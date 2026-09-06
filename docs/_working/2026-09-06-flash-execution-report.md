@@ -190,7 +190,7 @@ commit：—
 ## 7.2 复核发现与处置
 
 1. **ROOR ERRCODE 计数漂移（已修，31dfdc4a）**：§一宣称"registry 781 条终值"为 e27cf22c 去重（10:02，删 11 条双条目）**之前**的实测值；F 项 f13bc796 落盘 ROOR（10:09）晚于去重却未重测，写入 781。实测终值 **770**（error_codes 条目数，e27cf22c registry 删 57 行对账闭合）。总管已修 ROOR entry_count 781→770 并在 counting_rule 补终值说明。
-2. **path_ownership_map 6 条幽灵条目（新遗留 #9）**：H 项删除的 3 源文件+3 测试在 path_ownership_map.yaml 仍有 path 条目（claim_type=depgraph_node, existence=generated）。根因：depgraph 数据库节点未随源文件退役，且 generate_path_ownership_map.py 无目标文件存在性校验，再生时回填。§二 H 项"path_ownership_map --write 再生吸收"表述不成立。待 Owner 裁定：depgraph 节点退役排期 or 生成器加存在性过滤。
+2. **path_ownership_map 6 条幽灵条目（已处置自愈）**：H 项删除的 3 源文件+3 测试在 path_ownership_map.yaml 仍有 path 条目（claim_type=depgraph_node, existence=generated）。根因：depgraph 数据库节点未随源文件退役，且 generate_path_ownership_map.py 无目标文件存在性校验，再生时回填。§二 H 项"path_ownership_map --write 再生吸收"表述不成立。**总管处置**：generate_project_depgraph.py 刷新（节点已消失）→ 地图再生 → 6 条幽灵零命中、yaml 合法，自愈闭合（commit 见本笔）。生成器存在性过滤仍建议作为 D1 类加固项。
 
 ## 7.3 口径澄清（非缺陷）
 
@@ -200,7 +200,7 @@ commit：—
 
 ## 7.4 遗留分流汇总
 
-- 已处置：ROOR ERRCODE 漂移（本节 #1，31dfdc4a）。
-- 待 Owner 裁定/授权：§五 1/2/3/6/7 + 新增 #9（path_ownership_map 幽灵条目）。
-- 待排期：§五 5（flaky timeout 放宽）、§五 8（driver 测试面 checklist 固化）。
+- 已处置：ROOR ERRCODE 漂移（7.2 #1，31dfdc4a）；path_ownership_map 幽灵条目（7.2 #2，本笔自愈）。
+- 待 Owner 裁定/授权：§五 1/2/3/6/7。
+- 待排期：§五 5（flaky timeout 放宽）、§五 8（driver 测试面 checklist 固化）、生成器存在性过滤加固（7.2 #2 附注）。
 - 排查已毕待适配：§五 4（REG-INV-001 宽口径消费方适配）。

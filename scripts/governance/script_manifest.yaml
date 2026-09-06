@@ -1,17 +1,17 @@
-# 自动生成于 2026-09-06T01:06:03Z
+# 自动生成于 2026-09-06T01:41:19Z
 # 来源: scripts/governance/**/*.py __manifest__ 块
 # 手工编辑无效——修改请通过各 .py 文件的 __manifest__ 块
 
-generated_at: '2026-09-06T01:06:03Z'
+generated_at: '2026-09-06T01:41:19Z'
 generated_by: scripts/governance/generators/generate_script_manifest.py
 source: scripts/governance/**/*.py → __manifest__ 块
-total_scripts: 417
+total_scripts: 418
 with_manifest: 407
-missing_manifest: 10
+missing_manifest: 11
 categories:
   governance:_sync: 4
   governance:_tasks: 3
-  governance: 47
+  governance: 48
   governance:d10_performance: 1
   governance:d11_compliance: 24
   governance:d12_ai_hallucination: 4
@@ -3892,6 +3892,16 @@ scripts:
   description: 网关批次收尾仪式——批次触碰 rules/contracts 自动联动 C2 freeze + INTEGRITY 重钉（CAND-GATEMECH-005）
   tags:
   - Security
+- name: generate_asset_index.py
+  owner: governance
+  dimensions: []
+  priority: P2
+  timeout_seconds: 60
+  args: []
+  warn_only: false
+  description: ⚠ __manifest__ 缺失——请添加元数据块
+  tags: []
+  _manifest_missing: true
 - name: generate_decision_graph.py
   owner: governance
   dimensions:
