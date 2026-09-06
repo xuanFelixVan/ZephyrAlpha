@@ -3,8 +3,8 @@
 #
 manifest_version: 2.0.0
 generated_by: generate_manifest.py (auto-scan)
-generated_at: '2026-09-05'
-total_scripts: 754
+generated_at: '2026-09-06'
+total_scripts: 756
 scripts:
 - name: __init__.py
   path: __init__.py
@@ -1046,14 +1046,6 @@ scripts:
   status: registered
   timeout_seconds: 60
   dimensions: []
-- name: governance/run_semantic_audit.py
-  path: governance/run_semantic_audit.py
-  description: SemanticAuditor 9 阶段管道 CLI 入口（MOD-INF-028 B7 接线，2026-09-06）——审计规则文档并产出 JSON 报告到 .runtime/semantic_audit/。
-  domain: governance
-  execution_plane: warm-path
-  status: registered
-  timeout_seconds: 300
-  dimensions: []
 - name: governance/classify_workspace_wip.py
   path: governance/classify_workspace_wip.py
   description: classify_workspace_wip.py — 工作区脏文件判读器（#ARCH-308 B1，2026-09-03）。
@@ -1123,6 +1115,14 @@ scripts:
   description: 病根（#ARCH-130 实证）：ruff/codegen 批量批落码后，契约快照与 rules_integrity_db
   domain: governance
   execution_plane: hot-path
+  status: registered
+  timeout_seconds: 60
+  dimensions: []
+- name: governance/generate_asset_index.py
+  path: governance/generate_asset_index.py
+  description: 全项目资产索引生成器（2026-09-06 自 _archive/prototype 恢复为唯一真源写者，Owner 裁定）
+  domain: governance
+  execution_plane: warm-path
   status: registered
   timeout_seconds: 60
   dimensions: []
@@ -1219,6 +1219,14 @@ scripts:
   description: 用于 pre-commit hook 合并：将多个 GATE 脚本合并为单 hook 时使用。
   domain: governance
   execution_plane: hot-path
+  status: registered
+  timeout_seconds: 60
+  dimensions: []
+- name: governance/run_semantic_audit.py
+  path: governance/run_semantic_audit.py
+  description: 职责：为零消费的 src/zephyr/governance/semantic_audit/orchestrator.py（MOD-INF-028）
+  domain: governance
+  execution_plane: warm-path
   status: registered
   timeout_seconds: 60
   dimensions: []

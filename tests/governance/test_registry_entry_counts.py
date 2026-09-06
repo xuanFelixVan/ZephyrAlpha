@@ -1,3 +1,5 @@
+# [BLUEPRINT] MOD-D5_ARCH_TOOLS | (auto-injected by S4 reconciler) | §
+# [TTL] permanent
 # [TESTS-FOR] scripts/governance/d3_metadata/check_registry_consistency.py（CR-007 entry_count 对账+回填）
 # [MODULE] tests.governance.test_registry_entry_counts
 # [DOMAIN] D_GOV_SCRIPTS
