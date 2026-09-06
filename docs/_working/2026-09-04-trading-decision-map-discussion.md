@@ -606,4 +606,60 @@ Owner 大白话理解 6 项后终裁**全部要**。落盘分层：地图 YAML �
 
 ---
 
+## 35. 第二十八轮：P 流缺件三路审计+事后分析带（D50-D54，2026-09-07）
+
+**Owner 指令**：P 流落盘后再全网三路查（机构/量化社区/GitHub 开源），找缺失可补的+细节补充。AI 三路并行审计（机构 PMS 缺件/开源框架对账/缺层终验+X 流前瞻，各 15 组检索），报告约 40 项→过滤假阳性 8 项（调研员不知项目已有：情绪→总仓位=C1 预算带/公司行动=事件日历/涨停破板=24 号/Chandelier=42 号等）→Owner 大白话清单后裁定"全部按建议落盘"。
+
+**裁定内容**：D50 P0 五件套（MFE/MAE 追踪/峰值收益回撤止盈/做T配对核算器/交易盈亏持仓盈亏二分/止损单向棘轮——**棘轮已核实缺位**：Chandelier 为无状态纯函数无单调性约束）立项 position 域补强批次，地图注释欠账登记（P1-01/X-S1/P2-03/C3 四处）；D51 P1 九项+事后分析带四件套登记欠账随流消化；D52 X 流前瞻素材落本节素材区；D53 LLM 复盘归因登记 V2（只复核不决策，StockBench 禁令）；D54 不补三条（税务/融券/跨账户）写 69 号 §3 拒绝表。**缺层终验第三次通过：无结构性缺大层，不做 L5**。
+
+**验收**：YAML 注释 4 处（validate error=0 复跑）+69 号 v2.10.0 §2.27+§3 拒绝表+3 行+§5 V2 登记。
+
+**落盘**：trading_decision_map.yaml（注释欠账）/69 备忘录 v2.10.0 §2.27/讨论备忘录 §35。
+
+---
+
+## 35A. X 流（离场流）前瞻素材区（D52，开工时直接消费，勿重复调研）
+
+### S1 卖出信号收集评分素材
+
+**六类 exit 分类学**（评分分桶骨架；risk/signal/target/trailing/time/volatility；risk+time 两桶已挂 RLM-DRAWDOWN-001/002/006，**target/volatility 两桶缺**）：
+- 来源：Van Tharp 四分法+R 倍数框架（quantstrategy.io/blog/advanced-exit-strategies-when-to-get-out-for-maximum-profit）；Exit Rule 四类+混合（fxfoundations.com/learn/strategy-development/exit-rule-frameworks）；五类速查（backtestme.com/guides/entry-exit-strategies）
+
+**机构分批止盈（scale-out，S1→S2 接口协议）**：
+- Exit Ladder 三段式：1:1 R:R 减 50%+止损移保本→2:1 减 25%→runner 25% 跟踪到趋势末端（marketclutch.com/the-exit-strategy-mastering-the-art-of-scaling-out-of-trading-positions）
+- 1-2-3 结构：33%@2R+33%@3R+34% trail；前置加权（低价位多卖）=机构默认（digitalninjasystems.wpcomstaging.com/2026/05/31/how-to-exit-a-trend-profit-targets-and-trailing-stops）
+- 分批 2-4 点最优，>4 管理成本>收益（quantstrategy.io/blog/the-master-guide-to-scaling-out-vs-closing-trades-why/）
+- 按信号强度定分批密度（弱信号一次走/强信号留 runner）；exit 方法与策略错配可造成 30-60% 绩效差（traderssecondbrain.com/guides/take-profit-methods）
+- 处置效应校准（Odean 1998）：卖盈比卖亏高 50%，被卖赢家次年跑输持有输家 3.4%→用 MFE 捕获率作 S1 自检（<50%=止盈过早）（journalplus.co/blog/taking-profits-too-early/）
+
+**游资卖出体系（A股 native，可直接编码）**：
+- 陈小群"卖在一致"四铁律：①缩量加速次日分批止盈 50%+封单松动清仓 ②高位放量（换手>20% 滞涨）无条件离场 ③板块批量炸板→龙头同步减仓 ④监管异动/停牌预警提前止盈（xueqiu.com/7622014971/393155743）
+- 涅槃重升断板纪律：不板就砸（当日未涨停次日 9:35 前清仓）/炸板不回封立即减清/破 5 日线或前日最低价无条件止损/退潮信号空仓（caifuhao.eastmoney.com/news/20260312205313551730540）
+- 情绪拐点量化：板块单日≥3 只天地板当日全线清仓；龙头首次停牌减仓/二次停牌预示退潮提前减（caifuhao.eastmoney.com/news/20260620235746755643130）
+- 龙虎榜派发五规则：①高位上榜+知名游资现卖方→派发 ②买方全游资卖方全机构+高位→接力尾声 ③单日买入亮眼但三日榜净卖出→诱多出货 ④买入席位每日全换→击鼓传花尾声 ⑤拉萨天团频繁上榜→筹码分散派发中；优先看三日榜（licai.cofool.com/ask/qa_7434485.html）
+
+**Chandelier 三增强**（对照 42 号已有实现）：
+- 单向棘轮校验（D50 已核实缺位——实现正确性关键：回撤期 HH 变低止损钉住原位，nexusfi.com/a/indicators/chandelier-exit）
+- CE 距离作仓位闸门：止损距离对应风险>2% 权益时不入场（改仓位不改止损）
+- Override 矩阵：CE 管常态，六情况提前接管（新闻事件/高周期动量背离/关键阻力目标/情绪拐点）=S1 多信号与 trailing 融合点
+- 标准参数 22 期最高+3×ATR(22)；A股短线按 ATR 倍数日志法校准（30 笔找成交密集带调乘数）（journalplus.co/strategies/atr-trailing-stop-strategy/）
+
+### S2 离场执行素材（A股硬约束五项）
+
+1. **沪深尾盘机制分裂路由**：深市/创业板/科创板 14:57-15:00 收盘集合竞价**不可撤单**；沪市主板同段仍连续竞价可撤——路由器必须按市场分流（163.com/dy/article/KFU41H6D0553AF6B.html）
+2. **竞价逃命单**：挂跌停价=排队最优先且按开盘价成交（不会真卖在跌停价）；隔夜单（清算后 17:30-22:00 挂）比早盘临时单排队靠前（sina.cn/news/detail/5299375166456007.html）
+3. **跌停处置**：撤单重挂重置排队位次（绝对禁忌）；封单骤减>20%=撬板迹象→撤深队旧单以买一价重挂抢流动性窗口；约 43% 连续跌停第 3 日开板，第 2 跌停日盲目割肉非最优；区分基本面暴雷（全力跑）vs 情绪错杀（放量开板分批）（licai.cofool.com/ask/qa_7219771_2_1.html）
+4. **本地条件单范式**（vn.py）：停止单存本地不冻结仓位、触发才发限价单——解决限价止盈挂交易所冻结仓位导致止损单被拒（T+1 同坑）；cancel_all+重挂每 K 线刷新、本地双停止单实现 OCO（vnpy.com/forum/topic/34708）
+5. **订单通道映射**：QuantConnect MarketOnOpen/MarketOnClose 天然对应竞价卖/尾盘卖；UpdateOrderFields 不撤单直接改触发价（保排队位次）（quantconnect.com/docs/v2/writing-algorithms/reality-modeling/trade-fills/supported-models/equity-model）
+
+**尾盘时段规律**（S2 时段参数）：14:30-14:45 最易跳水（浮盈>10% 先减三成）；14:50-14:55 按收盘价决策（站稳当天高点留/跌破当天低点次日低开提前走）（caifuhao.eastmoney.com/news/1751470563）；上交所实证：收盘集合竞价显著缓解尾盘大单冲击——支持大单拆尾盘竞价（sse.com.cn/aboutus/research/report/c/10056876）
+
+### R1 应急保命增补素材
+
+- 游资红线量化：单笔>2% 无条件止损不补仓；单日总亏>3-5% 次日竞价清仓+停开仓；板块单日≥3 天地板当日全清；零杠杆
+- in-trade 监控三件（补中段 failsafe）：滑点超阈暂停该通道/消息率异常检测（失控算法）/极端波动熔断单标的（algovantis.com/implementing-failsafe-execution-protocols-for-uninterrupted-algo-trading-operations/）
+- 审计防篡改：2025 七大算法事故教训（Two Sigma 模型篡改等）——哈希链/只追加日志（veritaschain.org/blog/posts/2026-01-18-algorithmic-trading-crisis-2025/）
+
+---
+
 *本文件为讨论备忘录，讨论收敛并裁定后，正式设计应迁入 architecture_model 或相应设计目录，本文件届时归档。*

@@ -1611,6 +1611,9 @@ nodes:
     invalidation: null
     ai_autonomy: auto
     # D49 欠账注释：停牌持仓须冻结时间止损计时+复牌补跌预案，施工归公司行动处理（26 号 corporate_action_processor 消费侧）
+    # D50 欠账注释（事后分析带审计，69 号 §2.27）：台账须增 MFE/MAE 追踪字段（持仓期最大浮盈/浮亏+发生时点）——
+    #   回答"逻辑死了但 MFE 很大=出场问题非选股问题"；胜者 MAE 95% 分位校准止损距离、MFE 捕获率<50%=止盈过早；
+    #   施工归 position 域台账补强批次
     fallback: QMT 桥持仓文件缺失→沿用 T-1 快照+数据四态灯黄+人工核对
     strategy_mounts: []
 
@@ -1798,7 +1801,11 @@ nodes:
     invalidation: null
     ai_autonomy: paper
     # 成功判定=收盘股数不变+总成本下降（社区共识口径）；14:50 未闭环无条件平（冠军规则）；
-    #   统计喂 C3 归因；D49 欠账：除权除息自动改成本价会污染做T成本归因，施工归公司行动处理
+    #   统计喂 C3 归因；D49 欠账：除权除息自动改成本价会污染做T成本归因，施工归公司行动处理；
+    # D50 欠账（69 号 §2.27）：①做T配对核算器——多笔买卖按序配对（数量不等取小方）产出分项报表
+    #   （净收益/费用分项/做T后理论成本摊薄），做T系统的成绩单，施工归 position 域；
+    #   ②底仓复原语义+笔数偏差熔断（QMT 网格策略参照：尾盘按开盘前股数复原，买卖笔数差超阈撤单停手，
+    #   防做T单边漂移——与 14:50 强平互补：一个清敞口一个回底仓）
     fallback: 14:50 平仓失败→次日竞价优先处理并标记
     strategy_mounts: []
 
@@ -1931,6 +1938,8 @@ nodes:
     risk_limit_refs: [RLM-DRAWDOWN-001, RLM-DRAWDOWN-002, RLM-DRAWDOWN-006]
     data_refs: []
     module_ref: null
+    # D50 欠账（69 号 §2.27）：峰值收益回撤止盈信号——每仓记历史最高浮盈 peak_pnl，从峰值回落 X%
+    #   强制兑现（短线最大利润漏点="赚过没拿住"，与止损/时间止损三级联动）；施工随 X 流血肉消化
     strategy_mounts: []
 
   - node_id: TDM-X-S2
@@ -2011,6 +2020,9 @@ nodes:
     module_ref: null
     benchmark_refs: [BMK-INDEX-003, BMK-ABSOLUTE-001]
     threshold_refs: [THD-RETIRE-001, THD-RETIRE-002, THD-RETIRE-003]
+    # D50 欠账（69 号 §2.27，事后分析带）：①交易盈亏/持仓盈亏二分（vn.py 范式：日内成交映射 vs 隔夜持仓映射）——
+    #   直接衡量"做T到底贡献多少"，strategy_book 加切分列；②策略级 P&L Explain（底仓/做T/加仓腿分离归因，
+    #   策略亲和度调权的数据地基）；③逐笔 TCA（decision price→fill price 滑点归因，A股隐性成本可达佣金 5-10 倍）
     strategy_mounts: []
 
   # ── 币圈实例（骨架空壳，L2 弱化为赛道层）─────────────────────────────────
