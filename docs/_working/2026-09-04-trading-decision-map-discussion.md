@@ -540,6 +540,20 @@ Owner 大白话理解 6 项后终裁**全部要**。落盘分层：地图 YAML �
 
 **落盘**：decision_map.py（v1.6+R20-R25+V1-V4 修复）/YAML（11 个 module_id）/adversarial 套件/69 备忘录 v2.4.0 §2.21。
 
+## 30. 第二十三轮：遗留两项清账（D35，2026-09-07）
+
+**Owner 指令**：继续处理 §2.21 登记的两项遗留——①factor_refs 血肉补挂（16 节点）；②selection_funnel.py 文件头治理。
+
+**① 因子补挂（R24 16→0）**：16 个挂策略节点按语义匹配补挂 23 条因子引用，161 条因子库从 0 挂载→23 处交叉锚。匹配明细见 69 号备忘录 v2.5.0 §2.22 表（L2 结构强度=板块四维+涨停情绪量化/资金流聚合=净流入+迁移检测/生命周期=轮动位置+主线切换/L3 hub=三分法/Universe=业绩维/九阶段主链=RS+综合 RS/短线池=量比五分位/波段池=浪型量化/合流体检=背离级联/负面否决=假突破+加速见顶/打板链=炸板率连板+龙头三特质/分层维护=三分法/涨速异动=4 分钟涨速/L4 hub=开盘位置支撑压力/买入时序=竞价验证+竞价微结构/做T=VWAP 位置+急跌急反）。
+
+**② 文件头治理（R21 脏数据清零）**：selection_funnel.py [BLUEPRINT] 从文档串改 `MOD-SIG-086 supplement | 骨架蓝图路径`（SIGNAL-ARCH-001：该文件为 MOD-SIG-086 共享骨架的 fundamental 域薄适配层，supplement 先例=sector_momentum.py）；TDM-E-L3-02 补挂 module_id: MOD-SIG-086 对账通过。
+
+**配套修复**：depgraph 增量缓存按 content_hash 累积新旧条目不清旧——R21 对账取首条会被治理前陈旧条目遮蔽（红队 D 类变种）。修复：_resolve_mod_id 按当前文件 sha256 现算匹配现役条目。
+
+**验收**：R24/R21 双清零；剩余 warning=R25 空转叶子 17/R22 矩阵未覆盖 14/R1 红节点占位 75/R16 树宽 1（血肉阶段持续欠账）；对抗回归锚升级为"已清账不得复发"；70+142 测试全绿。
+
+**落盘**：YAML（16 节点 factor_refs+TDM-E-L3-02 module_id）/selection_funnel.py 文件头/decision_map.py（_resolve_mod_id）/adversarial f4 锚升级/69 备忘录 v2.5.0 §2.22。
+
 ---
 
 *本文件为讨论备忘录，讨论收敛并裁定后，正式设计应迁入 architecture_model 或相应设计目录，本文件届时归档。*

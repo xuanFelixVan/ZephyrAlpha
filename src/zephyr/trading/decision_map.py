@@ -365,8 +365,12 @@ def _load_registry_ids(registry_dir: Path, filename: str, section: str, key: str
     return frozenset(str(e.get(key)) for e in entries if isinstance(e, dict) and e.get(key))
 
 
-def _load_depgraph_mod_map(cache_path: Path) -> dict[str, str] | None:
-    """只读加载 depgraph 扫描缓存 → {path: blueprint_id}；缓存缺失返回 None（记 warning 不硬阻断）。"""
+def _load_depgraph_entries(cache_path: Path) -> dict[str, dict[str, dict]] | None:
+    """只读加载 depgraph 扫描缓存原始条目 {path: {content_hash: entry}}；缺失返回 None。
+
+    缓存按 content_hash 累积多版本条目（增量扫描不清旧条目），现役条目由
+    _resolve_mod_id 按当前文件 sha256 现算匹配（防陈旧 hash 遮蔽已治理的文件头）。
+    """
     if not cache_path.exists():
         return None
     try:
@@ -375,20 +379,34 @@ def _load_depgraph_mod_map(cache_path: Path) -> dict[str, str] | None:
         data = json.loads(cache_path.read_text(encoding="utf-8"))
     except (OSError, ValueError):
         return None
-    out: dict[str, str] = {}
-    for path, hashes in (data.get("entries") or {}).items():
-        if isinstance(hashes, dict):
-            for entry in hashes.values():
-                if isinstance(entry, dict) and entry.get("blueprint_id"):
-                    bid = str(entry["blueprint_id"]).strip()
-                    # 清洗 "MOD-SIG-026 supplement" 类后缀 → MOD-SIG-026（辅助文件归属主模块）
-                    if not re.fullmatch(_MOD_ID_RE, bid):
-                        first = bid.split()[0] if bid.split() else ""
-                        if re.fullmatch(_MOD_ID_RE, first):
-                            bid = first
-                    out[str(path)] = bid
-                    break
-    return out
+    entries = data.get("entries") or {}
+    return entries if isinstance(entries, dict) else {}
+
+
+def _resolve_mod_id(entries: dict[str, dict[str, dict]], repo_root: Path, path: str) -> str | None:
+    """解析 path 的现役 blueprint_id：优先匹配当前文件 sha256 的条目，回退首条；清洗 supplement 后缀。"""
+    hashes = entries.get(path)
+    if not isinstance(hashes, dict) or not hashes:
+        return None
+    entry: dict | None = None
+    try:
+        import hashlib
+
+        actual = hashlib.sha256((repo_root / path).read_bytes()).hexdigest()
+        entry = hashes.get(actual)
+    except OSError:
+        entry = None
+    if entry is None:
+        entry = next(iter(hashes.values()))
+    if not isinstance(entry, dict) or not entry.get("blueprint_id"):
+        return None
+    bid = str(entry["blueprint_id"]).strip()
+    # 清洗 "MOD-SIG-026 supplement" 类后缀 → MOD-SIG-026（辅助文件归属主模块）
+    if not re.fullmatch(_MOD_ID_RE, bid):
+        first = bid.split()[0] if bid.split() else ""
+        if re.fullmatch(_MOD_ID_RE, first):
+            bid = first
+    return bid
 
 
 def _collect_sequence_cycle(dm: DecisionMap) -> list[str]:
@@ -519,7 +537,7 @@ def _validate_governance(
     algo_ids: frozenset[str],
     add,
     emit_stats: bool = False,
-    mod_map: dict[str, str] | None = None,
+    depgraph_entries: dict[str, dict[str, dict]] | None = None,
 ) -> None:
     """D32/D33/D34 门禁包：R13 算法引用 / R14 附件存在 / R15 治理字段 / R16 父子完整性+树宽 / R17 粒度+容量 / R18 命名唯一 / R19 模块存在 / R20 node_id 骨架 / R21 MOD 交叉锚 / R22 矩阵覆盖 / R23 流预算 / R24 因子欠账 / R25 空转叶子。"""
     by_id = {n.node_id: n for n in dm.nodes}
@@ -555,11 +573,11 @@ def _validate_governance(
                 add("error", "R14", n.node_id, f"doc_ref 文件不存在（或非文件）: {rel}")
         if n.module_ref and not (repo_root / n.module_ref).is_file():
             add("error", "R19", n.node_id, f"module_ref 文件不存在（或非文件）: {n.module_ref}")
-        # R21 MOD-* 交叉锚：格式校验 + 与 module_ref 缓存映射对账
+        # R21 MOD-* 交叉锚：格式校验 + 与 depgraph 缓存映射对账（现役 hash 条目）
         if n.module_id is not None and not re.fullmatch(_MOD_ID_RE, n.module_id):
             add("error", "R21", n.node_id, f"module_id 不符合 MOD-* 格式: {n.module_id}")
-        if n.module_id and n.module_ref and mod_map is not None:
-            actual = mod_map.get(n.module_ref)
+        if n.module_id and n.module_ref and depgraph_entries is not None:
+            actual = _resolve_mod_id(depgraph_entries, repo_root, n.module_ref)
             if actual is not None and actual != n.module_id:
                 add("error", "R21", n.node_id, f"module_id {n.module_id} 与 depgraph 缓存 {actual} 不一致（module_ref={n.module_ref}）")
         if n.module_ref and not n.module_id:
@@ -741,10 +759,10 @@ def validate_decision_map(
     ind_ids = _load_registry_ids(registry_dir, _REG_IND, "indicators", "indicator_id")
     repo_root = registry_dir.parents[3]
     cache_path = depgraph_cache if depgraph_cache is not None else repo_root / _DEPGRAPH_CACHE
-    mod_map = _load_depgraph_mod_map(cache_path)
-    if mod_map is None:
+    depgraph_entries = _load_depgraph_entries(cache_path)
+    if depgraph_entries is None:
         add("warning", "R21", anchor0, f"depgraph 扫描缓存缺失（{cache_path}）——MOD 对账降级为格式校验")
-    _validate_governance(dm, registry_dir, exa_ids | ind_ids, add, mod_map=mod_map)
+    _validate_governance(dm, registry_dir, exa_ids | ind_ids, add, depgraph_entries=depgraph_entries)
 
     # R12 整装方案（v1.1）：sleeve 引用存在性+权重范围+和≤1+activation_state 在列轴+置信度
     if dm.portfolio_plan is not None:

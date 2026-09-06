@@ -410,10 +410,17 @@ class TestWarningSemantics:
         assert any(i.code == "R22" and i.level == "warning" for i in issues)
 
     def test_f4_repo_map_full_gates_still_green(self) -> None:
-        """真源地图对抗回归锚：R1-R25 全门禁下 error=0（欠账 warning 允许存在）。"""
+        """真源地图对抗回归锚：R1-R25 全门禁下 error=0（欠账 warning 允许存在）。
+
+        D35 因子补挂后：R24（因子欠账）必须清零、R21 必须无脏数据；
+        R25（空转叶子）/R22（矩阵未覆盖）/R1（红节点占位）为血肉阶段持续欠账，必须浮出。
+        """
         dm = load_decision_map(_REPO / "config" / "trading_decision_map.yaml")
         ok, issues = validate_decision_map(dm, _REGISTRY_DIR, _KNOWN_STRATEGIES)
         assert ok is True, [i for i in issues if i.level == "error"]
-        # 交叉索引欠账必须持续浮出（因子 16/空转叶子 17/矩阵 14/脏 MOD 1）
         codes = {i.code for i in issues}
-        assert {"R21", "R24", "R25", "R22"} <= codes
+        # 已清账：因子交叉欠账（R24）与 MOD 脏数据（R21）不得复发
+        assert "R24" not in codes, "R24 因子欠账复发（挂策略节点 factor_refs 又空了）"
+        assert not any(i.code == "R21" for i in issues), "R21 脏 MOD 复发"
+        # 持续欠账：必须可见（防门禁静默失效）
+        assert {"R25", "R22"} <= codes

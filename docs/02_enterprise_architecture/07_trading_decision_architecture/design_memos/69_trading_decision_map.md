@@ -5,7 +5,7 @@ title: 交易决策地图（Trading Decision Map）——决策内容索引层�
 owner: ZephyrAlpha-Owner
 language: zh
 status: active
-version: "2.4.0"
+version: "2.5.0"
 date: 2026-09-04
 topic: trading_decision_map
 scope: 07_trading_decision_architecture
@@ -341,6 +341,35 @@ E-L2 收口：**10 树枝 19 节点**。
 **红蓝对抗测试套件**（tests/trading/test_decision_map_adversarial.py，32 用例六类武器）：A 绕过类 8（注册表缺失/空地图/目录冒充/路径穿越×2 字段）、B 边界值类 6（100/101 字、树深 4/5、流预算 81 卡线）、C 伪装类 6（小写 node_id/两段 node_id/supplement 伪装/大小写枚举/模糊词藏长句）、D 交叉对账类 5（缓存不一致/一致/缺失降级/supplement 清洗/欠账）、E 组合攻击类 3（五重违规全报/feedback 合法放行防误杀/自指成环）、F warning 语义类 4（欠账浮出但 ok=True+真源回归锚）。
 
 **真源欠账快照**（warning 全景，血肉阶段消化清单）：R24 因子欠账 16 节点（161 条因子库 0 挂载=交叉索引最大欠账）、R25 空转叶子 17、R22 矩阵未覆盖 14、R21 脏 MOD 1、R16 树宽 1（TDM-E-L4 13 子节点贴线）。
+
+### 2.22 遗留两项清账（D35，2026-09-07 Owner 指令"继续处理遗留两项"）
+
+**① factor_refs 血肉补挂（R24 16 节点→0）**：16 个挂策略节点按语义匹配补挂 23 条因子引用（161 条因子库从 0 挂载→23 处交叉锚）：
+
+| 节点 | 补挂因子 | 匹配依据 |
+|---|---|---|
+| TDM-E-L2-01-1 结构强度评估 | FCT-MOM-011 板块四维质量评估/FCT-SENT-012 涨停板情绪量化体系 | 涨停比/梯队/趋势 |
+| TDM-E-L2-01-4 板块资金流聚合 | FCT-LIQ-040 5/10 日累计净流入/FCT-MOM-021 板块间资金迁移检测 | 主力资金进出 |
+| TDM-E-L2-08 板块生命周期判定 | FCT-MOM-005 板块轮动位置判定/FCT-MOM-022 主线评分与切换确认 | 启动/发酵/高潮/熄火 |
+| TDM-E-L3 个股选择（hub） | FCT-MOM-003 龙头/中军/后排三分法 | 板块里选哪只票 |
+| TDM-E-L3-01 Universe 构建与剔除 | FCT-QUAL-001 业绩维因子 | 不可交易剔除 |
+| TDM-E-L3-02 九阶段选票主链 | FCT-MOM-009 区间相对强弱 RS/FCT-MOM-010 综合 RS 评分 | 漏斗逐级压缩 |
+| TDM-E-L3-03-1 短线池 5 分制 | FCT-TECH-070 量比五分位标准 | 短线量能评分 |
+| TDM-E-L3-03-2 波段池 5 分制 | FCT-TECH-071 波段浪型量化标准 | 波段浪型评分 |
+| TDM-E-L3-03-3 双策略合流体检 | FCT-TECH-085 背离程度量化与多级别级联 | 三维共振体检 |
+| TDM-E-L3-04 负面否决器 | FCT-TECH-083 假突破统计参数/FCT-TECH-077 加速见顶 | 一票否决条件 |
+| TDM-E-L3-07-1 打板选股链 | FCT-SENT-007 炸板率+连板高度+涨停回封时间/FCT-MOM-016 龙头三特质 | 打板标的漏斗 |
+| TDM-E-L3-09 股票池分层维护 | FCT-MOM-003 龙头/中军/后排三分法 | Tier 升降级 |
+| TDM-E-L3-11-2 盘中涨速异动扫描 | FCT-MOM-030 4 分钟涨速资金异动 | 涨速榜 3-7% |
+| TDM-E-L4 买卖点与执行（hub） | FCT-INTRADAY-028 开盘位置 vs 支撑压力预判 | 何时进场 |
+| TDM-E-L4-02 买入时序 | FCT-INTRADAY-024 竞价验证/FCT-INTRADAY-027 竞价微结构信号 | 竞价铁律/时间锚 |
+| TDM-P-P2 做T与加减仓 | FCT-INTRADAY-025 VWAP 位置/FCT-INTRADAY-015 急跌必有急反 | 三做T策略 |
+
+**② selection_funnel.py 文件头治理（R21 脏数据清零）**：[BLUEPRINT] 行从文档串（21 号备忘录 §3.6）改为 `MOD-SIG-086 supplement | docs/03_modules/_domain_signal/selection_funnel_skeleton/blueprint.md`（SIGNAL-ARCH-001 裁定该文件为 MOD-SIG-086 共享骨架的 D_FUNDAMENTAL_SIGNAL 薄适配层，supplement 语义与 sector_momentum.py 先例一致）；[MODIFY-GUARD] 同步指向骨架蓝图。TDM-E-L3-02 补挂 module_id: MOD-SIG-086，与 depgraph 缓存对账通过。
+
+**配套修复——depgraph 缓存陈旧 hash 遮蔽漏洞**：增量扫描缓存按 content_hash 累积多版本条目且不清旧条目，原 R21 对账取首条会被文件头治理前的陈旧条目遮蔽（selection_funnel.py 缓存中新旧两条并存）。修复：_resolve_mod_id 按当前文件 sha256 现算匹配现役条目，匹配不到回退首条（对抗测试假缓存场景）。此漏洞属红队 D 类（交叉对账）变种，已由既有 D1-D5 用例+真源回归锚覆盖。
+
+**验收**：真源地图 R24/R21 双清零（warning 快照变为 R25 空转叶子 17/R22 矩阵未覆盖 14/R1 红节点占位 75/R16 树宽 1——血肉阶段持续欠账）；对抗回归锚升级为"已清账不得复发"（R24/R21 断言 not in，R25/R22 断言持续可见）；70（38+32）+142（signal_fundamental）测试全绿。
 
 ## 3. 考虑过的替代方案与拒绝理由
 

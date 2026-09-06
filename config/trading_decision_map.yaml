@@ -217,7 +217,7 @@ nodes:
     point: 盘后
     decision_question: 板块情绪结构（涨停比/梯队/趋势）强不强
     parent_node: TDM-E-L2-01
-    factor_refs: []
+    factor_refs: [FCT-MOM-011, FCT-SENT-012]
     data_refs: [DS-059]
     module_ref: src/zephyr/signal_ashare/sector_analyzer.py
     module_id: MOD-SIG-026
@@ -281,7 +281,7 @@ nodes:
     point: 盘后
     decision_question: 主力资金在进这个板块还是在出
     parent_node: TDM-E-L2-01
-    factor_refs: []
+    factor_refs: [FCT-LIQ-040, FCT-MOM-021]
     data_refs: [DS-181, DS-186]
     module_ref: src/zephyr/signal_ashare/sector_breadth.py
     module_id: MOD-SIG-026
@@ -673,7 +673,7 @@ nodes:
     point: 盘后
     decision_question: 这个板块自己走到生命周期哪一段了（启动/发酵/高潮/熄火）
     parent_node: TDM-E-L2
-    factor_refs: []
+    factor_refs: [FCT-MOM-005, FCT-MOM-022]
     data_refs: [DS-059, DS-170]
     module_ref: null
     algo_refs: []
@@ -735,7 +735,7 @@ nodes:
     node_type: stage
     point: 盘前
     decision_question: 板块里选哪只票
-    factor_refs: []
+    factor_refs: [FCT-MOM-003]
     data_refs: []
     module_ref: null
     strategy_mounts:
@@ -757,7 +757,7 @@ nodes:
     point: 盘后
     decision_question: 今天全市场扫哪些、先把不可交易的删掉哪些
     parent_node: TDM-E-L3
-    factor_refs: []
+    factor_refs: [FCT-QUAL-001]
     data_refs: [DS-150]
     module_ref: null
     algo_refs: []
@@ -779,9 +779,10 @@ nodes:
     point: 盘后
     decision_question: 候选池怎么逐级压缩到精选（业界漏斗压缩率参考 3000→10 级）
     parent_node: TDM-E-L3
-    factor_refs: []
+    factor_refs: [FCT-MOM-009, FCT-MOM-010]
     data_refs: [DS-150, DS-181]
     module_ref: src/zephyr/signal_fundamental/selection_funnel.py
+    module_id: MOD-SIG-086
     algo_refs: []
     doc_ref: "docs/01_policies_and_standards/_registry/catalogs/strategy_registry.yaml#STR-MULTIFACTOR-042"
     activation: postmarket
@@ -820,7 +821,7 @@ nodes:
     point: 盘后
     decision_question: 短线候选按 5 分制谁够格
     parent_node: TDM-E-L3-03
-    factor_refs: []
+    factor_refs: [FCT-TECH-070]
     data_refs: [DS-150]
     module_ref: null
     algo_refs: []
@@ -841,7 +842,7 @@ nodes:
     point: 盘后
     decision_question: 波段候选按 5 分制谁够格
     parent_node: TDM-E-L3-03
-    factor_refs: []
+    factor_refs: [FCT-TECH-071]
     data_refs: [DS-150]
     module_ref: null
     algo_refs: []
@@ -862,7 +863,7 @@ nodes:
     point: 盘后
     decision_question: 两池合并后过三维共振体检还剩谁
     parent_node: TDM-E-L3-03
-    factor_refs: []
+    factor_refs: [FCT-TECH-085]
     data_refs: []
     module_ref: null
     algo_refs: []
@@ -884,7 +885,7 @@ nodes:
     point: 盘后
     decision_question: 候选池里谁被一票否决直接出池
     parent_node: TDM-E-L3
-    factor_refs: []
+    factor_refs: [FCT-TECH-083, FCT-TECH-077]
     data_refs: [DS-150]
     module_ref: null
     algo_refs: []
@@ -970,7 +971,7 @@ nodes:
     point: 盘中
     decision_question: 板块内 5 步漏斗选出打板标的（消费 L2 龙头定位）
     parent_node: TDM-E-L3-07
-    factor_refs: []
+    factor_refs: [FCT-SENT-007, FCT-MOM-016]
     data_refs: [DS-150, DS-082]
     module_ref: null
     algo_refs: []
@@ -1055,7 +1056,7 @@ nodes:
     point: 盘后
     decision_question: 漏斗日产出怎么更新持久池（Tier 升降级+陈旧剔除）
     parent_node: TDM-E-L3
-    factor_refs: []
+    factor_refs: [FCT-MOM-003]
     data_refs: [DS-150]
     module_ref: null
     algo_refs: []
@@ -1139,7 +1140,7 @@ nodes:
     point: 盘中
     decision_question: 涨速榜 3-7% 快速拉升标的中谁进观察池（黄金窗口 9:30-10:30）
     parent_node: TDM-E-L3-11
-    factor_refs: []
+    factor_refs: [FCT-MOM-030]
     data_refs: [DS-150, DS-082]
     module_ref: null
     algo_refs: []
@@ -1261,7 +1262,7 @@ nodes:
     node_type: stage
     point: 盘中
     decision_question: 何时进场/怎么下单
-    factor_refs: []
+    factor_refs: [FCT-INTRADAY-028]
     data_refs: []
     module_ref: null
     strategy_mounts:
@@ -1300,7 +1301,7 @@ nodes:
     point: 盘中
     decision_question: 今天什么窗口下单（尾盘集中为主；竞价铁律 9:15-9:20 可撤假象多/9:20-9:25 只挂不撤/14:57-15:00 尾盘竞价不可撤；时间锚 2:30 背离与 2:57 竞价）
     parent_node: TDM-E-L4
-    factor_refs: []
+    factor_refs: [FCT-INTRADAY-024, FCT-INTRADAY-027]
     data_refs: [DS-150]
     module_ref: null
     algo_refs: []
@@ -1557,7 +1558,7 @@ nodes:
     node_type: stage
     point: 盘中
     decision_question: 今日持仓怎么做T/要不要加减仓
-    factor_refs: []
+    factor_refs: [FCT-INTRADAY-025, FCT-INTRADAY-015]
     data_refs: []
     module_ref: null
     strategy_mounts:

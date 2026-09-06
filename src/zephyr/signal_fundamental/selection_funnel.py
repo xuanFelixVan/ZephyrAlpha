@@ -1,4 +1,4 @@
-# [BLUEPRINT] docs/02_enterprise_architecture/07_trading_decision_architecture/design_memos/21_stock_selection_engine.md §3.6
+# [BLUEPRINT] MOD-SIG-086 supplement | docs/03_modules/_domain_signal/selection_funnel_skeleton/blueprint.md
 # [MODULE] zephyr.signal_fundamental.selection_funnel
 # [DOMAIN] D_FUNDAMENTAL_SIGNAL
 # [DEPENDENCIES] zephyr.signal_ashare.selection_funnel_skeleton（MOD-SIG-086 共享骨架）
@@ -6,7 +6,7 @@
 # [STARTUP] imported
 # [MATURITY] new
 # [INVARIANTS] 漏斗单调收敛：BM-SEL-16 输出 ⊇ BM-SEL-17 输出 ⊇ BM-SEL-18 输出；精筛输出 ≤ top_n
-# [MODIFY-GUARD] none
+# [MODIFY-GUARD] docs/03_modules/_domain_signal/selection_funnel_skeleton/blueprint.md
 # [STABILITY] evolving
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
