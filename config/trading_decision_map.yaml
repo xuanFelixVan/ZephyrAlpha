@@ -30,6 +30,9 @@ nodes:
   #   微观情绪相位（1-2 周短线）= 本矩阵列轴六段（定稿词汇，10 号 spec 五态的细分扩展：
   #   冰点→capitulation / 反核→accumulation+ignition / 主升→expansion / 疯狂→euphoria / 退潮→distribution）
   #   当日预案（今天冲高回落怎么应对）= 作战预案引擎（D_PLAN/BM-PLAN-01-C）管辖，地图只挂引用不重建
+  #   正名登记（D23）：现名"作战预案引擎"→未来正名"每日作战计划引擎（Game Plan Engine）"——
+  #   专业两层结构：Playbook（静态招式手册=策略库+作战手册，已有）vs Game Plan（当日动态作战计划）；
+  #   "预案"为口语，专业词=Game Plan；改名执行时同步 D_PLAN 域/BM-PLAN-01-C 锚点/相关备忘录编号
   - node_id: TDM-E-L1
     name_zh: 大盘总闸
     market: cn_a
