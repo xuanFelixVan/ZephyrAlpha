@@ -5,7 +5,7 @@ title: 交易决策地图（Trading Decision Map）——决策内容索引层�
 owner: ZephyrAlpha-Owner
 language: zh
 status: active
-version: "2.1.0"
+version: "2.2.0"
 date: 2026-09-04
 topic: trading_decision_map
 scope: 07_trading_decision_architecture
@@ -267,6 +267,24 @@ E-L2 收口：**10 树枝 19 节点**。
 **治理阶梯落地**：05/06=实盘执行节点，ai_autonomy=**paper**（D18 初始档，升档需 Owner dated 裁定）；其余 auto。**TCA 不设节点**：执行质量归因（滑点 bps/成交率/排队成交率）由 C3 归因承载，TCA 三阶段登记为 C3 子项。**OE 前沿登记升级路径**：MAP-Elites regime 专家/Conformal 门控/Smart TWAP 调制。**红节点 7**（01-04/07-08/09 待施工，05 production、06 algo_refs 锚）。
 
 **建仓流（E 流）就此全封板**：L1（六传感器+四层温度计，8 节点）→L2（10 树枝，29 节点）→L3（10 树枝，17 节点）→L4（9 树枝，10 节点）——**E 流合计 64 节点**。
+
+### 2.19 L3/L4 粒度补齐（D31，Owner 判定"个股与执行应比板块节点多"成立）
+
+**Owner 观察**：L2=29 节点 > L3=17 > L4=10，粒度倒挂——个股与执行真实复杂度被压缩（L2 按 22 号全展开而 L3/L4 粗颗粒）。全网深查（OMS 订单生命周期/A股资金面工具/竞价选股生态）证实两个粒度欠账：
+
+**L3 补 8 节点（17→25）**：
+- **11 日内动态选股**（树枝）：**11-1 竞价选股**（9:26-9:28 竞价瞬间产出当日候选——竞价量比/资金挂单/涨停试盘；社区竞价擒龙生态=短线王 60 因子/竞价排序列表前 30）+**11-2 盘中涨速异动扫描**（涨速榜 3-7%/黄金窗口 9:30-10:30；STR-MULTIFACTOR-031 上挂）——原结构全盘后，但打板候选大头来自日内扫描
+- **12 个股多维验证**（树枝）：**12-1 个股资金面**（DDE 大单/成交额≥20% 实战线，capital_flow_pattern_analyzer.py 已落码锚）/**12-2 龙虎榜席位追踪**（游资 vs 机构席位风格定接力概率）/**12-3 筹码分布**（低位集中吸筹/高位上移派发）/**12-4 形态结构识别**（chanlun_structure.py+bottom_confirmation_entry.py 已落码锚）
+- 边：11-1/11-2→08（日内候选入池）、04→12（否决后候选四维验证）、12→05（验证结论喂顺位）；**STR-MULTIFACTOR-048 补挂 07-1**（自查漏挂）
+
+**L4 补 4 节点（10→14）**（OMS 标准件，FIX/OpenWealth 订单状态机规范）：
+- **10 订单生命周期状态机**（九态：New/PendingNew/Accepted/Partial/Filled/PendingCancel/Cancelled/Rejected/Expired；async_fill_dispatcher.py 锚；PendingCancel 竞态语义）
+- **11 部分成交与撤改处理**（partial fill 撤/等决策+cancel/replace 竞态）
+- **12 订单级预检**（资金/持仓/限额/禁止清单——15c3-5 pre-trade 语义，发送边界前执行；与 L3-10 候选级预检分属两级）
+- **13 执行容灾对账**（三方对账：我以为发出/券商说发出/实际成交；断线重连；宪章约束五 RTO<5min；13→C3 feed=执行对账喂归因）
+- **09 更名"执行硬约束"**：扩语义加成本模型实时估算（佣金+印花税+滑点——宪章方法论约束一）
+
+**治理阶梯**：新增 10/11/12=实盘执行节点 ai_autonomy=paper；13 对账=auto。**L3 收口 25 节点（12 树枝，树枝数超 L2 ✓）/L4 收口 14 节点（13 树枝）**。
 
 ## 3. 考虑过的替代方案与拒绝理由
 
