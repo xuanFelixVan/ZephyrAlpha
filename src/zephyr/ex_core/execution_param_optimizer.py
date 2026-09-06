@@ -10,7 +10,7 @@
 # [STABILITY] evolving
 # [SAFETY] M
 # [AI_AUTONOMY] human_gated
-# [ERROR_CONTRACT] ExecutionOptimizerError(占位 ZA-EX-UNREGISTERED-EXECUTION-OPTIMIZER)——空参数空间/空白名单/白名单外参数/非法候选/TCA 缺失或为空/重复 cycle_id/未知提案/非法状态迁移时抛
+# [ERROR_CONTRACT] ExecutionOptimizerError(ZA-EX-0024)——空参数空间/空白名单/白名单外参数/非法候选/TCA 缺失或为空/重复 cycle_id/未知提案/非法状态迁移时抛
 # [TESTS] tests/ex_core/test_execution_param_optimizer.py
 # [A_module] module_id=MOD-EX-064 | layer=module | stability=evolving | safety=M | ai_autonomy=human_gated
 # [TTL] permanent
@@ -99,8 +99,10 @@ __all__: Final = [
 class ExecutionOptimizerError(Exception):
     """执行参数优化器输入/状态非法（Fail-Closed）。
 
-    未登记错误码-申请中：占位 ZA-EX-UNREGISTERED-EXECUTION-OPTIMIZER。
+    错误码 ZA-EX-0024 已登记转正（2026-09-06 Owner 批准批）。
     """
+
+    error_code = "ZA-EX-0024"
 
 
 class ProposalStatus(str, Enum):

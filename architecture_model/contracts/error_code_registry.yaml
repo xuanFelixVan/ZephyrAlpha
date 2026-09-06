@@ -3044,6 +3044,13 @@ error_codes:
   file: src/zephyr/digital_twin/market_twin_simulator.py
   introduced: '2026-09-06: Owner 批准占位码转正批（B17-②）——ZA-DT-UNREGISTERED-MARKET-TWIN 转正'
 
+# --- 2026-09-06 占位码转正批 EX（Owner 批准 B17-②，取号=段内 max+1 顺延）---
+- code: ZA-EX-0024
+  class: ExecutionOptimizerError
+  module: zephyr.ex_core.execution_param_optimizer
+  file: src/zephyr/ex_core/execution_param_optimizer.py
+  introduced: '2026-09-06: Owner 批准占位码转正批（B17-②）——ZA-EX-UNREGISTERED-EXECUTION-OPTIMIZER 转正'
+
 known_duplicates: []
 # ============================================================
 # 已知缺口（诚实登记，2026-08-15 #ARCH-MON-001 批次实测）
