@@ -10,7 +10,7 @@
 # [STABILITY] evolving
 # [SAFETY] M
 # [AI_AUTONOMY] human_gated
-# [ERROR_CONTRACT] RiskPolicyError(占位 ZA-RK-UNREGISTERED-RISK-POLICY)——连接未注入/空policy_id/空限额集/未知策略或版本/激活事务失败时抛
+# [ERROR_CONTRACT] RiskPolicyError(ZA-RK-0077)——连接未注入/空policy_id/空限额集/未知策略或版本/激活事务失败时抛
 # [TESTS] tests/risk/test_risk_policy_persister.py
 # [A_module] module_id=MOD-RK-044 | layer=module | stability=evolving | safety=M | ai_autonomy=human_gated
 # [TTL] permanent
@@ -110,8 +110,10 @@ _DDL: Final = (
 class RiskPolicyError(Exception):
     """风控策略持久化输入/状态非法（Fail-Closed）。
 
-    未登记错误码-申请中：占位 ZA-RK-UNREGISTERED-RISK-POLICY。
+    错误码 ZA-RK-0077 已登记转正（2026-09-06 Owner 批准批）。
     """
+
+    error_code = "ZA-RK-0077"
 
 
 @dataclass(frozen=True)

@@ -3678,6 +3678,33 @@ error_codes:
   file: src/zephyr/regime/style_regime_model.py
   introduced: '2026-09-06: Owner 批准占位码转正批（B17-②）——ZA-REGIME-UNREGISTERED-STYLE-REGIME 转正'
 
+# --- 2026-09-06 占位码转正批 RK（Owner 批准 B17-②，取号=段内 max+1 顺延）---
+- code: ZA-RK-0075
+  class: HedgeExecutionError
+  module: zephyr.risk.hedge_execution_skill
+  file: src/zephyr/risk/hedge_execution_skill.py
+  introduced: '2026-09-06: Owner 批准占位码转正批（B17-②）——ZA-RK-UNREGISTERED-HEDGE-EXECUTION 转正'
+- code: ZA-RK-0076
+  class: RiskContagionError
+  module: zephyr.risk.risk_contagion_modeler
+  file: src/zephyr/risk/risk_contagion_modeler.py
+  introduced: '2026-09-06: Owner 批准占位码转正批（B17-②）——ZA-RK-UNREGISTERED-RISK-CONTAGION 转正'
+- code: ZA-RK-0077
+  class: RiskPolicyError
+  module: zephyr.risk.risk_policy_persister
+  file: src/zephyr/risk/risk_policy_persister.py
+  introduced: '2026-09-06: Owner 批准占位码转正批（B17-②）——ZA-RK-UNREGISTERED-RISK-POLICY 转正'
+- code: ZA-RK-0078
+  class: VarPrefetchError
+  module: zephyr.risk.var_data_prefetcher
+  file: src/zephyr/risk/var_data_prefetcher.py
+  introduced: '2026-09-06: Owner 批准占位码转正批（B17-②）——ZA-RK-UNREGISTERED-VAR-PREFETCH 转正'
+- code: ZA-RK-0079
+  class: VarQueryError
+  module: zephyr.risk.var_query_builder
+  file: src/zephyr/risk/var_query_builder.py
+  introduced: '2026-09-06: Owner 批准占位码转正批（B17-②）——ZA-RK-UNREGISTERED-VAR-QUERY 转正'
+
 known_duplicates: []
 # ============================================================
 # 已知缺口（诚实登记，2026-08-15 #ARCH-MON-001 批次实测）

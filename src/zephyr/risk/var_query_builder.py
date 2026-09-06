@@ -10,7 +10,7 @@
 # [STABILITY] evolving
 # [SAFETY] M
 # [AI_AUTONOMY] human_gated
-# [ERROR_CONTRACT] VarQueryError(占位 ZA-RK-UNREGISTERED-RISK-QUERY)——非法表名/标的/频段/窗口/日期/空标的集/同键在飞重入时抛
+# [ERROR_CONTRACT] VarQueryError(占位 ZA-RK-0079)——非法表名/标的/频段/窗口/日期/空标的集/同键在飞重入时抛
 # [TESTS] tests/risk/test_var_query_builder.py
 # [A_module] module_id=MOD-RK-045 | layer=module | stability=evolving | safety=M | ai_autonomy=human_gated
 # [TTL] permanent
@@ -100,8 +100,10 @@ _DATE_RE: Final = re.compile(r"^\d{4}-\d{2}-\d{2}$")
 class VarQueryError(Exception):
     """VaR 查询构建输入/状态非法（Fail-Closed）。
 
-    未登记错误码-申请中：占位 ZA-RK-UNREGISTERED-VAR-QUERY。
+    错误码 ZA-RK-0079 已登记转正（2026-09-06 Owner 批准批）。
     """
+
+    error_code = "ZA-RK-0079"
 
 
 class QueryFrequency(str, Enum):

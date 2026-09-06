@@ -10,7 +10,7 @@
 # [STABILITY] evolving
 # [SAFETY] M
 # [AI_AUTONOMY] human_gated
-# [ERROR_CONTRACT] RiskContagionError(占位 ZA-RK-UNREGISTERED-RISK-CONTAGION)——空节点集/未知节点/非法边权衰减/零冲击/会话缺失或非盘后时抛
+# [ERROR_CONTRACT] RiskContagionError(ZA-RK-0076)——空节点集/未知节点/非法边权衰减/零冲击/会话缺失或非盘后时抛
 # [TESTS] tests/risk/test_risk_contagion_modeler.py
 # [A_module] module_id=MOD-RK-046 | layer=module | stability=evolving | safety=M | ai_autonomy=human_gated
 # [TTL] permanent
@@ -106,8 +106,10 @@ _POST_CLOSE: Final = "post_close"
 class RiskContagionError(Exception):
     """风险传播建模输入/状态非法（Fail-Closed）。
 
-    未登记错误码-申请中：占位 ZA-RK-UNREGISTERED-RISK-CONTAGION。
+    错误码 ZA-RK-0076 已登记转正（2026-09-06 Owner 批准批）。
     """
+
+    error_code = "ZA-RK-0076"
 
 
 class EdgeKind(str, Enum):

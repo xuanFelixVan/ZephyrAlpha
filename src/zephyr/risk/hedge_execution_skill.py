@@ -10,7 +10,7 @@
 # [STABILITY] evolving
 # [SAFETY] M
 # [AI_AUTONOMY] human_gated
-# [ERROR_CONTRACT] HedgeExecutionError(占位 ZA-RK-UNREGISTERED-HEDGE-EXECUTION)——空request_id/未知标的/非法比例或敞口/价格基差缺失/数量不足一手/执行回调未注入时抛
+# [ERROR_CONTRACT] HedgeExecutionError(ZA-RK-0075)——空request_id/未知标的/非法比例或敞口/价格基差缺失/数量不足一手/执行回调未注入时抛
 # [TESTS] tests/risk/test_hedge_execution_skill.py
 # [A_module] module_id=MOD-RK-042 | layer=module | stability=evolving | safety=M | ai_autonomy=human_gated
 # [TTL] permanent
@@ -102,8 +102,10 @@ _ONE: Final = Decimal("1")
 class HedgeExecutionError(Exception):
     """对冲执行技能输入/状态非法（Fail-Closed）。
 
-    未登记错误码-申请中：占位 ZA-RK-UNREGISTERED-HEDGE-EXECUTION。
+    错误码 ZA-RK-0075 已登记转正（2026-09-06 Owner 批准批）。
     """
+
+    error_code = "ZA-RK-0075"
 
 
 class HedgeInstrumentType(str, Enum):

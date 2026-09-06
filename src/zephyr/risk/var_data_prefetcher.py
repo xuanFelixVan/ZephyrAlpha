@@ -10,7 +10,7 @@
 # [STABILITY] evolving
 # [SAFETY] M
 # [AI_AUTONOMY] human_gated
-# [ERROR_CONTRACT] VarPrefetchError(占位 ZA-RK-UNREGISTERED-VAR-PREFETCH)——容量非法/连接未注入/parquet路径为空/标的集为空/窗口非正/查询失败时抛
+# [ERROR_CONTRACT] VarPrefetchError(ZA-RK-0078)——容量非法/连接未注入/parquet路径为空/标的集为空/窗口非正/查询失败时抛
 # [TESTS] tests/risk/test_var_data_prefetcher.py
 # [A_module] module_id=MOD-RK-043 | layer=module | stability=evolving | safety=M | ai_autonomy=human_gated
 # [TTL] permanent
@@ -100,8 +100,10 @@ __all__: Final = [
 class VarPrefetchError(Exception):
     """VaR 数据预取输入/状态非法（Fail-Closed）。
 
-    未登记错误码-申请中：占位 ZA-RK-UNREGISTERED-VAR-PREFETCH。
+    错误码 ZA-RK-0078 已登记转正（2026-09-06 Owner 批准批）。
     """
+
+    error_code = "ZA-RK-0078"
 
 
 @dataclass(frozen=True)
