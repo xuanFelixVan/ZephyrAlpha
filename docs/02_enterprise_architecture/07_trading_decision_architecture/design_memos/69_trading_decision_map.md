@@ -5,7 +5,7 @@ title: 交易决策地图（Trading Decision Map）——决策内容索引层�
 owner: ZephyrAlpha-Owner
 language: zh
 status: active
-version: "2.7.0"
+version: "2.8.0"
 date: 2026-09-04
 topic: trading_decision_map
 scope: 07_trading_decision_architecture
@@ -411,6 +411,26 @@ E-L2 收口：**10 树枝 19 节点**。
 **验收**：主套件 R34-R36 正反例+11 轴全绿用例（87 全绿）；对抗回归锚扩展三轴挂载不得静默消失。
 
 **满贯后交叉索引全景（v1.7 完全体）**：`TDM 节点 → EXA/IND → FCT → STR → PAT/SEAT/MAC/CYC/UNI/CST/EVT/RLM/PFM/BMK/THD（11 库交叉轴）+ DS → MOD-* 总线 → 五图体系`——**16/16 业务库全部点对点可达**，7 张图中 6 张活跃图互通（frontend_map 草案期待转正挂 module 轴）。
+
+### 2.25 frontend_map 挂 MOD 总线+新图新库必挂铁律（D38，Owner 2026-09-07 裁定）
+
+**Owner 指令**：①frontend_map 欠账继续处理；②以后新上的图和库都必须挂上去打通，每个刚进项目的 AI 都要知道。
+
+**① frontend_map 挂 MOD 总线（真源 src/zephyr/frontend/dashboard/web/frontend_map.yaml v2.1.0）**：
+- backend_ref 契约升级：支持列表多值（`[module:MOD-REGIME-005, table:CH.chip_distribution]`）
+- 首批挂载：F-STOCKQ-CHIP/F-STOCKQ-COSTLINE ↔ MOD-REGIME-005（筹码分布引擎，depgraph frontend_ref 已精确指向两功能点，双向闭合）
+- **R4 模块总线对账**（check_frontend_map.py 新增）：①frontend_map module: 引用必须在 depgraph 存在（防幽灵模块 fail）②depgraph frontend_ref 的 F- 功能点引用必须双向闭合（模块挂了功能点，功能点必回挂 module:，防两侧漂移 fail）③P- 页面引用映射 page 值域（fail）；DB 不可达降级 warn 不挡 commit 链
+- 其余 17 个 has_frontend 模块的 frontend_ref 为页面级粗引用（P-XXX），是 depgraph 侧精确化欠账，随前端功能血肉补挂（对账机制已就位，挂一个对一个）
+- 验收：check fail=0（含 R4 双向闭合）；gate 测试 4 passed；gap views A=0/C=0
+
+**② 新图新库必挂铁律（三件套+机制化）**：
+- AGENTS.md RULE-DEPGRAPH 第三件事新增"全图全库对齐铁律（D38）"段落（新 AI 必读第一入口）
+- alignment_checklist.md §4.1 更新（业务库 6→16 全挂 TDM 轴）+ 统一原则新增第 5 条（新库必挂轴）/第 6 条（新图必挂总线）
+- construction_workflow_sop.md §4 施工闭环清单新增第 14 项（新建注册表/全景图已挂轴 Yes/No 检查）
+- **机制化强制**：`tests/trading/test_decision_map.py::TestNewRegistryGate`（3 用例）——catalogs 目录新 yaml 文件必须二选一：挂 `_XREF_SPECS` 轴（业务库）或登记 `_GOVERNANCE_EXEMPT` 豁免（治理库 52 个显式清单）；漏做测试必红且报错信息自带操作指引——**新 AI 建库即被门禁教育，无需依赖自觉**
+- 全景图侧机制：新图走 module_id 总线（两跳互通）+ alignment_checklist §3 登记（君子协定+清单检查）
+
+**贯通意义**：交易决策地图（TDM）↔ frontend_map 经 MOD 总线互通闭环——TDM 节点 module_id → depgraph → frontend_map 功能点；反向功能点 → module: → depgraph → TDM 消费节点。全图全库对齐从"人知道"升级为"门禁强制知道"。
 
 ## 3. 考虑过的替代方案与拒绝理由
 

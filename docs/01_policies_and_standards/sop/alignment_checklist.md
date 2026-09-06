@@ -87,9 +87,11 @@ python scripts/governance/d5_architecture/generators/check_decision_map.py  # �
 
 > 40+ 注册表全量清单见 [registry_master_index.yaml](../_registry/catalogs/registry_master_index.yaml)，此处按域分组列出对齐规则
 
-### 4.1 业务资产库（6 个）
+### 4.1 业务资产库（16 个，全部挂 TDM 交叉轴）
 
 > 2026-09-05 G1 落地（#ARCH-BUSINESS-REG-GATE-001）：六库对齐工具从"门禁（待建）"转正式——**BUSINESS-REGISTRY gate（priority=139）**：条目 id 唯一+module_id 非空 MOD-* 格式（确定性硬）+depgraph 存在性（PG fail-open）；基线 735 条目 module_id 填充率 100% 实证
+>
+> **2026-09-07 D38 全库满贯**（Owner 裁定）：16 业务库全部挂 trading_decision_map 交叉轴（表驱动 `_XREF_SPECS`，门禁 R3-R36）——策略/因子/数据/指标/执行算法+形态/席位/宏观/周期/宇宙/成本/事件/风险限额/组合模型/基准/告警阈值；**新库必挂铁律**：新建业务库必须同 commit 加轴+挂载，治理库必须在 `tests/trading/test_decision_map.py::TestNewRegistryGate._GOVERNANCE_EXEMPT` 登记豁免——二选一必做，否则测试红（机制化强制每个新 AI 知晓）
 
 | 注册表 | 对齐对象 | 对齐规则 | 对齐时机 | 对齐工具 |
 |---|---|---|---|---|
@@ -142,6 +144,8 @@ python scripts/governance/d5_architecture/generators/check_decision_map.py  # �
 2. **转正必须迁移**：候选池（CAND）转正时必须从 candidate_module_registry 移到正式库
 3. **变更必须同步**：注册表内容变更时，必须同步到依赖它的全景图/其他注册表
 4. **删除必须清理**：注册表条目删除时，必须清理全景图/其他注册表的引用
+5. **新库必挂轴**（D38 铁律，2026-09-07）：新建业务资产库必须在 trading_decision_map `_XREF_SPECS` 同 commit 加交叉轴（两行）+ 真源挂载；治理类库必须在 `TestNewRegistryGate._GOVERNANCE_EXEMPT` 登记豁免——`tests/trading/test_decision_map.py` 门禁测试强制二选一
+6. **新图必挂总线**（D38 同源）：新建全景图必须以 module_id 为对齐 key 挂入七图体系（走 MOD 总线两跳互通，不搞 N² 直连），并在本清单 §3 登记
 
 ## 5. 第三层：代码↔文档↔测试对齐
 

@@ -1,16 +1,18 @@
 # 前端全景图（frontend_map）——页面·模块·功能点→代码路径·数据源·状态
-# 契约：每功能点一行，backend_ref 类型化（module:/registry:/table:/api:/none:）
+# 契约：每功能点一行，backend_ref 类型化（module:/registry:/table:/api:/none:），可多值（列表形态，D38）
 # ★唯一真源（Owner 2026-09-04 裁定）：architecture_model/frontend/frontend_map.yaml 已降级为派生副本禁手改禁消费
 # 生成源：features/manifest.yaml + 手工维护 + scan_frontend_pages.py 半自动补登（auto_scanned=true 待逐页人工复核转正）
-version: 2.0.0
-updated: '2026-09-04'
+# D38 模块总线（2026-09-07）：有后端模块承载的功能点必须挂 module:MOD-*（与 depgraph frontend_ref 双向闭合，
+#   经 MOD 总线与交易决策地图/五图互通——全图全库对齐铁律）；纯前端逻辑用 none: 声明事由
+version: 2.1.0
+updated: '2026-09-07'
 features:
 - id: F-STOCKQ-COSTLINE
   name: 持仓成本线
   page: stockq
   module_id: cost-line
   file: features/cost-line.js
-  backend_ref: table:CH.chip_distribution
+  backend_ref: [module:MOD-REGIME-005, table:CH.chip_distribution]
   status: active
 - id: F-STOCKQ-STOCK-HEADER
   name: 股票标题
@@ -129,7 +131,7 @@ features:
   page: stockq
   module_id: sq-chip-peak
   file: features/stockq/sq-chip-peak.js
-  backend_ref: table:CH.chip_distribution
+  backend_ref: [module:MOD-REGIME-005, table:CH.chip_distribution]
   status: pending
 - id: F-STOCKQ-INFO
   name: 右栏资料面板

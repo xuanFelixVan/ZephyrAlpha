@@ -576,6 +576,18 @@ Owner 大白话理解 6 项后终裁**全部要**。落盘分层：地图 YAML �
 
 **落盘**：decision_map.py（3 行扩容）/YAML（3 节点 8 引用）/两套件/69 备忘录 v2.7.0 §2.24。
 
+## 33. 第二十六轮：frontend_map 挂 MOD 总线+新图新库必挂铁律（D38，2026-09-07）
+
+**Owner 指令**：frontend_map 欠账继续处理；以后新上的图和库都要挂上去打通，每个刚进项目的 AI 都要知道。
+
+**① frontend_map 转正挂总线**：真源 v2.1.0 backend_ref 支持列表多值；首批 F-STOCKQ-CHIP/F-STOCKQ-COSTLINE ↔ MOD-REGIME-005（筹码引擎）双向闭合；check_frontend_map.py 新增 R4 模块总线对账（module: 引用存在性/depgraph frontend_ref F- 功能点双向闭合/P- 页面映射，DB 降级 warn）；check fail=0、gate 4 passed、gap views A=0/C=0。17 个页面级粗引用=depgraph 侧精确化欠账随血肉补。
+
+**② 新图新库必挂铁律**：AGENTS.md RULE-DEPGRAPH 加 D38 段落+alignment_checklist §4 统一原则 5/6（新库必挂轴/新图必挂总线）+construction_workflow_sop §4 清单第 14 项；机制化强制=TestNewRegistryGate（catalogs 新 yaml 必须挂 _XREF_SPECS 轴或登记 _GOVERNANCE_EXEMPT 豁免，52 治理库显式清单，漏做必红报错自带指引）——新 AI 建库即被门禁教育。
+
+**验收**：94 测试全绿（地图 46+对抗 41+gate 4+新门禁 3）。
+
+**落盘**：frontend_map.yaml v2.1.0/check_frontend_map.py R4/TestNewRegistryGate/三件套/69 备忘录 v2.8.0 §2.25。
+
 ---
 
 *本文件为讨论备忘录，讨论收敛并裁定后，正式设计应迁入 architecture_model 或相应设计目录，本文件届时归档。*

@@ -537,6 +537,122 @@ class TestGovernanceGates:
         assert not any(i.level == "warning" and "module_ref 缺失" in i.detail for i in issues)
 
 
+# ── A5 D38 新库必挂门禁（全图全库对齐铁律的机制化落地）──────────────────────
+
+
+class TestNewRegistryGate:
+    """新业务库必须挂 TDM 交叉轴，治理库必须显式登记豁免——新建即被本门禁抓到。
+
+    Owner 2026-09-07 裁定（D38）：全图全库对齐铁律——以后新上的图和库都必须挂上去打通。
+    本测试是铁律的机制化：catalogs 出现新 yaml 时，必须二选一：
+      ① 业务资产库 → decision_map.py _XREF_SPECS 加轴（两行）+ 真源挂载
+      ② 治理类 → 在 _GOVERNANCE_EXEMPT 登记豁免
+    不做任何动作 → 本测试红，新 AI 必然看到。
+    """
+
+    # 治理类豁免清单（管"怎么施工"不管"怎么赚钱"，不入 TDM 决策索引）
+    _GOVERNANCE_EXEMPT = frozenset(
+        {
+            "_index.yaml",
+            "ai_autonomy_authority_registry.yaml",
+            "ai_risk_register.yaml",
+            "ai_session_registry.yaml",
+            "architecture_issue_registry.yaml",
+            "battle_map_domain_policy.yaml",
+            "business_streams_registry.yaml",
+            "candidate_module_registry.yaml",
+            "capability_canonical_file_registry.yaml",
+            "compliance_report_registry.yaml",
+            "cross_module_dependency_registry.yaml",
+            "dataflow_graph_registry.yaml",
+            "declarative_contract_tracker_registry.yaml",
+            "depgraph_scan_exclusions.yaml",
+            "derived_identifier_registry.yaml",
+            "directory_registry.yaml",
+            "domain_naming_rules.yaml",
+            "experiment_registry.yaml",
+            "external_contract_verification_registry.yaml",
+            "feature_adjudication_registry.yaml",
+            "field_dictionary.yaml",
+            "frontier_llm_benchmark_ranking.yaml",
+            "frontmatter_field_registry.yaml",
+            "functional_domain_registry.yaml",
+            "gate_registry.yaml",
+            "gate_tracked_write_allowlist.yaml",
+            "generator_registry.yaml",
+            "governance_convergence_map.yaml",
+            "hard_boundaries_registry.yaml",
+            "in_process_gate_registry.yaml",
+            "infrastructure_registry.yaml",
+            "interface_contract_registry.yaml",
+            "knowledge_article_registry.yaml",
+            "migration_registry.yaml",
+            "model_registry.yaml",
+            "module_translation_registry.yaml",
+            "noqa_exempt_registry.yaml",
+            "panorama_exempt_list.yaml",
+            "registry_consistency_contract.yaml",
+            "registry_master_index.yaml",
+            "registry_of_logs.yaml",
+            "rule_ai_perception_index.yaml",
+            "rule_catalog_registry.yaml",
+            "rule_enforcement_registry.yaml",
+            "rule_registry_collection.yaml",
+            "ruling_registry.yaml",
+            "scripts_registry.yaml",
+            "task_card_meta_registry.yaml",
+            "terminology_glossary.yaml",
+            "test_suite_registry.yaml",
+            "trust_boundary_surface_registry.yaml",
+            "wiring_registry.yaml",
+        }
+    )
+
+    def test_axis_files_exist_in_catalogs(self) -> None:
+        """反向守门：已挂轴的 16 个注册表文件必须真实存在（防轴文件删除后测试仍绿）。"""
+        from zephyr.trading.decision_map import (
+            _REG_DATA,
+            _REG_EXA,
+            _REG_FACTOR,
+            _REG_IND,
+            _REG_STRATEGY,
+            _XREF_SPECS,
+        )
+
+        axis_files = {_REG_STRATEGY, _REG_FACTOR, _REG_DATA, _REG_EXA, _REG_IND} | {
+            spec[1] for spec in _XREF_SPECS
+        }
+        missing = [f for f in axis_files if not (_REGISTRY_DIR / f).exists()]
+        assert missing == [], f"挂轴注册表文件缺失: {missing}"
+
+    def test_catalogs_no_unregistered_new_library(self) -> None:
+        """正向守门：catalogs 新 yaml 必须挂轴或登记豁免（新库必挂铁律）。"""
+        from zephyr.trading.decision_map import (
+            _REG_DATA,
+            _REG_EXA,
+            _REG_FACTOR,
+            _REG_IND,
+            _REG_STRATEGY,
+            _XREF_SPECS,
+        )
+
+        axis_files = {_REG_STRATEGY, _REG_FACTOR, _REG_DATA, _REG_EXA, _REG_IND} | {
+            spec[1] for spec in _XREF_SPECS
+        }
+        actual = {p.name for p in _REGISTRY_DIR.glob("*.yaml")}
+        unregistered = actual - axis_files - self._GOVERNANCE_EXEMPT
+        assert not unregistered, (
+            "发现未登记的新库（全图全库对齐铁律 D38）："
+            f"{sorted(unregistered)} —— 若是业务资产库请在 decision_map.py _XREF_SPECS 加轴并挂载；"
+            "若是治理类请在本测试 _GOVERNANCE_EXEMPT 登记豁免。二选一必做。"
+        )
+
+    def test_exempt_files_still_exist(self) -> None:
+        """豁免清单卫生：登记的豁免文件必须仍存在（防删除后清单腐烂）。"""
+        gone = [f for f in self._GOVERNANCE_EXEMPT if not (_REGISTRY_DIR / f).exists()]
+        assert gone == [], f"豁免清单含已删除文件（清理防腐烂）: {gone}"
+
+
 # ── 真源自检（回归锚：仓库内真实地图必须持续全绿）───────────────────────────
 
 
