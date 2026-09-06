@@ -286,6 +286,72 @@ class TestDisguise:
         assert any(i.code == "R17" and "模糊词" in i.detail for i in issues)
 
 
+# ── G D36 八库交叉轴武器（R26-R33）───────────────────────────────────────────
+
+
+class TestXrefAdversarial:
+    def test_g1_cross_axis_disguise(self, tmp_path: Path) -> None:
+        """G1 串轴伪装：把因子 ID 塞进 pattern_refs → R26 必拦（FCT 不在形态库）。"""
+        payload = _payload()
+        payload["nodes"][0]["pattern_refs"] = ["FCT-MOM-009"]
+        ok, issues = _validate(tmp_path, payload)
+        assert ok is False
+        assert any(i.code == "R26" and "FCT-MOM-009" in i.detail for i in issues)
+
+    def test_g2_registry_missing_is_r99_error(self, tmp_path: Path) -> None:
+        """G2 八库任一注册表缺失 → R99 error（防新轴假阴性）。"""
+        import shutil
+
+        fake_reg = tmp_path / "reg"
+        fake_reg.mkdir()
+        for f in (
+            "strategy_registry.yaml",
+            "factor_registry.yaml",
+            "data_asset_registry.yaml",
+            "execution_algo_registry.yaml",
+            "technical_indicator_registry.yaml",
+            "chart_pattern_registry.yaml",
+            "seat_registry.yaml",
+            "macro_indicator_registry.yaml",
+            "regime_cycle_registry.yaml",
+            "universe_registry.yaml",
+            "cost_model_registry.yaml",
+            "event_calendar_registry.yaml",
+            "risk_limit_registry.yaml",
+        ):
+            shutil.copy(_REGISTRY_DIR / f, fake_reg / f)
+        (fake_reg / "risk_limit_registry.yaml").unlink()
+        payload = _payload()
+        payload["nodes"][0]["risk_limit_refs"] = ["RLM-DRAWDOWN-001"]
+        ok, issues = _validate(tmp_path, payload, registry_dir=fake_reg)
+        assert ok is False
+        assert any(i.code == "R99" and "risk_limit_registry" in i.detail for i in issues)
+
+    def test_g3_risk_limit_capacity_13_blocked(self, tmp_path: Path) -> None:
+        """G3 risk_limit_refs 13 个超容量 12 → R17 error。"""
+        payload = _payload()
+        payload["nodes"][0]["risk_limit_refs"] = ["RLM-DRAWDOWN-001"] * 13
+        ok, issues = _validate(tmp_path, payload)
+        assert ok is False
+        assert any(i.code == "R17" and "risk_limit_refs" in i.detail for i in issues)
+
+    def test_g4_universe_capacity_5_blocked(self, tmp_path: Path) -> None:
+        """G4 universe_refs 5 个超容量 4 → R17 error。"""
+        payload = _payload()
+        payload["nodes"][0]["universe_refs"] = ["UNI-RULE-001"] * 5
+        ok, issues = _validate(tmp_path, payload)
+        assert ok is False
+        assert any(i.code == "R17" and "universe_refs" in i.detail for i in issues)
+
+    def test_g5_duplicate_refs_within_axis_allowed(self, tmp_path: Path) -> None:
+        """G5 轴内重复引用（同 ID 挂多次）不构成结构性违规——存在性通过即放行（防过度设计误杀）。"""
+        payload = _payload()
+        payload["nodes"][0]["event_refs"] = ["EVT-EARN-001", "EVT-EARN-001"]
+        ok, issues = _validate(tmp_path, payload)
+        assert ok is True
+        assert not any(i.code == "R32" for i in issues)
+
+
 # ── D 交叉对账类：MOD 锚 vs depgraph 缓存 ────────────────────────────────────
 
 
@@ -424,3 +490,13 @@ class TestWarningSemantics:
         assert not any(i.code == "R21" for i in issues), "R21 脏 MOD 复发"
         # 持续欠账：必须可见（防门禁静默失效）
         assert {"R25", "R22"} <= codes
+        # D36 八库交叉轴挂载不得静默消失（防 YAML 引用被误删后测试仍绿）
+        node_by_id = {n.node_id: n for n in dm.nodes}
+        assert node_by_id["TDM-E-L3-12-4"].pattern_refs, "形态轴挂载消失"
+        assert node_by_id["TDM-E-L3-12-2"].seat_refs, "席位轴挂载消失"
+        assert node_by_id["TDM-E-L1-S0"].macro_refs, "宏观轴挂载消失"
+        assert node_by_id["TDM-E-L1-S1"].cycle_refs, "周期轴挂载消失"
+        assert node_by_id["TDM-E-L3-01"].universe_refs, "宇宙轴挂载消失"
+        assert node_by_id["TDM-E-L4-09"].cost_model_refs, "成本模型轴挂载消失"
+        assert node_by_id["TDM-E-L1-S0"].event_refs, "事件轴挂载消失"
+        assert node_by_id["TDM-X-R1"].risk_limit_refs, "风险限额轴挂载消失"

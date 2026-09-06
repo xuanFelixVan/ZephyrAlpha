@@ -222,6 +222,97 @@ class TestValidate:
         assert any(i.code == "R5" and "DS-NO-SUCH-999" in i.detail for i in issues)
 
 
+# ── A4 D36 八库交叉轴 R26-R33 ────────────────────────────────────────────────
+
+
+class TestXrefAxes:
+    """D36 全库交叉轴：形态/席位/宏观/周期/宇宙/成本/事件/风险限额（表驱动）。"""
+
+    def test_r26_pattern_ref(self, tmp_path: Path) -> None:
+        payload = _minimal_payload()
+        payload["nodes"][0]["pattern_refs"] = ["PAT-CLL-002", "PAT-NO-SUCH-999"]
+        dm = load_decision_map(_write_map(tmp_path, payload))
+        ok, issues = validate_decision_map(dm, _REGISTRY_DIR, _KNOWN_STRATEGIES)
+        assert ok is False
+        assert any(i.code == "R26" and "PAT-NO-SUCH-999" in i.detail for i in issues)
+
+    def test_r27_seat_ref(self, tmp_path: Path) -> None:
+        payload = _minimal_payload()
+        payload["nodes"][0]["seat_refs"] = ["SEAT-NO-SUCH-001"]
+        dm = load_decision_map(_write_map(tmp_path, payload))
+        ok, issues = validate_decision_map(dm, _REGISTRY_DIR, _KNOWN_STRATEGIES)
+        assert ok is False
+        assert any(i.code == "R27" for i in issues)
+
+    def test_r28_macro_ref(self, tmp_path: Path) -> None:
+        payload = _minimal_payload()
+        payload["nodes"][0]["macro_refs"] = ["MAC-NO-SUCH-001"]
+        dm = load_decision_map(_write_map(tmp_path, payload))
+        ok, issues = validate_decision_map(dm, _REGISTRY_DIR, _KNOWN_STRATEGIES)
+        assert ok is False
+        assert any(i.code == "R28" for i in issues)
+
+    def test_r29_cycle_ref(self, tmp_path: Path) -> None:
+        payload = _minimal_payload()
+        payload["nodes"][0]["cycle_refs"] = ["CYC-NO-SUCH-001"]
+        dm = load_decision_map(_write_map(tmp_path, payload))
+        ok, issues = validate_decision_map(dm, _REGISTRY_DIR, _KNOWN_STRATEGIES)
+        assert ok is False
+        assert any(i.code == "R29" for i in issues)
+
+    def test_r30_universe_ref(self, tmp_path: Path) -> None:
+        payload = _minimal_payload()
+        payload["nodes"][0]["universe_refs"] = ["UNI-NO-SUCH-001"]
+        dm = load_decision_map(_write_map(tmp_path, payload))
+        ok, issues = validate_decision_map(dm, _REGISTRY_DIR, _KNOWN_STRATEGIES)
+        assert ok is False
+        assert any(i.code == "R30" for i in issues)
+
+    def test_r31_cost_model_ref(self, tmp_path: Path) -> None:
+        payload = _minimal_payload()
+        payload["nodes"][0]["cost_model_refs"] = ["CST-NO-SUCH-001"]
+        dm = load_decision_map(_write_map(tmp_path, payload))
+        ok, issues = validate_decision_map(dm, _REGISTRY_DIR, _KNOWN_STRATEGIES)
+        assert ok is False
+        assert any(i.code == "R31" for i in issues)
+
+    def test_r32_event_ref(self, tmp_path: Path) -> None:
+        payload = _minimal_payload()
+        payload["nodes"][0]["event_refs"] = ["EVT-NO-SUCH-001"]
+        dm = load_decision_map(_write_map(tmp_path, payload))
+        ok, issues = validate_decision_map(dm, _REGISTRY_DIR, _KNOWN_STRATEGIES)
+        assert ok is False
+        assert any(i.code == "R32" for i in issues)
+
+    def test_r33_risk_limit_ref(self, tmp_path: Path) -> None:
+        payload = _minimal_payload()
+        payload["nodes"][0]["risk_limit_refs"] = ["RLM-NO-SUCH-001"]
+        dm = load_decision_map(_write_map(tmp_path, payload))
+        ok, issues = validate_decision_map(dm, _REGISTRY_DIR, _KNOWN_STRATEGIES)
+        assert ok is False
+        assert any(i.code == "R33" for i in issues)
+
+    def test_all_axes_valid_ok(self, tmp_path: Path) -> None:
+        """八轴全挂真实条目 → error=0。"""
+        payload = _minimal_payload()
+        payload["nodes"][0].update(
+            {
+                "pattern_refs": ["PAT-CLL-002"],
+                "seat_refs": ["SEAT-INST-001"],
+                "macro_refs": ["MAC-CN-006"],
+                "cycle_refs": ["CYC-STAT-001"],
+                "universe_refs": ["UNI-RULE-001"],
+                "cost_model_refs": ["CST-ASTOCK-001"],
+                "event_refs": ["EVT-EARN-001"],
+                "risk_limit_refs": ["RLM-DRAWDOWN-001"],
+            }
+        )
+        dm = load_decision_map(_write_map(tmp_path, payload))
+        ok, issues = validate_decision_map(dm, _REGISTRY_DIR, _KNOWN_STRATEGIES)
+        assert ok is True
+        assert not any(i.code in {"R26", "R27", "R28", "R29", "R30", "R31", "R32", "R33"} for i in issues)
+
+
 # ── A3 D32/D33 门禁包 R13-R19 ────────────────────────────────────────────────
 
 

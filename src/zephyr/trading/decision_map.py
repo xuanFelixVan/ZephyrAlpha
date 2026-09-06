@@ -6,7 +6,7 @@
 # [STARTUP] imported（纯函数库，无常驻进程/无事件订阅）
 # [MATURITY] production
 # [INVARIANTS] INV-1 地图YAML不复制注册表条目只持稳定标识符引用; INV-2 load产出全frozen dataclass; INV-3 validate纯函数无副作用; INV-4 error=0才可被下游消费; INV-5 module_ref=null记warning不记error（V0缺口可视化输入）
-# [MODIFY-GUARD] schema_version 变更必须同步升级 dataclasses+校验规则+测试（R1-R19）
+# [MODIFY-GUARD] schema_version 变更必须同步升级 dataclasses+校验规则+测试（R1-R33）
 # [STABILITY] evolving
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
@@ -41,8 +41,8 @@
 # - id: A2
 #   name_zh: ② 校验（validate_decision_map）
 #   name_en: validate_decision_map
-#   intro: 引用存在性+治理门禁 R1-R25 → (ok, GapReport)；缺口即地图红节点语义
-#   desc: R1 节点枚举; R2 边端点+类型+无环; R3 策略引用（STR-* 查 REG-STR-001，其余查 known_strategy_ids）; R4 因子引用 REG-FCT-001; R5 数据引用 REG-DATAFLOW-001 datasets; R6 置信度枚举+verified必带evidence; R7 矩阵格引用存在性; R8 sequence 边成环检测; R10 市场实例一致性; R12 整装方案; R13 算法引用（IND/EXA）; R14 doc_ref 存在+路径穿越拒绝; R15 治理字段枚举+新节点必填; R16 父子完整+树深≤4+树宽预警; R17 粒度（问题≤100字+禁模糊词）+容量（挂载≤8/因子≤12/数据≤8/算法≤8）; R18 name_zh 唯一; R19 module_ref 存在; R20 node_id 骨架; R21 MOD-* 交叉锚（格式+depgraph 缓存对账+欠账 warning）; R22 矩阵覆盖 warning; R23 流预算 warning（>80）; R24 因子欠账 warning; R25 空转叶子 warning; R98 空地图; R99 注册表真源缺失; module_ref=null 记 warning
+#   intro: 引用存在性+治理门禁 R1-R33 → (ok, GapReport)；缺口即地图红节点语义
+#   desc: R1 节点枚举; R2 边端点+类型+无环; R3 策略引用（STR-* 查 REG-STR-001，其余查 known_strategy_ids）; R4 因子引用 REG-FCT-001; R5 数据引用 REG-DATAFLOW-001 datasets; R6 置信度枚举+verified必带evidence; R7 矩阵格引用存在性; R8 sequence 边成环检测; R10 市场实例一致性; R12 整装方案; R13 算法引用（IND/EXA）; R14 doc_ref 存在+路径穿越拒绝; R15 治理字段枚举+新节点必填; R16 父子完整+树深≤4+树宽预警; R17 粒度（问题≤100字+禁模糊词）+容量（挂载≤8/因子≤12/数据≤8/算法≤8）; R18 name_zh 唯一; R19 module_ref 存在; R20 node_id 骨架; R21 MOD-* 交叉锚（格式+depgraph 缓存对账+欠账 warning）; R22 矩阵覆盖 warning; R23 流预算 warning（>80）; R24 因子欠账 warning; R25 空转叶子 warning; R26-R33 八库交叉轴（形态/席位/宏观/周期/宇宙/成本/事件/风险限额，表驱动 _XREF_SPECS）; R98 空地图; R99 注册表真源缺失; module_ref=null 记 warning
 #   inputs: DecisionMap I2 I3
 #   outputs: (bool, list[GapReportItem])
 # 层: 输出
@@ -125,6 +125,30 @@ _NODE_ID_RE = r"TDM-[A-Z]-[A-Z0-9]+(-[A-Z0-9]+)*"  # R20：TDM-{流}-{层}-{序�
 _MOD_ID_RE = r"MOD-[A-Z0-9]+(-[A-Z0-9]+)*"        # R21：MOD-* 交叉锚格式
 _DEPGRAPH_CACHE = ".runtime/depgraph_scan_cache.json"  # path→blueprint_id 映射（派生缓存，缺失记 warning）
 
+# D36 全库交叉轴（Owner 裁定"按消费场景分批打通全库"）：八业务库引用字段
+# 表驱动——新增库只需在此加一行 + 容量表加一行；治理类注册表不入 TDM（裁定）
+_XREF_SPECS: Final = (
+    # (节点字段, 注册表文件, list section, 条目 key, 门禁码, 库名)
+    ("pattern_refs", "chart_pattern_registry.yaml", "chart_patterns", "pattern_id", "R26", "形态库 PAT"),
+    ("seat_refs", "seat_registry.yaml", "seats", "seat_id", "R27", "席位库 SEAT"),
+    ("macro_refs", "macro_indicator_registry.yaml", "indicators", "indicator_id", "R28", "宏观指标库 MAC"),
+    ("cycle_refs", "regime_cycle_registry.yaml", "cycles", "cycle_id", "R29", "周期库 CYC"),
+    ("universe_refs", "universe_registry.yaml", "universes", "universe_id", "R30", "宇宙库 UNI"),
+    ("cost_model_refs", "cost_model_registry.yaml", "cost_models", "cost_model_id", "R31", "成本模型库 CST"),
+    ("event_refs", "event_calendar_registry.yaml", "event_types", "event_type_id", "R32", "事件日历库 EVT"),
+    ("risk_limit_refs", "risk_limit_registry.yaml", "risk_limits", "risk_limit_id", "R33", "风险限额库 RLM"),
+)
+_XREF_MAX: Final = {  # 各轴容量上限（D33 同款：超出=粒度过粗强制拆节点）
+    "pattern_refs": 12,
+    "seat_refs": 8,
+    "macro_refs": 12,
+    "cycle_refs": 8,
+    "universe_refs": 4,
+    "cost_model_refs": 4,
+    "event_refs": 8,
+    "risk_limit_refs": 12,
+}
+
 
 class DecisionMapSchemaError(ValueError):
     """地图真源结构错误（load 阶段）。"""
@@ -165,6 +189,15 @@ class DecisionMapNode:
     doc_ref: str | None = None
     # v1.6（D34 交叉索引）：MOD-* 交叉锚——对齐五图体系（depgraph 以 module_id 为对齐 key）
     module_id: str | None = None
+    # v1.7（D36 全库交叉轴）：八业务库引用（PAT/SEAT/MAC/CYC/UNI/CST/EVT/RLM；表驱动见 _XREF_SPECS）
+    pattern_refs: tuple[str, ...] = ()
+    seat_refs: tuple[str, ...] = ()
+    macro_refs: tuple[str, ...] = ()
+    cycle_refs: tuple[str, ...] = ()
+    universe_refs: tuple[str, ...] = ()
+    cost_model_refs: tuple[str, ...] = ()
+    event_refs: tuple[str, ...] = ()
+    risk_limit_refs: tuple[str, ...] = ()
 
 
 @dataclass(frozen=True)
@@ -289,6 +322,8 @@ def _parse_node(raw: dict) -> DecisionMapNode:
         algo_refs=tuple(str(x) for x in raw.get("algo_refs", []) or []),
         doc_ref=(str(raw["doc_ref"]) if raw.get("doc_ref") else None),
         module_id=(str(raw["module_id"]) if raw.get("module_id") else None),
+        # v1.7 八库交叉轴（表驱动字段，全部可选默认空）
+        **{field: tuple(str(x) for x in raw.get(field, []) or []) for field, *_ in _XREF_SPECS},
     )
 
 
@@ -531,6 +566,23 @@ def _validate_matrix_cell(
         add("error", "R7", c.node_id, f"矩阵格 confidence 非法: {c.confidence}")
 
 
+def _validate_xrefs(n, xref_ids: dict[str, frozenset[str]], add) -> None:
+    """R26-R33 八库交叉轴存在性+容量（表驱动：轴定义见 _XREF_SPECS）。"""
+    for field, _fname, _sec, _key, code, lib_name in _XREF_SPECS:
+        refs = getattr(n, field)
+        if not refs:
+            continue
+        known = xref_ids.get(field)
+        if known is None:  # 注册表缺失已由 R99 全局报 error，此处跳过防重复噪音
+            continue
+        for ref in refs:
+            if ref not in known:
+                add("error", code, n.node_id, f"{field} 不存在于{lib_name}: {ref}")
+        cap = _XREF_MAX.get(field, 8)
+        if len(refs) > cap:
+            add("error", "R17", n.node_id, f"{field} {len(refs)} 个超上限 {cap}（该拆节点）")
+
+
 def _validate_governance(
     dm: DecisionMap,
     registry_dir: Path,
@@ -538,6 +590,7 @@ def _validate_governance(
     add,
     emit_stats: bool = False,
     depgraph_entries: dict[str, dict[str, dict]] | None = None,
+    xref_ids: dict[str, frozenset[str]] | None = None,
 ) -> None:
     """D32/D33/D34 门禁包：R13 算法引用 / R14 附件存在 / R15 治理字段 / R16 父子完整性+树宽 / R17 粒度+容量 / R18 命名唯一 / R19 模块存在 / R20 node_id 骨架 / R21 MOD 交叉锚 / R22 矩阵覆盖 / R23 流预算 / R24 因子欠账 / R25 空转叶子。"""
     by_id = {n.node_id: n for n in dm.nodes}
@@ -582,6 +635,8 @@ def _validate_governance(
                 add("error", "R21", n.node_id, f"module_id {n.module_id} 与 depgraph 缓存 {actual} 不一致（module_ref={n.module_ref}）")
         if n.module_ref and not n.module_id:
             add("warning", "R21", n.node_id, "有 module_ref 无 module_id（MOD-* 交叉锚欠账，五图对齐 key 缺失）")
+        # R26-R33 八库交叉轴（表驱动）
+        _validate_xrefs(n, xref_ids or {}, add)
         if n.activation is not None and n.activation not in _ACTIVATIONS:
             add("error", "R15", n.node_id, f"activation 非法: {n.activation}")
         if n.ai_autonomy is not None and n.ai_autonomy not in _AI_AUTONOMY:
@@ -721,7 +776,7 @@ def validate_decision_map(
     registry_dir = Path(registry_dir)
     # V1 注册表真源缺失=error（文件不存在时引用校验静默通过=假阴性漏洞）
     anchor0 = dm.nodes[0].node_id if dm.nodes else ""
-    for fname in (_REG_STRATEGY, _REG_FACTOR, _REG_DATA, _REG_EXA, _REG_IND):
+    for fname in (_REG_STRATEGY, _REG_FACTOR, _REG_DATA, _REG_EXA, _REG_IND, *(spec[1] for spec in _XREF_SPECS)):
         if not (registry_dir / fname).exists():
             add("error", "R99", anchor0, f"注册表真源缺失: {fname}（引用校验不可信）")
     strat_ids = _load_registry_ids(registry_dir, _REG_STRATEGY, "strategies", "strategy_id")
@@ -762,7 +817,15 @@ def validate_decision_map(
     depgraph_entries = _load_depgraph_entries(cache_path)
     if depgraph_entries is None:
         add("warning", "R21", anchor0, f"depgraph 扫描缓存缺失（{cache_path}）——MOD 对账降级为格式校验")
-    _validate_governance(dm, registry_dir, exa_ids | ind_ids, add, depgraph_entries=depgraph_entries)
+    # D36 八库交叉轴 ID 集合（表驱动加载）
+    xref_ids: dict[str, frozenset[str]] = {
+        field: _load_registry_ids(registry_dir, fname, sec, key)
+        for field, fname, sec, key, _code, _lib in _XREF_SPECS
+    }
+    _validate_governance(
+        dm, registry_dir, exa_ids | ind_ids, add,
+        depgraph_entries=depgraph_entries, xref_ids=xref_ids,
+    )
 
     # R12 整装方案（v1.1）：sleeve 引用存在性+权重范围+和≤1+activation_state 在列轴+置信度
     if dm.portfolio_plan is not None:

@@ -5,7 +5,7 @@ title: 交易决策地图（Trading Decision Map）——决策内容索引层�
 owner: ZephyrAlpha-Owner
 language: zh
 status: active
-version: "2.5.0"
+version: "2.6.0"
 date: 2026-09-04
 topic: trading_decision_map
 scope: 07_trading_decision_architecture
@@ -370,6 +370,31 @@ E-L2 收口：**10 树枝 19 节点**。
 **配套修复——depgraph 缓存陈旧 hash 遮蔽漏洞**：增量扫描缓存按 content_hash 累积多版本条目且不清旧条目，原 R21 对账取首条会被文件头治理前的陈旧条目遮蔽（selection_funnel.py 缓存中新旧两条并存）。修复：_resolve_mod_id 按当前文件 sha256 现算匹配现役条目，匹配不到回退首条（对抗测试假缓存场景）。此漏洞属红队 D 类（交叉对账）变种，已由既有 D1-D5 用例+真源回归锚覆盖。
 
 **验收**：真源地图 R24/R21 双清零（warning 快照变为 R25 空转叶子 17/R22 矩阵未覆盖 14/R1 红节点占位 75/R16 树宽 1——血肉阶段持续欠账）；对抗回归锚升级为"已清账不得复发"（R24/R21 断言 not in，R25/R22 断言持续可见）；70（38+32）+142（signal_fundamental）测试全绿。
+
+### 2.23 全库交叉轴打通（D36，Owner 2026-09-07 裁定"TDM 打通全库+前端图走 module 总线"）
+
+**Owner 两问两裁**：①交易全景图要不要打通全图全库？——**要，按消费场景分批**（判断标准=该库有没有决策节点在消费它）；②前端全景图要不要打通？——**要，走 module_id 总线不做直连**（地铁换乘模型：所有图挂共同 module 轴，任意两图最多两跳，不搞 N² 直连；前端图转正时只挂 module 轴，不挂 FCT/STR/EXA——前端消费接口和模块，不消费因子策略）。**治理类注册表 30+ 个不入 TDM**（TDM 是决策内容索引层只索引赚钱链路资产，治理库管"怎么施工"不在链上）。
+
+**家底盘点**：全图 7 张（depgraph/dataflowgraph/decisiongraph/blueprint/battle_map/frontend_map[草案]/TDM）；全库业务资产 16 个约 1100+ 条。TDM 打通范围裁定分三档：第一档（有节点消费，本轮打通 8 个）=形态 256/风险限额 117/席位 16/宏观 16/周期 13/宇宙 7/成本模型 6/事件日历 14；第二档（等对应流开发再挂）=组合模型 11→C 流血肉、基准 9→回测域；第三档（不入）=治理类注册表。
+
+**schema v1.7 八库交叉轴（表驱动）**：节点新增 pattern_refs/seat_refs/macro_refs/cycle_refs/universe_refs/cost_model_refs/event_refs/risk_limit_refs 八字段；轴定义表 `_XREF_SPECS`（字段→注册表文件/section/key/门禁码/库名）+容量表 `_XREF_MAX`（形态 12/席位 8/宏观 12/周期 8/宇宙 4/成本 4/事件 8/风险限额 12）——**新增库只需加两行**。门禁 R26-R33 逐轴存在性校验+容量校验（超限记 R17 error）；R99 注册表缺失检查扩展至 13 个文件（5 原有+8 新）。
+
+**真源挂载（8 轴 28 处引用，全部语义匹配）**：
+
+| 节点 | 轴 | 挂载 |
+|---|---|---|
+| TDM-E-L3-12-4 形态结构识别 | pattern | 缠论底分型/中枢/一买/趋势背驰+双底/头肩底（6） |
+| TDM-E-L3-12-2 龙虎榜席位追踪 | seat | 机构专用+沪深北向+章盟主/方新侠/作手新一（6） |
+| TDM-E-L1-S0 宏观环境传感器 | macro+event | 货币（M2/LPR/MLF）+流动性（社融/10年国债）+海外（FOMC/美债/汇率）（8+1） |
+| TDM-E-L1-S1 大盘指数传感器 | cycle | 傅里叶频谱/机制切换/A股季节择时（3） |
+| TDM-E-L3-01 Universe 构建与剔除 | universe+event | 全A可交易/打板梯队/事件驱动池+解禁/停复牌/财报披露（3+3） |
+| TDM-E-L4-09 执行硬约束 | cost_model | A股标准成本模型（1） |
+| TDM-X-S1 卖出信号收集评分 | risk_limit | 止损三要素/跌破支撑必止损/时间止损三档（3） |
+| TDM-X-R1 应急保命 | risk_limit | 生死线破位清仓/跌停不T/回撤25%KillSwitch/单日亏损6%熔断（4） |
+
+**对抗武器 G 类 5 用例**：G1 串轴伪装（FCT 塞 pattern_refs→R26 拦）/G2 八库注册表缺失→R99/G3-G4 容量 13>12、5>4 超限/G5 轴内重复引用放行（防过度设计误杀）；对抗回归锚升级为八轴挂载不得静默消失（防 YAML 误删后测试仍绿）。主套件 +10 用例（R26-R33 正反+八轴全绿）。84 测试全绿。
+
+**交叉索引链路全景（v1.7 后）**：`TDM 节点 → EXA/IND（算法）→ FCT（因子）→ STR（策略）→ PAT/SEAT/MAC/CYC/UNI/CST/EVT/RLM（八库）→ MOD-*（模块总线）→ 五图体系`——13 个业务库+5 张图全部从最细节点点对点可达。
 
 ## 3. 考虑过的替代方案与拒绝理由
 

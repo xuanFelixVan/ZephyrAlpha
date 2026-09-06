@@ -62,6 +62,7 @@ nodes:
     point: 盘前
     decision_question: 指数趋势/位置如何（数据面）
     factor_refs: []
+    cycle_refs: [CYC-STAT-001, CYC-STAT-004, CYC-STAT-013]
     data_refs: [DS-150]
     module_ref: null
     strategy_mounts: []
@@ -130,6 +131,8 @@ nodes:
     point: 盘前
     decision_question: 市场之外的宏观环境（货币/流动性/海外/政策）对这段行情的支撑或压制
     factor_refs: []
+    macro_refs: [MAC-CN-005, MAC-CN-006, MAC-CN-007, MAC-CN-008, MAC-CN-009, MAC-CN-011, MAC-US-001, MAC-US-002]
+    event_refs: [EVT-MACRO-001]
     data_refs: [DS-098]
     module_ref: null
     strategy_mounts: []
@@ -758,6 +761,8 @@ nodes:
     decision_question: 今天全市场扫哪些、先把不可交易的删掉哪些
     parent_node: TDM-E-L3
     factor_refs: [FCT-QUAL-001]
+    universe_refs: [UNI-RULE-001, UNI-DYNAMIC-001, UNI-RULE-002]
+    event_refs: [EVT-CA-002, EVT-CA-003, EVT-EARN-001]
     data_refs: [DS-150]
     module_ref: null
     algo_refs: []
@@ -1203,6 +1208,7 @@ nodes:
     decision_question: 上榜标的是什么席位在买（游资/机构）—席位风格决定接力概率
     parent_node: TDM-E-L3-12
     factor_refs: []
+    seat_refs: [SEAT-INST-001, SEAT-INST-002, SEAT-INST-003, SEAT-YOUZI-001, SEAT-YOUZI-002, SEAT-YOUZI-003]
     data_refs: []
     module_ref: null
     algo_refs: []
@@ -1243,6 +1249,7 @@ nodes:
     decision_question: 缠论结构/底部确认/技术形态支持买入吗
     parent_node: TDM-E-L3-12
     factor_refs: []
+    pattern_refs: [PAT-CLL-002, PAT-CLL-006, PAT-CLL-007, PAT-CLL-013, PAT-CHART-004, PAT-CHART-016]
     data_refs: [DS-150]
     module_ref: src/zephyr/signal_ashare/chanlun_structure.py
     module_id: MOD-SIG-072
@@ -1445,6 +1452,7 @@ nodes:
     decision_question: 执行硬约束全过了吗（T+1/涨跌停/价格笼子/成本模型实时估算——佣金+印花税+滑点）
     parent_node: TDM-E-L4
     factor_refs: []
+    cost_model_refs: [CST-ASTOCK-001]
     data_refs: [DS-082]
     module_ref: null
     algo_refs: []
@@ -1589,6 +1597,7 @@ nodes:
     point: 持续
     decision_question: 哪些卖出信号触发了/强度如何
     factor_refs: []
+    risk_limit_refs: [RLM-DRAWDOWN-001, RLM-DRAWDOWN-002, RLM-DRAWDOWN-006]
     data_refs: []
     module_ref: null
     strategy_mounts: []
@@ -1616,6 +1625,7 @@ nodes:
     point: 持续
     decision_question: 暴跌/流动性危机是否触发无条件降仓
     factor_refs: []
+    risk_limit_refs: [RLM-KILLSW-003, RLM-KILLSW-005, RLM-KILL-SWITCH-004, RLM-KILL-SWITCH-005]
     data_refs: []
     module_ref: null
     strategy_mounts: []
