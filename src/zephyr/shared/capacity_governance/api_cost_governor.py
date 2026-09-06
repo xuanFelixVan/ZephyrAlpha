@@ -10,7 +10,7 @@
 # [STABILITY] evolving
 # [SAFETY] M
 # [AI_AUTONOMY] human_gated
-# [ERROR_CONTRACT] ApiCostGovernorError(占位 ZA-SH-UNREGISTERED-COST-GOVERNOR)——空source_id/负单价/未注册源/非法预算/非法令牌数时抛
+# [ERROR_CONTRACT] ApiCostGovernorError(ZA-SH-0057)——空source_id/负单价/未注册源/非法预算/非法令牌数时抛
 # [TESTS] tests/shared/capacity_governance/test_api_cost_governor.py
 # [A_module] module_id=MOD-SHARED-003 | layer=module | stability=evolving | safety=M | ai_autonomy=human_gated
 # [TTL] permanent
@@ -77,8 +77,10 @@ __all__: Final = [
 class ApiCostGovernorError(Exception):
     """成本治理输入/状态非法（Fail-Closed）。
 
-    未登记错误码-申请中：占位 ZA-SH-UNREGISTERED-COST-GOVERNOR。
+    错误码 ZA-SH-0057 已登记转正（2026-09-06 Owner 批准批）。
     """
+
+    error_code = "ZA-SH-0057"
 
 
 class BudgetPeriod(str, Enum):

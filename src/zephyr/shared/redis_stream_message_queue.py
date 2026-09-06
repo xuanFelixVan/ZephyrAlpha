@@ -10,7 +10,7 @@
 # [STABILITY] evolving
 # [SAFETY] M
 # [AI_AUTONOMY] human_gated
-# [ERROR_CONTRACT] RedisStreamQueueError(占位 ZA-SH-UNREGISTERED-STREAM-QUEUE)——空topic/未绑定主题/通道错配/客户端缺失/未知message_id/载荷非法/DLQ无出口时抛
+# [ERROR_CONTRACT] RedisStreamQueueError(ZA-SH-0059)——空topic/未绑定主题/通道错配/客户端缺失/未知message_id/载荷非法/DLQ无出口时抛
 # [TESTS] tests/shared/test_redis_stream_message_queue.py
 # [A_module] module_id=MOD-SHARED-004 | layer=module | stability=evolving | safety=M | ai_autonomy=human_gated
 # [TTL] permanent
@@ -103,8 +103,10 @@ __all__: Final = [
 class RedisStreamQueueError(Exception):
     """消息队列输入/状态非法（Fail-Closed）。
 
-    未登记错误码-申请中：占位 ZA-SH-UNREGISTERED-STREAM-QUEUE。
+    错误码 ZA-SH-0059 已登记转正（2026-09-06 Owner 批准批）。
     """
+
+    error_code = "ZA-SH-0059"
 
 
 class Channel(str, Enum):

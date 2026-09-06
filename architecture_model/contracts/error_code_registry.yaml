@@ -3748,6 +3748,23 @@ error_codes:
   file: src/zephyr/security/llm_defense/spectral_guard.py
   introduced: '2026-09-06: Owner 批准占位码转正批（B17-②）——ZA-SECLLM-UNREGISTERED-SPECTRAL-GUARD 转正'
 
+# --- 2026-09-06 占位码转正批 SH（Owner 批准 B17-②，取号=段内 max+1 顺延）---
+- code: ZA-SH-0057
+  class: ApiCostGovernorError
+  module: zephyr.shared.capacity_governance.api_cost_governor
+  file: src/zephyr/shared/capacity_governance/api_cost_governor.py
+  introduced: '2026-09-06: Owner 批准占位码转正批（B17-②）——ZA-SH-UNREGISTERED-COST-GOVERNOR 转正'
+- code: ZA-SH-0058
+  class: CacheConsistencyError
+  module: zephyr.shared.io.cache_consistency_manager
+  file: src/zephyr/shared/io/cache_consistency_manager.py
+  introduced: '2026-09-06: Owner 批准占位码转正批（B17-②）——ZA-SH-UNREGISTERED-CACHE-CONSISTENCY 转正'
+- code: ZA-SH-0059
+  class: RedisStreamQueueError
+  module: zephyr.shared.redis_stream_message_queue
+  file: src/zephyr/shared/redis_stream_message_queue.py
+  introduced: '2026-09-06: Owner 批准占位码转正批（B17-②）——ZA-SH-UNREGISTERED-STREAM-QUEUE 转正'
+
 known_duplicates: []
 # ============================================================
 # 已知缺口（诚实登记，2026-08-15 #ARCH-MON-001 批次实测）
