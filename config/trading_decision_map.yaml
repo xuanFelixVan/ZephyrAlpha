@@ -46,6 +46,7 @@ nodes:
     factor_refs: []
     data_refs: [DS-150]
     module_ref: src/zephyr/regime/core/regime_detector.py
+    module_id: MOD-REGIME-001
     strategy_mounts: []
 
   # L1 四路传感器阵列（D6：指数↔情绪双向、短线情绪领先）
@@ -164,6 +165,7 @@ nodes:
     factor_refs: []
     data_refs: [DS-098]
     module_ref: src/zephyr/regime/core/regime_detector.py
+    module_id: MOD-REGIME-001
     strategy_mounts: []
 
   - node_id: TDM-E-L2
@@ -218,6 +220,7 @@ nodes:
     factor_refs: []
     data_refs: [DS-059]
     module_ref: src/zephyr/signal_ashare/sector_analyzer.py
+    module_id: MOD-SIG-026
     algo_refs: []
     doc_ref: "docs/02_enterprise_architecture/07_trading_decision_architecture/design_memos/22_sector_rotation_spec.md#§3.1①"
     activation: postmarket
@@ -239,6 +242,7 @@ nodes:
     factor_refs: []
     data_refs: [DS-059, DS-170]
     module_ref: src/zephyr/data/sector_ranking_engine.py
+    module_id: MOD-L00-004
     algo_refs: []
     doc_ref: "docs/02_enterprise_architecture/07_trading_decision_architecture/design_memos/22_sector_rotation_spec.md#§3.1①"
     activation: postmarket
@@ -259,6 +263,7 @@ nodes:
     factor_refs: []
     data_refs: [DS-170]
     module_ref: src/zephyr/signal_ashare/sector_momentum.py
+    module_id: MOD-SIG-026
     algo_refs: []
     doc_ref: "docs/02_enterprise_architecture/07_trading_decision_architecture/design_memos/22_sector_rotation_spec.md#§3.1⑧"
     activation: postmarket
@@ -279,6 +284,7 @@ nodes:
     factor_refs: []
     data_refs: [DS-181, DS-186]
     module_ref: src/zephyr/signal_ashare/sector_breadth.py
+    module_id: MOD-SIG-026
     algo_refs: []
     doc_ref: "docs/02_enterprise_architecture/07_trading_decision_architecture/design_memos/22_sector_rotation_spec.md#§3.1⑥"
     activation: postmarket
@@ -361,6 +367,7 @@ nodes:
     factor_refs: []
     data_refs: [DS-059]
     module_ref: src/zephyr/signal_ashare/sector_analyzer.py
+    module_id: MOD-SIG-026
     algo_refs: []
     doc_ref: "docs/02_enterprise_architecture/07_trading_decision_architecture/design_memos/22_sector_rotation_spec.md#§3.1④"
     activation: intraday
@@ -1176,6 +1183,7 @@ nodes:
     factor_refs: []
     data_refs: [DS-181]
     module_ref: src/zephyr/signal_ashare/capital_flow_pattern_analyzer.py
+    module_id: MOD-SIG-022
     algo_refs: []
     doc_ref: null
     activation: postmarket
@@ -1236,6 +1244,7 @@ nodes:
     factor_refs: []
     data_refs: [DS-150]
     module_ref: src/zephyr/signal_ashare/chanlun_structure.py
+    module_id: MOD-SIG-072
     algo_refs: []
     doc_ref: null
     activation: postmarket
@@ -1356,6 +1365,7 @@ nodes:
     factor_refs: []
     data_refs: [DS-082]
     module_ref: src/zephyr/ex_core/daban_execution.py
+    module_id: MOD-EX-001
     algo_refs: []
     doc_ref: "docs/02_enterprise_architecture/07_trading_decision_architecture/design_memos/41_buy_flow.md#§3.9"
     activation: intraday
@@ -1457,6 +1467,7 @@ nodes:
     factor_refs: []
     data_refs: []
     module_ref: src/zephyr/ex_core/async_fill_dispatcher.py
+    module_id: MOD-L06-001
     algo_refs: []
     doc_ref: null
     activation: continuous

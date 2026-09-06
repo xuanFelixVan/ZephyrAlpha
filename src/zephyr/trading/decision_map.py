@@ -41,8 +41,8 @@
 # - id: A2
 #   name_zh: ② 校验（validate_decision_map）
 #   name_en: validate_decision_map
-#   intro: 引用存在性+治理门禁 R1-R19 → (ok, GapReport)；缺口即地图红节点语义
-#   desc: R1 节点枚举; R2 边端点+类型+无环; R3 策略引用（STR-* 查 REG-STR-001，其余查 known_strategy_ids）; R4 因子引用 REG-FCT-001; R5 数据引用 REG-DATAFLOW-001 datasets; R6 置信度枚举+verified必带evidence; R7 矩阵格引用存在性; R8 sequence 边成环检测; R10 市场实例一致性; R12 整装方案; R13 算法引用（IND/EXA）; R14 doc_ref 存在; R15 治理字段枚举+新节点必填; R16 父子完整+树深≤4+树宽预警; R17 粒度（问题≤100字+禁模糊词）+容量（挂载≤8/因子≤12/数据≤8/算法≤8）; R18 name_zh 唯一; R19 module_ref 存在; module_ref=null 记 warning
+#   intro: 引用存在性+治理门禁 R1-R25 → (ok, GapReport)；缺口即地图红节点语义
+#   desc: R1 节点枚举; R2 边端点+类型+无环; R3 策略引用（STR-* 查 REG-STR-001，其余查 known_strategy_ids）; R4 因子引用 REG-FCT-001; R5 数据引用 REG-DATAFLOW-001 datasets; R6 置信度枚举+verified必带evidence; R7 矩阵格引用存在性; R8 sequence 边成环检测; R10 市场实例一致性; R12 整装方案; R13 算法引用（IND/EXA）; R14 doc_ref 存在+路径穿越拒绝; R15 治理字段枚举+新节点必填; R16 父子完整+树深≤4+树宽预警; R17 粒度（问题≤100字+禁模糊词）+容量（挂载≤8/因子≤12/数据≤8/算法≤8）; R18 name_zh 唯一; R19 module_ref 存在; R20 node_id 骨架; R21 MOD-* 交叉锚（格式+depgraph 缓存对账+欠账 warning）; R22 矩阵覆盖 warning; R23 流预算 warning（>80）; R24 因子欠账 warning; R25 空转叶子 warning; R98 空地图; R99 注册表真源缺失; module_ref=null 记 warning
 #   inputs: DecisionMap I2 I3
 #   outputs: (bool, list[GapReportItem])
 # 层: 输出
@@ -64,6 +64,7 @@
 
 from __future__ import annotations
 
+import re
 from dataclasses import dataclass
 from pathlib import Path
 from typing import Final
@@ -118,6 +119,11 @@ _MAX_FACTOR_REFS = 12  # factor_refs 上限
 _MAX_DATA_REFS = 8     # data_refs 上限
 _MAX_ALGO_REFS = 8     # algo_refs 上限
 _WARN_CHILDREN = 12    # 单父节点子节点数 warning 阈值（超=提示分层，不阻断）
+# D34 交叉索引门禁（Owner 裁定"最细节点须能交叉定位其他全景图"）+ 膨胀预算
+_MAX_NODES_PER_FLOW = 80  # 单流节点数 warning 阈值（防血肉阶段无限膨胀）
+_NODE_ID_RE = r"TDM-[A-Z]-[A-Z0-9]+(-[A-Z0-9]+)*"  # R20：TDM-{流}-{层}-{序号}… 骨架
+_MOD_ID_RE = r"MOD-[A-Z0-9]+(-[A-Z0-9]+)*"        # R21：MOD-* 交叉锚格式
+_DEPGRAPH_CACHE = ".runtime/depgraph_scan_cache.json"  # path→blueprint_id 映射（派生缓存，缺失记 warning）
 
 
 class DecisionMapSchemaError(ValueError):
@@ -157,6 +163,8 @@ class DecisionMapNode:
     fallback: str | None = None
     algo_refs: tuple[str, ...] = ()
     doc_ref: str | None = None
+    # v1.6（D34 交叉索引）：MOD-* 交叉锚——对齐五图体系（depgraph 以 module_id 为对齐 key）
+    module_id: str | None = None
 
 
 @dataclass(frozen=True)
@@ -280,6 +288,7 @@ def _parse_node(raw: dict) -> DecisionMapNode:
         fallback=(str(raw["fallback"]) if raw.get("fallback") else None),
         algo_refs=tuple(str(x) for x in raw.get("algo_refs", []) or []),
         doc_ref=(str(raw["doc_ref"]) if raw.get("doc_ref") else None),
+        module_id=(str(raw["module_id"]) if raw.get("module_id") else None),
     )
 
 
@@ -354,6 +363,32 @@ def _load_registry_ids(registry_dir: Path, filename: str, section: str, key: str
     raw = yaml.safe_load(p.read_text(encoding="utf-8")) or {}
     entries = raw.get(section) or []
     return frozenset(str(e.get(key)) for e in entries if isinstance(e, dict) and e.get(key))
+
+
+def _load_depgraph_mod_map(cache_path: Path) -> dict[str, str] | None:
+    """只读加载 depgraph 扫描缓存 → {path: blueprint_id}；缓存缺失返回 None（记 warning 不硬阻断）。"""
+    if not cache_path.exists():
+        return None
+    try:
+        import json
+
+        data = json.loads(cache_path.read_text(encoding="utf-8"))
+    except (OSError, ValueError):
+        return None
+    out: dict[str, str] = {}
+    for path, hashes in (data.get("entries") or {}).items():
+        if isinstance(hashes, dict):
+            for entry in hashes.values():
+                if isinstance(entry, dict) and entry.get("blueprint_id"):
+                    bid = str(entry["blueprint_id"]).strip()
+                    # 清洗 "MOD-SIG-026 supplement" 类后缀 → MOD-SIG-026（辅助文件归属主模块）
+                    if not re.fullmatch(_MOD_ID_RE, bid):
+                        first = bid.split()[0] if bid.split() else ""
+                        if re.fullmatch(_MOD_ID_RE, first):
+                            bid = first
+                    out[str(path)] = bid
+                    break
+    return out
 
 
 def _collect_sequence_cycle(dm: DecisionMap) -> list[str]:
@@ -484,8 +519,9 @@ def _validate_governance(
     algo_ids: frozenset[str],
     add,
     emit_stats: bool = False,
+    mod_map: dict[str, str] | None = None,
 ) -> None:
-    """D32/D33 门禁包：R13 算法引用 / R14 附件存在 / R15 治理字段 / R16 父子完整性+树宽 / R17 粒度+容量 / R18 命名唯一 / R19 模块存在。"""
+    """D32/D33/D34 门禁包：R13 算法引用 / R14 附件存在 / R15 治理字段 / R16 父子完整性+树宽 / R17 粒度+容量 / R18 命名唯一 / R19 模块存在 / R20 node_id 骨架 / R21 MOD 交叉锚 / R22 矩阵覆盖 / R23 流预算 / R24 因子欠账 / R25 空转叶子。"""
     by_id = {n.node_id: n for n in dm.nodes}
 
     # R18 name_zh 全图唯一（防同名歧义/防撞车延伸）
@@ -499,17 +535,35 @@ def _validate_governance(
     # R14/R19 附件与模块存在性（相对仓库根；registry_dir=catalogs，parents[3]=仓库根）
     repo_root = registry_dir.parents[3]
 
-    # R15/R17/R13/R14/R19 逐节点
+    # R15/R17/R13/R14/R19/R20/R21 逐节点
+    import re
+
     for n in dm.nodes:
+        # R20 node_id 命名骨架（TDM-{流}-{层}-{序号}…；防小写/畸形/空段）
+        if not re.fullmatch(_NODE_ID_RE, n.node_id):
+            add("error", "R20", n.node_id, f"node_id 不符合 TDM-{{流}}-{{层}}-{{序号}} 骨架: {n.node_id}")
         for a in n.algo_refs:
             if a not in algo_ids:
                 add("error", "R13", n.node_id, f"algo_ref 不存在于算法库（IND/EXA）: {a}")
+        for rel_field, rel_val in (("doc_ref", n.doc_ref), ("module_ref", n.module_ref)):
+            # V3 路径穿越/绝对路径拒绝（防 ../ 与盘符绕过仓库根）
+            if rel_val and (Path(rel_val).is_absolute() or ".." in Path(rel_val).parts):
+                add("error", "R14" if rel_field == "doc_ref" else "R19", n.node_id, f"{rel_field} 禁止绝对路径/上跳: {rel_val}")
         if n.doc_ref:
             rel = n.doc_ref.split("#", 1)[0]
-            if rel and not (repo_root / rel).exists():
-                add("error", "R14", n.node_id, f"doc_ref 文件不存在: {rel}")
-        if n.module_ref and not (repo_root / n.module_ref).exists():
-            add("error", "R19", n.node_id, f"module_ref 文件不存在: {n.module_ref}")
+            if rel and not (repo_root / rel).is_file():
+                add("error", "R14", n.node_id, f"doc_ref 文件不存在（或非文件）: {rel}")
+        if n.module_ref and not (repo_root / n.module_ref).is_file():
+            add("error", "R19", n.node_id, f"module_ref 文件不存在（或非文件）: {n.module_ref}")
+        # R21 MOD-* 交叉锚：格式校验 + 与 module_ref 缓存映射对账
+        if n.module_id is not None and not re.fullmatch(_MOD_ID_RE, n.module_id):
+            add("error", "R21", n.node_id, f"module_id 不符合 MOD-* 格式: {n.module_id}")
+        if n.module_id and n.module_ref and mod_map is not None:
+            actual = mod_map.get(n.module_ref)
+            if actual is not None and actual != n.module_id:
+                add("error", "R21", n.node_id, f"module_id {n.module_id} 与 depgraph 缓存 {actual} 不一致（module_ref={n.module_ref}）")
+        if n.module_ref and not n.module_id:
+            add("warning", "R21", n.node_id, "有 module_ref 无 module_id（MOD-* 交叉锚欠账，五图对齐 key 缺失）")
         if n.activation is not None and n.activation not in _ACTIVATIONS:
             add("error", "R15", n.node_id, f"activation 非法: {n.activation}")
         if n.ai_autonomy is not None and n.ai_autonomy not in _AI_AUTONOMY:
@@ -587,12 +641,45 @@ def _validate_governance(
         if cnt > _WARN_CHILDREN:
             add("warning", "R16", pid, f"子节点 {cnt} 个超预警线 {_WARN_CHILDREN}（树宽过大，建议分层）")
 
+    # R23 流预算（warning）：单流节点数超阈值=血肉膨胀信号，提示收口而非继续加
+    by_flow: dict[str, int] = {}
+    for n in dm.nodes:
+        by_flow[n.flow] = by_flow.get(n.flow, 0) + 1
+    anchor = dm.nodes[0].node_id if dm.nodes else ""
+    for flow, cnt in sorted(by_flow.items()):
+        if cnt > _MAX_NODES_PER_FLOW:
+            add("warning", "R23", anchor, f"flow={flow} 节点数 {cnt} 超预算 {_MAX_NODES_PER_FLOW}（膨胀预警，考虑收口）")
+
+    # R24 因子交叉欠账（warning）：挂策略的节点 factor_refs 空=因子链路断
+    for n in dm.nodes:
+        if n.strategy_mounts and not n.factor_refs:
+            add("warning", "R24", n.node_id, "挂载策略但 factor_refs 为空（因子交叉索引欠账，血肉阶段补挂）")
+
+    # R25 空转叶子（warning）：叶子节点（无人以它为 parent）且全引用轴皆空=决策断头路
+    parented = {n.parent_node for n in dm.nodes if n.parent_node}
+    for n in dm.nodes:
+        if n.node_id in parented:
+            continue
+        no_refs = not (
+            n.strategy_mounts
+            or n.factor_refs
+            or n.data_refs
+            or n.algo_refs
+            or n.module_ref
+            or n.module_id
+            or n.doc_ref
+        )
+        if no_refs:
+            add("warning", "R25", n.node_id, "叶子节点无任何引用锚（空转节点：决策无落点也无交叉索引）")
+
+    # R22 矩阵覆盖（warning）：挂策略的环节未进任何状态格子=状态路由断链
+    mouted_nodes = {n.node_id for n in dm.nodes if n.strategy_mounts}
+    covered_nodes = {c.node_id for c in dm.state_matrix.cells}
+    for nid in sorted(mouted_nodes - covered_nodes):
+        add("warning", "R22", nid, "挂载策略但未进任何状态矩阵格子（状态路由未覆盖）")
+
     # 粒度统计（info 级，emit_stats=True 时输出各 flow 节点数）
     if emit_stats:
-        by_flow: dict[str, int] = {}
-        for n in dm.nodes:
-            by_flow[n.flow] = by_flow.get(n.flow, 0) + 1
-        anchor = dm.nodes[0].node_id if dm.nodes else ""
         for flow, cnt in sorted(by_flow.items()):
             add("info", "R17", anchor, f"粒度统计 flow={flow}: {cnt} 节点")
 
@@ -601,18 +688,36 @@ def validate_decision_map(
     dm: DecisionMap,
     registry_dir: Path,
     known_strategy_ids: frozenset[str] | None = None,
+    depgraph_cache: Path | None = None,
 ) -> tuple[bool, list[GapReportItem]]:
-    """引用存在性校验（纯函数，R1-R8）→ (error 数为 0, GapReport 列表)。"""
+    """引用存在性+治理门禁校验（纯函数，R1-R25）→ (error 数为 0, GapReport 列表)。
+
+    depgraph_cache：depgraph 扫描缓存路径（path→blueprint_id 映射，R21 对账用）；
+    None=默认仓库根 .runtime/depgraph_scan_cache.json；缓存缺失记 warning 不硬阻断。
+    """
     issues: list[GapReportItem] = []
 
     def add(level: str, code: str, node_id: str, detail: str) -> None:
         issues.append(GapReportItem(level=level, code=code, node_id=node_id, detail=detail))
 
     registry_dir = Path(registry_dir)
+    # V1 注册表真源缺失=error（文件不存在时引用校验静默通过=假阴性漏洞）
+    anchor0 = dm.nodes[0].node_id if dm.nodes else ""
+    for fname in (_REG_STRATEGY, _REG_FACTOR, _REG_DATA, _REG_EXA, _REG_IND):
+        if not (registry_dir / fname).exists():
+            add("error", "R99", anchor0, f"注册表真源缺失: {fname}（引用校验不可信）")
     strat_ids = _load_registry_ids(registry_dir, _REG_STRATEGY, "strategies", "strategy_id")
     factor_ids = _load_registry_ids(registry_dir, _REG_FACTOR, "factors", "factor_id")
     dataset_ids = _load_registry_ids(registry_dir, _REG_DATA, "datasets", "dataset_id")
     by_id = {n.node_id: n for n in dm.nodes}
+
+    # V4 空地图防御：空节点/空市场/空列轴=结构残缺，禁止静默全绿
+    if not dm.nodes:
+        add("error", "R98", "", "nodes 为空（空地图不可消费）")
+    if not dm.markets:
+        add("error", "R98", "", "markets 为空（市场分片声明缺失）")
+    if not dm.state_matrix.states:
+        add("error", "R98", anchor0, "状态矩阵列轴为空（六段情绪周期列轴缺失）")
 
     for n in dm.nodes:
         _validate_node_refs(n, add, strat_ids, factor_ids, dataset_ids, known_strategy_ids)
@@ -631,10 +736,15 @@ def validate_decision_map(
         if m not in node_markets:
             add("error", "R10", dm.nodes[0].node_id if dm.nodes else "", f"声明市场 {m} 无任何节点")
 
-    # D32/D33 门禁包 R13-R19（算法引用/附件/治理/父子/粒度容量/命名/模块存在）
+    # D32/D33/D34 门禁包 R13-R25（算法/附件/治理/父子/粒度容量/命名/模块/node_id/交叉锚/矩阵/预算/欠账）
     exa_ids = _load_registry_ids(registry_dir, _REG_EXA, "execution_algos", "execution_algo_id")
     ind_ids = _load_registry_ids(registry_dir, _REG_IND, "indicators", "indicator_id")
-    _validate_governance(dm, registry_dir, exa_ids | ind_ids, add)
+    repo_root = registry_dir.parents[3]
+    cache_path = depgraph_cache if depgraph_cache is not None else repo_root / _DEPGRAPH_CACHE
+    mod_map = _load_depgraph_mod_map(cache_path)
+    if mod_map is None:
+        add("warning", "R21", anchor0, f"depgraph 扫描缓存缺失（{cache_path}）——MOD 对账降级为格式校验")
+    _validate_governance(dm, registry_dir, exa_ids | ind_ids, add, mod_map=mod_map)
 
     # R12 整装方案（v1.1）：sleeve 引用存在性+权重范围+和≤1+activation_state 在列轴+置信度
     if dm.portfolio_plan is not None:

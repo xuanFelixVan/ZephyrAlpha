@@ -5,7 +5,7 @@ title: 交易决策地图（Trading Decision Map）——决策内容索引层�
 owner: ZephyrAlpha-Owner
 language: zh
 status: active
-version: "2.3.0"
+version: "2.4.0"
 date: 2026-09-04
 topic: trading_decision_map
 scope: 07_trading_decision_architecture
@@ -316,6 +316,31 @@ E-L2 收口：**10 树枝 19 节点**。
 **真源违规治理**（门禁生效即暴露，已修）：3 节点 decision_question 超限（TDM-E-L1-AGG 113 字→85/TDM-F-C1 108→90/TDM-E-L4-02 101→93，压缩不丢语义，详细规则留注释区）；4 节点 activation 用中文"持续"→continuous（TDM-E-L4-07/09/10/13）。
 
 **后续增量门禁（未建，按需立项）**：①node_id 命名规范门禁（TDM-{流}-{层}-{序号} 格式校验）；②状态矩阵节点全覆盖 warning（挂载策略的环节未进任何格子）；③地图×depgraph 双向对账（module_ref 指向的模块在 depgraph 登记）；④成交量门禁（单流节点数随血肉阶段增长的上限预算）。
+
+### 2.21 交叉索引锚+R20-R25 补齐+红蓝对抗（D34，Owner 2026-09-06 裁定"最细节点须能交叉定位其他全景图"）
+
+**Owner 需求**：最细粒度节点必须能查到——用什么算法/因子/策略/模块、模块存不存在、对应功能全景图哪个位置；用交易全景图快速交叉定位其他全景图。
+
+**交叉索引链路**（`TDM 节点 → EXA/IND → FCT → STR → MOD-* → 前端功能`）：节点新增 `module_id`（MOD-*，v1.6 schema），对齐五图体系（depgraph 以 module_id 为对齐 key）。11 个有 module_ref 的节点已补挂（MOD-REGIME-001/MOD-SIG-026/MOD-L00-004/MOD-SIG-022/MOD-SIG-072/MOD-EX-001/MOD-L06-001）；TDM-E-L3-02 的 selection_funnel.py 无 [A_module] 文件头（depgraph blueprint_id 被文档串污染=脏数据），留 warning 浮出待源头治理。前端功能全景图（frontend_map）2026-08-31 仍在草案期，F-* 互挂待其转正后立项。
+
+**§2.20 待建四项全部落地 + 红队漏洞修复**：
+
+| 新规则 | 内容 | 级别 |
+|---|---|---|
+| R20 | node_id 命名骨架 `TDM-{流}-{层}-{序号}…`（防小写/畸形/空段） | error |
+| R21 | MOD-* 交叉锚：格式校验+depgraph 扫描缓存对账（path↔blueprint_id 一致性，supplement 后缀清洗）；有 module_ref 无 module_id=欠账 warning | error/warning |
+| R22 | 挂策略环节未进任何矩阵格子（状态路由断链） | warning |
+| R23 | 单流节点数>80（膨胀预算预警；E 流 78 贴线） | warning |
+| R24 | 挂策略但 factor_refs 空（因子交叉欠账——当前全图 0 挂载，16 节点浮出） | warning |
+| R25 | 叶子节点全引用轴皆空（空转节点：决策无落点无索引，17 节点浮出） | warning |
+| R98 | 空地图防御：nodes/markets/状态列轴为空禁止静默全绿 | error |
+| R99 | 注册表真源缺失（5 注册表文件任一不存在=引用校验不可信，防假阴性） | error |
+
+**红队发现的 4 个既有门禁漏洞（已修）**：①V1 注册表缺失静默通过（_load_registry_ids 返回空集=无约束→R99）；②V2 目录冒充文件（exists() 对目录 True→is_file()）；③V3 路径穿越（doc_ref/module_ref 绝对路径与 ../ 绕过仓库根→显式拒绝）；④V4 空地图静默全绿（→R98）。
+
+**红蓝对抗测试套件**（tests/trading/test_decision_map_adversarial.py，32 用例六类武器）：A 绕过类 8（注册表缺失/空地图/目录冒充/路径穿越×2 字段）、B 边界值类 6（100/101 字、树深 4/5、流预算 81 卡线）、C 伪装类 6（小写 node_id/两段 node_id/supplement 伪装/大小写枚举/模糊词藏长句）、D 交叉对账类 5（缓存不一致/一致/缺失降级/supplement 清洗/欠账）、E 组合攻击类 3（五重违规全报/feedback 合法放行防误杀/自指成环）、F warning 语义类 4（欠账浮出但 ok=True+真源回归锚）。
+
+**真源欠账快照**（warning 全景，血肉阶段消化清单）：R24 因子欠账 16 节点（161 条因子库 0 挂载=交叉索引最大欠账）、R25 空转叶子 17、R22 矩阵未覆盖 14、R21 脏 MOD 1、R16 树宽 1（TDM-E-L4 13 子节点贴线）。
 
 ## 3. 考虑过的替代方案与拒绝理由
 
