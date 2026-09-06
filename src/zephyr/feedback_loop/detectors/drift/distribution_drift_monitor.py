@@ -10,7 +10,7 @@
 # [STABILITY] evolving
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
-# [ERROR_CONTRACT] DistributionDriftError(占位 ZA-FBL-UNREGISTERED-DRIFT-MONITOR)——空样本/长度不足/非有限值/阈值非法/未知通道时抛
+# [ERROR_CONTRACT] DistributionDriftError(ZA-FBL-0001)——空样本/长度不足/非有限值/阈值非法/未知通道时抛
 # [TESTS] tests/drift/test_distribution_drift_monitor.py
 # [A_module] module_id=MOD-FBL-001 | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
@@ -120,8 +120,10 @@ _MIN_SAMPLES: Final[int] = 2  # 分布度量最小样本数
 class DistributionDriftError(Exception):
     """分布漂移监控输入非法（Fail-Closed）。
 
-    未登记错误码-申请中：占位 ZA-FBL-UNREGISTERED-DRIFT-MONITOR。
+    错误码 ZA-FBL-0001 已登记转正（2026-09-06 Owner 批准批）。
     """
+
+    error_code = "ZA-FBL-0001"
 
 
 class DriftChannel(str, Enum):

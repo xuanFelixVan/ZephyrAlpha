@@ -10,7 +10,7 @@
 # [STABILITY] evolving
 # [SAFETY] M
 # [AI_AUTONOMY] human_gated
-# [ERROR_CONTRACT] MetaHarnessError(占位 ZA-FBL-UNREGISTERED-META-HARNESS)——evaluator未注入/非法学习超参/越界取值/策略参数混入/超递归深度上限/evaluator返回非法时抛
+# [ERROR_CONTRACT] MetaHarnessError(ZA-FBL-0002)——evaluator未注入/非法学习超参/越界取值/策略参数混入/超递归深度上限/evaluator返回非法时抛
 # [TESTS] tests/feedback_loop/test_meta_harness_optimizer.py
 # [A_module] module_id=MOD-FBL-004 | layer=module | stability=evolving | safety=M | ai_autonomy=human_gated
 # [TTL] permanent
@@ -92,8 +92,10 @@ __all__: Final = [
 class MetaHarnessError(Exception):
     """元优化器输入/状态非法（Fail-Closed）。
 
-    未登记错误码-申请中：占位 ZA-FBL-UNREGISTERED-META-HARNESS。
+    错误码 ZA-FBL-0002 已登记转正（2026-09-06 Owner 批准批）。
     """
+
+    error_code = "ZA-FBL-0002"
 
 
 class ReviewPolicy(str, Enum):

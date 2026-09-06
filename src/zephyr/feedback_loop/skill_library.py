@@ -10,7 +10,7 @@
 # [STABILITY] evolving
 # [SAFETY] M
 # [AI_AUTONOMY] human_gated
-# [ERROR_CONTRACT] SkillLibraryError(占位 ZA-FBL-UNREGISTERED-SKILL-LIBRARY)——非法类别/空内容/空来源任务/非法成功指标/未知技能/向量维度不符/非法top_k/embedder未注入时抛
+# [ERROR_CONTRACT] SkillLibraryError(ZA-FBL-0004)——非法类别/空内容/空来源任务/非法成功指标/未知技能/向量维度不符/非法top_k/embedder未注入时抛
 # [TESTS] tests/feedback_loop/test_skill_library.py
 # [A_module] module_id=MOD-FBL-003 | layer=module | stability=evolving | safety=M | ai_autonomy=human_gated
 # [TTL] permanent
@@ -80,8 +80,10 @@ __all__: Final = [
 class SkillLibraryError(Exception):
     """技能库输入/状态非法（Fail-Closed）。
 
-    未登记错误码-申请中：占位 ZA-FBL-UNREGISTERED-SKILL-LIBRARY。
+    错误码 ZA-FBL-0004 已登记转正（2026-09-06 Owner 批准批）。
     """
+
+    error_code = "ZA-FBL-0004"
 
 
 class SkillKind(str, Enum):

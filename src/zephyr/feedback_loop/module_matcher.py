@@ -10,7 +10,7 @@
 # [STABILITY] evolving
 # [SAFETY] M
 # [AI_AUTONOMY] human_gated
-# [ERROR_CONTRACT] ModuleMatcherError(占位 ZA-FBL-UNREGISTERED-MODULE-MATCHER)——空模块/重复注册/空标签/空需求/非法阈值/非法向量/embedder 异常时抛
+# [ERROR_CONTRACT] ModuleMatcherError(ZA-FBL-0003)——空模块/重复注册/空标签/空需求/非法阈值/非法向量/embedder 异常时抛
 # [TESTS] tests/feedback_loop/test_module_matcher.py
 # [A_module] module_id=MOD-FBL-002 | layer=module | stability=evolving | safety=M | ai_autonomy=human_gated
 # [TTL] permanent
@@ -92,8 +92,10 @@ _PARTIAL_THRESHOLD: Final[float] = 0.5
 class ModuleMatcherError(Exception):
     """模块匹配器输入/状态非法（Fail-Closed）。
 
-    未登记错误码-申请中：占位 ZA-FBL-UNREGISTERED-MODULE-MATCHER。
+    错误码 ZA-FBL-0003 已登记转正（2026-09-06 Owner 批准批）。
     """
+
+    error_code = "ZA-FBL-0003"
 
 
 class MatchTier(str, Enum):
