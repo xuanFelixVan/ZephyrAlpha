@@ -10,7 +10,7 @@
 # [STABILITY] evolving
 # [SAFETY] M
 # [AI_AUTONOMY] human_gated
-# [ERROR_CONTRACT] StandardsManagerError(占位 ZA-GOVR-UNREGISTERED-STANDARDS-MANAGER)——四要素缺失/非法词表/未知边界/变更冲突/重复裁决/非法裁决/脚本注册失败时抛
+# [ERROR_CONTRACT] StandardsManagerError(ZA-GOVR-0001)——四要素缺失/非法词表/未知边界/变更冲突/重复裁决/非法裁决/脚本注册失败时抛
 # [TESTS] tests/gov_rule/test_standards_manager.py
 # [A_module] module_id=MOD-GOV-057 | layer=module | stability=evolving | safety=M | ai_autonomy=human_gated
 # [TTL] permanent
@@ -91,8 +91,10 @@ __all__: Final = [
 class StandardsManagerError(Exception):
     """硬边界标准管理输入/状态非法（Fail-Closed）。
 
-    未登记错误码-申请中：占位 ZA-GOVR-UNREGISTERED-STANDARDS-MANAGER。
+    错误码 ZA-GOVR-0001 已登记转正（2026-09-06 Owner 批准批）。
     """
+
+    error_code = "ZA-GOVR-0001"
 
 
 class ViolationResponse(str, Enum):

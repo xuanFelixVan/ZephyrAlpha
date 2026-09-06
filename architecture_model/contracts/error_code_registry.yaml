@@ -60,6 +60,7 @@ domain_prefixes:
   SIG: D_ASHARE_SIGNAL
   TSK: D_GOVERNANCE
   SBX: D_INTEGRATION
+  GOVR: D_GOV_RULE
   GOVE: D_GOV_ENFORCEMENT
   GOVDRIFT: D_GOV_DRIFT
   GOVD: D_GOV_DOCS
@@ -3285,6 +3286,13 @@ error_codes:
   module: zephyr.gov_enforcement.construction_governor_gate
   file: src/zephyr/gov_enforcement/construction_governor_gate.py
   introduced: '2026-09-06: Owner 批准占位码转正批（B17-②）——ZA-GOVE-UNREGISTERED-CONSTRUCTION-GATE 转正'
+
+# --- 2026-09-06 占位码转正批 GOVR（Owner 批准 B17-②，取号=段内 max+1 顺延）---
+- code: ZA-GOVR-0001
+  class: StandardsManagerError
+  module: zephyr.gov_rule.standards_manager
+  file: src/zephyr/gov_rule/standards_manager.py
+  introduced: '2026-09-06: Owner 批准占位码转正批（B17-②）——ZA-GOVR-UNREGISTERED-STANDARDS-MANAGER 转正'
 
 known_duplicates: []
 # ============================================================
