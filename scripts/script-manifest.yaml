@@ -1046,6 +1046,14 @@ scripts:
   status: registered
   timeout_seconds: 60
   dimensions: []
+- name: governance/run_semantic_audit.py
+  path: governance/run_semantic_audit.py
+  description: SemanticAuditor 9 阶段管道 CLI 入口（MOD-INF-028 B7 接线，2026-09-06）——审计规则文档并产出 JSON 报告到 .runtime/semantic_audit/。
+  domain: governance
+  execution_plane: warm-path
+  status: registered
+  timeout_seconds: 300
+  dimensions: []
 - name: governance/classify_workspace_wip.py
   path: governance/classify_workspace_wip.py
   description: classify_workspace_wip.py — 工作区脏文件判读器（#ARCH-308 B1，2026-09-03）。

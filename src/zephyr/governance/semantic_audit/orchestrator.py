@@ -2,7 +2,7 @@
 # [MODULE] zephyr.governance.semantic_audit.orchestrator
 # [DOMAIN] D_GOV_AUDIT
 # [DEPENDENCIES]
-# [CONSUMERS] audit_orchestrator; cli; gates
+# [CONSUMERS] scripts/governance/run_semantic_audit.py
 # [STARTUP] manual
 # [MATURITY] production
 # [INVARIANTS] 9阶段管道顺序执行; audit()返回SemanticAuditReport; audit_batch()使用ThreadPoolExecutor并行; health_check()返回HealthStatus
@@ -11,7 +11,7 @@
 # [SAFETY] M
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] audit() never raises; individual stage failures are logged and skipped; returns partial report
-# [TESTS] tests/semantic_auditor/test_semantic_auditor.py
+# [TESTS] none（测试不直接测 orchestrator；管道逻辑经入口脚本 scripts/governance/run_semantic_audit.py 真实执行覆盖，2026-09-06 如实改标）
 # [A_module] module_id=MOD-INF-028 | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 """
