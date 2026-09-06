@@ -10,7 +10,7 @@
 # [STABILITY] evolving
 # [SAFETY] M
 # [AI_AUTONOMY] human_gated
-# [ERROR_CONTRACT] DataLakeError(占位 ZA-DE-UNREGISTERED-DATA-LAKE)——空数据集名/非法策略/重复注册/未知数据集/未来时间戳/执行器缺失时抛
+# [ERROR_CONTRACT] DataLakeError(ZA-DE-0004)——空数据集名/非法策略/重复注册/未知数据集/未来时间戳/执行器缺失时抛
 # [TESTS] tests/data_eng/test_data_lake_manager.py
 # [A_module] module_id=MOD-DATENG-006 | layer=module | stability=evolving | safety=M | ai_autonomy=human_gated
 # [TTL] permanent
@@ -99,8 +99,10 @@ _NEXT_TIER: Final[dict[LakeTier, LakeTier]] = {}
 class DataLakeError(Exception):
     """数据湖分层编排输入/状态非法（Fail-Closed）。
 
-    未登记错误码-申请中：占位 ZA-DE-UNREGISTERED-DATA-LAKE。
+    错误码 ZA-DE-0004 已登记转正（2026-09-06 Owner 批准批）。
     """
+
+    error_code = "ZA-DE-0004"
 
 
 class LakeTier(str, Enum):

@@ -10,7 +10,7 @@
 # [STABILITY] evolving
 # [SAFETY] M
 # [AI_AUTONOMY] human_gated
-# [ERROR_CONTRACT] QualitySlaPredictorError(占位 ZA-DE-UNREGISTERED-QUALITY-SLA-PREDICT)——空SLO名/非法target/重复注册/未知SLO/观测点不足/达成率越界时抛
+# [ERROR_CONTRACT] QualitySlaPredictorError(ZA-DE-0006)——空SLO名/非法target/重复注册/未知SLO/观测点不足/达成率越界时抛
 # [TESTS] tests/data_eng/test_quality_sla_breach_predictor.py
 # [A_module] module_id=MOD-DATENG-003 | layer=module | stability=evolving | safety=M | ai_autonomy=human_gated
 # [TTL] permanent
@@ -92,8 +92,10 @@ __all__: Final = [
 class QualitySlaPredictorError(Exception):
     """质量 SLA 违约预测输入/状态非法（Fail-Closed）。
 
-    未登记错误码-申请中：占位 ZA-DE-UNREGISTERED-QUALITY-SLA-PREDICT。
+    错误码 ZA-DE-0006 已登记转正（2026-09-06 Owner 批准批）。
     """
+
+    error_code = "ZA-DE-0006"
 
 
 class BurnRateLevel(str, Enum):

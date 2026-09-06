@@ -2991,6 +2991,33 @@ error_codes:
   file: src/zephyr/data_eng/data_anomaly_alerter.py
   introduced: '2026-09-06: Owner 批准占位码转正批（B17-②）——ZA-DATENG-UNREGISTERED-ANOMALY-ALERTER 转正'
 
+# --- 2026-09-06 占位码转正批 DE（Owner 批准 B17-②，取号=段内 max+1 顺延）---
+- code: ZA-DE-0003
+  class: ColdArchiveError
+  module: zephyr.data_eng.cold_data_archive_manager
+  file: src/zephyr/data_eng/cold_data_archive_manager.py
+  introduced: '2026-09-06: Owner 批准占位码转正批（B17-②）——ZA-DE-UNREGISTERED-COLD-ARCHIVE 转正'
+- code: ZA-DE-0004
+  class: DataLakeError
+  module: zephyr.data_eng.data_lake_manager
+  file: src/zephyr/data_eng/data_lake_manager.py
+  introduced: '2026-09-06: Owner 批准占位码转正批（B17-②）——ZA-DE-UNREGISTERED-DATA-LAKE 转正'
+- code: ZA-DE-0005
+  class: GpuResourceError
+  module: zephyr.data_eng.gpu_resource_manager
+  file: src/zephyr/data_eng/gpu_resource_manager.py
+  introduced: '2026-09-06: Owner 批准占位码转正批（B17-②）——ZA-DE-UNREGISTERED-GPU-RESOURCE 转正'
+- code: ZA-DE-0006
+  class: QualitySlaPredictorError
+  module: zephyr.data_eng.quality_sla_breach_predictor
+  file: src/zephyr/data_eng/quality_sla_breach_predictor.py
+  introduced: '2026-09-06: Owner 批准占位码转正批（B17-②）——ZA-DE-UNREGISTERED-QUALITY-SLA-PREDICT 转正'
+- code: ZA-DE-0007
+  class: StreamEngineError
+  module: zephyr.data_eng.stream_processing_engine
+  file: src/zephyr/data_eng/stream_processing_engine.py
+  introduced: '2026-09-06: Owner 批准占位码转正批（B17-②）——ZA-DE-UNREGISTERED-STREAM-ENGINE 转正'
+
 known_duplicates: []
 # ============================================================
 # 已知缺口（诚实登记，2026-08-15 #ARCH-MON-001 批次实测）

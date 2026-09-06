@@ -10,7 +10,7 @@
 # [STABILITY] evolving
 # [SAFETY] M
 # [AI_AUTONOMY] human_gated
-# [ERROR_CONTRACT] StreamEngineError(占位 ZA-DE-UNREGISTERED-STREAM-ENGINE)——空窗口名/重复注册/非法窗口参数/未注册窗口ingest/空事件key/非有限value时抛
+# [ERROR_CONTRACT] StreamEngineError(ZA-DE-0007)——空窗口名/重复注册/非法窗口参数/未注册窗口ingest/空事件key/非有限value时抛
 # [TESTS] tests/data_eng/test_stream_processing_engine.py
 # [A_module] module_id=MOD-DATENG-004 | layer=module | stability=evolving | safety=M | ai_autonomy=human_gated
 # [TTL] permanent
@@ -96,8 +96,10 @@ _EPOCH: Final = datetime.datetime(1970, 1, 1)
 class StreamEngineError(Exception):
     """流处理引擎输入/状态非法（Fail-Closed）。
 
-    未登记错误码-申请中：占位 ZA-DE-UNREGISTERED-STREAM-ENGINE。
+    错误码 ZA-DE-0007 已登记转正（2026-09-06 Owner 批准批）。
     """
+
+    error_code = "ZA-DE-0007"
 
 
 class WindowKind(str, Enum):

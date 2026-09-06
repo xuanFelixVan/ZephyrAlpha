@@ -10,7 +10,7 @@
 # [STABILITY] evolving
 # [SAFETY] M
 # [AI_AUTONOMY] human_gated
-# [ERROR_CONTRACT] ColdArchiveError(占位 ZA-DE-UNREGISTERED-COLD-ARCHIVE)——空表名/空分区/非法cutoff/索引连接缺失/重复归档/执行回调缺失/未注册保留策略时抛
+# [ERROR_CONTRACT] ColdArchiveError(ZA-DE-0003)——空表名/空分区/非法cutoff/索引连接缺失/重复归档/执行回调缺失/未注册保留策略时抛
 # [TESTS] tests/data_eng/test_cold_data_archive_manager.py
 # [A_module] module_id=MOD-DATENG-002 | layer=module | stability=evolving | safety=M | ai_autonomy=human_gated
 # [TTL] permanent
@@ -105,8 +105,10 @@ _INDEX_DDL: Final = (
 class ColdArchiveError(Exception):
     """冷数据归档编排输入/状态非法（Fail-Closed）。
 
-    未登记错误码-申请中：占位 ZA-DE-UNREGISTERED-COLD-ARCHIVE。
+    错误码 ZA-DE-0003 已登记转正（2026-09-06 Owner 批准批）。
     """
+
+    error_code = "ZA-DE-0003"
 
 
 @dataclass(frozen=True)

@@ -10,7 +10,7 @@
 # [STABILITY] evolving
 # [SAFETY] M
 # [AI_AUTONOMY] human_gated
-# [ERROR_CONTRACT] GpuResourceError(占位 ZA-DE-UNREGISTERED-GPU-RESOURCE)——非法总量/非法配额/未注册kind/重复workload/非法请求量/未知release/时段规则重叠/probe缺失时抛
+# [ERROR_CONTRACT] GpuResourceError(ZA-DE-0005)——非法总量/非法配额/未注册kind/重复workload/非法请求量/未知release/时段规则重叠/probe缺失时抛
 # [TESTS] tests/data_eng/test_gpu_resource_manager.py
 # [A_module] module_id=MOD-DATENG-005 | layer=module | stability=evolving | safety=M | ai_autonomy=human_gated
 # [TTL] permanent
@@ -92,8 +92,10 @@ __all__: Final = [
 class GpuResourceError(Exception):
     """GPU 资源裁决输入/状态非法（Fail-Closed）。
 
-    未登记错误码-申请中：占位 ZA-DE-UNREGISTERED-GPU-RESOURCE。
+    错误码 ZA-DE-0005 已登记转正（2026-09-06 Owner 批准批）。
     """
+
+    error_code = "ZA-DE-0005"
 
 
 class WorkloadKind(str, Enum):
