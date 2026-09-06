@@ -10,7 +10,7 @@
 # [STABILITY] evolving
 # [SAFETY] M
 # [AI_AUTONOMY] ai_modifiable
-# [ERROR_CONTRACT] DataAnomalyAlerterError(占位 ZA-DATENG-UNREGISTERED-ANOMALY-ALERTER)——空输入/长度不齐/阈值非正/信号值低于阈值时抛
+# [ERROR_CONTRACT] DataAnomalyAlerterError(ZA-DATENG-0001)——空输入/长度不齐/阈值非正/信号值低于阈值时抛
 # [TESTS] tests/zephyr/data/test_data_anomaly_alerter.py
 # [A_module] module_id=MOD-DATENG-001 | layer=module | stability=evolving | safety=M | ai_autonomy=ai_modifiable
 # [TTL] permanent
@@ -134,8 +134,10 @@ __all__: Final = [
 class DataAnomalyAlerterError(Exception):
     """数据异常告警器输入非法（Fail-Closed）。
 
-    未登记错误码-申请中：占位 ZA-DATENG-UNREGISTERED-ANOMALY-ALERTER。
+    错误码 ZA-DATENG-0001 已登记转正（2026-09-06 Owner 批准批）。
     """
+
+    error_code = "ZA-DATENG-0001"
 
 
 class AnomalyKind(str, Enum):

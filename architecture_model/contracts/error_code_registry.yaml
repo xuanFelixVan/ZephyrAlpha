@@ -60,6 +60,7 @@ domain_prefixes:
   SIG: D_ASHARE_SIGNAL
   TSK: D_GOVERNANCE
   SBX: D_INTEGRATION
+  DATENG: D_DATA_ENG
   AUDITTEST: D_AUDITTEST
   ALT: D_ALT_DATA
 # ============================================================
@@ -2982,6 +2983,13 @@ error_codes:
   module: zephyr.data_governance.openlineage_exporter
   file: src/zephyr/data_governance/openlineage_exporter.py
   introduced: '2026-09-06: Owner 批准占位码转正批（B17-②）——ZA-DATA-UNREGISTERED-OPENLINEAGE 转正'
+
+# --- 2026-09-06 占位码转正批 DATENG（Owner 批准 B17-②，取号=段内 max+1 顺延）---
+- code: ZA-DATENG-0001
+  class: DataAnomalyAlerterError
+  module: zephyr.data_eng.data_anomaly_alerter
+  file: src/zephyr/data_eng/data_anomaly_alerter.py
+  introduced: '2026-09-06: Owner 批准占位码转正批（B17-②）——ZA-DATENG-UNREGISTERED-ANOMALY-ALERTER 转正'
 
 known_duplicates: []
 # ============================================================
