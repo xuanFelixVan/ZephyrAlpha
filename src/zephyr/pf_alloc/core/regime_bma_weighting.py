@@ -10,7 +10,7 @@
 # [STABILITY] evolving
 # [SAFETY] M
 # [AI_AUTONOMY] human_gated
-# [ERROR_CONTRACT] RegimeBmaError(占位 ZA-PA-UNREGISTERED-REGIME-BMA)——空regime/空信号集/样本不足/观测非有限/参数非法/未估计先查询时抛
+# [ERROR_CONTRACT] RegimeBmaError(ZA-PA-0014)——空regime/空信号集/样本不足/观测非有限/参数非法/未估计先查询时抛
 # [TESTS] tests/pf_alloc/test_regime_bma_weighting.py
 # [A_module] module_id=MOD-PA-015 | layer=module | stability=evolving | safety=M | ai_autonomy=human_gated
 # [TTL] permanent
@@ -97,8 +97,10 @@ __all__: Final = [
 class RegimeBmaError(Exception):
     """体制条件 BMA 权重输入/状态非法（Fail-Closed）。
 
-    未登记错误码-申请中：占位 ZA-PA-UNREGISTERED-REGIME-BMA。
+    错误码 ZA-PA-0014 已登记转正（2026-09-06 Owner 批准批）。
     """
+
+    error_code = "ZA-PA-0014"
 
 
 class PrecisionMetric(str, Enum):

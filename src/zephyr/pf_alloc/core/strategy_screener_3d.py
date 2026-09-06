@@ -10,7 +10,7 @@
 # [STABILITY] evolving
 # [SAFETY] M
 # [AI_AUTONOMY] human_gated
-# [ERROR_CONTRACT] StrategyScreenerError(占位 ZA-PA-UNREGISTERED-STRATEGY-SCREENER)——权重/阈值非法/空strategy_id/指标非有限/回测序列为空/相关性缺失或越界时抛
+# [ERROR_CONTRACT] StrategyScreenerError(ZA-PA-0015)——权重/阈值非法/空strategy_id/指标非有限/回测序列为空/相关性缺失或越界时抛
 # [TESTS] tests/pf_alloc/test_strategy_screener_3d.py
 # [A_module] module_id=MOD-PA-014 | layer=module | stability=evolving | safety=M | ai_autonomy=human_gated
 # [TTL] permanent
@@ -119,8 +119,10 @@ _DEFAULT_WEIGHTS: Final[dict[str, float]] = {
 class StrategyScreenerError(Exception):
     """策略筛选三维评估输入/配置非法（Fail-Closed）。
 
-    未登记错误码-申请中：占位 ZA-PA-UNREGISTERED-STRATEGY-SCREENER。
+    错误码 ZA-PA-0015 已登记转正（2026-09-06 Owner 批准批）。
     """
+
+    error_code = "ZA-PA-0015"
 
 
 class ScreenerVerdict(str, Enum):
