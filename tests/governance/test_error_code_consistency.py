@@ -19,6 +19,12 @@
     pre-commit GATE-ERRCODE 硬阻断新增未登记码。
   方向 B（registry→code）：每条非 deprecated 条目必须有 (class, file) 精确匹配的存活
     定义点——条目说谎（类改名/文件迁移/码漂移/幻影登记）即红。
+  方向 C（contract→code，2026-09-06 第七断言）：tool_contracts.yaml 全部契约码
+    （error_codes[].code + tools[].errors[]）必须有活定义点，或块内显式
+    "# deferred" 注释（0bd159c4 先例格式）豁免——契约码死活由机器判定，
+    不再依赖模型按 backend 指针人肉推断（批三实证：Flash 因 session_handoff 段
+    backend 缺 server 文件指针，把 8 个活码误判为"无 server/骨架"，deferred
+    化反而造假）。deferred 码若出现活定义点亦红（防 deferred 注释腐化）。
   重码：同一 code 跨 (file, class) 定义点 >1 违反「grep 唯一命中」不变量。存量 9 码 10 处
     经 git 首引入裁定登记于注册表 known_duplicates 段（GAP-010 高敏区人审约束，改号待
     Owner 批准）——白名单外新增重码即红；白名单条目不再是真实重码（改号完工后残留）
@@ -37,6 +43,7 @@ import yaml
 REPO_ROOT = Path(__file__).resolve().parents[2]
 SRC_ROOT = REPO_ROOT / "src" / "zephyr"
 REGISTRY_PATH = REPO_ROOT / "architecture_model" / "contracts" / "error_code_registry.yaml"
+CONTRACTS_PATH = REPO_ROOT / "src" / "zephyr" / "integration" / "mcp" / "tool_contracts.yaml"
 
 _CODE_RE = re.compile(r"^ZA-[A-Z0-9]+(?:-[A-Z0-9]+)*$")
 
@@ -103,6 +110,44 @@ def load_registry(path: Path = REGISTRY_PATH) -> dict:
 def _prefix_of(code: str) -> str:
     """域前缀 = ZA- 后第一段（子码/模块号嵌入段不参与前缀声明判定）。"""
     return code.split("-")[1]
+
+
+def _collect_contract_codes() -> tuple[set[str], set[str]]:
+    """收集契约码（active, deferred）。
+
+    active：error_codes[].code + tools[].errors[]（yaml 结构化解析）。
+    deferred：文本级解析——"- code:" 块内含 "# deferred" 注释（0bd159c4 先例格式，
+    safe_load 不可见故走文本）；deferred 码从 active 集排除。
+    """
+    text = CONTRACTS_PATH.read_text(encoding="utf-8")
+    data = yaml.safe_load(text)
+
+    active: set[str] = set()
+
+    def _walk(node) -> None:
+        if isinstance(node, dict):
+            for k, v in node.items():
+                if k == "code" and isinstance(v, str) and _CODE_RE.match(v):
+                    active.add(v)
+                elif k == "errors" and isinstance(v, list):
+                    for item in v:
+                        if isinstance(item, str) and _CODE_RE.match(item):
+                            active.add(item)
+                else:
+                    _walk(v)
+        elif isinstance(node, list):
+            for item in node:
+                _walk(item)
+
+    _walk(data)
+
+    deferred: set[str] = set()
+    for block in text.split("- code:")[1:]:
+        chunk = block.split("- code:")[0]  # 块边界=下一个码条目
+        m = re.match(r'\s*"?(ZA-[A-Z0-9-]+)"?', chunk)
+        if m and "# deferred" in chunk:
+            deferred.add(m.group(1))
+    return active - deferred, deferred
 
 
 class TestCodeToRegistry:
@@ -194,3 +239,47 @@ class TestDuplicates:
             if locs != expected or len(locs) <= 1:
                 rotten.append(f"{code}: 代码实况 {sorted(locs)} != 白名单 {sorted(expected)}")
         assert not rotten, "known_duplicates 白名单与代码实况不符（改号完工后请移除条目）: " + "; ".join(rotten[:10])
+
+
+def _live_code_strings(src_root: Path = SRC_ROOT) -> set[str]:
+    """文本级活码全集：src/ 下 .py 文件中出现的全部 ZA- 码字符串（含注释/字符串/dict 值）。
+
+    死活判定用宽口径（与方向 A/B 的 AST (class,file) 精度对账解耦）：B 类 fail-soft 码
+    形态为 dict 赋值 out["error_code"]="ZA-X"（非 raise 字面量），AST 扫不出但确实活着。
+    """
+    codes: set[str] = set()
+    pat = re.compile(r"ZA-[A-Z0-9]+(?:-[A-Z0-9]+)*")
+    for py in src_root.rglob("*.py"):
+        text = py.read_text(encoding="utf-8", errors="replace")
+        if "ZA-" in text:
+            codes.update(pat.findall(text))
+    return codes
+
+
+class TestContractToCode:
+    """方向 C（第七断言，2026-09-06）：tool_contracts.yaml 契约码 ↔ 代码死活机器对账。
+
+    背景（批三 Root Cause）：Flash 按 backend 指针找 server 文件，session_handoff 段
+    backend 只列文档/模型名，未列实现文件（真源=doc_guard_server.py，文件名≠server_id）
+    → 8 个活码被误判"无 server/骨架族"。本断言把"契约码死活"从模型判断改为机器判定：
+    非 deferred 契约码必须在 src/ 有码字符串出现（宽口径，覆盖 raise/fail-soft dict/
+    dataclass 全形态）；deferred 码必须真的零出现。
+    """
+
+    def test_active_contract_codes_have_live_definition(self):
+        active, _deferred = _collect_contract_codes()
+        live = _live_code_strings()
+        dead = sorted(active - live)
+        assert not dead, (
+            f"{len(dead)} 个契约码在 src/ 零出现（实现它，或在契约块内加 '# deferred' 注释+理由）: "
+            + ", ".join(dead[:20])
+        )
+
+    def test_deferred_contract_codes_truly_dead(self):
+        """deferred 防腐：标了 deferred 却在代码出现 = 注释腐化，须除名。"""
+        _active, deferred = _collect_contract_codes()
+        live = _live_code_strings()
+        revived = sorted(deferred & live)
+        assert not revived, (
+            "deferred 契约码已在代码出现（deferred 注释腐化，请移除注释）: " + ", ".join(revived[:20])
+        )

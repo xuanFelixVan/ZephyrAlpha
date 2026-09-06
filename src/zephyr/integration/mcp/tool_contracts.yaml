@@ -272,6 +272,7 @@ gate_engine:
   status: beta
   backend:
     - "src/zephyr/gov_enforcement/rule_enforcement/gate_engine/gate_engine.py (T-2-17, Sonnet B10)"
+    - "src/zephyr/integration/mcp/gate_engine_server.py (MCP server 壳：ZA-GT 码 raise 落点)"
   error_namespace: "ZA-GT"
   error_codes:
     - code: "ZA-GT-0001"
@@ -444,6 +445,7 @@ session_handoff:
   description: "跨会话交接协议服务；包装 HandoffPackage / SessionCarryover 与 5 项反腐败校验"
   status: stable
   backend:
+    - "src/zephyr/integration/mcp/doc_guard_server.py (MCP server 实现：文件名≠server_id，2026-09-06 补指针——原缺失致 8 个活码被误判无 server)"
     - "docs/01_policies_and_standards/governance/ai/handoff-protocol.md (T-1-17)"
     - "ADR-0041 Handoff Protocol"
     - "Pydantic HandoffPackage 模型"
@@ -588,6 +590,7 @@ intent_router:
     - "src/zephyr/governance/persistence/intent_keyword_mapper.py (Stage 1, T-2-21)"
     - "src/zephyr/governance/persistence/intent_embedding_mapper.py (Stage 2, beta 引入)"
     - "src/zephyr/governance/persistence/intent_llm_router.py (Stage 3, stable 引入)"
+    - "src/zephyr/integration/mcp/sentinel_server.py (MCP server 壳：ZA-INT 码 raise 落点，文件名≠server_id)"
   error_namespace: "ZA-INT"
   error_codes:
     - code: "ZA-INT-0001"
@@ -599,6 +602,9 @@ intent_router:
     - code: "ZA-INT-0003"
       message: "llm budget exceeded (Stage 3)"
       http_status: 429
+      # deferred: 实现未施工（sentinel_server.py L201-204 Stage 3 为 PHASE-GATE 占位，
+      # intent_llm_router 未接线，无预算检查逻辑），随 Phase 4 落地。
+      # 2026-09-06 补注：0bd159c4 报告宣称已加本注释但实际漏加，七断言当场检出补齐。
     - code: "ZA-INT-0004"
       message: "domain not in D0-D9"
       http_status: 400
