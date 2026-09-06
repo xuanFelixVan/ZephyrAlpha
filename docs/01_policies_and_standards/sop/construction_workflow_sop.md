@@ -405,6 +405,11 @@ pytest tests/path/to/test_xxx.py -v
 - 历史违规归档为已知技术债，登记在 ARCH 条目 impact 字段，不卡日常 commit
 - 显示二元化：actual_blocking vs warn_only_count
 
+**测试面清单**（2026-09-06 立规，Flash 批二 A 项域测试执行偏差教训固化）：
+- 批量施工（driver/逐前缀/逐模块循环）启动前，必须先罗列本批改动的**测试面清单**：受影响域的测试文件/目录全集（`rg -l "<改动模块名>" tests/` 或按 `tests/<域路径>/` 圈定）
+- 每施工单元的验证 = 六断言（若涉错误码）+ 语法校验 + **测试面清单全量 pytest**，三者缺一不可；仅跑前两项即声明完成 = 执行偏差
+- 批量收尾必须留存测试面清单文件（如 `.runtime/tmp/<批次>_tests.txt`）+ 全量结果（passed 数）供复查——当日实证：227 文件 4991 passed 补课即靠此清单复跑
+
 **通过判据**：连续 2 次验收 0 错误（CIRCULAR_ACCEPTANCE_ROUNDS=2）
 **不通过处置**：3 轮修复仍无法归零 → 标记 FAILED 升级 Owner
 **产出物**：测试报告（对话内）

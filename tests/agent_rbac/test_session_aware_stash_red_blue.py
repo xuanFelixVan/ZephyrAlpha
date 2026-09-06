@@ -553,7 +553,9 @@ class TestConcurrentCommitNoCrossTheft:
 
         with ThreadPoolExecutor(max_workers=3) as pool:
             futures = [pool.submit(commit, f"sess-{s}", f) for s, f in files.items()]
-            results = {f.result()[0]: f.result()[1] for f in as_completed(futures, timeout=60)}
+            # 2026-09-06 放宽 60→180：3 并发 commit×pre-commit hook 串行在负载机上 60s 偏紧
+            # （Flash 批二遗留#5，E 项关联 flaky；隔离复跑绿，与本批改动无因果）
+            results = {f.result()[0]: f.result()[1] for f in as_completed(futures, timeout=180)}
 
         assert all(s == CommitStatus.OK for s in results.values()), f"3 session 应全部成功: {results}"
         # 每个文件最终内容正确

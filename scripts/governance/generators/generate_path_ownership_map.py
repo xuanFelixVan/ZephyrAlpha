@@ -214,6 +214,7 @@ def scan_blueprints() -> tuple[list[dict], list[dict]]:
 
     # 3. 生成 ownership_entries
     ownership_entries: list[dict] = []
+    ghost_nodes: list[str] = []  # 2026-09-06 存在性过滤：production 节点文件已删（真幽灵）
     for f in dg_files:
         mod_id = f["blueprint_id"]
         path = f["path"]
@@ -225,6 +226,13 @@ def scan_blueprints() -> tuple[list[dict], list[dict]]:
             existence = "未实现"
         else:
             existence = bs or "unknown"
+
+        # 2026-09-06 存在性过滤（批二遗留#9 根因加固）：production 节点指向已删除文件
+        # = 真幽灵（当日实证：multifactor 三件删除后 6 条幽灵回填），跳过并告警；
+        # design/planned（未实现）节点文件本就允许不存在，放行。
+        if existence == "已实现" and not (PROJECT_ROOT / path).exists():
+            ghost_nodes.append(f"{mod_id} -> {path}")
+            continue
 
         declared_in = blueprint_map.get(mod_id, "")
 
@@ -238,6 +246,17 @@ def scan_blueprints() -> tuple[list[dict], list[dict]]:
                 "ownership_judgment": "本模块",
             }
         )
+
+    if ghost_nodes:
+        print(
+            f"[WARN] depgraph 残留节点 {len(ghost_nodes)} 条（目标文件已删除，已跳过；"
+            f"请运行 generate_project_depgraph.py 刷新）:",
+            file=sys.stderr,
+        )
+        for g in ghost_nodes[:20]:
+            print(f"  - {g}", file=sys.stderr)
+        if len(ghost_nodes) > 20:
+            print(f"  ...（共 {len(ghost_nodes)} 条）", file=sys.stderr)
 
     return ownership_entries, all_claims
 
