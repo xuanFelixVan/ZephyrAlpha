@@ -10,7 +10,7 @@
 # [STABILITY] evolving
 # [SAFETY] M
 # [AI_AUTONOMY] human_gated
-# [ERROR_CONTRACT] AiMaskingError(占位 ZA-DSEC-UNREGISTERED-AI-MASKING)——空策略表/未知用途/空文本/非法级别/非法分桶阈值时抛
+# [ERROR_CONTRACT] AiMaskingError(ZA-DSEC-0001)——空策略表/未知用途/空文本/非法级别/非法分桶阈值时抛
 # [TESTS] tests/data_security/test_ai_masking_pipeline.py
 # [A_module] module_id=MOD-DATSEC-001 | layer=module | stability=evolving | safety=M | ai_autonomy=human_gated
 # [TTL] permanent
@@ -94,8 +94,10 @@ _SEQ_SPLIT_RE: Final = re.compile(r"[,，、/]")
 class AiMaskingError(Exception):
     """脱敏管道输入/策略非法（Fail-Closed）。
 
-    未登记错误码-申请中：占位 ZA-DSEC-UNREGISTERED-AI-MASKING。
+    错误码 ZA-DSEC-0001 已登记转正（2026-09-06 Owner 批准批）。
     """
+
+    error_code = "ZA-DSEC-0001"
 
 
 class MaskingLevel(str, Enum):

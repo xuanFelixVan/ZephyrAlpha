@@ -10,7 +10,7 @@
 # [STABILITY] evolving
 # [SAFETY] M
 # [AI_AUTONOMY] human_gated
-# [ERROR_CONTRACT] DataMaskingError(占位 ZA-DSEC-UNREGISTERED-DATA-MASKING)——空key/空文本/未注册角色字段策略/非法掩码类型/ε或sensitivity非正/非法随机源输出时抛
+# [ERROR_CONTRACT] DataMaskingError(ZA-DSEC-0003)——空key/空文本/未注册角色字段策略/非法掩码类型/ε或sensitivity非正/非法随机源输出时抛
 # [TESTS] tests/data_security/test_data_masking_engine.py
 # [A_module] module_id=MOD-DATSEC-003 | layer=module | stability=evolving | safety=M | ai_autonomy=human_gated
 # [TTL] permanent
@@ -91,8 +91,10 @@ _EPS_GUARD: Final = 1e-12
 class DataMaskingError(Exception):
     """脱敏引擎输入/策略非法（Fail-Closed）。
 
-    未登记错误码-申请中：占位 ZA-DSEC-UNREGISTERED-DATA-MASKING。
+    错误码 ZA-DSEC-0003 已登记转正（2026-09-06 Owner 批准批）。
     """
+
+    error_code = "ZA-DSEC-0003"
 
 
 class MaskKind(str, Enum):

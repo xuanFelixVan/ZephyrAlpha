@@ -60,6 +60,7 @@ domain_prefixes:
   SIG: D_ASHARE_SIGNAL
   TSK: D_GOVERNANCE
   SBX: D_INTEGRATION
+  DSEC: D_DATA_SEC
   DATENG: D_DATA_ENG
   AUDITTEST: D_AUDITTEST
   ALT: D_ALT_DATA
@@ -3017,6 +3018,23 @@ error_codes:
   module: zephyr.data_eng.stream_processing_engine
   file: src/zephyr/data_eng/stream_processing_engine.py
   introduced: '2026-09-06: Owner 批准占位码转正批（B17-②）——ZA-DE-UNREGISTERED-STREAM-ENGINE 转正'
+
+# --- 2026-09-06 占位码转正批 DSEC（Owner 批准 B17-②，取号=段内 max+1 顺延）---
+- code: ZA-DSEC-0001
+  class: AiMaskingError
+  module: zephyr.data_security.ai_masking_pipeline
+  file: src/zephyr/data_security/ai_masking_pipeline.py
+  introduced: '2026-09-06: Owner 批准占位码转正批（B17-②）——ZA-DSEC-UNREGISTERED-AI-MASKING 转正'
+- code: ZA-DSEC-0002
+  class: DataAccessAuditError
+  module: zephyr.data_security.data_access_auditor
+  file: src/zephyr/data_security/data_access_auditor.py
+  introduced: '2026-09-06: Owner 批准占位码转正批（B17-②）——ZA-DSEC-UNREGISTERED-ACCESS-AUDIT 转正'
+- code: ZA-DSEC-0003
+  class: DataMaskingError
+  module: zephyr.data_security.data_masking_engine
+  file: src/zephyr/data_security/data_masking_engine.py
+  introduced: '2026-09-06: Owner 批准占位码转正批（B17-②）——ZA-DSEC-UNREGISTERED-DATA-MASKING 转正'
 
 known_duplicates: []
 # ============================================================
