@@ -42,16 +42,18 @@ tiers:
         physical_path: scripts/script-manifest.yaml
         format: yaml
         maintenance: auto （scripts/generate_manifest.py）
-        entry_count: 483
+        entry_count: 755
+        counting_rule: scripts 数组条目数（generate_manifest.py 全树再生）
         status: active
-        description: 全 scripts/ 下 483 个 .py 脚本的完整注册——path/domain/execution_plane
+        description: 全 scripts/ 下 755 个 .py 脚本的完整注册——path/domain/execution_plane
 
       - registry_id: REG-SCRIPT-002
         name: 脚本清单（Governance 子集）
         physical_path: scripts/governance/script_manifest.yaml
         format: yaml
         maintenance: manual
-        entry_count: 416
+        entry_count: 418
+        counting_rule: scripts 数组条目数（governance 子集，__manifest__ 块提取）
         status: active
         description: Governance 脚本子集（可能与 REG-SCRIPT-001 有重叠）
 
@@ -96,9 +98,10 @@ tiers:
         physical_path: src/zephyr/gov_drift/_detector_registry.yaml
         format: yaml
         maintenance: manual
-        entry_count: 31
+        entry_count: 30
+        counting_rule: detectors.existing + detectors.new 条目数合计
         status: active
-        description: 漂移检测器配置（18 existing + 13 new = 31 个检测器）。detector_dispatcher.py 预期从此文件加载
+        description: 漂移检测器配置（17 existing + 13 new = 30 个检测器）。detector_dispatcher.py 预期从此文件加载
 
       - registry_id: REG-SKILL-001
         name: Agent 技能注册表
@@ -256,7 +259,8 @@ tiers:
         physical_path: docs/01_policies_and_standards/_registry/catalogs/rule_catalog_registry.yaml
         format: yaml
         maintenance: manual
-        entry_count: 229
+        entry_count: 230
+        counting_rule: files 数组条目数（rule catalog 文件级）
         status: active
         description: 153 个文档的元数据（与 PS-REG-018 同源；2026-06-26 P2-1 向内收——document_metadata_index_registry.yaml 已删除，REG-DOC-001 重定向至 rule_catalog_registry.yaml 真源）
 
@@ -292,7 +296,8 @@ tiers:
         physical_path: docs/01_policies_and_standards/_registry/catalogs/knowledge_article_registry.yaml
         format: yaml
         maintenance: manual
-        entry_count: 4
+        entry_count: 0
+        counting_rule: knowledge_entries 数组条目数（模板就位内容待填充）
         status: active
         description: 知识库文章索引（当前为空——模板就位，内容待填充）
 
@@ -301,7 +306,8 @@ tiers:
         physical_path: docs/01_policies_and_standards/_registry/catalogs/task_card_meta_registry.yaml
         format: yaml
         maintenance: manual
-        entry_count: 5
+        entry_count: 4
+        counting_rule: systems 子系统数
         status: active
         description: 4 个子系统的 TaskCard 元信息
 
@@ -319,7 +325,7 @@ tiers:
         physical_path: data/asset_index/unified-asset-index.yaml
         format: yaml
         maintenance: auto （generate_asset_index.py）
-        entry_count: 24434
+        entry_count: 31962
         counting_rule: total_assets（全项目文件资产总数，2026-09-06 实测回填——原 0 为回填遗漏）
         status: draft
         description: 全项目统一资产索引 SSoT——自动发现六大目录下全部文件资产，四维分类（type/layer/status/priority）登记，与 24 个注册表持续对账。蓝图 MOD-INF-026
@@ -393,7 +399,8 @@ tiers:
         format: yaml
         tier: tier_1_governance
         maintenance: manual
-        entry_count: 745  # 2026-08-11 更新：含 2026-08-11 第一性原理调研发现的 35 项 proposed 议题（#ARCH-AIGOV-001~010/AICOLLAB-001/RISK-001~005/QUANT-001~005/REG-001~005/ASHARE-001~002/COMPLIANCE-001/SDD-001/AUDIT-001/DRIFT-002/EXEC-001/CI-001/REGCAN-001）
+        entry_count: 746  # 2026-08-11 更新：含 2026-08-11 第一性原理调研发现的 35 项 proposed 议题（#ARCH-AIGOV-001~010/AICOLLAB-001/RISK-001~005/QUANT-001~005/REG-001~005/ASHARE-001~002/COMPLIANCE-001/SDD-001/AUDIT-001/DRIFT-002/EXEC-001/CI-001/REGCAN-001）
+        counting_rule: entries 数组条目数（含 deprecated 全量）
         status: active
         ssoT_for: architecture_issue_id, issue_status, issue_adjudication
 
@@ -419,7 +426,8 @@ tiers:
         format: yaml
         tier: tier_1_governance
         maintenance: manual（aliases/description 随生成器增减同步）
-        entry_count: 1517
+        entry_count: 1521
+        counting_rule: creation_tokens 数组条目数
         status: active
         description: >-
           12 个架构生成器的发现索引——capability_canonical_file_registry.yaml 中
@@ -498,7 +506,7 @@ tiers:
         maintenance: manual
         entry_count: 74
         status: active
-        description: 138 个企业架构级模块 ID
+        description: 74 个企业架构级模块 ID
 
       - registry_id: REG-ARCH-001
         name: 架构模型索引
@@ -507,7 +515,7 @@ tiers:
         maintenance: manual
         entry_count: 74
         status: active
-        description: 26 个 B-track / C-track 架构分区项
+        description: 74 个架构分区项
 
       - registry_id: REG-CACHE-001
         name: Grandfather 缓存注册表
@@ -523,7 +531,8 @@ tiers:
         physical_path: src/zephyr/shared/contracts/freeze_manifest.yaml
         format: yaml
         maintenance: manual
-        entry_count: 15
+        entry_count: 38
+        counting_rule: 六组 *_contracts 数组条目数合计（已冻结跨层契约全量）
         status: active
         description: 38 个已冻结的跨层契约
 
@@ -564,7 +573,8 @@ tiers:
         physical_path: docs/01_policies_and_standards/_registry/catalogs/universe_registry.yaml
         format: yaml
         maintenance: manual
-        entry_count: 6
+        entry_count: 7
+        counting_rule: universes 数组条目数
         status: active
         description: 股票池/标的池唯一真源（SSoT）——打板连板梯队池/全A可交易池/CSI300/CSI800/事件驱动池等 6 条（2026-08-20 实测）。回测必需输入：每次回测 MUST 指定 universe_id。#ARCH-BREG-001 P0
         owned_by: governance
@@ -585,7 +595,8 @@ tiers:
         physical_path: docs/01_policies_and_standards/_registry/catalogs/cost_model_registry.yaml
         format: yaml
         maintenance: manual
-        entry_count: 5
+        entry_count: 6
+        counting_rule: cost_models 数组条目数
         status: active
         description: 交易成本模型唯一真源（SSoT）——A股标准（万3佣金/万5印花税/万0.1过户费/1bp滑点）/保守/零成本/T0 等 5 条（2026-08-20 实测）。回测必需输入：MUST 指定 cost_model_id 扣成本。#ARCH-BREG-001 P0
         owned_by: governance
@@ -606,7 +617,8 @@ tiers:
         physical_path: docs/01_policies_and_standards/_registry/catalogs/strategy_registry.yaml
         format: yaml
         maintenance: manual
-        entry_count: 146
+        entry_count: 149
+        counting_rule: strategies 数组条目数
         status: draft
         description: 交易策略唯一真源（SSoT）——5 类 146 条已落盘（2026-08-20 实测）。P1-A Step1-8 全量闭环（code_path 半派生补全完成）。#ARCH-BREG-001 P1-A
         owned_by: governance
