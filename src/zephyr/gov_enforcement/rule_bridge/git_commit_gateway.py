@@ -231,9 +231,15 @@ class CommitResult:
 class _GlobalCommitLock:
     """跨进程全局串行锁（os.open O_CREAT|O_EXCL 原子创建）。
 
-    锁文件: .ailocks/git_commit_global.lock（全项目唯一，串行化所有 commit）
+    锁文件: <主仓根>/.ailocks/git_commit_global.lock（全项目唯一，串行化所有 commit）
     TTL: 30 分钟（防进程崩溃死锁，与 staging_area.py 一致）
     僵尸锁检测：持有进程 PID 已死亡时立即清理（零窗口期）。
+
+    B22⑤（2026-09-06）：锁路径锚主仓根——worktree 进程传入的 project_root 位于
+    .worktrees/<session>/ 下时剥离回主仓（strip_session_worktree），恢复"全项目
+    唯一串行锁"不变量（原实现各 worktree 进程各持一把，跨仓不互斥；
+    #ARCH-WORKTREE-GATE-001 同族，先例 DB_PATH 锚 MAIN_REPO_ROOT）。
+    对 tmp 测试库路径原样返回（不在 worktree 段下），测试隔离保持。
     """
 
     def __init__(
@@ -242,7 +248,9 @@ class _GlobalCommitLock:
         timeout: float = _LOCK_TIMEOUT_DEFAULT,
         poll_interval: float = _POLL_INTERVAL,
     ) -> None:
-        self._lock_file = project_root / ".ailocks" / _GLOBAL_LOCK_FILE
+        from zephyr.shared.io.paths import strip_session_worktree
+
+        self._lock_file = strip_session_worktree(project_root) / ".ailocks" / _GLOBAL_LOCK_FILE
         self._lock_file.parent.mkdir(parents=True, exist_ok=True)
         self._timeout = timeout
         self._poll_interval = poll_interval
