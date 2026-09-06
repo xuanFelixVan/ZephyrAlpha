@@ -10,7 +10,7 @@
 # [STABILITY] evolving
 # [SAFETY] M
 # [AI_AUTONOMY] human_gated
-# [ERROR_CONTRACT] RlPortfolioError(占位 ZA-PF-UNREGISTERED-RL-PORTFOLIO)——trainer/门禁缺失/场景错配/离线标注摘除/非Decimal/AC轨迹非法/步数错配/底仓变动/风控未过时抛
+# [ERROR_CONTRACT] RlPortfolioError(ZA-PF-0086)——trainer/门禁缺失/场景错配/离线标注摘除/非Decimal/AC轨迹非法/步数错配/底仓变动/风控未过时抛
 # [TESTS] tests/pf_core/test_rl_portfolio_execution.py
 # [A_module] module_id=MOD-PF-013 | layer=module | stability=evolving | safety=M | ai_autonomy=human_gated
 # [TTL] permanent
@@ -110,8 +110,10 @@ _FUSE_NOTE: Final = "偏离AC轨迹超阈值熔断：停用RL动作，回落AC�
 class RlPortfolioError(Exception):
     """RL 组合优化与执行编排输入/状态非法（Fail-Closed）。
 
-    未登记错误码-申请中：占位 ZA-PF-UNREGISTERED-RL-PORTFOLIO。
+    错误码 ZA-PF-0086 已登记转正（2026-09-06 Owner 批准批）。
     """
+
+    error_code = "ZA-PF-0086"
 
 
 class RlScenario(str, Enum):

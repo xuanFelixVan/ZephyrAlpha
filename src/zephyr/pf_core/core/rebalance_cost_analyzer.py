@@ -10,7 +10,7 @@
 # [STABILITY] evolving
 # [SAFETY] M
 # [AI_AUTONOMY] human_gated
-# [ERROR_CONTRACT] RebalanceCostError(占位 ZA-PF-UNREGISTERED-REBALANCE-COST)——税率表缺键/越界/非Decimal/空腿单/非法数量价格成本时抛
+# [ERROR_CONTRACT] RebalanceCostError(ZA-PF-0085)——税率表缺键/越界/非Decimal/空腿单/非法数量价格成本时抛
 # [TESTS] tests/pf_core/test_rebalance_cost_analyzer.py
 # [A_module] module_id=MOD-PF-014 | layer=module | stability=evolving | safety=M | ai_autonomy=human_gated
 # [TTL] permanent
@@ -107,8 +107,10 @@ _BPS_FACTOR: Final = Decimal("10000")
 class RebalanceCostError(Exception):
     """再平衡成本分析输入/配置非法（Fail-Closed）。
 
-    未登记错误码-申请中：占位 ZA-PF-UNREGISTERED-REBALANCE-COST。
+    错误码 ZA-PF-0085 已登记转正（2026-09-06 Owner 批准批）。
     """
+
+    error_code = "ZA-PF-0085"
 
 
 class TradeSide(str, Enum):

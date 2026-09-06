@@ -3647,6 +3647,18 @@ error_codes:
   file: src/zephyr/pf_alloc/core/strategy_screener_3d.py
   introduced: '2026-09-06: Owner 批准占位码转正批（B17-②）——ZA-PA-UNREGISTERED-STRATEGY-SCREENER 转正'
 
+# --- 2026-09-06 占位码转正批 PF（Owner 批准 B17-②，取号=段内 max+1 顺延）---
+- code: ZA-PF-0085
+  class: RebalanceCostError
+  module: zephyr.pf_core.core.rebalance_cost_analyzer
+  file: src/zephyr/pf_core/core/rebalance_cost_analyzer.py
+  introduced: '2026-09-06: Owner 批准占位码转正批（B17-②）——ZA-PF-UNREGISTERED-REBALANCE-COST 转正'
+- code: ZA-PF-0086
+  class: RlPortfolioError
+  module: zephyr.pf_core.rl_portfolio_execution
+  file: src/zephyr/pf_core/rl_portfolio_execution.py
+  introduced: '2026-09-06: Owner 批准占位码转正批（B17-②）——ZA-PF-UNREGISTERED-RL-PORTFOLIO 转正'
+
 known_duplicates: []
 # ============================================================
 # 已知缺口（诚实登记，2026-08-15 #ARCH-MON-001 批次实测）
