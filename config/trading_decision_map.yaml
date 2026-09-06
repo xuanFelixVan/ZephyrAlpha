@@ -160,9 +160,7 @@ nodes:
     #   封顶：周级退潮→日级最高 RISK_OFF；月级危机→日级最高 RISK_OFF（封顶不覆盖，日级如实报告）
     #   对齐加成：月+周+日三层同向→预算带取上限（业界三级共振）；冲突→取下限+高层赢
     decision_question: >-
-      双轴合成：RegimeSnapshot 概率（宏观谨慎度）× 情绪六段分布（微观机会窗口）；
-      输出预算带定位 + 策略路由 + 冲突仲裁（熵高分裂市→降档+Owner 接管）；
-      向日级输出封顶约束（月/周档位决定日级水温上限）
+      双轴合成：RegimeSnapshot 概率（宏观）×情绪六段分布（微观）；输出预算带+策略路由+冲突仲裁（熵高分裂市→降档+Owner 接管）；日级水温受月/周档位封顶
     factor_refs: []
     data_refs: [DS-098]
     module_ref: src/zephyr/regime/core/regime_detector.py
@@ -1291,7 +1289,7 @@ nodes:
     layer: L4
     node_type: stage
     point: 盘中
-    decision_question: 今天什么窗口下单（尾盘集中为主；竞价分段铁律 9:15-9:20 可撤假象多/9:20-9:25 只挂不撤真实资金/14:57-15:00 尾盘竞价不可撤；时间锚 2:30 窗口背离与 2:57 竞价）
+    decision_question: 今天什么窗口下单（尾盘集中为主；竞价铁律 9:15-9:20 可撤假象多/9:20-9:25 只挂不撤/14:57-15:00 尾盘竞价不可撤；时间锚 2:30 背离与 2:57 竞价）
     parent_node: TDM-E-L4
     factor_refs: []
     data_refs: [DS-150]
@@ -1400,7 +1398,7 @@ nodes:
     module_ref: null
     algo_refs: []
     doc_ref: "docs/02_enterprise_architecture/07_trading_decision_architecture/design_memos/41_buy_flow.md#§3.9"
-    activation: 持续
+    activation: continuous
     invalidation: null
     ai_autonomy: auto
     fallback: 队列积压→降级批量处理+告警（41 号降级语义）
@@ -1440,7 +1438,7 @@ nodes:
     module_ref: null
     algo_refs: []
     doc_ref: "docs/02_enterprise_architecture/07_trading_decision_architecture/design_memos/41_buy_flow.md#§3.7"
-    activation: 持续
+    activation: continuous
     invalidation: null
     ai_autonomy: auto
     fallback: null
@@ -1461,7 +1459,7 @@ nodes:
     module_ref: src/zephyr/ex_core/async_fill_dispatcher.py
     algo_refs: []
     doc_ref: null
-    activation: 持续
+    activation: continuous
     invalidation: PendingCancel 窗口内原单仍可成交=竞态，必须以交易所回执为准
     ai_autonomy: paper
     fallback: null
@@ -1521,7 +1519,7 @@ nodes:
     module_ref: null
     algo_refs: []
     doc_ref: null
-    activation: 持续
+    activation: continuous
     invalidation: null
     ai_autonomy: auto
     fallback: 对账不平→halt 新单+人工介入（宪章约束五 RTO 语义）
@@ -1626,9 +1624,7 @@ nodes:
     # 横切：过渡带（最大隶属度<60%）预算×0.5-0.7；尾部预备金 10-15% 永不投出；
     #   小资金容量优势允许高集中度（earned 单票集中，游资路径），风险百分比制资金无关
     decision_question: >-
-      总仓位怎么切给各策略 sleeve（Millennium pod 模型单体版）；
-      六段预算带见上注释，带内实际仓位=状态分布加权插值（灰度非查表）；
-      过渡带降仓×0.5-0.7 + 尾部预备金 10-15% 恒定预留
+      总仓位怎么切给各 sleeve（Millennium pod 单体版）；带内实际仓位=状态分布加权插值（灰度非查表）；过渡带降仓×0.5-0.7+尾部预备金 10-15% 恒定预留
     factor_refs: []
     data_refs: []
     module_ref: null

@@ -5,7 +5,7 @@ title: 交易决策地图（Trading Decision Map）——决策内容索引层�
 owner: ZephyrAlpha-Owner
 language: zh
 status: active
-version: "2.2.0"
+version: "2.3.0"
 date: 2026-09-04
 topic: trading_decision_map
 scope: 07_trading_decision_architecture
@@ -285,6 +285,37 @@ E-L2 收口：**10 树枝 19 节点**。
 - **09 更名"执行硬约束"**：扩语义加成本模型实时估算（佣金+印花税+滑点——宪章方法论约束一）
 
 **治理阶梯**：新增 10/11/12=实盘执行节点 ai_autonomy=paper；13 对账=auto。**L3 收口 25 节点（12 树枝，树枝数超 L2 ✓）/L4 收口 14 节点（13 树枝）**。
+
+### 2.20 门禁包 R13-R19 接线+节点容量限死（D32/D33，Owner 裁定"颗粒度必须限死，不能全写在一个节点里"）
+
+**背景**：D31 粒度倒挂暴露结构问题——地图此前只防"引用断链"（R1-R8），不防"单节点承载过粗/内容塞爆"。Owner 指令：先建门禁再继续加内容。
+
+**已建成门禁全景（R1-R19，validate_decision_map 纯函数，error=0 才可被下游消费）**：
+
+| 规则 | 防什么 | 级别 |
+|---|---|---|
+| R1 | 节点枚举合法性（market/flow/node_type/point）+layer 前缀与 flow 一致 | error |
+| R2 | 边端点存在+edge_type 枚举 | error |
+| R3 | 策略引用存在（REG-STR-001 或代码 StrategyMeta 双真源） | error |
+| R4/R5 | 因子/数据引用存在（REG-FCT-001/REG-DATAFLOW-001） | error |
+| R6 | 置信度枚举+verified 必带 evidence | error |
+| R7 | 矩阵格引用存在+mounted⊆节点挂载（防两处漂移） | error |
+| R8 | sequence 边成环 | error |
+| R10 | 市场实例一致性（节点 market∈顶层声明+声明市场非空壳） | error |
+| R12 | 整装方案（sleeve 存在/权重和≤1/activation_state 在列轴） | error |
+| R13 | algo_refs 存在于算法库（EXA 执行算法+IND 技术指标并集） | error |
+| R14 | doc_ref 文件存在（相对仓库根，# 锚前部分） | error |
+| R15 | 治理字段枚举（activation/ai_autonomy）+v1.5 节点（有 parent）必填 | error |
+| R16 | parent 存在+父链无环+树深≤4；**树宽>12 记 warning**（该分层信号不阻断） | error/warning |
+| R17 | **粒度限死**：decision_question≤100 字+禁模糊词（视情况/看情况/酌情/到时候再说）；**容量限死**：strategy_mounts≤8/factor_refs≤12/data_refs≤8/algo_refs≤8 | error |
+| R18 | name_zh 全图唯一 | error |
+| R19 | module_ref 文件存在（非空时）；空缺仍为 warning（红节点占位语义不变） | error |
+
+**接线修复**：D32 代码曾成死代码（_validate_governance 未被 validate_decision_map 调用）+repo_root 上溯层级错误（3 层应为 4 层）——本轮修复接线并补 19 个测试用例（总 38 全绿）。
+
+**真源违规治理**（门禁生效即暴露，已修）：3 节点 decision_question 超限（TDM-E-L1-AGG 113 字→85/TDM-F-C1 108→90/TDM-E-L4-02 101→93，压缩不丢语义，详细规则留注释区）；4 节点 activation 用中文"持续"→continuous（TDM-E-L4-07/09/10/13）。
+
+**后续增量门禁（未建，按需立项）**：①node_id 命名规范门禁（TDM-{流}-{层}-{序号} 格式校验）；②状态矩阵节点全覆盖 warning（挂载策略的环节未进任何格子）；③地图×depgraph 双向对账（module_ref 指向的模块在 depgraph 登记）；④成交量门禁（单流节点数随血肉阶段增长的上限预算）。
 
 ## 3. 考虑过的替代方案与拒绝理由
 

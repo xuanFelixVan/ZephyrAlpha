@@ -2,7 +2,7 @@
 # [DOMAIN] D_TRADING
 # [TESTS] tests/trading/test_decision_map.py
 # [TTL] permanent
-"""交易决策地图模块测试——加载/schema/校验 R1-R8/真源自检（回归锚）。"""
+"""交易决策地图模块测试——加载/schema/校验 R1-R19/真源自检（回归锚）。"""
 
 from __future__ import annotations
 
@@ -170,8 +170,8 @@ class TestValidate:
 
     def test_r8_sequence_cycle_detected(self, tmp_path: Path) -> None:
         payload = _minimal_payload()
-        payload["nodes"].append(_make_min_node(node_id="TDM-T-2"))
-        payload["nodes"].append(_make_min_node(node_id="TDM-T-3"))
+        payload["nodes"].append(_make_min_node(node_id="TDM-T-2", name_zh="第二环节"))
+        payload["nodes"].append(_make_min_node(node_id="TDM-T-3", name_zh="第三环节"))
         payload["edges"] = [
             {"from_node": "TDM-T-1", "to_node": "TDM-T-2", "edge_type": "sequence"},
             {"from_node": "TDM-T-2", "to_node": "TDM-T-3", "edge_type": "sequence"},
@@ -185,7 +185,7 @@ class TestValidate:
     def test_r8_no_cycle_for_feedback(self, tmp_path: Path) -> None:
         """feedback 边允许回指（指数↔情绪双向互动，D6）。"""
         payload = _minimal_payload()
-        payload["nodes"].append(_make_min_node(node_id="TDM-T-2"))
+        payload["nodes"].append(_make_min_node(node_id="TDM-T-2", name_zh="第二环节"))
         payload["edges"] = [
             {"from_node": "TDM-T-1", "to_node": "TDM-T-2", "edge_type": "sequence"},
             {"from_node": "TDM-T-2", "to_node": "TDM-T-1", "edge_type": "feedback"},
@@ -220,6 +220,201 @@ class TestValidate:
         ok, issues = validate_decision_map(dm, _REGISTRY_DIR, _KNOWN_STRATEGIES)
         assert ok is False
         assert any(i.code == "R5" and "DS-NO-SUCH-999" in i.detail for i in issues)
+
+
+# ── A3 D32/D33 门禁包 R13-R19 ────────────────────────────────────────────────
+
+
+class TestGovernanceGates:
+    """D32 治理门禁（R13-R16/R18）+ D33 容量粒度门禁（R17/R19）。"""
+
+    def test_r13_unknown_algo_ref(self, tmp_path: Path) -> None:
+        payload = _minimal_payload()
+        payload["nodes"][0]["algo_refs"] = ["EXA-NO-SUCH-001"]
+        dm = load_decision_map(_write_map(tmp_path, payload))
+        ok, issues = validate_decision_map(dm, _REGISTRY_DIR, _KNOWN_STRATEGIES)
+        assert ok is False
+        assert any(i.code == "R13" and "EXA-NO-SUCH-001" in i.detail for i in issues)
+
+    def test_r13_known_algo_ref_ok(self, tmp_path: Path) -> None:
+        payload = _minimal_payload()
+        payload["nodes"][0]["algo_refs"] = ["EXA-TWAP-001"]
+        dm = load_decision_map(_write_map(tmp_path, payload))
+        ok, issues = validate_decision_map(dm, _REGISTRY_DIR, _KNOWN_STRATEGIES)
+        assert not any(i.code == "R13" for i in issues)
+
+    def test_r14_doc_ref_missing_file(self, tmp_path: Path) -> None:
+        payload = _minimal_payload()
+        payload["nodes"][0]["doc_ref"] = "docs/__no_such_doc__.md#§1"
+        dm = load_decision_map(_write_map(tmp_path, payload))
+        ok, issues = validate_decision_map(dm, _REGISTRY_DIR, _KNOWN_STRATEGIES)
+        assert ok is False
+        assert any(i.code == "R14" and "__no_such_doc__.md" in i.detail for i in issues)
+
+    def test_r14_doc_ref_existing_file_ok(self, tmp_path: Path) -> None:
+        payload = _minimal_payload()
+        payload["nodes"][0]["doc_ref"] = "AGENTS.md"
+        dm = load_decision_map(_write_map(tmp_path, payload))
+        _, issues = validate_decision_map(dm, _REGISTRY_DIR, _KNOWN_STRATEGIES)
+        assert not any(i.code == "R14" for i in issues)
+
+    def test_r15_bad_activation_enum(self, tmp_path: Path) -> None:
+        payload = _minimal_payload()
+        payload["nodes"][0]["activation"] = "半夜"
+        dm = load_decision_map(_write_map(tmp_path, payload))
+        ok, issues = validate_decision_map(dm, _REGISTRY_DIR, _KNOWN_STRATEGIES)
+        assert ok is False
+        assert any(i.code == "R15" and "activation 非法" in i.detail for i in issues)
+
+    def test_r15_v15_node_requires_governance_fields(self, tmp_path: Path) -> None:
+        payload = _minimal_payload()
+        payload["nodes"].append(
+            _make_min_node(node_id="TDM-T-2", name_zh="子环节", parent_node="TDM-T-1")
+        )
+        dm = load_decision_map(_write_map(tmp_path, payload))
+        ok, issues = validate_decision_map(dm, _REGISTRY_DIR, _KNOWN_STRATEGIES)
+        assert ok is False
+        assert any(i.code == "R15" and "activation" in i.detail for i in issues)
+        assert any(i.code == "R15" and "ai_autonomy" in i.detail for i in issues)
+
+    def test_r15_v15_node_with_governance_ok(self, tmp_path: Path) -> None:
+        payload = _minimal_payload()
+        payload["nodes"].append(
+            _make_min_node(
+                node_id="TDM-T-2",
+                name_zh="子环节",
+                parent_node="TDM-T-1",
+                activation="intraday",
+                ai_autonomy="auto",
+            )
+        )
+        dm = load_decision_map(_write_map(tmp_path, payload))
+        ok, issues = validate_decision_map(dm, _REGISTRY_DIR, _KNOWN_STRATEGIES)
+        assert not any(i.code == "R15" for i in issues)
+        assert ok is True
+
+    def test_r16_parent_dangling(self, tmp_path: Path) -> None:
+        payload = _minimal_payload()
+        payload["nodes"][0]["parent_node"] = "TDM-GHOST"
+        dm = load_decision_map(_write_map(tmp_path, payload))
+        ok, issues = validate_decision_map(dm, _REGISTRY_DIR, _KNOWN_STRATEGIES)
+        assert ok is False
+        assert any(i.code == "R16" and "TDM-GHOST" in i.detail for i in issues)
+
+    def test_r16_parent_cycle(self, tmp_path: Path) -> None:
+        payload = _minimal_payload()
+        payload["nodes"][0]["parent_node"] = "TDM-T-2"
+        payload["nodes"].append(
+            _make_min_node(node_id="TDM-T-2", name_zh="父环节", parent_node="TDM-T-1")
+        )
+        dm = load_decision_map(_write_map(tmp_path, payload))
+        ok, issues = validate_decision_map(dm, _REGISTRY_DIR, _KNOWN_STRATEGIES)
+        assert ok is False
+        assert any(i.code == "R16" and "成环" in i.detail for i in issues)
+
+    def test_r16_tree_depth_over_limit(self, tmp_path: Path) -> None:
+        payload = _minimal_payload()
+        chain = ["TDM-T-1"]
+        for i in range(2, 8):  # 1→2→...→7 深度 6 > 4
+            nid = f"TDM-T-{i}"
+            payload["nodes"].append(
+                _make_min_node(
+                    node_id=nid,
+                    name_zh=f"环节{i}",
+                    parent_node=chain[-1],
+                    activation="intraday",
+                    ai_autonomy="auto",
+                )
+            )
+            chain.append(nid)
+        dm = load_decision_map(_write_map(tmp_path, payload))
+        ok, issues = validate_decision_map(dm, _REGISTRY_DIR, _KNOWN_STRATEGIES)
+        assert ok is False
+        assert any(i.code == "R16" and "树深度" in i.detail for i in issues)
+
+    def test_r16_tree_width_warning_not_error(self, tmp_path: Path) -> None:
+        payload = _minimal_payload()
+        for i in range(13):
+            payload["nodes"].append(
+                _make_min_node(
+                    node_id=f"TDM-C-{i}",
+                    name_zh=f"子环节{i}",
+                    parent_node="TDM-T-1",
+                    activation="intraday",
+                    ai_autonomy="auto",
+                )
+            )
+        dm = load_decision_map(_write_map(tmp_path, payload))
+        ok, issues = validate_decision_map(dm, _REGISTRY_DIR, _KNOWN_STRATEGIES)
+        assert ok is True  # warning 不阻断
+        assert any(i.code == "R16" and i.level == "warning" and "树宽过大" in i.detail for i in issues)
+
+    def test_r17_question_too_long(self, tmp_path: Path) -> None:
+        payload = _minimal_payload()
+        payload["nodes"][0]["decision_question"] = "长" * 101
+        dm = load_decision_map(_write_map(tmp_path, payload))
+        ok, issues = validate_decision_map(dm, _REGISTRY_DIR, _KNOWN_STRATEGIES)
+        assert ok is False
+        assert any(i.code == "R17" and "超上限" in i.detail for i in issues)
+
+    def test_r17_vague_word(self, tmp_path: Path) -> None:
+        payload = _minimal_payload()
+        payload["nodes"][0]["decision_question"] = "到时候再说怎么下单"
+        dm = load_decision_map(_write_map(tmp_path, payload))
+        ok, issues = validate_decision_map(dm, _REGISTRY_DIR, _KNOWN_STRATEGIES)
+        assert ok is False
+        assert any(i.code == "R17" and "模糊词" in i.detail for i in issues)
+
+    def test_r17_mounts_over_capacity(self, tmp_path: Path) -> None:
+        payload = _minimal_payload()
+        payload["nodes"][0]["strategy_mounts"] = [
+            {"strategy_ref": "daban-sleeve", "confidence": "proposed", "evidence": None}
+        ] * 9
+        dm = load_decision_map(_write_map(tmp_path, payload))
+        ok, issues = validate_decision_map(dm, _REGISTRY_DIR, _KNOWN_STRATEGIES)
+        assert ok is False
+        assert any(i.code == "R17" and "strategy_mounts" in i.detail for i in issues)
+
+    def test_r17_factor_refs_over_capacity(self, tmp_path: Path) -> None:
+        payload = _minimal_payload()
+        payload["nodes"][0]["factor_refs"] = [f"FCT-X-{i:03d}" for i in range(13)]
+        dm = load_decision_map(_write_map(tmp_path, payload))
+        ok, issues = validate_decision_map(dm, _REGISTRY_DIR, _KNOWN_STRATEGIES)
+        assert ok is False
+        assert any(i.code == "R17" and "factor_refs" in i.detail for i in issues)
+
+    def test_r17_within_capacity_ok(self, tmp_path: Path) -> None:
+        payload = _minimal_payload()
+        payload["nodes"][0]["strategy_mounts"] = [
+            {"strategy_ref": "daban-sleeve", "confidence": "proposed", "evidence": None}
+        ] * 8
+        dm = load_decision_map(_write_map(tmp_path, payload))
+        _, issues = validate_decision_map(dm, _REGISTRY_DIR, _KNOWN_STRATEGIES)
+        assert not any(i.code == "R17" for i in issues)
+
+    def test_r18_duplicate_name_zh(self, tmp_path: Path) -> None:
+        payload = _minimal_payload()
+        payload["nodes"].append(_make_min_node(node_id="TDM-T-2", name_zh="测试环节"))
+        dm = load_decision_map(_write_map(tmp_path, payload))
+        ok, issues = validate_decision_map(dm, _REGISTRY_DIR, _KNOWN_STRATEGIES)
+        assert ok is False
+        assert any(i.code == "R18" and "重复" in i.detail for i in issues)
+
+    def test_r19_module_ref_missing_file(self, tmp_path: Path) -> None:
+        payload = _minimal_payload()
+        payload["nodes"][0]["module_ref"] = "src/zephyr/__no_such_module__.py"
+        dm = load_decision_map(_write_map(tmp_path, payload))
+        ok, issues = validate_decision_map(dm, _REGISTRY_DIR, _KNOWN_STRATEGIES)
+        assert ok is False
+        assert any(i.code == "R19" and "__no_such_module__.py" in i.detail for i in issues)
+
+    def test_r19_module_ref_existing_file_ok(self, tmp_path: Path) -> None:
+        payload = _minimal_payload()
+        payload["nodes"][0]["module_ref"] = "src/zephyr/trading/decision_map.py"
+        dm = load_decision_map(_write_map(tmp_path, payload))
+        _, issues = validate_decision_map(dm, _REGISTRY_DIR, _KNOWN_STRATEGIES)
+        assert not any(i.code == "R19" for i in issues)
+        assert not any(i.level == "warning" and "module_ref 缺失" in i.detail for i in issues)
 
 
 # ── 真源自检（回归锚：仓库内真实地图必须持续全绿）───────────────────────────

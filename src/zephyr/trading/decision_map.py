@@ -6,7 +6,7 @@
 # [STARTUP] imported（纯函数库，无常驻进程/无事件订阅）
 # [MATURITY] production
 # [INVARIANTS] INV-1 地图YAML不复制注册表条目只持稳定标识符引用; INV-2 load产出全frozen dataclass; INV-3 validate纯函数无副作用; INV-4 error=0才可被下游消费; INV-5 module_ref=null记warning不记error（V0缺口可视化输入）
-# [MODIFY-GUARD] schema_version 变更必须同步升级 dataclasses+校验规则+测试（R1-R8）
+# [MODIFY-GUARD] schema_version 变更必须同步升级 dataclasses+校验规则+测试（R1-R19）
 # [STABILITY] evolving
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
@@ -41,8 +41,8 @@
 # - id: A2
 #   name_zh: ② 校验（validate_decision_map）
 #   name_en: validate_decision_map
-#   intro: 引用存在性校验 R1-R8 → (ok, GapReport)；缺口即地图红节点语义
-#   desc: R1 节点枚举; R2 边端点+类型+无环; R3 策略引用（STR-* 查 REG-STR-001，其余查 known_strategy_ids）; R4 因子引用 REG-FCT-001; R5 数据引用 REG-DATAFLOW-001 datasets; R6 置信度枚举+verified必带evidence; R7 矩阵格引用存在性; R8 sequence 边成环检测; module_ref=null 记 warning
+#   intro: 引用存在性+治理门禁 R1-R19 → (ok, GapReport)；缺口即地图红节点语义
+#   desc: R1 节点枚举; R2 边端点+类型+无环; R3 策略引用（STR-* 查 REG-STR-001，其余查 known_strategy_ids）; R4 因子引用 REG-FCT-001; R5 数据引用 REG-DATAFLOW-001 datasets; R6 置信度枚举+verified必带evidence; R7 矩阵格引用存在性; R8 sequence 边成环检测; R10 市场实例一致性; R12 整装方案; R13 算法引用（IND/EXA）; R14 doc_ref 存在; R15 治理字段枚举+新节点必填; R16 父子完整+树深≤4+树宽预警; R17 粒度（问题≤100字+禁模糊词）+容量（挂载≤8/因子≤12/数据≤8/算法≤8）; R18 name_zh 唯一; R19 module_ref 存在; module_ref=null 记 warning
 #   inputs: DecisionMap I2 I3
 #   outputs: (bool, list[GapReportItem])
 # 层: 输出
@@ -103,6 +103,21 @@ _LAYER_PREFIX_BY_FLOW: Final = {
 _REG_STRATEGY = "strategy_registry.yaml"
 _REG_FACTOR = "factor_registry.yaml"
 _REG_DATA = "data_asset_registry.yaml"
+_REG_EXA = "execution_algo_registry.yaml"
+_REG_IND = "technical_indicator_registry.yaml"
+
+# D32 门禁包常量（R15 治理字段枚举 / R17 粒度门禁 / R16 树深上限）
+_ACTIVATIONS = frozenset({"premarket", "intraday", "postmarket", "weekly", "on_demand", "continuous"})
+_AI_AUTONOMY = frozenset({"shadow", "paper", "pilot", "daily_review", "auto"})
+_VAGUE_WORDS = ("视情况", "看情况", "酌情", "到时候再说")
+_MAX_QUESTION_LEN = 100
+_MAX_TREE_DEPTH = 4
+# D33 节点容量门禁（Owner 裁定"单节点承载必须限死，不能全写在一个节点里"）：字段级数量上限
+_MAX_MOUNTS = 8        # strategy_mounts 上限（超出=该拆环节）
+_MAX_FACTOR_REFS = 12  # factor_refs 上限
+_MAX_DATA_REFS = 8     # data_refs 上限
+_MAX_ALGO_REFS = 8     # algo_refs 上限
+_WARN_CHILDREN = 12    # 单父节点子节点数 warning 阈值（超=提示分层，不阻断）
 
 
 class DecisionMapSchemaError(ValueError):
@@ -120,7 +135,7 @@ class StrategyMount:
 
 @dataclass(frozen=True)
 class DecisionMapNode:
-    """决策链节点（环节/传感器/聚合/横切）。"""
+    """决策链节点（环节/传感器/聚合/横切；v1.5 增治理七字段，D17/D18/D32）。"""
 
     node_id: str
     name_zh: str
@@ -134,6 +149,14 @@ class DecisionMapNode:
     data_refs: tuple[str, ...] = ()
     module_ref: str | None = None
     strategy_mounts: tuple[StrategyMount, ...] = ()
+    # v1.5 治理字段（D16 节点规范+D17 字段审计+D18 治理阶梯）
+    parent_node: str | None = None
+    activation: str | None = None
+    invalidation: str | None = None
+    ai_autonomy: str | None = None
+    fallback: str | None = None
+    algo_refs: tuple[str, ...] = ()
+    doc_ref: str | None = None
 
 
 @dataclass(frozen=True)
@@ -249,6 +272,14 @@ def _parse_node(raw: dict) -> DecisionMapNode:
         data_refs=tuple(str(x) for x in raw.get("data_refs", []) or []),
         module_ref=raw.get("module_ref"),
         strategy_mounts=mounts,
+        # v1.5 治理字段（缺失=None，校验按"有则校验+新节点必填"分级）
+        parent_node=(str(raw["parent_node"]) if raw.get("parent_node") else None),
+        activation=(str(raw["activation"]) if raw.get("activation") else None),
+        invalidation=(str(raw["invalidation"]) if raw.get("invalidation") else None),
+        ai_autonomy=(str(raw["ai_autonomy"]) if raw.get("ai_autonomy") else None),
+        fallback=(str(raw["fallback"]) if raw.get("fallback") else None),
+        algo_refs=tuple(str(x) for x in raw.get("algo_refs", []) or []),
+        doc_ref=(str(raw["doc_ref"]) if raw.get("doc_ref") else None),
     )
 
 
@@ -447,6 +478,125 @@ def _validate_matrix_cell(
         add("error", "R7", c.node_id, f"矩阵格 confidence 非法: {c.confidence}")
 
 
+def _validate_governance(
+    dm: DecisionMap,
+    registry_dir: Path,
+    algo_ids: frozenset[str],
+    add,
+    emit_stats: bool = False,
+) -> None:
+    """D32/D33 门禁包：R13 算法引用 / R14 附件存在 / R15 治理字段 / R16 父子完整性+树宽 / R17 粒度+容量 / R18 命名唯一 / R19 模块存在。"""
+    by_id = {n.node_id: n for n in dm.nodes}
+
+    # R18 name_zh 全图唯一（防同名歧义/防撞车延伸）
+    seen_names: dict[str, str] = {}
+    for n in dm.nodes:
+        if n.name_zh in seen_names:
+            add("error", "R18", n.node_id, f"name_zh 与 {seen_names[n.name_zh]} 重复: {n.name_zh}")
+        else:
+            seen_names[n.name_zh] = n.node_id
+
+    # R14/R19 附件与模块存在性（相对仓库根；registry_dir=catalogs，parents[3]=仓库根）
+    repo_root = registry_dir.parents[3]
+
+    # R15/R17/R13/R14/R19 逐节点
+    for n in dm.nodes:
+        for a in n.algo_refs:
+            if a not in algo_ids:
+                add("error", "R13", n.node_id, f"algo_ref 不存在于算法库（IND/EXA）: {a}")
+        if n.doc_ref:
+            rel = n.doc_ref.split("#", 1)[0]
+            if rel and not (repo_root / rel).exists():
+                add("error", "R14", n.node_id, f"doc_ref 文件不存在: {rel}")
+        if n.module_ref and not (repo_root / n.module_ref).exists():
+            add("error", "R19", n.node_id, f"module_ref 文件不存在: {n.module_ref}")
+        if n.activation is not None and n.activation not in _ACTIVATIONS:
+            add("error", "R15", n.node_id, f"activation 非法: {n.activation}")
+        if n.ai_autonomy is not None and n.ai_autonomy not in _AI_AUTONOMY:
+            add("error", "R15", n.node_id, f"ai_autonomy 非法: {n.ai_autonomy}")
+        # v1.5 节点（有 parent_node=新规范节点）治理字段必填；老节点 grandfather（有则校验）
+        if n.parent_node:
+            if n.activation is None:
+                add("error", "R15", n.node_id, "v1.5 节点缺 activation（时效窗必填）")
+            if n.ai_autonomy is None:
+                add("error", "R15", n.node_id, "v1.5 节点缺 ai_autonomy（治理档位必填）")
+        # R17 粒度门禁：一句话说清楚（长度上限+禁模糊词）
+        if len(n.decision_question) > _MAX_QUESTION_LEN:
+            add(
+                "error",
+                "R17",
+                n.node_id,
+                f"decision_question {len(n.decision_question)} 字超上限 {_MAX_QUESTION_LEN}（粒度过粗信号）",
+            )
+        for w in _VAGUE_WORDS:
+            if w in n.decision_question:
+                add("error", "R17", n.node_id, f"decision_question 含模糊词「{w}」（IF-THEN 粒度门禁）")
+                break
+        # D33 节点容量门禁：单节点承载上限（超出=粒度过粗，必须拆节点）
+        if len(n.strategy_mounts) > _MAX_MOUNTS:
+            add("error", "R17", n.node_id, f"strategy_mounts {len(n.strategy_mounts)} 个超上限 {_MAX_MOUNTS}（该拆环节）")
+        if len(n.factor_refs) > _MAX_FACTOR_REFS:
+            add("error", "R17", n.node_id, f"factor_refs {len(n.factor_refs)} 个超上限 {_MAX_FACTOR_REFS}")
+        if len(n.data_refs) > _MAX_DATA_REFS:
+            add("error", "R17", n.node_id, f"data_refs {len(n.data_refs)} 个超上限 {_MAX_DATA_REFS}")
+        if len(n.algo_refs) > _MAX_ALGO_REFS:
+            add("error", "R17", n.node_id, f"algo_refs {len(n.algo_refs)} 个超上限 {_MAX_ALGO_REFS}")
+
+    # R16 父子存在性+环+深度（成环时跳过深度检查——环已报错，且深度计算在环上无定义）
+    has_parent_cycle = False
+    for n in dm.nodes:
+        if n.parent_node and n.parent_node not in by_id:
+            add("error", "R16", n.node_id, f"parent_node 不存在: {n.parent_node}")
+    for n in dm.nodes:
+        trail = {n.node_id}
+        cur = n.parent_node
+        while cur and cur in by_id:
+            if cur in trail:
+                add("error", "R16", n.node_id, f"parent 链成环（经过 {cur}）")
+                has_parent_cycle = True
+                break
+            trail.add(cur)
+            cur = by_id[cur].parent_node
+
+    if not has_parent_cycle:
+        depth_cache: dict[str, int] = {}
+
+        def _depth(nid: str) -> int:
+            if nid in depth_cache:
+                return depth_cache[nid]
+            node = by_id.get(nid)
+            if node is None or not node.parent_node or node.parent_node not in by_id:
+                depth_cache[nid] = 0
+                return 0
+            d = _depth(node.parent_node) + 1
+            depth_cache[nid] = d
+            return d
+
+        for n in dm.nodes:
+            if n.parent_node and n.parent_node in by_id:
+                d = _depth(n.node_id)
+                if d > _MAX_TREE_DEPTH:
+                    add("error", "R16", n.node_id, f"树深度 {d} 超上限 {_MAX_TREE_DEPTH}")
+
+    # R16b 树宽预警（warning 级）：单父节点子节点过多=该分层信号，不阻断
+    children_count: dict[str, int] = {}
+    for n in dm.nodes:
+        if n.parent_node:
+            children_count[n.parent_node] = children_count.get(n.parent_node, 0) + 1
+    for pid, cnt in sorted(children_count.items()):
+        if cnt > _WARN_CHILDREN:
+            add("warning", "R16", pid, f"子节点 {cnt} 个超预警线 {_WARN_CHILDREN}（树宽过大，建议分层）")
+
+    # 粒度统计（info 级，emit_stats=True 时输出各 flow 节点数）
+    if emit_stats:
+        by_flow: dict[str, int] = {}
+        for n in dm.nodes:
+            by_flow[n.flow] = by_flow.get(n.flow, 0) + 1
+        anchor = dm.nodes[0].node_id if dm.nodes else ""
+        for flow, cnt in sorted(by_flow.items()):
+            add("info", "R17", anchor, f"粒度统计 flow={flow}: {cnt} 节点")
+
+
 def validate_decision_map(
     dm: DecisionMap,
     registry_dir: Path,
@@ -480,6 +630,11 @@ def validate_decision_map(
     for m in dm.markets:
         if m not in node_markets:
             add("error", "R10", dm.nodes[0].node_id if dm.nodes else "", f"声明市场 {m} 无任何节点")
+
+    # D32/D33 门禁包 R13-R19（算法引用/附件/治理/父子/粒度容量/命名/模块存在）
+    exa_ids = _load_registry_ids(registry_dir, _REG_EXA, "execution_algos", "execution_algo_id")
+    ind_ids = _load_registry_ids(registry_dir, _REG_IND, "indicators", "indicator_id")
+    _validate_governance(dm, registry_dir, exa_ids | ind_ids, add)
 
     # R12 整装方案（v1.1）：sleeve 引用存在性+权重范围+和≤1+activation_state 在列轴+置信度
     if dm.portfolio_plan is not None:
