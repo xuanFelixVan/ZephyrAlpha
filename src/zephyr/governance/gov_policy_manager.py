@@ -10,7 +10,7 @@
 # [STABILITY] evolving
 # [SAFETY] M
 # [AI_AUTONOMY] human_gated
-# [ERROR_CONTRACT] GovPolicyError(占位 ZA-GOV-UNREGISTERED-GOV-POLICY)——空/非GOV-前缀policy_id/空content/重复创建/未知策略/未知版本/非法状态迁移/retired后更新/非draft删除/sqlite写入失败时抛
+# [ERROR_CONTRACT] GovPolicyError(ZA-GOV-0002)——空/非GOV-前缀policy_id/空content/重复创建/未知策略/未知版本/非法状态迁移/retired后更新/非draft删除/sqlite写入失败时抛
 # [TESTS] tests/governance/test_gov_policy_manager.py
 # [A_module] module_id=MOD-GOV-052 | layer=module | stability=evolving | safety=M | ai_autonomy=human_gated
 # [TTL] permanent
@@ -88,8 +88,10 @@ _TRANSITIONS: Final[dict[PolicyState, frozenset[PolicyState]]] = {}
 class GovPolicyError(Exception):
     """策略管理输入/状态非法（Fail-Closed）。
 
-    未登记错误码-申请中：占位 ZA-GOV-UNREGISTERED-GOV-POLICY。
+    错误码 ZA-GOV-0002 已登记转正（2026-09-06 Owner 批准批）。
     """
+
+    error_code = "ZA-GOV-0002"
 
 
 class PolicyState(str, Enum):

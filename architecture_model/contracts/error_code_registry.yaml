@@ -60,6 +60,7 @@ domain_prefixes:
   SIG: D_ASHARE_SIGNAL
   TSK: D_GOVERNANCE
   SBX: D_INTEGRATION
+  GOV: D_GOVERNANCE
   FBL: D_FEEDBACK_LOOP
   FAC: D_FACTOR
   EXSIM: D_EXEC_SIM
@@ -3240,6 +3241,18 @@ error_codes:
   module: zephyr.frontend.value_stream_view
   file: src/zephyr/frontend/value_stream_view.py
   introduced: '2026-09-06: Owner 批准占位码转正批（B17-②）——ZA-FE-UNREGISTERED-VALUE-STREAM 转正'
+
+# --- 2026-09-06 占位码转正批 GOV（Owner 批准 B17-②，取号=段内 max+1 顺延）---
+- code: ZA-GOV-0001
+  class: DepmapError
+  module: zephyr.governance.depmap_engine
+  file: src/zephyr/governance/depmap_engine.py
+  introduced: '2026-09-06: Owner 批准占位码转正批（B17-②）——ZA-GOV-UNREGISTERED-DEPMAP 转正'
+- code: ZA-GOV-0002
+  class: GovPolicyError
+  module: zephyr.governance.gov_policy_manager
+  file: src/zephyr/governance/gov_policy_manager.py
+  introduced: '2026-09-06: Owner 批准占位码转正批（B17-②）——ZA-GOV-UNREGISTERED-GOV-POLICY 转正'
 
 known_duplicates: []
 # ============================================================

@@ -10,7 +10,7 @@
 # [STABILITY] evolving
 # [SAFETY] M
 # [AI_AUTONOMY] human_gated
-# [ERROR_CONTRACT] DepmapError(占位 ZA-GOV-UNREGISTERED-DEPMAP)——空层注册表/非法层/空键/语法错误/越顶相对导入/非 .py 路径/空路径/reader 未注入或读取失败时抛
+# [ERROR_CONTRACT] DepmapError(ZA-GOV-0001)——空层注册表/非法层/空键/语法错误/越顶相对导入/非 .py 路径/空路径/reader 未注入或读取失败时抛
 # [TESTS] tests/governance/test_depmap_engine.py
 # [A_module] module_id=MOD-GOV-051 | layer=module | stability=evolving | safety=M | ai_autonomy=human_gated
 # [TTL] permanent
@@ -86,8 +86,10 @@ _LAYER_RANK: Final[dict[DepmapLayer, int]] = {}
 class DepmapError(Exception):
     """DepMap 扫描输入/状态非法（Fail-Closed）。
 
-    未登记错误码-申请中：占位 ZA-GOV-UNREGISTERED-DEPMAP。
+    错误码 ZA-GOV-0001 已登记转正（2026-09-06 Owner 批准批）。
     """
+
+    error_code = "ZA-GOV-0001"
 
 
 class DepmapLayer(str, Enum):
