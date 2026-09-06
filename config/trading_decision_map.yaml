@@ -111,6 +111,28 @@ nodes:
   #   A8 板块联动(一天换主线=混沌) / B1 宽度领先原则 / B2 对坏消息的反应 / B3 市值分层宽度
   #   原始数据与 S2/S3 同源（DS-082/DS-059/DS-150），用法不同：本节点消费"当日读数+环比骤变"
   #   裁噪预留：同源指标重复计票（冗余即静默杀手）→ 灰度合成阶段用相关性去重
+  # ── S0 宏观环境传感器（D25：月级温度计的市场外进水管，非第五层）──
+  #   Owner 裁定：宏观完全交给系统算法（人工不消费），四组信号全上（先大而全，D21 三防弹衣适用）：
+  #   A 货币政策（降准降息节奏/政策利率/央行方向，领先 0-6 月，机构 signal hierarchy 顶点）
+  #   B 流动性与信用（社融/M1-M2 剪刀差/信用利差/两融 DS-098/五大央行方向，领先 3-12 月）
+  #   C 海外与汇率（美债 10Y/美元/中美利差/全球 risk-off 合成/港股联动）
+  #   D 增长与政策（PMI/产业政策风向/监管周期——A股范式变迁后权重上调，广发研报：
+  #     传统"货币→信贷→盈利"链失效，新链=产业政策→产业预期→股市，"M1 定买卖"失效）
+  #   方法论=复用周级三步法（滚动分位→加权合成→天气分 0-100），输出喂月级谨慎度修正
+  #   A股范式权重修正：政策/产业因子权重↑、总量因子权重↓
+  - node_id: TDM-E-L1-S0
+    name_zh: 宏观环境传感器
+    market: cn_a
+    flow: entry_flow
+    layer: L1
+    node_type: sensor
+    point: 盘前
+    decision_question: 市场之外的宏观环境（货币/流动性/海外/政策）对这段行情的支撑或压制
+    factor_refs: []
+    data_refs: [DS-098]
+    module_ref: null
+    strategy_mounts: []
+
   - node_id: TDM-E-L1-S5
     name_zh: 日级市场条件传感器
     market: cn_a
@@ -875,6 +897,7 @@ edges:
   - {from_node: TDM-E-L1-AGG, to_node: TDM-E-L2-05-1, edge_type: feed}
   - {from_node: TDM-E-L1-S5, to_node: TDM-E-L2-05-1, edge_type: feed}
   - {from_node: TDM-E-L1-S5, to_node: TDM-E-L1-AGG, edge_type: feed}
+  - {from_node: TDM-E-L1-S0, to_node: TDM-E-L1-AGG, edge_type: feed}
   - {from_node: TDM-E-L2-05-1, to_node: TDM-E-L2-05-2, edge_type: sequence}
   - {from_node: TDM-E-L2-05-2, to_node: TDM-E-L2-06-1, edge_type: feed}
   - {from_node: TDM-E-L2-05-2, to_node: TDM-E-L2-02-1, edge_type: feed}
