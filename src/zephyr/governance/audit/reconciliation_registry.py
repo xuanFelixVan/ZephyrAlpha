@@ -7180,6 +7180,16 @@ def make_index_generator_reconciler(gateway: object) -> ReconcilerSpec:
 
     def _reconcile(committed_files: list[str], session_id: str) -> ReconcileResult:
 
+        # 2026-09-06 Owner 裁定（批二 G 项"救活老脚本当唯一标准"）：本 reconciler 禁写
+        # unified-asset-index.yaml——写者唯一收敛为 scripts/governance/generate_asset_index.py
+        # （宽扫描口径，历史好态 73dbf90f 同源）。原 bootstrap（scan→classify→index 写盘）
+        # +auto-commit 链路产生的窄口径（24422/C 级）持续覆盖宽口径（31847/B），双写者分歧治本。
+        # 其他派生物（dashboard/classified）不在本裁定范围，如需维护由 Owner 另行裁定。
+        return ReconcileResult(
+            action="clean",
+            detail="unified-asset-index write ownership moved to scripts/governance/generate_asset_index.py (Owner 2026-09-06)",
+        )
+
         # 1. 跑 scan->classify->index 全管线（bootstrap 幂等，含 index 生成）
 
         bootstrap_result = _run_subprocess(
