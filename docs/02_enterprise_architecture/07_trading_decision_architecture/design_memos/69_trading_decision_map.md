@@ -5,7 +5,7 @@ title: 交易决策地图（Trading Decision Map）——决策内容索引层�
 owner: ZephyrAlpha-Owner
 language: zh
 status: active
-version: "1.5.0"
+version: "1.6.0"
 date: 2026-09-04
 topic: trading_decision_map
 scope: 07_trading_decision_architecture
@@ -199,6 +199,20 @@ L1 结构（D4/D6，Owner 裁定+行业修正）：**四路同层级传感器阵
 - **盘中**：预案引擎=pre-market routine+trading plan 同构；执行算法 TWAP/VWAP/IS 已在 EXA 库（REG-EXA-001 六件）。
 - **三个增强方向（非错误）**：①月级补宏观特征（信用利差/收益率曲线/中国 VIX）②日级中国 VIX 表登记（DS 缺口已标）③月级升级路径备选=Wasserstein HMM（哥大 2026，防状态漂移，Sharpe 2.18）。
 - **差异合法性**：绝对周期压缩（机构 SAA 年级 vs 我们月级）由策略频率决定（宪章约束四：日频以上），层级结构/职责/节拍/跨层规则与机构全部同构；分形市场假说（FMH）=分层理论根基。
+
+### 2.13 预案引擎正名登记与升级缺口清单（D23，Owner 2026-09-06 裁定）
+
+**正名裁定**：现名"作战预案引擎"（D_PLAN/BM-PLAN-01-C）→ **未来正名"每日作战计划引擎（Game Plan Engine）"**。专业术语两层结构：**Playbook**（静态招式手册：每打法一页 playcard——对应本项目策略库+作战手册，已有不新建）vs **Game Plan**（当日动态作战计划：今天打哪几张牌/关键位/最大风险/今天不做什么）——"预案"为口语，专业词=Game Plan；浓缩形态=Cheat Sheet（贴屏小抄）。改名暂不执行（涉 D_PLAN 域真源/BM-PLAN-01-C 锚点/编号链），已登记 YAML 注释，改名时同步全部锚点。
+
+**升级缺口清单（6 项候选，全 proposed，待 Owner 逐项裁定有/没有/要）**：
+1. **IF-THEN 强制格式**：每条预案必须是条件句（如果 X→做 Y→目标 Z→止损 W），禁写"看情况"
+2. **"今天不做什么"负面清单**：机构要求开盘前明文写不碰的标的/形态（decide in advance what you will NOT trade）
+3. **心理状态检查门**：Steenbarger 14 项打分 <10/14 当天不交易；funded trader 铁律"状态不对跳过当天=全年最高 EV 决定"
+4. **预警位联动**：关键位提前设警报（PDH/PDL/周开盘/整数关口），免盯盘
+5. **Skip log（跳过交易日志）**：记录"差点做但没做"的交易，30 天回看校准保守度（称 secret habit）
+6. **盘前/盘中职责分离显性化**：盘中只执行不分析，所有思考发生在盘前（机构四阶段：Pre-Market Prep→Game Plan & Risk Map→Live Execution→Post-Market Review）
+
+**业界构件对照**：预案引擎三区（昨预案/今匹配/明推演）已覆盖昨日复盘/关键位/setup 候选/仓位规划/次日推演——同构于机构四阶段流程；6 缺口为增量，收口后预案引擎=E-L4 买卖点层上游依赖。
 
 ## 3. 考虑过的替代方案与拒绝理由
 
