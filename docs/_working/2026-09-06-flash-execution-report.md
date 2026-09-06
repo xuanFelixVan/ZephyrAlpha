@@ -178,3 +178,29 @@ commit：—
 - E 项：python -m pytest tests/git/test_git_commit_gateway.py -q
 - F 项：python -c "import yaml; yaml.safe_load(open('docs/registry_of_registries.yaml', encoding='utf-8'))" + python scripts/governance/d3_metadata/check_registry_consistency.py
 - G 项：python scripts/governance/generate_asset_index.py（再生后查 total_assets/Health 口径）
+
+# 七、总管复核（2026-09-06，STEWARD-20260906-REVIEW）
+
+复核方法：§六终验命令全量复跑 + 增量抽查（registry 计数/前缀条目格式/B 项落码现场/H 项删除面/G 项幂等再生/commit 范围对账）。
+
+## 7.1 全量复跑通过项
+
+- 六断言 6 passed；227 域测试文件 4991 passed（--import-mode=importlib，32.26s）；网关+pre_write_gate 83 passed；CR-001~006 全 PASS；3 yaml 解析 ok；占位码 rg 零命中；G 项再生 31962/Health B (76.1)。
+
+## 7.2 复核发现与处置
+
+1. **ROOR ERRCODE 计数漂移（已修，31dfdc4a）**：§一宣称"registry 781 条终值"为 e27cf22c 去重（10:02，删 11 条双条目）**之前**的实测值；F 项 f13bc796 落盘 ROOR（10:09）晚于去重却未重测，写入 781。实测终值 **770**（error_codes 条目数，e27cf22c registry 删 57 行对账闭合）。总管已修 ROOR entry_count 781→770 并在 counting_rule 补终值说明。
+2. **path_ownership_map 6 条幽灵条目（新遗留 #9）**：H 项删除的 3 源文件+3 测试在 path_ownership_map.yaml 仍有 path 条目（claim_type=depgraph_node, existence=generated）。根因：depgraph 数据库节点未随源文件退役，且 generate_path_ownership_map.py 无目标文件存在性校验，再生时回填。§二 H 项"path_ownership_map --write 再生吸收"表述不成立。待 Owner 裁定：depgraph 节点退役排期 or 生成器加存在性过滤。
+
+## 7.3 口径澄清（非缺陷）
+
+- registry 条数：580→**770**（§一"781"为去重前峰值；ROOR 已同步修正）。
+- commit 枚数：263268a6^..71b40762 实测 **60 枚**（含 41 前缀逐枚+reconciler post-commit auto-commit）；§一"22 枚"为主要施工 commit 口径，低估，无虚报（关键哈希抽验 3 枚内容相符）。
+- 资产索引：G 项时点 31945 → 当前 **31962**（f13bc796/e27cf22c/71b40762 后续 commit 自然增量），Health B (76.1) 与好态一致。
+
+## 7.4 遗留分流汇总
+
+- 已处置：ROOR ERRCODE 漂移（本节 #1，31dfdc4a）。
+- 待 Owner 裁定/授权：§五 1/2/3/6/7 + 新增 #9（path_ownership_map 幽灵条目）。
+- 待排期：§五 5（flaky timeout 放宽）、§五 8（driver 测试面 checklist 固化）。
+- 排查已毕待适配：§五 4（REG-INV-001 宽口径消费方适配）。
