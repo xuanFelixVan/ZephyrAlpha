@@ -10,7 +10,7 @@
 # [STABILITY] evolving
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
-# [ERROR_CONTRACT]
+# [ERROR_CONTRACT] ZA-TSK-0005(stale task three-state mismatch)——SyncInconsistency.error_code 字段随不一致项返回（tool_contracts.yaml 对齐，2026-09-06 补码）
 # [TESTS]
 # [A_module] module_id=MOD-INF-039 | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
@@ -176,6 +176,8 @@ class SyncInconsistency:
     frontmatter_status: str | None
     task_status: str
     issue: str
+    # 2026-09-06 补码（tool_contracts.yaml 对齐）：ZA-TSK-0005 stale task three-state mismatch
+    error_code: str = "ZA-TSK-0005"
 
 
 @dataclass

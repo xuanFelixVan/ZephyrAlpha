@@ -10,7 +10,7 @@
 # [STABILITY] evolving
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
-# [ERROR_CONTRACT] 空结果+error字段（YAML缺失/解析失败）
+# [ERROR_CONTRACT] 空结果+error字段（YAML缺失/解析失败）；ZA-RD-0001(perception index missing)——fail-soft 错误 dict 带 error_code 字段（tool_contracts.yaml 对齐，2026-09-06 补码）
 # [TESTS]
 # [A_module] module_id=MOD-INF-014 | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
@@ -374,6 +374,8 @@ class RuleDiscoveryServer(BaseMCPServer):
                 "count": 0,
                 "source": "rule_ai_perception_index.yaml",
                 "error": "perception_index_not_loaded",
+                # 2026-09-06 补码（tool_contracts.yaml 对齐）：ZA-RD-0001 perception index missing
+                "error_code": "ZA-RD-0001",
             }
 
         # 若无任何过滤条件，返回全部（limit 20）

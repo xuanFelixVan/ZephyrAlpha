@@ -60,6 +60,7 @@ domain_prefixes:
   SIG: D_ASHARE_SIGNAL
   TSK: D_GOVERNANCE
   SBX: D_INTEGRATION
+  EXSIM: D_EXEC_SIM
   DT: D_DIGITAL_TWIN
   DSEC: D_DATA_SEC
   DATENG: D_DATA_ENG
@@ -3050,6 +3051,18 @@ error_codes:
   module: zephyr.ex_core.execution_param_optimizer
   file: src/zephyr/ex_core/execution_param_optimizer.py
   introduced: '2026-09-06: Owner 批准占位码转正批（B17-②）——ZA-EX-UNREGISTERED-EXECUTION-OPTIMIZER 转正'
+
+# --- 2026-09-06 占位码转正批 EXSIM（Owner 批准 B17-②，取号=段内 max+1 顺延）---
+- code: ZA-EXSIM-0001
+  class: AlmgrenChrissError
+  module: zephyr.execution_simulation.almgren_chriss_impact_model
+  file: src/zephyr/execution_simulation/almgren_chriss_impact_model.py
+  introduced: '2026-09-06: Owner 批准占位码转正批（B17-②）——ZA-EXSIM-UNREGISTERED-ALMGREN-CHRISS 转正'
+- code: ZA-TSK-0005
+  class: SyncInconsistency
+  module: zephyr.orchestrator.file_task_mapper
+  file: src/zephyr/orchestrator/file_task_mapper.py
+  introduced: '2026-09-06: tool_contracts.yaml 契约码补定义点（B 类处置批）——SyncInconsistency dataclass error_code 字段默认值（stale task three-state mismatch）'
 
 known_duplicates: []
 # ============================================================

@@ -880,7 +880,8 @@ class ResourceOptimizationEngine:
             elif strategy is OptimizationStrategy.STREAMING_READ:
                 actions = self._execute_streaming_read(context)
             else:
-                raise ValueError(f"unknown strategy: {strategy}")
+                # 2026-09-06 补码（tool_contracts.yaml 对齐）：ZA-ROE-0001 invalid strategy name
+                raise ValueError(f"ZA-ROE-0001: unknown strategy: {strategy}")
 
             cb.record_success()
         except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch

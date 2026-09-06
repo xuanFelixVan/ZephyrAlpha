@@ -131,7 +131,9 @@ class DaemonRegistry:
     ) -> None:
         with cls._lock:
             if name in cls._entries:
-                logger.debug("DaemonRegistry: '%s' already registered, skipping", name)
+                # 2026-09-06 补码（tool_contracts.yaml 对齐）：ZA-ROE-0004 daemon name conflict
+                # （fail-soft：重名注册按既有条目跳过，码随日志留痕）
+                logger.debug("ZA-ROE-0004: DaemonRegistry: '%s' already registered, skipping", name)
                 return
             cls._entries[name] = DaemonEntry(
                 name=name,
@@ -146,7 +148,8 @@ class DaemonRegistry:
         with cls._lock:
             entry = cls._entries.get(name)
             if entry is None:
-                logger.warning("DaemonRegistry: '%s' not registered", name)
+                # 2026-09-06 补码（tool_contracts.yaml 对齐）：ZA-ROE-0003 daemon not found（fail-soft 返回 False）
+                logger.warning("ZA-ROE-0003: DaemonRegistry: '%s' not registered", name)
                 return False
             if entry.state is DaemonState.RUNNING:
                 logger.debug("DaemonRegistry: '%s' already running", name)
@@ -173,6 +176,8 @@ class DaemonRegistry:
         with cls._lock:
             entry = cls._entries.get(name)
             if entry is None:
+                # 2026-09-06 补码（tool_contracts.yaml 对齐）：ZA-ROE-0003 daemon not found（fail-soft 返回 False）
+                logger.warning("ZA-ROE-0003: DaemonRegistry: '%s' not registered", name)
                 return False
             if entry.state is not DaemonState.RUNNING:
                 return True

@@ -10,7 +10,7 @@
 # [STABILITY] evolving
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
-# [ERROR_CONTRACT]
+# [ERROR_CONTRACT] ZA-BPS-0001(blueprint_routing.yaml missing/unreadable)——fail-soft 错误 dict 带 error_code 字段（tool_contracts.yaml 对齐，2026-09-06 补码）
 # [TESTS]
 # [A_module] module_id=MOD-INF-013 | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
@@ -222,7 +222,14 @@ class BlueprintSearchServer(BaseMCPServer):
         routes = self._load_routes()
         if not routes:
             _logger.warning("No routes loaded from %s", ROUTING_YAML_PATH)
-            return {"results": [], "count": 0, "source": "blueprint_routing.yaml", "error": "no_routes_loaded"}
+            # 2026-09-06 补码（tool_contracts.yaml 对齐）：ZA-BPS-0001 routing yaml missing/unreadable
+            return {
+                "results": [],
+                "count": 0,
+                "source": "blueprint_routing.yaml",
+                "error": "no_routes_loaded",
+                "error_code": "ZA-BPS-0001",
+            }
 
         task_lower = task_description.lower()
         scored = _score_routes(routes, task_lower, include_retired)

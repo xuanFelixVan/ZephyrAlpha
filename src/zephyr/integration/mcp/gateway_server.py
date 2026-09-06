@@ -10,7 +10,7 @@
 # [STABILITY] evolving
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
-# [ERROR_CONTRACT]
+# [ERROR_CONTRACT] ZA-GW-0001(route target server unavailable——熔断 open 降级)/ZA-GW-0002(rate limit exceeded)/ZA-GW-0003(ACL denied)——_err data 带 error_code 字段（tool_contracts.yaml 对齐，2026-09-06 补码）
 # [TESTS]
 # [A_module] module_id=MOD-INF-013 | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
@@ -588,7 +588,13 @@ class MCPGateway(BaseMCPServer):
                 error_code=ERR_GATE_FAILED,
                 duration_ms=int((time.monotonic() - t0) * 1000),
             )
-            return self._err(req_id, ERR_GATE_FAILED, degraded_msg)
+            return self._err(
+                req_id,
+                ERR_GATE_FAILED,
+                degraded_msg,
+                # 2026-09-06 补码（tool_contracts.yaml 对齐）：ZA-GW-0001 route target server unavailable
+                data={"error_code": "ZA-GW-0001"},
+            )
         return None
 
     def _try_gateway_local_tool(
@@ -794,7 +800,10 @@ class MCPGateway(BaseMCPServer):
                 error_message=deny_reason,
                 duration_ms=duration_ms,
             )
-            return self._err(req_id, ERR_RBAC_DENIED, f"RBAC denied: {deny_reason}")
+            # 2026-09-06 补码（tool_contracts.yaml 对齐）：ZA-GW-0003 ACL denied
+            return self._err(
+                req_id, ERR_RBAC_DENIED, f"RBAC denied: {deny_reason}", data={"error_code": "ZA-GW-0003"}
+            )
 
         # 5.36.1：RateLimit 阶段——使用 ERR_RATE_LIMITED + retry_after_seconds
         if not self._rate_limiter.try_acquire(routed_sid):
@@ -812,7 +821,8 @@ class MCPGateway(BaseMCPServer):
                 req_id,
                 ERR_RATE_LIMITED,
                 f"{RATE_LIMITED_KEY}: {tool_name!r} (rate exceeded)",
-                data={"retry_after_seconds": retry_after, "tool": tool_name},
+                # 2026-09-06 补码（tool_contracts.yaml 对齐）：ZA-GW-0002 rate limit exceeded
+                data={"retry_after_seconds": retry_after, "tool": tool_name, "error_code": "ZA-GW-0002"},
             )
 
         # 5.35.4：Sunset 阶段——sunset_date 已过的工具被拦截

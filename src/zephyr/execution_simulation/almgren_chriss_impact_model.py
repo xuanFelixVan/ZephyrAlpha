@@ -10,7 +10,7 @@
 # [STABILITY] evolving
 # [SAFETY] M
 # [AI_AUTONOMY] human_gated
-# [ERROR_CONTRACT] AlmgrenChrissError(占位 ZA-EXSIM-UNREGISTERED-ALMGREN-CHRISS)——非法参数/参与率越界/非法订单量或市场量/未知节奏词表/估计输入非法时抛
+# [ERROR_CONTRACT] AlmgrenChrissError(ZA-EXSIM-0001)——非法参数/参与率越界/非法订单量或市场量/未知节奏词表/估计输入非法时抛
 # [TESTS] tests/execution_simulation/test_almgren_chriss_impact_model.py
 # [A_module] module_id=MOD-EXSIM-001 | layer=module | stability=evolving | safety=M | ai_autonomy=human_gated
 # [TTL] permanent
@@ -86,8 +86,10 @@ __all__: Final = [
 class AlmgrenChrissError(Exception):
     """Almgren-Chriss 冲击建模输入/状态非法（Fail-Closed）。
 
-    未登记错误码-申请中：占位 ZA-EXSIM-UNREGISTERED-ALMGREN-CHRISS。
+    错误码 ZA-EXSIM-0001 已登记转正（2026-09-06 Owner 批准批）。
     """
+
+    error_code = "ZA-EXSIM-0001"
 
 
 class ScheduleType(str, Enum):

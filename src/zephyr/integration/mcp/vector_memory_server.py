@@ -10,7 +10,7 @@
 # [STABILITY] evolving
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
-# [ERROR_CONTRACT]
+# [ERROR_CONTRACT] ZA-VMS-0001(collection not found)/ZA-VMS-0002(provenance validation failed)/ZA-VMS-0003(embedding or VMS unavailable)/ZA-VMS-0004(index health degraded)/ZA-VMS-0005(human-gated write denied)——fail-soft 错误 dict 带 error_code 字段（tool_contracts.yaml 对齐，2026-09-06 补码）
 # [TESTS]
 # [A_module] module_id=MOD-INF-013 | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
@@ -181,39 +181,80 @@ class VectorMemoryServer(BaseMCPServer):
 
     def _search(self, collection_name: str, query: str, k: int = 5) -> dict[str, Any]:
         if self._vms is None:
-            return {"error": "VMS 未就绪", "hits": []}
-        hits = self._vms.search(collection_name, query, k=k)
+            # 2026-09-06 补码（tool_contracts.yaml 对齐）：ZA-VMS-0003 VMS/embedding 不可用
+            return {"error": "VMS 未就绪", "hits": [], "error_code": "ZA-VMS-0003"}
+        if collection_name not in VMS_COLLECTION_NAMES:
+            # 2026-09-06 补码（tool_contracts.yaml 对齐）：ZA-VMS-0001 collection not found
+            return {
+                "error": f"collection not found: {collection_name!r} (8 canonical names only)",
+                "hits": [],
+                "error_code": "ZA-VMS-0001",
+            }
+        try:
+            hits = self._vms.search(collection_name, query, k=k)
+        except VMSError as e:
+            logger.exception("vms search failed", exc_info=True)
+            # 2026-09-06 补码（tool_contracts.yaml 对齐）：ZA-VMS-0003 fail-soft 转错误 dict
+            return {"error": f"search failed: {e}", "hits": [], "error_code": "ZA-VMS-0003"}
         return {"hits": hits, "collection": collection_name, "query": query}
 
     def _write(
         self, collection_name: str, content: str, metadata: dict[str, Any] | None = None, doc_id: str | None = None
     ) -> dict[str, Any]:
         if self._vms is None:
-            return {"error": "VMS 未就绪", "written": False}
+            # 2026-09-06 补码（tool_contracts.yaml 对齐）：ZA-VMS-0003 VMS 不可用
+            return {"error": "VMS 未就绪", "written": False, "error_code": "ZA-VMS-0003"}
+        if collection_name not in VMS_COLLECTION_NAMES:
+            # 2026-09-06 补码（tool_contracts.yaml 对齐）：ZA-VMS-0001 collection not found
+            return {
+                "error": f"collection not found: {collection_name!r} (8 canonical names only)",
+                "written": False,
+                "error_code": "ZA-VMS-0001",
+            }
         from zephyr.integration.vector_memory.collection_manager import COLLECTION_SCHEMAS
 
         schema = COLLECTION_SCHEMAS.get(collection_name, {})
         if schema.get("ai_autonomy_level") == "human-gated":
+            # 2026-09-06 补码（tool_contracts.yaml 对齐）：ZA-VMS-0005 human-gated write denied
             return {
                 "error": f"Collection '{collection_name}' 为 human-gated，拒绝 AI 写入",
                 "written": False,
+                "error_code": "ZA-VMS-0005",
+            }
+        md = metadata or {}
+        if not (md.get("origin") and md.get("audit_chain") and md.get("arbitration")):
+            # 2026-09-06 补码（tool_contracts.yaml 对齐）：ZA-VMS-0002 provenance validation failed
+            return {
+                "error": "provenance validation failed (origin/audit_chain/arbitration required)",
+                "written": False,
+                "error_code": "ZA-VMS-0002",
             }
         try:
             result_id = self._vms.write(collection_name, content, metadata=metadata, doc_id=doc_id)
             return {"doc_id": result_id, "collection": collection_name, "written": True}
         except VMSError as e:
             logger.exception("vms write failed", exc_info=True)
-            return {"error": "write failed", "written": False}
+            # 2026-09-06 补码（tool_contracts.yaml 对齐）：ZA-VMS-0002 写入校验失败 fail-soft 转错误 dict
+            return {"error": f"write failed: {e}", "written": False, "error_code": "ZA-VMS-0002"}
 
     def _recall(self, collection_name: str, k: int = 5) -> dict[str, Any]:
         if self._vms is None:
-            return {"error": "VMS 未就绪", "records": []}
+            # 2026-09-06 补码（tool_contracts.yaml 对齐）：ZA-VMS-0003 VMS 不可用
+            return {"error": "VMS 未就绪", "records": [], "error_code": "ZA-VMS-0003"}
+        if collection_name not in VMS_COLLECTION_NAMES:
+            # 2026-09-06 补码（tool_contracts.yaml 对齐）：ZA-VMS-0001 collection not found
+            return {
+                "error": f"collection not found: {collection_name!r} (8 canonical names only)",
+                "records": [],
+                "error_code": "ZA-VMS-0001",
+            }
         records = self._vms.recall(collection_name, k=k)
         return {"records": records, "collection": collection_name}
 
     def _list_collections(self) -> dict[str, Any]:
         if self._vms is None:
-            return {"collections": [], "error": "VMS 未就绪"}
+            # 2026-09-06 补码（tool_contracts.yaml 对齐）：ZA-VMS-0003 VMS 不可用
+            return {"collections": [], "error": "VMS 未就绪", "error_code": "ZA-VMS-0003"}
         infos = self._vms.list_collections()
         return {
             "collections": [
@@ -232,8 +273,13 @@ class VectorMemoryServer(BaseMCPServer):
 
     def _health_check(self) -> dict[str, Any]:
         if self._vms is None:
-            return {"status": "unhealthy", "error": "VMS 未就绪"}
-        return self._vms.health_check()
+            # 2026-09-06 补码（tool_contracts.yaml 对齐）：ZA-VMS-0004 index health degraded（未就绪即降级）
+            return {"status": "unhealthy", "error": "VMS 未就绪", "error_code": "ZA-VMS-0004"}
+        result = self._vms.health_check()
+        if isinstance(result, dict) and result.get("status") == "unhealthy":
+            # 2026-09-06 补码（tool_contracts.yaml 对齐）：ZA-VMS-0004 index health degraded
+            result.setdefault("error_code", "ZA-VMS-0004")
+        return result
 
 
 def create_server() -> VectorMemoryServer:

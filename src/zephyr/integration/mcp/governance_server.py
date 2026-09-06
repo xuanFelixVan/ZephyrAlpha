@@ -10,7 +10,7 @@
 # [STABILITY] evolving
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
-# [ERROR_CONTRACT]
+# [ERROR_CONTRACT] ZA-GOV-0001(phase gate not importable)/ZA-GOV-0002(audit script timeout or missing)/ZA-GOV-0003(contract test not found)/ZA-GOV-0004(health DEGRADED)/ZA-GOV-0005(drift scan failed)/ZA-GOV-0006(drift report unavailable)/ZA-GOV-0007(drift budget exceeded)——fail-soft 错误 dict 带 error_code 字段（tool_contracts.yaml 对齐，2026-09-06 补码）
 # [TESTS]
 # [A_module] module_id=MOD-INF-013 | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
@@ -460,13 +460,17 @@ class GovernanceServer(BaseMCPServer):
         modules = gate_modules.get(phase, [])
         imports = {m: _import_check(m) for m in modules}
         all_pass = all(v.get("importable", False) for v in imports.values())
-        return {
+        result = {
             "phase": phase,
             "modules_checked": len(modules),
             "all_importable": all_pass,
             "details": imports,
             "lock_status": result.get("stdout", ""),
         }
+        if not all_pass:
+            # 2026-09-06 补码（tool_contracts.yaml 对齐）：ZA-GOV-0001 phase gate check failed
+            result["error_code"] = "ZA-GOV-0001"
+        return result
 
     def _audit_registration(self, json_output: bool = True) -> dict[str, Any]:
         args = ["--json"] if json_output else []
@@ -504,11 +508,22 @@ class GovernanceServer(BaseMCPServer):
         }
         test_file = contract_tests.get(contract_id)
         if test_file is None:
-            return {"contract_id": contract_id, "error": f"Unknown contract: {contract_id}", "valid": False}
+            # 2026-09-06 补码（tool_contracts.yaml 对齐）：ZA-GOV-0003 contract 无效/测试文件缺失
+            return {
+                "contract_id": contract_id,
+                "error": f"Unknown contract: {contract_id}",
+                "valid": False,
+                "error_code": "ZA-GOV-0003",
+            }
 
         test_path = REPO_ROOT / test_file
         if not test_path.exists():
-            return {"contract_id": contract_id, "error": f"Test file not found: {test_file}", "valid": False}
+            return {
+                "contract_id": contract_id,
+                "error": f"Test file not found: {test_file}",
+                "valid": False,
+                "error_code": "ZA-GOV-0003",
+            }
 
         result = _run_script(
             "-m",
@@ -601,11 +616,12 @@ class GovernanceServer(BaseMCPServer):
         except ImportError as e:
             logger.exception("behavioral-auditor import failed failed")
 
-            return {"error": "behavioral-auditor import failed failed", "events": []}
+            # 2026-09-06 补码（tool_contracts.yaml 对齐）：ZA-GOV-0005 drift scan failed
+            return {"error": "behavioral-auditor import failed failed", "events": [], "error_code": "ZA-GOV-0005"}
         except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
             logger.exception("scan failed failed", exc_info=True)
 
-            return {"error": "scan failed failed", "events": []}
+            return {"error": "scan failed failed", "events": [], "error_code": "ZA-GOV-0005"}
 
     def _drift_report(self) -> dict[str, Any]:
         try:
@@ -628,29 +644,44 @@ class GovernanceServer(BaseMCPServer):
         except ImportError as e:
             logger.exception("import failed failed")
 
-            return {"error": "import failed failed"}
+            # 2026-09-06 补码（tool_contracts.yaml 对齐）：ZA-GOV-0006 drift report unavailable
+            return {"error": "import failed failed", "error_code": "ZA-GOV-0006"}
         except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
             logger.exception("report failed failed", exc_info=True)
 
-            return {"error": "report failed failed"}
+            return {"error": "report failed failed", "error_code": "ZA-GOV-0006"}
 
     def _drift_budget(self, module_id: str) -> dict[str, Any]:
         try:
             from zephyr.gov_drift.drift_infrastructure import check_budget_for_gate
 
             result = check_budget_for_gate(module_id)
-            return {
+            out = {
                 "module_id": module_id,
                 **result,
             }
+            if not out.get("passed", True):
+                # 2026-09-06 补码（tool_contracts.yaml 对齐）：ZA-GOV-0007 drift budget exceeded
+                out["error_code"] = "ZA-GOV-0007"
+            return out
         except ImportError as e:
             logger.exception("import failed failed")
 
-            return {"error": "import failed failed", "module_id": module_id, "allowed": False}
+            return {
+                "error": "import failed failed",
+                "module_id": module_id,
+                "allowed": False,
+                "error_code": "ZA-GOV-0007",
+            }
         except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
             logger.exception("budget check failed failed", exc_info=True)
 
-            return {"error": "budget check failed failed", "module_id": module_id, "allowed": False}
+            return {
+                "error": "budget check failed failed",
+                "module_id": module_id,
+                "allowed": False,
+                "error_code": "ZA-GOV-0007",
+            }
 
     def _rbac_check(
         self, session_id: str, operation: str, maturity: str = "L2_REGULAR", role: str = "executor"

@@ -280,12 +280,14 @@ gate_engine:
     - code: "ZA-GT-0002"
       message: "gate policy yaml invalid"
       http_status: 500
+      # deferred: 实现未施工（gate_engine_server 为骨架，policy 加载路径未落地），随 Phase 落地
     - code: "ZA-GT-0003"
       message: "exemption signature invalid"
       http_status: 403
     - code: "ZA-GT-0004"
       message: "runtime budget exceeded"
       http_status: 429
+      # deferred: 实现未施工（gate_engine_server 无预算检查逻辑），随 Phase 落地
 
   resources:
     - id: "zephyr://gate_engine/policies/{gate_id}"
@@ -1584,6 +1586,7 @@ resource_optimization:
     - code: "ZA-ROE-0002"
       message: "permission denied (force_pressure requires Owner)"
       http_status: 403
+      # deferred: 实现未施工（MCP server 未落地 implementation: pending，无调用面），随 Phase 落地
     - code: "ZA-ROE-0003"
       message: "daemon not found"
       http_status: 404
@@ -1593,6 +1596,7 @@ resource_optimization:
     - code: "ZA-ROE-0005"
       message: "engine not running"
       http_status: 503
+      # deferred: 实现未施工（MCP server 未落地 implementation: pending，无调用面），随 Phase 落地
 
   tools:
 
