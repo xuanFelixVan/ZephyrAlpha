@@ -10,7 +10,7 @@
 # [STABILITY] evolving
 # [SAFETY] M
 # [AI_AUTONOMY] human_gated
-# [ERROR_CONTRACT] OverfittingGateError(占位 ZA-SIM-UNREGISTERED-OVERFITTING-GATE)——非法层/空check_id/重复注册/检查器不可调用/空subject_id/层缺检查项时抛
+# [ERROR_CONTRACT] OverfittingGateError(ZA-SIM-0028)——非法层/空check_id/重复注册/检查器不可调用/空subject_id/层缺检查项时抛
 # [TESTS] tests/simulation/test_overfitting_protection_gate.py
 # [A_module] module_id=MOD-SIM-028 | layer=module | stability=evolving | safety=M | ai_autonomy=human_gated
 # [TTL] permanent
@@ -82,8 +82,10 @@ __all__: Final = [
 class OverfittingGateError(Exception):
     """过拟合防护门禁输入/状态非法（Fail-Closed）。
 
-    未登记错误码-申请中：占位 ZA-SIM-UNREGISTERED-OVERFITTING-GATE。
+    错误码 ZA-SIM-0028 已登记转正（2026-09-06 Owner 批准批）。
     """
+
+    error_code = "ZA-SIM-0028"
 
 
 class ProtectionLayer(str, Enum):

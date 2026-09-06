@@ -3910,6 +3910,13 @@ error_codes:
   file: src/zephyr/signal_quality/signal_quality_benchmark.py
   introduced: '2026-09-06: Owner 批准占位码转正批（B17-②）——ZA-SIGQC-UNREGISTERED-SIGNAL-BENCHMARK 转正'
 
+# --- 2026-09-06 占位码转正批 SIM（Owner 批准 B17-②，取号=段内 max+1 顺延）---
+- code: ZA-SIM-0028
+  class: OverfittingGateError
+  module: zephyr.simulation.overfitting_protection_gate
+  file: src/zephyr/simulation/overfitting_protection_gate.py
+  introduced: '2026-09-06: Owner 批准占位码转正批（B17-②）——ZA-SIM-UNREGISTERED-OVERFITTING-GATE 转正'
+
 known_duplicates: []
 # ============================================================
 # 已知缺口（诚实登记，2026-08-15 #ARCH-MON-001 批次实测）
