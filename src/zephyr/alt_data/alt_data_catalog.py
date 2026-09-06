@@ -10,7 +10,7 @@
 # [STABILITY] evolving
 # [SAFETY] M
 # [AI_AUTONOMY] human_gated
-# [ERROR_CONTRACT] AltDataCatalogError(占位 ZA-ALT-UNREGISTERED-ALT-CATALOG)——重复/未知source_id、非法类型/质量分/配额/标签、非法状态迁移、lineage_sink缺失或回调失败、fts_connection缺失/查询空/语法错时抛
+# [ERROR_CONTRACT] AltDataCatalogError(ZA-ALT-0001)——重复/未知source_id、非法类型/质量分/配额/标签、非法状态迁移、lineage_sink缺失或回调失败、fts_connection缺失/查询空/语法错时抛
 # [TESTS] tests/alt_data/test_alt_data_catalog.py
 # [A_module] module_id=MOD-ALT-008 | layer=module | stability=evolving | safety=M | ai_autonomy=human_gated
 # [TTL] permanent
@@ -93,8 +93,10 @@ _FTS_TABLE: Final = "alt_data_catalog_fts"
 class AltDataCatalogError(Exception):
     """另类数据目录输入/状态非法（Fail-Closed）。
 
-    未登记错误码-申请中：占位 ZA-ALT-UNREGISTERED-ALT-CATALOG。
+    错误码 ZA-ALT-0001 已登记转正（2026-09-06 Owner 批准批）。
     """
+
+    error_code = "ZA-ALT-0001"
 
 
 class CatalogSourceType(str, Enum):

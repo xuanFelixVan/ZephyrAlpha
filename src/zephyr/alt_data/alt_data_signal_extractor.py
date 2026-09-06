@@ -10,7 +10,7 @@
 # [STABILITY] evolving
 # [SAFETY] M
 # [AI_AUTONOMY] human_gated
-# [ERROR_CONTRACT] AltSignalExtractorError(占位 ZA-ALT-UNREGISTERED-SIGNAL-EXTRACTOR)——ic计算器未注入/特征空白或重复/半衰期非正/样本长度不齐/样本不足/IC越界/负age/回归器未注入/代理变量空或长度不齐/残差长度违约/校验器未注入或拒绝时抛
+# [ERROR_CONTRACT] AltSignalExtractorError(ZA-ALT-0005)——ic计算器未注入/特征空白或重复/半衰期非正/样本长度不齐/样本不足/IC越界/负age/回归器未注入/代理变量空或长度不齐/残差长度违约/校验器未注入或拒绝时抛
 # [TESTS] tests/alt_data/test_alt_data_signal_extractor.py
 # [A_module] module_id=MOD-ALT-013 | layer=module | stability=evolving | safety=M | ai_autonomy=human_gated
 # [TTL] permanent
@@ -103,8 +103,10 @@ SignalValidator = Callable[[Mapping[str, object]], bool]
 class AltSignalExtractorError(Exception):
     """信号提取协议输入/配置非法（Fail-Closed）。
 
-    未登记错误码-申请中：占位 ZA-ALT-UNREGISTERED-SIGNAL-EXTRACTOR。
+    错误码 ZA-ALT-0005 已登记转正（2026-09-06 Owner 批准批）。
     """
+
+    error_code = "ZA-ALT-0005"
 
 
 @dataclass(frozen=True)

@@ -10,7 +10,7 @@
 # [STABILITY] evolving
 # [SAFETY] M
 # [AI_AUTONOMY] human_gated
-# [ERROR_CONTRACT] PolicyExpectationError(占位 ZA-ALT-UNREGISTERED-POLICY-EXPECTATION)——配置非法(阈值/词表/非callable注入)、statement_source未注入或抓取异常、表态/事件字段非法、未知statement_id、topic空/语料空、llm_scorer未注入/异常/打分越界、ETF快照非法/乱序/冲突、审核销号无匹配时抛
+# [ERROR_CONTRACT] PolicyExpectationError(ZA-ALT-0008)——配置非法(阈值/词表/非callable注入)、statement_source未注入或抓取异常、表态/事件字段非法、未知statement_id、topic空/语料空、llm_scorer未注入/异常/打分越界、ETF快照非法/乱序/冲突、审核销号无匹配时抛
 # [TESTS] tests/alt_data/test_policy_expectation_analyzer.py
 # [A_module] module_id=MOD-ALT-010 | layer=module | stability=evolving | safety=M | ai_autonomy=human_gated
 # [TTL] permanent
@@ -96,8 +96,10 @@ __all__: Final = [
 class PolicyExpectationError(Exception):
     """政策预期分析输入/状态非法（Fail-Closed）。
 
-    未登记错误码-申请中：占位 ZA-ALT-UNREGISTERED-POLICY-EXPECTATION。
+    错误码 ZA-ALT-0008 已登记转正（2026-09-06 Owner 批准批）。
     """
+
+    error_code = "ZA-ALT-0008"
 
 
 @dataclass(frozen=True)

@@ -10,7 +10,7 @@
 # [STABILITY] evolving
 # [SAFETY] M
 # [AI_AUTONOMY] human_gated
-# [ERROR_CONTRACT] AltPrivacyError(占位 ZA-ALT-UNREGISTERED-ALT-PRIVACY)——pii_type空白/正则不可编译/TTL非正/重复TTL登记/未知数据集TTL裁决/stored_at晚于时钟/白名单空/非映射记录/访问要素空白时抛
+# [ERROR_CONTRACT] AltPrivacyError(ZA-ALT-0004)——pii_type空白/正则不可编译/TTL非正/重复TTL登记/未知数据集TTL裁决/stored_at晚于时钟/白名单空/非映射记录/访问要素空白时抛
 # [TESTS] tests/alt_data/test_alt_data_privacy_protector.py
 # [A_module] module_id=MOD-ALT-012 | layer=module | stability=evolving | safety=M | ai_autonomy=human_gated
 # [TTL] permanent
@@ -89,8 +89,10 @@ __all__: Final = [
 class AltPrivacyError(Exception):
     """隐私保护输入/配置非法（Fail-Closed）。
 
-    未登记错误码-申请中：占位 ZA-ALT-UNREGISTERED-ALT-PRIVACY。
+    错误码 ZA-ALT-0004 已登记转正（2026-09-06 Owner 批准批）。
     """
+
+    error_code = "ZA-ALT-0004"
 
 
 @dataclass(frozen=True)

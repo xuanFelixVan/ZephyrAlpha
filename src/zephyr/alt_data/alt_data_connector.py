@@ -10,7 +10,7 @@
 # [STABILITY] evolving
 # [SAFETY] M
 # [AI_AUTONOMY] human_gated
-# [ERROR_CONTRACT] AltDataConnectorError(占位 ZA-ALT-UNREGISTERED-ALT-CONNECTOR)——重复/未知连接器、非法kind、适配器缺失或不可调用、密钥空/cipher缺失、游标非法、fetcher未注入或抓取/适配异常时抛
+# [ERROR_CONTRACT] AltDataConnectorError(ZA-ALT-0003)——重复/未知连接器、非法kind、适配器缺失或不可调用、密钥空/cipher缺失、游标非法、fetcher未注入或抓取/适配异常时抛
 # [TESTS] tests/alt_data/test_alt_data_connector.py
 # [A_module] module_id=MOD-ALT-007 | layer=module | stability=evolving | safety=M | ai_autonomy=human_gated
 # [TTL] permanent
@@ -96,8 +96,10 @@ __all__: Final = [
 class AltDataConnectorError(Exception):
     """另类数据接入输入/状态非法（Fail-Closed）。
 
-    未登记错误码-申请中：占位 ZA-ALT-UNREGISTERED-ALT-CONNECTOR。
+    错误码 ZA-ALT-0003 已登记转正（2026-09-06 Owner 批准批）。
     """
+
+    error_code = "ZA-ALT-0003"
 
 
 class ConnectorKind(str, Enum):

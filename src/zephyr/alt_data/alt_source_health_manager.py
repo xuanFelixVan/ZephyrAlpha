@@ -10,7 +10,7 @@
 # [STABILITY] evolving
 # [SAFETY] M
 # [AI_AUTONOMY] human_gated
-# [ERROR_CONTRACT] AltSourceHealthError(占位 ZA-ALT-UNREGISTERED-SOURCE-HEALTH)——权重和非法/阈值乱序/窗口非正/未知source/空source_id/负延迟/未来数据/空窗口评分/非法状态探测或评估时抛
+# [ERROR_CONTRACT] AltSourceHealthError(ZA-ALT-0006)——权重和非法/阈值乱序/窗口非正/未知source/空source_id/负延迟/未来数据/空窗口评分/非法状态探测或评估时抛
 # [TESTS] tests/alt_data/test_alt_source_health_manager.py
 # [A_module] module_id=MOD-ALT-011 | layer=module | stability=evolving | safety=M | ai_autonomy=human_gated
 # [TTL] permanent
@@ -99,8 +99,10 @@ _WEIGHT_KEYS: Final = ("success", "freshness", "latency")
 class AltSourceHealthError(Exception):
     """健康度管理输入/状态非法（Fail-Closed）。
 
-    未登记错误码-申请中：占位 ZA-ALT-UNREGISTERED-SOURCE-HEALTH。
+    错误码 ZA-ALT-0006 已登记转正（2026-09-06 Owner 批准批）。
     """
+
+    error_code = "ZA-ALT-0006"
 
 
 class HealthState(str, Enum):

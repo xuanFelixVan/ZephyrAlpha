@@ -60,6 +60,7 @@ domain_prefixes:
   SIG: D_ASHARE_SIGNAL
   TSK: D_GOVERNANCE
   SBX: D_INTEGRATION
+  ALT: D_ALT_DATA
 # ============================================================
 # 段位规划
 # ============================================================
@@ -2852,6 +2853,53 @@ error_codes:
   module: zephyr.ex_sor.core.sor_agent
   file: src/zephyr/ex_sor/core/sor_agent.py
   introduced: '2026-09-06: Owner 批准占位码转正批（B17-②）——ZA-XS-UNREGISTERED-SOR-AGENT 转正'
+
+# --- 2026-09-06 占位码转正批 ALT（Owner 批准 B17-②，取号=段内 max+1 顺延）---
+- code: ZA-ALT-0001
+  class: AltDataCatalogError
+  module: zephyr.alt_data.alt_data_catalog
+  file: src/zephyr/alt_data/alt_data_catalog.py
+  introduced: '2026-09-06: Owner 批准占位码转正批（B17-②）——ZA-ALT-UNREGISTERED-ALT-CATALOG 转正'
+- code: ZA-ALT-0002
+  class: AltComplianceError
+  module: zephyr.alt_data.alt_data_compliance_reviewer
+  file: src/zephyr/alt_data/alt_data_compliance_reviewer.py
+  introduced: '2026-09-06: Owner 批准占位码转正批（B17-②）——ZA-ALT-UNREGISTERED-ALT-COMPLIANCE 转正'
+- code: ZA-ALT-0003
+  class: AltDataConnectorError
+  module: zephyr.alt_data.alt_data_connector
+  file: src/zephyr/alt_data/alt_data_connector.py
+  introduced: '2026-09-06: Owner 批准占位码转正批（B17-②）——ZA-ALT-UNREGISTERED-ALT-CONNECTOR 转正'
+- code: ZA-ALT-0004
+  class: AltPrivacyError
+  module: zephyr.alt_data.alt_data_privacy_protector
+  file: src/zephyr/alt_data/alt_data_privacy_protector.py
+  introduced: '2026-09-06: Owner 批准占位码转正批（B17-②）——ZA-ALT-UNREGISTERED-ALT-PRIVACY 转正'
+- code: ZA-ALT-0005
+  class: AltSignalExtractorError
+  module: zephyr.alt_data.alt_data_signal_extractor
+  file: src/zephyr/alt_data/alt_data_signal_extractor.py
+  introduced: '2026-09-06: Owner 批准占位码转正批（B17-②）——ZA-ALT-UNREGISTERED-SIGNAL-EXTRACTOR 转正'
+- code: ZA-ALT-0006
+  class: AltSourceHealthError
+  module: zephyr.alt_data.alt_source_health_manager
+  file: src/zephyr/alt_data/alt_source_health_manager.py
+  introduced: '2026-09-06: Owner 批准占位码转正批（B17-②）——ZA-ALT-UNREGISTERED-SOURCE-HEALTH 转正'
+- code: ZA-ALT-0007
+  class: GeopoliticalRiskError
+  module: zephyr.alt_data.geopolitical_risk_analyzer
+  file: src/zephyr/alt_data/geopolitical_risk_analyzer.py
+  introduced: '2026-09-06: Owner 批准占位码转正批（B17-②）——ZA-ALT-UNREGISTERED-GEO-RISK 转正'
+- code: ZA-ALT-0008
+  class: PolicyExpectationError
+  module: zephyr.alt_data.policy_expectation_analyzer
+  file: src/zephyr/alt_data/policy_expectation_analyzer.py
+  introduced: '2026-09-06: Owner 批准占位码转正批（B17-②）——ZA-ALT-UNREGISTERED-POLICY-EXPECTATION 转正'
+- code: ZA-ALT-0009
+  class: ResearchReportError
+  module: zephyr.alt_data.research_report_collector
+  file: src/zephyr/alt_data/research_report_collector.py
+  introduced: '2026-09-06: Owner 批准占位码转正批（B17-②）——ZA-ALT-UNREGISTERED-REPORT-COLLECTOR 转正'
 
 known_duplicates: []
 # ============================================================

@@ -10,7 +10,7 @@
 # [STABILITY] evolving
 # [SAFETY] M
 # [AI_AUTONOMY] human_gated
-# [ERROR_CONTRACT] ResearchReportError(占位 ZA-ALT-UNREGISTERED-REPORT-COLLECTOR)——fetch_api/symbol_linker未注入、抓取/映射异常、批次或条目类型非法、字段非法、未知report_id查body_ref时抛
+# [ERROR_CONTRACT] ResearchReportError(ZA-ALT-0009)——fetch_api/symbol_linker未注入、抓取/映射异常、批次或条目类型非法、字段非法、未知report_id查body_ref时抛
 # [TESTS] tests/alt_data/test_research_report_collector.py
 # [A_module] module_id=MOD-ALT-009 | layer=module | stability=evolving | safety=M | ai_autonomy=human_gated
 # [TTL] permanent
@@ -93,8 +93,10 @@ __all__: Final = [
 class ResearchReportError(Exception):
     """研报采集输入/状态非法（Fail-Closed）。
 
-    未登记错误码-申请中：占位 ZA-ALT-UNREGISTERED-REPORT-COLLECTOR。
+    错误码 ZA-ALT-0009 已登记转正（2026-09-06 Owner 批准批）。
     """
+
+    error_code = "ZA-ALT-0009"
 
 
 @dataclass(frozen=True)

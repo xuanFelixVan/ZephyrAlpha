@@ -10,7 +10,7 @@
 # [STABILITY] evolving
 # [SAFETY] M
 # [AI_AUTONOMY] human_gated
-# [ERROR_CONTRACT] AltComplianceError(占位 ZA-ALT-UNREGISTERED-ALT-COMPLIANCE)——四要素空白/source_id空白/重复登记/清单空白/未知source/审查项不齐/证据空白/禁用未知源/interval非正/状态冲突时抛
+# [ERROR_CONTRACT] AltComplianceError(ZA-ALT-0002)——四要素空白/source_id空白/重复登记/清单空白/未知source/审查项不齐/证据空白/禁用未知源/interval非正/状态冲突时抛
 # [TESTS] tests/alt_data/test_alt_data_compliance_reviewer.py
 # [A_module] module_id=MOD-ALT-015 | layer=module | stability=evolving | safety=M | ai_autonomy=human_gated
 # [TTL] permanent
@@ -88,8 +88,10 @@ __all__: Final = [
 class AltComplianceError(Exception):
     """合规审查输入/配置/状态非法（Fail-Closed）。
 
-    未登记错误码-申请中：占位 ZA-ALT-UNREGISTERED-ALT-COMPLIANCE。
+    错误码 ZA-ALT-0002 已登记转正（2026-09-06 Owner 批准批）。
     """
+
+    error_code = "ZA-ALT-0002"
 
 
 class SourceStatus(str, Enum):

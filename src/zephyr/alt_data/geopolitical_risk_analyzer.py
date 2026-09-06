@@ -10,7 +10,7 @@
 # [STABILITY] evolving
 # [SAFETY] M
 # [AI_AUTONOMY] human_gated
-# [ERROR_CONTRACT] GeopoliticalRiskError(占位 ZA-ALT-UNREGISTERED-GEO-RISK)——事件源未注入/非callable/传导系数越界/阈值乱序/event_id空白/severity越界/country空白/重复评估事件时抛
+# [ERROR_CONTRACT] GeopoliticalRiskError(ZA-ALT-0007)——事件源未注入/非callable/传导系数越界/阈值乱序/event_id空白/severity越界/country空白/重复评估事件时抛
 # [TESTS] tests/alt_data/test_geopolitical_risk_analyzer.py
 # [A_module] module_id=MOD-ALT-014 | layer=module | stability=evolving | safety=M | ai_autonomy=human_gated
 # [TTL] permanent
@@ -99,8 +99,10 @@ EventBus = Callable[["RiskEvent"], None]
 class GeopoliticalRiskError(Exception):
     """地缘风险分析输入/配置非法（Fail-Closed）。
 
-    未登记错误码-申请中：占位 ZA-ALT-UNREGISTERED-GEO-RISK。
+    错误码 ZA-ALT-0007 已登记转正（2026-09-06 Owner 批准批）。
     """
+
+    error_code = "ZA-ALT-0007"
 
 
 class RiskLevel(str, Enum):
