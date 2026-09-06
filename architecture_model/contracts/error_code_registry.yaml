@@ -60,6 +60,7 @@ domain_prefixes:
   SIG: D_ASHARE_SIGNAL
   TSK: D_GOVERNANCE
   SBX: D_INTEGRATION
+  AUDITTEST: D_AUDITTEST
   ALT: D_ALT_DATA
 # ============================================================
 # 段位规划
@@ -2900,6 +2901,13 @@ error_codes:
   module: zephyr.alt_data.research_report_collector
   file: src/zephyr/alt_data/research_report_collector.py
   introduced: '2026-09-06: Owner 批准占位码转正批（B17-②）——ZA-ALT-UNREGISTERED-REPORT-COLLECTOR 转正'
+
+# --- 2026-09-06 占位码转正批 AUDITTEST（Owner 批准 B17-②，取号=段内 max+1 顺延）---
+- code: ZA-AUDITTEST-0001
+  class: QualitySelfdriveError
+  module: zephyr.simulation.quality_assurance_selfdrive
+  file: src/zephyr/simulation/quality_assurance_selfdrive.py
+  introduced: '2026-09-06: Owner 批准占位码转正批（B17-②）——ZA-AUDITTEST-UNREGISTERED-QA-SELFDRIVE 转正'
 
 known_duplicates: []
 # ============================================================

@@ -10,7 +10,7 @@
 # [STABILITY] evolving
 # [SAFETY] M
 # [AI_AUTONOMY] human_gated
-# [ERROR_CONTRACT] QualitySelfdriveError(占位 ZA-AUDITTEST-UNREGISTERED-QA-SELFDRIVE)——非法契约schema/writer缺失/检测器缺失或异常/基线非法/抽检参数非法/随机源越界时抛
+# [ERROR_CONTRACT] QualitySelfdriveError(ZA-AUDITTEST-0001)——非法契约schema/writer缺失/检测器缺失或异常/基线非法/抽检参数非法/随机源越界时抛
 # [TESTS] tests/simulation/test_quality_assurance_selfdrive.py
 # [A_module] module_id=MOD-AUDITTEST-001 | layer=module | stability=evolving | safety=M | ai_autonomy=human_gated
 # [TTL] permanent
@@ -97,8 +97,10 @@ _TODO_MARK: Final = "TODO"
 class QualitySelfdriveError(Exception):
     """质量自驱动输入/接线非法（Fail-Closed）。
 
-    未登记错误码-申请中：占位 ZA-AUDITTEST-UNREGISTERED-QA-SELFDRIVE。
+    错误码 ZA-AUDITTEST-0001 已登记转正（2026-09-06 Owner 批准批）。
     """
+
+    error_code = "ZA-AUDITTEST-0001"
 
 
 @dataclass(frozen=True)
