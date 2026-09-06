@@ -10,7 +10,7 @@
 # [STABILITY] evolving
 # [SAFETY] M
 # [AI_AUTONOMY] human_gated
-# [ERROR_CONTRACT] ApiDocSyncError(占位 ZA-GOVD-UNREGISTERED-API-DOC-SYNC)——scanner/writer/时段判定未注入/交易时段/非法签名/重复api_id/超阈值未获人工确认/scanner或writer异常/非法阈值时抛
+# [ERROR_CONTRACT] ApiDocSyncError(ZA-GOVD-0001)——scanner/writer/时段判定未注入/交易时段/非法签名/重复api_id/超阈值未获人工确认/scanner或writer异常/非法阈值时抛
 # [TESTS] tests/governance/docs/test_api_doc_version_syncer.py
 # [A_module] module_id=MOD-GOV-054 | layer=module | stability=evolving | safety=M | ai_autonomy=human_gated
 # [TTL] permanent
@@ -95,8 +95,10 @@ __all__: Final = [
 class ApiDocSyncError(Exception):
     """API 文档同步输入/状态非法（Fail-Closed）。
 
-    未登记错误码-申请中：占位 ZA-GOVD-UNREGISTERED-API-DOC-SYNC。
+    错误码 ZA-GOVD-0001 已登记转正（2026-09-06 Owner 批准批）。
     """
+
+    error_code = "ZA-GOVD-0001"
 
 
 class ChangeKind(str, Enum):
