@@ -10,7 +10,7 @@
 # [STABILITY] evolving
 # [SAFETY] M
 # [AI_AUTONOMY] human_gated
-# [ERROR_CONTRACT] IntegrationMatrixError(占位 ZA-INT-UNREGISTERED-INTEGRATION-MATRIX)——空要素/未知枚举/条目冲突/未知系统/降级链非法/规则schema违约时抛
+# [ERROR_CONTRACT] IntegrationMatrixError(ZA-INT-0011)——空要素/未知枚举/条目冲突/未知系统/降级链非法/规则schema违约时抛
 # [TESTS] tests/integration/test_integration_matrix_registry.py
 # [A_module] module_id=MOD-INT-MATRIX | layer=module | stability=evolving | safety=M | ai_autonomy=human_gated
 # [TTL] permanent
@@ -51,8 +51,10 @@ _RULE_REQUIRED_KEYS: Final[frozenset[str]] = frozenset({"system", "interaction",
 class IntegrationMatrixError(Exception):
     """集成交互矩阵输入/状态非法（Fail-Closed）。
 
-    未登记错误码-申请中：占位 ZA-INT-UNREGISTERED-INTEGRATION-MATRIX。
+    错误码 ZA-INT-0011 已登记转正（2026-09-06 Owner 批准批）。
     """
+
+    error_code = "ZA-INT-0011"
 
 
 class ProtocolKind(str, Enum):

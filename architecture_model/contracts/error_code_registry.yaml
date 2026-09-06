@@ -3392,6 +3392,33 @@ error_codes:
   file: src/zephyr/infrastructure/system_telemetry/reproducibility_packager.py
   introduced: '2026-09-06: Owner 批准占位码转正批（B17-②）——ZA-INF-UNREGISTERED-REPRO-PACKAGER 转正'
 
+# --- 2026-09-06 占位码转正批 INT（Owner 批准 B17-②，取号=段内 max+1 顺延）---
+- code: ZA-INT-0007
+  class: AiRouteError
+  module: zephyr.integration.ai_service_route_matrix
+  file: src/zephyr/integration/ai_service_route_matrix.py
+  introduced: '2026-09-06: Owner 批准占位码转正批（B17-②）——ZA-INT-UNREGISTERED-AI-ROUTE 转正'
+- code: ZA-INT-0008
+  class: ApiDocError
+  module: zephyr.integration.api_documentation_generator
+  file: src/zephyr/integration/api_documentation_generator.py
+  introduced: '2026-09-06: Owner 批准占位码转正批（B17-②）——ZA-INT-UNREGISTERED-API-DOC 转正'
+- code: ZA-INT-0009
+  class: ApiGatewayError
+  module: zephyr.integration.api_gateway
+  file: src/zephyr/integration/api_gateway.py
+  introduced: '2026-09-06: Owner 批准占位码转正批（B17-②）——ZA-INT-UNREGISTERED-API-GATEWAY 转正'
+- code: ZA-INT-0010
+  class: ExternalConnectorError
+  module: zephyr.integration.external_system_connector
+  file: src/zephyr/integration/external_system_connector.py
+  introduced: '2026-09-06: Owner 批准占位码转正批（B17-②）——ZA-INT-UNREGISTERED-EXT-CONNECTOR 转正'
+- code: ZA-INT-0011
+  class: IntegrationMatrixError
+  module: zephyr.integration.integration_matrix_registry
+  file: src/zephyr/integration/integration_matrix_registry.py
+  introduced: '2026-09-06: Owner 批准占位码转正批（B17-②）——ZA-INT-UNREGISTERED-INTEGRATION-MATRIX 转正'
+
 known_duplicates: []
 # ============================================================
 # 已知缺口（诚实登记，2026-08-15 #ARCH-MON-001 批次实测）

@@ -10,7 +10,7 @@
 # [STABILITY] evolving
 # [SAFETY] M
 # [AI_AUTONOMY] human_gated
-# [ERROR_CONTRACT] ApiGatewayError(占位 ZA-INT-UNREGISTERED-API-GATEWAY)——非法方法/空路径/路由重复/非法handler/空request_id/空路径请求时抛
+# [ERROR_CONTRACT] ApiGatewayError(ZA-INT-0009)——非法方法/空路径/路由重复/非法handler/空request_id/空路径请求时抛
 # [TESTS] tests/integration/test_api_gateway.py
 # [A_module] module_id=MOD-INT-APIGW | layer=module | stability=evolving | safety=M | ai_autonomy=human_gated
 # [TTL] permanent
@@ -58,8 +58,10 @@ _MASK: Final = "***"
 class ApiGatewayError(Exception):
     """API 网关输入/配置非法（Fail-Closed）。
 
-    未登记错误码-申请中：占位 ZA-INT-UNREGISTERED-API-GATEWAY。
+    错误码 ZA-INT-0009 已登记转正（2026-09-06 Owner 批准批）。
     """
+
+    error_code = "ZA-INT-0009"
 
 
 @dataclass(frozen=True)

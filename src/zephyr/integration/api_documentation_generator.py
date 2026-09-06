@@ -10,7 +10,7 @@
 # [STABILITY] evolving
 # [SAFETY] M
 # [AI_AUTONOMY] human_gated
-# [ERROR_CONTRACT] ApiDocError(占位 ZA-INT-UNREGISTERED-API-DOC)——非法方法/空路径/operation_id 重复/非法字段类型/非法阈值/未知路由时抛
+# [ERROR_CONTRACT] ApiDocError(ZA-INT-0008)——非法方法/空路径/operation_id 重复/非法字段类型/非法阈值/未知路由时抛
 # [TESTS] tests/integration/test_api_documentation_generator.py
 # [A_module] module_id=MOD-INT-OPENAPI | layer=module | stability=evolving | safety=M | ai_autonomy=human_gated
 # [TTL] permanent
@@ -54,8 +54,10 @@ _OPENAPI_VERSION: Final = "3.0.3"
 class ApiDocError(Exception):
     """API 文档生成输入/状态非法（Fail-Closed）。
 
-    未登记错误码-申请中：占位 ZA-INT-UNREGISTERED-API-DOC。
+    错误码 ZA-INT-0008 已登记转正（2026-09-06 Owner 批准批）。
     """
+
+    error_code = "ZA-INT-0008"
 
 
 @dataclass(frozen=True)

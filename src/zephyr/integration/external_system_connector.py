@@ -10,7 +10,7 @@
 # [STABILITY] evolving
 # [SAFETY] M
 # [AI_AUTONOMY] ai_modifiable
-# [ERROR_CONTRACT] ExternalConnectorError/ConnectorAlreadyRegisteredError/ConnectorNotFoundError/QuotaExceeded(占位 ZA-INT-UNREGISTERED-EXT-CONNECTOR)——空id/重复注册/未知连接器/非法配额/超限时抛
+# [ERROR_CONTRACT] ExternalConnectorError/ConnectorAlreadyRegisteredError/ConnectorNotFoundError/QuotaExceeded(ZA-INT-0010)——空id/重复注册/未知连接器/非法配额/超限时抛
 # [TESTS] tests/integration/test_external_system_connector.py
 # [A_module] module_id=MOD-INF-073 | layer=module | stability=evolving | safety=M | ai_autonomy=ai_modifiable
 # [TTL] permanent
@@ -54,8 +54,10 @@ __all__: Final = [
 class ExternalConnectorError(Exception):
     """外部连接器契约输入非法（Fail-Closed）。
 
-    未登记错误码-申请中：占位 ZA-INT-UNREGISTERED-EXT-CONNECTOR。
+    错误码 ZA-INT-0010 已登记转正（2026-09-06 Owner 批准批）。
     """
+
+    error_code = "ZA-INT-0010"
 
 
 class ConnectorAlreadyRegisteredError(ExternalConnectorError):

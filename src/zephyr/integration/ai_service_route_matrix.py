@@ -10,7 +10,7 @@
 # [STABILITY] evolving
 # [SAFETY] M
 # [AI_AUTONOMY] human_gated
-# [ERROR_CONTRACT] AiRouteError(占位 ZA-INT-UNREGISTERED-AI-ROUTE)——空service_id/重复注册/非法画像/未知服务/未知路由/空链/链含未注册服务/全链不可用时抛
+# [ERROR_CONTRACT] AiRouteError(ZA-INT-0007)——空service_id/重复注册/非法画像/未知服务/未知路由/空链/链含未注册服务/全链不可用时抛
 # [TESTS] tests/integration/test_ai_service_route_matrix.py
 # [A_module] module_id=MOD-INT-AIROUTE | layer=module | stability=evolving | safety=M | ai_autonomy=human_gated
 # [TTL] permanent
@@ -52,8 +52,10 @@ __all__: Final = [
 class AiRouteError(Exception):
     """AI 服务路由输入/状态非法（Fail-Closed）。
 
-    未登记错误码-申请中：占位 ZA-INT-UNREGISTERED-AI-ROUTE。
+    错误码 ZA-INT-0007 已登记转正（2026-09-06 Owner 批准批）。
     """
+
+    error_code = "ZA-INT-0007"
 
 
 class ServiceClass(str, Enum):
