@@ -10,7 +10,7 @@
 # [STABILITY] evolving
 # [SAFETY] M
 # [AI_AUTONOMY] human_gated
-# [ERROR_CONTRACT] SourceSlaError(占位 ZA-DATA-UNREGISTERED-SOURCE-SLA)——空source/非法目标/未注册源摄入/非法记录/空窗口聚合/非法周期时抛
+# [ERROR_CONTRACT] SourceSlaError(ZA-DATA-0023)——空source/非法目标/未注册源摄入/非法记录/空窗口聚合/非法周期时抛
 # [TESTS] tests/data/test_source_sla_tracker.py
 # [A_module] module_id=MOD-DATA-066 | layer=module | stability=evolving | safety=M | ai_autonomy=human_gated
 # [TTL] permanent
@@ -76,8 +76,10 @@ __all__: Final = [
 class SourceSlaError(Exception):
     """SLA 追踪输入/状态非法（Fail-Closed）。
 
-    未登记错误码-申请中：占位 ZA-DATA-UNREGISTERED-SOURCE-SLA。
+    错误码 ZA-DATA-0023 已登记转正（2026-09-06 Owner 批准批）。
     """
+
+    error_code = "ZA-DATA-0023"
 
 
 @dataclass(frozen=True)

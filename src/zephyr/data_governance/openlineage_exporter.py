@@ -10,7 +10,7 @@
 # [STABILITY] evolving
 # [SAFETY] M
 # [AI_AUTONOMY] human_gated
-# [ERROR_CONTRACT] OpenLineageError(占位 ZA-DATA-UNREGISTERED-OPENLINEAGE)——必填缺失/非法eventType/非法边/root与line_sink均未注入时抛
+# [ERROR_CONTRACT] OpenLineageError(ZA-DATA-0029)——必填缺失/非法eventType/非法边/root与line_sink均未注入时抛
 # [TESTS] tests/data_governance/test_openlineage_exporter.py
 # [A_module] module_id=MOD-DATA_GOV-011 | layer=module | stability=evolving | safety=M | ai_autonomy=human_gated
 # [TTL] permanent
@@ -128,8 +128,10 @@ Edge = tuple[str, str, str]
 class OpenLineageError(Exception):
     """OpenLineage 事件校验/导出输入非法（Fail-Closed）。
 
-    未登记错误码-申请中：占位 ZA-DATA-UNREGISTERED-OPENLINEAGE。
+    错误码 ZA-DATA-0029 已登记转正（2026-09-06 Owner 批准批）。
     """
+
+    error_code = "ZA-DATA-0029"
 
 
 class EventType(str, Enum):

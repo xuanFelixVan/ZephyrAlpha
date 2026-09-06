@@ -10,7 +10,7 @@
 # [STABILITY] evolving
 # [SAFETY] M
 # [AI_AUTONOMY] human_gated
-# [ERROR_CONTRACT] MlLineageError(占位 ZA-DATA-UNREGISTERED-ML-LINEAGE)——词表外类型/未知节点/方向不符/成环/适配器缺失或异常时抛
+# [ERROR_CONTRACT] MlLineageError(ZA-DATA-0028)——词表外类型/未知节点/方向不符/成环/适配器缺失或异常时抛
 # [TESTS] tests/data_governance/test_ml_lineage_tracker.py
 # [A_module] module_id=MOD-DATA_GOV-013 | layer=module | stability=evolving | safety=M | ai_autonomy=human_gated
 # [TTL] permanent
@@ -82,8 +82,10 @@ __all__: Final = [
 class MlLineageError(Exception):
     """ML 血缘登记/查询输入非法（Fail-Closed）。
 
-    未登记错误码-申请中：占位 ZA-DATA-UNREGISTERED-ML-LINEAGE。
+    错误码 ZA-DATA-0028 已登记转正（2026-09-06 Owner 批准批）。
     """
+
+    error_code = "ZA-DATA-0028"
 
 
 class MlNodeKind(str, Enum):

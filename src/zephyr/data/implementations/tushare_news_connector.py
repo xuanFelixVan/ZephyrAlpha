@@ -10,7 +10,7 @@
 # [STABILITY] evolving
 # [SAFETY] M
 # [AI_AUTONOMY] human_gated
-# [ERROR_CONTRACT] TushareNewsError(占位 ZA-DATA-UNREGISTERED-TUSHARE-NEWS)——api缺失/非法区间/空标题/时间戳越界/非法窗宽时抛
+# [ERROR_CONTRACT] TushareNewsError(ZA-DATA-0022)——api缺失/非法区间/空标题/时间戳越界/非法窗宽时抛
 # [TESTS] tests/data/implementations/test_tushare_news_connector.py
 # [A_module] module_id=MOD-DATA-065 | layer=module | stability=evolving | safety=M | ai_autonomy=human_gated
 # [TTL] permanent
@@ -98,8 +98,10 @@ _WS_RE: Final = re.compile(r"\s+")
 class TushareNewsError(Exception):
     """新闻接入输入/状态非法（Fail-Closed）。
 
-    未登记错误码-申请中：占位 ZA-DATA-UNREGISTERED-TUSHARE-NEWS。
+    错误码 ZA-DATA-0022 已登记转正（2026-09-06 Owner 批准批）。
     """
+
+    error_code = "ZA-DATA-0022"
 
 
 @dataclass(frozen=True)

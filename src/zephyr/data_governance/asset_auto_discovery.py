@@ -10,7 +10,7 @@
 # [STABILITY] evolving
 # [SAFETY] M
 # [AI_AUTONOMY] human_gated
-# [ERROR_CONTRACT] AssetDiscoveryError(占位 ZA-DATA-UNREGISTERED-ASSET-DISCOVERY)——词表外类型/非法scanner/重复注册/空asset_id/无scanner运行/scanner或sink异常时抛
+# [ERROR_CONTRACT] AssetDiscoveryError(ZA-DATA-0024)——词表外类型/非法scanner/重复注册/空asset_id/无scanner运行/scanner或sink异常时抛
 # [TESTS] tests/data_governance/test_asset_auto_discovery.py
 # [A_module] module_id=MOD-DATA_GOV-014 | layer=module | stability=evolving | safety=M | ai_autonomy=human_gated
 # [TTL] permanent
@@ -92,8 +92,10 @@ ScannerFn = Callable[[], Iterable["RawAssetInfo"]]
 class AssetDiscoveryError(Exception):
     """资产自动发现登记/运行输入非法（Fail-Closed）。
 
-    未登记错误码-申请中：占位 ZA-DATA-UNREGISTERED-ASSET-DISCOVERY。
+    错误码 ZA-DATA-0024 已登记转正（2026-09-06 Owner 批准批）。
     """
+
+    error_code = "ZA-DATA-0024"
 
 
 class AssetType(str, Enum):

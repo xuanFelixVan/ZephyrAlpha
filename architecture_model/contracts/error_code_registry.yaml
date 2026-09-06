@@ -2936,6 +2936,53 @@ error_codes:
   file: src/zephyr/compliance/regulatory_change_tracker.py
   introduced: '2026-09-06: Owner 批准占位码转正批（B17-②）——ZA-CMP-UNREGISTERED-REGULATORY-TRACKER 转正'
 
+# --- 2026-09-06 占位码转正批 DATA（Owner 批准 B17-②，取号=段内 max+1 顺延）---
+- code: ZA-DATA-0021
+  class: DataCompressionError
+  module: zephyr.data.data_compression_archiver
+  file: src/zephyr/data/data_compression_archiver.py
+  introduced: '2026-09-06: Owner 批准占位码转正批（B17-②）——ZA-DATA-UNREGISTERED-COMPRESSION 转正'
+- code: ZA-DATA-0022
+  class: TushareNewsError
+  module: zephyr.data.implementations.tushare_news_connector
+  file: src/zephyr/data/implementations/tushare_news_connector.py
+  introduced: '2026-09-06: Owner 批准占位码转正批（B17-②）——ZA-DATA-UNREGISTERED-TUSHARE-NEWS 转正'
+- code: ZA-DATA-0023
+  class: SourceSlaError
+  module: zephyr.data.source_sla_tracker
+  file: src/zephyr/data/source_sla_tracker.py
+  introduced: '2026-09-06: Owner 批准占位码转正批（B17-②）——ZA-DATA-UNREGISTERED-SOURCE-SLA 转正'
+- code: ZA-DATA-0024
+  class: AssetDiscoveryError
+  module: zephyr.data_governance.asset_auto_discovery
+  file: src/zephyr/data_governance/asset_auto_discovery.py
+  introduced: '2026-09-06: Owner 批准占位码转正批（B17-②）——ZA-DATA-UNREGISTERED-ASSET-DISCOVERY 转正'
+- code: ZA-DATA-0025
+  class: ColumnLineageError
+  module: zephyr.data_governance.column_lineage_tracker
+  file: src/zephyr/data_governance/column_lineage_tracker.py
+  introduced: '2026-09-06: Owner 批准占位码转正批（B17-②）——ZA-DATA-UNREGISTERED-COLUMN-LINEAGE 转正'
+- code: ZA-DATA-0026
+  class: LineageChangeError
+  module: zephyr.data_governance.lineage_change_detector
+  file: src/zephyr/data_governance/lineage_change_detector.py
+  introduced: '2026-09-06: Owner 批准占位码转正批（B17-②）——ZA-DATA-UNREGISTERED-LINEAGE-CHANGE 转正'
+- code: ZA-DATA-0027
+  class: MarketDataAggregateError
+  module: zephyr.data_governance.market_data_aggregates
+  file: src/zephyr/data_governance/market_data_aggregates.py
+  introduced: '2026-09-06: Owner 批准占位码转正批（B17-②）——ZA-DATA-UNREGISTERED-MKT-AGGREGATE 转正'
+- code: ZA-DATA-0028
+  class: MlLineageError
+  module: zephyr.data_governance.ml_lineage_tracker
+  file: src/zephyr/data_governance/ml_lineage_tracker.py
+  introduced: '2026-09-06: Owner 批准占位码转正批（B17-②）——ZA-DATA-UNREGISTERED-ML-LINEAGE 转正'
+- code: ZA-DATA-0029
+  class: OpenLineageError
+  module: zephyr.data_governance.openlineage_exporter
+  file: src/zephyr/data_governance/openlineage_exporter.py
+  introduced: '2026-09-06: Owner 批准占位码转正批（B17-②）——ZA-DATA-UNREGISTERED-OPENLINEAGE 转正'
+
 known_duplicates: []
 # ============================================================
 # 已知缺口（诚实登记，2026-08-15 #ARCH-MON-001 批次实测）

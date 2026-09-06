@@ -10,7 +10,7 @@
 # [STABILITY] evolving
 # [SAFETY] M
 # [AI_AUTONOMY] human_gated
-# [ERROR_CONTRACT] MarketDataAggregateError(占位 ZA-DATA-UNREGISTERED-MKT-AGGREGATE)——空ID/负版本/版本过期/重复策略/未知domain/非法演练记录时抛
+# [ERROR_CONTRACT] MarketDataAggregateError(ZA-DATA-0027)——空ID/负版本/版本过期/重复策略/未知domain/非法演练记录时抛
 # [TESTS] tests/data_governance/test_market_data_aggregates.py
 # [A_module] module_id=MOD-DATA_GOV-009 | layer=module | stability=evolving | safety=M | ai_autonomy=human_gated
 # [TTL] permanent
@@ -137,8 +137,10 @@ __all__: Final = [
 class MarketDataAggregateError(Exception):
     """行情聚合/仓储/保留策略/演练记录输入非法（Fail-Closed）。
 
-    未登记错误码-申请中：占位 ZA-DATA-UNREGISTERED-MKT-AGGREGATE。
+    错误码 ZA-DATA-0027 已登记转正（2026-09-06 Owner 批准批）。
     """
+
+    error_code = "ZA-DATA-0027"
 
 
 # ──────────────────────────────────────────────────────────────────────────────

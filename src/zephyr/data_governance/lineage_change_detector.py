@@ -10,7 +10,7 @@
 # [STABILITY] evolving
 # [SAFETY] M
 # [AI_AUTONOMY] human_gated
-# [ERROR_CONTRACT] LineageChangeError(占位 ZA-DATA-UNREGISTERED-LINEAGE-CHANGE)——空detector_id/非法边/自环/基线缺失时抛
+# [ERROR_CONTRACT] LineageChangeError(ZA-DATA-0026)——空detector_id/非法边/自环/基线缺失时抛
 # [TESTS] tests/data_governance/test_lineage_change_detector.py
 # [A_module] module_id=MOD-DATA_GOV-010 | layer=module | stability=evolving | safety=M | ai_autonomy=human_gated
 # [TTL] permanent
@@ -95,8 +95,10 @@ Edge = tuple[str, str, str]
 class LineageChangeError(Exception):
     """血缘变更检测输入/状态非法（Fail-Closed）。
 
-    未登记错误码-申请中：占位 ZA-DATA-UNREGISTERED-LINEAGE-CHANGE。
+    错误码 ZA-DATA-0026 已登记转正（2026-09-06 Owner 批准批）。
     """
+
+    error_code = "ZA-DATA-0026"
 
 
 @dataclass(frozen=True)
