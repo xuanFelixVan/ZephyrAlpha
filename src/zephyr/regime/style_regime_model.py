@@ -10,7 +10,7 @@
 # [STABILITY] evolving
 # [SAFETY] M
 # [AI_AUTONOMY] human_gated
-# [ERROR_CONTRACT] StyleRegimeError(占位 ZA-REGIME-UNREGISTERED-STYLE-REGIME)——收益序列非法/幅度阈值或确认期数非法/HMM输出非法/参数映射缺态/全期未决无法确认时抛
+# [ERROR_CONTRACT] StyleRegimeError(ZA-REGIME-0039)——收益序列非法/幅度阈值或确认期数非法/HMM输出非法/参数映射缺态/全期未决无法确认时抛
 # [TESTS] tests/regime/test_style_regime_model.py
 # [A_module] module_id=MOD-REGIME-014 | layer=module | stability=evolving | safety=M | ai_autonomy=human_gated
 # [TTL] permanent
@@ -88,8 +88,10 @@ __all__: Final = [
 class StyleRegimeError(Exception):
     """风格体制输入/配置非法（Fail-Closed）。
 
-    未登记错误码-申请中：占位 ZA-REGIME-UNREGISTERED-STYLE-REGIME。
+    错误码 ZA-REGIME-0039 已登记转正（2026-09-06 Owner 批准批）。
     """
+
+    error_code = "ZA-REGIME-0039"
 
 
 class StyleState(str, Enum):

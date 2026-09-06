@@ -3671,6 +3671,13 @@ error_codes:
   file: src/zephyr/plan_engine/premarket_workflow_engine.py
   introduced: '2026-09-06: Owner 批准占位码转正批（B17-②）——ZA-PLAN-UNREGISTERED-PREMARKET-WORKFLOW 转正'
 
+# --- 2026-09-06 占位码转正批 REGIME（Owner 批准 B17-②，取号=段内 max+1 顺延）---
+- code: ZA-REGIME-0039
+  class: StyleRegimeError
+  module: zephyr.regime.style_regime_model
+  file: src/zephyr/regime/style_regime_model.py
+  introduced: '2026-09-06: Owner 批准占位码转正批（B17-②）——ZA-REGIME-UNREGISTERED-STYLE-REGIME 转正'
+
 known_duplicates: []
 # ============================================================
 # 已知缺口（诚实登记，2026-08-15 #ARCH-MON-001 批次实测）
