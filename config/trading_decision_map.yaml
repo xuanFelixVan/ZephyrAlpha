@@ -33,6 +33,8 @@ nodes:
   #   正名登记（D23）：现名"作战预案引擎"→未来正名"每日作战计划引擎（Game Plan Engine）"——
   #   专业两层结构：Playbook（静态招式手册=策略库+作战手册，已有）vs Game Plan（当日动态作战计划）；
   #   "预案"为口语，专业词=Game Plan；改名执行时同步 D_PLAN 域/BM-PLAN-01-C 锚点/相关备忘录编号
+  #   升级需求清单（D24）：6 项功能全要（IF-THEN 强制格式/今日不做什么负面清单/心理状态检查门/
+  #     预警位联动/Skip log/盘前盘中职责分离）——需求真源=69 号备忘录 §2.13，施工归 D_PLAN 域升级批次
   - node_id: TDM-E-L1
     name_zh: 大盘总闸
     market: cn_a
