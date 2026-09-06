@@ -5,7 +5,7 @@
 # [CONSUMERS] zephyr.governance.audit.reconciliation_registry（GATE-WORKING-DOCS reconciler）
 # [STARTUP] imported
 # [MATURITY] production
-# [INVARIANTS] 永不物理删除（归档=guard_recycle 进回收站 30 天）；ttl: permanent 永不进观察；观察清单 SSoT=.runtime/archive_watchlist.json
+# [INVARIANTS] 永不物理删除（归档=guard_recycle 进回收站 30 天）；ttl: permanent 永不进观察；git tracked 文件永不观察/归档（2026-09-06 补丁，归档 tracked=制造 unstaged D）；观察清单 SSoT=.runtime/archive_watchlist.json
 # [MODIFY-GUARD] 状态机转移条件（WATCH_GRACE_SECONDS/INACTIVE_THRESHOLD_SECONDS）变更需同步本文件测试
 # [STABILITY] evolving
 # [SAFETY] H
@@ -164,6 +164,7 @@ from __future__ import annotations
 
 import json
 import re
+import subprocess
 import sys
 import time
 from dataclasses import dataclass, field
@@ -340,11 +341,37 @@ class LifecycleReport:
 
     scanned: int = 0
     skipped_permanent: int = 0
+    skipped_tracked: int = 0  # 2026-09-06 补丁：git tracked 文件赦免计数
     watched: list[str] = field(default_factory=list)
     revived: list[str] = field(default_factory=list)
     archived: list[str] = field(default_factory=list)
+    tracked_pardoned: list[str] = field(default_factory=list)  # tracked 文件从既有观察名单赦免出清
     pruned_recycle: int = 0
     error: str = ""
+
+
+def _git_tracked_working_docs(repo_root: Path) -> set[str]:
+    """git 已跟踪的 docs/_working 文件集（相对路径，/ 分隔）。
+
+    2026-09-06 补丁（批二"报告神秘删除"事件根因）：本状态机面向"临时工作文档"，
+    但归档 git tracked 正式文件 = 制造 unstaged D（当日实证：两份 2026-08-30 收口
+    报告被 guard_recycle move 走，unstaged D 挂 5.5 小时无人知）。故 tracked 文件
+    与 ttl: permanent 同待遇——永不观察、永不归档。
+
+    失败返回空集 fail-open：本状态机仅在 post-commit 周期运行（git 必然可用）；
+    非 git 环境（单测 tmp 目录）自然退化为旧行为。
+    """
+    try:
+        result = subprocess.run(
+            ["git", "-C", str(repo_root), "ls-files", "--", "docs/_working"],
+            capture_output=True,
+            text=True,
+            timeout=30,
+            check=True,
+        )
+        return {line.strip() for line in result.stdout.splitlines() if line.strip()}
+    except Exception:
+        return set()
 
 
 def _iter_working_docs(working_dir: Path) -> list[Path]:
@@ -384,6 +411,7 @@ def evaluate_lifecycle(repo_root: Path, *, now: int | None = None) -> LifecycleR
     working_dir = repo_root / "docs" / "_working"
     docs = _iter_working_docs(working_dir)
     present_rels = {str(p.relative_to(repo_root)).replace("\\", "/") for p in docs}
+    tracked_rels = _git_tracked_working_docs(repo_root)
 
     # 清单自愈：文件已不在工作区（被人工/其他途径处理）→ 出清单
     for rel in [k for k in entries if k not in present_rels]:
@@ -395,6 +423,14 @@ def evaluate_lifecycle(repo_root: Path, *, now: int | None = None) -> LifecycleR
         if ttl == "permanent":
             report.skipped_permanent += 1
             entries.pop(rel, None)  # permanent 永不观察（已在清单的赦免）
+            continue
+
+        # 2026-09-06 补丁：git tracked 正式文档永不观察/归档（归档 tracked = 制造
+        # unstaged D，当日两份收口报告实证）；已在观察名单的赦免出清（防 7 天复发）
+        if rel in tracked_rels:
+            report.skipped_tracked += 1
+            if entries.pop(rel, None) is not None:
+                report.tracked_pardoned.append(rel)
             continue
 
         report.scanned += 1

@@ -186,6 +186,81 @@ class TestWatchlistMechanics:
         assert r.watched == [] and r.archived == []
 
 
+class TestTrackedFilesSkip:
+    """2026-09-06 补丁：git tracked 文件永不观察/归档（批二"报告神秘删除"事件根因）。
+
+    当日实证：两份 git tracked 收口报告因 durable 死链进 watchlist，7 天宽限到期
+    被 guard_recycle move 进回收站 → unstaged D 挂 5.5 小时无人知；恢复后重新进
+    watchlist（14:24:28），不补丁 9/13 复发。
+    """
+
+    @pytest.fixture()
+    def git_repo(self, tmp_path):
+        """带 git 的临时仓库（tracked 文件补丁的验证环境）。"""
+        import subprocess
+
+        repo = tmp_path / "repo"
+        (repo / "docs" / "_working").mkdir(parents=True)
+        (repo / ".runtime").mkdir()
+        for cmd in (
+            ["git", "init", "-q"],
+            ["git", "config", "user.email", "t@t.local"],
+            ["git", "config", "user.name", "t"],
+        ):
+            subprocess.run(cmd, cwd=repo, check=True)
+        return repo
+
+    def _commit_all(self, repo: Path) -> None:
+        import subprocess
+
+        subprocess.run(["git", "add", "-A"], cwd=repo, check=True)
+        subprocess.run(["git", "commit", "-qm", "init"], cwd=repo, check=True)
+
+    def test_tracked_doc_never_watched(self, git_repo):
+        """tracked 文档即使含 durable 死链也不进观察名单。"""
+        _write_doc(git_repo, "tracked.md", "引用 src/gone/x.py")
+        self._commit_all(git_repo)
+        r = _evaluate(git_repo)
+        assert "docs/_working/tracked.md" not in r.watched
+        assert r.skipped_tracked >= 1
+        assert (git_repo / "docs" / "_working" / "tracked.md").exists()
+
+    def test_tracked_doc_pardoned_from_watchlist_not_archived(self, git_repo):
+        """已在观察名单+宽限已满的 tracked 文件 → 赦免出清而非归档（防 9/13 复发）。"""
+        from zephyr.governance.audit.doc_lifecycle import WatchEntry, load_watchlist, save_watchlist
+
+        doc = _write_doc(git_repo, "reports/r.md", "引用 src/gone/x.py")
+        self._commit_all(git_repo)
+
+        rel = "docs/_working/reports/r.md"
+        entries = load_watchlist(git_repo)
+        entries[rel] = WatchEntry(
+            state="watch",
+            first_seen=int(time.time()) - 10 * 24 * 3600,  # 宽限早已满
+            baseline_mtime=doc.stat().st_mtime - 100,
+            last_checked=int(time.time()),
+            ghost_refs=["src/gone/x.py"],
+            reason="seeded",
+        )
+        save_watchlist(git_repo, entries)
+
+        r = _evaluate(git_repo)
+        assert doc.exists(), "tracked 文件不得被 move 归档"
+        assert rel in r.tracked_pardoned
+        assert r.archived == []
+        assert rel not in load_watchlist(git_repo)
+
+    def test_untracked_doc_still_archived_after_grace(self, git_repo):
+        """同仓库内 untracked 文档仍走正常归档流程（补丁不误伤机制本体）。"""
+        _write_doc(git_repo, "tracked.md", "正常引用")
+        self._commit_all(git_repo)
+        _write_doc(git_repo, "untracked_dead.md", "引用 src/gone/x.py")  # 不 commit
+        t0 = int(time.time())
+        _evaluate(git_repo, now=t0)
+        r = _evaluate(git_repo, now=t0 + 7 * 24 * 3600 + 1)
+        assert "docs/_working/untracked_dead.md" in r.archived
+
+
 class TestRecycleBin:
     """回收站语义。"""
 
