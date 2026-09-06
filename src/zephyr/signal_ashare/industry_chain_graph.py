@@ -10,7 +10,7 @@
 # [STABILITY] evolving
 # [SAFETY] M
 # [AI_AUTONOMY] human_gated
-# [ERROR_CONTRACT] IndustryChainError(占位 ZA-SIG-UNREGISTERED-INDUSTRY-CHAIN)——非法连接/空id/重复节点/未知节点/非法边类型/边权越界/自环/悬空边/重复边/非法跳数时抛
+# [ERROR_CONTRACT] IndustryChainError(ZA-SIG-0143)——非法连接/空id/重复节点/未知节点/非法边类型/边权越界/自环/悬空边/重复边/非法跳数时抛
 # [TESTS] tests/signal_ashare/test_industry_chain_graph.py
 # [A_module] module_id=MOD-SIG-125 | layer=module | stability=evolving | safety=M | ai_autonomy=human_gated
 # [TTL] permanent
@@ -110,8 +110,10 @@ _DDL_EDGES: Final = (
 class IndustryChainError(Exception):
     """产业链图谱输入/状态非法（Fail-Closed）。
 
-    未登记错误码-申请中：占位 ZA-SIG-UNREGISTERED-INDUSTRY-CHAIN。
+    错误码 ZA-SIG-0143 已登记转正（2026-09-06 Owner 批准批）。
     """
+
+    error_code = "ZA-SIG-0143"
 
 
 class NodeKind(str, Enum):

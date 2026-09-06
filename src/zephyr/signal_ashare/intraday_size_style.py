@@ -10,7 +10,7 @@
 # [STABILITY] evolving
 # [SAFETY] M
 # [AI_AUTONOMY] human_gated
-# [ERROR_CONTRACT] IntradaySizeStyleError(占位 ZA-SIG-UNREGISTERED-INTRADAY-SIZE-STYLE)——空序列/长度不齐/非有限值/负成交量/零总量/窗口或参数越界时抛
+# [ERROR_CONTRACT] IntradaySizeStyleError(ZA-SIG-0144)——空序列/长度不齐/非有限值/负成交量/零总量/窗口或参数越界时抛
 # [TESTS] tests/signal_ashare/test_intraday_size_style.py
 # [A_module] module_id=MOD-SIG-120 | layer=module | stability=evolving | safety=M | ai_autonomy=human_gated
 # [TTL] permanent
@@ -86,8 +86,10 @@ _DEFAULT_ADX_PERIOD: Final = 14
 class IntradaySizeStyleError(Exception):
     """分时微结构与大小盘风格输入非法（Fail-Closed）。
 
-    未登记错误码-申请中：占位 ZA-SIG-UNREGISTERED-INTRADAY-SIZE-STYLE。
+    错误码 ZA-SIG-0144 已登记转正（2026-09-06 Owner 批准批）。
     """
+
+    error_code = "ZA-SIG-0144"
 
 
 @dataclass(frozen=True)

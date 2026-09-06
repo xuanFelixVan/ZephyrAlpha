@@ -10,7 +10,7 @@
 # [STABILITY] evolving
 # [SAFETY] M
 # [AI_AUTONOMY] human_gated
-# [ERROR_CONTRACT] VolumeRegimeError(占位 ZA-SIG-UNREGISTERED-VOLUME-REGIME)——量/均量非有限或越界/历史序列空或含非法值/阈值配置非法/矩阵缺格或多格/格值非法/未知体制或量能态类型时抛
+# [ERROR_CONTRACT] VolumeRegimeError(ZA-SIG-0155)——量/均量非有限或越界/历史序列空或含非法值/阈值配置非法/矩阵缺格或多格/格值非法/未知体制或量能态类型时抛
 # [TESTS] tests/signal_ashare/test_volume_regime_adaptive.py
 # [A_module] module_id=MOD-SIG-129 | layer=module | stability=evolving | safety=M | ai_autonomy=human_gated
 # [TTL] permanent
@@ -99,8 +99,10 @@ DIRECTIONS: Final[frozenset[str]] = frozenset({"long", "flat", "short"})
 class VolumeRegimeError(Exception):
     """量能体制输入/配置非法（Fail-Closed）。
 
-    未登记错误码-申请中：占位 ZA-SIG-UNREGISTERED-VOLUME-REGIME。
+    错误码 ZA-SIG-0155 已登记转正（2026-09-06 Owner 批准批）。
     """
+
+    error_code = "ZA-SIG-0155"
 
 
 class VolumeState(str, Enum):

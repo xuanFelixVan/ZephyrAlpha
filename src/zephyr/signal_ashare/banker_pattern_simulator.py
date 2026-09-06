@@ -10,7 +10,7 @@
 # [STABILITY] evolving
 # [SAFETY] M
 # [AI_AUTONOMY] human_gated
-# [ERROR_CONTRACT] BankerPatternError(占位 ZA-SIG-UNREGISTERED-BANKER-PATTERN)——阶段词表非法/规则库含非法区间/空序列/序列不等长时抛
+# [ERROR_CONTRACT] BankerPatternError(ZA-SIG-0135)——阶段词表非法/规则库含非法区间/空序列/序列不等长时抛
 # [TESTS] tests/signal_ashare/test_banker_pattern_simulator.py
 # [A_module] module_id=MOD-SIG-113 | layer=module | stability=evolving | safety=M | ai_autonomy=human_gated
 # [TTL] permanent
@@ -79,8 +79,10 @@ __all__: Final = [
 class BankerPatternError(Exception):
     """庄家模式协议输入/配置非法（Fail-Closed）。
 
-    未登记错误码-申请中：占位 ZA-SIG-UNREGISTERED-BANKER-PATTERN。
+    错误码 ZA-SIG-0135 已登记转正（2026-09-06 Owner 批准批）。
     """
+
+    error_code = "ZA-SIG-0135"
 
 
 class BankerPhase(str, Enum):

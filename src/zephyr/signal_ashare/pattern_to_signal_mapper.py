@@ -10,7 +10,7 @@
 # [STABILITY] evolving
 # [SAFETY] M
 # [AI_AUTONOMY] human_gated
-# [ERROR_CONTRACT] PatternSignalMapError(占位 ZA-SIG-UNREGISTERED-PATTERN-SIGNAL-MAP)——空 symbol/置信度或胜率越界/stop_buffer非正/无关键点位可止损/校验器未注入或拒绝时抛
+# [ERROR_CONTRACT] PatternSignalMapError(ZA-SIG-0147)——空 symbol/置信度或胜率越界/stop_buffer非正/无关键点位可止损/校验器未注入或拒绝时抛
 # [TESTS] tests/signal_ashare/test_pattern_to_signal_mapper.py
 # [A_module] module_id=MOD-SIG-115 | layer=module | stability=evolving | safety=M | ai_autonomy=human_gated
 # [TTL] permanent
@@ -93,8 +93,10 @@ __all__: Final = [
 class PatternSignalMapError(Exception):
     """形态信号转化协议输入/配置非法（Fail-Closed）。
 
-    未登记错误码-申请中：占位 ZA-SIG-UNREGISTERED-PATTERN-SIGNAL-MAP。
+    错误码 ZA-SIG-0147 已登记转正（2026-09-06 Owner 批准批）。
     """
+
+    error_code = "ZA-SIG-0147"
 
 
 class SignalDirection(str, Enum):

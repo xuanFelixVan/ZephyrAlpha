@@ -10,7 +10,7 @@
 # [STABILITY] evolving
 # [SAFETY] M
 # [AI_AUTONOMY] ai_modifiable
-# [ERROR_CONTRACT] PeadEventError(占位 ZA-SIG-UNREGISTERED-PEAD)——空symbol/非有限EPS/空价格序列/非正窗口/起止倒置/阈值非递增时抛
+# [ERROR_CONTRACT] PeadEventError(ZA-SIG-0158)——空symbol/非有限EPS/空价格序列/非正窗口/起止倒置/阈值非递增时抛
 # [TESTS] tests/signal_fundamental/test_pead_event_model.py
 # [A_module] module_id=MOD-SIG-110 | layer=module | stability=evolving | safety=M | ai_autonomy=ai_modifiable
 # [TTL] permanent
@@ -149,8 +149,10 @@ _EARNINGS_DEADLINES: Final[tuple[tuple[int, int], ...]] = ((4, 30), (8, 31), (10
 class PeadEventError(Exception):
     """PEAD 事件判定输入非法（Fail-Closed）。
 
-    未登记错误码-申请中：占位 ZA-SIG-UNREGISTERED-PEAD。
+    错误码 ZA-SIG-0158 已登记转正（2026-09-06 Owner 批准批）。
     """
+
+    error_code = "ZA-SIG-0158"
 
 
 class SueBand(str, Enum):

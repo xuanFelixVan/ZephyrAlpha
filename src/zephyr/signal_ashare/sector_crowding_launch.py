@@ -10,7 +10,7 @@
 # [STABILITY] evolving
 # [SAFETY] M
 # [AI_AUTONOMY] human_gated
-# [ERROR_CONTRACT] SectorCrowdingError(占位 ZA-SIG-UNREGISTERED-SECTOR-CROWDING)——空历史/非有限读数/分位越界/非法配置/非法状态机输入时抛
+# [ERROR_CONTRACT] SectorCrowdingError(ZA-SIG-0148)——空历史/非有限读数/分位越界/非法配置/非法状态机输入时抛
 # [TESTS] tests/signal_ashare/test_sector_crowding_launch.py
 # [A_module] module_id=MOD-SIG-119 | layer=module | stability=evolving | safety=M | ai_autonomy=human_gated
 # [TTL] permanent
@@ -88,8 +88,10 @@ __all__: Final = [
 class SectorCrowdingError(Exception):
     """板块拥挤度/启动条件输入非法（Fail-Closed）。
 
-    未登记错误码-申请中：占位 ZA-SIG-UNREGISTERED-SECTOR-CROWDING。
+    错误码 ZA-SIG-0148 已登记转正（2026-09-06 Owner 批准批）。
     """
+
+    error_code = "ZA-SIG-0148"
 
 
 class CrowdingLevel(str, Enum):

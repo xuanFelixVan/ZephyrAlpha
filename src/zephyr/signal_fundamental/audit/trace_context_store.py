@@ -10,7 +10,7 @@
 # [STABILITY] evolving
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
-# [ERROR_CONTRACT] TraceContextStoreError(占位 ZA-SIG-UNREGISTERED-TRACE-STORE)——空trace_id/span_id/ref_id/非法layer/未知signal_id/未知packet 时抛
+# [ERROR_CONTRACT] TraceContextStoreError(ZA-SIG-0157)——空trace_id/span_id/ref_id/非法layer/未知signal_id/未知packet 时抛
 # [TESTS] tests/signal_fundamental/audit/test_trace_context_store.py
 # [A_module] module_id=MOD-SIG-111 | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
@@ -91,8 +91,10 @@ _LAYER_ORDER: Final[dict[str, int]] = {"data": 0, "factor": 1, "signal": 2, "ord
 class TraceContextStoreError(Exception):
     """追踪上下文存储输入非法/状态非法（Fail-Closed）。
 
-    未登记错误码-申请中：占位 ZA-SIG-UNREGISTERED-TRACE-STORE。
+    错误码 ZA-SIG-0157 已登记转正（2026-09-06 Owner 批准批）。
     """
+
+    error_code = "ZA-SIG-0157"
 
 
 class TraceLayer(str, Enum):

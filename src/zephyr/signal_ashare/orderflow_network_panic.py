@@ -10,7 +10,7 @@
 # [STABILITY] evolving
 # [SAFETY] M
 # [AI_AUTONOMY] human_gated
-# [ERROR_CONTRACT] OrderflowPanicError(占位 ZA-SIG-UNREGISTERED-ORDERFLOW-PANIC)——空序列/窗口或阈值越界/邻接非方阵/维度不齐/负权重/无边/检验器未注入/时滞越界时抛
+# [ERROR_CONTRACT] OrderflowPanicError(ZA-SIG-0145)——空序列/窗口或阈值越界/邻接非方阵/维度不齐/负权重/无边/检验器未注入/时滞越界时抛
 # [TESTS] tests/signal_ashare/test_orderflow_network_panic.py
 # [A_module] module_id=MOD-SIG-121 | layer=module | stability=evolving | safety=M | ai_autonomy=human_gated
 # [TTL] permanent
@@ -98,8 +98,10 @@ _MIN_CONDUCTION_SAMPLES: Final = 5
 class OrderflowPanicError(Exception):
     """跨资产订单流网络与亏钱扩散输入非法（Fail-Closed）。
 
-    未登记错误码-申请中：占位 ZA-SIG-UNREGISTERED-ORDERFLOW-PANIC。
+    错误码 ZA-SIG-0145 已登记转正（2026-09-06 Owner 批准批）。
     """
+
+    error_code = "ZA-SIG-0145"
 
 
 @dataclass(frozen=True)

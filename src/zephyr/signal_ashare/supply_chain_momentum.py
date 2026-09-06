@@ -10,7 +10,7 @@
 # [STABILITY] evolving
 # [SAFETY] M
 # [AI_AUTONOMY] human_gated
-# [ERROR_CONTRACT] SupplyChainMomentumError(占位 ZA-SIG-UNREGISTERED-SUPPLY-CHAIN-MOMENTUM)——邻接表非法/未知标的/收益不足/非有限读数/回归器缺失或异常/非法配置时抛
+# [ERROR_CONTRACT] SupplyChainMomentumError(ZA-SIG-0153)——邻接表非法/未知标的/收益不足/非有限读数/回归器缺失或异常/非法配置时抛
 # [TESTS] tests/signal_ashare/test_supply_chain_momentum.py
 # [A_module] module_id=MOD-SIG-118 | layer=module | stability=evolving | safety=M | ai_autonomy=human_gated
 # [TTL] permanent
@@ -96,8 +96,10 @@ _LEAD_DAYS: Final = (1, 2, 3, 4, 5)
 class SupplyChainMomentumError(Exception):
     """供应链动量输入/状态非法（Fail-Closed）。
 
-    未登记错误码-申请中：占位 ZA-SIG-UNREGISTERED-SUPPLY-CHAIN-MOMENTUM。
+    错误码 ZA-SIG-0153 已登记转正（2026-09-06 Owner 批准批）。
     """
+
+    error_code = "ZA-SIG-0153"
 
 
 def _check_finite(name: str, v: float) -> None:

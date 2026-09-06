@@ -10,7 +10,7 @@
 # [STABILITY] evolving
 # [SAFETY] M
 # [AI_AUTONOMY] human_gated
-# [ERROR_CONTRACT] CrowdGameError(占位 ZA-SIG-UNREGISTERED-CROWD-GAME)——非法玩家类型/先验缺项或重复/权重非正/方向先验越界/盘后语义缺失时抛
+# [ERROR_CONTRACT] CrowdGameError(ZA-SIG-0138)——非法玩家类型/先验缺项或重复/权重非正/方向先验越界/盘后语义缺失时抛
 # [TESTS] tests/signal_ashare/test_crowd_game_simulator.py
 # [A_module] module_id=MOD-SIG-114 | layer=module | stability=evolving | safety=M | ai_autonomy=human_gated
 # [TTL] permanent
@@ -81,8 +81,10 @@ __all__: Final = [
 class CrowdGameError(Exception):
     """群体博弈协议输入/配置非法（Fail-Closed）。
 
-    未登记错误码-申请中：占位 ZA-SIG-UNREGISTERED-CROWD-GAME。
+    错误码 ZA-SIG-0138 已登记转正（2026-09-06 Owner 批准批）。
     """
+
+    error_code = "ZA-SIG-0138"
 
 
 class PlayerType(str, Enum):

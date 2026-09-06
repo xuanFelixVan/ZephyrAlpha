@@ -10,7 +10,7 @@
 # [STABILITY] evolving
 # [SAFETY] M
 # [AI_AUTONOMY] human_gated
-# [ERROR_CONTRACT] CalendarEffectsError(占位 ZA-SIG-UNREGISTERED-CALENDAR-EFFECTS)——空序列/参数越界/统计器未注入/日历映射不匹配/收益与日期长度不齐时抛
+# [ERROR_CONTRACT] CalendarEffectsError(ZA-SIG-0136)——空序列/参数越界/统计器未注入/日历映射不匹配/收益与日期长度不齐时抛
 # [TESTS] tests/signal_ashare/test_calendar_effects_model.py
 # [A_module] module_id=MOD-SIG-122 | layer=module | stability=evolving | safety=M | ai_autonomy=human_gated
 # [TTL] permanent
@@ -92,8 +92,10 @@ _DEFAULT_MIN_YEARS: Final = 3
 class CalendarEffectsError(Exception):
     """日历效应模型输入非法（Fail-Closed）。
 
-    未登记错误码-申请中：占位 ZA-SIG-UNREGISTERED-CALENDAR-EFFECTS。
+    错误码 ZA-SIG-0136 已登记转正（2026-09-06 Owner 批准批）。
     """
+
+    error_code = "ZA-SIG-0136"
 
 
 class CalendarEffectType(str, Enum):

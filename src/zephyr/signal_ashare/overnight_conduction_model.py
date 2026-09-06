@@ -10,7 +10,7 @@
 # [STABILITY] evolving
 # [SAFETY] M
 # [AI_AUTONOMY] human_gated
-# [ERROR_CONTRACT] OvernightConductionError(占位 ZA-SIG-UNREGISTERED-OVERNIGHT-CONDUCTION)——样本不足/回归器缺失或异常/非有限读数/非法配置/未知事件类型时抛
+# [ERROR_CONTRACT] OvernightConductionError(ZA-SIG-0146)——样本不足/回归器缺失或异常/非有限读数/非法配置/未知事件类型时抛
 # [TESTS] tests/signal_ashare/test_overnight_conduction_model.py
 # [A_module] module_id=MOD-SIG-117 | layer=module | stability=evolving | safety=M | ai_autonomy=human_gated
 # [TTL] permanent
@@ -93,8 +93,10 @@ __all__: Final = [
 class OvernightConductionError(Exception):
     """隔夜传导评估输入/状态非法（Fail-Closed）。
 
-    未登记错误码-申请中：占位 ZA-SIG-UNREGISTERED-OVERNIGHT-CONDUCTION。
+    错误码 ZA-SIG-0146 已登记转正（2026-09-06 Owner 批准批）。
     """
+
+    error_code = "ZA-SIG-0146"
 
 
 class OvernightEventType(str, Enum):

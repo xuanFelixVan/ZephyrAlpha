@@ -10,7 +10,7 @@
 # [STABILITY] evolving
 # [SAFETY] M
 # [AI_AUTONOMY] human_gated
-# [ERROR_CONTRACT] EventCondDensityError(占位 ZA-SIG-UNREGISTERED-EVENT-COND-DENSITY)——未注册事件类型/空事件文本/NLP回调缺失或异常/非法收益值/空样本/批次越护栏/计数不守恒时抛
+# [ERROR_CONTRACT] EventCondDensityError(ZA-SIG-0141)——未注册事件类型/空事件文本/NLP回调缺失或异常/非法收益值/空样本/批次越护栏/计数不守恒时抛
 # [TESTS] tests/signal_ashare/test_event_conditional_density.py
 # [A_module] module_id=MOD-SIG-123 | layer=module | stability=evolving | safety=M | ai_autonomy=human_gated
 # [TTL] permanent
@@ -95,8 +95,10 @@ _DEFAULT_QUANTILES: Final = (0.05, 0.25, 0.50, 0.75, 0.95)
 class EventCondDensityError(Exception):
     """事件条件分布输入/状态非法（Fail-Closed）。
 
-    未登记错误码-申请中：占位 ZA-SIG-UNREGISTERED-EVENT-COND-DENSITY。
+    错误码 ZA-SIG-0141 已登记转正（2026-09-06 Owner 批准批）。
     """
+
+    error_code = "ZA-SIG-0141"
 
 
 class EventType(str, Enum):

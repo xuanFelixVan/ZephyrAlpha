@@ -10,7 +10,7 @@
 # [STABILITY] evolving
 # [SAFETY] M
 # [AI_AUTONOMY] human_gated
-# [ERROR_CONTRACT] EventCausalError(占位 ZA-SIG-UNREGISTERED-EVENT-CAUSAL)——未知事件类型/空事件类型/非法衰减系数/空模板/模板重复时抛
+# [ERROR_CONTRACT] EventCausalError(ZA-SIG-0140)——未知事件类型/空事件类型/非法衰减系数/空模板/模板重复时抛
 # [TESTS] tests/signal_ashare/test_event_causal_reasoner.py
 # [A_module] module_id=MOD-SIG-112 | layer=module | stability=evolving | safety=M | ai_autonomy=human_gated
 # [TTL] permanent
@@ -92,8 +92,10 @@ __all__: Final = [
 class EventCausalError(Exception):
     """事件因果推理协议输入/配置非法（Fail-Closed）。
 
-    未登记错误码-申请中：占位 ZA-SIG-UNREGISTERED-EVENT-CAUSAL。
+    错误码 ZA-SIG-0140 已登记转正（2026-09-06 Owner 批准批）。
     """
+
+    error_code = "ZA-SIG-0140"
 
 
 class EventType(str, Enum):

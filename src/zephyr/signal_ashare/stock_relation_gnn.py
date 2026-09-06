@@ -10,7 +10,7 @@
 # [STABILITY] evolving
 # [SAFETY] M
 # [AI_AUTONOMY] human_gated
-# [ERROR_CONTRACT] StockRelationGnnError(占位 ZA-SIG-UNREGISTERED-STOCK-RELATION-GNN)——空id/空特征/非有限特征/维数不一致/重复节点/非法关系/未知端点/自环/边权越界/重复边/规模超限/非法聚合模式/未知节点/predictor缺失或异常时抛
+# [ERROR_CONTRACT] StockRelationGnnError(ZA-SIG-0151)——空id/空特征/非有限特征/维数不一致/重复节点/非法关系/未知端点/自环/边权越界/重复边/规模超限/非法聚合模式/未知节点/predictor缺失或异常时抛
 # [TESTS] tests/signal_ashare/test_stock_relation_gnn.py
 # [A_module] module_id=MOD-SIG-126 | layer=module | stability=evolving | safety=M | ai_autonomy=human_gated
 # [TTL] permanent
@@ -89,8 +89,10 @@ __all__: Final = [
 class StockRelationGnnError(Exception):
     """股票关系 GNN 输入/状态非法（Fail-Closed）。
 
-    未登记错误码-申请中：占位 ZA-SIG-UNREGISTERED-STOCK-RELATION-GNN。
+    错误码 ZA-SIG-0151 已登记转正（2026-09-06 Owner 批准批）。
     """
+
+    error_code = "ZA-SIG-0151"
 
 
 class RelationKind(str, Enum):
