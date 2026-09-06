@@ -767,6 +767,7 @@ python scripts/session_worktree.py cleanup <sid>
 | 12 | Step 11+12 临时文件清理 + worktree 合并完成（或暂保留逃生通道） | ☐ |
 | 13 | **Step 3.5 后端盘点与拆件判定完成（前端任务必做）**：每条数据需求有唯一后端真源且前端已接线；有重复真源先治后端；缺端点先建后端；拆件判定结论已留痕（有得拆→拆件 SOP 8 步闭环施工，没得拆→直接施工）；演示回退（若有）已标"断线·演示"（TRAE-086 §truth_source_wiring + §split_judgment + FRONTEND-TRUTH-SOURCE gate） | ☐ |
 | 14 | **新建注册表/全景图已挂轴（D38 全图全库对齐铁律）**：本次施工若新建了业务资产库（catalogs/*.yaml）→ 已在 `src/zephyr/trading/decision_map.py` `_XREF_SPECS` 加交叉轴（两行）+ 真源挂载；若新建治理类库 → 已在 `tests/trading/test_decision_map.py::TestNewRegistryGate._GOVERNANCE_EXEMPT` 登记豁免；若新建全景图 → 已以 module_id 为对齐 key 挂入七图体系并在 alignment_checklist.md §3 登记（`tests/trading/test_decision_map.py` 门禁测试强制二选一，漏做必红） | ☐ |
+| 15 | **派生残留已收口（2026-09-07 triage 根治）**：会话收尾时跑 `python scripts/governance/commit_derived_sync.py`（先 `--dry-run` 目检）——blueprint 统计区/注册表索引/金标哈希/手册统计块等跨域派生文件一条命令收口；纯信息类（手册 AUTO 块/README 快照）已由 workspace_hygiene_reconciler post-commit 自动还原自愈，无需人工；若 dry-run 显示非派生脏文件，属于未闭环任务须回表处理，禁止搭便车 | ☐ |
 
 ## 5. 边界与不做
 

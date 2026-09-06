@@ -100,6 +100,10 @@ auto-sync 产物清单（workspace_governance_policy.md §2.1 派生）
 
 - ``docs/02_enterprise_architecture/00_overview_entry/`` —— 概览入口（navigation_index/panorama 派生产物）
 
+- ``docs/02_enterprise_architecture/04_architecture_principles_decisions/project_handbook/`` —— 项目手册统计 AUTO 块（depgraph 扫描器 post-refresh hook 产物，2026-09-07 根治派生残留）
+
+- ``docs/02_enterprise_architecture/04_architecture_principles_decisions/README.md`` —— 架构区 README 项目快照（同上）
+
 - ``docs/**/_registry/catalogs/rule_catalog_registry.yaml`` —— 规则目录
 
 - ``docs/**/_registry/catalogs/registry_master_index.yaml`` —— 注册表主索引
@@ -299,6 +303,11 @@ _AUTO_SYNC_PREFIXES: tuple[str, ...] = (
     "docs/02_enterprise_architecture/01_global_architecture_diagram/full_project_tree_",
     "docs/02_enterprise_architecture/00_overview_entry/",
     "docs/_archive/architecture_debt_registry_v2.md",
+    # 2026-09-07 派生残留根治（triage 任务）：depgraph 扫描器 post-refresh hook 每次刷新
+    # 都重写 project_handbook/ 统计 AUTO 块与 04 区 README 快照——纯信息统计（AUTO 标记块），
+    # HEAD 停留旧值无害，列入 auto-sync 消除"每次刷新变脏→下次 commit 前持续残留"循环
+    "docs/02_enterprise_architecture/04_architecture_principles_decisions/project_handbook/",
+    "docs/02_enterprise_architecture/04_architecture_principles_decisions/README.md",
     "data/asset_index/unified-asset-index.yaml",
     # 2026-09-06 派生面退役（Owner 批二③+批四收尾）：dashboard.json/reconciliation-report.md/
     # classified-assets.json/raw-asset-scan.json 四派生物 git rm（零活消费方/同族管线产物，

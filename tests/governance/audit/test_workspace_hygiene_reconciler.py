@@ -187,6 +187,25 @@ class TestIsAutoSyncProduct:
         assert _is_auto_sync_product("docs/02_enterprise_architecture/02_domain_architecture_docs/d_foo.md") is True
 
     def test_prefix_match_full_project_tree(self):
+        assert _is_auto_sync_product("docs/02_enterprise_architecture/01_global_architecture_diagram/full_project_tree_v2.md") is True
+
+    def test_prefix_match_project_handbook_stats(self):
+        # 2026-09-07 派生残留根治：depgraph 扫描器 post-refresh hook 重写的手册统计 AUTO 块
+        assert _is_auto_sync_product(
+            "docs/02_enterprise_architecture/04_architecture_principles_decisions/project_handbook/01_overview.md"
+        ) is True
+        assert _is_auto_sync_product(
+            "docs/02_enterprise_architecture/04_architecture_principles_decisions/project_handbook/07_dependencies.md"
+        ) is True
+
+    def test_prefix_match_architecture_readme(self):
+        assert _is_auto_sync_product(
+            "docs/02_enterprise_architecture/04_architecture_principles_decisions/README.md"
+        ) is True
+        # 04 区其他文档不受影响（README 之外的真实设计文档不还原）
+        assert _is_auto_sync_product(
+            "docs/02_enterprise_architecture/04_architecture_principles_decisions/other_doc.md"
+        ) is False
         assert (
             _is_auto_sync_product(
                 "docs/02_enterprise_architecture/01_global_architecture_diagram/full_project_tree_root.txt"
