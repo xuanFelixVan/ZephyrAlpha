@@ -10,7 +10,7 @@
 # [STABILITY] evolving
 # [SAFETY] M
 # [AI_AUTONOMY] human_gated
-# [ERROR_CONTRACT] ExplainabilityGuarantorError(占位 ZA-SIGQC-UNREGISTERED-EXPLAINABILITY-GUARANTOR)——三要素缺失/空字段/置信度越界/signal_id冲突/audit_sink未注入或写失败/未知signal_id回放时抛
+# [ERROR_CONTRACT] ExplainabilityGuarantorError(ZA-SIGQC-0003)——三要素缺失/空字段/置信度越界/signal_id冲突/audit_sink未注入或写失败/未知signal_id回放时抛
 # [TESTS] tests/signal_quality/test_signal_explainability_guarantor.py
 # [A_module] module_id=MOD-SIGQC-006 | layer=module | stability=evolving | safety=M | ai_autonomy=human_gated
 # [TTL] permanent
@@ -86,8 +86,10 @@ __all__: Final = [
 class ExplainabilityGuarantorError(Exception):
     """可解释性强制契约违反（Fail-Closed：缺失即阻断）。
 
-    未登记错误码-申请中：占位 ZA-SIGQC-UNREGISTERED-EXPLAINABILITY-GUARANTOR。
+    错误码 ZA-SIGQC-0003 已登记转正（2026-09-06 Owner 批准批）。
     """
+
+    error_code = "ZA-SIGQC-0003"
 
 
 @dataclass(frozen=True)

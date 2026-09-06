@@ -60,6 +60,7 @@ domain_prefixes:
   SIG: D_ASHARE_SIGNAL
   TSK: D_GOVERNANCE
   SBX: D_INTEGRATION
+  SIGQC: D_SIGQC
   SECLLM: D_SECURITY_LLM
   SEC: D_SECURITY
   ORCH: D_ORCHESTRATOR
@@ -3886,6 +3887,28 @@ error_codes:
   module: zephyr.signal_fundamental.pead_event_model
   file: src/zephyr/signal_fundamental/pead_event_model.py
   introduced: '2026-09-06: Owner 批准占位码转正批（B17-②）——ZA-SIG-UNREGISTERED-PEAD 转正'
+
+# --- 2026-09-06 占位码转正批 SIGQC（Owner 批准 B17-②，取号=段内 max+1 顺延）---
+- code: ZA-SIGQC-0001
+  class: SignalDedupError
+  module: zephyr.signal_quality.signal_dedup
+  file: src/zephyr/signal_quality/signal_dedup.py
+  introduced: '2026-09-06: Owner 批准占位码转正批（B17-②）——ZA-SIGQC-UNREGISTERED-SIGNAL-DEDUP 转正'
+- code: ZA-SIGQC-0002
+  class: SignalDegradationError
+  module: zephyr.signal_quality.signal_degradation_monitor
+  file: src/zephyr/signal_quality/signal_degradation_monitor.py
+  introduced: '2026-09-06: Owner 批准占位码转正批（B17-②）——ZA-SIGQC-UNREGISTERED-SIGNAL-DEGRADATION 转正'
+- code: ZA-SIGQC-0003
+  class: ExplainabilityGuarantorError
+  module: zephyr.signal_quality.signal_explainability_guarantor
+  file: src/zephyr/signal_quality/signal_explainability_guarantor.py
+  introduced: '2026-09-06: Owner 批准占位码转正批（B17-②）——ZA-SIGQC-UNREGISTERED-EXPLAINABILITY-GUARANTOR 转正'
+- code: ZA-SIGQC-0004
+  class: SignalBenchmarkError
+  module: zephyr.signal_quality.signal_quality_benchmark
+  file: src/zephyr/signal_quality/signal_quality_benchmark.py
+  introduced: '2026-09-06: Owner 批准占位码转正批（B17-②）——ZA-SIGQC-UNREGISTERED-SIGNAL-BENCHMARK 转正'
 
 known_duplicates: []
 # ============================================================

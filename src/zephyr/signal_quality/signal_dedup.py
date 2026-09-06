@@ -10,7 +10,7 @@
 # [STABILITY] evolving
 # [SAFETY] M
 # [AI_AUTONOMY] human_gated
-# [ERROR_CONTRACT] SignalDedupError(占位 ZA-SIGQC-UNREGISTERED-SIGNAL-DEDUP)——空字段/置信度越界/signal_id冲突/非法阈值/非法时间窗时抛
+# [ERROR_CONTRACT] SignalDedupError(ZA-SIGQC-0001)——空字段/置信度越界/signal_id冲突/非法阈值/非法时间窗时抛
 # [TESTS] tests/signal_quality/test_signal_dedup.py
 # [A_module] module_id=MOD-SIGQC-003 | layer=module | stability=evolving | safety=M | ai_autonomy=human_gated
 # [TTL] permanent
@@ -95,8 +95,10 @@ _FINGERPRINT_PARTS: Final[int] = 4
 class SignalDedupError(Exception):
     """信号去重输入非法（Fail-Closed）。
 
-    未登记错误码-申请中：占位 ZA-SIGQC-UNREGISTERED-SIGNAL-DEDUP。
+    错误码 ZA-SIGQC-0001 已登记转正（2026-09-06 Owner 批准批）。
     """
+
+    error_code = "ZA-SIGQC-0001"
 
 
 class DedupAction(str, Enum):

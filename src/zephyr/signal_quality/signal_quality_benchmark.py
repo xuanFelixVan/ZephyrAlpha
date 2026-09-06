@@ -10,7 +10,7 @@
 # [STABILITY] evolving
 # [SAFETY] M
 # [AI_AUTONOMY] human_gated
-# [ERROR_CONTRACT] SignalBenchmarkError(占位 ZA-SIGQC-UNREGISTERED-SIGNAL-BENCHMARK)——空strategy_id/指标越界/空基准序列/基准值越界/历史不足对比/未知策略报告时抛
+# [ERROR_CONTRACT] SignalBenchmarkError(ZA-SIGQC-0004)——空strategy_id/指标越界/空基准序列/基准值越界/历史不足对比/未知策略报告时抛
 # [TESTS] tests/signal_quality/test_signal_quality_benchmark.py
 # [A_module] module_id=MOD-SIGQC-005 | layer=module | stability=evolving | safety=M | ai_autonomy=human_gated
 # [TTL] permanent
@@ -96,8 +96,10 @@ _METRICS: Final[tuple[str, str, str]] = ("ic", "coverage", "stability")
 class SignalBenchmarkError(Exception):
     """基准对比输入/状态非法（Fail-Closed）。
 
-    未登记错误码-申请中：占位 ZA-SIGQC-UNREGISTERED-SIGNAL-BENCHMARK。
+    错误码 ZA-SIGQC-0004 已登记转正（2026-09-06 Owner 批准批）。
     """
+
+    error_code = "ZA-SIGQC-0004"
 
 
 @dataclass(frozen=True)

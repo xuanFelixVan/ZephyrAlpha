@@ -10,7 +10,7 @@
 # [STABILITY] evolving
 # [SAFETY] M
 # [AI_AUTONOMY] human_gated
-# [ERROR_CONTRACT] SignalDegradationError(占位 ZA-SIGQC-UNREGISTERED-SIGNAL-DEGRADATION)——空signal_id/IC越界/hit非bool/非法窗长阈值/未知信号评估时抛（质量降级本身不抛）
+# [ERROR_CONTRACT] SignalDegradationError(ZA-SIGQC-0002)——空signal_id/IC越界/hit非bool/非法窗长阈值/未知信号评估时抛（质量降级本身不抛）
 # [TESTS] tests/signal_quality/test_signal_degradation_monitor.py
 # [A_module] module_id=MOD-SIGQC-004 | layer=module | stability=evolving | safety=M | ai_autonomy=human_gated
 # [TTL] permanent
@@ -105,8 +105,10 @@ _EPS: Final[float] = 1e-12
 class SignalDegradationError(Exception):
     """退化监控输入非法（Fail-Closed；质量降级本身不抛）。
 
-    未登记错误码-申请中：占位 ZA-SIGQC-UNREGISTERED-SIGNAL-DEGRADATION。
+    错误码 ZA-SIGQC-0002 已登记转正（2026-09-06 Owner 批准批）。
     """
+
+    error_code = "ZA-SIGQC-0002"
 
 
 class DegradationLevel(str, Enum):
