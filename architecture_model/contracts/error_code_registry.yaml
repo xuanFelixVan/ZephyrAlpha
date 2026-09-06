@@ -60,6 +60,7 @@ domain_prefixes:
   SIG: D_ASHARE_SIGNAL
   TSK: D_GOVERNANCE
   SBX: D_INTEGRATION
+  SECLLM: D_SECURITY_LLM
   SEC: D_SECURITY
   ORCH: D_ORCHESTRATOR
   OPS: D_OPS
@@ -3739,6 +3740,13 @@ error_codes:
   module: zephyr.security.supply_chain_security_scanner
   file: src/zephyr/security/supply_chain_security_scanner.py
   introduced: '2026-09-06: Owner 批准占位码转正批（B17-②）——ZA-SEC-UNREGISTERED-SUPPLY-CHAIN-SEC 转正'
+
+# --- 2026-09-06 占位码转正批 SECLLM（Owner 批准 B17-②，取号=段内 max+1 顺延）---
+- code: ZA-SECLLM-0001
+  class: SpectralGuardError
+  module: zephyr.security.llm_defense.spectral_guard
+  file: src/zephyr/security/llm_defense/spectral_guard.py
+  introduced: '2026-09-06: Owner 批准占位码转正批（B17-②）——ZA-SECLLM-UNREGISTERED-SPECTRAL-GUARD 转正'
 
 known_duplicates: []
 # ============================================================
