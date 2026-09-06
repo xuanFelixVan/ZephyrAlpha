@@ -656,6 +656,72 @@ nodes:
     fallback: null
     strategy_mounts: []
 
+  # ── 树枝08-10 板块层三补缺（D27：策略库有钱图上没挂的三样）─────────
+  # 08 板块个体生命周期——STR-MOMTREND-003 启动/熄火条件库（科技熄火四信号/机器人启动三要素/
+  #   消费启动三条件）上挂；与 02 RRG（板块间时序）分工：08 管单板块自身走到哪一段
+  - node_id: TDM-E-L2-08
+    name_zh: 板块生命周期判定
+    market: cn_a
+    flow: entry_flow
+    layer: L2
+    node_type: stage
+    point: 盘后
+    decision_question: 这个板块自己走到生命周期哪一段了（启动/发酵/高潮/熄火）
+    parent_node: TDM-E-L2
+    factor_refs: []
+    data_refs: [DS-059, DS-170]
+    module_ref: null
+    algo_refs: []
+    doc_ref: "docs/01_policies_and_standards/_registry/catalogs/strategy_registry.yaml#STR-MOMTREND-003"
+    activation: postmarket
+    invalidation: 熄火信号命中任一（PE 泡沫化/机构减持/新主流分流/政策转向）→周期判定降档
+    ai_autonomy: auto
+    fallback: null
+    strategy_mounts:
+      - {strategy_ref: STR-MOMTREND-003, confidence: proposed, evidence: null}
+
+  # 09 催化剂维度——板块过滤三维度（周期契合/主题对齐/估值）中的消息面，DS-107 新闻情绪窗首次入图
+  - node_id: TDM-E-L2-09
+    name_zh: 催化剂识别
+    market: cn_a
+    flow: entry_flow
+    layer: L2
+    node_type: stage
+    point: 盘前
+    decision_question: 这个板块有没有当下催化剂（政策/业绩/事件）加持
+    parent_node: TDM-E-L2
+    factor_refs: []
+    data_refs: [DS-107]
+    module_ref: null
+    algo_refs: []
+    doc_ref: null
+    activation: premarket
+    invalidation: null
+    ai_autonomy: auto
+    fallback: DS-107 缺失→催化剂维度降权（纯量价判定）
+    strategy_mounts: []
+
+  # 10 同源补涨比价——龙头板块涨完找同链条低位（RRG 改善象限的横向维度补充）
+  - node_id: TDM-E-L2-10
+    name_zh: 同源补涨比价
+    market: cn_a
+    flow: entry_flow
+    layer: L2
+    node_type: stage
+    point: 盘后
+    decision_question: 龙头板块的同链条/上下游里谁还没涨（补涨候选）
+    parent_node: TDM-E-L2
+    factor_refs: []
+    data_refs: [DS-186, DS-170]
+    module_ref: null
+    algo_refs: []
+    doc_ref: null
+    activation: postmarket
+    invalidation: null
+    ai_autonomy: auto
+    fallback: 产业链映射缺失→退化为纯涨幅横向比价
+    strategy_mounts: []
+
   - node_id: TDM-E-L3
     name_zh: 个股选择
     market: cn_a
@@ -906,6 +972,9 @@ edges:
   - {from_node: TDM-E-L2-06-3, to_node: TDM-E-L3, edge_type: feed}
   - {from_node: TDM-E-L2-03-1, to_node: TDM-E-L4, edge_type: feed}
   - {from_node: TDM-E-L2-07-1, to_node: TDM-E-L4, edge_type: feed}
+  - {from_node: TDM-E-L2-08, to_node: TDM-E-L2-01, edge_type: feed}
+  - {from_node: TDM-E-L2-09, to_node: TDM-E-L2-01, edge_type: feed}
+  - {from_node: TDM-E-L2-10, to_node: TDM-E-L2-06-3, edge_type: feed}
   - {from_node: TDM-E-L1, to_node: TDM-E-L2, edge_type: sequence}
   - {from_node: TDM-E-L2, to_node: TDM-E-L3, edge_type: sequence}
   - {from_node: TDM-E-L3, to_node: TDM-E-L4, edge_type: sequence}
