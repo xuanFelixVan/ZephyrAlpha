@@ -10,7 +10,7 @@
 # [STABILITY] evolving
 # [SAFETY] M
 # [AI_AUTONOMY] human_gated
-# [ERROR_CONTRACT] MarketTwinError(占位 ZA-DT-UNREGISTERED-MARKET-TWIN)——非法agent/非法订单/硬标注违反/未知邻接/非法模式/校验数据不足时抛
+# [ERROR_CONTRACT] MarketTwinError(ZA-DT-0001)——非法agent/非法订单/硬标注违反/未知邻接/非法模式/校验数据不足时抛
 # [TESTS] tests/digital_twin/test_market_twin_simulator.py
 # [A_module] module_id=MOD-DT-001 | layer=module | stability=evolving | safety=M | ai_autonomy=human_gated
 # [TTL] permanent
@@ -106,8 +106,10 @@ __all__: Final = [
 class MarketTwinError(Exception):
     """数字孪生市场仿真输入/状态非法（Fail-Closed）。
 
-    未登记错误码-申请中：占位 ZA-DT-UNREGISTERED-MARKET-TWIN。
+    错误码 ZA-DT-0001 已登记转正（2026-09-06 Owner 批准批）。
     """
+
+    error_code = "ZA-DT-0001"
 
 
 class OrderSide(str, Enum):

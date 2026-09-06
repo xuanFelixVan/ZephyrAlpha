@@ -60,6 +60,7 @@ domain_prefixes:
   SIG: D_ASHARE_SIGNAL
   TSK: D_GOVERNANCE
   SBX: D_INTEGRATION
+  DT: D_DIGITAL_TWIN
   DSEC: D_DATA_SEC
   DATENG: D_DATA_ENG
   AUDITTEST: D_AUDITTEST
@@ -3035,6 +3036,13 @@ error_codes:
   module: zephyr.data_security.data_masking_engine
   file: src/zephyr/data_security/data_masking_engine.py
   introduced: '2026-09-06: Owner 批准占位码转正批（B17-②）——ZA-DSEC-UNREGISTERED-DATA-MASKING 转正'
+
+# --- 2026-09-06 占位码转正批 DT（Owner 批准 B17-②，取号=段内 max+1 顺延）---
+- code: ZA-DT-0001
+  class: MarketTwinError
+  module: zephyr.digital_twin.market_twin_simulator
+  file: src/zephyr/digital_twin/market_twin_simulator.py
+  introduced: '2026-09-06: Owner 批准占位码转正批（B17-②）——ZA-DT-UNREGISTERED-MARKET-TWIN 转正'
 
 known_duplicates: []
 # ============================================================
