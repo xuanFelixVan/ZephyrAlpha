@@ -237,10 +237,14 @@ class TestRepoTruthSource:
         assert ok is True
 
     def test_repo_map_mounts_all_eight_strategies(self) -> None:
-        """8 个实盘策略必须全部挂载在地图上（D2 验收：策略归位完整）。"""
+        """8 个实盘策略必须全部挂载在地图上（D2 验收：策略归位完整）。
+
+        v1.3 血肉（D19）：地图允许额外挂载 REG-STR-001 规则级条目（STR-*，
+        R3 单独校验其存在性）——本锚只断言 8 实盘策略全覆盖（子集），不锁相等。
+        """
         dm = load_decision_map(_MAP_PATH)
         mounted = {m.strategy_ref for n in dm.nodes for m in n.strategy_mounts}
-        assert mounted == _KNOWN_STRATEGIES
+        assert _KNOWN_STRATEGIES <= mounted
 
     def test_repo_map_matrix_cells_proposed_only(self) -> None:
         """V0 血肉阶段：矩阵格子只允许 proposed/untested，禁止冒充 verified（D5）。"""
