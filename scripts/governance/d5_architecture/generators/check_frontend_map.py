@@ -47,12 +47,16 @@ def _ref_list(f: dict) -> list[str]:
 
 
 def _check_feature(f: dict, mf_ids: set, warns: list, fails: list) -> None:
-    """单功能点校验（R1 类型化 fail；R2/R3 warn，auto/pending 豁免）。"""
+    """单功能点校验（R1 类型化 fail——列表形态逐元素校验；R2/R3 warn，auto/pending 豁免）。"""
     fid = f.get("id", "?")
     auto = bool(f.get("auto_scanned"))  # auto 补登条目：R2/R3 宽松（待逐页复核转正后严检）
     refs = _ref_list(f)
     if not refs or not refs[0].startswith(REF_PREFIXES):
         fails.append(f"R1 {fid}: backend_ref 悬空（非类型化五前缀）: {' '.join(refs)[:60]}")
+        return
+    bad = [r for r in refs if not r.startswith(REF_PREFIXES)]
+    if bad:
+        fails.append(f"R1 {fid}: backend_ref 列表含非类型化元素: {' '.join(bad)[:60]}")
         return
     if f.get("module_id") and not auto and f["module_id"] not in mf_ids:
         warns.append(f"R2 {fid}: module_id={f['module_id']} 不在 features/manifest.yaml")
