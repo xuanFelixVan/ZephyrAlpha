@@ -198,9 +198,40 @@ commit：—
 - commit 枚数：263268a6^..71b40762 实测 **60 枚**（含 41 前缀逐枚+reconciler post-commit auto-commit）；§一"22 枚"为主要施工 commit 口径，低估，无虚报（关键哈希抽验 3 枚内容相符）。
 - 资产索引：G 项时点 31945 → 当前 **31962**（f13bc796/e27cf22c/71b40762 后续 commit 自然增量），Health B (76.1) 与好态一致。
 
-## 7.4 遗留分流汇总
+## 7.4 遗留分流汇总（2026-09-06 晚 Owner 批示"全都处理"后全部闭环，处置明细见 §八/§九）
 
-- 已处置：ROOR ERRCODE 漂移（7.2 #1，31dfdc4a）；path_ownership_map 幽灵条目（7.2 #2，本笔自愈）。
-- 待 Owner 裁定/授权：§五 1/2/3/6/7。
-- 待排期：§五 5（flaky timeout 放宽）、§五 8（driver 测试面 checklist 固化）、生成器存在性过滤加固（7.2 #2 附注）。
-- 排查已毕待适配：§五 4（REG-INV-001 宽口径消费方适配）。
+- 已处置：ROOR ERRCODE 漂移（7.2 #1，31dfdc4a）；path_ownership_map 幽灵条目（7.2 #2，5b2d27fc）。
+- §五 1（TSK-0004 关码）→ §八 D1；§五 2/6（ROOR 回填+自动对账）→ §八 D2；§五 3/4（派生面+消费方适配）→ §八 D5/§九；§五 5/8+生成器过滤 → §八 D3；§五 7（8 码）→ §八 D7 实锤无需处置；§五 8 复发风险 → §八 D4 机制补丁根除。
+
+# 八、总管批三处置（Owner 2026-09-06 批示"方案全同意+④不如现在做+删除事件查清直接处理+全都处理"）
+
+| # | 事项 | 处置 | commit |
+|---|---|---|---|
+| D1 | §五1 TSK-0004 关码 | 契约清单移除+关闭注释留裁定依据（schema v1.2.0 无 files 字段，无落点） | ba989521 |
+| D2 | §五2+6 ROOR 回填+自动对账 | **超出授权范围的处理**：不止回填 Flash 报的 5 表，CR-007 全量对账实测 **13 表漂移**并全部回填（含 Flash 报告宣称 31945/落盘 24434 双不符的 INV-001→31962、FREEZE 15→38 口径纠偏、KB 4→0、TASK-META 5→4 等）；check_registry_consistency.py 落地 CR-007（ENTRY_SPECS 58 表显式口径+MANUAL 13 表+UNSPECIFIED 强制闭环），--update-entry-counts 行级手术回填（保注释），CI governance.yml 既有调用点自动执法 | dbdc62ab |
+| D3 | §五5/8+生成器加固 | flaky timeout 60→180s；SOP Step 5"测试面清单"立规；generate_path_ownership_map.py 存在性过滤（production 节点文件已删=真幽灵跳过+告警；design/planned 放行——首轮误伤 35 条设计态条目已修正，幂等验证零 diff） | c229b8be |
+| D4 | 报告"神秘删除"事件 | 溯源**证据链闭环**（§8.1）；根因=doc_lifecycle 未区分 git tracked 状态，7 天 TTL 到期 guard_recycle move 走 tracked 正式报告；机制补丁：tracked 文件与 ttl:permanent 同待遇永不观察/归档+既有名单赦免出清；两报告当场赦免，**9/13 复发风险根除** | 641c3436 |
+| D5 | §五3/4 派生面+消费方适配 | 消费方排查（§九）：三派生物**零活消费**→git rm；mcp_server 收敛 2 工具+1 资源适配 v2；phase 门禁 check_asset_inventory 适配 v2 键（**曾静默恒 GREEN——fail-invisible 修复**）；G_asset_inventory 三条件重定靶；白名单/政策/测试/文件名漂移（4 处）联动 | 6fa2c9e0 |
+| D6 | reconciler 联动收尾 | 批三各 commit 触发的对齐表刷新 207 文件（全 M 零删除）chore 收尾 | 1f95c3d9 |
+| D7 | §五7 清单外 8 码 | **复核推翻 Flash 事实认定，无需处置**：HF-0001~0004/GT-0001/0003/INT-0001/0002 全部有活定义点（doc_guard_server.py L186-259 三 raise、gate_engine_server.py L285-367 四 raise、sentinel_server.py L184-209 两 raise），契约+注册表+实现三面一致，六断言全绿即证。Flash"无 server 文件/骨架族"判定有误（session_handoff 契约的实现真源=doc_guard_server）；若按其建议加 deferred 注释反而造假 | （零改动） |
+
+## 8.1 删除事件溯源结论（取证 agent 证据链，置信度：高）
+
+- **元凶**：GATE-WORKING-DOCS（doc_lifecycle.evaluate_lifecycle）于 09-06 08:58:36 在 FLASH-20260906-001 会话 post-commit 周期执行 guard_recycle——两报告 08-30 因 durable 死链进 watchlist，7 天宽限恰到期，被 move 进 .runtime/recycle_bin（I-GOV-2 禁删除类 auto-commit，故删除停留 unstaged 5.5 小时至总管 14:21 发现恢复；恢复后 14:24 重进 watchlist）。
+- **证据三角**：.runtime/reconcile_reports/working_docs_1788656316.json（archived 数组精确列两文件+session_id）；recycle_bin/1788656316/ 目录树 mtime=08:58:36；网关快照窗口闭合（08:56 无 D→08:58 归档→09:03 出现 D）。
+- **排除**：stash（无痕迹且网关已改 worktree 物理隔离）、生成器脚本（无删除能力）、人工 rm（审计零记录）。
+- **次生发现**：回收站副本 09:05:41 无痕消失（audit 洪峰轮转挤出日志，低置信度疑点）；权威副本始终在 git HEAD，无损失。
+- **遗留建议**（未施工，登记待排期）：治理类动作审计单独 append-only 落盘（防轮转挤出）。
+
+## 8.2 CR-007 回填明细（13 表实测终值）
+
+SCRIPT-001 483→755、SCRIPT-002 416→418、DRIFT-001 31→30（描述"18+13"同步纠偏为"17+13"）、DOC-001 229→230、KB-001 4→0（描述"当前为空"即证）、TASK-META-001 5→4（systems 子系统口径）、INV-001 24434→31962、ARCH-ISSUE-001 745→746、GEN-001 1517→1521、FREEZE-001 15→38（六组契约全量和，与描述"38 个"对齐）、UNI-001 6→7、CST-001 5→6、STR-001 146→149；另纠 4 处描述陈旧数字（SCRIPT-001/MOD-ID-001/ARCH-001/DRIFT-001）。DEPGRAPH/PANORAMA 两 postgres 表离线不可数（manual 登记），BLUEPRINT-001 派生退库运行时再生（manual 登记）。
+
+# 九、派生面消费方排查（取证 agent 全仓证据）
+
+- dashboard.json：唯一代码读方=asset_inventory mcp_server（无生产挂载死端，dispatch_tool 零调用）→ 淘汰，get_health_dashboard 改读索引 health 段。
+- classified-assets.json：消费全部在窄口径管线内部自循环（index_generator/reconcile）→ 淘汰。
+- reconciliation-report.md：零代码消费 → 淘汰。
+- **连带发现（比派生文件更紧，已一并修复）**：check_asset_inventory phase 门禁与 G_ASSET_INVENTORY 门禁读旧键（health_score/orphan_rate_pct/schema_version）在新 schema 全不存在→静默恒绿；mcp_server 六 assets[] 工具失效——均随 D5 适配。
+- 兄弟派生物 raw-asset-scan.json（同管线、停在 08-16）：本批保留（白名单仍在、无自动写者），登记待 Owner 后续裁定是否同族退役。
+- KTG（KnowledgeTransferGate，dashboard.py 内）读新索引宽容兼容，不受影响。

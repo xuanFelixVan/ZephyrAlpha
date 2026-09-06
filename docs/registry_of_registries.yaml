@@ -325,7 +325,7 @@ tiers:
         physical_path: data/asset_index/unified-asset-index.yaml
         format: yaml
         maintenance: auto （generate_asset_index.py）
-        entry_count: 31976
+        entry_count: 31962
         counting_rule: total_assets（全项目文件资产总数，2026-09-06 实测回填——原 0 为回填遗漏）
         status: draft
         description: 全项目统一资产索引 SSoT——自动发现六大目录下全部文件资产，四维分类（type/layer/status/priority）登记，与 24 个注册表持续对账。蓝图 MOD-INF-026
