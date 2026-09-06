@@ -49,6 +49,12 @@ commit：见上（逐前缀）
 
 验证：每前缀 commit 前六断言 6 passed+AST 语法校验；终局全量复跑见收尾。
 
+**收尾补课（Owner 复查后补齐）**：指令 A 项 4 要求"每前缀转正后跑该域相关测试"——driver 仅跑了六断言+AST 语法校验（裁定省略，属执行偏差）。复查后补跑：183 类文件按模块名 rg 收集到 **227 个域相关测试文件**，pytest --import-mode=importlib 全量 **4991 passed**（53.69s），零回归。补课记录 commit 见 §一。
+
+**B 类 34 码对账终态**：5 A 类真 raise（TSK-0001/0002/0003+SBX-0001/0003）+21 B 类落码（GOV7/VMS5/RD1/BPS1/GW3/TSK-0005/ROE-0001/0003/0004）+6 C 类 deferred（GT-0002/0004、INT-0003/0004、ROE-0002/0005）+1 遗留（TSK-0004）+1 勿动（SBX-0002）=**34 闭合**。tool_contracts 实测 42 码，指令清单外尚有 8 码（HF-0001~0004 无 server、GT-0001/0003 与 INT-0001/0002 同骨架族）未列入处置授权——同 F 项范围外先例登记遗留，处置先例已备（无 server→deferred 注释；骨架→deferred）。
+
+**G 项写入点复核（补）**：lifecycle.py main()/__main__.py _cmd_dashboard/_cmd_check 实读确认**均为只读**（yaml.safe_load 读取）；index_generator.save 为唯一写函数，自动写者唯一=GATE-ASSET-INDEX reconciler（已封）；bootstrap 为手动入口（__main__ CLI），非后台写者。封禁完备性确认。
+
 ## B 项 · 34 契约码 B/C 类处置
 
 **B 类 21 码落码（fail-soft 契约不破坏）**：错误 dict/dataclass 加 error_code 字段+表头 [ERROR_CONTRACT] 声明，不改成 raise：
@@ -160,6 +166,8 @@ commit：—
 4. **REG-INV-001 口径切换注记**：schema 已从 asset_inventory 窄口径（assets 数组）切回宽口径（计数聚合），依赖 assets 数组的消费方需另行适配（本次 rg 排查：核心消费链 project_rules/onboarding 读 total_assets/health，兼容）。
 5. **E 项 flaky 测试**：tests/agent_rbac/test_session_aware_stash_red_blue.py::TestConcurrentCommitNoCrossTheft::test_three_sessions_concurrent_distinct_files 组合跑 60s 超时窗口偏紧（3 并发 commit×pre-commit hook 串行），与本批改动无因果（隔离复跑绿），建议 Owner 排期放宽 timeout。
 6. **ROOR 生成器欠账**：entry_count/counting_rule 仍为手工维护，owner-book §七建议的"生成器自动回填"未落地（D1 预算待批类）。
+7. **B 项清单外 8 码**：tool_contracts 实测 42 码中 HF-0001~0004（session_handoff 无 server 文件）、GT-0001/0003、INT-0001/0002（gate_engine/intent 骨架族）未列入本批处置授权清单——按 F 项范围外先例遗留；后续收编先例已备（无 server→deferred 注释、骨架→deferred）。
+8. **A 项域测试执行偏差（已补课）**：driver 逐前缀仅跑六断言+语法校验，未按指令 4 跑域相关测试；Owner 复查后补跑 227 测试文件 4991 passed 零回归（commit 见 §一）。
 
 # 六、验证命令附录
 
