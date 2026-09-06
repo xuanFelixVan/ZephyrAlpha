@@ -740,6 +740,303 @@ nodes:
       - {strategy_ref: topn-momentum,      confidence: proposed, evidence: null}
       - {strategy_ref: default-equity,     confidence: proposed, evidence: null}
 
+  # ── E-L3 血肉 v1.5（D28：8 树枝 14 节点；策略库 12 条选股规则上图；调研=RankGLU/Learning-to-Rank/Value-Screen 四层流水线/Progressive 5-Stage Funnel/三套 A股条件表）──
+  # 两新增（Owner 确认）：05 顺位排序（全市场顺位：妖>龙>中军>核心>趋势>跟风+加分项）、06 环境开关（水温/情绪档→选股链启停，首板筛选器实证：两市成交<8000 亿首板链暂停）
+  # 负面否决器=一票否决语义（L3 特色树枝）；07-3 其他 sleeve 链内容薄=红节点
+  - node_id: TDM-E-L3-01
+    name_zh: Universe构建与剔除
+    market: cn_a
+    flow: entry_flow
+    layer: L3
+    node_type: stage
+    point: 盘后
+    decision_question: 今天全市场扫哪些、先把不可交易的删掉哪些
+    parent_node: TDM-E-L3
+    factor_refs: []
+    data_refs: [DS-150]
+    module_ref: null
+    algo_refs: []
+    doc_ref: "docs/01_policies_and_standards/_registry/catalogs/strategy_registry.yaml#STR-MULTIFACTOR-043"
+    activation: postmarket
+    invalidation: null
+    ai_autonomy: auto
+    fallback: 扫描数据缺→沿用昨日池并标注时效
+    strategy_mounts:
+      - {strategy_ref: STR-MULTIFACTOR-043, confidence: proposed, evidence: null}
+      - {strategy_ref: STR-MULTIFACTOR-044, confidence: proposed, evidence: null}
+
+  - node_id: TDM-E-L3-02
+    name_zh: 九阶段选票主链
+    market: cn_a
+    flow: entry_flow
+    layer: L3
+    node_type: stage
+    point: 盘后
+    decision_question: 候选池怎么逐级压缩到精选（业界漏斗压缩率参考 3000→10 级）
+    parent_node: TDM-E-L3
+    factor_refs: []
+    data_refs: [DS-150, DS-181]
+    module_ref: src/zephyr/signal_fundamental/selection_funnel.py
+    algo_refs: []
+    doc_ref: "docs/01_policies_and_standards/_registry/catalogs/strategy_registry.yaml#STR-MULTIFACTOR-042"
+    activation: postmarket
+    invalidation: null
+    ai_autonomy: auto
+    fallback: null
+    strategy_mounts:
+      - {strategy_ref: STR-MULTIFACTOR-042, confidence: proposed, evidence: null}
+
+  - node_id: TDM-E-L3-03
+    name_zh: 双池评分
+    market: cn_a
+    flow: entry_flow
+    layer: L3
+    node_type: aggregation
+    point: 盘后
+    decision_question: 短线池和波段池分别怎么打分、怎么合流
+    parent_node: TDM-E-L3
+    factor_refs: []
+    data_refs: [DS-150]
+    module_ref: null
+    algo_refs: []
+    doc_ref: null
+    activation: postmarket
+    invalidation: null
+    ai_autonomy: auto
+    fallback: null
+    strategy_mounts: []
+
+  - node_id: TDM-E-L3-03-1
+    name_zh: 短线池5分制
+    market: cn_a
+    flow: entry_flow
+    layer: L3
+    node_type: stage
+    point: 盘后
+    decision_question: 短线候选按 5 分制谁够格
+    parent_node: TDM-E-L3-03
+    factor_refs: []
+    data_refs: [DS-150]
+    module_ref: null
+    algo_refs: []
+    doc_ref: "docs/01_policies_and_standards/_registry/catalogs/strategy_registry.yaml#STR-MOMTREND-008"
+    activation: postmarket
+    invalidation: null
+    ai_autonomy: auto
+    fallback: null
+    strategy_mounts:
+      - {strategy_ref: STR-MOMTREND-008, confidence: proposed, evidence: null}
+
+  - node_id: TDM-E-L3-03-2
+    name_zh: 波段池5分制
+    market: cn_a
+    flow: entry_flow
+    layer: L3
+    node_type: stage
+    point: 盘后
+    decision_question: 波段候选按 5 分制谁够格
+    parent_node: TDM-E-L3-03
+    factor_refs: []
+    data_refs: [DS-150]
+    module_ref: null
+    algo_refs: []
+    doc_ref: "docs/01_policies_and_standards/_registry/catalogs/strategy_registry.yaml#STR-MOMTREND-009"
+    activation: postmarket
+    invalidation: null
+    ai_autonomy: auto
+    fallback: null
+    strategy_mounts:
+      - {strategy_ref: STR-MOMTREND-009, confidence: proposed, evidence: null}
+
+  - node_id: TDM-E-L3-03-3
+    name_zh: 双策略合流体检
+    market: cn_a
+    flow: entry_flow
+    layer: L3
+    node_type: aggregation
+    point: 盘后
+    decision_question: 两池合并后过三维共振体检还剩谁
+    parent_node: TDM-E-L3-03
+    factor_refs: []
+    data_refs: []
+    module_ref: null
+    algo_refs: []
+    doc_ref: "docs/01_policies_and_standards/_registry/catalogs/strategy_registry.yaml#STR-MULTIFACTOR-046"
+    activation: postmarket
+    invalidation: null
+    ai_autonomy: auto
+    fallback: null
+    strategy_mounts:
+      - {strategy_ref: STR-MULTIFACTOR-045, confidence: proposed, evidence: null}
+      - {strategy_ref: STR-MULTIFACTOR-046, confidence: proposed, evidence: null}
+
+  - node_id: TDM-E-L3-04
+    name_zh: 负面否决器
+    market: cn_a
+    flow: entry_flow
+    layer: L3
+    node_type: stage
+    point: 盘后
+    decision_question: 候选池里谁被一票否决直接出池
+    parent_node: TDM-E-L3
+    factor_refs: []
+    data_refs: [DS-150]
+    module_ref: null
+    algo_refs: []
+    doc_ref: "docs/01_policies_and_standards/_registry/catalogs/strategy_registry.yaml#STR-MULTIFACTOR-034"
+    activation: postmarket
+    invalidation: null
+    ai_autonomy: auto
+    fallback: null
+    strategy_mounts:
+      - {strategy_ref: STR-MULTIFACTOR-034, confidence: proposed, evidence: null}
+      - {strategy_ref: STR-MULTIFACTOR-035, confidence: proposed, evidence: null}
+      - {strategy_ref: STR-MULTIFACTOR-037, confidence: proposed, evidence: null}
+      - {strategy_ref: STR-MULTIFACTOR-039, confidence: proposed, evidence: null}
+      - {strategy_ref: STR-MULTIFACTOR-040, confidence: proposed, evidence: null}
+      - {strategy_ref: STR-MULTIFACTOR-041, confidence: proposed, evidence: null}
+
+  - node_id: TDM-E-L3-05
+    name_zh: 顺位排序
+    market: cn_a
+    flow: entry_flow
+    layer: L3
+    node_type: stage
+    point: 盘后
+    decision_question: 活下来的候选按全市场顺位谁排最前（妖>龙>中军>核心>趋势>跟风+加分项）
+    parent_node: TDM-E-L3
+    factor_refs: []
+    data_refs: [DS-150]
+    module_ref: null
+    algo_refs: []
+    doc_ref: "docs/02_enterprise_architecture/07_trading_decision_architecture/design_memos/69_trading_decision_map.md#§2.16"
+    activation: postmarket
+    invalidation: null
+    ai_autonomy: auto
+    fallback: 顺位评分数据缺→退化为双池分数排序
+    strategy_mounts: []
+
+  - node_id: TDM-E-L3-06
+    name_zh: 环境开关
+    market: cn_a
+    flow: entry_flow
+    layer: L3
+    node_type: stage
+    point: 盘前
+    decision_question: 今天的档位下哪些选股链开、哪些停（首板筛选器实证：两市成交<8000 亿首板链暂停；板块 RPS<90 降仓）
+    parent_node: TDM-E-L3
+    factor_refs: []
+    data_refs: [DS-150]
+    module_ref: null
+    algo_refs: []
+    doc_ref: null
+    activation: premarket
+    invalidation: null
+    ai_autonomy: auto
+    fallback: 档位缺失→全部选股链默认开（与 L1 fallback 对偶）
+    strategy_mounts: []
+
+  - node_id: TDM-E-L3-07
+    name_zh: 策略专属链
+    market: cn_a
+    flow: entry_flow
+    layer: L3
+    node_type: stage
+    point: 盘后
+    decision_question: 各 sleeve 自己的选股链跑出什么
+    parent_node: TDM-E-L3
+    factor_refs: []
+    data_refs: []
+    module_ref: null
+    algo_refs: []
+    doc_ref: null
+    activation: postmarket
+    invalidation: null
+    ai_autonomy: auto
+    fallback: null
+    strategy_mounts: []
+
+  - node_id: TDM-E-L3-07-1
+    name_zh: 打板选股链
+    market: cn_a
+    flow: entry_flow
+    layer: L3
+    node_type: stage
+    point: 盘中
+    decision_question: 板块内 5 步漏斗选出打板标的（消费 L2 龙头定位）
+    parent_node: TDM-E-L3-07
+    factor_refs: []
+    data_refs: [DS-150, DS-082]
+    module_ref: null
+    algo_refs: []
+    doc_ref: "docs/02_enterprise_architecture/07_trading_decision_architecture/design_memos/24_daban_strategy_detail.md"
+    activation: intraday
+    invalidation: null
+    ai_autonomy: auto
+    fallback: null
+    strategy_mounts:
+      - {strategy_ref: STR-DABAN-001, confidence: proposed, evidence: null}
+
+  - node_id: TDM-E-L3-07-2
+    name_zh: 多因子打分链
+    market: cn_a
+    flow: entry_flow
+    layer: L3
+    node_type: stage
+    point: 盘后
+    decision_question: 全池按多因子 IC 加权打分谁进组合
+    parent_node: TDM-E-L3-07
+    factor_refs: []
+    data_refs: [DS-150, DS-181]
+    module_ref: null
+    algo_refs: []
+    doc_ref: "docs/02_enterprise_architecture/07_trading_decision_architecture/design_memos/25_multifactor_strategy_detail.md"
+    activation: postmarket
+    invalidation: null
+    ai_autonomy: auto
+    fallback: null
+    strategy_mounts: []
+
+  - node_id: TDM-E-L3-07-3
+    name_zh: 其余sleeve选股链
+    market: cn_a
+    flow: entry_flow
+    layer: L3
+    node_type: stage
+    point: 盘后
+    decision_question: eventdriven 事件清单/topn 动量排名/default 基础池怎么选
+    parent_node: TDM-E-L3-07
+    factor_refs: []
+    data_refs: [DS-150]
+    module_ref: null
+    algo_refs: []
+    doc_ref: null
+    activation: postmarket
+    invalidation: null
+    ai_autonomy: auto
+    fallback: null
+    strategy_mounts: []
+
+  - node_id: TDM-E-L3-08
+    name_zh: 候选池输出
+    market: cn_a
+    flow: entry_flow
+    layer: L3
+    node_type: aggregation
+    point: 盘后
+    decision_question: 最终谁进买卖点环节（候选池+顺位排序+否决后清单）
+    parent_node: TDM-E-L3
+    factor_refs: []
+    data_refs: []
+    module_ref: null
+    algo_refs: []
+    doc_ref: null
+    activation: postmarket
+    invalidation: null
+    ai_autonomy: auto
+    fallback: null
+    strategy_mounts: []
+
   - node_id: TDM-E-L4
     name_zh: 买卖点与执行
     market: cn_a
@@ -975,6 +1272,24 @@ edges:
   - {from_node: TDM-E-L2-08, to_node: TDM-E-L2-01, edge_type: feed}
   - {from_node: TDM-E-L2-09, to_node: TDM-E-L2-01, edge_type: feed}
   - {from_node: TDM-E-L2-10, to_node: TDM-E-L2-06-3, edge_type: feed}
+  # ── E-L3 树枝边（D28）：漏斗主链+双池+否决+顺位+环境开关+策略专属链 ──
+  - {from_node: TDM-E-L3-01, to_node: TDM-E-L3-02, edge_type: sequence}
+  - {from_node: TDM-E-L3-02, to_node: TDM-E-L3-03-1, edge_type: feed}
+  - {from_node: TDM-E-L3-02, to_node: TDM-E-L3-03-2, edge_type: feed}
+  - {from_node: TDM-E-L3-03-1, to_node: TDM-E-L3-03-3, edge_type: feed}
+  - {from_node: TDM-E-L3-03-2, to_node: TDM-E-L3-03-3, edge_type: feed}
+  - {from_node: TDM-E-L3-03-3, to_node: TDM-E-L3-04, edge_type: feed}
+  - {from_node: TDM-E-L3-04, to_node: TDM-E-L3-05, edge_type: feed}
+  - {from_node: TDM-E-L3-05, to_node: TDM-E-L3-08, edge_type: feed}
+  - {from_node: TDM-E-L3-06, to_node: TDM-E-L3-02, edge_type: feed}
+  - {from_node: TDM-E-L3-06, to_node: TDM-E-L3-07, edge_type: feed}
+  - {from_node: TDM-E-L3-07-1, to_node: TDM-E-L3-08, edge_type: feed}
+  - {from_node: TDM-E-L3-07-2, to_node: TDM-E-L3-08, edge_type: feed}
+  - {from_node: TDM-E-L3-07-3, to_node: TDM-E-L3-08, edge_type: feed}
+  - {from_node: TDM-E-L3-08, to_node: TDM-E-L4, edge_type: feed}
+  - {from_node: TDM-E-L2-05-1, to_node: TDM-E-L3-06, edge_type: feed}
+  - {from_node: TDM-E-L2-06-2, to_node: TDM-E-L3-07-1, edge_type: feed}
+  - {from_node: TDM-E-L2-06-3, to_node: TDM-E-L3-02, edge_type: feed}
   - {from_node: TDM-E-L1, to_node: TDM-E-L2, edge_type: sequence}
   - {from_node: TDM-E-L2, to_node: TDM-E-L3, edge_type: sequence}
   - {from_node: TDM-E-L3, to_node: TDM-E-L4, edge_type: sequence}
