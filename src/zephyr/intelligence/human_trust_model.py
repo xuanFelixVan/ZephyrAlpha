@@ -10,7 +10,7 @@
 # [STABILITY] evolving
 # [SAFETY] M
 # [AI_AUTONOMY] human_gated
-# [ERROR_CONTRACT] HumanTrustError(占位 ZA-IT-UNREGISTERED-HUMAN-TRUST)——未知决策域/非法阈值表/非法置信度/空原因分类/重复校准周期时抛
+# [ERROR_CONTRACT] HumanTrustError(ZA-IT-0025)——未知决策域/非法阈值表/非法置信度/空原因分类/重复校准周期时抛
 # [TESTS] tests/intelligence/test_human_trust_model.py
 # [A_module] module_id=MOD-INT-HUMAN-TRUST | layer=module | stability=evolving | safety=M | ai_autonomy=human_gated
 # [TTL] permanent
@@ -92,8 +92,10 @@ _SCORE_MAX: Final = 1.0
 class HumanTrustError(Exception):
     """人机信任模型输入/状态非法（Fail-Closed）。
 
-    未登记错误码-申请中：占位 ZA-IT-UNREGISTERED-HUMAN-TRUST。
+    错误码 ZA-IT-0025 已登记转正（2026-09-06 Owner 批准批）。
     """
+
+    error_code = "ZA-IT-0025"
 
 
 class TrustRoute(str, Enum):

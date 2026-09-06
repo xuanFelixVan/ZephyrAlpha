@@ -3419,6 +3419,33 @@ error_codes:
   file: src/zephyr/integration/integration_matrix_registry.py
   introduced: '2026-09-06: Owner 批准占位码转正批（B17-②）——ZA-INT-UNREGISTERED-INTEGRATION-MATRIX 转正'
 
+# --- 2026-09-06 占位码转正批 IT（Owner 批准 B17-②，取号=段内 max+1 顺延）---
+- code: ZA-IT-0024
+  class: EventChainError
+  module: zephyr.intelligence.event_chain_causal_graph
+  file: src/zephyr/intelligence/event_chain_causal_graph.py
+  introduced: '2026-09-06: Owner 批准占位码转正批（B17-②）——ZA-IT-UNREGISTERED-EVENT-CHAIN 转正'
+- code: ZA-IT-0025
+  class: HumanTrustError
+  module: zephyr.intelligence.human_trust_model
+  file: src/zephyr/intelligence/human_trust_model.py
+  introduced: '2026-09-06: Owner 批准占位码转正批（B17-②）——ZA-IT-UNREGISTERED-HUMAN-TRUST 转正'
+- code: ZA-IT-0026
+  class: LlmResearchAgentError
+  module: zephyr.intelligence.llm_research_agent
+  file: src/zephyr/intelligence/llm_research_agent.py
+  introduced: '2026-09-06: Owner 批准占位码转正批（B17-②）——ZA-IT-UNREGISTERED-RESEARCH-AGENT 转正'
+- code: ZA-IT-0027
+  class: LlmSelfEvalError
+  module: zephyr.intelligence.llm_self_evaluation
+  file: src/zephyr/intelligence/llm_self_evaluation.py
+  introduced: '2026-09-06: Owner 批准占位码转正批（B17-②）——ZA-IT-UNREGISTERED-LLM-SELFEVAL 转正'
+- code: ZA-IT-0028
+  class: FactLedgerError
+  module: zephyr.intelligence.universal_fact_ledger
+  file: src/zephyr/intelligence/universal_fact_ledger.py
+  introduced: '2026-09-06: Owner 批准占位码转正批（B17-②）——ZA-IT-UNREGISTERED-FACT-LEDGER 转正'
+
 known_duplicates: []
 # ============================================================
 # 已知缺口（诚实登记，2026-08-15 #ARCH-MON-001 批次实测）

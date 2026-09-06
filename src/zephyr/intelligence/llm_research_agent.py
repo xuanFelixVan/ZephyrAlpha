@@ -10,7 +10,7 @@
 # [STABILITY] evolving
 # [SAFETY] M
 # [AI_AUTONOMY] human_gated
-# [ERROR_CONTRACT] LlmResearchAgentError(占位 ZA-IT-UNREGISTERED-RESEARCH-AGENT)——空任务/非法工具表/白名单外工具/空计划/重复步骤/超轮次护栏/事实回查缺失或未过时抛
+# [ERROR_CONTRACT] LlmResearchAgentError(ZA-IT-0026)——空任务/非法工具表/白名单外工具/空计划/重复步骤/超轮次护栏/事实回查缺失或未过时抛
 # [TESTS] tests/intelligence/test_llm_research_agent.py
 # [A_module] module_id=MOD-INT-RESEARCH-AGENT | layer=module | stability=evolving | safety=M | ai_autonomy=human_gated
 # [TTL] permanent
@@ -102,8 +102,10 @@ _PERCENT_RE: Final = re.compile(r"\d+(?:\.\d+)?%")
 class LlmResearchAgentError(Exception):
     """研究助手输入/状态非法（Fail-Closed）。
 
-    未登记错误码-申请中：占位 ZA-IT-UNREGISTERED-RESEARCH-AGENT。
+    错误码 ZA-IT-0026 已登记转正（2026-09-06 Owner 批准批）。
     """
+
+    error_code = "ZA-IT-0026"
 
 
 @dataclass(frozen=True)

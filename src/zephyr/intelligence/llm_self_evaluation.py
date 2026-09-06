@@ -10,7 +10,7 @@
 # [STABILITY] evolving
 # [SAFETY] M
 # [AI_AUTONOMY] human_gated
-# [ERROR_CONTRACT] LlmSelfEvalError(占位 ZA-IT-UNREGISTERED-LLM-SELFEVAL)——模型数非三/回调缺失/judge 分值越界/空 query/空 CoT 链/空结论/非法阈值时抛
+# [ERROR_CONTRACT] LlmSelfEvalError(ZA-IT-0027)——模型数非三/回调缺失/judge 分值越界/空 query/空 CoT 链/空结论/非法阈值时抛
 # [TESTS] tests/intelligence/test_llm_self_evaluation.py
 # [A_module] module_id=MOD-INT-LLM-SELFEVAL | layer=module | stability=evolving | safety=M | ai_autonomy=human_gated
 # [TTL] permanent
@@ -100,8 +100,10 @@ _DEFAULT_CONSISTENCY_THRESHOLD: Final = 2.0 / 3.0
 class LlmSelfEvalError(Exception):
     """LLM 自评估输入/状态非法（Fail-Closed）。
 
-    未登记错误码-申请中：占位 ZA-IT-UNREGISTERED-LLM-SELFEVAL。
+    错误码 ZA-IT-0027 已登记转正（2026-09-06 Owner 批准批）。
     """
+
+    error_code = "ZA-IT-0027"
 
 
 class EvalDimension(str, Enum):

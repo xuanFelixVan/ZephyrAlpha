@@ -10,7 +10,7 @@
 # [STABILITY] evolving
 # [SAFETY] M
 # [AI_AUTONOMY] human_gated
-# [ERROR_CONTRACT] EventChainError(占位 ZA-IT-UNREGISTERED-EVENT-CHAIN)——非法事件类型/未知节点/自环/非法滞后/序列非法/p 值越界或不显著/重复边/未知边查询时抛
+# [ERROR_CONTRACT] EventChainError(ZA-IT-0024)——非法事件类型/未知节点/自环/非法滞后/序列非法/p 值越界或不显著/重复边/未知边查询时抛
 # [TESTS] tests/intelligence/test_event_chain_causal_graph.py
 # [A_module] module_id=MOD-INT-EVENT-CHAIN | layer=module | stability=evolving | safety=M | ai_autonomy=human_gated
 # [TTL] permanent
@@ -92,8 +92,10 @@ __all__: Final = [
 class EventChainError(Exception):
     """事件链因果图输入/状态非法（Fail-Closed）。
 
-    未登记错误码-申请中：占位 ZA-IT-UNREGISTERED-EVENT-CHAIN。
+    错误码 ZA-IT-0024 已登记转正（2026-09-06 Owner 批准批）。
     """
+
+    error_code = "ZA-IT-0024"
 
 
 class EventType(str, Enum):

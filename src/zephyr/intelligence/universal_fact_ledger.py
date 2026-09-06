@@ -10,7 +10,7 @@
 # [STABILITY] evolving
 # [SAFETY] M
 # [AI_AUTONOMY] human_gated
-# [ERROR_CONTRACT] FactLedgerError(占位 ZA-IT-UNREGISTERED-FACT-LEDGER)——五要素缺失/非法类型/非法值域/confidence≠1.0/非法强度/非法容差/双锁拒绝强制（enforce）时抛
+# [ERROR_CONTRACT] FactLedgerError(ZA-IT-0028)——五要素缺失/非法类型/非法值域/confidence≠1.0/非法强度/非法容差/双锁拒绝强制（enforce）时抛
 # [TESTS] tests/intelligence/test_universal_fact_ledger.py
 # [A_module] module_id=MOD-INT-FACT-LEDGER | layer=module | stability=evolving | safety=M | ai_autonomy=human_gated
 # [TTL] permanent
@@ -90,8 +90,10 @@ __all__: Final = [
 class FactLedgerError(Exception):
     """UFL 输入/状态非法（Fail-Closed）。
 
-    未登记错误码-申请中：占位 ZA-IT-UNREGISTERED-FACT-LEDGER。
+    错误码 ZA-IT-0028 已登记转正（2026-09-06 Owner 批准批）。
     """
+
+    error_code = "ZA-IT-0028"
 
 
 class FactType(str, Enum):
