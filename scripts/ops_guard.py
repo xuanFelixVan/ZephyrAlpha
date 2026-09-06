@@ -379,6 +379,37 @@ def audit_delete(
         _AUDIT_REENTRANT.reset(_token)
 
 
+def _append_governance_log(action: str, detail: str, *, root: str | Path | None = None, **extra: object) -> None:
+    """治理动作专用 append-only 日志（2026-09-06 批四：取证链加固）。
+
+    文件: .runtime/gate_audit/governance_actions.jsonl —— 永不轮转、永不物理删除。
+
+    为什么独立于 ops_guard_delete.jsonl：主审计池 50MB 大小轮转（批5c 洪峰治本），
+    高频 in-process 记录会把治理动作的关键段物理挤出——2026-09-06 两份报告被
+    guard_recycle 归档事件的取证中，08:58 的关键审计已被 14:21 pytest 洪峰轮转
+    挤出（现存最老段仅回溯到 14:20）。治理动作每天个位数，直接 open-append
+    零膨胀风险，换取不可挤出的取证面。失败不阻断（与 audit_delete 语义一致）。
+    root 优先取调用方仓库根（测试隔离）；缺省回落 _get_project_root()。
+    """
+    try:
+        import json
+
+        base = Path(str(root)) if root else _get_project_root()
+        log_path = base / ".runtime" / "gate_audit" / "governance_actions.jsonl"
+        log_path.parent.mkdir(parents=True, exist_ok=True)
+        record = {
+            "timestamp": time.time(),
+            "session_id": _get_session_id(),
+            "action": action,
+            "detail": detail,
+            **extra,
+        }
+        with open(log_path, "a", encoding="utf-8") as fh:
+            fh.write(json.dumps(record, ensure_ascii=False, default=str) + "\n")
+    except Exception:  # noqa: BLE001 — 治理日志不阻断治理动作本身
+        pass
+
+
 # ============================================================================
 # 命令分析引擎
 # ============================================================================
@@ -902,8 +933,10 @@ def guard_recycle(
     root = Path(str(repo_root)) if repo_root else Path(str(cwd)) if cwd else Path.cwd()
     try:
         rel = src.resolve().relative_to(root.resolve())
+        rel_posix = rel.as_posix()  # 日志/回收站路径统一 / 分隔（跨平台可移植）
     except (ValueError, OSError):
         rel = Path(src.name)  # 仓库外路径降级为裸文件名
+        rel_posix = src.name
     ts = int(time.time())
     dst = root / RECYCLE_BIN / str(ts) / rel
     cmd_repr = f"guard_recycle('{src}', reason='{reason}')"
@@ -912,7 +945,7 @@ def guard_recycle(
         allowed=True,
         reason=f"回收站收纳（保留 30 天可恢复）: {reason or '未注明'}",
         primitive="recycle_bin",
-        targets=[str(rel)],
+        targets=[rel_posix],
         is_recursive=src.is_dir(),
         is_protected_zone=False,
     )
@@ -920,6 +953,15 @@ def guard_recycle(
 
     dst.parent.mkdir(parents=True, exist_ok=True)
     shutil.move(str(src), str(dst))
+    _append_governance_log(
+        "guard_recycle",
+        f"move '{rel_posix}' -> recycle_bin/{ts}/",
+        root=root,
+        reason=reason,
+        src=rel_posix,
+        recycle_dst=f"{RECYCLE_BIN}/{ts}/{rel_posix}",
+        recoverable_until=time.strftime("%Y-%m-%d", time.localtime(ts + RECYCLE_TTL_SECONDS)),
+    )
     return str(dst.relative_to(root))
 
 
@@ -958,6 +1000,13 @@ def prune_recycle_bin(
             f"prune_recycle_bin('{ts_dir.name}')",
             DeleteVerdict(allowed=True, reason=reason, primitive="recycle_prune", targets=[ts_dir.name]),
             cwd=str(repo_root),
+        )
+        _append_governance_log(
+            "recycle_prune",
+            f"物理删除回收站批次 {ts_dir.name}（唯一合法物理删除点）",
+            root=repo_root,
+            reason=reason,
+            batch=ts_dir.name,
         )
 
     # ① TTL 到期清理

@@ -300,9 +300,9 @@ _AUTO_SYNC_PREFIXES: tuple[str, ...] = (
     "docs/02_enterprise_architecture/00_overview_entry/",
     "docs/_archive/architecture_debt_registry_v2.md",
     "data/asset_index/unified-asset-index.yaml",
-    # 2026-09-06 派生面退役（Owner 批二③）：dashboard.json/reconciliation-report.md/
-    # classified-assets.json 三派生物 git rm（零活消费方，内容停 2026-08-16 窄口径）
-    "data/scans/raw-asset-scan.json",
+    # 2026-09-06 派生面退役（Owner 批二③+批四收尾）：dashboard.json/reconciliation-report.md/
+    # classified-assets.json/raw-asset-scan.json 四派生物 git rm（零活消费方/同族管线产物，
+    # 内容停 2026-08-16 窄口径）
     "data/architecture_health/latest.json",
     "data/budget/shutdown_snapshot.json",
     "data/metrics/kill_switch_probes.jsonl",

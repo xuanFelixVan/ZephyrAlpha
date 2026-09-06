@@ -886,7 +886,7 @@ class AssetEventBus:
 | 图 | 位置 | 状态 | 链接 |
 |----|------|------|------|
 | 依赖图 (depgraph) | `blueprint_id=MOD-INF-026` 的 29 个 file 节点 | production | `extract_depgraph.py --modules MOD-INF-026` |
-| 数据流图 (dataflow) | 0 个 Dataset / 1 个 Job | active | `apply_dataflowgraph.py --list-datasets` |
+| 数据流图 (dataflow) | （无节点） | N/A | `apply_dataflowgraph.py --list-datasets` |
 | 决策架构图 (decision) | 0 个决策节点 / 1 个决策层 | N/A | `generate_decision_diagram.py` |
 | 蓝图 (blueprint) | 本文件 | Active | — |
 
@@ -2996,11 +2996,13 @@ class KnowledgeTransferGate:
 
 > **决策 D-026-24**：盘点系统通过 `python -m zephyr.asset_inventory` 暴露 7 个子命令。每个命令支持 `--dry-run`（预览不写入）、`--output`（json/yaml/text）、`--verbose`（调试日志）。
 
-> **派生面退役（2026-09-06 Owner 批二③）**：`dashboard.json`、`reconciliation-report.md`、
-> `classified-assets.json` 三个派生产物文件已 git rm（零活消费方，内容停在 2026-08-16
-> 窄口径，与宽口径 v2 索引 schema 分裂）。下述 classify/reconcile/dashboard 命令保留为
-> 手动善后工具（GATE-ASSET-INDEX post-commit 自动触发链已禁写，正常流程不再产出
-> 三文件）；索引真源唯一写者 = `scripts/governance/generate_asset_index.py`。
+> **派生面退役（2026-09-06 Owner 批二③+批四收尾）**：`dashboard.json`、
+> `reconciliation-report.md`、`classified-assets.json`、`raw-asset-scan.json`
+> 四个派生产物文件已 git rm（前三者零活消费方；raw-asset-scan 为同族管线产物、
+> 内容停 2026-08-16 窄口径，MCP 资源声明同步移除）。下述 scan/classify/reconcile/
+> dashboard 命令保留为手动善后工具（GATE-ASSET-INDEX post-commit 自动触发链已禁写，
+> 正常流程不再产出四文件；手动运行产出物自行管理）；索引真源唯一写者 =
+> `scripts/governance/generate_asset_index.py`。
 
 ### 31.1 命令树
 

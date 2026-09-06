@@ -235,3 +235,29 @@ SCRIPT-001 483→755、SCRIPT-002 416→418、DRIFT-001 31→30（描述"18+13"�
 - **连带发现（比派生文件更紧，已一并修复）**：check_asset_inventory phase 门禁与 G_ASSET_INVENTORY 门禁读旧键（health_score/orphan_rate_pct/schema_version）在新 schema 全不存在→静默恒绿；mcp_server 六 assets[] 工具失效——均随 D5 适配。
 - 兄弟派生物 raw-asset-scan.json（同管线、停在 08-16）：本批保留（白名单仍在、无自动写者），登记待 Owner 后续裁定是否同族退役。
 - KTG（KnowledgeTransferGate，dashboard.py 内）读新索引宽容兼容，不受影响。
+
+# 十、总管批四收尾（Owner 2026-09-06 追加批示："两个雷深度调查+8 码为什么查错（显化问题？）+两遗留全部收工不留尾巴"）
+
+## 10.1 两雷深度复查（举一反三）
+
+- **全仓旧键扫描**：`health_score/orphan_rate_pct/by_type` 等资产索引旧键读方，批三已修面（phase 门禁+G 门禁+mcp）之外**零残留**——其余 health_score 命中均为别系统自有概念（capacity/gate_health/autonomy），与索引无关。orphan_judge 仅文本扫描注册表候选清单，不解析 schema，不受影响。
+- **管线内部**（reconciler.py/lifecycle.py 读窄口径 assets[]）：属手动善后 CLI 本体，蓝图注记已声明"手动产物自行管理"，不属雷。
+
+## 10.2 8 码误判 Root Cause（结论：显化缺口，非模型能力）
+
+**误判机制还原**：Flash 按契约 `backend:` 指针找 server 文件——session_handoff 段 backend 只列文档/模型名（handoff-protocol.md、ADR-0041、Pydantic 模型），**无实现文件指针**；gate_engine/intent_router 段同样缺 server 壳指针。按图索骥找不到 .py server → 判"无 server/骨架族"。而真相三处都有（doc_guard_server.py L186-259 三 raise / gate_engine_server.py L285-367 四 raise / sentinel_server.py L184-209 两 raise），且 `mcp/__init__.py` L12-13 明注"文件名≠server_id"——**信息存在但不自明**，真源一次 rg 即得，Flash 没做。
+
+**裁定：不是"全项目代码都需要死活标签"（过度工程）**——项目已有机器执法（六断言方向 A/B 全程绿=系统知道这些码活着），缺的是契约侧死活判定与证据链。治本=让机器替代模型判断：
+
+- **D8 显化修复（498dd01a）**：三段 backend 补 server 实现指针（含"文件名≠server_id"注记）。
+- **D9 七断言（498dd01a）**：test_error_code_consistency 六断言→七断言（方向 C：contract→code）——契约码必须在 src/ 有码字符串出现（宽口径覆盖 raise/fail-soft dict/dataclass 全形态，首跑即抓出 21 个 AST 扫不到的 B 类 dict 形态证明宽口径必要）；deferred 豁免真源=契约块内 "# deferred" 注释（文本级解析），deferred 码若在代码出现=注释腐化亦红。
+- **D9 连带抓获**：0bd159c4 报告宣称 INT-0003/0004 加 deferred 实际漏加 INT-0003（七断言当场检出，已按 Stage 3 PHASE-GATE 占位实证补注）；INT-0004 仅靠一条历史迁移注释"活"（宽口径已知边界，无害）。
+
+## 10.3 两遗留收工（不留尾巴）
+
+- **D10 raw-asset-scan.json 同族退役**：git rm + 白名单移除 + mcp_server/shim SCAN_PATH 删除 + 测试替身再换（architecture_health/latest.json）+ 蓝图注记更新为四派生物。asset_inventory 261 passed。
+- **D11 治理动作 append-only 日志**：ops_guard 新增 `_append_governance_log`——guard_recycle/recycle_prune 双挂钩，独立落 `.runtime/gate_audit/governance_actions.jsonl`（永不轮转，绕开 50MB 审计池被 pytest 洪峰挤出取证段的病根——当日 08:58 关键审计被 14:21 洪峰轮转挤出的直接治本）；记录含 reason/src/回收站目标/可恢复截止日。测试 2 例（TestGovernanceActionLog），lifecycle+safe_write 38 passed。
+
+## 10.4 批四总账
+
+commit：498dd01a（七断言+显化）+本笔（D10/D11+报告）。测试面 122+261+38 passed 全绿；CR-001~007 全 PASS（INV-001 联动回填 31986）；四派生物退役后资产索引再生 Health B (76.1) 稳定。

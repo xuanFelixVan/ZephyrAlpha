@@ -1,15 +1,15 @@
-generated_at: '2026-09-06T06:11:46.819208+00:00'
+generated_at: '2026-09-06T10:19:38.260875+00:00'
 generated_by: scripts/governance/generate_asset_index.py
-total_assets: 31962
+total_assets: 31986
 by_category:
   python_source: 0
-  python_test: 7518
+  python_test: 7519
   yaml_config: 695
-  markdown_doc: 1134
-  json_data: 14656
+  markdown_doc: 1135
+  json_data: 14674
   sql: 23
   toml: 0
-  other: 7936
+  other: 7940
 by_directory:
   config/config:
     other: 15
@@ -18,30 +18,30 @@ by_directory:
     json_data: 4
   scripts/scripts:
     python_test: 756
-    total: 1095
-    other: 268
+    total: 1096
+    other: 269
     yaml_config: 27
     markdown_doc: 13
     json_data: 15
     sql: 16
   docs/docs:
-    markdown_doc: 1099
-    total: 1577
+    markdown_doc: 1101
+    total: 1581
     yaml_config: 224
-    other: 252
+    other: 254
     json_data: 2
   tests/tests:
-    python_test: 3287
-    total: 6685
-    other: 3345
+    python_test: 3288
+    total: 6687
+    other: 3346
     json_data: 2
     yaml_config: 51
   data/data:
     other: 293
-    total: 15172
-    json_data: 14629
+    total: 15189
+    json_data: 14647
     yaml_config: 222
-    markdown_doc: 21
+    markdown_doc: 20
     sql: 7
   src/src/zephyr:
     yaml_config: 116
@@ -55,10 +55,10 @@ modules:
 health:
   health_score: 76.1
   health_grade: B
-  test_ratio: 7518.0
+  test_ratio: 7519.0
   doc_ratio: 0.035
 orphan_risk:
-  orphan_estimate: 958
+  orphan_estimate: 959
   orphan_rate: 0.03
-summary: Health B (76.1), 31962 total assets, 53 modules, test/ds ratio 7518.00, orphan
+summary: Health B (76.1), 31986 total assets, 53 modules, test/ds ratio 7519.00, orphan
   rate ~3.0%

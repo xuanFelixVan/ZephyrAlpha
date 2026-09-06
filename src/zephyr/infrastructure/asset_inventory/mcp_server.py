@@ -97,7 +97,6 @@ from zephyr.shared.io.paths import REPO_ROOT
 logger = logging.getLogger(__name__)
 
 INDEX_PATH = REPO_ROOT / "data" / "asset_index" / "unified-asset-index.yaml"
-SCAN_PATH = REPO_ROOT / "data" / "scans" / "raw-asset-scan.json"
 
 try:
     import yaml

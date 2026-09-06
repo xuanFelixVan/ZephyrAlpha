@@ -210,7 +210,8 @@ class TestIsAutoSyncProduct:
         assert _is_auto_sync_product("data/asset_index/unified-asset-index.yaml") is True
 
     def test_prefix_match_scans(self):
-        assert _is_auto_sync_product("data/scans/raw-asset-scan.json") is True
+        # 2026-09-06 批四：raw-asset-scan.json 同族退役出白名单
+        assert _is_auto_sync_product("data/scans/raw-asset-scan.json") is False
 
     def test_prefix_match_architecture_health(self):
         assert _is_auto_sync_product("data/architecture_health/latest.json") is True
@@ -523,19 +524,19 @@ class TestReconcile:
         assert content == "v2-modified\n"
 
     def test_reconcile_clean_when_only_auto_sync_restored(self, tmp_path):
-        # 仅 auto-sync 产物 + restore 成功 → clean（2026-09-06 换 raw-asset-scan 作替身：
-        # dashboard.json 已随派生面退役出白名单）
+        # 仅 auto-sync 产物 + restore 成功 → clean（2026-09-06 替身两换至 architecture_health：
+        # dashboard.json/raw-asset-scan.json 均已随派生面退役出白名单）
         _init_git_repo(tmp_path)
-        _commit_file(tmp_path, "data/scans/raw-asset-scan.json", '{"v":1}\n')
+        _commit_file(tmp_path, "data/architecture_health/latest.json", '{"v":1}\n')
         (tmp_path / "data" / "scans").mkdir(parents=True, exist_ok=True)
-        (tmp_path / "data" / "scans" / "raw-asset-scan.json").write_text('{"v":2}\n', encoding="utf-8")
+        (tmp_path / "data" / "architecture_health" / "latest.json").write_text('{"v":2}\n', encoding="utf-8")
         gw = _FakeGateway(tmp_path)
         spec = make_workspace_hygiene_reconciler(gw)
-        result = spec.reconcile(["data/scans/raw-asset-scan.json"], "test-session")
+        result = spec.reconcile(["data/architecture_health/latest.json"], "test-session")
         assert result.action == "clean"
         assert "restored" in result.detail
         # 文件被还原
-        content = (tmp_path / "data" / "scans" / "raw-asset-scan.json").read_text(encoding="utf-8")
+        content = (tmp_path / "data" / "architecture_health" / "latest.json").read_text(encoding="utf-8")
         assert content == '{"v":1}\n'
 
     def test_reconcile_warn_when_both_auto_sync_and_real_changes(self, tmp_path):
@@ -684,10 +685,10 @@ class TestBufferedFileExclusion:
 
     def test_mixed_buffered_and_unbuffered_auto_sync(self, tmp_path):
         # 混合场景：buffered 文件跳过，未 buffered 的 auto-sync 文件仍被 restore
-        # （2026-09-06 unbuffered 替身换 raw-asset-scan：dashboard.json 已退役出白名单）
+        # （2026-09-06 unbuffered 替身最终换 architecture_health：dashboard/raw-asset-scan 均已退役）
         _init_git_repo(tmp_path)
         buffered_file = "data/asset_index/unified-asset-index.yaml"
-        unbuffered_file = "data/scans/raw-asset-scan.json"
+        unbuffered_file = "data/architecture_health/latest.json"
         for f in (buffered_file, unbuffered_file):
             _commit_file(tmp_path, f, "v1\n")
             (tmp_path / f).parent.mkdir(parents=True, exist_ok=True)

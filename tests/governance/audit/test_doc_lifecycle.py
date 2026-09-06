@@ -326,3 +326,55 @@ class TestWatchlistPersistence:
         _write_doc(tmp_repo, "bare.md", "引用 src/gone/x.py", ttl=None)
         r = _evaluate(tmp_repo)
         assert r.watched == ["docs/_working/bare.md"]
+
+
+class TestGovernanceActionLog:
+    """2026-09-06 批四：治理动作 append-only 日志（防审计池轮转挤出取证段）。
+
+    当日实证：两份报告被 guard_recycle 归档事件中，08:58 的关键审计记录被
+    14:21 pytest 洪峰从 ops_guard_delete.jsonl 轮转池挤出。治理动作自此独立
+    落 governance_actions.jsonl（永不轮转）。
+    """
+
+    def test_guard_recycle_logged_append_only(self, tmp_repo):
+        import json
+
+        from scripts.ops_guard import guard_recycle
+
+        doc = _write_doc(tmp_repo, "gone.md", "内容")
+        guard_recycle(doc, repo_root=tmp_repo, reason="测试归档")
+
+        log = tmp_repo / ".runtime" / "gate_audit" / "governance_actions.jsonl"
+        assert log.exists(), "guard_recycle 必须留治理日志"
+        lines = [json.loads(x) for x in log.read_text(encoding="utf-8").splitlines() if x.strip()]
+        rec = next(r for r in lines if r["action"] == "guard_recycle")
+        assert rec["src"] == "docs/_working/gone.md"
+        assert "recycle_bin" in rec["recycle_dst"]
+        assert rec["reason"] == "测试归档"
+        assert rec["recoverable_until"], "必须记录可恢复截止日期"
+
+    def test_prune_logged_append_only(self, tmp_repo):
+        import json
+        import time as _time
+
+        from scripts.ops_guard import guard_recycle, prune_recycle_bin
+
+        doc = _write_doc(tmp_repo, "old.md", "内容")
+        guard_recycle(doc, repo_root=tmp_repo, reason="测试归档")
+
+        # 手工把回收站批次目录名改成 40 天前 → 触发 TTL 到期清理
+        bin_root = tmp_repo / ".runtime" / "recycle_bin"
+        ts_dir = next(p for p in bin_root.iterdir() if p.is_dir())
+        old_ts = int(_time.time()) - 40 * 24 * 3600
+        (bin_root / str(old_ts)).mkdir()
+        (bin_root / str(old_ts) / "x.md").write_text("x", encoding="utf-8")
+        ts_dir.rename(bin_root / "recent_backup_unused")  # 原 ts 目录改名防干扰
+
+        pruned = prune_recycle_bin(repo_root=tmp_repo)
+        assert pruned >= 1
+
+        log = tmp_repo / ".runtime" / "gate_audit" / "governance_actions.jsonl"
+        lines = [json.loads(x) for x in log.read_text(encoding="utf-8").splitlines() if x.strip()]
+        rec = next(r for r in lines if r["action"] == "recycle_prune")
+        assert rec["batch"] == str(old_ts)
+        assert "物理删除" in rec["detail"]

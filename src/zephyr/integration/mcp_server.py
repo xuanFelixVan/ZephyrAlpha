@@ -24,7 +24,8 @@
 
 2026-09-06 宽口径 v2 收敛：get_asset_detail/search_asset_by_type/tag/layer、
 list_all_tags、list_registry_ids、DASHBOARD_PATH 随窄口径 assets[] 派生面退役
-移出再导出（真源已删，详见 mcp_server.py 模块头注）。
+移出再导出（真源已删，详见 mcp_server.py 模块头注）；同日第二批：SCAN_PATH
+（raw-asset-scan.json）同族退役移出。
 """
 
 from typing import Final
@@ -33,7 +34,6 @@ from zephyr.infrastructure.asset_inventory.mcp_server import (  # noqa: F401
     INDEX_PATH,
     MCP_RESOURCES,
     MCP_TOOLS,
-    SCAN_PATH,
     dispatch_tool,
     get_asset_summary,
     get_health_dashboard,
@@ -45,7 +45,6 @@ __all__: Final = [
     "INDEX_PATH",
     "MCP_RESOURCES",
     "MCP_TOOLS",
-    "SCAN_PATH",
     "dispatch_tool",
     "get_asset_summary",
     "get_health_dashboard",
