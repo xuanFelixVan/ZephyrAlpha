@@ -95,9 +95,9 @@ task_manager:
     - code: "ZA-TSK-0003"
       message: "file_path unique constraint violated"
       http_status: 409
-    - code: "ZA-TSK-0004"
-      message: "budget exceeded (>20 files/session)"
-      http_status: 429
+    # ZA-TSK-0004（budget exceeded >20 files/session）已关闭——2026-09-06 Owner 裁定：
+    # create_task input_schema 自 v1.2.0 起无 files 字段，预算检查无落点，强加=造假 schema。
+    # 码未登记注册表（无定义点），关闭即从契约清单移除；编号退役不复用。
     - code: "ZA-TSK-0005"
       message: "stale task three-state mismatch"
       http_status: 409
@@ -195,7 +195,7 @@ task_manager:
       output_schema:
         type: object
         description: "TaskCard 序列化字典（与 SQLite 行一致子集）"
-      errors: ["ZA-TSK-0003", "ZA-TSK-0004"]
+      errors: ["ZA-TSK-0003"]
 
     - name: task_manager.decompose_blueprint
       description: "拆解蓝图 Markdown -> 子任务 ID 列表与依赖图"
