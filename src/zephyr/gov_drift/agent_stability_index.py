@@ -10,7 +10,7 @@
 # [STABILITY] evolving
 # [SAFETY] M
 # [AI_AUTONOMY] human_gated
-# [ERROR_CONTRACT] AgentStabilityError(占位 ZA-GOVDRIFT-UNREGISTERED-AGENT-STABILITY)——非法record/未知agent/窗未满强制评估/embedder异常或零向量/非法构造参数时抛
+# [ERROR_CONTRACT] AgentStabilityError(ZA-GOVDRIFT-0001)——非法record/未知agent/窗未满强制评估/embedder异常或零向量/非法构造参数时抛
 # [TESTS] tests/gov_drift/test_agent_stability_index.py
 # [A_module] module_id=MOD-GOV-055 | layer=module | stability=evolving | safety=M | ai_autonomy=human_gated
 # [TTL] permanent
@@ -61,8 +61,10 @@ _COMPONENT_KEYS: Final = frozenset(_DEFAULT_WEIGHTS)
 class AgentStabilityError(Exception):
     """Agent 稳定度评估输入/状态非法（Fail-Closed）。
 
-    未登记错误码-申请中：占位 ZA-GOVDRIFT-UNREGISTERED-AGENT-STABILITY。
+    错误码 ZA-GOVDRIFT-0001 已登记转正（2026-09-06 Owner 批准批）。
     """
+
+    error_code = "ZA-GOVDRIFT-0001"
 
 
 @dataclass(frozen=True)

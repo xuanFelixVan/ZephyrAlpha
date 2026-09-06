@@ -60,6 +60,7 @@ domain_prefixes:
   SIG: D_ASHARE_SIGNAL
   TSK: D_GOVERNANCE
   SBX: D_INTEGRATION
+  GOVDRIFT: D_GOV_DRIFT
   GOVD: D_GOV_DOCS
   GOVA: D_GOV_AUDIT
   GOV: D_GOVERNANCE
@@ -3269,6 +3270,13 @@ error_codes:
   module: zephyr.governance.docs.api_doc_version_syncer
   file: src/zephyr/governance/docs/api_doc_version_syncer.py
   introduced: '2026-09-06: Owner 批准占位码转正批（B17-②）——ZA-GOVD-UNREGISTERED-API-DOC-SYNC 转正'
+
+# --- 2026-09-06 占位码转正批 GOVDRIFT（Owner 批准 B17-②，取号=段内 max+1 顺延）---
+- code: ZA-GOVDRIFT-0001
+  class: AgentStabilityError
+  module: zephyr.gov_drift.agent_stability_index
+  file: src/zephyr/gov_drift/agent_stability_index.py
+  introduced: '2026-09-06: Owner 批准占位码转正批（B17-②）——ZA-GOVDRIFT-UNREGISTERED-AGENT-STABILITY 转正'
 
 known_duplicates: []
 # ============================================================
