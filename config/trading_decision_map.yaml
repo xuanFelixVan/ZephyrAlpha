@@ -99,6 +99,26 @@ nodes:
     module_ref: null
     strategy_mounts: []
 
+  # 日级温度计传感器（D20：四层架构第三支温度计=日级条件层，补业界 Daily Condition 缺位）
+  # 11 信号全上（Owner 裁定：先大而全跑数据，后数据裁噪；A组实战 8+ B组机构 3）：
+  #   A1 涨停家数环比 / A2 连板高度梯队 / A3 炸板率(>50% 追高必埋) / A4 跌停+核按钮(批量=退潮确认)
+  #   A5 昨日涨停溢价(≤-5% 退潮) / A6 红盘家数(<1500 绝对回避) / A7 量能匹配(缩量冲高+放量跳水=诱多)
+  #   A8 板块联动(一天换主线=混沌) / B1 宽度领先原则 / B2 对坏消息的反应 / B3 市值分层宽度
+  #   原始数据与 S2/S3 同源（DS-082/DS-059/DS-150），用法不同：本节点消费"当日读数+环比骤变"
+  #   裁噪预留：同源指标重复计票（冗余即静默杀手）→ 灰度合成阶段用相关性去重
+  - node_id: TDM-E-L1-S5
+    name_zh: 日级市场条件传感器
+    market: cn_a
+    flow: entry_flow
+    layer: L1
+    node_type: sensor
+    point: 盘中
+    decision_question: 当日盘面骤变读数（11 信号环比）显示今天该多激进
+    factor_refs: []
+    data_refs: [DS-082, DS-059, DS-150]
+    module_ref: null
+    strategy_mounts: []
+
   - node_id: TDM-E-L1-AGG
     name_zh: 市场状态判定
     market: cn_a
@@ -109,9 +129,13 @@ nodes:
     # 双轴合成（v1.2.2 B 方案定稿）：①谨慎度轴=消费 D_REGIME RegimeSnapshot 7 维概率
     #   （module_ref 已挂）→ 决定预算带位置（C1）；②机会轴=情绪六段分布（灰度）→ 决定策略路由
     #   （矩阵列轴）；③仲裁三规则：多数表决+历史可靠度加权（C3 养成）+分布熵高→分裂市降档+人工接管
+    # 四层架构（D20）：月级 12 态/周级六段/日级 S5 三温度计独立判定；跨层合成两规则——
+    #   封顶：周级退潮→日级最高 RISK_OFF；月级危机→日级最高 RISK_OFF（封顶不覆盖，日级如实报告）
+    #   对齐加成：月+周+日三层同向→预算带取上限（业界三级共振）；冲突→取下限+高层赢
     decision_question: >-
       双轴合成：RegimeSnapshot 概率（宏观谨慎度）× 情绪六段分布（微观机会窗口）；
-      输出预算带定位 + 策略路由 + 冲突仲裁（熵高分裂市→降档+Owner 接管）
+      输出预算带定位 + 策略路由 + 冲突仲裁（熵高分裂市→降档+Owner 接管）；
+      向日级输出封顶约束（月/周档位决定日级水温上限）
     factor_refs: []
     data_refs: [DS-098]
     module_ref: src/zephyr/regime/core/regime_detector.py
@@ -132,8 +156,8 @@ nodes:
     # ── E-L2 血肉 v1.3（D19，吸收 22 号 spec v1.9.7；算法附件=doc_ref 指向 22号 §3.1①-⑪）──
     # 双通道输出（D19）：①Top候选池+强度分→TDM-E-L3（机器）②盘后板块轮动简报→Owner 注意力（人工，
     #   锚 BM-SEL-25-C-3 跟风决策）——通道②由作战地图/预案引擎承载，地图只声明语义不建第二真源
-    # 水温接口挂起（D19）：树枝05 的 5 档推导待 L1 温度计时间周期定稿（宏观12态/情绪六段/水温5档
-    #   =月级/周级/日级三尺度错配，回炉 L1 讨论）——05-1/05-2 为挂起节点（pending 語义见备忘录 69 §2.9）
+    # 水温解挂（D20）：四层架构定稿——日级温度计（L1-S5，11 信号）独立判定 5 档，
+    #   月/周层封顶约束+三层对齐加成；05-1 消费 S5 当日读数（主判）+L1-AGG 双轴（封顶）
     doc_ref: "docs/02_enterprise_architecture/07_trading_decision_architecture/design_memos/22_sector_rotation_spec.md"
 
   # ── 树枝01 板块强度综合（22号 §3.1①⑧⑨）────────────────────────
@@ -450,17 +474,17 @@ nodes:
     layer: L2
     node_type: stage
     point: 盘前
-    decision_question: L1 双轴输出（regime 概率×情绪六段）翻译成哪一档水温
+    decision_question: 日级温度计（S5 当日读数主判）落在哪档+月/周封顶后最终档位
     parent_node: TDM-E-L2-05
     factor_refs: []
-    data_refs: [DS-150]
+    data_refs: [DS-150, DS-082, DS-059]
     module_ref: null
     algo_refs: []
     doc_ref: "docs/02_enterprise_architecture/07_trading_decision_architecture/design_memos/22_sector_rotation_spec.md#§3.1⑪"
     activation: premarket
     invalidation: null
     ai_autonomy: auto
-    fallback: L1-AGG 输出缺失→沿用前一交易日档位并告警（不自行判定）
+    fallback: S5 当日读数缺失→沿用前一交易日档位并告警（不自行判定）
     strategy_mounts: []
 
   - node_id: TDM-E-L2-05-2
@@ -844,6 +868,8 @@ edges:
   - {from_node: TDM-E-L2-04-1, to_node: TDM-E-L2-01-5, edge_type: feed}
   - {from_node: TDM-E-L2-04-2, to_node: TDM-E-L2-06-2, edge_type: feed}
   - {from_node: TDM-E-L1-AGG, to_node: TDM-E-L2-05-1, edge_type: feed}
+  - {from_node: TDM-E-L1-S5, to_node: TDM-E-L2-05-1, edge_type: feed}
+  - {from_node: TDM-E-L1-S5, to_node: TDM-E-L1-AGG, edge_type: feed}
   - {from_node: TDM-E-L2-05-1, to_node: TDM-E-L2-05-2, edge_type: sequence}
   - {from_node: TDM-E-L2-05-2, to_node: TDM-E-L2-06-1, edge_type: feed}
   - {from_node: TDM-E-L2-05-2, to_node: TDM-E-L2-02-1, edge_type: feed}
