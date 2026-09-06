@@ -27,7 +27,7 @@ scope: 07_trading_decision_architecture
 # 代码与算法多模型审查流水线
 
 > 本文档定义"施工后审查线"：对已 merge 回 dev 的模块代码、算法实现与运行情况，用多模型轮流交叉审查+自主治本修复，与前方施工线 **5+5 路并发**开工，统一由统筹会话调度。
-> 执行蓝本：[docs/audit_prompts_20_ai.md](../../../audit_prompts_20_ai.md)（AI-00 总控+域子代理+自主裁定框架+零打扰闭环，v3.2 已实证）。
+> 执行蓝本：[docs/01_policies_and_standards/sop/audit_prompts_20_ai.md](../../../01_policies_and_standards/sop/audit_prompts_20_ai.md)（AI-00 总控+域子代理+自主裁定框架+零打扰闭环，v3.2 已实证）。
 > 性质：跨切治理层（6x 段位）流程规范，2026-08-17 用户裁定转 active 并首开 5+5 十路并发。
 
 ## 1. 背景
@@ -170,7 +170,7 @@ scope: 07_trading_decision_architecture
   1. **切换模型**：下一步该在 Trae CN 选择器里切到哪个模型（Kimi-K3 / GLM-5.3 / Qwen3.8-Max）
   2. **执行任务**：路次+阶段（如"AI-R1 复审"）+一句话目标
   3. **一键复制指令**：填好全部参数的完整指令块（从附录模板实例化），用户切完模型开新对话直接粘贴即开工，零填写
-- **指令自包含原则**（沿用 audit 总控 §2 纪律）：指令块自带任务背景/域范围/纪律/返回格式，不依赖上对话上下文；域文件清单不一一内嵌，指路 `docs/audit_prompts_20_ai.md` 对应 AI-XX section（唯一真源，指令块保持短小）
+- **指令自包含原则**（沿用 audit 总控 §2 纪律）：指令块自带任务背景/域范围/纪律/返回格式，不依赖上对话上下文；域文件清单不一一内嵌，指路 `docs/01_policies_and_standards/sop/audit_prompts_20_ai.md` 对应 AI-XX section（唯一真源，指令块保持短小）
 - **输入传递走留痕不走口述**：复审所需初审问题清单一律从 tracker 遗留项+commit diff 读取（指令块只写条目编号范围），不在指令块里复制长清单——调度卡因此始终短小可一键复制
 - **队列锚点**：审查队列与批次进度以 tracker 为唯一真源；调度卡的"下一步"由完成方按轮换矩阵（§2.3）+队列现状推导，拿不准时在调度卡标"请统筹确认"而非瞎指
 - **并发与串行两形态兼容**：用户开 5 个审查窗口即 5 路并发（每窗口绑一路模型）；只开 1 个窗口即退化为串行任务链（切模型→粘贴→完成→下一张调度卡），机制不变
@@ -226,7 +226,7 @@ scope: 07_trading_decision_architecture
 
 ## 7. 引用
 
-- **执行蓝本（自主化机制+域划分+施工纪律来源）**：[docs/audit_prompts_20_ai.md](../../../audit_prompts_20_ai.md)（v3.2；AI-00 总控流程、域自主审计+治本修复指令 §0 执行前提/§0.8 自主裁定框架/§0.10 修复施工纪律/§0.11 自主红线/第十五条结果返回格式）
+- **执行蓝本（自主化机制+域划分+施工纪律来源）**：[docs/01_policies_and_standards/sop/audit_prompts_20_ai.md](../../../01_policies_and_standards/sop/audit_prompts_20_ai.md)（v3.2；AI-00 总控流程、域自主审计+治本修复指令 §0 执行前提/§0.8 自主裁定框架/§0.10 修复施工纪律/§0.11 自主红线/第十五条结果返回格式）
 - 硬边界与交叉验证约束：[system_charter.md §2](../../04_architecture_principles_decisions/system_charter.md)
 - 运行时监控基建（运行情况审查的数据源）：[55_monitoring_review.md](55_monitoring_review.md)
 - 多 AI 施工分工与生命周期：[61_lifecycle_multi_ai.md](61_lifecycle_multi_ai.md)

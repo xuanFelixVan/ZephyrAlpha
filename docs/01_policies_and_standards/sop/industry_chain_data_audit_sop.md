@@ -26,7 +26,7 @@ related_modules:
 > 本 SOP 是 **产业链/供应链全景图数据**（PG depgraph 库 ig_* 七表）的**审计、更新、补充流程真源**。
 > **核心用途**：Owner 睡前对 AI 说一句"按照 industry_chain_data_audit_sop 执行夜班"，AI 自主执行到 Owner 醒来，中途不问用户、不汇报中间态，醒后一次性大白话汇报。
 > **性质**：编排层 + 数据契约。表结构真源是 [apply_industry_graph_ddl.py](../../../../../scripts/industry_graph/apply_industry_graph_ddl.py)（DDL-as-Code），五视图设计真源是 [2026-08-28-industry-graph-frontend.md](../../02_enterprise_architecture/07_trading_decision_architecture/design_memos/2026-08-28-industry-graph-frontend.md)。本文件不重复表结构，只规定：审计什么 / 怎么补 / 数据怎么写 / 写成什么样算合格 / 怎么汇报。
-> **方法论参考**：[document_review_and_optimization_sop](document_review_and_optimization_sop.md)（轮次循环+连续零发现退出）｜[audit_prompts_20_ai](../../audit_prompts_20_ai.md)（总控派单+自包含提示词+无人值守编排）。
+> **方法论参考**：[document_review_and_optimization_sop](document_review_and_optimization_sop.md)（轮次循环+连续零发现退出）｜[audit_prompts_20_ai](audit_prompts_20_ai.md)（总控派单+自包含提示词+无人值守编排）。
 > **不做什么**：不动交易/实盘模块（只写 depgraph PG 库）；不做前端接线（chainmap 页接线走 DAL-C01/C02 另行派单）；不做 lead-lag 因子（2026-08-28 已证伪裁定，不推翻）。
 
 ## 1. 主题组信息
