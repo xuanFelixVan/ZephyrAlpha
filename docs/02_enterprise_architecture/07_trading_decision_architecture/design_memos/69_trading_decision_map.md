@@ -5,8 +5,8 @@ title: 交易决策地图（Trading Decision Map）——决策内容索引层�
 owner: ZephyrAlpha-Owner
 language: zh
 status: active
-version: "2.8.0"
-date: 2026-09-04
+version: "2.9.0"
+date: 2026-09-07
 topic: trading_decision_map
 scope: 07_trading_decision_architecture
 parent: "[讨论备忘录](../../../_working/2026-09-04-trading-decision-map-discussion.md)（D1-D6 裁定+27 项论断交叉验证报告）"
@@ -431,6 +431,31 @@ E-L2 收口：**10 树枝 19 节点**。
 - 全景图侧机制：新图走 module_id 总线（两跳互通）+ alignment_checklist §3 登记（君子协定+清单检查）
 
 **贯通意义**：交易决策地图（TDM）↔ frontend_map 经 MOD 总线互通闭环——TDM 节点 module_id → depgraph → frontend_map 功能点；反向功能点 → module: → depgraph → TDM 消费节点。全图全库对齐从"人知道"升级为"门禁强制知道"。
+
+### 2.26 P 流（持仓流）血肉——3 树枝 14 节点（D39-D49，Owner 2026-09-07 终裁）
+
+**SOP 全流程**：资产盘点（`_domain_position` 16/16 已落码+11 个有码无蓝图实现；本轮以"引用+编排"为主）→ 四路深查（机构 PM 五步体检 checklist/欧奈尔-Minervini 金字塔纪律/做T成本数学/Drawdown Governor+MFE 时间止损）→ 结构裁定 → 落盘。
+
+**结构定稿（D39）**：P 流 3 主干展开为 **3 树枝 14 节点，树深 2**（P 流合计 17，距预算 80 充足）。颗粒度裁定：不预先加深，哪层"爆了"拆哪层（上限 4 层=R16 门禁锁死）；"颗粒度无限细"的正确归宿=各库（module/registry/doc_ref 承载），地图无限细=代码镜像+内容-文档漂移失控。
+
+| 树枝 | 节点 | 锚 |
+|---|---|---|
+| P1 体检（6） | 01 对账台账→02 分级频率→03 逻辑存活→04 风险否决→05 组合体检→06 结论动作清单（WealthBee 五步 checklist 同构，四判据并行汇聚） | MOD-POS-002/MOD-SELL-000/MOD-RK-09/MOD-POS-003；DS-009/067/150/082/107；RLM-DRAWDOWN-005/006+RLM-CONCENTRATION-001/003/004+EVT-CA-002/003+EVT-EARN-001 |
+| P2 做T加减仓（4） | 01 资格与成本前置（三道门：状态 accumulation/expansion+振幅流动性+CST-T0-001 正期望线≥0.3%）→02 策略调度（三做T双挂）→03 闭环与成功判定（股数不变+成本下降=成功；14:50 未闭环强平）→04 减仓与再平衡（改善>2×成本） | MOD-SELL-018 planned/MOD-POS-004；CST-T0-001；FCT-INTRADAY-028/029/030/017/021；EXA-VWAP-001/EXA-TWAP-001 |
+| P3 加仓（4） | 01 资格门（四重：只加浮盈仓 BM-BUY-08 红线+情绪段权限仅 ignition/expansion+strategy_affinity>0+无熔断禁加期）→02 金字塔规则→03 量级风险核算（Case B 风险恒定+止损上移保本）→04 时点与执行（缩量回调/尾盘窗口 BM-PLAN-02） | MOD-POS-001/MOD-POS-010；RLM-POSITION-004/006/009/011/013/021+RLM-CONCENTRATION-001+RLM-KILL-SWITCH-006；EXA-TWAP-001/EXA-IS-001 |
+
+**关键裁定**：
+- **D40 逻辑存活**：分类型判据（打板查情绪梯队/多因子查暴露漂移 25 号/事件查衰减 26 号/做T底仓查趋势）；机构 thesis 卡片机制登记不施工；红节点。
+- **D41 术语统一**：社区"正T/反T"定义互相矛盾（雪球系 vs 东财系），系统禁用——图上用"先买后卖/先卖后买"，模块层 buy-first/sell-first；terminology_glossary REG-TERMINOLOGY-001 补 3 条（含禁用注记）。
+- **D43 缺户口补登**：orderbook-imbalance 补 **STR-VREV-024**（盘口失衡反转做T，aliases 挂 kebab id，code_symbol/fingerprint 实算，29 号 §S13.1 做T族类型定义归族；021-023 号段已被 29 号族既有条目占用故顺延）；三锚点不冲突各司其职（作战地图 BM-SELL-08=环节/StrategyMeta BM-EXE-02=执行步骤/TDM-P-P2=时机）。
+- **D44 冲突规则收口**：风控减仓 > 做T收口 > 做T新开（P2-04 注释承载，收口 BM-SELL-06 deprecated 遗留）；conflict_priority 字段=schema v1.8 候选（解析器 dataclass 未含，未加未知字段）。
+- **D45 金字塔参数**（全 proposed，69 号本节为真源）：正金字塔递减（首加占剩余预算 50% 逐次减半）/次数≤3/价格阶梯较上次买点≥2.5-3%/只顺势不加逆（禁马丁格尔）/加仓=新交易重新确认入场/Case B 总 dollar risk 不超首仓/euphoria 段无加仓权限（预算带"只卖不买"一致，取严）。
+- **D46 治理档位**：paper×4（P2-02/03/04、P3-04 实盘执行，P2-03 含 14:50 强平取严）、auto×10。
+- **D47 交叉轴修正**：alert 库 THD-DRIFT 族实为数据/特征漂移 PSI 语义，非仓位漂移带——不挂（漂移带由 MOD-POS-003 自带承载）。
+- **D48 跨流边**：P2-03→F-C3（做T统计喂归因，L4-13 同款）/P3-04→E-L4（加仓复用建仓执行件）/P1-04→X-S1（否决转离场）/P2-04→X-S2（减仓走离场执行件）/L1-AGG→P3-01（六段喂加仓权限）。
+- **D49 边角欠账**（注释登记不施工）：停牌持仓冻结时间止损计时→P1-01；除权除息成本归因污染做T统计→P2-03；施工归公司行动处理（26 号 corporate_action_processor 消费侧）。
+
+**验收**：真源地图 101 节点/106 边 validate error=0；双套件 90 测试全绿（含真源回归锚+对抗锚八轴满贯+TestNewRegistryGate）；warning 增量与设计一致（R1 红节点 75→82、R22 14→15、R24/R21 零复发、R16 树宽 1 不变）。
 
 ## 3. 考虑过的替代方案与拒绝理由
 

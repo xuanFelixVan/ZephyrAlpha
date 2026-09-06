@@ -590,4 +590,20 @@ Owner 大白话理解 6 项后终裁**全部要**。落盘分层：地图 YAML �
 
 ---
 
+## 34. 第二十七轮：P 流（持仓流）血肉（D39-D49，2026-09-07）
+
+**Owner 指令**：继续 P 流血肉开发按 SOP 完整走一遍；AI 产出资产盘点+全网深查+拆解树草案+待裁定清单（D39-D49），Owner 大白话解释后统一按 AI 建议执行。
+
+**资产盘点（SOP Step 1）**：`_domain_position` 16/16 蓝图全部已落码（另有 11 个有码无独立蓝图实现）——P 流底子比 E 流厚，本轮以"引用+编排"为主；三处真正空白=P1 体检汇总编排面/P2 做T统一调度（MOD-SELL-018 planned）/P3 金字塔加仓规则（全网+全项目核查均无承载）。关键发现：orderbook-imbalance 无 STR 条目（做T三策略唯一缺户口）；做T策略三处锚点（BM-EXE-02/TDM-P-P2/BM-SELL-08）各司其职不冲突。
+
+**四路深查（SOP Step 2）**：①机构=PM 五步体检 checklist（WealthBee，每次复盘必落一条动作）+thesis 卡片（3-5 支撑柱+失效条件可证伪）+MFE Duration 时间止损（2-3×盈利单中位时长）+Drawdown Governor 指数式收缩 ②大师=欧奈尔 50/30/17.5 递减+2.5-3% 阶梯/Minervini 渐进建仓+确认信号表/Case B 风险恒定加仓/Pyramiding vs Martingale 方向定生死 ③做T=成功判定"收盘股数不变+总成本下降"+双边成本 0.15-0.2% 正期望线+机构 drift band 双阈值"观察与执行分离" ④实战=养家单日>3% 降半/>5% 清仓与机构 governor 同构；**正T/反T 社区定义互相矛盾**（雪球系 vs 东财系）。
+
+**结构定稿（D39）**：3 树枝 14 节点树深 2（P1 体检 6/P2 做T加减仓 4/P3 加仓 4，P 流合计 17 距预算 80 充足）；颗粒度裁定=不预先加深按需生长（上限 4 层门禁锁死），"无限细"归宿在各库不在地图。D40 逻辑存活分类型判据（thesis 卡片登记不施工）；D41 术语统一 buy-first/sell-first（terminology_glossary 补 3 条含禁用注记）；D43 补登 STR-VREV-024（021-023 号段已被 29 号族占用故顺延，code_symbol+fingerprint 实算）；D44 冲突规则收口"风控减仓>做T收口>做T新开"（conflict_priority=schema v1.8 候选）；D45 金字塔参数全 proposed（euphoria 段无加仓权限取严）；D46 治理档位 paper×4/auto×10；D47 THD-DRIFT 族语义修正不挂（PSI 数据漂移≠仓位漂移带）；D48 跨流边 5 条（P2-03→F-C3/P3-04→E-L4/P1-04→X-S1/P2-04→X-S2/L1-AGG→P3-01）；D49 停牌冻结+除权成本污染两欠账注释登记。
+
+**验收**：真源地图 101 节点/106 边 validate error=0；双套件 90 测试全绿（地图主套件+对抗套件+真源回归锚+八轴挂载锚+TestNewRegistryGate）；warning 增量与设计一致（R1 75→82/R22 14→15/R24/R21 零复发）。
+
+**落盘**：trading_decision_map.yaml（+14 节点+20 边）/strategy_registry.yaml（STR-VREV-024）/terminology_glossary.yaml（trading_colloquial+3）/69 备忘录 v2.9.0 §2.26。
+
+---
+
 *本文件为讨论备忘录，讨论收敛并裁定后，正式设计应迁入 architecture_model 或相应设计目录，本文件届时归档。*

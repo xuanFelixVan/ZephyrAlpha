@@ -1587,6 +1587,337 @@ nodes:
     module_ref: null
     strategy_mounts: []
 
+  # ── P 流血肉（D39-D49，Owner 2026-09-07 终裁；3 树枝 14 节点，树深 2）──
+  # 资产盘点结论：_domain_position 16/16 已落码，本轮以"引用+编排"为主；
+  #   三处空白新写血肉=P1 体检汇总编排（P1-06 红节点）/P2 做T统一调度（MOD-SELL-018 planned）/
+  #   P3 金字塔加仓规则（P3-02 红节点，69 号 §2.26 为真源）
+  # P1 树枝：体检链=对账→{分级/逻辑/风险/组合}→结论动作清单（WealthBee 五步 checklist 同构）
+  - node_id: TDM-P-P1-01
+    name_zh: 持仓对账与台账快照
+    market: cn_a
+    flow: position_flow
+    layer: P1
+    node_type: stage
+    point: 盘前
+    decision_question: 每只持仓现在多少股/成本多少/状态机在哪一态，与券商记录是否一致
+    parent_node: TDM-P-P1
+    factor_refs: []
+    data_refs: [DS-009, DS-067]
+    module_ref: src/zephyr/position/core/position_state_machine.py
+    module_id: MOD-POS-002
+    algo_refs: []
+    doc_ref: "docs/02_enterprise_architecture/07_trading_decision_architecture/design_memos/93_qmt_file_bridge_playbook.md"
+    activation: premarket
+    invalidation: null
+    ai_autonomy: auto
+    # D49 欠账注释：停牌持仓须冻结时间止损计时+复牌补跌预案，施工归公司行动处理（26 号 corporate_action_processor 消费侧）
+    fallback: QMT 桥持仓文件缺失→沿用 T-1 快照+数据四态灯黄+人工核对
+    strategy_mounts: []
+
+  - node_id: TDM-P-P1-02
+    name_zh: 持仓分级与监控频率
+    market: cn_a
+    flow: position_flow
+    layer: P1
+    node_type: stage
+    point: 持续
+    decision_question: 哪些持仓要盯紧哪些可放开，各自用多密的频率盯
+    parent_node: TDM-P-P1
+    factor_refs: []
+    data_refs: [DS-150]
+    module_ref: src/zephyr/sell_decision/core/position_triage.py
+    module_id: MOD-SELL-000
+    algo_refs: [IND-VOL-001]
+    doc_ref: null
+    activation: continuous
+    invalidation: null
+    ai_autonomy: auto
+    fallback: ATR 数据缺失→按盈亏百分比粗分级
+    strategy_mounts: []
+
+  - node_id: TDM-P-P1-03
+    name_zh: 买入逻辑存活判定
+    market: cn_a
+    flow: position_flow
+    layer: P1
+    node_type: stage
+    point: 盘前
+    decision_question: 当初的买入逻辑现在还在不在，哪些持仓逻辑已失效
+    parent_node: TDM-P-P1
+    factor_refs: [FCT-SENT-012, FCT-MOM-022]
+    data_refs: [DS-082, DS-107]
+    module_ref: null
+    algo_refs: []
+    doc_ref: "docs/02_enterprise_architecture/07_trading_decision_architecture/design_memos/28_sentiment_cycle_trading.md"
+    activation: premarket
+    invalidation: null
+    ai_autonomy: auto
+    # D40：分类型判据=打板查情绪梯队/多因子查暴露漂移（25 号 HoldingDriftMonitor）/事件查衰减（26 号）/
+    #   做T底仓查趋势；机构 thesis 卡片机制（失效条件显式化）已登记不施工，本节点为红节点
+    fallback: 因子缺失→按盈亏与持仓天数粗判
+    strategy_mounts: []
+
+  - node_id: TDM-P-P1-04
+    name_zh: 风险否决体检
+    market: cn_a
+    flow: position_flow
+    layer: P1
+    node_type: stage
+    point: 盘前
+    decision_question: 哪些持仓触发风险否决线必须转离场处理
+    parent_node: TDM-P-P1
+    factor_refs: []
+    risk_limit_refs: [RLM-DRAWDOWN-005, RLM-DRAWDOWN-006]
+    event_refs: [EVT-CA-002, EVT-CA-003, EVT-EARN-001]
+    data_refs: []
+    module_ref: src/zephyr/risk/core/ashare_stop_loss_engine.py
+    module_id: MOD-RK-09
+    algo_refs: []
+    doc_ref: null
+    activation: premarket
+    invalidation: null
+    ai_autonomy: auto
+    # MOD-RK-09 现状=已建成 38 测试全绿、零生产消费（Owner 2026-09-06 接线里程碑）；地图不越权催接线
+    fallback: 止损引擎未接线→阈值比对降级实现
+    strategy_mounts: []
+
+  - node_id: TDM-P-P1-05
+    name_zh: 组合级持仓体检
+    market: cn_a
+    flow: position_flow
+    layer: P1
+    node_type: stage
+    point: 持续
+    decision_question: 组合层面有没有超集中/超漂移/相关性扎堆
+    parent_node: TDM-P-P1
+    factor_refs: []
+    risk_limit_refs: [RLM-CONCENTRATION-001, RLM-CONCENTRATION-003, RLM-CONCENTRATION-004]
+    data_refs: [DS-009]
+    module_ref: src/zephyr/position/core/position_drift_monitor.py
+    module_id: MOD-POS-003
+    algo_refs: []
+    doc_ref: null
+    activation: continuous
+    invalidation: null
+    ai_autonomy: auto
+    # 漂移带阈值（组合±2%/单标的±3%）语义由 MOD-POS-003 模块自带承载；alert 库 THD-DRIFT 族为
+    #   数据/特征漂移 PSI 语义不同轴，不挂（D47 修正）
+    fallback: 监控缺→盘前人工核对权重表
+    strategy_mounts: []
+
+  - node_id: TDM-P-P1-06
+    name_zh: 体检结论与动作清单
+    market: cn_a
+    flow: position_flow
+    layer: P1
+    node_type: stage
+    point: 盘前
+    decision_question: 汇总四路体检后每只持仓今天该做什么动作
+    parent_node: TDM-P-P1
+    factor_refs: []
+    data_refs: []
+    module_ref: null
+    algo_refs: []
+    doc_ref: null
+    activation: premarket
+    invalidation: null
+    ai_autonomy: auto
+    # 红节点（P 流三空白之一：体检汇总编排面）；动作过 position_adjudication_center（MOD-POS-024）+审计；
+    #   引用轴皆空=接受 R25 warning（与 E 流 17 空转叶子同池，血肉阶段欠账）
+    fallback: 任一子项异常→该持仓动作置人工确认默认态
+    strategy_mounts: []
+
+  # P2 树枝：资格门→调度→闭环，减仓/再平衡并行（冲突规则：风控减仓 > 做T收口 > 做T新开，收口 BM-SELL-06 废弃语义；
+  #   conflict_priority 字段为 schema v1.8 候选，当前以注释承载）
+  - node_id: TDM-P-P2-01
+    name_zh: 做T资格与成本前置
+    market: cn_a
+    flow: position_flow
+    layer: P2
+    node_type: stage
+    point: 盘前
+    decision_question: 这只持仓今天允不允许做T、值不值得做T
+    parent_node: TDM-P-P2
+    factor_refs: [FCT-INTRADAY-028]
+    cost_model_refs: [CST-T0-001]
+    data_refs: [DS-150]
+    module_ref: null
+    algo_refs: []
+    doc_ref: "docs/02_enterprise_architecture/07_trading_decision_architecture/design_memos/90_methodology_open_questions.md#§5"
+    activation: premarket
+    invalidation: 盘中转单边（跌停潮/板块崩塌）→当日做T资格全部作废
+    ai_autonomy: auto
+    # 三道门=状态门（矩阵仅 accumulation/expansion 段开做T）+标的质量门（振幅/流动性达标）+
+    #   成本门（CST-T0-001：预期价差≥0.3% 正期望线）；红节点（编排缺口）
+    fallback: 成本模型不可用→降级人工判定做T资格
+    strategy_mounts: []
+
+  - node_id: TDM-P-P2-02
+    name_zh: 做T策略调度
+    market: cn_a
+    flow: position_flow
+    layer: P2
+    node_type: stage
+    point: 盘中
+    decision_question: 三个做T策略今天怎么跑、信号冲突听谁的
+    parent_node: TDM-P-P2
+    factor_refs: [FCT-INTRADAY-029, FCT-INTRADAY-030, FCT-INTRADAY-017, FCT-INTRADAY-021]
+    data_refs: []
+    module_ref: null
+    module_id: MOD-SELL-018
+    algo_refs: [EXA-VWAP-001, EXA-TWAP-001]
+    doc_ref: null
+    activation: intraday
+    invalidation: 单边趋势确认→当日做T资格作废（与 P2-01 联动）
+    ai_autonomy: paper
+    # t_trade_coordinator planned（BM-SELL-08 锚，参数真源：单次≤底仓30%/净收益≥1.5%/失误止损1.5% proposed）；
+    #   做T方向术语=buy-first 先买后卖/sell-first 先卖后买（D41，禁用社区正T/反T，terminology_glossary 已登记）；
+    #   指令过 position_adjudication_center；执行侧异常兜底=strategy_abnormal_exit（MOD-TRADING-008）
+    fallback: 协调器未建成→单策略顺序执行+人工确认
+    strategy_mounts:
+      - {strategy_ref: intraday-surge-fall, confidence: proposed, evidence: null}
+      - {strategy_ref: orderbook-imbalance, confidence: proposed, evidence: null}
+      - {strategy_ref: vwap-reversion,      confidence: proposed, evidence: null}
+
+  - node_id: TDM-P-P2-03
+    name_zh: 做T闭环与成功判定
+    market: cn_a
+    flow: position_flow
+    layer: P2
+    node_type: stage
+    point: 盘中
+    decision_question: 今天的T收没收口、是赚是亏、成本降没降
+    parent_node: TDM-P-P2
+    factor_refs: []
+    cost_model_refs: [CST-T0-001]
+    data_refs: []
+    module_ref: null
+    algo_refs: []
+    doc_ref: null
+    activation: intraday
+    invalidation: null
+    ai_autonomy: paper
+    # 成功判定=收盘股数不变+总成本下降（社区共识口径）；14:50 未闭环无条件平（冠军规则）；
+    #   统计喂 C3 归因；D49 欠账：除权除息自动改成本价会污染做T成本归因，施工归公司行动处理
+    fallback: 14:50 平仓失败→次日竞价优先处理并标记
+    strategy_mounts: []
+
+  - node_id: TDM-P-P2-04
+    name_zh: 减仓与再平衡
+    market: cn_a
+    flow: position_flow
+    layer: P2
+    node_type: stage
+    point: 盘中
+    decision_question: 哪些持仓要减、减多少、划不划算
+    parent_node: TDM-P-P2
+    factor_refs: []
+    risk_limit_refs: [RLM-POSITION-011]
+    data_refs: [DS-009]
+    module_ref: src/zephyr/position/core/rebalance_engine.py
+    module_id: MOD-POS-004
+    algo_refs: []
+    doc_ref: null
+    activation: intraday
+    invalidation: null
+    ai_autonomy: paper
+    # 冲突优先级：风控减仓 > 做T收口 > 做T新开（D44，收口 BM-SELL-06 deprecated 遗留；schema v1.8 候选字段化）；
+    #   与 MOD-SELL-006 replacement_rebalance_seller 共享触发（置换减仓）；执行面走 X-S2 离场执行件
+    fallback: 再平衡引擎不可用→减仓指令降级人工确认
+    strategy_mounts: []
+
+  # P3 树枝：资格门→金字塔规则→量级风险核算→时点执行（流水线）；euphoria 段无加仓权限（只卖不买，取严）
+  - node_id: TDM-P-P3-01
+    name_zh: 加仓资格门
+    market: cn_a
+    flow: position_flow
+    layer: P3
+    node_type: stage
+    point: 盘前
+    decision_question: 这只浮盈仓现在有没有资格加仓
+    parent_node: TDM-P-P3
+    factor_refs: [FCT-MOM-022]
+    risk_limit_refs: [RLM-POSITION-004, RLM-POSITION-009, RLM-POSITION-013, RLM-KILL-SWITCH-006]
+    data_refs: []
+    module_ref: null
+    algo_refs: []
+    doc_ref: "docs/02_enterprise_architecture/07_trading_decision_architecture/design_memos/28_sentiment_cycle_trading.md"
+    activation: premarket
+    invalidation: 熔断或回撤协议触发→全部加仓资格即时作废
+    ai_autonomy: auto
+    # 四重门=只加浮盈仓（BM-BUY-08 四项严禁"被套补仓"红线）+情绪段权限（仅 ignition/expansion 开加仓）+
+    #   策略亲和 strategy_affinity>0（28 号）+无熔断禁加期；红节点（编排缺口）
+    fallback: null
+    strategy_mounts: []
+
+  - node_id: TDM-P-P3-02
+    name_zh: 金字塔加仓规则
+    market: cn_a
+    flow: position_flow
+    layer: P3
+    node_type: stage
+    point: 盘中
+    decision_question: 怎么加：每次加多少、隔多少空间、最多加几次
+    parent_node: TDM-P-P3
+    factor_refs: []
+    data_refs: []
+    module_ref: null
+    algo_refs: []
+    doc_ref: "docs/02_enterprise_architecture/07_trading_decision_architecture/design_memos/69_trading_decision_map.md#§2.26"
+    activation: on_demand
+    invalidation: 跌破上次加仓点→停止后续加仓计划
+    ai_autonomy: auto
+    # 红节点（P 流三空白之三：金字塔规则全网+全项目核查均无承载，69 号 §2.26 为参数真源）；
+    #   参数全 proposed：正金字塔递减（首加占剩余预算50%逐次减半）/次数≤3/价格阶梯较上次买点涨幅≥2.5-3%/
+    #   只顺势不加逆/加仓=新交易需重新确认入场条件/Case B 总 dollar risk 不超首仓风险预算（欧奈尔/Minervini 纪律）
+    fallback: null
+    strategy_mounts: []
+
+  - node_id: TDM-P-P3-03
+    name_zh: 加仓量级与风险核算
+    market: cn_a
+    flow: position_flow
+    layer: P3
+    node_type: stage
+    point: 盘中
+    decision_question: 加这一笔后总风险变多大、止损移到哪里
+    parent_node: TDM-P-P3
+    factor_refs: []
+    risk_limit_refs: [RLM-POSITION-006, RLM-POSITION-021, RLM-CONCENTRATION-001]
+    data_refs: []
+    module_ref: src/zephyr/position/core/position_sizing_engine.py
+    module_id: MOD-POS-001
+    algo_refs: []
+    doc_ref: null
+    activation: on_demand
+    invalidation: null
+    ai_autonomy: auto
+    fallback: null
+    strategy_mounts: []
+
+  - node_id: TDM-P-P3-04
+    name_zh: 加仓时点与执行
+    market: cn_a
+    flow: position_flow
+    layer: P3
+    node_type: stage
+    point: 盘中
+    decision_question: 什么时候下单加仓、怎么下单
+    parent_node: TDM-P-P3
+    factor_refs: []
+    data_refs: []
+    module_ref: src/zephyr/position/core/position_limit_enforcer.py
+    module_id: MOD-POS-010
+    algo_refs: [EXA-TWAP-001, EXA-IS-001]
+    doc_ref: null
+    activation: intraday
+    invalidation: null
+    ai_autonomy: paper
+    # 时点=缩量回调守住支撑或尾盘窗口（BM-PLAN-02：明日高开概率>70% 触发）；
+    #   下单复用建仓流执行件（→TDM-E-L4 feed 边）；硬约束预检=MOD-POS-010+cash_manager（MOD-POS-006）
+    fallback: 部分成交→按 TDM-E-L4-11 部分成交处理；未成交不追价、次日重走资格门
+    strategy_mounts: []
+
   # ── 离场流 exit_flow（cn_a）──────────────────────────────────────────────
   - node_id: TDM-X-S1
     name_zh: 卖出信号收集评分
@@ -1827,8 +2158,29 @@ edges:
   # 持仓流
   - {from_node: TDM-P-P1, to_node: TDM-P-P2, edge_type: sequence}
   - {from_node: TDM-P-P2, to_node: TDM-P-P3, edge_type: sequence}
+  # ── P 流血肉边（D39-D49）：体检链并行汇聚+三树枝主链+跨流联动 ──
+  - {from_node: TDM-P-P1-01, to_node: TDM-P-P1-02, edge_type: sequence}
+  - {from_node: TDM-P-P1-01, to_node: TDM-P-P1-03, edge_type: feed}
+  - {from_node: TDM-P-P1-01, to_node: TDM-P-P1-04, edge_type: feed}
+  - {from_node: TDM-P-P1-01, to_node: TDM-P-P1-05, edge_type: feed}
+  - {from_node: TDM-P-P1-02, to_node: TDM-P-P1-06, edge_type: feed}
+  - {from_node: TDM-P-P1-03, to_node: TDM-P-P1-06, edge_type: feed}
+  - {from_node: TDM-P-P1-04, to_node: TDM-P-P1-06, edge_type: feed}
+  - {from_node: TDM-P-P1-05, to_node: TDM-P-P1-06, edge_type: feed}
+  - {from_node: TDM-P-P1-06, to_node: TDM-P-P2-01, edge_type: feed}
+  - {from_node: TDM-P-P2-01, to_node: TDM-P-P2-02, edge_type: sequence}
+  - {from_node: TDM-P-P2-02, to_node: TDM-P-P2-03, edge_type: sequence}
+  - {from_node: TDM-P-P1-05, to_node: TDM-P-P2-04, edge_type: feed}
+  - {from_node: TDM-P-P3-01, to_node: TDM-P-P3-02, edge_type: sequence}
+  - {from_node: TDM-P-P3-02, to_node: TDM-P-P3-03, edge_type: sequence}
+  - {from_node: TDM-P-P3-03, to_node: TDM-P-P3-04, edge_type: sequence}
+  - {from_node: TDM-E-L1-AGG, to_node: TDM-P-P3-01, edge_type: feed}
   # 持仓→离场（做T卖出即离场决策输入）
   - {from_node: TDM-P-P2, to_node: TDM-X-S1, edge_type: sequence}
+  - {from_node: TDM-P-P1-04, to_node: TDM-X-S1, edge_type: feed}   # 风险否决持仓转离场评估
+  - {from_node: TDM-P-P2-04, to_node: TDM-X-S2, edge_type: feed}   # 减仓执行走离场执行件
+  - {from_node: TDM-P-P2-03, to_node: TDM-F-C3, edge_type: feed}   # 做T成功/失败统计喂归因（L4-13 同款）
+  - {from_node: TDM-P-P3-04, to_node: TDM-E-L4, edge_type: feed}   # 加仓执行复用建仓流执行件
   - {from_node: TDM-X-S1, to_node: TDM-X-S2, edge_type: sequence}
   # 应急保命横切（示意主边：触发即接管离场）
   - {from_node: TDM-X-R1, to_node: TDM-X-S2, edge_type: broadcast}

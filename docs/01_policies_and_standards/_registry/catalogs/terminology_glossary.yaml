@@ -38,9 +38,9 @@ description: |
 owner: MOD-INF-005
 tier: tier_1_governance
 status: active
-version: 1.1.0
+version: 1.2.0
 created: '2026-07-30'
-last_updated: '2026-08-15'
+last_updated: '2026-09-07'
 unique_key:
 - category
 - en
@@ -1000,3 +1000,15 @@ entries:
     en: transitional leader across regime
     zh: 穿越龙
     description: 土话「穿越龙」——穿越退潮期的过渡连板龙头（高度受卡位限制）
+  - category: trading_colloquial
+    en: buy-first intraday round trip
+    zh: 先买后卖做T
+    description: 系统标准术语（D41，2026-09-07）——社区所谓「正T」多数指此义但定义互相矛盾；上升趋势回调低吸首选，容错率高，本系统统一用 buy-first
+  - category: trading_colloquial
+    en: sell-first intraday round trip
+    zh: 先卖后买做T
+    description: 系统标准术语（D41，2026-09-07）——社区所谓「反T」多数指此义但定义互相矛盾；冲高规避回落场景，本系统统一用 sell-first
+  - category: trading_colloquial
+    en: zheng-T / fan-T (ambiguous, forbidden)
+    zh: 正T/反T（禁用）
+    description: A股社区土话——两词定义在社区内互相矛盾（雪球系「正T=先卖后买」vs 东财系「正T=先买后卖」），本系统禁用此对措辞，统一用 buy-first/sell-first（D41，2026-09-07）
