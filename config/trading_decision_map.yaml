@@ -976,6 +976,7 @@ nodes:
     fallback: null
     strategy_mounts:
       - {strategy_ref: STR-DABAN-001, confidence: proposed, evidence: null}
+      - {strategy_ref: STR-MULTIFACTOR-048, confidence: proposed, evidence: null}
 
   - node_id: TDM-E-L3-07-2
     name_zh: 多因子打分链
@@ -1080,6 +1081,169 @@ nodes:
     invalidation: null
     ai_autonomy: auto
     fallback: 预检数据缺→标记未预检（执行层兜底拦截）
+    strategy_mounts: []
+
+  # ── D31 L3 补缺：日内动态选股（竞价/盘中）+ 个股多维验证（资金/龙虎榜/筹码/形态）──
+  # Owner 判定成立：L3 粒度欠账——候选大头来自盘中扫描（涨速异动）与竞价（9:26-9:28），原结构全盘后
+  - node_id: TDM-E-L3-11
+    name_zh: 日内动态选股
+    market: cn_a
+    flow: entry_flow
+    layer: L3
+    node_type: stage
+    point: 盘中
+    decision_question: 盘中实时扫描产出哪些候选（涨速榜 3-7% 拉升/异动资金）
+    parent_node: TDM-E-L3
+    factor_refs: []
+    data_refs: [DS-150, DS-082]
+    module_ref: null
+    algo_refs: []
+    doc_ref: null
+    activation: intraday
+    invalidation: null
+    ai_autonomy: auto
+    fallback: null
+    strategy_mounts: []
+
+  - node_id: TDM-E-L3-11-1
+    name_zh: 竞价选股
+    market: cn_a
+    flow: entry_flow
+    layer: L3
+    node_type: stage
+    point: 盘中
+    decision_question: 9:26-9:28 竞价瞬间产出当日候选（竞价量比/资金挂单/涨停试盘）
+    parent_node: TDM-E-L3-11
+    factor_refs: []
+    data_refs: [DS-082, DS-150]
+    module_ref: null
+    algo_refs: []
+    doc_ref: null
+    activation: intraday
+    invalidation: 9:25 前数据为假象密集区，不作为选股依据
+    ai_autonomy: auto
+    fallback: null
+    strategy_mounts: []
+
+  - node_id: TDM-E-L3-11-2
+    name_zh: 盘中涨速异动扫描
+    market: cn_a
+    flow: entry_flow
+    layer: L3
+    node_type: stage
+    point: 盘中
+    decision_question: 涨速榜 3-7% 快速拉升标的中谁进观察池（黄金窗口 9:30-10:30）
+    parent_node: TDM-E-L3-11
+    factor_refs: []
+    data_refs: [DS-150, DS-082]
+    module_ref: null
+    algo_refs: []
+    doc_ref: null
+    activation: intraday
+    invalidation: null
+    ai_autonomy: auto
+    fallback: null
+    strategy_mounts:
+      - {strategy_ref: STR-MULTIFACTOR-031, confidence: proposed, evidence: null}
+
+  - node_id: TDM-E-L3-12
+    name_zh: 个股多维验证
+    market: cn_a
+    flow: entry_flow
+    layer: L3
+    node_type: stage
+    point: 盘后
+    decision_question: 候选个股的资金/席位/筹码/形态四维验证结论
+    parent_node: TDM-E-L3
+    factor_refs: []
+    data_refs: [DS-181]
+    module_ref: null
+    algo_refs: []
+    doc_ref: null
+    activation: postmarket
+    invalidation: null
+    ai_autonomy: auto
+    fallback: null
+    strategy_mounts: []
+
+  - node_id: TDM-E-L3-12-1
+    name_zh: 个股资金面分析
+    market: cn_a
+    flow: entry_flow
+    layer: L3
+    node_type: stage
+    point: 盘后
+    decision_question: 个股主力净额/DDE 大单强度够不够（大单金额/日成交额≥20% 实战线）
+    parent_node: TDM-E-L3-12
+    factor_refs: []
+    data_refs: [DS-181]
+    module_ref: src/zephyr/signal_ashare/capital_flow_pattern_analyzer.py
+    algo_refs: []
+    doc_ref: null
+    activation: postmarket
+    invalidation: null
+    ai_autonomy: auto
+    fallback: null
+    strategy_mounts: []
+
+  - node_id: TDM-E-L3-12-2
+    name_zh: 龙虎榜席位追踪
+    market: cn_a
+    flow: entry_flow
+    layer: L3
+    node_type: stage
+    point: 盘后
+    decision_question: 上榜标的是什么席位在买（游资/机构）—席位风格决定接力概率
+    parent_node: TDM-E-L3-12
+    factor_refs: []
+    data_refs: []
+    module_ref: null
+    algo_refs: []
+    doc_ref: null
+    activation: postmarket
+    invalidation: null
+    ai_autonomy: auto
+    fallback: null
+    strategy_mounts: []
+
+  - node_id: TDM-E-L3-12-3
+    name_zh: 筹码分布分析
+    market: cn_a
+    flow: entry_flow
+    layer: L3
+    node_type: stage
+    point: 盘后
+    decision_question: 筹码低位集中吸筹还是高位上移派发
+    parent_node: TDM-E-L3-12
+    factor_refs: []
+    data_refs: [DS-150]
+    module_ref: null
+    algo_refs: []
+    doc_ref: null
+    activation: postmarket
+    invalidation: null
+    ai_autonomy: auto
+    fallback: null
+    strategy_mounts: []
+
+  - node_id: TDM-E-L3-12-4
+    name_zh: 形态结构识别
+    market: cn_a
+    flow: entry_flow
+    layer: L3
+    node_type: stage
+    point: 盘后
+    decision_question: 缠论结构/底部确认/技术形态支持买入吗
+    parent_node: TDM-E-L3-12
+    factor_refs: []
+    data_refs: [DS-150]
+    module_ref: src/zephyr/signal_ashare/chanlun_structure.py
+    algo_refs: []
+    doc_ref: null
+    activation: postmarket
+    invalidation: null
+    ai_autonomy: auto
+    fallback: null
     strategy_mounts: []
 
   - node_id: TDM-E-L4
@@ -1263,13 +1427,13 @@ nodes:
     strategy_mounts: []
 
   - node_id: TDM-E-L4-09
-    name_zh: T+1涨跌停约束
+    name_zh: 执行硬约束
     market: cn_a
     flow: entry_flow
     layer: L4
     node_type: cross_cutting
     point: 持续
-    decision_question: 建仓节奏与资金口径的硬约束执行了吗（T+1/涨跌停/价格笼子）
+    decision_question: 执行硬约束全过了吗（T+1/涨跌停/价格笼子/成本模型实时估算——佣金+印花税+滑点）
     parent_node: TDM-E-L4
     factor_refs: []
     data_refs: [DS-082]
@@ -1280,6 +1444,87 @@ nodes:
     invalidation: null
     ai_autonomy: auto
     fallback: null
+    strategy_mounts: []
+
+  # ── D31 L4 补缺：订单生命周期状态机/部分成交处理/订单级预检/执行容灾对账（OMS 标准件）──
+  - node_id: TDM-E-L4-10
+    name_zh: 订单生命周期状态机
+    market: cn_a
+    flow: entry_flow
+    layer: L4
+    node_type: stage
+    point: 持续
+    decision_question: 每笔订单当前处于九态的哪一态（New/PendingNew/Accepted/Partial/Filled/PendingCancel/Cancelled/Rejected/Expired）
+    parent_node: TDM-E-L4
+    factor_refs: []
+    data_refs: []
+    module_ref: src/zephyr/ex_core/async_fill_dispatcher.py
+    algo_refs: []
+    doc_ref: null
+    activation: 持续
+    invalidation: PendingCancel 窗口内原单仍可成交=竞态，必须以交易所回执为准
+    ai_autonomy: paper
+    fallback: null
+    strategy_mounts: []
+
+  - node_id: TDM-E-L4-11
+    name_zh: 部分成交与撤改处理
+    market: cn_a
+    flow: entry_flow
+    layer: L4
+    node_type: stage
+    point: 盘中
+    decision_question: 部分成交后撤还是等、撤改单竞态怎么处理
+    parent_node: TDM-E-L4
+    factor_refs: []
+    data_refs: []
+    module_ref: null
+    algo_refs: []
+    doc_ref: null
+    activation: intraday
+    invalidation: null
+    ai_autonomy: paper
+    fallback: null
+    strategy_mounts: []
+
+  - node_id: TDM-E-L4-12
+    name_zh: 订单级预检
+    market: cn_a
+    flow: entry_flow
+    layer: L4
+    node_type: stage
+    point: 盘中
+    decision_question: 这笔单发出前的最后校验（资金可用/持仓限制/风控限额/禁止清单）过了吗
+    parent_node: TDM-E-L4
+    factor_refs: []
+    data_refs: []
+    module_ref: null
+    algo_refs: []
+    doc_ref: null
+    activation: intraday
+    invalidation: 任一校验不过→拒绝发送（15c3-5 pre-trade 语义，发送边界前执行）
+    ai_autonomy: paper
+    fallback: null
+    strategy_mounts: []
+
+  - node_id: TDM-E-L4-13
+    name_zh: 执行容灾对账
+    market: cn_a
+    flow: entry_flow
+    layer: L4
+    node_type: cross_cutting
+    point: 持续
+    decision_question: 我以为发出的、券商说发出的、实际成交的三方对上账了吗（断线重连/对账/RTO<5min）
+    parent_node: TDM-E-L4
+    factor_refs: []
+    data_refs: []
+    module_ref: null
+    algo_refs: []
+    doc_ref: null
+    activation: 持续
+    invalidation: null
+    ai_autonomy: auto
+    fallback: 对账不平→halt 新单+人工介入（宪章约束五 RTO 语义）
     strategy_mounts: []
 
   - node_id: TDM-P-P1
@@ -1528,6 +1773,21 @@ edges:
   - {from_node: TDM-E-L4-07, to_node: TDM-E-L4-05, edge_type: feed}
   - {from_node: TDM-E-L4-07, to_node: TDM-E-L4-06, edge_type: feed}
   - {from_node: TDM-E-L4-08, to_node: TDM-X-S1, edge_type: feed}
+  # ── E-L3/D31 补缺边：日内动态选股+多维验证 ──
+  - {from_node: TDM-E-L3-11-1, to_node: TDM-E-L3-08, edge_type: feed}
+  - {from_node: TDM-E-L3-11-2, to_node: TDM-E-L3-08, edge_type: feed}
+  - {from_node: TDM-E-L3-04, to_node: TDM-E-L3-12, edge_type: feed}
+  - {from_node: TDM-E-L3-12, to_node: TDM-E-L3-05, edge_type: feed}
+  # ── E-L4/D31 补缺边：订单级预检+订单生命周期+部分成交+容灾对账 ──
+  - {from_node: TDM-E-L4-04, to_node: TDM-E-L4-12, edge_type: feed}
+  - {from_node: TDM-E-L4-12, to_node: TDM-E-L4-05, edge_type: feed}
+  - {from_node: TDM-E-L4-12, to_node: TDM-E-L4-06, edge_type: feed}
+  - {from_node: TDM-E-L4-05, to_node: TDM-E-L4-10, edge_type: feed}
+  - {from_node: TDM-E-L4-06, to_node: TDM-E-L4-10, edge_type: feed}
+  - {from_node: TDM-E-L4-10, to_node: TDM-E-L4-11, edge_type: feed}
+  - {from_node: TDM-E-L4-10, to_node: TDM-E-L4-13, edge_type: feed}
+  - {from_node: TDM-E-L4-11, to_node: TDM-E-L4-13, edge_type: feed}
+  - {from_node: TDM-E-L4-13, to_node: TDM-F-C3, edge_type: feed}
   - {from_node: TDM-E-L2-05-1, to_node: TDM-E-L3-06, edge_type: feed}
   - {from_node: TDM-E-L2-06-2, to_node: TDM-E-L3-07-1, edge_type: feed}
   - {from_node: TDM-E-L2-06-3, to_node: TDM-E-L3-02, edge_type: feed}
