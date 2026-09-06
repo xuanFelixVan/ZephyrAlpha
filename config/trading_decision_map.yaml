@@ -1097,6 +1097,191 @@ nodes:
       - {strategy_ref: daban-sleeve, confidence: proposed, evidence: null}
 
   # ── 持仓流 position_flow（cn_a）──────────────────────────────────────────
+  # ── E-L4 血肉 v1.5（D30：9 树枝=41 号九要点一一对应；调研=OE 三代演进 MAP-Elites/Conformal 门控/Smart TWAP+TCA 三阶段+A股三买点/竞价分段铁律/封单读法）──
+  # 05/06=实盘执行节点，ai_autonomy=paper（D18 治理阶梯初始档；升档需 Owner dated 裁定）
+  # TCA 执行质量复盘不设节点：C3 归因承载执行质量归因（滑点 bps/成交率/排队成交率），TCA 三阶段登记为 C3 子项
+  - node_id: TDM-E-L4-01
+    name_zh: 分批建仓
+    market: cn_a
+    flow: entry_flow
+    layer: L4
+    node_type: stage
+    point: 盘中
+    decision_question: 置信度分几批进、每批多少（回踩 A/B/C 为置信度调节因子）
+    parent_node: TDM-E-L4
+    factor_refs: []
+    data_refs: [DS-150]
+    module_ref: null
+    algo_refs: []
+    doc_ref: "docs/02_enterprise_architecture/07_trading_decision_architecture/design_memos/41_buy_flow.md#§3.2"
+    activation: intraday
+    invalidation: null
+    ai_autonomy: auto
+    fallback: null
+    strategy_mounts: []
+
+  - node_id: TDM-E-L4-02
+    name_zh: 买入时序
+    market: cn_a
+    flow: entry_flow
+    layer: L4
+    node_type: stage
+    point: 盘中
+    decision_question: 今天什么窗口下单（尾盘集中为主；竞价分段铁律 9:15-9:20 可撤假象多/9:20-9:25 只挂不撤真实资金/14:57-15:00 尾盘竞价不可撤；时间锚 2:30 窗口背离与 2:57 竞价）
+    parent_node: TDM-E-L4
+    factor_refs: []
+    data_refs: [DS-150]
+    module_ref: null
+    algo_refs: []
+    doc_ref: "docs/02_enterprise_architecture/07_trading_decision_architecture/design_memos/41_buy_flow.md#§3.4"
+    activation: intraday
+    invalidation: 9:15-9:20 时段禁止决策（假单密集）
+    ai_autonomy: auto
+    fallback: null
+    strategy_mounts:
+      - {strategy_ref: STR-MULTIFACTOR-028, confidence: proposed, evidence: null}
+      - {strategy_ref: STR-MOMTREND-004, confidence: proposed, evidence: null}
+
+  - node_id: TDM-E-L4-03
+    name_zh: 价格锚定
+    market: cn_a
+    flow: entry_flow
+    layer: L4
+    node_type: stage
+    point: 盘中
+    decision_question: 限价还是市价（限价为主，市价仅应急）
+    parent_node: TDM-E-L4
+    factor_refs: []
+    data_refs: []
+    module_ref: null
+    algo_refs: []
+    doc_ref: "docs/02_enterprise_architecture/07_trading_decision_architecture/design_memos/41_buy_flow.md#§3.5"
+    activation: intraday
+    invalidation: null
+    ai_autonomy: auto
+    fallback: null
+    strategy_mounts: []
+
+  - node_id: TDM-E-L4-04
+    name_zh: 资金分配多标的
+    market: cn_a
+    flow: entry_flow
+    layer: L4
+    node_type: stage
+    point: 盘中
+    decision_question: 多标地下单排序与资金可用性兜底
+    parent_node: TDM-E-L4
+    factor_refs: []
+    data_refs: []
+    module_ref: null
+    algo_refs: []
+    doc_ref: "docs/02_enterprise_architecture/07_trading_decision_architecture/design_memos/41_buy_flow.md#§3.6"
+    activation: intraday
+    invalidation: null
+    ai_autonomy: auto
+    fallback: null
+    strategy_mounts: []
+
+  - node_id: TDM-E-L4-05
+    name_zh: 打板执行专项
+    market: cn_a
+    flow: entry_flow
+    layer: L4
+    node_type: stage
+    point: 盘中
+    decision_question: 排板/扫板/打回封选哪个+封单质量验证+撤单纪律（换手板>缩量板/封单要实且递增/黄金排队窗口 5-15 分钟/封单被快速吃掉或大盘跳水即撤）
+    parent_node: TDM-E-L4
+    factor_refs: []
+    data_refs: [DS-082]
+    module_ref: src/zephyr/ex_core/daban_execution.py
+    algo_refs: []
+    doc_ref: "docs/02_enterprise_architecture/07_trading_decision_architecture/design_memos/41_buy_flow.md#§3.9"
+    activation: intraday
+    invalidation: 封单被快速大额吃掉且无同力度补单→撤单；大盘突发跳水→无论封单多稳先撤（系统性风险优先）；QMT 约束=handlebar 主线程下单+隔 1-2 秒查委托回执，查不到标记疑似丢单
+    ai_autonomy: paper
+    fallback: null
+    strategy_mounts: []
+
+  - node_id: TDM-E-L4-06
+    name_zh: 执行算法
+    market: cn_a
+    flow: entry_flow
+    layer: L4
+    node_type: stage
+    point: 盘中
+    decision_question: 大单怎么拆（EXA 六件选型：TWAP/VWAP/ICEBERG/IS/POV/ALT；参与率纪律≤市场量 10-20%）
+    parent_node: TDM-E-L4
+    factor_refs: []
+    data_refs: []
+    module_ref: null
+    algo_refs: [EXA-TWAP-001, EXA-VWAP-001, EXA-ICEBERG-001, EXA-IS-001, EXA-POV-001, EXA-ALT-001]
+    doc_ref: null
+    activation: intraday
+    invalidation: null
+    ai_autonomy: paper
+    fallback: null
+    strategy_mounts: []
+
+  - node_id: TDM-E-L4-07
+    name_zh: 条件触发队列
+    market: cn_a
+    flow: entry_flow
+    layer: L4
+    node_type: aggregation
+    point: 持续
+    decision_question: 买入/卖出/执行/风控扳机怎么统一注册与触发（横切基础设施）
+    parent_node: TDM-E-L4
+    factor_refs: []
+    data_refs: []
+    module_ref: null
+    algo_refs: []
+    doc_ref: "docs/02_enterprise_architecture/07_trading_decision_architecture/design_memos/41_buy_flow.md#§3.9"
+    activation: 持续
+    invalidation: null
+    ai_autonomy: auto
+    fallback: 队列积压→降级批量处理+告警（41 号降级语义）
+    strategy_mounts: []
+
+  - node_id: TDM-E-L4-08
+    name_zh: 突破失败降级
+    market: cn_a
+    flow: entry_flow
+    layer: L4
+    node_type: stage
+    point: 盘中
+    decision_question: 突破失败后批次停不停、止损评估启不启
+    parent_node: TDM-E-L4
+    factor_refs: []
+    data_refs: [DS-150]
+    module_ref: null
+    algo_refs: []
+    doc_ref: "docs/02_enterprise_architecture/07_trading_decision_architecture/design_memos/41_buy_flow.md#§3.3"
+    activation: intraday
+    invalidation: null
+    ai_autonomy: auto
+    fallback: null
+    strategy_mounts: []
+
+  - node_id: TDM-E-L4-09
+    name_zh: T+1涨跌停约束
+    market: cn_a
+    flow: entry_flow
+    layer: L4
+    node_type: cross_cutting
+    point: 持续
+    decision_question: 建仓节奏与资金口径的硬约束执行了吗（T+1/涨跌停/价格笼子）
+    parent_node: TDM-E-L4
+    factor_refs: []
+    data_refs: [DS-082]
+    module_ref: null
+    algo_refs: []
+    doc_ref: "docs/02_enterprise_architecture/07_trading_decision_architecture/design_memos/41_buy_flow.md#§3.7"
+    activation: 持续
+    invalidation: null
+    ai_autonomy: auto
+    fallback: null
+    strategy_mounts: []
+
   - node_id: TDM-P-P1
     name_zh: 持仓体检
     market: cn_a
@@ -1334,6 +1519,15 @@ edges:
   - {from_node: TDM-E-L3-08, to_node: TDM-E-L3-09, edge_type: feed}
   - {from_node: TDM-E-L3-09, to_node: TDM-E-L3-10, edge_type: feed}
   - {from_node: TDM-E-L3-10, to_node: TDM-E-L4, edge_type: feed}
+  # ── E-L4 树枝边（D30）：41 号九要点链+扳机横切+降级衔接 ──
+  - {from_node: TDM-E-L4-01, to_node: TDM-E-L4-02, edge_type: sequence}
+  - {from_node: TDM-E-L4-02, to_node: TDM-E-L4-03, edge_type: sequence}
+  - {from_node: TDM-E-L4-03, to_node: TDM-E-L4-04, edge_type: sequence}
+  - {from_node: TDM-E-L4-04, to_node: TDM-E-L4-05, edge_type: feed}
+  - {from_node: TDM-E-L4-04, to_node: TDM-E-L4-06, edge_type: feed}
+  - {from_node: TDM-E-L4-07, to_node: TDM-E-L4-05, edge_type: feed}
+  - {from_node: TDM-E-L4-07, to_node: TDM-E-L4-06, edge_type: feed}
+  - {from_node: TDM-E-L4-08, to_node: TDM-X-S1, edge_type: feed}
   - {from_node: TDM-E-L2-05-1, to_node: TDM-E-L3-06, edge_type: feed}
   - {from_node: TDM-E-L2-06-2, to_node: TDM-E-L3-07-1, edge_type: feed}
   - {from_node: TDM-E-L2-06-3, to_node: TDM-E-L3-02, edge_type: feed}
