@@ -90,10 +90,10 @@ def _commit_initial(repo_dir: Path) -> None:
     # 真实代码文件
     (repo_dir / "src").mkdir(exist_ok=True)
     (repo_dir / "src" / "real_code.py").write_text("x = 1\n", encoding="utf-8")
-    # auto-sync 产物（模拟 dashboard.json）
+    # auto-sync 产物（raw-asset-scan.json 替身，2026-09-06 换：dashboard.json 已退役出白名单）
     (repo_dir / "data").mkdir(exist_ok=True)
-    (repo_dir / "data" / "reports").mkdir(exist_ok=True)
-    (repo_dir / "data" / "reports" / "dashboard.json").write_text(
+    (repo_dir / "data" / "scans").mkdir(exist_ok=True)
+    (repo_dir / "data" / "scans" / "raw-asset-scan.json").write_text(
         '{"v": 1}\n',
         encoding="utf-8",
     )
@@ -115,7 +115,7 @@ def _commit_initial(repo_dir: Path) -> None:
 
 def _make_auto_sync_dirty(repo_dir: Path) -> None:
     """让 auto-sync 产物变 dirty。"""
-    (repo_dir / "data" / "reports" / "dashboard.json").write_text(
+    (repo_dir / "data" / "scans" / "raw-asset-scan.json").write_text(
         '{"v": 2}\n',
         encoding="utf-8",
     )
@@ -456,12 +456,12 @@ class TestEndToEndScenario:
 
 def _make_auto_sync_staged(repo_dir: Path) -> None:
     """让 auto-sync 产物变 staged（M 状态）。"""
-    (repo_dir / "data" / "reports" / "dashboard.json").write_text(
+    (repo_dir / "data" / "scans" / "raw-asset-scan.json").write_text(
         '{"v": 99}\n',
         encoding="utf-8",
     )
     subprocess.run(
-        ["git", "add", "data/reports/dashboard.json"],
+        ["git", "add", "data/scans/raw-asset-scan.json"],
         cwd=str(repo_dir),
         capture_output=True,
         check=True,
@@ -472,19 +472,19 @@ def _make_auto_sync_staged(repo_dir: Path) -> None:
 def _make_auto_sync_mm_state(repo_dir: Path) -> None:
     """让 auto-sync 产物变 MM 状态（staged + worktree 同时 modified）。"""
     # 先 staged
-    (repo_dir / "data" / "reports" / "dashboard.json").write_text(
+    (repo_dir / "data" / "scans" / "raw-asset-scan.json").write_text(
         '{"v": 100}\n',
         encoding="utf-8",
     )
     subprocess.run(
-        ["git", "add", "data/reports/dashboard.json"],
+        ["git", "add", "data/scans/raw-asset-scan.json"],
         cwd=str(repo_dir),
         capture_output=True,
         check=True,
         env=_git_env(),
     )
     # 再 worktree modified
-    (repo_dir / "data" / "reports" / "dashboard.json").write_text(
+    (repo_dir / "data" / "scans" / "raw-asset-scan.json").write_text(
         '{"v": 101}\n',
         encoding="utf-8",
     )
@@ -530,7 +530,7 @@ class TestRestoreAutoSyncBatchStagedHandling:
 
         restored_count, failed = _restore_auto_sync_batch(
             tmp_path,
-            ["data/reports/dashboard.json"],
+            ["data/scans/raw-asset-scan.json"],
             "test",
         )
         assert restored_count == 1
@@ -552,7 +552,7 @@ class TestRestoreAutoSyncBatchStagedHandling:
 
         restored_count, failed = _restore_auto_sync_batch(
             tmp_path,
-            ["data/reports/dashboard.json"],
+            ["data/scans/raw-asset-scan.json"],
             "test",
         )
         assert restored_count == 1
@@ -568,7 +568,9 @@ class TestRestoreAutoSyncBatchStagedHandling:
 
         _init_git_repo(tmp_path)
         _commit_initial(tmp_path)
-        # 创建第二个 auto-sync 产物（mock 路径模式）
+        # 创建第二个 auto-sync 产物（mock 路径模式；2026-09-06 起目录需自建——
+        # _commit_initial 的 reports 目录已随 dashboard.json 替身换为 scans）
+        (tmp_path / "data" / "reports").mkdir(parents=True, exist_ok=True)
         (tmp_path / "data" / "reports" / "summary.json").write_text(
             '{"s": 1}\n',
             encoding="utf-8",
@@ -587,7 +589,7 @@ class TestRestoreAutoSyncBatchStagedHandling:
             check=True,
             env=_git_env(),
         )
-        # dashboard.json 设为 staged（M ）
+        # raw-asset-scan.json（替身）设为 staged（M ）
         _make_auto_sync_staged(tmp_path)
         # summary.json 设为 worktree modified（ M）
         (tmp_path / "data" / "reports" / "summary.json").write_text(
@@ -596,12 +598,12 @@ class TestRestoreAutoSyncBatchStagedHandling:
         )
         # 验证状态
         status = _git_porcelain_status(tmp_path)
-        assert "M  data/reports/dashboard.json" in status
+        assert "M  data/scans/raw-asset-scan.json" in status
         assert " M data/reports/summary.json" in status
 
         restored_count, failed = _restore_auto_sync_batch(
             tmp_path,
-            ["data/reports/dashboard.json", "data/reports/summary.json"],
+            ["data/scans/raw-asset-scan.json", "data/reports/summary.json"],
             "test",
         )
         assert restored_count == 2

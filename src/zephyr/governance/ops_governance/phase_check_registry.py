@@ -664,23 +664,37 @@ def check_audit_trail_context() -> GateResult:
 
 
 def check_asset_inventory() -> GateResult:
-    mod = REPO_ROOT / "data/asset_index/unified-asset-index.yaml"
-    if not mod.exists():
+    """资产盘点健康门禁（2026-09-06 适配宽口径 v2 schema：health/orphan_risk 嵌套键）。
+
+    旧键（顶层 health_score/orphan_rate_pct）在新 schema 不存在，曾致本检查静默
+    恒 GREEN（fail-invisible）；现缺键/缺 health 段 → YELLOW（fail-visible）。
+    """
+    index_path = REPO_ROOT / "data/asset_index/unified-asset-index.yaml"
+    if not index_path.exists():
         return GateResult.YELLOW
 
     try:
         import yaml
 
-        index = yaml.safe_load(mod.read_text(encoding="utf-8"))
-        health = index.get("health_score", "N/A")
-        orphan = index.get("orphan_rate_pct", 0.0)
+        index = yaml.safe_load(index_path.read_text(encoding="utf-8"))
+        if not isinstance(index, dict):
+            return GateResult.YELLOW
+
+        health = index.get("health") or {}
+        grade = health.get("health_grade", "")
+        score = health.get("health_score")
+        orphan = (index.get("orphan_risk") or {}).get("orphan_rate", None)
         total = index.get("total_assets", 0)
 
-        if health in ("D", "F"):
+        if not grade or score is None:  # fail-visible：schema 漂移不得静默 GREEN
+            return GateResult.YELLOW
+        if grade in ("D", "F"):
             return GateResult.RED
-        if orphan > 5.0:
+        if orphan is None:
+            return GateResult.YELLOW
+        if orphan > 0.05:  # 新 schema 孤儿率为小数（0.03 = 3%），阈值 5%/2% 沿用旧门禁
             return GateResult.RED
-        if orphan > 2.0:
+        if orphan > 0.02:
             return GateResult.YELLOW
         if total == 0:
             return GateResult.YELLOW

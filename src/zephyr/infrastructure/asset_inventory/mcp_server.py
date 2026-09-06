@@ -18,99 +18,53 @@
 """
 AssetInventory MCP Server — MOD-INF-026 蓝图 §21
 
-8 tool + 2 resource 暴露盘点功能给 IDE AI agent。
+2 tool + 1 resource 暴露盘点功能给 IDE AI agent。
 通过 FastMCP 协议。
+
+2026-09-06 宽口径 v2 收敛（Owner 批二 ③ 派生面处置）：
+  - dashboard.json/reconciliation-report.md/classified-assets.json 三派生物退役
+    （零活消费方，内容停在 2026-08-16 窄口径）；get_health_dashboard 改读索引
+    health/orphan_risk/summary。
+  - get_asset_detail/search_asset_by_type/tag/layer、list_all_tags、
+    list_registry_ids 六工具随窄口径 assets[] 数组退役——宽口径 v2 索引为计数
+    聚合 schema，无明细数组，工具语义不可实现（零生产挂载实证，rg dispatch_tool
+    零调用方）。
 
 # [ALGO_FLOW]
 # 层: 输入
 # - id: I1
-#   name: path 参数
-#   fields: 参数 path，类型注解 str
-#   code: mcp_server.py 顶层公共函数形参（AST 提取）
-# - id: I2
-#   name: asset_type 参数
-#   fields: 参数 asset_type，类型注解 str
-#   code: mcp_server.py 顶层公共函数形参（AST 提取）
-# - id: I3
-#   name: limit 参数
-#   fields: 参数 limit，类型注解 int
-#   code: mcp_server.py 顶层公共函数形参（AST 提取）
-# - id: I4
-#   name: tag 参数
-#   fields: 参数 tag，类型注解 str
-#   code: mcp_server.py 顶层公共函数形参（AST 提取）
+#   name_zh: 索引文件
+#   name_en: unified_index
+#   fields: data/asset_index/unified-asset-index.yaml（宽口径 v2 计数聚合）
 # 层: 算法
 # - id: A1
 #   name_zh: ① get_asset_summary
 #   name_en: get_asset_summary
-#   intro: get_asset_summary() 源码 L179-L197
-#   desc: 源码 L179-L197
+#   intro: get_asset_summary() 源码 L118-L137
+#   desc: 源码 L118-L137
 #   inputs: 无参数
 #   outputs: str
 # - id: A2
-#   name_zh: ② get_asset_detail
-#   name_en: get_asset_detail
-#   intro: get_asset_detail(path) 源码 L200-L208
-#   desc: 源码 L200-L208
-#   inputs: path
+#   name_zh: ② get_health_dashboard
+#   name_en: get_health_dashboard
+#   intro: get_health_dashboard() 源码 L140-L159
+#   desc: 源码 L140-L159
+#   inputs: 无参数
 #   outputs: str
 # - id: A3
-#   name_zh: ③ search_asset_by_type
-#   name_en: search_asset_by_type
-#   intro: search_asset_by_type(asset_type, limit) 源码 L211-L217
-#   desc: 源码 L211-L217
-#   inputs: asset_type limit
-#   outputs: str
-# - id: A4
-#   name_zh: ④ search_asset_by_tag
-#   name_en: search_asset_by_tag
-#   intro: search_asset_by_tag(tag, limit) 源码 L220-L226
-#   desc: 源码 L220-L226
-#   inputs: tag limit
-#   outputs: str
-# - id: A5
-#   name_zh: ⑤ search_asset_by_layer
-#   name_en: search_asset_by_layer
-#   intro: search_asset_by_layer(layer, limit) 源码 L229-L235
-#   desc: 源码 L229-L235
-#   inputs: layer limit
-#   outputs: str
-# - id: A6
-#   name_zh: ⑥ list_all_tags
-#   name_en: list_all_tags
-#   intro: list_all_tags() 源码 L238-L253
-#   desc: 源码 L238-L253
-#   inputs: 无参数
-#   outputs: str
-# - id: A7
-#   name_zh: ⑦ get_health_dashboard
-#   name_en: get_health_dashboard
-#   intro: get_health_dashboard() 源码 L256-L260
-#   desc: 源码 L256-L260
-#   inputs: 无参数
-#   outputs: str
-# - id: A8
-#   name_zh: ⑧ list_registry_ids
-#   name_en: list_registry_ids
-#   intro: list_registry_ids() 源码 L263-L278
-#   desc: 源码 L263-L278
-#   inputs: 无参数
-#   outputs: str
-# - id: A9
-#   name_zh: ⑨ dispatch_tool
+#   name_zh: ③ dispatch_tool
 #   name_en: dispatch_tool
-#   intro: dispatch_tool(name) 源码 L332-L344
-#   desc: 源码 L332-L344
+#   intro: dispatch_tool(name) 源码 L177-L189
+#   desc: 源码 L177-L189
 #   inputs: name
 #   outputs: str
-# - id: A10
-#   name_zh: ⑩ list_tools
+# - id: A4
+#   name_zh: ④ list_tools
 #   name_en: list_tools
-#   intro: list_tools() 源码 L347-L348
-#   desc: 源码 L347-L348
+#   intro: list_tools() 源码 L192-L193
+#   desc: 源码 L192-L193
 #   inputs: 无参数
 #   outputs: list[dict[str, str]]
-#   （注：A10 之后另有 1 个公共定义未列入（含 0 个数据契约/异常/枚举声明类），见源码）
 # 层: 输出
 # - id: O1
 #   name_zh: str
@@ -126,19 +80,11 @@ AssetInventory MCP Server — MOD-INF-026 蓝图 §21
 #
 # 边:
 # I1 --> A1
-# I2 --> A1
-# I3 --> A1
-# I4 --> A1
-# A1 --> A2
-# A2 --> A3
-# A3 --> A4
-# A4 --> A5
-# A5 --> A6
-# A6 --> A7
-# A7 --> A8
-# A8 --> A9
-# A9 --> A10
-# A10 --> O1
+# I1 --> A2
+# A1 --> O1
+# A2 --> O1
+# A3 --> O1
+# A4 --> O2
 """
 
 import json
@@ -151,7 +97,6 @@ from zephyr.shared.io.paths import REPO_ROOT
 logger = logging.getLogger(__name__)
 
 INDEX_PATH = REPO_ROOT / "data" / "asset_index" / "unified-asset-index.yaml"
-DASHBOARD_PATH = REPO_ROOT / "data" / "reports" / "dashboard.json"
 SCAN_PATH = REPO_ROOT / "data" / "scans" / "raw-asset-scan.json"
 
 try:
@@ -170,109 +115,41 @@ def _load_index() -> dict[str, Any] | None:
     return None
 
 
-def _load_dashboard() -> dict[str, Any] | None:
-    if not DASHBOARD_PATH.exists():
-        return None
-    return json.loads(DASHBOARD_PATH.read_text(encoding="utf-8"))
-
-
 def get_asset_summary() -> str:
+    """资产总览（宽口径 v2 schema：total_assets/health/orphan_risk/by_category）。"""
     index = _load_index()
     if not index:
-        return json.dumps({"error": "unified-asset-index.yaml not found — run index_generator first"})
+        return json.dumps({"error": "unified-asset-index.yaml not found — run generate_asset_index.py first"})
 
     return json.dumps(
         {
             "total_assets": index.get("total_assets"),
-            "health_score": index.get("health_score"),
-            "orphan_rate_pct": index.get("orphan_rate_pct"),
-            "ghost_rate_pct": index.get("ghost_rate_pct"),
-            "drift_rate_pct": index.get("drift_rate_pct"),
-            "by_type": index.get("by_type"),
-            "by_layer": index.get("by_layer"),
-            "by_status": index.get("by_status"),
+            "health": index.get("health"),
+            "orphan_risk": index.get("orphan_risk"),
+            "modules": index.get("modules"),
+            "by_category": index.get("by_category"),
+            "by_directory": index.get("by_directory"),
+            "summary": index.get("summary"),
+            "generated_at": index.get("generated_at"),
         },
         ensure_ascii=False,
         indent=2,
     )
 
 
-def get_asset_detail(path: str) -> str:
-    index = _load_index()
-    if not index:
-        return json.dumps({"error": "index not found"})
-
-    for asset in index.get("assets", []):
-        if isinstance(asset, dict) and asset.get("relative_path") == path:
-            return json.dumps(asset, ensure_ascii=False, indent=2)
-    return json.dumps({"error": f"asset not found: {path}"})
-
-
-def search_asset_by_type(asset_type: str, limit: int = 50) -> str:
-    index = _load_index()
-    if not index:
-        return json.dumps({"error": "index not found"})
-
-    matches = [a for a in index.get("assets", []) if isinstance(a, dict) and a.get("asset_type") == asset_type][:limit]
-    return json.dumps(matches, ensure_ascii=False, indent=2)
-
-
-def search_asset_by_tag(tag: str, limit: int = 50) -> str:
-    index = _load_index()
-    if not index:
-        return json.dumps({"error": "index not found"})
-
-    matches = [a for a in index.get("assets", []) if isinstance(a, dict) and tag in a.get("tags", [])][:limit]
-    return json.dumps(matches, ensure_ascii=False, indent=2)
-
-
-def search_asset_by_layer(layer: str, limit: int = 50) -> str:
-    index = _load_index()
-    if not index:
-        return json.dumps({"error": "index not found"})
-
-    matches = [a for a in index.get("assets", []) if isinstance(a, dict) and a.get("layer") == layer][:limit]
-    return json.dumps(matches, ensure_ascii=False, indent=2)
-
-
-def list_all_tags() -> str:
-    index = _load_index()
-    if not index:
-        return json.dumps({"error": "index not found"})
-
-    tag_counts: dict[str, int] = {}
-    for a in index.get("assets", []):
-        if isinstance(a, dict):
-            for t in a.get("tags", []):
-                tag_counts[t] = tag_counts.get(t, 0) + 1
-
-    return json.dumps(
-        sorted(tag_counts.items(), key=lambda x: (-x[1], x[0])),
-        ensure_ascii=False,
-        indent=2,
-    )
-
-
 def get_health_dashboard() -> str:
-    dash = _load_dashboard()
-    if not dash:
-        return json.dumps({"error": "dashboard.json not found — run dashboard generator first"})
-    return json.dumps(dash, ensure_ascii=False, indent=2)
-
-
-def list_registry_ids() -> str:
+    """健康面板——读索引 health/orphan_risk/summary（2026-09-06 起不再读已退役的 dashboard.json）。"""
     index = _load_index()
     if not index:
-        return json.dumps({"error": "index not found"})
-
-    reg_ids: dict[str, int] = {}
-    for a in index.get("assets", []):
-        if isinstance(a, dict):
-            for rid in a.get("registered_in", []):
-                reg_ids[rid] = reg_ids.get(rid, 0) + 1
+        return json.dumps({"error": "unified-asset-index.yaml not found — run generate_asset_index.py first"})
 
     return json.dumps(
-        sorted(reg_ids.items(), key=lambda x: (-x[1], x[0])),
+        {
+            "health": index.get("health"),
+            "orphan_risk": index.get("orphan_risk"),
+            "summary": index.get("summary"),
+            "generated_at": index.get("generated_at"),
+        },
         ensure_ascii=False,
         indent=2,
     )
@@ -280,40 +157,12 @@ def list_registry_ids() -> str:
 
 MCP_TOOLS = {
     "get_asset_summary": {
-        "description": "获取项目资产盘点总览：总数、健康评分、孤儿率/幽灵率/漂移率、按类型/层级/状态分布",
+        "description": "获取项目资产盘点总览（宽口径 v2）：总数、健康度、孤儿风险、按类型/目录分布",
         "function": get_asset_summary,
     },
-    "get_asset_detail": {
-        "description": "查询单个资产的详细信息：类型、层级、状态、大小、SHA-256、注册表引用",
-        "function": get_asset_detail,
-        "params": {"path": "str (required) — 资产相对路径如 'src/zephyr/asset-inventory/scanner.py'"},
-    },
-    "search_asset_by_type": {
-        "description": "按资产类型搜索所有资产（module/script/gate/doc/config/test/data/registry）",
-        "function": search_asset_by_type,
-        "params": {"asset_type": "str (required)", "limit": "int (default=50)"},
-    },
-    "search_asset_by_tag": {
-        "description": "按自定义标签搜索资产——找出所有标记为某标签的文件",
-        "function": search_asset_by_tag,
-        "params": {"tag": "str (required)", "limit": "int (default=50)"},
-    },
-    "search_asset_by_layer": {
-        "description": "按项目层级搜索资产（L00~L04 / cross_layer）",
-        "function": search_asset_by_layer,
-        "params": {"layer": "str (required)", "limit": "int (default=50)"},
-    },
-    "list_all_tags": {
-        "description": "列出项目所有被使用的标签及其出现次数",
-        "function": list_all_tags,
-    },
     "get_health_dashboard": {
-        "description": "获取健康仪表盘——最新健康评分、趋势数据和告警",
+        "description": "获取健康面板——健康评分/等级、孤儿风险与摘要（真源 unified-asset-index.yaml）",
         "function": get_health_dashboard,
-    },
-    "list_registry_ids": {
-        "description": "列出所有资产注册表ID及其登记资产数量",
-        "function": list_registry_ids,
     },
 }
 
@@ -321,10 +170,6 @@ MCP_RESOURCES = {
     "asset_index://unified": {
         "description": "统一的资产索引 YAML 文件——项目 SSoT（单一事实来源）",
         "path": str(INDEX_PATH),
-    },
-    "asset_index://dashboard": {
-        "description": "健康仪表盘 JSON 文件——当前健康状态 + 趋势 + 告警",
-        "path": str(DASHBOARD_PATH),
     },
 }
 

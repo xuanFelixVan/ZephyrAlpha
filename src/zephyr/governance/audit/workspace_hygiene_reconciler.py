@@ -300,11 +300,10 @@ _AUTO_SYNC_PREFIXES: tuple[str, ...] = (
     "docs/02_enterprise_architecture/00_overview_entry/",
     "docs/_archive/architecture_debt_registry_v2.md",
     "data/asset_index/unified-asset-index.yaml",
-    "data/reports/dashboard.json",
-    "data/reports/reconciliation-report.md",
+    # 2026-09-06 派生面退役（Owner 批二③）：dashboard.json/reconciliation-report.md/
+    # classified-assets.json 三派生物 git rm（零活消费方，内容停 2026-08-16 窄口径）
     "data/scans/raw-asset-scan.json",
     "data/architecture_health/latest.json",
-    "data/classified/classified-assets.json",
     "data/budget/shutdown_snapshot.json",
     "data/metrics/kill_switch_probes.jsonl",
     # 目录前缀匹配（避免 SSoT 路径硬编码，VOCAB-CHAIN gate 合规）

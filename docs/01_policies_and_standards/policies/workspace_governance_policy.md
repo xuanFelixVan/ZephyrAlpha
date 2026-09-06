@@ -74,13 +74,15 @@ GitCommitGateway post-commit 自动触发的 reconciler 重新生成的文件，
 | `docs/.../_registry/catalogs/rule_catalog_registry.yaml` | rule_catalog reconciler | 派生产物 |
 | `docs/.../_registry/catalogs/registry_master_index.yaml` | registry_master_index reconciler | 派生产物 |
 | `docs/02_enterprise_architecture/01_global_architecture_diagram/full_project_tree_*.md` | path-tree reconciler | 派生产物 |
-| `data/asset_index/unified-asset-index.yaml` | asset_index reconciler | 派生产物 |
-| `data/reports/dashboard.json` | dashboard reconciler | 运行时快照 |
-| `data/reports/reconciliation-report.md` | reconciliation reconciler | 运行时快照 |
+| `data/asset_index/unified-asset-index.yaml` | generate_asset_index.py（唯一写者，2026-09-06 裁定） | 派生产物 |
 | `data/scans/raw-asset-scan.json` | asset scanner | 运行时快照 |
 | `data/architecture_health/latest.json` | health reconciler | 运行时快照 |
-| `data/classified/classified-assets.json` | classifier | 运行时快照 |
 | `scripts/governance/meta/rules_integrity_db.json` | integrity checker | 运行时快照 |
+
+> **派生面退役（2026-09-06 Owner 批二③）**：`data/reports/dashboard.json`、
+> `data/reports/reconciliation-report.md`、`data/classified/classified-assets.json`
+> 三派生物已 git rm——零活消费方（唯一读方为无挂载的 MCP 死端/管线自循环），
+> 内容停在 2026-08-16 窄口径，与新索引（宽口径 v2 计数聚合）schema 分裂。
 
 > **注意（#ARCH-BLUEPRINT-AUTOSYNC-MISCLASSIFY-001，2026-07-21）**：`docs/03_modules/**/blueprint.md`
 > 已从 auto-sync 清单移除。原因：blueprint.md 是混合文件（frontmatter 派生 + 正文手写），文件级

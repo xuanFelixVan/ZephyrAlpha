@@ -245,7 +245,7 @@ python scripts/scaffold.py rule <主题_描述>           # 创建规则文件�
 ## RULE-NINE：强制资产认知
 **YAML真源**: → 参见 rules/trae_005_modification_governance.yaml
 
-进项目 MUST 先了解全盘资产规模与健康状态。读 `data/asset_index/unified_asset_index.yaml` → 知道总资产/健康评分/孤儿率。不知道系统有多大 = 盲目施工。
+进项目 MUST 先了解全盘资产规模与健康状态。读 `data/asset_index/unified-asset-index.yaml` → 知道总资产/健康评分/孤儿率。不知道系统有多大 = 盲目施工。
 
 | ❌ 绝对禁止 | 后果 |
 |---------|------|
@@ -399,7 +399,7 @@ Session 关门时 MUST 根目录审计：ls 根目录 → 逐项对照白名单 
 | 8 | **编码安全**——Python `open(path,'w')` 禁止省略 `encoding='utf-8'`；禁止 Trae+Cursor 同时打开同一文件；`.ps1` 文件 MUST 纯 ASCII（PowerShell 5.1 无 BOM 时按 ANSI 解码导致中文乱码，Edit 工具会剥离 BOM → 只能 ASCII-only），由 `check_encoding.py` (INJ-007) 强制检测非 ASCII 字节（FAIL 级） |
 | 9 | **修改原则**——发现事实错误 → 直接修正，禁止添加"之前为什么是错的"解释段；单个 real number 原则 |
 | 10 | **审计前置**——任何涉及文件变更的任务完成后 MUST 执行 `python scripts/governance/run_all.py --depth quick` |
-| 11 | **资产认知（RULE-NINE）**——进项目 MUST 先读 `data/asset_index/unified_asset_index.yaml` |
+| 11 | **资产认知（RULE-NINE）**——进项目 MUST 先读 `data/asset_index/unified-asset-index.yaml` |
 
 ---
 
@@ -439,7 +439,7 @@ STEP 1.2 — 提取 depgraph 摘要：extract_depgraph.py --summary（PostgreSQL
 STEP 1.5 — 读 docs/03_modules/_system_master/blueprint.md §0
 STEP 2   — 读本文件（project_rules.md）
 STEP 3   — Session Continuity 恢复
-STEP 4   — Phase Manager（46 门控）+ 资产盘点 unified_asset_index.yaml + Skill 发现 data/capability_cards/
+STEP 4   — Phase Manager（46 门控）+ 资产盘点 unified-asset-index.yaml + Skill 发现 data/capability_cards/
 STEP 4.7~4.14 — KB自检/Escalation/Drift Detector/RBAC/Rollback/Budget/Audit Trail/A2A 激活
 STEP 4.15 — DepMap: ⚠️ 禁止 generate_project_depgraph.py（丢失手工数据）。用 extract_depgraph.py --summary
 STEP 4.16 — 三方对齐验证: diagnose_depgraph.py + 蓝图 frontmatter + 代码头部

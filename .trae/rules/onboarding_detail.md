@@ -347,7 +347,7 @@ STEP 1.5 — 读 docs/03_modules/_system_master/blueprint.md §0 → 定位子�
 STEP 2  — 读 project_rules.md（即 L0 首关页面）→ 了解硬规则
 STEP 3  — Session Continuity 恢复: 上一个 session 做了啥 / 未完成任务 / 锁状态
 STEP 4  — Phase Manager: 当前施工阶段（46 个门控检查）
-STEP 4.5 — 资产盘点: unified_asset_index.yaml（总资产/健康评分/孤儿率）
+STEP 4.5 — 资产盘点: unified-asset-index.yaml（总资产/健康评分/孤儿率）
 STEP 4.6 — Skill 发现: 查看 data/capability_cards/ 目录（22 个 skill_*.yaml）
 STEP 4.7 — VMS 记忆自检: 施工前查已有记忆（`get_unified_memory_api().search(query)` 跨 topic 语义检索；`recall(topic)` 主题召回；KB 已删除，禁用 `kb.*` 旧 API）
 STEP 4.8 — Escalation Protocol 激活: 升级/委托安全网

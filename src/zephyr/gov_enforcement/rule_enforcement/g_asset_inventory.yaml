@@ -35,24 +35,24 @@ entry_conditions:
   - id: AI-C01
     name: health_score_adequate
     type: threshold
-    description: "健康评分必须 ≥ C (numeric ≥ 60)"
-    check: "health_score in ('A','B','C') and health_numeric >= 60"
+    description: "健康评分必须 ≥ C（health.health_grade in A/B/C 且 health.health_score ≥ 60，宽口径 v2 嵌套键）"
+    check: "index.health.health_grade in ('A','B','C') and index.health.health_score >= 60"
     severity: error
     on_failure: reject
     verifiable: true
-    verification_method: "修改索引 health_score 为 D 后运行 gate check"
+    verification_method: "修改索引 health.health_grade 为 D 后运行 gate check"
     rule_ids:
       - TRAE-002
 
   - id: AI-C02
     name: orphan_rate_acceptable
     type: threshold
-    description: "孤儿率必须 < 5%"
-    check: "orphan_rate_pct < 5.0"
+    description: "孤儿率必须 < 5%（orphan_risk.orphan_rate 小数口径，0.05=5%）"
+    check: "index.orphan_risk.orphan_rate < 0.05"
     severity: warning
     on_failure: warn
     verifiable: true
-    verification_method: "修改索引 orphan_rate_pct 为 10 后运行 gate check"
+    verification_method: "修改索引 orphan_risk.orphan_rate 为 0.10 后运行 gate check"
     rule_ids:
       - TRAE-002
 
@@ -81,13 +81,13 @@ entry_conditions:
       - TRAE-002
 
   - id: AI-C05
-    name: schema_version_valid
+    name: writer_sanctioned
     type: condition
-    description: "schema_version 必须是已知版本"
-    check: "schema_version in ('1.0.0','1.1.0','2.0.0')"
+    description: "索引必须由唯一授权写者生成（generated_by == generate_asset_index.py；宽口径 v2 无 schema_version 字段，2026-09-06 改查写者归属）"
+    check: "index.generated_by == 'scripts/governance/generate_asset_index.py'"
     severity: error
     on_failure: reject
     verifiable: true
-    verification_method: "修改索引 schema_version 为未知值后运行 gate check"
+    verification_method: "修改索引 generated_by 为其他值后运行 gate check"
     rule_ids:
       - TRAE-002
