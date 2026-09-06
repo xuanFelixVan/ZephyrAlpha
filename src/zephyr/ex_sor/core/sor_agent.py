@@ -10,7 +10,7 @@
 # [STABILITY] evolving
 # [SAFETY] H
 # [AI_AUTONOMY] human_gated
-# [ERROR_CONTRACT] SorAgentError(占位 ZA-XS-UNREGISTERED-SOR-AGENT)——LLM回调注入/weights非法/无候选/请求非法/拆单失败/未知replay_id时抛
+# [ERROR_CONTRACT] SorAgentError(ZA-XS-0015)——LLM回调注入/weights非法/无候选/请求非法/拆单失败/未知replay_id时抛
 # [TESTS] tests/ex_sor/test_sor_agent.py
 # [A_module] module_id=MOD-XS-015 | layer=module | stability=evolving | safety=H | ai_autonomy=human_gated
 # [TTL] permanent
@@ -132,8 +132,10 @@ AGENT_CARD: Final[dict[str, Any]] = {
 class SorAgentError(Exception):
     """SOR Agent 操作非法（Fail-Closed）。
 
-    未登记错误码-申请中：占位 ZA-XS-UNREGISTERED-SOR-AGENT。
+    错误码 ZA-XS-0015 已登记转正（2026-09-06 Owner 批准批）。
     """
+
+    error_code = "ZA-XS-0015"
 
 
 @dataclass(frozen=True)

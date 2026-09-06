@@ -2846,6 +2846,13 @@ error_codes:
   module: zephyr.signal_ashare.strategy_vote_integrator
   file: src/zephyr/signal_ashare/strategy_vote_integrator.py
   introduced: '2026-08-30: 候选核销批桶B CAND-SIG-004 转正（greatwall_20260830，MOD-SIG-134 多策略投票整合；SIG 段顺延 0133 后）'
+# --- 2026-09-06 占位码转正批 XS（Owner 批准 B17-②，取号=段内 max+1 顺延）---
+- code: ZA-XS-0015
+  class: SorAgentError
+  module: zephyr.ex_sor.core.sor_agent
+  file: src/zephyr/ex_sor/core/sor_agent.py
+  introduced: '2026-09-06: Owner 批准占位码转正批（B17-②）——ZA-XS-UNREGISTERED-SOR-AGENT 转正'
+
 known_duplicates: []
 # ============================================================
 # 已知缺口（诚实登记，2026-08-15 #ARCH-MON-001 批次实测）
