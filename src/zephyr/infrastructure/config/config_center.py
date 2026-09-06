@@ -10,7 +10,7 @@
 # [STABILITY] evolving
 # [SAFETY] M
 # [AI_AUTONOMY] human_gated
-# [ERROR_CONTRACT] ConfigCenterError(占位 ZA-INF-UNREGISTERED-CONFIG-CENTER)——空key/重复注册/未知key/未知版本/守卫拒绝时抛
+# [ERROR_CONTRACT] ConfigCenterError(ZA-INF-0013)——空key/重复注册/未知key/未知版本/守卫拒绝时抛
 # [TESTS] tests/infrastructure/test_config_center.py
 # [A_module] module_id=MOD-INF-091 | layer=module | stability=evolving | safety=M | ai_autonomy=human_gated
 # [TTL] permanent
@@ -81,8 +81,10 @@ __all__: Final = [
 class ConfigCenterError(Exception):
     """配置中心输入/守卫非法（Fail-Closed）。
 
-    未登记错误码-申请中：占位 ZA-INF-UNREGISTERED-CONFIG-CENTER。
+    错误码 ZA-INF-0013 已登记转正（2026-09-06 Owner 批准批）。
     """
+
+    error_code = "ZA-INF-0013"
 
 
 @dataclass(frozen=True)

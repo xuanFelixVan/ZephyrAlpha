@@ -10,7 +10,7 @@
 # [STABILITY] evolving
 # [SAFETY] M
 # [AI_AUTONOMY] human_gated
-# [ERROR_CONTRACT] StrategicBusError(占位 ZA-INF-UNREGISTERED-STRATEGIC-BUS)——空topic/未知前缀/未知agent/越权订阅/网关缺失/网关拒绝时抛
+# [ERROR_CONTRACT] StrategicBusError(ZA-INF-0012)——空topic/未知前缀/未知agent/越权订阅/网关缺失/网关拒绝时抛
 # [TESTS] tests/infrastructure/test_strategic_message_bus.py
 # [A_module] module_id=MOD-INF-090 | layer=module | stability=evolving | safety=M | ai_autonomy=human_gated
 # [TTL] permanent
@@ -87,8 +87,10 @@ __all__: Final = [
 class StrategicBusError(Exception):
     """三层总线协议输入/权限非法（Fail-Closed）。
 
-    未登记错误码-申请中：占位 ZA-INF-UNREGISTERED-STRATEGIC-BUS。
+    错误码 ZA-INF-0012 已登记转正（2026-09-06 Owner 批准批）。
     """
+
+    error_code = "ZA-INF-0012"
 
 
 class BusLayer(str, Enum):

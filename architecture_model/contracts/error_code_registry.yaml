@@ -60,6 +60,7 @@ domain_prefixes:
   SIG: D_ASHARE_SIGNAL
   TSK: D_GOVERNANCE
   SBX: D_INTEGRATION
+  INF: D_INFRASTRUCTURE
   GOVR: D_GOV_RULE
   GOVE: D_GOV_ENFORCEMENT
   GOVDRIFT: D_GOV_DRIFT
@@ -3293,6 +3294,103 @@ error_codes:
   module: zephyr.gov_rule.standards_manager
   file: src/zephyr/gov_rule/standards_manager.py
   introduced: '2026-09-06: Owner 批准占位码转正批（B17-②）——ZA-GOVR-UNREGISTERED-STANDARDS-MANAGER 转正'
+
+# --- 2026-09-06 占位码转正批 INF（Owner 批准 B17-②，取号=段内 max+1 顺延）---
+- code: ZA-INF-0001
+  class: LokiPipelineError
+  module: zephyr.infra_ops.loki_log_pipeline
+  file: src/zephyr/infra_ops/loki_log_pipeline.py
+  introduced: '2026-09-06: Owner 批准占位码转正批（B17-②）——ZA-INF-UNREGISTERED-LOKI-PIPELINE 转正'
+- code: ZA-INF-0002
+  class: RuntimeTopologyError
+  module: zephyr.infra_ops.runtime_topology_visualizer
+  file: src/zephyr/infra_ops/runtime_topology_visualizer.py
+  introduced: '2026-09-06: Owner 批准占位码转正批（B17-②）——ZA-INF-UNREGISTERED-RUNTIME-TOPOLOGY 转正'
+- code: ZA-INF-0003
+  class: StorageCostError
+  module: zephyr.infra_ops.storage_cost_calculator
+  file: src/zephyr/infra_ops/storage_cost_calculator.py
+  introduced: '2026-09-06: Owner 批准占位码转正批（B17-②）——ZA-INF-UNREGISTERED-STORAGE-COST 转正'
+- code: ZA-INF-0004
+  class: WalMonitorError
+  module: zephyr.infra_ops.wal_checkpoint_monitor
+  file: src/zephyr/infra_ops/wal_checkpoint_monitor.py
+  introduced: '2026-09-06: Owner 批准占位码转正批（B17-②）——ZA-INF-UNREGISTERED-WAL-MONITOR 转正'
+- code: ZA-INF-0005
+  class: ColdPlaneError
+  module: zephyr.infra_runtime.cold_plane_isolation
+  file: src/zephyr/infra_runtime/cold_plane_isolation.py
+  introduced: '2026-09-06: Owner 批准占位码转正批（B17-②）——ZA-INF-UNREGISTERED-COLD-PLANE 转正'
+- code: ZA-INF-0006
+  class: DatabaseLayerError
+  module: zephyr.infra_runtime.database_layer
+  file: src/zephyr/infra_runtime/database_layer.py
+  introduced: '2026-09-06: Owner 批准占位码转正批（B17-②）——ZA-INF-UNREGISTERED-DATABASE-LAYER 转正'
+- code: ZA-INF-0007
+  class: HaSlaError
+  module: zephyr.infra_runtime.ha_sla_framework
+  file: src/zephyr/infra_runtime/ha_sla_framework.py
+  introduced: '2026-09-06: Owner 批准占位码转正批（B17-②）——ZA-INF-UNREGISTERED-HA-SLA 转正'
+- code: ZA-INF-0008
+  class: LatencyBudgetError
+  module: zephyr.infra_runtime.latency_budget_allocator
+  file: src/zephyr/infra_runtime/latency_budget_allocator.py
+  introduced: '2026-09-06: Owner 批准占位码转正批（B17-②）——ZA-INF-UNREGISTERED-LATENCY-BUDGET 转正'
+- code: ZA-INF-0009
+  class: MlPipelineError
+  module: zephyr.infra_runtime.ml_pipeline_process
+  file: src/zephyr/infra_runtime/ml_pipeline_process.py
+  introduced: '2026-09-06: Owner 批准占位码转正批（B17-②）——ZA-INF-UNREGISTERED-ML-PIPELINE 转正'
+- code: ZA-INF-0010
+  class: ResourceSchedulerError
+  module: zephyr.infra_runtime.resource_scheduler
+  file: src/zephyr/infra_runtime/resource_scheduler.py
+  introduced: '2026-09-06: Owner 批准占位码转正批（B17-②）——ZA-INF-UNREGISTERED-RESOURCE-SCHEDULER 转正'
+- code: ZA-INF-0011
+  class: ZeroCopyError
+  module: zephyr.infra_runtime.shared_memory_zero_copy
+  file: src/zephyr/infra_runtime/shared_memory_zero_copy.py
+  introduced: '2026-09-06: Owner 批准占位码转正批（B17-②）——ZA-INF-UNREGISTERED-ZERO-COPY 转正'
+- code: ZA-INF-0012
+  class: StrategicBusError
+  module: zephyr.infrastructure.a2a_protocol.strategic_message_bus
+  file: src/zephyr/infrastructure/a2a_protocol/strategic_message_bus.py
+  introduced: '2026-09-06: Owner 批准占位码转正批（B17-②）——ZA-INF-UNREGISTERED-STRATEGIC-BUS 转正'
+- code: ZA-INF-0013
+  class: ConfigCenterError
+  module: zephyr.infrastructure.config.config_center
+  file: src/zephyr/infrastructure/config/config_center.py
+  introduced: '2026-09-06: Owner 批准占位码转正批（B17-②）——ZA-INF-UNREGISTERED-CONFIG-CENTER 转正'
+- code: ZA-INF-0014
+  class: CascadeSimError
+  module: zephyr.infrastructure.rollback.cascade_failure_simulator
+  file: src/zephyr/infrastructure/rollback/cascade_failure_simulator.py
+  introduced: '2026-09-06: Owner 批准占位码转正批（B17-②）——ZA-INF-UNREGISTERED-CASCADE-SIM 转正'
+- code: ZA-INF-0015
+  class: StrategyCanaryError
+  module: zephyr.infrastructure.strategy_canary_release
+  file: src/zephyr/infrastructure/strategy_canary_release.py
+  introduced: '2026-09-06: Owner 批准占位码转正批（B17-②）——ZA-INF-UNREGISTERED-STRATEGY-CANARY 转正'
+- code: ZA-INF-0016
+  class: AgentCallTracerError
+  module: zephyr.infrastructure.system_telemetry.agent_call_tracer
+  file: src/zephyr/infrastructure/system_telemetry/agent_call_tracer.py
+  introduced: '2026-09-06: Owner 批准占位码转正批（B17-②）——ZA-INF-UNREGISTERED-AGENT-TRACER 转正'
+- code: ZA-INF-0017
+  class: LatencyAttributorError
+  module: zephyr.infrastructure.system_telemetry.latency_attributor
+  file: src/zephyr/infrastructure/system_telemetry/latency_attributor.py
+  introduced: '2026-09-06: Owner 批准占位码转正批（B17-②）——ZA-INF-UNREGISTERED-LATENCY-ATTRIBUTOR 转正'
+- code: ZA-INF-0018
+  class: ObservabilityTriadError
+  module: zephyr.infrastructure.system_telemetry.observability_triad
+  file: src/zephyr/infrastructure/system_telemetry/observability_triad.py
+  introduced: '2026-09-06: Owner 批准占位码转正批（B17-②）——ZA-INF-UNREGISTERED-OBSERVABILITY-TRIAD 转正'
+- code: ZA-INF-0019
+  class: ReproPackagerError
+  module: zephyr.infrastructure.system_telemetry.reproducibility_packager
+  file: src/zephyr/infrastructure/system_telemetry/reproducibility_packager.py
+  introduced: '2026-09-06: Owner 批准占位码转正批（B17-②）——ZA-INF-UNREGISTERED-REPRO-PACKAGER 转正'
 
 known_duplicates: []
 # ============================================================

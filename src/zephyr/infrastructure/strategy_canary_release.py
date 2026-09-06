@@ -10,7 +10,7 @@
 # [STABILITY] evolving
 # [SAFETY] H
 # [AI_AUTONOMY] human_gated
-# [ERROR_CONTRACT] StrategyCanaryError(占位 ZA-INF-UNREGISTERED-STRATEGY-CANARY)——时段门禁/重复start/未start推进/配置非法/指标缺维时抛
+# [ERROR_CONTRACT] StrategyCanaryError(ZA-INF-0015)——时段门禁/重复start/未start推进/配置非法/指标缺维时抛
 # [TESTS] tests/infrastructure/test_strategy_canary_release.py
 # [A_module] module_id=MOD-INF-072 | layer=module | stability=evolving | safety=H | ai_autonomy=human_gated
 # [TTL] permanent
@@ -94,8 +94,10 @@ __all__: Final = [
 class StrategyCanaryError(Exception):
     """策略灰度发布操作非法（Fail-Closed）。
 
-    未登记错误码-申请中：占位 ZA-INF-UNREGISTERED-STRATEGY-CANARY。
+    错误码 ZA-INF-0015 已登记转正（2026-09-06 Owner 批准批）。
     """
+
+    error_code = "ZA-INF-0015"
 
 
 class ValidationDimension(str, Enum):

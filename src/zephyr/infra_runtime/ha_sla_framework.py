@@ -10,7 +10,7 @@
 # [STABILITY] evolving
 # [SAFETY] M
 # [AI_AUTONOMY] human_gated
-# [ERROR_CONTRACT] HaSlaError(占位 ZA-INF-UNREGISTERED-HA-SLA)——空名/重复注册/非法阈值/未知SLA或探针/SLA无绑定探针/窗口无样本时抛
+# [ERROR_CONTRACT] HaSlaError(ZA-INF-0007)——空名/重复注册/非法阈值/未知SLA或探针/SLA无绑定探针/窗口无样本时抛
 # [TESTS] tests/infra_runtime/test_ha_sla_framework.py
 # [A_module] module_id=MOD-INF-076 | layer=module | stability=evolving | safety=M | ai_autonomy=human_gated
 # [TTL] permanent
@@ -81,8 +81,10 @@ __all__: Final = [
 class HaSlaError(Exception):
     """HA/SLA 编排输入/状态非法（Fail-Closed）。
 
-    未登记错误码-申请中：占位 ZA-INF-UNREGISTERED-HA-SLA。
+    错误码 ZA-INF-0007 已登记转正（2026-09-06 Owner 批准批）。
     """
+
+    error_code = "ZA-INF-0007"
 
 
 @dataclass(frozen=True)

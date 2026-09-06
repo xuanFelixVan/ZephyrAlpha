@@ -10,7 +10,7 @@
 # [STABILITY] evolving
 # [SAFETY] M
 # [AI_AUTONOMY] human_gated
-# [ERROR_CONTRACT] ColdPlaneError(占位 ZA-INF-UNREGISTERED-COLD-PLANE)——配额越界/通道白名单外/Cold→Hot直连/QPS超限/空artifact_id/盘中激活时抛
+# [ERROR_CONTRACT] ColdPlaneError(ZA-INF-0005)——配额越界/通道白名单外/Cold→Hot直连/QPS超限/空artifact_id/盘中激活时抛
 # [TESTS] tests/infra_runtime/test_cold_plane_isolation.py
 # [A_module] module_id=MOD-INF-079 | layer=module | stability=evolving | safety=M | ai_autonomy=human_gated
 # [TTL] permanent
@@ -110,8 +110,10 @@ CHANNEL_POLL_INTERVAL_S: Final[float] = 30.0
 class ColdPlaneError(Exception):
     """Cold 平面隔离输入/越界调用非法（Fail-Closed）。
 
-    未登记错误码-申请中：占位 ZA-INF-UNREGISTERED-COLD-PLANE。
+    错误码 ZA-INF-0005 已登记转正（2026-09-06 Owner 批准批）。
     """
+
+    error_code = "ZA-INF-0005"
 
 
 class Plane(str, Enum):

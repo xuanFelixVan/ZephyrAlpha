@@ -10,7 +10,7 @@
 # [STABILITY] evolving
 # [SAFETY] M
 # [AI_AUTONOMY] human_gated
-# [ERROR_CONTRACT] LatencyBudgetError(占位 ZA-INF-UNREGISTERED-LATENCY-BUDGET)——非法平面/空阶段/非正预算/分解超总额/未登记平面或阶段/负耗时上报时抛
+# [ERROR_CONTRACT] LatencyBudgetError(ZA-INF-0008)——非法平面/空阶段/非正预算/分解超总额/未登记平面或阶段/负耗时上报时抛
 # [TESTS] tests/infra_runtime/test_latency_budget_allocator.py
 # [A_module] module_id=MOD-INF-080 | layer=module | stability=evolving | safety=M | ai_autonomy=human_gated
 # [TTL] permanent
@@ -85,8 +85,10 @@ __all__: Final = [
 class LatencyBudgetError(Exception):
     """延迟预算分配输入/状态非法（Fail-Closed）。
 
-    未登记错误码-申请中：占位 ZA-INF-UNREGISTERED-LATENCY-BUDGET。
+    错误码 ZA-INF-0008 已登记转正（2026-09-06 Owner 批准批）。
     """
+
+    error_code = "ZA-INF-0008"
 
 
 class Plane(str, Enum):

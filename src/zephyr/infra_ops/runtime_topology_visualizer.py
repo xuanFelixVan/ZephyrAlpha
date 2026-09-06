@@ -10,7 +10,7 @@
 # [STABILITY] evolving
 # [SAFETY] M
 # [AI_AUTONOMY] human_gated
-# [ERROR_CONTRACT] RuntimeTopologyError(占位 ZA-INF-UNREGISTERED-RUNTIME-TOPOLOGY)——空id/重复节点/未知节点/未知端点边/阈值非法时抛
+# [ERROR_CONTRACT] RuntimeTopologyError(ZA-INF-0002)——空id/重复节点/未知节点/未知端点边/阈值非法时抛
 # [TESTS] tests/infra_ops/test_runtime_topology_visualizer.py
 # [A_module] module_id=MOD-INF-087 | layer=module | stability=evolving | safety=M | ai_autonomy=human_gated
 # [TTL] permanent
@@ -85,8 +85,10 @@ __all__: Final = [
 class RuntimeTopologyError(Exception):
     """运行时拓扑输入非法（Fail-Closed）。
 
-    未登记错误码-申请中：占位 ZA-INF-UNREGISTERED-RUNTIME-TOPOLOGY。
+    错误码 ZA-INF-0002 已登记转正（2026-09-06 Owner 批准批）。
     """
+
+    error_code = "ZA-INF-0002"
 
 
 class NodeKind(str, Enum):

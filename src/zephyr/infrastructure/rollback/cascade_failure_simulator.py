@@ -10,7 +10,7 @@
 # [STABILITY] evolving
 # [SAFETY] M
 # [AI_AUTONOMY] human_gated
-# [ERROR_CONTRACT] CascadeSimError(占位 ZA-INF-UNREGISTERED-CASCADE-SIM)——空scenario_id/空steps/重复step_id/非法kind/空target/交易时段/备份未确认/injector缺失或异常/非法超时时抛
+# [ERROR_CONTRACT] CascadeSimError(ZA-INF-0014)——空scenario_id/空steps/重复step_id/非法kind/空target/交易时段/备份未确认/injector缺失或异常/非法超时时抛
 # [TESTS] tests/infrastructure/test_cascade_failure_simulator.py
 # [A_module] module_id=MOD-INF-089 | layer=module | stability=evolving | safety=M | ai_autonomy=human_gated
 # [TTL] permanent
@@ -97,8 +97,10 @@ _DEFAULT_TIMEOUT_MINUTES: Final[int] = 30
 class CascadeSimError(Exception):
     """级联仿真输入/护栏非法（Fail-Closed）。
 
-    未登记错误码-申请中：占位 ZA-INF-UNREGISTERED-CASCADE-SIM。
+    错误码 ZA-INF-0014 已登记转正（2026-09-06 Owner 批准批）。
     """
+
+    error_code = "ZA-INF-0014"
 
 
 class FailureKind(str, Enum):

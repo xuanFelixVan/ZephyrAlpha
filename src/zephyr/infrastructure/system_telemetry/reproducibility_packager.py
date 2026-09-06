@@ -10,7 +10,7 @@
 # [STABILITY] evolving
 # [SAFETY] M
 # [AI_AUTONOMY] human_gated
-# [ERROR_CONTRACT] ReproPackagerError(占位 ZA-INF-UNREGISTERED-REPRO-PACKAGER)——空exp_id/空必填字段/非法params/未知包/manifest缺失或损坏/hash不符时抛
+# [ERROR_CONTRACT] ReproPackagerError(ZA-INF-0019)——空exp_id/空必填字段/非法params/未知包/manifest缺失或损坏/hash不符时抛
 # [TESTS] tests/infrastructure/test_reproducibility_packager.py
 # [A_module] module_id=MOD-INF-081 | layer=module | stability=evolving | safety=M | ai_autonomy=human_gated
 # [TTL] permanent
@@ -88,8 +88,10 @@ _MANIFEST_FILE: Final[str] = "manifest.json"
 class ReproPackagerError(Exception):
     """可复现打包输入/状态非法（Fail-Closed）。
 
-    未登记错误码-申请中：占位 ZA-INF-UNREGISTERED-REPRO-PACKAGER。
+    错误码 ZA-INF-0019 已登记转正（2026-09-06 Owner 批准批）。
     """
+
+    error_code = "ZA-INF-0019"
 
 
 @dataclass(frozen=True)

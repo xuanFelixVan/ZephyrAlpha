@@ -10,7 +10,7 @@
 # [STABILITY] evolving
 # [SAFETY] M
 # [AI_AUTONOMY] human_gated
-# [ERROR_CONTRACT] LokiPipelineError(占位 ZA-INF-UNREGISTERED-LOKI-PIPELINE)——非法类别/非法标签/client缺失/参数非法/选择器为空时抛
+# [ERROR_CONTRACT] LokiPipelineError(ZA-INF-0001)——非法类别/非法标签/client缺失/参数非法/选择器为空时抛
 # [TESTS] tests/infra_ops/test_loki_log_pipeline.py
 # [A_module] module_id=MOD-INF-088 | layer=module | stability=evolving | safety=M | ai_autonomy=human_gated
 # [TTL] permanent
@@ -87,8 +87,10 @@ __all__: Final = [
 class LokiPipelineError(Exception):
     """Loki 管道输入/推送非法（Fail-Closed）。
 
-    未登记错误码-申请中：占位 ZA-INF-UNREGISTERED-LOKI-PIPELINE。
+    错误码 ZA-INF-0001 已登记转正（2026-09-06 Owner 批准批）。
     """
+
+    error_code = "ZA-INF-0001"
 
 
 class LogCategory(str, Enum):

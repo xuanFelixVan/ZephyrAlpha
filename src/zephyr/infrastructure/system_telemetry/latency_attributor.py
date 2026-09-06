@@ -10,7 +10,7 @@
 # [STABILITY] evolving
 # [SAFETY] M
 # [AI_AUTONOMY] human_gated
-# [ERROR_CONTRACT] LatencyAttributorError(占位 ZA-INF-UNREGISTERED-LATENCY-ATTRIBUTOR)——空trace_id/空span序列/空stage/负时长/零总时长/非法容量/非法慢阈时抛
+# [ERROR_CONTRACT] LatencyAttributorError(ZA-INF-0017)——空trace_id/空span序列/空stage/负时长/零总时长/非法容量/非法慢阈时抛
 # [TESTS] tests/infrastructure/test_latency_attributor.py
 # [A_module] module_id=MOD-INF-084 | layer=module | stability=evolving | safety=M | ai_autonomy=human_gated
 # [TTL] permanent
@@ -86,8 +86,10 @@ _DEFAULT_SLOW_THRESHOLD_MS: Final[float] = 1000.0
 class LatencyAttributorError(Exception):
     """延迟归因输入/状态非法（Fail-Closed）。
 
-    未登记错误码-申请中：占位 ZA-INF-UNREGISTERED-LATENCY-ATTRIBUTOR。
+    错误码 ZA-INF-0017 已登记转正（2026-09-06 Owner 批准批）。
     """
+
+    error_code = "ZA-INF-0017"
 
 
 @dataclass(frozen=True)

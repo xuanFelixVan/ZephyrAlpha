@@ -10,7 +10,7 @@
 # [STABILITY] evolving
 # [SAFETY] M
 # [AI_AUTONOMY] human_gated
-# [ERROR_CONTRACT] WalMonitorError(占位 ZA-INF-UNREGISTERED-WAL-MONITOR)——阈值非法/probe缺失/采集值非法/runner缺失或执行失败时抛
+# [ERROR_CONTRACT] WalMonitorError(ZA-INF-0004)——阈值非法/probe缺失/采集值非法/runner缺失或执行失败时抛
 # [TESTS] tests/infra_ops/test_wal_checkpoint_monitor.py
 # [A_module] module_id=MOD-INF-085 | layer=module | stability=evolving | safety=M | ai_autonomy=human_gated
 # [TTL] permanent
@@ -89,8 +89,10 @@ __all__: Final = [
 class WalMonitorError(Exception):
     """WAL 监控输入/执行非法（Fail-Closed）。
 
-    未登记错误码-申请中：占位 ZA-INF-UNREGISTERED-WAL-MONITOR。
+    错误码 ZA-INF-0004 已登记转正（2026-09-06 Owner 批准批）。
     """
+
+    error_code = "ZA-INF-0004"
 
 
 class AlertLevel(str, Enum):

@@ -10,7 +10,7 @@
 # [STABILITY] evolving
 # [SAFETY] M
 # [AI_AUTONOMY] human_gated
-# [ERROR_CONTRACT] StorageCostError(占位 ZA-INF-UNREGISTERED-STORAGE-COST)——单价表缺层/负单价/采集器缺失/占用负值/未知层时抛
+# [ERROR_CONTRACT] StorageCostError(ZA-INF-0003)——单价表缺层/负单价/采集器缺失/占用负值/未知层时抛
 # [TESTS] tests/infra_ops/test_storage_cost_calculator.py
 # [A_module] module_id=MOD-INF-086 | layer=module | stability=evolving | safety=M | ai_autonomy=human_gated
 # [TTL] permanent
@@ -92,8 +92,10 @@ TB_BYTES: Final[int] = 1024**4
 class StorageCostError(Exception):
     """存储成本核算输入非法（Fail-Closed）。
 
-    未登记错误码-申请中：占位 ZA-INF-UNREGISTERED-STORAGE-COST。
+    错误码 ZA-INF-0003 已登记转正（2026-09-06 Owner 批准批）。
     """
+
+    error_code = "ZA-INF-0003"
 
 
 class StorageLayer(str, Enum):

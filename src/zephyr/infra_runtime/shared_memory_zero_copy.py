@@ -10,7 +10,7 @@
 # [STABILITY] evolving
 # [SAFETY] M
 # [AI_AUTONOMY] human_gated
-# [ERROR_CONTRACT] ZeroCopyError(占位 ZA-INF-UNREGISTERED-ZERO-COPY)——非法命名/未知通道/重复创建/非法状态迁移/越界读写/非法size时抛
+# [ERROR_CONTRACT] ZeroCopyError(ZA-INF-0011)——非法命名/未知通道/重复创建/非法状态迁移/越界读写/非法size时抛
 # [TESTS] tests/infra_runtime/test_shared_memory_zero_copy.py
 # [A_module] module_id=MOD-INF-075 | layer=module | stability=evolving | safety=M | ai_autonomy=human_gated
 # [TTL] permanent
@@ -91,8 +91,10 @@ __all__: Final = [
 class ZeroCopyError(Exception):
     """零拷贝通道输入/状态非法（Fail-Closed）。
 
-    未登记错误码-申请中：占位 ZA-INF-UNREGISTERED-ZERO-COPY。
+    错误码 ZA-INF-0011 已登记转正（2026-09-06 Owner 批准批）。
     """
+
+    error_code = "ZA-INF-0011"
 
 
 class ChannelState(str, Enum):

@@ -10,7 +10,7 @@
 # [STABILITY] evolving
 # [SAFETY] M
 # [AI_AUTONOMY] human_gated
-# [ERROR_CONTRACT] AgentCallTracerError(占位 ZA-INF-UNREGISTERED-AGENT-TRACER)——空trace_id/空name/非法kind/负预算/未知父/跨trace父/父已闭合/未知span/二次闭合/非法状态迁移时抛
+# [ERROR_CONTRACT] AgentCallTracerError(ZA-INF-0016)——空trace_id/空name/非法kind/负预算/未知父/跨trace父/父已闭合/未知span/二次闭合/非法状态迁移时抛
 # [TESTS] tests/infrastructure/test_agent_call_tracer.py
 # [A_module] module_id=MOD-INF-083 | layer=module | stability=evolving | safety=M | ai_autonomy=human_gated
 # [TTL] permanent
@@ -90,8 +90,10 @@ __all__: Final = [
 class AgentCallTracerError(Exception):
     """调用链追踪输入/状态非法（Fail-Closed）。
 
-    未登记错误码-申请中：占位 ZA-INF-UNREGISTERED-AGENT-TRACER。
+    错误码 ZA-INF-0016 已登记转正（2026-09-06 Owner 批准批）。
     """
+
+    error_code = "ZA-INF-0016"
 
 
 class SpanKind(str, Enum):

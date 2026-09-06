@@ -10,7 +10,7 @@
 # [STABILITY] evolving
 # [SAFETY] M
 # [AI_AUTONOMY] human_gated
-# [ERROR_CONTRACT] MlPipelineError(占位 ZA-INF-UNREGISTERED-ML-PIPELINE)——空/重复task_id/非法职责/优先级越界/未知任务取消时抛
+# [ERROR_CONTRACT] MlPipelineError(ZA-INF-0009)——空/重复task_id/非法职责/优先级越界/未知任务取消时抛
 # [TESTS] tests/infra_runtime/test_ml_pipeline_process.py
 # [A_module] module_id=MOD-INF-078 | layer=module | stability=evolving | safety=M | ai_autonomy=human_gated
 # [TTL] permanent
@@ -98,8 +98,10 @@ BASE_PRIORITY: Final[int] = 40
 class MlPipelineError(Exception):
     """ML 管线编排输入/状态非法（Fail-Closed）。
 
-    未登记错误码-申请中：占位 ZA-INF-UNREGISTERED-ML-PIPELINE。
+    错误码 ZA-INF-0009 已登记转正（2026-09-06 Owner 批准批）。
     """
+
+    error_code = "ZA-INF-0009"
 
 
 class TaskKind(str, Enum):

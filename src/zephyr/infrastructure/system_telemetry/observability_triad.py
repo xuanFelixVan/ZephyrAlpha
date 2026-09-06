@@ -10,7 +10,7 @@
 # [STABILITY] evolving
 # [SAFETY] M
 # [AI_AUTONOMY] human_gated
-# [ERROR_CONTRACT] ObservabilityTriadError(占位 ZA-INF-UNREGISTERED-OBSERVABILITY-TRIAD)——空名/重复注册/未知指标/负增量/非法hot_days/归档回调缺失时抛
+# [ERROR_CONTRACT] ObservabilityTriadError(ZA-INF-0018)——空名/重复注册/未知指标/负增量/非法hot_days/归档回调缺失时抛
 # [TESTS] tests/infrastructure/test_observability_triad.py
 # [A_module] module_id=MOD-INF-082 | layer=module | stability=evolving | safety=M | ai_autonomy=human_gated
 # [TTL] permanent
@@ -99,8 +99,10 @@ _DEFAULT_HOT_DAYS: Final[int] = 7
 class ObservabilityTriadError(Exception):
     """三支柱门面输入/状态非法（Fail-Closed）。
 
-    未登记错误码-申请中：占位 ZA-INF-UNREGISTERED-OBSERVABILITY-TRIAD。
+    错误码 ZA-INF-0018 已登记转正（2026-09-06 Owner 批准批）。
     """
+
+    error_code = "ZA-INF-0018"
 
 
 class MetricKind(str, Enum):
