@@ -10,7 +10,7 @@
 # [STABILITY] evolving
 # [SAFETY] M
 # [AI_AUTONOMY] ai_modifiable
-# [ERROR_CONTRACT] ModelDriftError(占位 ZA-MLS-UNREGISTERED-MODEL-DRIFT)——空model_id/空样本/非有限值/阈值非法时抛
+# [ERROR_CONTRACT] ModelDriftError(ZA-MLS-0002)——空model_id/空样本/非有限值/阈值非法时抛
 # [TESTS] tests/ml_serve/test_model_drift_monitor.py
 # [A_module] module_id=MOD-MLS-001 | layer=module | stability=evolving | safety=M | ai_autonomy=ai_modifiable
 # [TTL] permanent
@@ -120,8 +120,10 @@ _METRIC_EPS: Final[float] = 1e-9  # 性能/IC 基线近零判定
 class ModelDriftError(Exception):
     """模型漂移监控输入非法（Fail-Closed）。
 
-    未登记错误码-申请中：占位 ZA-MLS-UNREGISTERED-MODEL-DRIFT。
+    错误码 ZA-MLS-0002 已登记转正（2026-09-06 Owner 批准批）。
     """
+
+    error_code = "ZA-MLS-0002"
 
 
 class DriftType(str, Enum):

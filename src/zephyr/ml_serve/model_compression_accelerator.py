@@ -10,7 +10,7 @@
 # [STABILITY] evolving
 # [SAFETY] M
 # [AI_AUTONOMY] human_gated
-# [ERROR_CONTRACT] ModelCompressionError(占位 ZA-MLS-UNREGISTERED-MODEL-COMPRESSION)——未注册模型/非法阶段顺序/空job_id/重复job/校准泄漏/指标非有限值/执行器缺失时抛
+# [ERROR_CONTRACT] ModelCompressionError(ZA-MLS-0004)——未注册模型/非法阶段顺序/空job_id/重复job/校准泄漏/指标非有限值/执行器缺失时抛
 # [TESTS] tests/ml_serve/test_model_compression_accelerator.py
 # [A_module] module_id=MOD-MLS-002 | layer=module | stability=evolving | safety=M | ai_autonomy=human_gated
 # [TTL] permanent
@@ -101,8 +101,10 @@ _MAX_NUMERIC_ERROR: Final[float] = 1e-5
 class ModelCompressionError(Exception):
     """模型压缩编排输入/状态非法（Fail-Closed）。
 
-    未登记错误码-申请中：占位 ZA-MLS-UNREGISTERED-MODEL-COMPRESSION。
+    错误码 ZA-MLS-0004 已登记转正（2026-09-06 Owner 批准批）。
     """
+
+    error_code = "ZA-MLS-0004"
 
 
 class CompressionPhase(str, Enum):

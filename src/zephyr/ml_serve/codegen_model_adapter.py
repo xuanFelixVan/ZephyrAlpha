@@ -10,7 +10,7 @@
 # [STABILITY] evolving
 # [SAFETY] M
 # [AI_AUTONOMY] human_gated
-# [ERROR_CONTRACT] CodegenAdapterError(占位 ZA-MLS-UNREGISTERED-CODEGEN-ADAPTER)——未注册model/能力越词表/上下文窗越限/空请求字段/响应schema缺漏/预算耗尽/client异常时抛
+# [ERROR_CONTRACT] CodegenAdapterError(ZA-MLS-0001)——未注册model/能力越词表/上下文窗越限/空请求字段/响应schema缺漏/预算耗尽/client异常时抛
 # [TESTS] tests/ml_serve/test_codegen_model_adapter.py
 # [A_module] module_id=MOD-MLS-003 | layer=module | stability=evolving | safety=M | ai_autonomy=human_gated
 # [TTL] permanent
@@ -105,8 +105,10 @@ _DEFAULT_WARN_RATIO: Final[float] = 0.8
 class CodegenAdapterError(Exception):
     """代码生成适配输入/状态非法（Fail-Closed）。
 
-    未登记错误码-申请中：占位 ZA-MLS-UNREGISTERED-CODEGEN-ADAPTER。
+    错误码 ZA-MLS-0001 已登记转正（2026-09-06 Owner 批准批）。
     """
+
+    error_code = "ZA-MLS-0001"
 
 
 class CodegenCapability(str, Enum):

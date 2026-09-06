@@ -10,7 +10,7 @@
 # [STABILITY] evolving
 # [SAFETY] M
 # [AI_AUTONOMY] human_gated
-# [ERROR_CONTRACT] DeepReviewAdapterError(占位 ZA-MLS-UNREGISTERED-DEEP-REVIEW-ADAPTER)——未注册model/审查类型越词表/校准集非法/exam分数越界/findings schema缺漏/未校准审查/重复校准/client异常时抛
+# [ERROR_CONTRACT] DeepReviewAdapterError(ZA-MLS-0003)——未注册model/审查类型越词表/校准集非法/exam分数越界/findings schema缺漏/未校准审查/重复校准/client异常时抛
 # [TESTS] tests/ml_serve/test_deep_review_model_adapter.py
 # [A_module] module_id=MOD-MLS-004 | layer=module | stability=evolving | safety=M | ai_autonomy=human_gated
 # [TTL] permanent
@@ -101,8 +101,10 @@ _DEFAULT_CONTEXT_WINDOW: Final[int] = 131072
 class DeepReviewAdapterError(Exception):
     """深度审查适配输入/状态非法（Fail-Closed）。
 
-    未登记错误码-申请中：占位 ZA-MLS-UNREGISTERED-DEEP-REVIEW-ADAPTER。
+    错误码 ZA-MLS-0003 已登记转正（2026-09-06 Owner 批准批）。
     """
+
+    error_code = "ZA-MLS-0003"
 
 
 class ReviewType(str, Enum):

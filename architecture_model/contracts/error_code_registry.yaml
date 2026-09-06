@@ -60,6 +60,7 @@ domain_prefixes:
   SIG: D_ASHARE_SIGNAL
   TSK: D_GOVERNANCE
   SBX: D_INTEGRATION
+  MLS: D_ML_SERVE
   KNW: D_KNOWLEDGE
   INF: D_INFRASTRUCTURE
   GOVR: D_GOV_RULE
@@ -3518,6 +3519,28 @@ error_codes:
   module: zephyr.knowledge.strategy_knowledge_base
   file: src/zephyr/knowledge/strategy_knowledge_base.py
   introduced: '2026-09-06: Owner 批准占位码转正批（B17-②）——ZA-KNW-UNREGISTERED-STRATEGY-KB 转正'
+
+# --- 2026-09-06 占位码转正批 MLS（Owner 批准 B17-②，取号=段内 max+1 顺延）---
+- code: ZA-MLS-0001
+  class: CodegenAdapterError
+  module: zephyr.ml_serve.codegen_model_adapter
+  file: src/zephyr/ml_serve/codegen_model_adapter.py
+  introduced: '2026-09-06: Owner 批准占位码转正批（B17-②）——ZA-MLS-UNREGISTERED-CODEGEN-ADAPTER 转正'
+- code: ZA-MLS-0002
+  class: ModelDriftError
+  module: zephyr.ml_serve.core.model_drift_monitor
+  file: src/zephyr/ml_serve/core/model_drift_monitor.py
+  introduced: '2026-09-06: Owner 批准占位码转正批（B17-②）——ZA-MLS-UNREGISTERED-MODEL-DRIFT 转正'
+- code: ZA-MLS-0003
+  class: DeepReviewAdapterError
+  module: zephyr.ml_serve.deep_review_model_adapter
+  file: src/zephyr/ml_serve/deep_review_model_adapter.py
+  introduced: '2026-09-06: Owner 批准占位码转正批（B17-②）——ZA-MLS-UNREGISTERED-DEEP-REVIEW-ADAPTER 转正'
+- code: ZA-MLS-0004
+  class: ModelCompressionError
+  module: zephyr.ml_serve.model_compression_accelerator
+  file: src/zephyr/ml_serve/model_compression_accelerator.py
+  introduced: '2026-09-06: Owner 批准占位码转正批（B17-②）——ZA-MLS-UNREGISTERED-MODEL-COMPRESSION 转正'
 
 known_duplicates: []
 # ============================================================
