@@ -3,7 +3,7 @@ module_id: MOD-TRADING-015
 title: "交易决策地图蓝图 — 决策链真源加载与引用校验"
 doc_type: blueprint
 status: Active
-version: "0.1.1"
+version: "0.1.2"
 ttl: permanent
 layer: L03_trading
 layer_name: trading
@@ -95,7 +95,7 @@ tests/trading/test_decision_map.py：正常加载/schema 错误/三类引用缺�
 
 | 图 | 位置 | 状态 | 链接 |
 |----|------|------|------|
-| 依赖图 (depgraph) | `blueprint_id=MOD-TRADING-015` 的 2 个 file 节点 | production | `extract_depgraph.py --modules MOD-TRADING-015` |
+| 依赖图 (depgraph) | `blueprint_id=MOD-TRADING-015` 的 3 个 file 节点 | production | `extract_depgraph.py --modules MOD-TRADING-015` |
 | 数据流图 (dataflow) | 0 个 Dataset / 1 个 Job | active | `apply_dataflowgraph.py --list-datasets` |
 | 决策架构图 (decision) | 0 个决策节点 / 1 个决策层 | N/A | `generate_decision_diagram.py` |
 | 蓝图 (blueprint) | 本文件 | Active | — |
@@ -107,7 +107,7 @@ tests/trading/test_decision_map.py：正常加载/schema 错误/三类引用缺�
 | module_id | MOD-TRADING-015 | MOD-TRADING-015 | ✅ |
 | domain_id | N/A | N/A | ✅ |
 | build_status | production | production | ✅ |
-| file_count | 2 文件 | N/A | — |
+| file_count | 3 文件 | N/A | — |
 
 > 冲突时以 depgraph 为准（ARCH-056 + ARCH-MM-001 声明 vs 验证框架）。
 
@@ -125,6 +125,7 @@ tests/trading/test_decision_map.py：正常加载/schema 错误/三类引用缺�
 | 文件路径 | 实现状态 | 说明 |
 |---------|:---:|------|
 | `tests/trading/test_decision_map.py` | ✅ 已实现 | |
+| `tests/trading/test_decision_map_adversarial.py` | ✅ 已实现 | |
 
 ### 7.5 路径索引使用指南
 
@@ -139,3 +140,5 @@ tests/trading/test_decision_map.py：正常加载/schema 错误/三类引用缺�
 - 测试在 `tests/` 下
 - 配置在 `config/` 下
 - 治理脚本在 `scripts/governance/` 下
+
+
