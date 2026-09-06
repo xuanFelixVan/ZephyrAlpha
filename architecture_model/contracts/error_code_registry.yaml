@@ -60,6 +60,7 @@ domain_prefixes:
   SIG: D_ASHARE_SIGNAL
   TSK: D_GOVERNANCE
   SBX: D_INTEGRATION
+  KNW: D_KNOWLEDGE
   INF: D_INFRASTRUCTURE
   GOVR: D_GOV_RULE
   GOVE: D_GOV_ENFORCEMENT
@@ -3445,6 +3446,78 @@ error_codes:
   module: zephyr.intelligence.universal_fact_ledger
   file: src/zephyr/intelligence/universal_fact_ledger.py
   introduced: '2026-09-06: Owner 批准占位码转正批（B17-②）——ZA-IT-UNREGISTERED-FACT-LEDGER 转正'
+
+# --- 2026-09-06 占位码转正批 KNW（Owner 批准 B17-②，取号=段内 max+1 顺延）---
+- code: ZA-KNW-0001
+  class: AiExtractorError
+  module: zephyr.knowledge.ai_knowledge_extractor
+  file: src/zephyr/knowledge/ai_knowledge_extractor.py
+  introduced: '2026-09-06: Owner 批准占位码转正批（B17-②）——ZA-KNW-UNREGISTERED-AI-EXTRACTOR 转正'
+- code: ZA-KNW-0002
+  class: CollectionSchemaError
+  module: zephyr.knowledge.collection_schema_manager
+  file: src/zephyr/knowledge/collection_schema_manager.py
+  introduced: '2026-09-06: Owner 批准占位码转正批（B17-②）——ZA-KNW-UNREGISTERED-COLLECTION-SCHEMA 转正'
+- code: ZA-KNW-0003
+  class: FactorKbError
+  module: zephyr.knowledge.factor_knowledge_base
+  file: src/zephyr/knowledge/factor_knowledge_base.py
+  introduced: '2026-09-06: Owner 批准占位码转正批（B17-②）——ZA-KNW-UNREGISTERED-FACTOR-KB 转正'
+- code: ZA-KNW-0004
+  class: FinancialGraphError
+  module: zephyr.knowledge.financial_knowledge_graph
+  file: src/zephyr/knowledge/financial_knowledge_graph.py
+  introduced: '2026-09-06: Owner 批准占位码转正批（B17-②）——ZA-KNW-UNREGISTERED-FIN-GRAPH 转正'
+- code: ZA-KNW-0005
+  class: KbEngineError
+  module: zephyr.knowledge.kb_engine
+  file: src/zephyr/knowledge/kb_engine.py
+  introduced: '2026-09-06: Owner 批准占位码转正批（B17-②）——ZA-KNW-UNREGISTERED-KB-ENGINE 转正'
+- code: ZA-KNW-0006
+  class: ArtifactStoreError
+  module: zephyr.knowledge.knowledge_artifact_store
+  file: src/zephyr/knowledge/knowledge_artifact_store.py
+  introduced: '2026-09-06: Owner 批准占位码转正批（B17-②）——ZA-KNW-UNREGISTERED-ARTIFACT-STORE 转正'
+- code: ZA-KNW-0007
+  class: KnowledgeQualityError
+  module: zephyr.knowledge.knowledge_quality_assessor
+  file: src/zephyr/knowledge/knowledge_quality_assessor.py
+  introduced: '2026-09-06: Owner 批准占位码转正批（B17-②）——ZA-KNW-UNREGISTERED-KNW-QUALITY 转正'
+- code: ZA-KNW-0008
+  class: LayeredMemoryError
+  module: zephyr.knowledge.layered_memory_orchestrator
+  file: src/zephyr/knowledge/layered_memory_orchestrator.py
+  introduced: '2026-09-06: Owner 批准占位码转正批（B17-②）——ZA-KNW-UNREGISTERED-LAYERED-MEMORY 转正'
+- code: ZA-KNW-0009
+  class: PaperTrackerError
+  module: zephyr.knowledge.paper_tracker
+  file: src/zephyr/knowledge/paper_tracker.py
+  introduced: '2026-09-06: Owner 批准占位码转正批（B17-②）——ZA-KNW-UNREGISTERED-PAPER-TRACKER 转正'
+- code: ZA-KNW-0010
+  class: RagPipelineError
+  module: zephyr.knowledge.rag_pipeline
+  file: src/zephyr/knowledge/rag_pipeline.py
+  introduced: '2026-09-06: Owner 批准占位码转正批（B17-②）——ZA-KNW-UNREGISTERED-RAG-PIPELINE 转正'
+- code: ZA-KNW-0011
+  class: ResearchCatalogError
+  module: zephyr.knowledge.research_catalog
+  file: src/zephyr/knowledge/research_catalog.py
+  introduced: '2026-09-06: Owner 批准占位码转正批（B17-②）——ZA-KNW-UNREGISTERED-RESEARCH-CATALOG 转正'
+- code: ZA-KNW-0012
+  class: ResearchProjectError
+  module: zephyr.knowledge.research_project_aggregate
+  file: src/zephyr/knowledge/research_project_aggregate.py
+  introduced: '2026-09-06: Owner 批准占位码转正批（B17-②）——ZA-KNW-UNREGISTERED-RESEARCH-PROJECT 转正'
+- code: ZA-KNW-0013
+  class: ResearchWorkflowError
+  module: zephyr.knowledge.research_workflow_engine
+  file: src/zephyr/knowledge/research_workflow_engine.py
+  introduced: '2026-09-06: Owner 批准占位码转正批（B17-②）——ZA-KNW-UNREGISTERED-RESEARCH-WORKFLOW 转正'
+- code: ZA-KNW-0014
+  class: StrategyKbError
+  module: zephyr.knowledge.strategy_knowledge_base
+  file: src/zephyr/knowledge/strategy_knowledge_base.py
+  introduced: '2026-09-06: Owner 批准占位码转正批（B17-②）——ZA-KNW-UNREGISTERED-STRATEGY-KB 转正'
 
 known_duplicates: []
 # ============================================================

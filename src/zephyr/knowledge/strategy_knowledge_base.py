@@ -10,7 +10,7 @@
 # [STABILITY] evolving
 # [SAFETY] M
 # [AI_AUTONOMY] human_gated
-# [ERROR_CONTRACT] StrategyKbError(占位 ZA-KNW-UNREGISTERED-STRATEGY-KB)——空字段/未知策略/重复注册/非法状态迁移/回填适配器缺失或空返回/指标非数值/FTS连接缺失/空查询时抛
+# [ERROR_CONTRACT] StrategyKbError(ZA-KNW-0014)——空字段/未知策略/重复注册/非法状态迁移/回填适配器缺失或空返回/指标非数值/FTS连接缺失/空查询时抛
 # [TESTS] tests/knowledge/test_strategy_knowledge_base.py
 # [A_module] module_id=MOD-KNW-006 | layer=module | stability=evolving | safety=M | ai_autonomy=human_gated
 # [TTL] permanent
@@ -101,8 +101,10 @@ _FTS_TABLE: Final[str] = "strategy_lesson_fts"
 class StrategyKbError(Exception):
     """策略知识库输入/状态非法（Fail-Closed）。
 
-    未登记错误码-申请中：占位 ZA-KNW-UNREGISTERED-STRATEGY-KB。
+    错误码 ZA-KNW-0014 已登记转正（2026-09-06 Owner 批准批）。
     """
+
+    error_code = "ZA-KNW-0014"
 
 
 class StrategyStatus(str, Enum):

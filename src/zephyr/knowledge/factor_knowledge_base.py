@@ -10,7 +10,7 @@
 # [STABILITY] evolving
 # [SAFETY] M
 # [AI_AUTONOMY] human_gated
-# [ERROR_CONTRACT] FactorKbError(占位 ZA-KNW-UNREGISTERED-FACTOR-KB)——空字段/未知因子/重复注册/非法关系/非法状态迁移/IC越界/样本不足时抛
+# [ERROR_CONTRACT] FactorKbError(ZA-KNW-0003)——空字段/未知因子/重复注册/非法关系/非法状态迁移/IC越界/样本不足时抛
 # [TESTS] tests/knowledge/test_factor_knowledge_base.py
 # [A_module] module_id=MOD-KNW-005 | layer=module | stability=evolving | safety=M | ai_autonomy=human_gated
 # [TTL] permanent
@@ -89,8 +89,10 @@ _ALLOWED_TRANSITIONS: Final[dict[FactorStatus, frozenset[FactorStatus]]] = {}
 class FactorKbError(Exception):
     """因子知识库输入/状态非法（Fail-Closed）。
 
-    未登记错误码-申请中：占位 ZA-KNW-UNREGISTERED-FACTOR-KB。
+    错误码 ZA-KNW-0003 已登记转正（2026-09-06 Owner 批准批）。
     """
+
+    error_code = "ZA-KNW-0003"
 
 
 class FactorStatus(str, Enum):

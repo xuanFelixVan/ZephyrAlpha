@@ -10,7 +10,7 @@
 # [STABILITY] evolving
 # [SAFETY] M
 # [AI_AUTONOMY] human_gated
-# [ERROR_CONTRACT] KbEngineError(占位 ZA-KNW-UNREGISTERED-KB-ENGINE)——未知collection/未知条目/重复创建/空标识/未知版本时抛
+# [ERROR_CONTRACT] KbEngineError(ZA-KNW-0005)——未知collection/未知条目/重复创建/空标识/未知版本时抛
 # [TESTS] tests/knowledge/test_kb_engine.py
 # [A_module] module_id=MOD-KNW-001 | layer=module | stability=evolving | safety=M | ai_autonomy=human_gated
 # [TTL] permanent
@@ -106,8 +106,10 @@ _FTS_TABLE: Final = "kb_fts"
 class KbEngineError(Exception):
     """知识库引擎输入/状态非法（Fail-Closed）。
 
-    未登记错误码-申请中：占位 ZA-KNW-UNREGISTERED-KB-ENGINE。
+    错误码 ZA-KNW-0005 已登记转正（2026-09-06 Owner 批准批）。
     """
+
+    error_code = "ZA-KNW-0005"
 
 
 class AuditAction:

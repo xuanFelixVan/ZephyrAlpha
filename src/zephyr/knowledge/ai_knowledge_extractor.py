@@ -10,7 +10,7 @@
 # [STABILITY] evolving
 # [SAFETY] M
 # [AI_AUTONOMY] human_gated
-# [ERROR_CONTRACT] AiExtractorError(占位 ZA-KNW-UNREGISTERED-AI-EXTRACTOR)——空字段/未知源/重复注册/LLM回调缺失/输出schema非法/置信度越界/kb_writer缺失/未知复核项时抛
+# [ERROR_CONTRACT] AiExtractorError(ZA-KNW-0001)——空字段/未知源/重复注册/LLM回调缺失/输出schema非法/置信度越界/kb_writer缺失/未知复核项时抛
 # [TESTS] tests/knowledge/test_ai_knowledge_extractor.py
 # [A_module] module_id=MOD-KNW-007 | layer=module | stability=evolving | safety=M | ai_autonomy=human_gated
 # [TTL] permanent
@@ -100,8 +100,10 @@ _REQUIRED_ITEM_FIELDS: Final[tuple[str, ...]] = ("title", "content", "confidence
 class AiExtractorError(Exception):
     """AI 知识抽取管线输入/状态非法（Fail-Closed）。
 
-    未登记错误码-申请中：占位 ZA-KNW-UNREGISTERED-AI-EXTRACTOR。
+    错误码 ZA-KNW-0001 已登记转正（2026-09-06 Owner 批准批）。
     """
+
+    error_code = "ZA-KNW-0001"
 
 
 class SourceType(str, Enum):

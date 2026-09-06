@@ -10,7 +10,7 @@
 # [STABILITY] evolving
 # [SAFETY] M
 # [AI_AUTONOMY] human_gated
-# [ERROR_CONTRACT] ResearchProjectError(占位 ZA-KNW-UNREGISTERED-RESEARCH-PROJECT)——连接缺失/未知项目/非法状态迁移/非法子实体/重复项目时抛
+# [ERROR_CONTRACT] ResearchProjectError(ZA-KNW-0012)——连接缺失/未知项目/非法状态迁移/非法子实体/重复项目时抛
 # [TESTS] tests/knowledge/test_research_project_aggregate.py
 # [A_module] module_id=MOD-KNW-011 | layer=module | stability=evolving | safety=M | ai_autonomy=human_gated
 # [TTL] permanent
@@ -96,8 +96,10 @@ __all__: Final = [
 class ResearchProjectError(Exception):
     """研究项目聚合输入/状态非法（Fail-Closed）。
 
-    未登记错误码-申请中：占位 ZA-KNW-UNREGISTERED-RESEARCH-PROJECT。
+    错误码 ZA-KNW-0012 已登记转正（2026-09-06 Owner 批准批）。
     """
+
+    error_code = "ZA-KNW-0012"
 
 
 class ProjectStatus(str, Enum):

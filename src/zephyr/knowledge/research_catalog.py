@@ -10,7 +10,7 @@
 # [STABILITY] evolving
 # [SAFETY] M
 # [AI_AUTONOMY] human_gated
-# [ERROR_CONTRACT] ResearchCatalogError(占位 ZA-KNW-UNREGISTERED-RESEARCH-CATALOG)——连接缺失/未知资产/非法类型或级别/重复资产/自引/空查询/语义适配器缺失时抛
+# [ERROR_CONTRACT] ResearchCatalogError(ZA-KNW-0011)——连接缺失/未知资产/非法类型或级别/重复资产/自引/空查询/语义适配器缺失时抛
 # [TESTS] tests/knowledge/test_research_catalog.py
 # [A_module] module_id=MOD-KNW-012 | layer=module | stability=evolving | safety=M | ai_autonomy=human_gated
 # [TTL] permanent
@@ -90,8 +90,10 @@ __all__: Final = [
 class ResearchCatalogError(Exception):
     """研究目录输入/状态非法（Fail-Closed）。
 
-    未登记错误码-申请中：占位 ZA-KNW-UNREGISTERED-RESEARCH-CATALOG。
+    错误码 ZA-KNW-0011 已登记转正（2026-09-06 Owner 批准批）。
     """
+
+    error_code = "ZA-KNW-0011"
 
 
 class AssetType(str, Enum):

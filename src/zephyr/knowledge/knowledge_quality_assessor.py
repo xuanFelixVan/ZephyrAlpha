@@ -10,7 +10,7 @@
 # [STABILITY] evolving
 # [SAFETY] M
 # [AI_AUTONOMY] human_gated
-# [ERROR_CONTRACT] KnowledgeQualityError(占位 ZA-KNW-UNREGISTERED-KNW-QUALITY)——非法权重/维度越界/空entry_id/未知条目/未来时间/空队列取件时抛
+# [ERROR_CONTRACT] KnowledgeQualityError(ZA-KNW-0007)——非法权重/维度越界/空entry_id/未知条目/未来时间/空队列取件时抛
 # [TESTS] tests/knowledge/test_knowledge_quality_assessor.py
 # [A_module] module_id=MOD-KNW-002 | layer=module | stability=evolving | safety=M | ai_autonomy=human_gated
 # [TTL] permanent
@@ -103,8 +103,10 @@ _DEFAULT_WEIGHTS: Final = {dim: 1.0 for dim in DIMENSIONS}
 class KnowledgeQualityError(Exception):
     """知识质量评估输入/状态非法（Fail-Closed）。
 
-    未登记错误码-申请中：占位 ZA-KNW-UNREGISTERED-KNW-QUALITY。
+    错误码 ZA-KNW-0007 已登记转正（2026-09-06 Owner 批准批）。
     """
+
+    error_code = "ZA-KNW-0007"
 
 
 @dataclass(frozen=True)

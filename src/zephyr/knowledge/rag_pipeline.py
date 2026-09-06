@@ -10,7 +10,7 @@
 # [STABILITY] evolving
 # [SAFETY] M
 # [AI_AUTONOMY] human_gated
-# [ERROR_CONTRACT] RagPipelineError(占位 ZA-KNW-UNREGISTERED-RAG-PIPELINE)——空字段/重复文档/非法滑窗参数/检索器或生成器未注入/未知chunk引用/重排非排列/生成非文本/top_k越界时抛
+# [ERROR_CONTRACT] RagPipelineError(ZA-KNW-0010)——空字段/重复文档/非法滑窗参数/检索器或生成器未注入/未知chunk引用/重排非排列/生成非文本/top_k越界时抛
 # [TESTS] tests/knowledge/test_rag_pipeline.py
 # [A_module] module_id=MOD-KNW-008 | layer=module | stability=evolving | safety=M | ai_autonomy=human_gated
 # [TTL] permanent
@@ -96,8 +96,10 @@ _RRF_K: Final[int] = 60
 class RagPipelineError(Exception):
     """RAG 管道输入/状态非法（Fail-Closed）。
 
-    未登记错误码-申请中：占位 ZA-KNW-UNREGISTERED-RAG-PIPELINE。
+    错误码 ZA-KNW-0010 已登记转正（2026-09-06 Owner 批准批）。
     """
+
+    error_code = "ZA-KNW-0010"
 
 
 @dataclass(frozen=True)

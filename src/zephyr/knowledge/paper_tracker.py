@@ -10,7 +10,7 @@
 # [STABILITY] evolving
 # [SAFETY] M
 # [AI_AUTONOMY] human_gated
-# [ERROR_CONTRACT] PaperTrackerError(占位 ZA-KNW-UNREGISTERED-PAPER-TRACKER)——空topic_id/重复订阅/未知topic/抓取器未注入/抓取异常/未知paper/非法趋势窗参数时抛
+# [ERROR_CONTRACT] PaperTrackerError(ZA-KNW-0009)——空topic_id/重复订阅/未知topic/抓取器未注入/抓取异常/未知paper/非法趋势窗参数时抛
 # [TESTS] tests/knowledge/test_paper_tracker.py
 # [A_module] module_id=MOD-KNW-013 | layer=module | stability=evolving | safety=M | ai_autonomy=human_gated
 # [TTL] permanent
@@ -131,8 +131,10 @@ _STOPWORDS: Final = frozenset(
 class PaperTrackerError(Exception):
     """论文追踪输入/状态非法（Fail-Closed）。
 
-    未登记错误码-申请中：占位 ZA-KNW-UNREGISTERED-PAPER-TRACKER。
+    错误码 ZA-KNW-0009 已登记转正（2026-09-06 Owner 批准批）。
     """
+
+    error_code = "ZA-KNW-0009"
 
 
 @dataclass(frozen=True)

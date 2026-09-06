@@ -10,7 +10,7 @@
 # [STABILITY] evolving
 # [SAFETY] M
 # [AI_AUTONOMY] human_gated
-# [ERROR_CONTRACT] ArtifactStoreError(占位 ZA-KNW-UNREGISTERED-ARTIFACT-STORE)——非法类型/schema键不符/空标识/未知工件/未知版本/非法时间窗时抛
+# [ERROR_CONTRACT] ArtifactStoreError(ZA-KNW-0006)——非法类型/schema键不符/空标识/未知工件/未知版本/非法时间窗时抛
 # [TESTS] tests/knowledge/test_knowledge_artifact_store.py
 # [A_module] module_id=MOD-KNW-004 | layer=module | stability=evolving | safety=M | ai_autonomy=human_gated
 # [TTL] permanent
@@ -77,8 +77,10 @@ __all__: Final = [
 class ArtifactStoreError(Exception):
     """知识工件库存储输入/状态非法（Fail-Closed）。
 
-    未登记错误码-申请中：占位 ZA-KNW-UNREGISTERED-ARTIFACT-STORE。
+    错误码 ZA-KNW-0006 已登记转正（2026-09-06 Owner 批准批）。
     """
+
+    error_code = "ZA-KNW-0006"
 
 
 class ArtifactType(str, Enum):

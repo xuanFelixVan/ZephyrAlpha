@@ -10,7 +10,7 @@
 # [STABILITY] evolving
 # [SAFETY] M
 # [AI_AUTONOMY] human_gated
-# [ERROR_CONTRACT] ResearchWorkflowError(占位 ZA-KNW-UNREGISTERED-RESEARCH-WORKFLOW)——空模板/重复节点/未知依赖/自环/循环DAG/未知模板/重复run_id/非法退避参数时抛
+# [ERROR_CONTRACT] ResearchWorkflowError(ZA-KNW-0013)——空模板/重复节点/未知依赖/自环/循环DAG/未知模板/重复run_id/非法退避参数时抛
 # [TESTS] tests/knowledge/test_research_workflow_engine.py
 # [A_module] module_id=MOD-KNW-014 | layer=module | stability=evolving | safety=M | ai_autonomy=human_gated
 # [TTL] permanent
@@ -115,8 +115,10 @@ _FACTOR_STAGES: Final[tuple[str, ...]] = (
 class ResearchWorkflowError(Exception):
     """研究工作流输入/状态非法（Fail-Closed）。
 
-    未登记错误码-申请中：占位 ZA-KNW-UNREGISTERED-RESEARCH-WORKFLOW。
+    错误码 ZA-KNW-0013 已登记转正（2026-09-06 Owner 批准批）。
     """
+
+    error_code = "ZA-KNW-0013"
 
 
 class NodeStatus(str, Enum):

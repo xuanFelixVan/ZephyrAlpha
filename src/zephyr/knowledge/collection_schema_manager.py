@@ -10,7 +10,7 @@
 # [STABILITY] evolving
 # [SAFETY] M
 # [AI_AUTONOMY] human_gated
-# [ERROR_CONTRACT] CollectionSchemaError(占位 ZA-KNW-UNREGISTERED-COLLECTION-SCHEMA)——未知Collection/非法版本/字段非法/破坏性变更未force/迁移非法或未dry-run/runner缺失时抛
+# [ERROR_CONTRACT] CollectionSchemaError(ZA-KNW-0002)——未知Collection/非法版本/字段非法/破坏性变更未force/迁移非法或未dry-run/runner缺失时抛
 # [TESTS] tests/knowledge/test_collection_schema_manager.py
 # [A_module] module_id=MOD-KNW-010 | layer=module | stability=evolving | safety=M | ai_autonomy=human_gated
 # [TTL] permanent
@@ -88,8 +88,10 @@ __all__: Final = [
 class CollectionSchemaError(Exception):
     """Collection schema 输入/状态非法（Fail-Closed）。
 
-    未登记错误码-申请中：占位 ZA-KNW-UNREGISTERED-COLLECTION-SCHEMA。
+    错误码 ZA-KNW-0002 已登记转正（2026-09-06 Owner 批准批）。
     """
+
+    error_code = "ZA-KNW-0002"
 
 
 class CollectionName(str, Enum):
