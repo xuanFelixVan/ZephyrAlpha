@@ -10,7 +10,7 @@
 # [STABILITY] evolving
 # [SAFETY] M
 # [AI_AUTONOMY] human_gated
-# [ERROR_CONTRACT] ConstructionGateError(占位 ZA-GOVE-UNREGISTERED-CONSTRUCTION-GATE)——空id/空公式/非法阈值/重复登记/未知产物/非法product/审批回调异常或返回非bool时抛
+# [ERROR_CONTRACT] ConstructionGateError(ZA-GOVE-0001)——空id/空公式/非法阈值/重复登记/未知产物/非法product/审批回调异常或返回非bool时抛
 # [TESTS] tests/gov_enforcement/test_construction_governor_gate.py
 # [A_module] module_id=MOD-GOV-056 | layer=module | stability=evolving | safety=M | ai_autonomy=human_gated
 # [TTL] permanent
@@ -94,8 +94,10 @@ __all__: Final = [
 class ConstructionGateError(Exception):
     """施工门禁输入/状态非法（Fail-Closed）。
 
-    未登记错误码-申请中：占位 ZA-GOVE-UNREGISTERED-CONSTRUCTION-GATE。
+    错误码 ZA-GOVE-0001 已登记转正（2026-09-06 Owner 批准批）。
     """
+
+    error_code = "ZA-GOVE-0001"
 
 
 class GateDecision(str, Enum):
