@@ -1,17 +1,17 @@
-# 自动生成于 2026-09-05T07:37:34Z
+# 自动生成于 2026-09-06T01:06:03Z
 # 来源: scripts/governance/**/*.py __manifest__ 块
 # 手工编辑无效——修改请通过各 .py 文件的 __manifest__ 块
 
-generated_at: '2026-09-05T07:37:34Z'
+generated_at: '2026-09-06T01:06:03Z'
 generated_by: scripts/governance/generators/generate_script_manifest.py
 source: scripts/governance/**/*.py → __manifest__ 块
-total_scripts: 416
+total_scripts: 417
 with_manifest: 407
-missing_manifest: 9
+missing_manifest: 10
 categories:
   governance:_sync: 4
   governance:_tasks: 3
-  governance: 46
+  governance: 47
   governance:d10_performance: 1
   governance:d11_compliance: 24
   governance:d12_ai_hallucination: 4
@@ -5050,6 +5050,16 @@ scripts:
   description: run_gate_chain.py — 顺序运行多个门禁脚本，内容判定聚合退出码 + files-modified 副作用分列报告。
   tags:
   - Quick
+- name: run_semantic_audit.py
+  owner: governance
+  dimensions: []
+  priority: P2
+  timeout_seconds: 60
+  args: []
+  warn_only: false
+  description: ⚠ __manifest__ 缺失——请添加元数据块
+  tags: []
+  _manifest_missing: true
 - name: run_silent_failure_regression.py
   owner: governance
   dimensions:
