@@ -10,7 +10,7 @@
 # [STABILITY] evolving
 # [SAFETY] M
 # [AI_AUTONOMY] human_gated
-# [ERROR_CONTRACT] FactorVoteError(占位 ZA-FAC-UNREGISTERED-FACTOR-VOTE)——Agent 数越界/id 重复或空/验证器缺失/topic 空白/验证器异常或返回非法/注入时钟回读非法时抛
+# [ERROR_CONTRACT] FactorVoteError(ZA-FAC-0004)——Agent 数越界/id 重复或空/验证器缺失/topic 空白/验证器异常或返回非法/注入时钟回读非法时抛
 # [TESTS] tests/research/test_factor_vote_mining.py
 # [A_module] module_id=MOD-FAC-004 | layer=module | stability=evolving | safety=M | ai_autonomy=human_gated
 # [TTL] permanent
@@ -102,8 +102,10 @@ _MAX_DEBATE_CAP: Final = 5
 class FactorVoteError(Exception):
     """FactorMAD 投票挖掘输入/状态非法（Fail-Closed）。
 
-    未登记错误码-申请中：占位 ZA-FAC-UNREGISTERED-FACTOR-VOTE。
+    错误码 ZA-FAC-0004 已登记转正（2026-09-06 Owner 批准批）。
     """
+
+    error_code = "ZA-FAC-0004"
 
 
 @dataclass(frozen=True)

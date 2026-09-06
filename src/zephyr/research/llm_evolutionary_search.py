@@ -10,7 +10,7 @@
 # [STABILITY] evolving
 # [SAFETY] M
 # [AI_AUTONOMY] human_gated
-# [ERROR_CONTRACT] LlmEvolutionError(占位 ZA-FAC-UNREGISTERED-LLM-EVOLUTION)——LLM 角色/评估器缺失/种群护栏越界/非盘后运行/三重门禁或 p-hacking 评估器未注入/种子非法/未知 candidate_id 裁决时抛
+# [ERROR_CONTRACT] LlmEvolutionError(ZA-FAC-0006)——LLM 角色/评估器缺失/种群护栏越界/非盘后运行/三重门禁或 p-hacking 评估器未注入/种子非法/未知 candidate_id 裁决时抛
 # [TESTS] tests/research/test_llm_evolutionary_search.py
 # [A_module] module_id=MOD-FAC-006 | layer=module | stability=evolving | safety=M | ai_autonomy=human_gated
 # [TTL] permanent
@@ -97,8 +97,10 @@ _GEN_MIN, _GEN_MAX = 1, 50
 class LlmEvolutionError(Exception):
     """LLM 进化搜索输入/状态非法（Fail-Closed）。
 
-    未登记错误码-申请中：占位 ZA-FAC-UNREGISTERED-LLM-EVOLUTION。
+    错误码 ZA-FAC-0006 已登记转正（2026-09-06 Owner 批准批）。
     """
+
+    error_code = "ZA-FAC-0006"
 
 
 class MutationRole(str, Enum):

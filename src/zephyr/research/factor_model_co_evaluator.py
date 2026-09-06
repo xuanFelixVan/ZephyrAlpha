@@ -10,7 +10,7 @@
 # [STABILITY] evolving
 # [SAFETY] M
 # [AI_AUTONOMY] human_gated
-# [ERROR_CONTRACT] CoEvaluatorError(占位 ZA-FAC-UNREGISTERED-CO-EVALUATOR)——评估器缺失或异常/阈值序非法/因子或模型 id 空或重复/未知报告版本时抛
+# [ERROR_CONTRACT] CoEvaluatorError(ZA-FAC-0003)——评估器缺失或异常/阈值序非法/因子或模型 id 空或重复/未知报告版本时抛
 # [TESTS] tests/research/test_factor_model_co_evaluator.py
 # [A_module] module_id=MOD-FAC-005 | layer=module | stability=evolving | safety=M | ai_autonomy=human_gated
 # [TTL] permanent
@@ -91,8 +91,10 @@ __all__: Final = [
 class CoEvaluatorError(Exception):
     """联合评估输入/状态非法（Fail-Closed）。
 
-    未登记错误码-申请中：占位 ZA-FAC-UNREGISTERED-CO-EVALUATOR。
+    错误码 ZA-FAC-0003 已登记转正（2026-09-06 Owner 批准批）。
     """
+
+    error_code = "ZA-FAC-0003"
 
 
 class FactorVerdict(str, Enum):

@@ -10,7 +10,7 @@
 # [STABILITY] evolving
 # [SAFETY] M
 # [AI_AUTONOMY] human_gated
-# [ERROR_CONTRACT] AutoFeatureError(占位 ZA-FAC-UNREGISTERED-AUTO-FEATURE)——词表外基础序列/非法窗口/阈值越界/ic_calculator 缺失或返回非法/未知 feature_id 确认或拒绝时抛
+# [ERROR_CONTRACT] AutoFeatureError(ZA-FAC-0002)——词表外基础序列/非法窗口/阈值越界/ic_calculator 缺失或返回非法/未知 feature_id 确认或拒绝时抛
 # [TESTS] tests/research/test_auto_feature_discoverer.py
 # [A_module] module_id=MOD-FAC-001 | layer=module | stability=evolving | safety=M | ai_autonomy=human_gated
 # [TTL] permanent
@@ -103,8 +103,10 @@ DEFAULT_WINDOWS: Final = (5, 10, 20)
 class AutoFeatureError(Exception):
     """特征发现输入/状态非法（Fail-Closed）。
 
-    未登记错误码-申请中：占位 ZA-FAC-UNREGISTERED-AUTO-FEATURE。
+    错误码 ZA-FAC-0002 已登记转正（2026-09-06 Owner 批准批）。
     """
+
+    error_code = "ZA-FAC-0002"
 
 
 class FeatureFamily(str, Enum):

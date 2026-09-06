@@ -60,6 +60,7 @@ domain_prefixes:
   SIG: D_ASHARE_SIGNAL
   TSK: D_GOVERNANCE
   SBX: D_INTEGRATION
+  FAC: D_FACTOR
   EXSIM: D_EXEC_SIM
   DT: D_DIGITAL_TWIN
   DSEC: D_DATA_SEC
@@ -3063,6 +3064,43 @@ error_codes:
   module: zephyr.orchestrator.file_task_mapper
   file: src/zephyr/orchestrator/file_task_mapper.py
   introduced: '2026-09-06: tool_contracts.yaml 契约码补定义点（B 类处置批）——SyncInconsistency dataclass error_code 字段默认值（stale task three-state mismatch）'
+
+# --- 2026-09-06 占位码转正批 FAC（Owner 批准 B17-②，取号=段内 max+1 顺延）---
+- code: ZA-FAC-0001
+  class: SignatureError
+  module: zephyr.factor.signature_feature_extractor
+  file: src/zephyr/factor/signature_feature_extractor.py
+  introduced: '2026-09-06: Owner 批准占位码转正批（B17-②）——ZA-FAC-UNREGISTERED-SIGNATURE 转正'
+- code: ZA-FAC-0002
+  class: AutoFeatureError
+  module: zephyr.research.auto_feature_discoverer
+  file: src/zephyr/research/auto_feature_discoverer.py
+  introduced: '2026-09-06: Owner 批准占位码转正批（B17-②）——ZA-FAC-UNREGISTERED-AUTO-FEATURE 转正'
+- code: ZA-FAC-0003
+  class: CoEvaluatorError
+  module: zephyr.research.factor_model_co_evaluator
+  file: src/zephyr/research/factor_model_co_evaluator.py
+  introduced: '2026-09-06: Owner 批准占位码转正批（B17-②）——ZA-FAC-UNREGISTERED-CO-EVALUATOR 转正'
+- code: ZA-FAC-0004
+  class: FactorVoteError
+  module: zephyr.research.factor_vote_mining
+  file: src/zephyr/research/factor_vote_mining.py
+  introduced: '2026-09-06: Owner 批准占位码转正批（B17-②）——ZA-FAC-UNREGISTERED-FACTOR-VOTE 转正'
+- code: ZA-FAC-0005
+  class: GpDiscoveryError
+  module: zephyr.research.gp_strategy_discovery
+  file: src/zephyr/research/gp_strategy_discovery.py
+  introduced: '2026-09-06: Owner 批准占位码转正批（B17-②）——ZA-FAC-UNREGISTERED-GP-DISCOVERY 转正'
+- code: ZA-FAC-0006
+  class: LlmEvolutionError
+  module: zephyr.research.llm_evolutionary_search
+  file: src/zephyr/research/llm_evolutionary_search.py
+  introduced: '2026-09-06: Owner 批准占位码转正批（B17-②）——ZA-FAC-UNREGISTERED-LLM-EVOLUTION 转正'
+- code: ZA-FAC-0007
+  class: StrategyUpgradeError
+  module: zephyr.research.strategy_iteration_upgrader
+  file: src/zephyr/research/strategy_iteration_upgrader.py
+  introduced: '2026-09-06: Owner 批准占位码转正批（B17-②）——ZA-FAC-UNREGISTERED-STRATEGY-UPGRADE 转正'
 
 known_duplicates: []
 # ============================================================

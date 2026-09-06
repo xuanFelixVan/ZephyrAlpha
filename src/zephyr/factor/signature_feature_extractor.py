@@ -10,7 +10,7 @@
 # [STABILITY] evolving
 # [SAFETY] M
 # [AI_AUTONOMY] human_gated
-# [ERROR_CONTRACT] SignatureError(占位 ZA-FAC-UNREGISTERED-SIGNATURE)——阶数越界/路径过短/维度不齐/空维/非正或非有限值（对数无定义）时抛
+# [ERROR_CONTRACT] SignatureError(ZA-FAC-0001)——阶数越界/路径过短/维度不齐/空维/非正或非有限值（对数无定义）时抛
 # [TESTS] tests/factor/test_signature_feature_extractor.py
 # [A_module] module_id=MOD-FAC-002 | layer=module | stability=evolving | safety=M | ai_autonomy=human_gated
 # [TTL] permanent
@@ -87,8 +87,10 @@ MAX_ORDER: Final = 4
 class SignatureError(Exception):
     """签名特征输入/配置非法（Fail-Closed）。
 
-    未登记错误码-申请中：占位 ZA-FAC-UNREGISTERED-SIGNATURE。
+    错误码 ZA-FAC-0001 已登记转正（2026-09-06 Owner 批准批）。
     """
+
+    error_code = "ZA-FAC-0001"
 
 
 @dataclass(frozen=True)

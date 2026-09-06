@@ -10,7 +10,7 @@
 # [STABILITY] evolving
 # [SAFETY] M
 # [AI_AUTONOMY] human_gated
-# [ERROR_CONTRACT] StrategyUpgradeError(占位 ZA-FAC-UNREGISTERED-STRATEGY-UPGRADE)——parser/sink 缺失或异常/报告结构非法/词表外方向/空 strategy_id/阈值序非法时抛
+# [ERROR_CONTRACT] StrategyUpgradeError(ZA-FAC-0007)——parser/sink 缺失或异常/报告结构非法/词表外方向/空 strategy_id/阈值序非法时抛
 # [TESTS] tests/research/test_strategy_iteration_upgrader.py
 # [A_module] module_id=MOD-FAC-007 | layer=module | stability=evolving | safety=M | ai_autonomy=human_gated
 # [TTL] permanent
@@ -103,8 +103,10 @@ DIRECTION_TEMPLATES: Final[dict[str, tuple[str, ...]]] = {
 class StrategyUpgradeError(Exception):
     """策略迭代升级输入/状态非法（Fail-Closed）。
 
-    未登记错误码-申请中：占位 ZA-FAC-UNREGISTERED-STRATEGY-UPGRADE。
+    错误码 ZA-FAC-0007 已登记转正（2026-09-06 Owner 批准批）。
     """
+
+    error_code = "ZA-FAC-0007"
 
 
 class WeightAction(str, Enum):

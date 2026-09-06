@@ -10,7 +10,7 @@
 # [STABILITY] evolving
 # [SAFETY] M
 # [AI_AUTONOMY] human_gated
-# [ERROR_CONTRACT] GpDiscoveryError(占位 ZA-FAC-UNREGISTERED-GP-DISCOVERY)——随机源/适应度评估器缺失/护栏参数越界/随机数越出 [0,1)/三重门禁未注入齐全/未知 candidate_id 审批时抛
+# [ERROR_CONTRACT] GpDiscoveryError(ZA-FAC-0005)——随机源/适应度评估器缺失/护栏参数越界/随机数越出 [0,1)/三重门禁未注入齐全/未知 candidate_id 审批时抛
 # [TESTS] tests/research/test_gp_strategy_discovery.py
 # [A_module] module_id=MOD-FAC-003 | layer=module | stability=evolving | safety=M | ai_autonomy=human_gated
 # [TTL] permanent
@@ -108,8 +108,10 @@ _DEPTH_MIN, _DEPTH_MAX = 2, 6
 class GpDiscoveryError(Exception):
     """GP 策略发现输入/状态非法（Fail-Closed）。
 
-    未登记错误码-申请中：占位 ZA-FAC-UNREGISTERED-GP-DISCOVERY。
+    错误码 ZA-FAC-0005 已登记转正（2026-09-06 Owner 批准批）。
     """
+
+    error_code = "ZA-FAC-0005"
 
 
 @dataclass(frozen=True)
