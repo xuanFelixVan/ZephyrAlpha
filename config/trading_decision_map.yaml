@@ -126,8 +126,483 @@ nodes:
     point: 盘前
     decision_question: 今天打哪个板块/赛道
     factor_refs: []
+    data_refs: [DS-059, DS-170]
+    module_ref: null
+    strategy_mounts: []
+    # ── E-L2 血肉 v1.3（D19，吸收 22 号 spec v1.9.7；算法附件=doc_ref 指向 22号 §3.1①-⑪）──
+    # 双通道输出（D19）：①Top候选池+强度分→TDM-E-L3（机器）②盘后板块轮动简报→Owner 注意力（人工，
+    #   锚 BM-SEL-25-C-3 跟风决策）——通道②由作战地图/预案引擎承载，地图只声明语义不建第二真源
+    # 水温接口挂起（D19）：树枝05 的 5 档推导待 L1 温度计时间周期定稿（宏观12态/情绪六段/水温5档
+    #   =月级/周级/日级三尺度错配，回炉 L1 讨论）——05-1/05-2 为挂起节点（pending 語义见备忘录 69 §2.9）
+    doc_ref: "docs/02_enterprise_architecture/07_trading_decision_architecture/design_memos/22_sector_rotation_spec.md"
+
+  # ── 树枝01 板块强度综合（22号 §3.1①⑧⑨）────────────────────────
+  - node_id: TDM-E-L2-01
+    name_zh: 板块强度综合
+    market: cn_a
+    flow: entry_flow
+    layer: L2
+    node_type: stage
+    point: 盘后
+    decision_question: 各板块今天整体强不强、强到值得进候选池吗
+    parent_node: TDM-E-L2
+    factor_refs: []
+    data_refs: [DS-059, DS-170]
+    module_ref: null
+    algo_refs: []
+    doc_ref: "docs/02_enterprise_architecture/07_trading_decision_architecture/design_memos/22_sector_rotation_spec.md#§3.2-板块强度综合"
+    activation: postmarket
+    invalidation: null
+    ai_autonomy: auto
+    fallback: 任一维度缺失时按剩余维度归一化输出并标注置信衰减
+    strategy_mounts: []
+
+  - node_id: TDM-E-L2-01-1
+    name_zh: 结构强度评估
+    market: cn_a
+    flow: entry_flow
+    layer: L2
+    node_type: stage
+    point: 盘后
+    decision_question: 板块情绪结构（涨停比/梯队/趋势）强不强
+    parent_node: TDM-E-L2-01
+    factor_refs: []
+    data_refs: [DS-059]
+    module_ref: src/zephyr/signal_ashare/sector_analyzer.py
+    algo_refs: []
+    doc_ref: "docs/02_enterprise_architecture/07_trading_decision_architecture/design_memos/22_sector_rotation_spec.md#§3.1①"
+    activation: postmarket
+    invalidation: 板块内封板率<70%时结构分×0.8（情绪虚高），以封板率终值复核
+    ai_autonomy: auto
+    fallback: 涨停比字段缺失→降级用涨停绝对数并标记不可跨板块比较
+    strategy_mounts:
+      - {strategy_ref: STR-DABAN-003, confidence: proposed, evidence: null}
+
+  - node_id: TDM-E-L2-01-2
+    name_zh: 动量活跃度排名
+    market: cn_a
+    flow: entry_flow
+    layer: L2
+    node_type: stage
+    point: 盘后
+    decision_question: 板块资金行为活跃度在全市场排第几
+    parent_node: TDM-E-L2-01
+    factor_refs: []
+    data_refs: [DS-059, DS-170]
+    module_ref: src/zephyr/data/sector_ranking_engine.py
+    algo_refs: []
+    doc_ref: "docs/02_enterprise_architecture/07_trading_decision_architecture/design_memos/22_sector_rotation_spec.md#§3.1①"
+    activation: postmarket
+    invalidation: null
+    ai_autonomy: auto
+    fallback: 基准 880001.SH 缺失→用全板块均值基准（与 RRG 同源规则）
+    strategy_mounts: []
+
+  - node_id: TDM-E-L2-01-3
+    name_zh: 多周期动量加权
+    market: cn_a
+    flow: entry_flow
+    layer: L2
+    node_type: stage
+    point: 盘后
+    decision_question: 是真启动还是一日游（q20/q5/q3 谁主导）
+    parent_node: TDM-E-L2-01
+    factor_refs: []
+    data_refs: [DS-170]
+    module_ref: src/zephyr/signal_ashare/sector_momentum.py
+    algo_refs: []
+    doc_ref: "docs/02_enterprise_architecture/07_trading_decision_architecture/design_memos/22_sector_rotation_spec.md#§3.1⑧"
+    activation: postmarket
+    invalidation: null
+    ai_autonomy: auto
+    fallback: q3 数据不足 3 日→退回 q5/q20 双因子并标注
+    strategy_mounts: []
+
+  - node_id: TDM-E-L2-01-4
+    name_zh: 板块资金流聚合
+    market: cn_a
+    flow: entry_flow
+    layer: L2
+    node_type: stage
+    point: 盘后
+    decision_question: 主力资金在进这个板块还是在出
+    parent_node: TDM-E-L2-01
+    factor_refs: []
+    data_refs: [DS-181, DS-186]
+    module_ref: src/zephyr/signal_ashare/sector_breadth.py
+    algo_refs: []
+    doc_ref: "docs/02_enterprise_architecture/07_trading_decision_architecture/design_memos/22_sector_rotation_spec.md#§3.1⑥"
+    activation: postmarket
+    invalidation: null
+    ai_autonomy: auto
+    fallback: money_flow 缺失→资金维度降权（结构+动量两维归一化）
+    strategy_mounts:
+      - {strategy_ref: STR-DABAN-002, confidence: proposed, evidence: null}
+
+  - node_id: TDM-E-L2-01-5
+    name_zh: 市场级调节注入
+    market: cn_a
+    flow: entry_flow
+    layer: L2
+    node_type: aggregation
+    point: 盘后
+    decision_question: 市场级轮动状态要不要对全板块强度统一加减分
+    parent_node: TDM-E-L2-01
+    factor_refs: []
     data_refs: []
     module_ref: null
+    algo_refs: []
+    doc_ref: "docs/02_enterprise_architecture/07_trading_decision_architecture/design_memos/22_sector_rotation_spec.md#§3.1⑨"
+    activation: postmarket
+    invalidation: null
+    ai_autonomy: auto
+    fallback: watch_score 缺失→按 0 处理（中性）
+    strategy_mounts: []
+
+  # ── 树枝02 轮动序列追踪（BM-SEL-08）────────────────────────
+  - node_id: TDM-E-L2-02
+    name_zh: 轮动序列追踪
+    market: cn_a
+    flow: entry_flow
+    layer: L2
+    node_type: stage
+    point: 盘后
+    decision_question: 资金正从哪些板块撤出、正接棒进哪些板块
+    parent_node: TDM-E-L2
+    factor_refs: []
+    data_refs: [DS-170]
+    module_ref: null
+    algo_refs: []
+    doc_ref: "docs/02_enterprise_architecture/07_trading_decision_architecture/design_memos/22_sector_rotation_spec.md#§3.1④"
+    activation: postmarket
+    invalidation: null
+    ai_autonomy: auto
+    fallback: null
+    strategy_mounts: []
+
+  - node_id: TDM-E-L2-02-1
+    name_zh: RRG 轮动序列
+    market: cn_a
+    flow: entry_flow
+    layer: L2
+    node_type: stage
+    point: 盘后
+    decision_question: 每个板块处在接棒/见顶/回避/布局哪个阶段
+    parent_node: TDM-E-L2-02
+    factor_refs: []
+    data_refs: [DS-170]
+    module_ref: null
+    algo_refs: []
+    doc_ref: "docs/02_enterprise_architecture/07_trading_decision_architecture/design_memos/22_sector_rotation_spec.md#§3.1④"
+    activation: postmarket
+    invalidation: 象限转移须连续 2-3 日确认，单日跳变不采信；transition 概率<10% 异常路径加 1 日确认
+    ai_autonomy: auto
+    fallback: 板块日K 不足 62 日（DualEma 最小数据量）→该板块不参与序列排名
+    strategy_mounts: []
+
+  - node_id: TDM-E-L2-02-2
+    name_zh: 单板块轮动预警
+    market: cn_a
+    flow: entry_flow
+    layer: L2
+    node_type: stage
+    point: 盘中
+    decision_question: 这个板块是不是涨到头要见顶了
+    parent_node: TDM-E-L2-02
+    factor_refs: []
+    data_refs: [DS-059]
+    module_ref: src/zephyr/signal_ashare/sector_analyzer.py
+    algo_refs: []
+    doc_ref: "docs/02_enterprise_architecture/07_trading_decision_architecture/design_memos/22_sector_rotation_spec.md#§3.1④"
+    activation: intraday
+    invalidation: null
+    ai_autonomy: auto
+    fallback: null
+    strategy_mounts: []
+
+  # ── 树枝03 调整周期进度（BM-SEL-09）────────────────────────
+  - node_id: TDM-E-L2-03
+    name_zh: 调整周期进度
+    market: cn_a
+    flow: entry_flow
+    layer: L2
+    node_type: stage
+    point: 盘后
+    decision_question: 目标板块的调整走完了没有、能不能低吸
+    parent_node: TDM-E-L2
+    factor_refs: []
+    data_refs: [DS-170]
+    module_ref: null
+    algo_refs: []
+    doc_ref: "docs/02_enterprise_architecture/07_trading_decision_architecture/design_memos/22_sector_rotation_spec.md#§3.1③"
+    activation: postmarket
+    invalidation: null
+    ai_autonomy: auto
+    fallback: null
+    strategy_mounts: []
+
+  - node_id: TDM-E-L2-03-1
+    name_zh: 扩散指标进度追踪
+    market: cn_a
+    flow: entry_flow
+    layer: L2
+    node_type: stage
+    point: 盘后
+    decision_question: 调整进度百分比到哪了
+    parent_node: TDM-E-L2-03
+    factor_refs: []
+    data_refs: [DS-170]
+    module_ref: null
+    algo_refs: []
+    doc_ref: "docs/02_enterprise_architecture/07_trading_decision_architecture/design_memos/22_sector_rotation_spec.md#§3.1③"
+    activation: postmarket
+    invalidation: null
+    ai_autonomy: auto
+    fallback: 扩散指标滞后（震荡/快轮动期）→以 RRG 序列交叉验证（22号声明分工）
+    strategy_mounts: []
+
+  # ── 树枝04 板块级市场状态 ────────────────────────
+  - node_id: TDM-E-L2-04
+    name_zh: 板块级市场状态
+    market: cn_a
+    flow: entry_flow
+    layer: L2
+    node_type: aggregation
+    point: 盘后
+    decision_question: 今天板块间分布结构是高潮/主线/分歧/派发/混沌哪种
+    parent_node: TDM-E-L2
+    factor_refs: []
+    data_refs: [DS-059, DS-170]
+    module_ref: null
+    algo_refs: []
+    doc_ref: "docs/02_enterprise_architecture/07_trading_decision_architecture/design_memos/22_sector_rotation_spec.md#§3.1⑨⑤"
+    activation: postmarket
+    invalidation: null
+    ai_autonomy: auto
+    fallback: null
+    strategy_mounts: []
+
+  - node_id: TDM-E-L2-04-1
+    name_zh: 轮动状态五分类
+    market: cn_a
+    flow: entry_flow
+    layer: L2
+    node_type: stage
+    point: 盘后
+    decision_question: 今天该给全板块强度打几分的调节分
+    parent_node: TDM-E-L2-04
+    factor_refs: []
+    data_refs: [DS-059, DS-170]
+    module_ref: null
+    algo_refs: []
+    doc_ref: "docs/02_enterprise_architecture/07_trading_decision_architecture/design_memos/22_sector_rotation_spec.md#§3.1⑨"
+    activation: postmarket
+    invalidation: null
+    ai_autonomy: auto
+    fallback: 四维输入缺失→默认 NEUTRAL_MIXED（0 分）
+    strategy_mounts: []
+
+  - node_id: TDM-E-L2-04-2
+    name_zh: 虹吸态识别
+    market: cn_a
+    flow: entry_flow
+    layer: L2
+    node_type: stage
+    point: 盘后
+    decision_question: 是不是极端分化只该做头部板块
+    parent_node: TDM-E-L2-04
+    factor_refs: []
+    data_refs: [DS-059, DS-181]
+    module_ref: null
+    algo_refs: []
+    doc_ref: "docs/02_enterprise_architecture/07_trading_decision_architecture/design_memos/22_sector_rotation_spec.md#§3.1⑤"
+    activation: postmarket
+    invalidation: null
+    ai_autonomy: auto
+    fallback: 虹吸样本<3 个月阈值未标定→score 输出但不触发收紧
+    strategy_mounts: []
+
+  # ── 树枝05 水温响应（D19 挂起：待 L1 温度计时间周期定稿）──────────
+  - node_id: TDM-E-L2-05
+    name_zh: 水温响应
+    market: cn_a
+    flow: entry_flow
+    layer: L2
+    node_type: stage
+    point: 盘前
+    decision_question: 当前水温下板块信号按什么比例放行
+    parent_node: TDM-E-L2
+    factor_refs: []
+    data_refs: [DS-150]
+    module_ref: null
+    algo_refs: []
+    doc_ref: "docs/02_enterprise_architecture/07_trading_decision_architecture/design_memos/22_sector_rotation_spec.md#§3.1⑪"
+    activation: premarket
+    invalidation: null
+    ai_autonomy: auto
+    fallback: null
+    strategy_mounts: []
+
+  - node_id: TDM-E-L2-05-1
+    name_zh: 水温档推导
+    market: cn_a
+    flow: entry_flow
+    layer: L2
+    node_type: stage
+    point: 盘前
+    decision_question: L1 双轴输出（regime 概率×情绪六段）翻译成哪一档水温
+    parent_node: TDM-E-L2-05
+    factor_refs: []
+    data_refs: [DS-150]
+    module_ref: null
+    algo_refs: []
+    doc_ref: "docs/02_enterprise_architecture/07_trading_decision_architecture/design_memos/22_sector_rotation_spec.md#§3.1⑪"
+    activation: premarket
+    invalidation: null
+    ai_autonomy: auto
+    fallback: L1-AGG 输出缺失→沿用前一交易日档位并告警（不自行判定）
+    strategy_mounts: []
+
+  - node_id: TDM-E-L2-05-2
+    name_zh: 信号响应三件套
+    market: cn_a
+    flow: entry_flow
+    layer: L2
+    node_type: stage
+    point: 盘前
+    decision_question: 信号权重/门槛阈值/象限过滤今天分别取什么值
+    parent_node: TDM-E-L2-05
+    factor_refs: []
+    data_refs: []
+    module_ref: null
+    algo_refs: []
+    doc_ref: "docs/02_enterprise_architecture/07_trading_decision_architecture/design_memos/22_sector_rotation_spec.md#§3.1⑪"
+    activation: premarket
+    invalidation: null
+    ai_autonomy: auto
+    fallback: null
+    strategy_mounts: []
+
+  # ── 树枝06 板块→个股传导 ────────────────────────
+  - node_id: TDM-E-L2-06
+    name_zh: 板块个股传导
+    market: cn_a
+    flow: entry_flow
+    layer: L2
+    node_type: stage
+    point: 盘后
+    decision_question: 板块结论怎么喂给个股层而不越权
+    parent_node: TDM-E-L2
+    factor_refs: []
+    data_refs: []
+    module_ref: null
+    algo_refs: []
+    doc_ref: "docs/02_enterprise_architecture/07_trading_decision_architecture/design_memos/22_sector_rotation_spec.md#§3.1⑦⑩"
+    activation: postmarket
+    invalidation: null
+    ai_autonomy: auto
+    fallback: null
+    strategy_mounts: []
+
+  - node_id: TDM-E-L2-06-1
+    name_zh: 三级放行门槛
+    market: cn_a
+    flow: entry_flow
+    layer: L2
+    node_type: stage
+    point: 盘中
+    decision_question: 这只股配不配进打分池（先 gate 后 weight）
+    parent_node: TDM-E-L2-06
+    factor_refs: []
+    data_refs: [DS-059]
+    module_ref: null
+    algo_refs: []
+    doc_ref: "docs/02_enterprise_architecture/07_trading_decision_architecture/design_memos/22_sector_rotation_spec.md#§3.1⑩"
+    activation: intraday
+    invalidation: null
+    ai_autonomy: auto
+    fallback: Top 热门列表缺失→只走超强个股通配通道（≥0.80）
+    strategy_mounts: []
+
+  - node_id: TDM-E-L2-06-2
+    name_zh: 龙头识别定位
+    market: cn_a
+    flow: entry_flow
+    layer: L2
+    node_type: stage
+    point: 盘中
+    decision_question: 它是龙头/中军/跟风/中位股哪一种
+    parent_node: TDM-E-L2-06
+    factor_refs: []
+    data_refs: [DS-059]
+    module_ref: null
+    algo_refs: []
+    doc_ref: "docs/02_enterprise_architecture/07_trading_decision_architecture/design_memos/22_sector_rotation_spec.md#§3.1⑦"
+    activation: intraday
+    invalidation: 封单不稳/率先掉队→定位实时降级（中位股=禁区禁触）
+    ai_autonomy: auto
+    fallback: null
+    strategy_mounts: []
+
+  - node_id: TDM-E-L2-06-3
+    name_zh: 强度加权传导
+    market: cn_a
+    flow: entry_flow
+    layer: L2
+    node_type: stage
+    point: 盘后
+    decision_question: 板块强度给个股 score 加成或打几折
+    parent_node: TDM-E-L2-06
+    factor_refs: []
+    data_refs: [DS-059]
+    module_ref: null
+    algo_refs: []
+    doc_ref: "docs/02_enterprise_architecture/07_trading_decision_architecture/design_memos/22_sector_rotation_spec.md#§3.1⑦"
+    activation: postmarket
+    invalidation: null
+    ai_autonomy: auto
+    fallback: null
+    strategy_mounts: []
+
+  # ── 树枝07 回踩质量分级（BM-BUY-04 消费）───────────────────
+  - node_id: TDM-E-L2-07
+    name_zh: 回踩质量分级
+    market: cn_a
+    flow: entry_flow
+    layer: L2
+    node_type: stage
+    point: 盘中
+    decision_question: 这次回踩是 A/B/C 哪级、值不值得买给多少仓
+    parent_node: TDM-E-L2
+    factor_refs: []
+    data_refs: [DS-170]
+    module_ref: null
+    algo_refs: []
+    doc_ref: "docs/02_enterprise_architecture/07_trading_decision_architecture/design_memos/22_sector_rotation_spec.md#§3.1②"
+    activation: intraday
+    invalidation: null
+    ai_autonomy: auto
+    fallback: null
+    strategy_mounts: []
+
+  - node_id: TDM-E-L2-07-1
+    name_zh: 回踩ABC判定
+    market: cn_a
+    flow: entry_flow
+    layer: L2
+    node_type: stage
+    point: 盘中
+    decision_question: Fib 位置×量能衰减×板块强度×时间窗合出 A/B/C 哪级
+    parent_node: TDM-E-L2-07
+    factor_refs: []
+    data_refs: [DS-170]
+    module_ref: null
+    algo_refs: []
+    doc_ref: "docs/02_enterprise_architecture/07_trading_decision_architecture/design_memos/22_sector_rotation_spec.md#§3.1②"
+    activation: intraday
+    invalidation: 回踩>15 交易日转横盘失效；<2 日属盘中洗盘不入级；>78.6% 趋势结构破坏
+    ai_autonomy: auto
+    fallback: null
     strategy_mounts: []
 
   - node_id: TDM-E-L3
@@ -359,6 +834,24 @@ edges:
   - {from_node: TDM-E-L1-S1, to_node: TDM-E-L1-S3, edge_type: feedback}
   # 漏斗主链（sequence，受上一步约束）
   - {from_node: TDM-E-L1-AGG, to_node: TDM-E-L1, edge_type: sequence}
+  # ── E-L2 树枝边（D19）：树枝内 feed/sequence + L1 融合接口 + 跨层输出 ──
+  - {from_node: TDM-E-L2-01-1, to_node: TDM-E-L2-01, edge_type: feed}
+  - {from_node: TDM-E-L2-01-2, to_node: TDM-E-L2-01, edge_type: feed}
+  - {from_node: TDM-E-L2-01-3, to_node: TDM-E-L2-01, edge_type: feed}
+  - {from_node: TDM-E-L2-01-4, to_node: TDM-E-L2-01, edge_type: feed}
+  - {from_node: TDM-E-L2-01-5, to_node: TDM-E-L2-01, edge_type: feed}
+  - {from_node: TDM-E-L2-02-1, to_node: TDM-E-L2-01, edge_type: feed}
+  - {from_node: TDM-E-L2-04-1, to_node: TDM-E-L2-01-5, edge_type: feed}
+  - {from_node: TDM-E-L2-04-2, to_node: TDM-E-L2-06-2, edge_type: feed}
+  - {from_node: TDM-E-L1-AGG, to_node: TDM-E-L2-05-1, edge_type: feed}
+  - {from_node: TDM-E-L2-05-1, to_node: TDM-E-L2-05-2, edge_type: sequence}
+  - {from_node: TDM-E-L2-05-2, to_node: TDM-E-L2-06-1, edge_type: feed}
+  - {from_node: TDM-E-L2-05-2, to_node: TDM-E-L2-02-1, edge_type: feed}
+  - {from_node: TDM-E-L2-06-1, to_node: TDM-E-L2-06-2, edge_type: sequence}
+  - {from_node: TDM-E-L2-06-2, to_node: TDM-E-L2-06-3, edge_type: sequence}
+  - {from_node: TDM-E-L2-06-3, to_node: TDM-E-L3, edge_type: feed}
+  - {from_node: TDM-E-L2-03-1, to_node: TDM-E-L4, edge_type: feed}
+  - {from_node: TDM-E-L2-07-1, to_node: TDM-E-L4, edge_type: feed}
   - {from_node: TDM-E-L1, to_node: TDM-E-L2, edge_type: sequence}
   - {from_node: TDM-E-L2, to_node: TDM-E-L3, edge_type: sequence}
   - {from_node: TDM-E-L3, to_node: TDM-E-L4, edge_type: sequence}
