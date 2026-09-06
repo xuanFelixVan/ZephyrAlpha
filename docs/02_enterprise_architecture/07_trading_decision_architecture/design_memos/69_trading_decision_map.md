@@ -5,7 +5,7 @@ title: 交易决策地图（Trading Decision Map）——决策内容索引层�
 owner: ZephyrAlpha-Owner
 language: zh
 status: active
-version: "2.0.0"
+version: "2.1.0"
 date: 2026-09-04
 topic: trading_decision_map
 scope: 07_trading_decision_architecture
@@ -255,6 +255,18 @@ E-L2 收口：**10 树枝 19 节点**。
 **V2 前沿登记（不施工）**：LLM/事件驱动选股三连——Agentic AI Screening（哥大 2026-08：双 LLM agent 商议筛池，Sharpe 优于未筛选基线）/Janus-Q（2026-02：事件驱动端到端，Event-to-CAR）/PEAD.txt（费城联储：文本驱动盈利漂移=数字版 2 倍，"市场学会处理数字还处理不了文本"）；社区范式"**math filters, LLM judges**"（375 只确定性打分→top30 送 LLM 终审）。=07-3 eventdriven sleeve 的 V2 形态+未来新树枝候选。
 
 **L3 收口：10 树枝 16 节点**（策略锚 13 条）。
+
+### 2.18 E-L4 买卖点与执行层血肉（D30，Owner 2026-09-06 终裁）
+
+**盘点**（SOP Step 1）：41 号 buy_flow 九要点全裁定（设计真源）+ex_core 执行域已落码（daban_execution/daban_exit_decision/async_fill_dispatcher/cancel_rate_guard/board_lot）+EXA 六算法+signal_ashare 竞价微结构/买卖点判定+时间纪律两条（028/004）+QMT 硬约束。
+
+**四路调研**：①OE 三代演进（Almgren-Chriss→RL：MAP-Elites 质量多样性按流动性×波动率生成 regime 专家/BofA CNN agent 2.13bps vs VWAP 5.23bps）②Conformal 门控（预测置信区间门控执行节奏，成本方差 19.1→10.0bps 可解释）+Smart TWAP 范式（AI 预测调制乘数非执行量）③TCA 三阶段（Pre-Trade/Intraday/Post-Trade 六基准）+滑点四分类+参与率纪律≤市场量 10-20% ④A股三买点（排板/扫板/打回封）+排板生存智慧（换手板/封单要实且递增/黄金窗口 5-15 分钟/撤单纪律）+竞价分段铁律（9:15-9:20 假象/9:20-9:25 真实/14:57 不可撤）+竞价封单读法。
+
+**结构定稿（9 树枝 9 节点=41 号九要点一一对应）**：01 分批建仓（置信度 2 批+回踩调节）→02 买入时序（尾盘集中+竞价分段+028/004 时间锚）→03 价格锚定（限价为主）→04 资金分配多标的→05 打板执行专项（**ex_core production 锚**；三买点+封单质量+撤单纪律；QMT 约束入 invalidation）→06 执行算法（EXA 六件 algo_refs；参与率纪律）→07 条件触发队列（扳机清单横切基础设施）→08 突破失败降级（→X-S1 衔接边）→09 T+1/涨跌停约束（cross_cutting）。
+
+**治理阶梯落地**：05/06=实盘执行节点，ai_autonomy=**paper**（D18 初始档，升档需 Owner dated 裁定）；其余 auto。**TCA 不设节点**：执行质量归因（滑点 bps/成交率/排队成交率）由 C3 归因承载，TCA 三阶段登记为 C3 子项。**OE 前沿登记升级路径**：MAP-Elites regime 专家/Conformal 门控/Smart TWAP 调制。**红节点 7**（01-04/07-08/09 待施工，05 production、06 algo_refs 锚）。
+
+**建仓流（E 流）就此全封板**：L1（六传感器+四层温度计）→L2（10 树枝 19 节点）→L3（10 树枝 16 节点）→L4（9 树枝 9 节点）。
 
 ## 3. 考虑过的替代方案与拒绝理由
 
