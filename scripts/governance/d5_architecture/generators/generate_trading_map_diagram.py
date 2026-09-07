@@ -1,3 +1,5 @@
+# [BLUEPRINT] MOD-D_GOV_SCRIPTS | (auto-injected by S4 reconciler) | §
+# [TTL] permanent
 # -*- coding: utf-8 -*-
 """交易决策地图全景图生成器（10 号目录，8 MD + 8 可缩放 HTML）。
 
@@ -94,12 +96,17 @@ def _render_mermaid(nodes: list[dict], edges: list[dict], external: dict[str, li
             lines.append(f"  {_mid(a)} --> EXT_OUT_{_mid(b)}([→ {_esc(b)}])")
     reds = [ _mid(n["node_id"]) for n in nodes if _is_red_node(n) ]
     papers = [ _mid(n["node_id"]) for n in nodes if n.get("ai_autonomy") == "paper" ]
-    lines.append("  classDef red fill:#2a1f14,stroke:#d97b29,color:#e8a04c,stroke-dasharray: 5 5;")
-    lines.append("  classDef paper fill:#14263a,stroke:#3d8bff,color:#9cc3ef;")
+    # 配色=模板 §4.7 跨文档统一（对齐 battle_map/域文档浅色系；深色主题由 HTML 主题层处理）
+    lines.append("  classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000;")
+    lines.append("  classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-dasharray: 5 5;")
+    lines.append("  classDef paper fill:#e8f5e9,stroke:#2e7d32,stroke-width:2.5px,color:#000;")
+    prod = [ _mid(n["node_id"]) for n in nodes if not _is_red_node(n) ]
+    if prod:
+        lines.append(f"  class {','.join(prod)} production;")
     if reds:
-        lines.append(f"  class {','.join(reds)} red;")
+        lines.append(f"  class {','.join(reds)} design;")
     if papers:
-        lines.append(f"  class {','.join(papers)} paper;")
+        lines.append(f"  class {','.join(papers)} paper;")  # paper 优先级最高（覆盖 production/design 底色）
     return "\n".join(lines)
 
 
@@ -116,17 +123,17 @@ def _fmt_mounts(n: dict) -> str:
 
 
 def _render_detail_table(nodes: list[dict]) -> str:
-    rows = ["| node_id | 名称 | 决策问题 | 时点 | activation | ai_autonomy | 模块锚 | 策略挂载 |",
-            "|---|---|---|---|---|---|---|---|"]
+    rows = ["| node_id | 名称 | 怎么算（大白话） | 时点 | 档位 | 模块锚 |",
+            "|---|---|---|---|---|---|"]
     for n in nodes:
         red = "🔴" if _is_red_node(n) else ""
         mod = n.get("module_ref") or "—"
         if n.get("module_id"):
-            mod = f"{mod}（{n['module_id']}）"
+            mod = f"{n['module_id']}"
+        note = (n.get("algo_note_zh") or "（待补）").strip().replace("|", "／")
         rows.append(
-            f"| {n['node_id']}{red} | {_esc(n.get('name_zh'))} | {_esc(n.get('decision_question'), 60)} "
-            f"| {n.get('point') or '—'} | {n.get('activation') or '—'} | {n.get('ai_autonomy') or '—'} "
-            f"| {_esc(str(mod), 60)} | {_esc(_fmt_mounts(n), 40)} |"
+            f"| {n['node_id']}{red} | {_esc(n.get('name_zh'))} | {note.strip()} "
+            f"| {n.get('point') or '—'} | {n.get('ai_autonomy') or '—'} | {mod} |"
         )
     return "\n".join(rows)
 

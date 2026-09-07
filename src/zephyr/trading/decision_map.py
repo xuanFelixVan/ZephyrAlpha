@@ -196,6 +196,9 @@ class DecisionMapNode:
     # v1.6（D34 交叉索引）：MOD-* 交叉锚——对齐五图体系（depgraph 以 module_id 为对齐 key）
     module_id: str | None = None
     # v1.7（D36/D37 全库交叉轴）：11 业务库引用（PAT/SEAT/MAC/CYC/UNI/CST/EVT/RLM/PFM/BMK/THD；表驱动见 _XREF_SPECS）
+    # v1.8（Owner 2026-09-07 裁定）：大白话算法说明——"这个节点怎么算的"给全景图读者看（含关键指标与阈值口径）；
+    #   必填（全景图可读性门禁），写作标准=大白话+具体参数（如"振幅≥3%/价差≥0.3%"），禁止空话
+    algo_note_zh: str = ""
     pattern_refs: tuple[str, ...] = ()
     seat_refs: tuple[str, ...] = ()
     macro_refs: tuple[str, ...] = ()
@@ -331,6 +334,8 @@ def _parse_node(raw: dict) -> DecisionMapNode:
         algo_refs=tuple(str(x) for x in raw.get("algo_refs", []) or []),
         doc_ref=(str(raw["doc_ref"]) if raw.get("doc_ref") else None),
         module_id=(str(raw["module_id"]) if raw.get("module_id") else None),
+        # v1.8 大白话算法说明（全景图可读性）
+        algo_note_zh=str(raw.get("algo_note_zh", "") or ""),
         # v1.7 11 库交叉轴（表驱动字段，全部可选默认空）
         **{field: tuple(str(x) for x in raw.get(field, []) or []) for field, *_ in _XREF_SPECS},
     )
@@ -668,6 +673,9 @@ def _validate_governance(
             if w in n.decision_question:
                 add("error", "R17", n.node_id, f"decision_question 含模糊词「{w}」（IF-THEN 粒度门禁）")
                 break
+        # R37 全景图可读性（Owner 2026-09-07 裁定）：大白话算法说明必填——无它读者看不懂"怎么算的"
+        if not n.algo_note_zh.strip():
+            add("error", "R37", n.node_id, "缺 algo_note_zh（大白话算法说明——含关键指标与阈值口径，全景图可读性门禁）")
         # D33 节点容量门禁：单节点承载上限（超出=粒度过粗，必须拆节点）
         if len(n.strategy_mounts) > _MAX_MOUNTS:
             add("error", "R17", n.node_id, f"strategy_mounts {len(n.strategy_mounts)} 个超上限 {_MAX_MOUNTS}（该拆环节）")

@@ -47,6 +47,7 @@ def _make_min_node(**overrides) -> dict:
         "node_type": "stage",
         "point": "盘前",
         "decision_question": "测试问题",
+        "algo_note_zh": "测试大白话说明：怎么算的（R37 必填）。",
         "factor_refs": [],
         "data_refs": [],
         "module_ref": None,
