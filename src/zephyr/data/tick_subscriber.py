@@ -1364,6 +1364,9 @@ class BridgeTickSource:
     # 沙箱全市场一轮 ~2.4s（27 批×(拉取+0.05s)+主间隔 1s）；0.5s 轮询延迟可忽略
     _POLL_INTERVAL_S = 0.5
     _STALE_WARN_S = 60.0  # 盘中桥文件超 60s 无新增告警（预留午间等短暂停）
+    # 重启追赶限速：单轮最多读 4MB（约 6 万行）——重启后积压从边车 offset 续读，
+    # 分多轮消化防队列洪泛（2026-09-07 实证：无上限时启动 burst 丢 1 万行）
+    _MAX_READ_CHUNK_BYTES = 4 * 1024 * 1024
 
     def __init__(self, sub: TickSubscriber, env: str = "sim", bridge_file: str | Path | None = None):
         """初始化桥数据源。
@@ -1378,6 +1381,7 @@ class BridgeTickSource:
         self._sub = sub
         self._env = env
         self._path = Path(bridge_file) if bridge_file else Path(self.ENV_CONFIG[env])
+        self._offset_path = self._path.with_suffix(self._path.suffix + ".offset")  # offset 边车
         self._offset = 0
         self._last_timetag: dict[str, str] = {}  # 桥侧去重（沙箱重启重 dump 防御）
         self._running = False
@@ -1389,18 +1393,49 @@ class BridgeTickSource:
         """只读：桥文件路径。"""
         return self._path
 
+    def _load_offset(self) -> int:
+        """启动时从边车恢复 offset（生产重启防全天重读）。
+
+        边车缺失（首次运行/测试）→ 0（从头读，对拍测试语义）。
+        文件比 offset 小（跨天重建）→ 0（_poll_once 的重建检测也会归零）。
+        边车损坏 → 0（fail-safe 重读，靠 timetag 去重挡 CH 重复）。
+        """
+        try:
+            if self._offset_path.exists():
+                saved = int(self._offset_path.read_text(encoding="ascii").strip())
+                if 0 <= saved <= self._path.stat().st_size:
+                    return saved
+                log.warning(
+                    "offset 边车越界（saved=%d size=%d，跨天重建？），从头读",
+                    saved,
+                    self._path.stat().st_size,
+                )
+        except (OSError, ValueError) as e:
+            log.warning("offset 边车读取失败（fail-safe 从头读）: %s", e)
+        return 0
+
+    def _save_offset(self) -> None:
+        """offset 落边车（原子写；best-effort，失败仅告警不阻断采集）。"""
+        try:
+            tmp = self._offset_path.with_suffix(".tmp")
+            tmp.write_text(str(self._offset), encoding="ascii")
+            tmp.replace(self._offset_path)
+        except OSError as e:
+            log.warning("offset 边车写出失败（不阻断）: %s", e)
+
     def start(self) -> bool:
-        """启动桥数据源：校验桥文件可读 → 下游链初始化 → 尾读线程。
+        """启动桥数据源：校验桥文件可读 → offset 边车恢复 → 下游链初始化 → 尾读线程。
 
         Returns:
-            False=桥文件不存在（QMT 沙箱 TICKDUMP v18 未启动）或下游链初始化失败。
+            False=桥文件不存在（QMT 沙箱 TICKDUMP 未启动）或下游链初始化失败。
         """
         if not self._path.exists():
             log.error(
-                "桥文件不存在: %s（QMT 沙箱 TICKDUMP v18 策略未启动？93 号备忘 §14）",
+                "桥文件不存在: %s（QMT 沙箱 TICKDUMP 策略未启动？93 号备忘 §14）",
                 self._path,
             )
             return False
+        self._offset = self._load_offset()  # 生产重启续读（防全天重读洪泛+CH 重复）
         if not self._sub.start_bridge():
             return False
         self._running = True
@@ -1425,7 +1460,7 @@ class BridgeTickSource:
         log.info("桥尾读线程结束: offset=%d", self._offset)
 
     def _poll_once(self) -> int:
-        """单轮尾读：offset 增量读 + 残行回退 + 解析 + timetag 去重 + 入队。
+        """单轮尾读：offset 增量读（限 4MB/轮）+ 残行回退 + 解析 + timetag 去重 + 入队。
 
         Returns:
             本轮入队 tick 数。
@@ -1448,9 +1483,11 @@ class BridgeTickSource:
             return 0
 
         # 二进制尾读：offset 按字节推进（ASCII 文件字节==字符，无编码漂移）
+        # 单轮读上限 _MAX_READ_CHUNK_BYTES：重启追赶积压分多轮消化，防队列洪泛
+        read_upto = min(size, self._offset + self._MAX_READ_CHUNK_BYTES)
         with open(self._path, "rb") as f:
             f.seek(self._offset)
-            chunk = f.read()
+            chunk = f.read(read_upto - self._offset)
         if not chunk.endswith(b"\n"):
             # 残行回退：行尾无换行 = 写侧 append 中途的撕裂半行，留到下一轮
             cut = chunk.rfind(b"\n")
@@ -1458,6 +1495,7 @@ class BridgeTickSource:
             if not chunk:
                 return 0
         self._offset += len(chunk)
+        self._save_offset()  # offset 边车持久化（生产重启续读，93 号备忘 §14.8）
 
         text = chunk.decode("ascii", errors="replace")
         n = 0

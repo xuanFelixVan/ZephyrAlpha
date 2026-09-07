@@ -1459,6 +1459,62 @@ class TestBridgeTickSource:
         )
         assert bridge._poll_once() == 1
 
+    def test_offset_sidecar_persistence(self, tmp_path):
+        """offset 边车持久化：poll 推进落边车；新实例 _load_offset 续读（重启防全天重读）。"""
+        sub, bridge, path = self._make_bridge(tmp_path)
+        with open(path, "a", encoding="ascii") as f:
+            f.write("000001.SZ,10.5,100,1050.00,10.49,10.51,5,3,20260904100003\n")
+        assert bridge._poll_once() == 1
+        sidecar = path.with_suffix(".csv.offset")
+        assert sidecar.exists()
+        saved = int(sidecar.read_text(encoding="ascii"))
+        assert saved == path.stat().st_size  # offset=文件大小（已读完）
+
+        # 模拟重启：新实例从边车续读——追加新行只读增量，旧行不重放
+        with open(path, "a", encoding="ascii") as f:
+            f.write("000001.SZ,10.6,200,2112.00,10.59,10.61,6,4,20260904100006\n")
+        sub2 = _make_sub()
+        bridge2 = BridgeTickSource(sub2, bridge_file=path)
+        assert bridge2._load_offset() == saved  # 边车恢复
+        bridge2._offset = bridge2._load_offset()  # 生产 start() 同款赋值
+        assert bridge2._poll_once() == 1  # 只入队 1 条新行（旧行 offset 已跳过）
+        sym, tick = sub2.tick_queue.get_nowait()
+        assert sym == "000001.SZ"
+        assert tick["lastPrice"] == 10.6
+
+        # 边车越界（文件被重建变小）→ fail-safe 从头读
+        tiny = tmp_path / "ticks_tiny.csv"
+        tiny.write_text("000001.SZ,10.5,100,1050.00,10.49,10.51,5,3,20260904100003\n", encoding="ascii")
+        tiny.with_suffix(".csv.offset").write_text(str(saved + 99999), encoding="ascii")
+        b3 = BridgeTickSource(_make_sub(), bridge_file=tiny)
+        assert b3._load_offset() == 0
+
+        # 边车损坏（非数字）→ fail-safe 从头读
+        tiny.with_suffix(".csv.offset").write_text("garbage", encoding="ascii")
+        assert b3._load_offset() == 0
+
+    def test_read_chunk_cap(self, tmp_path):
+        """重启追赶限速：积压超 4MB 单轮只读一部分，分多轮消化（防队列洪泛）。"""
+        sub, bridge, path = self._make_bridge(tmp_path)
+        # 写超 4MB（每行 ~70B → 61000 行 ≈ 4.3MB）；timetag 每行递增防去重干扰
+        with open(path, "a", encoding="ascii") as f:
+            for i in range(61000):
+                # timetag=行号映射的当日秒数（0..61000s<86400）——61000 行全部唯一，无去重干扰
+                s = i % 86400
+                tt = f"20260904{s // 3600:02d}{(s // 60) % 60:02d}{s % 60:02d}"
+                f.write(f"000001.SZ,10.500,1000,10500.00,10.490,10.510,500,300,{tt}\n")
+        total_size = path.stat().st_size
+        assert total_size > BridgeTickSource._MAX_READ_CHUNK_BYTES
+
+        n1 = bridge._poll_once()  # 第一轮：≤4MB
+        assert n1 < 61000  # 只消化了部分
+        assert bridge._offset <= BridgeTickSource._MAX_READ_CHUNK_BYTES
+        assert bridge._offset < total_size  # 还有积压
+
+        n2 = bridge._poll_once()  # 第二轮继续消化剩余
+        assert n2 > 0
+        assert bridge._offset == total_size  # 两轮读完（第二轮 + 剩余 < 4MB）
+
     def test_start_bridge_heartbeat_degradation(self, tmp_path, monkeypatch):
         """心跳降级：无 xtdata 环境 start_bridge——交易日判定走日历包降级心跳照写
         （mode=bridge），看门狗不触发 xtdata 重订阅链。"""

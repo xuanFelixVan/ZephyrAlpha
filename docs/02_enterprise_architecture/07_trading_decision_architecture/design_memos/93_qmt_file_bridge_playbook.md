@@ -5,7 +5,7 @@ title: 大QMT文件桥双向通道操作手册（miniQMT 替代方案）
 owner: ZephyrAlpha-Owner
 language: zh
 status: active
-version: "1.8.5"
+version: "1.8.6"
 date: 2026-09-07
 topic: qmt_file_bridge
 scope: 07_trading_decision_architecture
@@ -563,6 +563,24 @@ schtasks /run /tn ZephyrAlpha_TickSubscriber                              # 重�
 
 **已验证项（2026-09-07 实测）**：参数拼接双路径（xtdata 零变化 / bridge 加 flag）、argparse flag 注册、孤儿清理命令行子串匹配（`--bridge` 后缀不破坏 Contains 匹配）、BIZ-STALE 心跳监控兼容（桥模式心跳同字段）。注：guard watchdog 环境变量在 schtasks 交互会话下从用户环境继承，Task Scheduler 注册配置未改动。
 
+### 14.8 v19 全板块 5 档 dump + 桥重启自愈（2026-09-07 当日闭环）
+
+**v19 策略**（`ZEPHYR_TICKDUMP3`，E:\qmt_bridge_sim\ZEPHYR_TICKDUMP_v19.txt，ticks3.csv）——单策略合并版（订阅激活+轮询收割），替代 v18+v18.2 双跑：
+
+- **universe**：A股 5218 + 基金 2270 + 指数 588 + 转债 318 = 8394 只（京市A股/沪深B股按 Owner 2026-09-07 裁定排除——京市 50 万门槛+流动性差，B 股外汇计价无适配策略）
+- **5 档盘口**：25 列 CSV（bid1-5/ask1-5/bidVol1-5/askVol1-5 全量）——此前 v18 只 dump 1 档是写策略时砍的，源头 get_full_tick 本来就有完整 5 档
+- **项目侧**：_parse_line 列数自适应（9 列 v18 / 25 列 v19 同文件共存）；5 档完整进 tick dict（Redis 热缓存 write_batch 存完整 dict，盘中策略可拿 5 档），tick_to_row 取 [0] 落 tick_data（表 schema 1 档不变）；CLI 增 --bridge-file 覆盖参数
+- **对拍收官（14:34-14:39 窗口）**：±5s 匹配率 **99.8%**，price 一致 **99.3%** / volume 98.7% / bid1 99.6% / ask1 98.1%——差异样本全部为转债 3 秒相位内自然波动（v18 低密度期 73% → v18.2 高密度期 91.7% → v19 99.3%，两源同为 3 秒快照相位差收敛）
+
+**桥重启自愈（生产硬ening，9/18 前必做项当日完成）**：
+- **offset 边车持久化**：`<桥文件>.csv.offset` 原子写，重启续读防全天重读（CH 海量重复+队列洪泛）——2026-09-07 实证无此机制时启动 burst 丢 1 万行（3.7%）
+- **单轮读上限 4MB**：重启追赶积压分多轮消化（0.5s/轮），队列不再洪泛
+- **边车三态防御**：越界（跨天文件重建）→ 从头读；损坏 → 从头读；timetag 去重兜底挡 CH 重复
+
+**当日下午连带发现（非桥问题，生产侧）**：
+- 全市场订阅激活后引擎推送量暴涨 ~20 倍（~6K 行/分→~200K 行/分），生产 miniqmt 订阅管道过载（丢 0.3%、入库滞后 ~5 分钟）——订阅共享：沙箱订阅激活的 3s 推送对同一 miniquote 服务的**外部 xtdata 订阅者同样生效**。9/18 miniqmt 退役后此问题自然消失（生产订阅者退场，桥进程独享数据流）
+- 4 个历史遗留失败回灌文件（convertible_bond_list/hk_trade_calendar 格式错误）每 drain 周期重试失败——不阻塞 tick 段回灌但污染日志，待单独修复
+
 ## 15. 修订记录
 
 | 版本 | 日期 | 内容 |
@@ -582,3 +600,4 @@ schtasks /run /tn ZephyrAlpha_TickSubscriber                              # 重�
 | 1.8.3 | 2026-09-07 | **§14.4 第 4 项盘中对拍收官**：值语义通过（最近邻 ±5s 对拍 price 73%/bid 82% 全为相位差自然变动）+链路通（76,794 行入库零丢）；密度硬伤定因（get_full_tick 未订阅品种 timetag ~90 秒粒度 vs miniqmt 3 秒）——v18 轮询式仅够分钟级，tick 级需 v18.2 订阅式（subscribe_whole_quote 全市场回调 dump）；timetag 实测格式修复（88772a47）+沙箱 ASCII 铁律再实证（v18.1） |
 | 1.8.4 | 2026-09-07 | **§14.6 v18.2 当日闭环**：订阅激活+轮询收割组合方案落地（沙箱 subscribe_whole_quote 副作用激活全市场 3s 推送，v18 get_full_tick 密度 90s→3-9s）；高密度对拍全面通过（price 91.7%/bid 95.0%/ask 93.9%，差异全为相位内自然变动）；发现沙箱订阅 API callback 被静默忽略（回调路径不通，无需回调）；双策略同时运行纪律落盘 |
 | 1.8.5 | 2026-09-07 | **§14.7 guard 零代码切换落地**：start_tick_subscriber.ps1 支持 TICK_SOURCE/TICK_BRIDGE_ENV 环境变量（默认 xtdata 零行为变化；bridge 加 --bridge/--bridge-env flag）；退役日切换 SOP 一条命令（SetEnvironmentVariable + schtasks 重启）；参数拼接双路径/argparse/孤儿清理匹配/心跳兼容四项实测通过——P0-1 全部实施项闭环 |
+| 1.8.6 | 2026-09-07 | **§14.8 v19 全板块 5 档当日闭环**：TICKDUMP3 单策略合并版（A股+基金+指数+转债 8394 只，京市/B股按 Owner 裁定排除）；25 列 5 档 CSV（源头本有 5 档，v18 只砍剩 1 档）；对拍 99.8% 匹配/99.3% price 一致（v18→v18.2→v19 = 73%→91.7%→99.3%）；桥重启自愈 hardening（offset 边车+4MB 读限速+三态防御，实证防全天重读洪泛）；发现订阅共享效应（沙箱订阅激活 3s 推送对外部 xtdata 同样生效，生产管道 surge 20 倍——9/18 后自然消解） |
