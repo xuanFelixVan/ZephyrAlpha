@@ -187,12 +187,8 @@ nodes:
     #   封顶：周级退潮→日级最高 RISK_OFF；月级危机→日级最高 RISK_OFF（封顶不覆盖，日级如实报告）
     #   对齐加成：月+周+日三层同向→预算带取上限（业界三级共振）；冲突→取下限+高层赢
     # （D90 终裁 2026-09-07）：六段冲突场景=听弱的（预算带按较弱信号降一档机械执行，废除人工接管）；量×轮动二维状态机（成交额 250 日滚动分位<25%=存量博弈：小盘题材加权/主线降权/持仓≤2-3 天；>60%=主线放行；轮动强度>80% 分位=电风扇市=无主线不推大板块）；二值权限门滞回=进段连续 2 日隶属度>60%、退出<40%
-    decision_question: >-
-    algo_note_zh: >-
-      双轴相乘：宏观 RegimeSnapshot 概率（月级 12 态）×情绪六段分布（周级）。
-      两轴指向一致=直接取结论；指向分裂（熵值超阈）=按'就低不就高'仲裁。
-      输出三件套：预算带（给 C1）+六段状态（给全流）+策略路由（哪些 sleeve 今天开），一次判定 broadcast 全图。
-      双轴合成：RegimeSnapshot 概率（宏观）×情绪六段分布（微观）；输出预算带+策略路由+冲突仲裁（熵高分裂市→降档+Owner 接管）；日级水温受月/周档位封顶
+    decision_question: "双轴合成：RegimeSnapshot 概率（宏观）×情绪六段分布（微观）；输出预算带+策略路由+冲突仲裁（熵高分裂市→降档+Owner 接管）；日级水温受月/周档位封顶"
+    algo_note_zh: "双轴相乘：宏观 RegimeSnapshot 概率（月级 12 态）×情绪六段分布（周级）。两轴指向一致=直接取结论；指向分裂（熵值超阈）=按'就低不就高'仲裁。输出三件套：预算带（给 C1）+六段状态（给全流）+策略路由（哪些 sleeve 今天开），一次判定 broadcast 全图。"
     factor_refs: []
     data_refs: [DS-098]
     module_ref: src/zephyr/regime/core/regime_detector.py
@@ -1692,7 +1688,7 @@ nodes:
     parent_node: TDM-E-L4
     factor_refs: []
     data_refs: []
-    module_ref: src/zephyr/ex_core/async_fill_dispatcher.py
+    module_ref: src/zephyr/ex_core/order_manager.py
     module_id: MOD-L06-001
     algo_refs: []
     doc_ref: null
@@ -2297,6 +2293,94 @@ nodes:
     # 治理档位豁免（外审修复 2026-09-07，I-01/M-58）：kill switch 任何 ai_autonomy 档位下均为真实执行，不随 paper 模拟；
     # 复位=Owner 人工确认（fail-closed：重启/失联后保持 HALTED 待人工解除，I-05）；风控心跳失联→默认降级安全态（禁新开仓+人工告警，I-06/M-60 挂载点）
     # 四层止损作用域×节拍（m-11）：单票连续价（X-S1-02）/做T价差+时间（P2-02）/sleeve 月度净值（F-C3-02 5%减半·7.5%冻结）/组合日度+回撤（本节点）
+    # M-55 登记（D117）：人工干预入口欠账——paper 升档前在图上增设 Owner 手动接管正式入口节点（当前仅 kill switch 人工解除一种人工通道）
+
+  # ── X-R1 血肉（D112-D114，Owner 2026-09-07 终裁；熔断五级状态机分叉，树深 3）──
+  # M-36 收口：熔断从模糊词变等级表（判定=R1-01 离散状态机，D108 设计原则）；梯度减仓=R1-02；
+  # 护盘资产定向加仓窄门=R1-03（proposed 假说，回测验证前不生效）
+  - node_id: TDM-X-R1-01
+    name_zh: 熔断分级判定
+    market: cn_a
+    flow: exit_flow
+    layer: X1
+    node_type: stage
+    point: 持续
+    decision_question: 组合现在处于熔断五级的哪一级、升降级条件到了吗
+    algo_note_zh: >-
+      熔断五级状态机（判定轴=组合日盈亏+组合回撤双轴，与六段情绪的市场轴正交）：
+      L0 正常 / L1 警戒（日亏≥2%：禁加仓） / L2 禁开仓（日亏≥4%：停新开仓+白名单窄门开启） /
+      L3 减仓（日亏≥6%：梯度减仓） / L4 保命（组合回撤≥25% 或生死线：清仓+Owner 人工接管）。
+      迟滞解除：当日无新低+修复当日跌幅 50% 才降一级，禁 V 型直接回满。
+    parent_node: TDM-X-R1
+    factor_refs: []
+    risk_limit_refs: [RLM-KILL-SWITCH-006, RLM-KILLSW-005, RLM-KILL-SWITCH-004, RLM-KILLSW-003]
+    threshold_refs: [THD-DRAWDOWN-001, THD-DRAWDOWN-002, THD-DRAWDOWN-003]
+    data_refs: []
+    module_ref: null
+    algo_refs: []
+    doc_ref: "docs/02_enterprise_architecture/07_trading_decision_architecture/design_memos/69_trading_decision_map.md#§2.34"
+    activation: continuous
+    invalidation: L4 触发后仅 Owner 人工解除可回 L0（fail-closed）
+    ai_autonomy: auto
+    # M-36 收口（D112）：全系统"熔断禁加期"统一定义=R1-01 状态机 L1 及以上持续期间（P3-01 资格门④消费本节点输出）；
+    # 解除=熔断本身解除即解除，无独立计时器；梯度减仓表参考机构软去杠杆阶梯（breakingalpha：DD 10-12%→80% 仓/12-15%→60%/15-18%→40%）
+    fallback: 状态判定数据断流→维持当前级别不降级（fail-closed，D103 语义）
+    strategy_mounts: []
+
+  - node_id: TDM-X-R1-02
+    name_zh: 熔断期减仓与持仓处置
+    market: cn_a
+    flow: exit_flow
+    layer: X1
+    node_type: stage
+    point: 盘中
+    decision_question: L3 级减仓先减谁、减多少、怎么逐步恢复
+    algo_note_zh: >-
+      L3 减仓顺序（梯度非一刀切）：重亏仓（浮亏最深优先砍）→高波动仓（ATR 大）→压舱石保留（浮盈护盘属性资产最后动）。
+      减仓指令路由 P2-04 执行；恢复规则=组合回撤修复 50% 后逐级加回风险预算，禁 V 型回满。
+      L4 全清仓走 S1-06 绕过通道（既有边不动）。
+    parent_node: TDM-X-R1
+    factor_refs: []
+    data_refs: []
+    module_ref: null
+    algo_refs: []
+    doc_ref: "docs/02_enterprise_architecture/07_trading_decision_architecture/design_memos/69_trading_decision_map.md#§2.34"
+    activation: intraday
+    invalidation: null
+    ai_autonomy: paper
+    # D113：减仓顺序=重亏仓→高波动仓→压舱石（私募实践：核心仓=大市值高分红低波减缓下跌斜率，风浪来时压舱）；
+    # 梯度减仓参考机构软去杠杆阶梯；恢复=修复 50% 回撤逐级加回（机构标准 recover-50% 规则）
+    fallback: 减仓指令通道故障→降级 X-S1-06 单仓强清通道
+    strategy_mounts: []
+
+  - node_id: TDM-X-R1-03
+    name_zh: 护盘资产定向加仓白名单
+    market: cn_a
+    flow: exit_flow
+    layer: X1
+    node_type: stage
+    point: 盘中
+    decision_question: 熔断期的窄门开不开、买什么、买多少
+    algo_note_zh: >-
+      三重门全过才开窄门：①处于 L2/L3 状态；②D110 超跌反转信号触发（或国家队明牌信号=ETF 天量成交/官方增持公告）；
+      ③金字塔法分批（首笔 1/3 预算，确认收复再加）。
+      白名单：宽基 ETF（沪深300/中证500/1000/红利）优先，银行/高股息次之；仓位=D107 尾部弹药预算，上限总资金 5-10%。
+      风险声明：政策底≠市场底（历史滞后 40 天~半年）——分批+确认信号是铁律，严禁一次到位。
+    parent_node: TDM-X-R1
+    factor_refs: []
+    data_refs: []
+    module_ref: null
+    algo_refs: []
+    doc_ref: "docs/02_enterprise_architecture/07_trading_decision_architecture/design_memos/69_trading_decision_map.md#§2.34"
+    activation: intraday
+    invalidation: 白名单买入后窄门条件消失（信号失效/状态升 L4）→停止后续加仓批次，存量按 X 流信号管理
+    ai_autonomy: paper
+    # D114 proposed 假说（回测验证前不生效）：证据链=NT 买入降低标的波动率 3.45-5.65%/崩盘风险 -30~45%（JFQA 2023、
+    # La Trobe 2025）；护盘范式切换实证（2026 半年报：证金前十股东 77→22 家退出个股，诚通/国新借道宽基 ETF 维稳，
+    # NT 总持仓 80% 仍是银行底仓）；九次出手七次见底但政策底滞后市场底 40 天~半年（财联社复盘）→金字塔分批+确认信号铁律；
+    # 数据地基=ETF 成交量天量检测（需 ETF 日线数据登记）+银行指数 5 日超额（D109 已有 DS-170）
+    fallback: 尾部弹药预算未启用（D107 回测验证前）→本节点整节点休眠
+    strategy_mounts: []
 
   # ── X 流血肉（D60-D66，Owner 2026-09-07 终裁；2 树枝 12 节点，树深 2）──
   # 42 号卖出流 spec 十节吸收（语义入节点+公式留 doc_ref+spec 保留为算法附件，22 号先例）；
@@ -2577,6 +2661,8 @@ nodes:
     #   三口径=占昨日总量 5-10% 健康/<3% 缩量诱多高发/>15% 爆量看承接（**D67 纠错：修正 §2.28 D55-5
     #   骨架"昨涨停量 10-15%"旧口径**）；9:20-9:25 不可撤段决定离场→直接挂跌停价排队；除权除息日溢价率
     #   分母改除权参考价（D68 联动）
+    # D116 新股排除（M-30 收口）：上市首日无昨收/历史量能基准→十行矩阵全部"无法计算→默认观察不动作"，首日禁开新仓；次日起正常规则
+    # M-24 收口：跳空分档预案挂载=本节点（大幅低开 3%/6% 分档动作表），施工归 position 域隔夜风险批次（69 号 §2.28 欠账）
     fallback: null
     strategy_mounts: []
 
@@ -2690,11 +2776,8 @@ nodes:
     #   earned-position 上探 70-80%）/ euphoria ≤30%（只卖不买）/ distribution 0%（空仓）
     # 横切：过渡带（最大隶属度<60%）预算×0.5-0.7；尾部预备金 10-15% 永不投出；
     #   小资金容量优势允许高集中度（earned 单票集中，游资路径），风险百分比制资金无关
-    decision_question: >-
-    algo_note_zh: >-
-      预算切分（Millennium pod 模式）：总仓位预算（L1 预算带）按 sleeve 权重切分（PP-001 配置：打板 20%/多因子 20%/事件 15%…），各 sleeve 账本独立、风险独立核算、互不挪用。
-      sleeve 间资金流动只通过月度调权（C3-03）。
-      总仓位怎么切给各 sleeve（Millennium pod 单体版）；带内实际仓位=状态分布加权插值（灰度非查表）；过渡带降仓×0.5-0.7+尾部预备金 10-15% 恒定预留
+    decision_question: "总仓位怎么切给各 sleeve（Millennium pod 单体版）；带内实际仓位=状态分布加权插值（灰度非查表）；过渡带降仓×0.5-0.7+尾部预备金 10-15% 恒定预留"
+    algo_note_zh: "预算切分（Millennium pod 模式）：总仓位预算（L1 预算带）按 sleeve 权重切分（PP-001 配置：打板 20%/多因子 20%/事件 15%…），各 sleeve 账本独立、风险独立核算、互不挪用。sleeve 间资金流动只通过月度调权（C3-03）。"
     # D88（F 流第二轮审计，69 号 §2.32）：预备金管理三件——①存放分层（当日可用逆回购 GC001 一层/
     #   T+1 短债一层，14:00 后利率高 38%）；②书面动用条件≥2 条触发才可动用（组合回撤到线/单 sleeve
     #   冻结/显著折价窗口），动用记交易日志；③回补规则（条件解除后 N 日内回补 10-15% 带内；sleeve 冻结
@@ -2924,6 +3007,8 @@ nodes:
       数据依据：composite score（60+120 日双窗口）+THD-RETIRE 三线（滚动 20 日跑输基准 5%/60 日 Sharpe<0/回撤漂移 1.5×）。
       单 sleeve 回撤 5% 自动减半、7.5% 冻结——这条自动执行不等评审。
     parent_node: TDM-F-C3
+    # D115 M-22 收口：5% 减半/7.5% 冻结=收盘核算触发（净值结算后统一评估，避免盘中假摔误杀）；
+    # 盘中例外=触及 7.5% 冻结线即时禁新开仓（可逆保护动作，不砍存量）；恢复=修复 50% 回撤后逐级加回（对齐 X-R1-02 恢复规则）
     factor_refs: []
     threshold_refs: [THD-RETIRE-001, THD-RETIRE-002, THD-RETIRE-003]
     data_refs: []
@@ -3308,6 +3393,12 @@ edges:
   # ── 外审修复补边 Round 2（2026-09-07，R2 收敛扫描修复）──
   - {from_node: TDM-X-S2-06, to_node: TDM-E-L4-12, edge_type: feed}   # 冷却期清单+参数漂移锁消费（D72 买侧拦截闭环，两端注释早已声明，外审 B-06/R2-01）
   - {from_node: TDM-E-L1-AGG, to_node: TDM-X-S1-04, edge_type: feed}   # 情绪退潮联动六段输入（S1-04 注释已声明联动 AGG，外审 R2-03）
+  # ── R1 血肉边（D112-D114，Owner 2026-09-07 终裁；熔断五级状态机分叉）──
+  - {from_node: TDM-X-R1, to_node: TDM-X-R1-01, edge_type: sequence}   # 应急保命→熔断分级判定（D112，树深 3）
+  - {from_node: TDM-X-R1-01, to_node: TDM-X-R1-02, edge_type: sequence}   # 等级判定→减仓动作
+  - {from_node: TDM-X-R1-01, to_node: TDM-X-R1-03, edge_type: feed}   # L2/L3 状态授权白名单窄门（D114）
+  - {from_node: TDM-X-R1-02, to_node: TDM-P-P2-04, edge_type: feed}   # L3 减仓指令路由 P2-04 执行（冲突优先级仍=风控减仓最高，D44）
+  - {from_node: TDM-X-R1-03, to_node: TDM-E-L4, edge_type: feed}   # 白名单加仓复用建仓执行件（P3-04→E-L4 同款，D114）
   # 应急保命横切（示意主边：触发即接管离场）
   - {from_node: TDM-X-R1, to_node: TDM-X-S2, edge_type: broadcast}   # 叙事边（可执行路径=R1→S1-06→S2-01 与 R1→F-C2-01/P-P2-01，勿双计数，外审 R2-04）
   # 币圈链

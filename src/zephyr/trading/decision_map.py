@@ -661,7 +661,9 @@ def _validate_governance(
                 add("error", "R15", n.node_id, "v1.5 节点缺 activation（时效窗必填）")
             if n.ai_autonomy is None:
                 add("error", "R15", n.node_id, "v1.5 节点缺 ai_autonomy（治理档位必填）")
-        # R17 粒度门禁：一句话说清楚（长度上限+禁模糊词）
+        # R17 粒度门禁：一句话说清楚（长度上限+禁模糊词）；空串防御（折叠块头被截断的历史病根）
+        if not n.decision_question.strip():
+            add("error", "R17", n.node_id, "decision_question 为空（折叠块截断/字段丢失——修复数据而非放行）")
         if len(n.decision_question) > _MAX_QUESTION_LEN:
             add(
                 "error",
