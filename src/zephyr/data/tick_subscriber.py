@@ -1521,18 +1521,22 @@ class BridgeTickSource:
         """QMT timetag 字符串 → epoch 毫秒。
 
         Args:
-            timetag: "yyyyMMddHHmmss"（14位）或含毫秒（17位，截断到秒——
-                tick_data 表 timestamp 字段本身为秒精度）
+            timetag: 实测两种形态（2026-09-07 盘中 ticks.csv 实证）：
+                "20260907 11:30:00"（get_full_tick 返回，空格+冒号分隔，17字符）
+                "20260907113000"（纯数字 14 位）
+                两者均可能带毫秒尾缀（截断到秒——tick_data 表 timestamp 秒精度）
 
         Returns:
             epoch 毫秒；None=格式非法。本地时区解释（QMT 时间=北京时间，
             与 tick_to_row 的 fromtimestamp 本地往返一致）。
         """
         s = timetag.strip()
-        if len(s) < 14 or not s[:14].isdigit():
+        # 归一化：剔除分隔符只留数字（空格/冒号/点），两种形态统一处理
+        digits = "".join(ch for ch in s if ch.isdigit())
+        if len(digits) < 14:
             return None
         try:
-            dt = datetime.strptime(s[:14], "%Y%m%d%H%M%S")
+            dt = datetime.strptime(digits[:14], "%Y%m%d%H%M%S")
         except ValueError:
             return None
         return int(dt.timestamp() * 1000)

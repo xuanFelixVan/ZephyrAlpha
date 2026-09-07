@@ -1330,14 +1330,18 @@ class TestBridgeTickSource:
         return sub, BridgeTickSource(sub, bridge_file=path), path
 
     def test_bridge_file_parsing(self, tmp_path):
-        """桥文件解析：CSV 行→xtdata 等价 tick dict→tick_to_row 15 字段（data_source=qmt_bridge）。"""
+        """桥文件解析：CSV 行→xtdata 等价 tick dict→tick_to_row 15 字段（data_source=qmt_bridge）。
+
+        timetag 用 2026-09-07 盘中实测格式（get_full_tick 返回 "yyyyMMdd HH:MM:SS"
+        空格+冒号分隔——首版解析器只认纯数字格式全丢行，已修）。
+        """
         sub, bridge, path = self._make_bridge(tmp_path)
         path.write_text(
             "symbol,lastPrice,volume,amount,bid1,ask1,bidVol1,askVol1,timetag\n"
-            "000001.SZ,10.500,1000,10500.00,10.490,10.510,500,300,20260904100003\n"
+            "000001.SZ,10.500,1000,10500.00,10.490,10.510,500,300,20260904 10:00:03\n"
             "bad,row\n"  # 字段数不足 → 跳过
-            "600000.SH,notafloat,1,1,1,1,1,1,20260904100003\n"  # 数值非法 → 跳过
-            "600519.SH,1700.000,200,340000.00,1699.000,1701.000,10,20,20260904100003000\n",  # 17位timetag
+            "600000.SH,notafloat,1,1,1,1,1,1,20260904 10:00:03\n"  # 数值非法 → 跳过
+            "600519.SH,1700.000,200,340000.00,1699.000,1701.000,10,20,20260904100003000\n",  # 纯数字+毫秒
             encoding="ascii",
         )
         n = bridge._poll_once()
@@ -1367,7 +1371,7 @@ class TestBridgeTickSource:
         assert row[10] == Decimal("10.49")  # bid_price
         assert row[11] == Decimal("10.51")  # ask_price
 
-        # 17 位 timetag（含毫秒）截断到秒——与 14 位同时刻等价
+        # 纯数字+毫秒 timetag 截断到秒——与空格格式同时刻等价
         sym2, tick2 = sub.tick_queue.get_nowait()
         assert sym2 == "600519.SH"
         assert tick2["time"] == expected_ms
