@@ -370,6 +370,16 @@ directory_extensions:
     allowed_doc_types: []
     note: "src/ 下的配置子树——与根 config/ 同级语义。src/zephyr/ 规则不覆盖此子目录（longest-prefix match 独立）"
 
+  - path: "docs/02_enterprise_architecture/10_trading_map/"
+    allowed: [".md", ".html"]
+    forbidden: [".py", ".sh", ".ps1", ".bak", ".baseline"]
+    zone: permanent
+    allowed_doc_types: [architecture_view]
+    purpose: generated_panorama
+    purpose_allowed_extensions: [".md", ".html"]
+    overrides_parent: true
+    note: "交易决策地图全景图派生区（D91-D93，2026-09-07）：生成器 generate_trading_map_diagram.py 产物（总览+四流拆分 8 MD + 8 可缩放 HTML），真源=config/trading_decision_map.yaml（改动后运行时启动自动重生成，禁手编）。.html 白名单对齐 battle_map/_zoomable_html/ 生成物先例（Owner 2026-08-29 裁定延伸）；overrides_parent 覆盖 02 区默认 .md/.mmd/.yaml 清单以放行生成物 HTML"
+
   # --- 临时区 ---
   # 治本 #ARCH-TEMP-FILE-PLACEMENT-001（2026-07-20）：新增 purpose + purpose_allowed_extensions
   # 字段，由 DCR-008 (check_directory_contract.py::check_purpose_extension) 强制校验。

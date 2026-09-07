@@ -273,6 +273,20 @@ generators:
       - docs/02_enterprise_architecture/07_trading_decision_architecture/battle_map/_zoomable_html/*.html
 
   # ════════════════════════════════════════════════════════════════════════
+  # 10_trading_map — 交易决策地图全景图（MOD-TRADING-015 派生，D91-D93）
+  # ════════════════════════════════════════════════════════════════════════
+  - name: trading_decision_map
+    module_path: scripts.governance.d5_architecture.generators.generate_trading_map_diagram
+    entry_function: regenerate
+    trigger_sources:
+      - trading_decision_map_yaml   # 真源 YAML 变更后触发（启动时 mtime 对比）
+    input_sources:
+      - yaml:config/trading_decision_map.yaml
+    output_globs:
+      - docs/02_enterprise_architecture/10_trading_map/*.md
+      - docs/02_enterprise_architecture/10_trading_map/_zoomable_html/*.html
+
+  # ════════════════════════════════════════════════════════════════════════
   # Codegen 管线（YAML→代码，非文档生成器但同样需自动触发）
   # ════════════════════════════════════════════════════════════════════════
   - name: contracts
