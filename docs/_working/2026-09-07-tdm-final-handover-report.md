@@ -87,12 +87,12 @@ task_context: TDM 外审+修复+终裁全流程施工交接总汇报——转发
 
 | 文件 | 作用 |
 |---|---|
-| config/trading_decision_map.yaml | 决策地图真源（122 节点/166 边，裁定口径已落） |
+| config/trading_decision_map.yaml | 决策地图真源（125 节点/171 边，裁定口径已落，D112 熔断分叉） |
 | docs/_working/2026-09-07-tdm-backtest-protocol.md | 拼装回测协议 V0（启动闸门/合成声明/盲区/口径冻结/裁定清单/假说登记） |
 | docs/_working/2026-09-07-tdm-review-round-report.md | 外审 Round 1+2 完整编号归档 |
 | docs/_working/2026-09-07-tiandiban-threshold-study.md | 天地板实证报告（D99 依据）+ST 核查结论（W2 依据） |
-| docs/02_enterprise_architecture/07_trading_decision_architecture/design_memos/69_trading_decision_map.md | 设计真源 v2.16.0（§2.33 终裁包全文） |
-| docs/_working/2026-09-04-trading-decision-map-discussion.md | D1-D111 裁定讨论记录（第 41 轮=终裁包） |
+| docs/02_enterprise_architecture/07_trading_decision_architecture/design_memos/69_trading_decision_map.md | 设计真源 v2.17.0（§2.33 外审终裁包+§2.34 漏账收尾包全文） |
+| docs/_working/2026-09-04-trading-decision-map-discussion.md | D1-D117 裁定讨论记录（第 41 轮=外审终裁包，第 42 轮=漏账收尾包） |
 | tmp/qmt_bridge_handoff_report.md | QMT 文件桥交接汇报（通道现状全貌） |
 | docs/02_.../design_memos/93_qmt_file_bridge_playbook.md | 文件桥真源（v1.8.6） |
 
@@ -107,6 +107,16 @@ task_context: TDM 外审+修复+终裁全流程施工交接总汇报——转发
 7. 中文 commit message 用 --message-file（防 shell 编码问题）。
 
 ## 八、未闭合事项（全部有主，不阻塞）
+
+> **2026-09-07 深夜补账（GLM 内审复核）**：交叉核对发现 8 项漏账（无裁定/无工单/无本节登记），Owner 终裁 D112-D117 全部收口，详见 69 号 §2.34+讨论备忘录第 42 轮：
+> - M-36 熔断禁加期零定义→已闭环（D112 五级状态机，X-R1 下开 3 子节点 R1-01/02/03，图 122→125 节点/166→171 边）
+> - M-22 sleeve 回撤触发时点→已闭环（D115 收盘核算+盘中 7.5% 冻结线即时禁新开仓）
+> - M-30 新股竞价无分母→已闭环（D116 首日排除：竞价矩阵默认观察+E-L4-12 买入硬拦截）
+> - M-53 E-L4-10 模块锚→已闭环（D117：MOD-L06-001 实体=order_manager.py，module_ref 路径改正）
+> - M-24 跳空分档挂载→已闭环（D117：挂 X-S2-03）
+> - M-42 HMM 核码→已闭环（D117：核码 PASS，sentiment_cycle.py=filtered 递归贝叶斯）
+> - M-55 人工干预入口→已登记 X-R1 欠账（paper 升档前施工）
+> - M-32 桥断持仓保护→补登（93 号 playbook 扩展，随通道工程消化）；M-54 配股/红利税/ST 降级→已补入协议 §6 盲区清单
 
 - M-14 做T 双源→已闭环（D111）。
 - G4（W1）/数据回补（W10）/合规三件套（W8）=施工排期项，见工单。

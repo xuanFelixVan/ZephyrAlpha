@@ -1592,3 +1592,29 @@ entries:
   related_arch: []
   related_rulings: ['裁定#225']
   superseded_by: null
+- ruling_id: '裁定#227'
+  title: TDM 内审漏账收尾包（D112-D117）
+  date: '2026-09-07'
+  category: 架构
+  status: active
+  summary: >-
+    交接总汇报交叉核对（M-01~M-61 × D90-D111 × W1-W11）发现 8 项漏账，Owner 终裁收口：
+    D112 熔断五级状态机定义（M-36 收口，X-R1 下开 3 子节点 R1-01 分级判定/R1-02 减仓处置/
+    R1-03 护盘白名单，判定轴=组合日盈亏+回撤双轴与六段市场轴正交，L0-L4 等级表+迟滞解除）；
+    D113 熔断期减仓（梯度=重亏仓→高波动仓→压舱石，恢复=修复 50% 逐级加回）；
+    D114 护盘资产定向加仓白名单（proposed 假说：三重门+宽基 ETF 优先+尾部弹药 5-10% 上限+
+    政策底滞后市场底 40 天~半年→分批铁律，证据=JFQA 2023 NT 波动率 -3.45~5.65%/护盘范式切换
+    2026 半年报实证）；D115 sleeve 回撤收盘核算+盘中 7.5% 冻结线禁新开仓（M-22）；
+    D116 新股首日排除（M-30）；D117 小修打包（M-53 module_ref 路径改正/M-24 挂 X-S2-03/
+    M-42 HMM 核码 PASS filtered 递归贝叶斯/M-55 人工入口欠账登记/M-32+M-54 补登）。
+    图 122→125 节点/166→171 边；validate error=0，双套件 90/90 全绿。
+  affected_files:
+    - d:\ZephyrAlpha\config\trading_decision_map.yaml
+    - d:\ZephyrAlpha\docs\02_enterprise_architecture\07_trading_decision_architecture\design_memos\69_trading_decision_map.md
+    - d:\ZephyrAlpha\docs\_working\2026-09-04-trading-decision-map-discussion.md
+    - d:\ZephyrAlpha\docs\_working\2026-09-07-tdm-final-handover-report.md
+    - d:\ZephyrAlpha\docs\_working\2026-09-07-tdm-backtest-protocol.md
+    - d:\ZephyrAlpha\docs\01_policies_and_standards\_registry\catalogs\ruling_registry.yaml
+  related_arch: []
+  related_rulings: ['裁定#225', '裁定#226']
+  superseded_by: null
