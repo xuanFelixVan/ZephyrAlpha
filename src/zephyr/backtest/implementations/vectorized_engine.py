@@ -76,7 +76,7 @@ from zephyr.backtest.core.engine_base import (
     BacktestEngineBase,
     BacktestResult,
 )
-from zephyr.backtest.core.matching_engine import MatchingConfig, MatchingEngine
+from zephyr.backtest.core.matching_engine import MatchingConfig, MatchingEngine, StkLimitProvider
 from zephyr.backtest.core.metrics import DEFAULT_RISK_FREE_RATE, calculate_full_metrics
 from zephyr.backtest.core.overfitting_detector import OverfittingDetector, OverfittingGateError
 from zephyr.backtest.core.portfolio import Portfolio
@@ -120,12 +120,13 @@ class DefaultBacktestEngine(BacktestEngineBase):
 
     __backtest_id__ = __backtest_id__
 
-    def __init__(self, config: BacktestConfig | None = None):
+    def __init__(self, config: BacktestConfig | None = None, enable_stk_limit_provider: bool = True):
         self._config = config or BacktestConfig()
         self._matching_config = MatchingConfig(
             commission_rate=self._config.commission_rate,
             slippage_bps=self._config.slippage_bps,
         )
+        self._enable_stk_limit_provider = enable_stk_limit_provider
         self._results: list[BacktestResult] = []
         self._last_portfolio: Portfolio | None = None
 
@@ -163,7 +164,12 @@ class DefaultBacktestEngine(BacktestEngineBase):
 
         # 初始化持仓管理器和撮合引擎
         portfolio = Portfolio(initial_capital=capital)
-        matching_engine = MatchingEngine(config=self._matching_config)
+        # 涨跌停 PIT 提供器默认注入（#ARCH-DATA-020 重评条件②）：撮合涨跌停价
+        # 优先读 c1_market.stk_limit 表 PIT 行，缺行走 _limit_pct_of 日期切片
+        # （主板 ST 2026-07-06 起 10%、此前 5%）；CH 不可达 provider 内部降级
+        # fail-open。enable_stk_limit_provider=False 或单测注入 fake 可关。
+        limit_provider = StkLimitProvider() if self._enable_stk_limit_provider else None
+        matching_engine = MatchingEngine(config=self._matching_config, limit_provider=limit_provider)
 
         # 获取排序后的日期列表
         dates = self._get_sorted_dates(data)

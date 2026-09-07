@@ -92,7 +92,8 @@ class MatchingConfig:
         transfer_fee_rate: 过户费率(双向 万0.1=0.00001，沪深现行法定)
         min_commission: 最低佣金(5元；不免五——Owner 2026-08-22 确认实盘万0.854 不免五，保留 5 元下限)
         lot_size: 最小交易单位(A股100股)
-        price_limit_pct: 涨跌停板限制(10%=0.10, ST股5%=0.05)
+        price_limit_pct: 涨跌停板限制(10%=0.10；仅作未知前缀的最后防线兜底，
+            历史正确口径见 matching_engine._limit_bounds 三级解析链/#ARCH-DATA-020)
     """
 
     commission_rate: Decimal = Decimal("0.0000854")  # 万0.854（Owner 实盘协议费率，#233 裁定 2026-08-21）

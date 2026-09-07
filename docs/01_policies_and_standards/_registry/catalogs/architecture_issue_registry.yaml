@@ -21424,14 +21424,30 @@ entries:
     权限）；④ 对账通过：周度分布 07-06 起主板 ST 仅 0.10（0.05 清零）、wrong_pct=0、
     2026-09-04 全部 141 ST 行 limit_up/down Decimal 精确匹配（注意：SQL round 为银行家
     舍入，对账须用 HALF_UP 语义/Decimal，否则出伪差）。
-    遗留说明：stk_limit 表数据覆盖自 2026-07-06 起（旧数据 2026-08-03 起，更早历史无行），
-    2026-07-06 前回测的涨跌停价走规则兜底（daban rule_limit_price 已切片；matching_engine
-    未切片见重评条件②）。
+    遗留说明：stk_limit 表数据覆盖自 2026-01-05 起（2026-09-08 回补 2026-01-01 窗口后；
+    更早历史无行，撮合走三级解析链二级规则兜底——matching_engine 闭环记录见重评条件②）。
     重评条件：① 交易所再修涨跌幅规则 → 追加日期切片即可（模式已固化于 _limit_pct_of）；
-    ② 其余口径缺口本轮不修单独跟进：backtest matching_engine._infer_limit_pct 无 ST 区分
-    （2026-07-06 前历史回测主板 ST 反向错）、miniqmt_provider 竞价簿硬编码 ±10%（双创错）、
-    signal_ashare/tiered_screening_filter 与 ex_core/adapters/miniqmt_broker 按现值改无历史
-    切片；③ TDM 联动参数重校欠账（竞价即决封板/溢价映射、跌停排队、封成比阈值按 10% 重校）
+    ② matching_engine 无 ST 区分缺口已于 2026-09-08 闭环（回测撮合涨跌停三级解析链，
+    禁止再造第四份口径）：一级=stk_limit 表 PIT 行（trade_date=当日 FINAL，limit_up/
+    limit_down 精确价直用，limit_*=NULL 新股无限制期不封板）；二级=规则切片兜底（复用
+    生成侧单一真源 AkshareIngestProvider._limit_pct_of，ST 经 st_stock_list 最近可得
+    ≤T 快照）；三级=板块前缀推断 _infer_limit_pct（未知前缀/无日期旧调用保守回退，
+    行为不变）。date 贯通 generate_fills*→_build_target_orders→_is_limit_*；
+    vectorized_engine 默认接线 StkLimitProvider（enable_stk_limit_provider=False 可关，
+    CH 不可达 fail-open 降级+一次性 warn）。单测 13 用例（07-03/07-06 主板 ST 5%→10%
+    边界、创业板 2020-08-24 切片同构回归、非 ST 回归、PIT 行直用、provider 故障
+    fail-open、端到端封板拒成），backtest 域 964 测试全绿；真实 CH PIT 实证
+    （600053.SH 07-03 表行 5% 封板买单拒成）。stk_limit 表同步回补 2026-01-01 起
+    （2026-09-08 执行：last_key 回拨重算 900781 行落库 165 个交易日 2026-01-05~09-07
+    + OPTIMIZE FINAL 9 分区；对账=07-03 主板 ST 149 行全 0.05 / 07-06 主板 ST 149 行
+    全 0.10、wrong_pct 双向=0、三边界日 Decimal HALF_UP 精确匹配 0 伪差；撮合一二级链
+    在 2026-01-05 起全窗口生效）。回补限制（已评估可接受）：①adj_factor miniqmt dr
+    点口径 2026-07-01 起，回补窗内除权除息日 pre_close 退化为不修正（与 akshare
+    fallback 现行行为一致，不引入新错误类别）；②st_stock_list 快照 2026 年 1-3 月约
+    周频（4 月起日频），兜底 st_flag 为最近可得 ≤T 口径，ST 摘戴帽切换可能滞后数日
+    （PIT 合法，与生成侧 _load_st_snapshots 同语义）。残余跟进：miniqmt_provider
+    竞价簿硬编码 ±10%（双创错）、signal_ashare/tiered_screening_filter 与
+    ex_core/adapters/miniqmt_broker 按现值改无历史切片；③ TDM 联动参数重校欠账（竞价即决封板/溢价映射、跌停排队、封成比阈值按 10% 重校）
     ——③ 已清偿（2026-09-07）：判定=交易决策层零值变更、全部无需重校（D67 矩阵/封板时间→
     溢价映射/封成比四档的校准宇宙本为 10% 涨跌幅板，ST 主板拉平后系"恢复全域适用"非参数
     漂移，改值反成 ST 双真源；scenario_planner 昨涨停溢价映射数据驱动；跌停排队注入式零 pct
@@ -21449,7 +21465,13 @@ entries:
     - 'docs/01_policies_and_standards/_registry/catalogs/data_asset_registry.yaml（DS-082 evidence 时变化）'
     - 'config/trading_decision_map.yaml（TDM-X-S2-02 修表欠账清偿落账）'
     - 'docs/02_enterprise_architecture/02_domain_architecture_docs/11_d_data.md（口径文字同步）'
-  fix_phase: '已完成（代码切片+单测+回填补数+对账+登记，2026-09-07）'
+    - 'src/zephyr/backtest/core/matching_engine.py（涨跌停三级解析链：LimitInfo/StkLimitProvider/date 贯通/_limit_bounds）'
+    - 'src/zephyr/backtest/core/matching_logic.py（price_limit_pct 注释口径修正——未知前缀最后防线）'
+    - 'src/zephyr/backtest/implementations/vectorized_engine.py（默认接线 StkLimitProvider，enable_stk_limit_provider 可关）'
+    - 'tests/backtest/test_stk_limit_matching.py（13 用例：07-03/07-06 边界/创业板切片/PIT 行/降级/端到端）'
+    - 'tests/backtest/test_cost_friction_night001.py + tests/backtest/test_toy_reconciliation_night001.py（合成引擎级测试关 provider 隔离真实 PIT 行）'
+    - 'c1_market.stk_limit（2026-09-08 回补 2026-01-05 起 900781 行重算落库+OPTIMIZE FINAL 9 分区）'
+  fix_phase: '已完成（代码切片+单测+回填补数+对账+登记，2026-09-07）；2026-09-08 第二轮：撮合三级解析链闭环（重评条件② matching_engine 部分）+ stk_limit 历史回补 2026-01-05 起 900781 行+对账+PIT 实证'
   status: decided
   created: '2026-09-07'
-  last_updated: '2026-09-07'
+  last_updated: '2026-09-08'

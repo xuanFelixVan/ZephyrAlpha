@@ -39,7 +39,7 @@ template_for: ''
 title: 'D_BACKTEST 回测引擎域蓝图'
 ttl: permanent
 verifiability: automated
-version: 1.3.19
+version: 1.3.20
 responsibility_domain: 
 design_maturity: production
 build_status: generated
@@ -190,7 +190,7 @@ D_BACKTEST域代码唯一存放于 `src/zephyr/backtest/`。禁止在research/�
 
 | 图 | 位置 | 状态 | 链接 |
 |----|------|------|------|
-| 依赖图 (depgraph) | `blueprint_id=MOD-BT-001` 的 64 个 file 节点 | production | `extract_depgraph.py --modules MOD-BT-001` |
+| 依赖图 (depgraph) | `blueprint_id=MOD-BT-001` 的 65 个 file 节点 | production | `extract_depgraph.py --modules MOD-BT-001` |
 | 数据流图 (dataflow) | 5 个 Dataset / 5 个 Job | active | `apply_dataflowgraph.py --list-datasets` |
 | 决策架构图 (decision) | 0 个决策节点 / 1 个决策层 | N/A | `generate_decision_diagram.py` |
 | 蓝图 (blueprint) | 本文件 | Active | — |
@@ -202,7 +202,7 @@ D_BACKTEST域代码唯一存放于 `src/zephyr/backtest/`。禁止在research/�
 | module_id | MOD-BT-001 | MOD-BT-001 | ✅ |
 | domain_id | N/A | N/A | ✅ |
 | build_status | generated | generated | ✅ |
-| file_count | 64 文件 | N/A | — |
+| file_count | 65 文件 | N/A | — |
 
 > 冲突时以 depgraph 为准（ARCH-056 + ARCH-MM-001 声明 vs 验证框架）。
 
@@ -1015,6 +1015,7 @@ D_BACKTEST域当前7个模块(MVP),v1.1.0扩展到15个。容量阈值≤150,无
 | `tests/backtest/test_purged_kfold.py` | ✅ 已实现 | |
 | `tests/backtest/test_shrinkage_engine.py` | ✅ 已实现 | |
 | `tests/backtest/test_shrinkage_provider.py` | ✅ 已实现 | |
+| `tests/backtest/test_stk_limit_matching.py` | ✅ 已实现 | |
 | `tests/backtest/test_strategy_validation_pipeline.py` | ✅ 已实现 | |
 | `tests/backtest/test_tick_replay_data_handler.py` | ✅ 已实现 | |
 | `tests/backtest/test_toy_reconciliation_night001.py` | ✅ 已实现 | |

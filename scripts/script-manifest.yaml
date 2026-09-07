@@ -3,8 +3,8 @@
 #
 manifest_version: 2.0.0
 generated_by: generate_manifest.py (auto-scan)
-generated_at: '2026-09-06'
-total_scripts: 756
+generated_at: '2026-09-07'
+total_scripts: 761
 scripts:
 - name: __init__.py
   path: __init__.py
@@ -1057,6 +1057,14 @@ scripts:
 - name: governance/collect_write_audit_4663.py
   path: governance/collect_write_audit_4663.py
   description: 前置（一次性，Owner 管理员）：scripts/governance/enable_write_audit_sacls.ps1
+  domain: governance
+  execution_plane: warm-path
+  status: registered
+  timeout_seconds: 60
+  dimensions: []
+- name: governance/commit_derived_sync.py
+  path: governance/commit_derived_sync.py
+  description: 背景（第一性原理）：
   domain: governance
   execution_plane: warm-path
   status: registered
@@ -2649,6 +2657,14 @@ scripts:
 - name: governance/d5_architecture/generators/generate_policies.py
   path: governance/d5_architecture/generators/generate_policies.py
   description: 真源：architecture_model/data/data_sources_registry.yaml
+  domain: governance
+  execution_plane: warm-path
+  status: registered
+  timeout_seconds: 60
+  dimensions: []
+- name: governance/d5_architecture/generators/generate_trading_map_diagram.py
+  path: governance/d5_architecture/generators/generate_trading_map_diagram.py
+  description: '真源: config/trading_decision_map.yaml（YAML 型触发: git commit → reconcile_stale mtime 对比）'
   domain: governance
   execution_plane: warm-path
   status: registered
@@ -5056,7 +5072,7 @@ scripts:
   dimensions: []
 - name: industry_graph/apply_industry_graph_ddl.py
   path: industry_graph/apply_industry_graph_ddl.py
-  description: 表结构（2026-08-27 与用户定稿）：
+  description: 表结构（2026-08-27 与用户定稿；v2 2026-09-07 按 SOP industry_chain_data_audit_sop §4.8/§4.9 增补）：
   domain: industry_graph
   execution_plane: warm-path
   status: registered
@@ -5073,6 +5089,14 @@ scripts:
 - name: industry_graph/calc_customer_concentration.py
   path: industry_graph/calc_customer_concentration.py
   description: 衍生指标（公司-年度）：
+  domain: industry_graph
+  execution_plane: warm-path
+  status: registered
+  timeout_seconds: 60
+  dimensions: []
+- name: industry_graph/import_ckg_dataset.py
+  path: industry_graph/import_ckg_dataset.py
+  description: '来源: https://github.com/liuhuanyong/ChainKnowledgeGraph (2021-10 构建, 769★)'
   domain: industry_graph
   execution_plane: warm-path
   status: registered
@@ -5105,6 +5129,14 @@ scripts:
 - name: industry_graph/load_supply_top5_483.py
   path: industry_graph/load_supply_top5_483.py
   description: '- 边：from_symbol=披露公司(供应商) → to=客户(上市则取代码，否则 ''''+to_name)，'
+  domain: industry_graph
+  execution_plane: warm-path
+  status: registered
+  timeout_seconds: 60
+  dimensions: []
+- name: industry_graph/merge_semiconductor_chains.py
+  path: industry_graph/merge_semiconductor_chains.py
+  description: 只增不删：新建母链节点+迁移公司落位+子链标 deprecated+merged_into。
   domain: industry_graph
   execution_plane: warm-path
   status: registered
@@ -5177,6 +5209,14 @@ scripts:
 - name: industry_graph/theme_linkage_monitor.py
   path: industry_graph/theme_linkage_monitor.py
   description: 每条链输出：覆盖公司数、当日涨家占比、平均/中位涨跌幅、领涨股、
+  domain: industry_graph
+  execution_plane: warm-path
+  status: registered
+  timeout_seconds: 60
+  dimensions: []
+- name: industry_graph/websearch_ingest.py
+  path: industry_graph/websearch_ingest.py
+  description: '子命令::'
   domain: industry_graph
   execution_plane: warm-path
   status: registered

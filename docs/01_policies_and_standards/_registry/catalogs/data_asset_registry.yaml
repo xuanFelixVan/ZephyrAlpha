@@ -3530,7 +3530,7 @@ datasets:
   status: production
   version: 1.0.0
   created_at: '2026-08-14'
-  updated_at: '2026-09-07'
+  updated_at: '2026-09-08'
   owner: MOD-GOVERNANCE
   produced_by_source: SRC-AKSHARE-001
   survivorship_free: true
@@ -3544,7 +3544,7 @@ datasets:
   applies_to: ["market"]
   tags: ["数据"]
   algorithm_status: "not_applicable"
-  evidence: "2026-08-15 联调实证：c1_market.stk_limit 单日快照 5205 行，回读抽验 600000 涨停价 10.10 与前收×1.10 手算一致；分档规则（按 trade_date 时变）：主板非 ST 10%，主板 ST/*ST 5%（仅 2026-07-06 前）/10%（2026-07-06 起，沪深交易所《交易规则（2026年修订）》2026-04-24 发布、2026-07-06 施行），创业板 2020-08-24 起 20%（含ST）、科创板 20%（含ST）、北交所 30%，新股无涨跌幅期留空；按交易日生效日落库（PIT strict，st_flag 用时点快照）。2026-09-07 #ARCH-DATA-020 修复：2026-07-06 起主板 ST 行 0.05→0.10 重算回填 246406 行（ReplacingMergeTree 幂等替换+OPTIMIZE FINAL），对账=周度分布 0.05 清零、wrong_pct=0、2026-09-04 全部 141 ST 行 limit_up/down Decimal 精确匹配（SQL round 为银行家舍入，对账须用 HALF_UP 语义）；表数据覆盖自 2026-07-06 起，更早历史无行（回测走规则兜底）"
+  evidence: "2026-08-15 联调实证：c1_market.stk_limit 单日快照 5205 行，回读抽验 600000 涨停价 10.10 与前收×1.10 手算一致；分档规则（按 trade_date 时变）：主板非 ST 10%，主板 ST/*ST 5%（仅 2026-07-06 前）/10%（2026-07-06 起，沪深交易所《交易规则（2026年修订）》2026-04-24 发布、2026-07-06 施行），创业板 2020-08-24 起 20%（含ST）、科创板 20%（含ST）、北交所 30%，新股无涨跌幅期留空；按交易日生效日落库（PIT strict，st_flag 用时点快照）。2026-09-07 #ARCH-DATA-020 修复：2026-07-06 起主板 ST 行 0.05→0.10 重算回填 246406 行（ReplacingMergeTree 幂等替换+OPTIMIZE FINAL），对账=周度分布 0.05 清零、wrong_pct=0、2026-09-04 全部 141 ST 行 limit_up/down Decimal 精确匹配（SQL round 为银行家舍入，对账须用 HALF_UP 语义）；表数据覆盖自 2026-01-05 起（2026-09-08 回补 2026-01-01 窗：last_key 回拨重算 900781 行落库 165 个交易日+OPTIMIZE FINAL，对账=07-03 主板 ST 149 行全 0.05/07-06 全 0.10、wrong_pct 双向 0、三边界日 Decimal HALF_UP 精确匹配；撮合消费链 matching_engine 三级解析链落地，vectorized_engine 默认接线 PIT 行优先）；更早历史无行（撮合走二级规则兜底，见 #ARCH-DATA-020 重评条件②）"
   code_symbol: "src/zephyr/data/implementations/akshare_provider.py::AkshareIngestProvider._fetch_stk_limit"
   code_fingerprint: null
 

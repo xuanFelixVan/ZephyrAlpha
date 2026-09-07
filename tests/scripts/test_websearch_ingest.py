@@ -1,3 +1,5 @@
+# [BLUEPRINT] MOD-REGIME-P2-E8 | (auto-injected by S4 reconciler) | §
+# [TTL] permanent
 # [MODULE] tests.scripts.test_websearch_ingest
 # [DOMAIN] D_GOV_ENFORCEMENT
 # [MATURITY] production

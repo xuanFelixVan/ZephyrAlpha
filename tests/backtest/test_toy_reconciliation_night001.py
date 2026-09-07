@@ -264,7 +264,7 @@ class TestPriceLimitBoardInference:
         data = pd.DataFrame(rows).set_index(["symbol", "date"])
         # day1 无信号（NaN → 不动作）；day2/day3 满仓信号
         sig = pd.DataFrame({"600000": [float("nan"), 1.0, 1.0]}, index=dates)
-        engine = DefaultBacktestEngine(config=BacktestConfig())
+        engine = DefaultBacktestEngine(config=BacktestConfig(), enable_stk_limit_provider=False)
         engine.run(data=data, signals=sig, strategy_name="toy-limit")
         pf = engine.last_portfolio
         trades = pf.trades_log
@@ -469,7 +469,7 @@ class TestEngineLevelToyReconciliation:
             },
             index=dates,
         )
-        engine = DefaultBacktestEngine(config=BacktestConfig())
+        engine = DefaultBacktestEngine(config=BacktestConfig(), enable_stk_limit_provider=False)
         result = engine.run(data=data, signals=sig, strategy_name="toy-5d")
         pf = engine.last_portfolio
 
@@ -673,7 +673,7 @@ class TestRotationLiquidation:
             },
             index=dates,
         )
-        engine = DefaultBacktestEngine(config=BacktestConfig())
+        engine = DefaultBacktestEngine(config=BacktestConfig(), enable_stk_limit_provider=False)
         engine.run(data=data, signals=sig, strategy_name="toy-rotate")
         pf = engine.last_portfolio
         # d3 起 A 必须零持仓
@@ -711,7 +711,7 @@ class TestFullWeightCostFrictionFill:
         rows = [{"symbol": "600000", "date": d, "close": 10.0} for d in dates]
         data = pd.DataFrame(rows).set_index(["symbol", "date"])
         sig = pd.DataFrame({"600000": [1.0, 1.0]}, index=dates)  # 归一化后仍为 1.0 满仓
-        engine = DefaultBacktestEngine(config=BacktestConfig())
+        engine = DefaultBacktestEngine(config=BacktestConfig(), enable_stk_limit_provider=False)
         with caplog.at_level(logging.WARNING, logger="zephyr.backtest.implementations.vectorized_engine"):
             result = engine.run(data=data, signals=sig, strategy_name="toy-fullweight")
         pf = engine.last_portfolio
