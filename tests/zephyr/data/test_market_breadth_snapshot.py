@@ -3,8 +3,9 @@
 """market_breadth_snapshot 采集链单元测试（92号清单 §8.2 / 44号备忘 M1-④，mock miniqmt 不触库不触网）。
 
 覆盖：
-- 合成 tick → 表行映射（aggregate_market_ticks + build_insert_row）：主板 10%/ST 5%/
-  创业板 20%/北交所 30% 幅度口径；封住=涨停且卖一无量；曾涨停=high 触及（含炸板）；
+- 合成 tick → 表行映射（aggregate_market_ticks + build_insert_row）：主板 10%/主板 ST 5%
+  （2026-07-06 前，起 10%——时变口径见 #ARCH-DATA-020）/创业板 20%/北交所 30% 幅度口径；
+  封住=涨停且卖一无量；曾涨停=high 触及（含炸板）；
   Decimal 四舍五入到分边界（10.35×1.1=11.385→11.39）；无效 tick 跳过不计 total_count；
 - ST 集加载（load_current_st_codes）：注入 query_fn 往返/异常→(空集,False) fail-open；
 - provider _fetch_market_breadth_snapshot：mock xtdata 全市场分批→单行落库列序；
@@ -99,13 +100,17 @@ class TestAggregateMarketTicks:
         assert agg.limit_up == 1
         assert agg.sealed == 1
 
-    def test_st_5pct(self):
-        # 主板 ST 5%：+5% 涨停（ST 集内）；同一 tick 不在 ST 集 → 非涨停
-        ticks = {"601398.SH": _tick(10.50, 10.00, ask_p=[0.0], ask_v=[0])}
-        agg_st = aggregate_market_ticks(ticks, {"601398"}, trade_date=_TD)
-        assert agg_st.limit_up == 1
-        agg_non = aggregate_market_ticks(ticks, set(), trade_date=_TD)
-        assert agg_non.limit_up == 0
+    def test_main_board_st_regime_boundary(self):
+        # 主板 ST 时变口径（#ARCH-DATA-020）：2026-07-06 起 10%（+5% 不再涨停、
+        # +10% 涨停），此前 5%（+5% 即涨停）；非 ST 同 tick 恒不涨停
+        ticks_5 = {"601398.SH": _tick(10.50, 10.00, ask_p=[0.0], ask_v=[0])}
+        ticks_10 = {"601398.SH": _tick(11.00, 10.00, ask_p=[0.0], ask_v=[0])}
+        # 生效日前：ST 5% 口径
+        assert aggregate_market_ticks(ticks_5, {"601398"}, trade_date=D(2026, 7, 3)).limit_up == 1
+        # 生效日起：ST 10% 口径（+5% 不涨停；+10% 涨停；非 ST 同 +5% tick 不涨停）
+        assert aggregate_market_ticks(ticks_5, {"601398"}, trade_date=D(2026, 7, 6)).limit_up == 0
+        assert aggregate_market_ticks(ticks_5, set(), trade_date=D(2026, 7, 6)).limit_up == 0
+        assert aggregate_market_ticks(ticks_10, {"601398"}, trade_date=D(2026, 7, 6)).limit_up == 1
 
     def test_limit_down(self):
         ticks = {"600002.SH": _tick(9.00, 10.00)}

@@ -152,6 +152,13 @@ def limit_pct_for(board: Board | str, *, is_st: bool = False) -> float:
 
     Raises:
         ValueError: 未知板块
+
+    时变口径声明（#ARCH-DATA-020）：本函数为纯板块映射，无 trade_date 维度，
+    语义=按现行规则取值，仅限当日实时盘面场景；历史回放/回填 MUST 改走
+    AkshareIngestProvider._limit_pct_of(code, trade_date, st_flag) 日期切片
+    （主板 ST 2026-07-06 起 10%、此前 5%），禁止用本函数回推历史涨跌停幅度。
+    本函数当前生产调用为零（漏斗未接线）；接线时若涉历史区间，上游须传日期
+    （历史回放的自然形态=filter_tiered 批级日期参数，非 per-record 字段）。
     """
     try:
         b = Board(board)

@@ -21445,9 +21445,29 @@ entries:
     点口径 2026-07-01 起，回补窗内除权除息日 pre_close 退化为不修正（与 akshare
     fallback 现行行为一致，不引入新错误类别）；②st_stock_list 快照 2026 年 1-3 月约
     周频（4 月起日频），兜底 st_flag 为最近可得 ≤T 口径，ST 摘戴帽切换可能滞后数日
-    （PIT 合法，与生成侧 _load_st_snapshots 同语义）。残余跟进：miniqmt_provider
-    竞价簿硬编码 ±10%（双创错）、signal_ashare/tiered_screening_filter 与
-    ex_core/adapters/miniqmt_broker 按现值改无历史切片；③ TDM 联动参数重校欠账（竞价即决封板/溢价映射、跌停排队、封成比阈值按 10% 重校）
+    （PIT 合法，与生成侧 _load_st_snapshots 同语义）。② 残余三项已于 2026-09-08 全部收口：
+    a) miniqmt_provider._parse_auction_book_tick/_fetch_auction_book：删除 ±10% 硬编码与
+    stockStatus 0x04/0x08 位条件（位语义全项目无实证、无其他消费方；治理侧 tick 镜像表
+    原样保留 stockStatus 原值，原始数据未丢），改为无条件按 pre_close×(1±pct) Decimal
+    ROUND_HALF_UP 到分，幅度=单一真源 _limit_pct_of（延迟导入无环）；ST 集经
+    load_current_st_codes(as_of=payload.end) 每 fetch 运行加载一次（3 秒 auction_highfreq
+    档≈每运行 1 条 CH 微查询，可忽略；日级缓存裁定=不做 YAGNI，禁止下沉 per-tick 即
+    5400 查/3 秒），失败 fail-open 按非 ST 幅度近似+log.warning（本通道纯实时 trade_date
+    恒≥2026-07-06，_limit_pct_of 对 st_flag 钝感，降级数值影响=0）。历史脏行裁定=不回改：
+    upper_limit/lower_limit 全项目零消费方（scenario_planner 三条 SQL 均不选该列）+通道
+    纯实时不可回填；若未来出现首个消费方 MUST 按 pre_close×(1±pct) 重算或改走 stk_limit
+    表，禁止直读历史行。单测=tests/zephyr/data/test_auction_book_tick.py 13 用例（主板
+    ST 07-03=5%/07-06=10% 边界、双创 20%/北证 30%、HALF_UP 边界 10.35→11.39/9.32、
+    stockStatus 位无关性、pre_close 缺失/未知板块降级、ST 加载失败 fail-open 集成）。
+    b) tiered_screening_filter.limit_pct_for：docstring 声明"纯板块映射无日期维度、仅限
+    当日实时盘面，历史回放 MUST 走 _limit_pct_of 切片"（daban rule_limit_price None=
+    现行规则同款模板；生产调用为零、漏斗未接线；TieredFilterRecord 不预留 trade_date，
+    接线时以 filter_tiered 批级日期参数承接）。c) miniqmt_broker._BOARD_PRICE_LIMIT_PCT/
+    _check_price_limit：注释声明"现行规则静态映射、仅当下委托校验，历史回放/回测走
+    matching_engine 三级解析链"（pricing_policy 估算免责同款模板；现值已正确，零行为
+    变更）。附带回归修复：test_market_breadth_snapshot test_st_5pct 断言过时（生效日后
+    ST 5% 预期失效）改为时变边界用例 test_main_board_st_regime_boundary。；
+    ③ TDM 联动参数重校欠账（竞价即决封板/溢价映射、跌停排队、封成比阈值按 10% 重校）
     ——③ 已清偿（2026-09-07）：判定=交易决策层零值变更、全部无需重校（D67 矩阵/封板时间→
     溢价映射/封成比四档的校准宇宙本为 10% 涨跌幅板，ST 主板拉平后系"恢复全域适用"非参数
     漂移，改值反成 ST 双真源；scenario_planner 昨涨停溢价映射数据驱动；跌停排队注入式零 pct
@@ -21471,7 +21491,13 @@ entries:
     - 'tests/backtest/test_stk_limit_matching.py（13 用例：07-03/07-06 边界/创业板切片/PIT 行/降级/端到端）'
     - 'tests/backtest/test_cost_friction_night001.py + tests/backtest/test_toy_reconciliation_night001.py（合成引擎级测试关 provider 隔离真实 PIT 行）'
     - 'c1_market.stk_limit（2026-09-08 回补 2026-01-05 起 900781 行重算落库+OPTIMIZE FINAL 9 分区）'
-  fix_phase: '已完成（代码切片+单测+回填补数+对账+登记，2026-09-07）；2026-09-08 第二轮：撮合三级解析链闭环（重评条件② matching_engine 部分）+ stk_limit 历史回补 2026-01-05 起 900781 行+对账+PIT 实证'
+    - 'src/zephyr/data/implementations/miniqmt_provider.py（竞价簿涨跌停单一真源切片计算+_auction_limit_prices helper，废 stockStatus 位推断）'
+    - 'src/zephyr/signal_ashare/tiered_screening_filter.py（limit_pct_for 时变口径声明，零行为变更）'
+    - 'src/zephyr/ex_core/adapters/miniqmt_broker.py（_BOARD_PRICE_LIMIT_PCT/_check_price_limit 口径边界声明，零行为变更）'
+    - 'tests/zephyr/data/test_auction_book_tick.py（新建 13 用例：ST 07-03/07-06 边界/双创北证/HALF_UP/位无关性/降级集成）'
+    - 'tests/zephyr/data/test_market_breadth_snapshot.py（test_st_5pct→test_main_board_st_regime_boundary 时变边界）'
+    - 'docs/01_policies_and_standards/_registry/catalogs/data_asset_registry.yaml（DS-112 auction_book evidence 涨跌停列口径）'
+  fix_phase: '已完成（代码切片+单测+回填补数+对账+登记，2026-09-07）；2026-09-08 第二轮：撮合三级解析链闭环（重评条件② matching_engine 部分）+ stk_limit 历史回补 2026-01-05 起 900781 行+对账+PIT 实证；2026-09-08 第三轮：重评条件② 残余三项收口（竞价簿涨跌停真修+stockStatus 位废弃+历史脏行不回改裁定、tiered_screening_filter/miniqmt_broker 声明类留痕、附带 breadth test_st_5pct 过时断言修复）——重评条件② 全部闭环'
   status: decided
   created: '2026-09-07'
   last_updated: '2026-09-08'

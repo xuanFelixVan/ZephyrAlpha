@@ -185,6 +185,13 @@ _XT_SELL_ORDER_TYPES = {24, 26, 28, 30}  # 卖限价/卖市价/卖开/卖平
 
 # 板块涨跌停幅度（2026-07-06 规则修订：ST 与主板统一 ±10%）
 # 真源分类：ex_core.board_lot.classify_board；UNKNOWN 回退主板 10%
+# 时变口径声明（#ARCH-DATA-020）：本表为"现行规则"静态映射，无 trade_date 维度，
+# 仅限当下委托校验（submit_order 活体路径；prev_close 缺失 fail-open 跳过校验，
+# 见 _check_price_limit）——此处为无精确涨停价时的估算口径，调用方应优先使用
+# 交易所提供的精确涨停价（对齐 ex_core/pricing_policy.py 估算免责声明）；
+# 历史回放/回测 MUST 走 backtest.matching_engine 涨跌停三级解析链
+# （stk_limit PIT 行 → AkshareIngestProvider._limit_pct_of 日期切片 → 板块前缀推断），
+# 禁止用本表回推历史涨跌停价（主板 ST 2026-07-06 前 5% 会错按 10%）。
 _BOARD_PRICE_LIMIT_PCT: Final[dict[AShareBoard, Decimal]] = {
     AShareBoard.MAIN: Decimal("0.10"),
     AShareBoard.CHINEXT: Decimal("0.20"),  # 创业板 ±20%
@@ -1240,6 +1247,10 @@ class MiniQmtBroker(BrokerInterface):
         A股涨跌停板（2026-07-06 规则修订）: 主板/ST ±10%，创业板/科创板 ±20%，
         北交所 ±30%（板块分类真源：board_lot.classify_board）
         买入涨停价 = 拒绝，卖出跌停价 = 拒绝
+
+        仅作用于当下委托校验（幅度=现行规则静态映射，无 trade_date 维度，
+        #ARCH-DATA-020）；历史回放/回测的涨跌停判定走 matching_engine
+        涨跌停三级解析链，勿复用本方法。
 
         Args:
             symbol: 标的代码
