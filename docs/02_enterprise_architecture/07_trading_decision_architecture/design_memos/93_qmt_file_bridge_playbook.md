@@ -5,8 +5,8 @@ title: 大QMT文件桥双向通道操作手册（miniQMT 替代方案）
 owner: ZephyrAlpha-Owner
 language: zh
 status: active
-version: "1.8.2"
-date: 2026-09-04
+version: "1.8.3"
+date: 2026-09-07
 topic: qmt_file_bridge
 scope: 07_trading_decision_architecture
 ---
@@ -514,7 +514,13 @@ QMT 沙箱（QUOTE v18 策略）                    本地 tick_subscriber（桥
 1. ✅ 沙箱侧 `ZEPHYR_TICKDUMP_v18.txt`（分批全市场轮询+追加写+timetag 去重+轮内批间隔限速，落位 `E:\qmt_bridge_sim\`）
 2. ✅ 项目侧 tick_subscriber.py 加 `BridgeTickSource`（尾读+残行回退+新鲜度闸门，复用 qmt_file_bridge_quote 三件套；另加桥侧 timetag 二次去重——沙箱策略重启丢 last_tt 状态重 dump 的防御）+ `--bridge`/`--bridge-env` 模式接线 + `TickSubscriber.start_bridge()`（共享下游链初始化：WAL/flush/看门狗/心跳/metrics，跳过 xtdata 探活订阅链；看门狗桥模式分支只保心跳无重订阅语义；心跳 JSON 增 `mode` 字段，deadman 消费面按字段名取值增量安全）
 3. ✅ 单测：桥文件解析/timetag 去重（含残行回退+文件重建 offset 归零）/心跳降级三用例——90/90 两轮通过（含 TestMain argv 隔离修复）
-4. ⬜ 实测验收：盘中对拍（桥模式 vs miniqmt 现模式同时跑 30 分钟，行数/字段/延迟对比报告）——沙箱 v18 策略需 QMT 模拟终端模型交易启动后进行
+4. ✅ 实测验收（2026-09-07 盘中对拍 13:05-13:35，30 分钟）——**值语义通过，密度不达标，结论：v18 轮询式只够分钟级用途，tick 级需 v18.2 订阅式改造**：
+   - **值语义 ✅**：最近邻对拍（±5s 窗口）bridge 5000 行抽样——price 一致 73.0% / bid 82.2% / ask 80.6%，且全部差异为相位差内的自然行情变动（价格 ±0.01、累计量微增），无系统性错值；volume 一致 40.5%（累计量语义，时间差内自然增长，非错误）
+   - **链路 ✅**：ticks.csv→BridgeTickSource 尾读→WAL→CH 全链路通，窗口内 qmt_bridge 76,794 行入库（5,207 标的，零丢单零残行）
+   - **密度 ❌（硬伤）**：bridge 全市场每标的 ~90-120 秒 1 行（37 分钟活跃期 000001 仅 45 行）vs miniqmt 3 秒推送——**根因：get_full_tick 对未订阅品种的 timetag 更新粒度 ~90 秒**（v17 的 200 只订阅品种为 3 秒粒度，"订阅决定粒度"）
+   - **语义差异发现**：bridge timetag=最后成交时刻（秒数不齐 3 秒网格），miniqmt tick.time=3 秒对齐快照时刻——两源 timestamp 天然错相位，对拍只能最近邻不能精确 JOIN；另 symbol 纯代码跨市场冲突（000001.SH 指数 vs 000001.SZ 股票）在两源同存，系 tick_to_row 既有设计非桥引入
+   - **9/18 退役影响修订**：轮询桥保住"全市场 90 秒快照"（收盘对账/持仓监控/日线分钟因子够用），但做 T 三策略（盘口失衡/VWAP 回归/冲高回落）需秒级 tick——**必须 v18.2：沙箱内 subscribe_whole_quote 订阅全市场，回调驱动 dump（与 miniqmt 推送同构，密度回到 3 秒）**
+   - 修复实录：timetag 实测格式 "yyyyMMdd HH:MM:SS"（首版解析器只认纯数字全丢行，commit 88772a47 修）；沙箱策略首版含中文 SyntaxError（改纯 ASCII v18.1，沪深A股→\u 转义）
 
 ### 14.5 风险与边界
 
@@ -538,3 +544,4 @@ QMT 沙箱（QUOTE v18 策略）                    本地 tick_subscriber（桥
 | 1.8.0 | 2026-09-04 | **§14 P0-1 Tick 桥扩容设计**：沙箱全市场 dump（v18 分批轮询）+项目侧 BridgeTickSource 桥模式（下游 queue/WAL/CH 零改动复用）；快照轮询 vs 推送订阅语义等价论证；实施清单+风险边界（500MB/日轮转） |
 | 1.8.1 | 2026-09-04 | **§13.3 预案补全（Owner 质询两轮）**：L4 GUI 自动化终极防线入表（EasyTrader 思路，封它=封人用，只做预案不写代码）；L3 触发技术背景落盘（四法封堵零难度=业务选择非技术限制，演练=对口子关闭的对冲）；修订记录排序修正 |
 | 1.8.2 | 2026-09-04 | **§14 P0-1 落地（代码施工完成）**：沙箱 v18 策略落位 E:\qmt_bridge_sim\；项目侧 BridgeTickSource（尾读三件套+timetag 二次去重+文件重建自愈）+ start_bridge 共享下游链 + --bridge/--bridge-env 接线 + 心跳 mode 字段；单测 90/90 两轮通过；待盘中对拍验收（清单第 4 项） |
+| 1.8.3 | 2026-09-07 | **§14.4 第 4 项盘中对拍收官**：值语义通过（最近邻 ±5s 对拍 price 73%/bid 82% 全为相位差自然变动）+链路通（76,794 行入库零丢）；密度硬伤定因（get_full_tick 未订阅品种 timetag ~90 秒粒度 vs miniqmt 3 秒）——v18 轮询式仅够分钟级，tick 级需 v18.2 订阅式（subscribe_whole_quote 全市场回调 dump）；timetag 实测格式修复（88772a47）+沙箱 ASCII 铁律再实证（v18.1） |
