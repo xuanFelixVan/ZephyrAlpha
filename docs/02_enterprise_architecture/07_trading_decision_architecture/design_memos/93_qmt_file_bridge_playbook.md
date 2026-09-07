@@ -5,7 +5,7 @@ title: 大QMT文件桥双向通道操作手册（miniQMT 替代方案）
 owner: ZephyrAlpha-Owner
 language: zh
 status: active
-version: "1.8.3"
+version: "1.8.4"
 date: 2026-09-07
 topic: qmt_file_bridge
 scope: 07_trading_decision_architecture
@@ -528,6 +528,22 @@ QMT 沙箱（QUOTE v18 策略）                    本地 tick_subscriber（桥
 - **午夜/午休冻结**：与 §12.2 已知沙箱特性一致（无行情时段线程冻结），心跳 watchdog 已有该语义
 - **退役日兜底顺序**：miniqmt 活→现模式；miniqmt 死+桥活→桥模式；双死→tick 断流告警（死人开关已有通道）
 
+### 14.6 v18.2 订阅式密度修复（2026-09-07 14:14 盘中落地，当日闭环）
+
+**方案**：沙箱内 `ContextInfo.subscribe_whole_quote(全市场)` 订阅激活引擎推送 + v18 轮询收割写 CSV——双策略组合。
+
+**关键实证（当日盘中）**：
+- v18.2 `ZEPHYR_TICKDUMP2`（E:\qmt_bridge_sim\ZEPHYR_TICKDUMP_v18_2.txt）`subscribe_whole_quote` 5218 只分批订阅成功（INIT_OK symbols=5218 subscribed=5218）
+- **意外发现 1**：ContextInfo.subscribe_whole_quote 的 callback 参数被静默忽略——ticks2.csv 零行（回调从未触发），沙箱订阅 API 与外部 xtdata 签名不同
+- **意外发现 2（方案真身）**：仅调用订阅就激活了引擎对全市场的 3 秒快照推送——v18 的 get_full_tick 轮询密度从 90 秒跃升到 **3-9 秒（中位 6 秒）**，全市场 5207 只均匀覆盖（p50=19 行/2.1 分钟），整体 4.3 万行/分钟。**订阅激活推送，轮询收割数据**——不需要回调
+- **高密度对拍收官（14:14:30-14:16:00 窗口）**：±5s 匹配率 89.5%，price 一致 91.7% / bid 95.0% / ask 93.9% / volume 82.7%（vs 低密度期 73%/82%/81%/40.5% 全面跃升）；差异样本全部为 3 秒相位内 ±0.01 自然变动，无系统性错值
+- **行数差语义（11:1）**：miniqmt 每 3 秒全推订阅品种快照（含未变化行），bridge timetag 去重只写变化行——信息量等价，CH 存储反而更省
+
+**运行纪律（9/18 退役日依赖）**：
+- ⚠ **双策略必须同时运行**：v18.2 停止可能退订 → v18 轮询退回 90 秒粒度。v18.2 的 ticks2.csv 空转是预期行为（只借它的订阅副作用）
+- v18.3 合并版（单策略：订阅激活+轮询收割）留作后续优化项
+- 桥进程数据源仍是 ticks.csv（v18 写的），无需改动
+
 ## 15. 修订记录
 
 | 版本 | 日期 | 内容 |
@@ -545,3 +561,4 @@ QMT 沙箱（QUOTE v18 策略）                    本地 tick_subscriber（桥
 | 1.8.1 | 2026-09-04 | **§13.3 预案补全（Owner 质询两轮）**：L4 GUI 自动化终极防线入表（EasyTrader 思路，封它=封人用，只做预案不写代码）；L3 触发技术背景落盘（四法封堵零难度=业务选择非技术限制，演练=对口子关闭的对冲）；修订记录排序修正 |
 | 1.8.2 | 2026-09-04 | **§14 P0-1 落地（代码施工完成）**：沙箱 v18 策略落位 E:\qmt_bridge_sim\；项目侧 BridgeTickSource（尾读三件套+timetag 二次去重+文件重建自愈）+ start_bridge 共享下游链 + --bridge/--bridge-env 接线 + 心跳 mode 字段；单测 90/90 两轮通过；待盘中对拍验收（清单第 4 项） |
 | 1.8.3 | 2026-09-07 | **§14.4 第 4 项盘中对拍收官**：值语义通过（最近邻 ±5s 对拍 price 73%/bid 82% 全为相位差自然变动）+链路通（76,794 行入库零丢）；密度硬伤定因（get_full_tick 未订阅品种 timetag ~90 秒粒度 vs miniqmt 3 秒）——v18 轮询式仅够分钟级，tick 级需 v18.2 订阅式（subscribe_whole_quote 全市场回调 dump）；timetag 实测格式修复（88772a47）+沙箱 ASCII 铁律再实证（v18.1） |
+| 1.8.4 | 2026-09-07 | **§14.6 v18.2 当日闭环**：订阅激活+轮询收割组合方案落地（沙箱 subscribe_whole_quote 副作用激活全市场 3s 推送，v18 get_full_tick 密度 90s→3-9s）；高密度对拍全面通过（price 91.7%/bid 95.0%/ask 93.9%，差异全为相位内自然变动）；发现沙箱订阅 API callback 被静默忽略（回调路径不通，无需回调）；双策略同时运行纪律落盘 |
