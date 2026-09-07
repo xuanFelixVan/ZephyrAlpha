@@ -7,7 +7,7 @@ title: 产业链供应链全景图数据审计与更新SOP——夜班自主执�
 owner: ZephyrAlpha-Owner
 language: zh
 status: active
-version: "1.1.0"
+version: "1.2.0"
 date: 2026-09-07
 topic: industry_chain_data_audit
 scope: global
@@ -68,6 +68,20 @@ related_modules:
 - **不做**：美股/韩股全市场产业链（超出单机个人项目硬边界，系统只交易 A 股+数字货币）。
 - **定位**：全球锚点是**信息全景**（判断传导关系用），不进因子框架（lead-lag 已证伪的裁定不推翻）。
 - schema 已有 market 字段，**无需改表**。
+
+### 2.4 业界对标结论（2026-09-07 三路全网调研：机构产品/开源项目/学术论文）
+
+> 本节数据库升级（§4.8/§4.9）的设计依据。调研覆盖 FactSet/Bloomberg SPLC/Wind/Choice/iFinD/聚源/朝阳永续、中金/海通/华福/中信建投金工、ChainKnowledgeGraph 等 15+ 开源项目、2024-2026 学术论文（FinKario ACL'26/VRTE-LLM/GDES 等）。
+
+| 来源 | 关键发现 | 采纳到 |
+|---|---|---|
+| FactSet（量化界标准库） | 关系四主类13子类；`start_/end_` 区间存边（哨兵值表"至今"）；`revenue_pct` 优先于绝对金额；`subsidiaries/relevance/keywords` 边元数据；reverse link 反向补链 | §4.8 |
+| Bloomberg SPLC | `disclosed vs estimated` 显式区分；排除金融股 | §4.8 |
+| Wind/Choice/iFinD/朝阳永续 | 三层模型（产业树+公司-产品营收归因+公司间交易）；节点挂宏观/行业指标；边带传导类型（利润/政策/价格） | §4.8/§4.9 |
+| ChainKnowledgeGraph（开源 769★） | 公司-行业-产品三实体；产品↔产品上下游边 **17 万条现成免费数据**；"边不带权重则图谱无法定量推理" | §4.9 数据渠道① |
+| nexus（开源个人量化标杆） | 边表放关系库非图数据库；`available_as_of` PIT 硬约束；回测 `assert_point_in_time_safe()` | §4.8 |
+| 学术界（FinKario/GDES 等） | 双图分离（稳定属性+时变事件）；bi-temporal 三时间戳；关闭旧边开新边永不删；纯 prompt LLM 关系识别 F=0.23 不可靠→必须规则校验 | §4.8 |
+| 中金（A 股实证） | 双边上市供应关系仅约 1300 家→二层传递闭包补链；客户传导>供应商传导；1 个月窗口最优；供应链动量差 IC 4.87%/ICIR 1.10 | §4.8 消费侧 |
 
 ## 3. 触发条件与夜班总则
 
@@ -281,6 +295,77 @@ related_modules:
 ```
 
 **执行边界**：合并涉及存量行修改 → 按夜班总则第 1 条，AI 可做**方案与 dry-run**，执行合并须 Owner 醒后拍板（样板批准后可按同款规则批量化）。
+
+### 4.8 量化可用性标准（ig_company_edge v2 目标 schema，2026-09-07 增补）
+
+> 本节定义图谱数据"量化可直接消费"的标准。目标字段落地=DDL 升级施工（apply_industry_graph_ddl.py 增列，另案派单）；本 SOP 先冻结标准，DDL/工具校验对齐本节。
+
+**PIT 三时间戳（回测防前视的硬约束，学术界 bi-temporal + nexus 范式）**：
+
+| 新列 | 类型 | 语义 | 填法 |
+|---|---|---|---|
+| `valid_from` | DATE | 关系开始生效 | 年报披露的供应关系→报告期末（6/12 月末）；新闻事件→发布日 |
+| `valid_to` | DATE | 关系终止（NULL=至今） | 断供/换供应商证据日；无证据不填 |
+| `as_of` | DATE | 证据可日（决策者何时能看见） | 年报**披露日**（非报告期！）/新闻发布日 |
+
+- 存量 `year` 列保留（粗粒度兼容读旧数据）；**websearch 新写入必须带三时间戳**（日期不可得→`as_of`=采集日，`valid_from`=当年 6/12 月末，登记"粒度降级"warn）。
+- **更新纪律**：新证据到来→关闭旧边（`valid_to`=新证据日）+ 开新边，**永不覆盖永不删**（完整历史可回溯）。
+- **回测查询模板**（量化消费方唯一合法口径）：
+
+```sql
+WHERE valid_from <= :decision_date
+  AND (valid_to IS NULL OR valid_to > :decision_date)
+  AND as_of <= :decision_date
+```
+
+**边元数据 v2（FactSet/Bloomberg/朝阳永续对标）**：
+
+| 新列 | 类型 | 语义 | 对标 |
+|---|---|---|---|
+| `evidence_type` | TEXT | ∈{disclosed（披露实锤）, inferred（AI 推断）, estimated（估算）} | Bloomberg |
+| `revenue_pct` | REAL | 该关系占供应商营收比 | FactSet（优先于绝对金额） |
+| `subsidiary` | TEXT | 关系实际挂的子公司名 | FactSet |
+| `relevance` | SMALLINT | 关系相关度 1-5 | FactSet relevance rank |
+| `transmission_type` | TEXT[] | ∈{利润传导, 政策传导, 价格传导, 情绪传导} | 朝阳永续（因子分类维度） |
+
+**关系类型词表（edge_type v2，跨机构+开源+学术并集，封闭枚举）**：
+
+- 供应链：`supplies_to`（供应商→客户，方向必须保留）/ `customer_of`（反向冗余边，查询友好，写入时成对生成）
+- 竞争合作：`competitor_of` / `partners_with`
+- 产品：`produces`（公司→产品，尽量带营收占比）
+- 归属：`belongs_to_sector`（公司↔申万行业，替代模糊的 category 挂靠）
+- 现有 `structure/supply` 值保留兼容（存量不迁移）；websearch 新写入一律用 v2 词表。
+
+**量化消费侧最小数据需求**（字段取舍依据）：
+
+1. 客户动量因子（首选）：供应商→客户边 + PIT 三时间戳 + revenue_pct 权重；A 股实证：客户传导>供应商传导、1 个月窗口最优、剔除金融股。
+2. 中心性因子：图结构本地计算（月度重建）；注意 A 股 PageRank 与美股方向相反（外围公司收益更高）。
+3. 事件传导：断供/崩盘类事件边日级更新，2 周传导窗口。
+4. **覆盖度补链三招**（A 股双边上市关系稀缺的业界解法）：reverse link（在对方年报中被点名→反向建边）→ 二层传递闭包（客户1=供应商2 时构造间接边，标 `evidence_type='inferred'`）→ 图缺口驱动检索（§7.6）。
+
+### 4.9 全量内容入库（四层架构，Owner 2026-09-07 裁定：内容颗粒度不变、全部进数据库）
+
+> 解决"文档细节全被丢弃"问题：现状只入库三级结构（链→环节→公司），文档里的描述/数值/关系细节只留文件路径。四层架构实现内容零丢失 + 量化可检索。
+
+| 层 | 表 | 内容 | 状态 |
+|---|---|---|---|
+| 文档层 | ig_document | 3,049 份源文档登记 | 已有 |
+| 内容层 | **ig_chunk（新）** | 76,112 个文本块全量入 PG：`chunk_id PK / doc_id FK / title / doc_type / year / chunk_text`（源自 E:\数据下载\产业链数据_P2语料\chunks.sqlite，结构已实测确认） | 待施工 |
+| 事实层 | **ig_fact（新）** | 从 chunk 抽取的事实五元组：`fact_id PK / subject / relation / object / value / evidence_chunk_id FK / confidence / as_of`；relation 先冻结三类：`supplies_to / produces / market_share` | 待施工 |
+| 图谱层 | ig_chain/node/edge/node_company + ig_company_edge | 三级结构 + 供应链边（v2 字段见 §4.8） | 已有 |
+
+**施工与抽取纪律**：
+
+- **ig_chunk**：一次性 ETL 脚本从 E 盘 chunks.sqlite 全量导入（chunk_id 主键幂等）；向量检索继续用 E 盘现成 embeddings.npy（PG 只存文本+元数据，不建向量列——检索走 RAG 服务不走 PG）。
+- **ig_fact 抽取**（夜班新增子任务，挂第 2 轮）：对 P1 链相关 chunk 批量抽取，LLM 输出**JSON schema 约束**（学术范式：纯 prompt 不可靠，必须结构化输出+规则校验：relation 枚举白名单/object 非空/confidence≤0.7）+ 每条事实回链 evidence_chunk_id（反幻觉锚，对标"every edge has a citation"）。
+- **产品层（Phase 2 可选）**：ig_product + 公司→产品边（ChainKnowledgeGraph 模式：公司→主营产品→产品链→公司多跳传导，绕开公司间直接供应边稀缺难题）。
+
+**数据获取渠道优先级（v1.2 修订）**：
+
+1. **ChainKnowledgeGraph 开源数据集**（17 万条产品上下游边免费，GitHub 769★，一次导入+季度增量）——唯一现成外部数据源，优先级最高
+2. A 股年报前五大客户/供应商披露（公开披露口径，病菌寻路可复刻）
+3. 病菌寻路全网搜索（§7.6，增量与保鲜主渠道）
+4. 存量语料 RAG 复核（ig_chunk 抽取的内部证据源）
 
 ## 5. 写入工具（第 0 轮施工件）
 
@@ -508,10 +593,17 @@ related_modules:
 3. 全球锚点公司（进第 4 轮锚点清单，不在此展开）
 
 **纪律**：
-- 每次访问必带采集日期（§4.6 时效三件套）；关系数据按信息年写 year。
+- 每次访问必带采集日期（§4.6 时效三件套）；关系数据按信息年写 year；**websearch 边必带 §4.8 PIT 三时间戳**。
 - 三手来源只提供 frontier 线索，落库证据必须一手/二手（§7.2）。
 - 寻路明细（访问了几家/新增几家/停止原因）写入批次 JSON 的 `crawl_log` 字段，夜班汇报汇总。
-- 查到与存量矛盾的信息（如已断供还在库里）→ 不覆盖，新增带新 year 的边 + 登记开放问题。
+- 查到与存量矛盾的信息（如已断供还在库里）→ **关闭旧边 valid_to + 新开边**（§4.8 更新纪律），登记开放问题。
+
+**置信度融合与降噪（v1.2 升级，学术多 agent 范式）**：
+
+- **多 agent 投票**：P1 链关键边与全球锚点边，由 ≥2 个独立子代理各自抽取（不同查询词/不同信息源）；一致→confidence 0.7；分歧→0.5 + 登记待核；单源→0.5。
+- **IDF 降权（防"无处不在的对手"噪音）**：对台积电/三星类与大量公司都相连的 hub 实体，中心性/动量计算时按连接数倒数降权（学术 Yang&Zhang 范式）；写入时不降，消费侧统一处理。
+- **图缺口驱动检索**：寻路种子优先选"结构洞"——图上缺边的节点、落位覆盖率低的链、frontier 中的孤立公司（CIBDA Web-Knowledge-Web 范式）；第 0 轮 gap_ledger 的缺口清单直接作为种子清单，不再随机选种子。
+- **关系抽取防幻觉**（学术实证：纯 prompt 关系识别 F=0.23 不可靠）：每条边必须有 evidence_text 原文摘录；抽取输出走 JSON schema 约束；relation 用 §4.8 v2 词表白名单校验；类型约束过滤（关系两端的实体类型必须合法，如 supplies_to 两端必须是公司）。
 
 **子代理提示词模板**（总控派单时复制）：
 
@@ -624,4 +716,5 @@ progress.json 结构：
 | ---------- | ----- | --------------------------------------------------------------- | ----------------------------------------------------------------------- |
 | 2026-09-03 | 1.0.0 | 初稿：建立产业链/供应链全景图数据审计与更新 SOP（夜班自主执行版），八轮循环+数据契约+WebSearch 规范+总控编排 | ig\_\* 七表数据为一次性采购包无更新机制，落位覆盖率 46.8%，缺全球锚点；Owner 需要睡前一键启动、醒来看结果的自主数据保鲜流程 |
 | 2026-09-07 | 1.1.0 | 增补数据标准与采集模板：§4.6 七表字段字典（含时效三件套+过期公式）｜§4.7 命名与词表标准（链名规范/tier 9 值/category 申万 31 类/半导体链名治理样板 15→8）｜§7.6 病菌寻路采集法（种子→逐跳扩散→预算停止，7 步协议+子代理模板）｜第 0 轮缺口清单+第 1 轮治理动作挂接新标准｜工具硬校验扩至 9 条 | Owner 2026-09-07 指令：先定数据字段标准写入 SOP，再定全网搜索寻路模板（无数据包可下载，增量只能靠 AI 联网逐跳采集）；更新时间是快速定位过时数据的主键 |
+| 2026-09-07 | 1.2.0 | 量化原材料升级（三路全网调研驱动）：§2.4 业界对标结论（机构产品/开源/学术）｜§4.8 量化可用性标准——PIT 三时间戳（valid_from/valid_to/as_of，回测防前视）+边元数据 v2（evidence_type/revenue_pct/subsidiary/relevance/transmission_type，FactSet/Bloomberg 对标）+关系词表 v2（supplies_to 等 7 类）+覆盖度补链三招（reverse link/二层闭包/图缺口）｜§4.9 全量内容入库四层架构（ig_chunk 内容层 76,112 块+ig_fact 事实层五元组，Owner 裁定"内容颗粒度不变全部入库"）+数据渠道优先级（ChainKnowledgeGraph 17 万边免费数据居首）｜§7.6 升级：多 agent 投票/IDF 降权/图缺口驱动检索/JSON schema 防幻觉 | Owner 2026-09-07 指令：数据库将作为量化原材料（自动分析检索）必须标准化；内容全量入库可行性；全网调研机构/社区/GitHub/论文后升级流程到最好再填充 |
 
