@@ -5,7 +5,7 @@ title: 交易决策地图（Trading Decision Map）——决策内容索引层�
 owner: ZephyrAlpha-Owner
 language: zh
 status: active
-version: "2.13.0"
+version: "2.14.0"
 date: 2026-09-07
 topic: trading_decision_map
 scope: 07_trading_decision_architecture
@@ -574,6 +574,32 @@ E-L2 收口：**10 树枝 19 节点**。
 - **IS 三分解**（延迟成本/冲击成本/机会成本）进 S2-06 执行成本轴；分批批间触发升级（每多卖一批需新增一个恶化信号，不因时间流逝自动加卖）+三止盈接力（固定目标先行→止损上移保本→trailing 接管，峰值回撤与 Chandelier 同源不叠加）；ab tester 增强（MFE/MAE 字段+随机退出对照组+市场状态分层）待上图
 
 **落盘方式（D73）**：YAML 7 处注释（S1-04 假破位+除权口径/S1-05 确认层/S2-01 流动性包+板块顺序/S2-02 特殊标的/S2-03 竞价即决/S2-04 SellChase+QMT/S2-06 六分类+前瞻跟踪）+本节完整参数表；validate error=0。
+
+### 2.31 F 流（组合资金流）血肉——C2 四枝+C3 五枝（D74-D83，Owner 2026-09-07 终裁）
+
+**SOP 全流程**：本地资产盘点（F 流底子四流最厚：32 号 60 测试/33 号 33 测试/54 号 production/55 号 production/MOD-PF-007 归因引擎已落码）+三路定向调研（Millennium pod 机制/约束栈与净额/升降级 DSR 管线/可靠度加权谱系/开源库对账）→ 结构草案 → Owner 裁定"执行落盘"。
+
+**结构定稿（D74）**：C2 四枝+C3 五枝树深 2（F 流合计 12，距预算 80 充足）；**全 auto**（F 流无实盘下单节点，聚合产物走执行域）；**C1 不动**（D10-D12 预算带定稿）。
+
+| 树枝 | 节点 | 锚 |
+|---|---|---|
+| C2 聚合（4） | 01 目标聚合与净额轧平→02 组合约束栈→03 相关性聚类 cluster 上限；04 budget 变动三级升级（并行） | MOD-POS-021（pre_kelly_aggregate/post_kelly_clip）/MOD-POS-005/007/011/012/022；RLM-CONCENTRATION-002/003 |
+| C3 归因（5） | 01 多维归因引擎→02 升降级评审/03 sleeve 权重调权/04 参数校准闭环/05 可靠度养成与信号健康 | MOD-PF-007（Brinson 已落码）；THD-RETIRE-001/002/003；BMK-INDEX-003/ABSOLUTE-001 |
+
+**关键裁定**：
+- **D75 netting 执行侧**：intent netting 三步（收集→同标的按符号求和→净差单）+成交按贡献比例分摊回 strategy_book（逐笔归因到策略的前提）+价格交叉闸门防自成交；冲突不裁决对错只轧平（Millennium pod 同构：账本分离风险净额化）；新边 **C2-01→E-L4**（组合净指令喂执行件）
+- **D76 约束栈顺序**：总仓位→回撤限额（资金曲线分级动态压缩）→波动率目标→集中度→流动性→相关性；按比例削非策略优先级截断
+- **D77 相关性口径升级**：32 号 tierzero 0.6→行业主流 **ρ>0.70 减半/ρ>0.85 禁新仓/cluster heat≤5% 权益/月度再聚类/危机压测 ρ→0.9**
+- **D78 归因框架**：几何 Brinson（8 sleeve=8 板块，免多期 linking 修正）+MOD-PF-007 引擎锚（降级检测 IC 衰减>50%+拥挤检测 ρ>0.8）+盈亏二分+IS 三分解（D50 三项落位）
+- **D79 升降级纪律**：月度 composite 评审+季度正式 verdict 四选一（每 sleeve 恰好一个输出，阈值未触发=no change）；**评审制人工裁定不自动退役**（55 号既有裁定）；DSR 退役线=滚动 DSR<0 连 8 周（个人版入场≥0.5）；RegimeDecayDetector 三选二借鉴
+- **D80 调权公式**：54 号 RegimeMetaAllocator 已定（allocation=normalize(Base×PerfScore×Shrinkage) floor5%/cap40%）+防过拟合三纪律（漂移限幅±30%/单参数族/no-change 默认）
+- **D81 校准闭环**：G04 机制转起来（tracker #48 等首批 track record）；WFE>60% 可用/<40% 禁上线；CPCV+DSR+PBO+参数平台期四道 gate 才 verified；purge 窗=持仓半衰期+embargo≥5 日；引入建议 purgedcv/skfolio；**DSR 只做门禁不做优化目标**
+- **D82 可靠度三档递进**：等权起步（Fed 实证简单平均 50 年最稳，不一步到位 BMA）→判准率/逆误差平方→粒子滤波 DTVW；权重下限 10%+月度更新禁日级追；新边 **C3-05→E-L1-AGG feedback**（hub 边的精确承载者）
+- **D83 落盘与开源建议**：YAML 9 节点+11 边+§2.31；开源引入登记（quantstats 报表/alphalens-reloaded IC/purgedcv 或 skfolio CPCV 底座——借鉴自研为主不进地图）
+
+**红节点 5**（C3-02 评审编排/C3-03 调权编排/C3-04 校准闭环/C3-05 可靠度加权=X 流同款语义；C3-03/04 有 doc_ref 不算空转）。四流血肉进度：**E 64/P 17/X 15/F 12——四流全部封板**，进入拼装回测前置状态（Owner 预裁：全链清楚+策略装完才回测）。
+
+**验收**：真源 122 节点/132 边 validate error=0；R1 红节点 85→89（+4 C3 红节点）、R25 17→16 净减 1、R21 零错误（7 个新 MOD-POS/PF 锚全过 depgraph 对账）、R22/R16 不变。
 
 ## 3. 考虑过的替代方案与拒绝理由
 

@@ -2374,6 +2374,231 @@ nodes:
     # D50 欠账（69 号 §2.27，事后分析带）：①交易盈亏/持仓盈亏二分（vn.py 范式：日内成交映射 vs 隔夜持仓映射）——
     #   直接衡量"做T到底贡献多少"，strategy_book 加切分列；②策略级 P&L Explain（底仓/做T/加仓腿分离归因，
     #   策略亲和度调权的数据地基）；③逐笔 TCA（decision price→fill price 滑点归因，A股隐性成本可达佣金 5-10 倍）
+    #   ——三项已由 TDM-F-C3-01 多维归因引擎承接落位（D74 轮）
+    strategy_mounts: []
+
+  # ── F 流血肉（D74-D83，Owner 2026-09-07 终裁；C2 四枝+C3 五枝，树深 2；C1 预算带 D10-D12 定稿不动）──
+  # Millennium pod 单体版同构验证（pod 账本分离+风险净额化）；9 个 production 锚直接可用（32/33/54/55 号
+  # +MOD-PF-007 已落码 Brinson 引擎）；三空白=C2-01 执行侧 netting/C3-04 校准闭环编排/C3-05 可靠度加权
+  # C2 树枝：净额轧平→约束栈→相关性 cluster；budget 变动并行（F-C1 预算变动喂三级升级）
+  - node_id: TDM-F-C2-01
+    name_zh: 目标聚合与净额轧平
+    market: cn_a
+    flow: portfolio_flow
+    layer: C2
+    node_type: aggregation
+    point: 持续
+    decision_question: 各 sleeve 目标仓位怎么合成组合净指令
+    parent_node: TDM-F-C2
+    factor_refs: []
+    data_refs: []
+    module_ref: src/zephyr/position/core/firm_risk_aggregator.py
+    module_id: MOD-POS-021
+    algo_refs: []
+    doc_ref: "docs/02_enterprise_architecture/07_trading_decision_architecture/design_memos/32_firm_risk_aggregator.md#§2.7"
+    activation: continuous
+    invalidation: null
+    ai_autonomy: auto
+    # intent netting 三步（收集→同标的按符号求和→净差单发执行）+成交按贡献比例分摊回 strategy_book
+    # （逐笔归因到策略的前提，rustybt 范式）+发单前价格交叉闸门防跨策略自成交（Cancel Newest 语义）；
+    # 冲突不裁决对错只轧平（net>0 买入/net<0 仅可减不可做空/net=0 对冲，Millennium pod 同构：账本分离
+    # 风险净额化）；跨策略合并底座=MOD-POS-005 cross_strategy_position_merger
+    fallback: null
+    strategy_mounts: []
+
+  - node_id: TDM-F-C2-02
+    name_zh: 组合约束栈
+    market: cn_a
+    flow: portfolio_flow
+    layer: C2
+    node_type: stage
+    point: 持续
+    decision_question: 组合净头寸过没过全部约束
+    parent_node: TDM-F-C2
+    factor_refs: []
+    risk_limit_refs: [RLM-CONCENTRATION-002, RLM-CONCENTRATION-003]
+    data_refs: []
+    module_ref: src/zephyr/position/core/firm_risk_aggregator.py
+    module_id: MOD-POS-021
+    algo_refs: []
+    doc_ref: "docs/02_enterprise_architecture/07_trading_decision_architecture/design_memos/32_firm_risk_aggregator.md"
+    activation: continuous
+    invalidation: null
+    ai_autonomy: auto
+    # 约束栈顺序定稿（D76）：总仓位→回撤限额（资金曲线分级动态压缩 MOD-POS-007）→波动率目标→集中度→
+    # 流动性→相关性；post_kelly_clip 按比例削（非策略优先级截断）；硬约束回撤最优先期望目标容忍暂破
+    fallback: null
+    strategy_mounts: []
+
+  - node_id: TDM-F-C2-03
+    name_zh: 相关性聚类与cluster上限
+    market: cn_a
+    flow: portfolio_flow
+    layer: C2
+    node_type: stage
+    point: 持续
+    decision_question: 高相关持仓扎堆了吗、cluster 风险超限没
+    parent_node: TDM-F-C2
+    factor_refs: []
+    data_refs: []
+    module_ref: src/zephyr/position/core/correlation_regime_monitor.py
+    module_id: MOD-POS-012
+    algo_refs: []
+    doc_ref: "docs/02_enterprise_architecture/07_trading_decision_architecture/design_memos/32_firm_risk_aggregator.md"
+    activation: continuous
+    invalidation: null
+    ai_autonomy: auto
+    # D77 口径升级（32号 tierzero 0.6→行业主流）：60 日滚动 PnL 相关→层次聚类→cluster heat≤5% 权益；
+    # ρ>0.70 cluster 内减半/ρ>0.85 禁新仓；月度再聚类+危机压测 ρ→0.9（A 股涨跌停流动性螺旋更剧烈）；
+    # 底座=MOD-POS-011 covariance_estimator（Ledoit-Wolf 收缩）+MOD-POS-012 三档相关性 regime
+    fallback: null
+    strategy_mounts: []
+
+  - node_id: TDM-F-C2-04
+    name_zh: budget变动三级升级
+    market: cn_a
+    flow: portfolio_flow
+    layer: C2
+    node_type: stage
+    point: 持续
+    decision_question: 预算变了或超限了怎么平稳过渡
+    parent_node: TDM-F-C2
+    factor_refs: []
+    data_refs: []
+    module_ref: src/zephyr/position/core/budget_change_handler.py
+    module_id: MOD-POS-022
+    algo_refs: []
+    doc_ref: "docs/02_enterprise_architecture/07_trading_decision_architecture/design_memos/33_budget_change_handler.md"
+    activation: continuous
+    invalidation: null
+    ai_autonomy: auto
+    # 纯指令型状态机（不触碰下单接口）：Tier1 封锁新仓（撤买单留卖单瞬时）→Tier2 自主收敛（差异化窗口
+    # 打板 2d/事件 3d/多因子 4d）→Tier3 按比例强裁；防抖双层（日内<5% 忽略/连降>10% 强触；上调豁免）；
+    # 已知缺口=BudgetChanged 事件链未接线（33 号复核注记，随装配排期）
+    fallback: null
+    strategy_mounts: []
+
+  # C3 树枝：多维归因→{升降级评审/权重调权/参数校准/可靠度养成}（结论分发四路）
+  - node_id: TDM-F-C3-01
+    name_zh: 多维归因引擎
+    market: cn_a
+    flow: portfolio_flow
+    layer: C3
+    node_type: aggregation
+    point: 盘后
+    decision_question: 钱和亏在哪、哪个 sleeve 为什么
+    parent_node: TDM-F-C3
+    factor_refs: []
+    benchmark_refs: [BMK-INDEX-003, BMK-ABSOLUTE-001]
+    data_refs: []
+    module_ref: src/zephyr/pf_core/core/performance_attribution_engine.py
+    module_id: MOD-PF-007
+    algo_refs: []
+    doc_ref: "docs/02_enterprise_architecture/07_trading_decision_architecture/design_memos/54_reconciliation_attribution.md"
+    activation: postmarket
+    invalidation: null
+    ai_autonomy: auto
+    # 几何 Brinson（8 sleeve=8 板块：配置效应=权重贡献/选股效应=sleeve 内部，免多期 linking 修正）+
+    # 因子归因+风险归因+策略降级检测（IC 衰减>50% 权重归 0 建议）+拥挤检测（ρ>0.8 减半/ρ>0.9 归零建议）
+    # （MOD-PF-007 已落码）；交易 vs 持仓盈亏二分（vn.py 范式，D50 落位）+IS 三分解（延迟/冲击/机会成本）
+    fallback: null
+    strategy_mounts: []
+
+  - node_id: TDM-F-C3-02
+    name_zh: 升降级管线与退役评审
+    market: cn_a
+    flow: portfolio_flow
+    layer: C3
+    node_type: stage
+    point: 盘后
+    decision_question: 哪个 sleeve 升格、降半、清退还是重审
+    parent_node: TDM-F-C3
+    factor_refs: []
+    threshold_refs: [THD-RETIRE-001, THD-RETIRE-002, THD-RETIRE-003]
+    data_refs: []
+    module_ref: null
+    algo_refs: []
+    doc_ref: "docs/02_enterprise_architecture/07_trading_decision_architecture/design_memos/55_monitoring_review.md#§3.5"
+    activation: postmarket
+    invalidation: null
+    ai_autonomy: auto
+    # 月度 composite 评审+季度正式 verdict 四选一（维持/减半/清退/重审，每 sleeve 恰好一个输出；
+    # 阈值未触发=no change 防过度交易）；评审制人工裁定不自动退役（55 号 Owner 裁定，THD-RETIRE 触发
+    # 评估报告）；DSR 门禁：退役=滚动 DSR<0 连续 8 周（个人版入场≥0.5）；RegimeDecayDetector 三选二
+    # 借鉴（胜率衰减+DD 超 1.5×回测 MDD+OOD）；红节点（评审编排编排面）
+    fallback: null
+    strategy_mounts: []
+
+  - node_id: TDM-F-C3-03
+    name_zh: sleeve权重调权
+    market: cn_a
+    flow: portfolio_flow
+    layer: C3
+    node_type: stage
+    point: 盘后
+    decision_question: 下个月各 sleeve 权重怎么调
+    parent_node: TDM-F-C3
+    factor_refs: []
+    data_refs: []
+    module_ref: null
+    algo_refs: []
+    doc_ref: "docs/02_enterprise_architecture/07_trading_decision_architecture/design_memos/54_reconciliation_attribution.md"
+    activation: postmarket
+    invalidation: null
+    ai_autonomy: auto
+    # 调权公式 54 号已定（RegimeMetaAllocator）：allocation=normalize(Base×PerfScore×Shrinkage)
+    # floor 5%/cap 40%；PP-001 演进（等权→逆波动率→半 Kelly+HRP→拼装回测归因→逐月替换主观先验，
+    # 拼装回测引擎 planned）；防过拟合三纪律：参数漂移限幅±30%/每次最多一个参数族/阈值未触发 no-change
+    fallback: null
+    strategy_mounts: []
+
+  - node_id: TDM-F-C3-04
+    name_zh: 参数校准闭环
+    market: cn_a
+    flow: portfolio_flow
+    layer: C3
+    node_type: stage
+    point: 盘后
+    decision_question: 归因诊断怎么变成参数调整而不过拟合
+    parent_node: TDM-F-C3
+    factor_refs: []
+    data_refs: []
+    module_ref: null
+    algo_refs: []
+    doc_ref: "docs/02_enterprise_architecture/07_trading_decision_architecture/design_memos/54_reconciliation_attribution.md#§3.9"
+    activation: postmarket
+    invalidation: null
+    ai_autonomy: auto
+    # 红节点（F 流三空白之二：G04 校准机制在（核对/建议工单已落码 tracker #48）但闭环未转起来）；
+    # walk-forward 容器（WFE=OOS/IS >60% 可用/<40% 禁上线）+CPCV+DSR+PBO+参数平台期四道 gate 才允许
+    # verified；purge 窗=持仓半衰期+embargo≥5 日（A 股 T+1+隔夜跳空）；DSR 只做门禁不做优化目标；
+    # 底座引入建议=purgedcv 或 skfolio（CPCV+optuna trial 计数喂 DSR）
+    fallback: null
+    strategy_mounts: []
+
+  - node_id: TDM-F-C3-05
+    name_zh: 可靠度养成与信号健康
+    market: cn_a
+    flow: portfolio_flow
+    layer: C3
+    node_type: stage
+    point: 盘后
+    decision_question: 大盘判定器和信号哪个该降权了
+    parent_node: TDM-F-C3
+    factor_refs: []
+    data_refs: []
+    module_ref: null
+    algo_refs: []
+    doc_ref: null
+    activation: postmarket
+    invalidation: null
+    ai_autonomy: auto
+    # 红节点（F 流三空白之三：D7-D13 历史判准率加权 src 零实现，c3_throttle_attribution 仅 design 态）；
+    # 传感器可靠度三档递进（等权起步——Fed 实证简单平均最稳→判准率/逆误差平方加权→粒子滤波 DTVW），
+    # 权重下限 10% 月度更新禁日级追权重，反馈 E-L1-AGG（hub feedback 边的承载者）；滚动 IC+半衰期
+    # hyperbolic 拟合（机械/拥挤型因子 hyperbolic 优于 exponential）+三选二衰减报警；alphalens-reloaded
+    # 引入建议做 IC 计算
+    fallback: null
     strategy_mounts: []
 
   # ── 币圈实例（骨架空壳，L2 弱化为赛道层）─────────────────────────────────
@@ -2561,6 +2786,18 @@ edges:
   - {from_node: TDM-X-S2-01, to_node: TDM-X-S2-06, edge_type: feed}   # 执行产出喂闭环
   - {from_node: TDM-X-S2-05, to_node: TDM-X-S2-06, edge_type: feed}   # 分批批次结果喂闭环
   - {from_node: TDM-X-S2-06, to_node: TDM-F-C3, edge_type: feed}      # 退出效率喂归因（L4-13/P2-03 同款）
+  # ── F 流血肉边（D74-D83）：净额→约束栈→cluster；归因结论分发四路 ──
+  - {from_node: TDM-F-C2-01, to_node: TDM-F-C2-02, edge_type: sequence}
+  - {from_node: TDM-F-C2-02, to_node: TDM-F-C2-03, edge_type: feed}
+  - {from_node: TDM-F-C1, to_node: TDM-F-C2-04, edge_type: feed}      # 预算变动喂三级升级
+  - {from_node: TDM-F-C2-04, to_node: TDM-F-C2-01, edge_type: feed}   # 新 budget 目标进聚合
+  - {from_node: TDM-F-C2-01, to_node: TDM-E-L4, edge_type: feed}      # 组合净指令喂执行件（P3-04 同款）
+  - {from_node: TDM-F-C3-01, to_node: TDM-F-C3-02, edge_type: feed}   # 归因结论→升降级评审
+  - {from_node: TDM-F-C3-01, to_node: TDM-F-C3-03, edge_type: feed}   # 归因→月度调权
+  - {from_node: TDM-F-C3-01, to_node: TDM-F-C3-04, edge_type: feed}   # 诊断→参数校准
+  - {from_node: TDM-F-C3-01, to_node: TDM-F-C3-05, edge_type: feed}   # 信号质量数据→健康监控
+  - {from_node: TDM-F-C3-02, to_node: TDM-F-C3-03, edge_type: feed}   # verdict 影响权重
+  - {from_node: TDM-F-C3-05, to_node: TDM-E-L1-AGG, edge_type: feedback}  # 传感器可靠度权重喂大盘判定
   # 应急保命横切（示意主边：触发即接管离场）
   - {from_node: TDM-X-R1, to_node: TDM-X-S2, edge_type: broadcast}
   # 币圈链
