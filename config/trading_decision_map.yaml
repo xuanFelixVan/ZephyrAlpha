@@ -1765,8 +1765,8 @@ nodes:
     activation: premarket
     invalidation: 盘中转单边（跌停潮/板块崩塌）→当日做T资格全部作废
     ai_autonomy: auto
-    # 三道门=状态门（矩阵仅 accumulation/expansion 段开做T）+标的质量门（振幅/流动性达标）+
-    #   成本门（CST-T0-001：预期价差≥0.3% 正期望线）；红节点（编排缺口）
+    # 五道门=状态门（矩阵仅 accumulation/expansion 段开做T，L1-AGG 直喂）+标的质量门（振幅/流动性达标）+
+    #   成本门（CST-T0-001：预期价差≥0.3% 正期望线）+风险否决冻结（P1-04）+熔断停做T（X-R1 中断）（外审 R2-08 枚举对齐入边）；红节点（编排缺口）
     # D58 欠账（第二轮审计）：①做T时段准入矩阵——9:30-9:40 禁开新T（开盘价差最宽 L 型衰减）/9:50-10:10
     #   sell-first 黄金窗/10:20-11:00 方向定型胜率最高段/11:00-11:30 缩量禁T/13:30-14:20 第二波核心段/
     #   14:40 后只平不开；一天最多 2 笔T（第三笔胜率断崖）；②量能闸门——量能<5日均量0.8倍禁开新T；
@@ -2201,6 +2201,7 @@ nodes:
     #   止损不挑时段触发即执行/止盈限早盘 9:45-10:00 黄金窗或尾盘窗口
     # D72 恐慌拦截（69 号 §2.30，外审 B-06 落盘修复）：低开<-3% 触发开盘 30 分钟等待窗口禁市价卖出，三类绕过=KillSwitch/黑天鹅/跌停封死；
     #   与 D67 核按钮（<-5% 竞价挂跌停）在 -5%~-3% 区间的优先级、S1-06 四触发中 K≥3/主力弃庄是否豁免——待 Owner 裁定（M-21）；利空公告仓豁免等待窗（欠账期默认，待确认，M-25）
+    # 输入仲裁声明（外审 R2-05）：四路输入优先级=X-R1/S1-06 强清中断 ≥ F-C2-01 组合强裁 > P2-03/P2-04 纪律强平减仓 > S1-05 常规融合（是否并入 M-21 裁定范围交 Owner）
     fallback: 路由异常→限价单默认通道+人工确认
     strategy_mounts: []
 
@@ -2344,6 +2345,7 @@ nodes:
     #   调整必须走 42号§3.11 A/B 显著性 p<0.05）——前置闸门语义
     # 冷却期清单（同标的≥2 交易日禁追高买回/大盈利>20% 清仓后≥1 个月）+参数漂移锁→经 S2-06→E-L4-12 边消费（外审 B-06）；
     # 状态持久化载体=sleeve 治理状态表（待施工，M-39）；复牌假触发防护：停牌期时间止损计时暂停（对齐 D49 欠账期默认，M-31）
+    # 入边分工互斥声明（外审 R2-06）：五路入边按执行通道归属互斥上报——同一笔成交只经其执行通道（S2-01 直卖/02/03/04/05）上报一次，禁止通道间双报
     fallback: null
     strategy_mounts: []
 
@@ -2871,7 +2873,8 @@ edges:
   # 持仓→离场（做T卖出即离场决策输入）
   - {from_node: TDM-P-P2, to_node: TDM-X-S1, edge_type: sequence}   # 存疑待裁：骨架期边、D48 未收编；语义=做T统计供离场评估参考，非前置约束（外审 m-06）
   - {from_node: TDM-P-P1-04, to_node: TDM-X-S1, edge_type: feed}   # 风险否决持仓转离场评估
-  - {from_node: TDM-P-P2-04, to_node: TDM-X-S2, edge_type: feed}   # 减仓执行走离场执行件
+  - {from_node: TDM-P-P2-04, to_node: TDM-X-S2, edge_type: feed}   # 减仓执行走离场执行件【叙事边：payload 取下行 P2-04→X-S2-01，勿双计数，外审 R2-02】
+  - {from_node: TDM-P-P2-04, to_node: TDM-X-S2-01, edge_type: feed}   # 风控减仓/再平衡 payload 直送执行路由（D44 最高优先级源的执行面，外审 R2-02）
   - {from_node: TDM-P-P2-03, to_node: TDM-F-C3-01, edge_type: feed}   # 做T成功/失败统计喂归因（L4-13 同款）；归因汇聚改落引擎节点（原落 hub 父节点致引擎零入边，外审 M-04）
   - {from_node: TDM-P-P3-04, to_node: TDM-E-L4, edge_type: feed}   # 加仓执行复用建仓流执行件
   # ── 外审修复补边（2026-09-07 Round 1）──
@@ -2881,7 +2884,7 @@ edges:
   - {from_node: TDM-P-P1-06, to_node: TDM-P-P3-01, edge_type: feed}   # 体检动作分流：加仓候选喂资格门（外审 M-08）
   - {from_node: TDM-P-P1-06, to_node: TDM-X-S1, edge_type: feed}   # 体检动作分流：逻辑失效转离场（外审 M-08）
   - {from_node: TDM-P-P2-03, to_node: TDM-P-P3-01, edge_type: feed}   # 活仓未闭环冻结加仓额度（D58④ 底仓-活仓隔离，外审 m-05）
-  - {from_node: TDM-P-P2-03, to_node: TDM-X-S2-01, edge_type: feed}   # 14:50 强平执行通道（对齐 P2-04→X-S2 先例，外审 M-11）
+  - {from_node: TDM-P-P2-03, to_node: TDM-X-S2-01, edge_type: feed}   # 14:50 强平执行通道（payload 直送执行路由，外审 M-11/R2-02）
   - {from_node: TDM-X-S1, to_node: TDM-X-S2, edge_type: sequence}
   # ── X 流血肉边（D60-D66）：六桶并行喂三族→融合→路由分发→闭环 ──
   - {from_node: TDM-X-S1-01, to_node: TDM-X-S1-02, edge_type: feed}
@@ -2922,9 +2925,12 @@ edges:
   - {from_node: TDM-F-C2-01, to_node: TDM-X-S2-01, edge_type: feed}   # 净卖出/强裁指令路由卖出执行件（外审 B-09）
   - {from_node: TDM-F-C2-03, to_node: TDM-F-C2-02, edge_type: feed}   # 聚类判定回写约束栈相关性层（D77 禁新仓不再死信，外审 M-05）
   - {from_node: TDM-F-C3-03, to_node: TDM-F-C1, edge_type: feedback}   # 月度调权结论回写预算切分（PP-001 演进，D80，外审 M-04）
-  - {from_node: TDM-F-C3-05, to_node: TDM-E-L2, edge_type: feed}   # 板块命中表反馈 L2（D87②，外审 m-09）
+  - {from_node: TDM-F-C3-05, to_node: TDM-E-L2, edge_type: feedback}   # 板块命中表反馈 L2（D87②，外审 m-09/R2-07 边型修正）
+  # ── 外审修复补边 Round 2（2026-09-07，R2 收敛扫描修复）──
+  - {from_node: TDM-X-S2-06, to_node: TDM-E-L4-12, edge_type: feed}   # 冷却期清单+参数漂移锁消费（D72 买侧拦截闭环，两端注释早已声明，外审 B-06/R2-01）
+  - {from_node: TDM-E-L1-AGG, to_node: TDM-X-S1-04, edge_type: feed}   # 情绪退潮联动六段输入（S1-04 注释已声明联动 AGG，外审 R2-03）
   # 应急保命横切（示意主边：触发即接管离场）
-  - {from_node: TDM-X-R1, to_node: TDM-X-S2, edge_type: broadcast}
+  - {from_node: TDM-X-R1, to_node: TDM-X-S2, edge_type: broadcast}   # 叙事边（可执行路径=R1→S1-06→S2-01 与 R1→F-C2-01/P-P2-01，勿双计数，外审 R2-04）
   # 币圈链
   - {from_node: TDM-C-L1, to_node: TDM-C-L2, edge_type: sequence}
   - {from_node: TDM-C-L2, to_node: TDM-C-L3, edge_type: sequence}

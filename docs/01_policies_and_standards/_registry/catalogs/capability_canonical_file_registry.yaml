@@ -11105,6 +11105,10 @@ creation_tokens:
   token: tdm-backtest-protocol-20260907
   created_by: sess-35944-20260907153514
   capability: tdm_backtest_protocol
+- file: docs/_working/2026-09-07-tdm-review-round-report.md
+  token: tdm-review-round-report-20260907
+  created_by: sess-35944-20260907153514
+  capability: tdm_review_archive
 di_seam_exemptions:
 - module_path: zephyr.trading.auto_runtime_core.AutoRuntimeCore
   reason: P0-5 LSG DI seam 标杆，已有 DI 但 AST 模式不匹配（动态注入）
