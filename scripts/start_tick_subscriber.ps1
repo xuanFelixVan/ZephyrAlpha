@@ -52,6 +52,16 @@ $HeartbeatFile = Join-Path $TmpDir "tick_subscriber.heartbeat"
 $BizHeartbeatFile = Join-Path $TmpDir "tick_subscriber_biz.heartbeat"  # biz heartbeat (#ARCH-DATA-017 ruling C, JSON written by subscriber itself)
 $GuardLog = Join-Path $TmpDir "tick_subscriber_guard.log"
 
+# ============== Data source mode (P0-1 bridge switch, memo 93 sec 14) ==============
+# TICK_SOURCE=xtdata (default, miniQMT push subscription) | bridge (QMT sandbox ticks.csv tail-read)
+# Retirement-day zero-code switchover (2026-09-18 miniQMT shutdown):
+#   [Environment]::SetEnvironmentVariable("TICK_SOURCE", "bridge", "User")  # persistent, user-level
+#   then restart via: schtasks /run /tn ZephyrAlpha_TickSubscriber
+# Note: bridge mode also honors TICK_BRIDGE_ENV (sim|real, default sim) for the
+# sandbox bridge file partition (E:\qmt_bridge_sim vs E:\qmt_bridge).
+$TickSource = if ($env:TICK_SOURCE) { $env:TICK_SOURCE } else { "xtdata" }
+$TickBridgeEnv = if ($env:TICK_BRIDGE_ENV) { $env:TICK_BRIDGE_ENV } else { "sim" }
+
 if (-not (Test-Path $TmpDir)) {
     New-Item -ItemType Directory -Path $TmpDir -Force | Out-Null
 }
@@ -155,12 +165,20 @@ try {
     $env:PYTHONIOENCODING = "utf-8"
 
     $restartCount = 0
+    # P0-1 bridge mode: build python arg list per TICK_SOURCE (memo 93 sec 14)
+    # bridge -> python -m zephyr.data.tick_subscriber --bridge --bridge-env <sim|real>
+    $BizArgs = @("-m", $BizModule)
+    if ($TickSource -eq "bridge") {
+        $BizArgs += @("--bridge", "--bridge-env", $TickBridgeEnv)
+    }
+    Write-GuardLog "Data source mode: TICK_SOURCE=$TickSource bridge_env=$TickBridgeEnv"
+
     while ($true) {
         $startTime = Get-Date
         Write-GuardLog "Starting tick_subscriber (attempt $($restartCount + 1))..."
 
         $proc = Start-Process -FilePath $PythonExe `
-            -ArgumentList "-m", $BizModule `
+            -ArgumentList $BizArgs `
             -WorkingDirectory $RepoRoot `
             -WindowStyle Hidden `
             -PassThru

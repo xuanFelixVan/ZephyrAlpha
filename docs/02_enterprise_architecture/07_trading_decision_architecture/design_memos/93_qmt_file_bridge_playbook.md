@@ -5,7 +5,7 @@ title: 大QMT文件桥双向通道操作手册（miniQMT 替代方案）
 owner: ZephyrAlpha-Owner
 language: zh
 status: active
-version: "1.8.4"
+version: "1.8.5"
 date: 2026-09-07
 topic: qmt_file_bridge
 scope: 07_trading_decision_architecture
@@ -544,6 +544,25 @@ QMT 沙箱（QUOTE v18 策略）                    本地 tick_subscriber（桥
 - v18.3 合并版（单策略：订阅激活+轮询收割）留作后续优化项
 - 桥进程数据源仍是 ticks.csv（v18 写的），无需改动
 
+### 14.7 guard 启动脚本零代码切换（2026-09-07 落地）
+
+`scripts/start_tick_subscriber.ps1` 支持 TICK_SOURCE 环境变量：
+
+| 环境变量 | 值 | 行为 |
+|---|---|---|
+| TICK_SOURCE | 未设 / `xtdata` | 现模式（miniQMT 推送订阅）——默认，零行为变化 |
+| TICK_SOURCE | `bridge` | 桥模式：`python -m zephyr.data.tick_subscriber --bridge --bridge-env <env>` |
+| TICK_BRIDGE_ENV | `sim`（默认）/ `real` | 桥文件分区（E:\qmt_bridge_sim / E:\qmt_bridge） |
+
+**退役日切换 SOP（一条命令，无需改代码）**：
+```powershell
+[Environment]::SetEnvironmentVariable("TICK_SOURCE", "bridge", "User")  # 用户级持久化
+schtasks /run /tn ZephyrAlpha_TickSubscriber                              # 重启 guard 生效
+```
+前置条件：QMT 终端已启动且 v18/v18.2 双策略在模型交易中运行（终端启动自动运行勾选后免人工）。
+
+**已验证项（2026-09-07 实测）**：参数拼接双路径（xtdata 零变化 / bridge 加 flag）、argparse flag 注册、孤儿清理命令行子串匹配（`--bridge` 后缀不破坏 Contains 匹配）、BIZ-STALE 心跳监控兼容（桥模式心跳同字段）。注：guard watchdog 环境变量在 schtasks 交互会话下从用户环境继承，Task Scheduler 注册配置未改动。
+
 ## 15. 修订记录
 
 | 版本 | 日期 | 内容 |
@@ -562,3 +581,4 @@ QMT 沙箱（QUOTE v18 策略）                    本地 tick_subscriber（桥
 | 1.8.2 | 2026-09-04 | **§14 P0-1 落地（代码施工完成）**：沙箱 v18 策略落位 E:\qmt_bridge_sim\；项目侧 BridgeTickSource（尾读三件套+timetag 二次去重+文件重建自愈）+ start_bridge 共享下游链 + --bridge/--bridge-env 接线 + 心跳 mode 字段；单测 90/90 两轮通过；待盘中对拍验收（清单第 4 项） |
 | 1.8.3 | 2026-09-07 | **§14.4 第 4 项盘中对拍收官**：值语义通过（最近邻 ±5s 对拍 price 73%/bid 82% 全为相位差自然变动）+链路通（76,794 行入库零丢）；密度硬伤定因（get_full_tick 未订阅品种 timetag ~90 秒粒度 vs miniqmt 3 秒）——v18 轮询式仅够分钟级，tick 级需 v18.2 订阅式（subscribe_whole_quote 全市场回调 dump）；timetag 实测格式修复（88772a47）+沙箱 ASCII 铁律再实证（v18.1） |
 | 1.8.4 | 2026-09-07 | **§14.6 v18.2 当日闭环**：订阅激活+轮询收割组合方案落地（沙箱 subscribe_whole_quote 副作用激活全市场 3s 推送，v18 get_full_tick 密度 90s→3-9s）；高密度对拍全面通过（price 91.7%/bid 95.0%/ask 93.9%，差异全为相位内自然变动）；发现沙箱订阅 API callback 被静默忽略（回调路径不通，无需回调）；双策略同时运行纪律落盘 |
+| 1.8.5 | 2026-09-07 | **§14.7 guard 零代码切换落地**：start_tick_subscriber.ps1 支持 TICK_SOURCE/TICK_BRIDGE_ENV 环境变量（默认 xtdata 零行为变化；bridge 加 --bridge/--bridge-env flag）；退役日切换 SOP 一条命令（SetEnvironmentVariable + schtasks 重启）；参数拼接双路径/argparse/孤儿清理匹配/心跳兼容四项实测通过——P0-1 全部实施项闭环 |
