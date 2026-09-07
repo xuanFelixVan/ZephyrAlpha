@@ -244,3 +244,39 @@ class TestReflushNextDayExit:
         out = reflush_next_day_exit_decision({"cost_basis": 0}, {"open_price": 10.0}, holding_days=1)
         assert out["action"] == "HOLD"
         assert "人工复核" in out["reason"]
+
+
+# ---------------------------------------------------------------------
+# ST 主板 5%→10% 联动重校回归锚（#ARCH-DATA-020 ③，2026-09-07 清偿）
+# ---------------------------------------------------------------------
+
+
+class TestST10PctRecalibrationBaseline:
+    """ST 主板涨跌幅 2026-07-06 起 5%→10% 后的出场档位重校判定回归锚（42 号 §3.8.1）。
+
+    判定=零值变更：三档位是相对成本基的绝对损益语义，与涨跌幅板幅无关；
+    旧 5% ST 制下高开档（≥+5%，恰=开盘即涨停）对 ST 结构性不可达，
+    10% 制恢复全域可达——本组验证 ST 10% 制新增可达尾部的决策行为正确。
+    """
+
+    def test_tier_values_unchanged(self):
+        """三档位基线值锁定：-5% 核按钮闷杀/+3% 竞价卖半/+5% 全卖。"""
+        dec = NextDayExitDecision()
+        assert dec.hard_exit_premium_low == -0.05
+        assert dec.take_profit_tier1 == 0.03
+        assert dec.take_profit_tier2 == 0.05
+
+    def test_st_10pct_regime_deep_gap_up_tail(self):
+        """10% 制新增可达区：ST 高开 +9%（旧 5% 制不可达）→ 全卖止盈。"""
+        dec = NextDayExitDecision()
+        out = dec.decide({"cost_basis": 10.0}, {"open_price": 10.9}, {}, holding_days=1)
+        assert out["action"] == "SELL_ALL"
+        assert out["qty_ratio"] == 1.0
+
+    def test_st_10pct_regime_deep_gap_down_tail(self):
+        """10% 制新增可达区：ST 低开 -8%（旧 5% 制不可达，未至 -10% 跌停开盘）→核按钮。
+        若该低开同时封死跌停，由执行编排层 is_limit_down→LIMIT_DOWN_QUEUE 排队兜底（§3.8）。"""
+        dec = NextDayExitDecision()
+        out = dec.decide({"cost_basis": 10.0}, {"open_price": 9.2}, {}, holding_days=1)
+        assert out["action"] == "STOP_LOSS"
+        assert out["qty_ratio"] == 1.0

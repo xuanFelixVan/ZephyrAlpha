@@ -317,3 +317,43 @@ class TestQuantSeatWarning:
     def test_none(self):
         out = detect_quant_seat_warning(0.30)
         assert out["level"] == "NONE"
+
+
+# ---------------------------------------------------------------------
+# ST 主板 5%→10% 联动重校回归锚（#ARCH-DATA-020 ③，2026-09-07 清偿）
+# ---------------------------------------------------------------------
+
+
+class TestST10PctRecalibrationBaseline:
+    """ST 主板涨跌幅 2026-07-06 起 5%→10% 后的重校判定回归锚（42 号 §3.8.1）。
+
+    判定=交易决策层零值变更：封成比四档/次日溢价映射的校准宇宙本为 10% 涨跌幅板，
+    ST 主板拉平后系"恢复全域适用"非参数漂移——本组测试锁定该基线：
+    值若漂移必须走 42 号 §3.11 A/B 显著性重校流程，禁静默修改。
+    """
+
+    def test_seal_success_ratio_strict_boundaries(self):
+        """封成比档位边界严格性锁定：>10 稳定 / >1 一般 / ≤1 不牢（10% 制基线值）。"""
+        assert score_seal_structure(0.05, 10.0001)["score"] == 100
+        assert score_seal_structure(0.05, 10.0)["score"] == 75  # 严格 >10
+        assert score_seal_structure(0.05, 1.0001)["score"] == 75
+        assert score_seal_structure(0.05, 1.0)["score"] == 50  # 严格 >1
+
+    def test_premium_bands_within_10pct_limit(self):
+        """溢价三档带必须落在 ±10% 板幅内（越界=板幅口径漂移，需重校信号）。"""
+        cases = [
+            ("09:35", 3.0, 0.06),  # 强：[2%,5%]
+            ("11:00", 6.0, 0.03),  # 中性：[-1%,2%]
+            ("14:45", 0.5, 0.01),  # 弱：[-5%,-1%]
+        ]
+        for seal_time, surge, strength in cases:
+            out = forecast_next_day_premium(seal_time, surge, strength)
+            assert -0.10 <= out["premium_low"] <= out["premium_high"] <= 0.10, (
+                f"溢价带 [{out['premium_low']},{out['premium_high']}] 越出 ±10% 板幅"
+            )
+
+    def test_strong_band_reachable_for_st_10pct(self):
+        """旧 5% ST 制下 +5% 高开为竞价 gap 上限（强溢价带 [2%,5%] 上沿被截断）；
+        10% 制恢复全域适用——强带输出保持 [2%,5%] 不变（零值变更判定锚）。"""
+        out = forecast_next_day_premium("09:35", 3.0, 0.06)
+        assert (out["premium_low"], out["premium_high"]) == (0.02, 0.05)

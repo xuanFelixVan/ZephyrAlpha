@@ -21431,7 +21431,13 @@ entries:
     ② 其余口径缺口本轮不修单独跟进：backtest matching_engine._infer_limit_pct 无 ST 区分
     （2026-07-06 前历史回测主板 ST 反向错）、miniqmt_provider 竞价簿硬编码 ±10%（双创错）、
     signal_ashare/tiered_screening_filter 与 ex_core/adapters/miniqmt_broker 按现值改无历史
-    切片；③ TDM 联动参数重校欠账（竞价即决封板/溢价映射、跌停排队、封成比阈值按 10% 重校）。
+    切片；③ TDM 联动参数重校欠账（竞价即决封板/溢价映射、跌停排队、封成比阈值按 10% 重校）
+    ——③ 已清偿（2026-09-07）：判定=交易决策层零值变更、全部无需重校（D67 矩阵/封板时间→
+    溢价映射/封成比四档的校准宇宙本为 10% 涨跌幅板，ST 主板拉平后系"恢复全域适用"非参数
+    漂移，改值反成 ST 双真源；scenario_planner 昨涨停溢价映射数据驱动；跌停排队注入式零 pct
+    假设），逐项判定表落账 42 号 §3.8.1 + TDM-X-S2-02/S2-03 注释清偿 + 回归锚测试
+    TestST10PctRecalibrationBaseline（tests/ex_core/test_daban_named_functions.py /
+    test_daban_exit_decision.py）。
   impact:
     - 'src/zephyr/data/implementations/akshare_provider.py（_limit_pct_of 主板分支日期切片 + _MAIN_ST_10PCT_DATE）'
     - 'src/zephyr/data/implementations/daban_board_event_deriver.py（rule_limit_price 增 trade_date 切片 + _BOARD_PCT 主板 ST 现行 0.10）'
