@@ -1776,14 +1776,15 @@ nodes:
     parent_node: TDM-P-P2
     factor_refs: [FCT-INTRADAY-029, FCT-INTRADAY-030, FCT-INTRADAY-017, FCT-INTRADAY-021]
     data_refs: []
-    module_ref: null
+    module_ref: src/zephyr/sell_decision/core/t_trade_coordinator.py
     module_id: MOD-SELL-018
     algo_refs: [EXA-VWAP-001, EXA-TWAP-001]
     doc_ref: null
     activation: intraday
     invalidation: 单边趋势确认→当日做T资格作废（与 P2-01 联动）
     ai_autonomy: paper
-    # t_trade_coordinator planned（BM-SELL-08 锚，参数真源：单次≤底仓30%/净收益≥1.5%/失误止损1.5% proposed）；
+    # t_trade_coordinator 已落码（X 流血肉 D60 轮发现，原 planned 状态过时；BM-SELL-08 锚，
+    # 参数真源：单次≤底仓30%/净收益≥1.5%/失误止损1.5% proposed）；
     #   做T方向术语=buy-first 先买后卖/sell-first 先卖后买（D41，禁用社区正T/反T，terminology_glossary 已登记）；
     #   指令过 position_adjudication_center；执行侧异常兜底=strategy_abnormal_exit（MOD-TRADING-008）
     # D58 欠账（第二轮审计）：①单笔T双轨止损——价差止损 0.3-0.5%（买价下方）+时间止损（预期窗口未反弹
@@ -1961,7 +1962,7 @@ nodes:
     data_refs: []
     module_ref: null
     # D50 欠账（69 号 §2.27）：峰值收益回撤止盈信号——每仓记历史最高浮盈 peak_pnl，从峰值回落 X%
-    #   强制兑现（短线最大利润漏点="赚过没拿住"，与止损/时间止损三级联动）；施工随 X 流血肉消化
+    #   强制兑现（短线最大利润漏点="赚过没拿住"，与止损/时间止损三级联动）；已由 TDM-X-S1-03 止盈族承接落位（D60 轮）
     strategy_mounts: []
 
   - node_id: TDM-X-S2
@@ -1991,6 +1992,295 @@ nodes:
     threshold_refs: [THD-DRAWDOWN-001, THD-DRAWDOWN-002, THD-DRAWDOWN-003]
     data_refs: []
     module_ref: null
+    strategy_mounts: []
+
+  # ── X 流血肉（D60-D66，Owner 2026-09-07 终裁；2 树枝 12 节点，树深 2）──
+  # 42 号卖出流 spec 十节吸收（语义入节点+公式留 doc_ref+spec 保留为算法附件，22 号先例）；
+  # sell_decision 域 9 production 模块直接锚定；三空白新写=S2-03 时段路由/S2-04 本地条件单/S1-06 绕过通道编排；
+  # R1 应急保命保持横切不展开（kill switch 常驻 D18，RLM×4+THD×3 语义完备）
+  # S1 树枝：六桶分类→{止损族/止盈族/破位情绪}→融合评分；强制清仓绕过通道并行（42号§3.2 最高优先级）
+  - node_id: TDM-X-S1-01
+    name_zh: 信号收集与六桶分类
+    market: cn_a
+    flow: exit_flow
+    layer: S1
+    node_type: stage
+    point: 持续
+    decision_question: 卖出信号有哪些触发了、各属哪一类
+    parent_node: TDM-X-S1
+    factor_refs: [FCT-TECH-077, FCT-TECH-083]
+    data_refs: [DS-082, DS-150]
+    module_ref: src/zephyr/sell_decision/core/sell_signal_collector.py
+    module_id: MOD-SELL-001
+    algo_refs: []
+    doc_ref: "docs/02_enterprise_architecture/07_trading_decision_architecture/design_memos/42_sell_flow.md#§3.1"
+    activation: continuous
+    invalidation: null
+    ai_autonomy: auto
+    # 六类 exit 分类学分桶=risk/signal/target/trailing/time/volatility（42号 7 类信号归并映射，§2.29 D61）；
+    # triage 分级定扫描频率（Watch 秒级/Monitor 5min/Hold 事件驱动，MOD-SELL-000 前提）
+    fallback: null
+    strategy_mounts: []
+
+  - node_id: TDM-X-S1-02
+    name_zh: 止损族判定
+    market: cn_a
+    flow: exit_flow
+    layer: S1
+    node_type: stage
+    point: 持续
+    decision_question: 止损线触发了吗（Chandelier/时间/支撑/竞价/分时）
+    parent_node: TDM-X-S1
+    factor_refs: []
+    risk_limit_refs: [RLM-DRAWDOWN-001]
+    data_refs: []
+    module_ref: src/zephyr/sell_decision/core/stop_loss_strategy.py
+    module_id: MOD-SELL-005
+    algo_refs: [IND-VOL-001]
+    doc_ref: "docs/02_enterprise_architecture/07_trading_decision_architecture/design_memos/42_sell_flow.md#§3.3"
+    activation: continuous
+    invalidation: null
+    ai_autonomy: auto
+    # Chandelier 双区参数（亏损区 N=10/M=3.0 盈利区 N=22/M=2.0）+1×ATR/5日时间止损+固定%降级；
+    # A股六模式=A-share 止损引擎（MOD-RK-09：固定-7%/支撑破位/逻辑失效/竞价不及预期/分时破位/板块退潮，
+    # 38 测试待接线不越权催期）；猎杀防护=MOD-SELL-015（止损位偏移 1-2%+软止损 OBSERVING）；
+    # 单向棘轮 clamp=D50 欠账（调用方持久化止损位 max(old,new)）
+    fallback: ATR 缺失→固定%止损降级（短线 4%/中长线 8%）
+    strategy_mounts: []
+
+  - node_id: TDM-X-S1-03
+    name_zh: 止盈族判定
+    market: cn_a
+    flow: exit_flow
+    layer: S1
+    node_type: stage
+    point: 持续
+    decision_question: 止盈条件到了吗（移动止盈/峰值回撤/目标位）
+    parent_node: TDM-X-S1
+    factor_refs: []
+    data_refs: []
+    module_ref: src/zephyr/sell_decision/core/take_profit_strategy.py
+    module_id: MOD-SELL-004
+    algo_refs: []
+    doc_ref: "docs/02_enterprise_architecture/07_trading_decision_architecture/design_memos/42_sell_flow.md#§3.4"
+    activation: continuous
+    invalidation: null
+    ai_autonomy: auto
+    # Chandelier 移动止盈（自动 phase 判定）+峰值回撤兑现（D50 欠账本轮落位：peak_pnl 回落 X% 强制兑现）+
+    # 目标位达成；止盈条件只看市场状态变量（信号/移动止损/峰值回撤），不看连赢次数（D57 撤回语义）
+    fallback: null
+    strategy_mounts: []
+
+  - node_id: TDM-X-S1-04
+    name_zh: 破位与情绪退潮信号
+    market: cn_a
+    flow: exit_flow
+    layer: S1
+    node_type: stage
+    point: 持续
+    decision_question: 突破失败了吗、情绪退潮了吗、主力派发了吗
+    parent_node: TDM-X-S1
+    factor_refs: [FCT-SENT-012]
+    seat_refs: [SEAT-INST-001, SEAT-INST-002, SEAT-INST-003, SEAT-YOUZI-001, SEAT-YOUZI-002, SEAT-YOUZI-003]
+    data_refs: [DS-082]
+    module_ref: src/zephyr/sell_decision/core/breakout_failure_detector.py
+    module_id: MOD-SELL-003
+    algo_refs: []
+    doc_ref: "docs/02_enterprise_architecture/07_trading_decision_architecture/design_memos/42_sell_flow.md#§3.5"
+    activation: continuous
+    invalidation: null
+    ai_autonomy: auto
+    # 突破成败判定（连冲 3 次失败→强制清仓信号喂 S1-06）+情绪退潮加权（联动 L1-AGG 六段，28 号真源）+
+    # 龙虎榜派发五规则（高位游资上卖方榜/三日榜净卖出=诱多，优先三日榜，§35A 素材）
+    fallback: null
+    strategy_mounts: []
+
+  - node_id: TDM-X-S1-05
+    name_zh: 信号融合与紧迫度评分
+    market: cn_a
+    flow: exit_flow
+    layer: S1
+    node_type: aggregation
+    point: 持续
+    decision_question: 综合卖出意愿多强、多急
+    parent_node: TDM-X-S1
+    factor_refs: []
+    data_refs: []
+    module_ref: src/zephyr/sell_decision/core/sell_signal_fusion_engine.py
+    module_id: MOD-SELL-007
+    algo_refs: []
+    doc_ref: "docs/02_enterprise_architecture/07_trading_decision_architecture/design_memos/42_sell_flow.md#§3.1"
+    activation: continuous
+    invalidation: null
+    ai_autonomy: auto
+    # 加权融合 0~1+多时间框架共振（MOD-SELL-007）+紧迫度分级→执行策略映射（MOD-SELL-009
+    # sell_urgency_scorer）；紧迫度输出定 S2-01 路由（市价急走 vs 限价从容走）
+    fallback: 融合引擎异常→各族信号直通 S2-01 人工确认
+    strategy_mounts: []
+
+  - node_id: TDM-X-S1-06
+    name_zh: 强制清仓绕过通道
+    market: cn_a
+    flow: exit_flow
+    layer: S1
+    node_type: stage
+    point: 持续
+    decision_question: 是否触发无条件离场（绕过一切评分）
+    parent_node: TDM-X-S1
+    factor_refs: []
+    risk_limit_refs: [RLM-KILL-SWITCH-004, RLM-KILL-SWITCH-005]
+    data_refs: []
+    module_ref: null
+    algo_refs: []
+    doc_ref: "docs/02_enterprise_architecture/07_trading_decision_architecture/design_memos/42_sell_flow.md#§3.2"
+    activation: continuous
+    invalidation: null
+    ai_autonomy: auto
+    # 红节点（编排缺口）；四触发=风控 KillSwitch/黑天鹅/K≥3 破位失败/主力弃庄→紧迫度 1.0 市价直执行
+    # 不经过融合仲裁（资金安全最高优先级）；与 X-R1 分工=R1 管组合级熔断、本节点管单仓强制清仓；
+    # 连续亏损熔断已落码=trade_level_circuit_breaker.py（42号§3.10）
+    fallback: null
+    strategy_mounts: []
+
+  # S2 树枝：路由→{涨跌停约束/时段路由/条件单/分批}→闭环退出效率；paper×4 实盘执行
+  - node_id: TDM-X-S2-01
+    name_zh: 执行方式路由
+    market: cn_a
+    flow: exit_flow
+    layer: S2
+    node_type: stage
+    point: 盘中
+    decision_question: 这笔卖出怎么执行（一次性/分批/竞价/尾盘）
+    parent_node: TDM-X-S2
+    factor_refs: []
+    cost_model_refs: [CST-ASTOCK-001]
+    data_refs: []
+    module_ref: src/zephyr/sell_decision/core/sell_execution_planner.py
+    module_id: MOD-SELL-019
+    algo_refs: []
+    doc_ref: "docs/02_enterprise_architecture/07_trading_decision_architecture/design_memos/42_sell_flow.md#§3.7"
+    activation: intraday
+    invalidation: null
+    ai_autonomy: paper
+    # 按紧迫度+仓位大小+流动性路由（大单拆分/密度感知）+KillSwitch 清仓排序（MOD-SELL-019）；
+    # 卖出情景预案=MOD-SELL-013 exit_scenario_planner（BM-SELL-07）产出预案喂路由
+    fallback: 路由异常→限价单默认通道+人工确认
+    strategy_mounts: []
+
+  - node_id: TDM-X-S2-02
+    name_zh: T+1与涨跌停约束
+    market: cn_a
+    flow: exit_flow
+    layer: S2
+    node_type: stage
+    point: 盘中
+    decision_question: 跌停卖不出怎么办、今日可卖额度多少
+    parent_node: TDM-X-S2
+    factor_refs: []
+    risk_limit_refs: [RLM-DRAWDOWN-003]
+    data_refs: []
+    module_ref: null
+    algo_refs: []
+    doc_ref: "docs/02_enterprise_architecture/07_trading_decision_architecture/design_memos/42_sell_flow.md#§3.8"
+    activation: intraday
+    invalidation: null
+    ai_autonomy: paper
+    # 红节点（编排缺口）；跌停=挂跌停价排队（隔夜单 17:30 后第一时间挂+封单骤减>20% 撤旧买一价重挂+
+    # 撤单重挂重置位次禁忌）+t1_sellable 可卖额度核对；做T仓例外语义（42号§3.8）
+    fallback: 排队失败→次日竞价优先处理并标记
+    strategy_mounts: []
+
+  - node_id: TDM-X-S2-03
+    name_zh: 执行时段路由
+    market: cn_a
+    flow: exit_flow
+    layer: S2
+    node_type: stage
+    point: 盘中
+    decision_question: 现在是什么时段、该走哪条卖出通道
+    parent_node: TDM-X-S2
+    factor_refs: []
+    data_refs: []
+    module_ref: null
+    algo_refs: []
+    doc_ref: null
+    activation: intraday
+    invalidation: null
+    ai_autonomy: auto
+    # 红节点（X 流三空白之一）；沪深尾盘分裂路由（深市/创业板/科创板 14:57-15:00 收盘集合竞价不可撤、
+    # 沪市主板同段连续竞价可撤——路由器按市场分流）+竞价逃命单通道（挂跌停价=排队最优先按开盘价成交）+
+    # 尾盘时段规律（14:30-14:45 跳水窗/14:50-14:55 按收盘价决策窗）
+    fallback: null
+    strategy_mounts: []
+
+  - node_id: TDM-X-S2-04
+    name_zh: 本地条件单管理
+    market: cn_a
+    flow: exit_flow
+    layer: S2
+    node_type: stage
+    point: 持续
+    decision_question: 止损止盈条件单怎么挂才不被仓位冻结卡死
+    parent_node: TDM-X-S2
+    factor_refs: []
+    data_refs: []
+    module_ref: null
+    algo_refs: []
+    doc_ref: null
+    activation: continuous
+    invalidation: null
+    ai_autonomy: paper
+    # 红节点（X 流三空白之二）；vn.py 范式=停止单本地存储不冻结仓位、触发才发限价单（解决限价止盈挂
+    # 交易所冻结仓位致止损单被拒，T+1 同坑）+每 K 线 cancel_all 重挂刷新+本地双停止单 OCO
+    fallback: null
+    strategy_mounts: []
+
+  - node_id: TDM-X-S2-05
+    name_zh: 分批止盈执行
+    market: cn_a
+    flow: exit_flow
+    layer: S2
+    node_type: stage
+    point: 盘中
+    decision_question: 分批怎么切、每批卖多少
+    parent_node: TDM-X-S2
+    factor_refs: []
+    data_refs: []
+    module_ref: src/zephyr/sell_decision/core/scaling_out.py
+    module_id: MOD-SELL-017
+    algo_refs: []
+    doc_ref: "docs/02_enterprise_architecture/07_trading_decision_architecture/design_memos/42_sell_flow.md#§3.7"
+    activation: intraday
+    invalidation: null
+    ai_autonomy: paper
+    # scale-out 阶梯（1:1 R:R 减 50% 止损移保本→2:1 减 25%→runner 25% 跟踪）+按信号强度定分批密度
+    # （弱信号一次走/强信号留 runner）+MFE 捕获率自检（<50%=卖太早，处置效应校准）；
+    # 分批 2-4 点最优超 4 管理成本>收益；42号§3.7"分批 MVP 降级"已被 scaling_out.py 落码升级（本轮发现）
+    fallback: 分批模块异常→降级一次性执行
+    strategy_mounts: []
+
+  - node_id: TDM-X-S2-06
+    name_zh: 卖出闭环与退出效率
+    market: cn_a
+    flow: exit_flow
+    layer: S2
+    node_type: stage
+    point: 盘后
+    decision_question: 卖对了吗（卖飞率/避损率/捕获率）
+    parent_node: TDM-X-S2
+    factor_refs: []
+    data_refs: []
+    module_ref: src/zephyr/sell_decision/core/sell_execution_quality_tracker.py
+    module_id: MOD-SELL-012
+    algo_refs: []
+    doc_ref: "docs/02_enterprise_architecture/07_trading_decision_architecture/design_memos/42_sell_flow.md#§3.11"
+    activation: postmarket
+    invalidation: null
+    ai_autonomy: auto
+    # D51 欠账"离场闭环最后一环"本轮落位：卖出后 N 日跟踪（卖飞率=卖后再创新高占比/避损率/MFE 捕获率）
+    # 统计喂 F-C3 归因校准 S1 评分权重；信号准确率监控=MOD-SELL-010 sell_signal_accuracy_monitor（BM-SELL-09
+    # 卖出闭环优化）；42号§3.11 复盘编排复用 55 号
+    fallback: null
     strategy_mounts: []
 
   # ── 组合资金流 portfolio_flow（cn_a，v1.1 新增：整装仿真系统核心骨架）────
@@ -2216,6 +2506,22 @@ edges:
   - {from_node: TDM-P-P2-03, to_node: TDM-F-C3, edge_type: feed}   # 做T成功/失败统计喂归因（L4-13 同款）
   - {from_node: TDM-P-P3-04, to_node: TDM-E-L4, edge_type: feed}   # 加仓执行复用建仓流执行件
   - {from_node: TDM-X-S1, to_node: TDM-X-S2, edge_type: sequence}
+  # ── X 流血肉边（D60-D66）：六桶并行喂三族→融合→路由分发→闭环 ──
+  - {from_node: TDM-X-S1-01, to_node: TDM-X-S1-02, edge_type: feed}
+  - {from_node: TDM-X-S1-01, to_node: TDM-X-S1-03, edge_type: feed}
+  - {from_node: TDM-X-S1-01, to_node: TDM-X-S1-04, edge_type: feed}
+  - {from_node: TDM-X-S1-02, to_node: TDM-X-S1-05, edge_type: feed}
+  - {from_node: TDM-X-S1-03, to_node: TDM-X-S1-05, edge_type: feed}
+  - {from_node: TDM-X-S1-04, to_node: TDM-X-S1-05, edge_type: feed}
+  - {from_node: TDM-X-S1-05, to_node: TDM-X-S2-01, edge_type: sequence}
+  - {from_node: TDM-X-S1-06, to_node: TDM-X-S2-02, edge_type: feed}   # 强制清仓绕过融合直执行
+  - {from_node: TDM-X-S2-01, to_node: TDM-X-S2-02, edge_type: feed}
+  - {from_node: TDM-X-S2-01, to_node: TDM-X-S2-03, edge_type: feed}
+  - {from_node: TDM-X-S2-01, to_node: TDM-X-S2-04, edge_type: feed}
+  - {from_node: TDM-X-S2-01, to_node: TDM-X-S2-05, edge_type: feed}
+  - {from_node: TDM-X-S2-01, to_node: TDM-X-S2-06, edge_type: feed}   # 执行产出喂闭环
+  - {from_node: TDM-X-S2-05, to_node: TDM-X-S2-06, edge_type: feed}   # 分批批次结果喂闭环
+  - {from_node: TDM-X-S2-06, to_node: TDM-F-C3, edge_type: feed}      # 退出效率喂归因（L4-13/P2-03 同款）
   # 应急保命横切（示意主边：触发即接管离场）
   - {from_node: TDM-X-R1, to_node: TDM-X-S2, edge_type: broadcast}
   # 币圈链

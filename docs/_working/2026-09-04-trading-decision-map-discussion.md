@@ -676,4 +676,18 @@ Owner 大白话理解 6 项后终裁**全部要**。落盘分层：地图 YAML �
 
 ---
 
+## 37. 第三十轮：X 流（离场流）血肉（D60-D66，2026-09-07）
+
+**Owner 指令**：开始 X 流血肉。AI 消费 §35A 素材区（免重复调研）+核对 42 号卖出流 spec 十节+sell_decision 域代码头全扫描 → 出 2 树枝 12 节点草案（S1 信号六节点/S2 执行六节点，R1 横切不展开）→ Owner 裁定"按方案执行"。
+
+**重大发现**：sell_decision 域比 P 流盘点记录更厚——t_trade_coordinator.py（MOD-SELL-018，P2-02 原 planned）与 scaling_out.py（MOD-SELL-017，42号§3.7"分批待建"）均已落码，另发现 exit_scenario_planner（013）/sell_execution_quality_tracker（012）/sell_signal_accuracy_monitor（010）/strategy_specific_stop_framework（014）/trade_level_circuit_breaker（§3.10 连亏熔断）。据此 S2-05/S2-06 红节点升级实锚、P2-02 补挂真锚（红节点净减 1）。
+
+**裁定内容**：D60 结构定稿（S1：01 六桶分类→02 止损族/03 止盈族/04 破位情绪→05 融合紧迫度，06 强制清仓绕过通道并行；S2：01 执行路由→02 涨跌停约束/03 时段路由/04 本地条件单/05 分批止盈→06 卖出闭环）；D61 六类 exit 分桶吸收 42 号 7 类信号、spec 保留为附件；D62 强制清仓单列（绕过融合直执行，与 R1 分工=组合级 vs 单仓）；D63 卖出闭环 S2-06（卖飞率/避损率/MFE 捕获率→F-C3 第三条执行侧归因喂入）；D64 paper×4/auto×8；D65 交叉轴（FCT×3/SEAT×6 首次入 X 流/RLM-DRAWDOWN-003/CST-ASTOCK-001）；D66 42 号吸收政策=语义入节点+doc_ref+spec 保留。
+
+**验收**：真源 113 节点/121 边 validate error=0；R21 零错误（9 个 MOD-SELL 锚过 depgraph 对账含 MOD-SELL-017 双文件现算匹配）；红节点 4（S1-06/S2-02/S2-03/S2-04=X 流真空白）。四流血肉进度：E 64/P 17/X 15/F 骨架。
+
+**落盘**：trading_decision_map.yaml（+12 节点+15 边+P2-02 真锚）/69 备忘录 v2.12.0 §2.29/讨论备忘录 §37。
+
+---
+
 *本文件为讨论备忘录，讨论收敛并裁定后，正式设计应迁入 architecture_model 或相应设计目录，本文件届时归档。*

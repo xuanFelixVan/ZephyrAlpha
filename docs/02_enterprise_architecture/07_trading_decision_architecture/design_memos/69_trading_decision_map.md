@@ -5,7 +5,7 @@ title: 交易决策地图（Trading Decision Map）——决策内容索引层�
 owner: ZephyrAlpha-Owner
 language: zh
 status: active
-version: "2.11.0"
+version: "2.12.0"
 date: 2026-09-07
 topic: trading_decision_map
 scope: 07_trading_decision_architecture
@@ -516,6 +516,31 @@ E-L2 收口：**10 树枝 19 节点**。
 - **2 条设计约束**（不变量级）：①柜台为准原则——持仓总量/可卖数量信券商对账，T 任务/批次归属/成本分解等派生状态本地重建，分歧未决降级只读；②底仓-活仓隔离不变量——任何 T 操作不得侵蚀底仓目标线，底仓规模由趋势/估值状态定不随日内波动变
 
 **落盘方式（D59）**：YAML 5 处注释（P1-02/P2-01/P2-02/P2-04/P3-02）+本节，其余全由备忘录承载防节点注释爆炸。
+
+### 2.29 X 流（离场流）血肉——2 树枝 12 节点（D60-D66，Owner 2026-09-07 终裁）
+
+**SOP 全流程**：素材区 §35A 直接消费（免重复调研）+42 号卖出流 spec 十节核对+sell_decision 域代码头全扫描 → 结构草案 → Owner 裁定"按方案执行" → 落盘。
+
+**重大发现（资产盘点升级）**：sell_decision 域比 P 流盘点记录更厚——`t_trade_coordinator.py`（MOD-SELL-018，P2-02 原 planned）**已落码**、`scaling_out.py`（MOD-SELL-017，42号§3.7"分批待建"）**已落码**、另发现 exit_scenario_planner（MOD-SELL-013，BM-SELL-07）/sell_execution_quality_tracker（MOD-SELL-012）/sell_signal_accuracy_monitor（MOD-SELL-010）/strategy_specific_stop_framework（MOD-SELL-014）/trade_level_circuit_breaker（42号§3.10 连亏熔断）等有码资产。据此：S2-05/S2-06 由草案红节点升级为实锚；**P2-02 补挂真锚**（module_ref null→t_trade_coordinator.py+MOD-SELL-018，R1 红节点净减 1）。
+
+**结构定稿（D60）**：X 流 3 主干展开为 **2 树枝 12 节点，树深 2**（X 流合计 15，距预算 80 充足）；**R1 应急保命保持横切不展开**（kill switch 常驻 D18，RLM×4+THD×3 语义已完备）。
+
+| 树枝 | 节点 | 锚 |
+|---|---|---|
+| S1 信号（6，全 auto） | 01 信号收集与六桶分类→02 止损族/03 止盈族/04 破位情绪退潮（三族并行）→05 融合与紧迫度；06 强制清仓绕过通道（并行，绕过 05） | MOD-SELL-001/005/004/003/007；RLM-DRAWDOWN-001+KILL-SWITCH-004/005；FCT-TECH-077/083+SENT-012；SEAT×6（首次入 X 流）；IND-VOL-001；DS-082/150 |
+| S2 执行（6，paper×4） | 01 执行方式路由→02 T+1涨跌停约束/03 时段路由/04 本地条件单/05 分批止盈（四路分发）→06 卖出闭环与退出效率 | MOD-SELL-019/017/012；RLM-DRAWDOWN-003 跌停也卖；CST-ASTOCK-001 |
+
+**关键裁定**：
+- **D61 分类学映射**：六类 exit 分桶（risk/signal/target/trailing/time/volatility）吸收 42 号 7 类信号；42 号保留为算法附件不废弃（22 号先例），doc_ref 指向 §3.x 各节
+- **D62 强制清仓单列**：S1-06 四触发（KillSwitch/黑天鹅/K≥3 破位失败/主力弃庄）→紧迫度 1.0 市价直执行绕过融合（42号§3.2 资金安全最高优先级）；与 X-R1 分工=R1 组合级熔断、S1-06 单仓强制清仓
+- **D63 卖出闭环落位**：S2-06 卖出后 N 日跟踪（卖飞率/避损率/MFE 捕获率）→F-C3 边（L4-13/P2-03 同款第三条执行侧归因喂入）；BM-SELL-09 闭环优化锚 MOD-SELL-010
+- **D64 治理档位**：paper×4（S2-01/02/04/05 实盘执行）、auto×8
+- **D65 交叉轴**：FCT×3+SEAT×6+RLM-DRAWDOWN-003 落位 S2-02+CST-ASTOCK-001 入 S2-01；seat ID 按 registry 核准复用 E-L3-12-2 同款
+- **D66 吸收政策**：42 号语义入节点+doc_ref 引用+spec 保留；BM-SELL 锚引用不重建（06 deprecated 已 D44 收口、08 做T已在 P2-02）
+
+**红节点 4**（S1-06 绕过编排/S2-02 涨跌停编排/S2-03 时段路由/S2-04 本地条件单=X 流真空白）；X 流合计 15 节点（3 hub+12），四流血肉进度：E 64/P 17/X 15/F 骨架。
+
+**验收**：真源 113 节点/121 边 validate error=0；R1 红节点 82→85（+4 新红−P2-02 清零）、R21 零错误（9 个 MOD-SELL 锚全过 depgraph 对账含双文件同 ID 的 MOD-SELL-017 现算匹配）、R22/R16 不变。
 
 ## 3. 考虑过的替代方案与拒绝理由
 
