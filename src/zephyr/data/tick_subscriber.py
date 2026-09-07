@@ -1476,15 +1476,22 @@ class BridgeTickSource:
     def _parse_line(self, line: str) -> tuple[str, str, dict] | None:
         """解析桥文件单行 → (symbol, timetag, xtdata 等价 tick dict)。
 
-        行格式（沙箱 TICKDUMP v18）：
-            symbol,lastPrice,volume,amount,bid1,ask1,bidVol1,askVol1,timetag
-        timetag: QMT get_full_tick 时间戳字符串（yyyyMMddHHmmss[mmm]）。
+        两种行格式（列数自适应，v18→v19 平滑过渡）：
+          v18 9 列（1档）: symbol,lastPrice,volume,amount,bid1,ask1,bidVol1,askVol1,timetag
+          v19 25 列（5档）: symbol,lastPrice,volume,amount,
+                           bid1..bid5,ask1..ask5,bidVol1..5,askVol1..5,timetag
+        timetag: QMT get_full_tick 时间戳（"yyyyMMdd HH:MM:SS" 或纯数字）。
+
+        5档时 tick dict 的 bidPrice/askPrice/bidVol/askVol 为完整 5 元素列表——
+        tick_to_row 取 [0] 落 tick_data（表 schema 1 档不变），Redis 热缓存
+        write_batch 存完整 dict（盘中策略可拿 5 档）。
 
         Returns:
             None=表头/畸形行/时间戳非法（跳过该行）。
         """
         parts = line.strip().split(",")
-        if len(parts) != 9:
+        ncols = len(parts)
+        if ncols not in (9, 25):
             return None
         symbol = parts[0]
         if not symbol or symbol == "symbol" or "." not in symbol:
@@ -1493,13 +1500,21 @@ class BridgeTickSource:
             last_price = float(parts[1])
             volume = int(parts[2])
             amount = float(parts[3])
-            bid1 = float(parts[4])
-            ask1 = float(parts[5])
-            bid_vol1 = int(parts[6])
-            ask_vol1 = int(parts[7])
+            if ncols == 9:
+                bid_prices = [float(parts[4])]
+                ask_prices = [float(parts[5])]
+                bid_vols = [int(parts[6])]
+                ask_vols = [int(parts[7])]
+                timetag = parts[8]
+            else:
+                # v19 25 列: 4-8=bid1-5, 9-13=ask1-5, 14-18=bidVol1-5, 19-23=askVol1-5, 24=timetag
+                bid_prices = [float(parts[i]) for i in range(4, 9)]
+                ask_prices = [float(parts[i]) for i in range(9, 14)]
+                bid_vols = [int(parts[i]) for i in range(14, 19)]
+                ask_vols = [int(parts[i]) for i in range(19, 24)]
+                timetag = parts[24]
         except ValueError:
             return None
-        timetag = parts[8]
         ms = self._timetag_to_epoch_ms(timetag)
         if ms is None:
             return None
@@ -1509,10 +1524,10 @@ class BridgeTickSource:
             "lastPrice": last_price,
             "volume": volume,
             "amount": amount,
-            "bidPrice": [bid1],
-            "askPrice": [ask1],
-            "bidVol": [bid_vol1],
-            "askVol": [ask_vol1],
+            "bidPrice": bid_prices,
+            "askPrice": ask_prices,
+            "bidVol": bid_vols,
+            "askVol": ask_vols,
         }
         return symbol, timetag, tick
 
@@ -1578,6 +1593,11 @@ def main() -> int:
         default="sim",
         help="桥模式环境分区（默认 sim：E:\\qmt_bridge_sim\\ticks.csv；real：E:\\qmt_bridge\\ticks.csv）",
     )
+    parser.add_argument(
+        "--bridge-file",
+        default=None,
+        help="桥文件路径覆盖（默认按 env 取 ticks.csv；v19 全板块 5 档用 ticks3.csv）",
+    )
     args = parser.parse_args()
 
     logging.basicConfig(
@@ -1607,7 +1627,7 @@ def main() -> int:
     if args.bridge:
         # P0-1 桥模式：入口换成 BridgeTickSource（文件尾读→_on_backup_tick 入队），
         # 跳过 xtdata 订阅链（探活/订阅/预热均不需要；下游 WAL/CH 由 start_bridge 复用）
-        bridge = BridgeTickSource(sub, env=args.bridge_env)
+        bridge = BridgeTickSource(sub, env=args.bridge_env, bridge_file=args.bridge_file)
         if not bridge.start():
             log.error("桥模式启动失败（ticks.csv 不可读），退出")
             return 1

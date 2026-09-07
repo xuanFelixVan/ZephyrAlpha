@@ -1376,6 +1376,49 @@ class TestBridgeTickSource:
         assert sym2 == "600519.SH"
         assert tick2["time"] == expected_ms
 
+    def test_bridge_file_parsing_v19_5level(self, tmp_path):
+        """v19 25 列 5 档格式解析：全 5 档进 tick dict，tick_to_row 取 [0] 落 1 档（表 schema 不变）。"""
+        sub, bridge, path = self._make_bridge(tmp_path)
+        header = ("symbol,lastPrice,volume,amount,"
+                  "bid1,bid2,bid3,bid4,bid5,ask1,ask2,ask3,ask4,ask5,"
+                  "bidVol1,bidVol2,bidVol3,bidVol4,bidVol5,"
+                  "askVol1,askVol2,askVol3,askVol4,askVol5,timetag\n")
+        # 000001.SZ 5档 + 尾列 timetag（实测格式）
+        row1 = ("000001.SZ,11.690,962110,1129283900.00,"
+                "11.690,11.680,11.670,11.660,11.650,11.700,11.710,11.720,11.730,11.740,"
+                "4965,3236,2632,5981,12438,2930,2774,3304,3223,1911,20260907 14:26:33\n")
+        # 旧 9 列行混在同文件（v18→v19 过渡期共存）
+        row2 = "600000.SH,8.800,50000,440000.00,8.790,8.810,100,200,20260907 14:26:33\n"
+        path.write_text(header + row1 + row2, encoding="ascii")
+
+        n = bridge._poll_once()
+        assert n == 2
+
+        # v19 25 列行：5 档完整进 dict
+        sym1, tick1 = sub.tick_queue.get_nowait()
+        assert sym1 == "000001.SZ"
+        assert tick1["bidPrice"] == [11.69, 11.68, 11.67, 11.66, 11.65]
+        assert tick1["askPrice"] == [11.70, 11.71, 11.72, 11.73, 11.74]
+        assert tick1["bidVol"] == [4965, 3236, 2632, 5981, 12438]
+        assert tick1["askVol"] == [2930, 2774, 3304, 3223, 1911]
+        assert tick1["lastPrice"] == 11.69
+        expected_ms = int(datetime(2026, 9, 7, 14, 26, 33).timestamp() * 1000)
+        assert tick1["time"] == expected_ms
+        # tick_to_row 等价转换：取 [0] 档落 tick_data（15 字段 schema 不变）
+        row = tick_to_row(sym1, tick1, data_source=tick1.pop("_data_source", "miniqmt"))
+        assert row is not None
+        assert len(row) == 15
+        assert row[10] == Decimal("11.69")  # bid_price=bid1
+        assert row[11] == Decimal("11.70")  # ask_price=ask1
+        assert row[12] == 4965  # bid_volume=bidVol1
+        assert row[13] == 2930  # ask_volume=askVol1
+
+        # 旧 9 列行（同文件过渡期）：1 档照常
+        sym2, tick2 = sub.tick_queue.get_nowait()
+        assert sym2 == "600000.SH"
+        assert tick2["bidPrice"] == [8.79]
+        assert tick2["askPrice"] == [8.81]
+
     def test_timetag_dedupe_and_tail_recovery(self, tmp_path):
         """timetag 去重（沙箱重启重 dump 防御）+ 残行回退 + 文件重建 offset 归零。"""
         sub, bridge, path = self._make_bridge(tmp_path)
