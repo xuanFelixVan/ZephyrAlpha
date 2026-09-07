@@ -579,7 +579,7 @@ schtasks /run /tn ZephyrAlpha_TickSubscriber                              # 重�
 
 **当日下午连带发现（非桥问题，生产侧）**：
 - 全市场订阅激活后引擎推送量暴涨 ~20 倍（~6K 行/分→~200K 行/分），生产 miniqmt 订阅管道过载（丢 0.3%、入库滞后 ~5 分钟）——订阅共享：沙箱订阅激活的 3s 推送对同一 miniquote 服务的**外部 xtdata 订阅者同样生效**。9/18 miniqmt 退役后此问题自然消失（生产订阅者退场，桥进程独享数据流）
-- 4 个历史遗留失败回灌文件（convertible_bond_list/hk_trade_calendar 格式错误）每 drain 周期重试失败——不阻塞 tick 段回灌但污染日志，待单独修复
+- ~~4 个历史遗留失败回灌文件（convertible_bond_list/hk_trade_calendar 格式错误）每 drain 周期重试失败~~ **已清（2026-09-07 16:24）**：核实 CH 已有完整数据（hk 日历 2015~2027 共 3104 行、债列表 2102 行，旧段冗余）后删除 4 个段文件——既有 #ARCH-LOCAL-REPLAY-SKIPPED-ORPHAN 机制自动跳过并清 manifest，积压归零。另发现 convertible_bond_list max list_date 停在 09-03（该表日任务疑似未跑，与桥无关，转数据任务排查）
 
 ## 15. 修订记录
 
