@@ -5,7 +5,7 @@ title: 大QMT文件桥双向通道操作手册（miniQMT 替代方案）
 owner: ZephyrAlpha-Owner
 language: zh
 status: active
-version: "1.8.6"
+version: "1.8.7"
 date: 2026-09-07
 topic: qmt_file_bridge
 scope: 07_trading_decision_architecture
@@ -579,7 +579,19 @@ schtasks /run /tn ZephyrAlpha_TickSubscriber                              # 重�
 
 **当日下午连带发现（非桥问题，生产侧）**：
 - 全市场订阅激活后引擎推送量暴涨 ~20 倍（~6K 行/分→~200K 行/分），生产 miniqmt 订阅管道过载（丢 0.3%、入库滞后 ~5 分钟）——订阅共享：沙箱订阅激活的 3s 推送对同一 miniquote 服务的**外部 xtdata 订阅者同样生效**。9/18 miniqmt 退役后此问题自然消失（生产订阅者退场，桥进程独享数据流）
-- ~~4 个历史遗留失败回灌文件（convertible_bond_list/hk_trade_calendar 格式错误）每 drain 周期重试失败~~ **已清（2026-09-07 16:24）**：核实 CH 已有完整数据（hk 日历 2015~2027 共 3104 行、债列表 2102 行，旧段冗余）后删除 4 个段文件——既有 #ARCH-LOCAL-REPLAY-SKIPPED-ORPHAN 机制自动跳过并清 manifest，积压归零。另发现 convertible_bond_list max list_date 停在 09-03（该表日任务疑似未跑，与桥无关，转数据任务排查）
+- ~~4 个历史遗留失败回灌文件（convertible_bond_list/hk_trade_calendar 格式错误）每 drain 周期重试失败~~ **已清（2026-09-07 16:24）**：核实 CH 已有完整数据（hk 日历 2015~2027 共 3104 行、债列表 2102 行，旧段冗余）后删除 4 个段文件——既有 #ARCH-LOCAL-REPLAY-SKIPPED-ORPHAN 机制自动跳过并清 manifest，积压归零。另发现 convertible_bond_list max list_date 停在 09-03——**排查定论（2026-09-07）：设计如此非故障**，该任务 monthly_static 月频（9/1 宕机错过正档、9/2 catchup_guard 补跑成功 1051 行），下次正档 10/1。附带观察：9/2 一天跑 3 次疑似 manual 重试叠加 catchup（无害，触发源待查）
+
+### 14.9 QUOTE_V17 并入 TICKDUMP3 决策（Owner 2026-09-07 裁定：9/15 检查点）
+
+**观察期**：TICKDUMP3（v19）自 2026-09-07 起跑一周，**9/15 检查点**评估合并（届时跨 5 个交易日、每日 09:15 轮转已验证）。
+
+**合并方案（v20）**：TICKDUMP3 内加 200ms 取价热线程（只盯 quote_symbols.txt 列表），**照写 quote.csv**——文件出口不变、项目侧 Provider 零改动、取价延迟不劣化。收益=少一个策略+消除重复拉取；代价≈0（v20 与 v17 输出对拍一致即可）。
+
+**两路径（9/15 检查点时择一）**：
+- **A（激进）**：9/15 观察通过 → 当天出 v20 → 9/16~17 与 v17 并行对拍 quote.csv 一致性 → 9/17 停 v17 → 9/18 退役日只剩 TICK_SOURCE 单变量
+- **B（保守，默认）**：v17 原样保留过 9/18（它不依赖 miniQMT，退役后照常工作）→ 合并推迟到 10 月稳定期
+
+**不合并的既有理由（已评估不成立/降级）**：进程隔离做不到（QMT 沙箱所有策略共享 1 个 Python 引擎，架构决定）——现有隔离靠 QMT 策略级容错（一策略崩溃不殃及其他）+ 文件分立（quote.csv/ticks3.csv/orders_sim.csv 互不碰）。真正的进程边界在大脑↔终端（ZephyrAlpha↔QMT），那条已天然存在。
 
 ## 15. 修订记录
 
@@ -601,3 +613,4 @@ schtasks /run /tn ZephyrAlpha_TickSubscriber                              # 重�
 | 1.8.4 | 2026-09-07 | **§14.6 v18.2 当日闭环**：订阅激活+轮询收割组合方案落地（沙箱 subscribe_whole_quote 副作用激活全市场 3s 推送，v18 get_full_tick 密度 90s→3-9s）；高密度对拍全面通过（price 91.7%/bid 95.0%/ask 93.9%，差异全为相位内自然变动）；发现沙箱订阅 API callback 被静默忽略（回调路径不通，无需回调）；双策略同时运行纪律落盘 |
 | 1.8.5 | 2026-09-07 | **§14.7 guard 零代码切换落地**：start_tick_subscriber.ps1 支持 TICK_SOURCE/TICK_BRIDGE_ENV 环境变量（默认 xtdata 零行为变化；bridge 加 --bridge/--bridge-env flag）；退役日切换 SOP 一条命令（SetEnvironmentVariable + schtasks 重启）；参数拼接双路径/argparse/孤儿清理匹配/心跳兼容四项实测通过——P0-1 全部实施项闭环 |
 | 1.8.6 | 2026-09-07 | **§14.8 v19 全板块 5 档当日闭环**：TICKDUMP3 单策略合并版（A股+基金+指数+转债 8394 只，京市/B股按 Owner 裁定排除）；25 列 5 档 CSV（源头本有 5 档，v18 只砍剩 1 档）；对拍 99.8% 匹配/99.3% price 一致（v18→v18.2→v19 = 73%→91.7%→99.3%）；桥重启自愈 hardening（offset 边车+4MB 读限速+三态防御，实证防全天重读洪泛）；发现订阅共享效应（沙箱订阅激活 3s 推送对外部 xtdata 同样生效，生产管道 surge 20 倍——9/18 后自然消解） |
+| 1.8.7 | 2026-09-07 | **§14.9 合并决策落盘（Owner 裁定 9/15 检查点）**：TICKDUMP3 跑一周后评估并入 QUOTE_V17；v20 方案=200ms 取价热线程照写 quote.csv（项目侧零改动延迟不劣化）；两路径 A（9/15 出 v20 并行对拍→9/17 停 v17）或 B（保守默认：v17 过 9/18、合并推迟 10 月）。附带：回灌残留 4 段已清（SKIPPED-ORPHAN 机制自动归零）；convertible_bond_list "停更"定论=monthly_static 月频设计如此（9/2 catchup 补跑成功，下次 10/1）非故障 |
