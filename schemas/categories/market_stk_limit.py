@@ -22,7 +22,9 @@ JOB-077 市场元数据与约束接入（DS-082，2026-08-15）：
     故按交易所规则由昨收价计算（行业标准做法，对标 tushare stk_limit 语义）：
     limit_up/down = round_half_up(pre_close × (1±pct), 0.01)。
     pct 口径：科创板 20%（含ST）；创业板 2020-08-24 起 20%（含ST）、此前 ST 5%/非ST 10%；
-    北交所 30%；主板 ST/*ST 5%、否则 10%。新股无涨跌幅限制期 limit_*=NULL。
+    北交所 30%；主板非 ST 10%、主板 ST/*ST 2026-07-06 起 10%（沪深交易所
+    《交易规则（2026年修订）》2026-04-24 发布、2026-07-06 施行）、此前 5%。
+    新股无涨跌幅限制期 limit_*=NULL。
     PIT 语义 strict：trade_date=生效交易日，pre_close 经除权除息修正
     （close_prev × adj_factor_T/adj_factor_prev）。
 

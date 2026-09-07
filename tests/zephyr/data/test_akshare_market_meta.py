@@ -125,8 +125,16 @@ class TestLimitPctRules:
         assert AkshareIngestProvider._limit_pct_of("600000", D(2026, 8, 14), False) == 0.10
         assert AkshareIngestProvider._limit_pct_of("000001", D(2026, 8, 14), False) == 0.10
 
-    def test_main_board_st(self):
-        assert AkshareIngestProvider._limit_pct_of("600000", D(2026, 8, 14), True) == 0.05
+    def test_main_board_st_regime_change(self):
+        # 主板 ST/*ST：2026-07-06 起 10%（沪深交易所《交易规则（2026年修订）》
+        # 2026-04-24 发布、2026-07-06 施行，与主板非 ST 拉平），此前 5%
+        # （与创业板 2020-08-24 切片同构）
+        assert AkshareIngestProvider._limit_pct_of("600000", D(2026, 7, 3), True) == 0.05
+        assert AkshareIngestProvider._limit_pct_of("600000", D(2026, 7, 6), True) == 0.10
+        assert AkshareIngestProvider._limit_pct_of("000001", D(2026, 7, 3), True) == 0.05
+        assert AkshareIngestProvider._limit_pct_of("000001", D(2026, 7, 6), True) == 0.10
+        assert AkshareIngestProvider._limit_pct_of("002594", D(2026, 7, 3), True) == 0.05
+        assert AkshareIngestProvider._limit_pct_of("002594", D(2026, 7, 6), True) == 0.10
         assert AkshareIngestProvider._limit_pct_of("000001", D(2021, 3, 1), True) == 0.05
 
     def test_star_market(self):
@@ -238,9 +246,9 @@ class TestFetchStkLimit:
         r = by[("2026-08-12", "600000")]
         assert (r[3], r[4]) == (11.11, 9.09)
 
-        # ST 5%：20.00→21.00/19.00
+        # ST 10%（2026-08-11 ≥ 2026-07-06 新规生效日）：20.00→22.00/18.00
         r = by[("2026-08-11", "600001")]
-        assert (r[3], r[4], r[5], r[6]) == (21.00, 19.00, 0.05, 1)
+        assert (r[3], r[4], r[5], r[6]) == (22.00, 18.00, 0.10, 1)
 
         # 创业板 20%：100.00→120.00/80.00；科创板 20%：50.00→60.00/40.00
         assert by[("2026-08-11", "300750")][3] == 120.00

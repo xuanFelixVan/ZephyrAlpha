@@ -28,7 +28,7 @@ MOD-DATA-062 — 全市场分钟级宽度快照采集纯函数（92号清单 §8
 计数口径（写清）：
     - advancing/declining/flat：最新价 vs 昨收（float 同源小数直接比较）。
     - 涨跌停价=昨收×(1±幅度) 四舍五入到分（Decimal ROUND_HALF_UP，交易所口径）；
-      幅度=主板 10%（ST/*ST 5%）/创业板/科创板 20%/北交所 30%——复用
+      幅度=主板 10%（ST/*ST 2026-07-06 起 10%、此前 5%，沪深交易所《交易规则（2026年修订）》）/创业板/科创板 20%/北交所 30%——复用
       AkshareIngestProvider._limit_pct_of（stk_limit DS-082 同口径，单一真源不另造）。
     - limit_up=最新价达涨停价；attempted=日内最高曾触及涨停价（含炸板）；
       sealed=涨停且卖一无量（ask1 价≤0 或量=0，封单形态）；limit_down 对称。

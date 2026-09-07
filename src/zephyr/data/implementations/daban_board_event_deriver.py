@@ -5,7 +5,7 @@
 # [CONSUMERS] （STR-DABAN-022 打板 sleeve 回测数据腿：封板时间/开板次数/封单代理/涨停池连板；tasks.yaml 接线待 DDL 建表后排期）
 # [STARTUP] manual
 # [MATURITY] testing
-# [INVARIANTS] 匿名/只读访问（CH 全程 SELECT 零写入，落地产出=CSV 中间层）；涨停价解析链=库内 stk_limit→tushare stk_limit→规则推导，逐行 limit_src 留痕；规则口径=主板 10%/ST 5%、科创创业 20%、北证 30%，Decimal ROUND_HALF_UP 到分（经库内 stk_limit 重叠窗 88445 样本 100% 验证）；触板判定 eps=0.001；开板次数=分钟级下限口径（分钟内快开快合漏计）；封单代理=miniqmt tick 尾盘买一档（2026-07 起可得）；frozen dataclass asdict JSON 可序列化
+# [INVARIANTS] 匿名/只读访问（CH 全程 SELECT 零写入，落地产出=CSV 中间层）；涨停价解析链=库内 stk_limit→tushare stk_limit→规则推导，逐行 limit_src 留痕；规则口径=主板 10%/ST 5%（ST 5% 仅 2026-07-06 前；起 ST 亦 10%，沪深交易所《交易规则（2026年修订）》）、科创创业 20%、北证 30%，Decimal ROUND_HALF_UP 到分（经库内 stk_limit 重叠窗 88445 样本 100% 验证）；触板判定 eps=0.001；开板次数=分钟级下限口径（分钟内快开快合漏计）；封单代理=miniqmt tick 尾盘买一档（2026-07 起可得）；frozen dataclass asdict JSON 可序列化
 # [MODIFY-GUARD] .runtime/construction_20260823/reports/BTRUN_report.md §3.2（STR-DABAN-022 数据缺口）
 # [STABILITY] evolving
 # [SAFETY] M
@@ -201,11 +201,18 @@ DEFAULT_TICKS_FROM: Final = date(2026, 7, 1)
 #: 连板链/昨收链 lookback（自然日；≈28 交易日，覆盖现实连板长度）
 _LOOKBACK_DAYS: Final = 40
 
+#: 主板 ST/*ST 涨跌幅切片：沪深交易所《交易规则（2026年修订）》2026-04-24 发布、
+#: 2026-07-06 施行，主板 ST 5%→10%（与主板非 ST 拉平；科创创业 20%、北证 30% 不变）
+_MAIN_ST_10PCT_DATE: Final = date(2026, 7, 6)
+#: 主板 ST 旧规幅度（trade_date < _MAIN_ST_10PCT_DATE）
+_MAIN_ST_LEGACY_PCT: Final = Decimal("0.05")
+
+#: 现行涨跌停幅度表（trade_date >= _MAIN_ST_10PCT_DATE 口径；历史回填走 rule_limit_price 切片）
 _BOARD_PCT: Final = {
     ("sh_main", False): Decimal("0.10"),
-    ("sh_main", True): Decimal("0.05"),
+    ("sh_main", True): Decimal("0.10"),
     ("sz_main", False): Decimal("0.10"),
-    ("sz_main", True): Decimal("0.05"),
+    ("sz_main", True): Decimal("0.10"),
     ("star", False): Decimal("0.20"),
     ("star", True): Decimal("0.20"),  # 科创/创业 ST 不打折（20% 不变）
     ("chinext", False): Decimal("0.20"),
@@ -281,17 +288,28 @@ def rule_limit_price(
     pre_close: float | None,
     board: str,
     st_flag: bool,
+    trade_date: date | None = None,
 ) -> tuple[float, float] | None:
     """规则涨停价：昨收×(1±幅度) Decimal ROUND_HALF_UP 到分（交易所四舍五入口径）。
 
-    幅度：主板 10%/ST 5%；科创/创业 20%（ST 不打折）；北证 30%。
+    幅度：主板 10%/ST 5%（主板 ST 2026-07-06 起 10%，沪深交易所《交易规则
+    （2026年修订）》2026-04-24 发布、2026-07-06 施行）；科创/创业 20%（ST 不打折）；
+    北证 30%。trade_date=None 按现行规则（仅限当日盘面场景）；历史回填 MUST 传
+    trade_date，否则 2026-07-06 前主板 ST 会错按 10%。
     pre_close 缺失/非正 或 board 未知 → None（新股无涨跌幅限制日等场景跳过）。
     """
     if pre_close is None or pre_close <= 0:
         return None
-    pct = _BOARD_PCT.get((board, bool(st_flag)))
-    if pct is None:
-        return None
+    if board in ("sh_main", "sz_main") and st_flag:
+        # 主板 ST：2026-07-06 起 10%，此前 5%（沪深交易所《交易规则（2026年修订）》）
+        if trade_date is None or trade_date >= _MAIN_ST_10PCT_DATE:
+            pct: Decimal | None = Decimal("0.10")
+        else:
+            pct = _MAIN_ST_LEGACY_PCT
+    else:
+        pct = _BOARD_PCT.get((board, bool(st_flag)))
+        if pct is None:
+            return None
     base = Decimal(str(pre_close))
     up = (base * (1 + pct)).quantize(Decimal("0.01"), rounding=ROUND_HALF_UP)
     down = (base * (1 - pct)).quantize(Decimal("0.01"), rounding=ROUND_HALF_UP)

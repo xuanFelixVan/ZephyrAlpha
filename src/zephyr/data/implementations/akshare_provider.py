@@ -6440,13 +6440,18 @@ class AkshareIngestProvider(IngestProviderBase):
     # 创业板注册制改革生效日：涨跌幅 10%→20%（含ST股）
     _CHINEXT_20PCT_DATE = datetime.date(2020, 8, 24)
 
+    # 沪深交易所《交易规则（2026年修订）》（2026-04-24 发布，2026-07-06 施行）：
+    # 主板（沪 60 段/深 000-003 段）ST/*ST 涨跌幅 5%→10%，与主板非 ST 拉平
+    _MAIN_ST_10PCT_DATE = datetime.date(2026, 7, 6)
+
     @classmethod
     def _limit_pct_of(cls, code: str, trade_date: datetime.date, st_flag: bool) -> float | None:
         """涨跌停幅度（小数），口径=沪深北交易所交易规则。
 
         科创板 20%（含ST）；创业板 2020-08-24 起 20%（含ST，改革后ST不再区别），
         此前 ST/*ST 5%、非ST 10%（深交所投教：特别规定实施前创业板风险警示股 5%）；
-        北交所 30%（无ST 5%规则）；主板 ST/*ST 5%、否则 10%。
+        北交所 30%（无ST 5%规则）；主板非 ST 10%、主板 ST/*ST 2026-07-06 起 10%
+        （沪深交易所《交易规则（2026年修订）》），此前 5%。
         未知板块返回 None（调用方跳过，防误判）。
         """
         if code.startswith("68"):
@@ -6458,6 +6463,8 @@ class AkshareIngestProvider(IngestProviderBase):
         if code.startswith(("43", "83", "87", "88", "920")):
             return 0.30
         if code.startswith(("60", "00")):
+            if trade_date >= cls._MAIN_ST_10PCT_DATE:
+                return 0.10  # 2026-07-06 起主板 ST/*ST 与非 ST 同为 10%
             return 0.05 if st_flag else 0.10
         return None
 

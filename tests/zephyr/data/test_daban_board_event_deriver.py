@@ -16,7 +16,7 @@
 # [TTL] permanent
 """daban_board_event_deriver 打板回测历史事件推导器 单元测试（假数据不触真 CH/tushare）。
 
-覆盖：板块分类/规则涨停价（HALF_UP 边界/ST 5%/科创创业 20%/北证 30%）、日频事件推导
+覆盖：板块分类/规则涨停价（HALF_UP 边界/主板 ST 5% 仅 2026-07-06 前、起 10%/科创创业 20%/北证 30%）、日频事件推导
 （触板/封住/一字/连板链/eps 容差/无涨停价跳过）、分钟级首触与开板计数（下限口径）、
 tick 封单代理（尾盘买一）、tushare 涨停价拉取（mock pro）、collect 端到端
 （库内 stk_limit 优先/缺失日走 tushare/限速注入/窗口过滤/开关切换）、CSV 三态。
@@ -107,9 +107,24 @@ class TestRuleLimitPrice:
         assert up == pytest.approx(10.65)  # 9.68*1.1=10.648 → HALF_UP 10.65
         assert down == pytest.approx(8.71)
 
-    def test_main_board_st_5pct(self):
-        up, down = rule_limit_price(9.68, "sz_main", True)
-        assert up == pytest.approx(10.16)  # 9.68*1.05=10.164 → 10.16
+    def test_main_board_st_regime_change(self):
+        # 主板 ST：2026-07-06 起 10%（沪深交易所《交易规则（2026年修订）》
+        # 2026-04-24 发布、2026-07-06 施行），此前 5%
+        up, down = rule_limit_price(9.68, "sh_main", True, datetime.date(2026, 7, 6))
+        assert up == pytest.approx(10.65)  # 9.68*1.1=10.648 → HALF_UP 10.65
+        assert down == pytest.approx(8.71)
+        # 生效日前一天仍旧规 5%
+        assert rule_limit_price(9.68, "sz_main", True, datetime.date(2026, 7, 3))[0] == pytest.approx(
+            10.16
+        )  # 9.68*1.05=10.164 → 10.16
+
+    def test_main_board_st_legacy_before_date(self):
+        # 生效日前主板 ST 按旧规 5%
+        assert rule_limit_price(9.68, "sh_main", True, datetime.date(2026, 6, 30))[0] == pytest.approx(10.16)
+
+    def test_main_board_st_no_date_current_rule(self):
+        # trade_date=None 按现行规则（仅限当日盘面场景；历史回填 MUST 显式传日期）
+        assert rule_limit_price(9.68, "sh_main", True)[0] == pytest.approx(10.65)
 
     def test_star_chinext_20pct(self):
         assert rule_limit_price(10.0, "star", False)[0] == pytest.approx(12.00)
