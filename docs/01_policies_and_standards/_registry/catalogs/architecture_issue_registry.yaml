@@ -21400,3 +21400,50 @@ entries:
   status: decided
   created: '2026-09-05'
   last_updated: '2026-09-05'
+
+- issue_id: '#ARCH-DATA-020'
+  title: 'stk_limit 主板 ST/*ST 涨跌幅口径滞后——2026-07-06 起 5%→10%（沪深交易所《交易规则（2026年修订）》，已修复+回填+对账）'
+  severity: P1高
+  adjudication: |-
+    外部规则变更（已核实，2026-09-07）：沪深交易所 2026-04-24 发布《交易规则（2026年修订）》
+    （上交所上证发〔2026〕41号，沪深北同步），2026-07-06 起施行：主板（沪 60 段/深 000-003 段）
+    风险警示股（ST/*ST）日涨跌幅限制 5%→10%，与主板非 ST 拉平；创业板/科创板 20%、
+    北交所 30% 不变。证据=上交所公告原文+附件3（暂缓实施条文仅大宗交易条款，不含 ST）
+    + 盘面实证（2026-09-07 核查：7 只主板 ST 在 8~9 月合计 18 个交易日 |涨跌幅|>5%，
+    当日涨跌停价全部为 10% 口径）。
+    修改前口径：akshare_provider._limit_pct_of 主板分支 "return 0.05 if st_flag else 0.10"
+    无日期切片 → 2026-07-06 起主板 ST 行 limit_pct=0.05、limit_up/down 按 5% 计算=错值；
+    daban_board_event_deriver._BOARD_PCT 主板 ST 硬编码 0.05 同病（规则兜底链）。
+    修改后口径：主板分支按 trade_date 切片（>=2026-07-06 → 0.10，此前 0.05 if st_flag
+    else 0.10），与创业板 _CHINEXT_20PCT_DATE（2020-08-24）切片同构；daban
+    rule_limit_price 增 trade_date 可选参同步切片（None=现行规则，历史回填 MUST 显式传日期）。
+    已执行修复（2026-09-07）：① 两处代码切片+常量 _MAIN_ST_10PCT_DATE；② 单测边界日
+    2026-07-03/07-06 覆盖（60/000/002 前缀、ST/非 ST、双创北证回归）96 passed；
+    ③ task_progress.last_key 回拨 2026-07-06 重跑 stk_limit_premarket：重算 246406 行
+    （2026-07-06~09-07）+ OPTIMIZE FINAL（default 账号执行，zephyr_reader 无 OPTIMIZE
+    权限）；④ 对账通过：周度分布 07-06 起主板 ST 仅 0.10（0.05 清零）、wrong_pct=0、
+    2026-09-04 全部 141 ST 行 limit_up/down Decimal 精确匹配（注意：SQL round 为银行家
+    舍入，对账须用 HALF_UP 语义/Decimal，否则出伪差）。
+    遗留说明：stk_limit 表数据覆盖自 2026-07-06 起（旧数据 2026-08-03 起，更早历史无行），
+    2026-07-06 前回测的涨跌停价走规则兜底（daban rule_limit_price 已切片；matching_engine
+    未切片见重评条件②）。
+    重评条件：① 交易所再修涨跌幅规则 → 追加日期切片即可（模式已固化于 _limit_pct_of）；
+    ② 其余口径缺口本轮不修单独跟进：backtest matching_engine._infer_limit_pct 无 ST 区分
+    （2026-07-06 前历史回测主板 ST 反向错）、miniqmt_provider 竞价簿硬编码 ±10%（双创错）、
+    signal_ashare/tiered_screening_filter 与 ex_core/adapters/miniqmt_broker 按现值改无历史
+    切片；③ TDM 联动参数重校欠账（竞价即决封板/溢价映射、跌停排队、封成比阈值按 10% 重校）。
+  impact:
+    - 'src/zephyr/data/implementations/akshare_provider.py（_limit_pct_of 主板分支日期切片 + _MAIN_ST_10PCT_DATE）'
+    - 'src/zephyr/data/implementations/daban_board_event_deriver.py（rule_limit_price 增 trade_date 切片 + _BOARD_PCT 主板 ST 现行 0.10）'
+    - 'src/zephyr/data/market_breadth_collector.py（计数口径 docstring 时变化，复用 _limit_pct_of 单一真源）'
+    - 'tests/zephyr/data/test_akshare_market_meta.py（TestLimitPctRules 边界用例 + TestFetchStkLimit ST 行断言）'
+    - 'tests/zephyr/data/test_daban_board_event_deriver.py（TestRuleLimitPrice 时变用例）'
+    - 'schemas/categories/market_stk_limit.py（docstring 口径时变化）'
+    - 'c1_market.stk_limit（2026-07-06 起主板 ST 行重算回填 246406 行）'
+    - 'docs/01_policies_and_standards/_registry/catalogs/data_asset_registry.yaml（DS-082 evidence 时变化）'
+    - 'config/trading_decision_map.yaml（TDM-X-S2-02 修表欠账清偿落账）'
+    - 'docs/02_enterprise_architecture/02_domain_architecture_docs/11_d_data.md（口径文字同步）'
+  fix_phase: '已完成（代码切片+单测+回填补数+对账+登记，2026-09-07）'
+  status: decided
+  created: '2026-09-07'
+  last_updated: '2026-09-07'

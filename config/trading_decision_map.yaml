@@ -44,6 +44,9 @@ nodes:
     node_type: gate
     point: 盘前
     decision_question: 今天下不下单/给多少总仓位（消费 RegimeSnapshot 概率=谨慎度，六段预算带见 C1）
+    algo_note_zh: >-
+      不自己算宏观——消费 RegimeSnapshot 的 12 态概率分布当谨慎度系数：概率越分裂越谨慎。
+      再查六段情绪预算带（如吸筹 30-50%/点火 50-70%/扩张 60-80%/亢奋封顶 30% 只卖不买），月级定大档、日级水温微调，输出当日总仓位上限。
     factor_refs: []
     data_refs: [DS-150]
     module_ref: src/zephyr/regime/core/regime_detector.py
@@ -62,6 +65,9 @@ nodes:
     node_type: sensor
     point: 盘前
     decision_question: 指数趋势/位置如何（数据面）
+    algo_note_zh: >-
+      看均线排列与位置：MA20 在 MA60 上=多头加分，指数距 60 日高点<3%=高位减分；破 MA20 减一档、破 MA60 减两档。
+      输出指数趋势分（-2~+2）。
     factor_refs: []
     cycle_refs: [CYC-STAT-001, CYC-STAT-004, CYC-STAT-013]
     data_refs: [DS-150]
@@ -77,6 +83,9 @@ nodes:
     node_type: sensor
     point: 盘中
     decision_question: 涨停/跌停/炸板/连板梯队显示的参与度如何（广度面）
+    algo_note_zh: >-
+      数涨停/跌停家数、算炸板率、看连板梯队高度：涨跌停比>3 且炸板率<30%=强势；连板高度从 5 板断崖到 2 板=退潮预警。
+      广度结构给市场参与度打分。
     factor_refs: []
     data_refs: [DS-082]
     module_ref: null
@@ -90,6 +99,9 @@ nodes:
     node_type: sensor
     point: 盘前
     decision_question: 昨日涨停溢价/晋级率显示的投机情绪如何（结果面，短线领先）
+    algo_note_zh: >-
+      算昨日涨停股今天的平均溢价（低开多少/高开多少）和晋级率（昨天涨停今天又板的占比）：平均溢价>2% 且晋级率>50%=情绪健康；连续两天负溢价=退潮确认。
+      这是短线最领先的指标——打板资金赚不赚钱直接决定明天还敢不敢接。
     factor_refs: []
     data_refs: [DS-082, DS-107]
     module_ref: null
@@ -103,6 +115,9 @@ nodes:
     node_type: sensor
     point: 盘前
     decision_question: 市场波动状态是否允许正常仓位（可选通道；中国VIX表未登记=数据缺口）
+    algo_note_zh: >-
+      可选通道（中国 VIX 数据缺口，用 ATR 替代）：ATR/价格>3.5%=极端波动降仓，<1%=死水难做降仓，中间正常。
+      波动两端的行情都不适合正常仓位。
     factor_refs: []
     data_refs: [DS-150]
     module_ref: null
@@ -132,6 +147,9 @@ nodes:
     node_type: sensor
     point: 盘前
     decision_question: 市场之外的宏观环境（货币/流动性/海外/政策）对这段行情的支撑或压制
+    algo_note_zh: >-
+      四维扫一遍：货币（Shibor 隔夜利率骤升=紧）、流动性（两融余额环比连续降=去杠杆）、海外（隔夜纳指跌>2%=压制）、政策（监管动态人工录入）。
+      输出宏观支撑/压制分。
     factor_refs: []
     macro_refs: [MAC-CN-005, MAC-CN-006, MAC-CN-007, MAC-CN-008, MAC-CN-009, MAC-CN-011, MAC-US-001, MAC-US-002]
     event_refs: [EVT-MACRO-001]
@@ -147,6 +165,9 @@ nodes:
     node_type: sensor
     point: 盘中
     decision_question: 当日盘面骤变读数（11 信号环比）显示今天该多激进
+    algo_note_zh: >-
+      当日盘中 11 个信号环比（涨跌停比变化/成交额环比/炸板率走向等）→ 合成 S0-S4 五档水温：水烫=当日可激进，水冰=当日只看不动。
+      9:35 首算，盘中可更新，是唯一盘中可变的 L1 输入。
     factor_refs: []
     data_refs: [DS-082, DS-059, DS-150]
     module_ref: null
@@ -167,6 +188,10 @@ nodes:
     #   对齐加成：月+周+日三层同向→预算带取上限（业界三级共振）；冲突→取下限+高层赢
     # （D90 终裁 2026-09-07）：六段冲突场景=听弱的（预算带按较弱信号降一档机械执行，废除人工接管）；量×轮动二维状态机（成交额 250 日滚动分位<25%=存量博弈：小盘题材加权/主线降权/持仓≤2-3 天；>60%=主线放行；轮动强度>80% 分位=电风扇市=无主线不推大板块）；二值权限门滞回=进段连续 2 日隶属度>60%、退出<40%
     decision_question: >-
+    algo_note_zh: >-
+      双轴相乘：宏观 RegimeSnapshot 概率（月级 12 态）×情绪六段分布（周级）。
+      两轴指向一致=直接取结论；指向分裂（熵值超阈）=按'就低不就高'仲裁。
+      输出三件套：预算带（给 C1）+六段状态（给全流）+策略路由（哪些 sleeve 今天开），一次判定 broadcast 全图。
       双轴合成：RegimeSnapshot 概率（宏观）×情绪六段分布（微观）；输出预算带+策略路由+冲突仲裁（熵高分裂市→降档+Owner 接管）；日级水温受月/周档位封顶
     factor_refs: []
     data_refs: [DS-098]
@@ -182,6 +207,8 @@ nodes:
     node_type: stage
     point: 盘前
     decision_question: 今天打哪个板块/赛道
+    algo_note_zh: >-
+      板块层总枢纽：下有 10 个子环节（强度/轮动/调整进度/市场状态/水温响应/个股传导/回踩质量/生命周期/催化剂/补涨比价），产出当日板块候选池（3-5 个主攻板块）排序喂给 L3 个股层。
     factor_refs: []
     data_refs: [DS-059, DS-170]
     module_ref: null
@@ -202,6 +229,9 @@ nodes:
     node_type: stage
     point: 盘后
     decision_question: 各板块今天整体强不强、强到值得进候选池吗
+    algo_note_zh: >-
+      四路合分：结构强度（子1）+动量活跃（子2）+多周期动量（子3）+资金流（子4），再加市场级调节（子5）。
+      总分进前 15% 的板块进候选池。
     parent_node: TDM-E-L2
     factor_refs: []
     data_refs: [DS-059, DS-170]
@@ -222,6 +252,9 @@ nodes:
     node_type: stage
     point: 盘后
     decision_question: 板块情绪结构（涨停比/梯队/趋势）强不强
+    algo_note_zh: >-
+      板块情绪结构三件：板块内涨停股占比（>8%=强）、连板梯队是否完整（有 2 板有 3 板=接力健康）、板块指数趋势（20 日线上方）。
+      合出结构分 0-10。
     parent_node: TDM-E-L2-01
     factor_refs: [FCT-MOM-011, FCT-SENT-012]
     data_refs: [DS-059]
@@ -244,6 +277,9 @@ nodes:
     node_type: stage
     point: 盘后
     decision_question: 板块资金行为活跃度在全市场排第几
+    algo_note_zh: >-
+      板块成交额占全市场比+环比变化，排名前 10% 的板块=资金扎堆活跃区。
+      活跃度是必要条件——没量的板块再强的形态也是假象。
     parent_node: TDM-E-L2-01
     factor_refs: []
     data_refs: [DS-059, DS-170]
@@ -265,6 +301,9 @@ nodes:
     node_type: stage
     point: 盘后
     decision_question: 是真启动还是一日游（q20/q5/q3 谁主导）
+    algo_note_zh: >-
+      q20（20日）/q5（5日）/q3（3日）动量加权：q3 主导=刚点火（好）、q5 主导=进行中（可）、q20 主导=涨了很久（谨慎追）。
+      区分真启动与一日游。
     parent_node: TDM-E-L2-01
     factor_refs: []
     data_refs: [DS-170]
@@ -286,6 +325,9 @@ nodes:
     node_type: stage
     point: 盘后
     decision_question: 主力资金在进这个板块还是在出
+    algo_note_zh: >-
+      板块主力净流入 3 日累计+当日大单净额：连续 3 日净流入=资金在建仓，当日大单净流出>流入 2 倍=出货嫌疑。
+      资金流权重占板块总分 25%。
     parent_node: TDM-E-L2-01
     factor_refs: [FCT-LIQ-040, FCT-MOM-021]
     data_refs: [DS-181, DS-186]
@@ -308,6 +350,9 @@ nodes:
     node_type: aggregation
     point: 盘后
     decision_question: 市场级轮动状态要不要对全板块强度统一加减分
+    algo_note_zh: >-
+      市场级轮动状态（子4 的五分类）统一给全板块加/减分：主线态给头部板块+10%，派发态全体-15%。
+      防止板块层只看自己不看大盘。
     parent_node: TDM-E-L2-01
     factor_refs: []
     data_refs: []
@@ -329,6 +374,9 @@ nodes:
     node_type: stage
     point: 盘后
     decision_question: 资金正从哪些板块撤出、正接棒进哪些板块
+    algo_note_zh: >-
+      看板块指数与资金的移动方向：谁在连涨+资金连进=接棒区，谁在连跌+资金连出=撤离区。
+      输出接棒榜单（资金正在去的方向）。
     parent_node: TDM-E-L2
     factor_refs: []
     data_refs: [DS-170]
@@ -351,6 +399,9 @@ nodes:
     node_type: stage
     point: 盘后
     decision_question: 每个板块处在接棒/见顶/回避/布局哪个阶段
+    algo_note_zh: >-
+      RRG（相对旋转图）：板块相对大盘收益率×动量双轴，转一圈分四象限——改善（领先）/走弱（见顶）/落后（回避）/改善中（布局）。
+      目标=刚进领先象限的板块。
     parent_node: TDM-E-L2-02
     factor_refs: []
     data_refs: [DS-170]
@@ -371,6 +422,9 @@ nodes:
     node_type: stage
     point: 盘中
     decision_question: 这个板块是不是涨到头要见顶了
+    algo_note_zh: >-
+      单板块见顶预警三信号：RSI 日线>75、板块成交额创 20 日新高但指数滞涨（放量不涨）、龙头股率先破位。
+      命中两个=该板块从候选池降级。
     parent_node: TDM-E-L2-02
     factor_refs: []
     data_refs: [DS-059]
@@ -393,6 +447,8 @@ nodes:
     node_type: stage
     point: 盘后
     decision_question: 目标板块的调整走完了没有、能不能低吸
+    algo_note_zh: >-
+      目标板块从高点回撤算进度：回撤 5-8 天+缩量到高峰 1/3 以下=调整近尾声，可进低吸观察名单；还在放量下跌=调整没走完不碰。
     parent_node: TDM-E-L2
     factor_refs: []
     data_refs: [DS-170]
@@ -413,6 +469,10 @@ nodes:
     node_type: stage
     point: 盘后
     decision_question: 调整进度百分比到哪了
+    algo_note_zh: >-
+      扩散指标：板块内站上 20 日线的个股占比。
+      从 <30% 回升穿 50%=调整结束信号；从 >80% 掉头向下=见顶信号。
+      给出进度百分比。
     parent_node: TDM-E-L2-03
     factor_refs: []
     data_refs: [DS-170]
@@ -434,6 +494,8 @@ nodes:
     node_type: aggregation
     point: 盘后
     decision_question: 今天板块间分布结构是高潮/主线/分歧/派发/混沌哪种
+    algo_note_zh: >-
+      看全市场板块分布结构定当日生态：主线清晰（1-2 个板块吸走 30%+成交额）=聚焦做；高潮（涨停潮遍地）=第二天大概率分歧；混沌（无主线）=降仓等待。
     parent_node: TDM-E-L2
     factor_refs: []
     data_refs: [DS-059, DS-170]
@@ -454,6 +516,8 @@ nodes:
     node_type: stage
     point: 盘后
     decision_question: 今天该给全板块强度打几分的调节分
+    algo_note_zh: >-
+      五分类规则：按'板块强度方差+涨停集中度'分 高潮/主线/分歧/派发/混沌 五态，每态给全板块强度统一调节分（主线+10%/派发-15%），喂给子5 注入。
     parent_node: TDM-E-L2-04
     factor_refs: []
     data_refs: [DS-059, DS-170]
@@ -474,6 +538,9 @@ nodes:
     node_type: stage
     point: 盘后
     decision_question: 是不是极端分化只该做头部板块
+    algo_note_zh: >-
+      虹吸态=极端分化：头部板块吸金时其余板块缺血。
+      判定：前 3 板块成交占比>40% 时只做头部板块候选，其余板块候选池清空——虹吸期做非头部=接飞刀。
     parent_node: TDM-E-L2-04
     factor_refs: []
     data_refs: [DS-059, DS-181]
@@ -495,6 +562,9 @@ nodes:
     node_type: stage
     point: 盘前
     decision_question: 当前水温下板块信号按什么比例放行
+    algo_note_zh: >-
+      把 L1 的水温档翻译成板块信号放行比例：水烫（S4）=信号全放行+门槛降一档；水冰（S0-S1）=只放行最强信号（前 5%）+门槛升一档。
+      水温是板块层的总开关。
     parent_node: TDM-E-L2
     factor_refs: []
     data_refs: [DS-150]
@@ -515,6 +585,9 @@ nodes:
     node_type: stage
     point: 盘前
     decision_question: 日级温度计（S5 当日读数主判）落在哪档+月/周封顶后最终档位
+    algo_note_zh: >-
+      日级 S5 水温为主判，月级 12 态封顶：比如日级水烫但月级熊市反弹=最终档取'温'（月级有权一票否决激进度）。
+      防止反弹期当牛市做。
     parent_node: TDM-E-L2-05
     factor_refs: []
     data_refs: [DS-150, DS-082, DS-059]
@@ -536,6 +609,9 @@ nodes:
     node_type: stage
     point: 盘前
     decision_question: 信号权重/门槛阈值/象限过滤今天分别取什么值
+    algo_note_zh: >-
+      三件套联动：信号权重×（0.5~1.2 水温系数）、打分门槛随水温升降、象限过滤（水冰时只放主线象限板块）。
+      一套参数随档位查表切换。
     parent_node: TDM-E-L2-05
     factor_refs: []
     data_refs: []
@@ -557,6 +633,8 @@ nodes:
     node_type: stage
     point: 盘后
     decision_question: 板块结论怎么喂给个股层而不越权
+    algo_note_zh: >-
+      板块结论喂个股层的边界规则：只传'板块强度调节分+龙头定位'两个字段，个股层不得直接引用板块的买卖结论——层级隔离防越权。
     parent_node: TDM-E-L2
     factor_refs: []
     data_refs: []
@@ -577,6 +655,9 @@ nodes:
     node_type: stage
     point: 盘中
     decision_question: 这只股配不配进打分池（先 gate 后 weight）
+    algo_note_zh: >-
+      三级放行门槛（先 gate 后 weight）：①板块强度分>6；②个股自身强度>5；③流动性达标（日成交>2 亿）。
+      三关全过才进打分池，过不了连被板块加成的资格都没有。
     parent_node: TDM-E-L2-06
     factor_refs: []
     data_refs: [DS-059]
@@ -597,6 +678,9 @@ nodes:
     node_type: stage
     point: 盘中
     decision_question: 它是龙头/中军/跟风/中位股哪一种
+    algo_note_zh: >-
+      龙头四定位：板块强度榜第一+最先涨停=龙头；跟涨大盘股=中军；后涨小票=跟风；不上不下的=中位股。
+      定位决定持股预期与止损宽度（龙头宽/跟风窄）。
     parent_node: TDM-E-L2-06
     factor_refs: []
     data_refs: [DS-059]
@@ -618,6 +702,9 @@ nodes:
     node_type: stage
     point: 盘后
     decision_question: 板块强度给个股 score 加成或打几折
+    algo_note_zh: >-
+      强度传导系数：板块强度 10 分制映射个股加成（10 分板块=个股 score+15%，6 分=+5%，<6 分=反而-10%）。
+      强板块的弱票也加分，弱板块的强票打折。
     parent_node: TDM-E-L2-06
     factor_refs: []
     data_refs: [DS-059]
@@ -639,6 +726,9 @@ nodes:
     node_type: stage
     point: 盘中
     decision_question: 这次回踩是 A/B/C 哪级、值不值得买给多少仓
+    algo_note_zh: >-
+      回踩分 A/B/C 三级决定给不给仓：A 级（黄金坑）给满额、B 级给半仓、C 级只观察。
+      回踩是买点质量的核心判据——追高和低吸的胜负率差一倍。
     parent_node: TDM-E-L2
     factor_refs: []
     data_refs: [DS-170]
@@ -659,6 +749,9 @@ nodes:
     node_type: stage
     point: 盘中
     decision_question: Fib 位置×量能衰减×板块强度×时间窗合出 A/B/C 哪级
+    algo_note_zh: >-
+      四因子合成：Fib 回撤位置（38.2% 附近=A 的必要条件）×量能衰减（回调缩到峰值 1/3）×板块强度（>7）×时间窗（回调 3-8 天）。
+      四因子各 0-1 分加权定 A/B/C。
     parent_node: TDM-E-L2-07
     factor_refs: []
     data_refs: [DS-170]
@@ -682,6 +775,9 @@ nodes:
     node_type: stage
     point: 盘后
     decision_question: 这个板块自己走到生命周期哪一段了（启动/发酵/高潮/熄火）
+    algo_note_zh: >-
+      板块生命周期四段：启动（首板潮+题材发酵）、发酵（二板三板+跟风涌现）、高潮（板块涨停潮+媒体热炒）、熄火（龙头断板+炸板率>40%）。
+      只做启动和发酵段，高潮只持有不开新，熄火清仓。
     parent_node: TDM-E-L2
     factor_refs: [FCT-MOM-005, FCT-MOM-022]
     data_refs: [DS-059, DS-170]
@@ -704,6 +800,9 @@ nodes:
     node_type: stage
     point: 盘前
     decision_question: 这个板块有没有当下催化剂（政策/业绩/事件）加持
+    algo_note_zh: >-
+      催化剂扫描：政策（部委文件/产业规划）、业绩（行业龙头超预期）、事件（涨价/突破/签约）。
+      有当下催化剂的板块加权 20%——有故事的资金才敢接力。
     parent_node: TDM-E-L2
     factor_refs: []
     data_refs: [DS-107]
@@ -725,6 +824,9 @@ nodes:
     node_type: stage
     point: 盘后
     decision_question: 龙头板块的同链条/上下游里谁还没涨（补涨候选）
+    algo_note_zh: >-
+      龙头板块的同链条补涨：龙头股翻倍后，找同题材未涨股（涨幅<20%）+同产业链上下游。
+      补涨股启动滞后 3-5 天，胜率低于龙头但位置安全。
     parent_node: TDM-E-L2
     factor_refs: []
     data_refs: [DS-186, DS-170]
@@ -745,6 +847,8 @@ nodes:
     node_type: stage
     point: 盘前
     decision_question: 板块里选哪只票
+    algo_note_zh: >-
+      个股层总枢纽：从全市场 5000+ 压缩到 10-20 只精选（业界漏斗压缩率 3000→10 参照），子环节含 Universe 剔除/九阶段主链/双池评分/负面否决/顺位排序/环境开关/策略专属链/可交易性预检。
     factor_refs: [FCT-MOM-003]
     data_refs: []
     module_ref: null
@@ -766,6 +870,9 @@ nodes:
     node_type: stage
     point: 盘后
     decision_question: 今天全市场扫哪些、先把不可交易的删掉哪些
+    algo_note_zh: >-
+      先删不可交易的：停牌/ST/退市风险/上市<60 日（无历史数据）/市值<30 亿（易操纵）/日成交<5000 万（进出困难）。
+      剩下约 3000 只进 Universe。
     parent_node: TDM-E-L3
     factor_refs: [FCT-QUAL-001]
     universe_refs: [UNI-RULE-001, UNI-DYNAMIC-001, UNI-RULE-002]
@@ -790,6 +897,9 @@ nodes:
     node_type: stage
     point: 盘后
     decision_question: 候选池怎么逐级压缩到精选（业界漏斗压缩率参考 3000→10 级）
+    algo_note_zh: >-
+      九阶段逐级压缩（每阶段砍掉 50-70%）：动量初筛→流动性→波动率带→趋势确认→相对强度→量价配合→形态过滤→负面剔除→最终精选。
+      3000→10 的主链骨架。
     parent_node: TDM-E-L3
     factor_refs: [FCT-MOM-009, FCT-MOM-010]
     data_refs: [DS-150, DS-181]
@@ -812,6 +922,9 @@ nodes:
     node_type: aggregation
     point: 盘后
     decision_question: 短线池和波段池分别怎么打分、怎么合流
+    algo_note_zh: >-
+      双池并行打分再合流：短线池（1-3 日持仓，看情绪与涨停基因）+波段池（5-20 日，看趋势与量价）。
+      两池 5 分制各自打分，合流后过三维共振体检（趋势/资金/形态）。
     parent_node: TDM-E-L3
     factor_refs: []
     data_refs: [DS-150]
@@ -832,6 +945,9 @@ nodes:
     node_type: stage
     point: 盘后
     decision_question: 短线候选按 5 分制谁够格
+    algo_note_zh: >-
+      短线 5 分制：涨停基因（历史涨停后次日溢价）1 分+题材纯正度 1 分+龙头定位 1 分+情绪周期位置 1 分+分时强度 1 分。
+      ≥4 分进短线精选。
     parent_node: TDM-E-L3-03
     factor_refs: [FCT-TECH-070]
     data_refs: [DS-150]
@@ -853,6 +969,9 @@ nodes:
     node_type: stage
     point: 盘后
     decision_question: 波段候选按 5 分制谁够格
+    algo_note_zh: >-
+      波段 5 分制：趋势（20 日线上+均线多排）1 分+量能（温和放量不爆量）1 分+相对强度（跑赢行业指数）1 分+回踩质量（A/B 级）1 分+筹码（低位集中）1 分。
+      ≥4 分进波段精选。
     parent_node: TDM-E-L3-03
     factor_refs: [FCT-TECH-071]
     data_refs: [DS-150]
@@ -874,6 +993,9 @@ nodes:
     node_type: aggregation
     point: 盘后
     decision_question: 两池合并后过三维共振体检还剩谁
+    algo_note_zh: >-
+      合流体检三维：趋势共振（日线周线同向）+资金共振（主力连续净流入）+形态共振（突破平台或回踩确认）。
+      三维至少两维达标才保留，防单因子幻觉。
     parent_node: TDM-E-L3-03
     factor_refs: [FCT-TECH-085]
     data_refs: []
@@ -896,6 +1018,9 @@ nodes:
     node_type: stage
     point: 盘后
     decision_question: 候选池里谁被一票否决直接出池
+    algo_note_zh: >-
+      一票否决清单：业绩暴雷（预告亏损）/立案调查/大股东减持公告/解禁>5% 流通盘/商誉减值风险/配股圈钱。
+      命中任一条直接出池，不管打分多高——负面清单优先级高于一切加分项。
     parent_node: TDM-E-L3
     factor_refs: [FCT-TECH-083, FCT-TECH-077]
     data_refs: [DS-150]
@@ -922,6 +1047,9 @@ nodes:
     node_type: stage
     point: 盘后
     decision_question: 活下来的候选按全市场顺位谁排最前（妖>龙>中军>核心>趋势>跟风+加分项）
+    algo_note_zh: >-
+      全市场顺位排序定买入优先级：妖股（3 板+异常强势）>龙头>中军>核心资产>趋势股>跟风。
+      顺位=资金分配顺序，同分时顺位高的先买。
     parent_node: TDM-E-L3
     factor_refs: []
     data_refs: [DS-150]
@@ -942,6 +1070,9 @@ nodes:
     node_type: stage
     point: 盘前
     decision_question: 今天的档位下哪些选股链开、哪些停（首板筛选器实证：两市成交<8000 亿首板链暂停；板块 RPS<90 降仓）
+    algo_note_zh: >-
+      环境开关查表：两市成交<8000 亿=首板筛选器停（实证数据：地量首板次日溢价为负）；情绪冰点=短线链全停只留波段链；极端高潮=反向收紧。
+      开关表按 L1 六段状态查。
     parent_node: TDM-E-L3
     factor_refs: []
     data_refs: [DS-150]
@@ -962,6 +1093,9 @@ nodes:
     node_type: stage
     point: 盘后
     decision_question: 各 sleeve 自己的选股链跑出什么
+    algo_note_zh: >-
+      各 sleeve 自选链并行跑：打板链（子1）/多因子链（子2）/其余链（子3），产出各自的候选喂 L3-08 汇总。
+      策略间不共享中间结果，防耦合。
     parent_node: TDM-E-L3
     factor_refs: []
     data_refs: []
@@ -982,6 +1116,9 @@ nodes:
     node_type: stage
     point: 盘中
     decision_question: 板块内 5 步漏斗选出打板标的（消费 L2 龙头定位）
+    algo_note_zh: >-
+      打板 5 步漏斗：板块强度前 3→板块内涨停股→剔除烂板（封板<1 小时/尾盘板）→封单质量（封单/流通盘>2%）→龙头定位。
+      最终 1-3 只进打板候选。
     parent_node: TDM-E-L3-07
     factor_refs: [FCT-SENT-007, FCT-MOM-016]
     data_refs: [DS-150, DS-082]
@@ -1004,6 +1141,9 @@ nodes:
     node_type: stage
     point: 盘后
     decision_question: 全池按多因子 IC 加权打分谁进组合
+    algo_note_zh: >-
+      全池多因子打分：IC 加权（近 60 日 IC 衰减加权）合成因子分，前 20 只+行业中性化约束（单行业≤4 只）进多因子候选。
+      因子权重月度校准（C3-04）。
     parent_node: TDM-E-L3-07
     factor_refs: []
     data_refs: [DS-150, DS-181]
@@ -1024,6 +1164,9 @@ nodes:
     node_type: stage
     point: 盘后
     decision_question: eventdriven 事件清单/topn 动量排名/default 基础池怎么选
+    algo_note_zh: >-
+      其余 sleeve 链：eventdriven=事件日历扫描（财报/重组/中标）提前 3 日建观察；topn=20 日动量排名前 N；default-equity=宽基 ETF 网格。
+      各链独立产出。
     parent_node: TDM-E-L3-07
     factor_refs: []
     data_refs: [DS-150]
@@ -1044,6 +1187,8 @@ nodes:
     node_type: aggregation
     point: 盘后
     decision_question: 最终谁进买卖点环节（候选池+顺位排序+否决后清单）
+    algo_note_zh: >-
+      汇总输出：双池合流+策略链候选+顺位排序+否决后清单=最终候选池（10-20 只），带各自 sleeve 标签与顺位分，喂 L4 买卖点层。
     parent_node: TDM-E-L3
     factor_refs: []
     data_refs: []
@@ -1067,6 +1212,10 @@ nodes:
     node_type: aggregation
     point: 盘后
     decision_question: 漏斗日产出怎么更新持久池（Tier 升降级+陈旧剔除）
+    algo_note_zh: >-
+      持久池分层维护：Tier1（当日精选）/Tier2（观察池）/Tier3（备选池）。
+      日产出更新各 Tier：连续 2 日达标升 Tier、5 日不达标降级、10 日陈旧剔除。
+      防止每天从零重扫。
     parent_node: TDM-E-L3
     factor_refs: [FCT-MOM-003]
     data_refs: [DS-150]
@@ -1090,6 +1239,9 @@ nodes:
     node_type: stage
     point: 盘前
     decision_question: 候选池里谁今天实际买不进（停牌/一字板/笼子/权限）
+    algo_note_zh: >-
+      当日可买性预检：停牌/一字涨停（买不进）/价格笼子（申报价超±2% 会被拒）/科创板权限/资金不够一手。
+      买不进的标记跳过，防止下单层空转报错。
     parent_node: TDM-E-L3
     factor_refs: []
     data_refs: [DS-082, DS-150]
@@ -1112,6 +1264,9 @@ nodes:
     node_type: stage
     point: 盘中
     decision_question: 盘中实时扫描产出哪些候选（涨速榜 3-7% 拉升/异动资金）
+    algo_note_zh: >-
+      盘中实时选股双通道：竞价选股（子1，9:26-9:28）+涨速扫描（子2，盘中）。
+      与盘前选股互补——盘前管计划内，盘中抓计划外机会。
     parent_node: TDM-E-L3
     factor_refs: []
     data_refs: [DS-150, DS-082]
@@ -1133,6 +1288,9 @@ nodes:
     node_type: stage
     point: 盘中
     decision_question: 9:26-9:28 竞价瞬间产出当日候选（竞价量比/资金挂单/涨停试盘）
+    algo_note_zh: >-
+      竞价 120 秒：竞价量比>5+竞价涨幅 2-5%（过高易炸）+匹配量大单主导→直接进当日候选。
+      竞价是全天第一个情绪确认窗口。
     parent_node: TDM-E-L3-11
     factor_refs: []
     data_refs: [DS-082, DS-150]
@@ -1153,6 +1311,9 @@ nodes:
     node_type: stage
     point: 盘中
     decision_question: 涨速榜 3-7% 快速拉升标的中谁进观察池（黄金窗口 9:30-10:30）
+    algo_note_zh: >-
+      涨速榜扫描：3-7% 区间快速拉升（5 分钟涨>2%）+量比>3+非跟风定位→进观察池。
+      黄金窗口 9:30-10:00，午后拉尾谨慎（尾盘偷袭板质量差）。
     parent_node: TDM-E-L3-11
     factor_refs: [FCT-MOM-030]
     data_refs: [DS-150, DS-082]
@@ -1174,6 +1335,9 @@ nodes:
     node_type: stage
     point: 盘后
     decision_question: 候选个股的资金/席位/筹码/形态四维验证结论
+    algo_note_zh: >-
+      候选股四维验证：资金面（子1）/龙虎榜席位（子2）/筹码分布（子3）/形态结构（子4）。
+      四维至少三维正面才进最终池——多维验证压单维误判。
     parent_node: TDM-E-L3
     factor_refs: []
     data_refs: [DS-181]
@@ -1194,6 +1358,9 @@ nodes:
     node_type: stage
     point: 盘后
     decision_question: 个股主力净额/DDE 大单强度够不够（大单金额/日成交额≥20% 实战线）
+    algo_note_zh: >-
+      主力资金：大单净额/日成交额≥20%=资金主导；DDE 大单连续 3 日净流入=建仓期。
+      单日大进大出（>50% 占比）警惕对倒。
     parent_node: TDM-E-L3-12
     factor_refs: []
     data_refs: [DS-181]
@@ -1215,6 +1382,9 @@ nodes:
     node_type: stage
     point: 盘后
     decision_question: 上榜标的是什么席位在买（游资/机构）—席位风格决定接力概率
+    algo_note_zh: >-
+      龙虎榜席位定性：知名游资（一线席位）买入=短线情绪票接力有戏；机构专用席位=中线票；'拉萨天团'（散户大本营）=次日溢价差。
+      席位风格决定这只票的玩法。
     parent_node: TDM-E-L3-12
     factor_refs: []
     seat_refs: [SEAT-INST-001, SEAT-INST-002, SEAT-INST-003, SEAT-YOUZI-001, SEAT-YOUZI-002, SEAT-YOUZI-003]
@@ -1236,6 +1406,9 @@ nodes:
     node_type: stage
     point: 盘后
     decision_question: 筹码低位集中吸筹还是高位上移派发
+    algo_note_zh: >-
+      筹码分布：获利盘>90% 且集中（单峰密集）=拉升期无抛压；获利盘<30% 高位换手=派发嫌疑。
+      筹码低位单峰密集是最干净的形态。
     parent_node: TDM-E-L3-12
     factor_refs: []
     data_refs: [DS-150]
@@ -1256,6 +1429,9 @@ nodes:
     node_type: stage
     point: 盘后
     decision_question: 缠论结构/底部确认/技术形态支持买入吗
+    algo_note_zh: >-
+      形态结构：缠论（二买/三买位置）、底部形态（W 底/头肩底颈线突破）、技术位（前高突破/平台整理）。
+      形态给买点定位，不单独构成买入理由。
     parent_node: TDM-E-L3-12
     factor_refs: []
     pattern_refs: [PAT-CLL-002, PAT-CLL-006, PAT-CLL-007, PAT-CLL-013, PAT-CHART-004, PAT-CHART-016]
@@ -1278,6 +1454,9 @@ nodes:
     node_type: stage
     point: 盘中
     decision_question: 何时进场/怎么下单
+    algo_note_zh: >-
+      执行层总枢纽：分批建仓/时序/价格锚定/资金分配/打板专项/执行算法/条件队列/突破降级/硬约束/订单九态/部分成交/预检/容灾对账 13 子环节。
+      管'什么时候、怎么把单下出去'。
     factor_refs: [FCT-INTRADAY-028]
     data_refs: []
     module_ref: null
@@ -1296,6 +1475,10 @@ nodes:
     node_type: stage
     point: 盘中
     decision_question: 置信度分几批进、每批多少（回踩 A/B/C 为置信度调节因子）
+    algo_note_zh: >-
+      置信度定分批：高置信（A 级回踩+三维共振）=首批 70%；中置信=50%；低置信=30% 试探。
+      剩余额度等确认信号（涨 2% 或站稳分时均线）再进。
+      回踩 A/B/C 是置信度调节因子。
     parent_node: TDM-E-L4
     factor_refs: []
     data_refs: [DS-150]
@@ -1316,6 +1499,8 @@ nodes:
     node_type: stage
     point: 盘中
     decision_question: 今天什么窗口下单（尾盘集中为主；竞价铁律 9:15-9:20 可撤假象多/9:20-9:25 只挂不撤/14:57-15:00 尾盘竞价不可撤；时间锚 2:30 背离与 2:57 竞价）
+    algo_note_zh: >-
+      时序窗口表：尾盘 14:30-14:55 为集中窗口（全天信息确认后，隔夜风险最小）；竞价铁律=9:15-9:20 可撤挂单密集不参与、9:20-9:25 不可撤观察不动作；开盘 30 分钟只执行盘前计划单不新开。
     parent_node: TDM-E-L4
     factor_refs: [FCT-INTRADAY-024, FCT-INTRADAY-027]
     data_refs: [DS-150]
@@ -1338,6 +1523,9 @@ nodes:
     node_type: stage
     point: 盘中
     decision_question: 限价还是市价（限价为主，市价仅应急）
+    algo_note_zh: >-
+      限价为主（成本可控），市价仅应急（跌停逃命/强平）。
+      限价锚：买=卖一价+1 tick 保证成交又不追高；突破买=突破价上方 0.5% 挂单等着成交。
     parent_node: TDM-E-L4
     factor_refs: []
     data_refs: []
@@ -1358,6 +1546,8 @@ nodes:
     node_type: stage
     point: 盘中
     decision_question: 多标地下单排序与资金可用性兜底
+    algo_note_zh: >-
+      多标的资金排序：顺位高的先下单占资金；资金不足时按'置信度×顺位'加权分配；预留 10% 机动资金不分配（应对盘中机会）。
     parent_node: TDM-E-L4
     factor_refs: []
     data_refs: []
@@ -1378,6 +1568,9 @@ nodes:
     node_type: stage
     point: 盘中
     decision_question: 排板/扫板/打回封选哪个+封单质量验证+撤单纪律（换手板>缩量板/封单要实且递增/黄金排队窗口 5-15 分钟/封单被快速吃掉或大盘跳水即撤）
+    algo_note_zh: >-
+      打板三式：排板（涨停前挂单排队，封单/流通盘>2% 才排）、扫板（封板瞬间市价扫入，只扫首次封板）、打回封（炸板后回封确认再进）。
+      换手板优于缩量板（换手充分=接力意愿强）；撤单纪律=封单骤减 20% 立即撤。
     parent_node: TDM-E-L4
     factor_refs: []
     data_refs: [DS-082]
@@ -1399,6 +1592,9 @@ nodes:
     node_type: stage
     point: 盘中
     decision_question: 大单怎么拆（EXA 六件选型：TWAP/VWAP/ICEBERG/IS/POV/ALT；参与率纪律≤市场量 10-20%）
+    algo_note_zh: >-
+      大单拆分选型表：TWAP（时间均匀，常规）、VWAP（跟量，流动性好时）、ICEBERG（隐藏，防暴露）、IS（急单，前重后轻）。
+      >500 万单必拆；单笔≤盘口一档 50%；冲击成本预算 0.3%。
     parent_node: TDM-E-L4
     factor_refs: []
     data_refs: []
@@ -1419,6 +1615,9 @@ nodes:
     node_type: aggregation
     point: 持续
     decision_question: 买入/卖出/执行/风控扳机怎么统一注册与触发（横切基础设施）
+    algo_note_zh: >-
+      横切基础设施：所有触发器（价格/时间/指标/风控）统一注册到条件队列，tick 驱动按优先级触发（风控>卖出>买入）。
+      一处注册全图复用，防各策略各写各的触发器打架。
     parent_node: TDM-E-L4
     factor_refs: []
     data_refs: []
@@ -1440,6 +1639,9 @@ nodes:
     node_type: stage
     point: 盘中
     decision_question: 突破失败后批次停不停、止损评估启不启
+    algo_note_zh: >-
+      突破失败判定：突破价后 30 分钟内跌回突破位下方=失败→停后续批次+启动止损评估（-3% 或前低）。
+      突破买入的批次控制——首仓失败不加仓。
     parent_node: TDM-E-L4
     factor_refs: []
     data_refs: [DS-150]
@@ -1460,6 +1662,8 @@ nodes:
     node_type: cross_cutting
     point: 持续
     decision_question: 执行硬约束全过了吗（T+1/涨跌停/价格笼子/成本模型实时估算——佣金+印花税+滑点）
+    algo_note_zh: >-
+      五道硬约束过一遍才发单：T+1（当日买入不可卖）、涨跌停价格笼子（申报价±2% 限制）、成本模型实时估（预期冲击+佣金是否吃掉预期收益 1/3）、资金可用、持仓限额。
     parent_node: TDM-E-L4
     factor_refs: []
     cost_model_refs: [CST-ASTOCK-001]
@@ -1482,6 +1686,9 @@ nodes:
     node_type: stage
     point: 持续
     decision_question: 每笔订单当前处于九态的哪一态（New/PendingNew/Accepted/Partial/Filled/PendingCancel/Cancelled/Rejected/Expired）
+    algo_note_zh: >-
+      订单九态机：New/PendingNew/PartiallyFilled/Filled/Cancelled/PendingCancel/Rejected/Expired/Suspended。
+      每态有明确的超时与重试策略（如 PendingNew>3 秒重发确认）。
     parent_node: TDM-E-L4
     factor_refs: []
     data_refs: []
@@ -1503,6 +1710,9 @@ nodes:
     node_type: stage
     point: 盘中
     decision_question: 部分成交后撤还是等、撤改单竞态怎么处理
+    algo_note_zh: >-
+      部分成交三规则：成交<50% 且价格远离=撤单重挂；成交>50%=保留等剩余；改单与撤单竞态=以券商回报为准+本地加锁。
+      部分成交的仓位按已成交部分管理。
     parent_node: TDM-E-L4
     factor_refs: []
     data_refs: []
@@ -1523,6 +1733,9 @@ nodes:
     node_type: stage
     point: 盘中
     decision_question: 这笔单发出前的最后校验（资金可用/持仓限制/风控限额/禁止清单）过了吗
+    algo_note_zh: >-
+      发单前最后五查：资金可用≥委托额、持仓不超该股限额、不触风控熔断状态、非禁止清单（ST/黑名单）、价格在笼子内。
+      任何一条不过=拒单并记录原因。
     parent_node: TDM-E-L4
     factor_refs: []
     data_refs: []
@@ -1544,6 +1757,9 @@ nodes:
     node_type: cross_cutting
     point: 持续
     decision_question: 我以为发出的、券商说发出的、实际成交的三方对上账了吗（断线重连/对账/RTO<5min）
+    algo_note_zh: >-
+      三方对账：本地订单簿 vs 券商委托回报 vs 实际成交。
+      断线重连后先全量对账再恢复交易；孤儿单（券商有我无）=立即同步并评估处理；日终对不平=挂起次日竞价处理。
     parent_node: TDM-E-L4
     factor_refs: []
     data_refs: []
@@ -1564,6 +1780,8 @@ nodes:
     node_type: stage
     point: 盘前
     decision_question: 每只持仓的现状/逻辑是否仍在
+    algo_note_zh: >-
+      持仓体检枢纽：六个子环节（对账/分级/逻辑存活/风险否决/组合级/结论汇总）盘前并行跑一遍+盘中持续，输出每只持仓的当日动作清单。
     factor_refs: []
     data_refs: []
     module_ref: null
@@ -1577,6 +1795,9 @@ nodes:
     node_type: stage
     point: 盘中
     decision_question: 今日持仓怎么做T/要不要加减仓
+    algo_note_zh: >-
+      做T与加减仓枢纽：资格前置→策略调度→闭环判定，加减仓在 P3。
+      做T=在底仓上高抛低吸赚差价降成本，与加减仓是三件事（做T 不改变底仓股数）。
     factor_refs: [FCT-INTRADAY-025, FCT-INTRADAY-015]
     data_refs: []
     module_ref: null
@@ -1593,6 +1814,9 @@ nodes:
     node_type: stage
     point: 盘中
     decision_question: 浮盈仓要不要加/什么时候加
+    algo_note_zh: >-
+      加仓决策枢纽：资格门→金字塔规则→量级核算→时点执行四步。
+      核心纪律=只加浮盈仓（赚钱的才加，亏钱的禁补——补亏损仓=扩大错误）。
     factor_refs: []
     data_refs: []
     module_ref: null
@@ -1611,6 +1835,9 @@ nodes:
     node_type: stage
     point: 盘前
     decision_question: 每只持仓现在多少股/成本多少/状态机在哪一态，与券商记录是否一致
+    algo_note_zh: >-
+      对账三步：读 QMT 桥持仓文件（Stock.csv）→与本地 strategy_book 逐笔核对股数/成本→不平账标红人工核对。
+      输出富台账：代码/股数/成本/归属策略/开仓日/状态机态（六态）。
     parent_node: TDM-P-P1
     factor_refs: []
     data_refs: [DS-009, DS-067]
@@ -1637,6 +1864,9 @@ nodes:
     node_type: stage
     point: 持续
     decision_question: 哪些持仓要盯紧哪些可放开，各自用多密的频率盯
+    algo_note_zh: >-
+      分级三档定盯盘频率：WATCH（浮亏>3% 或临近止损）秒级盯；MONITOR（浮盈浮亏 3% 内）5 分钟盯；HOLD（深度浮盈安全区）事件驱动（涨停/公告才看）。
+      分级依据=盈亏态+ATR 距止损距离。
     parent_node: TDM-P-P1
     factor_refs: []
     data_refs: [DS-150]
@@ -1665,6 +1895,9 @@ nodes:
     node_type: stage
     point: 盘前
     decision_question: 当初的买入逻辑现在还在不在，哪些持仓逻辑已失效
+    algo_note_zh: >-
+      按买入理由逐仓回查：打板仓查情绪梯队还在不在（板块还热吗）；多因子仓查因子暴露漂移（当初的因子还强吗）；事件仓查事件衰减（利好兑现没）；做T底仓查趋势没破。
+      输出 成立/弱化/失效 三态，失效=转离场评估。
     parent_node: TDM-P-P1
     factor_refs: [FCT-SENT-012, FCT-MOM-022]
     data_refs: [DS-082, DS-107]
@@ -1687,6 +1920,9 @@ nodes:
     node_type: stage
     point: 盘前
     decision_question: 哪些持仓触发风险否决线必须转离场处理
+    algo_note_zh: >-
+      四类否决线逐仓核对：生死线（-7% 破位）、时间止损（盈利仓 5 日不涨/亏损仓 3 日不回）、财报前 1 日解禁前 3 日（事件禁区）、板块退潮（板块进熄火段）。
+      触发任一=标记转 X 流离场+冻结做T/加仓资格。
     parent_node: TDM-P-P1
     factor_refs: []
     risk_limit_refs: [RLM-DRAWDOWN-005, RLM-DRAWDOWN-006]
@@ -1711,6 +1947,10 @@ nodes:
     node_type: stage
     point: 持续
     decision_question: 组合层面有没有超集中/超漂移/相关性扎堆
+    algo_note_zh: >-
+      组合层三查：单票>20% 总仓位（超集中）、实际权重偏离目标>25%（漂移越带）、同题材持仓>3 只（扎堆）。
+      越带者下发 P2-04 减仓指令。
+      单票看对错，组合看结构。
     parent_node: TDM-P-P1
     factor_refs: []
     risk_limit_refs: [RLM-CONCENTRATION-001, RLM-CONCENTRATION-003, RLM-CONCENTRATION-004]
@@ -1735,6 +1975,10 @@ nodes:
     node_type: stage
     point: 盘前
     decision_question: 汇总四路体检后每只持仓今天该做什么动作
+    algo_note_zh: >-
+      汇总五路体检（对账/分级/逻辑/风险/组合）→每只持仓出一条当日动作：维持/可做T/可加仓/减仓/转离场。
+      动作过裁决中心（position_adjudication_center）+落审计。
+      任一子项异常=该持仓置'人工确认'默认态。
     parent_node: TDM-P-P1
     factor_refs: []
     data_refs: []
@@ -1759,6 +2003,9 @@ nodes:
     node_type: stage
     point: 盘前
     decision_question: 这只持仓今天允不允许做T、值不值得做T
+    algo_note_zh: >-
+      做T资格三道门：状态门（大盘在吸筹/扩张段才做，退潮期做T=送钱）+振幅门（该股 20 日平均振幅≥3%，振幅不够差价盖不住双边成本 0.15%）+成本门（预期价差≥0.3%，CST-T0-001 正期望线）。
+      三关全过才进调度。
     parent_node: TDM-P-P2
     factor_refs: [FCT-INTRADAY-028]
     cost_model_refs: [CST-T0-001]
@@ -1788,6 +2035,9 @@ nodes:
     node_type: stage
     point: 盘中
     decision_question: 三个做T策略今天怎么跑、信号冲突听谁的
+    algo_note_zh: >-
+      三策略并发扫描持仓：冲高回落（intraday-surge-fall，分时急拉 3%+遇阻回落空）、盘口失衡（orderbook-imbalance，买盘挂单远大于卖盘先买后卖）、VWAP 回归（vwap-reversion，价格偏离均线 2%+ 回落空）。
+      同标的多信号按策略适配度仲裁；单次做T量≤底仓 30%。
     parent_node: TDM-P-P2
     factor_refs: [FCT-INTRADAY-029, FCT-INTRADAY-030, FCT-INTRADAY-017, FCT-INTRADAY-021]
     data_refs: []
@@ -1821,6 +2071,10 @@ nodes:
     node_type: stage
     point: 盘中
     decision_question: 今天的T收没收口、是赚是亏、成本降没降
+    algo_note_zh: >-
+      盘中每 5 分钟核对当日做T买卖是否闭环；14:50 还没闭环的不管盈亏无条件平掉敞口（不留隔夜 T）。
+      收盘判定：股数不变+总成本降=成功。
+      成功/失败/损耗统计喂 C3 归因——做T是降成本工具不是独立盈利来源。
     parent_node: TDM-P-P2
     factor_refs: []
     cost_model_refs: [CST-T0-001]
@@ -1849,6 +2103,10 @@ nodes:
     node_type: stage
     point: 盘中
     decision_question: 哪些持仓要减、减多少、划不划算
+    algo_note_zh: >-
+      减仓触发两路：P1-05 漂移越带（超配的减回来）+置换机会（新标的预期收益>现持仓 1.5 倍时换仓）。
+      减多少=回到目标权重；划不划算=减仓改善>2×交易成本才动。
+      风控减仓优先级高于做T（冲突时丢做T保减仓）。
     parent_node: TDM-P-P2
     factor_refs: []
     risk_limit_refs: [RLM-POSITION-011]
@@ -1879,6 +2137,9 @@ nodes:
     node_type: stage
     point: 盘前
     decision_question: 这只浮盈仓现在有没有资格加仓
+    algo_note_zh: >-
+      加仓资格四重门：①只加浮盈仓（现价>成本，禁补亏损仓=红线）；②情绪段权限（点火/扩张段才开加仓，退潮/亢奋关）；③策略亲和度>0（该策略在当前段的适配为正）；④非熔断禁加期（日亏 4% 熔断触发时全禁）。
+      全过才进规则层。
     parent_node: TDM-P-P3
     factor_refs: [FCT-MOM-022]
     risk_limit_refs: [RLM-POSITION-004, RLM-POSITION-009, RLM-POSITION-013, RLM-KILL-SWITCH-006]
@@ -1903,6 +2164,10 @@ nodes:
     node_type: stage
     point: 盘中
     decision_question: 怎么加：每次加多少、隔多少空间、最多加几次
+    algo_note_zh: >-
+      金字塔三规则：递减（首加占剩余预算 50%，逐次减半——越加越少防重仓在顶部）、阶梯（较上次买价涨幅≥2.5-3% 才加下一笔，禁止平加）、限次（最多 3 次）。
+      跌破上次加仓价=停止后续计划。
+      加仓=新交易，需重新确认入场条件仍成立。
     parent_node: TDM-P-P3
     factor_refs: []
     data_refs: []
@@ -1931,6 +2196,9 @@ nodes:
     node_type: stage
     point: 盘中
     decision_question: 加这一笔后总风险变多大、止损移到哪里
+    algo_note_zh: >-
+      量级双算：仓位引擎四轨融合（风险预算/波动率目标/策略置信/现金约束）定这笔加多少；风险恒定校验=加仓后总风险额不超首仓风险预算（止损等比上移实现）。
+      加仓完成后全部止损上移保本。
     parent_node: TDM-P-P3
     factor_refs: []
     risk_limit_refs: [RLM-POSITION-006, RLM-POSITION-021, RLM-CONCENTRATION-001]
@@ -1953,6 +2221,9 @@ nodes:
     node_type: stage
     point: 盘中
     decision_question: 什么时候下单加仓、怎么下单
+    algo_note_zh: >-
+      时点二选一：缩量回调守住支撑（回踩不破前低+量缩）即时加；尾盘窗口（14:45 后确认当日强势，BM-PLAN-02：明日高开概率>70% 触发）尾盘加。
+      下单复用建仓执行件（分批+限价+硬约束预检）；未成交不追价，次日重走资格门。
     parent_node: TDM-P-P3
     factor_refs: []
     data_refs: []
@@ -1977,6 +2248,9 @@ nodes:
     node_type: stage
     point: 持续
     decision_question: 哪些卖出信号触发了/强度如何
+    algo_note_zh: >-
+      卖出信号枢纽：六桶分类（risk/signal/target/trailing/time/volatility）收集→止损族/止盈族/破位退潮族并行判定→融合评分→强制清仓旁路。
+      产出'卖不卖+多急'。
     factor_refs: []
     risk_limit_refs: [RLM-DRAWDOWN-001, RLM-DRAWDOWN-002, RLM-DRAWDOWN-006]
     data_refs: []
@@ -1993,6 +2267,9 @@ nodes:
     node_type: stage
     point: 盘中
     decision_question: 怎么卖（一次性/分批/竞价/尾盘）
+    algo_note_zh: >-
+      离场执行枢纽：方式路由（一次性/分批/竞价/尾盘）→约束（T+1/涨跌停）→时段路由→条件单/分批执行→闭环复盘。
+      '卖不卖'定了之后管'怎么卖'。
     factor_refs: []
     data_refs: []
     module_ref: null
@@ -2007,6 +2284,10 @@ nodes:
     node_type: cross_cutting
     point: 持续
     decision_question: 暴跌/流动性危机是否触发无条件降仓
+    algo_note_zh: >-
+      应急保命横切（kill switch 常驻任何档位不可移除）：组合级回撤 25% 或单日 -6% 触发→无条件全清仓+冻结所有开仓通道，只能 Owner 手动解除。
+      AI 熔断只降档不升档。
+      这是系统的'拔电源'。
     factor_refs: []
     risk_limit_refs: [RLM-KILLSW-003, RLM-KILLSW-005, RLM-KILL-SWITCH-004, RLM-KILL-SWITCH-005]
     threshold_refs: [THD-DRAWDOWN-001, THD-DRAWDOWN-002, THD-DRAWDOWN-003]
@@ -2030,6 +2311,9 @@ nodes:
     node_type: stage
     point: 持续
     decision_question: 卖出信号有哪些触发了、各属哪一类
+    algo_note_zh: >-
+      8 类信号源聚合去重（同一持仓多信号触发的合并为一条带来源列表），按六桶分类：止损/止盈/目标/移动/时间/波动。
+      分类决定后续走哪条判定链+什么确认模式（止损类立即执行不辩论，止盈类等收盘确认）。
     parent_node: TDM-X-S1
     factor_refs: [FCT-TECH-077, FCT-TECH-083]
     data_refs: [DS-082, DS-150]
@@ -2053,6 +2337,9 @@ nodes:
     node_type: stage
     point: 持续
     decision_question: 止损线触发了吗（Chandelier/时间/支撑/竞价/分时）
+    algo_note_zh: >-
+      五路止损并行：Chandelier（ATR 悬停：亏损区 3×ATR/盈利区 2×ATR 收紧）、固定 -7% 生死线、支撑破位（关键位下方 1%）、时间止损（盈利仓 5 日不涨/亏损仓 3 日）、分时破位（盘中跌破分时均线 30 分钟）。
+      止损只升不降（棘轮）。
     parent_node: TDM-X-S1
     factor_refs: []
     risk_limit_refs: [RLM-DRAWDOWN-001]
@@ -2080,6 +2367,8 @@ nodes:
     node_type: stage
     point: 持续
     decision_question: 止盈条件到了吗（移动止盈/峰值回撤/目标位）
+    algo_note_zh: >-
+      止盈三式：移动止盈（Chandelier 盈利区 2×ATR 跟踪，涨越多回撤容忍越大但只升不降）、峰值回撤（从最高浮盈回落 30% 兑现——赚过没拿住是最大利润漏点）、目标位（预期涨幅达成即了结，打板票=次日不板走）。
     parent_node: TDM-X-S1
     factor_refs: []
     data_refs: []
@@ -2103,6 +2392,8 @@ nodes:
     node_type: stage
     point: 持续
     decision_question: 突破失败了吗、情绪退潮了吗、主力派发了吗
+    algo_note_zh: >-
+      三路情绪侧信号：突破失败（买入理由消失——突破价跌回+量能萎缩，连冲 3 次失败强制清仓）、情绪退潮（L1 六段进入 distribution+该股为情绪票→加权卖出）、龙虎榜派发（高位游资上卖方榜/三日榜净卖出=诱多出货）。
     parent_node: TDM-X-S1
     factor_refs: [FCT-SENT-012]
     seat_refs: [SEAT-INST-001, SEAT-INST-002, SEAT-INST-003, SEAT-YOUZI-001, SEAT-YOUZI-002, SEAT-YOUZI-003]
@@ -2133,6 +2424,10 @@ nodes:
     node_type: aggregation
     point: 持续
     decision_question: 综合卖出意愿多强、多急
+    algo_note_zh: >-
+      信号加权融合 0~1：各桶信号按类型权重（止损 0.9/破位 0.7/止盈 0.5）+多周期共振加成（日线周线同向+0.2）。
+      紧迫度三档：>0.8 立即市价（S2-01 快速通道）、0.5-0.8 分批从容走、<0.5 等确认。
+      去抖与强制清仓互斥（救命单不等去抖）。
     parent_node: TDM-X-S1
     factor_refs: []
     data_refs: []
@@ -2160,6 +2455,10 @@ nodes:
     node_type: stage
     point: 持续
     decision_question: 是否触发无条件离场（绕过一切评分）
+    algo_note_zh: >-
+      四触发任一=绕过全部评分直接市价清仓：风控 KillSwitch（组合级）、黑天鹅（持仓突遭立案/暴雷）、K≥3 连续破位失败、主力弃庄（龙虎榜机构清仓式卖出）。
+      资金安全>一切优化，紧迫度直接置 1.0。
+      与 R1 分工：R1 管组合熔断，本节点管单仓强清。
     parent_node: TDM-X-S1
     factor_refs: []
     risk_limit_refs: [RLM-KILL-SWITCH-004, RLM-KILL-SWITCH-005]
@@ -2186,6 +2485,9 @@ nodes:
     node_type: stage
     point: 盘中
     decision_question: 这笔卖出怎么执行（一次性/分批/竞价/尾盘）
+    algo_note_zh: >-
+      路由表：紧迫度>0.8 或小仓（<2%）→一次性市价；中等紧迫+大仓→分批（3 批，每批 1/3，间隔 5 分钟）；不急+流动性差→尾盘集中；隔夜风险单→竞价挂跌停价逃命。
+      卖出前三查：单笔≤买一档挂单量、日量×10% 参与率、持仓市值/20 日均额>1% 禁市价。
     parent_node: TDM-X-S2
     factor_refs: []
     cost_model_refs: [CST-ASTOCK-001]
@@ -2221,6 +2523,9 @@ nodes:
     node_type: stage
     point: 盘中
     decision_question: 跌停卖不出怎么办、今日可卖额度多少
+    algo_note_zh: >-
+      跌停处置三步：先挂跌停价排队（17:30 夜市委托第一时间挂，越早排越前）→盘中封单骤减>20% 时撤旧单改买一价重挂（撤单重挂会重置排队位次，只在封单明显松动时做）→次日竞价再处理残余。
+      可卖额度=t1_sellable 核对（当日买入不可卖）。
     parent_node: TDM-X-S2
     factor_refs: []
     risk_limit_refs: [RLM-DRAWDOWN-003]
@@ -2237,7 +2542,7 @@ nodes:
     #   市价申报废单/临停基准=当日开盘价非发行价/主板首日竞价限发行价±20%/中签仓首日可卖当日买入仓不可卖/
     #   社区分层：开盘出 4 成冲高出 4 成留 2 成）；②临停复牌子状态机（停牌期可挂可撤/复牌竞价申报限停牌前
     #   成交价±10%/预埋限价规避复牌跳水/北交所临停只能撤不能新挂）；③风险警示板分支（ST 主板 ±5%（仅 2026-07-06 前有效）→2026-07-06 起 ±10%（沪深主板风险警示与主板一致，外审 B-10/J-03 制度时变）/双创 20%/北交所 30% 不变；回测须按生效日切片/
-    #   0.01 元低价股跌停仅 1 分钱秒级排队/强制限价申报）（✅ 已核实 2026-09-07 另案结论：规则已如期生效、盘面实证 10% 口径（18 个交易日 >5% 波动）；矛盾根因=stk_limit 管道口径滞后——修表欠账登记：ST 行 0.05→0.10 @trade_date≥2026-07-06、st_flag 用时点状态、修复后重跑日K 重叠窗对账；联动参数重校欠账：竞价即决封板/溢价映射、跌停排队、封成比阈值按 10% 重校；ST 日累计买入 50 万股上限（规则 4.4.10）保留）；④碎股整单卖出拆分废单+科创板 200 股基准
+    #   0.01 元低价股跌停仅 1 分钱秒级排队/强制限价申报）（✅ 已核实 2026-09-07 另案结论：规则已如期生效、盘面实证 10% 口径（18 个交易日 >5% 波动）；矛盾根因=stk_limit 管道口径滞后——修表欠账已清偿（2026-09-07 #ARCH-DATA-020）：生成侧 _limit_pct_of/daban rule_limit_price 按 trade_date 切片（≥2026-07-06 主板 ST=10%、此前 5%），ST 行重算回填 246406 行+周度 0.05 清零+Decimal 精确对账通过；联动参数重校欠账：竞价即决封板/溢价映射、跌停排队、封成比阈值按 10% 重校；ST 日累计买入 50 万股上限（规则 4.4.10）保留）；④碎股整单卖出拆分废单+科创板 200 股基准
     # 多日连续跌停分支（§35A 素材吸收，外审 m-27）：第 2 日盲目割肉非最优、约 43% 第 3 日开板；区分基本面暴雷（全力跑）vs 情绪错杀（放量开板分批）
     # ②临停复牌 ±10% 仅适用盘中临停；长期停牌（月级重组）复牌首日交易安排（D105 终裁：长停复牌首日欠账期默认=不自动卖出转人工；盘中临停±10% 与长停复牌两子状态）
     fallback: 排队失败→次日竞价优先处理并标记
@@ -2251,6 +2556,10 @@ nodes:
     node_type: stage
     point: 盘中
     decision_question: 现在是什么时段、该走哪条卖出通道
+    algo_note_zh: >-
+      时段通道分裂路由：深市 14:57 后集合竞价不可撤单（要卖赶在 14:57 前挂）；沪市尾盘可撤可改。
+      竞价逃命单=9:15 后挂跌停价（按开盘价成交，排队最优先）。
+      14:30-14:45 跳水窗谨慎挂单、14:50 决策窗处理做T收口。
     parent_node: TDM-X-S2
     factor_refs: []
     data_refs: []
@@ -2279,6 +2588,8 @@ nodes:
     node_type: stage
     point: 持续
     decision_question: 止损止盈条件单怎么挂才不被仓位冻结卡死
+    algo_note_zh: >-
+      条件单本地化（vn.py 范式）：止损/止盈触发器存本地不预占仓位（QMT 预挂条件单会冻结仓位），tick 触发后才发限价单；每根 K 线收盘 cancel 重挂刷新价位；本地双停止单 OCO（一个触发自动撤另一个）。
     parent_node: TDM-X-S2
     factor_refs: []
     data_refs: []
@@ -2306,6 +2617,10 @@ nodes:
     node_type: stage
     point: 盘中
     decision_question: 分批怎么切、每批卖多少
+    algo_note_zh: >-
+      Exit Ladder 阶梯：+1R（赚一个风险单位）减 50% 保本；+2R 再减 25% 锁利；尾仓 25% 跟踪止盈跑趋势。
+      信号强度定密度：弱信号一次走完、强信号留 runner。
+      MFE 捕获率<50%=卖太早，反馈校准 S1 权重。
     parent_node: TDM-X-S2
     factor_refs: []
     data_refs: []
@@ -2330,6 +2645,9 @@ nodes:
     node_type: stage
     point: 盘后
     decision_question: 卖对了吗（卖飞率/避损率/捕获率）
+    algo_note_zh: >-
+      卖出后 N 日跟踪三率：卖飞率（卖后再创新高的占比，>30%=止损太紧）、避损率（卖出后继续跌的占比，衡量止损价值）、MFE 捕获率（拿到行情的百分比）。
+      六分类复盘（止损/止盈/时间/逻辑/置换/恐慌）——PANIC 占比>10%=纪律失效告警。
     parent_node: TDM-X-S2
     factor_refs: []
     data_refs: []
@@ -2373,6 +2691,9 @@ nodes:
     # 横切：过渡带（最大隶属度<60%）预算×0.5-0.7；尾部预备金 10-15% 永不投出；
     #   小资金容量优势允许高集中度（earned 单票集中，游资路径），风险百分比制资金无关
     decision_question: >-
+    algo_note_zh: >-
+      预算切分（Millennium pod 模式）：总仓位预算（L1 预算带）按 sleeve 权重切分（PP-001 配置：打板 20%/多因子 20%/事件 15%…），各 sleeve 账本独立、风险独立核算、互不挪用。
+      sleeve 间资金流动只通过月度调权（C3-03）。
       总仓位怎么切给各 sleeve（Millennium pod 单体版）；带内实际仓位=状态分布加权插值（灰度非查表）；过渡带降仓×0.5-0.7+尾部预备金 10-15% 恒定预留
     # D88（F 流第二轮审计，69 号 §2.32）：预备金管理三件——①存放分层（当日可用逆回购 GC001 一层/
     #   T+1 短债一层，14:00 后利率高 38%）；②书面动用条件≥2 条触发才可动用（组合回撤到线/单 sleeve
@@ -2392,6 +2713,9 @@ nodes:
     node_type: aggregation
     point: 持续
     decision_question: 各 sleeve 的信号/持仓怎么聚合成组合（相关性/总仓位约束/风控叠加）
+    algo_note_zh: >-
+      聚合四步：各 sleeve 目标仓位求和轧平（对冲净额）→组合约束栈全检→相关性聚类去扎堆→输出组合净指令流。
+      多策略并发时'每个策略各自的账'与'组合是一盘棋'在这里合流。
     factor_refs: []
     data_refs: []
     module_ref: null
@@ -2406,6 +2730,9 @@ nodes:
     node_type: stage
     point: 盘后
     decision_question: 哪个 sleeve 赚/亏 → 预算倾斜与矩阵格 verified 升级（系统自我进化闭环）
+    algo_note_zh: >-
+      归因反馈闭环：多维归因（哪赚哪亏为什么）→升降级评审（sleeve 维持/减半/清退）→权重调权→参数校准→传感器可靠度反馈 L1。
+      系统自我进化的发动机——赚的加码亏的减码，全部凭数据不凭感觉。
     factor_refs: []
     data_refs: []
     module_ref: null
@@ -2429,6 +2756,10 @@ nodes:
     node_type: aggregation
     point: 持续
     decision_question: 各 sleeve 目标仓位怎么合成组合净指令
+    algo_note_zh: >-
+      intent netting 三步：收集各 sleeve 指令→同标的代数求和（买 1000+卖 600=净买 400，省 600 股手续费）→净差单下发。
+      成交按贡献比例分摊回各 sleeve 账本（否则逐笔归因做不了）。
+      批量窗口 1 分钟一拍，防信号抖动反复重算。
     parent_node: TDM-F-C2
     factor_refs: []
     data_refs: []
@@ -2462,6 +2793,10 @@ nodes:
     node_type: stage
     point: 持续
     decision_question: 组合净头寸过没过全部约束
+    algo_note_zh: >-
+      约束栈六层顺序过：总仓位上限→回撤限额（资金曲线分级压缩）→波动率目标→集中度（单票 20%）→流动性（3 日可退出）→相关性（cluster 5%）。
+      过哪层裁哪层，按非策略仓优先裁。
+      程序化查表，不进信号层。
     parent_node: TDM-F-C2
     factor_refs: []
     risk_limit_refs: [RLM-CONCENTRATION-002, RLM-CONCENTRATION-003]
@@ -2491,6 +2826,10 @@ nodes:
     node_type: stage
     point: 持续
     decision_question: 高相关持仓扎堆了吗、cluster 风险超限没
+    algo_note_zh: >-
+      相关性三档：60 日滚动 PnL 相关矩阵→层次聚类→同 cluster 合并风控。
+      ρ>0.70 的持仓合并计算敞口（视为同一个风险）；ρ>0.85 禁新仓；单 cluster 总权重≤5% 权益。
+      月度再聚类+危机期压测（相关性会趋于 1）。
     parent_node: TDM-F-C2
     factor_refs: []
     data_refs: []
@@ -2515,6 +2854,9 @@ nodes:
     node_type: stage
     point: 持续
     decision_question: 预算变了或超限了怎么平稳过渡
+    algo_note_zh: >-
+      预算变动三级响应（防踩踏）：Tier1 预算降<10%=封锁新仓（撤买单留卖单）自然收敛；Tier2 降 10-25%=各 sleeve 差异化窗口自主收敛（打板 2 日/事件 3 日/多因子 4 日）；Tier3 降>25%=按比例强裁。
+      防抖：日内<5% 忽略、连降>10% 强触发。
     parent_node: TDM-F-C2
     factor_refs: []
     data_refs: []
@@ -2541,6 +2883,10 @@ nodes:
     node_type: aggregation
     point: 盘后
     decision_question: 钱和亏在哪、哪个 sleeve 为什么
+    algo_note_zh: >-
+      几何 Brinson 三因子：配置效应（板块权重选对没）+选股效应（板块内选的票跑赢板块没）+交互效应。
+      加做T vs 持仓盈亏二分、IS 三分解（延迟/冲击/机会成本）。
+      月度跑一次，回答'钱从哪赚的亏到哪了'。
     parent_node: TDM-F-C3
     factor_refs: []
     benchmark_refs: [BMK-INDEX-003, BMK-ABSOLUTE-001]
@@ -2573,6 +2919,10 @@ nodes:
     node_type: stage
     point: 盘后
     decision_question: 哪个 sleeve 升格、降半、清退还是重审
+    algo_note_zh: >-
+      月度评审+季度 verdict 四选一（维持/减半/清退/重审），评审制人工裁定不自动退役。
+      数据依据：composite score（60+120 日双窗口）+THD-RETIRE 三线（滚动 20 日跑输基准 5%/60 日 Sharpe<0/回撤漂移 1.5×）。
+      单 sleeve 回撤 5% 自动减半、7.5% 冻结——这条自动执行不等评审。
     parent_node: TDM-F-C3
     factor_refs: []
     threshold_refs: [THD-RETIRE-001, THD-RETIRE-002, THD-RETIRE-003]
@@ -2610,6 +2960,10 @@ nodes:
     node_type: stage
     point: 盘后
     decision_question: 下个月各 sleeve 权重怎么调
+    algo_note_zh: >-
+      月度调权公式：新权重=normalize(基准权重×PerfScore×Shrinkage)，下限 5% 上限 40%。
+      防过拟合三纪律：单次调整幅度≤±10pp、调整后 5 交易日锁定、阈值未触发=不动（no-change 默认）。
+      大调整（>10pp）分日线性过渡。
     parent_node: TDM-F-C3
     factor_refs: []
     data_refs: []
@@ -2642,6 +2996,10 @@ nodes:
     node_type: stage
     point: 盘后
     decision_question: 归因诊断怎么变成参数调整而不过拟合
+    algo_note_zh: >-
+      校准四道 gate 才准改参数：CPCV 交叉验证（防数据挖掘）+DSR（deflated Sharpe，防多次尝试虚高）+PBO<30%（过拟合概率）+参数平台期（参数敏感度平坦区才可信）。
+      walk-forward 效率 WFE>60% 才可用，<40% 禁上线。
+      purge 窗=持仓半衰期，embargo≥5 日。
     parent_node: TDM-F-C3
     factor_refs: []
     data_refs: []
@@ -2677,6 +3035,10 @@ nodes:
     node_type: stage
     point: 盘后
     decision_question: 大盘判定器和信号哪个该降权了
+    algo_note_zh: >-
+      传感器可靠度三档递进：起步等权（实证：简单平均 50 年最稳）→月度判准率加权（下限 10% 防winner 通吃）→粒子滤波时变（远期）。
+      滚动 IC 监控+半衰期拟合，衰减>50% 报警。
+      反馈给 L1-AGG 降权不可靠传感器——大盘判定器自己也要被考核。
     parent_node: TDM-F-C3
     factor_refs: []
     data_refs: []
@@ -2711,6 +3073,9 @@ nodes:
     node_type: gate
     point: 持续
     decision_question: BTC 趋势/山寨季状态允许什么仓位
+    algo_note_zh: >-
+      币圈预留框架节点（未施工）：BTC 站稳 200 日线且斜率向上=趋势档开仓；ALT/BTC 汇率上行=山寨季开进攻档；BTC 破位则总闸收紧只留核心仓。
+      v1 空壳，等 A 股链路验证后移植。
     factor_refs: []
     data_refs: []
     module_ref: null
@@ -2724,6 +3089,8 @@ nodes:
     node_type: stage
     point: 持续
     decision_question: 哪条赛道在轮动（A股板块层的币圈弱化版）
+    algo_note_zh: >-
+      币圈预留框架节点（未施工）：山寨季指标+赛道资金流轮动定主赛道（A 股板块层的弱化版——币圈赛道少、轮动快，直接看资金流排名前 3）。
     factor_refs: []
     data_refs: []
     module_ref: null
@@ -2737,6 +3104,8 @@ nodes:
     node_type: stage
     point: 持续
     decision_question: 赛道里选哪个币
+    algo_note_zh: >-
+      币圈预留框架节点（未施工）：赛道内按市值+流动性+7 日动量排名选币，流动性差的排序再靠前也剔除（深度不足吃不掉滑点）。
     factor_refs: []
     data_refs: []
     module_ref: null
@@ -2750,6 +3119,8 @@ nodes:
     node_type: stage
     point: 持续
     decision_question: 何时进出（7x24 无 T+1 约束）
+    algo_note_zh: >-
+      币圈预留框架节点（未施工）：7x24 无 T+1 无涨跌停，突破确认与回踩两类时点，止损用 ATR 倍数（2×ATR）移动式。
     factor_refs: []
     data_refs: []
     module_ref: null
