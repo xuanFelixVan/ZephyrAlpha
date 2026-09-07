@@ -4,7 +4,7 @@
 # [CONSUMERS] 夜班 SOP industry_chain_data_audit_sop §5 全轮次写入(唯一合法通道)
 # [STARTUP] manual
 # [MATURITY] production
-# [INVARIANTS] 写入唯一通道: 全部走 ingest 子命令(禁手写 SQL); 批次=单事务全成全败; 幂等(UNIQUE 锚 ON CONFLICT); 硬校验九条(SOP §5): source_doc 三段式/confidence<=0.7(websearch)/symbol 正则+cn 反查 stock_basic/词表白名单(tier/category/edge_type v2)/node.name 无 -tier 后缀残留/backup 幂等; PIT 三时间戳 websearch 边必填
+# [INVARIANTS] 写入唯一通道: 全部走 ingest 子命令(禁手写 SQL); 批次=单事务全成全败; 幂等(UNIQUE 锚 ON CONFLICT); 硬校验九条(SOP §5): source_doc 三段式/confidence<=0.7(websearch)/symbol 正则+cn 反查 stock_basic/词表白名单(tier/category/edge_type v2)/node.name 无 -tier 后缀残留/backup 幂等; PIT 三时间戳 websearch 边必填; 节点引用按(链+环节名)查库解析存量真实ID(存量采购包节点ID非md5方案,重算会FK违规/造重复行,2026-09-08修复)
 # [MODIFY-GUARD] none
 # [STABILITY] evolving
 # [SAFETY] L
@@ -78,6 +78,22 @@ def _node_id(chain_id: str, name: str, tier: str) -> str:
     return f"ND-{hashlib.md5(f'{chain_id}|{name}|{tier}'.encode('utf-8')).hexdigest()[:12]}"
 
 
+def _resolve_node(cur, chain_id: str, name: str) -> str | None:
+    """按(链,环节名)解析节点真实 node_id（存量与同批次新写节点统一走此解析）。
+
+    存量采购包节点 ID 非本工具 md5 方案（2026-09-08 实测仅 28/2939 命中），
+    重算 ID 会致 node_company FK 违规整批回滚、node 重写造重复行、node_edge
+    悬空——引用节点必须查库解析，解析不到（且本批次未先写 node）才报错。
+    """
+    cur.execute(
+        "SELECT node_id FROM ig_node WHERE chain_id=%s AND name=%s "
+        "ORDER BY created_at, node_id LIMIT 1",
+        (chain_id, name),
+    )
+    row = cur.fetchone()
+    return row[0] if row else None
+
+
 def _load_stock_basic() -> set[str] | None:
     try:
         from zephyr.data import ch_writer
@@ -85,7 +101,13 @@ def _load_stock_basic() -> set[str] | None:
         tsv = ch_writer.query(
             "SELECT symbol_canonical FROM c1_market.stock_basic FINAL WHERE valid_to IS NULL"
         )
-        return {ln.split("\t")[0] for ln in tsv.strip().splitlines()[1:] if "\t" in ln}
+        # ch_writer TSV 无表头且单列无 \t（2026-09-08 实测：旧解析 [1:]+要求含\t
+        # 会把 5215 只在市股全集滤成空集，致所有 cn symbol 被误拒）——逐行取第一列
+        return {
+            ln.strip().split("\t")[0]
+            for ln in tsv.strip().splitlines()
+            if ln.strip()
+        }
     except Exception as e:  # noqa: BLE001 — CH 不可达降级 warn
         print(f"[WARN] stock_basic 反查降级: {e}")
         return None
@@ -232,16 +254,32 @@ def cmd_ingest(batch_path: str) -> int:
                 )
             elif typ == "node":
                 cid = _chain_id(r["chain_name"])
-                nid = _node_id(cid, r["name"], r.get("tier", ""))
-                cur.execute(
-                    """INSERT INTO ig_node (node_id,chain_id,name,tier,aliases,description,market,created_at,updated_at)
-                    VALUES (%s,%s,%s,%s,%s,%s,%s,now(),now())
-                    ON CONFLICT (node_id) DO UPDATE SET updated_at=now(), tier=COALESCE(NULLIF(EXCLUDED.tier,''),ig_node.tier)""",
-                    (nid, cid, r["name"], r.get("tier"), r.get("aliases"), r.get("description"), mkt),
-                )
+                nid = _resolve_node(cur, cid, r["name"])
+                if nid is not None:
+                    cur.execute(
+                        """UPDATE ig_node SET updated_at=now(),
+                             tier=COALESCE(NULLIF(%s,''), ig_node.tier),
+                             aliases=COALESCE(%s, ig_node.aliases),
+                             description=COALESCE(%s, ig_node.description)
+                           WHERE node_id=%s""",
+                        (r.get("tier") or "", r.get("aliases"), r.get("description"), nid),
+                    )
+                else:
+                    nid = _node_id(cid, r["name"], r.get("tier", ""))
+                    cur.execute(
+                        """INSERT INTO ig_node (node_id,chain_id,name,tier,aliases,description,market,created_at,updated_at)
+                        VALUES (%s,%s,%s,%s,%s,%s,%s,now(),now())
+                        ON CONFLICT (node_id) DO UPDATE SET updated_at=now(), tier=COALESCE(NULLIF(EXCLUDED.tier,''),ig_node.tier)""",
+                        (nid, cid, r["name"], r.get("tier"), r.get("aliases"), r.get("description"), mkt),
+                    )
             elif typ == "node_edge":
                 cid = _chain_id(r["chain_name"])
-                fn, tn = _node_id(cid, r["from_node"], ""), _node_id(cid, r["to_node"], "")
+                fn, tn = _resolve_node(cur, cid, r["from_node"]), _resolve_node(cur, cid, r["to_node"])
+                if fn is None or tn is None:
+                    raise ValueError(
+                        f"node_edge 端点节点不存在(先在同批次写 node 或确认存量已有): "
+                        f"{r['from_node']}->{r['to_node']} (chain={r['chain_name']})"
+                    )
                 cur.execute(
                     """INSERT INTO ig_edge (from_node,to_node,edge_type,source_doc,market,created_at)
                     VALUES (%s,%s,%s,%s,%s,now()) ON CONFLICT (from_node,to_node,edge_type) DO NOTHING""",
@@ -249,7 +287,12 @@ def cmd_ingest(batch_path: str) -> int:
                 )
             elif typ == "node_company":
                 cid = _chain_id(r["chain_name"])
-                nid = _node_id(cid, r["node_name"], "")
+                nid = _resolve_node(cur, cid, r["node_name"])
+                if nid is None:
+                    raise ValueError(
+                        f"node_company 引用节点不存在(先在同批次写 node 或确认存量已有): "
+                        f"{r['node_name']} (chain={r['chain_name']})"
+                    )
                 cur.execute(
                     """INSERT INTO ig_node_company (node_id,symbol,role,confidence,evidence_text,source_doc,market,created_at,updated_at)
                     VALUES (%s,%s,%s,%s,%s,%s,%s,now(),now())

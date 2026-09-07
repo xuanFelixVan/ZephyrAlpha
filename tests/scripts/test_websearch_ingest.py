@@ -144,3 +144,65 @@ def test_ingest_transaction_rollback(tmp_path: Path) -> None:
     cur.execute("SELECT COUNT(*) FROM ig_chain WHERE name='__回滚测试TMP__'")
     assert cur.fetchone()[0] == 0  # 回滚生效
     conn.close()
+
+
+def test_ingest_node_company_resolves_existing_node(tmp_path: Path) -> None:
+    # node 先写 + node_company/node_edge 按(链+环节名)解析：不重算 ID、不造重复行、不 FK 违规
+    chain = "__节点解析测试TMP__"
+    cid = wi._chain_id(chain)
+    recs = [
+        {"type": "chain", "name": chain, "category": "半导体", "version_year": 2026,
+         "market": "cn", "source_doc": SD, "source": "websearch"},
+        {"type": "node", "chain_name": chain, "name": "解析环节", "tier": "中游",
+         "market": "cn", "source_doc": SD, "source": "websearch"},
+        {"type": "node_company", "chain_name": chain, "node_name": "解析环节",
+         "symbol": "300750.SZ", "role": "参与", "confidence": 0.5,
+         "evidence_text": "测试证据一句", "market": "cn", "source_doc": SD, "source": "websearch"},
+        {"type": "node", "chain_name": chain, "name": "解析下游", "tier": "下游",
+         "market": "cn", "source_doc": SD, "source": "websearch"},
+        {"type": "node_edge", "chain_name": chain, "from_node": "解析环节", "to_node": "解析下游",
+         "edge_type": "structure", "market": "cn", "source_doc": SD, "source": "websearch"},
+        # node 重发同批同环节 -> UPDATE 已有行，不插重复
+        {"type": "node", "chain_name": chain, "name": "解析环节", "tier": "中游",
+         "market": "cn", "source_doc": SD, "source": "websearch"},
+    ]
+    p = _tmp_batch(tmp_path, recs)
+    assert wi.cmd_ingest(str(p)) == 0
+    from zephyr.governance.depgraph_schema import get_depgraph_pg_connection
+
+    # 验证+清理同连接用 read_only=False（writer 角色）：depgraph_reader 无 DELETE 权限
+    conn = get_depgraph_pg_connection(read_only=False)
+    cur = conn.cursor()
+    try:
+        cur.execute("SELECT count(*) FROM ig_node WHERE chain_id=%s", (cid,))
+        assert cur.fetchone()[0] == 2  # 无重复节点行
+        cur.execute(
+            "SELECT count(*) FROM ig_node_company WHERE node_id IN "
+            "(SELECT node_id FROM ig_node WHERE chain_id=%s) AND symbol='300750.SZ'",
+            (cid,),
+        )
+        assert cur.fetchone()[0] == 1  # 落位挂到真实节点
+        cur.execute(
+            "SELECT count(*) FROM ig_edge WHERE from_node IN "
+            "(SELECT node_id FROM ig_node WHERE chain_id=%s) "
+            "AND to_node IN (SELECT node_id FROM ig_node WHERE chain_id=%s)",
+            (cid, cid),
+        )
+        assert cur.fetchone()[0] == 1  # 边两端是真实节点
+        # 引用不存在节点 -> 报错整批回滚
+        (tmp_path / "bad").mkdir(exist_ok=True)
+        bad = [{"type": "node_company", "chain_name": chain, "node_name": "不存在环节",
+                "symbol": "300750.SZ", "confidence": 0.5, "market": "cn",
+                "source_doc": SD, "source": "websearch"}]
+        with pytest.raises(Exception):
+            wi.cmd_ingest(str(_tmp_batch(tmp_path / "bad", bad)))
+    finally:
+        cur.execute(
+            "DELETE FROM ig_node_company WHERE node_id IN (SELECT node_id FROM ig_node WHERE chain_id=%s)",
+            (cid,),
+        )
+        cur.execute("DELETE FROM ig_edge WHERE from_node IN (SELECT node_id FROM ig_node WHERE chain_id=%s)", (cid,))
+        cur.execute("DELETE FROM ig_node WHERE chain_id=%s", (cid,))
+        cur.execute("DELETE FROM ig_chain WHERE chain_id=%s", (cid,))
+        conn.commit()
+        conn.close()
