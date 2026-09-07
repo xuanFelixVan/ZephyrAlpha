@@ -96,6 +96,7 @@ import logging
 import math
 import re
 import time
+from decimal import ROUND_HALF_UP, Decimal
 from typing import Iterator
 
 from .. import ch_reader
@@ -4785,8 +4786,62 @@ class MiniQmtIngestProvider(IngestProviderBase):
         vals = list(raw or []) + [default] * 5
         return [self.safe_float(vals[i]) or default for i in range(5)]
 
-    def _parse_auction_book_tick(self, tick: dict, symbol: str, trade_date: str) -> tuple:
-        """解析单个 tick 为 auction_book 行（五档盘口）。"""
+    @staticmethod
+    def _safe_parse_iso_date(s: str) -> datetime.date | None:
+        """ISO 日期串安全解析（失败返回 None，调用方按口径未知降级）。"""
+        try:
+            return datetime.date.fromisoformat(s)
+        except (TypeError, ValueError):
+            return None
+
+    @staticmethod
+    def _auction_limit_prices(
+        pre_close: float,
+        symbol: str,
+        trade_date: datetime.date | None,
+        st_codes: frozenset[str] | set[str],
+    ) -> tuple[float, float]:
+        """竞价簿涨跌停价：pre_close×(1±pct) HALF_UP 到分（当日恒定，与 stockStatus 位无关）。
+
+        幅度转调 AkshareIngestProvider._limit_pct_of（单一真源，延迟导入对齐
+        market_breadth_collector 先例，导入失败按未知板块降级）。ST 集缺失由调用方
+        降级（空集=非 ST 幅度近似+warn 留痕，#ARCH-DATA-020 条件②）。
+        """
+        if pre_close <= 0 or trade_date is None:
+            return 0.0, 0.0
+        try:
+            from zephyr.data.implementations.akshare_provider import AkshareIngestProvider
+
+            pct = AkshareIngestProvider._limit_pct_of(symbol, trade_date, symbol in st_codes)
+        except ImportError:
+            pct = None
+        if pct is None:
+            return 0.0, 0.0
+        # Decimal 域精确乘（与 stk_limit 管道口径一致，保证同日同 pre_close 两表涨跌停价
+        # 逐分相等；float 先乘再转 Decimal 会产生 11.3849…→11.38 类亚分位偏差）
+        base = Decimal(str(pre_close))
+        pct_d = Decimal(str(pct))
+        up = (base * (Decimal("1") + pct_d)).quantize(Decimal("0.01"), rounding=ROUND_HALF_UP)
+        down = (base * (Decimal("1") - pct_d)).quantize(Decimal("0.01"), rounding=ROUND_HALF_UP)
+        return float(up), float(down)
+
+    def _parse_auction_book_tick(
+        self,
+        tick: dict,
+        symbol: str,
+        trade_date: str,
+        *,
+        st_codes: frozenset[str] | set[str] = frozenset(),
+        limit_date: datetime.date | None = None,
+    ) -> tuple:
+        """解析单个 tick 为 auction_book 行（五档盘口）。
+
+        涨跌停价（#ARCH-DATA-020 条件②）：无条件按 pre_close×(1±pct) Decimal
+        ROUND_HALF_UP 到分（当日恒定价格，与 stockStatus 位无关——0x04/0x08 位
+        语义无项目内实证，禁止再用于价格列推断）。pre_close≤0 / 未知板块 /
+        日期缺失 → (0.0, 0.0)：本表价格列缺数据约定即 0.0（五档盘口同款），
+        语义="该列缺数据"，非"无涨跌停限制"。
+        """
         ts_value = self._parse_timetag(tick.get("timetag", ""))
         last_price = self.safe_float(tick.get("lastPrice")) or 0.0
         vol = int(self.safe_float(tick.get("volume")) or 0)
@@ -4795,9 +4850,12 @@ class MiniQmtIngestProvider(IngestProviderBase):
         high = self.safe_float(tick.get("high")) or 0.0
         low = self.safe_float(tick.get("low")) or 0.0
         pre_close = self.safe_float(tick.get("lastClose")) or 0.0
-        stock_status = int(tick.get("stockStatus") or 0)
-        upper_limit = pre_close * 1.1 if stock_status & 0x04 else 0.0
-        lower_limit = pre_close * 0.9 if stock_status & 0x08 else 0.0
+        upper_limit, lower_limit = self._auction_limit_prices(
+            pre_close,
+            symbol,
+            limit_date or self._safe_parse_iso_date(trade_date),
+            st_codes,
+        )
         bp = self._extract_5_levels(tick.get("bidPrice"), 0.0)
         bv = [int(v) for v in self._extract_5_levels(tick.get("bidVol"), 0.0)]
         ap = self._extract_5_levels(tick.get("askPrice"), 0.0)
@@ -4915,9 +4973,20 @@ class MiniQmtIngestProvider(IngestProviderBase):
 
         t0 = time.monotonic()
         try:
+            trade_date = payload.end.isoformat()
+            # ST 集加载（fail-open；失败按非 ST 幅度近似+warn 留痕——breadth 快照同契约。
+            # 现行规则下主板 ST=非 ST=10%，降级数值影响=0，仅为规则再演化保正确性；
+            # 每次 fetch 运行加载一次（≈1 条 CH 微查询），禁止下沉到 per-tick 路径，
+            # #ARCH-DATA-020 条件②）
+            from zephyr.data.market_breadth_collector import load_current_st_codes
+
+            st_codes, st_ok = load_current_st_codes(as_of=payload.end)
+            if not st_ok:
+                self._log.warning(
+                    "auction_book ST 集加载失败，本批按非 ST 幅度近似（trade_date=%s）", trade_date
+                )
             batch_size = 200
             rows = []
-            trade_date = payload.end.isoformat()
             for i in range(0, len(symbols), batch_size):
                 batch = symbols[i : i + batch_size]
                 tick_data = self._call_with_policy(
@@ -4930,7 +4999,15 @@ class MiniQmtIngestProvider(IngestProviderBase):
                         if not tick:
                             continue
                         symbol = self._stock_to_symbol(stock_code)
-                        rows.append(self._parse_auction_book_tick(tick, symbol, trade_date))
+                        rows.append(
+                            self._parse_auction_book_tick(
+                                tick,
+                                symbol,
+                                trade_date,
+                                st_codes=st_codes,
+                                limit_date=payload.end,
+                            )
+                        )
             yield FetchResult(
                 table=table,
                 columns=columns,
