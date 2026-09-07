@@ -11109,6 +11109,10 @@ creation_tokens:
   token: tdm-review-round-report-20260907
   created_by: sess-35944-20260907153514
   capability: tdm_review_archive
+- file: docs/_working/2026-09-07-tiandiban-threshold-study.md
+  token: tiandiban-threshold-study-20260907
+  created_by: sess-35944-20260907153514
+  capability: tdm_tiandiban_empirical_study
 di_seam_exemptions:
 - module_path: zephyr.trading.auto_runtime_core.AutoRuntimeCore
   reason: P0-5 LSG DI seam 标杆，已有 DI 但 AST 模式不匹配（动态注入）

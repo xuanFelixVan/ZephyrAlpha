@@ -1544,3 +1544,27 @@ entries:
   related_arch: []
   related_rulings: []
   superseded_by: null
+
+# === TDM 外审后 Owner 终裁包（#225，2026-09-07）===
+
+- ruling_id: '裁定#225'
+  title: TDM 外审后 Owner 终裁包（D90-D110）
+  date: '2026-09-07'
+  category: 架构
+  status: active
+  summary: >-
+    TDM 拼装回测前外审（Round 1/2）产出 17 项待裁定+7 项 Owner 主观经验量化假说，
+    经全网证据调研与天地板实证研究（docs/_working/2026-09-07-tiandiban-threshold-study.md）
+    后 Owner 全部终裁=D90-D110（详见 69 号备忘录 §2.33 与讨论备忘录第 41 轮）；
+    要点=冲突听弱的/止损双触发/总仓 min(预算带,60%)/单策略 25%~60%/单票 10%/
+    竞价豁免恐慌窗/清退人工/做T穿透轧平/退潮立即强裁/天地板改个股级（实证证伪板块级）/
+    相关性 0.6 预警 0.70 动作/资金 T+0 按成交回报/合规双线/断流不开新仓/Triage 1min/
+    长停复牌转人工/时间口径交易日化+冷却改迟滞带连败阶梯/备用金改风险预算制/
+    判定离散状态机原则/攻防板块特征/超跌反转信号。
+  affected_files:
+    - d:\ZephyrAlpha\docs\01_policies_and_standards\_registry\catalogs\ruling_registry.yaml
+    - d:\ZephyrAlpha\docs\_working\2026-09-07-tdm-backtest-protocol.md
+    - d:\ZephyrAlpha\docs\01_policies_and_standards\_registry\catalogs\risk_limit_registry.yaml
+  related_arch: []
+  related_rulings: []
+  superseded_by: null

@@ -1162,11 +1162,11 @@ risk_limits:
     limit_type: "concentration"
     scope: "portfolio"
     scope_strategy: null
-    threshold_value: null
+    threshold_value: 0.10
     threshold_unit: null
     inherent_risk: null
     residual_risk: null
-    consumption_tracking: "任何情况不梭哈/all in一只股票（指数确认不退位品种可例外）"
+    consumption_tracking: "任何情况不梭哈/all in一只股票（指数确认不退位品种可例外）（2026-09-07 D94：默认单票≤10%；凯利波段 3% 见 RLM-POSITION-021；earned 豁免≤20% 须 P3-01 留痕）"
     kri_frequency: "daily"
     review_cycle: "quarterly"
     breach_action: "skip"
