@@ -7,7 +7,7 @@
  * 路径约定：本目录=tools/desktop/（根目录白名单内；src/zephyr 为 Python 包根禁 .json），
  *           web 根=<仓库根>/src/zephyr/frontend/dashboard/web/，仓库根=上两级
  */
-const { app, BrowserWindow, protocol, net, dialog } = require('electron');
+const { app, BrowserWindow, protocol, net, dialog, shell } = require('electron');
 const { pathToFileURL } = require('url');
 const { spawn } = require('child_process');
 const path = require('path');
@@ -44,6 +44,7 @@ protocol.registerSchemesAsPrivileged([
 ]);
 
 let apiProc = null;
+let docsProc = null;
 let win = null;
 
 /* ── API 后端生命周期 ── */
@@ -97,6 +98,52 @@ function killApi() {
   }
 }
 
+/* ── 本地文档服务生命周期（8765，Owner 2026-09-07 裁定：随面板自动拉起+总闸可管）──
+ * 用途：架构图 MD 里的"可缩放 HTML 版"链接（http://localhost:8765/...）依赖此服务；
+ * 与总闸"本地文档服务"开关同一进程语义（探活复用——总闸先起了就不重复拉）。
+ * --no-regen 秒起（全量重生成 72 域文档太慢，按需 python scripts/serve_docs.py --regen-only 手动跑） */
+const DOCS_HEALTH = 'http://127.0.0.1:8765/';
+const DOCS_LOG = path.join(REPO_ROOT, 'data', 'runtime', 'docs_server_desktop.log');
+
+async function docsAlive() {
+  try {
+    const r = await net.fetch(DOCS_HEALTH, { signal: AbortSignal.timeout(1500) });
+    return r.ok;
+  } catch { return false; }
+}
+
+function spawnDocs() {
+  fs.mkdirSync(path.dirname(DOCS_LOG), { recursive: true });
+  const log = fs.openSync(DOCS_LOG, 'a');
+  fs.writeSync(log, `\n===== spawn ${new Date().toLocaleString()} =====\n`);
+  docsProc = spawn('python', ['scripts/serve_docs.py', '--no-regen'], {
+    cwd: REPO_ROOT,
+    windowsHide: true,
+    stdio: ['ignore', log, log],
+  });
+  docsProc.on('error', (e) => fs.writeSync(log, `[desktop] spawn error: ${e.message}\n`));
+  docsProc.on('exit', (code) => fs.writeSync(log, `[desktop] docs exited code=${code}\n`));
+  return docsProc;
+}
+
+async function ensureDocs() {
+  if (await docsAlive()) return;   // 已有实例（总闸起的/手动起的）→ 复用
+  spawnDocs();
+  for (let i = 0; i < 12; i++) {   // 健康等待最多 6s（纯静态服务，起得快）
+    await new Promise((r) => setTimeout(r, 500));
+    if (await docsAlive()) return;
+  }
+  // 不弹窗打断面板启动——文档服务是锦上添花，失败留痕日志+总闸页可见红灯
+  fs.appendFileSync(DOCS_LOG, `[desktop] docs not ready within 6s (总闸页可手动拉起)\n`);
+}
+
+function killDocs() {
+  if (docsProc && !docsProc.killed) {
+    try { docsProc.kill(); } catch { /* already dead */ }
+    docsProc = null;
+  }
+}
+
 /* ── app:// 静态文件服务（无缓存：每次请求直读磁盘，根治"改了看不到"） ── */
 function registerAppProtocol() {
   protocol.handle('app', (request) => {
@@ -134,6 +181,16 @@ function createWindow() {
       sandbox: true,
     },
   });
+  // 外链拦截（Owner 2026-09-07）：页面里的 http(s) 链接（如 8765 架构图 HTML）交系统默认浏览器
+  // 打开——否则 Electron 会在面板窗口内整页跳走，面板被顶掉
+  win.webContents.setWindowOpenHandler(({ url }) => {
+    if (/^https?:/i.test(url)) { shell.openExternal(url); return { action: 'deny' }; }
+    return { action: 'allow' };
+  });
+  win.webContents.on('will-navigate', (e, url) => {
+    // app:// 内部导航放行；http(s) 一律外部浏览器（含 <a href> 普通点击）
+    if (/^https?:/i.test(url)) { e.preventDefault(); shell.openExternal(url); }
+  });
   // WCO 配套：①顶栏可拖拽移动窗口（交互子元素豁免）②顶栏右侧元素避开原生窗口按钮区（~150px）
   win.webContents.on('did-finish-load', () => {
     win.webContents.insertCSS(
@@ -165,14 +222,18 @@ function createWindow() {
 if (gotLock) {
   app.whenReady().then(async () => {
     registerAppProtocol();
-    if (!IS_DEV) await ensureApi();   // 生产模式托管 API；开发模式由外部服务自理
+    if (!IS_DEV) {
+      await ensureApi();    // 生产模式托管 API；开发模式由外部服务自理
+      ensureDocs();         // 文档服务（8765）随面板拉起——不 await，不阻断窗口出现
+    }
     createWindow();
     app.on('activate', () => { if (BrowserWindow.getAllWindows().length === 0) createWindow(); });
   });
 
   app.on('window-all-closed', () => {
     killApi();
+    killDocs();
     app.quit();
   });
-  app.on('before-quit', killApi);
+  app.on('before-quit', () => { killApi(); killDocs(); });
 }

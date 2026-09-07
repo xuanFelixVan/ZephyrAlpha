@@ -14,7 +14,7 @@
 # [TESTS]
 # [A_module] module_id=MOD-GOV_SERVE_DOCS | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
-# noqa: m11-perm-manual-legitimate  本地文档HTTP服务按需启动,非cron/daemon常驻服务
+# noqa: m11-perm-manual-legitimate  非cron/daemon常驻：桌面面板壳自动拉起随面板退出+服务总闸(docs_serve)手动启停
 """
 
 本地文档服务：按需重生成派生架构文档 + 启动 HTTP 服务器浏览。
