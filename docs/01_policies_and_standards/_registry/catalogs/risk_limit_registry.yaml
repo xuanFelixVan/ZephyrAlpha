@@ -1233,10 +1233,10 @@ risk_limits:
     scope: "portfolio"
     scope_strategy: null
     threshold_value: 0.7
-    threshold_unit: "σ"
+    threshold_unit: "ratio"
     inherent_risk: null
     residual_risk: null
-    consumption_tracking: "近60日收益相关矩阵>0.7→敞口合并计算，避免名义分散实际集中"
+    consumption_tracking: "近60日收益相关矩阵>0.7→敞口合并计算，避免名义分散实际集中（2026-09-07 外审勘误：单位 σ→ratio，原误标）"
     kri_frequency: "daily"
     review_cycle: "quarterly"
     breach_action: "warn"
@@ -2793,6 +2793,7 @@ risk_limits:
     code_symbol: null
     code_fingerprint: null
 
+  # 双拼写族映射（2026-09-07 外审 m-34 登记）：KILLSW 紧凑族（003 生死线破位/005 跌停不T）与 KILL-SWITCH 连字符族（004 回撤25%/005 单日6%/006 日度4%）并存；两族 005 撞号不同义，引用时注意全名精确匹配；词法统一立项待治理流程。
   - risk_limit_id: "RLM-KILLSW-003"
     name: "生死线破位清仓信号"
     name_zh: "生死线破位清仓信号"
@@ -3210,7 +3211,7 @@ risk_limits:
     threshold_unit: ""
     inherent_risk: null
     residual_risk: null
-    consumption_tracking: "跌停的股票不能做正 T，因跌停拉不起板，次日可能再跌停，做 T 变成补仓。"
+    consumption_tracking: "跌停日禁止做T（buy-first/sell-first 均禁），因跌停拉不起板，次日可能再跌停，做 T 变成补仓。（2026-09-07 外审术语勘误 D41）"
     kri_frequency: "daily"
     review_cycle: "quarterly"
     breach_action: "warn"

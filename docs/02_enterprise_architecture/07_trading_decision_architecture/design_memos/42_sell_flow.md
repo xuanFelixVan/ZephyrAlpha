@@ -390,6 +390,8 @@ def simple_scaling_out(position, atr_value, highest_close_fn):
 
 > **为何"1/3+保本+trailing"是 MVP→阶段 2 的最优过渡**（选项之外更好的答案）：完整 MOD-SELL-017 含等分/倒金字塔/混合/逆向中止 4 模式，施工复杂度高。arrowalgo 2026-03 实证：1/3 在 1:1 止盈 + 移动止损到保本 + 剩余 trailing 的三步法，在回测中捕获了 85% 的完整分批退出收益，但只需 1 个函数（非 4 模式状态机）。这是"先 80/20 再精细化"的工程路径。
 
+> ⚠ 勘误（外审修复 2026-09-07，m-36）：本节口径已被 D60/D61（六桶分类+scale-out 阶梯落盘于 X-S1-03/X-S2-05）超越，以 69 号备忘录与真源 YAML 为准。
+
 ### 3.8 ⑦ T+1 卖出约束 —— 跌停板不卖排队，做T 例外
 
 | 约束 | 对 sell_flow 的影响 |
@@ -399,6 +401,8 @@ def simple_scaling_out(position, atr_value, highest_close_fn):
 | 做T 例外 | BM-SELL-08 做T 是唯一日内卖出例外——先卖后买（高位卖底仓→低位买回），底仓净数量不变，T+0 套利 |
 | 涨跌停排队预案 | BM-SELL-07 情景预案：封死涨跌停→次日集合竞价卖出方案+排队优先级 |
 | 卖出资金 T+1 可用 | 卖出资金次日才可买入，换仓分两天（见 [41_buy_flow](41_buy_flow.md) §3.8） |
+
+> ⚠ 勘误（外审修复 2026-09-07，M-18）：本行资金可用口径已被 D58（T+0 回转购买力）与 D85（买入额度=期初可用+当日计划卖回款）取代；最终口径以 Owner 裁决为准。
 
 **跌停板排队优先级算法**（施工伪代码已补全）：多标的同时跌停时，次日集合竞价挂单顺序：
 
@@ -738,6 +742,9 @@ class TradeLevelCircuitBreaker:
 - **上交所交易规则 2026 修订（2026-07-06 生效）** —— §2.4.2 收盘集合竞价 14:57-15:00 不可撤单；本备忘卖出执行时序算法的合规基线（§3.8）
 - **A 股日内波动 U 型分布（CSDN 2026-08-08）** —— 14:00-14:57 成交量逐渐走高、14:57-15:00 收盘竞价最高、做T 9:45-10:15 卖/13:30-14:30 买回；本备忘止盈尾盘集中+止损盘中立即+做T 错峰时序设计来源（§3.8）
 - **2026 程序化交易新规（中基协 2026-07 权威确认 + CSDN 2026-08-08）** —— 高频认定 300 笔/秒 OR 20000 笔/日（"15笔/秒"系市场误传，中基协辟谣源自美国误传）、异常交易撤单率监控 50%；本备忘卖出执行合规约束来源，MVP 限价单+盘中立即执行天然合规（§3.8）
+
+> ⚠ 口径冲突存疑（外审修复 2026-09-07，M-57）：本节与 69 号 D58（≤15 笔/秒+日撤单率≤15%）正面冲突；可能一个是高频认定线、一个是异常交易监控线——以交易所细则原文裁决为准。
+
 - **Conformal Kelly drawdown dial（[arxiv 2608.01494](https://arxiv.org/html/2608.01494v1)，2026-08-02）** —— conformal prediction 区间 downside miss 时降杠杆、MaxDD 27.7%→20.3%、slow per-asset rolling 优于 adaptive；本备忘阶段 7 ML 风控远期实证（§5.2）
 - **CUSUM 策略衰减检测（[mathandmarkets 2026-02 Part 81](https://mathandmarkets.com/p/detecting-decay-in-real-time-when)）** —— CUSUM 单侧统计量 S⁺ₜ=max(0, S⁺ₜ₋₁+(μ₀-xₜ)-k)，k=0.5σ/h=4σ balanced；Sharpe~1 策略 50 交易日检测延迟（远优于滚动 Sharpe 6+ 月）；四检验对比（CUSUM/Page-Hinkley/Bayesian 变点/滚动 Sharpe）；本备忘阶段 8 策略衰减检测远期实证（§5.2）
 - **Optimal SL/TP Parameterization（[Li, Laryea & Ihlamur 2026 arXiv:2604.27150](https://arxiv.org/abs/2604.27150)，Oxford + Vela Research）** —— 900+ 历史交易反事实模拟，8960 配置全网格搜索；最强配置 ATR 1.0× 止损+2.0× 止盈+连续 2 笔亏损 circuit-breaker 减仓因子 0.25；exit-rule tuning 是校准问题非启发式选择；本备忘策略级连续亏损熔断施工算法来源（§3.10）

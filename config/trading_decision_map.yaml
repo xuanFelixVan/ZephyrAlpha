@@ -1,6 +1,6 @@
 # [A_config] module_id=MOD-TRADING-015 | layer=config | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # ============================================================================
-# 交易决策地图真源（Trading Decision Map SSOT）— schema v1.0
+# 交易决策地图真源（Trading Decision Map SSOT）— schema 文件级版本见 schema_version 字段（当前 1.1；节点规范演进由解析器承载）
 # 设计真源: docs/02_enterprise_architecture/07_trading_decision_architecture/design_memos/69_trading_decision_map.md
 # 蓝图: docs/03_modules/_domain_trading/decision_map/blueprint.md
 # 裁定: Owner 2026-09-04 D1-D6（讨论备忘录 docs/_working/2026-09-04-trading-decision-map-discussion.md）
@@ -163,6 +163,7 @@ nodes:
     # 四层架构（D20）：月级 12 态/周级六段/日级 S5 三温度计独立判定；跨层合成两规则——
     #   封顶：周级退潮→日级最高 RISK_OFF；月级危机→日级最高 RISK_OFF（封顶不覆盖，日级如实报告）
     #   对齐加成：月+周+日三层同向→预算带取上限（业界三级共振）；冲突→取下限+高层赢
+    # 六段冲突场景（指数强+情绪冰点/指数弱+情绪高潮）仓位细则待 Owner 口述（§10.3，外审 B-07 阻塞回测）；二值权限门（做T/加仓/daban/选股链启停）滞回防抖=进段需连续 2 日隶属度>60%、退出<40%（与 D86 同构，待 Owner 确认，M-34）
     decision_question: >-
       双轴合成：RegimeSnapshot 概率（宏观）×情绪六段分布（微观）；输出预算带+策略路由+冲突仲裁（熵高分裂市→降档+Owner 接管）；日级水温受月/周档位封顶
     factor_refs: []
@@ -519,6 +520,7 @@ nodes:
     activation: premarket
     invalidation: null
     ai_autonomy: auto
+    # 口径消歧（外审 m-31）：盘前判定主判据=S5 T-1 日读数（盘前可得）；当日盘中 S5 更新走盘中档；fallback 沿用前日档位
     fallback: S5 当日读数缺失→沿用前一交易日档位并告警（不自行判定）
     strategy_mounts: []
 
@@ -600,6 +602,7 @@ nodes:
     activation: intraday
     invalidation: 封单不稳/率先掉队→定位实时降级（中位股=禁区禁触）
     ai_autonomy: auto
+    # invalidation 封单不稳判定回测代理=tick 买一档量（DS-195，外审 m-45）
     fallback: null
     strategy_mounts: []
 
@@ -1069,6 +1072,7 @@ nodes:
     activation: postmarket
     invalidation: null
     ai_autonomy: auto
+    # 池成员状态存储=治理状态表/新 DS（待登记施工，外审 M-41）；回测侧升降级规则若对历史确定可重算则标可合成
     fallback: null
     strategy_mounts:
       - {strategy_ref: STR-MULTIFACTOR-033, confidence: proposed, evidence: null}
@@ -1113,6 +1117,7 @@ nodes:
     activation: intraday
     invalidation: null
     ai_autonomy: auto
+    # 首日上市标的暂不入池（新股买入侧档位待 D71 扩展裁定，外审 m-25）
     fallback: null
     strategy_mounts: []
 
@@ -1419,6 +1424,7 @@ nodes:
     activation: continuous
     invalidation: null
     ai_autonomy: auto
+    # 状态变量=扳机注册表（类型/触发条件/注册时点）；落盘先于生效（对标 P3-02 D58④）；重启后全量重注册（外审 m-59）
     fallback: 队列积压→降级批量处理+告警（41 号降级语义）
     strategy_mounts: []
 
@@ -1522,6 +1528,7 @@ nodes:
     activation: intraday
     invalidation: 任一校验不过→拒绝发送（15c3-5 pre-trade 语义，发送边界前执行）
     ai_autonomy: paper
+    # 禁止清单消费 S2-06 冷却清单（D72，外审 B-06）；程序化合规闸门挂载点：撤单率/申报频率口径待交易所细则裁决（M-57 存疑）+四类异常交易自评器（撤单率/申报频率/频繁拉抬打压/短时间大额成交，2025-07 细则第十八条，施工欠账登记，外审 B-11）
     fallback: null
     strategy_mounts: []
 
@@ -1614,6 +1621,7 @@ nodes:
     # D50 欠账注释（事后分析带审计，69 号 §2.27）：台账须增 MFE/MAE 追踪字段（持仓期最大浮盈/浮亏+发生时点）——
     #   回答"逻辑死了但 MFE 很大=出场问题非选股问题"；胜者 MAE 95% 分位校准止损距离、MFE 捕获率<50%=止盈过早；
     #   施工归 position 域台账补强批次
+    # 盘中桥心跳检测经 93 号 playbook 承载（外审 m-29）；回测持仓状态合成口径见《拼装回测协议 V0》合成状态清单（外审 B-05）
     fallback: QMT 桥持仓文件缺失→沿用 T-1 快照+数据四态灯黄+人工核对
     strategy_mounts: []
 
@@ -1641,6 +1649,7 @@ nodes:
     #   封单衰减警报（开板预警）+开板回封判定（回封且封单放大=洗盘留/不回封=出货走）+封板时间质量
     #   （10:00 前封板溢价高/14:30 后弱板）——涨停封板期卖出=涨停价成交，开板后=回落价，监控优化卖出时点；
     #   与 24 号微结构监控合并设计防撞车；③stale 行情熔断（快照>2s 判 stale 暂停该标的下单流）
+    # stale 熔断暂停范围=仅限新开仓/买单，卖出保护单豁免（欠账期默认，外审 M-27）；停牌仓监控=SUSPENDED 档（事件驱动免秒级轮询，m-26）；封单历史口径=tick 买一档量代理（DS-195，2025-01 起，m-46）；Triage 频率表以本节点 D58 口径（MONITOR 1min/HOLD 5min）抑或 X-S1-01 的 42 号口径（5min/事件驱动）为准——待 Owner 裁定（M-19）
     fallback: ATR 数据缺失→按盈亏百分比粗分级
     strategy_mounts: []
 
@@ -1759,9 +1768,10 @@ nodes:
     # 三道门=状态门（矩阵仅 accumulation/expansion 段开做T）+标的质量门（振幅/流动性达标）+
     #   成本门（CST-T0-001：预期价差≥0.3% 正期望线）；红节点（编排缺口）
     # D58 欠账（第二轮审计）：①做T时段准入矩阵——9:30-9:40 禁开新T（开盘价差最宽 L 型衰减）/9:50-10:10
-    #   倒T黄金窗/10:20-11:00 方向定型胜率最高段/11:00-11:30 缩量禁T/13:30-14:20 第二波核心段/
+    #   sell-first 黄金窗/10:20-11:00 方向定型胜率最高段/11:00-11:30 缩量禁T/13:30-14:20 第二波核心段/
     #   14:40 后只平不开；一天最多 2 笔T（第三笔胜率断崖）；②量能闸门——量能<5日均量0.8倍禁开新T；
     #   ③T量盘口匹配——单笔≤对手一档可见量50%（防自打穿盘口），单日参与≤1-5% ADV
+    # 持仓级时间止损三档（RLM-DRAWDOWN-006）只评底仓不评 T 腿（外审 m-12）
     fallback: 成本模型不可用→降级人工判定做T资格
     strategy_mounts: []
 
@@ -1788,9 +1798,10 @@ nodes:
     #   做T方向术语=buy-first 先买后卖/sell-first 先卖后买（D41，禁用社区正T/反T，terminology_glossary 已登记）；
     #   指令过 position_adjudication_center；执行侧异常兜底=strategy_abnormal_exit（MOD-TRADING-008）
     # D58 欠账（第二轮审计）：①单笔T双轨止损——价差止损 0.3-0.5%（买价下方）+时间止损（预期窗口未反弹
-    #   收盘前强制复原）；②反T铁律：接回失败尾盘必须复原仓位，禁止把T+0做成T+1加仓（最大隐蔽漏洞）；
+    #   收盘前强制复原）；②sell-first 复原铁律：接回失败尾盘必须复原仓位，禁止把T+0做成T+1加仓（最大隐蔽漏洞）；
     #   ③连败熔断——当日连续 2 笔做反对称即停，禁报复性补T；④主策略减仓信号优先于做T overlay
     #   （先平T仓让位主策略，禁做T锁仓阻止离场）
+    # 参数双源待裁定：t_trade_coordinator 口径（净收益≥1.5%/失误止损 1.5%）vs D58 双轨（价差 0.3-0.5%+时间止损）——以哪套为准待 Owner 裁定，回测协议暂按 D58（外审 M-14）
     fallback: 协调器未建成→单策略顺序执行+人工确认
     strategy_mounts:
       - {strategy_ref: intraday-surge-fall, confidence: proposed, evidence: null}
@@ -1821,6 +1832,7 @@ nodes:
     #   （净收益/费用分项/做T后理论成本摊薄），做T系统的成绩单，施工归 position 域；
     #   ②底仓复原语义+笔数偏差熔断（QMT 网格策略参照：尾盘按开盘前股数复原，买卖笔数差超阈撤单停手，
     #   防做T单边漂移——与 14:50 强平互补：一个清敞口一个回底仓）
+    # 跨窗规则（外审 m-13）：14:50 强平单 14:55 未成交——深市留集合竞价、沪市 14:56 前撤改重挂；次日竞价处理=复原性质卖单不占做T笔数、豁免 9:30-9:40 禁开新T（m-22）
     fallback: 14:50 平仓失败→次日竞价优先处理并标记
     strategy_mounts: []
 
@@ -1849,6 +1861,7 @@ nodes:
     #   （浮盈保护垫/流动性门槛/次日事件前置三合一；社区标准：干净 setup 半仓扛夜/周五跨周末减半/
     #   大事件前清仓）；配套隔夜风险预算=情绪阶段×隔夜总敞口上限二维表（联动 C1）；
     #   节前决策表（春节低开 69%/国庆 63% 但节后5日上涨 60-70%，牛市持股弱势持币+两融环比监控）
+    # 资格门只评底仓/隔夜候选仓（不含待强平 T 腿，底仓-活仓隔离，外审 m-14）；减仓动作执行不迟于 14:55（避深市不可撤段），14:55 后判定顺延次日竞价（待确认，m-21）；节前判定依赖交易日历数据源（待登记，M-26）
     fallback: 再平衡引擎不可用→减仓指令降级人工确认
     strategy_mounts: []
 
@@ -1900,6 +1913,7 @@ nodes:
     #   ②批次账本加"可卖时点"字段——T+1 下卖出顺序=可卖性 FIFO（只能卖旧批）；③涨停价加仓自动切排板模式
     #   （队列位置跟踪器+封单质量门 封单/流通盘>3%+炸板默认撤单+14:50 排板单强撤不过夜）；
     #   ④批次计划持久化先于下单+恢复后信号复验门（原触发条件仍成立才续加，禁静默作废/盲目续加两极）
+    # 排板门"封单/流通盘>3%"命名=封单流通比，与封成比（封单量/成交量，P1-02 四档）分母不同勿混用（外审 m-16）
     fallback: null
     strategy_mounts: []
 
@@ -1993,6 +2007,9 @@ nodes:
     data_refs: []
     module_ref: null
     strategy_mounts: []
+    # 治理档位豁免（外审修复 2026-09-07，I-01/M-58）：kill switch 任何 ai_autonomy 档位下均为真实执行，不随 paper 模拟；
+    # 复位=Owner 人工确认（fail-closed：重启/失联后保持 HALTED 待人工解除，I-05）；风控心跳失联→默认降级安全态（禁新开仓+人工告警，I-06/M-60 挂载点）
+    # 四层止损作用域×节拍（m-11）：单票连续价（X-S1-02）/做T价差+时间（P2-02）/sleeve 月度净值（F-C3-02 5%减半·7.5%冻结）/组合日度+回撤（本节点）
 
   # ── X 流血肉（D60-D66，Owner 2026-09-07 终裁；2 树枝 12 节点，树深 2）──
   # 42 号卖出流 spec 十节吸收（语义入节点+公式留 doc_ref+spec 保留为算法附件，22 号先例）；
@@ -2096,6 +2113,7 @@ nodes:
     #   （除息缺口是价格规则调整非下跌，否则除息日误判核按钮清仓）；D69 假破位处置——盘中破位收盘收回=
     #   影线穿越不算，反视为洗盘持有加分；时段可靠性系数——早盘 9:30-10:00 假信号高发窗（开盘 5 分钟
     #   波动为全天 4 倍）破位确认从严（量能+收盘双确认），尾盘从宽
+    # PIT 纪律（外审 M-43）：龙虎榜 T 日 18:00 后发布，本节点 continuous 消费时只用 T-1 及更早榜
     fallback: null
     strategy_mounts: []
 
@@ -2144,9 +2162,10 @@ nodes:
     activation: continuous
     invalidation: null
     ai_autonomy: auto
-    # 红节点（编排缺口）；四触发=风控 KillSwitch/黑天鹅/K≥3 破位失败/主力弃庄→紧迫度 1.0 市价直执行
+    # 红节点（编排缺口）；四触发=风控 KillSwitch/黑天鹅/K≥3 破位失败/主力弃庄→紧迫度 1.0 直送 S2 执行路由
     # 不经过融合仲裁（资金安全最高优先级）；与 X-R1 分工=R1 管组合级熔断、本节点管单仓强制清仓；
     # 连续亏损熔断已落码=trade_level_circuit_breaker.py（42号§3.10）
+    # 回测口径（外审 M-50）：黑天鹅/主力弃庄无可计算代理，拼装回测 V1 声明不含该两分支（覆盖折扣标注）；触发源边=X-S1-04（K≥3）+X-R1（组合级）
     fallback: null
     strategy_mounts: []
 
@@ -2180,6 +2199,8 @@ nodes:
     # D71：多持仓卖出队列每 tick 重排+停牌标的顺延；板块联动顺序=跟风→补涨→中军→龙头
     #   （买盘消失速度排序，龙头留 IS 慢速通道，龙头断板=全板块紧急升级）；时段-信号映射——
     #   止损不挑时段触发即执行/止盈限早盘 9:45-10:00 黄金窗或尾盘窗口
+    # D72 恐慌拦截（69 号 §2.30，外审 B-06 落盘修复）：低开<-3% 触发开盘 30 分钟等待窗口禁市价卖出，三类绕过=KillSwitch/黑天鹅/跌停封死；
+    #   与 D67 核按钮（<-5% 竞价挂跌停）在 -5%~-3% 区间的优先级、S1-06 四触发中 K≥3/主力弃庄是否豁免——待 Owner 裁定（M-21）；利空公告仓豁免等待窗（欠账期默认，待确认，M-25）
     fallback: 路由异常→限价单默认通道+人工确认
     strategy_mounts: []
 
@@ -2206,8 +2227,10 @@ nodes:
     # D71（第二轮审计，69 号 §2.30）：特殊标的分支——①新股首日卖出状态机（分板块参数表：首日仅限价单
     #   市价申报废单/临停基准=当日开盘价非发行价/主板首日竞价限发行价±20%/中签仓首日可卖当日买入仓不可卖/
     #   社区分层：开盘出 4 成冲高出 4 成留 2 成）；②临停复牌子状态机（停牌期可挂可撤/复牌竞价申报限停牌前
-    #   成交价±10%/预埋限价规避复牌跳水/北交所临停只能撤不能新挂）；③风险警示板分支（ST 主板 5% 双创 20%/
+    #   成交价±10%/预埋限价规避复牌跳水/北交所临停只能撤不能新挂）；③风险警示板分支（ST 主板 ±5%（仅 2026-07-06 前有效）→2026-07-06 起 ±10%（沪深主板风险警示与主板一致，外审 B-10/J-03 制度时变）/双创 20%/北交所 30% 不变；回测须按生效日切片/
     #   0.01 元低价股跌停仅 1 分钱秒级排队/强制限价申报）；④碎股整单卖出拆分废单+科创板 200 股基准
+    # 多日连续跌停分支（§35A 素材吸收，外审 m-27）：第 2 日盲目割肉非最优、约 43% 第 3 日开板；区分基本面暴雷（全力跑）vs 情绪错杀（放量开板分批）
+    # ②临停复牌 ±10% 仅适用盘中临停；长期停牌（月级重组）复牌首日交易安排另按交易所当时规则（待数据组核实，外审 M-31）
     fallback: 排队失败→次日竞价优先处理并标记
     strategy_mounts: []
 
@@ -2319,6 +2342,8 @@ nodes:
     #   降 30%→该桶紧迫度权重自动降档；IS 三分解（延迟/冲击/机会成本）进执行成本轴；
     #   卖出冷却期（卖出后 2 日禁追高买回，大盈利清仓后 1 个月）+参数漂移锁（卖飞后 2 日禁改参数，
     #   调整必须走 42号§3.11 A/B 显著性 p<0.05）——前置闸门语义
+    # 冷却期清单（同标的≥2 交易日禁追高买回/大盈利>20% 清仓后≥1 个月）+参数漂移锁→经 S2-06→E-L4-12 边消费（外审 B-06）；
+    # 状态持久化载体=sleeve 治理状态表（待施工，M-39）；复牌假触发防护：停牌期时间止损计时暂停（对齐 D49 欠账期默认，M-31）
     fallback: null
     strategy_mounts: []
 
@@ -2343,6 +2368,7 @@ nodes:
     #   T+1 短债一层，14:00 后利率高 38%）；②书面动用条件≥2 条触发才可动用（组合回撤到线/单 sleeve
     #   冻结/显著折价窗口），动用记交易日志；③回补规则（条件解除后 N 日内回补 10-15% 带内；sleeve 冻结
     #   释放仓位先进预备金层）；月报加现金贡献行（均仓×现金收益率+涨/跌月分开标注）
+    # 六段切换日存量处置规则待 Owner 裁定（distribution 切换=Tier3 立即强裁 vs Tier2 窗口收敛；earned-position 存量保留/减半/全清，外审 M-33）；切换日=回测净值最大敏感点之一
     factor_refs: []
     data_refs: []
     module_ref: null
@@ -2413,6 +2439,8 @@ nodes:
     #   target−actual 进下一聚合批次不即时追单，偏差<0.5% NAV 不补、同 parent 补单上限 2 次；
     #   ④强平插队三语义——先撤全部挂单后平仓/三态 kill switch（ACTIVE/HALTED 禁新仓放平仓/REDUCING
     #   只减不加）/exit 指令绕过一切削减性闸门但仍过价格保护（双车道：risk-reduction lane>normal lane）
+    # 聚合输入=全图 sleeve 目标仓位/intent 隐式订阅（数据轴承载，不单画边，外审 M-12）；纯指令型声明：不触碰下单接口，一切下单经 E-L4/X-S2 paper 节点（对齐 F-C2-04，外审 M-59）
+    # sleeve 级冻结语义：冻结即作废该 sleeve 全部未过期 intent+撤未成交挂单（复用 intent TTL，外审 M-23）；sleeve 离线三态=冻结最后目标/目标清零/剔除聚合（待裁定，欠账期默认=冻结最后目标，外审 M-29）
     fallback: null
     strategy_mounts: []
 
@@ -2441,6 +2469,7 @@ nodes:
     #   （当日可调出=min{调拨额,期初余额}；撤单秒级解冻；9:20-9:25/14:57-15:00 不可撤窗）；聚合产物
     #   **先卖后买**排序；买入额度=期初可用+当日计划卖回款−在途买单冻结−预扣费；额度不足只按比例削
     #   买入不削卖出；与现金 sleeve 逆回购互斥（当日拟买入资金不得先做逆回购）
+    # 资金四态=可用/冻结/在途/可取（对齐 D58；在途=T+1 回款未可取段=先卖后买排序依据，外审 m-57）；节假日顺延待日历数据源（M-26）；停牌/锁死仓计入口径=单列不计入集中度与强裁基数（M-28）
     fallback: null
     strategy_mounts: []
 
@@ -2489,6 +2518,7 @@ nodes:
     # 纯指令型状态机（不触碰下单接口）：Tier1 封锁新仓（撤买单留卖单瞬时）→Tier2 自主收敛（差异化窗口
     # 打板 2d/事件 3d/多因子 4d）→Tier3 按比例强裁；防抖双层（日内<5% 忽略/连降>10% 强触；上调豁免）；
     # 已知缺口=BudgetChanged 事件链未接线（33 号复核注记，随装配排期）
+    # Tier2 自主收敛窗口内加仓冻结（外审 m-20）；强裁基数=可卖口径（锁死/停牌仓剔除，外审 M-28）
     fallback: null
     strategy_mounts: []
 
@@ -2558,6 +2588,7 @@ nodes:
     #   ③滞回带防横跳——恢复线高于降权线一档+调权后 5 交易日锁定期+单次±10pp 上限+降权保留 REDUCED
     #   跟踪仓/paper 双轨重启通道；④fail-safe——数据质量门未过→当月不调权维持现状记"未归因月份"
     #   （禁部分数据粗调：错配诊断会指向错误 sleeve）
+    # composite 0.05 硬线 2 连月计数重置规则=单月≥0.05 即清零重计（待 Owner 确认，外审 M-39）；升档参考输入登记=paper 样本笔数/时长/与回测偏差阈（m-44）；档内自动动作范围=减半+冻结，清退=评审制人工输出（D79×D84 边界待 Owner 明示，m-37）
     fallback: null
     strategy_mounts: []
 
@@ -2624,6 +2655,7 @@ nodes:
     #   冷启动衔接——新策略 30% 仓位→正常评审需三条件（≥2 评审周期+forward 笔数门槛 15-50 笔按频率
     #   分层：打板/做T 3 个月起、多因子 6 个月起+composite 入线）；shadow 只做验证门不做排名输入，
     #   shadow 与 live 同权重口径记账
+    # 校准结论出口=参数真源 registry 修改工单（外审 M-04）；PIT 纪律：HMM 用 filtered 非 smoothed+滚动分位 trailing-only+状态标签序列一次生成冻结落盘为回测输入资产（M-42/M-46，回测协议强制）
     fallback: null
     strategy_mounts: []
 
@@ -2787,7 +2819,7 @@ edges:
   - {from_node: TDM-E-L4-10, to_node: TDM-E-L4-11, edge_type: feed}
   - {from_node: TDM-E-L4-10, to_node: TDM-E-L4-13, edge_type: feed}
   - {from_node: TDM-E-L4-11, to_node: TDM-E-L4-13, edge_type: feed}
-  - {from_node: TDM-E-L4-13, to_node: TDM-F-C3, edge_type: feed}
+  - {from_node: TDM-E-L4-13, to_node: TDM-F-C3-01, edge_type: feed}   # 归因汇聚改落引擎节点（原落 hub 父节点致引擎零入边，外审 M-04）
   - {from_node: TDM-E-L2-05-1, to_node: TDM-E-L3-06, edge_type: feed}
   - {from_node: TDM-E-L2-06-2, to_node: TDM-E-L3-07-1, edge_type: feed}
   - {from_node: TDM-E-L2-06-3, to_node: TDM-E-L3-02, edge_type: feed}
@@ -2797,11 +2829,25 @@ edges:
   # L1 广播到持仓/离场（大盘转弱→风险处置/警戒）
   - {from_node: TDM-E-L1-AGG, to_node: TDM-P-P1, edge_type: broadcast}
   - {from_node: TDM-E-L1-AGG, to_node: TDM-X-S1, edge_type: broadcast}
+  # ── 外审修复补边（2026-09-07 Round 1）──
+  - {from_node: TDM-E-L2-01, to_node: TDM-E-L2-06-3, edge_type: feed}   # 板块强度分主输血管（D19 双通道①机器 feed；外审 B-08）
+  - {from_node: TDM-E-L2-02-2, to_node: TDM-E-L2-02-1, edge_type: feed}   # 轮动预警喂 RRG 象限转移确认（外审 m-01）
+  - {from_node: TDM-E-L1-S3, to_node: TDM-E-L1-S1, edge_type: feedback}   # D6 双向边补全：短线情绪领先→指数（外审 m-02）
+  - {from_node: TDM-E-L3-06, to_node: TDM-E-L3-11, edge_type: feed}   # 环境开关覆盖日内动态选股链（外审 m-04）
+  - {from_node: TDM-E-L3-12-1, to_node: TDM-E-L3-12, edge_type: feed}   # 多维验证子喂父（对齐 L2-01 约定，外审 M-10）
+  - {from_node: TDM-E-L3-12-2, to_node: TDM-E-L3-12, edge_type: feed}   # 多维验证子喂父（对齐 L2-01 约定，外审 M-10）
+  - {from_node: TDM-E-L3-12-3, to_node: TDM-E-L3-12, edge_type: feed}   # 多维验证子喂父（对齐 L2-01 约定，外审 M-10）
+  - {from_node: TDM-E-L3-12-4, to_node: TDM-E-L3-12, edge_type: feed}   # 多维验证子喂父（对齐 L2-01 约定，外审 M-10）
+  - {from_node: TDM-E-L4, to_node: TDM-E-L4-01, edge_type: feed}   # hub 分发第一跳：候选池+预算入执行链（外审 M-09）
+  - {from_node: TDM-E-L4-10, to_node: TDM-E-L4-08, edge_type: feed}   # 成交/订单状态喂突破失败判定（外审 M-09）
+  - {from_node: TDM-E-L4-09, to_node: TDM-E-L4-12, edge_type: feed}   # 硬约束+成本估算并入订单级预检（外审 M-09）
+  - {from_node: TDM-E-L4-10, to_node: TDM-P-P1-01, edge_type: feed}   # 成交回报驱动持仓台账入库（T+1 可卖性由台账状态机承载，外审 M-02）
+  - {from_node: TDM-E-L3-08, to_node: TDM-F-C3-01, edge_type: feed}   # 决策时快照喂选股漏斗分层归因（D87①，外审 m-09）
   # 组合资金流闭环（v1.1：预算→聚合→归因→反馈回大盘闸=系统自我进化闭环）
   - {from_node: TDM-E-L1-AGG, to_node: TDM-F-C1, edge_type: broadcast}   # L1 预算输出喂资金切分
   - {from_node: TDM-F-C1, to_node: TDM-F-C2, edge_type: sequence}
   - {from_node: TDM-F-C2, to_node: TDM-F-C3, edge_type: sequence}
-  - {from_node: TDM-F-C3, to_node: TDM-E-L1-AGG, edge_type: feedback}    # 归因反馈回状态判定（闭环）
+  - {from_node: TDM-F-C3, to_node: TDM-E-L1-AGG, edge_type: feedback}    # 归因反馈回状态判定（闭环）；叙事边（执行取 C3-05→AGG 精确承载边，勿双计数，外审 m-03）
   # 持仓流
   - {from_node: TDM-P-P1, to_node: TDM-P-P2, edge_type: sequence}
   - {from_node: TDM-P-P2, to_node: TDM-P-P3, edge_type: sequence}
@@ -2823,11 +2869,19 @@ edges:
   - {from_node: TDM-P-P3-03, to_node: TDM-P-P3-04, edge_type: sequence}
   - {from_node: TDM-E-L1-AGG, to_node: TDM-P-P3-01, edge_type: feed}
   # 持仓→离场（做T卖出即离场决策输入）
-  - {from_node: TDM-P-P2, to_node: TDM-X-S1, edge_type: sequence}
+  - {from_node: TDM-P-P2, to_node: TDM-X-S1, edge_type: sequence}   # 存疑待裁：骨架期边、D48 未收编；语义=做T统计供离场评估参考，非前置约束（外审 m-06）
   - {from_node: TDM-P-P1-04, to_node: TDM-X-S1, edge_type: feed}   # 风险否决持仓转离场评估
   - {from_node: TDM-P-P2-04, to_node: TDM-X-S2, edge_type: feed}   # 减仓执行走离场执行件
-  - {from_node: TDM-P-P2-03, to_node: TDM-F-C3, edge_type: feed}   # 做T成功/失败统计喂归因（L4-13 同款）
+  - {from_node: TDM-P-P2-03, to_node: TDM-F-C3-01, edge_type: feed}   # 做T成功/失败统计喂归因（L4-13 同款）；归因汇聚改落引擎节点（原落 hub 父节点致引擎零入边，外审 M-04）
   - {from_node: TDM-P-P3-04, to_node: TDM-E-L4, edge_type: feed}   # 加仓执行复用建仓流执行件
+  # ── 外审修复补边（2026-09-07 Round 1）──
+  - {from_node: TDM-P-P1-04, to_node: TDM-P-P2-01, edge_type: feed}   # 风险否决=做T资格冻结（外审 M-06）
+  - {from_node: TDM-P-P1-04, to_node: TDM-P-P2-04, edge_type: feed}   # 风控减仓最高优先级源（D44，外审 M-06）
+  - {from_node: TDM-E-L1-AGG, to_node: TDM-P-P2-01, edge_type: feed}   # 做T状态门输入（对齐 AGG→P3-01 先例 D48，外审 M-07）
+  - {from_node: TDM-P-P1-06, to_node: TDM-P-P3-01, edge_type: feed}   # 体检动作分流：加仓候选喂资格门（外审 M-08）
+  - {from_node: TDM-P-P1-06, to_node: TDM-X-S1, edge_type: feed}   # 体检动作分流：逻辑失效转离场（外审 M-08）
+  - {from_node: TDM-P-P2-03, to_node: TDM-P-P3-01, edge_type: feed}   # 活仓未闭环冻结加仓额度（D58④ 底仓-活仓隔离，外审 m-05）
+  - {from_node: TDM-P-P2-03, to_node: TDM-X-S2-01, edge_type: feed}   # 14:50 强平执行通道（对齐 P2-04→X-S2 先例，外审 M-11）
   - {from_node: TDM-X-S1, to_node: TDM-X-S2, edge_type: sequence}
   # ── X 流血肉边（D60-D66）：六桶并行喂三族→融合→路由分发→闭环 ──
   - {from_node: TDM-X-S1-01, to_node: TDM-X-S1-02, edge_type: feed}
@@ -2837,14 +2891,14 @@ edges:
   - {from_node: TDM-X-S1-03, to_node: TDM-X-S1-05, edge_type: feed}
   - {from_node: TDM-X-S1-04, to_node: TDM-X-S1-05, edge_type: feed}
   - {from_node: TDM-X-S1-05, to_node: TDM-X-S2-01, edge_type: sequence}
-  - {from_node: TDM-X-S1-06, to_node: TDM-X-S2-02, edge_type: feed}   # 强制清仓绕过融合直执行
+  - {from_node: TDM-X-S1-06, to_node: TDM-X-S2-01, edge_type: feed}   # 强制清仓绕过融合直执行；强清直送执行路由（中断语义：优先于一切 sequence/feed；原落点 S2-02 零出边为缺陷，外审 B-09）
   - {from_node: TDM-X-S2-01, to_node: TDM-X-S2-02, edge_type: feed}
   - {from_node: TDM-X-S2-01, to_node: TDM-X-S2-03, edge_type: feed}
   - {from_node: TDM-X-S2-01, to_node: TDM-X-S2-04, edge_type: feed}
   - {from_node: TDM-X-S2-01, to_node: TDM-X-S2-05, edge_type: feed}
   - {from_node: TDM-X-S2-01, to_node: TDM-X-S2-06, edge_type: feed}   # 执行产出喂闭环
   - {from_node: TDM-X-S2-05, to_node: TDM-X-S2-06, edge_type: feed}   # 分批批次结果喂闭环
-  - {from_node: TDM-X-S2-06, to_node: TDM-F-C3, edge_type: feed}      # 退出效率喂归因（L4-13/P2-03 同款）
+  - {from_node: TDM-X-S2-06, to_node: TDM-F-C3-01, edge_type: feed}      # 退出效率喂归因（L4-13/P2-03 同款）；归因汇聚改落引擎节点（原落 hub 父节点致引擎零入边，外审 M-04）
   # ── F 流血肉边（D74-D83）：净额→约束栈→cluster；归因结论分发四路 ──
   - {from_node: TDM-F-C2-01, to_node: TDM-F-C2-02, edge_type: sequence}
   - {from_node: TDM-F-C2-02, to_node: TDM-F-C2-03, edge_type: feed}
@@ -2857,6 +2911,18 @@ edges:
   - {from_node: TDM-F-C3-01, to_node: TDM-F-C3-05, edge_type: feed}   # 信号质量数据→健康监控
   - {from_node: TDM-F-C3-02, to_node: TDM-F-C3-03, edge_type: feed}   # verdict 影响权重
   - {from_node: TDM-F-C3-05, to_node: TDM-E-L1-AGG, edge_type: feedback}  # 传感器可靠度权重喂大盘判定
+  # ── 外审修复补边（2026-09-07 Round 1）──
+  - {from_node: TDM-X-S1-04, to_node: TDM-X-S1-06, edge_type: feed}   # K≥3 破位失败触发源（节点注释已声明，外审 B-09）
+  - {from_node: TDM-X-R1, to_node: TDM-X-S1-06, edge_type: feed}   # 组合级 KillSwitch 触发单仓强清（外审 B-09）
+  - {from_node: TDM-X-R1, to_node: TDM-F-C2-01, edge_type: broadcast}   # 熔断=停新 intent【中断语义：优先于一切 sequence/feed】（外审 B-09）
+  - {from_node: TDM-X-R1, to_node: TDM-P-P2-01, edge_type: broadcast}   # 熔断=停做T【中断语义】（外审 B-09）
+  - {from_node: TDM-X-S2-02, to_node: TDM-X-S2-06, edge_type: feed}   # 闭环统计收编（跌停排队通道，外审 M-03）
+  - {from_node: TDM-X-S2-03, to_node: TDM-X-S2-06, edge_type: feed}   # 闭环统计收编（时段/竞价通道，外审 M-03）
+  - {from_node: TDM-X-S2-04, to_node: TDM-X-S2-06, edge_type: feed}   # 闭环统计收编（条件单通道，外审 M-03）
+  - {from_node: TDM-F-C2-01, to_node: TDM-X-S2-01, edge_type: feed}   # 净卖出/强裁指令路由卖出执行件（外审 B-09）
+  - {from_node: TDM-F-C2-03, to_node: TDM-F-C2-02, edge_type: feed}   # 聚类判定回写约束栈相关性层（D77 禁新仓不再死信，外审 M-05）
+  - {from_node: TDM-F-C3-03, to_node: TDM-F-C1, edge_type: feedback}   # 月度调权结论回写预算切分（PP-001 演进，D80，外审 M-04）
+  - {from_node: TDM-F-C3-05, to_node: TDM-E-L2, edge_type: feed}   # 板块命中表反馈 L2（D87②，外审 m-09）
   # 应急保命横切（示意主边：触发即接管离场）
   - {from_node: TDM-X-R1, to_node: TDM-X-S2, edge_type: broadcast}
   # 币圈链
@@ -2871,6 +2937,7 @@ state_matrix:
   #   ignition 点火启动 / expansion 发酵扩散 / euphoria 亢奋高潮 / distribution 派发退潮
   # 灰度语义：社区阈值（涨停60/120家、炸板率35%、晋级率60% 等）= 隶属度0.5锚点，
   #   非硬边界；实际判定=因子滚动分位→加权合成→状态分布（主状态+灰度），见 TDM-E-L1-AGG
+  # 图内口径（外审 m-17）：炸板率 35%=隶属度 0.5 锚点；S5 注释"炸板率>50%"=当日行动线；外部源 <30% 积极——三数语义不同勿混
   states: [capitulation, accumulation, ignition, expansion, euphoria, distribution]
   cells:
     # L1 总闸：六段各输出预算/姿态细则（格子内容待填，proposed）
@@ -2917,6 +2984,7 @@ portfolio_plan:
     - {strategy_ref: intraday-surge-fall, weight: 0.10, activation_state: [accumulation, expansion]}  # 做T=修复期主战场+发酵期
     - {strategy_ref: orderbook-imbalance, weight: 0.075, activation_state: [accumulation, expansion]}
     - {strategy_ref: vwap-reversion,      weight: 0.075, activation_state: [accumulation, expansion]}
+  # 外审修复注记（2026-09-07）：①correlation_cap=0.7 处置语义复用 F-C2-03 两档（ρ>0.70 减半/>0.85 禁新仓，m-15）；②max_total_position=1.0 不含尾部预备金（10-15% 永不投出，D88），合成净值含现金 sleeve（GC001）收益（D84⑤，m-50）；③sleeves.activation_state=null=全段激活，预算带 0% 段（distribution）=禁新开仓、存量由 X 流信号驱动离场（待 Owner 确认，m-49）
   aggregator:                        # 组合聚合规则（C2，proposed 占位）
     max_total_position: 1.0
     max_single_sleeve: 0.25

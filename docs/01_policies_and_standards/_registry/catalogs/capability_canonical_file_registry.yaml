@@ -11101,6 +11101,10 @@ creation_tokens:
   token: auto-test-gateway-post-commit-ritual-20260830
   created_by: greatwall_20260830
   capability: commit_gateway_audit_reconciler
+- file: docs/_working/2026-09-07-tdm-backtest-protocol.md
+  token: tdm-backtest-protocol-20260907
+  created_by: sess-35944-20260907153514
+  capability: tdm_backtest_protocol
 di_seam_exemptions:
 - module_path: zephyr.trading.auto_runtime_core.AutoRuntimeCore
   reason: P0-5 LSG DI seam 标杆，已有 DI 但 AST 模式不匹配（动态注入）
