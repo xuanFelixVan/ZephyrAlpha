@@ -608,9 +608,10 @@ class TestFetchIndexConstituent:
         assert cons_calls == ["000300", "000905", "000852", "000985", "000906"]
         r0 = results[0]
         assert not r0.error and len(r0.rows) == 2
-        # (trade_date, index_code, symbol, weight, action, data_source)
-        assert r0.rows[0] == ("2026-08-14", "000300.SH", "000001.SZ", 0.433, "", "akshare_csindex")
-        assert r0.rows[1] == ("2026-08-14", "000300.SH", "600000.SH", 1.234, "", "akshare_csindex")
+        # (trade_date, index_code, symbol, weight, action, data_source, valid_to)
+        # 开新批统一 7 列（2026-08-30：闭旧/开新同宽，防 BufferedWriter 混宽 CH Code 27）
+        assert r0.rows[0] == ("2026-08-14", "000300.SH", "000001.SZ", 0.433, "", "akshare_csindex", None)
+        assert r0.rows[1] == ("2026-08-14", "000300.SH", "600000.SH", 1.234, "", "akshare_csindex", None)
         # 权重接口日期(2026-07-31)不覆盖成分日期(2026-08-14)——PIT 以成分生效日为准
         assert all(row[0] == "2026-08-14" for row in r0.rows)
 
@@ -639,6 +640,9 @@ class TestFetchIndexConstituent:
         assert len(results) == 5
         assert all(not r.error for r in results)
         assert results[0].rows[0][3] == 0  # weight 降级为 0
+        # 开新批 7 列形状断言（valid_to=None；防形状漂移漏检——本类 6→7 列变更曾因索引断言漏检）
+        assert results[0].rows[0][5] == "akshare_csindex"
+        assert results[0].rows[0][6] is None
 
 
 # ============== st_stock_list 科创板扩展 ==============
