@@ -478,7 +478,7 @@ def schedule_sell_order(signal_type, current_time, position):
 | 隔日超短"10 点前离场"例外清单 6 条 / 盘后公告→次日竞价预案 | 叙事规则（69 号 §2.28/D67） | 无需重校 | 按逻辑形态（一字板/缩量加速/龙头/弱转强）分档而非涨跌幅分档，ST 同规则适用；9:25 定格/10 点离场等时序纪律与板幅无关 |
 | ST 日累计买入 50 万股上限 | 交易规则 4.4.10 | 保留不变 | TDM-X-S2-02 注释既有裁定，规则未修订 |
 
-**已完成/另案登记**（同族但不在 TDM 交易参数层）：①`tiered_screening_filter` 板幅表与 `ex_core/adapters/miniqmt_broker` `_BOARD_PRICE_LIMIT_PCT` 已按现值改 ST ±10%（177f2d2a9a，#ARCH-DATA-020 重评条件②，无历史切片）；②backtest `matching_engine._infer_limit_pct` 无 ST 区分（2026-07-06 前历史回测主板 ST 反向错）与 `miniqmt_provider` 竞价簿硬编码 ±10%（双创错）维持 #ARCH-DATA-020 重评条件②另案单独跟进，不属本判定。**历史回放注意**：2026-07-06 前回放中把 D67 矩阵/溢价映射用于主板 ST 会产生高位档失真（gap 被 5% 封顶）——回测须按生效日切片取口径（既有裁定），与 ② 的撮合层修复叠加生效。
+**已完成/另案登记**（同族但不在 TDM 交易参数层）：①`tiered_screening_filter` 板幅表与 `ex_core/adapters/miniqmt_broker` `_BOARD_PRICE_LIMIT_PCT` 已按现值改 ST ±10%（出处勘正 2026-09-08：tiered_screening_filter=4b3cbe160a 2026-08-31、miniqmt_broker=12a9967e36 2026-08-17，原记 177f2d2a9a 系笔误——该 commit 未触碰此两文件，git log -S 核验；#ARCH-DATA-020 重评条件②，无历史切片）；②backtest `matching_engine._infer_limit_pct` 无 ST 区分（2026-07-06 前历史回测主板 ST 反向错）与 `miniqmt_provider` 竞价簿硬编码 ±10%（双创错）维持 #ARCH-DATA-020 重评条件②另案单独跟进，不属本判定。**历史回放注意**：2026-07-06 前回放中把 D67 矩阵/溢价映射用于主板 ST 会产生高位档失真（gap 被 5% 封顶）——回测须按生效日切片取口径（既有裁定），与 ② 的撮合层修复叠加生效。
 
 ### 3.9 ⑧ 与回撤 Protocol 联动 —— 35 四级阈值触发卖出端响应
 
@@ -793,3 +793,4 @@ class TradeLevelCircuitBreaker:
 | 2026-08-14 | 1.7.1 | 遗留登记完备性补修（#ARCH-SELL-001 治本方案 P1-4） | §5.2 补阶段 5b（MOD-SELL-014 启用触发=G04 参数校准产出，原仅散见 §2.3/§5.3/§7）+ 阶段 5 触发条件补量化口径注记；§6 "G04 策略类型定稿"措辞勘正为"G04 按策略类型的参数校准产出"（20 号已 active，字面误读风险）；TradeLevelCircuitBreaker 补登 CAND-SELL-001（孤儿决策收口）；battle_map_07 BM-SELL-04-C 文案三方分裂——派生文件不入 git，depgraph MOD-SELL-014=planned 为真源，随下一次 battle_map 重生成自动订正 |
 | 2026-08-15 | 1.7.2 | 第二轮循环压缩：可压缩点收敛=0（AI-DC2-07） | 过程性叙述/重复实证/冗余修饰清理，标题编号/关键数值（四族 MVP/四级回撤 8%/15%/20%/25%/阶段 7-8 远期）/裁定/开放问题/BM-XXX/#ARCH-XXX/跨文档链接零丢失 |
 | 2026-09-07 | 1.8.0 | §3.8 增补 §3.8.1 ST 主板涨跌幅 5%→10% 联动参数重校判定 | TDM-X-S2-02 挂账清偿（#ARCH-DATA-020 ③）：全项目排查竞价即决封板/溢价映射/跌停排队/封成比/出场档位/量能口径/公告预案九族阈值，总结论=交易决策层零值变更全部无需重校（D67 矩阵/封板时间→溢价映射/封成比的校准宇宙本为 10% 涨跌幅板，ST 拉平后系"恢复全域适用"非参数漂移，改值反成 ST 双真源；scenario_planner 昨涨停溢价映射数据驱动 stk_limit 已切片回填；跌停排队注入式零 pct 假设）；tiered_screening_filter/miniqmt_broker 已按现值改（177f2d2a9a）、matching_engine._infer_limit_pct/miniqmt_provider 竞价簿另案（重评条件②）；配套 TDM-X-S2-02/S2-03 注释落账+回归锚测试（TestST10PctRecalibrationBaseline×2） | Owner 任务：主板 ST 涨跌幅生效后联动参数重校（TDM 挂账清偿） |
+| 2026-09-08 | 1.8.1 | §3.8.1 出处勘正 | "tiered_screening_filter/miniqmt_broker 已按现值改 ST ±10%"的 commit 归属由 177f2d2a9a 勘正为 4b3cbe160a（2026-08-31 长城任务）/12a9967e36（2026-08-17）——177f2d2a9a（stk_limit 口径修复）未触碰此两文件，git log -S 核验；"已按现值改、无历史切片"结论本身不变 | 复核会话抽验发现，防 provenance 误导 |
