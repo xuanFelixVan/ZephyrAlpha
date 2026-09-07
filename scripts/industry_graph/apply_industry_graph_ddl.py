@@ -4,23 +4,28 @@
 # [CONSUMERS] scripts.industry_graph.p0_scan_documents
 # [STARTUP] manual
 # [MATURITY] production
-# [INVARIANTS] DDL-as-Code: ig_* 五表 DDL 真源即本文件; 全部幂等(CREATE IF NOT EXISTS); 角色分级 GRANT 幂等
+# [INVARIANTS] DDL-as-Code: ig_* 九表 DDL 真源即本文件; 全部幂等(CREATE IF NOT EXISTS + ADD COLUMN IF NOT EXISTS); 角色分级 GRANT 幂等; v2 增量(SOP §4.8/§4.9): ig_company_edge PIT 三时间戳+边元数据五列, ig_chunk/ig_fact 内容层与事实层
 # [MODIFY-GUARD] none
 # [STABILITY] evolving
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] PG不可达->打印错误+退出码2; 执行失败->抛出非零退出
 # [TTL] permanent
-"""产业链图谱（industry_graph）五表 DDL 部署脚本（PostgreSQL depgraph 图谱域）。
+"""产业链图谱（industry_graph）九表 DDL 部署脚本（PostgreSQL depgraph 图谱域）。
 
-表结构（2026-08-27 与用户定稿）：
+表结构（2026-08-27 与用户定稿；v2 2026-09-07 按 SOP industry_chain_data_audit_sop §4.8/§4.9 增补）：
     ig_chain         产业链主表
     ig_node          环节节点（上游/中游/下游/设备/材料）
     ig_edge          环节间结构边（edge_type='structure'|'supply'，supply 公司级后置）
     ig_node_company  环节↔股票映射（龙头/主要/概念）
     ig_document      源文档登记表（P0 盘点使用，兼作语料库入口）
+    ig_company_edge  公司间供应链边（v2: PIT 三时间戳 valid_from/valid_to/as_of
+                     + 边元数据 evidence_type/revenue_pct/subsidiary/relevance/transmission_type）
+    ig_company_metric 公司年度指标
+    ig_chunk         内容层（E盘语料 76,112 块全量入库，内容颗粒度零丢失）
+    ig_fact          事实层（五元组事实，回链证据块，量化可 SQL 检索最小单元）
 
-市场分片规范：五表均带 market 字段，当前批次全部为 'cn'。
+市场分片规范：各表均带 market 字段（ig_chunk 除外——语料自带 year 无市场语义）。
 
 用法::
 
@@ -170,6 +175,53 @@ DDL_STATEMENTS = [
     "CREATE INDEX IF NOT EXISTS idx_ig_company_edge_from ON ig_company_edge (from_symbol)",
     "CREATE INDEX IF NOT EXISTS idx_ig_company_edge_to ON ig_company_edge (to_symbol)",
     "CREATE INDEX IF NOT EXISTS idx_ig_company_metric_sym ON ig_company_metric (symbol, metric)",
+    # ========== v2 增量（SOP industry_chain_data_audit_sop §4.8/§4.9，2026-09-07 Owner 裁定） ==========
+    # --- ig_company_edge PIT 三时间戳 + 边元数据 v2（FactSet/Bloomberg 对标） ---
+    "ALTER TABLE ig_company_edge ADD COLUMN IF NOT EXISTS valid_from DATE",
+    "ALTER TABLE ig_company_edge ADD COLUMN IF NOT EXISTS valid_to DATE",
+    "ALTER TABLE ig_company_edge ADD COLUMN IF NOT EXISTS as_of DATE",
+    "ALTER TABLE ig_company_edge ADD COLUMN IF NOT EXISTS evidence_type TEXT",
+    "ALTER TABLE ig_company_edge ADD COLUMN IF NOT EXISTS revenue_pct REAL",
+    "ALTER TABLE ig_company_edge ADD COLUMN IF NOT EXISTS subsidiary TEXT",
+    "ALTER TABLE ig_company_edge ADD COLUMN IF NOT EXISTS relevance SMALLINT",
+    "ALTER TABLE ig_company_edge ADD COLUMN IF NOT EXISTS transmission_type TEXT[]",
+    "CREATE INDEX IF NOT EXISTS idx_ig_company_edge_valid_from ON ig_company_edge (valid_from)",
+    "CREATE INDEX IF NOT EXISTS idx_ig_company_edge_valid_to ON ig_company_edge (valid_to)",
+    "CREATE INDEX IF NOT EXISTS idx_ig_company_edge_as_of ON ig_company_edge (as_of)",
+    # --- ig_chunk 内容层（E盘 chunks.sqlite 76,112 块全量入库，内容颗粒度零丢失） ---
+    """
+    CREATE TABLE IF NOT EXISTS ig_chunk (
+        chunk_id   TEXT PRIMARY KEY,
+        doc_id     TEXT REFERENCES ig_document(doc_id),
+        title      TEXT,
+        doc_type   TEXT,
+        year       SMALLINT,
+        chunk_text TEXT NOT NULL,
+        created_at TIMESTAMPTZ NOT NULL DEFAULT now()
+    )
+    """,
+    "CREATE INDEX IF NOT EXISTS idx_ig_chunk_doc ON ig_chunk (doc_id)",
+    "CREATE INDEX IF NOT EXISTS idx_ig_chunk_type ON ig_chunk (doc_type)",
+    # --- ig_fact 事实层（量化可检索的最小事实单元，每条回链证据块） ---
+    """
+    CREATE TABLE IF NOT EXISTS ig_fact (
+        fact_id            BIGSERIAL PRIMARY KEY,
+        subject            TEXT NOT NULL,
+        relation           TEXT NOT NULL,
+        object             TEXT NOT NULL,
+        value              TEXT,
+        evidence_chunk_id  TEXT REFERENCES ig_chunk(chunk_id),
+        confidence         REAL,
+        as_of              DATE,
+        source             TEXT NOT NULL DEFAULT 'websearch',
+        market             TEXT NOT NULL DEFAULT 'cn',
+        created_at         TIMESTAMPTZ NOT NULL DEFAULT now(),
+        UNIQUE (subject, relation, object, as_of, source)
+    )
+    """,
+    "CREATE INDEX IF NOT EXISTS idx_ig_fact_subject ON ig_fact (subject)",
+    "CREATE INDEX IF NOT EXISTS idx_ig_fact_object ON ig_fact (object)",
+    "CREATE INDEX IF NOT EXISTS idx_ig_fact_relation ON ig_fact (relation)",
 ]
 
 # 裁定#ARCH-DEPGRAPH_ACCESS_CONTROL: reader 只读 / writer 读写
@@ -181,6 +233,8 @@ _ALL_TABLES = (
     "ig_document",
     "ig_company_edge",
     "ig_company_metric",
+    "ig_chunk",
+    "ig_fact",
 )
 GRANT_STATEMENTS = (
     [f"GRANT SELECT ON {t} TO depgraph_reader" for t in _ALL_TABLES]
@@ -191,6 +245,7 @@ GRANT_STATEMENTS = (
         "GRANT USAGE, SELECT ON SEQUENCE ig_node_company_id_seq TO depgraph_writer",
         "GRANT USAGE, SELECT ON SEQUENCE ig_company_edge_edge_id_seq TO depgraph_writer",
         "GRANT USAGE, SELECT ON SEQUENCE ig_company_metric_id_seq TO depgraph_writer",
+        "GRANT USAGE, SELECT ON SEQUENCE ig_fact_fact_id_seq TO depgraph_writer",
     ]
 )
 
