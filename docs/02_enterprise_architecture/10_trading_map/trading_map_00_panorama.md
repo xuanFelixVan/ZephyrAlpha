@@ -13,7 +13,7 @@ source: config/trading_decision_map.yaml
 
 > **本文件由生成器自动派生，禁止手编**。真源=`config/trading_decision_map.yaml`（改动后 git commit → 运行时启动自动重生成）。
 > 规模：4 节点｜🔴设计态（红节点）4｜📄paper 实盘执行 0｜图例：橙虚线=设计态，蓝底=📄paper 实盘执行节点（D18 治理阶梯）。
-> 网页版（可缩放）：[_zoomable_html/trading_map_00_panorama.html](_zoomable_html/trading_map_00_panorama.html)
+> **[可缩放 HTML 版 / Zoomable HTML](http://localhost:8765/docs/02_enterprise_architecture/10_trading_map/_zoomable_html/trading_map_00_panorama.html)** — Ctrl+滚轮缩放 ｜ 双击重置 ｜ Ctrl+Shift+D 切换拖动/选择模式
 
 ## 关系图
 

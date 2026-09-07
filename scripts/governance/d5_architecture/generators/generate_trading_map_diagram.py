@@ -18,8 +18,14 @@ from pathlib import Path
 import yaml
 
 REPO_ROOT = Path(__file__).resolve().parents[4]
+if str(REPO_ROOT) not in sys.path:
+    sys.path.insert(0, str(REPO_ROOT))
+from scripts.governance._shared.constants import DOC_HTTP_BASE  # noqa: E402  URL SSoT（NO-HARDCODED-URL）
+
 SRC_YAML = REPO_ROOT / "config" / "trading_decision_map.yaml"
 DEFAULT_OUT = REPO_ROOT / "docs" / "02_enterprise_architecture" / "10_trading_map"
+# 模板 §14：HTML 链接必须 http:// 绝对路径，IDE 才会交外部浏览器渲染
+_HTML_SERVER_PREFIX = DOC_HTTP_BASE + "/"
 
 # D91 拆分规则: (文件名, 中文标题, node_id 前缀组)
 FILE_PLAN = [
@@ -140,6 +146,12 @@ def _render_mounts(nodes: list[dict]) -> str:
     return "\n\n".join(out) if out else "（本文件无挂载）"
 
 
+def _html_link_line(stem: str) -> str:
+    """网页版跳转行（对齐 battle_map 先例：http:// 绝对路径 + 操作提示）。"""
+    url = f"{_HTML_SERVER_PREFIX}docs/02_enterprise_architecture/10_trading_map/_zoomable_html/{stem}.html"
+    return f"> **[可缩放 HTML 版 / Zoomable HTML]({url})** — Ctrl+滚轮缩放 ｜ 双击重置 ｜ Ctrl+Shift+D 切换拖动/选择模式"
+
+
 def _render_file(stem: str, title: str, nodes: list[dict], all_edges: list[dict]) -> str:
     ids = {n["node_id"] for n in nodes}
     in_edges = [e for e in all_edges if e["from_node"] in ids or e["to_node"] in ids]
@@ -166,7 +178,7 @@ source: config/trading_decision_map.yaml
 
 > **本文件由生成器自动派生，禁止手编**。真源=`config/trading_decision_map.yaml`（改动后 git commit → 运行时启动自动重生成）。
 > 规模：{counts}｜🔴设计态（红节点）{reds}｜{PAPER_BADGE} 实盘执行 {papers}｜图例：橙虚线=设计态，蓝底={PAPER_BADGE} 实盘执行节点（D18 治理阶梯）。
-> 网页版（可缩放）：[_zoomable_html/{stem}.html](_zoomable_html/{stem}.html)
+{_html_link_line(stem)}
 
 ## 关系图
 
@@ -186,8 +198,6 @@ source: config/trading_decision_map.yaml
 
 def regenerate(output_dir: Path | None = None) -> dict:
     """编排器入口：生成 8 MD + 8 HTML，返回 {outputs, nodes, edges, files}。"""
-    if str(REPO_ROOT) not in sys.path:
-        sys.path.insert(0, str(REPO_ROOT))
     dm = yaml.safe_load(SRC_YAML.read_text(encoding="utf-8"))
     nodes = dm["nodes"]
     edges = dm["edges"]
