@@ -29,7 +29,10 @@
     </div>
 </section>
 <style>
-  #p-tdm.active { display:flex; flex-direction:column; height:calc(100vh - 150px); }
+  /* 满屏精确对齐：section 高度=视口-顶栏46- main顶padding8 - ticker32 → 底缘正好贴 ticker 上缘；
+     :has() 豁免 .main 56px 底部预留 padding（仅本页生效，否则那 56px 显成画布下黑条+页面多出 24px 滚动量） */
+  .main:has(#p-tdm.active) { padding-bottom: 0; }
+  #p-tdm.active { display:flex; flex-direction:column; height:calc(100vh - 86px); }
   #p-tdm .tdm-fill { flex:1; min-height:0; display:flex; gap:12px; align-items:stretch; }
   #p-tdm .tdm-canvas { flex:1; position:relative; overflow:hidden; cursor:grab; }
   #p-tdm .tdm-canvas.dragging { cursor:grabbing; }
