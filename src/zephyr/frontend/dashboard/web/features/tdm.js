@@ -156,18 +156,28 @@
       y = gy + 30;
     });
 
-    host.style.height = (y + 6) + 'px';   /* 绝对定位子元素不撑高父容器——显式写内容高度，滚动区才正确 */
+    /* 世界层与树的尺寸用布局常量直接算（X3+CW=内容右缘）——绝不能量 host.offsetWidth：
+     * world 是绝对定位收缩包裹、树内卡片全绝对定位不撑宽，量出来恒≈padding 8px，
+     * SVG 视口跟着塌成 8px 宽 → 连线全部画到可视区外（b20260908-02 连线消失的根因） */
+    var contentW = X3 + CW + 4;
+    var contentH = y + 6;
+    host.style.width = contentW + 'px';
+    host.style.height = contentH + 'px';   /* 绝对定位子元素不撑高父容器——显式写内容高度 */
     var w = worldEl();
-    if (w) { w.style.width = host.offsetWidth + 'px'; w.style.height = Math.max(host.offsetHeight, canvas.clientHeight || 600) + 'px'; }
+    if (w) {
+      w.style.width = Math.max(contentW, canvas.clientWidth) + 'px';
+      w.style.height = Math.max(contentH, canvas.clientHeight || 600) + 'px';
+    }
 
     requestAnimationFrame(function () {
-      var hh = Math.max(host.offsetHeight, canvas.clientHeight || 600);
-      svg.style.width = '100%';
+      var ww = w ? w.offsetWidth : contentW;
+      var hh = Math.max(contentH, canvas.clientHeight || 600);
+      svg.style.width = ww + 'px';
       svg.style.height = hh + 'px';
-      svg.setAttribute('width', host.offsetWidth);
+      svg.setAttribute('width', ww);
       svg.setAttribute('height', hh);
-      svg.innerHTML = wires.map(function (w) {
-        var a = w[0], b = w[1];
+      svg.innerHTML = wires.map(function (p) {
+        var a = p[0], b = p[1];
         var ax = a.offsetLeft + a.offsetWidth, ay = a.offsetTop + a.offsetHeight / 2;
         var bx = b.offsetLeft, by = b.offsetTop + b.offsetHeight / 2;
         var mx = (ax + bx) / 2;
@@ -184,13 +194,21 @@
     roTimer = setTimeout(render, 120);
   });
 
+  var FLOW_ZH = { entry_flow: '建仓流 E', position_flow: '持仓流 P', exit_flow: '离场流 X', portfolio_flow: '组合流 F' };
+  var REF_ZH = { factor: '因子', data: '数据源', cost_model: '成本模型', risk_limit: '风险限额', threshold: '阈值',
+    event: '事件', algo: '算法', universe: '股票域', strategy: '策略', indicator: '技术指标' };
+
   function drawer() {
     var box = document.getElementById('tdm-drawer');
     if (!box) return;
     var n = TDM.data && TDM.sel && TDM.data.nodes.find(function (x) { return x.id === TDM.sel; });
     if (!n) { box.style.display = 'none'; return; }
+    var byIdMap = {};
+    TDM.data.nodes.forEach(function (x) { byIdMap[x.id] = x; });
+    var par = n.parent && byIdMap[n.parent];
     var refs = Object.keys(n.refs || {}).map(function (k) {
-      return '<div class="kv"><b>' + k.replace('_refs', '') + '</b>：' + n.refs[k].join('、') + '</div>';
+      var label = REF_ZH[k.replace('_refs', '')] || k.replace('_refs', '');
+      return '<div class="kv"><b>' + label + '</b>（' + n.refs[k].length + '）：' + n.refs[k].join('、') + '</div>';
     }).join('');
     var cms = (n.comments || []).map(function (c) { return '<div class="cm">' + c + '</div>'; }).join('')
       || '<div class="cm">（无）</div>';
@@ -198,13 +216,18 @@
     box.innerHTML =
       '<h3>' + (n.autonomy === 'paper' ? '📄 ' : '') + n.name +
       ' <span class="dim" style="font-size:11px;font-weight:400">' + n.id + '</span></h3>' +
+      '<div class="sec">归属</div><div class="kv">流=' + (FLOW_ZH[n.flow] || n.flow || '—') +
+      ' ｜ 层=' + (n.layer || '—') + ' ｜ 时点=' + (n.point || '—') +
+      '<br>父节点=' + (par ? par.name + '（' + n.parent + '）' : (n.parent || '无（流根）')) + '</div>' +
       '<div class="sec">问</div><div class="kv">' + (n.q || '—') + '</div>' +
       '<div class="sec">机制（怎么算）</div><div class="kv">' + (n.note || '（待补）') + '</div>' +
       '<div class="sec">治理</div><div class="kv">激活=' + (n.activation || '—') + ' ｜ 档位=' + (n.autonomy || '—') +
-      ' ｜ 时点=' + (n.point || '—') + '<br>失效=' + (n.invalidation || '—') +
-      '<br>兜底=' + (n.fallback || '—') + '<br>模块=' + (n.module_id || '无（红节点）') + '</div>' +
-      (n.mounts && n.mounts.length ? '<div class="sec">策略挂载</div><div class="kv">' + n.mounts.join('、') + '</div>' : '') +
-      (refs ? '<div class="sec">依据锚</div>' + refs : '') +
+      '<br>失效=' + (n.invalidation || '—') +
+      '<br>兜底=' + (n.fallback || '—') + '</div>' +
+      '<div class="sec">模块锚（MOD）</div><div class="kv">' +
+      (n.module_id ? (n.module_ref || '') + (n.module_ref ? ' ｜ ' : '') + n.module_id : '无（红节点——设计态，模块未建/未锚）') + '</div>' +
+      (n.mounts && n.mounts.length ? '<div class="sec">策略挂载（STR，' + n.mounts.length + '）</div><div class="kv">' + n.mounts.join('、') + '</div>' : '') +
+      (refs ? '<div class="sec">依据锚（八轴引用）</div>' + refs : '') +
       '<div class="sec">设计备注（裁定/欠账原文）</div>' + cms;
   }
 
