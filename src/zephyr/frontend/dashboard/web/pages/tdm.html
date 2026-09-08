@@ -74,6 +74,11 @@
   #tdm-tree .tn.hit { border-color:#e6c34c; box-shadow:0 0 0 2px rgba(230,195,76,.25); }
   #tdm-tree .tn.dimmed { opacity:.25; }
   #tdm-tree .tn.sel { outline:2px solid #3d8bff; }
+  /* 验证态徽标（PB-03 P2-2）：噪音=灰化降透明 / 衰减=灰边——灰色系沿 .empty 色板，不发明新色 */
+  #tdm-tree .tn.vn { border-color:#525d70; opacity:.55; }
+  #tdm-tree .tn.vd { border-color:#8a94a6; }
+  #tdm-tree .tn .tn-v { position:absolute; top:-7px; right:6px; font-size:9.5px; line-height:1.4;
+    color:#8a94a6; border:1px solid #525d70; border-radius:99px; padding:0 6px; background:#10151d; z-index:1; }
   /* 流根标签=树的根部视觉锚点：24px > L1 卡 19px，全图最大字号，一眼锁定树根 */
   #tdm-tree .tg { position:absolute; background:#1a2436; border:1.5px solid #3d8bff; border-radius:10px;
     padding:12px 18px; font-size:24px; font-weight:700; color:var(--text); user-select:none; white-space:nowrap; z-index:2; }
@@ -90,6 +95,8 @@
   #tdm-drawer .bdg-paper { color:#7fc98a; border-color:#2e7d32; background:#0e2612; }
   #tdm-drawer .bdg-prod { color:#7db4e8; border-color:#1e5a8f; background:#0f2740; }
   #tdm-drawer .bdg-design { color:#d29a5b; border:1px dashed #8a4a12; background:#2a1c0e; }
+  /* 验证态中性徽标（PB-04）：未验证/噪音/待观察/衰减=灰系（不发明新色，沿 .empty 色板） */
+  #tdm-drawer .bdg-gray { color:#8a94a6; border-color:#263042; background:#10151d; }
   #tdm-drawer .dr-par { font-size:11px; color:#7d8aa0; margin-top:7px; line-height:1.5; }
   /* 分区标题：蓝色小标题+右延发丝线，替代旧纯文字堆叠 */
   #tdm-drawer .sec { display:flex; align-items:center; gap:8px; font-size:11px; font-weight:700;

@@ -8,7 +8,7 @@
  *           上下游节点导航行（点击跳选）/长文行高≥1.6；纯 HTML+CSS，数据契约与画布交互不变。 */
 (function () {
   'use strict';
-  var TDM = { data: null, sel: null, stamp: null, busy: false, dragDist: 0 };
+  var TDM = { data: null, sel: null, stamp: null, busy: false, dragDist: 0, verdicts: {} };
   var API_BASE = 'http://127.0.0.1:8890';   /* 与 services/api.js 同源——app:// 模式下相对 fetch 会打到 app://api/tdm 必断 */
   /* 画布视图状态（交互规范=visualization_view_template.md §6.6：滚轮缩放/拖动平移/双击重置/Ctrl+Shift+D 切模式） */
   var view = { z: 1, x: 0, y: 0, dragMode: true };
@@ -89,6 +89,10 @@
       if (cnt) cnt.textContent = d.nodes.length;
       if (changed) { drawer(); }   /* 真源变了：重开抽屉刷新内容 */
       else if (TDM.sel) { drawer(); }
+      /* 全节点验证态（PB-03）：画布噪音/衰减徽章数据源，失败降级无徽章不阻断地图 */
+      fetch(API_BASE + '/api/tdm/verdicts').then(function (r) { return r.json(); }).then(function (vd) {
+        if (vd && vd.ok) { TDM.verdicts = vd.verdicts || {}; render(); if (TDM.sel) drawer(); }
+      }).catch(function () { });
     }).catch(function () {
       TDM.busy = false;
       var meta = document.getElementById('tdm-meta');
@@ -129,10 +133,18 @@
 
     function card(n, cx, cy, depth) {
       var el = document.createElement('div');
-      el.className = 'tn tn-d' + depth + ' ' + cls(n) + (n.id === TDM.sel ? ' sel' : '');
+      var vd = TDM.verdicts && TDM.verdicts[n.id];
+      var vtag = '';
+      if (vd && (vd.verdict === 'noise' || vd.verdict === 'decaying')) {
+        el.className = 'tn tn-d' + depth + ' ' + cls(n) + ' v' + (vd.verdict === 'noise' ? 'n' : 'd') + (n.id === TDM.sel ? ' sel' : '');
+        vtag = '<span class="tn-v">' + (vd.verdict === 'noise' ? '噪音' : '衰减') + '</span>';
+      } else {
+        el.className = 'tn tn-d' + depth + ' ' + cls(n) + (n.id === TDM.sel ? ' sel' : '');
+      }
       el.style.left = cx + 'px'; el.style.top = cy + 'px'; el.style.width = colW + 'px';
       /* 小字=「问」全文（不 slice 截断），CSS line-clamp 2：一排放不下自动提行成两行；标题保留 📄 前缀 */
-      el.innerHTML = '<div class="tn-n">' + (n.autonomy === 'paper' ? '📄 ' : '') + (n.name || n.id) + '</div>' +
+      el.innerHTML = vtag +
+        '<div class="tn-n">' + (n.autonomy === 'paper' ? '📄 ' : '') + (n.name || n.id) + '</div>' +
         '<div class="tn-g">' + (n.q || '（问待补）') + '</div>';
       el.title = n.id;
       el.onclick = function () { if (TDM.dragDist > 3) return; TDM.sel = n.id; render(); drawer(); };   /* 拖动平移后松手不算点击 */
@@ -306,6 +318,26 @@
     }).join('');
     var cms = (n.comments || []).map(function (c) { return '<div class="cm">' + esc(c) + '</div>'; }).join('') ||
       '<div class="empty">（无）</div>';
+    /* 验证档案助手（PB-04）：徽章色沿既有语义（valid=绿正反馈，其余灰中性），不发明新色 */
+    var VAL_ZH = { valid: '有效', noise: '噪音', pending: '待观察', untested: '未验证', decaying: '衰减中' };
+    var VAL_SIG_ZH = { insufficient_samples: '触发<30 次不下结论', oos_decay_suspect: '样本外衰减≥50% 判存疑' };
+    function valBadge(v) {
+      return '<span class="bdg ' + (v === 'valid' ? 'bdg-paper' : 'bdg-gray') + '">' + esc(VAL_ZH[v] || v || '未验证') + '</span>';
+    }
+    function valHtml(vd) {
+      if (!vd || vd.ok === false) return '<div class="empty">' + esc((vd && vd.reason) || '查询失败') + '</div>';
+      var recs = vd.records || [];
+      if (!recs.length)
+        return valBadge('untested') + '<div class="empty" style="margin-top:5px">尚无验证记录——未进验证批次（排序=离钱近先验：执行→风控→总闸→选股→做T→归因）</div>';
+      return valBadge(vd.verdict) + '<div style="margin-top:6px">' + recs.map(function (r) {
+        return '<div class="cm"><b style="color:#c6cdd8">' + esc(r.window_start) + ' ~ ' + esc(r.window_end) + '</b> · '
+          + valBadge(r.verdict) + ' · 触发 ' + esc(r.triggers) + ' 次'
+          + (r.hit_ratio == null ? '' : ' · 命中 ' + Math.round(r.hit_ratio * 100) + '%')
+          + (r.significance && r.significance !== 'ok' ? ' · ⚠ ' + esc(VAL_SIG_ZH[r.significance] || r.significance) : '')
+          + (r.notes ? '<br>' + esc(r.notes) : '')
+          + '<br><span style="color:#525d70;font-size:10.5px">' + esc(r.validation_method) + ' · map@' + esc(r.snapshot_commit || '—') + ' · ' + esc(r.verdict_at) + '</span></div>';
+      }).join('') + '</div>';
+    }
     var scroll = box.scrollTop;   /* 30s 轮询重绘保持阅读位置 */
     box.style.display = 'block';
     box.innerHTML =
@@ -323,7 +355,9 @@
       (ups.length ? ups.map(function (u) { return nlink(u.x, u.t); }).join('') : '<div class="empty">—</div>') +
       '<div class="sec">下游（它喂给谁）<span class="cnt">' + downs.length + '</span></div>' +
       (downs.length ? downs.map(function (u) { return nlink(u.x, u.t); }).join('') : '<div class="empty">—</div>') +
-      '<div class="sec">设计备注（裁定/欠账原文）</div>' + cms;
+      '<div class="sec">设计备注（裁定/欠账原文）</div>' + cms +
+      '<div class="sec">验证档案（回测台账）<span class="cnt" id="tdm-val-cnt"></span></div>' +
+      '<div id="tdm-val"><div class="empty">查询中…</div></div>';
     box.scrollTop = scroll;
     /* 上/下游导航行点击跳选——drawer 内闭环 */
     box.querySelectorAll('[data-jump]').forEach(function (el) {
@@ -333,6 +367,24 @@
         drawer();
       });
     });
+    /* 验证档案：异步查台账（c1_backtest.node_verdict，只读端点）——填充后保持阅读位置；
+     * 已切节点/抽屉已重绘（valBox 不在 DOM）时丢弃过期响应 */
+    var valNode = n.id;
+    var valBox = box.querySelector('#tdm-val');
+    fetch(API_BASE + '/api/tdm/validation?node_id=' + encodeURIComponent(valNode))
+      .then(function (r) { return r.json(); })
+      .then(function (vd) {
+        if (TDM.sel !== valNode || !valBox || !valBox.isConnected) return;
+        var vs = box.scrollTop;
+        valBox.innerHTML = valHtml(vd);
+        var vc = box.querySelector('#tdm-val-cnt');
+        if (vc) vc.textContent = vd.records && vd.records.length ? String(vd.records.length) : '';
+        box.scrollTop = vs;
+      })
+      .catch(function () {
+        if (TDM.sel !== valNode || !valBox || !valBox.isConnected) return;
+        valBox.innerHTML = '<div class="empty">台账不可达（面板 API 未启动?）</div>';
+      });
   }
 
   window.tdmFilter = function (q) {

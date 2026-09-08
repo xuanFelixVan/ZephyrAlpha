@@ -428,6 +428,13 @@ features:
   file: features/tdm.js
   backend_ref: [module:MOD-L08-001, api:/api/tdm]
   status: active
+- id: F-TDM-VALIDATION
+  name: 节点验证档案区（验证态徽章+历次验证记录，读 node_verdict 台账，DDT 追加分区）
+  page: tdm
+  module_id: tdm-map
+  file: features/tdm.js
+  backend_ref: [module:MOD-L08-001, api:/api/tdm/validation]   # 真源=c1_backtest.node_verdict（MOD-TDMVAL-001 台账，P0-3 PB-04）
+  status: active
 - id: F-CRYPTOBT-AUTO-01
   name: 净值曲线（演示）
   page: cryptobt

@@ -1500,6 +1500,18 @@ def download_status() -> dict[str, Any]:
         if hits:
             t["fail_cnt"] = len(hits)
             t["fail_last"] = f"{hits[0]['level']} {hits[0]['ts'][5:16]} {hits[0]['task_id'][:24]}"
+    # F6（迁移台账 2026-09-09）：tick_data 今日新增按 data_source 分组（miniqmt/qmt_bridge
+    # 两段并存展示）——9/18 miniqmt 停写后合计数字会 30 倍缩水，分组渲染防误读为断更
+    for t in tables:
+        if t["table"] == "tick_data":
+            try:
+                by_src = _ch_exec(
+                    "SELECT data_source, count() FROM c1_market.tick_data "
+                    "WHERE trade_date = today() GROUP BY data_source"
+                )
+                t["today_rows_by_source"] = {str(s): int(c) for s, c in by_src}
+            except Exception:  # noqa: BLE001 — 分组明细降级（主数字不受影响）
+                pass
     return {"ok": True, "tables": tables, "counts": cnt, "vpn_on": vpn,
             "dl_now": dl_now,
             "generated_at": datetime.now().isoformat(" ", "seconds")}
@@ -1784,6 +1796,84 @@ def tdm_map() -> dict[str, Any]:
     _TDM_CACHE["payload"] = payload
     return payload
 
+
+@app.get("/api/tdm/validation")
+def tdm_validation(node_id: str = "") -> dict[str, Any]:
+    """节点验证台账（只读，零写副作用）——真源=c1_backtest.node_verdict（PB-04，P0-3）。
+
+    返回该节点最近 20 条验证记录 + 当前 verdict（verdict_at 最新一条）；
+    空表/无记录 = 200 + ok:true + verdict=untested（未验证态，前端灰徽章）；
+    CH 不可达 = 200 + ok:false + reason（前端显示"台账不可达"，不冒充未验证）。
+    消费者 = web/features/tdm.js drawer()「验证档案」区。
+    """
+    nid = (node_id or "").strip()
+    if not nid:
+        return {"ok": False, "reason": "node_id required", "node_id": "", "verdict": "untested", "records": []}
+    sql = (
+        "SELECT run_id, snapshot_commit, window_start, window_end, validation_method,"
+        " triggers, hit_ratio, significance, verdict, verdict_at, notes"
+        " FROM c1_backtest.node_verdict WHERE node_id = %(nid)s"
+        " ORDER BY verdict_at DESC, window_end DESC LIMIT 20"
+    )
+    try:
+        rows = _ch_exec(sql, {"nid": nid})
+    except Exception as exc:   # 台账不可达不阻断抽屉——降级披露，不冒充"未验证"
+        logger.warning("tdm validation query failed for %s: %s", nid, exc)
+        return {"ok": False, "reason": f"台账不可达: {exc}", "node_id": nid, "verdict": "untested", "records": []}
+
+    def _fmt_d(d: Any) -> str:
+        return d.strftime("%Y-%m-%d") if d else ""
+
+    def _fmt_ts(d: Any) -> str:
+        return d.strftime("%Y-%m-%d %H:%M") if d else ""
+
+    records = [
+        {
+            "run_id": r[0],
+            "snapshot_commit": r[1],
+            "window_start": _fmt_d(r[2]),
+            "window_end": _fmt_d(r[3]),
+            "validation_method": r[4],
+            "triggers": r[5],
+            "hit_ratio": r[6],
+            "significance": r[7],
+            "verdict": r[8],
+            "verdict_at": _fmt_ts(r[9]),
+            "notes": r[10],
+        }
+        for r in rows
+    ]
+    return {
+        "ok": True,
+        "node_id": nid,
+        "verdict": records[0]["verdict"] if records else "untested",
+        "records": records,
+        "record_count": len(records),
+    }
+
+
+
+@app.get("/api/tdm/verdicts")
+def tdm_verdicts() -> dict[str, Any]:
+    """全节点当前验证态地图（只读）——画布噪音/衰减徽章数据源（PB-03，P2-2）。
+
+    每节点取 verdict_at 最新一行的 verdict；空表/无记录=ok:true+空 map（画布无徽章）。
+    消费者=web/features/tdm.js render()（节点卡片灰色系噪音/衰减标记）。
+    """
+    sql = (
+        "SELECT node_id, verdict, toString(verdict_at)"
+        " FROM c1_backtest.node_verdict ORDER BY verdict_at DESC, window_end DESC"
+    )
+    try:
+        rows = _ch_exec(sql)
+    except Exception as exc:   # 台账不可达→空 map，画布降级无徽章（不阻断地图渲染）
+        logger.warning("tdm verdicts query failed: %s", exc)
+        return {"ok": True, "verdicts": {}, "degraded": True}
+    verdicts: dict[str, dict[str, str]] = {}
+    for node_id, verdict, verdict_at in rows:
+        if node_id and node_id not in verdicts:
+            verdicts[node_id] = {"verdict": verdict, "verdict_at": verdict_at}
+    return {"ok": True, "verdicts": verdicts, "count": len(verdicts)}
 
 
 # ═══════════════ 产业地图 chainmap（真源 ig_* 七表，depgraph PG 只读；Owner 2026-09-08 三层缩放方案） ═══════════════

@@ -206,3 +206,7 @@ def test_tdm_structure(page):
     src = (WEB_DIR / "features" / "tdm.js").read_text(encoding="utf-8")
     assert "function drawer()" in src, "tdm.js 缺 drawer() 函数"
     assert "/api/tdm" in src, "tdm.js 缺 /api/tdm 真源 fetch"
+    # 验证档案分区（PB-04 P0-3）：台账端点 fetch + 分区标题 + 未验证徽章路径（防分区被静默摘除）
+    assert "/api/tdm/validation" in src, "tdm.js 缺 /api/tdm/validation 台账 fetch"
+    assert "验证档案" in src, "tdm.js 缺「验证档案」分区"
+    assert "未验证" in src, "tdm.js 缺「未验证」空态徽章"
