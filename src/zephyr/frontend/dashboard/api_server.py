@@ -1791,6 +1791,8 @@ def tdm_map() -> dict[str, Any]:
 _CM_GALAXY_CACHE: dict[str, Any] = {"data": None, "ts": 0.0}          # L1 星系（TTL 600s，数据扩建期日级刷新足够）
 _CM_CLUSTER_CACHE: dict[str, dict[str, Any]] = {}                     # L2 簇详情（随 galaxy 失联失效）
 _CM_NAME_CACHE: dict[str, Any] = {"map": None, "ts": 0.0}             # symbol→公司名映射（ig_company_edge 名称列，覆盖不全如实用）
+_CM_NAME_OVERRIDE_PATH = _REPO / "config" / "chainmap_cluster_names.yaml"   # L1 族名 override（Commit C 规则版，mtime 缓存改 YAML 即生效）
+_CM_NAME_OVERRIDE: dict[str, Any] = {"mtime": None, "map": {}}
 
 # tier → 列位分桶（列序=产业链流向 上游→中游→下游）
 _CM_TIER_COL: dict[str, str] = {}
@@ -1801,6 +1803,29 @@ for _t in ("中游", "设备", "零部件", "制造", "加工"):
 for _t in ("下游", "应用", "终端", "运营", "品牌"):
     _CM_TIER_COL[_t] = "下游"
 _CM_COL_ORDER = ["上游", "中游", "下游", "其他", "通用"]
+
+
+def _cm_name_override() -> dict[str, str]:
+    """L1 族名 override（config/chainmap_cluster_names.yaml，mtime 缓存；未列出=自动族名）。"""
+    try:
+        mtime = _CM_NAME_OVERRIDE_PATH.stat().st_mtime
+    except OSError:
+        mtime = None
+    if mtime != _CM_NAME_OVERRIDE["mtime"]:
+        m: dict[str, str] = {}
+        if mtime is not None:
+            try:
+                import yaml
+
+                raw = yaml.safe_load(_CM_NAME_OVERRIDE_PATH.read_text(encoding="utf-8")) or {}
+                if isinstance(raw, dict):
+                    m = {str(k): str(v).strip() for k, v in raw.items()
+                         if str(v).strip() and not str(k).startswith("#")}
+            except Exception as exc:
+                logger.warning("chainmap name override 解析失败（沿用自动族名）: %s", exc)
+        _CM_NAME_OVERRIDE["mtime"] = mtime
+        _CM_NAME_OVERRIDE["map"] = m
+    return _CM_NAME_OVERRIDE["map"]
 
 
 def _cm_col(tier: str | None) -> str:
@@ -1937,9 +1962,10 @@ def _cm_build_galaxy() -> dict[str, Any]:
     cid_of = {st["root"]: f"C{i+1:02d}" for i, st in enumerate(cluster_stats)}
     used_names: dict[str, int] = {}
     clusters_out, links_out, chains_out = [], [], []
+    overrides = _cm_name_override()
     for st in cluster_stats:
         cid = cid_of[st["root"]]
-        nm = st["name"]
+        nm = overrides.get(cid) or st["name"]   # Commit C 规则版：override 优先，未列出沿用自动族名
         used_names[nm] = used_names.get(nm, 0) + 1
         if used_names[nm] > 1:
             nm = f"{nm}{used_names[nm]}"
@@ -1963,7 +1989,13 @@ def _cm_build_galaxy() -> dict[str, Any]:
 def _cm_galaxy() -> dict[str, Any]:
     g = _CM_GALAXY_CACHE["data"]
     if g and (time.time() - _CM_GALAXY_CACHE["ts"]) < 600:
-        return g
+        try:   # Commit C：族名 override 改 YAML 即生效（mtime 变化→绕过 TTL 强制重建）
+            if _CM_NAME_OVERRIDE_PATH.stat().st_mtime != _CM_NAME_OVERRIDE["mtime"]:
+                g = None
+        except OSError:
+            pass
+        if g:
+            return g
     g = _cm_build_galaxy()
     _CM_GALAXY_CACHE["data"] = g
     _CM_GALAXY_CACHE["ts"] = time.time()
