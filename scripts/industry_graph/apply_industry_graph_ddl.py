@@ -263,6 +263,12 @@ DDL_STATEMENTS = [
     # --- 股权表成本两列（Owner 2026-09-09 裁定: 取得成本+取得日,股权避坑核心） ---
     "ALTER TABLE ig_equity_edge ADD COLUMN IF NOT EXISTS acquisition_cost NUMERIC",
     "ALTER TABLE ig_equity_edge ADD COLUMN IF NOT EXISTS acquisition_date DATE",
+    # --- 股权表 UBO 五列（2026-09-09 全网调研: 人行《受益所有人信息管理办法》+瑞士LETA+EU 5AMLD 国际对标） ---
+    "ALTER TABLE ig_equity_edge ADD COLUMN IF NOT EXISTS voting_pct NUMERIC",
+    "ALTER TABLE ig_equity_edge ADD COLUMN IF NOT EXISTS control_method TEXT",
+    "ALTER TABLE ig_equity_edge ADD COLUMN IF NOT EXISTS holder_name TEXT",
+    "ALTER TABLE ig_equity_edge ADD COLUMN IF NOT EXISTS holder_country TEXT",
+    "ALTER TABLE ig_equity_edge ADD COLUMN IF NOT EXISTS verification TEXT",
     # --- ig_company_metric PIT 化（Owner 2026-09-09 裁定: 指标层保留不融不删,加 PIT 防回测切片前视） ---
     "ALTER TABLE ig_company_metric ADD COLUMN IF NOT EXISTS as_of DATE",
     "ALTER TABLE ig_company_metric ADD COLUMN IF NOT EXISTS valid_from DATE",
