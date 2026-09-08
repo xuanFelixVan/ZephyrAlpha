@@ -1133,6 +1133,7 @@ contracts:
       - {name: timestamp, type: datetime, required: true, description: "回测完成时间戳(UTC)"}
       - {name: overfitting_flag, type: bool, required: false, default: false, description: "过拟合标记(true=检测到过拟合)"}
       - {name: benchmark_symbol, type: "Optional[str]", required: false, description: "基准标的代码"}
+      - {name: map_snapshot, type: str, required: false, default: "", description: "地图快照 commit 号(git rev-parse --short HEAD, PB-06 轻量快照绑定——run 结果自动带一行, 不做门禁不做必填, 取不到为空串)"}
       - {name: idempotency_key, type: str, required: true, description: "幂等键(UUID),防止重复处理"}
       - {name: trace_context, type: "Optional[TraceContext]", required: false, description: "全链路追踪上下文"}
       - {name: schema_version, type: str, required: false, default: "1.0", description: "契约版本"}

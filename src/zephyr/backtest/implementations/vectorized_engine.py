@@ -75,6 +75,7 @@ from zephyr.backtest.core.decision_gate import DecisionGate, DecisionGateConfig,
 from zephyr.backtest.core.engine_base import (
     BacktestEngineBase,
     BacktestResult,
+    current_map_snapshot,
 )
 from zephyr.backtest.core.matching_engine import MatchingConfig, MatchingEngine, StkLimitProvider
 from zephyr.backtest.core.metrics import DEFAULT_RISK_FREE_RATE, calculate_full_metrics
@@ -249,6 +250,7 @@ class DefaultBacktestEngine(BacktestEngineBase):
             timestamp=datetime.now(timezone.utc),
             idempotency_key=result_id,
             benchmark_symbol=self._config.benchmark_symbol,
+            map_snapshot=current_map_snapshot(),
             overfitting_flag=metrics["is_overfitting"],
         )
 

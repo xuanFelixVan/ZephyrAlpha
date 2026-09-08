@@ -9025,6 +9025,83 @@ datasets:
   evidence: "2026-09-04 立项实证：kline_daily 2018 及以前仅 237 只样本覆盖（幸存者偏差禁用于等权口径），2019-01-02 起全量 3771+；回填 1861 交易日 2019-01-03~2026-09-03，独立 SQL 直算近 3 日对拍逐位一致；与官方指数真源 kline_index 分表（责任唯一）"
   code_symbol: "src/zephyr/data/implementations/index_eqw_compute.py::IndexEqwComputeProvider"
   code_fingerprint: null
+- dataset_id: DS-222
+  entity_name: c1_backtest.node_verdict
+  entity_type: dataset
+  scope: production
+  contract_ref: null
+  physical_type: clickhouse_table
+  produced_by_job: null
+  consumed_by_jobs: []
+  domain_id: D_BACKTEST
+  pit_policy: strict
+  format_summary: 节点验证台账（交易决策地图 TDM 节点回测成绩单：run_id/地图快照 commit/验证窗口/节点/方法/触发次数/命中占比/显著性土规/结论三态+decaying）；DDL 真源 schemas/categories/backtest_node_verdict.py；写入=zephyr.trading.validation.runner（P1-2），消费=/api/tdm/validation 只读+衰减巡检；2026-09-09 建表 0 行
+  valid_since: "2026-09-09"
+  module_id: MOD-TDMVAL-001
+  design_maturity: production
+  name: c1_backtest.node_verdict
+  name_zh: 节点验证台账
+  status: active
+  version: 1.0.0
+  created_at: "2026-09-09"
+  updated_at: "2026-09-09"
+  owner: MOD-TDMVAL-001
+  produced_by_source: SRC-INTERNAL-001
+  survivorship_free: unknown
+  pit_available: null
+  earnings_lag_days: null
+  llm_training_cutoff: N/A
+  lookahead_test_method: N/A
+  label_delay_days: null
+  drift_detector: none
+  entry_role: reference
+  applies_to:
+  - market
+  tags:
+  - 数据
+  - 质量
+  - 绩效
+  algorithm_status: not_applicable
+  evidence: "节点级可回测治理 P0-1（docs/_working/2026-09-09-node-backtest-governance.md §8.1）：验证状态只进台账不进地图 YAML（设计真源与运行产物分层）；holdout 窗口排除纪律随 validation_method_registry 约束；DDL 真源=schemas/categories/backtest_node_verdict.py（verify_schema_truth 校验链）"
+  code_symbol: null
+  code_fingerprint: null
+
+- dataset_id: DS-223
+  entity_name: c1_market.stock_profile_ths
+  entity_type: dataset
+  scope: production
+  contract_ref: null
+  physical_type: schemas/categories/meta_stock_profile_ths.py
+  produced_by_job: null
+  consumed_by_jobs: []
+  domain_id: D_MARKET
+  pit_policy: strict
+  format_summary: THS 个股元数据主数据（THS 一/二/三级行业分类 257 值+公司简介全文，全市场沪深 A 股快照）；补齐细分行业/公司简介两个主数据缺口，证监会行业不入库（1669 只"不详"质量不足）；图谱公司节点标签域真源（ths_industry←l2, sub_industry←l3, profile→ig_chunk）
+  valid_since: "2026-09-09"
+  module_id: MOD-L04-001
+  design_maturity: production
+  name: meta.stock_profile_ths
+  name_zh: THS 个股元数据主数据
+  status: production
+  version: 1.0.0
+  created_at: "2026-09-09"
+  updated_at: "2026-09-09"
+  owner: MOD-GOVERNANCE
+  produced_by_source: SRC-INTERNAL-001
+  survivorship_free: true
+  pit_available: true
+  earnings_lag_days: null
+  llm_training_cutoff: N/A
+  lookahead_test_method: N/A
+  label_delay_days: null
+  drift_detector: none
+  entry_role: "reference"
+  applies_to: ["stock", "market"]
+  tags: ["数据"]
+  algorithm_status: "not_applicable"
+  evidence: "2026-09-09 首次导入实证：docs/_working/同花顺资料/个股1 (1)(2).xlsx（GBK 编码 \\r 换行 TSV 伪装 .xlsx，BadZipFile 实证）合计 5217 只沪深 A 股零重叠，清洗后 dup 0/l2 空 0/l3 空 0/简介空 0；c1_market.stock_profile_ths 5217 行 CH_COMMITTED（http），抽验 000001.SZ=银行/股份制银行、600519.SH=白酒/白酒、688825.SH=半导体/数字芯片设计正确；【】串与独立列 823 处差异全部为申万式 Ⅱ/Ⅲ 后缀、零真实口径差异（故 l2/l3 取独立列裸名）"
+  code_symbol: "scripts/ch/import_ths_profile.py::do_import"
+  code_fingerprint: null
 jobs:
 - job_id: JOB-001
   job_name: ingest.minqmt_kline

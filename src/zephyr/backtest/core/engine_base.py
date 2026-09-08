@@ -97,6 +97,7 @@ class BacktestResult:
     trades_count: int
     win_rate: float
     benchmark_symbol: str | None = None
+    map_snapshot: str = ""
     overfitting_flag: bool = False
     schema_version: str = "1.0"
     trace_context: TraceContext | None = None
@@ -115,6 +116,30 @@ class FactorDiscovery:
     status: str = "candidate"  # candidate | validated | promoted | rejected
 
 
+_map_snapshot_cache: str | None = None
+
+
+def current_map_snapshot() -> str:
+    """当前地图快照 commit 号（git rev-parse --short HEAD，进程内缓存一次）。
+
+    PB-06 轻量快照绑定（真源 docs/_working/2026-09-09-node-backtest-governance.md §7.1）：
+    回测 run 结果自动带一行 commit 号，不做门禁不做必填；git 不可用/超时降级空串。
+    进程内缓存：同一进程内 HEAD 不变（commit 是会话级动作），零循环 git 开销。
+    """
+    global _map_snapshot_cache
+    if _map_snapshot_cache is None:
+        try:
+            import subprocess
+            from zephyr.shared.io.paths import REPO_ROOT
+            _map_snapshot_cache = subprocess.run(
+                ["git", "rev-parse", "--short", "HEAD"],
+                cwd=str(REPO_ROOT), capture_output=True, text=True, timeout=5,
+            ).stdout.strip() or ""
+        except Exception:   # noqa: BLE001 — 快照绑定是尽力而为，git 环境异常不阻断回测
+            _map_snapshot_cache = ""
+    return _map_snapshot_cache
+
+
 class BacktestEngineBase(abc.ABC):
     """
     回测引擎基类（OCP 扩展点）
@@ -130,4 +155,4 @@ class BacktestEngineBase(abc.ABC):
         ...
 
 
-__all__ = ["BacktestEngineBase", "BacktestResult", "FactorDiscovery"]
+__all__ = ["BacktestEngineBase", "BacktestResult", "FactorDiscovery", "current_map_snapshot"]
