@@ -7,6 +7,7 @@
 (function () {
   'use strict';
   var TDM = { data: null, sel: null, stamp: null, busy: false };
+  var API_BASE = 'http://127.0.0.1:8890';   /* 与 services/api.js 同源——app:// 模式下相对 fetch 会打到 app://api/tdm 必断 */
 
   function visible() {
     var el = document.getElementById('p-tdm');
@@ -30,9 +31,13 @@
   function load() {
     if (TDM.busy) return;
     TDM.busy = true;
-    fetch('/api/tdm').then(function (r) { return r.json(); }).then(function (d) {
+    fetch(API_BASE + '/api/tdm').then(function (r) { return r.json(); }).then(function (d) {
       TDM.busy = false;
-      if (!d.ok) return;
+      if (!d.ok) {
+        var meta0 = document.getElementById('tdm-meta');
+        if (meta0) meta0.textContent = '面板 API 未重启（无 /api/tdm 端点）——服务总闸「↻ 重启面板 API」后恢复';
+        return;
+      }
       var changed = TDM.stamp && TDM.stamp !== d.generated_at;
       TDM.stamp = d.generated_at;
       TDM.data = d;
