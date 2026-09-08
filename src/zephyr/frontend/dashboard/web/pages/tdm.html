@@ -79,8 +79,56 @@
     padding:12px 18px; font-size:24px; font-weight:700; color:var(--text); user-select:none; white-space:nowrap; z-index:2; }
   #tdm-tree .tg .cnt { color:#7d8aa0; font-weight:400; font-size:14px; margin-left:8px; }
   #tdm-wire path { fill:none; stroke:#2c3a52; stroke-width:1.4; }
-  #tdm-drawer h3 { margin:0 0 8px; font-size:15px; }
-  #tdm-drawer .sec { font-size:11px; font-weight:700; color:#3d8bff; margin:10px 0 3px; }
-  #tdm-drawer .kv { font-size:12.5px; line-height:1.65; color:#c6cdd8; }
-  #tdm-drawer .cm { font-size:11.5px; color:#8a94a6; line-height:1.55; border-left:2px solid #263042; padding-left:8px; margin:4px 0; }
+  /* ── 右侧详情抽屉 v2（b20260908-10 重设计：分区层次+chip 流，欧易终端密度，纯 HTML+CSS）──
+   * 分区：标题徽标 → 问 → 机制 → 治理键值网格 → 模块锚 → 策略挂载 → 依据锚八轴 chip → 上/下游导航行 → 设计备注 */
+  #tdm-drawer .dr-name { font-size:16px; font-weight:700; color:var(--text); line-height:1.35; }
+  #tdm-drawer .dr-id { font-size:11px; color:#7d8aa0; margin-top:3px; }
+  #tdm-drawer .dr-badges { display:flex; flex-wrap:wrap; gap:5px; margin:8px 0 0; }
+  #tdm-drawer .bdg { font-size:10.5px; line-height:1; padding:3px 8px; border-radius:99px;
+    border:1px solid #263042; color:#8a94a6; white-space:nowrap; }
+  /* 徽标三态=画布卡片同语义：绿 paper / 蓝实锚 / 橙虚红节点 */
+  #tdm-drawer .bdg-paper { color:#7fc98a; border-color:#2e7d32; background:#0e2612; }
+  #tdm-drawer .bdg-prod { color:#7db4e8; border-color:#1e5a8f; background:#0f2740; }
+  #tdm-drawer .bdg-design { color:#d29a5b; border:1px dashed #8a4a12; background:#2a1c0e; }
+  #tdm-drawer .dr-par { font-size:11px; color:#7d8aa0; margin-top:7px; line-height:1.5; }
+  /* 分区标题：蓝色小标题+右延发丝线，替代旧纯文字堆叠 */
+  #tdm-drawer .sec { display:flex; align-items:center; gap:8px; font-size:11px; font-weight:700;
+    letter-spacing:.4px; color:#3d8bff; margin:14px 0 6px; }
+  #tdm-drawer .sec::after { content:''; flex:1; height:1px; background:#1c2534; }
+  #tdm-drawer .sec .cnt { color:#7d8aa0; font-weight:400; }
+  /* 长文（问/机制）：行高≥1.6，问提亮一档 */
+  #tdm-drawer .txt { font-size:12.5px; line-height:1.7; color:#c6cdd8; word-break:break-word; }
+  #tdm-drawer .txt.q { color:#e2e8f2; }
+  /* 治理键值网格：禁长句拼接，空值 '—' 留位 */
+  #tdm-drawer .kgrid { display:grid; grid-template-columns:44px 1fr; gap:5px 10px; font-size:12px; line-height:1.6; }
+  #tdm-drawer .kgrid .k { color:#7d8aa0; }
+  #tdm-drawer .kgrid .v { color:#c6cdd8; word-break:break-word; }
+  #tdm-drawer .kgrid .v.na { color:#525d70; }
+  /* 引用 chip：编号(蓝)+中文名，流式排布，hover 亮边+title 全称 */
+  #tdm-drawer .chips { display:flex; flex-wrap:wrap; gap:5px; }
+  #tdm-drawer .chip { display:inline-flex; align-items:baseline; gap:5px; max-width:100%; font-size:11px;
+    line-height:1.5; background:#10151d; border:1px solid #263042; border-radius:6px; padding:2px 8px; }
+  #tdm-drawer .chip i { font-style:normal; color:#5b8fd6; flex:none; }
+  #tdm-drawer .chip b { font-weight:500; color:#c6cdd8; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+  #tdm-drawer .chip:hover { border-color:#3d8bff; }
+  /* 依据锚八轴分组：轴名+计数一行，chip 流另起一行 */
+  #tdm-drawer .axis { margin:7px 0; }
+  #tdm-drawer .axis-h { font-size:11px; color:#8a94a6; margin-bottom:4px; }
+  #tdm-drawer .axis-h b { color:#c6cdd8; font-weight:600; }
+  #tdm-drawer .axis-h .cnt { color:#525d70; }
+  /* 上/下游节点导航行：状态点+名称+边型+id，点击跳选 */
+  #tdm-drawer .nl { display:flex; align-items:center; gap:7px; padding:3px 6px; margin:2px -6px;
+    border-radius:6px; font-size:12px; cursor:pointer; }
+  #tdm-drawer .nl:hover { background:#131a26; }
+  #tdm-drawer .nl .dot { width:7px; height:7px; border-radius:2px; flex:none; }
+  #tdm-drawer .dot-prod { background:#1e5a8f; }
+  #tdm-drawer .dot-paper { background:#2e7d32; }
+  #tdm-drawer .dot-design { background:#8a4a12; }
+  #tdm-drawer .nl .nl-n { color:#c6cdd8; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+  #tdm-drawer .nl .nl-t { color:#525d70; font-size:10px; flex:none; }
+  #tdm-drawer .nl .nl-i { margin-left:auto; color:#525d70; font-size:10.5px; flex:none; }
+  /* 设计备注：卡片化引用块，行高 1.65 保长文（D109 级）可读 */
+  #tdm-drawer .cm { font-size:11.5px; color:#9aa5b5; line-height:1.65; border-left:2px solid #263042;
+    background:#10151d; border-radius:0 6px 6px 0; padding:5px 8px 5px 9px; margin:5px 0; word-break:break-word; }
+  #tdm-drawer .empty { font-size:12px; color:#525d70; line-height:1.6; }
 </style>

@@ -3,7 +3,9 @@
  * 布局：根流组(E建仓/P持仓/X离场/F组合/横切C) → 枝干节点(第二列) → 子节点(第三列)，
  *       DOM 卡片+SVG 贝塞尔连线；配色 production 蓝/design 橙虚/paper 绿（v1.8 语义）。
  * 激活检测：页面片段经 innerHTML 注入（script 不执行），本文件由 loader 显式加载；
- *           30s tick 时仅 p-tdm 可见才 fetch，页面隐藏零开销。 */
+ *           30s tick 时仅 p-tdm 可见才 fetch，页面隐藏零开销。
+ * 抽屉 v2（b20260908-10）：右侧详情抽屉重设计——标题徽标区/治理键值网格/依据锚八轴 chip 流/
+ *           上下游节点导航行（点击跳选）/长文行高≥1.6；纯 HTML+CSS，数据契约与画布交互不变。 */
 (function () {
   'use strict';
   var TDM = { data: null, sel: null, stamp: null, busy: false, dragDist: 0 };
@@ -234,53 +236,101 @@
   var REF_ZH = { factor: '因子', data: '数据源', cost_model: '成本模型', risk_limit: '风险限额', threshold: '阈值',
     event: '事件', algo: '算法', universe: '股票域', strategy: '策略', indicator: '技术指标' };
 
+  /* 抽屉 v2（b20260908-10 重设计）：分区层次=标题徽标 → 问 → 机制 → 治理键值网格 → 模块锚 →
+   * 策略挂载 → 依据锚八轴 chip 流 → 上/下游节点导航行（点击跳选）→ 设计备注；纯 HTML+CSS，数据契约不变 */
   function drawer() {
     var box = document.getElementById('tdm-drawer');
     if (!box) return;
     var n = TDM.data && TDM.sel && TDM.data.nodes.find(function (x) { return x.id === TDM.sel; });
     if (!n) { box.style.display = 'none'; return; }
+    function esc(s) {   /* 真源 YAML 文本进 innerHTML——防标签断裂/注入 */
+      return String(s == null ? '' : s).replace(/[&<>"']/g, function (c) {
+        return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c];
+      });
+    }
     var RN = TDM.data.ref_names || {};   /* 引用 id → 中文名（注册表翻译真源，API 注入） */
     function zh(id) { return RN[id] ? id + ' ' + RN[id] : id; }
     var byIdMap = {};
     TDM.data.nodes.forEach(function (x) { byIdMap[x.id] = x; });
     var par = n.parent && byIdMap[n.parent];
-    /* 上下游连线（谁喂它 / 它喂谁）——全量 171 边按当前节点过滤，溯源闭环 */
+    /* 上下游连线（谁喂它 / 它喂谁）——全量边按当前节点过滤，带边型 glyph 溯源闭环 */
     var ups = [], downs = [];
     (TDM.data.edges || []).forEach(function (e) {
-      if (e.from_node === n.id && byIdMap[e.to_node]) downs.push(byIdMap[e.to_node]);
-      if (e.to_node === n.id && byIdMap[e.from_node]) ups.push(byIdMap[e.from_node]);
+      if (e.from_node === n.id && byIdMap[e.to_node]) downs.push({ x: byIdMap[e.to_node], t: e.edge_type });
+      if (e.to_node === n.id && byIdMap[e.from_node]) ups.push({ x: byIdMap[e.from_node], t: e.edge_type });
     });
-    function lst(arr) {
-      return arr.map(function (x) { return x.name + '（' + x.id + '）'; }).join('、') || '—';
+    /* 状态徽标=画布卡片同语义：📄paper 绿 / 实锚蓝 / 🔴红节点橙虚 */
+    var stBdg = n.autonomy === 'paper'
+      ? '<span class="bdg bdg-paper">📄 paper · 实盘执行</span>'
+      : (n.module_ref
+        ? '<span class="bdg bdg-prod">实锚 · 已接模块</span>'
+        : '<span class="bdg bdg-design">🔴 红节点 · 设计态</span>');
+    var meta = (n.id.indexOf('TDM-C') === 0 ? '币圈镜像' : (FLOW_ZH[n.flow] || n.flow || '—')) +
+      ' ｜ 层 ' + (n.layer || '—') + ' ｜ ' + (n.point || '—');
+    /* 引用 chip：编号+中文名；hover title 全称（名称截断时兜底可读） */
+    function chip(id) {
+      var nm = RN[id] || '';
+      return '<span class="chip" title="' + esc(zh(id)) + '"><i>' + esc(id) + '</i>' +
+        (nm ? '<b>' + esc(nm) + '</b>' : '') + '</span>';
     }
-    var refs = Object.keys(n.refs || {}).map(function (k) {
-      var label = REF_ZH[k.replace('_refs', '')] || k.replace('_refs', '');
-      return '<div class="kv"><b>' + label + '</b>（' + n.refs[k].length + '）：' + n.refs[k].map(zh).join('、') + '</div>';
-    }).join('');
+    /* 节点导航行：状态点+名称+边型+id，点击跳选（抽屉内溯源，不动画布交互） */
+    var GLYPH = { sequence: '→', feed: '⇢', broadcast: '⇉', feedback: '↩' };
+    function nlink(x, t) {
+      var dot = x.autonomy === 'paper' ? 'paper' : (x.module_ref ? 'prod' : 'design');
+      return '<div class="nl" data-jump="' + esc(x.id) + '" title="' + esc(x.id) + (t ? ' · ' + esc(t) : '') + '">' +
+        '<span class="dot dot-' + dot + '"></span><span class="nl-n">' + esc(x.name || x.id) + '</span>' +
+        (t ? '<span class="nl-t">' + (GLYPH[t] || '·') + ' ' + esc(t) + '</span>' : '') +
+        '<span class="nl-i">' + esc(x.id) + '</span></div>';
+    }
+    function kv(k, v) {
+      return '<span class="k">' + k + '</span><span class="v' + (v ? '' : ' na') + '">' + (v ? esc(v) : '—') + '</span>';
+    }
+    /* 治理四键网格：空值显式 '—' 留位不塌行（验收基准 TDM-E-L1-S1 四键全空） */
+    var gov = '<div class="kgrid">' + kv('激活', n.activation) + kv('档位', n.autonomy) +
+      kv('失效', n.invalidation) + kv('兜底', n.fallback) + '</div>';
+    var mod = n.module_id
+      ? '<div class="chips">' + chip(n.module_id) + '</div>' +
+        (n.module_ref ? '<div class="empty" style="margin-top:4px">module_ref = ' + esc(n.module_ref) + '</div>' : '')
+      : '<div class="empty">无（红节点——设计态，模块未建/未锚）</div>';
     var mounts = (n.mounts && n.mounts.length)
-      ? n.mounts.map(zh).join('、')
-      : '（无挂载——本节点为判定/编排节点，不直接驱动策略）';
-    var cms = (n.comments || []).map(function (c) { return '<div class="cm">' + c + '</div>'; }).join('')
-      || '<div class="cm">（无）</div>';
+      ? '<div class="chips">' + n.mounts.map(chip).join('') + '</div>'
+      : '<div class="empty">（无挂载——本节点为判定/编排节点，不直接驱动策略）</div>';
+    /* 依据锚：八轴分组——每轴 label+计数 一行，chip 流式排布（禁顿号长串） */
+    var AXES = ['factor_refs', 'data_refs', 'cost_model_refs', 'risk_limit_refs', 'threshold_refs', 'event_refs', 'algo_refs'];
+    var refsHtml = AXES.filter(function (k) { return n.refs && n.refs[k] && n.refs[k].length; }).map(function (k) {
+      var label = REF_ZH[k.replace('_refs', '')] || k.replace('_refs', '');
+      return '<div class="axis"><div class="axis-h"><b>' + esc(label) + '</b> <span class="cnt">' + n.refs[k].length + '</span></div>' +
+        '<div class="chips">' + n.refs[k].map(chip).join('') + '</div></div>';
+    }).join('');
+    var cms = (n.comments || []).map(function (c) { return '<div class="cm">' + esc(c) + '</div>'; }).join('') ||
+      '<div class="empty">（无）</div>';
+    var scroll = box.scrollTop;   /* 30s 轮询重绘保持阅读位置 */
     box.style.display = 'block';
     box.innerHTML =
-      '<h3>' + (n.autonomy === 'paper' ? '📄 ' : '') + n.name +
-      ' <span class="dim" style="font-size:11px;font-weight:400">' + n.id + '</span></h3>' +
-      '<div class="sec">归属</div><div class="kv">流=' + (n.id.indexOf('TDM-C') === 0 ? '币圈镜像' : (FLOW_ZH[n.flow] || n.flow || '—')) +
-      ' ｜ 层=' + (n.layer || '—') + ' ｜ 时点=' + (n.point || '—') +
-      '<br>父节点=' + (par ? par.name + '（' + n.parent + '）' : (n.parent || '无（流根）')) + '</div>' +
-      '<div class="sec">问</div><div class="kv">' + (n.q || '—') + '</div>' +
-      '<div class="sec">机制（怎么算）</div><div class="kv">' + (n.note || '（待补）') + '</div>' +
-      '<div class="sec">治理</div><div class="kv">激活=' + (n.activation || '—') + ' ｜ 档位=' + (n.autonomy || '—') +
-      '<br>失效=' + (n.invalidation || '—') +
-      '<br>兜底=' + (n.fallback || '—') + '</div>' +
-      '<div class="sec">模块锚（MOD）</div><div class="kv">' +
-      (n.module_id ? zh(n.module_id) + (n.module_ref ? ' ｜ ' + n.module_ref : '') : '无（红节点——设计态，模块未建/未锚）') + '</div>' +
-      '<div class="sec">策略挂载（STR，用了什么策略）</div><div class="kv">' + mounts + '</div>' +
-      (refs ? '<div class="sec">依据锚（八轴引用，编号+中文名）</div>' + refs : '') +
-      '<div class="sec">上游（谁喂给它，' + ups.length + '）</div><div class="kv">' + lst(ups) + '</div>' +
-      '<div class="sec">下游（它喂给谁，' + downs.length + '）</div><div class="kv">' + lst(downs) + '</div>' +
+      '<div class="dr-name">' + (n.autonomy === 'paper' ? '📄 ' : '') + esc(n.name || n.id) + '</div>' +
+      '<div class="dr-id">' + esc(n.id) + ' · ' + esc(meta) + '</div>' +
+      '<div class="dr-badges">' + stBdg + '</div>' +
+      '<div class="dr-par">父节点：' + (par ? esc(par.name) + '（' + esc(n.parent) + '）' : (n.parent ? esc(n.parent) : '无（流根）')) + '</div>' +
+      '<div class="sec">问</div><div class="txt q">' + (n.q ? esc(n.q) : '—') + '</div>' +
+      '<div class="sec">机制（怎么算）</div><div class="txt">' + (n.note ? esc(n.note) : '（待补）') + '</div>' +
+      '<div class="sec">治理</div>' + gov +
+      '<div class="sec">模块锚（MOD）</div>' + mod +
+      '<div class="sec">策略挂载（STR）</div>' + mounts +
+      (refsHtml ? '<div class="sec">依据锚（八轴引用）</div>' + refsHtml : '') +
+      '<div class="sec">上游（谁喂给它）<span class="cnt">' + ups.length + '</span></div>' +
+      (ups.length ? ups.map(function (u) { return nlink(u.x, u.t); }).join('') : '<div class="empty">—</div>') +
+      '<div class="sec">下游（它喂给谁）<span class="cnt">' + downs.length + '</span></div>' +
+      (downs.length ? downs.map(function (u) { return nlink(u.x, u.t); }).join('') : '<div class="empty">—</div>') +
       '<div class="sec">设计备注（裁定/欠账原文）</div>' + cms;
+    box.scrollTop = scroll;
+    /* 上/下游导航行点击跳选——drawer 内闭环 */
+    box.querySelectorAll('[data-jump]').forEach(function (el) {
+      el.addEventListener('click', function () {
+        TDM.sel = el.getAttribute('data-jump');
+        render();
+        drawer();
+      });
+    });
   }
 
   window.tdmFilter = function (q) {
