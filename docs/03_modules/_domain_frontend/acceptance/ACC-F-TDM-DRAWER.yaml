@@ -1,0 +1,35 @@
+# --- 治理锚定 ---
+# doc_type: register | 功能验收单（冻结"什么样子算对"）
+# ttl: permanent
+# 修订权限：Owner 专有（AI 可提议不可自改已冻结条项）
+# --- 治理锚定结束 ---
+
+feature_id: F-TDM-DRAWER
+feature_name: 节点详情抽屉（问/机制/治理/依据锚/上下游导航）
+frozen_at: 2026-09-08
+frozen_by: ZephyrAlpha-Owner
+revision: 1
+revision_policy: "修订=Owner 批准+改原文+revision 链留痕；AI 不可自改已冻结条项"
+
+# check 取值：目检（截图人工/AI 视觉对） | 机断（DOM 断言，过渡期人工/控制台手动验，不免验）
+# 验收基准节点=TDM-E-L1-S1（大盘指数传感器，边界最全节点：红节点+四键全空+模块锚空+挂载空+依据锚单 chip+上下游导航+5 条设计备注）
+items:
+  - { id: 1, text: "点画布节点（如 TDM-E-L1-S1 大盘指数传感器）右侧抽屉弹出，再点空白/其他节点正常切换", check: 目检 }
+  - { id: 2, text: "标题徽标三态与画布卡片同语义同色号：TDM-E-L1-S1 无 module_ref → 橙虚「🔴 红节点 · 设计态」", check: 目检 }
+  - { id: 3, text: "「问」分区显示 decision_question（指数趋势/位置如何（数据面））；「机制」显示 algo_note_zh 大白话机制全文（MA20/MA60 排列规则）", check: 目检 }
+  - { id: 4, text: "治理四键网格（激活/档位/失效/兜底）空值显式「—」留位不塌行（S1 四键全空=验收基准）", check: 目检 }
+  - { id: 5, text: "模块锚空态「—」、策略挂载空态「—」显式留位", check: 目检 }
+  - { id: 6, text: "依据锚 chip 流显示「DS-150 日 K 线」（编号+中文名，hover title 全称）", check: 目检 }
+  - { id: 7, text: "上游 1 / 下游 2 导航行渲染（状态点+名称+边型 glyph+id），点击跳选联动抽屉切换到目标节点", check: 目检 }
+  - { id: 8, text: "设计备注 5 条可读（悬空前导注释 4 条+块内 D109 终裁 1 条；注释提取规则=块内归本节点、悬空前导归下一节点）", check: 目检 }
+  - { id: 9, text: "30s 轮询重绘保持阅读位置（scrollTop 保持，不冲掉阅读进度）", check: 目检 }
+
+execution:
+  trigger: "任何涉及本功能的 UI 改动 commit 前"
+  flow: "起面板 API（/api/tdm 就绪）→ 打开 tdm 页 → 点 TDM-E-L1-S1 逐条对 → 全绿才走 GitCommitGateway"
+  baseline_screenshot: "acceptance/screenshots/F-TDM-DRAWER-baseline.png"
+
+关联:
+  handbook: [FEH-PC-013]
+  frontend_map: F-TDM-DRAWER
+  code_ref: "src/zephyr/frontend/dashboard/web/features/tdm.js drawer() · pages/tdm.html style「右侧详情抽屉 v2」段"

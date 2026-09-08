@@ -5,7 +5,7 @@ title: 前端技术手册·项目约定（PC）
 owner: ZephyrAlpha-Owner
 language: zh
 status: active
-version: "1.6.0"
+version: "1.7.0"
 date: 2026-08-31
 topic: frontend_handbook_project_conventions
 scope: frontend
@@ -174,6 +174,30 @@ scope: frontend
 
 ---
 
+# FEH-PC-014｜绝对定位容器尺寸不能量 offsetWidth——用布局常量直接算
+- 触发词：连线消失 / SVG 不显示 / offsetWidth / 绝对定位 / 画布尺寸 / 视口塌了
+- 想做什么：绝对定位画布页（世界层+树+SVG 连线）初始化 SVG 视口尺寸
+- 内置能否：无内置，量 DOM 是第一直觉但在此布局必错
+- 坑：绝对定位容器收缩包裹（shrink-to-fit）+ 树内卡片全绝对定位不撑宽 → host.offsetWidth 恒≈padding（tdm 实测 8px）→ SVG 视口塌成 8px → 全部连线画到可视区外视觉上"连线全消失"（tdm b20260908-02 事故，171 条边一条不见但 DOM 全在，极易误判为数据/边生成 bug）
+- 正确做法：世界层/树/SVG 尺寸不用量 DOM——用布局常量直接算：contentW = 末列 X + 列宽、contentH = 末行 y + 余量，显式写 style.width/height；SVG 尺寸同源赋值（attr+style 双写）；容器尺寸变化走 ResizeObserver 整树重排不重量
+- 代码锚点：features/tdm.js render() 尾部注释块（contentW/contentH 显式计算）· pages/tdm.html #tdm-world/#tdm-wire
+- 关联：FEH-PC-012 自举三律 · ACC-F-TDM-MAP item 6（连线可见性回归点）
+- 来源：2026-09-08 tdm 连线消失排障实证（b20260908-02）
+
+---
+
+# FEH-PC-015｜ID 容器内状态色类必须带 ID 前缀——防基础规则特异度碾压
+- 触发词：状态色失效 / 颜色不生效 / 特异度 / CSS 选择器 / 样式被覆盖 / 卡片全一个色
+- 想做什么：给 ID 容器（#tdm-tree）内的状态变体（.production/.design/.paper）写差异化配色
+- 内置能否：无内置，CSS 特异度规则通用但在"ID 基础规则+状态类"组合必踩
+- 坑：ID 基础规则 `#tdm-tree .tn` 特异度 (1-1-0) 压过状态类 `.tn.production` (0-2-0)——状态色全被基础边框色覆盖（tdm b20260908-05 事故：三态色全失效，卡片视觉全同色，验收时才暴露）
+- 正确做法：状态色变体一律写带 ID 前缀的完整选择器：`#tdm-tree .tn.production`、`#tdm-tree .tn.design`、`#tdm-tree .tn.paper`（(1-2-0) > (1-1-0) 稳赢）；新画布页样式照此模式，禁裸状态类
+- 代码锚点：pages/tdm.html style 块（#tdm-tree .tn.production 等，注释有事故记录）
+- 关联：FEH-PC-013 抽屉徽标三态（同语义同色号）· ACC-F-TDM-MAP item 4（三态配色回归点）
+- 来源：2026-09-08 tdm 状态色失效排障实证（b20260908-05）
+
+---
+
 ## 修订记录
 
 | 日期 | 版本 | 改动 | 为什么改 |
@@ -185,3 +209,4 @@ scope: frontend
 | 2026-09-01 | 1.4.0 | +PC-008 组件拆分铁律（数据源边界+单一功能） | Owner 2026-09-01 裁定：数据源不同必拆；功能语义不同必拆 |
 | 2026-09-01 | 1.5.0 | +PC-009 版本戳排查法 / +PC-010 Electron 壳与素材纪律 / +PC-011 QMT 文件桥三律 | 当日三连实证：⚑12 缓存排障、桌面化落地、持仓口径修正 |
 | 2026-09-08 | 1.6.0 | +PC-013 详情抽屉统一模板（指向 detail_drawer_template.md） | tdm 抽屉 v2 实证沉淀，Owner 裁定模板化供全景图页复用 |
+| 2026-09-08 | 1.7.0 | +PC-014 绝对定位容器尺寸禁量 DOM / +PC-015 状态色类必须带 ID 前缀 | tdm 四件套补登记沉淀：b20260908-02 连线消失 + b20260908-05 状态色失效双事故成文 |

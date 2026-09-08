@@ -1,0 +1,33 @@
+# --- 治理锚定 ---
+# doc_type: register | 功能验收单（冻结"什么样子算对"）
+# ttl: permanent
+# 修订权限：Owner 专有（AI 可提议不可自改已冻结条项）
+# --- 治理锚定结束 ---
+
+feature_id: F-TDM-MAP
+feature_name: 交易决策全景画布（横向树实时映射）
+frozen_at: 2026-09-08
+frozen_by: ZephyrAlpha-Owner
+revision: 1
+revision_policy: "修订=Owner 批准+改原文+revision 链留痕；AI 不可自改已冻结条项"
+
+# check 取值：目检（截图人工/AI 视觉对） | 机断（DOM 断言，tests/frontend/test_dashboard_smoke.py::test_tdm_structure 已覆盖静态形态；过渡期人工/控制台手动验，不免验）
+items:
+  - { id: 1, text: "页头计数行显示「N 节点 / M 边 · 更新时间」，数字与 /api/tdm 返回一致（建单时 125 节点/171 边；禁硬编码，随真源漂移）", check: 机断 }
+  - { id: 2, text: "页头赚点数（tdm-count）=实时真源 nodes.length，非写死", check: 机断 }
+  - { id: 3, text: "横向树四层各一列（E 建仓/P 持仓/X 离场/F 组合+币圈镜像 C 分组），根流组→枝干→子节点三级", check: 目检 }
+  - { id: 4, text: "三态配色正确：蓝实锚（有模块）/橙虚线红节点（设计态）/绿（📄paper 实盘执行档），页头图例三项齐全", check: 目检 }
+  - { id: 5, text: "滚轮缩放（光标为锚点）/拖动平移/双击空白重置，✋拖动/📋选择复制模式切换（Ctrl+Shift+D）", check: 目检 }
+  - { id: 6, text: "SVG 连线按边型着色可见：主链灰蓝/喂给亮灰蓝/反馈暗橙、虚线区分；节点增减后连线随重排不消失", check: 目检 }
+  - { id: 7, text: "30s 轮询仅页面可见时 fetch（p-tdm 隐藏零开销）；真源 YAML 改动经 mtime 缓存自动生效", check: 机断 }
+  - { id: 8, text: "搜索框高亮命中节点（tn-hit）+非命中调暗（tn-dimmed）", check: 目检 }
+
+execution:
+  trigger: "任何涉及本功能的 UI 改动 commit 前"
+  flow: "起面板 API（/api/tdm 就绪）→ 打开 A股·研究·交易决策全景 → 逐条对 → 全绿才走 GitCommitGateway"
+  baseline_screenshot: "acceptance/screenshots/F-TDM-MAP-baseline.png"
+
+关联:
+  handbook: [FEH-PC-013, FEH-PC-014, FEH-PC-015]
+  frontend_map: F-TDM-MAP
+  code_ref: "src/zephyr/frontend/dashboard/web/features/tdm.js（render/交互段）· pages/tdm.html"
