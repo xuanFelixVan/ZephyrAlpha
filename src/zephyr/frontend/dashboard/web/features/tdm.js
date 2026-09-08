@@ -85,6 +85,8 @@
       render();
       var meta = document.getElementById('tdm-meta');
       if (meta) meta.textContent = d.nodes.length + ' 节点 / ' + d.edges.length + ' 边 · 更新 ' + d.generated_at.slice(5, 16);
+      var cnt = document.getElementById('tdm-count');   /* 页头赚点数=实时真源值，禁硬编码（防节点增减漂移） */
+      if (cnt) cnt.textContent = d.nodes.length;
       if (changed) { drawer(); }   /* 真源变了：重开抽屉刷新内容 */
       else if (TDM.sel) { drawer(); }
     }).catch(function () {
