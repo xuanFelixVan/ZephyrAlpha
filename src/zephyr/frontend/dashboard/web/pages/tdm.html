@@ -1,0 +1,43 @@
+<section class="page" id="p-tdm">
+    <h2 class="page-title">交易决策全景 <span class="badge b-pass">实时映射</span></h2>
+    <div class="page-sub">研究组 · <b>核心：交易决策地图（122 赚点）的原生实时视图——真源 YAML 一改这边自动变（30 秒轮询）</b>· 横向树：流 → 枝干 → 子节点 · 点节点开右侧抽屉看"怎么算的"完整机制</div>
+
+    <div class="card" style="margin-bottom:10px;display:flex;gap:10px;align-items:center;flex-wrap:wrap">
+      <span class="dim" style="font-size:12px">图例</span>
+      <span style="font-size:12px"><span style="display:inline-block;width:10px;height:10px;background:#0f2740;border:1.5px solid #1e5a8f;border-radius:3px;vertical-align:middle"></span> 实锚（有模块）</span>
+      <span style="font-size:12px"><span style="display:inline-block;width:10px;height:10px;background:#2a1c0e;border:1.5px dashed #8a4a12;border-radius:3px;vertical-align:middle"></span> 🔴 红节点（设计态）</span>
+      <span style="font-size:12px"><span style="display:inline-block;width:10px;height:10px;background:#0e2612;border:1.5px solid #2e7d32;border-radius:3px;vertical-align:middle"></span> 📄paper 实盘执行</span>
+      <input id="tdm-srch" placeholder="搜索节点（ID / 名称）…" oninput="tdmFilter(this.value)"
+             style="background:#0d1117;border:1px solid #263042;border-radius:6px;color:var(--text);padding:4px 10px;font-size:12px;width:200px">
+      <span style="margin-left:auto;font-size:11px" class="dim" id="tdm-meta">加载中…</span>
+    </div>
+
+    <div style="display:flex;gap:12px;align-items:stretch">
+      <div class="card" style="flex:1;position:relative;overflow:auto;max-height:calc(100vh - 230px)">
+        <svg id="tdm-wire" style="position:absolute;left:0;top:0;width:100%;height:100%;pointer-events:none"></svg>
+        <div id="tdm-tree" style="position:relative;min-width:1500px;min-height:600px;padding:8px 4px"></div>
+      </div>
+      <div class="card" id="tdm-drawer" style="width:400px;flex:none;overflow:auto;max-height:calc(100vh - 230px);display:none"></div>
+    </div>
+</section>
+<style>
+  #tdm-tree .tn { position:absolute; background:#0d1117; border:1.5px solid #263042; border-radius:8px;
+    padding:6px 10px; cursor:pointer; user-select:none; transition:border-color .15s; max-width:300px; }
+  #tdm-tree .tn:hover { border-color:#3d8bff; }
+  #tdm-tree .tn .tn-n { font-size:12.5px; font-weight:600; color:var(--text); white-space:nowrap; }
+  #tdm-tree .tn .tn-g { font-size:10.5px; color:#7d8aa0; white-space:nowrap; max-width:290px; overflow:hidden; text-overflow:ellipsis; }
+  #tdm-tree .tn.production { background:#0f2740; border-color:#1e5a8f; }
+  #tdm-tree .tn.design { background:#2a1c0e; border-style:dashed; border-color:#8a4a12; }
+  #tdm-tree .tn.paper { background:#0e2612; border-color:#2e7d32; }
+  #tdm-tree .tn.hit { border-color:#e6c34c; box-shadow:0 0 0 2px rgba(230,195,76,.25); }
+  #tdm-tree .tn.dimmed { opacity:.25; }
+  #tdm-tree .tn.sel { outline:2px solid #3d8bff; }
+  #tdm-tree .tg { position:absolute; background:#131a26; border:1px solid #263042; border-radius:8px;
+    padding:6px 12px; font-size:13px; font-weight:700; color:var(--text); user-select:none; white-space:nowrap; }
+  #tdm-tree .tg .cnt { color:#7d8aa0; font-weight:400; font-size:10.5px; margin-left:4px; }
+  #tdm-wire path { fill:none; stroke:#2c3a52; stroke-width:1.4; }
+  #tdm-drawer h3 { margin:0 0 8px; font-size:15px; }
+  #tdm-drawer .sec { font-size:11px; font-weight:700; color:#3d8bff; margin:10px 0 3px; }
+  #tdm-drawer .kv { font-size:12.5px; line-height:1.65; color:#c6cdd8; }
+  #tdm-drawer .cm { font-size:11.5px; color:#8a94a6; line-height:1.55; border-left:2px solid #263042; padding-left:8px; margin:4px 0; }
+</style>

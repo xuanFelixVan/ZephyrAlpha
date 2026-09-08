@@ -3,7 +3,7 @@
 window.ZK_BUILD='20260904-33';
 (function(){try{var el=document.querySelector('.tb-brand small');if(el&&(' '+el.textContent+' ').indexOf('b'+window.ZK_BUILD)<0)el.textContent+=' · b'+window.ZK_BUILD;}catch(e){}})();
 (function(){
-  var PAGES = ["home", "overview", "warroom", "live", "sector", "sentiment", "news", "policy", "overseas", "t0", "review", "index", "position", "backtest", "experiment", "task", "fitness", "govana", "modledger", "sysstatus", "services", "pano", "projmap", "macro", "chainmap", "strategy", "factor", "stock", "screener", "calendar", "reglib", "datainfo", "stockq", "cryptomarket", "cryptopos", "cryptostrat", "cryptobt", "cryptoinfo", "design", "modlib", "rating", "datasrc", "download", "bridge", "models", "aichat", "aitask"];
+  var PAGES = ["home", "overview", "warroom", "live", "sector", "sentiment", "news", "policy", "overseas", "t0", "review", "index", "position", "backtest", "experiment", "task", "fitness", "govana", "modledger", "sysstatus", "services", "pano", "projmap", "macro", "chainmap", "strategy", "factor", "stock", "screener", "calendar", "reglib", "datainfo", "tdm", "stockq", "cryptomarket", "cryptopos", "cryptostrat", "cryptobt", "cryptoinfo", "design", "modlib", "rating", "datasrc", "download", "bridge", "models", "aichat", "aitask"];
   var main = document.getElementById('main-root');
   function loadJs(src){
     return new Promise(function(res, rej){
@@ -78,6 +78,8 @@ window.ZK_BUILD='20260904-33';
     return loadJs('core/bridge.js');   /* 交易通道监控页（HTTP 桥全环节健康+速度 vs miniqmt 对比，真源 /api/bridge-status） */
   }).then(function(){
     return loadJs('core/home.js');   /* 首页三件套（结论墙/布局引擎/AI 对话框）——最后加载，依赖全部页面片段已在 DOM */
+  }).then(function(){
+    return loadJs('features/tdm.js');   /* 交易决策全景（横向树实时映射 /api/tdm，Owner 2026-09-07 裁定） */
   }).then(function(){
     return loadJs('vendor/dockview/dockview.min.js');   /* Dockview 库先行（dockpilot 依赖） */
   }).then(function(){

@@ -1587,6 +1587,110 @@ def bridge_status() -> dict[str, Any]:
     }
 
 
+_TDM_CACHE: dict[str, Any] = {}   # /api/tdm mtime 缓存（改 YAML 即失效重算）
+
+
+@app.get("/api/tdm")
+def tdm_map() -> dict[str, Any]:
+    """交易决策地图全量（前端原生实时渲染真源）——真源=config/trading_decision_map.yaml。
+
+    每请求按 mtime 缓存（改 YAML 即自动生效，无需重生成/重启）；payload=
+    nodes（含 algo_note_zh 大白话机制+node_comments 设计备注原文）+ edges + meta。
+    消费者=web/pages/tdm.html（横向树状图），Owner 2026-09-07 裁定。
+    """
+    p = _REPO / "config" / "trading_decision_map.yaml"
+    mtime = p.stat().st_mtime
+    cached = _TDM_CACHE.get("mtime")
+    if cached == mtime and _TDM_CACHE.get("payload"):
+        return _TDM_CACHE["payload"]
+
+    import re as _re
+
+    import yaml as _yaml
+
+    raw = _yaml.safe_load(p.read_text(encoding="utf-8"))
+    # 注释提取（D 螺定原文/欠账登记——抽屉"设计备注"真源）：块内归本节点，悬空前导归下一节点
+    lines = p.read_text(encoding="utf-8").split("\n")
+    try:
+        start = next(i for i, l in enumerate(lines) if l.rstrip() == "nodes:")
+    except StopIteration:
+        start = 0
+    end = start + 1
+    while end < len(lines) and (lines[end].startswith(" ") or not lines[end].strip()):
+        end += 1
+    region = lines[start + 1 : end]
+
+    def _is_node(s: str) -> bool:
+        return s.startswith("  - node_id:")
+
+    def _meaningful(s: str) -> bool:
+        return bool(s.strip()) and not s.lstrip().startswith("#")
+
+    after = [False] * len(region)
+    flag = False
+    for i in range(len(region) - 1, -1, -1):
+        after[i] = flag
+        if _meaningful(region[i]):
+            flag = _is_node(region[i])
+
+    comments: dict[str, list[str]] = {}
+    pending: list[str] = []
+    cur: str | None = None
+    for i, ln in enumerate(region):
+        if _is_node(ln):
+            cur = ln.split(":", 1)[1].strip()
+            comments[cur] = pending
+            pending = []
+        elif ln.lstrip().startswith("#"):
+            txt = ln.strip()[1:].strip()
+            if not txt or _re.fullmatch(r"[-─=═\s]+", txt):
+                continue
+            if cur is not None and not after[i]:
+                comments[cur].append(txt)
+            else:
+                pending.append(txt)
+
+    nodes_out = []
+    for n in raw.get("nodes", []):
+        nid = n.get("node_id", "")
+        note = str(n.get("algo_note_zh") or "").replace("\n", " ").strip()
+        while "。 " in note:
+            note = note.replace("。 ", "。")
+        nodes_out.append({
+            "id": nid,
+            "name": n.get("name_zh", ""),
+            "q": n.get("decision_question", ""),
+            "note": note,
+            "layer": n.get("layer"),
+            "flow": n.get("flow"),
+            "parent": n.get("parent_node"),
+            "point": n.get("point"),
+            "activation": n.get("activation"),
+            "invalidation": n.get("invalidation"),
+            "autonomy": n.get("ai_autonomy"),
+            "fallback": n.get("fallback"),
+            "module_ref": n.get("module_ref"),
+            "module_id": n.get("module_id"),
+            "mounts": [m.get("strategy_ref") if isinstance(m, dict) else str(m)
+                       for m in (n.get("strategy_mounts") or [])],
+            "refs": {k: n.get(k) or [] for k in (
+                "factor_refs", "data_refs", "cost_model_refs", "risk_limit_refs",
+                "threshold_refs", "event_refs", "algo_refs") if n.get(k)},
+            "comments": comments.get(nid, []),
+        })
+    payload = {
+        "ok": True,
+        "map_id": raw.get("map_id"),
+        "name_zh": raw.get("name_zh"),
+        "nodes": nodes_out,
+        "edges": raw.get("edges", []),
+        "generated_at": datetime.now().isoformat(" ", "seconds"),
+    }
+    _TDM_CACHE["mtime"] = mtime
+    _TDM_CACHE["payload"] = payload
+    return payload
+
+
 def main() -> None:
     import uvicorn
 
