@@ -4949,6 +4949,14 @@ capabilities:
   integrity_anchors:
   - evaluate_battle_map_report
 creation_tokens:
+- file: docs/03_modules/_domain_frontend/acceptance/ACC-F-TDM-MAP.yaml
+  token: auto-tdm-map-acc-20260908
+  created_by: sid-tdm4pc-8ca6d350
+  capability: frontend_acceptance
+- file: docs/03_modules/_domain_frontend/acceptance/ACC-F-TDM-DRAWER.yaml
+  token: auto-tdm-drawer-acc-20260908
+  created_by: sid-tdm4pc-8ca6d350
+  capability: frontend_acceptance
 - file: docs/03_modules/_domain_frontend/frontend_handbook/detail_drawer_template.md
   token: auto-detail-drawer-template-20260908
   created_by: sess-24176-20260908214815
@@ -11137,6 +11145,26 @@ creation_tokens:
   token: "auto-ths-industry-mapping-20260908"
   created_by: "openclaw-night-20260908-4316c"
   capability: "industry_graph_ths_import"
+- file: docs/03_modules/_domain_frontend/acceptance/ACC-F-CHAINMAP-GALAXY.yaml
+  token: auto-chainmap-galaxy-acc-20260908
+  created_by: sess-30232-20260908222748
+  capability: frontend_acceptance
+- file: docs/03_modules/_domain_frontend/acceptance/ACC-F-CHAINMAP-NAV.yaml
+  token: auto-chainmap-nav-acc-20260908
+  created_by: sess-30232-20260908222748
+  capability: frontend_acceptance
+- file: docs/03_modules/_domain_frontend/acceptance/ACC-F-CHAINMAP-SEARCH.yaml
+  token: auto-chainmap-search-acc-20260908
+  created_by: sess-30232-20260908222748
+  capability: frontend_acceptance
+- file: docs/03_modules/_domain_frontend/acceptance/ACC-F-CHAINMAP-CLUSTER.yaml
+  token: auto-chainmap-cluster-acc-20260908
+  created_by: sess-30232-20260908222748
+  capability: frontend_acceptance
+- file: docs/_working/2026-09-08-chainmap-component-split-inventory.md
+  token: auto-chainmap-inventory-20260908
+  created_by: sess-30232-20260908222748
+  capability: frontend_working_doc
 di_seam_exemptions:
 - module_path: zephyr.trading.auto_runtime_core.AutoRuntimeCore
   reason: P0-5 LSG DI seam 标杆，已有 DI 但 AST 模式不匹配（动态注入）

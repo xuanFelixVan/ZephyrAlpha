@@ -1,0 +1,30 @@
+# --- 治理锚定 ---
+# doc_type: register | 功能验收单（冻结"什么样子算对"）
+# ttl: permanent
+# 修订权限：Owner 专有（AI 可提议不可自改已冻结条项）
+# --- 治理锚定结束 ---
+
+feature_id: F-CHAINMAP-NAV
+feature_name: 产业导航树（族→链两级）
+frozen_at: 2026-09-08
+frozen_by: ZephyrAlpha-Owner
+revision: 1
+revision_policy: "修订=Owner 批准+改原文+revision 链留痕；AI 不可自改已冻结条项"
+
+# check 取值：目检（截图人工/AI 视觉对） | 机断（DOM/接口断言）
+items:
+  - { id: 1, text: "#cm-nav 渲染 族→链 两级树，族行显示 链数·公司数 徽章，链行显示公司数", check: 机断 }
+  - { id: 2, text: "顶部 ⌂ 全景星系 按钮点击返回 L1 并更新面包屑", check: 目检 }
+  - { id: 3, text: "点族头展开链清单并同时进入该族 L2（cm:open-cluster）", check: 目检 }
+  - { id: 4, text: "点链行进入 L2 并聚焦该链（其余链淡化，cm:chain-active 高亮当前链行）", check: 目检 }
+  - { id: 5, text: "API 断线时导航区显示断线提示且 15s 自动重试（零演示数据）", check: 机断 }
+  - { id: 6, text: "当前聚焦链与导航高亮双向联动（L2 切链时导航跟随）", check: 目检 }
+
+execution:
+  trigger: "任何涉及本功能的 UI 改动 commit 前"
+  flow: "起面板 API（8890）→ 打开 #chainmap → 截图 → 逐条对 → 全绿才走 GitCommitGateway"
+  baseline_screenshot: "acceptance/screenshots/F-CHAINMAP-NAV-baseline.png"
+
+关联:
+  frontend_map: F-CHAINMAP-NAV
+  code_ref: "src/zephyr/frontend/dashboard/web/features/chainmap/chainmap-nav.js"

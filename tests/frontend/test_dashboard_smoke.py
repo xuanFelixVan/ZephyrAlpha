@@ -155,3 +155,53 @@ def test_spec_pages_sections(page):
     )
     assert design_ok, "design 页缺 DS-11 模块拆件标准"
     assert modlib_ok, "modlib 页缺 模块拆件契约试点 区"
+
+
+def test_chainmap_structure(page):
+    """产业地图页结构断言（ACC-F-CHAINMAP-* 机断条款静态形态；API 断连也须过——验结构不验数据）。"""
+    page.wait_for_function(
+        "!!(window.ZK && ZK.features && ZK.features['chainmap-cluster'])", timeout=20000
+    )  # 加载链尾模块注册完成=四模块全载（galaxy→nav→search→cluster 顺序）
+    page.evaluate("go('chainmap')")
+    page.wait_for_timeout(800)
+    checks = page.evaluate(
+        """({
+        galaxy_canvas: !!document.getElementById('cm-canvas-galaxy'),
+        cluster_canvas: !!document.getElementById('cm-canvas-cluster'),
+        nav: !!document.getElementById('cm-nav'),
+        search_input: !!document.querySelector('#cm-search-slot .cm-si'),
+        side_panel: !!document.getElementById('cm-side'),
+        m_galaxy: !!(window.ZK && ZK.features && ZK.features['chainmap-galaxy']),
+        m_nav: !!(window.ZK && ZK.features && ZK.features['chainmap-nav']),
+        m_search: !!(window.ZK && ZK.features && ZK.features['chainmap-search']),
+        m_cluster: !!(window.ZK && ZK.features && ZK.features['chainmap-cluster']),
+    })"""
+    )
+    fails = [k for k, v in checks.items() if not v]
+    assert not fails, f"chainmap 结构断言失败: {fails}"
+
+
+def test_tdm_structure(page):
+    """交易决策全景页结构断言（ACC-F-TDM-MAP/DRAWER 机断条款静态形态；API 断连也须过——验结构不验数据）。"""
+    page.wait_for_function("!!window.tdmToggleMode", timeout=20000)  # tdm.js IIFE 自举完成标志（loader 加载链尾段）
+    page.evaluate("go('tdm')")
+    page.wait_for_timeout(500)
+    checks = page.evaluate(
+        """({
+        world: !!document.getElementById('tdm-world'),
+        tree: !!document.getElementById('tdm-tree'),
+        wire: !!document.getElementById('tdm-wire'),
+        drawer: !!document.getElementById('tdm-drawer'),
+        meta: !!document.getElementById('tdm-meta'),
+        search: !!document.getElementById('tdm-srch'),
+        legend_anchor: document.querySelector('#p-tdm').textContent.includes('实锚（有模块）'),
+        legend_design: document.querySelector('#p-tdm').textContent.includes('红节点（设计态）'),
+        legend_paper: document.querySelector('#p-tdm').textContent.includes('实盘执行'),
+    })"""
+    )
+    fails = [k for k, v in checks.items() if not v]
+    assert not fails, f"tdm 结构断言失败: {fails}"
+    # 模块脚本静态断言：抽屉函数 + 真源 fetch（源码级，防功能被静默摘除）
+    src = (WEB_DIR / "features" / "tdm.js").read_text(encoding="utf-8")
+    assert "function drawer()" in src, "tdm.js 缺 drawer() 函数"
+    assert "/api/tdm" in src, "tdm.js 缺 /api/tdm 真源 fetch"

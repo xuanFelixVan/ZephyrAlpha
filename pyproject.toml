@@ -303,6 +303,10 @@ extend-aliases = { "zephyr.shared.paths" = "paths", "zephyr.shared.time_utils" =
 # 是 DB 工具脚本的合理顶层兜底，非 silent failure。逐一加 # noqa 噪音大且易冲突，
 # 用 per-file-ignores 收敛（与 tests/** 忽略 B017 同机制）。
 "scripts/governance/apply_depgraph.py" = ["BLE001"]
+# api_server.py：FastAPI 只读端点错误契约 INVARIANT「查询异常 → ok:false fail-closed」，
+# 每个端点顶层 except Exception 是契约本体（20+ 处一致模式），非 silent failure。
+# 同机制 per-file-ignores 收敛（2026-09-08 chainmap 端点施工时补登）。
+"src/zephyr/frontend/dashboard/api_server.py" = ["BLE001"]
 
 [tool.mypy]
 python_version = "3.12"

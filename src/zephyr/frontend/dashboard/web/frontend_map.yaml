@@ -4,8 +4,8 @@
 # 生成源：features/manifest.yaml + 手工维护 + scan_frontend_pages.py 半自动补登（auto_scanned=true 待逐页人工复核转正）
 # D38 模块总线（2026-09-07）：有后端模块承载的功能点必须挂 module:MOD-*（与 depgraph frontend_ref 双向闭合，
 #   经 MOD 总线与交易决策地图/五图互通——全图全库对齐铁律）；纯前端逻辑用 none: 声明事由
-version: 2.1.0
-updated: '2026-09-07'
+version: 2.2.0
+updated: '2026-09-08'
 features:
 - id: F-STOCKQ-COSTLINE
   name: 持仓成本线
@@ -372,54 +372,48 @@ features:
   backend_ref: none:待拆件盘点（auto 扫描未发现 /api/ 调用）
   status: active
   auto_scanned: true
-- id: F-CHAINMAP-AUTO-01
-  name: 产业链浏览
+- id: F-CHAINMAP-GALAXY
+  name: 产业星系图（L1 族聚合全景）
   page: chainmap
-  module_id: chainmap-host
-  file: core/chainmap.js
-  backend_ref: none:待拆件盘点（auto 扫描未发现 /api/ 调用）
+  module_id: chainmap-galaxy
+  file: features/chainmap/chainmap-galaxy.js
+  backend_ref: [module:MOD-L08-001, api:/api/chainmap-galaxy]
   status: active
-  auto_scanned: true
-- id: F-CHAINMAP-AUTO-02
-  name: 个股落位查询
+- id: F-CHAINMAP-NAV
+  name: 产业导航树（族→链两级）
   page: chainmap
-  module_id: chainmap-host
-  file: core/chainmap.js
-  backend_ref: none:待拆件盘点（auto 扫描未发现 /api/ 调用）
+  module_id: chainmap-nav
+  file: features/chainmap/chainmap-nav.js
+  backend_ref: [module:MOD-L08-001, api:/api/chainmap-galaxy]
   status: active
-  auto_scanned: true
-- id: F-CHAINMAP-AUTO-03
-  name: 供应链指标
+- id: F-CHAINMAP-SEARCH
+  name: 产业全局搜索（链/环节/代码/公司名）
   page: chainmap
-  module_id: chainmap-host
-  file: core/chainmap.js
-  backend_ref: none:待拆件盘点（auto 扫描未发现 /api/ 调用）
+  module_id: chainmap-search
+  file: features/chainmap/chainmap-search.js
+  backend_ref: [module:MOD-L08-001, api:/api/chainmap-search]
   status: active
-  auto_scanned: true
-- id: F-CHAINMAP-AUTO-04
-  name: 说明与边界
+- id: F-CHAINMAP-CLUSTER
+  name: 产业链层（L2 上中下游列式+环节公司面板）
   page: chainmap
-  module_id: chainmap-host
-  file: core/chainmap.js
-  backend_ref: none:待拆件盘点（auto 扫描未发现 /api/ 调用）
+  module_id: chainmap-cluster
+  file: features/chainmap/chainmap-cluster.js
+  backend_ref: [module:MOD-L08-001, api:/api/chainmap-cluster, api:/api/chainmap-node]
   status: active
-  auto_scanned: true
-- id: F-CHAINMAP-AUTO-05
-  name: 规划内容（待与 Owner 对齐后细化）
-  page: chainmap
-  module_id: chainmap-host
-  file: core/chainmap.js
-  backend_ref: none:待拆件盘点（auto 扫描未发现 /api/ 调用）
+- id: F-TDM-MAP
+  name: 交易决策全景画布（横向树实时映射）
+  page: tdm
+  module_id: tdm-map
+  file: features/tdm.js
+  backend_ref: [module:MOD-L08-001, api:/api/tdm]   # 真源=config/trading_decision_map.yaml（MOD-TRADING-015）经 /api/tdm 投影
   status: active
-  auto_scanned: true
-- id: F-CHAINMAP-AUTO-06
-  name: 与现有页面的边界
-  page: chainmap
-  module_id: chainmap-host
-  file: core/chainmap.js
-  backend_ref: none:待拆件盘点（auto 扫描未发现 /api/ 调用）
+- id: F-TDM-DRAWER
+  name: 节点详情抽屉（问/机制/治理/依据锚/上下游导航）
+  page: tdm
+  module_id: tdm-map
+  file: features/tdm.js
+  backend_ref: [module:MOD-L08-001, api:/api/tdm]
   status: active
-  auto_scanned: true
 - id: F-CRYPTOBT-AUTO-01
   name: 净值曲线（演示）
   page: cryptobt

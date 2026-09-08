@@ -1,0 +1,30 @@
+# --- 治理锚定 ---
+# doc_type: register | 功能验收单（冻结"什么样子算对"）
+# ttl: permanent
+# 修订权限：Owner 专有（AI 可提议不可自改已冻结条项）
+# --- 治理锚定结束 ---
+
+feature_id: F-CHAINMAP-CLUSTER
+feature_name: 产业链层（L2 上中下游列式+环节公司面板）
+frozen_at: 2026-09-08
+frozen_by: ZephyrAlpha-Owner
+revision: 1
+revision_policy: "修订=Owner 批准+改原文+revision 链留痕；AI 不可自改已冻结条项"
+
+# check 取值：目检（截图人工/AI 视觉对） | 机断（DOM/接口断言）
+items:
+  - { id: 1, text: "/api/chainmap-cluster?cid= 返回 ok 且环节按 上游→中游→下游→其他→通用 列位渲染", check: 机断 }
+  - { id: 2, text: "链=chip 分组（公司数降序），环节卡显示名称+公司计数徽章，ig_edge 跨列结构边以贝塞尔连线（同列边不画）", check: 目检 }
+  - { id: 3, text: "点环节卡 → 右侧公司面板：角色徽标（龙头金/参与蓝/提及灰）+名称+代码+置信度，按角色置信度排序，上限 200 如实标注", check: 机断 }
+  - { id: 4, text: "面包屑 ‹ 全景 可返回 L1；链 chip 点击聚焦该链（其余淡化），导航树高亮联动", check: 目检 }
+  - { id: 5, text: "搜索落位（cm:goto-chain 带 focus_node）→ 目标环节居中+金色描边高亮", check: 目检 }
+  - { id: 6, text: "滚轮缩放/拖动平移/双击重置可用；簇加载失败显示空态文案（零演示数据）", check: 目检 }
+
+execution:
+  trigger: "任何涉及本功能的 UI 改动 commit 前"
+  flow: "起面板 API（8890）→ 打开 #chainmap → 截图 → 逐条对 → 全绿才走 GitCommitGateway"
+  baseline_screenshot: "acceptance/screenshots/F-CHAINMAP-CLUSTER-baseline.png"
+
+关联:
+  frontend_map: F-CHAINMAP-CLUSTER
+  code_ref: "src/zephyr/frontend/dashboard/web/features/chainmap/chainmap-cluster.js"

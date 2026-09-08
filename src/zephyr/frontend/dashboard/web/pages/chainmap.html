@@ -1,70 +1,153 @@
 <section class="page" id="p-chainmap">
-    <h2 class="page-title">产业地图 <span class="badge b-na">演示数据</span></h2>
-    <div class="page-sub">研究组 · <b>核心：产业链上下游传导——从"哪个环节受益"到"买哪只票"</b>· 板块页答"哪个板块强"（横向），本页答"强势会传导给谁"（纵向）· 真源=INDUSTRY-GRAPH-001 ig_* 七表（PostgreSQL，I-2 接线后转真 C20→P0）</div>
-    <div class="row c5">
-      <div class="card metric"><div class="l">产业链</div><div class="v">686</div><div class="s">ig_chain</div></div>
-      <div class="card metric"><div class="l">环节节点</div><div class="v">2,911</div><div class="s">ig_node</div></div>
-      <div class="card metric"><div class="l">环节结构边</div><div class="v">1,133</div><div class="s">ig_edge</div></div>
-      <div class="card metric"><div class="l">环节↔公司映射</div><div class="v">11,075</div><div class="s">ig_node_company（0.85 互证 801 条）</div></div>
-      <div class="card metric"><div class="l">公司供应链边</div><div class="v">58,029</div><div class="s">ig_company_edge（三证据源，1,980 多源互证）</div></div>
+    <div class="cm-top">
+      <div class="cm-crumb" id="cm-crumb">产业地图</div>
+      <div id="cm-search-slot" class="cm-search-slot"></div>
+      <span class="cm-legend dim" style="font-size:11px">三层缩放：星系（族聚合）→ 链层（上中下游）→ 公司 ｜ 滚轮缩放 · 拖动平移 · 双击重置
+        <i class="cm-info" title="板块页答'哪个板块强'（横向同环节并列）；本页答'强势沿产业链传导给谁'（纵向）。
+真源=INDUSTRY-GRAPH-001 ig_* 七表（PostgreSQL 只读）：族=按跨链供应连接紧密度聚类（Louvain，30~48 族）；
+公司名映射来自 ig_company_edge 名称列，覆盖不全为已知边界。">ⓘ</i></span>
+      <span class="dim" style="margin-left:auto;font-size:11px" id="cm-meta">加载中…</span>
     </div>
-    <div class="row c2" style="margin-top:14px">
-      <div class="card">
-        <h3>产业链浏览 <span class="dim">示例 6 链（全量 686 链 I-2 供数）· 点击展开环节与个股落位</span></h3>
-        <table>
-          <tr><th>产业链</th><th>环节数</th><th>映射公司</th><th>核心环节</th><th>热度</th></tr>
-          <tr><td>半导体设备</td><td>7</td><td>86</td><td>刻蚀/薄膜沉积/清洗</td><td><span class="badge b-buy">热</span></td></tr>
-          <tr><td>AI 算力（服务器/光模块）</td><td>9</td><td>112</td><td>GPU/光模块/液冷</td><td><span class="badge b-buy">热</span></td></tr>
-          <tr><td>创新药（ADC/双抗）</td><td>6</td><td>64</td><td>靶点发现/临床/CXO</td><td><span class="badge b-na">温</span></td></tr>
-          <tr><td>电力（绿电/特高压）</td><td>8</td><td>97</td><td>发电/输变电/储能</td><td><span class="badge b-na">温</span></td></tr>
-          <tr><td>新能源车（智能化）</td><td>10</td><td>143</td><td>域控/激光雷达/线控</td><td><span class="badge b-na">温</span></td></tr>
-          <tr><td>白酒消费</td><td>4</td><td>32</td><td>高端/次高端/渠道</td><td><span class="badge b-sell">冷</span></td></tr>
-        </table>
-      </div>
-      <div class="card">
-        <h3>个股落位查询 <span class="dim">ig_node_company 按 symbol 查（演示 3 票）</span></h3>
-        <table>
-          <tr><th>标的</th><th>产业链</th><th>环节</th><th>角色</th><th>置信度</th></tr>
-          <tr><td>中芯国际</td><td>半导体制造</td><td>晶圆代工</td><td>核心</td><td><span class="badge b-pass">0.92 互证</span></td></tr>
-          <tr><td>中微公司</td><td>半导体设备</td><td>刻蚀设备</td><td>核心</td><td><span class="badge b-pass">0.88 互证</span></td></tr>
-          <tr><td>汇川技术</td><td>工业自动化</td><td>伺服/PLC</td><td>核心</td><td><span class="badge b-pass">0.86 互证</span></td></tr>
-        </table>
-        <h3 style="margin-top:12px">供应链指标 <span class="dim">ig_company_metric 23.6 万条（客户 HHI/Top1/Top5/稳定性/韧性）</span></h3>
-        <table>
-          <tr><th>标的</th><th>客户 HHI</th><th>Top1 占比</th><th>供应链韧性</th></tr>
-          <tr><td>中芯国际</td><td>0.18</td><td>22%</td><td><span class="badge b-pass">高</span></td></tr>
-          <tr><td>汇川技术</td><td>0.09</td><td>8%</td><td><span class="badge b-pass">高</span></td></tr>
-        </table>
+    <div class="cm-body">
+      <aside class="cm-nav card" id="cm-nav"><div class="cm-nav-tip dim">导航加载中…</div></aside>
+      <div class="cm-stage">
+        <!-- L1 星系层（chainmap-galaxy 模块持有） -->
+        <div class="cm-canvas card" id="cm-canvas-galaxy">
+          <div class="cm-world" id="cm-world-galaxy">
+            <svg class="cm-wires" id="cm-wires-galaxy"></svg>
+            <div class="cm-nodes" id="cm-nodes-galaxy"></div>
+          </div>
+          <span class="cm-zoom" id="cm-zoom-galaxy">100%</span>
+          <div class="cm-empty" id="cm-empty-galaxy" style="display:none"></div>
+        </div>
+        <!-- L2 链层（chainmap-cluster 模块持有） -->
+        <div class="cm-canvas card" id="cm-canvas-cluster" style="display:none">
+          <div class="cm-world" id="cm-world-cluster">
+            <svg class="cm-wires" id="cm-wires-cluster"></svg>
+            <div class="cm-nodes" id="cm-nodes-cluster"></div>
+          </div>
+          <span class="cm-zoom" id="cm-zoom-cluster">100%</span>
+          <div class="cm-empty" id="cm-empty-cluster" style="display:none"></div>
+        </div>
+        <!-- 环节公司面板（chainmap-cluster 模块持有） -->
+        <aside class="cm-side card" id="cm-side" style="display:none"></aside>
       </div>
     </div>
-    <div class="card" style="margin-top:14px">
-      <h3>说明与边界</h3>
-      <div class="note">①源文档 1,970 份有效（ig_document；81M 语料+RAG 索引 76,112 块，研究组检索入口远期）②映射置信度两档：0.85 互证 801 条（人工级）/0.6 自动 10,274 条（程序级）③<b>lead-lag 传导因子已回测证伪</b>（月 IC=-0.029，2026-08-28 裁定不进因子框架，留档）——图谱价值在"传导路径与个股落位"，不在预测 ④股权边并图（第三种关系边）=远期，待数据源（R11）</div>
-    </div>
+</section>
+<style>
+  /* 满屏布局（同 tdm 页口径）：页节=视口-顶栏46-ticker32，底部贴 ticker 上缘 */
+  .main:has(#p-chainmap.active) { padding-bottom: 0; }
+  #p-chainmap.active { display:flex; flex-direction:column; height:calc(100vh - 86px); }
+  #p-chainmap .cm-top { display:flex; align-items:center; gap:12px; padding:0 2px 8px; flex:none; }
+  #p-chainmap .cm-crumb { font-size:14px; font-weight:700; color:var(--text); white-space:nowrap; }
+  #p-chainmap .cm-crumb .cm-back { cursor:pointer; color:#7db4e8; }
+  #p-chainmap .cm-crumb .cm-back:hover { color:#3d8bff; }
+  #p-chainmap .cm-crumb .cm-sep { color:#44546e; margin:0 6px; font-weight:400; }
+  #p-chainmap .cm-search-slot { position:relative; flex:none; }
+  #p-chainmap .cm-legend { white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+  #p-chainmap .cm-info { font-style:normal; cursor:help; color:#5b8fd6; border:1px solid #263042; border-radius:99px;
+    padding:0 5px; font-size:10px; margin-left:4px; }
+  #p-chainmap .cm-body { flex:1; min-height:0; display:flex; gap:12px; align-items:stretch; }
+  #p-chainmap .cm-nav { width:248px; flex:none; overflow:auto; padding:8px; }
+  #p-chainmap .cm-stage { flex:1; min-width:0; position:relative; }
+  #p-chainmap .cm-canvas { position:absolute; inset:0; overflow:hidden; cursor:grab; }
+  #p-chainmap .cm-canvas.dragging { cursor:grabbing; }
+  #p-chainmap .cm-world { position:absolute; left:0; top:0; transform-origin:0 0; }
+  #p-chainmap .cm-wires { position:absolute; left:0; top:0; pointer-events:none; }
+  #p-chainmap .cm-nodes { position:relative; }
+  #p-chainmap .cm-zoom { position:absolute; top:8px; right:12px; z-index:5; background:rgba(13,17,23,.88);
+    border:1px solid #263042; border-radius:99px; padding:2px 10px; font-size:11px; color:#7d8aa0; pointer-events:none; }
+  #p-chainmap .cm-empty { position:absolute; inset:0; display:flex; align-items:center; justify-content:center;
+    color:#525d70; font-size:13px; z-index:6; background:rgba(10,13,20,.6); }
+  #p-chainmap .cm-side { position:absolute; top:0; right:0; bottom:0; width:360px; z-index:8; overflow:auto; padding:12px; }
+  #p-chainmap .cm-bad { color:#e2b155 !important; }
 
-    <h2 class="page-title">产业地图 <span class="badge b-na">待建设</span></h2>
-    <div class="page-sub">研究组 · 产业链上下游传导图谱——从"哪个环节受益"到"买哪只票"的链条可视化</div>
-    <div class="alert-row info">🔵 本页待建设：产业链图谱数据结构 + 个股-环节映射 + 传导强度算法均需从零设计。<span class="t">Owner 裁定新增页 2026-08-22</span></div>
-    <div class="grid c2" style="margin-top:14px">
-      <div class="card">
-        <h3>规划内容（待与 Owner 对齐后细化）</h3>
-        <ul style="font-size:13px;color:var(--dim);line-height:2;padding-left:18px">
-          <li><b>图谱结构</b>：上中下游环节节点（如 半导体=设备/材料/设计/制造/封测）+ 环节间传导边</li>
-          <li><b>个股落位</b>：每只票映射到环节节点（sector_constituent 粒度之上加产业链维度）</li>
-          <li><b>热度传导</b>：某环节异动 → 上下游受益/受损链条推演（与板块页主线联动）</li>
-          <li><b>催化剂锚定</b>：新闻/政策命中某环节 → 链条上个股清单（与作战室作战池联动）</li>
-        </ul>
-      </div>
-      <div class="card">
-        <h3>与现有页面的边界</h3>
-        <ul style="font-size:13px;color:var(--dim);line-height:2;padding-left:18px">
-          <li><b>板块页</b>：板块=行业分类（横向同环节并列）→ 本页：产业链=纵向环节传导</li>
-          <li><b>板块详情 8 维度</b>：单板块内部 → 本页：跨板块上下游关系</li>
-          <li><b>差异本质</b>：板块页答"哪个板块强"，本页答"这个板块的强势会传导给谁"</li>
-        </ul>
-      </div>
-    </div>
-    <div class="note">建设依赖：产业链图谱数据源（外部引入或人工维护种子库）+ 环节-个股映射表 + 传导算法（缺口总账待登记）</div>
-  </section>
+  /* ── L1 星系节点（chainmap-galaxy）── 单色系 #3D8BFF 低饱和，大小=公司数 */
+  #cm-nodes-galaxy .cm-gn { position:absolute; display:flex; flex-direction:column; align-items:center; justify-content:center;
+    border-radius:50%; cursor:pointer; user-select:none; box-sizing:border-box; text-align:center; padding:6px;
+    background:radial-gradient(circle at 38% 32%, #1c2c44 0%, #101a2a 72%);
+    border:1.5px solid rgba(61,139,255,.38); transition:border-color .15s, box-shadow .15s; }
+  #cm-nodes-galaxy .cm-gn:hover { border-color:#3d8bff; }
+  #cm-nodes-galaxy .cm-gn .cm-gn-n { font-weight:700; color:#dbe4f0; line-height:1.25; max-height:2.6em; overflow:hidden; }
+  #cm-nodes-galaxy .cm-gn .cm-gn-s { font-size:10px; color:#7d8aa0; margin-top:3px; white-space:nowrap; }
+  #cm-canvas-galaxy .cm-fade #cm-wires-galaxy line { opacity:.045 !important; }
+  #cm-canvas-galaxy #cm-wires-galaxy line.cm-on { opacity:.95 !important; }
+  #cm-nodes-galaxy .cm-gn.cm-on { border-color:#e6c34c; box-shadow:0 0 0 2px rgba(230,195,76,.22); }
 
-  
+  /* ── 左侧导航树（chainmap-nav）── */
+  #cm-nav .cm-nav-root { display:block; width:100%; text-align:left; background:#10151d; border:1px solid #263042;
+    border-radius:6px; color:#c6cdd8; font-size:12px; padding:5px 9px; cursor:pointer; margin-bottom:8px; }
+  #cm-nav .cm-nav-root:hover { border-color:#3d8bff; }
+  #cm-nav .cm-cl { margin-bottom:2px; }
+  #cm-nav .cm-cl-h { display:flex; align-items:baseline; gap:6px; padding:5px 6px; border-radius:6px; cursor:pointer; }
+  #cm-nav .cm-cl-h:hover { background:#131a26; }
+  #cm-nav .cm-cl-h .tri { color:#525d70; font-size:9px; width:9px; flex:none; transition:transform .12s; }
+  #cm-nav .cm-cl-h.open .tri { transform:rotate(90deg); }
+  #cm-nav .cm-cl-h .nm { color:#dbe4f0; font-size:12.5px; font-weight:600; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+  #cm-nav .cm-cl-h .ct { margin-left:auto; color:#525d70; font-size:10.5px; flex:none; }
+  #cm-nav .cm-chs { display:none; padding:1px 0 4px 14px; }
+  #cm-nav .cm-cl.open .cm-chs { display:block; }
+  #cm-nav .cm-ch { display:flex; align-items:baseline; gap:6px; padding:3px 6px; border-radius:5px; cursor:pointer; font-size:11.5px; }
+  #cm-nav .cm-ch:hover { background:#131a26; }
+  #cm-nav .cm-ch.act { background:#0f2740; }
+  #cm-nav .cm-ch.act .nm { color:#7db4e8; }
+  #cm-nav .cm-ch .nm { color:#9aa5b5; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+  #cm-nav .cm-ch .ct { margin-left:auto; color:#525d70; font-size:10px; flex:none; }
+  #cm-nav .cm-nav-tip { padding:8px; font-size:12px; }
+
+  /* ── 顶部搜索（chainmap-search）── */
+  #cm-search-slot .cm-si { background:#0d1117; border:1px solid #263042; border-radius:6px; color:var(--text);
+    padding:4px 10px; font-size:12px; width:220px; outline:none; }
+  #cm-search-slot .cm-si:focus { border-color:#3d8bff; }
+  #cm-search-slot .cm-sd { position:absolute; top:30px; left:0; width:340px; max-height:380px; overflow:auto; z-index:30;
+    background:#0d1117; border:1px solid #263042; border-radius:8px; box-shadow:0 8px 24px rgba(0,0,0,.5); padding:4px; }
+  #cm-search-slot .cm-sg { font-size:10.5px; color:#525d70; padding:5px 8px 2px; font-weight:700; letter-spacing:.4px; }
+  #cm-search-slot .cm-sr { display:flex; align-items:baseline; gap:7px; padding:4px 8px; border-radius:6px; cursor:pointer; font-size:12px; }
+  #cm-search-slot .cm-sr:hover { background:#131a26; }
+  #cm-search-slot .cm-sr .a { color:#dbe4f0; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+  #cm-search-slot .cm-sr .b { margin-left:auto; color:#525d70; font-size:10px; flex:none; }
+  #cm-search-slot .cm-se { padding:8px; font-size:11px; color:#525d70; }
+
+  /* ── L2 链层（chainmap-cluster）── 列式：上游→中游→下游→其他→通用 */
+  #cm-nodes-cluster { position:absolute; left:0; top:0; }
+  #cm-nodes-cluster .cm-col-h { position:absolute; font-size:12px; font-weight:700; color:#7d8aa0; letter-spacing:1px; }
+  #cm-nodes-cluster .cm-chip { position:absolute; background:#1a2436; border:1px solid #3d8bff; border-radius:7px;
+    color:#dbe4f0; font-size:11.5px; font-weight:600; padding:4px 9px; cursor:pointer; white-space:nowrap; overflow:hidden;
+    text-overflow:ellipsis; box-sizing:border-box; }
+  #cm-nodes-cluster .cm-chip:hover { border-color:#e6c34c; }
+  #cm-nodes-cluster .cm-n { position:absolute; background:#0d1117; border:1.2px solid #263042; border-radius:7px;
+    padding:5px 8px; font-size:11.5px; color:#c6cdd8; cursor:pointer; overflow:hidden; box-sizing:border-box;
+    display:flex; align-items:center; gap:6px; }
+  #cm-nodes-cluster .cm-n:hover { border-color:#3d8bff; }
+  #cm-nodes-cluster .cm-n .nm { overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+  #cm-nodes-cluster .cm-n .ct { margin-left:auto; color:#525d70; font-size:10px; flex:none; }
+  #cm-nodes-cluster .cm-n.dimmed { opacity:.18; }
+  #cm-nodes-cluster .cm-n.hit { border-color:#e6c34c; box-shadow:0 0 0 2px rgba(230,195,76,.25); }
+  #cm-wires-cluster path { fill:none; stroke:#2c3a52; stroke-width:1.2; }
+
+  /* 链选轨（聚焦模式 >8 链大簇）：左侧固定列表，点击换链 */
+  #cm-canvas-cluster .cm-rail { position:absolute; top:8px; left:8px; bottom:8px; width:214px; overflow:auto; z-index:6;
+    background:rgba(13,17,23,.94); border:1px solid #263042; border-radius:8px; padding:5px; }
+  #cm-canvas-cluster .cm-rail-h { font-size:10.5px; font-weight:700; color:#525d70; letter-spacing:.5px; padding:4px 6px 5px; }
+  #cm-canvas-cluster .cm-rail-i { display:flex; align-items:baseline; gap:6px; padding:4px 7px; border-radius:6px;
+    cursor:pointer; font-size:11.5px; }
+  #cm-canvas-cluster .cm-rail-i:hover { background:#131a26; }
+  #cm-canvas-cluster .cm-rail-i.act { background:#0f2740; }
+  #cm-canvas-cluster .cm-rail-i.act .nm { color:#7db4e8; }
+  #cm-canvas-cluster .cm-rail-i .nm { color:#9aa5b5; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+  #cm-canvas-cluster .cm-rail-i .ct { margin-left:auto; color:#525d70; font-size:10px; flex:none; }
+
+  /* ── 环节公司面板（chainmap-cluster 右侧抽屉）── */
+  #cm-side .cm-sd-t { font-size:14px; font-weight:700; color:var(--text); }
+  #cm-side .cm-sd-s { font-size:11px; color:#7d8aa0; margin:3px 0 8px; line-height:1.5; }
+  #cm-side .cm-x { position:absolute; top:10px; right:12px; cursor:pointer; color:#7d8aa0; font-size:15px; }
+  #cm-side .cm-x:hover { color:#dbe4f0; }
+  #cm-side .cm-co { display:flex; align-items:baseline; gap:7px; padding:4px 6px; border-radius:6px; font-size:12px; }
+  #cm-side .cm-co:hover { background:#131a26; }
+  #cm-side .cm-co .rl { flex:none; font-size:9.5px; padding:1.5px 6px; border-radius:99px; border:1px solid #263042; color:#8a94a6; }
+  #cm-side .cm-co .rl.lead { color:#e6c34c; border-color:#8a6d1f; background:#241d0c; }
+  #cm-side .cm-co .rl.join { color:#7db4e8; border-color:#1e5a8f; background:#0f2740; }
+  #cm-side .cm-co .nm { color:#dbe4f0; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+  #cm-side .cm-co .sy { margin-left:auto; color:#525d70; font-size:10.5px; flex:none; }
+  #cm-side .cm-co .cf { color:#525d70; font-size:10px; flex:none; width:34px; text-align:right; }
+</style>
