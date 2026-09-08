@@ -140,8 +140,73 @@ ttl: task_bound
 | PB-05 | DAL 决策算法库+共振方式登记 | P1 |
 | PB-06 | 回测快照绑定（原D-a） | P0 |
 | PB-07 | 地图生效日（原D-b） | P0 |
-| PB-08 | holdout 保密考卷 6 个月（原D-c） | P0 |
+| PB-08 | holdout 保密考卷（业界惯例 12 个月，可选 6） | P0 |
 | PB-09 | 半年复审（原D-d） | P2 |
 | PB-10 | 参数出身三档标记 | P1 |
 | PB-11 | 反事实对照回放 | P2 |
 | PB-12 | 125 节点验证排序 | P1 |
+| PB-13 | 验证结论带显著性检验 | P1 |
+| PB-14 | 衰减监控+验证生命周期状态机 | P2 |
+| PB-15 | 数据快照内容哈希 | P0 |
+| PB-16 | 前视诊断三招进验证 SOP | P1 |
+
+---
+
+## 六、全网调研：专业机构做法对照（2026-09-09，结论=12 条全部有业界依据，另补 4 条业界标配）
+
+### 6.1 对照表（我们的条目 vs 业界实践）
+
+| 我们的条目 | 业界对应实践 | 依据来源 |
+|---|---|---|
+| PB-01 验证方法学 | 信号级独立验证是行业标准：IC/分档收益/单调性检验（alphalens 家族就是干这个的）；SR 11-7 要求 outcomes analysis | alphalens-reloaded、alpha-lens |
+| PB-02 验证台账 | 模型清单（Model Inventory）是监管硬要求：每模型唯一 ID+用途+风险分级+**验证状态和日期**+监控状态+已知局限；WorldQuant alpha 库每个 alpha 一条 DB 记录带状态机 | Fed SR 11-7、OCC 2026-13 |
+| PB-03 噪音闭环 | alpha 生命周期状态机是业界明文：WorldQuant 六态（INIT→SIMULATED→SYNC→CHECKED→SUBMITTED/DISCARDED）；开源 Quant-Agent 七态（CANDIDATE→VALIDATED→PAPER→ACTIVE→**DECAYING**→RETIRED/SUPERSEDED）；国内私募"衍生因子月度复盘，衰减直接替换下线" | WorldQuant Brain、Quant-Agent、私募札记 |
+| PB-04 抽屉验证档案 | 模型清单可视化+验证状态徽章=SR 11-7 文档化要求；Quant-Agent/WorldQuant 均有前端 | 同上 |
+| PB-05 算法链+共振 | 无完全对应标准（最接近：WorldQuant 多字段组合、meta-labeling 主模型+置信模型）。**属于合理自创**——我们的节点是决策编排层，业界没有现成的"决策节点算法共振登记" | —（自创，方向有先例） |
+| PB-06 快照绑定 | 机构回测参考架构明文：平台验证 PIT 完整性后返回**带内容哈希的冻结数据快照**，"Reproducibility starts here" | Finantrix《Backtesting at Scale》 |
+| PB-07 生效日 | 模型清单必含 validation date / effective date；PIT 纪律="每个数据点标注它何时变得可用" | SR 11-7、Alphanume |
+| PB-08 holdout | WorldQuant 惯例：**预留最后 12 个月不参与任何训练/调参**；70/30 时间切分、5 窗口 walk-forward 均为标配 | WorldQuant 实践、alpha-lens |
+| PB-09 半年复审 | SR 11-7：年度复验证或重大变更后复验证；国内私募衍生因子**月度**复盘。我们半年居中，节奏合理 | Fed SR 11-7/OCC 2026-13、私募札记 |
+| PB-10 参数出身 | 无直接对应；SR 11-7 要求文档化 assumptions+经济逻辑可解释性（econ interpretability）——方向一致，轻量自创 | SR 11-7 |
+| PB-11 反事实对照 | 业界叫 ablation/敏感性分析：**去掉某数据源重算**（性能崩=该源在做功）、反事实掩码测试；诊断前视偏差的"strip and recompute" | Alphanume、kinlay agentic workflow |
+| PB-12 验证排序 | 监管风险分级（risk tiering）：高中低档对应不同治理强度，materiality 决定资源投入 | SR 11-7 risk tiering |
+
+### 6.2 业界有、我们清单漏掉的 → 补为 PB-13~PB-16
+
+**PB-13 验证结论必须带显著性检验**（业界最强调的一条）
+- 大白话：跑一次回测就说"有效"，在统计上不可信——你试了 50 组参数，总有一组靠运气最好。业界金标准：Deflated Sharpe Ratio（按试验次数折减）、PBO（回测过拟合概率）、多重检验 haircut。"90% 以上回测策略实盘失败"的根源就是这个。
+- 落法：PB-02 台账的结论字段加显著性列（p 值/DSR 至少其一）；参数类验证必带，方法学类可从宽。
+
+**PB-14 衰减监控+验证生命周期状态机**
+- 大白话：验证不是"考一次试管一辈子"——信号会随市场变化衰减。业界给验证状态做了**会流动的状态机**：有效→衰减中→退役/被替代，配衰减监控（IC 衰减半衰期、滚动 IC 连续 3 个月低于阈值预警）。
+- 落法：PB-03 的三态升级为状态机（未验证→验证中→有效→衰减中→噪音/退役），衰减监控挂半年复审（或月度自动巡检）。
+
+**PB-15 数据快照内容哈希**
+- 大白话：光记"哪版地图"还不够——回测用的**数据**也要封存指纹（哈希）。业界参考架构明文：数据快照带内容哈希，可复现从这一步开始。否则同一段行情数据被回填修正过，回测就复现不出来。
+- 落法：PB-06 扩展：map_snapshot 之外加 data_snapshot 哈希（我们 ClickHouse 数据按表+窗口+回填批次可算指纹，落法施工时定）。
+
+**PB-16 前视诊断三招进验证 SOP**
+- 大白话：业界有三个标准动作主动抓"偷看未来"：①**加滞后重算**（数据多滞后 1-5 天，成绩暴跌=有前视）；②**去掉某数据源重算**（成绩崩=那个源在做功，查它）；③**walk-forward 前后对照**。我们 PB-11 只覆盖了第二招的变体，三招都进 SOP。
+- 落法：并入 PB-01 验证方法学，作为每类节点的标准诊断步骤。
+
+### 6.3 结论
+
+1. **你要做的这套，专业机构确实都在做**——而且不是民间土法：银行端有监管明文（SR 11-7，2026-04 更新为 OCC 2026-13/SR 26-02），顶级基金端有 WorldQuant/alphalens 体系的信号级验证，学术端有 López de Prado 的完整反过拟合方法论。
+2. **业界没有的只有一处**：PB-05"决策节点算法共振登记"——因为业界没有"决策地图"这个形态（他们是一条条 alpha 信号流水线），我们的地图本身是自创形态，配套登记是合理延伸。
+3. **业界最狠的两条纪律**要抄到位：①"模型没完全定稿前不许跑回测"（López de Prado：回测中做研究=酒后驾车）；②结论必须过显著性折减（试了 50 组参数，最好那组的夏普要打折看）。
+4. PB-08 holdout 建议从 6 个月上调为 **12 个月**（WorldQuant 惯例），最少 6 个月保底。
+
+### 6.4 调研来源
+
+- [Finantrix — Backtesting at Scale（机构回测参考架构：PIT 冻结快照+内容哈希/walk-forward/purged CV）](https://www.finantrix.com/in-focus/systematic-alpha-technology-stack-modern-hedge-fund/backtesting-at-scale-cloud-hpc-event-driven)
+- [美联储 SR 11-7 模型风险管理指引（模型清单/风险分级/独立验证/持续监控/回测）](https://www.federalreserve.gov/boarddocs/srletters/2011/sr1107.pdf)
+- [OCC Bulletin 2026-13（2026-04 取代 SR 11-7：保留三大验证支柱，风险分级替代固定年度节奏）](https://risktemplate.com/blog/2026-06-10-occ-bulletin-2026-13-model-risk-management-sr-11-7-what-changed/)
+- [alpha-lens 方法论文档（rank IC/分档/DSR/PBO/walk-forward/成本敏感性/生产就绪评分）](https://github.com/ellatso/alpha-lens/blob/main/docs/concepts.md)
+- [Quant-Agent（七态因子生命周期状态机 CANDIDATE→…→DECAYING→RETIRED + AlphaMonitor 衰减检测）](https://github.com/Kevin-Hou422/Quant-Agent)
+- [WorldQuant Brain alpha 生命周期（六态状态机+本地台账 DB）](https://deepwiki.com/xiegengcai/world-quant-brain/2.2-data-flow)
+- [How To Backtest Correctly（López de Prado AFML 开源实现：triple-barrier/purge/embargo/CPCV/DSR/PBO；"回测中做研究=酒后驾车"）](https://github.com/Neyt/How-To-Backtest-Correctly)
+- [Alphanume — What Is Look-Ahead Bias（前视偏差来源清单+诊断三招：lag 重算/strip 重算/walk-forward）](https://www.alphanume.com/blog/what-is-look-ahead-bias)
+- [巴西市场诚实无效化论文（CPCV+DSR 完整流水线实证：信号统计真实但成本后崩=换手×成本是约束）](https://github.com/JoaoHenriqueBarbosa/stockprecog/blob/main/paper/paper.pdf)
+- [私募札记（人工因子 85-90%+衍生 10-15%，衍生因子月度复盘、衰减即下线）](http://m.toutiao.com/group/7669707690368565795/)
+- [WorldQuant Brain 防过拟合体系（holdout 最后 12 个月/时序分块 CV/衰减半衰期监控）](https://ask.csdn.net/questions/9790038)
+- [FRTB 桌面级每日回测要求（250 日窗口、97.5/99 分位对照实际盈亏）](https://equicurious.com/learn/derivatives/operational-and-regulatory-considerations/model-governance-and-controls-requirements)
