@@ -256,6 +256,8 @@ DDL_STATEMENTS = [
     # --- ig_company_edge 供给侧两列（Owner 2026-09-09 裁定: capacity 产能+exclusivity 独供双供） ---
     "ALTER TABLE ig_company_edge ADD COLUMN IF NOT EXISTS capacity TEXT",
     "ALTER TABLE ig_company_edge ADD COLUMN IF NOT EXISTS exclusivity TEXT",
+    # --- 边级新闻关键词（2026-09-09 全网调研: FactSet keywords 对标,新闻联动边级命中） ---
+    "ALTER TABLE ig_company_edge ADD COLUMN IF NOT EXISTS keywords TEXT[]",
     # --- ig_company_metric PIT 化（Owner 2026-09-09 裁定: 指标层保留不融不删,加 PIT 防回测切片前视） ---
     "ALTER TABLE ig_company_metric ADD COLUMN IF NOT EXISTS as_of DATE",
     "ALTER TABLE ig_company_metric ADD COLUMN IF NOT EXISTS valid_from DATE",

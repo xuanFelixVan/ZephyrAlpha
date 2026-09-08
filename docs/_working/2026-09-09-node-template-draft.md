@@ -4,7 +4,7 @@ ttl: task_bound
 
 # 节点模板草案（Owner 审定稿前不动工引擎/门禁）
 
-> **状态**：草案 v0.2（2026-09-09 股权穿透三裁定并入），待 Owner 圈改。
+> **状态**：草案 v0.3（2026-09-09 全网调研增补：溯源六件套/新鲜度/地理/设施/专业名词对照），待 Owner 圈改。
 > **配套**：graph_quality_standard.md §6~§8（深度体系/详情卡/三查 S21~S23）——本文档是**字段级落地样例**，审定后字段标准回写标准文件，引擎按审定稿施工。
 
 ## 〇、链模板（第一层：链本身就是一种节点——全景图的三种节点）
@@ -107,12 +107,24 @@ company:
   soe_flag: true                    # 国资属性（同新闻国企民企反应方向不同）
   # ---- 全球属性（Owner 2026-09-09 增）----
   country: CN                       # 国籍
+  hq_location: 合肥·安徽·中国       # 总部地理（FactSet Revere 实践：地缘风险推演/台海情境模拟用）
   listing_venue: 上交所科创板        # 上市市场（纳斯达克/港交所/未上市…）
   listing_status: listed            # listed/unlisted/delisted（与编码表枚举统一）
   listing_date: 2026-07-27          # 上市日（PIT）
   delisting_date: null              # 退市日（未退市 null）
   dual_listing: [A]                # 多市场挂牌（A+H/ADR——美股新闻传导A股通道）
   st_flag: false                    # ST/风险警示标记
+  # ---- 设施域（GitHub supply-chain-kg 实践：Facility 节点轻量化为公司字段）----
+  facilities:                       # 产能地理点（capacity 列的地理维度）
+    - {site: 合肥空港工业园, type: 12英寸DRAM晶圆厂, capacity: 12万片/月, country: CN}
+  # ---- 溯源六件套（W3C PROV 六问对齐，v0.3 全网调研增补）----
+  source: ths_export                # ① 来源（已有）
+  source_doc: "查询词|URL|日期"      # ② 证据链接（已有）
+  evidence: "原文摘录"              # ③ 证据原文（已有）
+  info_channel: 巨潮资讯网          # ④ 信息渠道（新：公司公告发布渠道，爬虫着陆点）
+  source_url: https://...           # ⑤ 渠道入口网址（新：详情页/披露页 URL）
+  refresh_policy: {freq: quarterly, next_due: 2026-12-31, last_checked: null,
+                   checker: null}   # ⑥ 更新策略（新：频率+下次到期+上次核验+核验人；S25 审查对象）
   # ---- 日历域 ----
   calendar: {earnings: 2026-10-28, unlock: null, ex_div: null}   # 财报/解禁/除权（新闻时间锚）
   # ---- 内容 ----
@@ -232,8 +244,41 @@ CREATE TABLE ig_equity_edge (
 
 ## 五、审定后的动工清单（待你放行）
 
-1. 标准文件 §6~§8 按审定稿回写（v1.3.0，含链节点模板）
-2. 引擎加 S21~S23（进度指标段，样板验收后升硬闸）+链骨架验收（S24 候选：companies_min 低于阈值进报告）
+1. 标准文件 §6~§8 按审定稿回写（v1.3.0，含链节点模板+溯源六件套+专业名词对照）
+2. 引擎加 S21~S23（进度指标段，样板验收后升硬闸）+S24 链骨架+S25 新鲜度（refresh_policy 到期未检=违规候选进待更新队列）
 3. SOP §6 第2轮挂"深度下钻协议"（病菌寻路顺带判定 drill_status）
 4. websearch_ingest node 记录支持 child_chain_id/drill_status 写入+校验（drill_status=child 时 child_chain_id 必填交叉校验）；ig_chain 加 level 列（DDL v4 已含 node/company 列）
 5. 长城指令书 Phase 5 扩产段挂"半导体样板链"专项（L1 建主干→L2 挂接→L3 下钻→砖判定→公司详情卡打样）
+
+## 六、专业名词对照表（2026-09-09 全网调研定稿——对齐 FactSet/W3C，不推翻只补齐）
+
+**调研结论**：我们的 edge_type v2 词表与 FactSet 官方 API 的四大类（customer/supplier/partner/competitor+13 子类型）**语义一一对应，不需要换词**。需要补齐的是命名规范、别名归一层、以及以下对照：
+
+| 我们的名 | FactSet 标准名 | 说明 |
+|---|---|---|
+| supplies_to | SUPPLIER（四类之一）| 方向语义一致（供应商→客户）|
+| customer_of | CUSTOMER | 反向冗余边，FactSet 同做法（任一公司视角可查）|
+| competitor_of | COMPETITOR | 一致 |
+| partners_with | PARTNER | 一致 |
+| produces | —（FactSet 无，ArthaNethra 有 PRODUCES） | 保留（产品域） |
+| belongs_to_sector | —（FactSet 用 RBICS/GICS 行业） | 保留（申万归属） |
+| （无）| relationship_id（REL-GCID-x-GCID-y） | **采**：边的持久 ID（我们用 edge_id 序列，等价） |
+| （无）| relevance rankings | 已有 relevance 列 |
+| （无）| centrality measures | DERIVED 查询侧算（度中心性），不落库 |
+| （无）| keywords | **采**：边级关键词（我们只在公司级有 news_keywords）——边表加 keywords TEXT[] |
+
+**命名规范对齐（ArthaNethra 教训：40+ 别名归一到 26 类型，禁自由文本）**：
+- 词表封闭枚举已有（工具硬校验），补**关系别名映射表** `relation_alias_map.yaml`：中文别名（"供货/供应/卖给/采购自"→supplies_to）→ 写入时归一，防子代理自由发挥
+- 命名风格：蛇形（已是）；股权表 relation 四值（invests_in/subsidiary/shareholding/actual_control）与 ArthaNethra 的 INVESTED_IN/SUBSIDIARY_OF/OWNS 语义对应，保留我们的命名
+
+## 七、供应链 vs 产业链字段对照（2026-09-09 定稿：同库同表+edge_type 读法开关）
+
+| 维度 | 产业链读法 | 供应链读法 |
+|---|---|---|
+| 查询开关 | edge_type='structure' | edge_type IN (supplies_to, customer_of, …) |
+| 表 | ig_chain→ig_node→ig_edge | ig_company_edge（21→23 列） |
+| 核心字段 | 环节名/tier/child_chain_id/drill_status | product/year/PIT 三时间戳/weight/revenue_pct/evidence_type/subsidiary/relevance/transmission_type/**capacity**/**exclusivity**/**keywords**（待加） |
+| 机构对标 | Wind/Choice 三层产业树 | FactSet Revere 21 维边属性 |
+| 增删 | 每条 structure 边=流程一步 | 供给侧瓶颈+独供弹性+关键词联动 |
+
+**边表待加列汇总（DDL v4.1 施工项）**：keywords TEXT[]（边级新闻关键词）、（capacity/exclusivity 已建）。公司级溯源六件套中 info_channel/source_url/refresh_policy 三列为**公司主表扩展**（属 c1_market 域主表或图谱公司视图，施工时机=爬虫体系立项时，现在只在模板留位）。
