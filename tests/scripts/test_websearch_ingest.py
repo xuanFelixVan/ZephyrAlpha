@@ -98,6 +98,37 @@ def test_validate_passes_good_record() -> None:
     assert errs == [], errs
 
 
+def test_validate_rejects_bad_chain_status() -> None:
+    # status 非法值
+    errs = wi._validate_records(
+        [{"type": "chain", "name": "x", "status": "deleted", "market": "cn", "source_doc": SD}],
+        stocks=set(),
+    )
+    assert any("status 非法" in e for e in errs)
+    # deprecated 缺 merged_into（SOP §4.6）
+    errs2 = wi._validate_records(
+        [{"type": "chain", "name": "x", "status": "deprecated", "market": "cn", "source_doc": SD}],
+        stocks=set(),
+    )
+    assert any("merged_into" in e for e in errs2)
+    # merged_into 非 chain_id 格式
+    errs3 = wi._validate_records(
+        [{"type": "chain", "name": "x", "status": "deprecated", "merged_into": "某某链",
+          "market": "cn", "source_doc": SD}],
+        stocks=set(),
+    )
+    assert any("merged_into 非 chain_id" in e for e in errs3)
+
+
+def test_validate_passes_deprecated_chain() -> None:
+    errs = wi._validate_records(
+        [{"type": "chain", "name": "x", "status": "deprecated", "merged_into": "CH-abcdef123456",
+          "market": "cn", "source_doc": SD}],
+        stocks=set(),
+    )
+    assert errs == [], errs
+
+
 # ---- 集成三测（真 PG）----
 
 def _tmp_batch(tmp_path: Path, records: list[dict]) -> Path:
@@ -144,6 +175,34 @@ def test_ingest_transaction_rollback(tmp_path: Path) -> None:
     cur.execute("SELECT COUNT(*) FROM ig_chain WHERE name='__回滚测试TMP__'")
     assert cur.fetchone()[0] == 0  # 回滚生效
     conn.close()
+
+
+def test_ingest_deprecated_chain_no_resurrect(tmp_path: Path) -> None:
+    # deprecated 落库后，幂等复跑同链（不带 status，如常规定期刷新场景）不得翻回 active
+    chain = "__废弃链TMP__"
+    recs = [{"type": "chain", "name": chain, "category": "钢铁", "market": "cn",
+             "status": "deprecated", "merged_into": "CH-cbfda16e6c04",
+             "source_doc": SD, "source": "websearch"}]
+    p = _tmp_batch(tmp_path, recs)
+    assert wi.cmd_ingest(str(p)) == 0
+    assert wi.cmd_ingest(str(p)) == 0  # 幂等复跑（带 status）
+    # 重发不带 status 的常规记录（模拟刷新 category）——status 不回落 active
+    recs2 = [{"type": "chain", "name": chain, "category": "钢铁", "market": "cn",
+              "source_doc": SD, "source": "websearch"}]
+    p2 = _tmp_batch(tmp_path, recs2)
+    assert wi.cmd_ingest(str(p2)) == 0
+    # 验证 status 仍为 deprecated（不复活）+ 清理
+    from zephyr.governance.depgraph_schema import get_depgraph_pg_connection
+
+    conn = get_depgraph_pg_connection(read_only=False)
+    cur = conn.cursor()
+    try:
+        cur.execute("SELECT status FROM ig_chain WHERE name=%s", (chain,))
+        assert cur.fetchone()[0] == "deprecated"
+    finally:
+        cur.execute("DELETE FROM ig_chain WHERE name=%s", (chain,))
+        conn.commit()
+        conn.close()
 
 
 def test_ingest_node_company_resolves_existing_node(tmp_path: Path) -> None:

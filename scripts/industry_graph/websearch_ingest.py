@@ -4,7 +4,7 @@
 # [CONSUMERS] 夜班 SOP industry_chain_data_audit_sop §5 全轮次写入(唯一合法通道)
 # [STARTUP] manual
 # [MATURITY] production
-# [INVARIANTS] 写入唯一通道: 全部走 ingest 子命令(禁手写 SQL); 批次=单事务全成全败; 幂等(UNIQUE 锚 ON CONFLICT); 硬校验九条(SOP §5): source_doc 三段式/confidence<=0.7(websearch)/symbol 正则+cn 反查 stock_basic/词表白名单(tier/category/edge_type v2)/node.name 无 -tier 后缀残留/backup 幂等; PIT 三时间戳 websearch 边必填; 节点引用(node/node_company/node_edge)按(链+名)查库解析存量真实ID(存量采购包节点非md5方案,重算ID会FK违规/造重复行,2026-09-08修复)
+# [INVARIANTS] 写入唯一通道: 全部走 ingest 子命令(禁手写 SQL); 批次=单事务全成全败; 幂等(UNIQUE 锚 ON CONFLICT); 硬校验九条(SOP §5): source_doc 三段式/confidence<=0.7(websearch)/symbol 正则+cn 反查 stock_basic/词表白名单(tier/category/edge_type v2)/node.name 无 -tier 后缀残留/backup 幂等; PIT 三时间戳 websearch 边必填; 节点引用(node/node_company/node_edge)按(链+名)查库解析存量真实ID(存量采购包节点非md5方案,重算ID会FK违规/造重复行,2026-09-08修复); chain 支持 status/merged_into(deprecated 须带 merged_into,幂等 append 不覆盖原 source_note,2026-09-08 裁定执行)
 # [MODIFY-GUARD] none
 # [STABILITY] evolving
 # [SAFETY] L
@@ -46,11 +46,13 @@ TIERS = {"上游", "中游", "下游", "设备", "材料", "零部件", "原材�
 TIERS_NEW = {"上游", "中游", "下游", "设备", "材料"}  # websearch 只许前 5 值
 CATEGORIES = {
     "半导体", "消费电子", "元件", "光学光电子", "计算机设备", "机械设备", "电力设备", "汽车",
-    "国防军工", "家用电器", "基础化工", "有色金属", "钢铁", "建筑材料", "石油石化", "医药生物",
+    "国防军工", "家用电器", "基础化工", "有色金属", "钢铁", "建筑材料", "石油石化", "煤炭", "医药生物",
     "食品饮料", "纺织服饰", "商贸零售", "社会服务", "美容护理", "轻工制造", "农林牧渔",
     "软件开发", "互联网服务", "通信服务", "通信设备", "游戏", "传媒", "银行", "非银金融",
     "房地产", "建筑装饰", "交通运输", "公用事业", "环保", "综合",
 }
+CHAIN_STATUSES = {"active", "deprecated"}  # SOP §4.6 ig_chain.status 封闭枚举
+MERGED_INTO_RE = re.compile(r"^CH-[0-9a-f]{12}$")
 EDGE_TYPES_V2 = {"supplies_to", "customer_of", "competitor_of", "partners_with", "produces", "belongs_to_sector", "structure", "supply"}
 NODE_SUFFIX_RE = re.compile(r"-(上游|中游|下游|设备|材料|零部件|原材料|辅材|unspecified)$")
 SYMBOL_CN_RE = re.compile(r"^\d{6}\.(SH|SZ|BJ)$")
@@ -209,6 +211,15 @@ def _validate_records(records: list[dict], stocks: set[str] | None) -> list[str]
             cat = r.get("category")
             if cat and cat not in CATEGORIES and cat != "综合":
                 errs.append(f"{idx}: category 非申万词表: {cat}")
+            # chain 状态与合并指向(2026-09-08 裁定执行: 碎片链 deprecated 走唯一合法通道)
+            st = r.get("status")
+            if st is not None and st not in CHAIN_STATUSES:
+                errs.append(f"{idx}: status 非法(仅 active/deprecated): {st}")
+            mi = r.get("merged_into")
+            if mi is not None and not MERGED_INTO_RE.match(mi):
+                errs.append(f"{idx}: merged_into 非 chain_id 格式: {mi}")
+            if st == "deprecated" and not mi:
+                errs.append(f"{idx}: deprecated 链须带 merged_into(SOP §4.6)")
         if typ in ("node_edge", "company_edge"):
             et = r.get("edge_type", r.get("relation"))
             if et and et not in EDGE_TYPES_V2:
@@ -246,11 +257,20 @@ def cmd_ingest(batch_path: str) -> int:
             sd, src, mkt = r.get("source_doc", ""), r.get("source", "websearch"), r.get("market", "cn")
             if typ == "chain":
                 cid = _chain_id(r["name"])
+                merged = r.get("merged_into")
                 cur.execute(
                     """INSERT INTO ig_chain (chain_id,name,category,version_year,market,status,source_note,created_at,updated_at)
-                    VALUES (%s,%s,%s,%s,%s,'active',%s,now(),now())
-                    ON CONFLICT (chain_id) DO UPDATE SET updated_at=now(), category=COALESCE(EXCLUDED.category,ig_chain.category)""",
-                    (cid, r["name"], r.get("category"), r.get("version_year"), mkt, sd or src),
+                    VALUES (%s,%s,%s,%s,%s,%s,%s,now(),now())
+                    ON CONFLICT (chain_id) DO UPDATE SET updated_at=now(),
+                      category=COALESCE(EXCLUDED.category,ig_chain.category),
+                      status=CASE WHEN EXCLUDED.status IS DISTINCT FROM 'active'
+                             THEN EXCLUDED.status ELSE ig_chain.status END,
+                      source_note=CASE
+                        WHEN %s::text IS NOT NULL AND position(%s::text in ig_chain.source_note)=0
+                        THEN ig_chain.source_note||' | merged_into:'||%s::text
+                        ELSE ig_chain.source_note END""",
+                    (cid, r["name"], r.get("category"), r.get("version_year"), mkt,
+                     r.get("status") or "active", sd or src, merged, merged, merged),
                 )
             elif typ == "node":
                 cid = _chain_id(r["chain_name"])
