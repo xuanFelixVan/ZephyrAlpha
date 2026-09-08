@@ -20,6 +20,7 @@
     backup                七表库内备份(幂等,当日表已存在则跳过)
     find-chain --name X   模糊找链(前5相似)
     ingest --batch PATH   校验+事务写入批次 JSON
+    controller ACTION --session S  单夜单总控锁(acquire/release/status,SOP §3 总则 9)
 
 批次 JSON 格式与硬校验规则见 SOP §5。websearch/corpus_rag 来源强制:
 source_doc="查询词|URL|YYYY-MM-DD"; company_edge 必带 valid_from/as_of(PIT)。
@@ -56,7 +57,7 @@ MERGED_INTO_RE = re.compile(r"^CH-[0-9a-f]{12}$")
 EDGE_TYPES_V2 = {"supplies_to", "customer_of", "competitor_of", "partners_with", "produces", "belongs_to_sector", "structure", "supply"}
 NODE_SUFFIX_RE = re.compile(r"-(上游|中游|下游|设备|材料|零部件|原材料|辅材|unspecified)$")
 SYMBOL_CN_RE = re.compile(r"^\d{6}\.(SH|SZ|BJ)$")
-SYMBOL_GLOBAL_RE = re.compile(r"^[A-Z0-9]{1,6}\.(US|KS|TW|T|HK)$")
+SYMBOL_GLOBAL_RE = re.compile(r"^[A-Z0-9]{1,6}\.(US|KS|TW|T|HK|DE|LN|JP|SM)$")
 SOURCEDOC_RE = re.compile(r"^[^|]+\|[^|]+\|\d{4}-\d{2}-\d{2}$")
 
 _ALL_TABLES = ("ig_chain", "ig_node", "ig_edge", "ig_node_company", "ig_document", "ig_company_edge", "ig_company_metric", "ig_chunk", "ig_fact")
@@ -78,6 +79,56 @@ def _chain_id(name: str) -> str:
 
 def _node_id(chain_id: str, name: str, tier: str) -> str:
     return f"ND-{hashlib.md5(f'{chain_id}|{name}|{tier}'.encode('utf-8')).hexdigest()[:12]}"
+
+
+def _controller_lock_dir() -> Path:
+    return Path(__file__).resolve().parents[2] / ".runtime" / "industry_graph"
+
+
+def cmd_controller(action: str, session: str, ttl_min: int = 30) -> int:
+    """单夜单总控锁(SOP §3 总则 9,2026-09-08 B 项治本)。
+
+    acquire: 抢锁(已锁且未过期->exit 4 报占用者;过期->接管)
+    release: 释放(须同 session,防误释放他线)
+    status: 查看
+    心跳: 每次 ingest 自动续期(锁文件 mtime 即心跳)。
+    """
+    import time
+
+    lock = _controller_lock_dir() / "controller.lock"
+    now = time.time()
+    if action == "status":
+        if lock.is_file():
+            d = json.loads(lock.read_text(encoding="utf-8"))
+            age = (now - lock.stat().st_mtime) / 60
+            print(json.dumps({**d, "age_min": round(age, 1), "alive": age < ttl_min}, ensure_ascii=False))
+        else:
+            print(json.dumps({"state": "free"}))
+        return 0
+    if action == "acquire":
+        if lock.is_file():
+            d = json.loads(lock.read_text(encoding="utf-8"))
+            age = (now - lock.stat().st_mtime) / 60
+            if d.get("session") != session and age < ttl_min:
+                print(f"[BUSY] 总控锁被占用: {d.get('session')} (age {age:.0f}min < ttl {ttl_min}min)")
+                return 4
+        _controller_lock_dir().mkdir(parents=True, exist_ok=True)
+        lock.write_text(json.dumps({"session": session, "acquired_at": time.strftime("%Y-%m-%d %H:%M:%S")}, ensure_ascii=False), encoding="utf-8")
+        print(f"[LOCKED] {session}")
+        return 0
+    if action == "release":
+        if lock.is_file():
+            d = json.loads(lock.read_text(encoding="utf-8"))
+            if d.get("session") != session:
+                print(f"[DENIED] 锁属 {d.get('session')} 非 {session},拒绝释放")
+                return 4
+            lock.unlink(missing_ok=True)
+            print(f"[RELEASED] {session}")
+        else:
+            print("[FREE] 无锁")
+        return 0
+    print(f"[ERROR] 未知 action: {action}")
+    return 2
 
 
 def _resolve_node(cur, chain_id: str, name: str) -> str | None:
@@ -184,19 +235,22 @@ def _validate_records(records: list[dict], stocks: set[str] | None) -> list[str]
         if src in ("websearch", "corpus_rag") and (r.get("confidence") or 0) > 0.7:
             errs.append(f"{idx}: confidence>{0.7}: {r.get('confidence')}")
         market = r.get("market", "cn")
-        # 硬校验 3: symbol 正则
+        # 硬校验 3: symbol 正则(按端点各自市场判定,2026-09-08 跨市场治本:
+        # global 边可混端 cn+海外 symbol;单边 market=cn 但 symbol 是海外格式时按
+        # 该 symbol 实际市场校验,不再因边级 market 标签误拒合法混端边)
         for k in ("symbol", "from_symbol", "to_symbol"):
             sym = r.get(k)
             if not sym:
                 continue
-            if market == "cn":
-                if not SYMBOL_CN_RE.match(sym):
-                    errs.append(f"{idx}: cn symbol 非法: {sym}")
-                elif stocks is not None and sym not in stocks:
+            if SYMBOL_CN_RE.match(sym):
+                if stocks is not None and sym not in stocks:
                     errs.append(f"{idx}: cn symbol 不在 stock_basic: {sym}")
-            elif market == "global":
-                if not SYMBOL_GLOBAL_RE.match(sym):
-                    errs.append(f"{idx}: global symbol 非法: {sym}")
+            elif SYMBOL_GLOBAL_RE.match(sym):
+                pass  # 海外格式合法,按格式判市场
+            elif market == "cn":
+                errs.append(f"{idx}: cn symbol 非法: {sym}")
+            else:
+                errs.append(f"{idx}: global symbol 非法: {sym}")
         # 硬校验 7: tier 词表(websearch 禁 unspecified)
         if typ == "node":
             tier = r.get("tier")
@@ -229,6 +283,13 @@ def _validate_records(records: list[dict], stocks: set[str] | None) -> list[str]
             for k in ("valid_from", "as_of"):
                 if not r.get(k):
                     errs.append(f"{idx}: company_edge 缺 PIT 字段 {k}")
+        # 跨市场治本(2026-09-08): company_edge 两端 symbol 必须非空——
+        # 禁止新写入留空 symbol 用 name 编码公司(存量修复见 normalize_global_edges)
+        if typ == "company_edge" and src in ("websearch", "corpus_rag"):
+            if not r.get("from_symbol"):
+                errs.append(f"{idx}: company_edge 缺 from_symbol")
+            if not r.get("to_symbol"):
+                errs.append(f"{idx}: company_edge 缺 to_symbol")
     return errs
 
 
@@ -359,6 +420,10 @@ def cmd_ingest(batch_path: str) -> int:
         raise
     finally:
         conn.close()
+    # 总控锁心跳续期(锁文件 mtime 即心跳;无锁时静默跳过)
+    lock = _controller_lock_dir() / "controller.lock"
+    if lock.is_file():
+        lock.touch()
     print(json.dumps({"batch": batch.get("batch_id"), "written": counts}, ensure_ascii=False))
     return 0
 
@@ -372,9 +437,15 @@ def main() -> int:
     fc.add_argument("--name", required=True)
     ing = sub.add_parser("ingest")
     ing.add_argument("--batch", required=True)
+    ctl = sub.add_parser("controller")
+    ctl.add_argument("action", choices=["acquire", "release", "status"])
+    ctl.add_argument("--session", default="")
+    ctl.add_argument("--ttl-min", type=int, default=30)
     args = p.parse_args()
 
     try:
+        if args.cmd == "controller":
+            return cmd_controller(args.action, args.session, args.ttl_min)
         if args.cmd == "stats":
             return cmd_stats()
         if args.cmd == "backup":
