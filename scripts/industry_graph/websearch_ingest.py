@@ -4,7 +4,7 @@
 # [CONSUMERS] 夜班 SOP industry_chain_data_audit_sop §5 全轮次写入(唯一合法通道)
 # [STARTUP] manual
 # [MATURITY] production
-# [INVARIANTS] 写入唯一通道: 全部走 ingest 子命令(禁手写 SQL); 批次=单事务全成全败; 幂等(UNIQUE 锚 ON CONFLICT); 硬校验九条(SOP §5): source_doc 三段式/confidence<=0.7(websearch)/symbol 正则+cn 反查 stock_basic/词表白名单(tier/category/edge_type v2)/node.name 无 -tier 后缀残留/backup 幂等; PIT 三时间戳 websearch 边必填; 节点引用(node/node_company/node_edge)按(链+名)查库解析存量真实ID(存量采购包节点非md5方案,重算ID会FK违规/造重复行,2026-09-08修复); chain 支持 status/merged_into(deprecated 须带 merged_into,幂等 append 不覆盖原 source_note,2026-09-08 裁定执行)
+# [INVARIANTS] 写入唯一通道: 全部走 ingest 子命令(禁手写 SQL); 批次=单事务全成全败; 幂等(UNIQUE 锚 ON CONFLICT); 硬校验(SOP §5): source_doc 三段式/confidence<=0.7(websearch)/symbol 正则+cn 反查 stock_basic/词表白名单(tier/category/edge_type v2)/node.name 无 -tier 后缀残留/backup 幂等; UNLISTED:UE-xxx 唯一合法格式(旧格式公司名直写拒绝,§4.10); unlisted_entity 记录 status 枚举+listed_symbol 真代码格式校验; PIT 三时间戳 websearch 边必填; 节点引用(node/node_company/node_edge)按(链+名)查库解析存量真实ID(存量采购包节点非md5方案,重算ID会FK违规/造重复行,2026-09-08修复); chain 支持 status/merged_into(deprecated 须带 merged_into,幂等 append 不覆盖原 source_note,2026-09-08 裁定执行)
 # [MODIFY-GUARD] none
 # [STABILITY] evolving
 # [SAFETY] L
@@ -24,6 +24,8 @@
 
 批次 JSON 格式与硬校验规则见 SOP §5。websearch/corpus_rag 来源强制:
 source_doc="查询词|URL|YYYY-MM-DD"; company_edge 必带 valid_from/as_of(PIT)。
+unlisted_entity 记录(§4.10): name/country/status/listed_symbol,编码表登记与
+上市标定走本通道;UNLISTED symbol 唯一合法格式=UNLISTED:UE-{12hex}。
 """
 
 from __future__ import annotations
@@ -58,9 +60,12 @@ EDGE_TYPES_V2 = {"supplies_to", "customer_of", "competitor_of", "partners_with",
 NODE_SUFFIX_RE = re.compile(r"-(上游|中游|下游|设备|材料|零部件|原材料|辅材|unspecified)$")
 SYMBOL_CN_RE = re.compile(r"^\d{6}\.(SH|SZ|BJ)$")
 SYMBOL_GLOBAL_RE = re.compile(r"^[A-Z0-9]{1,6}\.(US|KS|TW|T|HK|DE|LN|JP|SM)$")
+# UNLISTED 唯一合法格式=编码表主键引用(SOP §4.10,2026-09-08 开放问题9裁定:
+# 旧格式 UNLISTED:公司名 禁止,防双格式并存致夜班模型幻觉/漂移)
+SYMBOL_UNLISTED_RE = re.compile(r"^UNLISTED:UE-[0-9a-f]{12}$")
 SOURCEDOC_RE = re.compile(r"^[^|]+\|[^|]+\|\d{4}-\d{2}-\d{2}$")
 
-_ALL_TABLES = ("ig_chain", "ig_node", "ig_edge", "ig_node_company", "ig_document", "ig_company_edge", "ig_company_metric", "ig_chunk", "ig_fact")
+_ALL_TABLES = ("ig_chain", "ig_node", "ig_edge", "ig_node_company", "ig_document", "ig_company_edge", "ig_company_metric", "ig_chunk", "ig_fact", "ig_unlisted_entity")
 _DATE = None
 
 
@@ -247,6 +252,10 @@ def _validate_records(records: list[dict], stocks: set[str] | None) -> list[str]
                     errs.append(f"{idx}: cn symbol 不在 stock_basic: {sym}")
             elif SYMBOL_GLOBAL_RE.match(sym):
                 pass  # 海外格式合法,按格式判市场
+            elif SYMBOL_UNLISTED_RE.match(sym):
+                pass  # 未上市实体编码表引用合法(SOP §4.10)
+            elif sym.startswith("UNLISTED:"):
+                errs.append(f"{idx}: UNLISTED 旧格式(公司名直写)已禁,须先登记编码表换 UNLISTED:UE-xxx: {sym}")
             elif market == "cn":
                 errs.append(f"{idx}: cn symbol 非法: {sym}")
             else:
@@ -290,6 +299,18 @@ def _validate_records(records: list[dict], stocks: set[str] | None) -> list[str]
                 errs.append(f"{idx}: company_edge 缺 from_symbol")
             if not r.get("to_symbol"):
                 errs.append(f"{idx}: company_edge 缺 to_symbol")
+        # 编码表登记校验(SOP §4.10): status 封闭枚举;listed_symbol 非空时必须真代码格式
+        if typ == "unlisted_entity":
+            st = r.get("status") or "unlisted"
+            if st not in ("unlisted", "listed", "merged"):
+                errs.append(f"{idx}: unlisted_entity.status 非法(仅 unlisted/listed/merged): {st}")
+            ls = r.get("listed_symbol")
+            if ls is not None and not (SYMBOL_GLOBAL_RE.match(ls) or SYMBOL_CN_RE.match(ls)):
+                errs.append(f"{idx}: unlisted_entity.listed_symbol 非真代码格式: {ls}")
+            if not r.get("name"):
+                errs.append(f"{idx}: unlisted_entity 缺 name")
+            if st == "listed" and not ls:
+                errs.append(f"{idx}: unlisted_entity status=listed 须带 listed_symbol(一手来源)")
     return errs
 
 
@@ -411,6 +432,21 @@ def cmd_ingest(batch_path: str) -> int:
                     ON CONFLICT (subject,relation,object,as_of,source) DO NOTHING""",
                     (r["subject"], r["relation"], r["object"], r.get("value"), r.get("evidence_chunk_id"),
                      r.get("confidence", 0.5), r.get("as_of"), src, mkt),
+                )
+            elif typ == "unlisted_entity":
+                # 编码表登记/上市标定(SOP §4.10): name+country 登记幂等;
+                # listed_symbol 须一手来源(交易所公告),工具只信入参不查外源
+                country = r.get("country", "CN")
+                uid = f"UE-{hashlib.md5(f'{r['name']}|{country}'.encode('utf-8')).hexdigest()[:12]}"
+                cur.execute(
+                    """INSERT INTO ig_unlisted_entity (ue_id,name,country,status,listed_symbol,source_doc,as_of,created_at,updated_at)
+                    VALUES (%s,%s,%s,%s,%s,%s,%s,now(),now())
+                    ON CONFLICT (name,country) DO UPDATE SET updated_at=now(),
+                      status=EXCLUDED.status,
+                      listed_symbol=COALESCE(EXCLUDED.listed_symbol,ig_unlisted_entity.listed_symbol),
+                      source_doc=COALESCE(EXCLUDED.source_doc,ig_unlisted_entity.source_doc)""",
+                    (uid, r["name"], country, r.get("status") or "unlisted",
+                     r.get("listed_symbol"), sd, r.get("as_of")),
                 )
             else:
                 raise ValueError(f"未知 record type: {typ}")

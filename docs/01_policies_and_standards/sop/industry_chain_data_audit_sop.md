@@ -7,7 +7,7 @@ title: 产业链供应链全景图数据审计与更新SOP——夜班自主执�
 owner: ZephyrAlpha-Owner
 language: zh
 status: active
-version: "1.4.0"
+version: "1.4.1"
 date: 2026-09-08
 topic: industry_chain_data_audit
 scope: global
@@ -351,13 +351,14 @@ WHERE valid_from <= :decision_date
 - 产品：`produces`（公司→产品，尽量带营收占比）
 - 归属：`belongs_to_sector`（公司↔申万行业，替代模糊的 category 挂靠）
 - 现有 `structure/supply` 值保留兼容（存量不迁移）；websearch 新写入一律用 v2 词表。
+- **硬边界（2026-09-08 开放问题 7 裁定）：股权投资关系禁入本词表**——`invests_in` 不设值，投资/持股/并表关系留给将来的股权穿透表（独立领域）。本表只收**业务传导**关系（供应/客户/竞争/合作/生产/归属）。
 
 **跨市场边契约（2026-09-08 A1 治本增补，首次夜班 53 边空端教训）**：
 
 1. `company_edge` 两端 symbol **必须非空**（工具硬校验强制）——禁止把公司代码编码进 `from_name/to_name` 留空 symbol（如 `to_name='特斯拉(US:TSLA)'`），按 symbol 查询的量化路径会整批漏掉。
 2. **混端边合法**：一条边一端 A 股（`002050.SZ`）一端海外（`TSLA.US`）是常态，market 字段取"主市场"（关系主要发生地）；symbol 校验按**每个端点各自格式**判定，不按边级 market 标签。
 3. **海外 symbol 后缀词表**（封闭枚举）：`.US .KS .TW .T .HK .DE .LN .JP .SM`（美/韩/台/东京/港/德/伦敦/日/美股粉单）。
-4. **未上市/无代码端点**（长江存储、华为、奇瑞等）：symbol 填 `UNLISTED:公司名`（前缀统一可过滤），name 保留纯公司名——查询侧按 `NOT LIKE 'UNLISTED:%'` 过滤或保留做展示。
+4. **未上市/无代码端点**（长江存储、华为、奇瑞等）：symbol 填 `UNLISTED:UE-{12hex}`（§4.10 编码表主键引用，2026-09-08 起**唯一合法格式**，旧格式公司名直写被工具拒绝），name 保留纯公司名——查询侧按 `NOT LIKE 'UNLISTED:%'` 过滤或保留做展示。
 5. 存量修复通道：`scripts/industry_graph/normalize_global_edges.py`（name 内嵌码提取+人工词表兜底+UNLISTED 标注，只 UPDATE 不 DELETE，幂等）。
 
 **量化消费侧最小数据需求**（字段取舍依据）：
@@ -407,7 +408,7 @@ WHERE valid_from <= :decision_date
 | source\_doc / as\_of / created\_at | — | PIT 三件套，同 §4.8 纪律 |
 
 - **唯一锚**：(name, country)——ON CONFLICT 幂等。
-- **边的 symbol 格式**：`UNLISTED:UE-{12hex}`（引用编码表主键；查询侧按 `NOT LIKE 'UNLISTED:%'` 过滤不变）。存量 23 条 `UNLISTED:公司名` 旧边由迁移脚本规范化为 `UNLISTED:UE-xxx`（幂等，施工项）。
+- **边的 symbol 格式**：`UNLISTED:UE-{12hex}`（引用编码表主键；查询侧按 `NOT LIKE 'UNLISTED:%'` 过滤不变）。~~存量 23 条 `UNLISTED:公司名` 旧边迁移~~ **已执行（2026-09-08 开放问题 9 裁定）**：migrate_unlisted_entities.py 完成 7 实体登记+23 边换码+幂等复验 0 残留；工具校验同步收紧——旧格式公司名直写**拒绝落库**（唯一合法=UE- 格式，防夜班模型双格式幻觉）。
 - **上市替换流程**（三步，全幂等）：
   1. 编码表 `status→listed` + 回填 `listed_symbol`（来源须一手：交易所公告/公司公告）；
   2. 跑替换脚本：UPDATE 全库 `from_symbol/to_symbol` 中 `UNLISTED:UE-xxx` 且编码表已 listed 的行 → 换成 listed\_symbol；
@@ -533,11 +534,11 @@ WHERE valid_from <= :decision_date
 **操作**：
 
 1. **施工导入脚本** `scripts/industry_graph/ths_import.py`（读 GBK TSV→批次 JSON→走 websearch_ingest ingest 通道，禁手写 SQL）：
-   - **行业锚点层**：THS 90 个一级行业各建 1 条"XX行业"锚点链（market='cn'，category 按 90→申万 36 映射表填，映射不上的填最近类+登记开放问题）+ 每链 1 个"行业聚合"节点 + 该行业全部 THS 股票落位（source='ths_export'，confidence=0.6）。写链前必跑 find-chain：已有同义链（如"半导体"）不重建，直接把行业股票挂到既有链的行业节点上。
-   - **被投股权边**：884 股的"被投资公司简称(已上市)"列 → ig_company_edge（edge\_type 用 `partners_with`+subsidiary 备注，或独立 relation 值 `invests_in` 待词表裁定→先登记开放问题不硬写）——**词表未裁定前只登记清单不落库**。
-   - **子公司名单→编码表**：918 份子公司 → ig_unlisted_entity 批量登记（§4.10，UNLISTED 实体池）。
+   - **行业锚点层（分层标签架构，开放问题 8 裁定）**：申万 36 为一级（链 category）、THS 90 为二级标签（公司落位到"XX行业"锚点链即打标）——THS 90 行业各建 1 条"XX行业"锚点链（market='cn'，category 按分层表定）+ 每链 1 个"行业聚合"节点 + 该行业全部 THS 股票落位（source='ths_export'，confidence=0.6）。写链前必跑 find-chain：已有同义链（如"半导体"）不重建，直接把行业股票挂到既有链的行业节点上。**争议行业溯源规则**：搜该 THS 行业成分股的申万实际归属，多数票定锚点链 category；"综合"仅收成分股多数本身是综合类，禁做垃圾桶。
+   - **被投股权关系（开放问题 7 裁定：禁入产业链边表）**：884 股的"被投资公司简称(已上市)"列 → **只登记清单落盘**（`docs/_working/同花顺资料/` 原档+登记台账），将来股权穿透表消费；**禁止写 ig_company_edge**（硬边界：股权投资关系禁入产业链边表）。
+   - **子公司名单→编码表**：918 份子公司 → ig_unlisted_entity 批量登记（§4.10，UNLISTED 实体池，走 ingest unlisted_entity 记录通道）。
    - **公司简介→ig_chunk**：全量文本入内容层（doc\_type='ths\_profile'，source='ths_export'）。
-2. **90→36 映射表**落盘 `scripts/industry_graph/ths_industry_mapping.yaml`（人工映射+机械校验：每个 THS 行业必须映射到唯一申万 category 或显式 UNMAPPED）。
+2. **THS→申万分层表**落盘 `scripts/industry_graph/ths_industry_mapping.yaml`（THS 90 行业→申万 36 一级 category+依据+争议标记；机械校验：每个 THS 行业必须映射到唯一申万 category 或显式 UNMAPPED，UNMAPPED 须溯源登记）。
 3. **818 板块清单处理**：只取行业指数类（88xxxx）作行业锚点参考；概念/主题板块（如"AI眼镜"）**不入链**（炒作主题非产业实态，防噪音）。
 4. 导入后跑第 6 轮校验子集（symbol 反查/重复链复扫）。
 
@@ -897,9 +898,9 @@ progress.json 结构：
 | 4 | 全球锚点是否纳入 theme\_linkage\_monitor 联动口径（当前只跑 cn ≥0.85 子集，天然不含 websearch 数据） | 待裁定  |
 | 5 | chainmap 前端接线（DAL-C01/C02，P0）不在本 SOP 范围，待另行派单                             | 已知缺口 |
 | 6 | 落位覆盖率 80% 目标线是否合理（剩余多为金融/综合类无链可挂）                                         | 待裁定  |
-| 7 | THS 被投股权边的 edge\_type 词表取值（`invests_in` 新增值 vs `partners_with`+subsidiary 备注）——词表未裁定前 R3b 只登记清单不落库 | 待裁定  |
-| 8 | THS 90→申万 36 映射表中的争议行业归属（如"环境治理"归环保 vs 公用事业）——映射表施工时逐条登记 | 待裁定  |
-| 9 | 存量 23 条 `UNLISTED:公司名` 旧边迁移为 `UNLISTED:UE-xxx` 编码格式的时点（随 ig_unlisted_entity DDL 一起施工） | 待裁定  |
+| 7 | ~~THS 被投股权边的 edge\_type 词表取值~~ **已裁定（2026-09-08 Owner）**：股权投资关系与产业链严格分域——`invests_in` **不进** ig_company_edge（该表只收业务传导：供应/客户/竞争/合作/生产/归属），THS 被投 922 条关系只登记清单落盘留档（`docs/_working/同花顺资料/` 原档+登记台账），将来建股权穿透表时直接消费。**硬边界新增：股权投资关系禁入产业链边表**（防污染传导逻辑） | 已裁定  |
+| 8 | ~~THS 90→申万 36 映射争议~~ **已裁定（2026-09-08 Owner）**：**分层标签架构**——申万 36 为一级分类（链 category，外部对话口径），THS 90 为二级分类标签（公司落位到"XX行业"锚点链即打标，THS 专属口径），257 细分行业为将来三级。争议行业**不做归并做溯源**：搜该行业成分股在申万口径的实际归属，多数票定锚点链一级归属；"综合"仅收成分股多数本身是综合类，**禁做垃圾桶**。层级表落盘 `ths_industry_mapping.yaml`（THS 行业→申万 category+依据+争议标记） | 已裁定  |
+| 9 | ~~存量 23 条 UNLISTED 旧边迁移时点~~ **已裁定+已执行（2026-09-08 Owner：现在就干，规则先统一防夜班幻觉/漂移）**：ig_unlisted_entity 表已建（DDL v3）、7 实体已登记、23 边已换 `UNLISTED:UE-{12hex}`、工具校验已收紧（旧格式公司名直写拒绝）、ingest 已开 unlisted\_entity 记录通道（登记+上市标定），测试 12→16 全绿。幂等迁移脚本 `migrate_unlisted_entities.py` 留档 | 已裁定  |
 
 ## 修订记录
 
@@ -912,4 +913,5 @@ progress.json 结构：
 | 2026-09-08 | 1.3.1 | §4.7.3 category 词表补「煤炭」（申万一级实有，37→38 值）｜§5 硬校验新增第 10 条：chain status/merged_into（deprecated 必带 merged_into、source_note 幂等追加不覆盖、无 status 重发不回落 active）——碎片链 deprecated 治理自此可走唯一合法通道 | 扩线线裁定执行（Owner 授权自裁）：「份钢铁」「AI+厨电行业趋势」「玻璃纯碱」三链 deprecated 已落库、「煤炭产业链」category 综合→煤炭已修正；websearch_ingest.py 同步改造，测试 9→12 全绿；「玻璃纯碱」裁定为纯碱主题非玻璃重复，先建「纯碱产业链」承接 2 家落位再废弃 |
 | 2026-09-08 | 1.3.2 | 首次夜班治本三件套（Owner 批准 A/B/C/D 全开工）：总则第 9 条**单夜单总控**（controller acquire/release，锁 TTL 30 分钟+ingest 心跳续期，治首次夜班三线并发冲突）｜§4.8 新增**跨市场边契约**（两端 symbol 必须非空、混端边合法按端点各自格式校验、海外后缀封闭枚举 9 值、UNLISTED: 前缀标注未上市端点）｜§8.6 首次夜班验收结论（链 691→720、cn 落位 47.5%、websearch 114 边全带 PIT）+ 四方案预审结论（4 条撞名改判并入新链）+ 下夜班主攻顺序（R3 覆盖冲刺 80% → R1 治理执行 → 光伏重建 → R5 年报） | 首次夜班暴露三教训：三线并发写库冲突（B 治本）、53 边空端 symbol 致量化路径漏查（A1 治本：normalize_global_edges.py 存量修复 30 提取+6 词表+23 UNLISTED，工具校验改按端点格式判定）、下夜班需明确优先级防再犯（D：数据增量价值排序） |
 | 2026-09-08 | 1.4.0 | **宽度战略升级**：§2.5 宽度基线（36 类 vs THS 90 行业/全球链 0/海外边 35 条）｜§4.2 新增 ths\_export 来源（同花顺终端导出，内部研究边界）｜§4.10 **未上市实体编码表 ig_unlisted_entity**（UE- 永久编码，上市后一键替换全库存量边）｜第 3 轮拆 **R3b 宽度铺面**（THS 导入：90 行业锚点链+5217 股落位+编码表登记+简介入 ig_chunk）+ **R3a 深度冲刺**（原主体，环节级 80%）｜第 4 轮升级**全球主干链建设**（首批 25 条清单+海峡节点+A 股接线）｜**宽度三闸**全局验收（行业宽度闸/全球宽度闸/事件传导闸——两类传导分治+美伊霍尔木兹首例）｜§7.6 **病菌群落层编排**（大地模型+合流焊点机制+事件种子）｜§8.6 主攻顺序改宽度优先｜§10 汇报格式加宽度三闸/合流焊点节 | Owner 2026-09-08 裁定：只跑深度不跑宽度（宽度=R3b 行业铺面先、全球慢夜长）；全球产业链全覆盖才能从新闻蛛丝马迹找隐形利好；未上市公司要有编码表（上市后换真码）；美伊例子按战略响应传导逻辑修正入 SOP（图谱只管最后一公里）；THS 90 行业全量做 A 股锚点基线、全球主干链 25 条另选、概念板块不入链 |
+| 2026-09-08 | 1.4.1 | **开放问题 7/8/9 裁定落地**：7 股权投资与产业链**严格分域**（invests\_in 不进 ig_company_edge，THS 被投 922 条只留档待股权穿透表；硬边界=股权关系禁入产业链边表）｜8 **分层标签架构**（申万 36 一级=链 category、THS 90 二级=公司标签、257 细分将来三级；争议行业溯源成分股多数票定归属、"综合"禁做垃圾桶）｜9 **已执行**：ig_unlisted_entity 建表（DDL v3）+7 实体登记+23 旧格式边换 UE- 码+工具校验收紧（旧格式拒绝）+ingest 开 unlisted\_entity 通道（登记/上市标定）+测试 12→16 全绿 | Owner 2026-09-08 三裁定：股权穿透是独立领域与产业链分开不混放；90 行业作二级标签分层而非归并、争议从股票源头溯源不乱放综合；UNLISTED 治理现在就干——规则先统一，防夜班新模型产生幻觉和漂移 |
 

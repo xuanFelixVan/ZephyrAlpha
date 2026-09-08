@@ -11,9 +11,9 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] PG不可达->打印错误+退出码2; 执行失败->抛出非零退出
 # [TTL] permanent
-"""产业链图谱（industry_graph）九表 DDL 部署脚本（PostgreSQL depgraph 图谱域）。
+"""产业链图谱（industry_graph）十表 DDL 部署脚本（PostgreSQL depgraph 图谱域）。
 
-表结构（2026-08-27 与用户定稿；v2 2026-09-07 按 SOP industry_chain_data_audit_sop §4.8/§4.9 增补）：
+表结构（2026-08-27 与用户定稿；v2 2026-09-07 按 SOP §4.8/§4.9 增补；v3 2026-09-08 按 SOP §4.10 增补）：
     ig_chain         产业链主表
     ig_node          环节节点（上游/中游/下游/设备/材料）
     ig_edge          环节间结构边（edge_type='structure'|'supply'，supply 公司级后置）
@@ -24,8 +24,9 @@
     ig_company_metric 公司年度指标
     ig_chunk         内容层（E盘语料 76,112 块全量入库，内容颗粒度零丢失）
     ig_fact          事实层（五元组事实，回链证据块，量化可 SQL 检索最小单元）
+    ig_unlisted_entity 未上市实体编码表（v3: UE- 永久编码+上市替换，SOP §4.10）
 
-市场分片规范：各表均带 market 字段（ig_chunk 除外——语料自带 year 无市场语义）。
+市场分片规范：各表均带 market 字段（ig_chunk/ig_unlisted_entity 除外——语料/实体无市场语义）。
 
 用法::
 
@@ -222,6 +223,25 @@ DDL_STATEMENTS = [
     "CREATE INDEX IF NOT EXISTS idx_ig_fact_subject ON ig_fact (subject)",
     "CREATE INDEX IF NOT EXISTS idx_ig_fact_object ON ig_fact (object)",
     "CREATE INDEX IF NOT EXISTS idx_ig_fact_relation ON ig_fact (relation)",
+    # ========== v3 增量（SOP industry_chain_data_audit_sop §4.10，2026-09-08 Owner 裁定：现在就干） ==========
+    # --- ig_unlisted_entity 未上市实体编码表（UE- 永久编码，上市后一键替换全库存量边） ---
+    """
+    CREATE TABLE IF NOT EXISTS ig_unlisted_entity (
+        ue_id         TEXT PRIMARY KEY,
+        name          TEXT NOT NULL,
+        country       TEXT NOT NULL DEFAULT 'CN',
+        status        TEXT NOT NULL DEFAULT 'unlisted',
+        listed_symbol TEXT,
+        source_doc    TEXT,
+        as_of         DATE,
+        created_at    TIMESTAMPTZ NOT NULL DEFAULT now(),
+        updated_at    TIMESTAMPTZ NOT NULL DEFAULT now(),
+        UNIQUE (name, country)
+    )
+    """,
+    "CREATE INDEX IF NOT EXISTS idx_ig_unlisted_name ON ig_unlisted_entity (name)",
+    "CREATE INDEX IF NOT EXISTS idx_ig_unlisted_status ON ig_unlisted_entity (status)",
+    "CREATE INDEX IF NOT EXISTS idx_ig_unlisted_symbol ON ig_unlisted_entity (listed_symbol)",
 ]
 
 # 裁定#ARCH-DEPGRAPH_ACCESS_CONTROL: reader 只读 / writer 读写
@@ -235,6 +255,7 @@ _ALL_TABLES = (
     "ig_company_metric",
     "ig_chunk",
     "ig_fact",
+    "ig_unlisted_entity",
 )
 GRANT_STATEMENTS = (
     [f"GRANT SELECT ON {t} TO depgraph_reader" for t in _ALL_TABLES]

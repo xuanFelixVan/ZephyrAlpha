@@ -129,6 +129,97 @@ def test_validate_passes_deprecated_chain() -> None:
     assert errs == [], errs
 
 
+# ---- UNLISTED 编码表契约（SOP §4.10，2026-09-08 开放问题9裁定：现在就统一格式） ----
+
+def test_validate_unlisted_ue_format_passes() -> None:
+    # UNLISTED:UE-{12hex} 引用编码表主键——唯一合法格式（混端/端点各自校验均通过）
+    errs = wi._validate_records(
+        [{"type": "company_edge", "source": "websearch", "from_symbol": "688019.SH",
+          "to_symbol": "UNLISTED:UE-c29a843e1aac", "from_name": "安集科技", "to_name": "长江存储",
+          "year": 2026, "market": "cn", "source_doc": SD,
+          "valid_from": "2026-01-01", "as_of": "2026-09-08", "edge_type": "supplies_to"}],
+        stocks={"688019.SH"},
+    )
+    assert errs == [], errs
+
+
+def test_validate_unlisted_legacy_name_rejected() -> None:
+    # 旧格式 UNLISTED:公司名（直写公司名）——必须拒绝，防双格式并存致夜班幻觉
+    errs = wi._validate_records(
+        [{"type": "company_edge", "source": "websearch", "from_symbol": "688019.SH",
+          "to_symbol": "UNLISTED:长江存储", "from_name": "安集科技", "to_name": "长江存储",
+          "year": 2026, "market": "cn", "source_doc": SD,
+          "valid_from": "2026-01-01", "as_of": "2026-09-08", "edge_type": "supplies_to"}],
+        stocks={"688019.SH"},
+    )
+    assert any("UNLISTED 旧格式" in e for e in errs), errs
+
+
+def test_validate_unlisted_entity_record_rules() -> None:
+    # 登记合法
+    errs = wi._validate_records(
+        [{"type": "unlisted_entity", "name": "华为", "country": "CN", "status": "unlisted",
+          "source_doc": SD, "source": "websearch"}],
+        stocks=set(),
+    )
+    assert errs == [], errs
+    # status 非法枚举
+    errs2 = wi._validate_records(
+        [{"type": "unlisted_entity", "name": "华为", "status": "半上市",
+          "source_doc": SD, "source": "websearch"}],
+        stocks=set(),
+    )
+    assert any("status 非法" in e for e in errs2), errs2
+    # listed 必带真代码
+    errs3 = wi._validate_records(
+        [{"type": "unlisted_entity", "name": "华为", "status": "listed",
+          "source_doc": SD, "source": "websearch"}],
+        stocks=set(),
+    )
+    assert any("listed_symbol" in e for e in errs3), errs3
+    # listed_symbol 格式非法
+    errs4 = wi._validate_records(
+        [{"type": "unlisted_entity", "name": "华为", "status": "listed", "listed_symbol": "华为控股",
+          "source_doc": SD, "source": "websearch"}],
+        stocks=set(),
+    )
+    assert any("listed_symbol 非真代码" in e for e in errs4), errs4
+    # 缺 name
+    errs5 = wi._validate_records(
+        [{"type": "unlisted_entity", "status": "unlisted", "source_doc": SD, "source": "websearch"}],
+        stocks=set(),
+    )
+    assert any("缺 name" in e for e in errs5), errs5
+
+
+def test_ingest_unlisted_entity_idempotent(tmp_path: Path) -> None:
+    # 编码表登记走 ingest 通道（幂等）+ 上市标定（listed+listed_symbol）
+    name = "__未上市测试TMP__"
+    recs = [{"type": "unlisted_entity", "name": name, "country": "CN", "status": "unlisted",
+             "source_doc": SD, "source": "websearch"}]
+    p = _tmp_batch(tmp_path, recs)
+    assert wi.cmd_ingest(str(p)) == 0
+    assert wi.cmd_ingest(str(p)) == 0  # 幂等复跑
+    from zephyr.governance.depgraph_schema import get_depgraph_pg_connection
+
+    conn = get_depgraph_pg_connection(read_only=False)
+    cur = conn.cursor()
+    try:
+        cur.execute("SELECT count(*) FROM ig_unlisted_entity WHERE name=%s", (name,))
+        assert cur.fetchone()[0] == 1  # 无重复行
+        # 上市标定：status→listed + 回填 listed_symbol（真代码格式）
+        recs2 = [{"type": "unlisted_entity", "name": name, "country": "CN", "status": "listed",
+                  "listed_symbol": "9973.HK", "source_doc": SD, "source": "websearch"}]
+        assert wi.cmd_ingest(str(_tmp_batch(tmp_path, recs2))) == 0
+        cur.execute("SELECT status, listed_symbol FROM ig_unlisted_entity WHERE name=%s", (name,))
+        row = cur.fetchone()
+        assert row[0] == "listed" and row[1] == "9973.HK"
+    finally:
+        cur.execute("DELETE FROM ig_unlisted_entity WHERE name=%s", (name,))
+        conn.commit()
+        conn.close()
+
+
 # ---- 集成三测（真 PG）----
 
 def _tmp_batch(tmp_path: Path, records: list[dict]) -> Path:
