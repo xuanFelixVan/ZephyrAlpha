@@ -98,6 +98,17 @@ __all__: Final = [
 _DEFAULT_MAX_RECONNECT_ATTEMPTS: Final[int] = 3
 _DEFAULT_MAX_HEARTBEAT_FAILURES: Final[int] = 3
 
+# ── miniQMT 通道退役冻结（迁移台账 §3-9，2026-09-09；93 号备忘 §2.1 政策时间线）──
+# 券商 2026-09-18 关停 miniQMT 通道（XtMiniQmt.exe 全面清退）。本通道管理器**保留接口
+# 不删码**（tests/ex_core/test_miniqmt_channel_manager.py 消费 + 状态机语义仍是桥通道
+# 重连管理的参照实现），但退役日起禁真连（fail-closed）：
+#   - 任何真实 xttrader 会话接线在 RETIRED_DATE 之后必须拒绝 connect（上层装配点判断，
+#     本模块状态机不动——退役不是删功能，是关阀门）
+#   - 生产替代通道 = QmtFileBridgeBroker（HTTP 18901 主 + 文件兜底，93 §12）
+#   - tasks.yaml 主源切换窗口 = 2026-09-17 收盘后（迁移台账红线 1）
+MINIQMT_CHANNEL_RETIRED_DATE: Final[str] = "2026-09-18"
+MINIQMT_CHANNEL_REPLACEMENT: Final[str] = "qmt_file_bridge_broker (HTTP 18901 + orders_sim.csv)"
+
 
 class MiniQmtChannelError(ZephyrBaseError):
     """miniQMT 通道错误（通道不可用拒出 / 状态机非法调用）。"""
