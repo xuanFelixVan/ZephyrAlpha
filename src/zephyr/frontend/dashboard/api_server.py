@@ -31,12 +31,15 @@ import threading
 import time
 import csv
 import json
+import logging
 from datetime import date, datetime
 from pathlib import Path
 from typing import Any
 
 from fastapi import FastAPI, Query
 from fastapi.middleware.cors import CORSMiddleware
+
+logger = logging.getLogger("zk.api_server")
 
 _REPO = Path(__file__).resolve().parents[4]
 if str(_REPO / "src") not in sys.path:
@@ -1588,6 +1591,96 @@ def bridge_status() -> dict[str, Any]:
 
 
 _TDM_CACHE: dict[str, Any] = {}   # /api/tdm mtime 缓存（改 YAML 即失效重算）
+_TDM_REFNAMES: dict[str, Any] = {"built_at": 0.0, "names": {}}
+_TDM_REFNAMES_TTL = 600.0   # 引用中文名缓存 10 分钟（注册表低频变更，无需逐请求重扫）
+
+
+def _tdm_ref_names() -> dict[str, str]:
+    """八轴引用+策略挂载+模块锚 → 中文名映射（翻译真源关联，抽屉溯源用）。
+
+    数据源=各 registry YAML（factor/strategy/data_asset/technical_indicator/
+    execution_algo/risk_limit/alert_threshold/event_calendar/cost_model）；
+    MOD-* 走"py 头 [A_module] module_id → 文件路径 → module_translation_registry
+    name_zh"链。未命中返回空（前端回退显示编号原文）。
+    """
+    now = time.time()
+    if now - _TDM_REFNAMES["built_at"] < _TDM_REFNAMES_TTL and _TDM_REFNAMES["names"]:
+        return _TDM_REFNAMES["names"]
+    import yaml as _yaml   # 延迟导入（与 tdm_map 同款，启动不加重）
+
+    names: dict[str, str] = {}
+
+    def _load(fname: str) -> Any:
+        return _yaml.safe_load((_REPO / "docs" / "01_policies_and_standards" / "_registry" / "catalogs" / fname).read_text(encoding="utf-8"))
+
+    try:
+        reg = _load("data_asset_registry.yaml")
+        for x in reg.get("datasets", []):
+            if x.get("dataset_id"):
+                names[x["dataset_id"]] = x.get("name_zh") or x.get("entity_name") or ""
+        reg = _load("factor_registry.yaml")
+        for x in reg.get("factors", []):
+            if x.get("factor_id"):
+                names[x["factor_id"]] = x.get("name_zh") or x.get("name") or ""
+        reg = _load("strategy_registry.yaml")
+        for x in reg.get("strategies", []):
+            zh = x.get("name_zh") or x.get("name") or ""
+            if x.get("strategy_id"):
+                names[x["strategy_id"]] = zh
+            for a in (x.get("aliases") or []):   # sleeve/别名挂载（daban-sleeve 等）也能翻出中文名
+                names.setdefault(a, zh)
+        reg = _load("technical_indicator_registry.yaml")
+        for x in reg.get("indicators", []):
+            if x.get("indicator_id"):
+                names[x["indicator_id"]] = x.get("name_zh") or x.get("name") or ""
+        reg = _load("execution_algo_registry.yaml")
+        for x in reg.get("execution_algos", []):
+            if x.get("execution_algo_id"):
+                names[x["execution_algo_id"]] = x.get("name_zh") or x.get("name") or ""
+        reg = _load("risk_limit_registry.yaml")
+        for x in reg.get("risk_limits", []):
+            if x.get("risk_limit_id"):
+                names[x["risk_limit_id"]] = x.get("name_zh") or x.get("name") or ""
+        reg = _load("alert_threshold_registry.yaml")
+        for x in reg.get("thresholds", []):
+            if x.get("threshold_id"):
+                names[x["threshold_id"]] = x.get("name_zh") or x.get("name") or ""
+        reg = _load("event_calendar_registry.yaml")
+        for x in reg.get("event_types", []):
+            if x.get("event_type_id"):
+                names[x["event_type_id"]] = x.get("name_zh") or x.get("name") or ""
+        reg = _load("cost_model_registry.yaml")
+        for x in reg.get("cost_models", []):
+            if x.get("cost_model_id"):
+                names[x["cost_model_id"]] = x.get("name_zh") or x.get("name") or ""
+    except Exception as exc:   # 注册表缺失/损坏不阻断地图本体——中文名降级为编号原文
+        logger.warning("tdm ref_names registry load failed: %s", exc)
+
+    # MOD-* 中文名：py 头 [A_module] module_id → 路径 → module_translation_registry
+    try:
+        import re as _re
+        mt = _load("module_translation_registry.yaml")
+        path2zh = {e.get("module_path"): (e.get("name_zh") or "") for e in mt.get("entries", []) if isinstance(e, dict)}
+        pat = _re.compile(r"\[A_module\]\s*module_id=(MOD-[A-Za-z0-9-]+)")
+        src_root = _REPO / "src"
+        for py in src_root.rglob("*.py"):
+            try:
+                head = py.read_text(encoding="utf-8", errors="ignore")[:4000]
+            except OSError:
+                continue
+            m = pat.search(head)
+            if not m:
+                continue
+            rel = py.relative_to(_REPO).as_posix()
+            zh = path2zh.get(rel, "")
+            if zh:
+                names.setdefault(m.group(1), zh)
+    except Exception as exc:
+        logger.warning("tdm ref_names MOD scan failed: %s", exc)
+
+    _TDM_REFNAMES["built_at"] = now
+    _TDM_REFNAMES["names"] = names
+    return names
 
 
 @app.get("/api/tdm")
@@ -1684,6 +1777,7 @@ def tdm_map() -> dict[str, Any]:
         "name_zh": raw.get("name_zh"),
         "nodes": nodes_out,
         "edges": raw.get("edges", []),
+        "ref_names": _tdm_ref_names(),   # 引用 id → 中文名（八轴+STR 别名+MOD，抽屉溯源真源关联）
         "generated_at": datetime.now().isoformat(" ", "seconds"),
     }
     _TDM_CACHE["mtime"] = mtime
