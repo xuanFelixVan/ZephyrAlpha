@@ -187,6 +187,13 @@ CHECKS: list[dict] = [
         WHERE (from_symbol ~ '^UNLISTED:' AND from_symbol !~ '^UNLISTED:UE-[0-9a-f]{12}$')
            OR (to_symbol ~ '^UNLISTED:' AND to_symbol !~ '^UNLISTED:UE-[0-9a-f]{12}$')
     """},
+    # S20 PIT 反造假(红蓝对抗 2026-09-09 补):valid_from 早于证据年份前一年=编历史
+    {"id": "S20", "title": "PIT 反造假(valid_from>=year-1)", "sql": """
+        SELECT edge_id::text, from_symbol || '->' || to_symbol || ' year=' || year
+               || ' vf=' || valid_from FROM ig_company_edge
+        WHERE valid_from IS NOT NULL AND year IS NOT NULL
+          AND valid_from < make_date(year - 1, 1, 1)
+    """},
     # S19 编码表上市撞名: 需 CH 反查,运行时注入
 ]
 

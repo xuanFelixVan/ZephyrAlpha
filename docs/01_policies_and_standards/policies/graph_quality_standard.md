@@ -3,11 +3,11 @@ ttl: permanent
 doc_type: policy
 rule_form: standard
 verifiability: machine
-title: 产业链图谱质量标准——十九项合格线与循环修复
+title: 产业链图谱质量标准——二十项合格线与循环修复
 owner: ZephyrAlpha-Owner
 language: zh
 status: active
-version: "1.0.0"
+version: "1.1.0"
 date: 2026-09-09
 topic: industry_graph_quality
 scope: global
@@ -72,6 +72,9 @@ related_modules:
 | S17 | websearch 边完整 | websearch 边缺 valid_from/as_of/evidence_type 任一违规 | 补齐；evidence 无据可补→登记 |
 | S18 | UNLISTED 格式统一 | symbol 匹配 ^UNLISTED: 但非 UNLISTED:UE-{12hex}=违规 | 登记编码表后换码（migrate 脚本） |
 | S19 | 编码表零上市撞名 | unlisted 实体 name 精确等于在市 A 股简称=违规 | 核对→标 listed+listed_symbol→跑 promote 换码 |
+| S20 | PIT 反造假（2026-09-09 红蓝对抗增补） | websearch 边 valid_from 早于证据年份前一年（year=2025 而 valid_from<2024-01-01）=违规——防"拍脑袋编历史"式前视造假 | 有据修正（上市日/协议签署日）；无据→清空 valid_from 重填盘点日+登记 |
+
+**豁免滥用法防线（红蓝对抗 2026-09-09 增补）**：任一类豁免数 > 该类违规总数 5% 须 Owner 签名（裁定人=Owner 手写），否则视为无效豁免。
 
 ## 6. 进度指标（非违规，报告附栏）
 
@@ -87,3 +90,4 @@ related_modules:
 ## 8. 版本
 
 - 1.0.0（2026-09-09）：初版十九项合格线（Owner 四裁定确认同日）。
+- 1.1.0（2026-09-09）：红蓝对抗增补——S20 PIT 反造假（防编历史式前视）+豁免滥用法防线（>5% 须 Owner 签名）。
