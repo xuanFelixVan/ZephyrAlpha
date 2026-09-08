@@ -47288,6 +47288,13 @@ entries:
   desc_zh: ""
   desc_en: ""
   plain_zh: "改动作战地图相关文件时自动检查：幽灵锚点、无锚点环节、缺叙事这三类问题直接拦下不让提交"
+- module_path: scripts/industry_graph/ths_import.py
+  domain_id: D_DATA
+  name_zh: "同花顺R3b导入施工件"
+  name_en: ""
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "读同花顺导出的三份GBK表格,生成THS90行业到申万词表的多数票映射,并把全A股5215只股票落到行业锚点链、子公司进编码表、简介进内容层,全程走统一写库通道"
 
 battle_map_steps:
 - step_id: BM-BUY-05

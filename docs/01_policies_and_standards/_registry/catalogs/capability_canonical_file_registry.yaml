@@ -11125,6 +11125,14 @@ creation_tokens:
   token: auto-ch-optimize-merge-hidden-20260908
   created_by: st-bridge-p01-20260908
   capability: ch_optimize_merge_hidden_launcher
+- file: "scripts/industry_graph/ths_import.py"
+  token: "auto-ths-import-20260908"
+  created_by: "openclaw-night-20260908-4316c"
+  capability: "industry_graph_ths_import"
+- file: "scripts/industry_graph/ths_industry_mapping.yaml"
+  token: "auto-ths-industry-mapping-20260908"
+  created_by: "openclaw-night-20260908-4316c"
+  capability: "industry_graph_ths_import"
 di_seam_exemptions:
 - module_path: zephyr.trading.auto_runtime_core.AutoRuntimeCore
   reason: P0-5 LSG DI seam 标杆，已有 DI 但 AST 模式不匹配（动态注入）

@@ -1,0 +1,279 @@
+# THS 90 二级行业 → SOP §4.7.3 申万词表 category 分层映射表(SOP §6 R3b 操作2)
+# 自动生成 by ths_import.py 多数票规则 at 2026-09-08; judged=AI显式判定(开放问题登记); UNMAPPED=不落库
+mapping:
+  "IT服务":
+    category: "软件开发"
+    votes: "117/117"
+    judged: "申万计算机-IT服务Ⅱ,SOP词表无IT服务值;金融IT/系统集成主体属软件开发,判定登记开放问题待Owner复核"
+    note: "申万计算机-IT服务Ⅱ,SOP词表无IT服务值;金融IT/系统集成主体属软件开发,判定登记开放问题待Owner复核"
+  "专用设备":
+    category: "机械设备"
+    votes: "179/179"
+  "中药":
+    category: "医药生物"
+    votes: "66/66"
+  "互联网电商":
+    category: "商贸零售"
+    votes: "19/19"
+  "保险":
+    category: "非银金融"
+    votes: "5/5"
+  "元件":
+    category: "元件"
+    votes: "58/58"
+  "光伏设备":
+    category: "电力设备"
+    votes: "68/68"
+  "光学光电子":
+    category: "光学光电子"
+    votes: "104/104"
+  "公路铁路运输":
+    category: "交通运输"
+    votes: "32/32"
+  "其他电子":
+    category: "消费电子"
+    votes: "33/33"
+    judged: "THS其他电子为电子杂项,SOP词表无此值;按电子零部件多数属性判消费电子,判定登记开放问题待Owner复核"
+    note: "THS其他电子为电子杂项,SOP词表无此值;按电子零部件多数属性判消费电子,判定登记开放问题待Owner复核"
+  "其他电源设备":
+    category: "电力设备"
+    votes: "34/34"
+  "其他社会服务":
+    category: "社会服务"
+    votes: "37/37"
+  "养殖业":
+    category: "农林牧渔"
+    votes: "35/35"
+  "军工电子":
+    category: "国防军工"
+    votes: "60/60"
+  "军工装备":
+    category: "国防军工"
+    votes: "80/80"
+  "农产品加工":
+    category: "农林牧渔"
+    votes: "39/39"
+  "农化制品":
+    category: "基础化工"
+    votes: "58/58"
+  "包装印刷":
+    category: "轻工制造"
+    votes: "40/40"
+  "化学制品":
+    category: "基础化工"
+    votes: "167/167"
+  "化学制药":
+    category: "医药生物"
+    votes: "149/149"
+  "化学原料":
+    category: "基础化工"
+    votes: "57/57"
+  "化学纤维":
+    category: "基础化工"
+    votes: "28/28"
+  "医疗器械":
+    category: "医药生物"
+    votes: "129/129"
+  "医疗服务":
+    category: "医药生物"
+    votes: "55/55"
+  "医药商业":
+    category: "医药生物"
+    votes: "32/32"
+  "半导体":
+    category: "半导体"
+    votes: "181/181"
+  "厨卫电器":
+    category: "家用电器"
+    votes: "9/9"
+  "塑料制品":
+    category: "基础化工"
+    votes: "71/71"
+  "多元金融":
+    category: "非银金融"
+    votes: "26/26"
+  "家居用品":
+    category: "轻工制造"
+    votes: "94/94"
+  "小家电":
+    category: "家用电器"
+    votes: "23/23"
+  "小金属":
+    category: "有色金属"
+    votes: "28/28"
+  "工业金属":
+    category: "有色金属"
+    votes: "54/54"
+  "工程机械":
+    category: "机械设备"
+    votes: "28/28"
+  "建筑材料":
+    category: "建筑材料"
+    votes: "69/69"
+  "建筑装饰":
+    category: "建筑装饰"
+    votes: "135/135"
+  "影视院线":
+    category: "传媒"
+    votes: "20/20"
+  "房地产":
+    category: "房地产"
+    votes: "88/88"
+  "教育":
+    category: "社会服务"
+    votes: "15/15"
+  "文化传媒":
+    category: "传媒"
+    votes: "84/84"
+  "旅游及酒店":
+    category: "社会服务"
+    votes: "35/35"
+  "服装家纺":
+    category: "纺织服饰"
+    votes: "74/74"
+  "机场航运":
+    category: "交通运输"
+    votes: "13/13"
+  "橡胶制品":
+    category: "基础化工"
+    votes: "16/16"
+  "汽车整车":
+    category: "汽车"
+    votes: "23/23"
+  "汽车服务及其他":
+    category: "汽车"
+    votes: "24/24"
+  "汽车零部件":
+    category: "汽车"
+    votes: "242/242"
+  "油气开采及服务":
+    category: "石油石化"
+    votes: "18/18"
+  "消费电子":
+    category: "消费电子"
+    votes: "88/88"
+  "港口航运":
+    category: "交通运输"
+    votes: "35/35"
+  "游戏":
+    category: "传媒"
+    votes: "23/23"
+  "煤炭开采加工":
+    category: "煤炭"
+    votes: "34/34"
+  "燃气":
+    category: "公用事业"
+    votes: "26/26"
+  "物流":
+    category: "交通运输"
+    votes: "49/49"
+  "环保设备":
+    category: "环保"
+    votes: "28/28"
+  "环境治理":
+    category: "环保"
+    votes: "109/109"
+  "生物制品":
+    category: "医药生物"
+    votes: "52/52"
+  "电力":
+    category: "公用事业"
+    votes: "109/109"
+  "电子化学品":
+    category: "基础化工"
+    votes: "40/40"
+    judged: "电子化学品本质精细化工材料(湿化学品/光刻胶/特气),SOP词表无此值;旧申万口径归化工,判定登记开放问题待Owner复核"
+    note: "电子化学品本质精细化工材料(湿化学品/光刻胶/特气),SOP词表无此值;旧申万口径归化工,判定登记开放问题待Owner复核"
+  "电机":
+    category: "电力设备"
+    votes: "24/24"
+  "电池":
+    category: "电力设备"
+    votes: "94/94"
+  "电网设备":
+    category: "电力设备"
+    votes: "125/125"
+  "白色家电":
+    category: "家用电器"
+    votes: "39/39"
+  "白酒":
+    category: "食品饮料"
+    votes: "19/19"
+  "石油加工贸易":
+    category: "石油石化"
+    votes: "27/27"
+  "种植业与林业":
+    category: "农林牧渔"
+    votes: "27/27"
+  "纺织制造":
+    category: "纺织服饰"
+    votes: "32/32"
+  "综合":
+    category: "综合"
+    votes: "18/18"
+  "美容护理":
+    category: "美容护理"
+    votes: "30/30"
+  "能源金属":
+    category: "有色金属"
+    votes: "12/12"
+  "自动化设备":
+    category: "机械设备"
+    votes: "87/87"
+  "计算机设备":
+    category: "计算机设备"
+    votes: "76/76"
+  "证券":
+    category: "非银金融"
+    votes: "50/50"
+  "贵金属":
+    category: "有色金属"
+    votes: "14/14"
+  "贸易":
+    category: "商贸零售"
+    votes: "14/14"
+  "轨交设备":
+    category: "机械设备"
+    votes: "28/28"
+  "软件开发":
+    category: "软件开发"
+    votes: "133/133"
+  "通信服务":
+    category: "通信服务"
+    votes: "43/43"
+  "通信设备":
+    category: "通信设备"
+    votes: "87/87"
+  "通用设备":
+    category: "机械设备"
+    votes: "224/224"
+  "造纸":
+    category: "轻工制造"
+    votes: "23/23"
+  "金属新材料":
+    category: "有色金属"
+    votes: "30/30"
+  "钢铁":
+    category: "钢铁"
+    votes: "44/44"
+  "银行":
+    category: "银行"
+    votes: "42/42"
+  "零售":
+    category: "商贸零售"
+    votes: "71/71"
+  "非金属材料":
+    category: "基础化工"
+    votes: "12/12"
+  "风电设备":
+    category: "电力设备"
+    votes: "31/31"
+  "食品加工制造":
+    category: "食品饮料"
+    votes: "62/62"
+  "饮料制造":
+    category: "食品饮料"
+    votes: "46/46"
+  "黑色家电":
+    category: "家用电器"
+    votes: "9/9"
