@@ -79,6 +79,14 @@ window.ZK_BUILD='20260908-10';
   }).then(function(){
     return loadJs('core/home.js');   /* 首页三件套（结论墙/布局引擎/AI 对话框）——最后加载，依赖全部页面片段已在 DOM */
   }).then(function(){
+    return loadJs('features/chainmap/chainmap-galaxy.js');   /* 产业星系图（L1 族聚合全景，/api/chainmap-galaxy，Owner 2026-09-08 裁定三层缩放 MVP） */
+  }).then(function(){
+    return loadJs('features/chainmap/chainmap-nav.js');   /* 产业导航树（族→链两级） */
+  }).then(function(){
+    return loadJs('features/chainmap/chainmap-search.js');   /* 产业全局搜索（链/环节/代码/公司名落位） */
+  }).then(function(){
+    return loadJs('features/chainmap/chainmap-cluster.js');   /* 产业链层（L2 上中下游列式+环节公司面板） */
+  }).then(function(){
     return loadJs('features/tdm.js');   /* 交易决策全景（横向树实时映射 /api/tdm，Owner 2026-09-07 裁定） */
   }).then(function(){
     return loadJs('vendor/dockview/dockview.min.js');   /* Dockview 库先行（dockpilot 依赖） */
