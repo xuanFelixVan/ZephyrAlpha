@@ -4,8 +4,9 @@ ttl: task_bound
 
 # 节点模板草案（Owner 审定稿前不动工引擎/门禁）
 
-> **状态**：草案 v0.3（2026-09-09 全网调研增补：溯源六件套/新鲜度/地理/设施/专业名词对照），待 Owner 圈改。
-> **配套**：graph_quality_standard.md §6~§8（深度体系/详情卡/三查 S21~S23）——本文档是**字段级落地样例**，审定后字段标准回写标准文件，引擎按审定稿施工。
+> **状态**：草案 v0.4（2026-09-09 深交所课题对标+tier 职能化改造+股权视图澄清），待 Owner 圈改。
+> **配套**：graph_quality_standard.md §6~§8——本文档是**字段级落地样例**，审定后字段标准回写标准文件，引擎按审定稿施工。
+> **权威对标（2026-09-09 全网调研）**：深交所课题《资本市场产业链图谱业务标准及数据标准研究》（申万三级+第四层起开放延伸，与本体系同构）｜济安金信 45/144/369 三级架构｜GICS 4 层。
 
 ## 〇、链模板（第一层：链本身就是一种节点——全景图的三种节点）
 
@@ -52,7 +53,11 @@ node:
   node_id: ND-xxxxxxxxxxxx          # 自动生成
   chain_id: CH-xxxxxxxxxxxx         # 所属链
   name: 晶圆制造                    # 纯环节名（禁后缀/禁标题腔）
-  tier: 中游                        # 上游/中游/下游/设备/材料/零部件/原材料/辅材
+  tier: 中游                        # 链内位置（v0.4 语义收窄）：上游/中游/下游——仅三值，L1 主链口径；子链视角递归（划片机链里"空气主轴"=该链上游）
+                                   # 【Owner 2026-09-09 质疑裁定改造】原 9 值混职能已废弃：设备/材料等职能拆到 function_role
+  function_role: 加工工艺           # 职能角色（新字段，深交所课题八大关系词表）：
+                                   # 生产设备/生产原料/辅助材料/辅助设备/加工工艺/技术服务/产品业务/销售渠道
+                                   # AI 应用公司=技术服务或产品业务（职能语义，绝对概念不随链变）
   aliases: [晶圆厂, Fab, IC制造]     # 别名（搜索用）
   description: 在硅片上光刻蚀刻出电路图形，是芯片制造的core环节   # 一句话+关键参数
   market: cn
@@ -62,6 +67,8 @@ node:
   # 例：某"稀土精矿"节点 drill_status=brick_mass（通用大宗原料，判据A）
   # 例：某"树脂合成"节点 drill_status=brick_noalpha（下钻无A股标的，判据B）
 ```
+
+**tier 与 function_role 分离依据（Owner 2026-09-09 质疑驱动）**：位置（上游/中游/下游）是**相对概念**随链变，职能（设备/原料/工艺/服务）是**绝对概念**不随链变——原 9 值词表把两者混在一个字段语义不干净；深交所课题与招商图谱指南的权威实践均为"三位置+职能关系词表"分离式。存量 5,215 只股票 tier 迁移：位置值保留、职能值迁 function_role（治理脚本一次性）。
 
 **环节节点必填**：name/tier/market。**可选**：aliases/description/child_chain_id/drill_status。
 
@@ -90,10 +97,14 @@ company:
   sub_industry: 数字芯片设计        # THS 三级细分（257 值，新）
   sw_category: 半导体               # 申万一级（链 category）
   csrc_industry: 制造业             # 证监会行业（SHOULD，交叉验证用）
-  # ---- 资本关系域（Owner 2026-09-09 裁定：独立股权表，与供应边彻底分域）----
-  equity:                           # 全部来自 ig_equity_edge（新表），查询侧拼装
-    holdings_in:                    # 我投了谁（对外投资，THS 被投列+年报口径）
-      - {party: 声通科技, stake: 15.2%, as_of: 2025FY年报}
+  # ---- 资本关系域（Owner 2026-09-09 裁定：独立股权表 ig_equity_edge，与供应边彻底分域）----
+  # ⚠️ 视图澄清：本段是【详情页展示视图】——查询时从 ig_equity_edge 拼装，数据物理上只存股权表一处
+  #    （模板段落=效果图，表=房子本身）。成本价/取得日期两字段随裁定新增（股权避坑核心：浮亏浮盈+减持动机）
+  equity:                           # ← 视图字段，来源=ig_equity_edge
+    holdings_in:                    # 我投了谁（对外投资）
+      - {party: 声通科技, stake: 15.2%, as_of: 2025FY年报,
+         acquisition_cost: 2.1亿, acquisition_date: 2024-06-30,   # 取得成本+取得日（新增，PIT）
+         pit_strength: weak}        # ⚠️ THS 年报口径=weak；websearch 复核一手公告后升 strong
     held_by:                        # 谁投了我（股东，含穿透链）
       - {party: 合肥产投, stake: 22.1%, layer: 1, actual: true}
     subsidiaries: [UE-xxx, UE-yyy]  # 子公司 UE 编码列表（回链编码表）

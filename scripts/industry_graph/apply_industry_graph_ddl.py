@@ -258,6 +258,11 @@ DDL_STATEMENTS = [
     "ALTER TABLE ig_company_edge ADD COLUMN IF NOT EXISTS exclusivity TEXT",
     # --- 边级新闻关键词（2026-09-09 全网调研: FactSet keywords 对标,新闻联动边级命中） ---
     "ALTER TABLE ig_company_edge ADD COLUMN IF NOT EXISTS keywords TEXT[]",
+    # --- 环节职能角色列（Owner 2026-09-09 质疑裁定: tier 三值化位置语义,职能拆出,深交所八值词表） ---
+    "ALTER TABLE ig_node ADD COLUMN IF NOT EXISTS function_role TEXT",
+    # --- 股权表成本两列（Owner 2026-09-09 裁定: 取得成本+取得日,股权避坑核心） ---
+    "ALTER TABLE ig_equity_edge ADD COLUMN IF NOT EXISTS acquisition_cost NUMERIC",
+    "ALTER TABLE ig_equity_edge ADD COLUMN IF NOT EXISTS acquisition_date DATE",
     # --- ig_company_metric PIT 化（Owner 2026-09-09 裁定: 指标层保留不融不删,加 PIT 防回测切片前视） ---
     "ALTER TABLE ig_company_metric ADD COLUMN IF NOT EXISTS as_of DATE",
     "ALTER TABLE ig_company_metric ADD COLUMN IF NOT EXISTS valid_from DATE",
