@@ -18,7 +18,10 @@
 '
 ' 用法 (Task Scheduler Action):
 '   Execute:    wscript.exe
-'   Arguments:  "D:\ZephyrAlpha\scripts\launch_hidden.vbs" "<ps1 full path>"
+'   Arguments:  "D:\ZephyrAlpha\scripts\launch_hidden.vbs" "<ps1 full path>" [extra args...]
+'   extra args (Arguments(1..n)) are appended verbatim after "-File <ps1>"
+'   (e.g. -Mode all -Force). Limitation: wscript drops quotes around spaced tokens,
+'   so args containing spaces need a dedicated wrapper ps1 instead of passthrough.
 '
 ' 等待策略: True (等待子进程退出)
 '   guard 脚本是 while-true 常驻, wscript 随之常驻; guard 崩溃 => wscript 返回其退出码
@@ -26,11 +29,14 @@
 '   一致, 且避免 wscript 立即退出导致 Task Scheduler job object 误杀孙进程 guard。
 ' ============================================================================
 Option Explicit
-Dim sh, ps1Path, cmd
+Dim sh, ps1Path, cmd, i
 If WScript.Arguments.Count < 1 Then WScript.Quit(1)
 ps1Path = WScript.Arguments(0)
 Set sh = CreateObject("WScript.Shell")
 cmd = "powershell.exe -NoProfile -ExecutionPolicy Bypass -WindowStyle Hidden -File """ & ps1Path & """"
+For i = 1 To WScript.Arguments.Count - 1
+    cmd = cmd & " " & WScript.Arguments(i)
+Next
 ' 0 = SW_HIDE (隐藏窗口), True = 等待子进程退出 (guard 常驻则 wscript 常驻)
 sh.Run cmd, 0, True
 Set sh = Nothing

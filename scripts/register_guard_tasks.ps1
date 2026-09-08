@@ -67,8 +67,13 @@ foreach ($svc in $services) {
     $ps1Path = Join-Path $RepoRoot ("scripts\" + $svc.Script)
     if (-not (Test-Path $ps1Path)) { throw "Guard script not found: $ps1Path" }
 
-    $argString = '-NoProfile -ExecutionPolicy Bypass -WindowStyle Hidden -File "' + $ps1Path + '"'
-    $action = New-ScheduledTaskAction -Execute "powershell.exe" -Argument $argString -WorkingDirectory $RepoRoot
+    # No-flash launch (#ARCH-BOOT-WINDOW-FLASH, 2026-09-08): powershell.exe is console-subsystem;
+    # Task Scheduler Interactive launch allocates a visible console before -WindowStyle Hidden
+    # applies => flash every 5min fire. wscript.exe (GUI subsystem) + launch_hidden.vbs creates
+    # the console hidden instead. Same -NoProfile -ExecutionPolicy Bypass semantics preserved.
+    $vbsPath = Join-Path $RepoRoot "scripts\launch_hidden.vbs"
+    $argString = '"' + $vbsPath + '" "' + $ps1Path + '"'
+    $action = New-ScheduledTaskAction -Execute "wscript.exe" -Argument $argString -WorkingDirectory $RepoRoot
 
     # Two triggers (repetition added post-registration; PS5.1 doesn't expose Repetition
     # on trigger objects from New-ScheduledTaskTrigger):
@@ -112,8 +117,10 @@ if (-not (Test-Path $tradingPs1)) { throw "Guard script not found: $tradingPs1" 
 if (Get-ScheduledTask -TaskName $tradingSvc.TaskName -ErrorAction SilentlyContinue) {
     Write-Host "Task already exists, left untouched (idempotent; state preserved): $($tradingSvc.TaskName)"
 } else {
-    $tradingArg = '-NoProfile -ExecutionPolicy Bypass -WindowStyle Hidden -File "' + $tradingPs1 + '"'
-    $tradingAction = New-ScheduledTaskAction -Execute "powershell.exe" -Argument $tradingArg -WorkingDirectory $RepoRoot
+    # Same no-flash pattern as the data-domain guards (#ARCH-BOOT-WINDOW-FLASH).
+    $vbsPath = Join-Path $RepoRoot "scripts\launch_hidden.vbs"
+    $tradingArg = '"' + $vbsPath + '" "' + $tradingPs1 + '"'
+    $tradingAction = New-ScheduledTaskAction -Execute "wscript.exe" -Argument $tradingArg -WorkingDirectory $RepoRoot
     $tradingLogonTrigger = New-ScheduledTaskTrigger -AtLogOn -User $CurrentUser
     $tradingLogonTrigger.Delay = 'PT4M'
     $tradingOnceTrigger = New-ScheduledTaskTrigger -Once -At (Get-Date)

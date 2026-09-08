@@ -593,6 +593,32 @@ schtasks /run /tn ZephyrAlpha_TickSubscriber                              # 重�
 
 **不合并的既有理由（已评估不成立/降级）**：进程隔离做不到（QMT 沙箱所有策略共享 1 个 Python 引擎，架构决定）——现有隔离靠 QMT 策略级容错（一策略崩溃不殃及其他）+ 文件分立（quote.csv/ticks3.csv/orders_sim.csv 互不碰）。真正的进程边界在大脑↔终端（ZephyrAlpha↔QMT），那条已天然存在。
 
+### 14.10 切换持久化、#BRIDGE-WRONG-FILE 事故与闪窗根治（2026-09-08）
+
+#### 14.10.1 guard 切换"已验证"实为会话级——持久化补课
+
+9/7 §14.7 的切换验证在**当时会话内**成立，但 User 级 `TICK_SOURCE` 实为空——9/8 早间计划任务重启 guard 后**静默退回 miniqmt 模式**（子进程无 `--bridge`，全天 miniqmt 源 2164 万行正常、bridge 源为零），幸有 miniqmt 尚在产未成事故。9/8 补课：`[Environment]::SetEnvironmentVariable("TICK_SOURCE","bridge","User")` 持久化 + `schtasks /run` 重启实测（子进程 `--bridge --bridge-env sim`，CH qmt_bridge 恢复入库）。**教训：切换类验证必须区分"会话级生效"与"持久级生效"——Task Scheduler 新会话只继承注册表用户环境，不继承 IDE 会话变量。**自此 bridge 为唯一实时源（9/8 17:16 起）。
+
+#### 14.10.2 #BRIDGE-WRONG-FILE 事故（当日发现当日治愈）
+
+- **根因**：`BridgeTickSource.ENV_CONFIG` 的 sim/real 默认路径仍指向 v18 遗留 `ticks.csv`（内容停在 2026-09-07 15:07），未随 v19 升级到 `ticks3.csv`。9/8 早间对拍用 `--bridge-file` 显式覆盖掩盖了默认值漂移；晚间 guard 子进程只带 `--bridge-env sim` → 尾读昨日文件，把 9/7 的 166 万行当今日 tick 灌入 CH（trade_date=9/7，recorded_time=当晚）。
+- **发现路径**：过渡期口径实测发现 CH qmt_bridge 下午零行 → 排查链：心跳 fresh（wall clock 语义）→ offset 推进正常 → 消费管道回灌成功 → 唯时间戳异常（9/7-stamped）→ 文件时间轴地图（ticks3.csv 全为 9/8 数据）→ ticks.csv.offset 边车在动 → 锁定读错文件。
+- **修复**：ENV_CONFIG sim/real → ticks3.csv（事故记录注释入码，93/93 单测过）；误灌行 ALTER DELETE 手术清理（谓词 data_source+trade_date+recorded_time 三键锁定，9/7 恢复合法值 308,657 行）；ticks3.csv 下午真积压 56MB 回补完成（9/8 = 739,952 行：早 38.6 万 + 下午 35.4 万）。
+- **教训**：① env 默认路径必须与当前 dump 策略产出文件**同版本升级**；② 测试期覆盖参数会掩盖默认值漂移，切换后首日必须无覆盖裸跑一次；③ 心跳/offset/mtime 等"活性指标"均不校验**数据币值**——timetag 新鲜度闸门（拒绝超龄 timetag 行）列为后续 hardening 候选。
+
+#### 14.10.3 闪窗根治（#ARCH-OPS-001 全量落地，历史标签 ARCH-BOOT-WINDOW-FLASH）
+
+Owner 诉求"项目里任何程序不得闪窗"。根因：powershell.exe/python.exe 为控制台子系统程序，Task Scheduler Interactive 拉起时先建可见控制台再被 `-WindowStyle Hidden` 隐藏（每分钟/每 5 分钟闪现）。9/8 全量处置：**10 个项目任务**统一 `wscript.exe + launch_hidden.vbs`（GUI 子系统 + SW_HIDE；vbs 增参数透传，`-Mode all -Force`/`-AutoCheck` 原样保留）；`ZephyrAlpha-AI-Wrapper-Inject`（每 1 分钟触发，闪窗主凶）包装并清掉卡死僵尸实例（LastResult 0x800710E0→0）；`register_guard_tasks.ps1` 两处注册模板同步改 vbs（防重注册回退）；DataScheduler 补启用（9/8 早间重启用漏项）、死任务 TickVerify_1306 删除（一次性过期+目标 bat 已删）。pythonw 任务（ProcessReaper/WorktreeDriftWatchdog）GUI 子系统天然无窗不动。
+
+#### 14.10.4 过渡期口径实测结论（2026-09-08）
+
+- **持仓列序 ✅**：实盘 PositionStatics.csv（30 列）逐列核对 row[7]=证券代码 / row[9]=当前拥股 / row[15]=可用数量 / row[18]=最新价，与 api_server、qmt_file_bridge_broker、SOP 三处消费方一致。**⚠️ 红旗**：文件 mtime 停在 08-26 20:50（真实大QMT 终端 13 天未导出）——Owner 待办：开真实终端验证自动导出恢复（9/18 前 MUST）。
+- **五档链路 ✅**：v19 dump 25 列结构正确；CH tick_data 落 1 档（15 字段 schema 设计，tick_to_row 取 [0]）；Redis 热缓存 `tick:{symbol}:latest` 完整 5 档（bid1-5/ask1-5/bid_vol1-5/ask_vol1-5）实测字段齐全。
+
+#### 14.10.5 9/9 观察清单（bridge 独挑第一个完整交易日）
+
+09:15 跨天轮转三连：① ticks3.csv 沙箱重建 ② offset 边车越界归零自愈（115,620,192 > 新文件 size）③ 09:30 后 CH qmt_bridge 恢复增长；盘中抽查 CH 新行 timestamp 与 wall clock 偏差 <1min（防陈旧 timetag）；biz.heartbeat mode=bridge、errors 无持续增长。详细施工进度见 `docs/_working/2026-09-08-qmt-bridge-migration-ledger.md`（本迁移工程唯一进度真源）。
+
 ## 15. 修订记录
 
 | 版本 | 日期 | 内容 |
@@ -614,3 +640,4 @@ schtasks /run /tn ZephyrAlpha_TickSubscriber                              # 重�
 | 1.8.5 | 2026-09-07 | **§14.7 guard 零代码切换落地**：start_tick_subscriber.ps1 支持 TICK_SOURCE/TICK_BRIDGE_ENV 环境变量（默认 xtdata 零行为变化；bridge 加 --bridge/--bridge-env flag）；退役日切换 SOP 一条命令（SetEnvironmentVariable + schtasks 重启）；参数拼接双路径/argparse/孤儿清理匹配/心跳兼容四项实测通过——P0-1 全部实施项闭环 |
 | 1.8.6 | 2026-09-07 | **§14.8 v19 全板块 5 档当日闭环**：TICKDUMP3 单策略合并版（A股+基金+指数+转债 8394 只，京市/B股按 Owner 裁定排除）；25 列 5 档 CSV（源头本有 5 档，v18 只砍剩 1 档）；对拍 99.8% 匹配/99.3% price 一致（v18→v18.2→v19 = 73%→91.7%→99.3%）；桥重启自愈 hardening（offset 边车+4MB 读限速+三态防御，实证防全天重读洪泛）；发现订阅共享效应（沙箱订阅激活 3s 推送对外部 xtdata 同样生效，生产管道 surge 20 倍——9/18 后自然消解） |
 | 1.8.7 | 2026-09-07 | **§14.9 合并决策落盘（Owner 裁定 9/15 检查点）**：TICKDUMP3 跑一周后评估并入 QUOTE_V17；v20 方案=200ms 取价热线程照写 quote.csv（项目侧零改动延迟不劣化）；两路径 A（9/15 出 v20 并行对拍→9/17 停 v17）或 B（保守默认：v17 过 9/18、合并推迟 10 月）。附带：回灌残留 4 段已清（SKIPPED-ORPHAN 机制自动归零）；convertible_bond_list "停更"定论=monthly_static 月频设计如此（9/2 catchup 补跑成功，下次 10/1）非故障 |
+| 1.8.8 | 2026-09-08 | **§14.10 切换持久化+事故治愈+闪窗根治**：① §14.7 切换实为会话级（User env 空，9/8 早重启静默退回 miniqmt）——TICK_SOURCE=bridge 持久化补课，bridge 自此为唯一实时源；② #BRIDGE-WRONG-FILE：ENV_CONFIG 未随 v19 升级仍指 v18 ticks.csv，guard 子进程误灌 9/7 数据 166 万行——ENV_CONFIG→ticks3.csv+ALTER DELETE 手术清理+下午积压回补（9/8=739,952 行）；③ #ARCH-OPS-001（历史标签 ARCH-BOOT-WINDOW-FLASH） 全量落地（10 任务 vbs 包装+AI-Wrapper-Inject 每分钟闪窗主凶+注册模板防回退）；④ 口径实测：持仓列序 ✅（⚠️ PositionStatics.csv 13 天未更新，Owner 开真实终端验证=9/18 前 MUST）、五档 dump/CH 1 档/Redis 完整 5 档 ✅；⑤ 9/9 跨天轮转观察清单落盘 |

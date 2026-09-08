@@ -1338,9 +1338,9 @@ class TickSubscriber:
 
 
 class BridgeTickSource:
-    """P0-1 桥模式数据源（93 号备忘 §14）——尾读 QMT 沙箱 TICKDUMP v18 桥文件。
+    """P0-1 桥模式数据源（93 号备忘 §14）——尾读 QMT 沙箱 TICKDUMP v19 桥文件。
 
-    数据流：E:\\qmt_bridge_sim\\ticks.csv（沙箱全市场快照 dump，ASCII 追加写）
+    数据流：E:\\qmt_bridge_sim\\ticks3.csv（沙箱全市场快照 dump，ASCII 追加写，每日重建）
     尾读 → 解析为 xtdata 等价 tick dict → sub._on_backup_tick(source="qmt_bridge")
     入队 → 既有 queue→WAL→CH 链路零改动复用。
 
@@ -1353,12 +1353,20 @@ class BridgeTickSource:
       - 跨天重置：沙箱每日 09:15 重建文件（size < offset）→ offset 归零从头读
       - timetag 去重：沙箱策略重启会丢 last_tt 状态重 dump 全量快照——桥侧
         按 (symbol, timetag) 二次去重，挡住重启重放（§14.4 实施清单第 3 项）
-      - 表头/畸形行跳过：字段数≠9 或数值解析失败即丢弃该行
+      - 表头/畸形行跳过：字段数≠9/25 或数值解析失败即丢弃该行
+
+    事故记录（2026-09-08 #BRIDGE-WRONG-FILE）：ENV_CONFIG 原指向 v18 遗留
+    ticks.csv（内容停在 9/7），guard 子进程只带 --bridge-env（无 --bridge-file
+    覆盖）→ 静默尾读昨日文件，把 9/7 数据当今日 tick 灌入 CH 166 万行。
+    教训：env 默认路径必须与当前 dump 策略的产出文件同步升级；早间测试用
+    --bridge-file 覆盖掩盖了默认值漂移。
     """
 
+    # v19 起桥文件为 ticks3.csv（全板块 25 列 5 档）。ticks.csv = v18 遗留
+    # （sim 侧停在 2026-09-07），禁止再作为默认数据源——见事故记录 #BRIDGE-WRONG-FILE。
     ENV_CONFIG: Final[dict[str, str]] = {
-        "real": r"E:\qmt_bridge\ticks.csv",
-        "sim": r"E:\qmt_bridge_sim\ticks.csv",
+        "real": r"E:\qmt_bridge\ticks3.csv",
+        "sim": r"E:\qmt_bridge_sim\ticks3.csv",
     }
 
     # 沙箱全市场一轮 ~2.4s（27 批×(拉取+0.05s)+主间隔 1s）；0.5s 轮询延迟可忽略
@@ -1667,7 +1675,7 @@ def main() -> int:
         # 跳过 xtdata 订阅链（探活/订阅/预热均不需要；下游 WAL/CH 由 start_bridge 复用）
         bridge = BridgeTickSource(sub, env=args.bridge_env, bridge_file=args.bridge_file)
         if not bridge.start():
-            log.error("桥模式启动失败（ticks.csv 不可读），退出")
+            log.error("桥模式启动失败（桥文件 %s 不可读），退出", bridge.bridge_file)
             return 1
         log.info("=== TickSubscriber 桥模式启动（数据源=%s）===", bridge.bridge_file)
     elif not sub.start():

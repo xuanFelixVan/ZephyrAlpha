@@ -11117,6 +11117,14 @@ creation_tokens:
   token: tdm-final-handover-20260907
   created_by: sess-35944-20260907153514
   capability: tdm_handover_report
+- file: scripts/run_ttl_rejudge_daily.ps1
+  token: auto-ttl-rejudge-hidden-20260908
+  created_by: st-bridge-p01-20260908
+  capability: ttl_rejudge_daily_hidden_launcher
+- file: scripts/ch/run_optimize_merge_hidden.ps1
+  token: auto-ch-optimize-merge-hidden-20260908
+  created_by: st-bridge-p01-20260908
+  capability: ch_optimize_merge_hidden_launcher
 di_seam_exemptions:
 - module_path: zephyr.trading.auto_runtime_core.AutoRuntimeCore
   reason: P0-5 LSG DI seam 标杆，已有 DI 但 AST 模式不匹配（动态注入）

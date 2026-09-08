@@ -20,10 +20,10 @@ ttl: task_bound
 
 ## §1 已就绪项（确认即勾）
 
-- [ ] tick 主链路：tick_subscriber bridge 模式（TICK_SOURCE 环境变量，9/7 已闭环，93 §14.7）
+- [x] tick 主链路：tick_subscriber bridge 模式（TICK_SOURCE 环境变量，9/7 已闭环，93 §14.7）（✅09-08 复核加固：TICK_SOURCE=bridge 已持久化 User 级 + guard 子进程实测读 ticks3.csv 入 CH；含 #BRIDGE-WRONG-FILE 修复 ENV_CONFIG→ticks3.csv，commit 待提交，见 §8）
 - [ ] 下单链路：QmtFileBridgeBroker（HTTP 127.0.0.1:18901 + orders_sim.csv 兜底）
 - [ ] 执行取价：QmtFileBridgeQuoteProvider（quote.csv 尾读+新鲜度闸门）
-- [ ] 持仓/资金 API：api_server 直读 `E:\qmt_bridge\Stock\`（GBK，row[7]/[9]/[15]/[18] 列序）
+- [x] 持仓/资金 API：api_server 直读 `E:\qmt_bridge\Stock\`（GBK，row[7]/[9]/[15]/[18] 列序）（✅09-08 实盘 CSV 逐列核对一致；⚠️ 红旗转 §8：PositionStatics.csv 已 13 天未更新——真实 QMT 终端疑似未开，9/18 前 MUST 验证）
 - [ ] 交易通道监控：web/services/api.js `fetchBridgeStatus`（HTTP 桥探活+桥文件族活性）
 - [ ] 健康面板组件：components/qmt_bridge_health.py（3 秒自刷）
 
@@ -146,7 +146,7 @@ ttl: task_bound
 ## §5 退役日操作 SOP（9/18）
 
 - [ ] 前置：确认沙箱 3 策略活着（EXEC_V16.4 / QUOTE_V17 / TICKDUMP3_v19）
-- [ ] `[Environment]::SetEnvironmentVariable("TICK_SOURCE", "bridge", "User")` + `schtasks /run /tn ZephyrAlpha_TickSubscriber`
+- [ ] `[Environment]::SetEnvironmentVariable("TICK_SOURCE", "bridge", "User")` + `schtasks /run /tn ZephyrAlpha_TickSubscriber`【9/8 已预执行并验证（env 持久化 + guard 重启实测子进程 --bridge --bridge-env sim）；9/18 复跑仅为确认】
 - [ ] api_server 重启（registry 中文名快照更新，DS-221 类新表 name_zh 生效）
 - [ ] 观察 26 个 fallback 任务首日 failover 日志（akshare/baostock 接管是否成功）
 - [ ] 监控页 data_source 分组数字核验（F6 验证）
@@ -165,3 +165,29 @@ ttl: task_bound
 | 轮次 | 日期 | 完成项 | commit | 备注 |
 |---|---|---|---|---|
 | 0 | 2026-09-08 | 全量摸排+本台账建立 | （本提交） | 摸排数据：59 主源/6 fallback/CH 实测行数 |
+| 1 | 2026-09-08 | 闪窗根治：10 个计划任务 wscript+launch_hidden.vbs 包装（含 vbs 参数透传）、register_guard_tasks.ps1 模板防回退、AI-Wrapper-Inject 僵尸实例清理、DataScheduler 补启用、死任务 TickVerify_1306 删除 | 待提交 | 元凶=AI-Wrapper-Inject 每 1 分钟直连 powershell 闪窗；#ARCH-OPS-001 |
+| 2 | 2026-09-08 | guard TICK_SOURCE=bridge 持久化（User 级）+ #BRIDGE-WRONG-FILE 修复（ENV_CONFIG sim/real→ticks3.csv，93/93 测试过）+ 误灌 166 万行 9/7 污染数据 ALTER DELETE 清理（9/7 恢复 308,657 行）+ 下午真积压回补（9/8 = 739,952 行） | 待提交 | 事故根因：env 默认路径未随 v19 升级，早间 --bridge-file 覆盖掩盖漂移；事故记录已注释进 tick_subscriber.py |
+| 3 | 2026-09-08 | 口径对齐全链实测（持仓 row[7]/[9]/[15]/[18] ✅、五档 dump 25 列 ✅、CH 1 档+Redis 完整 5 档 ✅）+ 本台账更新（§1 勾 2 项/§2.2-D 与 §5 标注进度/新增 §8） | （本提交） | PositionStatics.csv 13 天未更新红旗转 §8 |
+
+## §8 2026-09-08 增量待办（桥切换过渡期，按优先级）
+
+### §8.1 明早（9/9）盘前/盘中观察【P0，bridge 独挑第一个完整交易日】
+
+- [ ] 09:15 跨天轮转三连观察：① ticks3.csv 是否被沙箱重建（size 归零/仅表头）② ticks3.csv.offset 越界自愈是否归零（115,620,192 > 新文件 size → 应重置 0 从头读）③ 09:30 后 CH qmt_bridge 行恢复增长（`SELECT count() FROM c1_market.tick_data WHERE trade_date=today() AND data_source='qmt_bridge'`）
+- [ ] 盘中抽查：CH 新行 timestamp 与 wall clock 偏差 <1min（防再吃陈旧 timetag）；桥子进程 biz.heartbeat mode=bridge、errors 无持续增长
+- [ ] Redis `tick:*:latest`（db0，现存 147 键为旧 xtdata child 昨日残留）确认被 bridge child 盘中刷新（低优，仅观察）
+
+### §8.2 Owner 动作【P0，9/18 前 MUST】
+
+- [ ] 打开真实大QMT 终端一次，验证 `E:\qmt_bridge\Stock\PositionStatics.csv`/`Account.csv` 自动导出恢复（已 13 天未更新，mtime 停在 08-26 20:50；持仓 API/前端全靠它）
+
+### §8.3 记录与提交【P1】
+
+- [ ] 93 号备忘补 §14.10：#BRIDGE-WRONG-FILE 事故（根因/影响/修复/教训）+ 闪窗根治（#ARCH-OPS-001（历史标签 ARCH-BOOT-WINDOW-FLASH） 全量落地记录）+ 9/9 观察清单
+- [ ] commit 待提交清单：tick_subscriber.py（ENV_CONFIG 修复+事故注释）、launch_hidden.vbs（参数透传）、register_guard_tasks.ps1（vbs 模板 ×2）、scripts/run_ttl_rejudge_daily.ps1（新）、scripts/ch/run_optimize_merge_hidden.ps1（新）、本台账
+
+### §8.4 独立小问题【P2，与桥无关】
+
+- [ ] TTLRejudgeDaily 计划任务 9/7 18:05 退出码 1（python 层面，backfill_ttl_metadata.py；每日 18:05 会重复闪红）
+- [ ] QUOTE_V17 并入 TICKDUMP3 检查点：9/15 开评（93 §14.9 已落盘 v20 方案路径 A/B）；可选加速路径已呈报 Owner 裁定——明晚出 v20（dump+200ms 热线程照写 quote.csv）→ v20/v17 并行对拍 2-3 天 → 一致则退役 v17，9/18 只剩 TICK_SOURCE 一个切换变量
+- [ ] §2.2-B 前置确认项的连带提醒：convertible_bond_list 的 max list_date 停在 09-03 已定性为 monthly_static 月频设计（非故障），10/1 正档观察项（93 备忘已记录）

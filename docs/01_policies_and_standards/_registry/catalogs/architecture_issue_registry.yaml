@@ -21511,3 +21511,21 @@ entries:
   status: decided
   created: '2026-09-07'
   last_updated: '2026-09-08'
+- issue_id: '#ARCH-OPS-001'
+  title: 'Task Scheduler 交互拉起控制台子系统程序闪现窗口（AI-Wrapper-Inject 每分钟/guard 族每 5 分钟）——launch_hidden.vbs 无闪窗启动器全量根治'
+  severity: P2中
+  adjudication: |
+    纯技术修复（铁律#9：无价值判断，AI 可直接 decided）。根因：powershell.exe/python.exe
+    为控制台子系统程序，Task Scheduler Interactive 拉起时先分配可见控制台窗口，
+    -WindowStyle Hidden 来不及阻止那一瞬闪现。方案：统一 wscript.exe（GUI 子系统）+
+    scripts/launch_hidden.vbs（SW_HIDE 隐藏创建控制台；vbs 增参数透传支持附加参数），
+    register_guard_tasks.ps1 注册模板同步 vbs 化防重注册回退。2026-09-08 全量落地：
+    10 个项目任务核查完毕（7 个 vbs 包装、2 个 pythonw 天然无窗不动、1 个死任务删除），
+    AI-Wrapper-Inject（每 1 分钟闪窗主凶）包装并清掉卡死僵尸实例。历史标签
+    ARCH-BOOT-WINDOW-FLASH（launch_hidden.vbs 头注，当时未登记）冻结保留于此备查，
+    本条目为其数字制正身（铁律#7 冻结条款：新登记强制数字制）。
+  impact: 'Owner 深夜被闪窗困扰曾手动禁用 guard 计划任务（2026-09-08 生产断流 10 小时的诱因之一）；根治后 guard 常驻链路无心理负担'
+  fix_phase: '已完成（2026-09-08 全量落地，93 备忘 v1.8.8 §14.10.3，commit GW:st-bridge-p01-20260908）'
+  status: decided
+  created: '2026-09-08'
+  last_updated: '2026-09-08'
