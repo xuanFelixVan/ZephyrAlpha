@@ -300,9 +300,10 @@
         if (!d.ok) { side.innerHTML = '<div class="cm-bad" style="font-size:12px">加载失败：' + (d.error || '') + '</div>'; return; }
         var rows = d.companies.map(function (cp) {
           var cls = (cp.role.indexOf('龙头') >= 0 || cp.role === '核心') ? 'lead' : (cp.role === '参与' ? 'join' : '');
+          var xbadge = (cp.n_chains != null && cp.n_chains > 1) ? '<span class="rl xlinks" title="该公司跨 ' + cp.n_chains + ' 条产业链，点行看全部落位">跨' + cp.n_chains + '链</span>' : '';
           return '<div class="cm-co" data-sym="' + cp.symbol + '" data-name="' + (cp.name || '') + '" title="点开公司详情卡" style="cursor:pointer"><span class="rl ' + cls + '">' + (cp.role || '提及') + '</span>' +
             '<span class="nm" title="' + cp.name + '">' + (cp.name || '—') + '</span>' +
-            '<span class="sy">' + cp.symbol + '</span><span class="cf">' + (cp.confidence == null ? '' : cp.confidence.toFixed(2)) + '</span></div>';
+            '<span class="sy">' + cp.symbol + '</span>' + xbadge + '<span class="cf">' + (cp.confidence == null ? '' : cp.confidence.toFixed(2)) + '</span></div>';
         }).join('');
         side.innerHTML =
           '<span class="cm-x" title="关闭">✕</span>' +

@@ -2071,6 +2071,17 @@ def chainmap_node(node_id: str = Query(..., min_length=1)) -> dict[str, Any]:
             cur.execute("SELECT symbol, role, confidence FROM ig_node_company WHERE node_id = %s", (node_id,))
             rows = cur.fetchall()
             syms = [r[0] for r in rows]
+            # 跨链数（二期 Commit B）：公司在全部 active 链的落位链数（>1 即跨链，徽章跳转依据）
+            nchains: dict[str, int] = {}
+            if syms:
+                cur.execute(
+                    "SELECT nc.symbol, count(DISTINCT n.chain_id) FROM ig_node_company nc "
+                    "JOIN ig_node n ON n.node_id = nc.node_id "
+                    "JOIN ig_chain c ON c.chain_id = n.chain_id "
+                    "WHERE nc.symbol = ANY(%s) AND c.status = 'active' GROUP BY nc.symbol",
+                    (syms,),
+                )
+                nchains = {r[0]: int(r[1]) for r in cur.fetchall()}
             names = _cm_symbol_names()
             conn.close()
         except Exception:
@@ -2079,7 +2090,8 @@ def chainmap_node(node_id: str = Query(..., min_length=1)) -> dict[str, Any]:
             except Exception:
                 pass
             raise
-        companies = [{"symbol": s, "name": names.get(s, ""), "role": r or "", "confidence": None if cf is None else round(float(cf), 2)}
+        companies = [{"symbol": s, "name": names.get(s, ""), "role": r or "",
+                      "confidence": None if cf is None else round(float(cf), 2), "n_chains": nchains.get(s, 1)}
                      for s, r, cf in rows]
         companies.sort(key=lambda x: (_cm_role_rank(x["role"]), -(x["confidence"] or 0), x["symbol"]))
         return {"ok": True, "node": {"node_id": node_id, "name": row[0], "tier": row[1] or "",

@@ -51,6 +51,7 @@
       '#cm-company-card .cc-rn{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:#dbe4f0}' +
       '#cm-company-card .cc-rs{flex:none;color:#525d70;font-size:10.5px}' +
       '#cm-company-card .cc-rm{flex:none;max-width:46%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:#525d70;font-size:10.5px}' +
+      '#cm-company-card .cc-row[data-chain]:hover .cc-role{color:#e6c34c;border-color:#8a6d1f}' +
       '#cm-company-card .cc-foot{margin-top:18px;display:flex;align-items:center;gap:10px}' +
       '#cm-company-card .cc-jump{cursor:pointer;background:#e6c34c;color:#0d131d;font-weight:700;padding:6px 14px;' +
       'border-radius:6px;font-size:12px}' +
@@ -88,7 +89,9 @@
   }
 
   function posRow(p) {
-    return '<div class="cc-row"><span class="cc-chain" title="' + esc(p.chain_name) + '">' + esc(p.chain_name) + '</span>' +
+    return '<div class="cc-row" data-chain="' + esc(p.chain_id) + '" data-cluster="' + esc(p.cluster) + '" ' +
+      'data-chain-name="' + esc(p.chain_name) + '" data-node="' + esc(p.node_id) + '" title="跳转到该链（跨链跳转）" style="cursor:pointer">' +
+      '<span class="cc-chain" title="' + esc(p.chain_name) + '">' + esc(p.chain_name) + '</span>' +
       '<span class="cc-node" title="' + esc(p.node_name) + '">' + esc(p.node_name) + '</span>' +
       '<span class="cc-role">' + esc(p.role || '提及') + '</span></div>';
   }
@@ -131,6 +134,15 @@
       '<span class="cc-note">市值=最新总股本×收盘（估算）；关系方向按来源标注，专利合作边无方向。</span></div>';
     var x = card.querySelector('.cc-x');
     if (x) x.addEventListener('click', close);
+    Array.prototype.forEach.call(card.querySelectorAll('.cc-row[data-chain]'), function (el) {
+      el.addEventListener('click', function () {
+        close();
+        ZK.bus.emit('cm:view', { view: 'cluster' });
+        ZK.bus.emit('cm:open-cluster', { cid: el.getAttribute('data-cluster'), name: el.getAttribute('data-chain-name') });
+        ZK.bus.emit('cm:goto-chain', { chain_id: el.getAttribute('data-chain'), cluster: el.getAttribute('data-cluster'),
+                                       chain_name: el.getAttribute('data-chain-name'), focus_node: el.getAttribute('data-node') });
+      });
+    });
     var jp = card.querySelector('.cc-jump');
     if (jp) jp.addEventListener('click', function () {
       close();

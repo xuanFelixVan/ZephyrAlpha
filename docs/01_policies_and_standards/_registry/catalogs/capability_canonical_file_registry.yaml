@@ -11173,6 +11173,10 @@ creation_tokens:
   token: auto-chainmap-company-card-acc-20260909
   created_by: sess-chainmap-a2-20260909
   capability: frontend_acceptance
+- file: docs/03_modules/_domain_frontend/acceptance/ACC-F-CHAINMAP-CROSS-LINK.yaml
+  token: auto-chainmap-cross-link-acc-20260909
+  created_by: sess-chainmap-a2-20260909
+  capability: frontend_acceptance
 di_seam_exemptions:
 - module_path: zephyr.trading.auto_runtime_core.AutoRuntimeCore
   reason: P0-5 LSG DI seam 标杆，已有 DI 但 AST 模式不匹配（动态注入）

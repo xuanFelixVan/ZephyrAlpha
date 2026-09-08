@@ -1,0 +1,28 @@
+# --- 治理锚定 ---
+# doc_type: register | 功能验收单（冻结"什么样子算对"）
+# ttl: permanent
+# 修订权限：Owner 专有（AI 可提议不可自改已冻结条项）
+# --- 治理锚定结束 ---
+
+feature_id: F-CHAINMAP-CROSS-LINK
+feature_name: 跨链徽章（产业地图二期 Commit B：跨链数标记+落位行跳转）
+frozen_at: 2026-09-09
+frozen_by: ZephyrAlpha-Owner
+revision: 1
+revision_policy: "修订=Owner 批准+改原文+revision 链留痕；AI 不可自改已冻结条项"
+
+# check 取值：目检（截图人工/AI 视觉对） | 机断（DOM/接口断言）
+items:
+  - { id: 1, text: "/api/chainmap-node 返回 companies[].n_chains（>=1 整数）；跨链公司（n_chains>1）在环节公司面板行显示金色'跨N链'徽章，n_chains=1 不显示", check: 机断 }
+  - { id: 2, text: "公司详情卡'链上落位'行可点（hover 高亮提示），点击跳转目标链（cm:open-cluster + cm:goto-chain 带 focus_node），目标环节居中+高亮", check: 机断 }
+  - { id: 3, text: "方向语义红线不受影响：关系段仍按来源标注（本单不涉及关系渲染变更）", check: 目检 }
+  - { id: 4, text: "冒烟网 test_chainmap_structure 全绿（含 m_company）", check: 机断 }
+
+execution:
+  trigger: "任何涉及本功能的 UI 改动 commit 前"
+  flow: "起面板 API（8890）→ 打开 #chainmap → 点跨链公司行 → 详情卡点落位行 → 截图 → 逐条对 → 全绿才走 GitCommitGateway"
+  baseline_screenshot: "acceptance/screenshots/F-CHAINMAP-CROSS-LINK-baseline.png"
+
+关联:
+  frontend_map: F-CHAINMAP-CROSS-LINK
+  code_ref: "src/zephyr/frontend/dashboard/web/features/chainmap/chainmap-company-card.js"

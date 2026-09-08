@@ -208,6 +208,18 @@ modules:
     acceptance: ACC-F-CHAINMAP-COMPANY-CARD
     handbook: [FEH-PC-016]   # CAS 落错键坑（本组件登记时实证）
     status: active
+  - id: chainmap-cross-link
+    name: 跨链徽章（公司落位行跨链数标记+卡内落位行跳转）
+    file: features/chainmap/chainmap-company-card.js
+    page: chainmap
+    init: "并入 chainmap-company-card（同文件同数据源，徽章=面板行子元素）"
+    destroy: "并入 chainmap-company-card"
+    depends: [ZK.api, ZK.bus]   # /api/chainmap-node n_chains + /api/chainmap-company placements；跳转经 cm:view/cm:open-cluster/cm:goto-chain
+    toggle: none
+    styles: pages/chainmap.html <style> + self-injected
+    acceptance: ACC-F-CHAINMAP-CROSS-LINK
+    handbook: []
+    status: active
   - id: tdm-map
     name: 交易决策全景（横向树实时映射 /api/tdm）
     file: features/tdm.js
