@@ -269,6 +269,9 @@ DDL_STATEMENTS = [
     "ALTER TABLE ig_equity_edge ADD COLUMN IF NOT EXISTS holder_name TEXT",
     "ALTER TABLE ig_equity_edge ADD COLUMN IF NOT EXISTS holder_country TEXT",
     "ALTER TABLE ig_equity_edge ADD COLUMN IF NOT EXISTS verification TEXT",
+    # --- 股权质押风险（2026-09-09 调研: 中登口径+2025 质押新规——质押=股权域事件,relation 扩枚举,
+    #     预警线/平仓线/质押率放 relation='pledge' 行的 evidence/weight 列,不另加列） ---
+    # relation 词表扩: invests_in/subsidiary/shareholding/actual_control/pledge(质押)/judicial_frozen(司法冻结)
     # --- ig_company_metric PIT 化（Owner 2026-09-09 裁定: 指标层保留不融不删,加 PIT 防回测切片前视） ---
     "ALTER TABLE ig_company_metric ADD COLUMN IF NOT EXISTS as_of DATE",
     "ALTER TABLE ig_company_metric ADD COLUMN IF NOT EXISTS valid_from DATE",
