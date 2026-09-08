@@ -116,7 +116,7 @@
     /* 四层一列布局：流标签列(8~LABEL_W) + L1~L4 四列均分剩余宽度——同层永远同列，层级即列号；
      * 每次渲染实时量容器，窗口/抽屉变化由 ResizeObserver 触发重渲 */
     var W = canvas.clientWidth || 1400;
-    var LABEL_W = 150, GAP = 12;
+    var LABEL_W = 190, GAP = 12;   /* 流根标签 20px 字号所需宽度（最长"横切层·币圈"≈178px） */
     var colW = Math.max(170, Math.floor((W - LABEL_W - 16 - GAP * 3) / 4));
     var COLX = [0, LABEL_W, LABEL_W + (colW + GAP), LABEL_W + (colW + GAP) * 2, LABEL_W + (colW + GAP) * 3];
 
