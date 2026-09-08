@@ -300,7 +300,7 @@
         if (!d.ok) { side.innerHTML = '<div class="cm-bad" style="font-size:12px">加载失败：' + (d.error || '') + '</div>'; return; }
         var rows = d.companies.map(function (cp) {
           var cls = (cp.role.indexOf('龙头') >= 0 || cp.role === '核心') ? 'lead' : (cp.role === '参与' ? 'join' : '');
-          return '<div class="cm-co"><span class="rl ' + cls + '">' + (cp.role || '提及') + '</span>' +
+          return '<div class="cm-co" data-sym="' + cp.symbol + '" data-name="' + (cp.name || '') + '" title="点开公司详情卡" style="cursor:pointer"><span class="rl ' + cls + '">' + (cp.role || '提及') + '</span>' +
             '<span class="nm" title="' + cp.name + '">' + (cp.name || '—') + '</span>' +
             '<span class="sy">' + cp.symbol + '</span><span class="cf">' + (cp.confidence == null ? '' : cp.confidence.toFixed(2)) + '</span></div>';
         }).join('');
@@ -312,6 +312,11 @@
           (rows || '<div class="dim" style="font-size:12px">该环节暂无公司映射</div>');
         var x = side.querySelector('.cm-x');
         if (x) x.addEventListener('click', function () { side.style.display = 'none'; });
+        Array.prototype.forEach.call(side.querySelectorAll('.cm-co[data-sym]'), function (el) {
+          el.addEventListener('click', function () {
+            ZK.bus.emit('cm:open-company', { symbol: el.getAttribute('data-sym'), name: el.getAttribute('data-name') });
+          });
+        });
       }).catch(function (e) {
         side.innerHTML = '<div class="cm-bad" style="font-size:12px">加载失败（' + ((e && e.message) || 'fetch') + '）</div>';
       });

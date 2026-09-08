@@ -175,6 +175,7 @@ def test_chainmap_structure(page):
         m_nav: !!(window.ZK && ZK.features && ZK.features['chainmap-nav']),
         m_search: !!(window.ZK && ZK.features && ZK.features['chainmap-search']),
         m_cluster: !!(window.ZK && ZK.features && ZK.features['chainmap-cluster']),
+        m_company: !!(window.ZK && ZK.features && ZK.features['chainmap-company-card']),
     })"""
     )
     fails = [k for k, v in checks.items() if not v]

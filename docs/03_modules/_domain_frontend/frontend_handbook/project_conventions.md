@@ -198,6 +198,31 @@ scope: frontend
 
 ---
 
+---
+
+# FEH-PC-016｜creation_tokens CAS 追加会落进文件尾最后一个键——先定位再插入
+- 触发词：creation_tokens / safe_write_text / capability_canonical_file_registry / 落错键 / StaleWriteRefused
+- 想做什么：新建 .yaml/.md 文件前在 capability_canonical_file_registry.yaml 的 creation_tokens 追加 token 条目
+- 内置能否：无内置；registry 是多会话热文件，必须走 safe_write_text CAS（expected_base_sha256 必填，否则拒写）
+- 坑1（本会话 2026-09-09 实证）：EOF 直接 append 的条目物理上落进文件尾**最后一个顶层键**（当前=di_seam_exemptions），不在 creation_tokens——yaml 也能解析通过，肉眼难察觉，消费方按键查不到=白登记
+- 坑2：safe_write_text 不带 expected_base_sha256 → StaleWriteRefused 拒写（热文件 CAS 契约）；base=content_sha256(读到的原文)
+- 正确做法：①`s.count("\n di_seam_exemptions:\n")` 式定位**下一个顶层键**锚点，把新条目插到它**前面**（=上一个键列表尾）②CAS 写后必须 yaml.safe_load 复核条目真的在目标键下（`[e.get("file") for e in data["creation_tokens"]]` 断言）③文件尾"最后一个顶层键"会随治理演进漂移（曾是 creation_tokens 自身），禁硬编码 EOF append
+- 代码锚点：docs/01_policies_and_standards/_registry/catalogs/capability_canonical_file_registry.yaml（L4951 creation_tokens 键起；尾键=di_seam_exemptions）
+- 关联：TRAE-086 四件套闭环 · git_commit.py --allow-promote 前置（token 未登记则晋升被阻断）
+- 来源：2026-09-09 chainmap 二期 Commit A 实证（sess-chainmap-a2-20260909）
+
+---
+
+# FEH-PC-017｜commit message 声称"含后端"不等于真的提交了——交接前 git 实核
+- 触发词：端点 404 / 后端丢失 / quarantine / message 与实物不符 / 接手一期成果
+- 想做什么：接手前任 AI 的一期成果继续二期施工，以为端点/模块已入库
+- 内置能否：git log --oneline 只能看 message，不能证实物
+- 坑：一期 chainmap commit（3c314f7b85）message 声称"四模块+四端点"，实际只提交 16 个前端/文档文件，api_server.py 不在清单——后端四端点只活在 quarantine 副本里（drift 漂移隔离），dev 分支从未有过；前端对着 404 空转。同 commit 还有 loader 挂链缺失前科（f40afb8924 补救）。**message 与实物不符是事故族，不是孤例**
+- 正确做法：接手即核三件：①`git show <commit> --stat` 文件清单与 message 逐项对 ②`git log --all -S '<关键符号>' -- <文件>` 验证代码真进过历史 ③live 文件 Select-String 关键符号。发现缺失→先从 quarantine/副本移植回 live 并 AST 验证，再开工新功能，且在新 commit 里明确写"移植"语义
+- 代码锚点：src/zephyr/frontend/dashboard/api_server.py L1788 起（2026-09-09 从 quarantine drift_20260908T143802 移植的 chainmap 段）
+- 关联：ACC 冻结前实景验收（execution.flow 起服务逐条对）· TRAE-079 漂移隔离
+- 来源：2026-09-09 chainmap 二期调研发现 + Commit A 移植实证
+
 ## 修订记录
 
 | 日期 | 版本 | 改动 | 为什么改 |
@@ -210,3 +235,4 @@ scope: frontend
 | 2026-09-01 | 1.5.0 | +PC-009 版本戳排查法 / +PC-010 Electron 壳与素材纪律 / +PC-011 QMT 文件桥三律 | 当日三连实证：⚑12 缓存排障、桌面化落地、持仓口径修正 |
 | 2026-09-08 | 1.6.0 | +PC-013 详情抽屉统一模板（指向 detail_drawer_template.md） | tdm 抽屉 v2 实证沉淀，Owner 裁定模板化供全景图页复用 |
 | 2026-09-08 | 1.7.0 | +PC-014 绝对定位容器尺寸禁量 DOM / +PC-015 状态色类必须带 ID 前缀 | tdm 四件套补登记沉淀：b20260908-02 连线消失 + b20260908-05 状态色失效双事故成文 |
+| 2026-09-09 | 1.8.0 | +PC-016 creation_tokens CAS 落错键 / +PC-017 commit message 与实物不符排查法 | chainmap 二期 Commit A 实证：di_seam_exemptions 落键事故 + 一期后端假提交移植 |

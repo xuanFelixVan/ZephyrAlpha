@@ -87,6 +87,8 @@ window.ZK_BUILD='20260908-10';
   }).then(function(){
     return loadJs('features/chainmap/chainmap-cluster.js');   /* 产业链层（L2 上中下游列式+环节公司面板） */
   }).then(function(){
+    return loadJs('features/chainmap/chainmap-company-card.js');   /* 公司详情卡（/api/chainmap-company，二期 Commit A） */
+  }).then(function(){
     return loadJs('features/tdm.js');   /* 交易决策全景（横向树实时映射 /api/tdm，Owner 2026-09-07 裁定） */
   }).then(function(){
     return loadJs('vendor/dockview/dockview.min.js');   /* Dockview 库先行（dockpilot 依赖） */

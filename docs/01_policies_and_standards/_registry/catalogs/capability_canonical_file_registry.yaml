@@ -11165,6 +11165,14 @@ creation_tokens:
   token: auto-chainmap-inventory-20260908
   created_by: sess-30232-20260908222748
   capability: frontend_working_doc
+- file: src/zephyr/frontend/dashboard/web/features/chainmap/chainmap-company-card.js
+  token: auto-chainmap-company-card-20260909
+  created_by: sess-chainmap-a2-20260909
+  capability: frontend_feature_module
+- file: docs/03_modules/_domain_frontend/acceptance/ACC-F-CHAINMAP-COMPANY-CARD.yaml
+  token: auto-chainmap-company-card-acc-20260909
+  created_by: sess-chainmap-a2-20260909
+  capability: frontend_acceptance
 di_seam_exemptions:
 - module_path: zephyr.trading.auto_runtime_core.AutoRuntimeCore
   reason: P0-5 LSG DI seam 标杆，已有 DI 但 AST 模式不匹配（动态注入）

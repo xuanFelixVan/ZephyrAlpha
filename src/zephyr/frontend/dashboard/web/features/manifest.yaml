@@ -196,6 +196,18 @@ modules:
     acceptance: ACC-F-CHAINMAP-CLUSTER
     handbook: []
     status: active
+  - id: chainmap-company-card
+    name: 公司详情卡（落位+上下游关系+市值行情）
+    file: features/chainmap/chainmap-company-card.js
+    page: chainmap
+    init: "init(chart, ctx)"
+    destroy: "destroy()"
+    depends: [ZK.api, ZK.bus]   # /api/chainmap-company；cm:open-company 经总线（cluster 公司行点击触发）
+    toggle: none
+    styles: self-injected
+    acceptance: ACC-F-CHAINMAP-COMPANY-CARD
+    handbook: [FEH-PC-016]   # CAS 落错键坑（本组件登记时实证）
+    status: active
   - id: tdm-map
     name: 交易决策全景（横向树实时映射 /api/tdm）
     file: features/tdm.js

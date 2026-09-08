@@ -1785,6 +1785,551 @@ def tdm_map() -> dict[str, Any]:
     return payload
 
 
+
+# ═══════════════ 产业地图 chainmap（真源 ig_* 七表，depgraph PG 只读；Owner 2026-09-08 三层缩放方案） ═══════════════
+
+_CM_GALAXY_CACHE: dict[str, Any] = {"data": None, "ts": 0.0}          # L1 星系（TTL 600s，数据扩建期日级刷新足够）
+_CM_CLUSTER_CACHE: dict[str, dict[str, Any]] = {}                     # L2 簇详情（随 galaxy 失联失效）
+_CM_NAME_CACHE: dict[str, Any] = {"map": None, "ts": 0.0}             # symbol→公司名映射（ig_company_edge 名称列，覆盖不全如实用）
+
+# tier → 列位分桶（列序=产业链流向 上游→中游→下游）
+_CM_TIER_COL: dict[str, str] = {}
+for _t in ("上游", "原材料", "材料"):
+    _CM_TIER_COL[_t] = "上游"
+for _t in ("中游", "设备", "零部件", "制造", "加工"):
+    _CM_TIER_COL[_t] = "中游"
+for _t in ("下游", "应用", "终端", "运营", "品牌"):
+    _CM_TIER_COL[_t] = "下游"
+_CM_COL_ORDER = ["上游", "中游", "下游", "其他", "通用"]
+
+
+def _cm_col(tier: str | None) -> str:
+    t = (tier or "").strip()
+    if not t or t == "unspecified":
+        return "通用"
+    return _CM_TIER_COL.get(t, "其他")
+
+
+def _cm_pg() -> Any:
+    """depgraph PG 只读连接（depgraph_reader 角色，零写副作用）。"""
+    from zephyr.governance.depgraph_schema import get_depgraph_pg_connection
+
+    return get_depgraph_pg_connection()
+
+
+def _cm_role_rank(role: str | None) -> int:
+    r = (role or "").strip()
+    if "龙头" in r or r == "核心":
+        return 0
+    if r == "参与":
+        return 1
+    return 2   # mentioned/未知殿后
+
+
+def _cm_build_galaxy() -> dict[str, Any]:
+    """链→族聚类：跨链结构边+公司供应链边投影到链对 → 确定性加权标签传播 → 小簇并入最强邻居（≤48 簇）。
+
+    纯 Python 无新依赖；簇名=簇内连接度最高的枢纽链名。结果缓存 600s。
+    """
+    conn = _cm_pg()
+    try:
+        cur = conn.cursor()
+        cur.execute("SELECT chain_id, name FROM ig_chain WHERE status = 'active'")
+        chain_name: dict[str, str] = {r[0]: r[1] for r in cur.fetchall()}
+        cur.execute("SELECT node_id, chain_id FROM ig_node")
+        node_chain: dict[str, str] = {r[0]: r[1] for r in cur.fetchall()}
+        cur.execute("SELECT node_id, count(DISTINCT symbol) FROM ig_node_company GROUP BY node_id")
+        node_companies: dict[str, int] = {r[0]: int(r[1]) for r in cur.fetchall()}
+        cur.execute("SELECT DISTINCT node_id, symbol FROM ig_node_company")
+        sym_chains: dict[str, set[str]] = {}
+        for nid, sym in cur.fetchall():
+            c = node_chain.get(nid)
+            if c:
+                sym_chains.setdefault(sym, set()).add(c)
+        cur.execute("SELECT from_node, to_node FROM ig_edge")
+        pair_w: dict[tuple[str, str], float] = {}
+        for a, b in cur.fetchall():
+            c1, c2 = node_chain.get(a), node_chain.get(b)
+            if c1 in chain_name and c2 in chain_name and c1 != c2:
+                key = (c1, c2) if c1 < c2 else (c2, c1)
+                pair_w[key] = pair_w.get(key, 0.0) + 1.0
+        cur.execute("SELECT DISTINCT from_symbol, to_symbol FROM ig_company_edge")
+        for s1, s2 in cur.fetchall():
+            for c1 in sym_chains.get(s1, ()):
+                for c2 in sym_chains.get(s2, ()):
+                    if c1 in chain_name and c2 in chain_name and c1 != c2:
+                        key = (c1, c2) if c1 < c2 else (c2, c1)
+                        pair_w[key] = pair_w.get(key, 0.0) + 1.0
+        conn.close()
+    except Exception:
+        try:
+            conn.close()
+        except Exception:
+            pass
+        raise
+
+    # 链级邻接（无任何跨链边的孤立链各自成簇）
+    adj: dict[str, list[tuple[str, float]]] = {c: [] for c in chain_name}
+    nbr_w: dict[str, dict[str, float]] = {c: {} for c in chain_name}
+    for (a, b), w in pair_w.items():
+        adj.setdefault(a, []).append((b, w))
+        adj.setdefault(b, []).append((a, w))
+        nbr_w[a][b] = nbr_w[a].get(b, 0.0) + w
+        nbr_w[b][a] = nbr_w[b].get(a, 0.0) + w
+
+    labels: dict[str, str] = {c: c for c in chain_name}
+    order = sorted(chain_name)
+    for _ in range(24):   # 加权标签传播（确定性：固定遍历序 + 平票取最小 label）
+        changed = False
+        for c in order:
+            votes: dict[str, float] = {}
+            for nb, w in adj.get(c, ()):
+                votes[labels[nb]] = votes.get(labels[nb], 0.0) + w
+            if votes:
+                best = max(sorted(votes), key=lambda k: votes[k])
+                if votes[best] > 0 and labels[c] != best:
+                    labels[c] = best
+                    changed = True
+        if not changed:
+            break
+
+    def _clusters_of(lb: dict[str, str]) -> dict[str, list[str]]:
+        out: dict[str, list[str]] = {}
+        for c, l in lb.items():
+            out.setdefault(l, []).append(c)
+        return out
+
+    # 小簇（<2 链）与超量（>48）并入最强邻居
+    for _ in range(600):
+        groups = _clusters_of(labels)
+        roots = sorted(groups, key=lambda r: (len(groups[r]), r))
+        if len(roots) <= 48 and all(len(groups[r]) >= 2 for r in roots):
+            break
+        src = roots[0]
+        nbrs = nbr_w.get(src, {})
+        tgt = max(sorted(nbrs), key=lambda k: nbrs[k]) if nbrs else None
+        if tgt is None or nbrs.get(tgt, 0.0) <= 0:
+            tgt = min((r for r in roots if r != src), default=None)
+            if tgt is None:
+                break
+        for c in groups[src]:
+            labels[c] = tgt
+
+    groups = _clusters_of(labels)
+    chain_companies: dict[str, int] = {c: 0 for c in chain_name}
+    for sym, cs in sym_chains.items():
+        for c in cs:
+            if c in chain_companies:
+                chain_companies[c] += 1   # 一司挂多链按链各计（导航口径），簇内公司数另用去重并集
+
+    cluster_stats = []
+    for root, members in groups.items():
+        inner_deg = {m: sum(w for nb, w in adj[m] if labels[nb] == root) for m in members}
+        hub = max(sorted(members), key=lambda m: (inner_deg[m], chain_companies[m], m))
+        base = chain_name[hub].split("（")[0].split("(")[0].strip() or chain_name[hub]
+        cluster_stats.append({
+            "root": root, "members": members, "hub": hub, "name": base + "族",
+            "n_chains": len(members),
+            "n_companies": len({s for s, cs in sym_chains.items() if cs & set(members)}),
+            "n_nodes": sum(1 for n, c in node_chain.items() if c in set(members)),
+        })
+    cluster_stats.sort(key=lambda x: (-x["n_companies"], x["root"]))
+    cid_of = {st["root"]: f"C{i+1:02d}" for i, st in enumerate(cluster_stats)}
+    used_names: dict[str, int] = {}
+    clusters_out, links_out, chains_out = [], [], []
+    for st in cluster_stats:
+        cid = cid_of[st["root"]]
+        nm = st["name"]
+        used_names[nm] = used_names.get(nm, 0) + 1
+        if used_names[nm] > 1:
+            nm = f"{nm}{used_names[nm]}"
+        clusters_out.append({"id": cid, "name": nm, "n_chains": st["n_chains"],
+                             "n_nodes": st["n_nodes"], "n_companies": st["n_companies"]})
+        for m in st["members"]:
+            chains_out.append({"chain_id": m, "name": chain_name[m], "cluster": cid,
+                               "n_nodes": sum(1 for n, c in node_chain.items() if c == m),
+                               "n_companies": chain_companies[m]})
+    cg: dict[str, dict[str, float]] = {}
+    for (a, b), w in pair_w.items():
+        ca, cb = cid_of.get(labels[a]), cid_of.get(labels[b])
+        if ca and cb and ca != cb:
+            key = (ca, cb) if ca < cb else (cb, ca)
+            cg[key] = cg.get(key, 0.0) + w
+    links_out = [{"s": k[0], "t": k[1], "w": int(v)} for k, v in sorted(cg.items())]
+    return {"clusters": clusters_out, "links": links_out, "chains": chains_out,
+            "generated_at": datetime.now().isoformat(" ", "seconds")}
+
+
+def _cm_galaxy() -> dict[str, Any]:
+    g = _CM_GALAXY_CACHE["data"]
+    if g and (time.time() - _CM_GALAXY_CACHE["ts"]) < 600:
+        return g
+    g = _cm_build_galaxy()
+    _CM_GALAXY_CACHE["data"] = g
+    _CM_GALAXY_CACHE["ts"] = time.time()
+    _CM_CLUSTER_CACHE.clear()
+    return g
+
+
+def _cm_symbol_names() -> dict[str, str]:
+    m = _CM_NAME_CACHE["map"]
+    if m is not None and (time.time() - _CM_NAME_CACHE["ts"]) < 600:
+        return m
+    conn = _cm_pg()
+    try:
+        cur = conn.cursor()
+        cur.execute("SELECT from_symbol, MAX(from_name) FROM ig_company_edge WHERE from_name IS NOT NULL "
+                    "GROUP BY from_symbol")
+        m = {r[0]: r[1] for r in cur.fetchall()}
+        cur.execute("SELECT to_symbol, MAX(to_name) FROM ig_company_edge WHERE to_name IS NOT NULL AND to_symbol <> '' "
+                    "GROUP BY to_symbol")
+        for s, n in cur.fetchall():
+            m.setdefault(s, n)
+        conn.close()
+    except Exception:
+        try:
+            conn.close()
+        except Exception:
+            pass
+        raise
+    _CM_NAME_CACHE["map"] = m
+    _CM_NAME_CACHE["ts"] = time.time()
+    return m
+
+
+@app.get("/api/chainmap-galaxy")
+def chainmap_galaxy() -> dict[str, Any]:
+    """产业地图 L1 星系（chainmap-galaxy 组件）：族节点+族间边+全量链清单（导航树同源）。"""
+    try:
+        g = _cm_galaxy()
+        return {"ok": True, **g}
+    except Exception as exc:
+        return {"ok": False, "error": str(exc)[:200], "clusters": [], "links": [], "chains": []}
+
+
+@app.get("/api/chainmap-cluster")
+def chainmap_cluster(cid: str = Query(..., min_length=2, max_length=8)) -> dict[str, Any]:
+    """产业地图 L2 链层（chainmap-cluster 组件）：簇内链→环节（tier 分桶列）+结构边+公司计数。"""
+    if not cid.replace("C", "").isdigit():
+        return {"ok": False, "error": "bad cid", "chains": []}
+    cached = _CM_CLUSTER_CACHE.get(cid)
+    if cached:
+        return {"ok": True, **cached}
+    try:
+        g = _cm_galaxy()
+        members = [c for c in g["chains"] if c["cluster"] == cid]
+        if not members:
+            return {"ok": False, "error": "cluster not found", "chains": []}
+        cluster = next(c for c in g["clusters"] if c["id"] == cid)
+        conn = _cm_pg()
+        try:
+            cur = conn.cursor()
+            ids = [c["chain_id"] for c in members]
+            cur.execute("SELECT node_id, chain_id, name, tier FROM ig_node WHERE chain_id = ANY(%s)", (ids,))
+            node_rows = cur.fetchall()
+            cur.execute("SELECT node_id, count(DISTINCT symbol) FROM ig_node_company WHERE node_id IN "
+                        "(SELECT node_id FROM ig_node WHERE chain_id = ANY(%s)) GROUP BY node_id", (ids,))
+            ncomp = {r[0]: int(r[1]) for r in cur.fetchall()}
+            cur.execute("SELECT from_node, to_node FROM ig_edge")
+            all_edges = cur.fetchall()
+            conn.close()
+        except Exception:
+            try:
+                conn.close()
+            except Exception:
+                pass
+            raise
+        nodes_by_chain: dict[str, list[dict[str, Any]]] = {c["chain_id"]: [] for c in members}
+        nid_set = {r[0] for r in node_rows}
+        for nid, ch, name, tier in node_rows:
+            nodes_by_chain[ch].append({"node_id": nid, "name": name, "tier": tier or "",
+                                       "col": _cm_col(tier), "n_companies": ncomp.get(nid, 0)})
+        for lst in nodes_by_chain.values():
+            lst.sort(key=lambda n: (-n["n_companies"], n["name"]))
+        chains_out = [{**c, "nodes": nodes_by_chain[c["chain_id"]]} for c in
+                      sorted(members, key=lambda c: -c["n_companies"])]
+        edges_out = [[a, b] for a, b in all_edges if a in nid_set and b in nid_set]
+        data = {"cluster": cluster, "chains": chains_out, "edges": edges_out}
+        _CM_CLUSTER_CACHE[cid] = data
+        return {"ok": True, **data}
+    except Exception as exc:
+        return {"ok": False, "error": str(exc)[:200], "chains": []}
+
+
+@app.get("/api/chainmap-node")
+def chainmap_node(node_id: str = Query(..., min_length=1)) -> dict[str, Any]:
+    """环节公司面板（chainmap-cluster 组件右侧抽屉数据源）：环节↔公司映射，龙头/核心优先。"""
+    try:
+        conn = _cm_pg()
+        try:
+            cur = conn.cursor()
+            cur.execute("SELECT n.name, n.tier, n.chain_id, c.name FROM ig_node n "
+                        "JOIN ig_chain c ON c.chain_id = n.chain_id WHERE n.node_id = %s", (node_id,))
+            row = cur.fetchone()
+            if not row:
+                return {"ok": False, "error": "node not found", "companies": []}
+            cur.execute("SELECT symbol, role, confidence FROM ig_node_company WHERE node_id = %s", (node_id,))
+            rows = cur.fetchall()
+            syms = [r[0] for r in rows]
+            names = _cm_symbol_names()
+            conn.close()
+        except Exception:
+            try:
+                conn.close()
+            except Exception:
+                pass
+            raise
+        companies = [{"symbol": s, "name": names.get(s, ""), "role": r or "", "confidence": None if cf is None else round(float(cf), 2)}
+                     for s, r, cf in rows]
+        companies.sort(key=lambda x: (_cm_role_rank(x["role"]), -(x["confidence"] or 0), x["symbol"]))
+        return {"ok": True, "node": {"node_id": node_id, "name": row[0], "tier": row[1] or "",
+                                     "chain_id": row[2], "chain_name": row[3]},
+                "companies": companies[:200], "total": len(companies)}
+    except Exception as exc:
+        return {"ok": False, "error": str(exc)[:200], "companies": []}
+
+
+@app.get("/api/chainmap-search")
+def chainmap_search(q: str = Query(..., min_length=1)) -> dict[str, Any]:
+    """产业地图搜索（chainmap-search 组件）：链名/环节名 + symbol 落位 + 公司名（名称映射覆盖不全为已知边界）。"""
+    kw = q.strip()
+    if not kw:
+        return {"ok": False, "error": "empty query", "chains": [], "nodes": [], "symbols": []}
+    like = f"%{kw}%"
+    try:
+        g = _cm_galaxy()
+        chain_cluster = {c["chain_id"]: c["cluster"] for c in g["chains"]}
+        conn = _cm_pg()
+        try:
+            cur = conn.cursor()
+            cur.execute("SELECT chain_id, name FROM ig_chain WHERE status='active' AND name ILIKE %s "
+                        "ORDER BY name LIMIT 10", (like,))
+            chains_out = [{"chain_id": r[0], "name": r[1], "cluster": chain_cluster.get(r[0], "")} for r in cur.fetchall()]
+            cur.execute("SELECT n.node_id, n.name, n.chain_id, c.name FROM ig_node n "
+                        "JOIN ig_chain c ON c.chain_id = n.chain_id WHERE n.name ILIKE %s "
+                        "ORDER BY n.name LIMIT 10", (like,))
+            nodes_out = [{"node_id": r[0], "name": r[1], "chain_id": r[2], "chain_name": r[3],
+                          "cluster": chain_cluster.get(r[2], "")} for r in cur.fetchall()]
+            cur.execute("SELECT DISTINCT nc.symbol, n.node_id, n.name, n.chain_id, c.name, nc.role "
+                        "FROM ig_node_company nc JOIN ig_node n ON n.node_id = nc.node_id "
+                        "JOIN ig_chain c ON c.chain_id = n.chain_id WHERE nc.symbol ILIKE %s LIMIT 20",
+                        (kw + "%",))
+            sym_rows = cur.fetchall()
+            hit_syms = {r[0] for r in sym_rows}
+            name_map = _cm_symbol_names()
+            named = [s for s, n in name_map.items() if kw.lower() in (n or "").lower() and s not in hit_syms][:20]
+            extra_rows: list[tuple] = []
+            if named:
+                cur.execute("SELECT DISTINCT nc.symbol, n.node_id, n.name, n.chain_id, c.name, nc.role "
+                            "FROM ig_node_company nc JOIN ig_node n ON n.node_id = nc.node_id "
+                            "JOIN ig_chain c ON c.chain_id = n.chain_id WHERE nc.symbol = ANY(%s) LIMIT 20", (named,))
+                extra_rows = cur.fetchall()
+            conn.close()
+        except Exception:
+            try:
+                conn.close()
+            except Exception:
+                pass
+            raise
+        names = _cm_symbol_names()
+        symbols_out = [{"symbol": r[0], "name": names.get(r[0], ""), "node_id": r[1], "node_name": r[2],
+                        "chain_id": r[3], "chain_name": r[4], "cluster": chain_cluster.get(r[3], ""), "role": r[5] or ""}
+                       for r in list(sym_rows) + extra_rows]
+        return {"ok": True, "chains": chains_out, "nodes": nodes_out, "symbols": symbols_out}
+    except Exception as exc:
+        return {"ok": False, "error": str(exc)[:200], "chains": [], "nodes": [], "symbols": []}
+
+
+# ═══════════════ 公司详情卡数据端点（chainmap 二期 Commit A，2026-09-09） ═══════════════
+# 方向语义（Owner 红线，禁止臆断）：ig_company_edge from=供应商 → to=客户（load_supply_top5_483.py L16 实锤）；
+# J88_collab_patent=专利合作边无方向；to_symbol=''=对手方非上市（名称在 to_name，DDL L152 约定）。
+# 按来源分组贴 edge_kind：483_top5_customer/match_list_2012_2023/websearch=supply；J88_collab_patent=collab。
+
+_CM_SOURCE_EDGE_KIND: dict[str, str] = {
+    "483_top5_customer": "supply",
+    "match_list_2012_2023": "supply",
+    "websearch": "supply",
+    "J88_collab_patent": "collab",
+}
+_CM_RELATION_CAP = 10          # 每侧关系展示上限（total 如实返回）
+_CM_PLACEMENT_CAP = 60         # 落位展示上限（多链公司如实给 total）
+
+
+def _cm_bare_symbol(sym: str) -> str:
+    """300750.SZ → 300750（CH 行情 6 位裸码口径）；其他格式原样返回。"""
+    s = (sym or "").strip().upper()
+    return s.split(".")[0] if s.endswith((".SH", ".SZ", ".BJ")) else s
+
+
+def _cm_quote(bare: str) -> dict[str, Any] | None:
+    """CH 行情快照（独立降级：任何异常→None，前端渲染 '—'；CH 失败=null 任务书铁律）。
+
+    总市值：CH 两表无市值列（2026-09-09 全库普查）→ equity_pledge_summary.total_shares(万股,周更)
+    × 最新收盘 估算（茅台 16,372 亿交叉验证 ✓），键名 total_mv_yi，前端标"约"。
+    """
+    try:
+        rows = _ch_exec(
+            "SELECT trade_date, close, pct_change, amount FROM c1_market.kline_daily FINAL "
+            "WHERE symbol = %(s)s AND close > 0 AND quality_flag = 1 ORDER BY trade_date DESC LIMIT 1",
+            {"s": bare},
+        )
+        if not rows:
+            return None
+        d, close, pct, amt = rows[0]
+        out: dict[str, Any] = {
+            "trade_date": str(d),
+            "close": float(close),
+            "pct_change": None if pct is None else round(float(pct), 2),
+            "amount": None if amt is None else float(amt),
+        }
+        try:
+            mrows = _ch_exec(
+                "SELECT round(p.shares_wan * 10000 * k.close / 1e8, 1) FROM "
+                "(SELECT argMax(total_shares, end_date) AS shares_wan FROM c3_fundamental.equity_pledge_summary "
+                "WHERE symbol = %(s)s AND total_shares > 0) p CROSS JOIN "
+                "(SELECT close FROM c1_market.kline_daily FINAL WHERE symbol = %(s)s AND close > 0 "
+                "AND quality_flag = 1 ORDER BY trade_date DESC LIMIT 1) k",
+                {"s": bare},
+            )
+            if mrows and mrows[0][0] is not None:
+                out["total_mv_yi"] = float(mrows[0][0])
+        except Exception:
+            pass
+        try:
+            vrows = _ch_exec(
+                "SELECT trade_date, pe_ttm, pb_mrq FROM c1_market.daily_valuation "
+                "WHERE symbol = %(s)s AND pe_ttm > 0 ORDER BY trade_date DESC LIMIT 1",
+                {"s": bare},
+            )
+            if vrows:
+                out["valuation_asof"] = str(vrows[0][0])
+                out["pe_ttm"] = float(vrows[0][1])
+                out["pb_mrq"] = float(vrows[0][2])
+        except Exception:
+            pass
+        return out
+    except Exception:
+        return None
+
+
+@app.get("/api/chainmap-company")
+def chainmap_company(symbol: str = Query(..., min_length=2, max_length=24)) -> dict[str, Any]:
+    """公司详情卡（chainmap-company-card 真源）：链上落位 + 上下游关系 + CH 行情/估算市值。
+
+    symbol 接受 6 位裸码或带 .SH/.SZ/.BJ 后缀（统一归一）；海外/UNLISTED 端点不支持（fail-closed）。
+    关系段：suppliers=to_symbol=本司（from 为供应商）；customers=from_symbol=本司（to 为客户）；
+    collabs=J88 专利合作边（无方向）；对手方未上市 symbol='' 用 to_name/from_name 展示。
+    行情段独立降级：CH 异常→quote=null，不影响图谱段返回。
+    """
+    import re as _re
+
+    sym = (symbol or "").strip().upper()
+    if not _re.fullmatch(r"\d{6}(\.(SH|SZ|BJ))?", sym):
+        return {"ok": False, "error": "bad symbol", "company": {"symbol": sym},
+                "placements": [], "suppliers": [], "customers": [], "collabs": [], "quote": None}
+    if "." not in sym:   # 裸码补后缀（与 load_supply_top5_483.to_symbol 同规则）
+        sym += {"6": ".SH"}.get(sym[0], ".SZ") if sym[0] in "03" else (".SH" if sym[0] == "6" else ".BJ")
+    empty = {"ok": False, "error": "", "company": {"symbol": sym, "name": None},
+             "placements": [], "suppliers": [], "customers": [], "collabs": [], "quote": None}
+    try:
+        names = _cm_symbol_names()
+        g = _cm_galaxy()
+        chain_meta = {c["chain_id"]: (c["cluster"], c["name"]) for c in g["chains"]}
+        cluster_name = {c["id"]: c["name"] for c in g["clusters"]}
+        conn = _cm_pg()
+        try:
+            cur = conn.cursor()
+            cur.execute(
+                "SELECT n.node_id, n.name, n.tier, c.chain_id, c.name, nc.role, nc.confidence "
+                "FROM ig_node_company nc JOIN ig_node n ON n.node_id = nc.node_id "
+                "JOIN ig_chain c ON c.chain_id = n.chain_id "
+                "WHERE nc.symbol = %s AND c.status = 'active' ORDER BY c.name, n.name",
+                (sym,),
+            )
+            pos_rows = cur.fetchall()
+            cur.execute(
+                "SELECT from_symbol, to_symbol, year, product, weight, weight_type, source, "
+                "from_name, to_name, amount FROM ig_company_edge "
+                "WHERE from_symbol = %s OR to_symbol = %s "
+                "ORDER BY year DESC, weight DESC NULLS LAST LIMIT 400",
+                (sym, sym),
+            )
+            rel_rows = cur.fetchall()
+            conn.close()
+        except Exception:
+            try:
+                conn.close()
+            except Exception:
+                pass
+            raise
+    except Exception as exc:
+        empty["error"] = str(exc)[:200]
+        return empty
+
+    placements: list[dict[str, Any]] = []
+    for nid, nname, tier, chid, chname, role, cf in pos_rows:
+        cl, _clname = chain_meta.get(chid, ("", ""))
+        placements.append({
+            "node_id": nid, "node_name": nname, "tier": tier or "", "col": _cm_col(tier),
+            "chain_id": chid, "chain_name": chname, "cluster": cl,
+            "cluster_name": cluster_name.get(cl, cl),
+            "role": role or "", "confidence": None if cf is None else round(float(cf), 2),
+        })
+    n_placements = len(placements)
+    placements = placements[:_CM_PLACEMENT_CAP]
+
+    suppliers: list[dict[str, Any]] = []
+    customers: list[dict[str, Any]] = []
+    collabs: list[dict[str, Any]] = []
+    for fs, ts, yr, prod, w, wt, src, fn, tn, amt in rel_rows:
+        kind = _CM_SOURCE_EDGE_KIND.get(src or "", "supply")
+        base = {"product": prod, "year": int(yr) if yr is not None else None,
+                "weight": None if w is None else round(float(w), 2), "weight_type": wt,
+                "source": src, "amount": None if amt is None else float(amt)}
+        if kind == "collab":
+            other_s, other_n = (ts, tn) if fs == sym else (fs, fn)
+            collabs.append({**base, "symbol": other_s or "", "name": other_n or names.get(other_s or "", ""),
+                            "unlisted": not other_s})
+        elif ts == sym:   # from=供应商 → 本司
+            suppliers.append({**base, "symbol": fs, "name": fn or names.get(fs, ""), "unlisted": False})
+        elif fs == sym:   # 本司 → to=客户
+            customers.append({**base, "symbol": ts, "name": tn or names.get(ts, ""), "unlisted": not ts})
+    n_sup, n_cus, n_col = len(suppliers), len(customers), len(collabs)
+    suppliers = suppliers[:_CM_RELATION_CAP]
+    customers = customers[:_CM_RELATION_CAP]
+    collabs = collabs[:_CM_RELATION_CAP]
+
+    cname = names.get(sym)
+    if not cname:
+        for fs, _ts, _yr, _prod, _w, _wt, _src, fn, tn, _amt in rel_rows:
+            if fs == sym and fn:
+                cname = fn
+                break
+            if _ts == sym and tn:
+                cname = tn
+                break
+    if not cname:   # ig 名称映射覆盖不全 → CH stock_basic 兜底（/api/stock-header 同款真源），失败保持 None
+        try:
+            nb = _ch_exec(
+                "SELECT argMax(name, valid_from) FROM stock_basic WHERE symbol=%(s)s",
+                {"s": _cm_bare_symbol(sym)},
+            )
+            if nb and nb[0][0]:
+                cname = str(nb[0][0])
+        except Exception:
+            pass
+    return {
+        "ok": True,
+        "company": {"symbol": sym, "name": cname},
+        "placements": placements, "total_placements": n_placements,
+        "suppliers": suppliers, "n_suppliers": n_sup,
+        "customers": customers, "n_customers": n_cus,
+        "collabs": collabs, "n_collabs": n_col,
+        "quote": _cm_quote(_cm_bare_symbol(sym)),
+        "generated_at": datetime.now().isoformat(" ", "seconds"),
+    }
+
+
 def main() -> None:
     import uvicorn
 
