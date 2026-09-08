@@ -20,7 +20,7 @@ ttl: task_bound
 
 ## §1 已就绪项（确认即勾）
 
-- [x] tick 主链路：tick_subscriber bridge 模式（TICK_SOURCE 环境变量，9/7 已闭环，93 §14.7）（✅09-08 复核加固：TICK_SOURCE=bridge 已持久化 User 级 + guard 子进程实测读 ticks3.csv 入 CH；含 #BRIDGE-WRONG-FILE 修复 ENV_CONFIG→ticks3.csv，commit 待提交，见 §8）
+- [x] tick 主链路：tick_subscriber bridge 模式（TICK_SOURCE 环境变量，9/7 已闭环，93 §14.7）（✅09-08 复核加固：TICK_SOURCE=bridge 已持久化 User 级 + guard 子进程实测读 ticks3.csv 入 CH；含 #BRIDGE-WRONG-FILE 修复 ENV_CONFIG→ticks3.csv，✅09-09 核实已提交 75aae01b11）
 - [ ] 下单链路：QmtFileBridgeBroker（HTTP 127.0.0.1:18901 + orders_sim.csv 兜底）
 - [ ] 执行取价：QmtFileBridgeQuoteProvider（quote.csv 尾读+新鲜度闸门）
 - [x] 持仓/资金 API：api_server 直读 `E:\qmt_bridge\Stock\`（GBK，row[7]/[9]/[15]/[18] 列序）（✅09-08 实盘 CSV 逐列核对一致；⚠️ 红旗转 §8：PositionStatics.csv 已 13 天未更新——真实 QMT 终端疑似未开，9/18 前 MUST 验证）
@@ -105,10 +105,10 @@ ttl: task_bound
 - [ ] futures_tick_intraday（股指期货 tick → TICK_SOURCE=bridge 后 BridgeTickSource 覆盖评估）
 
 ### §2.4 档 4——占位任务清理 ×4【表不存在/空表，直接清】
-- [ ] margin_trading_qmt_placeholder（表不存在）→ 禁用或改 akshare 主源
-- [ ] dragon_tiger_qmt_placeholder（表不存在）→ 同上
-- [ ] block_trade_qmt_placeholder（表不存在）→ 同上
-- [ ] l2_tick_snapshot（CH 空表 0 行 + fallback 循环引用自己 `fallback: miniqmt`）→ 清理循环引用
+- [x] margin_trading_qmt_placeholder（表不存在）→ 已加"退役冻结 2026-09-18：miniQMT 独有源，表从未产出，待 Owner 裁定替代源后重建"注释（disabled 原有，source 值不切——红线 1）（✅09-09 8981a53f29）
+- [x] dragon_tiger_qmt_placeholder（表不存在）→ 同上（✅09-09 8981a53f29）
+- [x] block_trade_qmt_placeholder（表不存在）→ 同上（✅09-09 8981a53f29）
+- [x] l2_tick_snapshot（CH 空表 0 行 + fallback 循环引用自己 `fallback: miniqmt`）→ 已清 `fallback_sources: []`+注释（循环自引用无 failover 语义；L2 降级重建随 §2.2-B 裁定）（✅09-09 8981a53f29）
 
 ### §2.5 miniqmt 仅作 fallback 的 6 个【主源仍在，退役后 fallback 死→自动跳过，低优先】
 - [ ] futures_position_incremental
@@ -120,28 +120,27 @@ ttl: task_bound
 
 ## §3 后端代码层
 
-- [ ] scheduler.py：provider 工厂注册 `qmt_bridge` 源（L1099 工厂表/L1104 路径表/L1180 分支）
-- [ ] scheduler.py：非交易日守卫 miniqmt 拼写防护（L335-363）扩桥任务语义
+- [x] scheduler.py：provider 工厂注册 `qmt_bridge` 源（source_to_meta/source_to_path/create_provider 三表+分支，参照 miniqmt 条目；新 Provider depgraph 节点 12118065 已转 production）（✅09-09 8981a53f29）
+- [x] scheduler.py：非交易日守卫 miniqmt 拼写防护（L335-363）扩桥任务语义（qmt_bridge 同语义：沙箱非交易时段冻结，桥文件不增长）（✅09-09 8981a53f29）
 - [ ] market_breadth_collector.py：8 处 miniqmt 直连 → 桥数据聚合（依赖 §2.2-D 宽度快照方案裁定）
-- [ ] speed_tester.py：32 处——数据源测速器加 qmt_bridge 通道
-- [ ] source_health_check.py：miniqmt 探活 → 桥探活（4 处）
-- [ ] policy_registry.py / capability_symbol_gate.py / backfill_checker.py / cli.py / capability_validator.py：源登记与门禁里的 miniqmt 语义更新
+- [x] speed_tester.py：数据源测速器加 qmt_bridge 通道——专用桥口径（ticks3/quote.csv 尾读延迟+HTTP 18901 RTT），`run_speed_tests` 全量跑附带，bridge_probe 结果入 fetch_perf 同 schema（✅09-09 8981a53f29）
+- [x] source_health_check.py：miniqmt 探活旁并列 qmt_bridge 登记项+_probe_qmt_bridge 探针（桥文件族 mtime 新鲜度含交易时段判定+HTTP 18901 探活，语义对齐 api_server fetchBridgeStatus）（✅09-09 8981a53f29）
+- [x] policy_registry.py / capability_symbol_gate.py / backfill_checker.py / cli.py / capability_validator.py：源登记与门禁里的 miniqmt 语义更新——policy_registry 增 qmt_bridge DEFAULT_POLICIES（配套 test_policy_registry 断言同步）；cli 帮助文案补桥源示例；capability_symbol_gate/capability_validator **判读=通用 AST 门禁无源登记点，不需改**（新 provider 走 capability=="x" 通用路由形态，两门禁原生覆盖）；backfill_checker **判读不改**（TSV 内 miniqmt=历史回填数据 source 列，囤货语义 9/18 前仍有效，桥无历史回补通道）（✅09-09 8981a53f29）
+- [x] miniqmt_channel_manager.py：退役 dormant 策略——MINIQMT_CHANNEL_RETIRED_DATE=2026-09-18 + MINIQMT_CHANNEL_REPLACEMENT 常量与 fail-closed 注释落码（状态机逻辑不动，接口保留=测试消费+桥重连参照实现）（✅09-09 8981a53f29）
+- [x] ex_core/adapters/__init__.py（7 处）+ reference_data_manager / multi_timeframe_fusion / corporate_action_adjuster / board_lot 各 2 处判读：adapters/__init__=**活跃依赖**（MiniQmtBroker 统一导入枢纽，保留至 9/17 切换窗口）；其余 4 文件 8 处全为 [CONSUMERS]/[ALGO_FLOW] 注释元数据（无运行时 import，且描述的消费者关系属实——board_lot 已同时列桥 broker），措辞已一致无需统一；无"待裁定"新增项（✅09-09 8981a53f29）
+- [x] 回测域核查：event_driven_engine.py / matching_logic.py 的 miniqmt 字样——matching_logic=**活跃依赖**（回测-实盘撮合一致性 B 方案：MiniQmtBroker.submit_order 复用预校验，保留至切换窗口）；event_driven_engine=**活跃依赖，需裁定**（L139/219 MiniQmtQuoteProvider.fetch_historical(tick) 回测 tick 回放，9/18 后 xtquant 历史缓存断供）→ 已登记 §8.3"留 Owner 裁定"（✅09-09 8981a53f29）
 - [ ] P0-2 钱路：paper_session/intraday_main 下单链切 BrokerInterface 注入（接口已抽象，93 §13 定级"小"）
 - [ ] P0-3 对账：recon_runner/broker_settlement_adapter 切桥（同上）
-- [ ] miniqmt_channel_manager.py：退役后状态机 dormant/归档策略（保留接口禁真连）
-- [ ] ex_core/adapters/__init__.py：adapter 导出与默认装配更新（7 处 miniqmt 字样）
-- [ ] reference_data_manager.py / multi_timeframe_fusion.py / corporate_action_adjuster.py / board_lot.py：散点 miniqmt 依赖逐个核查（2/2/2/2 处）
-- [ ] 回测域核查：event_driven_engine.py / matching_logic.py 的 miniqmt 字样（疑为注释/常量，确认无运行时依赖即勾）
 
 ## §4 前端 7 点
 
-- [ ] F1 components/trade_panel.py：`broker_id="miniqmt"` 默认值 → `qmt_bridge`（L92/L452 两处）
-- [ ] F2 components/position_monitor.py：MiniQmtBroker.get_positions() 注入 → 桥文件持仓
-- [ ] F3 components/order_book.py：MiniQmtQuoteProvider → QmtFileBridgeQuoteProvider
-- [ ] F4 services_registry.py L91：QMT 客户端进程探测 pattern `xtminiqmt|xiadan|qmt` → 实测大QMT 客户端进程名后更新（否则服务总闸假死）
-- [ ] F5 web/services/api.js fetchBridgeStatus："miniqmt 存活"信号退役后 UI 语义改"已退役"
-- [ ] F6 tick/行情统计页：行数/延迟统计按 `data_source` 分组（miniqmt/qmt_bridge 并存→只剩 bridge，防退役日数字跳水）
-- [ ] F7 服务总闸：心跳 `mode` 字段（xtdata/bridge）上屏（tmp/tick_subscriber_biz.heartbeat）
+- [ ] F1 components/trade_panel.py：`broker_id="miniqmt"` 默认值 → `qmt_bridge`（L92/L452 两处）【9/17 收盘后窗口——红线 2】
+- [x] F2 components/position_monitor.py：MiniQmtBroker.get_positions() 注入点旁并列 QmtFileBridgeBroker——新增 create_position_broker(source/env) 工厂（桥读 E:\qmt_bridge[_sim]\Stock\PositionStatics.csv GBK row[7]/[9]/[15]/[18]，duck-typed PositionSnapshot 同构注入）+ app_panel 注入参数（默认 miniqmt 不切——红线 2）（✅09-09 3b25f73aed）
+- [x] F3 components/order_book.py：MiniQmtQuoteProvider 旁并列 QmtFileBridgeQuoteProvider——create_quote_provider(source/env) 工厂（quote.csv 尾读+新鲜度闸门）+ app_panel 注入参数（默认 miniqmt）（✅09-09 3b25f73aed）
+- [x] F4 services_registry.py L91：QMT 客户端进程探测 pattern `xtminiqmt|xiadan|qmt` → 补 `xtitclient`（大QMT 主程序 XtItClient.exe=93 备忘 §2.3 实地辨识名，9/18 后 pattern 命中全靠它）。⚠ 实测待复核：夜班 Get-Process 仅见 XtMiniQmt（PID 29720）在跑，大QMT 客户端未开（与 §8.2 PositionStatics 13 天未更新红旗互证）——Owner 开真实终端后核对进程名，不符则更新 pattern（✅09-09 3b25f73aed，复核留 §8.2）
+- [x] F5 web/services/api.js fetchBridgeStatus：注释标注 miniqmt 信号 9/18 退役语义 + bridge.js miniQMT 基线卡片与探活实测行退役日后显"已退役"占位（非"已停"，防误读为故障；判定=retire_date 本地日期比较）（✅09-09 3b25f73aed）
+- [x] F6 tick/行情统计页：下载监管页 tick_data 今日新增按 data_source 分组——后端 download_status 增 today_rows_by_source（CH 按日 GROUP BY data_source）+ 前端 download.js dlTodayCell 两段式渲染（mini/桥 并存+合计），9/18 后 mini 段归零、桥段独立可见，防合计 30 倍缩水被误读为断更（✅09-09 3b25f73aed）
+- [x] F7 服务总闸：services_registry 心跳分支读 biz 心跳 mode 字段（bridge→"桥模式"/xtdata→"miniQMT推送"）拼入 detail 上屏 + st.mode 结构化字段（✅09-09 3b25f73aed）
 
 ## §5 退役日操作 SOP（9/18）
 
@@ -165,9 +164,10 @@ ttl: task_bound
 | 轮次 | 日期 | 完成项 | commit | 备注 |
 |---|---|---|---|---|
 | 0 | 2026-09-08 | 全量摸排+本台账建立 | （本提交） | 摸排数据：59 主源/6 fallback/CH 实测行数 |
-| 1 | 2026-09-08 | 闪窗根治：10 个计划任务 wscript+launch_hidden.vbs 包装（含 vbs 参数透传）、register_guard_tasks.ps1 模板防回退、AI-Wrapper-Inject 僵尸实例清理、DataScheduler 补启用、死任务 TickVerify_1306 删除 | 待提交 | 元凶=AI-Wrapper-Inject 每 1 分钟直连 powershell 闪窗；#ARCH-OPS-001 |
-| 2 | 2026-09-08 | guard TICK_SOURCE=bridge 持久化（User 级）+ #BRIDGE-WRONG-FILE 修复（ENV_CONFIG sim/real→ticks3.csv，93/93 测试过）+ 误灌 166 万行 9/7 污染数据 ALTER DELETE 清理（9/7 恢复 308,657 行）+ 下午真积压回补（9/8 = 739,952 行） | 待提交 | 事故根因：env 默认路径未随 v19 升级，早间 --bridge-file 覆盖掩盖漂移；事故记录已注释进 tick_subscriber.py |
-| 3 | 2026-09-08 | 口径对齐全链实测（持仓 row[7]/[9]/[15]/[18] ✅、五档 dump 25 列 ✅、CH 1 档+Redis 完整 5 档 ✅）+ 本台账更新（§1 勾 2 项/§2.2-D 与 §5 标注进度/新增 §8） | （本提交） | PositionStatics.csv 13 天未更新红旗转 §8 |
+| 1 | 2026-09-08 | 闪窗根治：10 个计划任务 wscript+launch_hidden.vbs 包装（含 vbs 参数透传）、register_guard_tasks.ps1 模板防回退、AI-Wrapper-Inject 僵尸实例清理、DataScheduler 补启用、死任务 TickVerify_1306 删除 | 75aae01b11 | 元凶=AI-Wrapper-Inject 每 1 分钟直连 powershell 闪窗；#ARCH-OPS-001；09-09 夜班核实补登哈希 |
+| 2 | 2026-09-08 | guard TICK_SOURCE=bridge 持久化（User 级）+ #BRIDGE-WRONG-FILE 修复（ENV_CONFIG sim/real→ticks3.csv，93/93 测试过）+ 误灌 166 万行 9/7 污染数据 ALTER DELETE 清理（9/7 恢复 308,657 行）+ 下午真积压回补（9/8 = 739,952 行） | 75aae01b11 | 事故根因：env 默认路径未随 v19 升级，早间 --bridge-file 覆盖掩盖漂移；事故记录已注释进 tick_subscriber.py；09-09 夜班核实补登哈希 |
+| 3 | 2026-09-08 | 口径对齐全链实测（持仓 row[7]/[9]/[15]/[18] ✅、五档 dump 25 列 ✅、CH 1 档+Redis 完整 5 档 ✅）+ 本台账更新（§1 勾 2 项/§2.2-D 与 §5 标注进度/新增 §8） | 75aae01b11 | PositionStatics.csv 13 天未更新红旗转 §8 |
+| 4 | 2026-09-09 夜班 | §2.4 占位清理 ×4 + §3 桥能力注册主体（scheduler 四点注册/QmtBridgeIngestProvider 新建/六文件源登记/speed_tester 桥通道/channel_manager dormant 常量/ex_core+回测域判读）+ §4 前端 F2-F7 + §8.3 核实勾选 + §8.5 摸底报告 | 8981a53f29（第三批）/ 3b25f73aed（第四批） | 只增桥不删 miniqmt；tasks.yaml 零 source 切换（红线 1）；F1 未动（红线 2）；TICK_SOURCE 链未动（红线 3）；夜班遇 3 并发会话（st-nodebt/greatwall-0020/本会话）锁竞争与门禁竞争，全部走合规通道解决 |
 
 ## §8 2026-09-08 增量待办（桥切换过渡期，按优先级）
 
@@ -183,11 +183,61 @@ ttl: task_bound
 
 ### §8.3 记录与提交【P1】
 
-- [ ] 93 号备忘补 §14.10：#BRIDGE-WRONG-FILE 事故（根因/影响/修复/教训）+ 闪窗根治（#ARCH-OPS-001（历史标签 ARCH-BOOT-WINDOW-FLASH） 全量落地记录）+ 9/9 观察清单
-- [ ] commit 待提交清单：tick_subscriber.py（ENV_CONFIG 修复+事故注释）、launch_hidden.vbs（参数透传）、register_guard_tasks.ps1（vbs 模板 ×2）、scripts/run_ttl_rejudge_daily.ps1（新）、scripts/ch/run_optimize_merge_hidden.ps1（新）、本台账
+- [x] 93 号备忘补 §14.10：#BRIDGE-WRONG-FILE 事故（根因 env 默认路径未随 v19 升级/影响 166 万行污染已 ALTER DELETE 清理/修复 ENV_CONFIG→ticks3.csv/教训三条）+ 闪窗根治（#ARCH-OPS-001 全量落地记录）+ 9/9 观察清单——09-09 夜班核实：前序会话已于 9/8 21:21 完成（§14.10.1-14.10.5 五小节+changelog v1.8.8），无需重做（✅09-09 75aae01b11 核实）
+- [x] commit 待提交清单：tick_subscriber.py（ENV_CONFIG 修复+事故注释）、launch_hidden.vbs（参数透传）、register_guard_tasks.ps1（vbs 模板 ×2）、scripts/run_ttl_rejudge_daily.ps1（新）、scripts/ch/run_optimize_merge_hidden.ps1（新）、本台账——09-09 夜班核实：六文件全部已由 75aae01b11（2026-09-08 21:21）提交，工作区无残留；台账 §7 轮次 1/2/3 的"待提交"哈希已补登（✅09-09 75aae01b11 核实，台账簿记更新随本轮 8981a53f29 后续 docs 提交）
+
+#### §8.3.1 留 Owner 裁定（09-09 夜班新增）
+
+1. **回测 tick 回放数据源（event_driven_engine.py L139/219）**：回测引擎经 MiniQmtQuoteProvider.fetch_historical(interval="tick") 读 xtquant 本地历史 tick 缓存做回放——9/18 后断供。两难：a) 切 CH 囤货 tick_data 回放（qmt_bridge+miniqmt 双源都在 CH，口径统一、免 SDK；但 9/18 前 tick 只有订阅列表品种，全市场历史不完整）b) QMT【收盘清盘】"保存今日分笔"已勾选逐日累积的大QMT 本地 tick 库（93 §11.5a——但读取需经沙箱策略 dump，等于 §2.2-A 方案 a 的变体）。**倾向 a**（CH 统一回放源+存量囤货够用），待 Owner 批。
+2. **F4 进程 pattern 实测复核**：pattern 已按 93 §2.3 实证名补 `xtitclient`，但夜班大QMT 终端未开无法实测进程名——Owner 开终端时（§8.2 本就要开）顺手核对任务管理器，1 分钟动作。
+3. **分钟K线族三选一**（§8.5.1 摸底完毕）：推荐 b（tick 聚合合成）立即立项 + c（akshare）同批挂校验 + a（沙箱扩 dump）视对拍偏差 10 月再议——待 Owner 批。
+4. **L2/期权族沙箱权限验证**（§8.5.2 步骤清单已落盘）：待 Owner 开终端执行，结论决定 §2.2-B 五任务走向。
 
 ### §8.4 独立小问题【P2，与桥无关】
 
 - [ ] TTLRejudgeDaily 计划任务 9/7 18:05 退出码 1（python 层面，backfill_ttl_metadata.py；每日 18:05 会重复闪红）
 - [ ] QUOTE_V17 并入 TICKDUMP3 检查点：9/15 开评（93 §14.9 已落盘 v20 方案路径 A/B）；可选加速路径已呈报 Owner 裁定——明晚出 v20（dump+200ms 热线程照写 quote.csv）→ v20/v17 并行对拍 2-3 天 → 一致则退役 v17，9/18 只剩 TICK_SOURCE 一个切换变量
 - [ ] §2.2-B 前置确认项的连带提醒：convertible_bond_list 的 max list_date 停在 09-03 已定性为 monthly_static 月频设计（非故障），10/1 正档观察项（93 备忘已记录）
+
+### §8.5 分钟K线族三选一摸底报告（09-09 夜班，只出报告不实施，供 Owner 裁定）
+
+> 范围=§2.2-A：1/5/15/30/60min × 股票/ETF/LOF + kline_etf_daily + 周月线 + 5min 历史回填。核心约束：桥无 K 线 dump 通道。
+
+**方案 a）沙箱扩 K 线 dump（TICKDUMP 模式复用）**
+- 机制：沙箱策略内 `get_market_data_ex(period='1m'/'5m')` 增量轮询追加写 CSV（复用 TICKDUMP3_v19 分批轮询+追加写+去重骨架）
+- 工作量：~2-3 人日（沙箱 v21 策略 1 天开发+2 交易日验证；项目侧 provider kline capability 映射 0.5 天）
+- 数据前提：QMT 本地 K 线缓存（【补充数据】UI 实证支持日线/5分钟/1分钟下载；【收盘清盘】已勾 1/5 分钟逐日累积——93 §11.5a）
+- 体量：全市场 1min ≈ 5400 只×240 根/日 ≈ 130 万根/日（CSV 60-100MB/日，可缩 universe）
+- 优点：**官方 bar 口径**（QMT 聚合，与交易所一致）；有近期历史（UI 补下载+清盘累积）
+- 风险：中——bar 闭合与轮询相位差（半根 bar 剔除逻辑）；动沙箱=重开策略验证窗口（9/15 检查点已排 v20 合并评估，不宜并行加变量）
+
+**方案 b）BridgeTickSource tick 聚合合成分钟K【推荐首选】**
+- 机制：桥 tick 流（ticks3.csv，3-9 秒快照，8394 只全板块，已在产入 CH `data_source='qmt_bridge'`）→ CH SQL 聚合合成 bar——**复用 kline_resampler.py 的 argMin/argMax/toStartOfInterval 幂等模式**（15/30/60min 合成已有真源，只缺 tick→1min/5min 一段 SQL）
+- 工作量：~1 人日（聚合模块+tasks.yaml capability 挂接+口径单测），9/17 窗口前可就绪
+- OHLC 合成口径（铁律）：open=bar 内首 tick 价 / close=末 tick 价 / high=极值 / low=极值 / volume=Δvolume 累加 / amount=Δamount 累加；symbol×bar 窗口 GROUP BY；跨 09:30/13:00 半根 bar 按窗口裁剪
+- 品种/周期：股票/ETF/LOF 全覆盖（桥 universe 含基金 2270 只），1/5/15/30/60min 全可合成
+- 历史回补：**无**——只能从切换日起累积；切换前历史靠 miniQMT 囤货纪律（§10.3）+CH 存量
+- 风险：低-中——3 秒快照粒度可能漏 bar 内极端瞬时价（快照语义 vs 逐笔，偏差需对拍量化）；集合竞价成交量归属口径需裁定（建议归当日首 bar）
+- 决定性优势：**零沙箱改动=9/18 退役日零新增变量**（与 §14.9 路径 B"只剩 TICK_SOURCE 单变量"纪律一致）
+
+**方案 c）akshare 分钟线兜底**
+- 机制：`ak.stock_zh_a_hist_min_em`（东财源）；1min 深度仅近 5 交易日、5/15/30/60 近月
+- 质量：官方 bar 口径 ✅，但东财反爬先例在案（push2 大请求断连，akshare 探针实证 0/5）+ 全市场 5400 只×5 周期调用量=限流高危
+- 定位：**不宜作主源**；适合作 b 的对拍校验源（抽样 ±1 价位容差）与应急兜底
+- 工作量：0.5 天（挂接既有 akshare 通道）
+
+**推荐排序：b 立即立项（9/17 窗口前就绪）> c 同批挂校验兜底 > a 视 b 上线后对拍偏差再议（偏差率阈值建议：价格 ±0.01 外偏差 >2% 或 bar 缺口 >1% 则 10 月立项 a）**
+理由：退役日纪律优先（b 不新增切换变量）；a 的官方口径优势等 b 的偏差数据说话；c 免费但深度/反爬撑不起主源。
+
+### §8.5.2 L2/期权族摸底（§2.2-B 前置材料，任务 19）
+
+**数据接口来源实证（rg 核实）**：auction_snapshot / auction_book / option_greeks / option_iv_surface / convertible_bond_iv 五任务全部路由至 `MiniQmtIngestProvider`（miniqmt_provider.py meta.capabilities 显式声明+fetch 专用方法 `_fetch_option_iv_surface`/`_compute_iv_rows`/`_fetch_convertible_bond_iv`/`_get_option_detail_safe` 等），数据源=xtquant SDK（L2 接口需权限，#ARCH-DATA-014 探测机制已有）。
+
+**桥现状缺口**：桥文件族（ticks3.csv/quote.csv 均为免费 L1 口径 5 档快照）**无 L2 逐笔委托/逐笔成交，无期权 greek 字段链**。
+
+**大QMT 沙箱同等权限验证步骤（待 Owner 开终端执行，9/18 前完成）**：
+1. Owner 登录大QMT 终端（XtItClient.exe），核对账户行情权限等级（免费 L1 / 是否含期权行情）
+2. 沙箱探针策略打印 `get_full_tick('510300.SH')` 完整 5 档字段（对照现 quote.csv 口径一致性）
+3. 若曾开通 L2：沙箱内验证 L2 逐笔接口可用性（大QMT 沙箱权限随终端账户走 vs miniQMT 独立授权——需券商客户经理确认，即 93 §11.5"Level-2 权限确认"伏笔的落地动作）
+4. 期权链：沙箱内订阅期权合约快照（如沪深300ETF 期权主力），确认 greek 字段（delta/gamma/vega/theta/iv）是否随行情产出
+5. 结论回填 §2.2-B：有权限→桥扩期权/L2 dump 立项；无权限→五任务逐表评估 fallback（akshare iv 源/退役停更裁定）
