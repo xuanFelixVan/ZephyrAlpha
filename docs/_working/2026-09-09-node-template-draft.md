@@ -4,9 +4,9 @@ ttl: task_bound
 
 # 节点模板草案（Owner 审定稿前不动工引擎/门禁）
 
-> **状态**：草案 v0.4（2026-09-09 深交所课题对标+tier 职能化改造+股权视图澄清），待 Owner 圈改。
-> **配套**：graph_quality_standard.md §6~§8——本文档是**字段级落地样例**，审定后字段标准回写标准文件，引擎按审定稿施工。
-> **权威对标（2026-09-09 全网调研）**：深交所课题《资本市场产业链图谱业务标准及数据标准研究》（申万三级+第四层起开放延伸，与本体系同构）｜济安金信 45/144/369 三级架构｜GICS 4 层。
+> **状态**：草案 v0.5（2026-09-09 终稿：四决策点 Owner"按建议"全裁定+股权表 21 列全量同步+质押事件化），**审定通过，可放行**。
+> **配套**：graph_quality_standard.md §6~§8——本文档是**字段级落地样例**，字段标准回写标准文件在长城任务收尾轮执行。
+> **权威对标（2026-09-09 全网调研）**：深交所课题《资本市场产业链图谱业务标准及数据标准研究》（申万三级+第四层起开放延伸，与本体系同构）｜济安金信 45/144/369 三级架构｜GICS 4 层｜人行《受益所有人信息管理办法》｜FactSet Supply Chain API｜W3C PROV-O。
 
 ## 〇、链模板（第一层：链本身就是一种节点——全景图的三种节点）
 
@@ -141,8 +141,7 @@ company:
   # ---- 内容 ----
   profile: 国内唯一DRAM IDM，全球第四大DRAM厂商…   # ig_chunk ths_profile
   # ---- 质量 ----
-  confidence: 0.7
-  source_doc: "查询词|URL|2026-09-09"
+  confidence: 0.7                  # （溯源见六件套,此处不重复 source_doc）
 ```
 
 **字段分级**（标准文件 §7，审定点；v0.2 扩至七域）：
@@ -161,22 +160,30 @@ company:
 
 ```sql
 CREATE TABLE ig_equity_edge (
-    edge_id     BIGSERIAL PRIMARY KEY,
-    holder      TEXT NOT NULL,        -- 持有方 symbol（688825.SH / UNLISTED:UE-xxx / 人名前缀 PERSON:）
-    held        TEXT NOT NULL,        -- 被持有方 symbol/UE
-    stake_pct   NUMERIC,              -- 持股比例（%，可 NULL=未披露具体比例）
-    layer       SMALLINT DEFAULT 1,   -- 穿透层（1=直接持有，2=一层间接…）
-    relation    TEXT NOT NULL,        -- 封闭枚举: invests_in(对外投资)/subsidiary(控股子公司)/
-                                      --            shareholding(一般持股)/actual_control(实控)
-    as_of       DATE,                 -- 股权口径日（年报=报告期末，公告=公告日）PIT
-    valid_from  DATE,                 -- 关系生效日（增减持事件日）
-    valid_to    DATE,                 -- 减持/清仓日（未终止 NULL）
-    source      TEXT NOT NULL,        -- ths_export/websearch/annual_report
-    source_doc  TEXT,                 -- 三段式溯源
-    evidence    TEXT,                 -- 原文摘录（"持有XX公司15.2%股权"）
-    created_at  TIMESTAMPTZ DEFAULT now(),
-    UNIQUE (holder, held, as_of, source)   -- 幂等锚
+    edge_id           BIGSERIAL PRIMARY KEY,
+    holder            TEXT NOT NULL,     -- 持有方（688825.SH / UNLISTED:UE-xxx / PERSON:人名）
+    held              TEXT NOT NULL,     -- 被持有方（symbol/UE）
+    stake_pct         NUMERIC,           -- 持股比例 %（NULL=未披露）
+    voting_pct        NUMERIC,           -- 表决权比例（人行办法六条二款,AB股场景）
+    layer             SMALLINT DEFAULT 1,-- 穿透层（1=直接,2=一层间接…）
+    relation          TEXT NOT NULL,     -- 封闭枚举六值: invests_in/subsidiary/shareholding/
+                                        --   actual_control/pledge(质押)/judicial_frozen(司法冻结)
+    control_method    TEXT,              -- 控制方式（人行六条三款: 股权/协议/亲属/一致行动人）
+    acquisition_cost  NUMERIC,           -- 取得成本（Owner 2026-09-09 裁定:浮亏浮盈+减持动机）
+    acquisition_date  DATE,              -- 取得日（PIT）
+    as_of             DATE,              -- 股权口径日（年报=报告期末/公告=公告日）
+    valid_from        DATE,              -- 关系生效日（增减持/质押起始日）
+    valid_to          DATE,              -- 减持/清仓/解押日（未终止 NULL）
+    holder_name       TEXT,              -- 自然人姓名（EU 5AMLD 必填,PERSON: 行配套）
+    holder_country    TEXT,              -- 持有方国籍（EU 5AMLD 必填）
+    verification      TEXT,              -- 核验状态 unverified/verified/official（瑞士LETA纪律）
+    source            TEXT NOT NULL,     -- ths_export/websearch/annual_report
+    source_doc        TEXT,              -- 三段式溯源
+    evidence          TEXT,              -- 原文摘录；pledge 行存"平仓线=收盘价×质押率×比例"公式与数值
+    created_at        TIMESTAMPTZ DEFAULT now(),
+    UNIQUE (holder, held, as_of, source) -- 幂等锚
 )
+-- 21 列，达国际 UBO 登记标准（人行+瑞士LETA+EU 5AMLD 三方对标）；DDL 已部署
 ```
 
 **分流纪律（裁定 12）**：
@@ -231,27 +238,27 @@ CREATE TABLE ig_equity_edge (
 
 > 注：以上公司/链 id 为示意，实际以库内存量为准；本样例只定**字段与挂接形态**。
 
-## 四、待 Owner 圈改的决策点（2026-09-09 裁定进展：10/14 已定）
+## 四、决策点终态（2026-09-09 Owner"按建议"全裁定，17/17 定案）
 
 | # | 决策点 | 状态 |
 |---|---|---|
-| 1 | drill_status 四值 | 待圈 |
-| 2 | 同一环节挂多条子链=禁（多主题拆多环节） | 待圈（建议禁） |
-| 3 | chain_path 渐进转 MUST 时机=半导体样板链验收后 | 待圈 |
-| 4 | 上下游豁免口径=源头豁上游/终端豁下游登记制 | 待圈 |
-| 5 | 子链 tier 语义=本链视角 | 待圈 |
-| 6 | 砖判据依据写环节 description | 待圈 |
-| 7 | tier 六值自洽 | 待圈 |
-| 8 | 链 level 落库/parent_node 派生 | 待圈 |
-| 9 | 链骨架验收线 companies_min=5 | 待圈 |
-| 10 | **股权穿透独立表（Owner 2026-09-09 已裁定）**：ig_equity_edge 与供应边表彻底分开；THS 被投 922 条+年份戳进股权表；子公司 UE 编码回链 | ✅ 已裁定 |
-| 11 | **股权与供应同夜并行（已裁定）**：子代理查公司时两个表各填各的，互不污染 | ✅ 已裁定 |
-| 12 | **股权表数据分流（已裁定）**：被投关系/持股比例/实控人/质押→ig_equity_edge；供应/客户/竞争/合作→ig_company_edge；产品/环节落位→落位表 | ✅ 已裁定 |
-| 13 | 国籍/上市市场/上市状态/新闻关键词+别名集→公司主表（扩展点六组按建议档位） | 待圈（高管表降未来扩展点） |
-| 14 | 高管表三年内不建（字段位声明"未来扩展点"） | 待圈（建议同意） |
-| 15 | **供应边补两列（已裁定）**：capacity 产能（吨/片/GWh 供给侧瓶颈变量）+exclusivity 独供/双供（断供冲击弹性） | ✅ 已裁定（DDL 已建） |
-| 16 | **财务表分域（已裁定）**：通用财务主数据进 c1_market（与行情同库、采购/下载通道、禁 AI 搜索）；图谱侧只建 ig_product_revenue 产品营收归因（年报文本抽取） | ✅ 已裁定（DDL 已建） |
-| 17 | **ig_company_metric 处置（已裁定）**：供应链集中度指标层保留不融不删（五层架构第五层：文档→内容→事实→图谱→指标），PIT 化改造 | ✅ 已裁定（DDL 已建） |
+| 1 | drill_status 五值：child/brick_mass/brick_noalpha/NULL/drill_manual（人工钉死 AI 永不改） | ✅ 已裁定 |
+| 2 | 同一环节挂多条子链=禁（多主题拆多环节） | ✅ 已裁定 |
+| 3 | chain_path 渐进转 MUST 时机=半导体样板链验收后 | ✅ 已裁定 |
+| 4 | 上下游豁免口径=源头豁上游/终端豁下游登记制 | ✅ 已裁定 |
+| 5 | 子链 tier 语义=本链视角（递归） | ✅ 已裁定 |
+| 6 | 砖判据依据写环节 description | ✅ 已裁定 |
+| 7 | tier 三值（上中下游）+function_role 八值（深交所词表）分离 | ✅ 已裁定 |
+| 8 | 链 level 落库/parent_node 派生（单一真源） | ✅ 已裁定 |
+| 9 | 链骨架验收线 companies_min=5 | ✅ 已裁定 |
+| 10 | **股权穿透独立表**：ig_equity_edge 与供应边表彻底分开；THS 被投 922 条+年份戳进股权表；子公司 UE 编码回链 | ✅ 已裁定 |
+| 11 | **股权与供应同夜并行**：子代理查公司时两个表各填各的，互不污染 | ✅ 已裁定 |
+| 12 | **股权表数据分流**：被投/持股/实控/质押→ig_equity_edge；供应/客户/竞争/合作→ig_company_edge；产品/环节落位→落位表 | ✅ 已裁定 |
+| 13 | 国籍/上市市场/上市状态/新闻关键词+别名集→公司主表（七域按 v0.4 档位） | ✅ 已裁定 |
+| 14 | 高管表三年内不建（字段位声明"未来扩展点"） | ✅ 已裁定 |
+| 15 | **供应边补两列**：capacity 产能+exclusivity 独供/双供 | ✅ 已裁定（DDL 已建） |
+| 16 | **财务表分域**：通用财务主数据进 c1_market（采购通道禁 AI 搜索）；图谱侧只建 ig_product_revenue | ✅ 已裁定（DDL 已建） |
+| 17 | **ig_company_metric 处置**：指标层保留不融不删（五层第五层），PIT 化 | ✅ 已裁定（DDL 已建） |
 
 ## 五、审定后的动工清单（待你放行）
 
@@ -288,8 +295,8 @@ CREATE TABLE ig_equity_edge (
 |---|---|---|
 | 查询开关 | edge_type='structure' | edge_type IN (supplies_to, customer_of, …) |
 | 表 | ig_chain→ig_node→ig_edge | ig_company_edge（21→23 列） |
-| 核心字段 | 环节名/tier/child_chain_id/drill_status | product/year/PIT 三时间戳/weight/revenue_pct/evidence_type/subsidiary/relevance/transmission_type/**capacity**/**exclusivity**/**keywords**（待加） |
-| 机构对标 | Wind/Choice 三层产业树 | FactSet Revere 21 维边属性 |
+| 核心字段 | 环节名/tier(三值)/function_role(八值)/child_chain_id/drill_status | product/year/PIT 三时间戳/weight/revenue_pct/evidence_type/subsidiary/relevance/transmission_type/**capacity**/**exclusivity**/**keywords** |
+| 机构对标 | Wind/Choice 三层产业树+深交所八大关系 | FactSet Revere 21 维边属性 |
 | 增删 | 每条 structure 边=流程一步 | 供给侧瓶颈+独供弹性+关键词联动 |
 
-**边表待加列汇总（DDL v4.1 施工项）**：keywords TEXT[]（边级新闻关键词）、（capacity/exclusivity 已建）。公司级溯源六件套中 info_channel/source_url/refresh_policy 三列为**公司主表扩展**（属 c1_market 域主表或图谱公司视图，施工时机=爬虫体系立项时，现在只在模板留位）。
+**边表列终态（DDL 已全建）**：capacity/exclusivity/keywords TEXT[] 均已部署。公司级溯源六件套中 info_channel/source_url/refresh_policy 三列为**公司主表扩展**（施工时机=爬虫体系立项时，现在只在模板留位）。**tier 迁移治理项**：存量 ig_node 的职能值 tier（设备 522/材料 542/零部件 117/原材料 237/辅材 15 ≈1,433 行）迁 function_role，tier 保留仅三位置值——引擎 S6 与工具校验**同 commit 同词表**切换（三值+八值），防漂移。

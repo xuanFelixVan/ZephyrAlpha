@@ -2,8 +2,9 @@
 ttl: task_bound
 ---
 
-# 长城任务指令书：产业链图谱全量质量修复（2026-09-09 启动版）
+# 长城任务指令书：产业链图谱全量质量修复+扩产（2026-09-09 终版）
 
+> **并发全景（本夜六线并行）**：①产业链/供应链修复+扩产（引擎循环）②股权穿透全景图（表已建 21 列+THS 922 导入+websearch 增量）③深度体系半导体样板链（L1 主干→L2/L3 挂接→砖判定→详情卡打样）④PIT 回填（metric as_of 机械回填+落位表 valid_from）⑤tier 职能化迁移（≈1,433 行+引擎/工具同 commit 切换）⑥公司详情卡七域填充（P1 链优先，THS 铺底+websearch 补充）。
 > **交付形态**：本文件是给执行 AI 的完整指令，Owner 复制正文给新对话即可启动。
 > **配套真源**：SOP v1.5.0（industry_chain_data_audit_sop.md，编排+契约）｜质量标准（policies/graph_quality_standard.md，二十项合格线+修复方案）｜检查引擎（scripts/industry_graph/graph_quality_check.py）。
 > **总时长**：指令时刻 + 10 小时（到次日 09:00）。
@@ -36,13 +37,19 @@ ttl: task_bound
    - THS 被投 922 条（884 股"被投资公司简称(已上市)"列+年份戳）从原档导入股权表（走 ingest 通道）
    - **财务表定案（Owner 2026-09-09）**：通用财务主数据**不建图谱表**——将来进 c1_market（与行情同库回测直接 join），数据源走采购/下载通道（akshare/tushare 批量拉）**禁 AI 搜索**（财务数字幻觉重灾区）；图谱侧只建 ig_product_revenue 产品营收归因（年报文本抽取 AI 干合适）——本夜 P1 链 TOP5 公司先填一批打样
    - **ig_company_metric 处置（Owner 2026-09-09 裁定）**：供应链集中度指标层**保留不融不删**（五层架构第五层）；PIT 列已加（as_of/valid_from/valid_to）；夜班补历史行 as_of 回填（year 的年报口径期末日）
-3. 写入门禁收紧（websearch_ingest.py 校验追加，与引擎同词表同 commit 防漂移）：
+3. **tier 职能化迁移（Owner 2026-09-09 v0.4 裁定，引擎/工具同 commit 防漂移）**：
+   - 治理脚本一次性迁移：ig_node 存量职能值 tier（设备/材料/零部件/原材料/辅材 ≈1,433 行）→ function_role 列（深交所八值词表就近映射：设备→生产设备/辅助设备，材料→生产原料/辅助材料，其余按 description 语义）；tier 列仅保留 上游/中游/下游 三位置值，unspecified 行保持待判定不动。
+   - 引擎 S6 同步切换：tier 词表改三值+新增 function_role 八值检查（值域：生产设备/生产原料/辅助材料/辅助设备/加工工艺/技术服务/产品业务/销售渠道）。
+   - 工具校验同步：node 记录 tier 三值白名单+function_role 八值白名单。
+   - 迁移映射表落盘留痕（scripts/industry_graph/tier_migration_map.yaml）。
+4. 写入门禁收紧（websearch_ingest.py 校验追加，与引擎同词表同 commit 防漂移）：
    - role 白名单五值（龙头/核心/主要/参与/提及）
    - 链名标题腔正则拒绝（与引擎 TITLE_JUNK_RE 同源）
    - 节点名 -tier 后缀拒绝
-   - node 记录支持 child_chain_id/drill_status（drill_status=child 时 child_chain_id 必填交叉校验）
-   每条收紧补单测，测试 18→预期 24+。
-4. 引擎 S4/S13 复跑转正（degraded→真实违规数）。
+   - node 记录支持 child_chain_id/drill_status（drill_status=child 时 child_chain_id 必填交叉校验；drill_status 五值含 drill_manual=Owner 钉死 AI 不可改）
+   - equity_edge 记录 relation 六值枚举（invests_in/subsidiary/shareholding/actual_control/pledge/judicial_frozen）+ verification 三值
+   每条收紧补单测，测试 18→预期 26+。
+5. 引擎 S4/S13 复跑转正（degraded→真实违规数）。
 
 ━━━ 三、Phase 2 P0 污染源清除（量化查询正在中毒，~2h）━━━
 按标准 §12.3 优先级修，全部走治理脚本（幂等）或 ingest 通道，禁手写 SQL 写库：
