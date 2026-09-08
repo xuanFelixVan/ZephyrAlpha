@@ -1,0 +1,8 @@
+# 豁免登记表（quality_exemptions.yaml）
+# 用法: {S编号: [违规主键...]}——引擎跑时从违规中扣除
+# 纪律(graph_quality_standard.md §1): 每条豁免必须在同目录 quality_exemption_reasons.md 登记
+# 原因+裁定日期+裁定人; 未登记原因的豁免视为无效(引擎会扣除但审计视为违规)
+# 当前豁免: 零(基线全量待修)
+S11: []
+S14: []
+S6: []
