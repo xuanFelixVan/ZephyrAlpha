@@ -122,6 +122,7 @@ risk_limits:
     scope: "strategy"
     scope_strategy: null
     threshold_value: null
+    param_origin: 经验拍定
     threshold_unit: null
     inherent_risk: null
     residual_risk: null
@@ -159,6 +160,7 @@ risk_limits:
     scope: "strategy"
     scope_strategy: null
     threshold_value: null
+    param_origin: 经验拍定
     threshold_unit: null
     inherent_risk: null
     residual_risk: null
@@ -196,6 +198,7 @@ risk_limits:
     scope: "strategy"
     scope_strategy: null
     threshold_value: -10.0
+    param_origin: 经验拍定
     threshold_unit: "%"
     inherent_risk: null
     residual_risk: null
@@ -270,6 +273,7 @@ risk_limits:
     scope: "strategy"
     scope_strategy: null
     threshold_value: null
+    param_origin: 经验拍定
     threshold_unit: null
     inherent_risk: null
     residual_risk: null
@@ -307,6 +311,7 @@ risk_limits:
     scope: "strategy"
     scope_strategy: null
     threshold_value: null
+    param_origin: 经验拍定
     threshold_unit: null
     inherent_risk: null
     residual_risk: null
@@ -528,6 +533,7 @@ risk_limits:
     scope: "strategy"
     scope_strategy: null
     threshold_value: null
+    param_origin: 经验拍定
     threshold_unit: null
     inherent_risk: null
     residual_risk: null
@@ -598,6 +604,7 @@ risk_limits:
     scope: "portfolio"
     scope_strategy: null
     threshold_value: 30.0
+    param_origin: 经验拍定
     threshold_unit: "%"
     inherent_risk: null
     residual_risk: null
@@ -703,6 +710,7 @@ risk_limits:
     scope: "portfolio"
     scope_strategy: null
     threshold_value: null
+    param_origin: 经验拍定
     threshold_unit: null
     inherent_risk: null
     residual_risk: null
@@ -773,6 +781,7 @@ risk_limits:
     scope: "portfolio"
     scope_strategy: null
     threshold_value: 50.0
+    param_origin: 经验拍定
     threshold_unit: "%"
     inherent_risk: null
     residual_risk: null
@@ -843,6 +852,7 @@ risk_limits:
     scope: "strategy"
     scope_strategy: null
     threshold_value: null
+    param_origin: 经验拍定
     threshold_unit: null
     inherent_risk: null
     residual_risk: null
@@ -1123,6 +1133,7 @@ risk_limits:
     scope: "strategy"
     scope_strategy: null
     threshold_value: 3.0
+    param_origin: 经验拍定
     threshold_unit: "%"
     inherent_risk: null
     residual_risk: null
@@ -1163,6 +1174,7 @@ risk_limits:
     scope: "portfolio"
     scope_strategy: null
     threshold_value: 0.10
+    param_origin: 经验拍定
     threshold_unit: null
     inherent_risk: null
     residual_risk: null
@@ -1198,6 +1210,7 @@ risk_limits:
     scope: "portfolio"
     scope_strategy: null
     threshold_value: 60.0
+    param_origin: 经验拍定
     threshold_unit: "%"
     inherent_risk: null
     residual_risk: null
@@ -1233,6 +1246,7 @@ risk_limits:
     scope: "portfolio"
     scope_strategy: null
     threshold_value: 0.7
+    param_origin: 经验拍定
     threshold_unit: "ratio"
     inherent_risk: null
     residual_risk: null
@@ -1268,6 +1282,7 @@ risk_limits:
     scope: "portfolio"
     scope_strategy: null
     threshold_value: 20.0
+    param_origin: 经验拍定
     threshold_unit: "%"
     inherent_risk: null
     residual_risk: null
@@ -2041,6 +2056,7 @@ risk_limits:
     scope: "portfolio"
     scope_strategy: null
     threshold_value: 25.0
+    param_origin: 经验拍定
     threshold_unit: "%"
     inherent_risk: null
     residual_risk: null
@@ -2076,6 +2092,7 @@ risk_limits:
     scope: "portfolio"
     scope_strategy: null
     threshold_value: 6.0
+    param_origin: 经验拍定
     threshold_unit: "%"
     inherent_risk: null
     residual_risk: null
@@ -2111,6 +2128,7 @@ risk_limits:
     scope: "portfolio"
     scope_strategy: null
     threshold_value: 4.0
+    param_origin: 经验拍定
     threshold_unit: "%"
     inherent_risk: null
     residual_risk: null
@@ -2801,6 +2819,7 @@ risk_limits:
     scope: "strategy"
     scope_strategy: ""
     threshold_value: null
+    param_origin: 经验拍定
     threshold_unit: ""
     inherent_risk: null
     residual_risk: null
@@ -3208,6 +3227,7 @@ risk_limits:
     scope: "strategy"
     scope_strategy: ""
     threshold_value: null
+    param_origin: 经验拍定
     threshold_unit: ""
     inherent_risk: null
     residual_risk: null

@@ -1,0 +1,123 @@
+# [A_config] module_id=REG-DAL-001 | layer=config | stability=stable | safety=L | ai_autonomy=ai_modifiable
+# ============================================================================
+# 决策算法登记表（PB-05，Owner 2026-09-09 裁定保留·核心；前缀 DAL-*）
+# 真源文档: docs/_working/2026-09-09-node-backtest-governance.md §7.1/§8.2 P1-3
+# 挂载方式: 地图节点 algo_refs 允许 DAL-*（门禁 R13 值域扩展）；共振方式写机制文本不加新字段（精简裁定）
+# ============================================================================
+module_id: REG-DAL-001
+ttl: permanent
+schema_version: '1.0'
+registry_id: REG-DAL-001
+name: Decision Algorithm Registry
+name_zh: 决策算法登记表
+description: >-
+  交易决策地图节点背后的决策算法唯一登记处（AI 的施工图）。与 IND/EXA 正交：
+  IND=技术指标公式、EXA=执行算法、DAL=决策算法（判定/仲裁/预算/融合类）。
+  共振方式（几个算法怎么合成结论）写在节点机制文本中，不单列字段。
+  首批 15 条从地图机制文本提取（P1-3 授权）；code_ref=null=设计态未落码。
+algorithms:
+  - dal_id: DAL-REG-SNAPSHOT
+    name_zh: 宏观 RegimeSnapshot（月级 12 态概率）
+    mechanism_zh: 宏观月级状态判定，输出 12 态概率分布当谨慎度系数（概率越分裂越谨慎）
+    code_ref: src/zephyr/regime/core/regime_detector.py
+    inputs: [宏观月级特征]
+    outputs: [12 态概率分布, 谨慎度系数]
+    status: production
+  - dal_id: DAL-REG-HMM4
+    name_zh: HMM 四态降维
+    mechanism_zh: HMM 状态模型 4 态降维（13 号 §2.1），给宏观状态四档概率
+    code_ref: src/zephyr/regime/core/regime_detector.py
+    inputs: [市场特征序列]
+    outputs: [四态概率]
+    status: production
+  - dal_id: DAL-EMO-SIXSEG
+    name_zh: 情绪六段分布（周级）
+    mechanism_zh: 情绪周期六段（吸筹/点火/扩张/亢奋/派发/退潮）周级分布判定
+    code_ref: null
+    inputs: [情绪周期指标, 广度结构]
+    outputs: [六段状态分布]
+    status: design
+  - dal_id: DAL-BUDGET-BAND
+    name_zh: 六段预算带
+    mechanism_zh: 按情绪六段查表给当日总仓位预算带（吸筹 30-50%/点火 50-70%/扩张 60-80%/亢奋封顶 30% 只卖不买）
+    code_ref: null
+    inputs: [六段状态]
+    outputs: [当日仓位预算带]
+    status: design
+  - dal_id: DAL-WATER-TEMP
+    name_zh: 盘中水温五档（S0-S4）
+    mechanism_zh: 当日盘中 11 个信号环比（涨跌停比变化/成交额环比/炸板率走向等）合成 S0-S4 五档水温；9:35 首算盘中可更新
+    code_ref: src/zephyr/signal_ashare/sector_gate.py
+    inputs: [盘中 11 信号环比]
+    outputs: [S0-S4 水温档]
+    status: production
+  - dal_id: DAL-TEMP-MONTH-CAP
+    name_zh: 月级 12 态封顶仲裁
+    mechanism_zh: 日级水温为主判、月级 12 态封顶（日级水烫但月级熊市反弹=取温），防反弹期当牛市做
+    code_ref: null
+    inputs: [S0-S4 水温档, 12 态概率]
+    outputs: [最终温档]
+    status: design
+  - dal_id: DAL-MA-ALIGN
+    name_zh: MA20/MA60 均线排列计分
+    mechanism_zh: MA20 在 MA60 上=多头加分，指数距 60 日高点<3%=高位减分；破 MA20 减一档、破 MA60 减两档，输出 -2~+2 趋势分
+    code_ref: null
+    inputs: [指数日 K, MA20, MA60]
+    outputs: [指数趋势分 -2~+2]
+    status: design
+  - dal_id: DAL-BREADTH-SCORE
+    name_zh: 广度结构计分
+    mechanism_zh: 涨跌停比>3 且炸板率<30%=强势；连板高度断崖=退潮预警，给市场参与度打分
+    code_ref: null
+    inputs: [涨跌停家数, 炸板率, 连板梯队]
+    outputs: [参与度分]
+    status: design
+  - dal_id: DAL-AGG-DUALAX
+    name_zh: 双轴熵值仲裁
+    mechanism_zh: 宏观 RegimeSnapshot 概率×情绪六段分布双轴相乘；指向一致直接取结论，分裂（熵值超阈）按就低不就高仲裁，输出三件套
+    code_ref: null
+    inputs: [12 态概率, 六段状态分布]
+    outputs: [仓位预算带, 六段状态, 策略路由]
+    status: design
+  - dal_id: DAL-SECTOR-LIFE
+    name_zh: 板块生命周期四段
+    mechanism_zh: 启动（首板潮）/发酵（二三板+跟风）/高潮（涨停潮）/熄火（断板+炸板率>40%）四段判定；只做启动发酵，高潮只持有，熄火清仓
+    code_ref: null
+    inputs: [板块涨停结构, 炸板率, 龙头表现]
+    outputs: [生命周期段位]
+    status: design
+  - dal_id: DAL-NINE-PHASE
+    name_zh: 九阶段漏斗压缩
+    mechanism_zh: 九阶段逐级压缩（每阶段砍 50-70%）：动量初筛→流动性→波动率带→趋势确认→相对强度→量价配合→形态过滤→负面剔除→最终精选，3000→10 主链
+    code_ref: null
+    inputs: [全市场股票池]
+    outputs: [10-20 只精选池]
+    status: design
+  - dal_id: DAL-SIZE-QUAD
+    name_zh: 仓位引擎四轨融合
+    mechanism_zh: 风险预算/波动率目标/策略置信/现金约束四轨融合定单笔量级
+    code_ref: null
+    inputs: [账户风险状态, 波动率, 策略置信度, 现金约束]
+    outputs: [单笔仓位量级]
+    status: design
+  - dal_id: DAL-GRADIENT-TRIM
+    name_zh: L3 梯度减仓顺序
+    mechanism_zh: 重亏仓优先砍→高波动仓（ATR 大）次之→压舱石最后动；恢复=回撤修复 50% 后逐级加回风险预算，禁 V 型回满
+    code_ref: null
+    inputs: [持仓浮亏/ATR 排序]
+    outputs: [减仓顺序队列]
+    status: design
+  - dal_id: DAL-LHB-DISTRIB
+    name_zh: 龙虎榜派发五规则
+    mechanism_zh: 高位游资上卖方榜/三日榜净卖出=诱多出货信号；知名游资买入=接力有戏，机构席=中线票，拉萨天团=次日溢价差
+    code_ref: null
+    inputs: [龙虎榜席位数据]
+    outputs: [派发/接力定性]
+    status: design
+  - dal_id: DAL-BREAK-FAIL
+    name_zh: 突破失败三连计数
+    mechanism_zh: 突破价跌回+量能萎缩计失败一次，连冲 3 次失败强制清仓（买入理由消失）
+    code_ref: null
+    inputs: [突破价, 量能序列]
+    outputs: [清仓触发信号]
+    status: design

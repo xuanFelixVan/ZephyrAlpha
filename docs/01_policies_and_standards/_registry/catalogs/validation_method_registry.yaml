@@ -1,0 +1,86 @@
+# [A_config] module_id=REG-VALM-001 | layer=config | stability=stable | safety=L | ai_autonomy=ai_modifiable
+# ============================================================================
+# 节点级可回测治理——验证方法学登记表（PB-01，Owner 2026-09-09 裁定个人量化精简版）
+# 真源文档: docs/_working/2026-09-09-node-backtest-governance.md §7.1/§8.2 P1-1
+# ============================================================================
+module_id: REG-VALM-001
+ttl: permanent
+schema_version: '1.0'
+registry_id: REG-VALM-001
+name: Validation Method Registry
+name_zh: 验证方法学登记表
+description: >-
+  交易决策地图节点"怎么算对错"的唯一真源（五类方法，PB-01 保留·核心）。
+  节点不加 YAML 字段（防门禁 R15 大改）——验证方法由 layer+flow+node_id 形态推导，
+  推导规则见 derivation_rules 段；验证 runner（zephyr.trading.validation）消费本表。
+  显著性=轻量土规（PB-13 降级裁定）：触发<30 次不下结论 + 样本外衰减≥50% 判存疑；
+  参数搜索上规模再上 DSR/PBO。holdout：所有验证窗口排除最近 12 个月（PB-08 裁定）。
+# ── 五类验证方法 ──────────────────────────────────────────────────────────
+methods:
+  - method_id: sensor_monotonicity
+    name_zh: 传感器单调性
+    applies_to: "传感器类节点（L1 五传感器，输出分档/打分）"
+    pass_criteria: >-
+      信号分档 vs 未来 N 日收益/波动的秩相关单调：档位均值序 Spearman>=0.8 且方向正确
+      （喊越热后续越危险）；方向反转或 |rho|<0.5 判噪音。
+    statistic: "分档均值 Spearman 秩相关（档位序 vs 后续 N 日收益）+ 档间均值差"
+    min_samples: "每档>=20 次触发且总触发>=30（土规：总触发<30 不下结论→pending）"
+    verdict_mapping: "rho>=0.8 且方向对→valid；0.5<=|rho|<0.8→pending；方向反或 |rho|<0.5→noise"
+    notes: "对标 alphalens 分档单调性检验（PB-01 业界依据）"
+  - method_id: agg_discrimination
+    name_zh: 判定区分度
+    applies_to: "判定/聚合类节点（L1 AGG/市场状态判定/九阶段/L2-L3 聚合判定）"
+    pass_criteria: >-
+      各判定档之后行情显著不同：相邻档后续 N 日收益均值差 t 检验 p<0.05，且最高档与
+      最低档收益差绝对值>阈值（档位有实义区分力）。
+    statistic: "档间后续收益均值差 Welch t 检验（p 值）+ 高低档收益差"
+    min_samples: "每档>=20 且总触发>=30（不足→pending）"
+    verdict_mapping: "p<0.05 且高低档差>阈值→valid；p<0.10→pending；其余→noise"
+    notes: "判定节点不能看盈亏——看它分出的档后续走势是否真不同"
+  - method_id: exec_quality
+    name_zh: 执行质量
+    applies_to: "执行类节点（L4 买卖执行，E/X 流执行节点）"
+    pass_criteria: >-
+      滑点与成交率双达标：平均滑点（决策价 vs 成交价，bp）<= 成本模型容差（CST 挂载
+      对应档位），且限价单成交率>=95%、未成交率<=5%。
+    statistic: "滑点均值/分位数（bp）+ 成交率 + 未成交率（读回测成交流水 trade_log）"
+    min_samples: "成交笔数>=30（土规）"
+    verdict_mapping: "滑点达标且成交率>=95%→valid；单项超标→pending；滑点超 2 倍容差或成交率<80%→noise"
+    notes: "离钱最近的验证（PB-12 排序第一位）；首批验证即本类"
+  - method_id: exit_counterfactual
+    name_zh: 离场反事实对照
+    applies_to: "离场/风控类节点（X 流 S1/R1 判定与触发）"
+    pass_criteria: >-
+      触发后避免更大损失：触发后 N 日实际损失 < 无风控对照回放同窗口损失
+      （'止损线救了多少人'）；对照数据=关风控回放（PB-11 按需，未建时本方法标 pending）。
+    statistic: "触发/不触发两组后续 N 日损失差（反事实对照）"
+    min_samples: "触发次数>=30 且对照窗口覆盖同段行情"
+    verdict_mapping: "触发组损失显著更小→valid；差异不显著→pending；触发组反而更差→noise"
+    notes: "依赖 P2-3 关风控回放开关；开关未落地前该类节点验证保持 pending"
+  - method_id: portfolio_attribution
+    name_zh: 组合归因对账
+    applies_to: "组合类节点（F 流 C1-C3 归因）"
+    pass_criteria: >-
+      归因结论与逐笔账本对账：归因收益分解之和 vs 组合实际收益残差<1bp，且各归因项
+      符号与逐笔一致。
+    statistic: "归因分解残差（bp）+ 符号一致率"
+    min_samples: "对账周期>=30 个交易日"
+    verdict_mapping: "残差<1bp 且符号全一致→valid；残差 1~10bp→pending；残差>10bp 或符号错→noise"
+    notes: "组合层验证=账本对账（Owner 口径：F 流归因准确性）"
+# ── 方法推导规则（节点不加 YAML 字段，由 layer+flow+形态推导）──────────────
+derivation_rules:
+  - { when: "layer==L4 或 node_id 前缀 TDM-E-L4", method: exec_quality }
+  - { when: "flow==exit_flow（X 流）", method: exit_counterfactual }
+  - { when: "flow==portfolio_flow（F 流）", method: portfolio_attribution }
+  - { when: "layer==L1 且 node_id 含 -S（传感器）", method: sensor_monotonicity }
+  - { when: "其余判定/聚合节点（L1 AGG、L2、L3、P 流判定）", method: agg_discrimination }
+  - order: "先匹配者优先：L4 → X 流 → F 流 → L1 传感器 → 兜底 agg_discrimination"
+# ── 全局纪律（PB-08/PB-13/PB-16 裁定落地）────────────────────────────────
+discipline:
+  holdout_months: 12
+  holdout_rule: "验证窗口排除最近 12 个月（保密考卷）；考完一次即作废前移，改参数=换卷重考"
+  min_triggers_for_verdict: 30
+  min_triggers_rule: "触发<30 次不下结论（verdict=pending，significance=insufficient_samples）"
+  oos_decay_threshold: 0.50
+  oos_decay_rule: "样本外（最近窗口 vs 首次验证窗口）指标衰减>=50% 判存疑（significance=oos_decay_suspect）"
+  lag_recheck: "lag=1 加滞后重算开关默认开（PB-16：成绩暴跌=前视嫌疑，结论标 pending 并记 notes）"

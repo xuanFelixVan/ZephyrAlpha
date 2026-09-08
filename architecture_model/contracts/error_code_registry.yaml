@@ -53,6 +53,7 @@ domain_prefixes:
   SH: D_SHARED
   SIM: D_SIMULATION
   TR: D_TRADING
+  TDMVAL: D_TRADING
   TRIG: D_TRADING
   XC: D_EX_CORE
   XS: D_EX_SOR
@@ -3871,6 +3872,10 @@ error_codes:
   module: zephyr.trading.three_way_reconciliation
   file: src/zephyr/trading/three_way_reconciliation.py
   introduced: '2026-09-06: Owner 批准占位码转正批（B17-②）——ZA-TR-UNREGISTERED-THREE-WAY-RECON 转正'
+- code: ZA-TDMVAL-0001
+  class: ValidationError
+  module: zephyr.trading.validation.runner
+  file: src/zephyr/trading/validation/runner.py
 
 known_duplicates: []
 # ============================================================

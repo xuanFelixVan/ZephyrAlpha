@@ -695,6 +695,26 @@ tiers:
         description: 实验/回测目录唯一真源（SSoT）——登记所有实验运行实例（backtest/factor_eval/strategy_eval/param_search/walk_forward/regime_validation）的元信息。存储后端=FallbackBackend 本地 JSON（MLflow 已裁定完全卸载），展示层=Panel 实验历史 Tab。parent_experiment_id 支持迭代链。5 条真实可溯源实验（4 条 regime_validation completed + 1 条 walk_forward running）。#ARCH-BREG-001 P2
         owned_by: governance
 
+      - registry_id: REG-VALM-001
+        name: 验证方法学登记表
+        physical_path: docs/01_policies_and_standards/_registry/catalogs/validation_method_registry.yaml
+        format: yaml
+        maintenance: manual
+        entry_count: 5
+        status: active
+        description: 节点级可回测治理"怎么算对错"唯一真源（PB-01，Owner 2026-09-09 裁定保留·核心）——五类验证方法（传感器单调性/判定区分度/执行质量/离场反事实/组合归因对账）各含判对错标准+统计口径+最少样本；方法由 layer+flow 推导（节点不加 YAML 字段）；内置两土规（触发<30 不下结论/样本外衰减≥50% 判存疑）+holdout 12 个月窗口排除。消费者=zephyr.trading.validation runner+衰减巡检（P2-1）。
+        owned_by: governance
+
+      - registry_id: REG-DAL-001
+        name: 决策算法登记表
+        physical_path: docs/01_policies_and_standards/_registry/catalogs/decision_algo_registry.yaml
+        format: yaml
+        maintenance: manual
+        entry_count: 15
+        status: active
+        description: 交易决策地图节点背后决策算法唯一登记处（PB-05 保留·核心，前缀 DAL-*）——与 IND/EXA 正交（DAL=判定/仲裁/预算/融合类决策算法）。挂载方式=地图节点 algo_refs 值域（门禁 R13 扩展 IND/EXA/DAL），共振方式写节点机制文本不加新字段。首批 15 条自地图机制文本提取（RegimeSnapshot/HMM 四态/水温五档/六段预算带/四轨融合等）。
+        owned_by: governance
+
       - registry_id: REG-SEAT-001
         name: 龙虎榜席位注册表
         physical_path: docs/01_policies_and_standards/_registry/catalogs/seat_registry.yaml
@@ -820,11 +840,11 @@ known_issues:
 
 summary:
   total_tiers: 3
-  total_registries: 73  # #172 漂移修正：手写 69 → 2026-08-19 实测本文件登记 73（漂移全在 tier_2）
+  total_registries: 75  # #172 漂移修正：手写 69 → 2026-08-19 实测本文件登记 73（漂移全在 tier_2）
   fully_scanned: 19
   pending_scan: 5
   broken: 1
   by_tier:
     tier_0_core: 12
     tier_1_governance: 28
-    tier_2_runtime: 33  # #172 漂移修正：手写 29 → 2026-08-19 实测 33
+    tier_2_runtime: 35  # #172 漂移修正：手写 29 → 2026-08-19 实测 33

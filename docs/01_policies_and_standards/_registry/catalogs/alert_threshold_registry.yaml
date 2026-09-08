@@ -60,6 +60,7 @@ thresholds:
     category: drawdown
     metric_zh: "当前回撤（相对峰值）"
     value: 0.05
+    param_origin: 经验拍定
     unit: ratio
     comparator: gt
     severity_action: "WARNING 级回撤事件（仅级别变化时发射，事件去抖）"
@@ -77,6 +78,7 @@ thresholds:
     category: drawdown
     metric_zh: "当前回撤（相对峰值）"
     value: 0.10
+    param_origin: 经验拍定
     unit: ratio
     comparator: gt
     severity_action: "CRITICAL 级回撤事件"
@@ -94,6 +96,7 @@ thresholds:
     category: drawdown
     metric_zh: "当前回撤（相对峰值）"
     value: 0.15
+    param_origin: 经验拍定
     unit: ratio
     comparator: gt
     severity_action: "EMERGENCY 级回撤事件"
@@ -114,6 +117,7 @@ thresholds:
     category: health
     metric_zh: "内存使用率（%）"
     value: 70
+    param_origin: 经验拍定
     unit: percent
     comparator: gt
     severity_action: "压力分级 ELEVATED（观察）"
@@ -131,6 +135,7 @@ thresholds:
     category: health
     metric_zh: "内存使用率（%）"
     value: 80
+    param_origin: 经验拍定
     unit: percent
     comparator: gt
     severity_action: "压力分级 HIGH → THROTTLE_L3（节流 L3 层）"
@@ -148,6 +153,7 @@ thresholds:
     category: health
     metric_zh: "内存使用率（%）"
     value: 90
+    param_origin: 经验拍定
     unit: percent
     comparator: gt
     severity_action: "压力分级 CRITICAL → SHUTDOWN_L3_PRESERVE_L2（关 L3 保 L2）"
@@ -165,6 +171,7 @@ thresholds:
     category: health
     metric_zh: "磁盘使用率（%）"
     value: 90
+    param_origin: 经验拍定
     unit: percent
     comparator: gt
     severity_action: "disk_usage>90% 直接判 CRITICAL"
@@ -184,6 +191,7 @@ thresholds:
     category: health
     metric_zh: "单分区 active parts 计数（system.parts 按表内分区聚合取超限分区，2026-09-03 口径修正）"
     value: 30
+    param_origin: 经验拍定
     unit: count
     comparator: gt
     severity_action: "ALERT-CH-001 critical 告警（fle/dashboard/escalation 通知，CLI 巡检退出码 1）"
@@ -204,6 +212,7 @@ thresholds:
     category: gpu
     metric_zh: "RTX 3090 显存占用率（%）"
     value: 90
+    param_origin: 经验拍定
     unit: percent
     comparator: gte
     severity_action: "硬边界（system_charter §2 约束二硬件）；探头只采集不告警"
@@ -224,6 +233,7 @@ thresholds:
     category: deviation
     metric_zh: "相对偏差 |live-backtest|/|backtest|"
     value: 0.30
+    param_origin: 经验拍定
     unit: ratio
     comparator: gt
     severity_action: "warn（偏离告警，ORANGE）"
@@ -241,6 +251,7 @@ thresholds:
     category: deviation
     metric_zh: "相对偏差 |live-backtest|/|backtest|"
     value: 0.50
+    param_origin: 经验拍定
     unit: ratio
     comparator: gt
     severity_action: "retire（触发退役评估，RED；评审制不自动退役）"
@@ -258,6 +269,7 @@ thresholds:
     category: deviation
     metric_zh: "实盘 vs 回测日收益 Pearson 相关"
     value: 0.5
+    param_origin: 经验拍定
     unit: ratio
     comparator: lt
     severity_action: "偏离周报标注（不单独告警，供周复盘「偏离与告警事件」段消费）"
@@ -278,6 +290,7 @@ thresholds:
     category: plv
     metric_zh: "Paper vs Live 订单量偏差"
     value: "±1%"
+    param_origin: 经验拍定
     unit: percent
     comparator: range
     severity_action: "PLV 验证失败项（上线后验证不通过）"
@@ -295,6 +308,7 @@ thresholds:
     category: plv
     metric_zh: "Paper vs Live 成交率偏差"
     value: "±0.5%"
+    param_origin: 经验拍定
     unit: percent
     comparator: range
     severity_action: "PLV 验证失败项"
@@ -312,6 +326,7 @@ thresholds:
     category: plv
     metric_zh: "风控限额符合性"
     value: "≥limits"
+    param_origin: 经验拍定
     unit: ratio
     comparator: gte
     severity_action: "PLV 验证失败项"
@@ -329,6 +344,7 @@ thresholds:
     category: plv
     metric_zh: "数据校验和"
     value: "checksum verified"
+    param_origin: 经验拍定
     unit: doc
     comparator: eq
     severity_action: "PLV 验证失败项"
@@ -346,6 +362,7 @@ thresholds:
     category: plv
     metric_zh: "Paper vs Live 盈亏差"
     value: "±$5/1000trades"
+    param_origin: 经验拍定
     unit: trades
     comparator: range
     severity_action: "PLV 验证失败项"
@@ -366,6 +383,7 @@ thresholds:
     category: alert
     metric_zh: "同源同消息抑制时长"
     value: 300
+    param_origin: 经验拍定
     unit: seconds
     comparator: lt
     severity_action: "窗口内同源同消息告警被去重（防告警风暴）"
@@ -383,6 +401,7 @@ thresholds:
     category: alert
     metric_zh: "无人认领自动升级时长"
     value: 300
+    param_origin: 经验拍定
     unit: seconds
     comparator: gte
     severity_action: "超时未认领自动升级一级"
@@ -403,6 +422,7 @@ thresholds:
     category: audit
     metric_zh: "PnL gap_pct 绝对值"
     value: 0.001
+    param_origin: 经验拍定
     unit: ratio
     comparator: gt
     severity_action: "对账 FAIL（任一 FAIL→整体 FAIL，自动登记 IssueRecord）"
@@ -420,6 +440,7 @@ thresholds:
     category: audit
     metric_zh: "限额消耗 consumed/value"
     value: 0.8
+    param_origin: 经验拍定
     unit: ratio
     comparator: gt
     severity_action: "限额合规 WARNING"
@@ -437,6 +458,7 @@ thresholds:
     category: audit
     metric_zh: "归因偏差 |bias|"
     value: 0.1
+    param_origin: 经验拍定
     unit: ratio
     comparator: abs_gt
     severity_action: "归因判 BIASED"
@@ -457,6 +479,7 @@ thresholds:
     category: report
     metric_zh: "综合风险评分"
     value: 0.3
+    param_origin: 经验拍定
     unit: ratio
     comparator: lt
     severity_action: "RiskLevel.LOW"
@@ -474,6 +497,7 @@ thresholds:
     category: report
     metric_zh: "综合风险评分"
     value: 0.6
+    param_origin: 经验拍定
     unit: ratio
     comparator: lt
     severity_action: "RiskLevel.MEDIUM"
@@ -491,6 +515,7 @@ thresholds:
     category: report
     metric_zh: "综合风险评分"
     value: 0.8
+    param_origin: 经验拍定
     unit: ratio
     comparator: lt
     severity_action: "RiskLevel.HIGH"
@@ -508,6 +533,7 @@ thresholds:
     category: report
     metric_zh: "前后半段均值差绝对值"
     value: 0.05
+    param_origin: 经验拍定
     unit: ratio
     comparator: lt
     severity_action: "趋势判 STABLE"
@@ -528,6 +554,7 @@ thresholds:
     category: oprisk
     metric_zh: "执行失败率"
     value: 0.05
+    param_origin: 经验拍定
     unit: ratio
     comparator: gt
     severity_action: "breached（单维突破→warning；severe 或双突破→HALT）"
@@ -545,6 +572,7 @@ thresholds:
     category: oprisk
     metric_zh: "下单链路延迟 p95"
     value: 500.0
+    param_origin: 经验拍定
     unit: ms
     comparator: gt
     severity_action: "breached"
@@ -562,6 +590,7 @@ thresholds:
     category: oprisk
     metric_zh: "实际值/阈值 倍数"
     value: 2.0
+    param_origin: 经验拍定
     unit: ratio
     comparator: gte
     severity_action: "severe（任一维 severe→HALT）"
@@ -582,6 +611,7 @@ thresholds:
     category: drift
     metric_zh: "数据/特征漂移 PSI（边际分布比较）"
     value: 0.2
+    param_origin: 经验拍定
     unit: ratio
     comparator: gt
     severity_action: "关注（漂移监控标注）"
@@ -599,6 +629,7 @@ thresholds:
     category: drift
     metric_zh: "数据/特征漂移 PSI"
     value: 0.4
+    param_origin: 经验拍定
     unit: ratio
     comparator: gt
     severity_action: "高度（漂移告警）"
@@ -616,6 +647,7 @@ thresholds:
     category: drift
     metric_zh: "概念/标签漂移 CUSUM（残差持续偏移）"
     value: "h=4σ"
+    param_origin: 经验拍定
     unit: ratio
     comparator: gt
     severity_action: "变点告警"
@@ -633,6 +665,7 @@ thresholds:
     category: drift
     metric_zh: "Sharpe 30 日滚动"
     value: 0
+    param_origin: 经验拍定
     unit: ratio
     comparator: lt
     severity_action: "策略退役评估（静态登记，非自动执行）"
@@ -653,6 +686,7 @@ thresholds:
     category: retirement
     metric_zh: "滚动 20 日实盘累计收益 − 基准累计收益"
     value: 0.05
+    param_origin: 经验拍定
     unit: ratio
     comparator: lt
     severity_action: "触发退役评估报告（评审制，人工裁定；不自动退役）"
@@ -670,6 +704,7 @@ thresholds:
     category: retirement
     metric_zh: "滚动 60 日 Sharpe"
     value: 0
+    param_origin: 经验拍定
     unit: ratio
     comparator: lt
     severity_action: "触发退役评估报告（评审制）"
@@ -687,6 +722,7 @@ thresholds:
     category: retirement
     metric_zh: "当前回撤 / 历史最大回撤"
     value: 1.5
+    param_origin: 经验拍定
     unit: ratio
     comparator: gt
     severity_action: "触发退役评估报告（评审制）"

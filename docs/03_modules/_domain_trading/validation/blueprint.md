@@ -1,0 +1,117 @@
+---
+ttl: permanent
+doc_type: architecture_view
+title: TDM 节点验证 runner（validation）
+owner: ZephyrAlpha-Owner
+language: zh
+status: active
+version: "1.0.1"
+date: 2026-09-09
+topic: tdm_validation_runner
+scope: module
+module_id: MOD-TDMVAL-001
+design_maturity: design
+build_status: generated
+responsibility_domain: 
+---
+
+# TDM 节点验证 runner（MOD-TDMVAL-001）
+
+> 节点级可回测治理 P1-2（真源：`docs/_working/2026-09-09-node-backtest-governance.md` §8.2）。
+> 职责一句话：读回测成交流水 → 按 validation_method_registry 推导方法算指标 → 过显著性土规 → 写 `c1_backtest.node_verdict` 台账。
+
+## 1. 职责与边界
+
+| 项 | 内容 |
+|---|---|
+| 做 | L4 执行类节点验证（首批 14 节点，排除币圈镜像 TDM-C-*）；exec_quality 滑点/成交指标；holdout 窗口排除（最近 12 个月）；两土规（触发<30 不下结论 / 样本外衰减≥50% 判存疑）；lag=1 滞后重算开关；台账写入 |
+| 不做 | 反事实对照（P2-3 关风控回放未建，exit_counterfactual 保持 pending）；衰减巡检调度（P2-1 独立落盘）；结论反哺地图 YAML（验证态只进台账，地图保持设计真源纯净） |
+
+## 2. 数据流
+
+```
+config/trading_decision_map.yaml（L4 节点清单）
+data/backtest_artifacts/bt-*.json（成交流水 trade_log）
+docs/01_policies_and_standards/_registry/catalogs/validation_method_registry.yaml（方法推导+土规参数）
+  → runner.run() → c1_backtest.node_verdict（schemas/categories/backtest_node_verdict.py DDL 真源）
+  → /api/tdm/validation（只读端点）→ tdm 抽屉「验证档案」区
+```
+
+## 3. 关键设计裁定（施工中自裁）
+
+1. **holdout 优先**：现有流水全部落在 holdout 窗口内（2026-02~08 > 2025-09 截止线）→ 首批 verdict 全部为 `pending` + `significance=insufficient_samples`，notes 如实披露原因。宁可 pending 不作弊（PB-08 铁律："定稿前不许跑回测"）。
+2. **归因粒度限制**：trade_log 无 order_type/节点归因字段，v1 以执行流水全量为统计对象写每节点行；notes 披露该限制。子环节级归因待执行报告数据源扩展。
+3. **滑点基准**：决策价不存在于流水 → 用同日 kline_daily 成交额/成交量 VWAP 代理；lag_recheck=True 时基准右移 1 个交易日（前视诊断，PB-16）。
+4. **事件驱动**：runner 为手动/上游事件触发的无状态批函数（B 类），不做常驻调度；P2-1 衰减巡检挂既有 scheduler 事件。
+
+## 4. 接口
+
+```python
+from zephyr.trading.validation.runner import run_validation
+report = run_validation(dry_run=True)   # 先看不出库
+report = run_validation()               # 写台账
+```
+
+## 5. 验收
+
+- tests/trading/test_validation_runner.py：方法推导 / holdout 切分 / 土规 / lag 开关 / dry-run 零写入
+- 实弹：`run_validation()` 后 `SELECT count() FROM c1_backtest.node_verdict` 出现 14 行 L4 verdict；`/api/tdm/validation?node_id=TDM-E-L4-03` 返回记录
+
+### §0.6 五图对齐视图
+
+<!-- AUTOGEN: source=depgraph+dataflow+decision, generator=generate_blueprint_panorama.py, reconciler=sync_panorama_module.py -->
+
+> **自动生成**：本节由 generate_blueprint_panorama.py 从全景真源派生，禁止手写。
+> 生成命令：`python scripts/governance/d5_architecture/generators/generate_blueprint_panorama.py MOD-TDMVAL-001`
+
+#### 全景位置
+
+| 图 | 位置 | 状态 | 链接 |
+|----|------|------|------|
+| 依赖图 (depgraph) | `blueprint_id=MOD-TDMVAL-001` 的 5 个 file 节点 | design | `extract_depgraph.py --modules MOD-TDMVAL-001` |
+| 数据流图 (dataflow) | 0 个 Dataset / 1 个 Job | planned | `apply_dataflowgraph.py --list-datasets` |
+| 决策架构图 (decision) | 0 个决策节点 / 1 个决策层 | N/A | `generate_decision_diagram.py` |
+| 蓝图 (blueprint) | 本文件 | active | — |
+
+#### 四核心字段
+
+| 字段 | depgraph 值（真源） | 蓝图 frontmatter 值（声明） | 是否一致 |
+|------|-------------------|--------------------------|:-------:|
+| module_id | MOD-TDMVAL-001 | MOD-TDMVAL-001 | ✅ |
+| domain_id | N/A | N/A | ✅ |
+| build_status | generated | generated | ✅ |
+| file_count | 5 文件 | N/A | — |
+
+> 冲突时以 depgraph 为准（ARCH-056 + ARCH-MM-001 声明 vs 验证框架）。
+
+---
+
+## 6. 已实现代码完整路径索引
+
+> **AGENTS.md §6.1 蓝图-代码同步强制约定**——本节是蓝图与磁盘代码的「地址簿」。
+> 蓝图声称的文件必须与磁盘实际一致。不一致 = 蓝图漂移 = 下一个 AI session 冷启动时被误导。
+> **AUTOGEN**：本表由 sync_blueprint_code_index.py 从 depgraph.nodes 运营态（build_status∈generated/testing/stable）单向派生，禁止手写；重跑本脚本幂等更新。
+> 
+
+### 6.1 源码文件
+
+| 文件路径 | 实现状态 | 说明 |
+|---------|:---:|------|
+| `schemas/categories/backtest_node_verdict.py` | ✅ 已实现 | |
+| `src/zephyr/trading/validation/__init__.py` | ⚠️ 骨架 | |
+| `src/zephyr/trading/validation/decay_watch.py` | ✅ 已实现 | |
+| `src/zephyr/trading/validation/runner.py` | ✅ 已实现 | |
+
+### 6.5 路径索引使用指南
+
+**新 AI session 读取顺序**：
+1. 读本蓝图 §6（本节）→ 知道「哪些已实现、在哪里」
+2. 读模块分解 → 知道「每个模块的职责和 AI 自治权限」
+3. 读施工 Phase 规划 → 知道「下一步该做什么」
+
+**路径约定**：
+- 所有路径相对于 `D:\ZephyrAlpha\\`
+- 源码在 `src/zephyr/` 下
+- 测试在 `tests/` 下
+- 配置在 `config/` 下
+- 治理脚本在 `scripts/governance/` 下

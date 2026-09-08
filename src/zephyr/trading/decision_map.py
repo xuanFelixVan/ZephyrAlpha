@@ -42,7 +42,7 @@
 #   name_zh: ② 校验（validate_decision_map）
 #   name_en: validate_decision_map
 #   intro: 引用存在性+治理门禁 R1-R36 → (ok, GapReport)；缺口即地图红节点语义
-#   desc: R1 节点枚举; R2 边端点+类型+无环; R3 策略引用（STR-* 查 REG-STR-001，其余查 known_strategy_ids）; R4 因子引用 REG-FCT-001; R5 数据引用 REG-DATAFLOW-001 datasets; R6 置信度枚举+verified必带evidence; R7 矩阵格引用存在性; R8 sequence 边成环检测; R10 市场实例一致性; R12 整装方案; R13 算法引用（IND/EXA）; R14 doc_ref 存在+路径穿越拒绝; R15 治理字段枚举+新节点必填; R16 父子完整+树深≤4+树宽预警; R17 粒度（问题≤100字+禁模糊词）+容量（挂载≤8/因子≤12/数据≤8/算法≤8+各交叉轴上限）; R18 name_zh 唯一; R19 module_ref 存在; R20 node_id 骨架; R21 MOD-* 交叉锚（格式+depgraph 缓存对账+欠账 warning）; R22 矩阵覆盖 warning; R23 流预算 warning（>80）; R24 因子欠账 warning; R25 空转叶子 warning; R26-R36 11 库交叉轴（形态/席位/宏观/周期/宇宙/成本/事件/风险限额/组合模型/基准/告警阈值，表驱动 _XREF_SPECS）; R98 空地图; R99 注册表真源缺失; module_ref=null 记 warning
+#   desc: R1 节点枚举; R2 边端点+类型+无环; R3 策略引用（STR-* 查 REG-STR-001，其余查 known_strategy_ids）; R4 因子引用 REG-FCT-001; R5 数据引用 REG-DATAFLOW-001 datasets; R6 置信度枚举+verified必带evidence; R7 矩阵格引用存在性; R8 sequence 边成环检测; R10 市场实例一致性; R12 整装方案; R13 算法引用（IND/EXA/DAL）; R14 doc_ref 存在+路径穿越拒绝; R15 治理字段枚举+新节点必填; R16 父子完整+树深≤4+树宽预警; R17 粒度（问题≤100字+禁模糊词）+容量（挂载≤8/因子≤12/数据≤8/算法≤8+各交叉轴上限）; R18 name_zh 唯一; R19 module_ref 存在; R20 node_id 骨架; R21 MOD-* 交叉锚（格式+depgraph 缓存对账+欠账 warning）; R22 矩阵覆盖 warning; R23 流预算 warning（>80）; R24 因子欠账 warning; R25 空转叶子 warning; R26-R36 11 库交叉轴（形态/席位/宏观/周期/宇宙/成本/事件/风险限额/组合模型/基准/告警阈值，表驱动 _XREF_SPECS）; R98 空地图; R99 注册表真源缺失; module_ref=null 记 warning
 #   inputs: DecisionMap I2 I3
 #   outputs: (bool, list[GapReportItem])
 # 层: 输出
@@ -107,6 +107,7 @@ _REG_FACTOR = "factor_registry.yaml"
 _REG_DATA = "data_asset_registry.yaml"
 _REG_EXA = "execution_algo_registry.yaml"
 _REG_IND = "technical_indicator_registry.yaml"
+_REG_DAL = "decision_algo_registry.yaml"   # P1-3（PB-05）：决策算法库，algo_refs 值域扩 DAL-*
 
 # D32 门禁包常量（R15 治理字段枚举 / R17 粒度门禁 / R16 树深上限）
 _ACTIVATIONS = frozenset({"premarket", "intraday", "postmarket", "weekly", "on_demand", "continuous"})
@@ -630,7 +631,7 @@ def _validate_governance(
             add("error", "R20", n.node_id, f"node_id 不符合 TDM-{{流}}-{{层}}-{{序号}} 骨架: {n.node_id}")
         for a in n.algo_refs:
             if a not in algo_ids:
-                add("error", "R13", n.node_id, f"algo_ref 不存在于算法库（IND/EXA）: {a}")
+                add("error", "R13", n.node_id, f"algo_ref 不存在于算法库（IND/EXA/DAL）: {a}")
         for rel_field, rel_val in (("doc_ref", n.doc_ref), ("module_ref", n.module_ref)):
             # V3 路径穿越/绝对路径拒绝（防 ../ 与盘符绕过仓库根）
             if rel_val and (Path(rel_val).is_absolute() or ".." in Path(rel_val).parts):
@@ -796,7 +797,7 @@ def validate_decision_map(
     registry_dir = Path(registry_dir)
     # V1 注册表真源缺失=error（文件不存在时引用校验静默通过=假阴性漏洞）
     anchor0 = dm.nodes[0].node_id if dm.nodes else ""
-    for fname in (_REG_STRATEGY, _REG_FACTOR, _REG_DATA, _REG_EXA, _REG_IND, *(spec[1] for spec in _XREF_SPECS)):
+    for fname in (_REG_STRATEGY, _REG_FACTOR, _REG_DATA, _REG_EXA, _REG_IND, _REG_DAL, *(spec[1] for spec in _XREF_SPECS)):
         if not (registry_dir / fname).exists():
             add("error", "R99", anchor0, f"注册表真源缺失: {fname}（引用校验不可信）")
     strat_ids = _load_registry_ids(registry_dir, _REG_STRATEGY, "strategies", "strategy_id")
@@ -832,6 +833,7 @@ def validate_decision_map(
     # D32/D33/D34 门禁包 R13-R25（算法/附件/治理/父子/粒度容量/命名/模块/node_id/交叉锚/矩阵/预算/欠账）
     exa_ids = _load_registry_ids(registry_dir, _REG_EXA, "execution_algos", "execution_algo_id")
     ind_ids = _load_registry_ids(registry_dir, _REG_IND, "indicators", "indicator_id")
+    dal_ids = _load_registry_ids(registry_dir, _REG_DAL, "algorithms", "dal_id")
     repo_root = registry_dir.parents[3]
     cache_path = depgraph_cache if depgraph_cache is not None else repo_root / _DEPGRAPH_CACHE
     depgraph_entries = _load_depgraph_entries(cache_path)
@@ -843,7 +845,7 @@ def validate_decision_map(
         for field, fname, sec, key, _code, _lib in _XREF_SPECS
     }
     _validate_governance(
-        dm, registry_dir, exa_ids | ind_ids, add,
+        dm, registry_dir, exa_ids | ind_ids | dal_ids, add,
         depgraph_entries=depgraph_entries, xref_ids=xref_ids,
     )
 

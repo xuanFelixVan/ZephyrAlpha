@@ -596,6 +596,7 @@ _GOVERNANCE_EXEMPT = frozenset(
         "terminology_glossary.yaml",
         "test_suite_registry.yaml",
         "trust_boundary_surface_registry.yaml",
+        "validation_method_registry.yaml",   # P1-1（PB-01）验证方法学=治理类（管"怎么判对错"），验证 runner 消费，不入 TDM 决策索引
         "wiring_registry.yaml",
     }
 )
@@ -607,6 +608,7 @@ _AXIS_FILES = frozenset(
         "data_asset_registry.yaml",
         "execution_algo_registry.yaml",
         "technical_indicator_registry.yaml",
+        "decision_algo_registry.yaml",   # P1-3（PB-05）DAL 决策算法库：经 R13 algo_refs 值域挂载（非 _XREF_SPECS 新轴，节点不加字段）
         *(spec[1] for spec in _XREF_SPECS),
     }
 )
