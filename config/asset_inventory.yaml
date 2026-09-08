@@ -230,6 +230,14 @@ offrepo_assets:
     backup: none
     notes: "Ollama 应用 Roaming 数据；0.07GB"
 
+  - id: OFFREPO-TRAE-RUNTIME
+    path: "D:\\AI"
+    type: app_runtime
+    regenerable: true
+    criticality: important
+    backup: none
+    notes: "Trae CN 主力 IDE 安装目录（D:\\AI\\Trae CN\\Trae CN.exe 正在运行），官网可重装；AI 目录下仅此一项；1.35GB"
+
 # 已裁决不登记项（2026-09-08 Owner 确认）：
 #   E:\国金证券QMT交易端 / E:\国金QMT交易端模拟 —— 终端可重装，券商云端有账务数据
 #   E:\iFinD —— 数据源已退役（#ARCH-DATA-IFIND-RETIRE-001）
