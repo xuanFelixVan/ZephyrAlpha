@@ -59,6 +59,8 @@
     return { key: 'C', zh: '横切层(币圈预留)', order: 4 };
   }
 
+  /* 配色=施工状态三态（Owner 2026-09-08 裁定保留）：蓝=实锚（有模块）/ 橙虚线=🔴红节点（设计态）/ 绿=📄paper（实盘执行档）；
+   * 层级不占颜色——层级由列位+字号梯度承载（tn-d1~d4 只管大小不管色） */
   function cls(n) {
     if (n.autonomy === 'paper') return 'paper';
     return n.module_ref ? 'production' : 'design';
@@ -111,21 +113,20 @@
     host.innerHTML = '';
     var wires = [];
     var y = 8;
-    /* 满屏布局（每次渲染实时量容器——窗口最大化/抽屉开合由 ResizeObserver 触发重渲）：
-     * 子节点列锚定右缘铺满全宽，枝干列按比例放中间，流标签最左 */
+    /* 四层一列布局：流标签列(8~LABEL_W) + L1~L4 四列均分剩余宽度——同层永远同列，层级即列号；
+     * 每次渲染实时量容器，窗口/抽屉变化由 ResizeObserver 触发重渲 */
     var W = canvas.clientWidth || 1400;
-    var CW = Math.min(Math.max(Math.floor(W * 0.30), 260), 620);   /* 卡片宽 30%（260~620 夹紧） */
-    var X3 = Math.max(W - CW - 14, Math.floor(W * 0.34));          /* 子节点列贴右缘 */
-    var X2 = Math.max(150, Math.floor(W * 0.12));                  /* 枝干列 */
-    var X1 = 8;                                                    /* 流标签 */
+    var LABEL_W = 128, GAP = 12;
+    var colW = Math.max(170, Math.floor((W - LABEL_W - 16 - GAP * 3) / 4));
+    var COLX = [0, LABEL_W, LABEL_W + (colW + GAP), LABEL_W + (colW + GAP) * 2, LABEL_W + (colW + GAP) * 3];
 
-    function card(n, cx, cy) {
+    function card(n, cx, cy, depth) {
       var el = document.createElement('div');
-      el.className = 'tn ' + cls(n) + (n.id === TDM.sel ? ' sel' : '');
-      el.style.left = cx + 'px'; el.style.top = cy + 'px'; el.style.width = CW + 'px';
-      var gist = n.note ? n.note.slice(0, 110) : (n.q || '').slice(0, 100);
-      el.innerHTML = '<div class="tn-n">' + (n.autonomy === 'paper' ? '📄 ' : '') + (n.name || n.id) +
-        '</div><div class="tn-g">' + gist + '</div>';
+      el.className = 'tn tn-d' + depth + ' ' + cls(n) + (n.id === TDM.sel ? ' sel' : '');
+      el.style.left = cx + 'px'; el.style.top = cy + 'px'; el.style.width = colW + 'px';
+      /* 小字=「问」全文（不 slice 截断），CSS line-clamp 2：一排放不下自动提行成两行；标题保留 📄 前缀 */
+      el.innerHTML = '<div class="tn-n">' + (n.autonomy === 'paper' ? '📄 ' : '') + (n.name || n.id) + '</div>' +
+        '<div class="tn-g">' + (n.q || '（问待补）') + '</div>';
       el.title = n.id;
       el.onclick = function () { if (TDM.dragDist > 3) return; TDM.sel = n.id; render(); drawer(); };   /* 拖动平移后松手不算点击 */
       el.dataset.id = n.id;
@@ -134,32 +135,40 @@
     }
     function wire(a, b) { wires.push([a, b]); }
 
+    /* 递归布局：节点排在自己层列的 y 处；子节点从父同 y 起往下排（思维导图惯例）；
+     * 返回子树底部 y——父的下一个兄弟排在其整棵子树之后。树深≤4（门禁锁死），dd 兜底夹紧 */
+    function place(n, depth, y, parentEl) {
+      var dd = Math.min(Math.max(depth, 1), 4);
+      var el = card(n, COLX[dd], y, dd);
+      if (parentEl) wire(parentEl, el);
+      var cy = y, bottom = y + el.offsetHeight;
+      (kids[n.id] || []).forEach(function (c) {
+        var cb = place(c, depth + 1, cy, el);
+        cy = cb + 8;
+        bottom = Math.max(bottom, cb);
+      });
+      return bottom;
+    }
+
     Object.keys(flows).sort().forEach(function (fo) {
       var g = flows[fo];
       var fel = document.createElement('div');
       fel.className = 'tg';
-      fel.style.left = X1 + 'px'; fel.style.top = (y + 20) + 'px';
+      fel.style.left = '8px'; fel.style.top = (y + 20) + 'px';
       fel.innerHTML = g.info.zh + ' <span class="cnt">' + g.items.length + '</span>';
       host.appendChild(fel);
-      var gy = y;
+      var fy = y;
       g.items.forEach(function (n) {
-        var nel = card(n, X2, gy);
-        var chY = gy;
-        (kids[n.id] || []).forEach(function (c) {
-          var cel = card(c, X3, chY);
-          wire(nel, cel);
-          chY += cel.offsetHeight + 8;
-        });
-        gy = Math.max(gy + nel.offsetHeight + 8, chY + 4);
-        wire(fel, nel);
+        var cb = place(n, 1, fy, fel);
+        fy = cb + 26;
       });
-      y = gy + 30;
+      y = fy + 6;
     });
 
     /* 世界层与树的尺寸用布局常量直接算（X3+CW=内容右缘）——绝不能量 host.offsetWidth：
      * world 是绝对定位收缩包裹、树内卡片全绝对定位不撑宽，量出来恒≈padding 8px，
      * SVG 视口跟着塌成 8px 宽 → 连线全部画到可视区外（b20260908-02 连线消失的根因） */
-    var contentW = X3 + CW + 4;
+    var contentW = COLX[4] + colW + 4;
     var contentH = y + 6;
     host.style.width = contentW + 'px';
     host.style.height = contentH + 'px';   /* 绝对定位子元素不撑高父容器——显式写内容高度 */

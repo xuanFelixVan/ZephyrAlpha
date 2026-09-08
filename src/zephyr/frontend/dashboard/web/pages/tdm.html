@@ -1,21 +1,22 @@
 <section class="page" id="p-tdm">
     <h2 class="page-title">交易决策全景 <span class="badge b-pass">实时映射</span></h2>
-    <div class="page-sub">研究组 · <b>核心：交易决策地图（122 赚点）的原生实时视图——真源 YAML 一改这边自动变（30 秒轮询）</b>· 横向树：流 → 枝干 → 子节点 · 点节点开右侧抽屉看"怎么算的"完整机制</div>
+    <div class="page-sub">研究组 · <b>核心：交易决策地图（122 赚点）的原生实时视图——真源 YAML 一改这边自动变（30 秒轮询）</b>· 横向树：四层各一列，颜色=施工状态 ｜ 点节点开右侧抽屉看"怎么算的"完整机制</div>
 
     <div class="card" style="margin-bottom:10px;display:flex;gap:10px;align-items:center;flex-wrap:wrap">
       <span class="dim" style="font-size:12px">图例</span>
       <span style="font-size:12px"><span style="display:inline-block;width:10px;height:10px;background:#0f2740;border:1.5px solid #1e5a8f;border-radius:3px;vertical-align:middle"></span> 实锚（有模块）</span>
       <span style="font-size:12px"><span style="display:inline-block;width:10px;height:10px;background:#2a1c0e;border:1.5px dashed #8a4a12;border-radius:3px;vertical-align:middle"></span> 🔴 红节点（设计态）</span>
       <span style="font-size:12px"><span style="display:inline-block;width:10px;height:10px;background:#0e2612;border:1.5px solid #2e7d32;border-radius:3px;vertical-align:middle"></span> 📄paper 实盘执行</span>
+      <span class="dim" style="font-size:11px">｜ 层级：列位+字号梯度（L1 最大 → L4 最小，四层各一列）</span>
       <input id="tdm-srch" placeholder="搜索节点（ID / 名称）…" oninput="tdmFilter(this.value)"
-             style="background:#0d1117;border:1px solid #263042;border-radius:6px;color:var(--text);padding:4px 10px;font-size:12px;width:200px">
+             style="background:#0d1117;border:1px solid #263042;border-radius:6px;color:var(--text);padding:4px 10px;font-size:12px;width:180px">
       <span id="tdm-mode" onclick="tdmToggleMode()" title="切换 拖动画布 / 文字选择复制（快捷键 Ctrl+Shift+D）"
             style="cursor:pointer;user-select:none;background:#0d1117;border:1px solid #263042;border-radius:6px;color:var(--text);padding:3px 10px;font-size:12px">✋ 拖动模式</span>
       <span class="dim" style="font-size:11px">滚轮缩放 ｜ 拖动平移 ｜ 双击空白重置</span>
       <span style="margin-left:auto;font-size:11px" class="dim" id="tdm-meta">加载中…</span>
     </div>
 
-    <!-- 满屏布局：页节=视口减去顶栏46+ticker32+main上下padding64，树区 flex:1 吃掉全部剩余（页面切 display:none，仅 .active 生效） -->
+    <!-- 满屏布局：页节=视口减去顶栏46+ticker32+main上下padding，树区 flex:1 吃掉全部剩余 -->
     <div class="tdm-fill">
       <div class="card tdm-canvas">
         <!-- tdm-world=缩放平移世界层：滚轮/拖动作用在它上面（transform），画布本体 overflow:hidden 不走原生滚动 -->
@@ -30,7 +31,7 @@
 </section>
 <style>
   /* 满屏精确对齐：section 高度=视口-顶栏46- main顶padding8 - ticker32 → 底缘正好贴 ticker 上缘；
-     :has() 豁免 .main 56px 底部预留 padding（仅本页生效，否则那 56px 显成画布下黑条+页面多出 24px 滚动量） */
+     :has() 豁免 .main 56px 庄部预留 padding（仅本页生效） */
   .main:has(#p-tdm.active) { padding-bottom: 0; }
   #p-tdm.active { display:flex; flex-direction:column; height:calc(100vh - 86px); }
   #p-tdm .tdm-fill { flex:1; min-height:0; display:flex; gap:12px; align-items:stretch; }
@@ -43,15 +44,32 @@
   #tdm-wire { position:absolute; left:0; top:0; pointer-events:none; }
   #tdm-tree { position:relative; padding:8px 4px; }
   #tdm-drawer { width:400px; flex:none; overflow:auto; display:none; }
-  #tdm-tree .tn { position:absolute; background:#0d1117; border:1.5px solid #263042; border-radius:8px;
-    padding:6px 12px; cursor:pointer; user-select:none; transition:border-color .15s; box-sizing:border-box; }
+  /* 卡片：颜色=施工状态三态（蓝实锚/橙虚红节点/绿paper，Owner 2026-09-08 裁定保留）；
+   * 层级不占颜色——由列位+tn-d1~d4 字号/padding 梯度承载（L1 最大 → L4 最小） */
+  #tdm-tree .tn { position:absolute; border-radius:8px; cursor:pointer; user-select:none; transition:border-color .15s; box-sizing:border-box;
+    background:#0d1117; border:1.5px solid #263042; }
   #p-tdm .tdm-canvas.select-mode .tn, #p-tdm .tdm-canvas.select-mode .tg { user-select:text; cursor:text; }
   #tdm-tree .tn:hover { border-color:#3d8bff; }
-  #tdm-tree .tn .tn-n { font-size:12.5px; font-weight:600; color:var(--text); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
-  #tdm-tree .tn .tn-g { font-size:10.5px; color:#7d8aa0; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
-  #tdm-tree .tn.production { background:#0f2740; border-color:#1e5a8f; }
-  #tdm-tree .tn.design { background:#2a1c0e; border-style:dashed; border-color:#8a4a12; }
-  #tdm-tree .tn.paper { background:#0e2612; border-color:#2e7d32; }
+  #tdm-tree .tn .tn-n { font-weight:600; color:var(--text); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+  /* 小字=「问」全文：一排放不下自动提行，最多两行（line-clamp 2），禁止省略号截成一行 */
+  #tdm-tree .tn .tn-g { color:#8a94a6; margin-top:2px; display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical;
+    overflow:hidden; white-space:normal; line-height:1.45; }
+  .tn.production { background:#0f2740; border-color:#1e5a8f; }
+  .tn.design { background:#2a1c0e; border-style:dashed; border-color:#8a4a12; }
+  .tn.paper { background:#0e2612; border-color:#2e7d32; }
+  /* 层级梯度：只管大小不管色 */
+  .tn.tn-d1 { padding:9px 14px; }
+  .tn.tn-d1 .tn-n { font-size:15px; }
+  .tn.tn-d1 .tn-g { font-size:11.5px; color:#b9c6da; }
+  .tn.tn-d2 { padding:8px 12px; }
+  .tn.tn-d2 .tn-n { font-size:13.5px; }
+  .tn.tn-d2 .tn-g { font-size:11px; }
+  .tn.tn-d3 { padding:6px 11px; }
+  .tn.tn-d3 .tn-n { font-size:12.5px; }
+  .tn.tn-d3 .tn-g { font-size:10.5px; }
+  .tn.tn-d4 { padding:5px 10px; }
+  .tn.tn-d4 .tn-n { font-size:11.5px; }
+  .tn.tn-d4 .tn-g { font-size:10px; }
   #tdm-tree .tn.hit { border-color:#e6c34c; box-shadow:0 0 0 2px rgba(230,195,76,.25); }
   #tdm-tree .tn.dimmed { opacity:.25; }
   #tdm-tree .tn.sel { outline:2px solid #3d8bff; }
