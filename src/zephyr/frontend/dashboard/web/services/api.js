@@ -80,7 +80,11 @@ ZK.api = (function(){
     fetchDownloadStatus: function(){   /* 数据下载监管真源（146 表最新分区/行数/新鲜度） */
       return fetchJson('/api/download-status', 10000);
     },
-    fetchBridgeStatus: function(){   /* 交易通道监控真源（HTTP 桥探活+桥文件族活性+miniqmt 存活） */
+    fetchBridgeStatus: function(){   /* 交易通道监控真源（HTTP 桥探活+桥文件族活性+miniqmt 存活）。
+                                      * ⚠ miniqmt 信号 2026-09-18 退役（券商清退，93 备忘 §2.1）：
+                                      * 响应内 mini_alive 仅在退役日前是"存活"信号，退役日后消费方
+                                      * （bridge.js）应展示"已退役"占位而非"已停"（防误读为故障）；
+                                      * 判定依据 retire_date 字段（后端真源），前端本地比较日期即可。 */
       return fetchJson('/api/bridge-status', 10000);
     },
     fetchChainmapGalaxy: function(){   /* 产业地图 L1 星系（chainmap-galaxy/nav 真源；ig_* 聚类首算 3-6s，20s 兜底） */

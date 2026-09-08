@@ -59,11 +59,15 @@ function brRenderKpi() {
   }
   var httpOk = h.stats ? (parseInt(h.stats.http_ok || '0', 10) + parseInt(h.stats.thread_ok || '0', 10)) : 0;
   var badFiles = (st.files || []).filter(function (f) { return f.light === 'red'; }).length;
+  // miniqmt 存活信号 9/18 退役（迁移台账 F5）：退役日后显示"已退役"占位，非"已停"（防误读为故障）
+  var miniRetired = st.retire_date && ((new Date(st.retire_date + 'T23:59:59') - new Date()) <= 0);
+  var miniState = miniRetired ? '已退役' : (st.mini_alive ? '存活' : '已停');
+  var miniSub = miniRetired ? '历史基线（' + st.retire_date + ' 起）' : '退役后转历史基线';
   k.innerHTML =
     '<div class="card metric"><div class="l">HTTP 桥</div><div class="v ' + (alive ? 'up' : 'down') + '">' + (alive ? '在线' : '离线') + '</div><div class="s">探活 ' + (h.ms || '--') + 'ms · 18901</div></div>'
     + '<div class="card metric"><div class="l">桥累计下单</div><div class="v">' + httpOk + '</div><div class="s">http+thread 计数器</div></div>'
     + '<div class="card metric"><div class="l">文件族异常</div><div class="v ' + (badFiles ? 'down' : 'up') + '">' + badFiles + '</div><div class="s">红=文件缺失</div></div>'
-    + '<div class="card metric"><div class="l">miniQMT 基线</div><div class="v" style="color:' + (st.mini_alive ? 'var(--text)' : 'var(--dim)') + '">' + (st.mini_alive ? '存活' : '已停') + '</div><div class="s">退役后转历史基线</div></div>'
+    + '<div class="card metric"><div class="l">miniQMT 基线</div><div class="v" style="color:var(--dim)">' + miniState + '</div><div class="s">' + miniSub + '</div></div>'
     + '<div class="card metric"><div class="l">当前探活延迟</div><div class="v" style="font-size:16px">' + (alive ? (h.ms + 'ms') : '--') + '</div><div class="s">GET /health 往返</div></div>';
 }
 
@@ -79,9 +83,10 @@ function brRenderSpeed() {
   });
   // 探活实测行
   if (st.http) {
+    var miniRetired = st.retire_date && ((new Date(st.retire_date + 'T23:59:59') - new Date()) <= 0);
     h += '<tr><td><b>探活实测（当前）</b></td>'
       + '<td>' + (st.http.alive ? '<b class="up">' + st.http.ms + 'ms</b>' : '<span class="down">离线</span>') + '</td>'
-      + '<td style="color:var(--dim)">' + (st.mini_alive ? '进程存活' : '—') + '</td>'
+      + '<td style="color:var(--dim)">' + (miniRetired ? '已退役' : (st.mini_alive ? '进程存活' : '—')) + '</td>'
       + '<td style="font-size:11px;color:var(--dim)">' + (st.http.detail || '').slice(0, 60) + '</td></tr>';
   }
   box.innerHTML = h + '</table>';

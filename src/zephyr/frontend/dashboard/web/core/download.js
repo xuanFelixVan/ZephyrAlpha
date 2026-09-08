@@ -124,7 +124,7 @@ function dlRender() {
       + (t.schedule_zh ? '<br><span class="dim" style="font-size:10px">⏰ ' + t.schedule_zh + '</span>' : '') + '</td>'
       + '<td><span class="dot ' + stt[0] + '"></span>' + stt[1] + '</td>'
       + '<td style="font-size:11px">' + rate + '</td>'
-      + '<td style="font-size:11px">' + (t.today_rows ? '<b class="up">' + (t.today_rows >= 1e4 ? (t.today_rows / 1e4).toFixed(1) + ' 万' : t.today_rows.toLocaleString()) + '</b>' : '—') + '</td>'
+      + '<td style="font-size:11px">' + dlTodayCell(t) + '</td>'
       + '<td style="font-size:11px">' + (t.next_dl || '<span class="dim">—</span>') + '</td>'
       + '<td style="font-size:11px">' + t.period + '</td>'
       + '<td style="font-size:11px">' + t.source + '</td>'
@@ -133,6 +133,24 @@ function dlRender() {
       + '<td style="font-size:11px">' + fail + '</td></tr>';
   });
   box.innerHTML = h + '</table><div class="dim" style="font-size:11px;padding:6px 2px">' + rows.length + ' / ' + st.tables.length + ' 张表</div>';
+}
+
+/* F6（迁移台账 2026-09-09）：tick_data 今日新增按 data_source 分组渲染（mini/桥 两段并存）。
+ * 背景：9/18 miniqmt 退役停写后，合计"今日新增"将从 ~2000 万缩水到 ~70 万（30 倍），
+ * 合计口径会被误读为断；分组后桥通道行独立可见。无分组明细的表走原合计渲染。 */
+function dlFmtWan(n) {
+  return n >= 1e4 ? (n / 1e4).toFixed(1) + ' 万' : n.toLocaleString();
+}
+function dlTodayCell(t) {
+  var by = t.today_rows_by_source;
+  if (t.table !== 'tick_data' || !by) {
+    return t.today_rows ? '<b class="up">' + dlFmtWan(t.today_rows) + '</b>' : '—';
+  }
+  var parts = [];
+  if (by.miniqmt) parts.push('<span class="dim">mini</span> ' + dlFmtWan(by.miniqmt));
+  if (by.qmt_bridge) parts.push('<b class="up">桥 ' + dlFmtWan(by.qmt_bridge) + '</b>');
+  if (!parts.length) return t.today_rows ? '<b class="up">' + dlFmtWan(t.today_rows) + '</b>' : '—';
+  return parts.join('<br>') + (t.today_rows ? '<br><span class="dim" style="font-size:10px">合计 ' + dlFmtWan(t.today_rows) + '</span>' : '');
 }
 
 function dlToggleIssue(el) {

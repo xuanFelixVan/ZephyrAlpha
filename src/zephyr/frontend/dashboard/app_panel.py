@@ -203,6 +203,9 @@ class DashboardPanelApp:
         miniqmt_broker: object | None = None,
         execution_engine: object | None = None,
         qmt_assembly: object | None = None,
+        position_broker_source: str = "miniqmt",
+        position_bridge_env: str = "sim",
+        quote_provider_source: str = "miniqmt",
     ) -> None:
         self._task_repo = task_repo
         self._olap_engine = olap_engine
@@ -213,6 +216,14 @@ class DashboardPanelApp:
         self._miniqmt_broker = miniqmt_broker
         self._execution_engine = execution_engine
         self._qmt_assembly = qmt_assembly
+        # 持仓数据源选择（迁移台账 F2，2026-09-09）：默认 miniqmt（9/17 窗口前不切）；
+        # qmt_bridge=QmtFileBridgeBroker 按 env 分区读桥文件
+        self._position_broker_source = position_broker_source
+        self._position_bridge_env = position_bridge_env
+        self._position_broker: object | None = None
+        # 行情数据源选择（迁移台账 F3）：默认 miniqmt；qmt_bridge=QmtFileBridgeQuoteProvider
+        self._quote_provider_source = quote_provider_source
+        self._quote_provider: object | None = None
 
     @property
     def task_repo(self):
@@ -352,12 +363,40 @@ class DashboardPanelApp:
         return payload.get("_layout") or pn.pane.Markdown("Tick 回放渲染失败")
 
     def _tab_order_book(self) -> object:
-        data = fetch_order_book(self._miniqmt_provider, symbol="demo")
+        # 行情数据源并列支持（迁移台账 F3）：默认 miniqmt provider；source=qmt_bridge
+        # 时懒构造 QmtFileBridgeQuoteProvider（env 分区），失败回退空盘口不炸 Tab
+        provider = self._miniqmt_provider
+        if self._quote_provider_source == "qmt_bridge":
+            if self._quote_provider is None:
+                from zephyr.frontend.dashboard.components.order_book import (
+                    create_quote_provider,
+                )
+
+                self._quote_provider = create_quote_provider(
+                    source="qmt_bridge",
+                    env=self._position_bridge_env,
+                )
+            provider = self._quote_provider
+        data = fetch_order_book(provider, symbol="demo")
         payload = render_order_book(data)
         return payload.get("_layout") or pn.pane.Markdown("盘口渲染失败")
 
     def _tab_position_monitor(self) -> object:
-        data = fetch_position_monitor(self._miniqmt_broker)
+        # 持仓数据源并列支持（迁移台账 F2）：默认 miniqmt；source=qmt_bridge 时
+        # 懒构造 QmtFileBridgeBroker（env 分区），失败回退空数据不炸 Tab
+        broker = self._miniqmt_broker
+        if self._position_broker_source == "qmt_bridge":
+            if self._position_broker is None:
+                from zephyr.frontend.dashboard.components.position_monitor import (
+                    create_position_broker,
+                )
+
+                self._position_broker = create_position_broker(
+                    source="qmt_bridge",
+                    env=self._position_bridge_env,
+                )
+            broker = self._position_broker
+        data = fetch_position_monitor(broker)
         payload = render_position_monitor(data)
         return payload.get("_layout") or pn.pane.Markdown("持仓监控渲染失败")
 

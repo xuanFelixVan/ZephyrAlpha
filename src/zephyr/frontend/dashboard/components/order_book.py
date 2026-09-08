@@ -110,11 +110,16 @@ def _compute_pressure(ask_v: list[int], bid_v: list[int]) -> float:
 
 
 def fetch_order_book(miniqmt_provider: object, symbol: str) -> OrderBookData:
-    """从 D_DATA MiniQmtQuoteProvider 获取5档盘口（纯函数，无副作用）
+    """从行情数据源获取5档盘口（纯函数，无副作用）
 
     蓝图 §16.7.3:
-      - 输入: MiniQmtQuoteProvider 实例（依赖注入），标的代码
+      - 输入: 行情数据源实例（依赖注入，duck-typed——get_order_book(symbol) 返回
+        dict 即可），标的代码
       - 输出: OrderBookData（5档 ask/bid price/vol + 压力比）
+
+    注入源并列支持（迁移台账 F3，2026-09-09；用 create_quote_provider 构造）：
+      - MiniQmtQuoteProvider（默认）
+      - QmtFileBridgeQuoteProvider（quote.csv 尾读+新鲜度闸门，env 分区）
     """
     if miniqmt_provider is None:
         return OrderBookData(symbol=symbol)
@@ -222,8 +227,33 @@ def render_order_book(data: OrderBookData) -> dict[str, Any]:
     return payload
 
 
+def create_quote_provider(source: str = "miniqmt", env: str = "sim") -> object:
+    """行情数据源工厂（迁移台账 F3，2026-09-09：MiniQmtQuoteProvider 旁并列桥行情）。
+
+    Args:
+        source: "miniqmt"（默认）或 "qmt_bridge"（QmtFileBridgeQuoteProvider，
+            quote.csv 29 列尾读+10s 新鲜度闸门，freshness 失效返回空 dict=调用方
+            按缺价处理，绝不拿陈旧价下单——93 号备忘 §11.3）。
+        env: 桥环境分区 "sim" / "real"。
+
+    Returns:
+        注入 fetch_order_book 的 provider 对象（duck-typed get_order_book）。
+    """
+    if source == "qmt_bridge":
+        from zephyr.ex_core.adapters.qmt_file_bridge_quote import QmtFileBridgeQuoteProvider
+
+        return QmtFileBridgeQuoteProvider(env=env)
+    if source == "miniqmt":
+        from zephyr.governance.data_governance.miniqmt_provider import MiniQmtQuoteProvider
+
+        return MiniQmtQuoteProvider()
+    # 注：不插值 source 变量——MSG-EXPOSURE 门禁对敏感名 f-string 插值硬阻断（5.99.20）
+    raise ValueError("未知行情数据源（合法值: miniqmt/qmt_bridge，见 create_quote_provider 文档）")
+
+
 __all__ = [
     "OrderBookData",
+    "create_quote_provider",
     "fetch_order_book",
     "render_order_book",
 ]

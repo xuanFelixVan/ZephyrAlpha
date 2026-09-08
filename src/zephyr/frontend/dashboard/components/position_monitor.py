@@ -168,12 +168,17 @@ def fetch_position_monitor(
     cost_prices: dict[str, float] | None = None,
     symbol_names: dict[str, str] | None = None,
 ) -> PositionMonitorData:
-    """从 D_EX_CORE MiniQmtBroker 获取持仓（纯函数，无副作用）
+    """从持仓数据源获取持仓快照（纯函数，无副作用）
 
     蓝图 §16.7.4:
-      - 输入: MiniQmtBroker 实例（依赖注入）
+      - 输入: 持仓数据源实例（依赖注入，duck-typed——只要 get_positions() 返回
+        PositionSnapshot 形状即可，字段提取见 _extract_snapshot_fields）
       - 输出: PositionMonitorData（持仓+盈亏+T+1标记）
       - T+1标记: today_bought > 0 -> is_t_plus_1_locked=True
+
+    注入源并列支持（迁移台账 F2，2026-09-09；用 create_position_broker 构造）：
+      - MiniQmtBroker（默认，9/17 收盘后窗口前不切——迁移台账红线 2）
+      - QmtFileBridgeBroker（桥文件 PositionStatics.csv GBK row[7]/[9]/[15]/[18]，env 分区）
     """
     if miniqmt_broker is None:
         return PositionMonitorData()
@@ -337,9 +342,36 @@ def render_position_monitor(data: PositionMonitorData) -> dict[str, Any]:
     return payload
 
 
+def create_position_broker(source: str = "miniqmt", env: str = "sim") -> object:
+    """持仓数据源工厂（迁移台账 F2，2026-09-09：MiniQmtBroker 旁并列桥数据源）。
+
+    Args:
+        source: "miniqmt"（默认——miniQMT 9/18 退役、主源切换统一走 9/17 收盘后
+            窗口，此前默认值不切）或 "qmt_bridge"（QmtFileBridgeBroker，读
+            E:\\qmt_bridge[_sim]\\Stock\\PositionStatics.csv，GBK 列序
+            row[7]=证券代码 row[9]=当前拥股 row[15]=可用数量 row[18]=最新价）。
+        env: 桥环境分区 "sim"(E:\\qmt_bridge_sim) / "real"(E:\\qmt_bridge)。
+
+    Returns:
+        注入 fetch_position_monitor 的 broker 对象（duck-typed PositionSnapshot）。
+    """
+    if source == "qmt_bridge":
+        from zephyr.ex_core.adapters.qmt_file_bridge_broker import QmtFileBridgeBroker
+
+        return QmtFileBridgeBroker(env=env)
+    if source == "miniqmt":
+        from zephyr.ex_core.adapters.miniqmt_broker import MiniQmtBroker
+
+        return MiniQmtBroker()
+    # 注：不插值 source 变量——MSG-EXPOSURE 门禁对敏感名 f-string 插值硬阻断（5.99.20）；
+    # 非法值可由调用方入参日志定位
+    raise ValueError("未知持仓数据源（合法值: miniqmt/qmt_bridge，见 create_position_broker 文档）")
+
+
 __all__ = [
     "PositionItem",
     "PositionMonitorData",
+    "create_position_broker",
     "fetch_position_monitor",
     "render_position_monitor",
 ]

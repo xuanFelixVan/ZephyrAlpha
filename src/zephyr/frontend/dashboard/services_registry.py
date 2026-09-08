@@ -88,7 +88,11 @@ SERVICE_CATALOG: list[dict[str, Any]] = [
      "stop": {"how": "proc"}},
     {"id": "qmt", "group": "trading", "tier": "external", "name": "QMT 终端",
      "desc": "券商交易终端：行情+交易+文件桥（持仓/盘口数据的生产者）——无法自动登录，只能你手动启动",
-     "detect": {"type": "proc", "pattern": r"xtminiqmt|xiadan|qmt", "name_only": True}},
+     "detect": {"type": "proc", "pattern": r"xtminiqmt|xtitclient|xiadan|qmt", "name_only": True}},
+     # ↑ 迁移台账 F4（2026-09-09）：+xtitclient（大QMT 主程序 XtItClient.exe，93 备忘 §2.3 实地辨识）；
+     #   9/18 miniQMT 退役后 pattern 命中全靠它，缺失=服务总闸假死。⚠ 实测待复核：夜班时本机
+     #   仅有 XtMiniQmt 进程，大QMT 客户端未开——Owner 开真实终端后核对任务管理器进程名
+     #   是否为 XtItClient（台账 §8.2 前置动作），不符则更新本 pattern。
     {"id": "tdx", "group": "trading", "tier": "external", "name": "通达信客户端",
      "desc": "行情源之一（十源里的老牌选手）——手动启动，这里只看它的死活",
      "detect": {"type": "proc", "pattern": r"^tdx", "name_only": True}},
@@ -629,12 +633,22 @@ def get_services_status() -> dict[str, Any]:
                 st["beat_age"] = round(age)
                 child = _proc_stats(hb.get("child_pid"))
                 st.update(pid=hb.get("child_pid"), cpu=child["cpu"], mem=child["mem"])
+                # F7（迁移台账 2026-09-09）：biz 心跳 mode 字段上屏（xtdata/bridge）——
+                # 9/8 起 bridge 为唯一实时源，模式可见=过渡期一眼核验数据入口
+                mode = ""
+                if det.get("biz"):
+                    biz = _read_heartbeat(det["biz"])
+                    if isinstance(biz, dict):
+                        mode = str(biz.get("mode") or "")
+                mode_zh = {"bridge": "桥模式", "xtdata": "miniQMT推送"}.get(mode, mode)
+                if mode_zh:
+                    st["mode"] = mode_zh
                 # 任务禁用态（Owner 主动停止后）优先：灰灯"已停止"——不误报"重启中/延迟"
                 ti = _task_info(det["task"]) if det.get("task") else None
                 if ti and ti.get("status") == "Disabled":
                     st["light"] = "gray"; st["detail"] = "已停止（任务禁用，点启动即恢复）"
                 elif age < 120 and child["alive"]:
-                    st["light"] = "green"; st["detail"] = f"心跳 {round(age)}s 前"
+                    st["light"] = "green"; st["detail"] = f"心跳 {round(age)}s 前" + (f" · {mode_zh}" if mode_zh else "")
                 elif age < 120:
                     # 心跳新鲜但 child 不在 = 正在被拉起/刚被停止的瞬态（Owner 实证"延迟 29s"实为重启竞态）
                     st["light"] = "yellow"
