@@ -56,7 +56,7 @@
     if (f === 'position_flow') return { key: 'P', zh: '持仓流', order: 1 };
     if (f === 'exit_flow') return { key: 'X', zh: '离场流', order: 2 };
     if (f === 'portfolio_flow') return { key: 'F', zh: '组合流', order: 3 };
-    return { key: 'C', zh: '横切层(币圈预留)', order: 4 };
+    return { key: 'C', zh: '横切层·币圈', order: 4 };
   }
 
   /* 配色=施工状态三态（Owner 2026-09-08 裁定保留）：蓝=实锚（有模块）/ 橙虚线=🔴红节点（设计态）/ 绿=📄paper（实盘执行档）；
@@ -116,7 +116,7 @@
     /* 四层一列布局：流标签列(8~LABEL_W) + L1~L4 四列均分剩余宽度——同层永远同列，层级即列号；
      * 每次渲染实时量容器，窗口/抽屉变化由 ResizeObserver 触发重渲 */
     var W = canvas.clientWidth || 1400;
-    var LABEL_W = 128, GAP = 12;
+    var LABEL_W = 150, GAP = 12;
     var colW = Math.max(170, Math.floor((W - LABEL_W - 16 - GAP * 3) / 4));
     var COLX = [0, LABEL_W, LABEL_W + (colW + GAP), LABEL_W + (colW + GAP) * 2, LABEL_W + (colW + GAP) * 3];
 
