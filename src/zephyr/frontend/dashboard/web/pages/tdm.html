@@ -12,20 +12,27 @@
       <span style="margin-left:auto;font-size:11px" class="dim" id="tdm-meta">加载中…</span>
     </div>
 
-    <div style="display:flex;gap:12px;align-items:stretch">
-      <div class="card" style="flex:1;position:relative;overflow:auto;max-height:calc(100vh - 230px)">
-        <svg id="tdm-wire" style="position:absolute;left:0;top:0;width:100%;height:100%;pointer-events:none"></svg>
-        <div id="tdm-tree" style="position:relative;min-width:1500px;min-height:600px;padding:8px 4px"></div>
+    <!-- 满屏布局：页节=视口减去顶栏46+ticker32+main上下padding64，树区 flex:1 吃掉全部剩余（页面切 display:none，仅 .active 生效） -->
+    <div class="tdm-fill">
+      <div class="card tdm-canvas">
+        <svg id="tdm-wire"></svg>
+        <div id="tdm-tree"></div>
       </div>
-      <div class="card" id="tdm-drawer" style="width:400px;flex:none;overflow:auto;max-height:calc(100vh - 230px);display:none"></div>
+      <div class="card" id="tdm-drawer"></div>
     </div>
 </section>
 <style>
+  #p-tdm.active { display:flex; flex-direction:column; height:calc(100vh - 150px); }
+  #p-tdm .tdm-fill { flex:1; min-height:0; display:flex; gap:12px; align-items:stretch; }
+  #p-tdm .tdm-canvas { flex:1; position:relative; overflow:auto; }
+  #tdm-wire { position:absolute; left:0; top:0; pointer-events:none; }
+  #tdm-tree { position:relative; padding:8px 4px; }
+  #tdm-drawer { width:400px; flex:none; overflow:auto; display:none; }
   #tdm-tree .tn { position:absolute; background:#0d1117; border:1.5px solid #263042; border-radius:8px;
-    padding:6px 10px; cursor:pointer; user-select:none; transition:border-color .15s; max-width:300px; }
+    padding:6px 12px; cursor:pointer; user-select:none; transition:border-color .15s; box-sizing:border-box; }
   #tdm-tree .tn:hover { border-color:#3d8bff; }
-  #tdm-tree .tn .tn-n { font-size:12.5px; font-weight:600; color:var(--text); white-space:nowrap; }
-  #tdm-tree .tn .tn-g { font-size:10.5px; color:#7d8aa0; white-space:nowrap; max-width:290px; overflow:hidden; text-overflow:ellipsis; }
+  #tdm-tree .tn .tn-n { font-size:12.5px; font-weight:600; color:var(--text); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+  #tdm-tree .tn .tn-g { font-size:10.5px; color:#7d8aa0; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
   #tdm-tree .tn.production { background:#0f2740; border-color:#1e5a8f; }
   #tdm-tree .tn.design { background:#2a1c0e; border-style:dashed; border-color:#8a4a12; }
   #tdm-tree .tn.paper { background:#0e2612; border-color:#2e7d32; }
@@ -33,7 +40,7 @@
   #tdm-tree .tn.dimmed { opacity:.25; }
   #tdm-tree .tn.sel { outline:2px solid #3d8bff; }
   #tdm-tree .tg { position:absolute; background:#131a26; border:1px solid #263042; border-radius:8px;
-    padding:6px 12px; font-size:13px; font-weight:700; color:var(--text); user-select:none; white-space:nowrap; }
+    padding:6px 12px; font-size:13px; font-weight:700; color:var(--text); user-select:none; white-space:nowrap; z-index:2; }
   #tdm-tree .tg .cnt { color:#7d8aa0; font-weight:400; font-size:10.5px; margin-left:4px; }
   #tdm-wire path { fill:none; stroke:#2c3a52; stroke-width:1.4; }
   #tdm-drawer h3 { margin:0 0 8px; font-size:15px; }

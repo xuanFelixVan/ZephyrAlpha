@@ -57,7 +57,8 @@
     var d = TDM.data; if (!d) return;
     var host = document.getElementById('tdm-tree');
     var svg = document.getElementById('tdm-wire');
-    if (!host || !svg) return;
+    var canvas = document.querySelector('.tdm-canvas');
+    if (!host || !svg || !canvas) return;
     var byId = {};
     d.nodes.forEach(function (n) { byId[n.id] = n; });
     var kids = {};
@@ -74,12 +75,19 @@
     host.innerHTML = '';
     var wires = [];
     var y = 8;
+    /* 满屏布局（每次渲染实时量容器——窗口最大化/抽屉开合由 ResizeObserver 触发重渲）：
+     * 子节点列锚定右缘铺满全宽，枝干列按比例放中间，流标签最左 */
+    var W = canvas.clientWidth || 1400;
+    var CW = Math.min(Math.max(Math.floor(W * 0.30), 260), 620);   /* 卡片宽 30%（260~620 夹紧） */
+    var X3 = Math.max(W - CW - 14, Math.floor(W * 0.34));          /* 子节点列贴右缘 */
+    var X2 = Math.max(150, Math.floor(W * 0.12));                  /* 枝干列 */
+    var X1 = 8;                                                    /* 流标签 */
 
     function card(n, cx, cy) {
       var el = document.createElement('div');
       el.className = 'tn ' + cls(n) + (n.id === TDM.sel ? ' sel' : '');
-      el.style.left = cx + 'px'; el.style.top = cy + 'px';
-      var gist = n.note ? n.note.slice(0, 44) : (n.q || '').slice(0, 40);
+      el.style.left = cx + 'px'; el.style.top = cy + 'px'; el.style.width = CW + 'px';
+      var gist = n.note ? n.note.slice(0, 110) : (n.q || '').slice(0, 100);
       el.innerHTML = '<div class="tn-n">' + (n.autonomy === 'paper' ? '📄 ' : '') + (n.name || n.id) +
         '</div><div class="tn-g">' + gist + '</div>';
       el.title = n.id;
@@ -94,15 +102,15 @@
       var g = flows[fo];
       var fel = document.createElement('div');
       fel.className = 'tg';
-      fel.style.left = '10px'; fel.style.top = (y + 20) + 'px';
+      fel.style.left = X1 + 'px'; fel.style.top = (y + 20) + 'px';
       fel.innerHTML = g.info.zh + ' <span class="cnt">' + g.items.length + '</span>';
       host.appendChild(fel);
       var gy = y;
       g.items.forEach(function (n) {
-        var nel = card(n, 290, gy);
+        var nel = card(n, X2, gy);
         var chY = gy;
         (kids[n.id] || []).forEach(function (c) {
-          var cel = card(c, 580, chY);
+          var cel = card(c, X3, chY);
           wire(nel, cel);
           chY += cel.offsetHeight + 8;
         });
@@ -112,8 +120,11 @@
       y = gy + 30;
     });
 
+    host.style.height = (y + 6) + 'px';   /* 绝对定位子元素不撑高父容器——显式写内容高度，滚动区才正确 */
+
     requestAnimationFrame(function () {
-      var hh = Math.max(host.offsetHeight, 600);
+      var hh = Math.max(host.offsetHeight, canvas.clientHeight || 600);
+      svg.style.width = '100%';
       svg.style.height = hh + 'px';
       svg.setAttribute('width', host.offsetWidth);
       svg.setAttribute('height', hh);
@@ -126,6 +137,14 @@
       }).join('');
     });
   }
+
+  /* 窗口缩放/最大化、抽屉开合 → 容器尺寸变了就整树重排（防"渲染瞬间量宽后窗口变了布局僵死"） */
+  var roTimer = null;
+  var ro = new ResizeObserver(function () {
+    if (!TDM.data || !visible()) return;
+    if (roTimer) clearTimeout(roTimer);
+    roTimer = setTimeout(render, 120);
+  });
 
   function drawer() {
     var box = document.getElementById('tdm-drawer');
@@ -166,4 +185,6 @@
   setInterval(function () { if (visible()) load(); }, 30000);
   /* 頁面切到 tdm 时立即拉一次（go() 切 display，用事件捕获不到——轮询兜底+首次延迟） */
   setTimeout(load, 1200);
+  var tdmCanvas = document.querySelector('.tdm-canvas');
+  if (tdmCanvas) ro.observe(tdmCanvas);   /* 尺寸监听：最大化/还原/抽屉开合自动重排 */
 })();
