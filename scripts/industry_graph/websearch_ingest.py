@@ -448,6 +448,33 @@ def cmd_ingest(batch_path: str) -> int:
                     (uid, r["name"], country, r.get("status") or "unlisted",
                      r.get("listed_symbol"), sd, r.get("as_of")),
                 )
+            elif typ == "document":
+                # 源语料登记(SOP §4.9 内容层前置): THS 导出/其他新源登记 ig_document,
+                # relative_path UNIQUE 幂等; doc_type 自由词(ths_profile 等)
+                cur.execute(
+                    """INSERT INTO ig_document (doc_id,relative_path,bundle,file_name,ext,size_bytes,mtime,
+                       is_canonical,doc_type,title,year,org,market,excluded,parse_status,source_note,created_at,updated_at)
+                    VALUES (%s,%s,%s,%s,%s,%s,%s,true,%s,%s,%s,%s,%s,false,'raw',%s,now(),now())
+                    ON CONFLICT (relative_path) DO UPDATE SET updated_at=now(),
+                      title=COALESCE(EXCLUDED.title,ig_document.title),
+                      parse_status=EXCLUDED.parse_status""",
+                    (
+                        r["doc_id"], r["relative_path"], r.get("bundle") or r.get("title") or Path(r["relative_path"]).name,
+                        r.get("file_name") or Path(r["relative_path"]).name, r.get("ext") or "",
+                        r.get("size_bytes"), r.get("mtime"), r.get("doc_type") or "ths_profile",
+                        r.get("title"), r.get("year"), r.get("org"), r.get("market", "cn"),
+                        sd or src,
+                    ),
+                )
+            elif typ == "chunk":
+                # 内容层(SOP §4.9): 全量文本块入 ig_chunk; chunk_id 主键幂等;
+                # doc_id 外键 -> 同批次或存量须已有 document 记录
+                cur.execute(
+                    """INSERT INTO ig_chunk (chunk_id,doc_id,title,doc_type,year,chunk_text,created_at)
+                    VALUES (%s,%s,%s,%s,%s,%s,now())
+                    ON CONFLICT (chunk_id) DO UPDATE SET chunk_text=EXCLUDED.chunk_text""",
+                    (r["chunk_id"], r["doc_id"], r.get("title"), r.get("doc_type"), r.get("year"), r["chunk_text"]),
+                )
             else:
                 raise ValueError(f"未知 record type: {typ}")
         conn.commit()
@@ -498,3 +525,5 @@ def main() -> int:
 
 if __name__ == "__main__":
     sys.exit(main())
+
+
