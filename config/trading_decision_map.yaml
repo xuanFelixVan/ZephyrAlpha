@@ -20,6 +20,7 @@
 schema_version: '1.1'
 map_id: TDMAP-001
 name_zh: 交易决策地图
+effective_from: '2026-09-08'     # 知识层 PIT 生效日（D118/D122）：本版规则集的"开始存在"时点；规则回测预检比对轴——回测区间早于此=知识漂移须报告声明（D120 标注放行）。首次盘点统一=落盘日；此后每次 D 裁定批量落盘刷新
 markets: [cn_a, crypto]          # 同 schema 两实例（D2.5）；crypto V0 为骨架空壳
 
 nodes:

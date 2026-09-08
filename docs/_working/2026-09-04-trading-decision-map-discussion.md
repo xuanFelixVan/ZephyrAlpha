@@ -780,4 +780,20 @@ D43 补登 STR-VREV-024（021-023 号段已被 29 号族占用故顺延，code_s
 
 ---
 
+## 第四十三轮：知识层 PIT 时间治理（2026-09-08，D118-D122 全部按 AI 建议终裁）
+
+**议题**：Owner 提出——地图/注册表数据被回测使用，但没有"生效时间"字段，回测历史区间 = 用"未来的认知"测过去（lookahead）。拆解后确认两件事：①数据层 PIT 项目已有承载（data_asset_registry pit_policy/pit_available 等）；②真缺口 = **知识层 PIT**（地图规则集+裁定+登记条目都是"今天的认知"）。
+
+| # | 裁定点 | 裁定 |
+|---|--------|------|
+| D118 | 生效日字段加在哪 | **地图顶层一处** `effective_from`（节点级粒度过细维护不起；D 裁定日期已隐含时间线） |
+| D119 | 诊断时机 | **拼装回测预检**（每次必跑零遗忘），半年例行不做 |
+| D120 | 漂移三态处理 | **标注放行 + 报告强制声明**。规则回测（用今天的规则测历史行情鲁棒性）合法，不冒充实盘回放即可 |
+| D121 | 注册表层要不要同步加生效日 | **先只做地图层 + 数据资产层漂移扫描**（data_asset_registry datasets.updated_at），不动其余注册表 schema |
+| D122 | 首版 effective_from | **统一=落盘日 2026-09-08**（首次盘点无历史，合法且诚实） |
+
+**落盘物**：①YAML 顶层 `effective_from: '2026-09-08'`；②decision_map.py 新增 `pit_drift_report()` + CLI（`python src/zephyr/trading/decision_map.py pit-drift --start --end`，三态 clean/drift/blocked）；③回测协议 §1 增"知识层 PIT 强制声明"、§6 盲区清单补知识层 PIT 条目。后续每次 D 裁定批量落盘时刷新 effective_from。
+
+---
+
 *本文件为讨论备忘录，讨论收敛并裁定后，正式设计应迁入 architecture_model 或相应设计目录，本文件届时归档。*

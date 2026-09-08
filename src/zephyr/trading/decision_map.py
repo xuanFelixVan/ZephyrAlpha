@@ -66,6 +66,7 @@ from __future__ import annotations
 
 import re
 from dataclasses import dataclass
+from datetime import date
 from pathlib import Path
 from typing import Final
 
@@ -887,3 +888,99 @@ def validate_decision_map(
             add("error", "R12", plan.plan_id, "plan 标 verified 但无任何 sleeve 归因支撑")
 
     return (not any(i.level == "error" for i in issues), issues)
+
+
+# ---------------------------------------------------------------------------
+# 知识层 PIT 时间诊断（D119/D121，2026-09-08 Owner 终裁）：拼装回测预检项
+# 语义见 docs/_working/2026-09-07-tdm-backtest-protocol.md §1 强制声明。
+# ---------------------------------------------------------------------------
+_PIT_REPO = Path(__file__).resolve().parents[3]   # src/zephyr/trading/x.py → 仓库根
+_PIT_CATALOG = _PIT_REPO / "docs" / "01_policies_and_standards" / "_registry" / "catalogs"
+
+
+def pit_drift_report(map_path: Path, backtest_start: str, backtest_end: str, drift_scan_limit: int = 20) -> dict:
+    """知识层 PIT 漂移诊断：比对回测区间 vs 地图 effective_from 与注册表知识漂移。
+
+    三态（D120）：
+      clean   = 回测区间全在 effective_from 之后且无晚登记条目 → 报告仅声明规则集版本
+      drift   = 区间与生效日重叠，或区间内存在晚登记/晚修改的知识条目 → 放行但报告强制声明清单
+      blocked = 地图无 effective_from（无法判定）→ 须补字段后重跑
+    drift_items 现扫 data_asset_registry datasets.updated_at（知识漂移最大风险源）；
+    其余注册表无统一 updated_at，不扫描（D121：先只做地图层+数据资产层）。
+    """
+    raw = yaml.safe_load(Path(map_path).read_text(encoding="utf-8"))
+    effective = str(raw.get("effective_from") or "").strip()
+    if not effective:
+        return {"verdict": "blocked", "reason": "地图无 effective_from 字段（D118 未落盘）", "effective_from": None, "drift_items": []}
+    eff_d = date.fromisoformat(effective[:10])
+    s_d, e_d = date.fromisoformat(backtest_start[:10]), date.fromisoformat(backtest_end[:10])
+
+    drift_items: list[dict] = []
+    try:
+        reg = yaml.safe_load((_PIT_CATALOG / "data_asset_registry.yaml").read_text(encoding="utf-8"))
+        for x in reg.get("datasets", []):
+            upd = str(x.get("updated_at") or "")[:10]
+            if not upd:
+                continue
+            try:
+                u_d = date.fromisoformat(upd)
+            except ValueError:
+                continue
+            if u_d > s_d:   # 知识在回测起点之后才登记/修改 → 区间内用了"未来认知"
+                drift_items.append({"id": x.get("dataset_id"), "name_zh": x.get("name_zh") or x.get("entity_name"), "updated_at": upd})
+        drift_items.sort(key=lambda x: x["updated_at"])
+    except OSError as exc:
+        drift_items.append({"id": "REG-DATAFLOW-001", "name_zh": f"数据资产注册表读取失败: {exc}", "updated_at": ""})
+
+    if e_d < eff_d:
+        verdict = "drift"   # 回测完全在生效前=整段都是未来知识，放行但报告必须整段声明
+    elif s_d < eff_d or drift_items:
+        verdict = "drift"
+    else:
+        verdict = "clean"
+    return {
+        "verdict": verdict,
+        "effective_from": effective,
+        "backtest_range": [backtest_start[:10], backtest_end[:10]],
+        "drift_count": len(drift_items),
+        "drift_items": drift_items[:drift_scan_limit],
+        "declaration": (
+            f"本回测为规则回测（非实盘回放）：规则集=交易决策地图 TDMAP-001（effective_from {effective}）；"
+            f"知识漂移条目 {len(drift_items)} 项（详见清单），结论仅用于检验规则在历史行情的鲁棒性。"
+        ),
+    }
+
+
+# 代码 StrategyMeta 真源（8 实盘策略，pf_core/*.py）——与 tests/trading/test_decision_map.py 同源
+_CODE_STRATEGY_IDS: Final = frozenset(
+    {
+        "daban-sleeve", "default-equity", "eventdriven-sleeve", "multifactor-sleeve",
+        "topn-momentum", "intraday-surge-fall", "orderbook-imbalance", "vwap-reversion",
+    }
+)
+
+
+if __name__ == "__main__":
+    import argparse
+    import json
+
+    _ap = argparse.ArgumentParser(description="交易决策地图工具箱（validate / pit-drift）")
+    _ap.add_argument("command", choices=["validate", "pit-drift"])
+    _ap.add_argument("--map", default=str(_PIT_REPO / "config" / "trading_decision_map.yaml"))
+    _ap.add_argument("--start", help="回测区间起点 YYYY-MM-DD（pit-drift）")
+    _ap.add_argument("--end", help="回测区间终点 YYYY-MM-DD（pit-drift）")
+    _args = _ap.parse_args()
+    if _args.command == "validate":
+        _dm = load_decision_map(Path(_args.map))
+        _reg = yaml.safe_load((_PIT_CATALOG / "strategy_registry.yaml").read_text(encoding="utf-8"))
+        _known = frozenset(
+            x["strategy_id"] for x in _reg.get("strategies", []) if x.get("strategy_id")
+        ) | frozenset(a for x in _reg.get("strategies", []) for a in (x.get("aliases") or [])) | _CODE_STRATEGY_IDS
+        _ok, _issues = validate_decision_map(_dm, _PIT_CATALOG, _known)
+        print(json.dumps({"ok": _ok, "issue_count": len(_issues)}, ensure_ascii=False))
+        for _i in _issues:
+            print(f"[{_i.level}] {_i.code} {_i.node_id}: {_i.message}")
+        raise SystemExit(0 if _ok else 1)
+    if not (_args.start and _args.end):
+        raise SystemExit("pit-drift 需要 --start 与 --end（YYYY-MM-DD）")
+    print(json.dumps(pit_drift_report(Path(_args.map), _args.start, _args.end), ensure_ascii=False, indent=1))
