@@ -52,8 +52,9 @@ ttl: task_bound
 2. S7 后缀名 2,911：数据层剥离（治理脚本 UPDATE node.name 去尾部 "-tier"——改名不动 node_id 时安全；若同链同名将撞 S9 则合并处理）。前端显示剥离属 chainmap 会话职责不归本任务。
 3. S6 unspecified 686：380 条机械判定落地（预审方案 r1_tier_plan.md）；306 条出清单进开放问题留 Owner。
 4. S1 标题腔 61：逐条改规范名（"XX产业链"句式）或并入同义链（deprecated+merged_into）；与 90 锚点链同义者并入锚点（顺带解决 223 旧"XX行业"链撞车）。
-5. S8 孤岛 718：有据补边/补落位；无据→所在链整体登记开放问题。
-6. S5 version_year 382：按源文档年份补；无据开放问题。
+5. **R1 治理四方案执行**（2026-09-08 预审全合格，Owner 已批）：改名 46+并入 73+废弃 29（含 4 条撞名改判"并入新链"）+合并方案 A-D（145 组 CH-id 引用 100% 存在）——方案文件 .runtime/industry_graph/night_audit/r1_*.md，全部走 ingest 通道（chain status/merged_into 幂等追加），deprecated 不物理删。
+6. S8 孤岛 718：有据补边/补落位；无据→所在链整体登记开放问题。
+7. S5 version_year 382：按源文档年份补；无据开放问题。
 每类完成复跑引擎对账。
 
 ━━━ 五、Phase 4 P2 合规修复（~1h）━━━
@@ -77,9 +78,44 @@ S12 market 1 条机械修正。
 3. **全球主干链 5~8 条**（软时限 1.5h）：SOP §6 第4轮清单（全球石油/油气运输+霍尔木兹马六甲海峡节点/天然气与LNG/锂/半导体制造/铜），每链≥3环节+≥1海外真代码公司+≥1 A股接线或登记。
 4. **R5 供应链边**（时间允许）：P1 链 TOP5 公司年报客户/供应商+revenue_pct。
 
+**子代理派单包（每个子代理提示词必含，全文复制进提示词——SOP §8.1 自包含纪律）**：
+
+一、数据契约十项（写入前逐字核对）：
+1. source_doc 三段式 "查询词|URL|YYYY-MM-DD"，无来源不落库
+2. confidence：单一来源 0.5，两个独立来源互证 0.7，websearch 永不超 0.7
+3. cn symbol 6位.SH/.SZ/.BJ 必须反查 stock_basic 命中；global 后缀词表 .US/.KS/.TW/.T/.HK/.DE/.LN/.JP/.SM（如 NVDA.US/005930.KS/2330.TW）
+4. UNLISTED:UE-{12hex} 唯一合法未上市格式（先登记编码表再建边，公司名直写会被工具拒）
+5. tier 只许 上游/中游/下游/设备/材料（禁 unspecified）；category 申万 38 词表
+6. role 五值：龙头/核心/主要/参与/提及
+7. company_edge（websearch 来源）必带 PIT 三时间戳 valid_from/valid_to/as_of（年报关系 valid_from 用报告期末，未知 valid_to 填 null）+ 两端 symbol 非空；股权投资关系禁入边表
+8. node.name 纯环节功能名（如"光刻设备"，禁"-材料"后缀）；链名"XX产业链"句式（禁"一张图看懂"类标题腔）
+9. 反幻觉：每条落库带 evidence_text 原文摘录；搜不到原文依据就不写、登记缺口，禁凭记忆编造供应链关系
+10. 来源分级：一手（公告/年报/官网/政府统计）直接 0.5；二手（研报/主流财经媒体）两源互证升 0.7；三手（自媒体/百科）只作线索，必须追到一手/二手原文才准落库
+
+二、批次 JSON 示例（.runtime/industry_graph/night_audit/batches/roundN_主题_序号.json）：
+{"batch_id":"round2_存储芯片链_001","records":[
+ {"type":"chain","name":"存储芯片产业链","category":"半导体","version_year":2026,"market":"cn","source_doc":"查询词|https://...|2026-09-09"},
+ {"type":"node","chain_name":"存储芯片产业链","name":"HBM制造","tier":"中游","market":"cn","source_doc":"..."},
+ {"type":"node_company","chain_name":"存储芯片产业链","node_name":"HBM制造","symbol":"688825.SH","role":"龙头","confidence":0.5,"evidence_text":"原文摘录一句","market":"cn","source_doc":"..."},
+ {"type":"company_edge","from_symbol":"NVDA.US","to_symbol":"002463.SZ","year":2026,"product":"AI服务器","source":"websearch","from_name":"英伟达","to_name":"沪电股份","market":"global","valid_from":"2026-06-30","as_of":"2026-09-09","evidence_type":"news","evidence_text":"原文摘录","source_doc":"查询词|URL|2026-09-09"}
+]}
+被工具拒（exit 3）→按报错改批次文件重提，禁绕过工具手写 SQL。
+
+三、搜索词模板：
+- 链级："{链名} 产业链图谱 上中下游 2026" / "{链名} 龙头上市公司 A股 2026"
+- 公司级："{公司名} {产品或环节} 供应商 客户 2026"（英文公司加一轮 "{英文名} suppliers customers 2026"）
+- 年报："{公司} 前五大客户 供应商 年报"
+- 全球链："{链英文名} supply chain upstream downstream 2026"
+
+四、病菌寻路单菌落协议（SOP §7.6 七步）：[种子]（文本/公司/链名）→[提取]全部公司名+环节词→[访问]搜索→[落库]三件套（落位/供应边/新公司）→[扩散]新公司入 frontier（宽度优先）、已访入 visited 防环→[预算]单链≤30 查/深度≤3 跳/frontier≤50→[停止]预算尽 OR 连续 3 次访问零新增 OR frontier 尽。crawl_log 记 {访问数,新增公司数,新增边数,停止原因}；合流焊点（两菌落访到同一家公司）由总控收口时登记。
+
+五、纪律：子代理禁碰 progress.json（总控独写防并发写坏）；子代理失败→总控以新批次文件名重派，不阻塞其他并发批次。
+
 ━━━ 七、Phase 6 收敛循环（引擎驱动，直到时间盒）━━━
 按 SOP §12.2 循环：跑引擎→修（存量+扩产新增）→复跑（严格递减）→直到零违规或时间盒。
 振荡保护：违规数不降→停→开放问题。
+循环审查（SOP §8.4 同源）：修复+扩产一个循环=引擎→修→扩产→复跑，跑完不结束、以结果为新基线再开下一循环；**连续两个循环零违规（且零 degraded、零新增缺口）才算质量线真正收敛**。
+progress.json 记录：cycles_done / exit_reason（"two_zero_cycles" / "timebox" / "non_convergent"）/ violation_trace（每循环引擎总违规数序列）。
 时间盒到点：剩余按违规量降序报告，断点入 progress.json。
 事件传导闸首例推演（时间允许）：战略段结论 Owner 已给（美伊→霍尔木兹→中俄管道），图谱段从海峡节点/管道承建环节查 ≥3 家 A 股标的，跑不通=宽度缺口登记。
 
@@ -90,10 +126,11 @@ S12 market 1 条机械修正。
 4. 修复批次 source_doc 三段式："quality_fix|批次号|YYYY-MM-DD"。
 5. websearch 新写 confidence≤0.7+PIT 三时间戳+两端 symbol 非空；股权投资关系禁入边表。
 6. 引擎判定权最高：AI 不得自行宣布"修好了"——引擎复跑零违规才算；degraded 项须当轮修好环境。
-7. 单文件多编辑禁并行批（互相覆盖教训）；git 提交走 GitCommitGateway（--files 逗号分隔单参数，禁裸 commit/--no-verify）；新文件登记 creation_token+翻译真源（多会话热文件用 safe_write_text CAS）。
+7. 单文件多编辑禁并行批（互相覆盖教训）；git 提交走 GitCommitGateway（--files 逗号分隔单参数，禁裸 commit/--no-verify）；新文件登记 creation_token+翻译真源（多会话热文件用 safe_write_text CAS）；**commit≠push，push 需 Owner 明确指令**。
 8. 时间盒=指令时刻+10h（旧 progress 时间盒字段无效）。
 9. 拿不准的登记开放问题，不自裁。
 10. **PIT 反造假（S20）**：valid_from 不得早于证据年份前一年（year=2025 的边 valid_from<2024-01-01=违规）；回填历史必须有据（上市日回填须 list_date 可查），禁拍脑袋编历史。
+11. **边界禁区**：不碰交易/实盘模块（SOP §9.3）；不做前端 chainmap 接线（另案派单）；ig_chunk 语料 ETL 已完成不再涉及；每链/每锚点搜索≤5 次、连续 2 次无有效结果跳过登记（限速纪律）。
 
 ━━━ 九、收尾（必执行）━━━
 1. 引擎终跑+报告归档（.runtime/industry_graph/quality_reports/）。
@@ -109,4 +146,5 @@ S12 market 1 条机械修正。
    【数据增量】十表基线 vs 终态
    【施工件】DDL v4/脚本/测试清单+commit hash
    【开放问题】306 unspecified/44 超阈值甄别/孤岛链等待 Owner 拍板清单
+   【循环审查结论】各循环引擎违规数序列（violation_trace）+退出原因（two_zero_cycles/timebox/non_convergent）
    【断点与续跑】剩余违规+剩余扩产+下次从哪继续
