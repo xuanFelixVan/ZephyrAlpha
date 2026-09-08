@@ -4949,6 +4949,10 @@ capabilities:
   integrity_anchors:
   - evaluate_battle_map_report
 creation_tokens:
+- file: src/zephyr/data/implementations/qmt_bridge_provider.py
+  token: auto-qmt-bridge-provider-20260909
+  created_by: solo-20260909-qmt-night
+  capability: qmt_bridge_provider
 - file: docs/03_modules/_domain_frontend/acceptance/ACC-F-TDM-MAP.yaml
   token: auto-tdm-map-acc-20260908
   created_by: sid-tdm4pc-8ca6d350
@@ -11181,6 +11185,34 @@ creation_tokens:
   token: auto-chainmap-names-override-20260909
   created_by: sess-chainmap-a2-20260909
   capability: chainmap_l1_name_override
+- file: schemas/categories/backtest_node_verdict.py
+  token: auto-backtest-node-verdict-ddl-20260909
+  created_by: st-nodebt-night-20260909
+  capability: backtest_node_verdict_ddl
+- file: docs/01_policies_and_standards/_registry/catalogs/validation_method_registry.yaml
+  token: auto-validation-method-registry-20260909
+  created_by: st-nodebt-night-20260909
+  capability: validation_method_registry
+- file: docs/01_policies_and_standards/_registry/catalogs/decision_algo_registry.yaml
+  token: auto-decision-algo-registry-20260909
+  created_by: st-nodebt-night-20260909
+  capability: decision_algo_registry
+- file: docs/03_modules/_domain_trading/validation/blueprint.md
+  token: auto-validation-blueprint-20260909
+  created_by: st-nodebt-night-20260909
+  capability: tdm_validation_runner
+- file: src/zephyr/trading/validation/__init__.py
+  token: auto-validation-package-20260909
+  created_by: st-nodebt-night-20260909
+  capability: tdm_validation_runner
+- file: src/zephyr/trading/validation/runner.py
+  token: auto-validation-runner-20260909
+  created_by: st-nodebt-night-20260909
+  capability: tdm_validation_runner
+- file: src/zephyr/trading/validation/decay_watch.py
+  token: auto-validation-decay-watch-20260909
+  created_by: st-nodebt-night-20260909
+  capability: tdm_validation_runner
 di_seam_exemptions:
 - module_path: zephyr.trading.auto_runtime_core.AutoRuntimeCore
   reason: P0-5 LSG DI seam 标杆，已有 DI 但 AST 模式不匹配（动态注入）
@@ -13319,3 +13351,39 @@ di_seam_exemptions:
   token: auto-enable-write-audit-sacls-20260827
   created_by: AI-OWNER-WIRING
   capability: write_audit_sacl_enabler
+- file: scripts/industry_graph/migrate_tier_to_function_role.py
+  token: greatwall-tier-migration-20260909
+  created_by: greatwall-20260909-0020
+  capability: industry_graph_quality_engine
+- file: scripts/industry_graph/migrate_roles.py
+  token: greatwall-role-migration-20260909
+  created_by: greatwall-20260909-0020
+  capability: industry_graph_quality_engine
+- file: scripts/industry_graph/quality_fix_p0.py
+  token: greatwall-p0-fix-20260909
+  created_by: greatwall-20260909-0020
+  capability: industry_graph_quality_engine
+- file: scripts/industry_graph/execute_r1_chain_plans.py
+  token: greatwall-r1-exec-20260909
+  created_by: greatwall-20260909-0020
+  capability: industry_graph_quality_engine
+- file: scripts/industry_graph/fix_s6_s7_nodes.py
+  token: greatwall-s6s7-nodes-20260909
+  created_by: greatwall-20260909-0020
+  capability: industry_graph_quality_engine
+- file: scripts/industry_graph/quality_fix_p2.py
+  token: greatwall-p2-fix-20260909
+  created_by: greatwall-20260909-0020
+  capability: industry_graph_quality_engine
+- file: scripts/industry_graph/ths_equity_import.py
+  token: greatwall-equity-import-20260909
+  created_by: greatwall-20260909-0020
+  capability: industry_graph_ths_equity
+- file: scripts/industry_graph/tier_migration_map.yaml
+  token: greatwall-tier-map-20260909
+  created_by: greatwall-20260909-0020
+  capability: industry_graph_quality_engine
+- file: scripts/industry_graph/role_migration.yaml
+  token: greatwall-role-map-20260909
+  created_by: greatwall-20260909-0020
+  capability: industry_graph_quality_engine

@@ -199,7 +199,7 @@ def acquire_single_instance_lock(lock_path: str | Path | None = None):
             fh.seek(0)
             msvcrt.locking(fh.fileno(), msvcrt.LK_NBLCK, 1)
         else:
-            import fcntl
+            import fcntl  # noqa: import-integrity  平台条件分支：fcntl 仅 Unix 存在，Windows 上 find_spec 不可解析属预期
 
             fcntl.flock(fh.fileno(), fcntl.LOCK_EX | fcntl.LOCK_NB)
     except OSError:
@@ -352,17 +352,20 @@ def _filter_schedule_tasks(
         extra = t.get("extra") or {}
         if extra.get("disabled"):
             continue
-        # 拼写防护：miniqmt 任务在非守卫时段必须有 trading_day_only
+        # 拼写防护：miniqmt / qmt_bridge 任务在非守卫时段必须有 trading_day_only
+        # （迁移台账 §3 2026-09-09：桥任务同语义——沙箱策略非交易时段线程冻结，
+        #   桥文件不再增长，夜间跑只会拿到陈旧数据）
         source = t.get("source", "")
         if (
-            source == "miniqmt"
+            source in ("miniqmt", "qmt_bridge")
             and schedule_name not in TRADING_DAY_GUARDED_SCHEDULES
             and extra.get("trading_day_only") is not True
         ):
             log.warning(
-                "任务 %s（source=miniqmt, schedule=%s）缺少 trading_day_only: true，"
-                "非交易日将触发 QMT error 10061。请检查字段拼写是否正确。",
+                "任务 %s（source=%s, schedule=%s）缺少 trading_day_only: true，"
+                "非交易日将触发 QMT error 10061 / 桥文件陈旧。请检查字段拼写是否正确。",
                 t.get("task_id"),
+                source,
                 schedule_name,
             )
         if extra.get("trading_day_only") and not is_trading:
@@ -1097,11 +1100,15 @@ class IntegratorScheduler:
         source_to_meta = {
             "akshare": ("zephyr.data.implementations.akshare_provider", "AkshareIngestProvider"),
             "miniqmt": ("zephyr.data.implementations.miniqmt_provider", "MiniQmtIngestProvider"),
+            # 迁移台账 §3（2026-09-09）：qmt_bridge 桥源并列注册（只增桥不删 miniqmt，
+            # 主源切换走 9/17 收盘后窗口）
+            "qmt_bridge": ("zephyr.data.implementations.qmt_bridge_provider", "QmtBridgeIngestProvider"),
         }
         # provider 文件路径映射（Phase 4.3 路由-meta 一致性校验用）
         source_to_path = {
             "akshare": REPO_ROOT / "src" / "zephyr" / "data" / "implementations" / "akshare_provider.py",
             "miniqmt": REPO_ROOT / "src" / "zephyr" / "data" / "implementations" / "miniqmt_provider.py",
+            "qmt_bridge": REPO_ROOT / "src" / "zephyr" / "data" / "implementations" / "qmt_bridge_provider.py",
         }
         import importlib
 
@@ -1181,6 +1188,12 @@ class IntegratorScheduler:
                 from zephyr.data.implementations.miniqmt_provider import MiniQmtIngestProvider
 
                 return MiniQmtIngestProvider()
+            elif source == "qmt_bridge":
+                # 迁移台账 §3（2026-09-09）：QMT 文件桥 Provider（大QMT 沙箱，miniQMT 9/18 退役替代）。
+                # 只增桥不删 miniqmt——主源切换属 9/17 收盘后窗口，当前无任务挂本源
+                from zephyr.data.implementations.qmt_bridge_provider import QmtBridgeIngestProvider
+
+                return QmtBridgeIngestProvider()
             elif source == "akshare":
                 from zephyr.data.implementations.akshare_provider import AkshareIngestProvider
 

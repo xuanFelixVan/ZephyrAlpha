@@ -386,7 +386,7 @@ def _build_parser() -> argparse.ArgumentParser:
 
     # list [--source]
     p_list = sub.add_parser("list", help="列出任务（支持源过滤）")
-    p_list.add_argument("--source", default=None, help="按数据源过滤（如 miniqmt/akshare）")
+    p_list.add_argument("--source", default=None, help="按数据源过滤（如 miniqmt/qmt_bridge/akshare）")
 
     # run <task_id>
     p_run = sub.add_parser("run", help="手动触发单任务")
@@ -408,7 +408,7 @@ def _build_parser() -> argparse.ArgumentParser:
 
     # speed-test [--source] [--capability]
     p_speed = sub.add_parser("speed-test", help="数据源测速（小样本测速，选型主备源）")
-    p_speed.add_argument("--source", default=None, help="只测某数据源（如 miniqmt/akshare/baostock）")
+    p_speed.add_argument("--source", default=None, help="只测某数据源（如 miniqmt/qmt_bridge/akshare/baostock）")
     p_speed.add_argument("--capability", default=None, help="只测某能力（如 kline_daily/daily_valuation）")
 
     return parser

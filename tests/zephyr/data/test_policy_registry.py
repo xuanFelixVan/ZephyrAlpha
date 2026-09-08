@@ -104,8 +104,20 @@ class TestPolicyRegistry:
 
 
 class TestDefaultPoliciesCompleteness:
-    """确保 DEFAULT_POLICIES 覆盖蓝图 §5.2 的 7 个数据源。"""
+    """确保 DEFAULT_POLICIES 覆盖蓝图 §5.2 的 7 个数据源。
+
+    2026-09-09 迁移台账 §3：+qmt_bridge（miniQMT 9/18 退役替代源，只增桥不删 miniqmt）。
+    """
 
     def test_all_7_sources_present(self):
-        expected = {"miniqmt", "akshare", "baostock", "tushare", "tickflow", "tdx", "rss"}
+        expected = {
+            "miniqmt",
+            "akshare",
+            "baostock",
+            "tushare",
+            "tickflow",
+            "tdx",
+            "rss",
+            "qmt_bridge",
+        }
         assert expected == set(DEFAULT_POLICIES.keys())

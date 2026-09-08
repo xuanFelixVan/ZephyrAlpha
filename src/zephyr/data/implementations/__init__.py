@@ -43,9 +43,11 @@ from zephyr.data.implementations.onchain_provider import OnchainProvider
 
 from .akshare_provider import AkshareIngestProvider
 from .miniqmt_provider import MiniQmtIngestProvider
+from .qmt_bridge_provider import QmtBridgeIngestProvider
 
 __all__: Final = [
     "MiniQmtIngestProvider",
+    "QmtBridgeIngestProvider",
     "AkshareIngestProvider",
     "OnchainProvider",
     "CryptoEventCalendarProvider",

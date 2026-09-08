@@ -224,6 +224,17 @@ def _probe_miniqmt(provider) -> list:
     return xtdata.get_stock_list_in_sector("沪深A股")
 
 
+def _probe_qmt_bridge(provider) -> list:
+    """qmt_bridge 探针：桥文件族活性 + HTTP 18901 探活（93 备忘 §12/§14，迁移台账 §3）。
+
+    选型依据：桥源无 SDK 可调，探活语义=桥文件族（ticks3.csv/quote.csv）存在性
+    +mtime 新鲜度（provider.probe() 内含交易时段判定：非交易时段沙箱冻结不判死）
+    +HTTP 18901 /health 存活加分。alive 时返回单元素明细列表（data_count=1=healthy）。
+    """
+    verdict = provider.probe()
+    return [verdict] if verdict.get("alive") else []
+
+
 def _probe_tdx(provider):
     """tdx 探针：取浦发银行(600000)最近1根日线，验证服务器支持K线查询。
 
@@ -360,6 +371,16 @@ _HEALTH_CHECKS: list[dict[str, Any]] = [
         "class": "MiniQmtIngestProvider",
         "test": _probe_miniqmt,
         "test_desc": "xtdata.get_stock_list_in_sector 沪深A股（需 XtMiniQmt.exe）",
+        "env_required": [],
+    },
+    {
+        # 迁移台账 §3（2026-09-09）：qmt_bridge 桥源并列登记（只增桥不删 miniqmt，
+        # 9/18 退役后 miniqmt 条目自然转 test_fail，本条目接管绿灯）
+        "source": "qmt_bridge",
+        "module": "zephyr.data.implementations.qmt_bridge_provider",
+        "class": "QmtBridgeIngestProvider",
+        "test": _probe_qmt_bridge,
+        "test_desc": "桥文件族 mtime 新鲜度 + HTTP 18901 /health（需大QMT 沙箱策略常驻）",
         "env_required": [],
     },
     {

@@ -146,6 +146,19 @@ DEFAULT_POLICIES: Final[dict[str, dict]] = {
         "relogin_on_auth_error": True,
         "extra": {"requires_process": "XtMiniQmt.exe"},
     },
+    # 迁移台账 §3（2026-09-09）：qmt_bridge 桥源并列登记——纯本机文件/HTTP 读，
+    # 无限流无认证；文件读重试意义有限（沙箱停摆靠 health_check 告警而非重试）
+    "qmt_bridge": {
+        "rpm": 0,
+        "concurrency": 1,
+        "max_retries": 1,
+        "backoff": "fixed",
+        "initial_wait_sec": 0.5,
+        "retry_on": ["TimeoutError"],
+        "session_ttl_sec": 0,
+        "relogin_on_auth_error": False,
+        "extra": {"requires_process": "XtItClient.exe"},
+    },
     "akshare": {
         "rpm": 60,
         "concurrency": 4,

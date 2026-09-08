@@ -47295,6 +47295,13 @@ entries:
   desc_zh: ""
   desc_en: ""
   plain_zh: "读同花顺导出的三份GBK表格,生成THS90行业到申万词表的多数票映射,并把全A股5215只股票落到行业锚点链、子公司进编码表、简介进内容层,全程走统一写库通道"
+- module_path: src/zephyr/data/implementations/qmt_bridge_provider.py
+  domain_id: D_DATA
+  name_zh: "QMT文件桥数据源Provider"
+  name_en: ""
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "从大QMT沙箱的桥文件（ticks3.csv/quote.csv）探活和读数据的插件，miniQMT退役后替代用；目前只登记了能力，K线等通道等方案裁定后点亮"
 
 battle_map_steps:
 - step_id: BM-BUY-05

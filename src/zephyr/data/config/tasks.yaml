@@ -1580,6 +1580,8 @@ tasks:
     description: "板块成分股列表全量刷新（miniQMT get_stock_list_in_sector，默认沪深A股）"
     trading_day_only: true    # miniqmt 源，非交易日 QMT 服务器拒绝连接(error 10061)，月初遇周末跳过
 
+# 退役冻结 2026-09-18：本任务 source=miniqmt（get_l2_quote），miniQMT 通道退役后无对应桥通道（桥无 L2）；
+# 主源切换与其他 L2 族任务一样属 9/17 收盘后窗口统一处理，现阶段保持冻结disabled 不动
 - task_id: l2_tick_snapshot
   table: c1_market.l2_tick
   source: miniqmt
@@ -1589,12 +1591,9 @@ tasks:
   dependencies: []
   capability: l2_tick
   symbols:         # 需指定标的（L2数据量大）
-  fallback_sources:
-  - source: miniqmt
-    capability: tick_snapshot
-    description: "L2权限缺失时降级到get_full_tick五档快照（写入tick_data表）"
+  fallback_sources: []   # 09-09 退役冻结清理：原 fallback 指向自身 source=miniqmt（循环自引用，无 failover 语义）；L2 权限开通后的降级路径随台账 §2.2-B 方案裁定重建
   extra:
-    description: "Level-2逐笔行情增量（miniQMT get_l2_quote，需L2行情权限，无权限时自动降级到五档快照）"
+    description: "Level-2逐笔行情增量（miniQMT get_l2_quote，需L2行情权限；原 fallback 五档快照降级已于 09-09 清理——循环自引用）"
     requires_permission: L2
     disabled: true    # #ARCH-DATA-014: 需付费 L2 行情权限，裁定保留+fallback_sources 降级到 tick_data（用户开通 L2 后可启用）
 
@@ -1711,6 +1710,8 @@ tasks:
   extra:
     description: "AKShare回购数据全量刷新（ak.stock_repurchase_em，含计划/已回购数量金额）"
 
+# 退役冻结 2026-09-18：miniQMT 独有源，表从未产出，待 Owner 裁定替代源后重建
+#（akshare margin_trading_incremental 已同域覆盖；source 值不切换——主源切换统一走 9/17 收盘后窗口）
 - task_id: margin_trading_qmt_placeholder
   table: c1_market.margin_trading_qmt
   source: miniqmt
@@ -1723,6 +1724,8 @@ tasks:
     description: "融资融券-QMT占位（QMT无接口，已由AKShare margin_trading_incremental覆盖）"
     disabled: true
 
+# 退役冻结 2026-09-18：miniQMT 独有源，表从未产出，待 Owner 裁定替代源后重建
+#（akshare dragon_tiger_incremental 已同域覆盖；source 值不切换——主源切换统一走 9/17 收盘后窗口）
 - task_id: dragon_tiger_qmt_placeholder
   table: c1_market.dragon_tiger_qmt
   source: miniqmt
@@ -1735,6 +1738,8 @@ tasks:
     description: "龙虎榜-QMT占位（QMT无接口，已由AKShare dragon_tiger_incremental覆盖）"
     disabled: true
 
+# 退役冻结 2026-09-18：miniQMT 独有源，表从未产出，待 Owner 裁定替代源后重建
+#（akshare block_trade_incremental 已同域覆盖；source 值不切换——主源切换统一走 9/17 收盘后窗口）
 - task_id: block_trade_qmt_placeholder
   table: c1_market.block_trade_qmt
   source: miniqmt

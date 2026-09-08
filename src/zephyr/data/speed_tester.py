@@ -107,6 +107,7 @@ import datetime
 import logging
 import time
 from dataclasses import dataclass
+from pathlib import Path
 from typing import Optional
 
 from zephyr.data.provider_base import FetchPayload, FetchResult
@@ -388,6 +389,12 @@ def _make_provider(source: str):
         from zephyr.data.implementations.miniqmt_provider import MiniQmtIngestProvider
 
         return MiniQmtIngestProvider()
+    elif source == "qmt_bridge":
+        # 迁移台账 §3（2026-09-09）：桥源测速走 _speed_test_bridge_channel
+        # 专用口径（桥文件尾读+HTTP RTT），不经 TEST_MATRIX 的 SDK 拉取路径
+        from zephyr.data.implementations.qmt_bridge_provider import QmtBridgeIngestProvider
+
+        return QmtBridgeIngestProvider()
     elif source == "akshare":
         from zephyr.data.implementations.akshare_provider import AkshareIngestProvider
 
@@ -566,6 +573,81 @@ def speed_test_one(cfg: SpeedTestConfig) -> dict:
     return result
 
 
+# ============== 桥通道专用测速（迁移台账 §3，2026-09-09） ==============
+
+
+def _tail_read_ms(path_str: str, window: int = 65536) -> tuple[float, bool]:
+    """桥文件尾读测速：读末尾 window 字节，返回 (毫秒, 是否读到数据)。
+
+    与 BridgeTickSource/QmtFileBridgeQuoteProvider 的尾读语义同构（O(1) 窗口读），
+    延迟即实时消费路径的读开销代理指标。
+    """
+    p = Path(path_str)
+    if not p.exists():
+        return 0.0, False
+    t0 = time.perf_counter()
+    with open(p, "rb") as f:
+        size = f.seek(0, 2)
+        f.seek(max(0, size - window))
+        chunk = f.read(window)
+    return round((time.perf_counter() - t0) * 1000, 2), len(chunk) > 0
+
+
+def _speed_test_bridge_channel() -> dict:
+    """qmt_bridge 桥通道测速（miniqmt 退役替代源，93 备忘 §12/§14）。
+
+    桥源无 SDK 拉取语义（实时 tick 在 tick_subscriber 桥模式进程内入库），
+    测速口径为三探针：
+      - ticks3.csv 尾读延迟（tick 桥读路径，93 §14）
+      - quote.csv 尾读延迟（行情桥读路径，93 §11）
+      - HTTP 18901 /health RTT（执行通道主路径，93 §12，实测基线 32ms）
+    结果沿用 fetch_perf 同 schema（capability=bridge_probe），notes 记三探针明细。
+    """
+    result = {
+        "source": "qmt_bridge",
+        "capability": "bridge_probe",
+        "target_table": "n/a_bridge_files",
+        "symbols_count": 0,
+        "rows_fetched": 0,
+        "elapsed_sec": 0.0,
+        "rows_per_sec": 0.0,
+        "symbols_per_sec": 0.0,
+        "error_count": 0,
+        "error_rate": 0.0,
+        "rate_limited": 0,
+        "api_status": "ok",
+        "known_issues": "",
+        "notes": "",
+        "error_detail": "",
+    }
+    from zephyr.data.implementations.qmt_bridge_provider import QmtBridgeIngestProvider
+
+    env = QmtBridgeIngestProvider._env()
+    tick_path = QmtBridgeIngestProvider._TICK_FILE.get(env, QmtBridgeIngestProvider._TICK_FILE["sim"])
+    quote_path = QmtBridgeIngestProvider._QUOTE_FILE.get(env, QmtBridgeIngestProvider._QUOTE_FILE["sim"])
+
+    t0 = time.perf_counter()
+    tick_ms, tick_ok = _tail_read_ms(tick_path)
+    quote_ms, quote_ok = _tail_read_ms(quote_path)
+    http = QmtBridgeIngestProvider._probe_http()
+    result["elapsed_sec"] = round(time.perf_counter() - t0, 3)
+
+    notes = (
+        f"env={env} tick尾读={tick_ms}ms({'有' if tick_ok else '无文件'}) "
+        f"quote尾读={quote_ms}ms({'有' if quote_ok else '无文件'}) "
+        f"HTTP={http.get('ms')}ms(alive={http.get('alive')})"
+    )
+    result["notes"] = notes
+    if not (tick_ok or quote_ok):
+        result["api_status"] = "broken"
+        result["error_count"] = 1
+        result["error_rate"] = 1.0
+        result["known_issues"] = f"桥文件族均不存在（{tick_path} / {quote_path}）"
+        result["error_detail"] = result["known_issues"]
+    print(f"  桥通道: {notes}")
+    return result
+
+
 # ============== 批量测速 ==============
 def run_speed_tests(
     source_filter: str | None = None,
@@ -588,6 +670,16 @@ def run_speed_tests(
 
     print(f"共 {len(tests)} 项测速任务")
     results = []
+    # 桥通道专用测速（迁移台账 §3 2026-09-09）：--source qmt_bridge 或全量跑时附带；
+    # cap_filter 场景不掺入（桥通道无 capability 细分）
+    if cap_filter is None and source_filter in (None, "qmt_bridge"):
+        print(f"\n{'=' * 60}")
+        print("  测速: qmt_bridge / bridge_probe（桥文件尾读+HTTP RTT）")
+        print(f"{'=' * 60}")
+        try:
+            results.append(_speed_test_bridge_channel())
+        except Exception as e:  # noqa: BLE001 — 桥探针故障不阻断常规测速
+            print(f"  [FATAL] 桥通道测速失败: {e}")
     for entry in tests:
         # 兼容 5 元素（旧）和 7 元素（新）元组
         source, capability, table, extra, sym_override = entry[:5]
