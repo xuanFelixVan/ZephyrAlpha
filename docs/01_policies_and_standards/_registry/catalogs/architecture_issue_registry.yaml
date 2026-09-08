@@ -21424,8 +21424,12 @@ entries:
     权限）；④ 对账通过：周度分布 07-06 起主板 ST 仅 0.10（0.05 清零）、wrong_pct=0、
     2026-09-04 全部 141 ST 行 limit_up/down Decimal 精确匹配（注意：SQL round 为银行家
     舍入，对账须用 HALF_UP 语义/Decimal，否则出伪差）。
-    遗留说明：stk_limit 表数据覆盖自 2026-01-05 起（2026-09-08 回补 2026-01-01 窗口后；
-    更早历史无行，撮合走三级解析链二级规则兜底——matching_engine 闭环记录见重评条件②）。
+    数据覆盖说明（2026-09-09 长城任务最终更新）：stk_limit 表覆盖自 2015-01-05 起
+    （FINAL 9143205 行，2015~2026 逐年 240+ 交易日全覆盖，ST 行 2015 年起 4.4-4.6 万/年）
+    ——Owner 长城任务完成 ①st_stock_list isST 历史回补（baostock 日频 2015-01-01~
+    2025-12-31，300234 行，逐股逐日 ST 状态）②stk_limit 全历史回补（2015-01-05 起，
+    与日线/因子回测起点对齐）；2015-01-05 前窗口撮合走三级解析链二级规则兜底
+    （matching_engine 闭环记录见重评条件②）。
     重评条件：① 交易所再修涨跌幅规则 → 追加日期切片即可（模式已固化于 _limit_pct_of）；
     ② matching_engine 无 ST 区分缺口已于 2026-09-08 闭环（回测撮合涨跌停三级解析链，
     禁止再造第四份口径）：一级=stk_limit 表 PIT 行（trade_date=当日 FINAL，limit_up/
@@ -21500,6 +21504,9 @@ entries:
     - 'tests/backtest/test_stk_limit_matching.py（13 用例：07-03/07-06 边界/创业板切片/PIT 行/降级/端到端）'
     - 'tests/backtest/test_cost_friction_night001.py + tests/backtest/test_toy_reconciliation_night001.py（合成引擎级测试关 provider 隔离真实 PIT 行）'
     - 'c1_market.stk_limit（2026-09-08 回补 2026-01-05 起 900781 行重算落库+OPTIMIZE FINAL 9 分区）'
+    - 'c1_market.st_stock_list（2026-09-09 长城任务：isST 历史回补 2015-01-01~2025-12-31 日频 300234 行，baostock）'
+    - 'c1_market.stk_limit（2026-09-09 长城任务全历史回补：2015-01-05 起 FINAL 9143205 行，与 ST/日线/因子回测起点对齐）'
+    - 'src/zephyr/data/implementations/miniqmt_provider.py（2026-09-09 长城任务：kline/adj_factor 源板块 沪深A股→沪深京A股，北交所断供根因修复——提交挂起见遗留 L1）'
     - 'src/zephyr/data/implementations/miniqmt_provider.py（竞价簿涨跌停单一真源切片计算+_auction_limit_prices helper，废 stockStatus 位推断）'
     - 'src/zephyr/signal_ashare/tiered_screening_filter.py（limit_pct_for 时变口径声明，零行为变更）'
     - 'src/zephyr/ex_core/adapters/miniqmt_broker.py（_BOARD_PRICE_LIMIT_PCT/_check_price_limit 口径边界声明，零行为变更）'
