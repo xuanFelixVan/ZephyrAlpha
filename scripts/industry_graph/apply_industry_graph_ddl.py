@@ -11,20 +11,21 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] PG不可达->打印错误+退出码2; 执行失败->抛出非零退出
 # [TTL] permanent
-"""产业链图谱（industry_graph）十表 DDL 部署脚本（PostgreSQL depgraph 图谱域）。
+"""产业链图谱（industry_graph）十三表 DDL 部署脚本（PostgreSQL depgraph 图谱域）。
 
-表结构（2026-08-27 与用户定稿；v2 2026-09-07 按 SOP §4.8/§4.9 增补；v3 2026-09-08 按 SOP §4.10 增补）：
+表结构（2026-08-27 与用户定稿；v2 2026-09-07 按 SOP §4.8/§4.9 增补；v3 2026-09-08 按 SOP §4.10 增补；v4 2026-09-09 深度体系+分域增补）：
     ig_chain         产业链主表
-    ig_node          环节节点（上游/中游/下游/设备/材料）
+    ig_node          环节节点（v4: +child_chain_id/drill_status 层级下钻）
     ig_edge          环节间结构边（edge_type='structure'|'supply'，supply 公司级后置）
-    ig_node_company  环节↔股票映射（龙头/主要/概念）
+    ig_node_company  环节↔股票映射（v4: +PIT 三时间戳+pit_strength）
     ig_document      源文档登记表（P0 盘点使用，兼作语料库入口）
-    ig_company_edge  公司间供应链边（v2: PIT 三时间戳 valid_from/valid_to/as_of
-                     + 边元数据 evidence_type/revenue_pct/subsidiary/relevance/transmission_type）
-    ig_company_metric 公司年度指标
+    ig_company_edge  公司间供应链边（v2: PIT 三时间戳+边元数据 v2；v4: +capacity/exclusivity 供给侧）
+    ig_company_metric 公司年度指标（供应链集中度指标层，v4: +PIT 化）
     ig_chunk         内容层（E盘语料 76,112 块全量入库，内容颗粒度零丢失）
     ig_fact          事实层（五元组事实，回链证据块，量化可 SQL 检索最小单元）
     ig_unlisted_entity 未上市实体编码表（v3: UE- 永久编码+上市替换，SOP §4.10）
+    ig_equity_edge   股权穿透边表（v4: 业务/资本分域——被投/持股/实控，与 ig_company_edge 分开）
+    ig_product_revenue 产品营收归因表（v4: 图谱侧财务唯一表，通用财务主数据进 c1_market 防双真源）
 
 市场分片规范：各表均带 market 字段（ig_chunk/ig_unlisted_entity 除外——语料/实体无市场语义）。
 
@@ -242,6 +243,62 @@ DDL_STATEMENTS = [
     "CREATE INDEX IF NOT EXISTS idx_ig_unlisted_name ON ig_unlisted_entity (name)",
     "CREATE INDEX IF NOT EXISTS idx_ig_unlisted_status ON ig_unlisted_entity (status)",
     "CREATE INDEX IF NOT EXISTS idx_ig_unlisted_symbol ON ig_unlisted_entity (listed_symbol)",
+    # ========== v4 增量（graph_quality_standard.md §6 深度体系，2026-09-09 Owner 定稿） ==========
+    # --- ig_node 层级下钻列（子链挂接+砖标记） ---
+    "ALTER TABLE ig_node ADD COLUMN IF NOT EXISTS child_chain_id TEXT",
+    "ALTER TABLE ig_node ADD COLUMN IF NOT EXISTS drill_status TEXT",
+    "CREATE INDEX IF NOT EXISTS idx_ig_node_child ON ig_node (child_chain_id)",
+    # --- ig_node_company PIT 列（S13/S4 引擎转正前提,graph_quality_standard.md §4） ---
+    "ALTER TABLE ig_node_company ADD COLUMN IF NOT EXISTS valid_from DATE",
+    "ALTER TABLE ig_node_company ADD COLUMN IF NOT EXISTS valid_to DATE",
+    "ALTER TABLE ig_node_company ADD COLUMN IF NOT EXISTS pit_strength TEXT",
+    "CREATE INDEX IF NOT EXISTS idx_ig_node_company_valid_to ON ig_node_company (valid_to)",
+    # --- ig_company_edge 供给侧两列（Owner 2026-09-09 裁定: capacity 产能+exclusivity 独供双供） ---
+    "ALTER TABLE ig_company_edge ADD COLUMN IF NOT EXISTS capacity TEXT",
+    "ALTER TABLE ig_company_edge ADD COLUMN IF NOT EXISTS exclusivity TEXT",
+    # --- ig_company_metric PIT 化（Owner 2026-09-09 裁定: 指标层保留不融不删,加 PIT 防回测切片前视） ---
+    "ALTER TABLE ig_company_metric ADD COLUMN IF NOT EXISTS as_of DATE",
+    "ALTER TABLE ig_company_metric ADD COLUMN IF NOT EXISTS valid_from DATE",
+    "ALTER TABLE ig_company_metric ADD COLUMN IF NOT EXISTS valid_to DATE",
+    # --- ig_equity_edge 股权穿透表（Owner 2026-09-09 三裁定: 同库独立表,业务/资本分域） ---
+    """
+    CREATE TABLE IF NOT EXISTS ig_equity_edge (
+        edge_id     BIGSERIAL PRIMARY KEY,
+        holder      TEXT NOT NULL,
+        held        TEXT NOT NULL,
+        stake_pct   NUMERIC,
+        layer       SMALLINT NOT NULL DEFAULT 1,
+        relation    TEXT NOT NULL,
+        as_of       DATE,
+        valid_from  DATE,
+        valid_to    DATE,
+        source      TEXT NOT NULL,
+        source_doc  TEXT,
+        evidence    TEXT,
+        created_at  TIMESTAMPTZ NOT NULL DEFAULT now(),
+        UNIQUE (holder, held, as_of, source)
+    )
+    """,
+    "CREATE INDEX IF NOT EXISTS idx_ig_equity_holder ON ig_equity_edge (holder)",
+    "CREATE INDEX IF NOT EXISTS idx_ig_equity_held ON ig_equity_edge (held)",
+    # --- ig_product_revenue 产品营收归因（图谱侧财务唯一表: symbol→产品→revenue_pct→挂环节;通用财务进 c1_market） ---
+    """
+    CREATE TABLE IF NOT EXISTS ig_product_revenue (
+        id           BIGSERIAL PRIMARY KEY,
+        symbol       TEXT NOT NULL,
+        year         SMALLINT NOT NULL,
+        product      TEXT NOT NULL,
+        revenue_pct  REAL,
+        node_ref     TEXT,
+        source       TEXT NOT NULL,
+        source_doc   TEXT,
+        evidence     TEXT,
+        as_of        DATE,
+        created_at   TIMESTAMPTZ NOT NULL DEFAULT now(),
+        UNIQUE (symbol, year, product, source)
+    )
+    """,
+    "CREATE INDEX IF NOT EXISTS idx_ig_prodrev_symbol ON ig_product_revenue (symbol)",
 ]
 
 # 裁定#ARCH-DEPGRAPH_ACCESS_CONTROL: reader 只读 / writer 读写
@@ -256,6 +313,8 @@ _ALL_TABLES = (
     "ig_chunk",
     "ig_fact",
     "ig_unlisted_entity",
+    "ig_equity_edge",
+    "ig_product_revenue",
 )
 GRANT_STATEMENTS = (
     [f"GRANT SELECT ON {t} TO depgraph_reader" for t in _ALL_TABLES]
@@ -267,6 +326,8 @@ GRANT_STATEMENTS = (
         "GRANT USAGE, SELECT ON SEQUENCE ig_company_edge_edge_id_seq TO depgraph_writer",
         "GRANT USAGE, SELECT ON SEQUENCE ig_company_metric_id_seq TO depgraph_writer",
         "GRANT USAGE, SELECT ON SEQUENCE ig_fact_fact_id_seq TO depgraph_writer",
+        "GRANT USAGE, SELECT ON SEQUENCE ig_equity_edge_edge_id_seq TO depgraph_writer",
+        "GRANT USAGE, SELECT ON SEQUENCE ig_product_revenue_id_seq TO depgraph_writer",
     ]
 )
 

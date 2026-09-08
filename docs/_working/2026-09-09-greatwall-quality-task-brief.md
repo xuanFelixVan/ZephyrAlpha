@@ -30,10 +30,12 @@ ttl: task_bound
 1. ig_node_company PIT 列+ig_node 深度列（DDL v4 段**已建并已部署**——apply_industry_graph_ddl.py 跑过即生效，复跑幂等验证即可）：
    ig_node_company: valid_from/valid_to/pit_strength；ig_node: child_chain_id/drill_status。
 2. **股权穿透表施工（Owner 2026-09-09 三裁定：同库独立表/今晚并行跑/THS 被投进股权表）**：
-   - DDL 增补 ig_equity_edge（holder/held/stake_pct/layer/relation 四枚举/as_of/valid_from/valid_to/source/source_doc/evidence，UNIQUE(holder,held,as_of,source) 幂等）——设计真源见 docs/_working/2026-09-09-node-template-draft.md §2.5
+   - **DDL 已建已部署**（apply_industry_graph_ddl.py v4：ig_equity_edge 十三表体系；ig_product_revenue 产品营收归因表同批已建）——复跑幂等验证即可
    - websearch_ingest.py 新增 record type=equity_edge（relation 枚举校验：invests_in/subsidiary/shareholding/actual_control；holder/held 格式校验同 symbol 契约含 PERSON: 前缀；as_of 必填）
    - **数据分流硬规则**：被投/持股/实控/质押→equity_edge；供应/客户/竞争/合作→company_edge。子代理提示词包补分流规则段。
-   - THS 被投 922 条（884 股"被投资公司简称(已上市)"列+年份戳）从原档导入股权表（ths_import.py 增补 equity 段或独立小脚本，走 ingest 通道）
+   - THS 被投 922 条（884 股"被投资公司简称(已上市)"列+年份戳）从原档导入股权表（走 ingest 通道）
+   - **财务表定案（Owner 2026-09-09）**：通用财务主数据**不建图谱表**——将来进 c1_market（与行情同库回测直接 join），数据源走采购/下载通道（akshare/tushare 批量拉）**禁 AI 搜索**（财务数字幻觉重灾区）；图谱侧只建 ig_product_revenue 产品营收归因（年报文本抽取 AI 干合适）——本夜 P1 链 TOP5 公司先填一批打样
+   - **ig_company_metric 处置（Owner 2026-09-09 裁定）**：供应链集中度指标层**保留不融不删**（五层架构第五层）；PIT 列已加（as_of/valid_from/valid_to）；夜班补历史行 as_of 回填（year 的年报口径期末日）
 3. 写入门禁收紧（websearch_ingest.py 校验追加，与引擎同词表同 commit 防漂移）：
    - role 白名单五值（龙头/核心/主要/参与/提及）
    - 链名标题腔正则拒绝（与引擎 TITLE_JUNK_RE 同源）
