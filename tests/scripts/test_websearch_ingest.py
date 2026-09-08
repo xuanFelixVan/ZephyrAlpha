@@ -356,3 +356,51 @@ def test_ingest_node_company_resolves_existing_node(tmp_path: Path) -> None:
         cur.execute("DELETE FROM ig_chain WHERE chain_id=%s", (cid,))
         conn.commit()
         conn.close()
+
+
+# ---- document/chunk 内容层通道（SOP §4.9，2026-09-08 R3b 增补） ----
+
+def test_ingest_document_chunk_roundtrip(tmp_path: Path) -> None:
+    doc_id = "DOC-testchunktmp"
+    rel = "__tmp_test__/ths_probe.tsv"
+    recs = [
+        {"type": "document", "doc_id": doc_id, "relative_path": rel, "bundle": "__TMP__",
+         "file_name": "ths_probe.tsv", "ext": ".tsv", "size_bytes": 10, "doc_type": "ths_profile",
+         "title": "__文档测试TMP__", "market": "cn", "source_doc": SD, "source": "ths_export"},
+        {"type": "chunk", "chunk_id": "CK-testchunktmp", "doc_id": doc_id, "title": "__块测试TMP__",
+         "doc_type": "ths_profile", "year": 2026, "chunk_text": "测试文本块",
+         "source_doc": SD, "source": "ths_export"},
+    ]
+    p = _tmp_batch(tmp_path, recs)
+    assert wi.cmd_ingest(str(p)) == 0
+    assert wi.cmd_ingest(str(p)) == 0  # 幂等复跑
+    from zephyr.governance.depgraph_schema import get_depgraph_pg_connection
+
+    conn = get_depgraph_pg_connection(read_only=False)
+    cur = conn.cursor()
+    try:
+        cur.execute("SELECT count(*) FROM ig_document WHERE doc_id=%s", (doc_id,))
+        assert cur.fetchone()[0] == 1  # 无重复行
+        cur.execute("SELECT chunk_text FROM ig_chunk WHERE chunk_id='CK-testchunktmp'")
+        assert cur.fetchone()[0] == "测试文本块"
+    finally:
+        cur.execute("DELETE FROM ig_chunk WHERE chunk_id='CK-testchunktmp'")
+        cur.execute("DELETE FROM ig_document WHERE doc_id=%s", (doc_id,))
+        conn.commit()
+        conn.close()
+
+
+def test_ingest_chunk_fk_violation_rolls_back(tmp_path: Path) -> None:
+    # chunk 引用不存在的 doc_id -> FK 违规整批回滚
+    recs = [{"type": "chunk", "chunk_id": "CK-testfktmp", "doc_id": "DOC-nonexistent-tmp",
+             "chunk_text": "x", "source_doc": SD, "source": "ths_export"}]
+    p = _tmp_batch(tmp_path, recs)
+    with pytest.raises(Exception):
+        wi.cmd_ingest(str(p))
+    from zephyr.governance.depgraph_schema import get_depgraph_pg_connection
+
+    conn = get_depgraph_pg_connection()
+    cur = conn.cursor()
+    cur.execute("SELECT count(*) FROM ig_chunk WHERE chunk_id='CK-testfktmp'")
+    assert cur.fetchone()[0] == 0  # 回滚生效
+    conn.close()
