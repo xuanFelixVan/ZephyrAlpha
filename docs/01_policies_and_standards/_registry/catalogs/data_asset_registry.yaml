@@ -4673,7 +4673,7 @@ datasets:
   - 数据
   - 行情
   algorithm_status: not_applicable
-  evidence: "涨跌停价列口径（#ARCH-DATA-020，2026-09-08）：upper_limit/lower_limit 自本日起=pre_close×(1±pct) Decimal ROUND_HALF_UP 到分（幅度=单一真源 AkshareIngestProvider._limit_pct_of 切片：主板 ST 2026-07-06 起 10%/此前 5%、创业板/科创板 20%、北交所 30%），与 stockStatus 位无关（位推断已废弃，位语义无实证；治理侧 tick 镜像保留原值）；历史行 ±10% 硬编码不回改（upper_limit/lower_limit 全项目零消费方+get_full_tick 纯实时通道不可回填；未来首个消费方 MUST 按 pre_close×(1±pct) 重算或改走 stk_limit 表，禁止直读历史行）"
+  evidence: "涨跌停价列口径（#ARCH-DATA-020，2026-09-08）：upper_limit/lower_limit 自本日起=pre_close×(1±pct) Decimal ROUND_HALF_UP 到分（幅度=单一真源 AkshareIngestProvider._limit_pct_of 切片：主板 ST 2026-07-06 起 10%/此前 5%、创业板/科创板 20%、北交所 30%），与 stockStatus 位无关（位推断已废弃，位语义无实证；治理侧 tick 镜像保留原值）；历史行 ±10% 硬编码/0.0 缺值已于 2026-09-08 按 stk_limit 权威价重投影修复（Owner 裁定，INSERT SELECT 1911474 行+OPTIMIZE FINAL，终检 dirty=0，备份表 c1_market.auction_book_limit_bak_20260908；5413 行无 stk_limit 匹配按缺数据约定 0.0）"
   code_symbol: null
   code_fingerprint: null
 - dataset_id: DS-113

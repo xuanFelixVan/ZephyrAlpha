@@ -21453,10 +21453,19 @@ entries:
     load_current_st_codes(as_of=payload.end) 每 fetch 运行加载一次（3 秒 auction_highfreq
     档≈每运行 1 条 CH 微查询，可忽略；日级缓存裁定=不做 YAGNI，禁止下沉 per-tick 即
     5400 查/3 秒），失败 fail-open 按非 ST 幅度近似+log.warning（本通道纯实时 trade_date
-    恒≥2026-07-06，_limit_pct_of 对 st_flag 钝感，降级数值影响=0）。历史脏行裁定=不回改：
-    upper_limit/lower_limit 全项目零消费方（scenario_planner 三条 SQL 均不选该列）+通道
-    纯实时不可回填；若未来出现首个消费方 MUST 按 pre_close×(1±pct) 重算或改走 stk_limit
-    表，禁止直读历史行。单测=tests/zephyr/data/test_auction_book_tick.py 13 用例（主板
+    恒≥2026-07-06，_limit_pct_of 对 st_flag 钝感，降级数值影响=0）。历史脏行处置（裁定
+    修订：2026-09-08 初判"不回改"，Owner 同日裁定改为回改，已执行）：INSERT SELECT
+    重投影 JOIN stk_limit FINAL 权威价（日期切片自动产出各时代正确值——脏行判定基准=
+    该行 trade_date 当时的规则而非今日规则，07-06 前主板 ST 5% 行同样是脏行）+
+    OPTIMIZE FINAL。执行记录：备份表 c1_market.auction_book_limit_bak_20260908（1911474
+    行，保留至稳定期）→ 重投影 1911474 行 → 终检 dirty_up=0/dirty_dn=0/总行数不变；
+    脏态构成=97% 行（1855880）upper_limit=0.0（旧代码 stockStatus 位未置位写 0）+
+    约 4.6 万行 ±10% 硬编码错值（双创/北证/生效日前 ST）；5413 行（0.28%）无 stk_limit
+    匹配（退市整理/停牌等边缘）按缺数据约定 0.0。注：本表实际数据自 2026-07-21 起且
+    非全日覆盖（仅 15 个交易日），无 07-06 前行——5% 时代正确性由 stk_limit 切片机制
+    保证，本表无此类行；若未来回补更早竞价数据，同法重投影即自动产出 5%。另注：
+    breadth 快照表 _round_price 为 float 先乘（L257），与本表 Decimal 域精确乘存在亚分位
+    口径差，属既有行为未动。单测=tests/zephyr/data/test_auction_book_tick.py 13 用例（主板
     ST 07-03=5%/07-06=10% 边界、双创 20%/北证 30%、HALF_UP 边界 10.35→11.39/9.32、
     stockStatus 位无关性、pre_close 缺失/未知板块降级、ST 加载失败 fail-open 集成）。
     b) tiered_screening_filter.limit_pct_for：docstring 声明"纯板块映射无日期维度、仅限
@@ -21496,8 +21505,9 @@ entries:
     - 'src/zephyr/ex_core/adapters/miniqmt_broker.py（_BOARD_PRICE_LIMIT_PCT/_check_price_limit 口径边界声明，零行为变更）'
     - 'tests/zephyr/data/test_auction_book_tick.py（新建 13 用例：ST 07-03/07-06 边界/双创北证/HALF_UP/位无关性/降级集成）'
     - 'tests/zephyr/data/test_market_breadth_snapshot.py（test_st_5pct→test_main_board_st_regime_boundary 时变边界）'
-    - 'docs/01_policies_and_standards/_registry/catalogs/data_asset_registry.yaml（DS-112 auction_book evidence 涨跌停列口径）'
-  fix_phase: '已完成（代码切片+单测+回填补数+对账+登记，2026-09-07）；2026-09-08 第二轮：撮合三级解析链闭环（重评条件② matching_engine 部分）+ stk_limit 历史回补 2026-01-05 起 900781 行+对账+PIT 实证；2026-09-08 第三轮：重评条件② 残余三项收口（竞价簿涨跌停真修+stockStatus 位废弃+历史脏行不回改裁定、tiered_screening_filter/miniqmt_broker 声明类留痕、附带 breadth test_st_5pct 过时断言修复）——重评条件② 全部闭环'
+    - 'docs/01_policies_and_standards/_registry/catalogs/data_asset_registry.yaml（DS-112 auction_book evidence 涨跌停列口径+历史行已修复）'
+    - 'c1_market.auction_book（2026-09-08 历史脏行回改：INSERT SELECT 重投影 1911474 行 JOIN stk_limit 权威价+OPTIMIZE FINAL，终检 dirty=0；备份表 auction_book_limit_bak_20260908）'
+  fix_phase: '已完成（代码切片+单测+回填补数+对账+登记，2026-09-07）；2026-09-08 第二轮：撮合三级解析链闭环（重评条件② matching_engine 部分）+ stk_limit 历史回补 2026-01-05 起 900781 行+对账+PIT 实证；2026-09-08 第三轮：重评条件② 残余三项收口（竞价簿涨跌停真修+stockStatus 位废弃、tiered_screening_filter/miniqmt_broker 声明类留痕、附带 breadth test_st_5pct 过时断言修复）；2026-09-08 第四轮：auction_book 历史脏行回改执行（Owner 裁定修订"不回改"→回改，INSERT SELECT 重投影 1911474 行+OPTIMIZE FINAL，终检 dirty=0，备份表 auction_book_limit_bak_20260908）——重评条件② 全部闭环'
   status: decided
   created: '2026-09-07'
   last_updated: '2026-09-08'
