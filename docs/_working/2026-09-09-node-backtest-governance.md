@@ -251,3 +251,47 @@ ttl: task_bound
 
 1. **模型没完全定稿前不许跑回测**（López de Prado："回测中做研究=酒后驾车"）——先定稿、后考试。
 2. **保密考卷只考一次**——holdout 窗口考完就作废前移，改参数再考=换新卷，不许在同一张卷上反复考。
+
+---
+
+## 八、施工方案（三期全落盘清单，2026-09-09 定稿）【施工按 construction_workflow_sop.md 15 步执行】
+
+> **SOP 适配**：本专项横跨三域——07 域（地图 YAML/DAL 登记）走 SOP 15 步全套；CH 建表/治理脚本走全局规则；前端（api_server/tdm.js）沿用 Kimi 已建的 tdm 页四件套基线续补。每期收尾固定动作：回归 `tests/trading/test_decision_map.py` + `test_decision_map_adversarial.py` → `align_all.py` → GitCommitGateway 提交（禁裸 commit）。
+
+### 8.1 P0 地基（3 个落盘物）
+
+| # | 落盘物 | 落点（文件/位置） | 动作 | 登记闭环（SOP Step 7） |
+|---|---|---|---|---|
+| P0-1 | 台账表 `node_verdict` | ClickHouse（库归属施工时对齐 data_asset_registry 既有回测库惯例，暂定 c1_backtest） | 建 DDL+执行：run_id/snapshot_commit/window_start/window_end/node_id/validation_method/triggers/hit_ratio/significance/verdict(valid\|noise\|pending\|untested)/verdict_at/notes，ORDER BY (node_id, window_end) | data_asset_registry 登 DS 条目；datainfo 页可见 |
+| P0-2 | 快照自动记录 | 回测 run 元数据落点（施工第一步先盘点 backtest 三件套的 run 记录结构） | run 结果自动带 `map_snapshot = git rev-parse --short HEAD`，一行字段不做门禁 | 回测协议备忘录补一句 |
+| P0-3 | 抽屉「验证档案」区 | api_server.py（新增只读端点 GET /api/tdm/validation?node_id=，查 node_verdict 最近 N 条+当前 verdict）+ tdm.js drawer()（沿 Kimi DDT 六助手 esc/zh/chip/nlink/kv/sec 追加分区，空态="未验证"徽章） | 只读，零写副作用 | frontend_map F-TDM-DRAWER 补功能点 + ACC-F-TDM-DRAWER 补验收条目 + ZK_BUILD +1 + test_dashboard_smoke 结构断言 |
+
+P0 验收：TDM-E-L1-S1 抽屉显示"未验证"徽章；端点空表返回 200+ok:true；/api/tdm 回归无 diff。
+
+### 8.2 P1 验证启动（6 个落盘物）
+
+| # | 落盘物 | 落点 | 动作 | 坑位提醒 |
+|---|---|---|---|---|
+| P1-1 | validation_method_registry.yaml（新登记表） | docs/01_policies_and_standards/_registry/catalogs/ | 五类方法各一条：sensor_monotonicity/agg_discrimination/exec_quality/exit_counterfactual/portfolio_attribution，含判对错标准+统计口径+最少样本；节点**不加 YAML 字段**，由 layer+role 推导（防门禁 R15 大改） | CREATE-GUARD token 必须插进真 creation_tokens 列表（Kimi 发现的 EOF 追加坑：di_seam_exemptions 键之后 EOF 追加全落错段） |
+| P1-2 | 验证 runner v1 | src/zephyr/trading/validation/（新模块，走 trae_056 建模块流程） | 第一批=L4 执行类 14 节点：读回测成交流水→算滑点/成交率→写 node_verdict；内置 PB-13 两土规（触发<30 不下结论/OOS 衰减≥50% 判存疑）+PB-16 lag=1 重算开关默认开 | 铁律：这些参数已定稿才跑；窗口排除最近 12 个月（holdout） |
+| P1-3 | decision_algo_registry.yaml（DAL-*，新登记表） | 同 catalogs 目录 | 首批 10-20 条（从地图机制文本提取：RegimeSnapshot/HMM 四态/六段预算带/水温六段/四轨融合…），字段：dal_id/name_zh/mechanism_zh 一句话/code_ref/inputs/outputs | 门禁 R13 值域扩展允许 DAL-*（decision_map.py+两测试套件回归）；共振方式**暂写机制文本**不加新字段（精简） |
+| P1-4 | param_origin 字段 | alert_threshold_registry.yaml（36 条全量）+ risk_limit_registry.yaml（核心条目） | 三档枚举：业界标准/回测调优/经验拍定；未标的缺省=经验拍定 | 批量补登用脚本做 block 级替换，防破坏 YAML 结构 |
+| P1-5 | holdout 纪律落盘 | 回测协议备忘录加节 + 验证 runner 默认窗口排除最近 12 个月 | 考完一次即作废前移的规则写明 | — |
+| P1-6 | 全量回归 | — | test_decision_map.py + adversarial + align_all + 冒烟 | 门禁扩展（R13）必须过 adversarial（f4 锚不得静默消失） |
+
+P1 验收：台账里出现 L4 首批 14 条 verdict（含显著性土规标记）；抽屉"验证档案"区显示真实记录；validate error=0。
+
+### 8.3 P2 闭环（3 个落盘物）
+
+| # | 落盘物 | 落点 | 动作 |
+|---|---|---|---|
+| P2-1 | PB-14 衰减自动巡检 | 项目 scheduler（services_registry 既有调度体系） | 定期重算最近窗口指标 vs 首次验证，衰减超阈值→台账追加 verdict=decaying+面板预警；**报警才触发复审**（事件驱动，无固定日历） |
+| P2-2 | PB-03 噪音闭环前端 | tdm.js cls()/drawer() | 画布节点噪音/衰减徽章（灰色系，不发明新色，沿三态语义扩展）+验证档案区完整显示 |
+| P2-3 | PB-11 反事实对照 | 回测引擎开关 | 验证离场/风控类节点时支持"关风控回放"对照模式（按需启用） |
+
+### 8.4 协同与风险
+
+1. **Kimi 抽屉 v2 衔接**：P0-3 严格沿 DDT 模板册六助手契约+分区顺序追加，不动他定稿的样式语义；改完补 ACC-F-TDM-DRAWER 验收条目。
+2. **并发 session 教训**（Kimi 交付总结：sess-30232 git add 搭便车事故）：每期提交前核对 `git status` + `--files` 清单逐一核对，只提自己的文件；遇并发暂存冲突按 66 号串行化排队。
+3. **登记表新建必走 CREATE-GUARD**：token 插入位置=真 creation_tokens 列表内（EOF 追加坑已实证 500+ 条历史误置）。
+4. **CH 建表属基础设施**：走全局规则不走 SOP 15 步，但 DS 登记照做。
