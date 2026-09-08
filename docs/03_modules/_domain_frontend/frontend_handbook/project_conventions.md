@@ -5,7 +5,7 @@ title: 前端技术手册·项目约定（PC）
 owner: ZephyrAlpha-Owner
 language: zh
 status: active
-version: "1.0.0"
+version: "1.6.0"
 date: 2026-08-31
 topic: frontend_handbook_project_conventions
 scope: frontend
@@ -162,6 +162,18 @@ scope: frontend
 
 ---
 
+# FEH-PC-013｜详情抽屉统一模板——分区+chip+导航行（禁各页各自发明）
+- 触发词：详情抽屉 / 节点档案 / drawer / 右侧详情 / 点节点看详情
+- 想做什么：全景图/树图页做「点节点开右侧抽屉看完整档案」
+- 内置能否：❌ 无现成组件——但 tdm 页抽屉 v2（b20260908-10）已实证成模板
+- 坑：①长文+键值+引用列表混排纯文字堆叠 → 信息全但不可读②引用列表顿号长串 → 一行爆宽③治理字段「激活=x ｜ 档位=y」拼接 → 空值塌行④真源文本不转义直拼 innerHTML → YAML 含 `<>&` 必断标签⑤轮询重绘不存 scrollTop → 用户阅读位置被冲掉
+- 正确做法：照 `frontend_handbook/detail_drawer_template.md`——固定分区顺序（标题徽标→问→机制→治理键值网格→模块锚→挂载→八轴 chip→上下游导航行→设计备注）；三态徽标色与画布卡片同语义同色号；esc() 强制；空值 `—` 留位；新页施工时抽屉应按拆件三判据（单一功能+独立样式+跨页复用）直接拆为独立组件而非内联
+- 代码锚点：pages/tdm.html style 块「右侧详情抽屉 v2」段 · features/tdm.js drawer()
+- 关联：detail_drawer_template.md（模板真源）· FEH-PC-008 拆件铁律
+- 来源：2026-09-08 tdm 抽屉重设计实证（commit 062975c7）· Owner 裁定模板化
+
+---
+
 ## 修订记录
 
 | 日期 | 版本 | 改动 | 为什么改 |
@@ -172,3 +184,4 @@ scope: frontend
 | 2026-09-01 | 1.3.0 | +PC-007 depgraph 新增字段四步铁律 | 夜战实证：重建器静默重置新字段（20 模块值全丢）→ 根治后重建验证存活 |
 | 2026-09-01 | 1.4.0 | +PC-008 组件拆分铁律（数据源边界+单一功能） | Owner 2026-09-01 裁定：数据源不同必拆；功能语义不同必拆 |
 | 2026-09-01 | 1.5.0 | +PC-009 版本戳排查法 / +PC-010 Electron 壳与素材纪律 / +PC-011 QMT 文件桥三律 | 当日三连实证：⚑12 缓存排障、桌面化落地、持仓口径修正 |
+| 2026-09-08 | 1.6.0 | +PC-013 详情抽屉统一模板（指向 detail_drawer_template.md） | tdm 抽屉 v2 实证沉淀，Owner 裁定模板化供全景图页复用 |
