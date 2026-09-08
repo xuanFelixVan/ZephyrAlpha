@@ -9,14 +9,21 @@
       <span style="font-size:12px"><span style="display:inline-block;width:10px;height:10px;background:#0e2612;border:1.5px solid #2e7d32;border-radius:3px;vertical-align:middle"></span> 📄paper 实盘执行</span>
       <input id="tdm-srch" placeholder="搜索节点（ID / 名称）…" oninput="tdmFilter(this.value)"
              style="background:#0d1117;border:1px solid #263042;border-radius:6px;color:var(--text);padding:4px 10px;font-size:12px;width:200px">
+      <span id="tdm-mode" onclick="tdmToggleMode()" title="切换 拖动画布 / 文字选择复制（快捷键 Ctrl+Shift+D）"
+            style="cursor:pointer;user-select:none;background:#0d1117;border:1px solid #263042;border-radius:6px;color:var(--text);padding:3px 10px;font-size:12px">✋ 拖动模式</span>
+      <span class="dim" style="font-size:11px">滚轮缩放 ｜ 拖动平移 ｜ 双击空白重置</span>
       <span style="margin-left:auto;font-size:11px" class="dim" id="tdm-meta">加载中…</span>
     </div>
 
     <!-- 满屏布局：页节=视口减去顶栏46+ticker32+main上下padding64，树区 flex:1 吃掉全部剩余（页面切 display:none，仅 .active 生效） -->
     <div class="tdm-fill">
       <div class="card tdm-canvas">
-        <svg id="tdm-wire"></svg>
-        <div id="tdm-tree"></div>
+        <!-- tdm-world=缩放平移世界层：滚轮/拖动作用在它上面（transform），画布本体 overflow:hidden 不走原生滚动 -->
+        <div id="tdm-world">
+          <svg id="tdm-wire"></svg>
+          <div id="tdm-tree"></div>
+        </div>
+        <span id="tdm-zoom">100% ｜ ✋ 拖动</span>
       </div>
       <div class="card" id="tdm-drawer"></div>
     </div>
@@ -24,12 +31,18 @@
 <style>
   #p-tdm.active { display:flex; flex-direction:column; height:calc(100vh - 150px); }
   #p-tdm .tdm-fill { flex:1; min-height:0; display:flex; gap:12px; align-items:stretch; }
-  #p-tdm .tdm-canvas { flex:1; position:relative; overflow:auto; }
+  #p-tdm .tdm-canvas { flex:1; position:relative; overflow:hidden; cursor:grab; }
+  #p-tdm .tdm-canvas.dragging { cursor:grabbing; }
+  #p-tdm .tdm-canvas.select-mode { cursor:text; }
+  #tdm-world { position:absolute; left:0; top:0; transform-origin:0 0; }
+  #tdm-zoom { position:absolute; top:8px; right:12px; z-index:5; background:rgba(13,17,23,.88); border:1px solid #263042;
+    border-radius:99px; padding:2px 10px; font-size:11px; color:#7d8aa0; pointer-events:none; }
   #tdm-wire { position:absolute; left:0; top:0; pointer-events:none; }
   #tdm-tree { position:relative; padding:8px 4px; }
   #tdm-drawer { width:400px; flex:none; overflow:auto; display:none; }
   #tdm-tree .tn { position:absolute; background:#0d1117; border:1.5px solid #263042; border-radius:8px;
     padding:6px 12px; cursor:pointer; user-select:none; transition:border-color .15s; box-sizing:border-box; }
+  #p-tdm .tdm-canvas.select-mode .tn, #p-tdm .tdm-canvas.select-mode .tg { user-select:text; cursor:text; }
   #tdm-tree .tn:hover { border-color:#3d8bff; }
   #tdm-tree .tn .tn-n { font-size:12.5px; font-weight:600; color:var(--text); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
   #tdm-tree .tn .tn-g { font-size:10.5px; color:#7d8aa0; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }

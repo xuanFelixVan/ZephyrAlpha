@@ -6,8 +6,44 @@
  *           30s tick 时仅 p-tdm 可见才 fetch，页面隐藏零开销。 */
 (function () {
   'use strict';
-  var TDM = { data: null, sel: null, stamp: null, busy: false };
+  var TDM = { data: null, sel: null, stamp: null, busy: false, dragDist: 0 };
   var API_BASE = 'http://127.0.0.1:8890';   /* 与 services/api.js 同源——app:// 模式下相对 fetch 会打到 app://api/tdm 必断 */
+  /* 画布视图状态（交互规范=visualization_view_template.md §6.6：滚轮缩放/拖动平移/双击重置/Ctrl+Shift+D 切模式） */
+  var view = { z: 1, x: 0, y: 0, dragMode: true };
+
+  function worldEl() { return document.getElementById('tdm-world'); }
+  function canvasEl() { return document.querySelector('.tdm-canvas'); }
+
+  function applyView() {
+    var w = worldEl();
+    if (w) w.style.transform = 'translate(' + view.x + 'px,' + view.y + 'px) scale(' + view.z + ')';
+    var badge = document.getElementById('tdm-zoom');
+    if (badge) badge.textContent = Math.round(view.z * 100) + '% ｜ ' + (view.dragMode ? '✋ 拖动' : '📋 文字可选');
+  }
+
+  /* 以鼠标点为锚缩放（光标处内容保持在光标下——地图类标准手感） */
+  function zoomAt(cx, cy, factor) {
+    var c = canvasEl(); if (!c) return;
+    var r = c.getBoundingClientRect();
+    var mx = cx - r.left, my = cy - r.top;
+    var nz = Math.max(0.2, Math.min(30, view.z * factor));
+    var k = nz / view.z;
+    view.x = mx - (mx - view.x) * k;
+    view.y = my - (my - view.y) * k;
+    view.z = nz;
+    applyView();
+  }
+
+  function setMode(dm) {
+    view.dragMode = dm;
+    var c = canvasEl();
+    if (c) c.classList.toggle('select-mode', !dm);
+    var btn = document.getElementById('tdm-mode');
+    if (btn) btn.textContent = dm ? '✋ 拖动模式' : '📋 选择复制';
+    applyView();
+  }
+
+  window.tdmToggleMode = function () { setMode(!view.dragMode); };
 
   function visible() {
     var el = document.getElementById('p-tdm');
@@ -91,7 +127,7 @@
       el.innerHTML = '<div class="tn-n">' + (n.autonomy === 'paper' ? '📄 ' : '') + (n.name || n.id) +
         '</div><div class="tn-g">' + gist + '</div>';
       el.title = n.id;
-      el.onclick = function () { TDM.sel = n.id; render(); drawer(); };
+      el.onclick = function () { if (TDM.dragDist > 3) return; TDM.sel = n.id; render(); drawer(); };   /* 拖动平移后松手不算点击 */
       el.dataset.id = n.id;
       host.appendChild(el);
       return el;
@@ -121,6 +157,8 @@
     });
 
     host.style.height = (y + 6) + 'px';   /* 绝对定位子元素不撑高父容器——显式写内容高度，滚动区才正确 */
+    var w = worldEl();
+    if (w) { w.style.width = host.offsetWidth + 'px'; w.style.height = Math.max(host.offsetHeight, canvas.clientHeight || 600) + 'px'; }
 
     requestAnimationFrame(function () {
       var hh = Math.max(host.offsetHeight, canvas.clientHeight || 600);
@@ -187,4 +225,50 @@
   setTimeout(load, 1200);
   var tdmCanvas = document.querySelector('.tdm-canvas');
   if (tdmCanvas) ro.observe(tdmCanvas);   /* 尺寸监听：最大化/还原/抽屉开合自动重排 */
+
+  /* ── 画布交互挂接（规范=visualization_view_template.md §6.6，移植 zoomable_html 四项操作）── */
+  (function () {
+    var c = canvasEl();
+    if (!c) return;
+    /* ① 滚轮缩放（0.2x~30x，1.15 倍步进，以光标为锚） */
+    c.addEventListener('wheel', function (e) {
+      e.preventDefault();
+      zoomAt(e.clientX, e.clientY, e.deltaY < 0 ? 1.15 : 1 / 1.15);
+    }, { passive: false });
+    /* ② 拖动平移（拖动模式；按住左键位移画布，位移>3px 判定为拖动而非点击） */
+    var drag = null;
+    c.addEventListener('mousedown', function (e) {
+      if (!view.dragMode || e.button !== 0) return;
+      drag = { sx: e.clientX, sy: e.clientY, ox: view.x, oy: view.y, dist: 0 };
+      c.classList.add('dragging');
+    });
+    window.addEventListener('mousemove', function (e) {
+      if (!drag) return;
+      var dx = e.clientX - drag.sx, dy = e.clientY - drag.sy;
+      drag.dist = Math.max(drag.dist, Math.abs(dx) + Math.abs(dy));
+      view.x = drag.ox + dx; view.y = drag.oy + dy;
+      applyView();
+    });
+    window.addEventListener('mouseup', function () {
+      if (!drag) return;
+      TDM.dragDist = drag.dist;
+      drag = null;
+      var cc = canvasEl(); if (cc) cc.classList.remove('dragging');
+      setTimeout(function () { TDM.dragDist = 0; }, 0);   /* click 事件派发后再清零 */
+    });
+    /* ③ 双击空白重置（双击节点不算——节点双击是两次打开抽屉） */
+    c.addEventListener('dblclick', function (e) {
+      if (e.target && e.target.closest && e.target.closest('.tn, .tg')) return;
+      view.z = 1; view.x = 0; view.y = 0;
+      applyView();
+    });
+    /* ④ Ctrl+Shift+D 切换 拖动/选择复制 模式 */
+    document.addEventListener('keydown', function (e) {
+      if (e.ctrlKey && e.shiftKey && (e.key === 'D' || e.key === 'd')) {
+        e.preventDefault();
+        window.tdmToggleMode();
+      }
+    });
+    setMode(true);   /* 初始同步按钮文案+徽标+光标 */
+  })();
 })();
