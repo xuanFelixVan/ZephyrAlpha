@@ -54,3 +54,21 @@ trigger:
     - "pyproject.toml"
     - "docker-compose.yml"
   state_file: "data/databases/backup_state.json"
+
+# ---- 仓外关键资产镜像备份（2026-09-08 Owner 裁定新增）----
+# 消费者: backup.ps1 STAGE 3c（robocopy /MIR 逐条镜像）
+# 登记真源: config/asset_inventory.yaml offrepo_assets 中 backup: mirror 的条目
+# 目标: F:\offrepo_backup\<id>\ ；/XJ 防 junction 回环；Mode=ch 时跳过
+offrepo_backup:
+  base: "F:\\offrepo_backup"
+  targets:
+    - id: trae_memory
+      source: "C:\\Users\\fanzi\\.trae-cn\\memory"
+    - id: qmt_bridge
+      source: "E:\\qmt_bridge"
+    - id: stash_archive
+      source: "D:\\ZephyrAlpha-stash-archive"
+    - id: data_download
+      source: "E:\\数据下载"
+    - id: cold_archive
+      source: "E:\\zephyr_cold_archive"

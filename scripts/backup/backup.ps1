@@ -380,6 +380,58 @@ if ($Mode -eq "ch") {
     $codeResult = @{status=$(if($rcCode -lt 8){"ok"}else{"failed"}); robocopy_exit=$rcCode}
 }
 
+# ==================== STAGE 3c: Off-repo critical assets mirror ====================
+# Added 2026-09-08 (Owner approved): mirror off-repo critical assets (C/E drive)
+# to F:\offrepo_backup\<id>\. Registry source: config/asset_inventory.yaml
+# offrepo_assets (backup: mirror entries). Section config: backup_config.yaml
+# offrepo_backup (base + targets, line-state-machine parse, no powershell-yaml dep).
+# NOTE: keep comments ASCII-only in this file (PS5.1 parses non-BOM UTF-8 as ANSI).
+if ($Mode -eq "ch") {
+    Write-Stage "Mode=ch, skipping off-repo mirror (Stage 3c)"
+    $offrepoResult = @{status="skipped"; reason="Mode=ch"}
+} else {
+    Write-Stage "Stage 3c: Off-repo assets mirror"
+    $offrepoBase = "F:\offrepo_backup"
+    if ($yamlContent -match 'offrepo_backup:[\s\S]*?base:\s*"([^"]+)"') { $offrepoBase = $matches[1] -replace '\\\\','\' }
+
+    # Line-state-machine: parse (id, source) pairs from offrepo_backup.targets
+    $offrepoTargets = @()
+    $curId = $null; $inOffrepo = $false
+    foreach ($line in (Get-Content $ConfigFile -Encoding UTF8)) {
+        if ($line -match '^[A-Za-z_][A-Za-z0-9_]*:') { $inOffrepo = ($line -match '^offrepo_backup:'); continue }
+        if (-not $inOffrepo) { continue }
+        if ($line -match '-\s+id:\s*(\S+)') { $curId = $matches[1].Trim() }
+        elseif ($curId -and $line -match 'source:\s*"([^"]+)"') {
+            $offrepoTargets += [pscustomobject]@{ id = $curId; source = ($matches[1] -replace '\\\\','\') }
+            $curId = $null
+        }
+    }
+
+    $offrepoStatus = @{}
+    foreach ($t in $offrepoTargets) {
+        if (-not (Test-Path $t.source)) {
+            $offrepoStatus[$t.id] = @{status="failed"; error="source missing: $($t.source)"}
+            Write-Err "Off-repo [$($t.id)]: source missing: $($t.source)"
+            continue
+        }
+        $tgt = Join-Path $offrepoBase $t.id
+        & robocopy $t.source $tgt "/MIR" "/XJ" "/R:2" "/W:5" "/MT:8" "/NFL" "/NDL" "/NP" 2>&1 | Out-Null
+        $rc = $LASTEXITCODE
+        if ($rc -ge 8) {
+            $offrepoStatus[$t.id] = @{status="failed"; robocopy_exit=$rc}
+            Write-Err "Off-repo [$($t.id)] robocopy failed (exit $rc)"
+        } else {
+            $tgtBytes = (Get-ChildItem $tgt -Recurse -File -Force -ErrorAction SilentlyContinue | Measure-Object Length -Sum).Sum
+            $offrepoStatus[$t.id] = @{status="ok"; robocopy_exit=$rc; bytes=[int64]$tgtBytes}
+            Write-OK ("Off-repo [{0}]: ok ({1:N2} GB)" -f $t.id, ($tgtBytes/1GB))
+        }
+    }
+    $offrepoResult = @{
+        status = $(if (($offrepoStatus.Values | Where-Object status -eq "failed").Count -gt 0) {"failed"} elseif ($offrepoTargets.Count -eq 0) {"skipped"; reason="no targets parsed"} else {"ok"})
+        targets = $offrepoStatus
+    }
+}
+
 # ==================== STAGE 4: Report ====================
 Write-Stage "Stage 4: Report"
 $duration = (Get-Date) - $backupStartTime
@@ -390,6 +442,7 @@ $report = @{
     force_mode = $Force.IsPresent
     databases = $dbStatus
     code_backup = $codeResult
+    offrepo_backup = $offrepoResult
 }
 
 New-Item -ItemType Directory -Path "$ProjectRoot\logs" -Force | Out-Null
