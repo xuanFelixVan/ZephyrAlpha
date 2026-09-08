@@ -26,17 +26,21 @@ ttl: task_bound
    预期：总违规 ~18,182（S10 role 11,207 / S7 后缀 2,911 / S15 自环 1,874 / S8 孤岛 718 / S6 unspecified 686 / S5 382 / S16 145 / S17 114 / S1 61 / S14 44 / S20 PIT 造假 22 / S19 17 / S12 1；S4/S13 因 ig_node_company 无 PIT 列 degraded）。
 4. Python 环境：本机默认 3.13 缺 psycopg2——用 C:\Users\fanzi\AppData\Local\Programs\Python\Python312\python.exe（2026-09-08 夜班实证可用）。
 
-━━━ 二、Phase 1 基建（先修引擎再修数据，~1h）━━━
-1. ig_node_company 加 PIT 列（DDL 走 apply_industry_graph_ddl.py 增补 v4 段，幂等）：
-   ALTER TABLE ig_node_company ADD COLUMN IF NOT EXISTS valid_from DATE / valid_to DATE / pit_strength TEXT;
-   pit_strength 词表 {strong, weak}（graph_quality_standard.md §4 S13 口径）。
-   加列后引擎 S4/S13 不再 degraded（复跑验证）。
-2. 写入门禁收紧（websearch_ingest.py 校验追加，与引擎同词表同 commit 防漂移）：
+━━━ 二、Phase 1 基建（先修引擎再修数据，~1.5h）━━━
+1. ig_node_company PIT 列+ig_node 深度列（DDL v4 段**已建并已部署**——apply_industry_graph_ddl.py 跑过即生效，复跑幂等验证即可）：
+   ig_node_company: valid_from/valid_to/pit_strength；ig_node: child_chain_id/drill_status。
+2. **股权穿透表施工（Owner 2026-09-09 三裁定：同库独立表/今晚并行跑/THS 被投进股权表）**：
+   - DDL 增补 ig_equity_edge（holder/held/stake_pct/layer/relation 四枚举/as_of/valid_from/valid_to/source/source_doc/evidence，UNIQUE(holder,held,as_of,source) 幂等）——设计真源见 docs/_working/2026-09-09-node-template-draft.md §2.5
+   - websearch_ingest.py 新增 record type=equity_edge（relation 枚举校验：invests_in/subsidiary/shareholding/actual_control；holder/held 格式校验同 symbol 契约含 PERSON: 前缀；as_of 必填）
+   - **数据分流硬规则**：被投/持股/实控/质押→equity_edge；供应/客户/竞争/合作→company_edge。子代理提示词包补分流规则段。
+   - THS 被投 922 条（884 股"被投资公司简称(已上市)"列+年份戳）从原档导入股权表（ths_import.py 增补 equity 段或独立小脚本，走 ingest 通道）
+3. 写入门禁收紧（websearch_ingest.py 校验追加，与引擎同词表同 commit 防漂移）：
    - role 白名单五值（龙头/核心/主要/参与/提及）
    - 链名标题腔正则拒绝（与引擎 TITLE_JUNK_RE 同源）
    - 节点名 -tier 后缀拒绝
-   每条收紧补单测，测试 18→预期 20+。
-3. 引擎 S4/S13 复跑转正（degraded→真实违规数）。
+   - node 记录支持 child_chain_id/drill_status（drill_status=child 时 child_chain_id 必填交叉校验）
+   每条收紧补单测，测试 18→预期 24+。
+4. 引擎 S4/S13 复跑转正（degraded→真实违规数）。
 
 ━━━ 三、Phase 2 P0 污染源清除（量化查询正在中毒，~2h）━━━
 按标准 §12.3 优先级修，全部走治理脚本（幂等）或 ingest 通道，禁手写 SQL 写库：
@@ -87,7 +91,11 @@ S12 market 1 条机械修正。
 4. UNLISTED:UE-{12hex} 唯一合法未上市格式（先登记编码表再建边，公司名直写会被工具拒）
 5. tier 只许 上游/中游/下游/设备/材料（禁 unspecified）；category 申万 38 词表
 6. role 五值：龙头/核心/主要/参与/提及
-7. company_edge（websearch 来源）必带 PIT 三时间戳 valid_from/valid_to/as_of（年报关系 valid_from 用报告期末，未知 valid_to 填 null）+ 两端 symbol 非空；股权投资关系禁入边表
+7. company_edge（websearch 来源）必带 PIT 三时间戳 valid_from/valid_to/as_of（年报关系 valid_from 用报告期末，未知 valid_to 填 null）+ 两端 symbol 非空；**股权投资关系写 equity_edge 不写 company_edge**（分流规则见下）
+7b. **两表分流规则（Owner 2026-09-09 裁定，查公司时同时填各填各的）**：
+    - 供应/客户/竞争/合作/生产/归属（业务传导）→ record type=company_edge
+    - 被投/持股比例/实控人/质押（资本关系）→ record type=equity_edge（relation ∈ invests_in/subsidiary/shareholding/actual_control，as_of 必填=年报口径日期，持有方是人名用 PERSON:姓名 前缀，未上市用 UNLISTED:UE-xxx）
+    - 同一次搜索查到"宁德时代供应比亚迪电池"（业务）+"比亚迪持有宁德时代股权"（资本）→ 拆两条记录各进各表，禁混写
 8. node.name 纯环节功能名（如"光刻设备"，禁"-材料"后缀）；链名"XX产业链"句式（禁"一张图看懂"类标题腔）
 9. 反幻觉：每条落库带 evidence_text 原文摘录；搜不到原文依据就不写、登记缺口，禁凭记忆编造供应链关系
 10. 来源分级：一手（公告/年报/官网/政府统计）直接 0.5；二手（研报/主流财经媒体）两源互证升 0.7；三手（自媒体/百科）只作线索，必须追到一手/二手原文才准落库
@@ -143,7 +151,8 @@ progress.json 记录：cycles_done / exit_reason（"two_zero_cycles" / "timebox"
    【引擎终态】每项 S1~S20 的违规数终态表（含 degraded 清零声明）
    【P0 清除】污染源处置明细（000591 类清洗了多少、豁免了谁）
    【扩产成果】R2 链级补全明细/P3a 环节落位 47.5%→X%/全球主干链 X/8/新增边数；合流焊点清单
-   【数据增量】十表基线 vs 终态
+   【股权穿透】ig_equity_edge 落地：THS 被投 922 条导入+夜班新增 X 条+实控人 X 家；两表分流零混写声明
+   【数据增量】十一表基线 vs 终态（含 ig_equity_edge 新表）
    【施工件】DDL v4/脚本/测试清单+commit hash
    【开放问题】306 unspecified/44 超阈值甄别/孤岛链等待 Owner 拍板清单
    【循环审查结论】各循环引擎违规数序列（violation_trace）+退出原因（two_zero_cycles/timebox/non_convergent）

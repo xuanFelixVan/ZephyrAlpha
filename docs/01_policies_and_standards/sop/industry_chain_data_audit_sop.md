@@ -940,7 +940,7 @@ python scripts/industry_graph/graph_quality_check.py     # 体检: .runtime/indu
 | 4 | 全球锚点是否纳入 theme\_linkage\_monitor 联动口径（当前只跑 cn ≥0.85 子集，天然不含 websearch 数据） | 待裁定  |
 | 5 | chainmap 前端接线（DAL-C01/C02，P0）不在本 SOP 范围，待另行派单                             | 已知缺口 |
 | 6 | 落位覆盖率 80% 目标线是否合理（剩余多为金融/综合类无链可挂）                                         | 待裁定  |
-| 7 | ~~THS 被投股权边的 edge\_type 词表取值~~ **已裁定（2026-09-08 Owner）**：股权投资关系与产业链严格分域——`invests_in` **不进** ig_company_edge（该表只收业务传导：供应/客户/竞争/合作/生产/归属），THS 被投 922 条关系只登记清单落盘留档（`docs/_working/同花顺资料/` 原档+登记台账），将来建股权穿透表时直接消费。**硬边界新增：股权投资关系禁入产业链边表**（防污染传导逻辑） | 已裁定  |
+| 7 | ~~THS 被投股权边的 edge\_type 词表取值~~ **已裁定（2026-09-08 Owner；2026-09-09 二次裁定升级）**：股权投资关系与产业链严格分域——`invests_in` **不进** ig_company_edge（该表只收业务传导），**硬边界：股权投资关系禁入产业链边表**。2026-09-09 升级：建**同库独立表 ig\_equity\_edge**（holder/held/stake\_pct/layer/relation 四枚举/PIT/as\_of 年报口径，设计真源 docs/\_working/2026-09-09-node-template-draft.md §2.5），THS 被投 922 条+年份戳**直接入库**（替代原"留档待将来"处置）；夜班查公司时两表分流各填各的（业务→company\_edge，资本→equity\_edge），详情页查询侧 UNION 拼装 | 已裁定（v2）  |
 | 8 | ~~THS 90→申万 36 映射争议~~ **已裁定（2026-09-08 Owner）**：**分层标签架构**——申万 36 为一级分类（链 category，外部对话口径），THS 90 为二级分类标签（公司落位到"XX行业"锚点链即打标，THS 专属口径），257 细分行业为将来三级。争议行业**不做归并做溯源**：搜该行业成分股在申万口径的实际归属，多数票定锚点链一级归属；"综合"仅收成分股多数本身是综合类，**禁做垃圾桶**。层级表落盘 `ths_industry_mapping.yaml`（THS 行业→申万 category+依据+争议标记） | 已裁定  |
 | 9 | ~~存量 23 条 UNLISTED 旧边迁移时点~~ **已裁定+已执行（2026-09-08 Owner：现在就干，规则先统一防夜班幻觉/漂移）**：ig_unlisted_entity 表已建（DDL v3）、7 实体已登记、23 边已换 `UNLISTED:UE-{12hex}`、工具校验已收紧（旧格式公司名直写拒绝）、ingest 已开 unlisted\_entity 记录通道（登记+上市标定），测试 12→16 全绿。幂等迁移脚本 `migrate_unlisted_entities.py` 留档 | 已裁定  |
 | 10 | ig\_node\_company PIT 列（valid\_from/valid\_to）DDL 加列+历史回填口径（行业锚点回填上市日/环节落位填盘点日）——长城任务 Phase 1 施工项；当前引擎 S4/S13 因列不存在 degraded | 施工项  |
