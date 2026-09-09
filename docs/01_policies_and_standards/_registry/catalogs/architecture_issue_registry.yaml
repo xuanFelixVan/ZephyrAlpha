@@ -21429,7 +21429,13 @@ entries:
     ——Owner 长城任务完成 ①st_stock_list isST 历史回补（baostock 日频 2015-01-01~
     2025-12-31，300234 行，逐股逐日 ST 状态）②stk_limit 全历史回补（2015-01-05 起，
     与日线/因子回测起点对齐）；2015-01-05 前窗口撮合走三级解析链二级规则兜底
-    （matching_engine 闭环记录见重评条件②）。
+    （matching_engine 闭环记录见重评条件②）。2026-09-09 方案D 勘正（Owner 立项，
+    commit 69d94cc7）：除权修正真源切换 c3_fundamental.ex_dividend_event（QMT dr），
+    实证 2015~2026-06 除权修正从未生效（bdpan 累计口径被过滤排除）+ 9/8 延拓行
+    顶掉 7-9 月 miniqmt dr 行——全历史重算后除权修正首次全面生效（600000/7/16
+    pre_close=8.89 官方公式吻合、除权次日反向放大 bug 已修、2016 ST 时代口径回归
+    通过）；本条目上述"adj_factor 全覆盖依赖"表述据此勘正，重评条件②的
+    matching_engine 部分闭环不受影响（撮合消费 stk_limit 行，PIT 价已正确）。
     重评条件：① 交易所再修涨跌幅规则 → 追加日期切片即可（模式已固化于 _limit_pct_of）；
     ② matching_engine 无 ST 区分缺口已于 2026-09-08 闭环（回测撮合涨跌停三级解析链，
     禁止再造第四份口径）：一级=stk_limit 表 PIT 行（trade_date=当日 FINAL，limit_up/
