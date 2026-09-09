@@ -41,7 +41,7 @@ nodes:
   # ── 流根节点（Owner 2026-09-09 裁定：每流的最终输出点/视图汇聚点；纯结构，不承载实时清单）──
   # 语义=终点聚合：上游=本流各段（见入边），下游无（终点）；实时结果由台账与前端另行呈现，地图只管结构
   - node_id: TDM-E-FLOW
-    name_zh: 建仓流
+    name_zh: 输出建仓信号
     market: cn_a
     flow: entry_flow
     layer: LROOT
@@ -58,7 +58,7 @@ nodes:
     strategy_mounts: []
 
   - node_id: TDM-P-FLOW
-    name_zh: 持仓流
+    name_zh: 输出持仓信号
     market: cn_a
     flow: position_flow
     layer: PFLOW
@@ -75,7 +75,7 @@ nodes:
     strategy_mounts: []
 
   - node_id: TDM-X-FLOW
-    name_zh: 离场流
+    name_zh: 输出离场信号
     market: cn_a
     flow: exit_flow
     layer: XFLOW
@@ -92,7 +92,7 @@ nodes:
     strategy_mounts: []
 
   - node_id: TDM-F-FLOW
-    name_zh: 组合流
+    name_zh: 输出组合信号
     market: cn_a
     flow: portfolio_flow
     layer: CFLOW
@@ -318,6 +318,30 @@ nodes:
     data_refs: [DS-098]
     module_ref: null
     strategy_mounts: []
+
+  # ── S0-1 新闻情绪语义分析（Owner 2026-09-09：本地模型情绪打分入图；新闻→决策链的理解层）──
+  - node_id: TDM-E-L1-S0-1
+    name_zh: 新闻情绪语义分析
+    market: cn_a
+    flow: entry_flow
+    layer: L1
+    node_type: sensor
+    point: 持续
+    decision_question: 全市场新闻的情绪语义读数——利多利空几何、打到哪些板块（本地模型打分）
+    algo_note_zh: >-
+      本地模型链：新闻采集→语义分析/情绪打分（本地推理池+SFT 情感微调模型）→实体链接到个股/板块。
+      输出市场级+板块级情绪读数，喂 L1-S0 宏观判定与 L2-09 事件链。新闻/图谱流水线本体是数据底座不进图
+      （经 DS/module_ref 引用，同预案引擎先例）。
+    parent_node: TDM-E-L1-S0
+    factor_refs: []
+    data_refs: []
+    algo_refs: []
+    model_refs: [ML-SFT-001]
+    module_ref: src/zephyr/intelligence/news_sentiment_analyzer.py
+    module_id: MOD-INT-AISA
+    strategy_mounts: []
+    activation: continuous
+    ai_autonomy: auto
 
   - node_id: TDM-E-L1-S5
     name_zh: 日级市场条件传感器
@@ -962,6 +986,7 @@ nodes:
     algo_note_zh: >-
       催化剂扫描：政策（部委文件/产业规划）、业绩（行业龙头超预期）、事件（涨价/突破/签约）。
       有当下催化剂的板块加权 20%——有故事的资金才敢接力。
+      事件链血肉（2026-09-09 骨架落盘）：见 09-1 事件图谱传导 / 09-2 冲击标的生成。
     parent_node: TDM-E-L2
     factor_refs: []
     data_refs: [DS-107]
@@ -973,6 +998,49 @@ nodes:
     ai_autonomy: auto
     fallback: DS-107 缺失→催化剂维度降权（纯量价判定）
     strategy_mounts: []
+
+  # ── 09 事件链骨架（Owner 2026-09-09 落盘：新闻/产业链/供应链→盘中决策；实现件由接线会话交付后回填）──
+  - node_id: TDM-E-L2-09-1
+    name_zh: 事件图谱传导
+    market: cn_a
+    flow: entry_flow
+    layer: L2
+    node_type: stage
+    point: 持续
+    decision_question: 这条新闻/事件打在产业链哪个节点上、几分可信
+    algo_note_zh: >-
+      新闻实体/事件词 → 产业链图谱节点匹配（news_symbol_linker 思路升维到 ig_* 图谱节点）+置信度。
+      上游=新闻情绪语义分析（S0-1）与事件评分；下游=冲击标的生成（09-2）。
+      骨架占位：实现件接线会话 W3 交付后回填 module_ref（含图谱快照 DS 登记）。
+    parent_node: TDM-E-L2-09
+    factor_refs: []
+    data_refs: []
+    algo_refs: []
+    module_ref: null
+    strategy_mounts: []
+    activation: continuous
+    ai_autonomy: auto
+
+  - node_id: TDM-E-L2-09-2
+    name_zh: 冲击标的生成
+    market: cn_a
+    flow: entry_flow
+    layer: L2
+    node_type: stage
+    point: 持续
+    decision_question: 受击节点沿产业链/供应链扩散后，今天动哪些标的、利好还是利空
+    algo_note_zh: >-
+      图谱节点受冲击→上下游 N 跳扩散（含全球链/股权维度）→受影响标的/板块清单+方向分级（利好/利空/中性），
+      与 event_score 融合口径。利空子集喂 L3-04 负面否决；冲击流喂 L0-02 盘中偏离监控。
+      骨架占位：实现件接线会话 W4 交付后回填 module_ref；图谱本体经 data_refs 引用不进图。
+    parent_node: TDM-E-L2-09
+    factor_refs: []
+    data_refs: []
+    algo_refs: []
+    module_ref: null
+    strategy_mounts: []
+    activation: continuous
+    ai_autonomy: auto
 
   # 10 同源补涨比价——龙头板块涨完找同链条低位（RRG 改善象限的横向维度补充）
   - node_id: TDM-E-L2-10
@@ -3598,6 +3666,12 @@ edges:
   - {from_node: TDM-P-P3, to_node: TDM-P-FLOW, edge_type: feed}
   - {from_node: TDM-X-S2, to_node: TDM-X-FLOW, edge_type: feed}
   - {from_node: TDM-F-C3, to_node: TDM-F-FLOW, edge_type: feed}
+  # ── 新闻/事件链边（Owner 2026-09-09 骨架落盘）：情绪理解→事件传导→冲击扩散→消费 ──
+  - {from_node: TDM-E-L1-S0-1, to_node: TDM-E-L1-S0, edge_type: feed}
+  - {from_node: TDM-E-L1-S0-1, to_node: TDM-E-L2-09-1, edge_type: feed}
+  - {from_node: TDM-E-L2-09-1, to_node: TDM-E-L2-09-2, edge_type: sequence}
+  - {from_node: TDM-E-L2-09-2, to_node: TDM-E-L3-04, edge_type: feed}
+  - {from_node: TDM-E-L2-09-2, to_node: TDM-E-L0-02, edge_type: feed}
 
 state_matrix:
   # 列轴六段定稿（v1.2，Owner 裁定"机构命名+修复期独立成段"）
