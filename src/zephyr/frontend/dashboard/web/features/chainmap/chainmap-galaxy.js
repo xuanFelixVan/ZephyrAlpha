@@ -6,7 +6,8 @@
  * 验收单：ACC-F-CHAINMAP-GALAXY ｜ 拆分清单：docs/_working/2026-09-08-chainmap-component-split-inventory.md */
 (function () {
   'use strict';
-  var G = { data: null, busy: false, loaded: false, timer: null, view: { z: 1, x: 0, y: 0 }, lineByPair: null };
+  var G = { data: null, busy: false, loaded: false, timer: null, view: { z: 1, x: 0, y: 0 }, lineByPair: null,
+            market: 'all' };   /* market=市场过滤档（项4），nav 开关为唯一真源，经 cm:market 同步 */
   var elByCid = {};   /* cid → 节点元素（hover 邻居高亮） */
 
   function canvasEl() { return document.getElementById('cm-canvas-galaxy'); }
@@ -227,7 +228,7 @@
       el.addEventListener('mouseleave', function () { highlight(c.id, false); });
       el.addEventListener('click', function () {
         ZK.bus.emit('cm:view', { view: 'cluster' });
-        ZK.bus.emit('cm:open-cluster', { cid: c.id, name: c.name });
+        ZK.bus.emit('cm:open-cluster', { cid: c.id, name: c.name, market: G.market });
       });
       host.appendChild(el);
     });
@@ -260,7 +261,7 @@
   function load() {
     if (G.busy) return;
     G.busy = true;
-    ZK.api.fetchChainmapGalaxy().then(function (d) {
+    ZK.api.fetchChainmapGalaxy(G.market).then(function (d) {
       G.busy = false;
       if (!d.ok) { fail(d.error || '后端返回失败'); return; }
       G.loaded = true;
@@ -303,6 +304,14 @@
     var show = d.view === 'galaxy';
     c.style.display = show ? 'block' : 'none';
     if (show) { setCrumb(); if (!G.loaded) load(); }
+  });
+
+  /* 市场切档（项4）：galaxy 是簇空间本尊——重拉当前档数据重渲染；meta 行 counts 随档真实变化 */
+  ZK.bus.on('cm:market', function (d) {
+    G.market = (d && d.market) || 'all';
+    G.loaded = false;
+    G.data = null;
+    if (visible()) load();
   });
 
   function boot() {

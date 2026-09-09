@@ -12,7 +12,7 @@
                    '加工工艺': '工艺', '产品业务': '产品', '技术服务': '服务', '销售渠道': '渠道' };
   var COLW = 252, NODEW = 230, NODEH = 34, CHIPH = 24, PADX = 36, PADTOP = 46, RAIL_MIN = 8;
   var C = { cid: null, name: '', data: null, busy: false, view: { z: 1, x: 0, y: 0 },
-            pos: {}, focusChain: null, focusChainName: null, focusNode: null };
+            pos: {}, focusChain: null, focusChainName: null, focusNode: null, market: 'all' };
   var elByNode = {};   /* node_id → 环节卡元素（聚焦高亮） */
 
   function canvasEl() { return document.getElementById('cm-canvas-cluster'); }
@@ -336,20 +336,20 @@
     if (!showIt) clearRail();
   }
 
-  var nameMap = null;   /* cid → 族名（crumb 兜底；懒拉一次 galaxy，后端 TTL 缓存近零成本） */
-  function ensureNames(cb) {
-    if (nameMap) { cb(); return; }
-    ZK.api.fetchChainmapGalaxy().then(function (d) {
-      nameMap = {};
-      if (d.ok) d.clusters.forEach(function (c) { nameMap[c.id] = c.name; });
+  var nameMaps = {};   /* market → {cid: 族名}（crumb 兜底；per-market 懒拉，后端 TTL 缓存近零成本） */
+  function ensureNames(market, cb) {
+    if (nameMaps[market]) { cb(); return; }
+    ZK.api.fetchChainmapGalaxy(market).then(function (d) {
+      nameMaps[market] = {};
+      if (d.ok) d.clusters.forEach(function (c) { nameMaps[market][c.id] = c.name; });
       cb();
     }).catch(function () { cb(); });
   }
 
-  function loadCluster(cid, cb) {
+  function loadCluster(cid, market, cb) {
     if (C.busy) return;
     C.busy = true;
-    ZK.api.fetchChainmapCluster(cid)
+    ZK.api.fetchChainmapCluster(cid, market)
       .then(function (d) {
         C.busy = false;
         if (!d.ok) {
@@ -357,7 +357,7 @@
           if (empty) { empty.style.display = 'flex'; empty.textContent = '簇加载失败（' + (d.error || '') + '）——重进可重试'; }
           return;
         }
-        C.cid = cid; C.data = d;
+        C.cid = cid; C.data = d; C.market = market;
         render();
         if (cb) cb();
       }).catch(function () {
@@ -371,28 +371,40 @@
 
   ZK.bus.on('cm:open-cluster', function (d) {
     if (!d || !d.cid) return;
+    var mkt = d.market || C.market || 'all';
     C.focusChain = null; C.focusNode = null; C.focusChainName = null;
-    C.name = d.name || (nameMap && nameMap[d.cid]) || C.name;
+    C.name = d.name || (nameMaps[mkt] && nameMaps[mkt][d.cid]) || C.name;
     show(true);
-    if (C.cid === d.cid && C.data) { render(); return; }
-    loadCluster(d.cid, function () { ZK.bus.emit('cm:chain-active', { chain_id: null }); });
+    if (C.cid === d.cid && C.market === mkt && C.data) { render(); return; }
+    loadCluster(d.cid, mkt, function () { ZK.bus.emit('cm:chain-active', { chain_id: null }); });
   });
 
   ZK.bus.on('cm:goto-chain', function (d) {
     if (!d || !d.chain_id) return;
+    var mkt = d.market || C.market || 'all';
     show(true);
     var open = function () {
-      if (!C.name && nameMap && nameMap[d.cluster]) C.name = nameMap[d.cluster];
+      if (!C.name && nameMaps[mkt] && nameMaps[mkt][d.cluster]) C.name = nameMaps[mkt][d.cluster];
       C.focusNode = d.focus_node || null;
       focusChain(d.chain_id, d.chain_name);
       applyFocus();
       if (C.focusNode) centerOn(C.focusNode);
     };
     var go = function () {
-      if (C.cid !== d.cluster || !C.data) loadCluster(d.cluster, open);
+      if (C.cid !== d.cluster || C.market !== mkt || !C.data) loadCluster(d.cluster, mkt, open);
       else open();
     };
-    if (!nameMap) ensureNames(go); else go();
+    if (!nameMaps[mkt]) ensureNames(mkt, go); else go();
+  });
+
+  /* 市场切档（项4）：cid 是 per-market 聚类空间，切档后当前簇失效——回全景星系（新档数据
+   * 由 galaxy/nav 各自重拉），杜绝跨档 cid 误配 */
+  ZK.bus.on('cm:market', function () {
+    C.data = null; C.cid = null; C.focusChain = null; C.focusChainName = null; C.focusNode = null;
+    if (canvasEl() && canvasEl().style.display !== 'none') {
+      show(false);
+      ZK.bus.emit('cm:view', { view: 'galaxy' });
+    }
   });
 
   ZK.registerFeature({

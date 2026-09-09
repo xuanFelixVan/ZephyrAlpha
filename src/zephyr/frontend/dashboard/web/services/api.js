@@ -99,11 +99,13 @@ ZK.api = (function(){
                                       * 判定依据 retire_date 字段（后端真源），前端本地比较日期即可。 */
       return fetchJson('/api/bridge-status', 10000);
     },
-    fetchChainmapGalaxy: function(){   /* 产业地图 L1 星系（chainmap-galaxy/nav 真源；ig_* 聚类首算 3-6s，20s 兜底） */
-      return fetchJson('/api/chainmap-galaxy', 20000);
+    fetchChainmapGalaxy: function(market){   /* 产业地图 L1 星系（chainmap-galaxy/nav 真源；ig_* 聚类首算 3-6s，20s 兜底）；market=all/cn/global（项4，缺省 all 基线档） */
+      var q = (market && market !== 'all') ? '?market=' + encodeURIComponent(market) : '';
+      return fetchJson('/api/chainmap-galaxy' + q, 20000);
     },
-    fetchChainmapCluster: function(cid){   /* 产业地图 L2 链层（chainmap-cluster 真源） */
-      return fetchJson('/api/chainmap-cluster?cid='+encodeURIComponent(cid), 20000);
+    fetchChainmapCluster: function(cid, market){   /* 产业地图 L2 链层（chainmap-cluster 真源）；cid 是 per-market 聚类空间，须与取簇时 market 同档 */
+      var q = (market && market !== 'all') ? '&market=' + encodeURIComponent(market) : '';
+      return fetchJson('/api/chainmap-cluster?cid='+encodeURIComponent(cid) + q, 20000);
     },
     fetchChainmapNode: function(nodeId){   /* 环节公司面板（chainmap-cluster 右侧抽屉） */
       return fetchJson('/api/chainmap-node?node_id='+encodeURIComponent(nodeId), 15000);

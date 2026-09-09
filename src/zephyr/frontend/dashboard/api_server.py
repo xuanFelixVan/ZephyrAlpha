@@ -2300,8 +2300,9 @@ def tdm_verdicts() -> dict[str, Any]:
 
 # ═══════════════ 产业地图 chainmap（真源 ig_* 七表，depgraph PG 只读；Owner 2026-09-08 三层缩放方案） ═══════════════
 
-_CM_GALAXY_CACHE: dict[str, Any] = {"data": None, "ts": 0.0}          # L1 星系（TTL 600s，数据扩建期日级刷新足够）
-_CM_CLUSTER_CACHE: dict[str, dict[str, Any]] = {}                     # L2 簇详情（随 galaxy 失联失效）
+_CM_MARKETS = ("all", "cn", "global")   # 市场过滤档（项 4）：all=全部链（基线口径），cn/global=ig_chain.market 单档
+_CM_GALAXY_CACHE: dict[str, dict[str, Any]] = {}                     # market → {data, ts}（L1 星系，TTL 600s）
+_CM_CLUSTER_CACHE: dict[tuple[str, str], dict[str, Any]] = {}        # (market, cid) → L2 簇详情（随 galaxy 失联失效）
 _CM_NAME_CACHE: dict[str, Any] = {"map": None, "ts": 0.0}             # symbol→公司名映射（ig_company_edge 名称列，覆盖不全如实用）
 _CM_NAME_OVERRIDE_PATH = _REPO / "config" / "chainmap_cluster_names.yaml"   # L1 族名 override（Commit C 规则版，mtime 缓存改 YAML 即生效）
 _CM_NAME_OVERRIDE: dict[str, Any] = {"mtime": None, "map": {}}
@@ -2364,16 +2365,24 @@ def _cm_role_rank(role: str | None) -> int:
     return 2   # mentioned/未知殿后
 
 
-def _cm_build_galaxy() -> dict[str, Any]:
+def _cm_build_galaxy(market: str = "all") -> dict[str, Any]:
     """链→族聚类：跨链结构边+公司供应链边投影到链对 → 确定性模块度局部移动（Louvain 式单层，γ=3.5）→ 小簇并入最强邻居（≤48 簇）。
 
-    纯 Python 无新依赖；簇名=簇内连接度最高的枢纽链名。结果缓存 600s。
+    纯 Python 无新依赖；簇名=簇内连接度最高的枢纽链名。结果缓存 600s（按 market 分档，项 4）。
+    market=all=全部 active 链（基线口径，四闸验收档）；cn/global=ig_chain.market 单档过滤——
+    过滤在聚类输入侧（链清单先收敛，跨链边/公司投影经 chain_name 白名单自然截断），counts 真实反映。
     """
     conn = _cm_pg()
     try:
         cur = conn.cursor()
-        cur.execute("SELECT chain_id, name FROM ig_chain WHERE status = 'active'")
-        chain_name: dict[str, str] = {r[0]: r[1] for r in cur.fetchall()}
+        if market == "all":
+            cur.execute("SELECT chain_id, name, market FROM ig_chain WHERE status = 'active'")
+        else:
+            cur.execute("SELECT chain_id, name, market FROM ig_chain WHERE status = 'active' AND market = %s",
+                        (market,))
+        chain_rows = cur.fetchall()
+        chain_name: dict[str, str] = {r[0]: r[1] for r in chain_rows}
+        chain_market: dict[str, str] = {r[0]: (r[2] or "cn") for r in chain_rows}
         cur.execute("SELECT node_id, chain_id FROM ig_node")
         node_chain: dict[str, str] = {r[0]: r[1] for r in cur.fetchall()}
         cur.execute("SELECT node_id, count(DISTINCT symbol) FROM ig_node_company WHERE valid_to IS NULL GROUP BY node_id")
@@ -2506,6 +2515,7 @@ def _cm_build_galaxy() -> dict[str, Any]:
                              "n_nodes": st["n_nodes"], "n_companies": st["n_companies"]})
         for m in st["members"]:
             chains_out.append({"chain_id": m, "name": chain_name[m], "cluster": cid,
+                               "market": chain_market[m],
                                "n_nodes": sum(1 for n, c in node_chain.items() if c == m),
                                "n_companies": chain_companies[m]})
     cg: dict[str, dict[str, float]] = {}
@@ -2516,12 +2526,14 @@ def _cm_build_galaxy() -> dict[str, Any]:
             cg[key] = cg.get(key, 0.0) + w
     links_out = [{"s": k[0], "t": k[1], "w": int(v)} for k, v in sorted(cg.items())]
     return {"clusters": clusters_out, "links": links_out, "chains": chains_out,
+            "market": market,
             "generated_at": datetime.now().isoformat(" ", "seconds")}
 
 
-def _cm_galaxy() -> dict[str, Any]:
-    g = _CM_GALAXY_CACHE["data"]
-    if g and (time.time() - _CM_GALAXY_CACHE["ts"]) < 600:
+def _cm_galaxy(market: str = "all") -> dict[str, Any]:
+    ent = _CM_GALAXY_CACHE.get(market)
+    if ent and (time.time() - ent["ts"]) < 600:
+        g = ent["data"]
         try:   # Commit C：族名 override 改 YAML 即生效（mtime 变化→绕过 TTL 强制重建）
             if _CM_NAME_OVERRIDE_PATH.stat().st_mtime != _CM_NAME_OVERRIDE["mtime"]:
                 g = None
@@ -2529,9 +2541,8 @@ def _cm_galaxy() -> dict[str, Any]:
             pass
         if g:
             return g
-    g = _cm_build_galaxy()
-    _CM_GALAXY_CACHE["data"] = g
-    _CM_GALAXY_CACHE["ts"] = time.time()
+    g = _cm_build_galaxy(market)
+    _CM_GALAXY_CACHE[market] = {"data": g, "ts": time.time()}
     _CM_CLUSTER_CACHE.clear()
     return g
 
@@ -2563,25 +2574,31 @@ def _cm_symbol_names() -> dict[str, str]:
 
 
 @app.get("/api/chainmap-galaxy")
-def chainmap_galaxy() -> dict[str, Any]:
-    """产业地图 L1 星系（chainmap-galaxy 组件）：族节点+族间边+全量链清单（导航树同源）。"""
+def chainmap_galaxy(market: str = Query("all", pattern="^(all|cn|global)$")) -> dict[str, Any]:
+    """产业地图 L1 星系（chainmap-galaxy 组件）：族节点+族间边+全量链清单（导航树同源）。
+
+    market 过滤档（项 4）：all=全部链（默认，基线口径）/cn/global——聚类输入侧过滤，
+    clusters/links/chains counts 随档真实变化，各档独立缓存。"""
     try:
-        g = _cm_galaxy()
+        g = _cm_galaxy(market)
         return {"ok": True, **g}
     except Exception as exc:
         return {"ok": False, "error": str(exc)[:200], "clusters": [], "links": [], "chains": []}
 
 
 @app.get("/api/chainmap-cluster")
-def chainmap_cluster(cid: str = Query(..., min_length=2, max_length=8)) -> dict[str, Any]:
-    """产业地图 L2 链层（chainmap-cluster 组件）：簇内链→环节（tier 三值分列 + function_role 组内聚集）+结构边+公司计数。"""
+def chainmap_cluster(cid: str = Query(..., min_length=2, max_length=8),
+                     market: str = Query("all", pattern="^(all|cn|global)$")) -> dict[str, Any]:
+    """产业地图 L2 链层（chainmap-cluster 组件）：簇内链→环节（tier 三值分列 + function_role 组内聚集）+结构边+公司计数。
+
+    market 与 galaxy 同档取簇（cid 是 per-market 聚类空间，跨档 cid 不存在→cluster not found）。"""
     if not cid.replace("C", "").isdigit():
         return {"ok": False, "error": "bad cid", "chains": []}
-    cached = _CM_CLUSTER_CACHE.get(cid)
+    cached = _CM_CLUSTER_CACHE.get((market, cid))
     if cached:
         return {"ok": True, **cached}
     try:
-        g = _cm_galaxy()
+        g = _cm_galaxy(market)
         members = [c for c in g["chains"] if c["cluster"] == cid]
         if not members:
             return {"ok": False, "error": "cluster not found", "chains": []}
@@ -2616,8 +2633,8 @@ def chainmap_cluster(cid: str = Query(..., min_length=2, max_length=8)) -> dict[
         chains_out = [{**c, "nodes": nodes_by_chain[c["chain_id"]]} for c in
                       sorted(members, key=lambda c: -c["n_companies"])]
         edges_out = [[a, b] for a, b in all_edges if a in nid_set and b in nid_set]
-        data = {"cluster": cluster, "chains": chains_out, "edges": edges_out}
-        _CM_CLUSTER_CACHE[cid] = data
+        data = {"cluster": cluster, "chains": chains_out, "edges": edges_out, "market": market}
+        _CM_CLUSTER_CACHE[(market, cid)] = data
         return {"ok": True, **data}
     except Exception as exc:
         return {"ok": False, "error": str(exc)[:200], "chains": []}

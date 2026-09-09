@@ -217,10 +217,13 @@
     Array.prototype.forEach.call(card.querySelectorAll('.cc-row[data-chain]'), function (el) {
       el.addEventListener('click', function () {
         close();
+        /* 落位 cid 来自后端全档（all）聚类空间——若当前市场档非 all 先广播切回（项4：跨档 cid 空间不同） */
+        ZK.bus.emit('cm:market', { market: 'all' });
         ZK.bus.emit('cm:view', { view: 'cluster' });
-        ZK.bus.emit('cm:open-cluster', { cid: el.getAttribute('data-cluster'), name: el.getAttribute('data-chain-name') });
+        ZK.bus.emit('cm:open-cluster', { cid: el.getAttribute('data-cluster'), name: el.getAttribute('data-chain-name'), market: 'all' });
         ZK.bus.emit('cm:goto-chain', { chain_id: el.getAttribute('data-chain'), cluster: el.getAttribute('data-cluster'),
-                                       chain_name: el.getAttribute('data-chain-name'), focus_node: el.getAttribute('data-node') });
+                                       chain_name: el.getAttribute('data-chain-name'), focus_node: el.getAttribute('data-node'),
+                                       market: 'all' });
       });
     });
     var jp = card.querySelector('.cc-jump');
