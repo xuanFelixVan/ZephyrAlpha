@@ -39,7 +39,8 @@
 --------
 1. diff 块归因按"最近出现的 node_id"粗粒度归属——足够判定"动了谁的块"，不做行级精确。
 2. fail-open 只用于基础设施故障（地图缺失/git 异常）；diff 干净且节点受影响=真违规，阻断。
-3. priority=76：ARCH-REFERENCE(75) 之后、CAPABILITY-OVERLAP(200) 之前——必须在暂存集冻结后运行。
+3. priority=62：CREATE-GUARD(61) 与邻域段（63-75 已占）之间的唯一空位——必须在暂存集冻结后运行；
+   首选 76 与 RULE-FOUR-WAY-ALIGN 冲突，按"后到者让位"先例改 62（历史先例：DATA-TASK 78->41 等）。
 
 Usage::
 
@@ -58,7 +59,6 @@ from pathlib import Path
 from typing import Any
 
 from zephyr.shared.utils.time_utils import now_utc
-from zephyr.trading.decision_map import load_decision_map
 
 logger = logging.getLogger(__name__)
 
@@ -126,6 +126,10 @@ def check_algo_note_sync(
     changed_code = {_norm_posix(f, Path(map_path).parents[1]) for f in (files or []) if str(f).endswith(".py")}
     if not changed_code:
         return False, "", []
+    # 懒加载：zephyr.trading 包级 __init__ 较重且与 gov_enforcement 存在导入环风险，
+    # 网关进程内必须在注册期（import 本模块）之外才加载（2026-09-09 注册 105/106 失败治本）
+    from zephyr.trading.decision_map import load_decision_map
+
     dm = load_decision_map(Path(map_path))
     affected = [n for n in dm.nodes if n.module_ref and Path(str(n.module_ref)).as_posix() in changed_code]
     if not affected:
@@ -171,8 +175,8 @@ def make_algo_note_sync_gate() -> Any:
     """构造算法-大白话同步绑定 GateSpec（硬阻断型）。
 
     Returns:
-        GateSpec(gate_id="ALGO-NOTE-SYNC", priority=76)。
-        priority=76——紧跟 ARCH-REFERENCE(75) 之后、CAPABILITY-OVERLAP(200) 之前。
+        GateSpec(gate_id="ALGO-NOTE-SYNC", priority=62)。
+        priority=62——门禁家族邻段唯一空位（76 与 RULE-FOUR-WAY-ALIGN 冲突，后到者让位）。
     """
     from zephyr.gov_enforcement.rule_bridge.commit_gate_registry import GateSpec
 
@@ -198,4 +202,4 @@ def make_algo_note_sync_gate() -> Any:
             logger.warning("ALGO-NOTE-SYNC fail-open: %s", exc)
             return True, ""
 
-    return GateSpec(gate_id="ALGO-NOTE-SYNC", check=_check, priority=76)
+    return GateSpec(gate_id="ALGO-NOTE-SYNC", check=_check, priority=62)
