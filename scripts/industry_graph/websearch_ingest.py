@@ -4,7 +4,7 @@
 # [CONSUMERS] 夜班 SOP industry_chain_data_audit_sop §5 全轮次写入(唯一合法通道)
 # [STARTUP] manual
 # [MATURITY] production
-# [INVARIANTS] 写入唯一通道: 全部走 ingest 子命令(禁手写 SQL); 批次=单事务全成全败; 幂等(UNIQUE 锚 ON CONFLICT); 硬校验(SOP §5): source_doc 三段式/confidence<=0.7(websearch)/symbol 正则+cn 反查 stock_basic/词表白名单(tier/category/edge_type v2)/node.name 无 -tier 后缀残留/backup 幂等; UNLISTED:UE-xxx 唯一合法格式(旧格式公司名直写拒绝,§4.10); unlisted_entity 记录 status 枚举+listed_symbol 真代码格式校验; PIT 三时间戳 websearch 边必填; 节点引用(node/node_company/node_edge)按(链+名)查库解析存量真实ID(存量采购包节点非md5方案,重算ID会FK违规/造重复行,2026-09-08修复); chain 支持 status/merged_into(deprecated 须带 merged_into,幂等 append 不覆盖原 source_note,2026-09-08 裁定执行)
+# [INVARIANTS] 写入唯一通道: 全部走 ingest 子命令(禁手写 SQL); 批次=单事务全成全败; 幂等(UNIQUE 锚 ON CONFLICT); 硬校验(SOP §5): source_doc 三段式/confidence<=0.7(websearch)/symbol 正则+cn 反查 stock_basic/词表白名单(tier 三位置值 v0.4+function_role 八值/category/edge_type v2/role 五值)/链名标题腔拒绝/node.name 无 -tier 后缀残留/backup 幂等; UNLISTED:UE-xxx 唯一合法格式(旧格式公司名直写拒绝,§4.10); unlisted_entity 记录 status 枚举+listed_symbol 真代码格式校验; equity_edge 记录(relation 六值/as_of 必填/PERSON: 前缀/verification 三值,2026-09-09 分域裁定); node 深度列 child_chain_id+drill_status(child 交叉校验,drill_manual=Owner 钉死 AI 不可写); PIT 三时间戳 websearch 边必填; 节点引用(node/node_company/node_edge)按(链+名)查库解析存量真实ID(存量采购包节点非md5方案,重算ID会FK违规/造重复行,2026-09-08修复); chain 支持 status/merged_into(deprecated 须带 merged_into,幂等 append 不覆盖原 source_note,2026-09-08 裁定执行)
 # [MODIFY-GUARD] none
 # [STABILITY] evolving
 # [SAFETY] L
@@ -44,9 +44,17 @@ from psycopg2.extras import execute_values
 
 from zephyr.governance.depgraph_schema import get_depgraph_pg_connection
 
-# ---- 词表(SOP §4.7/§4.8) ----
+# ---- 词表(SOP §4.7/§4.8; 与 graph_quality_check 引擎同源,两边漂移=事故) ----
 TIERS = {"上游", "中游", "下游", "设备", "材料", "零部件", "原材料", "辅材", "unspecified"}
-TIERS_NEW = {"上游", "中游", "下游", "设备", "材料"}  # websearch 只许前 5 值
+# v0.4 职能化迁移(Owner 2026-09-09 裁定): tier 仅三位置值,职能拆 function_role 八值
+TIERS_NEW = {"上游", "中游", "下游"}
+FUNCTION_ROLES = ("生产设备", "生产原料", "辅助材料", "辅助设备", "加工工艺", "技术服务", "产品业务", "销售渠道")
+ROLES_STD = ("龙头", "核心", "主要", "参与", "提及")  # role 五值(Owner 2026-09-09 裁定)
+# 深度体系 drill_status: AI 可写三值; drill_manual=Owner 钉死 AI 不可写(SOP 节点模板裁定1)
+DRILL_STATUSES_AI = {"child", "brick_mass", "brick_noalpha"}
+CHAIN_ID_RE = re.compile(r"^CH-[0-9a-f]{12}$")
+# 链名标题腔(与引擎 TITLE_JUNK_RE 同源)
+TITLE_JUNK_RE = re.compile("一张图看懂|重磅|最新|预测|深度|全景图|解读|盘点|风向标|启幕|ppt|研报|机遇|风口")
 CATEGORIES = {
     "半导体", "消费电子", "元件", "光学光电子", "计算机设备", "机械设备", "电力设备", "汽车",
     "国防军工", "家用电器", "基础化工", "有色金属", "钢铁", "建筑材料", "石油石化", "煤炭", "医药生物",
@@ -64,8 +72,13 @@ SYMBOL_GLOBAL_RE = re.compile(r"^[A-Z0-9]{1,6}\.(US|KS|TW|T|HK|DE|LN|JP|SM)$")
 # 旧格式 UNLISTED:公司名 禁止,防双格式并存致夜班模型幻觉/漂移)
 SYMBOL_UNLISTED_RE = re.compile(r"^UNLISTED:UE-[0-9a-f]{12}$")
 SOURCEDOC_RE = re.compile(r"^[^|]+\|[^|]+\|\d{4}-\d{2}-\d{2}$")
+# 股权穿透表(2026-09-09 裁定: 同库独立表 ig_equity_edge,与 ig_company_edge 分域;
+# 分流硬规则: 被投/持股/实控/质押->equity_edge, 供应/客户/竞争/合作->company_edge)
+EQUITY_RELATIONS = {"invests_in", "subsidiary", "shareholding", "actual_control", "pledge", "judicial_frozen"}
+EQUITY_VERIFICATION = {"unverified", "verified", "official"}
+PERSON_PREFIX = "PERSON:"
 
-_ALL_TABLES = ("ig_chain", "ig_node", "ig_edge", "ig_node_company", "ig_document", "ig_company_edge", "ig_company_metric", "ig_chunk", "ig_fact", "ig_unlisted_entity")
+_ALL_TABLES = ("ig_chain", "ig_node", "ig_edge", "ig_node_company", "ig_document", "ig_company_edge", "ig_company_metric", "ig_chunk", "ig_fact", "ig_unlisted_entity", "ig_equity_edge", "ig_product_revenue")
 _DATE = None
 
 
@@ -260,15 +273,39 @@ def _validate_records(records: list[dict], stocks: set[str] | None) -> list[str]
                 errs.append(f"{idx}: cn symbol 非法: {sym}")
             else:
                 errs.append(f"{idx}: global symbol 非法: {sym}")
-        # 硬校验 7: tier 词表(websearch 禁 unspecified)
+        # 硬校验 7: tier 词表(v0.4 职能化: websearch 新写仅三位置值,职能走 function_role)
         if typ == "node":
             tier = r.get("tier")
             if tier and tier not in TIERS:
                 errs.append(f"{idx}: tier 非词表: {tier}")
             if tier and src in ("websearch", "corpus_rag") and tier not in TIERS_NEW:
-                errs.append(f"{idx}: websearch 禁 tier={tier}")
+                errs.append(f"{idx}: websearch 禁 tier={tier}(v0.4 后 tier 仅 上游/中游/下游,职能写 function_role)")
             if NODE_SUFFIX_RE.search(r.get("name", "")):
                 errs.append(f"{idx}: node.name 含 -tier 后缀残留: {r.get('name')}")
+            fr = r.get("function_role")
+            if fr is not None and fr not in FUNCTION_ROLES:
+                errs.append(f"{idx}: function_role 非八值词表: {fr}")
+            ds = r.get("drill_status")
+            if ds is not None:
+                if ds == "drill_manual":
+                    errs.append(f"{idx}: drill_status=drill_manual 为 Owner 钉死值,AI 不可写")
+                elif ds not in DRILL_STATUSES_AI:
+                    errs.append(f"{idx}: drill_status 非法(child/brick_mass/brick_noalpha): {ds}")
+            cc = r.get("child_chain_id")
+            if cc is not None and not CHAIN_ID_RE.match(cc):
+                errs.append(f"{idx}: child_chain_id 非 chain_id 格式: {cc}")
+            if ds == "child" and not cc:
+                errs.append(f"{idx}: drill_status=child 须带 child_chain_id(交叉校验)")
+            if cc and ds not in ("child", None):
+                errs.append(f"{idx}: 带 child_chain_id 时 drill_status 须为 child: {ds}")
+        # 硬校验: role 五值白名单(Owner 2026-09-09 裁定,与引擎 S10 同词表)
+        if typ == "node_company":
+            role = r.get("role")
+            if role is not None and role not in ROLES_STD:
+                errs.append(f"{idx}: role 非五值词表(龙头/核心/主要/参与/提及): {role}")
+            # S13 PIT: websearch 新落位必带 valid_from(2026-09-09 长城任务收紧)
+            if src in ("websearch", "corpus_rag") and not r.get("valid_from"):
+                errs.append(f"{idx}: node_company 缺 valid_from(S13 PIT)")
         # 硬校验 8: category
         if typ == "chain":
             cat = r.get("category")
@@ -283,6 +320,8 @@ def _validate_records(records: list[dict], stocks: set[str] | None) -> list[str]
                 errs.append(f"{idx}: merged_into 非 chain_id 格式: {mi}")
             if st == "deprecated" and not mi:
                 errs.append(f"{idx}: deprecated 链须带 merged_into(SOP §4.6)")
+            if TITLE_JUNK_RE.search(r.get("name", "")):
+                errs.append(f"{idx}: 链名标题腔拒绝(规范名=XX产业链句式): {r.get('name')}")
         if typ in ("node_edge", "company_edge"):
             et = r.get("edge_type", r.get("relation"))
             if et and et not in EDGE_TYPES_V2:
@@ -299,6 +338,39 @@ def _validate_records(records: list[dict], stocks: set[str] | None) -> list[str]
                 errs.append(f"{idx}: company_edge 缺 from_symbol")
             if not r.get("to_symbol"):
                 errs.append(f"{idx}: company_edge 缺 to_symbol")
+        # 股权穿透记录校验(2026-09-09 裁定: ig_equity_edge 21 列 UBO 标准;
+        # relation 六值枚举; as_of 必填=年报口径期末日/公告日; holder/held 同 symbol
+        # 契约 + PERSON:人名 前缀; verification 三值)
+        if typ == "equity_edge":
+            for k in ("holder", "held"):
+                v = r.get(k)
+                if not v:
+                    errs.append(f"{idx}: equity_edge 缺 {k}")
+                    continue
+                if v.startswith(PERSON_PREFIX):
+                    if not v[len(PERSON_PREFIX):].strip():
+                        errs.append(f"{idx}: equity_edge {k} PERSON: 后人名非空: {v!r}")
+                    continue
+                if SYMBOL_CN_RE.match(v):
+                    if stocks is not None and v not in stocks:
+                        errs.append(f"{idx}: equity_edge {k} cn symbol 不在 stock_basic: {v}")
+                elif SYMBOL_GLOBAL_RE.match(v) or SYMBOL_UNLISTED_RE.match(v):
+                    pass
+                elif v.startswith("UNLISTED:"):
+                    errs.append(f"{idx}: equity_edge {k} UNLISTED 旧格式已禁,须 UNLISTED:UE-xxx: {v}")
+                else:
+                    errs.append(f"{idx}: equity_edge {k} 非 symbol/PERSON:/UNLISTED:UE- 格式: {v}")
+            rel = r.get("relation")
+            if rel not in EQUITY_RELATIONS:
+                errs.append(f"{idx}: equity_edge.relation 非六值枚举(invests_in/subsidiary/shareholding/actual_control/pledge/judicial_frozen): {rel}")
+            if not r.get("as_of"):
+                errs.append(f"{idx}: equity_edge 缺 as_of(年报口径期末日/公告日,必填)")
+            vf = r.get("valid_from")
+            if vf and r.get("as_of") and str(vf) > str(r.get("as_of")):
+                errs.append(f"{idx}: equity_edge valid_from 晚于 as_of(时间倒挂): {vf}>{r.get('as_of')}")
+            ver = r.get("verification")
+            if ver is not None and ver not in EQUITY_VERIFICATION:
+                errs.append(f"{idx}: equity_edge.verification 非三值(unverified/verified/official): {ver}")
         # 编码表登记校验(SOP §4.10): status 封闭枚举;listed_symbol 非空时必须真代码格式
         if typ == "unlisted_entity":
             st = r.get("status") or "unlisted"
@@ -358,21 +430,30 @@ def cmd_ingest(batch_path: str) -> int:
                 cid = _chain_id(r["chain_name"])
                 nid = _resolve_node(cur, cid, r["name"])
                 if nid is not None:
+                    # drill_manual=Owner 钉死值: AI 更新不得触碰该两列(节点模板裁定1)
                     cur.execute(
                         """UPDATE ig_node SET updated_at=now(),
                              tier=COALESCE(NULLIF(%s,''), ig_node.tier),
                              aliases=COALESCE(%s, ig_node.aliases),
-                             description=COALESCE(%s, ig_node.description)
+                             description=COALESCE(%s, ig_node.description),
+                             function_role=COALESCE(%s, ig_node.function_role),
+                             child_chain_id=CASE WHEN ig_node.drill_status='drill_manual' THEN ig_node.child_chain_id
+                                                 ELSE COALESCE(%s, ig_node.child_chain_id) END,
+                             drill_status=CASE WHEN ig_node.drill_status='drill_manual' THEN ig_node.drill_status
+                                               ELSE COALESCE(%s, ig_node.drill_status) END
                            WHERE node_id=%s""",
-                        (r.get("tier") or "", r.get("aliases"), r.get("description"), nid),
+                        (r.get("tier") or "", r.get("aliases"), r.get("description"), r.get("function_role"),
+                         r.get("child_chain_id"), r.get("drill_status"), nid),
                     )
                 else:
                     nid = _node_id(cid, r["name"], r.get("tier", ""))
                     cur.execute(
-                        """INSERT INTO ig_node (node_id,chain_id,name,tier,aliases,description,market,created_at,updated_at)
-                        VALUES (%s,%s,%s,%s,%s,%s,%s,now(),now())
-                        ON CONFLICT (node_id) DO UPDATE SET updated_at=now(), tier=COALESCE(NULLIF(EXCLUDED.tier,''),ig_node.tier)""",
-                        (nid, cid, r["name"], r.get("tier"), r.get("aliases"), r.get("description"), mkt),
+                        """INSERT INTO ig_node (node_id,chain_id,name,tier,aliases,description,market,function_role,child_chain_id,drill_status,created_at,updated_at)
+                        VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,now(),now())
+                        ON CONFLICT (node_id) DO UPDATE SET updated_at=now(), tier=COALESCE(NULLIF(EXCLUDED.tier,''),ig_node.tier),
+                          function_role=COALESCE(EXCLUDED.function_role,ig_node.function_role)""",
+                        (nid, cid, r["name"], r.get("tier"), r.get("aliases"), r.get("description"), mkt,
+                         r.get("function_role"), r.get("child_chain_id"), r.get("drill_status")),
                     )
             elif typ == "node_edge":
                 cid = _chain_id(r["chain_name"])
@@ -396,12 +477,13 @@ def cmd_ingest(batch_path: str) -> int:
                         f"{r['node_name']} (chain={r['chain_name']})"
                     )
                 cur.execute(
-                    """INSERT INTO ig_node_company (node_id,symbol,role,confidence,evidence_text,source_doc,market,created_at,updated_at)
-                    VALUES (%s,%s,%s,%s,%s,%s,%s,now(),now())
+                    """INSERT INTO ig_node_company (node_id,symbol,role,confidence,evidence_text,source_doc,market,valid_from,valid_to,pit_strength,created_at,updated_at)
+                    VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,now(),now())
                     ON CONFLICT (node_id,symbol) DO UPDATE SET updated_at=now(),
                       confidence=GREATEST(ig_node_company.confidence,EXCLUDED.confidence),
                       evidence_text=COALESCE(EXCLUDED.evidence_text,ig_node_company.evidence_text)""",
-                    (nid, r["symbol"], r.get("role"), r.get("confidence", 0.5), r.get("evidence_text"), sd, mkt),
+                    (nid, r["symbol"], r.get("role"), r.get("confidence", 0.5), r.get("evidence_text"), sd, mkt,
+                     r.get("valid_from"), r.get("valid_to"), r.get("pit_strength")),
                 )
             elif typ == "company_edge":
                 cur.execute(
@@ -432,6 +514,33 @@ def cmd_ingest(batch_path: str) -> int:
                     ON CONFLICT (subject,relation,object,as_of,source) DO NOTHING""",
                     (r["subject"], r["relation"], r["object"], r.get("value"), r.get("evidence_chunk_id"),
                      r.get("confidence", 0.5), r.get("as_of"), src, mkt),
+                )
+            elif typ == "equity_edge":
+                # 股权穿透边(2026-09-09 裁定: 与 ig_company_edge 分域;UNIQUE 锚幂等)
+                cur.execute(
+                    """INSERT INTO ig_equity_edge (holder,held,stake_pct,voting_pct,layer,relation,control_method,
+                       acquisition_cost,acquisition_date,as_of,valid_from,valid_to,holder_name,holder_country,
+                       verification,source,source_doc,evidence,created_at)
+                    VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,now())
+                    ON CONFLICT (holder,held,as_of,source) DO UPDATE SET
+                      relation=EXCLUDED.relation,
+                      stake_pct=COALESCE(EXCLUDED.stake_pct,ig_equity_edge.stake_pct),
+                      voting_pct=COALESCE(EXCLUDED.voting_pct,ig_equity_edge.voting_pct),
+                      layer=COALESCE(EXCLUDED.layer,ig_equity_edge.layer),
+                      control_method=COALESCE(EXCLUDED.control_method,ig_equity_edge.control_method),
+                      acquisition_cost=COALESCE(EXCLUDED.acquisition_cost,ig_equity_edge.acquisition_cost),
+                      acquisition_date=COALESCE(EXCLUDED.acquisition_date,ig_equity_edge.acquisition_date),
+                      valid_from=COALESCE(EXCLUDED.valid_from,ig_equity_edge.valid_from),
+                      valid_to=COALESCE(EXCLUDED.valid_to,ig_equity_edge.valid_to),
+                      holder_name=COALESCE(EXCLUDED.holder_name,ig_equity_edge.holder_name),
+                      holder_country=COALESCE(EXCLUDED.holder_country,ig_equity_edge.holder_country),
+                      verification=COALESCE(EXCLUDED.verification,ig_equity_edge.verification),
+                      evidence=COALESCE(EXCLUDED.evidence,ig_equity_edge.evidence),
+                      source_doc=COALESCE(EXCLUDED.source_doc,ig_equity_edge.source_doc)""",
+                    (r["holder"], r["held"], r.get("stake_pct"), r.get("voting_pct"), r.get("layer", 1),
+                     r["relation"], r.get("control_method"), r.get("acquisition_cost"), r.get("acquisition_date"),
+                     r["as_of"], r.get("valid_from"), r.get("valid_to"), r.get("holder_name"),
+                     r.get("holder_country"), r.get("verification") or "unverified", src, sd, r.get("evidence")),
                 )
             elif typ == "unlisted_entity":
                 # 编码表登记/上市标定(SOP §4.10): name+country 登记幂等;

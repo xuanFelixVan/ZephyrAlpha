@@ -41,7 +41,8 @@ EXEMPT_FILE = Path(__file__).resolve().parent / "quality_exemptions.yaml"
 
 # 词表(与 websearch_ingest 同源; 引擎/工具两边规则漂移=事故,改须同 commit)
 TITLE_JUNK_RE = "一张图看懂|重磅|最新|预测|深度|全景图|解读|盘点|风向标|启幕|ppt|研报|机遇|风口"
-TIER_ALL = ("上游", "中游", "下游", "设备", "材料", "零部件", "原材料", "辅材")
+TIER_POSITION = ("上游", "中游", "下游")  # v0.4 职能化: tier 仅三位置值(Owner 2026-09-09)
+FUNCTION_ROLES = ("生产设备", "生产原料", "辅助材料", "辅助设备", "加工工艺", "技术服务", "产品业务", "销售渠道")
 TIER_SUFFIX_RE = "-(上游|中游|下游|设备|材料|零部件|原材料|辅材|unspecified)$"
 ROLES_STD = ("龙头", "核心", "主要", "参与", "提及")
 SW_CATEGORIES = (
@@ -105,12 +106,12 @@ CHECKS: list[dict] = [
     """},
     {"id": "S4", "title": "废弃链闭环", "sql": """
         SELECT chain_id, '缺merged_into: ' || name FROM ig_chain
-        WHERE status='deprecated' AND (merged_into IS NULL OR merged_into NOT ~ '^CH-[0-9a-f]{{12}}$')
+        WHERE status='deprecated' AND (source_note IS NULL OR source_note !~ 'merged_into:CH-[0-9a-f]{12}')
         UNION ALL
         SELECT c.chain_id, '废弃链落位残留 ' || count(*) FROM ig_chain c
         JOIN ig_node n ON n.chain_id=c.chain_id
         JOIN ig_node_company nc ON nc.node_id=n.node_id
-        WHERE c.status='deprecated'
+        WHERE c.status='deprecated' AND nc.valid_to IS NULL
         GROUP BY c.chain_id
     """},
     {"id": "S5", "title": "version_year 覆盖(锚点链豁免)", "sql": """
@@ -119,11 +120,20 @@ CHECKS: list[dict] = [
           AND name NOT LIKE '%行业'
     """},
     # ---- 节点层 ----
-    {"id": "S6", "title": "tier 词表+零 unspecified", "sql": f"""
-        SELECT node_id, coalesce(tier,'(空)') || ' | ' || name FROM ig_node
-        WHERE tier IS NULL OR (tier NOT IN ({','.join(f"'{t}'" for t in TIER_ALL)}) AND tier <> 'unspecified')
+    # S6 v0.4 职能化: tier 仅三位置值(残留职能值=违规) + function_role 八值词表检查
+    # 2026-09-09 Owner 委托裁定: 废弃链上节点=历史快照不审(与 S8 同口径),只审活跃链
+    {"id": "S6", "title": "tier 三位置值+function_role 八值+零 unspecified", "sql": f"""
+        SELECT n.node_id, coalesce(n.tier,'(空)') || ' | ' || n.name FROM ig_node n
+        JOIN ig_chain c ON n.chain_id=c.chain_id
+        WHERE (n.tier IS NULL OR (n.tier NOT IN ({','.join(f"'{t}'" for t in TIER_POSITION)}) AND n.tier <> 'unspecified'))
+          AND (c.status IS NULL OR c.status='active')
         UNION ALL
-        SELECT node_id, 'unspecified | ' || name FROM ig_node WHERE tier='unspecified'
+        SELECT n.node_id, 'unspecified | ' || n.name FROM ig_node n
+        JOIN ig_chain c ON n.chain_id=c.chain_id
+        WHERE n.tier='unspecified' AND (c.status IS NULL OR c.status='active')
+        UNION ALL
+        SELECT node_id, 'function_role非法:' || function_role || ' | ' || name FROM ig_node
+        WHERE function_role IS NOT NULL AND function_role NOT IN ({','.join(f"'{f}'" for f in FUNCTION_ROLES)})
     """},
     {"id": "S7", "title": "节点名零 -tier 后缀", "sql": f"""
         SELECT node_id, name FROM ig_node WHERE name ~ '{TIER_SUFFIX_RE}'
@@ -132,8 +142,10 @@ CHECKS: list[dict] = [
         SELECT n.node_id, n.name || ' @' || c.name FROM ig_node n
         JOIN ig_chain c ON n.chain_id=c.chain_id
         WHERE NOT EXISTS (SELECT 1 FROM ig_edge e WHERE e.from_node=n.node_id OR e.to_node=n.node_id)
-          AND NOT EXISTS (SELECT 1 FROM ig_node_company nc WHERE nc.node_id=n.node_id)
+          AND NOT EXISTS (SELECT 1 FROM ig_node_company nc WHERE nc.node_id=n.node_id AND nc.valid_to IS NULL)
           AND n.name <> '行业聚合'
+          AND n.name NOT LIKE '%%（已并入%%'
+          AND (c.status IS NULL OR c.status='active')
     """},
     {"id": "S9", "title": "同链同名节点零重复", "sql": """
         SELECT n.node_id, n.name || ' @' || c.name FROM ig_node n
@@ -144,35 +156,37 @@ CHECKS: list[dict] = [
     # ---- 落位层 ----
     {"id": "S10", "title": "role 五值词表", "sql": f"""
         SELECT nc.id::text, coalesce(nc.role,'(空)') || ' | ' || nc.symbol FROM ig_node_company nc
-        WHERE nc.role IS NULL OR nc.role NOT IN ({','.join(f"'{r}'" for r in ROLES_STD)})
+        WHERE (nc.role IS NULL OR nc.role NOT IN ({','.join(f"'{r}'" for r in ROLES_STD)}))
+          AND nc.valid_to IS NULL
     """},
     # S11 死映射: 需 CH 反查,运行时注入
     {"id": "S12", "title": "market 一致", "sql": """
         SELECT nc.id::text, nc.market || ' vs ' || n.market FROM ig_node_company nc
         JOIN ig_node n ON nc.node_id=n.node_id
-        WHERE nc.market <> n.market
+        WHERE nc.market <> n.market AND nc.valid_to IS NULL
     """},
     {"id": "S13", "title": "新落位 PIT 覆盖", "sql": f"""
         SELECT nc.id::text, nc.symbol || ' 缺valid_from' FROM ig_node_company nc
         WHERE nc.created_at::date > '{PIT_CUTOFF}' AND nc.valid_from IS NULL
+          AND nc.valid_to IS NULL
     """},
     {"id": "S14", "title": f"挂链阈值(>{MAX_CHAINS_PER_SYMBOL})", "sql": f"""
         SELECT nc.symbol, '挂' || count(DISTINCT n.chain_id) || '链' FROM ig_node_company nc
         JOIN ig_node n ON nc.node_id=n.node_id
         JOIN ig_chain c ON n.chain_id=c.chain_id
-        WHERE (c.status IS NULL OR c.status='active')
+        WHERE (c.status IS NULL OR c.status='active') AND nc.valid_to IS NULL
         GROUP BY nc.symbol HAVING count(DISTINCT n.chain_id) > {MAX_CHAINS_PER_SYMBOL}
     """},
-    # ---- 边层 ----
+    # ---- 边层(PIT 关闭行=历史快照,不计违规——标准 §1 查询侧默认过滤 valid_to IS NULL) ----
     {"id": "S15", "title": "零自环边", "sql": """
         SELECT edge_id::text, from_symbol || '->' || to_symbol FROM ig_company_edge
-        WHERE from_symbol=to_symbol AND from_symbol<>''
+        WHERE from_symbol=to_symbol AND from_symbol<>'' AND valid_to IS NULL
     """},
     {"id": "S16", "title": "零事故性双向边(成对冗余合法)", "sql": """
         SELECT a.edge_id::text, a.from_symbol || '<->' || a.to_symbol || ' ' || a.year FROM ig_company_edge a
         JOIN ig_company_edge b
           ON b.from_symbol=a.to_symbol AND b.to_symbol=a.from_symbol AND b.year=a.year
-        WHERE a.edge_id < b.edge_id
+        WHERE a.edge_id < b.edge_id AND a.valid_to IS NULL AND b.valid_to IS NULL
     """},
     {"id": "S17", "title": "websearch 边完整(PIT+evidence)", "sql": """
         SELECT edge_id::text,
@@ -180,18 +194,22 @@ CHECKS: list[dict] = [
                               CASE WHEN as_of IS NULL THEN 'as_of' END,
                               CASE WHEN evidence_type IS NULL THEN 'evidence_type' END)
         FROM ig_company_edge
-        WHERE source='websearch' AND (valid_from IS NULL OR as_of IS NULL OR evidence_type IS NULL)
+        WHERE source='websearch' AND valid_to IS NULL
+          AND (valid_from IS NULL OR as_of IS NULL OR evidence_type IS NULL)
     """},
     {"id": "S18", "title": "UNLISTED 格式统一", "sql": r"""
         SELECT edge_id::text, from_symbol || '/' || to_symbol FROM ig_company_edge
-        WHERE (from_symbol ~ '^UNLISTED:' AND from_symbol !~ '^UNLISTED:UE-[0-9a-f]{12}$')
-           OR (to_symbol ~ '^UNLISTED:' AND to_symbol !~ '^UNLISTED:UE-[0-9a-f]{12}$')
+        WHERE valid_to IS NULL AND (
+          (from_symbol ~ '^UNLISTED:' AND from_symbol !~ '^UNLISTED:UE-[0-9a-f]{12}$')
+           OR (to_symbol ~ '^UNLISTED:' AND to_symbol !~ '^UNLISTED:UE-[0-9a-f]{12}$'))
     """},
     # S20 PIT 反造假(红蓝对抗 2026-09-09 补):valid_from 早于证据年份前一年=编历史
+    # 2026-09-09 Owner 委托裁定: 判定保留不改——year=新闻年/vf=签约日的追述型长协边
+    # 属本条主要误报源,处置=豁免登记+抽检原文(豁免制度化),不走改判定放行(防弱化反造假哨)
     {"id": "S20", "title": "PIT 反造假(valid_from>=year-1)", "sql": """
         SELECT edge_id::text, from_symbol || '->' || to_symbol || ' year=' || year
                || ' vf=' || valid_from FROM ig_company_edge
-        WHERE valid_from IS NOT NULL AND year IS NOT NULL
+        WHERE valid_from IS NOT NULL AND year IS NOT NULL AND valid_to IS NULL
           AND valid_from < make_date(year - 1, 1, 1)
     """},
     # S19 编码表上市撞名: 需 CH 反查,运行时注入
@@ -203,7 +221,7 @@ DEGRADED_NOTE = "CH 不可达降级,本轮不计违规"
 def _check_s11(cur, alive: set[str]) -> dict:
     if alive is None:
         return {"id": "S11", "title": "死映射零存量", "violations": [], "degraded": True}
-    cur.execute("SELECT nc.id::text, nc.symbol FROM ig_node_company nc WHERE nc.market='cn'")
+    cur.execute("SELECT nc.id::text, nc.symbol FROM ig_node_company nc WHERE nc.market='cn' AND nc.valid_to IS NULL")
     rows = [(pk, sym) for pk, sym in cur.fetchall() if sym not in alive]
     return {"id": "S11", "title": "死映射零存量", "violations": rows, "degraded": False}
 

@@ -1,0 +1,96 @@
+# role 归一迁移映射表（Owner 2026-09-09 五值裁定，migrate_roles.py 生成）
+# 规则：mentioned->提及｜含 龙头/第一/前二/第二/头部/梯队/领先/最大 ->龙头｜含核心->核心｜其余->参与
+mapping:
+  "mentioned":
+    target: "提及"
+    rows: 9129
+  "三元前驱体全球前二":
+    target: "龙头"
+    rows: 1
+  "三元前驱体全球第一梯队":
+    target: "龙头"
+    rows: 1
+  "三元正极头部/铁锂转型":
+    target: "龙头"
+    rows: 1
+  "全球动力电池装机第四":
+    target: "参与"
+    rows: 1
+  "全球动力电池龙头":
+    target: "龙头"
+    rows: 1
+  "全球湿法隔膜龙头":
+    target: "龙头"
+    rows: 1
+  "全球电解液龙头":
+    target: "龙头"
+    rows: 1
+  "全球锂电结构件龙头":
+    target: "龙头"
+    rows: 1
+  "全球高端氢氧化锂生产商":
+    target: "参与"
+    rows: 1
+  "全球龙头":
+    target: "龙头"
+    rows: 21
+  "六氟磷酸锂产能全球第一":
+    target: "龙头"
+    rows: 1
+  "后段（化成分容）设备龙头":
+    target: "龙头"
+    rows: 1
+  "商用车电池全球第二/储能全球第二":
+    target: "龙头"
+    rows: 1
+  "干法隔膜龙头/湿法第二梯队":
+    target: "龙头"
+    rows: 1
+  "整线+化成分容设备":
+    target: "参与"
+    rows: 1
+  "极薄铜箔龙头":
+    target: "龙头"
+    rows: 1
+  "液相法铁锂正极第一梯队":
+    target: "龙头"
+    rows: 1
+  "电芯+PACK一体化龙头":
+    target: "龙头"
+    rows: 1
+  "电芯龙头（自供体系）":
+    target: "龙头"
+    rows: 1
+  "电解液新进入者":
+    target: "参与"
+    rows: 1
+  "电解液第二梯队龙头":
+    target: "龙头"
+    rows: 1
+  "磷酸铁锂正极出货量冠军":
+    target: "参与"
+    rows: 1
+  "磷酸铁锂电芯龙头":
+    target: "龙头"
+    rows: 1
+  "负极一线龙头":
+    target: "龙头"
+    rows: 2
+  "负极二线头部":
+    target: "龙头"
+    rows: 1
+  "锂电结构件龙二":
+    target: "参与"
+    rows: 1
+  "锂电设备龙头":
+    target: "龙头"
+    rows: 1
+  "锂电铜箔头部":
+    target: "龙头"
+    rows: 1
+  "锂资源龙头":
+    target: "龙头"
+    rows: 1
+  "高镍单晶三元正极龙头":
+    target: "龙头"
+    rows: 1

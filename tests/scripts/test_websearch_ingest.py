@@ -307,7 +307,8 @@ def test_ingest_node_company_resolves_existing_node(tmp_path: Path) -> None:
          "market": "cn", "source_doc": SD, "source": "websearch"},
         {"type": "node_company", "chain_name": chain, "node_name": "解析环节",
          "symbol": "300750.SZ", "role": "参与", "confidence": 0.5,
-         "evidence_text": "测试证据一句", "market": "cn", "source_doc": SD, "source": "websearch"},
+         "evidence_text": "测试证据一句", "market": "cn", "valid_from": "2026-09-09",
+         "source_doc": SD, "source": "websearch"},
         {"type": "node", "chain_name": chain, "name": "解析下游", "tier": "下游",
          "market": "cn", "source_doc": SD, "source": "websearch"},
         {"type": "node_edge", "chain_name": chain, "from_node": "解析环节", "to_node": "解析下游",
@@ -343,7 +344,7 @@ def test_ingest_node_company_resolves_existing_node(tmp_path: Path) -> None:
         (tmp_path / "bad").mkdir(exist_ok=True)
         bad = [{"type": "node_company", "chain_name": chain, "node_name": "不存在环节",
                 "symbol": "300750.SZ", "confidence": 0.5, "market": "cn",
-                "source_doc": SD, "source": "websearch"}]
+                "valid_from": "2026-09-09", "source_doc": SD, "source": "websearch"}]
         with pytest.raises(Exception):
             wi.cmd_ingest(str(_tmp_batch(tmp_path / "bad", bad)))
     finally:
@@ -404,3 +405,190 @@ def test_ingest_chunk_fk_violation_rolls_back(tmp_path: Path) -> None:
     cur.execute("SELECT count(*) FROM ig_chunk WHERE chunk_id='CK-testfktmp'")
     assert cur.fetchone()[0] == 0  # 回滚生效
     conn.close()
+
+
+# ---- 长城任务 Phase1 门禁收紧（2026-09-09 Owner 裁定：role 五值/链名标题腔/深度列/股权表通道） ----
+
+def test_validate_rejects_non_whitelist_role() -> None:
+    # role 五值白名单（与引擎 S10 同词表）：长尾杂值新写入拒绝
+    errs = wi._validate_records(
+        [{"type": "node_company", "source": "websearch", "symbol": "300750.SZ", "role": "全球龙头",
+          "chain_name": "x", "node_name": "y", "market": "cn", "source_doc": SD}],
+        stocks={"300750.SZ"},
+    )
+    assert any("role 非五值词表" in e for e in errs), errs
+    # 五值内放行
+    errs2 = wi._validate_records(
+        [{"type": "node_company", "source": "websearch", "symbol": "300750.SZ", "role": "龙头",
+          "chain_name": "x", "node_name": "y", "market": "cn", "source_doc": SD}],
+        stocks={"300750.SZ"},
+    )
+    assert not any("role" in e for e in errs2), errs2
+
+
+def test_validate_rejects_title_junk_chain_name() -> None:
+    # 链名标题腔拒绝（与引擎 TITLE_JUNK_RE 同源）
+    errs = wi._validate_records(
+        [{"type": "chain", "name": "一张图看懂光刻胶产业链", "category": "半导体",
+          "market": "cn", "source_doc": SD, "source": "websearch"}],
+        stocks=set(),
+    )
+    assert any("标题腔" in e for e in errs), errs
+    # 规范名放行
+    errs2 = wi._validate_records(
+        [{"type": "chain", "name": "光刻胶产业链", "category": "半导体", "version_year": 2026,
+          "market": "cn", "source_doc": SD, "source": "websearch"}],
+        stocks=set(),
+    )
+    assert not any("标题腔" in e for e in errs2), errs2
+
+
+def test_validate_node_depth_columns_contract() -> None:
+    # drill_status=child 必带 child_chain_id（交叉校验）
+    errs = wi._validate_records(
+        [{"type": "node", "source": "websearch", "chain_name": "x", "name": "封装测试", "tier": "中游",
+          "drill_status": "child", "market": "cn", "source_doc": SD}],
+        stocks=set(),
+    )
+    assert any("child_chain_id" in e for e in errs), errs
+    # drill_manual=Owner 钉死，AI 不可写
+    errs2 = wi._validate_records(
+        [{"type": "node", "source": "websearch", "chain_name": "x", "name": "封装测试", "tier": "中游",
+          "drill_status": "drill_manual", "market": "cn", "source_doc": SD}],
+        stocks=set(),
+    )
+    assert any("drill_manual" in e for e in errs2), errs2
+    # drill_status 非法值
+    errs3 = wi._validate_records(
+        [{"type": "node", "source": "websearch", "chain_name": "x", "name": "封装测试", "tier": "中游",
+          "drill_status": "maybe", "market": "cn", "source_doc": SD}],
+        stocks=set(),
+    )
+    assert any("drill_status 非法" in e for e in errs3), errs3
+    # 合法 child 挂接 + 砖判定放行
+    errs4 = wi._validate_records(
+        [{"type": "node", "source": "websearch", "chain_name": "x", "name": "封装测试", "tier": "中游",
+          "drill_status": "child", "child_chain_id": "CH-abcdef123456",
+          "function_role": "加工工艺", "market": "cn", "source_doc": SD}],
+        stocks=set(),
+    )
+    assert errs4 == [], errs4
+    # function_role 非八值拒绝
+    errs5 = wi._validate_records(
+        [{"type": "node", "source": "websearch", "chain_name": "x", "name": "封装测试", "tier": "中游",
+          "function_role": "设备", "market": "cn", "source_doc": SD}],
+        stocks=set(),
+    )
+    assert any("function_role" in e for e in errs5), errs5
+    # v0.4 职能化：websearch 新写 tier 仅三位置值，设备/材料须写 function_role
+    errs6 = wi._validate_records(
+        [{"type": "node", "source": "websearch", "chain_name": "x", "name": "光刻设备", "tier": "设备",
+          "market": "cn", "source_doc": SD}],
+        stocks=set(),
+    )
+    assert any("禁 tier" in e for e in errs6), errs6
+    # 带 child_chain_id 但 drill_status 非 child 拒绝
+    errs7 = wi._validate_records(
+        [{"type": "node", "source": "websearch", "chain_name": "x", "name": "封装测试", "tier": "中游",
+          "child_chain_id": "CH-abcdef123456", "drill_status": "brick_mass",
+          "market": "cn", "source_doc": SD}],
+        stocks=set(),
+    )
+    assert any("drill_status 须为 child" in e for e in errs7), errs7
+
+
+def test_validate_equity_edge_rules() -> None:
+    # relation 非六值枚举拒绝
+    errs = wi._validate_records(
+        [{"type": "equity_edge", "source": "websearch", "holder": "300750.SZ", "held": "002463.SZ",
+          "relation": "owns", "as_of": "2025-12-31", "market": "cn", "source_doc": SD}],
+        stocks={"300750.SZ", "002463.SZ"},
+    )
+    assert any("relation 非六值" in e for e in errs), errs
+    # as_of 必填
+    errs2 = wi._validate_records(
+        [{"type": "equity_edge", "source": "websearch", "holder": "300750.SZ", "held": "002463.SZ",
+          "relation": "invests_in", "market": "cn", "source_doc": SD}],
+        stocks={"300750.SZ", "002463.SZ"},
+    )
+    assert any("缺 as_of" in e for e in errs2), errs2
+    # PERSON: 空人名拒绝 + 合法人名放行
+    errs3 = wi._validate_records(
+        [{"type": "equity_edge", "source": "websearch", "holder": "PERSON: ", "held": "002463.SZ",
+          "relation": "actual_control", "as_of": "2025-12-31", "market": "cn", "source_doc": SD}],
+        stocks={"002463.SZ"},
+    )
+    assert any("PERSON:" in e for e in errs3), errs3
+    errs4 = wi._validate_records(
+        [{"type": "equity_edge", "source": "websearch", "holder": "PERSON:张三", "held": "002463.SZ",
+          "relation": "actual_control", "as_of": "2025-12-31", "holder_name": "张三",
+          "holder_country": "CN", "market": "cn", "source_doc": SD}],
+        stocks={"002463.SZ"},
+    )
+    assert errs4 == [], errs4
+    # verification 非三值拒绝
+    errs5 = wi._validate_records(
+        [{"type": "equity_edge", "source": "websearch", "holder": "300750.SZ", "held": "002463.SZ",
+          "relation": "invests_in", "as_of": "2025-12-31", "verification": "confirmed",
+          "market": "cn", "source_doc": SD}],
+        stocks={"300750.SZ", "002463.SZ"},
+    )
+    assert any("verification 非三值" in e for e in errs5), errs5
+    # UNLISTED 旧格式拒绝 + UE- 格式放行
+    errs6 = wi._validate_records(
+        [{"type": "equity_edge", "source": "websearch", "holder": "300750.SZ", "held": "UNLISTED:长江存储",
+          "relation": "invests_in", "as_of": "2025-12-31", "market": "cn", "source_doc": SD}],
+        stocks={"300750.SZ"},
+    )
+    assert any("UNLISTED 旧格式" in e for e in errs6), errs6
+    errs7 = wi._validate_records(
+        [{"type": "equity_edge", "source": "websearch", "holder": "300750.SZ",
+          "held": "UNLISTED:UE-c29a843e1aac", "relation": "invests_in", "as_of": "2025-12-31",
+          "market": "cn", "source_doc": SD}],
+        stocks={"300750.SZ"},
+    )
+    assert errs7 == [], errs7
+    # valid_from 晚于 as_of（时间倒挂）拒绝
+    errs8 = wi._validate_records(
+        [{"type": "equity_edge", "source": "websearch", "holder": "300750.SZ", "held": "002463.SZ",
+          "relation": "invests_in", "as_of": "2025-12-31", "valid_from": "2026-06-30",
+          "market": "cn", "source_doc": SD}],
+        stocks={"300750.SZ", "002463.SZ"},
+    )
+    assert any("时间倒挂" in e for e in errs8), errs8
+
+
+def test_ingest_equity_edge_idempotent(tmp_path: Path) -> None:
+    # 股权边走 ingest 通道落 ig_equity_edge（幂等：UNIQUE(holder,held,as_of,source)）
+    holder = "__测试链TMP__"  # 占位说明：equity 用 symbol 不用链名；此处用真实格式 symbol
+    holder_sym, held_sym = "300750.SZ", "002463.SZ"
+    recs = [{"type": "equity_edge", "source": "websearch", "holder": holder_sym, "held": held_sym,
+             "relation": "invests_in", "stake_pct": 12.5, "as_of": "2025-12-31",
+             "verification": "unverified", "evidence": "测试证据一句",
+             "market": "cn", "source_doc": SD}]
+    p = _tmp_batch(tmp_path, recs)
+    assert wi.cmd_ingest(str(p)) == 0
+    assert wi.cmd_ingest(str(p)) == 0  # 幂等复跑
+    from zephyr.governance.depgraph_schema import get_depgraph_pg_connection
+
+    conn = get_depgraph_pg_connection(read_only=False)
+    cur = conn.cursor()
+    try:
+        cur.execute(
+            "SELECT count(*) FROM ig_equity_edge WHERE holder=%s AND held=%s AND as_of=%s AND source='websearch'",
+            (holder_sym, held_sym, "2025-12-31"),
+        )
+        assert cur.fetchone()[0] == 1  # 无重复行
+        cur.execute(
+            "SELECT relation, stake_pct FROM ig_equity_edge WHERE holder=%s AND held=%s AND as_of=%s",
+            (holder_sym, held_sym, "2025-12-31"),
+        )
+        rel, stake = cur.fetchone()
+        assert rel == "invests_in" and float(stake) == 12.5
+    finally:
+        cur.execute(
+            "DELETE FROM ig_equity_edge WHERE holder=%s AND held=%s AND as_of=%s AND source='websearch'",
+            (holder_sym, held_sym, "2025-12-31"),
+        )
+        conn.commit()
+        conn.close()
