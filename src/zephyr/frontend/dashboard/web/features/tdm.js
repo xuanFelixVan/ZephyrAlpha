@@ -526,13 +526,15 @@
       ? '<div class="chips">' + algRefs.concat(mdlRefs).map(algChip).join('') + '</div>'
       : '<div class="empty">未登记算法锚</div>';
     /* 算法锚大白话（b20260910 二轮反馈）：边 payload 从画布线牌挪到抽屉本分区——
-     * 「← 来源节点：喂了什么」「→ 去向节点：喂了什么」，锚边关系一眼可读 */
+     * 「← 来源节点：喂了什么」「→ 去向节点：喂了什么」，锚边关系一眼可读；
+     * 三轮反馈：常显站位——无数据也留位显「未登记喂给说明」，对齐空态显式留位范式 */
     var anchorFeed = [];
     ups.forEach(function (u) { if (u.p) anchorFeed.push('← ' + (u.x.name || u.x.id) + '：' + u.p); });
     downs.forEach(function (dn) { if (dn.p) anchorFeed.push('→ ' + (dn.x.name || dn.x.id) + '：' + dn.p); });
-    var anchorFeedHtml = anchorFeed.length
-      ? '<div class="anchor-feed">' + anchorFeed.map(function (l) { return '<div class="af">' + esc(l) + '</div>'; }).join('') + '</div>'
-      : '';
+    var anchorFeedHtml = '<div class="axis-h"><b>算法大白话</b>（锚边喂进/喂出什么）</div>' +
+      (anchorFeed.length
+        ? '<div class="anchor-feed">' + anchorFeed.map(function (l) { return '<div class="af">' + esc(l) + '</div>'; }).join('') + '</div>'
+        : '<div class="empty">未登记喂给说明（大白话待补录）</div>');
     /* 代码锚：module_ref 有值=文件名可点击（点击复制全路径——app:// 下 file:// 链接被拦，
      * 复制路径是全环境可用的最短动作），无值=未落码灰字 */
     var codeAnchor = n.module_ref
