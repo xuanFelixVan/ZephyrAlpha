@@ -8,13 +8,17 @@ feature_id: F-CHAINMAP-GALAXY
 feature_name: 产业星系图（L1 族聚合全景）
 frozen_at: 2026-09-08
 frozen_by: ZephyrAlpha-Owner
-revision: 1
+revision: 2
 revision_policy: "修订=Owner 批准+改原文+revision 链留痕；AI 不可自改已冻结条项"
+# rev2 (2026-09-09, Owner 裁定): item2 数字带 30~48 废止——脏数据时代产物（旧输入混 33.6% 已关闭
+# 落位与垃圾权重伪造假簇）；任务书 8~15 拍脑袋估计同步撤回。簇数=修好数据后的自然结果，不是目标。
+# 新 item2=四闸：15~48 自然簇数 + 无巨簇（最大簇≤活跃链总数 25%）+ 族间 links>0
+# + 主题自检（抽 5 簇看 top 链名同族可读，机断+目检双检）。rev1 原文存 item2_rev1_text 留档。
 
 # check 取值：目检（截图人工/AI 视觉对） | 机断（DOM/接口断言）
 items:
   - { id: 1, text: "页面注入后 #cm-canvas-galaxy 与 #cm-nav 存在且默认可见", check: 机断 }
-  - { id: 2, text: "/api/chainmap-galaxy 返回 ok=true 且 clusters 30~48 个、links≥0", check: 机断 }
+  - { id: 2, text: "/api/chainmap-galaxy 返回 ok=true 且 clusters 15~48 个（塌簇修复后自然簇数）+ 无巨簇（最大簇 ≤ 活跃链总数 25%）+ 族间 links>0 + 主题自检（抽 5 簇看 top 链名，同族可读；机断+目检双检）", check: 机断, item2_rev1_text: "/api/chainmap-galaxy 返回 ok=true 且 clusters 30~48 个、links≥0" }
   - { id: 3, text: "族节点圆卡渲染数量=clusters 数，节点直径随公司数变化", check: 机断 }
   - { id: 4, text: "族间连线粗细/透明度随权重区分，hover 节点高亮直连边+邻点、其余淡化", check: 目检 }
   - { id: 5, text: "滚轮缩放（光标锚点）/拖动平移/双击空白重置三交互手感与 tdm 页一致", check: 目检 }
