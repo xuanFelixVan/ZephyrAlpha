@@ -4,7 +4,7 @@ ttl: task_bound
 
 # 交易决策全景图字段升级——全网调研对照与讨论稿
 
-> **日期**：2026-09-09 ｜ **会话**：st-tdmbe-20260909（fork 承接新闻+产业链后续）｜ **状态**：讨论稿，未裁定
+> **日期**：2026-09-09 ｜ **会话**：st-tdmbe-20260909（fork 承接新闻+产业链后续）｜ **状态**：✅ 已裁定（2026-09-10 Owner 批复，见 §五·五）
 > **任务**：Owner 指令——调研专业机构/量化社区/学术界的同类工程字段，对照本图 33 个节点字段，讨论还缺什么。
 > **铁律前置**：先讨论后落盘；字段全可选向后兼容（存量 136 节点不动）；新增字段必须过双测试套件+validate+align_all。
 
@@ -78,11 +78,47 @@ ttl: task_bound
 
 ## 五、待 Owner 拍板
 
+**【已裁定】Owner 2026-09-10 批复（大白话讨论后逐条裁定）：**
+
+| # | 项 | 裁定 |
+|---|---|---|
+| A1 owner | ❌ 不做——"项目就我一个人+AI 军队，追责到顶都是我，加了没意义" |
+| A2 risk_tier | ❌ 不做——"任何一个参数/模块节点坏了都不行，没有区分度" |
+| A3 review_frequency | ❌ 现在不做——留给未来统一的 AI 维护体系（"后面维护全是 AI，到时候统一设计复审字段"） |
+| A4 tags | ✅ 做（自由标签，零强制） |
+| A5 latency_budget | ✅ 必须做——"时间是整个交易系统的灵魂"，必须有时间限制并随时监控（字段声明+R39 欠账 warning，运行时监控属后续） |
+| B 档 | ✅ 认同分开——holding_period/capacity/decay 归策略库（strategy_registry+pf_core），另立批次移交施工轨 |
+| schema_version | ✅ 升 1.2（按推荐） |
+
+---
+
+以下为原讨论稿内容（裁定前存档）。
+
 1. A1-A5 五个字段是否全收（我推荐全收，成本≈半天含门禁+测试+存量批量补登脚本）；
 2. owner 字段的值规范：常驻会话 id 是否作为正式值（vs 引入"角色名"抽象——我推荐会话 id，直接可问责）；
 3. risk_tier 三档够不够（SR 11-7 业界有 3-4 档流派；我们离钱近先验三档可覆盖）；
 4. B 档三个字段的 strategy_registry 升级是否另立批次（涉及 pf_core StrategyMeta 代码，归施工轨）；
 5. schema_version 是否显式升 1.2。
+
+## 六、调研来源索引
+
+## 七、第二轮调研（Owner 2026-09-10 追问"还有没有字段可加"）——结论：图上字段空间已饱和
+
+四个新角度扫完，**没有发现新的值得加的节点字段**——全部收敛到已有字段/台账侧/库侧三处：
+
+| 新角度 | 来源 | 逐项映射 | 结论 |
+|---|---|---|---|
+| 交易决策日志（[TradeTally 三 job 框架](https://tradetally.io/blog/what-is-a-trading-journal/)、[Trader's Second Brain](https://traderssecondbrain.com/guides/trading-journal-for-swing-trading)、[学界纪律实证](https://www.sciencedirect.com/science/article/abs/pii/S0304405X0400203X)） | thesis-at-entry / expected R multiple / setup grade(ABC) / emotion / playbook 分类 | thesis=decision_question+algo_note（事前已写）；playbook 分类=strategy_mounts；**R multiple/grade/emotion=运行时字段归交易流水与台账** | 图上零缺口 |
+| Model Cards / Datasheets（[Mitchell et al.](https://iapp.org/news/a/5-things-to-know-about-ai-model-cards)、[Data Cards (ACM)](https://dl.acm.org/doi/fullHtml/10.1145/3531146.3533231)） | intended use / **out-of-scope uses** / factors / metrics / **training data** / limitations | intended use+限制=ai_autonomy+invalidation 已覆盖；**training_data/metrics/out_of_scope → 模型库 REG-ML-001 字段升级候选（B 档扩展，归施工轨）** | 图上零缺口；模型库侧 +1 候选 |
+| 策略预注册（[Center for Open Science](https://www.cos.io/initiatives/prereg)、[Deflated Sharpe (Bailey & López de Prado, JPM)](https://www.pm-research.com/content/iijpormgmt/40/5/94)、[QuantDare: 记录全部试验](https://quantdare.com/deflated-sharpe-ratio-how-to-avoid-been-fooled-by-randomness/)） | 假设先于数据收集登记；**记录全部试验次数**（DSR 折减的原料） | 两条铁律（定稿前不跑回测+holdout 只考一次）就是预注册思想；**node_verdict 台账补 trial_count 字段候选（验证 runner 侧，归 st-xflow/施工轨）** | 图上零缺口；台账侧 +1 候选 |
+| SRE SLO/错误预算（[Google SRE](https://sre.google/sre-book/service-level-objectives/)、[Chronosphere](https://chronosphere.io/learn/know-the-sre-fundamentals-differences-between-sli-vs-slo-vs-sla/)） | SLI/SLO target/measurement window/error budget | latency_budget（已收）的自由文本起步够用；结构化（p99+窗口+错误预算）**归未来 AI 维护体系统一设计**（Owner 已裁定运维体系统一） | 图上零缺口 |
+
+**饱和结论**：两轮 10 个角度扫完，图上节点字段收敛于"锚定五联+语义三件+治理四件+本轮两件"，其余业界字段全部正确地落在**库侧**（strategy_registry/REG-ML-001）与**台账侧**（node_verdict/交易流水）。新增库侧候选汇总：
+1. strategy_registry：holding_period / capacity / turnover 上限 / neutralization（B 档，已裁定移交施工轨）
+2. REG-ML-001 模型库：training_data / metrics / out_of_scope（Model Card 三件，B 档扩展）
+3. node_verdict 台账：trial_count（预注册计数，将来 DSR 折减原料，验证 runner 侧）
+
+---
 
 ## 六、调研来源索引
 
