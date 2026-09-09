@@ -223,6 +223,16 @@ scope: frontend
 - 关联：ACC 冻结前实景验收（execution.flow 起服务逐条对）· TRAE-079 漂移隔离
 - 来源：2026-09-09 chainmap 二期调研发现 + Commit A 移植实证
 
+# FEH-PC-018｜8890 面板服务重启权限墙——services-control restart 不是每次都真换进程
+- 触发词：改了 api_server 看不到效果 / restart 返回 ok 但端点还是旧逻辑 / taskkill 拒绝访问 / StartTime 不变
+- 想做什么：AI 会话改完 api_server.py 后重启 8890 让新代码生效（ACC execution.flow"起面板 API"）
+- 内置能否：services-control restart 对 self 级开放（_do_restart_self 分离代理：psutil kill 旧进程→等端口空→Popen 重拉），表面看一键搞定
+- 坑：①restart 返回 ok≠进程真换——旧实例可能是管理员提升权限进程（Get-CimInstance 的 ExecutablePath 查出来为空=权限不足信号），非提升 shell 的 taskkill/Stop-Process 一律"拒绝访问"，restarter 代理也会被权限挡住静默失败（连发三次排定三次 PID/StartTime 纹丝不动）。**判定服务版本唯一可信=进程 StartTime+端点行为探针（新字段/新参数返回），不是 restart 返回值**。②隔离验证别硬刚 8890：起临时实例（.runtime 下唯一文件名脚本+uvicorn 固定端口 8891）+ http.server 静态代理（/api 反代 8891）即可全链路实景验收，零权限需求；api.js BASE 硬编码 8890，浏览器侧用 playwright route 把 8890 请求改道 8891。③临时进程会被 ProcessReaper 当孤儿清理——cmdline 子串登记 data/runtime/process_reaper_keep.txt 保活
+- 正确做法：能换进程（StartTime 变）才继续 8890 验证；换不动立即转 8891 隔离方案，并在汇报里如实写"8890 需 Owner/管理员壳重启"，禁拿 8890 旧代码响应当新代码验收证据
+- 代码锚点：src/zephyr/frontend/dashboard/services_registry.py `_RESTARTER_SRC`/`_do_restart_self`（分离代理实现）；api_server.py `main()`（uvicorn 8890 单进程）
+- 关联：PC-009 版本戳排查法（ZK_BUILD 判前端旧代码）· 前会话实录 2026-09-09-chainmap-fix.md 教训 2
+- 来源：2026-09-10 chainmap 三项施工夜班实证（restart×3+taskkill+Stop-Process 五连败后 8891 方案全绿）
+
 ## 修订记录
 
 | 日期 | 版本 | 改动 | 为什么改 |
@@ -236,3 +246,4 @@ scope: frontend
 | 2026-09-08 | 1.6.0 | +PC-013 详情抽屉统一模板（指向 detail_drawer_template.md） | tdm 抽屉 v2 实证沉淀，Owner 裁定模板化供全景图页复用 |
 | 2026-09-08 | 1.7.0 | +PC-014 绝对定位容器尺寸禁量 DOM / +PC-015 状态色类必须带 ID 前缀 | tdm 四件套补登记沉淀：b20260908-02 连线消失 + b20260908-05 状态色失效双事故成文 |
 | 2026-09-09 | 1.8.0 | +PC-016 creation_tokens CAS 落错键 / +PC-017 commit message 与实物不符排查法 | chainmap 二期 Commit A 实证：di_seam_exemptions 落键事故 + 一期后端假提交移植 |
+| 2026-09-10 | 1.9.0 | +PC-018 8890 面板服务重启权限墙 | chainmap 三项施工夜班实证：restart×3 假成功，8891 隔离实例+playwright route 改道方案全绿 |
