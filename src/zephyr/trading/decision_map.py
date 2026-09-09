@@ -198,6 +198,9 @@ class DecisionMapNode:
     fallback: str | None = None
     algo_refs: tuple[str, ...] = ()
     doc_ref: str | None = None
+    # 任务三（Owner 2026-09-09）：大白话确认日期（YYYY-MM-DD）——代码触碰节点时 algo_note_zh
+    # 同 commit 修订或本字段同 commit 更新，否则 ALGO-NOTE-SYNC 门禁阻断（module_ref=null 豁免）
+    note_confirmed: str | None = None
     # v1.6（D34 交叉索引）：MOD-* 交叉锚——对齐五图体系（depgraph 以 module_id 为对齐 key）
     module_id: str | None = None
     # v1.7（D36/D37 全库交叉轴）：11 业务库引用（PAT/SEAT/MAC/CYC/UNI/CST/EVT/RLM/PFM/BMK/THD；表驱动见 _XREF_SPECS）
@@ -344,6 +347,7 @@ def _parse_node(raw: dict) -> DecisionMapNode:
         fallback=(str(raw["fallback"]) if raw.get("fallback") else None),
         algo_refs=tuple(str(x) for x in raw.get("algo_refs", []) or []),
         doc_ref=(str(raw["doc_ref"]) if raw.get("doc_ref") else None),
+        note_confirmed=(str(raw["note_confirmed"]) if raw.get("note_confirmed") else None),
         module_id=(str(raw["module_id"]) if raw.get("module_id") else None),
         # v1.8 大白话算法说明（全景图可读性）
         algo_note_zh=str(raw.get("algo_note_zh", "") or ""),

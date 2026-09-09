@@ -11306,6 +11306,10 @@ creation_tokens:
   token: fw-composer-blueprint-20260909
   created_by: sess-26548-20260909171109
   capability: framework_composer
+- file: src/zephyr/gov_enforcement/commit_gates/algo_note_sync_gate.py
+  token: algo-note-sync-gate-20260909
+  created_by: st-tdmbe-20260909
+  capability: algo_note_sync_gate
 di_seam_exemptions:
 - module_path: zephyr.trading.auto_runtime_core.AutoRuntimeCore
   reason: P0-5 LSG DI seam 标杆，已有 DI 但 AST 模式不匹配（动态注入）
