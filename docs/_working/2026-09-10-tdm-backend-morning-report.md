@@ -17,7 +17,9 @@ ttl: task_bound
 | `47ab163c`+`ce92f48e` | **ALGO-NOTE-SYNC 门禁**（任务三）：commit 触碰节点 module_ref 代码→algo_note_zh 必须同 commit 修订或加 note_confirmed，否则硬阻断；payload_zh 出边复审审计；注册 106/106 全绿 |
 | `4e963a49` | A 类回填第二批（L1/L2/L3 30 节点） |
 | `51a1a73b` | A 类回填第三批（P/F 流 9 节点，批次序收官） |
-| （在途） | schema v1.2（tags/latency_budget/R39）——**实现=st-tdmbe fork 会话 worktree 遗产**，本会话改为 adopt 验收收尾+L2-05-2 补挂；validate/双测试(97)/align 全绿，正等提交窗口（产业图会话 staged 复杂度违规在拦，守窗循环运行中） |
+| `6e1263cf` | schema v1.2 落地（tags/latency_budget/R39 时效预算欠账 warning；实现=st-tdmbe fork 会话 worktree 遗产，本会话 adopt 验收收尾+L2-05-2 补挂 sector_gate） |
+| `8cb0c86d` | T3——DAL code_ref 存在性校验（R13 warning；算法三态锚库侧完整性闭环；当前 27 条 DAL 基线零告警） |
+| `09b10933` | 本晨审报告入库 |
 
 **全图终态**：136 节点/190 边；**92 节点带实现锚（68%）**，红节点 44 全部为该空者（容器头/骨架占位/crypto/低置信不硬挂）。
 
