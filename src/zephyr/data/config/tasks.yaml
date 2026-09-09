@@ -237,9 +237,10 @@ tasks:
   extra:
     description: "美股日K线增量"
 
-  fallback_sources:
-  - source: akshare
-    capability: kline_us_daily
+  # 2026-09-10 移除假fallback akshare/kline_us_daily：akshare 无该能力（仅 tickflow/miniqmt 实现），
+  # fallback 每晚 18:00 报错为噪音；深度仅 2026-07-20 起=免费源上限实证（代码已请求 count=365 只回 ~48 自然日），
+  # 深度加深需新源（akshare stock_us_hist 立项 follow-up，known_data_gaps 已登记）
+  fallback_sources: []
 - task_id: us_index_incremental
   table: c1_market.us_index
   source: tickflow
@@ -253,9 +254,8 @@ tasks:
     description: "美股指数增量（ETF替代）"
 
   # ============== 盘后日K时段追加（周月K线 + 分钟K线）==============
-  fallback_sources:
-  - source: akshare
-    capability: us_index
+  # 2026-09-10 移除假fallback akshare/us_index：akshare 无该能力（仅 tickflow 实现）
+  fallback_sources: []
 - task_id: kline_weekly_incremental
   table: c1_market.kline_weekly
   source: miniqmt
@@ -1007,9 +1007,8 @@ tasks:
   extra:
     description: "美股日K线全量刷新"
 
-  fallback_sources:
-  - source: akshare
-    capability: kline_us_daily
+  # 2026-09-10 移除假fallback akshare/kline_us_daily：akshare 无该能力（同增量任务注释）
+  fallback_sources: []
 - task_id: us_index_full_refresh
   table: c1_market.us_index
   source: tickflow
@@ -1021,9 +1020,8 @@ tasks:
   extra:
     description: "美股指数全量刷新（ETF替代）"
 
-  fallback_sources:
-  - source: akshare
-    capability: us_index
+  # 2026-09-10 移除假fallback akshare/us_index：akshare 无该能力（同增量任务注释）
+  fallback_sources: []
 - task_id: money_flow_full_refresh
   table: c1_market.money_flow
   source: tushare          # 东财反爬治本(2026-08-14): 同 money_flow_incremental，tushare 升主源
@@ -1690,11 +1688,10 @@ tasks:
   extra:
     description: "美股日K线增量-QMT源（miniQMT get_market_data_ex，symbols如AAPL.US，需美股行情权限）"
     disabled: true
-    disabled_reason: "QMT 无美股板块，且需单独开通美股行情权限。已由 tickflow + akshare 双源覆盖。"
+    disabled_reason: "QMT 无美股板块，且需单独开通美股行情权限。已由 tickflow 单源覆盖（akshare 无 kline_us_daily 能力，2026-09-10 勘正原'双源覆盖'表述）。"
 
-  fallback_sources:
-  - source: akshare
-    capability: kline_us_daily
+  # 2026-09-10 移除假fallback akshare/kline_us_daily：akshare 无该能力
+  fallback_sources: []
 - task_id: etf_nav_refresh
   table: c1_market.etf_nav
   source: tushare    # 东财反爬治本(2026-08-14): fund_etf_fund_info_em 持续返回空，tushare fund_nav 升主源(实测510300.SH 5行/周)
@@ -1930,6 +1927,8 @@ tasks:
   symbols:
   extra:
     description: "指数列表全量刷新（AKShare stock_info_index_name_code）"
+    disabled: true
+    disabled_reason: "2026-09-10 停用+数据 PIT 关死（known_data_gaps index_list_wrong_universe）：现实现误用股票清单接口 stock_info_sh/sz_name_code，1700 行全是股票冒充指数（600000.SH 浦发银行 category=指数 实证），且 list_date 硬编码 1970。接真指数源（如 tushare index_basic）后移除本两行重启用。"
 
 - task_id: etf_benchmark_refresh
   table: c1_market.etf_benchmark

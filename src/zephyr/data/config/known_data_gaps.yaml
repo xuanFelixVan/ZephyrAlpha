@@ -264,3 +264,146 @@ gaps:
     created: "2026-08-15"
     last_updated: "2026-08-15"
 
+
+  # === 2026-09-10: hk_connect_flow 数据源停供退役（数据总览全库体检 P1）===
+  - id: "hk_connect_flow_hkex_disclosure_retirement"
+    table: "c1_market.hk_connect_flow"
+    gap_type: "empty_table"
+    start_date: "2024-08-19"   # 港交所停止公布北向日频数据的次日（末行=2024-08-16）
+    end_date: null  # 永久——港交所披露政策变更，无恢复预期
+    date_column: "trade_date"
+    detection_threshold: 1
+    status: "accepted"  # 已接受——上游停供，非管道故障；任务保留跑空跑留痕
+    root_cause: "港交所 2024-08-19 起停止公布北向日频资金流数据（数据源停供，非调度/写入故障）。
+      表数据 2014-11-17~2024-08-16 完整（4052 行）；区间内 40 个散布单日'缺口'（复活节/圣诞/
+      春节等）为陆港通假期≠两地日历交集的口径伪缺口——那些日子北向实际关闭，akshare
+      stock_hsgt_hist_em 源本就无数据，不可补抓。"
+    resolution_plan: "登记退役。日频语义由 northbound_hold_snapshot（tushare hk_hold 季度持仓，
+      memo 19）承接；tasks.yaml hk_connect_flow_incremental 描述已载明有效范围。"
+    primary_alternative: "c1_market.northbound_hold_snapshot（季度频率）"
+    created: "2026-09-10"
+    last_updated: "2026-09-10"
+
+  # === 2026-09-10: hk_kline 深度=QMT 港股源上限（数据总览全库体检 P2）===
+  - id: "hk_kline_source_depth_limit"
+    table: "c1_market.hk_kline"
+    gap_type: "date_range"
+    start_date: null  # 2026-08-03 之前——QMT 服务器港股历史不可得
+    end_date: "2026-08-02"
+    date_column: "trade_date"
+    detection_threshold: 1
+    status: "accepted"  # 源上限；日增通道健康（191 只/日持续写入）
+    root_cause: "2026-09-05 hk_kline_full_refresh（5 年历史回补）实证：QMT 服务器港股 tick 历史
+      仅回 2026-08-03 起（partition modification_time=09-05 19:30 全表一次写入），免费/模拟
+      权限源上限；akshare 无 hk_kline 能力（仅 kline_hk_daily 写另一表）。增量通道健康。
+      旁证：c1_market.kline_hk_daily（akshare 通道）同样仅 2026-08-10 起。"
+    resolution_plan: "登记源上限。深度加深需评估 akshare stock_hk_hist 桥接补历史（新 capability
+      立项，非缺口修复）；当前 193 只港股 2026-08-03 起日K满足盘中决策消费。"
+    primary_alternative: "无（历史深度以 kline_hk_daily 后续累积观察）"
+    created: "2026-09-10"
+    last_updated: "2026-09-10"
+
+  # === 2026-09-10: kline_us_daily 深度=tickflow 免费源上限（数据总览全库体检 P3）===
+  - id: "kline_us_daily_source_depth_limit"
+    table: "c1_market.kline_us_daily"
+    gap_type: "date_range"
+    start_date: null  # 2026-07-20 之前——tickflow 免费源不可得
+    end_date: "2026-07-19"
+    date_column: "trade_date"
+    detection_threshold: 1
+    status: "accepted"  # 源上限；日增通道健康（11 标的/日持续写入）
+    root_cause: "2026-09-05 表重建+tickflow 全量回补实证：代码请求 count=365（start=今日-365）
+      但免费源仅回 ~48 自然日（2026-07-20 起，11 标的×38 交易日=418 行）。provider 无
+      start_time/end_time 参数（仅 period+count），源上限非配置错。tasks.yaml 五处
+      akshare 假 fallback 同日清除（akshare 无 kline_us_daily/us_index 能力，fallback
+      每晚报错为噪音）。另：integrity_check 15:00 '当日 0 行'为时序伪告警（美股收盘
+      北京凌晨 5 点，数据 18:00 daily_capital 才落）。"
+    resolution_plan: "登记源上限。深度加深需新源（akshare stock_us_hist 多年历史，新 capability
+      立项 follow-up）；当前 11 标的增量持续满足消费。"
+    primary_alternative: "无"
+    created: "2026-09-10"
+    last_updated: "2026-09-10"
+
+  # === 2026-09-10: tick_data 2026-07~08 八日缺口超 QMT 历史下限（数据总览全库体检 P5）===
+  - id: "tick_data_2026_jul_aug_qmt_range_gap"
+    table: "c1_market.tick_data"
+    gap_type: "date_range"
+    start_date: "2026-07-01"
+    end_date: "2026-08-06"   # 缺口日=07-01~03、07-06~09、08-06（共 8 交易日）
+    date_column: "trade_date"
+    detection_threshold: 5000000  # 日均 < 500 万行 = 缺口（正常日均 >1500 万）
+    status: "pending"  # 待处置——bdpan 归档导入需 Owner 侧挂载或 9/17 窗口排期
+    root_cause: "缺口日落在 miniqmt 实时通道缺勤窗口（bdpan 月度归档仅导入到 2026-06，
+      2026-07 起表内数据全为 miniqmt 实时）；盘后 backfill 窗口（L10=7 天/L10.5=当日）
+      够不到。2026-09-10 探针实证：QMT 历史下载对 08-06 返回 0 行（对照 09-09=600 行
+      正常）——8 个缺口日全部超出 QMT 历史下限，QMT 通道不可补。"
+    resolution_plan: "复刻 2026-06 缺口回补路径（known_data_gaps tick_data_2026_06_gap
+      resolution_actual）：挂载 bdpan 云盘→取 分笔成交_按月归档_{沪深,京市}/2026-07 与
+      /2026-08 按日 zip→ad-hoc 导入（data_source='bdpan'）。注：当时导入脚本为会话级
+      未入库，需按 6 月记录重写。8/06 单日若无归档可权衡放弃（仅 1 交易日）。"
+    primary_alternative: "无（QMT 9/18 退役后历史下载通道一并消失，窗口=9/17 前）"
+    created: "2026-09-10"
+    last_updated: "2026-09-10"
+
+  # === 2026-09-10: news_sentiment_window 写入器无调度接线（数据总览全库体检 P7）===
+  - id: "news_sentiment_window_no_scheduler_wiring"
+    table: "c1_market.news_sentiment_window"
+    gap_type: "date_range"
+    start_date: "2026-08-22"
+    end_date: "2026-09-09"   # 本次已回填；结构性缺口=写入器从未接入调度
+    date_column: "window_date"
+    detection_threshold: 1
+    status: "monitoring"  # 2026-09-10 已按日回填 78 天（77+边界 1）；结构缺口挂账
+    root_cause: "写入器 MOD-INT-NEWS-NIGHT compute_nightly_sentiment 全仓零生产调用方
+      （data_asset_registry 口径'由夜间批/盘前流程调用'——该夜间批未接线）。表内存量
+      2026-02-24~08-21 为 D4SENT ad-hoc 回填（脚本未入库），8/21 断更点=回填截止点。
+      断更非故障——本来就没接线。"
+    resolution_plan: "结构修复=把 compute_nightly_sentiment(trade_date, persist=True) 接入
+      夜间批/盘前流程（92号 §8.4③ 统筹范围，涉及 tasks.yaml/scheduler special schedule，
+      宜单独立项）；接线前该表将持续断更。2026-09-10 已回填历史段（规则法 PIT 回算，
+      market 粒度 78 行）。"
+    primary_alternative: "无"
+    created: "2026-09-10"
+    last_updated: "2026-09-10"
+
+  # === 2026-09-10: index_list 错宇宙垃圾 PIT 关死（数据总览全库体检 P8）===
+  - id: "index_list_wrong_universe"
+    table: "c1_market.index_list"
+    gap_type: "upstream_data_corruption"
+    start_date: "2026-09-10"   # PIT 关死执行日（数据出生即坏）
+    end_date: null  # 直到接真指数源
+    date_column: "list_date"
+    detection_threshold: 1
+    status: "accepted"  # 全表 1700 行 valid_to=valid_from 关死（禁物理 DELETE，可逆）
+    root_cause: "双重量垃圾：①写入器 _fetch_index_list 误用股票清单接口
+      stock_info_sh/sz_name_code，1700 行全是股票冒充指数（600000.SH 浦发银行
+      category='指数' 实证）；②list_date/base_date 硬编码 1970-01-01（源有上市日期列
+      未映射）。垃圾经 valid_to=valid_from PIT 关死（Owner 裁定口径），index_list_refresh
+      任务同日停用防 10/1 月度刷新重新灌入。"
+    resolution_plan: "接真指数源（tushare index_basic：ts_code/name/market/publisher/
+      category/base_date/list_date 全字段匹配）后重写 _fetch_index_list 并重启任务；
+      关死行保留可追溯（ReplacingMergeTree 新行后写胜出自然取代）。"
+    primary_alternative: "无（index_list 无 SELECT 消费方，关死零下游影响实证）"
+    created: "2026-09-10"
+    last_updated: "2026-09-10"
+
+  # === 2026-09-10: etf_list list_date 哨兵零值 PIT 关死（数据总览全库体检 P8）===
+  - id: "etf_list_list_date_sentinel"
+    table: "c1_market.etf_list"
+    gap_type: "upstream_data_corruption"
+    start_date: "2026-09-10"   # PIT 关死执行日
+    end_date: null  # 直到补真实 list_date 源
+    date_column: "list_date"
+    detection_threshold: 1
+    status: "accepted"  # 全表 3278 行 valid_to=valid_from 关死（禁物理 DELETE，可逆）
+    root_cause: "sina 源 fund_etf_category_sina 无成立/上市日期（空串），写入器以
+      1970-01-01 哨兵防 Code 38 整批失败（2026-08-14 有意设计）；valid_from DEFAULT
+      toDate(list_date) 连带=1970。ETF 代码/名称本身真实（etf_nav 上游消费不受影响
+      ——消费查询不带 valid_to 过滤实证）。2026-09-10 PIT 关死全表；下次月度刷新
+      （10/1）新行后写胜出自然取代关死行，但 list_date 哨兵会复现。"
+    resolution_plan: "治本=给 etf_list 补真实 list_date 源（tushare fund_basic market=E
+      有 list_date，但 etf_list 14 列 sina 形状需列映射设计，防 index_code/manager 等
+      字段回归），立项后切换；在此之前接受 list_date 零值+审计侧已有 1970 排除兜底。"
+    primary_alternative: "无"
+    created: "2026-09-10"
+    last_updated: "2026-09-10"
