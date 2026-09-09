@@ -198,6 +198,35 @@ nodes:
     ai_autonomy: auto
     doc_ref: "docs/03_modules/_domain_plan_engine/tomorrow_boundary_planner/blueprint.md"
 
+  # G1 增长批1（2026-09-10 夜班）：明日情绪盘中滚动预测——已证实的真断链
+  #（tomorrow_boundary_planner 不变量明文"不读盘中实时数据"，明日先验只在盘后定稿；
+  #  零件 next_day_8state_forecast/similar_day_inference/brier_calibration 全在，
+  #  缺盘中滚动组合器=施工清单 C13 待建，本节点先以红节点入图占位）
+  - node_id: TDM-E-L0-04
+    name_zh: 明日情绪盘中滚动预测
+    market: cn_a
+    flow: entry_flow
+    layer: L0
+    node_type: stage
+    point: 盘中
+    decision_question: 盘中滚动更新的明日情绪概率比盘前先验悲观多少，要不要下调今天仓位档
+    algo_note_zh: >-
+      盘中 10:00/11:00/13:30/14:30 四时点用最新盘面重算明天情绪概率：昨晚 8 态转移先验
+      打底（next_day_8state_forecast），相似日推理按今天盘中走势找历史相似日修正
+      （similar_day_inference），Brier 校准连错的输入自动降权（brier_calibration）。
+      合成结果比盘前先验悲观一档以上→发"明日降档预警"喂偏离监控提前减仓（拿不准明天
+      就今天减）。只出概率不出点位；预警是建议，修订权在偏离监控。昨日先验由 L0-03
+      盘后落库、本节点盘中读缓存。学界佐证：隔夜收益延续+盘中情绪可更新（Lou-Poli-Gao
+      经典；Renault JBF 2017 半小时情绪更新预测尾盘；SSRN 5599654 CSI300 隔夜预测）。
+    parent_node: TDM-E-L0
+    factor_refs: []
+    data_refs: [DS-150, DS-082, DS-107]
+    algo_refs: []
+    strategy_mounts: []
+    activation: intraday
+    ai_autonomy: auto
+    tags: [G1, 增长批1]
+
   - node_id: TDM-E-L1
     name_zh: 大盘总闸
     market: cn_a
@@ -3509,6 +3538,8 @@ edges:
   - {from_node: TDM-E-L1-AGG, to_node: TDM-E-L2-05-1, edge_type: feed}
   - {from_node: TDM-E-L1-S5, to_node: TDM-E-L2-05-1, edge_type: feed}
   - {from_node: TDM-E-L1-S5, to_node: TDM-E-L1-AGG, edge_type: feed}
+  # G1 增长批1：盘中水温读数→明日情绪滚动预测
+  - {from_node: TDM-E-L1-S5, to_node: TDM-E-L0-04, edge_type: feed, payload_zh: "盘中 11 信号水温读数"}
   - {from_node: TDM-E-L1-S0, to_node: TDM-E-L1-AGG, edge_type: feed}
   - {from_node: TDM-E-L2-05-1, to_node: TDM-E-L2-05-2, edge_type: sequence}
   - {from_node: TDM-E-L2-05-2, to_node: TDM-E-L2-06-1, edge_type: feed}
@@ -3688,6 +3719,8 @@ edges:
   - {from_node: TDM-E-L0, to_node: TDM-E-L0-01, edge_type: sequence, payload_zh: "总仓位档+分批预案+禁做清单"}
   - {from_node: TDM-E-L0-01, to_node: TDM-E-L0-02, edge_type: sequence}
   - {from_node: TDM-E-L0-02, to_node: TDM-E-L0-03, edge_type: sequence}
+  # G1 增长批1：明日降档预警→偏离监控（修订权在 L0-02）
+  - {from_node: TDM-E-L0-04, to_node: TDM-E-L0-02, edge_type: feed, payload_zh: "明日降档预警触发边界修订"}
   - {from_node: TDM-E-L0, to_node: TDM-E-L1, edge_type: sequence, payload_zh: "总仓位建议档+应急触发线"}
   - {from_node: TDM-E-L0, to_node: TDM-E-L3-06, edge_type: feed}
   - {from_node: TDM-E-L0, to_node: TDM-X-R1, edge_type: broadcast}

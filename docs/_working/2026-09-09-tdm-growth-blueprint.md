@@ -120,6 +120,25 @@ ttl: task_bound
 
 | 候选 | 五步进度 | 四关结果 | 落图 commit | 终态 |
 |---|---|---|---|---|
-| （待填） | | | | |
+| G1 明日情绪盘中滚动预测（TDM-E-L0-04，2026-09-10 夜班批1） | 五步全走完：①母节点=L0-02 姊妹（定为 TDM-E-L0-04，parent=TDM-E-L0）②四道前置检查过——盘点：next_day_8state_forecast(MOD-SIG-037)/similar_day_inference(MOD-SIG-063)/brier_calibration(MOD-PLAN-010) 零件全在=引用；tomorrow_boundary_planner 不变量明文"不读盘中实时数据"=断链实证；外部调研见下；父节点 L0 定稿✓；树枝级✓ ③D108 三条件过（独立输入输出✓/可回测=agg_discrimination✓/非参数变体✓）④设计稿=本行+地图注释 ⑤落图 137 节点 | validate ok=true / 双测试 98 绿 / align_all exit0 / 网关提交 | （本批） | 已落图（红节点；模块=施工清单 C13 待建；latency_budget 留 R39 欠账待 C13 实测补） |
+
+**G1 六向寻路记录**（防噪音四闸留痕，2026-09-10 夜班）：
+- ①上游：DS-150 指数日线（8 态先验+盘中重算）/ DS-082 涨跌停生态（盘中情绪）/ DS-107 新闻情绪窗——全已登记✓；增强候选=期指基差（futures_basis_monitor 已有件，暂不挂）。
+- ②下游：TDM-E-L0-04→TDM-E-L0-02 feed（修订权在偏离监控）；机构实践=盘中检查点评审（69 号 §2.13 D24 机构四阶段，已网验）。
+- ③算法：内部=8 态马尔可夫转移+相似日 KNN+Brier 校准降权（全已有件）；外部佐证（来源可溯闸+交叉验证闸≥2 独立源）：
+  - Lou, Poli & Gao《The Day Destroys the Night, Night Extends the Day》（经典：隔夜收益延续/日内反转）https://www.carloalberto.org/wp-content/uploads/2023/01/Day-Destroys-The-Night-Night-Extends-The-Day.pdf
+  - Akbas et al. 2021《Overnight returns, daytime reversals, and future stock returns》（高情绪期预测性更强）
+  - Renault, Journal of Banking & Finance 2017《Intraday online investor sentiment and return patterns》（盘中前半小时情绪更新预测尾盘收益）https://ideas.repec.org/a/eee/jbfina/v84y2017icp25-40.html
+  - SSRN 5599654《News Sentiment and Overnight Return Prediction》（CSI300 隔夜预测，A 股直接适配）https://papers.ssrn.com/sol3/Delivery.cfm/02eb9d1c-a89b-483f-a9e7-160e8e07a8e6-MECA.pdf?abstractid=5599654&mirid=1
+  - arXiv 2507.04481 (2025)《Does Overnight News Explain Overnight Returns?》https://arxiv.org/html/2507.04481v1
+- ④后端：断链实证成立；缺盘中滚动组合器→施工清单 C13（拟 src/zephyr/plan_engine/intraday_tomorrow_forecast.py）。
+- ⑤前端：既有呈现=F-MODLIB-AUTO-33"明日 8 态推演"+F-REVIEW-AUTO-17"明日预案"；**需求登记单（只登记不施工，归前端会话）**：8 态推演卡的盘中滚动版（四时点刷新）+降档预警徽章。
+- ⑥数据字段：DS-150/082/107 全已登记，无 DATA-GAP；A 股适配闸=T+1 下"今天减仓防明天"合法（SSRN CSI300 直接适配）。
+
+| G2 资讯-产业链传导 | 等接线会话规格卡（管道在建） | — | — | 挂起（等交付） |
+| G3 币圈四节点展开 | 未启动 | — | — | 挂起 |
+| G4 执行成本反馈闭环 | 未启动（边界2 候选） | — | — | 挂起 |
+| G5 现有节点拆分 | Owner 裁先不动 | — | — | 挂起 |
+| G6 流根四节点 | 已落地（他会话 23da636683） | — | 23da636683 | 已落图 |
 
 **纪律**：真源 YAML 只在批次边界动；禁越级立节点（父未定不立子）；新节点必须有数据来源或标 [ASSUMPTION]；每批台账+地图同 commit；本文档 ttl: task_bound，增长收官归档。

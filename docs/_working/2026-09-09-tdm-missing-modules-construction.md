@@ -73,8 +73,8 @@ ttl: task_bound
 |---|---|---|---|---|---|---|
 | C1 | TDM-L1-S5 日级市场条件传感器（11 信号聚合器） | src/zephyr/signal_ashare/daily_condition_sensor.py | D_ASHARE_SIGNAL | A组8信号+B组3信号聚合→5 档水温读数；月/周层封顶约束+三层对齐加成（D20 定稿） | daily_condition/水温/日级 | 波次2 |
 | C2 | TDM-L1-S1 大盘指数传感器聚合 | src/zephyr/regime/features/index_sensor.py | D_REGIME | 均线排列+位置打分（-2~+2）；攻防板块特征入层（D109：券商/银行 5 日超额） | index_sensor/指数趋势 | 波次2 |
-| C3 | TDM-L2-05-2 信号响应三件套 | src/zephyr/signal_ashare/water_temp_response.py | D_ASHARE_SIGNAL | 水温档→响应动作三件套（加减档/对冲/观望清单） | water_temp/响应 | 波次2 |
-| C4 | TDM-L2-06-1 三级放行门槛 | src/zephyr/signal_ashare/sector_gate.py（扩展）或 three_level_gate.py | D_ASHARE_SIGNAL | 板块→个股传导的三级放行判定（门槛不过不往下传） | sector_gate/放行 | 波次2 |
+| C3 | TDM-L2-05-2 信号响应三件套 | ~~water_temp_response.py~~ **改判：降 B→命中 sector_gate.py** | D_ASHARE_SIGNAL | 水温档→响应动作三件套（加减档/对冲/观望清单） | water_temp/响应 | ✅波次0 命中：water_temp_response() 返回 signal_weight/gate_thresholds/rrg_filter 三件套，精确覆盖，module_ref 已正确 |
+| C4 | TDM-L2-06-1 三级放行门槛 | ~~three_level_gate.py~~ **改判：降 B→命中 sector_gate.py** | D_ASHARE_SIGNAL | 板块→个股传导的三级放行判定（门槛不过不往下传） | sector_gate/放行 | ✅波次0 命中：admission_gate() 三级放行（CORE_HOT/SECONDARY/WILDCARD/BLOCKED）精确覆盖，module_ref 已正确 |
 | C5 | TDM-L2-06-3 强度加权传导 | src/zephyr/signal_ashare/sector_conduction.py | D_ASHARE_SIGNAL | 板块强度加权传导到个股池（含 L2-10 同源补涨比价输入） | conduction/传导 | 波次2 |
 | C6 | TDM-L2-03-1 扩散指标进度追踪 | adjustment_cycle_tracker.py 扩展（先反查） | D_ASHARE_SIGNAL | 调整周期扩散指标进度（40/60/80% 阈值） | diffusion/扩散 | 波次2 |
 | C7 | TDM-L3-04 负面否决器 | src/zephyr/signal_fundamental/negative_veto.py | D_FUNDAMENTAL_SIGNAL | ST/退市/立案/减持/解禁/黑名单一票否决（已挂 STR-MULTIFACTOR-034~041 六条规则） | veto/否决/黑名单 | 波次3 |
@@ -82,7 +82,10 @@ ttl: task_bound
 | C9 | TDM-P3-01 加仓资格门 | src/zephyr/position/core/pyramiding_rules.py | D_POSITION | 加仓资格判定（浮盈保护/环境允许/计划内加仓点） | pyramiding/加仓资格 | 波次4 |
 | C10 | TDM-P3-02 金字塔加仓规则 | 同上文件（与 C9 同模块两函数，节点分开） | D_POSITION | 金字塔递减加仓（1/2/4 档逐级减半，总加仓≤首仓） | pyramiding | 波次4 |
 | C11 | TDM-X-R1-03 护盘资产定向加仓白名单 | src/zephyr/position/core/defensive_asset_whitelist.py | D_POSITION | 熔断期允许定向加仓的护盘资产白名单（动作方向=买入，验证时单独核对） | whitelist/护盘 | 波次1 |
-| C12 | TDM-X-S2-03 执行时段路由 | src/zephyr/ex_sor/core/execution_scheduler.py（核对后定） | D_EX_SOR | 卖出单时段路由（开盘竞价/盘中/尾盘竞价/急单走市价） | execution_scheduler/时段 | 波次1 |
+| C12 | TDM-X-S2-03 执行时段路由 | ~~核对 execution_scheduler.py~~ **核对结论：不覆盖，维持 C** → src/zephyr/ex_sor/core/sell_session_router.py | D_EX_SOR | 卖出单时段路由（开盘竞价/盘中/尾盘竞价/急单走市价） | execution_scheduler/时段 | 波次1 |
+| C13 | TDM-E-L0-04 明日情绪盘中滚动预测（G1 增长批1 新增） | src/zephyr/plan_engine/intraday_tomorrow_forecast.py | D_PLAN | 盘中 10:00/11:00/13:30/14:30 四时点滚动合成 8 态先验+相似日 KNN+水温读数→明日情绪概率，悲观降档预警喂 L0-02（三零件全在，缺组合器；Brier 校准降权） | forecast/滚动/明日情绪 | 波次4 后视容量，否则移交晨审 |
+
+**波次0 定界结论（2026-09-10 夜班三重反查实跑）**：C3/C4 命中既有实现降级（sector_gate.py 两函数精确覆盖）；C12 核对 execution_scheduler.py=参与率切片调度≠时段通道路由，维持 C；C1 核对 market_state_sensor.py=9 网格 trend×vol≠11 信号→S0-S4 五档水温（D20），维持 C；C2 核对 index_regime_panel.py=HMM 概率面板≠均线排列+位置打分 -2~+2，维持 C；C5 核对 sector_attribute_rules.py=攻防属性标注≠强度传导系数，维持 C；C7 核对 risk_veto_engine(MOD-RK-24)=订单级风险否决、strategy_cross_vote_funnel=市场状态否决、均≠负面清单一票否决，维持 C；C8 核对 plan_deviation_monitor=收益偏差 z 监控≠买入理由存活三态，维持 C；C9/C10/C11 无 capability 无文件，维持 C。**C 类最终边界：C1/C2/C5/C6/C7/C8/C9/C10/C11/C12 十项真新建 + C6 为 tracker 扩展式。**
 
 **C 类验收统一口径**：模块落码（15 字段头）+ `tests/<域>/test_<模块名>.py` 循环验收 2 轮 0 错误 + depgraph 设计态登记 + 节点 module_ref/module_id 同 commit 回填 + validate/双测试/align_all 三关。
 
