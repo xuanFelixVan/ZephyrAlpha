@@ -2364,7 +2364,7 @@ def _cm_role_rank(role: str | None) -> int:
 
 
 def _cm_build_galaxy() -> dict[str, Any]:
-    """链→族聚类：跨链结构边+公司供应链边投影到链对 → 确定性加权标签传播 → 小簇并入最强邻居（≤48 簇）。
+    """链→族聚类：跨链结构边+公司供应链边投影到链对 → 确定性模块度局部移动（Louvain 式单层，γ=3.5）→ 小簇并入最强邻居（≤48 簇）。
 
     纯 Python 无新依赖；簇名=簇内连接度最高的枢纽链名。结果缓存 600s。
     """
@@ -2414,19 +2414,39 @@ def _cm_build_galaxy() -> dict[str, Any]:
         nbr_w[a][b] = nbr_w[a].get(b, 0.0) + w
         nbr_w[b][a] = nbr_w[b].get(a, 0.0) + w
 
+    # 确定性模块度局部移动（Louvain 式单层；2026-09-09 塌簇治理，γ 随数据规模复扫校准）：
+    # 加权标签传播在稠密加权图上雪崩——实测 6 轮收敛后 Q=0、90.6% 链并入单簇（离线探针实锤）。
+    # γ 定档：618 链时点 γ=3.0→42 簇；数据增长至 635 链后 γ=3.0 自然漂到 73 簇超 48 上限，
+    # 复扫（3.2/3.5/4.0/4.5）定 γ=3.5→47 簇（ACC rev2 四闸带 [15,48]，最大簇 9.4%、零单例簇）。
+    # 确定性：sorted 遍历序 + 平票取最小社区。
     labels: dict[str, str] = {c: c for c in chain_name}
     order = sorted(chain_name)
-    for _ in range(24):   # 加权标签传播（确定性：固定遍历序 + 平票取最小 label）
+    deg_w: dict[str, float] = {c: sum(nbr_w[c].values()) for c in order}
+    sigma_tot: dict[str, float] = dict(deg_w)
+    m2 = sum(deg_w.values())
+    gamma_cm = 3.5
+    for _ in range(30):
         changed = False
-        for c in order:
-            votes: dict[str, float] = {}
-            for nb, w in adj.get(c, ()):
-                votes[labels[nb]] = votes.get(labels[nb], 0.0) + w
-            if votes:
-                best = max(sorted(votes), key=lambda k: votes[k])
-                if votes[best] > 0 and labels[c] != best:
-                    labels[c] = best
-                    changed = True
+        for u in order:
+            cu = labels[u]
+            links: dict[str, float] = {}
+            for nb, w in nbr_w[u].items():
+                lc = labels[nb]
+                links[lc] = links.get(lc, 0.0) + w
+            du = deg_w[u]
+            base = links.get(cu, 0.0) - gamma_cm * du * (sigma_tot[cu] - du) / m2
+            best_c, best_g = cu, base
+            for c in sorted(links):
+                if c == cu:
+                    continue
+                g = links[c] - gamma_cm * du * sigma_tot[c] / m2
+                if g > best_g + 1e-12 or (abs(g - best_g) <= 1e-12 and c < best_c):
+                    best_c, best_g = c, g
+            if best_c != cu:
+                labels[u] = best_c
+                sigma_tot[cu] -= du
+                sigma_tot[best_c] += du
+                changed = True
         if not changed:
             break
 
