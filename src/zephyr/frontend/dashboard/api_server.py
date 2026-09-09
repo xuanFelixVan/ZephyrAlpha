@@ -1953,9 +1953,9 @@ def _cm_build_galaxy() -> dict[str, Any]:
         chain_name: dict[str, str] = {r[0]: r[1] for r in cur.fetchall()}
         cur.execute("SELECT node_id, chain_id FROM ig_node")
         node_chain: dict[str, str] = {r[0]: r[1] for r in cur.fetchall()}
-        cur.execute("SELECT node_id, count(DISTINCT symbol) FROM ig_node_company GROUP BY node_id")
+        cur.execute("SELECT node_id, count(DISTINCT symbol) FROM ig_node_company WHERE valid_to IS NULL GROUP BY node_id")
         node_companies: dict[str, int] = {r[0]: int(r[1]) for r in cur.fetchall()}
-        cur.execute("SELECT DISTINCT node_id, symbol FROM ig_node_company")
+        cur.execute("SELECT DISTINCT node_id, symbol FROM ig_node_company WHERE valid_to IS NULL")
         sym_chains: dict[str, set[str]] = {}
         for nid, sym in cur.fetchall():
             c = node_chain.get(nid)
@@ -1968,7 +1968,7 @@ def _cm_build_galaxy() -> dict[str, Any]:
             if c1 in chain_name and c2 in chain_name and c1 != c2:
                 key = (c1, c2) if c1 < c2 else (c2, c1)
                 pair_w[key] = pair_w.get(key, 0.0) + 1.0
-        cur.execute("SELECT DISTINCT from_symbol, to_symbol FROM ig_company_edge")
+        cur.execute("SELECT DISTINCT from_symbol, to_symbol FROM ig_company_edge WHERE valid_to IS NULL")
         for s1, s2 in cur.fetchall():
             for c1 in sym_chains.get(s1, ()):
                 for c2 in sym_chains.get(s2, ()):
@@ -2100,10 +2100,10 @@ def _cm_symbol_names() -> dict[str, str]:
     conn = _cm_pg()
     try:
         cur = conn.cursor()
-        cur.execute("SELECT from_symbol, MAX(from_name) FROM ig_company_edge WHERE from_name IS NOT NULL "
+        cur.execute("SELECT from_symbol, MAX(from_name) FROM ig_company_edge WHERE valid_to IS NULL AND from_name IS NOT NULL "
                     "GROUP BY from_symbol")
         m = {r[0]: r[1] for r in cur.fetchall()}
-        cur.execute("SELECT to_symbol, MAX(to_name) FROM ig_company_edge WHERE to_name IS NOT NULL AND to_symbol <> '' "
+        cur.execute("SELECT to_symbol, MAX(to_name) FROM ig_company_edge WHERE valid_to IS NULL AND to_name IS NOT NULL AND to_symbol <> '' "
                     "GROUP BY to_symbol")
         for s, n in cur.fetchall():
             m.setdefault(s, n)
@@ -2149,7 +2149,7 @@ def chainmap_cluster(cid: str = Query(..., min_length=2, max_length=8)) -> dict[
             ids = [c["chain_id"] for c in members]
             cur.execute("SELECT node_id, chain_id, name, tier FROM ig_node WHERE chain_id = ANY(%s)", (ids,))
             node_rows = cur.fetchall()
-            cur.execute("SELECT node_id, count(DISTINCT symbol) FROM ig_node_company WHERE node_id IN "
+            cur.execute("SELECT node_id, count(DISTINCT symbol) FROM ig_node_company WHERE valid_to IS NULL AND node_id IN "
                         "(SELECT node_id FROM ig_node WHERE chain_id = ANY(%s)) GROUP BY node_id", (ids,))
             ncomp = {r[0]: int(r[1]) for r in cur.fetchall()}
             cur.execute("SELECT from_node, to_node FROM ig_edge")
@@ -2190,7 +2190,7 @@ def chainmap_node(node_id: str = Query(..., min_length=1)) -> dict[str, Any]:
             row = cur.fetchone()
             if not row:
                 return {"ok": False, "error": "node not found", "companies": []}
-            cur.execute("SELECT symbol, role, confidence FROM ig_node_company WHERE node_id = %s", (node_id,))
+            cur.execute("SELECT symbol, role, confidence FROM ig_node_company WHERE valid_to IS NULL AND node_id = %s", (node_id,))
             rows = cur.fetchall()
             syms = [r[0] for r in rows]
             # 跨链数（二期 Commit B）：公司在全部 active 链的落位链数（>1 即跨链，徽章跳转依据）
@@ -2200,7 +2200,7 @@ def chainmap_node(node_id: str = Query(..., min_length=1)) -> dict[str, Any]:
                     "SELECT nc.symbol, count(DISTINCT n.chain_id) FROM ig_node_company nc "
                     "JOIN ig_node n ON n.node_id = nc.node_id "
                     "JOIN ig_chain c ON c.chain_id = n.chain_id "
-                    "WHERE nc.symbol = ANY(%s) AND c.status = 'active' GROUP BY nc.symbol",
+                    "WHERE nc.valid_to IS NULL AND nc.symbol = ANY(%s) AND c.status = 'active' GROUP BY nc.symbol",
                     (syms,),
                 )
                 nchains = {r[0]: int(r[1]) for r in cur.fetchall()}
@@ -2246,7 +2246,7 @@ def chainmap_search(q: str = Query(..., min_length=1)) -> dict[str, Any]:
                           "cluster": chain_cluster.get(r[2], "")} for r in cur.fetchall()]
             cur.execute("SELECT DISTINCT nc.symbol, n.node_id, n.name, n.chain_id, c.name, nc.role "
                         "FROM ig_node_company nc JOIN ig_node n ON n.node_id = nc.node_id "
-                        "JOIN ig_chain c ON c.chain_id = n.chain_id WHERE nc.symbol ILIKE %s LIMIT 20",
+                        "JOIN ig_chain c ON c.chain_id = n.chain_id WHERE nc.valid_to IS NULL AND nc.symbol ILIKE %s LIMIT 20",
                         (kw + "%",))
             sym_rows = cur.fetchall()
             hit_syms = {r[0] for r in sym_rows}
@@ -2256,7 +2256,7 @@ def chainmap_search(q: str = Query(..., min_length=1)) -> dict[str, Any]:
             if named:
                 cur.execute("SELECT DISTINCT nc.symbol, n.node_id, n.name, n.chain_id, c.name, nc.role "
                             "FROM ig_node_company nc JOIN ig_node n ON n.node_id = nc.node_id "
-                            "JOIN ig_chain c ON c.chain_id = n.chain_id WHERE nc.symbol = ANY(%s) LIMIT 20", (named,))
+                            "JOIN ig_chain c ON c.chain_id = n.chain_id WHERE nc.valid_to IS NULL AND nc.symbol = ANY(%s) LIMIT 20", (named,))
                 extra_rows = cur.fetchall()
             conn.close()
         except Exception:
@@ -2276,14 +2276,16 @@ def chainmap_search(q: str = Query(..., min_length=1)) -> dict[str, Any]:
 
 # ═══════════════ 公司详情卡数据端点（chainmap 二期 Commit A，2026-09-09） ═══════════════
 # 方向语义（Owner 红线，禁止臆断）：ig_company_edge from=供应商 → to=客户（load_supply_top5_483.py L16 实锤）；
-# J88_collab_patent=专利合作边无方向；to_symbol=''=对手方非上市（名称在 to_name，DDL L152 约定）。
-# 按来源分组贴 edge_kind：483_top5_customer/match_list_2012_2023/websearch=supply；J88_collab_patent=collab。
+# J88_collab_patent=供应链协同创新边同样有方向（load_supply_collab_j88.py L16-17：供应商文件 from=供应商→to=中游，
+# 客户文件 from=中游→to=客户，weight=联合专利合作次数）；to_symbol=''=对手方非上市（名称在 to_name，DDL L152 约定）。
+# 按来源分组贴 edge_kind：483_top5_customer/match_list_2012_2023/websearch/J88_collab_patent=supply
+# （J88 归 supply 为 Owner 2026-09-09 方向勘误批准，ACC-F-CHAINMAP-COMPANY-CARD rev2 留痕）。
 
 _CM_SOURCE_EDGE_KIND: dict[str, str] = {
     "483_top5_customer": "supply",
     "match_list_2012_2023": "supply",
     "websearch": "supply",
-    "J88_collab_patent": "collab",
+    "J88_collab_patent": "supply",
 }
 _CM_RELATION_CAP = 10          # 每侧关系展示上限（total 如实返回）
 _CM_PLACEMENT_CAP = 60         # 落位展示上限（多链公司如实给 total）
@@ -2352,7 +2354,8 @@ def chainmap_company(symbol: str = Query(..., min_length=2, max_length=24)) -> d
 
     symbol 接受 6 位裸码或带 .SH/.SZ/.BJ 后缀（统一归一）；海外/UNLISTED 端点不支持（fail-closed）。
     关系段：suppliers=to_symbol=本司（from 为供应商）；customers=from_symbol=本司（to 为客户）；
-    collabs=J88 专利合作边（无方向）；对手方未上市 symbol='' 用 to_name/from_name 展示。
+    collabs=预留段（J88 勘误后归 supply，当前恒空，字段保留兼容 ACC item1 五段契约）；
+    对手方未上市 symbol='' 用 to_name/from_name 展示。
     行情段独立降级：CH 异常→quote=null，不影响图谱段返回。
     """
     import re as _re
@@ -2377,14 +2380,14 @@ def chainmap_company(symbol: str = Query(..., min_length=2, max_length=24)) -> d
                 "SELECT n.node_id, n.name, n.tier, c.chain_id, c.name, nc.role, nc.confidence "
                 "FROM ig_node_company nc JOIN ig_node n ON n.node_id = nc.node_id "
                 "JOIN ig_chain c ON c.chain_id = n.chain_id "
-                "WHERE nc.symbol = %s AND c.status = 'active' ORDER BY c.name, n.name",
+                "WHERE nc.valid_to IS NULL AND nc.symbol = %s AND c.status = 'active' ORDER BY c.name, n.name",
                 (sym,),
             )
             pos_rows = cur.fetchall()
             cur.execute(
                 "SELECT from_symbol, to_symbol, year, product, weight, weight_type, source, "
                 "from_name, to_name, amount FROM ig_company_edge "
-                "WHERE from_symbol = %s OR to_symbol = %s "
+                "WHERE valid_to IS NULL AND (from_symbol = %s OR to_symbol = %s) "
                 "ORDER BY year DESC, weight DESC NULLS LAST LIMIT 400",
                 (sym, sym),
             )

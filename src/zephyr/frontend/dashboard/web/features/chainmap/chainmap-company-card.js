@@ -1,8 +1,9 @@
 /* ── 公司详情卡（chainmap 二期 Commit A）· 真源 /api/chainmap-company ──
  * 打开：ZK.bus cm:open-company {symbol, name?}（环节公司面板行点击）；卡片自建 DOM 挂 #p-chainmap。
  * 行情段独立降级：quote=null → '—'（CH 失败不拖垮图谱段）；市值=最新总股本(周更)×收盘 估算，标"约"。
- * 关系按来源分组：supply=供应（483/名录/websearch 有方向：from=供应商→to=客户），collab=合作
- * （J88 专利边无方向——Owner 红线禁臆断箭头）；对手方未上市（symbol=''）以名称展示。
+ * 关系按来源分组：supply=供应链（483/名录/websearch/J88 均有方向：from=供应商→to=客户）——
+ * J88 勘误 Owner 已批准（load_supply_collab_j88.py L16-17：供应商→中游→客户，weight=联合专利合作次数）；
+ * collab=预留段（当前恒空不渲染）；对手方未上市（symbol=''）以名称展示。
  * 跳个股=go('stockq')+sqSel(裸码)（一期 go+setTimeout 先例）；断线 15s 自动重试（演示诚实纪律）。
  * 跨链徽章=Commit B（F-CHAINMAP-CROSS-LINK）。验收单：ACC-F-CHAINMAP-COMPANY-CARD */
 (function () {
@@ -73,7 +74,7 @@
   }
 
   function srcTag(s) {
-    if (s === 'J88_collab_patent') return '专利合作';
+    if (s === 'J88_collab_patent') return '专利协同';
     if (s === '483_top5_customer') return '前五大客户披露';
     if (s === 'match_list_2012_2023') return '供应名录';
     if (s === 'websearch') return '网络检索';
@@ -129,9 +130,9 @@
       sec('链上落位（链 · 环节 · 角色）', d.total_placements || 0, d.placements, posRow) +
       sec('供应商（上游 → 本司）', d.n_suppliers || 0, d.suppliers, relRow) +
       sec('客户（本司 → 下游）', d.n_customers || 0, d.customers, relRow) +
-      sec('合作（专利共同研发，无方向）', d.n_collabs || 0, d.collabs, relRow) +
+      ((d.n_collabs || 0) > 0 ? sec('专利协同', d.n_collabs || 0, d.collabs, relRow) : '') +
       '<div class="cc-foot"><span class="cc-jump">在个股页打开 →</span>' +
-      '<span class="cc-note">市值=最新总股本×收盘（估算）；关系方向按来源标注，专利合作边无方向。</span></div>';
+      '<span class="cc-note">市值=最新总股本×收盘（估算）；关系方向按来源标注（供应链边：上游→本司→下游）。</span></div>';
     var x = card.querySelector('.cc-x');
     if (x) x.addEventListener('click', close);
     Array.prototype.forEach.call(card.querySelectorAll('.cc-row[data-chain]'), function (el) {

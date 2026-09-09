@@ -8,7 +8,7 @@ feature_id: F-CHAINMAP-COMPANY-CARD
 feature_name: 公司详情卡（产业地图二期 Commit A：链上落位+上下游关系+市值行情）
 frozen_at: 2026-09-09
 frozen_by: ZephyrAlpha-Owner
-revision: 1
+revision: 2
 revision_policy: "修订=Owner 批准+改原文+revision 链留痕；AI 不可自改已冻结条项"
 
 # check 取值：目检（截图人工/AI 视觉对） | 机断（DOM/接口断言）
@@ -16,9 +16,20 @@ items:
   - { id: 1, text: "/api/chainmap-company?symbol=300750 返回 ok=true，含 placements/suppliers/customers/collabs/quote 五段（机断：HTTP 断言）", check: 机断 }
   - { id: 2, text: "环节公司面板（#cm-side .cm-co）行可点击，点行弹出公司详情卡（#cm-company-card），点遮罩/×/Esc 可关闭", check: 机断 }
   - { id: 3, text: "行情段：收盘/涨跌幅/总市值(标'约')/PE/PB；CH 断线时该段渲染 '—' 且图谱五段照常返回（独立降级）", check: 机断 }
-  - { id: 4, text: "关系段带来源标注（前五大客户披露/供应名录/网络检索/专利合作），合作组标题明示'无方向'（方向语义红线）", check: 目检 }
+  - { id: 4, text: "关系段带来源标注（前五大客户披露/供应名录/网络检索/专利协同），J88 边按方向归入供应链段（供应商→中游→客户），合作段为空时不渲染（方向语义红线 rev2）", check: 目检 }
   - { id: 5, text: "'在个股页打开'按钮 → 跳 stockq 页并选中该股（裸码）；断线态 15s 自动重试、无演示数据", check: 目检 }
   - { id: 6, text: "冒烟网 test_chainmap_structure 含 m_company 断言并全绿", check: 机断 }
+
+revision_history:
+  - rev: 1
+    date: 2026-09-09
+    by: ZephyrAlpha-Owner
+    action: 初版冻结（链上落位+上下游关系+行情五段六条目）
+  - rev: 2
+    date: 2026-09-09
+    by: ZephyrAlpha-Owner 批准，AI 会话（chainmap 收尾修正包）执行
+    change: "item 4 方向语义勘误——J88_collab_patent 由'专利合作（无方向）'改为'专利协同（供应链边，有方向）'；实锤=load_supply_collab_j88.py L16-17（供应商文件 from=供应商→to=中游，客户文件 from=中游→to=客户，weight=联合专利合作次数）；配套=api_server _CM_SOURCE_EDGE_KIND['J88_collab_patent'] collab→supply + 前端来源标签'合作（无方向）'→'专利协同'且合作段为空不渲染 + 两处注释勘误"
+    item4_rev1_text: "关系段带来源标注（前五大客户披露/供应名录/网络检索/专利合作），合作组标题明示'无方向'（方向语义红线）"
 
 execution:
   trigger: "任何涉及本功能的 UI 改动 commit 前"
