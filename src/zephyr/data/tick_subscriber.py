@@ -134,6 +134,9 @@ _TICK_COLUMNS = [
     "quality_flag",
 ]
 
+# 台账 §8.6 任务一（裁定⑤）：五档盘口旁路表名（注册表真源派生，#ARCH-CH-024）
+_TBL_TICK_DEPTH_5 = get_registry().table("market_tick_depth_5")
+
 _DATA_SOURCE = "miniqmt"
 
 # P0-2: 批量出队上限（减少 WalWriter.add 调用次数）
@@ -328,6 +331,10 @@ class TickSubscriber:
 
         self._tick_queue: queue.Queue[tuple[str, dict]] = queue.Queue(maxsize=100000)
         self._writer = None  # WalWriter，在 start() 中初始化
+        # 台账 §8.6 任务一（裁定⑤）：五档盘口并行旁路——默认关闭，TICK_DEPTH5=1 显式开启，
+        # 重启时机由 Owner 择盘前/午休执行（红线 2：现有 tick_data 链路行为零变更）
+        self._depth_enabled = os.environ.get("TICK_DEPTH5", "0") == "1"
+        self._depth_writer = None  # WalWriter(c1_market.tick_depth_5)，start*/start_bridge 中按门初始化
         self._flush_thread: threading.Thread | None = None
         self._running = False
         self._bridge_mode = False  # P0-1 桥模式（93 号备忘 §14）：数据入口=桥文件尾读
@@ -482,6 +489,35 @@ class TickSubscriber:
             last_key="",
             elapsed_sec=0.0,
         )
+        # 台账 §8.6 任务一（裁定⑤）：五档盘口并行旁路——用同一批 tick dict 构造
+        # 30 列深度行写 c1_market.tick_depth_5；tick_data 链路零变更（红线 2）。
+        # 单行构造异常只跳该行（主链不受影响）。
+        if self._depth_writer is not None and cache_ticks:
+            depth_rows: list[tuple] = []
+            for sym, tk in cache_ticks:
+                try:
+                    depth_rows.append(self._depth_row_fn(sym, tk))
+                except Exception:  # noqa: BLE001 — 单行异常不拖垮旁路
+                    log.debug("depth row build failed symbol=%s", sym, exc_info=True)
+            if depth_rows:
+                depth_cols = self._depth_columns
+                if depth_cols is None:
+                    from zephyr.data.tick_depth_writer import DEPTH_COLUMNS
+
+                    depth_cols = DEPTH_COLUMNS
+                    self._depth_columns = depth_cols
+                try:
+                    self._depth_writer.add(
+                        FetchResult(
+                            table=_TBL_TICK_DEPTH_5,
+                            columns=depth_cols,
+                            rows=depth_rows,
+                            last_key="",
+                            elapsed_sec=0.0,
+                        )
+                    )
+                except Exception:  # noqa: BLE001 — 旁路写失败不阻断主链
+                    log.error("五档旁路 add 失败（不影响 tick_data 主链）", exc_info=True)
         # CAND-OBS-001: Stage wal_add——WalWriter.add 段落盘耗时（契约 emit 段）
         self._stage_timer.begin("wal_add")
         add_ok = self._writer.add(result)
@@ -1072,6 +1108,7 @@ class TickSubscriber:
             segment_max_seconds=self._batch_seconds,
         )
         self._writer.start()  # 启动 drain 线程
+        self._init_depth_writer(WalWriter)  # 台账 §8.6 任务一：五档并行旁路（TICK_DEPTH5=1 时）
 
         # P1-5: 启动 Prometheus /metrics 端点
         start_metrics_server()
@@ -1164,6 +1201,7 @@ class TickSubscriber:
             segment_max_seconds=self._batch_seconds,
         )
         self._writer.start()  # 启动 drain 线程
+        self._init_depth_writer(WalWriter)  # 台账 §8.6 任务一：五档并行旁路（TICK_DEPTH5=1 时）
 
         start_metrics_server()
 
@@ -1181,7 +1219,10 @@ class TickSubscriber:
             name="tick-biz-watchdog",
         )
         self._biz_thread.start()
-        log.info("TickSubscriber 桥模式下游链就绪: WAL/flush/看门狗（数据入口=桥文件尾读）")
+        log.info(
+            "TickSubscriber 桥模式下游链就绪: WAL/flush/看门狗（数据入口=桥文件尾读，五档旁路=%s）",
+            "on" if self._depth_enabled else "off",
+        )
         return True
 
     def stop(self) -> None:
@@ -1200,6 +1241,9 @@ class TickSubscriber:
         # WalWriter.stop: flush 残留段 + 停止 drain 线程
         if self._writer:
             self._writer.stop()
+        # 台账 §8.6 任务一：五档旁路收尾（flush 残留段 + 停 drain）
+        if self._depth_writer:
+            self._depth_writer.stop()
         # 取消订阅（治本 2026-08-03 实盘验证发现并修正）：
         # 实测本 xtquant 版本：unsubscribe_quote 签名为 (int seq)，需 subscribe_quote
         # 返回的序列号；subscribe_whole_quote 返回成功码 1（非 seq）。原代码
@@ -1233,6 +1277,32 @@ class TickSubscriber:
                     len(subscribed_list),
                 )
         log.info("TickSubscriber 已停止: stats=%s", self.stats())
+
+    def _init_depth_writer(self, wal_writer_cls) -> None:
+        """台账 §8.6 任务一（裁定⑤）：五档并行旁路 WalWriter 初始化（TICK_DEPTH5=1 时）。
+
+        独立旁路：只读同一队列的 tick dict，写 c1_market.tick_depth_5，
+        现有 tick_data 链路一行不动（红线 2）。init 失败仅降级关闭旁路，
+        不阻断主链启动。
+        """
+        if not self._depth_enabled:
+            return
+        try:
+            from zephyr.data.tick_depth_writer import DEPTH_COLUMNS, depth_row_from_tick
+
+            self._depth_row_fn = depth_row_from_tick
+            self._depth_columns = DEPTH_COLUMNS
+            self._depth_writer = wal_writer_cls(
+                _TBL_TICK_DEPTH_5,
+                segment_max_rows=self._batch_rows,
+                segment_max_seconds=self._batch_seconds,
+            )
+            self._depth_writer.start()
+            log.info("五档盘口旁路已启用: %s（TICK_DEPTH5=1）", _TBL_TICK_DEPTH_5)
+        except Exception as e:  # noqa: BLE001 — 旁路失败不阻断主链
+            self._depth_writer = None
+            self._depth_enabled = False
+            log.error("五档盘口旁路初始化失败（降级关闭，主链不受影响）: %s", e)
 
     def stats(self) -> dict:
         """获取统计信息（无锁快照）。"""

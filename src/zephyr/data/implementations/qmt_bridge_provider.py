@@ -75,6 +75,28 @@ _HTTP_BRIDGE_PORT: Final[int] = 18901
 _FRESH_SECONDS: Final[float] = 60.0
 
 
+# 台账 §8.6 任务二（裁定③方案 b）：capability → (period, 目标表)
+# 合成执行走 _call_synth 懒导入（ch_tick_kline 依赖 table_registry，不依赖本模块）
+def _call_synth(period: str, start: str, end: str) -> int:
+    from zephyr.data.implementations.ch_tick_kline import (
+        synth_kline_from_1min,
+        synth_tick_kline,
+    )
+
+    if period in ("1min", "5min"):
+        return synth_tick_kline(period, start, end)
+    return synth_kline_from_1min(period, start, end)
+
+
+_KLINE_PERIOD_MAP: Final[dict[str, tuple[str, str]]] = {
+    "kline_1min": ("1min", "c1_market.kline_1min"),
+    "kline_5min": ("5min", "c1_market.kline_5min"),
+    "kline_15min": ("15min", "c1_market.kline_15min"),
+    "kline_30min": ("30min", "c1_market.kline_30min"),
+    "kline_60min": ("60min", "c1_market.kline_60min"),
+}
+
+
 class QmtBridgeIngestProvider(IngestProviderBase):
     """QMT 文件桥数据源 Provider（骨架：桥文件族探活 + 逐 capability 映射）。
 
@@ -96,11 +118,20 @@ class QmtBridgeIngestProvider(IngestProviderBase):
             # 9/8 起 bridge 为唯一实时源）；此处注册仅为 source 语义完备——
             # scheduler 侧对 tick_data 拉取返回零行 no-op（防误配双写）
             CapabilityContract("tick_data", supports_symbols_null=True),
+            # 台账 §8.6 任务二（裁定③方案 b）：tick→分钟K CH 内自拼——
+            # 1/5min 从 tick_data 聚合（ch_tick_kline.synth_tick_kline），
+            # 15/30/60min 从 kline_1min 二次合成（synth_kline_from_1min）。
+            # 点亮 capability ≠ 切换任务主源（tasks.yaml source 字段零改动，红线 1）。
+            CapabilityContract("kline_1min", supports_symbols_null=True),
+            CapabilityContract("kline_5min", supports_symbols_null=True),
+            CapabilityContract("kline_15min", supports_symbols_null=True),
+            CapabilityContract("kline_30min", supports_symbols_null=True),
+            CapabilityContract("kline_60min", supports_symbols_null=True),
         ],
         known_issues=[
             "依赖大QMT 终端（XtItClient.exe）+ 沙箱策略常驻（EXEC_V16.4/QUOTE_V17/TICKDUMP3_v19）",
-            "kline/quote 族桥通道未实现——待迁移台账 §2.2 三选一方案裁定后点亮",
-            "无历史回补能力（桥只产出实时流，历史靠 miniQMT 9/18 前囤货）",
+            "quote 族/指数取价桥通道未实现——QUOTE_V17 并入评估见 93 §14.9（9/15 检查点）",
+            "无历史回补能力（桥只产出实时流，历史靠 miniQMT 9/18 前囤货；分钟K 自 9/9 起随窗口累积）",
         ],
     )
 
@@ -231,7 +262,35 @@ class QmtBridgeIngestProvider(IngestProviderBase):
                 elapsed_sec=round(time.perf_counter() - started, 3),
             )
             return
-        # kline 族/quote 族/指数取价等：桥通道映射待台账 §2.2 三选一方案裁定
+        # 台账 §8.6 任务二（裁定③方案 b）：分钟K 族桥通道 = CH 内自拼
+        if capability in _KLINE_PERIOD_MAP:
+            period, table_hint = _KLINE_PERIOD_MAP[capability]
+            start_str = payload.start.strftime("%Y-%m-%d")
+            end_str = payload.end.strftime("%Y-%m-%d")
+            try:
+                n = _call_synth(period, start_str, end_str)
+                self._log.info(
+                    "桥通道分钟K合成完成: %s [%s~%s] 窗口内 %d bars（幂等 DELETE+INSERT）",
+                    capability, start_str, end_str, n,
+                )
+                yield FetchResult(
+                    table=table_hint,
+                    columns=[],
+                    rows=[],
+                    last_key=end_str,
+                    elapsed_sec=round(time.perf_counter() - started, 3),
+                )
+            except Exception as e:  # noqa: BLE001 — 错误契约：error 不抛
+                yield FetchResult(
+                    table=table_hint,
+                    columns=[],
+                    rows=[],
+                    last_key=end_str,
+                    elapsed_sec=round(time.perf_counter() - started, 3),
+                    error=f"qmt_bridge {capability} 合成失败: {e}",
+                )
+            return
+        # quote 族/指数取价等：待 QUOTE_V17 并入评估（93 §14.9，9/15 检查点）
         yield FetchResult(
             table=payload.table,
             columns=[],
@@ -240,6 +299,6 @@ class QmtBridgeIngestProvider(IngestProviderBase):
             elapsed_sec=round(time.perf_counter() - started, 3),
             error=(
                 f"NotImplementedError: qmt_bridge 源暂不支持 capability={capability}"
-                "（待迁移台账 §2.2 方案裁定：a 沙箱扩 K 线 dump / b tick 聚合合成 / c akshare 兜底）"
+                "（quote 族待 QUOTE_V17 并入评估 93 §14.9）"
             ),
         )

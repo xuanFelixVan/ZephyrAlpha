@@ -1559,3 +1559,149 @@ class TestBridgeTickSource:
             assert payload["last_tick_ts"] is not None
         finally:
             sub.stop()
+
+
+class TestTickDepthBypass:
+    """台账 §8.6 任务一（裁定⑤）：五档盘口并行旁路——默认关/TICK_DEPTH5=1 开。
+
+    断言边界：旁路只新增 tick_depth_5 写入，tick_data 主链 add 调用与
+    行内容完全不变（红线 2）。
+    """
+
+    def _v19_tick(self, ts_ms=1720838403000, price=10.5):
+        return {
+            "time": ts_ms,
+            "lastPrice": price,
+            "volume": 100,
+            "amount": 1050.0,
+            "bidPrice": [10.49, 10.48, 10.47, 10.46, 10.45],
+            "askPrice": [10.51, 10.52, 10.53, 10.54, 10.55],
+            "bidVol": [5, 4, 3, 2, 1],
+            "askVol": [6, 7, 8, 9, 10],
+        }
+
+    def test_depth_disabled_by_default(self):
+        sub = _make_sub()
+        assert sub._depth_enabled is False
+        assert sub._depth_writer is None
+
+    def test_depth_row_from_tick_full_5level(self):
+        from zephyr.data.tick_depth_writer import DEPTH_COLUMNS, depth_row_from_tick
+
+        row = depth_row_from_tick("000001.SZ", self._v19_tick(), data_source="qmt_bridge")
+        assert row is not None
+        assert len(row) == 30
+        assert len(DEPTH_COLUMNS) == 30
+        assert row[3] == "000001"              # 纯码（与 tick_data 同构）
+        assert row[4] == "stock"
+        assert row[5] == Decimal("10.5")
+        assert row[9] == Decimal("10.49")      # bid1
+        assert row[13] == Decimal("10.45")     # bid5
+        assert row[14] == Decimal("10.51")     # ask1
+        assert row[18] == Decimal("10.55")     # ask5
+        assert row[19] == 5 and row[23] == 1
+        assert row[24] == 6 and row[28] == 10
+        assert row[29] == 1                    # quality_flag
+
+    def test_depth_row_from_tick_no_depth(self):
+        from zephyr.data.tick_depth_writer import depth_row_from_tick
+
+        tick = {"time": 1720838403000, "lastPrice": 10.5, "volume": 100, "amount": 1050.0}
+        row = depth_row_from_tick("000001.SZ", tick)
+        assert row is not None
+        assert all(v is None for v in row[9:29])
+        assert row[29] == 0
+
+    def test_depth_row_from_tick_empty_returns_none(self):
+        from zephyr.data.tick_depth_writer import depth_row_from_tick
+
+        assert depth_row_from_tick("000001.SZ", {}) is None
+        assert depth_row_from_tick("000001.SZ", {"time": 0}) is None
+
+    def test_market_type_anchor(self):
+        """锚定：装配器 _infer_market_type 与 tick_subscriber.infer_market_type 同语义。"""
+        from zephyr.data.tick_depth_writer import _infer_market_type
+
+        samples = [
+            ("000001.SZ", "stock"),
+            ("600000.SH", "stock"),
+            ("510300.SH", "etf"),
+            ("159915.SZ", "etf"),
+            ("501018.SH", "lof"),
+            ("161725.SZ", "lof"),
+            ("113050.SH", "stock"),  # SH 非 51/50 前缀 → stock（既有口径）
+            ("123456.SZ", "cb"),
+            ("000300.SH", "index"),
+            ("399006.SZ", "index"),
+            ("880001.SH", "index"),
+            ("430047.BJ", "stock_bj"),
+        ]
+        for code, expected in samples:
+            assert _infer_market_type(code) == expected, code
+            assert infer_market_type(code) == expected, code
+
+    def test_drain_batch_depth_bypass_adds_extra_fetch_result(self):
+        """TICK_DEPTH5=1：同一批 tick 主链 add 1 次 + 旁路 add 1 次（行数一致）。"""
+        sub = _make_sub()
+        sub._depth_enabled = True
+        sub._depth_row_fn = lambda s, t: None  # 占位，下方替换
+        from zephyr.data.tick_depth_writer import depth_row_from_tick
+
+        sub._depth_row_fn = depth_row_from_tick
+        from zephyr.data.tick_depth_writer import DEPTH_COLUMNS
+
+        sub._depth_columns = DEPTH_COLUMNS
+        sub.writer = MagicMock()
+        sub.writer.add.return_value = True
+        depth_writer = MagicMock()
+        depth_writer.add.return_value = True
+        sub._depth_writer = depth_writer
+
+        sub.tick_queue.put(("000001.SZ", self._v19_tick()))
+        n = sub.drain_batch(timeout=0.1)
+
+        assert n == 1
+        assert sub.writer.add.call_count == 1          # 主链不变
+        assert depth_writer.add.call_count == 1        # 旁路新增一次
+        fr = depth_writer.add.call_args[0][0]
+        assert fr.table == "c1_market.tick_depth_5"
+        assert len(fr.rows) == 1 and len(fr.rows[0]) == 30
+
+    def test_drain_batch_no_depth_writer_when_disabled(self):
+        """默认关：主链 add 照旧，无旁路调用（红线 2 回归）。"""
+        sub = _make_sub()
+        sub.writer = MagicMock()
+        sub.writer.add.return_value = True
+
+        sub.tick_queue.put(("000001.SZ", self._v19_tick()))
+        assert sub.drain_batch(timeout=0.1) == 1
+        assert sub.writer.add.call_count == 1
+
+    def test_depth_bypass_failure_does_not_break_main_chain(self):
+        """旁路 add 抛异常 → 主链 add 仍执行（错误隔离）。"""
+        sub = _make_sub()
+        from zephyr.data.tick_depth_writer import depth_row_from_tick
+
+        sub._depth_enabled = True
+        sub._depth_row_fn = depth_row_from_tick
+        from zephyr.data.tick_depth_writer import DEPTH_COLUMNS
+
+        sub._depth_columns = DEPTH_COLUMNS
+        sub.writer = MagicMock()
+        sub.writer.add.return_value = True
+        depth_writer = MagicMock()
+        depth_writer.add.side_effect = RuntimeError("boom")
+        sub._depth_writer = depth_writer
+
+        sub.tick_queue.put(("000001.SZ", self._v19_tick()))
+        n = sub.drain_batch(timeout=0.1)
+
+        assert n == 1                                   # 主链照常
+        assert sub.writer.add.call_count == 1
+        assert sub.written == 1
+
+    def test_init_depth_writer_disabled_is_noop(self):
+        """门关：_init_depth_writer 不建 writer。"""
+        sub = _make_sub()
+        sub._init_depth_writer(MagicMock)
+        assert sub._depth_writer is None
