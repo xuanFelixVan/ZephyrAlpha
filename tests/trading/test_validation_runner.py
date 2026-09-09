@@ -1,3 +1,5 @@
+# [BLUEPRINT] MOD-TEST-333 | (auto-injected by S4 reconciler) | §
+# [TTL] permanent
 # -*- coding: utf-8 -*-
 """验证 runner v1 单元测试（P1-2）——方法推导/holdout 切分/两土规/lag 开关/dry-run 零写入。
 
@@ -134,13 +136,46 @@ def test_run_validation_writes_tsv(tmp_path: Path):
         captured["table"], captured["columns"], captured["tsv"] = table, columns, tsv
         return True
 
-    report = run_validation(cfg=ValidationConfig(as_of=AS_OF), artifacts_dir=artifacts, writer=fake_writer)
+    report = run_validation(cfg=ValidationConfig(as_of=AS_OF), artifacts_dir=artifacts, writer=fake_writer,
+                            decay_check=False)   # 单测不依赖 CH（衰减巡检走真实台账查询）
     assert report.written is True
     assert captured["table"] == "c1_backtest.node_verdict"
     lines = captured["tsv"].decode("utf-8").strip().split("\n")
     assert len(lines) == 14
     assert all(len(l.split("\t")) == 12 for l in lines)
     assert "\\N" in lines[0]   # hit_ratio=None → CH TSV NULL 转义（空串会变 0，实测踩坑）
+
+
+def test_run_validation_decay_tail_hook(tmp_path: Path, monkeypatch):
+    """衰减巡检=验证批尾随事件（裁定 2026-09-10）：写库成功后自动跑，失败不阻断验证批。"""
+    import zephyr.trading.validation.decay_watch as dw
+
+    # 台账查询打桩（单测不依赖真实 CH）：基线 0.60 → 最新 0.55，未达 50% 衰减线
+    monkeypatch.setattr(dw.ch_writer, "query", lambda q, timeout=30: (
+        "TDM-E-L1-S1\tvalid\t2025-01-01\tVAL-A\t2025-01-02 10:00:00\t0.60\texec_quality\n"
+        "TDM-E-L1-S1\tvalid\t2026-06-01\tVAL-B\t2026-06-02 10:00:00\t0.55\texec_quality\n"
+    ))
+
+    artifacts = tmp_path / "art"
+    artifacts.mkdir()
+    (artifacts / "bt-t3.json").write_text(json.dumps({"run_id": "bt-t3", "trade_log": []}), encoding="utf-8")
+    writes: list[str] = []
+
+    def counting_writer(table, columns, tsv):
+        writes.append(table)
+        return True
+
+    report = run_validation(cfg=ValidationConfig(as_of=AS_OF), artifacts_dir=artifacts,
+                            writer=counting_writer, decay_check=True)
+    assert report.written is True
+    assert report.decay is not None            # 钩子已执行且吃到打桩台账
+    assert report.decay["checked"] == 2
+    assert report.decay["decayed"] == 0        # 未达 50% 衰减线 → 不追加 decaying 行
+    assert len(writes) == 1                    # 只写了验证批 14 行，无 decaying 追加
+    # dry-run 不触发巡检（未写库无新数据可比）
+    report_dry = run_validation(cfg=ValidationConfig(as_of=AS_OF), artifacts_dir=artifacts,
+                                dry_run=True, writer=counting_writer, decay_check=True)
+    assert report_dry.decay is None
 
 
 # ── 衰减自动巡检（PB-14）──────────────────────────────────────────────────

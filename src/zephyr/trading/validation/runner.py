@@ -89,6 +89,7 @@ class ValidationReport:
     holdout_cutoff: str
     rows: list[dict[str, Any]] = field(default_factory=list)
     written: bool = False
+    decay: dict[str, Any] | None = None   # 衰减巡检尾随结果（run_decay_check 返回值）
 
 
 # ── 节点与方法推导 ────────────────────────────────────────────────────────
@@ -255,10 +256,13 @@ def run_validation(
     artifacts_dir: Path = _ARTIFACTS_DIR,
     dry_run: bool = False,
     writer: Callable[[str, str, bytes], bool] | None = None,
+    decay_check: bool = True,
 ) -> ValidationReport:
     """验证批入口：L4 首批节点逐个出 verdict 行并写台账。
 
     dry_run=True 不写库（验收预演）；writer 参数供测试注入收集器。
+    decay_check=True（默认）：台账写入成功后顺带跑衰减巡检（裁定 2026-09-10：衰减判定
+    依赖新验证行落地才有意义——巡检=验证批的尾随事件，不挂 cron 不占调度器，真正事件驱动）。
     """
     cfg = cfg or ValidationConfig()
     writer = writer or _default_writer
@@ -332,6 +336,19 @@ def run_validation(
     report.written = writer(_VERDICT_TABLE, _VERDICT_COLUMNS, tsv)
     if not report.written:
         logger.error("台账写入未确认 CH_COMMITTED（run_id=%s）——查 ch_writer 落盘兜底", run_id)
+        return report
+    if decay_check:
+        # 衰减巡检尾随事件（PB-14 事件驱动落地）：函数内导入防循环依赖
+        # （decay_watch 复用本模块的表常量）。巡检失败不回滚验证批——只记日志。
+        try:
+            from zephyr.trading.validation.decay_watch import run_decay_check
+
+            report.decay = run_decay_check(writer=writer)
+            if report.decay["decayed"]:
+                logger.warning("衰减巡检：%d 个节点判 decaying（已追加台账行，面板徽章即预警）",
+                               report.decay["decayed"])
+        except Exception as exc:   # noqa: BLE001 — 巡检是尾随增强，不阻断验证批结论
+            logger.error("衰减巡检失败（验证批结论不受影响）: %s", exc)
     return report
 
 

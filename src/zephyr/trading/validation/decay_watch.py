@@ -20,9 +20,10 @@ vs 最新一行（最近一次验证窗口）的命中指标比对，衰减>=50%
 verdict=decaying 行；面板「验证档案」区渲染该行为"衰减中"徽章=预警通道本身
 （真源 §7.1：台账标噪音/衰减即完成，前端可见+AI 优化优先级输入，不做治理流程）。
 
-调度挂载（P2-1 遗留接线项，晨报登记）：run_decay_check() 为无状态批函数，
-挂 DataScheduler 日频作业或 backtest 完成事件由 Owner 择一（trigger_router 新增触发器属
-Human-Gated 不可自改）；接线前由验证 runner 批次末尾顺带调用（同进程低成本）。
+调度挂载（2026-09-10 裁定，已落地）：衰减判定依赖"新验证行落地"才有意义——
+run_validation() 写台账成功后尾随调用本巡检（decay_check=True 默认开，失败不阻断验证批）。
+不挂 DataScheduler cron（巡检无新数据时空转）、不动 trigger_router（Human-Gated）。
+衰减判据本函数独立可手动触发（run_decay_check），调度解耦。
 """
 
 from __future__ import annotations
@@ -31,7 +32,7 @@ import logging
 from datetime import datetime
 from typing import Any, Callable
 
-from zephyr.data import ch_writer
+from zephyr.data import ch_reader, ch_writer
 from zephyr.trading.validation.runner import (
     _VERDICT_COLUMNS,
     _VERDICT_TABLE,
@@ -117,7 +118,8 @@ def run_decay_check(
     """
     writer = writer or (lambda t, c, b: ch_writer.write_tsv(t, c, b))
     if ledger_tsv is None:
-        ledger_tsv = ch_writer.query(_LEDGER_QUERY)
+        # 读路径走 ch_reader（#ARCH-CH-007：SELECT 应自动注入 FINAL 的正道）
+        ledger_tsv = ch_reader.query(_LEDGER_QUERY)
     if not ledger_tsv:
         return {"checked": 0, "decayed": 0, "written": False, "rows": []}
     rows = _parse_ledger_tsv(ledger_tsv)

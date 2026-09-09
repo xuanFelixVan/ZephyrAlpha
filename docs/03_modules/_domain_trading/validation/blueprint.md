@@ -42,7 +42,7 @@ docs/01_policies_and_standards/_registry/catalogs/validation_method_registry.yam
 1. **holdout 优先**：现有流水全部落在 holdout 窗口内（2026-02~08 > 2025-09 截止线）→ 首批 verdict 全部为 `pending` + `significance=insufficient_samples`，notes 如实披露原因。宁可 pending 不作弊（PB-08 铁律："定稿前不许跑回测"）。
 2. **归因粒度限制**：trade_log 无 order_type/节点归因字段，v1 以执行流水全量为统计对象写每节点行；notes 披露该限制。子环节级归因待执行报告数据源扩展。
 3. **滑点基准**：决策价不存在于流水 → 用同日 kline_daily 成交额/成交量 VWAP 代理；lag_recheck=True 时基准右移 1 个交易日（前视诊断，PB-16）。
-4. **事件驱动**：runner 为手动/上游事件触发的无状态批函数（B 类），不做常驻调度；P2-1 衰减巡检挂既有 scheduler 事件。
+4. **事件驱动**：runner 为手动/上游事件触发的无状态批函数（B 类），不做常驻调度；P2-1 衰减巡检=验证批写台账成功后的尾随事件（decay_check=True，2026-09-10 裁定落地），不挂 cron 不动 Human-Gated 路由表。
 
 ## 4. 接口
 
