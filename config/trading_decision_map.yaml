@@ -2652,6 +2652,7 @@ nodes:
 
   - node_id: TDM-X-R1-03
     name_zh: 护盘资产定向加仓白名单
+    # C11 施工（gw-tdm-20260909）：MOD-POS-026 落码回填 module_ref/module_id
     market: cn_a
     flow: exit_flow
     layer: X1
@@ -2666,7 +2667,8 @@ nodes:
     parent_node: TDM-X-R1
     factor_refs: []
     data_refs: []
-    module_ref: null
+    module_ref: src/zephyr/position/core/defensive_asset_whitelist.py
+    module_id: MOD-POS-026
     algo_refs: []
     doc_ref: "docs/02_enterprise_architecture/07_trading_decision_architecture/design_memos/69_trading_decision_map.md#§2.34"
     activation: intraday
@@ -2678,6 +2680,7 @@ nodes:
     # 数据地基=ETF 成交量天量检测（需 ETF 日线数据登记）+银行指数 5 日超额（D109 已有 DS-170）
     fallback: 尾部弹药预算未启用（D107 回测验证前）→本节点整节点休眠
     strategy_mounts: []
+    note_confirmed: "2026-09-10"
 
   # ── X 流血肉（D60-D66，Owner 2026-09-07 终裁；2 树枝 12 节点，树深 2）──
   # 42 号卖出流 spec 十节吸收（语义入节点+公式留 doc_ref+spec 保留为算法附件，22 号先例）；

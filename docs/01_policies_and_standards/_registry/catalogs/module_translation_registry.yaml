@@ -47344,6 +47344,20 @@ entries:
   desc_zh: ""
   desc_en: ""
   plain_zh: "把多只子策略的每日持仓权重按整装方案的资金比例加权合成一张组合权重面板，再用现有回测引擎跑出组合净值"
+- module_path: src/zephyr/position/core/defensive_asset_whitelist.py
+  domain_id: D_POSITION
+  name_zh: "护盘资产定向加仓白名单"
+  name_en: ""
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "熔断期唯一允许的买入窄门：三重门（L2/L3 状态、超跌反转或国家队信号、金字塔分批）全过才放行，只买白名单内宽基 ETF/银行高股息，首笔三分之一预算，回测验证前整门休眠"
+- module_path: src/zephyr/ex_sor/core/sell_session_router.py
+  domain_id: D_EX_SOR
+  name_zh: "卖出单时段路由"
+  name_en: ""
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "看现在几点决定这笔卖单怎么挂：9:15 竞价时段逃命单挂跌停价按开盘价成交排队最优先；14:30-14:45 跳水窗谨慎小单；14:50 决策窗收做T；14:57 后深市集合竞价不可撤单要卖赶早，沪市可撤可改；急单走市价"
 
 battle_map_steps:
 - step_id: BM-BUY-05

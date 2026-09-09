@@ -11322,6 +11322,30 @@ creation_tokens:
   token: tdm-backend-morning-report-20260910
   created_by: st-tdmbe-20260909
   capability: trading_decision_map
+- file: docs/03_modules/_domain_position/defensive_asset_whitelist/blueprint.md
+  token: gw-tdm-defwhitelist-blueprint-20260910
+  created_by: gw-tdm-20260909
+  capability: trading_decision_map
+- file: src/zephyr/position/core/defensive_asset_whitelist.py
+  token: gw-tdm-defwhitelist-module-20260910
+  created_by: gw-tdm-20260909
+  capability: trading_decision_map
+- file: tests/position/test_defensive_asset_whitelist.py
+  token: gw-tdm-defwhitelist-test-20260910
+  created_by: gw-tdm-20260909
+  capability: trading_decision_map
+- file: docs/03_modules/_domain_ex_sor/sell_session_router/blueprint.md
+  token: gw-tdm-sellrouter-blueprint-20260910
+  created_by: gw-tdm-20260909
+  capability: trading_decision_map
+- file: src/zephyr/ex_sor/core/sell_session_router.py
+  token: gw-tdm-sellrouter-module-20260910
+  created_by: gw-tdm-20260909
+  capability: trading_decision_map
+- file: tests/ex_sor/test_sell_session_router.py
+  token: gw-tdm-sellrouter-test-20260910
+  created_by: gw-tdm-20260909
+  capability: trading_decision_map
 di_seam_exemptions:
 - module_path: zephyr.trading.auto_runtime_core.AutoRuntimeCore
   reason: P0-5 LSG DI seam 标杆，已有 DI 但 AST 模式不匹配（动态注入）
