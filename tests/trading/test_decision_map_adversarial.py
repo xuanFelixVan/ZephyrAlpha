@@ -488,7 +488,10 @@ class TestWarningSemantics:
         codes = {i.code for i in issues}
         # 已清账：因子交叉欠账（R24）与 MOD 脏数据（R21）不得复发
         assert "R24" not in codes, "R24 因子欠账复发（挂策略节点 factor_refs 又空了）"
-        assert not any(i.code == "R21" for i in issues), "R21 脏 MOD 复发"
+        # R21 语义精化（2026-09-09 A 类回填批，Owner 批准）：error 级（格式错/与 depgraph
+        # 缓存不一致）=脏数据，禁复发；warning 级（有 module_ref 无 module_id）=血肉阶段
+        # 交叉锚欠账（如 t1_sellable/drawdown_* 尚无 MOD 注册），允许存在——同 R1 红节点占位哲学
+        assert not any(i.code == "R21" and i.level == "error" for i in issues), "R21 脏 MOD 复发"
         # 持续欠账：必须可见（防门禁静默失效）
         assert {"R25", "R22"} <= codes
         # D36 八库交叉轴挂载不得静默消失（防 YAML 引用被误删后测试仍绿）
@@ -505,3 +508,7 @@ class TestWarningSemantics:
         assert node_by_id["TDM-F-C2"].portfolio_model_refs, "组合模型轴挂载消失"
         assert node_by_id["TDM-F-C3"].benchmark_refs, "基准轴挂载消失"
         assert node_by_id["TDM-F-C3"].threshold_refs, "告警阈值轴挂载消失（C3 退役判据）"
+        # D38 补挂（2026-09-09）：模型轴挂载不得静默消失（75 库盘点唯一真缺口的闭环锚）
+        assert node_by_id["TDM-E-L1-AGG"].model_refs, "模型轴挂载消失（L1-AGG regime HMM）"
+        assert node_by_id["TDM-E-L3-07-1"].model_refs, "模型轴挂载消失（打板涨停分类器）"
+        assert node_by_id["TDM-E-L3-12-2"].model_refs, "模型轴挂载消失（席位形态分类器）"

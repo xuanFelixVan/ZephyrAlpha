@@ -42,7 +42,7 @@
 #   name_zh: ② 校验（validate_decision_map）
 #   name_en: validate_decision_map
 #   intro: 引用存在性+治理门禁 R1-R36 → (ok, GapReport)；缺口即地图红节点语义
-#   desc: R1 节点枚举; R2 边端点+类型+无环; R3 策略引用（STR-* 查 REG-STR-001，其余查 known_strategy_ids）; R4 因子引用 REG-FCT-001; R5 数据引用 REG-DATAFLOW-001 datasets; R6 置信度枚举+verified必带evidence; R7 矩阵格引用存在性; R8 sequence 边成环检测; R10 市场实例一致性; R12 整装方案; R13 算法引用（IND/EXA/DAL）; R14 doc_ref 存在+路径穿越拒绝; R15 治理字段枚举+新节点必填; R16 父子完整+树深≤4+树宽预警; R17 粒度（问题≤100字+禁模糊词）+容量（挂载≤8/因子≤12/数据≤8/算法≤8+各交叉轴上限）; R18 name_zh 唯一; R19 module_ref 存在; R20 node_id 骨架; R21 MOD-* 交叉锚（格式+depgraph 缓存对账+欠账 warning）; R22 矩阵覆盖 warning; R23 流预算 warning（>80）; R24 因子欠账 warning; R25 空转叶子 warning; R26-R36 11 库交叉轴（形态/席位/宏观/周期/宇宙/成本/事件/风险限额/组合模型/基准/告警阈值，表驱动 _XREF_SPECS）; R98 空地图; R99 注册表真源缺失; module_ref=null 记 warning
+#   desc: R1 节点枚举; R2 边端点+类型+无环; R3 策略引用（STR-* 查 REG-STR-001，其余查 known_strategy_ids）; R4 因子引用 REG-FCT-001; R5 数据引用 REG-DATAFLOW-001 datasets; R6 置信度枚举+verified必带evidence; R7 矩阵格引用存在性; R8 sequence 边成环检测; R10 市场实例一致性; R12 整装方案; R13 算法引用（IND/EXA/DAL）; R14 doc_ref 存在+路径穿越拒绝; R15 治理字段枚举+新节点必填; R16 父子完整+树深≤4+树宽预警; R17 粒度（问题≤100字+禁模糊词）+容量（挂载≤8/因子≤12/数据≤8/算法≤8+各交叉轴上限）; R18 name_zh 唯一; R19 module_ref 存在; R20 node_id 骨架; R21 MOD-* 交叉锚（格式+depgraph 缓存对账+欠账 warning）; R22 矩阵覆盖 warning; R23 流预算 warning（>80）; R24 因子欠账 warning; R25 空转叶子 warning; R26-R38 12 库交叉轴（形态/席位/宏观/周期/宇宙/成本/事件/风险限额/组合模型/基准/告警阈值/ML模型，表驱动 _XREF_SPECS）; R98 空地图; R99 注册表真源缺失; module_ref=null 记 warning
 #   inputs: DecisionMap I2 I3
 #   outputs: (bool, list[GapReportItem])
 # 层: 输出
@@ -142,6 +142,8 @@ _XREF_SPECS: Final = (
     ("portfolio_model_refs", "portfolio_model_registry.yaml", "portfolio_models", "model_id", "R34", "组合模型库 PFM"),
     ("benchmark_refs", "benchmark_registry.yaml", "benchmarks", "benchmark_id", "R35", "基准库 BMK"),
     ("threshold_refs", "alert_threshold_registry.yaml", "thresholds", "threshold_id", "R36", "告警阈值库 THD"),
+    # D38 补挂（Owner 2026-09-09 批准）：ML 模型库=算法家族最后缺锚的业务库（75 库盘点唯一真缺口）
+    ("model_refs", "model_registry.yaml", "models", "model_id", "R38", "模型库 ML"),
 )
 _XREF_MAX: Final = {  # 各轴容量上限（D33 同款：超出=粒度过粗强制拆节点）
     "pattern_refs": 12,
@@ -155,6 +157,7 @@ _XREF_MAX: Final = {  # 各轴容量上限（D33 同款：超出=粒度过粗强
     "portfolio_model_refs": 4,
     "benchmark_refs": 4,
     "threshold_refs": 8,
+    "model_refs": 4,
 }
 
 
@@ -212,6 +215,7 @@ class DecisionMapNode:
     portfolio_model_refs: tuple[str, ...] = ()
     benchmark_refs: tuple[str, ...] = ()
     threshold_refs: tuple[str, ...] = ()
+    model_refs: tuple[str, ...] = ()
 
 
 @dataclass(frozen=True)
@@ -981,7 +985,7 @@ if __name__ == "__main__":
         _ok, _issues = validate_decision_map(_dm, _PIT_CATALOG, _known)
         print(json.dumps({"ok": _ok, "issue_count": len(_issues)}, ensure_ascii=False))
         for _i in _issues:
-            print(f"[{_i.level}] {_i.code} {_i.node_id}: {_i.message}")
+            print(f"[{_i.level}] {_i.code} {_i.node_id}: {_i.detail}")
         raise SystemExit(0 if _ok else 1)
     if not (_args.start and _args.end):
         raise SystemExit("pit-drift 需要 --start 与 --end（YYYY-MM-DD）")

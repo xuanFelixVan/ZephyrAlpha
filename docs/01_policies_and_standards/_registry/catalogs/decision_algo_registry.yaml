@@ -121,3 +121,89 @@ algorithms:
     inputs: [突破价, 量能序列]
     outputs: [清仓触发信号]
     status: design
+
+  # ── 第二批 12 条（Owner 2026-09-09 批准的 DAL 补登批次；code_ref 全部实盘核验存在）──
+  - dal_id: DAL-RRG-SEQ
+    name_zh: RRG 相对旋转图四象限
+    mechanism_zh: 板块相对大盘收益率×动量双轴旋转，四象限判定（改善/走弱/落后/布局中），目标=刚进领先象限的板块
+    code_ref: src/zephyr/signal_ashare/sector_rrg.py
+    inputs: [板块相对收益, 板块动量]
+    outputs: [四象限轮动状态]
+    status: production
+  - dal_id: DAL-SIPHON-ID
+    name_zh: 虹吸态识别
+    mechanism_zh: 极端分化判定：前 3 板块成交占比>40%=虹吸期，只做头部板块候选、其余板块候选池清空（虹吸期做非头部=接飞刀）
+    code_ref: src/zephyr/signal_ashare/sector_siphon.py
+    inputs: [板块成交占比]
+    outputs: [虹吸态开关]
+    status: production
+  - dal_id: DAL-PULLBACK-ABC
+    name_zh: 回踩 ABC 质量分级
+    mechanism_zh: 四因子合成——Fib 回撤位置（38.2% 附近=A 必要条件）×量能衰减（缩到峰值 1/3）×板块强度（>7）×时间窗（3-8 天），加权定 A/B/C 置信级
+    code_ref: src/zephyr/signal_ashare/sector_pullback.py
+    inputs: [Fib 回撤位置, 量能衰减比, 板块强度, 回调天数]
+    outputs: [A/B/C 置信级]
+    status: production
+  - dal_id: DAL-AUCTION-MICRO
+    name_zh: 竞价微观结构选股
+    mechanism_zh: 竞价 120 秒确认：竞价量比>5+竞价涨幅 2-5%（过高易炸）+匹配量大单主导→直接进当日候选
+    code_ref: src/zephyr/signal_ashare/auction_microstructure_analyzer.py
+    inputs: [竞价量比, 竞价涨幅, 匹配量结构]
+    outputs: [当日候选确认]
+    status: production
+  - dal_id: DAL-SEAT-PATTERN
+    name_zh: 龙虎榜席位形态分析
+    mechanism_zh: 席位定性：一线游资买入=短线接力有戏；机构专用=中线票；拉萨天团（散户大本营）=次日溢价差；席位风格决定玩法
+    code_ref: src/zephyr/signal_ashare/seat_pattern_analyzer.py
+    inputs: [龙虎榜席位数据]
+    outputs: [席位定性（游资/机构/散户营）]
+    status: production
+  - dal_id: DAL-CHIP-DISTRIB
+    name_zh: 筹码分布引擎
+    mechanism_zh: 获利盘>90% 且单峰密集=拉升期无抛压；获利盘<30% 高位换手=派发嫌疑；低位单峰密集=最干净形态
+    code_ref: src/zephyr/regime/features/chip_distribution_engine.py
+    inputs: [历史成交分布]
+    outputs: [获利盘占比, 单峰密集度]
+    status: production
+  - dal_id: DAL-CHANLUN
+    name_zh: 缠论结构识别
+    mechanism_zh: 缠论二买/三买位置+底部形态（W 底/头肩底颈线突破）+技术位（前高突破/平台整理）给买点定位；形态不单独构成买入理由
+    code_ref: src/zephyr/signal_ashare/chanlun_structure.py
+    inputs: [K 线序列]
+    outputs: [买卖点位置, 底部形态确认]
+    status: production
+  - dal_id: DAL-CIRCUIT-5
+    name_zh: 熔断五级状态机
+    mechanism_zh: 组合日盈亏+回撤双轴分级——L1 警戒（日亏≥2% 禁加仓）/L2 禁开仓（≥4%）/L3 减仓（≥6%）/L4 保命（回撤≥25% 清仓人工接管）；迟滞解除=无新低+修复 50% 才降一级
+    code_ref: src/zephyr/risk/core/drawdown_state_machine.py
+    inputs: [组合日盈亏, 组合回撤]
+    outputs: [L0-L4 熔断档位]
+    status: production
+  - dal_id: DAL-BRIER-CAL
+    name_zh: Brier 概率校准
+    mechanism_zh: 情景预测概率 vs 实际结果的 Brier 分数回填，校准明日情景概率（作战计划闭环的数学地基）
+    code_ref: src/zephyr/plan_engine/brier_calibration.py
+    inputs: [情景预测概率, 实际结果]
+    outputs: [校准分数, 概率修正]
+    status: production
+  - dal_id: DAL-SCEN-PROB
+    name_zh: 情景概率模型
+    mechanism_zh: 由技术面因子与相似日统计生成明日情景概率分布（涨/跌/震荡×幅度档），供作战计划预案编排
+    code_ref: src/zephyr/plan_engine/scenario_probability_model.py
+    inputs: [技术面因子, 相似日统计]
+    outputs: [情景概率分布]
+    status: production
+  - dal_id: DAL-SIMILAR-DAY
+    name_zh: 相似日评估
+    mechanism_zh: 历史日特征向量检索 TopN 相似日，统计其后续走势分布作为明日预案的实证锚
+    code_ref: src/zephyr/plan_engine/similar_day_evaluator.py
+    inputs: [历史日特征向量]
+    outputs: [相似日 TopN 及次日走势统计]
+    status: production
+  - dal_id: DAL-T0-CLOSE
+    name_zh: 做T闭环判定
+    mechanism_zh: 盘中每 5 分钟核对做T买卖闭环；14:50 未闭环不管盈亏无条件平敞口（不留隔夜 T）；收盘判定=股数不变+总成本降=成功
+    code_ref: src/zephyr/signal_ashare/t0_trading_pipeline.py
+    inputs: [当日做T买卖流水]
+    outputs: [闭环状态, 成本变化]
+    status: production

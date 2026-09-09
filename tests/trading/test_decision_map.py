@@ -318,8 +318,16 @@ class TestXrefAxes:
         assert ok is False
         assert any(i.code == "R36" for i in issues)
 
+    def test_r38_model_ref(self, tmp_path: Path) -> None:
+        payload = _minimal_payload()
+        payload["nodes"][0]["model_refs"] = ["ML-NO-SUCH-999"]
+        dm = load_decision_map(_write_map(tmp_path, payload))
+        ok, issues = validate_decision_map(dm, _REGISTRY_DIR, _KNOWN_STRATEGIES)
+        assert ok is False
+        assert any(i.code == "R38" for i in issues)
+
     def test_all_axes_valid_ok(self, tmp_path: Path) -> None:
-        """11 轴全挂真实条目 → error=0。"""
+        """12 轴全挂真实条目 → error=0。"""
         payload = _minimal_payload()
         payload["nodes"][0].update(
             {
@@ -334,6 +342,7 @@ class TestXrefAxes:
                 "portfolio_model_refs": ["PFM-RB-001"],
                 "benchmark_refs": ["BMK-INDEX-003"],
                 "threshold_refs": ["THD-RETIRE-001"],
+                "model_refs": ["ML-CLS-001"],
             }
         )
         dm = load_decision_map(_write_map(tmp_path, payload))
@@ -579,7 +588,7 @@ _GOVERNANCE_EXEMPT = frozenset(
         "interface_contract_registry.yaml",
         "knowledge_article_registry.yaml",
         "migration_registry.yaml",
-        "model_registry.yaml",
+        # model_registry.yaml 已于 2026-09-09 挂 R38 model_refs 轴（D38 补挂，Owner 批准）——挪出豁免名单
         "module_translation_registry.yaml",
         "noqa_exempt_registry.yaml",
         "panorama_exempt_list.yaml",

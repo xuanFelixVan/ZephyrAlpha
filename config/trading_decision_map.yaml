@@ -38,6 +38,76 @@ nodes:
   #   "预案"为口语，专业词=Game Plan；改名执行时同步 D_PLAN 域/BM-PLAN-01-C 锚点/相关备忘录编号
   #   升级需求清单（D24）：6 项功能全要（IF-THEN 强制格式/今日不做什么负面清单/心理状态检查门/
   #     预警位联动/Skip log/盘前盘中职责分离）——需求真源=69 号备忘录 §2.13，施工归 D_PLAN 域升级批次
+  # ── 流根节点（Owner 2026-09-09 裁定：每流的最终输出点/视图汇聚点；纯结构，不承载实时清单）──
+  # 语义=终点聚合：上游=本流各段（见入边），下游无（终点）；实时结果由台账与前端另行呈现，地图只管结构
+  - node_id: TDM-E-FLOW
+    name_zh: 建仓流
+    market: cn_a
+    flow: entry_flow
+    layer: LROOT
+    node_type: aggregation
+    point: 持续
+    decision_question: 今天买什么、买多少、什么时候买？（本流最终输出=今日建仓清单）
+    algo_note_zh: >-
+      全流终端聚合点：上游=盘前作战计划（L0）与买卖执行段（L4），下游无（终点）。
+      组成=计划（L0）→选什么（L2 板块/L3 个股）→怎么买（L4 执行）。本节点只承载结构与指向，不写机制不存实时数据。
+    factor_refs: []
+    data_refs: []
+    algo_refs: []
+    module_ref: null
+    strategy_mounts: []
+
+  - node_id: TDM-P-FLOW
+    name_zh: 持仓流
+    market: cn_a
+    flow: position_flow
+    layer: PFLOW
+    node_type: aggregation
+    point: 持续
+    decision_question: 手上的仓位今天怎么照顾？（本流最终输出=持仓动作清单）
+    algo_note_zh: >-
+      全流终端聚合点：上游=持仓体检段（P1）→做T与加减仓段（P2/P3），下游无（终点）。
+      组成=对账体检（P1）→做T（P2）→加仓（P3）。本节点只承载结构与指向，不写机制不存实时数据。
+    factor_refs: []
+    data_refs: []
+    algo_refs: []
+    module_ref: null
+    strategy_mounts: []
+
+  - node_id: TDM-X-FLOW
+    name_zh: 离场流
+    market: cn_a
+    flow: exit_flow
+    layer: XFLOW
+    node_type: aggregation
+    point: 持续
+    decision_question: 今天卖什么、什么时候卖？（本流最终输出=今日离场清单）
+    algo_note_zh: >-
+      全流终端聚合点：上游=卖出信号段（S1）与离场执行段（S2），下游无（终点）。
+      组成=信号收集评分（S1，含应急保命 R1 横切）→执行路由（S2）。本节点只承载结构与指向，不写机制不存实时数据。
+    factor_refs: []
+    data_refs: []
+    algo_refs: []
+    module_ref: null
+    strategy_mounts: []
+
+  - node_id: TDM-F-FLOW
+    name_zh: 组合流
+    market: cn_a
+    flow: portfolio_flow
+    layer: CFLOW
+    node_type: aggregation
+    point: 持续
+    decision_question: 钱怎么分、明天怎么调？（本流最终输出=预算切分+目标组合权重）
+    algo_note_zh: >-
+      全流终端聚合点：上游=预算切分（C1）→组合聚合（C2）→归因反馈（C3），下游无（终点）。
+      组成=预算（C1）→约束聚合（C2）→归因调权（C3）。本节点只承载结构与指向，不写机制不存实时数据。
+    factor_refs: []
+    data_refs: []
+    algo_refs: []
+    module_ref: null
+    strategy_mounts: []
+
   # ── E-L0 盘前作战计划（Owner 2026-09-09 B-1 裁定甲-2：父+三子；定界=L0 产计划、L1 唯一开闸）──
   # 真源=plan_engine 包（D_PLAN），作战室前端已消费（今日交易计划卡/W2/W5 格）；"只挂引用不重建"承诺自本节点组兑现
   - node_id: TDM-E-L0
@@ -285,6 +355,7 @@ nodes:
     data_refs: [DS-098]
     module_ref: src/zephyr/regime/core/regime_detector.py
     module_id: MOD-REGIME-001
+    model_refs: [ML-REGIME-001]
     strategy_mounts: []
 
   - node_id: TDM-E-L2
@@ -494,7 +565,7 @@ nodes:
     factor_refs: []
     data_refs: [DS-170]
     module_ref: null
-    algo_refs: []
+    algo_refs: [DAL-RRG-SEQ]
     doc_ref: "docs/02_enterprise_architecture/07_trading_decision_architecture/design_memos/22_sector_rotation_spec.md#§3.1④"
     activation: postmarket
     invalidation: 象限转移须连续 2-3 日确认，单日跳变不采信；transition 概率<10% 异常路径加 1 日确认
@@ -633,7 +704,7 @@ nodes:
     factor_refs: []
     data_refs: [DS-059, DS-181]
     module_ref: null
-    algo_refs: []
+    algo_refs: [DAL-SIPHON-ID]
     doc_ref: "docs/02_enterprise_architecture/07_trading_decision_architecture/design_memos/22_sector_rotation_spec.md#§3.1⑤"
     activation: postmarket
     invalidation: null
@@ -844,7 +915,7 @@ nodes:
     factor_refs: []
     data_refs: [DS-170]
     module_ref: null
-    algo_refs: []
+    algo_refs: [DAL-PULLBACK-ABC]
     doc_ref: "docs/02_enterprise_architecture/07_trading_decision_architecture/design_memos/22_sector_rotation_spec.md#§3.1②"
     activation: intraday
     invalidation: 回踩>15 交易日转横盘失效；<2 日属盘中洗盘不入级；>78.6% 趋势结构破坏
@@ -1212,6 +1283,7 @@ nodes:
     data_refs: [DS-150, DS-082]
     module_ref: null
     algo_refs: []
+    model_refs: [ML-CLS-001]
     doc_ref: "docs/02_enterprise_architecture/07_trading_decision_architecture/design_memos/24_daban_strategy_detail.md"
     activation: intraday
     invalidation: null
@@ -1383,7 +1455,7 @@ nodes:
     factor_refs: []
     data_refs: [DS-082, DS-150]
     module_ref: null
-    algo_refs: []
+    algo_refs: [DAL-AUCTION-MICRO]
     doc_ref: null
     activation: intraday
     invalidation: 9:25 前数据为假象密集区，不作为选股依据
@@ -1479,6 +1551,7 @@ nodes:
     data_refs: []
     module_ref: null
     algo_refs: []
+    model_refs: [ML-CLS-002]
     doc_ref: null
     activation: postmarket
     invalidation: null
@@ -1501,7 +1574,7 @@ nodes:
     factor_refs: []
     data_refs: [DS-150]
     module_ref: null
-    algo_refs: []
+    algo_refs: [DAL-CHIP-DISTRIB]
     doc_ref: null
     activation: postmarket
     invalidation: null
@@ -1526,7 +1599,7 @@ nodes:
     data_refs: [DS-150]
     module_ref: src/zephyr/signal_ashare/chanlun_structure.py
     module_id: MOD-SIG-072
-    algo_refs: []
+    algo_refs: [DAL-CHANLUN]
     doc_ref: null
     activation: postmarket
     invalidation: null
@@ -1570,7 +1643,8 @@ nodes:
     parent_node: TDM-E-L4
     factor_refs: []
     data_refs: [DS-150]
-    module_ref: null
+    module_ref: src/zephyr/ex_core/order_splitter.py
+    module_id: MOD-EX-014
     algo_refs: []
     doc_ref: "docs/02_enterprise_architecture/07_trading_decision_architecture/design_memos/41_buy_flow.md#§3.2"
     activation: intraday
@@ -1617,7 +1691,8 @@ nodes:
     parent_node: TDM-E-L4
     factor_refs: []
     data_refs: []
-    module_ref: null
+    module_ref: src/zephyr/ex_core/pricing_policy.py
+    module_id: MOD-L06-001
     algo_refs: []
     doc_ref: "docs/02_enterprise_architecture/07_trading_decision_architecture/design_memos/41_buy_flow.md#§3.5"
     activation: intraday
@@ -1639,7 +1714,8 @@ nodes:
     parent_node: TDM-E-L4
     factor_refs: []
     data_refs: []
-    module_ref: null
+    module_ref: src/zephyr/signal_fundamental/capital/capital_allocator.py
+    module_id: MOD-L03-001
     algo_refs: []
     doc_ref: "docs/02_enterprise_architecture/07_trading_decision_architecture/design_memos/41_buy_flow.md#§3.6"
     activation: intraday
@@ -1686,7 +1762,8 @@ nodes:
     parent_node: TDM-E-L4
     factor_refs: []
     data_refs: []
-    module_ref: null
+    module_ref: src/zephyr/ex_sor/core/algo_execution_selector.py
+    module_id: MOD-XS-011
     algo_refs: [EXA-TWAP-001, EXA-VWAP-001, EXA-ICEBERG-001, EXA-IS-001, EXA-POV-001, EXA-ALT-001]
     doc_ref: null
     activation: intraday
@@ -1709,7 +1786,8 @@ nodes:
     parent_node: TDM-E-L4
     factor_refs: []
     data_refs: []
-    module_ref: null
+    module_ref: src/zephyr/ex_core/local_order_queue.py
+    module_id: MOD-L06-001
     algo_refs: []
     doc_ref: "docs/02_enterprise_architecture/07_trading_decision_architecture/design_memos/41_buy_flow.md#§3.9"
     activation: continuous
@@ -1756,7 +1834,8 @@ nodes:
     factor_refs: []
     cost_model_refs: [CST-ASTOCK-001]
     data_refs: [DS-082]
-    module_ref: null
+    module_ref: src/zephyr/ex_core/price_cage.py
+    module_id: MOD-L06-001
     algo_refs: []
     doc_ref: "docs/02_enterprise_architecture/07_trading_decision_architecture/design_memos/41_buy_flow.md#§3.7"
     activation: continuous
@@ -1804,7 +1883,8 @@ nodes:
     parent_node: TDM-E-L4
     factor_refs: []
     data_refs: []
-    module_ref: null
+    module_ref: src/zephyr/ex_core/fill_handler.py
+    module_id: MOD-EX-001
     algo_refs: []
     doc_ref: null
     activation: intraday
@@ -1827,7 +1907,8 @@ nodes:
     parent_node: TDM-E-L4
     factor_refs: []
     data_refs: []
-    module_ref: null
+    module_ref: src/zephyr/ex_core/pre_execution_checker.py
+    module_id: MOD-EX-024
     algo_refs: []
     doc_ref: null
     activation: intraday
@@ -1851,7 +1932,8 @@ nodes:
     parent_node: TDM-E-L4
     factor_refs: []
     data_refs: []
-    module_ref: null
+    module_ref: src/zephyr/trading/three_way_reconciliation.py
+    module_id: MOD-TRADING-013
     algo_refs: []
     doc_ref: null
     activation: continuous
@@ -2168,7 +2250,7 @@ nodes:
     cost_model_refs: [CST-T0-001]
     data_refs: []
     module_ref: null
-    algo_refs: []
+    algo_refs: [DAL-T0-CLOSE]
     doc_ref: null
     activation: intraday
     invalidation: null
@@ -2408,8 +2490,8 @@ nodes:
     risk_limit_refs: [RLM-KILL-SWITCH-006, RLM-KILLSW-005, RLM-KILL-SWITCH-004, RLM-KILLSW-003]
     threshold_refs: [THD-DRAWDOWN-001, THD-DRAWDOWN-002, THD-DRAWDOWN-003]
     data_refs: []
-    module_ref: null
-    algo_refs: []
+    module_ref: src/zephyr/risk/core/drawdown_state_machine.py
+    algo_refs: [DAL-CIRCUIT-5]
     doc_ref: "docs/02_enterprise_architecture/07_trading_decision_architecture/design_memos/69_trading_decision_map.md#§2.34"
     activation: continuous
     invalidation: L4 触发后仅 Owner 人工解除可回 L0（fail-closed）
@@ -2434,7 +2516,7 @@ nodes:
     parent_node: TDM-X-R1
     factor_refs: []
     data_refs: []
-    module_ref: null
+    module_ref: src/zephyr/risk/core/drawdown_liquidation_guard.py
     algo_refs: []
     doc_ref: "docs/02_enterprise_architecture/07_trading_decision_architecture/design_memos/69_trading_decision_map.md#§2.34"
     activation: intraday
@@ -2639,7 +2721,8 @@ nodes:
     factor_refs: []
     risk_limit_refs: [RLM-KILL-SWITCH-004, RLM-KILL-SWITCH-005]
     data_refs: []
-    module_ref: null
+    module_ref: src/zephyr/trading/strategy_abnormal_exit_orchestrator.py
+    module_id: MOD-TRADING-008
     algo_refs: []
     doc_ref: "docs/02_enterprise_architecture/07_trading_decision_architecture/design_memos/42_sell_flow.md#§3.2"
     activation: continuous
@@ -2706,7 +2789,7 @@ nodes:
     factor_refs: []
     risk_limit_refs: [RLM-DRAWDOWN-003]
     data_refs: []
-    module_ref: null
+    module_ref: src/zephyr/position/core/t1_sellable.py
     algo_refs: []
     doc_ref: "docs/02_enterprise_architecture/07_trading_decision_architecture/design_memos/42_sell_flow.md#§3.8"
     activation: intraday
@@ -2772,7 +2855,8 @@ nodes:
     parent_node: TDM-X-S2
     factor_refs: []
     data_refs: []
-    module_ref: null
+    module_ref: src/zephyr/ex_core/local_order_queue.py
+    module_id: MOD-L06-001
     algo_refs: []
     doc_ref: null
     activation: continuous
@@ -3508,6 +3592,12 @@ edges:
   - {from_node: TDM-E-L0, to_node: TDM-E-L1, edge_type: sequence}
   - {from_node: TDM-E-L0, to_node: TDM-E-L3-06, edge_type: feed}
   - {from_node: TDM-E-L0, to_node: TDM-X-R1, edge_type: broadcast}
+  # ── 流根汇聚边（Owner 2026-09-09）：各流末端→流根，视图最终汇于输出点 ──
+  - {from_node: TDM-E-L4, to_node: TDM-E-FLOW, edge_type: feed}
+  - {from_node: TDM-E-L0, to_node: TDM-E-FLOW, edge_type: feed}
+  - {from_node: TDM-P-P3, to_node: TDM-P-FLOW, edge_type: feed}
+  - {from_node: TDM-X-S2, to_node: TDM-X-FLOW, edge_type: feed}
+  - {from_node: TDM-F-C3, to_node: TDM-F-FLOW, edge_type: feed}
 
 state_matrix:
   # 列轴六段定稿（v1.2，Owner 裁定"机构命名+修复期独立成段"）
