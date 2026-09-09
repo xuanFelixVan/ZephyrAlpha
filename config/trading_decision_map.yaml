@@ -3583,13 +3583,13 @@ edges:
   - {from_node: TDM-C-L2, to_node: TDM-C-L3, edge_type: sequence}
   - {from_node: TDM-C-L3, to_node: TDM-C-L4, edge_type: sequence}
   # ── E-L0 盘前作战计划边（Owner 2026-09-09 B-1 裁定）：上游喂计划 + 计划喂下游 + 三子时序 ──
-  - {from_node: TDM-E-L1-AGG, to_node: TDM-E-L0, edge_type: feed}
-  - {from_node: TDM-F-C3-01, to_node: TDM-E-L0, edge_type: feedback}
-  - {from_node: TDM-F-C3-04, to_node: TDM-E-L0, edge_type: feedback}
-  - {from_node: TDM-E-L0, to_node: TDM-E-L0-01, edge_type: sequence}
+  - {from_node: TDM-E-L1-AGG, to_node: TDM-E-L0, edge_type: feed, payload_zh: "今天市场体温单：几成仓+哪些打法开门"}
+  - {from_node: TDM-F-C3-01, to_node: TDM-E-L0, edge_type: feed, payload_zh: "昨天钱赚亏在哪、哪个打法为什么"}
+  - {from_node: TDM-F-C3-04, to_node: TDM-E-L0, edge_type: feed, payload_zh: "参数体检报告：哪些参数今天可信"}
+  - {from_node: TDM-E-L0, to_node: TDM-E-L0-01, edge_type: sequence, payload_zh: "总仓位档+分批预案+禁做清单"}
   - {from_node: TDM-E-L0-01, to_node: TDM-E-L0-02, edge_type: sequence}
   - {from_node: TDM-E-L0-02, to_node: TDM-E-L0-03, edge_type: sequence}
-  - {from_node: TDM-E-L0, to_node: TDM-E-L1, edge_type: sequence}
+  - {from_node: TDM-E-L0, to_node: TDM-E-L1, edge_type: sequence, payload_zh: "总仓位建议档+应急触发线"}
   - {from_node: TDM-E-L0, to_node: TDM-E-L3-06, edge_type: feed}
   - {from_node: TDM-E-L0, to_node: TDM-X-R1, edge_type: broadcast}
   # ── 流根汇聚边（Owner 2026-09-09）：各流末端→流根，视图最终汇于输出点 ──

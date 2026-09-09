@@ -220,11 +220,16 @@ class DecisionMapNode:
 
 @dataclass(frozen=True)
 class DecisionMapEdge:
-    """决策依赖边（有依赖的地图才能推理）。"""
+    """决策依赖边（有依赖的地图才能推理）。
+
+    payload_zh（2026-09-09 Owner 批准）：一句大白话说清"这条边喂了什么数据或结论"，
+    ≤20 字（R2 长度门禁）；可选字段，存量边可空。全量内容由评审会话起草、Owner 审定后另批入库。
+    """
 
     from_node: str
     to_node: str
     edge_type: str
+    payload_zh: str | None = None
 
 
 @dataclass(frozen=True)
@@ -360,7 +365,12 @@ def load_decision_map(path: Path) -> DecisionMap:
     nodes = tuple(_parse_node(n) for n in raw["nodes"])
     _require(len({n.node_id for n in nodes}) == len(nodes), "node_id 重复")
     edges = tuple(
-        DecisionMapEdge(from_node=str(e["from_node"]), to_node=str(e["to_node"]), edge_type=str(e["edge_type"]))
+        DecisionMapEdge(
+            from_node=str(e["from_node"]),
+            to_node=str(e["to_node"]),
+            edge_type=str(e["edge_type"]),
+            payload_zh=(str(e["payload_zh"]) if e.get("payload_zh") else None),
+        )
         for e in raw["edges"]
     )
     sm = raw["state_matrix"]
@@ -555,6 +565,17 @@ def _validate_edge(e: DecisionMapEdge, by_id: dict[str, DecisionMapNode], add) -
         add("error", "R2", e.to_node, f"边 to_node 不存在（←{e.from_node}）")
     if e.edge_type not in _EDGE_TYPES:
         add("error", "R2", e.from_node, f"edge_type 非法: {e.edge_type}")
+    # payload_zh 大白话粒度门禁（2026-09-09 Owner 批准字段）：可选，有值则 ≤20 字
+    if e.payload_zh is not None:
+        if not e.payload_zh.strip():
+            add("error", "R2", e.from_node, "payload_zh 为空白串（要么不写要么写人话）")
+        elif len(e.payload_zh) > 20:
+            add(
+                "error",
+                "R2",
+                e.from_node,
+                f"payload_zh {len(e.payload_zh)} 字超上限 20（边大白话粒度门禁）: {e.payload_zh}",
+            )
 
 
 def _validate_matrix_cell(

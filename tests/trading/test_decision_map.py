@@ -326,6 +326,28 @@ class TestXrefAxes:
         assert ok is False
         assert any(i.code == "R38" for i in issues)
 
+    def test_r2_payload_zh_limit(self, tmp_path: Path) -> None:
+        """边 payload_zh 门禁（2026-09-09 Owner 批准字段）：可选，>20 字硬阻断（R2 扩展）。"""
+        payload = _minimal_payload()
+        payload["edges"] = [
+            {"from_node": "TDM-T-1", "to_node": "TDM-T-1", "edge_type": "feed", "payload_zh": "超" * 21}
+        ]
+        dm = load_decision_map(_write_map(tmp_path, payload))
+        ok, issues = validate_decision_map(dm, _REGISTRY_DIR, _KNOWN_STRATEGIES)
+        assert ok is False
+        assert any(i.code == "R2" and "payload_zh" in i.detail for i in issues)
+
+    def test_r2_payload_zh_ok(self, tmp_path: Path) -> None:
+        """合规 payload_zh（≤20 字）→ error=0。"""
+        payload = _minimal_payload()
+        payload["edges"] = [
+            {"from_node": "TDM-T-1", "to_node": "TDM-T-1", "edge_type": "feed", "payload_zh": "今日预算带与仓位档"}
+        ]
+        dm = load_decision_map(_write_map(tmp_path, payload))
+        ok, issues = validate_decision_map(dm, _REGISTRY_DIR, _KNOWN_STRATEGIES)
+        assert ok is True
+        assert not any(i.code == "R2" and "payload_zh" in i.detail for i in issues)
+
     def test_all_axes_valid_ok(self, tmp_path: Path) -> None:
         """12 轴全挂真实条目 → error=0。"""
         payload = _minimal_payload()
