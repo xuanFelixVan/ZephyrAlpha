@@ -568,6 +568,29 @@ def _validate_mount(
         add("error", "R6", node_id, f"verified 挂载缺 evidence: {m.strategy_ref}")
 
 
+def _check_dal_code_refs(registry_dir: Path, repo_root: Path, add) -> None:
+    """R13 伴随检查（T3，Owner 2026-09-09 批准③的可靠版）：DAL 条目 code_ref（非空）必须指向实存文件。
+
+    语义=算法三态锚的库侧完整性：登记说"在代码里"就必须真的在——登记↔代码漂移检测。
+    warning 级（存量条目可能指向待重命名路径，浮出欠账不阻断）；加载失败静默返回（R99 已兜底）。
+    """
+    try:
+        raw = yaml.safe_load((registry_dir / _REG_DAL).read_text(encoding="utf-8")) or {}
+    except Exception:  # noqa: BLE001 — 加载失败静默（真源缺失走 R99）
+        return
+    for entry in raw.get("algorithms", []) or []:
+        dal_id = str(entry.get("dal_id", "")).strip()
+        code_ref = entry.get("code_ref")
+        if not dal_id or not code_ref:
+            continue
+        rel = Path(str(code_ref))
+        if rel.is_absolute() or ".." in rel.parts:
+            add("warning", "R13", dal_id, f"code_ref 禁止绝对路径/上跳: {code_ref}")
+            continue
+        if not (repo_root / rel).is_file():
+            add("warning", "R13", dal_id, f"code_ref 不存在（登记↔代码漂移）: {code_ref}")
+
+
 def _validate_edge(e: DecisionMapEdge, by_id: dict[str, DecisionMapNode], add) -> None:
     """R2 边端点存在性 + edge_type 枚举。"""
     if e.from_node not in by_id:
@@ -880,6 +903,7 @@ def validate_decision_map(
     ind_ids = _load_registry_ids(registry_dir, _REG_IND, "indicators", "indicator_id")
     dal_ids = _load_registry_ids(registry_dir, _REG_DAL, "algorithms", "dal_id")
     repo_root = registry_dir.parents[3]
+    _check_dal_code_refs(registry_dir, repo_root, add)
     cache_path = depgraph_cache if depgraph_cache is not None else repo_root / _DEPGRAPH_CACHE
     depgraph_entries = _load_depgraph_entries(cache_path)
     if depgraph_entries is None:

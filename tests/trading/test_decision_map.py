@@ -382,6 +382,36 @@ class TestXrefAxes:
         assert ok is True
         assert not any(i.code == "R2" and "payload_zh" in i.detail for i in issues)
 
+    def test_dal_code_ref_drift_warning(self, tmp_path: Path) -> None:
+        """T3：DAL code_ref 指向不存在文件 → R13 warning（算法库↔代码漂移检测，Owner 批准③）。"""
+        import yaml
+
+        from zephyr.trading.decision_map import _check_dal_code_refs
+
+        issues: list = []
+        reg_dir = tmp_path / "catalogs"
+        reg_dir.mkdir(parents=True)
+        (reg_dir / "decision_algo_registry.yaml").write_text(
+            yaml.safe_dump(
+                {
+                    "algorithms": [
+                        {"dal_id": "DAL-GOOD", "code_ref": None},
+                        {"dal_id": "DAL-BAD", "code_ref": "src/zephyr/not_exist_impl.py"},
+                    ]
+                },
+                allow_unicode=True,
+            ),
+            encoding="utf-8",
+        )
+
+        def add(level, code, node_id, detail):
+            issues.append(type("GapItem", (), {"level": level, "code": code, "node_id": node_id, "detail": detail})())
+
+        _check_dal_code_refs(reg_dir, tmp_path, add)
+        assert len(issues) == 1
+        assert issues[0].code == "R13"
+        assert issues[0].node_id == "DAL-BAD"
+
     def test_all_axes_valid_ok(self, tmp_path: Path) -> None:
         """12 轴全挂真实条目 → error=0。"""
         payload = _minimal_payload()
