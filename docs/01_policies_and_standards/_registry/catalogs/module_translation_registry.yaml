@@ -47302,6 +47302,13 @@ entries:
   desc_zh: ""
   desc_en: ""
   plain_zh: "从大QMT沙箱的桥文件（ticks3.csv/quote.csv）探活和读数据的插件，miniQMT退役后替代用；目前只登记了能力，K线等通道等方案裁定后点亮"
+- module_path: scripts/ch/import_ths_profile.py
+  domain_id: D_DATA
+  name_zh: "THS 个股元数据导入器"
+  name_en: ""
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "把同花顺导出的个股行业分类和公司简介表格（GBK 文本）清洗去重后，灌进 ClickHouse 的 stock_profile_ths 主数据表，附带查数抽验；支持先演练不落库。"
 
 battle_map_steps:
 - step_id: BM-BUY-05

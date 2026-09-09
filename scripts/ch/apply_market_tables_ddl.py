@@ -374,6 +374,8 @@ from schemas.categories.market_stk_limit import STK_LIMIT_DDL
 from schemas.categories.market_suspend import SUSPEND_DDL
 from schemas.categories.market_us_futures_intraday import US_FUTURES_INTRADAY_DDL
 from schemas.categories.meta_stock_basic import STOCK_BASIC_DDL
+from schemas.categories.meta.meta_stock_profile_ths import STOCK_PROFILE_THS_DDL
+from schemas.categories.meta.meta_stock_profile_ths import TABLE_NAME as _THS_PROFILE_TABLE
 
 # 所有 DDL（按依赖顺序）
 _ALL_DDL: list[tuple[str, str]] = [
@@ -412,6 +414,9 @@ _ALL_DDL: list[tuple[str, str]] = [
     ("c1_market.a50_futures_daily", A50_FUTURES_DAILY_DDL),
     # 2026-08-30 designmemos 清单 #6 / GAP-F-23：外盘日K线（HSI/N225/KOSPI/CL/GC）
     ("c1_market.kline_global", KLINE_GLOBAL_DDL),
+    # 2026-09-09 DS-223：THS 行业/公司简介全市场主数据（细分行业缺口补齐）
+    # 表名经 schema 真源 TABLE_NAME 拼接（TABLE-NAME-REGISTRY：全限定名真源=categories YAML）
+    ("c1_market." + _THS_PROFILE_TABLE, STOCK_PROFILE_THS_DDL),
 ]
 
 # 增量迁移（ALTER TABLE ADD COLUMN IF NOT EXISTS）
@@ -463,6 +468,8 @@ _EXPECTED_ENGINES: dict[str, str] = {
     "a50_futures_daily": "ReplacingMergeTree",
     # 2026-08-30 GAP-F-23：日频按 (symbol, trade_date) 同键替换幂等
     "kline_global": "ReplacingMergeTree",
+    # 2026-09-09 DS-223：THS 主数据快照按 (trade_date, symbol) 同键替换幂等
+    "stock_profile_ths": "ReplacingMergeTree",
 }
 
 _DATABASE = "c1_market"

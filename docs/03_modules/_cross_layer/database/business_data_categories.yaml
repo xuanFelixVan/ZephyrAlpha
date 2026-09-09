@@ -1530,6 +1530,22 @@
   data_source: [akshare]
   blueprint: null
 
+- category_id: meta_stock_profile_ths
+  name: "THS 个股元数据主数据（THS一/二/三级行业分类+公司简介，全市场快照，图谱公司节点标签域真源）"
+  engine: clickhouse
+  database: c1_market
+  table: stock_profile_ths
+  schema_file: schemas/categories/meta/meta_stock_profile_ths.py
+  data_type: 元数据
+  lifecycle: permanent
+  sla_level: L2
+  enabled: true
+  hard_constraint: null
+  calc_mode: preload
+  frequency: 低频(手工导入)
+  data_source: [ths_manual]
+  blueprint: null
+
 - category_id: market_stk_limit
   name: "每日涨跌停价格（涨停价/跌停价，规则计算：昨收×(1±幅度)四舍五入到分）"
   engine: clickhouse

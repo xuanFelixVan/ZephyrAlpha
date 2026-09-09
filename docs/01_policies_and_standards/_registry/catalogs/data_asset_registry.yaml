@@ -9071,7 +9071,7 @@ datasets:
   entity_type: dataset
   scope: production
   contract_ref: null
-  physical_type: schemas/categories/meta_stock_profile_ths.py
+  physical_type: schemas/categories/meta/meta_stock_profile_ths.py
   produced_by_job: null
   consumed_by_jobs: []
   domain_id: D_MARKET

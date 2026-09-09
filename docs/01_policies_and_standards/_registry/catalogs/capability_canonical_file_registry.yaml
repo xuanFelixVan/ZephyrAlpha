@@ -11213,6 +11213,14 @@ creation_tokens:
   token: auto-validation-decay-watch-20260909
   created_by: st-nodebt-night-20260909
   capability: tdm_validation_runner
+- file: schemas/categories/meta/meta_stock_profile_ths.py
+  token: auto-ths-profile-schema-20260909
+  created_by: ths-profile-20260909
+  capability: meta_stock_profile_ths
+- file: scripts/ch/import_ths_profile.py
+  token: auto-ths-profile-import-20260909
+  created_by: ths-profile-20260909
+  capability: meta_stock_profile_ths
 di_seam_exemptions:
 - module_path: zephyr.trading.auto_runtime_core.AutoRuntimeCore
   reason: P0-5 LSG DI seam 标杆，已有 DI 但 AST 模式不匹配（动态注入）
