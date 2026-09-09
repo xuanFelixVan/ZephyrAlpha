@@ -11,9 +11,9 @@
  *           多跳必吞全图——实测 119~125/125）。上游居左/下游居右同水平带（列位=主链距离），
  *           无关节点整块下移让路+压暗（只动透明度，三态色语义不变）；镜头自动适配主带（仅聚焦
  *           切换时，轮询重绘不打断手动平移缩放）；退出=Esc/双击空白/工具栏「🎯 聚焦 ✕」。
- * 边标签牌（b20260910）：连线中点大白话备注——真源 edges.payload_zh（后端域字段，可选，未填不显示）；
- *           卡片间距拉大（垂直 8→18/GAP 12→18）给标签留位；抽屉上/下游行带 ↳payload 行。
- *           算法-大白话绑定门禁在后端域（commit 碰 module_ref → 同 commit 修订/确认节点大白话）。 */
+ * 边 payload 大白话（b20260910）：edges.payload_zh（后端域字段，可选）不在画布线上显示（二轮反馈：
+ *           线牌叠挡卡片）——改在抽屉「算法锚」下方 anchor-feed 引用块（←来源/→去向：喂了什么）；
+ *           卡片间距拉大保留（垂直 8→18/GAP 12→18）。算法-大白话绑定门禁在后端域。 */
 (function () {
   'use strict';
   var TDM = { data: null, sel: null, stamp: null, busy: false, dragDist: 0, verdicts: {}, focus: null, focusFit: null };
@@ -399,22 +399,8 @@
           (color !== '#2c3a52' ? ' stroke="' + color + '"' : '') +
           (p[4] ? '' : ' stroke-opacity="0.08"') + '/>';   /* 聚焦外压暗边：近隐不消失，保留全景上下文 */
       }).join('');
-      /* 边标签牌（b20260910）：有 payload_zh 的边在连线中点画大白话小牌——近竖直边右移避让线身，
-       * 聚焦模式跟随边亮度（wl-dim）；host 与 SVG 同处世界层原点，坐标直接复用贝塞尔端点 */
-      var lbls = [];
-      wires.forEach(function (p) {
-        if (!p[5]) return;
-        var a = p[0], b = p[1];
-        var ax = a.offsetLeft + a.offsetWidth, ay = a.offsetTop + a.offsetHeight / 2;
-        var bx = b.offsetLeft, by = b.offsetTop + b.offsetHeight / 2;
-        var vert = Math.abs(bx - ax) < 60;
-        var lx = vert ? Math.max(ax, bx) + 10 : (ax + bx) / 2;
-        var ly = (ay + by) / 2;
-        var txt = String(p[5]).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/"/g, '&quot;');
-        lbls.push('<div class="wl' + (p[4] ? '' : ' wl-dim') + (vert ? ' wl-v' : '') +
-          '" style="left:' + Math.round(lx) + 'px;top:' + Math.round(ly) + 'px" title="' + txt + '">' + txt + '</div>');
-      });
-      if (lbls.length) host.insertAdjacentHTML('beforeend', lbls.join(''));
+      /* 边标签牌已撤（b20260910 二轮反馈：线上小牌会叠挡卡片文字）——payload 大白话改在抽屉
+       * 「算法锚」下方显示（anchor-feed），画布只留干净的连线 */
     })();
   }
 
@@ -471,13 +457,12 @@
     }
     /* 节点导航行：状态点+名称+边型+id，点击跳选（抽屉内溯源，不动画布交互） */
     var GLYPH = { sequence: '→', feed: '⇢', broadcast: '⇉', feedback: '↩' };
-    function nlink(x, t, p) {
+    function nlink(x, t) {
       var dot = x.autonomy === 'paper' ? 'paper' : (x.module_ref ? 'prod' : 'design');
       return '<div class="nl" data-jump="' + esc(x.id) + '" title="' + esc(x.id) + (t ? ' · ' + esc(t) : '') + '">' +
         '<span class="dot dot-' + dot + '"></span><span class="nl-n">' + esc(x.name || x.id) + '</span>' +
         (t ? '<span class="nl-t">' + (GLYPH[t] || '·') + ' ' + esc(t) + '</span>' : '') +
-        '<span class="nl-i">' + esc(x.id) + '</span>' +
-        (p ? '<span class="nl-p">↳ ' + esc(p) + '</span>' : '') + '</div>';
+        '<span class="nl-i">' + esc(x.id) + '</span></div>';
     }
     function kv(k, v) {
       return '<span class="k">' + k + '</span><span class="v' + (v ? '' : ' na') + '">' + (v ? esc(v) : '—') + '</span>';
@@ -540,6 +525,14 @@
     var anchorHtml = anchorCnt
       ? '<div class="chips">' + algRefs.concat(mdlRefs).map(algChip).join('') + '</div>'
       : '<div class="empty">未登记算法锚</div>';
+    /* 算法锚大白话（b20260910 二轮反馈）：边 payload 从画布线牌挪到抽屉本分区——
+     * 「← 来源节点：喂了什么」「→ 去向节点：喂了什么」，锚边关系一眼可读 */
+    var anchorFeed = [];
+    ups.forEach(function (u) { if (u.p) anchorFeed.push('← ' + (u.x.name || u.x.id) + '：' + u.p); });
+    downs.forEach(function (dn) { if (dn.p) anchorFeed.push('→ ' + (dn.x.name || dn.x.id) + '：' + dn.p); });
+    var anchorFeedHtml = anchorFeed.length
+      ? '<div class="anchor-feed">' + anchorFeed.map(function (l) { return '<div class="af">' + esc(l) + '</div>'; }).join('') + '</div>'
+      : '';
     /* 代码锚：module_ref 有值=文件名可点击（点击复制全路径——app:// 下 file:// 链接被拦，
      * 复制路径是全环境可用的最短动作），无值=未落码灰字 */
     var codeAnchor = n.module_ref
@@ -559,13 +552,13 @@
       '<div class="sec">治理</div>' + gov +
       '<div class="sec">模块锚（MOD）</div>' + mod +
       '<div class="sec">算法锚（算法/模型）<span class="cnt">' + (anchorCnt ? anchorCnt : '') + '</span></div>' +
-      anchorHtml + codeAnchor +
+      anchorHtml + codeAnchor + anchorFeedHtml +
       '<div class="sec">策略挂载（STR）</div>' + mounts +
       (refsHtml ? '<div class="sec">依据锚（引用）</div>' + refsHtml : '') +
       '<div class="sec">上游（谁喂给它）<span class="cnt">' + ups.length + '</span></div>' +
-      (ups.length ? ups.map(function (u) { return nlink(u.x, u.t, u.p); }).join('') : '<div class="empty">—</div>') +
+      (ups.length ? ups.map(function (u) { return nlink(u.x, u.t); }).join('') : '<div class="empty">—</div>') +
       '<div class="sec">下游（它喂给谁）<span class="cnt">' + downs.length + '</span></div>' +
-      (downs.length ? downs.map(function (u) { return nlink(u.x, u.t, u.p); }).join('') : '<div class="empty">—</div>') +
+      (downs.length ? downs.map(function (u) { return nlink(u.x, u.t); }).join('') : '<div class="empty">—</div>') +
       '<div class="sec">设计备注（裁定/欠账原文）</div>' + cms +
       '<div class="sec">验证档案（回测台账）<span class="cnt" id="tdm-val-cnt"></span></div>' +
       '<div id="tdm-val"><div class="empty">查询中…</div></div>';
