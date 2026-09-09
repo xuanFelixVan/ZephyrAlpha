@@ -3876,6 +3876,11 @@ error_codes:
   class: ValidationError
   module: zephyr.trading.validation.runner
   file: src/zephyr/trading/validation/runner.py
+- code: ZA-TDMVAL-0002
+  class: ValidationError
+  module: zephyr.trading.validation.ablation
+  file: src/zephyr/trading/validation/ablation.py
+  introduced: '2026-09-10: X 流验证批 T2（Owner 指令+晨报裁定②）——信号消融对照器新增'
 
 known_duplicates: []
 # ============================================================

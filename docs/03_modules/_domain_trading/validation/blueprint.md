@@ -57,6 +57,7 @@ report = run_validation()               # 写台账
 ## 5. 验收
 
 - tests/trading/test_validation_runner.py：方法推导 / holdout 切分 / 两套土规 / lag 开关 / dry-run 零写入 / X 流 18 节点与 exit_counterfactual（2026-09-10 第二批 +7 用例，全绿）
+- tests/trading/test_validation_ablation.py：消融对照器 9 用例（空剥越恒等/回滚式剥算子保 Σw=1/非法动作拒绝/幂等基线 rescued≡0/清仓差额非零/NaT 过滤），2026-09-10 T2 落地
 - 实弹：`run_validation()` 后 `SELECT count() FROM c1_backtest.node_verdict` 出现 14 行 L4 verdict；`/api/tdm/validation?node_id=TDM-E-L4-03` 返回记录；`run_validation(batch="XFLOW")` 追加 18 行 X 流 verdict（holdout 锁窗下全 pending）
 
 ### §0.6 五图对齐视图
