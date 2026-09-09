@@ -1156,3 +1156,168 @@ class TestSysPathInjectionResolvable:
         passed, detail = make_import_integrity_gate().check(gw, [archived])
         assert passed is True
         assert detail == ""
+
+
+# ---------------------------------------------------------------------------
+# TestOnlyOwnSessionScanned: 只查自己（#ARCH-GATE-OWN-SCOPE-001，
+# 2026-09-09 并发夜锁死治本）——他人 WIP 暂存不再锁死本 session 提交，
+# 本 session 自身违规仍硬阻断。
+# ---------------------------------------------------------------------------
+
+
+class TestOnlyOwnSessionScanned:
+    """只查自己语义：扫描范围=全暂存区∩本 session 范围。"""
+
+    def test_foreign_wip_does_not_block_own_commit(self, tmp_path):
+        """他人 session 的 WIP（悬空 fcntl import）暂存时，本 session 正常文件可提交。"""
+        import json
+
+        own_py = "src/zephyr/my_module.py"
+        own_content = "import os\nprint(os.getcwd())\n"
+        foreign_py = "src/zephyr/scheduler.py"
+        # fcntl 是 Unix 模块，Windows 解释器 find_spec 失败=标准悬空样本
+        # （2026-09-09 夜事故的真实违规形态）
+        foreign_content = "import fcntl\nfcntl.lockf(1)\n"
+
+        from zephyr.security.access_control.session_concurrency import SessionRegistry
+
+        gw = MagicMock()
+        gw.project_root = tmp_path
+        gw._registry = SessionRegistry(project_root=tmp_path)  # 空 registry（无活跃 session）
+        gw.run_git = lambda args: MagicMock(returncode=1, stdout="", stderr="")
+
+        import zephyr.gov_enforcement.commit_gates.import_integrity_gate as gate_mod
+
+        with pytest.MonkeyPatch.context() as mp:
+            mp.setattr(gate_mod, "_get_staged_py_files", lambda g, gid: [own_py, foreign_py])
+            mp.setattr(
+                gate_mod,
+                "_read_staged_file",
+                lambda g, f: own_content if f == own_py else foreign_content,
+            )
+            gate = make_import_integrity_gate()
+            passed, detail = gate.check(gw, [own_py], session_id="sess-A")
+
+        assert passed is True  # 核心：不再被他人 WIP 锁死
+        assert "fcntl" not in detail  # 外来文件不产生 dangling import 违规
+        assert "[warn]" in detail and foreign_py in detail  # warn-only 姿势带 detail
+        # 审计落盘断言（.runtime/gate_audit/ 家族惯例）
+        audit = tmp_path / ".runtime" / "gate_audit" / "import_integrity_foreign_staged.jsonl"
+        assert audit.exists()
+        rec = json.loads(audit.read_text(encoding="utf-8").splitlines()[-1])
+        assert rec["session_id"] == "sess-A"
+        assert foreign_py in rec["foreign_files"]
+
+    def test_own_dangling_import_still_blocks(self, tmp_path):
+        """本 session 自身缺导入仍被硬阻断（保护语义不放松）。"""
+        own_py = "src/zephyr/rule_bridge/my_new.py"
+        own_bad = (
+            "from zephyr.gov_enforcement.commit_gates.nonexistent_module import something\n"
+            "something()\n"
+        )
+        foreign_py = "src/zephyr/other_session_wip.py"
+
+        from zephyr.security.access_control.session_concurrency import SessionRegistry
+
+        gw = MagicMock()
+        gw.project_root = tmp_path
+        gw._registry = SessionRegistry(project_root=tmp_path)
+        gw.run_git = lambda args: MagicMock(returncode=1, stdout="", stderr="")
+
+        import zephyr.gov_enforcement.commit_gates.import_integrity_gate as gate_mod
+
+        with pytest.MonkeyPatch.context() as mp:
+            mp.setattr(gate_mod, "_get_staged_py_files", lambda g, gid: [own_py, foreign_py])
+            mp.setattr(
+                gate_mod,
+                "_read_staged_file",
+                lambda g, f: own_bad if f == own_py else "import os\n",
+            )
+            gate = make_import_integrity_gate()
+            passed, detail = gate.check(gw, [own_py], session_id="sess-A")
+
+        assert passed is False
+        assert "dangling import" in detail and "nonexistent_module" in detail
+        assert "IMPORT-INTEGRITY" in detail
+
+    def test_windows_abs_path_files_matched(self, tmp_path):
+        """files 传 Windows 绝对路径（commit() 真实形态）也能与 staged 相对路径配对。"""
+        own_abs = str(tmp_path / "src" / "zephyr" / "my_module.py")
+        own_py = "src/zephyr/my_module.py"
+        own_content = "import os\n"
+        foreign_py = "src/zephyr/scheduler.py"
+        foreign_content = "import fcntl\n"
+
+        from zephyr.security.access_control.session_concurrency import SessionRegistry
+
+        gw = MagicMock()
+        gw.project_root = tmp_path
+        gw._registry = SessionRegistry(project_root=tmp_path)
+        gw.run_git = lambda args: MagicMock(returncode=1, stdout="", stderr="")
+
+        import zephyr.gov_enforcement.commit_gates.import_integrity_gate as gate_mod
+
+        with pytest.MonkeyPatch.context() as mp:
+            mp.setattr(gate_mod, "_get_staged_py_files", lambda g, gid: [own_py, foreign_py])
+            mp.setattr(
+                gate_mod,
+                "_read_staged_file",
+                lambda g, f: own_content if f == own_py else foreign_content,
+            )
+            gate = make_import_integrity_gate()
+            passed, _detail = gate.check(gw, [own_abs], session_id="sess-A")
+
+        assert passed is True
+
+    def test_no_scope_info_falls_back_to_full_scan(self, tmp_path):
+        """无归属信息（files 空 + 无 session_id）→ 退化旧行为扫全量（保守面不改宽）。"""
+        ghost_py = "src/zephyr/ghost_session_file.py"
+        ghost_content = "import totally_ghost_module_xyz_123\n"
+
+        gw = MagicMock()
+        gw.project_root = tmp_path
+        gw.run_git = lambda args: MagicMock(returncode=1, stdout="", stderr="")
+
+        import zephyr.gov_enforcement.commit_gates.import_integrity_gate as gate_mod
+
+        with pytest.MonkeyPatch.context() as mp:
+            mp.setattr(gate_mod, "_get_staged_py_files", lambda g, gid: [ghost_py])
+            mp.setattr(gate_mod, "_read_staged_file", lambda g, f: ghost_content)
+            gate = make_import_integrity_gate()
+            passed, detail = gate.check(gw, [])  # 无 files 无 session_id
+
+        assert passed is False  # 退化旧行为：悬空 import 照旧阻断
+        assert "dangling import" in detail
+
+    def test_held_files_expand_own_scope(self, tmp_path):
+        """session claimed held_files 补充范围：不在本次 files 清单的己方文件也被扫描。"""
+        from zephyr.security.access_control.session_concurrency import SessionRegistry
+
+        claimed_py = "src/zephyr/claimed_by_me.py"
+        claimed_content = "import os\n"
+        foreign_py = "src/zephyr/scheduler.py"
+        foreign_content = "import fcntl\n"
+
+        reg = SessionRegistry(project_root=tmp_path)
+        reg.register("sess-A", pid=0, held_files=[str(tmp_path / "src" / "zephyr" / "claimed_by_me.py")])
+
+        gw = MagicMock()
+        gw.project_root = tmp_path
+        gw._registry = reg  # 真实 registry（生产网关 _registry 为真实例，mock 如实提供）
+        gw.run_git = lambda args: MagicMock(returncode=1, stdout="", stderr="")
+
+        import zephyr.gov_enforcement.commit_gates.import_integrity_gate as gate_mod
+
+        with pytest.MonkeyPatch.context() as mp:
+            mp.setattr(gate_mod, "_get_staged_py_files", lambda g, gid: [claimed_py, foreign_py])
+            mp.setattr(
+                gate_mod,
+                "_read_staged_file",
+                lambda g, f: claimed_content if f == claimed_py else foreign_content,
+            )
+            gate = make_import_integrity_gate()
+            # files 清单为空，但 sess-A claimed 了 claimed_py → 属于本 session 范围
+            passed, detail = gate.check(gw, [], session_id="sess-A")
+
+        assert passed is True
+        assert "[warn]" in detail and foreign_py in detail  # 外来文件照旧 warn

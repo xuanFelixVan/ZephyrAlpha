@@ -5,12 +5,12 @@
 # [CONSUMERS] zephyr.gov_enforcement.rule_bridge.git_commit_gateway.GitCommitGateway.__init__ ; zephyr.governance.audit.reconciliation_registry.make_scripts_import_integrity_reconciler (Phase 3 baseline 全扫)
 # [STARTUP] imported
 # [MATURITY] production
-# [INVARIANTS] 硬阻断——staged scripts/governance/**/*.py 文件中 _shared.constants 公开符号被使用但未 import 时阻断（#ARCH-DATAQUALITY-V1.4 核心治本）；豁免 _shared/constants.py（真源文件，不可自引用）；含 wildcard import 的文件跳过（无法静态推断）；_shared.constants 不可导入时 fail-open；ast.parse 失败 fail-open（语法错误文件本就会在其他阶段失败）
+# [INVARIANTS] 硬阻断——本 session staged scripts/governance/**/*.py 文件中 _shared.constants 公开符号被使用但未 import 时阻断（#ARCH-DATAQUALITY-V1.4 核心治本）；只查自己（2026-09-09 并发夜锁死治本 #ARCH-GATE-OWN-SCOPE-001）——扫描范围=全暂存区∩本 session 范围（本次 commit files 清单 ∪ session claimed held_files），外来 session 的 staged 文件不扫描、降级 warn+审计（复用 import_integrity_gate._audit_foreign_staged），不再阻断；本 session 自身违规仍硬阻断（保护语义不放松）；归属判定 fail-open（registry 异常退化为 files-only，files 也为空时退化为旧行为扫全量）；豁免 _shared/constants.py（真源文件，不可自引用）；含 wildcard import 的文件跳过（无法静态推断）；_shared.constants 不可导入时 fail-open；ast.parse 失败 fail-open（语法错误文件本就会在其他阶段失败）
 # [MODIFY-GUARD] gate_id="SCRIPTS-IMPORT-INTEGRITY"; check 闭包签名 (gateway, files, **kwargs) -> tuple[bool, str]
 # [STABILITY] stable
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
-# [ERROR_CONTRACT] check 永不抛异常——_shared.constants 导入失败/ast.parse 失败/文件不可读降级为 fail-open（passed=True，logger.warning）；检出违规则 fail-closed 阻断（passed=False）
+# [ERROR_CONTRACT] check 永不抛异常——_shared.constants 导入失败/ast.parse 失败/文件不可读降级为 fail-open（passed=True，logger.warning）；外来 staged 审计写失败静默降级（不阻断）；检出本 session 违规则 fail-closed 阻断（passed=False）
 # [TESTS] tests/governance/commit_gates/test_scripts_import_integrity_gate.py
 # [A_module] module_id=MOD-GATE_ENGINE | layer=module | stability=stable | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
@@ -119,6 +119,11 @@ from pathlib import Path
 from zephyr.gov_enforcement.commit_gates._diff_helpers import (
     _get_staged_py_files,
     _read_staged_file,
+)
+from zephyr.gov_enforcement.commit_gates.import_integrity_gate import (
+    _audit_foreign_staged,
+    _build_own_scope,
+    _norm_rel,
 )
 from zephyr.gov_enforcement.rule_bridge.commit_gate_registry import GateSpec
 from zephyr.shared.io.paths import REPO_ROOT
@@ -293,7 +298,26 @@ def make_scripts_import_integrity_gate() -> GateSpec:
         py_files = _get_staged_py_files(gateway, "SCRIPTS-IMPORT-INTEGRITY")
         # 只检测 scripts/governance/**/*.py（src/ 由 validate_python_syntax 覆盖，
         # tests/ 不依赖 _shared.constants）
-        gov_scripts = [f for f in py_files if f.replace("\\", "/").startswith("scripts/governance/")]
+        gov_scripts_all = [f for f in py_files if f.replace("\\", "/").startswith("scripts/governance/")]
+
+        # 只查自己（#ARCH-GATE-OWN-SCOPE-001）：扫描范围=全暂存区∩本 session 范围。
+        # own_scope=None（无归属信息）→ 退化为旧行为扫全量（保守面不改宽）。
+        session_id = kwargs.get("session_id")
+        own_scope = _build_own_scope(gateway, files, session_id)
+        if own_scope is None:
+            gov_scripts: list[str] = gov_scripts_all
+            foreign_staged: list[str] = []
+        else:
+            gov_scripts = [f for f in gov_scripts_all if _norm_rel(gateway, f) in own_scope]
+            foreign_staged = [f for f in gov_scripts_all if _norm_rel(gateway, f) not in own_scope]
+        if foreign_staged:
+            # 降级 warn + 审计：不扫描、不产生违规、不阻断（复用主 gate 审计通道）
+            _audit_foreign_staged(gateway, session_id, foreign_staged, gate_name="SCRIPTS-IMPORT-INTEGRITY")
+            logger.warning(
+                "SCRIPTS-IMPORT-INTEGRITY: %d 个外来 session staged 文件未检查（warn+审计，不阻断）: %s",
+                len(foreign_staged),
+                ", ".join(foreign_staged[:5]) + ("..." if len(foreign_staged) > 5 else ""),
+            )
 
         violations: list[str] = []
         for py_file in gov_scripts:
@@ -319,7 +343,15 @@ def make_scripts_import_integrity_gate() -> GateSpec:
             )
             logger.error("SCRIPTS-IMPORT-INTEGRITY gate block:\n%s", detail)
             return False, detail
-        return True, ""
+        foreign_note = ""
+        if foreign_staged:
+            foreign_note = (
+                f"[warn] SCRIPTS-IMPORT-INTEGRITY: {len(foreign_staged)} 个外来 session staged 文件"
+                f"未检查（只查自己 #ARCH-GATE-OWN-SCOPE-001，warn+审计不阻断）: "
+                + ", ".join(foreign_staged[:5])
+                + ("..." if len(foreign_staged) > 5 else "")
+            )
+        return True, foreign_note
 
     return GateSpec(
         gate_id="SCRIPTS-IMPORT-INTEGRITY",

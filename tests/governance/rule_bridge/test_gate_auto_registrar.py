@@ -308,11 +308,11 @@ class TestRealProjectIntegration:
     """真实项目集成测试——使用真实 in_process_gate_registry.yaml。"""
 
     def test_load_real_yaml_entries(self) -> None:
-        """真实 YAML 可加载且条目数与 registry 演进同步（2026-08-15：83→92；2026-08-16：92→93；2026-08-17：93→97；2026-08-21：97→98 +GATE-ERRCODE-CONSISTENCY；2026-08-23：98→99 +HOT-FILE-BASE-FRESHNESS；2026-09-04：99→100 +FRONTEND-TRUTH-SOURCE；2026-09-04：100→101 +FRONTEND-MAP 六图对齐 commit 链闭环）。"""
+        """真实 YAML 可加载且条目数与 registry 演进同步（2026-08-15：83→92；2026-08-16：92→93；2026-08-17：93→97；2026-08-21：97→98 +GATE-ERRCODE-CONSISTENCY；2026-08-23：98→99 +HOT-FILE-BASE-FRESHNESS；2026-09-04：99→100 +FRONTEND-TRUTH-SOURCE；2026-09-04：100→101 +FRONTEND-MAP；2026-09-05：101→104 +DECISION-MAP+BUSINESS-REGISTRY+GATE-BATTLE-MAP-ALIGNMENT（测试期望滞后三批补记，2026-09-09 clearance-night 修复先在失败；2026-09-09：104→105 +REGISTRY-MASS-DELETION 登记表防蒸发门禁）。"""
         from zephyr.shared.io.paths import REPO_ROOT
 
         entries = load_gate_entries(Path(REPO_ROOT))
-        assert len(entries) == 101, f"expected 101 entries, got {len(entries)}"
+        assert len(entries) == 105, f"expected 105 entries, got {len(entries)}"
 
     def test_real_yaml_all_enabled(self) -> None:
         """真实 YAML 所有 gate enabled=true。"""

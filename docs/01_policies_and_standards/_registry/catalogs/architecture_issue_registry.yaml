@@ -21542,3 +21542,24 @@ entries:
   status: decided
   created: '2026-09-08'
   last_updated: '2026-09-08'
+- issue_id: '#ARCH-GATE-OWN-SCOPE-001'
+  title: '提交门禁扫全共享暂存区——并发夜他人 WIP 锁死所有人提交（IMPORT-INTEGRITY / SCRIPTS-IMPORT-INTEGRITY 只查自己改造）'
+  severity: P1高
+  adjudication: |
+    2026-09-09 夜实证：两个并发 session 边改边 add，共享暂存区含未过门禁 WIP
+    （scheduler.py fcntl 悬空导入），IMPORT-INTEGRITY gate 扫全暂存区（_files 参数
+    被 gate 刻意忽略），任何人 commit 都被他人 WIP 锁死数小时（nodebt 晨报裁定 9 +
+    建议 1）。治本（clearance-night T4，2026-09-09）：两 gate 扫描范围收敛为
+    全暂存区∩本 session 范围（commit files 清单 ∪ claimed held_files）；外来 staged
+    降级 warn+审计（.runtime/gate_audit/import_integrity_foreign_staged.jsonl）不再
+    阻断；本 session 自身违规仍硬阻断；可解析性参考集保留全量（防新互锁变体，
+    残余风险由 post-commit baseline 兜底）；归属判定 fail-open。登记服从治本先行，
+    本条目由 T4 commit 同批落账。
+  impact:
+    - 'src/zephyr/gov_enforcement/commit_gates/import_integrity_gate.py（_norm_rel/_build_own_scope/_audit_foreign_staged + 闭包改造）'
+    - 'src/zephyr/gov_enforcement/commit_gates/scripts_import_integrity_gate.py（同构改造，复用共享 helper）'
+    - 'tests/governance/commit_gates/test_import_integrity_gate.py（TestOnlyOwnSessionScanned 5 用例）'
+  fix_phase: '已落地（clearance-night T4，回归 79 passed + 注册链路 39 passed）'
+  status: decided
+  created: '2026-09-09'
+  last_updated: '2026-09-09'

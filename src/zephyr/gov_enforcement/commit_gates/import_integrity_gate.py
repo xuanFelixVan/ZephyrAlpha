@@ -5,12 +5,12 @@
 # [CONSUMERS] zephyr.gov_enforcement.rule_bridge.git_commit_gateway.GitCommitGateway.__init__ (gate registration)
 # [STARTUP] imported
 # [MATURITY] production
-# [INVARIANTS] 硬阻断——staged .py 文件中 import 的目标模块在 main HEAD + staged 文件中不可解析时阻断（#ARCH-CROSS-COMMIT-ATOMICITY-001 治本）；fail-open（git 失败/文件不可读/ast 解析失败时放行）；wildcard import 跳过（导入集无法静态推断）；相对 import（from . / from ..）跳过（依赖文件位置上下文）；stdlib 与第三方库模块通过 importlib.util.find_spec 解析；项目内 zephyr. / scripts. 模块通过文件系统查找；Phase 2.5（#ARCH-CROSS-COMMIT-ATOMICITY-002）：阻断时自动（不依赖 AI 传 depends_on_sessions）检查目标模块是否在其他活跃 session held_files 中，若是追加友好提示"等待该 session merge"（fail-open：SessionRegistry 不可用时不追加提示，不阻断）；sys.path 注入识别（#ARCH-IMPORT-INTEGRITY-SYSPATH-001 治本）：_extract_sys_path_dirs 提取 sys.path.insert/append 注入目录，_resolve_path_expr 启发式求值 4 种模式（直接 Path(__file__).resolve().parents[N] / str 包装变量 / 变量间接 _VAR.parent / next() 生成器向上搜索），_check_module_in_dirs 在注入目录中查找裸模块名（_shared/_common 等），找到则放行——320+ 脚本免疫，无需逐文件加 noqa 豁免（fail-open：无法求值的注入模式不提取该目录，由既有 noqa 逃生标记兜底）
+# [INVARIANTS] 硬阻断——本 session staged .py 文件中 import 的目标模块在 main HEAD + staged 文件中不可解析时阻断（#ARCH-CROSS-COMMIT-ATOMICITY-001 治本）；只查自己（2026-09-09 并发夜锁死治本 #ARCH-GATE-OWN-SCOPE-001）——扫描范围=全暂存区∩本 session 范围（本次 commit files 清单 ∪ session claimed held_files），外来 session 的 staged 文件不扫描、降级 warn+审计（.runtime/gate_audit/import_integrity_foreign_staged.jsonl），不再阻断；本 session 自身违规仍硬阻断（保护语义不放松）；可解析性参考集保留全量 staged（防止"B 的暂存文件卡 A"新互锁变体，残余风险由 post-commit baseline 兜底）；归属判定 fail-open（registry 异常退化为 files-only，files 也为空时退化为旧行为扫全量）；fail-open（git 失败/文件不可读/ast 解析失败时放行）；wildcard import 跳过（导入集无法静态推断）；相对 import（from . / from ..）跳过（依赖文件位置上下文）；stdlib 与第三方库模块通过 importlib.util.find_spec 解析；项目内 zephyr. / scripts. 模块通过文件系统查找；Phase 2.5（#ARCH-CROSS-COMMIT-ATOMICITY-002）：阻断时自动（不依赖 AI 传 depends_on_sessions）检查目标模块是否在其他活跃 session held_files 中，若是追加友好提示"等待该 session merge"（fail-open：SessionRegistry 不可用时不追加提示，不阻断）；sys.path 注入识别（#ARCH-IMPORT-INTEGRITY-SYSPATH-001 治本）：_extract_sys_path_dirs 提取 sys.path.insert/append 注入目录，_resolve_path_expr 启发式求值 4 种模式（直接 Path(__file__).resolve().parents[N] / str 包装变量 / 变量间接 _VAR.parent / next() 生成器向上搜索），_check_module_in_dirs 在注入目录中查找裸模块名（_shared/_common 等），找到则放行——320+ 脚本免疫，无需逐文件加 noqa 豁免（fail-open：无法求值的注入模式不提取该目录，由既有 noqa 逃生标记兜底）
 # [MODIFY-GUARD] gate_id="IMPORT-INTEGRITY"; check 闭包签名 (gateway, files, **kwargs) -> tuple[bool, str]
 # [STABILITY] evolving
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
-# [ERROR_CONTRACT] check 永不抛异常——git/ast/find_spec 失败降级为 fail-open（passed=True，logger.warning）；检出违规则 fail-closed 阻断（passed=False）
+# [ERROR_CONTRACT] check 永不抛异常——git/ast/find_spec 失败降级为 fail-open（passed=True，logger.warning）；外来 staged 审计写失败静默降级（不阻断）；检出本 session 违规则 fail-closed 阻断（passed=False）
 # [TESTS] tests/governance/commit_gates/test_import_integrity_gate.py
 # [A_module] module_id=MOD-GATE_ENGINE | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
@@ -159,10 +159,12 @@ from __future__ import annotations
 
 import ast
 import importlib.util
+import json
 import logging
 import os
 import re
 import sys
+import time
 from pathlib import Path
 
 from zephyr.gov_enforcement.commit_gates._diff_helpers import (
@@ -188,6 +190,105 @@ _SCAN_PREFIXES: tuple[str, ...] = ("scripts/governance/", "src/")
 
 # 项目内模块前缀（用文件系统查找，避免 import 副作用）
 _PROJECT_PREFIXES: tuple[str, ...] = ("zephyr.", "scripts.", "tests.")
+
+# 只查自己（#ARCH-GATE-OWN-SCOPE-001，2026-09-09 并发夜锁死治本）：
+# 外来 session staged 文件审计落点（jsonl append，对标 protected_paths_gate._audit_bypass）。
+# 注：Owner 指令字面为 .runtime/audit/，按 gate 家族一致性选 .runtime/gate_audit/
+# （protected_paths/foreign_change/commit_gate_registry 等 4 处既有先例），偏差已在晨报留痕。
+_FOREIGN_AUDIT_REL = ".runtime/gate_audit/import_integrity_foreign_staged.jsonl"
+
+
+def _norm_rel(gateway, path: str) -> str:
+    """任意路径 → normcase 相对路径（正斜杠），供 own_scope 交集比对。
+
+    commit() 传入绝对路径（git_commit_gateway L1684 abspath），_get_staged_py_files
+    返回正斜杠相对路径；Windows 盘符/大小写差异用 normcase 归一
+    （test_import_integrity_gate.py normcase 先例，小写盘符坑）。
+    fail-open：relpath 失败时原样返回 normcase 后的输入（不抛异常）。
+    """
+    try:
+        root = str(getattr(gateway, "project_root", "") or os.getcwd())
+        p = str(path)
+        if os.path.isabs(p):
+            # 生产路径：commit() 传绝对路径（git_commit_gateway abspath）
+            rel = os.path.relpath(p, root)
+        else:
+            # 已是仓库根相对路径（_get_staged_py_files 同基准/测试直调场景），
+            # 直接归一——不做 abspath（会锚定进程 CWD 而非仓库根，跨目录运行时错配）
+            rel = p
+        rel = rel.replace("\\", "/")
+    except Exception:  # noqa: BLE001 — 归一化失败不阻断（ERROR_CONTRACT，如跨盘符）
+        rel = str(path).replace("\\", "/")
+    return os.path.normcase(rel)
+
+
+def _build_own_scope(gateway, files: list[str] | None, session_id: str | None) -> set[str] | None:
+    """构建本 session 文件范围（normcase 相对路径集合）。
+
+    范围 = 本次 commit files 清单 ∪ session claimed held_files（SessionRegistry 只读）。
+    返回 None 语义：files 与 session 归属信息均为空（历史直调/未注册场景）——
+    调用方退化为旧行为（扫全量），保守面不改宽。
+    fail-open：registry 读取异常降级为 files-only。
+    """
+    scope: set[str] = set()
+    for f in files or []:
+        scope.add(_norm_rel(gateway, f))
+    if session_id:
+        try:
+            registry = getattr(gateway, "_registry", None)
+            info = registry.get_session(session_id) if registry is not None else None
+            for held in getattr(info, "held_files", None) or []:
+                scope.add(_norm_rel(gateway, held))
+        except Exception:  # noqa: BLE001 — registry 异常退化为 files-only（fail-open 红线）
+            logger.debug("IMPORT-INTEGRITY own-scope held_files 读取失败（退化为 files-only）", exc_info=True)
+    return scope or None
+
+
+def _attribute_foreign(gateway, session_id: str | None, foreign_staged: list[str]) -> dict[str, str]:
+    """外来 staged 文件尽力归因（other_held_files 只读；匹配不上标 unknown）。"""
+    attribution: dict[str, str] = {}
+    try:
+        registry = getattr(gateway, "_registry", None)
+        if registry is None:
+            return {}
+        foreign_norm = {_norm_rel(gateway, f) for f in foreign_staged}
+        for info in registry.list_active():
+            if session_id and info.session_id == session_id:
+                continue
+            for held in info.held_files or []:
+                norm = _norm_rel(gateway, held)
+                if norm in foreign_norm:
+                    attribution[norm] = info.session_id
+    except Exception:  # noqa: BLE001 — 归因失败不影响审计主流程
+        logger.debug("IMPORT-INTEGRITY foreign attribution failed (non-blocking)", exc_info=True)
+    return attribution
+
+
+def _audit_foreign_staged(
+    gateway, session_id: str | None, foreign_staged: list[str], *, gate_name: str = "IMPORT-INTEGRITY"
+) -> None:
+    """外来 session staged 文件落审计（jsonl append；fail-open：写失败不阻断）。
+
+    gate_name 参数供同族 gate（SCRIPTS-IMPORT-INTEGRITY）复用（#ARCH-FORCE-MERGE-DEDUP-001）。
+
+    对标 protected_paths_gate._audit_bypass（.runtime/gate_audit/ 惯例）。
+    """
+    try:
+        root = Path(getattr(gateway, "project_root", "."))
+        audit_dir = root / ".runtime" / "gate_audit"
+        audit_dir.mkdir(parents=True, exist_ok=True)
+        record = {
+            "timestamp": int(time.time()),
+            "gate": gate_name,
+            "session_id": session_id or "?",
+            "foreign_count": len(foreign_staged),
+            "foreign_files": foreign_staged[:50],
+            "attribution": _attribute_foreign(gateway, session_id, foreign_staged),
+        }
+        with (audit_dir / Path(_FOREIGN_AUDIT_REL).name).open("a", encoding="utf-8") as f:
+            f.write(json.dumps(record, ensure_ascii=False) + "\n")
+    except Exception:  # noqa: BLE001 — 审计失败不阻断（check ERROR_CONTRACT）
+        logger.debug("IMPORT-INTEGRITY foreign-staged audit write failed (non-blocking)", exc_info=True)
 
 # noqa 行级逃生：对标 bare-subprocess gate 模式
 # 格式：`# noqa: import-integrity` + 2+ 空格 + reason（>=10 字符）
@@ -939,14 +1040,39 @@ def make_import_integrity_gate() -> GateSpec:
     防止 ba40fa5b75 同型违规——commit 引入了对不存在模块的 import。
     """
 
-    def _check(gateway, _files: list[str], **_kwargs) -> tuple[bool, str]:
+    def _check(gateway, files: list[str], **kwargs) -> tuple[bool, str]:
         staged = _get_staged_py_files(gateway, "IMPORT-INTEGRITY")
         if not staged:
             return True, ""
 
+        session_id = kwargs.get("session_id")
+        # 只查自己（#ARCH-GATE-OWN-SCOPE-001）：扫描范围=全暂存区∩本 session 范围。
+        # own_scope=None（无归属信息）→ 退化为旧行为扫全量（保守面不改宽）。
+        own_scope = _build_own_scope(gateway, files, session_id)
+        # staged_set 双职责拆分（B.3）：可解析性参考集保留全量 staged——跨 session
+        # 协作时 A 的文件 import B 同 commit 将创建的模块应判可解析（staged 优先，
+        # 设计权衡 6）；若砍成本 session 会制造"B 的暂存文件卡 A"新互锁变体。
+        # 残余风险（B 最终放弃提交 → A 真悬空）由 post-commit baseline 全扫兜底。
         staged_set = set(staged)
+        if own_scope is None:
+            own_staged: list[str] = staged
+            foreign_staged: list[str] = []
+        else:
+            own_staged = [f for f in staged if _norm_rel(gateway, f) in own_scope]
+            foreign_staged = [f for f in staged if _norm_rel(gateway, f) not in own_scope]
+
+        if foreign_staged:
+            # 降级 warn + 审计：不扫描、不产生违规、不阻断（warn-only 姿势对标
+            # GIT-CALL-BUDGET：passed=True + detail）。本 session 自身违规分支不动。
+            _audit_foreign_staged(gateway, session_id, foreign_staged)
+            logger.warning(
+                "IMPORT-INTEGRITY: %d 个外来 session staged 文件未检查（warn+审计，不阻断）: %s",
+                len(foreign_staged),
+                ", ".join(foreign_staged[:5]) + ("..." if len(foreign_staged) > 5 else ""),
+            )
+
         violations: list[str] = []
-        for py_file in staged:
+        for py_file in own_staged:
             if not py_file.startswith(_SCAN_PREFIXES):
                 continue
             # 排除 _archive 目录（归档一次性代码不参与扫描——同族先例：undefined_name_gate
@@ -964,7 +1090,7 @@ def make_import_integrity_gate() -> GateSpec:
             # 阻断时自动（不依赖 AI 传 depends_on_sessions）检查目标模块是否在
             # 其他活跃 session held 的文件中。若是，追加友好提示——避免 AI 误判
             # 为"代码缺陷"反复修改（实际只需等待依赖 session merge）。
-            current_session_id = _kwargs.get("session_id")
+            current_session_id = kwargs.get("session_id")
             _project_root = getattr(gateway, "project_root", None)
             enhanced: list[str] = []
             for v in violations:
@@ -998,7 +1124,15 @@ def make_import_integrity_gate() -> GateSpec:
             )
             logger.error("IMPORT-INTEGRITY gate block:\n%s", detail)
             return False, detail
-        return True, ""
+        foreign_note = ""
+        if foreign_staged:
+            foreign_note = (
+                f"[warn] IMPORT-INTEGRITY: {len(foreign_staged)} 个外来 session staged 文件"
+                f"未检查（只查自己 #ARCH-GATE-OWN-SCOPE-001，warn+审计不阻断）: "
+                + ", ".join(foreign_staged[:5])
+                + ("..." if len(foreign_staged) > 5 else "")
+            )
+        return True, foreign_note
 
     return GateSpec(
         gate_id="IMPORT-INTEGRITY",
