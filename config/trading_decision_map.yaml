@@ -2162,7 +2162,8 @@ nodes:
     parent_node: TDM-P-P1
     factor_refs: [FCT-SENT-012, FCT-MOM-022]
     data_refs: [DS-082, DS-107]
-    module_ref: null
+    module_ref: src/zephyr/plan_engine/plan_deviation_monitor.py
+    module_id: MOD-PLAN-022
     algo_refs: []
     doc_ref: "docs/02_enterprise_architecture/07_trading_decision_architecture/design_memos/28_sentiment_cycle_trading.md"
     activation: premarket
@@ -2243,7 +2244,8 @@ nodes:
     parent_node: TDM-P-P1
     factor_refs: []
     data_refs: []
-    module_ref: null
+    module_ref: src/zephyr/position/core/position_adjudication_center.py
+    module_id: MOD-POS-024
     algo_refs: []
     doc_ref: null
     activation: premarket
@@ -2271,7 +2273,7 @@ nodes:
     factor_refs: [FCT-INTRADAY-028]
     cost_model_refs: [CST-T0-001]
     data_refs: [DS-150]
-    module_ref: null
+    module_ref: src/zephyr/position/core/t1_sellable.py
     algo_refs: []
     doc_ref: "docs/02_enterprise_architecture/07_trading_decision_architecture/design_memos/90_methodology_open_questions.md#§5"
     activation: premarket
@@ -2340,7 +2342,8 @@ nodes:
     factor_refs: []
     cost_model_refs: [CST-T0-001]
     data_refs: []
-    module_ref: null
+    module_ref: src/zephyr/signal_ashare/t0_trading_pipeline.py
+    module_id: MOD-SIG-090
     algo_refs: [DAL-T0-CLOSE]
     doc_ref: null
     activation: intraday
@@ -3053,7 +3056,8 @@ nodes:
     # （D98 终裁）：切入 distribution=Tier3 立即强裁（绕过 Tier2 收敛窗）；其他降档走 Tier2；earned-position 存量降档日减半、7 个交易日内归位新预算带；切换日=回测净值最大敏感点之一
     factor_refs: []
     data_refs: []
-    module_ref: null
+    module_ref: src/zephyr/pf_alloc/core/multi_strategy_capital_allocator.py
+    module_id: MOD-PA-003
     strategy_mounts: []
 
   - node_id: TDM-F-C2
@@ -3280,7 +3284,8 @@ nodes:
     factor_refs: []
     threshold_refs: [THD-RETIRE-001, THD-RETIRE-002, THD-RETIRE-003]
     data_refs: []
-    module_ref: null
+    module_ref: src/zephyr/factor/governance/lifecycle_state_machine.py
+    module_id: MOD-L02-013
     algo_refs: []
     doc_ref: "docs/02_enterprise_architecture/07_trading_decision_architecture/design_memos/55_monitoring_review.md#§3.5"
     activation: postmarket
@@ -3320,7 +3325,8 @@ nodes:
     parent_node: TDM-F-C3
     factor_refs: []
     data_refs: []
-    module_ref: null
+    module_ref: src/zephyr/pf_alloc/core/regime_meta_allocator.py
+    module_id: MOD-PA-007
     algo_refs: []
     doc_ref: "docs/02_enterprise_architecture/07_trading_decision_architecture/design_memos/54_reconciliation_attribution.md"
     activation: postmarket
@@ -3356,7 +3362,8 @@ nodes:
     parent_node: TDM-F-C3
     factor_refs: []
     data_refs: []
-    module_ref: null
+    module_ref: src/zephyr/backtest/core/walk_forward.py
+    module_id: MOD-BT-001
     algo_refs: []
     doc_ref: "docs/02_enterprise_architecture/07_trading_decision_architecture/design_memos/54_reconciliation_attribution.md#§3.9"
     activation: postmarket
@@ -3395,7 +3402,8 @@ nodes:
     parent_node: TDM-F-C3
     factor_refs: []
     data_refs: []
-    module_ref: null
+    module_ref: src/zephyr/signal_quality/signal_degradation_monitor.py
+    module_id: MOD-SIGQC-004
     algo_refs: []
     doc_ref: null
     activation: postmarket
