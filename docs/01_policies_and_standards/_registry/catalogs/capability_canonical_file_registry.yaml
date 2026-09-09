@@ -13424,3 +13424,7 @@ di_seam_exemptions:
   capability: write_audit_sacl_enabler
   created_by: ths-import-20260908
   capability: industry_graph_ths_equity
+- file: scripts/industry_graph/quality_closeout_governance.py
+  token: closeout-governance-20260909
+  created_by: closeout-20260909-ig-quality
+  capability: industry_graph_quality_engine

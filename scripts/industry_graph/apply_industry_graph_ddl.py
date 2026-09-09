@@ -13,7 +13,7 @@
 # [TTL] permanent
 """产业链图谱（industry_graph）十三表 DDL 部署脚本（PostgreSQL depgraph 图谱域）。
 
-表结构（2026-08-27 与用户定稿；v2 2026-09-07 按 SOP §4.8/§4.9 增补；v3 2026-09-08 按 SOP §4.10 增补；v4 2026-09-09 深度体系+分域增补）：
+表结构（2026-08-27 与用户定稿；v2 2026-09-07 按 SOP §4.8/§4.9 增补；v3 2026-09-08 按 SOP §4.10 增补；v4 2026-09-09 深度体系+分域增补；v5 2026-09-09 收尾增补 ig_chain.level）：
     ig_chain         产业链主表
     ig_node          环节节点（v4: +child_chain_id/drill_status 层级下钻）
     ig_edge          环节间结构边（edge_type='structure'|'supply'，supply 公司级后置）
@@ -26,6 +26,7 @@
     ig_unlisted_entity 未上市实体编码表（v3: UE- 永久编码+上市替换，SOP §4.10）
     ig_equity_edge   股权穿透边表（v4: 业务/资本分域——被投/持股/实控，与 ig_company_edge 分开）
     ig_product_revenue 产品营收归因表（v4: 图谱侧财务唯一表，通用财务主数据进 c1_market 防双真源）
+    （v5 2026-09-09 收尾: ig_chain.level 链层级列——模板决策#8 level 落库、parent 派生）
 
 市场分片规范：各表均带 market 字段（ig_chunk/ig_unlisted_entity 除外——语料/实体无市场语义）。
 
@@ -297,7 +298,11 @@ DDL_STATEMENTS = [
     """,
     "CREATE INDEX IF NOT EXISTS idx_ig_equity_holder ON ig_equity_edge (holder)",
     "CREATE INDEX IF NOT EXISTS idx_ig_equity_held ON ig_equity_edge (held)",
-    # --- ig_product_revenue 产品营收归因（图谱侧财务唯一表: symbol→产品→revenue_pct→挂环节;通用财务进 c1_market） ---
+    # --- ig_chain.level 链层级列（2026-09-09 收尾裁定: DDL v4 遗漏补建,模板决策#8="level 落库、parent 派生"——
+#     根链=1,子链经 node.child_chain_id 递归=父+1;挂接写入时顺手落值防递归爆栈,一致性由 quality_closeout_check.py 抽查） ---
+"ALTER TABLE ig_chain ADD COLUMN IF NOT EXISTS level SMALLINT",
+"CREATE INDEX IF NOT EXISTS idx_ig_chain_level ON ig_chain (level)",
+# --- ig_product_revenue 产品营收归因（图谱侧财务唯一表: symbol→产品→revenue_pct→挂环节;通用财务进 c1_market） ---
     """
     CREATE TABLE IF NOT EXISTS ig_product_revenue (
         id           BIGSERIAL PRIMARY KEY,

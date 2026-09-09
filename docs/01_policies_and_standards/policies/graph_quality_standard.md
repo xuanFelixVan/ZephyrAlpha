@@ -7,7 +7,7 @@ title: 产业链图谱质量标准——二十项合格线与循环修复
 owner: ZephyrAlpha-Owner
 language: zh
 status: active
-version: "1.2.0"
+version: "1.3.0"
 date: 2026-09-09
 topic: industry_graph_quality
 scope: global
@@ -72,7 +72,7 @@ related_modules:
 | S17 | websearch 边完整 | websearch 边缺 valid_from/as_of/evidence_type 任一违规 | 补齐；evidence 无据可补→登记 |
 | S18 | UNLISTED 格式统一 | symbol 匹配 ^UNLISTED: 但非 UNLISTED:UE-{12hex}=违规 | 登记编码表后换码（migrate 脚本） |
 | S19 | 编码表零上市撞名 | unlisted 实体 name 精确等于在市 A 股简称=违规 | 核对→标 listed+listed_symbol→跑 promote 换码 |
-| S20 | PIT 反造假（2026-09-09 红蓝对抗增补） | websearch 边 valid_from 早于证据年份前一年（year=2025 而 valid_from<2024-01-01）=违规——防"拍脑袋编历史"式前视造假 | 有据修正（上市日/协议签署日）；无据→清空 valid_from 重填盘点日+登记。**2026-09-09 裁定（Owner 委托夜班 AI）**：判定保留不改——year=新闻年/vf=签约日的"追述型长协边"是本条主要误报源（实测 22 条：15 条签约日即披露日+7 条新闻追述），处置=豁免制度化（登记+抽检原文），不改判定放行以保住反造假哨 |
+| S20 | PIT 反造假（2026-09-09 红蓝对抗增补） | websearch 边 valid_from 早于证据年份前一年（year=2025 而 valid_from<2024-01-01）=违规——防"拍脑袋编历史"式前视造假 | 有据修正（上市日/协议签署日）；无据→清空 valid_from 重填盘点日+登记。**2026-09-09 裁定（Owner 委托夜班 AI）**：判定保留不改——year=新闻年/vf=签约日的"追述型长协边"是本条主要误报源（实测 22 条：15 条签约日即披露日+7 条新闻追述），处置=豁免制度化（登记+抽检原文），不改判定放行以保住反造假哨。**2026-09-09 收尾裁定（Owner 签名批准）**：判定两段式化——SQL 只做粗筛（valid_from<year-1），放行核验下沉到原文正则：source_doc/evidence_text 原文含"YYYY年"且 YYYY≤valid_from 年份（如"2022年签署""2019年建立"）=有据回溯，放行；原文无依据的早日期仍判违规。存量 22 条经核原文无"YYYY年"字样（证据日在 URL 与三段式日期段），走豁免台账正式生效（Owner 签名批准，豁免占比 100%>5% 红线由 Owner 签名覆盖）。**【Owner 特别裁定——PIT 消费纪律，最高优先】**豁免只解决数据真实性判定，PIT 消费纪律不放松——一切 valid_from < as_of 的边，回测消费只能从 as_of（证据发布日）起使用，valid_from 更早的部分视为"当时不可知"；消费侧过滤永远 as_of <= 回测日，禁止用 valid_from 过滤可知性；SQL 示例：`WHERE as_of <= :backtest_date` |
 
 **豁免滥用法防线（红蓝对抗 2026-09-09 增补）**：任一类豁免数 > 该类违规总数 5% 须 Owner 签名（裁定人=Owner 手写），否则视为无效豁免。
 
@@ -128,4 +128,5 @@ related_modules:
 - 1.0.0（2026-09-09）：初版十九项合格线（Owner 四裁定确认同日）。
 - 1.1.0（2026-09-09）：红蓝对抗增补——S20 PIT 反造假（防编历史式前视造假）+豁免滥用法防线（>5% 须 Owner 签名）。
 - 1.2.0（2026-09-09）：**深度体系定稿**（Owner 三层图例定标）——§6 层级下钻模型（子链挂接 child\_chain\_id/drill\_status+砖双判据 mass/noalpha）；§7 公司详情卡字段标准（四级 MUST/SHOULD/DERIVED/渐进+完备度三档）；§8 深度审查三查 S21~S23（样板链验收前为进度指标、验收后升硬闸）。
+- 1.3.0（2026-09-09）：**收尾包裁定落地（Owner 签名批准）**——S20 判定两段式化（SQL 粗筛+原文"YYYY年"正则核据放行，反造假哨不弱化，引擎与标准同 commit 同步）；存量 22 条追述型长协边豁免台账正式生效（原文无"YYYY年"字样，证据日在 URL/日期段）；**PIT 消费纪律特别裁定写入 S20 条目**（消费只认 as_of，禁用 valid_from 过滤可知性，SQL 示例 WHERE as_of <= :backtest_date）；S11 口径修正（UNLISTED:UE- 落位行 by-design 不在 stock_basic，不计死映射，格式合规由写入工具 UE- 硬校验把关；market 标签随所属节点走 S12 口径）。
 - 1.2.1（2026-09-09）：**Owner 委托夜班 AI 裁定落地**——S20 判定保留不改、追述型长协误报走豁免制度化（22 条已签豁免）；S6 引擎加活跃链过滤（废弃链节点=历史快照不审，豁免 306→150）；S8 墓碑豁免约定（"（已并入"标记）。

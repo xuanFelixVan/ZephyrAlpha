@@ -4,7 +4,7 @@
 # [CONSUMERS] SOP industry_chain_data_audit_sop §11 质量验收循环(引擎判定权真源); 长城任务退出判定(连续两轮零违规)
 # [STARTUP] manual
 # [MATURITY] production
-# [INVARIANTS] 只读引擎: 全部 SELECT 零写入; 十九项合格线=graph_quality_standard.md §2~§6 一一对应(S1~S19); 豁免清单 quality_exemptions.yaml(未登记违规不扣除); 成对冗余豁免在 S16 SQL 内判(supplies_to+customer_of 合法); 输出 JSON(.runtime)+MD 报告, 退出码 0=全绿 1=有违规 2=环境故障
+# [INVARIANTS] 只读引擎: 全部 SELECT 零写入; 二十项合格线=graph_quality_standard.md §2~§6 一一对应(S1~S20); 豁免清单 quality_exemptions.yaml(未登记违规不扣除); 成对冗余豁免在 S16 SQL 内判(supplies_to+customer_of 合法); S20 两段式判定(SQL 粗筛+原文正则核据,2026-09-09 Owner 签名); 输出 JSON(.runtime)+MD 报告, 退出码 0=全绿 1=有违规 2=环境故障
 # [MODIFY-GUARD] graph_quality_standard.md(标准真源,SQL 须与其同步改)
 # [STABILITY] evolving
 # [SAFETY] L
@@ -206,22 +206,80 @@ CHECKS: list[dict] = [
     # S20 PIT 反造假(红蓝对抗 2026-09-09 补):valid_from 早于证据年份前一年=编历史
     # 2026-09-09 Owner 委托裁定: 判定保留不改——year=新闻年/vf=签约日的追述型长协边
     # 属本条主要误报源,处置=豁免登记+抽检原文(豁免制度化),不走改判定放行(防弱化反造假哨)
-    {"id": "S20", "title": "PIT 反造假(valid_from>=year-1)", "sql": """
+    # 2026-09-09 收尾裁定(Owner 签名批准): 两段式判定——SQL 只负责粗筛候选(vf<year-1),
+    # 放行核验下沉到 Python 正则(见 _s20_postfilter): 原文含"YYYY年"且 YYYY<=valid_from
+    # 年份=有据回溯放行; 原文无依据的早日期仍判违规。
+    # 豁免台账(quality_exemptions.yaml)与正则放行为两道并行闸,豁免数>5%红线仍适用。
+    {"id": "S20", "title": "PIT 反造假(valid_from>=year-1,原文有据回溯放行)", "sql": """
         SELECT edge_id::text, from_symbol || '->' || to_symbol || ' year=' || year
                || ' vf=' || valid_from FROM ig_company_edge
         WHERE valid_from IS NOT NULL AND year IS NOT NULL AND valid_to IS NULL
           AND valid_from < make_date(year - 1, 1, 1)
-    """},
+    """, "postfilter": "s20"},
     # S19 编码表上市撞名: 需 CH 反查,运行时注入
 ]
 
 DEGRADED_NOTE = "CH 不可达降级,本轮不计违规"
 
 
+S20_EVIDENCE_YEAR_RE = re.compile(r"(\d{4})年")  # 收尾裁定: 原文含"YYYY年"且 YYYY<=vf 年份=有据回溯
+
+
+def _s20_fetch_sql() -> str:
+    """S20 取数: source_doc 恒在; evidence_text 列存在(将来加列)才一并纳入原文核据。"""
+    conn = get_depgraph_pg_connection(read_only=True)
+    cur = conn.cursor()
+    cur.execute(
+        "SELECT count(*) FROM information_schema.columns "
+        "WHERE table_name='ig_company_edge' AND column_name='evidence_text'"
+    )
+    has_ev = cur.fetchone()[0] > 0
+    conn.close()
+    text_expr = "coalesce(source_doc,'')" if not has_ev else "coalesce(source_doc,'') || ' ' || coalesce(evidence_text,'')"
+    return (
+        f"SELECT edge_id::text, valid_from, {text_expr} "
+        "FROM ig_company_edge WHERE valid_from IS NOT NULL AND year IS NOT NULL AND valid_to IS NULL "
+        "AND valid_from < make_date(year - 1, 1, 1)"
+    )
+
+
+def _s20_postfilter(rows: list[tuple[str, str]]) -> tuple[list[tuple[str, str]], int]:
+    """S20 两段式判定第二段(2026-09-09 Owner 签名批准): 对 SQL 粗筛候选逐条核原文。
+
+    原文(source_doc/evidence_text)含 "YYYY年" 且 YYYY <= valid_from 年份 → 有据回溯,放行;
+    原文无任何依据性年份的早 valid_from 仍判违规(防拍脑袋编历史)。
+    返回 (保留违规, 放行数)。
+    """
+    if not rows:
+        return [], 0
+    conn = get_depgraph_pg_connection(read_only=True)
+    cur = conn.cursor()
+    cur.execute(_s20_fetch_sql())
+    text_by_pk = {str(r[0]): (r[1], str(r[2] or "")) for r in cur.fetchall()}
+    conn.close()
+    kept: list[tuple[str, str]] = []
+    passed = 0
+    for pk, desc in rows:
+        vf, text = text_by_pk.get(pk, (None, ""))
+        if vf is None:
+            kept.append((pk, desc))  # 取不到原文的退化情况: 保守判违规
+            continue
+        vf_year = int(str(vf)[:4])
+        years = [int(y) for y in S20_EVIDENCE_YEAR_RE.findall(text)]
+        if any(y <= vf_year for y in years):
+            passed += 1  # 原文有据回溯(如"2022年签署""2019年建立"),放行
+        else:
+            kept.append((pk, desc))
+    return kept, passed
+
+
 def _check_s11(cur, alive: set[str]) -> dict:
     if alive is None:
         return {"id": "S11", "title": "死映射零存量", "violations": [], "degraded": True}
-    cur.execute("SELECT nc.id::text, nc.symbol FROM ig_node_company nc WHERE nc.market='cn' AND nc.valid_to IS NULL")
+    # 2026-09-09 收尾裁定: UNLISTED:UE- 落位行(未上市实体编码表引用)by-design 不在
+    # stock_basic 在市集——格式合规由写入工具 UE- 硬校验把关,不计死映射;
+    # 其 market 标签随所属节点(S12 口径),不得为绕 S11 改 global(会触发 S12)。
+    cur.execute("SELECT nc.id::text, nc.symbol FROM ig_node_company nc WHERE nc.market='cn' AND nc.valid_to IS NULL AND nc.symbol NOT LIKE 'UNLISTED:%'")
     rows = [(pk, sym) for pk, sym in cur.fetchall() if sym not in alive]
     return {"id": "S11", "title": "死映射零存量", "violations": rows, "degraded": False}
 
@@ -262,10 +320,16 @@ def run_check() -> dict:
             results.append({"id": chk["id"], "title": chk["title"], "violations": [], "degraded": True,
                             "error": f"{type(e).__name__}: {e}"[:200]})
             continue
+        postfilter = chk.get("postfilter")
+        passed_note = 0
+        if postfilter == "s20":
+            rows, passed_note = _s20_postfilter(rows)  # 两段式第二段: 原文正则核据
         exempt = set(exemptions.get(chk["id"], []))
         kept = [(pk, desc) for pk, desc in rows if pk not in exempt]
         results.append({"id": chk["id"], "title": chk["title"], "violations": kept,
-                        "raw_count": len(rows), "exempt_count": len(rows) - len(kept)})
+                        "raw_count": len(rows) + (passed_note if postfilter == "s20" else 0),
+                        "evidence_pass_count": passed_note if postfilter == "s20" else None,
+                        "exempt_count": len(rows) - len(kept)})
 
     # CH 依赖两项
     alive_syms = _load_alive_stocks()
