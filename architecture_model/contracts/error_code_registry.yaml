@@ -29,6 +29,7 @@ domain_prefixes:
   DE: D_DATA_ENG
   EX: D_EX_CORE
   FE: D_FRONTEND
+  FWCOMP: D_PF_CORE
   GT: D_GOVERNANCE
   GV: D_GOVERNANCE
   HF: D_INTEGRATION
@@ -385,6 +386,14 @@ error_codes:
   class: TradePanelError
   module: zephyr.frontend.dashboard.components.trade_panel
   file: src/zephyr/frontend/dashboard/components/trade_panel.py
+- code: ZA-FWCOMP-0001
+  class: FrameworkPlanError
+  module: zephyr.pf_core.strategy_engine.framework_composer
+  file: src/zephyr/pf_core/strategy_engine/framework_composer.py
+- code: ZA-FWCOMP-0002
+  class: FrameworkValidationError
+  module: zephyr.pf_core.strategy_engine.framework_composer
+  file: src/zephyr/pf_core/strategy_engine/framework_composer.py
 - code: ZA-GT-0001
   class: MCPError
   module: zephyr.integration.mcp.gate_engine_server

@@ -4945,6 +4945,16 @@ capabilities:
     src/zephyr/gov_enforcement/commit_gates/battle_map_alignment_gate.py（auto 派生）。
   integrity_anchors:
   - evaluate_battle_map_report
+- capability_id: framework_composer
+  aliases:
+  - FrameworkComposer
+  - framework_backtest
+  - compose_weight_panels
+  description: 整装组合回测器（MOD-FWCOMP-001，二期整装回测）。把整装方案（config/framework_plans.yaml
+    三套预设的子策略资金权重）× 各子策略日频权重面板按资金比例线性合成组合面板（Σw=1 显式归一化
+    纪律与 ablation 同款），复用 DefaultBacktestEngine 跑组合净值，产物 bt-fw-*.json（plan_id 落
+    metrics）。与 MOD-TDMVAL-001 消融算子是姊妹算子（一减一加，禁止合并）。canonical =
+    src/zephyr/pf_core/strategy_engine/framework_composer.py。
 creation_tokens:
 - file: src/zephyr/data/tick_depth_writer.py
   token: qmt-day-depth-writer-20260909
@@ -11284,6 +11294,18 @@ creation_tokens:
   token: auto-scaffold-schemas_categories_market_tick_depth_5-20260909
   created_by: scaffold.py
   capability: schemas_categories_market_tick_depth_5
+- file: src/zephyr/pf_core/strategy_engine/framework_composer.py
+  token: fw-composer-20260909
+  created_by: sess-26548-20260909171109
+  capability: framework_composer
+- file: config/framework_plans.yaml
+  token: fw-plans-20260909
+  created_by: sess-26548-20260909171109
+  capability: framework_composer
+- file: docs/03_modules/_domain_portfolio_core/framework_composer_blueprint.md
+  token: fw-composer-blueprint-20260909
+  created_by: sess-26548-20260909171109
+  capability: framework_composer
 di_seam_exemptions:
 - module_path: zephyr.trading.auto_runtime_core.AutoRuntimeCore
   reason: P0-5 LSG DI seam 标杆，已有 DI 但 AST 模式不匹配（动态注入）
@@ -13428,3 +13450,23 @@ di_seam_exemptions:
   token: closeout-governance-20260909
   created_by: closeout-20260909-ig-quality
   capability: industry_graph_quality_engine
+- file: docs/_working/2026-09-09-tdm-missing-modules-construction.md
+  token: auto-trading-decision-map-20260909-gap-construction
+  created_by: st-tdmbe-20260909
+  capability: trading_decision_map
+- file: docs/_working/2026-09-09-tdm-night-greatwall-directive.md
+  token: auto-trading-decision-map-20260909-night-directive
+  created_by: st-tdmbe-20260909
+  capability: trading_decision_map
+- file: docs/_working/2026-09-09-tdm-growth-blueprint.md
+  token: auto-trading-decision-map-20260909-growth-blueprint
+  created_by: st-tdmbe-20260909
+  capability: trading_decision_map
+- file: docs/_working/2026-09-09-news-industry-wiring-directive.md
+  token: auto-trading-decision-map-20260909-wiring-directive
+  created_by: st-tdmbe-20260909
+  capability: trading_decision_map
+- file: docs/01_policies_and_standards/sop/trading_decision_map_pathfinding_sop.md
+  token: auto-trading-decision-map-20260909-pathfinding-sop
+  created_by: st-tdmbe-20260909
+  capability: trading_decision_map

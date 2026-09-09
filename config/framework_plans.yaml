@@ -1,0 +1,118 @@
+# =============================================================================
+# 整装方案配置真源（framework plans，二期整装回测 #BT-PIPELINE-002）
+# -----------------------------------------------------------------------------
+# [真源] 本文件是「整装方案」配置的唯一真源（规则数据 → YAML，RULE-SSOT）。
+#        组合回测器 loader: src/zephyr/pf_core/strategy_engine/framework_composer.py
+#        API: GET /api/framework-plans / POST /api/framework-backtest-run
+# [语义] 每套方案 = N 个已注册子策略的资金权重比例，合计 100%（容差 1e-6）。
+#        整装回测 = 方案权重 α_i × 各子策略日频权重面板 → 线性合成组合面板
+#        （system_charter.md §3 约束二「统一框架派：1 框架 × N 子策略 × regime 权重切换」，
+#        三期 regime 动态权重联动的数据骨架）。
+# [初值] AI 代拟（commit 前 Owner 审核确认——任务硬约束）。映射自框架状态页演示权重
+#        FW_W（web/core/app1.js：主线龙头回踩35/行业轮动25/低估值防御25/打板10/做T5）：
+#        主线龙头回踩 → topn-momentum（动量 TopN 选股，主线动量暴露）
+#        行业轮动     → multifactor-sleeve（多因子截面选股，轮动暴露）
+#        低估值防御   → default-equity（等权基础权益，防御底仓）
+#        打板         → daban-sleeve（打板袖策略）
+#        做T          → intraday-surge-fall / orderbook-imbalance / vwap-reversion（仅 tick 模式）
+#        事件驱动     → eventdriven-sleeve（弹性暴露，依赖情绪事件数据）
+# [注意] tick 模式专用成员（做T三策略）在向量化整装回测中被跳过并显式披露
+#        （skipped 落 artifact metrics），不做静默再归一化（ablation.py 同款纪律）。
+# =============================================================================
+schema_version: "1.0.0"
+ttl: permanent
+doc_type: config
+title: 整装方案配置真源（三套预设）
+status: active
+version: "1.0.0"
+date: "2026-09-09"
+owner: ZephyrAlpha-Owner
+review_status: approved  # 权重初值 AI 代拟，Owner 2026-09-09 审核确认（本会话裁定）
+
+plans:
+  - plan_id: fw-defensive
+    name_zh: 防御型整装方案
+    risk_profile: defensive
+    description: 防御为主——等权底仓 45% 压舱，动量/多因子收缩暴露，打板与做T 低配。
+    weights:
+      - strategy_id: default-equity
+        weight: 0.45
+        role: 底仓防御（等权基础权益）
+      - strategy_id: topn-momentum
+        weight: 0.25
+        role: 主线动量（收缩暴露）
+      - strategy_id: multifactor-sleeve
+        weight: 0.15
+        role: 多因子截面
+      - strategy_id: eventdriven-sleeve
+        weight: 0.05
+        role: 事件驱动弹性
+      - strategy_id: daban-sleeve
+        weight: 0.05
+        role: 打板（低配）
+      - strategy_id: intraday-surge-fall
+        weight: 0.02
+        role: 做T（仅 tick 模式）
+      - strategy_id: orderbook-imbalance
+        weight: 0.015
+        role: 做T（仅 tick 模式）
+      - strategy_id: vwap-reversion
+        weight: 0.015
+        role: 做T（仅 tick 模式）
+
+  - plan_id: fw-balanced
+    name_zh: 均衡型整装方案
+    risk_profile: balanced
+    description: 框架状态页演示权重的真实策略映射基线（35/25/25/10/5）。
+    weights:
+      - strategy_id: topn-momentum
+        weight: 0.35
+        role: 主线龙头回踩映射（动量 TopN）
+      - strategy_id: multifactor-sleeve
+        weight: 0.25
+        role: 行业轮动映射（多因子截面）
+      - strategy_id: default-equity
+        weight: 0.25
+        role: 低估值防御映射（等权底仓）
+      - strategy_id: daban-sleeve
+        weight: 0.10
+        role: 打板
+      - strategy_id: intraday-surge-fall
+        weight: 0.02
+        role: 做T（仅 tick 模式）
+      - strategy_id: orderbook-imbalance
+        weight: 0.015
+        role: 做T（仅 tick 模式）
+      - strategy_id: vwap-reversion
+        weight: 0.015
+        role: 做T（仅 tick 模式）
+
+  - plan_id: fw-aggressive
+    name_zh: 激进型整装方案
+    risk_profile: aggressive
+    description: 进攻为主——动量 40% + 打板 20%，做T 增强，底仓压缩到 10%。
+    weights:
+      - strategy_id: topn-momentum
+        weight: 0.40
+        role: 主线动量（进攻主力）
+      - strategy_id: daban-sleeve
+        weight: 0.20
+        role: 打板（进攻增强）
+      - strategy_id: multifactor-sleeve
+        weight: 0.10
+        role: 多因子截面
+      - strategy_id: eventdriven-sleeve
+        weight: 0.10
+        role: 事件驱动弹性
+      - strategy_id: default-equity
+        weight: 0.10
+        role: 底仓（压缩）
+      - strategy_id: intraday-surge-fall
+        weight: 0.04
+        role: 做T（仅 tick 模式）
+      - strategy_id: orderbook-imbalance
+        weight: 0.03
+        role: 做T（仅 tick 模式）
+      - strategy_id: vwap-reversion
+        weight: 0.03
+        role: 做T（仅 tick 模式）

@@ -47309,6 +47309,41 @@ entries:
   desc_zh: ""
   desc_en: ""
   plain_zh: "把同花顺导出的个股行业分类和公司简介表格（GBK 文本）清洗去重后，灌进 ClickHouse 的 stock_profile_ths 主数据表，附带查数抽验；支持先演练不落库。"
+- module_path: src/zephyr/data/tick_depth_writer.py
+  domain_id: D_DATA
+  name_zh: "五档盘口行装配器"
+  name_en: "tick_depth_writer"
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "把实时五档行情字典装配成五档盘口表的行数据，供 tick 订阅器旁路写入和五档历史回填共用，保证两条链路的列序和口径完全一致。"
+- module_path: src/zephyr/data/implementations/tick_depth_backfill.py
+  domain_id: D_DATA
+  name_zh: "五档盘口历史回填"
+  name_en: "tick_depth_backfill"
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "从 QMT 本地分笔缓存读取带五档的历史行情，转换后写入五档盘口表，在 miniQMT 退役前把近期数据囤进 ClickHouse。"
+- module_path: scripts/data/backfill_tick_depth5.py
+  domain_id: D_DATA
+  name_zh: "五档回填命令行工具"
+  name_en: "backfill_tick_depth5"
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "手动执行五档盘口历史回填的命令行入口，指定标的和日期即可补本地缓存并入库，支持试运行和下载开关。"
+- module_path: schemas/categories/market_tick_depth_5.py
+  domain_id: D_DATA
+  name_zh: "五档盘口表结构真源"
+  name_en: "market_tick_depth_5"
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "五档盘口 ClickHouse 表的建表语句唯一真源，定义 30 个数据列和排序分区规则，改表结构先改这里。"
+- module_path: src/zephyr/pf_core/strategy_engine/framework_composer.py
+  domain_id: D_PF_CORE
+  name_zh: "整装组合回测器"
+  name_en: ""
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "把多只子策略的每日持仓权重按整装方案的资金比例加权合成一张组合权重面板，再用现有回测引擎跑出组合净值"
 
 battle_map_steps:
 - step_id: BM-BUY-05
