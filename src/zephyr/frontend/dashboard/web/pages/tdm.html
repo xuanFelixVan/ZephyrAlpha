@@ -7,7 +7,7 @@
       <span style="font-size:12px"><span style="display:inline-block;width:10px;height:10px;background:#0f2740;border:1.5px solid #1e5a8f;border-radius:3px;vertical-align:middle"></span> 实锚（有模块）</span>
       <span style="font-size:12px"><span style="display:inline-block;width:10px;height:10px;background:#2a1c0e;border:1.5px dashed #8a4a12;border-radius:3px;vertical-align:middle"></span> 🔴 红节点（设计态）</span>
       <span style="font-size:12px"><span style="display:inline-block;width:10px;height:10px;background:#0e2612;border:1.5px solid #2e7d32;border-radius:3px;vertical-align:middle"></span> 📄paper 实盘执行</span>
-      <span class="dim" style="font-size:11px">｜ 连线：<span style="color:#44546e">━</span> 主链/sequence <span style="color:#44546e">╌</span> 虚线=喂给/feedback ｜ 层级：列位+字号（L1 大 → L4 小）</span>
+      <span class="dim" style="font-size:11px">｜ 连线：<span style="color:#44546e">━</span> 主链/sequence <span style="color:#44546e">╌</span> 虚线=喂给/feedback ｜ 线上小牌=喂什么（大白话） ｜ 层级：列位+字号（L1 大 → L4 小）</span>
       <input id="tdm-srch" placeholder="搜索节点（ID / 名称）…" oninput="tdmFilter(this.value)"
              style="background:#0d1117;border:1px solid #263042;border-radius:6px;color:var(--text);padding:4px 10px;font-size:12px;width:180px">
       <span id="tdm-mode" onclick="tdmToggleMode()" title="切换 拖动画布 / 文字选择复制（快捷键 Ctrl+Shift+D）"
@@ -90,6 +90,14 @@
     padding:12px 18px; font-size:24px; font-weight:700; color:var(--text); user-select:none; white-space:nowrap; z-index:2; }
   #tdm-tree .tg .cnt { color:#7d8aa0; font-weight:400; font-size:14px; margin-left:8px; }
   #tdm-wire path { fill:none; stroke:#2c3a52; stroke-width:1.4; }
+  /* ── 边标签牌（b20260910）：连线中点的大白话备注——真源 edges.payload_zh（后端域字段，可选），
+   *   无值不渲染；pointer-events 关闭（不挡卡片点击），全文看 title/抽屉 ── */
+  #tdm-tree .wl { position:absolute; transform:translate(-50%,-50%); max-width:150px; overflow:hidden;
+    text-overflow:ellipsis; white-space:nowrap; font-size:10px; line-height:1.6; color:#9aa5b5;
+    background:rgba(13,17,23,.92); border:1px solid #263042; border-radius:4px; padding:1px 7px;
+    pointer-events:none; z-index:1; }
+  #tdm-tree .wl-v { transform:translate(0,-50%); }   /* 近竖直边：右移版式，左对齐避让线身 */
+  #tdm-tree .wl-dim { opacity:.08; }                 /* 聚焦模式：血统外标签与边同步压暗 */
   /* ── 右侧详情抽屉 v2（b20260908-10 重设计：分区层次+chip 流，欧易终端密度，纯 HTML+CSS）──
    * 分区：标题徽标 → 问 → 机制 → 治理键值网格 → 模块锚 → 策略挂载 → 依据锚八轴 chip → 上/下游导航行 → 设计备注 */
   #tdm-drawer .dr-name { font-size:16px; font-weight:700; color:var(--text); line-height:1.35; }
@@ -129,8 +137,8 @@
   #tdm-drawer .axis-h { font-size:11px; color:#8a94a6; margin-bottom:4px; }
   #tdm-drawer .axis-h b { color:#c6cdd8; font-weight:600; }
   #tdm-drawer .axis-h .cnt { color:#525d70; }
-  /* 上/下游节点导航行：状态点+名称+边型+id，点击跳选 */
-  #tdm-drawer .nl { display:flex; align-items:center; gap:7px; padding:3px 6px; margin:2px -6px;
+  /* 上/下游节点导航行：状态点+名称+边型+id，点击跳选；nl-p=边大白话（payload_zh，整行折行） */
+  #tdm-drawer .nl { display:flex; align-items:center; gap:7px; padding:3px 6px; margin:2px -6px; flex-wrap:wrap;
     border-radius:6px; font-size:12px; cursor:pointer; }
   #tdm-drawer .nl:hover { background:#131a26; }
   #tdm-drawer .nl .dot { width:7px; height:7px; border-radius:2px; flex:none; }
@@ -140,6 +148,8 @@
   #tdm-drawer .nl .nl-n { color:#c6cdd8; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
   #tdm-drawer .nl .nl-t { color:#525d70; font-size:10px; flex:none; }
   #tdm-drawer .nl .nl-i { margin-left:auto; color:#525d70; font-size:10.5px; flex:none; }
+  #tdm-drawer .nl .nl-p { flex-basis:100%; color:#8a94a6; font-size:11px; line-height:1.55;
+    padding-left:14px; word-break:break-word; }
   /* 设计备注：卡片化引用块，行高 1.65 保长文（D109 级）可读 */
   #tdm-drawer .cm { font-size:11.5px; color:#9aa5b5; line-height:1.65; border-left:2px solid #263042;
     background:#10151d; border-radius:0 6px 6px 0; padding:5px 8px 5px 9px; margin:5px 0; word-break:break-word; }

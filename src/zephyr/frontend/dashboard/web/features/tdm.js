@@ -6,10 +6,14 @@
  *           30s tick 时仅 p-tdm 可见才 fetch，页面隐藏零开销。
  * 抽屉 v2（b20260908-10）：右侧详情抽屉重设计——标题徽标区/治理键值网格/依据锚八轴 chip 流/
  *           上下游节点导航行（点击跳选）/长文行高≥1.6；纯 HTML+CSS，数据契约与画布交互不变。
- * 聚焦模式（b20260909-fe）：点节点自动重排血统主线——亮区=直连一跳+父子链全程（feed 多跳闭包
- *           实测吞全图，已裁定只保直连），上游居左/下游居右同水平带（列位=与选中节点距离），
+ * 聚焦模式（b20260909-fe R2）：点节点自动重排血统主线——实线主链（sequence/broadcast/父子链）
+ *           多跳贯通，上游的上游/下游的下游一路走到底；虚线喂给只算直连一跳（feed 网含环，
+ *           多跳必吞全图——实测 119~125/125）。上游居左/下游居右同水平带（列位=主链距离），
  *           无关节点整块下移让路+压暗（只动透明度，三态色语义不变）；镜头自动适配主带（仅聚焦
- *           切换时，轮询重绘不打断手动平移缩放）；退出=Esc/双击空白/工具栏「🎯 聚焦 ✕」。 */
+ *           切换时，轮询重绘不打断手动平移缩放）；退出=Esc/双击空白/工具栏「🎯 聚焦 ✕」。
+ * 边标签牌（b20260910）：连线中点大白话备注——真源 edges.payload_zh（后端域字段，可选，未填不显示）；
+ *           卡片间距拉大（垂直 8→18/GAP 12→18）给标签留位；抽屉上/下游行带 ↳payload 行。
+ *           算法-大白话绑定门禁在后端域（commit 碰 module_ref → 同 commit 修订/确认节点大白话）。 */
 (function () {
   'use strict';
   var TDM = { data: null, sel: null, stamp: null, busy: false, dragDist: 0, verdicts: {}, focus: null, focusFit: null };
@@ -132,47 +136,43 @@
       (flows[fl.order] = flows[fl.order] || { info: fl, items: [] }).items.push(n);
     });
 
-    /* ── 聚焦模式血统计算（b20260909-fe）：亮区口径=直连一跳（feed/sequence/broadcast/feedback 全算）
-     * + 父链祖先全程 + 子链后代全程 + 自己。实测裁定依据：feed 边 129 条构成致密网，多跳闭包
-     * 会吞全图（125 节点全达，335 计数）；只保直连与树骨架后血统收敛到 3~21 节点，聚焦带可读。
-     * 同节点双侧可达按更近一侧归位，距离平局归上游。真源节点消失→自动退出聚焦 */
+    /* ── 聚焦模式血统计算（b20260909-fe R2，Owner 二轮裁定：整条链路贯通）——实线主链
+     * （sequence/broadcast/父链子链）多跳传播：上游的上游/下游的下游一路走到底；虚线喂给
+     * （feed/feedback）只算直连一跳。实测依据：feed 网 129 条含环，沿 feed 多跳必吞全图
+     * （119~125/125 全亮=聚焦失效）；主链贯通后典型血统 10~25 节点、纵深 3~4 列，主链源
+     * hub（市场状态判定）118 节点属真实级联。双侧可达按更近一侧归位，平局归上游；
+     * 真源节点消失（数据刷新后 focus 失效）→ 自动退出聚焦 */
     var F = null;
     if (TDM.focus) {
       if (!byId[TDM.focus]) { TDM.focus = null; TDM.focusFit = null; }
       else {
-        var nb = function (id, dir) {
-          var out = [];
-          (d.edges || []).forEach(function (e) {
-            if (dir === 'up' && e.to_node === id && byId[e.from_node]) out.push(e.from_node);
-            if (dir === 'down' && e.from_node === id && byId[e.to_node]) out.push(e.to_node);
-          });
-          if (dir === 'up') { var p = byId[id].parent; if (p && byId[p]) out.push(p); }
-          else (kids[id] || []).forEach(function (c) { out.push(c.id); });
-          return out;
-        };
-        var upD = {}, downD = {};
-        /* 树骨架全程：父链祖先（parent 树无环，dd 兜底防脏数据死循环）+ 子链后代 BFS */
-        (function () {
-          var cur = TDM.focus, dd = 0, p;
-          while (dd < 50 && (p = byId[cur].parent) && byId[p]) {
-            dd += 1;
-            if (!(p in upD) || upD[p] > dd) upD[p] = dd;
-            cur = p;
-          }
-        })();
-        (function () {
-          var q = [{ id: TDM.focus, d: 0 }];
+        var walk = function (dir) {
+          var dist = {}; dist[TDM.focus] = 0; var q = [TDM.focus];
           while (q.length) {
-            var it = q.shift();
-            (kids[it.id] || []).forEach(function (c) {
-              var cid = c.id;   /* kids 值是节点对象——取 .id，直接用对象会键成 "[object Object]" 幽灵节点 */
-              if (!(cid in downD)) { downD[cid] = it.d + 1; q.push({ id: cid, d: it.d + 1 }); }
+            var cur = q.shift(), dc = dist[cur];
+            (d.edges || []).forEach(function (e) {
+              if (e.edge_type !== 'sequence' && e.edge_type !== 'broadcast') return;
+              var a = dir === 'up' ? e.to_node : e.from_node;
+              var b = dir === 'up' ? e.from_node : e.to_node;
+              if (a === cur && byId[b] && !(b in dist)) { dist[b] = dc + 1; q.push(b); }
+            });
+            if (dir === 'up') {
+              var p = byId[cur].parent;
+              if (p && byId[p] && !(p in dist)) { dist[p] = dc + 1; q.push(p); }
+            } else (kids[cur] || []).forEach(function (c) {
+              if (!(c.id in dist)) { dist[c.id] = dc + 1; q.push(c.id); }   /* kids 值是节点对象，取 .id */
             });
           }
-        })();
-        /* 直连一跳覆盖：直接关系优先于结构距离（直接喂它的父辈节点归位更近） */
-        nb(TDM.focus, 'up').forEach(function (m) { if (m !== TDM.focus && (!(m in upD) || upD[m] > 1)) upD[m] = 1; });
-        nb(TDM.focus, 'down').forEach(function (m) { if (m !== TDM.focus && (!(m in downD) || downD[m] > 1)) downD[m] = 1; });
+          delete dist[TDM.focus];
+          return dist;
+        };
+        var upD = walk('up'), downD = walk('down');
+        /* 虚线喂给直连一跳：直接喂它的/它直接喂的保持贴身可见 */
+        (d.edges || []).forEach(function (e) {
+          if (e.edge_type === 'sequence' || e.edge_type === 'broadcast') return;
+          if (e.to_node === TDM.focus && byId[e.from_node] && (!(e.from_node in upD) || upD[e.from_node] > 1)) upD[e.from_node] = 1;
+          if (e.from_node === TDM.focus && byId[e.to_node] && (!(e.to_node in downD) || downD[e.to_node] > 1)) downD[e.to_node] = 1;
+        });
         var fset = {}; fset[TDM.focus] = { side: 'self', dist: 0 };
         Object.keys(upD).forEach(function (id) {
           fset[id] = { side: (downD[id] != null && downD[id] < upD[id]) ? 'down' : 'up',
@@ -184,6 +184,13 @@
     }
     function inF(el) { return !!F && !!F.set[el.dataset.id]; }
 
+    /* 边 payload 索引（b20260910）：真源 edges.payload_zh（大白话"喂过去的是什么"，后端域字段，
+     * 可选——未填的边自然无标签）；键=from>to，父链与依赖边共用一套去重 */
+    var pairPayload = {};
+    (d.edges || []).forEach(function (e) {
+      if (e.payload_zh) pairPayload[e.from_node + '>' + e.to_node] = e.payload_zh;
+    });
+
     host.innerHTML = '';
     var wires = [];
     var elById = {};        /* 节点 id → 卡片元素（边连线用） */
@@ -192,7 +199,7 @@
     /* 四层一列布局：流标签列(8~LABEL_W) + L1~L4 四列均分剩余宽度——同层永远同列，层级即列号；
      * 每次渲染实时量容器，窗口/抽屉变化由 ResizeObserver 触发重渲 */
     var W = canvas.clientWidth || 1400;
-    var LABEL_W = 215, GAP = 12;   /* 流根标签 24px 字号所需宽度（最长"横切层·币圈"≈205px） */
+    var LABEL_W = 215, GAP = 18;   /* 流根标签 24px 字号所需宽度；GAP 12→18 给横向边标签留位（b20260910） */
     var colW = Math.max(170, Math.floor((W - LABEL_W - 16 - GAP * 3) / 4));
     var COLX = [0, LABEL_W, LABEL_W + (colW + GAP), LABEL_W + (colW + GAP) * 2, LABEL_W + (colW + GAP) * 3];
 
@@ -220,9 +227,10 @@
       return el;
     }
     /* 连线样式：parent/sequence/broadcast=实线主链；feed/feedback=虚线喂给——wire(a,b,dashed,type)；
-     * 第 5 元=聚焦相关性（聚焦模式下两端都在血统内的边才保亮度，其余压暗） */
-    function wire(a, b, dashed, wtype) {
-      wires.push([a, b, !!dashed, wtype || 'parent', !F || (inF(a) && inF(b))]);
+     * 第 5 元=聚焦相关性（聚焦模式下两端都在血统内的边才保亮度，其余压暗）；
+     * 第 6 元=payload_zh（边大白话备注，渲染连线中点标签牌） */
+    function wire(a, b, dashed, wtype, payload) {
+      wires.push([a, b, !!dashed, wtype || 'parent', !F || (inF(a) && inF(b)), payload || '']);
     }
 
     /* 递归布局：节点排在自己层列的 y 处；子节点从父同 y 起往下排（思维导图惯例）；
@@ -231,13 +239,13 @@
       var dd = Math.min(Math.max(depth, 1), 4);
       var el = card(n, COLX[dd], y, dd);
       if (parentEl) {
-        wire(parentEl, el, false, 'parent');
+        wire(parentEl, el, false, 'parent', pairPayload[parentEl.dataset.id + '>' + n.id]);
         drawnPairs[parentEl.dataset.id + '>' + n.id] = 1;   /* 父链已画的对，边循环跳过 */
       }
       var cy = y, bottom = y + el.offsetHeight;
       (kids[n.id] || []).forEach(function (c) {
         var cb = place(c, depth + 1, cy, el);
-        cy = cb + 8;
+        cy = cb + 18;   /* b20260910：垂直间距 8→18，给竖直边的大白话标签牌留位 */
         bottom = Math.max(bottom, cb);
       });
       return bottom;
@@ -316,7 +324,7 @@
       if (drawnPairs[key]) return;
       drawnPairs[key] = 1;
       var t = e.edge_type || 'feed';
-      wire(a, b, t === 'feed' || t === 'feedback', t);
+      wire(a, b, t === 'feed' || t === 'feedback', t, pairPayload[key]);
     });
 
     /* 世界层与树的尺寸用布局常量直接算（X3+CW=内容右缘）——绝不能量 host.offsetWidth：
@@ -391,6 +399,22 @@
           (color !== '#2c3a52' ? ' stroke="' + color + '"' : '') +
           (p[4] ? '' : ' stroke-opacity="0.08"') + '/>';   /* 聚焦外压暗边：近隐不消失，保留全景上下文 */
       }).join('');
+      /* 边标签牌（b20260910）：有 payload_zh 的边在连线中点画大白话小牌——近竖直边右移避让线身，
+       * 聚焦模式跟随边亮度（wl-dim）；host 与 SVG 同处世界层原点，坐标直接复用贝塞尔端点 */
+      var lbls = [];
+      wires.forEach(function (p) {
+        if (!p[5]) return;
+        var a = p[0], b = p[1];
+        var ax = a.offsetLeft + a.offsetWidth, ay = a.offsetTop + a.offsetHeight / 2;
+        var bx = b.offsetLeft, by = b.offsetTop + b.offsetHeight / 2;
+        var vert = Math.abs(bx - ax) < 60;
+        var lx = vert ? Math.max(ax, bx) + 10 : (ax + bx) / 2;
+        var ly = (ay + by) / 2;
+        var txt = String(p[5]).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/"/g, '&quot;');
+        lbls.push('<div class="wl' + (p[4] ? '' : ' wl-dim') + (vert ? ' wl-v' : '') +
+          '" style="left:' + Math.round(lx) + 'px;top:' + Math.round(ly) + 'px" title="' + txt + '">' + txt + '</div>');
+      });
+      if (lbls.length) host.insertAdjacentHTML('beforeend', lbls.join(''));
     })();
   }
 
@@ -423,11 +447,12 @@
     var byIdMap = {};
     TDM.data.nodes.forEach(function (x) { byIdMap[x.id] = x; });
     var par = n.parent && byIdMap[n.parent];
-    /* 上下游连线（谁喂它 / 它喂谁）——全量边按当前节点过滤，带边型 glyph 溯源闭环 */
+    /* 上下游连线（谁喂它 / 它喂谁）——全量边按当前节点过滤，带边型 glyph 溯源闭环；
+     * p=payload_zh 边大白话（真源字段，可选） */
     var ups = [], downs = [];
     (TDM.data.edges || []).forEach(function (e) {
-      if (e.from_node === n.id && byIdMap[e.to_node]) downs.push({ x: byIdMap[e.to_node], t: e.edge_type });
-      if (e.to_node === n.id && byIdMap[e.from_node]) ups.push({ x: byIdMap[e.from_node], t: e.edge_type });
+      if (e.from_node === n.id && byIdMap[e.to_node]) downs.push({ x: byIdMap[e.to_node], t: e.edge_type, p: e.payload_zh });
+      if (e.to_node === n.id && byIdMap[e.from_node]) ups.push({ x: byIdMap[e.from_node], t: e.edge_type, p: e.payload_zh });
     });
     /* 状态徽标=画布卡片同语义：📄paper 绿 / 实锚蓝 / 🔴红节点橙虚 */
     var stBdg = n.autonomy === 'paper'
@@ -445,12 +470,13 @@
     }
     /* 节点导航行：状态点+名称+边型+id，点击跳选（抽屉内溯源，不动画布交互） */
     var GLYPH = { sequence: '→', feed: '⇢', broadcast: '⇉', feedback: '↩' };
-    function nlink(x, t) {
+    function nlink(x, t, p) {
       var dot = x.autonomy === 'paper' ? 'paper' : (x.module_ref ? 'prod' : 'design');
       return '<div class="nl" data-jump="' + esc(x.id) + '" title="' + esc(x.id) + (t ? ' · ' + esc(t) : '') + '">' +
         '<span class="dot dot-' + dot + '"></span><span class="nl-n">' + esc(x.name || x.id) + '</span>' +
         (t ? '<span class="nl-t">' + (GLYPH[t] || '·') + ' ' + esc(t) + '</span>' : '') +
-        '<span class="nl-i">' + esc(x.id) + '</span></div>';
+        '<span class="nl-i">' + esc(x.id) + '</span>' +
+        (p ? '<span class="nl-p">↳ ' + esc(p) + '</span>' : '') + '</div>';
     }
     function kv(k, v) {
       return '<span class="k">' + k + '</span><span class="v' + (v ? '' : ' na') + '">' + (v ? esc(v) : '—') + '</span>';
@@ -508,9 +534,9 @@
       '<div class="sec">策略挂载（STR）</div>' + mounts +
       (refsHtml ? '<div class="sec">依据锚（八轴引用）</div>' + refsHtml : '') +
       '<div class="sec">上游（谁喂给它）<span class="cnt">' + ups.length + '</span></div>' +
-      (ups.length ? ups.map(function (u) { return nlink(u.x, u.t); }).join('') : '<div class="empty">—</div>') +
+      (ups.length ? ups.map(function (u) { return nlink(u.x, u.t, u.p); }).join('') : '<div class="empty">—</div>') +
       '<div class="sec">下游（它喂给谁）<span class="cnt">' + downs.length + '</span></div>' +
-      (downs.length ? downs.map(function (u) { return nlink(u.x, u.t); }).join('') : '<div class="empty">—</div>') +
+      (downs.length ? downs.map(function (u) { return nlink(u.x, u.t, u.p); }).join('') : '<div class="empty">—</div>') +
       '<div class="sec">设计备注（裁定/欠账原文）</div>' + cms +
       '<div class="sec">验证档案（回测台账）<span class="cnt" id="tdm-val-cnt"></span></div>' +
       '<div id="tdm-val"><div class="empty">查询中…</div></div>';
