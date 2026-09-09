@@ -1,11 +1,13 @@
 <section class="page" id="p-download">
-    <h2 class="page-title">数据下载监管 <span class="badge b-pass">真源</span></h2>
-    <div class="page-sub">数据组 · <b>所有数据（非数据源）的下载实况</b>——146 张表最新数据分区一页看全（真源=CH system.parts）· 新鲜度四态灯按表名启发预期周期 · 断更表置顶 · 30s 自动刷新</div>
+    <h2 class="page-title">数据总览 <span class="badge b-pass">真源</span></h2>
+    <div class="page-sub">数据组 · <b>下载实况 + 库内资产一表看全</b>——146 张表下载状态（30s 刷新）+ 宽度/深度/完整度/缺口/存储层（慢档体检）· 断更表置顶 · 表头可排序</div>
     <div class="row c5" id="dl-kpi"></div>
     <div class="card" style="margin-top:14px">
       <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-bottom:8px">
-        <h3 style="margin:0">表级下载实况 <span class="dim">灯=最新数据龄 vs 表名启发预期周期（日频 3-4 天/周频 12 天/月频 45 天）</span></h3>
+        <h3 style="margin:0">表级总览 <span class="dim">左段=下载情况（30s）· 右段=库内资产（10min 慢档+手动体检）</span></h3>
         <span style="margin-left:auto;display:flex;gap:6px;align-items:center">
+          <span class="btn" id="dl-asset-btn" onclick="dlAssetKick(this)" title="立即重审库内资产（宽度/深度/完整度/缺口）——重查询约 1~2 分钟，进度在按钮上">深度体检</span>
+          <span class="dim" id="dl-asset-ts" style="font-size:11px"></span>
           <span class="btn" onclick="dlToggleIssue(this)" title="只显示滞后和疑似断更的表">只看问题表</span>
           <span class="sel" id="dl-db-sel" style="position:relative;cursor:pointer" onclick="dlDropTgl(event)"><span id="dl-db-t">全部库</span> ▾
             <span class="acct-menu" id="dl-db-menu"></span>
@@ -14,7 +16,7 @@
         </span>
       </div>
       <div id="dl-table"></div>
-      <div class="note">表头可点击排序（Excel 式：点击升序，同列再点切降序，⇅ 所在列=当前排序列）· 列说明：<b>下载状态</b>=近 15 分钟有无写入（query_log 真源，绿=正在下载）· <b>速率</b>=近 15 分钟平均写入行/s，质量分快(&gt;100)/正常(1-100)/零星(&lt;1) · <b>VPN</b>=源的网络属性（海外源"需"开、国内源"禁"开——挂代理反而连不上），右上 KPI 有 VPN 通道总开关灯 · 断更判定=数据龄超预期周期 3 倍；元数据小表灰灯不算异常</div>
+      <div class="note">表头可点击排序（Excel 式：点击升序，同列再点切降序）· <b>下载情况组</b>（30s 刷新）：<b>下载状态</b>=近 15 分钟有无写入（query_log 真源，绿=正在下载）· <b>速率</b>=近 15 分钟平均写入行/s，质量分快(&gt;100)/正常(1-100)/零星(&lt;1) · <b>VPN</b>=源的网络属性（海外源"需"开、国内源"禁"开——挂代理反而连不上）· 断更判定=数据龄超预期周期 3 倍 · <b>库内资产组</b>（慢档体检）：<b>宽度</b>=表内 distinct 股票数 / 应有数（应有仅 A 股宇宙白名单表展示）· <b>深度</b>=实际时间范围（精确到日）· <b>完整度/缺口</b>=实际交易日 vs 交易日历基准（新闻等 7×24 表无此口径显示 —）· <b>存储层</b>=热（内存 Redis）/常规（ClickHouse）/冷（E 盘归档）三层冷热架构，冷层启用前全部显示常规 · 「…」=未体检，「—」=该表无此口径</div>
     </div>
   </section>
 

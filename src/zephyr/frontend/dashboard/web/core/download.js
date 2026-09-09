@@ -1,13 +1,19 @@
-/* ── 数据下载监管页 v2（Owner 2026-09-03：中文名/源/时间段/实时速率/质量/VPN 联动全上）──
- * 真源=GET /api/download-status：CH system.parts（新鲜度+时间段）+ query_log（近 15 分钟 INSERT 实时速率）+ tasks.yaml（源/调度映射）+ 源级 VPN 属性登记 */
+/* ── 数据监管页 v3（Owner 2026-09-10：数据总览并入本页一表——下载实况 30s + 库内资产慢档 10min/手动体检）──
+ * 真源=GET /api/download-status（CH system.parts+query_log+tasks.yaml，30s 轮询）
+ *     + GET /api/data-asset（列扫描聚合审计：宽度/深度/完整度/缺口/存储层，内存缓存 10min 慢档+手动"深度体检"） */
 var DL_ST = null;
 var DL_TIMER = null;
+var DL_ASSET = null;         /* 库内资产审计结果 {running,done,total,audited_at,tables:{"db.table":rec}} */
+var DL_AS_TIMER = null;
 var DL_DB = "全部库";
 var DL_ONLY_ISSUE = false;
 var DL_ORDER = { red: 0, yellow: 1, green: 2, gray: 3 };
 var DL_STATE = { downloading: ["g", "正在下载"], idle: ["g", "正常"], lagging: ["y", "滞后"], stalled: ["r", "疑似断更"] };
-/* Excel 式表头排序（Owner 2026-09-04）：点表头升序、同列再点切降序，来回切换；换列重置升序；箭头指示当前方向 */
+var DL_TIER_ZH = { hot: "热", warm: "常规", cold: "冷" };
+/* Excel 式表头排序（Owner 2026-09-04）：点表头升序、同列再点切降序，来回切换；换列重置升序；箭头指示当前方向
+ * 列分两组（2026-09-10 合并裁定）：下载情况（30s 刷新）| 库内资产（慢档体检）——未体检行排最后（9e15 哨兵） */
 var DL_SORT = { key: null, dir: 1 };
+function dlAssetOf(t) { return (DL_ASSET && DL_ASSET.tables && DL_ASSET.tables[t.db + "." + t.table]) || null; }
 var DL_COLS = {
   name:   { label: "数据（中文/表名）", w: 0,   str: 1, get: function (t) { return (t.name_zh || "\uFF3F" + t.table) + "\u0001" + t.table; } },
   state:  { label: "下载状态", w: 96,  num: 1, get: function (t) { return { downloading: 1, lagging: 2, stalled: 3, idle: 4 }[t.state] || 9; } },
@@ -15,6 +21,11 @@ var DL_COLS = {
   today:  { label: "今日新增", w: 84,  num: 1, get: function (t) { return t.today_rows || 0; } },
   next:   { label: "下次下载", w: 120, str: 1, get: function (t) { return t.next_dl || "\uFF5E"; } },
   period: { label: "数据时间段", w: 150, str: 1, get: function (t) { return t.latest || ""; } },
+  awidth: { label: "宽度 覆盖/应有", w: 110, num: 1, get: function (t) { var a = dlAssetOf(t); if (!a || a.width == null) return 9e15; return a.expected_width ? a.width / a.expected_width : a.width; } },
+  adepth: { label: "深度 时间范围", w: 168, str: 1, get: function (t) { var a = dlAssetOf(t); return a && a.dmin ? a.dmin + "~" + (a.dmax || "") : "\uFF5E"; } },
+  acompl: { label: "完整度", w: 74,  num: 1, get: function (t) { var a = dlAssetOf(t); return a && a.completeness != null ? a.completeness : 9e15; } },
+  agap:   { label: "缺口", w: 62,  num: 1, get: function (t) { var a = dlAssetOf(t); return a && a.gap_days != null ? a.gap_days : 9e15; } },
+  tier:   { label: "存储层", w: 60,  str: 1, get: function (t) { var a = dlAssetOf(t); return a ? (a.tier || "warm") : "\uFF5E"; } },
   source: { label: "数据源", w: 100, str: 1, get: function (t) { return t.source || ""; } },
   vpn:    { label: "VPN", w: 110, str: 1, get: function (t) { return t.vpn_need || "\uFF5E"; } },
   rows:   { label: "行数", w: 70,  num: 1, get: function (t) { return t.rows || 0; } },
@@ -66,6 +77,31 @@ function dlBoot() {
   });
   dlLoad();
   if (!DL_TIMER) DL_TIMER = setInterval(dlLoad, 30000);
+  /* 库内资产慢档（2026-09-10 合并裁定）：60s 拉缓存秒回（后端超龄 10min 自动重审）+ SWR 首屏 */
+  if (ZK.api) ZK.api.swrLoad('zk_asset_v1', function (st) {
+    DL_ASSET = st;
+    dlRender();
+  });
+  dlAssetLoad(false);
+  if (!DL_AS_TIMER) DL_AS_TIMER = setInterval(function () { dlAssetLoad(false); }, 60000);
+}
+
+function dlAssetLoad(kick) {
+  if (!ZK.api) return;
+  ZK.api.fetchDataAsset(kick).then(function (st) {
+    if (!st || !st.ok) return;
+    DL_ASSET = st;
+    ZK.api.swrSave('zk_asset_v1', st);   /* SWR：资产审计结果落缓存供刷新秒出 */
+    var b = document.getElementById('dl-asset-btn');
+    if (b) b.textContent = st.running ? '体检中 ' + (st.done || 0) + '/' + (st.total || '?') : '深度体检';
+    var ts = document.getElementById('dl-asset-ts');
+    if (ts) ts.textContent = st.audited_at ? '资产列上次体检 ' + st.audited_at.slice(5, 16) : '';
+    dlRender();
+  }).catch(function () {});
+}
+function dlAssetKick(el) {
+  el.textContent = '体检中…';
+  dlAssetLoad(true);
 }
 dlBoot();
 
@@ -127,6 +163,11 @@ function dlRender() {
       + '<td style="font-size:11px">' + dlTodayCell(t) + '</td>'
       + '<td style="font-size:11px">' + (t.next_dl || '<span class="dim">—</span>') + '</td>'
       + '<td style="font-size:11px">' + t.period + '</td>'
+      + '<td style="font-size:11px">' + dlAssetWidthCell(dlAssetOf(t)) + '</td>'
+      + '<td style="font-size:11px">' + dlAssetDepthCell(dlAssetOf(t)) + '</td>'
+      + '<td style="font-size:11px">' + dlAssetPctCell(dlAssetOf(t)) + '</td>'
+      + '<td style="font-size:11px">' + dlAssetGapCell(dlAssetOf(t)) + '</td>'
+      + '<td style="font-size:11px">' + dlAssetTierCell(dlAssetOf(t)) + '</td>'
       + '<td style="font-size:11px">' + t.source + '</td>'
       + '<td style="font-size:11px">' + vpn + '</td>'
       + '<td style="font-size:11px">' + (t.rows >= 1e8 ? (t.rows / 1e8).toFixed(1) + ' 亿' : t.rows >= 1e4 ? (t.rows / 1e4).toFixed(1) + ' 万' : t.rows.toLocaleString()) + '</td>'
@@ -157,6 +198,37 @@ function dlToggleIssue(el) {
   DL_ONLY_ISSUE = !DL_ONLY_ISSUE;
   el.classList.toggle('primary', DL_ONLY_ISSUE);
   dlRender();
+}
+
+/* ── 库内资产列渲染（2026-09-10 合并裁定：宽度/深度/完整度/缺口/存储层）──
+ * 未体检（DL_ASSET 为空/该表无记录）=「…」；体检过但该列无值（无 symbol 列/7×24 表无缺口口径/空表深度）=「—」 */
+function dlAssetWidthCell(a) {
+  if (!a) return '<span class="dim">…</span>';
+  if (a.width == null) return '<span class="dim">—</span>';
+  var pct = a.expected_width ? Math.round(a.width / a.expected_width * 1000) / 10 : null;
+  var col = pct == null ? 'var(--text)' : pct >= 99 ? 'var(--up)' : pct >= 90 ? 'var(--yellow)' : '#CA3F64';
+  return '<b style="color:' + col + '">' + dlFmtWan(a.width) + '</b>'
+    + (a.expected_width ? '<br><span class="dim" style="font-size:10px">/ ' + dlFmtWan(a.expected_width) + ' · ' + pct + '%</span>' : '');
+}
+function dlAssetDepthCell(a) {
+  if (!a) return '<span class="dim">…</span>';
+  return a.dmin ? a.dmin + ' ~ ' + (a.dmax || '?') : '<span class="dim">—</span>';
+}
+function dlAssetPctCell(a) {
+  if (!a) return '<span class="dim">…</span>';
+  if (a.completeness == null) return '<span class="dim">—</span>';
+  var v = a.completeness;
+  var col = v >= 99 ? 'var(--up)' : v >= 90 ? 'var(--yellow)' : '#CA3F64';
+  return '<b style="color:' + col + '">' + v + '%</b>';
+}
+function dlAssetGapCell(a) {
+  if (!a) return '<span class="dim">…</span>';
+  if (a.gap_days == null) return '<span class="dim">—</span>';
+  return a.gap_days > 0 ? '<b style="color:#CA3F64">' + a.gap_days + ' 天</b>' : '<span class="up">0</span>';
+}
+function dlAssetTierCell(a) {
+  if (!a) return '<span class="dim">…</span>';
+  return '<span class="dim">' + (DL_TIER_ZH[a.tier] || a.tier || '常规') + '</span>';
 }
 function dlPickDb(d, e) {
   if (e && e.stopPropagation) e.stopPropagation();

@@ -1517,6 +1517,209 @@ def download_status() -> dict[str, Any]:
             "generated_at": datetime.now().isoformat(" ", "seconds")}
 
 
+# ── 数据总览真源（Owner 2026-09-10：库内资产视角并入下载监管一表——宽度/深度/完整度/缺口/存储层）──
+# 真源：列结构=system.columns；宽度/深度=每表一次列扫描聚合（uniq + min/max + groupUniqArray 交易日集合）；
+#       缺口/完整度基准=c0_meta.trade_calendar；应有宽度=c0_meta.stock_list 最新清单（白名单表才展示，防误报不完整）；
+#       存储层=三层冷热架构（docs/03_modules/_cross_layer/database/blueprint.md：热 Redis/常规 CH/冷 E 盘）。
+# 重查询与 30s 下载监管轮询隔离：独立 Client + 后台线程；结果存内存缓存（10 分钟慢档自动重审 + 手动"深度体检"）。
+_ASSET_DBS = ("c0_meta", "c1_market", "c3_fundamental")
+_ASSET_TTL_SEC = 600            # 慢档自动重审周期（Owner 裁定：资产列 10 分钟级，下载列仍 30s）
+_ASSET_HUGE_ROWS = 200_000_000  # 行数超阈值用 uniq 近似（亿级表 uniqExact 拖死审计；仪表盘容忍 ~1% 误差）
+_ASSET_ASHARE_UNIVERSE = {      # "应有宽度=股票全历史清单"白名单（宇宙口径=全 A 含退市的表才展示应有，子宇宙表列入必误红）
+    "kline_daily", "kline_daily_hfq", "kline_weekly", "kline_weekly_hfq", "kline_monthly",
+    "kline_monthly_hfq", "stk_limit", "technical_indicator", "stock_indicator", "daily_valuation",
+}
+# 日期列候选（按优先级命中第一个；真实 schema 2026-09-10 盘点：trade_date 89 表主导，
+# 日历真身在 c1_market.trade_calendar 且列=cal_date，新闻=publish_time，情绪窗=window_date，财务=announce_date）
+_ASSET_DATE_CANDIDATES = ("trade_date", "date", "cal_date", "publish_time", "window_ts",
+                          "window_date", "announce_date", "ex_date", "report_date", "timestamp",
+                          "snapshot_time", "list_date")
+_ASSET_CAL_SKIP = ("us_", "global", "futures", "hog", "a50", "weather", "macro", "edb")
+# ↑ 交易日历不跟随 A 股的表（美股/全球/期货/生猪现货/A50/天气/宏观）——按 A 股日历算完整度必出伪缺口
+_ASSET_TIER_OVERRIDES: dict[str, str] = {}   # 表名→tier；冷层启用迁表后在此登记（对齐 storage_tiering Tier；中文映射在前端）
+_asset_state: dict[str, Any] = {"running": False, "done": 0, "total": 0, "audited_at": "", "ts": 0.0,
+                                "error": "", "tables": {}}
+_asset_lock = threading.Lock()
+_asset_thread: threading.Thread | None = None
+
+
+def _asset_audit_client() -> Client:
+    """审计专用 Client（独立连接，不与 _ch_exec 全局锁争用——审计查询秒级~分钟级，不能饿死 30s 轮询端点）。"""
+    cfg = load_ch_config()
+    return Client(
+        host=cfg["host"], port=int(cfg.get("port", 9000)),
+        user=cfg.get("reader_user") or cfg.get("user", "default"),
+        password=cfg.get("reader_password") or cfg.get("password", ""),
+        database=cfg.get("database", "c1_market"),
+        connect_timeout=3, send_receive_timeout=180,
+    )
+
+
+def _asset_run_audit() -> None:
+    """库内资产审计（后台线程）：列结构→每表一次列扫描聚合→交易日历对齐→内存缓存渐进更新。
+
+    口径（Owner 2026-09-10 裁定）：
+    - 宽度=表内 distinct symbol（应有=股票全历史清单，仅全宇宙白名单表展示应有数）
+    - 深度=min~max 日期列实际值（非分区粒度，精确到日）
+    - 完整度/缺口=实际出现交易日 ∩ trade_calendar 在 [min,max] 区间的基准（占比 ≥90% 才按交易日口径算，
+      新闻等 7×24 表不算缺口防误报）
+    - 空表不跑重查询（width=0，深度空）
+    """
+    cli = _asset_audit_client()
+    cols = cli.execute(
+        "SELECT database, table, name, type FROM system.columns "
+        "WHERE database IN ('c0_meta','c1_market','c3_fundamental')")
+    tmap: dict[tuple[str, str], dict[str, Any]] = {}
+    for d, t, name, ty in cols:
+        e = tmap.setdefault((str(d), str(t)), {})
+        nl, tl = str(name).lower(), str(ty)
+        if nl == "symbol" and "symbol_col" not in e:
+            e["symbol_col"] = str(name)
+        if nl in _ASSET_DATE_CANDIDATES and ("Date" in tl or "String" in tl):
+            pri = _ASSET_DATE_CANDIDATES.index(nl)
+            if "date_pri" not in e or pri < e["date_pri"]:
+                e["date_col"], e["date_ty"], e["date_pri"] = str(name), tl, pri
+    sizes: dict[tuple[str, str], int] = {}
+    for d, t, n in cli.execute(
+            "SELECT database, table, sum(rows) FROM system.parts WHERE active "
+            "AND database IN ('c0_meta','c1_market','c3_fundamental') GROUP BY database, table"):
+        sizes[(str(d), str(t))] = int(n or 0)
+
+    # 交易日历基准（缺口真源）：主=c1_market.trade_calendar（A股）；港=c1_market.hk_trade_calendar——
+    # 港股族假期与 A 股不同，按 A 股日历算必出伪缺口（hk_connect_flow 实证 110 天伪缺口）
+    def _load_cal(dbtbl: str) -> set[str]:
+        tcols = {str(n) for d, t, n, _ in cols if d == "c1_market" and t == dbtbl}
+        if "cal_date" not in tcols:
+            return set()
+        where = "WHERE is_open = 1" if "is_open" in tcols else ""
+        try:
+            return {str(r[0])[:10] for r in cli.execute(
+                f"SELECT DISTINCT cal_date FROM c1_market.{dbtbl} {where}")}
+        except Exception:  # noqa: BLE001 — 日历缺失降级：无缺口/完整度（宽度/深度不受影响）
+            return set()
+
+    cal_a = _load_cal("trade_calendar")
+    cal_hk = _load_cal("hk_trade_calendar")
+
+    # 应有宽度真源：股票全历史清单（含退市，c1_market.stock_list 是 PIT 清单无 trade_date——
+    # list_status 全空不可用，全历史 uniq 与 kline_daily 含退市口径对齐：5906/5921≈99.7% 实证）
+    expected_w: int | None = None
+    try:
+        sl_cols = {str(n) for d, t, n, _ in cols if d == "c1_market" and t == "stock_list"}
+        if "symbol" in sl_cols:
+            expected_w = int(cli.execute("SELECT uniqExact(symbol) FROM c1_market.stock_list")[0][0])
+    except Exception:  # noqa: BLE001 — 应有宇宙取不到降级：白名单表也不展示应有数
+        expected_w = None
+
+    keys = sorted(tmap)
+    with _asset_lock:
+        _asset_state["total"] = len(keys)
+        _asset_state["done"] = 0
+        _asset_state["running"] = True
+        _asset_state["error"] = ""
+    tables_out: dict[str, dict[str, Any]] = {}
+    for db, tbl in keys:
+        e = tmap[(db, tbl)]
+        rec: dict[str, Any] = {"width": None, "expected_width": None, "dmin": "", "dmax": "",
+                               "days": None, "completeness": None, "gap_days": None,
+                               "tier": _ASSET_TIER_OVERRIDES.get(tbl, "warm"), "err": ""}
+        dc, sc, dty = e.get("date_col"), e.get("symbol_col"), e.get("date_ty", "")
+        tbl_low = tbl.lower()
+        if any(s in tbl_low for s in _ASSET_CAL_SKIP):
+            tbl_cal: set[str] = set()          # 日历不跟 A 股的表：不算缺口口径
+        elif "hk" in tbl_low:
+            # 陆港通资金流交易日=两地共同开市日（内地假期北向关闭，纯港股日历仍伪缺口——实证 137 天）
+            tbl_cal = (cal_a & cal_hk) if "connect" in tbl_low else cal_hk
+        else:
+            tbl_cal = cal_a
+        if dc or sc:
+            n = sizes.get((db, tbl), 0)
+            if n == 0:
+                rec["width"] = 0 if sc else None   # 空表免重查询
+            else:
+                u = "uniq" if n > _ASSET_HUGE_ROWS else "uniqExact"
+                sels: list[str] = []
+                if sc:
+                    sels.append(f"{u}({sc})")
+                if dc:
+                    dstr = "String" in dty
+                    # 1970-01-01=CH Date 零值脏行（list_date/announce_date 族实证），排除防深度伪起点
+                    zero = "'1970-01-01'" if dstr else "toDate('1970-01-01')"
+                    cond = f"{dc} != {zero}"
+                    dfn = f"substring({dc}, 1, 10)" if dstr else f"toDate({dc})"
+                    sels += [f"minIf({dc}, {cond})", f"maxIf({dc}, {cond})", f"groupUniqArrayIf({dfn}, {cond})"]
+                try:
+                    row = cli.execute(f"SELECT {', '.join(sels)} FROM {db}.{tbl}")[0]
+                    i = 0
+                    if sc:
+                        rec["width"] = int(row[i] or 0)
+                        i += 1
+                    if dc:
+                        rec["dmin"] = str(row[i])[:10] if row[i] is not None else ""     # Nullable 列全 NULL 兜底
+                        rec["dmax"] = str(row[i + 1])[:10] if row[i + 1] is not None else ""
+                        dates = {str(x)[:10] for x in (row[i + 2] or [])}
+                        rec["days"] = len(dates)
+                        if not dates:   # 全零值日期表（etf_list/index_list 实证）：CH 聚合默认值 1970 兜底清空
+                            rec["dmin"] = rec["dmax"] = ""
+                        # 完整度/缺口仅日频族（trade_date/date/cal_date）适用——事件型列（announce_date/
+                        # list_date/publish_time…）天然稀疏，按交易日全覆盖算必出伪缺口
+                        span = {x for x in tbl_cal if rec["dmin"] <= x <= rec["dmax"]}
+                        if span and dates and str(dc).lower() in ("trade_date", "date", "cal_date"):
+                            inter = dates & span
+                            if len(inter) / len(dates) >= 0.9:   # 排他防伪：7×24 混合表不算缺口
+                                rec["completeness"] = round(len(inter) / len(span) * 100, 1)
+                                rec["gap_days"] = max(0, len(span) - len(inter))
+                except Exception:  # noqa: BLE001 — 单表审计失败降级"未测"，不炸全局
+                    rec["err"] = "查询失败"
+        if tbl in _ASSET_ASHARE_UNIVERSE and expected_w:
+            rec["expected_width"] = expected_w
+        tables_out[f"{db}.{tbl}"] = rec
+        with _asset_lock:   # 渐进更新：前端 60s 轮询可见体检进度（done/total）
+            _asset_state["done"] = len(tables_out)
+            _asset_state["tables"] = dict(tables_out)
+    with _asset_lock:
+        _asset_state["running"] = False
+        _asset_state["audited_at"] = datetime.now().isoformat(" ", "seconds")
+        _asset_state["ts"] = time.time()
+
+
+def _asset_maybe_start(force: bool) -> dict[str, Any]:
+    """审计启动器：手动体检（force）或缓存超龄（10 分钟慢档）后台重审；进行中直接返回现状。"""
+    global _asset_thread
+    with _asset_lock:
+        st = {k: (dict(v) if k == "tables" else v) for k, v in _asset_state.items()}
+    if _asset_thread is not None and _asset_thread.is_alive():
+        return st
+    stale = (not st["ts"]) or (time.time() - st["ts"] > _ASSET_TTL_SEC)
+    if not (force or stale):
+        return st
+
+    def _run() -> None:
+        try:
+            _asset_run_audit()
+        except Exception as e:  # noqa: BLE001 — 审计线程兜底：失败标记非运行中，端点不炸
+            logger.warning("data-asset audit failed: %s", e)
+            with _asset_lock:
+                _asset_state["running"] = False
+                _asset_state["error"] = str(e)[:200]
+
+    with _asset_lock:
+        if _asset_thread is not None and _asset_thread.is_alive():
+            return st
+        _asset_thread = threading.Thread(target=_run, daemon=True, name="data-asset-audit")
+        _asset_thread.start()
+    return st
+
+
+@app.get("/api/data-asset")
+def data_asset(refresh: int = 0) -> dict[str, Any]:
+    """库内资产总览（与下载监管同表合并展示）：宽度/深度/完整度/缺口/存储层。
+    内存缓存秒回；超龄（>10 分钟）或 refresh=1 时后台重审（独立 Client 线程，不饿死 30s 轮询端点）。"""
+    st = _asset_maybe_start(bool(refresh))
+    st["ok"] = True
+    return st
+
+
 # ── 交易通道监控（Owner 2026-09-04：HTTP 桥独立监护页——量化系统主动脉）──────
 # 真源：HTTP 桥 GET /health（EXEC v16.4 沙箱内 18901）+ 实测下单延迟（HTTP vs miniqmt 探针）
 # + 桥文件族活性（orders/ack/quote/Stock CSV）+ 柜台挂单/成交 CSV 回报

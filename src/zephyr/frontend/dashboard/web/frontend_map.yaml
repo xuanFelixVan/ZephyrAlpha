@@ -547,22 +547,6 @@ features:
   backend_ref: none:待拆件盘点（auto 扫描未发现 /api/ 调用）
   status: active
   auto_scanned: true
-- id: F-DATAINFO-AUTO-01
-  name: 八表资产地图
-  page: datainfo
-  module_id: datainfo-host
-  file: core/datainfo.js
-  backend_ref: none:待拆件盘点（auto 扫描未发现 /api/ 调用）
-  status: active
-  auto_scanned: true
-- id: F-DATAINFO-AUTO-02
-  name: 规划深页
-  page: datainfo
-  module_id: datainfo-host
-  file: core/datainfo.js
-  backend_ref: none:待拆件盘点（auto 扫描未发现 /api/ 调用）
-  status: active
-  auto_scanned: true
 - id: F-DATASRC-AUTO-01
   name: 源清单 检查）· scheduler 启动时跑一轮全源探针
   page: datasrc
