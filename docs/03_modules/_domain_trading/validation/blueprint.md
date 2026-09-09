@@ -5,8 +5,8 @@ title: TDM 节点验证 runner（validation）
 owner: ZephyrAlpha-Owner
 language: zh
 status: active
-version: "1.0.1"
-date: 2026-09-09
+version: "1.1.0"
+date: 2026-09-10
 topic: tdm_validation_runner
 scope: module
 module_id: MOD-TDMVAL-001
@@ -24,14 +24,15 @@ responsibility_domain:
 
 | 项 | 内容 |
 |---|---|
-| 做 | L4 执行类节点验证（首批 14 节点，排除币圈镜像 TDM-C-*）；exec_quality 滑点/成交指标；holdout 窗口排除（最近 12 个月）；两土规（触发<30 不下结论 / 样本外衰减≥50% 判存疑）；lag=1 滞后重算开关；台账写入 |
-| 不做 | 反事实对照（P2-3 关风控回放未建，exit_counterfactual 保持 pending）；衰减巡检调度（P2-1 独立落盘）；结论反哺地图 YAML（验证态只进台账，地图保持设计真源纯净） |
+| 做 | 验证批入口 `run_validation(batch=...)`：L4 执行类首批 14 节点（exec_quality 滑点/成交指标，排除币圈镜像 TDM-C-*）+ X 流第二批 18 节点（`batch="XFLOW"`，flow==exit_flow，exit_counterfactual 避损口径，Owner 2026-09-10 X 流验证批指令 T3）；holdout 窗口排除（最近 12 个月）；两套土规（触发<30 不下结论 / 样本外衰减≥50% 判存疑）；lag=1 滞后重算开关；台账写入 |
+| 不做 | 消融回放实弹运行（对照数据=T2 信号消融对照器，受协议备忘录 §12「参数定稿前不跑回测」约束，放行前对照缺失按 pending 降级）；衰减巡检调度（P2-1 独立落盘=验证批尾随事件）；结论反哺地图 YAML（验证态只进台账，地图保持设计真源纯净） |
 
 ## 2. 数据流
 
 ```
-config/trading_decision_map.yaml（L4 节点清单）
-data/backtest_artifacts/bt-*.json（成交流水 trade_log）
+config/trading_decision_map.yaml（L4 节点清单 / flow==exit_flow X 流 18 节点）
+data/backtest_artifacts/bt-*.json（成交流水 trade_log；T1 起含 decision_price/order_type）
+src/zephyr/trading/validation/ablation.py（T2 信号消融对照器，exit_counterfactual 对照数据源——回放受 §12 约束）
 docs/01_policies_and_standards/_registry/catalogs/validation_method_registry.yaml（方法推导+土规参数）
   → runner.run() → c1_backtest.node_verdict（schemas/categories/backtest_node_verdict.py DDL 真源）
   → /api/tdm/validation（只读端点）→ tdm 抽屉「验证档案」区
@@ -43,6 +44,7 @@ docs/01_policies_and_standards/_registry/catalogs/validation_method_registry.yam
 2. **归因粒度限制**：trade_log 无 order_type/节点归因字段，v1 以执行流水全量为统计对象写每节点行；notes 披露该限制。子环节级归因待执行报告数据源扩展。
 3. **滑点基准**：决策价不存在于流水 → 用同日 kline_daily 成交额/成交量 VWAP 代理；lag_recheck=True 时基准右移 1 个交易日（前视诊断，PB-16）。
 4. **事件驱动**：runner 为手动/上游事件触发的无状态批函数（B 类），不做常驻调度；P2-1 衰减巡检=验证批写台账成功后的尾随事件（decay_check=True，2026-09-10 裁定落地），不挂 cron 不动 Human-Gated 路由表。
+5. **第二批=X 流风控批**（2026-09-10 Owner 指令 T3）：`load_xflow_nodes` 按 flow==exit_flow 选 18 节点；`compute_exit_counterfactual_metrics`/`apply_exit_soil_rules` 按方法学 exit_counterfactual 口径（触发/不触发损失差；对照=T2 消融器差额序列，缺失时 avoided_amount=None → pending 如实降级）；触发计数 v1 以卖出流水代理（全量口径+notes 披露，同裁定 2 先例）；R1-03（护盘加仓白名单）动作方向为买入，消融放行时需单独核对方向。本批流水全落 holdout 保密窗口（>2025-09-09），verdict 全部 pending+insufficient_samples 如实披露（纪律不是欠账，同裁定 1）。
 
 ## 4. 接口
 
@@ -54,8 +56,8 @@ report = run_validation()               # 写台账
 
 ## 5. 验收
 
-- tests/trading/test_validation_runner.py：方法推导 / holdout 切分 / 土规 / lag 开关 / dry-run 零写入
-- 实弹：`run_validation()` 后 `SELECT count() FROM c1_backtest.node_verdict` 出现 14 行 L4 verdict；`/api/tdm/validation?node_id=TDM-E-L4-03` 返回记录
+- tests/trading/test_validation_runner.py：方法推导 / holdout 切分 / 两套土规 / lag 开关 / dry-run 零写入 / X 流 18 节点与 exit_counterfactual（2026-09-10 第二批 +7 用例，全绿）
+- 实弹：`run_validation()` 后 `SELECT count() FROM c1_backtest.node_verdict` 出现 14 行 L4 verdict；`/api/tdm/validation?node_id=TDM-E-L4-03` 返回记录；`run_validation(batch="XFLOW")` 追加 18 行 X 流 verdict（holdout 锁窗下全 pending）
 
 ### §0.6 五图对齐视图
 

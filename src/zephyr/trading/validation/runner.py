@@ -13,7 +13,8 @@
 # [ERROR_CONTRACT] ValidationError
 # [TESTS] tests/trading/test_validation_runner.py
 # [TTL] permanent
-"""验证 runner v1——L4 执行类首批 14 节点（PB-12 排序第一位：离钱近先验）。
+"""验证 runner——节点验证批入口（PB-12 排序：第一批=L4 执行类 14 节点 exec_quality；
+第二批=X 流 18 节点 exit_counterfactual，Owner 2026-09-10 X 流验证批指令 T3）。
 
 数据源与真源:
     节点清单   config/trading_decision_map.yaml（layer==L4，排除币圈镜像 TDM-C-*）
@@ -27,9 +28,11 @@
     土规（PB-13 降级）: 触发<30 → verdict=pending + significance=insufficient_samples；
     样本外衰减≥50%（对比同方法首验指标）→ significance=oos_decay_suspect。
 
-已知限制（v1 如实披露，见蓝图 §3）:
-    - trade_log 无节点归因字段——exec 指标以执行流水全量为统计对象。
-    - 决策价不存在——滑点=成交价 vs 同日 VWAP 代理（lag_recheck=True 时基准右移 1 交易日）。
+已知限制（如实披露，见蓝图 §3）:
+    - trade_log 无节点归因字段——exec/exit 指标均以流水全量为统计对象（exit 触发=卖出流水代理）。
+    - 决策价自 T1（commit ebc98ac1）起入流水；exec 滑点 v1 仍用 VWAP 代理（真决策价口径变更需另批定稿）。
+    - exit_counterfactual 对照数据=信号消融对照器（晨报裁定②随本批施工）；回放受协议备忘录
+      §12 约束未放行前对照缺失 → 按方法学保持 pending，不造假。
 """
 
 from __future__ import annotations
@@ -113,6 +116,25 @@ def load_exec_nodes(map_path: Path = _MAP_PATH) -> list[dict[str, Any]]:
     return nodes
 
 
+def load_xflow_nodes(map_path: Path = _MAP_PATH) -> list[dict[str, Any]]:
+    """X 流离场/风控节点清单（flow==exit_flow，第二批；含 S1/S2/R1 枢纽与子节点）。
+
+    Raises:
+        ValidationError: 地图无 exit_flow 节点（空批不可静默通过）。
+    """
+    import yaml
+
+    raw = yaml.safe_load(map_path.read_text(encoding="utf-8"))
+    nodes = [
+        {"node_id": n["node_id"], "name_zh": n.get("name_zh", ""), "layer": n.get("layer"), "flow": n.get("flow")}
+        for n in raw.get("nodes", [])
+        if n.get("flow") == "exit_flow"
+    ]
+    if not nodes:
+        raise ValidationError(f"地图无 X 流（exit_flow）节点（{map_path}）——风控验证批不可为空")
+    return nodes
+
+
 def derive_method(node: dict[str, Any]) -> str:
     """layer+flow+形态推导验证方法（validation_method_registry.derivation_rules 的代码形态）。
 
@@ -152,6 +174,7 @@ def load_fills(artifacts_dir: Path = _ARTIFACTS_DIR) -> list[dict[str, Any]]:
                 "price": t.get("price"),
                 "quantity": t.get("quantity"),
                 "commission": t.get("commission"),
+                "decision_price": t.get("decision_price"),  # T1（ebc98ac1）起流水携带；v1 指标未消费，前向就绪
             })
     return fills
 
@@ -243,6 +266,60 @@ def apply_soil_rules(
     return "ok", "noise"
 
 
+# ── 离场反事实指标（exit_counterfactual，第二批 X 流）────────────────────
+
+def compute_exit_counterfactual_metrics(
+    fills: list[dict[str, Any]],
+    ablation_diff: list[float] | None = None,
+) -> dict[str, Any]:
+    """离场反事实指标（validation_method_registry.yaml exit_counterfactual 口径）。
+
+    统计口径=触发/不触发两组后续 N 日损失差；对照数据=T2 信号消融对照器的双净值
+    差额序列（全量净值-无风控净值，>0=风控救回金额）。对照未提供时如实降级：
+    avoided_amount=None（方法学 notes「对照未建保持 pending」的代码形态，不造假）。
+
+    触发计数 v1 口径：流水无节点归因，用在验窗口内卖出流水作 X 流触发代理
+    （全量口径+notes 披露，与一期裁定 4 同例）。
+
+    Args:
+        fills: 在验窗口内流水（partition_by_holdout 的 inside）。
+        ablation_diff: 消融差额序列（T2 ablation 双净值差，逐窗口/逐时点）。
+    """
+    exits = [f for f in fills if f.get("side") == "sell"]
+    diffs = [d for d in (ablation_diff or []) if d is not None]
+    return {
+        "triggers": len(exits),
+        "slip_bp_mean": None,   # 非滑点口径；键保留 None 复用行装配
+        "fill_rate": None,
+        "avoided_amount": round(sum(diffs), 2) if diffs else None,  # X 流救回金额（对照就绪才有值）
+        "ablation_samples": len(diffs),
+    }
+
+
+def apply_exit_soil_rules(
+    metrics: dict[str, Any], cfg: ValidationConfig, first_metrics: dict[str, Any] | None = None
+) -> tuple[str, str]:
+    """exit_counterfactual 土规 → (significance, verdict)。
+
+    判定链（对齐 verdict_mapping「触发组损失显著更小→valid；差异不显著→pending；
+    触发组反而更差→noise」）：样本量闸门 → 对照就绪闸门 → 对照样本量闸门 →
+    衰减闸门（避损额衰减≥50% 判存疑）→ 避损方向判定。
+    """
+    if metrics["triggers"] < cfg.min_triggers:
+        return "insufficient_samples", "pending"
+    if metrics.get("avoided_amount") is None:
+        return "", "pending"   # 对照数据未建（消融器未放行/未就绪）——保持 pending
+    if metrics.get("ablation_samples", 0) < cfg.min_triggers:
+        return "insufficient_samples", "pending"   # 对照样本不足，显著性无从谈起
+    if first_metrics and first_metrics.get("avoided_amount") is not None:
+        first, now = first_metrics["avoided_amount"], metrics["avoided_amount"]
+        if first > 0 and (first - now) / first >= cfg.oos_decay_threshold:
+            return "oos_decay_suspect", "pending"
+    if metrics["avoided_amount"] <= 0:
+        return "ok", "noise"   # 风控救回≤0=触发组反而更差
+    return "ok", "valid"
+
+
 # ── 批入口 ───────────────────────────────────────────────────────────────
 
 def _default_writer(table: str, columns: str, tsv: bytes) -> bool:
@@ -257,9 +334,14 @@ def run_validation(
     dry_run: bool = False,
     writer: Callable[[str, str, bytes], bool] | None = None,
     decay_check: bool = True,
+    batch: str = "L4",
+    ablation_diff: list[float] | None = None,
 ) -> ValidationReport:
-    """验证批入口：L4 首批节点逐个出 verdict 行并写台账。
+    """验证批入口：按 batch 选节点清单逐个出 verdict 行并写台账。
 
+    batch="L4"（默认）=第一批执行类 14 节点 exec_quality（一期行为不变）；
+    batch="XFLOW"=第二批 X 流 18 节点 exit_counterfactual（ablation_diff=消融差额
+    序列，缺省时对照缺失如实降级 pending）。
     dry_run=True 不写库（验收预演）；writer 参数供测试注入收集器。
     decay_check=True（默认）：台账写入成功后顺带跑衰减巡检（裁定 2026-09-10：衰减判定
     依赖新验证行落地才有意义——巡检=验证批的尾随事件，不挂 cron 不占调度器，真正事件驱动）。
@@ -269,7 +351,12 @@ def run_validation(
     as_of = cfg.as_of or datetime.now()
     cutoff = holdout_cutoff(as_of, cfg.holdout_months)
 
-    nodes = load_exec_nodes(map_path)
+    if batch == "L4":
+        nodes = load_exec_nodes(map_path)
+    elif batch == "XFLOW":
+        nodes = load_xflow_nodes(map_path)
+    else:
+        raise ValidationError(f"未知验证批: {batch}（合法值: L4 | XFLOW）")
     fills = load_fills(artifacts_dir)
     inside, locked = partition_by_holdout(fills, cutoff)
 
@@ -284,8 +371,12 @@ def run_validation(
         holdout_cutoff=cutoff.strftime("%Y-%m-%d"),
     )
 
-    metrics = compute_exec_metrics(inside)   # v1：执行流水全量（归因粒度限制，蓝图 §3）
-    significance, verdict = apply_soil_rules(metrics, cfg)
+    if batch == "XFLOW":
+        metrics = compute_exit_counterfactual_metrics(inside, ablation_diff=ablation_diff)
+        significance, verdict = apply_exit_soil_rules(metrics, cfg)
+    else:
+        metrics = compute_exec_metrics(inside)   # v1：执行流水全量（归因粒度限制，蓝图 §3）
+        significance, verdict = apply_soil_rules(metrics, cfg)
     verdict_at = as_of.strftime("%Y-%m-%d %H:%M:%S")
 
     for n in nodes:
@@ -295,11 +386,25 @@ def run_validation(
                 f"在验窗口无成交流水：现有 {len(locked)} 笔全部落 holdout 保密窗口"
                 f"（>{report.holdout_cutoff}），按 PB-08 定稿前不可考；窗口前移后重跑出结论"
             )
-        elif inside:
+        elif inside and batch == "L4":
             notes_parts.append(f"滑点均值 {metrics['slip_bp_mean']} bp（VWAP 代理基准，lag_recheck={cfg.lag_recheck}）")
-        notes_parts.append("归因粒度限制：流水无节点字段，v1 以执行流水全量统计（蓝图 §3）")
-        if metrics["fill_rate"] is None:
-            notes_parts.append("成交率不可得（流水只含成交记录）")
+        elif inside:
+            notes_parts.append(f"离场触发代理计数 {metrics['triggers']}（卖出流水全量口径）")
+        if batch == "L4":
+            notes_parts.append("归因粒度限制：流水无节点字段，v1 以执行流水全量统计（蓝图 §3）")
+            if metrics["fill_rate"] is None:
+                notes_parts.append("成交率不可得（流水只含成交记录）")
+        else:
+            notes_parts.append("归因粒度限制：流水无节点字段，离场触发以卖出流水代理（蓝图 §3）")
+            if metrics.get("avoided_amount") is None:
+                notes_parts.append(
+                    "exit_counterfactual 对照数据未就绪（信号消融对照器随本批施工；"
+                    "消融回放受协议备忘录 §12 约束，参数定稿放行前不出真结论）——按方法学保持 pending"
+                )
+            else:
+                notes_parts.append(
+                    f"消融避损 {metrics['avoided_amount']} 元（对照序列 {metrics['ablation_samples']} 样本）"
+                )
         row = {
             "run_id": run_id,
             "snapshot_commit": report.snapshot_commit,
@@ -356,12 +461,15 @@ __all__ = [
     "ValidationConfig",
     "ValidationError",
     "ValidationReport",
+    "apply_exit_soil_rules",
     "apply_soil_rules",
     "compute_exec_metrics",
+    "compute_exit_counterfactual_metrics",
     "derive_method",
     "holdout_cutoff",
     "load_exec_nodes",
     "load_fills",
+    "load_xflow_nodes",
     "partition_by_holdout",
     "run_validation",
 ]

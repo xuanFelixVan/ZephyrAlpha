@@ -15,11 +15,15 @@ import pytest
 
 from zephyr.trading.validation.runner import (
     ValidationConfig,
+    ValidationError,
+    apply_exit_soil_rules,
     apply_soil_rules,
     compute_exec_metrics,
+    compute_exit_counterfactual_metrics,
     derive_method,
     holdout_cutoff,
     load_exec_nodes,
+    load_xflow_nodes,
     partition_by_holdout,
     run_validation,
 )
@@ -227,3 +231,116 @@ class TestDecayWatch:
         assert line[8] == "oos_decay_suspect"
         assert line[5] == "portfolio_attribution"   # 沿用节点原验证方法
         assert "衰减" in line[11]
+
+
+# ── 第二批：X 流（exit_counterfactual，Owner 2026-09-10 指令 T3）──────────
+
+def test_load_xflow_nodes_is_18():
+    nodes = load_xflow_nodes()
+    assert len(nodes) == 18, f"X 流应为 18（S1/S2/R1 枢纽+子节点）: {len(nodes)}"
+    assert all(n["flow"] == "exit_flow" for n in nodes)
+    ids = {n["node_id"] for n in nodes}
+    assert {"TDM-X-S1", "TDM-X-S2", "TDM-X-R1"} <= ids
+    assert "TDM-X-R1-03" in ids   # 护盘加仓白名单（名义 exit_flow，消融方向注意）
+
+
+def test_derive_method_xflow_all_exit_counterfactual():
+    for n in load_xflow_nodes():
+        assert derive_method(n) == "exit_counterfactual", n["node_id"]
+    # 回归：L4 优先级最高不受影响
+    assert derive_method({"layer": "L4", "flow": "exit_flow"}) == "exec_quality"
+
+
+def test_exit_metrics_no_ablation_degrades_pending():
+    """对照未建时诚实降级：triggers=卖出流水数、avoided_amount=None → pending。"""
+    fills = [{"side": "sell", "price": 10.0} for _ in range(50)]
+    m = compute_exit_counterfactual_metrics(fills, ablation_diff=None)
+    assert m["triggers"] == 50 and m["avoided_amount"] is None
+    sig, verdict = apply_exit_soil_rules(m, ValidationConfig())
+    assert sig == "" and verdict == "pending"   # 越过样本量闸门后，对照缺失=保持 pending（不造假）
+
+
+def test_exit_metrics_with_ablation_diff_and_rules():
+    """双净值差输入：避损额口径 + 土规映射 valid/noise/样本不足。"""
+    fills = [{"side": "sell"}] * 50
+    m = compute_exit_counterfactual_metrics(fills, ablation_diff=[100.0, -20.0, 30.0])
+    assert m["avoided_amount"] == 110.0 and m["ablation_samples"] == 3
+    # 对照样本 <30 → insufficient_samples（触发数够但对照序列不够）
+    assert apply_exit_soil_rules(m, ValidationConfig()) == ("insufficient_samples", "pending")
+    m2 = compute_exit_counterfactual_metrics(fills, ablation_diff=[1.0] * 30)
+    assert apply_exit_soil_rules(m2, ValidationConfig()) == ("ok", "valid")      # 避损>0
+    m3 = compute_exit_counterfactual_metrics(fills, ablation_diff=[-1.0] * 30)
+    assert apply_exit_soil_rules(m3, ValidationConfig()) == ("ok", "noise")      # 风控反而更差
+    # 触发<30 → insufficient_samples（样本量闸门最前）
+    m4 = compute_exit_counterfactual_metrics([{"side": "sell"}] * 10, ablation_diff=[1.0] * 30)
+    assert apply_exit_soil_rules(m4, ValidationConfig()) == ("insufficient_samples", "pending")
+    # 衰减闸门：首验避损 100 → 现值 40（衰减 60% ≥ 50%）
+    m5 = compute_exit_counterfactual_metrics(fills, ablation_diff=[1.0] * 30)
+    m5["avoided_amount"] = 40.0
+    first = {"avoided_amount": 100.0}
+    assert apply_exit_soil_rules(m5, ValidationConfig(), first_metrics=first) == ("oos_decay_suspect", "pending")
+
+
+def test_run_validation_xflow_dry_run_no_write(tmp_path: Path):
+    artifacts = tmp_path / "art"
+    artifacts.mkdir()
+    (artifacts / "bt-x1.json").write_text(json.dumps({
+        "run_id": "bt-x1", "strategy_id": "test",
+        "trade_log": [{"timestamp": "2026-06-01", "symbol": "A", "side": "sell", "price": 10.0}],
+    }), encoding="utf-8")
+
+    def _must_not_write(table, columns, tsv):
+        raise AssertionError("dry-run 禁止写库")
+
+    report = run_validation(
+        cfg=ValidationConfig(as_of=AS_OF),
+        artifacts_dir=artifacts,
+        dry_run=True,
+        writer=_must_not_write,
+        batch="XFLOW",
+    )
+    assert len(report.rows) == 18
+    assert all(r["validation_method"] == "exit_counterfactual" for r in report.rows)
+    assert all(r["verdict"] == "pending" for r in report.rows)
+    assert all(r["significance"] == "insufficient_samples" for r in report.rows)
+    assert all("holdout" in r["notes"] for r in report.rows)
+    assert all("对照数据未就绪" in r["notes"] for r in report.rows)   # 消融降级披露
+    assert report.written is False
+
+
+def test_run_validation_xflow_writes_tsv(tmp_path: Path):
+    artifacts = tmp_path / "art"
+    artifacts.mkdir()
+    (artifacts / "bt-x2.json").write_text(json.dumps({"run_id": "bt-x2", "trade_log": []}), encoding="utf-8")
+    captured = {}
+
+    def fake_writer(table, columns, tsv):
+        captured["table"], captured["columns"], captured["tsv"] = table, columns, tsv
+        return True
+
+    report = run_validation(cfg=ValidationConfig(as_of=AS_OF), artifacts_dir=artifacts, writer=fake_writer,
+                            decay_check=False, batch="XFLOW",
+                            ablation_diff=[5.0] * 40)   # 对照就绪但窗口内无流水 → 仍按样本闸门 pending
+    assert report.written is True
+    assert captured["table"] == "c1_backtest.node_verdict"
+    lines = captured["tsv"].decode("utf-8").strip().split("\n")
+    assert len(lines) == 18
+    assert all(len(l.split("\t")) == 12 for l in lines)
+    row = lines[0].split("\t")
+    assert row[5] == "exit_counterfactual"
+    assert row[4].startswith("TDM-X-")
+    assert "\\N" in lines[0]   # NULL 转义不可回退
+
+
+def test_run_validation_batch_regression_and_guard(tmp_path: Path):
+    """batch 默认 L4 行为不变（一期 14 行回归锚）+ 非法 batch 拒绝。"""
+    artifacts = tmp_path / "art"
+    artifacts.mkdir()
+    (artifacts / "bt-r1.json").write_text(json.dumps({"run_id": "bt-r1", "trade_log": []}), encoding="utf-8")
+    report = run_validation(cfg=ValidationConfig(as_of=AS_OF), artifacts_dir=artifacts,
+                            dry_run=True, writer=lambda *a: True)
+    assert len(report.rows) == 14
+    assert all(r["validation_method"] == "exec_quality" for r in report.rows)
+    with pytest.raises(ValidationError):
+        run_validation(cfg=ValidationConfig(as_of=AS_OF), artifacts_dir=artifacts,
+                       dry_run=True, batch="NOPE")
