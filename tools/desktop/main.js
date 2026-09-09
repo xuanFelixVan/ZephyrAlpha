@@ -9,7 +9,7 @@
  */
 const { app, BrowserWindow, protocol, net, dialog, shell } = require('electron');
 const { pathToFileURL } = require('url');
-const { spawn } = require('child_process');
+const { spawn, execFile } = require('child_process');
 const path = require('path');
 const fs = require('fs');
 
@@ -35,6 +35,7 @@ const DESKTOP_DIR = __dirname;
 const REPO_ROOT = path.resolve(DESKTOP_DIR, '..', '..');
 const WEB_ROOT = path.join(REPO_ROOT, 'src', 'zephyr', 'frontend', 'dashboard', 'web');
 const API_HEALTH = 'http://127.0.0.1:8890/api/health';
+const API_PORT = 8890;
 // API 拉起日志（2026-09-03 实证：stdio ignore 时拉起失败零痕迹，用户只见断线白屏无从排查）
 const API_LOG = path.join(REPO_ROOT, 'data', 'runtime', 'api_server_desktop.log');
 
@@ -70,25 +71,92 @@ function spawnApi() {
   return apiProc;
 }
 
-async function ensureApi() {
-  if (await apiAlive()) return;   // 已有实例（如开发中手动起的）→ 复用不重复拉起
-  spawnApi();
-  let retried = false;
-  // 健康等待（最多 20s；CH 连接首建可能偏慢）
-  for (let i = 0; i < 40; i++) {
+/* ── 僵尸端口占用：检测 + 一键提权修复（2026-09-09 实证：旧 API 卡死后占 8890 不响应，
+ *    新 API bind 10048 秒退，面板静默进断线态，用户无从排查）── */
+
+/* netstat 找出 LISTENING 在 port 上的 PID；无占用/netstat 失败返回 null（失败时落回原排查路径） */
+function findPortPid(port) {
+  return new Promise((resolve) => {
+    execFile('netstat', ['-ano'], { windowsHide: true, timeout: 5000 }, (err, stdout) => {
+      if (err) return resolve(null);
+      const line = stdout.split('\n').find((l) => /LISTENING/i.test(l) && l.includes(`:${port} `));
+      const pid = line ? parseInt(line.trim().split(/\s+/).pop(), 10) : NaN;
+      resolve(Number.isInteger(pid) && pid > 0 ? pid : null);
+    });
+  });
+}
+
+/* 提权 taskkill（触发 UAC，用户点「是」生效；成败不信任返回码，以端口是否释放为准） */
+function killElevated(pid) {
+  return new Promise((resolve) => {
+    const ps = spawn('powershell.exe', ['-NoProfile', '-Command',
+      `Start-Process taskkill -ArgumentList '/PID ${pid} /F' -Verb RunAs -Wait`], { windowsHide: true });
+    ps.on('exit', () => resolve());
+    ps.on('error', () => resolve());
+  });
+}
+
+async function waitApiReady() {
+  for (let i = 0; i < 40; i++) {          // 最多 20s；CH 连接首建可能偏慢
     await new Promise((r) => setTimeout(r, 500));
-    if (await apiAlive()) return;
-    // 秒退重试一次（瞬态失败：端口刚释放/启动竞态——2026-09-03 实证需要）
-    if (!retried && apiProc && apiProc.exitCode !== null) {
-      retried = true;
-      spawnApi();
-    }
+    if (await apiAlive()) return true;
   }
+  return false;
+}
+
+function apiFailBox() {
   dialog.showErrorBox(
     'ZephyrAlpha 面板 API 未能启动',
     '点击图标后 20 秒内 API（127.0.0.1:8890）未就绪，页面将以断线·演示态渲染。\n\n' +
     '启动日志：' + API_LOG + '\n（排查：日志末尾看 python 报错；确认 8890 端口是否被占用）'
   );
+}
+
+/* 端口被僵尸占用 → 明示弹窗 + 一键提权修复，替代静默断线态 */
+async function offerZombieFix(pid) {
+  const { response } = await dialog.showMessageBox({
+    type: 'warning',
+    title: '8890 端口被占用，API 无法启动',
+    message: `端口 8890 被进程 PID ${pid} 占用，且健康检查无响应（疑似卡死的旧 API）`,
+    detail: '新拉起的 API 绑定端口失败（10048），面板只能以断线·演示态渲染。\n\n' +
+            '「提权修复并重试」会弹出 UAC 窗口请求管理员权限结束该进程，请点「是」；\n' +
+            '若跳过，面板以断线态打开，结束占用进程后重启面板即可恢复。',
+    buttons: ['提权修复并重试', '跳过，断线态打开'],
+    defaultId: 0,
+    cancelId: 1,
+    noLink: true,
+  });
+  if (response !== 0) return;
+  await killElevated(pid);
+  if ((await findPortPid(API_PORT)) !== null) {
+    dialog.showErrorBox(
+      '提权修复未生效',
+      `PID ${pid} 仍在占用 8890（UAC 被取消或权限不足）。\n` +
+      `可手动在任务管理器结束该进程，或用管理员终端执行：taskkill /PID ${pid} /F`
+    );
+    return;
+  }
+  spawnApi();
+  if (!(await waitApiReady())) apiFailBox();
+}
+
+async function ensureApi() {
+  if (await apiAlive()) return;   // 已有实例（如开发中手动起的）→ 复用不重复拉起
+  spawnApi();
+  let retried = false;
+  // 健康等待（最多 20s）
+  for (let i = 0; i < 40; i++) {
+    await new Promise((r) => setTimeout(r, 500));
+    if (await apiAlive()) return;
+    // 秒退先查端口：被他人占用=僵尸占口，重试无意义，直接走修复弹窗（2026-09-09 实证）
+    if (apiProc && apiProc.exitCode !== null) {
+      const pid = await findPortPid(API_PORT);
+      if (pid) return offerZombieFix(pid);
+      // 端口干净 → 瞬态失败（端口刚释放/启动竞态——2026-09-03 实证需要），重试一次
+      if (!retried) { retried = true; spawnApi(); }
+    }
+  }
+  apiFailBox();
 }
 
 function killApi() {
