@@ -7,7 +7,7 @@ title: 产业链图谱质量标准——二十项合格线与循环修复
 owner: ZephyrAlpha-Owner
 language: zh
 status: active
-version: "1.3.0"
+version: "1.4.0"
 date: 2026-09-09
 topic: industry_graph_quality
 scope: global
@@ -108,7 +108,7 @@ related_modules:
 
 | # | 标准 | 判定规则（大白话） |
 |---|---|---|
-| S21 | 流程主干连通 | 活跃链内节点≥2 却零 structure 边=散点链（当前 289/789）——主链必须从上游头到下游尾连通成线 |
+| S21 | 流程主干连通 | 活跃链（节点数≥3）：上游 tier 节点到下游 tier 节点存在连通路径（structure 流程边与 supply/supplies_to 供应边均计入连通路径，Owner 2026-09-09 口径）=合规；断链=违规（首轮 340/461，登记为链骨架建设缺口）。附带指标：各链 structure 边占比。**先进度指标后硬闸**：样板链验收前只报告不计违规，验收后转硬闸 |
 | S22 | 层级下钻到位 | P1 主链每个环节节点：drill\_status='child'（挂了子链）或砖（mass/noalpha）——NULL=待下钻；非 P1 链暂缓 |
 | S23 | 公司详情完备 | 按 §7 分档统计完备率+残缺清单（身份/坐标/标签 MUST 项） |
 
@@ -128,5 +128,6 @@ related_modules:
 - 1.0.0（2026-09-09）：初版十九项合格线（Owner 四裁定确认同日）。
 - 1.1.0（2026-09-09）：红蓝对抗增补——S20 PIT 反造假（防编历史式前视造假）+豁免滥用法防线（>5% 须 Owner 签名）。
 - 1.2.0（2026-09-09）：**深度体系定稿**（Owner 三层图例定标）——§6 层级下钻模型（子链挂接 child\_chain\_id/drill\_status+砖双判据 mass/noalpha）；§7 公司详情卡字段标准（四级 MUST/SHOULD/DERIVED/渐进+完备度三档）；§8 深度审查三查 S21~S23（样板链验收前为进度指标、验收后升硬闸）。
+- 1.4.0（2026-09-09）：**S21 流程连通性入引擎（三期项 6，Owner 批准）**——`_check_s21` 按本节 §8 新口径实现（活跃链节点≥3、上游→下游连通性、structure+supply+supplies_to 并集、无向连通 BFS、advisory 期不计违规不阻断）；首轮 advisory(340/461) 只报告；rev1 口径（节点≥2 零 structure=散点链，289/789）留档于 git 历史。
 - 1.3.0（2026-09-09）：**收尾包裁定落地（Owner 签名批准）**——S20 判定两段式化（SQL 粗筛+原文"YYYY年"正则核据放行，反造假哨不弱化，引擎与标准同 commit 同步）；存量 22 条追述型长协边豁免台账正式生效（原文无"YYYY年"字样，证据日在 URL/日期段）；**PIT 消费纪律特别裁定写入 S20 条目**（消费只认 as_of，禁用 valid_from 过滤可知性，SQL 示例 WHERE as_of <= :backtest_date）；S11 口径修正（UNLISTED:UE- 落位行 by-design 不在 stock_basic，不计死映射，格式合规由写入工具 UE- 硬校验把关；market 标签随所属节点走 S12 口径）。
 - 1.2.1（2026-09-09）：**Owner 委托夜班 AI 裁定落地**——S20 判定保留不改、追述型长协误报走豁免制度化（22 条已签豁免）；S6 引擎加活跃链过滤（废弃链节点=历史快照不审，豁免 306→150）；S8 墓碑豁免约定（"（已并入"标记）。

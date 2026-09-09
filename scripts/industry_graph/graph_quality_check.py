@@ -4,7 +4,7 @@
 # [CONSUMERS] SOP industry_chain_data_audit_sop §11 质量验收循环(引擎判定权真源); 长城任务退出判定(连续两轮零违规)
 # [STARTUP] manual
 # [MATURITY] production
-# [INVARIANTS] 只读引擎: 全部 SELECT 零写入; 二十项合格线=graph_quality_standard.md §2~§6 一一对应(S1~S20); 豁免清单 quality_exemptions.yaml(未登记违规不扣除); 成对冗余豁免在 S16 SQL 内判(supplies_to+customer_of 合法); S20 两段式判定(SQL 粗筛+原文正则核据,2026-09-09 Owner 签名); 输出 JSON(.runtime)+MD 报告, 退出码 0=全绿 1=有违规 2=环境故障
+# [INVARIANTS] 只读引擎: 全部 SELECT 零写入; 二十一项合格线=graph_quality_standard.md §2~§8 一一对应(S1~S21; S21~S23 为进度指标(样板链验收前 advisory 不计违规不阻断), S21=2026-09-09 增流程连通性,首轮 340/461 登记为链骨架建设缺口); S21=2026-09-09 增,流程连通性,首轮 340/461 违规登记为链骨架建设缺口不阻塞收口); 豁免清单 quality_exemptions.yaml(未登记违规不扣除); 成对冗余豁免在 S16 SQL 内判(supplies_to+customer_of 合法); S20 两段式判定(SQL 粗筛+原文正则核据,2026-09-09 Owner 签名); 输出 JSON(.runtime)+MD 报告, 退出码 0=全绿 1=有违规 2=环境故障
 # [MODIFY-GUARD] graph_quality_standard.md(标准真源,SQL 须与其同步改)
 # [STABILITY] evolving
 # [SAFETY] L
@@ -14,7 +14,7 @@
 # M10豁免: manual STARTUP 体检引擎
 """图谱质量检查引擎（Graph Quality Check，SOP §11 / graph_quality_standard.md）。
 
-十九项合格线一键体检：每条标准一条 SQL，输出违规清单（JSON+MD）。
+二十一项合格线一键体检（S1~S18 走 SQL 模板、S11/S19/S21 走 Python 特例检查），输出违规清单（JSON+MD）。
 审查判定权归本脚本——AI 只负责修复，不负责判定（治审查口径漂移）。
 
 用法::
@@ -29,6 +29,7 @@ import argparse
 import json
 import re
 import sys
+from collections import defaultdict, deque
 from datetime import date
 from pathlib import Path
 
@@ -292,6 +293,76 @@ def _check_s19(cur, alive_names: set[str] | None) -> dict:
     return {"id": "S19", "title": "编码表零上市撞名", "violations": rows, "degraded": False}
 
 
+def _s21_load_graph(cur) -> tuple[dict, dict, dict, dict]:
+    """S21 专用三查：活跃链集/节点归属与 tier/链内边集（只读 SELECT，无法机械化集中）。"""
+    cur.execute("SELECT chain_id, name FROM ig_chain WHERE status = 'active'")  # noqa: bare-sql  S21 专用只读三连查，引擎既有风格
+    chains = {r[0]: r[1] for r in cur.fetchall()}
+    cur.execute("SELECT node_id, chain_id, tier FROM ig_node")  # noqa: bare-sql  S21 专用只读三连查，引擎既有风格
+    node_chain: dict[str, str] = {}
+    node_tier: dict[str, str] = {}
+    for nid, cid, tier in cur.fetchall():
+        if cid in chains:
+            node_chain[nid] = cid
+            node_tier[nid] = tier
+    cur.execute("SELECT from_node, to_node, edge_type FROM ig_edge")  # noqa: bare-sql  S21 专用只读三连查，引擎既有风格
+    chain_edges: dict[str, list[tuple[str, str, str]]] = {}
+    for u, v, et in cur.fetchall():
+        cu, cv = node_chain.get(u), node_chain.get(v)
+        if cu is not None and cu == cv:
+            chain_edges.setdefault(cu, []).append((u, v, et))
+    return chains, node_chain, node_tier, chain_edges
+
+
+def _s21_reachable(starts, targets, adj) -> bool:
+    """无向连通 BFS：starts 任一节点可达 targets 任一节点即 True。"""
+    seen = set(starts)
+    q = deque(starts)
+    while q:
+        u = q.popleft()
+        if u in targets:
+            return True
+        for v in adj[u]:
+            if v not in seen:
+                seen.add(v)
+                q.append(v)
+    return False
+
+
+def _check_s21(cur) -> dict:
+    """S21 流程连通性（2026-09-09 增，Owner 口径：structure 流程边与 supply 供应边均计入连通路径）。
+    每条活跃链（节点数>=3）：上游 tier 节点 → 下游 tier 节点存在连通路径则合规，断链=违规。
+    违规描述附 structure 边占比（附带指标，不判违规）。"""
+    chains, node_chain, node_tier, chain_edges = _s21_load_graph(cur)
+    violations: list[tuple[str, str]] = []
+    checked = 0
+    for cid in sorted(chains):
+        nodes = [n for n, c in node_chain.items() if c == cid]
+        if len(nodes) < 3:
+            continue
+        checked += 1
+        edges = chain_edges.get(cid, [])
+        n_st = sum(1 for _, _, et in edges if et == 'structure')
+        n_sp = len(edges) - n_st
+        ratio = (n_st / len(edges)) if edges else 0.0
+        adj: dict[str, list[str]] = defaultdict(list)
+        for u, v, _et in edges:
+            adj[u].append(v)
+            adj[v].append(u)
+        starts = [n for n in nodes if node_tier.get(n) == '上游']
+        targets = {n for n in nodes if node_tier.get(n) == '下游'}
+        if not _s21_reachable(starts, targets, adj):
+            violations.append((cid, '%s nodes=%d structure=%d supply=%d 结构占比=%.2f' % (
+                chains[cid], len(nodes), n_st, n_sp, ratio)))
+    return {
+        'id': 'S21',
+        'title': '流程连通性(活跃链上游→下游 structure+supply 连通路径)',
+        'violations': violations,
+        'degraded': False,
+        'advisory': True,  # §8 先进度指标后硬闸：样板链验收前只报告不计违规（Owner 2026-09-09 口径）
+        'checked_chains': checked,
+    }
+
+
 def _alive_names() -> set[str] | None:
     """在市 A 股简称集(S19 用; S11 用 symbol 集,两口径不同)。"""
     try:
@@ -341,10 +412,14 @@ def run_check() -> dict:
     exempt19 = set(exemptions.get("S19", []))
     r19["violations"] = [(pk, d) for pk, d in r19["violations"] if pk not in exempt19]
     results.append(r19)
+    r21 = _check_s21(cur)
+    exempt21 = set(exemptions.get("S21", []))
+    r21["violations"] = [(pk, d) for pk, d in r21["violations"] if pk not in exempt21]
+    results.append(r21)
 
     conn.close()
 
-    total = sum(len(r["violations"]) for r in results)
+    total = sum(len(r["violations"]) for r in results if not r.get("advisory"))
     report = {
         "checked_at": today,
         "total_violations": total,
@@ -366,7 +441,12 @@ def _write_report(report: dict) -> Path:
         "",
     ]
     for r in report["checks"]:
-        status = "degraded(降级)" if r.get("degraded") else ("PASS" if not r["violations"] else f"违规 {len(r['violations'])}")
+        if r.get("degraded"):
+            status = "degraded(降级)"
+        elif r.get("advisory"):
+            status = f"advisory(进度指标 {len(r['violations'])} 项,不计违规)"
+        else:
+            status = "PASS" if not r["violations"] else f"违规 {len(r['violations'])}"
         lines.append(f"## {r['id']} {r['title']} — {status}")
         for pk, desc in r["violations"][:20]:
             lines.append(f"- [{pk}] {desc}")
@@ -396,7 +476,12 @@ def main() -> int:
         md = _write_report(report)
         print(f"[{'GREEN' if report['all_green'] else 'VIOLATIONS'}] 总违规 {report['total_violations']} 项")
         for r in report["checks"]:
-            tag = "degraded" if r.get("degraded") else (len(r["violations"]))
+            if r.get("degraded"):
+                tag = "degraded"
+            elif r.get("advisory"):
+                tag = f"advisory({len(r['violations'])})"
+            else:
+                tag = len(r["violations"])
             print(f"  {r['id']} {r['title']}: {tag}")
         print(f"报告: {md}")
     return 0 if report["all_green"] else 1
