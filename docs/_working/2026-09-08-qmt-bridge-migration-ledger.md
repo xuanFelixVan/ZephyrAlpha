@@ -174,6 +174,7 @@ ttl: task_bound
 | 3 | 2026-09-08 | 口径对齐全链实测（持仓 row[7]/[9]/[15]/[18] ✅、五档 dump 25 列 ✅、CH 1 档+Redis 完整 5 档 ✅）+ 本台账更新（§1 勾 2 项/§2.2-D 与 §5 标注进度/新增 §8） | 75aae01b11 | PositionStatics.csv 13 天未更新红旗转 §8 |
 | 5 | 2026-09-09 日间 | §8.6 五项裁定施工：任务一五档落库（tick_depth_5 建表+TICK_DEPTH5 门旁路+回填 4 日 20581 行 100% 五档）+ 任务二分钟K 自拼（ch_tick_kline 1/5/15/30/60min+防误覆盖护栏）+ 任务三回测 CH 回放 adapter + 任务四竞价出行事后取证（22 行真实 timetag，auction 族续命确认）+ 任务五 v21 期权扩桥草稿备料（未激活）+ 事故 #QMT-DAY-0908-OVERWRITE 当日发现当日恢复（0908 官方 1min 回灌 125.5 万行） | bae99e93（代码批 11 文件） | tasks.yaml 零改动（红线 1）；tick_data 链路零变更（红线 2）；v19 未动（红线 3）； commit 遭遇三批他会话共享暂存区门禁竞争，按裁定 9 配方退避轮询+Owner 授权窗口后落库 |
 | 4 | 2026-09-09 夜班 | §2.4 占位清理 ×4 + §3 桥能力注册主体（scheduler 四点注册/QmtBridgeIngestProvider 新建/六文件源登记/speed_tester 桥通道/channel_manager dormant 常量/ex_core+回测域判读）+ §4 前端 F2-F7 + §8.3 核实勾选 + §8.5 摸底报告 | 8981a53f29（第三批）/ 3b25f73aed（第四批） | 只增桥不删 miniqmt；tasks.yaml 零 source 切换（红线 1）；F1 未动（红线 2）；TICK_SOURCE 链未动（红线 3）；夜班遇 3 并发会话（st-nodebt/greatwall-0020/本会话）锁竞争与门禁竞争，全部走合规通道解决 |
+| 6 | 2026-09-10 | 长城任务三段·续：#QMT-DAY-0909-DAILY-POLLUTION 收尾——任务 A kline_daily 0908 修复闭环（keep-gen1/delete-gen2）+ 任务 B 全 K 线族排查（24 表零外溢）+ R1 kline_60min/kline_etf_60min 0909 盘前劣化批确认与清理（2806 行冗余版本，FINAL 视角逐位不变）+ R2 修复工具 repair_kline_degraded_pull.py（gitignore 运行时区留盘，按 backfill_tick_depth5.py 先例不入库）+ §8.7 事故条目登记 | （commit 哈希提交后补） | miniQMT 劣化定性升级：**按请求灰度间歇性**（同窗口 daily 劣化/hfq 健康、9/9 盘前 60min 再劣化）；详见 §8.7 |
 
 ## §8 2026-09-08 增量待办（桥切换过渡期，按优先级）
 
@@ -279,3 +280,42 @@ ttl: task_bound
 **教训**：①幂等 DELETE 前必须证明"窗口内全部行都是自己（或无主）的"，表没有来源列时默认拒绝；②验证类 SQL 一律先 SELECT count 看窗口现有行再动手；③SDK 下载语义要实证（单日 day,day 不落盘，必须区间参数）——93 §11.5a 已补记。
 
 
+
+### §8.7 事故条目：#QMT-DAY-0909-DAILY-POLLUTION（09-10 长城任务三段·续，修复+排查闭环）
+
+> 事故族：miniQMT 接口对重拉请求【按请求灰度间歇性】返回劣化数据——最后一根 1min bar 冒充目标
+> 周期 bar（OHLC 四值全等 + volume 异常偏小 63~5000 倍实测）。**关键定性（09-10 实证修正）**：
+> 劣化不遵循"T-1 必劣化、当日必正常"——同窗口 9/8 16:30 的 kline_daily 拉数劣化、16:34 的
+> kline_daily_hfq 健康；9/9 盘前 09:00（北京）的 60min 拉数又劣化。hfq 同窗口健康不代表 daily 安全。
+
+**任务 A：kline_daily 0908 修复闭环（✅）**
+
+- 画像：0908 实际 10766 行分两代。gen1=5554 行（ingest=UTC 9/8 19:00 桶，北京 9/9 03:23 凌晨补写）健康官方日线；gen2=5212 行（UTC 9/9 08:00+09:00 桶，run 150513 重写）污染批（5204 单值 + 6 行非单值但遮蔽 gen1）。
+- gen1 健康性三重验证：①量比 vs 1min 聚合 5206/5206 全落 [0.5,2.0]（348 只北交所无 1min 对照属正常缺口）②与 0907 健康 symbol 集 5555 只一致（上市/退市各 1 漂移）③akshare 独立源对拍 600519 逐字段一致（O1318/H1323/L1309.05/C1309.3/量17534/额23.03亿）。
+- 修复：`ALTER TABLE c1_market.kline_daily DELETE WHERE trade_date='2026-09-08' AND market_type='A_share' AND ingest_ts >= toDateTime64('2026-09-09 08:00:00',3,'UTC') SETTINGS mutations_sync = 2`（删 gen2 5212 行保留 gen1——优于原指令"删光重拉"：保住 gen1 独有 347 只北交所标的）。
+- 复验全绿：5554 行、单值率 0.18%（0901-0907 基线 6-11 行/日水位）；600519/000001/300750 三日连续性合理；1min 末根 close 对拍 5206/5206=100% 偏差<0.005。0909 日线本身健康（5/5207 单值）未动。**修复前后对照：10766 行/48.4% 单值 → 5554 行/0.18% 单值**。
+- 快照留证：tmp/dump_kline_daily_0908_polluted.tsv（5212 行）+ tmp/dump_kline_daily_0908_gen1_backup.tsv（5554 行）。
+
+**任务 B：全 K 线族排查结论（24 表）**
+
+kline_daily_hfq / weekly_hfq / monthly_hfq / weekly / monthly / etf_daily / index / cb / sector / sector_880 全健康（sv 0~1.1% 基线）；分钟线族 15 表 0908 全健康（每股行数精确 241/48/16/8/4）；kline_5min 0908 的 synth_tick 合成行 sv 22% 属合成正常非本事故。唯一开口=60min 两表 0909 → R1。
+
+**R1：kline_60min + kline_etf_60min 0909 盘前劣化批（✅ 09-10 确认+清理）**
+
+- 定因：run 149103 kline_60min_incremental（UTC 01:00:01 起=北京 09:00:01 盘前，SUCCESS 24076 行）与 run 149232 kline_etf_60min_incremental（北京 09:21，8146 行）——`intraday_minute` 槽位 `*/5 9-15` 于 09:00 整点触发，开盘前拉"当日"60min，miniQMT 灰度返回劣化 bar。**盘前触发面是结构性缺口：9:00-9:30 拉当日 bar 必然无真数据**。
+- 污染画像：kline_60min 01:00 桶 1544 行 100% 单值（全部 10:30 首槽、1544 symbols）；kline_etf_60min 1262 行同构。
+- 关键判定（消费者视角）：**FINAL 视角两表均无真污染**——60min FINAL sv=119（0.57%）低于 0908 基线 0.83%；etf FINAL sv=253（3.82%）与 0908 基线 3.65% 同水位（无成交 ETF 小时平坦属正常）。2776/2806 垃圾键已被后续健康桶（07:00/08:00 桶）按 (symbol,trade_time) 键重写遮蔽；余 30 键逐一核实为合法平坦：000523/002790 涨停一字板（全天四槽 OHLC 全等、FINAL 10:30 行为健康重写 vol=222399/214295），28 只无成交 ETF（健康桶重写同键量 0~558、全天 1min 总量 0~90 手）。
+- 劣化量比签名（同键新旧版本对比）：垃圾量/健康量 = **0.0002~0.03**（比原判 63~210 倍更极端）。
+- 修复（09-10 执行）：快照先行（tmp/dump_kline_{kline_60min,kline_etf_60min}_0909_0100bucket_polluted.tsv，1544+1262 行）→ `ALTER TABLE ... DELETE WHERE trade_date='2026-09-09' AND ingest_ts >= toDateTime64('2026-09-09 01:00:00',3,'UTC') AND ingest_ts < toDateTime64('2026-09-09 02:00:00',3,'UTC') AND open=high AND high=low AND low=close SETTINGS mutations_sync = 2`（预点数 1544/1262 断言后执行）。
+- 复验：桶残留 0/0；FINAL rows/单值逐位不变（20828/119、6616/253）——删除纯粹移除冗余版本，消费视角零变化；ETF 表 RAW==FINAL=6616 全干净；一字板股健康版本完好。
+- 工具固化：`scripts/data/repair_kline_degraded_pull.py`（analyze/--execute/--check-final 三模式；白名单表校验+快照先行+谓词预点数断言+FINAL 复验，供 9/15-17 对拍窗口复用）。**落盘形态按 backfill_tick_depth5.py 先例：scripts/data/ 为 gitignore 运行时区（#ARCH-308 定性"非代码不入库"），工具留盘不入 git**——CREATE-GUARD creation_token 已登记注册表工作区（qmt-day-0909-degraded-pull-repair-20260910），未来若转正迁 tracked 区随迁。
+
+**两条教训（9/15-17 对拍窗口纪律）**
+
+1. 【恢复/回补验证必须独立源交叉与结构特征校验，禁同源行数对拍】——gen1 健康性靠 1min 量比+symbol 集连续性+akshare 逐字段对拍三重确认，任何单一同源信号（行数/SUCCESS 状态）都不足采信。
+2. 【miniQMT 劣化=按请求间歇性灰度——所有重拉步骤必须带特征校验】三条件（①OHLC 非全等 ②量比 0.5~2.0 vs 1min 聚合 ③high>=low）+ 盘前 9:00-9:30 时段禁止采信任何"当日"bar 返回。劣化窗口实证：9/9 16:30（daily）与 9/9 09:00（60min 盘前）均有命中。
+
+**待查项（不阻塞，挂账）**
+
+- [ ] gen1（kline_daily 0908 健康 5554 行，ingest UTC 9/8 19:23-19:25）在 task_runs 无运行记录——写入通道未登记，疑似 WAL 回灌/补跑旁路，需查 ch_writer 旁路调用方
+- [ ] `intraday_minute` 槽位 09:00 盘前空转拉"当日"bar 的语义问题——9:00-9:30 触发的拉数本就无完整 bar 可拉，是否应在 provider 层对盘前触发做空跑防护（9/17 窗口一并评估，不单独立项）
