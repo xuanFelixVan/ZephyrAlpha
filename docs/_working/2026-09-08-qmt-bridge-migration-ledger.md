@@ -186,12 +186,12 @@ ttl: task_bound
 - [x] 93 号备忘补 §14.10：#BRIDGE-WRONG-FILE 事故（根因 env 默认路径未随 v19 升级/影响 166 万行污染已 ALTER DELETE 清理/修复 ENV_CONFIG→ticks3.csv/教训三条）+ 闪窗根治（#ARCH-OPS-001 全量落地记录）+ 9/9 观察清单——09-09 夜班核实：前序会话已于 9/8 21:21 完成（§14.10.1-14.10.5 五小节+changelog v1.8.8），无需重做（✅09-09 75aae01b11 核实）
 - [x] commit 待提交清单：tick_subscriber.py（ENV_CONFIG 修复+事故注释）、launch_hidden.vbs（参数透传）、register_guard_tasks.ps1（vbs 模板 ×2）、scripts/run_ttl_rejudge_daily.ps1（新）、scripts/ch/run_optimize_merge_hidden.ps1（新）、本台账——09-09 夜班核实：六文件全部已由 75aae01b11（2026-09-08 21:21）提交，工作区无残留；台账 §7 轮次 1/2/3 的"待提交"哈希已补登（✅09-09 75aae01b11 核实，台账簿记更新随本轮 8981a53f29 后续 docs 提交）
 
-#### §8.3.1 留 Owner 裁定（09-09 夜班新增）
+#### §8.3.1 四项裁定（09-09 夜班 AI 依授权自裁，Owner 可否决）
 
-1. **回测 tick 回放数据源（event_driven_engine.py L139/219）**：回测引擎经 MiniQmtQuoteProvider.fetch_historical(interval="tick") 读 xtquant 本地历史 tick 缓存做回放——9/18 后断供。两难：a) 切 CH 囤货 tick_data 回放（qmt_bridge+miniqmt 双源都在 CH，口径统一、免 SDK；但 9/18 前 tick 只有订阅列表品种，全市场历史不完整）b) QMT【收盘清盘】"保存今日分笔"已勾选逐日累积的大QMT 本地 tick 库（93 §11.5a——但读取需经沙箱策略 dump，等于 §2.2-A 方案 a 的变体）。**倾向 a**（CH 统一回放源+存量囤货够用），待 Owner 批。
-2. **F4 进程 pattern 实测复核**：pattern 已按 93 §2.3 实证名补 `xtitclient`，但夜班大QMT 终端未开无法实测进程名——Owner 开终端时（§8.2 本就要开）顺手核对任务管理器，1 分钟动作。
-3. **分钟K线族三选一**（§8.5.1 摸底完毕）：推荐 b（tick 聚合合成）立即立项 + c（akshare）同批挂校验 + a（沙箱扩 dump）视对拍偏差 10 月再议——待 Owner 批。
-4. **L2/期权族沙箱权限验证**（§8.5.2 步骤清单已落盘）：待 Owner 开终端执行，结论决定 §2.2-B 五任务走向。
+1. **✅ 已裁定：回测 tick 回放源 → 切 CH tick_data（方案 a）**。event_driven_engine 的回测 tick 回放从 MiniQmtQuoteProvider.fetch_historical（xtquant 本地缓存，9/18 断供）切为读 CH `c1_market.tick_data`（miniqmt 囤货 + qmt_bridge 双源同表，SQL 直取、无 SDK 依赖）。**已知降级（如实登记）**：tick_data 表 schema 为 1 档（tick_to_row 取 [0] 设计），价格/成交量回放全覆盖，5 档盘口深度回放降级——若后续做T 回测需要盘口深度，再启用 QMT【收盘清盘】逐日累积缓存通道（93 §11.5a，即 §8.5.1 方案 a 变体）。**执行**：新建 CH 回放 adapter（保持 provider 注入接口不变）列入 9/17 窗口施工单，1 人日。
+2. **✅ 已裁定：F4 进程名 pattern 维持现状**（`xtminiqmt|xtitclient|xiadan|qmt`，xtitclient 依据=93 §2.3 实地辨识，非猜测）。复核动作与 §8.2 开真实终端绑定（那本来就是 9/18 前 MUST——PositionStatics 已 13 天未更新）；开终端后 1 分钟核对，若不符改 1 行 pattern。**无前置阻塞**：pattern 错的最坏后果=服务总闸 QMT 灯假灰，不误伤数据链。
+3. **✅ 已裁定：分钟K线族按 §8.5.1 推荐排序执行——b 立项 + c 同批 + a 缓议**。b（CH tick 聚合合成分钟K，复用 kline_resampler 幂等模式）9/17 窗口前完成开发+口径单测，9/18 起随桥独跑自然累积（无历史回补，切换前历史靠囤货+CH 存量——已接受）；c（akshare）同批挂校验兜底；a（沙箱扩 K 线 dump）触发条件量化：b 上线后前 5 个交易日对拍 akshare，价格 ±0.01 外偏差 >2% 或 bar 缺口 >1% 则 10 月立项。**执行**：列入 9/17 窗口施工单，b 约 1 人日。
+4. **✅ 已裁定：L2/期权族按"无 L2"保守口径预规划，验证动作只作升级触发器**。即 §2.2-B 五任务先按"桥无 L2"准备降级路径（auction_snapshot/auction_book 用桥 ticks3 竞价段聚合评估替代；option_greeks/option_iv_surface/convertible_bond_iv 若沙箱无期权链则登记停更降级，不阻塞主链路）；Owner 开终端+问客户经理的验证（§8.5.2 步骤清单）结论若为"有权限"，再升级为桥扩 dump 立项。**这样验证不再是阻塞项**——保守方案先保 9/18 不断流。
 
 ### §8.4 独立小问题【P2，与桥无关】
 
