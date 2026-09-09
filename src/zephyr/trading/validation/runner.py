@@ -219,27 +219,52 @@ def compute_exec_metrics(
     fills: list[dict[str, Any]],
     ref_prices: dict[str, float] | None = None,
 ) -> dict[str, Any]:
-    """执行质量指标（滑点 bp + 成交统计）。
+    """执行质量指标（滑点 bp + 成交统计，v2 口径）。
 
-    ref_prices: symbol → 参考价（同日 VWAP 代理；lag_recheck=True 时为 T+1 基准）。
-    缺参考价的 fill 跳过滑点统计（不猜）。
+    滑点基准优先级（遗留④，2026-09-10）:
+        1. decision_price（T1 起新产物携带——记录意图价，真滑点=成交价 vs 决策价）。
+        2. ref_prices 同日 VWAP 代理（旧产物兜底；lag_recheck 前视诊断语义仅适用此路）。
+
+    Args:
+        fills: 成交流水（load_fills 产物，v2 起 fill 含 decision_price 可空键）。
+        ref_prices: symbol → 参考价（同日 VWAP 代理；lag_recheck=True 时为 T+1 基准）。
+        缺两路基准的 fill 跳过滑点统计（不猜）。
+
+    Returns:
+        指标 dict，新增 slip_basis 字段披露口径:
+        "decision_price" | "vwap_proxy" | "mixed(dp=a,vwap=b)" | None。
     """
     prices = [(f, _parse_float(f.get("price"))) for f in fills]
     priced = [(f, p) for f, p in prices if p and p > 0]
     slips: list[float] = []
+    n_dp = n_vwap = 0
     for f, p in priced:
-        ref = (ref_prices or {}).get(f.get("symbol", ""))
-        if not ref or ref <= 0:
-            continue
         direction = 1.0 if f.get("side") == "buy" else -1.0
-        slips.append(direction * (p - ref) / ref * 10000.0)   # bp，正=劣于基准
+        dp = _parse_float(f.get("decision_price"))
+        if dp and dp > 0:
+            slips.append(direction * (p - dp) / dp * 10000.0)   # bp，正=劣于决策价
+            n_dp += 1
+            continue
+        ref = (ref_prices or {}).get(f.get("symbol", ""))
+        if ref and ref > 0:
+            slips.append(direction * (p - ref) / ref * 10000.0)
+            n_vwap += 1
     n = len(fills)
     slip_mean = sum(slips) / len(slips) if slips else None
+    if n_dp and n_vwap:
+        basis = f"mixed(dp={n_dp},vwap={n_vwap})"
+    elif n_dp:
+        basis = "decision_price"
+    elif n_vwap:
+        basis = "vwap_proxy"
+    else:
+        basis = None
     return {
         "triggers": n,
         "slip_bp_mean": round(slip_mean, 2) if slip_mean is not None else None,
         "slip_samples": len(slips),
         "fill_rate": None,   # v1 流水只含成交记录，未成交数不可得——如实置空（方法学裁定单轴判）
+        "slip_basis": basis,   # 口径标注（遗留④）：进台账 notes，面板可读
     }
 
 
@@ -387,7 +412,10 @@ def run_validation(
                 f"（>{report.holdout_cutoff}），按 PB-08 定稿前不可考；窗口前移后重跑出结论"
             )
         elif inside and batch == "L4":
-            notes_parts.append(f"滑点均值 {metrics['slip_bp_mean']} bp（VWAP 代理基准，lag_recheck={cfg.lag_recheck}）")
+            notes_parts.append(
+                f"滑点均值 {metrics['slip_bp_mean']} bp（基准口径={metrics.get('slip_basis') or 'na'}，"
+                f"decision_price 优先/VWAP 兜底，lag_recheck={cfg.lag_recheck}）"
+            )
         elif inside:
             notes_parts.append(f"离场触发代理计数 {metrics['triggers']}（卖出流水全量口径）")
         if batch == "L4":

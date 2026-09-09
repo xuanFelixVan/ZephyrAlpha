@@ -344,3 +344,62 @@ def test_run_validation_batch_regression_and_guard(tmp_path: Path):
     with pytest.raises(ValidationError):
         run_validation(cfg=ValidationConfig(as_of=AS_OF), artifacts_dir=artifacts,
                        dry_run=True, batch="NOPE")
+
+
+# ── exec 滑点 v2 口径（遗留④，2026-09-10）────────────────────────────────
+
+class TestExecMetricsV2Basis:
+    """decision_price 优先 + VWAP 兜底 + slip_basis 口径标注。"""
+
+    def test_decision_price_takes_priority(self):
+        fills = [{"symbol": "A", "side": "buy", "price": 11.0, "decision_price": 10.0}]
+        m = compute_exec_metrics(fills, ref_prices={"A": 9.0})   # 若错用 VWAP 会得 +2000bp
+        assert m["slip_bp_mean"] == 1000.0   # (11-10)/10 = +1000bp（劣于决策价）
+        assert m["slip_basis"] == "decision_price"
+
+    def test_sell_direction_negative_when_better(self):
+        fills = [{"symbol": "A", "side": "sell", "price": 10.2, "decision_price": 10.0}]
+        m = compute_exec_metrics(fills)
+        assert m["slip_bp_mean"] == -200.0   # 卖高于决策价=负 bp=优于决策价（v1 方向约定）
+        fills2 = [{"symbol": "A", "side": "sell", "price": 9.9, "decision_price": 10.0}]
+        assert compute_exec_metrics(fills2)["slip_bp_mean"] == 100.0   # 卖低于决策价=劣
+
+    def test_vwap_fallback_for_legacy_fills(self):
+        fills = [{"symbol": "A", "side": "buy", "price": 11.0}]   # 旧产物无 decision_price
+        m = compute_exec_metrics(fills, ref_prices={"A": 10.0})
+        assert m["slip_bp_mean"] == 1000.0
+        assert m["slip_basis"] == "vwap_proxy"
+
+    def test_mixed_basis_annotation(self):
+        fills = [
+            {"symbol": "A", "side": "buy", "price": 11.0, "decision_price": 10.0},
+            {"symbol": "B", "side": "buy", "price": 11.0},   # 旧产物→VWAP
+        ]
+        m = compute_exec_metrics(fills, ref_prices={"B": 10.0})
+        assert m["slip_bp_mean"] == 1000.0
+        assert m["slip_basis"] == "mixed(dp=1,vwap=1)"
+
+    def test_no_basis_skipped_honestly(self):
+        fills = [{"symbol": "A", "side": "buy", "price": 11.0}]   # 无 decision_price 无 ref
+        m = compute_exec_metrics(fills)
+        assert m["slip_bp_mean"] is None
+        assert m["slip_basis"] is None
+
+    def test_bad_decision_price_falls_back(self):
+        """decision_price<=0/脏值 → 回落 VWAP（不猜不炸）。"""
+        fills = [{"symbol": "A", "side": "buy", "price": 11.0, "decision_price": 0}]
+        m = compute_exec_metrics(fills, ref_prices={"A": 10.0})
+        assert m["slip_basis"] == "vwap_proxy" and m["slip_bp_mean"] == 1000.0
+
+    def test_l4_notes_carry_basis(self, tmp_path: Path):
+        """L4 批 notes 带口径标注（面板可读）。"""
+        artifacts = tmp_path / "art"
+        artifacts.mkdir()
+        (artifacts / "bt-v2.json").write_text(json.dumps({
+            "run_id": "bt-v2",
+            "trade_log": [{"timestamp": "2025-06-01", "symbol": "A", "side": "buy", "price": 10.0,
+                            "decision_price": 10.0}],
+        }), encoding="utf-8")
+        report = run_validation(cfg=ValidationConfig(as_of=AS_OF), artifacts_dir=artifacts,
+                                dry_run=True, writer=lambda *a: True)
+        assert any("基准口径=decision_price" in r["notes"] for r in report.rows)
