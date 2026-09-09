@@ -4,7 +4,7 @@
 manifest_version: 2.0.0
 generated_by: generate_manifest.py (auto-scan)
 generated_at: '2026-09-09'
-total_scripts: 767
+total_scripts: 776
 scripts:
 - name: __init__.py
   path: __init__.py
@@ -696,7 +696,7 @@ scripts:
   dimensions: []
 - name: ch/import_ths_profile.py
   path: ch/import_ths_profile.py
-  description: THS 个股元数据（细分行业+公司简介）导入 c1_market.stock_profile_ths（DS-223，GBK TSV 源清洗）
+  description: 数据源：docs/_working/同花顺资料/个股1 (1).xlsx / 个股1 (2).xlsx
   domain: ch
   execution_plane: warm-path
   status: registered
@@ -5088,7 +5088,7 @@ scripts:
   dimensions: []
 - name: industry_graph/apply_industry_graph_ddl.py
   path: industry_graph/apply_industry_graph_ddl.py
-  description: 表结构（2026-08-27 与用户定稿；v2 2026-09-07 按 SOP §4.8/§4.9 增补；v3 2026-09-08 按 SOP §4.10 增补；v4 2026-09-09 深度体系+分域增补）：
+  description: 表结构（2026-08-27 与用户定稿；v2 2026-09-07 按 SOP §4.8/§4.9 增补；v3 2026-09-08 按 SOP §4.10 增补；v4 2026-09-09 深度体系+分域增补；v5 2026-09-09
   domain: industry_graph
   execution_plane: warm-path
   status: registered
@@ -5105,6 +5105,22 @@ scripts:
 - name: industry_graph/calc_customer_concentration.py
   path: industry_graph/calc_customer_concentration.py
   description: 衍生指标（公司-年度）：
+  domain: industry_graph
+  execution_plane: warm-path
+  status: registered
+  timeout_seconds: 60
+  dimensions: []
+- name: industry_graph/execute_r1_chain_plans.py
+  path: industry_graph/execute_r1_chain_plans.py
+  description: 执行对象（链级：改名/deprecated+merged_into/新建母链；节点与公司并集归并明细不在本通道，
+  domain: industry_graph
+  execution_plane: warm-path
+  status: registered
+  timeout_seconds: 60
+  dimensions: []
+- name: industry_graph/fix_s6_s7_nodes.py
+  path: industry_graph/fix_s6_s7_nodes.py
+  description: '子命令::'
   domain: industry_graph
   execution_plane: warm-path
   status: registered
@@ -5161,6 +5177,22 @@ scripts:
 - name: industry_graph/merge_semiconductor_chains.py
   path: industry_graph/merge_semiconductor_chains.py
   description: 只增不删：新建母链节点+迁移公司落位+子链标 deprecated+merged_into。
+  domain: industry_graph
+  execution_plane: warm-path
+  status: registered
+  timeout_seconds: 60
+  dimensions: []
+- name: industry_graph/migrate_roles.py
+  path: industry_graph/migrate_roles.py
+  description: '映射规则（机械语义，全表落盘 role_migration.yaml）::'
+  domain: industry_graph
+  execution_plane: warm-path
+  status: registered
+  timeout_seconds: 60
+  dimensions: []
+- name: industry_graph/migrate_tier_to_function_role.py
+  path: industry_graph/migrate_tier_to_function_role.py
+  description: 语义收窄：位置（上游/中游/下游）是相对概念随链变，职能（设备/原料/工艺/服务）
   domain: industry_graph
   execution_plane: warm-path
   status: registered
@@ -5238,6 +5270,30 @@ scripts:
   status: registered
   timeout_seconds: 60
   dimensions: []
+- name: industry_graph/quality_closeout_governance.py
+  path: industry_graph/quality_closeout_governance.py
+  description: 施工项（幂等，可重跑）：
+  domain: governance
+  execution_plane: warm-path
+  status: registered
+  timeout_seconds: 60
+  dimensions: []
+- name: industry_graph/quality_fix_p0.py
+  path: industry_graph/quality_fix_p0.py
+  description: '子命令（全部幂等，PIT 关闭=唯一处置，零物理 DELETE）::'
+  domain: industry_graph
+  execution_plane: warm-path
+  status: registered
+  timeout_seconds: 60
+  dimensions: []
+- name: industry_graph/quality_fix_p2.py
+  path: industry_graph/quality_fix_p2.py
+  description: s1-rename        S1 残余 2 链改规范名
+  domain: industry_graph
+  execution_plane: warm-path
+  status: registered
+  timeout_seconds: 60
+  dimensions: []
 - name: industry_graph/rag_build_index.py
   path: industry_graph/rag_build_index.py
   description: 语料 manifest.jsonl → 分块（页标记切分 + 800 字滑窗 step 500）
@@ -5257,6 +5313,14 @@ scripts:
 - name: industry_graph/theme_linkage_monitor.py
   path: industry_graph/theme_linkage_monitor.py
   description: 每条链输出：覆盖公司数、当日涨家占比、平均/中位涨跌幅、领涨股、
+  domain: industry_graph
+  execution_plane: warm-path
+  status: registered
+  timeout_seconds: 60
+  dimensions: []
+- name: industry_graph/ths_equity_import.py
+  path: industry_graph/ths_equity_import.py
+  description: 数据源：docs/_working/同花顺资料/个股1 (1).xlsx / 个股1 (2).xlsx（GBK TSV 伪 xlsx）
   domain: industry_graph
   execution_plane: warm-path
   status: registered

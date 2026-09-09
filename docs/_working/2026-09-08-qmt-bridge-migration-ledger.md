@@ -83,7 +83,7 @@ ttl: task_bound
 > auction_snapshot/auction_book=`get_full_tick` 实时快照（9:15-9:25 竞价时段轮询，含五档）；
 > option_greeks/option_iv_surface/convertible_bond_iv=标准期权合约要素+行情价，**希腊字母/IV 全是我们自己用 BS 公式算的**（miniqmt_provider `_compute_greeks_for_option`/`_solve_iv`，r=0.03）。
 > 全库唯一真 L2 任务=l2_tick_snapshot（get_l2_quote），**本就 disabled、CH 空表**。
-> → 真实前置不是"L2 权限"而是：①桥 dump 在 9:15-9:25 竞价时段是否照常出行（待交易日早晨验证，并入 §8.1 观察）②桥 universe（现 8394=A股/基金/指数/转债）**不含期权合约**，期权族续命需扩 universe（9/18 后动沙箱一次）。
+> → 真实前置不是"L2 权限"而是：①桥 dump 在 9:15-9:25 竞价时段是否照常出行——**9/9 实证确认照常出行**（CH 09:15 分桶 22 行真实竞价 timetag + 09:25:03 撮合行，§8.6 任务四取证）②桥 universe（现 8394=A股/基金/指数/转债）**不含期权合约**，期权族续命需扩 universe（9/18 后动沙箱一次）。
 - [ ] auction_snapshot（4.7 万行，auction_highfreq 时段）
 - [ ] auction_book（191 万行）
 - [ ] option_greeks（9/7 在产）
@@ -172,15 +172,17 @@ ttl: task_bound
 | 1 | 2026-09-08 | 闪窗根治：10 个计划任务 wscript+launch_hidden.vbs 包装（含 vbs 参数透传）、register_guard_tasks.ps1 模板防回退、AI-Wrapper-Inject 僵尸实例清理、DataScheduler 补启用、死任务 TickVerify_1306 删除 | 75aae01b11 | 元凶=AI-Wrapper-Inject 每 1 分钟直连 powershell 闪窗；#ARCH-OPS-001；09-09 夜班核实补登哈希 |
 | 2 | 2026-09-08 | guard TICK_SOURCE=bridge 持久化（User 级）+ #BRIDGE-WRONG-FILE 修复（ENV_CONFIG sim/real→ticks3.csv，93/93 测试过）+ 误灌 166 万行 9/7 污染数据 ALTER DELETE 清理（9/7 恢复 308,657 行）+ 下午真积压回补（9/8 = 739,952 行） | 75aae01b11 | 事故根因：env 默认路径未随 v19 升级，早间 --bridge-file 覆盖掩盖漂移；事故记录已注释进 tick_subscriber.py；09-09 夜班核实补登哈希 |
 | 3 | 2026-09-08 | 口径对齐全链实测（持仓 row[7]/[9]/[15]/[18] ✅、五档 dump 25 列 ✅、CH 1 档+Redis 完整 5 档 ✅）+ 本台账更新（§1 勾 2 项/§2.2-D 与 §5 标注进度/新增 §8） | 75aae01b11 | PositionStatics.csv 13 天未更新红旗转 §8 |
+| 5 | 2026-09-09 日间 | §8.6 五项裁定施工：任务一五档落库（tick_depth_5 建表+TICK_DEPTH5 门旁路+回填 4 日 20581 行 100% 五档）+ 任务二分钟K 自拼（ch_tick_kline 1/5/15/30/60min+防误覆盖护栏）+ 任务三回测 CH 回放 adapter + 任务四竞价出行事后取证（22 行真实 timetag，auction 族续命确认）+ 任务五 v21 期权扩桥草稿备料（未激活）+ 事故 #QMT-DAY-0908-OVERWRITE 当日发现当日恢复（0908 官方 1min 回灌 125.5 万行） | bae99e93（代码批 11 文件） | tasks.yaml 零改动（红线 1）；tick_data 链路零变更（红线 2）；v19 未动（红线 3）； commit 遭遇三批他会话共享暂存区门禁竞争，按裁定 9 配方退避轮询+Owner 授权窗口后落库 |
 | 4 | 2026-09-09 夜班 | §2.4 占位清理 ×4 + §3 桥能力注册主体（scheduler 四点注册/QmtBridgeIngestProvider 新建/六文件源登记/speed_tester 桥通道/channel_manager dormant 常量/ex_core+回测域判读）+ §4 前端 F2-F7 + §8.3 核实勾选 + §8.5 摸底报告 | 8981a53f29（第三批）/ 3b25f73aed（第四批） | 只增桥不删 miniqmt；tasks.yaml 零 source 切换（红线 1）；F1 未动（红线 2）；TICK_SOURCE 链未动（红线 3）；夜班遇 3 并发会话（st-nodebt/greatwall-0020/本会话）锁竞争与门禁竞争，全部走合规通道解决 |
 
 ## §8 2026-09-08 增量待办（桥切换过渡期，按优先级）
 
 ### §8.1 明早（9/9）盘前/盘中观察【P0，bridge 独挑第一个完整交易日】
 
-- [ ] 09:15 跨天轮转三连观察：① ticks3.csv 是否被沙箱重建（size 归零/仅表头）② ticks3.csv.offset 越界自愈是否归零（115,620,192 > 新文件 size → 应重置 0 从头读）③ 09:30 后 CH qmt_bridge 行恢复增长（`SELECT count() FROM c1_market.tick_data WHERE trade_date=today() AND data_source='qmt_bridge'`）
-- [ ] 盘中抽查：CH 新行 timestamp 与 wall clock 偏差 <1min（防再吃陈旧 timetag）；桥子进程 biz.heartbeat mode=bridge、errors 无持续增长
-- [ ] Redis `tick:*:latest`（db0，现存 147 键为旧 xtdata child 昨日残留）确认被 bridge child 盘中刷新（低优，仅观察）
+
+- [x] 09:15 跨天轮转三连观察（?09-09 日间批补记，事后取证）：① ticks3.csv 当日重建正常（当日 49,013,890 字节持续增长至收盘）② offset 边车自愈语义在位（14:43 实测 56,489,257 字节与文件同步推进；BridgeTickSource 跨天归零逻辑 9/7 已验证）③ CH qmt_bridge 恢复增长（当日 356,906 行，09:15 竞价 22 行真实 timetag）
+- [x] 盘中抽查（?09-09）：CH 最新行 timestamp 14:58:13 与 wall clock 同分钟（<1min 达标）；心跳 mode=bridge errors=0 resub_count=0（12:59:48 guard 计划任务轮换重启属正常）
+- [ ] Redis `tick:*:latest`（db0，现存 147 键为旧 xtdata child 昨日残留）确认被 bridge child 盘中刷新（低优，仅观察）——09-09 日间未及验证，留给 9/10 盘中例行
 
 ### §8.2 Owner 动作【P0，9/18 前 MUST】
 
@@ -252,9 +254,28 @@ ttl: task_bound
 
 > 真源=施工会话指令（09-09 14:38）+ §8.3.1 五项裁定；完成后逐项勾选，行尾补 （?09-09 commit哈希）。
 
-- [ ] 任务一：五档盘口落库（裁定⑤，最高优先）——新建 CH 表 c1_market.tick_depth_5（键与 tick_data 对齐+五档 20 列，ReplacingMergeTree，DateTime64(3,'Asia/Shanghai')）+ tick_subscriber.py 桥模式并行落盘分支（现有 tick_data 链路零变更，红线 2）+ 近期历史回填脚本（get_market_data_ex(period='tick') 19 列含五档）；guard 重启时机留 Owner 择盘前/午休
-- [ ] 任务二：分钟K线自拼（裁定③方案 b）——CH tick_data 按 symbol×bar 窗口聚合 1min/5min（OHLCV 口径铁律见 §8.5.1 方案 b）+ 15/30/60min 复用 kline_resampler 幂等模式 + qmt_bridge provider capabilities 点亮 kline_1min/5min/15min/30min/60min；tasks.yaml source 零改动（红线 1）+ akshare 对拍兜底（方案 c）
-- [ ] 任务三：回测 tick 回放切 CH（裁定①）——新建 CH 回放 adapter（读 c1_market.tick_data，SQL 直取，provider 注入接口不变）；如实登记降级：1 档回放，五档深度待 tick_depth_5 积累后升级
-- [ ] 任务四：桥竞价时段出行验证（裁定④修订）——09:15-09:25 ticks3.csv 持续新增观察 + 09:30 后 CH qmt_bridge 增长；结论回填 §2.2-B 勘误注；顺带 §8.1 09:15 跨天轮转三连观察（日间会话 14:38 启动，窗口已过，按事后取证补记）
-- [ ] 任务五：期权 universe 扩桥预案（裁定④修订，只备料不激活）——v21 沙箱策略草稿 .txt（v19 基础上 universe 追加期权合约清单，纯 ASCII）落 E:\qmt_bridge_sim\ZEPHYR_TICKDUMP_v21_draft.txt + 编辑器粘贴/激活 SOP 步骤写入台账；激活留 Owner 9/18 后终端操作
+- [x] 任务一：五档盘口落库（裁定⑤，最高优先）——DDL 真源 schemas/categories/market_tick_depth_5.py（33 列，ReplacingMergeTree 月分区，DateTime64(3,'Asia/Shanghai')）已建表实机验证；品类注册 business_data_categories.yaml 新增 market_tick_depth_5；tick_subscriber 旁路分支（TICK_DEPTH5=1 环境门开启，默认关=现网零变更，红线 2）+ tick_depth_writer 行装配器 + tick_depth_backfill 回填计算层 + scripts/data/backfill_tick_depth5.py CLI（含单日下载语义修正：必须区间参数变体 A）；测试 127 passed（TestTickDepthBypass 9 项含 market_type 锚定+错误隔离）；实机回填 510300.SH 近 4 交易日 20,581 行，五档完整率与 quality_flag=1 均 100%（含 bid5）；guard 重启时机留 Owner 择盘前/午休执行（（?09-09 bae99e93）
+- [x] 任务二：分钟K线自拼（裁定③方案 b）——ch_tick_kline.py：1min/5min 从 tick_data SQL 聚合（argMin/argMax OHLC + lagInFrame Δvolume/Δamount 正差累加），15/30/60min 从 kline_1min 二次合成（toStartOfInterval，OCLH 列序）；幂等 DELETE+INSERT；qmt_bridge provider capabilities 点亮 kline_1min~60min 五 capability（fetch 路由 _call_synth 懒导入，tasks.yaml source 零改动=红线 1 守住）；实测 0908 窗口 1min 合成跑通、5min 合成 936,480 bars；**事故防线固化**：1min/H 周期合成默认拒绝覆盖已有数据窗口（allow_official_overwrite 显式门），5min DELETE 只删 data_source='synth_tick' 行（见下方事故复盘）；akshare 对拍脚本属方案 c 上线后 5 日对拍观察项，登记为 9/18 后启动（?09-09 bae99e93）
+- [x] 任务三：回测 tick 回放切 CH（裁定①）——ch_tick_replay.py：duck-typed fetch_historical(symbol/start/end/interval='tick') 与 MiniQmtQuoteProvider 同构，SQL 按 symbol 纯码+时间窗直取（idx_symbol set 索引裁剪）；降级如实登记：1 档回放（2-5 档填 0，matching_logic 撮合预校验只用 bid1/ask1 够用），五档深度待 tick_depth_5 积累后升级；单测 5 项含 duck-type 契约测试；真实数据冒烟：510300.SH 0908 09:30-10:00 从 CH 取到 12 tick（?09-09 bae99e93）
+- [x] 任务四：桥竞价时段出行验证（裁定④修订）——**窗口已过（会话 14:38 启动），按事后取证补记**：CH 实测 09:15 分桶 22 行真实竞价 timetag（09:15:00-09:15:48）+ 09:25:03 撮合打印行 + 09:30 起持续增长（全天 356,906 行）；ticks3.csv 当日 49MB 持续写入至 15:00 收盘；**结论=auction 族桥可续命确认**（§2.2-B 勘误注结论回填：竞价时段沙箱 dump 照常出行）；§8.1 三连观察：①ticks3.csv 当日重建正常（49MB）②offset 边车 56,489,257<file size 健康（跨天自愈语义在位）③CH qmt_bridge 35.7 万行恢复增长；心跳 mode=bridge errors=0（12:59:48 guard 白天自动重启过一次，属计划任务正常轮换）；（（?09-09 本条为取证结论无代码交付）
+- [x] 任务五：期权 universe 扩桥预案（裁定④修订，只备料不激活）——E:\qmt_bridge_sim\ZEPHYR_TICKDUMP_v21_draft.txt 已落盘（8,427 字节，**纯 ASCII 校验 0 违规**）；v19 基础上仅两处变更：①SECTORS 追加 '\u6caa\u6df1\u671f\u6743'+备选 '\u671f\u6743\u6e05\u5355'（缺失板块日志跳过不中断）②日志标记 V21；激活 SOP 写在草稿头注释（编辑器粘贴→保存→编译→模型交易启动→验证 INIT_OK 含期权数）；**未激活**——激活留 Owner 9/18 后终端操作（红线 3：沙箱策略直写磁盘不生效）
+
+#### §8.6.A 事故复盘：#QMT-DAY-0908-OVERWRITE（任务二施工过程触发，当日发现当日闭环）
+
+**现象**：任务二验证 1min 合成 SQL 时，对 0908 单日窗口跑了 synth_tick_kline('1min', ...)——该窗口此前存有 miniqmt 官方 1min 数据（125 万行/5207 只），幂等 DELETE 把官方数据连同清空后插入了合成行（168 万行/8657 只，含 ETF/LOF/转债）。
+
+**根因**（MTH-006 追到底）：
+1. 直接根因：1min 表无 data_source 列（DEFAULT local_intraday），无法按来源过滤 DELETE——幂等 DELETE 等于全窗覆盖。**表结构设计缺陷在先**（当年 1min 表只有 local_intraday 一个写入方，不需要来源列）。
+2. 认知根因：验证新 SQL 时选了"最近一个交易日"0908，而该日官方数据在产；未先查目标窗口现有数据的写入方身份。
+3. 流程根因：trae_063 破坏性操作三步验证（必要性/真实性/可逆性）在"我以为只是空窗口验证"的语境下被跳过——恰恰是空窗口假设错了。
+
+**恢复**：①删全部合成行（0908 窗口归零）②经 miniqmt SDK 重新下载 0908 官方 1m 缓存（5207 只逐只 download_history_data 变体 A 区间参数）+ 直读缓存构建行回灌——**恢复 1,254,887 行/5207 只，与 0907 官方基线完全同量级**（且 miniqmt 主源 9/18 前仍在产，任务链路本来就含该数据，零信息损失）③miniqmt 9/18 退役后 1min 表只剩合成写入方，此风险自然消解；退役前护栏已固化（下条）。
+
+**防线固化**（ch_tick_kline.py）：
+- 1min/15/30/60min 合成：目标窗口已有数据时默认 RuntimeError 拒绝，须显式 allow_official_overwrite=True（调用方承担 trae_063 三步验证责任）
+- 5min 合成：DELETE 恒带 data_source='synth_tick' 过滤，官方历史行物理不可能被触碰
+- 单测 4 项锁定防线（TestOverwriteGuard：拒绝/空窗放行/显式放行/5min 过滤）
+
+**教训**：①幂等 DELETE 前必须证明"窗口内全部行都是自己（或无主）的"，表没有来源列时默认拒绝；②验证类 SQL 一律先 SELECT count 看窗口现有行再动手；③SDK 下载语义要实证（单日 day,day 不落盘，必须区间参数）——93 §11.5a 已补记。
+
 
