@@ -11314,6 +11314,10 @@ creation_tokens:
   token: algo-note-sync-gate-20260909
   created_by: st-tdmbe-20260909
   capability: algo_note_sync_gate
+- file: docs/_working/2026-09-09-tdm-field-upgrade-discussion.md
+  token: tdm-field-upgrade-discussion-20260909
+  created_by: st-tdmbe-20260909
+  capability: trading_decision_map
 di_seam_exemptions:
 - module_path: zephyr.trading.auto_runtime_core.AutoRuntimeCore
   reason: P0-5 LSG DI seam 标杆，已有 DI 但 AST 模式不匹配（动态注入）
