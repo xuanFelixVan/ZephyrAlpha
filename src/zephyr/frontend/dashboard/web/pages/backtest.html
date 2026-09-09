@@ -2,7 +2,39 @@
     <h2 class="page-title">回测结果 <span class="badge b-na" id="bt-src-badge">● 未启动</span></h2>
     <div class="page-sub">研究组 · BTRUN 真源（data/backtest_artifacts/ 产物，时序强制落盘 #BT-PIPELINE-001）· 双栏式：左屏=策略档案+该策略历史回测，右屏=回测配置+结果三视图（JoinQuant 布局参考，Owner 2026-09-03）</div>
 
-    <div style="display:flex;gap:12px;align-items:flex-start">
+    <!-- 三分类模式条（Owner 2026-09-04 二期：策略回测/因子回测/整装回测） -->
+    <div class="tabs" id="bt-mode-tabs" style="margin-bottom:12px;background:var(--card7);border:1px solid var(--hair);border-radius:6px;padding:6px 8px">
+      <span class="tab on" id="bt-mode-strategy" onclick="btMode('strategy',this)">策略回测 Strategy Backtest</span>
+      <span class="tab" id="bt-mode-factor" onclick="btMode('factor',this)">因子回测 Factor Backtest</span>
+      <span class="tab" id="bt-mode-framework" onclick="btMode('framework',this)">整装回测 Portfolio Backtest <span class="badge b-pass">二期新</span></span>
+    </div>
+
+    <!-- 因子回测入口卡（模式=factor 时显示；因子详情=因子档案页真源，本页不放复制品防双真源） -->
+    <div class="card" id="bt-factor-card" style="margin-bottom:14px;display:none">
+      <h3>因子回测 <span class="dim">Factor Backtest</span> <span class="badge b-pass">真源</span></h3>
+      <div style="padding:8px 0;font-size:12px">因子回测全套（IC/分组净值/衰减/相似组）真源在因子档案页——<span class="todo-link" onclick="ovxGo('factor',this)">前往 因子档案 →</span></div>
+      <div class="note">口径：因子层评估（IC/IR/分层收益）与策略层回测（净值/回撤）分离，防"因子好看策略亏钱"的黑箱（单因子→组合的传导在整装回测验证）</div>
+    </div>
+
+    <!-- 整装回测卡（模式=framework 时显示；真源 /api/framework-plans + /api/framework-backtest-run，MOD-FWCOMP-001） -->
+    <div class="card" id="bt-fw-card" style="margin-bottom:14px;display:none">
+      <h3>整装回测 <span class="dim">Portfolio Backtest</span> <span class="badge b-pass">真源</span> <span class="dim">方案权重骨架 × 子策略面板 → 组合净值（统一框架派宪章 §3 约束二）</span></h3>
+      <div style="font-size:12px;color:var(--faint);margin-bottom:6px">第一步：选择整装方案</div>
+      <div id="btfw-plans" style="display:flex;gap:10px;flex-wrap:wrap;margin-bottom:10px"></div>
+      <div style="display:flex;gap:14px;align-items:center;flex-wrap:wrap;font-size:12px;margin-bottom:8px">
+        <span class="dim">时间段：</span><input type="date" id="btfw-start" style="background:var(--input);border:1px solid var(--border);border-radius:4px;color:var(--text);font-size:11px;padding:3px 6px">
+        <span class="dim">~</span><input type="date" id="btfw-end" style="background:var(--input);border:1px solid var(--border);border-radius:4px;color:var(--text);font-size:11px;padding:3px 6px">
+        <span class="btn primary" id="btfw-btn" onclick="btfwRun()">▶ 发起整装回测</span>
+      </div>
+      <div class="btr-prog-wrap" id="btfw-prog-wrap" style="display:none">
+        <div class="bar"><i id="btfw-prog-fill" style="width:0%"></i></div>
+        <div class="note" id="btfw-status"></div>
+      </div>
+      <div id="btfw-detail" style="display:none;margin-top:8px"></div>
+      <div class="note">组合净值 = Σ(方案权重 × 子策略日频面板)；tick 策略不参与日频方案（跳过披露）；产物 bt-fw-*.json 落盘后自动进入左屏「该策略历史回测 Runs」体系（点选载入右屏三视图）</div>
+    </div>
+
+    <div id="bt-strategy-body" style="display:flex;gap:12px;align-items:flex-start">
       <!-- ═══════════ 左屏：策略选择 → 档案 → 该策略历史回测（与右屏等宽，Owner 2026-09-03） ═══════════ -->
       <div style="flex:1 1 0;min-width:0">
         <!-- 策略看板（/api/strategies 真源；下拉选择策略，Owner 2026-09-04 一期不再平铺 8 卡） -->

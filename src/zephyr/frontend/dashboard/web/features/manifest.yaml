@@ -148,6 +148,18 @@ modules:
     acceptance: ACC-F-BACKTEST-BATTLE-STAGE
     handbook: [FEH-PC-012]   # registerFeature 只登记不初始化——组件自举三事文件顶层做
     status: active
+  - id: bt-framework-panel
+    name: 整装回测面板（三分类 tab+方案选择+发起轮询+组合净值摘要）
+    file: core/backtest.js   # 宿主内函数族 btfw*（btMode/btfwPlansLoad/btfwRun，与 btrRun 同宿主同模式）
+    page: backtest
+    init: "btBoot 触发（btfwPlansLoad 惰性，模式切换 framework 时加载）"
+    destroy: none
+    depends: [ZK.api, btApi]   # /api/framework-plans + /api/framework-backtest-run POST/GET（MOD-FWCOMP-001 端点契约）；产物 bt-fw-*.json 复用现有详情渲染链
+    toggle: "三分类模式条 [整装回测] tab"
+    styles: none   # 复用全局 card/factor-card/badge/bar
+    acceptance: ACC-F-BACKTEST-FRAMEWORK
+    handbook: []
+    status: active
   - id: chainmap-galaxy
     name: 产业星系图（L1 族聚合全景）
     file: features/chainmap/chainmap-galaxy.js

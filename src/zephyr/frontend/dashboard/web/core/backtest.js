@@ -226,13 +226,22 @@ function btRenderRunList(list){
   if(!menu||!label)return;
   var sid=BTR_CFG.strategies[0];
   var mine=BT_RUNS.filter(function(x){return !sid||x.strategy_id===sid;});
-  if(!mine.length){menu.innerHTML='';label.innerHTML='<span class="dim">该策略暂无回测产物——右上方「发起回测」跑一次即有</span>';return;}
+  var fwRuns=BT_RUNS.filter(function(x){return (x.run_id||'').indexOf('bt-fw-')===0;});   /* 整装产物独立小节（Owner 2026-09-09 ACC 复盘：strategy_id=plan_id 不入策略过滤，防混列） */
+  if(!mine.length&&!fwRuns.length){menu.innerHTML='';label.innerHTML='<span class="dim">该策略暂无回测产物——右上方「发起回测」跑一次即有</span>';return;}
   var h='';
   mine.forEach(function(it){
     var ret=it.total_return!=null?(it.total_return*100).toFixed(1)+'%':'--';
     var on=it.run_id===BT_STATE.run;
     h+='<span class="acct-mi'+(on?' on':'')+'" data-v="'+it.run_id+'" onclick="btRunPick(\''+it.run_id+'\',event)">'+(on?'✓ ':'')+it.run_id.replace('bt-','')+' · <b class="'+(it.total_return>=0?'up':'down')+'">'+ret+'</b> · <span class="dim">'+(it.created_at||'').slice(0,10)+'</span></span>';
   });
+  if(fwRuns.length){
+    h+='<div class="dim" style="font-size:10px;padding:4px 12px 2px;border-top:1px solid var(--hair);margin-top:4px">── 整装回测（组合净值）──</div>';
+    fwRuns.forEach(function(it){
+      var ret=it.total_return!=null?(it.total_return*100).toFixed(1)+'%':'--';
+      var on=it.run_id===BT_STATE.run;
+      h+='<span class="acct-mi'+(on?' on':'')+'" data-v="'+it.run_id+'" onclick="btRunPick(\''+it.run_id+'\',event)">'+(on?'✓ ':'')+'📦 '+it.run_id.replace('bt-','')+' · <b class="'+(it.total_return>=0?'up':'down')+'">'+ret+'</b> · <span class="dim">'+(it.created_at||'').slice(0,10)+'</span></span>';
+    });
+  }
   menu.innerHTML=h;
   /* 收起态标签=当前载入 run 摘要；未载入则提示 N 次 */
   var cur=null;mine.forEach(function(it){if(it.run_id===BT_STATE.run)cur=it;});
@@ -242,6 +251,112 @@ function btRenderRunList(list){
   }else{
     label.innerHTML='<span class="dim">该策略共 '+mine.length+' 次回测，点开选择 ▾</span>';
   }
+}
+/* ── 三分类模式条（Owner 2026-09-04 二期：策略回测/因子回测/整装回测）── */
+function btMode(m,el){
+  document.querySelectorAll('#bt-mode-tabs .tab').forEach(function(t){t.classList.remove('on');});
+  if(el)el.classList.add('on');
+  var isStrategy=m==='strategy';
+  var body=document.getElementById('bt-strategy-body');
+  if(body)body.style.display=isStrategy?'flex':'none';
+  var btr=document.getElementById('btr-card');
+  if(btr)btr.style.display=isStrategy?'':'none';
+  /* 策略结果区（结果三视图 tabs/参数条/KPI/子页）仅 strategy 模式可见 */
+  document.querySelectorAll('#p-backtest .strategy-head,#p-backtest .tabs:not(#bt-mode-tabs),#p-backtest .param-strip').forEach(function(e){
+    e.style.display=isStrategy?'':'none';
+  });
+  var kpi=document.getElementById('bt-kpi'); if(kpi)kpi.style.display=isStrategy?'':'none';
+  document.querySelectorAll('#p-backtest .subpage').forEach(function(e){e.style.display=isStrategy?(e.classList.contains('active')?'':'none'):'none';});
+  var fc=document.getElementById('bt-factor-card'); if(fc)fc.style.display=(m==='factor')?'':'none';
+  var fw=document.getElementById('bt-fw-card'); if(fw)fw.style.display=(m==='framework')?'':'none';
+  if(m==='framework')btfwPlansLoad();
+}
+/* ── 整装回测（btfw 前缀，二期；真源 /api/framework-plans + /api/framework-backtest-run）── */
+var BTFW_PLANS=[],BTFW_SEL=null,BTFW_TASK=null,BTFW_TIMER=null,BTFW_BUSY=false;
+function btfwPlansLoad(){
+  var api=btApi(); if(!api)return;
+  var box=document.getElementById('btfw-plans'); if(!box)return;
+  api.fetchFrameworkPlans().then(function(r){
+    if(!r||!r.ok||!r.data){box.innerHTML='<span class="dim" style="font-size:12px">方案清单加载失败（后端 fail-closed）——15s 重试</span>';setTimeout(btfwPlansLoad,15000);return;}
+    BTFW_PLANS=r.data;
+    if(!BTFW_SEL||!BTFW_PLANS.some(function(p){return p.plan_id===BTFW_SEL;}))BTFW_SEL=BTFW_PLANS[0]&&BTFW_PLANS[0].plan_id;
+    btfwRenderPlans();
+  }).catch(function(){box.innerHTML='<span class="dim" style="font-size:12px">断线——15s 重试</span>';setTimeout(btfwPlansLoad,15000);});
+}
+function btfwRenderPlans(){
+  var box=document.getElementById('btfw-plans'); if(!box)return;
+  var h='';
+  BTFW_PLANS.forEach(function(p){
+    var on=p.plan_id===BTFW_SEL;
+    var mem=(p.weights||[]).map(function(w){return w.strategy_id+' '+(w.weight*100).toFixed(0)+'%';}).join(' · ');
+    h+='<div class="card factor-card'+(on?' active':'')+'" style="flex:1 1 220px;padding:8px 12px;cursor:pointer;'+(on?'border:1px solid var(--text);':'')+'" onclick="btfwSel(\''+p.plan_id+'\')">'
+      +'<div style="display:flex;justify-content:space-between;gap:8px"><b>'+p.name+'</b><span class="badge b-na">'+(p.risk_profile||'')+'</span></div>'
+      +'<div class="kv-mini" style="margin-top:4px;font-size:11px">'+mem+'</div></div>';
+  });
+  box.innerHTML=h;
+}
+function btfwSel(pid){
+  BTFW_SEL=pid;
+  btfwRenderPlans();
+}
+function btfwRun(){
+  if(BTFW_BUSY)return;
+  var api=btApi(); if(!api)return;
+  if(!BTFW_SEL){alert('先选方案');return;}
+  var s=document.getElementById('btfw-start'),en=document.getElementById('btfw-end');
+  var span=btrPeriodSpan(BTR_CFG.period);   /* 默认近6个月（ACC 复盘：后端四参硬校验 plan_id/symbols/start/end，留空=前端补默认，2026-09-09 实证） */
+  var body={plan_id:BTFW_SEL,
+    symbols:['600519.SH','000858.SZ','601318.SH','600036.SH','000001.SZ'],   /* 与单策略回测同标的池（自选池接入待 I-2） */
+    start:(s&&s.value)?s.value:span.start,
+    end:(en&&en.value)?en.value:span.end};
+  BTFW_BUSY=true;
+  var btn=document.getElementById('btfw-btn'),wrap=document.getElementById('btfw-prog-wrap'),fill=document.getElementById('btfw-prog-fill'),st=document.getElementById('btfw-status'),dt=document.getElementById('btfw-detail');
+  btn.classList.remove('primary'); btn.textContent='提交中…';
+  wrap.style.display='block'; fill.style.width='10%'; dt.style.display='none';
+  st.textContent='POST /api/framework-backtest-run（'+BTFW_SEL+'，后台合成+引擎撮合）…';
+  var t0=Date.now();
+  api.postFrameworkBacktestRun(body).then(function(r){
+    if(!r||!r.ok||!r.task_id)throw new Error(r&&r.error||'submit failed');
+    BTFW_TASK=r.task_id;
+    btn.textContent='运行中…';
+    fill.style.width='50%';
+    var poll=function(){
+      api.fetchFrameworkBacktestRunStatus(BTFW_TASK).then(function(s){
+        if(s&&s.status==='done'){
+          fill.style.width='100%'; btn.classList.add('primary'); btn.textContent='▶ 发起整装回测';
+          var m=s.metrics||{};
+          st.innerHTML='✅ 完成——产物 <b>'+(s.run_id||'')+'</b>（方案 '+s.plan_id+' · 参与 '+s.participants+' 成员'+(s.skipped?(' · 跳过 '+s.skipped+' tick 策略'):'')+(s.rescale_factor&&s.rescale_factor!==1?(' · rescale '+s.rescale_factor):'')+'），已自动载入右屏';
+          if(dt){dt.style.display='block';
+            dt.innerHTML='<div class="kv-mini" style="font-size:12px">组合收益 <b class="'+((m.total_return||0)>=0?'up':'down')+'">'+((m.total_return!=null?((m.total_return>=0?'+':'')+(m.total_return*100).toFixed(2)+'%'):'--'))+'</b> · 夏普 <b>'+(m.sharpe_ratio!=null?m.sharpe_ratio.toFixed(2):'--')+'</b> · 回撤 <b class="down">'+(m.max_drawdown!=null?('-'+(m.max_drawdown*100).toFixed(2)+'%'):'--')+'</b> · 成交 <b>'+(m.trades_count!=null?m.trades_count:'--')+'</b> 笔'+((m.compose_notes)?(' · <span class="dim">'+m.compose_notes+'</span>'):'')+'</div>';}
+          BTFW_BUSY=false;
+          /* 产物已入 artifacts → 刷新左屏 Runs 并载入详情（复用现有渲染链） */
+          api.fetchBacktestList().then(function(r2){
+            if(r2&&r2.ok){btRenderRunList(r2.data||[]);ZK.api.swrSave('zk_bt_v1',r2);}
+          });
+          if(s.run_id)btLoadDetail(s.run_id);
+          BTFW_TIMER=null;
+        }else if(s&&s.status==='failed'){
+          fill.style.width='100%'; btn.classList.add('primary'); btn.textContent='▶ 发起整装回测';
+          st.textContent='❌ 失败：'+(s.error||'unknown')+'（可重试）';
+          BTFW_BUSY=false; BTFW_TIMER=null;
+        }else{
+          var el=Math.round((Date.now()-t0)/1000);
+          st.textContent='整装回测运行中…已 '+el+'s（合成面板→引擎撮合，每 3s 轮询）';
+          fill.style.width=Math.min(90,50+el/3)+'%';
+          BTFW_TIMER=setTimeout(poll,3000);
+        }
+      }).catch(function(){
+        btn.classList.add('primary'); btn.textContent='▶ 发起整装回测';
+        st.textContent='❌ 轮询失败（API 断线）——可重试';
+        BTFW_BUSY=false; BTFW_TIMER=null;
+      });
+    };
+    BTFW_TIMER=setTimeout(poll,2000);
+  }).catch(function(e){
+    btn.classList.add('primary'); btn.textContent='▶ 发起整装回测';
+    st.textContent='❌ 发起失败：'+(e&&e.message||e);
+    BTFW_BUSY=false;
+  });
 }
 function btBoot(){
   /* SWR（2026-09-03 Owner「刷新立即出画面」）：先渲染上次缓存（策略宫格+Run 列表+绩效三图），

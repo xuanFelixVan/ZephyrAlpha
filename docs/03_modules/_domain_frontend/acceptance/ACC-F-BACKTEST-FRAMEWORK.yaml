@@ -1,0 +1,34 @@
+# --- 治理锚定 ---
+# doc_type: register | 功能验收单（冻结"什么样子算对"）
+# ttl: permanent
+# 修订权限：Owner 专有（AI 可提议不可自改已冻结条项）
+# --- 治理锚定结束 ---
+
+feature_id: F-BACKTEST-FRAMEWORK
+feature_name: 整装回测（三分类 tab+方案选择+发起轮询+组合净值摘要）
+frozen_at: 2026-09-09
+frozen_by: ZephyrAlpha-Owner
+revision: 1
+revision_policy: "修订=Owner 批准+改原文+revision 链留痕；AI 不可自改已冻结条项"
+
+items:
+  - { id: 1, text: "页顶三分类模式条：策略回测（默认选中）/ 因子回测 / 整装回测，点切互斥显示", check: 目检 }
+  - { id: 2, text: "策略回测模式=现有全部内容（双栏+配置条+三视图），无回归", check: 目检 }
+  - { id: 3, text: "因子回测模式=入口卡（跳转因子档案页），不放复制品防双真源", check: 目检 }
+  - { id: 4, text: "整装回测模式=方案三卡（防御/均衡/激进，含成员构成摘要与 Σ=100%），点选白边高亮", check: 目检 }
+  - { id: 5, text: "发起后进度条+轮询状态（running/done/failed），done 显示组合收益/夏普/回撤/成交摘要", check: 机断 }
+  - { id: 6, text: "产物 bt-fw-*.json 自动进入左屏历史 Runs 下拉并可载入右屏三视图（复用现有渲染链）", check: 机断 }
+  - { id: 7, text: "tick 策略跳过与 rescale 系数如实披露（done 状态行）", check: 目检 }
+  - { id: 8, text: "方案清单加载失败红灯+15s 自动重试，禁止演示数据顶替（fail-closed 真源 /api/framework-plans）", check: 机断 }
+  - { id: 9, text: "三分类切换不影响左屏下拉/档案卡/Runs 的既有联动行为", check: 目检 }
+
+execution:
+  trigger: "任何涉及本功能的 UI 改动 commit 前"
+  flow: "起本地服务 → 截图 → 逐条对 → 全绿才走 GitCommitGateway"
+  baseline_screenshot: "acceptance/screenshots/F-BACKTEST-FRAMEWORK-baseline.png"
+
+关联:
+  handbook: []
+  frontend_map: F-BACKTEST-FRAMEWORK
+  code_ref: "src/zephyr/frontend/dashboard/web/core/backtest.js（btfw* 函数族+btMode）"
+  backend_ref: "api:/api/framework-plans + api:/api/framework-backtest-run（MOD-FWCOMP-001，commit 622d3f5bb7 契约）"

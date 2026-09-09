@@ -53,6 +53,15 @@ ZK.api = (function(){
     fetchBattleMapFlow: function(){   /* 作战地图阶段树（策略所处环节模块真源，BattleMapReader 后端缓存 10min） */
       return fetchJson('/api/battle-map-flow', 15000);
     },
+    fetchFrameworkPlans: function(){   /* 整装方案清单（二期组合回测：防御/均衡/激进，config/framework_plans.yaml 真源，fail-closed） */
+      return fetchJson('/api/framework-plans', 15000);
+    },
+    postFrameworkBacktestRun: function(body){   /* 发起整装回测（POST，后台串行线程池，与 backtest-run 同模式） */
+      return fetchJson('/api/framework-backtest-run', 15000, {method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify(body)});
+    },
+    fetchFrameworkBacktestRunStatus: function(taskId){   /* 轮询整装回测状态 */
+      return fetchJson('/api/framework-backtest-run?task_id='+encodeURIComponent(taskId));
+    },
     fetchBacktestDetail: function(runId){   /* 回测产物详情（绩效三图/明细）；20s：tick 产物 127 万点冷盘读取 10s 必超时→误标「断线」（2026-09-03 实证） */
       return fetchJson('/api/backtest-detail?run_id='+encodeURIComponent(runId), 20000);
     },
