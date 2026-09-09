@@ -5,10 +5,14 @@
  * 激活检测：页面片段经 innerHTML 注入（script 不执行），本文件由 loader 显式加载；
  *           30s tick 时仅 p-tdm 可见才 fetch，页面隐藏零开销。
  * 抽屉 v2（b20260908-10）：右侧详情抽屉重设计——标题徽标区/治理键值网格/依据锚八轴 chip 流/
- *           上下游节点导航行（点击跳选）/长文行高≥1.6；纯 HTML+CSS，数据契约与画布交互不变。 */
+ *           上下游节点导航行（点击跳选）/长文行高≥1.6；纯 HTML+CSS，数据契约与画布交互不变。
+ * 聚焦模式（b20260909-fe）：点节点自动重排血统主线——亮区=直连一跳+父子链全程（feed 多跳闭包
+ *           实测吞全图，已裁定只保直连），上游居左/下游居右同水平带（列位=与选中节点距离），
+ *           无关节点整块下移让路+压暗（只动透明度，三态色语义不变）；镜头自动适配主带（仅聚焦
+ *           切换时，轮询重绘不打断手动平移缩放）；退出=Esc/双击空白/工具栏「🎯 聚焦 ✕」。 */
 (function () {
   'use strict';
-  var TDM = { data: null, sel: null, stamp: null, busy: false, dragDist: 0, verdicts: {} };
+  var TDM = { data: null, sel: null, stamp: null, busy: false, dragDist: 0, verdicts: {}, focus: null, focusFit: null };
   var API_BASE = 'http://127.0.0.1:8890';   /* 与 services/api.js 同源——app:// 模式下相对 fetch 会打到 app://api/tdm 必断 */
   /* 画布视图状态（交互规范=visualization_view_template.md §6.6：滚轮缩放/拖动平移/双击重置/Ctrl+Shift+D 切模式） */
   var view = { z: 1, x: 0, y: 0, dragMode: true };
@@ -46,6 +50,15 @@
   }
 
   window.tdmToggleMode = function () { setMode(!view.dragMode); };
+
+  /* 退出聚焦：回全景布局+视图复位（保留选中态与抽屉——聚焦是画布镜头，选中是抽屉上下文，两者解耦） */
+  function exitFocus() {
+    TDM.focus = null; TDM.focusFit = null;
+    view.z = 1; view.x = 0; view.y = 0;
+    render();
+    applyView();
+  }
+  window.tdmExitFocus = exitFocus;   /* 工具栏「🎯 聚焦 ✕」onclick 入口 */
 
   function visible() {
     var el = document.getElementById('p-tdm');
@@ -119,6 +132,58 @@
       (flows[fl.order] = flows[fl.order] || { info: fl, items: [] }).items.push(n);
     });
 
+    /* ── 聚焦模式血统计算（b20260909-fe）：亮区口径=直连一跳（feed/sequence/broadcast/feedback 全算）
+     * + 父链祖先全程 + 子链后代全程 + 自己。实测裁定依据：feed 边 129 条构成致密网，多跳闭包
+     * 会吞全图（125 节点全达，335 计数）；只保直连与树骨架后血统收敛到 3~21 节点，聚焦带可读。
+     * 同节点双侧可达按更近一侧归位，距离平局归上游。真源节点消失→自动退出聚焦 */
+    var F = null;
+    if (TDM.focus) {
+      if (!byId[TDM.focus]) { TDM.focus = null; TDM.focusFit = null; }
+      else {
+        var nb = function (id, dir) {
+          var out = [];
+          (d.edges || []).forEach(function (e) {
+            if (dir === 'up' && e.to_node === id && byId[e.from_node]) out.push(e.from_node);
+            if (dir === 'down' && e.from_node === id && byId[e.to_node]) out.push(e.to_node);
+          });
+          if (dir === 'up') { var p = byId[id].parent; if (p && byId[p]) out.push(p); }
+          else (kids[id] || []).forEach(function (c) { out.push(c.id); });
+          return out;
+        };
+        var upD = {}, downD = {};
+        /* 树骨架全程：父链祖先（parent 树无环，dd 兜底防脏数据死循环）+ 子链后代 BFS */
+        (function () {
+          var cur = TDM.focus, dd = 0, p;
+          while (dd < 50 && (p = byId[cur].parent) && byId[p]) {
+            dd += 1;
+            if (!(p in upD) || upD[p] > dd) upD[p] = dd;
+            cur = p;
+          }
+        })();
+        (function () {
+          var q = [{ id: TDM.focus, d: 0 }];
+          while (q.length) {
+            var it = q.shift();
+            (kids[it.id] || []).forEach(function (c) {
+              var cid = c.id;   /* kids 值是节点对象——取 .id，直接用对象会键成 "[object Object]" 幽灵节点 */
+              if (!(cid in downD)) { downD[cid] = it.d + 1; q.push({ id: cid, d: it.d + 1 }); }
+            });
+          }
+        })();
+        /* 直连一跳覆盖：直接关系优先于结构距离（直接喂它的父辈节点归位更近） */
+        nb(TDM.focus, 'up').forEach(function (m) { if (m !== TDM.focus && (!(m in upD) || upD[m] > 1)) upD[m] = 1; });
+        nb(TDM.focus, 'down').forEach(function (m) { if (m !== TDM.focus && (!(m in downD) || downD[m] > 1)) downD[m] = 1; });
+        var fset = {}; fset[TDM.focus] = { side: 'self', dist: 0 };
+        Object.keys(upD).forEach(function (id) {
+          fset[id] = { side: (downD[id] != null && downD[id] < upD[id]) ? 'down' : 'up',
+            dist: Math.min(upD[id], downD[id] != null ? downD[id] : Infinity) };
+        });
+        Object.keys(downD).forEach(function (id) { if (!fset[id]) fset[id] = { side: 'down', dist: downD[id] }; });
+        F = { id: TDM.focus, set: fset };
+      }
+    }
+    function inF(el) { return !!F && !!F.set[el.dataset.id]; }
+
     host.innerHTML = '';
     var wires = [];
     var elById = {};        /* 节点 id → 卡片元素（边连线用） */
@@ -135,11 +200,12 @@
       var el = document.createElement('div');
       var vd = TDM.verdicts && TDM.verdicts[n.id];
       var vtag = '';
+      var fd = (F && !F.set[n.id]) ? ' fdim' : '';   /* 聚焦模式：血统主线外压暗（只动透明度，色语义不动） */
       if (vd && (vd.verdict === 'noise' || vd.verdict === 'decaying')) {
-        el.className = 'tn tn-d' + depth + ' ' + cls(n) + ' v' + (vd.verdict === 'noise' ? 'n' : 'd') + (n.id === TDM.sel ? ' sel' : '');
+        el.className = 'tn tn-d' + depth + ' ' + cls(n) + fd + ' v' + (vd.verdict === 'noise' ? 'n' : 'd') + (n.id === TDM.sel ? ' sel' : '');
         vtag = '<span class="tn-v">' + (vd.verdict === 'noise' ? '噪音' : '衰减') + '</span>';
       } else {
-        el.className = 'tn tn-d' + depth + ' ' + cls(n) + (n.id === TDM.sel ? ' sel' : '');
+        el.className = 'tn tn-d' + depth + ' ' + cls(n) + fd + (n.id === TDM.sel ? ' sel' : '');
       }
       el.style.left = cx + 'px'; el.style.top = cy + 'px'; el.style.width = colW + 'px';
       /* 小字=「问」全文（不 slice 截断），CSS line-clamp 2：一排放不下自动提行成两行；标题保留 📄 前缀 */
@@ -147,15 +213,16 @@
         '<div class="tn-n">' + (n.autonomy === 'paper' ? '📄 ' : '') + (n.name || n.id) + '</div>' +
         '<div class="tn-g">' + (n.q || '（问待补）') + '</div>';
       el.title = n.id;
-      el.onclick = function () { if (TDM.dragDist > 3) return; TDM.sel = n.id; render(); drawer(); };   /* 拖动平移后松手不算点击 */
+      el.onclick = function () { if (TDM.dragDist > 3) return; TDM.sel = n.id; TDM.focus = n.id; render(); drawer(); };   /* 拖动平移后松手不算点击；点选即聚焦血统 */
       el.dataset.id = n.id;
       host.appendChild(el);
       elById[n.id] = el;
       return el;
     }
-    /* 连线样式：parent/sequence/broadcast=实线主链；feed/feedback=虚线喂给——wire(a,b,dashed,type) */
+    /* 连线样式：parent/sequence/broadcast=实线主链；feed/feedback=虚线喂给——wire(a,b,dashed,type)；
+     * 第 5 元=聚焦相关性（聚焦模式下两端都在血统内的边才保亮度，其余压暗） */
     function wire(a, b, dashed, wtype) {
-      wires.push([a, b, !!dashed, wtype || 'parent']);
+      wires.push([a, b, !!dashed, wtype || 'parent', !F || (inF(a) && inF(b))]);
     }
 
     /* 递归布局：节点排在自己层列的 y 处；子节点从父同 y 起往下排（思维导图惯例）；
@@ -178,11 +245,14 @@
 
     Object.keys(flows).sort().forEach(function (fo) {
       var g = flows[fo];
-      var fel = document.createElement('div');
-      fel.className = 'tg';
-      fel.style.left = '8px'; fel.style.top = (y + 20) + 'px';
-      fel.innerHTML = g.info.zh + ' <span class="cnt">' + g.items.length + '</span>';
-      host.appendChild(fel);
+      var fel = null;
+      if (!F) {   /* 聚焦模式不画流根标签——画面只留血统主线，流归属由全景态承载 */
+        fel = document.createElement('div');
+        fel.className = 'tg';
+        fel.style.left = '8px'; fel.style.top = (y + 20) + 'px';
+        fel.innerHTML = g.info.zh + ' <span class="cnt">' + g.items.length + '</span>';
+        host.appendChild(fel);
+      }
       var fy = y;
       g.items.forEach(function (n) {
         var cb = place(n, 1, fy, fel);
@@ -190,6 +260,52 @@
       });
       y = fy + 6;
     });
+
+    /* ── 聚焦重排（b20260909-fe）：主线拉成一条水平带——选中节点原地不动为锚，上游按血统距离向左、
+     * 下游向右各退一列（直接上游/下游贴身，越远越外）；同列多节点绕选中节点垂直居中堆叠（单节点
+     * 列与选中节点严格同水平线）；无关节点整块下移让路+压暗；主带越出左界时全图右移夹回 */
+    if (F) {
+      var selEl = elById[F.id];
+      var anchorX = selEl.offsetLeft;
+      var anchorCY = selEl.offsetTop + selEl.offsetHeight / 2;
+      var cols = {};
+      Object.keys(F.set).forEach(function (id) {
+        var it = F.set[id];
+        if (it.side === 'self') return;
+        var col = it.side === 'up' ? -it.dist : it.dist;
+        (cols[col] = cols[col] || []).push(elById[id]);
+      });
+      var step = colW + GAP;
+      Object.keys(cols).forEach(function (c) {
+        var els = cols[c].sort(function (a, b) { return a.offsetTop - b.offsetTop; });
+        var hs = els.map(function (el) { return el.offsetHeight; });
+        var total = hs.reduce(function (s, h) { return s + h; }, 0) + 10 * (els.length - 1);
+        var cy = anchorCY - total / 2;
+        els.forEach(function (el, i) {
+          el.style.left = (anchorX + c * step) + 'px';
+          el.style.top = cy + 'px';
+          cy += hs[i] + 10;
+        });
+      });
+      var minX = Infinity, bandBottom = 0;
+      Object.keys(F.set).forEach(function (id) {
+        var el = elById[id];
+        minX = Math.min(minX, el.offsetLeft);
+        bandBottom = Math.max(bandBottom, el.offsetTop + el.offsetHeight);
+      });
+      var dx = Math.max(0, 8 - minX);
+      var minY = Infinity;
+      Object.keys(elById).forEach(function (id) {
+        if (F.set[id]) return;
+        minY = Math.min(minY, elById[id].offsetTop);
+      });
+      var dy = Math.max(0, bandBottom + 70 - minY);
+      Object.keys(elById).forEach(function (id) {
+        var el = elById[id];
+        el.style.left = (el.offsetLeft + dx) + 'px';
+        if (!F.set[id] && dy) el.style.top = (el.offsetTop + dy) + 'px';
+      });
+    }
 
     /* 全量依赖边连线（171 条）：父链之外的 sequence/feed/broadcast/feedback 全画——
      * 用户记忆中"全景图枝丫繁茂"=边完整版（此前只画 ~100 条父链，交叉喂给线全缺失） */
@@ -206,8 +322,19 @@
     /* 世界层与树的尺寸用布局常量直接算（X3+CW=内容右缘）——绝不能量 host.offsetWidth：
      * world 是绝对定位收缩包裹、树内卡片全绝对定位不撑宽，量出来恒≈padding 8px，
      * SVG 视口跟着塌成 8px 宽 → 连线全部画到可视区外（b20260908-02 连线消失的根因） */
-    var contentW = COLX[4] + colW + 4;
-    var contentH = y + 6;
+    var contentW, contentH;
+    if (F) {   /* 聚焦态尺寸用卡片实测包围盒（重排后列位不再符合 COLX 公式） */
+      var mR = 0, mB = 0;
+      Object.keys(elById).forEach(function (id) {
+        var el = elById[id];
+        mR = Math.max(mR, el.offsetLeft + el.offsetWidth);
+        mB = Math.max(mB, el.offsetTop + el.offsetHeight);
+      });
+      contentW = mR + 4; contentH = mB + 6;
+    } else {
+      contentW = COLX[4] + colW + 4;
+      contentH = y + 6;
+    }
     host.style.width = contentW + 'px';
     host.style.height = contentH + 'px';   /* 绝对定位子元素不撑高父容器——显式写内容高度 */
     var w = worldEl();
@@ -216,7 +343,35 @@
       w.style.height = Math.max(contentH, canvas.clientHeight || 600) + 'px';
     }
 
-    requestAnimationFrame(function () {
+    /* 聚焦镜头自动适配：主带收进可视区（上游在视野左、下游在视野右）——仅聚焦目标切换时执行，
+     * 30s 轮询重绘不重拟合，不打断用户手动平移缩放 */
+    if (F && TDM.focusFit !== F.id) {
+      var bL = Infinity, bT = Infinity, bR = 0, bB = 0;
+      Object.keys(F.set).forEach(function (id) {
+        var el = elById[id];
+        bL = Math.min(bL, el.offsetLeft); bT = Math.min(bT, el.offsetTop);
+        bR = Math.max(bR, el.offsetLeft + el.offsetWidth);
+        bB = Math.max(bB, el.offsetTop + el.offsetHeight);
+      });
+      var cw = canvas.clientWidth || 1400, chh = canvas.clientHeight || 600, pad = 70;
+      var fz = Math.max(0.2, Math.min(1, (cw - pad * 2) / Math.max(1, bR - bL), (chh - pad * 2) / Math.max(1, bB - bT)));
+      view.z = fz;
+      view.x = cw / 2 - ((bL + bR) / 2) * fz;
+      view.y = chh / 2 - ((bT + bB) / 2) * fz;
+      applyView();
+      TDM.focusFit = F.id;
+    }
+    /* 工具栏聚焦指示 pill：聚焦中显示节点名+✕（点击退出），退出后隐藏 */
+    var fp = document.getElementById('tdm-focus');
+    if (fp) {
+      fp.style.display = F ? 'inline-block' : 'none';
+      if (F) { var fn = document.getElementById('tdm-focus-name'); if (fn) fn.textContent = byId[F.id].name || F.id; }
+    }
+
+    /* 连线绘制：同步执行——样式写入后读 offsetLeft 会强制浏览器同步排版，坐标本就准确；
+     * 原实现套 requestAnimationFrame，在嵌入环境（app:// 窗口遮挡/渲染器节流）rAF 可能永不触发
+     * → 连线整幅空白且无任何报错（2026-09-09 聚焦模式施工实测抓到），同步画根除该脆弱性 */
+    (function () {
       var ww = w ? w.offsetWidth : contentW;
       var hh = Math.max(contentH, canvas.clientHeight || 600);
       svg.style.width = ww + 'px';
@@ -233,9 +388,10 @@
         else if (p[3] === 'feed') color = '#44546e';          /* 喂给边：亮一档灰蓝 */
         return '<path d="M' + ax + ',' + ay + ' C' + mx + ',' + ay + ' ' + mx + ',' + by + ' ' + bx + ',' + by + '"' +
           (p[2] ? ' stroke-dasharray="5 4"' : '') +
-          (color !== '#2c3a52' ? ' stroke="' + color + '"' : '') + '/>';
+          (color !== '#2c3a52' ? ' stroke="' + color + '"' : '') +
+          (p[4] ? '' : ' stroke-opacity="0.08"') + '/>';   /* 聚焦外压暗边：近隐不消失，保留全景上下文 */
       }).join('');
-    });
+    })();
   }
 
   /* 窗口缩放/最大化、抽屉开合 → 容器尺寸变了就整树重排（防"渲染瞬间量宽后窗口变了布局僵死"） */
@@ -363,6 +519,7 @@
     box.querySelectorAll('[data-jump]').forEach(function (el) {
       el.addEventListener('click', function () {
         TDM.sel = el.getAttribute('data-jump');
+        TDM.focus = TDM.sel;   /* 跳选=换焦点：行为与画布点选一致，血统主线跟着换 */
         render();
         drawer();
       });
@@ -435,18 +592,18 @@
       var cc = canvasEl(); if (cc) cc.classList.remove('dragging');
       setTimeout(function () { TDM.dragDist = 0; }, 0);   /* click 事件派发后再清零 */
     });
-    /* ③ 双击空白重置（双击节点不算——节点双击是两次打开抽屉） */
+    /* ③ 双击空白重置+退出聚焦（双击节点不算——节点双击是两次打开抽屉） */
     c.addEventListener('dblclick', function (e) {
       if (e.target && e.target.closest && e.target.closest('.tn, .tg')) return;
-      view.z = 1; view.x = 0; view.y = 0;
-      applyView();
+      exitFocus();
     });
-    /* ④ Ctrl+Shift+D 切换 拖动/选择复制 模式 */
+    /* ④ Ctrl+Shift+D 切换 拖动/选择复制 模式；⑤ Esc 退出聚焦 */
     document.addEventListener('keydown', function (e) {
       if (e.ctrlKey && e.shiftKey && (e.key === 'D' || e.key === 'd')) {
         e.preventDefault();
         window.tdmToggleMode();
       }
+      if (e.key === 'Escape' && TDM.focus) exitFocus();
     });
     setMode(true);   /* 初始同步按钮文案+徽标+光标 */
   })();

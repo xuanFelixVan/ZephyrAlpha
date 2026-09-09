@@ -12,7 +12,9 @@
              style="background:#0d1117;border:1px solid #263042;border-radius:6px;color:var(--text);padding:4px 10px;font-size:12px;width:180px">
       <span id="tdm-mode" onclick="tdmToggleMode()" title="切换 拖动画布 / 文字选择复制（快捷键 Ctrl+Shift+D）"
             style="cursor:pointer;user-select:none;background:#0d1117;border:1px solid #263042;border-radius:6px;color:var(--text);padding:3px 10px;font-size:12px">✋ 拖动模式</span>
-      <span class="dim" style="font-size:11px">滚轮缩放 ｜ 拖动平移 ｜ 双击空白重置</span>
+      <span id="tdm-focus" onclick="tdmExitFocus()" title="退出聚焦，还原全景（Esc / 双击空白 同效）"
+            style="display:none;cursor:pointer;user-select:none;background:#0d1117;border:1px solid #3d8bff;border-radius:6px;color:#7db4e8;padding:3px 10px;font-size:12px">🎯 聚焦 <b id="tdm-focus-name" style="color:#e2e8f2;font-weight:600">—</b> ✕</span>
+      <span class="dim" style="font-size:11px">滚轮缩放 ｜ 拖动平移 ｜ 点节点=聚焦血统（上游居左·下游居右）｜ Esc/双击空白还原全景</span>
       <span style="margin-left:auto;font-size:11px" class="dim" id="tdm-meta">加载中…</span>
     </div>
 
@@ -74,6 +76,10 @@
   #tdm-tree .tn.hit { border-color:#e6c34c; box-shadow:0 0 0 2px rgba(230,195,76,.25); }
   #tdm-tree .tn.dimmed { opacity:.25; }
   #tdm-tree .tn.sel { outline:2px solid #3d8bff; }
+  /* 聚焦模式（b20260909-fe）：血统主线外压暗——只动透明度不改三态色语义（Owner 裁定色语义不可变）；
+   * 悬停提亮=压暗卡片预览（看清后点击即换焦点，探索通道） */
+  #tdm-tree .tn.fdim { opacity:.12; }
+  #tdm-tree .tn.fdim:hover { opacity:.5; }
   /* 验证态徽标（PB-03 P2-2）：噪音=灰化降透明 / 衰减=灰边——灰色系沿 .empty 色板，不发明新色 */
   #tdm-tree .tn.vn { border-color:#525d70; opacity:.55; }
   #tdm-tree .tn.vd { border-color:#8a94a6; }
