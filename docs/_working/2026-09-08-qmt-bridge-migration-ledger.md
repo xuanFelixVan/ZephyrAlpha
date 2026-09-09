@@ -79,6 +79,11 @@ ttl: task_bound
 - [ ] kline_5min_history_backfill（月频回填，无 fallback）
 
 #### B. L2/期权族 ×5【前置：确认大QMT 沙箱行情权限是否含 L2】
+> ⚠ **09-09 上午勘误（Owner 质询触发，代码实话实查）**：本节五任务**没有一个真依赖付费 L2**——
+> auction_snapshot/auction_book=`get_full_tick` 实时快照（9:15-9:25 竞价时段轮询，含五档）；
+> option_greeks/option_iv_surface/convertible_bond_iv=标准期权合约要素+行情价，**希腊字母/IV 全是我们自己用 BS 公式算的**（miniqmt_provider `_compute_greeks_for_option`/`_solve_iv`，r=0.03）。
+> 全库唯一真 L2 任务=l2_tick_snapshot（get_l2_quote），**本就 disabled、CH 空表**。
+> → 真实前置不是"L2 权限"而是：①桥 dump 在 9:15-9:25 竞价时段是否照常出行（待交易日早晨验证，并入 §8.1 观察）②桥 universe（现 8394=A股/基金/指数/转债）**不含期权合约**，期权族续命需扩 universe（9/18 后动沙箱一次）。
 - [ ] auction_snapshot（4.7 万行，auction_highfreq 时段）
 - [ ] auction_book（191 万行）
 - [ ] option_greeks（9/7 在产）
@@ -191,7 +196,8 @@ ttl: task_bound
 1. **✅ 已裁定：回测 tick 回放源 → 切 CH tick_data（方案 a）**。event_driven_engine 的回测 tick 回放从 MiniQmtQuoteProvider.fetch_historical（xtquant 本地缓存，9/18 断供）切为读 CH `c1_market.tick_data`（miniqmt 囤货 + qmt_bridge 双源同表，SQL 直取、无 SDK 依赖）。**已知降级（如实登记）**：tick_data 表 schema 为 1 档（tick_to_row 取 [0] 设计），价格/成交量回放全覆盖，5 档盘口深度回放降级——若后续做T 回测需要盘口深度，再启用 QMT【收盘清盘】逐日累积缓存通道（93 §11.5a，即 §8.5.1 方案 a 变体）。**执行**：新建 CH 回放 adapter（保持 provider 注入接口不变）列入 9/17 窗口施工单，1 人日。
 2. **✅ 已裁定：F4 进程名 pattern 维持现状**（`xtminiqmt|xtitclient|xiadan|qmt`，xtitclient 依据=93 §2.3 实地辨识，非猜测）。复核动作与 §8.2 开真实终端绑定（那本来就是 9/18 前 MUST——PositionStatics 已 13 天未更新）；开终端后 1 分钟核对，若不符改 1 行 pattern。**无前置阻塞**：pattern 错的最坏后果=服务总闸 QMT 灯假灰，不误伤数据链。
 3. **✅ 已裁定：分钟K线族按 §8.5.1 推荐排序执行——b 立项 + c 同批 + a 缓议**。b（CH tick 聚合合成分钟K，复用 kline_resampler 幂等模式）9/17 窗口前完成开发+口径单测，9/18 起随桥独跑自然累积（无历史回补，切换前历史靠囤货+CH 存量——已接受）；c（akshare）同批挂校验兜底；a（沙箱扩 K 线 dump）触发条件量化：b 上线后前 5 个交易日对拍 akshare，价格 ±0.01 外偏差 >2% 或 bar 缺口 >1% 则 10 月立项。**执行**：列入 9/17 窗口施工单，b 约 1 人日。
-4. **✅ 已裁定：L2/期权族按"无 L2"保守口径预规划，验证动作只作升级触发器**。即 §2.2-B 五任务先按"桥无 L2"准备降级路径（auction_snapshot/auction_book 用桥 ticks3 竞价段聚合评估替代；option_greeks/option_iv_surface/convertible_bond_iv 若沙箱无期权链则登记停更降级，不阻塞主链路）；Owner 开终端+问客户经理的验证（§8.5.2 步骤清单）结论若为"有权限"，再升级为桥扩 dump 立项。**这样验证不再是阻塞项**——保守方案先保 9/18 不断流。
+4. **✅ 已裁定（09-09 上午按 Owner 质询勘误修订）：L2/期权族——勘误后口径大幅放松**。代码实查证实五任务均不依赖付费 L2（详见 §2.2-B 勘误注）：auction 族=get_full_tick 竞价快照，桥同源可续（唯一待验证=沙箱 dump 在 9:15-9:25 是否照常出行，并入 §8.1 早晨观察）；option 族=自算 greeks/IV，输入=期权合约要素+行情价，桥扩 universe 期权标的后续命（9/18 后动沙箱一次，列入退役日施工单）。真 L2 任务（l2_tick_snapshot）本就 disabled，无续命需求。
+5. **✅ 已裁定（09-09 上午，Owner 提议采纳）：五档盘口落库立项**。现状=CH tick_data 按表结构只存 1 档（tick_to_row 取 [0]，设计如此），但**数据流里五档全在**（miniqmt 推送与桥 v19 25 列 dump 都带完整 bid1-5/ask1-5/bidVol1-5/askVol1-5，Redis 热缓存已存完整五档，仅 CH 落库时丢弃）。执行=新表 c1_market.tick_depth_5（同键 3 秒快照×五档 20 列）+ tick_subscriber 桥模式加落盘分支 + 近期历史回填（get_market_data_ex(period='tick') 返回 19 列含五档：miniqmt 9/18 前可回填近期若干天，9/18 后大QMT 沙箱同 API 可用【§11.5a 已实证】+【收盘清盘】已勾逐日累积）。**边界（如实）**：更早的深史五档任何渠道都不存在；回测五档精细撮合自切换日起有数据。列入 9/17 窗口施工单（约 1-1.5 人日）。
 
 ### §8.4 独立小问题【P2，与桥无关】
 
