@@ -220,6 +220,9 @@ class MatchingFill:
     slippage_cost: Decimal
     filled: bool = True
     filled_quantity: Decimal = Decimal("0")
+    # X 流验证批 T1（Owner 2026-09-10 指令裁定③）：决策价+订单类型贯通成交流水
+    decision_price: Decimal | None = None  # 撮合前基准/信号价；None=无（未成交占位）
+    order_type: str | None = None  # "market" | "tick" | "limit"（小写，对齐 trade_log.side 口径）
 
     @property
     def total_cost(self) -> Decimal:
@@ -325,6 +328,8 @@ class MatchingLogic:
             slippage_cost=slippage_cost,
             filled=True,
             filled_quantity=order.quantity,
+            decision_price=base_price,
+            order_type="market",
         )
 
     def match_limit_order(
@@ -388,6 +393,8 @@ class MatchingLogic:
             slippage_cost=slippage_cost,
             filled=True,
             filled_quantity=order.quantity,
+            decision_price=order.limit_price,
+            order_type="limit",
         )
 
     def match_tick_order(
@@ -474,6 +481,8 @@ class MatchingLogic:
             slippage_cost=slippage_cost,
             filled=(remaining <= 0),
             filled_quantity=filled_qty,
+            decision_price=tick_data.last_price,
+            order_type="tick",
         )
 
     def _apply_slippage(self, price: Decimal, side: str) -> Decimal:

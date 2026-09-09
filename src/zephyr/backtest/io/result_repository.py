@@ -237,6 +237,8 @@ def build_artifact_from_data(
             "price": p.price,
             "quantity": p.quantity,
             "commission": p.commission,
+            "decision_price": p.decision_price,
+            "order_type": p.order_type,
         }
         for p in data.trade_log
     ]

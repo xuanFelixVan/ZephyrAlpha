@@ -56,7 +56,8 @@ def _collect_timeseries(runner, data, signals, config, engine) -> dict:
     """从引擎 last_portfolio 收集四条时序（sink 契约格式）。
 
     - equity_curve: nav_series → [{timestamp, equity}]（净值=初始资金归一前的总资产）
-    - trade_log:    trades_log → [{timestamp, symbol, side, price, quantity, commission}]
+    - trade_log:    trades_log → [{timestamp, symbol, side, price, quantity, commission,
+                    decision_price?, order_type?}]（X 流验证批 T1 两可空字段）
     - drawdown_curve: 净值滚动峰值回撤 → [{timestamp, drawdown}]（正数小数）
     - benchmark_curve: 基准未接（引擎层无基准数据通道），留 None 由前端显示"无基准"
 
@@ -89,6 +90,10 @@ def _collect_timeseries(runner, data, signals, config, engine) -> dict:
                 "price": float(t.get("price", 0.0)),
                 "quantity": int(t.get("quantity", 0)),
                 "commission": float(t.get("commission", 0.0)),
+                "decision_price": (
+                    float(t["decision_price"]) if t.get("decision_price") is not None else None
+                ),
+                "order_type": t.get("order_type"),
             }
         )
     return {

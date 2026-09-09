@@ -680,6 +680,8 @@ class MatchingEngine:
             price=fill.price,
             commission=fill.commission,
             slippage_cost=fill.slippage_cost,
+            decision_price=fill.decision_price,
+            order_type=fill.order_type,
         )
 
     def _synthetic_order_book(self, symbol: str, price: Decimal) -> OrderBookSnapshot:

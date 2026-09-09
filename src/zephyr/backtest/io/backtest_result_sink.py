@@ -124,6 +124,9 @@ class TradeRecord:
     price: float
     quantity: int
     commission: float = 0.0
+    # X 流验证批 T1（裁定③）：可空字段，存量产物无此键=None（消费方 .get 容错）
+    decision_price: float | None = None  # 决策价（撮合前基准/信号价）；市价单无=有基准价，未成交=None
+    order_type: str | None = None  # "market" | "tick" | "limit"（小写枚举，排板留位）
 
 
 @dataclass(frozen=True)
@@ -213,7 +216,8 @@ def sink_backtest_result(
     Args:
         result: CTR-P1-016 BacktestResult dataclass 实例
         equity_curve: 净值曲线时序数据 [{timestamp: ISO8601, equity: float}, ...]
-        trade_log: 交易记录 [{timestamp, symbol, side, price, quantity, commission}, ...]
+        trade_log: 交易记录 [{timestamp, symbol, side, price, quantity, commission,
+                     decision_price?, order_type?}, ...]（后两键可空，旧数据无键=字段默认 None）
         drawdown_curve: 回撤曲线 [{timestamp, drawdown}, ...]
         benchmark_curve: 基准曲线 [{timestamp, value}, ...]
 

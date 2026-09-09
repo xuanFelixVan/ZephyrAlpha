@@ -119,6 +119,9 @@ class BacktestFill:
     price: Decimal
     commission: Decimal = Decimal("0")
     slippage_cost: Decimal = Decimal("0")
+    # X 流验证批 T1（裁定③）：决策价+订单类型贯通（matching_engine 产出，portfolio 透传）
+    decision_price: Decimal | None = None  # 撮合前基准/信号价；None=无
+    order_type: str | None = None  # "market" | "tick" | "limit"（小写）
 
     @property
     def total_cost(self) -> Decimal:
@@ -213,6 +216,10 @@ class Portfolio:
                 "commission": float(fill.commission),
                 "slippage_cost": float(fill.slippage_cost),
                 "total_cost": float(fill.total_cost),
+                "decision_price": (
+                    float(fill.decision_price) if fill.decision_price is not None else None
+                ),
+                "order_type": fill.order_type,
             }
         )
 
