@@ -33,6 +33,7 @@ from zephyr.trading.validation.ablation import (
     XFlowAction,
     ablate_weight_panel,
     run_ablation,
+    sell_signals_to_xflow_actions,
 )
 
 
@@ -139,3 +140,78 @@ def test_run_ablation_clear_action_changes_nav(data: pd.DataFrame, panel: pd.Dat
 def test_run_ablation_empty_panel_rejected(data: pd.DataFrame):
     with pytest.raises(ValidationError):
         run_ablation(data=data, panel_full=pd.DataFrame(), actions=[])
+
+# ── SellSignal→XFlowAction 转换助手（遗留③）──────────────────────────────
+
+class TestSellSignalsToXFlowActions:
+    """sell_decision.SellSignal → XFlowAction 映射（真实 SellSignal dataclass 构造）。"""
+
+    def _sig(self, symbol="000001.SZ", direction="CLEAR", confidence=0.8, source="TDM-X-S1-02", ts="2026-01-06"):
+        from zephyr.sell_decision.core.sell_signal_collector import (
+            SellDirection,
+            SellSignal,
+            SellSignalType,
+        )
+
+        return SellSignal(
+            symbol=symbol,
+            signal_type=SellSignalType.TECHNICAL,
+            direction=SellDirection(direction),
+            confidence=confidence,
+            source=source,
+            metadata={"reason": "test"},
+            timestamp=ts,
+        )
+
+    def test_clear_maps_to_clear(self):
+        actions = sell_signals_to_xflow_actions([self._sig(direction="CLEAR")])
+        assert len(actions) == 1
+        a = actions[0]
+        assert a.symbol == "000001.SZ" and a.action == "clear"
+        assert a.source == "TDM-X-S1-02" and str(a.date) == "2026-01-06"
+
+    def test_reduce_maps_with_confidence(self):
+        actions = sell_signals_to_xflow_actions([self._sig(direction="REDUCE", confidence=0.6)])
+        assert len(actions) == 1
+        a = actions[0]
+        assert a.action == "reduce"
+        assert a.reduce_to == pytest.approx(0.4)   # 1.0 - confidence
+
+    def test_reduce_zero_confidence_skipped(self):
+        """conf<=0 的 REDUCE 保守忽略（不产动作）。"""
+        assert sell_signals_to_xflow_actions([self._sig(direction="REDUCE", confidence=0.0)]) == []
+
+    def test_replace_maps_to_clear(self):
+        """REPLACE=先清仓（v1 无建仓动作位）。"""
+        actions = sell_signals_to_xflow_actions([self._sig(direction="REPLACE")])
+        assert len(actions) == 1 and actions[0].action == "clear"
+
+    def test_source_fallback_default(self):
+        """source 空 → 默认 TDM-X-S1。"""
+        actions = sell_signals_to_xflow_actions([self._sig(source="")])
+        assert actions[0].source == "TDM-X-S1"
+
+    def test_missing_symbol_or_ts_rejected(self):
+        """防御层：字段被外部破坏（绕过 SellSignal 构造期校验）时转换器拒绝。"""
+        import dataclasses
+
+        s1 = dataclasses.replace(self._sig())
+        object.__setattr__(s1, "symbol", "")
+        with pytest.raises(ValidationError):
+            sell_signals_to_xflow_actions([s1])
+        s2 = dataclasses.replace(self._sig())
+        object.__setattr__(s2, "timestamp", None)
+        with pytest.raises(ValidationError):
+            sell_signals_to_xflow_actions([s2])
+
+    def test_end_to_end_with_ablate(self):
+        """转换产物直接可喂 ablate_weight_panel（接口贯通）。"""
+        panel = pd.DataFrame(
+            {"AAA": [0.5, 0.5], "BBB": [0.3, 0.3], "CCC": [0.2, 0.2]},
+            index=pd.date_range("2026-01-05", periods=2, freq="B"),
+        )
+        sigs = [self._sig(symbol="CCC", direction="CLEAR", ts=str(panel.index[1].date()))]
+        actions = sell_signals_to_xflow_actions(sigs)
+        out = ablate_weight_panel(panel, actions)
+        assert out.loc[panel.index[1], "CCC"] == 0.0
+        assert abs(out.loc[panel.index[1]].sum() - 1.0) < 1e-9

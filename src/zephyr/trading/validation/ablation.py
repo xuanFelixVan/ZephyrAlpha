@@ -22,6 +22,13 @@
 裁定②背景: "关风控回放开关"是伪命题——引擎 DecisionGate 是策略晋升闸不在成交路径，
 X 流是决策生产者（生成信号）。正确切口=信号层剥离 X 流动作再重放。
 
+SellSignal 转换助手（遗留③）:
+    sell_signals_to_xflow_actions(signals) —— 把 sell_decision 的 SellSignal 流转成
+    XFlowAction（direction CLEAR→clear、REDUCE→reduce+reduce_to=1.0-confidence 近似、
+    REPLACE→clear）；source=signal.source 或 "TDM-X-S1"（默认映射）。v1 自动化只到
+    "转换"这一层——上游怎么把历史 K 线喂给卖出逻辑产 SellSignal 属另一工程
+    （sell_decision 信号 provider 尚零实现，见盘点），转换器先行保证接口就绪。
+
 实现（双权重面板重放差，盘点方案 A）:
     输入=同一行情 data + 两份权重面板（全量 panel_full / 剥离后面板 panel_ablated），
     引擎各跑一支 run，净值从 last_portfolio.nav_series 取（BacktestResult 15 字段契约
@@ -133,7 +140,14 @@ def ablate_weight_panel(
             raise ValidationError(f"reduce 动作必须带合法 reduce_to>=0: {a.date}/{a.symbol}")
 
     ablated = panel_full.copy(deep=True)
-    index_lookup = {str(k): k for k in ablated.index}
+    # 索引匹配双侧容错：全形 str + 日期部分（[:10]）——日频面板 Timestamp 索引
+    # 可被 "2026-01-06" 或 Timestamp 对象命中；分钟级 "2026-01-06 09:30" 也可命中
+    index_lookup: dict[str, Any] = {}
+    for k in ablated.index:
+        s = str(k)
+        index_lookup.setdefault(s, k)
+        if len(s) >= 10:
+            index_lookup.setdefault(s[:10], k)
     applied = 0
     for a in actions:
         key = index_lookup.get(str(a.date))
@@ -225,10 +239,67 @@ def run_ablation(
     )
 
 
+def sell_signals_to_xflow_actions(signals) -> list[XFlowAction]:
+    """SellSignal → XFlowAction 转换助手（遗留③自动化第一层，纯函数）。
+
+    映射（对齐 SellDirection 枚举语义）:
+        - CLEAR   → clear（该标的权重归零）
+        - REDUCE  → reduce，reduce_to = 1.0 - confidence（减仓量∝信号置信度，
+                    置信度 1.0=全减≈clear；conf<=0 保守忽略不产动作）
+        - REPLACE → clear（换股=先清仓；v1 无建仓动作位，留后续扩展）
+    其余字段: symbol=signal.symbol、date=signal.timestamp（date/datetime 均可——
+    ablate_weight_panel 按 str() 匹配面板索引）、source=signal.source 或 "TDM-X-S1"。
+
+    Args:
+        signals: 可迭代 SellSignal（zephyr.sell_decision.core.sell_signal_collector.SellSignal）。
+
+    Returns:
+        XFlowAction 清单（按输入序；无方向动作/缺 timestamp 的跳过并告警）。
+
+    Raises:
+        ValidationError: signal 缺 symbol 或缺 timestamp（不可定位到面板日）。
+    """
+    dir_clear = "CLEAR"
+    dir_reduce = "REDUCE"
+    dir_replace = "REPLACE"
+
+    out: list[XFlowAction] = []
+    for s in signals or []:
+        sym = getattr(s, "symbol", None)
+        ts = getattr(s, "timestamp", None)
+        direction = getattr(s, "direction", None)
+        direction = getattr(direction, "value", direction)
+        conf = getattr(s, "confidence", 0.0) or 0.0
+        if not sym or ts is None:
+            raise ValidationError(f"SellSignal 缺 symbol 或 timestamp——无法转 XFlowAction: {s!r}")
+        try:
+            conf = float(conf)
+        except (TypeError, ValueError):
+            conf = 0.0
+        source = getattr(s, "source", "") or "TDM-X-S1"
+        if direction == dir_clear or direction == dir_replace:
+            out.append(XFlowAction(date=ts, symbol=sym, action="clear", source=source))
+        elif direction == dir_reduce:
+            if conf > 0:
+                out.append(
+                    XFlowAction(
+                        date=ts,
+                        symbol=sym,
+                        action="reduce",
+                        reduce_to=round(1.0 - conf, 4),
+                        source=source,
+                    )
+                )
+        else:
+            logger.warning("SellSignal 方向跳过（非 CLEAR/REDUCE/REPLACE）: %s", direction)
+    return out
+
+
 __all__ = [
     "AblationReport",
     "ValidationError",
     "XFlowAction",
     "ablate_weight_panel",
     "run_ablation",
+    "sell_signals_to_xflow_actions",
 ]
