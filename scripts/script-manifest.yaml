@@ -4,7 +4,7 @@
 manifest_version: 2.0.0
 generated_by: generate_manifest.py (auto-scan)
 generated_at: '2026-09-10'
-total_scripts: 779
+total_scripts: 781
 scripts:
 - name: __init__.py
   path: __init__.py
@@ -913,6 +913,14 @@ scripts:
 - name: data/backfill_tick_depth5.py
   path: data/backfill_tick_depth5.py
   description: 用法（在仓库根，Python 3.12 + PYTHONPATH=src）：
+  domain: data
+  execution_plane: warm-path
+  status: registered
+  timeout_seconds: 60
+  dimensions: []
+- name: data/repair_kline_degraded_pull.py
+  path: data/repair_kline_degraded_pull.py
+  description: 背景（93 备忘 §14.10 同族）：miniQMT 接口对重拉请求【按请求灰度间歇性】返回劣化数据
   domain: data
   execution_plane: warm-path
   status: registered
@@ -5342,17 +5350,17 @@ scripts:
   status: registered
   timeout_seconds: 60
   dimensions: []
-- name: industry_graph/ths_equity_import.py
-  path: industry_graph/ths_equity_import.py
-  description: 数据源：docs/_working/同花顺资料/个股1 (1).xlsx / 个股1 (2).xlsx（GBK TSV 伪 xlsx）
+- name: industry_graph/ths_equity_hk_refill.py
+  path: industry_graph/ths_equity_hk_refill.py
+  description: from __future__ import annotations
   domain: industry_graph
   execution_plane: warm-path
   status: registered
   timeout_seconds: 60
   dimensions: []
-- name: industry_graph/ths_equity_hk_refill.py
-  path: industry_graph/ths_equity_hk_refill.py
-  description: 港股复归：THS 被投缺口 263 条中港股子集经 hk_stock_list 名称精确反查回填 ig_equity_edge（零幻觉在库真源）
+- name: industry_graph/ths_equity_import.py
+  path: industry_graph/ths_equity_import.py
+  description: 数据源：docs/_working/同花顺资料/个股1 (1).xlsx / 个股1 (2).xlsx（GBK TSV 伪 xlsx）
   domain: industry_graph
   execution_plane: warm-path
   status: registered
