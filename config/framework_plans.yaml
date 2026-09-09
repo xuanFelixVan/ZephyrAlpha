@@ -8,6 +8,14 @@
 #        整装回测 = 方案权重 α_i × 各子策略日频权重面板 → 线性合成组合面板
 #        （system_charter.md §3 约束二「统一框架派：1 框架 × N 子策略 × regime 权重切换」，
 #        三期 regime 动态权重联动的数据骨架）。
+# [语义·三期] regime_overrides = 方案级 regime 联动覆盖表（α_i(t) 动态化的配置侧）：
+#        键 = REGIME_STATES 7 态枚举（唯一真源 src/zephyr/regime/core/regime_detector.py——
+#        r1 低波震荡 / r2 中波震荡 / r3 牛市趋势 / r4 熊市阴跌 / r10 CRISIS / r11 RECOVERY /
+#        r12 BREAKOUT；判定真源 = MOD-REGIME-001 检测器，本文件只做查表不做判定——
+#        禁自造 regime 判定逻辑，宪章 §3 约束三「regime 错=权重错」生死线）。
+#        值 = 完整权重覆盖表（成员集合必须与基准 weights 一致，仅权重不同，Σ=1 容差 1e-6）。
+#        未列出的 regime → 回退基准 weights；逐日查表语义见 framework_composer.py
+#        compose_weight_panels(regime_by_date=...)。覆盖值 AI 代拟，Owner 审核后生效。
 # [初值] AI 代拟（commit 前 Owner 审核确认——任务硬约束）。映射自框架状态页演示权重
 #        FW_W（web/core/app1.js：主线龙头回踩35/行业轮动25/低估值防御25/打板10/做T5）：
 #        主线龙头回踩 → topn-momentum（动量 TopN 选股，主线动量暴露）
@@ -19,15 +27,15 @@
 # [注意] tick 模式专用成员（做T三策略）在向量化整装回测中被跳过并显式披露
 #        （skipped 落 artifact metrics），不做静默再归一化（ablation.py 同款纪律）。
 # =============================================================================
-schema_version: "1.0.0"
+schema_version: "1.1.0"
 ttl: permanent
 doc_type: config
-title: 整装方案配置真源（三套预设）
+title: 整装方案配置真源（三套预设 + regime 联动覆盖表）
 status: active
-version: "1.0.0"
-date: "2026-09-09"
+version: "1.1.0"
+date: "2026-09-10"
 owner: ZephyrAlpha-Owner
-review_status: approved  # 权重初值 AI 代拟，Owner 2026-09-09 审核确认（本会话裁定）
+review_status: approved  # 基准权重 AI 代拟 Owner 2026-09-09 审核确认；三期 regime_overrides AI 代拟，Owner 审核后生效（本会话裁定留痕）
 
 plans:
   - plan_id: fw-defensive
@@ -59,6 +67,43 @@ plans:
       - strategy_id: vwap-reversion
         weight: 0.015
         role: 做T（仅 tick 模式）
+    regime_overrides:
+      r3:  # 牛市趋势——防御型仍守防御，动量小幅上调
+        - {strategy_id: default-equity, weight: 0.40}
+        - {strategy_id: topn-momentum, weight: 0.30}
+        - {strategy_id: multifactor-sleeve, weight: 0.15}
+        - {strategy_id: eventdriven-sleeve, weight: 0.05}
+        - {strategy_id: daban-sleeve, weight: 0.05}
+        - {strategy_id: intraday-surge-fall, weight: 0.02}
+        - {strategy_id: orderbook-imbalance, weight: 0.015}
+        - {strategy_id: vwap-reversion, weight: 0.015}
+      r12:  # BREAKOUT 突破主升——温和跟进，动量追平底仓
+        - {strategy_id: default-equity, weight: 0.35}
+        - {strategy_id: topn-momentum, weight: 0.35}
+        - {strategy_id: multifactor-sleeve, weight: 0.15}
+        - {strategy_id: eventdriven-sleeve, weight: 0.05}
+        - {strategy_id: daban-sleeve, weight: 0.05}
+        - {strategy_id: intraday-surge-fall, weight: 0.02}
+        - {strategy_id: orderbook-imbalance, weight: 0.015}
+        - {strategy_id: vwap-reversion, weight: 0.015}
+      r4:  # 熊市阴跌——防御底仓加码，进攻全面收缩
+        - {strategy_id: default-equity, weight: 0.65}
+        - {strategy_id: topn-momentum, weight: 0.15}
+        - {strategy_id: multifactor-sleeve, weight: 0.10}
+        - {strategy_id: eventdriven-sleeve, weight: 0.02}
+        - {strategy_id: daban-sleeve, weight: 0.02}
+        - {strategy_id: intraday-surge-fall, weight: 0.02}
+        - {strategy_id: orderbook-imbalance, weight: 0.02}
+        - {strategy_id: vwap-reversion, weight: 0.02}
+      r10:  # CRISIS 系统性危机——最强防御，底仓 75%
+        - {strategy_id: default-equity, weight: 0.75}
+        - {strategy_id: topn-momentum, weight: 0.08}
+        - {strategy_id: multifactor-sleeve, weight: 0.06}
+        - {strategy_id: eventdriven-sleeve, weight: 0.03}
+        - {strategy_id: daban-sleeve, weight: 0.01}
+        - {strategy_id: intraday-surge-fall, weight: 0.03}
+        - {strategy_id: orderbook-imbalance, weight: 0.02}
+        - {strategy_id: vwap-reversion, weight: 0.02}
 
   - plan_id: fw-balanced
     name_zh: 均衡型整装方案
@@ -86,6 +131,39 @@ plans:
       - strategy_id: vwap-reversion
         weight: 0.015
         role: 做T（仅 tick 模式）
+    regime_overrides:
+      r3:  # 牛市趋势——均衡型进攻温和上调（打板 15%）
+        - {strategy_id: topn-momentum, weight: 0.40}
+        - {strategy_id: multifactor-sleeve, weight: 0.22}
+        - {strategy_id: default-equity, weight: 0.15}
+        - {strategy_id: daban-sleeve, weight: 0.15}
+        - {strategy_id: intraday-surge-fall, weight: 0.03}
+        - {strategy_id: orderbook-imbalance, weight: 0.025}
+        - {strategy_id: vwap-reversion, weight: 0.025}
+      r12:  # BREAKOUT 突破主升——打板拉到 17%
+        - {strategy_id: topn-momentum, weight: 0.42}
+        - {strategy_id: multifactor-sleeve, weight: 0.20}
+        - {strategy_id: default-equity, weight: 0.13}
+        - {strategy_id: daban-sleeve, weight: 0.17}
+        - {strategy_id: intraday-surge-fall, weight: 0.03}
+        - {strategy_id: orderbook-imbalance, weight: 0.025}
+        - {strategy_id: vwap-reversion, weight: 0.025}
+      r4:  # 熊市阴跌——底仓防御加码到 45%
+        - {strategy_id: topn-momentum, weight: 0.25}
+        - {strategy_id: multifactor-sleeve, weight: 0.20}
+        - {strategy_id: default-equity, weight: 0.45}
+        - {strategy_id: daban-sleeve, weight: 0.02}
+        - {strategy_id: intraday-surge-fall, weight: 0.03}
+        - {strategy_id: orderbook-imbalance, weight: 0.025}
+        - {strategy_id: vwap-reversion, weight: 0.025}
+      r10:  # CRISIS 系统性危机——底仓 62%，打板几乎清零
+        - {strategy_id: topn-momentum, weight: 0.15}
+        - {strategy_id: multifactor-sleeve, weight: 0.15}
+        - {strategy_id: default-equity, weight: 0.62}
+        - {strategy_id: daban-sleeve, weight: 0.01}
+        - {strategy_id: intraday-surge-fall, weight: 0.03}
+        - {strategy_id: orderbook-imbalance, weight: 0.02}
+        - {strategy_id: vwap-reversion, weight: 0.02}
 
   - plan_id: fw-aggressive
     name_zh: 激进型整装方案
@@ -116,3 +194,40 @@ plans:
       - strategy_id: vwap-reversion
         weight: 0.03
         role: 做T（仅 tick 模式）
+    regime_overrides:
+      r3:  # 牛市趋势——激进型进攻拉满（动量 45% + 打板 25%）
+        - {strategy_id: topn-momentum, weight: 0.45}
+        - {strategy_id: daban-sleeve, weight: 0.25}
+        - {strategy_id: multifactor-sleeve, weight: 0.10}
+        - {strategy_id: eventdriven-sleeve, weight: 0.10}
+        - {strategy_id: default-equity, weight: 0.02}
+        - {strategy_id: intraday-surge-fall, weight: 0.03}
+        - {strategy_id: orderbook-imbalance, weight: 0.025}
+        - {strategy_id: vwap-reversion, weight: 0.025}
+      r12:  # BREAKOUT 突破主升——打板拉满 30%（主升打板，任务书示例语义）
+        - {strategy_id: topn-momentum, weight: 0.42}
+        - {strategy_id: daban-sleeve, weight: 0.30}
+        - {strategy_id: multifactor-sleeve, weight: 0.08}
+        - {strategy_id: eventdriven-sleeve, weight: 0.10}
+        - {strategy_id: default-equity, weight: 0.02}
+        - {strategy_id: intraday-surge-fall, weight: 0.03}
+        - {strategy_id: orderbook-imbalance, weight: 0.025}
+        - {strategy_id: vwap-reversion, weight: 0.025}
+      r4:  # 熊市阴跌——激进收缩，底仓 40%
+        - {strategy_id: topn-momentum, weight: 0.30}
+        - {strategy_id: daban-sleeve, weight: 0.02}
+        - {strategy_id: multifactor-sleeve, weight: 0.15}
+        - {strategy_id: eventdriven-sleeve, weight: 0.03}
+        - {strategy_id: default-equity, weight: 0.40}
+        - {strategy_id: intraday-surge-fall, weight: 0.04}
+        - {strategy_id: orderbook-imbalance, weight: 0.03}
+        - {strategy_id: vwap-reversion, weight: 0.03}
+      r10:  # CRISIS 系统性危机——底仓 57%，打板清零
+        - {strategy_id: topn-momentum, weight: 0.20}
+        - {strategy_id: daban-sleeve, weight: 0.01}
+        - {strategy_id: multifactor-sleeve, weight: 0.10}
+        - {strategy_id: eventdriven-sleeve, weight: 0.02}
+        - {strategy_id: default-equity, weight: 0.57}
+        - {strategy_id: intraday-surge-fall, weight: 0.04}
+        - {strategy_id: orderbook-imbalance, weight: 0.03}
+        - {strategy_id: vwap-reversion, weight: 0.03}
