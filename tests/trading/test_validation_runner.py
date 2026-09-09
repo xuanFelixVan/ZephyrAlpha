@@ -416,3 +416,56 @@ class TestExecMetricsV2Basis:
         report = run_validation(cfg=ValidationConfig(as_of=AS_OF), artifacts_dir=artifacts,
                                 dry_run=True, writer=lambda *a: True)
         assert any("基准口径=decision_price" in r["notes"] for r in report.rows)
+
+
+# ── 定稿锚点（finalized_at，2026-09-10 设计 §三；启用=Owner 执行放行）──────
+
+class TestFinalizedAnchor:
+    """finalized_at=D：D 前全锁/D 后可考；None=12 个月滚动锁现状不变。"""
+
+    FILLS = [
+        {"timestamp": "2025-06-01", "symbol": "A", "side": "buy", "price": 10.0},   # 12mo 窗内（旧）
+        {"timestamp": "2026-01-15", "symbol": "A", "side": "buy", "price": 10.0},   # 12mo 窗内（新侧）
+        {"timestamp": "2026-09-10", "symbol": "B", "side": "sell", "price": 20.0},  # D 后
+        {"timestamp": "2026-09-20", "symbol": "C", "side": "sell", "price": 30.0},  # D 后
+        {"timestamp": "garbage", "symbol": "D", "side": "buy", "price": 1.0},       # 脏时间戳
+    ]
+
+    def test_default_unchanged(self):
+        """None=现状：cutoff 两侧切分，脏时间戳锁死。"""
+        cutoff = holdout_cutoff(AS_OF, 12)
+        inside, locked = partition_by_holdout(self.FILLS, cutoff)
+        assert len(inside) == 1 and inside[0]["timestamp"] == "2025-06-01"
+        assert len(locked) == 4
+
+    def test_anchor_d_before_locked_d_after_examined(self):
+        """D=2026-09-09：D 前 3 笔（含 12mo 窗内与脏）全锁，D 后 2 笔可考。"""
+        cutoff = holdout_cutoff(AS_OF, 12)
+        inside, locked = partition_by_holdout(self.FILLS, cutoff, finalized_at="2026-09-09")
+        assert {f["timestamp"] for f in inside} == {"2026-09-10", "2026-09-20"}
+        assert len(locked) == 3
+
+    def test_invalid_d_rejected(self):
+        with pytest.raises(ValidationError):
+            partition_by_holdout(self.FILLS, holdout_cutoff(AS_OF, 12), finalized_at="not-a-date")
+
+    def test_run_validation_with_anchor(self, tmp_path: Path):
+        """批入口贯通：锚点模式下 D 后流水进在验窗口，notes 带 D 披露。"""
+        artifacts = tmp_path / "art"
+        artifacts.mkdir()
+        (artifacts / "bt-anchor.json").write_text(json.dumps({
+            "run_id": "bt-anchor",
+            "trade_log": [
+                {"timestamp": "2026-09-10", "symbol": "A", "side": "sell", "price": 10.0},
+                {"timestamp": "2026-09-20", "symbol": "B", "side": "sell", "price": 11.0},
+            ],
+        }), encoding="utf-8")
+        report = run_validation(
+            cfg=ValidationConfig(as_of=AS_OF, finalized_at="2026-09-09"),
+            artifacts_dir=artifacts, dry_run=True, writer=lambda *a: True, batch="XFLOW",
+        )
+        assert len(report.rows) >= 18
+        assert all("定稿锚点 D=2026-09-09" in r["notes"] for r in report.rows)
+        # D 后 2 笔卖出=触发代理>0（对照缺失仍 pending，不造假）
+        xrows = [r for r in report.rows if r["node_id"] == report.rows[0]["node_id"]]
+        assert report.rows[0]["triggers"] == 2

@@ -79,6 +79,9 @@ class ValidationConfig:
     oos_decay_threshold: float = 0.50  # PB-13 土规 2：样本外衰减≥50% 判存疑
     lag_recheck: bool = True          # PB-16：lag=1 滞后重算开关（默认开）
     as_of: datetime | None = None     # 验证基准时点（None=now；测试可注入固定时点）
+    finalized_at: str | None = None   # 定稿锚点 D 日（ISO date；None=12 个月滚动锁现状。
+    # 启用=Owner 执行放行：D=参数定稿日，D 前流水全锁（调参看过=旧练习题），D 后流水可考
+    # （调参时不存在=天然无污染）——"考完作废前移"的显式实现，2026-09-10 设计 §三。
 
 
 @dataclass
@@ -191,18 +194,34 @@ def holdout_cutoff(as_of: datetime, holdout_months: int) -> datetime:
 
 
 def partition_by_holdout(
-    fills: list[dict[str, Any]], cutoff: datetime
+    fills: list[dict[str, Any]],
+    cutoff: datetime,
+    finalized_at: str | None = None,
 ) -> tuple[list[dict[str, Any]], list[dict[str, Any]]]:
-    """流水切分为 (在验窗口内, holdout 保密窗口)。窗口内=timestamp <= cutoff。"""
+    """流水切分为 (在验窗口内, holdout 保密窗口)。
+
+    默认（finalized_at=None）：窗口内=timestamp <= cutoff（12 个月滚动锁，现状不变）。
+    定稿锚点（finalized_at=D）：D 前流水全锁（含原 12 个月窗口），D 后流水可考；
+    脏时间戳一律按保密处理（宁严勿漏，两模式同规）。
+    """
     inside: list[dict[str, Any]] = []
     locked: list[dict[str, Any]] = []
+    anchor: datetime | None = None
+    if finalized_at:
+        try:
+            anchor = datetime.strptime(finalized_at[:10], "%Y-%m-%d")
+        except ValueError:
+            raise ValidationError(f"finalized_at 非法（需 ISO date）: {finalized_at}")
     for f in fills:
         try:
             ts = datetime.strptime(f["timestamp"][:10], "%Y-%m-%d")
         except ValueError:
             locked.append(f)   # 无日期/脏时间戳按保密处理（宁严勿漏）
             continue
-        (inside if ts <= cutoff else locked).append(f)
+        if anchor is not None:
+            (locked if ts <= anchor else inside).append(f)   # D 前全锁/D 后可考
+        else:
+            (inside if ts <= cutoff else locked).append(f)
     return inside, locked
 
 
@@ -383,7 +402,7 @@ def run_validation(
     else:
         raise ValidationError(f"未知验证批: {batch}（合法值: L4 | XFLOW）")
     fills = load_fills(artifacts_dir)
-    inside, locked = partition_by_holdout(fills, cutoff)
+    inside, locked = partition_by_holdout(fills, cutoff, finalized_at=cfg.finalized_at)
 
     from zephyr.backtest.core.engine_base import current_map_snapshot
 
@@ -433,6 +452,10 @@ def run_validation(
                 notes_parts.append(
                     f"消融避损 {metrics['avoided_amount']} 元（对照序列 {metrics['ablation_samples']} 样本）"
                 )
+        if cfg.finalized_at:
+            notes_parts.append(
+                f"定稿锚点 D={cfg.finalized_at}：D 前全锁/D 后可考（Owner 放行启用；默认 None=12 个月滚动锁）"
+            )
         row = {
             "run_id": run_id,
             "snapshot_commit": report.snapshot_commit,
