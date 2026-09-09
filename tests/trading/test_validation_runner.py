@@ -235,12 +235,24 @@ class TestDecayWatch:
 
 # ── 第二批：X 流（exit_counterfactual，Owner 2026-09-10 指令 T3）──────────
 
-def test_load_xflow_nodes_is_18():
+_XFLOW_BASELINE_18 = {
+    "TDM-X-S1", "TDM-X-S1-01", "TDM-X-S1-02", "TDM-X-S1-03", "TDM-X-S1-04",
+    "TDM-X-S1-05", "TDM-X-S1-06",
+    "TDM-X-S2", "TDM-X-S2-01", "TDM-X-S2-02", "TDM-X-S2-03", "TDM-X-S2-04",
+    "TDM-X-S2-05", "TDM-X-S2-06",
+    "TDM-X-R1", "TDM-X-R1-01", "TDM-X-R1-02", "TDM-X-R1-03",
+}
+
+
+def test_load_xflow_nodes_covers_baseline():
+    """X 流清单：基线 18 节点全在 + flow 全为 exit_flow；地图演化新增节点
+    （如 TDM-X-FLOW）自动入批，断言用下限守卫不写死总数。"""
     nodes = load_xflow_nodes()
-    assert len(nodes) == 18, f"X 流应为 18（S1/S2/R1 枢纽+子节点）: {len(nodes)}"
-    assert all(n["flow"] == "exit_flow" for n in nodes)
     ids = {n["node_id"] for n in nodes}
-    assert {"TDM-X-S1", "TDM-X-S2", "TDM-X-R1"} <= ids
+    missing = _XFLOW_BASELINE_18 - ids
+    assert not missing, f"基线 X 流节点缺失: {missing}"
+    assert len(nodes) >= 18, f"X 流至少应含基线 18: {len(nodes)}"
+    assert all(n["flow"] == "exit_flow" for n in nodes)
     assert "TDM-X-R1-03" in ids   # 护盘加仓白名单（名义 exit_flow，消融方向注意）
 
 
@@ -299,7 +311,8 @@ def test_run_validation_xflow_dry_run_no_write(tmp_path: Path):
         writer=_must_not_write,
         batch="XFLOW",
     )
-    assert len(report.rows) == 18
+    assert len(report.rows) >= 18   # 地图演化可增节点，基线 18 只增不减
+    assert {r["node_id"] for r in report.rows} >= _XFLOW_BASELINE_18
     assert all(r["validation_method"] == "exit_counterfactual" for r in report.rows)
     assert all(r["verdict"] == "pending" for r in report.rows)
     assert all(r["significance"] == "insufficient_samples" for r in report.rows)
@@ -324,7 +337,7 @@ def test_run_validation_xflow_writes_tsv(tmp_path: Path):
     assert report.written is True
     assert captured["table"] == "c1_backtest.node_verdict"
     lines = captured["tsv"].decode("utf-8").strip().split("\n")
-    assert len(lines) == 18
+    assert len(lines) >= 18   # 地图演化可增节点
     assert all(len(l.split("\t")) == 12 for l in lines)
     row = lines[0].split("\t")
     assert row[5] == "exit_counterfactual"
