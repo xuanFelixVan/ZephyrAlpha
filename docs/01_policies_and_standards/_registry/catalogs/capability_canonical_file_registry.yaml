@@ -4884,10 +4884,11 @@ capabilities:
     canonical = src/zephyr/ex_core/daban_execution.py（auto 派生：basename 匹配 capability_id）。
     DabanExecutionAlgorithm 分笔建仓（passive impact 指数填充概率衰减+SaR 前置检查→FIRST60%/REFLUSH30%/RESERVE
     三段，SaR>2% 削 30%）；DabanTimingDecision 打板时点（封板概率≥85%+封流比≥5%→追板市价单/50-85%→板前埋伏限价单）；
-    DynamicCapacityCalculator 动态容量（sar/seal/float/nav 四约束取 min→max_qty+binding_constraint，C12 单票≤5%
-    NAV）。与既有打板五件（daban_named_functions/daban_signal_decision/daban_instant_circuit_breaker/
-    daban_exit_decision/daban_monitors/daban_pit_safety）同包同契约（MOD-EX-001）。[MATURITY] production。
-    解决发现性：新 AI 搜 "打板分笔建仓/打板时点/动态容量/DabanExecution" 可定位真源。解决防重建：check_file_canonical() 反查。
+    DynamicCapacityCalculator 动态容量（sar/seal/float/nav 四约束取 min→max_qty+binding_constraint，C12
+    单票≤5% NAV）。与既有打板五件（daban_named_functions/daban_signal_decision/daban_instant_circuit_breaker/
+    daban_exit_decision/daban_monitors/daban_pit_safety）同包同契约（MOD-EX-001）。[MATURITY]
+    production。 解决发现性：新 AI 搜 "打板分笔建仓/打板时点/动态容量/DabanExecution" 可定位真源。解决防重建：check_file_canonical()
+    反查。
   integrity_anchors:
   - DabanExecutionAlgorithm
   - DabanTimingDecision
@@ -4897,12 +4898,10 @@ capabilities:
   - TradingDecisionMap
   - decision_map
   - 交易决策地图
-  description: 交易决策地图（MOD-TRADING-015，第 7 张地图性质的决策内容索引层）。加载并校验
-    config/trading_decision_map.yaml（三流骨架：建仓 L1-L4 内嵌漏斗+持仓 P1-P3+离场 S1-S2+风控横切；
-    L1 四路传感器阵列；环节×状态矩阵带置信度分级；双市场同 schema）。策略/因子/数据引用按稳定
-    标识符指向既有注册表（REG-STR-001/REG-FCT-001/REG-DATAFLOW-001 + 代码 StrategyMeta），
-    R1-R8 引用存在性校验产出 GapReport（缺口=地图红节点）。设计真源 docs/02_enterprise_architecture/
-    07_trading_decision_architecture/design_memos/69_trading_decision_map.md。
+  description: 交易决策地图（MOD-TRADING-015，第 7 张地图性质的决策内容索引层）。加载并校验 config/trading_decision_map.yaml（三流骨架：建仓
+    L1-L4 内嵌漏斗+持仓 P1-P3+离场 S1-S2+风控横切； L1 四路传感器阵列；环节×状态矩阵带置信度分级；双市场同 schema）。策略/因子/数据引用按稳定
+    标识符指向既有注册表（REG-STR-001/REG-FCT-001/REG-DATAFLOW-001 + 代码 StrategyMeta）， R1-R8
+    引用存在性校验产出 GapReport（缺口=地图红节点）。设计真源 docs/02_enterprise_architecture/ 07_trading_decision_architecture/design_memos/69_trading_decision_map.md。
     canonical = src/zephyr/trading/decision_map.py（auto 派生：basename 匹配 capability_id）。
   integrity_anchors:
   - load_decision_map
@@ -4913,12 +4912,11 @@ capabilities:
   - DecisionMapAlignment
   - check_decision_map
   - 交易决策地图对齐
-  description: 第七图（交易决策地图）对齐校验器（#ARCH-DECISION-MAP-GATE-001，2026-09-05 七图升级）。
-    run_checks() → (fails, warns, total)：R1-R8 error 级=硬阻断，warning 级=红节点占位。
-    known_strategy_ids=AST 扫描 pf_core 全部 strategy_id 字面量（离线免重依赖）。
-    消费方=align_all.py 第 7 项 + DECISION-MAP gate（priority=138，恒跑）。
-    校验规则单一真源=zephyr.trading.decision_map.validate_decision_map（本文件只封装分级，禁复制）。
-    canonical = scripts/governance/d5_architecture/generators/check_decision_map.py（auto 派生）。
+  description: 第七图（交易决策地图）对齐校验器（#ARCH-DECISION-MAP-GATE-001，2026-09-05 七图升级）。 run_checks()
+    → (fails, warns, total)：R1-R8 error 级=硬阻断，warning 级=红节点占位。 known_strategy_ids=AST
+    扫描 pf_core 全部 strategy_id 字面量（离线免重依赖）。 消费方=align_all.py 第 7 项 + DECISION-MAP gate（priority=138，恒跑）。
+    校验规则单一真源=zephyr.trading.decision_map.validate_decision_map（本文件只封装分级，禁复制）。 canonical
+    = scripts/governance/d5_architecture/generators/check_decision_map.py（auto 派生）。
   integrity_anchors:
   - run_checks
   - collect_strategy_ids_via_ast
@@ -4927,11 +4925,11 @@ capabilities:
   - BusinessRegistryGate
   - BUSINESS-REGISTRY
   - 业务库入库门禁
-  description: 业务资产库入库门禁（#ARCH-BUSINESS-REG-GATE-001，2026-09-05，alignment_checklist §4.1
-    "待建"转正式）。6 库（策略/因子/指标/形态/组合/限额）staged 变更时：条目 id 唯一+module_id
-    非空 MOD-* 格式（确定性硬）+depgraph 存在性（PG fail-open）。基线 module_id 填充率 100% 实证
-    （149+161+41+3 空库）。GateSpec(gate_id="BUSINESS-REGISTRY", priority=139)。
-    canonical = src/zephyr/gov_enforcement/commit_gates/business_registry_gate.py（auto 派生）。
+  description: 业务资产库入库门禁（#ARCH-BUSINESS-REG-GATE-001，2026-09-05，alignment_checklist
+    §4.1 "待建"转正式）。6 库（策略/因子/指标/形态/组合/限额）staged 变更时：条目 id 唯一+module_id 非空 MOD-* 格式（确定性硬）+depgraph
+    存在性（PG fail-open）。基线 module_id 填充率 100% 实证 （149+161+41+3 空库）。GateSpec(gate_id="BUSINESS-REGISTRY",
+    priority=139)。 canonical = src/zephyr/gov_enforcement/commit_gates/business_registry_gate.py（auto
+    派生）。
   integrity_anchors:
   - validate_registry_file
   - REGISTRY_SPECS
@@ -4940,15 +4938,56 @@ capabilities:
   - BattleMapAlignmentGate
   - GATE-BATTLE-MAP-ALIGNMENT
   - 作战地图硬化门禁
-  description: 作战地图对齐硬化门禁（#ARCH-BATTLE-MAP-HARD-001，2026-09-05 G3 驱零后升硬）。
-    BM 相关文件触发时跑 align_battle_map 七类检查：ghost_anchors/违规孤儿环节/缺失叙事
-    三类=硬阻断（基线 0 实证：acknowledged 18 环节已排除）；域漂移/悬空边/父子嵌套/孤儿模块
-    （457）保持 warn=G4 清淤 campaign。纯判定 evaluate_battle_map_report 可单测。
-    GateSpec(gate_id="GATE-BATTLE-MAP-ALIGNMENT", priority=833)。
-    canonical = src/zephyr/gov_enforcement/commit_gates/battle_map_alignment_gate.py（auto 派生）。
+  description: 作战地图对齐硬化门禁（#ARCH-BATTLE-MAP-HARD-001，2026-09-05 G3 驱零后升硬）。 BM 相关文件触发时跑
+    align_battle_map 七类检查：ghost_anchors/违规孤儿环节/缺失叙事 三类=硬阻断（基线 0 实证：acknowledged 18
+    环节已排除）；域漂移/悬空边/父子嵌套/孤儿模块 （457）保持 warn=G4 清淤 campaign。纯判定 evaluate_battle_map_report
+    可单测。 GateSpec(gate_id="GATE-BATTLE-MAP-ALIGNMENT", priority=833)。 canonical =
+    src/zephyr/gov_enforcement/commit_gates/battle_map_alignment_gate.py（auto 派生）。
   integrity_anchors:
   - evaluate_battle_map_report
 creation_tokens:
+- file: scripts/industry_graph/migrate_tier_to_function_role.py
+  token: greatwall-tier-migration-20260909
+  created_by: greatwall-20260909-0020
+  capability: industry_graph_quality_engine
+- file: scripts/industry_graph/migrate_roles.py
+  token: greatwall-role-migration-20260909
+  created_by: greatwall-20260909-0020
+  capability: industry_graph_quality_engine
+- file: scripts/industry_graph/quality_fix_p0.py
+  token: greatwall-p0-fix-20260909
+  created_by: greatwall-20260909-0020
+  capability: industry_graph_quality_engine
+- file: scripts/industry_graph/execute_r1_chain_plans.py
+  token: greatwall-r1-exec-20260909
+  created_by: greatwall-20260909-0020
+  capability: industry_graph_quality_engine
+- file: scripts/industry_graph/fix_s6_s7_nodes.py
+  token: greatwall-s6s7-nodes-20260909
+  created_by: greatwall-20260909-0020
+  capability: industry_graph_quality_engine
+- file: scripts/industry_graph/quality_fix_p2.py
+  token: greatwall-p2-fix-20260909
+  created_by: greatwall-20260909-0020
+  capability: industry_graph_quality_engine
+- file: scripts/industry_graph/ths_equity_import.py
+  token: greatwall-equity-import-20260909
+  created_by: greatwall-20260909-0020
+  capability: industry_graph_ths_equity
+- file: scripts/industry_graph/tier_migration_map.yaml
+  token: greatwall-tier-map-20260909
+  created_by: greatwall-20260909-0020
+  capability: industry_graph_quality_engine
+- file: scripts/industry_graph/role_migration.yaml
+  token: greatwall-role-map-20260909
+  created_by: greatwall-20260909-0020
+  capability: industry_graph_quality_engine
+- file: "docs/_working/同花顺资料/被投清单登记_ths_import_2026-09-08.md"
+  token: ths-invested-ledger-20260908
+  created_by: ths-import-20260908
+  capability: industry_graph_ths_equity
+- file: "docs/_working/同花顺资料/被投清单登记_ths_import_20260908.md"
+  token: ths-invested-ledger2-20260908
 - file: src/zephyr/data/implementations/qmt_bridge_provider.py
   token: auto-qmt-bridge-provider-20260909
   created_by: solo-20260909-qmt-night
@@ -11141,14 +11180,14 @@ creation_tokens:
   token: auto-ch-optimize-merge-hidden-20260908
   created_by: st-bridge-p01-20260908
   capability: ch_optimize_merge_hidden_launcher
-- file: "scripts/industry_graph/ths_import.py"
-  token: "auto-ths-import-20260908"
-  created_by: "openclaw-night-20260908-4316c"
-  capability: "industry_graph_ths_import"
-- file: "scripts/industry_graph/ths_industry_mapping.yaml"
-  token: "auto-ths-industry-mapping-20260908"
-  created_by: "openclaw-night-20260908-4316c"
-  capability: "industry_graph_ths_import"
+- file: scripts/industry_graph/ths_import.py
+  token: auto-ths-import-20260908
+  created_by: openclaw-night-20260908-4316c
+  capability: industry_graph_ths_import
+- file: scripts/industry_graph/ths_industry_mapping.yaml
+  token: auto-ths-industry-mapping-20260908
+  created_by: openclaw-night-20260908-4316c
+  capability: industry_graph_ths_import
 - file: docs/03_modules/_domain_frontend/acceptance/ACC-F-CHAINMAP-GALAXY.yaml
   token: auto-chainmap-galaxy-acc-20260908
   created_by: sess-30232-20260908222748
@@ -11221,6 +11260,10 @@ creation_tokens:
   token: auto-ths-profile-import-20260909
   created_by: ths-profile-20260909
   capability: meta_stock_profile_ths
+- file: scripts/schemas/categories/market_tick_depth_5.py
+  token: auto-scaffold-schemas_categories_market_tick_depth_5-20260909
+  created_by: scaffold.py
+  capability: schemas_categories_market_tick_depth_5
 di_seam_exemptions:
 - module_path: zephyr.trading.auto_runtime_core.AutoRuntimeCore
   reason: P0-5 LSG DI seam 标杆，已有 DI 但 AST 模式不匹配（动态注入）
@@ -13359,39 +13402,5 @@ di_seam_exemptions:
   token: auto-enable-write-audit-sacls-20260827
   created_by: AI-OWNER-WIRING
   capability: write_audit_sacl_enabler
-- file: scripts/industry_graph/migrate_tier_to_function_role.py
-  token: greatwall-tier-migration-20260909
-  created_by: greatwall-20260909-0020
-  capability: industry_graph_quality_engine
-- file: scripts/industry_graph/migrate_roles.py
-  token: greatwall-role-migration-20260909
-  created_by: greatwall-20260909-0020
-  capability: industry_graph_quality_engine
-- file: scripts/industry_graph/quality_fix_p0.py
-  token: greatwall-p0-fix-20260909
-  created_by: greatwall-20260909-0020
-  capability: industry_graph_quality_engine
-- file: scripts/industry_graph/execute_r1_chain_plans.py
-  token: greatwall-r1-exec-20260909
-  created_by: greatwall-20260909-0020
-  capability: industry_graph_quality_engine
-- file: scripts/industry_graph/fix_s6_s7_nodes.py
-  token: greatwall-s6s7-nodes-20260909
-  created_by: greatwall-20260909-0020
-  capability: industry_graph_quality_engine
-- file: scripts/industry_graph/quality_fix_p2.py
-  token: greatwall-p2-fix-20260909
-  created_by: greatwall-20260909-0020
-  capability: industry_graph_quality_engine
-- file: scripts/industry_graph/ths_equity_import.py
-  token: greatwall-equity-import-20260909
-  created_by: greatwall-20260909-0020
+  created_by: ths-import-20260908
   capability: industry_graph_ths_equity
-- file: scripts/industry_graph/tier_migration_map.yaml
-  token: greatwall-tier-map-20260909
-  created_by: greatwall-20260909-0020
-  capability: industry_graph_quality_engine
-- file: scripts/industry_graph/role_migration.yaml
-  token: greatwall-role-map-20260909
-  created_by: greatwall-20260909-0020
-  capability: industry_graph_quality_engine

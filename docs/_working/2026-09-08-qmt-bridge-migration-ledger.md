@@ -247,3 +247,14 @@ ttl: task_bound
 3. 若曾开通 L2：沙箱内验证 L2 逐笔接口可用性（大QMT 沙箱权限随终端账户走 vs miniQMT 独立授权——需券商客户经理确认，即 93 §11.5"Level-2 权限确认"伏笔的落地动作）
 4. 期权链：沙箱内订阅期权合约快照（如沪深300ETF 期权主力），确认 greek 字段（delta/gamma/vega/theta/iv）是否随行情产出
 5. 结论回填 §2.2-B：有权限→桥扩期权/L2 dump 立项；无权限→五任务逐表评估 fallback（akshare iv 源/退役停更裁定）
+
+### §8.6 裁定项施工单（09-09 日间批，Owner 已批准全部开始执行）
+
+> 真源=施工会话指令（09-09 14:38）+ §8.3.1 五项裁定；完成后逐项勾选，行尾补 （?09-09 commit哈希）。
+
+- [ ] 任务一：五档盘口落库（裁定⑤，最高优先）——新建 CH 表 c1_market.tick_depth_5（键与 tick_data 对齐+五档 20 列，ReplacingMergeTree，DateTime64(3,'Asia/Shanghai')）+ tick_subscriber.py 桥模式并行落盘分支（现有 tick_data 链路零变更，红线 2）+ 近期历史回填脚本（get_market_data_ex(period='tick') 19 列含五档）；guard 重启时机留 Owner 择盘前/午休
+- [ ] 任务二：分钟K线自拼（裁定③方案 b）——CH tick_data 按 symbol×bar 窗口聚合 1min/5min（OHLCV 口径铁律见 §8.5.1 方案 b）+ 15/30/60min 复用 kline_resampler 幂等模式 + qmt_bridge provider capabilities 点亮 kline_1min/5min/15min/30min/60min；tasks.yaml source 零改动（红线 1）+ akshare 对拍兜底（方案 c）
+- [ ] 任务三：回测 tick 回放切 CH（裁定①）——新建 CH 回放 adapter（读 c1_market.tick_data，SQL 直取，provider 注入接口不变）；如实登记降级：1 档回放，五档深度待 tick_depth_5 积累后升级
+- [ ] 任务四：桥竞价时段出行验证（裁定④修订）——09:15-09:25 ticks3.csv 持续新增观察 + 09:30 后 CH qmt_bridge 增长；结论回填 §2.2-B 勘误注；顺带 §8.1 09:15 跨天轮转三连观察（日间会话 14:38 启动，窗口已过，按事后取证补记）
+- [ ] 任务五：期权 universe 扩桥预案（裁定④修订，只备料不激活）——v21 沙箱策略草稿 .txt（v19 基础上 universe 追加期权合约清单，纯 ASCII）落 E:\qmt_bridge_sim\ZEPHYR_TICKDUMP_v21_draft.txt + 编辑器粘贴/激活 SOP 步骤写入台账；激活留 Owner 9/18 后终端操作
+

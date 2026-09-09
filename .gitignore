@@ -597,3 +597,9 @@ data/fix_patterns/
 data/_tmp_*.py
 # scripts 下运行时数据目录（非代码）
 scripts/data/
+
+# 2026-09-09 工作区卫生(#ARCH-308 分类处置): 运行时产物与数据源二进制留档不入库
+data/asset_index/offrepo_scan_report.json
+data/integrator_progress.db.bak*
+docs/_working/同花顺资料/*.xlsx
+docs/03_modules/_domain_frontend/acceptance/screenshots/
