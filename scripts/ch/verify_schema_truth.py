@@ -10,7 +10,7 @@
 # [STABILITY] evolving
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
-# [ERROR_CONTRACT] CH不可达->退出码2; 真源文件import失败->WARN跳过; 发现漂移->退出码1; 零漂移->退出码0
+# [ERROR_CONTRACT] CH不可达->退出码2; 真源文件import失败->WARN跳过; 真源DDL_STATUS=design_not_executed->SKIP行+汇总/报告含跳过清单(退出码语义不变); 发现漂移->退出码1; 零漂移->退出码0
 # [TESTS] python scripts/ch/verify_schema_truth.py (smoke: 全量真源 vs DB 漂移报告)
 # [A_module] module_id=MOD-L04-001 | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
@@ -213,6 +213,10 @@ def _load_truth_schemas() -> list[dict]:
                 continue
             t = _parse_truth_table(ddl)
             t["source_file"] = path.name
+            # 设计态显式跳过注记（T6）：真源声明 DDL_STATUS = "design_not_executed"
+            # 表示该表为设计态、DDL 从未在 DB 执行（DB 无此表属预期，非漂移）。
+            # 跳过必须显式：主循环打印 SKIP 行，汇总行/报告含跳过清单（非静默）。
+            t["design_not_executed"] = getattr(mod, "DDL_STATUS", "") == "design_not_executed"
             truths.append(t)
         except Exception as e:  # noqa: BLE001 — 单文件失败不阻断全量校验
             print(f"[WARN] 真源 {path.name} 导入失败: {e}")
@@ -297,6 +301,7 @@ def _write_markdown_report(
     path: Path,
     per_table: list[tuple[dict, list[str]]],
     all_drifts: list[str],
+    skipped_design: list[str] | None = None,
 ) -> None:
     """把校验结果写到 markdown 报告（供 CI/审计留证）。
 
@@ -316,6 +321,7 @@ def _write_markdown_report(
         "",
         f"- 生成时间: {_dt.datetime.now(_dt.timezone.utc).isoformat()}",
         f"- 校验表数: {checked}",
+        f"- 设计态显式跳过: {', '.join(skipped_design) if skipped_design else '无'}",
         f"- 漂移条目: {len(all_drifts)}",
         f"- 退出码: {'1 (有漂移)' if all_drifts else '0 (零漂移)'}",
         "",
@@ -369,7 +375,16 @@ def main() -> int:
 
     all_drifts: list[str] = []
     per_table: list[tuple[dict, list[str]]] = []
+    skipped_design: list[str] = []
     for t in truths:
+        if t.get("design_not_executed"):
+            skipped_design.append(f"{t['db']}.{t['table']}")
+            if not args.quiet:
+                print(
+                    f"  SKIP  {t['db']}.{t['table']:30s} <- {t['source_file']}"
+                    " [design_not_executed 设计态未执行: DB 无此表属预期, 显式跳过]"
+                )
+            continue
         db = _load_db_schema(client, t["db"], t["table"])
         drifts = _compare(t, db)
         per_table.append((t, drifts))
@@ -379,7 +394,12 @@ def main() -> int:
         all_drifts.extend(drifts)
 
     checked = len(per_table)
-    print(f"\n校验 {checked} 张表真源，发现 {len(all_drifts)} 处漂移。")
+    skip_note = (
+        f"（显式跳过 {len(skipped_design)} 张设计态表: {', '.join(skipped_design)}）"
+        if skipped_design
+        else ""
+    )
+    print(f"\n校验 {checked} 张表真源{skip_note}，发现 {len(all_drifts)} 处漂移。")
     if all_drifts:
         print("\n=== 漂移明细 ===")
         for d in all_drifts:
@@ -388,7 +408,7 @@ def main() -> int:
         print("零漂移：所有 DDL-as-Code 真源与 ClickHouse 实际表结构一致。")
 
     if args.output:
-        _write_markdown_report(Path(args.output), per_table, all_drifts)
+        _write_markdown_report(Path(args.output), per_table, all_drifts, skipped_design)
         print(f"\n报告已写入: {args.output}")
 
     return 1 if all_drifts else 0

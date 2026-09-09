@@ -38,6 +38,12 @@ A 股"特殊日子"数据资产——全市场日历事件标记表（2026-08-10
     ORDER BY (event_date, event_type)——按日期+类型点查友好，便于"某日有哪些事件"查询。
 
 注：本表无 symbol 字段（全市场事件），故不带 TRAE-082 MATERIALIZED exchange/symbol_canonical 派生列。
+
+2026-09-09 回写（T6，登记服从 DB）：DB 实表含 pub_value/exp_value/prev_value 三列
+（均为 Nullable(String)，无默认值、无注释，属历史 ALTER ADD COLUMN 未回写真源），
+按 DB 现实逐字补入 DDL；经济含义推断为经济数据事件的公布值/预期值/前值
+（pub/exp/prev），DB 侧无注释佐证，待 Owner 后续补 COMMENT 时一并回写。
+INSERT_COLUMNS 不含三列：无 DEFAULT 的 Nullable 列缺省写入即 NULL，兼容既有写入侧。
 """
 
 from __future__ import annotations
@@ -52,7 +58,10 @@ CREATE TABLE IF NOT EXISTS c1_market.calendar_event
     event_type   LowCardinality(String)  COMMENT '事件类型(month_end/quarter_end/half_year_end/year_end/futures_delivery/index_option_expiry/etf_option_expiry/lpr_announcement/hk_connect_closed/fomc_meeting/major_meeting/stamp_duty_change)',
     description  String                  DEFAULT '' COMMENT '事件描述',
     data_source  LowCardinality(String)  DEFAULT 'internal' COMMENT '数据来源(internal=计算派生/manual=手工录入)',
-    ingest_ts    DateTime64(3, 'UTC')    DEFAULT now() COMMENT '入库时间戳'
+    ingest_ts    DateTime64(3, 'UTC')    DEFAULT now() COMMENT '入库时间戳',
+    pub_value    Nullable(String),
+    exp_value    Nullable(String),
+    prev_value   Nullable(String)
 )
 ENGINE = ReplacingMergeTree
 PARTITION BY toYYYYMM(event_date)

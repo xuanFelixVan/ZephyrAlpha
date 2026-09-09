@@ -78,6 +78,10 @@ TABLE_NAME = "factor_feature_value"
 DATABASE = "c1_market"
 CATEGORY_ID = "factor_feature_value"
 CALC_MODE = "preload"
+# 设计态注记（T6，2026-09-09）：本表 DDL 尚未在 DB 执行，DB 无 c1_market.factor_feature_value 属预期。
+# verify_schema_truth.py 读到本字段即显式跳过该表（输出 SKIP 行 + 汇总含跳过计数，非静默）。
+# ⚠️ Owner 窗口 apply DDL 建表成功后必须删除本注记，让核对器恢复真实校验。
+DDL_STATUS = "design_not_executed"
 ENGINE = "ReplacingMergeTree"
 PARTITION_KEY = "toYYYYMM(trade_date)"
 ORDER_BY = "(factor_id, symbol, trade_date)"
