@@ -42,7 +42,7 @@
 #   name_zh: ② 校验（validate_decision_map）
 #   name_en: validate_decision_map
 #   intro: 引用存在性+治理门禁 R1-R36 → (ok, GapReport)；缺口即地图红节点语义
-#   desc: R1 节点枚举; R2 边端点+类型+无环; R3 策略引用（STR-* 查 REG-STR-001，其余查 known_strategy_ids）; R4 因子引用 REG-FCT-001; R5 数据引用 REG-DATAFLOW-001 datasets; R6 置信度枚举+verified必带evidence; R7 矩阵格引用存在性; R8 sequence 边成环检测; R10 市场实例一致性; R12 整装方案; R13 算法引用（IND/EXA/DAL）; R14 doc_ref 存在+路径穿越拒绝; R15 治理字段枚举+新节点必填; R16 父子完整+树深≤4+树宽预警; R17 粒度（问题≤100字+禁模糊词）+容量（挂载≤8/因子≤12/数据≤8/算法≤8+各交叉轴上限）; R18 name_zh 唯一; R19 module_ref 存在; R20 node_id 骨架; R21 MOD-* 交叉锚（格式+depgraph 缓存对账+欠账 warning）; R22 矩阵覆盖 warning; R23 流预算 warning（>80）; R24 因子欠账 warning; R25 空转叶子 warning; R26-R38 12 库交叉轴（形态/席位/宏观/周期/宇宙/成本/事件/风险限额/组合模型/基准/告警阈值/ML模型，表驱动 _XREF_SPECS）; R98 空地图; R99 注册表真源缺失; module_ref=null 记 warning
+#   desc: R1 节点枚举; R2 边端点+类型+无环; R3 策略引用（STR-* 查 REG-STR-001，其余查 known_strategy_ids）; R4 因子引用 REG-FCT-001; R5 数据引用 REG-DATAFLOW-001 datasets; R6 置信度枚举+verified必带evidence; R7 矩阵格引用存在性; R8 sequence 边成环检测; R10 市场实例一致性; R12 整装方案; R13 算法引用（IND/EXA/DAL）; R14 doc_ref 存在+路径穿越拒绝; R15 治理字段枚举+新节点必填; R16 父子完整+树深≤4+树宽预警; R17 粒度（问题≤100字+禁模糊词）+容量（挂载≤8/因子≤12/数据≤8/算法≤8+各交叉轴上限）; R18 name_zh 唯一; R19 module_ref 存在; R20 node_id 骨架; R21 MOD-* 交叉锚（格式+depgraph 缓存对账+欠账 warning）; R22 矩阵覆盖 warning; R23 流预算 warning（>80）; R24 因子欠账 warning; R25 空转叶子 warning; R26-R38 12 库交叉轴（形态/席位/宏观/周期/宇宙/成本/事件/风险限额/组合模型/基准/告警阈值/ML模型，表驱动 _XREF_SPECS）; R98 空地图; R99 注册表真源缺失; module_ref=null 记 warning; R39 盘中/持续节点时效预算欠账 warning（v1.9 latency_budget）
 #   inputs: DecisionMap I2 I3
 #   outputs: (bool, list[GapReportItem])
 # 层: 输出
@@ -94,7 +94,7 @@ _NODE_TYPES = frozenset({"gate", "stage", "sensor", "aggregation", "cross_cuttin
 _POINTS = frozenset({"盘前", "盘中", "盘后", "持续"})
 _EDGE_TYPES = frozenset({"feed", "sequence", "broadcast", "feedback"})
 _CONFIDENCE = frozenset({"verified", "proposed", "untested"})
-_SCHEMA_VERSIONS = frozenset({"1.0", "1.1"})
+_SCHEMA_VERSIONS = frozenset({"1.0", "1.1", "1.2"})
 _LAYER_PREFIX_BY_FLOW: Final = {
     "entry_flow": "L",
     "position_flow": "P",
@@ -219,6 +219,11 @@ class DecisionMapNode:
     benchmark_refs: tuple[str, ...] = ()
     threshold_refs: tuple[str, ...] = ()
     model_refs: tuple[str, ...] = ()
+    # v1.9（Owner 2026-09-10 字段升级批复）：tags 自由标签（检索/过滤用，零强制）；
+    #   latency_budget 时效预算（"时间是交易系统的灵魂"——盘中/持续节点缺省=R39 欠账 warning，
+    #   运行时超时联动既有 fallback 字段；批量补值需逐节点工程实测，禁拍脑袋）
+    tags: tuple[str, ...] = ()
+    latency_budget: str | None = None
 
 
 @dataclass(frozen=True)
@@ -348,6 +353,8 @@ def _parse_node(raw: dict) -> DecisionMapNode:
         algo_refs=tuple(str(x) for x in raw.get("algo_refs", []) or []),
         doc_ref=(str(raw["doc_ref"]) if raw.get("doc_ref") else None),
         note_confirmed=(str(raw["note_confirmed"]) if raw.get("note_confirmed") else None),
+        tags=tuple(str(x) for x in raw.get("tags", []) or []),
+        latency_budget=(str(raw["latency_budget"]) if raw.get("latency_budget") else None),
         module_id=(str(raw["module_id"]) if raw.get("module_id") else None),
         # v1.8 大白话算法说明（全景图可读性）
         algo_note_zh=str(raw.get("algo_note_zh", "") or ""),
@@ -692,6 +699,15 @@ def _validate_governance(
                 add("error", "R15", n.node_id, "v1.5 节点缺 activation（时效窗必填）")
             if n.ai_autonomy is None:
                 add("error", "R15", n.node_id, "v1.5 节点缺 ai_autonomy（治理档位必填）")
+        # v1.9 时效预算欠账（Owner 2026-09-10："时间是交易系统的灵魂"）：盘中/持续节点必须声明
+        # latency_budget，缺=warning 浮出欠账（不阻断；补值需逐节点工程实测禁拍脑袋）
+        if n.activation in ("intraday", "continuous") and not n.latency_budget:
+            add(
+                "warning",
+                "R39",
+                n.node_id,
+                "盘中/持续节点缺 latency_budget（时效预算欠账——运行时超时监控与 fallback 联动的依据）",
+            )
         # R17 粒度门禁：一句话说清楚（长度上限+禁模糊词）；空串防御（折叠块头被截断的历史病根）
         if not n.decision_question.strip():
             add("error", "R17", n.node_id, "decision_question 为空（折叠块截断/字段丢失——修复数据而非放行）")

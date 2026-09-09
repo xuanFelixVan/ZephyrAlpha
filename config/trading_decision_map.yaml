@@ -17,7 +17,7 @@
 # 设计原则（D108，2026-09-07 Owner 终裁）：判定用离散状态机、程度用灰度插值；情况细化用决策表/状态机承载（D67 十行矩阵/D71 状态机先例），非加树深；新节点拆分三条件=独立数据输入或动作输出+行为差异可回测区分+非纯参数变化
 # ============================================================================
 
-schema_version: '1.1'
+schema_version: '1.2'
 map_id: TDMAP-001
 name_zh: 交易决策地图
 effective_from: '2026-09-08'     # 知识层 PIT 生效日（D118/D122）：本版规则集的"开始存在"时点；规则回测预检比对轴——回测区间早于此=知识漂移须报告声明（D120 标注放行）。首次盘点统一=落盘日；此后每次 D 裁定批量落盘刷新
@@ -806,7 +806,7 @@ nodes:
     parent_node: TDM-E-L2-05
     factor_refs: []
     data_refs: []
-    module_ref: null
+    module_ref: src/zephyr/signal_ashare/sector_gate.py
     algo_refs: []
     doc_ref: "docs/02_enterprise_architecture/07_trading_decision_architecture/design_memos/22_sector_rotation_spec.md#§3.1⑪"
     activation: premarket

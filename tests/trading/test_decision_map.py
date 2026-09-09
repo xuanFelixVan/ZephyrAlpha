@@ -326,6 +326,40 @@ class TestXrefAxes:
         assert ok is False
         assert any(i.code == "R38" for i in issues)
 
+    def test_schema_1_2_loads(self, tmp_path: Path) -> None:
+        """v1.9 字段升级（Owner 2026-09-10 批复）：schema_version 1.2 合法。"""
+        payload = _minimal_payload()
+        payload["schema_version"] = "1.2"
+        dm = load_decision_map(_write_map(tmp_path, payload))
+        assert dm.schema_version == "1.2"
+
+    def test_tags_roundtrip(self, tmp_path: Path) -> None:
+        payload = _minimal_payload()
+        payload["nodes"][0]["tags"] = ["盘中", "事件驱动"]
+        dm = load_decision_map(_write_map(tmp_path, payload))
+        assert dm.nodes[0].tags == ("盘中", "事件驱动")
+
+    def test_r39_latency_budget_warning(self, tmp_path: Path) -> None:
+        """时效预算欠账：盘中/持续节点缺 latency_budget → R39 warning；补上即消。"""
+        payload = _minimal_payload()
+        payload["nodes"][0]["activation"] = "intraday"
+        dm = load_decision_map(_write_map(tmp_path, payload))
+        ok, issues = validate_decision_map(dm, _REGISTRY_DIR, _KNOWN_STRATEGIES)
+        assert ok is True  # warning 级不阻断
+        assert any(i.code == "R39" for i in issues)
+        payload["nodes"][0]["latency_budget"] = "秒级（盘中扫描窗口内出结论）"
+        dm = load_decision_map(_write_map(tmp_path, payload))
+        _, issues = validate_decision_map(dm, _REGISTRY_DIR, _KNOWN_STRATEGIES)
+        assert not any(i.code == "R39" for i in issues)
+
+    def test_r39_not_for_premarket(self, tmp_path: Path) -> None:
+        """盘前节点不适用 R39（时效预算只管盘中/持续）。"""
+        payload = _minimal_payload()
+        payload["nodes"][0]["activation"] = "premarket"
+        dm = load_decision_map(_write_map(tmp_path, payload))
+        _, issues = validate_decision_map(dm, _REGISTRY_DIR, _KNOWN_STRATEGIES)
+        assert not any(i.code == "R39" for i in issues)
+
     def test_r2_payload_zh_limit(self, tmp_path: Path) -> None:
         """边 payload_zh 门禁（2026-09-09 Owner 批准字段）：可选，>20 字硬阻断（R2 扩展）。"""
         payload = _minimal_payload()
