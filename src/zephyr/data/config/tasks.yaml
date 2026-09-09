@@ -620,14 +620,25 @@ tasks:
 - task_id: dividend_incremental
   table: c3_fundamental.dividend
   source: miniqmt
-  schedule: daily_event
+  schedule: disabled
   incremental: true
   date_col: announce_date
   dependencies: []
   capability: dividend
   symbols:
   extra:
-    description: "分红送股增量（QMT get_divid_factors）"
+    description: "[2026-09-09 方案D 停用] 旧分红增量——字段名(divid_per_share等)在 QMT get_divid_factors 返回中不存在(真名 interest/stockBonus/...)且与东财20列表 schema 不匹配，写入持续失败、表 7/13 后断供；由 ex_dividend_event_incremental 治本替代，c3_fundamental.dividend 东财研究口径 7/14 起缺口登记 follow-up"
+- task_id: ex_dividend_event_incremental
+  table: c3_fundamental.ex_dividend_event
+  source: miniqmt
+  schedule: daily_event
+  incremental: true
+  date_col: trade_date
+  dependencies: []
+  capability: dividend
+  symbols:
+  extra:
+    description: "除权除息事件要素增量（QMT get_divid_factors 真实字段映射：interest/stockBonus/stockGift/allotNum/allotPrice/dr/gugai；dr=当日综合除权因子=昨收/除权参考价，stk_limit 公式法唯一输入）"
 
 - task_id: rights_issue_incremental
   table: c3_fundamental.rights_issue

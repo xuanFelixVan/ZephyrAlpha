@@ -284,26 +284,33 @@ _SQL_KLINE_DAYS = (
     "WHERE trade_date >= '{start}' AND trade_date <= '{end}' ORDER BY trade_date"
 )
 # #198 stk_limit 收盘价+除权乘子：kline_daily.adj_factor 列无持续生产者（2026-08-19
-# 实证全表 9,659,286 行恒 1，除权修正静默失效），改读独立 adj_factor 表——其持续
-# 生产者为 miniqmt get_divid_factors（tasks.yaml adj_factor_incremental，盘后日K时段，
-# 实证已落库 714 行最新至当日）。口径实证：miniqmt dr 为单次事件点因子（600000 除权日
-# 2026-07-16 dr=1.048054，官方昨收=前收/dr），故 SQL 侧取倒数 1/dr 输出"当日除权乘子"
-# （无事件日=1）。仅取 data_source='miniqmt'：bdpan 系为 hfq 累计口径且 2026-07-03 已
-# 停更、akshare 新浪 hfq_factor 同为累计口径（与 dr 点口径不可混算）——akshare fallback
-# 期间退化为不修正（与修复前行为一致，不引入新错误）；历史窗口重算的累计口径另行裁定。
+# 实证全表 9,659,286 行恒 1，除权修正静默失效），改读独立 adj_factor 表。
+# 2026-09-09 长城任务方案D（Owner 立项）二次切换：数据源改为 c3_fundamental.ex_dividend_event
+# （QMT get_divid_factors 真实字段映射，含全历史除权事件 dr）。
+# 切换根因链（长城任务实证）：
+#   a) adj_factor 的 miniqmt dr 行仅覆盖 2026-07 起（此前 bdpan 累计口径被本 SQL 的
+#      data_source='miniqmt' 过滤排除 → 1-6 月除权修正从未生效）；
+#   b) 2026-09-08 的 hfq_ratio_extend 延拓行顶掉 7/1-9/8 沪深除权日 miniqmt dr 行
+#      （ReplacingMergeTree(ingest_ts) 后写胜出）→ 修正链二次受损；
+#   c) ex_dividend_event.dr 为 QMT 官方当日综合除权因子（=昨收/除权参考价，600000
+#      2026-07-16 dr=1.047244 实证），SQL 侧取倒数 1/dr 输出"当日除权乘子"（无事件日=1），
+#      全历史事件覆盖 → 2015 起除权修正首次全面生效。
 # 注：JOIN 用 USING 无别名写法——ch_reader.inject_final 在表名后注入 FINAL，
 # "FROM t FINAL alias" 非法（FINAL 须在别名后），USING 形态下注入后语法仍合法（实测）。
 _SQL_KLINE_BARS = (
     "SELECT trade_date, symbol, close, "
-    "if(a.dr IS NULL OR a.dr <= 0, 1, 1 / a.dr) AS adj_mult "
+    # toFloat64 转换：dr 为 Nullable(Decimal(18,10))，CH Decimal 域除法 1/Decimal 会
+    # Decimal math overflow（scale 相加越界），float 域除法无此问题（下游 round(4)）
+    "if(e.dr IS NULL OR e.dr <= 0, 1, 1 / toFloat64(e.dr)) AS adj_mult "
     "FROM c1_market.kline_daily "
     "LEFT JOIN ("
-    "SELECT symbol, trade_date, any(adj_factor) AS dr "
-    "FROM c1_market.adj_factor "
-    "WHERE data_source = 'miniqmt' "
-    "AND trade_date >= '{start}' AND trade_date <= '{end}' "
+    # WHERE 不得引用聚合别名 dr（CH 26.6 分析器把 WHERE 的 dr 绑定到 any(dr) 别名
+    # 报 "aggregate function any(dr) is found in WHERE"）——过滤移入聚合内部
+    "SELECT symbol, trade_date, any(if(dr IS NULL OR dr <= 0, NULL, dr)) AS dr "
+    "FROM c3_fundamental.ex_dividend_event "
+    "WHERE trade_date >= '{start}' AND trade_date <= '{end}' "
     "GROUP BY symbol, trade_date"
-    ") a USING (symbol, trade_date) "
+    ") e USING (symbol, trade_date) "
     "WHERE trade_date >= '{start}' AND trade_date <= '{end}'"
 )
 _SQL_KLINE_SYMBOL_DAYS = (
@@ -6607,6 +6614,15 @@ class AkshareIngestProvider(IngestProviderBase):
             bars.setdefault(code, []).append((d, close, adj))
         for series in bars.values():
             series.sort(key=lambda x: x[0])
+            # 点乘子 → 累计化（2026-09-09 方案D）：SQL 的 adj_mult 是"当日除权乘子"
+            # （仅除权日≠1，无事件日=1），而 _stk_limit_row_for 的公式
+            # pre_close = prev_close × (adj/prev_adj) 要求第三列为【累计因子】。
+            # 不累积化的后果：除权次日 adj=1、prev_adj=1/dr → 乘子=dr 把除权反向
+            # 加回（浦发 7/17 pre_close=9.2681，应 8.85，实证偏差 +4.7%）。
+            cum = 1.0
+            for j, item in enumerate(series):
+                cum *= item[2]
+                series[j] = (item[0], item[1], cum)
         return bars
 
     def _stk_limit_row_for(

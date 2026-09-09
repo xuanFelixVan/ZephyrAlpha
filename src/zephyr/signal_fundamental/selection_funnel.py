@@ -414,7 +414,16 @@ def run_selection_funnel(
     screen_degraded: bool = False,
     score_degraded: bool = False,
 ) -> SelectionFunnelResult:
-    """BM-SEL-16 → 17 → 18 盘前批处理串联。"""
+    """BM-SEL-16 → 17 → 18 盘前批处理串联。
+
+    接线契约（2026-09-09 Owner 裁定，北交所 ST 名单不修的替代防呆）：
+    records 构造方 MUST 在进入本函数前完成"市场=沪深"硬过滤——排除北交所
+    （92/43/83/87 段）与港股/B股。理由：c1_market.st_stock_list 的北交所 ST
+    名单缺失（akshare/baostock 源均无覆盖，#ARCH-DATA-020 L3），ST 排除级
+    （graded exclusion）对北交所票不生效；且 Owner 交易域=沪深，北交所票
+    不应流入任何策略宇宙。kline/stk_limit 等行情表含北交所行（数据完整性）
+    属正常，过滤责任在本入口的 records 构造侧。
+    """
     chain = run_funnel_chain(
         records,
         symbol_of=_SYMBOL_OF,

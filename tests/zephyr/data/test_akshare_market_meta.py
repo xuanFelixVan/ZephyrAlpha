@@ -380,16 +380,21 @@ class TestFetchStkLimit:
         r = by["600011"]
         assert r[2] == 20.00 and r[3] == 22.00 and r[4] == 18.00
 
-    def test_kline_bars_sql_reads_adj_factor_table_198(self):
-        # #198 契约钉：stk_limit 除权来源必须是独立 adj_factor 表（miniqmt dr 单次事件
-        # 点口径，取倒数为当日乘子），防回退为读 kline_daily.adj_factor 废弃列
-        # （该列无持续生产者恒 1 = 除权修正静默失效根因）。
+    def test_kline_bars_sql_reads_ex_dividend_event_20260909(self):
+        # #198 契约钉（2026-09-09 方案D 二次切换）：stk_limit 除权来源必须是
+        # c3_fundamental.ex_dividend_event（QMT get_divid_factors 真实字段映射，
+        # dr=当日综合除权因子=昨收/除权参考价，取倒数为当日乘子），防回退为
+        # ①读 kline_daily.adj_factor 废弃列（恒 1=除权修正静默失效根因）
+        # ②读 adj_factor 表（miniqmt dr 行仅 2026-07 起且已被 hfq_ratio_extend
+        #   延拓行顶掉——1-6 月修正从未生效的根因，长城任务实证）。
         from src.zephyr.data.implementations import akshare_provider as akp
 
         sql = akp._SQL_KLINE_BARS
-        assert "c1_market.adj_factor" in sql
-        assert "data_source = 'miniqmt'" in sql  # 累计口径源（bdpan/akshare hfq）不可混算
-        assert "1 / a.dr" in sql  # dr 为事件点因子（官方昨收=前收/dr），取倒数得乘子
+        assert "c3_fundamental.ex_dividend_event" in sql
+        assert "c1_market.adj_factor" not in sql  # 不得回退到 adj_factor 混口径源
+        # dr 为当日综合除权因子（官方昨收=前收/dr），取倒数得乘子；toFloat64 防
+        # Decimal 域除法溢出（dr 为 Nullable(Decimal(18,10))，scale 相加越界）
+        assert "1 / toFloat64(e.dr)" in sql
         assert "close, adj_factor FROM c1_market.kline_daily" not in sql  # 不得再读主表废弃列
 
 

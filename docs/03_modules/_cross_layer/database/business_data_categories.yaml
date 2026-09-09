@@ -223,6 +223,19 @@
 # 注意：tick_data(market_type='index') 是指数3秒Tick，与 kline_index(指数日K线) 不同
 # ⚠️ tick_data 是3秒采样快照（miniqmt get_full_tick），不是逐笔成交。逐笔成交见 market_l2_tick（已禁用）
 
+- category_id: market_tick_depth_5
+  name: "A股五档盘口快照（bid/ask 1-5 价量 20 列；裁定⑤ 2026-09-09，并行旁路表，tick_data 链路零变更）"
+  engine: clickhouse
+  database: c1_market
+  table: tick_depth_5
+  schema_file: schemas/categories/market_tick_depth_5.py
+  data_type: 原料
+  lifecycle: permanent
+  sla_level: L1
+  enabled: true
+  hard_constraint: null
+  calc_mode: replay
+  frequency: 3秒
 - category_id: market_tick
   name: "A股3秒Tick快照（含stock/etf/cb/lof/index/sector/stock_bj/mkt_index 8种market_type）"
   engine: clickhouse
@@ -1888,6 +1901,22 @@
   database: c3_fundamental
   table: dividend
   schema_file: null
+  data_type: 原料
+  lifecycle: permanent
+  sla_level: L2
+  enabled: true
+  hard_constraint: null
+  calc_mode: preload
+  frequency: 事件驱动
+  data_source: [miniqmt]
+  blueprint: null
+
+- category_id: ex_dividend_event
+  name: "除权除息事件要素表（QMT get_divid_factors 口径：每股派现/送/转/配股要素+dr综合除权因子；stk_limit 公式法除权修正唯一输入，2026-09-09 长城任务方案D立项；东财研究口径的 c3_fundamental.dividend 与 miniqmt _fetch_dividend 6列 schema 不匹配致 dividend_incremental 写入持续失败、表 2026-07-13 后断供——本表为治本替代，dividend 研究表缺口登记 follow-up）"
+  engine: clickhouse
+  database: c3_fundamental
+  table: ex_dividend_event
+  schema_file: market_ex_dividend_event.py
   data_type: 原料
   lifecycle: permanent
   sla_level: L2

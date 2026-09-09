@@ -110,7 +110,7 @@ _TBL_AUCTION_BOOK = get_registry().table("market_auction_book")
 _TBL_AUCTION_SNAPSHOT = get_registry().table("market_auction_snapshot")
 _TBL_BLOCK_TRADE_QMT = get_registry().table("market_block_trade_qmt")
 _TBL_CONVERTIBLE_BOND_IV = get_registry().table("market_cb_iv")
-_TBL_DIVIDEND = get_registry().table("fund_dividend")
+_TBL_DIVIDEND = get_registry().table("ex_dividend_event")
 _TBL_DRAGON_TIGER_QMT = get_registry().table("market_dragon_tiger_qmt")
 _TBL_ETF_NAV = get_registry().table("market_etf_nav")
 _TBL_FUTURES_POSITION = get_registry().table("market_futures_position")
@@ -2269,11 +2269,24 @@ class MiniQmtIngestProvider(IngestProviderBase):
         payload: FetchPayload,
         policy: SourcePolicy,
     ) -> Iterator[FetchResult]:
-        """抓取分红送股数据。
+        """抓取除权除息事件要素（2026-09-09 长城任务方案D重构）。
 
-        遍历 symbols 调用 xtdata.get_divid_factors 获取除权除息信息。
-        表 schema: (trade_date, symbol, divid_per_share, split_per_share,
-                    funds_per_share, data_source)
+        遍历 symbols 调用 xtdata.get_divid_factors 获取除权除息信息，
+        写 c3_fundamental.ex_dividend_event（品类 ex_dividend_event）。
+
+        历史病灶（本重构根因）：
+        ① 旧字段名 divid_per_share/split_per_share/funds_per_share 在 get_divid_factors
+           返回中不存在（真名 interest/stockBonus/stockGift/allotNum/allotPrice/dr/gugai），
+           row.get() 全取 None → 历史写入全空值；
+        ② 旧目标表 c3_fundamental.dividend（东财研究 20 列）与 6 列 schema 不匹配 →
+           INSERT 持续失败落 fallback → 表 2026-07-13 后断供。
+        二者均由 ex_dividend_event 表 + 真实字段映射治本。
+
+        dr 语义（实证）：当日综合除权因子 = 昨收/除权参考价；stk_limit 公式法消费
+        dr：除权日 pre_close = prev_close / dr（方案D，替代 adj_factor 因子比修正）。
+
+        表 schema: (trade_date, symbol, divid_per_share, bonus_per_share,
+                    gift_per_share, allot_ratio, allot_price, dr, gugai, data_source)
 
         Args:
             payload: 下载请求（start/end 用于过滤日期范围）
@@ -2289,8 +2302,12 @@ class MiniQmtIngestProvider(IngestProviderBase):
             "trade_date",
             "symbol",
             "divid_per_share",
-            "split_per_share",
-            "funds_per_share",
+            "bonus_per_share",
+            "gift_per_share",
+            "allot_ratio",
+            "allot_price",
+            "dr",
+            "gugai",
             "data_source",
         ]
         start_date = payload.start.isoformat()
@@ -2299,7 +2316,7 @@ class MiniQmtIngestProvider(IngestProviderBase):
         try:
             symbols = payload.symbols
             if not symbols:
-                symbols = self._call_with_policy(xtdata.get_stock_list_in_sector, policy, "沪深A股")
+                symbols = self._call_with_policy(xtdata.get_stock_list_in_sector, policy, "沪深京A股")
         except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
             yield FetchResult(
                 table=table,
@@ -2334,9 +2351,13 @@ class MiniQmtIngestProvider(IngestProviderBase):
                             (
                                 trade_date,
                                 symbol,
-                                self.safe_float(row.get("divid_per_share")),
-                                self.safe_float(row.get("split_per_share")),
-                                self.safe_float(row.get("funds_per_share")),
+                                self.safe_float(row.get("interest")),
+                                self.safe_float(row.get("stockBonus")),
+                                self.safe_float(row.get("stockGift")),
+                                self.safe_float(row.get("allotNum")),
+                                self.safe_float(row.get("allotPrice")),
+                                self.safe_float(row.get("dr")),
+                                self.safe_float(row.get("gugai")),
                                 "miniqmt",
                             )
                         )
