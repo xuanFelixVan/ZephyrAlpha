@@ -525,6 +525,16 @@
     var anchorHtml = anchorCnt
       ? '<div class="chips">' + algRefs.concat(mdlRefs).map(algChip).join('') + '</div>'
       : '<div class="empty">未登记算法锚</div>';
+    /* 每算法大白话（b20260910 四轮，Owner"每个算法一句大白话"）：ref_descs=id→大白话（api 从
+     * DAL mechanism_zh/ML task/EXA 场景聚合，真源字段零硬编码）；有则逐条渲染，无则略过（空态由下方站位兜底） */
+    var RD = TDM.data.ref_descs || {};
+    var algDescLines = [];
+    algRefs.concat(mdlRefs).forEach(function (id) {
+      if (RD[id]) algDescLines.push('<div class="af alg-desc"><i>' + esc(id) + '</i>' + esc(RD[id]) + '</div>');
+    });
+    var algDescHtml = algDescLines.length
+      ? '<div class="anchor-feed alg-desc-block">' + algDescLines.join('') + '</div>'
+      : '';
     /* 算法锚大白话（b20260910 二轮反馈）：边 payload 从画布线牌挪到抽屉本分区——
      * 「← 来源节点：喂了什么」「→ 去向节点：喂了什么」，锚边关系一眼可读；
      * 三轮反馈：常显站位——无数据也留位显「未登记喂给说明」，对齐空态显式留位范式 */
@@ -554,7 +564,7 @@
       '<div class="sec">治理</div>' + gov +
       '<div class="sec">模块锚（MOD）</div>' + mod +
       '<div class="sec">算法锚（算法/模型）<span class="cnt">' + (anchorCnt ? anchorCnt : '') + '</span></div>' +
-      anchorHtml + codeAnchor + anchorFeedHtml +
+      anchorHtml + algDescHtml + codeAnchor + anchorFeedHtml +
       '<div class="sec">策略挂载（STR）</div>' + mounts +
       (refsHtml ? '<div class="sec">依据锚（引用）</div>' + refsHtml : '') +
       '<div class="sec">上游（谁喂给它）<span class="cnt">' + ups.length + '</span></div>' +

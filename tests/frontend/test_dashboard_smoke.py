@@ -217,3 +217,5 @@ def test_tdm_structure(page):
     # 算法大白话常显站位（Owner 三轮反馈）：无数据也必须留位显「未登记喂给说明」
     assert "算法大白话" in src, "tdm.js 缺「算法大白话」站位标题"
     assert "未登记喂给说明" in src, "tdm.js 缺「未登记喂给说明」空态站位"
+    # 每算法大白话行（Owner 四轮反馈）：ref_descs 翻译层读取（api 聚合 DAL/ML/EXA/IND 既有字段）
+    assert "ref_descs" in src, "tdm.js 缺 ref_descs 大白话翻译层读取"

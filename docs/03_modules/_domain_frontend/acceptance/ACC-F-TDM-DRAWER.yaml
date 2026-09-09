@@ -8,12 +8,13 @@ feature_id: F-TDM-DRAWER
 feature_name: 节点详情抽屉（问/机制/治理/依据锚/上下游导航）
 frozen_at: 2026-09-08
 frozen_by: ZephyrAlpha-Owner
-revision: 4
+revision: 5
 revision_policy: "修订=Owner 批准+改原文+revision 链留痕；AI 不可自改已冻结条项"
 revision_log:
   - { revision: 2, date: "2026-09-09", by: "st-nodebt-night-20260909", change: "追加条目 10（验证档案分区，PB-04 P0-3 授权施工）——既有 1~9 条冻结原文未动" }
   - { revision: 3, date: "2026-09-09", by: "st-tdmfe-20260909", change: "追加条目 11（算法锚分区，Owner 任务单授权：algo_refs/model_refs 只读渲染+代码锚行）——既有 1~10 条冻结原文未动" }
   - { revision: 4, date: "2026-09-09", by: "st-tdmfe-20260909", change: "追加条目 12（算法大白话常显站位，Owner 三轮反馈授权：锚边 payload 从画布线牌挪入算法锚分区下方，空态显式留位）——既有 1~11 条冻结原文未动" }
+  - { revision: 5, date: "2026-09-09", by: "st-tdmfe-20260909", change: "追加条目 13（每算法大白话行，Owner 四轮授权：ref_descs 翻译层渲染每个算法锚的大白话，api_server 聚合登记表既有字段零硬编码）——既有 1~12 条冻结原文未动" }
 
 # check 取值：目检（截图人工/AI 视觉对） | 机断（DOM 断言，过渡期人工/控制台手动验，不免验）
 # 验收基准节点=TDM-E-L1-S1（大盘指数传感器，边界最全节点：红节点+四键全空+模块锚空+挂载空+依据锚单 chip+上下游导航+5 条设计备注）
@@ -30,6 +31,7 @@ items:
   - { id: 10, text: "「验证档案（回测台账）」分区渲染（追加在设计备注后）：空表=灰色「未验证」徽章+排序说明；有记录=当前 verdict 徽章+历次记录（窗口/触发次数/命中占比/显著性土规/map@commit）；CH 断连=「台账不可达」不冒充未验证；异步填充后阅读位置保持；TDM-E-L1-S1（空表态）为验收基准", check: 目检 }
   - { id: 11, text: "「算法锚（算法/模型）」分区渲染（追加在模块锚后）：algo_refs/model_refs 逐枚 chip 带 DAL=决策算法/IND=技术指标/EXA=执行算法/ML=模型 前缀类型徽（中文名就绪自动显示，未就绪显示 id）；空态=「未登记算法锚」灰字不隐藏分区；底部「代码锚」行：module_ref 有值=文件名可点击（点击复制路径+title 全路径），无值=「未落码」灰字", check: 目检 }
   - { id: 12, text: "「算法大白话（锚边喂进/喂出什么）」常显站位（算法锚分区内、代码锚行下方）：有 payload_zh 数据=「← 来源节点：喂了什么」「→ 去向节点：喂了什么」引用块行；无数据=「未登记喂给说明（大白话待补录）」灰字站位不隐藏；画布连线不渲染任何标签牌（防叠挡卡片）", check: 目检 }
+  - { id: 13, text: "每算法大白话行（chips 下方）：每个算法/模型锚 chip 对应一行 ref_descs 大白话（DAL=mechanism_zh 机制、ML=task+architecture、EXA=name_zh+适用场景、IND=name_zh，api 聚合登记表既有字段零硬编码）；行首 id 蓝色编号+大白话正文；无 desc 的引用不渲染行（不算空态）", check: 目检 }
 
 execution:
   trigger: "任何涉及本功能的 UI 改动 commit 前"

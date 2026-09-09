@@ -1948,6 +1948,25 @@ def bridge_status() -> dict[str, Any]:
 _TDM_CACHE: dict[str, Any] = {}   # /api/tdm mtime 缓存（改 YAML 即失效重算）
 _TDM_REFNAMES: dict[str, Any] = {"built_at": 0.0, "names": {}}
 _TDM_REFNAMES_TTL = 600.0   # 引用中文名缓存 10 分钟（注册表低频变更，无需逐请求重扫）
+_TDM_REFDESCS: dict[str, Any] = {"built_at": 0.0, "descs": {}}   # 引用 id → 大白话机制（算法锚分区，b20260910）
+
+
+def _tdm_ref_names_algo(names: dict[str, str]) -> None:
+    """DAL/ML 算法锚中文名补源（b20260910）——独立助手：_tdm_ref_names 复杂度已近阈，
+    加载分支拆出防 NO-HIGH-COMPLEXITY。"""
+    import yaml as _yaml
+
+    def _load(fname: str) -> Any:
+        return _yaml.safe_load((_REPO / "docs" / "01_policies_and_standards" / "_registry" / "catalogs" / fname).read_text(encoding="utf-8"))
+
+    reg = _load("decision_algo_registry.yaml")
+    for x in reg.get("algorithms", []):
+        if x.get("dal_id"):
+            names[x["dal_id"]] = x.get("name_zh") or ""
+    reg = _load("model_registry.yaml")
+    for x in reg.get("models", []):
+        if x.get("model_id"):
+            names[x["model_id"]] = x.get("name_zh") or ""
 
 
 def _tdm_ref_names() -> dict[str, str]:
@@ -2008,6 +2027,7 @@ def _tdm_ref_names() -> dict[str, str]:
         for x in reg.get("cost_models", []):
             if x.get("cost_model_id"):
                 names[x["cost_model_id"]] = x.get("name_zh") or x.get("name") or ""
+        _tdm_ref_names_algo(names)   # DAL/ML 算法锚补翻译源（b20260910，复杂度拆 helper）
     except Exception as exc:   # 注册表缺失/损坏不阻断地图本体——中文名降级为编号原文
         logger.warning("tdm ref_names registry load failed: %s", exc)
 
@@ -2036,6 +2056,64 @@ def _tdm_ref_names() -> dict[str, str]:
     _TDM_REFNAMES["built_at"] = now
     _TDM_REFNAMES["names"] = names
     return names
+
+
+def _tdm_ref_descs_dal_ml(descs: dict[str, str]) -> None:
+    """DAL/ML 大白话聚合（mechanism_zh / task+architecture）。"""
+    import yaml as _yaml
+
+    def _load(fname: str) -> Any:
+        return _yaml.safe_load((_REPO / "docs" / "01_policies_and_standards" / "_registry" / "catalogs" / fname).read_text(encoding="utf-8"))
+
+    reg = _load("decision_algo_registry.yaml")
+    for x in reg.get("algorithms", []):
+        if x.get("dal_id") and x.get("mechanism_zh"):
+            descs[x["dal_id"]] = str(x["mechanism_zh"]).replace("\n", " ").strip()
+    reg = _load("model_registry.yaml")
+    for x in reg.get("models", []):
+        if x.get("model_id"):
+            parts = [str(p).strip() for p in (x.get("task"), x.get("architecture")) if p]
+            if parts:
+                descs[x["model_id"]] = "；".join(parts)
+
+
+def _tdm_ref_descs_exa_ind(descs: dict[str, str]) -> None:
+    """EXA/IND 大白话聚合（name_zh+适用场景 / name_zh 兜底）。"""
+    import yaml as _yaml
+
+    def _load(fname: str) -> Any:
+        return _yaml.safe_load((_REPO / "docs" / "01_policies_and_standards" / "_registry" / "catalogs" / fname).read_text(encoding="utf-8"))
+
+    reg = _load("execution_algo_registry.yaml")
+    for x in reg.get("execution_algos", []):
+        if x.get("execution_algo_id"):
+            scene = str(x.get("applicable_scenario") or "").split("；")[0].split("\n")[0].strip()
+            descs[x["execution_algo_id"]] = (x.get("name_zh") or "") + (("；适用：" + scene) if scene else "")
+    reg = _load("technical_indicator_registry.yaml")
+    for x in reg.get("indicators", []):
+        if x.get("indicator_id"):
+            descs.setdefault(x["indicator_id"], x.get("name_zh") or "")
+
+
+def _tdm_ref_descs() -> dict[str, str]:
+    """算法/模型引用 id → 大白话机制（算法锚分区展示用，b20260910）。
+
+    真源=各 registry 既有字段聚合，零硬编码翻译：DAL←mechanism_zh；
+    ML←task+architecture；EXA←name_zh+applicable_scenario；IND←name_zh 兜底。
+    未命中返回空（前端回退「未登记喂给说明」站位）。聚合分支拆 helper 防复杂度超阈。
+    """
+    now = now_utc().timestamp()
+    if now - _TDM_REFDESCS["built_at"] < _TDM_REFNAMES_TTL and _TDM_REFDESCS["descs"]:
+        return _TDM_REFDESCS["descs"]
+    descs: dict[str, str] = {}
+    try:
+        _tdm_ref_descs_dal_ml(descs)
+        _tdm_ref_descs_exa_ind(descs)
+    except Exception as exc:   # 注册表缺失/损坏不阻断地图本体——大白话降级为空（前端站位兜底）
+        logger.warning("tdm ref_descs registry load failed: %s", exc)
+    _TDM_REFDESCS["built_at"] = now
+    _TDM_REFDESCS["descs"] = descs
+    return descs
 
 
 @app.get("/api/tdm")
@@ -2133,6 +2211,7 @@ def tdm_map() -> dict[str, Any]:
         "nodes": nodes_out,
         "edges": raw.get("edges", []),
         "ref_names": _tdm_ref_names(),   # 引用 id → 中文名（八轴+STR 别名+MOD，抽屉溯源真源关联）
+        "ref_descs": _tdm_ref_descs(),   # 算法/模型 id → 大白话机制（算法锚分区，b20260910）
         "generated_at": datetime.now().isoformat(" ", "seconds"),
     }
     _TDM_CACHE["mtime"] = mtime
