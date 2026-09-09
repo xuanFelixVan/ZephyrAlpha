@@ -930,6 +930,146 @@ def backtest_run_status(task_id: str = Query(..., min_length=3)) -> dict[str, An
     return {"ok": True, **st}
 
 
+# ── 整装回测三端点（二期整装回测后端，MOD-FWCOMP-001；追加式，复用 backtest-run task 模式）──
+# 组合回测器真源: zephyr.pf_core.strategy_engine.framework_composer；
+# 方案权重真源: config/framework_plans.yaml（防御/均衡/激进三套，Σ=100%）。
+# 与 /api/backtest-run 的边界: backtest-run=多策略各自跑各自出净值；framework-backtest-run=
+# 方案权重×子策略权重面板线性合成组合面板→引擎跑出单条组合净值（整装语义）。
+from zephyr.shared.utils.time_utils import now_utc  # noqa: E402
+
+_FW_RUN_POOL = ThreadPoolExecutor(max_workers=1, thread_name_prefix="fw-run")  # 串行防 CH 连接竞争
+_FW_RUN_STATE: dict[str, dict[str, Any]] = {}
+_FW_RUN_LOCK = threading.Lock()
+
+
+def _fw_run_task(task_id: str, params: dict[str, Any]) -> None:
+    """后台整装回测线程体：run_framework_backtest → 更新状态（成功附 run_id/artifact）。"""
+    try:
+        from zephyr.pf_core.strategy_engine.framework_composer import (
+            FrameworkBacktestConfig,
+            run_framework_backtest,
+        )
+
+        summary = run_framework_backtest(
+            params["plan_id"],
+            params["symbols"],
+            params["start"],
+            params["end"],
+            config=FrameworkBacktestConfig(
+                factor_ids=tuple(params.get("factor_ids", ["momentum_20d"])),
+                rebalance_freq=params.get("rebalance_freq", "W-FRI"),
+                top_n=int(params.get("top_n", 10)),
+                max_single=float(params.get("max_single", 0.10)),
+                initial_capital=float(params.get("initial_capital", 1_000_000.0)),
+                pit_shift=int(params.get("pit_shift", 1)),
+                allow_partial=bool(params.get("allow_partial", True)),
+            ),
+        )
+        with _FW_RUN_LOCK:
+            if summary.get("ok"):
+                _FW_RUN_STATE[task_id] = {
+                    "status": "done",
+                    "run_id": summary["run_id"],
+                    "plan_id": summary["plan_id"],
+                    "participants": summary["participants"],
+                    "skipped": summary["skipped"],
+                    "rescale_factor": summary["rescale_factor"],
+                    "equity_points": summary["equity_points"],
+                    "trades": summary["trades"],
+                    "metrics": summary["metrics"],
+                    "warn": summary.get("warn"),
+                }
+            else:
+                _FW_RUN_STATE[task_id] = {
+                    "status": "failed",
+                    "error": str(summary.get("error", "?"))[:300],
+                    "plan_id": params["plan_id"],
+                }
+    except Exception as exc:  # noqa: BLE001 — 与 backtest-run 线程体同款兜底
+        with _FW_RUN_LOCK:
+            _FW_RUN_STATE[task_id] = {"status": "failed", "error": str(exc)[:300]}
+
+
+@app.get("/api/framework-plans")
+def framework_plans() -> dict[str, Any]:
+    """列整装方案清单（三套预设）：方案元数据 + 子策略权重明细（前端方案选择器数据源）。"""
+    try:
+        from zephyr.pf_core.strategy_engine.framework_composer import load_framework_plans
+
+        plans = load_framework_plans()
+        return {
+            "ok": True,
+            "count": len(plans),
+            "data": [
+                {
+                    "plan_id": p.plan_id,
+                    "name": p.name,
+                    "risk_profile": p.risk_profile,
+                    "description": p.description,
+                    "total_weight": p.total_weight,
+                    "weights": [
+                        {"strategy_id": w.strategy_id, "weight": w.weight, "role": w.role}
+                        for w in p.weights
+                    ],
+                }
+                for p in plans
+            ],
+        }
+    except Exception as exc:  # noqa: BLE001 — fail-closed 契约（配置缺失/YAML 非法/权重和≠1）
+        return {"ok": False, "error": str(exc)[:200], "data": []}
+
+
+@app.post("/api/framework-backtest-run")
+def framework_backtest_run(body: dict[str, Any]) -> dict[str, Any]:
+    """发起整装回测：入队后台执行，返回 task_id（轮询 GET /api/framework-backtest-run）。
+
+    body: {plan_id: "fw-defensive|fw-balanced|fw-aggressive", symbols: [..], start, end,
+           factor_ids?, rebalance_freq?, top_n?, max_single?, initial_capital?, pit_shift?,
+           allow_partial?（默认 true：tick-only 成员跳过后权重显式再归一化并披露）}
+    产物: data/backtest_artifacts/bt-fw-*.json（与单策略 schema 对齐，plan_id 落 metrics）。
+    """
+    plan_id = str(body.get("plan_id", "")).strip()
+    symbols = [str(s).strip() for s in body.get("symbols", []) if str(s).strip()]
+    start = str(body.get("start", "")).strip()
+    end = str(body.get("end", "")).strip()
+    if not plan_id or not symbols or not start or not end:
+        return {"ok": False, "error": "plan_id/symbols/start/end required", "task_id": None}
+    task_id = f"fwrun-{int(now_utc().timestamp())}-{len(_FW_RUN_STATE) % 10000}"
+    with _FW_RUN_LOCK:
+        _FW_RUN_STATE[task_id] = {
+            "status": "running",
+            "params": {"plan_id": plan_id, "symbols": symbols, "start": start, "end": end},
+        }
+    _FW_RUN_POOL.submit(
+        _fw_run_task,
+        task_id,
+        {
+            "plan_id": plan_id,
+            "symbols": symbols,
+            "start": start,
+            "end": end,
+            "factor_ids": body.get("factor_ids", ["momentum_20d"]),
+            "rebalance_freq": body.get("rebalance_freq", "W-FRI"),
+            "top_n": body.get("top_n", 10),
+            "max_single": body.get("max_single", 0.10),
+            "initial_capital": body.get("initial_capital", 1_000_000.0),
+            "pit_shift": body.get("pit_shift", 1),
+            "allow_partial": body.get("allow_partial", True),
+        },
+    )
+    return {"ok": True, "task_id": task_id, "status": "running", "plan_id": plan_id}
+
+
+@app.get("/api/framework-backtest-run")
+def framework_backtest_run_status(task_id: str = Query(..., min_length=3)) -> dict[str, Any]:
+    """轮询整装回测任务状态：running / done / failed（done 附 run_id=bt-fw-* 可跳详情）。"""
+    with _FW_RUN_LOCK:
+        st = _FW_RUN_STATE.get(task_id.strip())
+    if st is None:
+        return {"ok": False, "error": "task not found", "status": "unknown"}
+    return {"ok": True, **st}
+
+
 # ── 信号两接口（#BT-PIPELINE-001 阶段三）：market_signal_history 两管道 ──
 # 管道 A source='strategy_weight'（BTRUN 权重面板）/ 管道 B source='factor_synth'（日频因子截面）。
 _VALID_SOURCES = ("factor_synth", "strategy_weight")
