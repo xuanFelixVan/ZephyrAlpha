@@ -3,7 +3,7 @@
  * 演示诚实纪律：断线空态+15s 重试，零演示数据。验收单：ACC-F-CHAINMAP-NAV */
 (function () {
   'use strict';
-  var N = { data: null, busy: false, loaded: false, timer: null, activeChain: null };
+  var N = { data: null, busy: false, loaded: false, timer: null, bootTimer: null, activeChain: null };
 
   function hostEl() { return document.getElementById('cm-nav'); }
 
@@ -95,19 +95,27 @@
   ZK.registerFeature({
     id: 'chainmap-nav',
     init: function () {
-      var el = document.getElementById('p-chainmap');
-      if (el && el.offsetParent !== null) load();
-      else {
-        var t = setInterval(function () {
-          if (N.loaded) { clearInterval(t); return; }
-          var p = document.getElementById('p-chainmap');
-          if (p && p.offsetParent !== null) { clearInterval(t); load(); }
-        }, 1200);
-      }
+      /* registerFeature 无统一 init 调度（ZK 契约：各模块自引导）——保留入口兼容手动调用 */
+      bootNav();
     },
     render: function () { render(); },
-    destroy: function () { if (N.timer) clearInterval(N.timer); }
+    destroy: function () { if (N.timer) clearInterval(N.timer); if (N.bootTimer) { clearInterval(N.bootTimer); N.bootTimer = null; } }
   });
 
-  if (document.getElementById('p-chainmap') && document.getElementById('p-chainmap').offsetParent !== null) load();
+  /* 自引导（与 chainmap-galaxy.boot 同构）：loader 顺序预载时本页未必 active——offsetParent 判定
+   * 在懒加载时代成立，预载模式下永不成立（存量缺陷 2026-09-10 实证：nav 永停"加载中"），改轮询等 visible */
+  function bootNav() {
+    if (N.bootTimer) return;
+    if (visibleNow()) { load(); return; }
+    N.bootTimer = setInterval(function () {
+      if (N.loaded || visibleNow()) { clearInterval(N.bootTimer); N.bootTimer = null; if (!N.loaded) load(); }
+    }, 1200);
+  }
+
+  function visibleNow() {
+    var el = document.getElementById('p-chainmap');
+    return !!(el && el.offsetParent !== null);
+  }
+
+  bootNav();
 })();

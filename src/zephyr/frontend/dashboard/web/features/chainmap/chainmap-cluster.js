@@ -1,11 +1,15 @@
 /* ── 产业地图 L2 链层（族内产业链上中下游列式）· 真源 /api/chainmap-cluster + /api/chainmap-node ──
  * 分治渲染（2026-09-08 实景验收修正）：簇内 ≤RAIL_MIN 链=整族列式（链 chip 分组）；>RAIL_MIN 链=聚焦模式
- * （单链列式+左侧链选轨，146 链全画=细柱不可读）。tier 分桶列 上游→中游→下游→其他→通用；
+ * （单链列式+左侧链选轨，146 链全画=细柱不可读）。分列=tier 三值直读 上游→中游→下游→通用（项2 适配：
+ * tier 九值→三值后职能语义拆 function_role，环节卡带职能徽章，列内按职能分组聚集，后端排好序前端直用）；
  * ig_edge 结构边=SVG 贝塞尔（仅跨列，同列边不画防搅线）。点环节→右侧公司面板。
  * 跨链徽章/公司详情卡完整版=二期（Owner 2026-09-08 MVP 边界）。验收单：ACC-F-CHAINMAP-CLUSTER */
 (function () {
   'use strict';
-  var COLS = ['上游', '中游', '下游', '其他', '通用'];
+  var COLS = ['上游', '中游', '下游', '通用'];
+  /* function_role 八值徽章缩写（深交所词表；hover tooltip 显全称；空值不渲染） */
+  var FR_SHORT = { '生产原料': '原料', '辅助材料': '辅材', '生产设备': '设备', '辅助设备': '辅设',
+                   '加工工艺': '工艺', '产品业务': '产品', '技术服务': '服务', '销售渠道': '渠道' };
   var COLW = 252, NODEW = 230, NODEH = 34, CHIPH = 24, PADX = 36, PADTOP = 46, RAIL_MIN = 8;
   var C = { cid: null, name: '', data: null, busy: false, view: { z: 1, x: 0, y: 0 },
             pos: {}, focusChain: null, focusChainName: null, focusNode: null };
@@ -188,7 +192,9 @@
         var disp = n.name;
         var pfx = g.chain.name + '-';
         if (disp.indexOf(pfx) === 0 && disp.length > pfx.length) disp = disp.slice(pfx.length);
-        el.innerHTML = '<span class="nm" title="' + n.name + '">' + disp + '</span><span class="ct">' + n.n_companies + '</span>';
+        el.innerHTML = '<span class="nm" title="' + n.name + '">' + disp + '</span>' +
+          (n.function_role ? '<span class="fr" title="职能：' + n.function_role + '">' + (FR_SHORT[n.function_role] || n.function_role) + '</span>' : '') +
+          '<span class="ct">' + n.n_companies + '</span>';
         el.addEventListener('click', function () { openPanel(n, g.chain); });
         el.dataset.chain = g.chain.chain_id;
         elByNode[n.node_id] = el;

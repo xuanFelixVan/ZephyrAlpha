@@ -108,7 +108,7 @@
   #cm-search-slot .cm-sr .b { margin-left:auto; color:#525d70; font-size:10px; flex:none; }
   #cm-search-slot .cm-se { padding:8px; font-size:11px; color:#525d70; }
 
-  /* ── L2 链层（chainmap-cluster）── 列式：上游→中游→下游→其他→通用 */
+  /* ── L2 链层（chainmap-cluster）── 列式：tier 三值直读 上游→中游→下游→通用（职能看环节卡徽章） */
   #cm-nodes-cluster { position:absolute; left:0; top:0; }
   #cm-nodes-cluster .cm-col-h { position:absolute; font-size:12px; font-weight:700; color:#7d8aa0; letter-spacing:1px; }
   #cm-nodes-cluster .cm-chip { position:absolute; background:#1a2436; border:1px solid #3d8bff; border-radius:7px;
@@ -119,8 +119,10 @@
     padding:5px 8px; font-size:11.5px; color:#c6cdd8; cursor:pointer; overflow:hidden; box-sizing:border-box;
     display:flex; align-items:center; gap:6px; }
   #cm-nodes-cluster .cm-n:hover { border-color:#3d8bff; }
-  #cm-nodes-cluster .cm-n .nm { overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+  #cm-nodes-cluster .cm-n .nm { min-width:0; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
   #cm-nodes-cluster .cm-n .ct { margin-left:auto; color:#525d70; font-size:10px; flex:none; }
+  #cm-nodes-cluster .cm-n .fr { flex:none; font-size:9px; line-height:1.5; padding:0 5px; border-radius:99px;
+    border:1px solid #2c3a52; color:#8a94a6; cursor:help; }   /* function_role 职能徽章（项2，hover 显全称） */
   #cm-nodes-cluster .cm-n.dimmed { opacity:.18; }
   #cm-nodes-cluster .cm-n.hit { border-color:#e6c34c; box-shadow:0 0 0 2px rgba(230,195,76,.25); }
   #cm-wires-cluster path { fill:none; stroke:#2c3a52; stroke-width:1.2; }

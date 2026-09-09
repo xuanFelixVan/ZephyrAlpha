@@ -2306,15 +2306,11 @@ _CM_NAME_CACHE: dict[str, Any] = {"map": None, "ts": 0.0}             # symbol�
 _CM_NAME_OVERRIDE_PATH = _REPO / "config" / "chainmap_cluster_names.yaml"   # L1 族名 override（Commit C 规则版，mtime 缓存改 YAML 即生效）
 _CM_NAME_OVERRIDE: dict[str, Any] = {"mtime": None, "map": {}}
 
-# tier → 列位分桶（列序=产业链流向 上游→中游→下游）
-_CM_TIER_COL: dict[str, str] = {}
-for _t in ("上游", "原材料", "材料"):
-    _CM_TIER_COL[_t] = "上游"
-for _t in ("中游", "设备", "零部件", "制造", "加工"):
-    _CM_TIER_COL[_t] = "中游"
-for _t in ("下游", "应用", "终端", "运营", "品牌"):
-    _CM_TIER_COL[_t] = "下游"
-_CM_COL_ORDER = ["上游", "中游", "下游", "其他", "通用"]
+# tier 三值直读（v1.9 字段升级 Owner 2026-09-09 裁定：tier 收敛 上游/中游/下游，职能语义拆
+# function_role 八值词表——旧九值混职能分列废止；库内实测 tier 无旧值残留，未知/空一律落"通用"）
+_CM_COL_ORDER = ["上游", "中游", "下游", "通用"]
+# function_role 八值（深交所课题词表）→ 列内分组展示序：按产业链流向 原料→辅材→设备→辅设→工艺→产品→服务→渠道
+_CM_FR_ORDER = ["生产原料", "辅助材料", "生产设备", "辅助设备", "加工工艺", "产品业务", "技术服务", "销售渠道"]
 
 
 def _cm_name_override() -> dict[str, str]:
@@ -2341,10 +2337,15 @@ def _cm_name_override() -> dict[str, str]:
 
 
 def _cm_col(tier: str | None) -> str:
+    """tier 三值直读（上游/中游/下游）；空/unspecified/未知值落"通用"（禁编造列）。"""
     t = (tier or "").strip()
-    if not t or t == "unspecified":
-        return "通用"
-    return _CM_TIER_COL.get(t, "其他")
+    return t if t in ("上游", "中游", "下游") else "通用"
+
+
+def _cm_fr_rank(function_role: str | None) -> int:
+    """function_role 列内分组序（未知值/空殿后）。"""
+    f = (function_role or "").strip()
+    return _CM_FR_ORDER.index(f) if f in _CM_FR_ORDER else len(_CM_FR_ORDER)
 
 
 def _cm_pg() -> Any:
@@ -2573,7 +2574,7 @@ def chainmap_galaxy() -> dict[str, Any]:
 
 @app.get("/api/chainmap-cluster")
 def chainmap_cluster(cid: str = Query(..., min_length=2, max_length=8)) -> dict[str, Any]:
-    """产业地图 L2 链层（chainmap-cluster 组件）：簇内链→环节（tier 分桶列）+结构边+公司计数。"""
+    """产业地图 L2 链层（chainmap-cluster 组件）：簇内链→环节（tier 三值分列 + function_role 组内聚集）+结构边+公司计数。"""
     if not cid.replace("C", "").isdigit():
         return {"ok": False, "error": "bad cid", "chains": []}
     cached = _CM_CLUSTER_CACHE.get(cid)
@@ -2589,7 +2590,7 @@ def chainmap_cluster(cid: str = Query(..., min_length=2, max_length=8)) -> dict[
         try:
             cur = conn.cursor()
             ids = [c["chain_id"] for c in members]
-            cur.execute("SELECT node_id, chain_id, name, tier FROM ig_node WHERE chain_id = ANY(%s)", (ids,))
+            cur.execute("SELECT node_id, chain_id, name, tier, function_role FROM ig_node WHERE chain_id = ANY(%s)", (ids,))
             node_rows = cur.fetchall()
             cur.execute("SELECT node_id, count(DISTINCT symbol) FROM ig_node_company WHERE valid_to IS NULL AND node_id IN "
                         "(SELECT node_id FROM ig_node WHERE chain_id = ANY(%s)) GROUP BY node_id", (ids,))
@@ -2605,11 +2606,13 @@ def chainmap_cluster(cid: str = Query(..., min_length=2, max_length=8)) -> dict[
             raise
         nodes_by_chain: dict[str, list[dict[str, Any]]] = {c["chain_id"]: [] for c in members}
         nid_set = {r[0] for r in node_rows}
-        for nid, ch, name, tier in node_rows:
+        for nid, ch, name, tier, frole in node_rows:
             nodes_by_chain[ch].append({"node_id": nid, "name": name, "tier": tier or "",
-                                       "col": _cm_col(tier), "n_companies": ncomp.get(nid, 0)})
+                                       "col": _cm_col(tier), "function_role": (frole or "").strip(),
+                                       "n_companies": ncomp.get(nid, 0)})
         for lst in nodes_by_chain.values():
-            lst.sort(key=lambda n: (-n["n_companies"], n["name"]))
+            # 链内按 function_role 分组聚集（八值展示序），同组内公司数降序（项 2 分列适配）
+            lst.sort(key=lambda n: (_cm_fr_rank(n["function_role"]), -n["n_companies"], n["name"]))
         chains_out = [{**c, "nodes": nodes_by_chain[c["chain_id"]]} for c in
                       sorted(members, key=lambda c: -c["n_companies"])]
         edges_out = [[a, b] for a, b in all_edges if a in nid_set and b in nid_set]
