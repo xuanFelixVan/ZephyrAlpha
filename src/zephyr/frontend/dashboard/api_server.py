@@ -2742,6 +2742,111 @@ def _cm_bare_symbol(sym: str) -> str:
     return s.split(".")[0] if s.endswith((".SH", ".SZ", ".BJ")) else s
 
 
+def _cm_equity(sym: str, names: dict[str, str]) -> dict[str, Any]:
+    """股权域（ig_equity_edge 查询侧 UNION 拼装——数据物理只存股权表一处，节点模板 v0.5 §2.5）。
+
+    holdings_in=我投了谁（holder=本司）；held_by=谁投了我（held=本司）。
+    relation 封闭枚举：invests_in/subsidiary/shareholding/actual_control/pledge/judicial_frozen；
+    PERSON:/UNLISTED: 前缀持有方按原样展示（对手方名称映射覆盖不全为已知边界，缺名回 CH stock_basic）。
+    独立降级：查询异常→空结构（不拖垮图谱段）。
+    """
+    out: dict[str, Any] = {"holdings_in": [], "held_by": [], "n_holdings": 0, "n_held": 0}
+
+    def _name_of(ref: str) -> str:
+        return names.get(ref, "")
+
+    def _row(holder: str, held: str, stake, layer, relation, verif, as_of) -> dict[str, Any]:
+        other = held if holder == sym else holder
+        non_local = other.startswith(("PERSON:", "UNLISTED:"))
+        return {
+            "symbol": "" if non_local else other,
+            "name": _name_of(other) if not non_local else "",
+            "ref": other if non_local else "",
+            "stake_pct": None if stake is None else round(float(stake), 2),
+            "layer": int(layer) if layer is not None else 1,
+            "relation": relation or "",
+            "verification": verif or "",
+            "as_of": str(as_of) if as_of else None,
+        }
+
+    try:
+        conn = _cm_pg()
+        try:
+            cur = conn.cursor()
+            cur.execute(
+                "SELECT holder, held, stake_pct, layer, relation, verification, as_of FROM ig_equity_edge "
+                "WHERE valid_to IS NULL AND holder = %s ORDER BY stake_pct DESC NULLS LAST, held",
+                (sym,),
+            )
+            rows_in = cur.fetchall()
+            cur.execute(
+                "SELECT holder, held, stake_pct, layer, relation, verification, as_of FROM ig_equity_edge "
+                "WHERE valid_to IS NULL AND held = %s ORDER BY stake_pct DESC NULLS LAST, holder",
+                (sym,),
+            )
+            rows_by = cur.fetchall()
+            conn.close()
+        except Exception:
+            try:
+                conn.close()
+            except Exception:
+                pass
+            raise
+        out["holdings_in"] = [_row(h, d, s, l, r, v, a) for h, d, s, l, r, v, a in rows_in]
+        out["held_by"] = [_row(h, d, s, l, r, v, a) for h, d, s, l, r, v, a in rows_by]
+        out["n_holdings"] = len(out["holdings_in"])
+        out["n_held"] = len(out["held_by"])
+    except Exception:
+        return out   # 独立降级：股权段缺失不影响图谱五段
+    return out
+
+
+def _cm_profile(bare: str) -> dict[str, Any]:
+    """基本盘/全球属性（有什么展示什么，缺列如实标未入库禁编造——任务书项 3 口径）。
+
+    实测列源（2026-09-10 DESCRIBE）：stock_basic=exchange/board/list_date（无 country/st 列）；
+    daily_valuation.is_st（0/1）；stock_profile_ths=industry_ths_l1/l2/l3。
+    country/hq_location/listing_status 无实列 → missing_fields 声明（listing_status 无法判退市：
+    stock_basic 全量在册不含退市行，禁推标记）。独立降级：CH 异常→空结构。
+    """
+    out: dict[str, Any] = {
+        "country": None, "listing_venue": None, "board": None, "listing_date": None,
+        "st_flag": None, "industry_ths": None,
+        "missing_fields": ["country", "hq_location", "listing_status"],
+    }
+    try:
+        rows = _ch_exec(
+            "SELECT argMax(exchange, valid_from), argMax(board, valid_from), argMax(list_date, valid_from) "
+            "FROM stock_basic WHERE symbol=%(s)s",
+            {"s": bare},
+        )
+        if rows:
+            ex, bd, ld = rows[0]
+            if ex:
+                out["listing_venue"] = {"SH": "上交所", "SZ": "深交所", "BJ": "北交所"}.get(str(ex), str(ex))
+            if bd:
+                out["board"] = str(bd)
+            if ld:
+                out["listing_date"] = str(ld)
+        st = _ch_exec(
+            "SELECT trade_date, is_st FROM daily_valuation WHERE symbol=%(s)s ORDER BY trade_date DESC LIMIT 1",
+            {"s": bare},
+        )
+        if st:
+            out["st_flag"] = bool(st[0][1])
+            out["st_asof"] = str(st[0][0])
+        ths = _ch_exec(
+            "SELECT argMax(industry_ths_l1, trade_date), argMax(industry_ths_l2, trade_date), "
+            "argMax(industry_ths_l3, trade_date) FROM stock_profile_ths WHERE symbol=%(s)s",
+            {"s": bare},
+        )
+        if ths and any(ths[0]):
+            out["industry_ths"] = [str(x) for x in ths[0] if x]
+    except Exception:
+        return out   # 独立降级
+    return out
+
+
 def _cm_quote(bare: str) -> dict[str, Any] | None:
     """CH 行情快照（独立降级：任何异常→None，前端渲染 '—'；CH 失败=null 任务书铁律）。
 
@@ -2795,24 +2900,31 @@ def _cm_quote(bare: str) -> dict[str, Any] | None:
 
 @app.get("/api/chainmap-company")
 def chainmap_company(symbol: str = Query(..., min_length=2, max_length=24)) -> dict[str, Any]:
-    """公司详情卡（chainmap-company-card 真源）：链上落位 + 上下游关系 + CH 行情/估算市值。
+    """公司详情卡（chainmap-company-card 真源）：链上落位 + 上下游关系 + CH 行情/估算市值 + 股权域 + 基本盘。
 
     symbol 接受 6 位裸码或带 .SH/.SZ/.BJ 后缀（统一归一）；海外/UNLISTED 端点不支持（fail-closed）。
     关系段：suppliers=to_symbol=本司（from 为供应商）；customers=from_symbol=本司（to 为客户）；
     collabs=预留段（J88 勘误后归 supply，当前恒空，字段保留兼容 ACC item1 五段契约）；
     对手方未上市 symbol='' 用 to_name/from_name 展示。
-    行情段独立降级：CH 异常→quote=null，不影响图谱段返回。
+    七域扩展（任务书项 3，2026-09-10）：equity=股权域（ig_equity_edge UNION 拼装 holdings_in/held_by）；
+    profile=基本盘/全球属性（stock_basic/daily_valuation.is_st/stock_profile_ths 实列，缺列如实
+    missing_fields）；pending_domains=库中无实表域（news_keywords/aliases/facilities/calendar）留位
+    标"建设中"禁编造。行情/股权/基本盘三段各自独立降级，互不拖垮图谱段。
     """
     import re as _re
 
     sym = (symbol or "").strip().upper()
     if not _re.fullmatch(r"\d{6}(\.(SH|SZ|BJ))?", sym):
         return {"ok": False, "error": "bad symbol", "company": {"symbol": sym},
-                "placements": [], "suppliers": [], "customers": [], "collabs": [], "quote": None}
+                "placements": [], "suppliers": [], "customers": [], "collabs": [], "quote": None,
+                "equity": {"holdings_in": [], "held_by": [], "n_holdings": 0, "n_held": 0},
+                "profile": {}, "pending_domains": []}
     if "." not in sym:   # 裸码补后缀（与 load_supply_top5_483.to_symbol 同规则）
         sym += {"6": ".SH"}.get(sym[0], ".SZ") if sym[0] in "03" else (".SH" if sym[0] == "6" else ".BJ")
     empty = {"ok": False, "error": "", "company": {"symbol": sym, "name": None},
-             "placements": [], "suppliers": [], "customers": [], "collabs": [], "quote": None}
+             "placements": [], "suppliers": [], "customers": [], "collabs": [], "quote": None,
+             "equity": {"holdings_in": [], "held_by": [], "n_holdings": 0, "n_held": 0},
+             "profile": {}, "pending_domains": []}
     try:
         names = _cm_symbol_names()
         g = _cm_galaxy()
@@ -2908,6 +3020,9 @@ def chainmap_company(symbol: str = Query(..., min_length=2, max_length=24)) -> d
         "customers": customers, "n_customers": n_cus,
         "collabs": collabs, "n_collabs": n_col,
         "quote": _cm_quote(_cm_bare_symbol(sym)),
+        "equity": _cm_equity(sym, names),
+        "profile": _cm_profile(_cm_bare_symbol(sym)),
+        "pending_domains": ["news_keywords", "aliases", "facilities", "calendar"],
         "generated_at": datetime.now().isoformat(" ", "seconds"),
     }
 

@@ -1,15 +1,21 @@
-/* ── 公司详情卡（chainmap 二期 Commit A）· 真源 /api/chainmap-company ──
+/* ── 公司详情卡（chainmap 二期 Commit A + 七域升级）· 真源 /api/chainmap-company ──
  * 打开：ZK.bus cm:open-company {symbol, name?}（环节公司面板行点击）；卡片自建 DOM 挂 #p-chainmap。
  * 行情段独立降级：quote=null → '—'（CH 失败不拖垮图谱段）；市值=最新总股本(周更)×收盘 估算，标"约"。
  * 关系按来源分组：supply=供应链（483/名录/websearch/J88 均有方向：from=供应商→to=客户）——
  * J88 勘误 Owner 已批准（load_supply_collab_j88.py L16-17：供应商→中游→客户，weight=联合专利合作次数）；
  * collab=预留段（当前恒空不渲染）；对手方未上市（symbol=''）以名称展示。
- * 跳个股=go('stockq')+sqSel(裸码)（一期 go+setTimeout 先例）；断线 15s 自动重试（演示诚实纪律）。
+ * 七域扩展（任务书项 3，2026-09-10）：equity=股权域（对外投资/股东，ig_equity_edge UNION 拼装，
+ * PERSON:/UNLISTED: 持有方按 ref 原样展示）；profile=基本盘（实列有什么展示什么，missing_fields
+ * 如实标"未入库"）；pending_domains=无实表域留位标"建设中"禁编造（演示诚实纪律）。
+ * 跳个股=go('stockq')+sqSel(裸码)（一期 go+setTimeout 先例）；断线 15s 自动重试。
  * 跨链徽章=Commit B（F-CHAINMAP-CROSS-LINK）。验收单：ACC-F-CHAINMAP-COMPANY-CARD */
 (function () {
   'use strict';
   var opened = null;      /* 当前卡 symbol（防旧响应覆盖新卡） */
   var hintName = '';      /* 事件携带的公司名（后端名称映射覆盖不全时兜底展示） */
+  var EQ_REL_ZH = { invests_in: '对外投资', subsidiary: '子公司', shareholding: '参股',
+                    actual_control: '实控', pledge: '质押', judicial_frozen: '司法冻结' };
+  var PENDING_ZH = { news_keywords: '新闻关键词', aliases: '别名集', facilities: '设施', calendar: '日历' };
 
   function pageEl() { return document.getElementById('p-chainmap'); }
   function esc(s) {
@@ -53,6 +59,12 @@
       '#cm-company-card .cc-rs{flex:none;color:#525d70;font-size:10.5px}' +
       '#cm-company-card .cc-rm{flex:none;max-width:46%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:#525d70;font-size:10.5px}' +
       '#cm-company-card .cc-row[data-chain]:hover .cc-role{color:#e6c34c;border-color:#8a6d1f}' +
+      '#cm-company-card .cc-kv{display:flex;gap:8px;padding:3px 6px;border-radius:6px;font-size:11.5px}' +
+      '#cm-company-card .cc-kv:hover{background:#131a26}' +
+      '#cm-company-card .cc-kv .k{flex:none;width:64px;color:#525d70}' +
+      '#cm-company-card .cc-kv .v{color:#c6cdd8;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}' +
+      '#cm-company-card .cc-kv .v .na{color:#525d70}' +
+      '#cm-company-card .cc-st2{font-size:10.5px;color:#7d8aa0;padding:2px 6px 3px}' +
       '#cm-company-card .cc-foot{margin-top:18px;display:flex;align-items:center;gap:10px}' +
       '#cm-company-card .cc-jump{cursor:pointer;background:#e6c34c;color:#0d131d;font-weight:700;padding:6px 14px;' +
       'border-radius:6px;font-size:12px}' +
@@ -109,6 +121,70 @@
       '<span class="cc-rm">' + (meta.join(' · ') || '&nbsp;') + '</span></div>';
   }
 
+  function eqRow(r, arrow) {
+    var nm = r.name || r.ref || r.symbol || '—';
+    var idpart = r.symbol ? esc(r.symbol) : esc(r.ref || '非上市编码');
+    var meta = [];
+    if (EQ_REL_ZH[r.relation]) meta.push(EQ_REL_ZH[r.relation]);
+    meta.push(r.stake_pct != null ? '持股 ' + r.stake_pct + '%' : '持股未披露');
+    if (r.layer != null && r.layer > 1) meta.push('第' + r.layer + '层穿透');
+    if (r.verification) meta.push(r.verification === 'official' ? '官方口径' : (r.verification === 'verified' ? '已核验' : '未核验'));
+    if (r.as_of) meta.push('口径 ' + r.as_of);
+    return '<div class="cc-row"><span class="cc-rs">' + arrow + '</span>' +
+      '<span class="cc-rn" title="' + esc(nm) + '">' + esc(nm) + '</span>' +
+      '<span class="cc-rs">' + idpart + '</span>' +
+      '<span class="cc-rm">' + esc(meta.join(' · ')) + '</span></div>';
+  }
+
+  function eqSec(eq) {
+    var e = eq || {};
+    var body = '';
+    var hi = (e.holdings_in || []).map(function (r) { return eqRow(r, '→'); }).join('');
+    var hb = (e.held_by || []).map(function (r) { return eqRow(r, '⬅'); }).join('');
+    if (!hi && !hb) return '';
+    if (hi || (e.n_holdings || 0) > 0) {
+      var moreIn = (e.n_holdings || 0) > (e.holdings_in || []).length
+        ? '<span class="cc-more">共 ' + e.n_holdings + ' 条</span>' : '';
+      body += '<div class="cc-st2">对外投资（我 → 被投方）' + moreIn + '</div>' +
+        (hi || '<div class="cc-empty">暂无</div>');
+    }
+    if (hb || (e.n_held || 0) > 0) {
+      var moreBy = (e.n_held || 0) > (e.held_by || []).length
+        ? '<span class="cc-more">共 ' + e.n_held + ' 条</span>' : '';
+      body += '<div class="cc-st2">股东（持有方 → 我）' + moreBy + '</div>' +
+        (hb || '<div class="cc-empty">暂无</div>');
+    }
+    return '<div class="cc-sec"><div class="cc-st">股权关系（ig_equity_edge）</div>' + body + '</div>';
+  }
+
+  function kvRow(k, v) {
+    var shown = (v == null || v === '') ? '<span class="na">—（未入库）</span>' : esc(v);
+    return '<div class="cc-kv"><span class="k">' + k + '</span><span class="v">' + shown + '</span></div>';
+  }
+
+  function profileSec(p) {
+    var d = p || {};
+    var venue = [d.listing_venue, d.board].filter(Boolean).join(' · ');
+    var st;
+    if (d.st_flag == null) st = null;
+    else st = d.st_flag ? '<span class="cc-up">ST 风险警示</span>' : '非 ST' + (d.st_asof ? '（' + d.st_asof + '）' : '');
+    var body =
+      kvRow('上市市场', venue) +
+      kvRow('上市日', d.listing_date) +
+      kvRow('国籍', d.country) +
+      kvRow('上市状态', d.listing_status) +
+      kvRow('风险警示', st) +
+      kvRow('行业(THS)', (d.industry_ths || []).join(' › '));
+    return '<div class="cc-sec"><div class="cc-st">基本盘（上市 · 行业 · 风险）</div>' + body + '</div>';
+  }
+
+  function pendingSec(domains) {
+    var names = (domains || []).map(function (d) { return PENDING_ZH[d] || d; });
+    if (!names.length) return '';
+    return '<div class="cc-sec"><div class="cc-st">建设中（字段位已留，数据域未建）</div>' +
+      '<div class="cc-empty">' + esc(names.join(' · ')) + '</div></div>';
+  }
+
   function render(card, d) {
     var q = d.quote || {};
     var co = d.company || {};
@@ -131,8 +207,11 @@
       sec('供应商（上游 → 本司）', d.n_suppliers || 0, d.suppliers, relRow) +
       sec('客户（本司 → 下游）', d.n_customers || 0, d.customers, relRow) +
       ((d.n_collabs || 0) > 0 ? sec('专利协同', d.n_collabs || 0, d.collabs, relRow) : '') +
+      eqSec(d.equity) +
+      profileSec(d.profile) +
+      pendingSec(d.pending_domains) +
       '<div class="cc-foot"><span class="cc-jump">在个股页打开 →</span>' +
-      '<span class="cc-note">市值=最新总股本×收盘（估算）；关系方向按来源标注（供应链边：上游→本司→下游）。</span></div>';
+      '<span class="cc-note">市值=最新总股本×收盘（估算）；关系方向按来源标注（供应链边：上游→本司→下游）；基本盘缺列如实标"未入库"。</span></div>';
     var x = card.querySelector('.cc-x');
     if (x) x.addEventListener('click', close);
     Array.prototype.forEach.call(card.querySelectorAll('.cc-row[data-chain]'), function (el) {
