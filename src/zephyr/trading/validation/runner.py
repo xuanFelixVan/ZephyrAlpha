@@ -79,9 +79,9 @@ class ValidationConfig:
     oos_decay_threshold: float = 0.50  # PB-13 土规 2：样本外衰减≥50% 判存疑
     lag_recheck: bool = True          # PB-16：lag=1 滞后重算开关（默认开）
     as_of: datetime | None = None     # 验证基准时点（None=now；测试可注入固定时点）
-    finalized_at: str | None = None   # 定稿锚点 D 日（ISO date；None=12 个月滚动锁现状。
-    # 启用=Owner 执行放行：D=参数定稿日，D 前流水全锁（调参看过=旧练习题），D 后流水可考
-    # （调参时不存在=天然无污染）——"考完作废前移"的显式实现，2026-09-10 设计 §三。
+    finalized_at: str | None = "2026-09-09"  # 定稿锚点 D 日（Owner 2026-09-09 裁定："同意，开工"）。
+    # 语义：D 前流水全锁（调参看过=旧练习题，含原 12 个月窗口），D 后流水可考（调参时不存在=
+    # 天然无污染）——"考完作废前移"的显式实现（协议备忘录 §12.5）。置 None 可回退 12 个月滚动锁。
 
 
 @dataclass
@@ -393,7 +393,7 @@ def run_validation(
     cfg = cfg or ValidationConfig()
     writer = writer or _default_writer
     as_of = cfg.as_of or datetime.now()
-    cutoff = holdout_cutoff(as_of, cfg.holdout_months)
+    cutoff = holdout_cutoff(as_of, cfg.holdout_months)   # 锚点模式仅作 notes 披露基准（切分由 finalized_at 接管）
 
     if batch == "L4":
         nodes = load_exec_nodes(map_path)
