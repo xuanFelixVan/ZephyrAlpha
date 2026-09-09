@@ -431,7 +431,8 @@
     event: '事件', algo: '算法', universe: '股票域', strategy: '策略', indicator: '技术指标' };
 
   /* 抽屉 v2（b20260908-10 重设计）：分区层次=标题徽标 → 问 → 机制 → 治理键值网格 → 模块锚 →
-   * 策略挂载 → 依据锚八轴 chip 流 → 上/下游节点导航行（点击跳选）→ 设计备注；纯 HTML+CSS，数据契约不变 */
+   * 算法锚（b20260910）→ 策略挂载 → 依据锚 chip 流 → 上/下游节点导航行（点击跳选）→ 设计备注；
+   * 纯 HTML+CSS，数据契约不变 */
   function drawer() {
     var box = document.getElementById('tdm-drawer');
     if (!box) return;
@@ -491,8 +492,9 @@
     var mounts = (n.mounts && n.mounts.length)
       ? '<div class="chips">' + n.mounts.map(chip).join('') + '</div>'
       : '<div class="empty">（无挂载——本节点为判定/编排节点，不直接驱动策略）</div>';
-    /* 依据锚：八轴分组——每轴 label+计数 一行，chip 流式排布（禁顿号长串） */
-    var AXES = ['factor_refs', 'data_refs', 'cost_model_refs', 'risk_limit_refs', 'threshold_refs', 'event_refs', 'algo_refs'];
+    /* 依据锚：轴分组——每轴 label+计数 一行，chip 流式排布（禁顿号长串）。
+     * algo_refs 已升格为「算法锚」独立分区（b20260910），此处不再重复显示 */
+    var AXES = ['factor_refs', 'data_refs', 'cost_model_refs', 'risk_limit_refs', 'threshold_refs', 'event_refs'];
     var refsHtml = AXES.filter(function (k) { return n.refs && n.refs[k] && n.refs[k].length; }).map(function (k) {
       var label = REF_ZH[k.replace('_refs', '')] || k.replace('_refs', '');
       return '<div class="axis"><div class="axis-h"><b>' + esc(label) + '</b> <span class="cnt">' + n.refs[k].length + '</span></div>' +
@@ -520,6 +522,31 @@
           + '<br><span style="color:#525d70;font-size:10.5px">' + esc(r.validation_method) + ' · map@' + esc(r.snapshot_commit || '—') + ' · ' + esc(r.verdict_at) + '</span></div>';
       }).join('') + '</div>';
     }
+    /* 算法锚（b20260910，F-TDM-ALGOANCHOR）：algo_refs（DAL/IND/EXA）+ model_refs（ML，新字段）
+     * 只读渲染；前缀徽=类型语义（灰系沿 .empty 色板，不发明新色）；DAL/ML 中文名后端补翻译源后
+     * 经 zh() 自动生效（ref_names TTL 600s）。契约双读：顶层字段优先，兼容既有 refs.algo_refs 嵌套 */
+    var algRefs = n.algo_refs || (n.refs && n.refs.algo_refs) || [];
+    var mdlRefs = n.model_refs || [];
+    var ALG_PREFIX = { 'DAL-': '决策算法', 'IND-': '技术指标', 'EXA-': '执行算法', 'ML-': '模型' };
+    function algChip(id) {
+      var tag = '';
+      Object.keys(ALG_PREFIX).forEach(function (p) {
+        if (!tag && id.indexOf(p) === 0) tag = '<em class="alg-t">' + ALG_PREFIX[p] + '</em>';
+      });
+      return '<span class="chip" title="' + esc(zh(id)) + '">' + tag + '<i>' + esc(id) + '</i>' +
+        (RN[id] ? '<b>' + esc(RN[id]) + '</b>' : '') + '</span>';
+    }
+    var anchorCnt = algRefs.length + mdlRefs.length;
+    var anchorHtml = anchorCnt
+      ? '<div class="chips">' + algRefs.concat(mdlRefs).map(algChip).join('') + '</div>'
+      : '<div class="empty">未登记算法锚</div>';
+    /* 代码锚：module_ref 有值=文件名可点击（点击复制全路径——app:// 下 file:// 链接被拦，
+     * 复制路径是全环境可用的最短动作），无值=未落码灰字 */
+    var codeAnchor = n.module_ref
+      ? '<div class="code-anchor">代码锚：<a class="mod-copy" href="javascript:void(0)" data-copy="' +
+        esc(n.module_ref) + '" title="点击复制路径：' + esc(n.module_ref) + '">' +
+        esc(n.module_ref.split('/').pop()) + '</a></div>'
+      : '<div class="code-anchor na">代码锚：未落码</div>';
     var scroll = box.scrollTop;   /* 30s 轮询重绘保持阅读位置 */
     box.style.display = 'block';
     box.innerHTML =
@@ -531,8 +558,10 @@
       '<div class="sec">机制（怎么算）</div><div class="txt">' + (n.note ? esc(n.note) : '（待补）') + '</div>' +
       '<div class="sec">治理</div>' + gov +
       '<div class="sec">模块锚（MOD）</div>' + mod +
+      '<div class="sec">算法锚（算法/模型）<span class="cnt">' + (anchorCnt ? anchorCnt : '') + '</span></div>' +
+      anchorHtml + codeAnchor +
       '<div class="sec">策略挂载（STR）</div>' + mounts +
-      (refsHtml ? '<div class="sec">依据锚（八轴引用）</div>' + refsHtml : '') +
+      (refsHtml ? '<div class="sec">依据锚（引用）</div>' + refsHtml : '') +
       '<div class="sec">上游（谁喂给它）<span class="cnt">' + ups.length + '</span></div>' +
       (ups.length ? ups.map(function (u) { return nlink(u.x, u.t, u.p); }).join('') : '<div class="empty">—</div>') +
       '<div class="sec">下游（它喂给谁）<span class="cnt">' + downs.length + '</span></div>' +
@@ -548,6 +577,26 @@
         TDM.focus = TDM.sel;   /* 跳选=换焦点：行为与画布点选一致，血统主线跟着换 */
         render();
         drawer();
+      });
+    });
+    /* 代码锚点击=复制源码路径（app:// 下 file:// 链接被 Chromium 拦，复制路径全环境可用） */
+    box.querySelectorAll('.mod-copy').forEach(function (el) {
+      el.addEventListener('click', function (ev) {
+        ev.preventDefault();
+        var path = el.getAttribute('data-copy');
+        var done = function () {
+          var old = el.textContent;
+          el.textContent = '已复制路径 ✓';
+          setTimeout(function () { el.textContent = old; }, 1200);
+        };
+        if (navigator.clipboard && navigator.clipboard.writeText) {
+          navigator.clipboard.writeText(path).then(done, function () { });
+        } else {
+          var ta = document.createElement('textarea');
+          ta.value = path; document.body.appendChild(ta); ta.select();
+          try { document.execCommand('copy'); done(); } catch (e) { }
+          document.body.removeChild(ta);
+        }
       });
     });
     /* 验证档案：异步查台账（c1_backtest.node_verdict，只读端点）——填充后保持阅读位置；

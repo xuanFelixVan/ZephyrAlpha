@@ -210,3 +210,7 @@ def test_tdm_structure(page):
     assert "/api/tdm/validation" in src, "tdm.js 缺 /api/tdm/validation 台账 fetch"
     assert "验证档案" in src, "tdm.js 缺「验证档案」分区"
     assert "未验证" in src, "tdm.js 缺「未验证」空态徽章"
+    # 算法锚分区（F-TDM-ALGOANCHOR）：分区标题 + 空态文案 + algo_refs/model_refs 字段读取（防分区被静默摘除）
+    assert "算法锚" in src, "tdm.js 缺「算法锚」分区"
+    assert "未登记算法锚" in src, "tdm.js 缺「未登记算法锚」空态"
+    assert "model_refs" in src, "tdm.js 缺 model_refs 字段读取"

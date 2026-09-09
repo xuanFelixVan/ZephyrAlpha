@@ -8,10 +8,11 @@ feature_id: F-TDM-DRAWER
 feature_name: 节点详情抽屉（问/机制/治理/依据锚/上下游导航）
 frozen_at: 2026-09-08
 frozen_by: ZephyrAlpha-Owner
-revision: 2
+revision: 3
 revision_policy: "修订=Owner 批准+改原文+revision 链留痕；AI 不可自改已冻结条项"
 revision_log:
   - { revision: 2, date: "2026-09-09", by: "st-nodebt-night-20260909", change: "追加条目 10（验证档案分区，PB-04 P0-3 授权施工）——既有 1~9 条冻结原文未动" }
+  - { revision: 3, date: "2026-09-09", by: "st-tdmfe-20260909", change: "追加条目 11（算法锚分区，Owner 任务单授权：algo_refs/model_refs 只读渲染+代码锚行）——既有 1~10 条冻结原文未动" }
 
 # check 取值：目检（截图人工/AI 视觉对） | 机断（DOM 断言，过渡期人工/控制台手动验，不免验）
 # 验收基准节点=TDM-E-L1-S1（大盘指数传感器，边界最全节点：红节点+四键全空+模块锚空+挂载空+依据锚单 chip+上下游导航+5 条设计备注）
@@ -26,6 +27,7 @@ items:
   - { id: 8, text: "设计备注 5 条可读（悬空前导注释 4 条+块内 D109 终裁 1 条；注释提取规则=块内归本节点、悬空前导归下一节点）", check: 目检 }
   - { id: 9, text: "30s 轮询重绘保持阅读位置（scrollTop 保持，不冲掉阅读进度）", check: 目检 }
   - { id: 10, text: "「验证档案（回测台账）」分区渲染（追加在设计备注后）：空表=灰色「未验证」徽章+排序说明；有记录=当前 verdict 徽章+历次记录（窗口/触发次数/命中占比/显著性土规/map@commit）；CH 断连=「台账不可达」不冒充未验证；异步填充后阅读位置保持；TDM-E-L1-S1（空表态）为验收基准", check: 目检 }
+  - { id: 11, text: "「算法锚（算法/模型）」分区渲染（追加在模块锚后）：algo_refs/model_refs 逐枚 chip 带 DAL=决策算法/IND=技术指标/EXA=执行算法/ML=模型 前缀类型徽（中文名就绪自动显示，未就绪显示 id）；空态=「未登记算法锚」灰字不隐藏分区；底部「代码锚」行：module_ref 有值=文件名可点击（点击复制路径+title 全路径），无值=「未落码」灰字", check: 目检 }
 
 execution:
   trigger: "任何涉及本功能的 UI 改动 commit 前"
