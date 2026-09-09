@@ -32,11 +32,102 @@ nodes:
   #   微观情绪相位（1-2 周短线）= 本矩阵列轴六段（定稿词汇，10 号 spec 五态的细分扩展：
   #   冰点→capitulation / 反核→accumulation+ignition / 主升→expansion / 疯狂→euphoria / 退潮→distribution）
   #   当日预案（今天冲高回落怎么应对）= 作战预案引擎（D_PLAN/BM-PLAN-01-C）管辖，地图只挂引用不重建
+#     （2026-09-09 B-1 裁定兑现：挂载落为 TDM-E-L0/L0-01/02/03 节点组，引用=module_ref/module_id，不重建引擎内部）
   #   正名登记（D23）：现名"作战预案引擎"→未来正名"每日作战计划引擎（Game Plan Engine）"——
   #   专业两层结构：Playbook（静态招式手册=策略库+作战手册，已有）vs Game Plan（当日动态作战计划）；
   #   "预案"为口语，专业词=Game Plan；改名执行时同步 D_PLAN 域/BM-PLAN-01-C 锚点/相关备忘录编号
   #   升级需求清单（D24）：6 项功能全要（IF-THEN 强制格式/今日不做什么负面清单/心理状态检查门/
   #     预警位联动/Skip log/盘前盘中职责分离）——需求真源=69 号备忘录 §2.13，施工归 D_PLAN 域升级批次
+  # ── E-L0 盘前作战计划（Owner 2026-09-09 B-1 裁定甲-2：父+三子；定界=L0 产计划、L1 唯一开闸）──
+  # 真源=plan_engine 包（D_PLAN），作战室前端已消费（今日交易计划卡/W2/W5 格）；"只挂引用不重建"承诺自本节点组兑现
+  - node_id: TDM-E-L0
+    name_zh: 盘前作战计划
+    market: cn_a
+    flow: entry_flow
+    layer: L0
+    node_type: gate
+    point: 盘前
+    decision_question: 今天按什么计划打——总仓位建议档、情景预案、禁做清单是什么
+    algo_note_zh: >-
+      消费昨日归因（C3-01）、参数校准（C3-04）与宏观态（L1-AGG），产出当日作战计划：总仓位建议档、
+      分批建仓预案、禁做清单（sit_out_list 三源合成）、应急触发线。计划是输入不是第二决策点——
+      开闸仍由 L1 大盘总闸唯一裁定（Owner 2026-09-09 定界）。跨日闭环：盘后 L0-03 生成明日边界，
+      次日盘前 premarket_constraint_loader 装载回本节点（DAG 不画跨日自环，语义记此）。
+    factor_refs: []
+    data_refs: []
+    algo_refs: []
+    module_ref: src/zephyr/plan_engine/daily_warroom_pipeline.py
+    module_id: MOD-PLAN-018
+    strategy_mounts: []
+    activation: premarket
+    ai_autonomy: daily_review
+
+  - node_id: TDM-E-L0-01
+    name_zh: 计划生成
+    market: cn_a
+    flow: entry_flow
+    layer: L0
+    node_type: stage
+    point: 盘前
+    decision_question: 今日交易计划怎么生成（候选池+持仓+立场→仓位档与分批预案）
+    algo_note_zh: >-
+      规则模板生成非 LLM 拍脑袋（纯函数可单测）：候选池×持仓×立场×仓位系数→逐票计划；
+      firm 单票 8% 硬顶恒生效，A 股整手折算，不足一手跳过+notes 留痕。产出=作战室"今日交易计划"卡。
+    parent_node: TDM-E-L0
+    factor_refs: []
+    data_refs: []
+    algo_refs: []
+    module_ref: src/zephyr/plan_engine/daily_trade_plan.py
+    module_id: MOD-PLAN-011
+    strategy_mounts: []
+    activation: premarket
+    ai_autonomy: auto
+
+  - node_id: TDM-E-L0-02
+    name_zh: 偏离监控与修订
+    market: cn_a
+    flow: entry_flow
+    layer: L0
+    node_type: stage
+    point: 盘中
+    decision_question: 盘中实际走势偏离计划时何时修订当日边界（触发条件与修订权限）
+    algo_note_zh: >-
+      对照计划与实际：偏离超阈触发 boundary_revision_engine 修订当日边界；修订仅当日有效，
+      跨日/过期消费拒发（明日边界归 L0-03）。计划外操作记执行不一致（作战室归因）。
+    parent_node: TDM-E-L0
+    factor_refs: []
+    data_refs: []
+    algo_refs: []
+    module_ref: src/zephyr/plan_engine/plan_deviation_monitor.py
+    module_id: MOD-PLAN-022
+    strategy_mounts: []
+    activation: intraday
+    ai_autonomy: auto
+    doc_ref: "docs/03_modules/_domain_plan_engine/plan_deviation_monitor/blueprint.md"
+
+  - node_id: TDM-E-L0-03
+    name_zh: 收盘复盘与明日边界
+    market: cn_a
+    flow: entry_flow
+    layer: L0
+    node_type: stage
+    point: 盘后
+    decision_question: 收盘后复盘计划达成度并生成明日边界（校准回填情景概率）
+    algo_note_zh: >-
+      收盘定案（closing_session_decision）→brier 校准回填情景概率（brier_calibration）→
+      盘后生成明日边界（tomorrow_boundary_planner；边界层坏=致命暂停操作）。
+      明日边界喂次日买卖融合（对应本图 L3-06 环境开关/L4 执行/X 离场的预案约束）。
+    parent_node: TDM-E-L0
+    factor_refs: []
+    data_refs: []
+    algo_refs: []
+    module_ref: src/zephyr/plan_engine/tomorrow_boundary_planner.py
+    module_id: MOD-PLAN-001
+    strategy_mounts: []
+    activation: postmarket
+    ai_autonomy: auto
+    doc_ref: "docs/03_modules/_domain_plan_engine/tomorrow_boundary_planner/blueprint.md"
+
   - node_id: TDM-E-L1
     name_zh: 大盘总闸
     market: cn_a
@@ -3407,6 +3498,16 @@ edges:
   - {from_node: TDM-C-L1, to_node: TDM-C-L2, edge_type: sequence}
   - {from_node: TDM-C-L2, to_node: TDM-C-L3, edge_type: sequence}
   - {from_node: TDM-C-L3, to_node: TDM-C-L4, edge_type: sequence}
+  # ── E-L0 盘前作战计划边（Owner 2026-09-09 B-1 裁定）：上游喂计划 + 计划喂下游 + 三子时序 ──
+  - {from_node: TDM-E-L1-AGG, to_node: TDM-E-L0, edge_type: feed}
+  - {from_node: TDM-F-C3-01, to_node: TDM-E-L0, edge_type: feedback}
+  - {from_node: TDM-F-C3-04, to_node: TDM-E-L0, edge_type: feedback}
+  - {from_node: TDM-E-L0, to_node: TDM-E-L0-01, edge_type: sequence}
+  - {from_node: TDM-E-L0-01, to_node: TDM-E-L0-02, edge_type: sequence}
+  - {from_node: TDM-E-L0-02, to_node: TDM-E-L0-03, edge_type: sequence}
+  - {from_node: TDM-E-L0, to_node: TDM-E-L1, edge_type: sequence}
+  - {from_node: TDM-E-L0, to_node: TDM-E-L3-06, edge_type: feed}
+  - {from_node: TDM-E-L0, to_node: TDM-X-R1, edge_type: broadcast}
 
 state_matrix:
   # 列轴六段定稿（v1.2，Owner 裁定"机构命名+修复期独立成段"）
