@@ -4946,6 +4946,22 @@ capabilities:
   integrity_anchors:
   - evaluate_battle_map_report
 creation_tokens:
+- file: src/zephyr/data/tick_depth_writer.py
+  token: qmt-day-depth-writer-20260909
+  created_by: qmt-day-20260909
+  capability: market_tick_depth_5
+- file: src/zephyr/data/implementations/tick_depth_backfill.py
+  token: qmt-day-depth-backfill-20260909
+  created_by: qmt-day-20260909
+  capability: market_tick_depth_5
+- file: scripts/data/backfill_tick_depth5.py
+  token: qmt-day-depth-backfill-cli-20260909
+  created_by: qmt-day-20260909
+  capability: market_tick_depth_5
+- file: schemas/categories/market_tick_depth_5.py
+  token: qmt-day-depth-ddl-20260909
+  created_by: qmt-day-20260909
+  capability: market_tick_depth_5
 - file: scripts/industry_graph/migrate_tier_to_function_role.py
   token: greatwall-tier-migration-20260909
   created_by: greatwall-20260909-0020
@@ -11208,6 +11224,10 @@ creation_tokens:
   token: auto-chainmap-inventory-20260908
   created_by: sess-30232-20260908222748
   capability: frontend_working_doc
+- file: docs/_working/2026-09-10-xflow-batch-report.md
+  token: xflow-batch-report-20260910
+  created_by: st-xflow-20260910
+  capability: tdm_validation_runner
 - file: src/zephyr/frontend/dashboard/web/features/chainmap/chainmap-company-card.js
   token: auto-chainmap-company-card-20260909
   created_by: sess-chainmap-a2-20260909
