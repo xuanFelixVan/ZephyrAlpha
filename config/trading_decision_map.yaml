@@ -233,7 +233,8 @@ nodes:
     factor_refs: []
     cycle_refs: [CYC-STAT-001, CYC-STAT-004, CYC-STAT-013]
     data_refs: [DS-150]
-    module_ref: null
+    module_ref: src/zephyr/regime/index_regime_panel.py
+    module_id: MOD-REGIME-008
     # （D109 终裁）：攻防板块特征入本层——券商指数 5 日超额/银行指数 5 日超额/券商÷银行涨幅比（>1 且放量=进攻态；银行独涨+科技跌=避险标签；银行与科技 20 日同涨且相关性转正=哑铃市双主线）；数据=DS-170 板块 K 线；先产特征不联动仓位，回测验证预测力后联动
     strategy_mounts: []
 
@@ -250,7 +251,8 @@ nodes:
       广度结构给市场参与度打分。
     factor_refs: []
     data_refs: [DS-082]
-    module_ref: null
+    module_ref: src/zephyr/signal_ashare/limit_up_followthrough.py
+    module_id: MOD-SIG-078
     strategy_mounts: []
 
   - node_id: TDM-E-L1-S3
@@ -266,7 +268,8 @@ nodes:
       这是短线最领先的指标——打板资金赚不赚钱直接决定明天还敢不敢接。
     factor_refs: []
     data_refs: [DS-082, DS-107]
-    module_ref: null
+    module_ref: src/zephyr/signal_ashare/lhb_premium_analyzer.py
+    module_id: MOD-SIG-057
     strategy_mounts: []
 
   - node_id: TDM-E-L1-S4
@@ -282,7 +285,8 @@ nodes:
       波动两端的行情都不适合正常仓位。
     factor_refs: []
     data_refs: [DS-150]
-    module_ref: null
+    module_ref: src/zephyr/regime/features/synthetic_vix.py
+    module_id: MOD-REGIME-002
     strategy_mounts: []
 
   # 日级温度计传感器（D20：四层架构第三支温度计=日级条件层，补业界 Daily Condition 缺位）
@@ -316,7 +320,8 @@ nodes:
     macro_refs: [MAC-CN-005, MAC-CN-006, MAC-CN-007, MAC-CN-008, MAC-CN-009, MAC-CN-011, MAC-US-001, MAC-US-002]
     event_refs: [EVT-MACRO-001]
     data_refs: [DS-098]
-    module_ref: null
+    module_ref: src/zephyr/alt_data/policy_expectation_analyzer.py
+    module_id: MOD-ALT-010
     strategy_mounts: []
 
   # ── S0-1 新闻情绪语义分析（Owner 2026-09-09：本地模型情绪打分入图；新闻→决策链的理解层）──
@@ -356,7 +361,8 @@ nodes:
       9:35 首算，盘中可更新，是唯一盘中可变的 L1 输入。
     factor_refs: []
     data_refs: [DS-082, DS-059, DS-150]
-    module_ref: null
+    module_ref: src/zephyr/signal_ashare/market_state_sensor.py
+    module_id: MOD-SIG-036
     strategy_mounts: []
 
   - node_id: TDM-E-L1-AGG
@@ -539,7 +545,8 @@ nodes:
     parent_node: TDM-E-L2-01
     factor_refs: []
     data_refs: []
-    module_ref: null
+    module_ref: src/zephyr/regime/market_forecast_fusion.py
+    module_id: MOD-REGIME-012
     algo_refs: []
     doc_ref: "docs/02_enterprise_architecture/07_trading_decision_architecture/design_memos/22_sector_rotation_spec.md#§3.1⑨"
     activation: postmarket
@@ -588,7 +595,7 @@ nodes:
     parent_node: TDM-E-L2-02
     factor_refs: []
     data_refs: [DS-170]
-    module_ref: null
+    module_ref: src/zephyr/signal_ashare/sector_rrg.py
     algo_refs: [DAL-RRG-SEQ]
     doc_ref: "docs/02_enterprise_architecture/07_trading_decision_architecture/design_memos/22_sector_rotation_spec.md#§3.1④"
     activation: postmarket
@@ -659,7 +666,8 @@ nodes:
     parent_node: TDM-E-L2-03
     factor_refs: []
     data_refs: [DS-170]
-    module_ref: null
+    module_ref: src/zephyr/signal_ashare/adjustment_cycle_tracker.py
+    module_id: MOD-SIG-040
     algo_refs: []
     doc_ref: "docs/02_enterprise_architecture/07_trading_decision_architecture/design_memos/22_sector_rotation_spec.md#§3.1③"
     activation: postmarket
@@ -704,7 +712,7 @@ nodes:
     parent_node: TDM-E-L2-04
     factor_refs: []
     data_refs: [DS-059, DS-170]
-    module_ref: null
+    module_ref: src/zephyr/signal_ashare/sector_rotation_state.py
     algo_refs: []
     doc_ref: "docs/02_enterprise_architecture/07_trading_decision_architecture/design_memos/22_sector_rotation_spec.md#§3.1⑨"
     activation: postmarket
@@ -727,7 +735,7 @@ nodes:
     parent_node: TDM-E-L2-04
     factor_refs: []
     data_refs: [DS-059, DS-181]
-    module_ref: null
+    module_ref: src/zephyr/signal_ashare/sector_siphon.py
     algo_refs: [DAL-SIPHON-ID]
     doc_ref: "docs/02_enterprise_architecture/07_trading_decision_architecture/design_memos/22_sector_rotation_spec.md#§3.1⑤"
     activation: postmarket
@@ -774,7 +782,7 @@ nodes:
     parent_node: TDM-E-L2-05
     factor_refs: []
     data_refs: [DS-150, DS-082, DS-059]
-    module_ref: null
+    module_ref: src/zephyr/signal_ashare/sentiment_cycle.py
     algo_refs: []
     doc_ref: "docs/02_enterprise_architecture/07_trading_decision_architecture/design_memos/22_sector_rotation_spec.md#§3.1⑪"
     activation: premarket
@@ -844,7 +852,7 @@ nodes:
     parent_node: TDM-E-L2-06
     factor_refs: []
     data_refs: [DS-059]
-    module_ref: null
+    module_ref: src/zephyr/signal_ashare/sector_gate.py
     algo_refs: []
     doc_ref: "docs/02_enterprise_architecture/07_trading_decision_architecture/design_memos/22_sector_rotation_spec.md#§3.1⑩"
     activation: intraday
@@ -867,7 +875,8 @@ nodes:
     parent_node: TDM-E-L2-06
     factor_refs: []
     data_refs: [DS-059]
-    module_ref: null
+    module_ref: src/zephyr/signal_ashare/sector_leader.py
+    module_id: MOD-SIG-062
     algo_refs: []
     doc_ref: "docs/02_enterprise_architecture/07_trading_decision_architecture/design_memos/22_sector_rotation_spec.md#§3.1⑦"
     activation: intraday
@@ -891,7 +900,8 @@ nodes:
     parent_node: TDM-E-L2-06
     factor_refs: []
     data_refs: [DS-059]
-    module_ref: null
+    module_ref: src/zephyr/signal_ashare/sector_attribute_rules.py
+    module_id: MOD-SIG-077
     algo_refs: []
     doc_ref: "docs/02_enterprise_architecture/07_trading_decision_architecture/design_memos/22_sector_rotation_spec.md#§3.1⑦"
     activation: postmarket
@@ -938,7 +948,7 @@ nodes:
     parent_node: TDM-E-L2-07
     factor_refs: []
     data_refs: [DS-170]
-    module_ref: null
+    module_ref: src/zephyr/signal_ashare/sector_pullback.py
     algo_refs: [DAL-PULLBACK-ABC]
     doc_ref: "docs/02_enterprise_architecture/07_trading_decision_architecture/design_memos/22_sector_rotation_spec.md#§3.1②"
     activation: intraday
@@ -964,7 +974,8 @@ nodes:
     parent_node: TDM-E-L2
     factor_refs: [FCT-MOM-005, FCT-MOM-022]
     data_refs: [DS-059, DS-170]
-    module_ref: null
+    module_ref: src/zephyr/signal_ashare/sector_momentum_persistence.py
+    module_id: MOD-SIG-098
     algo_refs: []
     doc_ref: "docs/01_policies_and_standards/_registry/catalogs/strategy_registry.yaml#STR-MOMTREND-003"
     activation: postmarket
@@ -990,7 +1001,8 @@ nodes:
     parent_node: TDM-E-L2
     factor_refs: []
     data_refs: [DS-107]
-    module_ref: null
+    module_ref: src/zephyr/signal_ashare/event_driven_screener.py
+    module_id: MOD-SIG-049
     algo_refs: []
     doc_ref: null
     activation: premarket
@@ -1057,7 +1069,8 @@ nodes:
     parent_node: TDM-E-L2
     factor_refs: []
     data_refs: [DS-186, DS-170]
-    module_ref: null
+    module_ref: src/zephyr/signal_ashare/supply_chain_momentum.py
+    module_id: MOD-SIG-118
     algo_refs: []
     doc_ref: null
     activation: postmarket
@@ -1105,7 +1118,7 @@ nodes:
     universe_refs: [UNI-RULE-001, UNI-DYNAMIC-001, UNI-RULE-002]
     event_refs: [EVT-CA-002, EVT-CA-003, EVT-EARN-001]
     data_refs: [DS-150]
-    module_ref: null
+    module_ref: src/zephyr/data/instrument_master.py
     algo_refs: []
     doc_ref: "docs/01_policies_and_standards/_registry/catalogs/strategy_registry.yaml#STR-MULTIFACTOR-043"
     activation: postmarket
@@ -1178,7 +1191,8 @@ nodes:
     parent_node: TDM-E-L3-03
     factor_refs: [FCT-TECH-070]
     data_refs: [DS-150]
-    module_ref: null
+    module_ref: src/zephyr/signal_ashare/fine_scoring_engine.py
+    module_id: MOD-SIG-048
     algo_refs: []
     doc_ref: "docs/01_policies_and_standards/_registry/catalogs/strategy_registry.yaml#STR-MOMTREND-008"
     activation: postmarket
@@ -1202,7 +1216,8 @@ nodes:
     parent_node: TDM-E-L3-03
     factor_refs: [FCT-TECH-071]
     data_refs: [DS-150]
-    module_ref: null
+    module_ref: src/zephyr/signal_ashare/quant_short_term_strength_engine.py
+    module_id: MOD-SIG-034
     algo_refs: []
     doc_ref: "docs/01_policies_and_standards/_registry/catalogs/strategy_registry.yaml#STR-MOMTREND-009"
     activation: postmarket
@@ -1226,7 +1241,8 @@ nodes:
     parent_node: TDM-E-L3-03
     factor_refs: [FCT-TECH-085]
     data_refs: []
-    module_ref: null
+    module_ref: src/zephyr/signal_fundamental/router/signal_conflict_resolver.py
+    module_id: MOD-SIG-010
     algo_refs: []
     doc_ref: "docs/01_policies_and_standards/_registry/catalogs/strategy_registry.yaml#STR-MULTIFACTOR-046"
     activation: postmarket
@@ -1251,7 +1267,8 @@ nodes:
     parent_node: TDM-E-L3
     factor_refs: [FCT-TECH-083, FCT-TECH-077]
     data_refs: [DS-150]
-    module_ref: null
+    module_ref: src/zephyr/signal_ashare/risk_event_consumer.py
+    module_id: MOD-SIG-088
     algo_refs: []
     doc_ref: "docs/01_policies_and_standards/_registry/catalogs/strategy_registry.yaml#STR-MULTIFACTOR-034"
     activation: postmarket
@@ -1280,7 +1297,7 @@ nodes:
     parent_node: TDM-E-L3
     factor_refs: []
     data_refs: [DS-150]
-    module_ref: null
+    module_ref: src/zephyr/signal_fundamental/selection_confidence.py
     algo_refs: []
     doc_ref: "docs/02_enterprise_architecture/07_trading_decision_architecture/design_memos/69_trading_decision_map.md#§2.16"
     activation: postmarket
@@ -1375,8 +1392,10 @@ nodes:
     parent_node: TDM-E-L3-07
     factor_refs: []
     data_refs: [DS-150, DS-181]
-    module_ref: null
+    module_ref: src/zephyr/factor/analysis/multifactor_synthesis.py
+    module_id: MOD-L02-011
     algo_refs: []
+    model_refs: [ML-RANK-001]
     doc_ref: "docs/02_enterprise_architecture/07_trading_decision_architecture/design_memos/25_multifactor_strategy_detail.md"
     activation: postmarket
     invalidation: null
@@ -1522,7 +1541,8 @@ nodes:
     parent_node: TDM-E-L3-11
     factor_refs: []
     data_refs: [DS-082, DS-150]
-    module_ref: null
+    module_ref: src/zephyr/signal_ashare/auction_microstructure_analyzer.py
+    module_id: MOD-SIG-089
     algo_refs: [DAL-AUCTION-MICRO]
     doc_ref: null
     activation: intraday
@@ -1545,7 +1565,8 @@ nodes:
     parent_node: TDM-E-L3-11
     factor_refs: [FCT-MOM-030]
     data_refs: [DS-150, DS-082]
-    module_ref: null
+    module_ref: src/zephyr/signal_ashare/intraday_volume_orderflow.py
+    module_id: MOD-SIG-093
     algo_refs: []
     doc_ref: null
     activation: intraday
@@ -1617,7 +1638,8 @@ nodes:
     factor_refs: []
     seat_refs: [SEAT-INST-001, SEAT-INST-002, SEAT-INST-003, SEAT-YOUZI-001, SEAT-YOUZI-002, SEAT-YOUZI-003]
     data_refs: []
-    module_ref: null
+    module_ref: src/zephyr/signal_ashare/seat_pattern_analyzer.py
+    module_id: MOD-SIG-056
     algo_refs: []
     model_refs: [ML-CLS-002]
     doc_ref: null
@@ -1641,7 +1663,8 @@ nodes:
     parent_node: TDM-E-L3-12
     factor_refs: []
     data_refs: [DS-150]
-    module_ref: null
+    module_ref: src/zephyr/regime/features/chip_distribution_engine.py
+    module_id: MOD-REGIME-005
     algo_refs: [DAL-CHIP-DISTRIB]
     doc_ref: null
     activation: postmarket
