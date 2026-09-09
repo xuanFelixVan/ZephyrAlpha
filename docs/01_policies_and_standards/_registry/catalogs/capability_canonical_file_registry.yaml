@@ -5004,6 +5004,10 @@ creation_tokens:
   token: greatwall-tier-map-20260909
   created_by: greatwall-20260909-0020
   capability: industry_graph_quality_engine
+- file: scripts/industry_graph/ths_equity_hk_refill.py
+  token: greatwall-equity-hk-refill-20260910
+  created_by: gw-equity-20260910
+  capability: industry_graph_ths_equity
 - file: scripts/industry_graph/role_migration.yaml
   token: greatwall-role-map-20260909
   created_by: greatwall-20260909-0020
@@ -11346,6 +11350,87 @@ creation_tokens:
   token: gw-tdm-sellrouter-test-20260910
   created_by: gw-tdm-20260909
   capability: trading_decision_map
+- file: docs/03_modules/_domain_frontend/acceptance/ACC-F-CHAINMAP-EQUITY-BADGE.yaml
+  token: auto-chainmap-equity-badge-acc-20260910
+  created_by: st-chainfe-20260910b
+  capability: frontend_acceptance
+- file: docs/03_modules/_domain_frontend/acceptance/ACC-F-CHAINMAP-CATALYST.yaml
+  token: auto-chainmap-catalyst-acc-20260910
+  created_by: st-chainfe-20260910b
+  capability: frontend_acceptance
+- file: docs/03_modules/_domain_signal/daily_condition_sensor/blueprint.md
+  token: gw-tdm-dailysensor-blueprint-20260910
+  created_by: gw-tdm-20260909
+  capability: trading_decision_map
+- file: src/zephyr/signal_ashare/daily_condition_sensor.py
+  token: gw-tdm-dailysensor-module-20260910
+  created_by: gw-tdm-20260909
+  capability: trading_decision_map
+- file: tests/signal_ashare/test_daily_condition_sensor.py
+  token: gw-tdm-dailysensor-test-20260910
+  created_by: gw-tdm-20260909
+  capability: trading_decision_map
+- file: docs/03_modules/_domain_regime/index_sensor/blueprint.md
+  token: gw-tdm-indexsensor-blueprint-20260910
+  created_by: gw-tdm-20260909
+  capability: trading_decision_map
+- file: src/zephyr/regime/features/index_sensor.py
+  token: gw-tdm-indexsensor-module-20260910
+  created_by: gw-tdm-20260909
+  capability: trading_decision_map
+- file: tests/regime/test_index_sensor.py
+  token: gw-tdm-indexsensor-test-20260910
+  created_by: gw-tdm-20260909
+  capability: trading_decision_map
+- file: docs/03_modules/_domain_signal/sector_conduction/blueprint.md
+  token: gw-tdm-conduction-blueprint-20260910
+  created_by: gw-tdm-20260909
+  capability: trading_decision_map
+- file: src/zephyr/signal_ashare/sector_conduction.py
+  token: gw-tdm-conduction-module-20260910
+  created_by: gw-tdm-20260909
+  capability: trading_decision_map
+- file: tests/signal_ashare/test_sector_conduction.py
+  token: gw-tdm-conduction-test-20260910
+  created_by: gw-tdm-20260909
+  capability: trading_decision_map
+- file: docs/03_modules/_domain_fundamental_signal/negative_veto/blueprint.md
+  token: gw-tdm-negveto-blueprint-20260910
+  created_by: gw-tdm-20260909
+  capability: trading_decision_map
+- file: src/zephyr/signal_fundamental/negative_veto.py
+  token: gw-tdm-negveto-module-20260910
+  created_by: gw-tdm-20260909
+  capability: trading_decision_map
+- file: tests/signal_fundamental/test_negative_veto.py
+  token: gw-tdm-negveto-test-20260910
+  created_by: gw-tdm-20260909
+  capability: trading_decision_map
+
+- file: docs/03_modules/_domain_plan_engine/thesis_survival/blueprint.md
+  token: gw-tdm-thesis-blueprint-20260910
+  created_by: gw-tdm-20260909
+  capability: trading_decision_map
+- file: src/zephyr/plan_engine/thesis_survival.py
+  token: gw-tdm-thesis-module-20260910
+  created_by: gw-tdm-20260909
+  capability: trading_decision_map
+- file: tests/plan_engine/test_thesis_survival.py
+  token: gw-tdm-thesis-test-20260910
+  created_by: gw-tdm-20260909
+  capability: trading_decision_map
+- file: docs/03_modules/_domain_position/pyramiding_rules/blueprint.md
+  token: gw-tdm-pyramid-blueprint-20260910
+  created_by: gw-tdm-20260909
+  capability: trading_decision_map
+- file: src/zephyr/position/core/pyramiding_rules.py
+  token: gw-tdm-pyramid-module-20260910
+  created_by: gw-tdm-20260909
+  capability: trading_decision_map
+- file: tests/position/test_pyramiding_rules.py
+  token: gw-tdm-pyramid-test-20260910
+  created_by: gw-tdm-20260909
+  capability: trading_decision_map
 di_seam_exemptions:
 - module_path: zephyr.trading.auto_runtime_core.AutoRuntimeCore
   reason: P0-5 LSG DI seam 标杆，已有 DI 但 AST 模式不匹配（动态注入）
@@ -13510,3 +13595,7 @@ di_seam_exemptions:
   token: auto-trading-decision-map-20260909-pathfinding-sop
   created_by: st-tdmbe-20260909
   capability: trading_decision_map
+- file: scripts/data/repair_kline_degraded_pull.py
+  token: qmt-day-0909-degraded-pull-repair-20260910
+  created_by: solo-20260910-daily-fix
+  capability: repair_kline_degraded_pull
