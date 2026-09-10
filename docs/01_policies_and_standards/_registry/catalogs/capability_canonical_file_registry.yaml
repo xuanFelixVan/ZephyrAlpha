@@ -13619,3 +13619,7 @@ di_seam_exemptions:
   token: qmt-day-0909-degraded-pull-repair-20260910
   created_by: solo-20260910-daily-fix
   capability: repair_kline_degraded_pull
+- file: scripts/data/backfill_sector880_history.py
+  token: asset-v2-sector880-history-backfill-20260911
+  created_by: st-asset-v2
+  capability: backfill_sector880_history
