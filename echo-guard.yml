@@ -807,3 +807,12 @@ acknowledged:
     src\zephyr\autonomy_core\skills\skill_cross_model.py:default_provider||src\zephyr\frontend\dashboard\app_panel.py:task_repo
   note: 2026-09-09 夜班（solo-20260909-qmt-night）：琐碎单行 @property 模式撞车（AI-WAVE0-001 
     同族先例），非真重复，合并=荒谬；engine 间歇产出让 commit 门禁随机假阳性阻断，批量 dismissed 治本
+- id: 
+    src\zephyr\gov_enforcement\commit_gates\high_complexity_gate.py:_cyclomatic_complexity:00000000||scripts\governance\d7_code\scan_complexity.py:_cyclomatic_complexity:00000000
+  verdict: intentional
+  stable_key: 
+    src\zephyr\gov_enforcement\commit_gates\high_complexity_gate.py:_cyclomatic_complexity||scripts\governance\d7_code\scan_complexity.py:_cyclomatic_complexity
+  note: 2026-09-10 st-legacy-clear-20260910：gate 与独立 CLI 扫描器的 McCabe 双实现——gate 须
+    fail-closed 独立于扫描器，scanner 刻意零仓库依赖（仅 
+    _shared.constants）可单机跑；双向合并任一方向破坏另一运行契约；算法一致性由裁定#215 
+    注释互指背书。intentional=算法演进时需人工同步两侧

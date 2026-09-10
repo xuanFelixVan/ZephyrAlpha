@@ -31,7 +31,7 @@ NO-HIGH-COMPLEXITY gate (priority=85) 只检测**新增**函数的复杂度（�
 设计原则（对标 check_any_abuse.py / scan_debt.py）：
   - 纯 stdlib（ast + pathlib），不依赖 ruff/mypy/radon 是否安装
   - 非阻断：默认 exit 0（CI/CD 报告用）；--ci 模式 exit 1 有违规时
-  - McCabe 算法与 high_complexity_gate.py._cyclomatic_complexity 完全一致
+  - McCabe 算法直接引用 high_complexity_gate.py._cyclomatic_complexity（单一真源）
   - tests/ 豁免（与 gate 一致）
 
 使用：
@@ -65,6 +65,14 @@ from statistics import mean
 
 from _shared.constants import EXIT_ERROR, EXIT_FINDINGS, EXIT_PASS
 
+# 克隆合并（#ARCH-FORCE-MERGE-DEDUP-001，2026-09-10 st-legacy-clear-20260910）：
+# McCabe 实现唯一真源=high_complexity_gate（裁定#215 算法），本扫描器删除重复实现改为
+# 引用；运行前提=src 在 sys.path（与 scripts/governance 其它 import zephyr 的脚本一致）。
+from zephyr.gov_enforcement.commit_gates.high_complexity_gate import (  # noqa: E402
+    _cyclomatic_complexity,
+    _walk_excluding_nested_funcs,
+)
+
 # ── 阈值（与 high_complexity_gate.py _MAX_COMPLEXITY 一致）─────────────
 _MAX_COMPLEXITY = 15
 
@@ -84,45 +92,6 @@ class ComplexityFinding:
         suffix = f"-{self.end_line}" if self.end_line else ""
         return f"{self.file}:{self.line}{suffix}: {self.function}(complexity={self.complexity})"
 
-
-def _walk_excluding_nested_funcs(node):
-    """遍历 AST 节点的所有后代，但不递归进入嵌套函数定义。
-
-    裁定#215：McCabe 复杂度只计算函数自身决策点，不含嵌套函数体。
-    """
-    for child in ast.iter_child_nodes(node):
-        if isinstance(child, (ast.FunctionDef, ast.AsyncFunctionDef)):
-            continue
-        yield child
-        yield from _walk_excluding_nested_funcs(child)
-
-
-def _cyclomatic_complexity(node: ast.FunctionDef | ast.AsyncFunctionDef) -> int:
-    """计算函数的循环复杂度（McCabe），不递归进入嵌套函数。
-
-    与 high_complexity_gate.py._cyclomatic_complexity 算法完全一致：
-    基础复杂度=1，每个决策点+1：
-    - If / IfExp
-    - For / AsyncFor / While
-    - ExceptHandler
-    - BoolOp(And/Or) 每个操作数（len(values)-1）
-    - comprehension 的 if 子句
-
-    裁定#215：不递归进入嵌套函数体（嵌套函数独立检查）。
-    """
-    complexity = 1
-    for child in _walk_excluding_nested_funcs(node):
-        if isinstance(child, (ast.If, ast.IfExp)):
-            complexity += 1
-        elif isinstance(child, (ast.For, ast.AsyncFor, ast.While)):
-            complexity += 1
-        elif isinstance(child, ast.ExceptHandler):
-            complexity += 1
-        elif isinstance(child, ast.BoolOp):
-            complexity += len(child.values) - 1
-        elif isinstance(child, ast.comprehension):
-            complexity += len(child.ifs)
-    return complexity
 
 
 def _is_test_file(filepath: str) -> bool:

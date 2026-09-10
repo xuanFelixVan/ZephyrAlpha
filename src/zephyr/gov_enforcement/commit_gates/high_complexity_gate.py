@@ -88,9 +88,12 @@ import ast
 import logging
 
 from zephyr.gov_enforcement.commit_gates._diff_helpers import (
+    _audit_foreign_staged,
+    _build_own_scope,
     _collect_function_names,
     _get_added_lines,
     _get_staged_py_files,
+    _norm_rel,
     _read_head_file,
     _read_staged_file,
 )
@@ -155,7 +158,32 @@ def make_high_complexity_gate() -> GateSpec:
     """
 
     def _check(gateway, files: list[str], **kwargs) -> tuple[bool, str]:
-        py_files = [f for f in _get_staged_py_files(gateway, "NO-HIGH-COMPLEXITY") if not is_test_exempt(f)]
+        staged = [f for f in _get_staged_py_files(gateway, "NO-HIGH-COMPLEXITY") if not is_test_exempt(f)]
+        if not staged:
+            return True, ""
+
+        # 只查自己（#ARCH-GATE-OWN-SCOPE-001 推广，2026-09-10）：扫描范围=全暂存区∩本
+        # session 范围。own_scope=None（无归属信息）→ 退化为旧行为扫全量（保守面不改宽）。
+        # 背景：共享暂存区多会话并发下，他人半成品函数 cc>16 曾锁死本 gate 一整个工作夜
+        # （2026-09-09/10 夜班实证，clearance-night 晨报遗留 7）。
+        session_id = kwargs.get("session_id")
+        own_scope = _build_own_scope(gateway, files, session_id)
+        if own_scope is None:
+            py_files = staged
+        else:
+            py_files = [f for f in staged if _norm_rel(gateway, f) in own_scope]
+            foreign_staged = [f for f in staged if _norm_rel(gateway, f) not in own_scope]
+            if foreign_staged:
+                # 外来 staged 不扫描、降级 warn+审计（本 session 自身违规分支不动）
+                _audit_foreign_staged(
+                    gateway, session_id, foreign_staged, gate_name="NO-HIGH-COMPLEXITY"
+                )
+                logger.warning(
+                    "NO-HIGH-COMPLEXITY: %d 个外来 session staged 文件未检查（warn+审计，不阻断）: %s",
+                    len(foreign_staged),
+                    ", ".join(foreign_staged[:5]) + ("..." if len(foreign_staged) > 5 else ""),
+                )
+
         violations: list[str] = []
         for py_file in py_files:
             file_content = _read_staged_file(gateway, py_file)

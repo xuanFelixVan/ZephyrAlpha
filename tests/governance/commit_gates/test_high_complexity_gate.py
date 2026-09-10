@@ -210,3 +210,67 @@ class TestGatewayIntegration:
         passed, msg = make_high_complexity_gate().check(gw, [])
         assert passed  # fail-open
         assert msg == ""
+
+
+class TestOnlyOwnSessionScanned:
+    """只查自己语义（#ARCH-GATE-OWN-SCOPE-001 推广 2026-09-10）：扫描范围=全暂存区∩本 session 范围。"""
+
+    def _make_session_gateway(self, tmp_path, staged_files, file_contents):
+        gw = _make_gateway(staged_files=staged_files, file_contents=file_contents)
+        from zephyr.security.access_control.session_concurrency import SessionRegistry
+
+        gw.project_root = str(tmp_path)  # 审计落 tmp_path（防污染真实仓库）
+        gw._registry = SessionRegistry(project_root=tmp_path)  # 空 registry（无活跃 session）
+        return gw
+
+    def test_foreign_wip_does_not_block_own_commit(self, tmp_path):
+        """他人 session 的 WIP（高复杂度函数）暂存时，本 session 干净文件可提交。"""
+        import json
+
+        own_py = "src/zephyr/own_clean.py"
+        own_content = "def clean(x):\n    return x + 1\n"
+        foreign_py = "src/zephyr/foreign_wip.py"
+        # 他人半成品：cc=18 的高复杂度函数（2026-09-09/10 夜班锁死一整夜的真实形态）
+        foreign_content = (
+            "def messy(a, b, c):\n"
+            + "".join(f"    if a > {i}:\n        a += {i}\n" for i in range(17))
+            + "    return a + b + c\n"
+        )
+
+        gw = self._make_session_gateway(
+            tmp_path, [own_py, foreign_py], {own_py: own_content, foreign_py: foreign_content}
+        )
+        passed, msg = make_high_complexity_gate().check(gw, [own_py], session_id="sess-A")
+
+        assert passed is True  # 核心：不再被他人 WIP 锁死
+        assert "messy" not in msg  # 外来文件不产生违规
+        # 审计落盘断言（.runtime/gate_audit/ 家族惯例，文件名由 gate_name 派生）
+        audit = tmp_path / ".runtime" / "gate_audit" / "no_high_complexity_foreign_staged.jsonl"
+        assert audit.exists()
+        rec = json.loads(audit.read_text(encoding="utf-8").splitlines()[-1])
+        assert rec["session_id"] == "sess-A"
+        assert foreign_py in rec["foreign_files"]
+
+    def test_own_high_complexity_still_blocks(self, tmp_path):
+        """本 session 自身高复杂度函数仍被硬阻断（保护语义不放松）。"""
+        import json
+
+        own_py = "src/zephyr/own_messy.py"
+        own_bad = (
+            "def own_messy(a, b, c):\n"
+            + "".join(f"    if a > {i}:\n        a += {i}\n" for i in range(17))
+            + "    return a + b + c\n"
+        )
+        foreign_py = "src/zephyr/foreign_clean.py"
+        foreign_content = "def ok(x):\n    return x\n"
+
+        gw = self._make_session_gateway(
+            tmp_path, [own_py, foreign_py], {own_py: own_bad, foreign_py: foreign_content}
+        )
+        passed, msg = make_high_complexity_gate().check(gw, [own_py], session_id="sess-A")
+
+        assert passed is False  # 自身违规仍硬阻断
+        assert "own_messy" in msg
+        # 外来文件虽同 staged，但已走 warn+审计而非阻断来源
+        audit = tmp_path / ".runtime" / "gate_audit" / "no_high_complexity_foreign_staged.jsonl"
+        assert audit.exists()
