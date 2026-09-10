@@ -55,6 +55,8 @@ DRILL_STATUSES_AI = {"child", "brick_mass", "brick_noalpha"}
 CHAIN_ID_RE = re.compile(r"^CH-[0-9a-f]{12}$")
 # 链名标题腔(与引擎 TITLE_JUNK_RE 同源)
 TITLE_JUNK_RE = re.compile("一张图看懂|重磅|最新|预测|深度|全景图|解读|盘点|风向标|启幕|ppt|研报|机遇|风口")
+# 链名结构完整性(S25 同源,SOP §4.7.0 链名分类学 2026-09-10): 截断括号/虚词悬空尾/外文缩写裸名/报告词
+CHAIN_STRUCT_RE = re.compile(r"（(?![^）]*）)|\((?![^)]*\))|[的与及了]$|^[A-Z0-9]{2,6}$|指数|白皮书|研究报告|年鉴")
 CATEGORIES = {
     "半导体", "消费电子", "元件", "光学光电子", "计算机设备", "机械设备", "电力设备", "汽车",
     "国防军工", "家用电器", "基础化工", "有色金属", "钢铁", "建筑材料", "石油石化", "煤炭", "医药生物",
@@ -322,6 +324,8 @@ def _validate_records(records: list[dict], stocks: set[str] | None) -> list[str]
                 errs.append(f"{idx}: deprecated 链须带 merged_into(SOP §4.6)")
             if TITLE_JUNK_RE.search(r.get("name", "")):
                 errs.append(f"{idx}: 链名标题腔拒绝(规范名=XX产业链句式): {r.get('name')}")
+            if CHAIN_STRUCT_RE.search(r.get("name", "")):
+                errs.append(f"{idx}: 链名结构违规(S25:括号不闭合/虚词悬空尾/外文缩写裸名/报告词,缩写进aliases): {r.get('name')}")
         if typ in ("node_edge", "company_edge"):
             et = r.get("edge_type", r.get("relation"))
             if et and et not in EDGE_TYPES_V2:
@@ -544,18 +548,21 @@ def cmd_ingest(batch_path: str) -> int:
                 )
             elif typ == "unlisted_entity":
                 # 编码表登记/上市标定(SOP §4.10): name+country 登记幂等;
-                # listed_symbol 须一手来源(交易所公告),工具只信入参不查外源
+                # listed_symbol 须一手来源(交易所公告),工具只信入参不查外源;
+                # covered=主数据收录标记(Owner 2026-09-10 留痕指令: 北交所/海外实体一律登记,
+                # 行情库收录后按 covered=false 清单 promote 对上,DDL v6)
                 country = r.get("country", "CN")
                 uid = f"UE-{hashlib.md5(f'{r['name']}|{country}'.encode('utf-8')).hexdigest()[:12]}"
                 cur.execute(
-                    """INSERT INTO ig_unlisted_entity (ue_id,name,country,status,listed_symbol,source_doc,as_of,created_at,updated_at)
-                    VALUES (%s,%s,%s,%s,%s,%s,%s,now(),now())
+                    """INSERT INTO ig_unlisted_entity (ue_id,name,country,status,listed_symbol,covered,source_doc,as_of,created_at,updated_at)
+                    VALUES (%s,%s,%s,%s,%s,%s,%s,%s,now(),now())
                     ON CONFLICT (name,country) DO UPDATE SET updated_at=now(),
                       status=EXCLUDED.status,
                       listed_symbol=COALESCE(EXCLUDED.listed_symbol,ig_unlisted_entity.listed_symbol),
+                      covered=EXCLUDED.covered,
                       source_doc=COALESCE(EXCLUDED.source_doc,ig_unlisted_entity.source_doc)""",
                     (uid, r["name"], country, r.get("status") or "unlisted",
-                     r.get("listed_symbol"), sd, r.get("as_of")),
+                     r.get("listed_symbol"), bool(r.get("covered", False)), sd, r.get("as_of")),
                 )
             elif typ == "document":
                 # 源语料登记(SOP §4.9 内容层前置): THS 导出/其他新源登记 ig_document,

@@ -120,6 +120,16 @@ CHECKS: list[dict] = [
         WHERE version_year IS NULL AND (status IS NULL OR status='active')
           AND name NOT LIKE '%行业'
     """},
+    # S25 链名结构完整性(2026-09-10 SOP §4.7.0 链名分类学): 括号不闭合/虚词悬空尾/外文缩写裸名/报告指数词
+    {"id": "S25", "title": "链名结构完整(括号闭合/无悬空尾/非裸缩写/非报告名)", "sql": r"""
+        SELECT chain_id, name FROM ig_chain
+        WHERE (status IS NULL OR status='active') AND (
+          (name ~ '（' AND name !~ '）') OR (name ~ '\(' AND name !~ '\)')
+          OR name ~ '[的与及了]$'
+          OR name ~ '^[A-Z0-9]{2,6}$'
+          OR name ~ '指数|白皮书|研究报告|年鉴'
+        )
+    """},
     # ---- 节点层 ----
     # S6 v0.4 职能化: tier 仅三位置值(残留职能值=违规) + function_role 八值词表检查
     # 2026-09-09 Owner 委托裁定: 废弃链上节点=历史快照不审(与 S8 同口径),只审活跃链

@@ -13,7 +13,7 @@
 # [TTL] permanent
 """产业链图谱（industry_graph）十三表 DDL 部署脚本（PostgreSQL depgraph 图谱域）。
 
-表结构（2026-08-27 与用户定稿；v2 2026-09-07 按 SOP §4.8/§4.9 增补；v3 2026-09-08 按 SOP §4.10 增补；v4 2026-09-09 深度体系+分域增补；v5 2026-09-09 收尾增补 ig_chain.level）：
+表结构（2026-08-27 与用户定稿；v2 2026-09-07 按 SOP §4.8/§4.9 增补；v3 2026-09-08 按 SOP §4.10 增补；v4 2026-09-09 深度体系+分域增补；v5 2026-09-09 收尾增补 ig_chain.level；v6 2026-09-10 增补 ig_unlisted_entity.covered）：
     ig_chain         产业链主表
     ig_node          环节节点（v4: +child_chain_id/drill_status 层级下钻）
     ig_edge          环节间结构边（edge_type='structure'|'supply'，supply 公司级后置）
@@ -27,6 +27,7 @@
     ig_equity_edge   股权穿透边表（v4: 业务/资本分域——被投/持股/实控，与 ig_company_edge 分开）
     ig_product_revenue 产品营收归因表（v4: 图谱侧财务唯一表，通用财务主数据进 c1_market 防双真源）
     （v5 2026-09-09 收尾: ig_chain.level 链层级列——模板决策#8 level 落库、parent 派生）
+    （v6 2026-09-10: ig_unlisted_entity.covered 主数据收录标记——外部实体留痕登记,产业链↔主数据对账桥梁）
 
 市场分片规范：各表均带 market 字段（ig_chunk/ig_unlisted_entity 除外——语料/实体无市场语义）。
 
@@ -320,6 +321,11 @@ DDL_STATEMENTS = [
     )
     """,
     "CREATE INDEX IF NOT EXISTS idx_ig_prodrev_symbol ON ig_product_revenue (symbol)",
+    # ========== v6 增量（Owner 2026-09-10 指令: 外部实体留痕登记——凡查到代码或名字的非 A 股实体
+    #     一律入编码表,多一个"主数据收录没有"标记;将来主数据扩源(北交所/美股/港股)后按 covered=false
+    #     清单逐个 promote 对上,编码表即产业链↔主数据的对账桥梁） ---
+    "ALTER TABLE ig_unlisted_entity ADD COLUMN IF NOT EXISTS covered BOOLEAN NOT NULL DEFAULT FALSE",
+    "CREATE INDEX IF NOT EXISTS idx_ig_unlisted_covered ON ig_unlisted_entity (covered)",
 ]
 
 # 裁定#ARCH-DEPGRAPH_ACCESS_CONTROL: reader 只读 / writer 读写
