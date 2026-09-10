@@ -2438,6 +2438,7 @@ nodes:
   # P3 树枝：资格门→金字塔规则→量级风险核算→时点执行（流水线）；euphoria 段无加仓权限（只卖不买，取严）
   - node_id: TDM-P-P3-01
     name_zh: 加仓资格门
+    # C9 施工（gw-tdm-20260909）：MOD-POS-027 落码回填 module_ref/module_id
     market: cn_a
     flow: position_flow
     layer: P3
@@ -2451,7 +2452,9 @@ nodes:
     factor_refs: [FCT-MOM-022]
     risk_limit_refs: [RLM-POSITION-004, RLM-POSITION-009, RLM-POSITION-013, RLM-KILL-SWITCH-006]
     data_refs: []
-    module_ref: null
+    module_ref: src/zephyr/position/core/pyramiding_rules.py
+    module_id: MOD-POS-027
+    note_confirmed: "2026-09-10"
     algo_refs: []
     doc_ref: "docs/02_enterprise_architecture/07_trading_decision_architecture/design_memos/28_sentiment_cycle_trading.md"
     activation: premarket
@@ -2465,6 +2468,7 @@ nodes:
 
   - node_id: TDM-P-P3-02
     name_zh: 金字塔加仓规则
+    # C10 施工（gw-tdm-20260909）：MOD-POS-027 同模块两函数，回填 module_ref/module_id
     market: cn_a
     flow: position_flow
     layer: P3
@@ -2478,7 +2482,9 @@ nodes:
     parent_node: TDM-P-P3
     factor_refs: []
     data_refs: []
-    module_ref: null
+    module_ref: src/zephyr/position/core/pyramiding_rules.py
+    module_id: MOD-POS-027
+    note_confirmed: "2026-09-10"
     algo_refs: []
     doc_ref: "docs/02_enterprise_architecture/07_trading_decision_architecture/design_memos/69_trading_decision_map.md#§2.26"
     activation: on_demand

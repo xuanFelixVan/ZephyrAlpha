@@ -52,3 +52,57 @@ __all__: Final[list[str]] = [
     "PositionAdjudicationCenter",
     "CoreSatelliteAllocator",
 ]
+
+# MOD-POS-026 Defensive Asset Whitelist（gw-tdm-20260909：C11 护盘白名单接线，包门面再导出）
+from zephyr.position.core.defensive_asset_whitelist import (
+    CircuitLevel,
+    DefensiveAdditionRequest,
+    DefensiveVerdict,
+    DefensiveWhitelistConfig,
+    DefensiveWhitelistError,
+    NationalTeamSignal,
+    ReasonCode,
+    ReversalSignal,
+    WhitelistTier,
+    evaluate_defensive_addition,
+)
+
+__all__: Final[list[str]] = __all__ + [
+    "CircuitLevel",
+    "DefensiveAdditionRequest",
+    "DefensiveVerdict",
+    "DefensiveWhitelistConfig",
+    "DefensiveWhitelistError",
+    "NationalTeamSignal",
+    "ReasonCode",
+    "ReversalSignal",
+    "WhitelistTier",
+    "evaluate_defensive_addition",
+]
+
+# ORPHAN-MODULE: 引用登记（gw-tdm-20260909：C9/C10 金字塔加仓）
+from zephyr.position.core.pyramiding_rules import (  # noqa: F401
+    GateCode,
+    PyramidPlan,
+    PyramidPlanRequest,
+    PyramidingConfig,
+    PyramidingError,
+    PyramidingGateRequest,
+    PyramidingPhase,
+    check_pyramiding_eligibility,
+    get_default_config,
+    plan_pyramid_addition,
+)
+
+__all__ = __all__ + [
+    "GateCode",
+    "PyramidPlan",
+    "PyramidPlanRequest",
+    "PyramidingConfig",
+    "PyramidingError",
+    "PyramidingGateRequest",
+    "PyramidingPhase",
+    "check_pyramiding_eligibility",
+    "get_default_config",
+    "plan_pyramid_addition",
+]

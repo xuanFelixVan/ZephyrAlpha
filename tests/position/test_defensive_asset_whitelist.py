@@ -1,3 +1,4 @@
+# [BLUEPRINT] MOD-POS-026 | docs/03_modules/_domain_position/defensive_asset_whitelist/blueprint.md
 # [DOMAIN] D_POSITION
 # [TTL] permanent
 """MOD-POS-026 defensive_asset_whitelist 单元测试（红蓝对抗：红-边界/红-契约/红-故障姿态）。"""
