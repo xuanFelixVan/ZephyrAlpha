@@ -39,34 +39,31 @@ import sys
 from pathlib import Path
 
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", "..", "src"))
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 
 from psycopg2.extras import execute_values
 
+from vocab_loader import load_vocab  # 词表唯一真源=industry_graph_field_dictionary.yaml(改词表只改 YAML)
 from zephyr.governance.depgraph_schema import get_depgraph_pg_connection
 
-# ---- 词表(SOP §4.7/§4.8; 与 graph_quality_check 引擎同源,两边漂移=事故) ----
-TIERS = {"上游", "中游", "下游", "设备", "材料", "零部件", "原材料", "辅材", "unspecified"}
+# ---- 词表(字段字典单一真源加载,本文件不再硬编码词表;对齐由 test_field_dictionary_alignment 强制) ----
+_V = load_vocab()
+TIERS = set(_V["tiers"]["values"]) | set(_V["tiers_legacy"]["values"])
 # v0.4 职能化迁移(Owner 2026-09-09 裁定): tier 仅三位置值,职能拆 function_role 八值
-TIERS_NEW = {"上游", "中游", "下游"}
-FUNCTION_ROLES = ("生产设备", "生产原料", "辅助材料", "辅助设备", "加工工艺", "技术服务", "产品业务", "销售渠道")
-ROLES_STD = ("龙头", "核心", "主要", "参与", "提及")  # role 五值(Owner 2026-09-09 裁定)
+TIERS_NEW = set(_V["tiers"]["values"])
+FUNCTION_ROLES = tuple(_V["function_roles"]["values"])
+ROLES_STD = tuple(_V["roles_std"]["values"])  # role 五值(Owner 2026-09-09 裁定)
 # 深度体系 drill_status: AI 可写三值; drill_manual=Owner 钉死 AI 不可写(SOP 节点模板裁定1)
-DRILL_STATUSES_AI = {"child", "brick_mass", "brick_noalpha"}
+DRILL_STATUSES_AI = set(_V["drill_statuses_ai"]["values"])
 CHAIN_ID_RE = re.compile(r"^CH-[0-9a-f]{12}$")
 # 链名标题腔(与引擎 TITLE_JUNK_RE 同源)
 TITLE_JUNK_RE = re.compile("一张图看懂|重磅|最新|预测|深度|全景图|解读|盘点|风向标|启幕|ppt|研报|机遇|风口")
 # 链名结构完整性(S25 同源,SOP §4.7.0 链名分类学 2026-09-10): 截断括号/虚词悬空尾/外文缩写裸名/报告词
 CHAIN_STRUCT_RE = re.compile(r"（(?![^）]*）)|\((?![^)]*\))|[的与及了]$|^[A-Z0-9]{2,6}$|指数|白皮书|研究报告|年鉴")
-CATEGORIES = {
-    "半导体", "消费电子", "元件", "光学光电子", "计算机设备", "机械设备", "电力设备", "汽车",
-    "国防军工", "家用电器", "基础化工", "有色金属", "钢铁", "建筑材料", "石油石化", "煤炭", "医药生物",
-    "食品饮料", "纺织服饰", "商贸零售", "社会服务", "美容护理", "轻工制造", "农林牧渔",
-    "软件开发", "互联网服务", "通信服务", "通信设备", "游戏", "传媒", "银行", "非银金融",
-    "房地产", "建筑装饰", "交通运输", "公用事业", "环保", "综合",
-}
-CHAIN_STATUSES = {"active", "deprecated"}  # SOP §4.6 ig_chain.status 封闭枚举
+CATEGORIES = set(_V["categories"]["values"])
+CHAIN_STATUSES = set(_V["chain_statuses"]["values"])  # SOP §4.6 ig_chain.status 封闭枚举
 MERGED_INTO_RE = re.compile(r"^CH-[0-9a-f]{12}$")
-EDGE_TYPES_V2 = {"supplies_to", "customer_of", "competitor_of", "partners_with", "produces", "belongs_to_sector", "structure", "supply"}
+EDGE_TYPES_V2 = set(_V["edge_types_v2"]["values"])
 NODE_SUFFIX_RE = re.compile(r"-(上游|中游|下游|设备|材料|零部件|原材料|辅材|unspecified)$")
 SYMBOL_CN_RE = re.compile(r"^\d{6}\.(SH|SZ|BJ)$")
 SYMBOL_GLOBAL_RE = re.compile(r"^[A-Z0-9]{1,6}\.(US|KS|TW|T|HK|DE|LN|JP|SM)$")
@@ -76,8 +73,8 @@ SYMBOL_UNLISTED_RE = re.compile(r"^UNLISTED:UE-[0-9a-f]{12}$")
 SOURCEDOC_RE = re.compile(r"^[^|]+\|[^|]+\|\d{4}-\d{2}-\d{2}$")
 # 股权穿透表(2026-09-09 裁定: 同库独立表 ig_equity_edge,与 ig_company_edge 分域;
 # 分流硬规则: 被投/持股/实控/质押->equity_edge, 供应/客户/竞争/合作->company_edge)
-EQUITY_RELATIONS = {"invests_in", "subsidiary", "shareholding", "actual_control", "pledge", "judicial_frozen"}
-EQUITY_VERIFICATION = {"unverified", "verified", "official"}
+EQUITY_RELATIONS = set(_V["equity_relations"]["values"])
+EQUITY_VERIFICATION = set(_V["equity_verification"]["values"])
 PERSON_PREFIX = "PERSON:"
 
 _ALL_TABLES = ("ig_chain", "ig_node", "ig_edge", "ig_node_company", "ig_document", "ig_company_edge", "ig_company_metric", "ig_chunk", "ig_fact", "ig_unlisted_entity", "ig_equity_edge", "ig_product_revenue")

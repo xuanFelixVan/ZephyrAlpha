@@ -1,6 +1,12 @@
 ---
 ttl: task_bound
+status: RETIRED（已退役，2026-09-10）
+migrated_to: docs/01_policies_and_standards/_registry/catalogs/industry_graph_field_dictionary.yaml
 ---
+
+> **【退役声明（Owner 2026-09-10 方案 A 裁定）】本文档的字段标准内容已全部迁入字段字典单一真源
+> `industry_graph_field_dictionary.yaml`（各字段 standard/notes 注记保留设计决策）。
+> 本文件仅作历史设计过程留档，**禁止再引用为标准真源**（SOP/标准文件中的引用已同步切换）。**
 
 # 节点模板草案（Owner 审定稿前不动工引擎/门禁）
 

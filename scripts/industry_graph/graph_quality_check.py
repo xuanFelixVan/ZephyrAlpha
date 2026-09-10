@@ -34,25 +34,22 @@ from datetime import date
 from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[2] / "src"))
+sys.path.insert(0, str(Path(__file__).resolve().parent))
 
+from vocab_loader import load_vocab  # noqa: E402  词表唯一真源=industry_graph_field_dictionary.yaml
 from zephyr.governance.depgraph_schema import get_depgraph_pg_connection  # noqa: E402
 
 REPORT_DIR = Path(__file__).resolve().parents[2] / ".runtime" / "industry_graph" / "quality_reports"
 EXEMPT_FILE = Path(__file__).resolve().parent / "quality_exemptions.yaml"
 
-# 词表(与 websearch_ingest 同源; 引擎/工具两边规则漂移=事故,改须同 commit)
+# 词表(字段字典单一真源加载,本文件不再硬编码词表;对齐由 test_field_dictionary_alignment 强制)
+_V = load_vocab()
 TITLE_JUNK_RE = "一张图看懂|重磅|最新|预测|深度|全景图|解读|盘点|风向标|启幕|ppt|研报|机遇|风口"
-TIER_POSITION = ("上游", "中游", "下游")  # v0.4 职能化: tier 仅三位置值(Owner 2026-09-09)
-FUNCTION_ROLES = ("生产设备", "生产原料", "辅助材料", "辅助设备", "加工工艺", "技术服务", "产品业务", "销售渠道")
+TIER_POSITION = tuple(_V["tiers"]["values"])  # v0.4 职能化: tier 仅三位置值(Owner 2026-09-09)
+FUNCTION_ROLES = tuple(_V["function_roles"]["values"])
 TIER_SUFFIX_RE = "-(上游|中游|下游|设备|材料|零部件|原材料|辅材|unspecified)$"
-ROLES_STD = ("龙头", "核心", "主要", "参与", "提及")
-SW_CATEGORIES = (
-    "半导体", "消费电子", "元件", "光学光电子", "计算机设备", "机械设备", "电力设备", "汽车",
-    "国防军工", "家用电器", "基础化工", "有色金属", "钢铁", "建筑材料", "石油石化", "煤炭", "医药生物",
-    "食品饮料", "纺织服饰", "商贸零售", "社会服务", "美容护理", "轻工制造", "农林牧渔",
-    "软件开发", "互联网服务", "通信服务", "通信设备", "游戏", "传媒", "银行", "非银金融",
-    "房地产", "建筑装饰", "交通运输", "公用事业", "环保", "综合",
-)
+ROLES_STD = tuple(_V["roles_std"]["values"])
+SW_CATEGORIES = tuple(_V["categories"]["values"])
 PIT_CUTOFF = "2026-09-08"  # S13: 此日期后新增落位必须带 valid_from(THS 铺面批次的次日)
 MAX_CHAINS_PER_SYMBOL = 20  # S14 挂链阈值(Owner 2026-09-09 裁定)
 

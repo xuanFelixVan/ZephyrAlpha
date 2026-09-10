@@ -1,0 +1,951 @@
+meta:
+  version: 1.0.0
+  date: 2026-09-10
+  owner: ZephyrAlpha-Owner
+  decision: Owner 2026-09-10 方案 A 拍板（对话记录）；对齐测试=alert_threshold_registry 先例
+  consumers:
+  - scripts/industry_graph/websearch_ingest.py
+  - scripts/industry_graph/graph_quality_check.py
+  - tests/industry_graph/test_field_dictionary_alignment.py
+vocab:
+  tiers:
+    values:
+    - 上游
+    - 中游
+    - 下游
+    standard: 仅位置语义（链内上中下游）；设备/材料等职能语义一律填 function_role。websearch 新写入禁用历史兼容值（零部件/原材料/辅材/unspecified 仅为存量）
+  tiers_legacy:
+    values:
+    - 设备
+    - 材料
+    - 零部件
+    - 原材料
+    - 辅材
+    - unspecified
+  function_roles:
+    values:
+    - 生产设备
+    - 生产原料
+    - 辅助材料
+    - 辅助设备
+    - 加工工艺
+    - 技术服务
+    - 产品业务
+    - 销售渠道
+    standard: 绝对职能概念（不随链变）：AI 应用公司=技术服务或产品业务；设备商=生产设备；原料商=生产原料
+  roles_std:
+    values:
+    - 龙头
+    - 核心
+    - 主要
+    - 参与
+    - 提及
+    standard: 语义归一：市占率前列=龙头；关键技术卡位=核心；有实质份额=主要；有业务但份额小=参与；仅被提及无实质=提及。长尾杂值按 role_migration.yaml 映射
+  categories:
+    values:
+    - 半导体
+    - 消费电子
+    - 元件
+    - 光学光电子
+    - 计算机设备
+    - 机械设备
+    - 电力设备
+    - 汽车
+    - 国防军工
+    - 家用电器
+    - 基础化工
+    - 有色金属
+    - 钢铁
+    - 建筑材料
+    - 石油石化
+    - 煤炭
+    - 医药生物
+    - 食品饮料
+    - 纺织服饰
+    - 商贸零售
+    - 社会服务
+    - 美容护理
+    - 轻工制造
+    - 农林牧渔
+    - 软件开发
+    - 互联网服务
+    - 通信服务
+    - 通信设备
+    - 游戏
+    - 传媒
+    - 银行
+    - 非银金融
+    - 房地产
+    - 建筑装饰
+    - 交通运输
+    - 公用事业
+    - 环保
+    - 综合
+    standard: 申万一级行业词表；判不准进开放问题禁塞'综合'（综合禁做垃圾桶，SOP 开放问题 8 裁定）；煤炭 2026-09-08 补录
+  equity_relations:
+    values:
+    - invests_in
+    - subsidiary
+    - shareholding
+    - actual_control
+    - pledge
+    - judicial_frozen
+    standard: 英文封闭枚举：参股投资/子公司/持股/实际控制/质押/司法冻结；质押率/预警线等数值放 evidence 不另造值（DDL v4 注记）
+  equity_verification:
+    values:
+    - unverified
+    - verified
+    - official
+    standard: unverified=单源未核；verified=双源/原文核过；official=交易所公告/年报一手
+  edge_types_v2:
+    values:
+    - supplies_to
+    - customer_of
+    - competitor_of
+    - partners_with
+    - produces
+    - belongs_to_sector
+    - structure
+    - supply
+    standard: websearch 新写供应边用 supplies_to（供应商→客户，方向恒定）+customer_of 成对反向；structure=链内环节顺序边；存量 supply 保留兼容。股权投资关系禁入（开放问题 7 硬边界）
+  chain_statuses:
+    values:
+    - active
+    - deprecated
+    standard: deprecated 必带 merged_into:CH-xxx（source_note 幂等追加，硬校验 10）；重发链记录不带 status 时不回落 active
+  drill_statuses_ai:
+    values:
+    - child
+    - brick_mass
+    - brick_noalpha
+    standard: child=已挂子链（child_chain_id 必非空，交叉校验）；brick_mass=子流程输入是通用大宗（判据 A）；brick_noalpha=再下钻不新增 A 股标的（判据 B）；判据依据写 description
+  markets:
+    values:
+    - cn
+    - global
+  sources:
+    values:
+    - websearch
+    - corpus_rag
+    - ths_export
+    - 483_top5_customer
+    - match_list_2012_2023
+    - J88_collab_patent
+    standard: websearch/corpus_rag 强制 source_doc 三段式+confidence≤0.7；ths_export 固定 confidence=0.6（终端单源）；483/match_list/J88 仅采购管线；新来源须先在本词表登记（本文件）再写入
+  evidence_types:
+    values:
+    - disclosed
+    - inferred
+    - estimated
+    standard: disclosed=披露实锤（年报前五大客户原文）；inferred=AI 推断（须 evidence 原文锚）；estimated=估算
+  symbol_cn_re: \d{6}\.(SH|SZ|BJ)
+  symbol_global_re: '[A-Z0-9]{1,6}\.(US|KS|TW|T|HK|DE|LN|JP|SM)'
+  symbol_unlisted_re: UNLISTED:UE-[0-9a-f]{12}
+  symbol_standard: cn=6位数字.SH/.SZ/.BJ（必须反查 stock_basic 在市）；global=代码.交易所后缀（9 值封闭 .US/.KS/.TW/.T/.HK/.DE/.LN/.JP/.SM）；未上市=UNLISTED:UE-{12hex}（编码表主键引用，唯一合法格式，公司名直写已禁）
+  sourcedoc_re: ^[^|]+\|[^|]+\|\d{4}-\d{2}-\d{2}$
+  sourcedoc_standard: 三段式「查询词|URL|YYYY-MM-DD」；websearch/corpus_rag 强制（ths_export 用「同花顺导出|文件|日期」变体）；无来源不落库
+tables:
+  ig_chain:
+    pk: chain_id
+    fields:
+      chain_id:
+        type: text
+        required: false
+        standard: CH-{12位hex}=md5(name) 自动生成；改名=换 id（改名即新建+迁移+deprecated，无原地改名通道）
+      name:
+        type: text
+        required: true
+        standard: 产业链标准名三段法：[全球前缀]+核心产品/工艺标准中文名+产业链（行业锚点链={THS二级行业}行业）。依据国标/申万词汇；禁标题腔（S1）/禁截断括号、虚词悬空尾、外文缩写裸名、报告指数词（S25）/禁环节名当链名/≤12字
+        good_example: 碳化硅产业链 / 全球半导体制造产业链 / 食品加工制造行业
+        bad_example: 碳化硅（SiC / 中国算力产业崛起的 / IC / 环氧丙烷产业链供需格局
+        validated_by:
+        - S1
+        - S2
+        - S25
+      category:
+        type: enum(vocab:categories)
+        required: true
+        standard: 申万一级行业；锚点链=成分股多数票判定（ths_industry_mapping.yaml）；判不准进开放问题禁塞综合
+        good_example: 半导体
+        bad_example: 产业链全景图 / 2025新版100大行业全景图谱图解（数据包名残留）
+        validated_by:
+        - S3
+      version_year:
+        type: smallint
+        required: true
+        standard: 信息版本年=图谱内容描述哪一年的产业实态（非写入年）；锚点链豁免（S5）
+        good_example: 2026（描述 2026 年产业实态）
+        validated_by:
+        - S5
+      market:
+        type: enum(vocab:markets)
+        required: true
+        standard: 链本身默认 cn；全球主干链=global
+        good_example: cn
+        bad_example: other（枚举仅 cn/global）
+      status:
+        type: enum(vocab:chain_statuses)
+        required: true
+        standard: 新建必须 active；废弃走 deprecated+merged_into 唯一合法通道
+        validated_by:
+        - S4
+        good_example: active
+        bad_example: deprecated（须带 merged_into，否则 S4）
+      source_note:
+        type: text
+        required: true
+        standard: 首建来源（三段式或采购包标记）；deprecated 时幂等追加 merged_into:CH-xxx 不覆盖原值
+        good_example: 半导体 产业链图谱 上中下游 2026|https://...|2026-09-10
+      level:
+        type: smallint
+        required: false
+        standard: 链层级：L1 主链=1；子链=父+1。挂接写入时顺手落值防递归爆栈；parent 关系由 node.child_chain_id 反查派生不落库（节点模板决策#8）
+      created_at:
+        type: timestamptz
+        required: false
+        standard: 自动
+      updated_at:
+        type: timestamptz
+        required: false
+        standard: 任何对本链条目的写入必须刷新（工具强制）；自动生成（主键/时间戳），无人工填写标准
+  ig_node:
+    pk: node_id
+    fields:
+      node_id:
+        type: text
+        required: false
+        standard: ND-{12位hex}=md5(chain_id|name|tier)；引用存量节点必须查库解析真实 id（_resolve_node），禁重算（存量采购包节点非 md5 方案）；自动生成（主键/时间戳），无人工填写标准
+      chain_id:
+        type: text
+        required: true
+        standard: 所属链 FK
+        good_example: CH-a1b2c3d4e5f6
+      name:
+        type: text
+        required: true
+        standard: 纯环节功能名（标准工序/部件名词，≤10字名词性，依据行业术语）；禁链名前缀/禁 -tier 后缀残留（S7）/禁标题腔；子链视角下 tier 递归（划片机链里'空气主轴'=该链上游）
+        good_example: 晶圆制造 / HBM封装 / 光引发剂
+        bad_example: 半导体-上游 / 晶圆制造环节
+        validated_by:
+        - S7
+        - S9
+      tier:
+        type: enum(vocab:tiers)
+        required: true
+        standard: 链内位置三值（vocab:tiers.standard）；websearch 新写禁 legacy 值
+        good_example: 中游
+        bad_example: 中游-设备 / unspecified
+        validated_by:
+        - S6
+      aliases:
+        type: array
+        required: false
+        standard: 别名数组（英文名/简称/外文缩写一律进这里不进 name，如 IC/PVD/SiC）
+      description:
+        type: text
+        required: false
+        standard: 一句话环节说明；drill_status 砖判定（mass/noalpha）必须在此附一句判据依据（§6 深度体系）
+      market:
+        type: enum(vocab:markets)
+        required: true
+        standard: 与链 market 一致（落位时另有 S12 校验）
+        good_example: cn
+      child_chain_id:
+        type: text
+        required: false
+        standard: 该环节的下钻子链（CH- 格式）；必须指向已存在的链（先建链再挂接）；同一环节只挂一条子链
+      drill_status:
+        type: enum(vocab:drill_statuses_ai)
+        required: false
+        standard: child/brick_mass/brick_noalpha（vocab.standard）；drill_manual=Owner 钉死值 AI 不可写（工具拒绝）
+        validated_by: []
+        notes: 引擎 S22（层级下钻到位）为进度指标未入引擎检查项，下钻覆盖度由 S24/梳理工程间接跟踪
+      function_role:
+        type: enum(vocab:function_roles)
+        required: false
+        standard: 八值职能（vocab.standard）；与 tier 正交——tier 管位置，function_role 管职能
+        good_example: 晶圆制造环节=function_role:加工工艺 + tier:中游
+        validated_by:
+        - S6
+      created_at:
+        type: timestamptz
+        required: false
+        standard: 自动
+      updated_at:
+        type: timestamptz
+        required: false
+        standard: 任何节点信息变更刷新（tier/别名/职能）；自动生成（主键/时间戳），无人工填写标准
+  ig_edge:
+    pk: edge_id
+    fields:
+      edge_id:
+        type: bigint
+        required: false
+        standard: 自动（BIGSERIAL）
+      from_node:
+        type: text
+        required: true
+        standard: 供应流向起点（上游→下游方向恒定）
+        good_example: ND-a1b2c3d4e5f6（上游环节，查库解析存量真实 id）
+      to_node:
+        type: text
+        required: true
+        standard: 供应流向终点
+        good_example: ND-b2c3d4e5f6a1（下游环节）
+      edge_type:
+        type: enum(vocab:edge_types_v2)
+        required: true
+        standard: structure=链内环节顺序边（流程）；supply=环节间供应边。UNIQUE(from,to,type) 幂等锚
+        good_example: structure
+      source_doc:
+        type: text
+        required: true
+        standard: websearch 补边=三段式；推断补边（S21 骨架）第二段写明推断依据（如「tier层序与产业流程推断(见evidence字段)」）
+        good_example: 光刻胶 产业链 2026|https://...|2026-09-10
+      market:
+        type: enum(vocab:markets)
+        required: true
+        standard: 与链一致
+        good_example: cn
+      created_at:
+        type: timestamptz
+        required: false
+        standard: 自动
+  ig_node_company:
+    pk: id
+    fields:
+      id:
+        type: bigint
+        required: false
+        standard: 自动生成（BIGSERIAL 主键），无人工填写标准
+      node_id:
+        type: text
+        required: true
+        standard: 落到具体环节（FK）；引用节点查库解析
+        good_example: ND-a1b2c3d4e5f6（查库解析，禁重算）
+      symbol:
+        type: text
+        required: true
+        standard: vocab:symbol_standard（cn 反查 stock_basic 在市/全球格式/UNLISTED:UE-）；UNIQUE(node_id,symbol) 幂等锚
+        good_example: 300750.SZ / NVDA.US / UNLISTED:UE-a1b2c3d4e5f6
+        bad_example: 300750（裸码）/ 特斯拉(US:TSLA)（名字编码）
+        validated_by:
+        - S11
+        - S12
+        - S18
+      role:
+        type: enum(vocab:roles_std)
+        required: false
+        standard: 五值（vocab.roles_std.standard）
+        good_example: 龙头
+        bad_example: 后段（化成分容）设备龙头（长尾杂值→按'龙头'归一留痕 role_migration.yaml）
+        validated_by:
+        - S10
+      confidence:
+        type: real
+        required: true
+        standard: websearch/corpus_rag ≤0.7（硬校验，双源互证才 0.7 单源 0.5）；ths_export 固定 0.6；0.85 仅采购管线
+        good_example: 0.7（两独立来源互证）
+        bad_example: 0.9（websearch 来源超上限）
+      evidence_text:
+        type: text
+        required: true
+        standard: websearch 必填原文摘录一句（反幻觉锚）——回读原文找不到依据零容忍；禁 AI 转述禁编造
+        good_example: 「XX公司是宁德时代隔膜核心供应商」（新闻原句）
+        bad_example: 该公司供应关系良好（AI 自己的话）
+      source_doc:
+        type: text
+        required: true
+        standard: vocab:sourcedoc_standard 三段式，采集日期必填（时效三件套之一）
+        good_example: 宁德时代 供应商 隔膜 2026|https://...|2026-09-10
+      market:
+        type: enum(vocab:markets)
+        required: true
+        standard: 与 node.market 一致（S12）；UNLISTED:UE- 行 by-design 不在 stock_basic 不计死映射（S11 口径）
+        good_example: cn（须与 node.market 一致）
+      valid_from:
+        type: date
+        required: true
+        standard: 落位生效日；2026-09-08 后新增落位必填（S13，PIT_CUTOFF）；行业锚点回填上市日/环节落位填盘点日
+        validated_by:
+        - S13
+        good_example: 2026-09-10（新落位=盘点日）
+      valid_to:
+        type: date
+        required: false
+        standard: NULL=至今；修正错误=PIT 关闭（置修复日+source_doc 留痕 quality_fix|批次|日期），唯一处置方式禁物理删
+      pit_strength:
+        type: text
+        required: false
+        standard: PIT 强度标注（存量兼容列）
+      updated_at:
+        type: timestamptz
+        required: false
+        standard: 公司信息变更（role/别名/主营变化）刷新；自动生成（主键/时间戳），无人工填写标准
+      created_at:
+        type: timestamptz
+        required: false
+        standard: 自动生成，无人工填写标准
+  ig_company_edge:
+    pk: edge_id
+    fields:
+      edge_id:
+        type: bigint
+        required: false
+        standard: 自动生成（BIGSERIAL 主键），无人工填写标准
+      from_symbol:
+        type: text
+        required: true
+        standard: 供应商端；两端 symbol 必须非空（跨市场契约 2026-09-08 治本：禁把代码编码进 name 留空 symbol）；UNIQUE(from,to,year,source) 幂等锚
+        good_example: NVDA.US / 002463.SZ
+        bad_example: '''''（空端，53 边事故教训）'
+        validated_by:
+        - S15
+        - S18
+      to_symbol:
+        type: text
+        required: true
+        standard: 客户端；非上市对手方=UNLISTED:UE-（编码表引用）或按历史惯例空+to_name（存量兼容，新写禁空端）
+        good_example: 300750.SZ / UNLISTED:UE-a1b2c3d4e5f6
+        bad_example: '''''（新写禁空端）'
+      year:
+        type: smallint
+        required: true
+        standard: 关系数据年（年报年/新闻年）——信息描述哪一年，非采集年
+        good_example: 2025（2025 年报关系）
+      product:
+        type: text
+        required: false
+        standard: 供应的产品/服务（'AI服务器整机代工'/'HBM3'）；新闻级事件边写事件内容
+      weight:
+        type: real
+        required: false
+        standard: 数值（与 weight_type 配对：占营收比/采购额亿）
+      weight_type:
+        type: text
+        required: false
+        standard: weight 的类型说明
+      source:
+        type: enum(vocab:sources)
+        required: true
+        standard: vocab:sources（决定 confidence 上限与三段式强制）
+        good_example: websearch
+      source_doc:
+        type: text
+        required: true
+        standard: 三段式；websearch 边缺任一段=整批拒绝
+        good_example: 宁德时代 供应商 2026|https://...|2026-09-10
+      from_name:
+        type: text
+        required: false
+        standard: 公司中文名；global/非上市端必填其一侧
+      to_name:
+        type: text
+        required: false
+        standard: 同上
+      amount:
+        type: numeric
+        required: false
+        standard: 金额（亿元）
+      rank:
+        type: smallint
+        required: false
+        standard: 前五大客户排位（1-5）
+      market:
+        type: enum(vocab:markets)
+        required: true
+        standard: cn 边=双侧 A 股；跨国边=global（混端边合法，symbol 按每端各自格式校验）
+        good_example: cn（双侧 A 股）/ global（含海外端）
+      valid_from:
+        type: date
+        required: true
+        standard: 关系开始生效（年报披露→报告期末；新闻→发布日）；websearch 必填（S17）；S20 反造假：不得早于 year-1 除非原文有据回溯（'YYYY年'正则放行）
+        validated_by:
+        - S17
+        - S20
+        good_example: 2025-12-31（年报报告期末）
+        bad_example: 2020-01-01（拍脑袋编历史→S20）
+      valid_to:
+        type: date
+        required: false
+        standard: NULL=至今；断供/换供应商证据日；无证据不填；更新纪律=关旧边开新边永不覆盖
+      as_of:
+        type: date
+        required: true
+        standard: 证据可日（决策者何时能看见）=年报披露日/新闻发布日——回测防前视核心；消费侧过滤恒用 as_of<=回测日，禁用 valid_from 过滤可知性（Owner 特别裁定）
+        good_example: 2026-03-28（年报披露日）
+        validated_by:
+        - S17
+      evidence_type:
+        type: enum(vocab:evidence_types)
+        required: true
+        standard: vocab:evidence_types（websearch 必填）
+        good_example: disclosed
+      revenue_pct:
+        type: real
+        required: false
+        standard: 该关系占供应商营收比（FactSet 对标，优先于绝对金额）——量化消费主字段
+      subsidiary:
+        type: text
+        required: false
+        standard: 关系实际挂的子公司名（FactSet 对标）
+      relevance:
+        type: smallint
+        required: false
+        standard: 关系相关度 1-5（FactSet relevance rank）
+      transmission_type:
+        type: array
+        required: false
+        standard: 传导类型枚举：利润传导/政策传导/价格传导/情绪传导（朝阳永续对标，因子分类维度）
+      capacity:
+        type: text
+        required: false
+        standard: 产能（Owner 2026-09-09 裁定供给侧两列）
+      exclusivity:
+        type: text
+        required: false
+        standard: 独供/双供标注（同上）
+      keywords:
+        type: array
+        required: false
+        standard: 边级新闻关键词（2026-09-09 调研 FactSet keywords 对标，新闻联动边级命中）
+      created_at:
+        type: timestamptz
+        required: false
+        standard: 自动
+  ig_equity_edge:
+    pk: edge_id
+    fields:
+      edge_id:
+        type: bigint
+        required: false
+        standard: 自动生成（BIGSERIAL 主键），无人工填写标准
+      holder:
+        type: text
+        required: true
+        standard: 持股方；symbol 三格式（cn/global/UNLISTED:UE-）或 PERSON:人名 前缀（自然人）；同 symbol 契约；UNIQUE(holder,held,as_of,source) 幂等锚
+        good_example: 000002.SZ / PERSON:张三
+      held:
+        type: text
+        required: true
+        standard: 被持股方；格式同 holder
+        good_example: 02533.HK / 830946.BJ（核证后）
+      stake_pct:
+        type: numeric
+        required: false
+        standard: 持股比例（%）
+      layer:
+        type: smallint
+        required: true
+        standard: 股权层级（直接持股=1，间接逐层+1）
+        good_example: 1（直接持股）
+      relation:
+        type: enum(vocab:equity_relations)
+        required: true
+        standard: 六值封闭（vocab.standard）；与 ig_company_edge 分域硬边界：资本关系禁入业务边表（开放问题 7 v2 裁定）
+        good_example: invests_in
+      as_of:
+        type: date
+        required: true
+        standard: 年报口径期末日或公告日（必填）；THS 被投列=2025-12-31
+        good_example: 2025-12-31（THS 年报口径）
+      valid_from:
+        type: date
+        required: false
+        standard: 关系生效日；不得晚于 as_of（时间倒挂拒绝）
+      valid_to:
+        type: date
+        required: false
+        standard: NULL=至今
+      acquisition_cost:
+        type: numeric
+        required: false
+        standard: 取得成本（股权避坑核心字段，Owner 裁定）
+      acquisition_date:
+        type: date
+        required: false
+        standard: 取得日
+      voting_pct:
+        type: numeric
+        required: false
+        standard: 表决权比例（UBO 五列，人行《受益所有人信息管理办法》对标）
+      control_method:
+        type: text
+        required: false
+        standard: 控制方式
+      holder_name:
+        type: text
+        required: false
+        standard: '持有方中文名（PERSON:/UNLISTED: 时必填其一侧）'
+      holder_country:
+        type: text
+        required: false
+        standard: 国家/地区（CN/HK/US…）
+      verification:
+        type: enum(vocab:equity_verification)
+        required: true
+        standard: 三值（vocab.standard）；THS 导出批量=unverified，逐条核过升 verified
+        good_example: unverified（THS 批量）
+      source:
+        type: enum(vocab:sources)
+        required: true
+        standard: vocab:sources
+        good_example: ths_export
+      source_doc:
+        type: text
+        required: true
+        standard: 三段式或 THS 变体；解析依据（繁简/ST剥离/更名公告URL）一并写入
+        good_example: 同花顺导出|个股1(1+2) 被投资公司简称(已上市)|2026-09-10
+      evidence:
+        type: text
+        required: false
+        standard: 原文摘录/解析依据（如「THS 被投名'际华集团'；stock_basic 现名'ST际华'，ST剥离后前缀唯一命中」）
+      created_at:
+        type: text
+        required: false
+        standard: 自动/存量列，无人工填写标准（补齐对账）
+  ig_unlisted_entity:
+    pk: ue_id
+    fields:
+      ue_id:
+        type: text
+        required: false
+        standard: UE-{md5(name|国家)[:12]} 自动生成；编码一经分配永不回收
+      name:
+        type: text
+        required: true
+        standard: 纯公司名（去内嵌代码）；北交所/海外实体一律登记留痕（Owner 2026-09-10 指令）——产业链↔主数据对账桥梁
+        good_example: 曙光数创
+        bad_example: 曙光数创(872808.BJ)（内嵌代码）
+      country:
+        type: text
+        required: true
+        standard: 国家/地区（消歧同名实体）；默认 CN；海外实体未定位前填 OVERSEAS
+        good_example: CN / OVERSEAS（未定位前）
+      status:
+        type: text
+        required: true
+        standard: 封闭枚举 unlisted/listed/merged；listed 必带 listed_symbol 一手来源；无代码不标 listed（北交所实体暂挂 unlisted+evidence 注明待核）
+        good_example: unlisted
+      listed_symbol:
+        type: text
+        required: false
+        standard: 上市后回填真代码（2330.TW/9973.HK/830946.BJ 格式）；NULL=未上市；回填后跑 promote 换码三步流程
+      covered:
+        type: boolean
+        required: true
+        standard: 主数据收录标记（Owner 2026-09-10：'数据库里有没有'）——FALSE=行情库（stock_basic/hk_stock_list）未收录；主数据扩源后按 covered=false 清单逐个 promote 对上
+        good_example: false（行情库未收录，待 promote）
+      source_doc:
+        type: text
+        required: true
+        standard: 登记来源（THS 台账/websearch 核证 URL）
+        good_example: 同花顺导出|缺口台账留痕登记|2026-09-10
+      as_of:
+        type: date
+        required: false
+        standard: 信息口径日（如 THS 2025 财年=2025-12-31）
+      created_at:
+        type: text
+        required: false
+        standard: 自动/存量列，无人工填写标准（补齐对账）
+      updated_at:
+        type: text
+        required: false
+        standard: 自动/存量列，无人工填写标准（补齐对账）
+  ig_product_revenue:
+    pk: id
+    fields:
+      symbol:
+        type: text
+        required: true
+        standard: 公司代码（cn 格式反查）；UNIQUE(symbol,year,product,source) 幂等锚
+        good_example: 688268.SH
+      year:
+        type: smallint
+        required: true
+        standard: 报告期年份（年报口径）
+        good_example: 2021（采购包年报口径）
+      product:
+        type: text
+        required: true
+        standard: 主营产品标准名（年报主营构成口径）
+        good_example: 特种气体
+      revenue_pct:
+        type: real
+        required: false
+        standard: 该产品营收占比 [0,1]；事实层 produces 关系 value 同源（2021 口径 as_of=2021-10-26，展示必须带年份防误读）
+      node_ref:
+        type: text
+        required: false
+        standard: 产品挂图谱环节的 node_id（可空；后续产品名→ig_node 对齐回填）
+      source:
+        type: enum(vocab:sources)
+        required: true
+        standard: vocab:sources
+        good_example: 483_top5_customer（采购管线）/ websearch
+      source_doc:
+        type: text
+        required: true
+        standard: 三段式/采购包标记
+        good_example: 华特气体 主营构成 2021|https://...|2026-09-10
+      evidence:
+        type: text
+        required: false
+        standard: 原文摘录（年报主营构成表原文）
+      as_of:
+        type: date
+        required: false
+        standard: 数据口径日——PIT 消费过滤字段，诚实标陈旧口径
+      created_at:
+        type: text
+        required: false
+        standard: 自动/存量列，无人工填写标准（补齐对账）
+      id:
+        type: text
+        required: false
+        standard: 自动/存量列，无人工填写标准（补齐对账）
+  ig_fact:
+    pk: fact_id
+    fields:
+      subject:
+        type: text
+        required: true
+        standard: 事实主语（公司代码或产品名，按 relation 定类型约束——supplies_to 两端须产品名）
+        good_example: 688268.SH（produces 关系=公司代码）
+      relation:
+        type: text
+        required: true
+        standard: 现存量七值：product_def/supplies_to/produces/subtype_of/belongs_to_sector/sector_parent_of/product_downstream_of；新 relation 须先在本行扩登记（词表封闭纪律）
+        good_example: produces
+      object:
+        type: text
+        required: true
+        standard: 事实宾语
+        good_example: 特种气体
+      value:
+        type: text
+        required: false
+        standard: 数值（produces=营收占比文本形态，如 '0.510725'=51.07%）
+      evidence_chunk_id:
+        type: text
+        required: false
+        standard: 证据回链 ig_chunk（反幻觉锚，every edge has a citation 对标）——新写入必填
+      confidence:
+        type: real
+        required: false
+        standard: ≤0.7（LLM 抽取 JSON schema 约束+规则校验）；采购包双文档互证=0.85
+      as_of:
+        type: date
+        required: false
+        standard: 抽取口径日
+      source:
+        type: enum(vocab:sources)
+        required: true
+        standard: vocab:sources
+        good_example: 483_top5_customer（采购管线）
+      created_at:
+        type: text
+        required: false
+        standard: 自动/存量列，无人工填写标准（补齐对账）
+      fact_id:
+        type: text
+        required: false
+        standard: 自动/存量列，无人工填写标准（补齐对账）
+      market:
+        type: text
+        required: false
+        standard: 自动/存量列，无人工填写标准（补齐对账）
+  ig_chunk:
+    pk: chunk_id
+    fields:
+      chunk_id:
+        type: text
+        required: false
+        standard: CK- 前缀+来源标识（如 CK-ths-{代码}）；主键幂等；自动生成（主键/时间戳），无人工填写标准
+      doc_id:
+        type: text
+        required: false
+        standard: FK→ig_document（同批次先写 document 或存量已有）
+      title:
+        type: text
+        required: false
+        standard: 块标题（'300750.SZ 宁德时代 公司简介'式）
+      doc_type:
+        type: text
+        required: false
+        standard: ths_profile 等（自由词，来源类型标识）
+      year:
+        type: smallint
+        required: false
+        standard: 内容年份
+      chunk_text:
+        type: text
+        required: true
+        standard: 全量原文文本（内容颗粒度不变全部入库，Owner 2026-09-07 裁定）；向量检索走 E 盘 embeddings 不建 PG 向量列
+        good_example: （公司简介原文全文，禁摘要禁改写）
+      created_at:
+        type: timestamptz
+        required: false
+        standard: 自动
+  ig_document:
+    pk: doc_id
+    fields:
+      doc_id:
+        type: text
+        required: false
+        standard: DOC- 前缀+来源标识；自动生成（主键/时间戳），无人工填写标准
+      relative_path:
+        type: text
+        required: true
+        standard: UNIQUE 幂等锚（相对路径）
+        good_example: docs/_working/同花顺资料/个股1(1+2)_公司简介.tsv
+      is_canonical:
+        type: boolean
+        required: true
+        standard: canonical 去重组
+        good_example: 'true'
+      doc_type:
+        type: text
+        required: false
+        standard: ths_profile 等
+      parse_status:
+        type: text
+        required: true
+        standard: raw/parsed 等（管线状态）
+        good_example: raw
+      source_note:
+        type: text
+        required: true
+        standard: 来源标记（三段式或采购标记）
+        good_example: 同花顺导出|docs/_working/同花顺资料|2026-09-10
+      excluded:
+        type: boolean
+        required: true
+        standard: 排除标记
+        good_example: 'false'
+      market:
+        type: enum(vocab:markets)
+        required: true
+        standard: 默认 cn
+        good_example: cn
+      extracted_text_path:
+        type: text
+        required: false
+        standard: 自动/存量列，无人工填写标准（补齐对账）
+      updated_at:
+        type: text
+        required: false
+        standard: 自动/存量列，无人工填写标准（补齐对账）
+      org:
+        type: text
+        required: false
+        standard: 自动/存量列，无人工填写标准（补齐对账）
+      bundle:
+        type: text
+        required: false
+        standard: 自动/存量列，无人工填写标准（补齐对账）
+      title:
+        type: text
+        required: false
+        standard: 自动/存量列，无人工填写标准（补齐对账）
+      mtime:
+        type: text
+        required: false
+        standard: 自动/存量列，无人工填写标准（补齐对账）
+      exclude_reason:
+        type: text
+        required: false
+        standard: 自动/存量列，无人工填写标准（补齐对账）
+      size_bytes:
+        type: text
+        required: false
+        standard: 自动/存量列，无人工填写标准（补齐对账）
+      year:
+        type: text
+        required: false
+        standard: 自动/存量列，无人工填写标准（补齐对账）
+      ext:
+        type: text
+        required: false
+        standard: 自动/存量列，无人工填写标准（补齐对账）
+      created_at:
+        type: text
+        required: false
+        standard: 自动/存量列，无人工填写标准（补齐对账）
+      parent_doc:
+        type: text
+        required: false
+        standard: 自动/存量列，无人工填写标准（补齐对账）
+      source_root:
+        type: text
+        required: false
+        standard: 自动/存量列，无人工填写标准（补齐对账）
+      file_hash:
+        type: text
+        required: false
+        standard: 自动/存量列，无人工填写标准（补齐对账）
+      dedup_group:
+        type: text
+        required: false
+        standard: 自动/存量列，无人工填写标准（补齐对账）
+      file_name:
+        type: text
+        required: false
+        standard: 自动/存量列，无人工填写标准（补齐对账）
+  ig_company_metric:
+    pk: id
+    fields:
+      symbol:
+        type: text
+        required: true
+        standard: 公司代码；UNIQUE(symbol,year,metric,source) 幂等锚
+        good_example: 002463.SZ
+      year:
+        type: smallint
+        required: true
+        standard: 指标年度
+        good_example: '2025'
+      metric:
+        type: text
+        required: true
+        standard: 封闭五值：customer_hhi/customer_stability/top1_ratio/top5_ratio/supply_chain_resilience；新指标须先在 SOP §4.6 登记词表再写入
+        good_example: top5_ratio
+      value:
+        type: real
+        required: false
+        standard: 指标数值（top5_ratio=0.62 即 62%）
+      value_aux:
+        type: real
+        required: false
+        standard: 辅助数值
+      source:
+        type: enum(vocab:sources)
+        required: true
+        standard: vocab:sources
+        good_example: websearch
+      market:
+        type: enum(vocab:markets)
+        required: true
+        standard: 默认 cn
+        good_example: cn
+      as_of:
+        type: date
+        required: false
+        standard: PIT 三件套（v4 增列）——回测切片防前视
+      valid_from:
+        type: date
+        required: false
+        standard: PIT 起日
+      valid_to:
+        type: date
+        required: false
+        standard: NULL=至今
+      created_at:
+        type: text
+        required: false
+        standard: 自动/存量列，无人工填写标准（补齐对账）
+      id:
+        type: text
+        required: false
+        standard: 自动/存量列，无人工填写标准（补齐对账）

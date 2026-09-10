@@ -4956,6 +4956,14 @@ capabilities:
     metrics）。与 MOD-TDMVAL-001 消融算子是姊妹算子（一减一加，禁止合并）。canonical =
     src/zephyr/pf_core/strategy_engine/framework_composer.py。
 creation_tokens:
+- file: docs/01_policies_and_standards/_registry/catalogs/industry_graph_field_dictionary.yaml
+  token: ig-field-dictionary-20260910
+  created_by: st-igbe-20260910
+  capability: industry_graph_field_dictionary
+- file: scripts/industry_graph/vocab_loader.py
+  token: ig-vocab-loader-20260910
+  created_by: st-igbe-20260910
+  capability: industry_graph_field_dictionary
 - file: src/zephyr/data/tick_depth_writer.py
   token: qmt-day-depth-writer-20260909
   created_by: qmt-day-20260909

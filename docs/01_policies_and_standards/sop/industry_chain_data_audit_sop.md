@@ -166,7 +166,9 @@ related_modules:
 - 恢复 = Owner 醒后人工裁定执行，夜班 AI 只备份不恢复。
 - **禁止 DELETE/TRUNCATE/DROP**（备份表除外，也不许动）。
 
-### 4.6 字段字典（数据标准真源，2026-09-07 增补）
+### 4.6 字段字典（数据标准真源，2026-09-07 增补；2026-09-10 真源迁移声明）
+
+> **【真源迁移（Owner 2026-09-10 方案 A 裁定）】字段定义与词表的唯一真源 = [industry_graph_field_dictionary.yaml](../_registry/catalogs/industry_graph_field_dictionary.yaml)**（12 表逐字段：类型/必填/词表/填写标准/正反例/validated_by 反挂引擎检查项）。工具与引擎词表已改为从该 YAML 加载（scripts/industry_graph/vocab_loader.py），对齐由 `tests/industry_graph/test_field_dictionary_alignment.py` 机械强制（YAML↔DDL↔工具↔引擎四方，漏改一处 commit 红）。**本节保留的只有夜班操作纪律**（时效三件套/过期公式/写入方式约定）；下文字段表保留作速查，凡与字段字典冲突以字段字典为准。
 
 > 七表全字段标准。夜班 AI 写入任何一列前必读本节对应行；`websearch_ingest.py` 硬校验以此为准。**时效三件套**（version\_year / year / source\_doc 采集日期）是过期判定的唯一依据，缺一不可。
 
