@@ -1305,7 +1305,13 @@ def _cmd_drain(args: argparse.Namespace) -> int:
     # 2026-09-10 治本（死信事故排查第二处缺口）：CLI drain MUST 接真 landing——
     # A 段默认桩=标记 done 不真提交，对真实队列是"假 done 丢内容"footgun；
     # B 段真落地在 bootstrap_drain_with_landing，但 CLI drain 一直没回接。
-    # 延迟 import 防循环（commit_queue_landing → commit_queue as cq）。
+    # 延迟 import 防循环；直跑场景（sys.path[0]=scripts/）补 repo 根防 scripts.governance 不可达。
+    import sys as _sys
+
+    _repo_root_str = str(Path(__file__).resolve().parents[1])
+    if _repo_root_str not in _sys.path:
+        _sys.path.insert(0, _repo_root_str)
+    from scripts.governance.commit_queue_landing import WorktreeLanding  # noqa: PLC0415
     from scripts.governance.commit_queue_landing import WorktreeLanding  # noqa: PLC0415
 
     landing = WorktreeLanding(repo_root=_REPO_ROOT, queue_root=args.queue_root)
