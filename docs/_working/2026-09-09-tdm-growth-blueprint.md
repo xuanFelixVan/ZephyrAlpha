@@ -75,7 +75,7 @@ ttl: task_bound
 | G1 | **明日情绪盘中滚动预测** | L0-02 偏离监控（姊妹节点）或 L1-S5 扩展 | "明日情绪滚动预测→回写今日仓位档"：盘中每 N 分钟用 8 态预测+相似日推理滚动更新明日概率，悲观则下调今日 stance（Owner 场景：拿不准明天→今天减仓） | 盘点：next_day_8state_forecast/similar_day_evaluator/brier_calibration 零件在；tomorrow_boundary_planner 明文"不读盘中数据"=断链实证 | 设计中（反查先行） |
 | G2 | **资讯-产业链传导**（主分支） | L1-S0 宏观传感器 + L2-09 催化剂 + L3-04 负面否决 | 事件→产业链节点命中→受冲击标的/板块→盘中消费（偏离监控/盘中扫描/否决器）。节点规格由接线会话交付，本轨统一落图 | 管道在建（他会话）；入图设计归本轨 | 待接线交付 |
 | G3 | 币圈四节点展开 | TDM-C-L1~L4 | 每节点下设计 L1 传感器/赛道/币对/执行的子骨架（设计稿，实现待 Owner 立项） | 待做 | 挂起 |
-| G4 | 执行成本反馈闭环 | L4-09/L4-13 | TCA 实测冲击成本→回写执行算法选择（EXA 选型自学习） | 盘点：ex_sor/slippage_analyzer+execution_quality_scorer+t0_cost_model 在 | 反查后定 |
+| G4 | 执行成本反馈闭环 | L4-09/L4-13 | TCA 实测冲击成本→回写执行算法选择（EXA 选型自学习） | 盘点：ex_sor/slippage_analyzer+execution_quality_scorer+t0_cost_model 在 | **已落图**（增长批2：TDM-E-L4-14，2026-09-10 夜班） |
 | G5 | 现有节点有据拆分 | L4-02 等 | 竞价/盘中/尾盘三段——**先挂起**：流根落地看过全景再定（Owner 已裁先不动） | — | 挂起 |
 | G6 | 流根四节点 | 四流末端 | TDM-E-FLOW 建仓流/TDM-P-FLOW 持仓流/TDM-X-FLOW 离场流/TDM-F-FLOW 组合流（aggregation，输出=今日买卖清单） | 设计已完成（上轮方案） | **已落地**（他会话合并批次 23da636683 入图，2026-09-09 深夜；地图 133 节点/185 边） |
 
@@ -135,10 +135,22 @@ ttl: task_bound
 - ⑤前端：既有呈现=F-MODLIB-AUTO-33"明日 8 态推演"+F-REVIEW-AUTO-17"明日预案"；**需求登记单（只登记不施工，归前端会话）**：8 态推演卡的盘中滚动版（四时点刷新）+降档预警徽章。
 - ⑥数据字段：DS-150/082/107 全已登记，无 DATA-GAP；A 股适配闸=T+1 下"今天减仓防明天"合法（SSRN CSI300 直接适配）。
 
-| G2 资讯-产业链传导 | 等接线会话规格卡（管道在建） | — | — | 挂起（等交付） |
+**增长批2 晨审移交清单**（2026-09-10 夜班，night-pathfinding-2300）：
+1. **R21 module_id 格式冲突**（落图时实锤）：execution_quality_scorer.py 的 depgraph blueprint_id=`MOD-EX_SOR_EXT-002`（带下划线），地图 R21 正则 `MOD-[A-Z0-9]+(-[A-Z0-9]+)*` 不认下划线——写原 id 报格式错、去下划线报对账错，两真源格式互斥。涉 id 改名跨域（depgraph 缓存+44 号域文档+模块蓝图头），非夜班轨可决；TDM-E-L4-14 暂留 module_ref 无 module_id（warn 级欠账有先例）。
+2. **X-R1 外部方法三件**的 A 股离散化改造方案：CPPI（Black-Perold 1992）/回撤控制（Grossman-Zhou 1993）/趋势危机 alpha（Hurst-Ooi-Pedersen 2017），URL 见台账 X-R1 行。
+3. **G4 RL 执行远期候选**：arXiv 2411.06389 (2024)、2507.06345 (2025)——A 股 T+1/涨跌停/拆单限制（execution_route_policy"打板不可拆单"）需改造，暂不立项。
+4. **DAL 补登**：DAL-MA-ALIGN code_ref 补 `src/zephyr/regime/features/index_sensor.py`（现 registry code_ref=None 而代码已在产）；DAL-BREADTH-SCORE 广度计分核=施工候选（MOD-DATA-062 采集在、计分缺）。
+5. **前端需求两张**（只登记，移交 st-tdmfe）：指数趋势分卡（L1-S1，-2~+2+四时点刷新）；涨停板生态卡（L1-S2，梯队/断层/晋级率，limit_up_ecosystem_leadership 模块头已注候选）。
+6. **G1 遗留**：latency_budget R39 欠账（随 C13 实测补，前批已登记）。
+
+| G2 资讯-产业链传导 | 复核（2026-09-10 夜班批2）：L2-09-1/L2-09-2 红节点在图（bc0e322b 骨架）；今晚活跃会话无接线轨（session registry 核实），W3/W4 规格卡未交付 | — | — | 挂起（维持，等交付） |
 | G3 币圈四节点展开 | 未启动 | — | — | 挂起 |
-| G4 执行成本反馈闭环 | 未启动（边界2 候选） | — | — | 挂起 |
 | G5 现有节点拆分 | Owner 裁先不动 | — | — | 挂起 |
 | G6 流根四节点 | 已落地（他会话 23da636683） | — | 23da636683 | 已落图 |
+| L1-S1 大盘指数传感器（样板六向，2026-09-10 增长批2） | 六向全走：③算法=挂 DAL-MA-ALIGN（design）——code=index_sensor.py MOD-REGIME-016 已挂 module_ref 且模块消费者行点名本节点，registry↔code↔map 三角闭合；①上游=查无缺口：北向盘中信号**驳回**（披露机制 2024-05-13 取消实时买卖额、2024-08-19 起个股持股改季度——盘中无数据可算；来源：证券时报 stcn.com/article/detail/1203876.html + 沪深交易所 2024-04-12 两阶段公告）；DS-110 A50 期货候选**暂不挂**（index_sensor 零消费 A50，挂了=挂而不用，待隔夜腿立项）；D109 终裁已规划攻防板块特征（DS-170 注释在节点上）不重复；②下游=L1-AGG 已接、权重=DAL-AGG-DUALAX 在 DAL；④后端=MOD-REGIME-016 在；⑤前端需求登记单：指数趋势分卡（-2~+2 视觉化+四时点刷新，归前端会话，只登记不施工）；⑥数据=DS-150 在产 | validate errors=0 / 双测试 98 绿 / align_all exit0 | 本批（增长批2） | 已落图（algo_refs 挂载；样板结论：传感器层缺的是 registry 三角闭合，不是新节点） |
+| L1-S2 市场内部结构传感器（2026-09-10 增长批2） | ①上游=data_refs+[DS-108] 分钟级宽度快照（MOD-DATA-062 采集器 production 在产）；连板梯队明细=**DATA-GAP 挂账**（limit_up_pool_collector testing 待 DDL 建表，GAP-F-13；字段可登记=封板资金/炸板次数/连板高度已在采集器 invariants 全列）；③算法=挂 DAL-BREADTH-SCORE（design 无代码=广度计分核缺口：采集在/计分缺→施工候选挂晨审）；MOD-SIG-097 连板梯队 leadership（testing）=深化候选记档；外部佐证（两独立源印证涨停生态结构信息含量）：Seasholes-Wu 2007 *Journal of Empirical Finance* 14(5) 590-610 上证涨停板注意力买入（sciencedirect.com/science/article/abs/pii/S0927539807000308）+磁吸效应实证《管理科学学报》涨停侧存在/跌停侧无（jmsc.tju.edu.cn/jmsc/article/html/20080514） | validate errors=0 / 双测试 98 绿 / align_all exit0 | 本批（增长批2） | 已落图（data_refs/algo_refs 挂载；DATA-GAP 挂账待 DDL） |
+| L2-05 水温响应（2026-09-10 增长批2） | ①上游=已通（S5 11 信号环比→L2-05-1 主判+月/周封顶）；③算法=sentiment_cycle.py 五阶段 phase_prob+STRATEGY_DEPLOYMENT_MATRIX 与 L2-05-2 信号响应三件套语义对位，但 MATURITY=new、CONSUMERS 全"待 G07 相关性验证"→**闸 4 不过禁入图**，挂起候选（验证过后挂 L2-05-2）；DAL 无对应条目（DAL-EMO-SIXSEG=六段周级，非五阶段情绪周期，勿混）；外部佐证：Baker-Wurgler 2006 *Journal of Finance* 61(4) 经典（pages.stern.nyu.edu/~jwurgler/papers/wurgler_baker_cross_section.pdf）+A 股 CICSI/PCA 派生文献多源+北大中国投资者情绪指数 | 四闸：闸 4 不过（算法未验证） | — | 挂起（待 G07 相关性验证） |
+| G4 执行成本反馈闭环→L4-06（TDM-E-L4-14，2026-09-10 夜班批2） | 五步全走完：①母节点=L4-06 姊妹（定为 TDM-E-L4-14，parent=TDM-E-L4，盘后）②四道前置检查过——盘点：slippage_analyzer(MOD-EX_SOR_EXT-001 production)+execution_quality_scorer(MOD-EX_SOR_EXT-002 production)+algo_execution_selector(MOD-XS-011 production) 三零件全在；**断链实证=scorer 消费者行写"MOD-XS-011 算法选择器反馈环"，但 selector 源码零 import quality/feedback（grep 实证 2026-09-10）=闭环未接线**；父节点 L4 定稿✓；树枝级✓ ③D108 三条件过（独立输入=成交流水/独立输出=选型偏好回写/可回测=分算法执行成本对比/非参数变体）④设计稿=本行+地图节点 ⑤落图 138 节点+2 边（L4-10→L4-14 feed、L4-14→L4-06 feedback，S1↔S3 双向 feedback 同款先例）+施工清单立 C14；外部佐证：Almgren-Chriss 2000 *Journal of Risk* 3(2) 经典（risk.net/journal-risk/2161150）+RL 执行近作 arXiv 2411.06389(2024)/2507.06345(2025)（远期候选挂晨审：A 股 T+1/涨跌停/拆单限制需改造） | validate errors=0 / 双测试 98 绿 / align_all exit0 / 网关提交 | 本批（增长批2） | 已落图（模块=C14 接线待排期；module_id 欠账=R21 格式冲突挂晨审） |
+| X-R1 熔断族（2026-09-10 增长批2，CORE 域发现挂晨审） | ①上游=查无缺口（DAL-CIRCUIT-5 production 输入=组合日盈亏+回撤，组合内部量非外部 DS，data_refs 留空正当）；③算法外部三件全带 URL 挂晨审：CPPI=Black-Perold 1992 *JEDC* 16(3-4)（sciencedirect.com/science/article/pii/016518899290043E）+回撤控制=Grossman-Zhou 1993 ***Mathematical Finance*** 3(3)（常被误引 JF，onlinelibrary.wiley.com/doi/10.1111/j.1467-9965.1993.tb00044.x）+趋势危机 alpha=Hurst-Ooi-Pedersen 2017 *JPM* 44(1) 1880 起 67 市场危机期正收益（fairmodel.econ.yale.edu/ec439/hurst.pdf）；A 股适配闸：T+1+跌停无法卖出→CPPI 连续调仓不可行需离散化改造（晨审议题）；②下游=已接（R1→X-S1-06/F-C2-01/P2-01） | 发现全挂晨审（CORE 域纪律） | — | 挂起（晨审清单 3 项） |
 
 **纪律**：真源 YAML 只在批次边界动；禁越级立节点（父未定不立子）；新节点必须有数据来源或标 [ASSUMPTION]；每批台账+地图同 commit；本文档 ttl: task_bound，增长收官归档。

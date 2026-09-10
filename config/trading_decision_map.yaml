@@ -265,6 +265,7 @@ nodes:
     data_refs: [DS-150]
     module_ref: src/zephyr/regime/features/index_sensor.py
     module_id: MOD-REGIME-016
+    algo_refs: [DAL-MA-ALIGN]
     note_confirmed: "2026-09-10"
     # （D109 终裁）：攻防板块特征入本层——券商指数 5 日超额/银行指数 5 日超额/券商÷银行涨幅比（>1 且放量=进攻态；银行独涨+科技跌=避险标签；银行与科技 20 日同涨且相关性转正=哑铃市双主线）；数据=DS-170 板块 K 线；先产特征不联动仓位，回测验证预测力后联动
     strategy_mounts: []
@@ -281,9 +282,11 @@ nodes:
       数涨停/跌停家数、算炸板率、看连板梯队高度：涨跌停比>3 且炸板率<30%=强势；连板高度从 5 板断崖到 2 板=退潮预警。
       广度结构给市场参与度打分。
     factor_refs: []
-    data_refs: [DS-082]
+    # 增长批2（night-pathfinding-2300）：补分钟级宽度快照（MOD-DATA-062 采集器 production 在产）；连板梯队明细表待 DDL 建表（GAP-F-13，limit_up_pool_collector testing）=DATA-GAP 挂账
+    data_refs: [DS-082, DS-108]
     module_ref: src/zephyr/signal_ashare/limit_up_followthrough.py
     module_id: MOD-SIG-078
+    algo_refs: [DAL-BREADTH-SCORE]
     strategy_mounts: []
 
   - node_id: TDM-E-L1-S3
@@ -2076,6 +2079,34 @@ nodes:
     fallback: 对账不平→halt 新单+人工介入（宪章约束五 RTO 语义）
     strategy_mounts: []
 
+  - node_id: TDM-E-L4-14
+    name_zh: 执行成本反馈与选型回写
+    market: cn_a
+    flow: entry_flow
+    layer: L4
+    node_type: stage
+    point: 盘后
+    decision_question: 今天实测滑点和成交质量比发单前预估差多少，下批同类大单换不换算法
+    algo_note_zh: >-
+      盘后把成交回报对一遍账：实测滑点按买/卖方向拆冲击/时机/价差分量，加成交质量评分（好/可/差三档），
+      与 L4-09 发单前的成本预估比对；偏差按执行算法分桶累积，喂执行算法选择器当评分输入——
+      某算法连续实测比预估差就降它的权重，下批同类单换算法（Almgren-Chriss 2000 经典：执行=冲击成本与时机风险的权衡）。
+      三零件全在且 production（滑点分析器+质量评分器+算法选择器），缺把三者接成环的接线——
+      质量评分器的消费者行写着"选择器反馈环"，但选择器代码还没消费它（断链实证 2026-09-10）。
+      RL 执行为远期候选（A 股 T+1/涨跌停/拆单限制需改造，挂晨审）。
+    parent_node: TDM-E-L4
+    factor_refs: []
+    data_refs: [DS-008]
+    module_ref: src/zephyr/ex_sor/services/execution_quality_scorer.py
+    # module_id 欠账：depgraph blueprint_id=MOD-EX_SOR_EXT-002 带下划线，R21 正则 MOD-[A-Z0-9-]+ 不认（写了报格式错、改写报对账错）——格式冲突挂晨审，勿擅自改 id
+    algo_refs: []
+    doc_ref: null
+    activation: postmarket
+    invalidation: null
+    ai_autonomy: auto
+    strategy_mounts: []
+    tags: [G4, 增长批2]
+
   - node_id: TDM-P-P1
     name_zh: 持仓体检
     market: cn_a
@@ -3619,6 +3650,9 @@ edges:
   - {from_node: TDM-E-L4-10, to_node: TDM-E-L4-13, edge_type: feed}
   - {from_node: TDM-E-L4-11, to_node: TDM-E-L4-13, edge_type: feed}
   - {from_node: TDM-E-L4-13, to_node: TDM-F-C3-01, edge_type: feed}   # 归因汇聚改落引擎节点（原落 hub 父节点致引擎零入边，外审 M-04）
+  # ── 增长批2（G4 执行成本反馈闭环，night-pathfinding-2300）：L4-14 盘后成本评估+选型回写 ──
+  - {from_node: TDM-E-L4-10, to_node: TDM-E-L4-14, edge_type: feed}   # 订单生命周期/成交流水喂成本评估
+  - {from_node: TDM-E-L4-14, to_node: TDM-E-L4-06, edge_type: feedback}   # 实测成本回写算法选型偏好（S1↔S3 双向 feedback 同款先例）
   - {from_node: TDM-E-L2-05-1, to_node: TDM-E-L3-06, edge_type: feed}
   - {from_node: TDM-E-L2-06-2, to_node: TDM-E-L3-07-1, edge_type: feed}
   - {from_node: TDM-E-L2-06-3, to_node: TDM-E-L3-02, edge_type: feed}
