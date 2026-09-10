@@ -103,3 +103,24 @@ __all__.append("RlExecContract")
 __all__.append("RlExecBoundary")
 
 __all__.append("SorAgent")
+
+# XS-016 Sell Session Router（gw-tdm-20260909：C12 时段路由接线，包门面再导出）
+from zephyr.ex_sor.core.sell_session_router import (
+    RouteUrgency,
+    SellChannel,
+    SellRouteDecision,
+    SellSessionRouterError,
+    SessionRouterConfig,
+    SessionWindow,
+    classify_session,
+    route_sell,
+)
+
+__all__.append("RouteUrgency")
+__all__.append("SellChannel")
+__all__.append("SellRouteDecision")
+__all__.append("SellSessionRouterError")
+__all__.append("SessionRouterConfig")
+__all__.append("SessionWindow")
+__all__.append("classify_session")
+__all__.append("route_sell")

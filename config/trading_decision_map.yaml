@@ -2955,6 +2955,7 @@ nodes:
 
   - node_id: TDM-X-S2-03
     name_zh: 执行时段路由
+    # C12 施工（gw-tdm-20260909）：MOD-XS-016 落码回填 module_ref/module_id
     market: cn_a
     flow: exit_flow
     layer: S2
@@ -2968,7 +2969,9 @@ nodes:
     parent_node: TDM-X-S2
     factor_refs: []
     data_refs: []
-    module_ref: null
+    module_ref: src/zephyr/ex_sor/core/sell_session_router.py
+    module_id: MOD-XS-016
+    note_confirmed: "2026-09-10"
     algo_refs: []
     doc_ref: null
     activation: intraday
