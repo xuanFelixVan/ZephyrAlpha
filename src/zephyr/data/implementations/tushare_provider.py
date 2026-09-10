@@ -134,6 +134,7 @@ class TushareProvider(IngestProviderBase):
             "industry_class",
             "industry_class_suppl",
             "lof_list",
+            "etf_list",
             "index_list",
             "money_flow",
             "futures_term_structure",
@@ -211,6 +212,8 @@ class TushareProvider(IngestProviderBase):
             yield from self._fetch_industry_class_suppl(payload, policy)
         elif capability == "lof_list":
             yield from self._fetch_lof_list(payload, policy)
+        elif capability == "etf_list":
+            yield from self._fetch_etf_list(payload, policy)
         elif capability == "index_list":
             yield from self._fetch_index_list(payload, policy)
         elif capability == "money_flow":
@@ -664,6 +667,95 @@ class TushareProvider(IngestProviderBase):
                 ))
 
         self._log.info(f"index_list: {len(rows)} 只指数（tushare index_basic 全市场含退市）")
+        yield FetchResult(
+            table=table,
+            columns=columns,
+            rows=rows,
+            last_key=today_str,
+            elapsed_sec=seconds_since(t0),
+        )
+
+    def _fetch_etf_list(self, payload: FetchPayload, policy: SourcePolicy) -> Iterator[FetchResult]:
+        """ETF 基金列表全量刷新，写入 c1_market.etf_list。
+
+        2026-09-11 接线（数据总览体检 P8 收尾，known_data_gaps etf_list_list_date_sentinel）：
+        原 sina 源无成立/上市日期，list_date 全 1970 哨兵（旧批已 PIT 关死
+        valid_to=valid_from）。tushare fund_basic(market="E") 是场内大桶（ETF+LOF+REITs
+        混装，fund_type=投资风格不区分上市类型），按代码段过滤 ETF：SH 51/52/53/55/56/58
+        开头 + SZ 15 开头（52/53/55=沪市新段首跑实证：漏掉即 78 只旧 ETF 残留墓碑；
+        剔除 LOF 501/503/16x 与 REITs 508/18x）；真实
+        found_date/list_date，退市 ETF（status=D）delist_date→valid_to 闭区间；
+        valid_from 由 CH 列 DEFAULT toDate(list_date) 自动填真值。
+        etf_code 保持库内既有 sh560650 无点格式（ORDER BY=(etf_code)，改格式=双宇宙）；
+        index_code/index_name tushare 不提供（benchmark 为业绩基准自由文本不入结构化列，
+        旧 sina 行该两列实证亦为空，零回归）。
+        """
+        table = _TBL_ETF_LIST
+        columns = ["etf_code", "etf_name", "etf_abbr", "full_name", "index_code",
+                   "index_name", "setup_date", "list_date", "list_status", "exchange",
+                   "manager", "custodian", "mgmt_fee", "etf_type", "valid_to"]
+        today_str = datetime.date.today().isoformat()
+        t0 = now_utc()
+
+        def _ts_date(v: Any) -> datetime.date | None:
+            """tushare 日期 'YYYYMMDD'/'YYYY-MM-DD'/空 → date（空返回 None）。"""
+            s = str(v or "").strip()
+            if not s or s.lower() in ("nan", "none", "nat"):
+                return None
+            try:
+                return datetime.datetime.strptime(s.replace("-", "")[:8], "%Y%m%d").date()
+            except ValueError:
+                return None
+
+        def _is_etf_code(ts_code: str) -> bool:
+            """场内大桶 → ETF 代码段过滤（SH 51/52/53/55/56/58 + SZ 15；词表见 docstring）。"""
+            try:
+                code, suffix = ts_code.split(".")
+            except ValueError:
+                return False
+            return (suffix == "SH" and code[:2] in ("51", "52", "53", "55", "56", "58")) or \
+                (suffix == "SZ" and code[:2] == "15")
+
+        try:
+            df = self._call_with_policy(self._pro.fund_basic, policy, market="E")
+        except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
+            yield FetchResult(
+                table=table,
+                columns=columns,
+                rows=[],
+                last_key="",
+                elapsed_sec=seconds_since(t0),
+                error=str(e),
+            )
+            return
+
+        rows: list[tuple] = []
+        if df is not None and not df.empty:
+            for _, r in df.iterrows():
+                ts_code = str(r.get("ts_code", "") or "")
+                if not _is_etf_code(ts_code):
+                    continue
+                code, suffix = ts_code.split(".", 1)
+                status = str(r.get("status", "") or "")
+                rows.append((
+                    suffix.lower() + code,                  # etf_code：保持 sh560650 库内既有格式
+                    str(r.get("name", "") or ""),
+                    "",                                     # etf_abbr（tushare 无简称列）
+                    "",                                     # full_name（tushare 无全称列）
+                    "",                                     # index_code（tushare 无跟踪指数代码）
+                    "",                                     # index_name（同上）
+                    _ts_date(r.get("found_date")) or datetime.date(1970, 1, 1),  # setup_date 非空 Date 列哨兵
+                    _ts_date(r.get("list_date")) or datetime.date(1970, 1, 1),   # 未上市新基走哨兵（审计已排除 1970）
+                    "上市" if status == "L" else ("退市" if status == "D" else status),
+                    suffix,                                 # exchange：SH/SZ
+                    str(r.get("management", "") or ""),     # 管理人
+                    str(r.get("custodian", "") or ""),      # 托管人
+                    float(r.get("m_fee") or 0.0),           # 管理费%
+                    str(r.get("fund_type", "") or ""),      # 股票型/债券型/混合型/货币型/其他
+                    _ts_date(r.get("delist_date")),         # valid_to：退市=闭区间终止日，在市=None
+                ))
+
+        self._log.info(f"etf_list: {len(rows)} 只 ETF（tushare fund_basic 场内桶代码段过滤，含退市）")
         yield FetchResult(
             table=table,
             columns=columns,

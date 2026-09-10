@@ -413,7 +413,7 @@ gaps:
     end_date: null  # 直到补真实 list_date 源
     date_column: "list_date"
     detection_threshold: 1
-    status: "accepted"  # 全表 3278 行 valid_to=valid_from 关死（禁物理 DELETE，可逆）
+    status: "completed"  # 2026-09-11 tushare fund_basic 接线完成（C1），旧墓碑已被新行替换清零
     root_cause: "sina 源 fund_etf_category_sina 无成立/上市日期（空串），写入器以
       1970-01-01 哨兵防 Code 38 整批失败（2026-08-14 有意设计）；valid_from DEFAULT
       toDate(list_date) 连带=1970。ETF 代码/名称本身真实（etf_nav 上游消费不受影响
@@ -422,6 +422,104 @@ gaps:
     resolution_plan: "治本=给 etf_list 补真实 list_date 源（tushare fund_basic market=E
       有 list_date，但 etf_list 14 列 sina 形状需列映射设计，防 index_code/manager 等
       字段回归），立项后切换；在此之前接受 list_date 零值+审计侧已有 1970 排除兜底。"
-    primary_alternative: "无"
+    resolution_actual: "2026-09-11 接线完成（数据总览二批 C1）：tushare_provider 新增
+      etf_list capability（fund_basic(market=E) 场内大桶代码段过滤——SH 51/52/53/55/56/58
+      +SZ 15；52/53/55=沪市新段首跑实证漏掉即 78 只旧 ETF 残留墓碑；剔除 LOF 501/503/16x
+      与 REITs 508/18x）。tasks.yaml etf_list_refresh akshare→tushare，含退市 436 只
+      （delist_date→valid_to 闭区间）。etf_code 保持 sh560650 无点格式（ORDER BY 键，
+      改格式=双宇宙）；index_code/index_name tushare 不提供留空（旧 sina 行该两列实证
+      亦空，零回归）。首跑 2184 只真实 ETF 落库，list_date 全真值（在市 1748），
+      FINAL 墓碑 0。"
+    primary_alternative: "无（已治本，无需备选）"
     created: "2026-09-10"
-    last_updated: "2026-09-10"
+    last_updated: "2026-09-11"
+
+  # === 2026-09-11: stock_basic 日快照 4 天漏跑（数据总览二批 B1 triage）===
+  - id: "stock_basic_snapshot_days_missing"
+    table: "c1_market.stock_basic"
+    gap_type: "date_range"
+    start_date: "2026-08-17"
+    end_date: "2026-09-07"   # 缺口日=08-17/08-24/08-26/09-07（共 4 交易日，3 天为周一）
+    date_column: "trade_date"
+    detection_threshold: 1
+    status: "accepted"  # 快照型不可回补——akshare 交易所清单接口只返回当日清单
+    root_cause: "双调度点（盘前 08:30 stock_basic_premarket + 盘后 18:00 stock_basic_postclose）
+      当日双双失败。兄弟表取证：同日 stk_limit/st_stock_list/daily_valuation 均有 5500+ 行
+      ——调度器活着，是 akshare 交易所官网清单接口（stock_info_sh/sz_name_code）当日失败，
+      任务无重试兜底。daily_backfill 救不了：快照型任务只产当日清单，无历史日期参数。"
+    resolution_plan: "不可回补（源无历史清单接口）；那 4 天的清单语义由相邻日快照近似
+      （差量≈当日新上市几只，对 universe 构造影响可忽略）。防复发依赖下载监管 fail_cnt
+      告警（已在线），不另行立项。"
+    primary_alternative: "相邻日快照（08-16/08-18 等差集≈当日新上市股）"
+    created: "2026-09-11"
+    last_updated: "2026-09-11"
+
+  # === 2026-09-11: kline_sector_880 历史断档 312 日（数据总览二批 B2，最大缺口）===
+  - id: "kline_sector_880_history_structural"
+    table: "c1_market.kline_sector_880"
+    gap_type: "date_range"
+    start_date: "2024-12-07"   # 首段覆盖止于 2024-12 初；此后 2025 全年真空+2026 上半年散段
+    end_date: "2026-05-31"     # 缺口日合计 312（2025 全年 242 + 2024-12 残段 + 2026-01~05 散段）
+    date_column: "trade_date"
+    detection_threshold: 1
+    status: "pending"  # 历史回补需 tqcenter/mootdx 桥接立项；防复发已随批落地（days 5→30）
+    root_cause: "源=tqcenter（通达信客户端插件，requires_process=True）。任务 2026-07-30
+      才从手工脚本升级自动调度，且增量窗口 days=5——回看窗内一次漏跑=永久缺口。2025 全年
+      +2026-01~05 散段=手工脚本时代残留（2026-04/05 日均仅 ~6 行=个别板块凑数），
+      2026-06 起自动调度满负荷（338 行/日=460 板块全覆盖）。月度分布实证：
+      2024-10(2日)/2024-11(21)/2024-12(6)/2025 全缺/2026-01(2)/2026-02(0)/2026-03(6)/
+      2026-04(17)/2026-05(17)/2026-06 起(21+/月)。"
+    resolution_plan: "①防复发已落地：kline_sector_880_incremental days 5→30（30 天内
+      漏跑可被次日增量自愈）；②历史 312 日回补：tqcenter get_market_data 拉宽 days 或
+      mootdx index_bars TCP 直连翻页（通达信行情服务器保留数年日K，与 9/18 miniQMT
+      退役无关），需单独立项写回补执行器（走 provider+ch_writer 正门）。"
+    primary_alternative: "c1_market.kline_sector（mootdx 通道，count=100 回看近 100 日）"
+    created: "2026-09-11"
+    last_updated: "2026-09-11"
+
+  # === 2026-09-11: index_constituent 日快照散缺+08-31 部分行（数据总览二批 B3）===
+  - id: "index_constituent_snapshot_gaps"
+    table: "c1_market.index_constituent"
+    gap_type: "date_range"
+    start_date: "2026-08-22"   # 散缺口=08-22~27/09-03~04/09-07（9 交易日）+08-31 部分行 300/7722
+    end_date: "2026-09-07"
+    date_column: "trade_date"
+    detection_threshold: 1
+    status: "monitoring"  # 快照型不可回补；宇宙口径已核实充分（全指 000985 承担全 A 语义）
+    root_cause: "①日快照散缺 9 天：双调度点（pre_market/daily_capital 的 index_member_*）
+      akshare 中证官网接口当日失败（与 stock_basic 缺日同因但日期集不完全重合=各任务独立
+      失败）；②08-31 部分行：盘前只写入 000300.SH 300 行（正常 7722=五指数并集），盘后
+      补跑亦失败，半截快照留表。宇宙口径核实（Owner 二批问号）：5 指数=000300/000905/
+      000906/000852/000985，000985 中证全指 2026-08-14 接入后单日成分 5122≈全部在市 A 股，
+      宽度 5555/5921=93.8% 差额为退市股——覆盖充分，无需按指数分表；历史日期散点
+      （2005 起 268 天）=调整事件历史+近期日快照混合语义，审计器已按事件口径标注
+      （commit e5583240）。"
+    resolution_plan: "不可回补（源只返回当日清单）。08-31 部分行 300 行择期 PIT 关死
+      （valid_to=valid_from，禁物理 DELETE）；散缺接受——消费侧取最近快照即可。
+      扩指数覆盖（全谱系成分）需 tushare index_member_all 新 capability 立项。"
+    primary_alternative: "最近有效快照（消费侧 FINAL 取最新 trade_date）"
+    created: "2026-09-11"
+    last_updated: "2026-09-11"
+
+  # === 2026-09-11: kline_lof 族分钟K双窗缺口（数据总览二批 B4）===
+  - id: "kline_lof_minute_windows"
+    table: "c1_market.kline_lof_15min"   # 五表族：1/5/15/30/60min（缺口日集合各表略异）
+    gap_type: "date_range"
+    start_date: "2025-12-15"   # 窗1=12-15~12-31 全族 12 日；窗2=2026-07-01~17+08-06+08-18 仅 15min 16 日
+    end_date: "2026-08-18"
+    date_column: "trade_date"
+    detection_threshold: 1
+    status: "pending"  # 回补通道已实证可用（QMT 分钟历史够到 2025-12），执行窗口=9/17 前
+    root_cause: "①窗1（2025-12-15~31，五表全缺 12 交易日）：LOF 任务级断档——同期
+      tick_data 日均 2000 万行（miniqmt 终端活着）、同调度族 kline_etf_15min 零缺口，
+      非终端/调度故障，是 LOF 任务自身未产出（根因日志超出 fetch_perf 保留期无法回溯）；
+      ②窗2（2026-07~08，仅 15min 缺 16 交易日）：miniqmt 缺勤窗（tick_data 8 日缺口
+      同源）+15min 任务自身延伸漏跑。另 2011-11-21 单日残缺（4 表）=历史源上限。"
+    resolution_plan: "QMT 历史下载回补实证（2026-09-11 探针）：download_history_data+
+      get_market_data_ex 对 501018.SH 5m 的 2025-12-15 返回 96 根 bar、2026-08-18 同样
+      可用——回补通道健康。执行=写一次显式日期窗回补驱动（provider kline capability
+      正门，五表×双窗×LOF 板块），窗口 9/17 miniQMT 退役前完成；过期后 bdpan 只有分笔
+      无 LOF 分钟归档=永久缺口。2011-11-21 不补（源上限）。"
+    primary_alternative: "无（bdpan 无 LOF 分钟归档）"
+    created: "2026-09-11"
+    last_updated: "2026-09-11"

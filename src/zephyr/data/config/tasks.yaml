@@ -1824,14 +1824,14 @@ tasks:
 
 - task_id: etf_list_refresh
   table: c1_market.etf_list
-  source: akshare
+  source: tushare         # P8 收尾(2026-09-11): sina 源无成立/上市日期致 list_date 全 1970（known_data_gaps etf_list_list_date_sentinel 旧批已 PIT 关死），tushare fund_basic(market=E) 代码段过滤 ETF 接主源
   schedule: monthly_static
   incremental: false
   dependencies: []
   capability: etf_list
   symbols:
   extra:
-    description: "ETF基金列表全量刷新（AKShare fund_etf_category_sina）"
+    description: "ETF基金列表全量刷新（tushare fund_basic 场内桶含退市，真实 found/list/delist 日期）"
 
 - task_id: lof_list_refresh
   table: c1_market.lof_list
@@ -1984,9 +1984,9 @@ tasks:
   capability: kline_sector_880
   symbols:         # null=全部880xxx板块（实测2026-07-22: 460只，tqcenter get_sector_list动态获取）+9只市场指数
   extra:
-    description: "880xxx板块指数日K线增量（tqcenter get_market_data，日K 5天）"
+    description: "880xxx板块指数日K线增量（tqcenter get_market_data，日K 30天）"
     period: 1d
-    days: 5
+    days: 30       # 2026-09-11 由 5 提到 30（数据总览体检 P4）：增量 5 天回看窗内一次漏跑=永久缺口，2025 全年 312 日断档即漏跑永久化实证；30 天窗内漏跑可被次日增量自愈
 
 - task_id: sector_constituent_refresh
   table: c1_market.sector_constituent
