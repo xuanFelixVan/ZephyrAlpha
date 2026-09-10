@@ -84,14 +84,21 @@ def _ch() -> Client:
     return _client
 
 
+_CH_MAX_EXEC_SECONDS = 12  # 查询级超时（服务端 max_execution_time）；与 socket 级 send_receive_timeout 构成双道防线
+
+
 def _ch_exec(sql: str, params: dict | None = None) -> list:
     """带锁执行（2026-09-01 实证：stockq 多组件并发取数触发 Simultaneous queries on single connection）。
-    2026-09-03 加固：半开连接挂死曾耗尽线程池致整机假死——查询异常即弃连重建，锁获取限时防队列堆积。"""
+    2026-09-03 加固：半开连接挂死曾耗尽线程池致整机假死——查询异常即弃连重建，锁获取限时防队列堆积。
+    2026-09-10 加固（legacy-clear T6）：补查询级超时 settings.max_execution_time——socket 级
+    send_receive_timeout 在"服务端持续慢查询但连接未断"场景不触发，线程池被慢查询占满后
+    连自重启端点都排不上队；查询级超时由服务端主动中断，异常仍走弃连重建+端点级降级 ok:false。
+    """
     global _client
     if not _ch_lock.acquire(timeout=30):
         raise RuntimeError("CH 通道忙（30s 未获锁，疑似上游查询挂死）")
     try:
-        return _ch().execute(sql, params or {})
+        return _ch().execute(sql, params or {}, settings={"max_execution_time": _CH_MAX_EXEC_SECONDS})
     except Exception:
         _client = None   # 连接疑似坏态：弃置，下一位调用者重建自愈
         raise
