@@ -332,7 +332,18 @@ gaps:
     end_date: "2026-08-06"   # 缺口日=07-01~03、07-06~09、08-06（共 8 交易日）
     date_column: "trade_date"
     detection_threshold: 5000000  # 日均 < 500 万行 = 缺口（正常日均 >1500 万）
-    status: "pending"  # 待处置——bdpan 归档导入需 Owner 侧挂载或 9/17 窗口排期
+    status: "pending"  # 部分回补完成（07-01/02 已入库 3156 万行）；缺 5 日 zip 待 Owner 补下+08-06 单日
+    resolution_progress: >-
+      2026-09-10 晚 Owner 已下载 2026-07 月包至 E:/数据下载/tick 8 天缺口/2026-07
+      （每日双 zip：主=沪深 5198 只、(1)=京市 322 只 92xxxx，UTF-8，列=时间/成交价/手数/买卖方向）。
+      导入器 scripts/data/import_bdpan_tick_zip.py 持久化（zip→tick_data 幂等逐日：预检 bdpan 行=0→
+      分块 INSERT→复验），行规与 2026-06 批逐列一致（market_type=stock、symbol 裸码、direction 原样、
+      volume=手数×100、amount=价×手×100、bid/ask NULL、data_source=bdpan）。
+      已入库：07-01=15,884,084 行/5520 标的、07-02=15,676,685 行/5524 标的（0 坏行，抽查逐位吻合：
+      600000 09:25 8.58×2790 手→279000 股/2393820 元）。
+      待办：①Owner 补下 07-03、07-06~07-09 五日 zip（现有下载止于 07-02）②08-06 单日：
+      miniqmt 两度实证 0 行（09-10 晨+晚，对照 09-09=600 行）超范围坐实，唯一来源=网盘
+      分笔成交_按月归档_沪深/京市 的 2026-08 月包内 20260806.zip。
     root_cause: "缺口日落在 miniqmt 实时通道缺勤窗口（bdpan 月度归档仅导入到 2026-06，
       2026-07 起表内数据全为 miniqmt 实时）；盘后 backfill 窗口（L10=7 天/L10.5=当日）
       够不到。2026-09-10 探针实证：QMT 历史下载对 08-06 返回 0 行（对照 09-09=600 行
