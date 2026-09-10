@@ -67,8 +67,12 @@ Usage::
 from __future__ import annotations
 
 import ast
+import json
 import logging
+import os
 import re
+import time
+from pathlib import Path
 
 logger = logging.getLogger(__name__)
 
@@ -417,3 +421,103 @@ def _matches_any_prefix(s: str, prefixes: tuple[str, ...]) -> bool:
         True 如果 ``s`` 以 ``prefixes`` 中任一项开头。
     """
     return any(s.startswith(p) for p in prefixes)
+
+
+# ═══ session-scope helpers（#ARCH-GATE-OWN-SCOPE-001 推广 2026-09-10）═══
+# 自 import_integrity_gate.py 平移泛化——"只查自己"改造的共享原语：
+# 内容扫描型 gate 扫描范围收敛为「全暂存区 ∩ 本 session 范围」，外来 staged
+# 不扫描、降级 warn+审计。平移语义不变；_audit_foreign_staged 的审计文件名
+# 由 gate_name 派生（各 gate 各写各的审计，替代同族共用单文件）。
+
+logger_ss = logging.getLogger(__name__)
+
+
+def _norm_rel(gateway, path: str) -> str:
+    """任意路径 → normcase 相对路径（正斜杠），供 own_scope 交集比对。
+
+    commit() 传入绝对路径（git_commit_gateway abspath），_get_staged_py_files
+    返回正斜杠相对路径；Windows 盘符/大小写差异用 normcase 归一。
+    fail-open：relpath 失败时原样返回 normcase 后的输入（不抛异常）。
+    """
+    try:
+        root = str(getattr(gateway, "project_root", "") or os.getcwd())
+        p = str(path)
+        if os.path.isabs(p):
+            rel = os.path.relpath(p, root)
+        else:
+            # 已是仓库根相对路径（测试直调场景），不做 abspath（会锚定进程 CWD）
+            rel = p
+        rel = rel.replace("\\", "/")
+    except Exception:  # noqa: BLE001 — 归一化失败不阻断（ERROR_CONTRACT，如跨盘符）
+        rel = str(path).replace("\\", "/")
+    return os.path.normcase(rel)
+
+
+def _build_own_scope(gateway, files: list[str] | None, session_id: str | None) -> set[str] | None:
+    """构建本 session 文件范围（normcase 相对路径集合）。
+
+    范围 = 本次 commit files 清单 ∪ session claimed held_files（SessionRegistry 只读）。
+    返回 None：files 与 session 归属信息均为空（历史直调/未注册场景）——
+    调用方退化为旧行为（扫全量），保守面不改宽。
+    fail-open：registry 读取异常降级为 files-only。
+    """
+    scope: set[str] = set()
+    for f in files or []:
+        scope.add(_norm_rel(gateway, f))
+    if session_id:
+        try:
+            registry = getattr(gateway, "_registry", None)
+            info = registry.get_session(session_id) if registry is not None else None
+            for held in getattr(info, "held_files", None) or []:
+                scope.add(_norm_rel(gateway, held))
+        except Exception:  # noqa: BLE001 — registry 异常退化为 files-only（fail-open 红线）
+            logger_ss.debug("own-scope held_files 读取失败（退化为 files-only）", exc_info=True)
+    return scope or None
+
+
+def _attribute_foreign(gateway, session_id: str | None, foreign_staged: list[str]) -> dict[str, str]:
+    """外来 staged 文件尽力归因（other_held_files 只读；匹配不上标 unknown）。"""
+    attribution: dict[str, str] = {}
+    try:
+        registry = getattr(gateway, "_registry", None)
+        if registry is None:
+            return {}
+        foreign_norm = {_norm_rel(gateway, f) for f in foreign_staged}
+        for info in registry.list_active():
+            if session_id and info.session_id == session_id:
+                continue
+            for held in info.held_files or []:
+                norm = _norm_rel(gateway, held)
+                if norm in foreign_norm:
+                    attribution[norm] = info.session_id
+    except Exception:  # noqa: BLE001 — 归因失败不影响审计主流程
+        logger_ss.debug("foreign attribution failed (non-blocking)", exc_info=True)
+    return attribution
+
+
+def _audit_foreign_staged(
+    gateway, session_id: str | None, foreign_staged: list[str], *, gate_name: str
+) -> None:
+    """外来 session staged 文件落审计（jsonl append；fail-open：写失败不阻断）。
+
+    审计文件名由 gate_name 派生（NO-HIGH-COMPLEXITY → no_high_complexity_foreign_staged.jsonl），
+    各 gate 各写各的审计（IMPORT-INTEGRITY 派生名与历史文件名一致，行为兼容）。
+    对标 protected_paths_gate._audit_bypass（.runtime/gate_audit/ 惯例）。
+    """
+    try:
+        root = Path(getattr(gateway, "project_root", "."))
+        audit_dir = root / ".runtime" / "gate_audit"
+        audit_dir.mkdir(parents=True, exist_ok=True)
+        fname = gate_name.lower().replace("-", "_") + "_foreign_staged.jsonl"
+        record = {
+            "timestamp": int(time.time()),  # noqa: m46-time 审计事件需 epoch 秒（gate 家族先例 protected_paths_gate 同口径）
+            "gate": gate_name,
+            "session_id": session_id or "?",
+            "foreign_count": len(foreign_staged),
+            "foreign_files": foreign_staged[:50],
+            "attribution": _attribute_foreign(gateway, session_id, foreign_staged),
+        }
+        with (audit_dir / fname).open("a", encoding="utf-8") as f:
+            f.write(json.dumps(record, ensure_ascii=False) + chr(10))
+    except Exception:  # noqa: BLE001 — 审计失败不阻断（check ERROR_CONTRACT）
+        logger_ss.debug("foreign staged audit write failed (non-blocking)", exc_info=True)
