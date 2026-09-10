@@ -8,8 +8,11 @@ feature_id: F-CHAINMAP-CLUSTER
 feature_name: 产业链层（L2 上中下游列式+环节公司面板）
 frozen_at: 2026-09-08
 frozen_by: ZephyrAlpha-Owner
-revision: 5
+revision: 6
 revision_policy: "修订=Owner 批准+改原文+revision 链留痕；AI 不可自改已冻结条项"
+# rev6 (2026-09-11, Owner 截图反馈 字遮挡+无自动排序): ①显示名剥离「（已并入 ND-xxx…）」墓碑
+# 后缀（title 保留全名）——长 hash 名撑爆 48px 卡=字遮挡根因，卡高 48→50；②列内重心法拓扑
+# 排序（barycentric 两轮，链粒度 chip 不离散）——组序按邻边对端平均 y，上下游连线顺读。
 # rev5 (2026-09-10, Owner 截图再反馈仍空→数据现实=该族所有链皆稀薄,选链救不了画面):
 # 照抄 TDM 全景口径——整族全量绘制（所有链环节卡+跨列边同画布，不再 >RAIL_MIN 切单链视图，
 # 单链模式退役）；聚焦=压暗他链不删卡（TDM 血统聚焦同构）；选单轨/链 chip=聚焦开关
@@ -36,6 +39,8 @@ items:
   - { id: 8, text: "聚焦模式首开默认链=环节数最多（并列取公司数最大，机断：act 选单项与 API 按此规则算出的链一致）；显式选链（rail/chip/goto-chain）优先于默认", check: 机断, superseded: rev5（改活跃环节优先） }
   - { id: 9, text: "整族全量绘制机断：任一族打开后画布环节卡数=该族全链环节总数（非单链子集）；选单轨仅 >RAIL_MIN 链的族出现", check: 机断 }
   - { id: 10, text: "聚焦=压暗不删卡：点选单轨/链 chip 聚焦他链 .dimmed、再点同项/Esc 取消全图恢复全亮；首开自动聚焦=活跃环节数最多链（并列公司数→总环节）", check: 机断 }
+  - { id: 11, text: "墓碑显示名剥离：名称含「（已并入」的环节卡显示名不含 ND-hash（title 保留全名），卡高 50px 无字遮挡", check: 机断 }
+  - { id: 12, text: "列内重心法拓扑排序：有跨列边的组按对端平均 y 排序（上下游连线顺读），无边组保持原位；chip 分组不离散", check: 机断 }
 
 execution:
   trigger: "任何涉及本功能的 UI 改动 commit 前"

@@ -15,10 +15,13 @@
   /* function_role 八值徽章缩写（深交所词表；hover tooltip 显全称；空值不渲染） */
   var FR_SHORT = { '生产原料': '原料', '辅助材料': '辅材', '生产设备': '设备', '辅助设备': '辅设',
                    '加工工艺': '工艺', '产品业务': '产品', '技术服务': '服务', '销售渠道': '渠道' };
-  var COLW = 252, NODEW = 230, NODEH = 48, CHIPH = 24, PADX = 36, PADTOP = 52, RAIL_MIN = 8;
+  var COLW = 252, NODEW = 230, NODEH = 56, CHIPH = 24, PADX = 36, PADTOP = 52, RAIL_MIN = 8;
   /* B4 甬道化（Owner 2026-09-10 裁定"参考交易决策全景效果"）：环节卡升 TDM 双行卡
-   * （行1=环节名 600 加粗、行2=职能/股权徽章+公司数灰字），列头加大带底线+环节计数，
-   * 连线沿用 TDM 同款贝塞尔灰蓝（#2c3a52）。列序=上中下游左→右不变。 */
+   * （行1=环节名 600 加粗、行2=职能/股权徽章+公司数灰字），列头 tag+环节计数，
+   * 连线沿用 TDM 同款贝塞尔灰蓝（#2c3a52）。列序=上中下游左→右不变。
+   * B4r4（Owner 2026-09-11 截图反馈 字遮挡+无自动排序）：①显示名剥离"（已并入 ND-xxx…）"
+   * 墓碑后缀（title 保留全名），长 hash 名不再撑爆卡片；②列内节点重心法拓扑排序
+   * （barycentric 两轮迭代）——纵向位置对齐跨列邻边对端，上下游流向连线顺读不乱穿。 */
   var C = { cid: null, name: '', data: null, busy: false, view: { z: 1, x: 0, y: 0 },
             pos: {}, focusChain: null, focusChainName: null, focusNode: null, market: 'all', cat: null,
             focusOff: false, autoFocused: false };
@@ -110,31 +113,66 @@
     var cols = COLS.filter(function (c) { return colSet[c]; });
     if (!cols.length) cols = ['通用'];
     var y0 = view.padTop || PADTOP;
-    var nodePos = {}, groups = [];
-    var maxBottom = y0;
-    cols.forEach(function (col, ci) {
-      var x = PADX + ci * COLW;
-      var y = y0;
-      var list = view.chains.filter(function (ch) {
-        return ch.nodes.some(function (n) { return n.col === col; });
+    /* 每列链分组初排（后端序=公司数降序），组内保持链内原序；B4r4 列内再做重心法拓扑排序 */
+    var colGroups = {};
+    cols.forEach(function (col) { colGroups[col] = []; });
+    view.chains.forEach(function (ch) {
+      ch.nodes.forEach(function (n) {
+        var arr = colGroups[n.col], g = null;
+        for (var i = 0; i < arr.length; i++) { if (arr[i].chain.chain_id === ch.chain_id) { g = arr[i]; break; } }
+        if (!g) { g = { chain: ch, col: n.col, nodes: [], chip: true }; arr.push(g); }
+        g.nodes.push(n);
       });
-      list.forEach(function (ch) {
-        var ns = ch.nodes.filter(function (n) { return n.col === col; });
-        groups.push({ chain: ch, col: col, x: x, y: y, nodes: ns, chip: true });
+    });
+    var adj = {};   /* 跨列结构边邻接（重心法输入） */
+    view.edges.forEach(function (e) {
+      (adj[e[0]] = adj[e[0]] || []).push(e[1]);
+      (adj[e[1]] = adj[e[1]] || []).push(e[0]);
+    });
+    var pos = {};
+    function restack(col) {   /* 按当前组序纵向排布并写 pos */
+      var x = PADX + colIdx[col] * COLW, y = y0;
+      colGroups[col].forEach(function (g) {
+        g.x = x; g.y = y;
         y += CHIPH + 9;
-        ns.forEach(function (n) {
-          nodePos[n.node_id] = { x: x, y: y, col: col };
+        g.nodes.forEach(function (n) {
+          pos[n.node_id] = { x: x, y: y, col: col };
           y += NODEH + 8;
         });
         y += 14;
       });
-      maxBottom = Math.max(maxBottom, y);
-    });
+      return y;
+    }
+    var colIdx = {};
+    cols.forEach(function (c, i) { colIdx[c] = i; });
+    cols.forEach(restack);   /* 初排 */
+    /* B4r4 重心法拓扑排序：两轮迭代，每列组序按邻边对端平均 y 重排（链粒度，chip 不离散）；
+     * 无跨列边的组保持原位。效果=上下游流向连线顺读，不交叉乱穿（Owner"没有自动排序"反馈） */
+    for (var round = 0; round < 2; round++) {
+      cols.forEach(function (col) {
+        colGroups[col].forEach(function (g) {
+          var sum = 0, cnt = 0;
+          g.nodes.forEach(function (n) {
+            (adj[n.node_id] || []).forEach(function (m) {
+              var pp = pos[m];
+              if (pp && pp.col !== col) { sum += pp.y; cnt++; }
+            });
+          });
+          g.bary = cnt ? sum / cnt : g.y;
+        });
+        colGroups[col].sort(function (a, b) { return a.bary - b.bary; });
+        restack(col);
+      });
+    }
+    var maxBottom = y0;
+    cols.forEach(function (col) { maxBottom = Math.max(maxBottom, restack(col)); });
     view.worldW = PADX * 2 + cols.length * COLW;
     view.worldH = maxBottom + 50;
     view.cols = cols;
-    C.pos = nodePos;
+    C.pos = pos;
     C.viewData = view;
+    var groups = [];
+    cols.forEach(function (col) { colGroups[col].forEach(function (g) { groups.push(g); }); });
     return groups;
   }
 
@@ -191,10 +229,12 @@
         var el = document.createElement('div');
         el.className = 'cm-n';
         el.style.left = p.x + 'px'; el.style.top = p.y + 'px'; el.style.width = NODEW + 'px'; el.style.height = NODEH + 'px';
-        /* 显示名去链名前缀（数据侧节点名常为「链名-环节」全称，卡内展示冗余；title 保留全称） */
+        /* 显示名去链名前缀（数据侧节点名常为「链名-环节」全称，卡内展示冗余；title 保留全称）；
+         * B4r4：再剥「（已并入 ND-xxx…）」墓碑后缀——长 hash 名挤爆卡片=字遮挡根因 */
         var disp = n.name;
         var pfx = g.chain.name + '-';
         if (disp.indexOf(pfx) === 0 && disp.length > pfx.length) disp = disp.slice(pfx.length);
+        disp = disp.replace(/（已并入[^）]*）?\s*$/, '').trim() || disp;
         /* 股权徽章（F-CHAINMAP-EQUITY-BADGE）：环节落位公司 ∩ ig_equity_edge 有关系的才渲染 */
         var eq = n.equity, eqb = '';
         if (eq && (eq.out > 0 || eq.inn > 0)) {

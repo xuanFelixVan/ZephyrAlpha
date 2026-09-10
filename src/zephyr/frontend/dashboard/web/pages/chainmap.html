@@ -154,8 +154,11 @@
     text-overflow:ellipsis; box-sizing:border-box; }
   #cm-nodes-cluster .cm-chip:hover { border-color:#e6c34c; }
   #cm-nodes-cluster .cm-n { position:absolute; background:#0f2740; border:1.5px solid #1e5a8f; border-radius:8px;
-    padding:7px 11px; font-size:12.5px; color:#c6cdd8; cursor:pointer; overflow:hidden; box-sizing:border-box;
-    display:flex; flex-direction:column; justify-content:center; gap:4px; transition:border-color .15s; }
+    padding:7px 11px; font-size:12.5px; line-height:1.25; color:#c6cdd8; cursor:pointer; overflow:hidden;
+    box-sizing:border-box; display:flex; flex-direction:column; justify-content:center; gap:4px;
+    transition:border-color .15s; }
+  /* B4r4 字遮挡根因：卡高 < 内容高时 flex 默认收缩竖裁 CJK 字形——子行禁收缩+行高钉死 */
+  #cm-nodes-cluster .cm-n .nm, #cm-nodes-cluster .cm-n .sub { flex-shrink:0; }
   #cm-nodes-cluster .cm-n:hover { border-color:#3d8bff; }
   #cm-nodes-cluster .cm-n.empty0 { background:#2a1c0e; border-style:dashed; border-color:#8a4a12; }
   #cm-nodes-cluster .cm-n .nm { min-width:0; font-weight:600; color:#dbe4f0; overflow:hidden;
