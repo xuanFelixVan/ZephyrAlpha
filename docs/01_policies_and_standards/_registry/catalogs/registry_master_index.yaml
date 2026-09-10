@@ -1,11 +1,11 @@
-# 自动生成于 2026-09-06T15:52:10Z
+# 自动生成于 2026-09-10T15:25:23Z
 # 来源: _registry/catalogs/*.yaml frontmatter
 # 手工编辑无效——修改请通过各登记表的 frontmatter
 
-generated_at: '2026-09-06T15:52:10Z'
+generated_at: '2026-09-10T15:25:23Z'
 generated_by: scripts/governance/generators/generate_registry_master_index.py
 source: _registry/catalogs/*.yaml → frontmatter
-total_registries: 46
+total_registries: 48
 registries:
 - registry_id: GOV-AI-001
   name: AI 自治权限登记表（全模块权限终表）
@@ -45,7 +45,7 @@ registries:
   physical_path: docs/01_policies_and_standards/_registry/catalogs/architecture_issue_registry.yaml
   format: yaml
   maintenance: manual
-  entry_count: 746
+  entry_count: 749
   status: active
 - registry_id: CFG-business-streams
   name: 业务流定义登记表
@@ -95,6 +95,14 @@ registries:
   maintenance: manual
   entry_count: 132
   status: active
+- registry_id: REG-DAL-001
+  name: Decision Algorithm Registry
+  category: governance_rule
+  physical_path: docs/01_policies_and_standards/_registry/catalogs/decision_algo_registry.yaml
+  format: yaml
+  maintenance: manual
+  entry_count: 0
+  status: unknown
 - registry_id: PS-REG-019
   name: 声明式契约跟踪登记表
   category: governance_rule
@@ -181,7 +189,7 @@ registries:
   physical_path: docs/01_policies_and_standards/_registry/catalogs/gate_registry.yaml
   format: yaml
   maintenance: auto
-  entry_count: 159
+  entry_count: 161
   status: active
 - registry_id: CFG-governance-convergence-map
   name: governance_convergence_map
@@ -205,7 +213,7 @@ registries:
   physical_path: docs/01_policies_and_standards/_registry/catalogs/in_process_gate_registry.yaml
   format: yaml
   maintenance: manual
-  entry_count: 104
+  entry_count: 106
   status: active
 - registry_id: CFG-infrastructure-registry
   name: 运行时基础设施登记表
@@ -253,7 +261,7 @@ registries:
   physical_path: docs/01_policies_and_standards/_registry/catalogs/module_translation_registry.yaml
   format: yaml
   maintenance: manual
-  entry_count: 6740
+  entry_count: 6756
   status: active
 - registry_id: CFG-noqa-exempt-registry
   name: noqa_exempt_registry
@@ -325,7 +333,7 @@ registries:
   physical_path: docs/01_policies_and_standards/_registry/catalogs/rule_catalog_registry.yaml
   format: yaml
   maintenance: auto
-  entry_count: 231
+  entry_count: 235
   status: active
 - registry_id: REG-RULING-001
   name: 裁定中央登记表
@@ -333,7 +341,7 @@ registries:
   physical_path: docs/01_policies_and_standards/_registry/catalogs/ruling_registry.yaml
   format: yaml
   maintenance: manual
-  entry_count: 59
+  entry_count: 62
   status: active
 - registry_id: REG-SEAT-001
   name: Seat Registry
@@ -365,7 +373,7 @@ registries:
   physical_path: docs/01_policies_and_standards/_registry/catalogs/terminology_glossary.yaml
   format: yaml
   maintenance: manual
-  entry_count: 273
+  entry_count: 276
   status: active
 - registry_id: CFG-TRUST-BOUNDARY-001
   name: 信任边界 surface 登记表
@@ -375,3 +383,11 @@ registries:
   maintenance: manual
   entry_count: 0
   status: active
+- registry_id: REG-VALM-001
+  name: Validation Method Registry
+  category: governance_rule
+  physical_path: docs/01_policies_and_standards/_registry/catalogs/validation_method_registry.yaml
+  format: yaml
+  maintenance: manual
+  entry_count: 0
+  status: unknown
