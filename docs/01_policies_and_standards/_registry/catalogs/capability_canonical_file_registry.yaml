@@ -5004,6 +5004,10 @@ creation_tokens:
   token: greatwall-tier-map-20260909
   created_by: greatwall-20260909-0020
   capability: industry_graph_quality_engine
+- file: docs/_working/2026-09-10-legacy-clear-night-report.md
+  token: auto-legacy-clear-night-report-20260910
+  created_by: st-legacy-clear-20260910
+  capability: governance_night_report
 - file: scripts/industry_graph/ths_equity_hk_refill.py
   token: greatwall-equity-hk-refill-20260910
   created_by: gw-equity-20260910
