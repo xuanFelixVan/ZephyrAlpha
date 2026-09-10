@@ -195,6 +195,41 @@ class CompareResult:
     checked_files: int = 0
 
 
+def _load_acknowledged_pairs(raw: dict) -> set[frozenset[str]]:
+    """echo-guard.yml acknowledged 段 → {frozenset("path:func", "path:func")} 集合。
+
+    stable_key 两侧 "path:name"（兼容剥离纯 hex hash8 尾段）；分隔符归一正斜杠。
+    解析永不抛异常（fail-open：坏条目跳过）。
+    """
+    pairs: set[frozenset[str]] = set()
+    for e in raw.get("acknowledged") or []:
+        if not isinstance(e, dict):
+            continue
+        sk = str(e.get("stable_key") or "")
+        if "||" not in sk:
+            continue
+        sides = []
+        for side in sk.split("||"):
+            norm = side.replace("\\", "/").strip()
+            parts = norm.rsplit(":", 1)
+            if len(parts) == 2 and len(parts[1]) == 8 and all(
+                c in "0123456789abcdef" for c in parts[1].lower()
+            ):
+                norm = parts[0].strip()
+            sides.append(norm)
+        if len(sides) == 2:
+            pairs.add(frozenset(sides))
+    return pairs
+
+
+def _pair_of(f: AggregatedFinding) -> frozenset[str]:
+    """finding 的克隆对键（与 stable_key 同构：正斜杠 path:func，无序集合）。"""
+    return frozenset({
+        f"{f.source_file.replace(chr(92), '/')}:{f.source_function}".strip(),
+        f"{f.existing_file.replace(chr(92), '/')}:{f.existing_function}".strip(),
+    })
+
+
 class CloneGuardOrchestrator:
     """CloneGuard 统一编排器。
 
@@ -267,6 +302,47 @@ class CloneGuardOrchestrator:
             engines["relate"] = self._relate
         return engines
 
+    def _suppress_acknowledged(self, agg_result: AggregationResult) -> AggregationResult:
+        """echo-guard.yml acknowledged 登记的聚合器级豁免消费（引擎无关层）。
+
+        stable_key 两侧为 "path:name"（历史登记无 hash8 尾段，兼容剥离纯 hex hash8），
+        匹配时分隔符归一（反斜杠/正斜杠等价）、两侧无序。
+        读取失败/无登记 → 原样返回（fail-open）。
+        命中 → severity 降级 "acknowledged"（不在 block_severities，不再阻断；
+        finding 保留供审计，符合 echo-guard.yml "intentional=保留两副本"语义）。
+        背景（2026-09-10 st-legacy-clear-20260910）：acknowledged 此前只被 echo_guard
+        引擎自身消费，ast_grep/redup 对同一克隆对的报告绕过豁免——extract 阻断
+        绕过登记，实证后以引擎无关的对账层治本。
+        """
+        import dataclasses as _dc
+        import yaml as _yaml
+
+        try:
+            ack_path = self._repo_root / "echo-guard.yml"
+            if not ack_path.is_file():
+                return agg_result
+            raw = _yaml.safe_load(ack_path.read_text(encoding="utf-8")) or {}
+            pairs = _load_acknowledged_pairs(raw)
+            if not pairs:
+                return agg_result
+
+            demoted = 0
+            new_findings = []
+            for f in agg_result.findings:
+                if f.severity in self._config.block_severities and _pair_of(f) in pairs:
+                    f = _dc.replace(f, severity="acknowledged")
+                    demoted += 1
+                new_findings.append(f)
+            if demoted:
+                logger.info(
+                    "CloneGuard: %d 个 finding 命中 echo-guard acknowledged 登记，降级为 acknowledged（不阻断）",
+                    demoted,
+                )
+                agg_result = _dc.replace(agg_result, findings=new_findings)
+        except Exception:  # noqa: BLE001 — 豁免读取失败绝不阻断主流程（fail-open）
+            logger.debug("CloneGuard acknowledged 对账失败（fail-open）", exc_info=True)
+        return agg_result
+
     def check(self, staged_files: list[str]) -> CheckResult:
         """检测 staged 文件中的代码克隆（多引擎并发 + 聚合）。
 
@@ -292,6 +368,10 @@ class CloneGuardOrchestrator:
 
         # 4. 聚合（去重 + 多数表决 + 严重性就高）
         agg_result = self._aggregator.aggregate(engine_results)
+
+        # 4.5 acknowledged 豁免消费（引擎无关层，2026-09-10）：
+        # echo-guard.yml 登记对 ast_grep/redup 等全部引擎的报告生效。
+        agg_result = self._suppress_acknowledged(agg_result)
 
         # 5. 全引擎降级 → fail_closed 决定
         if agg_result.active_engine_count == 0:

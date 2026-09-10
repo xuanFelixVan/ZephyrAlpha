@@ -816,3 +816,62 @@ class TestOrchestratorCompare:
         ):
             result = orch.compare(["src/foo.py"])
         assert set(result.degraded_engines) == {"redup", "vendetect", "relate"}
+
+
+class TestAcknowledgedSuppression:
+    """echo-guard.yml acknowledged 的聚合器级豁免消费（2026-09-10 st-legacy-clear-20260910）。
+
+    引擎无关层：ast_grep/redup 对已登记克隆对的报告与 echo_guard 自身报告同等降级，
+    修复"登记本只管自家引擎"的豁免盲区（本次实证 extract 阻断绕过登记）。"""
+
+    def _make_orch_with_ack(self, tmp_path: Path, stable_key: str):
+        ack = tmp_path / "echo-guard.yml"
+        ack.write_text(
+            "acknowledged:\n"
+            f"- id: \"{stable_key}:00000000\"\n"
+            "  verdict: intentional\n"
+            f"  stable_key: \"{stable_key}\"\n"
+            "  note: test fixture\n",
+            encoding="utf-8",
+        )
+        return CloneGuardOrchestrator(tmp_path)
+
+    def _agg_result(self, source_file, source_function, existing_file, existing_function, severity="extract"):
+        from zephyr.clone_guard.aggregator import AggregatedFinding, AggregationResult
+
+        f1 = AggregatedFinding(
+            finding_id="AGG-x", severity=severity, clone_type="type3", similarity=0.58,
+            source_file=source_file, source_function=source_function, source_lineno=1,
+            existing_file=existing_file, existing_function=existing_function, existing_lineno=2,
+            import_suggestion=None, engines=("ast_grep",), engine_severities={},
+            engine_similarities={}, consensus="unanimous", vote_count=1, active_engine_count=1,
+        )
+        return AggregationResult(findings=[f1], degraded_engines=[], active_engine_count=1,
+                                 total_raw_findings=1, deduplicated_count=1)
+
+    def test_registered_pair_demoted_to_acknowledged(self, tmp_path: Path):
+        """已登记克隆对（任意引擎报告）severity 降级 acknowledged——不阻断。"""
+        orch = self._make_orch_with_ack(
+            tmp_path,
+            "src/a/gate.py:_impl||scripts/tools/scanner.py:_impl",
+        )
+        res = self._agg_result("src/a/gate.py", "_impl", "scripts/tools/scanner.py", "_impl")
+        out = orch._suppress_acknowledged(res)
+        assert out.findings[0].severity == "acknowledged"
+
+    def test_unregistered_pair_unchanged(self, tmp_path: Path):
+        """未登记克隆对不被误降级（保护语义不放松）。"""
+        orch = self._make_orch_with_ack(
+            tmp_path,
+            "src/a/gate.py:_impl||scripts/tools/scanner.py:_impl",
+        )
+        res = self._agg_result("src/other/x.py", "_impl", "src/other/y.py", "_impl")
+        out = orch._suppress_acknowledged(res)
+        assert out.findings[0].severity == "extract"
+
+    def test_missing_echo_guard_fail_open(self, tmp_path: Path):
+        """echo-guard.yml 缺失 → fail-open 原样返回。"""
+        orch = CloneGuardOrchestrator(tmp_path)  # tmp_path 无 echo-guard.yml
+        res = self._agg_result("src/a/gate.py", "_impl", "scripts/tools/scanner.py", "_impl")
+        out = orch._suppress_acknowledged(res)
+        assert out.findings[0].severity == "extract"
