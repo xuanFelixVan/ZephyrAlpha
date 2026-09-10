@@ -91,6 +91,7 @@ import logging
 import re
 
 from zephyr.gov_enforcement.commit_gates._diff_helpers import (
+    _is_src_zephyr_file,
     _extract_docstring_lines,
     _is_exempt_line,
     _parse_diff_with_line_numbers,
@@ -107,7 +108,6 @@ _GENERATORS_DIR_PART = "/generators/"
 _GENERATOR_FILE_PREFIX = "generate_"
 
 # src/zephyr/ 全量检测面前缀
-_SRC_ZEPHYR_PREFIX = "src/zephyr/"
 
 # noqa 豁免标记（MUST 在 noqa_exempt_registry.yaml 登记）
 _NOQA_MARKER = "m46-time"
@@ -141,19 +141,6 @@ def _is_generator_file(py_file: str) -> bool:
         return True
     basename = normalized.rsplit("/", 1)[-1]
     return basename.startswith(_GENERATOR_FILE_PREFIX)
-
-
-def _is_src_zephyr_file(py_file: str) -> bool:
-    """判定 .py 文件是否在 src/zephyr/ 目录下（5.46 全量检测面）。
-
-    Args:
-        py_file: 相对路径（/ 或 \\ 分隔）。
-
-    Returns:
-        True 如果文件路径以 ``src/zephyr/`` 开头。
-    """
-    normalized = py_file.replace("\\", "/")
-    return normalized.startswith(_SRC_ZEPHYR_PREFIX)
 
 
 def _has_noqa_exempt(content: str) -> bool:

@@ -84,6 +84,10 @@ import logging
 import re
 
 from zephyr.gov_enforcement.commit_gates._diff_helpers import (
+    _is_src_zephyr_file,
+    _audit_foreign_staged,
+    _build_own_scope,
+    _norm_rel,
     _extract_docstring_lines,
     _get_added_lines,
     _get_staged_py_files,
@@ -97,7 +101,6 @@ logger = logging.getLogger(__name__)
 __all__ = ["make_asyncio_run_in_context_gate"]  # noqa: n114-final  n114-final豁免: __all__是Python导出约定，非可变常量，无需Final标注
 
 # src/zephyr/ 全量检测面前缀
-_SRC_ZEPHYR_PREFIX = "src/zephyr/"
 
 # noqa 豁免标记（MUST 在 noqa_exempt_registry.yaml 登记）
 _NOQA_MARKER = "a100-asyncio"
@@ -106,11 +109,6 @@ _NOQA_MARKER = "a100-asyncio"
 _ASYNCIO_RUN_RE = re.compile(r"\basyncio\.run\s*\(")
 _ASYNCIO_GET_LOOP_RE = re.compile(r"\basyncio\.get_event_loop\s*\(")
 _ASYNCIO_NEW_LOOP_RE = re.compile(r"\basyncio\.new_event_loop\s*\(")
-
-
-def _is_src_zephyr_file(py_file: str) -> bool:
-    """判定 .py 文件是否在 src/zephyr/ 目录下。"""
-    return py_file.replace("\\", "/").startswith(_SRC_ZEPHYR_PREFIX)
 
 
 def _has_noqa_exempt(content: str) -> bool:
@@ -170,6 +168,24 @@ def make_asyncio_run_in_context_gate() -> GateSpec:
         staged = _get_staged_py_files(gateway, gate_name="ASYNCIO-RUN-IN-CONTEXT")
         if not staged:
             return True, ""
+        # 只查自己（#ARCH-GATE-OWN-SCOPE-001 推广，2026-09-10）：扫描范围=全暂存区∩本
+        # session 范围；外来 staged 不扫描、降级 warn+审计；own_scope=None 退化旧行为
+        # 扫全量；本 session 自身违规仍硬阻断；fail-open 红线不变。
+        session_id = kwargs.get("session_id")
+        own_scope = _build_own_scope(gateway, files, session_id)
+        if own_scope is None:
+            pass  # 退化：扫全量（保守面不改宽）
+        else:
+            foreign_staged = [f for f in staged if _norm_rel(gateway, f) not in own_scope]
+            staged = [f for f in staged if _norm_rel(gateway, f) in own_scope]
+            if foreign_staged:
+                _audit_foreign_staged(gateway, session_id, foreign_staged, gate_name="ASYNCIO-RUN-IN-CONTEXT")
+                logger.warning(
+                    "ASYNCIO-RUN-IN-CONTEXT: %d 个外来 session staged 文件未检查（warn+审计，不阻断）: %s",
+                    len(foreign_staged),
+                    ", ".join(foreign_staged[:5]) + ("..." if len(foreign_staged) > 5 else ""),
+                )
+
 
         target_files = [f for f in staged if _is_src_zephyr_file(f) and not is_test_exempt(f)]
         if not target_files:

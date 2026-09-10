@@ -92,6 +92,9 @@ import ast
 import logging
 
 from zephyr.gov_enforcement.commit_gates._diff_helpers import (
+    _audit_foreign_staged,
+    _build_own_scope,
+    _norm_rel,
     _extract_noqa_lines,
     _get_added_lines,
     _get_staged_py_files,
@@ -230,11 +233,32 @@ def make_bare_subprocess_gate() -> GateSpec:
     """
 
     def _check(gateway, files: list[str], **kwargs) -> tuple[bool, str]:
-        py_files = [
+        staged_all = [
             f
             for f in _get_staged_py_files(gateway, "BARE-SUBPROCESS")
             if not is_test_exempt(f) and not _is_bare_subprocess_exempt_file(f)
         ]
+        if not staged_all:
+            return True, ""
+        # 只查自己（#ARCH-GATE-OWN-SCOPE-001 推广，2026-09-10）：扫描范围=全暂存区∩本
+        # session 范围；外来 staged 不扫描、降级 warn+审计；own_scope=None 退化旧行为
+        # 扫全量；本 session 自身违规仍硬阻断；fail-open 红线不变。
+        session_id = kwargs.get("session_id")
+        own_scope = _build_own_scope(gateway, files, session_id)
+        if own_scope is None:
+            pass  # 退化：扫全量（保守面不改宽）
+        else:
+            foreign_staged = [f for f in staged_all if _norm_rel(gateway, f) not in own_scope]
+            staged_all = [f for f in staged_all if _norm_rel(gateway, f) in own_scope]
+            if foreign_staged:
+                _audit_foreign_staged(gateway, session_id, foreign_staged, gate_name="BARE-SUBPROCESS")
+                logger.warning(
+                    "BARE-SUBPROCESS: %d 个外来 session staged 文件未检查（warn+审计，不阻断）: %s",
+                    len(foreign_staged),
+                    ", ".join(foreign_staged[:5]) + ("..." if len(foreign_staged) > 5 else ""),
+                )
+
+        py_files = staged_all
         if not py_files:
             return True, ""
 

@@ -521,3 +521,15 @@ def _audit_foreign_staged(
             f.write(json.dumps(record, ensure_ascii=False) + chr(10))
     except Exception:  # noqa: BLE001 — 审计失败不阻断（check ERROR_CONTRACT）
         logger_ss.debug("foreign staged audit write failed (non-blocking)", exc_info=True)
+
+
+_SRC_ZEPHYR_PREFIX = "src/zephyr/"
+
+
+def _is_src_zephyr_file(py_file: str) -> bool:
+    """判定 .py 文件是否在 src/zephyr/ 目录下（分隔符归一后前缀判断）。
+
+    自 asyncio_run_in_context_gate / datetime_now_forbidden_gate 的同构实现合并
+    （#ARCH-FORCE-MERGE-DEDUP-001，2026-09-10 st-legacy-clear-20260910）。
+    """
+    return str(py_file).replace("\\", "/").startswith(_SRC_ZEPHYR_PREFIX)
