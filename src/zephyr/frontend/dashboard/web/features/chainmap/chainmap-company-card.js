@@ -6,7 +6,9 @@
  * collab=预留段（当前恒空不渲染）；对手方未上市（symbol=''）以名称展示。
  * 七域扩展（任务书项 3，2026-09-10）：equity=股权域（对外投资/股东，ig_equity_edge UNION 拼装，
  * PERSON:/UNLISTED: 持有方按 ref 原样展示）；profile=基本盘（实列有什么展示什么，missing_fields
- * 如实标"未入库"）；pending_domains=无实表域留位标"建设中"禁编造（演示诚实纪律）。
+ * 如实标"未入库"）；news_keywords/calendar 域点亮（遗留修复 2026-09-10：news_data 真表
+ * 816 万行活跃灌入 / disclosure_plan+share_unlock 个股日历）；pending_domains=仍无实表域
+ * （aliases/facilities）留位标"建设中"禁编造（演示诚实纪律）。行情/股权/基本盘等各段独立降级。
  * 跳个股=go('stockq')+sqSel(裸码)（一期 go+setTimeout 先例）；断线 15s 自动重试。
  * 跨链徽章=Commit B（F-CHAINMAP-CROSS-LINK）。验收单：ACC-F-CHAINMAP-COMPANY-CARD */
 (function () {
@@ -69,7 +71,10 @@
       '#cm-company-card .cc-jump{cursor:pointer;background:#e6c34c;color:#0d131d;font-weight:700;padding:6px 14px;' +
       'border-radius:6px;font-size:12px}' +
       '#cm-company-card .cc-jump:hover{background:#f0d36a}' +
-      '#cm-company-card .cc-note{font-size:10px;color:#525d70;line-height:1.5}';
+      '#cm-company-card .cc-note{font-size:10px;color:#525d70;line-height:1.5}' +
+      '#cm-company-card .cc-kws{display:flex;flex-wrap:wrap;gap:5px;padding:4px 2px}' +
+      '#cm-company-card .cc-kw{font-size:10.5px;padding:2px 8px;border-radius:99px;border:1px solid #2c3a52;color:#c6cdd8;background:#111927}' +
+      '#cm-company-card .cc-kw i{font-style:normal;margin-left:4px;color:#525d70}';
     document.head.appendChild(st);
   }
 
@@ -185,6 +190,42 @@
       '<div class="cc-empty">' + esc(names.join(' · ')) + '</div></div>';
   }
 
+  /* news_keywords 域点亮（遗留修复 2026-09-10）：news_data 真表（近 30 天，quality_flag=1） */
+  function newsSec(nw) {
+    var d = nw || {};
+    var chips = (d.keywords || []).map(function (k) {
+      return '<span class="cc-kw">' + esc(k.keyword) + '<i>' + k.n + '</i></span>';
+    }).join('');
+    var latest = (d.latest || []).map(function (r) {
+      return '<div class="cc-row"><span class="cc-rn" title="' + esc(r.title) + '">' + esc(r.title) + '</span>' +
+        '<span class="cc-rs">' + esc(r.date) + '</span></div>';
+    }).join('');
+    if (!chips && !latest) return '';
+    var more = (d.n_news || 0) > 0 ? '<span class="cc-more">近 30 天 ' + d.n_news + ' 条</span>' : '';
+    return '<div class="cc-sec"><div class="cc-st">新闻关键词（news_data · 近 30 天）' + more + '</div>' +
+      (chips ? '<div class="cc-kws">' + chips + '</div>' : '<div class="cc-empty">近 30 天无命中——news_data 现为海外新闻源，A 股覆盖待数据侧接入</div>') +
+      (latest || '') + '</div>';
+  }
+
+  /* calendar 域点亮（遗留修复 2026-09-10）：disclosure_plan 财报披露预约/实际 + share_unlock 限售解禁 */
+  function calSec(sc) {
+    var d = sc || {};
+    var disc = (d.disclosures || []).map(function (r) {
+      var st = r.actual ? '<span class="cc-dim">已披露</span>'
+                        : '<span class="cc-up">预约 ' + esc(r.scheduled || '?') + '</span>';
+      return '<div class="cc-row"><span class="cc-rs">' + esc(r.report_period) + '</span>' +
+        '<span class="cc-rn">' + st + '</span><span class="cc-rs">' + esc(r.actual || r.scheduled || '—') + '</span></div>';
+    }).join('');
+    var unl = (d.unlocks || []).map(function (r) {
+      return '<div class="cc-row"><span class="cc-rn">限售解禁</span>' +
+        '<span class="cc-rs">' + (r.ratio != null ? '占总股本 ' + r.ratio + '%' : '') + '</span>' +
+        '<span class="cc-rs">' + esc(r.date) + '</span></div>';
+    }).join('');
+    if (!disc && !unl) return '';
+    return '<div class="cc-sec"><div class="cc-st">个股日历（披露计划 · 解禁）</div>' +
+      (disc || '') + (unl || '') + '</div>';
+  }
+
   function render(card, d) {
     var q = d.quote || {};
     var co = d.company || {};
@@ -208,6 +249,8 @@
       sec('客户（本司 → 下游）', d.n_customers || 0, d.customers, relRow) +
       ((d.n_collabs || 0) > 0 ? sec('专利协同', d.n_collabs || 0, d.collabs, relRow) : '') +
       eqSec(d.equity) +
+      newsSec(d.news) +
+      calSec(d.stock_calendar) +
       profileSec(d.profile) +
       pendingSec(d.pending_domains) +
       '<div class="cc-foot"><span class="cc-jump">在个股页打开 →</span>' +

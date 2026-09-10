@@ -2863,7 +2863,41 @@ _SQL_CM_CAT_NODE_COMPS = (
     "SELECT symbol, role, confidence FROM ig_node_company "
     "WHERE valid_to IS NULL AND node_id = %s"
 )
+# 详情卡 news_keywords/calendar 域点亮（遗留修复 2026-09-10：数据侧真表已就绪——
+# news_data 816 万行、近 7 天 1.3 万行活跃灌入；disclosure_plan/share_unlock 为
+# MOD-DATA-068 event_calendar_filler 同源装配口径。aliases/facilities 无实表维持建设中）
+from typing import Final
 
+from zephyr.data.table_registry import get_registry
+
+_TBL_CM_NEWS_DATA: Final[str] = get_registry().table("fund_news_data")
+_TBL_CM_DISCLOSURE: Final[str] = get_registry().table("fund_disclosure_plan")
+_TBL_CM_UNLOCK: Final[str] = get_registry().table("fund_share_unlock")
+_SQL_CM_NEWS_KW = (
+    f"SELECT keyword, count() FROM {_TBL_CM_NEWS_DATA} "
+    "WHERE quality_flag = 1 AND arrayExists(x -> x = %(s)s, related_symbols) "
+    "AND keyword != '' AND publish_time >= now() - INTERVAL 30 DAY "
+    "GROUP BY keyword ORDER BY count() DESC LIMIT 12"
+)
+_SQL_CM_NEWS_LATEST = (
+    f"SELECT title, publish_time FROM {_TBL_CM_NEWS_DATA} "
+    "WHERE quality_flag = 1 AND arrayExists(x -> x = %(s)s, related_symbols) "
+    "AND publish_time >= now() - INTERVAL 30 DAY ORDER BY publish_time DESC LIMIT 3"
+)
+_SQL_CM_NEWS_COUNT = (
+    f"SELECT count() FROM {_TBL_CM_NEWS_DATA} "
+    "WHERE quality_flag = 1 AND arrayExists(x -> x = %(s)s, related_symbols) "
+    "AND publish_time >= now() - INTERVAL 30 DAY"
+)
+_SQL_CM_CAL_DISCLOSURE = (
+    f"SELECT report_period, scheduled_date, actual_date FROM {_TBL_CM_DISCLOSURE} "
+    "WHERE symbol = %(s)s AND (toDate(scheduled_date) >= today() - 400 OR toDate(actual_date) >= today() - 400) "
+    "ORDER BY coalesce(toDate(actual_date), toDate(scheduled_date)) DESC LIMIT 6"
+)
+_SQL_CM_CAL_UNLOCK = (
+    f"SELECT unlock_date, shares, ratio FROM {_TBL_CM_UNLOCK} "
+    "WHERE symbol = %(s)s AND unlock_date >= today() - 400 ORDER BY unlock_date DESC LIMIT 6"
+)
 
 
 def _cm_cat_themes() -> list[dict[str, Any]]:
@@ -2889,7 +2923,12 @@ def _cm_cat_classify(text: str, themes: list[dict[str, Any]]) -> dict[str, Any] 
 
 
 def _cm_cat_events() -> tuple[list[dict[str, Any]], int]:
-    """事件窗扫描+主题分类（CH/主题库异常独立降级→空）。返回 (命中事件, 扫描总数)。"""
+    """事件窗扫描+主题分类（CH/主题库异常独立降级→空）。返回 (命中事件, 扫描总数)。
+
+    遗留修复 enrich（2026-09-10）：并入 MOD-DATA-068 macro_rule_events 规则推导宏观
+    事件（LPR/MLF/PMI/CPI，certainty 分级）——MLF/PMI/CPI 为 calendar_event 稀缺
+    语料的真实扩充；按 (日期,主题) 与 calendar_event 行去重防同事件双计。
+    """
     try:
         rows = _ch_exec(_SQL_CM_CAT_EVENTS, {"b": _CM_CAT_WINDOW_BACK, "f": _CM_CAT_WINDOW_FWD})
     except Exception as exc:
@@ -2898,11 +2937,33 @@ def _cm_cat_events() -> tuple[list[dict[str, Any]], int]:
     themes = _cm_cat_themes()
     today = date.today()
     out: list[dict[str, Any]] = []
+    seen: set[tuple[str, str]] = set()
     for d, et, desc in rows:
         t = _cm_cat_classify(str(et) + " " + str(desc), themes)
         if t:
             out.append({"date": d.isoformat(), "type": str(et)[:40], "description": str(desc)[:120],
                         "is_future": d > today, "theme": t})
+            seen.add((d.isoformat(), t["theme_id"]))
+    # 规则推导宏观事件（MOD-DATA-068，fail-open 单源跳过）
+    try:
+        from datetime import timedelta as _td
+
+        from zephyr.data.event_calendar_filler import macro_rule_events
+
+        for en in macro_rule_events(today - _td(days=_CM_CAT_WINDOW_BACK),
+                                    today + _td(days=_CM_CAT_WINDOW_FWD)):
+            t = _cm_cat_classify(f"{en.event_type} {en.description or en.event_type}", themes)
+            if not t:
+                continue
+            key = (en.event_date.isoformat(), t["theme_id"])
+            if key in seen:
+                continue
+            seen.add(key)
+            out.append({"date": en.event_date.isoformat(), "type": str(en.event_type)[:40],
+                        "description": (en.description or en.event_type)[:120],
+                        "is_future": en.event_date > today, "theme": t})
+    except Exception as exc:
+        logger.warning("chainmap-catalyst 规则事件装配失败（跳过该源）: %s", exc)
     return out, len(rows)
 
 
@@ -3248,6 +3309,44 @@ def _cm_quote(bare: str) -> dict[str, Any] | None:
         return None
 
 
+def _cm_news_keywords(bare: str) -> dict[str, Any]:
+    """news_keywords 域点亮（遗留修复 2026-09-10）：c3_fundamental.news_data 真表
+    （近 30 天，quality_flag=1，related_symbols 命中本司）——top 关键词+最新标题+条数。
+    独立降级：CH 异常→空结构。"""
+    out: dict[str, Any] = {"keywords": [], "latest": [], "n_news": 0}
+    try:
+        rows = _ch_exec(_SQL_CM_NEWS_KW, {"s": bare})
+        out["keywords"] = [{"keyword": str(r[0]), "n": int(r[1])} for r in rows]
+        rows2 = _ch_exec(_SQL_CM_NEWS_LATEST, {"s": bare})
+        out["latest"] = [{"title": str(r[0]), "date": str(r[1])[:16]} for r in rows2]
+        rows3 = _ch_exec(_SQL_CM_NEWS_COUNT, {"s": bare})
+        out["n_news"] = int(rows3[0][0]) if rows3 else 0
+    except Exception:
+        return out   # 独立降级
+    return out
+
+
+def _cm_stock_calendar(bare: str) -> dict[str, Any]:
+    """calendar 域点亮（遗留修复 2026-09-10）：disclosure_plan 财报披露预约/实际 +
+    share_unlock 限售解禁（口径对齐 MOD-DATA-068 event_calendar_filler 装配 SQL）。
+    独立降级：CH 异常→空结构。"""
+    out: dict[str, Any] = {"disclosures": [], "unlocks": [], "n_disclosures": 0, "n_unlocks": 0}
+    try:
+        rows = _ch_exec(_SQL_CM_CAL_DISCLOSURE, {"s": bare})
+        out["disclosures"] = [{"report_period": str(r[0]),
+                               "scheduled": str(r[1]) if r[1] else None,
+                               "actual": str(r[2]) if r[2] else None} for r in rows]
+        rows2 = _ch_exec(_SQL_CM_CAL_UNLOCK, {"s": bare})
+        out["unlocks"] = [{"date": str(r[0]),
+                           "shares": None if r[1] is None else float(r[1]),
+                           "ratio": None if r[2] is None else round(float(r[2]), 2)} for r in rows2]
+        out["n_disclosures"] = len(out["disclosures"])
+        out["n_unlocks"] = len(out["unlocks"])
+    except Exception:
+        return out   # 独立降级
+    return out
+
+
 @app.get("/api/chainmap-company")
 def chainmap_company(symbol: str = Query(..., min_length=2, max_length=24)) -> dict[str, Any]:
     """公司详情卡（chainmap-company-card 真源）：链上落位 + 上下游关系 + CH 行情/估算市值 + 股权域 + 基本盘。
@@ -3372,7 +3471,9 @@ def chainmap_company(symbol: str = Query(..., min_length=2, max_length=24)) -> d
         "quote": _cm_quote(_cm_bare_symbol(sym)),
         "equity": _cm_equity(sym, names),
         "profile": _cm_profile(_cm_bare_symbol(sym)),
-        "pending_domains": ["news_keywords", "aliases", "facilities", "calendar"],
+        "news": _cm_news_keywords(_cm_bare_symbol(sym)),
+        "stock_calendar": _cm_stock_calendar(_cm_bare_symbol(sym)),
+        "pending_domains": ["aliases", "facilities"],
         "generated_at": datetime.now().isoformat(" ", "seconds"),
     }
 

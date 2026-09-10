@@ -8,7 +8,7 @@ feature_id: F-CHAINMAP-COMPANY-CARD
 feature_name: 公司详情卡（产业地图二期 Commit A：链上落位+上下游关系+市值行情）
 frozen_at: 2026-09-09
 frozen_by: ZephyrAlpha-Owner
-revision: 2
+revision: 3
 revision_policy: "修订=Owner 批准+改原文+revision 链留痕；AI 不可自改已冻结条项"
 
 # check 取值：目检（截图人工/AI 视觉对） | 机断（DOM/接口断言）
@@ -19,6 +19,9 @@ items:
   - { id: 4, text: "关系段带来源标注（前五大客户披露/供应名录/网络检索/专利协同），J88 边按方向归入供应链段（供应商→中游→客户），合作段为空时不渲染（方向语义红线 rev2）", check: 目检 }
   - { id: 5, text: "'在个股页打开'按钮 → 跳 stockq 页并选中该股（裸码）；断线态 15s 自动重试、无演示数据", check: 目检 }
   - { id: 6, text: "冒烟网 test_chainmap_structure 含 m_company 断言并全绿", check: 机断 }
+  - { id: 7, text: "/api/chainmap-company 响应含 news（news_data 近 30 天：top 关键词+最新标题+条数，quality_flag=1 且 related_symbols 命中）与 stock_calendar（disclosure_plan 披露预约/实际 + share_unlock 解禁）两新段；CH 异常各自独立降级为空结构不拖垮图谱段（rev3 机断）", check: 机断 }
+  - { id: 8, text: "news 域空态如实标注覆盖缺口（news_data 现为海外新闻源，A 股覆盖待数据侧接入），禁以空数据冒充'无新闻'；calendar 域已披露/预约状态分色（actual=已披露灰、scheduled=预约红）（rev3 目检）", check: 目检 }
+  - { id: 9, text: "pending_domains 收窄为 aliases/facilities 两域（news_keywords/calendar 已点亮）；aliases/facilities 无实表维持'建设中'留位禁编造（rev3 机断）", check: 机断 }
 
 revision_history:
   - rev: 1
@@ -30,6 +33,11 @@ revision_history:
     by: ZephyrAlpha-Owner 批准，AI 会话（chainmap 收尾修正包）执行
     change: "item 4 方向语义勘误——J88_collab_patent 由'专利合作（无方向）'改为'专利协同（供应链边，有方向）'；实锤=load_supply_collab_j88.py L16-17（供应商文件 from=供应商→to=中游，客户文件 from=中游→to=客户，weight=联合专利合作次数）；配套=api_server _CM_SOURCE_EDGE_KIND['J88_collab_patent'] collab→supply + 前端来源标签'合作（无方向）'→'专利协同'且合作段为空不渲染 + 两处注释勘误"
     item4_rev1_text: "关系段带来源标注（前五大客户披露/供应名录/网络检索/专利合作），合作组标题明示'无方向'（方向语义红线）"
+  - rev: 3
+    date: 2026-09-10
+    by: Owner 指令（遗留清单"调查并执行修复"），AI 会话（st-chainfe-20260910b）执行
+    change: "item 7/8/9 新增——news_keywords/calendar 两域点亮：数据侧真表经调查已就绪（news_data 816 万行近 7 天 1.3 万行活跃灌入但现覆盖海外源；c3_fundamental.disclosure_plan 31.6 万行+share_unlock 2.9 万行），原 rev2'无实表→建设中'前提失效；aliases/facilities 经 system.columns 全扫确认无实表维持建设中。配套=api_server _cm_news_keywords/_cm_stock_calendar（口径对齐 MOD-DATA-068 event_calendar_filler 装配 SQL）+ 前端 newsSec/calSec 两段。**已知覆盖缺口如实登记**：news_data 现为海外新闻源，A 股新闻覆盖待数据侧接入，点亮后 A 股空态如实标注该缺口"
+    item9_rev2_text: "（rev2 无独立 item9；pending_domains 当时='news_keywords/aliases/facilities/calendar' 四域全'建设中'）"
 
 execution:
   trigger: "任何涉及本功能的 UI 改动 commit 前"
