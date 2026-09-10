@@ -2,7 +2,7 @@
 ttl: task_bound
 ---
 
-# 提交通道性能优化调研方案（调研稿 · 待 Owner 审定）
+# 提交通道性能优化调研方案（已审定 · P0 已执行 · 收尾移交下一会话）
 
 - **task_bound**：临时工作文档，Owner 审定后按"正式施工清单"逐项销项后归档；会话 st-perf-plan-20260910 单写手
 - **创建**：2026-09-10；creation_token=`commit-pipeline-perf-plan-20260910`（capability_canonical_file_registry.yaml creation_tokens 段，插 di_seam_exemptions 行之前）
@@ -427,6 +427,13 @@ P2（Owner 决策后立项，flag 门控）
 4. 同 commit 附带：DECISION-MAP gate 头注释耗时口径纠偏（③）。
 5. （echo_guard 超时调整**不在本清单**——语义权衡项，待 Owner §5-2 明示后单独执行。）
 6. 提交纪律：session st-perf-plan-20260910 走 `python scripts/git_commit.py`（禁裸 commit）；遇 FOREIGN_CHANGE→--adopt-prior-work；WORKTREE-REQUIRED→--allow-non-worktree；TRACKED-DRIFT→--allow-tracked-drift（按需逐个加，禁一把梭）。
+
+**施工状态总账（2026-09-11 收工盘点，st-perf-plan-20260910）**
+- P0① --wait 参数化：**已落地**（91d1ae4246，偏差见上条第②款施工偏差记录）
+- P0③ DECISION-MAP 耗时口径纠偏：**已落地**（91d1ae4246）
+- P0② 死信 triage：**已完成并超预期**——根因实锤=serializer worktree 的 .git 被红队测试改写指向已删除 pytest 临时仓（自愈校验只验存在不验有效，8 天漏检）；运营侧已清残骸重建复活；代码四连修复：LandingEnvironmentError 环境失败/物品失败分离（a4a6d7098e）→ 瞬态 git 锁争用转环境专类（53916fd13b）→ CLI drain 接真 landing 治"假 done"footgun（6e2d438467）→ 直跑 sys.path 补丁（53fa0b431a）；tests/conftest.py autouse 队列隔离 fixture（ZEPHYR_COMMIT_QUEUE_DIR）；回归 110/110 分文件全绿；requeue 试点 10 项（2 项成功重排队尾、6 项甄别 hot.txt 污染残留为 purge 候选）
+- **移交下一会话**（交接指令已备）：dead/ 933 项分批处置（污染残留列 purge 清单报 Owner 批；正常项 requeue+drain 分批）+ 死信率告警最小落地（Owner 已裁定要做）
+- P1④⑤⑥ / P2⑦⑧⑨：**均未施工**，待 Owner 批准（P2 全部 flag 默认 OFF）；echo_guard 超时 30→10s 维持不做（语义权衡项，待 §5-2 明示）
 
 ---
 
