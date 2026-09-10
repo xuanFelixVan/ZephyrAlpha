@@ -4956,6 +4956,10 @@ capabilities:
     metrics）。与 MOD-TDMVAL-001 消融算子是姊妹算子（一减一加，禁止合并）。canonical =
     src/zephyr/pf_core/strategy_engine/framework_composer.py。
 creation_tokens:
+- file: docs/_working/2026-09-11-tdm-morning-review-report.md
+  token: tdm-morning-review-20260911
+  created_by: st-tdm-review-20260911
+  capability: trading_decision_map_morning_review
 - file: docs/01_policies_and_standards/_registry/catalogs/industry_graph_field_dictionary.yaml
   token: ig-field-dictionary-20260910
   created_by: st-igbe-20260910
@@ -11459,6 +11463,10 @@ creation_tokens:
   token: chainmap-final-batch-report-20260911
   created_by: st-igfe-20260910
   capability: chainmap_frontend
+- file: docs/_working/2026-09-11-commit-queue-dead-zero-closure.md
+  token: commit-queue-dead-zero-closure-20260911
+  created_by: st-perf-plan-20260910
+  capability: gate_commit_gw
 di_seam_exemptions:
 - module_path: zephyr.trading.auto_runtime_core.AutoRuntimeCore
   reason: P0-5 LSG DI seam 标杆，已有 DI 但 AST 模式不匹配（动态注入）
