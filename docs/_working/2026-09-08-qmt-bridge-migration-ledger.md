@@ -175,6 +175,7 @@ ttl: task_bound
 | 5 | 2026-09-09 日间 | §8.6 五项裁定施工：任务一五档落库（tick_depth_5 建表+TICK_DEPTH5 门旁路+回填 4 日 20581 行 100% 五档）+ 任务二分钟K 自拼（ch_tick_kline 1/5/15/30/60min+防误覆盖护栏）+ 任务三回测 CH 回放 adapter + 任务四竞价出行事后取证（22 行真实 timetag，auction 族续命确认）+ 任务五 v21 期权扩桥草稿备料（未激活）+ 事故 #QMT-DAY-0908-OVERWRITE 当日发现当日恢复（0908 官方 1min 回灌 125.5 万行） | bae99e93（代码批 11 文件） | tasks.yaml 零改动（红线 1）；tick_data 链路零变更（红线 2）；v19 未动（红线 3）； commit 遭遇三批他会话共享暂存区门禁竞争，按裁定 9 配方退避轮询+Owner 授权窗口后落库 |
 | 4 | 2026-09-09 夜班 | §2.4 占位清理 ×4 + §3 桥能力注册主体（scheduler 四点注册/QmtBridgeIngestProvider 新建/六文件源登记/speed_tester 桥通道/channel_manager dormant 常量/ex_core+回测域判读）+ §4 前端 F2-F7 + §8.3 核实勾选 + §8.5 摸底报告 | 8981a53f29（第三批）/ 3b25f73aed（第四批） | 只增桥不删 miniqmt；tasks.yaml 零 source 切换（红线 1）；F1 未动（红线 2）；TICK_SOURCE 链未动（红线 3）；夜班遇 3 并发会话（st-nodebt/greatwall-0020/本会话）锁竞争与门禁竞争，全部走合规通道解决 |
 | 6 | 2026-09-10 | 长城任务三段·续：#QMT-DAY-0909-DAILY-POLLUTION 收尾——任务 A kline_daily 0908 修复闭环（keep-gen1/delete-gen2）+ 任务 B 全 K 线族排查（24 表零外溢）+ R1 kline_60min/kline_etf_60min 0909 盘前劣化批确认与清理（2806 行冗余版本，FINAL 视角逐位不变）+ R2 修复工具 repair_kline_degraded_pull.py（gitignore 运行时区留盘，按 backfill_tick_depth5.py 先例不入库）+ §8.7 事故条目登记 | 6b54f46baa | miniQMT 劣化定性升级：**按请求灰度间歇性**（同窗口 daily 劣化/hfq 健康、9/9 盘前 60min 再劣化）；详见 §8.7 |
+| 7 | 2026-09-11 凌晨 | 追办三件套之一落地：TICK_DEPTH5=1 已设 User 级（guard 重启择窗留 Owner，重启才激活五档旁路）+ §8.7 gen1 待查闭环（query_log 定性，见该条勾选）+ 台账外追加任务：kline_lof 五表分钟K历史断档回补约 142.7 万行（数据总览 B4 死线 9/17 前执行，执行器 scripts/data/backfill_lof_minute_history.py，miniqmt provider 正门+零覆盖+自验；终验五表缺日归零+8890 审计 100%） | （随 LOF 销项 commit 补登） | tasks.yaml 零改动（红线 1）；tick 运行链零变更（红线 2，仅设 env 未重启）；9/18 退役前唯一回补窗已用掉——LOF 通道自此无历史回补能力，交底 |
 
 ## §8 2026-09-08 增量待办（桥切换过渡期，按优先级）
 
@@ -317,5 +318,5 @@ kline_daily_hfq / weekly_hfq / monthly_hfq / weekly / monthly / etf_daily / inde
 
 **待查项（不阻塞，挂账）**
 
-- [ ] gen1（kline_daily 0908 健康 5554 行，ingest UTC 9/8 19:23-19:25）在 task_runs 无运行记录——写入通道未登记，疑似 WAL 回灌/补跑旁路，需查 ch_writer 旁路调用方
+- [x] gen1（kline_daily 0908 健康 5554 行，ingest UTC 9/8 19:23-19:25）在 task_runs 无运行记录——**已闭环（09-11 凌晨 query_log 取证）**：写入通道=ch_writer 单行 INSERT（zephyr_writer 账号，UTC 9/8 19:00-19:30 共 10,763 条语句/13,871 行，北京 9/9 凌晨 3 点段，列含 amplitude/pct_change/change=#256① 口径），定性=**9/9 凌晨事故修复会话的 ad-hoc 逐标的重拉回灌**（0908 正是 #QMT-DAY-0909-DAILY-POLLUTION 污染事故日，健康 gen1 即该批官方数据），合法写入非 WAL 回灌旁路；不入 task_runs 因走会话级脚本（同 6 月 bdpan tick 导入器先例）。流程改进挂账：ad-hoc 回灌应留脚本入库+台账登记行号（✅09-11）
 - [ ] `intraday_minute` 槽位 09:00 盘前空转拉"当日"bar 的语义问题——9:00-9:30 触发的拉数本就无完整 bar 可拉，是否应在 provider 层对盘前触发做空跑防护（9/17 窗口一并评估，不单独立项）

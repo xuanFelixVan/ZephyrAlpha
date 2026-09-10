@@ -13639,3 +13639,7 @@ di_seam_exemptions:
   token: asset-v2-sector880-history-backfill-20260911
   created_by: st-asset-v2
   capability: backfill_sector880_history
+- file: scripts/data/backfill_lof_minute_history.py
+  token: asset-v2-lof-minute-backfill-20260911
+  created_by: st-asset-v2
+  capability: backfill_lof_minute_history

@@ -509,12 +509,12 @@ gaps:
   - id: "kline_lof_minute_windows"
     table: "c1_market.kline_lof_15min"   # 五表族：1/5/15/30/60min（缺口日集合各表略异）
     gap_type: "date_range"
-    start_date: "2025-12-15"   # 窗1=12-15~12-31 全族 12 日；窗2=2026-07-01~17+08-06+08-18 仅 15min 16 日
+    start_date: "2025-12-15"   # 窗1=12-15~12-31 全族 13 日；窗2=2026-07-01~17+08-06+08-18 仅 15min 16 日
     end_date: "2026-08-18"
     date_column: "trade_date"
     detection_threshold: 1
-    status: "pending"  # 回补通道已实证可用（QMT 分钟历史够到 2025-12），执行窗口=9/17 前
-    root_cause: "①窗1（2025-12-15~31，五表全缺 12 交易日）：LOF 任务级断档——同期
+    status: "completed"  # 2026-09-11 凌晨回补完成（约 142.7 万行，QMT 9/18 退役前窗口执行）
+    root_cause: "①窗1（2025-12-15~31，五表全缺 13 交易日）：LOF 任务级断档——同期
       tick_data 日均 2000 万行（miniqmt 终端活着）、同调度族 kline_etf_15min 零缺口，
       非终端/调度故障，是 LOF 任务自身未产出（根因日志超出 fetch_perf 保留期无法回溯）；
       ②窗2（2026-07~08，仅 15min 缺 16 交易日）：miniqmt 缺勤窗（tick_data 8 日缺口
@@ -524,6 +524,15 @@ gaps:
       可用——回补通道健康。执行=写一次显式日期窗回补驱动（provider kline capability
       正门，五表×双窗×LOF 板块），窗口 9/17 miniQMT 退役前完成；过期后 bdpan 只有分笔
       无 LOF 分钟归档=永久缺口。2011-11-21 不补（源上限）。"
+    resolution_actual: "2026-09-11 凌晨执行（scripts/data/backfill_lof_minute_history.py，
+      miniqmt provider fetch 正门 capability 路由，零覆盖只补缺格，重跑幂等）：五表合计
+      回补约 142.7 万行——1min=1,083,957（窗1）、5min=215,892、15min=155,004（窗1+窗2
+      28 日）、30min=38,750、60min=17,991。终验：五表缺日归零，8890 审计完整度 100%
+      （gap 仅剩 2011-11-21 残缺日，登记口径不补）。剩余缺格=25 个退市/清盘 LOF×对应
+      天数（2026-06 后全不活跃，QMT 源无该标的历史=源上限不可补）。验证等级=同通道
+      特征校验+结构校验（每日 bar 数精确 48/16/8/4/240；平坦 bar 率如实报告：LOF 低
+      流动性高平坦属常态）；独立源交叉不可得（akshare 分钟历史仅近月、bdpan 无 2025-12
+      LOF 归档）——该窗口 miniQMT 为唯一源，登记为已知验证局限。"
     primary_alternative: "无（bdpan 无 LOF 分钟归档）"
     created: "2026-09-11"
     last_updated: "2026-09-11"
