@@ -417,3 +417,49 @@ class TestGatewayIntegration:
         passed, msg = make_bare_sql_gate().check(gw, [])
         assert passed
         assert msg == ""
+
+
+class TestOnlyOwnSessionScanned:
+    """只查自己语义（#ARCH-GATE-OWN-SCOPE-001 推广 2026-09-10）。"""
+
+    def _make_session_gateway(self, tmp_path, staged_files, file_contents):
+        gw = _make_gateway(staged_files=staged_files, file_contents=file_contents)
+        from zephyr.security.access_control.session_concurrency import SessionRegistry
+
+        gw.project_root = str(tmp_path)
+        gw._registry = SessionRegistry(project_root=tmp_path)
+        return gw
+
+    def test_foreign_wip_does_not_block_own_commit(self, tmp_path):
+        """他人 session 的 WIP（裸 SQL）暂存时，本 session 干净文件可提交。"""
+        import json
+
+        own_py = "src/zephyr/own_clean.py"
+        own_content = "X = 1\n"
+        foreign_py = "src/zephyr/foreign_wip.py"
+        foreign_content = 'cur.execute("SELECT id FROM users")\n'
+
+        gw = self._make_session_gateway(
+            tmp_path, [own_py, foreign_py], {own_py: own_content, foreign_py: foreign_content}
+        )
+        passed, msg = make_bare_sql_gate().check(gw, [own_py], session_id="sess-A")
+        assert passed is True
+        assert "users" not in msg
+        audit = tmp_path / ".runtime" / "gate_audit" / "no_bare_sql_foreign_staged.jsonl"
+        assert audit.exists()
+        rec = json.loads(audit.read_text(encoding="utf-8").splitlines()[-1])
+        assert foreign_py in rec["foreign_files"]
+
+    def test_own_bare_sql_still_blocks(self, tmp_path):
+        """本 session 自身裸 SQL 仍被硬阻断（保护语义不放松）。"""
+        own_py = "src/zephyr/own_bad.py"
+        own_content = 'cur.execute("SELECT id FROM orders")\n'
+        foreign_py = "src/zephyr/foreign_clean.py"
+        foreign_content = "X = 1\n"
+
+        gw = self._make_session_gateway(
+            tmp_path, [own_py, foreign_py], {own_py: own_content, foreign_py: foreign_content}
+        )
+        passed, msg = make_bare_sql_gate().check(gw, [own_py], session_id="sess-A")
+        assert passed is False
+        assert "orders" in msg
