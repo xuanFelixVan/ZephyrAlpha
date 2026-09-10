@@ -49,7 +49,9 @@ _DERIVED_PATTERNS: tuple[str, ...] = (
     "scripts/governance/meta/rules_integrity_db.json",
     "docs/01_policies_and_standards/_registry/catalogs/rule_catalog_registry.yaml",
     "docs/01_policies_and_standards/_registry/catalogs/registry_master_index.yaml",
-    "architecture_model/index.yaml",
+    # architecture_model/index.yaml 已移除（Owner 裁定 2026-09-11 选 A，st-perf-plan-20260910）：
+    # 该路径受保护（PROTECTED_PATTERNS architecture_model/ 重大修改须 Owner），派生时间戳漂移
+    # 每轮被收口→门禁拦截→死信循环；现改由 Owner 手动处理，自动同步不再触碰。
     # 自愈类兜底（reconciler 通常已还原；若有残留一并收口，保持 HEAD 新鲜）
     "docs/02_enterprise_architecture/04_architecture_principles_decisions/project_handbook/",
     "docs/02_enterprise_architecture/04_architecture_principles_decisions/README.md",

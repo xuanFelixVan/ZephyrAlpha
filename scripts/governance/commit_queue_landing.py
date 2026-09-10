@@ -712,6 +712,36 @@ def bootstrap_drain_with_landing(*, queue_root=None, repo_root=None) -> dict:
         return {"skipped": True, "reason": f"bootstrap_error: {exc}"}
 
 
+def split_auto_commit_snapshot(
+    existing: list[str], project_root: str | os.PathLike
+) -> tuple[list[tuple[str, bytes]], list[str], list[str]]:
+    """auto-commit 快照文件切分：保护路径剔除（不入队）+ payload/deletes 构建。
+
+    返回 (payload, deletes, skipped_protected)。保护清单真源=check_protected_paths
+    .PROTECTED_PATTERNS（经 check_path 复用，零复制——见 reroute 内注释）。
+    单独成函数供回归测试（Owner 裁定 2026-09-11 选 A 的复发性死信治本）。
+    """
+    from scripts.governance.d6_security.check_protected_paths import check_path
+
+    payload: list[tuple[str, bytes]] = []
+    deletes: list[str] = []
+    skipped_protected: list[str] = []
+    for f in existing:
+        rel = os.path.relpath(f, str(project_root)).replace("\\", "/")
+        if check_path(rel):
+            skipped_protected.append(rel)
+            continue
+        if os.path.isfile(f):
+            try:
+                payload.append((rel, Path(f).read_bytes()))
+            except OSError as exc:
+                # fail-safe：读盘异常向上传播 → gateway 降级直提（transient 占用可自愈）
+                raise RuntimeError(f"reroute 快照读盘失败: {rel}（{exc}）") from exc
+        else:
+            deletes.append(rel)  # 已跟踪但盘上缺失 = 删除
+    return payload, deletes, skipped_protected
+
+
 def reroute_auto_commit_to_queue(gateway, session_id: str, files: list[str], message: str):
     """flag ON 时 _commit_auto 的改道目标：快照入袋即返回（66 号 §7 + 08 号文 §4.2 步骤 5）。
 
@@ -737,18 +767,24 @@ def reroute_auto_commit_to_queue(gateway, session_id: str, files: list[str], mes
             status=CommitStatus.NOTHING_TO_COMMIT,
             message="no existing or tracked files to auto-commit",
         )
-    payload: list[tuple[str, bytes]] = []
-    deletes: list[str] = []
-    for f in existing:
-        rel = os.path.relpath(f, str(gateway.project_root)).replace("\\", "/")
-        if os.path.isfile(f):
-            try:
-                payload.append((rel, Path(f).read_bytes()))
-            except OSError as exc:
-                # fail-safe：读盘异常向上传播 → gateway 降级直提（transient 占用可自愈）
-                raise RuntimeError(f"reroute 快照读盘失败: {rel}（{exc}）") from exc
-        else:
-            deletes.append(rel)  # 已跟踪但盘上缺失 = 删除
+    # 自动同步保护路径过滤（Owner 裁定 2026-09-11 选 A，复发性死信治本，st-perf-plan-20260910）：
+    # 保护文件（architecture_model/** 等）混入 reconciler 批次时，落盘必被 PROTECTED-PATHS
+    # 门禁拦截且**整批陪葬**成死信——改为入队前剔除不碰，漂移留工作区归属主手动处理；
+    # 门禁语义零改动（manual 直提路径照旧全量拦截），队列侧永不再产生此类死信。
+    payload, deletes, skipped_protected = split_auto_commit_snapshot(
+        existing, str(gateway.project_root)
+    )
+    if skipped_protected:
+        logger.warning(
+            "[reroute] 自动同步保护路径过滤: 跳过 %d 项不入队（漂移留工作区归属主处理）: %s",
+            len(skipped_protected),
+            skipped_protected[:5],
+        )
+        if not payload and not deletes:
+            return CommitResult(
+                status=CommitStatus.NOTHING_TO_COMMIT,
+                message=f"all {len(skipped_protected)} files protected-skipped: {skipped_protected[:5]}",
+            )
     head_r = gateway.run_git(["git", "rev-parse", f"refs/heads/{cq._TARGET_BRANCH}"])
     base_head = head_r.stdout.strip() if head_r.returncode == 0 else None
     # QueueReject 等入队异常向上传播 → gateway fail-safe 降级直提（warning 留痕）

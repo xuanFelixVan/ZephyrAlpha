@@ -435,6 +435,15 @@ P2（Owner 决策后立项，flag 门控）
 - **移交下一会话**（交接指令已备）：dead/ 933 项分批处置（污染残留列 purge 清单报 Owner 批；正常项 requeue+drain 分批）+ 死信率告警最小落地（Owner 已裁定要做）
 - P1④⑤⑥ / P2⑦⑧⑨：**均未施工**，待 Owner 批准（P2 全部 flag 默认 OFF）；echo_guard 超时 30→10s 维持不做（语义权衡项，待 §5-2 明示）
 
+**施工状态总账（2026-09-11 第二夜，st-perf-plan-20260910 续；Owner 裁定"剩余活儿全部做"）**
+- 死信处置收尾：952 项甄别（全部 auto 再生产物）→ REQUEUE 757 + round-2 26 项、PURGE 184 项 Owner 批准删除（审计 purge_audit_20260911.jsonl）、REVIEW 5 项按 merge_conflict_resolution_sop 冲突三分法结案（全 B 类迭代型，漂移已被属主会话迭代取代）；死信告警落地（REG-ATH-001 v1.4.0 THD-ALERT-003/004 + task_board T-QUEUE-DEADLETTER 通道，实弹验收过）；保护路径死循环治本（commit_derived_sync 白名单删行 + reroute split_auto_commit_snapshot 过滤）
+- P1⑥ reconciler 子进程 import 补齐：`_ensure_scripts_package_importable`（补仓库根+毒缓存清洗）
+- P1⑤ A1：`_git_read_cache` 门禁链窗口式 run_git 读缓存（写命令即失效）
+- P1⑤ A2：checker_supervisor.py 持久 worker 消 spawn 税（run_checker_script 透明接管，异常回退直 spawn，ZEPHYR_CHECKER_SUPERVISOR=0 回滚）
+- P2⑧ gate_result_cache / P2⑦ gate_preflight：gate_cache_preflight.py（保守白名单+五元组指纹+TTL 缓存+预跑采信），flag 全 OFF
+- P2⑨ commit_queue_interactive：git_commit.py --enqueue，flag OFF fail-closed 拒绝
+- 回归：gateway 86 绿 + supervisor 6 绿 + cache_preflight 13 绿 + 队列 77/87/23/21 全绿
+
 ---
 
 ## 8. 附录：证据索引

@@ -664,6 +664,46 @@ class TestCommitAutoReroute:
         assert item["base_head"] == _git_text(tmp_repo, "rev-parse", "refs/heads/dev"), "base_head 落袋"
         assert drain_calls, "入队后触发自举排空尝试（66 号 §8；mock 不真实落盘）"
 
+    def test_reroute_filters_protected_paths(
+        self, tmp_repo: Path, tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+    ) -> None:
+        """保护路径过滤（Owner 裁定 2026-09-11 选 A）：混入 auto-commit 批次的保护文件
+        入队前剔除（漂移留工作区归属主处理），正常文件照常入袋——整批不再陪葬成死信。"""
+        qroot = tmp_path / "cq_prot"
+        monkeypatch.setenv(cq.QUEUE_ENV_VAR, str(qroot))
+        monkeypatch.setattr(gw_mod, "_commit_queue_serializer_enabled", lambda: True)
+        monkeypatch.setattr(cql, "bootstrap_drain_with_landing", lambda **kw: {"skipped": True})
+        gw = self._gateway_on_main(tmp_repo)
+        prot_dir = tmp_repo / "architecture_model"
+        prot_dir.mkdir()
+        (prot_dir / "x.yaml").write_text("k: v\n", encoding="utf-8")
+        (tmp_repo / "auto3.txt").write_text("auto3\n", encoding="utf-8")
+        result = gw._commit_auto(
+            "sess-flag-t", [str(prot_dir / "x.yaml"), str(tmp_repo / "auto3.txt")], "chore: auto sync 3"
+        )
+        assert result.status == CommitStatus.OK and result.commit_hash.startswith("QUEUED:")
+        pending = list((qroot / "pending").glob("q-*.json"))
+        assert len(pending) == 1, "仍产生 1 个队列项（正常文件不受保护剔除牵连）"
+        item = json.loads(pending[0].read_text(encoding="utf-8"))
+        paths = [f["path"] for f in item["files"]]
+        assert paths == ["auto3.txt"], f"保护文件须被剔除，实际: {paths}"
+
+    def test_split_auto_commit_snapshot_unit(self, tmp_path: Path) -> None:
+        """split_auto_commit_snapshot 纯单元：保护剔除/payload/deletes 三通道切分。"""
+        real = tmp_path / "a.txt"
+        real.write_bytes(b"x")
+        payload, deletes, skipped = cql.split_auto_commit_snapshot(
+            [
+                str(real),
+                str(tmp_path / "architecture_model" / "index.yaml"),
+                str(tmp_path / "gone.txt"),
+            ],
+            tmp_path,
+        )
+        assert [p for p, _ in payload] == ["a.txt"]
+        assert deletes == ["gone.txt"]
+        assert skipped == ["architecture_model/index.yaml"]
+
     def test_flag_on_delete_file_carried_as_delete_action(
         self, tmp_repo: Path, tmp_path: Path, monkeypatch: pytest.MonkeyPatch
     ) -> None:
