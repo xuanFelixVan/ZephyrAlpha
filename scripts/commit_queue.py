@@ -1302,8 +1302,15 @@ def _cmd_status(args: argparse.Namespace) -> int:
 
 
 def _cmd_drain(args: argparse.Namespace) -> int:
+    # 2026-09-10 治本（死信事故排查第二处缺口）：CLI drain MUST 接真 landing——
+    # A 段默认桩=标记 done 不真提交，对真实队列是"假 done 丢内容"footgun；
+    # B 段真落地在 bootstrap_drain_with_landing，但 CLI drain 一直没回接。
+    # 延迟 import 防循环（commit_queue_landing → commit_queue as cq）。
+    from scripts.governance.commit_queue_landing import WorktreeLanding  # noqa: PLC0415
+
+    landing = WorktreeLanding(repo_root=_REPO_ROOT, queue_root=args.queue_root)
     try:
-        result = drain_queue(args.queue_root, max_items=args.max_items, done_ttl_days=args.done_ttl_days)
+        result = drain_queue(args.queue_root, landing=landing, max_items=args.max_items, done_ttl_days=args.done_ttl_days)
     except LeaseUnavailable as exc:
         # 显式 drain 拿不到 lease = 另一 Serializer 在排空——正常路径非错误（66 号 §8）
         print(f"SKIPPED: {exc}")
