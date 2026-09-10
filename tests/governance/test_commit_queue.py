@@ -947,3 +947,81 @@ class TestDoneTtlCleanup:
         assert rc == 0
         out = capsys.readouterr().out
         assert "CLEANUP" in out and "removed=1" in out
+
+
+# ---------------------------------------------------------------------------
+# 环境失败不死信（2026-09-10 死信事故治本：pytest 污染进程 drain 真实队列，
+# 851 项真实物品被环境失败误标死信——LandingEnvironmentError 语义）
+# ---------------------------------------------------------------------------
+def test_drain_aborts_on_landing_environment_error(queue_root: Path) -> None:
+    """landing 抛 LandingEnvironmentError → 整轮终止、物品退回 pending、零死信。"""
+    _enqueue(queue_root, "sess-a", "item one", [("a.py", b"a=1\n")])
+    _enqueue(queue_root, "sess-b", "item two", [("b.py", b"b=2\n")])
+
+    def _broken_env_landing(item: dict, root: Path) -> cq.LandingResult:
+        raise cq.LandingEnvironmentError(
+            "landing 环境不可用（repo_root=...pytest_50136...）: RuntimeError: git rev-parse rc=128"
+        )
+
+    stats = cq.drain_queue(queue_root, landing=_broken_env_landing)
+    assert stats["dead"] == 0, "环境失败绝不死信（与物品失败严格区分）"
+    assert stats["done"] == 0
+    pending = sorted(p.stem for p in (queue_root / "pending").glob("q-*.json"))
+    assert len(pending) == 2, "两项都应退回 pending 等下次自举"
+    assert not list((queue_root / "processing").glob("q-*.json")), "processing 不残留"
+
+
+def test_landing_generic_failure_still_deadletters(queue_root: Path) -> None:
+    """同族对照：普通异常仍死信不卡队（既有 DLQ 语义保持），仅环境异常终止整轮。"""
+    _enqueue(queue_root, "sess-a", "item one", [("a.py", b"a=1\n")])
+    _enqueue(queue_root, "sess-b", "item two", [("b.py", b"b=2\n")])
+    calls = {"n": 0}
+
+    def _landing(item: dict, root: Path) -> cq.LandingResult:
+        calls["n"] += 1
+        if calls["n"] == 1:
+            raise RuntimeError("普通单项失败（非环境）")
+        return cq.LandingResult(ok=True, landed_id="deadbeef")
+
+    stats = cq.drain_queue(queue_root, landing=_landing)
+    assert stats["dead"] == 1, "普通异常仍死信（既有 DLQ 语义）"
+    assert stats["done"] == 1
+
+
+# ---------------------------------------------------------------------------
+# 环境失败不死信（2026-09-10 死信事故治本：pytest 污染进程 drain 真实队列，
+# 851 项真实物品被环境失败误标死信——LandingEnvironmentError 语义）
+# ---------------------------------------------------------------------------
+def test_drain_aborts_on_landing_environment_error(queue_root: Path) -> None:
+    """landing 抛 LandingEnvironmentError → 整轮终止、物品退回 pending、零死信。"""
+    _enqueue(queue_root, "sess-a", "item one", [("a.py", b"a=1\n")])
+    _enqueue(queue_root, "sess-b", "item two", [("b.py", b"b=2\n")])
+
+    def _broken_env_landing(item: dict, root: Path) -> cq.LandingResult:
+        raise cq.LandingEnvironmentError(
+            "landing 环境不可用（repo_root=...pytest_50136...）: RuntimeError: git rev-parse rc=128"
+        )
+
+    stats = cq.drain_queue(queue_root, landing=_broken_env_landing)
+    assert stats["dead"] == 0, "环境失败绝不死信（与物品失败严格区分）"
+    assert stats["done"] == 0
+    pending = sorted(p.stem for p in (queue_root / "pending").glob("q-*.json"))
+    assert len(pending) == 2, "两项都应退回 pending 等下次自举"
+    assert not list((queue_root / "processing").glob("q-*.json")), "processing 不残留"
+
+
+def test_landing_generic_failure_still_deadletters(queue_root: Path) -> None:
+    """同族对照：普通异常仍死信不卡队（既有 DLQ 语义保持），仅环境异常终止整轮。"""
+    _enqueue(queue_root, "sess-a", "item one", [("a.py", b"a=1\n")])
+    _enqueue(queue_root, "sess-b", "item two", [("b.py", b"b=2\n")])
+    calls = {"n": 0}
+
+    def _landing(item: dict, root: Path) -> cq.LandingResult:
+        calls["n"] += 1
+        if calls["n"] == 1:
+            raise RuntimeError("普通单项失败（非环境）")
+        return cq.LandingResult(ok=True, landed_id="deadbeef")
+
+    stats = cq.drain_queue(queue_root, landing=_landing)
+    assert stats["dead"] == 1, "普通异常仍死信（既有 DLQ 语义）"
+    assert stats["done"] == 1

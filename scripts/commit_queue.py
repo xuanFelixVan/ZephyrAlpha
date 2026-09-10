@@ -196,6 +196,18 @@ class RequeueError(RuntimeError):
     """死信取回重入队失败（qid 不在 dead/、qid 非法、工作区文件缺失等——CLI 映射 exit 1）。"""
 
 
+class LandingEnvironmentError(RuntimeError):
+    """landing 运行环境不可用（2026-09-10 死信事故治本）。
+
+    与"物品失败"严格区分：landing 自身的 repo/worktree 不可用（如 rev-parse
+    rc=128）= 环境失败 → drain 终止整轮、当前项退回 pending、**绝不死信**；
+    物品失败（CAS 冲突/门禁阻断/快照损坏）= 死信不卡队（66 号 §4 裁定 4）。
+
+    事故背景：pytest 污染进程（repo_root=已删除临时仓）自举 drain 真实队列，
+    851 项真实物品被环境失败误标死信（dead_reason 全带 pytest_50136 路径）。
+    """
+
+
 @dataclass
 class LandingResult:
     """landing callable 返回协议（B 段真落盘实现的契约）。
@@ -940,6 +952,19 @@ def drain_queue(
             if result is None:
                 try:
                     result = landing_fn(item, root)
+                except LandingEnvironmentError as exc:
+                    # 环境失败 ≠ 物品失败（2026-09-10 死信事故治本）：landing 自身
+                    # repo/worktree 不可用时，本轮所有项都必然同样失败——当前项退回
+                    # pending、终止整轮、绝不死信（真实物品不被环境事故拖进坟墓）。
+                    try:
+                        _retry_transient(lambda: os.rename(processing_path, head))
+                    except OSError:
+                        logger.error("[drain] qid=%s 环境失败退回 pending 失败，留 processing 等孤儿回收", qid)
+                    logger.error(
+                        "[drain] landing 环境失败，终止本轮排空（当前项退回 pending，不死信）: %s",
+                        exc,
+                    )
+                    break
                 except Exception as exc:  # 单项失败 → 死信不卡队（66 号 §4 裁定 4）
                     result = LandingResult(ok=False, reason=f"landing 异常: {type(exc).__name__}: {exc}")
             if result.ok:

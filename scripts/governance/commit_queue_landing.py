@@ -586,8 +586,15 @@ class WorktreeLanding:
                 logger.warning("[landing] qid=%s 重放收敛异常（non-blocking）: %s", qid, exc)
             return cq.LandingResult(ok=True, landed_id=landed)
 
-        self.ensure_worktree()
-        gateway = self._get_gateway()
+        try:
+            self.ensure_worktree()
+            gateway = self._get_gateway()
+        except cq.LandingEnvironmentError:
+            raise
+        except Exception as exc:  # noqa: BLE001 — 环境失败≠物品失败：转专类供 drain 终止整轮不死信（2026-09-10 死信事故治本）
+            raise cq.LandingEnvironmentError(
+                f"landing 环境不可用（repo_root={self.repo_root}）: {type(exc).__name__}: {exc}"
+            ) from exc
         marker = queue_marker(session_id, qid)
 
         for attempt in range(1, self._max_cas_retries + 1):

@@ -396,3 +396,19 @@ def _sysmodules_pollution_sentinel():
         raise AssertionError(
             "sys.modules 污染检出（#ARCH-107）：本测试置脏模块注册表且未恢复: " + "; ".join(sorted(set(poisoned)))
         )
+
+
+# ---------------------------------------------------------------------------
+# 提交队列隔离（2026-09-10 死信事故治本：pytest 污染进程 drain 真实队列，
+# 851 项真实物品被环境失败误标死信——详见 .runtime/tmp/commit_queue_dead_triage_20260910.md）
+# ---------------------------------------------------------------------------
+@pytest.fixture(autouse=True)
+def _isolate_commit_queue_root(tmp_path_factory, monkeypatch):
+    """autouse：pytest 全域禁触真实 .runtime/commit_queue。
+
+    ZEPHYR_COMMIT_QUEUE_DIR 是 commit_queue 预留的测试/多仓隔离覆盖位
+    （scripts/commit_queue.py QUEUE_ENV_VAR，先例 ZEPHYR_TASK_BOARD_DB）。
+    显式传 queue_root 的队列测试不受影响；生产环境无此 env 照常锚主仓。
+    """
+    iso_root = tmp_path_factory.mktemp("commit_queue_iso")
+    monkeypatch.setenv("ZEPHYR_COMMIT_QUEUE_DIR", str(iso_root))
