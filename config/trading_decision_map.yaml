@@ -2193,16 +2193,14 @@ nodes:
 
   - node_id: TDM-P-P1-03
     name_zh: 买入逻辑存活判定
-    # C8 施工（gw-tdm-20260909）：MOD-PLAN-024 落码，module_ref 由 plan_deviation_monitor 改指理由存活核
+    # C8 施工（gw-tdm-20260909）：MOD-PLAN-024 落码回填（module_ref 改指理由存活核+algo_note 锚定同批）
     market: cn_a
     flow: position_flow
     layer: P1
     node_type: stage
     point: 盘前
     decision_question: 当初的买入逻辑现在还在不在，哪些持仓逻辑已失效
-    algo_note_zh: >-
-      按买入理由逐仓回查：打板仓查情绪梯队还在不在（板块还热吗）；多因子仓查因子暴露漂移（当初的因子还强吗）；事件仓查事件衰减（利好兑现没）；做T底仓查趋势没破。
-      输出 成立/弱化/失效 三态，失效=转离场评估。
+    algo_note_zh: 按买入理由逐仓回查：打板仓查情绪梯队还在不在（板块还热吗）；多因子仓查因子暴露漂移（当初的因子还强吗）；事件仓查事件衰减（利好兑现没）；做T底仓查趋势没破。 输出 成立/弱化/失效 三态，失效=转离场评估。实现锚=thesis_survival（MOD-PLAN-024）。
     parent_node: TDM-P-P1
     factor_refs: [FCT-SENT-012, FCT-MOM-022]
     data_refs: [DS-082, DS-107]
