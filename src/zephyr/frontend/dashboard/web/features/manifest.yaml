@@ -161,16 +161,16 @@ modules:
     handbook: []
     status: active
   - id: chainmap-galaxy
-    name: 产业星系图（L1 族聚合全景）
+    name: 产业星系图（L1 族聚合 3D 星云）
     file: features/chainmap/chainmap-galaxy.js
     page: chainmap
     init: "init(chart, ctx)"
     destroy: "destroy()"
-    depends: [ZK.api, ZK.bus]   # /api/chainmap-galaxy（ig_* 七表聚类真源）；cm:view/cm:open-cluster 经总线
+    depends: [ZK.api, ZK.bus, vendor/three]   # /api/chainmap-galaxy（ig_* 七表聚类真源）；cm:view/cm:open-cluster 经总线；渲染=three.js r147（B2 起 3D：拖拽旋转/滚轮推拉/键盘方向/双击复位，轨道相机手搓）
     toggle: none
     styles: pages/chainmap.html <style>   # 画布页同 tdm 先例：样式随页面片段
     acceptance: ACC-F-CHAINMAP-GALAXY
-    handbook: []
+    handbook: [FEH-PC-019]   # 3D 画布双坑：.catch 吞 render 异常伪装断线+元素遮挡 pointerdown
     status: active
   - id: chainmap-nav
     name: 产业导航树（族→链两级）

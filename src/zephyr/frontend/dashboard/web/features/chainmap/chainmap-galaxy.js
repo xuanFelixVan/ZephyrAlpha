@@ -1,24 +1,25 @@
-/* ── 产业地图 L1 星系层（族聚合全景）· 真源 /api/chainmap-galaxy（ig_* 七表，PG 只读）──
- * Owner 2026-09-08 裁定三层缩放方案：L1=族节点（按跨链供应连接 Louvain 聚类，30~48 族），
- * 力导向布局坐标 localStorage 缓存固化（同数据恒定不跳），点族进入 L2 链层。
- * 模块契约：ZK.registerFeature 注册；与 nav/search/cluster 只经 ZK.bus 通信（cm:view/cm:open-cluster）；
- * 画布容器 #cm-canvas-galaxy 本模块独占；演示诚实纪律：无演示数据，断线空态+15s 自动重试直至真源。
- * 验收单：ACC-F-CHAINMAP-GALAXY ｜ 拆分清单：docs/_working/2026-09-08-chainmap-component-split-inventory.md */
+/* ── 产业地图 L1 星系层 · 3D 族星云（B2 一期，Owner 2026-09-10 裁定 3D 化）· 真源 /api/chainmap-galaxy（ig_* 七表，PG 只读）──
+ * 47 族 Fibonacci 球面撒点（族越大星越大，确定性几何分布免布局缓存）；拖拽旋转/滚轮推拉/键盘方向/
+ * 双击复位；hover 高亮直连邻接；点星进 L2 链层（cm:view/cm:open-cluster 契约不变）。
+ * 渲染=three.js r147 UMD（vendor/three/，dockview vendor 先例）；轨道相机手搓球坐标（~60 行，
+ * 免 examples/OrbitControls 版本耦合）。旧 2D 力导向渲染退役（git 历史留存）。
+ * 模块契约：ZK.registerFeature 注册；与 nav/search/cluster 只经 ZK.bus 通信（cm:view/cm:market）；
+ * 画布容器 #cm-canvas-galaxy 本模块独占；演示诚实纪律：无演示数据，断线空态+15s 自动重试；
+ * WebGL/three 缺失→诚实报错不做 2D 假降级。验收单：ACC-F-CHAINMAP-GALAXY（rev4）
+ * ｜ 拆分清单：docs/_working/2026-09-08-chainmap-component-split-inventory.md */
 (function () {
   'use strict';
-  var G = { data: null, busy: false, loaded: false, timer: null, view: { z: 1, x: 0, y: 0 }, lineByPair: null,
-            market: 'all',
-            loadStart: 0, elapsedTimer: null, retryCount: 0 };   /* B1 加载态（ACC rev3）：首算诚实计时+重试计数 */
-  var elByCid = {};   /* cid → 节点元素（hover 邻居高亮） */
+  var G = { data: null, busy: false, loaded: false, timer: null, market: 'all',
+            loadStart: 0, elapsedTimer: null, retryCount: 0,   /* B1 加载态（ACC rev3） */
+            gl: null, raf: 0, birth: 0 };   /* gl=3D 引擎句柄（initGL 建见注释） */
 
   function canvasEl() { return document.getElementById('cm-canvas-galaxy'); }
-  function worldEl() { return document.getElementById('cm-world-galaxy'); }
+  function glEl() { return document.getElementById('cm-gl-galaxy'); }
+  function loadingEl() { return document.getElementById('cm-loading-galaxy'); }
 
   /* ── B1 加载态（ACC-F-CHAINMAP-GALAXY rev3 item7/8）──
    * 首算 3-6s（冷缓存最长 20s）期间画布不再是空白：星云闪烁骨架+已等待秒数诚实计数；
    * 断线转失败态（红字+暂停闪烁+重试计数），15s 自动重试机制不变；成功即隐藏。零假数据。 */
-  function loadingEl() { return document.getElementById('cm-loading-galaxy'); }
-
   function showLoading(failMode, msg) {
     var el = loadingEl();
     if (!el) return;
@@ -49,249 +50,304 @@
     if (G.elapsedTimer) { clearInterval(G.elapsedTimer); G.elapsedTimer = null; }
   }
 
-  function applyView() {
-    var w = worldEl();
-    if (w) w.style.transform = 'translate(' + G.view.x + 'px,' + G.view.y + 'px) scale(' + G.view.z + ')';
-    var b = document.getElementById('cm-zoom-galaxy');
-    if (b) b.textContent = Math.round(G.view.z * 100) + '%';
-  }
+  /* ── 3D 引擎（three.js r147 UMD + 手搓轨道相机）──
+   * gl={renderer,scene,camera,tex,group,stars:{cid:sprite},starList:[{cid,sprite,base}],
+   *     lines:[{s,t,line,baseOp}],linkByPair:{cid:{cid:true}},labels:{cid:el},labelHost,
+   *     sph:{theta,phi,r},drag,mouse,ray,hover} */
+  var SPH0 = { theta: 0.55, phi: 1.25, r: 340 };
 
-  function resetView() {
-    var c = canvasEl();
-    if (!c || !G.data) return;
-    var r = c.getBoundingClientRect();
-    var W = 2600, H = 1600;
-    var z = Math.min((r.width - 24) / W, (r.height - 24) / H);
-    G.view = { z: Math.max(0.15, z), x: (r.width - W * z) / 2, y: (r.height - H * z) / 2 };
-    applyView();
-  }
-
-  /* 交互模板（visualization_view_template.md §6.6）：滚轮缩放（光标锚点）/拖动平移/双击重置 */
-  function bindView() {
-    var c = canvasEl();
-    if (!c || c.dataset.bound) return;
-    c.dataset.bound = '1';
-    c.addEventListener('wheel', function (e) {
-      e.preventDefault();
-      var r = c.getBoundingClientRect();
-      zoomAt(e.clientX - r.left, e.clientY - r.top, e.deltaY < 0 ? 1.12 : 0.89);
-    }, { passive: false });
-    var drag = null;
-    c.addEventListener('mousedown', function (e) {
-      drag = { x: e.clientX, y: e.clientY, vx: G.view.x, vy: G.view.y };
-      c.classList.add('dragging');
-    });
-    window.addEventListener('mousemove', function (e) {
-      if (!drag) return;
-      G.view.x = drag.vx + (e.clientX - drag.x);
-      G.view.y = drag.vy + (e.clientY - drag.y);
-      applyView();
-    });
-    window.addEventListener('mouseup', function () { drag = null; c.classList.remove('dragging'); });
-    c.addEventListener('dblclick', function (e) { if (e.target.closest('.cm-gn')) return; resetView(); });
-  }
-
-  function zoomAt(mx, my, factor) {
-    var nz = Math.max(0.15, Math.min(8, G.view.z * factor));
-    var k = nz / G.view.z;
-    G.view.x = mx - (mx - G.view.x) * k;
-    G.view.y = my - (my - G.view.y) * k;
-    G.view.z = nz;
-    applyView();
-  }
-
-  /* 确定性布局 v2：大簇（≥5 公司）力导向（正规 FR：斥力 k²/d + 引力 w·d/k 线性，温度收敛），
-   * 小簇/孤链 golden-angle 外环排布（ dwarf 星系带），末段全点碰撞松弛防压盖。
-   * 坐标随 generated_at 缓存固化（防每次微跳）。v1 教训：引力用 d² 项在大簇间发散，重簇塌成一坨。 */
-  function computeLayout(d) {
-    var ns = d.clusters, ls = d.links;
-    var key = 'cmGalaxy:v2:' + ns.length + ':' + ls.length + ':' + (d.generated_at || '');
+  function glAvailable() {
     try {
-      var saved = JSON.parse(localStorage.getItem(key) || 'null');
-      if (saved && saved.p) return saved.p;
-    } catch (e) { /* 缓存坏态重算 */ }
-    var W = 2600, H = 1600, cx = W / 2, cy = H / 2, i, j;
-    var pos = {}, seed = 20260908;
-    function rnd() { seed = (seed * 1103515245 + 12345) & 0x7fffffff; return seed / 0x7fffffff; }
-    var MAJOR_MIN = 5;
-    var majors = [], minors = [];
-    ns.forEach(function (c) { (c.n_companies >= MAJOR_MIN ? majors : minors).push(c); });
-    var deg = {};
-    ls.forEach(function (l) { deg[l.s] = (deg[l.s] || 0) + 1; deg[l.t] = (deg[l.t] || 0) + 1; });
-    var m = majors.length;
-    majors.forEach(function (c, i2) {
-      var a = 2 * Math.PI * i2 / Math.max(1, m);
-      pos[c.id] = { x: cx + Math.cos(a) * W * 0.2 * (0.5 + rnd() * 0.5), y: cy + Math.sin(a) * H * 0.2 * (0.5 + rnd() * 0.5) };
+      var c = document.createElement('canvas');
+      return !!(window.WebGLRenderingContext && (c.getContext('webgl') || c.getContext('experimental-webgl')));
+    } catch (e) { return false; }
+  }
+
+  function glDegrade(reason) {
+    var el = loadingEl();
+    if (el) {
+      el.style.display = 'flex';
+      el.classList.add('cm-load-fail');
+      var t = document.getElementById('cm-loading-galaxy-t');
+      var s = document.getElementById('cm-loading-galaxy-s');
+      if (t) t.textContent = '3D 渲染不可用——' + reason;
+      if (s) s.textContent = '请用 Chrome / Electron 壳打开（WebGL 必需）· 数据接口无恙';
+    }
+    var meta = document.getElementById('cm-meta');
+    if (meta) { meta.textContent = '3D 渲染不可用（' + reason + '）——/api/chainmap-galaxy 数据接口本身无恙'; meta.classList.add('cm-bad'); }
+  }
+
+  function glowTexture() {
+    var c = document.createElement('canvas'); c.width = c.height = 128;
+    var g = c.getContext('2d');
+    var gr = g.createRadialGradient(64, 64, 0, 64, 64, 64);
+    gr.addColorStop(0, 'rgba(216,232,255,1)');
+    gr.addColorStop(0.25, 'rgba(122,176,255,.9)');
+    gr.addColorStop(0.6, 'rgba(61,139,255,.30)');
+    gr.addColorStop(1, 'rgba(61,139,255,0)');
+    g.fillStyle = gr; g.fillRect(0, 0, 128, 128);
+    return new THREE.CanvasTexture(c);
+  }
+
+  function initGL() {
+    if (G.gl) return G.gl;
+    if (typeof THREE === 'undefined') { glDegrade('three.js 库未加载（vendor/three/）'); return null; }
+    if (!glAvailable()) { glDegrade('WebGL 不可用'); return null; }
+    var renderer;
+    try {
+      renderer = new THREE.WebGLRenderer({ canvas: glEl(), antialias: true, alpha: true });
+    } catch (e) { glDegrade('WebGL 初始化失败'); return null; }
+    renderer.setPixelRatio(Math.min(2, window.devicePixelRatio || 1));
+    var scene = new THREE.Scene();
+    var camera = new THREE.PerspectiveCamera(55, 1, 1, 4000);
+    /* 背景尘星：远球薄壳随机点（纯装饰坐标，非业务数据，演示诚实纪律不受限） */
+    (function () {
+      var n = 420, pos = new Float32Array(n * 3);
+      for (var i = 0; i < n; i++) {
+        var u = Math.random() * 2 - 1, a = Math.random() * Math.PI * 2;
+        var r = 700 + Math.random() * 250, s = Math.sqrt(1 - u * u);
+        pos[i * 3] = r * s * Math.cos(a); pos[i * 3 + 1] = r * u; pos[i * 3 + 2] = r * s * Math.sin(a);
+      }
+      var geo = new THREE.BufferGeometry();
+      geo.setAttribute('position', new THREE.BufferAttribute(pos, 3));
+      scene.add(new THREE.Points(geo, new THREE.PointsMaterial({ color: 0x7d8aa0, size: 1.6, transparent: true, opacity: 0.4, sizeAttenuation: false })));
+    })();
+    G.gl = { renderer: renderer, scene: scene, camera: camera, tex: glowTexture(),
+             group: null, stars: {}, starList: [], lines: [], linkByPair: {},
+             labels: {}, labelHost: document.getElementById('cm-labels-galaxy'),
+             sph: { theta: SPH0.theta, phi: SPH0.phi, r: SPH0.r },
+             drag: null, mouse: { x: -9, y: -9 }, ray: new THREE.Raycaster(), hover: null };
+    bindView3D();
+    return G.gl;
+  }
+
+  /* 轨道相机：球坐标→相机位姿（手搓 ~60 行核心，免 OrbitControls 依赖） */
+  function applyCamera() {
+    var gl = G.gl, s = gl.sph;
+    var sp = Math.sin(s.phi);
+    gl.camera.position.set(s.r * sp * Math.sin(s.theta), s.r * Math.cos(s.phi), s.r * sp * Math.cos(s.theta));
+    gl.camera.lookAt(0, 0, 0);
+  }
+
+  function bindView3D() {
+    var el = glEl();
+    if (!el || el.dataset.bound) return;
+    el.dataset.bound = '1';
+    el.addEventListener('wheel', function (e) {
+      e.preventDefault();
+      var gl = G.gl; if (!gl) return;
+      gl.sph.r = Math.max(90, Math.min(620, gl.sph.r * (e.deltaY < 0 ? 0.9 : 1.1)));
+    }, { passive: false });
+    el.addEventListener('pointerdown', function (e) {
+      var gl = G.gl; if (!gl) return;
+      gl.drag = { x: e.clientX, y: e.clientY, th: gl.sph.theta, ph: gl.sph.phi, moved: 0 };
+      el.classList.add('dragging');
     });
-    if (m > 1) {
-      var k = 0.5 * Math.sqrt(W * H / m), IT = 300;
-      var isMaj = {};
-      majors.forEach(function (c) { isMaj[c.id] = true; });
-      var disp = {};
-      for (var it = 0; it < IT; it++) {
-        var t = 1 - it / IT;
-        for (i = 0; i < m; i++) {
-          var ia = majors[i].id, dx = 0, dy = 0;
-          for (j = 0; j < m; j++) {
-            if (i === j) continue;
-            var ddx = pos[ia].x - pos[majors[j].id].x, ddy = pos[ia].y - pos[majors[j].id].y;
-            var dd = Math.max(4, ddx * ddx + ddy * ddy);
-            var dist = Math.sqrt(dd);
-            var f = (k * k) / dist;   /* 斥力：短程强、长程弱 */
-            dx += ddx / dist * f; dy += ddy / dist * f;
-          }
-          disp[ia] = { x: dx, y: dy };
-        }
-        ls.forEach(function (l) {
-          if (!isMaj[l.s] || !isMaj[l.t]) return;
-          var p = pos[l.s], q = pos[l.t];
-          if (!p || !q) return;
-          var ddx = p.x - q.x, ddy = p.y - q.y;
-          var dist = Math.sqrt(ddx * ddx + ddy * ddy) || 1;
-          var wgt = Math.min(2.2, Math.log10(l.w + 1) || 0.3);
-          var f = (dist / k) * wgt;   /* 引力：线性于距离（d² 会发散塌团） */
-          disp[l.s].x -= ddx / dist * f; disp[l.s].y -= ddy / dist * f;
-          disp[l.t].x += ddx / dist * f; disp[l.t].y += ddy / dist * f;
-        });
-        for (i = 0; i < m; i++) {
-          var id = majors[i].id, vx = disp[id].x, vy = disp[id].y;
-          var dl = Math.sqrt(vx * vx + vy * vy) || 1;
-          var lim = Math.min(dl, t * 26 + 2);
-          pos[id].x = Math.max(140, Math.min(W - 140, pos[id].x + vx / dl * lim));
-          pos[id].y = Math.max(110, Math.min(H - 110, pos[id].y + vy / dl * lim));
-        }
-      }
-    }
-    /* 小簇带：golden-angle 椭圆环包住大簇区（矮星系视觉，不跟大簇抢中心） */
-    if (minors.length) {
-      var bx0 = 1e9, bx1 = -1e9, by0 = 1e9, by1 = -1e9;
-      majors.forEach(function (c) {
-        var p = pos[c.id];
-        if (!p) return;
-        bx0 = Math.min(bx0, p.x); bx1 = Math.max(bx1, p.x);
-        by0 = Math.min(by0, p.y); by1 = Math.max(by1, p.y);
-      });
-      if (!majors.length) { bx0 = cx - 200; bx1 = cx + 200; by0 = cy - 150; by1 = cy + 150; }
-      var rcx = (bx0 + bx1) / 2, rcy = (by0 + by1) / 2;
-      var rx = (bx1 - bx0) / 2 + 190, ry = (by1 - by0) / 2 + 150;
-      minors.forEach(function (c, i2) {
-        var a = i2 * 2.399963 + 0.7;
-        pos[c.id] = {
-          x: Math.max(110, Math.min(W - 110, rcx + Math.cos(a) * rx * (1 + (i2 % 3) * 0.14))),
-          y: Math.max(90, Math.min(H - 90, rcy + Math.sin(a) * ry * (1 + (i2 % 3) * 0.18)))
-        };
-      });
-    }
-    /* 全点碰撞松弛（半径=节点圆 + 间距 14），防压盖 */
-    var rad = {};
-    ns.forEach(function (c) { rad[c.id] = radiusOf(c.n_companies) + 14; });
-    for (var pass = 0; pass < 180; pass++) {
-      for (i = 0; i < ns.length; i++) {
-        for (j = i + 1; j < ns.length; j++) {
-          var A = ns[i].id, B = ns[j].id, pa = pos[A], pb = pos[B];
-          if (!pa || !pb) continue;
-          var ddx = pb.x - pa.x, ddy = pb.y - pa.y;
-          var dist = Math.sqrt(ddx * ddx + ddy * ddy) || 0.5;
-          var min = rad[A] + rad[B];
-          if (dist < min) {
-            var push = (min - dist) / dist * 0.5;
-            pa.x -= ddx * push; pa.y -= ddy * push;
-            pb.x += ddx * push; pb.y += ddy * push;
-          }
-        }
-      }
-      ns.forEach(function (c) {
-        var p = pos[c.id];
-        if (!p) return;
-        p.x = Math.max(110, Math.min(W - 110, p.x));
-        p.y = Math.max(90, Math.min(H - 90, p.y));
-      });
-    }
-    try { localStorage.setItem(key, JSON.stringify({ p: pos })); } catch (e) { /* 存不下则每次重算 */ }
-    return pos;
+    window.addEventListener('pointermove', function (e) {
+      var gl = G.gl; if (!gl) return;
+      var c = glEl(); if (!c) return;
+      var r = c.getBoundingClientRect();
+      gl.mouse.x = ((e.clientX - r.left) / r.width) * 2 - 1;
+      gl.mouse.y = -((e.clientY - r.top) / r.height) * 2 + 1;
+      if (!gl.drag) return;
+      var dx = e.clientX - gl.drag.x, dy = e.clientY - gl.drag.y;
+      gl.drag.moved = Math.max(gl.drag.moved, Math.abs(dx) + Math.abs(dy));
+      gl.sph.theta = gl.drag.th - dx * 0.005;
+      gl.sph.phi = Math.max(0.15, Math.min(Math.PI - 0.15, gl.drag.ph - dy * 0.005));
+    });
+    window.addEventListener('pointerup', function (e) {
+      var gl = G.gl; if (!gl || !gl.drag) return;
+      var moved = gl.drag.moved; gl.drag = null;
+      var c = glEl(); if (c) c.classList.remove('dragging');
+      if (moved < 6) clickPick(e);   /* 位移<6px 视为点击（点星进簇） */
+    });
+    el.addEventListener('dblclick', function () {
+      var gl = G.gl; if (!gl) return;
+      gl.sph.theta = SPH0.theta; gl.sph.phi = SPH0.phi; gl.sph.r = SPH0.r;
+    });
+    window.addEventListener('keydown', function (e) {
+      if (!visible()) return;
+      var gl = G.gl; if (!gl) return;
+      var d = 0.06;
+      if (e.key === 'ArrowLeft') gl.sph.theta -= d;
+      else if (e.key === 'ArrowRight') gl.sph.theta += d;
+      else if (e.key === 'ArrowUp') gl.sph.phi = Math.max(0.15, gl.sph.phi - d);
+      else if (e.key === 'ArrowDown') gl.sph.phi = Math.min(Math.PI - 0.15, gl.sph.phi + d);
+      else return;
+      e.preventDefault();
+    });
+    window.addEventListener('resize', fitGL);
   }
 
-  function radiusOf(nCompanies) {
-    return Math.min(26 + Math.sqrt(nCompanies || 1) * 1.9, 92);
+  function fitGL() {
+    var gl = G.gl, c = canvasEl();
+    if (!gl || !c) return;
+    var w = c.clientWidth, h = c.clientHeight;
+    if (!w || !h) return;
+    gl.renderer.setSize(w, h, false);
+    gl.camera.aspect = w / h;
+    gl.camera.updateProjectionMatrix();
   }
 
+  function clickPick(e) {
+    var gl = G.gl, c = glEl();
+    if (!gl || !c || !gl.starList.length) { G.lastPick = { early: 'no-gl' }; return; }
+    var r = c.getBoundingClientRect();
+    if (e.clientX < r.left || e.clientX > r.right || e.clientY < r.top || e.clientY > r.bottom) { G.lastPick = { early: 'out-of-bounds', x: e.clientX, y: e.clientY }; return; }
+    var m = new THREE.Vector2(((e.clientX - r.left) / r.width) * 2 - 1, -((e.clientY - r.top) / r.height) * 2 + 1);
+    gl.ray.setFromCamera(m, gl.camera);
+    var hits = gl.ray.intersectObjects(gl.starList.map(function (s) { return s.sprite; }));
+    G.lastPick = { x: e.clientX, y: e.clientY, hits: hits.length };
+    if (!hits.length) return;
+    var cid = hits[0].object.userData.cid, star = gl.stars[cid];
+    if (!star) return;
+    ZK.bus.emit('cm:view', { view: 'cluster' });
+    ZK.bus.emit('cm:open-cluster', { cid: cid, name: star.name, market: G.market });
+  }
+
+  /* 47 族 Fibonacci 球面撒点：黄金角均匀分布（确定性几何，坐标与数据零耦合免缓存）；
+   * 按公司数降序分配序号——大族错开落位。星大小=公司数（同旧 2D 口径公式族）。 */
   function render() {
     var d = G.data;
     if (!d) return;
-    var world = worldEl(), svg = document.getElementById('cm-wires-galaxy'), host = document.getElementById('cm-nodes-galaxy');
-    var empty = document.getElementById('cm-empty-galaxy');
-    if (!world || !svg || !host) return;
-    var W = 2600, H = 1600;
-    svg.setAttribute('width', W); svg.setAttribute('height', H);
-    world.style.width = W + 'px'; world.style.height = H + 'px';
-    host.innerHTML = ''; svg.innerHTML = '';
-    if (!d.clusters.length) {
-      if (empty) { empty.style.display = 'flex'; empty.textContent = '无族数据（ig_* 表为空或聚类退化）'; }
-      return;
-    }
-    if (empty) empty.style.display = 'none';
-    var pos = computeLayout(d);
-    /* 边层：粗细=连接强度（公司供应链边去重计数），透明度随权重 */
-    G.lineByPair = {};
-    var frag = document.createDocumentFragment();
+    var gl = initGL();
+    if (!gl) return;   /* 降级路径：glDegrade 已给出诚实提示 */
+    fitGL();
+    clearScene();
+    var R = 150, GA = 2.399963;
+    var ns = d.clusters.slice().sort(function (a, b) { return b.n_companies - a.n_companies; });
+    var linkOf = {};
+    d.links.forEach(function (l) { (linkOf[l.s] = linkOf[l.s] || {})[l.t] = l.w; (linkOf[l.t] = linkOf[l.t] || {})[l.s] = l.w; });
+    var group = new THREE.Group();
+    gl.group = group;
+    ns.forEach(function (c, i) {
+      var y = 1 - 2 * (i + 0.5) / ns.length, rr = Math.sqrt(Math.max(0, 1 - y * y)), a = GA * i;
+      var p = new THREE.Vector3(Math.cos(a) * rr * R, y * R, Math.sin(a) * rr * R);
+      var base = 5 + Math.sqrt(c.n_companies || 1) * 1.15;
+      var mat = new THREE.SpriteMaterial({ map: gl.tex, color: 0x3d8bff, transparent: true, depthWrite: false });
+      var sp = new THREE.Sprite(mat);
+      sp.position.copy(p);
+      sp.scale.setScalar(base * 2.2);
+      sp.userData.cid = c.id;
+      group.add(sp);
+      gl.stars[c.id] = { cid: c.id, name: c.name, sprite: sp, base: base };
+      gl.starList.push(gl.stars[c.id]);
+      var lb = document.createElement('div');
+      lb.className = 'cm-gl-label';
+      lb.textContent = c.name;
+      lb.title = c.name + '（' + c.n_chains + ' 链 · ' + c.n_companies + ' 公司）';
+      if (base >= 10) lb.classList.add('cm-gl-major');
+      gl.labelHost.appendChild(lb);
+      gl.labels[c.id] = lb;
+    });
     d.links.forEach(function (l) {
-      var p = pos[l.s], q = pos[l.t];
-      if (!p || !q) return;
-      var ln = document.createElementNS('http://www.w3.org/2000/svg', 'line');
-      ln.setAttribute('x1', p.x); ln.setAttribute('y1', p.y);
-      ln.setAttribute('x2', q.x); ln.setAttribute('y2', q.y);
-      ln.setAttribute('stroke', '#3d8bff');
-      ln.setAttribute('stroke-width', (0.6 + Math.log10(l.w + 1) * 1.6).toFixed(2));
-      ln.setAttribute('opacity', Math.min(0.5, 0.1 + l.w / 900).toFixed(3));
-      frag.appendChild(ln);
-      (G.lineByPair[l.s] = G.lineByPair[l.s] || {})[l.t] = ln;
-      (G.lineByPair[l.t] = G.lineByPair[l.t] || {})[l.s] = ln;
+      var sa = gl.stars[l.s], sb = gl.stars[l.t];
+      if (!sa || !sb) return;
+      var geo = new THREE.BufferGeometry().setFromPoints([sa.sprite.position, sb.sprite.position]);
+      var op = Math.min(0.42, 0.06 + Math.log10((l.w || 1) + 1) * 0.14);
+      var line = new THREE.Line(geo, new THREE.LineBasicMaterial({ color: 0x3d8bff, transparent: true, opacity: op }));
+      group.add(line);
+      gl.lines.push({ s: l.s, t: l.t, line: line, baseOp: op });
+      gl.linkByPair[l.s] = gl.linkByPair[l.s] || {};
+      gl.linkByPair[l.s][l.t] = true;
+      gl.linkByPair[l.t] = gl.linkByPair[l.t] || {};
+      gl.linkByPair[l.t][l.s] = true;
     });
-    svg.appendChild(frag);
-    /* 点层：大小=公司数，颜色单色系 #3D8BFF 低饱和（Owner UI 纪律） */
-    d.clusters.forEach(function (c) {
-      var p = pos[c.id];
-      if (!p) return;
-      var r = radiusOf(c.n_companies);
-      var el = document.createElement('div');
-      el.className = 'cm-gn';
-      el.style.left = (p.x - r) + 'px'; el.style.top = (p.y - r) + 'px';
-      el.style.width = (r * 2) + 'px'; el.style.height = (r * 2) + 'px';
-      el.style.fontSize = Math.max(10.5, Math.min(15, r / 4.2)).toFixed(1) + 'px';
-      el.innerHTML = '<div class="cm-gn-n" title="' + c.name + '（' + c.n_chains + ' 链 · ' + c.n_companies + ' 公司）">' + c.name + '</div>' +
-        (r < 32 ? '' : '<div class="cm-gn-s">' + c.n_companies + ' 公司 · ' + c.n_chains + ' 链</div>');
-      el.addEventListener('mouseenter', function () { highlight(c.id, true); });
-      el.addEventListener('mouseleave', function () { highlight(c.id, false); });
-      el.addEventListener('click', function () {
-        ZK.bus.emit('cm:view', { view: 'cluster' });
-        ZK.bus.emit('cm:open-cluster', { cid: c.id, name: c.name, market: G.market });
-      });
-      host.appendChild(el);
-    });
-    resetView();
+    gl.scene.add(group);
     var meta = document.getElementById('cm-meta');
     if (meta) {
       meta.textContent = d.clusters.length + ' 族 · ' + d.chains.length + ' 链 · ' +
-        d.clusters.reduce(function (s, c) { return s + c.n_companies; }, 0) + ' 公司（去重口径另计） · 真源 ig_*（PG 只读） · ' + d.generated_at;
+        d.clusters.reduce(function (s, c) { return s + c.n_companies; }, 0) + ' 公司（去重口径另计） · 真源 ig_*（PG 只读） · ' + d.generated_at + ' · 3D：拖拽旋转/滚轮推拉/方向键/双击复位';
       meta.classList.remove('cm-bad');
     }
     setCrumb();
+    G.birth = performance.now();
+    applyHover(null);
+    startLoop();
   }
 
-  function highlight(cid, on) {
-    var c = canvasEl();
-    if (!c || !G.lineByPair) return;
-    c.classList.toggle('cm-fade', on);
-    var links = G.lineByPair[cid] || {};
-    Object.keys(links).forEach(function (k) { links[k].classList.toggle('cm-on', on); });
-    Object.keys(elByCid).forEach(function (k) {
-      elByCid[k].classList.toggle('cm-on', !!(on && (k === cid || links[k])));
+  function clearScene() {
+    var gl = G.gl;
+    if (gl.group) {
+      gl.scene.remove(gl.group);
+      gl.group.traverse(function (o) {
+        if (o.geometry) o.geometry.dispose();
+        if (o.material) { if (o.material.map && o.material.map !== gl.tex) o.material.map.dispose(); o.material.dispose(); }
+      });
+      gl.group = null;
+    }
+    gl.stars = {}; gl.starList = []; gl.lines = []; gl.linkByPair = {}; gl.hover = null;
+    if (gl.labelHost) gl.labelHost.innerHTML = '';
+    gl.labels = {};
+  }
+
+  function applyHover(cid) {
+    var gl = G.gl;
+    if (!gl || gl.hover === cid) return;
+    gl.hover = cid;
+    var links = cid ? (gl.linkByPair[cid] || {}) : {};
+    gl.starList.forEach(function (s) {
+      var on = !cid || s.cid === cid || !!links[s.cid];
+      s.sprite.material.opacity = (cid && !on) ? 0.14 : 1;
+      s.sprite.material.color.setHex(s.cid === cid ? 0xe6c34c : 0x3d8bff);
+      var lb = gl.labels[s.cid];
+      if (lb) { lb.classList.toggle('cm-on', s.cid === cid); lb.classList.toggle('cm-dim', !!cid && !on); }
     });
+    gl.lines.forEach(function (ln) {
+      var act = cid && (ln.s === cid || ln.t === cid);
+      ln.line.material.opacity = cid ? (act ? 0.95 : 0.03) : ln.baseOp;
+    });
+  }
+
+  var V3 = null;   /* 复用向量，避免每帧分配 */
+  function startLoop() {
+    if (G.raf) return;
+    var loop = function () {
+      var gl = G.gl;
+      if (!gl || !visible()) { stopLoop(); return; }
+      G.raf = requestAnimationFrame(loop);
+      var now = performance.now();
+      if (gl.group) {   /* 星云成形入场：0.9s 缩放+微旋 */
+        var k = Math.min(1, (now - G.birth) / 900), e = 1 - Math.pow(1 - k, 3);
+        gl.group.scale.setScalar(0.2 + 0.8 * e);
+        gl.group.rotation.y = (1 - e) * 0.6;
+      }
+      applyCamera();
+      if (gl.drag) applyHover(null);
+      else {
+        gl.ray.setFromCamera(new THREE.Vector2(gl.mouse.x, gl.mouse.y), gl.camera);
+        var hits = gl.ray.intersectObjects(gl.starList.map(function (s) { return s.sprite; }));
+        applyHover(hits.length ? hits[0].object.userData.cid : null);
+        glEl().style.cursor = hits.length ? 'pointer' : 'grab';
+      }
+      /* 标签投影：近侧亮、远侧淡（背面 0.22），v.z>1 视锥后隐藏 */
+      var c = canvasEl(), w = c.clientWidth, h = c.clientHeight;
+      if (w && h) {
+        V3 = V3 || new THREE.Vector3();
+        var cn = gl.camera.position.clone().normalize();
+        for (var cid in gl.labels) {
+          var star = gl.stars[cid], lb = gl.labels[cid];
+          V3.copy(star.sprite.position).applyMatrix4(gl.group ? gl.group.matrixWorld : gl.scene.matrixWorld).project(gl.camera);
+          if (V3.z > 1) { lb.style.display = 'none'; continue; }
+          lb.style.display = 'block';
+          lb.style.left = ((V3.x * 0.5 + 0.5) * w) + 'px';
+          lb.style.top = ((-V3.y * 0.5 + 0.5) * h) + 'px';
+          var facing = star.sprite.position.clone().normalize().dot(cn);
+          lb.style.opacity = (0.55 + 0.4 * Math.max(0, facing)).toFixed(2);
+        }
+      }
+      gl.renderer.render(gl.scene, gl.camera);
+    };
+    G.raf = requestAnimationFrame(loop);
+  }
+
+  function stopLoop() {
+    if (G.raf) { cancelAnimationFrame(G.raf); G.raf = 0; }
   }
 
   function setCrumb() {
     var cr = document.getElementById('cm-crumb');
-    if (cr) cr.textContent = '产业地图 · 全景星系';
+    if (cr) cr.textContent = '产业地图 · 全景星系（3D）';
   }
 
   function load() {
@@ -305,17 +361,7 @@
       G.retryCount = 0;
       hideLoading();
       G.data = d;
-      elByCid = {};
-      var host = document.getElementById('cm-nodes-galaxy');
       render();
-      /* 渲染后建 cid→元素映射（hover 高亮用） */
-      if (host) {
-        var kids = host.children, idx = 0;
-        d.clusters.forEach(function (c) {
-          if (kids[idx]) elByCid[c.id] = kids[idx];
-          idx++;
-        });
-      }
     }).catch(function (e) { G.busy = false; fail(e && e.message || 'fetch 失败'); });
   }
 
@@ -344,7 +390,13 @@
     if (!c) return;
     var show = d.view === 'galaxy';
     c.style.display = show ? 'block' : 'none';
-    if (show) { setCrumb(); if (!G.loaded) load(); }
+    if (show) {
+      setCrumb();
+      if (G.gl) { fitGL(); startLoop(); }   /* 回页重启渲染循环+适配尺寸 */
+      if (!G.loaded) load();
+    } else {
+      stopLoop();   /* 隐藏页零后台占用（home 纯视频先例） */
+    }
   });
 
   /* 市场切档（项4）：galaxy 是簇空间本尊——重拉当前档数据重渲染；meta 行 counts 随档真实变化 */
@@ -356,7 +408,6 @@
   });
 
   function boot() {
-    bindView();
     if (visible()) load();
     else {
       var t = setInterval(function () {
@@ -369,7 +420,16 @@
     id: 'chainmap-galaxy',
     init: function () { boot(); },
     render: function () { render(); },
-    destroy: function () { if (G.timer) clearInterval(G.timer); if (G.elapsedTimer) { clearInterval(G.elapsedTimer); G.elapsedTimer = null; } }
+    debug: function () {   /* ACC 机断只读探针：相机球坐标+场景规模+拾取诊断（不暴露可变引用） */
+      return G.gl && { theta: G.gl.sph.theta, phi: G.gl.sph.phi, r: G.gl.sph.r,
+        stars: Object.keys(G.gl.stars).length, lines: G.gl.lines.length, webgl: true, lastPick: G.lastPick || null };
+    },
+    destroy: function () {
+      if (G.timer) clearInterval(G.timer);
+      if (G.elapsedTimer) { clearInterval(G.elapsedTimer); G.elapsedTimer = null; }
+      stopLoop();
+      if (G.gl) { G.gl.renderer.dispose(); G.gl = null; }
+    }
   });
 
   if (document.getElementById('p-chainmap')) boot();

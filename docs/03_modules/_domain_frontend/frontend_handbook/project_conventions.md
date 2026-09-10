@@ -233,6 +233,15 @@ scope: frontend
 - 关联：PC-009 版本戳排查法（ZK_BUILD 判前端旧代码）· 前会话实录 2026-09-09-chainmap-fix.md 教训 2
 - 来源：2026-09-10 chainmap 三项施工夜班实证（restart×3+taskkill+Stop-Process 五连败后 8891 方案全绿）
 
+# FEH-PC-019｜3D 画布双坑——render 异常被 .catch 伪装成"API 断线" + 元素遮挡让 pointerdown 失效
+- 触发词：meta 显示"API 断线（xxx is not defined）"但 curl 后端全绿 / E2E 点星没反应但 hover 高亮正常 / lastPick 探针为 null
+- 想做什么：chainmap galaxy 3D 化（B2）后正常渲染+点星进簇；Playwright 全序列验收
+- 坑：①取数 load() 的 `.then` 回调里调 render()，render 抛错（如裸 `scene.add` ReferenceError）会被同一 Promise 链的 `.catch` 捕获→fail(e.message)→meta 显示"API 断线（scene is not defined）"——**前端渲染异常伪装成后端断线**，且场景已建一半（stars/lines 计数正常）更具迷惑性。判定法：页内直接 fetch 后端对账（fetch ok=true + meta 断线 = 前端 .then 内异常被吞）；配套 debug() 只读探针暴露 lastPick/相机球坐标供机断。②交互监听器分家：pointermove 挂 window（任何目标都触发）、pointerdown 挂画布元素——当点击点被 pointer-events:auto 元素（顶栏 cm-meta 计数行等）遮挡时，hover 照常工作而 pointerdown 永远不达画布，表现为"hover 亮但点了没反应"。判定法：elementFromPoint(x,y) 看落点元素；E2E 侧在拖拽/缩放后先 dblclick 复位再选目标（旋转后标签可能漂进顶栏遮挡区）
+- 正确做法：render 入口不依赖外层 .catch 兜错误——重渲染路径的异常要么在 render 内部自捕获转诚实空态，要么 fail() 文案区分"取数失败"与"渲染失败"；3D 交互 E2E 断言用 debug() 探针而不是只看 DOM 副作用
+- 代码锚点：src/zephyr/frontend/dashboard/web/features/chainmap/chainmap-galaxy.js（load().catch / clickPick 的 G.lastPick / debug() 探针）
+- 关联：PC-009 版本戳排查法 · ACC-F-CHAINMAP-GALAXY rev4 item12（debug 探针机断）
+- 来源：2026-09-10 chainmap B2 3D 星云一期施工实证（scene.add ReferenceError 三轮排查 + cm-meta 遮挡致 E2E 点选连败）
+
 ## 修订记录
 
 | 日期 | 版本 | 改动 | 为什么改 |

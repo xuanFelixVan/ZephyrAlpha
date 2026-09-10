@@ -8,7 +8,7 @@ feature_id: F-CHAINMAP-GALAXY
 feature_name: 产业星系图（L1 族聚合全景）
 frozen_at: 2026-09-08
 frozen_by: ZephyrAlpha-Owner
-revision: 3
+revision: 4
 revision_policy: "修订=Owner 批准+改原文+revision 链留痕；AI 不可自改已冻结条项"
 # rev2 (2026-09-09, Owner 裁定): item2 数字带 30~48 废止——脏数据时代产物（旧输入混 33.6% 已关闭
 # 落位与垃圾权重伪造假簇）；任务书 8~15 拍脑袋估计同步撤回。簇数=修好数据后的自然结果，不是目标。
@@ -17,17 +17,28 @@ revision_policy: "修订=Owner 批准+改原文+revision 链留痕；AI 不可�
 # rev3 (2026-09-10, Owner 对话批准"加载体验批"施工): 新增 item7/8 加载态——首算 3-6s（冷缓存
 # 最长 20s）不再白屏：星云闪烁骨架+已等待秒数诚实计数；断线画布内失败态（红字+暂停闪烁+重试
 # 计数）+15s 自动重试机制不变；成功即隐藏。零假数据（演示诚实纪律）。
+# rev4 (2026-09-10, Owner 裁定 3D 星云一期开工): 渲染层 2D 力导向退役 → three.js r147 3D 星云
+# （vendor/three/，轨道相机手搓免 examples 耦合）。数据契约/总线事件/加载态（rev3）全不变。
+# item3/4/5/6 语义平移到 3D（节点=星点 sprite、连线=3D line、交互=轨道相机）；新增 item9-12。
+# rev3 冻结原文留档（item3~6）：{3:"族节点圆卡渲染数量=clusters 数，节点直径随公司数变化"}
+# {4:"族间连线粗细/透明度随权重区分，hover 节点高亮直连边+邻点、其余淡化"}
+# {5:"滚轮缩放（光标锚点）/拖动平移/双击空白重置三交互手感与 tdm 页一致"}
+# {6:"点族节点切到 L2 链层并隐藏 L1 画布；坐标刷新（generated_at 变化）后布局重算不残留旧缓存"}
 
 # check 取值：目检（截图人工/AI 视觉对） | 机断（DOM/接口断言）
 items:
   - { id: 1, text: "页面注入后 #cm-canvas-galaxy 与 #cm-nav 存在且默认可见", check: 机断 }
   - { id: 2, text: "/api/chainmap-galaxy 返回 ok=true 且 clusters 15~48 个（塌簇修复后自然簇数）+ 无巨簇（最大簇 ≤ 活跃链总数 25%）+ 族间 links>0 + 主题自检（抽 5 簇看 top 链名，同族可读；机断+目检双检）", check: 机断, item2_rev1_text: "/api/chainmap-galaxy 返回 ok=true 且 clusters 30~48 个、links≥0" }
-  - { id: 3, text: "族节点圆卡渲染数量=clusters 数，节点直径随公司数变化", check: 机断 }
-  - { id: 4, text: "族间连线粗细/透明度随权重区分，hover 节点高亮直连边+邻点、其余淡化", check: 目检 }
-  - { id: 5, text: "滚轮缩放（光标锚点）/拖动平移/双击空白重置三交互手感与 tdm 页一致", check: 目检 }
-  - { id: 6, text: "点族节点切到 L2 链层并隐藏 L1 画布；坐标刷新（generated_at 变化）后布局重算不残留旧缓存", check: 目检 }
+  - { id: 3, text: "3D 星点 sprite 渲染数量=clusters 数，星大小随公司数变化（B2 前为 2D 圆卡 DOM）", check: 机断 }
+  - { id: 4, text: "族间连线粗细/透明度随权重区分，hover 星点高亮直连边+邻星、其余淡化（3D 材质透明度）", check: 目检 }
+  - { id: 5, text: "拖拽旋转（轨道相机 theta/phi）/滚轮推拉（r dolly）/双击复位三交互与 tdm 页手感一致；新增键盘方向键旋转", check: 目检 }
+  - { id: 6, text: "点星切到 L2 链层并隐藏 L1 画布（拖拽位移≥6px 不误触发点击）；坐标数据零耦合（Fibonacci 确定性撒点，无布局缓存）", check: 目检 }
   - { id: 7, text: "取数期间 #cm-loading-galaxy 可见且含'星系聚类首算中'文案与已等待秒数（1s 递增）；取数成功后浮层隐藏", check: 机断 }
   - { id: 8, text: "断线时浮层转失败态（cm-load-fail 红字+闪烁暂停+已自动重试 N 次计数），15s 重试机制不回归（item 沿用 meta 行双通道）", check: 机断 }
+  - { id: 9, text: "WebGL/three.js 缺失时诚实报错（loading 浮层红字'3D 渲染不可用'+meta 行），不做 2D 假降级", check: 机断 }
+  - { id: 10, text: "标签投影层：每族一签随相机逐帧跟随，近侧亮远侧淡、视锥后隐藏；hover 星金亮+标签 cm-on", check: 目检 }
+  - { id: 11, text: "入场动画 0.9s（缩放 0.2→1+微旋，星云成形）；隐藏页 rAF 循环停止零后台占用（home 纯视频先例）", check: 机断 }
+  - { id: 12, text: "market 切档（cm:market）重拉数据重建 3D 场景，旧场景 geometry/material 全 dispose 无泄漏", check: 机断 }
 
 execution:
   trigger: "任何涉及本功能的 UI 改动 commit 前"

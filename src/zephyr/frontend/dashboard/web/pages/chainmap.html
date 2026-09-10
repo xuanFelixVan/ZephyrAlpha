@@ -11,12 +11,10 @@
     <div class="cm-body">
       <aside class="cm-nav card" id="cm-nav"><div class="cm-nav-tip dim">导航加载中…</div></aside>
       <div class="cm-stage">
-        <!-- L1 星系层（chainmap-galaxy 模块持有） -->
+        <!-- L1 星系层（chainmap-galaxy 模块持有；B2 起 3D 星云：WebGL 画布+标签投影层） -->
         <div class="cm-canvas card" id="cm-canvas-galaxy">
-          <div class="cm-world" id="cm-world-galaxy">
-            <svg class="cm-wires" id="cm-wires-galaxy"></svg>
-            <div class="cm-nodes" id="cm-nodes-galaxy"></div>
-          </div>
+          <canvas class="cm-gl" id="cm-gl-galaxy"></canvas>
+          <div class="cm-gl-labels" id="cm-labels-galaxy"></div>
           <span class="cm-zoom" id="cm-zoom-galaxy">100%</span>
           <div class="cm-empty" id="cm-empty-galaxy" style="display:none"></div>
           <!-- B1 加载态（ACC-F-CHAINMAP-GALAXY rev3）：首算 3-6s 骨架提示+诚实计时，断线转失败态；零假数据 -->
@@ -68,17 +66,15 @@
   #p-chainmap .cm-side { position:absolute; top:0; right:0; bottom:0; width:360px; z-index:8; overflow:auto; padding:12px; }
   #p-chainmap .cm-bad { color:#e2b155 !important; }
 
-  /* ── L1 星系节点（chainmap-galaxy）── 单色系 #3D8BFF 低饱和，大小=公司数 */
-  #cm-nodes-galaxy .cm-gn { position:absolute; display:flex; flex-direction:column; align-items:center; justify-content:center;
-    border-radius:50%; cursor:pointer; user-select:none; box-sizing:border-box; text-align:center; padding:6px;
-    background:radial-gradient(circle at 38% 32%, #1c2c44 0%, #101a2a 72%);
-    border:1.5px solid rgba(61,139,255,.38); transition:border-color .15s, box-shadow .15s; }
-  #cm-nodes-galaxy .cm-gn:hover { border-color:#3d8bff; }
-  #cm-nodes-galaxy .cm-gn .cm-gn-n { font-weight:700; color:#dbe4f0; line-height:1.25; max-height:2.6em; overflow:hidden; }
-  #cm-nodes-galaxy .cm-gn .cm-gn-s { font-size:10px; color:#7d8aa0; margin-top:3px; white-space:nowrap; }
-  #cm-canvas-galaxy .cm-fade #cm-wires-galaxy line { opacity:.045 !important; }
-  #cm-canvas-galaxy #cm-wires-galaxy line.cm-on { opacity:.95 !important; }
-  #cm-nodes-galaxy .cm-gn.cm-on { border-color:#e6c34c; box-shadow:0 0 0 2px rgba(230,195,76,.22); }
+  /* ── L1 星系（chainmap-galaxy）── B2 起 3D 星云：2D 节点/连线样式已随 DOM 退役（git 历史留存），活渲染=WebGL 画布+标签投影层 */
+  #cm-canvas-galaxy .cm-gl { position:absolute; inset:0; width:100%; height:100%; display:block; cursor:grab; }
+  #cm-canvas-galaxy .cm-gl.dragging { cursor:grabbing; }
+  #cm-canvas-galaxy .cm-gl-labels { position:absolute; inset:0; overflow:hidden; pointer-events:none; z-index:3; }
+  #cm-canvas-galaxy .cm-gl-label { position:absolute; transform:translate(-50%,-50%); font-size:11px;
+    color:#9aa5b5; white-space:nowrap; text-shadow:0 1px 4px rgba(0,0,0,.8); pointer-events:none; }
+  #cm-canvas-galaxy .cm-gl-label.cm-gl-major { font-size:12.5px; font-weight:700; color:#c6d2e2; }
+  #cm-canvas-galaxy .cm-gl-label.cm-on { color:#e6c34c; font-weight:700; }
+  #cm-canvas-galaxy .cm-gl-label.cm-dim { opacity:.18 !important; }
 
   /* ── B1 加载态（chainmap-galaxy，ACC rev3 item7/8）── 星云闪烁骨架+诚实计时；失败态转红停闪 */
   #cm-loading-galaxy { position:absolute; inset:0; display:none; flex-direction:column; align-items:center;

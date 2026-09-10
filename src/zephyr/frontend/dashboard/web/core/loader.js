@@ -1,6 +1,6 @@
 /* R22 拆分版加载器：fetch 41 页面片段注入 main → 顺序加载 core/app1~4.js → backtest.js（保持原单文件执行时序；backtest.js 依赖 app1 全局工具故最后）
  * 版本戳 ZK_BUILD：loader.js 经 ?v=Date.now() 破缓存加载，必为最新——页头品牌行若缺"b<版本>"即浏览器在跑旧代码（"改了看不到"类问题一键定位，2026-09-01 实证：⚑12 不显示=浏览器残留 2.5h 前旧 JS） */
-window.ZK_BUILD='20260910-11';
+window.ZK_BUILD='20260910-12';
 (function(){try{var el=document.querySelector('.tb-brand small');if(el&&(' '+el.textContent+' ').indexOf('b'+window.ZK_BUILD)<0)el.textContent+=' · b'+window.ZK_BUILD;}catch(e){}})();
 (function(){
   var PAGES = ["home", "overview", "warroom", "live", "sector", "sentiment", "news", "policy", "overseas", "t0", "review", "index", "position", "backtest", "experiment", "task", "fitness", "govana", "modledger", "sysstatus", "services", "pano", "projmap", "macro", "chainmap", "strategy", "factor", "stock", "screener", "calendar", "reglib", "tdm", "stockq", "cryptomarket", "cryptopos", "cryptostrat", "cryptobt", "cryptoinfo", "design", "modlib", "rating", "datasrc", "download", "bridge", "models", "aichat", "aitask"];
@@ -79,7 +79,9 @@ window.ZK_BUILD='20260910-11';
   }).then(function(){
     return loadJs('core/home.js');   /* 首页三件套（结论墙/布局引擎/AI 对话框）——最后加载，依赖全部页面片段已在 DOM */
   }).then(function(){
-    return loadJs('features/chainmap/chainmap-galaxy.js');   /* 产业星系图（L1 族聚合全景，/api/chainmap-galaxy，Owner 2026-09-08 裁定三层缩放 MVP） */
+    return loadJs('vendor/three/three.min.js');   /* three.js r147 UMD（chainmap 3D 星云渲染引擎，B2；UMD 全局 THREE，dockview vendor 先例） */
+  }).then(function(){
+    return loadJs('features/chainmap/chainmap-galaxy.js');   /* 产业星系图（L1 族聚合 3D 星云，/api/chainmap-galaxy；B2 起渲染=vendor/three r147，依赖前一行先行加载） */
   }).then(function(){
     return loadJs('features/chainmap/chainmap-nav.js');   /* 产业导航树（族→链两级） */
   }).then(function(){
