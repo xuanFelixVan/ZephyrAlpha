@@ -1919,16 +1919,15 @@ tasks:
 
 - task_id: index_list_refresh
   table: c1_market.index_list
-  source: akshare
+  source: tushare
   schedule: monthly_static
   incremental: false
   dependencies: []
   capability: index_list
   symbols:
+  fallback_sources: []
   extra:
-    description: "指数列表全量刷新（AKShare stock_info_index_name_code）"
-    disabled: true
-    disabled_reason: "2026-09-10 停用+数据 PIT 关死（known_data_gaps index_list_wrong_universe）：现实现误用股票清单接口 stock_info_sh/sz_name_code，1700 行全是股票冒充指数（600000.SH 浦发银行 category=指数 实证），且 list_date 硬编码 1970。接真指数源（如 tushare index_basic）后移除本两行重启用。"
+    description: "指数列表全量刷新（tushare index_basic 全市场含退市，真实 list_date/base_date；Owner 2026-09-10 授权 akshare→tushare 接线，P8 治本）"
 
 - task_id: etf_benchmark_refresh
   table: c1_market.etf_benchmark

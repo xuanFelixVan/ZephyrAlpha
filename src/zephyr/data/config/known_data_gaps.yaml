@@ -374,16 +374,19 @@ gaps:
     end_date: null  # 直到接真指数源
     date_column: "list_date"
     detection_threshold: 1
-    status: "accepted"  # 全表 1700 行 valid_to=valid_from 关死（禁物理 DELETE，可逆）
+    status: "completed"  # 2026-09-10 晚 Owner 授权 tushare 接线，首次全量 8000 行真实指数已落库
     root_cause: "双重量垃圾：①写入器 _fetch_index_list 误用股票清单接口
       stock_info_sh/sz_name_code，1700 行全是股票冒充指数（600000.SH 浦发银行
       category='指数' 实证）；②list_date/base_date 硬编码 1970-01-01（源有上市日期列
       未映射）。垃圾经 valid_to=valid_from PIT 关死（Owner 裁定口径），index_list_refresh
       任务同日停用防 10/1 月度刷新重新灌入。"
-    resolution_plan: "接真指数源（tushare index_basic：ts_code/name/market/publisher/
-      category/base_date/list_date 全字段匹配）后重写 _fetch_index_list 并重启任务；
-      关死行保留可追溯（ReplacingMergeTree 新行后写胜出自然取代）。"
-    primary_alternative: "无（index_list 无 SELECT 消费方，关死零下游影响实证）"
+    resolution_plan: "接真指数源（tushare index_basic）后重写 _fetch_index_list 并重启任务。"
+    resolution_actual: "2026-09-10 晚 Owner 授权 akshare→tushare 接线完成：tushare_provider
+      新增 index_list capability（pro.index_basic 全市场），tasks.yaml 复启用 source=tushare，
+      首次运行落库 8000 行真实指数（含上证指数 base 1990-12-19/list 1991-07-15），list_date
+      全真值非零，在市 8000（valid_to=NULL）；1700 行旧垃圾保持 PIT 关死墓碑（禁物理 DELETE）。
+      顺带修复 schemas/categories/market_index_list.py INSERT_COLUMNS 双逗号笔误。"
+    primary_alternative: "无（已治本，无需备选）"
     created: "2026-09-10"
     last_updated: "2026-09-10"
 

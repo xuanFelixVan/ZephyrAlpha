@@ -65,7 +65,7 @@ import logging
 import re
 import threading
 import time
-from typing import Iterator
+from typing import Any, Iterator
 
 # 19 号 memo：北向季度持仓快照（绝对 import 供 ORPHAN-MODULE 门禁 git grep 发现引用）
 from zephyr.data.implementations.northbound_hold_fetcher import fetch_northbound_hold_snapshot
@@ -92,6 +92,7 @@ _TBL_INDUSTRY_CLASS = get_registry().table("market_industry_class")
 _TBL_INDUSTRY_CLASS_SUPPL = get_registry().table("fund_industry_class_suppl")
 # 2026-08-14 东财反爬治本：LOF 列表替代源（fund_lof_spot_em 持续 RemoteDisconnected）
 _TBL_LOF_LIST = get_registry().table("market_lof_list")
+_TBL_INDEX_LIST = get_registry().table("market_index_list")
 # 2026-08-14 QMT期货板块为空治本：期限结构替代源（fut_daily 全市场合约日行情）
 _TBL_FUTURES_TERM = get_registry().table("market_futures_term")
 # 2026-08-14 东财反爬治本：ETF 净值替代源（fund_etf_fund_info_em 持续返回空）
@@ -133,6 +134,7 @@ class TushareProvider(IngestProviderBase):
             "industry_class",
             "industry_class_suppl",
             "lof_list",
+            "index_list",
             "money_flow",
             "futures_term_structure",
             "etf_nav",
@@ -209,6 +211,8 @@ class TushareProvider(IngestProviderBase):
             yield from self._fetch_industry_class_suppl(payload, policy)
         elif capability == "lof_list":
             yield from self._fetch_lof_list(payload, policy)
+        elif capability == "index_list":
+            yield from self._fetch_index_list(payload, policy)
         elif capability == "money_flow":
             yield from self._fetch_money_flow(payload, policy)
         elif capability == "kline_daily_bj":
@@ -594,6 +598,72 @@ class TushareProvider(IngestProviderBase):
                 rows.append((str(r.get("ts_code", "") or ""), str(r.get("name", "") or "")))
 
         self._log.info(f"lof_list: {len(rows)} 只 LOF（tushare 替代东财）")
+        yield FetchResult(
+            table=table,
+            columns=columns,
+            rows=rows,
+            last_key=today_str,
+            elapsed_sec=seconds_since(t0),
+        )
+
+    def _fetch_index_list(self, payload: FetchPayload, policy: SourcePolicy) -> Iterator[FetchResult]:
+        """指数列表全量刷新（tushare pro.index_basic），写入 c1_market.index_list。
+
+        2026-09-10 Owner 授权接线（数据总览体检 P8 治本）：原 akshare 通道误用股票清单
+        接口且 list_date 硬编码 1970（known_data_gaps index_list_wrong_universe，该批
+        已 PIT 关死+任务停用）。本能力给真实 list_date/base_date，全市场含已退市指数
+        （delist_date → valid_to 闭区间）；valid_from 由 CH 列 DEFAULT toDate(list_date)
+        自动填充。全量重刷幂等（ReplacingMergeTree 后写胜出）。
+        """
+        table = _TBL_INDEX_LIST
+        columns = ["ts_code", "name", "market", "publisher", "category",
+                   "base_date", "base_point", "list_date", "symbol_num", "market_id", "valid_to"]
+        today_str = datetime.date.today().isoformat()
+        t0 = now_utc()
+
+        def _ts_date(v: Any) -> datetime.date | None:
+            """tushare 日期 'YYYYMMDD'/'YYYY-MM-DD'/空 → date（空返回 None）。"""
+            s = str(v or "").strip()
+            if not s or s.lower() in ("nan", "none", "nat"):
+                return None
+            try:
+                return datetime.datetime.strptime(s.replace("-", "")[:8], "%Y%m%d").date()
+            except ValueError:
+                return None
+
+        try:
+            df = self._call_with_policy(self._pro.index_basic, policy)
+        except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
+            yield FetchResult(
+                table=table,
+                columns=columns,
+                rows=[],
+                last_key="",
+                elapsed_sec=seconds_since(t0),
+                error=str(e),
+            )
+            return
+
+        rows: list[tuple] = []
+        if df is not None and not df.empty:
+            for _, r in df.iterrows():
+                base_d = _ts_date(r.get("base_date"))
+                list_d = _ts_date(r.get("list_date"))
+                rows.append((
+                    str(r.get("ts_code", "") or ""),
+                    str(r.get("name", "") or ""),
+                    str(r.get("market", "") or ""),
+                    str(r.get("publisher", "") or ""),
+                    str(r.get("category", "") or ""),
+                    base_d or datetime.date(1970, 1, 1),   # base_date 非空 Date 列，缺源哨兵（审计已排除 1970）
+                    0.0,                                    # base_point（tushare 不提供，列非空填 0）
+                    list_d or datetime.date(1970, 1, 1),    # list_date 同上（正常全覆盖，tushare 有真值）
+                    "",                                     # symbol_num（tushare 不提供）
+                    0.0,                                    # market_id（tushare 不提供）
+                    _ts_date(r.get("delist_date")),         # valid_to：退市=闭区间终止日，在市=None
+                ))
+
+        self._log.info(f"index_list: {len(rows)} 只指数（tushare index_basic 全市场含退市）")
         yield FetchResult(
             table=table,
             columns=columns,
