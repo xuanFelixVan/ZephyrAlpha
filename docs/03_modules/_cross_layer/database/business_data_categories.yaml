@@ -1916,7 +1916,7 @@
   engine: clickhouse
   database: c3_fundamental
   table: ex_dividend_event
-  schema_file: market_ex_dividend_event.py
+  schema_file: schemas/categories/market_ex_dividend_event.py
   data_type: 原料
   lifecycle: permanent
   sla_level: L2
