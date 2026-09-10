@@ -43,6 +43,7 @@ from zephyr.pf_core.strategy_engine.framework_composer import (
     compose_weight_panels,
     get_framework_plan,
     load_framework_plans,
+    per_regime_summary,
     reconcile_composed_nav,
     run_framework_backtest,
 )
@@ -443,3 +444,266 @@ def test_run_framework_backtest_partial_skips_disclosed(fake_runner_panels, tmp_
     assert sorted(summary["participants"]) == ["fake-a", "fake-b", "tick-do-t"]
     d = json.loads((storage / f"{summary['run_id']}.json").read_text(encoding="utf-8"))
     assert d["metrics"]["rescale_factor"] == 1.0
+
+
+# ---------------------------------------------------------------------------
+# 三期 regime 动态权重联动（α_i(t) 查表——配置解析/动态合成/回退锚/摘要）
+# ---------------------------------------------------------------------------
+
+
+def test_load_plans_real_config_regime_overrides():
+    """真源配置三套方案 regime_overrides 全量可解析：Σ=1、成员集合=基准、回退语义正确。"""
+    for pid in ("fw-defensive", "fw-balanced", "fw-aggressive"):
+        plan = get_framework_plan(pid)
+        assert plan.regime_overrides, f"{pid} 缺 regime_overrides"
+        base_map = {w.strategy_id: w.weight for w in plan.weights}
+        for state, oweights in plan.regime_overrides:
+            assert abs(sum(w.weight for w in oweights) - 1.0) < 1e-6
+            assert {w.strategy_id for w in oweights} == set(base_map)
+        # 未覆盖 regime（r1 低波震荡在三套方案均未覆盖）→ 回退基准
+        eff = plan.effective_weights("r1")
+        assert {w.strategy_id: w.weight for w in eff} == base_map
+        # None → 基准
+        assert plan.effective_weights(None) == plan.weights
+    # 均衡型 r3 覆盖表抽样：打板上调至 0.15
+    balanced = get_framework_plan("fw-balanced")
+    r3_map = {w.strategy_id: w.weight for w in balanced.effective_weights("r3")}
+    assert r3_map["daban-sleeve"] == 0.15
+    assert r3_map["topn-momentum"] == 0.40
+
+
+def test_load_plans_regime_override_bad_state_key(tmp_path: Path):
+    cfg = {
+        "plans": [
+            {
+                "plan_id": "fw-x",
+                "name_zh": "坏键",
+                "risk_profile": "balanced",
+                "weights": [{"strategy_id": "a", "weight": 1.0}],
+                "regime_overrides": {
+                    "r99": [{"strategy_id": "a", "weight": 1.0}],  # r99 不在 7 态
+                },
+            }
+        ]
+    }
+    p = tmp_path / "plans.yaml"
+    p.write_text(yaml.safe_dump(cfg), encoding="utf-8")
+    with pytest.raises(FrameworkPlanError, match="键非法"):
+        load_framework_plans(p)
+
+
+def test_load_plans_regime_override_member_mismatch(tmp_path: Path):
+    cfg = {
+        "plans": [
+            {
+                "plan_id": "fw-x",
+                "name_zh": "成员漂移",
+                "risk_profile": "balanced",
+                "weights": [{"strategy_id": "a", "weight": 1.0}],
+                "regime_overrides": {
+                    "r3": [{"strategy_id": "b", "weight": 1.0}],  # 成员≠基准
+                },
+            }
+        ]
+    }
+    p = tmp_path / "plans.yaml"
+    p.write_text(yaml.safe_dump(cfg), encoding="utf-8")
+    with pytest.raises(FrameworkPlanError, match="成员集合"):
+        load_framework_plans(p)
+
+
+def test_load_plans_regime_override_bad_sum(tmp_path: Path):
+    cfg = {
+        "plans": [
+            {
+                "plan_id": "fw-x",
+                "name_zh": "覆盖表Σ≠1",
+                "risk_profile": "balanced",
+                "weights": [
+                    {"strategy_id": "a", "weight": 0.6},
+                    {"strategy_id": "b", "weight": 0.4},
+                ],
+                "regime_overrides": {
+                    "r3": [
+                        {"strategy_id": "a", "weight": 0.7},
+                        {"strategy_id": "b", "weight": 0.2},  # Σ=0.9
+                    ],
+                },
+            }
+        ]
+    }
+    p = tmp_path / "plans.yaml"
+    p.write_text(yaml.safe_dump(cfg), encoding="utf-8")
+    with pytest.raises(FrameworkPlanError, match="权重合计"):
+        load_framework_plans(p)
+
+
+def _two_regime_plan() -> FrameworkPlan:
+    """两 regime 日序验证 α_i(t) 切换的标准方案：基准 a=0.6/b=0.4；r3 覆盖 a=0.9/b=0.1。"""
+    return FrameworkPlan(
+        plan_id="fw-dyn",
+        name="动态测试",
+        risk_profile="balanced",
+        description="",
+        weights=(PlanWeight("a", 0.6), PlanWeight("b", 0.4)),
+        regime_overrides=(("r3", (PlanWeight("a", 0.9), PlanWeight("b", 0.1))),),
+    )
+
+
+def test_compose_dynamic_alpha_switch_two_regimes():
+    """动态查表正确性：两 regime 日序逐日切换 α_i(t)，Σw=1 恒成立。"""
+    plan = _two_regime_plan()
+    idx = pd.to_datetime(["2026-08-03", "2026-08-04", "2026-08-05"])
+    pa = _panel({"600519": [0.8, 0.8, 0.8], "000858": [0.2, 0.2, 0.2]}, idx, ["600519", "000858"])
+    pb = _panel({"600519": [0.5, 0.5, 0.5], "000858": [0.5, 0.5, 0.5]}, idx, ["600519", "000858"])
+    regime = {"2026-08-03": "r3", "2026-08-04": "r4", "2026-08-05": "r3"}
+    report = compose_weight_panels(plan, {"a": pa, "b": pb}, regime_by_date=regime)
+    # r3 日: 0.9*0.8+0.1*0.5=0.77；r4 日（未覆盖→基准）: 0.6*0.8+0.4*0.5=0.68
+    assert report.panel.loc[idx[0], "600519"] == pytest.approx(0.9 * 0.8 + 0.1 * 0.5)
+    assert report.panel.loc[idx[1], "600519"] == pytest.approx(0.6 * 0.8 + 0.4 * 0.5)
+    assert report.panel.loc[idx[2], "600519"] == pytest.approx(0.77)
+    # Σw=1 恒成立
+    assert (report.panel.sum(axis=1).abs() - 1.0).max() < 1e-9
+    # 分组披露：r3 两日（r4 未覆盖归 __base__ 一日）
+    assert report.regime_day_counts == {"r3": 2, "__base__": 1}
+    assert "regime 动态合成" in report.notes
+
+
+def test_compose_dynamic_fallback_equals_static_bitwise():
+    """回退锚：regime 序全为未覆盖状态/缺日期时，动态结果与静态（二期）逐位一致。"""
+    plan = _two_regime_plan()
+    idx = pd.to_datetime(["2026-08-03", "2026-08-04", "2026-08-05"])
+    pa = _panel({"600519": [0.8, 0.6, 0.4], "000858": [0.2, 0.4, 0.6]}, idx, ["600519", "000858"])
+    pb = _panel({"600519": [0.5, 0.5, 0.5], "000858": [0.5, 0.5, 0.5]}, idx, ["600519", "000858"])
+    static_report = compose_weight_panels(plan, {"a": pa, "b": pb})
+    # r1 不在覆盖表 + 08-05 无 regime 条目 → 全部回退基准
+    dyn_report = compose_weight_panels(
+        plan, {"a": pa, "b": pb}, regime_by_date={"2026-08-03": "r1", "2026-08-04": "r2"}
+    )
+    pd.testing.assert_frame_equal(dyn_report.panel, static_report.panel)
+    assert dyn_report.regime_day_counts == {"__base__": 3}
+
+
+def test_compose_dynamic_invalid_state_rejected():
+    """非法 regime 状态 fail-closed 拒绝（regime 错=权重错，禁静默回退）。"""
+    plan = _two_regime_plan()
+    idx = pd.to_datetime(["2026-08-03"])
+    pa = _panel({"600519": [1.0]}, idx, ["600519"])
+    with pytest.raises(FrameworkValidationError, match="状态非法"):
+        compose_weight_panels(plan, {"a": pa}, regime_by_date={"2026-08-03": "r99"})
+
+
+def test_compose_dynamic_empty_series_rejected():
+    plan = _two_regime_plan()
+    idx = pd.to_datetime(["2026-08-03"])
+    pa = _panel({"600519": [1.0]}, idx, ["600519"])
+    with pytest.raises(FrameworkValidationError, match="日序为空"):
+        compose_weight_panels(plan, {"a": pa}, regime_by_date={})
+
+
+def test_compose_dynamic_per_group_rescale_disclosed():
+    """动态模式 tick-only 跳过后各组独立显式再归一化（禁静默）。"""
+    plan = FrameworkPlan(
+        plan_id="fw-dyn-partial",
+        name="动态部分成员",
+        risk_profile="balanced",
+        description="",
+        weights=(PlanWeight("a", 0.95), PlanWeight("tick-only", 0.05)),
+        regime_overrides=(("r3", (PlanWeight("a", 0.90), PlanWeight("tick-only", 0.10))),),
+    )
+    idx = pd.to_datetime(["2026-08-03", "2026-08-04"])
+    pa = _panel({"600519": [1.0, 1.0]}, idx, ["600519"])
+    # tick-only 面板缺失 → 参与者仅 a：r3 组 α=0.90（×1/0.9），__base__ 组 α=0.95（×1/0.95）
+    report = compose_weight_panels(plan, {"a": pa}, regime_by_date={"2026-08-03": "r3"})
+    assert report.panel.loc[idx[0], "600519"] == pytest.approx(1.0)
+    assert report.panel.loc[idx[1], "600519"] == pytest.approx(1.0)
+    assert report.regime_rescale_factors["r3"] == pytest.approx(1.0 / 0.90)
+    assert report.regime_rescale_factors["__base__"] == pytest.approx(1.0 / 0.95)
+    assert report.alpha_total == pytest.approx(0.90)  # 最坏组口径
+    assert report.regime_day_counts == {"r3": 1, "__base__": 1}
+
+
+def test_per_regime_summary_math():
+    """per-regime 分段摘要手算对账：链式贡献收益 + 段内 running-peak 回撤。"""
+    plan = _two_regime_plan()  # 仅覆盖 r3
+    equity_curve = [
+        {"timestamp": "2026-08-03", "equity": 1_000_000.0},  # r3
+        {"timestamp": "2026-08-04", "equity": 1_010_000.0},  # r3
+        {"timestamp": "2026-08-05", "equity": 990_000.0},  # r4→__base__
+        {"timestamp": "2026-08-06", "equity": 1_002_000.0},  # 无 regime 条目→__base__
+    ]
+    regime = {"2026-08-03": "r3", "2026-08-04": "r3", "2026-08-05": "r4"}
+    rows = per_regime_summary(plan, equity_curve, regime)
+    by_regime = {r["regime"]: r for r in rows}
+    assert by_regime["r3"]["days"] == 2
+    assert by_regime["r3"]["return_pct"] == pytest.approx(1.0)  # ×1.01-1
+    assert by_regime["r3"]["max_drawdown_pct"] == 0.0
+    assert by_regime["__base__"]["days"] == 2
+    # 990000/1010000 × 1002000/990000 = 1002000/1010000 → +1.2121% 链式贡献
+    assert by_regime["__base__"]["return_pct"] == pytest.approx((1002000 / 1010000 - 1) * 100, abs=1e-3)
+    # 段内回撤: 990000（起点）→1002000（升）无回撤
+    assert by_regime["__base__"]["max_drawdown_pct"] == 0.0
+
+
+def test_run_framework_backtest_dynamic_e2e(fake_runner_panels, tmp_path: Path):
+    """端到端动态回测：regime 日序入参 → 产物 metrics 披露 + per-regime 摘要产出。"""
+    cfg = json.loads(json.dumps(_FAKE_CFG))
+    cfg["plans"][0]["regime_overrides"] = {
+        "r3": [
+            {"strategy_id": "fake-a", "weight": 0.8},
+            {"strategy_id": "fake-b", "weight": 0.2},
+        ]
+    }
+    plans_file = tmp_path / "plans.yaml"
+    plans_file.write_text(yaml.safe_dump(cfg), encoding="utf-8")
+    storage = tmp_path / "artifacts"
+    storage.mkdir()
+
+    summary = run_framework_backtest(
+        "fw-test",
+        ["600519.SH", "000858.SZ"],
+        "2026-08-03",
+        "2026-08-14",
+        config=FrameworkBacktestConfig(
+            storage_path=storage,
+            plans_path=plans_file,
+            enable_stk_limit_provider=False,
+            regime_by_date={"2026-08-04": "r3", "2026-08-05": "r3"},
+        ),
+    )
+    assert summary["ok"], summary.get("error")
+    assert summary["dynamic"] is True
+    # 面板 10 日（08-03..08-12）：r3 两日 + 回退八日
+    assert summary["regime_day_counts"] == {"r3": 2, "__base__": 8}
+    assert summary["per_regime"]
+    assert {r["regime"] for r in summary["per_regime"]} <= {"r3", "__base__"}
+    d = json.loads((storage / f"{summary['run_id']}.json").read_text(encoding="utf-8"))
+    assert d["metrics"]["dynamic"] is True
+    assert d["metrics"]["regime_day_counts"] == {"r3": 2, "__base__": 8}
+    assert d["metrics"]["plan_regime_overrides"]["r3"] == {"fake-a": 0.8, "fake-b": 0.2}
+
+
+def test_run_framework_backtest_static_backward_compat_keys(fake_runner_panels, tmp_path: Path):
+    """向后兼容锚：静态模式响应含三期新键（dynamic=False/空 dict/空 list），二期消费方零漂移。"""
+    plans_file = tmp_path / "plans.yaml"
+    plans_file.write_text(yaml.safe_dump(_FAKE_CFG), encoding="utf-8")
+    storage = tmp_path / "artifacts"
+    storage.mkdir()
+
+    summary = run_framework_backtest(
+        "fw-test",
+        ["600519.SH"],
+        "2026-08-03",
+        "2026-08-14",
+        config=FrameworkBacktestConfig(
+            storage_path=storage,
+            plans_path=plans_file,
+            enable_stk_limit_provider=False,
+        ),
+    )
+    assert summary["ok"], summary.get("error")
+    assert summary["dynamic"] is False
+    assert summary["regime_day_counts"] == {}
+    assert summary["per_regime"] == []
+    d = json.loads((storage / f"{summary['run_id']}.json").read_text(encoding="utf-8"))
+    assert "dynamic" not in d["metrics"]  # 静态产物不加键，二期产物 schema 零漂移
