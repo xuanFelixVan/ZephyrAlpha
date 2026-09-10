@@ -3,7 +3,12 @@
  * （单链列式+左侧链选轨，146 链全画=细柱不可读）。分列=tier 三值直读 上游→中游→下游→通用（项2 适配：
  * tier 九值→三值后职能语义拆 function_role，环节卡带职能徽章，列内按职能分组聚集，后端排好序前端直用）；
  * ig_edge 结构边=SVG 贝塞尔（仅跨列，同列边不画防搅线）。点环节→右侧公司面板。
- * 跨链徽章/公司详情卡完整版=二期（Owner 2026-09-08 MVP 边界）。验收单：ACC-F-CHAINMAP-CLUSTER */
+ * 跨链徽章/公司详情卡完整版=二期（Owner 2026-09-08 MVP 边界）。验收单：ACC-F-CHAINMAP-CLUSTER
+ * 剩余批（2026-09-10）：股权徽章（F-CHAINMAP-EQUITY-BADGE，cluster 响应 per-node equity 聚合，
+ * hover 浮层列明细、listed 行点击 cm:open-company，PERSON:/UNLISTED: 仅展示）+ 催化剂角标
+ * （F-CHAINMAP-CATALYST，/api/chainmap-catalyst 零命中空态，受益清单段插环节面板顶部，
+ * 方向语义=MOD-ALT-005 既有判定，个股行跳作战池=导航+诚实提示）。验收单：ACC-F-CHAINMAP-EQUITY-BADGE
+ * / ACC-F-CHAINMAP-CATALYST */
 (function () {
   'use strict';
   var COLS = ['上游', '中游', '下游', '通用'];
@@ -12,8 +17,12 @@
                    '加工工艺': '工艺', '产品业务': '产品', '技术服务': '服务', '销售渠道': '渠道' };
   var COLW = 252, NODEW = 230, NODEH = 34, CHIPH = 24, PADX = 36, PADTOP = 46, RAIL_MIN = 8;
   var C = { cid: null, name: '', data: null, busy: false, view: { z: 1, x: 0, y: 0 },
-            pos: {}, focusChain: null, focusChainName: null, focusNode: null, market: 'all' };
+            pos: {}, focusChain: null, focusChainName: null, focusNode: null, market: 'all', cat: null };
   var elByNode = {};   /* node_id → 环节卡元素（聚焦高亮） */
+  /* 股权 relation 中译（词表真源=ig_equity_edge DDL 封闭枚举，与 chainmap-company-card EQ_REL_ZH 同源） */
+  var EQ_REL_ZH = { invests_in: '对外投资', subsidiary: '子公司', shareholding: '参股',
+                    actual_control: '实控', pledge: '质押', judicial_frozen: '司法冻结' };
+  var eqHideT = null;  /* 浮层延迟关闭句柄 */
 
   function canvasEl() { return document.getElementById('cm-canvas-cluster'); }
   function worldEl() { return document.getElementById('cm-world-cluster'); }
@@ -143,6 +152,7 @@
     var world = worldEl(), svg = document.getElementById('cm-wires-cluster'), host = document.getElementById('cm-nodes-cluster');
     var empty = document.getElementById('cm-empty-cluster');
     if (!world || !svg || !host) return;
+    hideEqOverlay(true);   /* 重画前清浮层（旧卡片已销毁，钉住的浮层一并撤） */
     svg.setAttribute('width', view.worldW); svg.setAttribute('height', view.worldH);
     world.style.width = view.worldW + 'px'; world.style.height = view.worldH + 'px';
     host.innerHTML = ''; svg.innerHTML = '';
@@ -192,12 +202,22 @@
         var disp = n.name;
         var pfx = g.chain.name + '-';
         if (disp.indexOf(pfx) === 0 && disp.length > pfx.length) disp = disp.slice(pfx.length);
+        /* 股权徽章（F-CHAINMAP-EQUITY-BADGE）：环节落位公司 ∩ ig_equity_edge 有关系的才渲染 */
+        var eq = n.equity, eqb = '';
+        if (eq && (eq.out > 0 || eq.inn > 0)) {
+          var seg = [];
+          if (eq.out > 0) seg.push('控' + eq.out);
+          if (eq.inn > 0) seg.push('被' + eq.inn + '控');
+          eqb = '<span class="eqb" title="股权关系（ig_equity_edge）——悬停看明细">⚙' + seg.join('/') + '</span>';
+        }
         el.innerHTML = '<span class="nm" title="' + n.name + '">' + disp + '</span>' +
           (n.function_role ? '<span class="fr" title="职能：' + n.function_role + '">' + (FR_SHORT[n.function_role] || n.function_role) + '</span>' : '') +
+          eqb +
           '<span class="ct">' + n.n_companies + '</span>';
         el.addEventListener('click', function () { openPanel(n, g.chain); });
         el.dataset.chain = g.chain.chain_id;
         elByNode[n.node_id] = el;
+        bindEqBadge(el, n);
         frag.appendChild(el);
       });
     });
@@ -217,6 +237,7 @@
     });
     svg.appendChild(sfrag);
     applyFocus();
+    decorateCatalyst();   /* 重画后补催化角标（C.cat 就绪时；零命中 no-op） */
     fitView();
   }
 
@@ -296,11 +317,97 @@
     return elByNode[nodeId] || null;
   }
 
+  /* ── 股权徽章明细浮层（F-CHAINMAP-EQUITY-BADGE）：挂 #p-chainmap（transform 祖先之外，
+   * position:fixed 视口坐标直用不受画布缩放裁剪）；listed 行点击跳公司详情卡，
+   * PERSON:/UNLISTED: 行仅展示（Owner 原则：聚合层看连接、公司层靠徽章/详情）── */
+  function eqOverlayEl() { return document.getElementById('cm-eq-overlay'); }
+  function hideEqOverlay(now) {
+    if (eqHideT) { clearTimeout(eqHideT); eqHideT = null; }
+    var ov = eqOverlayEl();
+    if (ov && (now || !ov.dataset.pin) && ov.parentNode) ov.parentNode.removeChild(ov);
+  }
+  function showEqOverlay(n, cardEl) {
+    if (eqHideT) { clearTimeout(eqHideT); eqHideT = null; }
+    var old = eqOverlayEl();
+    if (old && old.parentNode) old.parentNode.removeChild(old);
+    var eq = n.equity || {};
+    var rows = (eq.rows || []).map(function (r) {
+      var zh = EQ_REL_ZH[r.relation] || (r.relation || '股权');
+      var ver = r.verification === 'official' ? '官方口径' : (r.verification === 'verified' ? '已核验' : '未核验');
+      var nm = r.name || r.symbol || r.ref || '—';
+      var idp = r.symbol ? r.symbol : (r.ref || '非上市编码');
+      var lk = !!r.symbol;
+      return '<div class="cm-eq-r' + (lk ? ' lk' : '') + '"' +
+        (lk ? ' data-sym="' + r.symbol + '" data-name="' + nm + '" title="点开对方公司详情卡"'
+            : ' title="未上市/个人持有方——仅展示不跳转"') + '>' +
+        '<span class="d">' + (r.dir === 'out' ? '控→' : '⬅被控') + '</span>' +
+        '<span class="nm">' + nm + '</span>' +
+        '<span class="sy">' + idp + '</span>' +
+        '<span class="mt">' + zh + (r.stake_pct != null ? ' · 持股 ' + r.stake_pct + '%' : '') + ' · ' + ver + '</span></div>';
+    }).join('');
+    var total = (eq.out || 0) + (eq.inn || 0);
+    var ov = document.createElement('div');
+    ov.id = 'cm-eq-overlay';
+    ov.innerHTML = '<div class="cm-eq-h">股权关系 · ' + (n.name || '') +
+      '（控 ' + (eq.out || 0) + ' / 被 ' + (eq.inn || 0) + ' 控）' +
+      (total > (eq.rows || []).length ? ' · 共 ' + total + ' 条' : '') + '</div>' + rows;
+    ov.addEventListener('mouseenter', function () { if (eqHideT) { clearTimeout(eqHideT); eqHideT = null; } });
+    ov.addEventListener('mouseleave', function () { hideEqOverlay(); });
+    ov.addEventListener('click', function (e) {
+      var row = e.target.closest ? e.target.closest('.cm-eq-r[data-sym]') : null;
+      if (row) { hideEqOverlay(true); ZK.bus.emit('cm:open-company', { symbol: row.getAttribute('data-sym'), name: row.getAttribute('data-name') }); }
+    });
+    var page = document.getElementById('p-chainmap');
+    if (!page) return;
+    page.appendChild(ov);
+    var r = cardEl.getBoundingClientRect();
+    var left = Math.min(r.left, window.innerWidth - 336);
+    ov.style.left = Math.max(4, left) + 'px';
+    ov.style.top = Math.min(r.bottom + 4, window.innerHeight - 120) + 'px';
+  }
+  function bindEqBadge(el, n) {
+    var badge = el.querySelector('.eqb');
+    if (!badge) return;
+    badge.addEventListener('mouseenter', function (e) { e.stopPropagation(); showEqOverlay(n, el); });
+    badge.addEventListener('mouseleave', function () { eqHideT = setTimeout(function () { hideEqOverlay(); }, 250); });
+    badge.addEventListener('click', function (e) {
+      e.stopPropagation();
+      var ov = eqOverlayEl();
+      if (ov && ov.dataset.pin === n.node_id) { hideEqOverlay(true); return; }
+      showEqOverlay(n, el);
+      var o2 = eqOverlayEl();
+      if (o2) o2.dataset.pin = n.node_id;
+    });
+  }
+
+  /* ── 催化剂角标（F-CHAINMAP-CATALYST）：有未消化/近期事件命中的环节标"催"，
+   * 点击=开环节面板（面板顶部自动插受益清单段）；零命中不渲染（禁造数据）── */
+  function decorateCatalyst() {
+    var cat = C.cat;
+    if (!cat || !cat.nodes) return;
+    Object.keys(cat.nodes).forEach(function (nid) {
+      var el = elByNode[nid];
+      if (!el || el.querySelector('.catb')) return;
+      var hits = cat.nodes[nid] || [];
+      var d = hits[0] || {};
+      var b = document.createElement('span');
+      b.className = 'catb';
+      b.title = '催化命中 ' + hits.length + ' 条：' + (d.theme_id || '') + (d.direction || '') +
+        '（' + (d.date || '') + (d.is_future ? ' · 未消化' : '') + '）——点击看受益清单';
+      b.textContent = '催';
+      b.addEventListener('click', function (e) { e.stopPropagation(); openPanel({ node_id: nid, name: '' }); });
+      el.appendChild(b);
+    });
+  }
+
   function openPanel(n, chain) {
     var side = document.getElementById('cm-side');
     if (!side) return;
+    hideEqOverlay(true);
     side.style.display = 'block';
     side.innerHTML = '<div class="dim" style="font-size:12px">加载公司落位…</div>';
+    /* 催化命中的环节（C.cat 角标数据）→ 面板顶部插受益清单段（/api/chainmap-catalyst?node_id=） */
+    var catalyzed = !!(C.cat && C.cat.nodes && C.cat.nodes[n.node_id]);
     ZK.api.fetchChainmapNode(n.node_id)
       .then(function (d) {
         if (!d.ok) { side.innerHTML = '<div class="cm-bad" style="font-size:12px">加载失败：' + (d.error || '') + '</div>'; return; }
@@ -311,19 +418,55 @@
             '<span class="nm" title="' + cp.name + '">' + (cp.name || '—') + '</span>' +
             '<span class="sy">' + cp.symbol + '</span>' + xbadge + '<span class="cf">' + (cp.confidence == null ? '' : cp.confidence.toFixed(2)) + '</span></div>';
         }).join('');
-        side.innerHTML =
-          '<span class="cm-x" title="关闭">✕</span>' +
-          '<div class="cm-sd-t">' + d.node.name + '</div>' +
-          '<div class="cm-sd-s">' + d.node.chain_name + ' · ' + (d.node.tier || '未标注') +
-          ' ｜ 公司 ' + d.total + ' 家（按角色/置信度排序，最多展示 200）</div>' +
-          (rows || '<div class="dim" style="font-size:12px">该环节暂无公司映射</div>');
-        var x = side.querySelector('.cm-x');
-        if (x) x.addEventListener('click', function () { side.style.display = 'none'; });
-        Array.prototype.forEach.call(side.querySelectorAll('.cm-co[data-sym]'), function (el) {
-          el.addEventListener('click', function () {
-            ZK.bus.emit('cm:open-company', { symbol: el.getAttribute('data-sym'), name: el.getAttribute('data-name') });
+        var finish = function (cat) {
+          var ben = '';
+          if (cat && cat.ok && cat.n_hits > 0) {
+            var hitRows = (cat.hits || []).map(function (h) {
+              return '<div class="cm-ben-h"><span class="' + (h.direction === '受益' ? 'up' : 'dn') + '">' + h.direction + '</span>' +
+                '<span class="th">' + h.theme_id + '</span>' +
+                '<span class="dt">' + h.date + (h.is_future ? '（未消化）' : '') + '</span>' +
+                '<span class="ds" title="' + h.description + '">' + h.description + '</span></div>';
+            }).join('');
+            var stockRows = (cat.beneficiaries || []).slice(0, 10).map(function (b) {
+              var wr = b.jump ? '<span class="wr" data-sym="' + b.symbol + '" data-name="' + (b.name || '') + '" title="跳作战池">作战池→</span>' : '';
+              return '<div class="cm-ben-r"><span class="rl">' + (b.role || '提及') + '</span>' +
+                '<span class="nm" title="' + (b.name || '') + '">' + (b.name || '—') + '</span>' +
+                '<span class="sy">' + b.symbol + '</span>' + wr + '</div>';
+            }).join('');
+            ben = '<div class="cm-ben">' +
+              '<div class="cm-ben-t">⚡ 催化受益清单（' + (cat.hits || []).length + ' / ' + cat.n_hits + ' 条事件）</div>' +
+              hitRows +
+              '<div class="cm-ben-st">受益个股（本环节落位 · 角色序 · 前 10 / 共 ' + cat.n_beneficiaries + '）</div>' +
+              stockRows +
+              '<div class="cm-ben-note">命中粒度=主题→申万行业→链级投影；受益方向=MOD-ALT-005 主题库既有判定；本功能不做涨跌预测（传导预测已证伪裁定留档）。作战池跳转=页面导航+提示（选中接口演示态，未真实入池）。</div>' +
+              '</div>';
+          }
+          side.innerHTML =
+            '<span class="cm-x" title="关闭">✕</span>' + ben +
+            '<div class="cm-sd-t">' + d.node.name + '</div>' +
+            '<div class="cm-sd-s">' + d.node.chain_name + ' · ' + (d.node.tier || '未标注') +
+            ' ｜ 公司 ' + d.total + ' 家（按角色/置信度排序，最多展示 200）</div>' +
+            (rows || '<div class="dim" style="font-size:12px">该环节暂无公司映射</div>');
+          var x = side.querySelector('.cm-x');
+          if (x) x.addEventListener('click', function () { side.style.display = 'none'; });
+          Array.prototype.forEach.call(side.querySelectorAll('.cm-co[data-sym]'), function (el) {
+            el.addEventListener('click', function () {
+              ZK.bus.emit('cm:open-company', { symbol: el.getAttribute('data-sym'), name: el.getAttribute('data-name') });
+            });
           });
-        });
+          Array.prototype.forEach.call(side.querySelectorAll('.cm-ben-r .wr[data-sym]'), function (el) {
+            el.addEventListener('click', function (ev) {
+              ev.stopPropagation();
+              if (typeof go === 'function') go('warroom');
+              if (typeof gToast === 'function') {
+                gToast('「' + (el.getAttribute('data-name') || '') + ' ' + el.getAttribute('data-sym') + '」来自催化受益清单——作战池选中接口为演示态，未真实入池');
+              }
+            });
+          });
+        };
+        if (catalyzed) {
+          ZK.api.fetchChainmapCatalystNode(n.node_id).then(finish).catch(function () { finish(null); });
+        } else finish(null);
       }).catch(function (e) {
         side.innerHTML = '<div class="cm-bad" style="font-size:12px">加载失败（' + ((e && e.message) || 'fetch') + '）</div>';
       });
@@ -358,7 +501,14 @@
           return;
         }
         C.cid = cid; C.data = d; C.market = market;
+        C.cat = null;   /* 换簇清催化数据（旧簇角标随重画消失） */
+        hideEqOverlay(true);
         render();
+        /* 催化数据异步装饰（F-CHAINMAP-CATALYST）：独立降级——失败/零命中不拖垮链层，仅无角标 */
+        ZK.api.fetchChainmapCatalyst(cid, market).then(function (cd) {
+          if (C.cid !== cid || C.market !== market) return;   /* 已换簇/换档：丢弃旧响应 */
+          if (cd && cd.ok) { C.cat = cd; decorateCatalyst(); }
+        }).catch(function () { /* 静默：催化剂为增量装饰 */ });
         if (cb) cb();
       }).catch(function () {
         C.busy = false;
@@ -400,7 +550,7 @@
   /* 市场切档（项4）：cid 是 per-market 聚类空间，切档后当前簇失效——回全景星系（新档数据
    * 由 galaxy/nav 各自重拉），杜绝跨档 cid 误配 */
   ZK.bus.on('cm:market', function () {
-    C.data = null; C.cid = null; C.focusChain = null; C.focusChainName = null; C.focusNode = null;
+    C.data = null; C.cid = null; C.focusChain = null; C.focusChainName = null; C.focusNode = null; C.cat = null;
     if (canvasEl() && canvasEl().style.display !== 'none') {
       show(false);
       ZK.bus.emit('cm:view', { view: 'galaxy' });
@@ -411,8 +561,9 @@
     id: 'chainmap-cluster',
     init: function () { bindView(); },
     render: function () { if (C.data) render(); },
-    destroy: function () { /* 无定时器 */ }
+    destroy: function () { hideEqOverlay(true); }
   });
 
   if (document.getElementById('p-chainmap')) bindView();
+  document.addEventListener('keydown', function (e) { if (e.key === 'Escape') hideEqOverlay(true); });
 })();

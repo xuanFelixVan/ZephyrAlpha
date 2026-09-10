@@ -116,6 +116,13 @@ ZK.api = (function(){
     fetchChainmapCompany: function(symbol){   /* 公司详情卡（chainmap-company-card 真源：落位+关系+行情/估算市值） */
       return fetchJson('/api/chainmap-company?symbol='+encodeURIComponent(symbol), 15000);
     },
+    fetchChainmapCatalyst: function(cid, market){   /* 产业链催化剂·簇视角（F-CHAINMAP-CATALYST：环节催化角标映射；零命中=空映射不造数据） */
+      var q = (market && market !== 'all') ? '&market=' + encodeURIComponent(market) : '';
+      return fetchJson('/api/chainmap-catalyst?cid='+encodeURIComponent(cid) + q, 15000);
+    },
+    fetchChainmapCatalystNode: function(nodeId){   /* 产业链催化剂·环节视角（受益清单：命中事件方向语义+落位个股） */
+      return fetchJson('/api/chainmap-catalyst?node_id='+encodeURIComponent(nodeId), 15000);
+    },
     /* ── SWR 缓存（stale-while-revalidate，2026-09-03 Owner「刷新立即出画面」诉求）──
      * 刷新后先渲染 localStorage 里上次响应（毫秒级，数据自带时间戳可见新鲜度），后台拉新到达后覆盖。
      * 演示诚实纪律：缓存态渲染时由调用方标注"上次更新 HH:MM"，新数据到达后消失。 */

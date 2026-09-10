@@ -130,6 +130,39 @@
     border:1px solid #2c3a52; color:#8a94a6; cursor:help; }   /* function_role 职能徽章（项2，hover 显全称） */
   #cm-nodes-cluster .cm-n.dimmed { opacity:.18; }
   #cm-nodes-cluster .cm-n.hit { border-color:#e6c34c; box-shadow:0 0 0 2px rgba(230,195,76,.25); }
+  /* 股权徽章（F-CHAINMAP-EQUITY-BADGE）+ 催化角标（F-CHAINMAP-CATALYST）+ 明细浮层（剩余批 2026-09-10） */
+  #cm-nodes-cluster .cm-n .eqb { flex:none; font-size:9px; line-height:1.6; padding:0 5px; border-radius:99px;
+    border:1px solid #3a5a8c; color:#7db4e8; cursor:help; white-space:nowrap; }
+  #cm-nodes-cluster .cm-n .catb { position:absolute; top:-7px; right:-6px; font-size:9px; line-height:1; padding:2px 4px;
+    border-radius:99px; background:#8a4d1f; color:#ffd9a8; border:1px solid #b06a2a; cursor:pointer; z-index:2; }
+  #cm-eq-overlay { position:fixed; z-index:880; width:330px; max-width:92vw; background:#0d131d; border:1px solid #2c3a52;
+    border-radius:8px; box-shadow:0 8px 24px rgba(0,0,0,.5); padding:8px; font-size:11px; color:#c6cdd8; }
+  #cm-eq-overlay .cm-eq-h { font-weight:700; color:#7db4e8; margin-bottom:5px; }
+  #cm-eq-overlay .cm-eq-r { display:flex; gap:6px; align-items:baseline; padding:3px 4px; border-radius:5px; }
+  #cm-eq-overlay .cm-eq-r.lk { cursor:pointer; }
+  #cm-eq-overlay .cm-eq-r.lk:hover { background:#131a26; }
+  #cm-eq-overlay .cm-eq-r .d { flex:none; color:#8a94a6; font-size:10px; }
+  #cm-eq-overlay .cm-eq-r .nm { min-width:0; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; color:#dbe4f0; }
+  #cm-eq-overlay .cm-eq-r .sy { flex:none; color:#525d70; font-size:10px; }
+  #cm-eq-overlay .cm-eq-r .mt { flex:none; color:#525d70; font-size:10px; }
+  /* 催化受益清单段（环节面板顶部插入） */
+  .cm-ben { border:1px solid #3a2a12; background:#171208; border-radius:8px; padding:8px; margin-bottom:10px; }
+  .cm-ben .cm-ben-t { font-weight:700; color:#e6a23c; font-size:12px; margin-bottom:5px; }
+  .cm-ben .cm-ben-h { display:flex; gap:7px; align-items:baseline; padding:2px 0; }
+  .cm-ben .cm-ben-h .up { color:#e05d5d; font-weight:700; flex:none; }
+  .cm-ben .cm-ben-h .dn { color:#45b47c; font-weight:700; flex:none; }
+  .cm-ben .cm-ben-h .th { flex:none; color:#e6c34c; font-size:11px; }
+  .cm-ben .cm-ben-h .dt { flex:none; color:#525d70; font-size:10px; }
+  .cm-ben .cm-ben-h .ds { min-width:0; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; color:#9aa5b5; font-size:10.5px; }
+  .cm-ben .cm-ben-st { font-size:10.5px; color:#7d8aa0; margin:6px 0 3px; }
+  .cm-ben .cm-ben-r { display:flex; gap:7px; align-items:baseline; padding:3px 4px; border-radius:5px; }
+  .cm-ben .cm-ben-r:hover { background:#131a26; }
+  .cm-ben .cm-ben-r .rl { flex:none; color:#8a94a6; font-size:9.5px; }
+  .cm-ben .cm-ben-r .nm { min-width:0; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; color:#dbe4f0; }
+  .cm-ben .cm-ben-r .sy { flex:none; color:#525d70; font-size:10px; }
+  .cm-ben .cm-ben-r .wr { flex:none; margin-left:auto; color:#e6c34c; cursor:pointer; font-size:10.5px; }
+  .cm-ben .cm-ben-r .wr:hover { text-decoration:underline; }
+  .cm-ben .cm-ben-note { font-size:9.5px; color:#525d70; line-height:1.5; margin-top:5px; }
   #cm-wires-cluster path { fill:none; stroke:#2c3a52; stroke-width:1.2; }
 
   /* 链选轨（聚焦模式 >8 链大簇）：左侧固定列表，点击换链 */

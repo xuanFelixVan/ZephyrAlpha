@@ -232,6 +232,30 @@ modules:
     acceptance: ACC-F-CHAINMAP-CROSS-LINK
     handbook: []
     status: active
+  - id: chainmap-equity-badge
+    name: 股权徽章（环节卡 ⚠控/被控 计数+hover 明细浮层+对方卡跳转）
+    file: features/chainmap/chainmap-cluster.js
+    page: chainmap
+    init: "并入 chainmap-cluster（同数据源子元素徽章，cluster 响应 per-node equity 聚合直用）"
+    destroy: "并入 chainmap-cluster（浮层清理随 hideEqOverlay）"
+    depends: [ZK.api, ZK.bus]   # /api/chainmap-cluster equity 段（ig_equity_edge 批量聚合）；明细行点击经 cm:open-company
+    toggle: none
+    styles: pages/chainmap.html <style>
+    acceptance: ACC-F-CHAINMAP-EQUITY-BADGE
+    handbook: []
+    status: active
+  - id: chainmap-catalyst
+    name: 催化剂角标（事件命中环节标"催"+受益清单段+作战池跳转）
+    file: features/chainmap/chainmap-cluster.js
+    page: chainmap
+    init: "并入 chainmap-cluster（簇加载后异步装饰；零命中=无角标空态禁造数据）"
+    destroy: "并入 chainmap-cluster"
+    depends: [ZK.api, ZK.bus]   # /api/chainmap-catalyst（判定真源=MOD-ALT-005 主题库既有判定+CH calendar_event）；跳作战池=go('warroom')
+    toggle: none
+    styles: pages/chainmap.html <style>
+    acceptance: ACC-F-CHAINMAP-CATALYST
+    handbook: []
+    status: active
   - id: tdm-map
     name: 交易决策全景（横向树实时映射 /api/tdm）
     file: features/tdm.js

@@ -414,6 +414,21 @@ features:
   file: features/chainmap/chainmap-company-card.js
   backend_ref: [module:MOD-L08-001, api:/api/chainmap-node, api:/api/chainmap-company]
   status: active
+- id: F-CHAINMAP-EQUITY-BADGE
+  name: 股权徽章（环节卡控/被控计数+明细浮层+对方卡跳转）
+  page: chainmap
+  module_id: chainmap-equity-badge
+  file: features/chainmap/chainmap-cluster.js
+  backend_ref: [module:MOD-L08-001, api:/api/chainmap-cluster]   # equity 段=ig_equity_edge 批量聚合（数据真源 ig_equity_edge 表，消费同 MOD-L08-001 图谱域）
+  status: active
+- id: F-CHAINMAP-CATALYST
+  name: 催化剂角标（事件命中定位+受益清单，不做涨跌预测）
+  page: chainmap
+  module_id: chainmap-catalyst
+  file: features/chainmap/chainmap-cluster.js
+  # 方向判定真源=MOD-ALT-005 policy_theme_mapper 主题库（受益/受损既有判定直引，端点层实现细节见 ACC）
+  backend_ref: [module:MOD-L08-001, api:/api/chainmap-catalyst]
+  status: active
 - id: F-TDM-MAP
   name: 交易决策全景画布（横向树实时映射）
   page: tdm

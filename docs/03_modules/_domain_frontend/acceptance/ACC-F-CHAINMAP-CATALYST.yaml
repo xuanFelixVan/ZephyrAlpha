@@ -1,0 +1,44 @@
+# --- 治理锚定 ---
+# doc_type: register | 功能验收单（冻结"什么样子算对"）
+# ttl: permanent
+# 修订权限：Owner 专有（AI 可提议不可自改已冻结条项）
+# --- 治理锚定结束 ---
+
+feature_id: F-CHAINMAP-CATALYST
+feature_name: 催化剂角标（事件命中环节标"催"+受益清单段+作战池跳转）
+frozen_at: 2026-09-10
+frozen_by: ZephyrAlpha-Owner
+revision: 1
+revision_policy: "修订=Owner 批准+改原文+revision 链留痕；AI 不可自改已冻结条项"
+
+# check 取值：目检（截图人工/AI 视觉对） | 机断（DOM/接口断言）
+# 后端盘点留痕（TRAE-086 truth_source_wiring，2026-09-10）：
+#   数据需求①事件真源：CH calendar_event（/api/events 同源同库，宏观事件日历实表实数据）；
+#   ②关键词→环节映射：后端三查=api_server 无既有端点；policy_theme_mapper（MOD-ALT-005）有主题关键词
+#   库+主题→申万行业受益/受损映射（判定真源，设计态纯内存判定核心）；industry_chain_graph（MOD-SIG-125）
+#   =独立 SQLite 传导图（非关键词映射，不复用不重复）。结论=映射真源已在（MOD-ALT-005 主题库），
+#   缺的是"主题→chainmap 链"投影端点 → 新建 /api/chainmap-catalyst（cid 簇视角/node_id 环节视角）。
+#   语义边界（Owner 红线）：只做事件命中定位，不做涨跌/传导预测（热度传导预测已证伪裁定 月 IC=-0.029 留档）。
+#   方向语义直引 MOD-ALT-005 beneficiary_industries/damaged_industries（受益/受损），禁臆断；
+#   行业别名表仅做名字归一（新能源→电力设备等 11 项），国产替代/出口链/航运等概念名 unmapped 如实返回。
+#   命中粒度=主题→申万一级行业→ig_chain.category→链上环节投影（环节级独立命中判定既有真源不存在，
+#   不造）；分类规则=MOD-ALT-005 规则分支同语义（关键词子串命中，库序首个命中即断）。
+#   数据底子（2026-09-10 实测）：事件窗 24 条扫描命中 4 条（全部为 LPR 公布日→货币政策→受益 银行/非银金融/
+#   房地产）——命中率低但真实，零编造；机制+真实命中交付，语料扩充待数据会话（commit message 披露）。
+items:
+  - { id: 1, text: "/api/chainmap-catalyst?cid=&market= 返回 ok+events[]+nodes{}（node_id→命中明细 ≤6 条：date/is_future/theme_id/direction/description）+unmapped_industries；?node_id= 返回 ok+hits[]+beneficiaries[]（role 序，jump=仅 A 股 6 位码 true）", check: 机断 }
+  - { id: 2, text: "簇内被命中链的环节卡右上角出现'催'角标（橙底），hover 提示命中主题/方向/日期；零命中环节无角标（C01 簇实测 0 角标=正确空态）", check: 机断 }
+  - { id: 3, text: "点角标开环节面板：顶部插 ⚡催化受益清单段（命中行=方向色 受益红/受损绿+主题+日期+未消化标记+事件描述；受益个股行=角色+名称+代码+作战池→；前 10/共 N 如实标注）", check: 目检 }
+  - { id: 4, text: "受益个股行'作战池→'点击→go('warroom') 导航+gToast 诚实提示（选中接口演示态未真实入池，禁假称已入池）", check: 机断 }
+  - { id: 5, text: "受益清单段底注声明三边界：命中粒度=链级投影/方向=MOD-ALT-005 既有判定/不做涨跌预测（证伪裁定留档）", check: 目检 }
+  - { id: 6, text: "换簇/换市场档后旧角标与 C.cat 清空重取（防跨档 cid 错配）；催化剂 API 失败静默降级不拖垮链层渲染", check: 机断 }
+
+execution:
+  trigger: "任何涉及本功能的 UI 改动 commit 前"
+  flow: "起面板 API（8890）→ 打开 #chainmap → 进 C05 簇（房地产行业/地产链 10 环节有 LPR 货币政策受益命中，2026-09-10 实测）→ 点角标截图受益清单段 → 逐条对 → 全绿才走 GitCommitGateway"
+  baseline_screenshot: "acceptance/screenshots/F-CHAINMAP-CATALYST-baseline.png"
+
+关联:
+  frontend_map: F-CHAINMAP-CATALYST
+  code_ref: "src/zephyr/frontend/dashboard/web/features/chainmap/chainmap-cluster.js（并入 cluster，decorateCatalyst/openPanel 受益段）"
+  backend_ref: "src/zephyr/frontend/dashboard/api_server.py /api/chainmap-catalyst（判定直引 zephyr.alt_data.policy_theme_mapper.DEFAULT_THEME_LIBRARY）"

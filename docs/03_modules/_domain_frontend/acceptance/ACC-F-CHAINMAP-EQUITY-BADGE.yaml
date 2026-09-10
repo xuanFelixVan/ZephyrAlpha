@@ -1,0 +1,39 @@
+# --- 治理锚定 ---
+# doc_type: register | 功能验收单（冻结"什么样子算对"）
+# ttl: permanent
+# 修订权限：Owner 专有（AI 可提议不可自改已冻结条项）
+# --- 治理锚定结束 ---
+
+feature_id: F-CHAINMAP-EQUITY-BADGE
+feature_name: 股权徽章（环节卡控/被控计数+明细浮层+对方卡跳转）
+frozen_at: 2026-09-10
+frozen_by: ZephyrAlpha-Owner
+revision: 1
+revision_policy: "修订=Owner 批准+改原文+revision 链留痕；AI 不可自改已冻结条项"
+
+# check 取值：目检（截图人工/AI 视觉对） | 机断（DOM/接口断言）
+# 后端盘点留痕（TRAE-086 truth_source_wiring）：
+#   数据需求=环节粒度股权聚合（哪些落位公司有股权关系+控/被控计数+明细）。
+#   后端三查：①api_server 无既有环节粒度股权端点；②项3 的 /api/chainmap-company equity 段=单公司粒度
+#   （ig_equity_edge 查询侧 UNION 拼装），环节批量无端点；③无其他服务提供。结论=「有单点无批量」→
+#   按任务书授权扩展 /api/chainmap-cluster 响应（per-node equity 聚合，UNION ALL 双向 JOIN+UE 编码表
+#   LEFT JOIN 取名，簇级 LIMIT 800），前端零全量拉边计算。数据真源=ig_equity_edge 表（物理单处存储，
+#   节点模板 v0.5 §2.5）；relation 词表真源=DDL 封闭枚举六值。
+items:
+  - { id: 1, text: "/api/chainmap-cluster 响应环节含 equity 字段 {out,inn,rows[]}；rows 内 listed 端点带 symbol+name，PERSON:/UNLISTED: 端点 symbol='' 且 ref/name 为编码表名", check: 机断 }
+  - { id: 2, text: "环节卡上有股权关系的显示 ⚙控N/被M控 徽章（计数 0 的侧不渲染；无关系环节无徽章）", check: 机断 }
+  - { id: 3, text: "悬停徽章出浮层：明细行=方向（控→/⬅被控）+对象名+代码/编码 ref+relation 中译+持股比例+核验状态（官方口径/已核验/未核验）；计数超明细上限时浮层头标'共 N 条'", check: 目检 }
+  - { id: 4, text: "浮层 listed 行点击→关闭浮层+打开对方公司详情卡（cm:open-company）；PERSON:/UNLISTED: 行不可点（title 说明仅展示）", check: 机断 }
+  - { id: 5, text: "徽章点击不触发环节卡默认公司面板（stopPropagation）；点击可钉住浮层，再点/Escape/换簇/重画关闭；浮层不被画布 overflow 裁剪（fixed 定位）", check: 目检 }
+  - { id: 6, text: "L1 星系不加股权边（族聚合层语义不匹配，如实留白——本功能不改动 chainmap-galaxy）", check: 机断 }
+  - { id: 7, text: "断线/空数据诚实降级：equity 缺失环节无徽章无占位假数据；API 失败仅静默无徽章（同链层既有降级口径）", check: 机断 }
+
+execution:
+  trigger: "任何涉及本功能的 UI 改动 commit 前"
+  flow: "起面板 API（8890）→ 打开 #chainmap → 进 C01 簇（汽车零部件行业·行业聚合等 26 环节有股权数据，2026-09-10 实测）→ 悬停徽章截图 → 逐条对 → 全绿才走 GitCommitGateway"
+  baseline_screenshot: "acceptance/screenshots/F-CHAINMAP-EQUITY-BADGE-baseline.png"
+
+关联:
+  frontend_map: F-CHAINMAP-EQUITY-BADGE
+  code_ref: "src/zephyr/frontend/dashboard/web/features/chainmap/chainmap-cluster.js（并入 cluster，showEqOverlay/bindEqBadge）"
+  backend_ref: "src/zephyr/frontend/dashboard/api_server.py chainmap_cluster equity 聚合段"
