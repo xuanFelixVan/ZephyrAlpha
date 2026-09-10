@@ -301,3 +301,62 @@ class TestScanAll:
         violations, error_msg = scan_all_for_undefined_names(tmp_path)
         assert error_msg is None
         assert violations == []
+
+
+# ---------------------------------------------------------------------------
+# TestOnlyOwnSessionScanned — 只查自己（#ARCH-GATE-OWN-SCOPE-001 推广 2026-09-10）
+# ---------------------------------------------------------------------------
+
+
+class TestOnlyOwnSessionScanned:
+    """扫描范围=全暂存区∩本 session 范围；外来 staged warn+审计不阻断。"""
+
+    def _make_session_gateway(self, tmp_path, staged_files, file_contents):
+        gw = _make_gateway(staged_files=staged_files, file_contents=file_contents)
+        from zephyr.security.access_control.session_concurrency import SessionRegistry
+
+        gw.project_root = str(tmp_path)  # 审计落 tmp_path（防污染真实仓库）
+        gw._registry = SessionRegistry(project_root=tmp_path)  # 空 registry（无活跃 session）
+        return gw
+
+    def test_foreign_wip_does_not_block_own_commit(self, tmp_path):
+        """他人 session 的 WIP（未定义符号）暂存时，本 session 干净文件可提交。"""
+        import json
+
+        own_py = "src/zephyr/own_clean.py"
+        own_content = "import os\nX = os.getcwd()\n"
+        foreign_py = "src/zephyr/foreign_wip.py"
+        # 他人半成品：引用未定义符号（笔误/幻觉 API 形态）
+        foreign_content = "X = undefined_symbol_xyz()\n"
+
+        gw = self._make_session_gateway(
+            tmp_path, [own_py, foreign_py], {own_py: own_content, foreign_py: foreign_content}
+        )
+        passed, msg = make_undefined_name_gate().check(gw, [own_py], session_id="sess-A")
+
+        assert passed is True  # 核心：不再被他人 WIP 锁死
+        assert "undefined_symbol_xyz" not in msg  # 外来文件不产生违规
+        audit = tmp_path / ".runtime" / "gate_audit" / "undefined_name_foreign_staged.jsonl"
+        assert audit.exists()
+        rec = json.loads(audit.read_text(encoding="utf-8").splitlines()[-1])
+        assert rec["session_id"] == "sess-A"
+        assert foreign_py in rec["foreign_files"]
+
+    def test_own_undefined_symbol_still_blocks(self, tmp_path):
+        """本 session 自身未定义符号仍被硬阻断（保护语义不放松）。"""
+        import json
+
+        own_py = "src/zephyr/own_bad.py"
+        own_content = "X = undefined_symbol_own()\n"
+        foreign_py = "src/zephyr/foreign_clean.py"
+        foreign_content = "import os\nY = os.sep\n"
+
+        gw = self._make_session_gateway(
+            tmp_path, [own_py, foreign_py], {own_py: own_content, foreign_py: foreign_content}
+        )
+        passed, msg = make_undefined_name_gate().check(gw, [own_py], session_id="sess-A")
+
+        assert passed is False  # 自身违规仍硬阻断
+        assert "undefined_symbol_own" in msg
+        audit = tmp_path / ".runtime" / "gate_audit" / "undefined_name_foreign_staged.jsonl"
+        assert audit.exists()

@@ -101,6 +101,9 @@ import logging
 from pathlib import Path
 
 from zephyr.gov_enforcement.commit_gates._diff_helpers import (
+    _audit_foreign_staged,
+    _build_own_scope,
+    _norm_rel,
     _get_staged_py_files,
     _read_staged_file,
 )
@@ -369,13 +372,33 @@ def make_undefined_name_gate() -> GateSpec:
     硬阻断。fail-open：无 staged 文件/git 失败/文件不可读时放行。
     """
 
-    def _check(gateway, _files: list[str], **_kwargs) -> tuple[bool, str]:
+    def _check(gateway, files: list[str], **kwargs) -> tuple[bool, str]:
         staged = _get_staged_py_files(gateway, "UNDEFINED-NAME")
         if not staged:
             return True, ""
 
+        # 只查自己（#ARCH-GATE-OWN-SCOPE-001 推广，2026-09-10）：扫描范围=全暂存区∩本
+        # session 范围；外来 staged 不扫描、降级 warn+审计；own_scope=None 退化旧行为扫全量；
+        # 本 session 自身违规仍硬阻断；fail-open 红线不变。
+        session_id = kwargs.get("session_id")
+        own_scope = _build_own_scope(gateway, files, session_id)
+        if own_scope is None:
+            own_staged = staged
+        else:
+            own_staged = [f for f in staged if _norm_rel(gateway, f) in own_scope]
+            foreign_staged = [f for f in staged if _norm_rel(gateway, f) not in own_scope]
+            if foreign_staged:
+                _audit_foreign_staged(
+                    gateway, session_id, foreign_staged, gate_name="UNDEFINED-NAME"
+                )
+                logger.warning(
+                    "UNDEFINED-NAME: %d 个外来 session staged 文件未检查（warn+审计，不阻断）: %s",
+                    len(foreign_staged),
+                    ", ".join(foreign_staged[:5]) + ("..." if len(foreign_staged) > 5 else ""),
+                )
+
         violations: list[str] = []
-        for py_file in staged:
+        for py_file in own_staged:
             if not py_file.startswith(_SCAN_PREFIXES):
                 continue
             # 裁定#E（2026-07-19）同口径补齐：staged 路径与 scan_all_for_undefined_names
