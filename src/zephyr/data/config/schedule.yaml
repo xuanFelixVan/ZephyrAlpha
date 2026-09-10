@@ -140,6 +140,16 @@ schedules:
     executor: default
     description: "调度对账补跑层——检测错过档期的任务并自动补跑（月度/周度/日频 overdue + 空表兜底）"
 
+  # 夜间情绪窗层：08:20 日频（窗口 [T-1 18:00, T 08:00) 08:00 闭合后 20 分钟起步，
+  # 给 news_data 300s flush 缓冲留余量）。MOD-INT-NEWS-NIGHT 接线（2026-09-10，
+  # 治本 known_data_gaps news_sentiment_window_no_scheduler_wiring——写入器此前零调用方，
+  # 表存量全靠 ad-hoc 回填）。全周 7 天运行：窗口归属日连续覆盖含周末（degraded 行占位不留洞），
+  # 近 7 日缺口自愈补跑（停机错过次日自动补齐）。
+  nightly_sentiment:
+    cron: "20 8 * * *"
+    executor: default
+    description: "夜间情绪窗层——compute_nightly_sentiment 日频接线（当日窗口+近7日缺口补跑，ReplacingMergeTree 幂等）"
+
   # L0 集合竞价高频层：9:15-9:25 每10秒抓取五档盘口（cron 6段：second minute hour day month day_of_week）
   # 用于主力挂撤单行为分析。间隔从3秒调整为10秒：全量~5200标的 get_full_tick 批量抓取耗时>3s，
   # 在 max_instances=1+coalesce=True 下 3秒间隔会导致后续触发全部 collapse 为1次（实测仅出1次快照）。

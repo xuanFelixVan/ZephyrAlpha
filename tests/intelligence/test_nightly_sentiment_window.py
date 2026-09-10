@@ -366,3 +366,59 @@ class TestAnalyzerPersistHook:
         assert len(windows) == 1
         assert len(captured) == 1
         assert captured[0].rows[0][2] == "1h"
+
+
+class TestNightlyBatchRunner:
+    """run_nightly_sentiment_batch 调度入口（2026-09-10 schedule nightly_sentiment 接线）。
+
+    纯函数补跑日计算 + 批跑编排（client/compute 注入 mock），不触网不触库。
+    """
+
+    def test_missing_dates_pure(self):
+        from datetime import timedelta
+
+        from zephyr.intelligence.nightly_sentiment_window import _missing_night_dates
+
+        today = date(2026, 9, 10)
+        existing = {date(2026, 9, 8), date(2026, 9, 9)}
+        out = _missing_night_dates(existing, today, lookback=7)
+        assert out == [
+            date(2026, 9, 3), date(2026, 9, 4), date(2026, 9, 5), date(2026, 9, 6),
+            date(2026, 9, 7), date(2026, 9, 10),
+        ]
+        full = {today - timedelta(days=k) for k in range(8)}
+        assert _missing_night_dates(full, today, lookback=7) == []
+
+    def test_batch_computes_missing_and_skips_existing(self):
+        from datetime import timedelta
+        from unittest.mock import MagicMock
+
+        import zephyr.intelligence.nightly_sentiment_window as nsw
+
+        today = date.today()
+        client = MagicMock()
+        client.execute.return_value = [(today,), (today - timedelta(days=1),)]
+        sentinel = NightlySentimentResult(
+            date=today.isoformat(),
+            window_start=datetime(2026, 9, 9, 18, 0),
+            window_end=datetime(2026, 9, 10, 8, 0),
+            sentiment_index=0.0, avg_polarity=0.0,
+            positive_count=0, negative_count=0, neutral_count=0, total_count=1,
+            persisted=True,
+        )
+        with patch.object(nsw, "compute_nightly_sentiment", return_value=sentinel) as cmp:
+            r = nsw.run_nightly_sentiment_batch(lookback=2, client=client)
+        assert r["ok"] is True
+        assert cmp.call_count == 1  # 仅缺失的 today-2 需计算，已覆盖 2 天跳过
+        assert r["computed"] == [(today - timedelta(days=2)).isoformat()]
+
+    def test_batch_ch_failure_degrades_without_raise(self):
+        from unittest.mock import MagicMock
+
+        import zephyr.intelligence.nightly_sentiment_window as nsw
+
+        client = MagicMock()
+        client.execute.side_effect = RuntimeError("ch down")
+        r = nsw.run_nightly_sentiment_batch(client=client)
+        assert r["ok"] is False
+        assert r["failed"] and r["failed"][0].startswith("ch_read")

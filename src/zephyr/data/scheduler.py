@@ -320,6 +320,36 @@ def _run_special_schedule(
 
         result = run_catchup_guard(scheduler)
         return {"catchup_guard": result.get("success", False)}
+    # 夜间情绪窗层：MOD-INT-NEWS-NIGHT 日频接线（2026-09-10，known_data_gaps
+    # news_sentiment_window_no_scheduler_wiring 治本）。惰性导入 intelligence 域写入器；
+    # 任何异常降级 alerter 告警，不炸调度器。
+    if schedule_name == "nightly_sentiment":
+        try:
+            from zephyr.intelligence.nightly_sentiment_window import run_nightly_sentiment_batch
+
+            result = run_nightly_sentiment_batch()
+        except Exception as exc:  # noqa: BLE001 — 接线故障降级告警
+            try:
+                scheduler._alerter.notify(
+                    "nightly_sentiment",
+                    f"夜间情绪窗批跑异常: {str(exc)[:200]}",
+                    level="ERROR",
+                    source="nightly_sentiment",
+                )
+            except Exception:  # noqa: BLE001 — 告警通道自身故障不再上抛
+                pass
+            return {"nightly_sentiment": False}
+        if not result.get("ok", False):
+            try:
+                scheduler._alerter.notify(
+                    "nightly_sentiment",
+                    f"夜间情绪窗批跑存在失败日: failed={result.get('failed')}",
+                    level="ERROR",
+                    source="nightly_sentiment",
+                )
+            except Exception:  # noqa: BLE001 — 告警通道自身故障不再上抛
+                pass
+        return {"nightly_sentiment": bool(result.get("ok", False))}
     return None
 
 

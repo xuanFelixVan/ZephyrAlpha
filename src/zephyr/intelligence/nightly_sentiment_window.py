@@ -2,7 +2,7 @@
 # [MODULE] zephyr.intelligence.nightly_sentiment_window
 # [DOMAIN] D_INTELLIGENCE
 # [DEPENDENCIES] pandas; zephyr.data.news_collector; zephyr.data.ch_writer（persist 时）; zephyr.intelligence.news_sentiment_analyzer; zephyr.intelligence.news_symbol_linker（可选注入）; zephyr.data.provider_base; zephyr.shared.foundation.errors
-# [CONSUMERS] 夜间批/盘前流程调用方（92号 §8.4③）；MOD-PLAN-004 overnight_boundary_reviser 消费接线待统筹裁定（本模块输出契约预留 plan004_input 对接字段，MOD-PLAN-004 零改动）
+# [CONSUMERS] schedule nightly_sentiment（08:20 日频，scheduler._run_special_schedule 分派，2026-09-10 接线治本 known_data_gaps news_sentiment_window_no_scheduler_wiring）；MOD-PLAN-004 overnight_boundary_reviser 消费接线待统筹裁定（本模块输出契约预留 plan004_input 对接字段，MOD-PLAN-004 零改动）
 # [STARTUP] imported
 # [MATURITY] testing
 # [INVARIANTS] 夜间窗口=前一交易日18:00(含)→交易日08:00(不含)左闭右开；sentiment_index=窗口平均极性（与 SentimentAggregator 口径一致）；news_data 为 SCD 多版本表按 news_id 去重（keep first=最早版本 PIT 语义）；空窗口→total_count=0+degraded=True 不抛；persist 默认关，写表经 ReplacingMergeTree(scope,symbol,window_type,window_ts) 同键替换幂等；情绪分数作事件信号维度非独立 alpha（26号备忘 §2.7 裁定）
@@ -150,6 +150,13 @@ _INSERT_COLUMNS: Final = (
 )
 
 DEFAULT_TOP_N: Final = 5  # top_events_json 头部事件条数（按 |polarity| 降序）
+
+# 已覆盖窗口归属日查询（run_nightly_sentiment_batch 补跑判定；模块内唯一 SQL 消费点，
+# 消费方仅 ch_writer 单点，集中化收益低于新增跨模块依赖成本——noqa 留痕）
+_SQL_COVERED_WINDOW_DATES: Final = (
+    "SELECT DISTINCT toDate(window_end) FROM c1_market.news_sentiment_window"  # noqa: bare-sql  常量已模块级集中化，AST 豁免不识别 AnnAssign 多行字面量的存量伪新增场景
+    " WHERE window_end >= toDateTime('{since} 00:00:00')"
+)
 
 
 # ============================================================================
@@ -441,13 +448,87 @@ def _replace_result(result: NightlySentimentResult, *, persisted: bool, reasons:
 
 
 # ============================================================================
-# 6. 模块导出
+# 6. 调度入口（schedule nightly_sentiment 08:20 日频，2026-09-10 接线）
+# ============================================================================
+
+
+def _missing_night_dates(
+    existing: set[datetime.date],
+    today: datetime.date,
+    lookback: int = 7,
+) -> list[datetime.date]:
+    """补跑日期计算（纯函数）：[today-lookback, today] 中未被 existing 覆盖的窗口归属日。
+
+    窗口归属日=trade_date（toDate(window_end)）；连续日频覆盖（含周末，与
+    2026-09-10 历史回填口径一致——degraded 行同样占位，不留洞）。
+    """
+    out: list[datetime.date] = []
+    for offset in range(lookback, -1, -1):
+        d = today - datetime.timedelta(days=offset)
+        if d not in existing:
+            out.append(d)
+    return out
+
+
+def run_nightly_sentiment_batch(
+    *,
+    lookback: int = 7,
+    top_n: int = DEFAULT_TOP_N,
+    client: Any = None,
+) -> dict[str, Any]:
+    """日频调度入口（schedule nightly_sentiment）：当日窗口 + 近 lookback 日缺口补跑。
+
+    - 读 c1_market.news_sentiment_window 已覆盖 toDate(window_end) 集合，
+      缺失日逐日 compute_nightly_sentiment(persist=True)（ReplacingMergeTree 同键幂等）；
+    - 永不抛（单日失败进 failed 列表继续）；CH 不可达时整体 failed 返回 ok=False，
+      由 scheduler 分支降级 alerter 告警（不炸调度器）；
+    - client 可注入（测试 mock）；None=ch_writer.get_client()。
+    """
+    today = datetime.date.today()
+    result: dict[str, Any] = {
+        "ok": False, "computed": [], "degraded": [], "failed": [], "skipped": 0,
+    }
+    try:
+        if client is None:
+            from zephyr.data.ch_writer import get_client
+
+            client = get_client()
+        rows = client.execute(
+            _SQL_COVERED_WINDOW_DATES.format(
+                since=(today - datetime.timedelta(days=lookback)).isoformat()))
+        existing = {r[0] for r in rows}
+    except Exception as exc:  # noqa: BLE001 — CH 不可达整体降级
+        result["failed"].append(f"ch_read:{exc}")
+        return result
+    result["skipped"] = len(existing)
+
+    for d in _missing_night_dates(existing, today, lookback):
+        try:
+            r = compute_nightly_sentiment(d.isoformat(), persist=True, top_n=top_n)
+            if not r.persisted:
+                result["failed"].append(f"{d.isoformat()}:persist_false")
+            elif r.degraded:
+                result["degraded"].append(d.isoformat())
+            else:
+                result["computed"].append(d.isoformat())
+        except Exception as exc:  # noqa: BLE001 — 单日失败继续
+            result["failed"].append(f"{d.isoformat()}:{exc}")
+    result["ok"] = not result["failed"]
+    log.info(
+        "nightly_sentiment batch: ok=%s computed=%s degraded=%s failed=%s",
+        result["ok"], result["computed"], result["degraded"], result["failed"])
+    return result
+
+
+# ============================================================================
+# 7. 模块导出
 # ============================================================================
 
 __all__: Final = [
     "NightlySentimentError",
     "NightlySentimentResult",
     "compute_nightly_sentiment",
+    "run_nightly_sentiment_batch",
     "nightly_window",
     "NIGHT_WINDOW_START_HOUR",
     "NIGHT_WINDOW_END_HOUR",
