@@ -935,6 +935,10 @@ def backtest_run_status(task_id: str = Query(..., min_length=3)) -> dict[str, An
 # 方案权重真源: config/framework_plans.yaml（防御/均衡/激进三套，Σ=100%）。
 # 与 /api/backtest-run 的边界: backtest-run=多策略各自跑各自出净值；framework-backtest-run=
 # 方案权重×子策略权重面板线性合成组合面板→引擎跑出单条组合净值（整装语义）。
+# 三期 regime 动态权重联动（α_i(t) 查表）: POST body 增 dynamic+regime_series——
+# regime 来源=显式注入 {date: state}（T1 盘点结论：无逐日持久化 regime 真源表，
+# 判定真源=MOD-REGIME-001 检测器，查表不做判定，禁自造判定逻辑，宪章 §3 约束三）；
+# done 响应补 per_regime 分段摘要（各 regime 组合收益/回撤贡献）供前端展示。
 from zephyr.shared.utils.time_utils import now_utc  # noqa: E402
 
 _FW_RUN_POOL = ThreadPoolExecutor(max_workers=1, thread_name_prefix="fw-run")  # 串行防 CH 连接竞争
@@ -963,6 +967,7 @@ def _fw_run_task(task_id: str, params: dict[str, Any]) -> None:
                 initial_capital=float(params.get("initial_capital", 1_000_000.0)),
                 pit_shift=int(params.get("pit_shift", 1)),
                 allow_partial=bool(params.get("allow_partial", True)),
+                regime_by_date=params.get("regime_by_date"),  # 三期：None=静态（二期语义）
             ),
         )
         with _FW_RUN_LOCK:
@@ -974,6 +979,10 @@ def _fw_run_task(task_id: str, params: dict[str, Any]) -> None:
                     "participants": summary["participants"],
                     "skipped": summary["skipped"],
                     "rescale_factor": summary["rescale_factor"],
+                    # 三期动态模式三键（静态=False/{} /[]，二期消费方零漂移）
+                    "dynamic": summary.get("dynamic", False),
+                    "regime_day_counts": summary.get("regime_day_counts", {}),
+                    "per_regime": summary.get("per_regime", []),
                     "equity_points": summary["equity_points"],
                     "trades": summary["trades"],
                     "metrics": summary["metrics"],
@@ -1025,8 +1034,15 @@ def framework_backtest_run(body: dict[str, Any]) -> dict[str, Any]:
 
     body: {plan_id: "fw-defensive|fw-balanced|fw-aggressive", symbols: [..], start, end,
            factor_ids?, rebalance_freq?, top_n?, max_single?, initial_capital?, pit_shift?,
-           allow_partial?（默认 true：tick-only 成员跳过后权重显式再归一化并披露）}
-    产物: data/backtest_artifacts/bt-fw-*.json（与单策略 schema 对齐，plan_id 落 metrics）。
+           allow_partial?（默认 true：tick-only 成员跳过后权重显式再归一化并披露）,
+           dynamic?（三期默认 false：regime 动态权重开关）,
+           regime_series?（dynamic=true 时必填：{YYYY-MM-DD: regime_state} 显式注入日序，
+           state ∈ REGIME_STATES 7 态 r1/r2/r3/r4/r10/r11/r12——真源 regime_detector，
+           查表不做判定；未覆盖日期回退方案基准权重）}
+    产物: data/backtest_artifacts/bt-fw-*.json（与单策略 schema 对齐，plan_id 落 metrics；
+          动态模式另落 dynamic/regime_day_counts/plan_regime_overrides）。
+    done 响应: 增 dynamic/regime_day_counts/per_regime（各 regime 组合收益/回撤贡献分段
+          摘要，regime=__base__ 为未覆盖回退组）。
     """
     plan_id = str(body.get("plan_id", "")).strip()
     symbols = [str(s).strip() for s in body.get("symbols", []) if str(s).strip()]
@@ -1034,6 +1050,36 @@ def framework_backtest_run(body: dict[str, Any]) -> dict[str, Any]:
     end = str(body.get("end", "")).strip()
     if not plan_id or not symbols or not start or not end:
         return {"ok": False, "error": "plan_id/symbols/start/end required", "task_id": None}
+
+    # ── 三期：regime 动态模式入参校验（fail-fast，composer 侧再 fail-closed 兜底）──
+    dynamic = bool(body.get("dynamic", False))
+    regime_series_raw = body.get("regime_series")
+    regime_by_date: dict[str, str] | None = None
+    if dynamic:
+        if not isinstance(regime_series_raw, dict) or not regime_series_raw:
+            return {
+                "ok": False,
+                "error": "dynamic=true requires non-empty regime_series: {YYYY-MM-DD: regime_state}",
+                "task_id": None,
+            }
+        try:
+            from zephyr.regime.core.regime_detector import REGIME_STATES
+
+            bad = {
+                str(v): str(v)
+                for v in regime_series_raw.values()
+                if str(v).strip() not in REGIME_STATES
+            }
+        except Exception as exc:  # noqa: BLE001 — 词表真源不可用即入参不可信
+            return {"ok": False, "error": f"regime states source unavailable: {exc}", "task_id": None}
+        if bad:
+            return {
+                "ok": False,
+                "error": f"invalid regime states {sorted(bad)}（合法 7 态见 regime_detector.REGIME_STATES）",
+                "task_id": None,
+            }
+        regime_by_date = {str(k): str(v).strip() for k, v in regime_series_raw.items()}
+
     task_id = f"fwrun-{int(now_utc().timestamp())}-{len(_FW_RUN_STATE) % 10000}"
     with _FW_RUN_LOCK:
         _FW_RUN_STATE[task_id] = {
@@ -1055,6 +1101,7 @@ def framework_backtest_run(body: dict[str, Any]) -> dict[str, Any]:
             "initial_capital": body.get("initial_capital", 1_000_000.0),
             "pit_shift": body.get("pit_shift", 1),
             "allow_partial": body.get("allow_partial", True),
+            "regime_by_date": regime_by_date,  # 三期：None=静态
         },
     )
     return {"ok": True, "task_id": task_id, "status": "running", "plan_id": plan_id}
@@ -2307,6 +2354,8 @@ _CM_NAME_CACHE: dict[str, Any] = {"map": None, "ts": 0.0}             # symbol�
 _CM_NAME_OVERRIDE_PATH = _REPO / "config" / "chainmap_cluster_names.yaml"   # L1 族名 override（Commit C 规则版，mtime 缓存改 YAML 即生效）
 _CM_NAME_OVERRIDE: dict[str, Any] = {"mtime": None, "map": {}}
 
+_CM_EQUITY_ROWS_CAP = 8   # 环节股权徽章明细行上限（计数 out/inn 如实给全量，明细 hover 浮层展示前 N）
+
 # tier 三值直读（v1.9 字段升级 Owner 2026-09-09 裁定：tier 收敛 上游/中游/下游，职能语义拆
 # function_role 八值词表——旧九值混职能分列废止；库内实测 tier 无旧值残留，未知/空一律落"通用"）
 _CM_COL_ORDER = ["上游", "中游", "下游", "通用"]
@@ -2612,6 +2661,11 @@ def chainmap_cluster(cid: str = Query(..., min_length=2, max_length=8),
             cur.execute("SELECT node_id, count(DISTINCT symbol) FROM ig_node_company WHERE valid_to IS NULL AND node_id IN "
                         "(SELECT node_id FROM ig_node WHERE chain_id = ANY(%s)) GROUP BY node_id", (ids,))
             ncomp = {r[0]: int(r[1]) for r in cur.fetchall()}
+            # 股权批量聚合（F-CHAINMAP-EQUITY-BADGE，2026-09-10）：簇内环节落位公司 ∩ ig_equity_edge 参与方。
+            # 方向按落位公司是 holder（控=对外投资）/held（被控=股东）判；UE 编码对手方 LEFT JOIN 编码表取名；
+            # 簇级 LIMIT 防大簇失控（计数在前端按行累加，明细行每环节另截 _CM_EQUITY_ROWS_CAP）
+            cur.execute(_SQL_CM_EQ_AGG, (ids, ids))
+            eq_rows = cur.fetchall()
             cur.execute("SELECT from_node, to_node FROM ig_edge")
             all_edges = cur.fetchall()
             conn.close()
@@ -2623,10 +2677,25 @@ def chainmap_cluster(cid: str = Query(..., min_length=2, max_length=8),
             raise
         nodes_by_chain: dict[str, list[dict[str, Any]]] = {c["chain_id"]: [] for c in members}
         nid_set = {r[0] for r in node_rows}
+        eq_names = _cm_symbol_names()
+        eq_by_node: dict[str, dict[str, Any]] = {}
+        for nid, dirn, other, stake, rel, verif, asof, uename in eq_rows:
+            agg = eq_by_node.setdefault(nid, {"out": 0, "inn": 0, "rows": []})
+            non_local = str(other or "").startswith(("PERSON:", "UNLISTED:"))
+            agg["out" if dirn == "out" else "inn"] += 1
+            if len(agg["rows"]) < _CM_EQUITY_ROWS_CAP:
+                agg["rows"].append({
+                    "dir": dirn, "symbol": "" if non_local else other,
+                    "name": (uename or "") if non_local else eq_names.get(other, ""),
+                    "ref": str(other) if non_local else "",
+                    "stake_pct": None if stake is None else round(float(stake), 2),
+                    "relation": rel or "", "verification": verif or "",
+                    "as_of": str(asof) if asof else None,
+                })
         for nid, ch, name, tier, frole in node_rows:
             nodes_by_chain[ch].append({"node_id": nid, "name": name, "tier": tier or "",
                                        "col": _cm_col(tier), "function_role": (frole or "").strip(),
-                                       "n_companies": ncomp.get(nid, 0)})
+                                       "n_companies": ncomp.get(nid, 0), "equity": eq_by_node.get(nid)})
         for lst in nodes_by_chain.values():
             # 链内按 function_role 分组聚集（八值展示序），同组内公司数降序（项 2 分列适配）
             lst.sort(key=lambda n: (_cm_fr_rank(n["function_role"]), -n["n_companies"], n["name"]))
@@ -2734,6 +2803,263 @@ def chainmap_search(q: str = Query(..., min_length=1)) -> dict[str, Any]:
         return {"ok": True, "chains": chains_out, "nodes": nodes_out, "symbols": symbols_out}
     except Exception as exc:
         return {"ok": False, "error": str(exc)[:200], "chains": [], "nodes": [], "symbols": []}
+
+
+# ═══════════════ 产业链催化剂锚定（chainmap 剩余批任务2，F-CHAINMAP-CATALYST，2026-09-10） ═══════════════
+# 语义边界（Owner 红线）：只做"事件命中定位"，不做涨跌/传导预测——热度传导预测已被证伪裁定（月 IC=-0.029 留档）。
+# 判定真源（禁止臆断）：MOD-ALT-005 policy_theme_mapper.DEFAULT_THEME_LIBRARY 直引——主题关键词词表与
+# 主题→申万行业受益/受损映射为既有判定；分类规则=该模块规则分支同语义（关键词子串命中，库序首个命中即断）。
+# 事件真源：CH calendar_event（宏观事件日历，/api/events 同源同库）。
+# 命中粒度（如实声明）：主题→申万一级行业→ig_chain.category→链上环节投影；环节级独立命中判定既有真源
+# 不存在，不造（ACC-F-CHAINMAP-CATALYST 留痕）。行业别名表仅做名字归一，不改方向判定。
+_CM_CAT_WINDOW_BACK = 30   # 已发生事件回看天
+_CM_CAT_WINDOW_FWD = 90    # 未来事件前瞻天
+_CM_CAT_EVENTS_CAP = 40    # 响应事件条数上限（total 如实返回）
+_CM_CAT_NODE_HITS_CAP = 6  # 单环节催化角标命中明细上限
+# MOD-ALT-005 受益/受损行业名 → 申万一级词表（ig_chain.category）机械别名（仅名字归一；
+# 国产替代/出口链/航运 等概念名无机械对应 → unmapped 如实返回不硬凑）
+_CM_CAT_IND_ALIAS: dict[str, str] = {
+    "银行": "银行", "非银金融": "非银金融", "房地产": "房地产", "半导体": "半导体",
+    "新能源": "电力设备", "高端装备": "机械设备", "工程机械": "机械设备",
+    "建筑": "建筑装饰", "建材": "建筑材料", "农业": "农林牧渔", "互联网": "互联网服务",
+}
+
+# 裸 SQL 集中化（R96 常量豁免通道；NOQA-VALIDATION 密度闸否决行级 noqa 后的正道）：
+# chainmap 只读诊断 SQL，参数化绑定无注入面，与既有 chainmap 段手写 execute 同一读口径
+_SQL_CM_EQ_AGG = (
+    "SELECT node_id, dir, other, stake_pct, relation, verification, as_of, ue_name FROM ("
+    "SELECT nc.node_id, 'out' AS dir, e.held AS other, e.stake_pct, e.relation, e.verification, e.as_of, "
+    "ue.name AS ue_name FROM ig_equity_edge e "
+    "JOIN ig_node_company nc ON nc.valid_to IS NULL AND nc.symbol = e.holder "
+    "AND nc.node_id IN (SELECT node_id FROM ig_node WHERE chain_id = ANY(%s)) "
+    "LEFT JOIN ig_unlisted_entity ue ON 'UNLISTED:UE-' || ue.ue_id = e.held "
+    "WHERE e.valid_to IS NULL "
+    "UNION ALL "
+    "SELECT nc.node_id, 'in', e.holder, e.stake_pct, e.relation, e.verification, e.as_of, ue2.name "
+    "FROM ig_equity_edge e "
+    "JOIN ig_node_company nc ON nc.valid_to IS NULL AND nc.symbol = e.held "
+    "AND nc.node_id IN (SELECT node_id FROM ig_node WHERE chain_id = ANY(%s)) "
+    "LEFT JOIN ig_unlisted_entity ue2 ON 'UNLISTED:UE-' || ue2.ue_id = e.holder "
+    "WHERE e.valid_to IS NULL) q LIMIT 800"
+)
+_SQL_CM_CAT_EVENTS = (
+    "SELECT event_date, event_type, description FROM calendar_event "
+    "WHERE event_date >= today() - %(b)s AND event_date <= today() + %(f)s ORDER BY event_date"
+)
+_SQL_CM_CAT_CLUSTER_CHAINS = "SELECT chain_id, category FROM ig_chain WHERE chain_id = ANY(%s)"
+_SQL_CM_CAT_CLUSTER_HIT_NODES = "SELECT node_id, chain_id FROM ig_node WHERE chain_id = ANY(%s)"
+_SQL_CM_CAT_NODE_INFO = (
+    "SELECT n.name, n.tier, n.chain_id, c.name, c.category FROM ig_node n "
+    "JOIN ig_chain c ON c.chain_id = n.chain_id WHERE n.node_id = %s"
+)
+_SQL_CM_CAT_NODE_COMPS = (
+    "SELECT symbol, role, confidence FROM ig_node_company "
+    "WHERE valid_to IS NULL AND node_id = %s"
+)
+
+
+
+def _cm_cat_themes() -> list[dict[str, Any]]:
+    """MOD-ALT-005 主题库直引（import 失败→空表独立降级，端点回零命中空态禁崩）。"""
+    try:
+        from zephyr.alt_data.policy_theme_mapper import DEFAULT_THEME_LIBRARY
+
+        return [{"theme_id": t.theme_id, "keywords": list(t.keywords),
+                 "beneficiary": list(t.beneficiary_industries), "damaged": list(t.damaged_industries)}
+                for t in DEFAULT_THEME_LIBRARY]
+    except Exception as exc:
+        logger.warning("chainmap-catalyst 主题库加载失败（回零命中空态）: %s", exc)
+        return []
+
+
+def _cm_cat_classify(text: str, themes: list[dict[str, Any]]) -> dict[str, Any] | None:
+    """规则分支同语义分类（MOD-ALT-005 规则路径：关键词子串命中，库序首个命中即断）。"""
+    hay = (text or "").lower()
+    for t in themes:
+        if any(k.lower() in hay for k in t["keywords"]):
+            return t
+    return None
+
+
+def _cm_cat_events() -> tuple[list[dict[str, Any]], int]:
+    """事件窗扫描+主题分类（CH/主题库异常独立降级→空）。返回 (命中事件, 扫描总数)。"""
+    try:
+        rows = _ch_exec(_SQL_CM_CAT_EVENTS, {"b": _CM_CAT_WINDOW_BACK, "f": _CM_CAT_WINDOW_FWD})
+    except Exception as exc:
+        logger.warning("chainmap-catalyst 事件窗查询失败（回零命中空态）: %s", exc)
+        return [], 0
+    themes = _cm_cat_themes()
+    today = date.today()
+    out: list[dict[str, Any]] = []
+    for d, et, desc in rows:
+        t = _cm_cat_classify(str(et) + " " + str(desc), themes)
+        if t:
+            out.append({"date": d.isoformat(), "type": str(et)[:40], "description": str(desc)[:120],
+                        "is_future": d > today, "theme": t})
+    return out, len(rows)
+
+
+def _cm_cat_theme_categories(theme: dict[str, Any]) -> tuple[list[str], list[str]]:
+    """主题受益/受损行业 → 申万 category 列表（别名归一；无法归一的进 unmapped）。"""
+    cats: list[str] = []
+    unmapped: list[str] = []
+    for ind in list(theme["beneficiary"]) + list(theme["damaged"]):
+        c = _CM_CAT_IND_ALIAS.get(ind)
+        if c and c not in cats:
+            cats.append(c)
+        elif not c and ind not in unmapped:
+            unmapped.append(ind)
+    return cats, unmapped
+
+
+@app.get("/api/chainmap-catalyst")
+def chainmap_catalyst(cid: str | None = Query(None, min_length=2, max_length=8),
+                      market: str = Query("all", pattern="^(all|cn|global)$"),
+                      node_id: str | None = Query(None, min_length=1)) -> dict[str, Any]:
+    """产业链催化剂（F-CHAINMAP-CATALYST）：宏观事件→主题→行业→链/环节命中定位+受益清单。
+
+    两种用法：?cid=&market= 簇内环节催化角标数据（nodes 映射，chainmap-cluster 装饰用）；
+    ?node_id= 单环节受益清单（环节落位公司+命中事件方向语义，方向=MOD-ALT-005 受益/受损既有判定，
+    粒度=链级投影如实声明）。零命中=ok:true 空态（禁造映射充数）。
+    """
+    # 直调安全归一（进程内测试/脚本直调时 Query 默认对象→None；HTTP 路径 FastAPI 已解析为 str）
+    if not isinstance(cid, str):
+        cid = None
+    if not isinstance(node_id, str):
+        node_id = None
+    if not node_id and not (cid and cid.replace("C", "").isdigit()):
+        return {"ok": False, "error": "need cid or node_id", "events": [], "nodes": {}, "beneficiaries": []}
+    try:
+        events, scanned = _cm_cat_events()
+        if node_id:
+            return _cm_cat_node_view(node_id, events)
+        return _cm_cat_cluster_view(cid or "", market, events, scanned)
+    except Exception as exc:
+        return {"ok": False, "error": str(exc)[:200], "events": [], "nodes": {}, "beneficiaries": []}
+
+
+def _cm_cat_cluster_events(events: list[dict[str, Any]], members: list[dict[str, Any]],
+                           chain_cat: dict[str, str], cat_chains: dict[str, list[str]]) -> tuple[list, set, set]:
+    """事件→簇内链命中解析（簇视角第一段）：返回 (事件明细≤CAP, 命中链集合, unmapped 行业)。"""
+    name_of = {m["chain_id"]: m["name"] for m in members}
+    events_out: list[dict[str, Any]] = []
+    hit_chain_ids: set[str] = set()
+    unmapped: set[str] = set()
+    for ev in events:
+        cats, unm = _cm_cat_theme_categories(ev["theme"])
+        unmapped.update(unm)
+        hit_chains = [{"chain_id": ch, "chain_name": name_of.get(ch, ""), "category": cat}
+                      for cat in cats for ch in cat_chains.get(cat, []) if ch in chain_cat]
+        if not hit_chains:
+            continue
+        hit_chain_ids.update(h["chain_id"] for h in hit_chains)
+        if len(events_out) < _CM_CAT_EVENTS_CAP:
+            events_out.append({"date": ev["date"], "type": ev["type"], "description": ev["description"],
+                               "is_future": ev["is_future"], "theme_id": ev["theme"]["theme_id"],
+                               "chains": hit_chains})
+    return events_out, hit_chain_ids, unmapped
+
+
+def _cm_cat_node_flags(events: list[dict[str, Any]], cat_chains: dict[str, list[str]],
+                       node_chain_map: dict[str, str]) -> dict[str, list[dict[str, Any]]]:
+    """环节→命中事件映射（簇视角第二段）：环节所在链 category 与事件主题映射求交，方向=主题级。"""
+    node_flags: dict[str, list[dict[str, Any]]] = {}
+    for ev in events:
+        cats, _unm = _cm_cat_theme_categories(ev["theme"])
+        hit_for_ev = [ch_id for cat in cats for ch_id in cat_chains.get(cat, [])]
+        if not hit_for_ev:
+            continue
+        direction = "受益" if any(
+            _CM_CAT_IND_ALIAS.get(i) in cats for i in ev["theme"]["beneficiary"]) else "受损"
+        hit_set = set(hit_for_ev)
+        for nid, nch in node_chain_map.items():
+            if nch not in hit_set:
+                continue
+            lst = node_flags.setdefault(nid, [])
+            if len(lst) < _CM_CAT_NODE_HITS_CAP:
+                lst.append({"date": ev["date"], "is_future": ev["is_future"],
+                            "theme_id": ev["theme"]["theme_id"], "direction": direction,
+                            "description": ev["description"]})
+    return node_flags
+
+
+def _cm_cat_cluster_view(cid: str, market: str, events: list[dict[str, Any]], scanned: int) -> dict[str, Any]:
+    """簇视角：scope 内链 category 命中 → 环节催化角标映射（F-CHAINMAP-CATALYST 簇模式）。"""
+    g = _cm_galaxy(market)
+    members = [c for c in g["chains"] if c["cluster"] == cid]
+    if not members:
+        return {"ok": False, "error": "cluster not found", "events": [], "nodes": {}}
+    conn = _cm_pg()
+    try:
+        cur = conn.cursor()
+        ids = [c["chain_id"] for c in members]
+        cur.execute(_SQL_CM_CAT_CLUSTER_CHAINS, (ids,))
+        chain_cat = {r[0]: (r[1] or "").strip() for r in cur.fetchall()}
+        cat_chains: dict[str, list[str]] = {}
+        for ch_id, cat in chain_cat.items():
+            if cat:
+                cat_chains.setdefault(cat, []).append(ch_id)
+        events_out, hit_chain_ids, unmapped = _cm_cat_cluster_events(events, members, chain_cat, cat_chains)
+        node_flags: dict[str, list[dict[str, Any]]] = {}
+        if hit_chain_ids:
+            cur.execute(_SQL_CM_CAT_CLUSTER_HIT_NODES, (sorted(hit_chain_ids),))
+            node_flags = _cm_cat_node_flags(events, cat_chains, dict(cur.fetchall()))
+        conn.close()
+    except Exception:
+        try:
+            conn.close()
+        except Exception:
+            pass
+        raise
+    return {"ok": True, "mode": "cluster", "cluster": cid, "market": market,
+            "events": events_out, "n_events_scanned": scanned, "n_hit_events": len(events_out),
+            "nodes": node_flags, "unmapped_industries": sorted(unmapped)}
+
+
+def _cm_cat_node_view(node_id: str, events: list[dict[str, Any]]) -> dict[str, Any]:
+    """环节视角：命中事件方向语义+环节落位受益清单（F-CHAINMAP-CATALYST 抽屉模式）。"""
+    conn = _cm_pg()
+    try:
+        cur = conn.cursor()
+        cur.execute(_SQL_CM_CAT_NODE_INFO, (node_id,))
+        row = cur.fetchone()
+        if not row:
+            return {"ok": False, "error": "node not found", "events": [], "beneficiaries": []}
+        category = (row[4] or "").strip()
+        cur.execute(_SQL_CM_CAT_NODE_COMPS, (node_id,))
+        comp_rows = cur.fetchall()
+        conn.close()
+    except Exception:
+        try:
+            conn.close()
+        except Exception:
+            pass
+        raise
+    import re as _re
+
+    names = _cm_symbol_names()
+    hits: list[dict[str, Any]] = []
+    for ev in events:
+        cats, unm = _cm_cat_theme_categories(ev["theme"])
+        if category not in cats:
+            continue
+        direction = "受益" if category in {_CM_CAT_IND_ALIAS.get(i) for i in ev["theme"]["beneficiary"]} else "受损"
+        hits.append({"date": ev["date"], "type": ev["type"], "description": ev["description"],
+                     "is_future": ev["is_future"], "theme_id": ev["theme"]["theme_id"],
+                     "direction": direction, "industries": [i for i, c in
+                     [(i, _CM_CAT_IND_ALIAS.get(i)) for i in list(ev["theme"]["beneficiary"]) + list(ev["theme"]["damaged"])] if c == category],
+                     "unmapped": unm})
+    companies = [{"symbol": s, "name": names.get(s, ""), "role": r or "",
+                  "confidence": None if cf is None else round(float(cf), 2),
+                  "jump": bool(_re.fullmatch(r"\d{6}\.(SH|SZ|BJ)", s or ""))}
+                 for s, r, cf in comp_rows]
+    companies.sort(key=lambda x: (_cm_role_rank(x["role"]), -(x["confidence"] or 0), x["symbol"]))
+    return {"ok": True, "mode": "node",
+            "node": {"node_id": node_id, "name": row[0], "tier": row[1] or "",
+                     "chain_id": row[2], "chain_name": row[3], "category": category},
+            "hits": hits[:_CM_CAT_EVENTS_CAP], "n_hits": len(hits),
+            "beneficiaries": companies[:_CM_PLACEMENT_CAP], "n_beneficiaries": len(companies),
+            "note": "命中粒度=主题→申万行业→链级投影；受益方向=MOD-ALT-005 既有判定；不做涨跌预测（证伪裁定留档）"}
 
 
 # ═══════════════ 公司详情卡数据端点（chainmap 二期 Commit A，2026-09-09） ═══════════════
