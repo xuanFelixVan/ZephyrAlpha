@@ -95,3 +95,6 @@ __all__: Final = [
 
 # ORPHAN-MODULE: 引用登记（让 depgraph 发现 import 边）
 from zephyr.plan_engine.similar_day_evaluator import evaluate_similar_day_hit_rate  # noqa: F401
+
+# ORPHAN-MODULE: 引用登记（gw-tdm-20260909：C8 买入逻辑存活判定）
+from zephyr.plan_engine.thesis_survival import evaluate_thesis  # noqa: F401
