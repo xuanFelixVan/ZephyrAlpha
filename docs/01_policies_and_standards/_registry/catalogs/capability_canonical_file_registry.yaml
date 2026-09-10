@@ -11443,6 +11443,10 @@ creation_tokens:
   token: chainmap-fe-batch-plan-20260910
   created_by: st-igfe-20260910
   capability: chainmap_frontend
+- file: docs/_working/2026-09-10-commit-pipeline-perf-plan.md
+  token: commit-pipeline-perf-plan-20260910
+  created_by: st-perf-plan-20260910
+  capability: gate_commit_gw
 di_seam_exemptions:
 - module_path: zephyr.trading.auto_runtime_core.AutoRuntimeCore
   reason: P0-5 LSG DI seam 标杆，已有 DI 但 AST 模式不匹配（动态注入）
