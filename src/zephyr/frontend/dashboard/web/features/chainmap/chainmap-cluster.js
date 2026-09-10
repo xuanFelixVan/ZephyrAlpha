@@ -249,9 +249,18 @@
     fitView();
   }
 
-  /* 聚焦模式（>RAIL_MIN 链的大簇）：单链列式+左侧链选轨（默认聚焦公司数最大链） */
+  /* 默认聚焦链=环节数最多（并列取公司数最大）。Owner 2026-09-10 实测截图反馈：原按公司数选
+   * 默认落单节点聚合链（"消费电子行业"88 公司 1 环节），甬道只剩一张卡画面空。显式选链
+   * （rail/chip/cm:goto-chain 设 C.focusChain）永远优先，本函数只兜无显式焦点的首开。 */
+  function defaultFocus(d) {
+    return d.chains.slice().sort(function (a, b) {
+      return (b.n_nodes - a.n_nodes) || (b.n_companies - a.n_companies);
+    })[0];
+  }
+
+  /* 聚焦模式（>RAIL_MIN 链的大簇）：单链列式+左侧链选轨 */
   function renderFocused(d) {
-    var ch = d.chains.filter(function (c) { return c.chain_id === C.focusChain; })[0] || d.chains[0];
+    var ch = d.chains.filter(function (c) { return c.chain_id === C.focusChain; })[0] || defaultFocus(d);
     C.focusChain = ch.chain_id;
     C.focusChainName = ch.name;
     var idset = {};

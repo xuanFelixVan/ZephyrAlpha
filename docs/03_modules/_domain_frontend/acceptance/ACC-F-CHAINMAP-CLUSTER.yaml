@@ -8,8 +8,11 @@ feature_id: F-CHAINMAP-CLUSTER
 feature_name: 产业链层（L2 上中下游列式+环节公司面板）
 frozen_at: 2026-09-08
 frozen_by: ZephyrAlpha-Owner
-revision: 3
+revision: 4
 revision_policy: "修订=Owner 批准+改原文+revision 链留痕；AI 不可自改已冻结条项"
+# rev4 (2026-09-10, Owner 实测截图反馈默认聚焦画面空): 聚焦模式默认链改=环节数最多
+# （并列取公司数最大）——原按公司数最大选链会落单节点聚合链（"消费电子行业"88 公司
+# 1 环节）甬道只剩一卡；显式选链（rail/chip/cm:goto-chain）仍最优先。新增 item8。
 # rev3 (2026-09-10, Owner 出示 TDM 截图指定"直接照抄交易决策全景视觉效果"): 卡面配色照抄 TDM——
 # 蓝卡=TDM production 板（bg #0f2740/边 #1e5a8f）＝有公司落位；棕虚线=TDM 红节点板
 # （bg #2a1c0e/边 #8a4a12 dashed）＝暂无公司落位（语义同构：TDM 红节点=模块未建）；描述行=TDM
@@ -25,6 +28,7 @@ items:
   - { id: 5, text: "搜索落位（cm:goto-chain 带 focus_node）→ 目标环节居中+金色描边高亮", check: 目检 }
   - { id: 6, text: "滚轮缩放/拖动平移/双击重置可用；簇加载失败显示空态文案（零演示数据）", check: 目检 }
   - { id: 7, text: "双行卡机断：.cm-n 高≈48px 含 .nm（600 加粗）+.sub（职能灰字/股权徽章/公司数）两行；蓝卡底色 #0f2740；0 公司环节挂 .empty0 棕虚线；列头 .cm-col-h=TDM tag 板含 .cc 计数；图例条 #cm-legend-cluster 存在", check: 机断 }
+  - { id: 8, text: "聚焦模式首开默认链=环节数最多（并列取公司数最大，机断：act 选单项与 API 按此规则算出的链一致）；显式选链（rail/chip/goto-chain）优先于默认", check: 机断 }
 
 execution:
   trigger: "任何涉及本功能的 UI 改动 commit 前"
