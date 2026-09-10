@@ -44,7 +44,8 @@ EXEMPT_FILE = Path(__file__).resolve().parent / "quality_exemptions.yaml"
 
 # 词表(字段字典单一真源加载,本文件不再硬编码词表;对齐由 test_field_dictionary_alignment 强制)
 _V = load_vocab()
-TITLE_JUNK_RE = "一张图看懂|重磅|最新|预测|深度|全景图|解读|盘点|风向标|启幕|ppt|研报|机遇|风口"
+# 2026-09-10 扩词(Owner 点名穿透事故:"中国节水装备行业发展现状""环氧丙烷产业链供需格局"原词表漏拦):
+TITLE_JUNK_RE = "一张图看懂|重磅|最新|预测|深度|全景图|解读|盘点|风向标|启幕|ppt|研报|机遇|风口|现状|格局|趋势|展望|前景|图解|一文|解析|洞察|市场和应用"
 TIER_POSITION = tuple(_V["tiers"]["values"])  # v0.4 职能化: tier 仅三位置值(Owner 2026-09-09)
 FUNCTION_ROLES = tuple(_V["function_roles"]["values"])
 TIER_SUFFIX_RE = "-(上游|中游|下游|设备|材料|零部件|原材料|辅材|unspecified)$"

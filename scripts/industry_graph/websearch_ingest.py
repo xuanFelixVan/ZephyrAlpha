@@ -56,8 +56,11 @@ ROLES_STD = tuple(_V["roles_std"]["values"])  # role 五值(Owner 2026-09-09 裁
 # 深度体系 drill_status: AI 可写三值; drill_manual=Owner 钉死 AI 不可写(SOP 节点模板裁定1)
 DRILL_STATUSES_AI = set(_V["drill_statuses_ai"]["values"])
 CHAIN_ID_RE = re.compile(r"^CH-[0-9a-f]{12}$")
-# 链名标题腔(与引擎 TITLE_JUNK_RE 同源)
-TITLE_JUNK_RE = re.compile("一张图看懂|重磅|最新|预测|深度|全景图|解读|盘点|风向标|启幕|ppt|研报|机遇|风口")
+# 链名标题腔(与引擎 TITLE_JUNK_RE 同源;2026-09-10 扩词: Owner 点名"中国节水装备行业发展现状"
+# "环氧丙烷产业链供需格局"穿透事故——补 现状/格局/趋势/展望/前景/图解/一文/解析/洞察/应用)
+TITLE_JUNK_RE = re.compile("一张图看懂|重磅|最新|预测|深度|全景图|解读|盘点|风向标|启幕|ppt|研报|机遇|风口|现状|格局|趋势|展望|前景|图解|一文|解析|洞察|市场和应用")
+# 链名长度上限(SOP §4.7.1 ≤12 字,2026-09-10 起工具硬校验——此前只写在 SOP 未执行)
+CHAIN_NAME_MAX_LEN = 12
 # 链名结构完整性(S25 同源,SOP §4.7.0 链名分类学 2026-09-10): 截断括号/虚词悬空尾/外文缩写裸名/报告词
 CHAIN_STRUCT_RE = re.compile(r"（(?![^）]*）)|\((?![^)]*\))|[的与及了]$|^[A-Z0-9]{2,6}$|指数|白皮书|研究报告|年鉴")
 CATEGORIES = set(_V["categories"]["values"])
@@ -321,6 +324,8 @@ def _validate_records(records: list[dict], stocks: set[str] | None) -> list[str]
                 errs.append(f"{idx}: deprecated 链须带 merged_into(SOP §4.6)")
             if TITLE_JUNK_RE.search(r.get("name", "")):
                 errs.append(f"{idx}: 链名标题腔拒绝(规范名=XX产业链句式): {r.get('name')}")
+            if len(r.get("name", "")) > CHAIN_NAME_MAX_LEN:
+                errs.append(f"{idx}: 链名超长(>{CHAIN_NAME_MAX_LEN}字,SOP §4.7.1): {r.get('name')}")
             if CHAIN_STRUCT_RE.search(r.get("name", "")):
                 errs.append(f"{idx}: 链名结构违规(S25:括号不闭合/虚词悬空尾/外文缩写裸名/报告词,缩写进aliases): {r.get('name')}")
         if typ in ("node_edge", "company_edge"):
