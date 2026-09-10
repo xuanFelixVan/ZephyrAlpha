@@ -404,6 +404,31 @@ def tag_requeued(
         return 0
 
 
+def ensure_task(
+    conn: sqlite3.Connection,
+    task_id: str,
+    *,
+    title: str,
+    description: str = "",
+    actor: str = "commit_queue",
+) -> int:
+    """固定 id 幂等建 task（commit_queue 死信积压告警挂载点专用，2026-09-11）。
+
+    与 cmd_create 的差异：cmd_create 走 _new_task_id 随机分配，告警挂载点需要
+    **稳定 task id** 做跨次告警的去重/冷却锚点，故允许调用方指定 id（存在即幂等
+    返回，不覆盖既有内容）。返回 0=已存在或新建成功；1=固定 id 非法（空/超长）。
+    """
+    task_id = (task_id or "").strip()
+    if not task_id or len(task_id) > 64:
+        return 1
+    with conn:
+        if conn.execute(_SQL_TASK_EXISTS, (task_id,)).fetchone() is not None:
+            return 0
+        conn.execute(_SQL_INSERT_TASK, (task_id, title, description, "{}"))
+        _add_event(conn, task_id, "created", actor, {"title": title, "fixed_id": True})
+    return 0
+
+
 def cmd_deadletter(conn: sqlite3.Connection, args: argparse.Namespace) -> int:
     """66 号 §6.4 死信打标 CLI（核心逻辑见 tag_dead_letter）。"""
     task = _get_task(conn, args.task_id)

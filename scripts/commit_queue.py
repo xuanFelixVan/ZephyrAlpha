@@ -85,6 +85,9 @@ CLI
       [--queue-root DIR] [--no-bootstrap]
   python scripts/commit_queue.py status [--session S] [--queue-root DIR] [--no-bootstrap]
   python scripts/commit_queue.py drain [--queue-root DIR] [--max-items N]
+  python scripts/commit_queue.py requeue <qid> [--worktree-root DIR] [--no-bootstrap]
+  python scripts/commit_queue.py cleanup [--done-ttl-days N]
+  python scripts/commit_queue.py health [--no-alert]
 
 B 段接口预留点（2026-08-21 B 段已接通）
 --------------------------------------
@@ -117,7 +120,7 @@ from __future__ import annotations
 
 __manifest__ = """
 args: []
-description: 提交队列串行化 MVP（enqueue/status/drain/requeue/cleanup + 入队自举排空 + 死信 + compaction + 级联标记 + done/ TTL 清理）
+description: 提交队列串行化 MVP（enqueue/status/drain/requeue/cleanup/health + 入队自举排空 + 死信 + compaction + 级联标记 + done/ TTL 清理 + 死信积压告警）
 dimensions:
 - D1
 priority: P0
@@ -143,6 +146,12 @@ _REPO_ROOT = Path(__file__).resolve().parents[1]
 _SRC = _REPO_ROOT / "src"
 if str(_SRC) not in sys.path:
     sys.path.insert(0, str(_SRC))
+# repo 根同样入 path（2026-09-11 修正 53fa0b431a 残留）：scripts/ 是常规包，直跑场景
+# （sys.path[0]=scripts/，repo 根不在 path）下 `from scripts.X import` 需要根在 path，
+# 且必须位于 pywin32.pth 注入的 site-packages/win32 之前——该目录含裸 `scripts` 命名
+# 空间部分，会遮蔽本仓真实包（详见 _purge_poisoned_scripts_package）。
+if str(_REPO_ROOT) not in sys.path:
+    sys.path.insert(0, str(_REPO_ROOT))
 
 # 僵尸 PID 检测真源唯一（红蓝对抗归一，禁止内联复制——process_pool.py docstring 原话）
 from zephyr.shared.infra.process_pool import is_pid_alive  # noqa: E402
@@ -169,6 +178,25 @@ _READ_RETRY_TIMES = 20  # drain 读 pending 项容忍写入窗口：重试次数
 _READ_RETRY_INTERVAL = 0.05  # 重试间隔 50ms × 20 = 1s 上限
 
 _DONE_TTL_DAYS_DEFAULT = 7.0  # 66 号 §12 Q3 已闭环：done 保留 7 天 TTL；dead 永不自动清理
+
+# 死信积压告警（2026-09-11 死信率告警最小落地，st-perf-plan-20260910）：
+# 阈值唯一真源=alert_threshold_registry.yaml（REG-ATH-001）THD-ALERT-003（积压项数）
+# /THD-ALERT-004（告警冷却窗口）；告警通道=task_board 专 task 死信标签（66 号 §6.4 同款）。
+_DEADLETTER_WATCH_TASK_ID = "T-QUEUE-DEADLETTER"  # 告警挂载点固定 task id（幂等自建）
+_HEALTH_ALERT_STATE_FILE = "health_alert_state.json"  # 冷却状态（队列根下，共命运）
+
+# 死因三分类标记（与 .runtime/tmp/commit_queue_dead_triage_20260910.md 口径一致）：
+# env=环境性失败（物品无辜，可 requeue）；item=门禁/冲突物品性失败（gate 语义正常）。
+_DEAD_REASON_ENV_MARKERS = (
+    "pytest_50136", "pytest_19944", "rev-parse --show-toplevel",
+    "index.lock", "Unable to create", "Author identity unknown",
+    "LandingEnvironmentError", "瞬态锁争用",
+)
+_DEAD_REASON_ITEM_MARKERS = (
+    "PROTECTED-PATHS", "CAS 竞态", "快进判定失败", "SESSION-REQUIRED",
+    "CLAIM_REQUIRED", "COMMIT_SCOPE", "cascade_stale", "基底重校验",
+    "TRACKED-DRIFT-READONLY", "LOCK_TIMEOUT", "网关落盘失败",
+)
 
 # session_id 字符白名单：session_id 进入 qid 与 seq 文件名，必须防路径注入
 _SESSION_ID_RE = re.compile(r"^[A-Za-z0-9._-]{1,64}$")
@@ -993,6 +1021,12 @@ def drain_queue(
         if done_ttl_days is not None:
             # done/ TTL 清理（66 号 §12 Q3：done 7 天 / dead 永不清理）；lease 内单写者安全
             stats["done_cleaned"] = len(cleanup_done(root, ttl_days=done_ttl_days)["removed"])
+    # 死信积压告警（2026-09-11：drain 收尾事件触发，lease 外执行——task_board IO 不占
+    # 单写者窗口；内部全量 fail-open，绝不影响排空结果）
+    try:
+        emit_dead_backlog_alert(root)
+    except Exception as exc:  # noqa: BLE001 — 告警是旁路可观测性，双重保险吞异常
+        logger.warning("[health] 死信积压告警异常（忽略）: %s", exc)
     return stats
 
 
@@ -1232,6 +1266,182 @@ def queue_status(queue_root: str | os.PathLike | None = None, *, session_id: str
 
 
 # ---------------------------------------------------------------------------
+# 队列健康快照 + 死信积压告警（2026-09-11 死信率告警最小落地）
+# 背景：884 项死信积压 8 天无人发现（.runtime/tmp/commit_queue_dead_triage_20260910.md
+# §下一步 3/4）——每项 task_id 联动只覆盖带 task_id 的项，auto 同步项（无 task_id）
+# 是可见性盲区。本节补两块：只读健康快照（聚合口径复用该 triage）+ 积压超阈告警。
+# ---------------------------------------------------------------------------
+
+
+def classify_dead_reason(reason: str) -> str:
+    """死因三分类：env（环境性，物品无辜可 requeue）/ item（门禁物品性，gate 语义正常）/ other。"""
+    reason = reason or ""
+    if any(m in reason for m in _DEAD_REASON_ENV_MARKERS):
+        return "env"
+    if any(m in reason for m in _DEAD_REASON_ITEM_MARKERS):
+        return "item"
+    return "other"
+
+
+def queue_health(queue_root: str | os.PathLike | None = None) -> dict:
+    """队列健康快照（只读，不触发排空——与 status 的自举排空语义刻意区分）。
+
+    聚合：四态计数 + dead 死因分类 + 最老 pending/processing 项龄（小时，积压监控
+    关键指标）+ blobs 数。供 CLI ``health`` 子命令与死信积压告警共用。
+    """
+    root = resolve_queue_root(queue_root)
+    counts: dict[str, int] = {s: 0 for s in _STATES}
+    dead_categories: dict[str, int] = {}
+    oldest_pending_created: str | None = None
+    oldest_processing_created: str | None = None
+    for state in _STATES:
+        for entry in sorted((root / state).glob("q-*.json")):
+            counts[state] += 1
+            if state not in ("pending", "processing", "dead"):
+                continue
+            try:
+                item = json.loads(entry.read_text(encoding="utf-8"))
+            except (OSError, ValueError):
+                continue
+            created = item.get("created_at")
+            if not created:
+                continue
+            if state == "dead":
+                cat = classify_dead_reason(item.get("dead_reason", ""))
+                dead_categories[cat] = dead_categories.get(cat, 0) + 1
+            elif state == "pending" and (oldest_pending_created is None or created < oldest_pending_created):
+                oldest_pending_created = created
+            elif state == "processing" and (
+                oldest_processing_created is None or created < oldest_processing_created
+            ):
+                oldest_processing_created = created
+    now = datetime.now().astimezone()
+    ages: dict[str, float] = {}
+    for key, created in (("oldest_pending_hours", oldest_pending_created), ("oldest_processing_hours", oldest_processing_created)):
+        if created:
+            try:
+                ages[key] = round((now - datetime.fromisoformat(created)).total_seconds() / 3600, 2)
+            except ValueError:
+                ages[key] = -1.0  # 解析失败如实标注（负值=未知，不当 0 冒充新鲜）
+    return {
+        "queue_root": str(root),
+        "counts": counts,
+        "dead_total": counts["dead"],
+        "dead_categories": dead_categories,
+        **ages,
+        "blobs": len(list((root / "blobs").glob("*"))),
+        "generated_at": _now_iso(),
+    }
+
+
+def emit_dead_backlog_alert(
+    queue_root: str | os.PathLike | None = None,
+    *,
+    health: dict | None = None,
+    registry_path=None,
+    now: datetime | None = None,
+) -> dict:
+    """死信积压超阈告警（drain 收尾事件触发，无常驻轮询）。
+
+    判定：dead_total ≥ THD-ALERT-003（REG-ATH-001，fail-closed 统读）且距上次告警
+    ≥ THD-ALERT-004 冷却窗口 → task_board 专 task（T-QUEUE-DEADLETTER，幂等自建）
+    打 deadletter 标签（66 号 §6.4 既有通道，list --label deadletter 可查）。
+
+    可观测性链路 fail-open：阈值加载失败/板不可达/状态写失败一律记日志返回 skipped，
+    **绝不阻断排空**（宁漏不误，对标 task_board 联动口径）；REG-ATH-001 的 fail-closed
+    约束针对核心业务阈值消费（错阈值=错行为），本函数是旁路可观测性，语义分级处理。
+    """
+    root = resolve_queue_root(queue_root)
+    snap = health or queue_health(root)
+    result: dict = {"fired": False, "action": "skipped"}
+    dead_total = snap.get("dead_total", 0)
+    if dead_total <= 0:
+        return result
+    try:
+        from zephyr.shared.alerts.threshold_loader import AlertThresholdConfigError, load_alert_thresholds
+
+        thresholds = load_alert_thresholds(
+            {"THD-ALERT-003": "dead_backlog", "THD-ALERT-004": "cooldown_seconds"},
+            registry_path=registry_path,
+            cast="int",
+        )
+    except Exception as exc:  # noqa: BLE001 — 阈值不可读=告警链路降级（fail-open，见 docstring）
+        logger.warning("[health] 死信积压阈值加载失败，告警跳过（REG-ATH-001 不可达）: %s", exc)
+        result["action"] = "threshold_unavailable"
+        return result
+    if dead_total < thresholds["dead_backlog"]:
+        result["action"] = "below_threshold"
+        return result
+    state_file = root / _HEALTH_ALERT_STATE_FILE
+    ref = now or datetime.now().astimezone()
+    try:
+        last = json.loads(state_file.read_text(encoding="utf-8")) if state_file.exists() else {}
+        last_at = datetime.fromisoformat(last.get("last_alert_at")) if last.get("last_alert_at") else None
+        if last_at is not None and (ref - last_at).total_seconds() < thresholds["cooldown_seconds"]:
+            result["action"] = "cooldown"
+            return result
+    except (OSError, ValueError):
+        pass  # 状态损坏=视作无冷却历史，放行本次告警
+    # task_board 联动（专 task 幂等自建 + deadletter 标签；板不可达仅记日志）
+    try:
+        from scripts import task_board as tb
+
+        conn = tb._connect(tb._resolve_board_db())
+        try:
+            if tb._get_task(conn, _DEADLETTER_WATCH_TASK_ID) is None:
+                tb.ensure_task(
+                    conn,
+                    _DEADLETTER_WATCH_TASK_ID,
+                    title="提交队列死信积压告警（自动维护勿关闭）",
+                    description=(
+                        "commit_queue 死信积压超阈挂载点（66 号 §6.4 通道）：dead/ 积压 ≥ "
+                        "REG-ATH-001 THD-ALERT-003 时经 tag_dead_letter 打标；处置入口 "
+                        "python scripts/commit_queue.py health。"
+                    ),
+                    actor="commit_queue",
+                )
+            newest_dead = ""
+            try:
+                newest = sorted((root / "dead").glob("q-*.json"))[-1]
+                newest_dead = newest.stem
+            except (OSError, IndexError):
+                pass
+            reason = (
+                f"dead_backlog={dead_total} ≥ threshold={thresholds['dead_backlog']}; "
+                f"categories={snap.get('dead_categories')}; "
+                f"oldest_pending_hours={snap.get('oldest_pending_hours')}"
+            )
+            rc = tb.tag_dead_letter(
+                conn,
+                _DEADLETTER_WATCH_TASK_ID,
+                qid=newest_dead or "backlog",
+                reason=reason,
+                owner="commit_queue",
+                actor="commit_queue",
+            )
+        finally:
+            conn.close()
+        if rc != 0:
+            logger.warning("[health] 死信积压告警打标跳过: rc=%s（任务已完成/metadata 损坏）", rc)
+            result["action"] = f"tag_skipped_rc{rc}"
+            return result
+    except Exception as exc:  # noqa: BLE001 — 板不可达不阻断排空（宁漏不误）
+        logger.warning("[health] 死信积压告警 task_board 联动失败（忽略）: %s", exc)
+        result["action"] = "board_unreachable"
+        return result
+    try:
+        _atomic_write(state_file, json.dumps({"last_alert_at": ref.isoformat(), "dead_total": dead_total}, ensure_ascii=False).encode("utf-8"))
+    except OSError as exc:
+        logger.warning("[health] 告警冷却状态写入失败（下次可能重复告警）: %s", exc)
+    logger.warning("[health] 死信积压告警触发: %s", reason)
+    result.update({"fired": True, "action": "alerted", "reason": reason})
+    return result
+
+
+
+
+
+# ---------------------------------------------------------------------------
 # CLI
 # ---------------------------------------------------------------------------
 
@@ -1301,6 +1511,27 @@ def _cmd_status(args: argparse.Namespace) -> int:
     return 0
 
 
+def _purge_poisoned_scripts_package() -> None:
+    """清除 sys.modules 中被外来同名命名空间包占据的 `scripts` 族缓存（毒缓存防护）。
+
+    病根（2026-09-11 直跑 drain 实证）：pywin32 的 .pth 把 site-packages/win32 注入
+    sys.path，其 scripts/ 子目录可被裸 `import scripts` 解析为**命名空间包**；直跑时
+    main() 首选 `from scripts.ops_guard import ...`（此时 repo 根已在 path，正常解析真包，
+    不触发）——但任何早于真包解析的 `import scripts`（外来工具链/PYTHONPATH 异常态）
+    一旦命中 win32 命名空间，sys.modules['scripts'] 即被缓存，**事后补插 sys.path 无法
+    翻转**（submodule 搜索走已缓存 __path__，scripts.governance 永久不可达 → CLI drain
+    ModuleNotFoundError）。按 __path__ 是否含本仓 scripts/ 判定毒缓存，命中则整族清除
+    （下一条 import 语句按已修正的 sys.path 重新解析真包）。
+    """
+    import sys as _sys
+
+    _scripts_dir = str(Path(__file__).resolve().parent)
+    _pkg = _sys.modules.get("scripts")
+    if _pkg is not None and _scripts_dir not in (getattr(_pkg, "__path__", None) or ()):
+        for _name in [n for n in list(_sys.modules) if n == "scripts" or n.startswith("scripts.")]:
+            del _sys.modules[_name]
+
+
 def _cmd_drain(args: argparse.Namespace) -> int:
     # 2026-09-10 治本（死信事故排查第二处缺口）：CLI drain MUST 接真 landing——
     # A 段默认桩=标记 done 不真提交，对真实队列是"假 done 丢内容"footgun；
@@ -1311,7 +1542,7 @@ def _cmd_drain(args: argparse.Namespace) -> int:
     _repo_root_str = str(Path(__file__).resolve().parents[1])
     if _repo_root_str not in _sys.path:
         _sys.path.insert(0, _repo_root_str)
-    from scripts.governance.commit_queue_landing import WorktreeLanding  # noqa: PLC0415
+    _purge_poisoned_scripts_package()
     from scripts.governance.commit_queue_landing import WorktreeLanding  # noqa: PLC0415
 
     landing = WorktreeLanding(repo_root=_REPO_ROOT, queue_root=args.queue_root)
@@ -1370,6 +1601,16 @@ def _cmd_requeue(args: argparse.Namespace) -> int:
 def _cmd_cleanup(args: argparse.Namespace) -> int:
     result = cleanup_done(args.queue_root, ttl_days=args.done_ttl_days)
     print(f"CLEANUP: removed={len(result['removed'])} kept={result['kept']}（done/ 超 TTL 项已清理；dead/ 永不清理）")
+    return 0
+
+
+def _cmd_health(args: argparse.Namespace) -> int:
+    snap = queue_health(args.queue_root)
+    print(json.dumps(snap, ensure_ascii=False, indent=2))
+    if args.no_alert:
+        return 0
+    alert = emit_dead_backlog_alert(args.queue_root, health=snap)
+    print(f"ALERT: {json.dumps(alert, ensure_ascii=False)}")
     return 0
 
 
@@ -1438,6 +1679,13 @@ def main(argv: list[str] | None = None) -> int:
     p_cl = sub.add_parser("cleanup", help=f"done/ TTL 清理（默认 {_DONE_TTL_DAYS_DEFAULT:.0f} 天；dead/ 永不清理）")
     p_cl.add_argument("--done-ttl-days", type=float, default=_DONE_TTL_DAYS_DEFAULT, help="done/ 保留天数")
     p_cl.set_defaults(func=_cmd_cleanup)
+
+    p_hl = sub.add_parser(
+        "health",
+        help="队列健康快照（只读不排空：四态计数/死因分类/最老项龄；死信积压告警同源聚合）",
+    )
+    p_hl.add_argument("--no-alert", action="store_true", help="只打印快照，不执行积压告警判定")
+    p_hl.set_defaults(func=_cmd_health)
 
     args = parser.parse_args(argv)
     return args.func(args)

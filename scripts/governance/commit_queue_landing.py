@@ -104,8 +104,6 @@ from pathlib import Path
 
 from scripts.governance._shared.thresholds import get as _get_threshold  # 治本(AI-20 P0③ 2026-09-05): 阈值SSoT
 
-from scripts.governance._shared.thresholds import get as _get_threshold  # 治本(AI-20 P0③ 2026-09-05): 阈值SSoT
-
 import scripts.commit_queue as cq
 
 logger = logging.getLogger(__name__)

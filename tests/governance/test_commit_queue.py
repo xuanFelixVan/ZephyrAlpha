@@ -1025,3 +1025,144 @@ def test_landing_generic_failure_still_deadletters(queue_root: Path) -> None:
     stats = cq.drain_queue(queue_root, landing=_landing)
     assert stats["dead"] == 1, "普通异常仍死信（既有 DLQ 语义）"
     assert stats["done"] == 1
+
+
+# ---------------------------------------------------------------------------
+# 队列健康快照 + 死信积压告警（2026-09-11 死信率告警最小落地，st-perf-plan-20260910）
+# 阈值真源=alert_threshold_registry.yaml（REG-ATH-001）THD-ALERT-003/004；告警通道=
+# task_board 专 task（T-QUEUE-DEADLETTER）死信标签；告警链路 fail-open 不阻断排空。
+# ---------------------------------------------------------------------------
+
+
+class TestQueueHealthAndDeadBacklogAlert:
+    """健康快照聚合口径 + 积压告警阈值/冷却/挂载点/失败开放语义。"""
+
+    @staticmethod
+    def _mini_registry(tmp_path: Path, *, backlog: int = 5, cooldown: int = 3600) -> Path:
+        """最小阈值注册表（真实 loader 走 fail-closed 全链路，不 mock 加载器）。"""
+        reg = tmp_path / "alert_threshold_registry.yaml"
+        reg.write_text(
+            "schema_version: '1.0'\n"
+            "thresholds:\n"
+            f"  - threshold_id: 'THD-ALERT-003'\n    value: {backlog}\n"
+            f"  - threshold_id: 'THD-ALERT-004'\n    value: {cooldown}\n",
+            encoding="utf-8",
+        )
+        return reg
+
+    @staticmethod
+    def _fail_landing(item: dict, root: Path) -> cq.LandingResult:
+        return cq.LandingResult(ok=False, reason="boom-模拟物品失败")
+
+    def test_health_counts_and_categories(self, queue_root: Path) -> None:
+        _enqueue(queue_root, "sess-a", "one", [("a.py", b"a=1\n")])
+        _enqueue(queue_root, "sess-b", "two", [("b.py", b"b=2\n")])
+
+        calls = {"n": 0}
+
+        def _mixed_fail(item: dict, root: Path) -> cq.LandingResult:
+            calls["n"] += 1
+            if calls["n"] == 1:
+                return cq.LandingResult(ok=False, reason="网关落盘失败（COMMIT_FAILED）: 门禁 X 阻断")  # item 标记
+            return cq.LandingResult(ok=False, reason="boom-无标记普通失败")  # other
+
+        cq.drain_queue(queue_root, landing=_mixed_fail)
+        _enqueue(queue_root, "sess-c", "three", [("c.py", b"c=3\n")])  # 留一项 pending
+        snap = cq.queue_health(queue_root)
+        assert snap["counts"] == {"pending": 1, "processing": 0, "done": 0, "dead": 2}
+        assert snap["dead_total"] == 2
+        assert snap["dead_categories"] == {"item": 1, "other": 1}
+        assert snap["oldest_pending_hours"] is not None and snap["oldest_pending_hours"] >= 0
+        assert snap["blobs"] == 3
+        assert snap["generated_at"]
+
+    def test_health_env_marker_classification(self, queue_root: Path) -> None:
+        """env 标记死因（pytest 时期环境事故）归 env 类——triage 聚合口径回归。"""
+        _enqueue(queue_root, "sess-a", "one", [("a.py", b"a=1\n")])
+
+        def _env_fail(item: dict, root: Path) -> cq.LandingResult:
+            return cq.LandingResult(ok=False, reason="landing 异常: RuntimeError: git reset --hard -> index.lock: File exists.")
+
+        cq.drain_queue(queue_root, landing=_env_fail)
+        snap = cq.queue_health(queue_root)
+        assert snap["dead_categories"] == {"env": 1}
+
+    def test_below_threshold_no_alert_no_board(self, queue_root: Path, tmp_path: Path) -> None:
+        _enqueue(queue_root, "sess-a", "one", [("a.py", b"a=1\n")])
+        cq.drain_queue(queue_root, landing=self._fail_landing)
+        result = cq.emit_dead_backlog_alert(queue_root, registry_path=self._mini_registry(tmp_path, backlog=5))
+        assert result == {"fired": False, "action": "below_threshold"}
+
+    def test_zero_dead_short_circuits_before_threshold_load(self, queue_root: Path, tmp_path: Path) -> None:
+        """dead=0 时不加载注册表（缺 REG-ATH-001 也不报错——健康队列零依赖告警链路）。"""
+        result = cq.emit_dead_backlog_alert(queue_root, registry_path=tmp_path / "missing.yaml")
+        assert result == {"fired": False, "action": "skipped"}
+
+    def test_threshold_unavailable_fail_open(self, queue_root: Path, tmp_path: Path) -> None:
+        """注册表缺条目 → 告警链路降级 skipped，绝不抛出（fail-open 分级语义）。"""
+        _enqueue(queue_root, "sess-a", "one", [("a.py", b"a=1\n")])
+        cq.drain_queue(queue_root, landing=self._fail_landing)
+        result = cq.emit_dead_backlog_alert(queue_root, registry_path=tmp_path / "missing.yaml")
+        assert result["fired"] is False and result["action"] == "threshold_unavailable"
+
+    def test_alert_fires_creates_watch_task_and_cooldown(self, queue_root: Path, tmp_path: Path) -> None:
+        monkeyclosed = tmp_path / "task_board.db"
+        os.environ["ZEPHYR_TASK_BOARD_DB"] = str(monkeyclosed)
+        try:
+            _enqueue(queue_root, "sess-a", "one", [("a.py", b"a=1\n")])
+            cq.drain_queue(queue_root, landing=self._fail_landing)
+            reg = self._mini_registry(tmp_path, backlog=1, cooldown=3600)
+            first = cq.emit_dead_backlog_alert(queue_root, registry_path=reg)
+            assert first["fired"] is True and first["action"] == "alerted"
+            assert "dead_backlog=1" in first["reason"]
+            # 专 task 幂等自建 + deadletter 标签落 metadata
+            conn = sqlite3.connect(str(monkeyclosed))
+            try:
+                row = conn.execute(
+                    "SELECT metadata_json FROM tasks WHERE task_id=?",
+                    (cq._DEADLETTER_WATCH_TASK_ID,),
+                ).fetchone()
+            finally:
+                conn.close()
+            assert row is not None, "挂载点 task 应被自动创建"
+            tag = json.loads(row[0])["deadletter"]
+            assert "dead_backlog=1" in tag["reason"]
+            # 冷却窗口内第二次判定 → 静默跳过
+            second = cq.emit_dead_backlog_alert(queue_root, registry_path=reg)
+            assert second == {"fired": False, "action": "cooldown"}
+        finally:
+            os.environ.pop("ZEPHYR_TASK_BOARD_DB", None)
+
+    def test_board_unreachable_fail_open(self, queue_root: Path, tmp_path: Path) -> None:
+        """板不可达（父路径是文件）→ 告警降级 board_unreachable，绝不抛出。"""
+        blocker = tmp_path / "blocker"
+        blocker.write_text("x", encoding="utf-8")
+        os.environ["ZEPHYR_TASK_BOARD_DB"] = str(blocker / "task_board.db")
+        try:
+            _enqueue(queue_root, "sess-a", "one", [("a.py", b"a=1\n")])
+            cq.drain_queue(queue_root, landing=self._fail_landing)
+            result = cq.emit_dead_backlog_alert(queue_root, registry_path=self._mini_registry(tmp_path, backlog=1))
+            assert result["fired"] is False and result["action"] == "board_unreachable"
+        finally:
+            os.environ.pop("ZEPHYR_TASK_BOARD_DB", None)
+
+    def test_drain_end_invokes_alert(self, queue_root: Path, monkeypatch: pytest.MonkeyPatch) -> None:
+        """drain 收尾事件触发告警判定（lease 外执行，异常双重吞掉不阻断排空）。"""
+        calls: list[dict] = []
+
+        def _spy(root) -> dict:
+            calls.append({"root": str(root)})
+            return {"fired": False, "action": "skipped"}
+
+        monkeypatch.setattr(cq, "emit_dead_backlog_alert", _spy)
+        _enqueue(queue_root, "sess-a", "one", [("a.py", b"a=1\n")])
+        stats = cq.drain_queue(queue_root, landing=lambda item, root: cq.LandingResult(ok=True, landed_id="x"))
+        assert stats["done"] == 1
+        assert len(calls) == 1, "drain 收尾应恰好触发一次告警判定"
+
+    def test_cli_health_smoke(self, queue_root: Path, capsys: pytest.CaptureFixture) -> None:
+        _enqueue(queue_root, "sess-a", "one", [("a.py", b"a=1\n")])
+        rc = cq.main(["--queue-root", str(queue_root), "health", "--no-alert"])
+        assert rc == 0
+        snap = json.loads(capsys.readouterr().out)
+        assert snap["counts"]["pending"] == 1 and snap["dead_total"] == 0

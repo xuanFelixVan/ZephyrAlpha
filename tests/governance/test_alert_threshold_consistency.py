@@ -177,9 +177,9 @@ class TestDesignEntriesExist:
         assert e["THD-DRIFT-003"]["value"] == "h=4σ"
 
     def test_entry_total_and_categories(self):
-        """总量与分类守卫：36 条 11 类（防误删条目无感流失）。"""
+        """总量与分类守卫：38 条 11 类（防误删条目无感流失；v1.4.0 +THD-ALERT-003/004）。"""
         e = _registry_entries()
-        assert len(e) == 36
+        assert len(e) == 38
         cats = {entry["category"] for entry in e.values()}
         assert cats == {
             "drawdown",
