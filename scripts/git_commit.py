@@ -94,7 +94,13 @@ logger = logging.getLogger(__name__)
 _COMMIT_RESULT_MAP: dict[CommitStatus, tuple[int, str, str | None, bool]] = {
     CommitStatus.OK: (0, "OK: {message} (hash={commit_hash})", None, True),
     CommitStatus.NOTHING_TO_COMMIT: (1, "SKIP: {message}", None, True),
-    CommitStatus.LOCK_TIMEOUT: (2, "LOCK_TIMEOUT: {message}", None, False),
+    CommitStatus.LOCK_TIMEOUT: (
+        2,
+        "LOCK_TIMEOUT: {message}",
+        "  如需等待更久，用更大 --wait 重试（如 --wait 900，上限 1800）；"
+        "建议对 exit 2 做指数退避重试（5s→15s→45s…）而非固定间隔盲轮询。",
+        False,
+    ),
     CommitStatus.STASH_CONFLICT: (
         2,
         "STASH_CONFLICT: {message}",
@@ -572,6 +578,14 @@ def main() -> int:
         "冲突已解决、staged 区内容全部归属本次 merge。",
     )
     parser.add_argument(
+        "--wait",
+        type=float,
+        default=None,
+        help="全局锁等待超时秒数（缺省 60.0=现状行为不变）。0=立即失败（快速探测锁状态）；"
+        "上限 1800（=锁 TTL，超过无意义）。exit 2（LOCK_TIMEOUT）时建议改用更大 --wait "
+        "或做指数退避重试（5s→15s→45s…），勿固定间隔盲轮询。",
+    )
+    parser.add_argument(
         "--adopt-prior-work",
         action="store_true",
         default=False,
@@ -694,6 +708,7 @@ def main() -> int:
                 allow_multi_domain=args.allow_multi_domain,
                 allow_tracked_drift=args.allow_tracked_drift,
                 merge_finalize=args.merge_finalize,
+                lock_wait_timeout=args.wait,
             )
         finally:
             gw.release_files(args.session, claimed)

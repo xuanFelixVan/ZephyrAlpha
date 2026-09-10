@@ -34,6 +34,7 @@ from __future__ import annotations
 import os
 import subprocess
 import sys
+import time
 from pathlib import Path
 
 import pytest
@@ -207,6 +208,41 @@ class TestGlobalCommitLock:
             with GlobalCommitLock(tmp_path, timeout=2.0):
                 raise ValueError("boom")
         assert not lock_file.exists(), "异常后锁文件应已删除"
+
+
+class TestGlobalCommitLockWaitTimeout:
+    """--wait 参数化（lock_wait_timeout 透传链路）测试。
+
+    对应 2026-09-10 提交通道性能优化方案 P0-①：缺省 60s 现状不变；
+    传入值精确生效；0=立即失败（快速探测语义）。
+    """
+
+    def test_default_timeout_is_60(self, tmp_path: Path) -> None:
+        """缺省构造 timeout=60.0（现状行为不变，缺省即现状）。"""
+        _init_git_repo(tmp_path)
+        lock = GlobalCommitLock(tmp_path)
+        assert lock._timeout == 60.0, "缺省 timeout 应为 60.0（现状兼容）"
+
+    def test_custom_timeout_raises_after_elapsed(self, tmp_path: Path) -> None:
+        """传入 timeout=0.5 → ≈0.5s 抛 GatewayError（透传精确生效）。"""
+        _init_git_repo(tmp_path)
+        with GlobalCommitLock(tmp_path, timeout=5.0):
+            t0 = time.monotonic()
+            with pytest.raises(GatewayError, match="timeout 0.5"):
+                with GlobalCommitLock(tmp_path, timeout=0.5, poll_interval=0.05):
+                    pass  # 不应到达
+            elapsed = time.monotonic() - t0
+        assert 0.3 <= elapsed <= 2.0, f"超时应≈0.5s，实际 {elapsed:.2f}s"
+
+    def test_zero_timeout_fails_immediately(self, tmp_path: Path) -> None:
+        """timeout=0 → 立即失败（--wait 0 快速探测语义，不等待）。"""
+        _init_git_repo(tmp_path)
+        with GlobalCommitLock(tmp_path, timeout=5.0):
+            t0 = time.monotonic()
+            with pytest.raises(GatewayError, match="timeout 0.0"):
+                with GlobalCommitLock(tmp_path, timeout=0.0, poll_interval=0.05):
+                    pass  # 不应到达
+            assert time.monotonic() - t0 < 0.3, "timeout=0 应立即失败"
 
 
 # ---------------------------------------------------------------------------

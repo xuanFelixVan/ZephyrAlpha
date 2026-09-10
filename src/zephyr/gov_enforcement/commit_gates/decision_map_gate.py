@@ -5,7 +5,7 @@
 # [CONSUMERS] zephyr.gov_enforcement.rule_bridge.git_commit_gateway.GitCommitGateway.__init__（经 in_process_gate_registry.yaml 自动注册）
 # [STARTUP] imported
 # [MATURITY] testing
-# [INVARIANTS] 硬阻断（确定性校验）——config/trading_decision_map.yaml R1-R8 error 级缺口>0 → 阻断 commit；恒跑（读 4 个 YAML 毫秒级，不按文件过滤——地图被任何提交改动都可能产生引用断链）；校验逻辑单一真源=check_decision_map.py（gate 只做阻塞语义封装，禁复制 R1-R8）；YAML 解析异常=fail-closed（真源损坏必须先修）
+# [INVARIANTS] 硬阻断（确定性校验）——config/trading_decision_map.yaml R1-R8 error 级缺口>0 → 阻断 commit；恒跑（读 4 个 YAML+AST 扫描，实测 ~8.2s，2026-09-10 计时 harness 纠偏——原"毫秒级"自述失真；不按文件过滤——地图被任何提交改动都可能产生引用断链）；校验逻辑单一真源=check_decision_map.py（gate 只做阻塞语义封装，禁复制 R1-R8）；YAML 解析异常=fail-closed（真源损坏必须先修）
 # [MODIFY-GUARD] gate_id="DECISION-MAP"；check 闭包签名 (gateway, files, **kwargs) -> tuple[bool, str]
 # [STABILITY] evolving
 # [SAFETY] L
@@ -28,7 +28,7 @@
 
 设计权衡
 --------
-1. **恒跑**：读 4 个 YAML + AST 扫描 pf_core（毫秒级~十毫秒级），不按文件过滤。
+1. **恒跑**：读 4 个 YAML + AST 扫描 pf_core（实测 ~8.2s，2026-09-10 计时 harness 纠偏——原自述"毫秒级~十毫秒级"失真），不按文件过滤。
 2. **error=阻断**：R1-R8 全部确定性校验（非启发式），镜像 FRONTEND-MAP 分层。
 3. **校验逻辑单一真源**：R1-R8 只在 zephyr.trading.decision_map.validate_decision_map
    实现，scripts 层 check_decision_map.py 封装，gate 动态复用——禁复制。

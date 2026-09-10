@@ -1667,6 +1667,7 @@ class GitCommitGateway:
         allow_multi_domain: bool = False,
         allow_tracked_drift: bool = False,
         merge_finalize: bool = False,
+        lock_wait_timeout: float | None = None,
     ) -> CommitResult:
         """串行化 commit 入口。allow_overlap 逃生通道放行被其他 session 持有的文件，追加 [GW:<sid>:overlap] 标记。
         allow_derived_deletion 逃生通道放行受保护派生文件删除（#ARCH-BP-REGISTRY-DELETION-001 P1）。
@@ -1674,7 +1675,10 @@ class GitCommitGateway:
         allow_tracked_drift 逃生通道放行 TRACKED-DRIFT-READONLY 未归因写入阻断
         （CAND-GATEMECH-004，追加 [GW:<sid>:tracked-drift] 标记留痕）。
         merge_finalize=True 显式完成在途 merge（B2 治本①）：MERGE_HEAD 存在时普通 commit
-        一律拒绝（防截胡张冠李戴），仅本标志放行全量 commit 并追加 [GW:<sid>:merge] 留痕。"""
+        一律拒绝（防截胡张冠李戴），仅本标志放行全量 commit 并追加 [GW:<sid>:merge] 留痕。
+        lock_wait_timeout：全局锁等待超时秒数（None=缺省 _LOCK_TIMEOUT_DEFAULT=60s 现状不变；
+        0=立即失败快速探测；上限建议 ≤_LOCK_TTL_SECONDS）。仅影响锁等待时长，
+        不改变锁的串行化/TTL/僵尸清理语义。"""
         if not files:
             return CommitResult(status=CommitStatus.NOTHING_TO_COMMIT, message="empty files list")
         if not session_id:
@@ -1776,7 +1780,10 @@ class GitCommitGateway:
         # 病根：gate 检查在锁外时，另一 session 可在 gate 通过后、commit 前修改文件（搭便车/FOREIGN_CHANGE）
         # 治本：gate 检查移入文件锁临界区，串行化整个 [gate → stage → commit] 不可分割
         try:
-            with _GlobalCommitLock(self.project_root):
+            with _GlobalCommitLock(
+                self.project_root,
+                timeout=lock_wait_timeout if lock_wait_timeout is not None else _LOCK_TIMEOUT_DEFAULT,
+            ):
                 # B2① TOCTOU 根治：锁内二次校验（晾置可能发生在锁外 pre-flight 通过之后）
                 if not merge_finalize and self._is_merge_in_progress():
                     return self._merge_in_progress_result()

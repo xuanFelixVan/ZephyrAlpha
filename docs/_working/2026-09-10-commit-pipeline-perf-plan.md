@@ -73,7 +73,7 @@ ZephyrAlpha 多 AI 会话并发共享工作区，唯一合法提交入口 `pytho
 - `--wait 0` 语义 = 立即失败（快速探测锁状态）；`--wait` 上限建议钳制 ≤1800s（=TTL，超过无意义，TTL 兜底会清锁）。
 - 默认值**保持 60.0 不变**（不改变现有会话行为；是否调默认值属 Owner 决策）。
 - exit code 契约不变（LOCK_TIMEOUT 仍 exit 2）；`_COMMIT_RESULT_MAP` 的 LOCK_TIMEOUT 行 help_text 增补引导："如需等待更久用 --wait 900；建议对 exit 2 做指数退避重试（5s→15s→45s…）而非固定轮询"——把昨夜 20+ 轮无效轮询的教训固化进提示。
-- `_commit_auto` 路径（L2712）同 patch 一并透传（reconciler 场景可选等待），一行改动。
+- `_commit_auto` 路径（L2712）不在本批透传（施工偏差：后台 reconciler 无 CLI 通道，默认 60s 即其语义；见 §7-2 偏差记录）。
 
 **工作量**：0.5 人时，2 文件（scripts/git_commit.py、gateway commit 签名+两处 with），测试 3 例（默认 60 / 自定义超时 / --wait 0），入 tests/test_git_commit_gateway.py。
 **风险**：极低（缺省=现状；原型已验证锁机制）。
@@ -421,7 +421,8 @@ P2（Owner 决策后立项，flag 门控）
 ## 7. 正式施工清单（Owner 批准 P0 后执行）
 
 1. `scripts/git_commit.py`：argparse 增加 `--wait`（type=float，default=None→gateway 内部取 60.0；help 注明 0=立即失败、上限 1800）；`gw.commit(...)` 透传 `lock_wait_timeout=args.wait`；LOCK_TIMEOUT 行 help_text 增补指数退避引导。~10 行。
-2. `src/zephyr/gov_enforcement/rule_bridge/git_commit_gateway.py`：`commit()` 签名加 `lock_wait_timeout: float | None = None`（L1658-1670）；L1779 与 L2712 两处 `with _GlobalCommitLock(self.project_root, timeout=lock_wait_timeout if lock_wait_timeout is not None else _LOCK_TIMEOUT_DEFAULT)`。~8 行。**不触碰 L9 MODIFY-GUARD 保护字段**。
+2. `src/zephyr/gov_enforcement/rule_bridge/git_commit_gateway.py`：`commit()` 签名加 `lock_wait_timeout: float | None = None`（L1658-1670）；L1779 一处 `with _GlobalCommitLock(self.project_root, timeout=lock_wait_timeout if lock_wait_timeout is not None else _LOCK_TIMEOUT_DEFAULT)`。~8 行。**不触碰 L9 MODIFY-GUARD 保护字段**。
+   **施工偏差记录（2026-09-10 开工实测）**：①L2712 `_commit_auto` **未**透传——其调用方为后台 reconciler（无 CLI 通道），默认 60s 即其语义，最小变更原则不引入无消费方的参数；reconciler 场景如需等待再单独立项。②测试实际落位 `tests/git/test_git_commit_gateway.py`（git/ 子目录，本文件 2415 行既有约定；方案原写 tests/test_git_commit_gateway.py 不存在）。③验收：新增 3 用例 + 既有 TestGlobalCommitLock 回归 6/6 绿 + commit 流程回归 7/7 绿 + `--help` 显示 --wait。
 3. `tests/test_git_commit_gateway.py`：3 例（缺省 60s 常量 / 自定义 timeout 抛 GatewayError 时长 / --wait 0 立即失败语义）。
 4. 同 commit 附带：DECISION-MAP gate 头注释耗时口径纠偏（③）。
 5. （echo_guard 超时调整**不在本清单**——语义权衡项，待 Owner §5-2 明示后单独执行。）
