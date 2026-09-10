@@ -11,8 +11,9 @@
   'use strict';
   var G = { data: null, busy: false, loaded: false, timer: null, market: 'all',
             loadStart: 0, elapsedTimer: null, retryCount: 0,   /* B1 加载态（ACC rev3） */
-            gl: null, raf: 0, birth: 0, lastPick: null,   /* gl=3D 引擎句柄（initGL 建见注释） */
-            mode: 'root', family: null };   /* B3 两级钻取：root=47 族星云；family=族内链群小星云（同数据源 d.chains 过滤，零后端改动） */
+            gl: null, raf: 0, birth: 0, lastPick: null };   /* gl=3D 引擎句柄（initGL 建见注释） */
+  /* B3 族内链群小星云已撤（Owner 2026-09-10 实测裁定"不用星云了"：族内内容天然带上中下游
+   * 序，点族星直开链层列式甬道=chainmap-cluster，B4 按 TDM 视觉升级）——代码见 git 历史 */
 
   function canvasEl() { return document.getElementById('cm-canvas-galaxy'); }
   function glEl() { return document.getElementById('cm-gl-galaxy'); }
@@ -169,7 +170,6 @@
     window.addEventListener('keydown', function (e) {
       if (!visible()) return;
       var gl = G.gl; if (!gl) return;
-      if (e.key === 'Escape' && G.mode === 'family') { flyOut(); return; }   /* B3：Esc 飞出链群小星云 */
       var d = 0.06;
       if (e.key === 'ArrowLeft') gl.sph.theta -= d;
       else if (e.key === 'ArrowRight') gl.sph.theta += d;
@@ -199,43 +199,17 @@
     var m = new THREE.Vector2(((e.clientX - r.left) / r.width) * 2 - 1, -((e.clientY - r.top) / r.height) * 2 + 1);
     gl.ray.setFromCamera(m, gl.camera);
     var hits = gl.ray.intersectObjects(gl.starList.map(function (s) { return s.sprite; }));
-    G.lastPick = { x: e.clientX, y: e.clientY, hits: hits.length, mode: G.mode };
+    G.lastPick = { x: e.clientX, y: e.clientY, hits: hits.length };
     if (!hits.length) return;
     var cid = hits[0].object.userData.cid, star = gl.stars[cid];
     if (!star) return;
-    if (G.mode === 'family') {   /* B3：链星→链层单链聚焦（与 nav 树点击同款双事件契约） */
-      ZK.bus.emit('cm:view', { view: 'cluster' });
-      ZK.bus.emit('cm:goto-chain', { chain_id: cid, cluster: G.family.cid, chain_name: star.name, market: G.market });
-      return;
-    }
-    flyIn(cid);   /* B3：族星→飞入链群小星云 */
+    /* 点族星直开链层列式甬道（Owner 2026-09-10 裁定：族内不用星云，上中下游左→右列式） */
+    ZK.bus.emit('cm:view', { view: 'cluster' });
+    ZK.bus.emit('cm:open-cluster', { cid: cid, name: star.name, market: G.market });
   }
 
-  /* B3 两级钻取：root 点族星飞入族内链群小星云（数据=G.data.chains 按 cluster 过滤，零后端改动）；
-   * family 点链星→链层单链聚焦；Esc/面包屑返回。相机各态独立记忆，往返不丢视角。 */
-  function flyIn(cid) {
-    var gl = G.gl, star = gl && gl.stars[cid], d = G.data;
-    if (!star || !d || G.mode !== 'root') return;
-    var chains = (d.chains || []).filter(function (c) { return c.cluster === cid; });
-    G.family = { cid: cid, name: star.name, chains: chains };
-    G.mode = 'family';
-    G.gl.sph = { theta: SPH0.theta, phi: SPH0.phi, r: 270 };   /* 小星云取近景 */
-    var empty = document.getElementById('cm-empty-galaxy');
-    if (empty) empty.style.display = 'none';
-    render();
-  }
-
-  function flyOut() {
-    if (G.mode !== 'family') return;
-    G.mode = 'root';
-    G.family = null;
-    if (G.gl) G.gl.sph = { theta: SPH0.theta, phi: SPH0.phi, r: SPH0.r };
-    var empty = document.getElementById('cm-empty-galaxy');
-    if (empty) empty.style.display = 'none';
-    render();
-  }
-
-  /* 渲染分派：root=47 族星云（含族间供应连线）；family=族内链群小星云（链星，无族内连线语义） */
+  /* 47 族 Fibonacci 球面撒点：黄金角均匀分布（确定性几何，坐标与数据零耦合免缓存）；
+   * 按公司数降序分配序号——大族错开落位。星大小=公司数（同旧 2D 口径公式族）。 */
   function render() {
     var d = G.data;
     if (!d) return;
@@ -243,17 +217,6 @@
     if (!gl) return;   /* 降级路径：glDegrade 已给出诚实提示 */
     fitGL();
     clearScene();
-    if (G.mode === 'family') renderFamily(gl);
-    else renderRoot(gl, d);
-    setCrumb();
-    G.birth = performance.now();
-    applyHover(null);
-    startLoop();
-  }
-
-  /* 47 族 Fibonacci 球面撒点：黄金角均匀分布（确定性几何，坐标与数据零耦合免缓存）；
-   * 按公司数降序分配序号——大族错开落位。星大小=公司数（同旧 2D 口径公式族）。 */
-  function renderRoot(gl, d) {
     var empty = document.getElementById('cm-empty-galaxy');
     if (empty) empty.style.display = 'none';
     var R = 150, GA = 2.399963;
@@ -299,50 +262,13 @@
     var meta = document.getElementById('cm-meta');
     if (meta) {
       meta.textContent = d.clusters.length + ' 族 · ' + d.chains.length + ' 链 · ' +
-        d.clusters.reduce(function (s, c) { return s + c.n_companies; }, 0) + ' 公司（去重口径另计） · 真源 ig_*（PG 只读） · 3D：拖拽旋转/滚轮推拉/方向键/双击复位 · 点族星进族';
+        d.clusters.reduce(function (s, c) { return s + c.n_companies; }, 0) + ' 公司（去重口径另计） · 真源 ig_*（PG 只读） · ' + d.generated_at + ' · 3D：拖拽旋转/滚轮推拉/方向键/双击复位 · 点族星进链层';
+      meta.classList.remove('cm-bad');
     }
-  }
-
-  /* B3 链群小星云：该族链条按公司数降序 Fibonacci 撒点（链越大星越大），点链星进链层单链聚焦。
-   * 族内无供应连线语义（族间 links 是族级聚合），不造数据——纯星群视觉。 */
-  function renderFamily(gl) {
-    var f = G.family;
-    var chains = (f.chains || []).slice().sort(function (a, b) { return b.n_companies - a.n_companies; });
-    if (!chains.length) {
-      var empty = document.getElementById('cm-empty-galaxy');
-      if (empty) { empty.style.display = 'flex'; empty.textContent = '「' + f.name + '」暂无链条数据（ig_*）'; }
-      var meta0 = document.getElementById('cm-meta');
-      if (meta0) meta0.textContent = '族「' + f.name + '」· 0 链 · 真源 ig_*（PG 只读）';
-      return;
-    }
-    var R = 110, GA = 2.399963;
-    var group = new THREE.Group();
-    gl.group = group;
-    chains.forEach(function (c, i) {
-      var y = 1 - 2 * (i + 0.5) / chains.length, rr = Math.sqrt(Math.max(0, 1 - y * y)), a = GA * i;
-      var p = new THREE.Vector3(Math.cos(a) * rr * R, y * R, Math.sin(a) * rr * R);
-      var base = 4 + Math.sqrt(c.n_companies || 1) * 1.15;
-      var mat = new THREE.SpriteMaterial({ map: gl.tex, color: 0x3d8bff, transparent: true, depthWrite: false });
-      var sp = new THREE.Sprite(mat);
-      sp.position.copy(p);
-      sp.scale.setScalar(base * 2.2);
-      sp.userData.cid = c.chain_id;
-      group.add(sp);
-      gl.stars[c.chain_id] = { cid: c.chain_id, name: c.name, sprite: sp, base: base };
-      gl.starList.push(gl.stars[c.chain_id]);
-      var lb = document.createElement('div');
-      lb.className = 'cm-gl-label';
-      lb.textContent = c.name;
-      lb.title = c.name + '（' + c.n_nodes + ' 环节 · ' + c.n_companies + ' 公司）';
-      if (base >= 8) lb.classList.add('cm-gl-major');
-      gl.labelHost.appendChild(lb);
-      gl.labels[c.chain_id] = lb;
-    });
-    gl.scene.add(group);
-    var meta = document.getElementById('cm-meta');
-    if (meta) {
-      meta.textContent = '族「' + f.name + '」· ' + chains.length + ' 链 · 真源 ig_*（PG 只读） · 点链星进链层 · Esc 返回全景';
-    }
+    setCrumb();
+    G.birth = performance.now();
+    applyHover(null);
+    startLoop();
   }
 
   function clearScene() {
@@ -426,15 +352,7 @@
 
   function setCrumb() {
     var cr = document.getElementById('cm-crumb');
-    if (!cr) return;
-    if (G.mode === 'family' && G.family) {
-      cr.innerHTML = '<span class="cm-back" id="cm-back">‹ 全景星系</span>' +
-        '<span class="cm-sep">›</span><span>' + G.family.name + '（' + (G.family.chains || []).length + ' 链）</span>';
-      var back = document.getElementById('cm-back');
-      if (back) back.addEventListener('click', flyOut);
-    } else {
-      cr.textContent = '产业地图 · 全景星系（3D）';
-    }
+    if (cr) cr.textContent = '产业地图 · 全景星系（3D）';
   }
 
   function load() {
@@ -486,14 +404,11 @@
     }
   });
 
-  /* 市场切档（项4）：galaxy 是簇空间本尊——重拉当前档数据重渲染；meta 行 counts 随档真实变化。
-   * B3：cid 是 per-market 聚类空间，切档后族小星云失效——回 root 态（与 cluster 模块同口径） */
+  /* 市场切档（项4）：galaxy 是簇空间本尊——重拉当前档数据重渲染；meta 行 counts 随档真实变化 */
   ZK.bus.on('cm:market', function (d) {
     G.market = (d && d.market) || 'all';
     G.loaded = false;
     G.data = null;
-    G.mode = 'root';
-    G.family = null;
     if (visible()) load();
   });
 
@@ -512,8 +427,7 @@
     render: function () { render(); },
     debug: function () {   /* ACC 机断只读探针：相机球坐标+场景规模+拾取诊断（不暴露可变引用） */
       return G.gl && { theta: G.gl.sph.theta, phi: G.gl.sph.phi, r: G.gl.sph.r,
-        stars: Object.keys(G.gl.stars).length, lines: G.gl.lines.length, webgl: true, lastPick: G.lastPick || null,
-        mode: G.mode, family: G.family ? { cid: G.family.cid, chains: (G.family.chains || []).length } : null };
+        stars: Object.keys(G.gl.stars).length, lines: G.gl.lines.length, webgl: true, lastPick: G.lastPick || null };
     },
     destroy: function () {
       if (G.timer) clearInterval(G.timer);

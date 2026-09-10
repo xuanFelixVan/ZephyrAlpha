@@ -131,19 +131,25 @@
   #cm-search-slot .cm-sr .b { margin-left:auto; color:#525d70; font-size:10px; flex:none; }
   #cm-search-slot .cm-se { padding:8px; font-size:11px; color:#525d70; }
 
-  /* ── L2 链层（chainmap-cluster）── 列式：tier 三值直读 上游→中游→下游→通用（职能看环节卡徽章） */
+  /* ── L2 链层（chainmap-cluster）── B4 甬道化（Owner 2026-09-10 裁定"参考交易决策全景效果"）：
+     环节卡=TDM 双行卡（行1 环节名加粗/行2 徽章+公司数灰字），列头加大带底线+环节计数，列序=上中下游左→右 */
   #cm-nodes-cluster { position:absolute; left:0; top:0; }
-  #cm-nodes-cluster .cm-col-h { position:absolute; font-size:12px; font-weight:700; color:#7d8aa0; letter-spacing:1px; }
+  #cm-nodes-cluster .cm-col-h { position:absolute; font-size:14px; font-weight:700; color:#b9c6da;
+    letter-spacing:3px; width:230px; padding-bottom:5px; border-bottom:1px solid #2c3a52; }
+  #cm-nodes-cluster .cm-col-h .cc { font-size:10.5px; font-weight:400; color:#525d70; letter-spacing:0;
+    border:1px solid #2c3a52; border-radius:99px; padding:0 7px; margin-left:4px; }
   #cm-nodes-cluster .cm-chip { position:absolute; background:#1a2436; border:1px solid #3d8bff; border-radius:7px;
     color:#dbe4f0; font-size:11.5px; font-weight:600; padding:4px 9px; cursor:pointer; white-space:nowrap; overflow:hidden;
     text-overflow:ellipsis; box-sizing:border-box; }
   #cm-nodes-cluster .cm-chip:hover { border-color:#e6c34c; }
-  #cm-nodes-cluster .cm-n { position:absolute; background:#0d1117; border:1.2px solid #263042; border-radius:7px;
-    padding:5px 8px; font-size:11.5px; color:#c6cdd8; cursor:pointer; overflow:hidden; box-sizing:border-box;
-    display:flex; align-items:center; gap:6px; }
+  #cm-nodes-cluster .cm-n { position:absolute; background:#0d1117; border:1.5px solid #263042; border-radius:8px;
+    padding:6px 10px; font-size:12.5px; color:#c6cdd8; cursor:pointer; overflow:hidden; box-sizing:border-box;
+    display:flex; flex-direction:column; justify-content:center; gap:4px; transition:border-color .15s; }
   #cm-nodes-cluster .cm-n:hover { border-color:#3d8bff; }
-  #cm-nodes-cluster .cm-n .nm { min-width:0; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
-  #cm-nodes-cluster .cm-n .ct { margin-left:auto; color:#525d70; font-size:10px; flex:none; }
+  #cm-nodes-cluster .cm-n .nm { min-width:0; font-weight:600; color:#dbe4f0; overflow:hidden;
+    text-overflow:ellipsis; white-space:nowrap; }
+  #cm-nodes-cluster .cm-n .sub { display:flex; align-items:center; gap:5px; min-width:0; }
+  #cm-nodes-cluster .cm-n .ct { margin-left:auto; color:#525d70; font-size:10px; flex:none; white-space:nowrap; }
   #cm-nodes-cluster .cm-n .fr { flex:none; font-size:9px; line-height:1.5; padding:0 5px; border-radius:99px;
     border:1px solid #2c3a52; color:#8a94a6; cursor:help; }   /* function_role 职能徽章（项2，hover 显全称） */
   #cm-nodes-cluster .cm-n.dimmed { opacity:.18; }

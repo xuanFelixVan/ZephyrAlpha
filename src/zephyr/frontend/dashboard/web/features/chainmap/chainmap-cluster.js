@@ -15,7 +15,10 @@
   /* function_role 八值徽章缩写（深交所词表；hover tooltip 显全称；空值不渲染） */
   var FR_SHORT = { '生产原料': '原料', '辅助材料': '辅材', '生产设备': '设备', '辅助设备': '辅设',
                    '加工工艺': '工艺', '产品业务': '产品', '技术服务': '服务', '销售渠道': '渠道' };
-  var COLW = 252, NODEW = 230, NODEH = 34, CHIPH = 24, PADX = 36, PADTOP = 46, RAIL_MIN = 8;
+  var COLW = 252, NODEW = 230, NODEH = 48, CHIPH = 24, PADX = 36, PADTOP = 52, RAIL_MIN = 8;
+  /* B4 甬道化（Owner 2026-09-10 裁定"参考交易决策全景效果"）：环节卡升 TDM 双行卡
+   * （行1=环节名 600 加粗、行2=职能/股权徽章+公司数灰字），列头加大带底线+环节计数，
+   * 连线沿用 TDM 同款贝塞尔灰蓝（#2c3a52）。列序=上中下游左→右不变。 */
   var C = { cid: null, name: '', data: null, busy: false, view: { z: 1, x: 0, y: 0 },
             pos: {}, focusChain: null, focusChainName: null, focusNode: null, market: 'all', cat: null };
   var elByNode = {};   /* node_id → 环节卡元素（聚焦高亮） */
@@ -164,13 +167,15 @@
     if (single) view.padTop = PADTOP + 36;   /* 单链模式：链标题 chip 占位，环节下移防压列头（列头 48） */
     var groups = layout(view);
     var frag = document.createDocumentFragment();
-    /* 列头（单链模式给链标题 chip 让位下移） */
-    var colHeadY = single ? 48 : 12;
+    /* 列头（单链模式给链标题 chip 让位下移）；B4：列头带环节计数（TDM 列头质感） */
+    var colHeadY = single ? 52 : 14;
+    var colCount = {};
+    groups.forEach(function (g) { g.nodes.forEach(function (n) { colCount[g.col] = (colCount[g.col] || 0) + 1; }); });
     view.cols.forEach(function (col, ci) {
       var h = document.createElement('div');
       h.className = 'cm-col-h';
       h.style.left = (PADX + ci * COLW) + 'px'; h.style.top = colHeadY + 'px';
-      h.textContent = col;
+      h.innerHTML = col + ' <span class="cc">' + (colCount[col] || 0) + '</span>';
       frag.appendChild(h);
     });
     if (single) {   /* 链标题一枚（免重复链头） */
@@ -211,9 +216,11 @@
           eqb = '<span class="eqb" title="股权关系（ig_equity_edge）——悬停看明细">⚙' + seg.join('/') + '</span>';
         }
         el.innerHTML = '<span class="nm" title="' + n.name + '">' + disp + '</span>' +
+          '<span class="sub">' +
           (n.function_role ? '<span class="fr" title="职能：' + n.function_role + '">' + (FR_SHORT[n.function_role] || n.function_role) + '</span>' : '') +
           eqb +
-          '<span class="ct">' + n.n_companies + '</span>';
+          '<span class="ct">' + n.n_companies + ' 公司</span>' +
+          '</span>';
         el.addEventListener('click', function () { openPanel(n, g.chain); });
         el.dataset.chain = g.chain.chain_id;
         elByNode[n.node_id] = el;

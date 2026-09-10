@@ -373,7 +373,7 @@ features:
   status: active
   auto_scanned: true
 - id: F-CHAINMAP-GALAXY
-  name: 产业星系图（L1 族聚合 3D 星云+族内链群小星云钻取：拖拽旋转/滚轮推拉/键盘方向/双击复位，three.js r147）
+  name: 产业星系图（L1 族聚合 3D 星云：拖拽旋转/滚轮推拉/键盘方向/双击复位，three.js r147；点族星进链层）
   page: chainmap
   module_id: chainmap-galaxy
   file: features/chainmap/chainmap-galaxy.js
@@ -394,7 +394,7 @@ features:
   backend_ref: [module:MOD-L08-001, api:/api/chainmap-search]
   status: active
 - id: F-CHAINMAP-CLUSTER
-  name: 产业链层（L2 上中下游列式+环节公司面板）
+  name: 产业链层（L2 上中下游列式甬道+环节公司面板，TDM 双行卡视觉）
   page: chainmap
   module_id: chainmap-cluster
   file: features/chainmap/chainmap-cluster.js

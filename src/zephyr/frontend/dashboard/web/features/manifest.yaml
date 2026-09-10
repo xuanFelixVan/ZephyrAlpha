@@ -154,19 +154,19 @@ modules:
     page: backtest
     init: "btBoot 触发（btfwPlansLoad 惰性，模式切换 framework 时加载）"
     destroy: none
-    depends: [ZK.api, btApi]   # /api/framework-plans + /api/framework-backtest-run POST/GET（MOD-FWCOMP-001 端点契约）；产物 bt-fw-*.json 复用现有详情渲染链
+    depends: [ZK.api, btApi]   # /api/framework-plans + /api/framework-backtest-run POST/GET（MOD-FWCOMP-001 端点契约）；三期动态权重=POST body 增 dynamic+regime_series（{YYYY-MM-DD: 7 态}，词表真源=MOD-REGIME-001 regime_detector.REGIME_STATES，前端只注入不判定）+done 响应增 dynamic/regime_day_counts/per_regime（__base__=未覆盖回退组，commit 370a5b16 契约冻结）；产物 bt-fw-*.json 复用现有详情渲染链
     toggle: "三分类模式条 [整装回测] tab"
     styles: none   # 复用全局 card/factor-card/badge/bar
     acceptance: ACC-F-BACKTEST-FRAMEWORK
     handbook: []
     status: active
   - id: chainmap-galaxy
-    name: 产业星系图（L1 族聚合 3D 星云+族内链群小星云两级钻取）
+    name: 产业星系图（L1 族聚合 3D 星云）
     file: features/chainmap/chainmap-galaxy.js
     page: chainmap
     init: "init(chart, ctx)"
     destroy: "destroy()"
-    depends: [ZK.api, ZK.bus, vendor/three]   # /api/chainmap-galaxy（ig_* 七表聚类真源）；cm:view/cm:open-cluster 经总线；渲染=three.js r147（B2 3D+B3 两级钻取：点族星飞入链群小星云→点链星单链聚焦进链层，Esc/面包屑返回，轨道相机手搓）
+    depends: [ZK.api, ZK.bus, vendor/three]   # /api/chainmap-galaxy（ig_* 七表聚类真源）；cm:view/cm:open-cluster 经总线；渲染=three.js r147（B2 3D，轨道相机手搓；点族星直开链层列式甬道——B3 族内星云经 Owner 2026-09-10 实测裁定撤销）
     toggle: none
     styles: pages/chainmap.html <style>   # 画布页同 tdm 先例：样式随页面片段
     acceptance: ACC-F-CHAINMAP-GALAXY
@@ -197,12 +197,12 @@ modules:
     handbook: []
     status: active
   - id: chainmap-cluster
-    name: 产业链层（L2 上中下游列式+环节公司面板）
+    name: 产业链层（L2 上中下游列式甬道+环节公司面板，TDM 视觉）
     file: features/chainmap/chainmap-cluster.js
     page: chainmap
     init: "init(chart, ctx)"
     destroy: "destroy()"
-    depends: [ZK.api, ZK.bus]   # /api/chainmap-cluster + /api/chainmap-node；cm:view/cm:open-cluster/cm:goto-chain
+    depends: [ZK.api, ZK.bus]   # /api/chainmap-cluster + /api/chainmap-node；cm:view/cm:open-cluster/cm:goto-chain；B4 甬道化=TDM 双行卡+列头计数（Owner 2026-09-10 裁定）
     toggle: none
     styles: pages/chainmap.html <style>
     acceptance: ACC-F-CHAINMAP-CLUSTER
