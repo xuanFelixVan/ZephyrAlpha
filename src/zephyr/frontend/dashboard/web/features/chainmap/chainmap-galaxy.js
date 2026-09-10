@@ -7,11 +7,47 @@
 (function () {
   'use strict';
   var G = { data: null, busy: false, loaded: false, timer: null, view: { z: 1, x: 0, y: 0 }, lineByPair: null,
-            market: 'all' };   /* market=市场过滤档（项4），nav 开关为唯一真源，经 cm:market 同步 */
+            market: 'all',
+            loadStart: 0, elapsedTimer: null, retryCount: 0 };   /* B1 加载态（ACC rev3）：首算诚实计时+重试计数 */
   var elByCid = {};   /* cid → 节点元素（hover 邻居高亮） */
 
   function canvasEl() { return document.getElementById('cm-canvas-galaxy'); }
   function worldEl() { return document.getElementById('cm-world-galaxy'); }
+
+  /* ── B1 加载态（ACC-F-CHAINMAP-GALAXY rev3 item7/8）──
+   * 首算 3-6s（冷缓存最长 20s）期间画布不再是空白：星云闪烁骨架+已等待秒数诚实计数；
+   * 断线转失败态（红字+暂停闪烁+重试计数），15s 自动重试机制不变；成功即隐藏。零假数据。 */
+  function loadingEl() { return document.getElementById('cm-loading-galaxy'); }
+
+  function showLoading(failMode, msg) {
+    var el = loadingEl();
+    if (!el) return;
+    el.style.display = 'flex';
+    el.classList.toggle('cm-load-fail', !!failMode);
+    var t = document.getElementById('cm-loading-galaxy-t');
+    var s = document.getElementById('cm-loading-galaxy-s');
+    if (failMode) {
+      if (t) t.textContent = 'API 断线——' + (msg || '取数失败') + '，15s 后自动重试';
+      if (s) s.textContent = '已自动重试 ' + G.retryCount + ' 次 · 直至真源恢复 · 真源 ig_*（PG 只读）';
+      if (G.elapsedTimer) { clearInterval(G.elapsedTimer); G.elapsedTimer = null; }
+      return;
+    }
+    G.loadStart = Date.now();
+    if (t) t.textContent = '星系聚类首算中…';
+    if (G.elapsedTimer) clearInterval(G.elapsedTimer);
+    var tick = function () {
+      if (s) s.textContent = '已等待 ' + Math.round((Date.now() - G.loadStart) / 1000) +
+        's · 首算约 3-6 秒，冷缓存最长 20 秒 · 真源 ig_*（PG 只读）';
+    };
+    tick();
+    G.elapsedTimer = setInterval(tick, 1000);
+  }
+
+  function hideLoading() {
+    var el = loadingEl();
+    if (el) el.style.display = 'none';
+    if (G.elapsedTimer) { clearInterval(G.elapsedTimer); G.elapsedTimer = null; }
+  }
 
   function applyView() {
     var w = worldEl();
@@ -261,10 +297,13 @@
   function load() {
     if (G.busy) return;
     G.busy = true;
+    showLoading(false);   /* B1：每次取数周期进入加载态（重试周期亦然） */
     ZK.api.fetchChainmapGalaxy(G.market).then(function (d) {
       G.busy = false;
       if (!d.ok) { fail(d.error || '后端返回失败'); return; }
       G.loaded = true;
+      G.retryCount = 0;
+      hideLoading();
       G.data = d;
       elByCid = {};
       var host = document.getElementById('cm-nodes-galaxy');
@@ -281,6 +320,8 @@
   }
 
   function fail(msg) {
+    G.retryCount += 1;
+    showLoading(true, msg);   /* B1：画布内失败态（meta 行同步保底，双通道不冲突） */
     var meta = document.getElementById('cm-meta');
     if (meta) {
       meta.textContent = 'API 断线（' + msg + '）—— 15s 后自动重试直至真源';
@@ -328,7 +369,7 @@
     id: 'chainmap-galaxy',
     init: function () { boot(); },
     render: function () { render(); },
-    destroy: function () { if (G.timer) clearInterval(G.timer); }
+    destroy: function () { if (G.timer) clearInterval(G.timer); if (G.elapsedTimer) { clearInterval(G.elapsedTimer); G.elapsedTimer = null; } }
   });
 
   if (document.getElementById('p-chainmap')) boot();
