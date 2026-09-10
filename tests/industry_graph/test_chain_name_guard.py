@@ -50,3 +50,34 @@ def test_legitimate_names_pass():
         errs = mod._validate_records(_chain_recs(name), None)
         name_errs = [e for e in errs if "标题腔" in e or "超长" in e]
         assert not name_errs, f"规范名被误拦: '{name}' -> {name_errs}"
+
+
+def test_node_article_names_rejected():
+    """环节名文章式短语拦截（词汇审计：'唐山地区黑色产业链调研（一'等研报标题混入环节名）。"""
+    mod = _load_tool()
+    base = {"type": "node", "chain_name": "测试链", "tier": "中游", "market": "cn",
+            "source": "websearch", "source_doc": "查询词|https://example.com/a|2026-09-10"}
+    for name in ("PVC产业链配套与边际装置", "黑色产业链调研", "橡胶产业链概况及套利交易模式分析"):
+        recs = [dict(base, name=name)]
+        errs = mod._validate_records(recs, None)
+        assert any("文章词" in e or "超长" in e for e in errs), f"环节名穿透: '{name}'"
+    # 合法环节名不误伤
+    for name in ("PCB", "晶圆制造", "HBM封装"):
+        errs = [e for e in mod._validate_records([dict(base, name=name)], None) if "文章词" in e or "环节名超长" in e]
+        assert not errs, f"合法环节名误拦: '{name}'"
+
+
+def test_transmission_and_weight_type_vocab():
+    """transmission_type 四值/weight_type 词表拦截（词汇审计：存量 14 条自创 direct/indirect）。"""
+    mod = _load_tool()
+    base = {"type": "company_edge", "from_symbol": "000001.SZ", "to_symbol": "000002.SZ",
+            "year": 2025, "source": "websearch",
+            "source_doc": "查询词|https://example.com/a|2026-09-10",
+            "valid_from": "2025-12-31", "as_of": "2025-12-31"}
+    errs = mod._validate_records([dict(base, transmission_type=["direct"])], None)
+    assert any("transmission_type" in e for e in errs), "direct 穿透"
+    errs = mod._validate_records([dict(base, weight_type="占供应商营收比（未按客户拆分）")], None)
+    assert any("weight_type" in e for e in errs), "中文 weight_type 穿透"
+    errs = mod._validate_records([dict(base, transmission_type=["利润传导", "价格传导"], weight_type="sales_pct")], None)
+    tt_errs = [e for e in errs if "transmission_type" in e or "weight_type" in e]
+    assert not tt_errs, f"合法值误拦: {tt_errs}"

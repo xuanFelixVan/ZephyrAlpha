@@ -1,12 +1,13 @@
 meta:
-  version: 1.0.0
-  date: 2026-09-10
+  version: 1.1.0
+  date: '2026-09-10'
   owner: ZephyrAlpha-Owner
   decision: Owner 2026-09-10 方案 A 拍板（对话记录）；对齐测试=alert_threshold_registry 先例
   consumers:
   - scripts/industry_graph/websearch_ingest.py
   - scripts/industry_graph/graph_quality_check.py
   - tests/industry_graph/test_field_dictionary_alignment.py
+  changelog: '1.1.0=词汇审计批: transmission_type/weight_type 词表化+node.name 文章词拦截+chain.name 动词尾禁令+fact.object 产品词纪律'
 vocab:
   tiers:
     values:
@@ -144,6 +145,20 @@ vocab:
   symbol_standard: cn=6位数字.SH/.SZ/.BJ（必须反查 stock_basic 在市）；global=代码.交易所后缀（9 值封闭 .US/.KS/.TW/.T/.HK/.DE/.LN/.JP/.SM）；未上市=UNLISTED:UE-{12hex}（编码表主键引用，唯一合法格式，公司名直写已禁）
   sourcedoc_re: ^[^|]+\|[^|]+\|\d{4}-\d{2}-\d{2}$
   sourcedoc_standard: 三段式「查询词|URL|YYYY-MM-DD」；websearch/corpus_rag 强制（ths_export 用「同花顺导出|文件|日期」变体）；无来源不落库
+  transmission_types:
+    values:
+    - 利润传导
+    - 政策传导
+    - 价格传导
+    - 情绪传导
+    standard: 朝阳永续对标四值传导类型（因子分类维度）；存量 14 条 websearch 边自创 direct/indirect=违规值，归一批另做（登记开放问题）
+  weight_types:
+    values:
+    - sales_pct
+    - collab_count
+    - amount_yi
+    - revenue_pct
+    standard: weight 数值的类型代码（英文枚举）；中文描述性文本禁入本列（如'占供应商营收比（未按客户拆分）'→改 weight_type=revenue_pct+product/evidence 注明口径），存量 14 条归一批
 tables:
   ig_chain:
     pk: chain_id
@@ -155,9 +170,9 @@ tables:
       name:
         type: text
         required: true
-        standard: 产业链标准名三段法：[全球前缀]+核心产品/工艺标准中文名+产业链（行业锚点链={THS二级行业}行业）。依据国标/申万词汇；禁标题腔（S1）/禁截断括号、虚词悬空尾、外文缩写裸名、报告指数词（S25）/禁环节名当链名/≤12字
+        standard: 产业链标准名三段法：[全球前缀]+核心产品/工艺标准中文名+产业链（行业锚点链={THS二级行业}行业）。依据国标/申万词汇；禁标题腔（S1）/禁截断括号、虚词悬空尾、外文缩写裸名、报告指数词（S25）/禁环节名当链名/≤12字；禁动词性结尾（发展/崛起/建设/研究/布局，S1 词表）；新链名应带类后缀（产业链/行业/产业/链，锚点链'XX行业'与产业链'XX产业链'并存合法=双轨，'XX产业'第三形态禁用统一归并）
         good_example: 碳化硅产业链 / 全球半导体制造产业链 / 食品加工制造行业
-        bad_example: 碳化硅（SiC / 中国算力产业崛起的 / IC / 环氧丙烷产业链供需格局
+        bad_example: 碳化硅（SiC / 中国算力产业崛起的 / IC / 环氧丙烷产业链供需格局 / 医药冷链行业供应链发展
         validated_by:
         - S1
         - S2
@@ -223,9 +238,10 @@ tables:
       name:
         type: text
         required: true
-        standard: 纯环节功能名（标准工序/部件名词，≤10字名词性，依据行业术语）；禁链名前缀/禁 -tier 后缀残留（S7）/禁标题腔；子链视角下 tier 递归（划片机链里'空气主轴'=该链上游）
-        good_example: 晶圆制造 / HBM封装 / 光引发剂
-        bad_example: 半导体-上游 / 晶圆制造环节
+        standard: 纯环节功能名（标准工序/部件名词，≤15 字工具硬拦，目标≤10 字名词性，依据行业术语）；禁链名前缀/禁 -tier 后缀残留（S7）/禁文章式短语（产业链/调研/概况/格局/进出口/配套/边际装置等报告词，工具 NODE_JUNK_RE 拦）；通用产业缩写部件名允许（PCB/OLED/Type-C），非通名概念缩写须中文化并在 aliases 留英文；子链视角下
+          tier 递归
+        good_example: 晶圆制造 / HBM封装 / PCB
+        bad_example: 唐山地区黑色产业链调研（一 / PVC产业链配套与边际装置 / 机构行为100篇（一）：可转债市场机构行为
         validated_by:
         - S7
         - S9
@@ -240,7 +256,7 @@ tables:
       aliases:
         type: array
         required: false
-        standard: 别名数组（英文名/简称/外文缩写一律进这里不进 name，如 IC/PVD/SiC）
+        standard: 别名数组（英文名/简称/外文缩写一律进这里不进 name，如 IC/PVD/SiC）；外文缩写（IC/SiC/PVD/Type-C）一律进 aliases 不进 name——链与环节同纪律
       description:
         type: text
         required: false
@@ -422,9 +438,11 @@ tables:
         required: false
         standard: 数值（与 weight_type 配对：占营收比/采购额亿）
       weight_type:
-        type: text
+        type: enum(vocab:weight_types)
         required: false
-        standard: weight 的类型说明
+        standard: weight 数值类型代码（vocab:weight_types）；禁中文描述文本
+        good_example: sales_pct
+        bad_example: 占供应商营收比（未按客户拆分）
       source:
         type: enum(vocab:sources)
         required: true
@@ -494,9 +512,11 @@ tables:
         required: false
         standard: 关系相关度 1-5（FactSet relevance rank）
       transmission_type:
-        type: array
+        type: enum(vocab:transmission_types)
         required: false
-        standard: 传导类型枚举：利润传导/政策传导/价格传导/情绪传导（朝阳永续对标，因子分类维度）
+        standard: 四值传导类型（vocab:transmission_types），数组；写入工具逐值校验
+        good_example: '[利润传导, 价格传导]'
+        bad_example: direct/indirect（自创值已禁）
       capacity:
         type: text
         required: false
@@ -721,8 +741,9 @@ tables:
       object:
         type: text
         required: true
-        standard: 事实宾语
-        good_example: 特种气体
+        standard: 事实宾语；relation=产品网关系时须为产业产品词——禁菜谱/生活词（外采产品网数据混入'三七全鸡汤/DIY面膜'类噪音，写入前须过滤，存量噪音清理批另做）
+        good_example: 电子特气 / 多晶硅
+        bad_example: 丁香炒牛杂 / DIY面膜
       value:
         type: text
         required: false

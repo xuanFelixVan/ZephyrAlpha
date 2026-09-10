@@ -61,6 +61,14 @@ CHAIN_ID_RE = re.compile(r"^CH-[0-9a-f]{12}$")
 TITLE_JUNK_RE = re.compile("一张图看懂|重磅|最新|预测|深度|全景图|解读|盘点|风向标|启幕|ppt|研报|机遇|风口|现状|格局|趋势|展望|前景|图解|一文|解析|洞察|市场和应用")
 # 链名长度上限(SOP §4.7.1 ≤12 字,2026-09-10 起工具硬校验——此前只写在 SOP 未执行)
 CHAIN_NAME_MAX_LEN = 12
+# 2026-09-10 词汇审计新增: 传导类型四值(SOP §4.8 朝阳永续对标;存量 14 条 websearch 边自创
+# direct/indirect 违反词表,工具一直未拦——补拦防新增,存量归一另批)+weight_type 词表化
+TRANSMISSION_TYPES = {"利润传导", "政策传导", "价格传导", "情绪传导"}
+WEIGHT_TYPES = {"sales_pct", "collab_count", "amount_yi", "revenue_pct"}
+# 环节名结构(词汇审计:文章标题混入环节名"唐山地区黑色产业链调研（一"/"PVC产业链配套与边际装置"——
+# S7 只拦 -tier 后缀不拦文章词;环节=标准工序/部件名词 ≤15 字)
+NODE_NAME_MAX_LEN = 15
+NODE_JUNK_RE = re.compile(r"产业链|调研|概况|格局|进出口|配套|边际装置|纵览|概况及")
 # 链名结构完整性(S25 同源,SOP §4.7.0 链名分类学 2026-09-10): 截断括号/虚词悬空尾/外文缩写裸名/报告词
 CHAIN_STRUCT_RE = re.compile(r"（(?![^）]*）)|\((?![^)]*\))|[的与及了]$|^[A-Z0-9]{2,6}$|指数|白皮书|研究报告|年鉴")
 CATEGORIES = set(_V["categories"]["values"])
@@ -332,6 +340,24 @@ def _validate_records(records: list[dict], stocks: set[str] | None) -> list[str]
             et = r.get("edge_type", r.get("relation"))
             if et and et not in EDGE_TYPES_V2:
                 errs.append(f"{idx}: edge_type 非 v2 词表: {et}")
+        # transmission_type 四值词表+weight_type 词表(2026-09-10 词汇审计补拦防新增)
+        if typ == "company_edge":
+            tt = r.get("transmission_type")
+            if tt:
+                for v in (tt if isinstance(tt, list) else [tt]):
+                    if v not in TRANSMISSION_TYPES:
+                        errs.append(f"{idx}: transmission_type 非四值词表(利润传导/政策传导/价格传导/情绪传导): {v}")
+            wt = r.get("weight_type")
+            if wt and wt not in WEIGHT_TYPES:
+                errs.append(f"{idx}: weight_type 非词表(sales_pct/collab_count/amount_yi/revenue_pct): {wt}")
+        # 环节名结构(2026-09-10 词汇审计:文章标题混入环节名,补文章词+长度拦截)
+        if typ == "node":
+            nn = r.get("name", "")
+            if len(nn) > NODE_NAME_MAX_LEN:
+                errs.append(f"{idx}: 环节名超长(>{NODE_NAME_MAX_LEN}字,环节=标准工序/部件名词): {nn}")
+            hit = NODE_JUNK_RE.search(nn)
+            if hit:
+                errs.append(f"{idx}: 环节名含文章词({hit.group(0)}),环节名禁报告式短语: {nn}")
         # PIT: websearch company_edge 必带
         if typ == "company_edge" and src == "websearch":
             for k in ("valid_from", "as_of"):
