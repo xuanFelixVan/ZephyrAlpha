@@ -24,7 +24,12 @@
       <div style="display:flex;gap:14px;align-items:center;flex-wrap:wrap;font-size:12px;margin-bottom:8px">
         <span class="dim">时间段：</span><input type="date" id="btfw-start" style="background:var(--input);border:1px solid var(--border);border-radius:4px;color:var(--text);font-size:11px;padding:3px 6px">
         <span class="dim">~</span><input type="date" id="btfw-end" style="background:var(--input);border:1px solid var(--border);border-radius:4px;color:var(--text);font-size:11px;padding:3px 6px">
+        <label style="cursor:pointer;display:flex;gap:4px;align-items:center"><input type="checkbox" id="btfw-dynamic" onchange="btfwDynTgl()"> <b>动态权重（regime 联动）</b></label>
         <span class="btn primary" id="btfw-btn" onclick="btfwRun()">▶ 发起整装回测</span>
+      </div>
+      <div id="btfw-dyn-box" style="display:none;margin-bottom:8px">
+        <div style="font-size:11px;color:var(--faint);margin-bottom:4px">regime 日序（JSON：{"2026-06-01":"r3","2026-06-02":"r4",...}；7 态枚举真源=MOD-REGIME-001：r1 低波震荡/r2 中波震荡/r3 牛市趋势/r4 熊市阴跌/r10 CRISIS/r11 RECOVERY/r12 BREAKOUT；日序生产=检测器离线回放另批立项，当前由调用方供给）。校验：非法 JSON/日期格式/状态值=前端拦截不发请求；留空发起=后端 fail-fast 拒绝（错误信息原样透出）</div>
+        <textarea id="btfw-regime-series" placeholder='{"2026-06-01":"r3","2026-06-02":"r3","2026-06-03":"r4"}' style="width:100%;min-height:56px;background:var(--input);border:1px solid var(--border);border-radius:4px;color:var(--text);font-size:11px;padding:6px;font-family:monospace"></textarea>
       </div>
       <div class="btr-prog-wrap" id="btfw-prog-wrap" style="display:none">
         <div class="bar"><i id="btfw-prog-fill" style="width:0%"></i></div>

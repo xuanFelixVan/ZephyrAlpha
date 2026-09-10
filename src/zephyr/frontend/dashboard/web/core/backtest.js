@@ -299,21 +299,98 @@ function btfwSel(pid){
   BTFW_SEL=pid;
   btfwRenderPlans();
 }
+/* ── 三期动态权重接线（regime 联动；后端契约 commit 370a5b16：POST body 增 dynamic+regime_series，
+ *    done 响应增 dynamic/regime_day_counts/per_regime）。演示诚实纪律：前端只做注入入口，
+ *    不造默认日序（日序生产=检测器离线回放另批立项）；后端 fail-closed 错误原样透出。── */
+/* 7 态中文名映射。词表真源=MOD-REGIME-001（src/zephyr/regime/core/regime_detector.py L249
+ * REGIME_STATES + L283-295 语义注释）；__base__=未覆盖回退组（真源 framework_composer.py
+ * _FALLBACK_GROUP_KEY——注入日序中方案覆盖表未列的状态/日期归此组，回退方案基准权重） */
+var BTFW_REGIME_ZH={'r1':'低波震荡','r2':'中波震荡','r3':'牛市趋势','r4':'熊市阴跌','r10':'CRISIS','r11':'RECOVERY','r12':'BREAKOUT'};
+function btfwDynTgl(){
+  var cb=document.getElementById('btfw-dynamic'),box=document.getElementById('btfw-dyn-box');
+  if(cb&&box)box.style.display=cb.checked?'':'none';
+}
+/* regime 日序校验器：{YYYY-MM-DD: 7态}。返回 {ok,series} 或 {ok:false,err}（err 含具体原因供 alert） */
+function btfwParseRegimeSeries(txt){
+  var obj;
+  try{obj=JSON.parse(txt);}catch(e){return{ok:false,err:'不是合法 JSON——'+e.message};}
+  if(!obj||typeof obj!=='object'||Array.isArray(obj))return{ok:false,err:'必须是 JSON 对象（键=YYYY-MM-DD 日期，值=regime 状态）'};
+  var keys=Object.keys(obj);
+  if(!keys.length)return{ok:false,err:'regime 日序为空对象（至少 1 个日期）'};
+  var series={};
+  for(var i=0;i<keys.length;i++){
+    var k=String(keys[i]).trim(),v=String(obj[keys[i]]).trim();
+    var d=new Date(k+'T00:00:00Z');
+    if(!/^\d{4}-\d{2}-\d{2}$/.test(k)||isNaN(d.getTime())||d.toISOString().slice(0,10)!==k)
+      return{ok:false,err:'第 '+(i+1)+' 项键「'+k+'」不是合法日期（要求 YYYY-MM-DD）'};
+    if(!BTFW_REGIME_ZH[v])
+      return{ok:false,err:'第 '+(i+1)+' 项「'+k+': '+v+'」状态非法——合法 7 态 r1/r2/r3/r4/r10/r11/r12（词表真源 MOD-REGIME-001）'};
+    series[k]=v;
+  }
+  return{ok:true,series:series};
+}
+/* 发起前动态分支组装：未勾选={active:false}（二期静态零漂移）；勾选但留空={active:true,series:{}}
+ * （交后端 fail-fast 拒绝，错误信息经发起失败路径透出）；有内容=前端校验，失败 alert 具体原因
+ * 不发请求（返回带 alert 标记） */
+function btfwDynBody(){
+  var cb=document.getElementById('btfw-dynamic');
+  if(!cb||!cb.checked)return{active:false};
+  var ta=document.getElementById('btfw-regime-series');
+  var txt=((ta&&ta.value)?ta.value:'').trim();
+  if(!txt)return{active:true,series:{}};
+  var p=btfwParseRegimeSeries(txt);
+  if(!p.ok){alert('regime 日序校验失败：'+p.err);return{active:true,alert:p.err};}
+  return{active:true,series:p.series};
+}
+/* per-regime 分段摘要表（done 响应 per_regime：[{regime,days,return_pct,max_drawdown_pct}]，
+ * 数值单位已 %（composer 侧 ×100）；return_pct=组内链式贡献（各组不可直接加总）；
+ * max_drawdown_pct=段内 running peak 口径，按负回撤惯例显示） */
+function btfwRegimeTable(per){
+  if(!per||!per.length)return'';
+  var h='<table style="margin-top:6px"><tr><th>Regime 状态</th><th>天数</th><th>分段收益</th><th>段内最大回撤</th></tr>';
+  per.forEach(function(g){
+    var isBase=(g.regime==='__base__');
+    var zh=isBase?'未覆盖回退组':(BTFW_REGIME_ZH[g.regime]||g.regime);
+    var rp=(g.return_pct!=null)?((g.return_pct>=0?'+':'')+Number(g.return_pct).toFixed(2)+'%'):'--';
+    var dd=(g.max_drawdown_pct!=null)?('-'+Number(g.max_drawdown_pct).toFixed(2)+'%'):'--';
+    h+='<tr><td><span class="badge '+(isBase?'b-na':'b-warn')+'">'+g.regime+'</span> '+zh+'</td>'
+      +'<td>'+g.days+'</td>'
+      +'<td class="'+((g.return_pct||0)>=0?'up':'down')+'"><b>'+rp+'</b></td>'
+      +'<td class="down">'+dd+'</td></tr>';
+  });
+  return h+'</table>';
+}
+/* done 渲染（轮询 done 分支共用）：状态行 + kv 摘要；动态模式追加 per-regime 分段摘要表 */
+function btfwDoneRender(s){
+  var m=s.metrics||{};
+  var st=document.getElementById('btfw-status'),dt=document.getElementById('btfw-detail');
+  if(st)st.innerHTML='✅ 完成——产物 <b>'+(s.run_id||'')+'</b>（方案 '+s.plan_id+' · 参与 '+s.participants+' 成员'+(s.skipped?(' · 跳过 '+s.skipped+' tick 策略'):'')+(s.rescale_factor&&s.rescale_factor!==1?(' · rescale '+s.rescale_factor):'')+(s.dynamic?' · <b>动态权重（regime 联动）</b>':'')+'），已自动载入右屏';
+  if(!dt)return;
+  dt.style.display='block';
+  dt.innerHTML='<div class="kv-mini" style="font-size:12px">组合收益 <b class="'+((m.total_return||0)>=0?'up':'down')+'">'+((m.total_return!=null?((m.total_return>=0?'+':'')+(m.total_return*100).toFixed(2)+'%'):'--'))+'</b> · 夏普 <b>'+(m.sharpe_ratio!=null?m.sharpe_ratio.toFixed(2):'--')+'</b> · 回撤 <b class="down">'+(m.max_drawdown!=null?('-'+(m.max_drawdown*100).toFixed(2)+'%'):'--')+'</b> · 成交 <b>'+(m.trades_count!=null?m.trades_count:'--')+'</b> 笔'+((m.compose_notes)?(' · <span class="dim">'+m.compose_notes+'</span>'):'')+'</div>';
+  if(s.dynamic)dt.innerHTML+='<div style="font-size:11px;color:var(--faint);margin-top:6px">per-regime 分段摘要（链式贡献口径，各组收益不可直接加总；__base__=未覆盖回退组）：</div>'+btfwRegimeTable(s.per_regime);
+}
 function btfwRun(){
   if(BTFW_BUSY)return;
   var api=btApi(); if(!api)return;
   if(!BTFW_SEL){alert('先选方案');return;}
+  var dyn=btfwDynBody(); if(dyn.alert)return;   /* 前端校验失败已 alert，不发请求 */
   var s=document.getElementById('btfw-start'),en=document.getElementById('btfw-end');
   var span=btrPeriodSpan(BTR_CFG.period);   /* 默认近6个月（ACC 复盘：后端四参硬校验 plan_id/symbols/start/end，留空=前端补默认，2026-09-09 实证） */
   var body={plan_id:BTFW_SEL,
     symbols:['600519.SH','000858.SZ','601318.SH','600036.SH','000001.SZ'],   /* 与单策略回测同标的池（自选池接入待 I-2） */
     start:(s&&s.value)?s.value:span.start,
     end:(en&&en.value)?en.value:span.end};
+  if(dyn.active){body.dynamic=true;body.regime_series=dyn.series;}   /* 三期动态权重（空对象=后端 fail-fast 口径透出） */
+  btfwSubmitPoll(api,body,dyn.active);
+}
+/* 提交+轮询（btfwRun 校验组装后的执行段；dynOn 仅用于状态行文案，静态=二期行为零漂移） */
+function btfwSubmitPoll(api,body,dynOn){
   BTFW_BUSY=true;
   var btn=document.getElementById('btfw-btn'),wrap=document.getElementById('btfw-prog-wrap'),fill=document.getElementById('btfw-prog-fill'),st=document.getElementById('btfw-status'),dt=document.getElementById('btfw-detail');
   btn.classList.remove('primary'); btn.textContent='提交中…';
   wrap.style.display='block'; fill.style.width='10%'; dt.style.display='none';
-  st.textContent='POST /api/framework-backtest-run（'+BTFW_SEL+'，后台合成+引擎撮合）…';
+  st.textContent='POST /api/framework-backtest-run（'+BTFW_SEL+(dynOn?' · 动态权重 regime 联动':'，静态')+'，后台合成+引擎撮合）…';
   var t0=Date.now();
   api.postFrameworkBacktestRun(body).then(function(r){
     if(!r||!r.ok||!r.task_id)throw new Error(r&&r.error||'submit failed');
@@ -324,10 +401,7 @@ function btfwRun(){
       api.fetchFrameworkBacktestRunStatus(BTFW_TASK).then(function(s){
         if(s&&s.status==='done'){
           fill.style.width='100%'; btn.classList.add('primary'); btn.textContent='▶ 发起整装回测';
-          var m=s.metrics||{};
-          st.innerHTML='✅ 完成——产物 <b>'+(s.run_id||'')+'</b>（方案 '+s.plan_id+' · 参与 '+s.participants+' 成员'+(s.skipped?(' · 跳过 '+s.skipped+' tick 策略'):'')+(s.rescale_factor&&s.rescale_factor!==1?(' · rescale '+s.rescale_factor):'')+'），已自动载入右屏';
-          if(dt){dt.style.display='block';
-            dt.innerHTML='<div class="kv-mini" style="font-size:12px">组合收益 <b class="'+((m.total_return||0)>=0?'up':'down')+'">'+((m.total_return!=null?((m.total_return>=0?'+':'')+(m.total_return*100).toFixed(2)+'%'):'--'))+'</b> · 夏普 <b>'+(m.sharpe_ratio!=null?m.sharpe_ratio.toFixed(2):'--')+'</b> · 回撤 <b class="down">'+(m.max_drawdown!=null?('-'+(m.max_drawdown*100).toFixed(2)+'%'):'--')+'</b> · 成交 <b>'+(m.trades_count!=null?m.trades_count:'--')+'</b> 笔'+((m.compose_notes)?(' · <span class="dim">'+m.compose_notes+'</span>'):'')+'</div>';}
+          btfwDoneRender(s);
           BTFW_BUSY=false;
           /* 产物已入 artifacts → 刷新左屏 Runs 并载入详情（复用现有渲染链） */
           api.fetchBacktestList().then(function(r2){

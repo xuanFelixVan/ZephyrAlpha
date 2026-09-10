@@ -8,8 +8,12 @@ feature_id: F-BACKTEST-FRAMEWORK
 feature_name: 整装回测（三分类 tab+方案选择+发起轮询+组合净值摘要）
 frozen_at: 2026-09-09
 frozen_by: ZephyrAlpha-Owner
-revision: 1
+revision: 2
 revision_policy: "修订=Owner 批准+改原文+revision 链留痕；AI 不可自改已冻结条项"
+# rev2 (2026-09-10, AI 先施工后报批——任务书《整装回测三期前端接线：动态权重开关+regime 日序注入
+# +per-regime 分段摘要》，Owner 批注流程走汇报回执): 新增 item10-13 三期动态权重。后端契约已冻结
+# （commit 370a5b16：POST body 增 dynamic+regime_series fail-fast 校验；done 响应增
+# dynamic/regime_day_counts/per_regime），本 rev 只落前端接线，零后端改动。
 
 items:
   - { id: 1, text: "页顶三分类模式条：策略回测（默认选中）/ 因子回测 / 整装回测，点切互斥显示", check: 目检 }
@@ -21,6 +25,10 @@ items:
   - { id: 7, text: "tick 策略跳过与 rescale 系数如实披露（done 状态行）", check: 目检 }
   - { id: 8, text: "方案清单加载失败红灯+15s 自动重试，禁止演示数据顶替（fail-closed 真源 /api/framework-plans）", check: 机断 }
   - { id: 9, text: "三分类切换不影响左屏下拉/档案卡/Runs 的既有联动行为", check: 目检 }
+  - { id: 10, text: "动态权重开关：勾选→展开 regime 日序注入区（textarea）；未勾选=静态模式，请求体不含 dynamic/regime_series（二期行为零漂移）", check: 目检 }
+  - { id: 11, text: "勾选+合法日序发起→done 渲染 per-regime 分段摘要表：每行状态徽章/天数/分段收益（涨跌色）/段内最大回撤；__base__ 行标注「未覆盖回退组」；7 态中文名映射注释真源=MOD-REGIME-001（regime_detector.REGIME_STATES）", check: 机断 }
+  - { id: 12, text: "非法输入双通道：textarea 有内容但坏 JSON/日期格式错/非法状态（如 r99）→前端 alert 具体原因不发请求；勾选留空发起→后端 fail-fast 拒绝（dynamic=true requires non-empty regime_series）原样透出到状态行", check: 机断 }
+  - { id: 13, text: "前端不造默认日序（演示诚实纪律）：regime 日序只由调用方注入，前端无内置/默认日序，空序与非法序一律走 fail-closed 拒绝链", check: 目检 }
 
 execution:
   trigger: "任何涉及本功能的 UI 改动 commit 前"
@@ -30,5 +38,5 @@ execution:
 关联:
   handbook: []
   frontend_map: F-BACKTEST-FRAMEWORK
-  code_ref: "src/zephyr/frontend/dashboard/web/core/backtest.js（btfw* 函数族+btMode）"
-  backend_ref: "api:/api/framework-plans + api:/api/framework-backtest-run（MOD-FWCOMP-001，commit 622d3f5bb7 契约）"
+  code_ref: "src/zephyr/frontend/dashboard/web/core/backtest.js（btfw* 函数族+btMode；三期动态权重=BTFW_REGIME_ZH/btfwDynTgl/btfwParseRegimeSeries/btfwDynBody/btfwRegimeTable/btfwDoneRender/btfwSubmitPoll）"
+  backend_ref: "api:/api/framework-plans + api:/api/framework-backtest-run（MOD-FWCOMP-001，commit 622d3f5bb7 契约；三期动态权重 commit 370a5b16——body dynamic+regime_series / done dynamic+regime_day_counts+per_regime）"
