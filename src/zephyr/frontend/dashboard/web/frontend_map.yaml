@@ -373,7 +373,7 @@ features:
   status: active
   auto_scanned: true
 - id: F-CHAINMAP-GALAXY
-  name: 产业星系图（L1 族聚合 3D 星云：拖拽旋转/滚轮推拉/键盘方向/双击复位，three.js r147）
+  name: 产业星系图（L1 族聚合 3D 星云+族内链群小星云钻取：拖拽旋转/滚轮推拉/键盘方向/双击复位，three.js r147）
   page: chainmap
   module_id: chainmap-galaxy
   file: features/chainmap/chainmap-galaxy.js

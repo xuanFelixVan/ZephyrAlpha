@@ -8,7 +8,7 @@ feature_id: F-CHAINMAP-GALAXY
 feature_name: 产业星系图（L1 族聚合全景）
 frozen_at: 2026-09-08
 frozen_by: ZephyrAlpha-Owner
-revision: 4
+revision: 5
 revision_policy: "修订=Owner 批准+改原文+revision 链留痕；AI 不可自改已冻结条项"
 # rev2 (2026-09-09, Owner 裁定): item2 数字带 30~48 废止——脏数据时代产物（旧输入混 33.6% 已关闭
 # 落位与垃圾权重伪造假簇）；任务书 8~15 拍脑袋估计同步撤回。簇数=修好数据后的自然结果，不是目标。
@@ -24,6 +24,10 @@ revision_policy: "修订=Owner 批准+改原文+revision 链留痕；AI 不可�
 # {4:"族间连线粗细/透明度随权重区分，hover 节点高亮直连边+邻点、其余淡化"}
 # {5:"滚轮缩放（光标锚点）/拖动平移/双击空白重置三交互手感与 tdm 页一致"}
 # {6:"点族节点切到 L2 链层并隐藏 L1 画布；坐标刷新（generated_at 变化）后布局重算不残留旧缓存"}
+# rev5 (2026-09-10, Owner 认可一期后裁定开工): B3 链群小星云两级钻取——点族星飞入族内链群
+# 小星云（数据=G.data.chains 按 cluster 过滤，零后端改动），点链星→链层单链聚焦（cm:goto-chain
+# 与 nav 同款契约）；面包屑/Esc 返回；market 切档回 root 态（与 cluster 模块同口径）；族内无
+# 供应连线语义不造数据；空族诚实标注。新增 item13-16。B2 的 item6"点族进 L2"语义由 B3 承接。
 
 # check 取值：目检（截图人工/AI 视觉对） | 机断（DOM/接口断言）
 items:
@@ -39,6 +43,10 @@ items:
   - { id: 10, text: "标签投影层：每族一签随相机逐帧跟随，近侧亮远侧淡、视锥后隐藏；hover 星金亮+标签 cm-on", check: 目检 }
   - { id: 11, text: "入场动画 0.9s（缩放 0.2→1+微旋，星云成形）；隐藏页 rAF 循环停止零后台占用（home 纯视频先例）", check: 机断 }
   - { id: 12, text: "market 切档（cm:market）重拉数据重建 3D 场景，旧场景 geometry/material 全 dispose 无泄漏", check: 机断 }
+  - { id: 13, text: "root 态点族星→飞入该族链群小星云（debug().mode='family'，星数=该族链条数，面包屑'‹ 全景星系›族名（N 链）'）", check: 机断 }
+  - { id: 14, text: "family 态点链星→链层单链聚焦打开（cm:goto-chain 同款契约，crumb 含链名）；Esc/面包屑'‹ 全景星系'返回 root 态", check: 机断 }
+  - { id: 15, text: "family 态 market 切档回 root 态重拉数据；簇间往返（root→family→cluster→返回）相机视角各自记忆不互串", check: 机断 }
+  - { id: 16, text: "族内无供应连线（族间 links 是族级聚合，不造数据）；空族诚实标注'暂无链条数据'", check: 机断 }
 
 execution:
   trigger: "任何涉及本功能的 UI 改动 commit 前"
