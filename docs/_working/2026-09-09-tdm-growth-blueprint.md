@@ -12,7 +12,7 @@ ttl: task_bound
 ## §0 双轨关系与铁律（为什么不能边施工边改图）
 
 | 轨 | 干什么 | 动什么文件 |
-|---|---|---|
+|---|---|---|---|
 | 增长轨（本文档） | 画图：设计新节点→批量落图→验收冻结 | `config/trading_decision_map.yaml` + 本文档台账 |
 | 施工轨（清单文档） | 建模块：C/B 类落码 + module_ref 回填 | src/zephyr/ 域包 + tests/ + 回填地图引用 |
 
@@ -220,24 +220,26 @@ ttl: task_bound
 | G3 币圈四节点展开（增长批3 主作业，六向全走） | ①上游：**家底反转实证**——data_asset_registry 零 crypto 条目+table_registry 零 crypto 表+field_dictionary 零字段=DATA-GAP 实锤；但 provider 层有货：okx_provider/okx_swap_provider（MOD-MKT-DATA，planned）+sentiment_panel_provider（skeleton，免费源 api.alternative.me/fng 恐惧贪婪指数）+crypto_universe_selector（testing）；数据设计蓝图在=[95号 §一](../../02_enterprise_architecture/07_trading_decision_architecture/design_memos/95_crypto_system_blueprint.md) 四类（行情/合约/链上/宏观情绪），Phase 2 等外部条件（Glassnode/CryptoQuant 付费 key、币安 key）。②下游：**地图断链实证**——TDM-C 四节点仅 L1→L2→L3→L4 sequence 内链，L1 无入边（无上游喂总闸）、L4 无出边（产物无消费）；执行件 okx_broker（MOD-L06-001，testing）在盘未接。③算法：**内裁在先**=94 号 §7.6 四大耐用策略裁定→趋势跟踪系，网格（做市变种）/配对协整（Meridian 实证结构性不成立）已否定；因子三件已登记 FCT-CRYPTO-MOM-001/002+FCT-CRYPTO-VOL-001（registry 行在，无实现代码）；外证新鲜度补针（来源可溯+交叉验证双源过）：Grobys 2020 *Finance Research Letters*《Technical trading rules in the cryptocurrency market》MA 策略显著正超额（sciencedirect.com/science/article/pii/S1544612319308852）+山寨季业界标准双源=BlockchainCenter Altcoin Season Index（75% Top-50 跑赢 BTC/90 天滚动，blockchaincenter.net/altcoin-season-index/）+CoinMarketCap Top-100 变体（coinmarketcap.com/charts/altcoin-season-index/）——把 C-L1 空壳"ALT/BTC 上行=山寨季"落到可算定义。④后端：broker testing 最深→providers planned/skeleton→策略信号零代码；回测壳齐（UNI-CRYPTO-001+BMK-CRYPTO-001+CST-CRYPTO-001+RLM-CRYPTO-001/002/003 全登记）。⑤前端：95 号 §八 四面板（币圈盘面/持仓风控/班次复盘/情绪资金流）=需求登记单归前端会话，只登记不施工。⑥数据字段：零登记；口径可登记（OKX API 公开规格）但依赖表建设先行。**子骨架设计稿备妥未落图**：C-L1 大盘总闸（BTC 200 日线趋势门 Grobys 实证+山寨季 75%/90 天标准门）→C-L2 赛道（BTC.D+板块资金流排名）→C-L3 币对（市值+流动性+7 日动量，FCT-CRYPTO-MOM 族消费）→C-L4 时点（ATR 移动止损），逐环数据前提=Phase 2 数据层立项 | **闸 4 不过（DATA-GAP：数据层零在产——无表/无 DS/无字段，providers 未施工）**；闸 1/2/3 过（内裁 94/95 号+外证双源+A 股闸不适用币圈按 7×24/T+0 微观结构改造已在设计稿注明） | —（零地图写入，防挂而不用，同批2 L1-S1 DS-110 暂不挂先例） | 挂起（设计稿备妥；解锁=Owner 立项 95 号 Phase 2 数据层施工→DS/字段登记→下批落图） |
 | G2 资讯-产业链传导（批3 复核） | 会话注册表无接线轨活跃（st-perf-plan/solo-daily-fix/st-asset-v2 三者均非）；W3/W4 规格卡仍未交付；TDM-E-L2-09-1/09-2 仍 null 占位 | 交付依赖未满足 | — | 挂起（维持） |
 | L2-05 水温响应（批3 复核） | sentiment_cycle.py 头部 CONSUMERS 仍标"待 G07 相关性验证"、MATURITY=new 未变 | 闸 4 维持不过 | — | 挂起（维持，待 G07） |
-| X-R1 熔断族（批3 复核） | **晨审 st-tdm-review-20260911 未跑**：2026-09-11-tdm-morning-review-report.md 不存在+今日 git log 零 TDM 复核提交——D1-R21 格式冲突/D2-X-R1 三方法/D3-RL 执行/D4-DAL 补登/D5-前端两卡/D6-C13 立项六项裁定仍悬 | 发现维持挂晨审 | — | 挂起（晨审欠账提醒 Owner 派会话） |
+| X-R1 熔断族（批3 复核） | **晨审已完成**（夜班落笔后被 02:00-02:30 晨审追平）：报告 docs/_working/2026-09-11-tdm-morning-review-report.md 已落盘（commit 454c10ad）+ 六项裁定全落笔（D1 维持欠账/D2 批准方向/D3 挂起/D4 批准/D5 批准/D6 批准升批）——本行状态由晨审 2026-09-11 02:35 回写修正 | 发现维持挂晨审 | — | 挂起（晨审欠账提醒 Owner 派会话） |
 
 ### §7.1 八个树枝锚定红节点归属提案（④后端反查产出，供晨审 §6.C.2 审定；非本轨裁定）
 
-| 红节点 | 归属提案（候选实件） | 证据 |
+| 红节点 | 归属提案（候选实件） | 证据 | 晨审裁定（2026-09-11） |
 |---|---|---|
-| TDM-E-L3-07-1 打板选股链 | `src/zephyr/pf_core/strategies/daban_sleeve_strategy.py` | 实件在盘；G08 打板 sleeve 与 sentiment_cycle CONSUMERS 行互证 |
-| TDM-E-L3-07-3 其余 sleeve 选股链 | `pf_core/strategies/event_driven_sleeve_strategy.py` + `multifactor_sleeve_strategy.py` + `pf_core/topn_momentum_strategy.py` | 节点 decision_question 三问（eventdriven/topn/default）与三实件一一对应 |
-| TDM-E-L4-02 买入时序 | `src/zephyr/plan_engine/closing_session_decision.py` + `boundary_revision_engine.py` | 尾盘决策/边界修订实件在 plan_engine |
-| TDM-E-L4-08 突破失败降级 | `plan_engine/batch_boundary_runner.py` / `scenario_planner.py`（候选，需语义核对） | grep"突破"命中，归属强度中等 |
-| TDM-E-L3-10 可交易性预检 | `src/zephyr/data/instrument_master.py`（候选） | 停牌/权限主数据；Tradability 判定逻辑归属需晨审核 |
-| TDM-E-L3-08 候选池输出 | `pf_core/core/constraint_solver.py` + `exposure_manager.py`（候选） | 组合约束=谁进候选池的求解侧 |
-| TDM-E-L3-06 环境开关 | 反查无直接命中（查无留痕） | 首板筛选器/降仓规则无现成模块，或立项或挂缺口清单 |
-| TDM-E-L3-09 股票池分层维护 | 反查无直接命中（查无留痕） | Tier 升降级无现成模块，universe 域候选 |
+| TDM-E-L3-07-1 打板选股链 | `src/zephyr/pf_core/strategies/daban_sleeve_strategy.py` | 实件在盘；G08 打板 sleeve 与 sentiment_cycle CONSUMERS 行互证 | **采纳**（daban_sleeve MOD-L05-001 testing，语义对位） |
+| TDM-E-L3-07-3 其余 sleeve 选股链 | `pf_core/strategies/event_driven_sleeve_strategy.py` + `multifactor_sleeve_strategy.py` + `pf_core/topn_momentum_strategy.py` | 节点 decision_question 三问（eventdriven/topn/default）与三实件一一对应 | **采纳**（三件组合锚：event_driven+multifactor sleeve（testing）+topn_momentum（production），三问三件一一对应） |
+| TDM-E-L4-02 买入时序 | `src/zephyr/plan_engine/closing_session_decision.py` + `boundary_revision_engine.py` | 尾盘决策/边界修订实件在 plan_engine | **采纳+另指补强**（closing_session_decision MOD-PLAN-003 production 为决策侧锚；另指 batched_position_builder 为执行侧锚，双锚并挂） |
+| TDM-E-L4-08 突破失败降级 | `plan_engine/batch_boundary_runner.py` / `scenario_planner.py`（候选，需语义核对） | grep"突破"命中，归属强度中等 | **驳回提案，另指**（batch_boundary_runner 仅字段透传不对位；正锚=sell_decision/breakout_failure_detector MOD-SELL-003 production+pf_alloc detect_breakout_failure） |
+| TDM-E-L3-10 可交易性预检 | `src/zephyr/data/instrument_master.py`（候选） | 停牌/权限主数据；Tradability 判定逻辑归属需晨审核 | **部分采纳**（instrument_master 承载停牌/昨收/申报单位三查；价格笼子/权限/资金一手三查无专件，维持缺口登记） |
+| TDM-E-L3-08 候选池输出 | `pf_core/core/constraint_solver.py` + `exposure_manager.py`（候选） | 组合约束=谁进候选池的求解侧 | **驳回（语义不对位）**（constraint_solver=组合权重求解、exposure_manager=敞口管理，均为池定稿后组合层；节点维持 aggregation 结构位预期红） |
+| TDM-E-L3-06 环境开关 | 反查无直接命中（查无留痕） | 首板筛选器/降仓规则无现成模块，或立项或挂缺口清单 | **确认查无，立 C 类缺口**（是否立项归 Owner） |
+| TDM-E-L3-09 股票池分层维护 | 反查无直接命中（查无留痕） | Tier 升降级无现成模块，universe 域候选 | **确认查无，立 C 类缺口**（universe 域候选） |
 
 ### §7.2 批3 结论
 
 - 地图零写入，138/194 维持；四关验收不适用（无地图变更）；本批提交=本文档台账+handoff（.runtime 不入库）。
 - **交接要点**：①晨审欠账（六项裁定）②G3 解锁条件=95 号 Phase 2 数据层立项 ③8 红节点提案表待晨审 C.2 ④R21 冲突未解前，币圈/新增节点落图继续走 module_ref-only warn 路线。
+
+**晨审销项（st-tdm-review-20260911，2026-09-11 02:35 批3 增量）**：①晨审欠账已清——六裁定全落笔（见 §6 晨审报告 454c10ad+本轮 §7.1 八锚裁定）②G3 解锁条件确认留痕（CAND-CRYPTO-010 张力定论=生命周期 promoted 与成熟度 skeleton 两层口径并存非矛盾，24 测试复跑 green 实证；等 Owner 立项 95 号 Phase 2）③8 红节点提案已逐件裁定：采纳 3+采纳另指 1+部分采纳 1+驳回另指 1+驳回维持结构位 1+确认缺口 2（详见晨审报告 §7.1）④module_ref-only warn 路线与 D1 裁定一致。
 
 **纪律**：真源 YAML 只在批次边界动；禁越级立节点（父未定不立子）；新节点必须有数据来源或标 [ASSUMPTION]；每批台账+地图同 commit；本文档 ttl: task_bound，增长收官归档。

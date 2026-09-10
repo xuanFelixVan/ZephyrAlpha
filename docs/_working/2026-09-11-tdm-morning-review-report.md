@@ -157,3 +157,47 @@ validate R 系 errors=0（含边悬空引用检查）；141 warn 全量清点=R1
 - 台账回写：增长蓝图 §5 状态列 + 施工清单 C13/C14 状态 + §6 裁定销项（同 commit）
 - 交接包：`.runtime/handoffs/handoff_st-tdm-review-20260911.json`
 - **终止判据核对**：A 十模块×六点全有结论 ✅ + B 四项全过（1 项带他域 fail 定性）✅ + C 三项全过（断链全有归属）✅ + D 六项全裁定 ✅——**晨审使命完成：检查完毕，链路全通。**
+
+
+## 七、批 3 增量验收（2026-09-11 02:35 移交，st-tdm-review-20260911 续）
+
+> 夜班批 3（commit 2dfff1866a，仅蓝图文档 32 行、地图零写入、138/194 冻结维持）并入晨审范围后的增量裁定。
+
+### 7.1 八个树枝锚定红节点归属裁定（C.2 增量，逐件裁定夜班 §7.1 提案）
+
+晨审独立验证方式：11 个候选实件逐一在盘核对（BLUEPRINT/MATURITY 头部实读）+ 语义对位细核（L4-08/L3-08/L3-10 重点）。
+
+| 红节点 | 夜班提案 | 晨审裁定 | 裁定理由（实件证据） |
+|---|---|---|---|
+| TDM-E-L3-07-1 打板选股链 | daban_sleeve_strategy.py | **采纳** | MOD-L05-001 testing；打板 sleeve 专用策略件，与节点"打板 5 步漏斗"语义对位 |
+| TDM-E-L3-07-3 其余 sleeve 链 | event_driven + multifactor sleeve + topn_momentum | **采纳**（三件组合锚） | event_driven/multifactor sleeve testing + topn_momentum production；节点三问（eventdriven/topn/default）与三实件一一对应 |
+| TDM-E-L4-02 买入时序 | closing_session_decision + boundary_revision_engine | **采纳**（另指补强） | 两件均 production（MOD-PLAN-003/006）；**另指**：尾盘集中窗口 14:50-14:57 的执行侧承载在 pf_alloc/batched_position_builder.py（上轮晨审已认定），建议正式锚定时以 closing_session_decision（决策侧）+batched_position_builder（执行侧）双锚 |
+| TDM-E-L4-08 突破失败降级 | batch_boundary_runner / scenario_planner（自标强度中等） | **驳回夜班提案，另指** | batch_boundary_runner 仅 2 处 breakout_confirm 字段透传（testing）、scenario_planner 无突破失败判定——语义不对位；**另指**：sell_decision/core/breakout_failure_detector.py（MOD-SELL-003 **production**，K≥3 强制清仓 INVARIANTS 实读）+ pf_alloc/batch_position_builder.detect_breakout_failure（41 号 §3.3）为正锚 |
+| TDM-E-L3-10 可交易性预检 | instrument_master.py（候选待核） | **部分采纳** | instrument_master（testing）承载停牌标志/昨收/最小申报单位=五查之二三；价格笼子/科创板权限/资金一手三查无专件——**采纳为部分锚**，余下三查维持缺口登记（可交易性预检专用件属 C 类候选，挂下批评估） |
+| TDM-E-L3-08 候选池输出 | constraint_solver + exposure_manager | **驳回（语义不对位）** | constraint_solver（MOD-PF-006 production）语义=组合权重求解（候选权重输入已给定），exposure_manager（design）=敞口管理——两者都是"候选池定稿之后"的组合层，不承载"双池合流+顺位+否决清单汇总"的候选池输出语义；节点为 aggregation 结构位，**维持结构位预期红**，汇总件归属待下批再议 |
+| TDM-E-L3-06 环境开关 | 查无留痕 | **确认查无，立缺口** | 晨审复核认同：STRATEGY_DEPLOYMENT_MATRIX（sentiment_cycle）仅部分承载且 MATURITY=new 待 G07；"两市成交<8000 亿首板链停"类环境开关无专件——**登记为 C 类候选缺口**，是否立项归 Owner |
+| TDM-E-L3-09 股票池分层维护 | 查无留痕 | **确认查无，立缺口** | Tier 升降级（2 日升/5 日降/10 日陈旧剔除）无现成模块；universe 域候选——**登记为 C 类候选缺口** |
+
+**裁定计数：采纳 3（含 1 组合锚）+ 采纳但另指补强 1 + 部分采纳 1 + 驳回另指 1 + 驳回维持结构位 1 + 确认缺口 2。**
+
+### 7.2 CAND-CRYPTO-010 张力核对（夜班移交点 5）
+
+**定论：两层口径都真、非矛盾，无需勘误。**
+
+| 层 | 口径 | 实态 |
+|---|---|---|
+| candidate_module_registry | `status: promoted`（CAND 候选**生命周期**态：candidate→promoted=已晋升为真实文件） | 证据链完整：2026-08-28 骨架落地 + promoted_to=src/zephyr/data/implementations/sentiment_panel_provider.py + 24 测试 green（**晨审复跑实证 24 passed**） |
+| 代码头 | `MATURITY: skeleton`（模块**成熟度**态：骨架阶段） | 免费源 alternative.me 恐贪指数实采 + BTC 占比 CMC 实采；ETF/USDT 溢价=显式 error 骨架不进决策硬链（INVARIANTS 明文） |
+
+95 号蓝图 L19/328 "CAND-CRYPTO-010 翻 promoted" 指生命周期事件，与代码 skeleton 成熟度并存不冲突。**留痕归档，不改代码不改注册表。**
+
+### 7.3 批 3 其余移交点核销
+
+| 移交点 | 晨审处理 |
+|---|---|
+| G1 三零件复核 | 已按告知跳过重查（夜班已复核 MOD-SIG-037/PLAN-016/PLAN-010 无退化）；A.10 行在上轮 §一 已完成 |
+| G2/L2-05 挂起证据刷新 | 认同采信，不重查 |
+| G3 币圈六向 | 无需裁定落图；**报告中带一笔：解锁条件已明确=Owner 立项 95 号 Phase 2 数据层施工（付费 key+表建设+DS/字段登记），子骨架设计稿备妥** |
+| §7 X-R1 行"晨审未跑" | **事实已过期**：晨审已于 02:00-02:30 完成并提交（454c10ad，六裁定全落笔）——蓝图 §7 该行状态列由晨审本轮回写修正 |
+| R21 未解前新增节点走 module_ref-only warn | 认同（与 D1 裁定一致，有先例） |
+
