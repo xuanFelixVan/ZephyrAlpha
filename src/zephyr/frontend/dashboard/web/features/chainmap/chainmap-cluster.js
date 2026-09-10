@@ -20,7 +20,8 @@
    * （行1=环节名 600 加粗、行2=职能/股权徽章+公司数灰字），列头加大带底线+环节计数，
    * 连线沿用 TDM 同款贝塞尔灰蓝（#2c3a52）。列序=上中下游左→右不变。 */
   var C = { cid: null, name: '', data: null, busy: false, view: { z: 1, x: 0, y: 0 },
-            pos: {}, focusChain: null, focusChainName: null, focusNode: null, market: 'all', cat: null };
+            pos: {}, focusChain: null, focusChainName: null, focusNode: null, market: 'all', cat: null,
+            focusOff: false, autoFocused: false };
   var elByNode = {};   /* node_id → 环节卡元素（聚焦高亮） */
   /* 股权 relation 中译（词表真源=ig_equity_edge DDL 封闭枚举，与 chainmap-company-card EQ_REL_ZH 同源） */
   var EQ_REL_ZH = { invests_in: '对外投资', subsidiary: '子公司', shareholding: '参股',
@@ -99,20 +100,14 @@
     if (back) back.addEventListener('click', function () { ZK.bus.emit('cm:view', { view: 'galaxy' }); });
   }
 
-  /* 列式确定性布局：view= {chains, edges, cols, worldW, worldH, padTop}。
-   * 整族模式：链=chip 分组（公司数降序），链跨列时每列各挂 chip（组头随列走）；
-   * 单链模式（single）：免重复 chip，仅链标题一枚，环节按列堆叠。 */
+  /* 列式确定性布局（B4r3 起恒整族全量绘制）：view= {chains, edges, cols, worldW, worldH, padTop}。
+   * 链=chip 分组（公司数降序），链跨列时每列各挂 chip（组头随列走）；聚焦=压暗他链不删卡。 */
   function layout(view) {
     var colSet = {};
     view.chains.forEach(function (ch) {
       ch.nodes.forEach(function (n) { if (!colSet[n.col]) colSet[n.col] = true; });
     });
     var cols = COLS.filter(function (c) { return colSet[c]; });
-    if (view.single) {   /* 单链：仅保留该链实际用到的列 */
-      var used = {};
-      view.chains[0].nodes.forEach(function (n) { used[n.col] = true; });
-      cols = COLS.filter(function (c) { return used[c]; });
-    }
     if (!cols.length) cols = ['通用'];
     var y0 = view.padTop || PADTOP;
     var nodePos = {}, groups = [];
@@ -125,8 +120,8 @@
       });
       list.forEach(function (ch) {
         var ns = ch.nodes.filter(function (n) { return n.col === col; });
-        groups.push({ chain: ch, col: col, x: x, y: y, nodes: ns, chip: !view.single });
-        y += (view.single ? 0 : CHIPH + 9);
+        groups.push({ chain: ch, col: col, x: x, y: y, nodes: ns, chip: true });
+        y += CHIPH + 9;
         ns.forEach(function (n) {
           nodePos[n.node_id] = { x: x, y: y, col: col };
           y += NODEH + 8;
@@ -148,10 +143,10 @@
     if (!d) return;
     clearRail();
     if (d.chains.length > RAIL_MIN) renderFocused(d);
-    else drawView(d, false);
+    else drawView(d);
   }
 
-  function drawView(view, single) {
+  function drawView(view) {
     var world = worldEl(), svg = document.getElementById('cm-wires-cluster'), host = document.getElementById('cm-nodes-cluster');
     var empty = document.getElementById('cm-empty-cluster');
     if (!world || !svg || !host) return;
@@ -159,16 +154,15 @@
     svg.setAttribute('width', view.worldW); svg.setAttribute('height', view.worldH);
     world.style.width = view.worldW + 'px'; world.style.height = view.worldH + 'px';
     host.innerHTML = ''; svg.innerHTML = '';
-    if (!view.chains.length || (single && !view.chains[0].nodes.length)) {
+    if (!view.chains.length) {
       if (empty) { empty.style.display = 'flex'; empty.textContent = '该簇/链无环节数据'; }
       return;
     }
     if (empty) empty.style.display = 'none';
-    if (single) view.padTop = PADTOP + 36;   /* 单链模式：链标题 chip 占位，环节下移防压列头（列头 48） */
     var groups = layout(view);
     var frag = document.createDocumentFragment();
-    /* 列头（单链模式给链标题 chip 让位下移）；B4：列头带环节计数（TDM 列头质感） */
-    var colHeadY = single ? 52 : 14;
+    /* 列头带环节计数（TDM 列头质感） */
+    var colHeadY = 14;
     var colCount = {};
     groups.forEach(function (g) { g.nodes.forEach(function (n) { colCount[g.col] = (colCount[g.col] || 0) + 1; }); });
     view.cols.forEach(function (col, ci) {
@@ -178,15 +172,6 @@
       h.innerHTML = col + ' <span class="cc">' + (colCount[col] || 0) + '</span>';
       frag.appendChild(h);
     });
-    if (single) {   /* 链标题一枚（免重复链头） */
-      var ch = view.chains[0];
-      var t = document.createElement('div');
-      t.className = 'cm-chip';
-      t.style.left = PADX + 'px'; t.style.top = '10px'; t.style.width = NODEW + 'px';
-      t.textContent = ch.name + ' · ' + ch.n_companies;
-      t.title = ch.name + '（' + ch.nodes.length + ' 环节 · ' + ch.n_companies + ' 公司）';
-      frag.appendChild(t);
-    }
     groups.forEach(function (g) {
       if (g.chip) {
         var chip = document.createElement('div');
@@ -194,7 +179,10 @@
         chip.style.left = g.x + 'px'; chip.style.top = g.y + 'px'; chip.style.width = NODEW + 'px';
         chip.textContent = g.chain.name + ' · ' + g.chain.n_companies;
         chip.title = g.chain.name + '（' + g.chain.nodes.length + ' 环节 · ' + g.chain.n_companies + ' 公司）';
-        chip.addEventListener('click', function () { focusChain(g.chain.chain_id, g.chain.name); });
+        chip.addEventListener('click', function () {   /* B4r3：链 chip=聚焦开关（再点取消） */
+          if (C.focusChain === g.chain.chain_id) unfocusFocus();
+          else focusChain(g.chain.chain_id, g.chain.name);
+        });
         chip.dataset.chain = g.chain.chain_id;
         frag.appendChild(chip);
       }
@@ -249,35 +237,52 @@
     fitView();
   }
 
-  /* 默认聚焦链=环节数最多（并列取公司数最大）。Owner 2026-09-10 实测截图反馈：原按公司数选
-   * 默认落单节点聚合链（"消费电子行业"88 公司 1 环节），甬道只剩一张卡画面空。显式选链
-   * （rail/chip/cm:goto-chain 设 C.focusChain）永远优先，本函数只兜无显式焦点的首开。 */
+  /* B4r3（Owner 2026-09-10 截图反馈"点开大星云呈现效果就是这样"——聚焦单链画面空）：
+   * 照抄 TDM 全景口径——整族全量绘制（所有链的环节卡+连线同画布），聚焦=压暗他链不删卡
+   * （TDM 血统聚焦同构）；选单轨/链 chip=聚焦开关（点聚焦、再点/Esc 取消）；首开自动聚焦
+   * 活跃环节最丰富的链。默认聚焦规则见 defaultFocus。 */
   function defaultFocus(d) {
+    function score(c) {   /* 活跃环节（有公司落位）优先→公司数→总环节；墓碑链（已并入/零落位）自然沉底 */
+      var act = 0;
+      c.nodes.forEach(function (n) { if (n.n_companies > 0) act++; });
+      return [act, c.n_companies, c.n_nodes];
+    }
     return d.chains.slice().sort(function (a, b) {
-      return (b.n_nodes - a.n_nodes) || (b.n_companies - a.n_companies);
+      var sa = score(a), sb = score(b);
+      for (var i = 0; i < 3; i++) { if (sb[i] !== sa[i]) return sb[i] - sa[i]; }
+      return 0;
     })[0];
   }
 
-  /* 聚焦模式（>RAIL_MIN 链的大簇）：单链列式+左侧链选轨 */
-  function renderFocused(d) {
-    var ch = d.chains.filter(function (c) { return c.chain_id === C.focusChain; })[0] || defaultFocus(d);
-    C.focusChain = ch.chain_id;
-    C.focusChainName = ch.name;
-    var idset = {};
-    ch.nodes.forEach(function (n) { idset[n.node_id] = true; });
-    var view = { chains: [ch], single: true, worldW: 0, worldH: 0, cols: [],
-                 edges: d.edges.filter(function (e) { return idset[e[0]] && idset[e[1]]; }) };
-    drawView(view, true);
-    buildRail(d, ch.chain_id);
-    fitView();
-    if (C.focusNode) centerOn(C.focusNode);
-    setCrumb(ch.name);
-    ZK.bus.emit('cm:chain-active', { chain_id: ch.chain_id });
+  function render() {
+    var d = C.data;
+    if (!d) return;
+    clearRail();
+    drawView(d);
+    if (d.chains.length > RAIL_MIN) {
+      if (!C.focusChain && !C.focusOff) {
+        var def = defaultFocus(d);
+        C.focusChain = def.chain_id;
+        C.focusChainName = def.name;
+        C.autoFocused = true;
+        C.needCenter = true;
+      }
+      buildRail(d, C.focusChain);
+      applyFocus();
+    }
     var meta = document.getElementById('cm-meta');
     if (meta) {
-      meta.textContent = C.name + ' › ' + ch.name + ' · ' + ch.nodes.length + ' 环节 · 公司位 ' + ch.n_companies +
-        ' · 结构边 ' + view.edges.length + ' · 换链用左侧选单 · 真源 ig_*（PG 只读）';
+      var nNodes = d.chains.reduce(function (s, c) { return s + c.nodes.length; }, 0);
+      meta.textContent = C.name + ' · ' + d.chains.length + ' 链 ' + nNodes + ' 环节全量绘制 · 真源 ig_*（PG 只读）' +
+        (C.focusChain ? ' · 聚焦「' + (C.focusChainName || '') + '」（点选单轨/链名取消）' : ' · 点链名聚焦');
       meta.classList.remove('cm-bad');
+    }
+    setCrumb(C.focusChainName);
+    fitView();
+    if (C.needCenter) {   /* 首屏镜头落在聚焦链上（z≥0.9 可读），全族压暗留视野，滚轮缩小看全景 */
+      C.needCenter = false;
+      var fch = d.chains.filter(function (c) { return c.chain_id === C.focusChain; })[0];
+      if (fch && fch.nodes.length) centerOn(fch.nodes[0].node_id);   /* 传 node_id（centerOn 内部自查 C.pos） */
     }
   }
 
@@ -290,15 +295,15 @@
     rail.id = 'cm-rail';
     var head = document.createElement('div');
     head.className = 'cm-rail-h';
-    head.textContent = '链选单 · ' + d.chains.length;
+    head.textContent = '链选单 · ' + d.chains.length + '（点聚焦/取消）';
     rail.appendChild(head);
     d.chains.forEach(function (ch) {
       var r = document.createElement('div');
       r.className = 'cm-rail-i' + (ch.chain_id === activeId ? ' act' : '');
       r.innerHTML = '<span class="nm" title="' + ch.name + '">' + ch.name + '</span><span class="ct">' + ch.n_companies + '</span>';
       r.addEventListener('click', function () {
-        C.focusChain = ch.chain_id; C.focusChainName = ch.name; C.focusNode = null;
-        renderFocused(C.data);
+        if (C.focusChain === ch.chain_id) unfocusFocus();   /* B4r3：再点=取消聚焦（全图恢复全亮） */
+        else focusChain(ch.chain_id, ch.name);
       });
       rail.appendChild(r);
     });
@@ -313,18 +318,30 @@
   function focusChain(chainId, chainName) {
     C.focusChain = chainId;
     C.focusChainName = chainName || null;
-    if (C.data && C.data.chains.length > RAIL_MIN) renderFocused(C.data);
-    else { applyFocus(); setCrumb(C.focusChainName); }
+    C.focusOff = false;
+    C.autoFocused = false;
+    if (C.data) render();   /* B4r3：整族重绘（rail act/图例态随聚焦刷新），压暗在 applyFocus */
+    applyFocus();
+    if (C.focusNode) centerOn(C.focusNode);
     ZK.bus.emit('cm:chain-active', { chain_id: chainId });
+  }
+
+  function unfocusFocus() {
+    C.focusChain = null;
+    C.focusChainName = null;
+    C.focusNode = null;
+    C.focusOff = true;   /* 用户显式取消——本次簇视图内不再自动聚焦 */
+    C.autoFocused = false;
+    render();
   }
 
   function applyFocus() {
     var host = document.getElementById('cm-nodes-cluster');
     if (!host) return;
-    var multi = C.data && C.data.chains.length <= RAIL_MIN;   /* 整族模式才淡化他链；聚焦模式全体同链 */
+    /* B4r3：聚焦=压暗他链不删卡（TDM 血统聚焦同构），整族全量绘制下全尺寸可用 */
     Array.prototype.forEach.call(host.children, function (el) {
       if (!el.dataset.chain) return;
-      el.classList.toggle('dimmed', multi && !!C.focusChain && el.dataset.chain !== C.focusChain);
+      el.classList.toggle('dimmed', !!C.focusChain && el.dataset.chain !== C.focusChain);
       el.classList.remove('hit');
     });
     if (C.focusNode && byIdEl(C.focusNode)) byIdEl(C.focusNode).classList.add('hit');
@@ -539,7 +556,7 @@
   ZK.bus.on('cm:open-cluster', function (d) {
     if (!d || !d.cid) return;
     var mkt = d.market || C.market || 'all';
-    C.focusChain = null; C.focusNode = null; C.focusChainName = null;
+    C.focusChain = null; C.focusNode = null; C.focusChainName = null; C.focusOff = false; C.autoFocused = false;
     C.name = d.name || (nameMaps[mkt] && nameMaps[mkt][d.cid]) || C.name;
     show(true);
     if (C.cid === d.cid && C.market === mkt && C.data) { render(); return; }
@@ -582,5 +599,9 @@
   });
 
   if (document.getElementById('p-chainmap')) bindView();
-  document.addEventListener('keydown', function (e) { if (e.key === 'Escape') hideEqOverlay(true); });
+  document.addEventListener('keydown', function (e) {
+    if (e.key !== 'Escape') return;
+    if (C.focusChain) { unfocusFocus(); return; }   /* B4r3：Esc 先取消链聚焦，再关浮层 */
+    hideEqOverlay(true);
+  });
 })();

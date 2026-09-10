@@ -8,8 +8,13 @@ feature_id: F-CHAINMAP-CLUSTER
 feature_name: 产业链层（L2 上中下游列式+环节公司面板）
 frozen_at: 2026-09-08
 frozen_by: ZephyrAlpha-Owner
-revision: 4
+revision: 5
 revision_policy: "修订=Owner 批准+改原文+revision 链留痕；AI 不可自改已冻结条项"
+# rev5 (2026-09-10, Owner 截图再反馈仍空→数据现实=该族所有链皆稀薄,选链救不了画面):
+# 照抄 TDM 全景口径——整族全量绘制（所有链环节卡+跨列边同画布，不再 >RAIL_MIN 切单链视图，
+# 单链模式退役）；聚焦=压暗他链不删卡（TDM 血统聚焦同构）；选单轨/链 chip=聚焦开关
+# （点聚焦/再点取消/Esc 取消）；首开自动聚焦=活跃环节（有公司落位）最多→公司数→总环节，
+# 墓碑链（已并入/零落位）自然沉底（rev4 的纯环节数规则作废，item8 同步 superseded）。
 # rev4 (2026-09-10, Owner 实测截图反馈默认聚焦画面空): 聚焦模式默认链改=环节数最多
 # （并列取公司数最大）——原按公司数最大选链会落单节点聚合链（"消费电子行业"88 公司
 # 1 环节）甬道只剩一卡；显式选链（rail/chip/cm:goto-chain）仍最优先。新增 item8。
@@ -28,7 +33,9 @@ items:
   - { id: 5, text: "搜索落位（cm:goto-chain 带 focus_node）→ 目标环节居中+金色描边高亮", check: 目检 }
   - { id: 6, text: "滚轮缩放/拖动平移/双击重置可用；簇加载失败显示空态文案（零演示数据）", check: 目检 }
   - { id: 7, text: "双行卡机断：.cm-n 高≈48px 含 .nm（600 加粗）+.sub（职能灰字/股权徽章/公司数）两行；蓝卡底色 #0f2740；0 公司环节挂 .empty0 棕虚线；列头 .cm-col-h=TDM tag 板含 .cc 计数；图例条 #cm-legend-cluster 存在", check: 机断 }
-  - { id: 8, text: "聚焦模式首开默认链=环节数最多（并列取公司数最大，机断：act 选单项与 API 按此规则算出的链一致）；显式选链（rail/chip/goto-chain）优先于默认", check: 机断 }
+  - { id: 8, text: "聚焦模式首开默认链=环节数最多（并列取公司数最大，机断：act 选单项与 API 按此规则算出的链一致）；显式选链（rail/chip/goto-chain）优先于默认", check: 机断, superseded: rev5（改活跃环节优先） }
+  - { id: 9, text: "整族全量绘制机断：任一族打开后画布环节卡数=该族全链环节总数（非单链子集）；选单轨仅 >RAIL_MIN 链的族出现", check: 机断 }
+  - { id: 10, text: "聚焦=压暗不删卡：点选单轨/链 chip 聚焦他链 .dimmed、再点同项/Esc 取消全图恢复全亮；首开自动聚焦=活跃环节数最多链（并列公司数→总环节）", check: 机断 }
 
 execution:
   trigger: "任何涉及本功能的 UI 改动 commit 前"
