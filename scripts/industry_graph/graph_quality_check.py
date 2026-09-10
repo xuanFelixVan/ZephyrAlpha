@@ -4,7 +4,7 @@
 # [CONSUMERS] SOP industry_chain_data_audit_sop §11 质量验收循环(引擎判定权真源); 长城任务退出判定(连续两轮零违规)
 # [STARTUP] manual
 # [MATURITY] production
-# [INVARIANTS] 只读引擎: 全部 SELECT 零写入; 二十一项合格线=graph_quality_standard.md §2~§8 一一对应(S1~S21; S21~S23 为进度指标(样板链验收前 advisory 不计违规不阻断), S21=2026-09-09 增流程连通性,首轮 340/461 登记为链骨架建设缺口); S21=2026-09-09 增,流程连通性,首轮 340/461 违规登记为链骨架建设缺口不阻塞收口); 豁免清单 quality_exemptions.yaml(未登记违规不扣除); 成对冗余豁免在 S16 SQL 内判(supplies_to+customer_of 合法); S20 两段式判定(SQL 粗筛+原文正则核据,2026-09-09 Owner 签名); 输出 JSON(.runtime)+MD 报告, 退出码 0=全绿 1=有违规 2=环境故障
+# [INVARIANTS] 只读引擎: 全部 SELECT 零写入; 合格线=graph_quality_standard.md §2~§8 一一对应(S1~S20 硬线+S21~S24 进度指标(advisory 不计违规不阻断); S21=流程连通性(2026-09-10 口径修正: 墓碑节点过滤+锚点链豁免,与 S8 同口径;修正前 336 advisory 中 93.8% 为墓碑伪断链); S24=僵尸链检测(2026-09-10 增,活跃链去墓碑实质节点<=1 或全等链名,清单=Owner 废弃排序底稿)); 豁免清单 quality_exemptions.yaml(未登记违规不扣除); 成对冗余豁免在 S16 SQL 内判(supplies_to+customer_of 合法); S20 两段式判定(SQL 粗筛+原文正则核据,2026-09-09 Owner 签名); 输出 JSON(.runtime)+MD 报告, 退出码 0=全绿 1=有违规 2=环境故障
 # [MODIFY-GUARD] graph_quality_standard.md(标准真源,SQL 须与其同步改)
 # [STABILITY] evolving
 # [SAFETY] L
@@ -294,23 +294,25 @@ def _check_s19(cur, alive_names: set[str] | None) -> dict:
 
 
 def _s21_load_graph(cur) -> tuple[dict, dict, dict, dict]:
-    """S21 专用三查：活跃链集/节点归属与 tier/链内边集（只读 SELECT，无法机械化集中）。"""
+    """S21/S24 专用三查：活跃链集/节点归属与 tier/链内边集（只读 SELECT，无法机械化集中）。"""
     cur.execute("SELECT chain_id, name FROM ig_chain WHERE status = 'active'")  # noqa: bare-sql  S21 专用只读三连查，引擎既有风格
     chains = {r[0]: r[1] for r in cur.fetchall()}
-    cur.execute("SELECT node_id, chain_id, tier FROM ig_node")  # noqa: bare-sql  S21 专用只读三连查，引擎既有风格
+    cur.execute("SELECT node_id, chain_id, tier, name FROM ig_node")  # noqa: bare-sql  S21 专用只读三连查，引擎既有风格
     node_chain: dict[str, str] = {}
     node_tier: dict[str, str] = {}
-    for nid, cid, tier in cur.fetchall():
+    node_name: dict[str, str] = {}
+    for nid, cid, tier, name in cur.fetchall():
         if cid in chains:
             node_chain[nid] = cid
             node_tier[nid] = tier
+            node_name[nid] = name
     cur.execute("SELECT from_node, to_node, edge_type FROM ig_edge")  # noqa: bare-sql  S21 专用只读三连查，引擎既有风格
     chain_edges: dict[str, list[tuple[str, str, str]]] = {}
     for u, v, et in cur.fetchall():
         cu, cv = node_chain.get(u), node_chain.get(v)
         if cu is not None and cu == cv:
             chain_edges.setdefault(cu, []).append((u, v, et))
-    return chains, node_chain, node_tier, chain_edges
+    return chains, node_chain, node_tier, node_name, chain_edges
 
 
 def _s21_reachable(starts, targets, adj) -> bool:
@@ -328,17 +330,33 @@ def _s21_reachable(starts, targets, adj) -> bool:
     return False
 
 
+def _tombstone(name: str) -> bool:
+    """墓碑节点判定（与 S8 '（已并入' 豁免同口径）：历史合并快照不参与结构审查。"""
+    return "（已并入" in name or name.startswith("已并入")
+
+
 def _check_s21(cur) -> dict:
     """S21 流程连通性（2026-09-09 增，Owner 口径：structure 流程边与 supply 供应边均计入连通路径）。
-    每条活跃链（节点数>=3）：上游 tier 节点 → 下游 tier 节点存在连通路径则合规，断链=违规。
-    违规描述附 structure 边占比（附带指标，不判违规）。"""
-    chains, node_chain, node_tier, chain_edges = _s21_load_graph(cur)
+    每条活跃链（实质节点数>=3）：上游 tier 节点 → 下游 tier 节点存在连通路径则合规，断链=违规。
+    违规描述附 structure 边占比（附带指标，不判违规）。
+
+    口径修正（2026-09-10，与 S8/S6 既有裁定同源）：墓碑节点（'（已并入'标记=历史合并快照）
+    不计入节点数与起讫集；去墓碑后实质节点<3 的链、实质节点名全等于链名(±'行业'/'行业聚合')
+    的锚点/单环节链跳过——这类链由 S24 僵尸链检测收口，不在 S21 制造伪断链。
+    依据：合并治理墓碑残留曾占 advisory 336 的 93.8%（315/336），伪断链淹没真缺口。
+    """
+    chains, node_chain, node_tier, node_name, chain_edges = _s21_load_graph(cur)
     violations: list[tuple[str, str]] = []
     checked = 0
     for cid in sorted(chains):
         nodes = [n for n, c in node_chain.items() if c == cid]
-        if len(nodes) < 3:
-            continue
+        alive = [n for n in nodes if not _tombstone(node_name.get(n, ""))]
+        if len(alive) < 3:
+            continue   # 基数=实质节点≥3（原 1.4.0 口径节点≥3 的墓碑过滤版）；僵尸/单环节链 → S24 收口
+        cname = chains[cid]
+        alive_names = {node_name.get(n, "") for n in alive}
+        if alive_names <= {cname, cname + "行业", "行业聚合"}:
+            continue   # 行业锚点链/链名单环节垃圾 → S24 收口
         checked += 1
         edges = chain_edges.get(cid, [])
         n_st = sum(1 for _, _, et in edges if et == 'structure')
@@ -348,11 +366,11 @@ def _check_s21(cur) -> dict:
         for u, v, _et in edges:
             adj[u].append(v)
             adj[v].append(u)
-        starts = [n for n in nodes if node_tier.get(n) == '上游']
-        targets = {n for n in nodes if node_tier.get(n) == '下游'}
+        starts = [n for n in alive if node_tier.get(n) == '上游']
+        targets = {n for n in alive if node_tier.get(n) == '下游'}
         if not _s21_reachable(starts, targets, adj):
             violations.append((cid, '%s nodes=%d structure=%d supply=%d 结构占比=%.2f' % (
-                chains[cid], len(nodes), n_st, n_sp, ratio)))
+                cname, len(alive), n_st, n_sp, ratio)))
     return {
         'id': 'S21',
         'title': '流程连通性(活跃链上游→下游 structure+supply 连通路径)',
@@ -360,6 +378,33 @@ def _check_s21(cur) -> dict:
         'degraded': False,
         'advisory': True,  # §8 先进度指标后硬闸：样板链验收前只报告不计违规（Owner 2026-09-09 口径）
         'checked_chains': checked,
+    }
+
+
+def _check_s24(cur) -> dict:
+    """S24 僵尸链检测（2026-09-10 增，advisory）：活跃链去墓碑后实质节点<=1，
+    或实质节点名全等于链名(±'行业'/'行业聚合')=链骨架已被合并抽走/抽取垃圾——
+    该链应走 deprecated+merged_into 收口（SOP §5 硬校验 10 唯一合法通道）。
+    废弃涉及存量行修改 → Owner 排序拍板，本项只出清单（advisory 不计违规）。
+    清单即废弃排序底稿：n_alive 越小、落位越少优先废弃。"""
+    chains, node_chain, _node_tier, node_name, _chain_edges = _s21_load_graph(cur)
+    violations: list[tuple[str, str]] = []
+    for cid in sorted(chains):
+        nodes = [n for n, c in node_chain.items() if c == cid]
+        if len(nodes) < 3:
+            continue   # 少于3节点的链不构成僵尸判定基数（S21 同口径）
+        cname = chains[cid]
+        alive = [n for n in nodes if not _tombstone(node_name.get(n, ""))]
+        alive_names = {node_name.get(n, "") for n in alive}
+        if len(alive) <= 1 or alive_names <= {cname, cname + "行业", "行业聚合"}:
+            violations.append((cid, '%s 实质节点=%d/%d' % (cname, len(alive), len(nodes))))
+    return {
+        'id': 'S24',
+        'title': '僵尸链(活跃链去墓碑后实质节点<=1或全等链名,待Owner排序废弃)',
+        'violations': violations,
+        'degraded': False,
+        'advisory': True,  # 废弃=存量行修改须 Owner 拍板（SOP 铁律 5），清单不阻断
+        'checked_chains': len(chains),
     }
 
 
@@ -416,6 +461,10 @@ def run_check() -> dict:
     exempt21 = set(exemptions.get("S21", []))
     r21["violations"] = [(pk, d) for pk, d in r21["violations"] if pk not in exempt21]
     results.append(r21)
+    r24 = _check_s24(cur)
+    exempt24 = set(exemptions.get("S24", []))
+    r24["violations"] = [(pk, d) for pk, d in r24["violations"] if pk not in exempt24]
+    results.append(r24)
 
     conn.close()
 
