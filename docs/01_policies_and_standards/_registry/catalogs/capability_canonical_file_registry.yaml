@@ -2038,7 +2038,7 @@ capabilities:
   canonical_override: src/zephyr/intelligence/model_drift_detector.py
   aliases:
   - model_drift_detector
-  description: 'LLM模型行为漂移检测器。 域: D_INTELLIGENCE。 module_id: MOD-INF-021-model_drift_detector。
+  description: 'LLM模型行为漂移检测器。 域: D_INTELLIGENCE。 module_id: MOD-INF-021（model_drift_detector）。
     功能: 建立基线feature vector → 定期采样 → KL/JS散度 → 超阈值→exit 34。 解决发现性：新AI 搜 "model_drift_detector"
     可定位本模块。 解决防重建：check_file_canonical() 反查。'
 - capability_id: drift_detection_naming_magic_checker
@@ -11366,7 +11366,7 @@ creation_tokens:
   token: gw-tdm-dailysensor-blueprint-20260910
   created_by: gw-tdm-20260909
   capability: trading_decision_map
-- file: src/zephyr/signal_ashare/daily_condition_sensor.py
+- file: src/zephyr/signal_ashare/core/daily_condition_sensor.py
   token: gw-tdm-dailysensor-module-20260910
   created_by: gw-tdm-20260909
   capability: trading_decision_map
@@ -11390,7 +11390,7 @@ creation_tokens:
   token: gw-tdm-conduction-blueprint-20260910
   created_by: gw-tdm-20260909
   capability: trading_decision_map
-- file: src/zephyr/signal_ashare/sector_conduction.py
+- file: src/zephyr/signal_ashare/core/sector_conduction.py
   token: gw-tdm-conduction-module-20260910
   created_by: gw-tdm-20260909
   capability: trading_decision_map

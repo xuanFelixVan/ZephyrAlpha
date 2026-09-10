@@ -139,3 +139,7 @@ from zephyr.signal_ashare.market_breadth_history_store import load_history_store
 from zephyr.signal_ashare.sentiment_cycle_evaluator import evaluate_locator_accuracy  # noqa: F401
 from zephyr.signal_ashare.strategy_vote_integrator import integrate_strategy_votes  # noqa: F401
 from zephyr.signal_ashare.strength_ic_data_assembler import assemble_ic_window  # noqa: F401
+
+# ORPHAN-MODULE: 引用登记（gw-tdm-20260909：C1 五档水温合成核 + C5 强度传导系数）
+from zephyr.signal_ashare.core.daily_condition_sensor import evaluate_daily_condition  # noqa: F401
+from zephyr.signal_ashare.core.sector_conduction import apply_strength_conduction  # noqa: F401

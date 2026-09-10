@@ -379,6 +379,7 @@ nodes:
 
   - node_id: TDM-E-L1-S5
     name_zh: 日级市场条件传感器
+    # C1 施工（gw-tdm-20260909）：MOD-SIG-135 落码，module_ref 由 market_state_sensor 改指 11 信号合成核
     market: cn_a
     flow: entry_flow
     layer: L1
@@ -390,8 +391,8 @@ nodes:
       9:35 首算，盘中可更新，是唯一盘中可变的 L1 输入。
     factor_refs: []
     data_refs: [DS-082, DS-059, DS-150]
-    module_ref: src/zephyr/signal_ashare/market_state_sensor.py
-    module_id: MOD-SIG-036
+    module_ref: src/zephyr/signal_ashare/core/daily_condition_sensor.py
+    note_confirmed: "2026-09-10"
     strategy_mounts: []
 
   - node_id: TDM-E-L1-AGG
@@ -625,6 +626,7 @@ nodes:
     factor_refs: []
     data_refs: [DS-170]
     module_ref: src/zephyr/signal_ashare/sector_rrg.py
+    module_id: MOD-SIG-026
     algo_refs: [DAL-RRG-SEQ]
     doc_ref: "docs/02_enterprise_architecture/07_trading_decision_architecture/design_memos/22_sector_rotation_spec.md#§3.1④"
     activation: postmarket
@@ -682,6 +684,7 @@ nodes:
 
   - node_id: TDM-E-L2-03-1
     name_zh: 扩散指标进度追踪
+    # C6 施工（gw-tdm-20260909）：adjustment_cycle_tracker 扩展扩散指标段
     market: cn_a
     flow: entry_flow
     layer: L2
@@ -704,6 +707,7 @@ nodes:
     ai_autonomy: auto
     fallback: 扩散指标滞后（震荡/快轮动期）→以 RRG 序列交叉验证（22号声明分工）
     strategy_mounts: []
+    note_confirmed: "2026-09-10"
 
   # ── 树枝04 板块级市场状态 ────────────────────────
   - node_id: TDM-E-L2-04
@@ -742,6 +746,7 @@ nodes:
     factor_refs: []
     data_refs: [DS-059, DS-170]
     module_ref: src/zephyr/signal_ashare/sector_rotation_state.py
+    module_id: MOD-SIG-026
     algo_refs: []
     doc_ref: "docs/02_enterprise_architecture/07_trading_decision_architecture/design_memos/22_sector_rotation_spec.md#§3.1⑨"
     activation: postmarket
@@ -765,6 +770,7 @@ nodes:
     factor_refs: []
     data_refs: [DS-059, DS-181]
     module_ref: src/zephyr/signal_ashare/sector_siphon.py
+    module_id: MOD-SIG-026
     algo_refs: [DAL-SIPHON-ID]
     doc_ref: "docs/02_enterprise_architecture/07_trading_decision_architecture/design_memos/22_sector_rotation_spec.md#§3.1⑤"
     activation: postmarket
@@ -836,6 +842,7 @@ nodes:
     factor_refs: []
     data_refs: []
     module_ref: src/zephyr/signal_ashare/sector_gate.py
+    module_id: MOD-SIG-026
     algo_refs: []
     doc_ref: "docs/02_enterprise_architecture/07_trading_decision_architecture/design_memos/22_sector_rotation_spec.md#§3.1⑪"
     activation: premarket
@@ -882,6 +889,7 @@ nodes:
     factor_refs: []
     data_refs: [DS-059]
     module_ref: src/zephyr/signal_ashare/sector_gate.py
+    module_id: MOD-SIG-026
     algo_refs: []
     doc_ref: "docs/02_enterprise_architecture/07_trading_decision_architecture/design_memos/22_sector_rotation_spec.md#§3.1⑩"
     activation: intraday
@@ -917,6 +925,7 @@ nodes:
 
   - node_id: TDM-E-L2-06-3
     name_zh: 强度加权传导
+    # C5 施工（gw-tdm-20260909）：MOD-SIG-136 落码，module_ref 由 sector_attribute_rules 改指传导系数核
     market: cn_a
     flow: entry_flow
     layer: L2
@@ -929,8 +938,8 @@ nodes:
     parent_node: TDM-E-L2-06
     factor_refs: []
     data_refs: [DS-059]
-    module_ref: src/zephyr/signal_ashare/sector_attribute_rules.py
-    module_id: MOD-SIG-077
+    module_ref: src/zephyr/signal_ashare/core/sector_conduction.py
+    note_confirmed: "2026-09-10"
     algo_refs: []
     doc_ref: "docs/02_enterprise_architecture/07_trading_decision_architecture/design_memos/22_sector_rotation_spec.md#§3.1⑦"
     activation: postmarket
@@ -978,6 +987,7 @@ nodes:
     factor_refs: []
     data_refs: [DS-170]
     module_ref: src/zephyr/signal_ashare/sector_pullback.py
+    module_id: MOD-SIG-026
     algo_refs: [DAL-PULLBACK-ABC]
     doc_ref: "docs/02_enterprise_architecture/07_trading_decision_architecture/design_memos/22_sector_rotation_spec.md#§3.1②"
     activation: intraday

@@ -367,3 +367,110 @@ class AdjustmentCycleTracker:
         """加载指数日 K 并输出调整周期快照（计算委托 track_adjustment_cycle）。"""
         closes = self.load_index_closes(symbol, start, end)
         return track_adjustment_cycle(closes, nh_ratios, self._config)
+
+
+# ───────────────────────────────────────────────────────────────────
+# 扩散指标进度追踪（C6 扩展，TDM-E-L2-03-1，2026-09-10 夜班批）
+# 节点语义：扩散指标=板块内站上 20 日线的个股占比；从 <30% 回升穿 50%=调整
+# 结束信号；从 >80% 掉头向下=见顶信号；输出进度百分比。与上文价格回撤进度
+# （drawdown 维）正交互补：本段给出 breadth（宽度）维的调整进度。
+# ───────────────────────────────────────────────────────────────────
+
+
+class DiffusionError(ValueError):
+    """扩散指标非法输入（fail-closed）：成员数越界/占比越界/空序列。"""
+
+
+@dataclass(frozen=True)
+class DiffusionConfig:
+    """扩散指标阈值（节点口径：30% 低谷带 / 50% 确认线 / 80% 顶部带）。"""
+
+    low_band: float = 0.30  # <30% = 调整充分区（低谷记号）
+    confirm_cross: float = 0.50  # 低谷后上穿 50% = 调整结束信号
+    top_band: float = 0.80  # >80% = 过热区（峰顶记号）
+    min_members: int = 10  # 板块成员数下限（防小样本噪声）
+
+
+@dataclass(frozen=True)
+class DiffusionVerdict:
+    """扩散指标判定（frozen，可审计）。"""
+
+    ratio: float  # 当前进度百分比 ∈ [0,1]（站上 20 日线个股占比）
+    crossed_up_confirm: bool  # 低谷(<30%)后上穿 50% → 调整结束信号
+    crossed_down_top: bool  # 峰顶(>80%)后掉头下穿 80% → 见顶信号
+    in_low_band: bool  # 当前处于 <30% 低谷带
+    in_top_band: bool  # 当前处于 >80% 过热带
+    n_members: int  # 板块成员总数
+
+
+def compute_diffusion_ratio(
+    above_ma20_count: int, total_count: int, config: DiffusionConfig | None = None
+) -> float:
+    """板块内站上 20 日线个股占比（纯函数）。
+
+    Args:
+        above_ma20_count: 站上 20 日线的成员数（0 ≤ x ≤ total）。
+        total_count: 板块成员总数（≥ config.min_members 防小样本）。
+
+    Returns:
+        占比 ∈ [0,1]。
+    """
+    cfg = config or DiffusionConfig()
+    if total_count < cfg.min_members:
+        raise DiffusionError(f"板块成员数不足（≥{cfg.min_members}）: {total_count}")
+    if above_ma20_count < 0 or above_ma20_count > total_count:
+        raise DiffusionError(
+            f"站上 20 日线家数非法 [0,{total_count}]: {above_ma20_count}"
+        )
+    return above_ma20_count / total_count
+
+
+def track_diffusion_progress(
+    ratios: Sequence[float], config: DiffusionConfig | None = None
+) -> DiffusionVerdict:
+    """扩散指标进度追踪（历史占比序列 → 交叉信号判定，纯函数）。
+
+    Args:
+        ratios: 占比历史序列（升序时间，末位=最新；每值 ∈ [0,1]）。
+
+    Returns:
+        DiffusionVerdict：ratio=最新进度百分比；
+        crossed_up_confirm=序列中先出现 <30% 低谷、之后上穿 50%（调整结束信号）；
+        crossed_down_top=先出现 >80% 峰顶、之后回落 ≤80%（见顶信号）。
+    """
+    cfg = config or DiffusionConfig()
+    _validate_ratio_series(ratios)
+    latest = ratios[-1]
+    return DiffusionVerdict(
+        ratio=latest,
+        crossed_up_confirm=_crossed_up_after_low(ratios, cfg),
+        crossed_down_top=_crossed_down_after_top(ratios, cfg),
+        in_low_band=latest < cfg.low_band,
+        in_top_band=latest > cfg.top_band,
+        n_members=0,  # 序列视图不携带成员数；成员数经 compute_diffusion_ratio 单独校验
+    )
+
+
+def _validate_ratio_series(ratios: Sequence[float]) -> None:
+    """占比序列校验（空序列/越界 fail-closed）。"""
+    if not ratios:
+        raise DiffusionError("占比序列不可为空")
+    for r in ratios:
+        if r != r or r < 0.0 or r > 1.0:
+            raise DiffusionError(f"占比越界 [0,1]: {r!r}")
+
+
+def _crossed_up_after_low(ratios: Sequence[float], cfg: DiffusionConfig) -> bool:
+    """低谷(<30%)后上穿确认线(≥50%)→调整结束信号（两段式：先找首谷，再看其后）。"""
+    first_low = next((i for i, r in enumerate(ratios) if r < cfg.low_band), None)
+    if first_low is None:
+        return False
+    return any(r >= cfg.confirm_cross for r in ratios[first_low + 1 :])
+
+
+def _crossed_down_after_top(ratios: Sequence[float], cfg: DiffusionConfig) -> bool:
+    """峰顶(>80%)后回落(≤80%)→见顶信号（两段式：先找首峰，再看其后）。"""
+    first_top = next((i for i, r in enumerate(ratios) if r > cfg.top_band), None)
+    if first_top is None:
+        return False
+    return any(r <= cfg.top_band for r in ratios[first_top + 1 :])

@@ -47358,6 +47358,48 @@ entries:
   desc_zh: ""
   desc_en: ""
   plain_zh: "看现在几点决定这笔卖单怎么挂：9:15 竞价时段逃命单挂跌停价按开盘价成交排队最优先；14:30-14:45 跳水窗谨慎小单；14:50 决策窗收做T；14:57 后深市集合竞价不可撤单要卖赶早，沪市可撤可改；急单走市价"
+- module_path: src/zephyr/signal_ashare/core/daily_condition_sensor.py
+  domain_id: D_ASHARE_SIGNAL
+  name_zh: "日级市场条件传感器"
+  name_en: ""
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "盘中看 11 个盘面信号（涨停家数环比/连板梯队/炸板率/跌停家数/昨日涨停溢价/红盘家数/量价背离/板块混沌/宽度领先/对坏消息反应/市值分层宽度）逐个打分加总，合成水温水烫到水冰五档读数——水烫今天可以激进，水冰只看不动；数据不足一半就不下结论"
+- module_path: src/zephyr/regime/features/index_sensor.py
+  domain_id: D_REGIME
+  name_zh: "大盘指数传感器"
+  name_en: ""
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "看指数的均线排列和位置打分：MA20 在 MA60 上方加分，跌破 MA20 减一档、跌破 MA60 减两档，指数离 60 日高点不到 3% 也减分（高位不远攻），输出 -2 到 +2 的趋势分"
+- module_path: src/zephyr/signal_ashare/core/sector_conduction.py
+  domain_id: D_ASHARE_SIGNAL
+  name_zh: "板块强度加权传导"
+  name_en: ""
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "把板块强度换算成个股打分的加减系数：10 分板块的票加 15%，6 分加 5%，不到 6 分反而打九折——强板块的弱票也沾光，弱板块的强票要打折"
+- module_path: src/zephyr/signal_fundamental/negative_veto.py
+  domain_id: D_FUNDAMENTAL_SIGNAL
+  name_zh: "负面否决器"
+  name_en: ""
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "候选池的负面清单一票否决：业绩暴雷、立案调查、大股东减持、解禁超 5% 流通盘、商誉减值风险、配股圈钱，撞上任何一条直接出池，打分再高也没用"
+- module_path: src/zephyr/plan_engine/thesis_survival.py
+  domain_id: D_PLAN
+  name_zh: "买入逻辑存活判定"
+  name_en: ""
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "按当初为什么买逐仓回查：打板仓看情绪梯队还热不热，多因子仓看因子还灵不灵，事件仓看利好兑现了多少，做T底仓看趋势破没破——给出成立/弱化/失效三态，失效就转离场评估"
+- module_path: src/zephyr/position/core/pyramiding_rules.py
+  domain_id: D_POSITION
+  name_zh: "金字塔加仓规则"
+  name_en: ""
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "加仓先过四道门（只加浮盈仓禁补亏损、点火/扩张段才开、策略适配为正、不在熔断禁加期），再按金字塔三规则加：首加剩余预算一半逐次减半、比上次买价涨 2.5% 以上才加、最多三次，跌破上次加仓价就停止计划"
 
 battle_map_steps:
 - step_id: BM-BUY-05

@@ -1,3 +1,5 @@
+# [DOMAIN] D_ASHARE_SIGNAL
+# [TTL] permanent
 """调整周期追踪器 单元测试（市场级，复用 sector_adjustment 进度引擎，MOD-SIG-040）"""
 
 import pytest
@@ -7,8 +9,11 @@ from zephyr.signal_ashare.adjustment_cycle_tracker import (
     AdjustmentCycleDataError,
     AdjustmentCycleTracker,
     CyclePhase,
+    DiffusionError,
+    compute_diffusion_ratio,
     find_cycle_peak,
     track_adjustment_cycle,
+    track_diffusion_progress,
 )
 from zephyr.signal_ashare.sector_adjustment import (
     ACTION_ACTIVATE_PARTIAL,
@@ -137,3 +142,70 @@ class TestAdjustmentCycleTrackerLoader:
         tracker = AdjustmentCycleTracker(query_fn=lambda sql, timeout=30: rows, config=cfg)
         snap = tracker.track("000300", "2025-01-01", "2026-08-31")
         assert snap.phase == CyclePhase.NO_ADJUSTMENT
+
+
+# ── C6 扩散指标进度追踪（TDM-E-L2-03-1，2026-09-10 扩展）──
+
+
+class TestDiffusionRatio:
+    """compute_diffusion_ratio：占比计算与小样本 fail-closed。"""
+
+    def test_basic_ratio(self):
+        assert compute_diffusion_ratio(45, 80) == pytest.approx(0.5625)
+
+    def test_zero_and_full(self):
+        assert compute_diffusion_ratio(0, 50) == 0.0
+        assert compute_diffusion_ratio(50, 50) == 1.0
+
+    def test_small_panel_rejected(self):
+        with pytest.raises(DiffusionError):
+            compute_diffusion_ratio(3, 8)  # < min_members=10
+
+    def test_count_exceeds_total_rejected(self):
+        with pytest.raises(DiffusionError):
+            compute_diffusion_ratio(11, 10)
+
+
+class TestDiffusionProgress:
+    """track_diffusion_progress：30/50/80 三线交叉语义。"""
+
+    def test_low_trough_then_cross_50_confirms_end(self):
+        v = track_diffusion_progress([0.25, 0.35, 0.52, 0.55])
+        assert v.crossed_up_confirm is True
+        assert v.ratio == 0.55
+
+    def test_cross_50_without_low_band_no_signal(self):
+        # 未经过 <30% 低谷，直接 45→55：不算"调整结束"确认
+        v = track_diffusion_progress([0.45, 0.55])
+        assert v.crossed_up_confirm is False
+
+    def test_top_then_fall_below_80_confirms_top(self):
+        v = track_diffusion_progress([0.85, 0.83, 0.78])
+        assert v.crossed_down_top is True
+        assert v.crossed_up_confirm is False
+
+    def test_bands(self):
+        v = track_diffusion_progress([0.25])
+        assert v.in_low_band is True and v.in_top_band is False
+        v2 = track_diffusion_progress([0.85])
+        assert v2.in_top_band is True and v2.in_low_band is False
+
+    def test_empty_rejected(self):
+        with pytest.raises(DiffusionError):
+            track_diffusion_progress([])
+
+    def test_ratio_out_of_range_rejected(self):
+        with pytest.raises(DiffusionError):
+            track_diffusion_progress([0.5, 1.5])
+
+    def test_boundary_50_is_inclusive_cross(self):
+        # 恰好 0.50 视为上穿确认线（≥0.50）
+        v = track_diffusion_progress([0.25, 0.50])
+        assert v.crossed_up_confirm is True
+
+    def test_boundary_80_stay_hot(self):
+        # 恰好 0.80 不算掉头（严格 >0.80 才是峰顶带内）
+        v = track_diffusion_progress([0.85, 0.80])
+        assert v.crossed_down_top is True  # 0.80 ≤ top_band → 触发
+        v2 = track_diffusion_progress([0.85, 0.81])
+        assert v2.crossed_down_top is False  # 仍在峰顶带上方悬着
