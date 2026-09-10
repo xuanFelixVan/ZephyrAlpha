@@ -1,3 +1,5 @@
+# [BLUEPRINT] MOD-PLAN-024 | (auto-injected by S4 reconciler，gw-tdm-20260909 修正为模块级 ID) | §
+# [TTL] permanent
 # [DOMAIN] D_PLAN
 # [TTL] permanent
 """MOD-PLAN-024 thesis_survival 单元测试（红蓝对抗：红-边界/红-契约/红-前视姿态）。"""
