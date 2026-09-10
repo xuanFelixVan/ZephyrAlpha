@@ -2559,9 +2559,11 @@ def _cm_build_galaxy(market: str = "all") -> dict[str, Any]:
     for root, members in groups.items():
         inner_deg = {m: sum(w for nb, w in adj[m] if labels[nb] == root) for m in members}
         hub = max(sorted(members), key=lambda m: (inner_deg[m], chain_companies[m], m))
+        # 族名=枢纽链名去括号（Owner 2026-09-10 裁定：不加"族"尾缀——簇名直接用行业名，
+        # 如"食品加工制造行业"；与链名同字串无妨，簇 id(C01) 与链 id 不同维度）
         base = chain_name[hub].split("（")[0].split("(")[0].strip() or chain_name[hub]
         cluster_stats.append({
-            "root": root, "members": members, "hub": hub, "name": base + "族",
+            "root": root, "members": members, "hub": hub, "name": base,
             "n_chains": len(members),
             "n_companies": len({s for s, cs in sym_chains.items() if cs & set(members)}),
             "n_nodes": sum(1 for n, c in node_chain.items() if c in set(members)),
