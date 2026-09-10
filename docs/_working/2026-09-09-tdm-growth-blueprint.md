@@ -120,7 +120,7 @@ ttl: task_bound
 
 | 候选 | 五步进度 | 四关结果 | 落图 commit | 终态 |
 |---|---|---|---|---|
-| G1 明日情绪盘中滚动预测（TDM-E-L0-04，2026-09-10 夜班批1） | 五步全走完：①母节点=L0-02 姊妹（定为 TDM-E-L0-04，parent=TDM-E-L0）②四道前置检查过——盘点：next_day_8state_forecast(MOD-SIG-037)/similar_day_inference(MOD-SIG-063)/brier_calibration(MOD-PLAN-010) 零件全在=引用；tomorrow_boundary_planner 不变量明文"不读盘中实时数据"=断链实证；外部调研见下；父节点 L0 定稿✓；树枝级✓ ③D108 三条件过（独立输入输出✓/可回测=agg_discrimination✓/非参数变体✓）④设计稿=本行+地图注释 ⑤落图 137 节点 | validate ok=true / 双测试 98 绿 / align_all exit0 / 网关提交 | （本批） | 已落图（红节点；模块=施工清单 C13 待建；latency_budget 留 R39 欠账待 C13 实测补） |
+| G1 明日情绪盘中滚动预测（TDM-E-L0-04，2026-09-10 夜班批1） | 五步全走完：①母节点=L0-02 姊妹（定为 TDM-E-L0-04，parent=TDM-E-L0）②四道前置检查过——盘点：next_day_8state_forecast(MOD-SIG-037)/similar_day_inference(MOD-SIG-063)/brier_calibration(MOD-PLAN-010) 零件全在=引用；tomorrow_boundary_planner 不变量明文"不读盘中实时数据"=断链实证；外部调研见下；父节点 L0 定稿✓；树枝级✓ ③D108 三条件过（独立输入输出✓/可回测=agg_discrimination✓/非参数变体✓）④设计稿=本行+地图注释 ⑤落图 137 节点 | validate ok=true / 双测试 98 绿 / align_all exit0 / 网关提交 | c8f678d8 | 已落图（红节点；模块=施工清单 C13 待建；latency_budget 留 R39 欠账待 C13 实测补） |
 
 **G1 六向寻路记录**（防噪音四闸留痕，2026-09-10 夜班）：
 - ①上游：DS-150 指数日线（8 态先验+盘中重算）/ DS-082 涨跌停生态（盘中情绪）/ DS-107 新闻情绪窗——全已登记✓；增强候选=期指基差（futures_basis_monitor 已有件，暂不挂）。
