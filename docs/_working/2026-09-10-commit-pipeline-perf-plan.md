@@ -7,7 +7,7 @@ ttl: task_bound
 - **task_bound**：临时工作文档，Owner 审定后按"正式施工清单"逐项销项后归档；会话 st-perf-plan-20260910 单写手
 - **创建**：2026-09-10；creation_token=`commit-pipeline-perf-plan-20260910`（capability_canonical_file_registry.yaml creation_tokens 段，插 di_seam_exemptions 行之前）
 - **纪律**：本任务只做只读调研+计时取证；允许的最小施工=打点日志与 --wait 参数化原型验证（已做，沙箱零风险，验证后未触碰任何 tracked 文件）；本文档 Owner 审定前不施工
-- **结论速览**：三条根因全部坐实并有实测数据；P0 三项低风险高确定性可立即施工（锁等待参数化 / echo_guard 超时下调 / 死信 triage）；P1 减负两项（own-scope 推广已在派 + 子进程税治理）；P2 三项需 Owner 拍板（锁外预跑+指纹采信 / 门禁结果持久缓存 / 交互式提交入队）
+- **结论速览**：三条根因全部坐实并有实测数据；**第一约束=功能效果严格不变、只提速提效**（§2.7 逐项等价性自审）；P0 两项可立即施工（--wait 参数化 / 死信 triage）+ 文档纠偏，全部严格行为等价；P1 减负两项（own-scope 扩充 + 子进程税治理）；P2 三项 flag 门控需 Owner 拍板；echo_guard 超时下调涉及检测语义权衡，已从 P0 摘出改为 Owner 明示项
 
 ---
 
@@ -102,7 +102,7 @@ ZephyrAlpha 多 AI 会话并发共享工作区，唯一合法提交入口 `pytho
 - **fail-open/fail-closed 交互**：
   - 只缓存 `passed=True` 且缓存条目记录引擎健康状态；**降级态（CloneGuard degraded / DB fail-open / worktree skip）产生的 PASS 一律不缓存**——防止把"检测器失效的侥幸通过"洗白成可信 PASS（fail-open 语义不被缓存放大）。
   - `passed=False` 不缓存（AI 修复内容后 sha 变化 key 自然失效，缓存失败结果无意义且危险）。
-  - 白名单准入：仅"staged 内容纯函数"gate 可入白名单（§4 分级清单中内容扫描型）；信号型禁入；结构校验型恒跑类（DECISION-MAP 等）暂不入（其输入含全局注册表，hash 成本>收益）。
+  - 白名单准入：仅"staged 内容纯函数"gate 可入白名单（§4 分级清单中内容扫描型）；信号型禁入；结构校验型恒跑类（DECISION-MAP 等）暂不入（其输入含全局注册表，hash 成本>收益）。**准入前置=逐 gate 输入面分析**：凡输入超出 `staged 内容 ∪ own_scope ∪ HEAD` 的 gate，须把其全部输入文件 sha 纳入 key 方可入池——确保缓存命中 ≡ 现算（2026-09-10 复审补强）。
 - **与 own-scope 组合**：key 含 own_scope_set_hash——同一文件换会话/换 claim 范围提交时不误命中。
 - **与 TOCTOU 组合**：缓存命中在锁内校验指纹后采信（与 §2.3 同一指纹机制）。
 
@@ -122,7 +122,7 @@ ZephyrAlpha 多 AI 会话并发共享工作区，唯一合法提交入口 `pytho
 **方案 A（推荐）：锁外预跑 + 锁内指纹校验采信**
 
 流程设计：
-1. commit() 拿锁**前**：跑 gate 链的"可预跑子集"（内容扫描型 + 触发式结构校验型，§4 白名单），同时记录指纹 `F = {staged_tree_sha(git write-tree), HEAD_sha, own_scope_set_hash}`。
+1. commit() 拿锁**前**：跑 gate 链的"可预跑子集"（内容扫描型 + 触发式结构校验型，§4 白名单），同时记录指纹 `F = {staged_tree_sha(git write-tree), HEAD_sha, own_scope_set_hash, gate_inputs_manifest_sha}`——第四项为**白名单 gate 全部外部输入文件**（各注册表/配置 YAML）的内容 sha256 清单，防止预跑→拿锁等待窗口内注册表变更导致陈旧采信（等价性关键补强，2026-09-10 复审加入）。
 2. 拿锁后：重算指纹 F′。**F′==F → 采信预跑结果**，锁内只跑信号型 gate + drift-watch + commit；**F′≠F → 丢弃预跑结果，锁内全量重跑**（现行路径，正确性永不依赖指纹）。
 3. 预跑任何异常/降级 → 直接走现行锁内全量链（fail-safe to current behavior）。
 
@@ -130,6 +130,7 @@ ZephyrAlpha 多 AI 会话并发共享工作区，唯一合法提交入口 `pytho
 - 原设计消除的窗口：gate 通过后、commit 前 staged 内容被改。方案 A 中，采信的前提是锁内重验 `git write-tree` 树 sha 与预跑时逐字节一致（O_EXCL 锁保证此刻无并发写入者持有锁在写 index；树 sha 对 staged 内容完备敏感，任一字节变化 sha 必变）。
 - 内容 gate 是 staged 内容的纯函数 → 指纹相等 ⇒ 判定必然相同 ⇒ 采信无损。原不变量"被提交的树必须通过全部门禁"保持成立：预跑与采信针对的是**同一棵树**。
 - HEAD_sha 进指纹：部分 gate 以 HEAD 为 diff 基线（added-lines 判定），HEAD 移动则重跑，杜绝基线漂移。
+- gate_inputs_manifest_sha 进指纹：白名单 gate 读取的注册表/配置文件内容 sha 清单——预跑与锁内采信之间任何输入变化都触发重跑，保证"采信结果 ≡ 锁内现算结果"。
 - 残余窗口 = 锁内"算指纹 + 比对"两步（毫秒级原子读），相比原设计"整链执行期"收窄两个数量级。
 - 信号型 gate 不参与预跑：其判定对象是会话/锁/健康运行态，本质必须在锁内以最新状态判定。
 
@@ -187,7 +188,7 @@ ZephyrAlpha 多 AI 会话并发共享工作区，唯一合法提交入口 `pytho
 
 | 方案 | 内容 | 工作量 | 风险 |
 |------|------|--------|------|
-| 5a（推荐，立即） | `clone_guard.yml pre_commit.timeout_sec: 30 → 10`（快路径 0.44s，10s 覆盖常态 20+ 倍余量；超时即降级 warn-only 为既有语义，尾部损失 30s→10s） | 1 行配置 | 极低 |
+| 5a（⚠️ 检测语义权衡，**移出 P0**） | `clone_guard.yml pre_commit.timeout_sec: 30 → 10`（快路径 0.44s，常态余量充足；但 10-30s 可完成的扫描将由"完成检测"变为"降级 warn-only"——**尾部场景检测覆盖收窄，非严格行为等价**） | 1 行配置 | 中（语义）——须 Owner 明示接受；建议先 5b 根因治理观察超时是否自然消失，再决定是否调参 |
 | 5b | rescan.signal 消费机制取证与健康检查：确认 CLI 是否因 signal 触发重扫；补索引刷新例程或删除陈旧 signal 的清理步骤；echo-guard index 健康度纳入 RECONCILER-HEALTH 观测 | 0.5 天 | 低 |
 | 5c | 检测面整理：ast_grep 4 规则保留（零重叠不合并）；redup 维持禁用并在 clone_guard.yml 注明安装后翻回流程（已有注释）；echo_guard 与 ast_grep 的聚合语义不变 | 0（仅文档） | 无 |
 | 5d | CAPABILITY-OVERLAP 纳入 own-scope 推广批次（机械活，随已派批次走）：只查本 session staged .py，外来 staged 落 _audit_foreign_staged 审计 | 随 own-scope 批次 | 低 |
@@ -307,26 +308,49 @@ ZephyrAlpha 多 AI 会话并发共享工作区，唯一合法提交入口 `pytho
 
 **耗时量级结论**：0.000-0.05s（信号快路径）≈ 30 个；0.15-0.25s（子进程税带）≈ 62 个；0.3-1s ≈ 6 个；1-5s ≈ 4 个；>5s = 1 个（DECISION-MAP）。子进程税带是"数量 × 单价"型成本（合计 ~12s），重 gate 是"单价"型成本（合计 ~25s）——两类治理手段不同（A2 合并执行 vs A3/预跑/触发收窄）。
 
+### 2.7 功能等价性审计（Owner 复审回应：功能效果不变、只提速提效）
+
+本方案第一约束=**行为等价**：所有优化不得改变门禁的判定语义、阻断语义、fail-open/fail-closed 边界与审计留痕。逐项自审结论：
+
+| 工作项 | 等价性判定 | 说明 |
+|--------|-----------|------|
+| ①--wait 参数化 | ✅ 严格等价 | 缺省 60s 不变；锁的串行化/TTL/僵尸清理/O_EXCL 语义全部不动，仅等待时长可配 |
+| ②死信 triage | ✅ 严格等价 | 纯运营工具，不触碰提交路径 |
+| ③文档纠偏 | ✅ 严格等价 | 注释纠偏 |
+| ④own-scope 推广 | ✅ 群体等价（检测主体转移） | 从"任一提交者扫全量 staged"改为"各提交者扫各自+外来落 jsonl 审计"；覆盖保证=每个文件必然随其归属会话过闸（全部提交走唯一入口）；项目既定方向（#ARCH-GATE-OWN-SCOPE-001，前 5 gate 已落地先例） |
+| ⑤A1 输入 memoization | ✅ 严格等价 | 同一调用内相同输入只算一次，判定逻辑零改动 |
+| ⑤A2 checker 合并 | ✅ 等价（需验收） | 同一脚本同参数执行；验收=改造前后逐 gate 结果 diff（计时 harness 复用为验收工具） |
+| ⑦预跑+指纹采信 | ✅ 严格等价（补强后） | 指纹四元组含 gate 输入清单 sha：任何 staged/HEAD/own_scope/注册表输入变化→锁内全量重跑；**兜底路径保证最坏=现状（更慢但永不更错）** |
+| ⑧A3 持久缓存 | ✅ 有条件等价 | 输入面分析准入 + 输入 sha 入 key + 降级态不缓存；默认 flag OFF |
+| 5a echo_guard 超时 10s | ❌ 检测行为变化 | 尾部场景检测覆盖收窄——**已移出 P0**，改为 Owner 明示的语义权衡项 |
+| ⑨交互式提交入队 | ❌ 语义变更（同步→异步） | 本就列为 Owner 决策项，不属于"功能不变"范畴 |
+
+**防漏检三道保险**（针对预跑/缓存两项）：
+1. 指纹/key 不命中 → 锁内全量重跑（永远保底，最坏=现状）；
+2. 降级态（CloneGuard degraded / DB fail-open / worktree skip）结果一律不缓存、不采信——防"检测器失效的侥幸通过"被洗白；
+3. 白名单默认空集，逐 gate 输入面分析后准入，信号型永不准入。
+
 ---
 
 ## 3. 总体实施路线图
 
 ```
-P0（低风险高确定性，建议本周）
+P0（严格行为等价，建议本周）
   ├─ ①--wait 参数化（§2.1 方案A，0.5h，含 LOCK_TIMEOUT 退避引导文案）
-  ├─ ②echo_guard 超时 30→10s（§2.5-5a，1 行配置）
-  ├─ ③队列死信 triage 启动 + 可观测性（§2.4-4a，1-2 天）
-  └─ ④文档纠偏：DECISION-MAP 头注释"毫秒级"→实测 8.2s（防再误判，随①同批）
+  ├─ ②队列死信 triage 启动 + 可观测性（§2.4-4a，1-2 天）
+  ├─ ③文档纠偏：DECISION-MAP 头注释"毫秒级"→实测 8.2s（防再误判，随①同批）
+  └─ 附注：own-scope 推广批（已在派）照常推进——群体等价+审计留痕（§2.7）；
+     echo_guard 超时下调已移出 P0（检测语义权衡，§2.5-5a / §5-2）
 
 P1（1-2 周，行为等价类优化）
-  ├─ ⑤own-scope 推广批（已在派）：9 个 _diff_helpers 族先行 + CAPABILITY-OVERLAP/ENCODING-SAFETY/NO-BARE-SQL 三个高优候选
-  ├─ ⑥A1 共享输入 memoization + A2 checker 合并执行（§2.2，消 ~12s 子进程税）
-  └─ ⑦队列运营补强收尾（worktree 内 CloneGuard 索引方案 / task_board 联动）
+  ├─ ④own-scope 推广批扩充：_diff_helpers 族 9 个 + CAPABILITY-OVERLAP/ENCODING-SAFETY/NO-BARE-SQL 三个高优候选
+  ├─ ⑤A1 共享输入 memoization + A2 checker 合并执行（§2.2，消 ~12s 子进程税）
+  └─ ⑥队列运营补强收尾（worktree 内 CloneGuard 索引方案 / task_board 联动）
 
 P2（Owner 决策后立项，flag 门控）
-  ├─ ⑧锁外预跑+指纹采信（§2.3 方案A，flag gate_preflight）
-  ├─ ⑨门禁结果持久缓存白名单子集（§2.2 A3，flag gate_result_cache）
-  └─ ⑩交互式提交入队（§2.4-4b，flag commit_queue_interactive）
+  ├─ ⑦锁外预跑+指纹采信（§2.3 方案A，flag gate_preflight，指纹含 gate 输入清单 sha）
+  ├─ ⑧门禁结果持久缓存白名单子集（§2.2 A3，flag gate_result_cache，输入面分析准入）
+  └─ ⑨交互式提交入队（§2.4-4b，flag commit_queue_interactive）
 ```
 
 **预期收益量化**：锁内时间现状 ~45-50s → P0/P1 后 ~30s（-40%）→ P2 全量后 ~5-8s（-85%）；AI 会话侧从"60s 超时 × N 轮盲目重试"变为"--wait 一次等待到位（或队列 qid 异步）"；多会话互锁 2 小时类事故的复发面收窄至 signal gate 毫秒级窗口。
@@ -338,7 +362,7 @@ P2（Owner 决策后立项，flag 门控）
 | 工作项 | 主要风险 | 缓解 | 回滚 |
 |--------|---------|------|------|
 | ①--wait | 极低；MODIFY-GUARD 不触碰（timeout 不在保护清单） | 原型已验证；缺省=现状 | revert 单 commit |
-| ②echo_guard 10s | 极低（超时即降级 warn-only 为既有语义） | 快路径 0.44s 实测余量 20 倍 | 配置改回 30 |
+| ②echo_guard 10s（已移出 P0） | **检测语义权衡**：尾部扫描降级 warn-only，覆盖收窄 | 快路径 0.44s 实测余量充足；先 5b 根因治理再评估 | 配置改回 30 |
 | ③死信 triage | 低（处置误删→retry/purge 双通道+审计） | 856 项先报表后处置，Owner 授权批量清理 | 死信文件不物理删（purge 移 .runtime/archive） |
 | ⑤own-scope | 低（语义等价风险：某 gate 有隐性全量依赖） | _build_own_scope None→退化全量底线；逐 gate 红蓝用例；外来文件落审计不静默丢弃 | 逐 gate revert |
 | ⑥A1/A2 | 中（A2 基建改动） | 行为等价回归：65 gate 明细 diff 对比（harness 可复用为验收工具） | revert |
@@ -351,10 +375,10 @@ P2（Owner 决策后立项，flag 门控）
 ## 5. 待 Owner 决策事项
 
 1. **P0 三项是否批准立即施工**（①②③，合计 ≤2 人天，零行为语义变更）。
-2. **echo_guard 超时 30→10s**：批准即改 clone_guard.yml（是否需要走裁定留痕请示下）。
+2. **echo_guard 超时 30→10s（语义权衡确认）**：该项**非严格行为等价**（尾部检测覆盖收窄，§2.7），默认不做；若接受权衡，建议顺序=先做 5b 根因治理（rescan.signal/索引健康），观察 30s 超时是否自然消失，再决定是否调参。
 3. **死信 856 项**：授权先出报表，批量清理（purge）需二次确认。
 4. **DECISION-MAP 8.24s 恒跑**：接受现状（防断链设计）vs 立项"按触发文件降频"（staged 未触及 trading_decision_map/相关注册表时跳过——语义弱化为"触发式"，需 Owner 认可断链防护窗口收窄）。
-5. **P2 三项是否立项**（⑧⑨⑩），及 flag 开启窗口安排（宪章 B-007）。
+5. **P2 三项是否立项**（⑦⑧⑨），及 flag 开启窗口安排（宪章 B-007）。
 6. **--wait 默认值**：维持 60.0（推荐）vs 调整为 120/180（直接缓解轮询，但不解决占锁时长本身）。
 
 ---
@@ -382,8 +406,8 @@ P2（Owner 决策后立项，flag 门控）
 1. `scripts/git_commit.py`：argparse 增加 `--wait`（type=float，default=None→gateway 内部取 60.0；help 注明 0=立即失败、上限 1800）；`gw.commit(...)` 透传 `lock_wait_timeout=args.wait`；LOCK_TIMEOUT 行 help_text 增补指数退避引导。~10 行。
 2. `src/zephyr/gov_enforcement/rule_bridge/git_commit_gateway.py`：`commit()` 签名加 `lock_wait_timeout: float | None = None`（L1658-1670）；L1779 与 L2712 两处 `with _GlobalCommitLock(self.project_root, timeout=lock_wait_timeout if lock_wait_timeout is not None else _LOCK_TIMEOUT_DEFAULT)`。~8 行。**不触碰 L9 MODIFY-GUARD 保护字段**。
 3. `tests/test_git_commit_gateway.py`：3 例（缺省 60s 常量 / 自定义 timeout 抛 GatewayError 时长 / --wait 0 立即失败语义）。
-4. `clone_guard.yml`：`pre_commit.timeout_sec: 30 → 10`（Owner 批准②后）。
-5. 同 commit 附带：DECISION-MAP gate 头注释耗时口径纠偏（④）。
+4. 同 commit 附带：DECISION-MAP gate 头注释耗时口径纠偏（③）。
+5. （echo_guard 超时调整**不在本清单**——语义权衡项，待 Owner §5-2 明示后单独执行。）
 6. 提交纪律：session st-perf-plan-20260910 走 `python scripts/git_commit.py`（禁裸 commit）；遇 FOREIGN_CHANGE→--adopt-prior-work；WORKTREE-REQUIRED→--allow-non-worktree；TRACKED-DRIFT→--allow-tracked-drift（按需逐个加，禁一把梭）。
 
 ---
