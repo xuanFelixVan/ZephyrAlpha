@@ -1,17 +1,17 @@
-# 自动生成于 2026-09-07T16:04:43Z
+# 自动生成于 2026-09-10T17:45:33Z
 # 来源: scripts/governance/**/*.py __manifest__ 块
 # 手工编辑无效——修改请通过各 .py 文件的 __manifest__ 块
 
-generated_at: '2026-09-07T16:04:43Z'
+generated_at: '2026-09-10T17:45:33Z'
 generated_by: scripts/governance/generators/generate_script_manifest.py
 source: scripts/governance/**/*.py → __manifest__ 块
-total_scripts: 420
+total_scripts: 422
 with_manifest: 407
-missing_manifest: 13
+missing_manifest: 15
 categories:
   governance:_sync: 4
   governance:_tasks: 3
-  governance: 49
+  governance: 51
   governance:d10_performance: 1
   governance:d11_compliance: 24
   governance:d12_ai_hallucination: 4
@@ -4976,6 +4976,16 @@ scripts:
   description: 将42项暂缓模块写入 depgraph 设计态，含3图对齐设计。
   tags:
   - Quick
+- name: registry_batch_edit.py
+  owner: governance
+  dimensions: []
+  priority: P2
+  timeout_seconds: 60
+  args: []
+  warn_only: false
+  description: ⚠ __manifest__ 缺失——请添加元数据块
+  tags: []
+  _manifest_missing: true
 - name: repair/apply_verification_results.py
   owner: governance:repair
   dimensions:
@@ -5101,6 +5111,16 @@ scripts:
   description: run_silent_failure_regression.py — silent-failure 回归套件一键执行入口（P3-2，2026-07-19）
   tags:
   - Quick
+- name: scan_offrepo_assets.py
+  owner: governance
+  dimensions: []
+  priority: P2
+  timeout_seconds: 60
+  args: []
+  warn_only: false
+  description: ⚠ __manifest__ 缺失——请添加元数据块
+  tags: []
+  _manifest_missing: true
 - name: session_startup_health_check.py
   owner: governance
   dimensions:
