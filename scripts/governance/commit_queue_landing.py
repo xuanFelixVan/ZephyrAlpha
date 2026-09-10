@@ -599,7 +599,18 @@ class WorktreeLanding:
 
         for attempt in range(1, self._max_cas_retries + 1):
             # 2) 同步 + 基底冲突判定
-            self._sync_worktree()
+            try:
+                self._sync_worktree()
+            except cq.LandingEnvironmentError:
+                raise
+            except RuntimeError as exc:
+                # 瞬态 git 锁争用（index.lock/Unable to create）≠ 物品失败——高并发期
+                # 他会话 commit 持主仓/worktree 索引锁是常态（2026-09-10 二阶死信：
+                # worktree 修复后 26 项死于 reset --hard 撞锁）。转环境专类 → 项退回
+                # pending、整轮终止等下次自举，绝不死信。
+                if "index.lock" in str(exc) or "Unable to create" in str(exc):
+                    raise cq.LandingEnvironmentError(f"git 瞬态锁争用，项退回 pending 等下次自举: {exc}") from exc
+                raise
             old_dev = self._dev_head()
             reason = self._conflict_reason(item, old_dev)
             if reason:
