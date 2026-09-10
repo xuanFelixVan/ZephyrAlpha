@@ -64,3 +64,8 @@ __all__: list[str] = [
     "trend_features",
     "wyckoff_engine",
 ]
+
+# ORPHAN-MODULE: 引用登记（gw-tdm-20260909：C2 指数趋势打分核）
+from zephyr.regime.features.index_sensor import compute_index_trend_score  # noqa: F401
+
+__all__.append("index_sensor")

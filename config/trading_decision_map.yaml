@@ -250,6 +250,7 @@ nodes:
   #   补登因子后回填引用（缺口检测语义）
   - node_id: TDM-E-L1-S1
     name_zh: 大盘指数传感器
+    # C2 施工（gw-tdm-20260909）：MOD-REGIME-016 落码，module_ref 由 index_regime_panel 改指均线排列打分核
     market: cn_a
     flow: entry_flow
     layer: L1
@@ -262,8 +263,9 @@ nodes:
     factor_refs: []
     cycle_refs: [CYC-STAT-001, CYC-STAT-004, CYC-STAT-013]
     data_refs: [DS-150]
-    module_ref: src/zephyr/regime/index_regime_panel.py
-    module_id: MOD-REGIME-008
+    module_ref: src/zephyr/regime/features/index_sensor.py
+    module_id: MOD-REGIME-016
+    note_confirmed: "2026-09-10"
     # （D109 终裁）：攻防板块特征入本层——券商指数 5 日超额/银行指数 5 日超额/券商÷银行涨幅比（>1 且放量=进攻态；银行独涨+科技跌=避险标签；银行与科技 20 日同涨且相关性转正=哑铃市双主线）；数据=DS-170 板块 K 线；先产特征不联动仓位，回测验证预测力后联动
     strategy_mounts: []
 
