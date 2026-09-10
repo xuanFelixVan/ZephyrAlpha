@@ -1723,8 +1723,10 @@ def download_status() -> dict[str, Any]:
 
 # ── 数据总览真源（Owner 2026-09-10：库内资产视角并入下载监管一表——宽度/深度/完整度/缺口/存储层）──
 # 真源：列结构=system.columns；宽度/深度=每表一次列扫描聚合（uniq + min/max + groupUniqArray 交易日集合）；
-#       缺口/完整度基准=c0_meta.trade_calendar；应有宽度=c0_meta.stock_list 最新清单（白名单表才展示，防误报不完整）；
-#       存储层=三层冷热架构（docs/03_modules/_cross_layer/database/blueprint.md：热 Redis/常规 CH/冷 E 盘）。
+#       缺口/完整度基准=c1_market.trade_calendar（A股开市日）按表自身频率口径换算（weekly/monthly/
+#       quarterly/event 各自算法，见 _asset_freq_of）；应有宽度=c0_meta.stock_list 最新清单（白名单表才
+#       展示，防误报不完整）；存储层=三层冷热架构（docs/03_modules/_cross_layer/database/blueprint.md：
+#       热 Redis/常规 CH/冷 E 盘）。
 # 重查询与 30s 下载监管轮询隔离：独立 Client + 后台线程；结果存内存缓存（10 分钟慢档自动重审 + 手动"深度体检"）。
 _ASSET_DBS = ("c0_meta", "c1_market", "c3_fundamental")
 _ASSET_TTL_SEC = 600            # 慢档自动重审周期（Owner 裁定：资产列 10 分钟级，下载列仍 30s）
@@ -1740,6 +1742,43 @@ _ASSET_DATE_CANDIDATES = ("trade_date", "date", "cal_date", "publish_time", "win
                           "snapshot_time", "list_date")
 _ASSET_CAL_SKIP = ("us_", "global", "futures", "hog", "a50", "weather", "macro", "edb")
 # ↑ 交易日历不跟随 A 股的表（美股/全球/期货/生猪现货/A50/天气/宏观）——按 A 股日历算完整度必出伪缺口
+
+# 频率口径分类（Owner 2026-09-10 二批裁定"修尺子"）：完整度/缺口按表自身数据频率计算，
+# 禁止用 A 股日频日历量周K/月K/季频/事件表（v1 伪缺口根因：周K compl≈21%/月K≈5.6%/北向季频≈1.9%）。
+# 判定来源择优：表名启发（weekly/monthly 族）+ 显式登记（季频快照/事件驱动），不读 tasks.yaml
+# schedule——任务调度频率≠数据频率（northbound 任务日跑但数据=季度末快照，schedule 作真源必错）。
+_ASSET_FREQ_QUARTERLY = ("northbound_hold_snapshot",)   # tushare hk_hold 季度末快照（JOB-083）
+_ASSET_FREQ_EVENT = (                                    # 事件驱动：行随事件出现，无每日覆盖语义
+    "ex_dividend_event", "index_constituent", "index_adjustment", "msci_adjustment",
+    "margin_target_adjustment", "dividend", "share_change", "repurchase",
+    "restricted_shares", "disclosure_plan", "share_unlock", "ipo_schedule",
+)
+
+
+def _asset_freq_of(tbl: str, dc: str | None) -> str:
+    """表数据频率：weekly/monthly/quarterly/event/daily/none（none=无日期列）。"""
+    if tbl in _ASSET_FREQ_EVENT:
+        return "event"
+    if tbl in _ASSET_FREQ_QUARTERLY:
+        return "quarterly"
+    if "_weekly" in tbl or tbl.endswith("weekly"):
+        return "weekly"
+    if "_monthly" in tbl or tbl.endswith("monthly"):
+        return "monthly"
+    return "daily" if dc else "none"
+
+
+def _asset_period_key(d: str, freq: str) -> str:
+    """日期→所属周期键（weekly=ISO 周 / monthly=月 / quarterly=季）；bar 日期=周期内最后交易日，与日历同周期映射。"""
+    y, m = int(d[:4]), int(d[5:7])
+    if freq == "monthly":
+        return f"{y}-{m:02d}"
+    if freq == "quarterly":
+        return f"{y}-Q{(m - 1) // 3 + 1}"
+    iso = date(int(y), m, int(d[8:10])).isocalendar()
+    return f"{iso[0]}-W{iso[1]:02d}"
+
+
 _ASSET_TIER_OVERRIDES: dict[str, str] = {}   # 表名→tier；冷层启用迁表后在此登记（对齐 storage_tiering Tier；中文映射在前端）
 _asset_state: dict[str, Any] = {"running": False, "done": 0, "total": 0, "audited_at": "", "ts": 0.0,
                                 "error": "", "tables": {}}
@@ -1765,8 +1804,9 @@ def _asset_run_audit() -> None:
     口径（Owner 2026-09-10 裁定）：
     - 宽度=表内 distinct symbol（应有=股票全历史清单，仅全宇宙白名单表展示应有数）
     - 深度=min~max 日期列实际值（非分区粒度，精确到日）
-    - 完整度/缺口=实际出现交易日 ∩ trade_calendar 在 [min,max] 区间的基准（占比 ≥90% 才按交易日口径算，
-      新闻等 7×24 表不算缺口防误报）
+    - 完整度/缺口按表自身频率口径（freq 字段，_asset_freq_of）：日频=实际出现交易日 ∩ trade_calendar
+      在 [min,max] 区间的基准（占比 ≥90% 才按交易日口径算，新闻等 7×24 表不算缺口防误报）；
+      周K/月K/季频=应出周期数比对（ISO 周/自然月/自然季）；事件驱动表标注"事件"不报缺口
     - 空表不跑重查询（width=0，深度空）
     """
     cli = _asset_audit_client()
@@ -1828,6 +1868,7 @@ def _asset_run_audit() -> None:
                                "days": None, "completeness": None, "gap_days": None,
                                "tier": _ASSET_TIER_OVERRIDES.get(tbl, "warm"), "err": ""}
         dc, sc, dty = e.get("date_col"), e.get("symbol_col"), e.get("date_ty", "")
+        rec["freq"] = freq = _asset_freq_of(tbl, dc)
         tbl_low = tbl.lower()
         if any(s in tbl_low for s in _ASSET_CAL_SKIP):
             tbl_cal: set[str] = set()          # 日历不跟 A 股的表：不算缺口口径
@@ -1865,12 +1906,22 @@ def _asset_run_audit() -> None:
                         rec["days"] = len(dates)
                         if not dates:   # 全零值日期表（etf_list/index_list 实证）：CH 聚合默认值 1970 兜底清空
                             rec["dmin"] = rec["dmax"] = ""
-                        # 完整度/缺口仅日频族（trade_date/date/cal_date）适用——事件型列（announce_date/
-                        # list_date/publish_time…）天然稀疏，按交易日全覆盖算必出伪缺口
+                        # 完整度/缺口按表自身频率口径（freq）：日频维持交易日历比对；周/月/季按"应出周期数
+                        # 比对"（bar 日期=周期内最后交易日，与日历同周期映射）；事件口径不报——行随事件出现，
+                        # 无每日覆盖语义。事件型日期列（announce_date/list_date/publish_time…）天然稀疏，
+                        # 按交易日全覆盖算同样必出伪缺口，不参与。
                         span = {x for x in tbl_cal if rec["dmin"] <= x <= rec["dmax"]}
-                        if span and dates and str(dc).lower() in ("trade_date", "date", "cal_date"):
+                        if freq == "event":
+                            pass   # 事件口径：前端标注"事件"，无完整度/缺口
+                        elif span and dates and str(dc).lower() in ("trade_date", "date", "cal_date"):
                             inter = dates & span
-                            if len(inter) / len(dates) >= 0.9:   # 排他防伪：7×24 混合表不算缺口
+                            if freq in ("weekly", "monthly", "quarterly"):
+                                got = {_asset_period_key(x, freq) for x in inter}
+                                exp = {_asset_period_key(x, freq) for x in span}
+                                if exp:
+                                    rec["completeness"] = round(len(got & exp) / len(exp) * 100, 1)
+                                    rec["gap_days"] = max(0, len(exp) - len(got & exp))
+                            elif len(inter) / len(dates) >= 0.9:   # 排他防伪：7×24 混合表不算缺口
                                 rec["completeness"] = round(len(inter) / len(span) * 100, 1)
                                 rec["gap_days"] = max(0, len(span) - len(inter))
                 except Exception:  # noqa: BLE001 — 单表审计失败降级"未测"，不炸全局

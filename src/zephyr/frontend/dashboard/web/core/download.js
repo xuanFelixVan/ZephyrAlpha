@@ -201,7 +201,15 @@ function dlToggleIssue(el) {
 }
 
 /* ── 库内资产列渲染（2026-09-10 合并裁定：宽度/深度/完整度/缺口/存储层）──
- * 未体检（DL_ASSET 为空/该表无记录）=「…」；体检过但该列无值（无 symbol 列/7×24 表无缺口口径/空表深度）=「—」 */
+ * 未体检（DL_ASSET 为空/该表无记录）=「…」；体检过但该列无值（无 symbol 列/7×24 表无缺口口径/空表深度）=「—」；
+ * 完整度/缺口按表自身频率口径（a.freq：weekly/monthly/quarterly 按应出周期数比对，event=事件驱动不报） */
+function dlAssetFreqUnit(a) {
+  return {weekly: ' 周', monthly: ' 月', quarterly: ' 季'}[a.freq] || ' 天';
+}
+function dlAssetFreqTip(a) {
+  return {weekly: '按周口径审计（应出周数比对）', monthly: '按月口径审计（应出月数比对）',
+          quarterly: '按季口径审计（应出季数比对）'}[a.freq] || '按 A 股交易日口径审计';
+}
 function dlAssetWidthCell(a) {
   if (!a) return '<span class="dim">…</span>';
   if (a.width == null) return '<span class="dim">—</span>';
@@ -216,15 +224,21 @@ function dlAssetDepthCell(a) {
 }
 function dlAssetPctCell(a) {
   if (!a) return '<span class="dim">…</span>';
-  if (a.completeness == null) return '<span class="dim">—</span>';
+  if (a.completeness == null) {
+    if (a.freq === 'event') return '<span class="dim" title="事件驱动表：行随事件出现，无完整度/缺口口径">事件</span>';
+    return '<span class="dim">—</span>';
+  }
   var v = a.completeness;
   var col = v >= 99 ? 'var(--up)' : v >= 90 ? 'var(--yellow)' : '#CA3F64';
   return '<b style="color:' + col + '">' + v + '%</b>';
 }
 function dlAssetGapCell(a) {
   if (!a) return '<span class="dim">…</span>';
+  if (a.freq === 'event') return '<span class="dim">—</span>';
   if (a.gap_days == null) return '<span class="dim">—</span>';
-  return a.gap_days > 0 ? '<b style="color:#CA3F64">' + a.gap_days + ' 天</b>' : '<span class="up">0</span>';
+  return a.gap_days > 0
+    ? '<b style="color:#CA3F64" title="' + dlAssetFreqTip(a) + '">' + a.gap_days + dlAssetFreqUnit(a) + '</b>'
+    : '<span class="up" title="' + dlAssetFreqTip(a) + '">0</span>';
 }
 function dlAssetTierCell(a) {
   if (!a) return '<span class="dim">…</span>';
