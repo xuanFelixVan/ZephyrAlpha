@@ -4,10 +4,10 @@ ttl: permanent
 doc_type: register
 title: 规则路径目录（唯一真源 SSoT）
 status: active
-generated_at: '2026-09-07T16:10:07Z'
+generated_at: '2026-09-10T10:31:27Z'
 generated_by: scripts/governance/d3_metadata/generate_rule_catalog.py
 maintenance: auto
-total_files: 231
+total_files: 235
 total_rules: 61
 tier_distribution:
   L0: 21
@@ -40,6 +40,21 @@ files:
   stability: ''
   layer: cross_layer
   superseded_by: null
+  severity: ''
+  tier: ''
+  aliases: []
+  section_count: 0
+- path: docs/01_policies_and_standards/policies/graph_quality_standard.md
+  module_id: ''
+  title: 产业链图谱质量标准——二十项合格线与循环修复
+  doc_type: policy
+  status: active
+  version: 1.4.0
+  rule_form: standard
+  scope: global
+  stability: ''
+  layer: ''
+  superseded_by: ''
   severity: ''
   tier: ''
   aliases: []
@@ -1874,7 +1889,7 @@ files:
   title: 产业链供应链全景图数据审计与更新SOP——夜班自主执行版
   doc_type: policy
   status: active
-  version: 1.3.0
+  version: 1.5.0
   rule_form: procedural
   scope: global
   stability: ''
@@ -1907,6 +1922,21 @@ files:
   version: 1.2.0
   rule_form: procedural
   scope: 07_trading_decision_architecture
+  stability: ''
+  layer: ''
+  superseded_by: ''
+  severity: ''
+  tier: ''
+  aliases: []
+  section_count: 0
+- path: docs/01_policies_and_standards/sop/trading_decision_map_pathfinding_sop.md
+  module_id: ''
+  title: 交易决策全景图病菌寻路增长 SOP——六向寻路+防噪音四闸（长期增长机制真源）
+  doc_type: policy
+  status: active
+  version: 1.0.0
+  rule_form: procedural
+  scope: global
   stability: ''
   layer: ''
   superseded_by: ''
@@ -2325,6 +2355,21 @@ files:
   doc_type: ''
   status: active
   version: 1.0.2
+  rule_form: ''
+  scope: ''
+  stability: ''
+  layer: ''
+  superseded_by: ''
+  severity: ''
+  tier: ''
+  aliases: []
+  section_count: 0
+- path: docs/01_policies_and_standards/_registry/catalogs/decision_algo_registry.yaml
+  module_id: REG-DAL-001
+  title: ''
+  doc_type: ''
+  status: ''
+  version: ''
   rule_form: ''
   scope: ''
   stability: ''
@@ -3090,6 +3135,21 @@ files:
   doc_type: ''
   status: active
   version: 1.2.3
+  rule_form: ''
+  scope: ''
+  stability: ''
+  layer: ''
+  superseded_by: ''
+  severity: ''
+  tier: ''
+  aliases: []
+  section_count: 0
+- path: docs/01_policies_and_standards/_registry/catalogs/validation_method_registry.yaml
+  module_id: REG-VALM-001
+  title: ''
+  doc_type: ''
+  status: ''
+  version: ''
   rule_form: ''
   scope: ''
   stability: ''
