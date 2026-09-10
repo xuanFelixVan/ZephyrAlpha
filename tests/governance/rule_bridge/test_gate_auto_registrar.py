@@ -308,11 +308,31 @@ class TestRealProjectIntegration:
     """真实项目集成测试——使用真实 in_process_gate_registry.yaml。"""
 
     def test_load_real_yaml_entries(self) -> None:
-        """真实 YAML 可加载且条目数与 registry 演进同步（2026-08-15：83→92；2026-08-16：92→93；2026-08-17：93→97；2026-08-21：97→98 +GATE-ERRCODE-CONSISTENCY；2026-08-23：98→99 +HOT-FILE-BASE-FRESHNESS；2026-09-04：99→100 +FRONTEND-TRUTH-SOURCE；2026-09-04：100→101 +FRONTEND-MAP；2026-09-05：101→104 +DECISION-MAP+BUSINESS-REGISTRY+GATE-BATTLE-MAP-ALIGNMENT（测试期望滞后三批补记，2026-09-09 clearance-night 修复先在失败；2026-09-09：104→105 +REGISTRY-MASS-DELETION 登记表防蒸发门禁）。"""
+        """真实 YAML 可加载且条目数与头部 total_gates 声明一致（去硬编码治本）。
+
+        演进史：2026-08-15：83→92；2026-08-16：92→93；2026-08-17：93→97；2026-08-21：97→98
+        +GATE-ERRCODE-CONSISTENCY；2026-08-23：98→99 +HOT-FILE-BASE-FRESHNESS；2026-09-04：
+        99→100 +FRONTEND-TRUTH-SOURCE；2026-09-04：100→101 +FRONTEND-MAP；2026-09-05：
+        101→104 +DECISION-MAP+BUSINESS-REGISTRY+GATE-BATTLE-MAP-ALIGNMENT；2026-09-09：
+        104→105 +REGISTRY-MASS-DELETION；2026-09-09：105→106 +ALGO-NOTE-SYNC（47ab163cbf）。
+
+        治本（2026-09-10）：assert == <数字> 的硬编码在每次 registry 演进时必然滞后
+        （105 断言 vs 106 实际，测试期望三批滞后补记的根因）——改为「实际条数 == 头部
+        total_gates 声明」单锚双端校验：演进者加条目时必须同步 total_gates 字段，
+        同步义务由本断言显式化。"""
+        import yaml
+
         from zephyr.shared.io.paths import REPO_ROOT
 
+        reg_path = Path(REPO_ROOT) / REGISTRY_REL_PATH
+        raw = yaml.safe_load(reg_path.read_text(encoding="utf-8"))
+        declared = (raw or {}).get("total_gates")
+        assert isinstance(declared, int), f"total_gates 字段缺失或非整数: {declared!r}"
         entries = load_gate_entries(Path(REPO_ROOT))
-        assert len(entries) == 105, f"expected 105 entries, got {len(entries)}"
+        assert len(entries) == declared, (
+            f"registry 实际条数 {len(entries)} 与头部 total_gates 声明 {declared} 不一致——"
+            "加条目时必须同步 total_gates 字段（同步义务）"
+        )
 
     def test_real_yaml_all_enabled(self) -> None:
         """真实 YAML 所有 gate enabled=true。"""
