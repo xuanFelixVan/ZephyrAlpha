@@ -16,7 +16,7 @@ import socket
 import subprocess
 import sys
 import time
-from datetime import datetime
+from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any
 
@@ -72,6 +72,13 @@ SERVICE_CATALOG: list[dict[str, Any]] = [
      "start": ["powershell", "-NoProfile", "-ExecutionPolicy", "Bypass", "-File", "scripts/start_tick_subscriber.ps1"],
      "stop": {"how": "heartbeat", "task": "ZephyrAlpha_TickSubscriber",
               "kill_patterns": [r"start_tick_subscriber\.ps1", r"zephyr\.data\.tick_subscriber"]}},
+    # 开关型软服务（非进程）：调度器内的 nightly_sentiment 时段（08:20 日频）标记文件闸——
+    # 停=写 data/runtime/nightly_sentiment.disabled（下一次触发起跳过），启=删标记；调度器无需重启
+    {"id": "nightly_sentiment", "group": "data", "tier": "free", "name": "情绪打分",
+     "desc": "每天 08:20 自动给昨夜新闻打情绪分入「新闻情绪窗口」表（本地规则法零成本）——开关即停/复，历史数据不动",
+     "detect": {"type": "flag", "file": "nightly_sentiment.disabled"},
+     "stop": {"how": "flag", "file": "nightly_sentiment.disabled"},
+     "start": {"how": "flag", "file": "nightly_sentiment.disabled"}},
     {"id": "sector_collector", "group": "data", "tier": "confirm", "name": "板块快照采集器",
      "desc": "盘中每分钟存一张板块涨跌快照进库（板块排名/轮动分析的数据底料）",
      "detect": {"type": "proc", "pattern": r"sector_snapshot_collector"},
@@ -285,6 +292,12 @@ def _kill_tree(pid: int) -> None:
 
 def _do_stop(item: dict[str, Any]) -> str:
     how = (item.get("stop") or {}).get("how")
+    if how == "flag":
+        # 开关型软服务：写停用标记（下一次调度触发起跳过），调度器不重启
+        f = _REPO / "data" / "runtime" / item["stop"]["file"]
+        f.parent.mkdir(parents=True, exist_ok=True)
+        f.write_text(datetime.now(timezone.utc).isoformat(" ", "seconds") + " 停用（服务总闸）\n", encoding="utf-8")
+        return "已停用：自动打分暂停（历史数据保留），点启动即恢复"
     if how == "port":
         pid = _port_listener_pid(item["stop"]["port"])
         if pid:
@@ -301,6 +314,8 @@ def _do_stop(item: dict[str, Any]) -> str:
                 subprocess.run(["schtasks", "/end", "/tn", task], capture_output=True, text=True, timeout=5)
                 subprocess.run(["schtasks", "/change", "/tn", task, "/disable"],
                                capture_output=True, text=True, timeout=5)
+                # 失效 schtasks 60s 缓存——否则状态灯最长 1 分钟仍显示旧"运行中"（Owner 实证"点了没反应"）
+                _SCHTASKS_CACHE.pop(task, None)
                 ended = "task ended+disabled; "
             except Exception:  # noqa: BLE001 — /end 失败仍走补刀
                 ended = "task end failed; "
@@ -320,6 +335,12 @@ def _do_stop(item: dict[str, Any]) -> str:
                     killed.append(str(pid))
                 except Exception:  # noqa: BLE001 — 单个杀失败不阻断其余
                     continue
+        # 停止成功即删心跳文件——残留的新鲜心跳会让状态灯按 mtime 绿到 2 分钟后才翻灰，
+        # 期间页面一直显示"运行中"（Owner 2026-09-10 实证：连点 5 次停止"没有任何反应"）
+        try:
+            (_TMP / item["detect"]["file"]).unlink(missing_ok=True)
+        except OSError:
+            pass
         if not killed:
             return ended + "no alive pid in heartbeat"
         return ended + "killed pids=" + ",".join(killed)
@@ -333,6 +354,14 @@ def _do_stop(item: dict[str, Any]) -> str:
 
 
 def _do_start(item: dict[str, Any]) -> str:
+    if (item.get("start") or {}).get("how") == "flag":
+        # 开关型软服务：删停用标记即恢复（下一次调度触发自动打分）
+        f = _REPO / "data" / "runtime" / item["start"]["file"]
+        try:
+            f.unlink(missing_ok=True)
+        except OSError:
+            pass
+        return "已启用：每天 08:20 自动打分（缺日由批内近 7 日缺口自愈补齐）"
     cmd = item.get("start")
     if not cmd:
         return "no start command"
@@ -665,6 +694,13 @@ def get_services_status() -> dict[str, Any]:
                     st["light"] = "red"; st["detail"] = f"心跳停 {round(age/60)} 分钟"
             else:
                 st["detail"] = "无心跳文件"
+        elif det["type"] == "flag":
+            # 开关型软服务（非进程）：标记文件存在=停用（灰），不存在=启用（绿）
+            f = _REPO / "data" / "runtime" / det["file"]
+            if f.exists():
+                st["detail"] = "已停用（点启动即恢复每日 08:20 自动打分）"
+            else:
+                st.update(light="green", detail="启用中 · 每日 08:20 自动打分")
         elif det["type"] == "proc":
             p = _find_proc(det["pattern"], det.get("name_only", False))
             if p:

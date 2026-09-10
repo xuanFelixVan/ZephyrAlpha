@@ -151,6 +151,8 @@ function svcCtl(id, action, _unused) {
   ZK.api.postServicesControl(id, action).then(function (r) {
     if (r && r.ok) {
       if (id === 'api_server' && action === 'restart') { svcWaitRestart(); return; }
+      /* 成功必反馈（Owner 2026-09-10 实证：停止成功但状态灯有延迟，零提示=像没反应） */
+      alert((action === 'stop' ? '■ 已停止：' : '▶ 已启动：') + (r.msg || '完成') + '\n（状态灯 10 秒内随轮询刷新）');
       svcLoad(); return;
     }
     if (r && r.need_confirm) {

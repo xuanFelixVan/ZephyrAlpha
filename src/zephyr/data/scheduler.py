@@ -324,6 +324,11 @@ def _run_special_schedule(
     # news_sentiment_window_no_scheduler_wiring 治本）。惰性导入 intelligence 域写入器；
     # 任何异常降级 alerter 告警，不炸调度器。
     if schedule_name == "nightly_sentiment":
+        # 服务总闸开关（data/runtime/nightly_sentiment.disabled 存在=停用）——
+        # 每次触发实查标记文件，开关即时生效无需重启调度器
+        _flag = Path(__file__).resolve().parents[3] / "data" / "runtime" / "nightly_sentiment.disabled"
+        if _flag.exists():
+            return {"nightly_sentiment": False}
         try:
             from zephyr.intelligence.nightly_sentiment_window import run_nightly_sentiment_batch
 

@@ -34,7 +34,7 @@ import json
 import logging
 from datetime import date, datetime
 from pathlib import Path
-from typing import Any
+from typing import Any, Final
 
 from fastapi import FastAPI, Query
 from fastapi.middleware.cors import CORSMiddleware
@@ -990,6 +990,8 @@ def _fw_run_task(task_id: str, params: dict[str, Any]) -> None:
                     "dynamic": summary.get("dynamic", False),
                     "regime_day_counts": summary.get("regime_day_counts", {}),
                     "per_regime": summary.get("per_regime", []),
+                    # 面板级对账（#275 定案口径①）：独立复算逐位硬验收摘要
+                    "panel_reconciliation": summary.get("panel_reconciliation"),
                     "equity_points": summary["equity_points"],
                     "trades": summary["trades"],
                     "metrics": summary["metrics"],
@@ -1261,6 +1263,12 @@ def services_control(body: dict[str, Any]) -> dict[str, Any]:
 
 # ── 数据源监管真源（Owner 2026-09-03：datasrc 页全部接通）─────────────────
 # 真源：logs/source_health_YYYYMMDD.log（scheduler 启动时全源实探）+ data/failures/*.json（alerter 真实告警）
+# 无 tasks.yaml 任务的内算表元数据（数据监管行补 数据源/时段 展示——调度接线在 schedule
+# 槽位而非 tasks.yaml，tasks_meta 查不到导致整行显示"—"；Owner 2026-09-10 要求情绪线上屏）
+_INTERNAL_JOB_META: Final = {
+    "news_sentiment_window": {"source": "internal·情绪批", "schedule_zh": "每日 08:20 自动打分"},
+}
+
 _SOURCE_CAPS = {
     "miniqmt": "行情/五档/委托", "tdx": "行情（通达信）", "tickflow": "行情 tick 流",
     "baostock": "行情备源", "akshare": "日频/财务/股东", "tushare": "日频/基本面",
@@ -1654,6 +1662,8 @@ def download_status() -> dict[str, Any]:
         light, days = _dl_light(latest_s, tbl_s)
         cnt[light] += 1
         meta = tasks_meta.get(full) or tasks_meta.get(tbl_s) or {}
+        if not meta and tbl_s in _INTERNAL_JOB_META:
+            meta = _INTERNAL_JOB_META[tbl_s]   # 无下载任务的内算表（调度接线在 schedule 槽位非 tasks.yaml）
         src = meta.get("source", "—")
         vpn_need, vpn_note = _SOURCE_VPN.get(src, ("—", ""))
         start_zh, end_zh = _partition_range(str(earliest) if earliest else "", str(latest) if latest else "")
