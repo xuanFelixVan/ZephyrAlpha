@@ -1,3 +1,5 @@
+# [BLUEPRINT] MOD-GATE_ENGINE | (auto-injected by S4 reconciler) | §
+# [TTL] permanent
 # -*- coding: utf-8 -*-
 # [MODULE] tests.governance.commit_gates.test_own_scope_promoted_gates
 # [DOMAIN] D_GOV_ENFORCEMENT
