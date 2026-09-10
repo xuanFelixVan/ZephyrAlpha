@@ -95,3 +95,6 @@ def __getattr__(name):
 
 
 __all__.append("PeadEventModel")
+
+# ORPHAN-MODULE: 引用登记（gw-tdm-20260909：C7 负面否决器）
+from zephyr.signal_fundamental.negative_veto import apply_negative_veto  # noqa: F401

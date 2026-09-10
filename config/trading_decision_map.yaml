@@ -1296,6 +1296,7 @@ nodes:
 
   - node_id: TDM-E-L3-04
     name_zh: 负面否决器
+    # C7 施工（gw-tdm-20260909）：MOD-SIG-137 落码，module_ref 由 risk_event_consumer 改指负面清单核
     market: cn_a
     flow: entry_flow
     layer: L3
@@ -1308,8 +1309,9 @@ nodes:
     parent_node: TDM-E-L3
     factor_refs: [FCT-TECH-083, FCT-TECH-077]
     data_refs: [DS-150]
-    module_ref: src/zephyr/signal_ashare/risk_event_consumer.py
-    module_id: MOD-SIG-088
+    module_ref: src/zephyr/signal_fundamental/negative_veto.py
+    module_id: MOD-SIG-137
+    note_confirmed: "2026-09-10"
     algo_refs: []
     doc_ref: "docs/01_policies_and_standards/_registry/catalogs/strategy_registry.yaml#STR-MULTIFACTOR-034"
     activation: postmarket
@@ -2191,6 +2193,7 @@ nodes:
 
   - node_id: TDM-P-P1-03
     name_zh: 买入逻辑存活判定
+    # C8 施工（gw-tdm-20260909）：MOD-PLAN-024 落码，module_ref 由 plan_deviation_monitor 改指理由存活核
     market: cn_a
     flow: position_flow
     layer: P1
@@ -2203,8 +2206,9 @@ nodes:
     parent_node: TDM-P-P1
     factor_refs: [FCT-SENT-012, FCT-MOM-022]
     data_refs: [DS-082, DS-107]
-    module_ref: src/zephyr/plan_engine/plan_deviation_monitor.py
-    module_id: MOD-PLAN-022
+    module_ref: src/zephyr/plan_engine/thesis_survival.py
+    module_id: MOD-PLAN-024
+    note_confirmed: "2026-09-10"
     algo_refs: []
     doc_ref: "docs/02_enterprise_architecture/07_trading_decision_architecture/design_memos/28_sentiment_cycle_trading.md"
     activation: premarket
