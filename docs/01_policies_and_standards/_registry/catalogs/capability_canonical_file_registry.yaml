@@ -5004,6 +5004,10 @@ creation_tokens:
   token: greatwall-tier-map-20260909
   created_by: greatwall-20260909-0020
   capability: industry_graph_quality_engine
+- file: docs/_working/2026-09-10-commit-unblock-notice.md
+  token: auto-commit-unblock-notice-20260910
+  created_by: st-legacy-clear-20260910
+  capability: governance_night_report
 - file: docs/_working/2026-09-10-legacy-clear-night-report.md
   token: auto-legacy-clear-night-report-20260910
   created_by: st-legacy-clear-20260910
@@ -11435,6 +11439,10 @@ creation_tokens:
   token: gw-tdm-pyramid-test-20260910
   created_by: gw-tdm-20260909
   capability: trading_decision_map
+- file: docs/_working/2026-09-10-chainmap-frontend-batch-plan.md
+  token: chainmap-fe-batch-plan-20260910
+  created_by: st-igfe-20260910
+  capability: chainmap_frontend
 di_seam_exemptions:
 - module_path: zephyr.trading.auto_runtime_core.AutoRuntimeCore
   reason: P0-5 LSG DI seam 标杆，已有 DI 但 AST 模式不匹配（动态注入）
