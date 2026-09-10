@@ -219,8 +219,9 @@
           '<span class="sub">' +
           (n.function_role ? '<span class="fr" title="职能：' + n.function_role + '">' + (FR_SHORT[n.function_role] || n.function_role) + '</span>' : '') +
           eqb +
-          '<span class="ct">' + n.n_companies + ' 公司</span>' +
+          '<span class="ct">' + (n.n_companies > 0 ? n.n_companies + ' 公司' : '暂无落位') + '</span>' +
           '</span>';
+        if (!n.n_companies) el.classList.add('empty0');   /* 照抄 TDM 红节点板：棕虚线=暂无公司落位 */
         el.addEventListener('click', function () { openPanel(n, g.chain); });
         el.dataset.chain = g.chain.chain_id;
         elByNode[n.node_id] = el;

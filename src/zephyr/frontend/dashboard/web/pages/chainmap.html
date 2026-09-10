@@ -24,8 +24,9 @@
             <div class="cm-loading-s" id="cm-loading-galaxy-s">已等待 0s</div>
           </div>
         </div>
-        <!-- L2 链层（chainmap-cluster 模块持有） -->
+        <!-- L2 链层（chainmap-cluster 模块持有；B4 甬道视觉照抄 TDM：蓝卡实锚/棕虚线空节点/列头 tag/图例条） -->
         <div class="cm-canvas card" id="cm-canvas-cluster" style="display:none">
+          <div class="cm-legend" id="cm-legend-cluster"><i class="d d-b"></i>蓝卡＝有公司落位<i class="d d-d"></i>棕虚线＝暂无落位<i class="d d-g"></i>⚙＝股权（悬停明细）<i class="d d-o"></i>⚡＝催化命中<i class="d d-l"></i>连线＝ig_edge 结构边（仅跨列）</div>
           <div class="cm-world" id="cm-world-cluster">
             <svg class="cm-wires" id="cm-wires-cluster"></svg>
             <div class="cm-nodes" id="cm-nodes-cluster"></div>
@@ -131,27 +132,38 @@
   #cm-search-slot .cm-sr .b { margin-left:auto; color:#525d70; font-size:10px; flex:none; }
   #cm-search-slot .cm-se { padding:8px; font-size:11px; color:#525d70; }
 
-  /* ── L2 链层（chainmap-cluster）── B4 甬道化（Owner 2026-09-10 裁定"参考交易决策全景效果"）：
-     环节卡=TDM 双行卡（行1 环节名加粗/行2 徽章+公司数灰字），列头加大带底线+环节计数，列序=上中下游左→右 */
+  /* ── L2 链层（chainmap-cluster）── B4 甬道视觉照抄 TDM（Owner 2026-09-10 指定）：蓝卡=TDM
+     production 板（#0f2740/#1e5a8f），棕虚线=TDM 红节点板（#2a1c0e/#8a4a12 dashed）＝暂无公司落位，
+     描述行=TDM 灰字，列头=TDM 流根标签板（#1a2436/#3d8bff 圆角 tag），顶部图例条同 TDM 工具栏 */
+  #cm-canvas-cluster .cm-legend { position:absolute; top:8px; left:12px; z-index:6; font-size:11px; color:#8a94a6;
+    background:rgba(10,13,20,.82); border:1px solid #263042; border-radius:99px; padding:3px 12px; pointer-events:none; }
+  #cm-canvas-cluster .cm-legend .d { display:inline-block; width:8px; height:8px; border-radius:50%; margin:0 5px 0 10px; vertical-align:middle; }
+  #cm-canvas-cluster .cm-legend .d:first-child { margin-left:0; }
+  #cm-canvas-cluster .cm-legend .d-b { background:#3d8bff; }
+  #cm-canvas-cluster .cm-legend .d-d { background:#8a4a12; }
+  #cm-canvas-cluster .cm-legend .d-g { background:#7db4e8; }
+  #cm-canvas-cluster .cm-legend .d-o { background:#e6a23c; }
+  #cm-canvas-cluster .cm-legend .d-l { background:#44546e; }
   #cm-nodes-cluster { position:absolute; left:0; top:0; }
-  #cm-nodes-cluster .cm-col-h { position:absolute; font-size:14px; font-weight:700; color:#b9c6da;
-    letter-spacing:3px; width:230px; padding-bottom:5px; border-bottom:1px solid #2c3a52; }
-  #cm-nodes-cluster .cm-col-h .cc { font-size:10.5px; font-weight:400; color:#525d70; letter-spacing:0;
-    border:1px solid #2c3a52; border-radius:99px; padding:0 7px; margin-left:4px; }
-  #cm-nodes-cluster .cm-chip { position:absolute; background:#1a2436; border:1px solid #3d8bff; border-radius:7px;
+  #cm-nodes-cluster .cm-col-h { position:absolute; background:#1a2436; border:1.5px solid #3d8bff; border-radius:10px;
+    color:#dbe4f0; font-size:14px; font-weight:700; letter-spacing:3px; padding:6px 16px; white-space:nowrap; }
+  #cm-nodes-cluster .cm-col-h .cc { font-size:10.5px; font-weight:400; color:#8a94a6; letter-spacing:0;
+    border:1px solid #2c3a52; border-radius:99px; padding:0 7px; margin-left:6px; }
+  #cm-nodes-cluster .cm-chip { position:absolute; background:#1a2436; border:1px solid #3d8bff; border-radius:10px;
     color:#dbe4f0; font-size:11.5px; font-weight:600; padding:4px 9px; cursor:pointer; white-space:nowrap; overflow:hidden;
     text-overflow:ellipsis; box-sizing:border-box; }
   #cm-nodes-cluster .cm-chip:hover { border-color:#e6c34c; }
-  #cm-nodes-cluster .cm-n { position:absolute; background:#0d1117; border:1.5px solid #263042; border-radius:8px;
-    padding:6px 10px; font-size:12.5px; color:#c6cdd8; cursor:pointer; overflow:hidden; box-sizing:border-box;
+  #cm-nodes-cluster .cm-n { position:absolute; background:#0f2740; border:1.5px solid #1e5a8f; border-radius:8px;
+    padding:7px 11px; font-size:12.5px; color:#c6cdd8; cursor:pointer; overflow:hidden; box-sizing:border-box;
     display:flex; flex-direction:column; justify-content:center; gap:4px; transition:border-color .15s; }
   #cm-nodes-cluster .cm-n:hover { border-color:#3d8bff; }
+  #cm-nodes-cluster .cm-n.empty0 { background:#2a1c0e; border-style:dashed; border-color:#8a4a12; }
   #cm-nodes-cluster .cm-n .nm { min-width:0; font-weight:600; color:#dbe4f0; overflow:hidden;
     text-overflow:ellipsis; white-space:nowrap; }
-  #cm-nodes-cluster .cm-n .sub { display:flex; align-items:center; gap:5px; min-width:0; }
-  #cm-nodes-cluster .cm-n .ct { margin-left:auto; color:#525d70; font-size:10px; flex:none; white-space:nowrap; }
-  #cm-nodes-cluster .cm-n .fr { flex:none; font-size:9px; line-height:1.5; padding:0 5px; border-radius:99px;
-    border:1px solid #2c3a52; color:#8a94a6; cursor:help; }   /* function_role 职能徽章（项2，hover 显全称） */
+  #cm-nodes-cluster .cm-n .sub { display:flex; align-items:center; gap:6px; min-width:0; color:#b9c6da;
+    font-size:11px; }
+  #cm-nodes-cluster .cm-n .ct { margin-left:auto; color:#8a94a6; font-size:10.5px; flex:none; white-space:nowrap; }
+  #cm-nodes-cluster .cm-n .fr { flex:none; color:#b9c6da; cursor:help; }   /* function_role 灰字描述（TDM 问行板式，hover 显全称） */
   #cm-nodes-cluster .cm-n.dimmed { opacity:.18; }
   #cm-nodes-cluster .cm-n.hit { border-color:#e6c34c; box-shadow:0 0 0 2px rgba(230,195,76,.25); }
   /* 股权徽章（F-CHAINMAP-EQUITY-BADGE）+ 催化角标（F-CHAINMAP-CATALYST）+ 明细浮层（剩余批 2026-09-10） */

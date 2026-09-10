@@ -8,11 +8,13 @@ feature_id: F-CHAINMAP-CLUSTER
 feature_name: 产业链层（L2 上中下游列式+环节公司面板）
 frozen_at: 2026-09-08
 frozen_by: ZephyrAlpha-Owner
-revision: 2
+revision: 3
 revision_policy: "修订=Owner 批准+改原文+revision 链留痕；AI 不可自改已冻结条项"
-# rev2 (2026-09-10, Owner 裁定链层"参考交易决策全景效果"甬道化): 视觉升级不改行为契约——
-# 环节卡 34px 单行→48px TDM 双行卡（行1 环节名 600 加粗/行2 职能+股权徽章+公司数灰字），
-# 列头 12px→14px 加底线+环节计数徽章，连线沿用 TDM 同款贝塞尔灰蓝。item1-6 语义全部不变。
+# rev3 (2026-09-10, Owner 出示 TDM 截图指定"直接照抄交易决策全景视觉效果"): 卡面配色照抄 TDM——
+# 蓝卡=TDM production 板（bg #0f2740/边 #1e5a8f）＝有公司落位；棕虚线=TDM 红节点板
+# （bg #2a1c0e/边 #8a4a12 dashed）＝暂无公司落位（语义同构：TDM 红节点=模块未建）；描述行=TDM
+# 灰字（职能/公司数去徽章框）；列头=TDM 流根标签板（#1a2436/#3d8bff 圆角 tag）+环节计数；
+# 新增顶部图例条（同 TDM 工具栏图例）。item1-6 行为语义不变。
 
 # check 取值：目检（截图人工/AI 视觉对） | 机断（DOM/接口断言）
 items:
@@ -22,7 +24,7 @@ items:
   - { id: 4, text: "面包屑 ‹ 全景 可返回 L1；链 chip 点击聚焦该链（其余淡化），导航树高亮联动", check: 目检 }
   - { id: 5, text: "搜索落位（cm:goto-chain 带 focus_node）→ 目标环节居中+金色描边高亮", check: 目检 }
   - { id: 6, text: "滚轮缩放/拖动平移/双击重置可用；簇加载失败显示空态文案（零演示数据）", check: 目检 }
-  - { id: 7, text: "双行卡机断：.cm-n 高≈48px 含 .nm（600 加粗）+.sub（职能徽章/股权徽章/公司数）两行；列头 .cm-col-h 含 .cc 计数", check: 机断 }
+  - { id: 7, text: "双行卡机断：.cm-n 高≈48px 含 .nm（600 加粗）+.sub（职能灰字/股权徽章/公司数）两行；蓝卡底色 #0f2740；0 公司环节挂 .empty0 棕虚线；列头 .cm-col-h=TDM tag 板含 .cc 计数；图例条 #cm-legend-cluster 存在", check: 机断 }
 
 execution:
   trigger: "任何涉及本功能的 UI 改动 commit 前"
