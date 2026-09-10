@@ -206,4 +206,36 @@ ttl: task_bound
 | G4 执行成本反馈闭环→L4-06（TDM-E-L4-14，2026-09-10 夜班批2） | 五步全走完：①母节点=L4-06 姊妹（定为 TDM-E-L4-14，parent=TDM-E-L4，盘后）②四道前置检查过——盘点：slippage_analyzer(MOD-EX_SOR_EXT-001 production)+execution_quality_scorer(MOD-EX_SOR_EXT-002 production)+algo_execution_selector(MOD-XS-011 production) 三零件全在；**断链实证=scorer 消费者行写"MOD-XS-011 算法选择器反馈环"，但 selector 源码零 import quality/feedback（grep 实证 2026-09-10）=闭环未接线**；父节点 L4 定稿✓；树枝级✓ ③D108 三条件过（独立输入=成交流水/独立输出=选型偏好回写/可回测=分算法执行成本对比/非参数变体）④设计稿=本行+地图节点 ⑤落图 138 节点+2 边（L4-10→L4-14 feed、L4-14→L4-06 feedback，S1↔S3 双向 feedback 同款先例）+施工清单立 C14；外部佐证：Almgren-Chriss 2000 *Journal of Risk* 3(2) 经典（risk.net/journal-risk/2161150）+RL 执行近作 arXiv 2411.06389(2024)/2507.06345(2025)（远期候选挂晨审：A 股 T+1/涨跌停/拆单限制需改造） | validate errors=0 / 双测试 98 绿 / align_all exit0 / 网关提交 | 84ac62dc（增长批2） | 已落图（模块=C14 接线待排期；module_id 欠账=R21 格式冲突挂晨审） |
 | X-R1 熔断族（2026-09-10 增长批2，CORE 域发现挂晨审） | ①上游=查无缺口（DAL-CIRCUIT-5 production 输入=组合日盈亏+回撤，组合内部量非外部 DS，data_refs 留空正当）；③算法外部三件全带 URL 挂晨审：CPPI=Black-Perold 1992 *JEDC* 16(3-4)（sciencedirect.com/science/article/pii/016518899290043E）+回撤控制=Grossman-Zhou 1993 ***Mathematical Finance*** 3(3)（常被误引 JF，onlinelibrary.wiley.com/doi/10.1111/j.1467-9965.1993.tb00044.x）+趋势危机 alpha=Hurst-Ooi-Pedersen 2017 *JPM* 44(1) 1880 起 67 市场危机期正收益（fairmodel.econ.yale.edu/ec439/hurst.pdf）；A 股适配闸：T+1+跌停无法卖出→CPPI 连续调仓不可行需离散化改造（晨审议题）；②下游=已接（R1→X-S1-06/F-C2-01/P2-01） | 发现全挂晨审（CORE 域纪律） | — | 挂起（晨审清单 3 项） |
 
+---
+
+## §7 增长批3（2026-09-11 夜，night-pathfinding-2300 续作：队列终态核实+G3 币圈六向寻路）
+
+> **批3 定性**：地图零写入批——§3.1 队列七行在批2 已全部销账（四落图三挂起），本批①复核终态无退化②把队列中唯一未启动的 G3 币圈展开做满六向寻路③给晨审补交 8 红节点归属提案。全部候选被闸 4（DATA-GAP）或交付依赖合法拦住，无一够格落图；地图维持 **138 节点/194 边** 冻结（HEAD=84ac62dc 后无他批推进，今日 git log 核实零 TDM 提交）。
+
+| 候选 | 五步进度 | 四关结果 | 落图 commit | 终态 |
+|---|---|---|---|---|
+| G1 三零件成熟度复核（任务点名，2026-09-11 夜） | 反查：next_day_8state_forecast(MOD-SIG-037, D_ASHARE_SIGNAL, 依赖 ch_reader)/similar_day_evaluator(MOD-PLAN-016, 依赖 prediction_log_writer+brier_calibration+similar_day_inference)/brier_calibration(MOD-PLAN-010, 依赖 prediction_log_writer) 三件全在盘，配套测试三件全在（tests/plan_engine/test_brier_calibration.py+test_similar_day_evaluator.py+tests/signal_ashare/test_next_day_8state_forecast.py）；TDM-E-L0-04 仍 module_ref=null（等 C13 组合器）=预期红维持 | 复核项，非新候选 | — | 已落图（批1 终态维持，无退化） |
+| G3 币圈四节点展开（增长批3 主作业，六向全走） | ①上游：**家底反转实证**——data_asset_registry 零 crypto 条目+table_registry 零 crypto 表+field_dictionary 零字段=DATA-GAP 实锤；但 provider 层有货：okx_provider/okx_swap_provider（MOD-MKT-DATA，planned）+sentiment_panel_provider（skeleton，免费源 api.alternative.me/fng 恐惧贪婪指数）+crypto_universe_selector（testing）；数据设计蓝图在=[95号 §一](../../02_enterprise_architecture/07_trading_decision_architecture/design_memos/95_crypto_system_blueprint.md) 四类（行情/合约/链上/宏观情绪），Phase 2 等外部条件（Glassnode/CryptoQuant 付费 key、币安 key）。②下游：**地图断链实证**——TDM-C 四节点仅 L1→L2→L3→L4 sequence 内链，L1 无入边（无上游喂总闸）、L4 无出边（产物无消费）；执行件 okx_broker（MOD-L06-001，testing）在盘未接。③算法：**内裁在先**=94 号 §7.6 四大耐用策略裁定→趋势跟踪系，网格（做市变种）/配对协整（Meridian 实证结构性不成立）已否定；因子三件已登记 FCT-CRYPTO-MOM-001/002+FCT-CRYPTO-VOL-001（registry 行在，无实现代码）；外证新鲜度补针（来源可溯+交叉验证双源过）：Grobys 2020 *Finance Research Letters*《Technical trading rules in the cryptocurrency market》MA 策略显著正超额（sciencedirect.com/science/article/pii/S1544612319308852）+山寨季业界标准双源=BlockchainCenter Altcoin Season Index（75% Top-50 跑赢 BTC/90 天滚动，blockchaincenter.net/altcoin-season-index/）+CoinMarketCap Top-100 变体（coinmarketcap.com/charts/altcoin-season-index/）——把 C-L1 空壳"ALT/BTC 上行=山寨季"落到可算定义。④后端：broker testing 最深→providers planned/skeleton→策略信号零代码；回测壳齐（UNI-CRYPTO-001+BMK-CRYPTO-001+CST-CRYPTO-001+RLM-CRYPTO-001/002/003 全登记）。⑤前端：95 号 §八 四面板（币圈盘面/持仓风控/班次复盘/情绪资金流）=需求登记单归前端会话，只登记不施工。⑥数据字段：零登记；口径可登记（OKX API 公开规格）但依赖表建设先行。**子骨架设计稿备妥未落图**：C-L1 大盘总闸（BTC 200 日线趋势门 Grobys 实证+山寨季 75%/90 天标准门）→C-L2 赛道（BTC.D+板块资金流排名）→C-L3 币对（市值+流动性+7 日动量，FCT-CRYPTO-MOM 族消费）→C-L4 时点（ATR 移动止损），逐环数据前提=Phase 2 数据层立项 | **闸 4 不过（DATA-GAP：数据层零在产——无表/无 DS/无字段，providers 未施工）**；闸 1/2/3 过（内裁 94/95 号+外证双源+A 股闸不适用币圈按 7×24/T+0 微观结构改造已在设计稿注明） | —（零地图写入，防挂而不用，同批2 L1-S1 DS-110 暂不挂先例） | 挂起（设计稿备妥；解锁=Owner 立项 95 号 Phase 2 数据层施工→DS/字段登记→下批落图） |
+| G2 资讯-产业链传导（批3 复核） | 会话注册表无接线轨活跃（st-perf-plan/solo-daily-fix/st-asset-v2 三者均非）；W3/W4 规格卡仍未交付；TDM-E-L2-09-1/09-2 仍 null 占位 | 交付依赖未满足 | — | 挂起（维持） |
+| L2-05 水温响应（批3 复核） | sentiment_cycle.py 头部 CONSUMERS 仍标"待 G07 相关性验证"、MATURITY=new 未变 | 闸 4 维持不过 | — | 挂起（维持，待 G07） |
+| X-R1 熔断族（批3 复核） | **晨审 st-tdm-review-20260911 未跑**：2026-09-11-tdm-morning-review-report.md 不存在+今日 git log 零 TDM 复核提交——D1-R21 格式冲突/D2-X-R1 三方法/D3-RL 执行/D4-DAL 补登/D5-前端两卡/D6-C13 立项六项裁定仍悬 | 发现维持挂晨审 | — | 挂起（晨审欠账提醒 Owner 派会话） |
+
+### §7.1 八个树枝锚定红节点归属提案（④后端反查产出，供晨审 §6.C.2 审定；非本轨裁定）
+
+| 红节点 | 归属提案（候选实件） | 证据 |
+|---|---|---|
+| TDM-E-L3-07-1 打板选股链 | `src/zephyr/pf_core/strategies/daban_sleeve_strategy.py` | 实件在盘；G08 打板 sleeve 与 sentiment_cycle CONSUMERS 行互证 |
+| TDM-E-L3-07-3 其余 sleeve 选股链 | `pf_core/strategies/event_driven_sleeve_strategy.py` + `multifactor_sleeve_strategy.py` + `pf_core/topn_momentum_strategy.py` | 节点 decision_question 三问（eventdriven/topn/default）与三实件一一对应 |
+| TDM-E-L4-02 买入时序 | `src/zephyr/plan_engine/closing_session_decision.py` + `boundary_revision_engine.py` | 尾盘决策/边界修订实件在 plan_engine |
+| TDM-E-L4-08 突破失败降级 | `plan_engine/batch_boundary_runner.py` / `scenario_planner.py`（候选，需语义核对） | grep"突破"命中，归属强度中等 |
+| TDM-E-L3-10 可交易性预检 | `src/zephyr/data/instrument_master.py`（候选） | 停牌/权限主数据；Tradability 判定逻辑归属需晨审核 |
+| TDM-E-L3-08 候选池输出 | `pf_core/core/constraint_solver.py` + `exposure_manager.py`（候选） | 组合约束=谁进候选池的求解侧 |
+| TDM-E-L3-06 环境开关 | 反查无直接命中（查无留痕） | 首板筛选器/降仓规则无现成模块，或立项或挂缺口清单 |
+| TDM-E-L3-09 股票池分层维护 | 反查无直接命中（查无留痕） | Tier 升降级无现成模块，universe 域候选 |
+
+### §7.2 批3 结论
+
+- 地图零写入，138/194 维持；四关验收不适用（无地图变更）；本批提交=本文档台账+handoff（.runtime 不入库）。
+- **交接要点**：①晨审欠账（六项裁定）②G3 解锁条件=95 号 Phase 2 数据层立项 ③8 红节点提案表待晨审 C.2 ④R21 冲突未解前，币圈/新增节点落图继续走 module_ref-only warn 路线。
+
 **纪律**：真源 YAML 只在批次边界动；禁越级立节点（父未定不立子）；新节点必须有数据来源或标 [ASSUMPTION]；每批台账+地图同 commit；本文档 ttl: task_bound，增长收官归档。
