@@ -683,6 +683,74 @@ def _compose_weight_panels_dynamic(
     )
 
 
+def verify_weight_panel_identity(
+    plan: FrameworkPlan,
+    panels: dict[str, pd.DataFrame],
+    composed: pd.DataFrame,
+    regime_by_date: Any = None,
+    tolerance: float = 1e-9,
+) -> dict[str, Any]:
+    """面板级对账（tracker #275 定案口径①）：按合成公式独立重算并与实际面板逐位对比。
+
+    分工边界（机构 sleeve attribution 同款）：
+        - 本函数验「权重合成的数学」——W(t,s)=Σα_i(t)·w_i(t,s) 独立重算（不调用
+          compose_weight_panels，防同源盲区），逐位硬验收（默认容差 1e-9）。
+        - NAV 层残差（整手取整/成本/涨跌停拒绝的执行层效应）属归因披露，不进本容差；
+          look-through 混合对账不适用单一账户统一框架（宪章约束二无独立子账户，
+          重写引擎亦不消除取整残差）。
+
+    Args:
+        plan / panels / regime_by_date: 与 compose_weight_panels 同参。
+        composed: 被验面板（compose 产物或引擎实际消费的 signals）。
+        tolerance: 逐格精确容差（默认 1e-9）。
+
+    Returns:
+        {"max_abs_diff", "samples", "over_tolerance_cells", "within_tolerance",
+         "tolerance", "note"}（note 披露参与成员口径）。
+    """
+    # 独立重算：只取参与成员（面板存在且非空），逐日 α 查表，行级 Σ>0 归一（合成同规则）
+    participants = [
+        w.strategy_id
+        for w in plan.weights
+        if w.strategy_id in panels and panels[w.strategy_id] is not None and not panels[w.strategy_id].empty
+    ]
+    union_index = list(composed.index)
+    union_cols = list(composed.columns)
+    lookup = _normalize_regime_series(regime_by_date) if regime_by_date is not None else {}
+    override_map = plan.regime_override_map
+
+    recomputed = pd.DataFrame(0.0, index=union_index, columns=union_cols)
+    for ts in union_index:
+        state = lookup.get(pd.Timestamp(ts).normalize())
+        state = state if (state is not None and state in override_map) else None
+        eff_map = {w.strategy_id: float(w.weight) for w in plan.effective_weights(state)}
+        alpha_total = sum(eff_map.get(sid, 0.0) for sid in participants)
+        if alpha_total <= 0.0:
+            continue
+        row = pd.Series(0.0, index=union_cols)
+        for sid in participants:
+            aligned = panels[sid].reindex(index=[ts], columns=union_cols).fillna(0.0).iloc[0]
+            row = row.add(aligned * eff_map[sid])
+        # 与 compose 可观察输出对齐：组内 rescale 后再做行级 Σ→1 归一——行归一吞掉 rescale，
+        # 故复算只需 行=Σα_i·w_i 再归一（全零行保留=现金日）
+        row_sum = float(row.sum())
+        if abs(row_sum) > 1e-12:
+            row = row * (1.0 / row_sum)
+        recomputed.loc[ts] = row
+
+    diff = (composed - recomputed).abs()
+    max_abs = float(diff.to_numpy().max()) if diff.size else 0.0
+    over = int((diff > tolerance).to_numpy().sum())
+    return {
+        "max_abs_diff": round(max_abs, 12),
+        "samples": int(diff.size),
+        "over_tolerance_cells": over,
+        "within_tolerance": over == 0,
+        "tolerance": tolerance,
+        "note": f"独立复算口径=参与成员({len(participants)}员)×逐日α查表×行归一；NAV 层执行残差另行归因披露",
+    }
+
+
 def per_regime_summary(
     plan: FrameworkPlan,
     equity_curve: list[dict[str, Any]],
@@ -992,6 +1060,7 @@ def _persist_framework_artifact(
     plan: FrameworkPlan,
     report: ComposeReport,
     config: FrameworkBacktestConfig,
+    panel_recon: dict[str, Any] | None = None,
 ) -> tuple[str, dict[str, Any], dict[str, Any]]:
     """引擎结果 → sink → artifact（bt-fw-* 命名 + plan_id 披露字段）→ 落盘。"""
     from zephyr.backtest.io.backtest_result_sink import sink_backtest_result
@@ -1032,12 +1101,30 @@ def _persist_framework_artifact(
                 },
             }
         )
+    if panel_recon is not None:  # 面板级对账（#275 定案口径①）——静/动两模式均落产物
+        metrics["panel_reconciliation"] = panel_recon
     run_id = f"{_ARTIFACT_RUN_PREFIX}-{uuid.uuid4().hex[:8]}"
     artifact = replace(artifact, run_id=run_id, metrics=metrics)
     saved_run_id = save_artifact(
         artifact, storage_path=Path(config.storage_path) if config.storage_path else None
     )
     return saved_run_id, ts, metrics
+
+
+def _assemble_run_warn(
+    ts: dict[str, Any],
+    report: ComposeReport,
+    panel_recon: dict[str, Any] | None,
+) -> str | None:
+    """run_framework_backtest 的 warn 组装（空净值/跳过成员/面板对账超容差三项）。"""
+    parts: list[str] = []
+    if not ts.get("equity_curve"):
+        parts.append("equity_curve empty")
+    if report.skipped:
+        parts.append("skipped: " + "; ".join(f"{s}({r})" for s, r in report.skipped))
+    if panel_recon is not None and not panel_recon["within_tolerance"]:
+        parts.append(f"panel reconciliation OVER tolerance: max_abs_diff={panel_recon['max_abs_diff']}")
+    return "; ".join(parts) if parts else None
 
 
 def run_framework_backtest(
@@ -1058,9 +1145,10 @@ def run_framework_backtest(
 
     Returns:
         {"ok", "run_id", "plan_id", "participants", "skipped", "rescale_factor",
-         "dynamic", "regime_day_counts", "per_regime", "equity_points", "trades",
-         "metrics", "warn"}（ok=False 时含 error；动态模式三键有值，静态模式
-         dynamic=False/regime_day_counts={} /per_regime=[]——二期消费方零漂移）。
+         "dynamic", "regime_day_counts", "per_regime", "panel_reconciliation",
+         "equity_points", "trades", "metrics", "warn"}（ok=False 时含 error；动态模式
+         dynamic/regime_day_counts/per_regime 三键有值，静态模式=False/{}/[]——二期消费方
+         零漂移；panel_reconciliation=面板级对账（#275 定案口径①），超容差落 warn）。
     """
     from zephyr.backtest.implementations.vectorized_engine import BacktestConfig, DefaultBacktestEngine
 
@@ -1103,13 +1191,20 @@ def run_framework_backtest(
         plan, panels, allow_partial=cfg.allow_partial, regime_by_date=cfg.regime_by_date
     )
 
+    # 面板级对账（tracker #275 定案口径①）：独立复算逐位硬验收，每次运行自带回归绊线
+    panel_recon = verify_weight_panel_identity(
+        plan, panels, report.panel, regime_by_date=cfg.regime_by_date
+    )
+
     engine = DefaultBacktestEngine(
         config=BacktestConfig(initial_capital=Decimal(str(cfg.initial_capital))),
         enable_stk_limit_provider=cfg.enable_stk_limit_provider,
     )
     result = engine.run(data=data, signals=report.panel, strategy_name=plan.plan_id)
 
-    saved_run_id, ts, artifact_metrics = _persist_framework_artifact(result, engine, plan, report, cfg)
+    saved_run_id, ts, artifact_metrics = _persist_framework_artifact(
+        result, engine, plan, report, cfg, panel_recon=panel_recon
+    )
 
     # 三期动态模式：per-regime 分段摘要（收益/回撤贡献，done 响应消费）
     dynamic = bool(report.regime_day_counts)
@@ -1118,11 +1213,7 @@ def run_framework_backtest(
         per_regime = per_regime_summary(plan, ts.get("equity_curve") or [], cfg.regime_by_date)
 
     n_eq = len(ts.get("equity_curve") or [])
-    warn = None
-    if n_eq == 0:
-        warn = "equity_curve empty"
-    if report.skipped:
-        warn = (warn + "; " if warn else "") + "skipped: " + "; ".join(f"{s}({r})" for s, r in report.skipped)
+    warn = _assemble_run_warn(ts, report, panel_recon)
 
     return {
         "ok": True,
@@ -1134,6 +1225,7 @@ def run_framework_backtest(
         "dynamic": dynamic,
         "regime_day_counts": report.regime_day_counts,
         "per_regime": per_regime,
+        "panel_reconciliation": panel_recon,
         "equity_points": n_eq,
         "trades": len(ts.get("trade_log") or []),
         "metrics": artifact_metrics,
@@ -1154,4 +1246,5 @@ __all__: Final = (
     "per_regime_summary",
     "reconcile_composed_nav",
     "run_framework_backtest",
+    "verify_weight_panel_identity",
 )

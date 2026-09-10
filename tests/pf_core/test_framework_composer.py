@@ -46,6 +46,7 @@ from zephyr.pf_core.strategy_engine.framework_composer import (
     per_regime_summary,
     reconcile_composed_nav,
     run_framework_backtest,
+    verify_weight_panel_identity,
 )
 
 # ---------------------------------------------------------------------------
@@ -707,3 +708,72 @@ def test_run_framework_backtest_static_backward_compat_keys(fake_runner_panels, 
     assert summary["per_regime"] == []
     d = json.loads((storage / f"{summary['run_id']}.json").read_text(encoding="utf-8"))
     assert "dynamic" not in d["metrics"]  # 静态产物不加键，二期产物 schema 零漂移
+
+
+# ---------------------------------------------------------------------------
+# 面板级对账（tracker #275 定案口径①：独立复算逐位硬验收）
+# ---------------------------------------------------------------------------
+
+
+def test_verify_panel_identity_static_within_tolerance():
+    """静态模式：独立复算与合成面板逐位一致（≤1e-9）。"""
+    plan = _two_regime_plan()
+    idx = pd.to_datetime(["2026-08-03", "2026-08-04"])
+    pa = _panel({"600519": [0.8, 0.6], "000858": [0.2, 0.4]}, idx, ["600519", "000858"])
+    pb = _panel({"600519": [0.5, 0.5], "000858": [0.5, 0.5]}, idx, ["600519", "000858"])
+    report = compose_weight_panels(plan, {"a": pa, "b": pb})
+    recon = verify_weight_panel_identity(plan, {"a": pa, "b": pb}, report.panel)
+    assert recon["within_tolerance"] is True
+    assert recon["max_abs_diff"] <= 1e-9
+    assert recon["over_tolerance_cells"] == 0
+
+
+def test_verify_panel_identity_dynamic_within_tolerance():
+    """动态模式：两 regime 切换下独立复算仍逐位一致。"""
+    plan = _two_regime_plan()
+    idx = pd.to_datetime(["2026-08-03", "2026-08-04", "2026-08-05"])
+    pa = _panel({"600519": [0.8, 0.8, 0.4], "000858": [0.2, 0.2, 0.6]}, idx, ["600519", "000858"])
+    pb = _panel({"600519": [0.5, 0.5, 0.5], "000858": [0.5, 0.5, 0.5]}, idx, ["600519", "000858"])
+    regime = {"2026-08-03": "r3", "2026-08-05": "r4"}
+    report = compose_weight_panels(plan, {"a": pa, "b": pb}, regime_by_date=regime)
+    recon = verify_weight_panel_identity(plan, {"a": pa, "b": pb}, report.panel, regime_by_date=regime)
+    assert recon["within_tolerance"] is True
+    assert recon["max_abs_diff"] <= 1e-9
+
+
+def test_verify_panel_identity_detects_corruption():
+    """反例：面板被扰动 0.01 时必须报超容差（证明校验真的能红）。"""
+    plan = _two_regime_plan()
+    idx = pd.to_datetime(["2026-08-03"])
+    pa = _panel({"600519": [0.8], "000858": [0.2]}, idx, ["600519", "000858"])
+    pb = _panel({"600519": [0.5], "000858": [0.5]}, idx, ["600519", "000858"])
+    report = compose_weight_panels(plan, {"a": pa, "b": pb})
+    corrupted = report.panel.copy()
+    corrupted.iloc[0, 0] += 0.01
+    recon = verify_weight_panel_identity(plan, {"a": pa, "b": pb}, corrupted)
+    assert recon["within_tolerance"] is False
+    assert recon["over_tolerance_cells"] >= 1
+
+
+def test_run_framework_backtest_reports_panel_reconciliation(fake_runner_panels, tmp_path: Path):
+    """端到端：summary 与产物 metrics 均落 panel_reconciliation 且静态模式也在容差内。"""
+    plans_file = tmp_path / "plans.yaml"
+    plans_file.write_text(yaml.safe_dump(_FAKE_CFG), encoding="utf-8")
+    storage = tmp_path / "artifacts"
+    storage.mkdir()
+
+    summary = run_framework_backtest(
+        "fw-test",
+        ["600519.SH"],
+        "2026-08-03",
+        "2026-08-14",
+        config=FrameworkBacktestConfig(
+            storage_path=storage,
+            plans_path=plans_file,
+            enable_stk_limit_provider=False,
+        ),
+    )
+    assert summary["ok"], summary.get("error")
+    assert summary["panel_reconciliation"]["within_tolerance"] is True
+    d = json.loads((storage / f"{summary['run_id']}.json").read_text(encoding="utf-8"))
+    assert d["metrics"]["panel_reconciliation"]["within_tolerance"] is True

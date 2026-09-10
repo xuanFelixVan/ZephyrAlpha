@@ -29,7 +29,7 @@ date: 2026-09-10
 | 图 | 位置 | 状态 | 链接 |
 |----|------|------|------|
 | 依赖图 (depgraph) | `blueprint_id=MOD-FWCOMP-001` 的 2 个 file 节点 | production | `extract_depgraph.py --modules MOD-FWCOMP-001` |
-| 数据流图 (dataflow) | （无节点） | N/A | `apply_dataflowgraph.py --list-datasets` |
+| 数据流图 (dataflow) | 0 个 Dataset / 1 个 Job | active | `apply_dataflowgraph.py --list-datasets` |
 | 决策架构图 (decision) | 0 个决策节点 / 1 个决策层 | N/A | `generate_decision_diagram.py` |
 | 蓝图 (blueprint) | 本文件 | active | — |
 
@@ -78,6 +78,7 @@ system_charter.md §3 约束二「统一框架派：1 框架 × N 子策略 × r
 | `get_framework_plan(plan_id)` | 按 ID 取方案（不存在抛 FrameworkPlanError） |
 | `compose_weight_panels(plan, panels, allow_partial=True, regime_by_date=None)` | 合成算子 → ComposeReport（panel/participants/skipped/rescale_factor/notes 全披露；三期 regime_by_date 非空=动态查表模式） |
 | `per_regime_summary(plan, equity_curve, regime_by_date)` | 三期：per-regime 分段摘要（days/return_pct/max_drawdown_pct，未覆盖归 __base__） |
+| `verify_weight_panel_identity(plan, panels, composed, regime_by_date=None, tolerance=1e-9)` | 面板级对账（#275 定案口径①）：独立复算 W(t,s)=Σα_i(t)·w_i(t,s) 逐位硬验收；run_framework_backtest 每次运行自动执行并落产物 metrics |
 | `reconcile_composed_nav(composed, member_navs, plan)` | 组合净值 vs Σα_i·nav_i 逐日对账（验收判据 抽样≥5 日误差<0.01%；仅静态口径，动态用 per_regime_summary） |
 | `run_framework_backtest(plan_id, symbols, start, end, ...)` | 全链路：成员面板 → 合成 → DefaultBacktestEngine → 产物 bt-fw-*.json（plan_id 落 metrics；cfg.regime_by_date 非空=动态，响应增 dynamic/regime_day_counts/per_regime） |
 
@@ -105,5 +106,5 @@ system_charter.md §3 约束二「统一框架派：1 框架 × N 子策略 × r
 - v1 仅向量化日频合成回测；tick 模式整装回测（逐成员 tick 回放+组合）为后续迭代。
 - 成员回测参数同参透传（v1 简化）；方案级参数差异化留后续。
 - 约束事件（涨跌停拒单/T+1）下组合净值与手工加权存在路径二阶差异——对账工具如实报告超容差日期，不粉饰。
-- （三期实测 2026-09-10）组合净值 vs 成员净值混合（Σα_i·r_i）在活跃窗口存在恒定比率级偏差（同引擎 solo 成员路径复现，静态同样存在；归因=整手取整（高股价 100 股粒度）/成本/约束事件在组合与成员两组合间的非共享二阶效应）——面板级 α_i(t) 数学已单测逐位验证；NAV 级 <0.01% 对账判据在现引擎保真度下仅平窗成立，提升保真度留后续（construction_progress_tracker §六登记）。
+- （三期实测 2026-09-10，**#275 定案**）组合净值 vs 成员净值混合（Σα_i·r_i）在活跃窗口存在恒定比率级偏差（同引擎 solo 成员路径复现，静态同样存在；归因=整手取整（高股价 100 股粒度）/成本/约束事件在组合与成员两组合间的非共享二阶效应）——面板级 α_i(t) 数学已单测逐位验证。**定案口径①（Owner 授权最专业方案自裁）**：面板级对账 `verify_weight_panel_identity` 逐位硬验收（1e-9，run_framework_backtest 每次运行自动执行并落产物 metrics）；NAV 层残差归因披露不设容差；方案② look-through 留待多账户/模拟赛马阶段自然成立（单一账户硬做不消除取整残差）。
 - （三期）regime 日序为显式注入（无逐日持久化真源表）；内置检测器 walk-forward 自动回放另批立项。
