@@ -5,7 +5,7 @@
 # [CONSUMERS] zephyr.gov_enforcement.rule_bridge.git_commit_gateway.GitCommitGateway.__init__
 # [STARTUP] imported
 # [MATURITY] production
-# [INVARIANTS] 硬阻断——staged 新增/修改 .py 文件的 raise 语句异常消息 f-string 中含敏感变量名（tx_id/path/file_path/password/secret/token 等）时阻断 commit；tests/ 豁免（真源：commit_gate_registry.is_test_exempt）；in-process AST 分析无 subprocess；AST 解析失败/文件读取失败 fail-open（logger.warning）；行尾含 `noqa: MSG-EXPOSURE` 注释的单行豁免
+# [INVARIANTS] 硬阻断——staged 新增/修改 .py 文件的 raise 语句异常消息 f-string 中含敏感变量名（tx_id/path/file_path/password/secret/token 等）时阻断 commit；own-scope（#ARCH-GATE-OWN-SCOPE-001 第四批，#ARCH-310）：扫描范围=全暂存区∩本 session（files∪held），外来 staged 降级 warn+_audit_foreign_staged 审计不阻断，own_scope=None 退化全量保守；tests/ 豁免（真源：commit_gate_registry.is_test_exempt）；in-process AST 分析无 subprocess；AST 解析失败/文件读取失败 fail-open（logger.warning）；行尾含 `noqa: MSG-EXPOSURE` 注释的单行豁免
 # [MODIFY-GUARD] gate_id="MSG-EXPOSURE"；check 闭包签名 (gateway, files, **kwargs) -> tuple[bool, str]
 # [STABILITY] evolving
 # [SAFETY] L
@@ -95,6 +95,11 @@ import ast
 import logging
 import os
 
+from zephyr.gov_enforcement.commit_gates._diff_helpers import (
+    _audit_foreign_staged,
+    _build_own_scope,
+    _norm_rel,
+)
 from zephyr.gov_enforcement.rule_bridge.commit_gate_registry import GateSpec, is_test_exempt
 
 logger = logging.getLogger(__name__)
@@ -424,6 +429,25 @@ def make_msg_exposure_gate() -> GateSpec:
         py_files = _get_staged_py_files(gateway)
         if not py_files:
             return True, ""
+
+        # 只查自己（#ARCH-GATE-OWN-SCOPE-001 第四批，#ARCH-310，2026-09-12）：扫描范围=
+        # 全暂存区∩本 session 范围；外来 staged 不扫描、降级 warn+审计；own_scope=None
+        # 退化旧行为扫全量；本 session 自身违规仍硬阻断；fail-open 红线不变。
+        session_id = kwargs.get("session_id")
+        own_scope = _build_own_scope(gateway, files, session_id)
+        if own_scope is not None:
+            own_rel = [f for f in py_files if _norm_rel(gateway, f) in own_scope]
+            foreign_staged = [f for f in py_files if _norm_rel(gateway, f) not in own_scope]
+            if foreign_staged:
+                _audit_foreign_staged(gateway, session_id, foreign_staged, gate_name="MSG-EXPOSURE")
+                logger.warning(
+                    "MSG-EXPOSURE: %d 个外来 session staged 文件未检查（warn+审计，不阻断）: %s",
+                    len(foreign_staged),
+                    ", ".join(foreign_staged[:5]) + ("..." if len(foreign_staged) > 5 else ""),
+                )
+            py_files = own_rel
+            if not py_files:
+                return True, ""
 
         # worktree root
         try:

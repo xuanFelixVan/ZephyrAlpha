@@ -5,7 +5,7 @@
 # [CONSUMERS] zephyr.gov_enforcement.rule_bridge.git_commit_gateway.GitCommitGateway.__init__
 # [STARTUP] imported
 # [MATURITY] production
-# [INVARIANTS] 硬阻断——staged .py 文件含未登记或无理由的自定义 noqa 标记时阻断 commit；ruff/flake8 标准码（E402/BLE001/S324 等）跳过；registry 加载失败 fail-open（不阻断）；只检 staged .py（增量检测，现存违规 grandfather）
+# [INVARIANTS] 硬阻断——staged .py 文件含未登记或无理由的自定义 noqa 标记时阻断 commit；own-scope（#ARCH-GATE-OWN-SCOPE-001 第四批，#ARCH-310）：扫描范围=全暂存区∩本 session（files∪held），外来 staged 降级 warn+_audit_foreign_staged 审计不阻断，own_scope=None 退化全量保守；ruff/flake8 标准码（E402/BLE001/S324 等）跳过；registry 加载失败 fail-open（不阻断）；只检 staged .py（增量检测，现存违规 grandfather）
 # [MODIFY-GUARD] gate_id="NOQA-VALIDATION"；check 闭包签名 (gateway, files, **kwargs) -> tuple[bool, str]
 # [STABILITY] stable
 # [SAFETY] L
@@ -77,6 +77,11 @@ from typing import Any
 
 import yaml
 
+from zephyr.gov_enforcement.commit_gates._diff_helpers import (
+    _audit_foreign_staged,
+    _build_own_scope,
+    _norm_rel,
+)
 from zephyr.gov_enforcement.rule_bridge.commit_gate_registry import GateSpec
 
 logger = logging.getLogger(__name__)
@@ -246,6 +251,24 @@ def make_noqa_validation_gate() -> GateSpec:
         staged_py = _get_staged_py_files(gateway)
         if not staged_py:
             return True, ""
+        # 只查自己（#ARCH-GATE-OWN-SCOPE-001 第四批，#ARCH-310，2026-09-12）：扫描范围=
+        # 全暂存区∩本 session 范围；外来 staged 不扫描、降级 warn+审计；own_scope=None
+        # 退化旧行为扫全量；本 session 自身违规仍硬阻断；fail-open 红线不变。
+        session_id = kwargs.get("session_id")
+        own_scope = _build_own_scope(gateway, files, session_id)
+        if own_scope is not None:
+            own_rel = [f for f in staged_py if _norm_rel(gateway, f) in own_scope]
+            foreign_staged = [f for f in staged_py if _norm_rel(gateway, f) not in own_scope]
+            if foreign_staged:
+                _audit_foreign_staged(gateway, session_id, foreign_staged, gate_name="NOQA-VALIDATION")
+                logger.warning(
+                    "NOQA-VALIDATION: %d 个外来 session staged 文件未检查（warn+审计，不阻断）: %s",
+                    len(foreign_staged),
+                    ", ".join(foreign_staged[:5]) + ("..." if len(foreign_staged) > 5 else ""),
+                )
+            staged_py = own_rel
+            if not staged_py:
+                return True, ""
         wt_root = _resolve_worktree_root(gateway)
         abs_files = _resolve_abs_paths(staged_py, wt_root)
         if not abs_files:
