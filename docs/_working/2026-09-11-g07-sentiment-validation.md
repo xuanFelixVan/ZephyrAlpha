@@ -1,5 +1,6 @@
 ---
 ttl: task_bound
+doc_type: audit_report
 ---
 # G07 情绪分层相关性验证报告（三态裁定）
 

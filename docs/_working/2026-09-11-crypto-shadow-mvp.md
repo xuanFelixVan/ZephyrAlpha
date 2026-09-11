@@ -1,5 +1,6 @@
 ---
 ttl: task_bound
+doc_type: audit_report
 ---
 # 币圈影子 MVP 收尾报告（crypto shadow MVP）
 
@@ -63,6 +64,8 @@ ttl: task_bound
 | 系统代理 | 无（HTTP(S)_PROXY 全空） |
 
 **定性**：环境级端点阻断（域名污染 + SNI 干扰），非脚本问题。**未授权擅自切换数据源**（如币安）——MVP 数据源是已定设计，换源属 Owner 决策。
+
+**二次评估补记（2026-09-12 晨，Owner 指令"自己裁定"）**：一次性测试 4 个备用公开端点——`api.binance.com`（免 key 公开 K 线）/`api1.binance.com`/`okx.com/api/v5/public/time`/`api.exchange.coinbase.com` 全部 URLError 失败。**境外加密交易所公开行情属环境级全域封锁**，换源无法绕过网络闸（Cloudflare 反代或代理是唯一路径，需 Owner 资源）。结论：真实首跑维持挂闸，裁定=登记待外部网络条件变化，非 AI 可解。
 
 ## 6. 真实首跑指令（网络解锁后，Owner 或下一会话执行）
 

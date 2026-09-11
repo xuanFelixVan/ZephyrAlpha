@@ -458,6 +458,7 @@ nodes:
 
   # ── 树枝01 板块强度综合（22号 §3.1①⑧⑨）────────────────────────
   - node_id: TDM-E-L2-01
+    note_confirmed: 2026-09-12
     name_zh: 板块强度综合
     market: cn_a
     flow: entry_flow
@@ -471,7 +472,9 @@ nodes:
     parent_node: TDM-E-L2
     factor_refs: []
     data_refs: [DS-059, DS-170]
-    module_ref: null
+    module_ref: src/zephyr/signal_ashare/core/sector_strength_aggregator.py
+    module_id: MOD-SIG-142
+
     red_reason: structural
     algo_refs: []
     doc_ref: "docs/02_enterprise_architecture/07_trading_decision_architecture/design_memos/22_sector_rotation_spec.md#§3.2-板块强度综合"
@@ -731,6 +734,7 @@ nodes:
 
   # ── 树枝04 板块级市场状态 ────────────────────────
   - node_id: TDM-E-L2-04
+    note_confirmed: 2026-09-12
     name_zh: 板块级市场状态
     market: cn_a
     flow: entry_flow
@@ -743,7 +747,9 @@ nodes:
     parent_node: TDM-E-L2
     factor_refs: []
     data_refs: [DS-059, DS-170]
-    module_ref: null
+    module_ref: src/zephyr/signal_ashare/core/sector_ecology_judge.py
+    module_id: MOD-SIG-143
+
     red_reason: structural
     algo_refs: []
     doc_ref: "docs/02_enterprise_architecture/07_trading_decision_architecture/design_memos/22_sector_rotation_spec.md#§3.1⑨⑤"
@@ -1091,14 +1097,14 @@ nodes:
     algo_note_zh: >-
       新闻实体/事件词 → 产业链图谱节点匹配（news_symbol_linker 思路升维到 ig_* 图谱节点）+置信度。
       上游=新闻情绪语义分析（S0-1）与事件评分；下游=冲击标的生成（09-2）。
-      回填留痕（2026-09-11）：接线会话 wiring-news-ig-001 W3 交付回填，模块 MOD-INT_NEWS_CHAIN（testing），
+      回填留痕（2026-09-11）：接线会话 wiring-news-ig-001 W3 交付回填，模块 MOD-INT-NEWS-CHAIN（testing），
       55 单测全绿+红蓝对抗 9 手法+端到端 dry-run 实证（24h 窗 800 新闻→图谱命中 10，5.5s）。
       规格卡=docs/_working/2026-09-11-news-chain-wiring-spec-cards.md 卡 1。
     parent_node: TDM-E-L2-09
     factor_refs: []
     data_refs: [DS-224, DS-225]
     algo_refs: []
-    module_ref: src/zephyr/intelligence/news_chain_node_linker.py    # module_ref-only warn 路线：MOD-INT_NEWS_CHAIN 待 R21 格式冲突解挂后补 module_id
+    module_ref: src/zephyr/intelligence/news_chain_node_linker.py    # module_ref-only warn 路线：R21 格式冲突已解挂（源文件头归一纯连字符），2026-09-12 补 module_id=MOD-INT-NEWS-CHAIN
     strategy_mounts: []
     activation: continuous
     ai_autonomy: auto
@@ -1517,6 +1523,7 @@ nodes:
   - node_id: TDM-E-L3-08
     note_confirmed: 2026-09-11
     name_zh: 候选池输出
+    module_id: MOD-SIG-142
     market: cn_a
     flow: entry_flow
     layer: L3
