@@ -57,6 +57,7 @@ thresholds:
   # DRAWDOWN（回撤三级阈值，35 号 Protocol / 55 号 §3.1B）— 3 条
   # ============================================================
   - threshold_id: "THD-DRAWDOWN-001"
+    module_id: MOD-RK-011
     name: "Drawdown Warning Threshold"
     name_zh: "回撤预警阈值"
     category: drawdown
@@ -75,6 +76,7 @@ thresholds:
     last_verified: '2026-08-17'
 
   - threshold_id: "THD-DRAWDOWN-002"
+    module_id: MOD-RK-011
     name: "Drawdown Critical Threshold"
     name_zh: "回撤严重阈值"
     category: drawdown
@@ -93,6 +95,7 @@ thresholds:
     last_verified: '2026-08-17'
 
   - threshold_id: "THD-DRAWDOWN-003"
+    module_id: MOD-RK-011
     name: "Drawdown Emergency Threshold"
     name_zh: "回撤紧急阈值"
     category: drawdown
@@ -114,6 +117,7 @@ thresholds:
   # HEALTH（系统健康压力分级，55 号 §3.1A + 64 号 §16.2 Q8）— 5 条
   # ============================================================
   - threshold_id: "THD-HEALTH-001"
+    module_id: MOD-INF-035
     name: "Memory Pressure Elevated"
     name_zh: "内存压力-ELEVATED"
     category: health
@@ -132,6 +136,7 @@ thresholds:
     last_verified: '2026-08-17'
 
   - threshold_id: "THD-HEALTH-002"
+    module_id: MOD-INF-035
     name: "Memory Pressure High"
     name_zh: "内存压力-HIGH"
     category: health
@@ -150,6 +155,7 @@ thresholds:
     last_verified: '2026-08-17'
 
   - threshold_id: "THD-HEALTH-003"
+    module_id: MOD-INF-035
     name: "Memory Pressure Critical"
     name_zh: "内存压力-CRITICAL"
     category: health
@@ -168,6 +174,7 @@ thresholds:
     last_verified: '2026-08-17'
 
   - threshold_id: "THD-HEALTH-004"
+    module_id: MOD-INF-035
     name: "Disk Pressure Critical"
     name_zh: "磁盘压力-CRITICAL"
     category: health
@@ -186,6 +193,7 @@ thresholds:
     last_verified: '2026-08-17'
 
   - threshold_id: "THD-HEALTH-005"
+    module_id: MOD-GOVERNANCE
     # 2026-09-03 v1.4.0：口径修正（Owner 拍板）——月分区宽表按表 total parts 天然超限（250+ 分区×2-8 parts），
     # 改按单分区判定；值 100→30。同日 top5 表 OPTIMIZE FINAL 清碎屑。
     name: "ClickHouse Parts Explosion"
@@ -209,6 +217,7 @@ thresholds:
   # GPU（显存硬边界，system_charter §2 / 55 号 §3.1A）— 1 条
   # ============================================================
   - threshold_id: "THD-GPU-001"
+    module_id: MOD-RESOURCE_OPTIMIZATION_ENGINE
     name: "GPU Memory Hard Cap"
     name_zh: "GPU 显存硬上限"
     category: gpu
@@ -230,6 +239,7 @@ thresholds:
   # DEVIATION（实盘 vs 回测偏离，55 号 §3.4）— 3 条
   # ============================================================
   - threshold_id: "THD-DEVIATION-001"
+    module_id: MOD-GOVERNANCE
     name: "Backtest Live Deviation Warn"
     name_zh: "回测-实盘偏离告警阈值"
     category: deviation
@@ -248,6 +258,7 @@ thresholds:
     last_verified: '2026-08-17'
 
   - threshold_id: "THD-DEVIATION-002"
+    module_id: MOD-GOVERNANCE
     name: "Backtest Live Deviation Retire"
     name_zh: "回测-实盘偏离退役评估阈值"
     category: deviation
@@ -266,6 +277,7 @@ thresholds:
     last_verified: '2026-08-17'
 
   - threshold_id: "THD-DEVIATION-003"
+    module_id: MOD-RK-23
     name: "Daily Return Correlation Floor"
     name_zh: "日收益相关下限"
     category: deviation
@@ -287,6 +299,7 @@ thresholds:
   # PLV（上线后验证 5 项规约，55 号 §3.1C）— 5 条
   # ============================================================
   - threshold_id: "THD-PLV-001"
+    module_id: MOD-GOVERNANCE
     name: "PLV Order Count Deviation"
     name_zh: "PLV 订单量偏差"
     category: plv
@@ -305,6 +318,7 @@ thresholds:
     last_verified: '2026-08-17'
 
   - threshold_id: "THD-PLV-002"
+    module_id: MOD-GOVERNANCE
     name: "PLV Fill Rate Comparison"
     name_zh: "PLV 成交率对比"
     category: plv
@@ -323,6 +337,7 @@ thresholds:
     last_verified: '2026-08-17'
 
   - threshold_id: "THD-PLV-003"
+    module_id: MOD-GOVERNANCE
     name: "PLV Risk Conformance"
     name_zh: "PLV 风控符合性"
     category: plv
@@ -341,6 +356,7 @@ thresholds:
     last_verified: '2026-08-17'
 
   - threshold_id: "THD-PLV-004"
+    module_id: MOD-GOVERNANCE
     name: "PLV Data Integrity"
     name_zh: "PLV 数据完整性"
     category: plv
@@ -359,6 +375,7 @@ thresholds:
     last_verified: '2026-08-17'
 
   - threshold_id: "THD-PLV-005"
+    module_id: MOD-GOVERNANCE
     name: "PLV PnL Reconciliation"
     name_zh: "PLV 盈亏对账"
     category: plv
@@ -380,6 +397,7 @@ thresholds:
   # ALERT（告警机制参数，55 号 §3.1B）— 2 条
   # ============================================================
   - threshold_id: "THD-ALERT-001"
+    module_id: MOD-RK-06
     name: "Alert Dedup Window"
     name_zh: "告警去重窗口"
     category: alert
@@ -398,6 +416,7 @@ thresholds:
     last_verified: '2026-08-17'
 
   - threshold_id: "THD-ALERT-002"
+    module_id: MOD-INF-016
     name: "Alert Auto Escalation Timeout"
     name_zh: "告警自动升级超时"
     category: alert
@@ -416,6 +435,7 @@ thresholds:
     last_verified: '2026-08-17'
 
   - threshold_id: "THD-ALERT-003"
+    module_id: MOD-GOV-046
     name: "Commit Queue Dead Letter Backlog"
     name_zh: "提交队列死信积压阈值"
     category: alert
@@ -434,6 +454,7 @@ thresholds:
     last_verified: '2026-09-11'
 
   - threshold_id: "THD-ALERT-004"
+    module_id: MOD-GOV-046
     name: "Commit Queue Dead Alert Cooldown"
     name_zh: "提交队列死信告警冷却窗口"
     category: alert
@@ -455,6 +476,7 @@ thresholds:
   # AUDIT（日终审计五件套参数，55 号 §3.1C）— 3 条
   # ============================================================
   - threshold_id: "THD-AUDIT-001"
+    module_id: MOD-RK-20
     name: "PnL Reconciliation Tolerance"
     name_zh: "PnL 对账容差"
     category: audit
@@ -473,6 +495,7 @@ thresholds:
     last_verified: '2026-08-17'
 
   - threshold_id: "THD-AUDIT-002"
+    module_id: MOD-RK-20
     name: "Limit Warn Ratio"
     name_zh: "限额预警利用率"
     category: audit
@@ -491,6 +514,7 @@ thresholds:
     last_verified: '2026-08-17'
 
   - threshold_id: "THD-AUDIT-003"
+    module_id: MOD-RK-20
     name: "Attribution Bias Threshold"
     name_zh: "归因偏差阈值"
     category: audit
@@ -512,6 +536,7 @@ thresholds:
   # REPORT（风险报告分级/趋势阈值，55 号 §3.1C）— 4 条
   # ============================================================
   - threshold_id: "THD-REPORT-001"
+    module_id: MOD-RPT-008
     name: "Risk Score Low"
     name_zh: "风险评分-LOW 上限"
     category: report
@@ -530,6 +555,7 @@ thresholds:
     last_verified: '2026-08-17'
 
   - threshold_id: "THD-REPORT-002"
+    module_id: MOD-RPT-008
     name: "Risk Score Medium"
     name_zh: "风险评分-MEDIUM 上限"
     category: report
@@ -548,6 +574,7 @@ thresholds:
     last_verified: '2026-08-17'
 
   - threshold_id: "THD-REPORT-003"
+    module_id: MOD-RPT-008
     name: "Risk Score High"
     name_zh: "风险评分-HIGH 上限"
     category: report
@@ -566,6 +593,7 @@ thresholds:
     last_verified: '2026-08-17'
 
   - threshold_id: "THD-REPORT-004"
+    module_id: MOD-RPT-008
     name: "Trend Stable Threshold"
     name_zh: "趋势平稳判定阈值"
     category: report
@@ -587,6 +615,7 @@ thresholds:
   # OPRISK（操作风险阈值解释，55 号 §3.2①）— 3 条
   # ============================================================
   - threshold_id: "THD-OPRISK-001"
+    module_id: MOD-RK-19
     name: "Operational Failure Rate"
     name_zh: "操作失败率阈值"
     category: oprisk
@@ -605,6 +634,7 @@ thresholds:
     last_verified: '2026-08-17'
 
   - threshold_id: "THD-OPRISK-002"
+    module_id: MOD-RK-19
     name: "Operational Latency P95"
     name_zh: "操作延迟 p95 阈值"
     category: oprisk
@@ -623,6 +653,7 @@ thresholds:
     last_verified: '2026-08-17'
 
   - threshold_id: "THD-OPRISK-003"
+    module_id: MOD-RK-19
     name: "Operational Severe Multiplier"
     name_zh: "操作风险严重度倍数"
     category: oprisk
@@ -644,6 +675,7 @@ thresholds:
   # DRIFT（模型漂移体系统一口径，55 号 §3.2B + §3.5 联动）— 4 条
   # ============================================================
   - threshold_id: "THD-DRIFT-001"
+    module_id: MOD-GOVERNANCE
     name: "PSI Attention Level"
     name_zh: "PSI 关注阈值"
     category: drift
@@ -662,6 +694,7 @@ thresholds:
     last_verified: '2026-08-15'
 
   - threshold_id: "THD-DRIFT-002"
+    module_id: MOD-GOVERNANCE
     name: "PSI High Level"
     name_zh: "PSI 高度阈值"
     category: drift
@@ -680,6 +713,7 @@ thresholds:
     last_verified: '2026-08-15'
 
   - threshold_id: "THD-DRIFT-003"
+    module_id: MOD-GOVERNANCE
     name: "CUSUM Decision Interval"
     name_zh: "CUSUM 判定区间"
     category: drift
@@ -698,6 +732,7 @@ thresholds:
     last_verified: '2026-08-15'
 
   - threshold_id: "THD-DRIFT-004"
+    module_id: MOD-GOVERNANCE
     name: "Prediction Drift Sharpe 30d"
     name_zh: "预测漂移 Sharpe 30 日"
     category: drift
@@ -719,6 +754,7 @@ thresholds:
   # RETIREMENT（策略退役双判据标准值，55 号 §3.5/§7⑤）— 3 条
   # ============================================================
   - threshold_id: "THD-RETIRE-001"
+    module_id: MOD-GOVERNANCE
     name: "Rolling Underperformance Window Gap"
     name_zh: "滚动跑输判据（20 日 / 5%）"
     category: retirement
@@ -737,6 +773,7 @@ thresholds:
     last_verified: '2026-08-15'
 
   - threshold_id: "THD-RETIRE-002"
+    module_id: MOD-GOVERNANCE
     name: "Rolling Sharpe 60d Floor"
     name_zh: "滚动 Sharpe 判据（60 日 / <0）"
     category: retirement
@@ -755,6 +792,7 @@ thresholds:
     last_verified: '2026-08-15'
 
   - threshold_id: "THD-RETIRE-003"
+    module_id: MOD-GOVERNANCE
     name: "Drawdown Drift Multiplier"
     name_zh: "回撤漂移倍数（相对历史最大回撤）"
     category: retirement
