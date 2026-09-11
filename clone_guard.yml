@@ -31,6 +31,17 @@ pre_commit:
   fail_closed: false        # 全引擎不可用时 warn-only 不阻断(降级兜底)
   engines:
     echo_guard:
+      # R1-R4 裁定（2026-09-12，st-encfix 夜班，Owner 批准"分层归位"）：
+      # L1 保留 enabled:true——卸载 onnxscript（R1 已执行）后 CLI 在 Tier2 缺依赖路径
+      # 快速失败降级（实测 CAPABILITY-OVERLAP 0.76s，不再烧 30s 预算），ast_grep 完好。
+      # 上游 echo-guard 0.4.1 三缺陷（Tier2 治本回位条件=R3，修复版发布后执行）：
+      # ① embeddings.npy append-only 不压实（28K 函数理论 ~116MB，实测膨胀 5.2GB=48×，
+      #    全量重建只增不减）；② 离线模式（HF_HUB_OFFLINE=1）下模型缺失路径仍尝试
+      # HF 网络请求（10s 超时×重试=挂死主因之一）；③ Tier2 相似度批 (32,1024,1024)
+      # 128MiB 分配失败后慢速降级（单次 check 400s 级，实测 475s/399s）。
+      # 回位动作：pip install -U echo-guard（≥修复版）+ pip install onnxscript +
+      # 联网窗口删 embeddings.npy 重建压实 + 验证 check <30s，然后 L1/L2 Tier2 复活。
+      # 索引卫生仪表盘=RECONCILER-HEALTH 2.6 探针（signal 残留>7 天/npy>2GB 告警）。
       enabled: true         # Phase A——L1 离线优先 AST 哈希检测
     ast_grep:
       enabled: true         # Phase B——结构化规则检测（no-bare-except 等）

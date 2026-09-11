@@ -235,6 +235,39 @@ def make_reconciler_health_gate() -> GateSpec:
         except Exception:  # noqa: BLE001 — 覆盖率检查失败不阻断
             pass
 
+        # 2.6 R2a echo-guard 索引卫生探针（2026-09-12，st-encfix R1-R4 裁定 R2）：
+        # warn 不阻断——外部 CLI 已知劣化模式的仪表盘（回位条件与上游缺陷登记见
+        # clone_guard.yml echo_guard 段注释）：
+        # ① rescan.signal 残留 >7 天：月龄孤儿信号曾使批量 check 从 0.8s 劣化为 >120s
+        #    全仓重扫路径（2026-09-11 实证，删除即恢复）；该信号在本仓代码零消费者。
+        # ② embeddings.npy >2GB：CLI append-only 不压实——28K 函数×1024 维 float32 理论
+        #    ~116MB，实测膨胀至 5.2GB（48×），Tier2 检查因之 400s 级；2GB≈24 万函数等价，
+        #    远超本项目函数数地平线，命中即膨胀疑报。
+        try:
+            import time as _t6
+
+            _eg_dir = Path(str(project_root)) / ".echo-guard"
+            _signal = _eg_dir / "rescan.signal"
+            if _signal.exists():
+                _age_days = (_t6.time() - _signal.stat().st_mtime) / 86400
+                if _age_days > 7:
+                    _sig_msg = (
+                        f"RECONCILER-HEALTH WARN: echo-guard rescan.signal 残留 {_age_days:.0f} 天"
+                        "（陈旧孤儿信号强制全仓重扫路径——删除该文件即恢复快路径）"
+                    )
+                    logger.warning(_sig_msg)
+                    print(f"[GATE RECONCILER-HEALTH] {_sig_msg}")
+            _npy = _eg_dir / "embeddings.npy"
+            if _npy.exists() and _npy.stat().st_size > 2 * 1024**3:
+                _npy_msg = (
+                    f"RECONCILER-HEALTH WARN: echo-guard embeddings.npy {_npy.stat().st_size / 1024**3:.1f}GB"
+                    " 疑似 append-only 膨胀（理论 ~116MB/28K 函数；Tier2 检查因之 400s 级）"
+                )
+                logger.warning(_npy_msg)
+                print(f"[GATE RECONCILER-HEALTH] {_npy_msg}")
+        except Exception:  # noqa: BLE001 — 探针失败不阻断
+            pass
+
         return True, "reconciler health OK (0 block_next, 0 critical_warn in last 24h)"
 
     return GateSpec(gate_id="RECONCILER-HEALTH", check=_check, priority=64)

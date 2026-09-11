@@ -281,3 +281,67 @@ class TestWarnBannerDedup:
         passed, _ = gate.check(gw, [])
         assert passed is True
         assert "GATE-NEW" in capsys.readouterr().out
+
+
+class TestEchoGuardIndexHygieneProbe:
+    """2.6 echo-guard 索引卫生探针（2026-09-12 R2a）——rescan.signal 陈旧/embeddings 膨胀 warn 不阻断。"""
+
+    def _patch_clean(self, monkeypatch):
+        monkeypatch.setattr(
+            "zephyr.gov_enforcement.commit_gates.reconciler_health_gate.check_recent_blocks",
+            lambda root: [],
+        )
+        monkeypatch.setattr(
+            "zephyr.gov_enforcement.commit_gates.reconciler_health_gate.check_recent_critical_warns",
+            lambda root: [],
+        )
+
+    def test_no_artifacts_pass_silent(self, tmp_path: Path, monkeypatch, capsys):
+        """.echo-guard/ 无相关工件 → 放行且无卫生告警。"""
+        self._patch_clean(monkeypatch)
+        gate = make_reconciler_health_gate()
+        passed, detail = gate.check(_make_gateway(tmp_path), [])
+        assert passed is True
+        assert "rescan.signal" not in capsys.readouterr().out
+
+    def test_stale_signal_warns_nonblocking(self, tmp_path: Path, monkeypatch, capsys):
+        """rescan.signal 残留 >7 天 → warn 打印但放行。"""
+        import os
+        import time as _t
+
+        self._patch_clean(monkeypatch)
+        eg = tmp_path / ".echo-guard"
+        eg.mkdir(parents=True)
+        sig = eg / "rescan.signal"
+        sig.write_text("", encoding="utf-8")
+        old = _t.time() - 10 * 86400
+        os.utime(sig, (old, old))
+        gate = make_reconciler_health_gate()
+        passed, _ = gate.check(_make_gateway(tmp_path), [])
+        assert passed is True
+        assert "rescan.signal 残留" in capsys.readouterr().out
+
+    def test_fresh_signal_no_warn(self, tmp_path: Path, monkeypatch, capsys):
+        """rescan.signal 新鲜（<7 天）→ 不告警（活跃重扫信号非孤儿）。"""
+        self._patch_clean(monkeypatch)
+        eg = tmp_path / ".echo-guard"
+        eg.mkdir(parents=True)
+        (eg / "rescan.signal").write_text("", encoding="utf-8")
+        gate = make_reconciler_health_gate()
+        passed, _ = gate.check(_make_gateway(tmp_path), [])
+        assert passed is True
+        assert "rescan.signal" not in capsys.readouterr().out
+
+    def test_bloated_embeddings_warns_nonblocking(self, tmp_path: Path, monkeypatch, capsys):
+        """embeddings.npy >2GB（稀疏文件模拟）→ 膨胀 warn 打印但放行。"""
+        self._patch_clean(monkeypatch)
+        eg = tmp_path / ".echo-guard"
+        eg.mkdir(parents=True)
+        npy = eg / "embeddings.npy"
+        # 稀疏文件：truncate 不占磁盘即达 2.5GB
+        with npy.open("wb") as f:
+            f.truncate(int(2.5 * 1024**3))
+        gate = make_reconciler_health_gate()
+        passed, _ = gate.check(_make_gateway(tmp_path), [])
+        assert passed is True
+        assert "append-only 膨胀" in capsys.readouterr().out
