@@ -1,5 +1,5 @@
 ---
-module_id: MOD-EX_SOR_EXT-003
+module_id: MOD-XS-019
 submodule_path: src/zephyr/ex_sor/services/transaction_cost_optimizer.py
 title: "交易成本优化器蓝图 — A股全成本分解+优化建议"
 doc_type: blueprint
@@ -20,11 +20,11 @@ blueprint_level: module
 responsibility_domain: 
 ---
 
-# MOD-EX_SOR_EXT-003 Transaction Cost Optimizer — 交易成本优化器 蓝图
+# MOD-XS-019 Transaction Cost Optimizer — 交易成本优化器 蓝图
 
-> **module_id**: MOD-EX_SOR_EXT-003 | **域**: D_EX_SOR | **层**: L2 执行路由
+> **module_id**: MOD-XS-019 | **域**: D_EX_SOR | **层**: L2 执行路由
 > **优先级**: P2 | **成熟度**: production | **建设标记**: ✅可建(①) | **设计标签**: XS-EXT-03
-> **SSoT**: depgraph MOD-EX_SOR_EXT-003 | **设计真源**: D:\临时工作区\依赖图\09-D-EX-SOR-执行路由域.md §2.1 XS-EXT-03 + §13.3 成本模型
+> **SSoT**: depgraph MOD-XS-019 | **设计真源**: D:\临时工作区\依赖图\09-D-EX-SOR-执行路由域.md §2.1 XS-EXT-03 + §13.3 成本模型
 > **代码**: src/zephyr/ex_sor/services/transaction_cost_optimizer.py | **测试**: tests/ex_sor/test_transaction_cost_optimizer.py
 
 ## 1. 定位
@@ -152,7 +152,7 @@ class TransactionCostOptimizer:
 
 | 消费者 | 消费方式 | 契约 |
 |--------|---------|------|
-| MOD-EX_SOR_EXT-002 (ExecutionQualityScorer) | 消费 TransactionCostResult → cost 维度评分 | EXT-002 `score_from_results` |
+| MOD-XS-018 (ExecutionQualityScorer) | 消费 TransactionCostResult → cost 维度评分 | EXT-002 `score_from_results` |
 | MOD-EX-CORE (成本报告) | 消费成本明细生成 TCA 报告 | D-EX-CORE §13.3 |
 
 ## 10. 已实现代码路径
@@ -178,35 +178,6 @@ class TransactionCostOptimizer:
 | 日期 | 版本 | 变更摘要 |
 |------|------|---------|
 | 2026-08-02 | 0.1.0 | 初版落地：显性(佣金+印花税+过户费+监管费)+隐性(冲击+机会)六项分解+优化建议；类名由 CostBreakdown 改为 TransactionCostBreakdown 解决冲突；module_id 由非法 MOD-XS-EXT-003 改为派生轨 MOD-EX_SOR_EXT-003 |
-
-### §0.6 五图对齐视图
-
-<!-- AUTOGEN: source=depgraph+dataflow+decision, generator=generate_blueprint_panorama.py, reconciler=sync_panorama_module.py -->
-
-> **自动生成**：本节由 generate_blueprint_panorama.py 从全景真源派生，禁止手写。
-> 生成命令：`python scripts/governance/d5_architecture/generators/generate_blueprint_panorama.py MOD-EX_SOR_EXT-003`
-
-#### 全景位置
-
-| 图 | 位置 | 状态 | 链接 |
-|----|------|------|------|
-| 依赖图 (depgraph) | `blueprint_id=MOD-EX_SOR_EXT-003` 的 2 个 file 节点 | production | `extract_depgraph.py --modules MOD-EX_SOR_EXT-003` |
-| 数据流图 (dataflow) | （无节点） | N/A | `apply_dataflowgraph.py --list-datasets` |
-| 决策架构图 (decision) | 0 个决策节点 / 1 个决策层 | N/A | `generate_decision_diagram.py` |
-| 蓝图 (blueprint) | 本文件 | Active | — |
-
-#### 四核心字段
-
-| 字段 | depgraph 值（真源） | 蓝图 frontmatter 值（声明） | 是否一致 |
-|------|-------------------|--------------------------|:-------:|
-| module_id | MOD-EX_SOR_EXT-003 | MOD-EX_SOR_EXT-003 | ✅ |
-| domain_id | N/A | N/A | ✅ |
-| build_status | production | production | ✅ |
-| file_count | 2 文件 | N/A | — |
-
-> 冲突时以 depgraph 为准（ARCH-056 + ARCH-MM-001 声明 vs 验证框架）。
-
----
 
 ## 13. 已实现代码完整路径索引
 
@@ -235,4 +206,29 @@ class TransactionCostOptimizer:
 - 配置在 `config/` 下
 - 治理脚本在 `scripts/governance/` 下
 
+### §0.6 五图对齐视图
 
+<!-- AUTOGEN: source=depgraph+dataflow+decision, generator=generate_blueprint_panorama.py, reconciler=sync_panorama_module.py -->
+
+> **自动生成**：本节由 generate_blueprint_panorama.py 从全景真源派生，禁止手写。
+> 生成命令：`python scripts/governance/d5_architecture/generators/generate_blueprint_panorama.py MOD-XS-019`
+
+#### 全景位置
+
+| 图 | 位置 | 状态 | 链接 |
+|----|------|------|------|
+| 依赖图 (depgraph) | `blueprint_id=MOD-XS-019` 的 2 个 file 节点 | production | `extract_depgraph.py --modules MOD-XS-019` |
+| 数据流图 (dataflow) | 0 个 Dataset / 1 个 Job | active | `apply_dataflowgraph.py --list-datasets` |
+| 决策架构图 (decision) | 0 个决策节点 / 1 个决策层 | N/A | `generate_decision_diagram.py` |
+| 蓝图 (blueprint) | 本文件 | Active | — |
+
+#### 四核心字段
+
+| 字段 | depgraph 值（真源） | 蓝图 frontmatter 值（声明） | 是否一致 |
+|------|-------------------|--------------------------|:-------:|
+| module_id | MOD-XS-019 | MOD-XS-019 | ✅ |
+| domain_id | N/A | N/A | ✅ |
+| build_status | production | production | ✅ |
+| file_count | 2 文件 | N/A | — |
+
+> 冲突时以 depgraph 为准（ARCH-056 + ARCH-MM-001 声明 vs 验证框架）。

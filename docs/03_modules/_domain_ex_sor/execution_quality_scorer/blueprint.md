@@ -1,5 +1,5 @@
 ---
-module_id: MOD-EX_SOR_EXT-002
+module_id: MOD-XS-018
 submodule_path: src/zephyr/ex_sor/services/execution_quality_scorer.py
 title: "执行质量评分器蓝图 — 四维评分+加权汇总+评定"
 doc_type: blueprint
@@ -20,11 +20,11 @@ blueprint_level: module
 responsibility_domain: 
 ---
 
-# MOD-EX_SOR_EXT-002 Execution Quality Scorer — 执行质量评分器 蓝图
+# MOD-XS-018 Execution Quality Scorer — 执行质量评分器 蓝图
 
-> **module_id**: MOD-EX_SOR_EXT-002 | **域**: D_EX_SOR | **层**: L2 执行路由
+> **module_id**: MOD-XS-018 | **域**: D_EX_SOR | **层**: L2 执行路由
 > **优先级**: P2 | **成熟度**: production | **建设标记**: ✅可建(①) | **设计标签**: XS-EXT-02
-> **SSoT**: depgraph MOD-EX_SOR_EXT-002 | **设计真源**: D:\临时工作区\依赖图\09-D-EX-SOR-执行路由域.md §2.1 XS-EXT-02 + §140 执行质量评分
+> **SSoT**: depgraph MOD-XS-018 | **设计真源**: D:\临时工作区\依赖图\09-D-EX-SOR-执行路由域.md §2.1 XS-EXT-02 + §140 执行质量评分
 > **代码**: src/zephyr/ex_sor/services/execution_quality_scorer.py | **测试**: tests/ex_sor/test_execution_quality_scorer.py
 
 ## 1. 定位
@@ -196,35 +196,7 @@ EXT-002 是聚合层：EXT-001 提供价格+冲击维度，EXT-003 提供成本�
 | 日期 | 版本 | 变更摘要 |
 |------|------|---------|
 | 2026-08-02 | 0.1.0 | 初版落地：四维评分(价格/时间/成本/冲击)+加权汇总+good/acceptable/poor 评定；类名由 DimensionScore 改为 ExecutionDimensionScore 解决冲突；module_id 由非法 MOD-XS-EXT-002 改为派生轨 MOD-EX_SOR_EXT-002 |
-
-### §0.6 五图对齐视图
-
-<!-- AUTOGEN: source=depgraph+dataflow+decision, generator=generate_blueprint_panorama.py, reconciler=sync_panorama_module.py -->
-
-> **自动生成**：本节由 generate_blueprint_panorama.py 从全景真源派生，禁止手写。
-> 生成命令：`python scripts/governance/d5_architecture/generators/generate_blueprint_panorama.py MOD-EX_SOR_EXT-002`
-
-#### 全景位置
-
-| 图 | 位置 | 状态 | 链接 |
-|----|------|------|------|
-| 依赖图 (depgraph) | `blueprint_id=MOD-EX_SOR_EXT-002` 的 2 个 file 节点 | production | `extract_depgraph.py --modules MOD-EX_SOR_EXT-002` |
-| 数据流图 (dataflow) | （无节点） | N/A | `apply_dataflowgraph.py --list-datasets` |
-| 决策架构图 (decision) | 0 个决策节点 / 1 个决策层 | N/A | `generate_decision_diagram.py` |
-| 蓝图 (blueprint) | 本文件 | Active | — |
-
-#### 四核心字段
-
-| 字段 | depgraph 值（真源） | 蓝图 frontmatter 值（声明） | 是否一致 |
-|------|-------------------|--------------------------|:-------:|
-| module_id | MOD-EX_SOR_EXT-002 | MOD-EX_SOR_EXT-002 | ✅ |
-| domain_id | N/A | N/A | ✅ |
-| build_status | production | production | ✅ |
-| file_count | 2 文件 | N/A | — |
-
-> 冲突时以 depgraph 为准（ARCH-056 + ARCH-MM-001 声明 vs 验证框架）。
-
----
+| 2026-09-11 | 0.1.1 | 裁定#208 双轨制合规改名：MOD-EX_SOR_EXT-002 → MOD-XS-018（D1 depgraph 编号规范化批，下划线 id 不被地图 R21 正则接纳；历史行保留旧 id） |
 
 ## 14. 已实现代码完整路径索引
 
@@ -253,4 +225,29 @@ EXT-002 是聚合层：EXT-001 提供价格+冲击维度，EXT-003 提供成本�
 - 配置在 `config/` 下
 - 治理脚本在 `scripts/governance/` 下
 
+### §0.6 五图对齐视图
 
+<!-- AUTOGEN: source=depgraph+dataflow+decision, generator=generate_blueprint_panorama.py, reconciler=sync_panorama_module.py -->
+
+> **自动生成**：本节由 generate_blueprint_panorama.py 从全景真源派生，禁止手写。
+> 生成命令：`python scripts/governance/d5_architecture/generators/generate_blueprint_panorama.py MOD-XS-018`
+
+#### 全景位置
+
+| 图 | 位置 | 状态 | 链接 |
+|----|------|------|------|
+| 依赖图 (depgraph) | `blueprint_id=MOD-XS-018` 的 2 个 file 节点 | production | `extract_depgraph.py --modules MOD-XS-018` |
+| 数据流图 (dataflow) | 0 个 Dataset / 1 个 Job | active | `apply_dataflowgraph.py --list-datasets` |
+| 决策架构图 (decision) | 0 个决策节点 / 1 个决策层 | N/A | `generate_decision_diagram.py` |
+| 蓝图 (blueprint) | 本文件 | Active | — |
+
+#### 四核心字段
+
+| 字段 | depgraph 值（真源） | 蓝图 frontmatter 值（声明） | 是否一致 |
+|------|-------------------|--------------------------|:-------:|
+| module_id | MOD-XS-018 | MOD-XS-018 | ✅ |
+| domain_id | N/A | N/A | ✅ |
+| build_status | production | production | ✅ |
+| file_count | 2 文件 | N/A | — |
+
+> 冲突时以 depgraph 为准（ARCH-056 + ARCH-MM-001 声明 vs 验证框架）。

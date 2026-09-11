@@ -39,7 +39,7 @@ SOR Agent 实体（A7 §1.4 族卡模式，与 MOD-AU-011 T0TraderAgent 同族�
 | optimal_order_router | MOD-XS-001 | 延迟/成交率/费用三维加权选券商（路由算法件） | 本件=Agent **实体**（族卡+技能编排+回放+反馈循环），路由评分算法自含轻量版（流动性维度并入），运行时亦可委托 MOD-XS-001（装配批） |
 | order_splitter | MOD-EX-014 | TWAP/VWAP 拆单纯函数（门禁降级版） | 本件拆单技能经 splitter_fn 委托其 split_order，不重建拆单算法 |
 | algo_execution_selector | MOD-XS-011 | 执行算法选择（TWAP/VWAP/POV 选取） | 算法选取件，非 Agent 实体 |
-| slippage_analyzer | MOD-EX_SOR_EXT-001 | 滑点计算/归因/预测 | 本件滑点回写消费其口径，反馈记录经 feedback_sink 供其校准 |
+| slippage_analyzer | MOD-XS-017 | 滑点计算/归因/预测 | 本件滑点回写消费其口径，反馈记录经 feedback_sink 供其校准 |
 | llm_agent_router | MOD-INT-AGENT-ROUTER | **LLM 任务→模型**路由（R1 已建） | **零交集**：彼=LLM 模型选择，此=订单通道路由（铁律⑤钉死） |
 | smart_order_router | — | **不存在**（grep 全仓无此件） | SOR 族即 MOD-XS-001 等，Agent 化无既有实体 |
 
