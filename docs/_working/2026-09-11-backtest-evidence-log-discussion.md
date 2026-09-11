@@ -123,12 +123,14 @@ attempts          # 迭代轮数（喂 Deflated Sharpe 的试验计数）
 | 11 | 归档与退役联动（BT 对象判死→节点降级→PB-03 噪音闭环；策略判死→registry 退役态） | 骨架已有（PB-03/decay_watch） | ✅ |
 | 12 | 复现演练（抽样 run 重跑对照，人工比对净值/交易数一致） | 新提（可选轻量，P2） | 待裁定 |
 
-## 八、待 Owner 裁定
+## 八、裁定结果（Owner 2026-09-11：R1-R5 全认，R5 提前）
 
-| # | 问题 | 建议 |
-|---|---|---|
-| R1 | run 过程档案采用文件制 `data/backtest_artifacts/runs/<run_id>/`（§3.1） | 认可（最轻，与 bt-*.json 先例一致） |
-| R2 | node_verdict 加 verdict_reason 列（代码生成枚举，存量=legacy_notes） | 认可（DDL 变更走 apply DDL + verify_schema_truth） |
-| R3 | 新建 strategy_screen 表承接 SOP-C 快筛 | 认可（SOP-C 启动前建好即可） |
-| R4 | 命名规范按 §四 统一（VAL 带 batch 段） | 认可 |
-| R5 | 复现演练（#12）本期做不做 | 建议 P2 按需（对齐 YAGNI） |
+| # | 问题 | 裁定 | 落点 |
+|---|---|---|---|
+| R1 | run 过程档案文件制 `data/backtest_artifacts/runs/<run_id>/` | ✅ 认可，**细节升级为完整图书馆规范**（位置地图/编号/目录模板/meta 字段/自动落盘 API/巡检/保留策略） | SOP-D（sop_d_run_archive_naming.md） |
+| R2 | node_verdict 加 verdict_reason 列（代码生成枚举，存量=legacy_notes） | ✅ 认可，开工 | DDL 变更走 apply DDL + verify_schema_truth |
+| R3 | 新建 strategy_screen 表承接 SOP-C 快筛 | ✅ 认可，SOP-C 启动前建好 | DDL-as-Code 同模式 |
+| R4 | 命名规范统一（五前缀） | ✅ 认可，**修正**：引擎 run 收编既有 `bt-[variant-]<hash8>` 三形态（bt-*/bt-tick-*/bt-fw-*），非日期 slug | SOP-D §3 |
+| R5 | 复现演练 | ✅ **提前执行**（不等 P2）：每批次决策点抽 1 条 verdict≠pending 的 run 演练；模拟盘上线前 P0 对象全量演练 | SOP-D §8 |
+
+**关键发现（施工时注意）**：`data/backtest_artifacts/` 已被 .gitignore（2026-09-02 裁定，可重跑再生产物不入库）——run 档案不进 git，预注册阈值（backlog）必须进 git 放登记表区（`_registry/catalogs/backtest_backlog.yaml`）。

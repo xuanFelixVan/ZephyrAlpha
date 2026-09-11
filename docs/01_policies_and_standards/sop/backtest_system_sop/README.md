@@ -69,6 +69,7 @@ L4 全图整装级   —— 四流并发 × 六段状态矩阵 × PP-001 配比�
 | [sop_a_full_map_orchestration.md](sop_a_full_map_orchestration.md) | 全图编排：注册→分类→优先级→批次推进→归档升级 | AI 自驱，Owner 看批次决策点 |
 | [sop_b_node_loop.md](sop_b_node_loop.md) | 单个回测对象的七步循环 + 三护栏 + 自检清单 | AI 自驱 |
 | [sop_c_strategy_library_intake.md](sop_c_strategy_library_intake.md) | 外部策略源码（聚宽 600 条等）→ 策略库 → 挂图 → 配比 | AI 自驱 |
+| [sop_d_run_archive_naming.md](sop_d_run_archive_naming.md) | 回测档案图书馆规范：run 目录位置/编号/结构/自动落盘/巡检/复现演练 | AI 自驱，落盘走 run_archive API |
 
 **施工讨论记录**：`docs/_working/2026-09-11-backtest-system-sop-discussion.md`（三问三答原貌 + 定稿决策 D1-D4 + 七步打通顺序）。
 
