@@ -50,6 +50,7 @@ from zephyr.gov_enforcement.rule_bridge.git_commit_gateway import (  # noqa: E40
     GatewayError,
     GitCommitGateway,
     GlobalCommitLock,
+    _ensure_scripts_package_importable,
 )
 
 
@@ -243,6 +244,88 @@ class TestGlobalCommitLockWaitTimeout:
                 with GlobalCommitLock(tmp_path, timeout=0.0, poll_interval=0.05):
                     pass  # 不应到达
             assert time.monotonic() - t0 < 0.3, "timeout=0 应立即失败"
+
+
+class TestEnsureScriptsPackageImportable:
+    """P1⑥（2026-09-11）：reconciler 子进程改道 import 环境补齐。
+
+    病根=子进程 sys.path 缺仓库根 + pywin32 .pth 命名空间毒缓存（scripts/commit_queue.py
+    _purge_poisoned_scripts_package 同族语义，两处入口各自防御）。
+    """
+
+    def test_real_package_kept(self, tmp_path: Path) -> None:
+        """sys.modules['scripts'] 为真包（__path__ 含 project scripts/）→ 幂等不动。"""
+        import scripts  # noqa: F401 — pytest 根可达，真实包已在
+        before = sys.modules["scripts"]
+        _ensure_scripts_package_importable(str(Path(__file__).resolve().parents[2]))
+        assert sys.modules.get("scripts") is before, "真包不得被清除"
+
+    def test_poisoned_namespace_purged(self, tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
+        """毒缓存（外来命名空间 __path__ 无本仓 scripts/）→ 整族清除，补根后可重导真包。"""
+        import types
+
+        monkeypatch.syspath_prepend(str(tmp_path))  # project_root=tmp_path（无 scripts/）
+        saved = {n: m for n, m in sys.modules.items() if n == "scripts" or n.startswith("scripts.")}
+        fake = types.ModuleType("scripts")
+        fake.__path__ = [str(tmp_path / "elsewhere" / "win32" / "scripts")]
+        sys.modules["scripts"] = fake
+        try:
+            _ensure_scripts_package_importable(str(tmp_path))
+            assert "scripts" not in sys.modules, "毒缓存应被整族清除（下条 import 按新 path 重解析）"
+        finally:
+            for n in [n for n in list(sys.modules) if n == "scripts" or n.startswith("scripts.")]:
+                del sys.modules[n]
+            sys.modules.update(saved)
+
+    def test_repo_root_prepended(self, tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
+        """sys.path 缺仓库根 → 补到最前（真包优先于外来同名命名空间部分）。"""
+        root = str(Path(__file__).resolve().parents[2])
+        monkeypatch.setattr(sys, "path", [p for p in sys.path if p != root])
+        assert root not in sys.path, "前置：仓库根已从 path 移除"
+        _ensure_scripts_package_importable(root)
+        assert sys.path[0] == root, "仓库根应补到 sys.path 最前"
+
+
+class TestRunGitReadCacheWindow:
+    """P1⑤ A1（2026-09-11）：门禁链窗口内 run_git 读命令 memoization。
+
+    语义边界：读类命中复用（同一 CompletedProcess）；任何写类命令即整体失效
+    （写后索引/HEAD 可能变化，绝不跨写复用）；窗口外（_git_read_cache=None）行为不变。
+    """
+
+    def _gateway(self, tmp_path: Path) -> GitCommitGateway:
+        _init_git_repo(tmp_path)
+        return GitCommitGateway(project_root=tmp_path)
+
+    def test_read_hit_and_write_invalidates(self, tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
+        import zephyr.shared.infra.process_pool as pp
+
+        gw = self._gateway(tmp_path)
+        calls = {"n": 0}
+        real = pp.run_subprocess_hidden
+
+        def counting(*a, **kw):
+            calls["n"] += 1
+            return real(*a, **kw)
+
+        monkeypatch.setattr(pp, "run_subprocess_hidden", counting)
+        gw._git_read_cache = {}  # 开窗（生产由 _check_gates_with_drift_watch 开/关）
+        r1 = gw.run_git(["git", "status", "--porcelain"])
+        r2 = gw.run_git(["git", "status", "--porcelain"])
+        assert r2 is r1, "窗口内同参数读命令应命中缓存（同一 CompletedProcess）"
+        assert calls["n"] == 1, "读命令应只执行一次"
+        gw.run_git(["git", "add", "-A"])  # 写类 → 整体失效
+        assert gw._git_read_cache is None, "写命令应使读缓存失效并退出窗口"
+        gw.run_git(["git", "status", "--porcelain"])
+        assert calls["n"] == 3, "失效后的读应真实执行（status×2 + add×1，不缓存不省略）"
+
+    def test_disarmed_by_default(self, tmp_path: Path) -> None:
+        """默认（未开窗）行为不变：读命令不缓存。"""
+        gw = self._gateway(tmp_path)
+        assert GitCommitGateway._git_read_cache is None
+        r1 = gw.run_git(["git", "status", "--porcelain"])
+        r2 = gw.run_git(["git", "status", "--porcelain"])
+        assert r1 is not r2 and gw._git_read_cache is None, "窗口外不缓存（现状行为）"
 
 
 # ---------------------------------------------------------------------------

@@ -37,6 +37,7 @@ import json
 import logging
 import os
 import subprocess
+import sys
 import tempfile
 import threading
 import time
@@ -138,6 +139,31 @@ from zephyr.shared.io.paths import REPO_ROOT
 
 logger = logging.getLogger(__name__)
 
+
+def _ensure_scripts_package_importable(project_root: str) -> None:
+    """repo 根补入 sys.path + `scripts` 包毒缓存清洗（P1⑥，2026-09-11，st-perf-plan-20260910）。
+
+    病根（reconciler 子进程改道恒降级直提实证）：子进程入口（`-m zephyr...`/checker
+    subprocess）sys.path 常不含仓库根，`from scripts.governance... import` 直接
+    ModuleNotFoundError → 队列改道 fail-safe 降级直提（瞬态双写者形态，dev 落入
+    队列外写入）。且 pywin32 `.pth` 会把 `site-packages/win32` 注入 sys.path，其
+    `scripts/` 子目录可被裸 `import scripts` 解析为命名空间包并缓存进 sys.modules——
+    事后补 sys.path 无法翻转（submodule 搜索走已缓存 `__path__`）。本函数两步治本：
+    ①按 project_root 补根（置于最前，真包 regular `scripts/__init__.py` 优先于外来
+    命名空间部分）；②按"__path__ 是否含 project_root/scripts"判定毒缓存，命中则
+    整族清除重导。与 scripts/commit_queue.py `_purge_poisoned_scripts_package` 同族
+    语义（两处入口各自防御，不互相 import 以免循环）。
+    """
+    root = str(Path(project_root))
+    scripts_dir = str(Path(project_root) / "scripts")
+    if root not in sys.path:
+        sys.path.insert(0, root)
+    pkg = sys.modules.get("scripts")
+    if pkg is not None and scripts_dir not in (getattr(pkg, "__path__", None) or ()):
+        for name in [n for n in list(sys.modules) if n == "scripts" or n.startswith("scripts.")]:
+            del sys.modules[name]
+
+
 _GATEWAY_ENV = "ZEPHYR_COMMIT_GATEWAY"
 _GW_MARKER_FMT = "[GW:{session_id}]"
 _GLOBAL_LOCK_FILE = "git_commit_global.lock"
@@ -174,6 +200,16 @@ def _commit_queue_serializer_enabled() -> bool:
         return global_flag_registry.is_enabled(_COMMIT_QUEUE_SERIALIZER_FLAG, default=False)
     except Exception:  # noqa: BLE001 — flag 设施异常 fail-closed OFF（绝不暗中改道）
         logger.warning("_commit_queue_serializer_enabled: flag 读取异常，fail-closed OFF", exc_info=True)
+        return False
+
+
+def _preflight_flag_enabled() -> bool:
+    """P2⑦ gate_preflight flag 读取唯一点（fail-closed OFF；宪章 B-007 启用属 Owner 窗口）。"""
+    try:
+        from zephyr.gov_enforcement.rule_bridge.gate_cache_preflight import preflight_enabled
+
+        return preflight_enabled()
+    except Exception:  # noqa: BLE001 — 设施异常 fail-closed OFF
         return False
 
 
@@ -590,6 +626,12 @@ class GitCommitGateway:
     串行化所有 commit。阶段3 起 worktree 物理隔离（WorktreeManager）替代 stash
     隔离——在 session worktree 内直接 commit，无需 stash 其他 session 修改。
     """
+
+    # A1 共享输入 memoization（2026-09-11 提交通道性能优化方案 §2.2-A1，st-perf-plan-20260910）：
+    # 仅在门禁链窗口（_check_gates_with_drift_watch）内非 None——命中则 run_git 读命令
+    # 复用窗口内结果（消除 106 gate 链内重复 git 子进程，数十次→数次）；任何写类命令
+    # 或窗口结束即置 None（写后索引/HEAD 可能变化，绝不跨写复用）。默认 None=不缓存。
+    _git_read_cache: dict | None = None
 
     def __init__(
         self,
@@ -1779,6 +1821,51 @@ class GitCommitGateway:
         # TRAE-079 铁律1：[gate → stage → commit] 整体在 _GlobalCommitLock 临界区内，消除 TOCTOU
         # 病根：gate 检查在锁外时，另一 session 可在 gate 通过后、commit 前修改文件（搭便车/FOREIGN_CHANGE）
         # 治本：gate 检查移入文件锁临界区，串行化整个 [gate → stage → commit] 不可分割
+        # P2⑦ 锁外预跑+锁内指纹采信（方案 §2.3 方案A；flag gate_preflight 出厂默认 OFF，
+        # 启用属 Owner 窗口）。OFF 时本块零开销零行为差异。ON 时：锁外先跑白名单内容
+        # gate（CONTENT_SCAN_CACHE_WHITELIST，纯 staged 内容扫描型）并记指纹 F；拿锁后
+        # 重算 F′——F′==F 才采信（锁内白名单 gate 复用预跑结果，只跑信号型+其余 gate）；
+        # F′≠F/预跑异常/预跑即失败 → 丢弃预跑，锁内全量重跑（现行路径，正确性永不依赖
+        # 预跑）。drift-watch：预跑段无硬阻断语义（硬阻断只归锁内段，CAND-GATEMECH-004
+        # 维持）；残余窗口=锁内"算指纹+比对"毫秒级（方案 §2.3 安全边界论证）。
+        preflight_results: dict[str, tuple[bool, str]] | None = None
+        preflight_fp = None
+        if _preflight_flag_enabled():
+            try:
+                from zephyr.gov_enforcement.rule_bridge import gate_cache_preflight as _gcp_mod
+
+                _fp = _gcp_mod.compute_fingerprint(self)
+                if _fp is not None:
+                    _pre: dict[str, tuple[bool, str]] = {}
+                    _ok = True
+                    for spec in self._gate_registry.specs_sorted():
+                        if spec.gate_id not in _gcp_mod.CONTENT_SCAN_CACHE_WHITELIST:
+                            continue
+                        try:
+                            p, d = spec.check(
+                                self,
+                                existing,
+                                allow_overlap=allow_overlap,
+                                allow_promote=allow_promote,
+                                commit_message=message,
+                                allow_derived_deletion=allow_derived_deletion,
+                                allow_non_worktree=allow_non_worktree,
+                                allow_multi_domain=allow_multi_domain,
+                                allow_tracked_drift=allow_tracked_drift,
+                            )
+                        except Exception:  # noqa: BLE001 — 预跑异常=放弃采信
+                            _ok = False
+                            break
+                        if not p:
+                            _ok = False  # 预跑即失败：丢弃采信，锁内全量重跑给出现行阻断语义
+                            break
+                        _pre[spec.gate_id] = (p, d)
+                    if _ok:
+                        preflight_fp = _fp
+                        preflight_results = _pre
+            except Exception:  # noqa: BLE001 — 预跑编排异常=回退现行全量链
+                preflight_results = None
+                preflight_fp = None
         try:
             with _GlobalCommitLock(
                 self.project_root,
@@ -1789,6 +1876,17 @@ class GitCommitGateway:
                     return self._merge_in_progress_result()
                 # B2 治本②：gate 链前清扫 ita 存量残留（staged 校验盲区，merge 误报源）
                 self._sweep_intent_to_add_residue(session_id, self._target_rel_set(existing))
+                # P2⑦ 锁内指纹重验：F′==F 才采信预跑（任一 staged/HEAD/config 变化→全量重跑）
+                _usable_preflight = None
+                if preflight_results is not None and preflight_fp is not None:
+                    try:
+                        from zephyr.gov_enforcement.rule_bridge import gate_cache_preflight as _gcp_mod
+
+                        _fp2 = _gcp_mod.compute_fingerprint(self)
+                        if _fp2 is not None and preflight_fp.matches(_fp2):
+                            _usable_preflight = preflight_results
+                    except Exception:  # noqa: BLE001
+                        _usable_preflight = None
                 # pre-commit 门禁注册表（架构债务 #AD-001 治本：5 个 in-process gate 替代 12 个硬编码 _check_*）
                 # 新增门禁 MUST 走 CommitGateRegistry 注册制（commit_gates/ 下 make_xxx_gate() + __init__ register）
                 # commit_message 透传：CAPABILITY-LOOKUP-REQUIRED gate 据此检测 [no-lookup:reason] 逃生标记
@@ -1804,6 +1902,7 @@ class GitCommitGateway:
                     allow_multi_domain=allow_multi_domain,
                     allow_tracked_drift=allow_tracked_drift,
                     skip_gates=_gate_skip,
+                    preflight_results=_usable_preflight,
                 )
                 blocked = self._check_gate_results(gate_results)
                 if blocked is not None:
@@ -1811,7 +1910,10 @@ class GitCommitGateway:
 
                 result = self._commit_locked(session_id, existing, full_message, gw_marker)
         except GatewayError as e:
-            return CommitResult(status=CommitStatus.LOCK_TIMEOUT, message="internal error")
+            # 2026-09-11 诊断性治本：此前 message 固定 "internal error" 吞掉真实异常，
+            # 并发夜锁定排查困难（对齐 #ARCH-TOOL-HEALTH-V1 可诊断性精神）；status 语义不变。
+            logger.exception("GitCommitGateway: GatewayError during gated commit flow")
+            return CommitResult(status=CommitStatus.LOCK_TIMEOUT, message=f"internal error: {e}")
         except OSError as e:
             # TRAE-079 铁律6：文件锁 fail-open 降级 MUST 落审计
             # 锁文件目录不可写（磁盘满/权限/只读文件系统）→ 降级为无锁 commit + 审计
@@ -2110,7 +2212,14 @@ class GitCommitGateway:
         except OSError:
             pass  # 审计落盘失败不阻断（warn 已发）
 
-    def _check_gates_with_drift_watch(self, existing, session_id, skip_gates=frozenset(), **kwargs):
+    def _check_gates_with_drift_watch(
+        self,
+        existing,
+        session_id,
+        skip_gates=frozenset(),
+        preflight_results: "dict[str, tuple[bool, str]] | None" = None,
+        **kwargs,
+    ):
         """gate 链执行 + tracked 区漂移监视（T4-2）：运行前后指纹比对。
 
         CAND-GATEMECH-004 升硬（2026-09-02 冻结窗口，裁定=组合路线①）：
@@ -2126,7 +2235,21 @@ class GitCommitGateway:
         """
         allow_tracked_drift = bool(kwargs.get("allow_tracked_drift", False))
         before_fp, before_map = self._tracked_area_snapshot()
-        results = self._gate_registry.check_all(self, existing, session_id=session_id, skip_gates=skip_gates, **kwargs)
+        # A1 读缓存开窗（§2.2-A1）：窗口=本次门禁链——链内 106 gate 的重复读命令
+        # （staged 清单/diff/per-file 内容）复用一次执行；链结束/任何写命令即失效
+        # （run_git 侧置 None）。索引在窗口内不可变（锁内 + add 在链后），语义等价。
+        self._git_read_cache = {}
+        try:
+            results = self._gate_registry.check_all(
+                self,
+                existing,
+                session_id=session_id,
+                skip_gates=skip_gates,
+                preflight_results=preflight_results,
+                **kwargs,
+            )
+        finally:
+            self._git_read_cache = None
         after_fp, after_map = self._tracked_area_snapshot()
         if before_fp and after_fp and before_fp != after_fp:
             changed = sorted(p for p in set(before_map) | set(after_map) if before_map.get(p) != after_map.get(p))
@@ -2603,6 +2726,7 @@ class GitCommitGateway:
         reconciler 工作流；降级留 warning 痕非静默，且降级 commit 无队列标记，可被
         assert_single_writer_dev_history 机械点名（可见性闭环）。
         """
+        _ensure_scripts_package_importable(str(self.project_root))
         from scripts.governance.commit_queue_landing import (  # noqa: PLC0415 延迟 import：flag OFF 期零开销，且避免 src→scripts 模块级耦合
             reroute_auto_commit_to_queue,
         )
@@ -2982,6 +3106,14 @@ class GitCommitGateway:
                     "见 AGENTS.md §8 L281。"
                 ),
             )
+        # A1 读缓存（窗口=门禁链；读类才查，写/其他类即整体失效退出窗口）
+        _cache = getattr(self, "_git_read_cache", None)
+        if len(cmd) >= 2 and cmd[0] == "git" and cmd[1] not in _GIT_READ_SUBCMDS:
+            self._git_read_cache = None
+        elif _cache is not None and len(cmd) >= 2 and cmd[0] == "git":
+            _key = (tuple(cmd), cwd)
+            if _key in _cache:
+                return _cache[_key]
         env = os.environ.copy()
         env[_GATEWAY_ENV] = "1"
         from zephyr.shared.infra.process_pool import run_subprocess_hidden
@@ -3015,12 +3147,15 @@ class GitCommitGateway:
                     os.unlink(_tmp)
                 except OSError:
                     pass
-        return subprocess.CompletedProcess(
+        _result = subprocess.CompletedProcess(
             args=cmd,
             returncode=proc.returncode,
             stdout=stdout,
             stderr=stderr,
         )
+        if getattr(self, "_git_read_cache", None) is not None and len(cmd) >= 2 and cmd[0] == "git" and cmd[1] in _GIT_READ_SUBCMDS:
+            self._git_read_cache[(tuple(cmd), cwd)] = _result
+        return _result
 
     def _run_git(self, cmd: list[str], cwd: str | None = None) -> subprocess.CompletedProcess:
         """向后兼容 thin wrapper（Stage 4 公共化）。"""

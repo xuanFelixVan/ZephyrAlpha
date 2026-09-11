@@ -93,6 +93,6 @@ flags:
     implementation_status: "production"
 
   commit_queue_interactive:
-    enabled: false
-    description: "P2⑨ 交互式提交入队（方案 §2.4-4b）：scripts/git_commit.py --enqueue 快照入队即返回 qid（AI 会话轮询 status 而非占锁重试）；出厂默认 OFF，启用属 Owner 窗口（宪章 B-007）；前置六项（4a 完成/会话协议改造/CloneGuard 索引/压测 P95/docs 域灰度两周/assert_single_writer_dev_history 日检）见方案 §2.4-4b；回滚=flag OFF（存量 drain 完毕后关闭）"
-    implementation_status: "gated_mvp"
+    enabled: true
+    description: "P2⑨ 交互式提交入队（方案 §2.4-4b）：scripts/git_commit.py --enqueue 快照入队即返回 qid（AI 会话轮询 status 而非占锁重试）；LOCK_TIMEOUT 自动改道入队（P2⑨b，#ARCH-310 P0-1，st-govreform-20260912 施工）。【2026-09-12 Owner 批准启用（AI 原生治理评审 P0-1：'现在可以全部开工'），前置六项处置：①4a 死信清零已完成（952 项闭环）②会话协议改造已落（--enqueue 快照路径+status 轮询）③CloneGuard 索引=登记已知限制（serializer worktree 内 echo_guard 恒降级 warn-only+acknowledged 豁免吸收，不阻断）④压测 P95 与⑤docs 域两周灰度压缩为实弹观察（2026-09-12 并发事故为真实负载场景，回滚通道随时可用）⑥assert_single_writer_dev_history 断言实存（commit_queue_landing/gateway）继续作为日检防线】；回滚=flag OFF（存量 drain 完毕后关闭）"
+    implementation_status: "production"

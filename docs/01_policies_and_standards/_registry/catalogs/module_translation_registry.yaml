@@ -47423,11 +47423,11 @@ entries:
   plain_zh: "盘中每隔几分钟取一批最新新闻，自动完成读新闻、判断好坏、找到产业链环节、列出受影响公司这一整套流程，打包成一份快照给盘中监控直接取用。任何一步坏了就如实标注降级，不炸整体。"
 - module_path: src/zephyr/plan_engine/intraday_tomorrow_forecast.py
   domain_id: D_PLAN
-  name_zh: "明日情绪盘中滚动预测"
+  name_zh: "盘中明日预告器"
   name_en: ""
   desc_zh: ""
   desc_en: ""
-  plain_zh: "盘中四个时点用最新盘面重算明天情绪概率：昨晚8态转移先验打底，相似日修正，历史连错的输入自动降权；合成结果比盘前先验悲观一档以上就发明日降档预警"
+  plain_zh: "盘中实时算一份明天的作战预告（哪些板块哪些票值得盯），给作战指挥页当输入，算不动就降级输出空预告并告警。"
 - module_path: src/zephyr/signal_ashare/core/environment_switch.py
   domain_id: D_ASHARE_SIGNAL
   name_zh: "环境开关"
@@ -47456,6 +47456,41 @@ entries:
   desc_zh: ""
   desc_en: ""
   plain_zh: "把上次提交时已经检查过的内容记在小本本上，下次提交同样的东西就不用重新查一遍；只有内容完全没变、代码分支没动、配置没改的小本本记录才算数，出任何岔子都退回全量重查。"
+- module_path: src/zephyr/data/implementations/crypto_kline_collector.py
+  domain_id: D_DATA
+  name_zh: "币圈K线采集器"
+  name_en: ""
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "从 OKX 免费公开接口拉币圈K线存进本地库，不用申请任何密钥，纯影子验证用，拉不到数据就报错退出绝不影响股票主数据链。"
+- module_path: src/zephyr/data/implementations/shadow_gate_c_l1.py
+  domain_id: D_DATA
+  name_zh: "C-L1影子判定脚本"
+  name_en: ""
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "拿币圈影子数据跑一遍 C-L1 关卡的判定逻辑做纸上验证，只输出判定结果不碰任何真实交易，跑不动就明确报错。"
+- module_path: src/zephyr/gov_enforcement/commit_gates/industry_chain_map_gate.py
+  domain_id: D_GOV_ENFORCEMENT
+  name_zh: "产业链地图门禁"
+  name_en: ""
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "给产业链全景图当守门员：每次提交检查图的数据和代码有没有对不上，对不上就拦下不让进库，防止图上出现假链路。"
+- module_path: src/zephyr/gov_enforcement/registry_alignment.py
+  domain_id: D_GOV_ENFORCEMENT
+  name_zh: "注册表对齐核查器"
+  name_en: ""
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "核对各注册表之间和数据库结构是否一一对应，发现字段或表对不上就报出来，防止登记表和真实结构渐行渐远。"
+- module_path: src/zephyr/signal_ashare/core/candidate_pool_aggregator.py
+  domain_id: D_ASHARE_SIGNAL
+  name_zh: "候选池汇总器"
+  name_en: ""
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "把三条线选出来的候选股票汇总到一起，按规则否决掉不合格的，输出一份干净的最终候选池。"
 
 battle_map_steps:
 - step_id: BM-BUY-05

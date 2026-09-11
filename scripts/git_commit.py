@@ -84,6 +84,7 @@ _PROJECT_ROOT = _REPO_ROOT
 from zephyr.gov_enforcement.rule_bridge.git_commit_gateway import (  # noqa: E402
     CommitStatus,
     GitCommitGateway,
+    _ensure_scripts_package_importable,
 )
 
 logger = logging.getLogger(__name__)
@@ -462,6 +463,60 @@ def _cleanup_message_file(args, exit_code: int | None = None) -> None:
         logger.warning("message-file 清理失败（不阻断）: %s — %s", msg_file, e)
 
 
+def _enqueue_mode(args, files: list[str], message: str) -> int:
+    """P2⑨ --enqueue 模式：快照入袋即返回 qid（方案 §2.4-4b）。
+
+    flag commit_queue_interactive 出厂默认 OFF（fail-closed 拒绝）；入队不经
+    claim 前移协议（landing 时按队列项 session claim，快照语义=入袋即完成）。
+    互斥参数在入口处显式拒绝（--reconciler-verify / --merge_finalize 语义与
+    异步落盘冲突）。
+    """
+    if args.reconciler_verify or getattr(args, "merge_finalize", False):
+        print("ERROR: --enqueue 与 --reconciler-verify/--merge_finalize 互斥", file=sys.stderr)
+        return 2
+    from zephyr.gov_enforcement.rule_bridge.gate_cache_preflight import flag_enabled
+
+    if not flag_enabled("commit_queue_interactive"):
+        print(
+            "ERROR: --enqueue 需 flag commit_queue_interactive=ON"
+            "（出厂默认 OFF；启用属 Owner 窗口，宪章 B-007；灰度前置六项见方案 §2.4-4b）",
+            file=sys.stderr,
+        )
+        return 2
+    _ensure_scripts_package_importable(str(_PROJECT_ROOT))
+    from scripts.commit_queue import EnqueueOptions, enqueue_item  # noqa: PLC0415
+    from scripts.commit_queue import _read_files_from_worktree  # noqa: PLC0415
+
+    wt = Path(args.project_root)
+    try:
+        payload = _read_files_from_worktree(wt, files)
+        deletes = [f for f in files if not (wt / f).exists()]
+    except Exception as exc:  # noqa: BLE001 — 轻检拒绝（QueueReject）fail-closed 报错
+        print(f"DENIED: {exc}", file=sys.stderr)
+        return 2
+    if not payload and not deletes:
+        print("ERROR: --enqueue 空文件清单（文件缺失且未跟踪）", file=sys.stderr)
+        return 1
+    item = enqueue_item(
+        args.session,
+        message,
+        payload,
+        options=EnqueueOptions(deletes=deletes or None, meta_extra={"interactive": "true"}),
+    )
+    # 入队自举排空尝试（best-effort，66 号 §8；失败等下次自举，入袋即安全）
+    try:
+        from scripts.governance.commit_queue_landing import bootstrap_drain_with_landing  # noqa: PLC0415
+
+        bootstrap_drain_with_landing(repo_root=wt)
+    except Exception as exc:  # noqa: BLE001 — 自举失败不阻断入队返回
+        logger.warning("[enqueue] 自举排空尝试失败（入袋已安全）: %s", exc)
+    print(
+        f"ENQUEUED: {item['qid']} (files={len(item['files'])}) — 快照入袋即完成，"
+        f"Serializer 异步落盘；查询: python scripts/commit_queue.py status --session {args.session}"
+    )
+    return 0
+
+
 def main() -> int:
     # CAND-GOVSEC-001 ② 翻硬拦（批5b，2026-08-26）：观测期 42h 零误伤（333万 allow /
     # 402 would_block 全测试噪音归因完毕），commit 入口 in-process 删除护栏转正硬拦。
@@ -639,6 +694,28 @@ def main() -> int:
         help="reconciler-verify 模式下放行其他活跃 session 检查（逃生通道）。"
         "默认硬阻断——验证前必须无其他活跃 session，确保单 session 诊断场景无搭便车窗口。",
     )
+    # P2⑨ 交互式提交入队（方案 §2.4-4b，2026-09-11 st-perf-plan-20260910）：
+    # --enqueue 快照入队即返回 qid（AI 会话轮询 status 而非占锁重试——釜底抽薪解
+    # 1-4 分钟占锁与无限轮询）。flag commit_queue_interactive 出厂默认 OFF；启用属
+    # Owner 窗口（宪章 B-007），灰度六项前置见方案 §2.4-4b 前置条件清单。
+    parser.add_argument(
+        "--enqueue",
+        action="store_true",
+        default=False,
+        help="快照入队即返回 qid（异步落盘，Serializer 单写者）；需 flag"
+        " commit_queue_interactive=ON（出厂默认 OFF）。与 --reconciler-verify/"
+        "--merge_finalize 互斥；不走 claim 前移协议（landing 时按队列项 session claim）。",
+    )
+    # P2⑨b（#ARCH-310 P0-1，2026-09-12 Owner 批准 AI 原生治理评审施工批）：
+    # LOCK_TIMEOUT 自动改道入队——把"抢锁空转"结构性变成"排队"（评审裁定 R1：
+    # 队列是正门，锁降级为队列内部实现）。默认 ON（flag 门控），逃生通道保留。
+    parser.add_argument(
+        "--no-auto-enqueue",
+        action="store_true",
+        default=False,
+        help="关闭 LOCK_TIMEOUT 自动改道入队（默认改道，flag commit_queue_interactive=ON"
+        " 时生效）。本旗标保留同步占锁语义：超时即 exit 2 由调用方自行决策。",
+    )
     # 方案 A 治本（#ARCH-MSG-FILE-RESIDUE-001）：--message-file 成功即删契约
     # 对标 gateway 内部 tempfile.mkstemp + finally os.remove 范式
     # （git_commit_gateway.py:1642-1666）。try/finally 覆盖 parse_args 到
@@ -667,6 +744,10 @@ def main() -> int:
             return 1
         if tracked_but_deleted:
             logger.info("以下文件已跟踪但工作区已删除（将作为删除提交）: %s", tracked_but_deleted)
+
+        # P2⑨ 交互式入队快速路径（在 claim/commit 流程之前分流）
+        if getattr(args, "enqueue", False):
+            return _enqueue_mode(args, files, message)
 
         try:
             gw = GitCommitGateway(project_root=args.project_root)
@@ -712,6 +793,26 @@ def main() -> int:
             )
         finally:
             gw.release_files(args.session, claimed)
+
+        # P2⑨b（#ARCH-310 P0-1）：LOCK_TIMEOUT 自动改道快照入队（在格式化失败横幅
+        # 之前分流，避免"先报失败再入队"的混乱输出）。语义不兼容入队的通道
+        # （reconciler-verify / merge_finalize）与显式 --no-auto-enqueue 维持原
+        # exit 2；flag OFF 时行为与历史完全一致。
+        if (
+            result.status is CommitStatus.LOCK_TIMEOUT
+            and not getattr(args, "no_auto_enqueue", False)
+            and not args.reconciler_verify
+            and not getattr(args, "merge_finalize", False)
+        ):
+            from zephyr.gov_enforcement.rule_bridge.gate_cache_preflight import flag_enabled  # noqa: PLC0415
+
+            if flag_enabled("commit_queue_interactive"):
+                print(
+                    "AUTO-ENQUEUE: 锁等待超时——自动改道快照入队（--no-auto-enqueue 可关闭；"
+                    f"锁详情: {result.message[:200]}）",
+                    file=sys.stderr,
+                )
+                return _enqueue_mode(args, files, message)
 
         exit_code = _format_commit_result(result)
         return exit_code

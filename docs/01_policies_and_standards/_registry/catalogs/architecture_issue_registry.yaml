@@ -21606,3 +21606,12 @@ entries:
   related_adjudication: ""
   created: "2026-09-11"
   last_updated: "2026-09-11"
+- issue_id: "#ARCH-310"
+  title: AI 原生治理体系现代化（100% AI 开发战略评审施工纲领：队列正门/own-scope 默认/宪法分层/治理元预算/人机门位）
+  severity: P1高
+  adjudication: 2026-09-12 Owner 批准全面开工（对话指令"现在可以全部开工"）。背景=并发提交抢锁事故（4 会话 35 分钟零落地）+治理资产盘点（112 gate/86 规则 3.3 万行/76 注册表/宪法 1639 行，元治理成本与业务开发同量级）+业界三方对照。五裁定：R1 队列是正门锁降级为实现；R2 门禁默认 own-diff 作用域全仓扫描须登记例外；R3 宪法分层 L0≤300 行+索引卡渐进披露；R4 治理元预算净零增长（新增须声明替代）；R5 人机门位注册表化。报告真源 docs/_working/2026-09-12-ai-native-governance-review.md
+  fix_phase: P0 施工中（2026-09-12 st-govreform-20260912：①commit_queue_interactive 转 ON+LOCK_TIMEOUT 自动改道入队②DATETIME-NOW-FORBIDDEN own-scope 第三批+3 测试③landing 死信阻断详情 400→2000 字符；P1 待排：gate 注册表/宪法瘦身 L0/风险分级注册表；watchdog 活跃 claim 豁免核实=已有（verdict=claimed 只审计），残余误报属未 claim 纪律缺口不改码）
+  status: in_progress
+  related_adjudication: ""
+  created: "2026-09-12"
+  last_updated: "2026-09-12"

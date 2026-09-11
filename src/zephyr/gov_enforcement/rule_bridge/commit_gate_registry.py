@@ -272,6 +272,21 @@ def run_checker_script(
     # MUST 用 CREATE_NO_WINDOW，消除 commit 流程闪窗（之前每次 commit 跑 10+ 个
     # checker 都闪窗）。run_subprocess_hidden 默认注入 CREATE_NO_WINDOW |
     # CREATE_NEW_PROCESS_GROUP，且 errors='replace' 与本函数语义一致。
+    # A2 supervisor 优先（2026-09-11 提交通道性能优化方案 §2.2-A2，st-perf-plan-20260910）：
+    # 持久 worker 消 spawn 税（68 spawn/链 → 1）；worker 异常返回 None → 回退下方
+    # 直 spawn（结果≡现状，fail-safe）；超时抛 TimeoutExpired 与直 spawn 同款。
+    try:
+        from zephyr.gov_enforcement.rule_bridge.checker_supervisor import get_supervisor
+
+        supervised = get_supervisor().run(script_path, args, cwd=cwd, timeout=timeout, text=text, env=env)
+        if supervised is not None:
+            return supervised
+    except subprocess.TimeoutExpired:
+        raise
+    except Exception:  # noqa: BLE001 — supervisor 自身装配失败 → 回退直 spawn（现状路径）
+        logger = logging.getLogger(__name__)
+        logger.warning("[checker-supervisor] 装配失败，回退直 spawn", exc_info=True)
+
     from zephyr.shared.infra.process_pool import run_subprocess_hidden
 
     return run_subprocess_hidden([sys.executable, str(script_path), *args], **kwargs)
@@ -372,6 +387,7 @@ class CommitGateRegistry:
         gateway: object,
         files: list[str],
         skip_gates: frozenset[str] = frozenset(),
+        preflight_results: "dict[str, tuple[bool, str]] | None" = None,
         **kwargs: Any,
     ) -> list[GateResult]:
         """按 priority 升序执行所有 gate，返回结果列表。
@@ -383,8 +399,27 @@ class CommitGateRegistry:
         唯一消费场景=worktree 物理隔离 commit（跳过集合单一真源=
         session_worktree._WORKTREE_SKIP_GATES，tracker #92 治本——物理隔离下
         搭便车三 gate 无检测对象，对齐 merge 预演既有跳过口径）。
+
+        preflight_results: P2⑦（2026-09-11，st-perf-plan-20260910）锁外预跑已验
+        gate 的结果表（调用方负责指纹 F′==F 校验后才传入）；命中的 gate 复用预跑
+        结果不再现算。None=未启用/指纹不一致（现行全量路径，正确性永不依赖预跑）。
         """
         _audit_allow_overlap_usage(gateway, files, kwargs)
+        # P2⑧ 持久结果缓存（方案 §2.2-A3）：flag OFF（出厂默认）时 cache_ctx=None
+        # 行为不变；ON 时仅白名单（纯 staged 内容扫描型）查/存，只缓存 passed=True，
+        # key 五元组任一变化即全失效（详见 gate_cache_preflight 模块 docstring）。
+        _gcp = None
+        cache_ctx = None
+        try:
+            from zephyr.gov_enforcement.rule_bridge import gate_cache_preflight as _gcp_mod
+
+            _gcp = _gcp_mod
+            if _gcp.result_cache_enabled():
+                cand = _gcp.GateResultCache(gateway, files)
+                if cand.usable:
+                    cache_ctx = cand
+        except Exception:  # noqa: BLE001 — 缓存设施异常=回退全量现算
+            cache_ctx = None
         results: list[GateResult] = []
         for spec in sorted(self._specs.values(), key=lambda s: s.priority):
             if spec.gate_id in skip_gates:
@@ -395,6 +430,25 @@ class CommitGateRegistry:
                         detail="skipped: worktree 物理隔离（无检测对象）",
                     )
                 )
+                continue
+            _cachedable = cache_ctx is not None and spec.gate_id in _gcp.CONTENT_SCAN_CACHE_WHITELIST
+            _own_scope = ""
+            if _cachedable:
+                try:
+                    _own_scope = _gcp.own_scope_hash(gateway, files)
+                except Exception:  # noqa: BLE001
+                    _cachedable = False
+            if _cachedable:
+                hit = cache_ctx.lookup(spec.gate_id, _own_scope)
+                if hit is not None:
+                    results.append(GateResult(gate_id=spec.gate_id, passed=True, detail=f"cache-hit: {hit}"))
+                    continue
+            _preflight_hit = (
+                preflight_results.get(spec.gate_id) if preflight_results else None
+            )
+            if _preflight_hit is not None:
+                passed, detail = _preflight_hit
+                results.append(GateResult(gate_id=spec.gate_id, passed=passed, detail=f"preflight: {detail}"))
                 continue
             try:
                 passed, detail = spec.check(gateway, files, **kwargs)
@@ -408,6 +462,9 @@ class CommitGateRegistry:
                         detail=f"gate 异常（fail-closed）: {e}",
                     )
                 )
+                continue
+            if _cachedable and passed:
+                cache_ctx.store(spec.gate_id, _own_scope, detail)
         return results
 
     def get(self, gate_id: str) -> GateSpec | None:
@@ -417,6 +474,10 @@ class CommitGateRegistry:
             GateSpec 或 None（gate_id 未注册时）。
         """
         return self._specs.get(gate_id)
+
+    def specs_sorted(self) -> list[GateSpec]:
+        """全部 gate 按 priority 升序快照（P2⑦ 锁外预跑编排用，2026-09-11）。"""
+        return sorted(self._specs.values(), key=lambda s: s.priority)
 
     def list_all(self) -> list[GateSpec]:
         """返回所有已注册的 GateSpec（按 priority 升序）。
