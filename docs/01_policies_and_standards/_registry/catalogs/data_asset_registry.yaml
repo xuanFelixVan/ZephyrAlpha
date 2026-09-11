@@ -80,7 +80,7 @@ unique_key:
   sources: [source_id]
   datasets: [dataset_id]
   jobs: [job_id]
-entry_counts: {sources: 15, datasets: 221, jobs: 88}  # 2026-09-04 v1.5.0：DS-221 自算衍生指数日K（kline_index_calc，全A等权 EQW_ALLA 立项）；派生快照值，以 yaml 实测为准——禁止凭此报数（#83 漏报教训）
+entry_counts: {sources: 15, datasets: 224, jobs: 87}  # 2026-09-11 v1.6.x：DS-224/225 产业链图谱底座+盘中事件冲击流（接线指令 W6）；jobs 87=本次实测勘正（原声明 88 为陈旧派生值）；派生快照值，以 yaml 实测为准——禁止凭此报数（#83 漏报教训）
 
 # v1.5.0 changelog(2026-09-04): 全A等权立项——DS-221 自算衍生指数日K c1_market.kline_index_calc（datasets 220→221）。
 #   首条 EQW_ALLA：internal 复权收益等权平均链乘，基期 2019-01-03=1000（2018 及以前 kline_daily 仅 237 只样本，
@@ -782,7 +782,7 @@ datasets:
   pit_policy: strict
   format_summary: 合成交易信号（多因子加权/截面排名/置信度），CTR-P1-015 SynthesizedSignal
   valid_since: '2020-01-01'
-  module_id: MOD-SIGNAL-ASHARE
+  module_id: MOD-SIGNAL_ASHARE
   name: signal.composite
   name_zh: 合成交易信号
   status: candidate
@@ -9103,6 +9103,78 @@ datasets:
   evidence: "2026-09-09 首次导入实证：docs/_working/同花顺资料/个股1 (1)(2).xlsx（GBK 编码 \\r 换行 TSV 伪装 .xlsx，BadZipFile 实证）合计 5217 只沪深 A 股零重叠，清洗后 dup 0/l2 空 0/l3 空 0/简介空 0；c1_market.stock_profile_ths 5217 行 CH_COMMITTED（http），抽验 000001.SZ=银行/股份制银行、600519.SH=白酒/白酒、688825.SH=半导体/数字芯片设计正确；【】串与独立列 823 处差异全部为申万式 Ⅱ/Ⅲ 后缀、零真实口径差异（故 l2/l3 取独立列裸名）"
   code_symbol: "scripts/ch/import_ths_profile.py::do_import"
   code_fingerprint: null
+- dataset_id: DS-224
+  entity_name: governance.ig_industry_graph
+  entity_type: dataset
+  scope: production
+  contract_ref: null
+  physical_type: postgres_table
+  produced_by_job: null
+  consumed_by_jobs: []
+  domain_id: D_INTELLIGENCE
+  pit_policy: partial
+  format_summary: 产业链图谱查询底座（长城任务产物，本批服务化消费时补登记；depgraph PG 只读四表族，**活跃施工期——计数以实时查询为准，禁引用本处快照数**；2026-09-11 02:10 时点快照=ig_chain 830 链/635 active、ig_node 3328（墓碑 2225/活 1103）、ig_edge 1378、ig_node_company 16900 行/1832 节点；同日 04:4x 复测已漂移=839 链/599 active/3350 节点/1400 边/11158 行·806 节点（他会话 S24 治理批在跑）；DDL 真源=scripts/industry_graph/apply_industry_graph_ddl.py；服务化查询已挂 api_server cm_* 通道（W1 复用实证），节点匹配/冲击扩散消费方=DS-225
+  valid_since: "2026-08-30"
+  module_id: MOD-INT-NEWS-CHAIN
+  design_maturity: production
+  name: governance.ig_industry_graph
+  name_zh: 产业链图谱（ig_* 四表族）
+  status: active
+  version: 1.0.0
+  created_at: "2026-09-11"
+  updated_at: "2026-09-11"
+  owner: MOD-INT-NEWS-CHAIN
+  produced_by_source: SRC-INTERNAL-001
+  survivorship_free: partial
+  pit_available: null
+  earnings_lag_days: null
+  llm_training_cutoff: N/A
+  lookahead_test_method: N/A
+  label_delay_days: null
+  drift_detector: none
+  entry_role: "reference"
+  applies_to: ["stock", "market"]
+  tags: ["数据", "行业", "事件"]
+  algorithm_status: "not_applicable"
+  evidence: "2026-09-11 实测盘点：SELECT count(*) 逐表实证（ig_node 3328/830 链，带 aliases 节点=0；ig_edge 1284+58+36；ig_node_company 16900/1832）；墓碑=名称含'已并入'（长城墓碑合并法，无独立状态列）；valid_to 列为后加增量升级（DDL L105 无此列，api_server cm_* 全线 valid_to IS NULL 过滤同口径）"
+  code_symbol: "scripts/industry_graph/apply_industry_graph_ddl.py::main"
+  code_fingerprint: null
+- dataset_id: DS-225
+  entity_name: intelligence.chain_impact_stream
+  entity_type: dataset
+  scope: testing
+  contract_ref: null
+  physical_type: src/zephyr/intelligence/chain_impact_stream.py::ChainImpactSnapshot
+  produced_by_job: null
+  consumed_by_jobs: []
+  domain_id: D_INTELLIGENCE
+  pit_policy: strict
+  format_summary: 盘中事件冲击流（只读派生视图，无物理表）：c3_fundamental.news_data 分钟窗（PIT≤now；入库延迟实测 2026-09-10 盘中 p50≈6min/p90≈13min，300s flush buffer 为地板）→ MOD-INT-AISA RuleBasedSentimentScorer 打分（L1-S0-1 已挂真锚上游）→ ig_node 活节点词表匹配（MOD-INT-NEWS-CHAIN，剔墓碑/泛化词）→ ig_edge 无向 BFS 2 跳扩散 → ig_node_company 标的落点+方向（MOD-INT-CHAIN-IMPACT，±0.15 死区映射 ±1/0，全跳同向传导置信度×0.6^hop，与 event_score surprise_direction 同 [-1,1] 口径）→ 跨新闻聚合 symbol 唯一；api_server /api/chain-impact-stream 只读端点透出（消费方=偏离监控/盘中扫描/负面否决，拉式选型）
+  valid_since: "2026-09-11"
+  module_id: MOD-INT-IMPACT-STREAM
+  design_maturity: testing
+  name: intelligence.chain_impact_stream
+  name_zh: 盘中事件冲击流
+  status: active
+  version: 0.1.0
+  created_at: "2026-09-11"
+  updated_at: "2026-09-11"
+  owner: MOD-INT-IMPACT-STREAM
+  produced_by_source: SRC-INTERNAL-001
+  survivorship_free: partial
+  pit_available: null
+  earnings_lag_days: null
+  llm_training_cutoff: N/A
+  lookahead_test_method: N/A
+  label_delay_days: null
+  drift_detector: none
+  entry_role: "reference"
+  applies_to: ["market"]
+  tags: ["数据", "事件", "行业"]
+  algorithm_status: "not_applicable"
+  evidence: "2026-09-11 接线指令 W3-W6 交付实证：三模块单测 53 通过+红蓝对抗 9 手法（边界/故障/前视）；W2 实测盘中延迟 p50 6.07min/p90 12.58min（542 条样本，36 个 10min 桶仅收盘桶 1 空窗）；端到端 dry-run 一条真实新闻→图谱命中→标的清单→端点透出全链路通"
+  code_symbol: "src/zephyr/intelligence/chain_impact_stream.py::ChainImpactStream"
+  code_fingerprint: null
 jobs:
 - job_id: JOB-001
   job_name: ingest.minqmt_kline
@@ -9229,7 +9301,7 @@ jobs:
   - DS-005
   pit_relevance: strict
   description: 合成多因子信号（加权/截面排名/置信度），产出DS-005 signal.composite
-  module_id: MOD-SIGNAL-ASHARE
+  module_id: MOD-SIGNAL_ASHARE
   name: synthesize.signal
   name_zh: 合成多因子信号
   status: candidate
