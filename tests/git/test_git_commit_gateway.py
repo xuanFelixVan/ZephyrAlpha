@@ -261,7 +261,30 @@ class TestEnsureScriptsPackageImportable:
         assert sys.modules.get("scripts") is before, "真包不得被清除"
 
     def test_poisoned_namespace_purged(self, tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
-        """毒缓存（外来命名空间 __path__ 无本仓 scripts/）→ 整族清除，补根后可重导真包。"""
+        """毒缓存（候选真包目录存在但缓存 __path__ 失配）→ 整族清除，补根后可重导真包。
+
+        场景对齐生产实证（pywin32 .pth）：project_root 是含 scripts/ 的真仓根，
+        sys.modules['scripts'] 被外来命名空间占据（__path__ 指向 win32/scripts）。
+        """
+        import types
+
+        monkeypatch.syspath_prepend(str(tmp_path))
+        (tmp_path / "scripts").mkdir()  # 候选真包目录存在（守卫的存在性前提）
+        saved = {n: m for n, m in sys.modules.items() if n == "scripts" or n.startswith("scripts.")}
+        fake = types.ModuleType("scripts")
+        fake.__path__ = [str(tmp_path / "elsewhere" / "win32" / "scripts")]
+        sys.modules["scripts"] = fake
+        try:
+            _ensure_scripts_package_importable(str(tmp_path))
+            assert "scripts" not in sys.modules, "毒缓存应被整族清除（下条 import 按新 path 重解析）"
+        finally:
+            for n in [n for n in list(sys.modules) if n == "scripts" or n.startswith("scripts.")]:
+                del sys.modules[n]
+            sys.modules.update(saved)
+
+    def test_non_repo_root_keeps_cached_package(self, tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
+        """#ARCH-310 守卫回归：project_root 无 scripts/（测试 tmp 仓）不得清族——
+        否则调用方/monkeypatch 持有的真实 scripts 模块对象被甩空（六测试回归实证）。"""
         import types
 
         monkeypatch.syspath_prepend(str(tmp_path))  # project_root=tmp_path（无 scripts/）
@@ -271,7 +294,7 @@ class TestEnsureScriptsPackageImportable:
         sys.modules["scripts"] = fake
         try:
             _ensure_scripts_package_importable(str(tmp_path))
-            assert "scripts" not in sys.modules, "毒缓存应被整族清除（下条 import 按新 path 重解析）"
+            assert sys.modules.get("scripts") is fake, "无 scripts/ 的根不得触发清族（存在性守卫）"
         finally:
             for n in [n for n in list(sys.modules) if n == "scripts" or n.startswith("scripts.")]:
                 del sys.modules[n]
