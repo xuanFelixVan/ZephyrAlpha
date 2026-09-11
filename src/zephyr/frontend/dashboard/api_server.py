@@ -2500,7 +2500,7 @@ def _cm_build_galaxy(market: str = "all") -> dict[str, Any]:
         chain_rows = cur.fetchall()
         chain_name: dict[str, str] = {r[0]: r[1] for r in chain_rows}
         chain_market: dict[str, str] = {r[0]: (r[2] or "cn") for r in chain_rows}
-        cur.execute("SELECT node_id, chain_id FROM ig_node")
+        cur.execute(_SQL_CM_NODES_ALL)
         node_chain: dict[str, str] = {r[0]: r[1] for r in cur.fetchall()}
         cur.execute("SELECT node_id, count(DISTINCT symbol) FROM ig_node_company WHERE valid_to IS NULL GROUP BY node_id")
         node_companies: dict[str, int] = {r[0]: int(r[1]) for r in cur.fetchall()}
@@ -2726,10 +2726,9 @@ def chainmap_cluster(cid: str = Query(..., min_length=2, max_length=8),
         try:
             cur = conn.cursor()
             ids = [c["chain_id"] for c in members]
-            cur.execute("SELECT node_id, chain_id, name, tier, function_role FROM ig_node WHERE chain_id = ANY(%s)", (ids,))
+            cur.execute(_SQL_CM_NODES_BY_CHAIN, (ids,))
             node_rows = cur.fetchall()
-            cur.execute("SELECT node_id, count(DISTINCT symbol) FROM ig_node_company WHERE valid_to IS NULL AND node_id IN "
-                        "(SELECT node_id FROM ig_node WHERE chain_id = ANY(%s)) GROUP BY node_id", (ids,))
+            cur.execute(_SQL_CM_NODE_COMPS_BY_CHAIN, (ids,))
             ncomp = {r[0]: int(r[1]) for r in cur.fetchall()}
             # 股权批量聚合（F-CHAINMAP-EQUITY-BADGE，2026-09-10）：簇内环节落位公司 ∩ ig_equity_edge 参与方。
             # 方向按落位公司是 holder（控=对外投资）/held（被控=股东）判；UE 编码对手方 LEFT JOIN 编码表取名；
@@ -2787,7 +2786,8 @@ def chainmap_node(node_id: str = Query(..., min_length=1)) -> dict[str, Any]:
         try:
             cur = conn.cursor()
             cur.execute("SELECT n.name, n.tier, n.chain_id, c.name FROM ig_node n "
-                        "JOIN ig_chain c ON c.chain_id = n.chain_id WHERE n.node_id = %s", (node_id,))
+                        "JOIN ig_chain c ON c.chain_id = n.chain_id WHERE n.node_id = %s"
+                        " AND n.name NOT LIKE '%%（已并入%%'", (node_id,))
             row = cur.fetchone()
             if not row:
                 return {"ok": False, "error": "node not found", "companies": []}
@@ -2841,7 +2841,7 @@ def chainmap_search(q: str = Query(..., min_length=1)) -> dict[str, Any]:
                         "ORDER BY name LIMIT 10", (like,))
             chains_out = [{"chain_id": r[0], "name": r[1], "cluster": chain_cluster.get(r[0], "")} for r in cur.fetchall()]
             cur.execute("SELECT n.node_id, n.name, n.chain_id, c.name FROM ig_node n "
-                        "JOIN ig_chain c ON c.chain_id = n.chain_id WHERE n.name ILIKE %s "
+                        "JOIN ig_chain c ON c.chain_id = n.chain_id WHERE c.status = 'active' AND n.name ILIKE %s AND n.name NOT LIKE '%%（已并入%%' "
                         "ORDER BY n.name LIMIT 10", (like,))
             nodes_out = [{"node_id": r[0], "name": r[1], "chain_id": r[2], "chain_name": r[3],
                           "cluster": chain_cluster.get(r[2], "")} for r in cur.fetchall()]
@@ -2896,6 +2896,16 @@ _CM_CAT_IND_ALIAS: dict[str, str] = {
 
 # 裸 SQL 集中化（R96 常量豁免通道；NOQA-VALIDATION 密度闸否决行级 noqa 后的正道）：
 # chainmap 只读诊断 SQL，参数化绑定无注入面，与既有 chainmap 段手写 execute 同一读口径
+# 墓碑过滤统一口径(NO-BARE-SQL 集中化;墓碑=已合并历史快照,S8/S21/S24/api 同口径)
+_SQL_CM_NODES_ALL = "SELECT node_id, chain_id FROM ig_node WHERE name NOT LIKE '%%（已并入%%'"
+_SQL_CM_NODES_BY_CHAIN = (
+    "SELECT node_id, chain_id, name, tier, function_role FROM ig_node"
+    " WHERE chain_id = ANY(%s) AND name NOT LIKE '%%（已并入%%'"
+)
+_SQL_CM_NODE_COMPS_BY_CHAIN = (
+    "SELECT node_id, count(DISTINCT symbol) FROM ig_node_company WHERE valid_to IS NULL AND node_id IN "
+    "(SELECT node_id FROM ig_node WHERE chain_id = ANY(%s) AND name NOT LIKE '%%（已并入%%') GROUP BY node_id"
+)
 _SQL_CM_EQ_AGG = (
     "SELECT node_id, dir, other, stake_pct, relation, verification, as_of, ue_name FROM ("
     "SELECT nc.node_id, 'out' AS dir, e.held AS other, e.stake_pct, e.relation, e.verification, e.as_of, "
@@ -2917,7 +2927,7 @@ _SQL_CM_CAT_EVENTS = (
     "WHERE event_date >= today() - %(b)s AND event_date <= today() + %(f)s ORDER BY event_date"
 )
 _SQL_CM_CAT_CLUSTER_CHAINS = "SELECT chain_id, category FROM ig_chain WHERE chain_id = ANY(%s)"
-_SQL_CM_CAT_CLUSTER_HIT_NODES = "SELECT node_id, chain_id FROM ig_node WHERE chain_id = ANY(%s)"
+_SQL_CM_CAT_CLUSTER_HIT_NODES = "SELECT node_id, chain_id FROM ig_node WHERE chain_id = ANY(%s) AND name NOT LIKE '%%（已并入%%'"
 _SQL_CM_CAT_NODE_INFO = (
     "SELECT n.name, n.tier, n.chain_id, c.name, c.category FROM ig_node n "
     "JOIN ig_chain c ON c.chain_id = n.chain_id WHERE n.node_id = %s"
@@ -3539,6 +3549,31 @@ def chainmap_company(symbol: str = Query(..., min_length=2, max_length=24)) -> d
         "pending_domains": ["aliases", "facilities"],
         "generated_at": datetime.now().isoformat(" ", "seconds"),
     }
+
+
+@app.get("/api/chain-impact-stream")
+def chain_impact_stream_endpoint(
+    minutes: int = Query(30, ge=5, le=240),
+    min_confidence: float = Query(0.0, ge=0.0, le=1.0),
+) -> dict[str, Any]:
+    """盘中事件冲击流（只读拉式）：新闻分钟窗→情绪→产业链节点传导→冲击标的清单。
+
+    消费方=偏离监控/盘中扫描/负面否决。数据源=c3_fundamental.news_data
+    （入库延迟实测 2026-09-10：p50≈6min/p90≈13min）+ ig_* 产业链图谱。
+    接线指令 W5 交付；实现真源=zephyr.intelligence.chain_impact_stream（MOD-INT-IMPACT-STREAM）。
+    """
+    from zephyr.intelligence.chain_impact_stream import ChainImpactStream
+
+    try:
+        snap = ChainImpactStream(window_minutes=minutes).run()
+    except Exception as exc:
+        return {"ok": False, "error": f"{type(exc).__name__}: {exc}"[:200], "items": [], "all_targets": []}
+    payload = snap.to_dict()
+    if min_confidence > 0:
+        payload["all_targets"] = [t for t in payload["all_targets"] if t["confidence"] >= min_confidence]
+        for it in payload["items"]:
+            it["targets"] = [t for t in it["targets"] if t["confidence"] >= min_confidence]
+    return payload
 
 
 def main() -> None:

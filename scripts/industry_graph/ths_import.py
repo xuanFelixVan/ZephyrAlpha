@@ -62,14 +62,11 @@ TODAY = date.today().isoformat()
 SOURCE_DOC = f"同花顺导出|docs/_working/同花顺资料/个股1*.xlsx|{TODAY}"
 DOC_SOURCE_DOC = f"同花顺导出|docs/_working/同花顺资料|{TODAY}"
 
-# SOP §4.7.3 category 词表(38+综合)——多数票仅在其中裁决
-CATEGORIES = {
-    "半导体", "消费电子", "元件", "光学光电子", "计算机设备", "机械设备", "电力设备", "汽车",
-    "国防军工", "家用电器", "基础化工", "有色金属", "钢铁", "建筑材料", "石油石化", "煤炭", "医药生物",
-    "食品饮料", "纺织服饰", "商贸零售", "社会服务", "美容护理", "轻工制造", "农林牧渔",
-    "软件开发", "互联网服务", "通信服务", "通信设备", "游戏", "传媒", "银行", "非银金融",
-    "房地产", "建筑装饰", "交通运输", "公用事业", "环保", "综合",
-}
+# SOP §4.7.3 category 词表——字段字典单一真源加载(vocab_loader,2026-09-10 方案 A)
+sys.path.insert(0, str(Path(__file__).resolve().parent))
+from vocab_loader import load_vocab  # noqa: E402
+
+CATEGORIES = set(load_vocab()["categories"]["values"])
 # 申万真一级拆细后词表装不下的 THS 行业 → 显式判定(非垃圾桶,理由登记开放问题)
 JUDGED = {
     "电子化学品": ("基础化工", "电子化学品本质精细化工材料(湿化学品/光刻胶/特气),SOP词表无此值;旧申万口径归化工,判定登记开放问题待Owner复核"),
@@ -250,7 +247,7 @@ def load_stock_basic() -> set[str] | None:
     try:
         from zephyr.data import ch_reader
 
-        tsv = ch_reader.query(f"SELECT symbol_canonical FROM {_TBL_STOCK_BASIC} WHERE valid_to IS NULL")  # noqa: bare-sql  stock_basic 快照统一走 ch_reader TSV 只读通道,全项目唯一采集路径
+        tsv = ch_reader.query(f"SELECT DISTINCT symbol_canonical FROM {_TBL_STOCK_BASIC} WHERE valid_to IS NULL")  # noqa: bare-sql  stock_basic 快照统一走 ch_reader TSV 只读通道,全项目唯一采集路径
         return {ln.strip().split("\t")[0] for ln in tsv.strip().splitlines() if ln.strip()}
     except Exception as e:  # noqa: BLE001
         print(f"[WARN] stock_basic 预查降级(将由工具侧反查兜底): {e}")

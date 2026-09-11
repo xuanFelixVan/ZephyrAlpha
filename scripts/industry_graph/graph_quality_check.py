@@ -37,10 +37,24 @@ sys.path.insert(0, str(Path(__file__).resolve().parents[2] / "src"))
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 
 from vocab_loader import load_vocab  # noqa: E402  词表唯一真源=industry_graph_field_dictionary.yaml
+from zephyr.data.table_registry import get_registry  # noqa: E402
 from zephyr.governance.depgraph_schema import get_depgraph_pg_connection  # noqa: E402
 
 REPORT_DIR = Path(__file__).resolve().parents[2] / ".runtime" / "industry_graph" / "quality_reports"
 EXEMPT_FILE = Path(__file__).resolve().parent / "quality_exemptions.yaml"
+
+# ARCH-CH-024: 表名经 TableRegistry 真源派生,禁硬编码;SQL 集中化(§5.160.2)
+_TBL_STOCK_BASIC = get_registry().table("meta_stock_basic")
+_SQL_ALIVE_SYMBOLS = (
+    f"SELECT DISTINCT symbol_canonical FROM {_TBL_STOCK_BASIC} FINAL WHERE valid_to IS NULL"
+)
+_SQL_ALIVE_NAMES = (
+    f"SELECT DISTINCT name FROM {_TBL_STOCK_BASIC} FINAL WHERE valid_to IS NULL "
+    f"AND trade_date=(SELECT max(trade_date) FROM {_TBL_STOCK_BASIC})"
+)
+_SQL_S24_ANCHOR_PLACEMENT = (
+    "SELECT count(*) FROM ig_node_company WHERE node_id=%s AND valid_to IS NULL"
+)
 
 # 词表(字段字典单一真源加载,本文件不再硬编码词表;对齐由 test_field_dictionary_alignment 强制)
 _V = load_vocab()
@@ -71,11 +85,9 @@ def _load_exemptions() -> dict[str, list[str]]:
 
 def _load_alive_stocks() -> set[str] | None:
     try:
-        from zephyr.data import ch_writer
+        from zephyr.data import ch_reader
 
-        tsv = ch_writer.query(
-            "SELECT symbol_canonical FROM c1_market.stock_basic FINAL WHERE valid_to IS NULL"
-        )
+        tsv = ch_reader.query(_SQL_ALIVE_SYMBOLS)
         return {ln.strip().split("\t")[0] for ln in tsv.strip().splitlines() if ln.strip()}
     except Exception as e:  # noqa: BLE001
         print(f"[WARN] stock_basic 反查降级(S11/S19 不计违规): {e}")
@@ -93,8 +105,8 @@ CHECKS: list[dict] = [
     """},
     {"id": "S2", "title": "链名唯一且规范", "sql": """
         SELECT c.chain_id, c.name || ' (重复x' || cnt || ')' FROM ig_chain c
-        JOIN (SELECT name, count(*) cnt FROM ig_chain GROUP BY name HAVING count(*)>1) d
-          ON c.name = d.name
+        JOIN (SELECT name, count(*) cnt FROM ig_chain WHERE (status IS NULL OR status='active') GROUP BY name HAVING count(*)>1) d
+          ON c.name = d.name AND (c.status IS NULL OR c.status='active')
         UNION ALL
         SELECT chain_id, name || ' (·尾巴)' FROM ig_chain WHERE name ~ '·[0-9]+'
     """},
@@ -153,6 +165,7 @@ CHECKS: list[dict] = [
         WHERE NOT EXISTS (SELECT 1 FROM ig_edge e WHERE e.from_node=n.node_id OR e.to_node=n.node_id)
           AND NOT EXISTS (SELECT 1 FROM ig_node_company nc WHERE nc.node_id=n.node_id AND nc.valid_to IS NULL)
           AND n.name <> '行业聚合'
+          AND n.child_chain_id IS NULL
           AND n.name NOT LIKE '%%（已并入%%'
           AND (c.status IS NULL OR c.status='active')
     """},
@@ -405,6 +418,16 @@ def _check_s24(cur) -> dict:
         alive = [n for n in nodes if not _tombstone(node_name.get(n, ""))]
         alive_names = {node_name.get(n, "") for n in alive}
         if len(alive) <= 1 or alive_names <= {cname, cname + "行业", "行业聚合"}:
+            # 锚点链豁免（2026-09-11）: 行业聚合节点承载活落位=合法锚点链（分层标签架构裁定）,非僵尸
+            has_anchor_placement = False
+            for n in nodes:
+                if node_name.get(n, "") == "行业聚合":
+                    cur.execute(_SQL_S24_ANCHOR_PLACEMENT, (n,))
+                    if cur.fetchone()[0] > 0:
+                        has_anchor_placement = True
+                        break
+            if has_anchor_placement:
+                continue
             violations.append((cid, '%s 实质节点=%d/%d' % (cname, len(alive), len(nodes))))
     return {
         'id': 'S24',
@@ -419,11 +442,9 @@ def _check_s24(cur) -> dict:
 def _alive_names() -> set[str] | None:
     """在市 A 股简称集(S19 用; S11 用 symbol 集,两口径不同)。"""
     try:
-        from zephyr.data import ch_writer
+        from zephyr.data import ch_reader
 
-        tsv = ch_writer.query(
-            "SELECT name FROM c1_market.stock_basic FINAL WHERE valid_to IS NULL AND trade_date=(SELECT max(trade_date) FROM c1_market.stock_basic)"
-        )
+        tsv = ch_reader.query(_SQL_ALIVE_NAMES)
         return {ln.strip().split("\t")[0] for ln in tsv.strip().splitlines() if ln.strip()}
     except Exception:  # noqa: BLE001
         return None

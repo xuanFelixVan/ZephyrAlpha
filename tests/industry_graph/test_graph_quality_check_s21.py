@@ -26,11 +26,14 @@ class _FakeCur:
     def __init__(self, chains, nodes, edges):
         self._results = [chains, nodes, edges]
 
-    def execute(self, _sql):
+    def execute(self, _sql, _params=None):
         pass
 
     def fetchall(self):
         return self._results.pop(0)
+
+    def fetchone(self):
+        return (0,)   # 锚点落位计数查询恒 0（测试无行业聚合落位场景）
 
 
 def test_s21_connected_chain_passes():

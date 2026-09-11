@@ -44,7 +44,14 @@ sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 from psycopg2.extras import execute_values
 
 from vocab_loader import load_vocab  # 词表唯一真源=industry_graph_field_dictionary.yaml(改词表只改 YAML)
+from zephyr.data.table_registry import get_registry
 from zephyr.governance.depgraph_schema import get_depgraph_pg_connection
+
+# ARCH-CH-024: 表名经 TableRegistry 真源派生,禁硬编码;SQL 集中化(§5.160.2)
+_TBL_STOCK_BASIC = get_registry().table("meta_stock_basic")
+_SQL_ALIVE_SYMBOLS = (
+    f"SELECT DISTINCT symbol_canonical FROM {_TBL_STOCK_BASIC} FINAL WHERE valid_to IS NULL"
+)
 
 # ---- 词表(字段字典单一真源加载,本文件不再硬编码词表;对齐由 test_field_dictionary_alignment 强制) ----
 _V = load_vocab()
@@ -87,6 +94,14 @@ SOURCEDOC_RE = re.compile(r"^[^|]+\|[^|]+\|\d{4}-\d{2}-\d{2}$")
 EQUITY_RELATIONS = set(_V["equity_relations"]["values"])
 EQUITY_VERIFICATION = set(_V["equity_verification"]["values"])
 PERSON_PREFIX = "PERSON:"
+
+# 落位PIT关闭/产品营收归一 SQL 集中化(NO-BARE-SQL 同款口径)
+_SQL_PLACEMENT_CLOSE = """UPDATE ig_node_company SET valid_to=%s, updated_at=now()
+                    WHERE valid_to IS NULL AND symbol=%s
+                      AND node_id IN (SELECT node_id FROM ig_node WHERE chain_id=%s)"""
+_SQL_PRODUCT_REVENUE_UPSERT = """INSERT INTO ig_product_revenue (symbol,year,product,revenue_pct,node_ref,source,source_doc,evidence,as_of)
+                    VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s)
+                    ON CONFLICT (symbol,year,product,source) DO UPDATE SET revenue_pct=EXCLUDED.revenue_pct, as_of=EXCLUDED.as_of"""
 
 _ALL_TABLES = ("ig_chain", "ig_node", "ig_edge", "ig_node_company", "ig_document", "ig_company_edge", "ig_company_metric", "ig_chunk", "ig_fact", "ig_unlisted_entity", "ig_equity_edge", "ig_product_revenue")
 _DATE = None
@@ -177,11 +192,9 @@ def _resolve_node(cur, chain_id: str, name: str) -> str | None:
 
 def _load_stock_basic() -> set[str] | None:
     try:
-        from zephyr.data import ch_writer
+        from zephyr.data import ch_reader
 
-        tsv = ch_writer.query(
-            "SELECT symbol_canonical FROM c1_market.stock_basic FINAL WHERE valid_to IS NULL"
-        )
+        tsv = ch_reader.query(_SQL_ALIVE_SYMBOLS)
         # ch_writer TSV 无表头且单列无 \t（2026-09-08 实测：旧解析 [1:]+要求含\t
         # 会把 5215 只在市股全集滤成空集，致所有 cn symbol 被误拒）——逐行取第一列
         return {
@@ -262,10 +275,30 @@ def _validate_records(records: list[dict], stocks: set[str] | None) -> list[str]
         # 硬校验 2: confidence 上限
         if src in ("websearch", "corpus_rag") and (r.get("confidence") or 0) > 0.7:
             errs.append(f"{idx}: confidence>{0.7}: {r.get('confidence')}")
+
+        if typ == "product_revenue":
+            # 营收归因豁免在市校验(2026-09-11): CKG 数据集含退市/B股历史公司,营收归因含历史公司
+            # by-design(回测口径), symbol 仅查基本格式(6位数字.市场)
+            pre: list[str] = []
+            sym = r.get("symbol", "")
+            if not re.match(r"^\d{6}\.(SH|SZ|BJ)$", sym):
+                pre.append(f"{idx}: product_revenue symbol 非法: {sym}")
+            if not r.get("as_of"):
+                pre.append(f"{idx}: product_revenue 缺 as_of")
+            errs.extend(pre)
+            if not pre:
+                continue   # product_revenue 合法(或已记错),跳过后续通用 symbol 校验
         market = r.get("market", "cn")
         # 硬校验 3: symbol 正则(按端点各自市场判定,2026-09-08 跨市场治本:
         # global 边可混端 cn+海外 symbol;单边 market=cn 但 symbol 是海外格式时按
         # 该 symbol 实际市场校验,不再因边级 market 标签误拒合法混端边)
+        if typ == "placement_close":
+            # 关闭操作豁免在市校验(2026-09-11): placement_close 正是关死映射/误挂的通道,
+            # 目标 symbol 可能已被主数据标记退场(如 stock_basic 误标),按 chain_name+symbol 关闭
+            if not r.get("symbol"):
+                errs.append(f"{idx}: placement_close 缺 symbol")
+            else:
+                return errs   # 只需 symbol 非空+下面 valid_to 由执行层校验
         for k in ("symbol", "from_symbol", "to_symbol"):
             sym = r.get(k)
             if not sym:
@@ -330,12 +363,14 @@ def _validate_records(records: list[dict], stocks: set[str] | None) -> list[str]
                 errs.append(f"{idx}: merged_into 非 chain_id 格式: {mi}")
             if st == "deprecated" and not mi:
                 errs.append(f"{idx}: deprecated 链须带 merged_into(SOP §4.6)")
-            if TITLE_JUNK_RE.search(r.get("name", "")):
-                errs.append(f"{idx}: 链名标题腔拒绝(规范名=XX产业链句式): {r.get('name')}")
-            if len(r.get("name", "")) > CHAIN_NAME_MAX_LEN:
-                errs.append(f"{idx}: 链名超长(>{CHAIN_NAME_MAX_LEN}字,SOP §4.7.1): {r.get('name')}")
-            if CHAIN_STRUCT_RE.search(r.get("name", "")):
-                errs.append(f"{idx}: 链名结构违规(S25:括号不闭合/虚词悬空尾/外文缩写裸名/报告词,缩写进aliases): {r.get('name')}")
+            # 链名三查只约束新写/活跃链;deprecated 重发=垃圾名废弃动作,旧名豁免(2026-09-10)
+            if st != "deprecated":
+                if TITLE_JUNK_RE.search(r.get("name", "")):
+                    errs.append(f"{idx}: 链名标题腔拒绝(规范名=XX产业链句式): {r.get('name')}")
+                if len(r.get("name", "")) > CHAIN_NAME_MAX_LEN:
+                    errs.append(f"{idx}: 链名超长(>{CHAIN_NAME_MAX_LEN}字,SOP §4.7.1): {r.get('name')}")
+                if CHAIN_STRUCT_RE.search(r.get("name", "")):
+                    errs.append(f"{idx}: 链名结构违规(S25:括号不闭合/虚词悬空尾/外文缩写裸名/报告词,缩写进aliases): {r.get('name')}")
         if typ in ("node_edge", "company_edge"):
             et = r.get("edge_type", r.get("relation"))
             if et and et not in EDGE_TYPES_V2:
@@ -456,7 +491,7 @@ def cmd_ingest(batch_path: str) -> int:
                         THEN ig_chain.source_note||' | merged_into:'||%s::text
                         ELSE ig_chain.source_note END""",
                     (cid, r["name"], r.get("category"), r.get("version_year"), mkt,
-                     r.get("status") or "active", sd or src, merged, merged, merged),
+                     r.get("status") or "active", (sd or src) + (f" | merged_into:{merged}" if merged and "merged_into:" not in (sd or src) else ""), merged, merged, merged),
                 )
             elif typ == "node":
                 cid = _chain_id(r["chain_name"])
@@ -574,6 +609,24 @@ def cmd_ingest(batch_path: str) -> int:
                      r["as_of"], r.get("valid_from"), r.get("valid_to"), r.get("holder_name"),
                      r.get("holder_country"), r.get("verification") or "unverified", src, sd, r.get("evidence")),
                 )
+            elif typ == "product_revenue":
+                # 产品营收归因(SOP §4.9 四层架构;2026-09-11 ETL 落地: ig_fact produces 关系同构迁移)
+                rp = r.get("revenue_pct")
+                if rp is not None and not (0 <= float(rp) <= 1):
+                    raise ValueError(f"product_revenue revenue_pct 越界[0,1]: {rp}")
+                if not r.get("as_of"):
+                    raise ValueError("product_revenue 缺 as_of")
+                cur.execute(_SQL_PRODUCT_REVENUE_UPSERT,
+                    (r["symbol"], r["year"], r["product"], rp, r.get("node_ref"),
+                     src, sd, r.get("evidence"), r.get("as_of")))
+            elif typ == "placement_close":
+                # 落位 PIT 关闭(梳理工程唯一合法通道,2026-09-10;禁手写 SQL):
+                # 幂等(valid_to IS NULL 才关);须 chain_name+symbol 精确定位;reason_doc 留痕
+                cid = _chain_id(r["chain_name"])
+                vt = r.get("valid_to") or _today()
+                if not re.match(r"\d{4}-\d{2}-\d{2}", str(vt)):
+                    raise ValueError(f"placement_close valid_to 非日期: {vt}")
+                cur.execute(_SQL_PLACEMENT_CLOSE, (vt, r["symbol"], cid))
             elif typ == "unlisted_entity":
                 # 编码表登记/上市标定(SOP §4.10): name+country 登记幂等;
                 # listed_symbol 须一手来源(交易所公告),工具只信入参不查外源;
