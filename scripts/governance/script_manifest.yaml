@@ -1,8 +1,8 @@
-# 自动生成于 2026-09-10T17:45:33Z
+# 自动生成于 2026-09-11T15:10:06Z
 # 来源: scripts/governance/**/*.py __manifest__ 块
 # 手工编辑无效——修改请通过各 .py 文件的 __manifest__ 块
 
-generated_at: '2026-09-10T17:45:33Z'
+generated_at: '2026-09-11T15:10:06Z'
 generated_by: scripts/governance/generators/generate_script_manifest.py
 source: scripts/governance/**/*.py → __manifest__ 块
 total_scripts: 422
@@ -3159,7 +3159,8 @@ scripts:
   args:
   - flag: --file
     type: str
-    description: 检查指定文件的编码合规性
+    multiple: true
+    description: 检查指定文件的编码合规性（可传多个，单进程批量）
   - flag: --dir
     type: str
     description: 检查指定目录下所有文件的编码合规性

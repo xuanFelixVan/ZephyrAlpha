@@ -4,10 +4,10 @@ ttl: permanent
 doc_type: register
 title: 规则路径目录（唯一真源 SSoT）
 status: active
-generated_at: '2026-09-11T08:06:29Z'
+generated_at: '2026-09-11T15:10:40Z'
 generated_by: scripts/governance/d3_metadata/generate_rule_catalog.py
 maintenance: auto
-total_files: 235
+total_files: 240
 total_rules: 61
 tier_distribution:
   L0: 21
@@ -1952,6 +1952,81 @@ files:
   version: 1.0.0
   rule_form: procedural
   scope: global
+  stability: ''
+  layer: ''
+  superseded_by: ''
+  severity: ''
+  tier: ''
+  aliases: []
+  section_count: 0
+- path: docs/01_policies_and_standards/sop/backtest_system_sop/README.md
+  module_id: ''
+  title: 回测体系 SOP 总纲——分级回测金字塔 × AI 自驱循环 × 策略库入库漏斗
+  doc_type: policy
+  status: active
+  version: 1.0.0
+  rule_form: procedural
+  scope: 07_trading_decision_architecture
+  stability: ''
+  layer: ''
+  superseded_by: ''
+  severity: ''
+  tier: ''
+  aliases: []
+  section_count: 0
+- path: docs/01_policies_and_standards/sop/backtest_system_sop/sop_a_full_map_orchestration.md
+  module_id: ''
+  title: SOP-A 全图回测编排——注册·分类·优先级·批次推进·归档升级
+  doc_type: policy
+  status: active
+  version: 1.0.0
+  rule_form: procedural
+  scope: 07_trading_decision_architecture
+  stability: ''
+  layer: ''
+  superseded_by: ''
+  severity: ''
+  tier: ''
+  aliases: []
+  section_count: 0
+- path: docs/01_policies_and_standards/sop/backtest_system_sop/sop_b_node_loop.md
+  module_id: ''
+  title: SOP-B 单节点 AI 自驱回测七步循环——调研·数据·宽测·剪枝·窄测·归档
+  doc_type: policy
+  status: active
+  version: 1.0.0
+  rule_form: procedural
+  scope: 07_trading_decision_architecture
+  stability: ''
+  layer: ''
+  superseded_by: ''
+  severity: ''
+  tier: ''
+  aliases: []
+  section_count: 0
+- path: docs/01_policies_and_standards/sop/backtest_system_sop/sop_c_strategy_library_intake.md
+  module_id: ''
+  title: SOP-C 外部策略入库漏斗——盘点·粗筛·翻译·快筛·去重·入库挂图
+  doc_type: policy
+  status: active
+  version: 1.0.0
+  rule_form: procedural
+  scope: 07_trading_decision_architecture
+  stability: ''
+  layer: ''
+  superseded_by: ''
+  severity: ''
+  tier: ''
+  aliases: []
+  section_count: 0
+- path: docs/01_policies_and_standards/sop/backtest_system_sop/sop_d_run_archive_naming.md
+  module_id: ''
+  title: SOP-D 回测档案管理规范——run 目录·编号·结构·自动落盘·复现演练（图书馆规则）
+  doc_type: policy
+  status: active
+  version: 1.0.0
+  rule_form: procedural
+  scope: 07_trading_decision_architecture
   stability: ''
   layer: ''
   superseded_by: ''
