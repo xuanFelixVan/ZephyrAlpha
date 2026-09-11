@@ -1,3 +1,5 @@
+# [BLUEPRINT] MOD-BT-018 | (auto-injected by S4 reconciler) | §
+# [TTL] permanent
 # [TTL] permanent
 """
 

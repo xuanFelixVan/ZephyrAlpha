@@ -1,3 +1,5 @@
+# [BLUEPRINT] MOD-BT-001 | (auto-injected by S4 reconciler) | §
+# [TTL] permanent
 """run_archive 图书馆 API 单测（SOP-D §4/§5/§9——tmp 根隔离，不触真实档案区）。"""
 from __future__ import annotations
 
