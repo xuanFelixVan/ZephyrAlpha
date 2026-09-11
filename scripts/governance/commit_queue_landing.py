@@ -640,6 +640,11 @@ class WorktreeLanding:
                         # （gate+自家测试是同一任务的合法组成——q-0007 死信实证），域拆分
                         # 责任在入队侧，落地不再二次执法；gateway 自动追加 multi-domain 标记留痕。
                         allow_multi_domain=True,
+                        # B3b（#ARCH-310，2026-09-12）：永久区新文件（注册表/登记表）经队
+                        # 列入队时，入队者的显式 --files 清单即 PROMOTION gate 要求的准入
+                        # 意思表示（q-0015 死信实证：REG-RISK-TIER-001 被拦）；allow_promote
+                        # 落地留痕审计不变。
+                        allow_promote=True,
                     )
                 finally:
                     if prev_env is None:
