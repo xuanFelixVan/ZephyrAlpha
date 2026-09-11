@@ -47400,6 +47400,62 @@ entries:
   desc_zh: ""
   desc_en: ""
   plain_zh: "加仓先过四道门（只加浮盈仓禁补亏损、点火/扩张段才开、策略适配为正、不在熔断禁加期），再按金字塔三规则加：首加剩余预算一半逐次减半、比上次买价涨 2.5% 以上才加、最多三次，跌破上次加仓价就停止计划"
+- module_path: src/zephyr/intelligence/news_chain_node_linker.py
+  domain_id: D_INTELLIGENCE
+  name_zh: "产业链节点链接器"
+  name_en: ""
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "看一条新闻，找出它在说哪些产业链环节（比如光伏、光刻胶、晶圆制造），并给出把握度。这是把新闻和产业链图谱对上号的第一步，别名为空时只认环节名，合并掉的死环节（墓碑）一律不认。"
+- module_path: src/zephyr/intelligence/chain_impact_resolver.py
+  domain_id: D_INTELLIGENCE
+  name_zh: "产业链冲击标的生成器"
+  name_en: ""
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "图谱里某个环节被新闻砸中后，顺着产业链上下游走两步，把受影响的公司列出来，并标注利好还是利空、把握多大。方向来自上游情绪打分，整条链同向传导，越远越不确定。"
+- module_path: src/zephyr/intelligence/chain_impact_stream.py
+  domain_id: D_INTELLIGENCE
+  name_zh: "盘中事件冲击流"
+  name_en: ""
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "盘中每隔几分钟取一批最新新闻，自动完成读新闻、判断好坏、找到产业链环节、列出受影响公司这一整套流程，打包成一份快照给盘中监控直接取用。任何一步坏了就如实标注降级，不炸整体。"
+- module_path: src/zephyr/plan_engine/intraday_tomorrow_forecast.py
+  domain_id: D_PLAN
+  name_zh: "明日情绪盘中滚动预测"
+  name_en: ""
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "盘中四个时点用最新盘面重算明天情绪概率：昨晚8态转移先验打底，相似日修正，历史连错的输入自动降权；合成结果比盘前先验悲观一档以上就发明日降档预警"
+- module_path: src/zephyr/signal_ashare/core/environment_switch.py
+  domain_id: D_ASHARE_SIGNAL
+  name_zh: "环境开关"
+  name_en: ""
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "看两个输入查表定今天哪些选股链开哪些停：两市成交额不到8000亿就关首板筛选器，情绪冰点就停短线只留波段，疯狂高潮就反向收紧"
+- module_path: src/zephyr/signal_ashare/core/pool_tier_maintenance.py
+  domain_id: D_ASHARE_SIGNAL
+  name_zh: "股票池分层维护"
+  name_en: ""
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "候选股按就绪度分三层池子每天滚动维护：连续2天达标升一层、连续5天不达标降一层、10天没贡献就剔除，免得每天从零重扫"
+- module_path: src/zephyr/gov_enforcement/rule_bridge/checker_supervisor.py
+  domain_id: D_GOV_ENFORCEMENT
+  name_zh: "检查器监督进程"
+  name_en: ""
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "一个常驻的解释器小工人在提交时帮忙跑各种检查脚本，省去反复启动解释器的等待，检查脚本自己崩溃或超时会自动退回老办法重跑，结果和以前一模一样。"
+- module_path: src/zephyr/gov_enforcement/rule_bridge/gate_cache_preflight.py
+  domain_id: D_GOV_ENFORCEMENT
+  name_zh: "门禁缓存与预跑基座"
+  name_en: ""
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "把上次提交时已经检查过的内容记在小本本上，下次提交同样的东西就不用重新查一遍；只有内容完全没变、代码分支没动、配置没改的小本本记录才算数，出任何岔子都退回全量重查。"
 
 battle_map_steps:
 - step_id: BM-BUY-05
@@ -54673,55 +54729,55 @@ algo_submodules:
   name_en: BrokerAdapterManager.submit_order
   plain_zh: 把订单交给券商适配器管理器提交, 熔断自动切备选券商
 - module_path: src/zephyr/ex_sor/services/execution_quality_scorer.py
-  module_id: MOD-EX_SOR_EXT-002
+  module_id: MOD-XS-018
   node_id: A1
   name_zh: ① 单维度归一评分
   name_en: ExecutionQualityScorer._score_dimension
   plain_zh: 每个维度按离最差阈值的比例折算成0~1分, 越小越好
 - module_path: src/zephyr/ex_sor/services/execution_quality_scorer.py
-  module_id: MOD-EX_SOR_EXT-002
+  module_id: MOD-XS-018
   node_id: A2
   name_zh: ② 四维加权汇总评定
   name_en: ExecutionQualityScorer._calc_overall+_verdict
   plain_zh: 四维分按权重加权平均得总分, 再定good/acceptable/poor三档
 - module_path: src/zephyr/ex_sor/services/transaction_cost_optimizer.py
-  module_id: MOD-EX_SOR_EXT-003
+  module_id: MOD-XS-019
   node_id: A1
   name_zh: ① 显性成本计算
   name_en: TransactionCostOptimizer._calc_explicit
   plain_zh: 佣金+印花税+过户费+监管费四项法定费用逐项算金额
 - module_path: src/zephyr/ex_sor/services/transaction_cost_optimizer.py
-  module_id: MOD-EX_SOR_EXT-003
+  module_id: MOD-XS-019
   node_id: A2
   name_zh: ② 隐性成本计算
   name_en: TransactionCostOptimizer._calc_implicit
   plain_zh: 冲击成本看成交价相对决策价的偏离, 没成交部分再算机会成本
 - module_path: src/zephyr/ex_sor/services/transaction_cost_optimizer.py
-  module_id: MOD-EX_SOR_EXT-003
+  module_id: MOD-XS-019
   node_id: A3
   name_zh: ③ 总成本汇总
   name_en: TransactionCostOptimizer.calculate
   plain_zh: 显性加隐性得总成本, 再折算成相对成交金额的基点
 - module_path: src/zephyr/ex_sor/services/transaction_cost_optimizer.py
-  module_id: MOD-EX_SOR_EXT-003
+  module_id: MOD-XS-019
   node_id: A4
   name_zh: ④ 成本优化建议
   name_en: TransactionCostOptimizer.advise
   plain_zh: 找金额最大的成本项, 给出对应的降本建议和预估节省
 - module_path: src/zephyr/ex_sor/services/slippage_analyzer.py
-  module_id: MOD-EX_SOR_EXT-001
+  module_id: MOD-XS-017
   node_id: A1
   name_zh: ① 多基准滑点计算
   name_en: SlippageAnalyzer._calc_slippage_bps
   plain_zh: 平均成交价相对每个基准算出滑点基点, 正值都是成本
 - module_path: src/zephyr/ex_sor/services/slippage_analyzer.py
-  module_id: MOD-EX_SOR_EXT-001
+  module_id: MOD-XS-017
   node_id: A2
   name_zh: ② 三因子滑点归因
   name_en: SlippageAnalyzer._attribute
   plain_zh: 把总滑点拆成市场冲击+时机+价差三块, 剩下的进残差
 - module_path: src/zephyr/ex_sor/services/slippage_analyzer.py
-  module_id: MOD-EX_SOR_EXT-001
+  module_id: MOD-XS-017
   node_id: A3
   name_zh: ③ 平方根冲击滑点预测
   name_en: SquareRootImpactPredictor.predict
