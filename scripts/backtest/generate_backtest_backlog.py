@@ -40,6 +40,7 @@
 from __future__ import annotations
 
 import argparse
+import re
 import sys
 from datetime import datetime
 from pathlib import Path
@@ -266,9 +267,13 @@ def generate(*, check: bool = False) -> int:
         "priority_legend": "P0=生死线三件套 P1=主链 P2=树枝 P3=流级/结构/crypto另册",
     }
     if check:
+        # 漂移比对剔除 generated_at 时间戳（每次生成必变，非语义漂移）
+        def _norm(text: str) -> str:
+            return re.sub(r"^generated_at: .*$", "generated_at: <ts>", text, flags=re.M)
+
         old_text = _OUT_PATH.read_text(encoding="utf-8") if _OUT_PATH.exists() else ""
-        new_text = yaml.safe_dump({**header, "objects": objects}, allow_unicode=True, sort_keys=False, width=100)
-        drift = content_sha256(old_text) != content_sha256(new_text) if old_text else True
+        new_text = _norm(yaml.safe_dump({**header, "objects": objects}, allow_unicode=True, sort_keys=False, width=100))
+        drift = _norm(old_text) != new_text if old_text else True
         print("DRIFT" if drift else "CLEAN")
         return 1 if drift else 0
     text = "# [A_config] module_id=REG-BTB-001 | layer=config | stability=evolving | safety=L | ai_autonomy=ai_modifiable\n"

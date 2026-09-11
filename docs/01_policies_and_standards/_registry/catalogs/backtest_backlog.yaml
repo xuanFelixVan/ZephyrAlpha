@@ -10,7 +10,7 @@ description: SOP-A Step A0 产物：交易决策地图全部节点的回测对�
 source_map: config/trading_decision_map.yaml
 map_schema_version: '1.2'
 map_effective_from: '2026-09-08'
-generated_at: '2026-09-12T03:01:47+08:00'
+generated_at: '2026-09-12T06:56:48+08:00'
 generated_by: scripts/backtest/generate_backtest_backlog.py
 priority_legend: P0=生死线三件套 P1=主链 P2=树枝 P3=流级/结构/crypto另册
 objects:
@@ -288,10 +288,9 @@ objects:
   map_layer: L2
   flow: entry_flow
   market: cn_a
-  module_ref: null
-  testable: false
+  module_ref: src/zephyr/signal_ashare/core/sector_strength_aggregator.py
+  testable: true
   confidence: untested
-  testable_note: 结构点/容器环节——行为由子节点或全流承载（D108 合并判据），不独立开回测对象
   plan: null
   plan_note: 验收阈值未预注册——批次决策点填写并冻结前禁跑（SOP-B 护栏③）
 - object_id: BT-P1-009
@@ -432,10 +431,9 @@ objects:
   map_layer: L2
   flow: entry_flow
   market: cn_a
-  module_ref: null
-  testable: false
+  module_ref: src/zephyr/signal_ashare/core/sector_ecology_judge.py
+  testable: true
   confidence: untested
-  testable_note: 结构点/容器环节——行为由子节点或全流承载（D108 合并判据），不独立开回测对象
   plan: null
   plan_note: 验收阈值未预注册——批次决策点填写并冻结前禁跑（SOP-B 护栏③）
 - object_id: BT-P2-014
