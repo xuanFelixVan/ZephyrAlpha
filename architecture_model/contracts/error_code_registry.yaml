@@ -3405,6 +3405,21 @@ error_codes:
   module: zephyr.intelligence.universal_fact_ledger
   file: src/zephyr/intelligence/universal_fact_ledger.py
   introduced: '2026-09-06: Owner 批准占位码转正批（B17-②）——ZA-IT-UNREGISTERED-FACT-LEDGER 转正'
+- code: ZA-IT-0029
+  class: ChainNodeLinkerError
+  module: zephyr.intelligence.news_chain_node_linker
+  file: src/zephyr/intelligence/news_chain_node_linker.py
+  introduced: '2026-09-11: 接线批 W3 产业链节点链接器（注入词表条目畸形 fail-closed）'
+- code: ZA-IT-0030
+  class: ChainImpactResolverError
+  module: zephyr.intelligence.chain_impact_resolver
+  file: src/zephyr/intelligence/chain_impact_resolver.py
+  introduced: '2026-09-11: 接线批 W4 冲击标的生成器（注入图数据畸形/参数越界 fail-closed）'
+- code: ZA-IT-0031
+  class: ChainImpactStreamError
+  module: zephyr.intelligence.chain_impact_stream
+  file: src/zephyr/intelligence/chain_impact_stream.py
+  introduced: '2026-09-11: 接线批 W5 盘中事件冲击流（构造参数越界；运行时故障走 fail-open 降级不抛）'
 
 # --- 2026-09-06 占位码转正批 KNW（Owner 批准 B17-②，取号=段内 max+1 顺延）---
 - code: ZA-KNW-0001
@@ -3918,3 +3933,4 @@ related_systems:
   format: dataclass 值对象
   canonical_file: architecture_model/contracts/cross_layer_contracts.yaml
   description: 跨层契约错误码
+

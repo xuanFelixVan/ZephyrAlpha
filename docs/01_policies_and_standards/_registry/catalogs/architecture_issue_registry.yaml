@@ -21563,3 +21563,28 @@ entries:
   status: decided
   created: '2026-09-09'
   last_updated: '2026-09-09'
+
+- issue_id: '#ARCH-ALIGN-L2-001'
+  title: 全图全库对齐满贯施工遗留清欠单（2026-09-11 八图满贯批登记+跳过项）
+  severity: P2中
+  adjudication: |-
+    2026-09-11 全图全库对齐满贯施工（四方对齐机制升级批）中按"登记+跳过"原则收敛的遗留项，逐项清欠：
+    (1) 域级占位锚实现态细化——strategy/factor/risk_limit/chart_pattern 等 431 条历史条目的域级锚（MOD-FACTOR→MOD-L02-001 等 7 组）已正名到真实域蓝图 ID，但条目级"实现态细锚"（每条目→具体实现模块）待条目实现/回测落地时逐条细化；新增条目已由满贯版 gate 139 强制真锚，存量不追溯。
+    (2) ex_sor 域 depgraph 登记缺口——src/zephyr/ex_sor/services/t0_cost_model.py 文件头自声明 MOD-XS-T0COST 但 depgraph 无该节点（planning stub 域扫描排除），注册表条目已临时正名到 MOD-EX_SOR；ex_sor 正式施工时须补 depgraph 设计态登记。
+    (3) docs 存量易变物理 ID 硬编码 12 处（94_crypto_quant_expansion.md 1 处 + construction_progress_tracker.md 2 处等，check_doc_node_id_hardcode --ci 全量 961 文件）——增量已由 GATE-DOC-NODE-ID commit gate 硬管，存量清欠走文档审查七轮流程。
+    (4) 图 8 产业链数据层违规升硬条件——align_all 第七节当前 S1×5/S25×20（长城专项清欠中）+advisory 417 暂计软；非 advisory 清零后将 ig_hard 并入 hard_issues（alignment_checklist §3 图 8 行已登记升硬条件）。
+    (5) test_alignment_gates_red_blue.py::TestV11PortfolioFlow::test_repo_plan_loads_with_sleeves 断言 schema 1.1/3 节点，与 TDM 地图在飞演进（schema 1.2/13 节点）漂移——归 TDM 后端常驻会话（st-tdmbe-20260909）职权，其 merge 后按权威口径更新断言。
+  impact: 遗留清欠不阻塞满贯版对齐体系运行（align_all 硬清零已实证）；(4)(5) 涉及他 session 职权域，禁越权处置。
+  fix_phase: 随各归属域下一次专项施工
+  status: proposed
+  created: '2026-09-11'
+  last_updated: '2026-09-11'
+- issue_id: "#ARCH-309"
+  title: 接线批 3 个新 error_code 需登记受保护契约文件 error_code_registry.yaml
+  severity: P3低
+  adjudication: W3/W4/W5 三新模块（MOD-INT_NEWS_CHAIN/CHAIN_IMPACT/IMPACT_STREAM）按 GATE-ERRCODE-CONSISTENCY 处方取号 ZA-IT-0029/0030/0031，登记动作本身命中 PROTECTED-PATHS 保护路径——按该 gate 正式逃生通道 [ARCH-APPROVAL] 放行，登记内容纯追加三条目零删改，与代码同 commit 原子落库
+  fix_phase: 已完成（同 commit 原子修复，本条目即授权凭据）
+  status: decided
+  related_adjudication: ""
+  created: "2026-09-11"
+  last_updated: "2026-09-11"
