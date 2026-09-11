@@ -84,13 +84,13 @@ flags:
 
   gate_result_cache:
     enabled: true
-    description: "P2⑧ 门禁结果持久缓存（2026-09-10 提交通道性能优化方案 §2.2-A3，st-perf-plan-20260910 施工）：白名单（纯 staged 内容扫描型 CONTENT_SCAN_CACHE_WHITELIST，保守准入）命中跳过现算；key=gate_id×own_scope×write-tree 树指纹×HEAD_sha×flags mtime（任一变化全失效）+TTL 10min；只缓存 passed=True（降级态/失败不缓存——fail-open 不被放大）；【2026-09-11 Owner 批准翻开（st-encfix 夜班决策清单②）；回滚=flag OFF+删 .runtime/gate_cache/】"
-    implementation_status: "gated_mvp"
+    description: "P2⑧ 门禁结果持久缓存（2026-09-10 提交通道性能优化方案 §2.2-A3，st-perf-plan-20260910 施工）：白名单（纯 staged 内容扫描型 CONTENT_SCAN_CACHE_WHITELIST，保守准入）命中跳过现算；key=gate_id×own_scope×write-tree 树指纹×HEAD_sha×flags mtime（任一变化全失效）+TTL 10min；只缓存 passed=True（降级态/失败不缓存——fail-open 不被放大）；【2026-09-12 Owner 批准转正（原定 7 天灰度提前结项：7 笔实弹提交零异常+红蓝#2 缓存投毒/失效攻击 4/4 全防住+reconciler 永久对账兜底）；回滚通道永久有效=flag OFF+删 .runtime/gate_cache/】"
+    implementation_status: "production"
 
   gate_preflight:
     enabled: true
-    description: "P2⑦ 锁外预跑+锁内指纹采信（方案 §2.3 方案A）：commit() 拿锁前预跑白名单内容 gate 记指纹 F={write-tree,HEAD,flags mtime}，拿锁后 F′==F 才采信（锁内只跑信号型+其余 gate），F′≠F/预跑异常/预跑即失败→全量重跑（现行路径永不拆除）；drift-watch 硬阻断语义只归锁内段；【2026-09-11 Owner 批准翻开（st-encfix 夜班决策清单②），灰度起始=docs 域提交观察指纹命中率与零漏检；回滚=flag OFF（预跑代码保留）】"
-    implementation_status: "gated_mvp"
+    description: "P2⑦ 锁外预跑+锁内指纹采信（方案 §2.3 方案A）：commit() 拿锁前预跑白名单内容 gate 记指纹 F={write-tree,HEAD,flags mtime}，拿锁后 F′==F 才采信（锁内只跑信号型+其余 gate），F′≠F/预跑异常/预跑即失败→全量重跑（现行路径永不拆除）；drift-watch 硬阻断语义只归锁内段；【2026-09-12 Owner 批准转正（原定 7 天灰度提前结项：实弹提交指纹采信正常+红蓝#2 验证 F′≠F 回退路径+reconciler 永久对账兜底）；回滚通道永久有效=flag OFF（预跑代码保留）】"
+    implementation_status: "production"
 
   commit_queue_interactive:
     enabled: false

@@ -33,17 +33,28 @@ ttl: task_bound
 | R4 | preflight/cache 灰度观察计划（§3） | ✅ 本文档即计划 |
 | R5 | commit_queue dead=821 按 66 号 §6.4 取回流程批处理（队列运营收尾，不新增机制） | 移交排期 |
 
-## 3. preflight/cache 灰度观察计划（R4）
+## 3. preflight/cache 灰度观察计划（R4）——已提前结项转正
 
-- **窗口**：2026-09-12 起 7 天（至 2026-09-19）。
-- **起始域**：docs 域提交优先观察（本文档提交即首个样本）；src 域自然混入后一并统计。
-- **指标**（均可从 `.runtime/gate_cache/` 与 `.runtime/gate_audit/` 回溯，无新增埋点）：
-  1. `gate_result_cache` 命中率：cache-hit detail 计数 / 白名单 gate 调用计数（TTL 10min 内同指纹重提交流）；
-  2. `gate_preflight` 指纹采信率：F′==F 采信次数 / 预跑次数（采信率低=锁内全量重跑频发，需排查写入方）；
-  3. **零漏检红线**：观察期内任何"预跑/缓存放行后本应阻断的违规"（以 post-commit reconciler critical_warn 与人工复核为准）出现 → 立即 flag OFF 回滚。
-- **扩面条件**：7 天零漏检 + 命中/采信数据正常 → 维持 ON 进常态化；异常 → flag OFF（回滚零残留：缓存目录可整删，预跑代码保留不拆）。
-- **回滚命令**：`config/flags.yaml` 两 flag 翻回 false + 删 `.runtime/gate_cache/`。
+- **2026-09-12 Owner 裁定提前转正**（原定 7 天窗口缩至 0）：依据=7 笔实弹提交零异常
+  +红蓝#2 缓存投毒/失效攻击 4/4 全防住+reconciler 永久对账兜底（漏检检测不依赖灰度期，
+  每次提交自动跑）。转正操作=flags.yaml 两 flag 描述去除灰度语言+implementation_status
+  升 production。**回滚通道永久有效**：`config/flags.yaml` 两 flag 翻回 false +
+  删 `.runtime/gate_cache/`——任何时候发现漏检照此执行，无需等窗口。
+- 观察指标（命中率/采信率）仍可持续从 `.runtime/gate_cache/` 与 gate 审计回溯（被动留痕）。
 
-## 4. L1 检测面补偿说明（Tier2 缺位期）
+## 3a. R3 处置——不等作者了，echo_guard 退役（2026-09-12 Owner 裁定）
 
-Tier2 全层暂下线（等 R3）期间的补偿防线：Tier1 AST 哈希经 L2 周期审计保留、ast_grep 结构规则（本夜全部实证拦截来源）、L0 MCP advisory（check_before_write）、acknowledged 白名单纪律（resolve_finding 双 verdict）。
+- 原案"等上游发版后回位四步"**取消**：等时间表未知的外部作者=永悬活账；redup 已实测
+  接管核心职责（T1/T2/T3 红蓝#3 全抓获+L2 语义全语料）；其独门能力（全函数索引 vs
+  变更文件）由 redup L2 周期审计兜底（W3 缺口=新文件克隆旧仓未变更函数，提交时漏检、
+  周期审计补获）。
+- 退役动作：clone_guard.yml echo_guard enabled:false 长期保持+注释改退役语义；
+  死缓存已删（embeddings.npy 5.2GB/index.duckdb 826MB/wal，可再生的派生缓存）；
+  RECONCILER-HEALTH 2.6 探针保留（防误启用复发）；重启条件留档备查（非承诺）。
+
+## 4. L1 检测面补偿说明（echo_guard 退役后）
+
+退役后 L1 阵容=ast_grep（结构规则，本夜全部实证拦截来源）+ redup（T1/T2/T3 结构克隆，
+changed-only 增量 ~2s）+ 能力反查/token 检查 + L0 MCP advisory + acknowledged 白名单纪律。
+已知残余缺口（红蓝#3 唯一真红旗）：新文件克隆旧仓**未变更**函数在提交时漏检——
+由 redup L2 周期审计（全语料语义模式）补获，属分层设计内的时间延迟而非覆盖缺失。

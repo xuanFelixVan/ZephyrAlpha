@@ -31,15 +31,15 @@ pre_commit:
   fail_closed: false        # 全引擎不可用时 warn-only 不阻断(降级兜底)
   engines:
     echo_guard:
-      # R1-R4 裁定（2026-09-12，st-encfix 夜班，Owner 批准"分层归位"）：
-      # 【L1 岗位撤除（2026-09-12 01:55 Owner 批准"病号回家养病"）】enabled:false
-      # ——病根三联（① embeddings.npy append-only 膨胀 48×；② 离线模式绕过联网；
-      # ③ Tier2 批次内存失败）使 check 恒 400s 级，且卸载 onnxscript 后仍烧满
-      # 30s 预算才降级（CLI 内部 Tier2 可用性探测路径）——L1 实际贡献为零、
-      # 每笔提交白付 30s。撤岗后 L1 引擎=ast_grep（结构规则，全部实证拦截来源）
-      # + redup（语义克隆，2026-09-12 接活，B22② 兑现）。岗位保留性：R3 回位
-      # 四步（修复版+onnxscript 重装+联网窗口压实重建+check<30s 验证）完成后
-      # 翻回 true 即恢复三引擎。
+      # 【已退役（2026-09-12 Owner 裁定"不等作者了"）】enabled:false 长期保持。
+      # 退役依据：redup 已实测接管其核心职责（T1/T2/T3 克隆红蓝#3 全抓获+L2 语义
+      # 全语料）；其唯一独门能力（全函数索引 vs 变更文件）由 redup L2 周期审计兜底；
+      # 等外部作者修三缺陷（embeddings append-only 膨胀 48×/离线绕联网/Tier2 批
+      # 内存失败）时间表未知=永悬活账，且 5.2GB 索引+onnxscript 依赖本身是负债。
+      # 退役动作：死缓存已删（embeddings.npy/index.duckdb）；RECONCILER-HEALTH
+      # 2.6 探针保留（防未来误启用后膨胀复发）。
+      # 若未来重启（留档备查，非承诺）：三缺陷修复版 + onnxscript 重装 + 联网窗口
+      # 重建索引 + check<30s 验证，四步过才翻回 true（与 ast_grep+redup 三引擎并存）。
       enabled: false
     ast_grep:
       enabled: true         # Phase B——结构化规则检测（no-bare-except 等）
