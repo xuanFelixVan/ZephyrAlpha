@@ -466,7 +466,7 @@ gaps:
     end_date: "2026-05-31"     # 缺口日合计 312（2025 全年 242 + 2024-12 残段 + 2026-01~05 散段）
     date_column: "trade_date"
     detection_threshold: 1
-    status: "pending"  # 历史回补需 tqcenter/mootdx 桥接立项；防复发已随批落地（days 5→30）
+    status: "completed"  # 2026-09-11 tqcenter 换道回补完成（超额：全表 2020-03 起六年半零缺日）
     root_cause: "源=tqcenter（通达信客户端插件，requires_process=True）。任务 2026-07-30
       才从手工脚本升级自动调度，且增量窗口 days=5——回看窗内一次漏跑=永久缺口。2025 全年
       +2026-01~05 散段=手工脚本时代残留（2026-04/05 日均仅 ~6 行=个别板块凑数），
@@ -477,6 +477,18 @@ gaps:
       漏跑可被次日增量自愈）；②历史 312 日回补：tqcenter get_market_data 拉宽 days 或
       mootdx index_bars TCP 直连翻页（通达信行情服务器保留数年日K，与 9/18 miniQMT
       退役无关），需单独立项写回补执行器（走 provider+ch_writer 正门）。"
+    resolution_actual: "2026-09-11 换道执行完成（mootdx 通道当日实测退化：00:50/08:16/
+      09:00 三次试探均 TCP 通/K线回 0 行，16:30 同通道日任务 kline_sector_incremental
+      当日亦零产出=通道整体退化非脚本问题）——改走方案① tqcenter 拉宽 days：通达信客户端
+      开启状态下（tdxw.exe），TQCenterProvider.fetch 正门（capability kline_sector_880，
+      extra.days=500→1000 两轮），经 BufferedWriter 写入合计 664,687 行（231,844+
+      432,843，含最近窗幂等重写）。终验：全表缺日=0（对照 A 股日历），深度 2020-03-17~
+      2026-09-11 共 1,577 交易日全覆盖（超出登记缺口两年半，白赚早期历史），8890 审计
+      完整度 100%/gap=0。驱动配方（一次性，tmp/asset_audit_v2/drive880_tqcenter.py）：
+      FetchPayload(table, extra={'capability':'kline_sector_880','period':'1d',
+      'days':N}) → provider.fetch → BufferedWriter；依赖客户端运行，9/18 后仍可用
+      （tqcenter=大QMT 插件通道与 miniQMT 退役无关）。mootdx 路径执行器
+      scripts/data/backfill_sector880_history.py（commit 875e3d68）保留但通道休眠。"
     primary_alternative: "c1_market.kline_sector（mootdx 通道，count=100 回看近 100 日）"
     created: "2026-09-11"
     last_updated: "2026-09-11"
