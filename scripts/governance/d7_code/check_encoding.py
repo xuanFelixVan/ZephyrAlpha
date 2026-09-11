@@ -73,8 +73,11 @@ DOUBLE_CR = b"\r\r\n"
 # check_encoding.py 自身（pattern 定义 + docstring）+ .pre-commit-config.yaml（gate 描述注释）
 # 含 "autoGuessEncoding" 字面量被误判为违规。改为 regex 只匹配 truthy 设置，消除自指误报。
 # `files.autoGuessEncoding: true` 也被匹配（autoGuessEncoding: true 是其子串）。
+# 治本（2026-09-11，红蓝对抗发现）：补带引号 JSON key（真 VS Code settings.json 格式
+# `"files.autoGuessEncoding": true`）——keyword 后可选闭引号再接分隔符。全仓 grep 零存量
+# 命中（修复不产生存量新违规）；本行 pattern 定义自身 keyword 后是 `)`/`|`，不自指。
 AUTO_GUESS_VIOLATION_RE = re.compile(
-    rb"(?:autoGuessEncoding|auto_guess_encoding)\s*[:=]\s*true",
+    rb"(?:autoGuessEncoding|auto_guess_encoding)[\"']?\s*[:=]\s*true",
     re.IGNORECASE,
 )
 MOJIBAKE_MARKERS = [

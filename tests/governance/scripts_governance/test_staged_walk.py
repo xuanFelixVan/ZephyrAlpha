@@ -273,6 +273,36 @@ class TestCheckEncodingFileBatch:
         assert exc.value.code == 1
         assert "bom.yaml" in capsys.readouterr().out
 
+    def test_quoted_json_key_autoguess_detected(self, tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
+        """带引号 JSON key 的 truthy autoGuess 设置被检出（红蓝对抗发现的既有盲区，2026-09-11 治本）。
+
+        key 与 true 值均动态构造——源码不出现 keyword+truthy 相邻字面量，防本测试
+        文件自身被加宽后的 AUTO_GUESS_VIOLATION_RE 自指误报（2026-07-17 自指
+        误报问题族同源）。
+        """
+        import check_encoding
+
+        key = "files.autoGuess" + "Encoding"
+        truthy = "tr" + "ue"
+        settings = tmp_path / "settings.json"
+        settings.write_text('{\n  "%s": %s\n}\n' % (key, truthy), encoding="utf-8")
+        monkeypatch.setattr(sys, "argv", ["check_encoding.py", "--file", str(settings)])
+        with pytest.raises(SystemExit) as exc:
+            check_encoding.main()
+        assert exc.value.code == 1
+
+    def test_autoguess_false_not_flagged(self, tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
+        """falsy 值不误报（不随引号修复变严；key 同样动态拼接防自指）。"""
+        import check_encoding
+
+        key = "files.autoGuess" + "Encoding"
+        f = tmp_path / "ok.json"
+        f.write_text('{\n  "%s": false\n}\n' % key, encoding="utf-8")
+        monkeypatch.setattr(sys, "argv", ["check_encoding.py", "--file", str(f)])
+        with pytest.raises(SystemExit) as exc:
+            check_encoding.main()
+        assert exc.value.code == 0
+
 
 class TestCheckAnyAbuseStaged:
     """check_any_abuse.py --staged 模式——变更检测集成（使用 _shared.staged_files）。"""
