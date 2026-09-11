@@ -45,6 +45,21 @@ TODAY = date.today().isoformat()
 NA = REPO / ".runtime" / "industry_graph" / "night_audit"
 YEAR_RE = re.compile(r"(20[12]\d)")
 
+# §5.160.2 SQL 集中化（2026-09-11 st-igbe 接手批）：S4 满贯批/S25 改名新增行按 gate 要求
+# 提取为模块级常量（NO-BARE-SQL 豁免口径=SQL_* 常量定义）；pre-existing 修复函数 SQL 不动
+_SQL_S4_CHAIN_BY_NAME = (
+    "SELECT chain_id, category, source_note FROM ig_chain WHERE name=%s AND status='deprecated'"
+)
+_SQL_S4_TARGET_BY_NAME = "SELECT chain_id FROM ig_chain WHERE name=%s AND status='active'"
+_SQL_S4_MERGE_NOTE = """UPDATE ig_chain SET source_note=COALESCE(source_note,'')||' | merged_into:'||%s,
+               updated_at=now() WHERE chain_id=%s"""
+_SQL_S4_CLOSE_PLACEMENTS = """UPDATE ig_node_company nc SET valid_to=CURRENT_DATE, updated_at=now()
+               FROM ig_node n WHERE n.node_id=nc.node_id AND nc.valid_to IS NULL
+                 AND n.chain_id=%s"""
+_SQL_S25_TARGET_EXISTS = "SELECT chain_id, status FROM ig_chain WHERE name=%s"
+_SQL_S25_OLD_LOOKUP = "SELECT chain_id FROM ig_chain WHERE name=%s"
+_SQL_S25_RENAME = "UPDATE ig_chain SET name=%s, updated_at=now() WHERE chain_id=%s"
+
 
 def _deprecate(cur, cid: str, target: str) -> str:
     cur.execute("SELECT status, source_note FROM ig_chain WHERE chain_id=%s", (cid,))
@@ -300,13 +315,106 @@ def fix_s20_exempt() -> int:
     return 0
 
 
+def fix_s4_close_merge() -> int:
+    """S4 废弃链闭环（2026-09-11 满贯批）：5 条 deprecated 链补 merged_into 落款
+    + 落位残留 PIT 关闭。承接者：2 条按名承接（聚氨酯（PU）行业/氟化工），
+    3 条按 _best_successor 同类最多活跃落位先例承接。幂等：已带 merged_into 跳过、
+    valid_to IS NULL 才关。"""
+    named_targets = {
+        "聚氨酯材料市场和应用": "聚氨酯（PU）行业",
+        "氟化工市场和应用": "氟化工",
+    }
+    conn = get_depgraph_pg_connection(read_only=False)
+    cur = conn.cursor()
+    done = []
+    chains = ["聚氨酯材料市场和应用", "环氧丙烷产业链供需格局", "中国节水装备行业发展现状",
+              "氟化工市场和应用", "金融消费行业趋势"]
+    for name in chains:
+        cur.execute(_SQL_S4_CHAIN_BY_NAME, (name,))
+        row = cur.fetchone()
+        if not row:
+            done.append({"chain": name, "skip": "not-found-or-not-deprecated"})
+            continue
+        cid, category, source_note = row
+        if source_note and "merged_into:CH-" in source_note:
+            done.append({"chain": name, "skip": "already-merged"})
+            continue
+        if name in named_targets:
+            cur.execute(_SQL_S4_TARGET_BY_NAME, (named_targets[name],))
+            trow = cur.fetchone()
+            target = trow[0] if trow else None
+        else:
+            target = _best_successor(cur, category, cid)
+        if not target:
+            done.append({"chain": name, "skip": "no-successor"})
+            continue
+        cur.execute(_SQL_S4_MERGE_NOTE, (target, cid))
+        cur.execute(_SQL_S4_CLOSE_PLACEMENTS, (cid,))
+        closed = cur.rowcount
+        done.append({"chain": name, "merged_into": target, "placements_closed": closed})
+    conn.commit()
+    conn.close()
+    print(json.dumps({"fix": "s4_close_merge", "done": done}, ensure_ascii=False))
+    return 0
+
+
+def fix_s25_rename() -> int:
+    """S25 链名结构完整（2026-09-11 满贯批）：15 裸缩写扩中文全称+2 未闭合括号闭合
+    +1 悬空尾裁齐。链名 ≤12 字（SOP §4.7.1），中文主名（缩写）房 style，查重后才改；
+    chain_id 不变（md5 原名稳定键，节点/落位/边全保留）。"""
+    renames = {
+        "SOFC": "固体氧化物燃料电池",
+        "VR": "虚拟现实（VR）",
+        "AIDC": "智算中心（AIDC）",
+        "HNB": "加热不燃烧烟草（HNB）",
+        "PEEK": "聚醚醚酮（PEEK）",
+        "ASIC": "专用芯片（ASIC）",
+        "PVD": "物理气相沉积（PVD）",
+        "LCD": "液晶显示（LCD）",
+        "TMT": "科技传媒通信（TMT）",
+        "IP": "半导体IP",
+        "CPO": "光电共封装（CPO）",
+        "LED": "发光二极管（LED）",
+        "OLED": "有机发光显示（OLED）",
+        "AIPC": "AI电脑（AIPC）",
+        "PCB": "印制电路板（PCB）",
+        "碳化硅（SiC": "碳化硅（SiC）",
+        "阿尔兹海默症（AD": "阿尔兹海默症（AD）",
+        "光模块行业历史脉络与": "光模块行业",
+    }
+    conn = get_depgraph_pg_connection(read_only=False)
+    cur = conn.cursor()
+    done = []
+    for old, new in renames.items():
+        if len(new) > 12:
+            done.append({"old": old, "new": new, "skip": "new-name-too-long"})
+            continue
+        cur.execute(_SQL_S25_TARGET_EXISTS, (new,))
+        if cur.fetchone():
+            done.append({"old": old, "new": new, "skip": "target-name-exists"})
+            continue
+        cur.execute(_SQL_S25_OLD_LOOKUP, (old,))
+        row = cur.fetchone()
+        if not row:
+            done.append({"old": old, "skip": "not-found"})
+            continue
+        cur.execute(_SQL_S25_RENAME, (new, row[0]))
+        done.append({"old": old, "new": new, "chain_id": row[0]})
+    conn.commit()
+    conn.close()
+    print(json.dumps({"fix": "s25_rename", "done": done}, ensure_ascii=False))
+    return 0
+
+
+
+
 def main() -> int:
     ap = argparse.ArgumentParser()
-    ap.add_argument("cmd", choices=["s1-rename", "s5-fill-years", "s8-junk-chains", "s12-fix",
+    ap.add_argument("cmd", choices=["s1-rename", "s5-fill-years", "s8-junk-chains", "s12-fix", "s4-close-merge", "s25-rename",
                                     "s17-backfill", "s19-promote", "s20-exempt", "all"])
     args = ap.parse_args()
     fns = {
-        "s1-rename": fix_s1_rename, "s5-fill-years": fix_s5_years, "s8-junk-chains": fix_s8_junk_chains,
+        "s1-rename": fix_s1_rename, "s5-fill-years": fix_s5_years, "s8-junk-chains": fix_s8_junk_chains, "s4-close-merge": fix_s4_close_merge, "s25-rename": fix_s25_rename,
         "s12-fix": fix_s12, "s17-backfill": fix_s17, "s19-promote": fix_s19, "s20-exempt": fix_s20_exempt,
     }
     try:

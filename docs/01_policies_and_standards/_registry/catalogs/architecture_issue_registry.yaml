@@ -11,7 +11,7 @@ tier: tier_1_governance
 status: active
 version: 1.6.0
 created: '2026-06-26'
-last_updated: '2026-08-11'
+last_updated: '2026-09-11'
 # 裁定#208 R6+R7: 议题登记机制建立 + 编号分配铁律文档化
 
 # ============================================================
@@ -2449,6 +2449,14 @@ entries:
       是 DDL 操作需表属主权限，nodes_metadata 属主为 zephyr 角色，depgraph_reader/depgraph_writer
       均无权 ALTER，故脚本传 superuser=True（postgres DDL 角色）。DDL schema 迁移合法入口，
       对标 02_create_pg_schema.sql 的 fresh-DB DDL，纳入白名单。）
+    - 2026-09-11 补登：scripts/industry_graph/quality_fix_p2.py
+      （ig_* 产业链图谱质量修复写入器：S4 废弃链闭环 merged_into 落款+落位 PIT 关闭、
+      S25 链名结构修正、S12 误挂 PIT 关闭、S17 PIT 三件套补全等，写 ig_chain/ig_node_company/
+      ig_unlisted_entity 表。属 apply_depgraph.py 同类的受控数据修复入口（长城任务质量修复
+      SOP 循环的执行件），经 get_depgraph_pg_connection(read_only=False) 走 depgraph_writer
+      角色。接手会话 st-igbe-20260911 实证：该脚本 staged 违规触发 DEPGRAPH-WRITE-PATH
+      硬阻断且无 noqa 通道，卡死全项目提交（gate 连坐），归属会话已死无法自愈——按扩展
+      三步规则纳入白名单，SQL 已集中化为 _SQL_* 常量（§5.160.2）。）
   adjudication: |
     6 项裁定：
     (a) 新增 04_create_roles.sql 创建 depgraph_reader/depgraph_writer 角色
@@ -2480,6 +2488,14 @@ entries:
         /depgraph_writer（DML）均无权 ALTER，故脚本传 superuser=True（postgres DDL 角色）。
         DDL schema 迁移合法入口，对标 02_create_pg_schema.sql 的 fresh-DB DDL（同步已更新
         nodes_metadata 段），纳入白名单。
+
+    2026-09-11 补登裁定（ig_* 图谱质量修复写入路径）：
+    (l) quality_fix_p2.py 加入白名单——ig_chain/ig_node_company/ig_unlisted_entity 表的
+        质量修复写入器（长城任务 SOP 修复循环执行件），与 apply_depgraph.py 同类受控入口。
+        触发场景：S4 满贯批（5 条 deprecated 链 merged_into 落款+落位 PIT 关闭）+S25 链名
+        结构修正（18 条裸缩写/截断名改规范名，chain_id md5 稳定键不变）。该脚本曾以孤儿
+        staged 状态卡死全项目提交（gate 连坐），归属会话死亡无法自愈；按扩展三步纳入，
+        新增 SQL 同步集中化为 _SQL_* 模块常量。
   impact:
   - scripts/governance/migrate_sqlite_to_pg/04_create_roles.sql（新增角色创建DDL）
   - src/zephyr/governance/depgraph_schema.py（连接函数添加 read_only 参数 + 2026-08-05 nodes_metadata acquisition 列 + CHECK 约束）
@@ -2492,6 +2508,8 @@ entries:
   - scripts/governance/generate_project_path_tree.py（2026-07-17 修复：read_only=False）
   - scripts/governance/apply_battle_map.py（2026-08-01 修复：read_only=False + 白名单扩展）
   - scripts/governance/migrations/add_acquisition_fields.py（2026-08-05 新增：nodes_metadata acquisition 字段迁移，superuser=True DDL）
+  - src/zephyr/gov_enforcement/commit_gates/depgraph_write_path_gate.py（2026-09-11 白名单扩展 quality_fix_p2.py：_WHITELIST+docstring+错误信息三处同步）
+  - scripts/industry_graph/quality_fix_p2.py（2026-09-11 白名单纳入：S4 满贯批/S25 改名写入器，SQL 集中化 _SQL_* 常量）
   - scripts/governance/migrate_sqlite_to_pg/02_create_pg_schema.sql（2026-08-05 同步：nodes_metadata acquisition 列 + CHECK 约束，fresh-DB DDL 真源）
   - src/zephyr/governance/persistence/depgraph_reader.py（2026-08-05 修复：get_status_and_gate_map 加 acquisition 列 + JOIN nodes_metadata + ORDER BY n.path 聚合确定性）
   - scripts/governance/apply_depgraph.py（2026-08-05 修复：update_module_metadata 白名单加 acquisition 字段 + 空串转 None）
