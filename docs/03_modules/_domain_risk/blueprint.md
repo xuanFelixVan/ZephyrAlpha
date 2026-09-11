@@ -4,7 +4,7 @@ submodule_path: src/zephyr/risk
 title: "Risk Management Core 蓝图+施工图 — 风险管理引擎"
 doc_type: blueprint
 status: Active
-version: "2.2.19"
+version: "2.2.23"
 layer: L2_domain
 layer_name: risk_management
 functional_domain: risk
@@ -59,7 +59,7 @@ build_status: generated
 > 本蓝图仅做审查、回填、压缩、对齐，不触发任何代码变更。
 
 > actual_disk_path: src/zephyr/risk/ (10 .py files)
-> module_id: MOD-L04-001 | version: 2.2.19 | status: Active | layer: L2_domain
+> module_id: MOD-L04-001 | version: 2.2.23 | status: Active | layer: L2_domain
 > generation: 2 | construction_progress: partially_implemented
 
 # Risk Management Core 蓝图+施工图 — 风险管理引擎
@@ -143,7 +143,7 @@ build_status: generated
 
 | 图 | 位置 | 状态 | 链接 |
 |----|------|------|------|
-| 依赖图 (depgraph) | `blueprint_id=MOD-L04-001` 的 146 个 file 节点 | production | `extract_depgraph.py --modules MOD-L04-001` |
+| 依赖图 (depgraph) | `blueprint_id=MOD-L04-001` 的 152 个 file 节点 | production | `extract_depgraph.py --modules MOD-L04-001` |
 | 数据流图 (dataflow) | 1 个 Dataset / 1 个 Job | active | `apply_dataflowgraph.py --list-datasets` |
 | 决策架构图 (decision) | 76 个决策节点 / 2 个决策层 | design | `generate_decision_diagram.py` |
 | 蓝图 (blueprint) | 本文件 | Active | — |
@@ -155,7 +155,7 @@ build_status: generated
 | module_id | MOD-L04-001 | MOD-L04-001 | ✅ |
 | domain_id | N/A | N/A | ✅ |
 | build_status | generated | generated | ✅ |
-| file_count | 146 文件 | 14 文件（§0.1） | ❌ |
+| file_count | 152 文件 | 14 文件（§0.1） | ❌ |
 
 > 冲突时以 depgraph 为准（ARCH-056 + ARCH-MM-001 声明 vs 验证框架）。
 
@@ -962,6 +962,7 @@ class ViolationDetail(BaseModel):
 | `schemas/categories/market_etf_benchmark.py` | ✅ 已实现 | |
 | `schemas/categories/market_etf_list.py` | ✅ 已实现 | |
 | `schemas/categories/market_etf_nav.py` | ✅ 已实现 | |
+| `schemas/categories/market_ex_dividend_event.py` | ✅ 已实现 | |
 | `schemas/categories/market_execution_report.py` | ✅ 已实现 | |
 | `schemas/categories/market_futures_kline_qmt.py` | ✅ 已实现 | |
 | `schemas/categories/market_futures_position.py` | ✅ 已实现 | |
@@ -1041,10 +1042,13 @@ class ViolationDetail(BaseModel):
 | `schemas/categories/market_suspend.py` | ✅ 已实现 | |
 | `schemas/categories/market_technical_indicator.py` | ✅ 已实现 | |
 | `schemas/categories/market_tick.py` | ✅ 已实现 | |
+| `schemas/categories/market_tick_depth_5.py` | ✅ 已实现 | |
 | `schemas/categories/market_trade_calendar.py` | ✅ 已实现 | |
 | `schemas/categories/market_us_futures_intraday.py` | ✅ 已实现 | |
 | `schemas/categories/market_us_index.py` | ✅ 已实现 | |
+| `schemas/categories/meta/meta_stock_profile_ths.py` | ✅ 已实现 | |
 | `schemas/categories/meta_stock_basic.py` | ✅ 已实现 | |
+| `src/zephyr/backtest/implementations/ch_tick_replay.py` | ✅ 已实现 | |
 | `src/zephyr/risk/__init__.py` | ✅ 已实现 | |
 | `src/zephyr/risk/implementations/__init__.py` | ✅ 已实现 | |
 | `src/zephyr/risk/implementations/default_position_limit_checker.py` | ✅ 已实现 | |
@@ -1058,6 +1062,7 @@ class ViolationDetail(BaseModel):
 | `tests/risk/core/test_orchestrator_g3g5g6_integration.py` | ✅ 已实现 | |
 | `tests/risk/test_kill_switch_state_persistence.py` | ✅ 已实现 | |
 | `tests/risk/test_l04_risk_management.py` | ✅ 已实现 | |
+| `tests/zephyr/backtest/test_ch_tick_replay.py` | ✅ 已实现 | |
 
 ### 1.5 路径索引使用指南
 
