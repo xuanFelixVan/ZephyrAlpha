@@ -912,7 +912,7 @@ scripts:
   dimensions: []
 - name: data/backfill_lof_minute_history.py
   path: data/backfill_lof_minute_history.py
-  description: 背景（数据总览 v2 二批 B4，2026-09-11）：LOF 分钟K五表两窗断档——窗1=2025-12-15~12-31
+  description: 注：9/17 后随 miniQMT 退役本工具自然失效，保留供审计。
   domain: data
   execution_plane: warm-path
   status: registered
