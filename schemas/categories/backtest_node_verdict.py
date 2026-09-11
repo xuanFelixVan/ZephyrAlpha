@@ -32,6 +32,8 @@
    业务列 window_start/window_end/verdict_at 用 Asia/Shanghai。
 6. significance 为轻量土规标记（PB-13 降级裁定）：ok=通过土规 /
    insufficient_samples=触发<30 次不下结论 / oos_decay_suspect=样本外衰减>=50% 判存疑。
+7. verdict_reason 为判定原因枚举（G2 结构化裁定，Owner 2026-09-11 R2 认可）：由验证
+   runner/衰减巡检代码生成，禁 AI 手填；存量行读默认值 legacy_notes 兼容。
 """
 
 from __future__ import annotations
@@ -50,6 +52,7 @@ CREATE TABLE IF NOT EXISTS c1_backtest.node_verdict
     hit_ratio         Nullable(Float64)       COMMENT '命中方向占比 0~1(方法相关,无值为 NULL)',
     significance      LowCardinality(String)  DEFAULT '' COMMENT '显著性土规标记(ok/insufficient_samples/oos_decay_suspect,空=不适用)',
     verdict           LowCardinality(String)  COMMENT '结论(valid/noise/pending/untested/decaying)',
+    verdict_reason    LowCardinality(String)  DEFAULT 'legacy_notes' COMMENT '判定原因枚举(runner 代码生成禁手填,G2/R2): insufficient_samples/oos_decay_suspect/slip_within_tolerance/slip_marginal/slip_above_tolerance/counterfactual_missing/counterfactual_confirmed/avoided_negative/reference_price_missing/method_not_applicable; 存量=legacy_notes',
     verdict_at        DateTime64(3, 'Asia/Shanghai') COMMENT '结论时间',
     notes             String                  DEFAULT '' COMMENT '一句话结论备注(AI/人可读)'
 )
@@ -70,5 +73,5 @@ ORDER_BY = "(node_id, window_end)"
 # 列清单（用于 INSERT）
 INSERT_COLUMNS = (
     "(run_id, snapshot_commit, window_start, window_end, node_id, validation_method,"
-    " triggers, hit_ratio, significance, verdict, verdict_at, notes)"
+    " triggers, hit_ratio, significance, verdict, verdict_reason, verdict_at, notes)"
 )

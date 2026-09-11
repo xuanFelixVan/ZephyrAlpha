@@ -142,6 +142,7 @@ def run_decay_check(
             "hit_ratio": d["latest_hit"],
             "significance": "oos_decay_suspect",
             "verdict": "decaying",
+            "verdict_reason": "oos_decay_suspect",
             "verdict_at": now,
             "notes": (
                 f"衰减巡检：首验命中 {d['baseline_hit']:.0%} → 最新 {d['latest_hit']:.0%}"
@@ -151,7 +152,7 @@ def run_decay_check(
     tsv = ("\n".join(
         "\t".join("" if r[c] is None else str(r[c]).replace("\t", " ") for c in (
             "run_id", "snapshot_commit", "window_start", "window_end", "node_id", "validation_method",
-            "triggers", "hit_ratio", "significance", "verdict", "verdict_at", "notes"))
+            "triggers", "hit_ratio", "significance", "verdict", "verdict_reason", "verdict_at", "notes"))
         for r in out_rows
     ) + "\n").encode("utf-8")
     written = False

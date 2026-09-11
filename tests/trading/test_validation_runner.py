@@ -33,9 +33,10 @@ AS_OF = datetime(2026, 9, 9, 12, 0, 0)
 
 # ── 节点清单与方法推导 ────────────────────────────────────────────────────
 
-def test_load_exec_nodes_first_batch_is_14_excluding_crypto():
+def test_load_exec_nodes_first_batch_baseline_excluding_crypto():
     nodes = load_exec_nodes()
-    assert len(nodes) == 14, f"首批应为 14（15 个 L4 减币圈镜像）: {len(nodes)}"
+    # 基线 14 只增不减（地图演化可增 L4 节点；2026-09-12 实测 15——地图增长线扩容后未同步本基线，按下限断言收口）
+    assert len(nodes) >= 14, f"首批基线 14 只增不减: {len(nodes)}"
     assert all(not n["node_id"].startswith("TDM-C-") for n in nodes)
     assert any(n["node_id"] == "TDM-E-L4-03" for n in nodes)
 
@@ -71,23 +72,23 @@ def test_partition_splits_at_cutoff():
 # ── 两土规（PB-13 降级裁定）───────────────────────────────────────────────
 
 def test_soil_rule_insufficient_samples():
-    sig, verdict = apply_soil_rules({"triggers": 10, "slip_bp_mean": 5.0}, ValidationConfig())
-    assert sig == "insufficient_samples" and verdict == "pending"
+    sig, verdict, reason = apply_soil_rules({"triggers": 10, "slip_bp_mean": 5.0}, ValidationConfig())
+    assert sig == "insufficient_samples" and verdict == "pending" and reason == "insufficient_samples"
 
 
 def test_soil_rule_oos_decay_suspect():
     metrics = {"triggers": 100, "slip_bp_mean": 30.0}
     first = {"slip_bp_mean": 10.0}   # 衰减 (30-10)/10 = 200% >= 50%
-    sig, verdict = apply_soil_rules(metrics, ValidationConfig(), first_metrics=first)
-    assert sig == "oos_decay_suspect" and verdict == "pending"
+    sig, verdict, reason = apply_soil_rules(metrics, ValidationConfig(), first_metrics=first)
+    assert sig == "oos_decay_suspect" and verdict == "pending" and reason == "oos_decay_suspect"
 
 
 def test_soil_rule_verdict_by_slippage():
     cfg = ValidationConfig()
-    assert apply_soil_rules({"triggers": 50, "slip_bp_mean": 8.0}, cfg) == ("ok", "valid")
-    assert apply_soil_rules({"triggers": 50, "slip_bp_mean": 30.0}, cfg) == ("ok", "pending")
-    assert apply_soil_rules({"triggers": 50, "slip_bp_mean": 88.0}, cfg) == ("ok", "noise")
-    assert apply_soil_rules({"triggers": 50, "slip_bp_mean": None}, cfg) == ("", "pending")
+    assert apply_soil_rules({"triggers": 50, "slip_bp_mean": 8.0}, cfg) == ("ok", "valid", "slip_within_tolerance")
+    assert apply_soil_rules({"triggers": 50, "slip_bp_mean": 30.0}, cfg) == ("ok", "pending", "slip_marginal")
+    assert apply_soil_rules({"triggers": 50, "slip_bp_mean": 88.0}, cfg) == ("ok", "noise", "slip_above_tolerance")
+    assert apply_soil_rules({"triggers": 50, "slip_bp_mean": None}, cfg) == ("", "pending", "reference_price_missing")
 
 
 def test_compute_exec_metrics_direction_and_skip():
@@ -122,9 +123,10 @@ def test_run_validation_dry_run_no_write(tmp_path: Path):
         dry_run=True,
         writer=_must_not_write,
     )
-    assert len(report.rows) == 14
+    assert len(report.rows) >= 14
     assert all(r["verdict"] == "pending" for r in report.rows)
     assert all(r["significance"] == "insufficient_samples" for r in report.rows)
+    assert all(r["verdict_reason"] == "insufficient_samples" for r in report.rows)   # R2 判定链代码生成
     assert all("holdout" in r["notes"] for r in report.rows)   # notes 如实披露锁窗原因
     assert report.written is False
     assert report.snapshot_commit  # 快照绑定（PB-06）必带 commit 号
@@ -146,8 +148,8 @@ def test_run_validation_writes_tsv(tmp_path: Path):
     assert report.written is True
     assert captured["table"] == "c1_backtest.node_verdict"
     lines = captured["tsv"].decode("utf-8").strip().split("\n")
-    assert len(lines) == 14
-    assert all(len(l.split("\t")) == 12 for l in lines)
+    assert len(lines) >= 14
+    assert all(len(l.split("\t")) == 13 for l in lines)
     assert "\\N" in lines[0]   # hit_ratio=None → CH TSV NULL 转义（空串会变 0，实测踩坑）
 
 
@@ -230,8 +232,9 @@ class TestDecayWatch:
         line = captured["tsv"].decode("utf-8").strip().split("\n")[0].split("\t")
         assert line[4] == "TDM-F-C1" and line[9] == "decaying"
         assert line[8] == "oos_decay_suspect"
+        assert line[10] == "oos_decay_suspect"   # verdict_reason（R2 判定链代码生成）
         assert line[5] == "portfolio_attribution"   # 沿用节点原验证方法
-        assert "衰减" in line[11]
+        assert "衰减" in line[12]
 
 
 # ── 第二批：X 流（exit_counterfactual，Owner 2026-09-10 指令 T3）──────────
@@ -269,8 +272,8 @@ def test_exit_metrics_no_ablation_degrades_pending():
     fills = [{"side": "sell", "price": 10.0} for _ in range(50)]
     m = compute_exit_counterfactual_metrics(fills, ablation_diff=None)
     assert m["triggers"] == 50 and m["avoided_amount"] is None
-    sig, verdict = apply_exit_soil_rules(m, ValidationConfig())
-    assert sig == "" and verdict == "pending"   # 越过样本量闸门后，对照缺失=保持 pending（不造假）
+    sig, verdict, reason = apply_exit_soil_rules(m, ValidationConfig())
+    assert sig == "" and verdict == "pending" and reason == "counterfactual_missing"   # 越过样本量闸门后，对照缺失=保持 pending（不造假）
 
 
 def test_exit_metrics_with_ablation_diff_and_rules():
@@ -279,19 +282,19 @@ def test_exit_metrics_with_ablation_diff_and_rules():
     m = compute_exit_counterfactual_metrics(fills, ablation_diff=[100.0, -20.0, 30.0])
     assert m["avoided_amount"] == 110.0 and m["ablation_samples"] == 3
     # 对照样本 <30 → insufficient_samples（触发数够但对照序列不够）
-    assert apply_exit_soil_rules(m, ValidationConfig()) == ("insufficient_samples", "pending")
+    assert apply_exit_soil_rules(m, ValidationConfig()) == ("insufficient_samples", "pending", "insufficient_samples")
     m2 = compute_exit_counterfactual_metrics(fills, ablation_diff=[1.0] * 30)
-    assert apply_exit_soil_rules(m2, ValidationConfig()) == ("ok", "valid")      # 避损>0
+    assert apply_exit_soil_rules(m2, ValidationConfig()) == ("ok", "valid", "counterfactual_confirmed")      # 避损>0
     m3 = compute_exit_counterfactual_metrics(fills, ablation_diff=[-1.0] * 30)
-    assert apply_exit_soil_rules(m3, ValidationConfig()) == ("ok", "noise")      # 风控反而更差
+    assert apply_exit_soil_rules(m3, ValidationConfig()) == ("ok", "noise", "avoided_negative")      # 风控反而更差
     # 触发<30 → insufficient_samples（样本量闸门最前）
     m4 = compute_exit_counterfactual_metrics([{"side": "sell"}] * 10, ablation_diff=[1.0] * 30)
-    assert apply_exit_soil_rules(m4, ValidationConfig()) == ("insufficient_samples", "pending")
+    assert apply_exit_soil_rules(m4, ValidationConfig()) == ("insufficient_samples", "pending", "insufficient_samples")
     # 衰减闸门：首验避损 100 → 现值 40（衰减 60% ≥ 50%）
     m5 = compute_exit_counterfactual_metrics(fills, ablation_diff=[1.0] * 30)
     m5["avoided_amount"] = 40.0
     first = {"avoided_amount": 100.0}
-    assert apply_exit_soil_rules(m5, ValidationConfig(), first_metrics=first) == ("oos_decay_suspect", "pending")
+    assert apply_exit_soil_rules(m5, ValidationConfig(), first_metrics=first) == ("oos_decay_suspect", "pending", "oos_decay_suspect")
 
 
 def test_run_validation_xflow_dry_run_no_write(tmp_path: Path):
@@ -339,7 +342,7 @@ def test_run_validation_xflow_writes_tsv(tmp_path: Path):
     assert captured["table"] == "c1_backtest.node_verdict"
     lines = captured["tsv"].decode("utf-8").strip().split("\n")
     assert len(lines) >= 18   # 地图演化可增节点
-    assert all(len(l.split("\t")) == 12 for l in lines)
+    assert all(len(l.split("\t")) == 13 for l in lines)
     row = lines[0].split("\t")
     assert row[5] == "exit_counterfactual"
     assert row[4].startswith("TDM-X-")
@@ -355,7 +358,7 @@ def test_run_validation_batch_regression_and_guard(tmp_path: Path):
     (artifacts / "bt-r1.json").write_text(json.dumps({"run_id": "bt-r1", "trade_log": []}), encoding="utf-8")
     report = run_validation(cfg=ValidationConfig(as_of=AS_OF, finalized_at=None), artifacts_dir=artifacts,
                             dry_run=True, writer=lambda *a: True)
-    assert len(report.rows) == 14
+    assert len(report.rows) >= 14   # 基线 14 只增不减（地图演化，2026-09-12 实测 15）
     assert all(r["validation_method"] == "exec_quality" for r in report.rows)
     with pytest.raises(ValidationError):
         run_validation(cfg=ValidationConfig(as_of=AS_OF, finalized_at=None), artifacts_dir=artifacts,

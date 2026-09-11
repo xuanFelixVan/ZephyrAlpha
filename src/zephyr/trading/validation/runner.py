@@ -5,7 +5,7 @@
 # [CONSUMERS] zephyr.frontend.dashboard.api_server(/api/tdm/validation 只读消费台账); P2-1 衰减巡检
 # [STARTUP] manual
 # [MATURITY] production
-# [INVARIANTS] holdout 排除最近 12 个月; 触发<30 verdict=pending; 台账只追加不删改; 空数据不造假(pending 如实披露)
+# [INVARIANTS] holdout 排除最近 12 个月; 触发<30 verdict=pending; 台账只追加不删改; 空数据不造假(pending 如实披露); verdict_reason 判定链代码生成禁手填(R2)
 # [MODIFY-GUARD] blueprint.md
 # [STABILITY] evolving
 # [SAFETY] L
@@ -57,7 +57,7 @@ _METHOD_REGISTRY = (
 _VERDICT_TABLE = "c1_backtest.node_verdict"
 _VERDICT_COLUMNS = (
     "(run_id, snapshot_commit, window_start, window_end, node_id, validation_method,"
-    " triggers, hit_ratio, significance, verdict, verdict_at, notes)"
+    " triggers, hit_ratio, significance, verdict, verdict_reason, verdict_at, notes)"
 )
 
 # 首批=L4 执行类；币圈镜像节点（TDM-C-*）无 A 股成交流水，排除后正好 14 节点
@@ -210,8 +210,8 @@ def partition_by_holdout(
     if finalized_at:
         try:
             anchor = datetime.strptime(finalized_at[:10], "%Y-%m-%d")
-        except ValueError:
-            raise ValidationError(f"finalized_at 非法（需 ISO date）: {finalized_at}")
+        except ValueError as exc:
+            raise ValidationError(f"finalized_at 非法（需 ISO date）: {finalized_at}") from exc
     for f in fills:
         try:
             ts = datetime.strptime(f["timestamp"][:10], "%Y-%m-%d")
@@ -289,25 +289,26 @@ def compute_exec_metrics(
 
 def apply_soil_rules(
     metrics: dict[str, Any], cfg: ValidationConfig, first_metrics: dict[str, Any] | None = None
-) -> tuple[str, str]:
-    """两土规 → (significance, verdict)。先样本量闸门，再样本外衰减闸门。
+) -> tuple[str, str, str]:
+    """两土规 → (significance, verdict, verdict_reason)。先样本量闸门，再样本外衰减闸门。
 
     返回 verdict ∈ valid|noise|pending（数据充分时由滑点容差判定；v1 容差线=20bp）。
+    verdict_reason 由判定链代码生成（G2/R2 裁定：禁手填），与本函数判定分支一一对应。
     """
     if metrics["triggers"] < cfg.min_triggers:
-        return "insufficient_samples", "pending"
+        return "insufficient_samples", "pending", "insufficient_samples"
     if first_metrics and first_metrics.get("slip_bp_mean") is not None and metrics.get("slip_bp_mean") is not None:
         first, now = first_metrics["slip_bp_mean"], metrics["slip_bp_mean"]
         if first > 0 and (now - first) / first >= cfg.oos_decay_threshold:
-            return "oos_decay_suspect", "pending"
+            return "oos_decay_suspect", "pending", "oos_decay_suspect"
     slip = metrics.get("slip_bp_mean")
     if slip is None:
-        return "", "pending"   # 无参考价可算——不下结论
+        return "", "pending", "reference_price_missing"   # 无参考价可算——不下结论
     if slip <= 20.0:
-        return "ok", "valid"
+        return "ok", "valid", "slip_within_tolerance"
     if slip <= 40.0:
-        return "ok", "pending"
-    return "ok", "noise"
+        return "ok", "pending", "slip_marginal"
+    return "ok", "noise", "slip_above_tolerance"
 
 
 # ── 离场反事实指标（exit_counterfactual，第二批 X 流）────────────────────
@@ -342,26 +343,28 @@ def compute_exit_counterfactual_metrics(
 
 def apply_exit_soil_rules(
     metrics: dict[str, Any], cfg: ValidationConfig, first_metrics: dict[str, Any] | None = None
-) -> tuple[str, str]:
-    """exit_counterfactual 土规 → (significance, verdict)。
+) -> tuple[str, str, str]:
+    """exit_counterfactual 土规 → (significance, verdict, verdict_reason)。
 
     判定链（对齐 verdict_mapping「触发组损失显著更小→valid；差异不显著→pending；
     触发组反而更差→noise」）：样本量闸门 → 对照就绪闸门 → 对照样本量闸门 →
     衰减闸门（避损额衰减≥50% 判存疑）→ 避损方向判定。
+    verdict_reason 由判定链代码生成（G2/R2 裁定）；valid 分支=counterfactual_confirmed
+    （与 noise 分支 avoided_negative 对称，枚举补位于 R2 施工时登记）。
     """
     if metrics["triggers"] < cfg.min_triggers:
-        return "insufficient_samples", "pending"
+        return "insufficient_samples", "pending", "insufficient_samples"
     if metrics.get("avoided_amount") is None:
-        return "", "pending"   # 对照数据未建（消融器未放行/未就绪）——保持 pending
+        return "", "pending", "counterfactual_missing"   # 对照数据未建（消融器未放行/未就绪）——保持 pending
     if metrics.get("ablation_samples", 0) < cfg.min_triggers:
-        return "insufficient_samples", "pending"   # 对照样本不足，显著性无从谈起
+        return "insufficient_samples", "pending", "insufficient_samples"   # 对照样本不足，显著性无从谈起
     if first_metrics and first_metrics.get("avoided_amount") is not None:
         first, now = first_metrics["avoided_amount"], metrics["avoided_amount"]
         if first > 0 and (first - now) / first >= cfg.oos_decay_threshold:
-            return "oos_decay_suspect", "pending"
+            return "oos_decay_suspect", "pending", "oos_decay_suspect"
     if metrics["avoided_amount"] <= 0:
-        return "ok", "noise"   # 风控救回≤0=触发组反而更差
-    return "ok", "valid"
+        return "ok", "noise", "avoided_negative"   # 风控救回≤0=触发组反而更差
+    return "ok", "valid", "counterfactual_confirmed"
 
 
 # ── 批入口 ───────────────────────────────────────────────────────────────
@@ -417,10 +420,10 @@ def run_validation(
 
     if batch == "XFLOW":
         metrics = compute_exit_counterfactual_metrics(inside, ablation_diff=ablation_diff)
-        significance, verdict = apply_exit_soil_rules(metrics, cfg)
+        significance, verdict, verdict_reason = apply_exit_soil_rules(metrics, cfg)
     else:
         metrics = compute_exec_metrics(inside)   # v1：执行流水全量（归因粒度限制，蓝图 §3）
-        significance, verdict = apply_soil_rules(metrics, cfg)
+        significance, verdict, verdict_reason = apply_soil_rules(metrics, cfg)
     verdict_at = as_of.strftime("%Y-%m-%d %H:%M:%S")
 
     for n in nodes:
@@ -467,6 +470,7 @@ def run_validation(
             "hit_ratio": metrics["fill_rate"],
             "significance": significance or "na",
             "verdict": verdict,
+            "verdict_reason": verdict_reason,
             "verdict_at": verdict_at,
             "notes": "；".join(notes_parts),
         }
@@ -480,7 +484,7 @@ def run_validation(
     tsv = ("\n".join(
         "\t".join(_tsv_cell(row[c]) for c in (
             "run_id", "snapshot_commit", "window_start", "window_end", "node_id", "validation_method",
-            "triggers", "hit_ratio", "significance", "verdict", "verdict_at", "notes"))
+            "triggers", "hit_ratio", "significance", "verdict", "verdict_reason", "verdict_at", "notes"))
         for row in report.rows
     ) + "\n").encode("utf-8") if report.rows else b""
 
