@@ -176,28 +176,21 @@
     return groups;
   }
 
-  function render() {
-    var d = C.data;
-    if (!d) return;
-    clearRail();
-    if (d.chains.length > RAIL_MIN) renderFocused(d);
-    else drawView(d);
-  }
 
   function drawView(view) {
     var world = worldEl(), svg = document.getElementById('cm-wires-cluster'), host = document.getElementById('cm-nodes-cluster');
     var empty = document.getElementById('cm-empty-cluster');
     if (!world || !svg || !host) return;
     hideEqOverlay(true);   /* 重画前清浮层（旧卡片已销毁，钉住的浮层一并撤） */
-    svg.setAttribute('width', view.worldW); svg.setAttribute('height', view.worldH);
-    world.style.width = view.worldW + 'px'; world.style.height = view.worldH + 'px';
-    host.innerHTML = ''; svg.innerHTML = '';
     if (!view.chains.length) {
       if (empty) { empty.style.display = 'flex'; empty.textContent = '该簇/链无环节数据'; }
       return;
     }
+    var groups = layout(view);   /* 先布局后定尺寸：worldW/worldH 由 layout 计算（首画 svg width=undefined 告警治本 2026-09-11） */
+    svg.setAttribute('width', view.worldW); svg.setAttribute('height', view.worldH);
+    world.style.width = view.worldW + 'px'; world.style.height = view.worldH + 'px';
+    host.innerHTML = ''; svg.innerHTML = '';
     if (empty) empty.style.display = 'none';
-    var groups = layout(view);
     var frag = document.createDocumentFragment();
     /* 列头带环节计数（TDM 列头质感） */
     var colHeadY = 14;
