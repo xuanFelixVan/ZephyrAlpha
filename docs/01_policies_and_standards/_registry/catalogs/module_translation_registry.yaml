@@ -47519,6 +47519,20 @@ entries:
   desc_zh: ""
   desc_en: ""
   plain_zh: "看主线梯队连击天数成交集中度和高潮分三个数定今天生态：高潮警惕第二天分歧，主线清晰聚焦做，否则混沌降仓等待"
+- module_path: scripts/backtest/generate_backtest_backlog.py
+  domain_id: D_BACKTEST
+  name_zh: "回测对象登记表生成器"
+  name_en: "Backtest Backlog Generator"
+  desc_zh: "SOP-A A0：从交易决策地图解析导出回测对象预注册登记表，推导类型/优先级/可测性，再生成保留冻结阈值"
+  desc_en: ""
+  plain_zh: "把交易决策地图上的一百多个环节自动整理成一张回测待办清单：哪些先测（生死线三件套）、哪些后测、哪些是纯结构不用测、哪些代码还没造出来不能测。每次重跑都会保留已经定好的验收标准和对象编号，防止有人偷偷改考试门槛。"
+- module_path: scripts/backtest/strategy_intake_inventory.py
+  domain_id: D_BACKTEST
+  name_zh: "聚宽策略盘点归一工具"
+  name_en: "Strategy Intake Inventory"
+  desc_zh: "SOP-C C1：遍历聚宽源码目录逐文件登记编码/行数/平台特征/指纹，统一转 UTF-8 归一副本"
+  desc_en: ""
+  plain_zh: "外部买来的六百个炒股策略源码进门时做的体检登记：每个文件是哪年的、用什么编码、能不能打开、带不带中文注释、像不像聚宽的写法，全记在一张表上，顺便各复印一份统一格式的副本。坏文件只登记不修理，后面的筛选工序都靠这张表。"
 
 battle_map_steps:
 - step_id: BM-BUY-05

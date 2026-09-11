@@ -1,0 +1,1822 @@
+# [A_config] module_id=REG-BTB-001 | layer=config | stability=evolving | safety=L | ai_autonomy=ai_modifiable
+module_id: REG-BTB-001
+ttl: permanent
+schema_version: '1.0'
+registry_id: REG-BTB-001
+name: Backtest Object Backlog
+name_zh: 回测对象预注册登记表
+description: SOP-A Step A0 产物：交易决策地图全部节点的回测对象注册（从地图解析导出，禁手工挑）。预注册=可审计真源（验收阈值跑前写死，禁事后挪门柱；threshold_status=draft
+  的数值为 AI 提案，批次决策点确认冻结后才可跑）。再生成保留既有 plan/confidence/object_id（防台账断链与挪门柱）。真源文档=sop/backtest_system_sop/sop_a_full_map_orchestration.md。
+source_map: config/trading_decision_map.yaml
+map_schema_version: '1.2'
+map_effective_from: '2026-09-08'
+generated_at: '2026-09-12T03:01:47+08:00'
+generated_by: scripts/backtest/generate_backtest_backlog.py
+priority_legend: P0=生死线三件套 P1=主链 P2=树枝 P3=流级/结构/crypto另册
+objects:
+- object_id: BT-P2-001
+  node_ids:
+  - TDM-E-FLOW
+  node_type: aggregation
+  layer: L0节点
+  map_layer: LROOT
+  flow: entry_flow
+  market: cn_a
+  module_ref: null
+  testable: false
+  confidence: untested
+  testable_note: 结构点/容器环节——行为由子节点或全流承载（D108 合并判据），不独立开回测对象
+  plan: null
+  plan_note: 验收阈值未预注册——批次决策点填写并冻结前禁跑（SOP-B 护栏③）
+- object_id: BT-P3-001
+  node_ids:
+  - TDM-P-FLOW
+  node_type: aggregation
+  layer: L0节点
+  map_layer: PFLOW
+  flow: position_flow
+  market: cn_a
+  module_ref: null
+  testable: false
+  confidence: untested
+  testable_note: 结构点/容器环节——行为由子节点或全流承载（D108 合并判据），不独立开回测对象
+  plan: null
+  plan_note: 验收阈值未预注册——批次决策点填写并冻结前禁跑（SOP-B 护栏③）
+- object_id: BT-P3-002
+  node_ids:
+  - TDM-X-FLOW
+  node_type: aggregation
+  layer: L0节点
+  map_layer: XFLOW
+  flow: exit_flow
+  market: cn_a
+  module_ref: null
+  testable: false
+  confidence: untested
+  testable_note: 结构点/容器环节——行为由子节点或全流承载（D108 合并判据），不独立开回测对象
+  plan: null
+  plan_note: 验收阈值未预注册——批次决策点填写并冻结前禁跑（SOP-B 护栏③）
+- object_id: BT-P3-003
+  node_ids:
+  - TDM-F-FLOW
+  node_type: aggregation
+  layer: L0节点
+  map_layer: CFLOW
+  flow: portfolio_flow
+  market: cn_a
+  module_ref: null
+  testable: false
+  confidence: untested
+  testable_note: 结构点/容器环节——行为由子节点或全流承载（D108 合并判据），不独立开回测对象
+  plan: null
+  plan_note: 验收阈值未预注册——批次决策点填写并冻结前禁跑（SOP-B 护栏③）
+- object_id: BT-P2-002
+  node_ids:
+  - TDM-E-L0
+  node_type: gate
+  layer: L0节点
+  map_layer: L0
+  flow: entry_flow
+  market: cn_a
+  module_ref: src/zephyr/plan_engine/daily_warroom_pipeline.py
+  testable: true
+  confidence: untested
+  plan: null
+  plan_note: 验收阈值未预注册——批次决策点填写并冻结前禁跑（SOP-B 护栏③）
+- object_id: BT-P2-003
+  node_ids:
+  - TDM-E-L0-01
+  node_type: strategy
+  layer: L0节点
+  map_layer: L0
+  flow: entry_flow
+  market: cn_a
+  module_ref: src/zephyr/plan_engine/daily_trade_plan.py
+  testable: true
+  confidence: untested
+  plan: null
+  plan_note: 验收阈值未预注册——批次决策点填写并冻结前禁跑（SOP-B 护栏③）
+- object_id: BT-P2-004
+  node_ids:
+  - TDM-E-L0-02
+  node_type: strategy
+  layer: L0节点
+  map_layer: L0
+  flow: entry_flow
+  market: cn_a
+  module_ref: src/zephyr/plan_engine/plan_deviation_monitor.py
+  testable: true
+  confidence: untested
+  plan: null
+  plan_note: 验收阈值未预注册——批次决策点填写并冻结前禁跑（SOP-B 护栏③）
+- object_id: BT-P2-005
+  node_ids:
+  - TDM-E-L0-03
+  node_type: strategy
+  layer: L0节点
+  map_layer: L0
+  flow: entry_flow
+  market: cn_a
+  module_ref: src/zephyr/plan_engine/tomorrow_boundary_planner.py
+  testable: true
+  confidence: untested
+  plan: null
+  plan_note: 验收阈值未预注册——批次决策点填写并冻结前禁跑（SOP-B 护栏③）
+- object_id: BT-P2-006
+  node_ids:
+  - TDM-E-L0-04
+  node_type: strategy
+  layer: L0节点
+  map_layer: L0
+  flow: entry_flow
+  market: cn_a
+  module_ref: src/zephyr/plan_engine/intraday_tomorrow_forecast.py
+  testable: true
+  confidence: untested
+  plan: null
+  plan_note: 验收阈值未预注册——批次决策点填写并冻结前禁跑（SOP-B 护栏③）
+- object_id: BT-P0-001
+  node_ids:
+  - TDM-E-L1
+  node_type: gate
+  layer: L0节点
+  map_layer: L1
+  flow: entry_flow
+  market: cn_a
+  module_ref: src/zephyr/regime/core/regime_detector.py
+  testable: true
+  confidence: untested
+  plan:
+    validation_method: agg_discrimination
+    min_samples: 谨慎度分档每档>=20 且总触发>=30
+    thresholds:
+      adjacent_t_test_p: 0.05
+      high_caution_drawdown_delta_20d_pct: 2.0
+    verdict_mapping: 高谨慎档后续 20 日最大回撤显著更深（p<0.05 且档差>=2.0%）→valid；方向反→noise
+    threshold_status: draft
+    source: validation_method_registry.yaml agg_discrimination + 总闸谨慎度语义 + AI 数值提案 2026-09-12
+- object_id: BT-P1-001
+  node_ids:
+  - TDM-E-L1-S1
+  node_type: sensor
+  layer: L0节点
+  map_layer: L1
+  flow: entry_flow
+  market: cn_a
+  module_ref: src/zephyr/regime/features/index_sensor.py
+  testable: true
+  confidence: untested
+  plan: null
+  plan_note: 验收阈值未预注册——批次决策点填写并冻结前禁跑（SOP-B 护栏③）
+- object_id: BT-P1-002
+  node_ids:
+  - TDM-E-L1-S2
+  node_type: sensor
+  layer: L0节点
+  map_layer: L1
+  flow: entry_flow
+  market: cn_a
+  module_ref: src/zephyr/signal_ashare/limit_up_followthrough.py
+  testable: true
+  confidence: untested
+  plan: null
+  plan_note: 验收阈值未预注册——批次决策点填写并冻结前禁跑（SOP-B 护栏③）
+- object_id: BT-P1-003
+  node_ids:
+  - TDM-E-L1-S3
+  node_type: sensor
+  layer: L0节点
+  map_layer: L1
+  flow: entry_flow
+  market: cn_a
+  module_ref: src/zephyr/signal_ashare/lhb_premium_analyzer.py
+  testable: true
+  confidence: untested
+  plan: null
+  plan_note: 验收阈值未预注册——批次决策点填写并冻结前禁跑（SOP-B 护栏③）
+- object_id: BT-P1-004
+  node_ids:
+  - TDM-E-L1-S4
+  node_type: sensor
+  layer: L0节点
+  map_layer: L1
+  flow: entry_flow
+  market: cn_a
+  module_ref: src/zephyr/regime/features/synthetic_vix.py
+  testable: true
+  confidence: untested
+  plan: null
+  plan_note: 验收阈值未预注册——批次决策点填写并冻结前禁跑（SOP-B 护栏③）
+- object_id: BT-P1-005
+  node_ids:
+  - TDM-E-L1-S0
+  node_type: sensor
+  layer: L0节点
+  map_layer: L1
+  flow: entry_flow
+  market: cn_a
+  module_ref: src/zephyr/alt_data/policy_expectation_analyzer.py
+  testable: true
+  confidence: untested
+  plan: null
+  plan_note: 验收阈值未预注册——批次决策点填写并冻结前禁跑（SOP-B 护栏③）
+- object_id: BT-P1-006
+  node_ids:
+  - TDM-E-L1-S0-1
+  node_type: sensor
+  layer: L0节点
+  map_layer: L1
+  flow: entry_flow
+  market: cn_a
+  module_ref: src/zephyr/intelligence/news_sentiment_analyzer.py
+  testable: true
+  confidence: untested
+  plan: null
+  plan_note: 验收阈值未预注册——批次决策点填写并冻结前禁跑（SOP-B 护栏③）
+- object_id: BT-P1-007
+  node_ids:
+  - TDM-E-L1-S5
+  node_type: sensor
+  layer: L0节点
+  map_layer: L1
+  flow: entry_flow
+  market: cn_a
+  module_ref: src/zephyr/signal_ashare/core/daily_condition_sensor.py
+  testable: true
+  confidence: untested
+  plan: null
+  plan_note: 验收阈值未预注册——批次决策点填写并冻结前禁跑（SOP-B 护栏③）
+- object_id: BT-P0-002
+  node_ids:
+  - TDM-E-L1-AGG
+  node_type: gate
+  layer: L0节点
+  map_layer: L1
+  flow: entry_flow
+  market: cn_a
+  module_ref: src/zephyr/regime/core/regime_detector.py
+  testable: true
+  confidence: untested
+  plan:
+    validation_method: agg_discrimination
+    min_samples: 每档>=20 次触发且总触发>=30
+    thresholds:
+      adjacent_t_test_p: 0.05
+      top_bottom_spread_20d_pct: 1.0
+    verdict_mapping: p<0.05 且高低档差>=1.0%→valid；p<0.10→pending；其余→noise（registry verdict_mapping+数值提案）
+    threshold_status: draft
+    source: validation_method_registry.yaml agg_discrimination + AI 数值提案 2026-09-12
+- object_id: BT-P2-007
+  node_ids:
+  - TDM-E-L2
+  node_type: strategy
+  layer: L0节点
+  map_layer: L2
+  flow: entry_flow
+  market: cn_a
+  module_ref: null
+  testable: false
+  confidence: untested
+  testable_note: 结构点/容器环节——行为由子节点或全流承载（D108 合并判据），不独立开回测对象
+  plan: null
+  plan_note: 验收阈值未预注册——批次决策点填写并冻结前禁跑（SOP-B 护栏③）
+- object_id: BT-P1-008
+  node_ids:
+  - TDM-E-L2-01
+  node_type: strategy
+  layer: L0节点
+  map_layer: L2
+  flow: entry_flow
+  market: cn_a
+  module_ref: null
+  testable: false
+  confidence: untested
+  testable_note: 结构点/容器环节——行为由子节点或全流承载（D108 合并判据），不独立开回测对象
+  plan: null
+  plan_note: 验收阈值未预注册——批次决策点填写并冻结前禁跑（SOP-B 护栏③）
+- object_id: BT-P1-009
+  node_ids:
+  - TDM-E-L2-01-1
+  node_type: strategy
+  layer: L0节点
+  map_layer: L2
+  flow: entry_flow
+  market: cn_a
+  module_ref: src/zephyr/signal_ashare/sector_analyzer.py
+  testable: true
+  confidence: untested
+  plan: null
+  plan_note: 验收阈值未预注册——批次决策点填写并冻结前禁跑（SOP-B 护栏③）
+- object_id: BT-P1-010
+  node_ids:
+  - TDM-E-L2-01-2
+  node_type: strategy
+  layer: L0节点
+  map_layer: L2
+  flow: entry_flow
+  market: cn_a
+  module_ref: src/zephyr/data/sector_ranking_engine.py
+  testable: true
+  confidence: untested
+  plan: null
+  plan_note: 验收阈值未预注册——批次决策点填写并冻结前禁跑（SOP-B 护栏③）
+- object_id: BT-P1-011
+  node_ids:
+  - TDM-E-L2-01-3
+  node_type: strategy
+  layer: L0节点
+  map_layer: L2
+  flow: entry_flow
+  market: cn_a
+  module_ref: src/zephyr/signal_ashare/sector_momentum.py
+  testable: true
+  confidence: untested
+  plan: null
+  plan_note: 验收阈值未预注册——批次决策点填写并冻结前禁跑（SOP-B 护栏③）
+- object_id: BT-P1-012
+  node_ids:
+  - TDM-E-L2-01-4
+  node_type: strategy
+  layer: L0节点
+  map_layer: L2
+  flow: entry_flow
+  market: cn_a
+  module_ref: src/zephyr/signal_ashare/sector_breadth.py
+  testable: true
+  confidence: untested
+  plan: null
+  plan_note: 验收阈值未预注册——批次决策点填写并冻结前禁跑（SOP-B 护栏③）
+- object_id: BT-P1-013
+  node_ids:
+  - TDM-E-L2-01-5
+  node_type: aggregation
+  layer: L0节点
+  map_layer: L2
+  flow: entry_flow
+  market: cn_a
+  module_ref: src/zephyr/regime/market_forecast_fusion.py
+  testable: true
+  confidence: untested
+  plan: null
+  plan_note: 验收阈值未预注册——批次决策点填写并冻结前禁跑（SOP-B 护栏③）
+- object_id: BT-P2-008
+  node_ids:
+  - TDM-E-L2-02
+  node_type: strategy
+  layer: L0节点
+  map_layer: L2
+  flow: entry_flow
+  market: cn_a
+  module_ref: src/zephyr/signal_ashare/sector_divergence.py
+  testable: true
+  confidence: untested
+  plan: null
+  plan_note: 验收阈值未预注册——批次决策点填写并冻结前禁跑（SOP-B 护栏③）
+- object_id: BT-P2-009
+  node_ids:
+  - TDM-E-L2-02-1
+  node_type: strategy
+  layer: L0节点
+  map_layer: L2
+  flow: entry_flow
+  market: cn_a
+  module_ref: src/zephyr/signal_ashare/sector_rrg.py
+  testable: true
+  confidence: untested
+  plan: null
+  plan_note: 验收阈值未预注册——批次决策点填写并冻结前禁跑（SOP-B 护栏③）
+- object_id: BT-P2-010
+  node_ids:
+  - TDM-E-L2-02-2
+  node_type: strategy
+  layer: L0节点
+  map_layer: L2
+  flow: entry_flow
+  market: cn_a
+  module_ref: src/zephyr/signal_ashare/sector_analyzer.py
+  testable: true
+  confidence: untested
+  plan: null
+  plan_note: 验收阈值未预注册——批次决策点填写并冻结前禁跑（SOP-B 护栏③）
+- object_id: BT-P2-011
+  node_ids:
+  - TDM-E-L2-03
+  node_type: strategy
+  layer: L0节点
+  map_layer: L2
+  flow: entry_flow
+  market: cn_a
+  module_ref: src/zephyr/signal_ashare/sector_adjustment.py
+  testable: true
+  confidence: untested
+  plan: null
+  plan_note: 验收阈值未预注册——批次决策点填写并冻结前禁跑（SOP-B 护栏③）
+- object_id: BT-P2-012
+  node_ids:
+  - TDM-E-L2-03-1
+  node_type: strategy
+  layer: L0节点
+  map_layer: L2
+  flow: entry_flow
+  market: cn_a
+  module_ref: src/zephyr/signal_ashare/adjustment_cycle_tracker.py
+  testable: true
+  confidence: untested
+  plan: null
+  plan_note: 验收阈值未预注册——批次决策点填写并冻结前禁跑（SOP-B 护栏③）
+- object_id: BT-P2-013
+  node_ids:
+  - TDM-E-L2-04
+  node_type: gate
+  layer: L0节点
+  map_layer: L2
+  flow: entry_flow
+  market: cn_a
+  module_ref: null
+  testable: false
+  confidence: untested
+  testable_note: 结构点/容器环节——行为由子节点或全流承载（D108 合并判据），不独立开回测对象
+  plan: null
+  plan_note: 验收阈值未预注册——批次决策点填写并冻结前禁跑（SOP-B 护栏③）
+- object_id: BT-P2-014
+  node_ids:
+  - TDM-E-L2-04-1
+  node_type: strategy
+  layer: L0节点
+  map_layer: L2
+  flow: entry_flow
+  market: cn_a
+  module_ref: src/zephyr/signal_ashare/sector_rotation_state.py
+  testable: true
+  confidence: untested
+  plan: null
+  plan_note: 验收阈值未预注册——批次决策点填写并冻结前禁跑（SOP-B 护栏③）
+- object_id: BT-P2-015
+  node_ids:
+  - TDM-E-L2-04-2
+  node_type: strategy
+  layer: L0节点
+  map_layer: L2
+  flow: entry_flow
+  market: cn_a
+  module_ref: src/zephyr/signal_ashare/sector_siphon.py
+  testable: true
+  confidence: untested
+  plan: null
+  plan_note: 验收阈值未预注册——批次决策点填写并冻结前禁跑（SOP-B 护栏③）
+- object_id: BT-P2-016
+  node_ids:
+  - TDM-E-L2-05
+  node_type: strategy
+  layer: L0节点
+  map_layer: L2
+  flow: entry_flow
+  market: cn_a
+  module_ref: null
+  testable: false
+  confidence: untested
+  testable_note: 结构点/容器环节——行为由子节点或全流承载（D108 合并判据），不独立开回测对象
+  plan: null
+  plan_note: 验收阈值未预注册——批次决策点填写并冻结前禁跑（SOP-B 护栏③）
+- object_id: BT-P2-017
+  node_ids:
+  - TDM-E-L2-05-1
+  node_type: gate
+  layer: L0节点
+  map_layer: L2
+  flow: entry_flow
+  market: cn_a
+  module_ref: src/zephyr/signal_ashare/sentiment_cycle.py
+  testable: true
+  confidence: untested
+  plan: null
+  plan_note: 验收阈值未预注册——批次决策点填写并冻结前禁跑（SOP-B 护栏③）
+- object_id: BT-P2-018
+  node_ids:
+  - TDM-E-L2-05-2
+  node_type: strategy
+  layer: L0节点
+  map_layer: L2
+  flow: entry_flow
+  market: cn_a
+  module_ref: src/zephyr/signal_ashare/sector_gate.py
+  testable: true
+  confidence: untested
+  plan: null
+  plan_note: 验收阈值未预注册——批次决策点填写并冻结前禁跑（SOP-B 护栏③）
+- object_id: BT-P2-019
+  node_ids:
+  - TDM-E-L2-06
+  node_type: strategy
+  layer: L0节点
+  map_layer: L2
+  flow: entry_flow
+  market: cn_a
+  module_ref: src/zephyr/signal_ashare/core/sector_conduction.py
+  testable: true
+  confidence: untested
+  plan: null
+  plan_note: 验收阈值未预注册——批次决策点填写并冻结前禁跑（SOP-B 护栏③）
+- object_id: BT-P2-020
+  node_ids:
+  - TDM-E-L2-06-1
+  node_type: strategy
+  layer: L0节点
+  map_layer: L2
+  flow: entry_flow
+  market: cn_a
+  module_ref: src/zephyr/signal_ashare/sector_gate.py
+  testable: true
+  confidence: untested
+  plan: null
+  plan_note: 验收阈值未预注册——批次决策点填写并冻结前禁跑（SOP-B 护栏③）
+- object_id: BT-P2-021
+  node_ids:
+  - TDM-E-L2-06-2
+  node_type: strategy
+  layer: L0节点
+  map_layer: L2
+  flow: entry_flow
+  market: cn_a
+  module_ref: src/zephyr/signal_ashare/sector_leader.py
+  testable: true
+  confidence: untested
+  plan: null
+  plan_note: 验收阈值未预注册——批次决策点填写并冻结前禁跑（SOP-B 护栏③）
+- object_id: BT-P2-022
+  node_ids:
+  - TDM-E-L2-06-3
+  node_type: strategy
+  layer: L0节点
+  map_layer: L2
+  flow: entry_flow
+  market: cn_a
+  module_ref: src/zephyr/signal_ashare/core/sector_conduction.py
+  testable: true
+  confidence: untested
+  plan: null
+  plan_note: 验收阈值未预注册——批次决策点填写并冻结前禁跑（SOP-B 护栏③）
+- object_id: BT-P2-023
+  node_ids:
+  - TDM-E-L2-07
+  node_type: strategy
+  layer: L0节点
+  map_layer: L2
+  flow: entry_flow
+  market: cn_a
+  module_ref: src/zephyr/signal_ashare/sector_pullback.py
+  testable: true
+  confidence: untested
+  plan: null
+  plan_note: 验收阈值未预注册——批次决策点填写并冻结前禁跑（SOP-B 护栏③）
+- object_id: BT-P2-024
+  node_ids:
+  - TDM-E-L2-07-1
+  node_type: strategy
+  layer: L0节点
+  map_layer: L2
+  flow: entry_flow
+  market: cn_a
+  module_ref: src/zephyr/signal_ashare/sector_pullback.py
+  testable: true
+  confidence: untested
+  plan: null
+  plan_note: 验收阈值未预注册——批次决策点填写并冻结前禁跑（SOP-B 护栏③）
+- object_id: BT-P2-025
+  node_ids:
+  - TDM-E-L2-08
+  node_type: strategy
+  layer: L0节点
+  map_layer: L2
+  flow: entry_flow
+  market: cn_a
+  module_ref: src/zephyr/signal_ashare/sector_momentum_persistence.py
+  testable: true
+  confidence: untested
+  plan: null
+  plan_note: 验收阈值未预注册——批次决策点填写并冻结前禁跑（SOP-B 护栏③）
+- object_id: BT-P2-026
+  node_ids:
+  - TDM-E-L2-09
+  node_type: strategy
+  layer: L0节点
+  map_layer: L2
+  flow: entry_flow
+  market: cn_a
+  module_ref: src/zephyr/signal_ashare/event_driven_screener.py
+  testable: true
+  confidence: untested
+  plan: null
+  plan_note: 验收阈值未预注册——批次决策点填写并冻结前禁跑（SOP-B 护栏③）
+- object_id: BT-P2-027
+  node_ids:
+  - TDM-E-L2-09-1
+  node_type: strategy
+  layer: L0节点
+  map_layer: L2
+  flow: entry_flow
+  market: cn_a
+  module_ref: src/zephyr/intelligence/news_chain_node_linker.py
+  testable: true
+  confidence: untested
+  plan: null
+  plan_note: 验收阈值未预注册——批次决策点填写并冻结前禁跑（SOP-B 护栏③）
+- object_id: BT-P2-028
+  node_ids:
+  - TDM-E-L2-09-2
+  node_type: strategy
+  layer: L0节点
+  map_layer: L2
+  flow: entry_flow
+  market: cn_a
+  module_ref: src/zephyr/intelligence/chain_impact_resolver.py
+  testable: true
+  confidence: untested
+  plan: null
+  plan_note: 验收阈值未预注册——批次决策点填写并冻结前禁跑（SOP-B 护栏③）
+- object_id: BT-P2-029
+  node_ids:
+  - TDM-E-L2-10
+  node_type: strategy
+  layer: L0节点
+  map_layer: L2
+  flow: entry_flow
+  market: cn_a
+  module_ref: src/zephyr/signal_ashare/supply_chain_momentum.py
+  testable: true
+  confidence: untested
+  plan: null
+  plan_note: 验收阈值未预注册——批次决策点填写并冻结前禁跑（SOP-B 护栏③）
+- object_id: BT-P2-030
+  node_ids:
+  - TDM-E-L3
+  node_type: strategy
+  layer: L0节点
+  map_layer: L3
+  flow: entry_flow
+  market: cn_a
+  module_ref: null
+  testable: false
+  confidence: untested
+  testable_note: 结构点/容器环节——行为由子节点或全流承载（D108 合并判据），不独立开回测对象
+  plan: null
+  plan_note: 验收阈值未预注册——批次决策点填写并冻结前禁跑（SOP-B 护栏③）
+- object_id: BT-P2-031
+  node_ids:
+  - TDM-E-L3-01
+  node_type: strategy
+  layer: L0节点
+  map_layer: L3
+  flow: entry_flow
+  market: cn_a
+  module_ref: src/zephyr/data/instrument_master.py
+  testable: true
+  confidence: untested
+  plan: null
+  plan_note: 验收阈值未预注册——批次决策点填写并冻结前禁跑（SOP-B 护栏③）
+- object_id: BT-P1-014
+  node_ids:
+  - TDM-E-L3-02
+  node_type: strategy
+  layer: L0节点
+  map_layer: L3
+  flow: entry_flow
+  market: cn_a
+  module_ref: src/zephyr/signal_fundamental/selection_funnel.py
+  testable: true
+  confidence: untested
+  plan: null
+  plan_note: 验收阈值未预注册——批次决策点填写并冻结前禁跑（SOP-B 护栏③）
+- object_id: BT-P1-015
+  node_ids:
+  - TDM-E-L3-03
+  node_type: aggregation
+  layer: L0节点
+  map_layer: L3
+  flow: entry_flow
+  market: cn_a
+  module_ref: null
+  testable: false
+  confidence: untested
+  testable_note: 结构点/容器环节——行为由子节点或全流承载（D108 合并判据），不独立开回测对象
+  plan: null
+  plan_note: 验收阈值未预注册——批次决策点填写并冻结前禁跑（SOP-B 护栏③）
+- object_id: BT-P1-016
+  node_ids:
+  - TDM-E-L3-03-1
+  node_type: strategy
+  layer: L0节点
+  map_layer: L3
+  flow: entry_flow
+  market: cn_a
+  module_ref: src/zephyr/signal_ashare/fine_scoring_engine.py
+  testable: true
+  confidence: untested
+  plan: null
+  plan_note: 验收阈值未预注册——批次决策点填写并冻结前禁跑（SOP-B 护栏③）
+- object_id: BT-P1-017
+  node_ids:
+  - TDM-E-L3-03-2
+  node_type: strategy
+  layer: L0节点
+  map_layer: L3
+  flow: entry_flow
+  market: cn_a
+  module_ref: src/zephyr/signal_ashare/quant_short_term_strength_engine.py
+  testable: true
+  confidence: untested
+  plan: null
+  plan_note: 验收阈值未预注册——批次决策点填写并冻结前禁跑（SOP-B 护栏③）
+- object_id: BT-P1-018
+  node_ids:
+  - TDM-E-L3-03-3
+  node_type: aggregation
+  layer: L0节点
+  map_layer: L3
+  flow: entry_flow
+  market: cn_a
+  module_ref: src/zephyr/signal_fundamental/router/signal_conflict_resolver.py
+  testable: true
+  confidence: untested
+  plan: null
+  plan_note: 验收阈值未预注册——批次决策点填写并冻结前禁跑（SOP-B 护栏③）
+- object_id: BT-P1-019
+  node_ids:
+  - TDM-E-L3-04
+  node_type: strategy
+  layer: L0节点
+  map_layer: L3
+  flow: entry_flow
+  market: cn_a
+  module_ref: src/zephyr/signal_fundamental/negative_veto.py
+  testable: true
+  confidence: untested
+  plan: null
+  plan_note: 验收阈值未预注册——批次决策点填写并冻结前禁跑（SOP-B 护栏③）
+- object_id: BT-P1-020
+  node_ids:
+  - TDM-E-L3-05
+  node_type: strategy
+  layer: L0节点
+  map_layer: L3
+  flow: entry_flow
+  market: cn_a
+  module_ref: src/zephyr/signal_fundamental/selection_confidence.py
+  testable: true
+  confidence: untested
+  plan: null
+  plan_note: 验收阈值未预注册——批次决策点填写并冻结前禁跑（SOP-B 护栏③）
+- object_id: BT-P1-021
+  node_ids:
+  - TDM-E-L3-06
+  node_type: gate
+  layer: L0节点
+  map_layer: L3
+  flow: entry_flow
+  market: cn_a
+  module_ref: src/zephyr/signal_ashare/core/environment_switch.py
+  testable: true
+  confidence: untested
+  plan: null
+  plan_note: 验收阈值未预注册——批次决策点填写并冻结前禁跑（SOP-B 护栏③）
+- object_id: BT-P1-022
+  node_ids:
+  - TDM-E-L3-07
+  node_type: strategy
+  layer: L0节点
+  map_layer: L3
+  flow: entry_flow
+  market: cn_a
+  module_ref: null
+  testable: false
+  confidence: untested
+  testable_note: 结构点/容器环节——行为由子节点或全流承载（D108 合并判据），不独立开回测对象
+  plan: null
+  plan_note: 验收阈值未预注册——批次决策点填写并冻结前禁跑（SOP-B 护栏③）
+- object_id: BT-P1-023
+  node_ids:
+  - TDM-E-L3-07-1
+  node_type: strategy
+  layer: L0节点
+  map_layer: L3
+  flow: entry_flow
+  market: cn_a
+  module_ref: src/zephyr/pf_core/strategies/daban_sleeve_strategy.py
+  testable: true
+  confidence: untested
+  plan: null
+  plan_note: 验收阈值未预注册——批次决策点填写并冻结前禁跑（SOP-B 护栏③）
+- object_id: BT-P1-024
+  node_ids:
+  - TDM-E-L3-07-2
+  node_type: strategy
+  layer: L0节点
+  map_layer: L3
+  flow: entry_flow
+  market: cn_a
+  module_ref: src/zephyr/factor/analysis/multifactor_synthesis.py
+  testable: true
+  confidence: untested
+  plan: null
+  plan_note: 验收阈值未预注册——批次决策点填写并冻结前禁跑（SOP-B 护栏③）
+- object_id: BT-P1-025
+  node_ids:
+  - TDM-E-L3-07-3
+  node_type: strategy
+  layer: L0节点
+  map_layer: L3
+  flow: entry_flow
+  market: cn_a
+  module_ref: src/zephyr/pf_core/strategies/event_driven_sleeve_strategy.py
+  testable: true
+  confidence: untested
+  plan: null
+  plan_note: 验收阈值未预注册——批次决策点填写并冻结前禁跑（SOP-B 护栏③）
+- object_id: BT-P1-026
+  node_ids:
+  - TDM-E-L3-08
+  node_type: aggregation
+  layer: L0节点
+  map_layer: L3
+  flow: entry_flow
+  market: cn_a
+  module_ref: src/zephyr/signal_ashare/core/candidate_pool_aggregator.py
+  testable: true
+  confidence: untested
+  plan: null
+  plan_note: 验收阈值未预注册——批次决策点填写并冻结前禁跑（SOP-B 护栏③）
+- object_id: BT-P2-032
+  node_ids:
+  - TDM-E-L3-09
+  node_type: aggregation
+  layer: L0节点
+  map_layer: L3
+  flow: entry_flow
+  market: cn_a
+  module_ref: src/zephyr/signal_ashare/core/pool_tier_maintenance.py
+  testable: true
+  confidence: untested
+  plan: null
+  plan_note: 验收阈值未预注册——批次决策点填写并冻结前禁跑（SOP-B 护栏③）
+- object_id: BT-P2-033
+  node_ids:
+  - TDM-E-L3-10
+  node_type: strategy
+  layer: L0节点
+  map_layer: L3
+  flow: entry_flow
+  market: cn_a
+  module_ref: src/zephyr/data/instrument_master.py
+  testable: true
+  confidence: untested
+  plan: null
+  plan_note: 验收阈值未预注册——批次决策点填写并冻结前禁跑（SOP-B 护栏③）
+- object_id: BT-P2-034
+  node_ids:
+  - TDM-E-L3-11
+  node_type: strategy
+  layer: L0节点
+  map_layer: L3
+  flow: entry_flow
+  market: cn_a
+  module_ref: null
+  testable: false
+  confidence: untested
+  testable_note: 结构点/容器环节——行为由子节点或全流承载（D108 合并判据），不独立开回测对象
+  plan: null
+  plan_note: 验收阈值未预注册——批次决策点填写并冻结前禁跑（SOP-B 护栏③）
+- object_id: BT-P2-035
+  node_ids:
+  - TDM-E-L3-11-1
+  node_type: strategy
+  layer: L0节点
+  map_layer: L3
+  flow: entry_flow
+  market: cn_a
+  module_ref: src/zephyr/signal_ashare/auction_microstructure_analyzer.py
+  testable: true
+  confidence: untested
+  plan: null
+  plan_note: 验收阈值未预注册——批次决策点填写并冻结前禁跑（SOP-B 护栏③）
+- object_id: BT-P2-036
+  node_ids:
+  - TDM-E-L3-11-2
+  node_type: strategy
+  layer: L0节点
+  map_layer: L3
+  flow: entry_flow
+  market: cn_a
+  module_ref: src/zephyr/signal_ashare/intraday_volume_orderflow.py
+  testable: true
+  confidence: untested
+  plan: null
+  plan_note: 验收阈值未预注册——批次决策点填写并冻结前禁跑（SOP-B 护栏③）
+- object_id: BT-P2-037
+  node_ids:
+  - TDM-E-L3-12
+  node_type: strategy
+  layer: L0节点
+  map_layer: L3
+  flow: entry_flow
+  market: cn_a
+  module_ref: null
+  testable: false
+  confidence: untested
+  testable_note: 结构点/容器环节——行为由子节点或全流承载（D108 合并判据），不独立开回测对象
+  plan: null
+  plan_note: 验收阈值未预注册——批次决策点填写并冻结前禁跑（SOP-B 护栏③）
+- object_id: BT-P2-038
+  node_ids:
+  - TDM-E-L3-12-1
+  node_type: strategy
+  layer: L0节点
+  map_layer: L3
+  flow: entry_flow
+  market: cn_a
+  module_ref: src/zephyr/signal_ashare/capital_flow_pattern_analyzer.py
+  testable: true
+  confidence: untested
+  plan: null
+  plan_note: 验收阈值未预注册——批次决策点填写并冻结前禁跑（SOP-B 护栏③）
+- object_id: BT-P2-039
+  node_ids:
+  - TDM-E-L3-12-2
+  node_type: strategy
+  layer: L0节点
+  map_layer: L3
+  flow: entry_flow
+  market: cn_a
+  module_ref: src/zephyr/signal_ashare/seat_pattern_analyzer.py
+  testable: true
+  confidence: untested
+  plan: null
+  plan_note: 验收阈值未预注册——批次决策点填写并冻结前禁跑（SOP-B 护栏③）
+- object_id: BT-P2-040
+  node_ids:
+  - TDM-E-L3-12-3
+  node_type: strategy
+  layer: L0节点
+  map_layer: L3
+  flow: entry_flow
+  market: cn_a
+  module_ref: src/zephyr/regime/features/chip_distribution_engine.py
+  testable: true
+  confidence: untested
+  plan: null
+  plan_note: 验收阈值未预注册——批次决策点填写并冻结前禁跑（SOP-B 护栏③）
+- object_id: BT-P2-041
+  node_ids:
+  - TDM-E-L3-12-4
+  node_type: strategy
+  layer: L0节点
+  map_layer: L3
+  flow: entry_flow
+  market: cn_a
+  module_ref: src/zephyr/signal_ashare/chanlun_structure.py
+  testable: true
+  confidence: untested
+  plan: null
+  plan_note: 验收阈值未预注册——批次决策点填写并冻结前禁跑（SOP-B 护栏③）
+- object_id: BT-P2-042
+  node_ids:
+  - TDM-E-L4
+  node_type: strategy
+  layer: L0节点
+  map_layer: L4
+  flow: entry_flow
+  market: cn_a
+  module_ref: null
+  testable: false
+  confidence: untested
+  testable_note: 结构点/容器环节——行为由子节点或全流承载（D108 合并判据），不独立开回测对象
+  plan: null
+  plan_note: 验收阈值未预注册——批次决策点填写并冻结前禁跑（SOP-B 护栏③）
+- object_id: BT-P1-027
+  node_ids:
+  - TDM-E-L4-01
+  node_type: strategy
+  layer: L0节点
+  map_layer: L4
+  flow: entry_flow
+  market: cn_a
+  module_ref: src/zephyr/ex_core/order_splitter.py
+  testable: true
+  confidence: untested
+  plan: null
+  plan_note: 验收阈值未预注册——批次决策点填写并冻结前禁跑（SOP-B 护栏③）
+- object_id: BT-P1-028
+  node_ids:
+  - TDM-E-L4-02
+  node_type: strategy
+  layer: L0节点
+  map_layer: L4
+  flow: entry_flow
+  market: cn_a
+  module_ref: src/zephyr/plan_engine/closing_session_decision.py
+  testable: true
+  confidence: untested
+  plan: null
+  plan_note: 验收阈值未预注册——批次决策点填写并冻结前禁跑（SOP-B 护栏③）
+- object_id: BT-P2-043
+  node_ids:
+  - TDM-E-L4-03
+  node_type: strategy
+  layer: L0节点
+  map_layer: L4
+  flow: entry_flow
+  market: cn_a
+  module_ref: src/zephyr/ex_core/pricing_policy.py
+  testable: true
+  confidence: untested
+  plan: null
+  plan_note: 验收阈值未预注册——批次决策点填写并冻结前禁跑（SOP-B 护栏③）
+- object_id: BT-P2-044
+  node_ids:
+  - TDM-E-L4-04
+  node_type: strategy
+  layer: L0节点
+  map_layer: L4
+  flow: entry_flow
+  market: cn_a
+  module_ref: src/zephyr/signal_fundamental/capital/capital_allocator.py
+  testable: true
+  confidence: untested
+  plan: null
+  plan_note: 验收阈值未预注册——批次决策点填写并冻结前禁跑（SOP-B 护栏③）
+- object_id: BT-P2-045
+  node_ids:
+  - TDM-E-L4-05
+  node_type: strategy
+  layer: L0节点
+  map_layer: L4
+  flow: entry_flow
+  market: cn_a
+  module_ref: src/zephyr/ex_core/daban_execution.py
+  testable: true
+  confidence: untested
+  plan: null
+  plan_note: 验收阈值未预注册——批次决策点填写并冻结前禁跑（SOP-B 护栏③）
+- object_id: BT-P2-046
+  node_ids:
+  - TDM-E-L4-06
+  node_type: strategy
+  layer: L0节点
+  map_layer: L4
+  flow: entry_flow
+  market: cn_a
+  module_ref: src/zephyr/ex_sor/core/algo_execution_selector.py
+  testable: true
+  confidence: untested
+  plan: null
+  plan_note: 验收阈值未预注册——批次决策点填写并冻结前禁跑（SOP-B 护栏③）
+- object_id: BT-P2-047
+  node_ids:
+  - TDM-E-L4-07
+  node_type: aggregation
+  layer: L0节点
+  map_layer: L4
+  flow: entry_flow
+  market: cn_a
+  module_ref: src/zephyr/ex_core/local_order_queue.py
+  testable: true
+  confidence: untested
+  plan: null
+  plan_note: 验收阈值未预注册——批次决策点填写并冻结前禁跑（SOP-B 护栏③）
+- object_id: BT-P2-048
+  node_ids:
+  - TDM-E-L4-08
+  node_type: strategy
+  layer: L0节点
+  map_layer: L4
+  flow: entry_flow
+  market: cn_a
+  module_ref: src/zephyr/sell_decision/core/breakout_failure_detector.py
+  testable: true
+  confidence: untested
+  plan: null
+  plan_note: 验收阈值未预注册——批次决策点填写并冻结前禁跑（SOP-B 护栏③）
+- object_id: BT-P2-049
+  node_ids:
+  - TDM-E-L4-10
+  node_type: strategy
+  layer: L0节点
+  map_layer: L4
+  flow: entry_flow
+  market: cn_a
+  module_ref: src/zephyr/ex_core/order_manager.py
+  testable: true
+  confidence: untested
+  plan: null
+  plan_note: 验收阈值未预注册——批次决策点填写并冻结前禁跑（SOP-B 护栏③）
+- object_id: BT-P2-050
+  node_ids:
+  - TDM-E-L4-11
+  node_type: strategy
+  layer: L0节点
+  map_layer: L4
+  flow: entry_flow
+  market: cn_a
+  module_ref: src/zephyr/ex_core/fill_handler.py
+  testable: true
+  confidence: untested
+  plan: null
+  plan_note: 验收阈值未预注册——批次决策点填写并冻结前禁跑（SOP-B 护栏③）
+- object_id: BT-P2-051
+  node_ids:
+  - TDM-E-L4-12
+  node_type: strategy
+  layer: L0节点
+  map_layer: L4
+  flow: entry_flow
+  market: cn_a
+  module_ref: src/zephyr/ex_core/pre_execution_checker.py
+  testable: true
+  confidence: untested
+  plan: null
+  plan_note: 验收阈值未预注册——批次决策点填写并冻结前禁跑（SOP-B 护栏③）
+- object_id: BT-P2-052
+  node_ids:
+  - TDM-E-L4-13
+  node_type: aggregation
+  layer: L0节点
+  map_layer: L4
+  flow: entry_flow
+  market: cn_a
+  module_ref: src/zephyr/trading/three_way_reconciliation.py
+  testable: true
+  confidence: untested
+  plan: null
+  plan_note: 验收阈值未预注册——批次决策点填写并冻结前禁跑（SOP-B 护栏③）
+- object_id: BT-P2-053
+  node_ids:
+  - TDM-E-L4-14
+  node_type: strategy
+  layer: L0节点
+  map_layer: L4
+  flow: entry_flow
+  market: cn_a
+  module_ref: src/zephyr/ex_sor/services/execution_quality_scorer.py
+  testable: true
+  confidence: untested
+  plan: null
+  plan_note: 验收阈值未预注册——批次决策点填写并冻结前禁跑（SOP-B 护栏③）
+- object_id: BT-P3-004
+  node_ids:
+  - TDM-P-P1
+  node_type: strategy
+  layer: L0节点
+  map_layer: P1
+  flow: position_flow
+  market: cn_a
+  module_ref: null
+  testable: false
+  confidence: untested
+  testable_note: 结构点/容器环节——行为由子节点或全流承载（D108 合并判据），不独立开回测对象
+  plan: null
+  plan_note: 验收阈值未预注册——批次决策点填写并冻结前禁跑（SOP-B 护栏③）
+- object_id: BT-P3-005
+  node_ids:
+  - TDM-P-P2
+  node_type: strategy
+  layer: L0节点
+  map_layer: P2
+  flow: position_flow
+  market: cn_a
+  module_ref: null
+  testable: false
+  confidence: untested
+  testable_note: 结构点/容器环节——行为由子节点或全流承载（D108 合并判据），不独立开回测对象
+  plan: null
+  plan_note: 验收阈值未预注册——批次决策点填写并冻结前禁跑（SOP-B 护栏③）
+- object_id: BT-P3-006
+  node_ids:
+  - TDM-P-P3
+  node_type: strategy
+  layer: L0节点
+  map_layer: P3
+  flow: position_flow
+  market: cn_a
+  module_ref: null
+  testable: false
+  confidence: untested
+  testable_note: 结构点/容器环节——行为由子节点或全流承载（D108 合并判据），不独立开回测对象
+  plan: null
+  plan_note: 验收阈值未预注册——批次决策点填写并冻结前禁跑（SOP-B 护栏③）
+- object_id: BT-P3-007
+  node_ids:
+  - TDM-P-P1-01
+  node_type: strategy
+  layer: L0节点
+  map_layer: P1
+  flow: position_flow
+  market: cn_a
+  module_ref: src/zephyr/position/core/position_state_machine.py
+  testable: true
+  confidence: untested
+  plan: null
+  plan_note: 验收阈值未预注册——批次决策点填写并冻结前禁跑（SOP-B 护栏③）
+- object_id: BT-P3-008
+  node_ids:
+  - TDM-P-P1-02
+  node_type: strategy
+  layer: L0节点
+  map_layer: P1
+  flow: position_flow
+  market: cn_a
+  module_ref: src/zephyr/sell_decision/core/position_triage.py
+  testable: true
+  confidence: untested
+  plan: null
+  plan_note: 验收阈值未预注册——批次决策点填写并冻结前禁跑（SOP-B 护栏③）
+- object_id: BT-P3-009
+  node_ids:
+  - TDM-P-P1-03
+  node_type: strategy
+  layer: L0节点
+  map_layer: P1
+  flow: position_flow
+  market: cn_a
+  module_ref: src/zephyr/plan_engine/thesis_survival.py
+  testable: true
+  confidence: untested
+  plan: null
+  plan_note: 验收阈值未预注册——批次决策点填写并冻结前禁跑（SOP-B 护栏③）
+- object_id: BT-P3-010
+  node_ids:
+  - TDM-P-P1-04
+  node_type: strategy
+  layer: L0节点
+  map_layer: P1
+  flow: position_flow
+  market: cn_a
+  module_ref: src/zephyr/risk/core/ashare_stop_loss_engine.py
+  testable: true
+  confidence: untested
+  plan: null
+  plan_note: 验收阈值未预注册——批次决策点填写并冻结前禁跑（SOP-B 护栏③）
+- object_id: BT-P3-011
+  node_ids:
+  - TDM-P-P1-05
+  node_type: strategy
+  layer: L0节点
+  map_layer: P1
+  flow: position_flow
+  market: cn_a
+  module_ref: src/zephyr/position/core/position_drift_monitor.py
+  testable: true
+  confidence: untested
+  plan: null
+  plan_note: 验收阈值未预注册——批次决策点填写并冻结前禁跑（SOP-B 护栏③）
+- object_id: BT-P3-012
+  node_ids:
+  - TDM-P-P1-06
+  node_type: strategy
+  layer: L0节点
+  map_layer: P1
+  flow: position_flow
+  market: cn_a
+  module_ref: src/zephyr/position/core/position_adjudication_center.py
+  testable: true
+  confidence: untested
+  plan: null
+  plan_note: 验收阈值未预注册——批次决策点填写并冻结前禁跑（SOP-B 护栏③）
+- object_id: BT-P3-013
+  node_ids:
+  - TDM-P-P2-02
+  node_type: strategy
+  layer: L0节点
+  map_layer: P2
+  flow: position_flow
+  market: cn_a
+  module_ref: src/zephyr/sell_decision/core/t_trade_coordinator.py
+  testable: true
+  confidence: untested
+  plan: null
+  plan_note: 验收阈值未预注册——批次决策点填写并冻结前禁跑（SOP-B 护栏③）
+- object_id: BT-P3-014
+  node_ids:
+  - TDM-P-P2-04
+  node_type: strategy
+  layer: L0节点
+  map_layer: P2
+  flow: position_flow
+  market: cn_a
+  module_ref: src/zephyr/position/core/rebalance_engine.py
+  testable: true
+  confidence: untested
+  plan: null
+  plan_note: 验收阈值未预注册——批次决策点填写并冻结前禁跑（SOP-B 护栏③）
+- object_id: BT-P3-015
+  node_ids:
+  - TDM-P-P3-01
+  node_type: strategy
+  layer: L0节点
+  map_layer: P3
+  flow: position_flow
+  market: cn_a
+  module_ref: src/zephyr/position/core/pyramiding_rules.py
+  testable: true
+  confidence: untested
+  plan: null
+  plan_note: 验收阈值未预注册——批次决策点填写并冻结前禁跑（SOP-B 护栏③）
+- object_id: BT-P3-016
+  node_ids:
+  - TDM-P-P3-02
+  node_type: strategy
+  layer: L0节点
+  map_layer: P3
+  flow: position_flow
+  market: cn_a
+  module_ref: src/zephyr/position/core/pyramiding_rules.py
+  testable: true
+  confidence: untested
+  plan: null
+  plan_note: 验收阈值未预注册——批次决策点填写并冻结前禁跑（SOP-B 护栏③）
+- object_id: BT-P3-017
+  node_ids:
+  - TDM-P-P3-03
+  node_type: strategy
+  layer: L0节点
+  map_layer: P3
+  flow: position_flow
+  market: cn_a
+  module_ref: src/zephyr/position/core/position_sizing_engine.py
+  testable: true
+  confidence: untested
+  plan: null
+  plan_note: 验收阈值未预注册——批次决策点填写并冻结前禁跑（SOP-B 护栏③）
+- object_id: BT-P3-018
+  node_ids:
+  - TDM-P-P3-04
+  node_type: strategy
+  layer: L0节点
+  map_layer: P3
+  flow: position_flow
+  market: cn_a
+  module_ref: src/zephyr/position/core/position_limit_enforcer.py
+  testable: true
+  confidence: untested
+  plan: null
+  plan_note: 验收阈值未预注册——批次决策点填写并冻结前禁跑（SOP-B 护栏③）
+- object_id: BT-P3-019
+  node_ids:
+  - TDM-X-S1
+  node_type: strategy
+  layer: L0节点
+  map_layer: S1
+  flow: exit_flow
+  market: cn_a
+  module_ref: null
+  testable: false
+  confidence: untested
+  testable_note: 结构点/容器环节——行为由子节点或全流承载（D108 合并判据），不独立开回测对象
+  plan: null
+  plan_note: 验收阈值未预注册——批次决策点填写并冻结前禁跑（SOP-B 护栏③）
+- object_id: BT-P3-020
+  node_ids:
+  - TDM-X-S2
+  node_type: strategy
+  layer: L0节点
+  map_layer: S2
+  flow: exit_flow
+  market: cn_a
+  module_ref: null
+  testable: false
+  confidence: untested
+  testable_note: 结构点/容器环节——行为由子节点或全流承载（D108 合并判据），不独立开回测对象
+  plan: null
+  plan_note: 验收阈值未预注册——批次决策点填写并冻结前禁跑（SOP-B 护栏③）
+- object_id: BT-P3-021
+  node_ids:
+  - TDM-X-R1
+  node_type: aggregation
+  layer: L0节点
+  map_layer: X1
+  flow: exit_flow
+  market: cn_a
+  module_ref: src/zephyr/security/access_control/kill_switch.py
+  testable: true
+  confidence: untested
+  plan: null
+  plan_note: 验收阈值未预注册——批次决策点填写并冻结前禁跑（SOP-B 护栏③）
+- object_id: BT-P3-022
+  node_ids:
+  - TDM-X-R1-01
+  node_type: strategy
+  layer: L0节点
+  map_layer: X1
+  flow: exit_flow
+  market: cn_a
+  module_ref: src/zephyr/risk/core/drawdown_state_machine.py
+  testable: true
+  confidence: untested
+  plan: null
+  plan_note: 验收阈值未预注册——批次决策点填写并冻结前禁跑（SOP-B 护栏③）
+- object_id: BT-P3-023
+  node_ids:
+  - TDM-X-R1-02
+  node_type: strategy
+  layer: L0节点
+  map_layer: X1
+  flow: exit_flow
+  market: cn_a
+  module_ref: src/zephyr/risk/core/drawdown_liquidation_guard.py
+  testable: true
+  confidence: untested
+  plan: null
+  plan_note: 验收阈值未预注册——批次决策点填写并冻结前禁跑（SOP-B 护栏③）
+- object_id: BT-P3-024
+  node_ids:
+  - TDM-X-R1-03
+  node_type: strategy
+  layer: L0节点
+  map_layer: X1
+  flow: exit_flow
+  market: cn_a
+  module_ref: src/zephyr/position/core/defensive_asset_whitelist.py
+  testable: true
+  confidence: untested
+  plan: null
+  plan_note: 验收阈值未预注册——批次决策点填写并冻结前禁跑（SOP-B 护栏③）
+- object_id: BT-P3-025
+  node_ids:
+  - TDM-X-S1-01
+  node_type: strategy
+  layer: L0节点
+  map_layer: S1
+  flow: exit_flow
+  market: cn_a
+  module_ref: src/zephyr/sell_decision/core/sell_signal_collector.py
+  testable: true
+  confidence: untested
+  plan: null
+  plan_note: 验收阈值未预注册——批次决策点填写并冻结前禁跑（SOP-B 护栏③）
+- object_id: BT-P3-026
+  node_ids:
+  - TDM-X-S1-02
+  node_type: strategy
+  layer: L0节点
+  map_layer: S1
+  flow: exit_flow
+  market: cn_a
+  module_ref: src/zephyr/sell_decision/core/stop_loss_strategy.py
+  testable: true
+  confidence: untested
+  plan: null
+  plan_note: 验收阈值未预注册——批次决策点填写并冻结前禁跑（SOP-B 护栏③）
+- object_id: BT-P3-027
+  node_ids:
+  - TDM-X-S1-03
+  node_type: strategy
+  layer: L0节点
+  map_layer: S1
+  flow: exit_flow
+  market: cn_a
+  module_ref: src/zephyr/sell_decision/core/take_profit_strategy.py
+  testable: true
+  confidence: untested
+  plan: null
+  plan_note: 验收阈值未预注册——批次决策点填写并冻结前禁跑（SOP-B 护栏③）
+- object_id: BT-P3-028
+  node_ids:
+  - TDM-X-S1-04
+  node_type: strategy
+  layer: L0节点
+  map_layer: S1
+  flow: exit_flow
+  market: cn_a
+  module_ref: src/zephyr/sell_decision/core/breakout_failure_detector.py
+  testable: true
+  confidence: untested
+  plan: null
+  plan_note: 验收阈值未预注册——批次决策点填写并冻结前禁跑（SOP-B 护栏③）
+- object_id: BT-P3-029
+  node_ids:
+  - TDM-X-S1-05
+  node_type: aggregation
+  layer: L0节点
+  map_layer: S1
+  flow: exit_flow
+  market: cn_a
+  module_ref: src/zephyr/sell_decision/core/sell_signal_fusion_engine.py
+  testable: true
+  confidence: untested
+  plan: null
+  plan_note: 验收阈值未预注册——批次决策点填写并冻结前禁跑（SOP-B 护栏③）
+- object_id: BT-P3-030
+  node_ids:
+  - TDM-X-S1-06
+  node_type: strategy
+  layer: L0节点
+  map_layer: S1
+  flow: exit_flow
+  market: cn_a
+  module_ref: src/zephyr/trading/strategy_abnormal_exit_orchestrator.py
+  testable: true
+  confidence: untested
+  plan: null
+  plan_note: 验收阈值未预注册——批次决策点填写并冻结前禁跑（SOP-B 护栏③）
+- object_id: BT-P3-031
+  node_ids:
+  - TDM-X-S2-02
+  node_type: strategy
+  layer: L0节点
+  map_layer: S2
+  flow: exit_flow
+  market: cn_a
+  module_ref: src/zephyr/position/core/t1_sellable.py
+  testable: true
+  confidence: untested
+  plan: null
+  plan_note: 验收阈值未预注册——批次决策点填写并冻结前禁跑（SOP-B 护栏③）
+- object_id: BT-P3-032
+  node_ids:
+  - TDM-X-S2-03
+  node_type: strategy
+  layer: L0节点
+  map_layer: S2
+  flow: exit_flow
+  market: cn_a
+  module_ref: src/zephyr/ex_sor/core/sell_session_router.py
+  testable: true
+  confidence: untested
+  plan: null
+  plan_note: 验收阈值未预注册——批次决策点填写并冻结前禁跑（SOP-B 护栏③）
+- object_id: BT-P3-033
+  node_ids:
+  - TDM-X-S2-04
+  node_type: strategy
+  layer: L0节点
+  map_layer: S2
+  flow: exit_flow
+  market: cn_a
+  module_ref: src/zephyr/ex_core/local_order_queue.py
+  testable: true
+  confidence: untested
+  plan: null
+  plan_note: 验收阈值未预注册——批次决策点填写并冻结前禁跑（SOP-B 护栏③）
+- object_id: BT-P3-034
+  node_ids:
+  - TDM-X-S2-05
+  node_type: strategy
+  layer: L0节点
+  map_layer: S2
+  flow: exit_flow
+  market: cn_a
+  module_ref: src/zephyr/sell_decision/core/scaling_out.py
+  testable: true
+  confidence: untested
+  plan: null
+  plan_note: 验收阈值未预注册——批次决策点填写并冻结前禁跑（SOP-B 护栏③）
+- object_id: BT-P3-035
+  node_ids:
+  - TDM-X-S2-06
+  node_type: strategy
+  layer: L0节点
+  map_layer: S2
+  flow: exit_flow
+  market: cn_a
+  module_ref: src/zephyr/sell_decision/core/sell_execution_quality_tracker.py
+  testable: true
+  confidence: untested
+  plan: null
+  plan_note: 验收阈值未预注册——批次决策点填写并冻结前禁跑（SOP-B 护栏③）
+- object_id: BT-P3-036
+  node_ids:
+  - TDM-F-C1
+  node_type: gate
+  layer: L0节点
+  map_layer: C1
+  flow: portfolio_flow
+  market: cn_a
+  module_ref: src/zephyr/pf_alloc/core/multi_strategy_capital_allocator.py
+  testable: true
+  confidence: untested
+  plan: null
+  plan_note: 验收阈值未预注册——批次决策点填写并冻结前禁跑（SOP-B 护栏③）
+- object_id: BT-P3-037
+  node_ids:
+  - TDM-F-C2
+  node_type: aggregation
+  layer: L0节点
+  map_layer: C2
+  flow: portfolio_flow
+  market: cn_a
+  module_ref: null
+  testable: false
+  confidence: untested
+  testable_note: 结构点/容器环节——行为由子节点或全流承载（D108 合并判据），不独立开回测对象
+  plan: null
+  plan_note: 验收阈值未预注册——批次决策点填写并冻结前禁跑（SOP-B 护栏③）
+- object_id: BT-P3-038
+  node_ids:
+  - TDM-F-C3
+  node_type: strategy
+  layer: L0节点
+  map_layer: C3
+  flow: portfolio_flow
+  market: cn_a
+  module_ref: null
+  testable: false
+  confidence: untested
+  testable_note: 结构点/容器环节——行为由子节点或全流承载（D108 合并判据），不独立开回测对象
+  plan: null
+  plan_note: 验收阈值未预注册——批次决策点填写并冻结前禁跑（SOP-B 护栏③）
+- object_id: BT-P3-039
+  node_ids:
+  - TDM-F-C2-01
+  node_type: aggregation
+  layer: L0节点
+  map_layer: C2
+  flow: portfolio_flow
+  market: cn_a
+  module_ref: src/zephyr/position/core/firm_risk_aggregator.py
+  testable: true
+  confidence: untested
+  plan: null
+  plan_note: 验收阈值未预注册——批次决策点填写并冻结前禁跑（SOP-B 护栏③）
+- object_id: BT-P3-040
+  node_ids:
+  - TDM-F-C2-02
+  node_type: strategy
+  layer: L0节点
+  map_layer: C2
+  flow: portfolio_flow
+  market: cn_a
+  module_ref: src/zephyr/position/core/firm_risk_aggregator.py
+  testable: true
+  confidence: untested
+  plan: null
+  plan_note: 验收阈值未预注册——批次决策点填写并冻结前禁跑（SOP-B 护栏③）
+- object_id: BT-P3-041
+  node_ids:
+  - TDM-F-C2-03
+  node_type: strategy
+  layer: L0节点
+  map_layer: C2
+  flow: portfolio_flow
+  market: cn_a
+  module_ref: src/zephyr/position/core/correlation_regime_monitor.py
+  testable: true
+  confidence: untested
+  plan: null
+  plan_note: 验收阈值未预注册——批次决策点填写并冻结前禁跑（SOP-B 护栏③）
+- object_id: BT-P3-042
+  node_ids:
+  - TDM-F-C2-04
+  node_type: strategy
+  layer: L0节点
+  map_layer: C2
+  flow: portfolio_flow
+  market: cn_a
+  module_ref: src/zephyr/position/core/budget_change_handler.py
+  testable: true
+  confidence: untested
+  plan: null
+  plan_note: 验收阈值未预注册——批次决策点填写并冻结前禁跑（SOP-B 护栏③）
+- object_id: BT-P3-043
+  node_ids:
+  - TDM-F-C3-01
+  node_type: aggregation
+  layer: L0节点
+  map_layer: C3
+  flow: portfolio_flow
+  market: cn_a
+  module_ref: src/zephyr/pf_core/core/performance_attribution_engine.py
+  testable: true
+  confidence: untested
+  plan: null
+  plan_note: 验收阈值未预注册——批次决策点填写并冻结前禁跑（SOP-B 护栏③）
+- object_id: BT-P3-044
+  node_ids:
+  - TDM-F-C3-02
+  node_type: strategy
+  layer: L0节点
+  map_layer: C3
+  flow: portfolio_flow
+  market: cn_a
+  module_ref: src/zephyr/factor/governance/lifecycle_state_machine.py
+  testable: true
+  confidence: untested
+  plan: null
+  plan_note: 验收阈值未预注册——批次决策点填写并冻结前禁跑（SOP-B 护栏③）
+- object_id: BT-P3-045
+  node_ids:
+  - TDM-F-C3-03
+  node_type: strategy
+  layer: L0节点
+  map_layer: C3
+  flow: portfolio_flow
+  market: cn_a
+  module_ref: src/zephyr/pf_alloc/core/regime_meta_allocator.py
+  testable: true
+  confidence: untested
+  plan: null
+  plan_note: 验收阈值未预注册——批次决策点填写并冻结前禁跑（SOP-B 护栏③）
+- object_id: BT-P3-046
+  node_ids:
+  - TDM-F-C3-04
+  node_type: strategy
+  layer: L0节点
+  map_layer: C3
+  flow: portfolio_flow
+  market: cn_a
+  module_ref: src/zephyr/backtest/core/walk_forward.py
+  testable: true
+  confidence: untested
+  plan: null
+  plan_note: 验收阈值未预注册——批次决策点填写并冻结前禁跑（SOP-B 护栏③）
+- object_id: BT-P3-047
+  node_ids:
+  - TDM-F-C3-05
+  node_type: strategy
+  layer: L0节点
+  map_layer: C3
+  flow: portfolio_flow
+  market: cn_a
+  module_ref: src/zephyr/signal_quality/signal_degradation_monitor.py
+  testable: true
+  confidence: untested
+  plan: null
+  plan_note: 验收阈值未预注册——批次决策点填写并冻结前禁跑（SOP-B 护栏③）
+- object_id: BT-P3-048
+  node_ids:
+  - TDM-C-L1
+  node_type: gate
+  layer: L0节点
+  map_layer: L1
+  flow: entry_flow
+  market: crypto
+  module_ref: null
+  testable: true
+  confidence: untested
+  pending_build: true
+  plan: null
+  plan_note: 验收阈值未预注册——批次决策点填写并冻结前禁跑（SOP-B 护栏③）
+- object_id: BT-P3-049
+  node_ids:
+  - TDM-C-L2
+  node_type: strategy
+  layer: L0节点
+  map_layer: L2
+  flow: entry_flow
+  market: crypto
+  module_ref: null
+  testable: false
+  confidence: untested
+  testable_note: 结构点/容器环节——行为由子节点或全流承载（D108 合并判据），不独立开回测对象
+  plan: null
+  plan_note: 验收阈值未预注册——批次决策点填写并冻结前禁跑（SOP-B 护栏③）
+- object_id: BT-P3-050
+  node_ids:
+  - TDM-C-L3
+  node_type: strategy
+  layer: L0节点
+  map_layer: L3
+  flow: entry_flow
+  market: crypto
+  module_ref: null
+  testable: false
+  confidence: untested
+  testable_note: 结构点/容器环节——行为由子节点或全流承载（D108 合并判据），不独立开回测对象
+  plan: null
+  plan_note: 验收阈值未预注册——批次决策点填写并冻结前禁跑（SOP-B 护栏③）
+- object_id: BT-P3-051
+  node_ids:
+  - TDM-C-L4
+  node_type: strategy
+  layer: L0节点
+  map_layer: L4
+  flow: entry_flow
+  market: crypto
+  module_ref: null
+  testable: false
+  confidence: untested
+  testable_note: 结构点/容器环节——行为由子节点或全流承载（D108 合并判据），不独立开回测对象
+  plan: null
+  plan_note: 验收阈值未预注册——批次决策点填写并冻结前禁跑（SOP-B 护栏③）
+- object_id: BT-P0-003
+  node_ids:
+  - TDM-E-L4-09
+  - TDM-P-P2-01
+  - TDM-P-P2-03
+  - TDM-X-S2-01
+  node_type: aggregation
+  layer: L0节点
+  map_layer: cross_cutting
+  flow: cross_flow
+  market: cn_a
+  module_ref: cost_model_registry(CST-ASTOCK-001/CST-T0-001)
+  testable: true
+  confidence: untested
+  merge_note: 成本模型三件套（SOP-A P0 铁行）：cost_model_refs 承载节点族合并验证
+  plan:
+    validation_method: exec_quality
+    min_samples: 总触发>=30（土规）
+    thresholds:
+      slip_bp_valid: 20.0
+      slip_bp_pending: 40.0
+      cost_items: 佣金+印花税+滑点+市场冲击+做T额外成本（费率读实际账户配置，禁硬编码）
+    verdict_mapping: 滑点均值<=20bp→valid；<=40bp→pending；>40bp→noise（registry exec_quality 土规线）
+    threshold_status: draft
+    source: validation_method_registry.yaml exec_quality（裁定土规线，非 AI 提案）

@@ -645,6 +645,10 @@ _GOVERNANCE_EXEMPT = frozenset(
         "ai_risk_register.yaml",
         "ai_session_registry.yaml",
         "architecture_issue_registry.yaml",
+        # backtest_backlog.yaml 已于 2026-09-12 登记豁免（R1-R5 证据链批同步）——
+        # 回测治理类（SOP-A A0 预注册表）：不挂 TDM 决策索引；强制=SOP-B 护栏③预注册纪律
+        # （threshold_status=draft 禁跑，冻结只许批次决策点公开修订）+ run_archive 台账回执链
+        "backtest_backlog.yaml",
         "battle_map_domain_policy.yaml",
         "business_streams_registry.yaml",
         "candidate_module_registry.yaml",
@@ -661,6 +665,10 @@ _GOVERNANCE_EXEMPT = frozenset(
         "external_contract_verification_registry.yaml",
         "feature_adjudication_registry.yaml",
         "field_dictionary.yaml",
+        # industry_graph_field_dictionary.yaml 已于 2026-09-11 登记豁免（满贯批 A5 同步）——
+        # schema 字典类（同 field_dictionary 先例）：不入 TDM 决策索引；其强制=
+        # tests/industry_graph/test_field_dictionary_alignment.py 四方测试 + INDUSTRY-CHAIN-MAP gate(141) 结构四边
+        "industry_graph_field_dictionary.yaml",
         "frontier_llm_benchmark_ranking.yaml",
         "frontmatter_field_registry.yaml",
         "functional_domain_registry.yaml",
