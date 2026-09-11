@@ -88,7 +88,12 @@ class TestOrchestratorDegraded:
         """降级 + fail_closed=True → passed=False（铁律阻断）。"""
         cfg = CloneGuardConfig(fail_closed=True)
         orch = CloneGuardOrchestrator(tmp_path, cfg)
-        with patch.object(orch._echo_guard, "detect", return_value=([], True)):
+        # 2026-09-12 redup 接活：本机 redup CLI 已实装——隔离测试 MUST 同时 mock
+        # redup 引擎（否则其真实运行会改变 degraded/consensus 判定）。
+        with (
+            patch.object(orch._echo_guard, "detect", return_value=([], True)),
+            patch.object(orch._redup, "detect", return_value=([], True)),
+        ):
             result = orch.check(["src/foo.py"])
         assert result.passed is False
         assert result.degraded is True
@@ -218,19 +223,23 @@ class TestOrchestratorMultiEngine:
         with (
             patch.object(orch._echo_guard, "detect", return_value=([eg_finding], False)),
             patch.object(orch._ast_grep, "detect", return_value=([sg_finding], False)),
+            patch.object(orch._redup, "detect", return_value=([], False)),
         ):
             result = orch.check(["src/new.py"])
         assert result.passed is False  # extract 就高 → 阻断
         assert len(result.findings) == 1
         f = result.findings[0]
-        assert f.consensus == "unanimous"
+        # 2026-09-12 redup 接活：活跃引擎 2→3（redup 健康但本例未报此克隆），
+        # 2/3 票= majority（unanimous 需 3/3）。引擎数增加→共识标准变严=聚合器正确语义。
+        assert f.consensus == "majority"
         assert f.severity == "extract"  # 就高原则
         assert f.similarity == 0.95  # 取最大
         assert set(f.engines) == {"echo_guard", "ast_grep"}
-        assert result.consensus_summary == {"unanimous": 1}
+        assert result.consensus_summary == {"majority": 1}
 
     def test_consensus_summary_mixed(self, tmp_path: Path):
-        """混合共识：f1 两引擎一致(unanimous) + f2 仅 ast_grep(majority)。"""
+        """混合共识（2026-09-12 redup 接活后活跃引擎=3）：f1 两引擎一致(majority 2/3)
+        + f2 仅 ast_grep(single 1/3)。unanimous 需 3/3 全票。"""
         orch = CloneGuardOrchestrator(tmp_path)
         # f1：两引擎报相同去重键
         eg_f1 = _make_finding(severity="review", similarity=0.8)
@@ -256,11 +265,13 @@ class TestOrchestratorMultiEngine:
         with (
             patch.object(orch._echo_guard, "detect", return_value=([eg_f1], False)),
             patch.object(orch._ast_grep, "detect", return_value=([sg_f1, sg_f2], False)),
+            patch.object(orch._redup, "detect", return_value=([], False)),
         ):
             result = orch.check(["src/new.py"])
         assert result.passed is True  # 全 review
         assert len(result.findings) == 2
-        assert result.consensus_summary == {"unanimous": 1, "majority": 1}
+        # redup 接活后活跃引擎=3：2/3 票=majority、1/3 票=single
+        assert result.consensus_summary == {"majority": 1, "single": 1}
 
     def test_ast_grep_rule_finding_flows_through(self, tmp_path: Path):
         """ast_grep 结构反模式 finding 流经聚合器（clone_type=rule 保留）。"""
@@ -828,9 +839,9 @@ class TestAcknowledgedSuppression:
         ack = tmp_path / "echo-guard.yml"
         ack.write_text(
             "acknowledged:\n"
-            f"- id: \"{stable_key}:00000000\"\n"
+            f'- id: "{stable_key}:00000000"\n'
             "  verdict: intentional\n"
-            f"  stable_key: \"{stable_key}\"\n"
+            f'  stable_key: "{stable_key}"\n'
             "  note: test fixture\n",
             encoding="utf-8",
         )
@@ -840,14 +851,27 @@ class TestAcknowledgedSuppression:
         from zephyr.clone_guard.aggregator import AggregatedFinding, AggregationResult
 
         f1 = AggregatedFinding(
-            finding_id="AGG-x", severity=severity, clone_type="type3", similarity=0.58,
-            source_file=source_file, source_function=source_function, source_lineno=1,
-            existing_file=existing_file, existing_function=existing_function, existing_lineno=2,
-            import_suggestion=None, engines=("ast_grep",), engine_severities={},
-            engine_similarities={}, consensus="unanimous", vote_count=1, active_engine_count=1,
+            finding_id="AGG-x",
+            severity=severity,
+            clone_type="type3",
+            similarity=0.58,
+            source_file=source_file,
+            source_function=source_function,
+            source_lineno=1,
+            existing_file=existing_file,
+            existing_function=existing_function,
+            existing_lineno=2,
+            import_suggestion=None,
+            engines=("ast_grep",),
+            engine_severities={},
+            engine_similarities={},
+            consensus="unanimous",
+            vote_count=1,
+            active_engine_count=1,
         )
-        return AggregationResult(findings=[f1], degraded_engines=[], active_engine_count=1,
-                                 total_raw_findings=1, deduplicated_count=1)
+        return AggregationResult(
+            findings=[f1], degraded_engines=[], active_engine_count=1, total_raw_findings=1, deduplicated_count=1
+        )
 
     def test_registered_pair_demoted_to_acknowledged(self, tmp_path: Path):
         """已登记克隆对（任意引擎报告）severity 降级 acknowledged——不阻断。"""

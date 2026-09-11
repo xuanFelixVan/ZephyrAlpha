@@ -33,6 +33,19 @@ def _load_fixture() -> dict:
     return json.loads(_FIXTURE.read_text(encoding="utf-8"))
 
 
+# fixture 涉及的全部 source 文件（own-scope 过滤 2026-09-12 接活后，解析类测试
+# MUST 以完整检测集调用 detect，findings 才不被过滤掉）。
+FIXTURE_FILES = {
+    "src/api.py",
+    "src/auth.py",
+    "src/billing.py",
+    "src/gen_a.py",
+    "src/gen_b.py",
+    "src/invoice.py",
+    "src/utils.py",
+}
+
+
 def _mock_result(stdout: str, returncode: int = 1) -> MagicMock:
     return MagicMock(returncode=returncode, stdout=stdout, stderr="")
 
@@ -122,6 +135,28 @@ class TestRedupAdapterDetectDegradation:
         assert findings == []
         assert degraded is False
 
+    def test_banner_prefixed_mixed_output_parsed(self, tmp_path: Path):
+        """redup 1.x 实装形态（2026-09-12 接活治本）：stdout=进度 banner+JSON 混合——
+        从首个 "{" 截取解析成功、不降级（裸 loads 形态的回归锁）。"""
+        adapter = RedupAdapter(tmp_path, CloneGuardConfig())
+        fixture = json.dumps(_load_fixture())
+        banner = "🧩 Changed-only mode: 307 file(s) selected from git diff vs HEAD\n🔍 Scanning: X\n"
+        with patch("shutil.which", return_value="/fake/redup"):
+            with patch("subprocess.run", return_value=_mock_result(banner + fixture, returncode=0)):
+                findings, degraded = adapter.detect(["src/foo.py"])
+        assert degraded is False
+        # fixture 里的 groups 应正常解析为 findings（非空即证混合路径活了）
+        assert isinstance(findings, list)
+
+    def test_banner_without_brace_degraded(self, tmp_path: Path):
+        """纯 banner 无 JSON 主体（CLI 崩溃半截输出）→ 降级不误判。"""
+        adapter = RedupAdapter(tmp_path, CloneGuardConfig())
+        with patch("shutil.which", return_value="/fake/redup"):
+            with patch("subprocess.run", return_value=_mock_result("🧩 banner only, no json", returncode=0)):
+                findings, degraded = adapter.detect(["src/foo.py"])
+        assert findings == []
+        assert degraded is True
+
 
 class TestRedupCommandBuilding:
     """_build_command 命令构造测试。"""
@@ -205,7 +240,7 @@ class TestRedupFixtureParsing:
         data = _load_fixture()
         with patch("shutil.which", return_value="/fake/redup"):
             with patch("subprocess.run", return_value=_mock_result(json.dumps(data), returncode=1)):
-                findings, degraded = adapter.detect(["src/foo.py"])
+                findings, degraded = adapter.detect(sorted(FIXTURE_FILES))
         assert degraded is False
         assert len(findings) == 4  # grp-001(3frag→2) + grp-002(2frag→1) + grp-003(2frag→1)
 
@@ -215,7 +250,7 @@ class TestRedupFixtureParsing:
         data = _load_fixture()
         with patch("shutil.which", return_value="/fake/redup"):
             with patch("subprocess.run", return_value=_mock_result(json.dumps(data), returncode=1)):
-                findings, _ = adapter.detect(["src/foo.py"])
+                findings, _ = adapter.detect(sorted(FIXTURE_FILES))
         grp1 = [f for f in findings if f.finding_id.startswith("RD-grp-001")]
         assert len(grp1) == 2
         for f in grp1:
@@ -229,7 +264,7 @@ class TestRedupFixtureParsing:
         data = _load_fixture()
         with patch("shutil.which", return_value="/fake/redup"):
             with patch("subprocess.run", return_value=_mock_result(json.dumps(data), returncode=1)):
-                findings, _ = adapter.detect(["src/foo.py"])
+                findings, _ = adapter.detect(sorted(FIXTURE_FILES))
         grp2 = [f for f in findings if f.finding_id.startswith("RD-grp-002")]
         assert len(grp2) == 1
         assert grp2[0].severity == "review"
@@ -241,7 +276,7 @@ class TestRedupFixtureParsing:
         data = _load_fixture()
         with patch("shutil.which", return_value="/fake/redup"):
             with patch("subprocess.run", return_value=_mock_result(json.dumps(data), returncode=1)):
-                findings, _ = adapter.detect(["src/foo.py"])
+                findings, _ = adapter.detect(sorted(FIXTURE_FILES))
         grp3 = [f for f in findings if f.finding_id.startswith("RD-grp-003")]
         assert len(grp3) == 1
         assert grp3[0].severity == "acknowledged"
@@ -252,7 +287,7 @@ class TestRedupFixtureParsing:
         data = _load_fixture()
         with patch("shutil.which", return_value="/fake/redup"):
             with patch("subprocess.run", return_value=_mock_result(json.dumps(data), returncode=1)):
-                findings, _ = adapter.detect(["src/foo.py"])
+                findings, _ = adapter.detect(sorted(FIXTURE_FILES))
         grp1 = [f for f in findings if f.finding_id.startswith("RD-grp-001")]
         # source = fragments[0] (src/auth.py:validate_input @ line_start=10)
         assert grp1[0].source_file == "src/auth.py"
@@ -272,7 +307,7 @@ class TestRedupFixtureParsing:
         data = _load_fixture()
         with patch("shutil.which", return_value="/fake/redup"):
             with patch("subprocess.run", return_value=_mock_result(json.dumps(data), returncode=1)):
-                findings, _ = adapter.detect(["src/foo.py"])
+                findings, _ = adapter.detect(sorted(FIXTURE_FILES))
         grp1 = [f for f in findings if f.finding_id.startswith("RD-grp-001")]
         assert grp1[0].import_suggestion == "from src.validators import validate_input"
         # grp-002/003 无 refactor_suggestion → None
@@ -285,7 +320,7 @@ class TestRedupFixtureParsing:
         data = _load_fixture()
         with patch("shutil.which", return_value="/fake/redup"):
             with patch("subprocess.run", return_value=_mock_result(json.dumps(data), returncode=1)):
-                findings, _ = adapter.detect(["src/foo.py"])
+                findings, _ = adapter.detect(sorted(FIXTURE_FILES))
         ids = {f.finding_id for f in findings}
         assert "RD-grp-001-1" in ids
         assert "RD-grp-001-2" in ids

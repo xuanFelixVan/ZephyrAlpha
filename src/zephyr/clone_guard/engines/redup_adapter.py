@@ -118,8 +118,11 @@ class RedupAdapter:
         """检测给定文件的语义克隆。
 
         Args:
-            files: 待检测文件路径列表（相对路径）。reDUP 的扫描范围由 --changed-only /
-                --semantic 决定，files 仅用于空值守卫（空列表短路）。
+            files: 待检测文件路径列表（相对路径，own-scope 后的检测集）。
+                reDUP 的扫描范围由 --changed-only/--semantic 决定（git diff 口径，
+                含共享暂存区外来 WIP）——本适配器在 findings 解析后按 files 过滤，
+                只保留 source_file 命中检测集的报告（2026-09-12 接活治本：原实现
+                redup 报外来文件的克隆会阻断无关会话的提交）。
             timeout: 超时秒数（None 时使用配置默认值）。
 
         Returns:
@@ -138,6 +141,10 @@ class RedupAdapter:
         if shutil.which("redup") is None:
             logger.debug("RedupAdapter: reDUP CLI 未安装，跳过检测")
             return [], True
+
+        # own-scope 过滤集（normcase 相对路径；file 参数可能是绝对路径）
+        scope = {os.path.normcase(os.path.relpath(f, self._repo_root)).replace("\\", "/") for f in files}
+        scope |= {os.path.normcase(f).replace("\\", "/") for f in files}
 
         timeout_sec = timeout or self._config.pre_commit_timeout_sec
         cmd = self._build_command()
@@ -170,15 +177,34 @@ class RedupAdapter:
             )
             return [], True
 
-        # 解析 JSON 输出
+        # 解析 JSON 输出（2026-09-12 接活治本：redup 1.x 实装后实测 stdout =
+        # 进度 banner（emoji 行，~550B）+ JSON 文档混合——裸 loads 必失败恒降级。
+        # 兼容双形态：纯 JSON（老版/--output）→ 直接 loads；混合 → 从首个 "{" 截取。
         try:
-            data = json.loads(result.stdout) if result.stdout.strip() else {}
+            raw = result.stdout or ""
+            try:
+                data = json.loads(raw) if raw.strip() else {}
+            except json.JSONDecodeError:
+                brace = raw.find("{")
+                if brace < 0:
+                    raise
+                data = json.loads(raw[brace:])
         except json.JSONDecodeError as e:
             logger.warning("RedupAdapter degraded: JSON 解析失败(%s)", e)
             return [], True
 
         findings = self._parse_findings(data)
-        return findings, False
+        # own-scope 过滤：redup 按 git diff 口径扫描（含外来 WIP），只保留
+        # source_file 命中本次检测集的发现——外来文件的克隆由其归属会话提交时
+        # 自行发现（全部提交走唯一入口，覆盖保证不变）。
+        scoped = [f for f in findings if getattr(f, "source_file", "") in scope]
+        if len(scoped) != len(findings):
+            logger.info(
+                "RedupAdapter: own-scope 过滤 %d -> %d（外来文件的克隆不阻断本会话）",
+                len(findings),
+                len(scoped),
+            )
+        return scoped, False
 
     def _build_command(self) -> list[str]:
         """构造 reDUP scan 命令（依据 config.redup_mode 选择 L1/L2 模式）。
