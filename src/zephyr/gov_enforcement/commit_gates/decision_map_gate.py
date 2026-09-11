@@ -5,7 +5,7 @@
 # [CONSUMERS] zephyr.gov_enforcement.rule_bridge.git_commit_gateway.GitCommitGateway.__init__（经 in_process_gate_registry.yaml 自动注册）
 # [STARTUP] imported
 # [MATURITY] testing
-# [INVARIANTS] 硬阻断（确定性校验）——config/trading_decision_map.yaml R1-R8 error 级缺口>0 → 阻断 commit；恒跑（读 4 个 YAML+AST 扫描，实测 ~8.2s，2026-09-10 计时 harness 纠偏——原"毫秒级"自述失真；不按文件过滤——地图被任何提交改动都可能产生引用断链）；校验逻辑单一真源=check_decision_map.py（gate 只做阻塞语义封装，禁复制 R1-R8）；YAML 解析异常=fail-closed（真源损坏必须先修）
+# [INVARIANTS] 硬阻断（确定性校验）——config/trading_decision_map.yaml R1-R8 error 级缺口>0 → 阻断 commit；触发式（2026-09-11 Owner 批准收窄，方案 §5-4）——本 commit（files∪held）触及地图输入面（地图 YAML+strategy/factor/data_asset 三注册表+pf_core/**.py）才全量校验（读 4 个 YAML+AST 扫描，实测 ~8.2s），无归属信息退化恒跑保守；校验逻辑单一真源=check_decision_map.py（gate 只做阻塞语义封装，禁复制 R1-R8）；YAML 解析异常=fail-closed（真源损坏必须先修）
 # [MODIFY-GUARD] gate_id="DECISION-MAP"；check 闭包签名 (gateway, files, **kwargs) -> tuple[bool, str]
 # [STABILITY] evolving
 # [SAFETY] L
@@ -28,7 +28,7 @@
 
 设计权衡
 --------
-1. **恒跑**：读 4 个 YAML + AST 扫描 pf_core（实测 ~8.2s，2026-09-10 计时 harness 纠偏——原自述"毫秒级~十毫秒级"失真），不按文件过滤。
+1. **触发式（2026-09-11 Owner 批准收窄）**：本 commit 触及地图输入面才跑全量（读 4 个 YAML + AST 扫描 pf_core，实测 ~8.2s）；无归属信息退化恒跑保守（原行为）。
 2. **error=阻断**：R1-R8 全部确定性校验（非启发式），镜像 FRONTEND-MAP 分层。
 3. **校验逻辑单一真源**：R1-R8 只在 zephyr.trading.decision_map.validate_decision_map
    实现，scripts 层 check_decision_map.py 封装，gate 动态复用——禁复制。
@@ -69,10 +69,12 @@ Usage::
 from __future__ import annotations
 
 import logging
+import os
 import sys
 from pathlib import Path
 from typing import Final
 
+from zephyr.gov_enforcement.commit_gates._diff_helpers import _build_own_scope, _norm_rel
 from zephyr.gov_enforcement.rule_bridge.commit_gate_registry import GateSpec
 
 logger = logging.getLogger(__name__)
@@ -81,6 +83,25 @@ __all__: Final = ["make_decision_map_gate"]
 
 # 校验逻辑单一真源（scripts 层 check_decision_map.py），动态加载（先例：frontend_map_gate）
 _GENERATORS_DIR = Path(__file__).resolve().parents[4] / "scripts" / "governance" / "d5_architecture" / "generators"
+
+# 地图输入面（触发式收窄真源，2026-09-11 Owner 批准，方案 §5-4）：与
+# check_decision_map.run_checks 的读取面一一对应——地图 YAML + 三注册表 + pf_core AST。
+# 常量侧同过 os.path.normcase（Windows=小写+反斜杠），与 _norm_rel 输出同域可比。
+_MAP_INPUT_YAML: Final = frozenset(
+    os.path.normcase(p)
+    for p in (
+        "config/trading_decision_map.yaml",
+        "docs/01_policies_and_standards/_registry/catalogs/strategy_registry.yaml",
+        "docs/01_policies_and_standards/_registry/catalogs/factor_registry.yaml",
+        "docs/01_policies_and_standards/_registry/catalogs/data_asset_registry.yaml",
+    )
+)
+_PF_CORE_PREFIX: Final = os.path.normcase("src/zephyr/pf_core/")
+
+
+def _is_map_input(norm_rel: str) -> bool:
+    """normcase 归一后的相对路径是否命中地图输入面。"""
+    return norm_rel in _MAP_INPUT_YAML or (norm_rel.startswith(_PF_CORE_PREFIX) and norm_rel.endswith(".py"))
 
 
 def make_decision_map_gate() -> GateSpec:
@@ -91,6 +112,15 @@ def make_decision_map_gate() -> GateSpec:
     """
 
     def _check(gateway, files: list[str], **kwargs) -> tuple[bool, str]:
+        # 触发式收窄（2026-09-11 Owner 批准，方案 §5-4）：本 commit（files∪held）未触及
+        # 地图输入面（trading_decision_map.yaml + strategy/factor/data_asset 三注册表 +
+        # pf_core/**.py）时跳过全量校验（实测 8-10s）——地图断链只能由这些文件的改动
+        # 引入，触及者（含地图归属会话）必经全量校验，覆盖保证不变；own_scope=None
+        # （无归属信息）→ 退化为恒跑（保守面不改宽，原 INVARIANTS 行为）。
+        own_scope = _build_own_scope(gateway, files, kwargs.get("session_id"))
+        if own_scope is not None and not any(_is_map_input(f) for f in own_scope):
+            return True, "skip: 本 commit 未触及地图输入面（触发式收窄，2026-09-11 Owner 批准）"
+
         if str(_GENERATORS_DIR) not in sys.path:
             sys.path.insert(0, str(_GENERATORS_DIR))
         try:

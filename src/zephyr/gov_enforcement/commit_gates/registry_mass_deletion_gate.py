@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 # [BLUEPRINT] MOD-GATE_ENGINE | docs/03_modules/_cross_layer/gate_engine/blueprint.md | §0.1
 # [MODULE] zephyr.gov_enforcement.commit_gates.registry_mass_deletion_gate
 # [DOMAIN] D_GOV_CODE_QUALITY
@@ -54,7 +53,12 @@ import re
 import time
 from pathlib import Path
 
-from zephyr.gov_enforcement.commit_gates._diff_helpers import _read_staged_file
+from zephyr.gov_enforcement.commit_gates._diff_helpers import (
+    _audit_foreign_staged,
+    _build_own_scope,
+    _norm_rel,
+    _read_staged_file,
+)
 from zephyr.gov_enforcement.rule_bridge.commit_gate_registry import GateSpec
 
 logger = logging.getLogger(__name__)
@@ -104,9 +108,7 @@ def _line_delta(head: str, staged: str) -> tuple[int, int]:
     staged_lines = staged.splitlines()
     deleted = 0
     added = 0
-    for tag, i1, i2, j1, j2 in difflib.SequenceMatcher(
-        a=head_lines, b=staged_lines, autojunk=False
-    ).get_opcodes():
+    for tag, i1, i2, j1, j2 in difflib.SequenceMatcher(a=head_lines, b=staged_lines, autojunk=False).get_opcodes():
         if tag == "delete":
             deleted += i2 - i1
         elif tag == "insert":
@@ -160,25 +162,37 @@ def make_registry_mass_deletion_gate() -> GateSpec:
     """
 
     def _check(gateway, files: list[str], **kwargs) -> tuple[bool, str]:
-        del files  # 本 gate 按 staged 全量判定（净删行是文件级信号，与会话归属无关）
         message = str(kwargs.get("commit_message", "") or "")
         marker = _ALLOW_MARKER_RE.search(message)
 
         # 登记表是 .yaml——直接用底层 git diff 全量文件清单（.py 过滤器不适用）
         try:
-            result = gateway.run_git(
-                ["git", "diff", "--cached", "--name-only", "--diff-filter=AM"]
-            )
+            result = gateway.run_git(["git", "diff", "--cached", "--name-only", "--diff-filter=AM"])
             if result.returncode != 0:
                 return True, ""  # fail-open：git 失败不阻断
-            staged_all = [
-                f.replace("\\", "/")
-                for f in result.stdout.strip().splitlines()
-                if f and f.endswith(".yaml")
-            ]
+            staged_all = [f.replace("\\", "/") for f in result.stdout.strip().splitlines() if f and f.endswith(".yaml")]
         except Exception:  # noqa: BLE001 — fail-open
             logger.warning("REGISTRY-MASS-DELETION fail-open: git diff 异常", exc_info=True)
             return True, ""
+
+        # own-scope（#ARCH-GATE-OWN-SCOPE-001 推广批，2026-09-11）：本 gate 原按 staged
+        # 全量判定（净删行是文件级信号）。但 gateway 提交走 pathspec 只含本 session 文件
+        # ——外来 staged 登记表进不了本次 commit，其风险在归属会话提交时必经本闸（全部
+        # 提交走唯一入口，覆盖保证不变）。共享暂存区大登记表批（20+ catalogs YAML 逐个
+        # git show+YAML 解析）曾使 5 文件小提交付出 34.6s。own_scope=None（无归属信息）
+        # → 退化为旧行为扫全量（保守面不改宽）。
+        session_id = kwargs.get("session_id")
+        own_scope = _build_own_scope(gateway, files, session_id)
+        if own_scope is not None:
+            foreign_yaml = [f for f in staged_all if _norm_rel(gateway, f) not in own_scope]
+            if foreign_yaml:
+                _audit_foreign_staged(gateway, session_id, foreign_yaml, gate_name="REGISTRY-MASS-DELETION")
+                logger.warning(
+                    "REGISTRY-MASS-DELETION: %d 个外来 session staged .yaml 未检查（warn+审计，不阻断）: %s",
+                    len(foreign_yaml),
+                    ", ".join(foreign_yaml[:5]) + ("..." if len(foreign_yaml) > 5 else ""),
+                )
+                staged_all = [f for f in staged_all if _norm_rel(gateway, f) in own_scope]
 
         watch = [f for f in staged_all if _is_watch_file(f)]
         if not watch:

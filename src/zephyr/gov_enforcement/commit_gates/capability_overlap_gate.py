@@ -5,7 +5,7 @@
 # [CONSUMERS] zephyr.gov_enforcement.rule_bridge.git_commit_gateway.GitCommitGateway.__init__
 # [STARTUP] imported
 # [MATURITY] production
-# [INVARIANTS] Phase A 升级——extract 级克隆硬阻断(passed=False), review 级警告, CloneGuard 降级时 warn-only 兜底(passed=True); tests/ 豁免; token overlap 检查保留 warn-only(原有行为); CloneGuard 检查所有 staged .py 文件(AM filter); git diff 失败 fail-loud; token 匹配 ≥4 字符才告警
+# [INVARIANTS] Phase A 升级——extract 级克隆硬阻断(passed=False), review 级警告, CloneGuard 降级时 warn-only 兜底(passed=True); tests/ 豁免; token overlap 检查保留 warn-only(原有行为); CloneGuard 检查 staged .py 文件(AM filter)∩own-scope（2026-09-11 own-scope 推广：外来 staged 落审计不代查，None 退化全量）; git diff 失败 fail-loud; token 匹配 ≥4 字符才告警
 # [MODIFY-GUARD] gate_id="CAPABILITY-OVERLAP"；check 闭包签名 (gateway, files, **kwargs) -> tuple[bool, str]
 # [STABILITY] evolving
 # [SAFETY] L
@@ -76,6 +76,11 @@ import os
 import re
 from pathlib import Path
 
+from zephyr.gov_enforcement.commit_gates._diff_helpers import (
+    _audit_foreign_staged,
+    _build_own_scope,
+    _norm_rel,
+)
 from zephyr.gov_enforcement.rule_bridge.commit_gate_registry import GateSpec, is_test_exempt
 
 logger = logging.getLogger(__name__)
@@ -332,6 +337,25 @@ def make_capability_overlap_gate() -> GateSpec:
         all_staged_py = _get_all_staged_py_files(gateway)
         if not all_staged_py:
             return True, ""  # 无 .py 文件需检测
+
+        # own-scope（#ARCH-GATE-OWN-SCOPE-001 推广批，2026-09-11，方案 §2.6/§2.5-5d）：
+        # CloneGuard 只查本 session 文件（files∪held_files）；外来 staged 落审计不代查——
+        # 覆盖保证=每个文件随其归属会话过闸（全部提交走唯一入口）。own_scope=None
+        # （无归属信息）→ 退化为旧行为扫全量（保守面不改宽）。
+        session_id = kwargs.get("session_id")
+        own_scope = _build_own_scope(gateway, files, session_id)
+        if own_scope is not None:
+            foreign_staged = [f for f in all_staged_py if _norm_rel(gateway, f) not in own_scope]
+            if foreign_staged:
+                _audit_foreign_staged(gateway, session_id, foreign_staged, gate_name="CAPABILITY-OVERLAP")
+                logger.warning(
+                    "CAPABILITY-OVERLAP: %d 个外来 session staged 文件未检查（warn+审计，不阻断）: %s",
+                    len(foreign_staged),
+                    ", ".join(foreign_staged[:5]) + ("..." if len(foreign_staged) > 5 else ""),
+                )
+                all_staged_py = [f for f in all_staged_py if _norm_rel(gateway, f) in own_scope]
+                if not all_staged_py:
+                    return True, ""
 
         cg_result = _run_clone_guard_check(all_staged_py)
         if cg_result is None:
