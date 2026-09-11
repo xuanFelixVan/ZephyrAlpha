@@ -3,7 +3,7 @@ module_id: MOD-POS-026
 title: "护盘资产定向加仓白名单蓝图 — 熔断期窄门三重门"
 doc_type: blueprint
 status: Active
-version: "0.1.2"
+version: "0.1.3"
 design_maturity: production
 ttl: permanent
 layer: L03_position
@@ -88,6 +88,12 @@ TDM-X-R1-03 节点（决策地图）；未来由 X-R1-01 drawdown_state_machine 
 |---------|:---:|------|
 | `src/zephyr/position/core/defensive_asset_whitelist.py` | ✅ 已实现 | |
 
+### 7.2 测试文件
+
+| 文件路径 | 实现状态 | 说明 |
+|---------|:---:|------|
+| `tests/position/test_defensive_asset_whitelist.py` | ✅ 已实现 | |
+
 ### 7.5 路径索引使用指南
 
 **新 AI session 读取顺序**：
@@ -114,7 +120,7 @@ TDM-X-R1-03 节点（决策地图）；未来由 X-R1-01 drawdown_state_machine 
 
 | 图 | 位置 | 状态 | 链接 |
 |----|------|------|------|
-| 依赖图 (depgraph) | `blueprint_id=MOD-POS-026` 的 1 个 file 节点 | production | `extract_depgraph.py --modules MOD-POS-026` |
+| 依赖图 (depgraph) | `blueprint_id=MOD-POS-026` 的 2 个 file 节点 | production | `extract_depgraph.py --modules MOD-POS-026` |
 | 数据流图 (dataflow) | 0 个 Dataset / 1 个 Job | active | `apply_dataflowgraph.py --list-datasets` |
 | 决策架构图 (decision) | 0 个决策节点 / 1 个决策层 | N/A | `generate_decision_diagram.py` |
 | 蓝图 (blueprint) | 本文件 | Active | — |
@@ -126,6 +132,6 @@ TDM-X-R1-03 节点（决策地图）；未来由 X-R1-01 drawdown_state_machine 
 | module_id | MOD-POS-026 | MOD-POS-026 | ✅ |
 | domain_id | N/A | N/A | ✅ |
 | build_status | stable | N/A | — |
-| file_count | 1 文件 | N/A | — |
+| file_count | 2 文件 | N/A | — |
 
 > 冲突时以 depgraph 为准（ARCH-056 + ARCH-MM-001 声明 vs 验证框架）。
