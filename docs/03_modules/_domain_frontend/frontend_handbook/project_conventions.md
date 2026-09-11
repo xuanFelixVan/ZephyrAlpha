@@ -5,7 +5,7 @@ title: 前端技术手册·项目约定（PC）
 owner: ZephyrAlpha-Owner
 language: zh
 status: active
-version: "1.7.0"
+version: "2.0.0"
 date: 2026-08-31
 topic: frontend_handbook_project_conventions
 scope: frontend
@@ -242,6 +242,16 @@ scope: frontend
 - 关联：PC-009 版本戳排查法 · ACC-F-CHAINMAP-GALAXY rev4 item12（debug 探针机断）
 - 来源：2026-09-10 chainmap B2 3D 星云一期施工实证（scene.add ReferenceError 三轮排查 + cm-meta 遮挡致 E2E 点选连败）
 
+# FEH-PC-020｜app1.js 宿主拆件：跨文件函数提升失效 + core/ 目录收口
+- 触发词：拆 app1.js / 宿主拆分 / 大文件拆件 / 加载顺序 / ReferenceError 拆完后 / core/ 该放什么
+- 想做什么：把 app1.js 这类多页面引擎混装的宿主大文件按区块拆成 features/<page>/ 文件
+- 内置能否：无内置，项目自约定（2026-09-12 拆件批实证，7116 行→37 模块+261 行薄宿主）
+- 坑：①**跨文件提升失效**——单文件里 A 区块顶层语句调 B 区块的函数靠 JS 函数提升（hoisting）兜住（实证：L3587 启动批调 21 个区块之后的 usycRender；L4824 srch 批调 L195 的 IND_CAT），拆成多文件后提升跨文件不存在，后加载文件的全局名在前文件求值时是未定义 → ReferenceError；隐蔽变体：区块内 IIFE（ovxRank）在求值时同步调 drawLine/genCandles——光看"函数声明区"会漏判。②**loader 顺序即语义**——sq-* 组件自举（FEH-PC-012 竞态兜底）依赖宿主变量已定义，宿主文件必须排在 event_bus/api/features 之前。③页面引擎错放 core/ 积少成多——core/ 帽 ≤10 只减不增（TRAE-086），backtest/services/datasrc/download/bridge/home 六个页引擎曾塞 core/ 致 13 文件超帽。
+- 正确做法：①拆前脚本化盘点全部顶层可执行语句（非声明行）并判定其引用符号的声明区块位置；加载序=原区块相对顺序，前向引用者单点调序（usyc-curve 提前到 wr-risk-cards 之前、srch-overlay 垫底）或把 exec 随被依赖者迁移（srchLate 尾调用）；②拆分用脚本按行段搬运+覆盖完整性断言+逐声明文本保全校验（441 声明零丢失），禁止手抄；③每轮验证=node --check 全文件+playwright 全页扫掠收集 console error；④页引擎回 features/<page>/，core/ 只留启动器/总线/布局引擎；⑤frontend_map 同 commit 修 file: 指向（迁移文件的旧路径引用）。
+- 代码锚点：core/loader.js（保序加载链+顺序约束注释）· docs/_working/2026-09-12-frontend-split-inventory.md（裁定 R1-R8）
+- 关联：TRAE-086 §folder_assignment · FEH-PC-012（registerFeature 只登记不初始化）· FEH-PC-005（playwright 三坑）
+- 来源：2026-09-12 前端全量拆件夜班（app1.js 34 区块/441 声明拆分实证）
+
 ## 修订记录
 
 | 日期 | 版本 | 改动 | 为什么改 |
@@ -256,3 +266,4 @@ scope: frontend
 | 2026-09-08 | 1.7.0 | +PC-014 绝对定位容器尺寸禁量 DOM / +PC-015 状态色类必须带 ID 前缀 | tdm 四件套补登记沉淀：b20260908-02 连线消失 + b20260908-05 状态色失效双事故成文 |
 | 2026-09-09 | 1.8.0 | +PC-016 creation_tokens CAS 落错键 / +PC-017 commit message 与实物不符排查法 | chainmap 二期 Commit A 实证：di_seam_exemptions 落键事故 + 一期后端假提交移植 |
 | 2026-09-10 | 1.9.0 | +PC-018 8890 面板服务重启权限墙 | chainmap 三项施工夜班实证：restart×3 假成功，8891 隔离实例+playwright route 改道方案全绿 |
+| 2026-09-12 | 2.0.0 | +PC-020 app1.js 宿主拆件（跨文件提升失效+core/ 收口） | 前端全量拆件夜班：7116 行宿主→37 模块，脚本化搬运+保全校验+全页扫掠实证 |

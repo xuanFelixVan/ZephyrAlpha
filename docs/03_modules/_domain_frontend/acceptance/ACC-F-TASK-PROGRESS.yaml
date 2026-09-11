@@ -1,0 +1,33 @@
+# --- 治理锚定 ---
+# doc_type: register | 功能验收单（冻结"什么样子算对"）
+# ttl: permanent
+# 修订权限：Owner 专有（AI 可提议不可自改已冻结条项）
+# --- 治理锚定结束 ---
+
+feature_id: ACC-F-TASK-PROGRESS
+feature_name: 任务进度下钻
+frozen_at: 2026-09-12
+frozen_by: sess-38668-20260912015945（AI 拆件批代拟，Owner 复核后可修订）
+revision: 1
+revision_policy: "修订=Owner 批准+改原文+revision 链留痕；AI 不可自改已冻结条项"
+
+# 2026-09-12 拆件批：本模块=纯物理迁移（原 core/app1.js 行段原样迁出，全局函数名零改动，逻辑零改动）。
+# 验收基线=迁移前行为；items 5/6 为逐模块机断/目检的固定锚。
+
+items:
+  - { id: 1, text: "文件位于 features/task/task-progress.js 且经 core/loader.js 加载链挂载（浏览器加载无 404）", check: 机断 }
+  - { id: 2, text: "原全局函数名全部保留，页面 onclick 绑定不失效（符号完整性校验 441 声明零丢失）", check: 机断 }
+  - { id: 3, text: "go('task') 页面渲染无未捕获 console 错误，功能区块可见", check: 机断 }
+  - { id: 4, text: "演示数据保持「演示」标记与回退语义，未新增数据世界", check: 目检 }
+  - { id: 5, text: "pytest tests/frontend/test_dashboard_smoke.py 全绿", check: 机断 }
+  - { id: 6, text: "视觉与拆分前一致（区块内容/布局/交互不回归）——截图对照", check: 目检 }
+
+execution:
+  trigger: "任何涉及本模块的 UI 改动 commit 前"
+  flow: "起本地服务/壳 → 逐条对 → 全绿才走 GitCommitGateway"
+
+关联:
+  handbook: [FEH-PC-020]
+  frontend_map: F-TASK-PROGRESS
+  code_ref: "src/zephyr/frontend/dashboard/web/features/task/task-progress.js"
+  source: "2026-09-12 拆件批自 core/app1.js L4723-4768 原样迁出（零逻辑改动）"
