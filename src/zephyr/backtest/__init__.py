@@ -69,6 +69,17 @@ from zephyr.backtest.io import (
     sink_backtest_result,
 )
 
+# SOP-D run 过程档案图书馆 API（R1 裁定：落盘走 API 禁手 mkdir）
+from zephyr.backtest.run_archive import (
+    RunArchiveError,
+    create_run,
+    finalize_run,
+    iter_run_ids,
+    load_meta,
+    log_iteration,
+    write_step,
+)
+
 __all__ = [
     "BacktestEngineBase",
     "BacktestResult",
@@ -87,4 +98,12 @@ __all__ = [
     "get_artifact",
     "list_artifacts",
     "build_artifact_from_data",
+    # SOP-D run 档案图书馆（R1）
+    "RunArchiveError",
+    "create_run",
+    "write_step",
+    "finalize_run",
+    "load_meta",
+    "log_iteration",
+    "iter_run_ids",
 ]
