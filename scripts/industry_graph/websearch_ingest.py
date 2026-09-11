@@ -4,7 +4,7 @@
 # [CONSUMERS] 夜班 SOP industry_chain_data_audit_sop §5 全轮次写入(唯一合法通道)
 # [STARTUP] manual
 # [MATURITY] production
-# [INVARIANTS] 写入唯一通道: 全部走 ingest 子命令(禁手写 SQL); 批次=单事务全成全败; 幂等(UNIQUE 锚 ON CONFLICT); 硬校验(SOP §5): source_doc 三段式/confidence<=0.7(websearch)/symbol 正则+cn 反查 stock_basic/词表白名单(tier 三位置值 v0.4+function_role 八值/category/edge_type v2/role 五值)/链名标题腔拒绝/node.name 无 -tier 后缀残留/backup 幂等; UNLISTED:UE-xxx 唯一合法格式(旧格式公司名直写拒绝,§4.10); unlisted_entity 记录 status 枚举+listed_symbol 真代码格式校验; equity_edge 记录(relation 六值/as_of 必填/PERSON: 前缀/verification 三值,2026-09-09 分域裁定); node 深度列 child_chain_id+drill_status(child 交叉校验,drill_manual=Owner 钉死 AI 不可写); PIT 三时间戳 websearch 边必填; 节点引用(node/node_company/node_edge)按(链+名)查库解析存量真实ID(存量采购包节点非md5方案,重算ID会FK违规/造重复行,2026-09-08修复); chain 支持 status/merged_into(deprecated 须带 merged_into,幂等 append 不覆盖原 source_note,2026-09-08 裁定执行)
+# [INVARIANTS] 写入唯一通道: 全部走 ingest 子命令(禁手写 SQL); 批次=单事务全成全败; 幂等(UNIQUE 锚 ON CONFLICT); 硬校验(SOP §5): source_doc 三段式/confidence<=0.7(websearch)/symbol 正则+cn 反查 stock_basic/词表白名单(tier 三位置值 v0.4+function_role 八值/category/edge_type v2/role 五值)/链名标题腔拒绝/node.name 无 -tier 后缀残留/backup 幂等; UNLISTED:UE-xxx 唯一合法格式(旧格式公司名直写拒绝,§4.10); unlisted_entity 记录 status 枚举+listed_symbol 真代码格式校验; equity_edge 记录(relation 六值/as_of 必填/PERSON: 前缀/verification 三值,2026-09-09 分域裁定); node 深度列 child_chain_id+drill_status(child 交叉校验,drill_manual=Owner 钉死 AI 不可写); PIT 三时间戳 websearch 边必填; 节点引用(node/node_company/node_edge)按(链+名)查库解析存量真实ID(存量采购包节点非md5方案,重算ID会FK违规/造重复行,2026-09-08修复); chain 支持 status/merged_into(deprecated 须带 merged_into,幂等 append 不覆盖原 source_note,2026-09-08 裁定执行); chain/placement_close 可选 chain_id 显式寻址(legacy-id 链 md5(现名)≠chain_id 场景,带值须命中存量行防伪造,2026-09-11)
 # [MODIFY-GUARD] none
 # [STABILITY] evolving
 # [SAFETY] L
@@ -102,6 +102,9 @@ _SQL_PLACEMENT_CLOSE = """UPDATE ig_node_company SET valid_to=%s, updated_at=now
 _SQL_PRODUCT_REVENUE_UPSERT = """INSERT INTO ig_product_revenue (symbol,year,product,revenue_pct,node_ref,source,source_doc,evidence,as_of)
                     VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s)
                     ON CONFLICT (symbol,year,product,source) DO UPDATE SET revenue_pct=EXCLUDED.revenue_pct, as_of=EXCLUDED.as_of"""
+# chain_id 显式寻址防伪校验(2026-09-11): legacy-id 链(chain_id≠md5(现名),曾改名/旧命名方案)
+# 无法按名寻址——chain/placement_close 记录可带 chain_id 直指,带值时 MUST 命中存量行
+_SQL_CHAIN_EXISTS = "SELECT 1 FROM ig_chain WHERE chain_id=%s"
 
 _ALL_TABLES = ("ig_chain", "ig_node", "ig_edge", "ig_node_company", "ig_document", "ig_company_edge", "ig_company_metric", "ig_chunk", "ig_fact", "ig_unlisted_entity", "ig_equity_edge", "ig_product_revenue")
 _DATE = None
@@ -477,7 +480,13 @@ def cmd_ingest(batch_path: str) -> int:
             counts[typ] = counts.get(typ, 0) + 1
             sd, src, mkt = r.get("source_doc", ""), r.get("source", "websearch"), r.get("market", "cn")
             if typ == "chain":
-                cid = _chain_id(r["name"])
+                # 可选 chain_id 显式寻址(2026-09-11): legacy-id 链(md5(现名)≠chain_id)按值直指,
+                # 带值 MUST 命中存量行(禁造任意 id 新行);不带值走 md5(name) 派生老路径
+                cid = r.get("chain_id") or _chain_id(r["name"])
+                if r.get("chain_id"):
+                    cur.execute(_SQL_CHAIN_EXISTS, (cid,))
+                    if cur.fetchone() is None:
+                        raise ValueError(f"chain.chain_id 寻址不存在(防伪,禁造新id行): {cid}")
                 merged = r.get("merged_into")
                 cur.execute(
                     """INSERT INTO ig_chain (chain_id,name,category,version_year,market,status,source_note,created_at,updated_at)
@@ -622,7 +631,13 @@ def cmd_ingest(batch_path: str) -> int:
             elif typ == "placement_close":
                 # 落位 PIT 关闭(梳理工程唯一合法通道,2026-09-10;禁手写 SQL):
                 # 幂等(valid_to IS NULL 才关);须 chain_name+symbol 精确定位;reason_doc 留痕
-                cid = _chain_id(r["chain_name"])
+                # 可选 chain_id 显式寻址(2026-09-11): legacy-id 链 md5(名)≠chain_id 时按值直指,
+                # 带值 MUST 命中存量行(防伪造 id);不带值走 md5 老路径(幂等重放不报错)
+                cid = r.get("chain_id") or _chain_id(r["chain_name"])
+                if r.get("chain_id"):
+                    cur.execute(_SQL_CHAIN_EXISTS, (cid,))
+                    if cur.fetchone() is None:
+                        raise ValueError(f"placement_close chain_id 寻址不存在(防伪): {cid}")
                 vt = r.get("valid_to") or _today()
                 if not re.match(r"\d{4}-\d{2}-\d{2}", str(vt)):
                     raise ValueError(f"placement_close valid_to 非日期: {vt}")
