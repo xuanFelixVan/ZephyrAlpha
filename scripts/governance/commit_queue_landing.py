@@ -393,6 +393,13 @@ class WorktreeLanding:
             rel = entry.get("path", "")
             if not rel:
                 continue
+            # 红队对称补齐（#ARCH-310，2026-09-12）：入队侧 _read_files_from_worktree
+            # 已用 _validate_relpath 拦穿越/绝对路径/.git/密钥路径；落地侧同口径——
+            # 畸形项（手改 JSON/未来非 CLI 写入方）在此死信而非越界写盘。
+            try:
+                rel = cq._validate_relpath(rel)
+            except cq.QueueReject as exc:
+                raise RuntimeError(f"快照路径校验拒绝: {rel}（{exc}）") from exc
             abs_path = self.worktree_path / rel
             if entry.get("action") == "delete":
                 try:
