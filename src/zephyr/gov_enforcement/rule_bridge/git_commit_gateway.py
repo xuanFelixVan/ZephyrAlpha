@@ -158,8 +158,17 @@ def _ensure_scripts_package_importable(project_root: str) -> None:
     scripts_dir = str(Path(project_root) / "scripts")
     if root not in sys.path:
         sys.path.insert(0, root)
+    # 存在性守卫（#ARCH-310，2026-09-12 六测试回归实证）：project_root 无 scripts/
+    # 目录时（测试 tmp 仓/裸工作区），不得把已缓存的真实 scripts 包误判为毒缓存
+    # 清族重导——否则测试 monkeypatch 与调用方持有的模块对象被甩空。毒缓存判定仅在
+    # 候选真包目录实际存在且与缓存 __path__ 失配时生效，原生产语义（win32 命名空间
+    # 毒缓存）不变。
     pkg = sys.modules.get("scripts")
-    if pkg is not None and scripts_dir not in (getattr(pkg, "__path__", None) or ()):
+    if (
+        pkg is not None
+        and os.path.isdir(scripts_dir)
+        and scripts_dir not in (getattr(pkg, "__path__", None) or ())
+    ):
         for name in [n for n in list(sys.modules) if n == "scripts" or n.startswith("scripts.")]:
             del sys.modules[name]
 

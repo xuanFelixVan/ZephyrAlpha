@@ -1032,6 +1032,27 @@ def drain_queue(
 
 def try_bootstrap_drain(queue_root: str | os.PathLike | None = None, *, landing=None) -> dict:
     """入队自举排空（66 号 §8：无常驻进程——写队后尝试拿 lease，拿不到就放弃等下次）。"""
+    if landing is None:
+        # B3（#ARCH-310，2026-09-12）：自举排空默认接真落地——默认桩=标记 done 不真
+        # 提交，对真实队列是"假 done 丢内容"footgun（q-0004 实证：文档项被标 done 但
+        # dev 无 commit）。仅在可安全锚定仓根的默认队列布局（<repo>/.runtime/commit_queue）
+        # 下启用：自定义队列根（测试隔离 tmp 等）无法判定归属仓，保持桩行为（项留
+        # pending 不丢失）。延迟 import 防循环（B 段 landing 反向 import 本模块）；
+        # 装载失败退回桩（fail-open：入队主流程不受影响）。
+        try:
+            _qroot = resolve_queue_root(queue_root)
+            _repo: Path | None = _qroot.parents[1] if _qroot.parent.name == ".runtime" else None
+            if _repo is not None and (_repo / "scripts" / "governance" / "commit_queue_landing.py").is_file():
+                _repo_root_str = str(_repo)
+                if _repo_root_str not in sys.path:
+                    sys.path.insert(0, _repo_root_str)
+                _purge_poisoned_scripts_package()
+                from scripts.governance.commit_queue_landing import WorktreeLanding  # noqa: PLC0415
+
+                landing = WorktreeLanding(repo_root=_repo, queue_root=_qroot)
+        except Exception:  # noqa: BLE001 — 排空是 best-effort，装载失败不阻断入队
+            logger.warning("[bootstrap] 真落地装载失败，本次退回默认桩（项留 pending 不丢）", exc_info=True)
+            landing = None
     try:
         return drain_queue(queue_root, landing=landing)
     except LeaseUnavailable as exc:

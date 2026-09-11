@@ -632,6 +632,14 @@ class WorktreeLanding:
                         commit_files,
                         full_message,
                         allow_non_worktree=True,
+                        # B2（#ARCH-310，2026-09-12）：落地快照与 worktree 同步之间存在
+                        # 窗口，同族 reconciler 波次会重写自身衍生文件（script-manifest 等
+                        # ——q-0001 死信实证），快照内容本身受 CAS 保护，容忍窗口漂移。
+                        allow_tracked_drift=True,
+                        # B3（#ARCH-310，2026-09-12）：队列项=入队者已圈定的单任务文件集
+                        # （gate+自家测试是同一任务的合法组成——q-0007 死信实证），域拆分
+                        # 责任在入队侧，落地不再二次执法；gateway 自动追加 multi-domain 标记留痕。
+                        allow_multi_domain=True,
                     )
                 finally:
                     if prev_env is None:

@@ -240,11 +240,23 @@ def _check_file(
     # 替换原 flat fail-open（if not metadata: return issues）
     # 不可能三角解法：permanent/temporary zone 无 frontmatter → HARD BLOCK；
     #   其他 zone 无 frontmatter → PASS（保持向后兼容）
-    try:
-        rel_path = str(fpath.relative_to(REPO_ROOT)).replace("\\", "/")
-        zone = _classify_file_zone(rel_path)
-    except ValueError:
-        zone = "neutral"  # 路径不在 repo 内（如测试 tmp_path），按 neutral 处理
+    # zone 分类锚定调用方视角（#ARCH-310 B1，2026-09-12）：TTL-METADATA gate 以
+    # cwd=project_root 传入相对路径——serializer worktree 落地场景 project_root
+    # （.runtime/commit_queue/worktree）≠ REPO_ROOT，原 REPO_ROOT 单锚会把
+    # docs/_working/ 误算成 .runtime/... → temporary 解耦失效 → doc_type 在落地
+    # 上下文被硬要求，与 EXEMPT-ZONE-FM（禁临时区 doc_type）形成死锁，_working/
+    # 文档永远无法经队列落地。改为 cwd 优先、REPO_ROOT 回退、原样兜底。
+    zone_base: str | None = None
+    for _base in (Path.cwd(), REPO_ROOT):
+        try:
+            zone_base = str(fpath.relative_to(_base)).replace("\\", "/")
+            break
+        except ValueError:
+            continue
+    if zone_base is None:
+        # 路径不在任何锚下（如测试 tmp_path），按 neutral 处理
+        zone_base = str(fpath).replace("\\", "/")
+    zone = _classify_file_zone(zone_base)
 
     if not metadata:
         # 无 frontmatter 的文件——按 zone 分类处理

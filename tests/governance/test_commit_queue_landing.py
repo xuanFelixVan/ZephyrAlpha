@@ -134,7 +134,15 @@ class _StubGateway:
     def release_files(self, session_id: str, files: list[str]) -> None:
         self.events.append(("release", (session_id, list(files))))
 
-    def commit(self, session_id: str, files: list[str], message: str, allow_non_worktree: bool = False) -> CommitResult:
+    def commit(
+        self,
+        session_id: str,
+        files: list[str],
+        message: str,
+        allow_non_worktree: bool = False,
+        allow_tracked_drift: bool = False,  # #ARCH-310 B2：landing 传入（衍生漂移容忍）
+        allow_multi_domain: bool = False,  # #ARCH-310 B3：landing 传入（队列项单任务豁免）
+    ) -> CommitResult:
         self.events.append(
             (
                 "commit",
@@ -143,6 +151,8 @@ class _StubGateway:
                     "files": list(files),
                     "message": message,
                     "allow_non_worktree": allow_non_worktree,
+                    "allow_tracked_drift": allow_tracked_drift,
+                    "allow_multi_domain": allow_multi_domain,
                 },
             )
         )
