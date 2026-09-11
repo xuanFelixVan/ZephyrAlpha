@@ -4,7 +4,7 @@
 manifest_version: 2.0.0
 generated_by: generate_manifest.py (auto-scan)
 generated_at: '2026-09-12'
-total_scripts: 789
+total_scripts: 791
 scripts:
 - name: __init__.py
   path: __init__.py
@@ -574,9 +574,25 @@ scripts:
   status: registered
   timeout_seconds: 60
   dimensions: []
+- name: backtest/replay_drill.py
+  path: backtest/replay_drill.py
+  description: 演练语义（裁定 §八 R5）：锁 meta（commit+manifest+参数）→ 重跑 → diff 四件套
+  domain: test
+  execution_plane: warm-path
+  status: registered
+  timeout_seconds: 60
+  dimensions: []
 - name: backtest/strategy_intake_inventory.py
   path: backtest/strategy_intake_inventory.py
   description: 规范真源：docs/01_policies_and_standards/sop/backtest_system_sop/sop_c_strategy_library_intake.md §1。
+  domain: test
+  execution_plane: warm-path
+  status: registered
+  timeout_seconds: 60
+  dimensions: []
+- name: backtest/strategy_screen_c2.py
+  path: backtest/strategy_screen_c2.py
+  description: 规范真源：docs/01_policies_and_standards/sop/backtest_system_sop/sop_c_strategy_library_intake.md §2。
   domain: test
   execution_plane: warm-path
   status: registered
