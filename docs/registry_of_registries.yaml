@@ -715,6 +715,26 @@ tiers:
         description: 交易决策地图节点背后决策算法唯一登记处（PB-05 保留·核心，前缀 DAL-*）——与 IND/EXA 正交（DAL=判定/仲裁/预算/融合类决策算法）。挂载方式=地图节点 algo_refs 值域（门禁 R13 扩展 IND/EXA/DAL），共振方式写节点机制文本不加新字段。首批 15 条自地图机制文本提取（RegimeSnapshot/HMM 四态/水温五档/六段预算带/四轨融合等）。
         owned_by: governance
 
+      - registry_id: REG-RISK-TIER-001
+        name: 域风险分级与人机门位注册表
+        physical_path: docs/01_policies_and_standards/_registry/catalogs/risk_tier_registry.yaml
+        format: yaml
+        maintenance: manual
+        entry_count: 18
+        status: active
+        description: R5 人机门位模型化落地（#ARCH-310，AI 原生治理评审，2026-09-12 Owner 批准）——按功能域给出风险分级（high=交易核心/资金数据写入/治理门禁自身；medium=因子信号回测分析；low=兜底默认）与对应 human_gate 位（production 流转/注册表净删/flag 出厂翻转/资金破坏性操作）。100% AI 开发下 AI 冷启动查表即知门位，无需撞门后才知道。默认兜底=未列出域一律 low（分级 fail-open、门禁强度由 gate 体系独立保证）。新鲜度=tests/governance/test_risk_tier_registry.py 机械校验。
+        owned_by: governance
+
+      - registry_id: REG-BTB-001
+        name: 回测对象预注册登记表
+        physical_path: docs/01_policies_and_standards/_registry/catalogs/backtest_backlog.yaml
+        format: yaml
+        maintenance: script_generated
+        entry_count: 135
+        status: active
+        description: SOP-A Step A0 产物（2026-09-12 R1-R5 证据链批）——交易决策地图全部节点的回测对象注册（135 对象：138 节点扣除成本三件套合并），预注册=可审计真源：验收阈值跑前写死禁事后挪门柱（threshold_status=draft 为 AI 提案，批次决策点确认冻结后才可跑）；P0=生死线三件套（L1-AGG 状态判定/L1 总闸/成本模型）；再生成由 scripts/backtest/generate_backtest_backlog.py 承载且保留既有 plan/confidence/object_id（防台账断链）。消费者=SOP-B 七步循环（无注册条目的回测结果不予归档）+ verify_run_archive 巡检。
+        owned_by: governance
+
       - registry_id: REG-SEAT-001
         name: 龙虎榜席位注册表
         physical_path: docs/01_policies_and_standards/_registry/catalogs/seat_registry.yaml
@@ -840,11 +860,11 @@ known_issues:
 
 summary:
   total_tiers: 3
-  total_registries: 75  # #172 漂移修正：手写 69 → 2026-08-19 实测本文件登记 73（漂移全在 tier_2）
+  total_registries: 77  # 2026-09-12 +1：REG-BTB-001 回测对象预注册登记表；+1：REG-RISK-TIER-001 域风险分级与人机门位注册表（#ARCH-310 R5）
   fully_scanned: 19
   pending_scan: 5
   broken: 1
   by_tier:
     tier_0_core: 12
-    tier_1_governance: 28
+    tier_1_governance: 29  # 2026-09-12 +1：REG-BTB-001
     tier_2_runtime: 35  # #172 漂移修正：手写 29 → 2026-08-19 实测 33

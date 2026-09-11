@@ -4968,6 +4968,26 @@ capabilities:
   name_zh: 产业链全景图 git 侧工件门禁
   description: 图 8 产业链全景图的字典↔DDL↔引擎三方同 commit 同步硬阻断（priority=141）+ chainmap_cluster_names 词表 sanity
 creation_tokens:
+- file: docs/01_policies_and_standards/_registry/catalogs/risk_tier_registry.yaml
+  token: risk-tier-registry-20260912
+  created_by: st-govreform-20260912
+  capability: gate_commit_gw
+- file: src/zephyr/signal_ashare/core/sector_strength_aggregator.py
+  token: sole-gw-l201-strlenagg-20260912
+  created_by: sole-committer-20260911
+  capability: sector_strength_aggregator
+- file: docs/03_modules/_domain_signal/sector_strength_aggregator/blueprint.md
+  token: sole-gw-l201-strlenagg-bp-20260912
+  created_by: sole-committer-20260911
+  capability: sector_strength_aggregator
+- file: src/zephyr/signal_ashare/core/sector_ecology_judge.py
+  token: sole-gw-l204-ecojudge-20260912
+  created_by: sole-committer-20260911
+  capability: sector_ecology_judge
+- file: docs/03_modules/_domain_signal/sector_ecology_judge/blueprint.md
+  token: sole-gw-l204-ecojudge-bp-20260912
+  created_by: sole-committer-20260911
+  capability: sector_ecology_judge
 - file: docs/_working/2026-09-12-ai-native-governance-review.md
   token: ai-native-gov-review-20260912
   created_by: st-govreform-20260912

@@ -144,6 +144,10 @@ def extract_commit_gates() -> list[dict]:
                 "category": "commit_gate",
                 "status": "active",
                 "source": "commit-gate",
+                # own-scope 派生标记（#ARCH-310 R2 落地，2026-09-12）：gate 模块源码
+                # import _build_own_scope 即为 own-diff 作用域（外来 staged 降级审计）；
+                # 未标记者默认全暂存区扫描（全仓例外须按 R2 登记理由）。
+                "own_scope": "_build_own_scope" in text,
             }
         )
     return gates

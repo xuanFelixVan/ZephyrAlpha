@@ -1,0 +1,130 @@
+# [A_config] module_id=REG-RISK-TIER-001 | layer=config | stability=evolving | safety=M | ai_autonomy=human_gated
+module_id: REG-RISK-TIER-001
+ttl: permanent
+title: 域风险分级与人机门位注册表
+doc_type: register
+registry_id: REG-RISK-TIER-001
+name: 域风险分级与人机门位注册表
+owner: MOD-GATE-ENGINE
+tier: tier_1_governance
+status: active
+version: 1.0.0
+created: '2026-09-12'
+last_updated: '2026-09-12'
+unique_key: domain
+description: >-
+  R5 人机门位模型化落地（#ARCH-310，AI 原生治理评审五裁定之五，2026-09-12 Owner 批准全面开工）。
+  将事实上的 human-gate 惯例（Owner 晨审/裁定/放行）注册表化：按功能域给出风险分级
+  （high/medium/low）与对应门禁强度、human-gate 位。100% AI 开发场景下，AI 冷启动
+  查询本表即知"这个域动什么需要 Owner 门位"，无需撞门后才知道。
+
+  分级模型（评审 §五 R5）：
+  - high   交易核心/资金数据写入/治理与门禁自身/注册表真源——合入 dev 须 Owner 放行位
+  - medium 因子/信号/回测/分析/管线——全自动门禁，行为变更须 commit message 声明
+  - low    文档/派生缓存/前端视觉/测试工具——全自动，兜底默认级
+
+  默认兜底：未显式列出的 domain 一律 low（fail-open 分级、fail-closed 门禁——
+  门禁强度由 gate 体系独立保证，本表只决定人机门位，不放松任何既有 gate）。
+
+  维护策略：
+  - 新域默认 low；升 high/medium 须 Owner 裁定登记（ruling_registry 关联）
+  - human_gate 位变更（新增/退役）须 Owner 签字，本表 entries 同 commit 原子落库
+  - 新鲜度由 tests/governance/test_risk_tier_registry.py 机械校验
+entry_schema:
+  domain: string (required, unique) — functional_domain_registry 的 domain 键（D_XXX）
+  tier: string (required) — high | medium | low
+  rationale: string (required) — 分级理由（一句话）
+  human_gate: list[string] — 触发 Owner 门位的动作清单（仅 high 必填）
+default_tier: low
+tiers:
+  high:
+    gate_policy: 全量门禁+human_gate 位全生效
+    human_gate: &high_human_gate
+      - 首次施工转 production（对齐 depgraph design_maturity 流转 Owner 核验）
+      - 注册表/真源条目删除（净删行）
+      - 门禁 flag 出厂默认翻转（宪章 B-007 production 行为变更窗口）
+      - 资金数据破坏性操作（RULE-DATA-OPS 三步验证前置）
+  medium:
+    gate_policy: 全量门禁+行为变更 message 声明
+    human_gate: []
+  low:
+    gate_policy: 标准门禁
+    human_gate: []
+domain_tiers:
+  # ── high：交易核心与资金路径 ──
+  - domain: D_EX_CORE
+    tier: high
+    rationale: 实盘执行引擎/订单状态机，资金安全直接承载
+    human_gate: *high_human_gate
+  - domain: D_POSITION
+    tier: high
+    rationale: 持仓与 T0/T1 可卖判定，错误直接造成资金损失
+    human_gate: *high_human_gate
+  - domain: D_RISK
+    tier: high
+    rationale: 风控限额/回撤清算守门，错误=风控失效
+    human_gate: *high_human_gate
+  - domain: D_TRADING
+    tier: high
+    rationale: 系统大脑 AutoRuntime 与交易契约（BrokerInterface/Order）
+    human_gate: *high_human_gate
+  - domain: D_PLAN
+    tier: high
+    rationale: 计划引擎产出实际交易计划
+    human_gate: *high_human_gate
+  # ── high：数据写入路径 ──
+  - domain: D_DATA
+    tier: high
+    rationale: 数据源实现与写入器（CH/PG 写路径），破坏性写入史（#ARCH-CH-020）
+    human_gate: *high_human_gate
+  # ── high：治理与门禁自身 ──
+  - domain: D_GOV_ENFORCEMENT
+    tier: high
+    rationale: 门禁引擎自身——守门人被攻陷=全部防线失效
+    human_gate: *high_human_gate
+  - domain: D_GOVERNANCE
+    tier: high
+    rationale: 治理持久化/审计/reconciler 基础设施
+    human_gate: *high_human_gate
+  - domain: D_GOV_SCRIPTS
+    tier: high
+    rationale: 治理脚本（gate/registry 生成与校验通道）
+    human_gate: *high_human_gate
+  # ── medium：研究分析层 ──
+  - domain: D_FACTOR
+    tier: medium
+    rationale: 因子抽象与研究产物，错误经回测信号链可检出
+    human_gate: []
+  - domain: D_ASHARE_SIGNAL
+    tier: medium
+    rationale: A股特色信号研究层
+    human_gate: []
+  - domain: D_FUNDAMENTAL_SIGNAL
+    tier: medium
+    rationale: 信号合成管道（研究产物）
+    human_gate: []
+  - domain: D_SIGQC
+    tier: medium
+    rationale: 信号质量评估（自带降级监视防线）
+    human_gate: []
+  - domain: D_BACKTEST
+    tier: medium
+    rationale: 回测体系（holdout 锁窗纪律已由回测治理批立规）
+    human_gate: []
+  - domain: D_INFRA_RUNTIME
+    tier: medium
+    rationale: 运行时基础设施（有四层守护+探针兜底）
+    human_gate: []
+  - domain: D_INFRA_RECOVERY
+    tier: medium
+    rationale: 回滚与恢复设施（自身即防线）
+    human_gate: []
+  # ── low：兜底默认，未列出域一律 low ──
+  - domain: D_GOV_DOCS
+    tier: low
+    rationale: 文档域（GATE-WORKING-DOCS/TTL-METADATA 已覆盖质量）
+    human_gate: []
+  - domain: D_FRONTEND
+    tier: low
+    rationale: 前端视觉/仪表盘（真源接线由 TRAE-086 gate 把守）
+    human_gate: []
