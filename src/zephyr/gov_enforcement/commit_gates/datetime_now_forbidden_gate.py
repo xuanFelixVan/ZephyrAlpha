@@ -5,7 +5,7 @@
 # [CONSUMERS] zephyr.gov_enforcement.rule_bridge.git_commit_gateway.GitCommitGateway.__init__
 # [STARTUP] imported
 # [MATURITY] production
-# [INVARIANTS] 硬阻断——两类检测面：①生成器代码(.py)新增行含 datetime.now() 任何形式调用时阻断（生成器输出必须幂等）；②src/zephyr/ 全量代码(.py)新增行含 time.time() 或 datetime.now() 无参数调用（naive datetime）时阻断（5.46 时区处理防复发）；tests/ 豁免；import/注释/docstring 豁免；# noqa: m46-time 豁免；YAML/git diff 不可达 fail-open（logger.warning 检测器失效）；检出违规则 fail-closed 阻断（passed=False）
+# [INVARIANTS] 硬阻断——两类检测面：①生成器代码(.py)新增行含 datetime.now() 任何形式调用时阻断（生成器输出必须幂等）；②src/zephyr/ 全量代码(.py)新增行含 time.time() 或 datetime.now() 无参数调用（naive datetime）时阻断（5.46 时区处理防复发）；own-scope（#ARCH-GATE-OWN-SCOPE-001 第三批，#ARCH-310）：扫描范围=全暂存区∩本 session（files∪held），外来 staged 降级 warn+_audit_foreign_staged 审计不阻断，own_scope=None 退化全量保守；tests/ 豁免；import/注释/docstring 豁免；# noqa: m46-time 豁免；YAML/git diff 不可达 fail-open（logger.warning 检测器失效）；检出违规则 fail-closed 阻断（passed=False）
 # [MODIFY-GUARD] gate_id="DATETIME-NOW-FORBIDDEN"；check 闭包签名 (gateway, files, **kwargs) -> tuple[bool, str]
 # [STABILITY] stable
 # [SAFETY] L
@@ -91,9 +91,12 @@ import logging
 import re
 
 from zephyr.gov_enforcement.commit_gates._diff_helpers import (
+    _audit_foreign_staged,
+    _build_own_scope,
     _is_src_zephyr_file,
     _extract_docstring_lines,
     _is_exempt_line,
+    _norm_rel,
     _parse_diff_with_line_numbers,
     _read_staged_file,
 )
@@ -265,6 +268,27 @@ def make_datetime_now_forbidden_gate() -> GateSpec:
         target_files = _filter_target_py_files(staged)
         if not target_files:
             return True, ""
+
+        # 2.5 只查自己（#ARCH-GATE-OWN-SCOPE-001 第三批，#ARCH-310 P0-2，2026-09-12）：
+        # 扫描范围=全暂存区∩本 session 范围；外来 staged 不扫描、降级 warn+审计
+        # （2026-09-12 并发事故实证：他会话滞留暂存区的违规文件阻断全部排队提交人
+        # ——本 session 自身违规仍硬阻断，fail-open 红线不变，own_scope=None 退化
+        # 旧行为扫全量）。覆盖保证=每文件随归属会话过闸（全部提交走唯一入口）。
+        session_id = kwargs.get("session_id")
+        own_scope = _build_own_scope(gateway, files, session_id)
+        if own_scope is not None:
+            own_files = [f for f in target_files if _norm_rel(gateway, f) in own_scope]
+            foreign_staged = [f for f in target_files if _norm_rel(gateway, f) not in own_scope]
+            if foreign_staged:
+                _audit_foreign_staged(gateway, session_id, foreign_staged, gate_name="DATETIME-NOW-FORBIDDEN")
+                logger.warning(
+                    "DATETIME-NOW-FORBIDDEN: %d 个外来 session staged 文件未检查（warn+审计，不阻断）: %s",
+                    len(foreign_staged),
+                    ", ".join(foreign_staged[:5]) + ("..." if len(foreign_staged) > 5 else ""),
+                )
+            target_files = own_files
+            if not target_files:
+                return True, ""
 
         # 3. 检测每个目标文件的 added 行
         violations: list[str] = []

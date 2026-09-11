@@ -632,3 +632,70 @@ class TestSrcZephyrBackslashPath:
         gate = make_datetime_now_forbidden_gate()
         passed, detail = gate.check(gw, [])
         assert not passed
+
+
+# ============================================================================
+# TestOnlyOwnSessionScanned — own-scope 语义（#ARCH-GATE-OWN-SCOPE-001 第三批，
+# #ARCH-310 P0-2，2026-09-12；对标 test_bare_sql_gate.py 同名类）
+# ============================================================================
+
+
+class TestOnlyOwnSessionScanned:
+    """只查自己语义：外来 staged 违规不阻断本 session 提交（warn+审计）；自身违规仍硬阻断。"""
+
+    def _make_session_gateway(self, tmp_path, staged_files, file_diffs, file_contents=None):
+        gw = _make_mock_gateway(staged_files, file_diffs, file_contents)
+        from zephyr.security.access_control.session_concurrency import SessionRegistry
+
+        gw.project_root = str(tmp_path)
+        gw._registry = SessionRegistry(project_root=tmp_path)
+        return gw
+
+    def test_foreign_violation_does_not_block_own_commit(self, tmp_path):
+        """他人 session 滞留暂存区的 time.time() 文件不阻断本 session 干净提交。"""
+        import json
+
+        own_gen = "scripts/governance/generate_own.py"
+        own_content = "x = 1\n"
+        foreign_py = "src/zephyr/foreign_wip.py"
+        foreign_content = "t0 = time.time()\n"
+
+        gw = self._make_session_gateway(
+            tmp_path,
+            [own_gen, foreign_py],
+            {own_gen: [], foreign_py: [foreign_content]},
+            {own_gen: own_content, foreign_py: foreign_content},
+        )
+        passed, msg = make_datetime_now_forbidden_gate().check(gw, [own_gen], session_id="sess-A")
+        assert passed is True
+        assert "time.time()" not in msg
+        audit = tmp_path / ".runtime" / "gate_audit" / "datetime_now_forbidden_foreign_staged.jsonl"
+        assert audit.exists()
+        rec = json.loads(audit.read_text(encoding="utf-8").splitlines()[-1])
+        assert foreign_py in rec["foreign_files"]
+
+    def test_own_violation_still_blocks(self, tmp_path):
+        """本 session 自身 time.time() 仍硬阻断（保护语义不放松）。"""
+        own_bad = "src/zephyr/own_bad.py"
+        own_content = "t0 = time.time()\n"
+        foreign_py = "src/zephyr/foreign_clean.py"
+        foreign_content = "x = 1\n"
+
+        gw = self._make_session_gateway(
+            tmp_path,
+            [own_bad, foreign_py],
+            {own_bad: [own_content], foreign_py: []},
+            {own_bad: own_content, foreign_py: foreign_content},
+        )
+        passed, msg = make_datetime_now_forbidden_gate().check(gw, [own_bad], session_id="sess-A")
+        assert passed is False
+        assert "time.time()" in msg
+
+    def test_no_session_degrades_to_full_scan(self, tmp_path):
+        """files 与 session 归属均为空（own_scope=None）→ 退化旧行为扫全量（保守面不改宽）。"""
+        gen = "scripts/governance/generate_legacy.py"
+        gen_content = "t = datetime.now()\n"
+        gw = self._make_session_gateway(tmp_path, [gen], {gen: [gen_content]}, {gen: gen_content})
+        passed, msg = make_datetime_now_forbidden_gate().check(gw, [])
+        assert passed is False
+        assert "datetime.now()" in msg
