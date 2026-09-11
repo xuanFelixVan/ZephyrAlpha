@@ -73,6 +73,8 @@ _REQUIRED_STEPS: Final[dict[str, set[str]]] = {
 
 _RUN_ID_RE: Final = re.compile(r"^(VAL|SCR|ABL)-[A-Za-z0-9._-]+$")
 _ASCII_RE: Final = re.compile(r"^[\x21-\x7e]+$")   # 可打印 ASCII 且无空格
+_FILENAME_FORBIDDEN: Final[tuple[str, ...]] = ("/", "\\", ":")
+_FILENAME_RESERVED: Final[frozenset[str]] = frozenset({".", ".."})
 
 
 class RunArchiveError(Exception):
@@ -113,7 +115,10 @@ def _read_meta(run_dir: Path) -> dict[str, Any]:
     if not p.exists():
         raise RunArchiveError(f"meta.json 缺失（无主档案）: {p}")
     try:
-        return json.loads(p.read_text(encoding="utf-8"))
+        _loaded = json.loads(p.read_text(encoding="utf-8"))
+        if not isinstance(_loaded, dict):
+            raise RunArchiveError("meta.json 顶层非对象（损坏/被篡改）", details={"path": str(p)})
+        return _loaded
     except (OSError, json.JSONDecodeError) as exc:
         raise RunArchiveError(f"meta.json 不可读/损坏: {p}: {exc}") from exc
 
@@ -131,10 +136,17 @@ def _check_ascii_filename(filename: str) -> None:
             "文件名非 ASCII/含空格（SOP-D §3 铁律，中文进文件内容）",
             details={"filename": filename},
         )
-
-
-# ── 四个核心函数（SOP-D §6）────────────────────────────────────────────
-
+    if (
+        any(sep in filename for sep in _FILENAME_FORBIDDEN)
+        or ".." in filename
+        or filename in _FILENAME_RESERVED
+        or filename.endswith((" ", "."))
+        or filename.startswith(" ")
+    ):
+        raise RunArchiveError(
+            "文件名含路径分隔符/父引用/Windows 保留尾字符（穿越防护）",
+            details={"filename": filename},
+        )
 
 def create_run(  # noqa: long-param-list  公共 API 契约绑定（14 测试），签名重构另批
     run_id: str,
@@ -179,7 +191,11 @@ def create_run(  # noqa: long-param-list  公共 API 契约绑定（14 测试）
                     f"同 object_id={object_id} 存在未归档 run {other.parent.name}"
                     "（SOP-D §9.6 禁双 run 并行；确需并行用 allow_concurrent=True 并留痕）"
                 )
-    run_dir.mkdir(parents=True, exist_ok=False)
+    try:
+        run_dir.mkdir(parents=True, exist_ok=False)
+    except OSError as exc:
+        raise RunArchiveError("run 目录创建失败（磁盘/权限/路径占用）",
+                              details={"run_dir": str(run_dir), "reason": str(exc)}) from exc
 
     from zephyr.backtest.core.engine_base import current_map_snapshot
 
