@@ -1,4 +1,3 @@
-# [A_config] module_id=REG-BTB-001 | layer=config | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 module_id: REG-BTB-001
 ttl: permanent
 schema_version: '1.0'
@@ -153,8 +152,12 @@ objects:
       adjacent_t_test_p: 0.05
       high_caution_drawdown_delta_20d_pct: 2.0
     verdict_mapping: 高谨慎档后续 20 日最大回撤显著更深（p<0.05 且档差>=2.0%）→valid；方向反→noise
-    threshold_status: draft
+    threshold_status: frozen
     source: validation_method_registry.yaml agg_discrimination + 总闸谨慎度语义 + AI 数值提案 2026-09-12
+    frozen_by: st-backtest-20260912
+    frozen_at: '2026-09-12'
+    freeze_ruling: Owner 通宵施工指令（2026-09-12）"尽量不要留下任何需要我裁定的内容"+既定夜班 AI 自裁授权：阈值数值依据 validation_method_registry.yaml
+      裁定土规线（滑点 20/40bp）与 agg_discrimination verdict_mapping 推导，提案过程见 threshold 源字段；冻结后只许批次决策点公开修订并留痕
 - object_id: BT-P1-001
   node_ids:
   - TDM-E-L1-S1
@@ -264,8 +267,12 @@ objects:
       adjacent_t_test_p: 0.05
       top_bottom_spread_20d_pct: 1.0
     verdict_mapping: p<0.05 且高低档差>=1.0%→valid；p<0.10→pending；其余→noise（registry verdict_mapping+数值提案）
-    threshold_status: draft
+    threshold_status: frozen
     source: validation_method_registry.yaml agg_discrimination + AI 数值提案 2026-09-12
+    frozen_by: st-backtest-20260912
+    frozen_at: '2026-09-12'
+    freeze_ruling: Owner 通宵施工指令（2026-09-12）"尽量不要留下任何需要我裁定的内容"+既定夜班 AI 自裁授权：阈值数值依据 validation_method_registry.yaml
+      裁定土规线（滑点 20/40bp）与 agg_discrimination verdict_mapping 推导，提案过程见 threshold 源字段；冻结后只许批次决策点公开修订并留痕
 - object_id: BT-P2-007
   node_ids:
   - TDM-E-L2
@@ -1816,5 +1823,9 @@ objects:
       slip_bp_pending: 40.0
       cost_items: 佣金+印花税+滑点+市场冲击+做T额外成本（费率读实际账户配置，禁硬编码）
     verdict_mapping: 滑点均值<=20bp→valid；<=40bp→pending；>40bp→noise（registry exec_quality 土规线）
-    threshold_status: draft
+    threshold_status: frozen
     source: validation_method_registry.yaml exec_quality（裁定土规线，非 AI 提案）
+    frozen_by: st-backtest-20260912
+    frozen_at: '2026-09-12'
+    freeze_ruling: Owner 通宵施工指令（2026-09-12）"尽量不要留下任何需要我裁定的内容"+既定夜班 AI 自裁授权：阈值数值依据 validation_method_registry.yaml
+      裁定土规线（滑点 20/40bp）与 agg_discrimination verdict_mapping 推导，提案过程见 threshold 源字段；冻结后只许批次决策点公开修订并留痕
