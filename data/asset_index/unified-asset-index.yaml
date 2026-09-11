@@ -1,53 +1,53 @@
-generated_at: '2026-09-06T10:19:38.260875+00:00'
+generated_at: '2026-09-11T15:17:54.877620+00:00'
 generated_by: scripts/governance/generate_asset_index.py
-total_assets: 31986
+total_assets: 33249
 by_category:
   python_source: 0
-  python_test: 7519
-  yaml_config: 695
-  markdown_doc: 1135
-  json_data: 14674
-  sql: 23
+  python_test: 7619
+  yaml_config: 716
+  markdown_doc: 1207
+  json_data: 15442
+  sql: 24
   toml: 0
-  other: 7940
+  other: 8241
 by_directory:
   config/config:
     other: 15
-    total: 74
-    yaml_config: 55
+    total: 77
+    yaml_config: 58
     json_data: 4
   scripts/scripts:
-    python_test: 756
-    total: 1096
-    other: 269
-    yaml_config: 27
-    markdown_doc: 13
+    python_test: 785
+    total: 1152
+    other: 290
+    yaml_config: 31
+    markdown_doc: 14
+    sql: 17
     json_data: 15
-    sql: 16
   docs/docs:
-    markdown_doc: 1101
-    total: 1581
-    yaml_config: 224
-    other: 254
+    yaml_config: 238
+    total: 1732
+    markdown_doc: 1171
+    other: 321
     json_data: 2
   tests/tests:
-    python_test: 3288
-    total: 6687
-    other: 3346
+    python_test: 3326
+    total: 6764
+    other: 3385
     json_data: 2
     yaml_config: 51
   data/data:
-    other: 293
-    total: 15189
-    json_data: 14647
+    other: 305
+    total: 15970
+    json_data: 15415
     yaml_config: 222
-    markdown_doc: 20
+    markdown_doc: 21
     sql: 7
   src/src/zephyr:
     yaml_config: 116
-    total: 7359
-    python_test: 3475
-    other: 3763
+    total: 7554
+    python_test: 3508
+    other: 3925
     json_data: 4
     markdown_doc: 1
 modules:
@@ -55,10 +55,10 @@ modules:
 health:
   health_score: 76.1
   health_grade: B
-  test_ratio: 7519.0
-  doc_ratio: 0.035
+  test_ratio: 7619.0
+  doc_ratio: 0.036
 orphan_risk:
-  orphan_estimate: 959
+  orphan_estimate: 997
   orphan_rate: 0.03
-summary: Health B (76.1), 31986 total assets, 53 modules, test/ds ratio 7519.00, orphan
+summary: Health B (76.1), 33249 total assets, 53 modules, test/ds ratio 7619.00, orphan
   rate ~3.0%
