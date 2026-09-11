@@ -4,7 +4,7 @@
 # 生成源：features/manifest.yaml + 手工维护 + scan_frontend_pages.py 半自动补登（auto_scanned=true 待逐页人工复核转正）
 # D38 模块总线（2026-09-07）：有后端模块承载的功能点必须挂 module:MOD-*（与 depgraph frontend_ref 双向闭合，
 #   经 MOD 总线与交易决策地图/五图互通——全图全库对齐铁律）；纯前端逻辑用 none: 声明事由
-version: 2.3.0
+version: 2.3.1
 updated: '2026-09-12'
 features:
 - id: F-STOCKQ-COSTLINE
@@ -352,7 +352,7 @@ features:
   name: 2026 年 8 月
   page: calendar
   module_id: calendar-host
-  file: core/calendar.js
+  file: pages/calendar.html   # 2026-09-12 幽灵引用治理：原 core/calendar.js 从未存在，按条目内容检索归属真源
   backend_ref: none:待拆件盘点（auto 扫描未发现 /api/ 调用）
   status: active
   auto_scanned: true
@@ -360,7 +360,7 @@ features:
   name: 当日清单 ·
   page: calendar
   module_id: calendar-host
-  file: core/calendar.js
+  file: pages/calendar.html   # 2026-09-12 幽灵引用治理：原 core/calendar.js 从未存在，按条目内容检索归属真源
   backend_ref: none:待拆件盘点（auto 扫描未发现 /api/ 调用）
   status: active
   auto_scanned: true
@@ -368,7 +368,7 @@ features:
   name: 数据源与纪律
   page: calendar
   module_id: calendar-host
-  file: core/calendar.js
+  file: pages/calendar.html   # 2026-09-12 幽灵引用治理：原 core/calendar.js 从未存在，按条目内容检索归属真源
   backend_ref: none:待拆件盘点（auto 扫描未发现 /api/ 调用）
   status: active
   auto_scanned: true
@@ -461,7 +461,7 @@ features:
   name: 净值曲线（演示）
   page: cryptobt
   module_id: cryptobt-host
-  file: core/cryptobt.js
+  file: pages/cryptobt.html   # 2026-09-12 幽灵引用治理：原 core/cryptobt.js 从未存在，按条目内容检索归属真源
   backend_ref: none:待拆件盘点（auto 扫描未发现 /api/ 调用）
   status: active
   auto_scanned: true
@@ -469,7 +469,7 @@ features:
   name: 链上数据（待接入占位）
   page: cryptoinfo
   module_id: cryptoinfo-host
-  file: core/cryptoinfo.js
+  file: pages/cryptoinfo.html   # 2026-09-12 幽灵引用治理：原 core/cryptoinfo.js 从未存在，按条目内容检索归属真源
   backend_ref: none:待拆件盘点（auto 扫描未发现 /api/ 调用）
   status: active
   auto_scanned: true
@@ -477,7 +477,7 @@ features:
   name: 永续合约行情
   page: cryptomarket
   module_id: cryptomarket-host
-  file: core/cryptomarket.js
+  file: pages/cryptomarket.html   # 2026-09-12 幽灵引用治理：原 core/cryptomarket.js 从未存在，按条目内容检索归属真源
   backend_ref: none:待拆件盘点（auto 扫描未发现 /api/ 调用）
   status: active
   auto_scanned: true
@@ -485,7 +485,7 @@ features:
   name: 资金费率热力（8h）
   page: cryptomarket
   module_id: cryptomarket-host
-  file: core/cryptomarket.js
+  file: pages/cryptomarket.html   # 2026-09-12 幽灵引用治理：原 core/cryptomarket.js 从未存在，按条目内容检索归属真源
   backend_ref: none:待拆件盘点（auto 扫描未发现 /api/ 调用）
   status: active
   auto_scanned: true
@@ -493,7 +493,7 @@ features:
   name: BTC 持仓量 OI（24h）
   page: cryptomarket
   module_id: cryptomarket-host
-  file: core/cryptomarket.js
+  file: pages/cryptomarket.html   # 2026-09-12 幽灵引用治理：原 core/cryptomarket.js 从未存在，按条目内容检索归属真源
   backend_ref: none:待拆件盘点（auto 扫描未发现 /api/ 调用）
   status: active
   auto_scanned: true
@@ -501,7 +501,7 @@ features:
   name: 爆仓地图（24h 待清算密集区）
   page: cryptomarket
   module_id: cryptomarket-host
-  file: core/cryptomarket.js
+  file: pages/cryptomarket.html   # 2026-09-12 幽灵引用治理：原 core/cryptomarket.js 从未存在，按条目内容检索归属真源
   backend_ref: none:待拆件盘点（auto 扫描未发现 /api/ 调用）
   status: active
   auto_scanned: true
@@ -509,7 +509,7 @@ features:
   name: 多空比 + 标记/指数价差
   page: cryptomarket
   module_id: cryptomarket-host
-  file: core/cryptomarket.js
+  file: pages/cryptomarket.html   # 2026-09-12 幽灵引用治理：原 core/cryptomarket.js 从未存在，按条目内容检索归属真源
   backend_ref: none:待拆件盘点（auto 扫描未发现 /api/ 调用）
   status: active
   auto_scanned: true
@@ -517,7 +517,7 @@ features:
   name: 合约仓位
   page: cryptopos
   module_id: cryptopos-host
-  file: core/cryptopos.js
+  file: pages/cryptopos.html   # 2026-09-12 幽灵引用治理：原 core/cryptopos.js 从未存在，按条目内容检索归属真源
   backend_ref: none:待拆件盘点（auto 扫描未发现 /api/ 调用）
   status: active
   auto_scanned: true
@@ -525,7 +525,7 @@ features:
   name: 强平预警带
   page: cryptopos
   module_id: cryptopos-host
-  file: core/cryptopos.js
+  file: pages/cryptopos.html   # 2026-09-12 幽灵引用治理：原 core/cryptopos.js 从未存在，按条目内容检索归属真源
   backend_ref: none:待拆件盘点（auto 扫描未发现 /api/ 调用）
   status: active
   auto_scanned: true
@@ -533,7 +533,7 @@ features:
   name: 资金费累计 + 风控规则
   page: cryptopos
   module_id: cryptopos-host
-  file: core/cryptopos.js
+  file: pages/cryptopos.html   # 2026-09-12 幽灵引用治理：原 core/cryptopos.js 从未存在，按条目内容检索归属真源
   backend_ref: none:待拆件盘点（auto 扫描未发现 /api/ 调用）
   status: active
   auto_scanned: true
@@ -541,7 +541,7 @@ features:
   name: 网格交易
   page: cryptostrat
   module_id: cryptostrat-host
-  file: core/cryptostrat.js
+  file: pages/cryptostrat.html   # 2026-09-12 幽灵引用治理：原 core/cryptostrat.js 从未存在，按条目内容检索归属真源
   backend_ref: none:待拆件盘点（auto 扫描未发现 /api/ 调用）
   status: active
   auto_scanned: true
@@ -549,7 +549,7 @@ features:
   name: 资金费套利
   page: cryptostrat
   module_id: cryptostrat-host
-  file: core/cryptostrat.js
+  file: pages/cryptostrat.html   # 2026-09-12 幽灵引用治理：原 core/cryptostrat.js 从未存在，按条目内容检索归属真源
   backend_ref: none:待拆件盘点（auto 扫描未发现 /api/ 调用）
   status: active
   auto_scanned: true
@@ -557,7 +557,7 @@ features:
   name: 趋势跟踪
   page: cryptostrat
   module_id: cryptostrat-host
-  file: core/cryptostrat.js
+  file: pages/cryptostrat.html   # 2026-09-12 幽灵引用治理：原 core/cryptostrat.js 从未存在，按条目内容检索归属真源
   backend_ref: none:待拆件盘点（auto 扫描未发现 /api/ 调用）
   status: active
   auto_scanned: true
@@ -565,7 +565,7 @@ features:
   name: 与 A 股策略的关系
   page: cryptostrat
   module_id: cryptostrat-host
-  file: core/cryptostrat.js
+  file: pages/cryptostrat.html   # 2026-09-12 幽灵引用治理：原 core/cryptostrat.js 从未存在，按条目内容检索归属真源
   backend_ref: none:待拆件盘点（auto 扫描未发现 /api/ 调用）
   status: active
   auto_scanned: true
@@ -597,7 +597,7 @@ features:
   name: 底色族（5+4）——结构色，不可用于文字/数据；v7（2026-08-30）：一级卡片底=半透明叠层 --card7（S
   page: design
   module_id: design-host
-  file: core/design.js
+  file: pages/design.html   # 2026-09-12 幽灵引用治理：原 core/design.js 从未存在，按条目内容检索归属真源
   backend_ref: none:待拆件盘点（auto 扫描未发现 /api/ 调用）
   status: active
   auto_scanned: true
@@ -605,7 +605,7 @@ features:
   name: 文字灰阶（3+1）——全部文字只许这几级；v7 新增 --label=卡标题/表头/分区标专用标签灰（宽字距语法见 DS
   page: design
   module_id: design-host
-  file: core/design.js
+  file: pages/design.html   # 2026-09-12 幽灵引用治理：原 core/design.js 从未存在，按条目内容检索归属真源
   backend_ref: none:待拆件盘点（auto 扫描未发现 /api/ 调用）
   status: active
   auto_scanned: true
@@ -613,7 +613,7 @@ features:
   name: 功能色（6+3）——色系 v6 极简功能主义延续：图表坐标系外一律灰阶，彩色只给功能；v7 新增提亮族与信息蓝（Shar
   page: design
   module_id: design-host
-  file: core/design.js
+  file: pages/design.html   # 2026-09-12 幽灵引用治理：原 core/design.js 从未存在，按条目内容检索归属真源
   backend_ref: none:待拆件盘点（auto 扫描未发现 /api/ 调用）
   status: active
   auto_scanned: true
@@ -621,7 +621,7 @@ features:
   name: 透明度族（颜色收敛规则——所有"底色强调"一律透明化，禁实色块）
   page: design
   module_id: design-host
-  file: core/design.js
+  file: pages/design.html   # 2026-09-12 幽灵引用治理：原 core/design.js 从未存在，按条目内容检索归属真源
   backend_ref: none:待拆件盘点（auto 扫描未发现 /api/ 调用）
   status: active
   auto_scanned: true
@@ -629,7 +629,7 @@ features:
   name: OKX 清单照抄记录（2026-08-27，markets/favorite 页 getComputedStyle 全量
   page: design
   module_id: design-host
-  file: core/design.js
+  file: pages/design.html   # 2026-09-12 幽灵引用治理：原 core/design.js 从未存在，按条目内容检索归属真源
   backend_ref: none:待拆件盘点（auto 扫描未发现 /api/ 调用）
   status: active
   auto_scanned: true
@@ -637,7 +637,7 @@ features:
   name: 刻意超越包（OKX 没有的 4 处微细节——"高级感=纹理不是颜色"）
   page: design
   module_id: design-host
-  file: core/design.js
+  file: pages/design.html   # 2026-09-12 幽灵引用治理：原 core/design.js 从未存在，按条目内容检索归属真源
   backend_ref: none:待拆件盘点（auto 扫描未发现 /api/ 调用）
   status: active
   auto_scanned: true
@@ -645,7 +645,7 @@ features:
   name: 色彩秩序 v6 极简功能主义（2026-08-28 Owner 裁定：除必要颜色能不用就不用——K线涨跌红绿/进度条蓝/
   page: design
   module_id: design-host
-  file: core/design.js
+  file: pages/design.html   # 2026-09-12 幽灵引用治理：原 core/design.js 从未存在，按条目内容检索归属真源
   backend_ref: none:待拆件盘点（auto 扫描未发现 /api/ 调用）
   status: active
   auto_scanned: true
@@ -653,7 +653,7 @@ features:
   name: 禁色清单（已废止，合规审查见即改）
   page: design
   module_id: design-host
-  file: core/design.js
+  file: pages/design.html   # 2026-09-12 幽灵引用治理：原 core/design.js 从未存在，按条目内容检索归属真源
   backend_ref: none:待拆件盘点（auto 扫描未发现 /api/ 调用）
   status: active
   auto_scanned: true
@@ -661,7 +661,7 @@ features:
   name: 4.1 卡片（信息容器唯一形态）
   page: design
   module_id: design-host
-  file: core/design.js
+  file: pages/design.html   # 2026-09-12 幽灵引用治理：原 core/design.js 从未存在，按条目内容检索归属真源
   backend_ref: none:待拆件盘点（auto 扫描未发现 /api/ 调用）
   status: active
   auto_scanned: true
@@ -669,7 +669,7 @@ features:
   name: 4.2 KPI 指标卡（核心数字=锚点）
   page: design
   module_id: design-host
-  file: core/design.js
+  file: pages/design.html   # 2026-09-12 幽灵引用治理：原 core/design.js 从未存在，按条目内容检索归属真源
   backend_ref: none:待拆件盘点（auto 扫描未发现 /api/ 调用）
   status: active
   auto_scanned: true
@@ -677,7 +677,7 @@ features:
   name: 4.3 badge 六族（语义映射唯一表）
   page: design
   module_id: design-host
-  file: core/design.js
+  file: pages/design.html   # 2026-09-12 幽灵引用治理：原 core/design.js 从未存在，按条目内容检索归属真源
   backend_ref: none:待拆件盘点（auto 扫描未发现 /api/ 调用）
   status: active
   auto_scanned: true
@@ -685,7 +685,7 @@ features:
   name: 4.4 alert-row 族（v6 去框化：err/warn/info + .bad=err 别名，Owner 202
   page: design
   module_id: design-host
-  file: core/design.js
+  file: pages/design.html   # 2026-09-12 幽灵引用治理：原 core/design.js 从未存在，按条目内容检索归属真源
   backend_ref: none:待拆件盘点（auto 扫描未发现 /api/ 调用）
   status: active
   auto_scanned: true
@@ -693,7 +693,7 @@ features:
   name: 4.5 表格
   page: design
   module_id: design-host
-  file: core/design.js
+  file: pages/design.html   # 2026-09-12 幽灵引用治理：原 core/design.js 从未存在，按条目内容检索归属真源
   backend_ref: none:待拆件盘点（auto 扫描未发现 /api/ 调用）
   status: active
   auto_scanned: true
@@ -701,7 +701,7 @@ features:
   name: 4.6 tab / 按钮 / 输入
   page: design
   module_id: design-host
-  file: core/design.js
+  file: pages/design.html   # 2026-09-12 幽灵引用治理：原 core/design.js 从未存在，按条目内容检索归属真源
   backend_ref: none:待拆件盘点（auto 扫描未发现 /api/ 调用）
   status: active
   auto_scanned: true
@@ -709,7 +709,7 @@ features:
   name: 4.7 顶栏导航与下拉
   page: design
   module_id: design-host
-  file: core/design.js
+  file: pages/design.html   # 2026-09-12 幽灵引用治理：原 core/design.js 从未存在，按条目内容检索归属真源
   backend_ref: none:待拆件盘点（auto 扫描未发现 /api/ 调用）
   status: active
   auto_scanned: true
@@ -717,7 +717,7 @@ features:
   name: 4.8 ⓘ 注解悬浮组件（版面简洁化核心）
   page: design
   module_id: design-host
-  file: core/design.js
+  file: pages/design.html   # 2026-09-12 幽灵引用治理：原 core/design.js 从未存在，按条目内容检索归属真源
   backend_ref: none:待拆件盘点（auto 扫描未发现 /api/ 调用）
   status: active
   auto_scanned: true
@@ -725,7 +725,7 @@ features:
   name: 4.9 ticker 横条 / toast / 状态灯
   page: design
   module_id: design-host
-  file: core/design.js
+  file: pages/design.html   # 2026-09-12 幽灵引用治理：原 core/design.js 从未存在，按条目内容检索归属真源
   backend_ref: none:待拆件盘点（auto 扫描未发现 /api/ 调用）
   status: active
   auto_scanned: true
@@ -733,7 +733,7 @@ features:
   name: 4.10 chip 胶囊族（v7 新增，SharpLink 徽章语法）
   page: design
   module_id: design-host
-  file: core/design.js
+  file: pages/design.html   # 2026-09-12 幽灵引用治理：原 core/design.js 从未存在，按条目内容检索归属真源
   backend_ref: none:待拆件盘点（auto 扫描未发现 /api/ 调用）
   status: active
   auto_scanned: true
@@ -741,7 +741,7 @@ features:
   name: 4.11 合并模块族（v7 新增·终版样板实证——同类低密度卡片合一，消灭卡内留白）
   page: design
   module_id: design-host
-  file: core/design.js
+  file: pages/design.html   # 2026-09-12 幽灵引用治理：原 core/design.js 从未存在，按条目内容检索归属真源
   backend_ref: none:待拆件盘点（auto 扫描未发现 /api/ 调用）
   status: active
   auto_scanned: true
@@ -749,7 +749,7 @@ features:
   name: 4.12 决策卡 dc-card（R18 划重点例外件——全站唯一大字彩色强调）
   page: design
   module_id: design-host
-  file: core/design.js
+  file: pages/design.html   # 2026-09-12 幽灵引用治理：原 core/design.js 从未存在，按条目内容检索归属真源
   backend_ref: none:待拆件盘点（auto 扫描未发现 /api/ 调用）
   status: active
   auto_scanned: true
@@ -757,7 +757,7 @@ features:
   name: K 线视图 5 档尺寸标准（2026-08-27 Owner 方向：多档标准+全主图滚轮缩放）
   page: design
   module_id: design-host
-  file: core/design.js
+  file: pages/design.html   # 2026-09-12 幽灵引用治理：原 core/design.js 从未存在，按条目内容检索归属真源
   backend_ref: none:待拆件盘点（auto 扫描未发现 /api/ 调用）
   status: active
   auto_scanned: true
@@ -765,7 +765,7 @@ features:
   name: 进度条标准（.pbar 族——马上多功能上线，统一此规格）
   page: design
   module_id: design-host
-  file: core/design.js
+  file: pages/design.html   # 2026-09-12 幽灵引用治理：原 core/design.js 从未存在，按条目内容检索归属真源
   backend_ref: none:待拆件盘点（auto 扫描未发现 /api/ 调用）
   status: active
   auto_scanned: true
@@ -773,7 +773,7 @@ features:
   name: K 线规范图（标准蓝图——真实引擎渲染+元素标注；验收对照用）
   page: design
   module_id: design-host
-  file: core/design.js
+  file: pages/design.html   # 2026-09-12 幽灵引用治理：原 core/design.js 从未存在，按条目内容检索归属真源
   backend_ref: none:待拆件盘点（auto 扫描未发现 /api/ 调用）
   status: active
   auto_scanned: true
@@ -781,7 +781,7 @@ features:
   name: 合规审查记录
   page: design
   module_id: design-host
-  file: core/design.js
+  file: pages/design.html   # 2026-09-12 幽灵引用治理：原 core/design.js 从未存在，按条目内容检索归属真源
   backend_ref: none:待拆件盘点（auto 扫描未发现 /api/ 调用）
   status: active
   auto_scanned: true
@@ -789,7 +789,7 @@ features:
   name: DS-1 色彩系统
   page: design
   module_id: design-host
-  file: core/design.js
+  file: pages/design.html   # 2026-09-12 幽灵引用治理：原 core/design.js 从未存在，按条目内容检索归属真源
   backend_ref: none:待拆件盘点（auto 扫描未发现 /api/ 调用）
   status: active
   auto_scanned: true
@@ -797,7 +797,7 @@ features:
   name: DS-2 字体系统
   page: design
   module_id: design-host
-  file: core/design.js
+  file: pages/design.html   # 2026-09-12 幽灵引用治理：原 core/design.js 从未存在，按条目内容检索归属真源
   backend_ref: none:待拆件盘点（auto 扫描未发现 /api/ 调用）
   status: active
   auto_scanned: true
@@ -805,7 +805,7 @@ features:
   name: DS-3 间距与圆角
   page: design
   module_id: design-host
-  file: core/design.js
+  file: pages/design.html   # 2026-09-12 幽灵引用治理：原 core/design.js 从未存在，按条目内容检索归属真源
   backend_ref: none:待拆件盘点（auto 扫描未发现 /api/ 调用）
   status: active
   auto_scanned: true
@@ -813,7 +813,7 @@ features:
   name: DS-4 组件规范
   page: design
   module_id: design-host
-  file: core/design.js
+  file: pages/design.html   # 2026-09-12 幽灵引用治理：原 core/design.js 从未存在，按条目内容检索归属真源
   backend_ref: none:待拆件盘点（auto 扫描未发现 /api/ 调用）
   status: active
   auto_scanned: true
@@ -821,7 +821,7 @@ features:
   name: DS-5 K 线与图表专项
   page: design
   module_id: design-host
-  file: core/design.js
+  file: pages/design.html   # 2026-09-12 幽灵引用治理：原 core/design.js 从未存在，按条目内容检索归属真源
   backend_ref: none:待拆件盘点（auto 扫描未发现 /api/ 调用）
   status: active
   auto_scanned: true
@@ -829,7 +829,7 @@ features:
   name: DS-6 语义色宪章
   page: design
   module_id: design-host
-  file: core/design.js
+  file: pages/design.html   # 2026-09-12 幽灵引用治理：原 core/design.js 从未存在，按条目内容检索归属真源
   backend_ref: none:待拆件盘点（auto 扫描未发现 /api/ 调用）
   status: active
   auto_scanned: true
@@ -837,7 +837,7 @@ features:
   name: DS-7 图标与装饰规则
   page: design
   module_id: design-host
-  file: core/design.js
+  file: pages/design.html   # 2026-09-12 幽灵引用治理：原 core/design.js 从未存在，按条目内容检索归属真源
   backend_ref: none:待拆件盘点（auto 扫描未发现 /api/ 调用）
   status: active
   auto_scanned: true
@@ -845,7 +845,7 @@ features:
   name: DS-8 负反馈与待接入规范
   page: design
   module_id: design-host
-  file: core/design.js
+  file: pages/design.html   # 2026-09-12 幽灵引用治理：原 core/design.js 从未存在，按条目内容检索归属真源
   backend_ref: none:待拆件盘点（auto 扫描未发现 /api/ 调用）
   status: active
   auto_scanned: true
@@ -853,7 +853,7 @@ features:
   name: DS-9 组件→页面适用索引
   page: design
   module_id: design-host
-  file: core/design.js
+  file: pages/design.html   # 2026-09-12 幽灵引用治理：原 core/design.js 从未存在，按条目内容检索归属真源
   backend_ref: none:待拆件盘点（auto 扫描未发现 /api/ 调用）
   status: active
   auto_scanned: true
@@ -861,7 +861,7 @@ features:
   name: DS-10 模块缩放规范
   page: design
   module_id: design-host
-  file: core/design.js
+  file: pages/design.html   # 2026-09-12 幽灵引用治理：原 core/design.js 从未存在，按条目内容检索归属真源
   backend_ref: none:待拆件盘点（auto 扫描未发现 /api/ 调用）
   status: active
   auto_scanned: true
@@ -869,7 +869,7 @@ features:
   name: DS-12 数据源状态灯
   page: design
   module_id: design-host
-  file: core/design.js
+  file: pages/design.html   # 2026-09-12 幽灵引用治理：原 core/design.js 从未存在，按条目内容检索归属真源
   backend_ref: none:待拆件盘点（auto 扫描未发现 /api/ 调用）
   status: active
   auto_scanned: true
@@ -877,7 +877,7 @@ features:
   name: DS-11 模块拆件标准
   page: design
   module_id: design-host
-  file: core/design.js
+  file: pages/design.html   # 2026-09-12 幽灵引用治理：原 core/design.js 从未存在，按条目内容检索归属真源
   backend_ref: none:待拆件盘点（auto 扫描未发现 /api/ 调用）
   status: active
   auto_scanned: true
@@ -893,7 +893,7 @@ features:
   name: Runs
   page: experiment
   module_id: experiment-host
-  file: core/experiment.js
+  file: pages/experiment.html   # 2026-09-12 幽灵引用治理：原 core/experiment.js 从未存在，按条目内容检索归属真源
   backend_ref: none:待拆件盘点（auto 扫描未发现 /api/ 调用）
   status: active
   auto_scanned: true
@@ -901,7 +901,7 @@ features:
   name: c1_mock_20260819_sector · 详情
   page: experiment
   module_id: experiment-host
-  file: core/experiment.js
+  file: features/position/pos-attribution.js   # 2026-09-12 幽灵引用治理：原 core/experiment.js 从未存在，按条目内容检索归属真源
   backend_ref: none:待拆件盘点（auto 扫描未发现 /api/ 调用）
   status: active
   auto_scanned: true
@@ -909,7 +909,7 @@ features:
   name: 因子看板
   page: factor
   module_id: factor-host
-  file: core/factor.js
+  file: pages/factor.html   # 2026-09-12 幽灵引用治理：原 core/factor.js 从未存在，按条目内容检索归属真源
   backend_ref: none:待拆件盘点（auto 扫描未发现 /api/ 调用）
   status: active
   auto_scanned: true
@@ -917,7 +917,7 @@ features:
   name: 反转因子 · 分组净值
   page: factor
   module_id: factor-host
-  file: core/factor.js
+  file: pages/factor.html   # 2026-09-12 幽灵引用治理：原 core/factor.js 从未存在，按条目内容检索归属真源
   backend_ref: none:待拆件盘点（auto 扫描未发现 /api/ 调用）
   status: active
   auto_scanned: true
@@ -925,7 +925,7 @@ features:
   name: IC 滚动稳定 + 衰减
   page: factor
   module_id: factor-host
-  file: core/factor.js
+  file: pages/factor.html   # 2026-09-12 幽灵引用治理：原 core/factor.js 从未存在，按条目内容检索归属真源
   backend_ref: none:待拆件盘点（auto 扫描未发现 /api/ 调用）
   status: active
   auto_scanned: true
@@ -933,7 +933,7 @@ features:
   name: 近 30 次趋势
   page: fitness
   module_id: fitness-host
-  file: core/fitness.js
+  file: pages/fitness.html   # 2026-09-12 幽灵引用治理：原 core/fitness.js 从未存在，按条目内容检索归属真源
   backend_ref: none:待拆件盘点（auto 扫描未发现 /api/ 调用）
   status: active
   auto_scanned: true
@@ -941,7 +941,7 @@ features:
   name: 状态
   page: govana
   module_id: govana-host
-  file: core/govana.js
+  file: pages/govana.html   # 2026-09-12 幽灵引用治理：原 core/govana.js 从未存在，按条目内容检索归属真源
   backend_ref: none:待拆件盘点（auto 扫描未发现 /api/ 调用）
   status: active
   auto_scanned: true
@@ -949,7 +949,7 @@ features:
   name: 阶段状态标注
   page: index
   module_id: index-host
-  file: core/index.js
+  file: pages/index.html   # 2026-09-12 幽灵引用治理：原 core/index.js 从未存在，按条目内容检索归属真源
   backend_ref: none:待拆件盘点（auto 扫描未发现 /api/ 调用）
   status: active
   auto_scanned: true
@@ -957,7 +957,7 @@ features:
   name: 逐笔回报时序
   page: live
   module_id: live-host
-  file: core/live.js
+  file: pages/live.html   # 2026-09-12 幽灵引用治理：原 core/live.js 从未存在，按条目内容检索归属真源
   backend_ref: none:待拆件盘点（auto 扫描未发现 /api/ 调用）
   status: active
   auto_scanned: true
@@ -965,7 +965,7 @@ features:
   name: 市场 Regime
   page: live
   module_id: live-host
-  file: core/live.js
+  file: pages/live.html   # 2026-09-12 幽灵引用治理：原 core/live.js 从未存在，按条目内容检索归属真源
   backend_ref: none:待拆件盘点（auto 扫描未发现 /api/ 调用）
   status: active
   auto_scanned: true
@@ -973,7 +973,7 @@ features:
   name: 情绪温度
   page: live
   module_id: live-host
-  file: core/live.js
+  file: pages/live.html   # 2026-09-12 幽灵引用治理：原 core/live.js 从未存在，按条目内容检索归属真源
   backend_ref: none:待拆件盘点（auto 扫描未发现 /api/ 调用）
   status: active
   auto_scanned: true
@@ -981,7 +981,7 @@ features:
   name: 接力情绪周期
   page: live
   module_id: live-host
-  file: core/live.js
+  file: pages/live.html   # 2026-09-12 幽灵引用治理：原 core/live.js 从未存在，按条目内容检索归属真源
   backend_ref: none:待拆件盘点（auto 扫描未发现 /api/ 调用）
   status: active
   auto_scanned: true
@@ -989,7 +989,7 @@ features:
   name: 极端预警
   page: live
   module_id: live-host
-  file: core/live.js
+  file: pages/live.html   # 2026-09-12 幽灵引用治理：原 core/live.js 从未存在，按条目内容检索归属真源
   backend_ref: none:待拆件盘点（auto 扫描未发现 /api/ 调用）
   status: active
   auto_scanned: true
@@ -997,7 +997,7 @@ features:
   name: 决策链
   page: live
   module_id: live-host
-  file: core/live.js
+  file: pages/live.html   # 2026-09-12 幽灵引用治理：原 core/live.js 从未存在，按条目内容检索归属真源
   backend_ref: none:待拆件盘点（auto 扫描未发现 /api/ 调用）
   status: active
   auto_scanned: true
@@ -1005,7 +1005,7 @@ features:
   name: 风控实时
   page: live
   module_id: live-host
-  file: core/live.js
+  file: pages/live.html   # 2026-09-12 幽灵引用治理：原 core/live.js 从未存在，按条目内容检索归属真源
   backend_ref: none:待拆件盘点（auto 扫描未发现 /api/ 调用）
   status: active
   auto_scanned: true
@@ -1013,7 +1013,7 @@ features:
   name: 今日交易计划
   page: live
   module_id: live-host
-  file: core/live.js
+  file: pages/live.html   # 2026-09-12 幽灵引用治理：原 core/live.js 从未存在，按条目内容检索归属真源
   backend_ref: none:待拆件盘点（auto 扫描未发现 /api/ 调用）
   status: active
   auto_scanned: true
@@ -1021,7 +1021,7 @@ features:
   name: 当日委托 / 成交
   page: live
   module_id: live-host
-  file: core/live.js
+  file: pages/live.html   # 2026-09-12 幽灵引用治理：原 core/live.js 从未存在，按条目内容检索归属真源
   backend_ref: none:待拆件盘点（auto 扫描未发现 /api/ 调用）
   status: active
   auto_scanned: true
@@ -1029,7 +1029,7 @@ features:
   name: 系统运行日志
   page: live
   module_id: live-host
-  file: core/live.js
+  file: pages/live.html   # 2026-09-12 幽灵引用治理：原 core/live.js 从未存在，按条目内容检索归属真源
   backend_ref: none:待拆件盘点（auto 扫描未发现 /api/ 调用）
   status: active
   auto_scanned: true
@@ -1037,7 +1037,7 @@ features:
   name: 下单
   page: live
   module_id: live-host
-  file: core/live.js
+  file: features/live/ord-ticket.js   # 2026-09-12 幽灵引用治理：原 core/live.js 从未存在，按条目内容检索归属真源
   backend_ref: none:待拆件盘点（auto 扫描未发现 /api/ 调用）
   status: active
   auto_scanned: true
@@ -1045,7 +1045,7 @@ features:
   name: 上证指数 i主版面 · 分钟级
   page: live
   module_id: live-host
-  file: core/live.js
+  file: pages/live.html   # 2026-09-12 幽灵引用治理：原 core/live.js 从未存在，按条目内容检索归属真源
   backend_ref: none:待拆件盘点（auto 扫描未发现 /api/ 调用）
   status: active
   auto_scanned: true
@@ -1053,7 +1053,7 @@ features:
   name: 副指数 · 深证 / 创业板 / 科创
   page: live
   module_id: live-host
-  file: core/live.js
+  file: pages/live.html   # 2026-09-12 幽灵引用治理：原 core/live.js 从未存在，按条目内容检索归属真源
   backend_ref: none:待拆件盘点（auto 扫描未发现 /api/ 调用）
   status: active
   auto_scanned: true
@@ -1061,7 +1061,7 @@ features:
   name: 市场统计
   page: live
   module_id: live-host
-  file: core/live.js
+  file: pages/live.html   # 2026-09-12 幽灵引用治理：原 core/live.js 从未存在，按条目内容检索归属真源
   backend_ref: none:待拆件盘点（auto 扫描未发现 /api/ 调用）
   status: active
   auto_scanned: true
@@ -1069,7 +1069,7 @@ features:
   name: 风格分化 i
   page: live
   module_id: live-host
-  file: core/live.js
+  file: pages/live.html   # 2026-09-12 幽灵引用治理：原 core/live.js 从未存在，按条目内容检索归属真源
   backend_ref: none:待拆件盘点（auto 扫描未发现 /api/ 调用）
   status: active
   auto_scanned: true
@@ -1077,7 +1077,7 @@ features:
   name: 涨跌分档分布 i
   page: live
   module_id: live-host
-  file: core/live.js
+  file: pages/live.html   # 2026-09-12 幽灵引用治理：原 core/live.js 从未存在，按条目内容检索归属真源
   backend_ref: none:待拆件盘点（auto 扫描未发现 /api/ 调用）
   status: active
   auto_scanned: true
@@ -1085,7 +1085,7 @@ features:
   name: 涨停强度 · 今昨对比 i
   page: live
   module_id: live-host
-  file: core/live.js
+  file: pages/live.html   # 2026-09-12 幽灵引用治理：原 core/live.js 从未存在，按条目内容检索归属真源
   backend_ref: none:待拆件盘点（auto 扫描未发现 /api/ 调用）
   status: active
   auto_scanned: true
@@ -1093,7 +1093,7 @@ features:
   name: 成交额 · 分时累计 i
   page: live
   module_id: live-host
-  file: core/live.js
+  file: pages/live.html   # 2026-09-12 幽灵引用治理：原 core/live.js 从未存在，按条目内容检索归属真源
   backend_ref: none:待拆件盘点（auto 扫描未发现 /api/ 调用）
   status: active
   auto_scanned: true
@@ -1101,7 +1101,7 @@ features:
   name: 大盘状态 · 因子构成面板 i
   page: live
   module_id: live-host
-  file: core/live.js
+  file: pages/live.html   # 2026-09-12 幽灵引用治理：原 core/live.js 从未存在，按条目内容检索归属真源
   backend_ref: none:待拆件盘点（auto 扫描未发现 /api/ 调用）
   status: active
   auto_scanned: true
@@ -1109,7 +1109,7 @@ features:
   name: 规划内容（待与 Owner 对齐后细化）
   page: macro
   module_id: macro-host
-  file: core/macro.js
+  file: pages/macro.html   # 2026-09-12 幽灵引用治理：原 core/macro.js 从未存在，按条目内容检索归属真源
   backend_ref: none:待拆件盘点（auto 扫描未发现 /api/ 调用）
   status: active
   auto_scanned: true
@@ -1117,7 +1117,7 @@ features:
   name: 与现有页面的边界
   page: macro
   module_id: macro-host
-  file: core/macro.js
+  file: pages/macro.html   # 2026-09-12 幽灵引用治理：原 core/macro.js 从未存在，按条目内容检索归属真源
   backend_ref: none:待拆件盘点（auto 扫描未发现 /api/ 调用）
   status: active
   auto_scanned: true
@@ -1125,7 +1125,7 @@ features:
   name: 天气数据（40 城市）
   page: macro
   module_id: macro-host
-  file: core/macro.js
+  file: pages/macro.html   # 2026-09-12 幽灵引用治理：原 core/macro.js 从未存在，按条目内容检索归属真源
   backend_ref: none:待拆件盘点（auto 扫描未发现 /api/ 调用）
   status: active
   auto_scanned: true
@@ -1133,7 +1133,7 @@ features:
   name: 模型注册表
   page: models
   module_id: models-host
-  file: core/models.js
+  file: pages/models.html   # 2026-09-12 幽灵引用治理：原 core/models.js 从未存在，按条目内容检索归属真源
   backend_ref: none:待拆件盘点（auto 扫描未发现 /api/ 调用）
   status: active
   auto_scanned: true
@@ -1141,7 +1141,7 @@ features:
   name: 训练态质量
   page: models
   module_id: models-host
-  file: core/models.js
+  file: pages/models.html   # 2026-09-12 幽灵引用治理：原 core/models.js 从未存在，按条目内容检索归属真源
   backend_ref: none:待拆件盘点（auto 扫描未发现 /api/ 调用）
   status: active
   auto_scanned: true
@@ -1149,7 +1149,7 @@ features:
   name: 服务态四维漂移+影子部署
   page: models
   module_id: models-host
-  file: core/models.js
+  file: pages/models.html   # 2026-09-12 幽灵引用治理：原 core/models.js 从未存在，按条目内容检索归属真源
   backend_ref: none:待拆件盘点（auto 扫描未发现 /api/ 调用）
   status: active
   auto_scanned: true
@@ -1157,7 +1157,7 @@ features:
   name: 学习效果回喂
   page: models
   module_id: models-host
-  file: core/models.js
+  file: pages/models.html   # 2026-09-12 幽灵引用治理：原 core/models.js 从未存在，按条目内容检索归属真源
   backend_ref: none:待拆件盘点（auto 扫描未发现 /api/ 调用）
   status: active
   auto_scanned: true
@@ -1165,7 +1165,7 @@ features:
   name: 决策解释+人工干预留痕
   page: models
   module_id: models-host
-  file: core/models.js
+  file: pages/models.html   # 2026-09-12 幽灵引用治理：原 core/models.js 从未存在，按条目内容检索归属真源
   backend_ref: none:待拆件盘点（auto 扫描未发现 /api/ 调用）
   status: active
   auto_scanned: true
@@ -1173,7 +1173,7 @@ features:
   name: 压缩验证三阶段
   page: models
   module_id: models-host
-  file: core/models.js
+  file: pages/models.html   # 2026-09-12 幽灵引用治理：原 core/models.js 从未存在，按条目内容检索归属真源
   backend_ref: none:待拆件盘点（auto 扫描未发现 /api/ 调用）
   status: active
   auto_scanned: true
@@ -1181,7 +1181,7 @@ features:
   name: 因子×模型双向利用度
   page: models
   module_id: models-host
-  file: core/models.js
+  file: pages/models.html   # 2026-09-12 幽灵引用治理：原 core/models.js 从未存在，按条目内容检索归属真源
   backend_ref: none:待拆件盘点（auto 扫描未发现 /api/ 调用）
   status: active
   auto_scanned: true
@@ -1189,7 +1189,7 @@ features:
   name: 本页结论怎么来的 · 证据链
   page: models
   module_id: models-host
-  file: core/models.js
+  file: pages/models.html   # 2026-09-12 幽灵引用治理：原 core/models.js 从未存在，按条目内容检索归属真源
   backend_ref: none:待拆件盘点（auto 扫描未发现 /api/ 调用）
   status: active
   auto_scanned: true
@@ -1197,7 +1197,7 @@ features:
   name: 全模块清单
   page: modledger
   module_id: modledger-host
-  file: core/modledger.js
+  file: pages/modledger.html   # 2026-09-12 幽灵引用治理：原 core/modledger.js 从未存在，按条目内容检索归属真源
   backend_ref: none:待拆件盘点（auto 扫描未发现 /api/ 调用）
   status: active
   auto_scanned: true
@@ -1205,7 +1205,7 @@ features:
   name: 口径与数据源说明
   page: modledger
   module_id: modledger-host
-  file: core/modledger.js
+  file: pages/modledger.html   # 2026-09-12 幽灵引用治理：原 core/modledger.js 从未存在，按条目内容检索归属真源
   backend_ref: none:待拆件盘点（auto 扫描未发现 /api/ 调用）
   status: active
   auto_scanned: true
@@ -1213,7 +1213,7 @@ features:
   name: 一、容器类 信息的外壳
   page: modlib
   module_id: modlib-host
-  file: core/modlib.js
+  file: pages/modlib.html   # 2026-09-12 幽灵引用治理：原 core/modlib.js 从未存在，按条目内容检索归属真源
   backend_ref: none:待拆件盘点（auto 扫描未发现 /api/ 调用）
   status: active
   auto_scanned: true
@@ -1221,7 +1221,7 @@ features:
   name: 二、表格类 列数定族：≤5 列窄表 / ≥7 列宽表
   page: modlib
   module_id: modlib-host
-  file: core/modlib.js
+  file: pages/modlib.html   # 2026-09-12 幽灵引用治理：原 core/modlib.js 从未存在，按条目内容检索归属真源
   backend_ref: none:待拆件盘点（auto 扫描未发现 /api/ 调用）
   status: active
   auto_scanned: true
@@ -1229,7 +1229,7 @@ features:
   name: 三、图表类 统一铁律：数据驱动 fluid 重绘（page:show/resize），禁 viewBox-none 拉伸
   page: modlib
   module_id: modlib-host
-  file: core/modlib.js
+  file: pages/modlib.html   # 2026-09-12 幽灵引用治理：原 core/modlib.js 从未存在，按条目内容检索归属真源
   backend_ref: none:待拆件盘点（auto 扫描未发现 /api/ 调用）
   status: active
   auto_scanned: true
@@ -1237,7 +1237,7 @@ features:
   name: 四、交互控件 小件族：全部耐宽、不参与拉宽
   page: modlib
   module_id: modlib-host
-  file: core/modlib.js
+  file: pages/modlib.html   # 2026-09-12 幽灵引用治理：原 core/modlib.js 从未存在，按条目内容检索归属真源
   backend_ref: none:待拆件盘点（auto 扫描未发现 /api/ 调用）
   status: active
   auto_scanned: true
@@ -1245,7 +1245,7 @@ features:
   name: 五、信息流 时间线/新闻/日志/辩论/矩阵
   page: modlib
   module_id: modlib-host
-  file: core/modlib.js
+  file: pages/modlib.html   # 2026-09-12 幽灵引用治理：原 core/modlib.js 从未存在，按条目内容检索归属真源
   backend_ref: none:待拆件盘点（auto 扫描未发现 /api/ 调用）
   status: active
   auto_scanned: true
@@ -1253,7 +1253,7 @@ features:
   name: 六、专用模块 各自有明确宽度姿态
   page: modlib
   module_id: modlib-host
-  file: core/modlib.js
+  file: pages/modlib.html   # 2026-09-12 幽灵引用治理：原 core/modlib.js 从未存在，按条目内容检索归属真源
   backend_ref: none:待拆件盘点（auto 扫描未发现 /api/ 调用）
   status: active
   auto_scanned: true
@@ -1261,7 +1261,7 @@ features:
   name: 七、网格画廊 auto-fill 结论卡阵——一句一行，依据收 ⓘ
   page: modlib
   module_id: modlib-host
-  file: core/modlib.js
+  file: pages/modlib.html   # 2026-09-12 幽灵引用治理：原 core/modlib.js 从未存在，按条目内容检索归属真源
   backend_ref: none:待拆件盘点（auto 扫描未发现 /api/ 调用）
   status: active
   auto_scanned: true
@@ -1269,7 +1269,7 @@ features:
   name: 八、补件 盘点缺口补样
   page: modlib
   module_id: modlib-host
-  file: core/modlib.js
+  file: pages/modlib.html   # 2026-09-12 幽灵引用治理：原 core/modlib.js 从未存在，按条目内容检索归属真源
   backend_ref: none:待拆件盘点（auto 扫描未发现 /api/ 调用）
   status: active
   auto_scanned: true
@@ -1277,7 +1277,7 @@ features:
   name: 九、停靠布局试点 Docking Layout · 同花顺式手感验证区——拖标题栏到任意模块四向分裂；拖分隔缝调宽高（联
   page: modlib
   module_id: modlib-host
-  file: core/modlib.js
+  file: pages/modlib.html   # 2026-09-12 幽灵引用治理：原 core/modlib.js 从未存在，按条目内容检索归属真源
   backend_ref: none:待拆件盘点（auto 扫描未发现 /api/ 调用）
   status: active
   auto_scanned: true
@@ -1285,7 +1285,7 @@ features:
   name: 十、模块拆件契约试点 Module Contract · features/&lt;id&gt;.js 单文件功能模块—
   page: modlib
   module_id: modlib-host
-  file: core/modlib.js
+  file: pages/modlib.html   # 2026-09-12 幽灵引用治理：原 core/modlib.js 从未存在，按条目内容检索归属真源
   backend_ref: none:待拆件盘点（auto 扫描未发现 /api/ 调用）
   status: active
   auto_scanned: true
@@ -1293,7 +1293,7 @@ features:
   name: 十一、数据源状态灯
   page: modlib
   module_id: modlib-host
-  file: core/modlib.js
+  file: pages/modlib.html   # 2026-09-12 幽灵引用治理：原 core/modlib.js 从未存在，按条目内容检索归属真源
   backend_ref: none:待拆件盘点（auto 扫描未发现 /api/ 调用）
   status: active
   auto_scanned: true
@@ -1301,7 +1301,7 @@ features:
   name: 卡片标题 i演示数据
   page: modlib
   module_id: modlib-host
-  file: core/modlib.js
+  file: pages/modlib.html   # 2026-09-12 幽灵引用治理：原 core/modlib.js 从未存在，按条目内容检索归属真源
   backend_ref: none:待拆件盘点（auto 扫描未发现 /api/ 调用）
   status: active
   auto_scanned: true
@@ -1309,7 +1309,7 @@ features:
   name: 地缘政治风险 待接入
   page: modlib
   module_id: modlib-host
-  file: core/modlib.js
+  file: pages/modlib.html   # 2026-09-12 幽灵引用治理：原 core/modlib.js 从未存在，按条目内容检索归属真源
   backend_ref: none:待拆件盘点（auto 扫描未发现 /api/ 调用）
   status: active
   auto_scanned: true
@@ -1317,7 +1317,7 @@ features:
   name: 副指数 · 深证 / 创业板 / 科创
   page: modlib
   module_id: modlib-host
-  file: core/modlib.js
+  file: pages/modlib.html   # 2026-09-12 幽灵引用治理：原 core/modlib.js 从未存在，按条目内容检索归属真源
   backend_ref: none:待拆件盘点（auto 扫描未发现 /api/ 调用）
   status: active
   auto_scanned: true
@@ -1325,7 +1325,7 @@ features:
   name: 涨停强度 · 今昨对比
   page: modlib
   module_id: modlib-host
-  file: core/modlib.js
+  file: pages/modlib.html   # 2026-09-12 幽灵引用治理：原 core/modlib.js 从未存在，按条目内容检索归属真源
   backend_ref: none:待拆件盘点（auto 扫描未发现 /api/ 调用）
   status: active
   auto_scanned: true
@@ -1333,7 +1333,7 @@ features:
   name: 持仓明细（宽表节选）
   page: modlib
   module_id: modlib-host
-  file: core/modlib.js
+  file: pages/modlib.html   # 2026-09-12 幽灵引用治理：原 core/modlib.js 从未存在，按条目内容检索归属真源
   backend_ref: none:待拆件盘点（auto 扫描未发现 /api/ 调用）
   status: active
   auto_scanned: true
@@ -1341,7 +1341,7 @@ features:
   name: 任务清单 · 动态表
   page: modlib
   module_id: modlib-host
-  file: core/modlib.js
+  file: pages/modlib.html   # 2026-09-12 幽灵引用治理：原 core/modlib.js 从未存在，按条目内容检索归属真源
   backend_ref: none:待拆件盘点（auto 扫描未发现 /api/ 调用）
   status: active
   auto_scanned: true
@@ -1349,7 +1349,7 @@ features:
   name: 策略定义
   page: modlib
   module_id: modlib-host
-  file: core/modlib.js
+  file: pages/modlib.html   # 2026-09-12 幽灵引用治理：原 core/modlib.js 从未存在，按条目内容检索归属真源
   backend_ref: none:待拆件盘点（auto 扫描未发现 /api/ 调用）
   status: active
   auto_scanned: true
@@ -1357,7 +1357,7 @@ features:
   name: 阶段盈亏
   page: modlib
   module_id: modlib-host
-  file: core/modlib.js
+  file: pages/modlib.html   # 2026-09-12 幽灵引用治理：原 core/modlib.js 从未存在，按条目内容检索归属真源
   backend_ref: none:待拆件盘点（auto 扫描未发现 /api/ 调用）
   status: active
   auto_scanned: true
@@ -1365,7 +1365,7 @@ features:
   name: 个股行情 · K线工作台 i日K分时
   page: modlib
   module_id: modlib-host
-  file: core/modlib.js
+  file: pages/modlib.html   # 2026-09-12 幽灵引用治理：原 core/modlib.js 从未存在，按条目内容检索归属真源
   backend_ref: none:待拆件盘点（auto 扫描未发现 /api/ 调用）
   status: active
   auto_scanned: true
@@ -1373,7 +1373,7 @@ features:
   name: 上证指数
   page: modlib
   module_id: modlib-host
-  file: core/modlib.js
+  file: pages/modlib.html   # 2026-09-12 幽灵引用治理：原 core/modlib.js 从未存在，按条目内容检索归属真源
   backend_ref: none:待拆件盘点（auto 扫描未发现 /api/ 调用）
   status: active
   auto_scanned: true
@@ -1381,7 +1381,7 @@ features:
   name: 迷你走势
   page: modlib
   module_id: modlib-host
-  file: core/modlib.js
+  file: pages/modlib.html   # 2026-09-12 幽灵引用治理：原 core/modlib.js 从未存在，按条目内容检索归属真源
   backend_ref: none:待拆件盘点（auto 扫描未发现 /api/ 调用）
   status: active
   auto_scanned: true
@@ -1389,7 +1389,7 @@ features:
   name: 权益分时 vs 回测包络 i
   page: modlib
   module_id: modlib-host
-  file: core/modlib.js
+  file: pages/modlib.html   # 2026-09-12 幽灵引用治理：原 core/modlib.js 从未存在，按条目内容检索归属真源
   backend_ref: none:待拆件盘点（auto 扫描未发现 /api/ 调用）
   status: active
   auto_scanned: true
@@ -1397,7 +1397,7 @@ features:
   name: 涨跌分档分布
   page: modlib
   module_id: modlib-host
-  file: core/modlib.js
+  file: pages/modlib.html   # 2026-09-12 幽灵引用治理：原 core/modlib.js 从未存在，按条目内容检索归属真源
   backend_ref: none:待拆件盘点（auto 扫描未发现 /api/ 调用）
   status: active
   auto_scanned: true
@@ -1405,7 +1405,7 @@ features:
   name: 营收 / 归母净利 · 8 季
   page: modlib
   module_id: modlib-host
-  file: core/modlib.js
+  file: pages/modlib.html   # 2026-09-12 幽灵引用治理：原 core/modlib.js 从未存在，按条目内容检索归属真源
   backend_ref: none:待拆件盘点（auto 扫描未发现 /api/ 调用）
   status: active
   auto_scanned: true
@@ -1413,7 +1413,7 @@ features:
   name: 风险预算
   page: modlib
   module_id: modlib-host
-  file: core/modlib.js
+  file: pages/modlib.html   # 2026-09-12 幽灵引用治理：原 core/modlib.js 从未存在，按条目内容检索归属真源
   backend_ref: none:待拆件盘点（auto 扫描未发现 /api/ 调用）
   status: active
   auto_scanned: true
@@ -1421,7 +1421,7 @@ features:
   name: 长任务进度
   page: modlib
   module_id: modlib-host
-  file: core/modlib.js
+  file: pages/modlib.html   # 2026-09-12 幽灵引用治理：原 core/modlib.js 从未存在，按条目内容检索归属真源
   backend_ref: none:待拆件盘点（auto 扫描未发现 /api/ 调用）
   status: active
   auto_scanned: true
@@ -1429,7 +1429,7 @@ features:
   name: 月度收益热力 · 2026
   page: modlib
   module_id: modlib-host
-  file: core/modlib.js
+  file: pages/modlib.html   # 2026-09-12 幽灵引用治理：原 core/modlib.js 从未存在，按条目内容检索归属真源
   backend_ref: none:待拆件盘点（auto 扫描未发现 /api/ 调用）
   status: active
   auto_scanned: true
@@ -1437,7 +1437,7 @@ features:
   name: 事件日历 · 本周
   page: modlib
   module_id: modlib-host
-  file: core/modlib.js
+  file: pages/modlib.html   # 2026-09-12 幽灵引用治理：原 core/modlib.js 从未存在，按条目内容检索归属真源
   backend_ref: none:待拆件盘点（auto 扫描未发现 /api/ 调用）
   status: active
   auto_scanned: true
@@ -1445,7 +1445,7 @@ features:
   name: 情绪温度
   page: modlib
   module_id: modlib-host
-  file: core/modlib.js
+  file: pages/modlib.html   # 2026-09-12 幽灵引用治理：原 core/modlib.js 从未存在，按条目内容检索归属真源
   backend_ref: none:待拆件盘点（auto 扫描未发现 /api/ 调用）
   status: active
   auto_scanned: true
@@ -1453,7 +1453,7 @@ features:
   name: 相对强度光谱 · 行业
   page: modlib
   module_id: modlib-host
-  file: core/modlib.js
+  file: pages/modlib.html   # 2026-09-12 幽灵引用治理：原 core/modlib.js 从未存在，按条目内容检索归属真源
   backend_ref: none:待拆件盘点（auto 扫描未发现 /api/ 调用）
   status: active
   auto_scanned: true
@@ -1461,7 +1461,7 @@ features:
   name: 市场相位带 · 近一年
   page: modlib
   module_id: modlib-host
-  file: core/modlib.js
+  file: pages/modlib.html   # 2026-09-12 幽灵引用治理：原 core/modlib.js 从未存在，按条目内容检索归属真源
   backend_ref: none:待拆件盘点（auto 扫描未发现 /api/ 调用）
   status: active
   auto_scanned: true
@@ -1469,7 +1469,7 @@ features:
   name: 明日 8 态推演
   page: modlib
   module_id: modlib-host
-  file: core/modlib.js
+  file: pages/modlib.html   # 2026-09-12 幽灵引用治理：原 core/modlib.js 从未存在，按条目内容检索归属真源
   backend_ref: none:待拆件盘点（auto 扫描未发现 /api/ 调用）
   status: active
   auto_scanned: true
@@ -1477,7 +1477,7 @@ features:
   name: 模块布局 i
   page: modlib
   module_id: modlib-host
-  file: core/modlib.js
+  file: pages/modlib.html   # 2026-09-12 幽灵引用治理：原 core/modlib.js 从未存在，按条目内容检索归属真源
   backend_ref: none:待拆件盘点（auto 扫描未发现 /api/ 调用）
   status: active
   auto_scanned: true
@@ -1485,7 +1485,7 @@ features:
   name: 逐笔回报时序
   page: modlib
   module_id: modlib-host
-  file: core/modlib.js
+  file: pages/modlib.html   # 2026-09-12 幽灵引用治理：原 core/modlib.js 从未存在，按条目内容检索归属真源
   backend_ref: none:待拆件盘点（auto 扫描未发现 /api/ 调用）
   status: active
   auto_scanned: true
@@ -1493,7 +1493,7 @@ features:
   name: 新闻清单 · 两天滚动窗
   page: modlib
   module_id: modlib-host
-  file: core/modlib.js
+  file: pages/modlib.html   # 2026-09-12 幽灵引用治理：原 core/modlib.js 从未存在，按条目内容检索归属真源
   backend_ref: none:待拆件盘点（auto 扫描未发现 /api/ 调用）
   status: active
   auto_scanned: true
@@ -1501,7 +1501,7 @@ features:
   name: 系统运行日志
   page: modlib
   module_id: modlib-host
-  file: core/modlib.js
+  file: pages/modlib.html   # 2026-09-12 幽灵引用治理：原 core/modlib.js 从未存在，按条目内容检索归属真源
   backend_ref: none:待拆件盘点（auto 扫描未发现 /api/ 调用）
   status: active
   auto_scanned: true
@@ -1509,7 +1509,7 @@ features:
   name: 多方 · 交易员 i
   page: modlib
   module_id: modlib-host
-  file: core/modlib.js
+  file: pages/modlib.html   # 2026-09-12 幽灵引用治理：原 core/modlib.js 从未存在，按条目内容检索归属真源
   backend_ref: none:待拆件盘点（auto 扫描未发现 /api/ 调用）
   status: active
   auto_scanned: true
@@ -1517,7 +1517,7 @@ features:
   name: 空方 · 风控官 i
   page: modlib
   module_id: modlib-host
-  file: core/modlib.js
+  file: pages/modlib.html   # 2026-09-12 幽灵引用治理：原 core/modlib.js 从未存在，按条目内容检索归属真源
   backend_ref: none:待拆件盘点（auto 扫描未发现 /api/ 调用）
   status: active
   auto_scanned: true
@@ -1525,7 +1525,7 @@ features:
   name: 实时情景矩阵 i
   page: modlib
   module_id: modlib-host
-  file: core/modlib.js
+  file: pages/modlib.html   # 2026-09-12 幽灵引用治理：原 core/modlib.js 从未存在，按条目内容检索归属真源
   backend_ref: none:待拆件盘点（auto 扫描未发现 /api/ 调用）
   status: active
   auto_scanned: true
@@ -1533,7 +1533,7 @@ features:
   name: AI 助手 本地 qwen3:8b
   page: modlib
   module_id: modlib-host
-  file: core/modlib.js
+  file: pages/modlib.html   # 2026-09-12 幽灵引用治理：原 core/modlib.js 从未存在，按条目内容检索归属真源
   backend_ref: none:待拆件盘点（auto 扫描未发现 /api/ 调用）
   status: active
   auto_scanned: true
@@ -1541,7 +1541,7 @@ features:
   name: 下单 human_gated
   page: modlib
   module_id: modlib-host
-  file: core/modlib.js
+  file: pages/modlib.html   # 2026-09-12 幽灵引用治理：原 core/modlib.js 从未存在，按条目内容检索归属真源
   backend_ref: none:待拆件盘点（auto 扫描未发现 /api/ 调用）
   status: active
   auto_scanned: true
@@ -1549,7 +1549,7 @@ features:
   name: 决策链 · 漏斗
   page: modlib
   module_id: modlib-host
-  file: core/modlib.js
+  file: pages/modlib.html   # 2026-09-12 幽灵引用治理：原 core/modlib.js 从未存在，按条目内容检索归属真源
   backend_ref: none:待拆件盘点（auto 扫描未发现 /api/ 调用）
   status: active
   auto_scanned: true
@@ -1557,7 +1557,7 @@ features:
   name: 73 域骨架 · 数据流
   page: modlib
   module_id: modlib-host
-  file: core/modlib.js
+  file: pages/modlib.html   # 2026-09-12 幽灵引用治理：原 core/modlib.js 从未存在，按条目内容检索归属真源
   backend_ref: none:待拆件盘点（auto 扫描未发现 /api/ 调用）
   status: active
   auto_scanned: true
@@ -1565,7 +1565,7 @@ features:
   name: 架构全景 · 嵌入 8765 未启动
   page: modlib
   module_id: modlib-host
-  file: core/modlib.js
+  file: pages/modlib.html   # 2026-09-12 幽灵引用治理：原 core/modlib.js 从未存在，按条目内容检索归属真源
   backend_ref: none:待拆件盘点（auto 扫描未发现 /api/ 调用）
   status: active
   auto_scanned: true
@@ -1573,7 +1573,7 @@ features:
   name: 新闻清单
   page: news
   module_id: news-host
-  file: core/news.js
+  file: pages/news.html   # 2026-09-12 幽灵引用治理：原 core/news.js 从未存在，按条目内容检索归属真源
   backend_ref: none:待拆件盘点（auto 扫描未发现 /api/ 调用）
   status: active
   auto_scanned: true
@@ -1581,7 +1581,7 @@ features:
   name: 预期差分析
   page: news
   module_id: news-host
-  file: core/news.js
+  file: pages/news.html   # 2026-09-12 幽灵引用治理：原 core/news.js 从未存在，按条目内容检索归属真源
   backend_ref: none:待拆件盘点（auto 扫描未发现 /api/ 调用）
   status: active
   auto_scanned: true
@@ -1589,7 +1589,7 @@ features:
   name: 可预测性分布
   page: news
   module_id: news-host
-  file: core/news.js
+  file: pages/news.html   # 2026-09-12 幽灵引用治理：原 core/news.js 从未存在，按条目内容检索归属真源
   backend_ref: none:待拆件盘点（auto 扫描未发现 /api/ 调用）
   status: active
   auto_scanned: true
@@ -1597,7 +1597,7 @@ features:
   name: 情绪聚合分析
   page: news
   module_id: news-host
-  file: core/news.js
+  file: pages/news.html   # 2026-09-12 幽灵引用治理：原 core/news.js 从未存在，按条目内容检索归属真源
   backend_ref: none:待拆件盘点（auto 扫描未发现 /api/ 调用）
   status: active
   auto_scanned: true
@@ -1605,7 +1605,7 @@ features:
   name: 公告流
   page: news
   module_id: news-host
-  file: core/news.js
+  file: pages/news.html   # 2026-09-12 幽灵引用治理：原 core/news.js 从未存在，按条目内容检索归属真源
   backend_ref: none:待拆件盘点（auto 扫描未发现 /api/ 调用）
   status: active
   auto_scanned: true
@@ -1613,7 +1613,7 @@ features:
   name: 当日新闻清单
   page: news
   module_id: news-host
-  file: core/news.js
+  file: pages/news.html   # 2026-09-12 幽灵引用治理：原 core/news.js 从未存在，按条目内容检索归属真源
   backend_ref: none:待拆件盘点（auto 扫描未发现 /api/ 调用）
   status: active
   auto_scanned: true
@@ -1621,7 +1621,7 @@ features:
   name: 情绪分析
   page: news
   module_id: news-host
-  file: core/news.js
+  file: pages/news.html   # 2026-09-12 幽灵引用治理：原 core/news.js 从未存在，按条目内容检索归属真源
   backend_ref: none:待拆件盘点（auto 扫描未发现 /api/ 调用）
   status: active
   auto_scanned: true
@@ -1629,7 +1629,7 @@ features:
   name: 今日热点
   page: news
   module_id: news-host
-  file: core/news.js
+  file: pages/news.html   # 2026-09-12 幽灵引用治理：原 core/news.js 从未存在，按条目内容检索归属真源
   backend_ref: none:待拆件盘点（auto 扫描未发现 /api/ 调用）
   status: active
   auto_scanned: true
@@ -1637,7 +1637,7 @@ features:
   name: 公司公告
   page: news
   module_id: news-host
-  file: core/news.js
+  file: features/news/ann-panel.js   # 2026-09-12 幽灵引用治理：原 core/news.js 从未存在，按条目内容检索归属真源
   backend_ref: none:待拆件盘点（auto 扫描未发现 /api/ 调用）
   status: active
   auto_scanned: true
@@ -1645,7 +1645,7 @@ features:
   name: 整体分析
   page: overseas
   module_id: overseas-host
-  file: core/overseas.js
+  file: pages/overseas.html   # 2026-09-12 幽灵引用治理：原 core/overseas.js 从未存在，按条目内容检索归属真源
   backend_ref: none:待拆件盘点（auto 扫描未发现 /api/ 调用）
   status: active
   auto_scanned: true
@@ -1653,7 +1653,7 @@ features:
   name: 美债利率深区
   page: overseas
   module_id: overseas-host
-  file: core/overseas.js
+  file: pages/overseas.html   # 2026-09-12 幽灵引用治理：原 core/overseas.js 从未存在，按条目内容检索归属真源
   backend_ref: none:待拆件盘点（auto 扫描未发现 /api/ 调用）
   status: active
   auto_scanned: true
@@ -1661,7 +1661,7 @@ features:
   name: 功能域
   page: pano
   module_id: pano-host
-  file: core/pano.js
+  file: pages/pano.html   # 2026-09-12 幽灵引用治理：原 core/pano.js 从未存在，按条目内容检索归属真源
   backend_ref: none:待拆件盘点（auto 扫描未发现 /api/ 调用）
   status: active
   auto_scanned: true
@@ -1669,7 +1669,7 @@ features:
   name: 嵌入查看
   page: pano
   module_id: pano-host
-  file: core/pano.js
+  file: pages/pano.html   # 2026-09-12 幽灵引用治理：原 core/pano.js 从未存在，按条目内容检索归属真源
   backend_ref: none:待拆件盘点（auto 扫描未发现 /api/ 调用）
   status: active
   auto_scanned: true
@@ -1677,7 +1677,7 @@ features:
   name: 板块维度（季度净变动，推导）
   page: policy
   module_id: policy-host
-  file: core/policy.js
+  file: pages/policy.html   # 2026-09-12 幽灵引用治理：原 core/policy.js 从未存在，按条目内容检索归属真源
   backend_ref: none:待拆件盘点（auto 扫描未发现 /api/ 调用）
   status: active
   auto_scanned: true
@@ -1685,7 +1685,7 @@ features:
   name: 个股维度（2026Q2 十大股东推导）
   page: policy
   module_id: policy-host
-  file: core/policy.js
+  file: pages/policy.html   # 2026-09-12 幽灵引用治理：原 core/policy.js 从未存在，按条目内容检索归属真源
   backend_ref: none:待拆件盘点（auto 扫描未发现 /api/ 调用）
   status: active
   auto_scanned: true
@@ -1693,7 +1693,7 @@ features:
   name: 政策流
   page: policy
   module_id: policy-host
-  file: core/policy.js
+  file: features/policy/pol-panel.js   # 2026-09-12 幽灵引用治理：原 core/policy.js 从未存在，按条目内容检索归属真源
   backend_ref: none:待拆件盘点（auto 扫描未发现 /api/ 调用）
   status: active
   auto_scanned: true
@@ -1701,7 +1701,7 @@ features:
   name: 国家队持仓变动（社保/汇金）
   page: policy
   module_id: policy-host
-  file: core/policy.js
+  file: pages/policy.html   # 2026-09-12 幽灵引用治理：原 core/policy.js 从未存在，按条目内容检索归属真源
   backend_ref: none:待拆件盘点（auto 扫描未发现 /api/ 调用）
   status: active
   auto_scanned: true
@@ -1709,7 +1709,7 @@ features:
   name: 宽基 ETF 份额异动
   page: policy
   module_id: policy-host
-  file: core/policy.js
+  file: pages/policy.html   # 2026-09-12 幽灵引用治理：原 core/policy.js 从未存在，按条目内容检索归属真源
   backend_ref: none:待拆件盘点（auto 扫描未发现 /api/ 调用）
   status: active
   auto_scanned: true
@@ -1717,7 +1717,7 @@ features:
   name: 地缘政治 / 战争风险
   page: policy
   module_id: policy-host
-  file: core/policy.js
+  file: pages/policy.html   # 2026-09-12 幽灵引用治理：原 core/policy.js 从未存在，按条目内容检索归属真源
   backend_ref: none:待拆件盘点（auto 扫描未发现 /api/ 调用）
   status: active
   auto_scanned: true
@@ -1725,7 +1725,7 @@ features:
   name: 真源与现状
   page: projmap
   module_id: projmap-host
-  file: core/projmap.js
+  file: pages/projmap.html   # 2026-09-12 幽灵引用治理：原 core/projmap.js 从未存在，按条目内容检索归属真源
   backend_ref: none:待拆件盘点（auto 扫描未发现 /api/ 调用）
   status: active
   auto_scanned: true
@@ -1733,7 +1733,7 @@ features:
   name: 73 域骨架预览
   page: projmap
   module_id: projmap-host
-  file: core/projmap.js
+  file: pages/projmap.html   # 2026-09-12 幽灵引用治理：原 core/projmap.js 从未存在，按条目内容检索归属真源
   backend_ref: none:待拆件盘点（auto 扫描未发现 /api/ 调用）
   status: active
   auto_scanned: true
@@ -1741,7 +1741,7 @@ features:
   name: 当前可用替代
   page: projmap
   module_id: projmap-host
-  file: core/projmap.js
+  file: pages/projmap.html   # 2026-09-12 幽灵引用治理：原 core/projmap.js 从未存在，按条目内容检索归属真源
   backend_ref: none:待拆件盘点（auto 扫描未发现 /api/ 调用）
   status: active
   auto_scanned: true
@@ -1749,7 +1749,7 @@ features:
   name: 评级变动流
   page: rating
   module_id: rating-host
-  file: core/rating.js
+  file: pages/rating.html   # 2026-09-12 幽灵引用治理：原 core/rating.js 从未存在，按条目内容检索归属真源
   backend_ref: none:待拆件盘点（auto 扫描未发现 /api/ 调用）
   status: active
   auto_scanned: true
@@ -1757,7 +1757,7 @@ features:
   name: 金股池
   page: rating
   module_id: rating-host
-  file: core/rating.js
+  file: pages/rating.html   # 2026-09-12 幽灵引用治理：原 core/rating.js 从未存在，按条目内容检索归属真源
   backend_ref: none:待拆件盘点（auto 扫描未发现 /api/ 调用）
   status: active
   auto_scanned: true
@@ -1765,7 +1765,7 @@ features:
   name: AI 深研
   page: rating
   module_id: rating-host
-  file: core/rating.js
+  file: pages/rating.html   # 2026-09-12 幽灵引用治理：原 core/rating.js 从未存在，按条目内容检索归属真源
   backend_ref: none:待拆件盘点（auto 扫描未发现 /api/ 调用）
   status: active
   auto_scanned: true
@@ -1773,7 +1773,7 @@ features:
   name: 交易统计（实盘） 口径随上方周期切换 · trades/journal 聚合，多口径聚合管线落地后转真（I-2）
   page: review
   module_id: review-host
-  file: core/review.js
+  file: pages/review.html   # 2026-09-12 幽灵引用治理：原 core/review.js 从未存在，按条目内容检索归属真源
   backend_ref: none:待拆件盘点（auto 扫描未发现 /api/ 调用）
   status: active
   auto_scanned: true
@@ -1781,7 +1781,7 @@ features:
   name: 打板复盘 复盘统计语境（晋级率/收益统计，回答"今天打板生态能不能赚钱"）；盘中实时梯队结构 → 「板块全景」；数据：l
   page: review
   module_id: review-host
-  file: core/review.js
+  file: pages/review.html   # 2026-09-12 幽灵引用治理：原 core/review.js 从未存在，按条目内容检索归属真源
   backend_ref: none:待拆件盘点（auto 扫描未发现 /api/ 调用）
   status: active
   auto_scanned: true
@@ -1789,7 +1789,7 @@ features:
   name: Brinson 拆解
   page: review
   module_id: review-host
-  file: core/review.js
+  file: pages/review.html   # 2026-09-12 幽灵引用治理：原 core/review.js 从未存在，按条目内容检索归属真源
   backend_ref: none:待拆件盘点（auto 扫描未发现 /api/ 调用）
   status: active
   auto_scanned: true
@@ -1797,7 +1797,7 @@ features:
   name: 因子暴露拆解
   page: review
   module_id: review-host
-  file: core/review.js
+  file: pages/review.html   # 2026-09-12 幽灵引用治理：原 core/review.js 从未存在，按条目内容检索归属真源
   backend_ref: none:待拆件盘点（auto 扫描未发现 /api/ 调用）
   status: active
   auto_scanned: true
@@ -1805,7 +1805,7 @@ features:
   name: 今日执行回看
   page: review
   module_id: review-host
-  file: core/review.js
+  file: features/review/rev-engine.js   # 2026-09-12 幽灵引用治理：原 core/review.js 从未存在，按条目内容检索归属真源
   backend_ref: none:待拆件盘点（auto 扫描未发现 /api/ 调用）
   status: active
   auto_scanned: true
@@ -1813,7 +1813,7 @@ features:
   name: PnL 对账 + 归因
   page: review
   module_id: review-host
-  file: core/review.js
+  file: features/review/rev-engine.js   # 2026-09-12 幽灵引用治理：原 core/review.js 从未存在，按条目内容检索归属真源
   backend_ref: none:待拆件盘点（auto 扫描未发现 /api/ 调用）
   status: active
   auto_scanned: true
@@ -1821,7 +1821,7 @@ features:
   name: 按情景胜率
   page: review
   module_id: review-host
-  file: core/review.js
+  file: pages/review.html   # 2026-09-12 幽灵引用治理：原 core/review.js 从未存在，按条目内容检索归属真源
   backend_ref: none:待拆件盘点（auto 扫描未发现 /api/ 调用）
   status: active
   auto_scanned: true
@@ -1829,7 +1829,7 @@ features:
   name: 按板块胜率
   page: review
   module_id: review-host
-  file: core/review.js
+  file: pages/review.html   # 2026-09-12 幽灵引用治理：原 core/review.js 从未存在，按条目内容检索归属真源
   backend_ref: none:待拆件盘点（auto 扫描未发现 /api/ 调用）
   status: active
   auto_scanned: true
@@ -1837,7 +1837,7 @@ features:
   name: 连板梯队晋级明细
   page: review
   module_id: review-host
-  file: core/review.js
+  file: pages/review.html   # 2026-09-12 幽灵引用治理：原 core/review.js 从未存在，按条目内容检索归属真源
   backend_ref: none:待拆件盘点（auto 扫描未发现 /api/ 调用）
   status: active
   auto_scanned: true
@@ -1845,7 +1845,7 @@ features:
   name: 打板收益统计
   page: review
   module_id: review-host
-  file: core/review.js
+  file: pages/review.html   # 2026-09-12 幽灵引用治理：原 core/review.js 从未存在，按条目内容检索归属真源
   backend_ref: none:待拆件盘点（auto 扫描未发现 /api/ 调用）
   status: active
   auto_scanned: true
@@ -1853,7 +1853,7 @@ features:
   name: 因子级归因
   page: review
   module_id: review-host
-  file: core/review.js
+  file: pages/review.html   # 2026-09-12 幽灵引用治理：原 core/review.js 从未存在，按条目内容检索归属真源
   backend_ref: none:待拆件盘点（auto 扫描未发现 /api/ 调用）
   status: active
   auto_scanned: true
@@ -1861,7 +1861,7 @@ features:
   name: 压力测试盘后验证
   page: review
   module_id: review-host
-  file: core/review.js
+  file: pages/review.html   # 2026-09-12 幽灵引用治理：原 core/review.js 从未存在，按条目内容检索归属真源
   backend_ref: none:待拆件盘点（auto 扫描未发现 /api/ 调用）
   status: active
   auto_scanned: true
@@ -1869,7 +1869,7 @@ features:
   name: 预案回看
   page: review
   module_id: review-host
-  file: core/review.js
+  file: pages/review.html   # 2026-09-12 幽灵引用治理：原 core/review.js 从未存在，按条目内容检索归属真源
   backend_ref: none:待拆件盘点（auto 扫描未发现 /api/ 调用）
   status: active
   auto_scanned: true
@@ -1877,7 +1877,7 @@ features:
   name: 因子健康
   page: review
   module_id: review-host
-  file: core/review.js
+  file: pages/review.html   # 2026-09-12 幽灵引用治理：原 core/review.js 从未存在，按条目内容检索归属真源
   backend_ref: none:待拆件盘点（auto 扫描未发现 /api/ 调用）
   status: active
   auto_scanned: true
@@ -1885,7 +1885,7 @@ features:
   name: 龙虎榜 · 席位"谁在买"
   page: review
   module_id: review-host
-  file: core/review.js
+  file: pages/review.html   # 2026-09-12 幽灵引用治理：原 core/review.js 从未存在，按条目内容检索归属真源
   backend_ref: none:待拆件盘点（auto 扫描未发现 /api/ 调用）
   status: active
   auto_scanned: true
@@ -1893,7 +1893,7 @@ features:
   name: 隔夜外盘
   page: review
   module_id: review-host
-  file: core/review.js
+  file: pages/review.html   # 2026-09-12 幽灵引用治理：原 core/review.js 从未存在，按条目内容检索归属真源
   backend_ref: none:待拆件盘点（auto 扫描未发现 /api/ 调用）
   status: active
   auto_scanned: true
@@ -1901,7 +1901,7 @@ features:
   name: 明日预案
   page: review
   module_id: review-host
-  file: core/review.js
+  file: pages/review.html   # 2026-09-12 幽灵引用治理：原 core/review.js 从未存在，按条目内容检索归属真源
   backend_ref: none:待拆件盘点（auto 扫描未发现 /api/ 调用）
   status: active
   auto_scanned: true
@@ -1909,7 +1909,7 @@ features:
   name: 📜 今日战报
   page: review
   module_id: review-host
-  file: core/review.js
+  file: pages/review.html   # 2026-09-12 幽灵引用治理：原 core/review.js 从未存在，按条目内容检索归属真源
   backend_ref: none:待拆件盘点（auto 扫描未发现 /api/ 调用）
   status: active
   auto_scanned: true
@@ -1917,7 +1917,7 @@ features:
   name: ① 选股宇宙
   page: screener
   module_id: screener-host
-  file: core/screener.js
+  file: pages/screener.html   # 2026-09-12 幽灵引用治理：原 core/screener.js 从未存在，按条目内容检索归属真源
   backend_ref: none:待拆件盘点（auto 扫描未发现 /api/ 调用）
   status: active
   auto_scanned: true
@@ -1925,7 +1925,7 @@ features:
   name: ② 添加条件
   page: screener
   module_id: screener-host
-  file: core/screener.js
+  file: pages/screener.html   # 2026-09-12 幽灵引用治理：原 core/screener.js 从未存在，按条目内容检索归属真源
   backend_ref: none:待拆件盘点（auto 扫描未发现 /api/ 调用）
   status: active
   auto_scanned: true
@@ -1933,7 +1933,7 @@ features:
   name: ③ 条件列表 OR ▾
   page: screener
   module_id: screener-host
-  file: core/screener.js
+  file: pages/screener.html   # 2026-09-12 幽灵引用治理：原 core/screener.js 从未存在，按条目内容检索归属真源
   backend_ref: none:待拆件盘点（auto 扫描未发现 /api/ 调用）
   status: active
   auto_scanned: true
@@ -1941,7 +1941,7 @@ features:
   name: 条件面板
   page: screener
   module_id: screener-host
-  file: core/screener.js
+  file: pages/screener.html   # 2026-09-12 幽灵引用治理：原 core/screener.js 从未存在，按条目内容检索归属真源
   backend_ref: none:待拆件盘点（auto 扫描未发现 /api/ 调用）
   status: active
   auto_scanned: true
@@ -1949,7 +1949,7 @@ features:
   name: 选股结果
   page: screener
   module_id: screener-host
-  file: core/screener.js
+  file: pages/screener.html   # 2026-09-12 幽灵引用治理：原 core/screener.js 从未存在，按条目内容检索归属真源
   backend_ref: none:待拆件盘点（auto 扫描未发现 /api/ 调用）
   status: active
   auto_scanned: true
@@ -1957,7 +1957,7 @@ features:
   name: 成分股全表
   page: sector
   module_id: sector-host
-  file: core/sector.js
+  file: pages/sector.html   # 2026-09-12 幽灵引用治理：原 core/sector.js 从未存在，按条目内容检索归属真源
   backend_ref: none:待拆件盘点（auto 扫描未发现 /api/ 调用）
   status: active
   auto_scanned: true
@@ -1965,7 +1965,7 @@ features:
   name: 板块资金流历史
   page: sector
   module_id: sector-host
-  file: core/sector.js
+  file: pages/sector.html   # 2026-09-12 幽灵引用治理：原 core/sector.js 从未存在，按条目内容检索归属真源
   backend_ref: none:待拆件盘点（auto 扫描未发现 /api/ 调用）
   status: active
   auto_scanned: true
@@ -1973,7 +1973,7 @@ features:
   name: 板块舆情
   page: sector
   module_id: sector-host
-  file: core/sector.js
+  file: pages/sector.html   # 2026-09-12 幽灵引用治理：原 core/sector.js 从未存在，按条目内容检索归属真源
   backend_ref: none:待拆件盘点（auto 扫描未发现 /api/ 调用）
   status: active
   auto_scanned: true
@@ -1981,7 +1981,7 @@ features:
   name: 相对强度光谱地图 当前：领涨视角
   page: sector
   module_id: sector-host
-  file: core/sector.js
+  file: pages/sector.html   # 2026-09-12 幽灵引用治理：原 core/sector.js 从未存在，按条目内容检索归属真源
   backend_ref: none:待拆件盘点（auto 扫描未发现 /api/ 调用）
   status: active
   auto_scanned: true
@@ -1989,7 +1989,7 @@ features:
   name: 抗跌榜
   page: sector
   module_id: sector-host
-  file: core/sector.js
+  file: pages/sector.html   # 2026-09-12 幽灵引用治理：原 core/sector.js 从未存在，按条目内容检索归属真源
   backend_ref: none:待拆件盘点（auto 扫描未发现 /api/ 调用）
   status: active
   auto_scanned: true
@@ -1997,7 +1997,7 @@ features:
   name: 领涨榜
   page: sector
   module_id: sector-host
-  file: core/sector.js
+  file: pages/sector.html   # 2026-09-12 幽灵引用治理：原 core/sector.js 从未存在，按条目内容检索归属真源
   backend_ref: none:待拆件盘点（auto 扫描未发现 /api/ 调用）
   status: active
   auto_scanned: true
@@ -2005,7 +2005,7 @@ features:
   name: 证据链 · 怎么算出"资金去了哪"
   page: sector
   module_id: sector-host
-  file: core/sector.js
+  file: pages/sector.html   # 2026-09-12 幽灵引用治理：原 core/sector.js 从未存在，按条目内容检索归属真源
   backend_ref: none:待拆件盘点（auto 扫描未发现 /api/ 调用）
   status: active
   auto_scanned: true
@@ -2013,7 +2013,7 @@ features:
   name: 主线候选 Top10
   page: sector
   module_id: sector-host
-  file: core/sector.js
+  file: pages/sector.html   # 2026-09-12 幽灵引用治理：原 core/sector.js 从未存在，按条目内容检索归属真源
   backend_ref: none:待拆件盘点（auto 扫描未发现 /api/ 调用）
   status: active
   auto_scanned: true
@@ -2021,7 +2021,7 @@ features:
   name: 产业链联动日报
   page: sector
   module_id: sector-host
-  file: core/sector.js
+  file: pages/sector.html   # 2026-09-12 幽灵引用治理：原 core/sector.js 从未存在，按条目内容检索归属真源
   backend_ref: none:待拆件盘点（auto 扫描未发现 /api/ 调用）
   status: active
   auto_scanned: true
@@ -2029,7 +2029,7 @@ features:
   name: 主线候选 Top 10
   page: sector
   module_id: sector-host
-  file: core/sector.js
+  file: pages/sector.html   # 2026-09-12 幽灵引用治理：原 core/sector.js 从未存在，按条目内容检索归属真源
   backend_ref: none:待拆件盘点（auto 扫描未发现 /api/ 调用）
   status: active
   auto_scanned: true
@@ -2037,7 +2037,7 @@ features:
   name: 板块梯队明细
   page: sector
   module_id: sector-host
-  file: core/sector.js
+  file: pages/sector.html   # 2026-09-12 幽灵引用治理：原 core/sector.js 从未存在，按条目内容检索归属真源
   backend_ref: none:待拆件盘点（auto 扫描未发现 /api/ 调用）
   status: active
   auto_scanned: true
@@ -2045,7 +2045,7 @@ features:
   name: 板块档案下钻
   page: sector
   module_id: sector-host
-  file: core/sector.js
+  file: features/sector/sector-arc.js   # 2026-09-12 幽灵引用治理：原 core/sector.js 从未存在，按条目内容检索归属真源
   backend_ref: none:待拆件盘点（auto 扫描未发现 /api/ 调用）
   status: active
   auto_scanned: true
@@ -2053,7 +2053,7 @@ features:
   name: 大盘分时贡献度拆解
   page: sector
   module_id: sector-host
-  file: core/sector.js
+  file: pages/sector.html   # 2026-09-12 幽灵引用治理：原 core/sector.js 从未存在，按条目内容检索归属真源
   backend_ref: none:待拆件盘点（auto 扫描未发现 /api/ 调用）
   status: active
   auto_scanned: true
@@ -2061,7 +2061,7 @@ features:
   name: 分钟级逆势上涨
   page: sector
   module_id: sector-host
-  file: core/sector.js
+  file: pages/sector.html   # 2026-09-12 幽灵引用治理：原 core/sector.js 从未存在，按条目内容检索归属真源
   backend_ref: none:待拆件盘点（auto 扫描未发现 /api/ 调用）
   status: active
   auto_scanned: true
@@ -2069,7 +2069,7 @@ features:
   name: 下跌段资金流入
   page: sector
   module_id: sector-host
-  file: core/sector.js
+  file: pages/sector.html   # 2026-09-12 幽灵引用治理：原 core/sector.js 从未存在，按条目内容检索归属真源
   backend_ref: none:待拆件盘点（auto 扫描未发现 /api/ 调用）
   status: active
   auto_scanned: true
@@ -2077,7 +2077,7 @@ features:
   name: 率先反弹
   page: sector
   module_id: sector-host
-  file: core/sector.js
+  file: pages/sector.html   # 2026-09-12 幽灵引用治理：原 core/sector.js 从未存在，按条目内容检索归属真源
   backend_ref: none:待拆件盘点（auto 扫描未发现 /api/ 调用）
   status: active
   auto_scanned: true
@@ -2085,7 +2085,7 @@ features:
   name: 最抗跌
   page: sector
   module_id: sector-host
-  file: core/sector.js
+  file: pages/sector.html   # 2026-09-12 幽灵引用治理：原 core/sector.js 从未存在，按条目内容检索归属真源
   backend_ref: none:待拆件盘点（auto 扫描未发现 /api/ 调用）
   status: active
   auto_scanned: true
@@ -2093,7 +2093,7 @@ features:
   name: 盘后板块总结
   page: sector
   module_id: sector-host
-  file: core/sector.js
+  file: pages/sector.html   # 2026-09-12 幽灵引用治理：原 core/sector.js 从未存在，按条目内容检索归属真源
   backend_ref: none:待拆件盘点（auto 扫描未发现 /api/ 调用）
   status: active
   auto_scanned: true
@@ -2101,7 +2101,7 @@ features:
   name: 涨停强度 · 今 vs 昨
   page: sentiment
   module_id: sentiment-host
-  file: core/sentiment.js
+  file: pages/sentiment.html   # 2026-09-12 幽灵引用治理：原 core/sentiment.js 从未存在，按条目内容检索归属真源
   backend_ref: none:待拆件盘点（auto 扫描未发现 /api/ 调用）
   status: active
   auto_scanned: true
@@ -2109,7 +2109,7 @@ features:
   name: 涨停质量三维
   page: sentiment
   module_id: sentiment-host
-  file: core/sentiment.js
+  file: pages/sentiment.html   # 2026-09-12 幽灵引用治理：原 core/sentiment.js 从未存在，按条目内容检索归属真源
   backend_ref: none:待拆件盘点（auto 扫描未发现 /api/ 调用）
   status: active
   auto_scanned: true
@@ -2117,7 +2117,7 @@ features:
   name: 连板天梯
   page: sentiment
   module_id: sentiment-host
-  file: core/sentiment.js
+  file: pages/sentiment.html   # 2026-09-12 幽灵引用治理：原 core/sentiment.js 从未存在，按条目内容检索归属真源
   backend_ref: none:待拆件盘点（auto 扫描未发现 /api/ 调用）
   status: active
   auto_scanned: true
@@ -2125,7 +2125,7 @@ features:
   name: 市场宽度
   page: sentiment
   module_id: sentiment-host
-  file: core/sentiment.js
+  file: features/sentiment/sent-margin.js   # 2026-09-12 幽灵引用治理：原 core/sentiment.js 从未存在，按条目内容检索归属真源
   backend_ref: none:待拆件盘点（auto 扫描未发现 /api/ 调用）
   status: active
   auto_scanned: true
@@ -2133,7 +2133,7 @@ features:
   name: 两融情绪
   page: sentiment
   module_id: sentiment-host
-  file: core/sentiment.js
+  file: pages/sentiment.html   # 2026-09-12 幽灵引用治理：原 core/sentiment.js 从未存在，按条目内容检索归属真源
   backend_ref: none:待拆件盘点（auto 扫描未发现 /api/ 调用）
   status: active
   auto_scanned: true
@@ -2141,7 +2141,7 @@ features:
   name: 情绪是怎么算出来的 · 构成因子
   page: sentiment
   module_id: sentiment-host
-  file: core/sentiment.js
+  file: pages/sentiment.html   # 2026-09-12 幽灵引用治理：原 core/sentiment.js 从未存在，按条目内容检索归属真源
   backend_ref: none:待拆件盘点（auto 扫描未发现 /api/ 调用）
   status: active
   auto_scanned: true
@@ -2149,7 +2149,7 @@ features:
   name: 情绪运行阶段
   page: sentiment
   module_id: sentiment-host
-  file: core/sentiment.js
+  file: pages/sentiment.html   # 2026-09-12 幽灵引用治理：原 core/sentiment.js 从未存在，按条目内容检索归属真源
   backend_ref: none:待拆件盘点（auto 扫描未发现 /api/ 调用）
   status: active
   auto_scanned: true
@@ -2157,7 +2157,7 @@ features:
   name: 涨跌停全景
   page: sentiment
   module_id: sentiment-host
-  file: core/sentiment.js
+  file: pages/sentiment.html   # 2026-09-12 幽灵引用治理：原 core/sentiment.js 从未存在，按条目内容检索归属真源
   backend_ref: none:待拆件盘点（auto 扫描未发现 /api/ 调用）
   status: active
   auto_scanned: true
@@ -2165,7 +2165,7 @@ features:
   name: 情绪温度 · 近 20 日时序
   page: sentiment
   module_id: sentiment-host
-  file: core/sentiment.js
+  file: pages/sentiment.html   # 2026-09-12 幽灵引用治理：原 core/sentiment.js 从未存在，按条目内容检索归属真源
   backend_ref: none:待拆件盘点（auto 扫描未发现 /api/ 调用）
   status: active
   auto_scanned: true
@@ -2173,7 +2173,7 @@ features:
   name: 市场宽度 · 近 20 日时序
   page: sentiment
   module_id: sentiment-host
-  file: core/sentiment.js
+  file: pages/sentiment.html   # 2026-09-12 幽灵引用治理：原 core/sentiment.js 从未存在，按条目内容检索归属真源
   backend_ref: none:待拆件盘点（auto 扫描未发现 /api/ 调用）
   status: active
   auto_scanned: true
@@ -2181,7 +2181,7 @@ features:
   name: 盘中异动流
   page: sentiment
   module_id: sentiment-host
-  file: core/sentiment.js
+  file: pages/sentiment.html   # 2026-09-12 幽灵引用治理：原 core/sentiment.js 从未存在，按条目内容检索归属真源
   backend_ref: none:待拆件盘点（auto 扫描未发现 /api/ 调用）
   status: active
   auto_scanned: true
@@ -2189,7 +2189,7 @@ features:
   name: 档案头
   page: stock
   module_id: stock-host
-  file: core/stock.js
+  file: pages/stock.html   # 2026-09-12 幽灵引用治理：原 core/stock.js 从未存在，按条目内容检索归属真源
   backend_ref: none:待拆件盘点（auto 扫描未发现 /api/ 调用）
   status: active
   auto_scanned: true
@@ -2197,7 +2197,7 @@ features:
   name: 行情边界
   page: stock
   module_id: stock-host
-  file: core/stock.js
+  file: pages/stock.html   # 2026-09-12 幽灵引用治理：原 core/stock.js 从未存在，按条目内容检索归属真源
   backend_ref: none:待拆件盘点（auto 扫描未发现 /api/ 调用）
   status: active
   auto_scanned: true
@@ -2205,7 +2205,7 @@ features:
   name: 前十大股东
   page: stock
   module_id: stock-host
-  file: core/stock.js
+  file: pages/stock.html   # 2026-09-12 幽灵引用治理：原 core/stock.js 从未存在，按条目内容检索归属真源
   backend_ref: none:待拆件盘点（auto 扫描未发现 /api/ 调用）
   status: active
   auto_scanned: true
@@ -2213,7 +2213,7 @@ features:
   name: 董监高
   page: stock
   module_id: stock-host
-  file: core/stock.js
+  file: features/stock/stock-profile.js   # 2026-09-12 幽灵引用治理：原 core/stock.js 从未存在，按条目内容检索归属真源
   backend_ref: none:待拆件盘点（auto 扫描未发现 /api/ 调用）
   status: active
   auto_scanned: true
@@ -2221,7 +2221,7 @@ features:
   name: 财务概况
   page: stock
   module_id: stock-host
-  file: core/stock.js
+  file: pages/stock.html   # 2026-09-12 幽灵引用治理：原 core/stock.js 从未存在，按条目内容检索归属真源
   backend_ref: none:待拆件盘点（auto 扫描未发现 /api/ 调用）
   status: active
   auto_scanned: true
@@ -2229,7 +2229,7 @@ features:
   name: 筹码与股东户数
   page: stock
   module_id: stock-host
-  file: core/stock.js
+  file: pages/stock.html   # 2026-09-12 幽灵引用治理：原 core/stock.js 从未存在，按条目内容检索归属真源
   backend_ref: none:待拆件盘点（auto 扫描未发现 /api/ 调用）
   status: active
   auto_scanned: true
@@ -2237,7 +2237,7 @@ features:
   name: 主营构成 + 同行比较
   page: stock
   module_id: stock-host
-  file: core/stock.js
+  file: pages/stock.html   # 2026-09-12 幽灵引用治理：原 core/stock.js 从未存在，按条目内容检索归属真源
   backend_ref: none:待拆件盘点（auto 扫描未发现 /api/ 调用）
   status: active
   auto_scanned: true
@@ -2245,7 +2245,7 @@ features:
   name: 资金流向
   page: stock
   module_id: stock-host
-  file: core/stock.js
+  file: pages/stock.html   # 2026-09-12 幽灵引用治理：原 core/stock.js 从未存在，按条目内容检索归属真源
   backend_ref: none:待拆件盘点（auto 扫描未发现 /api/ 调用）
   status: active
   auto_scanned: true
@@ -2253,7 +2253,7 @@ features:
   name: 近期公告
   page: stock
   module_id: stock-host
-  file: core/stock.js
+  file: pages/stock.html   # 2026-09-12 幽灵引用治理：原 core/stock.js 从未存在，按条目内容检索归属真源
   backend_ref: none:待拆件盘点（auto 扫描未发现 /api/ 调用）
   status: active
   auto_scanned: true
@@ -2261,7 +2261,7 @@ features:
   name: 研报评级
   page: stock
   module_id: stock-host
-  file: core/stock.js
+  file: pages/stock.html   # 2026-09-12 幽灵引用治理：原 core/stock.js 从未存在，按条目内容检索归属真源
   backend_ref: none:待拆件盘点（auto 扫描未发现 /api/ 调用）
   status: active
   auto_scanned: true
@@ -2269,7 +2269,7 @@ features:
   name: 关联跳转
   page: stock
   module_id: stock-host
-  file: core/stock.js
+  file: pages/stock.html   # 2026-09-12 幽灵引用治理：原 core/stock.js 从未存在，按条目内容检索归属真源
   backend_ref: none:待拆件盘点（auto 扫描未发现 /api/ 调用）
   status: active
   auto_scanned: true
@@ -2277,7 +2277,7 @@ features:
   name: 当前框架状态
   page: strategy
   module_id: strategy-host
-  file: core/strategy.js
+  file: pages/strategy.html   # 2026-09-12 幽灵引用治理：原 core/strategy.js 从未存在，按条目内容检索归属真源
   backend_ref: none:待拆件盘点（auto 扫描未发现 /api/ 调用）
   status: active
   auto_scanned: true
@@ -2285,7 +2285,7 @@ features:
   name: regime 适用性核对
   page: strategy
   module_id: strategy-host
-  file: core/strategy.js
+  file: pages/strategy.html   # 2026-09-12 幽灵引用治理：原 core/strategy.js 从未存在，按条目内容检索归属真源
   backend_ref: none:待拆件盘点（auto 扫描未发现 /api/ 调用）
   status: active
   auto_scanned: true
@@ -2293,7 +2293,7 @@ features:
   name: 10 层数据分布
   page: sysstatus
   module_id: sysstatus-host
-  file: core/sysstatus.js
+  file: pages/sysstatus.html   # 2026-09-12 幽灵引用治理：原 core/sysstatus.js 从未存在，按条目内容检索归属真源
   backend_ref: none:待拆件盘点（auto 扫描未发现 /api/ 调用）
   status: active
   auto_scanned: true
@@ -2301,7 +2301,7 @@ features:
   name: 已知问题
   page: sysstatus
   module_id: sysstatus-host
-  file: core/sysstatus.js
+  file: pages/sysstatus.html   # 2026-09-12 幽灵引用治理：原 core/sysstatus.js 从未存在，按条目内容检索归属真源
   backend_ref: none:待拆件盘点（auto 扫描未发现 /api/ 调用）
   status: active
   auto_scanned: true
@@ -2309,7 +2309,7 @@ features:
   name: 调度时段
   page: sysstatus
   module_id: sysstatus-host
-  file: core/sysstatus.js
+  file: pages/sysstatus.html   # 2026-09-12 幽灵引用治理：原 core/sysstatus.js 从未存在，按条目内容检索归属真源
   backend_ref: none:待拆件盘点（auto 扫描未发现 /api/ 调用）
   status: active
   auto_scanned: true
@@ -2317,7 +2317,7 @@ features:
   name: 券商连接
   page: sysstatus
   module_id: sysstatus-host
-  file: core/sysstatus.js
+  file: pages/sysstatus.html   # 2026-09-12 幽灵引用治理：原 core/sysstatus.js 从未存在，按条目内容检索归属真源
   backend_ref: none:待拆件盘点（auto 扫描未发现 /api/ 调用）
   status: active
   auto_scanned: true
@@ -2325,7 +2325,7 @@ features:
   name: 熔断开关（Kill Switch）
   page: sysstatus
   module_id: sysstatus-host
-  file: core/sysstatus.js
+  file: pages/sysstatus.html   # 2026-09-12 幽灵引用治理：原 core/sysstatus.js 从未存在，按条目内容检索归属真源
   backend_ref: none:待拆件盘点（auto 扫描未发现 /api/ 调用）
   status: active
   auto_scanned: true
@@ -2333,7 +2333,7 @@ features:
   name: QMT 文件桥健康
   page: sysstatus
   module_id: sysstatus-host
-  file: core/sysstatus.js
+  file: pages/sysstatus.html   # 2026-09-12 幽灵引用治理：原 core/sysstatus.js 从未存在，按条目内容检索归属真源
   backend_ref: none:待拆件盘点（auto 扫描未发现 /api/ 调用）
   status: active
   auto_scanned: true
@@ -2341,7 +2341,7 @@ features:
   name: 备份健康 Backup Health
   page: sysstatus
   module_id: sysstatus-host
-  file: core/sysstatus.js
+  file: pages/sysstatus.html   # 2026-09-12 幽灵引用治理：原 core/sysstatus.js 从未存在，按条目内容检索归属真源
   backend_ref: none:待拆件盘点（auto 扫描未发现 /api/ 调用）
   status: active
   auto_scanned: true
@@ -2349,7 +2349,7 @@ features:
   name: 性能监控
   page: sysstatus
   module_id: sysstatus-host
-  file: core/sysstatus.js
+  file: pages/sysstatus.html   # 2026-09-12 幽灵引用治理：原 core/sysstatus.js 从未存在，按条目内容检索归属真源
   backend_ref: none:待拆件盘点（auto 扫描未发现 /api/ 调用）
   status: active
   auto_scanned: true
@@ -2357,7 +2357,7 @@ features:
   name: 资源水位
   page: sysstatus
   module_id: sysstatus-host
-  file: core/sysstatus.js
+  file: pages/sysstatus.html   # 2026-09-12 幽灵引用治理：原 core/sysstatus.js 从未存在，按条目内容检索归属真源
   backend_ref: none:待拆件盘点（auto 扫描未发现 /api/ 调用）
   status: active
   auto_scanned: true
@@ -2365,7 +2365,7 @@ features:
   name: 近 20 日命中率趋势
   page: t0
   module_id: t0-host
-  file: core/t0.js
+  file: pages/t0.html   # 2026-09-12 幽灵引用治理：原 core/t0.js 从未存在，按条目内容检索归属真源
   backend_ref: none:待拆件盘点（auto 扫描未发现 /api/ 调用）
   status: active
   auto_scanned: true
@@ -2373,7 +2373,7 @@ features:
   name: 分桶校准
   page: t0
   module_id: t0-host
-  file: core/t0.js
+  file: pages/t0.html   # 2026-09-12 幽灵引用治理：原 core/t0.js 从未存在，按条目内容检索归属真源
   backend_ref: none:待拆件盘点（auto 扫描未发现 /api/ 调用）
   status: active
   auto_scanned: true
@@ -2381,7 +2381,7 @@ features:
   name: 今日做T信号回验
   page: t0
   module_id: t0-host
-  file: core/t0.js
+  file: pages/t0.html   # 2026-09-12 幽灵引用治理：原 core/t0.js 从未存在，按条目内容检索归属真源
   backend_ref: none:待拆件盘点（auto 扫描未发现 /api/ 调用）
   status: active
   auto_scanned: true
@@ -2389,7 +2389,7 @@ features:
   name: 各阶段进度（现有内容保留）
   page: task
   module_id: task-host
-  file: core/task.js
+  file: pages/task.html   # 2026-09-12 幽灵引用治理：原 core/task.js 从未存在，按条目内容检索归属真源
   backend_ref: none:待拆件盘点（auto 扫描未发现 /api/ 调用）
   status: active
   auto_scanned: true
@@ -2397,7 +2397,7 @@ features:
   name: 最近完成
   page: task
   module_id: task-host
-  file: core/task.js
+  file: pages/task.html   # 2026-09-12 幽灵引用治理：原 core/task.js 从未存在，按条目内容检索归属真源
   backend_ref: none:待拆件盘点（auto 扫描未发现 /api/ 调用）
   status: active
   auto_scanned: true
@@ -2405,7 +2405,7 @@ features:
   name: 失败任务
   page: task
   module_id: task-host
-  file: core/task.js
+  file: pages/task.html   # 2026-09-12 幽灵引用治理：原 core/task.js 从未存在，按条目内容检索归属真源
   backend_ref: none:待拆件盘点（auto 扫描未发现 /api/ 调用）
   status: active
   auto_scanned: true
@@ -2413,7 +2413,7 @@ features:
   name: 全量任务清单
   page: task
   module_id: task-host
-  file: core/task.js
+  file: pages/task.html   # 2026-09-12 幽灵引用治理：原 core/task.js 从未存在，按条目内容检索归属真源
   backend_ref: none:待拆件盘点（auto 扫描未发现 /api/ 调用）
   status: active
   auto_scanned: true
@@ -2421,7 +2421,7 @@ features:
   name: 长任务进度
   page: task
   module_id: task-host
-  file: core/task.js
+  file: pages/task.html   # 2026-09-12 幽灵引用治理：原 core/task.js 从未存在，按条目内容检索归属真源
   backend_ref: none:待拆件盘点（auto 扫描未发现 /api/ 调用）
   status: active
   auto_scanned: true

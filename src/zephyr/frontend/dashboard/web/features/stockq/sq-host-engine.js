@@ -49,7 +49,7 @@ var sqCur='600519',sqListMode='fav',sqTf='日';
 try{ var _sqs=JSON.parse(localStorage.getItem('zk-sq-state')||'null'); if(_sqs){ if(_sqs.sym)sqCur=_sqs.sym; if(_sqs.tf)sqTf=_sqs.tf; if(_sqs.mode)sqListMode=_sqs.mode; } }catch(e){}
 function sqStateSave(){ try{ localStorage.setItem('zk-sq-state',JSON.stringify({sym:sqCur,tf:sqTf,mode:sqListMode})); }catch(e){} }
 sqStateSave();
-var sqFav; try{ sqFav=JSON.parse(localStorage.getItem('zk-sq-fav')||'null')||['600519','300750','688981']; }catch(e){ sqFav=['600519','300750','688981']; }
+var sqFav; try{ sqFav=JSON.parse(localStorage.getItem('zk-sq-fav')||'null')||['600519','300750','688981']; }catch(e){ sqFav=['600519','300750','688981']; } if(!Array.isArray(sqFav)) sqFav=['600519','300750','688981'];   /* 红队 V5：localStorage 毒化（合法 JSON 非数组）守卫 */
 function sqPoolFind(sym){ for(var i=0;i<SQ_POOL.length;i++) if(SQ_POOL[i].sym===sym) return SQ_POOL[i]; return null; }
 var sqDraw={mode:null,items:[],pend:null};   /* v4.3 KLineChart overlay 接管后废弃，保留空对象防误引用 */
 /* ---------- KLineChart 引擎状态（v4.3：自研 canvas 全退役；滚轮缩放/拖拽平移/十字光标/画线/指标均由库内建） ---------- */

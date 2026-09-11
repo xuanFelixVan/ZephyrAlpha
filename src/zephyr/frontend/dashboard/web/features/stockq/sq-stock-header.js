@@ -89,7 +89,8 @@
       var dm = box.querySelector('.klp-datamode');
       if(nm) nm.textContent = apiData.name;
       if(cd) cd.textContent = apiData.code;
-      if(px){ px.textContent = apiData.price.toFixed(2); px.className = 'px ' + apiData.direction; }
+      var _pv = apiData && Number(apiData.price);
+      if(px && apiData.price != null && isFinite(_pv)){ px.textContent = _pv.toFixed(2); px.className = 'px ' + (apiData.direction || ''); }   /* 红队 V7：毒 JSON 数值守卫 */
       if(chg){ chg.textContent = apiData.pct_change_str; chg.className = 'chg ' + apiData.direction; }
       if(dm){ dm.className = 'klp-datamode dm-真源'; dm.textContent = '● 真源'; }
     },

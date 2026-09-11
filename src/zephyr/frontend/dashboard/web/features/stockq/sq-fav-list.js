@@ -97,7 +97,7 @@
       if(!this._visible()) return;
       var box = document.getElementById('sq-list');
       if(!box) return;
-      var syms = (typeof sqFav !== 'undefined') ? sqFav : [];
+      var syms = (typeof sqFav !== 'undefined' && Array.isArray(sqFav)) ? sqFav : [];   /* 红队 V5 防御 */
       var h = this._statusHtml(this._mode);
       var self = this;
       syms.forEach(function(sym){ h += self._rowHtml(sym); });

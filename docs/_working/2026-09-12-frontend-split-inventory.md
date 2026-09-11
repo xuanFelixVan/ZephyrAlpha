@@ -121,7 +121,7 @@ app1.js 留守：L1-76 全局 chrome（go/gToast/fold/theme/lang）+ L135-137 �
 
 ### 遗留登记（不在本批范围，交后续批）
 
+- ~~frontend_map 幽灵引用~~ → **已治理（2026-09-12 深夜续批）**：245 条 auto_scanned 幽灵条目（core/<page>.js 从未存在）按"条目内容检索归属真源"全部修复——9 条命中拆分引擎文件、236 条归属页面片段 pages/<page>.html（区块普查条目的自然归宿）；frontend_map v2.3.1；7 条 status:pending 规划条目（sq-kline-main 等待建族）为合法占位保留
 - **Tier-2 契约化**：37 个页面引擎为全局函数族物理模块（非 registerFeature 组件）——待各页数据源接通时按 stockq sq-* 先例逐件契约化（onclick 重接线随页施工）。
-- **frontend_map 幽灵引用**：~245 条 auto_scanned 条目指向从未存在的 core/design.js、core/modlib.js 等（本批前既有债，非拆分造成）——需 scan_frontend_pages.py 半自动复核批。
 - **app2/3/4 批脚本**：多页混装 IIFE 渲染批留在 core/（迁移=为拆而拆，见裁定 R4）——随数据源接通逐页拆。
 - **他会话 staged 改动**：features/tdm.js + pages/tdm.html 的 RED_GLYPH 红因徽章批系前班会话滞留暂存区，本批提交严格按 --files pathspec 避开，归属他会话。

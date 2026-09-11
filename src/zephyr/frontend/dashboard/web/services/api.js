@@ -148,6 +148,10 @@ ZK.api = (function(){
           renderFn(d, new Date(), false);
         }
         return d;
+      }).catch(function(e){
+        /* 取数失败=不落缓存不覆盖渲染（红队 V6 实证：无 catch 时 reject 逃逸为未捕获 Promise 拒绝；
+         * 组件保持既有模式/缓存直出态——红/灰灯语义由调用方既有回退路径承载） */
+        return null;
       });
     }
   };
