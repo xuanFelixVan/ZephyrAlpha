@@ -488,9 +488,22 @@ def _enqueue_mode(args, files: list[str], message: str) -> int:
     from scripts.commit_queue import _read_files_from_worktree  # noqa: PLC0415
 
     wt = Path(args.project_root)
+    # 路径归一（#ARCH-310 P0-1b 热修，2026-09-12 实弹 DENIED 教训）：CLI 上游
+    # _check_staged_delete_fallback 会把清单转成绝对反斜杠路径，而
+    # _read_files_from_worktree 只收正斜杠仓库相对路径——统一归一再进队列。
+    def _norm_to_rel(f: str) -> str:
+        p = Path(f)
+        if p.is_absolute():
+            try:
+                p = p.relative_to(wt)
+            except ValueError:
+                pass
+        return p.as_posix()
+
+    rel_files = [_norm_to_rel(f) for f in files]
     try:
-        payload = _read_files_from_worktree(wt, files)
-        deletes = [f for f in files if not (wt / f).exists()]
+        payload = _read_files_from_worktree(wt, rel_files)
+        deletes = [f for f in rel_files if not (wt / f).exists()]
     except Exception as exc:  # noqa: BLE001 — 轻检拒绝（QueueReject）fail-closed 报错
         print(f"DENIED: {exc}", file=sys.stderr)
         return 2
