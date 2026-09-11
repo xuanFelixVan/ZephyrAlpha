@@ -4955,7 +4955,67 @@ capabilities:
     纪律与 ablation 同款），复用 DefaultBacktestEngine 跑组合净值，产物 bt-fw-*.json（plan_id 落
     metrics）。与 MOD-TDMVAL-001 消融算子是姊妹算子（一减一加，禁止合并）。canonical =
     src/zephyr/pf_core/strategy_engine/framework_composer.py。
+- capability_id: registry_alignment_core
+  name: registry_alignment_core
+  canonical_file: src/zephyr/gov_enforcement/registry_alignment.py
+  module_id: MOD-GATE_ENGINE
+  name_zh: 注册表对齐第二层共享校验核心
+  description: 业务/治理/字典类注册表与 depgraph/FK 消费方的横向闭环校验唯一真源（BUSINESS-REGISTRY gate、INDUSTRY-CHAIN-MAP gate、align_all 第五节、pytest 四方同源）
+- capability_id: industry_chain_map_gate
+  name: industry_chain_map_gate
+  canonical_file: src/zephyr/gov_enforcement/commit_gates/industry_chain_map_gate.py
+  module_id: MOD-GATE_ENGINE
+  name_zh: 产业链全景图 git 侧工件门禁
+  description: 图 8 产业链全景图的字典↔DDL↔引擎三方同 commit 同步硬阻断（priority=141）+ chainmap_cluster_names 词表 sanity
 creation_tokens:
+- file: docs/03_modules/_domain_signal/sentiment_cycle/blueprint.md
+  token: night-gw-d1-sentcycle-bp-20260911
+  created_by: night-gw-2300
+  capability: sentiment_cycle
+- file: docs/03_modules/_domain_fundamental_signal/selection_confidence/blueprint.md
+  token: night-gw-d1-selconf-bp-20260911
+  created_by: night-gw-2300
+  capability: selection_confidence
+- file: docs/03_modules/_domain_data/instrument_master/blueprint.md
+  token: night-gw-d1-instmaster-bp-20260911
+  created_by: night-gw-2300
+  capability: instrument_master
+- file: docs/03_modules/_domain_position/t1_sellable/blueprint.md
+  token: night-gw-d1-t1sell-bp-20260911
+  created_by: night-gw-2300
+  capability: t1_sellable
+- file: docs/03_modules/_domain_risk/drawdown_state_machine/blueprint.md
+  token: night-gw-d1-ddsm-bp-20260911
+  created_by: night-gw-2300
+  capability: drawdown_state_machine
+- file: docs/03_modules/_domain_risk/drawdown_liquidation_guard/blueprint.md
+  token: night-gw-d1-ddlg-bp-20260911
+  created_by: night-gw-2300
+  capability: drawdown_liquidation_guard
+- file: src/zephyr/signal_ashare/core/environment_switch.py
+  token: night-gw-l306-envswitch-20260911
+  created_by: night-gw-2300
+  capability: environment_switch
+- file: docs/03_modules/_domain_signal/environment_switch/blueprint.md
+  token: night-gw-l306-envswitch-bp-20260911
+  created_by: night-gw-2300
+  capability: environment_switch
+- file: src/zephyr/signal_ashare/core/pool_tier_maintenance.py
+  token: night-gw-l309-pooltier-20260911
+  created_by: night-gw-2300
+  capability: pool_tier_maintenance
+- file: docs/03_modules/_domain_signal/pool_tier_maintenance/blueprint.md
+  token: night-gw-l309-pooltier-bp-20260911
+  created_by: night-gw-2300
+  capability: pool_tier_maintenance
+- file: src/zephyr/plan_engine/intraday_tomorrow_forecast.py
+  token: night-gw-c13-forecaster-20260911
+  created_by: night-gw-2300
+  capability: intraday_tomorrow_forecast
+- file: docs/03_modules/_domain_plan_engine/intraday_tomorrow_forecast/blueprint.md
+  token: night-gw-c13-blueprint-20260911
+  created_by: night-gw-2300
+  capability: intraday_tomorrow_forecast
 - file: docs/_working/2026-09-11-tdm-morning-review-report.md
   token: tdm-morning-review-20260911
   created_by: st-tdm-review-20260911
@@ -11465,6 +11525,38 @@ creation_tokens:
   capability: chainmap_frontend
 - file: docs/_working/2026-09-11-commit-queue-dead-zero-closure.md
   token: commit-queue-dead-zero-closure-20260911
+  created_by: st-perf-plan-20260910
+  capability: gate_commit_gw
+- file: docs/_working/2026-09-11-news-chain-wiring-spec-cards.md
+  token: news-chain-wiring-spec-cards-20260911
+  created_by: wiring-news-ig-001
+  capability: news_chain_node_linker
+- file: src/zephyr/intelligence/news_chain_node_linker.py
+  token: news-chain-node-linker-20260911
+  created_by: wiring-news-ig-001
+  capability: news_chain_node_linker
+- file: src/zephyr/intelligence/chain_impact_resolver.py
+  token: chain-impact-resolver-20260911
+  created_by: wiring-news-ig-001
+  capability: chain_impact_resolver
+- file: src/zephyr/intelligence/chain_impact_stream.py
+  token: chain-impact-stream-20260911
+  created_by: wiring-news-ig-001
+  capability: chain_impact_stream
+- file: src/zephyr/gov_enforcement/registry_alignment.py
+  token: registry-alignment-core-20260911
+  created_by: sess-alignfull-20260911
+  capability: registry_alignment_core
+- file: src/zephyr/gov_enforcement/commit_gates/industry_chain_map_gate.py
+  token: industry-chain-map-gate-20260911
+  created_by: sess-alignfull-20260911
+  capability: industry_chain_map_gate
+- file: src/zephyr/gov_enforcement/rule_bridge/checker_supervisor.py
+  token: checker-supervisor-20260911
+  created_by: st-perf-plan-20260910
+  capability: gate_commit_gw
+- file: src/zephyr/gov_enforcement/rule_bridge/gate_cache_preflight.py
+  token: gate-cache-preflight-20260911
   created_by: st-perf-plan-20260910
   capability: gate_commit_gw
 di_seam_exemptions:
