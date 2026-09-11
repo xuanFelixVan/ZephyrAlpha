@@ -95,6 +95,7 @@ class ValidationReport:
     holdout_cutoff: str
     rows: list[dict[str, Any]] = field(default_factory=list)
     written: bool = False
+    archive_dir: str | None = None   # SOP-D run 过程档案目录（fail-closed 接线后必有）
     decay: dict[str, Any] | None = None   # 衰减巡检尾随结果（run_decay_check 返回值）
 
 
@@ -369,6 +370,108 @@ def apply_exit_soil_rules(
 
 # ── 批入口 ───────────────────────────────────────────────────────────────
 
+def _write_run_archive(
+    *,
+    run_id: str,
+    report: ValidationReport,
+    metrics: dict[str, Any],
+    batch: str,
+    cfg: ValidationConfig,
+    nodes: list[dict[str, Any]],
+    artifacts_dir: Path,
+    archive_root: Path | None,
+) -> Path:
+    """SOP-D §4 底线：验证批写台账前必须落 run 过程档案（fail-closed）。
+
+    档案件：01 批次报告、02 DATA-GAP、03 data_manifest、05 剪枝记录（验证批无
+    剪枝环节，如实记空）、06_narrow/metrics.json。verdict.md 与 finalize 在台账
+    写入成功后由 _finalize_run_archive 补齐——写台账失败则目录保持未归档（诚实态）。
+    """
+    from zephyr.backtest.run_archive import RunArchiveError, create_run, write_step
+
+    try:
+        create_run(
+            run_id, "", "VAL",
+            window={
+                "start": report.window_start or report.holdout_cutoff,
+                "end": report.window_end or report.holdout_cutoff,
+            },
+            holdout={
+                "mode": "anchor" if cfg.finalized_at else "rolling",
+                "cutoff": report.holdout_cutoff,
+            },
+            cost_mode="rough",
+            created_by="zephyr.trading.validation.runner",
+            artifacts_root=archive_root,
+        )
+        node_lines = "".join(
+            f"- {n['node_id']} {n.get('name_zh', '')}（method={derive_method(n)}）" + chr(10)
+            for n in nodes
+        )
+        survey = f"""# 验证批报告（batch={batch}）
+
+- run_id: {run_id}
+- snapshot_commit: {report.snapshot_commit}
+- holdout 截止: {report.holdout_cutoff}（定稿锚点 D={cfg.finalized_at or '未启用，12 个月滚动锁'}）
+- 节点清单:
+{node_lines}
+- 已知限制: 流水无节点归因字段，exec/exit 指标以流水全量统计（蓝图 §3）；fill_rate 不可得（流水只含成交记录）
+"""
+        write_step(run_id, "01", survey, artifacts_root=archive_root)
+        write_step(run_id, "02", """# DATA-GAP 缺口清单（needs-driven，已知项如实登记）
+- id: node_attribution
+  gap: trade_log 无节点归因字段
+  level: 降级可跑
+  proxy: 流水全量统计代理
+- id: unfilled_orders
+  gap: 流水只含成交记录，未成交数不可得
+  level: 降级可跑
+  proxy: fill_rate 置空（方法学单轴判）
+""", artifacts_root=archive_root)
+        write_step(run_id, "03", """- name: 成交流水
+  source: backtest 产物 trade_log（bt-*.json）
+  window: 见 meta.window（holdout 切分见 01 报告）
+  pit_note: 流水为历史成交回放，无未来函数
+  proxy: false
+""", artifacts_root=archive_root)
+        write_step(run_id, "05", """# 剪枝记录
+[]  # 验证批（非宽测参数扫描）无剪枝环节——如实记空
+""", artifacts_root=archive_root)
+        write_step(run_id, "06", json.dumps(
+            {"metrics": metrics, "rows": report.rows}, ensure_ascii=False, indent=2,
+        ), filename="metrics.json", artifacts_root=archive_root)
+    except RunArchiveError as exc:
+        raise ValidationError(f"run 档案创建失败，拒绝写台账（SOP-D §4 底线）: {exc}") from exc
+    if archive_root:
+        return Path(archive_root) / run_id
+    return Path(_ARTIFACTS_DIR) / "runs" / run_id
+
+
+def _finalize_run_archive(
+    *,
+    run_id: str,
+    report: ValidationReport,
+    metrics: dict[str, Any],
+    batch: str,
+    archive_root: Path | None,
+) -> None:
+    """台账写入成功后补 verdict.md 判定书并 finalize（归档冻结）。"""
+    from zephyr.backtest.run_archive import finalize_run, write_step
+
+    first = report.rows[0] if report.rows else {}
+    verdict_doc = f"""# 判定书：{run_id}
+对象/节点：{batch} 验证批（节点清单见 01 报告）｜ kind=VAL ｜ 窗口={report.window_start}~{report.window_end} ｜ 成本口径=rough
+结论：verdict={first.get('verdict', 'pending')} significance={first.get('significance', 'na')} verdict_reason={first.get('verdict_reason', 'na')}
+判定链：runner 土规代码（apply_soil_rules/apply_exit_soil_rules，validation_method_registry verdict_mapping；禁手写理由）
+关键数字：triggers={metrics.get('triggers')} slip_bp_mean={metrics.get('slip_bp_mean')} avoided_amount={metrics.get('avoided_amount')}
+遗留问题：归因粒度限制见 01 报告；节点级 verdict 以台账行与前端徽章为准
+台账回执：已写 c1_backtest.node_verdict run_id={run_id}
+"""
+    write_step(run_id, "verdict", verdict_doc, artifacts_root=archive_root)
+    finalize_run(run_id, verdict_ref={"table": "c1_backtest.node_verdict", "run_id": run_id},
+                 artifacts_root=archive_root)
+
+
 def _default_writer(table: str, columns: str, tsv: bytes) -> bool:
     """生产写入通道：ch_writer.write_tsv（HTTP 主路径+本地落盘兜底，CH 已提交才 True）。"""
     return ch_writer.write_tsv(table, columns, tsv)
@@ -383,6 +486,7 @@ def run_validation(
     decay_check: bool = True,
     batch: str = "L4",
     ablation_diff: list[float] | None = None,
+    archive_root: Path | None = None,
 ) -> ValidationReport:
     """验证批入口：按 batch 选节点清单逐个出 verdict 行并写台账。
 
@@ -392,6 +496,8 @@ def run_validation(
     dry_run=True 不写库（验收预演）；writer 参数供测试注入收集器。
     decay_check=True（默认）：台账写入成功后顺带跑衰减巡检（裁定 2026-09-10：衰减判定
     依赖新验证行落地才有意义——巡检=验证批的尾随事件，不挂 cron 不占调度器，真正事件驱动）。
+    archive_root：SOP-D §4 底线接线（R1 批 2026-09-12）——写台账必须先建 run 过程档案
+    （"结论必须能翻到过程"），档案创建失败则拒绝写台账（fail-closed）；dry_run 不建档案。
     """
     cfg = cfg or ValidationConfig()
     writer = writer or _default_writer
@@ -493,10 +599,19 @@ def run_validation(
         return report
     if not report.rows:
         raise ValidationError("验证批产出 0 行——拒绝空写入")
+    # SOP-D §4 底线（R1 接线 2026-09-12）：写台账必须先落 run 过程档案——结论必须能翻到过程。
+    archive_dir = _write_run_archive(
+        run_id=run_id, report=report, metrics=metrics, batch=batch, cfg=cfg,
+        nodes=nodes, artifacts_dir=artifacts_dir, archive_root=archive_root,
+    )
+    report.archive_dir = str(archive_dir) if archive_dir else None
     report.written = writer(_VERDICT_TABLE, _VERDICT_COLUMNS, tsv)
     if not report.written:
         logger.error("台账写入未确认 CH_COMMITTED（run_id=%s）——查 ch_writer 落盘兜底", run_id)
         return report
+    if report.written and archive_dir is not None:
+        _finalize_run_archive(run_id=run_id, report=report, metrics=metrics,
+                              batch=batch, archive_root=archive_root)
     if decay_check:
         # 衰减巡检尾随事件（PB-14 事件驱动落地）：函数内导入防循环依赖
         # （decay_watch 复用本模块的表常量）。巡检失败不回滚验证批——只记日志。

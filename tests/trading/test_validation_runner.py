@@ -119,7 +119,7 @@ def test_run_validation_dry_run_no_write(tmp_path: Path):
 
     report = run_validation(
         cfg=ValidationConfig(as_of=AS_OF, finalized_at=None),   # 显式旧模式（一期 12mo 行为锚）
-        artifacts_dir=artifacts,
+        artifacts_dir=artifacts, archive_root=tmp_path / "runs",
         dry_run=True,
         writer=_must_not_write,
     )
@@ -142,7 +142,7 @@ def test_run_validation_writes_tsv(tmp_path: Path):
         captured["table"], captured["columns"], captured["tsv"] = table, columns, tsv
         return True
 
-    report = run_validation(cfg=ValidationConfig(as_of=AS_OF, finalized_at=None), artifacts_dir=artifacts,
+    report = run_validation(cfg=ValidationConfig(as_of=AS_OF, finalized_at=None), artifacts_dir=artifacts, archive_root=tmp_path / "runs",
                             writer=fake_writer,
                             decay_check=False)   # 单测不依赖 CH（衰减巡检走真实台账查询）
     assert report.written is True
@@ -172,7 +172,7 @@ def test_run_validation_decay_tail_hook(tmp_path: Path, monkeypatch):
         writes.append(table)
         return True
 
-    report = run_validation(cfg=ValidationConfig(as_of=AS_OF, finalized_at=None), artifacts_dir=artifacts,
+    report = run_validation(cfg=ValidationConfig(as_of=AS_OF, finalized_at=None), artifacts_dir=artifacts, archive_root=tmp_path / "runs",
                             writer=counting_writer, decay_check=True)
     assert report.written is True
     assert report.decay is not None            # 钩子已执行且吃到打桩台账
@@ -180,7 +180,7 @@ def test_run_validation_decay_tail_hook(tmp_path: Path, monkeypatch):
     assert report.decay["decayed"] == 0        # 未达 50% 衰减线 → 不追加 decaying 行
     assert len(writes) == 1                    # 只写了验证批 14 行，无 decaying 追加
     # dry-run 不触发巡检（未写库无新数据可比）
-    report_dry = run_validation(cfg=ValidationConfig(as_of=AS_OF), artifacts_dir=artifacts,
+    report_dry = run_validation(cfg=ValidationConfig(as_of=AS_OF), artifacts_dir=artifacts, archive_root=tmp_path / "runs",
                                 dry_run=True, writer=counting_writer, decay_check=True)
     assert report_dry.decay is None
 
@@ -310,7 +310,7 @@ def test_run_validation_xflow_dry_run_no_write(tmp_path: Path):
 
     report = run_validation(
         cfg=ValidationConfig(as_of=AS_OF),   # 默认配置=锚点已启用（D=2026-09-09）
-        artifacts_dir=artifacts,
+        artifacts_dir=artifacts, archive_root=tmp_path / "runs",
         dry_run=True,
         writer=_must_not_write,
         batch="XFLOW",
@@ -335,7 +335,7 @@ def test_run_validation_xflow_writes_tsv(tmp_path: Path):
         captured["table"], captured["columns"], captured["tsv"] = table, columns, tsv
         return True
 
-    report = run_validation(cfg=ValidationConfig(as_of=AS_OF), artifacts_dir=artifacts, writer=fake_writer,
+    report = run_validation(cfg=ValidationConfig(as_of=AS_OF), artifacts_dir=artifacts, archive_root=tmp_path / "runs", writer=fake_writer,
                             decay_check=False, batch="XFLOW",
                             ablation_diff=[5.0] * 40)   # 默认锚点启用；2026-06 流水 D 前全锁 → 仍按样本闸门 pending
     assert report.written is True
@@ -356,12 +356,12 @@ def test_run_validation_batch_regression_and_guard(tmp_path: Path):
     artifacts = tmp_path / "art"
     artifacts.mkdir()
     (artifacts / "bt-r1.json").write_text(json.dumps({"run_id": "bt-r1", "trade_log": []}), encoding="utf-8")
-    report = run_validation(cfg=ValidationConfig(as_of=AS_OF, finalized_at=None), artifacts_dir=artifacts,
+    report = run_validation(cfg=ValidationConfig(as_of=AS_OF, finalized_at=None), artifacts_dir=artifacts, archive_root=tmp_path / "runs",
                             dry_run=True, writer=lambda *a: True)
     assert len(report.rows) >= 14   # 基线 14 只增不减（地图演化，2026-09-12 实测 15）
     assert all(r["validation_method"] == "exec_quality" for r in report.rows)
     with pytest.raises(ValidationError):
-        run_validation(cfg=ValidationConfig(as_of=AS_OF, finalized_at=None), artifacts_dir=artifacts,
+        run_validation(cfg=ValidationConfig(as_of=AS_OF, finalized_at=None), artifacts_dir=artifacts, archive_root=tmp_path / "runs",
                        dry_run=True, batch="NOPE")
 
 
@@ -419,7 +419,7 @@ class TestExecMetricsV2Basis:
             "trade_log": [{"timestamp": "2025-06-01", "symbol": "A", "side": "buy", "price": 10.0,
                             "decision_price": 10.0}],
         }), encoding="utf-8")
-        report = run_validation(cfg=ValidationConfig(as_of=AS_OF, finalized_at=None), artifacts_dir=artifacts,
+        report = run_validation(cfg=ValidationConfig(as_of=AS_OF, finalized_at=None), artifacts_dir=artifacts, archive_root=tmp_path / "runs",
                                 dry_run=True, writer=lambda *a: True)
         assert any("基准口径=decision_price" in r["notes"] for r in report.rows)
 
@@ -468,7 +468,7 @@ class TestFinalizedAnchor:
         }), encoding="utf-8")
         report = run_validation(
             cfg=ValidationConfig(as_of=AS_OF, finalized_at="2026-09-09"),
-            artifacts_dir=artifacts, dry_run=True, writer=lambda *a: True, batch="XFLOW",
+            artifacts_dir=artifacts, archive_root=tmp_path / "runs", dry_run=True, writer=lambda *a: True, batch="XFLOW",
         )
         assert len(report.rows) >= 18
         assert all("定稿锚点 D=2026-09-09" in r["notes"] for r in report.rows)
@@ -489,7 +489,7 @@ class TestFinalizedAnchor:
                 {"timestamp": "2026-09-15", "symbol": "NEW", "side": "sell", "price": 10.0},  # D 后
             ],
         }), encoding="utf-8")
-        report = run_validation(cfg=ValidationConfig(as_of=AS_OF), artifacts_dir=artifacts,
+        report = run_validation(cfg=ValidationConfig(as_of=AS_OF), artifacts_dir=artifacts, archive_root=tmp_path / "runs",
                                 dry_run=True, writer=lambda *a: True, batch="XFLOW")
         assert report.rows[0]["triggers"] == 2   # 仅 D 后 2 笔进在验窗口
         assert report.window_start == "2026-09-10" and report.window_end == "2026-09-15"

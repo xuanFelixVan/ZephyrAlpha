@@ -47533,6 +47533,20 @@ entries:
   desc_zh: "SOP-C C1：遍历聚宽源码目录逐文件登记编码/行数/平台特征/指纹，统一转 UTF-8 归一副本"
   desc_en: ""
   plain_zh: "外部买来的六百个炒股策略源码进门时做的体检登记：每个文件是哪年的、用什么编码、能不能打开、带不带中文注释、像不像聚宽的写法，全记在一张表上，顺便各复印一份统一格式的副本。坏文件只登记不修理，后面的筛选工序都靠这张表。"
+- module_path: scripts/backtest/replay_drill.py
+  domain_id: D_BACKTEST
+  name_zh: "复现演练器"
+  name_en: "Replay Drill"
+  desc_zh: "SOP-D §8：同输入重跑验证批与档案 diff 四件套，结果写 08_replay.md"
+  desc_en: ""
+  plain_zh: "给回测结论做'再考一遍'的验证员：把当初那次验证原样重跑，逐行比对结论、触发数、显著性和判定原因是否一模一样。一样就盖'可复现'章，不一样就立刻报警暂挂结论——防止数据被回填修改或代码悄悄变过导致旧结论失真。"
+- module_path: scripts/backtest/strategy_screen_c2.py
+  domain_id: D_BACKTEST
+  name_zh: "C2 粗筛机"
+  name_en: "C2 Hard-exclusion Screener"
+  desc_zh: "SOP-C §2：硬排除四类判据（非股票标的/非日线级/结构不可迁移/演示作业）机器第一遍"
+  desc_en: ""
+  plain_zh: "六百个进门策略的第一道筛子：专挑不要的——炒期货的、买基金的、玩分钟线的、做对冲套利的、明显是教学演示的，按硬标准直接出局；拿不准的一律放行进下一关。故意宁漏勿误，因为错杀好策略的代价远大于多看几个平庸的。"
 
 battle_map_steps:
 - step_id: BM-BUY-05

@@ -4968,6 +4968,14 @@ capabilities:
   name_zh: 产业链全景图 git 侧工件门禁
   description: 图 8 产业链全景图的字典↔DDL↔引擎三方同 commit 同步硬阻断（priority=141）+ chainmap_cluster_names 词表 sanity
 creation_tokens:
+- file: scripts/backtest/replay_drill.py
+  token: replay-drill-20260912
+  created_by: st-backtest-20260912
+  capability: backtest_run_archive
+- file: scripts/backtest/strategy_screen_c2.py
+  token: strategy-screen-c2-20260912
+  created_by: st-backtest-20260912
+  capability: backtest_run_archive
 - file: docs/01_policies_and_standards/_registry/catalogs/risk_tier_registry.yaml
   token: risk-tier-registry-20260912
   created_by: st-govreform-20260912
