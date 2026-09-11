@@ -33,7 +33,7 @@ from __future__ import annotations
 import os
 import sys
 from pathlib import Path
-from typing import Any
+from typing import TYPE_CHECKING, Any
 
 # 一次性 bootstrap：算 sys.path（此 N 值对本文件固定且仅用一次，符合 project_memory 豁免）。
 # 先例：scripts/git_commit.py、scripts/governance/check_ssot_gate.py 均已 bootstrap import src/。
@@ -87,17 +87,22 @@ def mark_depgraph_dirty() -> None:
 
 # P2迁移后：depgraph.db 已迁移到 PostgreSQL，所有治理脚本通过此入口获取 PG 连接。
 # 真源：docs/03_modules/_cross_layer/database/sub_blueprints/mod_inf_012b_p2_postgresql_migration.md
-import psycopg2  # noqa: E402
-from psycopg2.extras import RealDictCursor  # noqa: E402
+#
+# PG 依赖惰性加载（2026-09-11 提交通道性能治本）：本模块被 453 个 governance 脚本
+# import，绝大多数只用 EXIT_*/REPO_ROOT/EXCLUDE_DIRS 等轻常量；而模块级
+# import psycopg2 + depgraph_schema 实测拖 ~2-3s 导入链（zephyr.governance.depgraph_schema
+# ~2s 为主）——每个 checker spawn 白付一次，ENCODING-SAFETY 逐文件调用 306 文件实测
+# 1004s。改为调用点惰性导入后，仅真实访问 PG 的路径（get_depgraph_pg_connection /
+# cursor 构建）才付这笔成本；模块公共 API 与调用方语义零变化（import 时机推迟到首次调用）。
+if TYPE_CHECKING:  # 类型检查期导入（PgConnExecuteWrapper.__init__ 注解引用）
+    import psycopg2
 
-# 注意：import 用别名，避免与本模块下方定义的 wrapper 函数同名遮蔽导致无限递归。
-# F1 真源（depgraph_schema）返回 psycopg2 connection；F4 wrapper（本模块）包装为 PgConnExecuteWrapper。
-# 同名设计是为调用方透明替代，但 wrapper 内部必须调用真源，不能调用自己。
-# 治本（2026-06-28）：原直接 import 同名，L107 调用解析到局部 wrapper → RecursionError →
-# path_tree sync failed warning。改用别名消除遮蔽。见 AGENTS.md §11.4。
-from zephyr.governance.depgraph_schema import (
-    get_depgraph_pg_connection as _get_depgraph_pg_connection_from_depgraph_schema,  # noqa: E402
-)
+
+def _real_dict_cursor():
+    """惰性取 RealDictCursor（PG 依赖延迟加载，见上方模块注释）。"""
+    from psycopg2.extras import RealDictCursor  # noqa: PLC0415 — 惰性导入治本导入链税
+
+    return RealDictCursor
 
 
 class PgConnExecuteWrapper:
@@ -113,16 +118,16 @@ class PgConnExecuteWrapper:
         self._pg_conn = pg_conn
 
     def execute(self, sql: str, params: tuple = ()) -> Any:
-        cur = self._pg_conn.cursor(cursor_factory=RealDictCursor)
+        cur = self._pg_conn.cursor(cursor_factory=_real_dict_cursor())
         cur.execute(sql, params)
         return cur
 
     def cursor(self):
         """兼容 sqlite3 conn.cursor() 接口，返回 RealDictCursor（支持 execute/fetchone/fetchall）。"""
-        return self._pg_conn.cursor(cursor_factory=RealDictCursor)
+        return self._pg_conn.cursor(cursor_factory=_real_dict_cursor())
 
     def executemany(self, sql: str, params_list: list[tuple]) -> None:
-        cur = self._pg_conn.cursor(cursor_factory=RealDictCursor)
+        cur = self._pg_conn.cursor(cursor_factory=_real_dict_cursor())
         cur.executemany(sql, params_list)
         cur.close()
 
@@ -176,6 +181,16 @@ def get_depgraph_pg_connection(
     :param superuser: True 使用 postgres 超级用户（用于 DDL/迁移，覆盖 read_only）
     :return: PgConnExecuteWrapper 包装的 psycopg2 连接
     """
+    # 注意：import 用别名，避免与本模块上方定义的 wrapper 函数同名遮蔽导致无限递归。
+    # F1 真源（depgraph_schema）返回 psycopg2 connection；F4 wrapper（本模块）包装为 PgConnExecuteWrapper。
+    # 同名设计是为调用方透明替代，但 wrapper 内部必须调用真源，不能调用自己。
+    # 治本（2026-06-28）：原直接 import 同名，L107 调用解析到局部 wrapper → RecursionError →
+    # path_tree sync failed warning。改用别名消除遮蔽。见 AGENTS.md §11.4。
+    # 治本（2026-09-11）：import 从模块级移入函数体（PG 依赖惰性加载，见模块头注释）。
+    from zephyr.governance.depgraph_schema import (  # noqa: PLC0415
+        get_depgraph_pg_connection as _get_depgraph_pg_connection_from_depgraph_schema,
+    )
+
     # allow_edge_delete 需要写权限，自动覆盖 read_only
     if allow_edge_delete:
         read_only = False

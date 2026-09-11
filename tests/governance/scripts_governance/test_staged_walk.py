@@ -228,6 +228,52 @@ class TestCheckEncodingStaged:
             assert exc.value.code == 0
 
 
+class TestCheckEncodingFileBatch:
+    """check_encoding.py --file 批量模式（2026-09-11 治本：ENCODING-SAFETY gate 批量化前提）。
+
+    --file 从单文件（type=str）改为 nargs="+"——单文件调用向后兼容，
+    多文件单进程批量（消除 N 次解释器启动+导入链税）。
+    """
+
+    def test_file_single_backward_compat(self, tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
+        """单文件 --file 调用仍正常（exit 0）。"""
+        import check_encoding
+
+        clean = tmp_path / "clean.py"
+        clean.write_text("x = 1\n", encoding="utf-8")
+        monkeypatch.setattr(sys, "argv", ["check_encoding.py", "--file", str(clean)])
+        with pytest.raises(SystemExit) as exc:
+            check_encoding.main()
+        assert exc.value.code == 0
+
+    def test_file_batch_all_pass(self, tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
+        """多文件批量全部通过——exit 0。"""
+        import check_encoding
+
+        f1 = tmp_path / "a.py"
+        f2 = tmp_path / "b.md"
+        f1.write_text("x = 1\n", encoding="utf-8")
+        f2.write_text("# ok\n", encoding="utf-8")
+        monkeypatch.setattr(sys, "argv", ["check_encoding.py", "--file", str(f1), str(f2)])
+        with pytest.raises(SystemExit) as exc:
+            check_encoding.main()
+        assert exc.value.code == 0
+
+    def test_file_batch_partial_violation(self, tmp_path: Path, monkeypatch: pytest.MonkeyPatch, capsys) -> None:
+        """批量中一个文件带 BOM——exit 1 且输出定位到该文件。"""
+        import check_encoding
+
+        clean = tmp_path / "clean.py"
+        clean.write_text("x = 1\n", encoding="utf-8")
+        bom = tmp_path / "bom.yaml"
+        bom.write_bytes(b"\xef\xbb\xbfkey: val\n")
+        monkeypatch.setattr(sys, "argv", ["check_encoding.py", "--file", str(clean), str(bom)])
+        with pytest.raises(SystemExit) as exc:
+            check_encoding.main()
+        assert exc.value.code == 1
+        assert "bom.yaml" in capsys.readouterr().out
+
+
 class TestCheckAnyAbuseStaged:
     """check_any_abuse.py --staged 模式——变更检测集成（使用 _shared.staged_files）。"""
 

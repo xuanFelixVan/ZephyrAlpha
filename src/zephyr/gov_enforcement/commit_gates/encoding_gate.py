@@ -51,8 +51,12 @@ exit 1（检出违规）时硬阻断。
    占用，priority=41 预留给 DATA-TASK-COMPLETENESS 迁移，故选 42）。
 4. **按后缀过滤**：只校验 .py/.md/.yaml/.yml/.json/.toml/.ps1（与 check_encoding.py
    check_dir_encoding 一致），避免对 .png/.bin 等二进制文件无意义调用。
-5. **逐文件调用 --file**：check_encoding.py 的 --file 模式只接受单个文件，
-   逐文件 subprocess 调用（典型 commit 1-5 文件，性能可接受）。
+5. **批量调用 --file（2026-09-11 治本）**：check_encoding.py 的 --file 模式支持
+   多文件（nargs="+"），本 gate 分块批量调用（_CHUNK_MAX_FILES 文件/块）。
+   原逐文件 spawn 在共享暂存区大批量场景实测 306 文件 1004s（每次调用付
+   ~3s 解释器启动+导入链固定税 ×N）；批量化后固定税只付块数次。分块上限
+   防 Windows CreateProcess 命令行 32767 字符硬限。经 run_checker_script
+   走 checker_supervisor（A2 持久 worker，异常自动回退直 spawn）。
 
 Usage::
 
@@ -93,11 +97,13 @@ from __future__ import annotations
 import logging
 import os
 import subprocess
-import sys
 from pathlib import Path
+from typing import Iterator
 
-from zephyr.gov_enforcement.rule_bridge.commit_gate_registry import GateSpec
-from zephyr.shared.infra.process_pool import run_subprocess_hidden
+from zephyr.gov_enforcement.rule_bridge.commit_gate_registry import (
+    GateSpec,
+    run_checker_script,
+)
 
 logger = logging.getLogger(__name__)
 
@@ -105,6 +111,21 @@ __all__ = ["make_encoding_gate"]
 
 # check_encoding.py 支持的后缀（与 check_dir_encoding 一致）
 _CHECKED_SUFFIXES = frozenset({".py", ".md", ".yaml", ".yml", ".json", ".toml", ".ps1"})
+
+# 批量分块上限（2026-09-11 治本）：Windows CreateProcess 命令行 32767 字符硬限，
+# 64 文件 × ~100 字符路径 ≈ 6.4K，留足余量；块内文件共享一次解释器启动+导入链。
+_CHUNK_MAX_FILES = 64
+
+# 单块超时（秒）：原逐文件路径每文件 30s；64 文件块按病态大文件（CJK mojibake
+# round-trip 检测）~2s/个 封顶 128s，取 120s 留余量。fail-open 语义不变
+# （超时=环境异常放行，与原逐文件超时同款）。
+_BATCH_TIMEOUT_SECONDS = 120
+
+
+def _chunk_files(rel_files: list[str]) -> Iterator[list[str]]:
+    """按 _CHUNK_MAX_FILES 分块（命令行长度安全）。"""
+    for i in range(0, len(rel_files), _CHUNK_MAX_FILES):
+        yield rel_files[i : i + _CHUNK_MAX_FILES]
 
 
 def make_encoding_gate() -> GateSpec:
@@ -143,12 +164,18 @@ def make_encoding_gate() -> GateSpec:
             )
             return True, f"check_encoding.py not found, skip (fail-open): {check_script}"
 
-        # 3. 逐文件 subprocess 调用复用真源
+        # 3. 分块批量 subprocess 调用复用真源（2026-09-11 治本：原逐文件 spawn，
+        #    共享暂存区大批量实测 306 文件 1004s——每次调用付 ~3s 固定税 ×N）
         failures: list[str] = []
-        for rel in rel_files:
-            cmd = [sys.executable, str(check_script), "--file", rel]
+        for chunk in _chunk_files(rel_files):
             try:
-                result = run_subprocess_hidden(cmd, capture_output=True, cwd=str(project_root), timeout=30, text=False)
+                result = run_checker_script(
+                    check_script,
+                    ["--file", *chunk],
+                    cwd=str(project_root),
+                    timeout=_BATCH_TIMEOUT_SECONDS,
+                    text=False,
+                )
             except (subprocess.TimeoutExpired, OSError) as e:
                 # fail-open：subprocess 异常是环境问题，不阻断
                 logger.warning(
@@ -165,7 +192,7 @@ def make_encoding_gate() -> GateSpec:
                 detail = result.stdout.decode("utf-8", errors="replace").strip()
                 if not detail:
                     detail = result.stderr.decode("utf-8", errors="replace").strip()
-                failures.append(detail or f"encoding violation in {rel}")
+                failures.append(detail or f"encoding violation in chunk ({len(chunk)} file(s))")
             else:
                 # exit 2 或其他：脚本异常，fail-open（与 pure_shim_gate 一致）
                 err = result.stderr.decode("utf-8", errors="replace").strip()

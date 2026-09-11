@@ -14,6 +14,7 @@
 - TestCheckScriptError: checker exit 2 fail-open 放行
 - TestCheckSubprocessException: subprocess 异常（timeout/OSError）fail-open 放行
 - TestCheckMultipleFiles: 多文件中部分违规——聚合 detail
+- TestCheckBatchInvocation: 批量调用结构——单次调用/64 分块/块违规阻断（2026-09-11 治本）
 """
 
 from __future__ import annotations
@@ -201,12 +202,19 @@ class TestCheckScriptError:
 
 
 class TestCheckSubprocessException:
-    """subprocess 异常（timeout / OSError）——fail-open 放行（与 pure_shim_gate 等一致）。"""
+    """subprocess 异常（timeout / OSError）——fail-open 放行（与 pure_shim_gate 等一致）。
+
+    注意（2026-09-11 批量化治本）：gate 经 run_checker_script 优先走 checker_supervisor
+    持久 worker（不经过 subprocess.run，patch 落空）——测试 MUST 先
+    setenv ZEPHYR_CHECKER_SUPERVISOR=0 关闭 supervisor 走直 spawn 回退路径，
+    才能模拟底层 spawn 失败（env 逐调用判定，checker_supervisor.py）。
+    """
 
     def test_timeout_returns_true(self, tmp_path, monkeypatch):
         gw = _MockGateway(tmp_path)
         _make_checker_stub(tmp_path, exit_code=0)
         _make_target_file(tmp_path, "foo.py")
+        monkeypatch.setenv("ZEPHYR_CHECKER_SUPERVISOR", "0")
 
         def _raise_timeout(*args, **kwargs):
             raise subprocess.TimeoutExpired(cmd="mock", timeout=30)
@@ -222,6 +230,7 @@ class TestCheckSubprocessException:
         gw = _MockGateway(tmp_path)
         _make_checker_stub(tmp_path, exit_code=0)
         _make_target_file(tmp_path, "foo.py")
+        monkeypatch.setenv("ZEPHYR_CHECKER_SUPERVISOR", "0")
 
         def _raise_oserror(*args, **kwargs):
             raise OSError("mock permission denied")
@@ -235,7 +244,7 @@ class TestCheckSubprocessException:
 
 
 class TestCheckMultipleFiles:
-    """多文件——逐文件 subprocess 调用，违规聚合 detail。"""
+    """多文件——批量单次 subprocess 调用（2026-09-11 治本：原逐文件 spawn），违规聚合 detail。"""
 
     def test_multiple_files_all_pass(self, tmp_path):
         """多文件全部通过——detail 含文件数。"""
@@ -249,9 +258,9 @@ class TestCheckMultipleFiles:
         assert "2 file" in detail
 
     def test_multiple_files_partial_violation(self, tmp_path):
-        """多文件部分违规——第一个违规直接返回（按当前实现）。"""
+        """多文件部分违规——整块 exit 1，detail 透传（批量后 stub 对整块返回同码）。"""
         gw = _MockGateway(tmp_path)
-        # 同一 stub 对所有调用返回相同 exit code——模拟 foo.py 违规
+        # 同一 stub 对整块返回相同 exit code——模拟 foo.py 违规
         _make_checker_stub(tmp_path, exit_code=1, stdout_msg="non-ASCII in foo.py")
         _make_target_file(tmp_path, "foo.py")
         _make_target_file(tmp_path, "bar.py")
@@ -259,3 +268,69 @@ class TestCheckMultipleFiles:
         passed, detail = spec.check(gw, [str(tmp_path / "foo.py"), str(tmp_path / "bar.py")])
         assert passed is False
         assert "non-ASCII in foo.py" in detail
+
+
+class TestCheckBatchInvocation:
+    """批量调用结构（2026-09-11 治本验证）——多文件单次调用 + 64 文件分块。
+
+    通过 monkeypatch encoding_gate.run_checker_script 记录调用（不真跑 checker），
+    验证批量化结构本身：N 文件 ≤64 → 恰 1 次调用且参数含全部文件；
+    N 文件 >64 → 恰 ceil(N/64) 次调用（Windows 命令行长度安全）。
+    """
+
+    def _install_recorder(self, monkeypatch, returncode=0, stdout=b""):
+        import zephyr.gov_enforcement.commit_gates.encoding_gate as enc_mod
+
+        calls: list[list[str]] = []
+
+        def _fake_run(script_path, args, *, cwd, timeout, text, env=None):
+            calls.append(list(args))
+            return subprocess.CompletedProcess(
+                args=[str(script_path), *args], returncode=returncode, stdout=stdout, stderr=b""
+            )
+
+        monkeypatch.setattr(enc_mod, "run_checker_script", _fake_run)
+        return calls
+
+    def test_le_64_files_single_invocation(self, tmp_path, monkeypatch):
+        """3 文件 → 恰 1 次调用，--file 后跟全部 3 个文件。"""
+        _make_checker_stub(tmp_path, exit_code=0)  # stub 只需存在（run_checker_script 被 fake）
+        calls = self._install_recorder(monkeypatch)
+        files = []
+        for i in range(3):
+            rel = f"src/f{i}.py"
+            _make_target_file(tmp_path, rel)
+            files.append(str(tmp_path / rel))
+        spec = make_encoding_gate()
+        passed, detail = spec.check(_MockGateway(tmp_path), files)
+        assert passed is True
+        assert len(calls) == 1
+        assert calls[0][0] == "--file"
+        assert len(calls[0]) == 4  # --file + 3 文件
+
+    def test_gt_64_files_chunked_invocation(self, tmp_path, monkeypatch):
+        """70 文件 → 恰 2 次调用（64+6 分块，Windows CreateProcess 命令行 32767 硬限防护）。"""
+        _make_checker_stub(tmp_path, exit_code=0)  # stub 只需存在（run_checker_script 被 fake）
+        calls = self._install_recorder(monkeypatch)
+        files = []
+        for i in range(70):
+            rel = f"src/f{i:03d}.py"
+            _make_target_file(tmp_path, rel)
+            files.append(str(tmp_path / rel))
+        spec = make_encoding_gate()
+        passed, detail = spec.check(_MockGateway(tmp_path), files)
+        assert passed is True
+        assert len(calls) == 2
+        assert len(calls[0]) == 65  # --file + 64 文件
+        assert len(calls[1]) == 7  # --file + 6 文件
+        assert "70 file" in detail
+
+    def test_chunk_violation_blocks(self, tmp_path, monkeypatch):
+        """某块 exit 1 → 阻断且 detail 透传 stdout（fail-closed 语义保持）。"""
+        _make_checker_stub(tmp_path, exit_code=0)  # stub 只需存在（run_checker_script 被 fake）
+        calls = self._install_recorder(monkeypatch, returncode=1, stdout=b"INJ-007 FAIL: BOM")
+        _make_target_file(tmp_path, "foo.py")
+        spec = make_encoding_gate()
+        passed, detail = spec.check(_MockGateway(tmp_path), [str(tmp_path / "foo.py")])
+        assert passed is False
+        assert "INJ-007 FAIL: BOM" in detail

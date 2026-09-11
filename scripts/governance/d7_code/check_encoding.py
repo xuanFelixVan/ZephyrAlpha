@@ -11,7 +11,7 @@
 # [SAFETY] M
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT]
-# [TESTS] pre-commit: --staged（只查 staged 文件，92s→亚秒）；CI/全量: --dir .；单测: tests/governance/scripts_governance/test_staged_walk.py
+# [TESTS] pre-commit: --staged（只查 staged 文件，92s→亚秒）或 ENCODING-SAFETY gate --file 批量；CI/全量: --dir .；单测: tests/governance/scripts_governance/test_staged_walk.py + tests/governance/commit_gates/test_encoding_gate.py
 # [A_module] module_id=MOD-INF-005 | layer=module | stability=evolving | safety=M | ai_autonomy=ai_modifiable
 # [TTL] permanent
 """check_encoding.py — 编码合规校验（INJ-007）
@@ -19,7 +19,9 @@
 对标：GOV-MOD-ALPHA_SIGNAL_DOMAIN INJ-007（编码合规）
 
 检测内容：
-- --file: 检查指定文件的编码合规性（UTF-8 BOM/无BOM、无 CRLF、无 autoGuessEncoding）
+- --file: 检查指定文件的编码合规性（UTF-8 BOM/无BOM、无 CRLF、无 autoGuessEncoding）；
+  支持一次传多个文件（批量单进程——2026-09-11 治本：ENCODING-SAFETY gate 原逐文件
+  spawn，N 文件=N 次解释器启动+导入链，306 文件实测 1004s）
 - 包装 scripts/governance/d7_code/detect_missing_encoding.py 的功能
 
 语义说明（2026-06-25, OPS-2026062501 修复）：
@@ -33,7 +35,7 @@ from __future__ import annotations
 
 __manifest__ = """
 args:
-- {flag: --file, type: str, description: "检查指定文件的编码合规性"}
+- {flag: --file, type: str, multiple: true, description: "检查指定文件的编码合规性（可传多个，单进程批量）"}
 - {flag: --dir, type: str, description: "检查指定目录下所有文件的编码合规性"}
 description: >
   编码合规校验（INJ-007）——UTF-8 编码、无 CRLF、无 autoGuessEncoding。
@@ -311,7 +313,9 @@ def check_dir_encoding(dirpath: str) -> tuple[list[str], list[str]]:
 def main() -> None:
     """Entry point: parse args, run logic, return exit code."""
     parser = argparse.ArgumentParser(description="Encoding compliance check (INJ-007)")
-    parser.add_argument("--file", type=str, help="Check encoding of a specific file")
+    parser.add_argument(
+        "--file", nargs="+", help="Check encoding of specific file(s) — supports batch (multiple paths)"
+    )
     parser.add_argument("--dir", type=str, help="Check encoding of all files in directory")
     parser.add_argument("--scan", action="store_true", help="Scan entire project for mojibake")
     parser.add_argument(
@@ -326,9 +330,12 @@ def main() -> None:
     all_warnings: list[str] = []  # WARNING 级别，不阻断提交
 
     if args.file:
-        f_findings, f_warnings = check_file_encoding(args.file)
-        all_findings.extend(f_findings)
-        all_warnings.extend(f_warnings)
+        # 批量单进程（2026-09-11 治本）：--file 接受多个文件，逐文件检测逻辑不变
+        # （check_file_encoding 纯函数），仅消除 N 次 spawn 的解释器启动+导入链税。
+        for one_file in args.file:
+            f_findings, f_warnings = check_file_encoding(one_file)
+            all_findings.extend(f_findings)
+            all_warnings.extend(f_warnings)
 
     if args.staged:
         # 变更检测（治本 2026-08-03）：--dir . 全量扫 7355 文件需 92s（逐文件
