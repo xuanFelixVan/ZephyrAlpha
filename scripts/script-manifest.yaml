@@ -3,8 +3,8 @@
 #
 manifest_version: 2.0.0
 generated_by: generate_manifest.py (auto-scan)
-generated_at: '2026-09-11'
-total_scripts: 785
+generated_at: '2026-09-12'
+total_scripts: 789
 scripts:
 - name: __init__.py
   path: __init__.py
@@ -566,6 +566,30 @@ scripts:
   status: registered
   timeout_seconds: 60
   dimensions: []
+- name: backtest/generate_backtest_backlog.py
+  path: backtest/generate_backtest_backlog.py
+  description: 规范真源：docs/01_policies_and_standards/sop/backtest_system_sop/sop_a_full_map_orchestration.md §1-§3。
+  domain: test
+  execution_plane: warm-path
+  status: registered
+  timeout_seconds: 60
+  dimensions: []
+- name: backtest/strategy_intake_inventory.py
+  path: backtest/strategy_intake_inventory.py
+  description: 规范真源：docs/01_policies_and_standards/sop/backtest_system_sop/sop_c_strategy_library_intake.md §1。
+  domain: test
+  execution_plane: warm-path
+  status: registered
+  timeout_seconds: 60
+  dimensions: []
+- name: backtest/verify_run_archive.py
+  path: backtest/verify_run_archive.py
+  description: 规范真源：docs/01_policies_and_standards/sop/backtest_system_sop/sop_d_run_archive_naming.md §6。
+  domain: test
+  execution_plane: warm-path
+  status: registered
+  timeout_seconds: 60
+  dimensions: []
 - name: backup/backup_reconciler.py
   path: backup/backup_reconciler.py
   description: 职责：注册为 ReconciliationRegistry 的 reconciler，post-commit 自动触发。
@@ -835,6 +859,14 @@ scripts:
   description: import sys
   domain: construction
   execution_plane: warm-path
+  status: registered
+  timeout_seconds: 60
+  dimensions: []
+- name: construction/g07_sentiment_validation.py
+  path: construction/g07_sentiment_validation.py
+  description: 问题：情绪周期是否为三策略（打板/多因子/事件驱动）的隐形驱动？
+  domain: construction
+  execution_plane: hot-path
   status: registered
   timeout_seconds: 60
   dimensions: []
