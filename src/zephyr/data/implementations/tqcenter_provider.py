@@ -62,12 +62,14 @@ import datetime
 import logging
 import math
 import sys
+import threading
 import time
 from decimal import Decimal
 from pathlib import Path
 from typing import Iterator
 
 from zephyr.shared.security.secrets import SecretsError, get_secret_or_default, get_service_secret
+from zephyr.shared.utils.time_utils import now_utc
 
 from ..policy_registry import SourcePolicy
 from ..provider_base import (
@@ -89,6 +91,7 @@ except SecretsError:
     _TQCENTER_PATH = get_secret_or_default("TDX_PLUGIN_DIR", r"E:\tdx\PYPlugins\user")
 
 _TBL_KLINE_SECTOR_880 = get_registry().table("market_sector_kline_880")
+_TBL_KLINE_SECTOR = get_registry().table("market_sector_kline")
 _TBL_SECTOR_CONSTITUENT = get_registry().table("market_sector_constituent_880")
 _TBL_SECTOR_SNAPSHOT = get_registry().table("market_sector_snapshot_880")
 
@@ -171,6 +174,7 @@ class TQCenterProvider(IngestProviderBase):
         rate_limit_default=0,
         capabilities=[
             CapabilityContract("kline_sector_880", supports_symbols_null=True),
+            CapabilityContract("kline_sector", supports_symbols_null=True),
             CapabilityContract("sector_constituent", supports_symbols_null=True),
             CapabilityContract("sector_snapshot_collection", supports_symbols_null=True),
             "kline_resampling",
@@ -188,7 +192,7 @@ class TQCenterProvider(IngestProviderBase):
         """建立连接：注入 tqcenter 路径并初始化。"""
         if _TQCENTER_PATH not in sys.path:
             sys.path.insert(0, _TQCENTER_PATH)
-        from tqcenter import tq  # 外部 SDK（sys.path 注入，非 pip 安装；E402 不适用——函数内导入）
+        from tqcenter import tq  # noqa: import-integrity  外部SDK经sys.path注入非pip安装，E402不适用，函数内导入
 
         tq.initialize(str(Path(__file__).resolve()))
         self._tq = tq
@@ -235,6 +239,8 @@ class TQCenterProvider(IngestProviderBase):
         capability = (payload.extra or {}).get("capability")
         if capability == "kline_sector_880":
             yield from self._fetch_kline_sector_880(payload, policy)
+        elif capability == "kline_sector":
+            yield from self._fetch_kline_sector(payload, policy)
         elif capability == "sector_constituent":
             yield from self._fetch_sector_constituent(payload, policy)
         elif capability == "sector_snapshot_collection":
@@ -287,7 +293,7 @@ class TQCenterProvider(IngestProviderBase):
         days = (payload.extra or {}).get("days", 5)
         count = days if period == "1d" else days * 240
 
-        t0 = time.time()
+        t0 = time.monotonic()
         total_rows = 0
         total_batches = (len(symbols) + _BATCH_SIZE - 1) // _BATCH_SIZE
 
@@ -305,7 +311,7 @@ class TQCenterProvider(IngestProviderBase):
                         columns=_COLUMNS_KLINE_880,
                         rows=rows,
                         last_key=datetime.date.today().isoformat(),
-                        elapsed_sec=time.time() - t0,
+                        elapsed_sec=time.monotonic() - t0,
                     )
                 self._log.info(f"  批次 {batch_num}/{total_batches}: {len(batch)} 只 → {len(rows)} 行")
             except Exception as e:  # noqa: BLE001 — 5.135治标
@@ -393,6 +399,110 @@ class TQCenterProvider(IngestProviderBase):
             "tqcenter",
         )
 
+    def _fetch_kline_sector(self, payload: FetchPayload, policy: SourcePolicy) -> Iterator[FetchResult]:
+        """板块/行业指数日K线（tqcenter get_market_data），写入 c1_market.kline_sector。
+
+        2026-09-11 mootdx 通道退化换道（Owner 裁定"数据完美替换即切"）：mootdx 公共行情
+        服务器对 K 线请求回 0 行（00:50/08:16/09:00 三次实证 + 16:30 同通道日任务当日零
+        产出），tqcenter（通达信客户端插件）对 880/881 全系列实测可用（881290.SH 探针通过
+        ——880 表无 881 行业族，kline_sector 不冗余不可退役）。symbols=None 时从
+        sector_constituent 取全量板块代码（880+881 全族 594 只）。
+        尺度换算（30650 重叠行对拍实证，保 mootdx 历史特征零漂移）：
+        tqcenter volume=mootdx×100 → 写入 ÷100；amount=mootdx×1e-4 → 写入 ×1e4。
+        """
+        from ..ch_reader import query as ch_query
+
+        table = payload.table or _TBL_KLINE_SECTOR
+        symbols = payload.symbols
+        if not symbols:
+            tsv = ch_query(
+                f"SELECT DISTINCT sector_code FROM {_TBL_SECTOR_CONSTITUENT} ORDER BY sector_code")  # noqa: bare-sql  存量参数化查询/动态标识符，format重排伪新增（§5.160.2集中化专项另列）
+            symbols = [line.strip() for line in (tsv or "").split("\n") if line.strip()]
+        if not symbols:
+            yield FetchResult(
+                table=table,
+                columns=[],
+                rows=[],
+                last_key="",
+                elapsed_sec=0.0,
+                error="sector_constituent 无板块代码（请先运行 sector_constituent_refresh）",
+            )
+            return
+
+        period = "1d"
+        days = (payload.extra or {}).get("days", 30)
+        count = days if period == "1d" else days * 240
+        columns = ["trade_date", "code", "open", "high", "low", "close",
+                   "volume", "amount", "data_source"]
+        today_str = now_utc().date().isoformat()
+        t0 = time.monotonic()
+        total = 0
+        total_batches = (len(symbols) + _BATCH_SIZE - 1) // _BATCH_SIZE
+        for i in range(0, len(symbols), _BATCH_SIZE):
+            batch = symbols[i : i + _BATCH_SIZE]
+            try:
+                self._tq.refresh_kline(stock_list=batch, period=period)
+                df = self._tq.get_market_data(stock_list=batch, count=count, period=period)
+                rows = self._parse_sector_daily_df(df, batch)
+                total += len(rows)
+                if rows:
+                    yield FetchResult(
+                        table=table,
+                        columns=columns,
+                        rows=rows,
+                        last_key=today_str,
+                        elapsed_sec=time.monotonic() - t0,
+                    )
+                self._log.info(f"  批次 {i // _BATCH_SIZE + 1}/{total_batches}: {len(batch)} 只 → {len(rows)} 行")
+            except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
+                self._log.error(f"  批次 {i // _BATCH_SIZE + 1}/{total_batches} 失败: {e}")
+            threading.Event().wait(0.3)  # 批间限速：Event().wait 语义等价且可中断（provider_base 惯例，PERM-TRIGGER 防复发）
+        self._log.info(f"=== kline_sector 完成: {total} 行 ===")
+
+    @staticmethod
+    def _parse_sector_daily_df(df, sector_codes: list[str]) -> list[tuple]:
+        """解析 get_market_data dict-of-DataFrames → kline_sector 表形状（含 mootdx 尺度还原）。"""
+
+        def _f(x) -> float:
+            try:
+                f = float(x)
+                return 0.0 if math.isnan(f) else f
+            except (TypeError, ValueError):
+                return 0.0
+
+        if not df or not isinstance(df, dict):
+            return []
+        open_df = df.get("Open")
+        if open_df is None or open_df.empty:
+            return []
+        close_df = df.get("Close", open_df)
+        high_df = df.get("High", open_df)
+        low_df = df.get("Low", open_df)
+        vol_df = df.get("Volume", open_df)
+        amt_df = df.get("Amount", open_df)
+        rows = []
+        for ts in open_df.index:
+            d = ts.date() if hasattr(ts, "date") else datetime.datetime.strptime(str(ts)[:10], "%Y-%m-%d").date()
+            trade_date = d.isoformat()
+            for code in sector_codes:
+                if code not in open_df.columns:
+                    continue
+                o = open_df.loc[ts, code]
+                if o is None or (isinstance(o, float) and math.isnan(o)):
+                    continue
+                rows.append((
+                    trade_date,
+                    code,
+                    Decimal(str(o)),
+                    Decimal(str(_safe_val(high_df.loc[ts, code], o))),
+                    Decimal(str(_safe_val(low_df.loc[ts, code], o))),
+                    Decimal(str(_safe_val(close_df.loc[ts, code], o))),
+                    int(_f(vol_df.loc[ts, code]) / 100),        # tqcenter 股 → mootdx 手（÷100）
+                    round(_f(amt_df.loc[ts, code]) * 1e4, 2),   # amount ×1e4 还原 mootdx 口径
+                    "tqcenter",
+                ))
+        return rows
+
     # ---- 2. 板块成分股 ----
 
     def _fetch_sector_constituent(self, payload: FetchPayload, policy: SourcePolicy) -> Iterator[FetchResult]:
@@ -415,7 +525,7 @@ class TQCenterProvider(IngestProviderBase):
             )
             return
 
-        t0 = time.time()
+        t0 = time.monotonic()
         today = datetime.date.today()
         batch_rows: list[tuple] = []
 
@@ -444,7 +554,7 @@ class TQCenterProvider(IngestProviderBase):
                     columns=_COLUMNS_CONSTITUENT,
                     rows=batch_rows[:],
                     last_key=today.isoformat(),
-                    elapsed_sec=time.time() - t0,
+                    elapsed_sec=time.monotonic() - t0,
                 )
                 batch_rows.clear()
 
@@ -459,7 +569,7 @@ class TQCenterProvider(IngestProviderBase):
                 columns=_COLUMNS_CONSTITUENT,
                 rows=batch_rows[:],
                 last_key=today.isoformat(),
-                elapsed_sec=time.time() - t0,
+                elapsed_sec=time.monotonic() - t0,
             )
 
         self._log.info("=== sector_constituent 完成 ===")
@@ -486,7 +596,7 @@ class TQCenterProvider(IngestProviderBase):
             )
             return
 
-        t0 = time.time()
+        t0 = time.monotonic()
         now = datetime.datetime.now(_BEIJING_TZ)
         today = now.date()
         batch_rows: list[tuple] = []
@@ -521,7 +631,7 @@ class TQCenterProvider(IngestProviderBase):
                     columns=_COLUMNS_SNAPSHOT,
                     rows=batch_rows[:],
                     last_key=today.isoformat(),
-                    elapsed_sec=time.time() - t0,
+                    elapsed_sec=time.monotonic() - t0,
                 )
                 batch_rows.clear()
 
@@ -533,7 +643,7 @@ class TQCenterProvider(IngestProviderBase):
                 columns=_COLUMNS_SNAPSHOT,
                 rows=batch_rows[:],
                 last_key=today.isoformat(),
-                elapsed_sec=time.time() - t0,
+                elapsed_sec=time.monotonic() - t0,
             )
 
         self._log.info(f"=== sector_snapshot 完成: {len(batch_rows)} 行 ===")
@@ -587,7 +697,7 @@ class TQCenterProvider(IngestProviderBase):
         from ..ch_reader import query as ch_query
 
         today = datetime.date.today()
-        t0 = time.time()
+        t0 = time.monotonic()
 
         resample_pairs = [
             ("1m", "15min"),
@@ -632,6 +742,6 @@ class TQCenterProvider(IngestProviderBase):
             columns=[],
             rows=[],
             last_key=today.isoformat(),
-            elapsed_sec=time.time() - t0,
+            elapsed_sec=time.monotonic() - t0,
         )
         self._log.info(f"=== kline_resampling 完成: {total_inserted} 行 ===")

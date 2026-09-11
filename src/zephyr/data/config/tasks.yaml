@@ -763,17 +763,17 @@ tasks:
     description: "申万行业分类全量刷新（tushare index_classify + index_member）"
 - task_id: kline_sector_incremental
   table: c1_market.kline_sector
-  source: tdx
+  source: tqcenter       # 2026-09-11 mootdx 通道退化换道（Owner 裁定"完美替换即切"）：mootdx 对 K 线请求回 0 行（三次实证+16:30 同通道日任务零产出），tqcenter 881 系列探针通过（881 行业族 880 表没有，kline_sector 不冗余不可退役）；尺度换算 volume÷100/amount×1e4 保 mootdx 历史特征零漂移
   schedule: daily_kline    # 板块指数日K线应每日盘后更新，原weekend_calibration导致周一-周五无当日板块K线
   incremental: true
   date_col: trade_date
   dependencies: ["industry_class_refresh"]
   capability: kline_sector
-  symbols:         # null=tdx_provider._resolve_sector_symbols 从 sector_constituent 表获取880xxx板块代码
+  symbols:         # null=tqcenter 从 sector_constituent 取全量板块代码（880+881 全族 594 只）
   extra:
-    description: "板块指数日K线增量（mootdx index_bars，period=1d）"
+    description: "板块指数日K线增量（tqcenter get_market_data，period=1d，days=30）"
     period: 1d
-    count: 100
+    days: 30
 
 - task_id: option_iv_surface_incremental
   table: c1_market.option_iv_surface
