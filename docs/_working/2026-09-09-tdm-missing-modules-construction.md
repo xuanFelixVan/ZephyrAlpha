@@ -242,3 +242,19 @@ Owner 四批开工令（批1=C13/批2=L3-06/批3=L3-09——夜班已全部建�
 - **单发命令**：`bash .runtime/tmp/gw_night_gw_2300_commit_queue.sh`（22 文件版，含 --allow-promote --allow-non-worktree --adopt-prior-work；热文件锁 TTL 30min，过期先重取 lock_files）
 - **四关全绿证据**：validate errors=0/R21=0/R1=28；双地图测试 98 绿；ex_sor+plan_engine 555+signal_ashare 2533 全绿；align_all exit0（幽灵锚点 3→0 修复后）
 - **阻塞机理备案**：共享暂存区 52-69 件他会话在途（wiring/st-perf-plan/alignfull 体检批）自身 gate 违规（VOCAB-HARDCODE/DEPGRAPH-WRITE-PATH/TEST-SOURCE-CONSISTENCY 等）经全暂存区扫描连坐阻断全员；本轮已用尽：allow_overlap 5/24h 配额、session_worktree（TRAE-079 降级）、enqueue（B-007 Owner 窗口）；unstage 外来违规文件 10 件次（审计 .runtime/audit/night_gw_2300_unstage_adjudication.json，worktree 零损失全可逆）
+
+## 十四、落库完成（2026-09-12 04:44，sole-committer-20260911 收尾会话）
+
+- **状态：LANDED ✅ commit `e86ce72b80`**「feat(tdm): 四批开工令整批落地——C13/L3-06/L3-09 三模块新建+六锚回填+D1 编号规范化（night-gw-2300）」，HEAD 逐件核对 22/22 与清单完全一致、零外来搭便车，22 件工作区全 clean。
+- **31 件总账**：9 件先期入库（4 蓝图+翻译表+ownership map 早前批；C13/L3-06/L3-09 三蓝图随 st-encfix 829f6417fb）+ 22 件本批（16 M+6 A）= 31/31 全部落库，§十三"待落库 22 文件"清零。
+- **四关复验终态**：validate errors=0 ✅ / 双地图测试 **98 passed** ✅ / align_all **exit 0**（domain_mismatches=0、ghost_anchors=0、硬问题清零）✅ / 8890 服务 **200** ✅。
+- **R1/R21 漂移定性（非本批问题，全额归属接线会话）**：R1 28→**25**（改善：TDM-E-L2-09-1/09-2/L3-08 三红节点被接线 module_ref resolving）；R21 0→**3**（同三节点"有 ref 无 id"）——落库 diff 实证系 wiring 接班会话在共享地图工作区插入的**文档化中间态**（行内注释原文："module_ref-only warn 路线：MOD-INT_NEWS_CHAIN/MOD-INT_CHAIN_IMPACT 待 R21 格式冲突解挂后补 module_id"，指向 src/zephyr/intelligence/news_chain_node_linker.py/chain_impact_resolver.py），骑乘本批入库；98 测试在该地图状态上跑绿。欠账归接线会话台账，非本批偿付义务。
+- **落库排障纪要（10 次尝试全定性，零盲试）**：①LOCK_TIMEOUT→--wait 900；②SESSION-REQUIRED（原会话心跳死）→register+heartbeat_daemon 复活；③FOREIGN_CHANGE（claim 基线过期）→release-only+re-claim 钦定三连；④DATETIME-NOW-FORBIDDEN/NOQA-VALIDATION×2（外来 tqcenter_provider.py gate 迭代）→他会话自修（重构 now_utc）；⑤COMMIT_SCOPE 8 域→--allow-multi-domain（2026-08-13 裁定预授权，本批=跨域编号重构自许可场景）；⑥TRACKED-DRIFT-READONLY（外来并发写 architecture_issue_registry.yaml）→等写入波停稳后钦定重试一次即过；⑦他会话提交 stash 舞步两次 unstage 我 22 件→重装零丢失。st-encfix own-scope 治本对本批生效实证：外来 staged 文件违规仅剩 gate-infra 全局闸（FRONTEND-MAP/DATETIME/NOQA/TRACKED-DRIFT）仍连坐，内容类闸（ENCODING 等）已不再咬外来件。
+
+
+## 十四、L2-01/L2-04 自裁批（Owner"自行裁定"令落地，sole-committer-20260911）
+
+- **L2-01 板块强度综合 → MOD-SIG-142 sector_strength_aggregator**：权重裁定=等权 0.25×4（架构师分析：无 IC 证据链时等权为最大熵先验=量化社区 Barra/WorldQuant/QLib 标准起步；weights 显式可注入，IC 积累后按 multifactor_synthesis IC 加权惯例重校）；市场级调节=加法 delta ∈[-10,+10] clamp [0,100]；候选池 Top-ceil(N×15%) 保底 1；36+18 测试全绿
+- **L2-04 板块级市场状态 → MOD-SIG-143 sector_ecology_judge**：三态判定（CLIMAX>MAINLINE_CLEAR>CHAOS 优先级）；阈值零自创——连击≥2（MOD-SIG-064 无主线判据反向）/集中度≥30%（节点真源）/高潮分≥90（sector_rotation_state 既有文档阈值）；36 测试全绿
+- 蓝图×2+翻译×2+token×4+depgraph 设计态×2（node 12715366/12715367）；地图 L2-01/L2-04 锚点回填（R1 28→23）
+- S24 处置裁定（登记）：647 条 deprecated 链保留档案不物理删除（只增不删红线+数据资产+可逆性）；特斯拉链（CH-2ca173ff809d）随僵尸标准一并下架，复活开关留 Owner（一条 UPDATE，审计在案）
