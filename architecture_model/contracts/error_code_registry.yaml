@@ -24,6 +24,7 @@ purpose: 1. 提供业务异常错误码的单一发现入口 2. 声明每个 err
 domain_prefixes:
   AC: D_AUTONOMY_CORE
   BT: D_BACKTEST
+  BTARCH: D_BACKTEST
   CMP: D_COMPLIANCE
   DATA: D_DATA
   DE: D_DATA_ENG
@@ -135,6 +136,11 @@ error_codes:
   module: zephyr.autonomy_core.skills.skill_trajectory_miner
   file: src/zephyr/autonomy_core/skills/skill_trajectory_miner.py
   introduced: '2026-08-30: aiarch 清单 2.7 轨迹挖掘器（11号文 §4.4 P2-1）；初取 ZA-AC-0006 与当日并发批次（module_factory）撞号，按并集 max+1 改取 0008'
+- code: ZA-BTARCH-0001
+  class: RunArchiveError
+  module: zephyr.backtest.run_archive
+  file: src/zephyr/backtest/run_archive.py
+  introduced: '2026-09-12: 补登记——run_archive（SOP-D run 档案 API，他会话批入码）错误码登记缺口，GATE-ERRCODE 对账红修复'
 - code: ZA-BT-0001
   class: WalkForwardError
   module: zephyr.backtest.core.walk_forward
