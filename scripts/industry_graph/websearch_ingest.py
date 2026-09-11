@@ -4,7 +4,7 @@
 # [CONSUMERS] 夜班 SOP industry_chain_data_audit_sop §5 全轮次写入(唯一合法通道)
 # [STARTUP] manual
 # [MATURITY] production
-# [INVARIANTS] 写入唯一通道: 全部走 ingest 子命令(禁手写 SQL); 批次=单事务全成全败; 幂等(UNIQUE 锚 ON CONFLICT); 硬校验(SOP §5): source_doc 三段式/confidence<=0.7(websearch)/symbol 正则+cn 反查 stock_basic/词表白名单(tier 三位置值 v0.4+function_role 八值/category/edge_type v2/role 五值)/链名标题腔拒绝/node.name 无 -tier 后缀残留/backup 幂等; UNLISTED:UE-xxx 唯一合法格式(旧格式公司名直写拒绝,§4.10); unlisted_entity 记录 status 枚举+listed_symbol 真代码格式校验; equity_edge 记录(relation 六值/as_of 必填/PERSON: 前缀/verification 三值,2026-09-09 分域裁定); node 深度列 child_chain_id+drill_status(child 交叉校验,drill_manual=Owner 钉死 AI 不可写); PIT 三时间戳 websearch 边必填; 节点引用(node/node_company/node_edge)按(链+名)查库解析存量真实ID(存量采购包节点非md5方案,重算ID会FK违规/造重复行,2026-09-08修复); chain 支持 status/merged_into(deprecated 须带 merged_into,幂等 append 不覆盖原 source_note,2026-09-08 裁定执行); chain/placement_close 可选 chain_id 显式寻址(legacy-id 链 md5(现名)≠chain_id 场景,带值须命中存量行防伪造,2026-09-11); node_rename 环节改名(node_id 稳定键不动,新名过文章词/长度/-tier 三关+(链,名)防撞,2026-09-11)
+# [INVARIANTS] 写入唯一通道: 全部走 ingest 子命令(禁手写 SQL); 批次=单事务全成全败; 幂等(UNIQUE 锚 ON CONFLICT); 硬校验(SOP §5): source_doc 三段式/confidence<=0.7(websearch)/symbol 正则+cn 反查 stock_basic/词表白名单(tier 三位置值 v0.4+function_role 八值/category/edge_type v2/role 五值)/链名标题腔拒绝/node.name 无 -tier 后缀残留/backup 幂等; UNLISTED:UE-xxx 唯一合法格式(旧格式公司名直写拒绝,§4.10); unlisted_entity 记录 status 枚举+listed_symbol 真代码格式校验; equity_edge 记录(relation 六值/as_of 必填/PERSON: 前缀/verification 三值,2026-09-09 分域裁定); node 深度列 child_chain_id+drill_status(child 交叉校验,drill_manual=Owner 钉死 AI 不可写); PIT 三时间戳 websearch 边必填; 节点引用(node/node_company/node_edge)按(链+名)查库解析存量真实ID(存量采购包节点非md5方案,重算ID会FK违规/造重复行,2026-09-08修复); chain 支持 status/merged_into(deprecated 须带 merged_into,幂等 append 不覆盖原 source_note,2026-09-08 裁定执行); chain/placement_close 可选 chain_id 显式寻址(legacy-id 链 md5(现名)≠chain_id 场景,带值须命中存量行防伪造,2026-09-11); node_rename 环节改名(node_id 稳定键不动,新名过文章词/长度/-tier 三关+(链,名)防撞,2026-09-11); fact_close 事实层 PIT 关闭(fact_id 数组直指+reason_doc 留痕,幂等禁 DELETE,2026-09-11)
 # [MODIFY-GUARD] none
 # [STABILITY] evolving
 # [SAFETY] L
@@ -107,6 +107,8 @@ _SQL_PRODUCT_REVENUE_UPSERT = """INSERT INTO ig_product_revenue (symbol,year,pro
 _SQL_CHAIN_EXISTS = "SELECT 1 FROM ig_chain WHERE chain_id=%s"
 # 环节改名(词汇治理): node_id 稳定键不动仅改 name,存量引用(node_company/ig_edge 按 node_id)零影响
 _SQL_NODE_RENAME = "UPDATE ig_node SET name=%s, updated_at=now() WHERE node_id=%s"
+# fact_close(2026-09-11 ig_fact 事实层 PIT 收口): 噪音/离型事实关闭唯一通道,幂等(valid_to IS NULL 才关),禁 DELETE
+_SQL_FACT_CLOSE = "UPDATE ig_fact SET valid_to=%s WHERE fact_id=ANY(%s) AND valid_to IS NULL"
 
 _ALL_TABLES = ("ig_chain", "ig_node", "ig_edge", "ig_node_company", "ig_document", "ig_company_edge", "ig_company_metric", "ig_chunk", "ig_fact", "ig_unlisted_entity", "ig_equity_edge", "ig_product_revenue")
 _DATE = None
@@ -304,6 +306,15 @@ def _validate_records(records: list[dict], stocks: set[str] | None) -> list[str]
                 errs.append(f"{idx}: placement_close 缺 symbol")
             else:
                 return errs   # 只需 symbol 非空+下面 valid_to 由执行层校验
+        if typ == "fact_close":
+            # 事实层关闭(2026-09-11): fact_id 整数数组直指+reason_doc 留痕;无 symbol 概念,豁免在市校验
+            fids = r.get("fact_ids")
+            if not fids or not isinstance(fids, list) or not all(
+                isinstance(x, int) and not isinstance(x, bool) for x in fids
+            ):
+                errs.append(f"{idx}: fact_close 缺 fact_ids(非空整数数组)")
+            if not r.get("reason_doc"):
+                errs.append(f"{idx}: fact_close 缺 reason_doc 留痕")
         for k in ("symbol", "from_symbol", "to_symbol"):
             sym = r.get(k)
             if not sym:
@@ -670,6 +681,13 @@ def cmd_ingest(batch_path: str) -> int:
                 if _resolve_node(cur, cid, nn) is not None:
                     raise ValueError(f"node_rename (链,新名)已存在: {nn} (chain={r['chain_name']})")
                 cur.execute(_SQL_NODE_RENAME, (nn, nid))
+            elif typ == "fact_close":
+                # 事实层 PIT 关闭(2026-09-11 ig_fact 收口): 噪音/离型事实唯一出清通道,
+                # 幂等(valid_to IS NULL 才关),禁 DELETE;fact_id 数组直指,reason_doc 校验层留痕
+                vt = r.get("valid_to") or _today()
+                if not re.match(r"\d{4}-\d{2}-\d{2}", str(vt)):
+                    raise ValueError(f"fact_close valid_to 非日期: {vt}")
+                cur.execute(_SQL_FACT_CLOSE, (vt, r["fact_ids"]))
             elif typ == "unlisted_entity":
                 # 编码表登记/上市标定(SOP §4.10): name+country 登记幂等;
                 # listed_symbol 须一手来源(交易所公告),工具只信入参不查外源;

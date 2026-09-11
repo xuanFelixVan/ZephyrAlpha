@@ -132,7 +132,8 @@ vocab:
     - 483_top5_customer
     - match_list_2012_2023
     - J88_collab_patent
-    standard: websearch/corpus_rag 强制 source_doc 三段式+confidence≤0.7；ths_export 固定 confidence=0.6（终端单源）；483/match_list/J88 仅采购管线；新来源须先在本词表登记（本文件）再写入
+    - ckg_2021
+    standard: websearch/corpus_rag 强制 source_doc 三段式+confidence≤0.7；ths_export 固定 confidence=0.6（终端单源）；483/match_list/J88 仅采购管线；新来源须先在本词表登记（本文件）再写入；ckg_2021=ChainKnowledgeGraph 2021 数据集（采购包引入，产品营收归一来源）
   evidence_types:
     values:
     - disclosed
@@ -777,6 +778,10 @@ tables:
         type: text
         required: false
         standard: 自动/存量列，无人工填写标准（补齐对账）
+      valid_to:
+        type: date
+        required: false
+        standard: PIT 关闭时间戳（2026-09-11 v7 增量，事实层收口）：NULL=存活；关闭只走 ingest fact_close（fact_id 数组直指+reason_doc 留痕，幂等可逆）；分析查询默认过滤 valid_to IS NULL；禁 DELETE
   ig_chunk:
     pk: chunk_id
     fields:

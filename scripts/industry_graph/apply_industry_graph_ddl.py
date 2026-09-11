@@ -132,6 +132,9 @@ DDL_STATEMENTS = [
     "ALTER TABLE ig_document ADD COLUMN IF NOT EXISTS source_root TEXT",
     # P1: 解压产物指向来源压缩包 doc_id
     "ALTER TABLE ig_document ADD COLUMN IF NOT EXISTS parent_doc TEXT",
+    # v7 增量(2026-09-11 ig_fact 事实层 PIT 收口,Owner 裁定): 事实层关闭唯一通道=ingest
+    # fact_close 盖 valid_to(幂等可逆,禁 DELETE);分析查询默认 valid_to IS NULL 过滤
+    "ALTER TABLE ig_fact ADD COLUMN IF NOT EXISTS valid_to DATE",
     """
     CREATE TABLE IF NOT EXISTS ig_company_edge (
         edge_id     BIGSERIAL PRIMARY KEY,
