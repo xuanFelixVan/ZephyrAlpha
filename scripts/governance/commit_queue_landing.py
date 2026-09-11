@@ -651,7 +651,9 @@ class WorktreeLanding:
                     return cq.LandingResult(ok=True, landed_id=old_dev)
                 return cq.LandingResult(
                     ok=False,
-                    reason=f"网关落盘失败（{result.status.value}）: {result.message[:400]}",
+                    # P0-3（#ARCH-310，2026-09-12）：400→2000——门禁阻断详情（多文件
+                    # file:line 违规清单）400 字符常被截断，AI requeue 时读不到病灶。
+                    reason=f"网关落盘失败（{result.status.value}）: {result.message[:2000]}",
                 )
 
             # 4) CAS 推进 dev；失败=队列外写入者插队 → 同路径冲突死信 / 否则重试
