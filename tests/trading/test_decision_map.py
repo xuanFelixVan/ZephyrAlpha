@@ -669,6 +669,9 @@ _GOVERNANCE_EXEMPT = frozenset(
         # schema 字典类（同 field_dictionary 先例）：不入 TDM 决策索引；其强制=
         # tests/industry_graph/test_field_dictionary_alignment.py 四方测试 + INDUSTRY-CHAIN-MAP gate(141) 结构四边
         "industry_graph_field_dictionary.yaml",
+        # risk_tier_registry.yaml 已于 2026-09-12 登记豁免（A5 同步）——治理类（域风险分级与人机门位，
+        # R5 human-gate 治理改革交付物），不入 TDM 决策索引
+        "risk_tier_registry.yaml",
         "frontier_llm_benchmark_ranking.yaml",
         "frontmatter_field_registry.yaml",
         "functional_domain_registry.yaml",

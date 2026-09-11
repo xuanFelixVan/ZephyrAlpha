@@ -31,7 +31,19 @@ def _load_yaml() -> dict:
 
 
 def _ddl_columns() -> dict[str, set[str]]:
-    """从 DDL-as-Code 真源解析每表物理列（CREATE TABLE 列定义 + ALTER ADD COLUMN）。"""
+    """从 DDL-as-Code 真源解析每表物理列（委托共享实现——唯一真源，防双实现漂移）。
+
+    2026-09-11 全图全库对齐满贯：逻辑真源移交
+    zephyr.gov_enforcement.registry_alignment._ddl_columns（INDUSTRY-CHAIN-MAP gate
+    与 align_all 第七节同源消费）；本测试保留行为断言职责。
+    """
+    from zephyr.gov_enforcement.registry_alignment import _ddl_columns as _shared_ddl_columns
+
+    return _shared_ddl_columns()
+
+
+def _ddl_columns_legacy() -> dict[str, set[str]]:
+    """原内联实现（保留作交叉验证影子，不再被断言消费）。"""
     ddl = _load_module("apply_industry_graph_ddl", DDL_PATH)
     cols: dict[str, set[str]] = {}
     for stmt in ddl.DDL_STATEMENTS:

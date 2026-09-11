@@ -356,6 +356,7 @@ class TestV11PortfolioFlow:
             "data_refs": [],
             "module_ref": None,
             "strategy_mounts": [],
+            "algo_note_zh": "测试算法说明（R37 要求大白话口径；该合成 payload 补字段防 R37 error 淹没 R11 断言——2026-09-11 对齐满贯批顺手治本）",
         }
         return {
             "schema_version": "1.1",
@@ -388,13 +389,14 @@ class TestV11PortfolioFlow:
         from zephyr.trading.decision_map import load_decision_map
 
         dm = load_decision_map(_REPO / "config" / "trading_decision_map.yaml")
-        assert dm.schema_version == "1.1"
+        # 2026-09-12 对齐权威现状（任务 A 四批落地后 TDM 演进：schema 1.2，portfolio_flow 13 节点）
+        assert dm.schema_version == "1.2"
         assert dm.portfolio_plan is not None
         assert len(dm.portfolio_plan.sleeves) == 8
         assert abs(sum(s.weight for s in dm.portfolio_plan.sleeves) - 1.0) < 1e-9
         assert dm.portfolio_plan.confidence == "proposed"
         c_nodes = [n for n in dm.nodes if n.flow == "portfolio_flow"]
-        assert len(c_nodes) == 3 and all(n.layer.startswith("C") for n in c_nodes)
+        assert len(c_nodes) == 13 and all(n.layer.startswith("C") for n in c_nodes)
         assert any(
             e.from_node == "TDM-F-C3" and e.to_node == "TDM-E-L1-AGG" and e.edge_type == "feedback" for e in dm.edges
         )
@@ -462,6 +464,7 @@ class TestR11DataExistence:
             "factor_refs": [],
             "data_refs": [TestR11DataExistence.DS_ID],
             "module_ref": None,
+            "algo_note_zh": "测试算法说明（R37 需大白话口径；合成 payload 补字段防 R37 淹没本测试断言——2026-09-11 满贯批治本）",
             "strategy_mounts": [],
         }
         return {
