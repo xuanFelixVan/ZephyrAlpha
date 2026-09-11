@@ -1,8 +1,8 @@
 # 前端功能模块注册表（模块契约真源；兼作 frontend_map 前端侧清单生成源之一）
 # 契约：每模块一个独立文件 features/<id>.js；init(chart,ctx)/render(d)/destroy()；样式自注入；模块间只经 ZK.bus 通信
 # 纪律：新功能一律模块制；禁止隐式跨模块摸对方 DOM/状态（depends 显式声明）
-version: "1.0.0"
-updated: 2026-09-08
+version: "1.1.0"
+updated: 2026-09-12
 modules:
   - id: cost-line
     name: 持仓成本线
@@ -150,7 +150,7 @@ modules:
     status: active
   - id: bt-framework-panel
     name: 整装回测面板（三分类 tab+方案选择+发起轮询+组合净值摘要）
-    file: core/backtest.js   # 宿主内函数族 btfw*（btMode/btfwPlansLoad/btfwRun，与 btrRun 同宿主同模式）
+    file: features/backtest/bt-engine.js   # 宿主内函数族 btfw*（2026-09-12 拆件批自 core/ 迁入）（btMode/btfwPlansLoad/btfwRun，与 btrRun 同宿主同模式）
     page: backtest
     init: "btBoot 触发（btfwPlansLoad 惰性，模式切换 framework 时加载）"
     destroy: none
@@ -267,4 +267,549 @@ modules:
     styles: pages/tdm.html <style>   # 画布页同 chainmap 先例：样式随页面片段
     acceptance: [ACC-F-TDM-MAP, ACC-F-TDM-DRAWER]   # 画布本体+详情抽屉两单（一文件两功能点）
     handbook: [FEH-PC-013, FEH-PC-014, FEH-PC-015]
+    status: active
+  - id: wr-scenario-matrix
+    name: 作战室 3×3 情景矩阵
+    file: features/warroom/wr-scenario-matrix.js
+    page: warroom
+    init: "IIFE 前全局函数族（页面 onclick 直绑；非 registerFeature——Tier-2 契约化待数据源接通时逐件做）"
+    destroy: none
+    depends: []   # 2026-09-12 拆件批自 core/app1.js L77-176（全局名零改动）
+    toggle: none
+    styles: pages 全局样式（随页面片段）
+    acceptance: ACC-F-WR-SCENARIO-MATRIX
+    handbook: [FEH-PC-020]
+    status: active
+
+  - id: idx-patterns
+    name: 指数页指标计算+形态识别库
+    file: features/index/idx-patterns.js
+    page: index
+    init: "IIFE 前全局函数族（页面 onclick 直绑；非 registerFeature——Tier-2 契约化待数据源接通时逐件做）"
+    destroy: none
+    depends: []   # 2026-09-12 拆件批自 core/app1.js L251-2267（全局名零改动）
+    toggle: none
+    styles: pages 全局样式（随页面片段）
+    acceptance: ACC-F-IDX-PATTERNS
+    handbook: [FEH-PC-020]
+    status: active
+
+  - id: idx-engine
+    name: 指数详情页渲染引擎
+    file: features/index/idx-engine.js
+    page: index
+    init: "IIFE 前全局函数族（页面 onclick 直绑；非 registerFeature——Tier-2 契约化待数据源接通时逐件做）"
+    destroy: none
+    depends: []   # 2026-09-12 拆件批自 core/app1.js L177-250+L2268-3343（全局名零改动）
+    toggle: none
+    styles: pages 全局样式（随页面片段）
+    acceptance: ACC-F-IDX-ENGINE
+    handbook: [FEH-PC-020]
+    status: active
+
+  - id: fc-mini-charts
+    name: factor 页迷你走势启动批
+    file: features/factor/fc-mini-charts.js
+    page: factor
+    init: "IIFE 前全局函数族（页面 onclick 直绑；非 registerFeature——Tier-2 契约化待数据源接通时逐件做）"
+    destroy: none
+    depends: []   # 2026-09-12 拆件批自 core/app1.js L3588-3590（全局名零改动）
+    toggle: none
+    styles: pages 全局样式（随页面片段）
+    acceptance: ACC-F-FACTOR-MINI-CHARTS
+    handbook: [FEH-PC-020]
+    status: active
+
+  - id: ov-mini-cards
+    name: 外盘迷你卡
+    file: features/overseas/ov-mini-cards.js
+    page: overseas
+    init: "IIFE 前全局函数族（页面 onclick 直绑；非 registerFeature——Tier-2 契约化待数据源接通时逐件做）"
+    destroy: none
+    depends: []   # 2026-09-12 拆件批自 core/app1.js L3344-3380（全局名零改动）
+    toggle: none
+    styles: pages 全局样式（随页面片段）
+    acceptance: ACC-F-OV-MINI-CARDS
+    handbook: [FEH-PC-020]
+    status: active
+
+  - id: ov-rank
+    name: 全球市场排名榜
+    file: features/overseas/ov-rank.js
+    page: overseas
+    init: "IIFE 前全局函数族（页面 onclick 直绑；非 registerFeature——Tier-2 契约化待数据源接通时逐件做）"
+    destroy: none
+    depends: []   # 2026-09-12 拆件批自 core/app1.js L3625-3669（全局名零改动）
+    toggle: none
+    styles: pages 全局样式（随页面片段）
+    acceptance: ACC-F-OV-RANK
+    handbook: [FEH-PC-020]
+    status: active
+
+  - id: t0-intraday
+    name: T 分析分时图+做T回验
+    file: features/t0/t0-intraday.js
+    page: t0
+    init: "IIFE 前全局函数族（页面 onclick 直绑；非 registerFeature——Tier-2 契约化待数据源接通时逐件做）"
+    destroy: none
+    depends: []   # 2026-09-12 拆件批自 core/app1.js L3381-3428+L5204-5220（全局名零改动）
+    toggle: none
+    styles: pages 全局样式（随页面片段）
+    acceptance: ACC-F-T0-INTRADAY
+    handbook: [FEH-PC-020]
+    status: active
+
+  - id: sector-contrib
+    name: 板块贡献度
+    file: features/sector/sector-contrib.js
+    page: sector
+    init: "IIFE 前全局函数族（页面 onclick 直绑；非 registerFeature——Tier-2 契约化待数据源接通时逐件做）"
+    destroy: none
+    depends: []   # 2026-09-12 拆件批自 core/app1.js L3429-3451（全局名零改动）
+    toggle: none
+    styles: pages 全局样式（随页面片段）
+    acceptance: ACC-F-SECTOR-CONTRIB
+    handbook: [FEH-PC-020]
+    status: active
+
+  - id: sector-arc
+    name: 板块档案下钻
+    file: features/sector/sector-arc.js
+    page: sector
+    init: "IIFE 前全局函数族（页面 onclick 直绑；非 registerFeature——Tier-2 契约化待数据源接通时逐件做）"
+    destroy: none
+    depends: []   # 2026-09-12 拆件批自 core/app1.js L4629-4656（全局名零改动）
+    toggle: none
+    styles: pages 全局样式（随页面片段）
+    acceptance: ACC-F-SECTOR-ARC
+    handbook: [FEH-PC-020]
+    status: active
+
+  - id: usyc-curve
+    name: 美债收益率曲线
+    file: features/overseas/usyc-curve.js
+    page: overseas
+    init: "IIFE 前全局函数族（页面 onclick 直绑；非 registerFeature——Tier-2 契约化待数据源接通时逐件做）"
+    destroy: none
+    depends: []   # 2026-09-12 拆件批自 core/app1.js L4657-4674（全局名零改动）
+    toggle: none
+    styles: pages 全局样式（随页面片段）
+    acceptance: ACC-F-OV-USYC-CURVE
+    handbook: [FEH-PC-020]
+    status: active
+
+  - id: tolerance-band
+    name: 组合容忍带
+    file: features/position/tolerance-band.js
+    page: position
+    init: "IIFE 前全局函数族（页面 onclick 直绑；非 registerFeature——Tier-2 契约化待数据源接通时逐件做）"
+    destroy: none
+    depends: []   # 2026-09-12 拆件批自 core/app1.js L4675-4689（全局名零改动）
+    toggle: none
+    styles: pages 全局样式（随页面片段）
+    acceptance: ACC-F-POS-TOLERANCE-BAND
+    handbook: [FEH-PC-020]
+    status: active
+
+  - id: wr-risk-cards
+    name: 作战室风险卡族
+    file: features/warroom/wr-risk-cards.js
+    page: warroom
+    init: "IIFE 前全局函数族（页面 onclick 直绑；非 registerFeature——Tier-2 契约化待数据源接通时逐件做）"
+    destroy: none
+    depends: []   # 2026-09-12 拆件批自 core/app1.js L3452-3587（全局名零改动）
+    toggle: none
+    styles: pages 全局样式（随页面片段）
+    acceptance: ACC-F-WR-RISK-CARDS
+    handbook: [FEH-PC-020]
+    status: active
+
+  - id: ord-ticket
+    name: 盘中下单票据+日志过滤
+    file: features/live/ord-ticket.js
+    page: live
+    init: "IIFE 前全局函数族（页面 onclick 直绑；非 registerFeature——Tier-2 契约化待数据源接通时逐件做）"
+    destroy: none
+    depends: []   # 2026-09-12 拆件批自 core/app1.js L3591-3593+L3670-3707（全局名零改动）
+    toggle: none
+    styles: pages 全局样式（随页面片段）
+    acceptance: ACC-F-LIVE-ORD-TICKET
+    handbook: [FEH-PC-020]
+    status: active
+
+  - id: stock-profile
+    name: 个股档案页引擎
+    file: features/stock/stock-profile.js
+    page: stock
+    init: "IIFE 前全局函数族（页面 onclick 直绑；非 registerFeature——Tier-2 契约化待数据源接通时逐件做）"
+    destroy: none
+    depends: []   # 2026-09-12 拆件批自 core/app1.js L3708-4055+L5221-5252（全局名零改动）
+    toggle: none
+    styles: pages 全局样式（随页面片段）
+    acceptance: ACC-F-STOCK-PROFILE
+    handbook: [FEH-PC-020]
+    status: active
+
+  - id: scr-engine
+    name: 条件选股引擎
+    file: features/screener/scr-engine.js
+    page: screener
+    init: "IIFE 前全局函数族（页面 onclick 直绑；非 registerFeature——Tier-2 契约化待数据源接通时逐件做）"
+    destroy: none
+    depends: []   # 2026-09-12 拆件批自 core/app1.js L4056-4356（全局名零改动）
+    toggle: none
+    styles: pages 全局样式（随页面片段）
+    acceptance: ACC-F-SCREENER-ENGINE
+    handbook: [FEH-PC-020]
+    status: active
+
+  - id: cal-engine
+    name: 事件日历引擎
+    file: features/calendar/cal-engine.js
+    page: calendar
+    init: "IIFE 前全局函数族（页面 onclick 直绑；非 registerFeature——Tier-2 契约化待数据源接通时逐件做）"
+    destroy: none
+    depends: []   # 2026-09-12 拆件批自 core/app1.js L4357-4471（全局名零改动）
+    toggle: none
+    styles: pages 全局样式（随页面片段）
+    acceptance: ACC-F-CALENDAR-ENGINE
+    handbook: [FEH-PC-020]
+    status: active
+
+  - id: rev-engine
+    name: 盘后复盘引擎
+    file: features/review/rev-engine.js
+    page: review
+    init: "IIFE 前全局函数族（页面 onclick 直绑；非 registerFeature——Tier-2 契约化待数据源接通时逐件做）"
+    destroy: none
+    depends: []   # 2026-09-12 拆件批自 core/app1.js L4472-4563（全局名零改动）
+    toggle: none
+    styles: pages 全局样式（随页面片段）
+    acceptance: ACC-F-REVIEW-ENGINE
+    handbook: [FEH-PC-020]
+    status: active
+
+  - id: ann-panel
+    name: 公司公告面板
+    file: features/news/ann-panel.js
+    page: news
+    init: "IIFE 前全局函数族（页面 onclick 直绑；非 registerFeature——Tier-2 契约化待数据源接通时逐件做）"
+    destroy: none
+    depends: []   # 2026-09-12 拆件批自 core/app1.js L4564-4599（全局名零改动）
+    toggle: none
+    styles: pages 全局样式（随页面片段）
+    acceptance: ACC-F-NEWS-ANN-PANEL
+    handbook: [FEH-PC-020]
+    status: active
+
+  - id: pol-panel
+    name: 政策资金面板
+    file: features/policy/pol-panel.js
+    page: policy
+    init: "IIFE 前全局函数族（页面 onclick 直绑；非 registerFeature——Tier-2 契约化待数据源接通时逐件做）"
+    destroy: none
+    depends: []   # 2026-09-12 拆件批自 core/app1.js L4600-4628（全局名零改动）
+    toggle: none
+    styles: pages 全局样式（随页面片段）
+    acceptance: ACC-F-POLICY-POL-PANEL
+    handbook: [FEH-PC-020]
+    status: active
+
+  - id: live-equity
+    name: 盘中实时权益分时
+    file: features/live/live-equity.js
+    page: live
+    init: "IIFE 前全局函数族（页面 onclick 直绑；非 registerFeature——Tier-2 契约化待数据源接通时逐件做）"
+    destroy: none
+    depends: []   # 2026-09-12 拆件批自 core/app1.js L4690-4722（全局名零改动）
+    toggle: none
+    styles: pages 全局样式（随页面片段）
+    acceptance: ACC-F-LIVE-EQUITY
+    handbook: [FEH-PC-020]
+    status: active
+
+  - id: task-progress
+    name: 任务进度下钻
+    file: features/task/task-progress.js
+    page: task
+    init: "IIFE 前全局函数族（页面 onclick 直绑；非 registerFeature——Tier-2 契约化待数据源接通时逐件做）"
+    destroy: none
+    depends: []   # 2026-09-12 拆件批自 core/app1.js L4723-4768（全局名零改动）
+    toggle: none
+    styles: pages 全局样式（随页面片段）
+    acceptance: ACC-F-TASK-PROGRESS
+    handbook: [FEH-PC-020]
+    status: active
+
+  - id: srch-overlay
+    name: 全局搜索先行版
+    file: features/search/srch-overlay.js
+    page: none   # 全局顶栏 overlay（无页面归属，不入 frontend_map——widgets 同口径）
+    init: "IIFE 前全局函数族（页面 onclick 直绑；非 registerFeature——Tier-2 契约化待数据源接通时逐件做）"
+    destroy: none
+    depends: []   # 2026-09-12 拆件批自 core/app1.js L4769-4880+L7114-7115（全局名零改动）
+    toggle: none
+    styles: pages 全局样式（随页面片段）
+    acceptance: ACC-F-SEARCH-OVERLAY
+    handbook: [FEH-PC-020]
+    status: active
+
+  - id: pos-attribution
+    name: 盈亏归因+experiment 阶段门控
+    file: features/position/pos-attribution.js
+    page: position
+    init: "IIFE 前全局函数族（页面 onclick 直绑；非 registerFeature——Tier-2 契约化待数据源接通时逐件做）"
+    destroy: none
+    depends: []   # 2026-09-12 拆件批自 core/app1.js L4881-4908（全局名零改动）
+    toggle: none
+    styles: pages 全局样式（随页面片段）
+    acceptance: ACC-F-POS-ATTRIBUTION
+    handbook: [FEH-PC-020]
+    status: active
+
+  - id: acct-multi
+    name: 多账号持仓视图
+    file: features/position/acct-multi.js
+    page: position
+    init: "IIFE 前全局函数族（页面 onclick 直绑；非 registerFeature——Tier-2 契约化待数据源接通时逐件做）"
+    destroy: none
+    depends: []   # 2026-09-12 拆件批自 core/app1.js L4909-5044（全局名零改动）
+    toggle: none
+    styles: pages 全局样式（随页面片段）
+    acceptance: ACC-F-POS-ACCT-MULTI
+    handbook: [FEH-PC-020]
+    status: active
+
+  - id: perf-analysis
+    name: 收益分析区
+    file: features/position/perf-analysis.js
+    page: position
+    init: "IIFE 前全局函数族（页面 onclick 直绑；非 registerFeature——Tier-2 契约化待数据源接通时逐件做）"
+    destroy: none
+    depends: []   # 2026-09-12 拆件批自 core/app1.js L5045-5147（全局名零改动）
+    toggle: none
+    styles: pages 全局样式（随页面片段）
+    acceptance: ACC-F-POS-PERF-ANALYSIS
+    handbook: [FEH-PC-020]
+    status: active
+
+  - id: sent-margin
+    name: 市场情绪·两融
+    file: features/sentiment/sent-margin.js
+    page: sentiment
+    init: "IIFE 前全局函数族（页面 onclick 直绑；非 registerFeature——Tier-2 契约化待数据源接通时逐件做）"
+    destroy: none
+    depends: []   # 2026-09-12 拆件批自 core/app1.js L5148-5203（全局名零改动）
+    toggle: none
+    styles: pages 全局样式（随页面片段）
+    acceptance: ACC-F-SENTIMENT-MARGIN
+    handbook: [FEH-PC-020]
+    status: active
+
+  - id: reg-engine
+    name: 注册表库引擎
+    file: features/reglib/reg-engine.js
+    page: reglib
+    init: "IIFE 前全局函数族（页面 onclick 直绑；非 registerFeature——Tier-2 契约化待数据源接通时逐件做）"
+    destroy: none
+    depends: []   # 2026-09-12 拆件批自 core/app1.js L5253-5514（全局名零改动）
+    toggle: none
+    styles: pages 全局样式（随页面片段）
+    acceptance: ACC-F-REGLIB-ENGINE
+    handbook: [FEH-PC-020]
+    status: active
+
+  - id: pano-engine
+    name: 架构全景页引擎
+    file: features/pano/pano-engine.js
+    page: pano
+    init: "IIFE 前全局函数族（页面 onclick 直绑；非 registerFeature——Tier-2 契约化待数据源接通时逐件做）"
+    destroy: none
+    depends: []   # 2026-09-12 拆件批自 core/app1.js L5515-5598（全局名零改动）
+    toggle: none
+    styles: pages 全局样式（随页面片段）
+    acceptance: ACC-F-PANO-ENGINE
+    handbook: [FEH-PC-020]
+    status: active
+
+  - id: mod-engine
+    name: 模块总账引擎
+    file: features/modledger/mod-engine.js
+    page: modledger
+    init: "IIFE 前全局函数族（页面 onclick 直绑；非 registerFeature——Tier-2 契约化待数据源接通时逐件做）"
+    destroy: none
+    depends: []   # 2026-09-12 拆件批自 core/app1.js L5599-5733（全局名零改动）
+    toggle: none
+    styles: pages 全局样式（随页面片段）
+    acceptance: ACC-F-MODLEDGER-ENGINE
+    handbook: [FEH-PC-020]
+    status: active
+
+  - id: btr-links
+    name: 回测+策略链接（fwInit）
+    file: features/backtest/btr-links.js
+    page: backtest
+    init: "IIFE 前全局函数族（页面 onclick 直绑；非 registerFeature——Tier-2 契约化待数据源接通时逐件做）"
+    destroy: none
+    depends: []   # 2026-09-12 拆件批自 core/app1.js L5734-5764（全局名零改动）
+    toggle: none
+    styles: pages 全局样式（随页面片段）
+    acceptance: ACC-F-BACKTEST-BTR-LINKS
+    handbook: [FEH-PC-020]
+    status: active
+
+  - id: sq-host-engine
+    name: 个股行情二级页宿主引擎
+    file: features/stockq/sq-host-engine.js
+    page: stockq
+    init: "IIFE 前全局函数族（页面 onclick 直绑；非 registerFeature——Tier-2 契约化待数据源接通时逐件做）"
+    destroy: none
+    depends: []   # 2026-09-12 拆件批自 core/app1.js L5866-6197（全局名零改动）
+    toggle: none
+    styles: pages 全局样式（随页面片段）
+    acceptance: ACC-F-STOCKQ-HOST-ENGINE
+    handbook: [FEH-PC-020]
+    status: active
+
+  - id: klp-mark-layer
+    name: 主图标注层
+    file: features/stockq/klp-mark-layer.js
+    page: stockq
+    init: "IIFE 前全局函数族（页面 onclick 直绑；非 registerFeature——Tier-2 契约化待数据源接通时逐件做）"
+    destroy: none
+    depends: []   # 2026-09-12 拆件批自 core/app1.js L6198-6357（全局名零改动）
+    toggle: none
+    styles: pages 全局样式（随页面片段）
+    acceptance: ACC-F-STOCKQ-MARK-LAYER
+    handbook: [FEH-PC-020]
+    status: active
+
+  - id: klp-timeline
+    name: K 线时间轴
+    file: features/stockq/klp-timeline.js
+    page: stockq
+    init: "IIFE 前全局函数族（页面 onclick 直绑；非 registerFeature——Tier-2 契约化待数据源接通时逐件做）"
+    destroy: none
+    depends: []   # 2026-09-12 拆件批自 core/app1.js L6358-6452（全局名零改动）
+    toggle: none
+    styles: pages 全局样式（随页面片段）
+    acceptance: ACC-F-STOCKQ-KLP-TIMELINE
+    handbook: [FEH-PC-020]
+    status: active
+
+  - id: klp-period-picker
+    name: 周期选择弹层
+    file: features/stockq/klp-period-picker.js
+    page: stockq
+    init: "IIFE 前全局函数族（页面 onclick 直绑；非 registerFeature——Tier-2 契约化待数据源接通时逐件做）"
+    destroy: none
+    depends: []   # 2026-09-12 拆件批自 core/app1.js L6453-6510（全局名零改动）
+    toggle: none
+    styles: pages 全局样式（随页面片段）
+    acceptance: ACC-F-STOCKQ-PERIOD-PICKER
+    handbook: [FEH-PC-020]
+    status: active
+
+  - id: klp-indicator-dialog
+    name: 指标设置弹窗
+    file: features/stockq/klp-indicator-dialog.js
+    page: stockq
+    init: "IIFE 前全局函数族（页面 onclick 直绑；非 registerFeature——Tier-2 契约化待数据源接通时逐件做）"
+    destroy: none
+    depends: []   # 2026-09-12 拆件批自 core/app1.js L6511-6798（全局名零改动）
+    toggle: none
+    styles: pages 全局样式（随页面片段）
+    acceptance: ACC-F-STOCKQ-INDICATOR-DIALOG
+    handbook: [FEH-PC-020]
+    status: active
+
+  - id: cm-engine
+    name: 币圈组引擎
+    file: features/cryptomarket/cm-engine.js
+    page: cryptomarket
+    init: "IIFE 前全局函数族（页面 onclick 直绑；非 registerFeature——Tier-2 契约化待数据源接通时逐件做）"
+    destroy: none
+    depends: []   # 2026-09-12 拆件批自 core/app1.js L6799-6946（全局名零改动）
+    toggle: none
+    styles: pages 全局样式（随页面片段）
+    acceptance: ACC-F-CRYPTO-CM-ENGINE
+    handbook: [FEH-PC-020]
+    status: active
+
+  - id: ds-spec-chart
+    name: DS-5 K 线规范图
+    file: features/design/ds-spec-chart.js
+    page: design
+    init: "IIFE 前全局函数族（页面 onclick 直绑；非 registerFeature——Tier-2 契约化待数据源接通时逐件做）"
+    destroy: none
+    depends: []   # 2026-09-12 拆件批自 core/app1.js L6947-7061（全局名零改动）
+    toggle: none
+    styles: pages 全局样式（随页面片段）
+    acceptance: ACC-F-DESIGN-SPEC-CHART
+    handbook: [FEH-PC-020]
+    status: active
+
+  - id: sv-page
+    name: 服务总闸页
+    file: features/services/sv-page.js
+    page: services
+    init: "IIFE 前全局函数族（页面 onclick 直绑；非 registerFeature——Tier-2 契约化待数据源接通时逐件做）"
+    destroy: none
+    depends: []   # 2026-09-12 拆件批自 core/services.js 迁入（全局名零改动）
+    toggle: none
+    styles: pages 全局样式（随页面片段）
+    acceptance: ACC-F-SERVICES-PAGE
+    handbook: [FEH-PC-020]
+    status: active
+
+  - id: ds-page
+    name: 数据源监管页
+    file: features/datasrc/ds-page.js
+    page: datasrc
+    init: "IIFE 前全局函数族（页面 onclick 直绑；非 registerFeature——Tier-2 契约化待数据源接通时逐件做）"
+    destroy: none
+    depends: []   # 2026-09-12 拆件批自 core/datasrc.js 迁入（全局名零改动）
+    toggle: none
+    styles: pages 全局样式（随页面片段）
+    acceptance: ACC-F-DATASRC-PAGE
+    handbook: [FEH-PC-020]
+    status: active
+
+  - id: dl-page
+    name: 数据监管页 v3
+    file: features/download/dl-page.js
+    page: download
+    init: "IIFE 前全局函数族（页面 onclick 直绑；非 registerFeature——Tier-2 契约化待数据源接通时逐件做）"
+    destroy: none
+    depends: []   # 2026-09-12 拆件批自 core/download.js 迁入（全局名零改动）
+    toggle: none
+    styles: pages 全局样式（随页面片段）
+    acceptance: ACC-F-DOWNLOAD-PAGE
+    handbook: [FEH-PC-020]
+    status: active
+
+  - id: br-page
+    name: 交易通道监控页
+    file: features/bridge/br-page.js
+    page: bridge
+    init: "IIFE 前全局函数族（页面 onclick 直绑；非 registerFeature——Tier-2 契约化待数据源接通时逐件做）"
+    destroy: none
+    depends: []   # 2026-09-12 拆件批自 core/bridge.js 迁入（全局名零改动）
+    toggle: none
+    styles: pages 全局样式（随页面片段）
+    acceptance: ACC-F-BRIDGE-PAGE
+    handbook: [FEH-PC-020]
+    status: active
+
+  - id: hm-engine
+    name: 首页三件套
+    file: features/home/hm-engine.js
+    page: home
+    init: "IIFE 前全局函数族（页面 onclick 直绑；非 registerFeature——Tier-2 契约化待数据源接通时逐件做）"
+    destroy: none
+    depends: []   # 2026-09-12 拆件批自 core/home.js 迁入（全局名零改动）
+    toggle: none
+    styles: pages 全局样式（随页面片段）
+    acceptance: ACC-F-HOME-ENGINE
+    handbook: [FEH-PC-020]
     status: active

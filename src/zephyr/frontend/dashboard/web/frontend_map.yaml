@@ -4,8 +4,8 @@
 # 生成源：features/manifest.yaml + 手工维护 + scan_frontend_pages.py 半自动补登（auto_scanned=true 待逐页人工复核转正）
 # D38 模块总线（2026-09-07）：有后端模块承载的功能点必须挂 module:MOD-*（与 depgraph frontend_ref 双向闭合，
 #   经 MOD 总线与交易决策地图/五图互通——全图全库对齐铁律）；纯前端逻辑用 none: 声明事由
-version: 2.2.0
-updated: '2026-09-08'
+version: 2.3.0
+updated: '2026-09-12'
 features:
 - id: F-STOCKQ-COSTLINE
   name: 持仓成本线
@@ -240,7 +240,7 @@ features:
   name: 策略看板
   page: backtest
   module_id: backtest-host
-  file: core/backtest.js
+  file: features/backtest/bt-engine.js
   backend_ref: api:/api/backtest-detail × /api/backtest-list × /api/backtest-run × /api/strategies
   status: active
   auto_scanned: true
@@ -248,7 +248,7 @@ features:
   name: 绩效指标明细 Performance Metrics Detail
   page: backtest
   module_id: backtest-host
-  file: core/backtest.js
+  file: features/backtest/bt-engine.js
   backend_ref: api:/api/backtest-detail × /api/backtest-list × /api/backtest-run × /api/strategies
   status: active
   auto_scanned: true
@@ -256,7 +256,7 @@ features:
   name: 持仓明细 Position Details
   page: backtest
   module_id: backtest-host
-  file: core/backtest.js
+  file: features/backtest/bt-engine.js
   backend_ref: api:/api/backtest-detail × /api/backtest-list × /api/backtest-run × /api/strategies
   status: active
   auto_scanned: true
@@ -264,7 +264,7 @@ features:
   name: 当日下钻 Daily Drill-down
   page: backtest
   module_id: backtest-host
-  file: core/backtest.js
+  file: features/backtest/bt-engine.js
   backend_ref: api:/api/backtest-detail × /api/backtest-list × /api/backtest-run × /api/strategies
   status: active
   auto_scanned: true
@@ -272,7 +272,7 @@ features:
   name: 当日资金 Daily Capital (2019-01-02)
   page: backtest
   module_id: backtest-host
-  file: core/backtest.js
+  file: features/backtest/bt-engine.js
   backend_ref: api:/api/backtest-detail × /api/backtest-list × /api/backtest-run × /api/strategies
   status: active
   auto_scanned: true
@@ -280,7 +280,7 @@ features:
   name: 当日持仓 Daily Positions (2019-01-02)
   page: backtest
   module_id: backtest-host
-  file: core/backtest.js
+  file: features/backtest/bt-engine.js
   backend_ref: api:/api/backtest-detail × /api/backtest-list × /api/backtest-run × /api/strategies
   status: active
   auto_scanned: true
@@ -288,7 +288,7 @@ features:
   name: 当日委托 Daily Orders (2019-01-02)
   page: backtest
   module_id: backtest-host
-  file: core/backtest.js
+  file: features/backtest/bt-engine.js
   backend_ref: api:/api/backtest-detail × /api/backtest-list × /api/backtest-run × /api/strategies
   status: active
   auto_scanned: true
@@ -296,7 +296,7 @@ features:
   name: 月度收益率热力图 Monthly Returns
   page: backtest
   module_id: backtest-host
-  file: core/backtest.js
+  file: features/backtest/bt-engine.js
   backend_ref: api:/api/backtest-detail × /api/backtest-list × /api/backtest-run × /api/strategies
   status: active
   auto_scanned: true
@@ -304,7 +304,7 @@ features:
   name: 交易明细 Trade Details
   page: backtest
   module_id: backtest-host
-  file: core/backtest.js
+  file: features/backtest/bt-engine.js
   backend_ref: api:/api/backtest-detail × /api/backtest-list × /api/backtest-run × /api/strategies
   status: active
   auto_scanned: true
@@ -312,7 +312,7 @@ features:
   name: 策略档案
   page: backtest
   module_id: backtest-host
-  file: core/backtest.js
+  file: features/backtest/bt-engine.js
   backend_ref: api:/api/backtest-detail × /api/backtest-list × /api/backtest-run × /api/strategies
   status: active
   auto_scanned: true
@@ -320,7 +320,7 @@ features:
   name: 新建回测
   page: backtest
   module_id: backtest-host
-  file: core/backtest.js
+  file: features/backtest/bt-engine.js
   backend_ref: api:/api/backtest-detail × /api/backtest-list × /api/backtest-run × /api/strategies
   status: active
   auto_scanned: true
@@ -328,7 +328,7 @@ features:
   name: 速度对比
   page: bridge
   module_id: bridge-host
-  file: core/bridge.js
+  file: features/bridge/br-page.js
   backend_ref: api:/api/bridge-status
   status: active
   auto_scanned: true
@@ -336,7 +336,7 @@ features:
   name: 桥环节健康
   page: bridge
   module_id: bridge-host
-  file: core/bridge.js
+  file: features/bridge/br-page.js
   backend_ref: api:/api/bridge-status
   status: active
   auto_scanned: true
@@ -344,7 +344,7 @@ features:
   name: 桥文件族活性
   page: bridge
   module_id: bridge-host
-  file: core/bridge.js
+  file: features/bridge/br-page.js
   backend_ref: api:/api/bridge-status
   status: active
   auto_scanned: true
@@ -573,7 +573,7 @@ features:
   name: 源清单 检查）· scheduler 启动时跑一轮全源探针
   page: datasrc
   module_id: datasrc-host
-  file: core/datasrc.js
+  file: features/datasrc/ds-page.js
   backend_ref: api:/api/sources-status
   status: active
   auto_scanned: true
@@ -581,7 +581,7 @@ features:
   name: 30 日可用率实测
   page: datasrc
   module_id: datasrc-host
-  file: core/datasrc.js
+  file: features/datasrc/ds-page.js
   backend_ref: api:/api/sources-status
   status: active
   auto_scanned: true
@@ -589,7 +589,7 @@ features:
   name: 告警流水
   page: datasrc
   module_id: datasrc-host
-  file: core/datasrc.js
+  file: features/datasrc/ds-page.js
   backend_ref: api:/api/sources-status
   status: active
   auto_scanned: true
@@ -885,7 +885,7 @@ features:
   name: 表级下载实况
   page: download
   module_id: download-host
-  file: core/download.js
+  file: features/download/dl-page.js
   backend_ref: api:/api/download-status
   status: active
   auto_scanned: true
@@ -2425,3 +2425,290 @@ features:
   backend_ref: none:待拆件盘点（auto 扫描未发现 /api/ 调用）
   status: active
   auto_scanned: true
+- id: F-WR-SCENARIO-MATRIX
+  name: 作战室 3×3 情景矩阵
+  page: warroom
+  module_id: wr-scenario-matrix
+  file: features/warroom/wr-scenario-matrix.js
+  backend_ref: none:演示数据（MOD-PLAN-005/001 字段契约对齐，真源待接入）
+  status: active
+- id: F-IDX-PATTERNS
+  name: 指数页指标计算+形态识别库
+  page: index
+  module_id: idx-patterns
+  file: features/index/idx-patterns.js
+  backend_ref: none:纯函数库（输入=K线数组；规则对齐 chart_pattern_registry PAT-*）
+  status: active
+- id: F-IDX-ENGINE
+  name: 指数详情页渲染引擎
+  page: index
+  module_id: idx-engine
+  file: features/index/idx-engine.js
+  backend_ref: none:确定性模拟数据演示版式（真源待接入）
+  status: active
+- id: F-FACTOR-MINI-CHARTS
+  name: factor 页迷你走势启动批
+  page: factor
+  module_id: fc-mini-charts
+  file: features/factor/fc-mini-charts.js
+  backend_ref: none:确定性模拟（genCandles 种子）
+  status: active
+- id: F-OV-MINI-CARDS
+  name: 外盘迷你卡
+  page: overseas
+  module_id: ov-mini-cards
+  file: features/overseas/ov-mini-cards.js
+  backend_ref: none:确定性模拟数据演示版式
+  status: active
+- id: F-OV-RANK
+  name: 全球市场排名榜
+  page: overseas
+  module_id: ov-rank
+  file: features/overseas/ov-rank.js
+  backend_ref: none:确定性模拟（未接入口=待接入徽章诚实标注）
+  status: active
+- id: F-T0-INTRADAY
+  name: T 分析分时图+做T回验
+  page: t0
+  module_id: t0-intraday
+  file: features/t0/t0-intraday.js
+  backend_ref: none:确定性模拟数据演示版式
+  status: active
+- id: F-SECTOR-CONTRIB
+  name: 板块贡献度
+  page: sector
+  module_id: sector-contrib
+  file: features/sector/sector-contrib.js
+  backend_ref: none:确定性模拟数据演示版式
+  status: active
+- id: F-SECTOR-ARC
+  name: 板块档案下钻
+  page: sector
+  module_id: sector-arc
+  file: features/sector/sector-arc.js
+  backend_ref: none:演示数据 SECARC_D
+  status: active
+- id: F-OV-USYC-CURVE
+  name: 美债收益率曲线
+  page: overseas
+  module_id: usyc-curve
+  file: features/overseas/usyc-curve.js
+  backend_ref: none:确定性模拟数据演示版式
+  status: active
+- id: F-POS-TOLERANCE-BAND
+  name: 组合容忍带
+  page: position
+  module_id: tolerance-band
+  file: features/position/tolerance-band.js
+  backend_ref: none:演示数据（real/paper 两档）
+  status: active
+- id: F-WR-RISK-CARDS
+  name: 作战室风险卡族
+  page: warroom
+  module_id: wr-risk-cards
+  file: features/warroom/wr-risk-cards.js
+  backend_ref: none:演示数据 FEED 表（相关净值/持仓状态/T1/节流/W5 日历/压力）
+  status: active
+- id: F-LIVE-ORD-TICKET
+  name: 盘中下单票据+日志过滤
+  page: live
+  module_id: ord-ticket
+  file: features/live/ord-ticket.js
+  backend_ref: none:纯前端交互（无数据源）
+  status: active
+- id: F-STOCK-PROFILE
+  name: 个股档案页引擎
+  page: stock
+  module_id: stock-profile
+  file: features/stock/stock-profile.js
+  backend_ref: none:演示数据 STOCK_D（含 F9 补强族）
+  status: active
+- id: F-SCREENER-ENGINE
+  name: 条件选股引擎
+  page: screener
+  module_id: scr-engine
+  file: features/screener/scr-engine.js
+  backend_ref: none:演示数据+方案 localStorage
+  status: active
+- id: F-CALENDAR-ENGINE
+  name: 事件日历引擎
+  page: calendar
+  module_id: cal-engine
+  file: features/calendar/cal-engine.js
+  backend_ref: none:演示数据 CAL_EVENTS（宏观事件两市场共享）
+  status: active
+- id: F-REVIEW-ENGINE
+  name: 盘后复盘引擎
+  page: review
+  module_id: rev-engine
+  file: features/review/rev-engine.js
+  backend_ref: none:演示数据 REVIEW_D
+  status: active
+- id: F-NEWS-ANN-PANEL
+  name: 公司公告面板
+  page: news
+  module_id: ann-panel
+  file: features/news/ann-panel.js
+  backend_ref: none:演示数据 ANN_D
+  status: active
+- id: F-POLICY-POL-PANEL
+  name: 政策资金面板
+  page: policy
+  module_id: pol-panel
+  file: features/policy/pol-panel.js
+  backend_ref: none:演示数据 POL_D（政策≠新闻独立源）
+  status: active
+- id: F-LIVE-EQUITY
+  name: 盘中实时权益分时
+  page: live
+  module_id: live-equity
+  file: features/live/live-equity.js
+  backend_ref: none:确定性模拟（样本外包络）
+  status: active
+- id: F-TASK-PROGRESS
+  name: 任务进度下钻
+  page: task
+  module_id: task-progress
+  file: features/task/task-progress.js
+  backend_ref: none:演示数据 TASK_LIST
+  status: active
+- id: F-POS-ATTRIBUTION
+  name: 盈亏归因+experiment 阶段门控
+  page: position
+  module_id: pos-attribution
+  file: features/position/pos-attribution.js
+  backend_ref: none:演示数据 POS_ATTR
+  status: active
+- id: F-POS-ACCT-MULTI
+  name: 多账号持仓视图
+  page: position
+  module_id: acct-multi
+  file: features/position/acct-multi.js
+  backend_ref: none:演示数据 ACCOUNT_D
+  status: active
+- id: F-POS-PERF-ANALYSIS
+  name: 收益分析区
+  page: position
+  module_id: perf-analysis
+  file: features/position/perf-analysis.js
+  backend_ref: none:确定性模拟（多账户收益曲线）
+  status: active
+- id: F-SENTIMENT-MARGIN
+  name: 市场情绪·两融
+  page: sentiment
+  module_id: sent-margin
+  file: features/sentiment/sent-margin.js
+  backend_ref: none:演示数据（两融余额）
+  status: active
+- id: F-REGLIB-ENGINE
+  name: 注册表库引擎
+  page: reglib
+  module_id: reg-engine
+  file: features/reglib/reg-engine.js
+  backend_ref: none:演示数据 REGLIB_D
+  status: active
+- id: F-PANO-ENGINE
+  name: 架构全景页引擎
+  page: pano
+  module_id: pano-engine
+  file: features/pano/pano-engine.js
+  backend_ref: none:演示数据（层列卡）
+  status: active
+- id: F-MODLEDGER-ENGINE
+  name: 模块总账引擎
+  page: modledger
+  module_id: mod-engine
+  file: features/modledger/mod-engine.js
+  backend_ref: none:演示数据（模块行）
+  status: active
+- id: F-BACKTEST-BTR-LINKS
+  name: 回测+策略链接（fwInit）
+  page: backtest
+  module_id: btr-links
+  file: features/backtest/btr-links.js
+  backend_ref: none:纯前端交互（无数据源）
+  status: active
+- id: F-STOCKQ-HOST-ENGINE
+  name: 个股行情二级页宿主引擎
+  page: stockq
+  module_id: sq-host-engine
+  file: features/stockq/sq-host-engine.js
+  backend_ref: none:演示回退 STOCKQ_D/SQ_POOL（真源=sq-* 组件族接 API）
+  status: active
+- id: F-STOCKQ-MARK-LAYER
+  name: 主图标注层
+  page: stockq
+  module_id: klp-mark-layer
+  file: features/stockq/klp-mark-layer.js
+  backend_ref: none:overlay 分组（bs/trade/chip/evt/cost）
+  status: active
+- id: F-STOCKQ-KLP-TIMELINE
+  name: K 线时间轴
+  page: stockq
+  module_id: klp-timeline
+  file: features/stockq/klp-timeline.js
+  backend_ref: none:周期自适应刻度+事件图标
+  status: active
+- id: F-STOCKQ-PERIOD-PICKER
+  name: 周期选择弹层
+  page: stockq
+  module_id: klp-period-picker
+  file: features/stockq/klp-period-picker.js
+  backend_ref: none:纯前端交互（全量周期矩阵）
+  status: active
+- id: F-STOCKQ-INDICATOR-DIALOG
+  name: 指标设置弹窗
+  page: stockq
+  module_id: klp-indicator-dialog
+  file: features/stockq/klp-indicator-dialog.js
+  backend_ref: none:纯前端交互（参数/颜色编辑）
+  status: active
+- id: F-CRYPTO-CM-ENGINE
+  name: 币圈组引擎
+  page: cryptomarket
+  module_id: cm-engine
+  file: features/cryptomarket/cm-engine.js
+  backend_ref: none:演示数据（OKX 公开 API 待接入 I-2）
+  status: active
+- id: F-DESIGN-SPEC-CHART
+  name: DS-5 K 线规范图
+  page: design
+  module_id: ds-spec-chart
+  file: features/design/ds-spec-chart.js
+  backend_ref: none:设计规范演示图（design 页）
+  status: active
+- id: F-SERVICES-PAGE
+  name: 服务总闸页
+  page: services
+  module_id: sv-page
+  file: features/services/sv-page.js
+  backend_ref: api:/api/services-status（services_registry 16 启动项）
+  status: active
+- id: F-DATASRC-PAGE
+  name: 数据源监管页
+  page: datasrc
+  module_id: ds-page
+  file: features/datasrc/ds-page.js
+  backend_ref: api:/api/sources-status（源健康探针+alerter 告警）
+  status: active
+- id: F-DOWNLOAD-PAGE
+  name: 数据监管页 v3
+  page: download
+  module_id: dl-page
+  file: features/download/dl-page.js
+  backend_ref: api:/api/download-status + api:/api/data-asset
+  status: active
+- id: F-BRIDGE-PAGE
+  name: 交易通道监控页
+  page: bridge
+  module_id: br-page
+  file: features/bridge/br-page.js
+  backend_ref: api:/api/bridge-status（HTTP 桥+miniqmt 探活）
+  status: active
+- id: F-HOME-ENGINE
+  name: 首页三件套
+  page: home
+  module_id: hm-engine
+  file: features/home/hm-engine.js
+  backend_ref: none:布局引擎+结论墙+AI 对话框（页面组合层）
+  status: active
