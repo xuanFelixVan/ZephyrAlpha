@@ -142,6 +142,7 @@ class _StubGateway:
         allow_non_worktree: bool = False,
         allow_tracked_drift: bool = False,  # #ARCH-310 B2：landing 传入（衍生漂移容忍）
         allow_multi_domain: bool = False,  # #ARCH-310 B3：landing 传入（队列项单任务豁免）
+        allow_promote: bool = False,  # #ARCH-310 B3b：landing 传入（永久区新文件准入透传）
     ) -> CommitResult:
         self.events.append(
             (
@@ -153,6 +154,7 @@ class _StubGateway:
                     "allow_non_worktree": allow_non_worktree,
                     "allow_tracked_drift": allow_tracked_drift,
                     "allow_multi_domain": allow_multi_domain,
+                    "allow_promote": allow_promote,
                 },
             )
         )
