@@ -1,4 +1,4 @@
-# [BLUEPRINT] 90_methodology_open_questions.md §18（v2.0.0 裁定）
+# [BLUEPRINT] MOD-DATA-069 | docs/03_modules/_domain_data/instrument_master/blueprint.md（裁定真源=90 号 §18④，v2.0.0）
 # [MODULE] zephyr.data.instrument_master
 # [DOMAIN] D_DATA
 # [DEPENDENCIES] 无（DDL 常量+纯行规范化；ClickHouse 写入由调用方注入）
@@ -12,7 +12,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] 必填字段缺失/非法枚举→ValueError
 # [TESTS] tests/data/test_instrument_master.py
-# [A_module] module_id=MOD-L00-IM | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
+# [A_module] module_id=MOD-DATA-069 | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 """
 D_DATA — 轻量 Instrument Master（90 号 Phase2 项，#18 资产覆盖轻量 IM）

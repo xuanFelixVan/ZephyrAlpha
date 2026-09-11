@@ -1,6 +1,6 @@
-# [BLUEPRINT] MOD-EX_SOR_EXT-001 | docs/03_modules/_domain_ex_sor/slippage_analyzer/blueprint.md
+# [BLUEPRINT] MOD-XS-017 | docs/03_modules/_domain_ex_sor/slippage_analyzer/blueprint.md
 # [TTL] permanent
-"""SlippageAnalyzer 单元测试 (MOD-EX_SOR_EXT-001)。多基准滑点 + 三因子归因 + 预测。"""
+"""SlippageAnalyzer 单元测试 (MOD-XS-017)。多基准滑点 + 三因子归因 + 预测。"""
 
 from __future__ import annotations
 

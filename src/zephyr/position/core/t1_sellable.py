@@ -1,4 +1,4 @@
-# [BLUEPRINT] 32_firm_risk_aggregator §6（T+1 可卖持仓口径假设）+ 31_position_sizing §1 结案遗留 #30
+# [BLUEPRINT] MOD-POS-028 | docs/03_modules/_domain_position/t1_sellable/blueprint.md
 # [MODULE] zephyr.position.core.t1_sellable
 # [DOMAIN] D_POSITION
 # [DEPENDENCIES] 无（纯函数口径工具）

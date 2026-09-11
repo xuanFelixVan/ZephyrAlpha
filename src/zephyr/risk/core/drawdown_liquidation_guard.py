@@ -1,4 +1,4 @@
-# [BLUEPRINT] 35_drawdown_protocol_impl | docs/02_enterprise_architecture/07_trading_decision_architecture/design_memos/35_drawdown_protocol_impl.md | §3.5.1/§6.14
+# [BLUEPRINT] MOD-RK-050 | docs/03_modules/_domain_risk/drawdown_liquidation_guard/blueprint.md
 # [MODULE] zephyr.risk.core.drawdown_liquidation_guard
 # [DOMAIN] D_RISK
 # [DEPENDENCIES] zephyr.shared.foundation.errors

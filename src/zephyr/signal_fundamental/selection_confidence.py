@@ -1,4 +1,4 @@
-# [BLUEPRINT] docs/02_enterprise_architecture/07_trading_decision_architecture/design_memos/21_stock_selection_engine.md §3.5/§3.6
+# [BLUEPRINT] MOD-SIG-141 | docs/03_modules/_domain_fundamental_signal/selection_confidence/blueprint.md
 # [MODULE] zephyr.signal_fundamental.selection_confidence
 # [DOMAIN] D_FUNDAMENTAL_SIGNAL
 # [DEPENDENCIES]

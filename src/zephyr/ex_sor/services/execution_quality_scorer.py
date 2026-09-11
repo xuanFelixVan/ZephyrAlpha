@@ -1,4 +1,4 @@
-# [BLUEPRINT] MOD-EX_SOR_EXT-002 | docs/03_modules/_domain_ex_sor/execution_quality_scorer/blueprint.md
+# [BLUEPRINT] MOD-XS-018 | docs/03_modules/_domain_ex_sor/execution_quality_scorer/blueprint.md
 # [MODULE] zephyr.ex_sor.services.execution_quality_scorer
 # [DOMAIN] D_EX_SOR
 # [DEPENDENCIES] zephyr.shared.contracts.enums.order_enums; zephyr.shared.foundation.errors
@@ -12,13 +12,13 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] QualityScorerError; InvalidWeightsError; InsufficientMetricsError
 # [TESTS] tests/ex_sor/test_execution_quality_scorer.py
-# [A_module] module_id=MOD-EX_SOR_EXT-002 | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
+# [A_module] module_id=MOD-XS-018 | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 
 """
 
 
-Execution Quality Scorer — 执行质量评分器 (MOD-EX_SOR_EXT-002)
+Execution Quality Scorer — 执行质量评分器 (MOD-XS-018)
 
 D-EX-SOR §2.1 XS-EXT-02: 价格/时间/成本/市场影响多维评估 + 历史追踪。
 
@@ -43,7 +43,7 @@ D-EX-SOR §2.1 XS-EXT-02: 价格/时间/成本/市场影响多维评估 + 历史
     - TransactionCostOptimizer (EXT-003) 的 TransactionCostResult → cost 维度
     - 也可直接传入原始指标 (slippage_bps, duration_s, cost_bps, impact_bps)
 
-SSoT: depgraph MOD-EX_SOR_EXT-002
+SSoT: depgraph MOD-XS-018
 Version: 0.1.0
 
 # [ALGO_FLOW]

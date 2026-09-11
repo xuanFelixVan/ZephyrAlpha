@@ -1,4 +1,4 @@
-# [BLUEPRINT] docs/02_enterprise_architecture/07_trading_decision_architecture/design_memos/28_sentiment_cycle_trading.md §3.2-§3.10
+# [BLUEPRINT] MOD-SIG-140 | docs/03_modules/_domain_signal/sentiment_cycle/blueprint.md
 # [MODULE] zephyr.signal_ashare.sentiment_cycle
 # [DOMAIN] D_ASHARE_SIGNAL
 # [DEPENDENCIES] numpy

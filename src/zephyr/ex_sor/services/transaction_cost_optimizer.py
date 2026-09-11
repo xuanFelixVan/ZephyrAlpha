@@ -1,8 +1,8 @@
-# [BLUEPRINT] MOD-EX_SOR_EXT-003 | docs/03_modules/_domain_ex_sor/transaction_cost_optimizer/blueprint.md
+# [BLUEPRINT] MOD-XS-019 | docs/03_modules/_domain_ex_sor/transaction_cost_optimizer/blueprint.md
 # [MODULE] zephyr.ex_sor.services.transaction_cost_optimizer
 # [DOMAIN] D_EX_SOR
 # [DEPENDENCIES] zephyr.shared.contracts.enums.order_enums; zephyr.shared.foundation.errors
-# [CONSUMERS] MOD-EX_SOR_EXT-002(ExecutionQualityScorer, 消费 TransactionCostResult); MOD-EX-CORE(成本报告)
+# [CONSUMERS] MOD-XS-018(ExecutionQualityScorer, 消费 TransactionCostResult); MOD-EX-CORE(成本报告)
 # [STARTUP] manual
 # [MATURITY] production
 # [INVARIANTS] 成本非负; 显性=佣金+印花税+过户费+监管费; 隐性=冲击+机会; 总=显性+隐性; 印花税仅卖方; 佣金有最低收费
@@ -12,13 +12,13 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] TransactionCostError; InvalidFeeScheduleError; InvalidCostInputError
 # [TESTS] tests/ex_sor/test_transaction_cost_optimizer.py
-# [A_module] module_id=MOD-EX_SOR_EXT-003 | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
+# [A_module] module_id=MOD-XS-019 | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 
 """
 
 
-Transaction Cost Optimizer — 交易成本优化器 (MOD-EX_SOR_EXT-003)
+Transaction Cost Optimizer — 交易成本优化器 (MOD-XS-019)
 
 D-EX-SOR §2.1 XS-EXT-03: 佣金费率 + 印花税 + 冲击成本 + 机会成本 → 总成本最小化。
 
@@ -38,7 +38,7 @@ A 股成本结构 (2023-08-28 印花税降后):
         冲击成本   — 订单执行造成的价格变动 (vs 决策价)
         机会成本   — 未成交部分的错失收益
 
-SSoT: depgraph MOD-EX_SOR_EXT-003
+SSoT: depgraph MOD-XS-019
 Version: 0.1.0
 
 # [ALGO_FLOW]
@@ -109,7 +109,7 @@ Version: 0.1.0
 #   name_zh: 交易成本分析结果 TransactionCostResult
 #   name_en: TransactionCostResult
 #   intro: 六项成本分解+总成本(元/bps), 完整呈现这一单花了多少钱
-#   downstream: MOD-EX_SOR_EXT-002(ExecutionQualityScorer,消费 TransactionCostResult); MOD-EX-CORE(成本报告)
+#   downstream: MOD-XS-018(ExecutionQualityScorer,消费 TransactionCostResult); MOD-EX-CORE(成本报告)
 # - id: O2
 #   name_zh: 成本优化建议 OptimizationAdvice
 #   name_en: OptimizationAdvice

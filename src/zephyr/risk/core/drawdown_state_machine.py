@@ -1,4 +1,5 @@
-# [BLUEPRINT] 35_drawdown_protocol_impl | docs/02_enterprise_architecture/07_trading_decision_architecture/design_memos/35_drawdown_protocol_impl.md | §3.11/§3.14/§3.20/§6.6
+# [BLUEPRINT] MOD-RK-049 | docs/03_modules/_domain_risk/drawdown_state_machine/blueprint.md
+# [CORE-ALGORITHM] X-R1-01 熔断分级判定——五级离散状态机（晨审重点：状态迁移完整性/迟滞解除/禁 V 型回满）
 # [MODULE] zephyr.risk.core.drawdown_state_machine
 # [DOMAIN] D_RISK
 # [DEPENDENCIES] zephyr.shared.foundation.errors; zephyr.shared.state_store

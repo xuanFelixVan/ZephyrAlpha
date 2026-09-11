@@ -55,6 +55,7 @@ nodes:
     data_refs: []
     algo_refs: []
     module_ref: null
+    red_reason: terminal
     strategy_mounts: []
 
   - node_id: TDM-P-FLOW
@@ -72,6 +73,7 @@ nodes:
     data_refs: []
     algo_refs: []
     module_ref: null
+    red_reason: terminal
     strategy_mounts: []
 
   - node_id: TDM-X-FLOW
@@ -89,6 +91,7 @@ nodes:
     data_refs: []
     algo_refs: []
     module_ref: null
+    red_reason: terminal
     strategy_mounts: []
 
   - node_id: TDM-F-FLOW
@@ -106,6 +109,7 @@ nodes:
     data_refs: []
     algo_refs: []
     module_ref: null
+    red_reason: terminal
     strategy_mounts: []
 
   # ── E-L0 盘前作战计划（Owner 2026-09-09 B-1 裁定甲-2：父+三子；定界=L0 产计划、L1 唯一开闸）──
@@ -203,6 +207,7 @@ nodes:
   #  零件 next_day_8state_forecast/similar_day_inference/brier_calibration 全在，
   #  缺盘中滚动组合器=施工清单 C13 待建，本节点先以红节点入图占位）
   - node_id: TDM-E-L0-04
+    note_confirmed: 2026-09-11
     name_zh: 明日情绪盘中滚动预测
     market: cn_a
     flow: entry_flow
@@ -218,13 +223,18 @@ nodes:
       就今天减）。只出概率不出点位；预警是建议，修订权在偏离监控。昨日先验由 L0-03
       盘后落库、本节点盘中读缓存。学界佐证：隔夜收益延续+盘中情绪可更新（Lou-Poli-Gao
       经典；Renault JBF 2017 半小时情绪更新预测尾盘；SSRN 5599654 CSI300 隔夜预测）。
+      组合器=intraday_tomorrow_forecast（纯函数核零 IO，三零件产出由调用方注入）：
+      预警判据=融合最可能态悲观档比先验最可能态悲观 ≥1 档（悲观档位序 8 态全序见蓝图 §2）。
     parent_node: TDM-E-L0
     factor_refs: []
     data_refs: [DS-150, DS-082, DS-107]
     algo_refs: []
+    module_ref: src/zephyr/plan_engine/intraday_tomorrow_forecast.py
+    module_id: MOD-PLAN-025
     strategy_mounts: []
     activation: intraday
     ai_autonomy: auto
+    latency_budget: 合成核实测 0.02ms/次（5000 次单调钟）；单时点端到端（8 态/相似日/校准三零件读库+合成）≤2s，首运期按实测修订
     tags: [G1, 增长批1]
 
   - node_id: TDM-E-L1
@@ -397,6 +407,7 @@ nodes:
     factor_refs: []
     data_refs: [DS-082, DS-059, DS-150]
     module_ref: src/zephyr/signal_ashare/core/daily_condition_sensor.py
+    module_id: MOD-SIG-135
     note_confirmed: "2026-09-10"
     strategy_mounts: []
 
@@ -436,6 +447,7 @@ nodes:
     factor_refs: []
     data_refs: [DS-059, DS-170]
     module_ref: null
+    red_reason: structural
     strategy_mounts: []
     # ── E-L2 血肉 v1.3（D19，吸收 22 号 spec v1.9.7；算法附件=doc_ref 指向 22号 §3.1①-⑪）──
     # 双通道输出（D19）：①Top候选池+强度分→TDM-E-L3（机器）②盘后板块轮动简报→Owner 注意力（人工，
@@ -460,6 +472,7 @@ nodes:
     factor_refs: []
     data_refs: [DS-059, DS-170]
     module_ref: null
+    red_reason: structural
     algo_refs: []
     doc_ref: "docs/02_enterprise_architecture/07_trading_decision_architecture/design_memos/22_sector_rotation_spec.md#§3.2-板块强度综合"
     activation: postmarket
@@ -675,10 +688,12 @@ nodes:
     decision_question: 目标板块的调整走完了没有、能不能低吸
     algo_note_zh: >-
       目标板块从高点回撤算进度：回撤 5-8 天+缩量到高峰 1/3 以下=调整近尾声，可进低吸观察名单；还在放量下跌=调整没走完不碰。
+      实现锚=sector_adjustment 三维进度（时间 0.4+回撤 0.3+扩散 0.3，≥80% LATE 才放行动作门控）；量能缩量维为设计语言待扩展。
     parent_node: TDM-E-L2
     factor_refs: []
     data_refs: [DS-170]
-    module_ref: null
+    module_ref: src/zephyr/signal_ashare/sector_adjustment.py
+    module_id: MOD-SIG-040
     algo_refs: []
     doc_ref: "docs/02_enterprise_architecture/07_trading_decision_architecture/design_memos/22_sector_rotation_spec.md#§3.1③"
     activation: postmarket
@@ -729,6 +744,7 @@ nodes:
     factor_refs: []
     data_refs: [DS-059, DS-170]
     module_ref: null
+    red_reason: structural
     algo_refs: []
     doc_ref: "docs/02_enterprise_architecture/07_trading_decision_architecture/design_memos/22_sector_rotation_spec.md#§3.1⑨⑤"
     activation: postmarket
@@ -800,6 +816,7 @@ nodes:
     factor_refs: []
     data_refs: [DS-150]
     module_ref: null
+    red_reason: pending_gate
     algo_refs: []
     doc_ref: "docs/02_enterprise_architecture/07_trading_decision_architecture/design_memos/22_sector_rotation_spec.md#§3.1⑪"
     activation: premarket
@@ -809,6 +826,7 @@ nodes:
     strategy_mounts: []
 
   - node_id: TDM-E-L2-05-1
+    note_confirmed: 2026-09-11
     name_zh: 水温档推导
     market: cn_a
     flow: entry_flow
@@ -823,6 +841,7 @@ nodes:
     factor_refs: []
     data_refs: [DS-150, DS-082, DS-059]
     module_ref: src/zephyr/signal_ashare/sentiment_cycle.py
+    module_id: MOD-SIG-140
     algo_refs: []
     doc_ref: "docs/02_enterprise_architecture/07_trading_decision_architecture/design_memos/22_sector_rotation_spec.md#§3.1⑪"
     activation: premarket
@@ -867,10 +886,12 @@ nodes:
     decision_question: 板块结论怎么喂给个股层而不越权
     algo_note_zh: >-
       板块结论喂个股层的边界规则：只传'板块强度调节分+龙头定位'两个字段，个股层不得直接引用板块的买卖结论——层级隔离防越权。
+      实现锚=core/sector_conduction（强度调节分乘数封闭 10→+15%/6→+5%/<6→-10%，只调分不重排名=层级隔离承载）；龙头定位字段由 sector_leader（L2-06-2）供给。
     parent_node: TDM-E-L2
     factor_refs: []
     data_refs: []
-    module_ref: null
+    module_ref: src/zephyr/signal_ashare/core/sector_conduction.py
+    module_id: MOD-SIG-136
     algo_refs: []
     doc_ref: "docs/02_enterprise_architecture/07_trading_decision_architecture/design_memos/22_sector_rotation_spec.md#§3.1⑦⑩"
     activation: postmarket
@@ -944,6 +965,7 @@ nodes:
     factor_refs: []
     data_refs: [DS-059]
     module_ref: src/zephyr/signal_ashare/core/sector_conduction.py
+    module_id: MOD-SIG-136
     note_confirmed: "2026-09-10"
     algo_refs: []
     doc_ref: "docs/02_enterprise_architecture/07_trading_decision_architecture/design_memos/22_sector_rotation_spec.md#§3.1⑦"
@@ -965,10 +987,12 @@ nodes:
     algo_note_zh: >-
       回踩分 A/B/C 三级决定给不给仓：A 级（黄金坑）给满额、B 级给半仓、C 级只观察。
       回踩是买点质量的核心判据——追高和低吸的胜负率差一倍。
+      实现锚=sector_pullback grade_pullback（Fib×量能×强度三维取最弱档定级；A=满额优先建仓/B=半仓分批/C=观望，pullback_action 映射在码）。
     parent_node: TDM-E-L2
     factor_refs: []
     data_refs: [DS-170]
-    module_ref: null
+    module_ref: src/zephyr/signal_ashare/sector_pullback.py
+    module_id: MOD-SIG-026
     algo_refs: []
     doc_ref: "docs/02_enterprise_architecture/07_trading_decision_architecture/design_memos/22_sector_rotation_spec.md#§3.1②"
     activation: intraday
@@ -1055,7 +1079,7 @@ nodes:
     fallback: DS-107 缺失→催化剂维度降权（纯量价判定）
     strategy_mounts: []
 
-  # ── 09 事件链骨架（Owner 2026-09-09 落盘：新闻/产业链/供应链→盘中决策；实现件由接线会话交付后回填）──
+  # ── 09 事件链（Owner 2026-09-09 落盘：新闻/产业链/供应链→盘中决策；接线 W3/W4 于 2026-09-11 交付，规格卡=docs/_working/2026-09-11-news-chain-wiring-spec-cards.md，两节点同日回填）──
   - node_id: TDM-E-L2-09-1
     name_zh: 事件图谱传导
     market: cn_a
@@ -1067,12 +1091,14 @@ nodes:
     algo_note_zh: >-
       新闻实体/事件词 → 产业链图谱节点匹配（news_symbol_linker 思路升维到 ig_* 图谱节点）+置信度。
       上游=新闻情绪语义分析（S0-1）与事件评分；下游=冲击标的生成（09-2）。
-      骨架占位：实现件接线会话 W3 交付后回填 module_ref（含图谱快照 DS 登记）。
+      回填留痕（2026-09-11）：接线会话 wiring-news-ig-001 W3 交付回填，模块 MOD-INT_NEWS_CHAIN（testing），
+      55 单测全绿+红蓝对抗 9 手法+端到端 dry-run 实证（24h 窗 800 新闻→图谱命中 10，5.5s）。
+      规格卡=docs/_working/2026-09-11-news-chain-wiring-spec-cards.md 卡 1。
     parent_node: TDM-E-L2-09
     factor_refs: []
-    data_refs: []
+    data_refs: [DS-224, DS-225]
     algo_refs: []
-    module_ref: null
+    module_ref: src/zephyr/intelligence/news_chain_node_linker.py    # module_ref-only warn 路线：MOD-INT_NEWS_CHAIN 待 R21 格式冲突解挂后补 module_id
     strategy_mounts: []
     activation: continuous
     ai_autonomy: auto
@@ -1088,12 +1114,14 @@ nodes:
     algo_note_zh: >-
       图谱节点受冲击→上下游 N 跳扩散（含全球链/股权维度）→受影响标的/板块清单+方向分级（利好/利空/中性），
       与 event_score 融合口径。利空子集喂 L3-04 负面否决；冲击流喂 L0-02 盘中偏离监控。
-      骨架占位：实现件接线会话 W4 交付后回填 module_ref；图谱本体经 data_refs 引用不进图。
+      回填留痕（2026-09-11）：接线会话 W4 交付回填，模块 MOD-INT_CHAIN_IMPACT（testing，23 单测全绿）。
+      扩散口径=ig_edge 无向 BFS 默认 2 跳×每跳置信 0.6 衰减；方向=情绪 polarity ±0.15 死区外映射
+      利好/利空、全链同向（成本反号传导留事件类型细分后迭代）。规格卡=同上 卡 2。
     parent_node: TDM-E-L2-09
     factor_refs: []
-    data_refs: []
+    data_refs: [DS-224]
     algo_refs: []
-    module_ref: null
+    module_ref: src/zephyr/intelligence/chain_impact_resolver.py    # module_ref-only warn 路线：MOD-INT_CHAIN_IMPACT 待 R21 格式冲突解挂后补 module_id
     strategy_mounts: []
     activation: continuous
     ai_autonomy: auto
@@ -1136,6 +1164,7 @@ nodes:
     factor_refs: [FCT-MOM-003]
     data_refs: []
     module_ref: null
+    red_reason: structural
     strategy_mounts:
       - {strategy_ref: daban-sleeve,      confidence: proposed, evidence: null}
       - {strategy_ref: multifactor-sleeve, confidence: proposed, evidence: null}
@@ -1147,6 +1176,7 @@ nodes:
   # 两新增（Owner 确认）：05 顺位排序（全市场顺位：妖>龙>中军>核心>趋势>跟风+加分项）、06 环境开关（水温/情绪档→选股链启停，首板筛选器实证：两市成交<8000 亿首板链暂停）
   # 负面否决器=一票否决语义（L3 特色树枝）；07-3 其他 sleeve 链内容薄=红节点
   - node_id: TDM-E-L3-01
+    note_confirmed: 2026-09-11
     name_zh: Universe构建与剔除
     market: cn_a
     flow: entry_flow
@@ -1163,6 +1193,7 @@ nodes:
     event_refs: [EVT-CA-002, EVT-CA-003, EVT-EARN-001]
     data_refs: [DS-150]
     module_ref: src/zephyr/data/instrument_master.py
+    module_id: MOD-DATA-069
     algo_refs: []
     doc_ref: "docs/01_policies_and_standards/_registry/catalogs/strategy_registry.yaml#STR-MULTIFACTOR-043"
     activation: postmarket
@@ -1213,6 +1244,7 @@ nodes:
     factor_refs: []
     data_refs: [DS-150]
     module_ref: null
+    red_reason: structural
     algo_refs: []
     doc_ref: null
     activation: postmarket
@@ -1330,6 +1362,7 @@ nodes:
       - {strategy_ref: STR-MULTIFACTOR-041, confidence: proposed, evidence: null}
 
   - node_id: TDM-E-L3-05
+    note_confirmed: 2026-09-11
     name_zh: 顺位排序
     market: cn_a
     flow: entry_flow
@@ -1344,6 +1377,7 @@ nodes:
     factor_refs: []
     data_refs: [DS-150]
     module_ref: src/zephyr/signal_fundamental/selection_confidence.py
+    module_id: MOD-SIG-141
     algo_refs: []
     doc_ref: "docs/02_enterprise_architecture/07_trading_decision_architecture/design_memos/69_trading_decision_map.md#§2.16"
     activation: postmarket
@@ -1353,6 +1387,7 @@ nodes:
     strategy_mounts: []
 
   - node_id: TDM-E-L3-06
+    note_confirmed: 2026-09-11
     name_zh: 环境开关
     market: cn_a
     flow: entry_flow
@@ -1363,10 +1398,12 @@ nodes:
     algo_note_zh: >-
       环境开关查表：两市成交<8000 亿=首板筛选器停（实证数据：地量首板次日溢价为负）；情绪冰点=短线链全停只留波段链；极端高潮=反向收紧。
       开关表按 L1 六段状态查。
+      实现锚=environment_switch 六段×四开关封闭查表（首板/短线/波段/收紧；地量与冰点/疯狂/退潮规则叠加），六段与 SentimentPhase 五阶段归并由调用方负责。
     parent_node: TDM-E-L3
     factor_refs: []
     data_refs: [DS-150]
-    module_ref: null
+    module_ref: src/zephyr/signal_ashare/core/environment_switch.py
+    module_id: MOD-SIG-138
     algo_refs: []
     doc_ref: null
     activation: premarket
@@ -1390,6 +1427,7 @@ nodes:
     factor_refs: []
     data_refs: []
     module_ref: null
+    red_reason: structural
     algo_refs: []
     doc_ref: null
     activation: postmarket
@@ -1409,10 +1447,12 @@ nodes:
     algo_note_zh: >-
       打板 5 步漏斗：板块强度前 3→板块内涨停股→剔除烂板（封板<1 小时/尾盘板）→封单质量（封单/流通盘>2%）→龙头定位。
       最终 1-3 只进打板候选。
+      实现锚=daban_sleeve_strategy 四引擎组装（ShortTermStockSelector 资格门+连板 7 维评分卡/游资情绪 6 因子/量化强度 6 维/双引擎融合），final_score 降序 Top-N≤10。
     parent_node: TDM-E-L3-07
     factor_refs: [FCT-SENT-007, FCT-MOM-016]
     data_refs: [DS-150, DS-082]
-    module_ref: null
+    module_ref: src/zephyr/pf_core/strategies/daban_sleeve_strategy.py
+    module_id: MOD-L05-001
     algo_refs: []
     model_refs: [ML-CLS-001]
     doc_ref: "docs/02_enterprise_architecture/07_trading_decision_architecture/design_memos/24_daban_strategy_detail.md"
@@ -1460,10 +1500,12 @@ nodes:
     algo_note_zh: >-
       其余 sleeve 链：eventdriven=事件日历扫描（财报/重组/中标）提前 3 日建观察；topn=20 日动量排名前 N；default-equity=宽基 ETF 网格。
       各链独立产出。
+      组合锚三件=event_driven_sleeve_strategy/multifactor_sleeve_strategy/topn_momentum_strategy（同属 MOD-L05-001 sleeve 族）。
     parent_node: TDM-E-L3-07
     factor_refs: []
     data_refs: [DS-150]
-    module_ref: null
+    module_ref: src/zephyr/pf_core/strategies/event_driven_sleeve_strategy.py
+    module_id: MOD-L05-001
     algo_refs: []
     doc_ref: null
     activation: postmarket
@@ -1473,6 +1515,7 @@ nodes:
     strategy_mounts: []
 
   - node_id: TDM-E-L3-08
+    note_confirmed: 2026-09-11
     name_zh: 候选池输出
     market: cn_a
     flow: entry_flow
@@ -1482,10 +1525,13 @@ nodes:
     decision_question: 最终谁进买卖点环节（候选池+顺位排序+否决后清单）
     algo_note_zh: >-
       汇总输出：双池合流+策略链候选+顺位排序+否决后清单=最终候选池（10-20 只），带各自 sleeve 标签与顺位分，喂 L4 买卖点层。
+      回填留痕（2026-09-11 晚批）：汇总件 candidate_pool_aggregator 落码（C13 纯函数核范式，三来源注入零 IO，
+      37 单测全绿，否决只标记不剔除/容量 10-20/去重确定序），设计态待 MOD id 统筹登记。
+      spec=docs/_working/2026-09-11-l308-aggregator-construction.md。
     parent_node: TDM-E-L3
     factor_refs: []
     data_refs: []
-    module_ref: null
+    module_ref: src/zephyr/signal_ashare/core/candidate_pool_aggregator.py
     algo_refs: []
     doc_ref: null
     activation: postmarket
@@ -1498,6 +1544,7 @@ nodes:
   # 09 股票池分层维护（业界三层就绪度池：Tier1 活跃 5-10/Tier2 培育 10-20/Tier3 雷达 20-50；
   #   每日升降级+陈旧剔除；与 03 双池正交——双池按风格、Tier 按就绪度）；STR-MULTIFACTOR-033 上挂
   - node_id: TDM-E-L3-09
+    note_confirmed: 2026-09-11
     name_zh: 股票池分层维护
     market: cn_a
     flow: entry_flow
@@ -1509,10 +1556,12 @@ nodes:
       持久池分层维护：Tier1（当日精选）/Tier2（观察池）/Tier3（备选池）。
       日产出更新各 Tier：连续 2 日达标升 Tier、5 日不达标降级、10 日陈旧剔除。
       防止每天从零重扫。
+      实现锚=pool_tier_maintenance 三层就绪度日更状态机（升/降/剔封闭规则+连击清零防连跳+一次一事）；池成员持久化归治理状态表/新 DS（外审 M-41 欠账待登记）。
     parent_node: TDM-E-L3
     factor_refs: [FCT-MOM-003]
     data_refs: [DS-150]
-    module_ref: null
+    module_ref: src/zephyr/signal_ashare/core/pool_tier_maintenance.py
+    module_id: MOD-SIG-139
     algo_refs: []
     doc_ref: "docs/01_policies_and_standards/_registry/catalogs/strategy_registry.yaml#STR-MULTIFACTOR-033"
     activation: postmarket
@@ -1525,6 +1574,7 @@ nodes:
 
   # 10 可交易性预检（A股刚需：停牌/一字板/价格笼子±2%/权限门槛/异常交易监控——预案给一字板票=白写）
   - node_id: TDM-E-L3-10
+    note_confirmed: 2026-09-11
     name_zh: 可交易性预检
     market: cn_a
     flow: entry_flow
@@ -1535,10 +1585,12 @@ nodes:
     algo_note_zh: >-
       当日可买性预检：停牌/一字涨停（买不进）/价格笼子（申报价超±2% 会被拒）/科创板权限/资金不够一手。
       买不进的标记跳过，防止下单层空转报错。
+      部分锚=instrument_master（停牌标志/昨收价算涨跌停/最小申报单位）；价格笼子/科创板权限/资金一手三查缺口在册，专件挂下批评估。
     parent_node: TDM-E-L3
     factor_refs: []
     data_refs: [DS-082, DS-150]
-    module_ref: null
+    module_ref: src/zephyr/data/instrument_master.py
+    module_id: MOD-DATA-069
     algo_refs: []
     doc_ref: null
     activation: premarket
@@ -1564,6 +1616,7 @@ nodes:
     factor_refs: []
     data_refs: [DS-150, DS-082]
     module_ref: null
+    red_reason: structural
     algo_refs: []
     doc_ref: null
     activation: intraday
@@ -1637,6 +1690,7 @@ nodes:
     factor_refs: []
     data_refs: [DS-181]
     module_ref: null
+    red_reason: structural
     algo_refs: []
     doc_ref: null
     activation: postmarket
@@ -1758,6 +1812,7 @@ nodes:
     factor_refs: [FCT-INTRADAY-028]
     data_refs: []
     module_ref: null
+    red_reason: structural
     strategy_mounts:
       - {strategy_ref: daban-sleeve, confidence: proposed, evidence: null}
 
@@ -1799,11 +1854,12 @@ nodes:
     point: 盘中
     decision_question: 今天什么窗口下单（尾盘集中为主；竞价铁律 9:15-9:20 可撤假象多/9:20-9:25 只挂不撤/14:57-15:00 尾盘竞价不可撤；时间锚 2:30 背离与 2:57 竞价）
     algo_note_zh: >-
-      时序窗口表：尾盘 14:30-14:55 为集中窗口（全天信息确认后，隔夜风险最小）；竞价铁律=9:15-9:20 可撤挂单密集不参与、9:20-9:25 不可撤观察不动作；开盘 30 分钟只执行盘前计划单不新开。
+      时序窗口表：尾盘集中（决策侧 closing_session_decision 14:45-15:00 定加减仓；执行侧 batched_position_builder 14:50-14:57 挂单主窗+14:57-15:00 收盘竞价兜底），全天信息确认后隔夜风险最小；竞价铁律=9:15-9:20 可撤挂单密集不参与、9:20-9:25 不可撤观察不动作；开盘 30 分钟只执行盘前计划单不新开。
     parent_node: TDM-E-L4
     factor_refs: [FCT-INTRADAY-024, FCT-INTRADAY-027]
     data_refs: [DS-150]
-    module_ref: null
+    module_ref: src/zephyr/plan_engine/closing_session_decision.py
+    module_id: MOD-PLAN-003
     algo_refs: []
     doc_ref: "docs/02_enterprise_architecture/07_trading_decision_architecture/design_memos/41_buy_flow.md#§3.4"
     activation: intraday
@@ -1943,12 +1999,13 @@ nodes:
     point: 盘中
     decision_question: 突破失败后批次停不停、止损评估启不启
     algo_note_zh: >-
-      突破失败判定：突破价后 30 分钟内跌回突破位下方=失败→停后续批次+启动止损评估（-3% 或前低）。
+      突破失败判定（双锚）：batched_position_builder.detect_breakout_failure=收盘价连续 2 根 K 线（防日内假跌破）跌破首仓入场价→暂停确认仓+止损评估；收盘跌破前低（10 日回看）→暂停全部后续批次+止损卖出；breakout_failure_detector=K≥3 次突破失败→强制清仓（最高优先级）。
       突破买入的批次控制——首仓失败不加仓。
     parent_node: TDM-E-L4
     factor_refs: []
     data_refs: [DS-150]
-    module_ref: null
+    module_ref: src/zephyr/sell_decision/core/breakout_failure_detector.py
+    module_id: MOD-SELL-003
     algo_refs: []
     doc_ref: "docs/02_enterprise_architecture/07_trading_decision_architecture/design_memos/41_buy_flow.md#§3.3"
     activation: intraday
@@ -2080,6 +2137,7 @@ nodes:
     strategy_mounts: []
 
   - node_id: TDM-E-L4-14
+    note_confirmed: 2026-09-11
     name_zh: 执行成本反馈与选型回写
     market: cn_a
     flow: entry_flow
@@ -2098,7 +2156,8 @@ nodes:
     factor_refs: []
     data_refs: [DS-008]
     module_ref: src/zephyr/ex_sor/services/execution_quality_scorer.py
-    # module_id 欠账：depgraph blueprint_id=MOD-EX_SOR_EXT-002 带下划线，R21 正则 MOD-[A-Z0-9-]+ 不认（写了报格式错、改写报对账错）——格式冲突挂晨审，勿擅自改 id
+    module_id: MOD-XS-018
+    # D1 编号规范化批（2026-09-11）：MOD-EX_SOR_EXT-002 已改名 MOD-XS-018（裁定#208 双轨制合规），module_id 欠账清偿
     algo_refs: []
     doc_ref: null
     activation: postmarket
@@ -2120,6 +2179,7 @@ nodes:
     factor_refs: []
     data_refs: []
     module_ref: null
+    red_reason: structural
     strategy_mounts: []
 
   - node_id: TDM-P-P2
@@ -2136,6 +2196,7 @@ nodes:
     factor_refs: [FCT-INTRADAY-025, FCT-INTRADAY-015]
     data_refs: []
     module_ref: null
+    red_reason: structural
     strategy_mounts:
       - {strategy_ref: intraday-surge-fall, confidence: proposed, evidence: null}
       - {strategy_ref: orderbook-imbalance, confidence: proposed, evidence: null}
@@ -2155,6 +2216,7 @@ nodes:
     factor_refs: []
     data_refs: []
     module_ref: null
+    red_reason: structural
     strategy_mounts: []
 
   # ── P 流血肉（D39-D49，Owner 2026-09-07 终裁；3 树枝 14 节点，树深 2）──
@@ -2333,6 +2395,7 @@ nodes:
   # P2 树枝：资格门→调度→闭环，减仓/再平衡并行（冲突规则：风控减仓 > 做T收口 > 做T新开，收口 BM-SELL-06 废弃语义；
   #   conflict_priority 字段为 schema v1.8 候选，当前以注释承载）
   - node_id: TDM-P-P2-01
+    note_confirmed: 2026-09-11
     name_zh: 做T资格与成本前置
     market: cn_a
     flow: position_flow
@@ -2348,6 +2411,7 @@ nodes:
     cost_model_refs: [CST-T0-001]
     data_refs: [DS-150]
     module_ref: src/zephyr/position/core/t1_sellable.py
+    module_id: MOD-POS-028
     algo_refs: []
     doc_ref: "docs/02_enterprise_architecture/07_trading_decision_architecture/design_memos/90_methodology_open_questions.md#§5"
     activation: premarket
@@ -2599,6 +2663,7 @@ nodes:
     risk_limit_refs: [RLM-DRAWDOWN-001, RLM-DRAWDOWN-002, RLM-DRAWDOWN-006]
     data_refs: []
     module_ref: null
+    red_reason: structural
     # D50 欠账（69 号 §2.27）：峰值收益回撤止盈信号——每仓记历史最高浮盈 peak_pnl，从峰值回落 X%
     #   强制兑现（短线最大利润漏点="赚过没拿住"，与止损/时间止损三级联动）；已由 TDM-X-S1-03 止盈族承接落位（D60 轮）
     strategy_mounts: []
@@ -2617,6 +2682,7 @@ nodes:
     factor_refs: []
     data_refs: []
     module_ref: null
+    red_reason: structural
     strategy_mounts: []
 
   # ── 风控横切（非第四条流，任何环节可触发）────────────────────────────────
@@ -2636,7 +2702,8 @@ nodes:
     risk_limit_refs: [RLM-KILLSW-003, RLM-KILLSW-005, RLM-KILL-SWITCH-004, RLM-KILL-SWITCH-005]
     threshold_refs: [THD-DRAWDOWN-001, THD-DRAWDOWN-002, THD-DRAWDOWN-003]
     data_refs: []
-    module_ref: null
+    module_ref: src/zephyr/security/access_control/kill_switch.py
+    module_id: MOD-INF-018
     strategy_mounts: []
     # 治理档位豁免（外审修复 2026-09-07，I-01/M-58）：kill switch 任何 ai_autonomy 档位下均为真实执行，不随 paper 模拟；
     # 复位=Owner 人工确认（fail-closed：重启/失联后保持 HALTED 待人工解除，I-05）；风控心跳失联→默认降级安全态（禁新开仓+人工告警，I-06/M-60 挂载点）
@@ -2647,6 +2714,7 @@ nodes:
   # M-36 收口：熔断从模糊词变等级表（判定=R1-01 离散状态机，D108 设计原则）；梯度减仓=R1-02；
   # 护盘资产定向加仓窄门=R1-03（proposed 假说，回测验证前不生效）
   - node_id: TDM-X-R1-01
+    note_confirmed: 2026-09-11
     name_zh: 熔断分级判定
     market: cn_a
     flow: exit_flow
@@ -2665,6 +2733,7 @@ nodes:
     threshold_refs: [THD-DRAWDOWN-001, THD-DRAWDOWN-002, THD-DRAWDOWN-003]
     data_refs: []
     module_ref: src/zephyr/risk/core/drawdown_state_machine.py
+    module_id: MOD-RK-049
     algo_refs: [DAL-CIRCUIT-5]
     doc_ref: "docs/02_enterprise_architecture/07_trading_decision_architecture/design_memos/69_trading_decision_map.md#§2.34"
     activation: continuous
@@ -2676,6 +2745,7 @@ nodes:
     strategy_mounts: []
 
   - node_id: TDM-X-R1-02
+    note_confirmed: 2026-09-11
     name_zh: 熔断期减仓与持仓处置
     market: cn_a
     flow: exit_flow
@@ -2691,6 +2761,7 @@ nodes:
     factor_refs: []
     data_refs: []
     module_ref: src/zephyr/risk/core/drawdown_liquidation_guard.py
+    module_id: MOD-RK-050
     algo_refs: []
     doc_ref: "docs/02_enterprise_architecture/07_trading_decision_architecture/design_memos/69_trading_decision_map.md#§2.34"
     activation: intraday
@@ -2952,6 +3023,7 @@ nodes:
     strategy_mounts: []
 
   - node_id: TDM-X-S2-02
+    note_confirmed: 2026-09-11
     name_zh: T+1与涨跌停约束
     market: cn_a
     flow: exit_flow
@@ -2967,6 +3039,7 @@ nodes:
     risk_limit_refs: [RLM-DRAWDOWN-003]
     data_refs: []
     module_ref: src/zephyr/position/core/t1_sellable.py
+    module_id: MOD-POS-028
     algo_refs: []
     doc_ref: "docs/02_enterprise_architecture/07_trading_decision_architecture/design_memos/42_sell_flow.md#§3.8"
     activation: intraday
@@ -3160,6 +3233,7 @@ nodes:
     factor_refs: []
     data_refs: []
     module_ref: null
+    red_reason: structural
     portfolio_model_refs: [PFM-HEU-002, PFM-RB-001, PFM-HEUR-009]
     strategy_mounts: []
 
@@ -3177,6 +3251,7 @@ nodes:
     factor_refs: []
     data_refs: []
     module_ref: null
+    red_reason: structural
     benchmark_refs: [BMK-INDEX-003, BMK-ABSOLUTE-001]
     threshold_refs: [THD-RETIRE-001, THD-RETIRE-002, THD-RETIRE-003]
     # D50 欠账（69 号 §2.27，事后分析带）：①交易盈亏/持仓盈亏二分（vn.py 范式：日内成交映射 vs 隔夜持仓映射）——
@@ -3526,6 +3601,7 @@ nodes:
     factor_refs: []
     data_refs: []
     module_ref: null
+    red_reason: not_built
     strategy_mounts: []
 
   - node_id: TDM-C-L2
@@ -3541,6 +3617,7 @@ nodes:
     factor_refs: []
     data_refs: []
     module_ref: null
+    red_reason: not_built
     strategy_mounts: []
 
   - node_id: TDM-C-L3
@@ -3556,6 +3633,7 @@ nodes:
     factor_refs: []
     data_refs: []
     module_ref: null
+    red_reason: not_built
     strategy_mounts: []
 
   - node_id: TDM-C-L4
@@ -3571,6 +3649,7 @@ nodes:
     factor_refs: []
     data_refs: []
     module_ref: null
+    red_reason: not_built
     strategy_mounts: []
 
 edges:

@@ -1,6 +1,6 @@
-# [BLUEPRINT] MOD-EX_SOR_EXT-002 | docs/03_modules/_domain_ex_sor/execution_quality_scorer/blueprint.md
+# [BLUEPRINT] MOD-XS-018 | docs/03_modules/_domain_ex_sor/execution_quality_scorer/blueprint.md
 # [TTL] permanent
-"""ExecutionQualityScorer 单元测试 (MOD-EX_SOR_EXT-002)。四维度评分+加权+历史追踪。"""
+"""ExecutionQualityScorer 单元测试 (MOD-XS-018)。四维度评分+加权+历史追踪。"""
 
 from __future__ import annotations
 

@@ -1,8 +1,8 @@
-# [BLUEPRINT] MOD-EX_SOR_EXT-001 | docs/03_modules/_domain_ex_sor/slippage_analyzer/blueprint.md
+# [BLUEPRINT] MOD-XS-017 | docs/03_modules/_domain_ex_sor/slippage_analyzer/blueprint.md
 # [MODULE] zephyr.ex_sor.services.slippage_analyzer
 # [DOMAIN] D_EX_SOR
 # [DEPENDENCIES] zephyr.shared.contracts.enums.order_enums; zephyr.shared.foundation.errors
-# [CONSUMERS] MOD-EX_SOR_EXT-002(ExecutionQualityScorer, 消费 SlippageResult); MOD-EX-CORE(执行质量报告)
+# [CONSUMERS] MOD-XS-018(ExecutionQualityScorer, 消费 SlippageResult); MOD-EX-CORE(执行质量报告)
 # [STARTUP] manual
 # [MATURITY] production
 # [INVARIANTS] 滑点符号约定: BUY 正=成本(买贵了), SELL 正=成本(卖便宜了); 归因分量和≈总滑点(残差吸收误差); 预测值为非负
@@ -12,13 +12,13 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] SlippageAnalyzerError; InsufficientFillsError; InvalidBenchmarkError
 # [TESTS] tests/ex_sor/test_slippage_analyzer.py
-# [A_module] module_id=MOD-EX_SOR_EXT-001 | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
+# [A_module] module_id=MOD-XS-017 | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 
 """
 
 
-Slippage Analyzer — 滑点分析器 (MOD-EX_SOR_EXT-001)
+Slippage Analyzer — 滑点分析器 (MOD-XS-017)
 
 D-EX-SOR §2.1 XS-EXT-01: 实际vs预期滑点 + 滑点归因 + 滑点预测 + 基准比较。
 
@@ -41,7 +41,7 @@ D-EX-SOR §2.1 XS-EXT-01: 实际vs预期滑点 + 滑点归因 + 滑点预测 + �
     spread_bps        = half_spread_bps (估计)
     residual_bps      = total_slippage - (impact + timing + spread)
 
-SSoT: depgraph MOD-EX_SOR_EXT-001
+SSoT: depgraph MOD-XS-017
 Version: 0.1.0
 
 # [ALGO_FLOW]
@@ -105,7 +105,7 @@ Version: 0.1.0
 #   name_zh: 滑点分析结果 SlippageResult
 #   name_en: SlippageResult
 #   intro: 多基准滑点+三因子归因+预测滑点的完整分析, 并留历史记录
-#   downstream: MOD-EX_SOR_EXT-002(ExecutionQualityScorer,消费 SlippageResult); MOD-EX-CORE(执行质量报告)
+#   downstream: MOD-XS-018(ExecutionQualityScorer,消费 SlippageResult); MOD-EX-CORE(执行质量报告)
 # [/ALGO_FLOW]
 #
 # 边:
