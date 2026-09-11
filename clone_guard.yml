@@ -32,17 +32,15 @@ pre_commit:
   engines:
     echo_guard:
       # R1-R4 裁定（2026-09-12，st-encfix 夜班，Owner 批准"分层归位"）：
-      # L1 保留 enabled:true——卸载 onnxscript（R1 已执行）后 CLI 在 Tier2 缺依赖路径
-      # 快速失败降级（实测 CAPABILITY-OVERLAP 0.76s，不再烧 30s 预算），ast_grep 完好。
-      # 上游 echo-guard 0.4.1 三缺陷（Tier2 治本回位条件=R3，修复版发布后执行）：
-      # ① embeddings.npy append-only 不压实（28K 函数理论 ~116MB，实测膨胀 5.2GB=48×，
-      #    全量重建只增不减）；② 离线模式（HF_HUB_OFFLINE=1）下模型缺失路径仍尝试
-      # HF 网络请求（10s 超时×重试=挂死主因之一）；③ Tier2 相似度批 (32,1024,1024)
-      # 128MiB 分配失败后慢速降级（单次 check 400s 级，实测 475s/399s）。
-      # 回位动作：pip install -U echo-guard（≥修复版）+ pip install onnxscript +
-      # 联网窗口删 embeddings.npy 重建压实 + 验证 check <30s，然后 L1/L2 Tier2 复活。
-      # 索引卫生仪表盘=RECONCILER-HEALTH 2.6 探针（signal 残留>7 天/npy>2GB 告警）。
-      enabled: true         # Phase A——L1 离线优先 AST 哈希检测
+      # 【L1 岗位撤除（2026-09-12 01:55 Owner 批准"病号回家养病"）】enabled:false
+      # ——病根三联（① embeddings.npy append-only 膨胀 48×；② 离线模式绕过联网；
+      # ③ Tier2 批次内存失败）使 check 恒 400s 级，且卸载 onnxscript 后仍烧满
+      # 30s 预算才降级（CLI 内部 Tier2 可用性探测路径）——L1 实际贡献为零、
+      # 每笔提交白付 30s。撤岗后 L1 引擎=ast_grep（结构规则，全部实证拦截来源）
+      # + redup（语义克隆，2026-09-12 接活，B22② 兑现）。岗位保留性：R3 回位
+      # 四步（修复版+onnxscript 重装+联网窗口压实重建+check<30s 验证）完成后
+      # 翻回 true 即恢复三引擎。
+      enabled: false
     ast_grep:
       enabled: true         # Phase B——结构化规则检测（no-bare-except 等）
     redup:

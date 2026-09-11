@@ -197,7 +197,12 @@ class RedupAdapter:
         # own-scope 过滤：redup 按 git diff 口径扫描（含外来 WIP），只保留
         # source_file 命中本次检测集的发现——外来文件的克隆由其归属会话提交时
         # 自行发现（全部提交走唯一入口，覆盖保证不变）。
-        scoped = [f for f in findings if getattr(f, "source_file", "") in scope]
+        # 归一化对称（2026-09-12 红蓝#3 抓获）：redup 报 file 字段为 Windows 反斜杠
+        # 形态（tmp_x\d_a.py），scope 集为正斜杠小写——双侧 MUST 同过 normcase+斜杠
+        # 归一，否则自己的发现也被过滤丢弃（与 DECISION-MAP 触发器同款坑）。
+        scoped = [
+            f for f in findings if os.path.normcase(str(getattr(f, "source_file", ""))).replace("\\", "/") in scope
+        ]
         if len(scoped) != len(findings):
             logger.info(
                 "RedupAdapter: own-scope 过滤 %d -> %d（外来文件的克隆不阻断本会话）",
