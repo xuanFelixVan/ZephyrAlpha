@@ -4,7 +4,7 @@
 # [CONSUMERS] 夜班 SOP industry_chain_data_audit_sop §5 全轮次写入(唯一合法通道)
 # [STARTUP] manual
 # [MATURITY] production
-# [INVARIANTS] 写入唯一通道: 全部走 ingest 子命令(禁手写 SQL); 批次=单事务全成全败; 幂等(UNIQUE 锚 ON CONFLICT); 硬校验(SOP §5): source_doc 三段式/confidence<=0.7(websearch)/symbol 正则+cn 反查 stock_basic/词表白名单(tier 三位置值 v0.4+function_role 八值/category/edge_type v2/role 五值)/链名标题腔拒绝/node.name 无 -tier 后缀残留/backup 幂等; UNLISTED:UE-xxx 唯一合法格式(旧格式公司名直写拒绝,§4.10); unlisted_entity 记录 status 枚举+listed_symbol 真代码格式校验; equity_edge 记录(relation 六值/as_of 必填/PERSON: 前缀/verification 三值,2026-09-09 分域裁定); node 深度列 child_chain_id+drill_status(child 交叉校验,drill_manual=Owner 钉死 AI 不可写); PIT 三时间戳 websearch 边必填; 节点引用(node/node_company/node_edge)按(链+名)查库解析存量真实ID(存量采购包节点非md5方案,重算ID会FK违规/造重复行,2026-09-08修复); chain 支持 status/merged_into(deprecated 须带 merged_into,幂等 append 不覆盖原 source_note,2026-09-08 裁定执行); chain/placement_close 可选 chain_id 显式寻址(legacy-id 链 md5(现名)≠chain_id 场景,带值须命中存量行防伪造,2026-09-11)
+# [INVARIANTS] 写入唯一通道: 全部走 ingest 子命令(禁手写 SQL); 批次=单事务全成全败; 幂等(UNIQUE 锚 ON CONFLICT); 硬校验(SOP §5): source_doc 三段式/confidence<=0.7(websearch)/symbol 正则+cn 反查 stock_basic/词表白名单(tier 三位置值 v0.4+function_role 八值/category/edge_type v2/role 五值)/链名标题腔拒绝/node.name 无 -tier 后缀残留/backup 幂等; UNLISTED:UE-xxx 唯一合法格式(旧格式公司名直写拒绝,§4.10); unlisted_entity 记录 status 枚举+listed_symbol 真代码格式校验; equity_edge 记录(relation 六值/as_of 必填/PERSON: 前缀/verification 三值,2026-09-09 分域裁定); node 深度列 child_chain_id+drill_status(child 交叉校验,drill_manual=Owner 钉死 AI 不可写); PIT 三时间戳 websearch 边必填; 节点引用(node/node_company/node_edge)按(链+名)查库解析存量真实ID(存量采购包节点非md5方案,重算ID会FK违规/造重复行,2026-09-08修复); chain 支持 status/merged_into(deprecated 须带 merged_into,幂等 append 不覆盖原 source_note,2026-09-08 裁定执行); chain/placement_close 可选 chain_id 显式寻址(legacy-id 链 md5(现名)≠chain_id 场景,带值须命中存量行防伪造,2026-09-11); node_rename 环节改名(node_id 稳定键不动,新名过文章词/长度/-tier 三关+(链,名)防撞,2026-09-11)
 # [MODIFY-GUARD] none
 # [STABILITY] evolving
 # [SAFETY] L
@@ -105,6 +105,8 @@ _SQL_PRODUCT_REVENUE_UPSERT = """INSERT INTO ig_product_revenue (symbol,year,pro
 # chain_id 显式寻址防伪校验(2026-09-11): legacy-id 链(chain_id≠md5(现名),曾改名/旧命名方案)
 # 无法按名寻址——chain/placement_close 记录可带 chain_id 直指,带值时 MUST 命中存量行
 _SQL_CHAIN_EXISTS = "SELECT 1 FROM ig_chain WHERE chain_id=%s"
+# 环节改名(词汇治理): node_id 稳定键不动仅改 name,存量引用(node_company/ig_edge 按 node_id)零影响
+_SQL_NODE_RENAME = "UPDATE ig_node SET name=%s, updated_at=now() WHERE node_id=%s"
 
 _ALL_TABLES = ("ig_chain", "ig_node", "ig_edge", "ig_node_company", "ig_document", "ig_company_edge", "ig_company_metric", "ig_chunk", "ig_fact", "ig_unlisted_entity", "ig_equity_edge", "ig_product_revenue")
 _DATE = None
@@ -642,6 +644,32 @@ def cmd_ingest(batch_path: str) -> int:
                 if not re.match(r"\d{4}-\d{2}-\d{2}", str(vt)):
                     raise ValueError(f"placement_close valid_to 非日期: {vt}")
                 cur.execute(_SQL_PLACEMENT_CLOSE, (vt, r["symbol"], cid))
+            elif typ == "node_rename":
+                # 环节改名(2026-09-11 词汇治理): node_id 稳定键不动,仅改 name——存量
+                # node_company/ig_edge 引用按 node_id 外键,零影响。硬校验: 旧名须存在、
+                # 新名过 NODE_JUNK_RE/长度/-tier 后缀三关、(链,新名)不撞存量、新旧不同名。
+                cid = r.get("chain_id") or _chain_id(r["chain_name"])
+                if r.get("chain_id"):
+                    cur.execute(_SQL_CHAIN_EXISTS, (cid,))
+                    if cur.fetchone() is None:
+                        raise ValueError(f"node_rename chain_id 寻址不存在(防伪): {cid}")
+                nid = _resolve_node(cur, cid, r["old_name"])
+                if nid is None:
+                    raise ValueError(
+                        f"node_rename 旧环节名不存在: {r['old_name']} (chain={r['chain_name']})"
+                    )
+                nn = r["new_name"]
+                if nn == r["old_name"]:
+                    raise ValueError("node_rename 新旧同名")
+                if NODE_JUNK_RE.search(nn):
+                    raise ValueError(f"node_rename 新名含文章词: {nn}")
+                if len(nn) > NODE_NAME_MAX_LEN:
+                    raise ValueError(f"node_rename 新名超长(>{NODE_NAME_MAX_LEN}字): {nn}")
+                if NODE_SUFFIX_RE.search(nn):
+                    raise ValueError(f"node_rename 新名含 -tier 后缀残留: {nn}")
+                if _resolve_node(cur, cid, nn) is not None:
+                    raise ValueError(f"node_rename (链,新名)已存在: {nn} (chain={r['chain_name']})")
+                cur.execute(_SQL_NODE_RENAME, (nn, nid))
             elif typ == "unlisted_entity":
                 # 编码表登记/上市标定(SOP §4.10): name+country 登记幂等;
                 # listed_symbol 须一手来源(交易所公告),工具只信入参不查外源;
