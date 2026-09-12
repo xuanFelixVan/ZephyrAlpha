@@ -1,3 +1,5 @@
+# [BLUEPRINT] MOD-SIG-038 | (auto-injected by S4 reconciler) | §
+# [TTL] permanent
 """MOD-SIG-142 sector_strength_aggregator 单元测试（night-gw-2300 自裁批）。
 
 红蓝手法：红-边界（负分/NaN/权重不归一/调节越界/空池）/红-契约（等权默认+池比例）

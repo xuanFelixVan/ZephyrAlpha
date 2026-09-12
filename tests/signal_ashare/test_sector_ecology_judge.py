@@ -1,3 +1,5 @@
+# [BLUEPRINT] MOD-SIG-038 | (auto-injected by S4 reconciler) | §
+# [TTL] permanent
 """MOD-SIG-143 sector_ecology_judge 单元测试（night-gw-2300 自裁批）。
 
 红蓝手法：红-边界（负连击/集中度越界/阈值 2·0.30·90 精确边界）/红-契约（三态封闭集）
