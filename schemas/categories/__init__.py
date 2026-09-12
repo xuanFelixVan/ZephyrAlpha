@@ -30,3 +30,17 @@
 
 对账链：verify_schema_truth.py / lint_symbol_convention.py 按 rglob 递归枚举本目录。
 """
+
+# 【GOV-DOC-018 命名约定（T_soft=120 资格声明，2026-09-13 DEDUP/平铺债批）】
+# 本目录 76 个 .py 按文件名前缀簇管理命名规则（模块地图如下）。
+# 前缀簇（top12）：
+#   - market_* (68 件)
+#   - macro_* (2 件)
+#   - backnode_* (1 件)
+#   - backstrategy_* (1 件)
+#   - cross_* (1 件)
+#   - factor_* (1 件)
+#   - meta_* (1 件)
+#   - regime_* (1 件)
+# 约定：新增文件必须延续所属簇前缀；新簇须先在本约定登记再落文件；
+# 单簇超过 20 件时应拆子目录（参照 tests/signal_ashare 拆分先例）。
