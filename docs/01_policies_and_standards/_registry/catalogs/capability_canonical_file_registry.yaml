@@ -14320,3 +14320,7 @@ di_seam_exemptions:
   token: test-strategy-screen-query-st-zcode-c4-20260912
   created_by: st-zcode-c4-20260912
   capability: c4_batch_translation
+- file: docs/_working/2026-09-13-c5-cluster-differentiation-report.md
+  token: c5-cluster-differentiation-report-20260913
+  created_by: st-zcode-c4-20260912
+  capability: c4_batch_translation
