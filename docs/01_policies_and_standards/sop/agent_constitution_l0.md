@@ -11,8 +11,7 @@ cutover_plan: 见文末 §切换程序；索引卡真源=capability_cards/ L0-L3
 
 # ZephyrAlpha — AI Agent 宪法 L0
 
-> 本文件是唯一必读宪法。目标长度 ≤300 行（#ARCH-310 R3：规范总量与执行率负相关，
-> 上下文是硬预算）。每个硬规则一行陈述+真源指针；细节按需检索，不预载。
+> 本文件是唯一必读宪法。目标长度 ≤300 行硬上限（#ARCH-310 R3：规范总量与执行率负相关，上下文是硬预算）。每个硬规则一行陈述+真源指针；细节按需检索，不预载。
 
 ## 0. 冷启动序列（按序执行，缺一不可）
 
@@ -21,7 +20,8 @@ cutover_plan: 见文末 §切换程序；索引卡真源=capability_cards/ L0-L3
 2. **RULE-GUARDIAN**：`python scripts/lock_files.py cleanup && python -m zephyr.trading.process_reaper --status`。
    计划任务不存在 = 禁止任何写操作。长批任务先登记 `data/runtime/process_reaper_keep.txt` 防误杀(每行一个 cmdline 子串)。
 3. **RULE-WORKTREE**：`session_worktree_start`（或按既定裁定降级走 `scripts/git_commit.py` 正门）。
-   提交必经 GitCommitGateway / git_commit.py，禁止裸 `git commit`。
+   提交必经 GitCommitGateway / git_commit.py，禁止裸 `git commit`。改前 claim：`lock_files.py acquire <file> <sid>`；
+   reconciler 链路验证走 `--reconciler-verify`（专用豁免通道，三前置：主区 clean/无活跃会话/claim 全成）。
 4. **RULE-CAPABILITY-LOOKUP**：写第一行业务代码前调
    `capability_lookup.find(<kw>, session_id=<sid>)` 或 MCP `rule_discovery`（写审计）。
 5. **RULE-DEPGRAPH**：施工前 `apply_depgraph.py --add-design-node` 登记；文件重命名后
@@ -39,7 +39,7 @@ cutover_plan: 见文末 §切换程序；索引卡真源=capability_cards/ L0-L3
 | 4 | RULE-DEPGRAPH | 先登记后施工；HIGH drift pre-merge 阻断 | trae_080_panorama_alignment.yaml |
 | 5 | RULE-REGISTRY | 注册表发现唯一直 ROOR；数量勿写死 | docs/registry_of_registries.yaml |
 | 6 | RULE-SSOT | 规则=YAML、架构=DB，机械判定禁止凭记忆 | trae_062_ssot_classification.yaml |
-| 7 | RULE-DATA-OPS | 破坏性 DB 操作三步验证（必要性/真实性/可逆性） | trae_063_data_ops_discipline.yaml |
+| 7 | RULE-DATA-OPS | 破坏性 DB 操作三步验证（必要性/真实性/可逆性）；判重用 `check_tick_duplication.py` 禁聚合数 | trae_063_data_ops_discipline.yaml |
 | 8 | RULE-RULING | 裁定#NNN 必须先登记 ruling_registry，同 commit 原子 | ruling_registry.yaml |
 | 9 | RULE-CAPABILITY-LOOKUP | 施工前能力反查留审计；逃生走 [no-lookup:<白名单 reason>] | trae_065/trae_077 |
 | 10 | RULE-SCHEMA-TZ | DateTime64(3)+显式时区；生成器禁 datetime.now()/time.time() | trae_065 时区批/AGENTS §11.1.1 |
@@ -47,7 +47,7 @@ cutover_plan: 见文末 §切换程序；索引卡真源=capability_cards/ L0-L3
 | 12 | RULE-GIT-SAFE | 危险 git 命令清单禁用；每轮修改即 git add；改前 claim | scripts/git_safety_wrapper.ps1 |
 | 13 | 热文件写入 | 注册表/宪法/tracker 等热文件必用 `safe_write_text`（CAS 防并发覆盖，`src/zephyr/shared/io/file_utils.py`），禁裸 Edit/Write 后不复核；写后进程外核实 | file_utils.py |
 
-补充铁律（同硬阻断级）：RULE-CLONEGUARD（extract 级克隆无逃生）；新建 .py 模块须登记大白话简介（`add_module_translation.py`，TRANSLATION-COVERAGE gate 拦截）；
+补充铁律（同硬阻断级）：RULE-CLONEGUARD（extract 级克隆无逃生；写前预查 `clone_guard.check_before_write`，合理重复走 `resolve_finding` 标 acknowledged）；新建 .py 模块须登记大白话简介（`add_module_translation.py`，TRANSLATION-COVERAGE gate 拦截）；
 RULE-WORKSPACE-WIP（脏文件先跑 classify_workspace_wip.py，禁肉眼判罚）；
 CREATE-GUARD（新建 .py/.yaml/.md 等 7 格式须登记 creation_token，tests/ 豁免）。
 
@@ -61,8 +61,11 @@ CREATE-GUARD（新建 .py/.yaml/.md 等 7 格式须登记 creation_token，tests
 4. **gate+自家测试同批是合法的**：COMMIT_SCOPE 误判时用 `--allow-multi-domain`（留痕）。
 5. **commit 后必做**：`git log -1 --name-only` 核实真实归属（暂存区可能吸收他会话内容）。
 6. **多会话并发窗口**：优先 `--enqueue` 走队列（serializer worktree 干净暂存区，
-   结构性免疫连坐）；直连与队列不要混抢。
+   结构性免疫连坐）；直连与队列不要混抢。队列项 dead：读 dead_reason 修正后
+   `commit_queue.py requeue <qid>`（落地侧已容忍衍生漂移/跨域/永久区新文件）。
 7. 死会话 stale claim 挡道：`gateway.release_files('<死sid>', files)` 精准释放后重 claim。
+8. 编辑"消失"先查 `.runtime/workspace_alerts/stash_notice.json`——是被 stash 保存了，
+   不是丢失（`git stash pop` 恢复）；勿误判为被覆盖而重做或清理。
 
 ## 3. 作用域与连坐（#ARCH-310 R2）
 
@@ -112,6 +115,19 @@ CREATE-GUARD（新建 .py/.yaml/.md 等 7 格式须登记 creation_token，tests
 - 业务资产库 16 表挂 TDM 交叉轴（`_XREF_SPECS` 表驱动）；新库/新图挂接义务见该表 §4。
 - 术语三层：terminology_glossary.yaml（术语）/ functional_domain_registry.yaml（域）/
   module_translation_registry.yaml（模块）——生成器输出经 loader，禁硬编码翻译。
+
+## 9. 运维红线（知识-only——门禁不拦，违反即闷声出事）
+
+1. **数据库访问**：禁裸 `duckdb.connect`/裸 SQL 散落——一律 `DatabaseService`（`zephyr.infrastructure.database_service`）。
+2. **LLM 调用**：所有 LLM API 调用必经 `LSGSecurityGateway`（裸调被 GATE-20+运行时拦截器双捕）。
+3. **永久系统四要素**：自动触发/自动运行/自动维护/自动关闭；reconciler 必须**事件触发**，禁 cron/Timer/sleep-loop。
+4. **.runtime 卫生**：禁向 `.runtime` 根直写——暂存走 `.runtime/sessions/<sid>/staging/`（24h TTL，成果须 promote 到 docs/_working/ 才算交付）；临时脚本/输出走 `.runtime/tmp/`；**项目根目录零临时文件**。
+5. **静态清单禁手工维护**：凡"条目列表+计数"清单必须生成器产出，手工维护必然漂移。
+6. **测试隔离**：测试禁写生产路径（`data/` 业务目录），输出一律 `tmp_path` fixture。
+7. **.ps1 必须纯 ASCII**：PowerShell 5.1 无 BOM 按 GBK 解码，中文注释导致假语法错误。
+8. **提交工具红线**：`[GW:]` 标记不可伪造（POST-COMMIT-GUARD 会 reset 回滚）；禁 plumbing 命令绕过（read-tree/update-index/write-tree）；`emergency_commit` 仅注册表/锁不可用时可用且手写标记判 forged。
+9. **生成器输出 i18n**：中英文标签必经三层翻译 loader（terminology/domain/module），禁硬编码翻译字典。
+10. **文件重命名**：`git mv` 后 commit 前 MUST `generate_project_depgraph.py --force` 重建（RENAME-DEPGRAPH-SYNC gate 硬拦）。
 
 ## 切换程序（本文件转正流程）
 
