@@ -4950,24 +4950,37 @@ capabilities:
   - FrameworkComposer
   - framework_backtest
   - compose_weight_panels
-  description: 整装组合回测器（MOD-FWCOMP-001，二期整装回测）。把整装方案（config/framework_plans.yaml
-    三套预设的子策略资金权重）× 各子策略日频权重面板按资金比例线性合成组合面板（Σw=1 显式归一化
-    纪律与 ablation 同款），复用 DefaultBacktestEngine 跑组合净值，产物 bt-fw-*.json（plan_id 落
-    metrics）。与 MOD-TDMVAL-001 消融算子是姊妹算子（一减一加，禁止合并）。canonical =
-    src/zephyr/pf_core/strategy_engine/framework_composer.py。
+  description: 整装组合回测器（MOD-FWCOMP-001，二期整装回测）。把整装方案（config/framework_plans.yaml 三套预设的子策略资金权重）×
+    各子策略日频权重面板按资金比例线性合成组合面板（Σw=1 显式归一化 纪律与 ablation 同款），复用 DefaultBacktestEngine 跑组合净值，产物
+    bt-fw-*.json（plan_id 落 metrics）。与 MOD-TDMVAL-001 消融算子是姊妹算子（一减一加，禁止合并）。canonical
+    = src/zephyr/pf_core/strategy_engine/framework_composer.py。
 - capability_id: registry_alignment_core
   name: registry_alignment_core
   canonical_file: src/zephyr/gov_enforcement/registry_alignment.py
   module_id: MOD-GATE_ENGINE
   name_zh: 注册表对齐第二层共享校验核心
-  description: 业务/治理/字典类注册表与 depgraph/FK 消费方的横向闭环校验唯一真源（BUSINESS-REGISTRY gate、INDUSTRY-CHAIN-MAP gate、align_all 第五节、pytest 四方同源）
+  description: 业务/治理/字典类注册表与 depgraph/FK 消费方的横向闭环校验唯一真源（BUSINESS-REGISTRY gate、INDUSTRY-CHAIN-MAP
+    gate、align_all 第五节、pytest 四方同源）
 - capability_id: industry_chain_map_gate
   name: industry_chain_map_gate
   canonical_file: src/zephyr/gov_enforcement/commit_gates/industry_chain_map_gate.py
   module_id: MOD-GATE_ENGINE
   name_zh: 产业链全景图 git 侧工件门禁
-  description: 图 8 产业链全景图的字典↔DDL↔引擎三方同 commit 同步硬阻断（priority=141）+ chainmap_cluster_names 词表 sanity
+  description: 图 8 产业链全景图的字典↔DDL↔引擎三方同 commit 同步硬阻断（priority=141）+ chainmap_cluster_names
+    词表 sanity
 creation_tokens:
+- file: src/zephyr/signal_ashare/core/sector_strength_wiring.py
+  token: sole-gw-wiring-layer-20260912
+  created_by: sole-committer-20260911
+  capability: sector_strength_wiring
+- file: docs/03_modules/_domain_signal/sector_strength_wiring/blueprint.md
+  token: sole-gw-wiring144-bp-20260912
+  created_by: sole-committer-20260911
+  capability: sector_strength_wiring
+- file: tests/signal_ashare/test_sector_strength_wiring.py
+  token: sole-gw-wiring-tests-20260912
+  created_by: sole-committer-20260911
+  capability: sector_strength_wiring
 - file: scripts/backtest/replay_drill.py
   token: replay-drill-20260912
   created_by: st-backtest-20260912
@@ -5324,11 +5337,11 @@ creation_tokens:
   token: greatwall-role-map-20260909
   created_by: greatwall-20260909-0020
   capability: industry_graph_quality_engine
-- file: "docs/_working/同花顺资料/被投清单登记_ths_import_2026-09-08.md"
+- file: docs/_working/同花顺资料/被投清单登记_ths_import_2026-09-08.md
   token: ths-invested-ledger-20260908
   created_by: ths-import-20260908
   capability: industry_graph_ths_equity
-- file: "docs/_working/同花顺资料/被投清单登记_ths_import_20260908.md"
+- file: docs/_working/同花顺资料/被投清单登记_ths_import_20260908.md
   token: ths-invested-ledger2-20260908
 - file: src/zephyr/data/implementations/qmt_bridge_provider.py
   token: auto-qmt-bridge-provider-20260909
@@ -11718,7 +11731,6 @@ creation_tokens:
   token: gw-tdm-negveto-test-20260910
   created_by: gw-tdm-20260909
   capability: trading_decision_map
-
 - file: docs/03_modules/_domain_plan_engine/thesis_survival/blueprint.md
   token: gw-tdm-thesis-blueprint-20260910
   created_by: gw-tdm-20260909
@@ -11855,6 +11867,10 @@ creation_tokens:
   token: gate-perf-r1-r4-ruling-20260912
   created_by: st-encfix-20260911
   capability: gate_commit_gw
+- file: scripts/industry_graph/igfact_fill.py
+  token: auto-scaffold-industry_graph_igfact_fill-20260912
+  created_by: workbuddy-session-igfact-fill (scaffold 同格式手工登记, 2026-09-12)
+  capability: industry_graph_igfact_fill
 di_seam_exemptions:
 - module_path: zephyr.trading.auto_runtime_core.AutoRuntimeCore
   reason: P0-5 LSG DI seam 标杆，已有 DI 但 AST 模式不匹配（动态注入）
@@ -13991,8 +14007,6 @@ di_seam_exemptions:
   capability: write_audit_sacl_collector_test
 - file: scripts/governance/enable_write_audit_sacls.ps1
   token: auto-enable-write-audit-sacls-20260827
-  created_by: AI-OWNER-WIRING
-  capability: write_audit_sacl_enabler
   created_by: ths-import-20260908
   capability: industry_graph_ths_equity
 - file: scripts/industry_graph/quality_closeout_governance.py

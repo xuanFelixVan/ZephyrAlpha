@@ -47,4 +47,8 @@
 # A1 --> O1
 """
 
-__all__: list[str] = []
+from zephyr.signal_ashare.core.sector_strength_wiring import (  # noqa: E402  F401
+    wire_from_report,
+)
+
+__all__: list[str] = ["wire_from_report"]
