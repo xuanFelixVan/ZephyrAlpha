@@ -2477,16 +2477,30 @@ class TestRunGitPipeRedirect:
         assert r.stdout == ""
         assert "boom" in r.stderr
 
-    def test_temp_files_cleaned_up(self, tmp_path: Path) -> None:
-        """临时文件 try/finally 必清理——运行前后 TEMP 无 zephyr_gw_git_* 新增残留。"""
-        import tempfile
+    def test_temp_files_cleaned_up(self, tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
+        """临时文件 try/finally 必清理——运行前后无 zephyr_gw_git_* 新增残留。
 
+        封闭沙箱（#ARCH-310 认证战役，2026-09-12）：共享 %TEMP% 下他会话网关进程
+        在途临时文件会污染快照（实测 30 个残留、两方向 flake 实证）——monkeypatch
+        tempfile.mkstemp 重定向到本测试 tmp_path，断言域完全私有；不弱化"泄漏必
+        失败"语义（本进程 run_git 产生的任何残留即红）。
+        """
+        import tempfile as _tf
+
+        sandbox = tmp_path / "gw_tmp"
+        sandbox.mkdir()
+        _real_mkstemp = _tf.mkstemp
+
+        def _sandboxed_mkstemp(*args, **kwargs):
+            kwargs["dir"] = str(sandbox)
+            return _real_mkstemp(*args, **kwargs)
+
+        monkeypatch.setattr(_tf, "mkstemp", _sandboxed_mkstemp)
         gw = self._gw(tmp_path)
-        tmpdir = Path(tempfile.gettempdir())
-        before = set(tmpdir.glob("zephyr_gw_git_*"))
+        before = set(sandbox.glob("zephyr_gw_git_*"))
         r = gw.run_git([sys.executable, "-c", "print('cleanup')"])
         assert r.returncode == 0
-        after = set(tmpdir.glob("zephyr_gw_git_*"))
+        after = set(sandbox.glob("zephyr_gw_git_*"))
         assert after == before, f"临时文件未清理: {sorted(after - before)}"
 
 
