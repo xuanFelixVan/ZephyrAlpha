@@ -2426,9 +2426,8 @@ _CM_NAME_OVERRIDE: dict[str, Any] = {"mtime": None, "map": {}}
 
 _CM_EQUITY_ROWS_CAP = 8   # 环节股权徽章明细行上限（计数 out/inn 如实给全量，明细 hover 浮层展示前 N）
 
-# tier 三值直读（v1.9 字段升级 Owner 2026-09-09 裁定：tier 收敛 上游/中游/下游，职能语义拆
-# function_role 八值词表——旧九值混职能分列废止；库内实测 tier 无旧值残留，未知/空一律落"通用"）
-_CM_COL_ORDER = ["上游", "中游", "下游", "通用"]
+# 2026-09-12 tier 退役终章：列=链内拓扑层号 L1..Ln（_cm_chain_cols 从 ig_edge 结构推导），
+# 散点/环/存量兜底一律"未分层"——不再出现 上游/中游/下游/通用 字样（tier 字段停止人工填写）。
 # function_role 八值（深交所课题词表）→ 列内分组展示序：按产业链流向 原料→辅材→设备→辅设→工艺→产品→服务→渠道
 _CM_FR_ORDER = ["生产原料", "辅助材料", "生产设备", "辅助设备", "加工工艺", "产品业务", "技术服务", "销售渠道"]
 
@@ -2457,24 +2456,20 @@ def _cm_name_override() -> dict[str, str]:
 
 
 def _cm_col(tier: str | None) -> str:
-    """tier 三值直读（上游/中游/下游）；空/unspecified/未知值落"通用"（禁编造列）。
-
-    2026-09-12 tier 退役：仅作存量 fallback（拓扑分层失败时的历史值兜底），
-    cluster 主视图列改由 _cm_chain_cols 拓扑推导（本函数保留防其它调用点回归）。"""
-    t = (tier or "").strip()
-    return t if t in ("上游", "中游", "下游") else "通用"
+    """col 展示值中性化（2026-09-12 tier 退役终章）：不再输出 上游/中游/下游 字样，
+    一律落"未分层"（tier 已停止人工填写，层位由 _cm_chain_cols 拓扑推导为 L1..Ln）。"""
+    return "未分层"
 
 
 def _cm_chain_cols(nodes: list[tuple[str, str]], edges: list[tuple[str, str]]) -> dict[str, str]:
-    """链内拓扑分层 → 三列映射（2026-09-12 tier 退役裁定：层位由边结构派生，不读人工标注）。
+    """链内拓扑分层 → 层号列（2026-09-12 tier 退役裁定：层位由边结构派生，不读人工标注）。
 
-    Kahn 剥洋葱：入度0=第0层（源头→"上游"列），逐层推进，最末层→"下游"列，中间层→"中游"列。
-    分层失败（链内成环）或零内部边的散点节点 → fallback 存量 tier 值（无则"通用"）。
-    nodes=[(node_id, tier)]，edges=[(from,to)]（调用方保证两端属同链）。
+    Kahn 剥洋葱：入度0=第1层（列头 L1），逐层推进 L2/L3/...（真实推导层数，不再压缩成三段）。
+    分层失败（链内成环）或零内部边的散点节点 → "未分层"（不显示任何层级字样）。
+    nodes=[(node_id, tier)]（tier 参数仅为签名兼容，已不再消费），edges=[(from,to)]。
     """
-    tiers = {nid: t for nid, t in nodes}
-    fallback = {nid: _cm_col(t) for nid, t in nodes}
-    ids = set(fallback)
+    ids = {nid for nid, _t in nodes}
+    fallback = {nid: "未分层" for nid in ids}
     indeg = {nid: 0 for nid in ids}
     outdeg = {nid: 0 for nid in ids}
     adj: dict[str, list[str]] = {nid: [] for nid in ids}
@@ -2489,7 +2484,7 @@ def _cm_chain_cols(nodes: list[tuple[str, str]], edges: list[tuple[str, str]]) -
         return fallback
     layer = {nid: 0 for nid in ids if indeg[nid] == 0}
     frontier = [nid for nid, d in indeg.items() if d == 0]
-    if not frontier:          # 全部入度>=1 → 链内成环，整体 fallback 存量 tier
+    if not frontier:          # 全部入度>=1 → 链内成环，整体 fallback
         return fallback
     seen = set(frontier)
     depth = 0
@@ -2504,19 +2499,12 @@ def _cm_chain_cols(nodes: list[tuple[str, str]], edges: list[tuple[str, str]]) -
                     seen.add(v)
                     nxt.append(v)
         frontier = nxt
-    max_layer = max(layer.values())
     out: dict[str, str] = {}
     for nid in ids:
         if nid not in seen or (indeg[nid] == 0 and outdeg[nid] == 0):
-            out[nid] = fallback[nid]                 # 环上节点/链内零边散点 → 存量兜底
-        elif max_layer == 0:                          # 无内部边可达推进（退化）→ 兜底
-            out[nid] = fallback[nid]
-        elif layer[nid] == 0:
-            out[nid] = "上游"
-        elif layer[nid] == max_layer:
-            out[nid] = "下游"
+            out[nid] = fallback[nid]                 # 环上节点/链内零边散点 → 未分层
         else:
-            out[nid] = "中游"
+            out[nid] = f"L{layer[nid] + 1}"          # 拓扑层号（L1=源头层，依次向下游）
     return out
 
 

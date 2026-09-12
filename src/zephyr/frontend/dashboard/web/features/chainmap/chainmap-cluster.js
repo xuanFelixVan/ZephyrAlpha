@@ -1,7 +1,8 @@
-/* ── 产业地图 L2 链层（族内产业链上中下游列式）· 真源 /api/chainmap-cluster + /api/chainmap-node ──
+/* ── 产业地图 L2 链层（族内产业链拓扑层号列式）· 真源 /api/chainmap-cluster + /api/chainmap-node ──
  * 分治渲染（2026-09-08 实景验收修正）：簇内 ≤RAIL_MIN 链=整族列式（链 chip 分组）；>RAIL_MIN 链=聚焦模式
- * （单链列式+左侧链选轨，146 链全画=细柱不可读）。分列=tier 三值直读 上游→中游→下游→通用（项2 适配：
- * tier 九值→三值后职能语义拆 function_role，环节卡带职能徽章，列内按职能分组聚集，后端排好序前端直用）；
+ * （单链列式+左侧链选轨，146 链全画=细柱不可读）。分列=链内拓扑层号 L1..Ln（2026-09-12 tier 退役：
+ * API _cm_chain_cols 由 ig_edge 结构 Kahn 剥洋葱推导，散点/环=未分层；不再出现 上游/中游/下游 字样；
+ * 职能语义=function_role 徽章，列内按职能分组聚集，后端排好序前端直用）；
  * ig_edge 结构边=SVG 贝塞尔（仅跨列，同列边不画防搅线）。点环节→右侧公司面板。
  * 跨链徽章/公司详情卡完整版=二期（Owner 2026-09-08 MVP 边界）。验收单：ACC-F-CHAINMAP-CLUSTER
  * 剩余批（2026-09-10）：股权徽章（F-CHAINMAP-EQUITY-BADGE，cluster 响应 per-node equity 聚合，
@@ -11,17 +12,17 @@
  * / ACC-F-CHAINMAP-CATALYST */
 (function () {
   'use strict';
-  var COLS = ['上游', '中游', '下游', '通用'];
+  var COLS = [];   /* 2026-09-12 tier 退役：列头动态化——col 值=链内拓扑层号 L1..Ln（API _cm_chain_cols 推导），散点/环=未分层；不再出现 上游/中游/下游 字样 */
   /* function_role 八值徽章缩写（深交所词表；hover tooltip 显全称；空值不渲染） */
   var FR_SHORT = { '生产原料': '原料', '辅助材料': '辅材', '生产设备': '设备', '辅助设备': '辅设',
                    '加工工艺': '工艺', '产品业务': '产品', '技术服务': '服务', '销售渠道': '渠道' };
   var COLW = 252, NODEW = 230, NODEH = 56, CHIPH = 24, PADX = 36, PADTOP = 52, RAIL_MIN = 8;
   /* B4 甬道化（Owner 2026-09-10 裁定"参考交易决策全景效果"）：环节卡升 TDM 双行卡
    * （行1=环节名 600 加粗、行2=职能/股权徽章+公司数灰字），列头 tag+环节计数，
-   * 连线沿用 TDM 同款贝塞尔灰蓝（#2c3a52）。列序=上中下游左→右不变。
+   * 连线沿用 TDM 同款贝塞尔灰蓝（#2c3a52）。列序=拓扑层号 L1..Ln 左→右（源头层在左）。
    * B4r4（Owner 2026-09-11 截图反馈 字遮挡+无自动排序）：①显示名剥离"（已并入 ND-xxx…）"
    * 墓碑后缀（title 保留全名），长 hash 名不再撑爆卡片；②列内节点重心法拓扑排序
-   * （barycentric 两轮迭代）——纵向位置对齐跨列邻边对端，上下游流向连线顺读不乱穿。 */
+   * （barycentric 两轮迭代）——纵向位置对齐跨列邻边对端，流向连线顺读不乱穿。 */
   var C = { cid: null, name: '', data: null, busy: false, view: { z: 1, x: 0, y: 0 },
             pos: {}, focusChain: null, focusChainName: null, focusNode: null, market: 'all', cat: null,
             focusOff: false, autoFocused: false };
@@ -110,8 +111,14 @@
     view.chains.forEach(function (ch) {
       ch.nodes.forEach(function (n) { if (!colSet[n.col]) colSet[n.col] = true; });
     });
-    var cols = COLS.filter(function (c) { return colSet[c]; });
-    if (!cols.length) cols = ['通用'];
+    var cols = Object.keys(colSet).sort(function (a, b) {   /* 层号 L1..Ln 升序,未分层殿后 */
+      var na = /^L(\d+)$/.exec(a), nb = /^L(\d+)$/.exec(b);
+      if (na && nb) return (+na[1]) - (+nb[1]);
+      if (na) return -1;
+      if (nb) return 1;
+      return 0;
+    });
+    if (!cols.length) cols = ['未分层'];
     var y0 = view.padTop || PADTOP;
     /* 每列链分组初排（后端序=公司数降序），组内保持链内原序；B4r4 列内再做重心法拓扑排序 */
     var colGroups = {};
@@ -147,7 +154,7 @@
     cols.forEach(function (c, i) { colIdx[c] = i; });
     cols.forEach(restack);   /* 初排 */
     /* B4r4 重心法拓扑排序：两轮迭代，每列组序按邻边对端平均 y 重排（链粒度，chip 不离散）；
-     * 无跨列边的组保持原位。效果=上下游流向连线顺读，不交叉乱穿（Owner"没有自动排序"反馈） */
+     * 无跨列边的组保持原位。效果=流向连线顺读，不交叉乱穿（Owner"没有自动排序"反馈） */
     for (var round = 0; round < 2; round++) {
       cols.forEach(function (col) {
         colGroups[col].forEach(function (g) {
