@@ -1,3 +1,5 @@
+# [BLUEPRINT] MOD-SIG-038 | (auto-injected by S4 reconciler) | §
+# [TTL] permanent
 """MOD-SIG-138 environment_switch 单元测试（长城夜班 night-gw-2300，Owner 立项）。
 
 红蓝手法覆盖：红-边界（未知状态/负值/NaN/8000 阈值边界）/红-契约（六段封闭集）

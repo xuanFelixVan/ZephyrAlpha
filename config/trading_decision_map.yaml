@@ -460,6 +460,7 @@ nodes:
   - node_id: TDM-E-L2-01
     note_confirmed: 2026-09-12
     name_zh: 板块强度综合
+    note_confirmed: 2026-09-12
     market: cn_a
     flow: entry_flow
     layer: L2
@@ -467,8 +468,7 @@ nodes:
     point: 盘后
     decision_question: 各板块今天整体强不强、强到值得进候选池吗
     algo_note_zh: >-
-      四路合分：结构强度（子1）+动量活跃（子2）+多周期动量（子3）+资金流（子4），再加市场级调节（子5）。
-      总分进前 15% 的板块进候选池。
+    algo_note_zh: 四路子分（结构强度/动量活跃/多周期动量/资金流，各 0-100）等权 0.25 合成，加市场级调节 ±10 后 clamp [0,100]，总分前 15% 进候选池；实现锚=sector_strength_aggregator（MOD-SIG-142，纯函数零 IO，等权先验待 IC 重校）。
     parent_node: TDM-E-L2
     factor_refs: []
     data_refs: [DS-059, DS-170]
@@ -736,6 +736,7 @@ nodes:
   - node_id: TDM-E-L2-04
     note_confirmed: 2026-09-12
     name_zh: 板块级市场状态
+    note_confirmed: 2026-09-12
     market: cn_a
     flow: entry_flow
     layer: L2
@@ -743,7 +744,7 @@ nodes:
     point: 盘后
     decision_question: 今天板块间分布结构是高潮/主线/分歧/派发/混沌哪种
     algo_note_zh: >-
-      看全市场板块分布结构定当日生态：主线清晰（1-2 个板块吸走 30%+成交额）=聚焦做；高潮（涨停潮遍地）=第二天大概率分歧；混沌（无主线）=降仓等待。
+    algo_note_zh: 三态封闭判定（优先级 高潮>主线清晰>混沌）：高潮分≥90=次日分歧警示；梯队连击≥2 且 Top2 集中度≥30%=主线清晰聚焦做；其余混沌降仓等待；实现锚=sector_ecology_judge（MOD-SIG-143，纯函数零 IO，阈值全取自既有文档口径）。
     parent_node: TDM-E-L2
     factor_refs: []
     data_refs: [DS-059, DS-170]

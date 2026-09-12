@@ -1,3 +1,5 @@
+# [BLUEPRINT] MOD-SIG-038 | (auto-injected by S4 reconciler) | §
+# [TTL] permanent
 """MOD-SIG-139 pool_tier_maintenance 单元测试（长城夜班 night-gw-2300，Owner 立项）。
 
 红蓝手法覆盖：红-边界（空池/空达标集/档位端点/连击边界 2/5/10）/红-契约（重复条目

@@ -1,3 +1,5 @@
+# [BLUEPRINT] MOD-PLAN-001 | (auto-injected by S4 reconciler) | §
+# [TTL] permanent
 """MOD-PLAN-025 intraday_tomorrow_forecast 单元测试（C13，night-gw-2300）。
 
 红蓝对抗手法覆盖（长城指令 §4）：
