@@ -1,17 +1,18 @@
 # [BLUEPRINT] MOD-GATE_ENGINE | docs/03_modules/_cross_layer/gate_engine/blueprint.md | §business_registry_gate
 # [MODULE] zephyr.gov_enforcement.commit_gates.business_registry_gate
 # [DOMAIN] D_GOV_CODE_QUALITY
-# [DEPENDENCIES] yaml（外部）；fnmatch/pathlib（stdlib）；depgraph（PG 只读查询，fail-open）
-# [CONSUMERS] zephyr.gov_enforcement.rule_bridge.git_commit_gateway.GitCommitGateway.__init__（经 in_process_gate_registry.yaml 自动注册）
+# [DEPENDENCIES] zephyr.gov_enforcement.registry_alignment（共享校验核心）；depgraph（PG 只读查询，fail-open）
+# [CONSUMERS] zephyr.gov_enforcement.rule_bridge.git_commit_gateway.GitCommitGateway.__init__（经 in_process_gate_registry.yaml 自动注册）；tests/governance/test_alignment_gates_red_blue.py
 # [STARTUP] imported
 # [MATURITY] testing
-# [INVARIANTS] 硬阻断（确定性校验）——6 业务库（strategy/factor/technical_indicator/chart_pattern/portfolio_model/risk_limit）staged 变更时：①条目 id 重复→阻断 ②条目 module_id 缺失→阻断（对齐清单 §4.1"必须登记 depgraph"，2026-09-05 起"待建"转正式）③module_id 非 MOD-* 格式→阻断 ④module_id 在 depgraph 不存在→阻断（PG 查询，fail-open：DB 不可用跳过该子检查并 warn）；空库（0 条目）放行；文件级整库校验（基线 100% module_id 已实证：149+161+41）
-# [MODIFY-GUARD] gate_id="BUSINESS-REGISTRY"；_REGISTRY_SPECS 段名/键名变更须同步对应注册表 schema
+# [INVARIANTS] 硬阻断（确定性校验）——19 文件/21 段业务资产库全量（2026-09-11 满贯扩容，原 6 库→全量，REGISTRY_SPECS 真源移交 registry_alignment.py）staged 变更时：①条目 id 重复→阻断 ②条目 module_id 缺失→阻断 ③module_id 非 MOD-* 格式→阻断 ④module_id 在 depgraph 不存在→阻断（blueprint_id 口径，PG fail-open；2026-09-11 治本原 nodes.module_id 列不存在致子检查恒 fail-open 从未生效）；空库（0 条目）放行；文件级整库校验（基线 1463 条目填充率+格式 100% 已实证）
+# [MODIFY-GUARD] gate_id="BUSINESS-REGISTRY"；REGISTRY_SPECS 段名/键名变更须同步对应注册表 schema（真源=registry_alignment.py）
 # [STABILITY] evolving
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] YAML 解析异常=fail-closed（库损坏须先修）；PG 异常=fail-open（跳过 depgraph 存在性子检查，logger.warning）
 # [TESTS] tests/governance/test_alignment_gates_red_blue.py
+# [TESTS-ALT] tests/governance/test_registry_alignment_layer2.py（同 gate 第二测试文件；[TESTS] 头仅支持单路径故以此行补记）
 # [A_module] module_id=MOD-GATE_ENGINE | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 # [ARCH-REF] #ARCH-BUSINESS-REG-GATE-001
@@ -20,12 +21,23 @@
 
 病根（第一性原理）
 -----------------
-alignment_checklist.md §4.1 六个业务资产库的对齐工具一栏全部是"门禁（待建）"——
-新策略/因子/指标注册时**没有任何门禁强制**挂 depgraph（module_id）。血肉填充阶段会
-批量入库新条目，缺 module_id 的条目=地图上查不到实现的幽灵资产，且无机制发现。
-本 gate 把"入库必须带 depgraph 锚点"从君子协定升为 commit 硬阻断（2026-09-05 起
-"待建"转正式；基线 module_id 填充率 100% 已实证：strategy 149/149、factor 161/161、
-indicator 41/41，三空库 0 条目——硬门禁基线安全）。
+alignment_checklist.md §4.1 业务资产库的对齐工具一栏原为"门禁（待建）"——
+新策略/因子/指标注册时**没有任何门禁强制**挂 depgraph（module_id）。本 gate 把
+"入库必须带 depgraph 锚点"从君子协定升为 commit 硬阻断（2026-09-05 六库转正式；
+2026-09-11 满贯扩容至 19 文件/21 段全量，基线 1463 条目 100% 实证后纳入）。
+
+2026-09-11 两项治本：
+1. **SQL 列名 bug**：depgraph nodes 表无 module_id 列（真名 blueprint_id）——
+   存在性子检查自上线起恒 fail-open 从未生效；修正后首轮即抓出 11 条幽灵锚点
+   （MOD-FACTOR/MOD-STRATEGY 等域级占位），已批量正名到真实域蓝图 ID。
+2. **共享化**：校验逻辑真源移交 zephyr.gov_enforcement.registry_alignment
+   （gate/align_all/pytest 三方同源，防双真源漂移）；本文件保留 commit 专属
+   逻辑（staged diff 提取新增条目 + BM 锚点强制）。
+
+Usage::
+
+    from zephyr.gov_enforcement.commit_gates.business_registry_gate import make_business_registry_gate
+    registry.register(make_business_registry_gate())
 
 设计权衡
 --------
@@ -88,77 +100,29 @@ Usage::
 from __future__ import annotations
 
 import logging
-from dataclasses import dataclass
+import re
 from pathlib import Path
 from typing import Final
 
 import yaml
 
+from zephyr.gov_enforcement.registry_alignment import (
+    CATALOGS_DIR as _CATALOGS_DIR,
+    REGISTRY_SPECS,
+    RegistrySpec,
+    query_one as _query_one,
+    validate_registry_file,
+)
 from zephyr.gov_enforcement.rule_bridge.commit_gate_registry import GateSpec
 
 logger = logging.getLogger(__name__)
 
 __all__: Final = ["make_business_registry_gate", "validate_registry_file", "REGISTRY_SPECS"]
 
-_REPO_ROOT = Path(__file__).resolve().parents[4]
-_CATALOGS_DIR = _REPO_ROOT / "docs" / "01_policies_and_standards" / "_registry" / "catalogs"
-
 # SQL 常量（NO-BARE-SQL 豁免命名约定 _SQL_*，先例=rename_depgraph_sync_gate._SQL_CHECK_FILE_PATH）
-_SQL_CHECK_MODULE_ID = "SELECT 1 FROM nodes WHERE module_id = %s LIMIT 1"
-_SQL_GET_BUILD_STATUS = "SELECT build_status FROM nodes WHERE module_id = %s LIMIT 1"
+# 2026-09-11 治本：nodes 表真名为 blueprint_id（原 module_id 列不存在）
+_SQL_GET_BUILD_STATUS = "SELECT build_status FROM nodes WHERE blueprint_id = %s LIMIT 1"
 _SQL_CHECK_BM_ANCHOR = "SELECT 1 FROM battle_map_anchors WHERE target_graph = 'depgraph' AND target_id = %s LIMIT 1"
-
-
-@dataclass(frozen=True)
-class RegistrySpec:
-    """单库校验规格（段名/id 键/显示名）。"""
-
-    filename: str
-    section: str
-    id_key: str
-    display: str
-
-
-REGISTRY_SPECS: tuple[RegistrySpec, ...] = (
-    RegistrySpec("strategy_registry.yaml", "strategies", "strategy_id", "策略库"),
-    RegistrySpec("factor_registry.yaml", "factors", "factor_id", "因子库"),
-    RegistrySpec("technical_indicator_registry.yaml", "indicators", "indicator_id", "技术指标库"),
-    RegistrySpec("chart_pattern_registry.yaml", "chart_patterns", "pattern_id", "图形形态库"),
-    RegistrySpec("portfolio_model_registry.yaml", "portfolio_models", "model_id", "组合模型库"),
-    RegistrySpec("risk_limit_registry.yaml", "risk_limits", "risk_limit_id", "风控限额库"),
-)
-
-
-def validate_registry_file(path: Path, spec: RegistrySpec) -> list[str]:
-    """整库确定性校验：id 唯一 + module_id 非空且 MOD-* 前缀。
-
-    Returns:
-        fails 列表（空=通过）。YAML 解析异常向上抛（gate fail-closed）。
-    """
-    raw = yaml.safe_load(Path(path).read_text(encoding="utf-8")) or {}
-    entries = raw.get(spec.section) or []
-    fails: list[str] = []
-    seen: dict[str, int] = {}
-    for idx, e in enumerate(entries):
-        if not isinstance(e, dict):
-            fails.append(f"{spec.filename}[{idx}] 条目非映射")
-            continue
-        eid = str(e.get(spec.id_key) or "")
-        if not eid:
-            fails.append(f"{spec.filename}[{idx}] 缺 {spec.id_key}")
-            continue
-        if eid in seen:
-            fails.append(f"{spec.filename} {spec.id_key} 重复: {eid}（首见 [{seen[eid]}]）")
-        seen[eid] = idx
-        mid = e.get("module_id")
-        if not mid:
-            fails.append(
-                f"{spec.filename} {eid} 缺 module_id（业务库入库必须挂 depgraph 锚点，"
-                "alignment_checklist §4.1——2026-09-05 起强制）"
-            )
-        elif not str(mid).startswith("MOD-"):
-            fails.append(f"{spec.filename} {eid} module_id 非 MOD-* 格式: {mid}")
-    return fails
 
 
 def _added_entry_ids(rel_path: str, id_key: str) -> list[str]:
@@ -166,7 +130,6 @@ def _added_entry_ids(rel_path: str, id_key: str) -> list[str]:
 
     git 不可用/无 diff → 返回空列表（fail-open）。
     """
-    import re
     import subprocess
 
     try:
@@ -183,30 +146,11 @@ def _added_entry_ids(rel_path: str, id_key: str) -> list[str]:
     return [m.group(1) for line in out.splitlines() for m in [pat.match(line)] if m]
 
 
-def _query_one(query: str, param: str) -> tuple[bool, str | None]:
-    """PG 单值查询（fail-open：异常返回 (True, None)=跳过子检查）。返回 (skip, value)。"""
-    try:
-        from zephyr.governance.depgraph_schema import get_depgraph_pg_connection
-
-        conn = get_depgraph_pg_connection()
-        try:
-            with conn.cursor() as cur:
-                cur.execute(query, (param,))
-                row = cur.fetchone()
-        finally:
-            conn.close()
-        return False, (row[0] if row else None)
-    except Exception as e:  # noqa: BLE001 — DB 不可用=fail-open（对标 NEW-FILE-DEPGRAPH gate）
-        logger.warning("BUSINESS-REGISTRY gate: PG 查询失败，跳过子检查（fail-open）: %s", e)
-        return True, None
-
-
 def _module_exists_in_depgraph(module_id: str) -> bool:
-    """depgraph 只读存在性查询（fail-open：异常时返回 True=跳过子检查）。"""
-    skip, row = _query_one(_SQL_CHECK_MODULE_ID, module_id)
-    if skip:
-        return True
-    return row is not None
+    """depgraph 存在性（blueprint_id 口径；共享实现，fail-open=True 跳过）。"""
+    from zephyr.gov_enforcement.registry_alignment import module_exists_in_depgraph
+
+    return module_exists_in_depgraph(module_id)
 
 
 def make_business_registry_gate() -> GateSpec:
@@ -235,15 +179,24 @@ def make_business_registry_gate() -> GateSpec:
                 return False, f"BUSINESS-REGISTRY: {spec.filename} 解析异常（库损坏须先修）: {e}"
             all_fails.extend(f"【{spec.display}】{x}" for x in fails)
 
-            # depgraph 存在性（fail-open 子检查）
+            # depgraph 存在性（fail-open 子检查；在途豁免=他会话 staged 未提交实现
+            # 文件的锚点，commit 后 reconciler 自动登记——防误伤并行 WIP）
             try:
+                from zephyr.gov_enforcement.registry_alignment import (
+                    _norm_mid,
+                    in_flight_module_ids,
+                    missing_depgraph_module_ids,
+                )
+
                 raw = yaml.safe_load(path.read_text(encoding="utf-8")) or {}
                 mids = {
                     str(e.get("module_id"))
                     for e in (raw.get(spec.section) or [])
                     if isinstance(e, dict) and e.get("module_id")
                 }
-                missing = sorted(m for m in mids if not _module_exists_in_depgraph(m))
+                in_flight = {_norm_mid(x) for x in in_flight_module_ids()}
+                missing_set, _db_ok = missing_depgraph_module_ids(mids)
+                missing = sorted(m for m in missing_set if _norm_mid(m) not in in_flight)
                 all_fails.extend(f"【{spec.display}】module_id 在 depgraph 不存在: {m}" for m in missing)
             except Exception as e:  # noqa: BLE001 — 存在性子检查失败不阻断（格式校验已覆盖）
                 logger.warning("BUSINESS-REGISTRY gate: depgraph 子检查跳过: %s", e)

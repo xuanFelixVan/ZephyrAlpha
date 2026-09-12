@@ -1497,6 +1497,16 @@ def _cmd_enqueue(args: argparse.Namespace) -> int:
             print(f"ERROR: message-file 读取失败: {exc}", file=sys.stderr)
             return 1
     files_arg = [f.strip() for f in (args.files or "").split(",") if f.strip()]
+    if args.files_file:
+        try:
+            # --files-file：一行一路径（UTF-8）；逗号分隔无法承载含逗号文件名（2026-09-13 C4 数据批发现）
+            for line in Path(args.files_file).read_text(encoding="utf-8").splitlines():
+                line = line.strip()
+                if line and not line.startswith("#"):
+                    files_arg.append(line)
+        except OSError as exc:
+            print(f"ERROR: files-file 读取失败: {exc}", file=sys.stderr)
+            return 1
     if not files_arg:
         print("DENIED: 空文件清单拒绝入队（--files 必填）", file=sys.stderr)
         return 2
@@ -1659,7 +1669,8 @@ def main(argv: list[str] | None = None) -> int:
 
     p_enq = sub.add_parser("enqueue", help="快照入队即返回（入袋即完成）")
     p_enq.add_argument("--session", required=True, help="生产者会话 ID（[A-Za-z0-9._-] ≤64）")
-    p_enq.add_argument("--files", required=True, help="仓内相对路径逗号分隔（正斜杠）")
+    p_enq.add_argument("--files", required=False, help="仓内相对路径逗号分隔（正斜杠）")
+    p_enq.add_argument("--files-file", default=None, help="文件清单文件（UTF-8，一行一路径；文件名含逗号时用，与 --files 二选一同时给出则合并）")
     p_enq.add_argument("--message", default=None, help="commit message（内联）")
     p_enq.add_argument("--message-file", default=None, help="commit message 文件（UTF-8，中文推荐）")
     p_enq.add_argument("--worktree-root", default=None, help="工作区根（默认 cwd）")

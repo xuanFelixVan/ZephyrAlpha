@@ -1,3 +1,5 @@
+# [BLUEPRINT] MOD-GOV_ALGO_EXTRACTOR | (auto-injected by S4 reconciler) | §
+# [TTL] permanent
 # -*- coding: utf-8 -*-
 # [MODULE] scripts.governance._shared.registry_batch_edit
 # [TTL] permanent

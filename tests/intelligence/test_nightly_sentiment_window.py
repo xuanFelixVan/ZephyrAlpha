@@ -1,3 +1,5 @@
+# [BLUEPRINT] MOD-INF-049 | (auto-injected by S4 reconciler) | §
+# [TTL] permanent
 """NightlySentimentWindow（MOD-INT-NEWS-NIGHT，92号 §8.4 M3-② / tracker #138）单元测试。
 
 覆盖：
