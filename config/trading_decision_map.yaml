@@ -1522,7 +1522,7 @@ nodes:
     strategy_mounts: []
 
   - node_id: TDM-E-L3-08
-    note_confirmed: 2026-09-11
+    note_confirmed: 2026-09-12
     name_zh: 候选池输出
     module_id: MOD-SIG-142
     market: cn_a

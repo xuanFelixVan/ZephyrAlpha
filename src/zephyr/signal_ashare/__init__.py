@@ -143,3 +143,8 @@ from zephyr.signal_ashare.strength_ic_data_assembler import assemble_ic_window  
 # ORPHAN-MODULE: 引用登记（gw-tdm-20260909：C1 五档水温合成核 + C5 强度传导系数）
 from zephyr.signal_ashare.core.daily_condition_sensor import evaluate_daily_condition  # noqa: F401
 from zephyr.signal_ashare.core.sector_conduction import apply_strength_conduction  # noqa: F401
+from zephyr.signal_ashare.core.candidate_pool_aggregator import aggregate_candidate_pool  # noqa: F401  L3-08 汇总件门面接线（满贯批接手批）
+from zephyr.signal_ashare.core.environment_switch import evaluate_environment_switches  # noqa: F401  L3-09 门面接线
+from zephyr.signal_ashare.core.pool_tier_maintenance import update_pool_tiers  # noqa: F401  L3-09 门面接线
+from zephyr.signal_ashare.core.sector_ecology_judge import judge_sector_ecology  # noqa: F401  TDM-E-L2-04 门面接线（满贯批接手批）
+from zephyr.signal_ashare.core.sector_strength_aggregator import aggregate_sector_strength  # noqa: F401  TDM-E-L2-09 族门面接线（满贯批接手批）
