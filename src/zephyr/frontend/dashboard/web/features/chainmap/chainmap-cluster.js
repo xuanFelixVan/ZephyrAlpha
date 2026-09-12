@@ -124,6 +124,13 @@
     return disp || name;
   }
 
+  /* 兜底占位节点显示名（Owner 2026-09-13："不应该有行业聚合"）——ig_node 有 96 链各一
+   * 的"行业聚合"兜底节点（承载未细分到环节的公司落位，0 边），数据侧治理前显示层先
+   * 诚实化为"未细分环节"；真名保留在 title 悬停 */
+  function nodeLabel(name) {
+    return name === '行业聚合' ? '未细分环节' : name;
+  }
+
   function nameLines(t) {
     if (t.length <= 6) return [t];
     var i = t.indexOf('（');
@@ -279,6 +286,7 @@
         '" font-weight="700" fill="' + c[4] + '">' + esc(l) + '</text>';
     }).join('');
     return '<g class="cm-nd' + (variant === 'empty' ? ' empty0' : '') + '" data-node="' + node.node_id + '">' +
+      '<title>' + esc(node.name) + '</title>' +
       '<polygon class="cube-top" points="' + cx + ',' + (cy - hh) + ' ' + (cx + hw) + ',' + cy + ' ' + cx + ',' + (cy + hh) + ' ' + (cx - hw) + ',' + cy +
       '" fill="' + c[0] + '" stroke="' + c[3] + '" stroke-width="' + sw + '"' + dash + '/>' +
       '<polygon points="' + (cx - hw) + ',' + cy + ' ' + cx + ',' + (cy + hh) + ' ' + cx + ',' + (cy + hh + dp) + ' ' + (cx - hw) + ',' + (cy + dp) +
@@ -345,7 +353,7 @@
           anchorBlock = b;
           var an = nodeNameOf(view, b.anchorId);
           g += '<rect x="' + (ox + b.x) + '" y="' + by + '" width="' + b.bw + '" height="' + b.bh + '" rx="10" fill="' + T.anchorPlate[0] + '" stroke="' + T.anchorPlate[1] + '"/>' +
-            '<text x="' + (ox + b.x + ZPAD) + '" y="' + (by + 17) + '" font-size="12" font-weight="700" fill="' + T.anchorPlate[2] + '">锚点 · ' + esc(an ? dispName(ch.name, an.name) : '') + '</text>';
+            '<text x="' + (ox + b.x + ZPAD) + '" y="' + (by + 17) + '" font-size="12" font-weight="700" fill="' + T.anchorPlate[2] + '">锚点 · ' + esc(an ? nodeLabel(dispName(ch.name, an.name)) : '') + '</text>';
         }
       });
       ch._edges.forEach(function (e) {
@@ -362,7 +370,7 @@
         if (!p) return;
         var isAnchorTwin = lay.twins.some(function (t) { return t.node_id === n.node_id; });
         var isAnchor = n.node_id === lay.anchorId;
-        var disp = dispName(ch.name, n.name);
+        var disp = nodeLabel(dispName(ch.name, n.name));
         var variant = isAnchor ? 'anchor' : (isAnchorTwin ? 'anchorTwin' : (n.name.indexOf('（全球）') > 0 ? 'global' : (n.n_companies > 0 ? 'normal' : 'empty')));
         g += cubeSvg(p.x, p.y, n, variant, lay.indeg[n.node_id] || 0, disp);
         g += eqBadgeSvg(p.x, p.y, n);
@@ -718,7 +726,7 @@
           }
           side.innerHTML =
             '<span class="cm-x" title="关闭">✕</span>' + ben +
-            '<div class="cm-sd-t">' + d.node.name + '</div>' +
+            '<div class="cm-sd-t" title="' + d.node.name + '">' + nodeLabel(d.node.name) + '</div>' +
             '<div class="cm-sd-s">' + d.node.chain_name +
             (d.node.function_role ? ' · ' + d.node.function_role : '') +
             ' ｜ 公司 ' + d.total + ' 家（按角色/置信度排序，最多展示 200）</div>' +
