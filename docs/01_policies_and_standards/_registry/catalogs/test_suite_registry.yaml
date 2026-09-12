@@ -471,11 +471,11 @@ items:
   name: test_ab_test.py
   node_type: test
   status: active
-- file: tests/audit/test_absence_manager.py
+- file: tests/audit/quality_static/test_absence_manager.py
   name: test_absence_manager.py
   node_type: test
   status: active
-- file: tests/audit/test_amplification_guard.py
+- file: tests/audit/ops_resilience/test_amplification_guard.py
   name: test_amplification_guard.py
   node_type: test
   status: active
@@ -483,179 +483,179 @@ items:
   name: test_api_dependency_metrics.py
   node_type: test
   status: active
-- file: tests/audit/test_architecture_contracts.py
+- file: tests/audit/quality_static/test_architecture_contracts.py
   name: test_architecture_contracts.py
   node_type: test
   status: active
-- file: tests/audit/test_architecture_principles.py
+- file: tests/audit/quality_static/test_architecture_principles.py
   name: test_architecture_principles.py
   node_type: test
   status: active
-- file: tests/audit/test_audit_anomaly.py
+- file: tests/audit/audit_core/test_audit_anomaly.py
   name: test_audit_anomaly.py
   node_type: test
   status: active
-- file: tests/audit/test_audit_api_lifecycle.py
+- file: tests/audit/audit_core/test_audit_api_lifecycle.py
   name: test_audit_api_lifecycle.py
   node_type: test
   status: active
-- file: tests/audit/test_audit_bridge.py
+- file: tests/audit/audit_core/test_audit_bridge.py
   name: test_audit_bridge.py
   node_type: test
   status: active
-- file: tests/audit/test_audit_chain_verifier.py
+- file: tests/audit/audit_core/test_audit_chain_verifier.py
   name: test_audit_chain_verifier.py
   node_type: test
   status: active
-- file: tests/audit/test_audit_cli.py
+- file: tests/audit/audit_core/test_audit_cli.py
   name: test_audit_cli.py
   node_type: test
   status: active
-- file: tests/audit/test_audit_contracts.py
+- file: tests/audit/audit_core/test_audit_contracts.py
   name: test_audit_contracts.py
   node_type: test
   status: active
-- file: tests/audit/test_audit_dim_d1_d4_e2e.py
+- file: tests/audit/audit_core/test_audit_dim_d1_d4_e2e.py
   name: test_audit_dim_d1_d4_e2e.py
   node_type: test
   status: active
-- file: tests/audit/test_audit_dim_d5_d8_e2e.py
+- file: tests/audit/audit_core/test_audit_dim_d5_d8_e2e.py
   name: test_audit_dim_d5_d8_e2e.py
   node_type: test
   status: active
-- file: tests/audit/test_audit_dim_d9_d12_e2e.py
+- file: tests/audit/audit_core/test_audit_dim_d9_d12_e2e.py
   name: test_audit_dim_d9_d12_e2e.py
   node_type: test
   status: active
-- file: tests/audit/test_audit_financial_compliance.py
+- file: tests/audit/audit_core/test_audit_financial_compliance.py
   name: test_audit_financial_compliance.py
   node_type: test
   status: active
-- file: tests/audit/test_audit_full_closure_e2e.py
+- file: tests/audit/audit_core/test_audit_full_closure_e2e.py
   name: test_audit_full_closure_e2e.py
   node_type: test
   status: active
-- file: tests/audit/test_audit_full_pipeline_e2e.py
+- file: tests/audit/audit_core/test_audit_full_pipeline_e2e.py
   name: test_audit_full_pipeline_e2e.py
   node_type: test
   status: active
-- file: tests/audit/test_audit_incremental_review.py
+- file: tests/audit/audit_core/test_audit_incremental_review.py
   name: test_audit_incremental_review.py
   node_type: test
   status: active
-- file: tests/audit/test_audit_indexer.py
+- file: tests/audit/audit_core/test_audit_indexer.py
   name: test_audit_indexer.py
   node_type: test
   status: active
-- file: tests/audit/test_audit_integrity.py
+- file: tests/audit/audit_core/test_audit_integrity.py
   name: test_audit_integrity.py
   node_type: test
   status: active
-- file: tests/audit/test_audit_log_guard.py
+- file: tests/audit/audit_core/test_audit_log_guard.py
   name: test_audit_log_guard.py
   node_type: test
   status: active
-- file: tests/audit/test_audit_models.py
+- file: tests/audit/audit_core/test_audit_models.py
   name: test_audit_models.py
   node_type: test
   status: active
-- file: tests/audit/test_audit_observability_dashboard.py
+- file: tests/audit/audit_core/test_audit_observability_dashboard.py
   name: test_audit_observability_dashboard.py
   node_type: test
   status: active
-- file: tests/audit/test_audit_orchestrator_e2e.py
+- file: tests/audit/audit_core/test_audit_orchestrator_e2e.py
   name: test_audit_orchestrator_e2e.py
   node_type: test
   status: active
-- file: tests/audit/test_audit_orphan_judge_e2e.py
+- file: tests/audit/audit_core/test_audit_orphan_judge_e2e.py
   name: test_audit_orphan_judge_e2e.py
   node_type: test
   status: active
-- file: tests/audit/test_audit_provenance_tracker.py
+- file: tests/audit/audit_core/test_audit_provenance_tracker.py
   name: test_audit_provenance_tracker.py
   node_type: test
   status: active
-- file: tests/audit/test_audit_red_blue_e2e.py
+- file: tests/audit/audit_core/test_audit_red_blue_e2e.py
   name: test_audit_red_blue_e2e.py
   node_type: test
   status: active
-- file: tests/audit/test_audit_registry_gate_e2e.py
+- file: tests/audit/audit_core/test_audit_registry_gate_e2e.py
   name: test_audit_registry_gate_e2e.py
   node_type: test
   status: active
-- file: tests/audit/test_audit_self_healer_e2e.py
+- file: tests/audit/audit_core/test_audit_self_healer_e2e.py
   name: test_audit_self_healer_e2e.py
   node_type: test
   status: active
-- file: tests/audit/test_audit_spec_auditor.py
+- file: tests/audit/audit_core/test_audit_spec_auditor.py
   name: test_audit_spec_auditor.py
   node_type: test
   status: active
-- file: tests/audit/test_audit_supply_chain_security.py
+- file: tests/audit/audit_core/test_audit_supply_chain_security.py
   name: test_audit_supply_chain_security.py
   node_type: test
   status: active
-- file: tests/audit/test_audit_write_failure_protector.py
+- file: tests/audit/audit_core/test_audit_write_failure_protector.py
   name: test_audit_write_failure_protector.py
   node_type: test
   status: active
-- file: tests/audit/test_backcompat_checker.py
+- file: tests/audit/quality_static/test_backcompat_checker.py
   name: test_backcompat_checker.py
   node_type: test
   status: active
-- file: tests/audit/test_baseline_manager.py
+- file: tests/audit/drift_integrity/test_baseline_manager.py
   name: test_baseline_manager.py
   node_type: test
   status: active
-- file: tests/audit/test_baseline_poisoning_guard.py
+- file: tests/audit/drift_integrity/test_baseline_poisoning_guard.py
   name: test_baseline_poisoning_guard.py
   node_type: test
   status: active
-- file: tests/audit/test_benchmark_integrity.py
+- file: tests/audit/drift_integrity/test_benchmark_integrity.py
   name: test_benchmark_integrity.py
   node_type: test
   status: active
-- file: tests/audit/test_brain_integration_root.py
+- file: tests/audit/intelligence_audit/test_brain_integration_root.py
   name: test_brain_integration_root.py
   node_type: test
   status: active
-- file: tests/audit/test_build_reproducibility_verifier.py
+- file: tests/audit/quality_static/test_build_reproducibility_verifier.py
   name: test_build_reproducibility_verifier.py
   node_type: test
   status: active
-- file: tests/audit/test_build_reproducibility_verifier_v2.py
+- file: tests/audit/quality_static/test_build_reproducibility_verifier_v2.py
   name: test_build_reproducibility_verifier_v2.py
   node_type: test
   status: active
-- file: tests/audit/test_burn_rate_alerter.py
+- file: tests/audit/ops_resilience/test_burn_rate_alerter.py
   name: test_burn_rate_alerter.py
   node_type: test
   status: active
-- file: tests/audit/test_burnout_alarm.py
+- file: tests/audit/ops_resilience/test_burnout_alarm.py
   name: test_burnout_alarm.py
   node_type: test
   status: active
-- file: tests/audit/test_cascade_detector.py
+- file: tests/audit/drift_integrity/test_cascade_detector.py
   name: test_cascade_detector.py
   node_type: test
   status: active
-- file: tests/audit/test_causal_inference_engine.py
+- file: tests/audit/intelligence_audit/test_causal_inference_engine.py
   name: test_causal_inference_engine.py
   node_type: test
   status: active
-- file: tests/audit/test_code_review_ai.py
+- file: tests/audit/quality_static/test_code_review_ai.py
   name: test_code_review_ai.py
   node_type: test
   status: active
-- file: tests/audit/test_cognitive_load_budget.py
+- file: tests/audit/intelligence_audit/test_cognitive_load_budget.py
   name: test_cognitive_load_budget.py
   node_type: test
   status: active
-- file: tests/audit/test_correlation_engine.py
+- file: tests/audit/intelligence_audit/test_correlation_engine.py
   name: test_correlation_engine.py
   node_type: test
   status: active
-- file: tests/audit/test_credibility_engine.py
+- file: tests/audit/intelligence_audit/test_credibility_engine.py
   name: test_credibility_engine.py
   node_type: test
   status: active
@@ -663,11 +663,11 @@ items:
   name: test_crypto_bootstrap.py
   node_type: test
   status: active
-- file: tests/audit/test_detector_dispatcher.py
+- file: tests/audit/drift_integrity/test_detector_dispatcher.py
   name: test_detector_dispatcher.py
   node_type: test
   status: active
-- file: tests/audit/test_deterministic_replay.py
+- file: tests/audit/drift_integrity/test_deterministic_replay.py
   name: test_deterministic_replay.py
   node_type: test
   status: active
@@ -675,7 +675,7 @@ items:
   name: test_diagnosis_kpi.py
   node_type: test
   status: active
-- file: tests/audit/test_emergent_behavior_detector.py
+- file: tests/audit/drift_integrity/test_emergent_behavior_detector.py
   name: test_emergent_behavior_detector.py
   node_type: test
   status: active
@@ -683,11 +683,11 @@ items:
   name: test_events_ba.py
   node_type: test
   status: active
-- file: tests/audit/test_forensics_engine.py
+- file: tests/audit/intelligence_audit/test_forensics_engine.py
   name: test_forensics_engine.py
   node_type: test
   status: active
-- file: tests/audit/test_gitignore_auditor.py
+- file: tests/audit/drift_integrity/test_gitignore_auditor.py
   name: test_gitignore_auditor.py
   node_type: test
   status: active
@@ -695,7 +695,7 @@ items:
   name: test_global_health_map.py
   node_type: test
   status: active
-- file: tests/audit/test_handoff_manager.py
+- file: tests/audit/ops_resilience/test_handoff_manager.py
   name: test_handoff_manager.py
   node_type: test
   status: active
@@ -703,7 +703,7 @@ items:
   name: test_headless_scanner.py
   node_type: test
   status: active
-- file: tests/audit/test_human_anomaly_flood_detector.py
+- file: tests/audit/drift_integrity/test_human_anomaly_flood_detector.py
   name: test_human_anomaly_flood_detector.py
   node_type: test
   status: active
@@ -731,15 +731,15 @@ items:
   name: test_mtti_tracker.py
   node_type: test
   status: active
-- file: tests/audit/test_naming_magic_checker.py
+- file: tests/audit/quality_static/test_naming_magic_checker.py
   name: test_naming_magic_checker.py
   node_type: test
   status: active
-- file: tests/audit/test_orphan_scanner.py
+- file: tests/audit/drift_integrity/test_orphan_scanner.py
   name: test_orphan_scanner.py
   node_type: test
   status: active
-- file: tests/audit/test_performance_baseline.py
+- file: tests/audit/drift_integrity/test_performance_baseline.py
   name: test_performance_baseline.py
   node_type: test
   status: active
@@ -747,15 +747,15 @@ items:
   name: test_point_in_time_reconstructor.py
   node_type: test
   status: active
-- file: tests/audit/test_pre_flight_simulator.py
+- file: tests/audit/ops_resilience/test_pre_flight_simulator.py
   name: test_pre_flight_simulator.py
   node_type: test
   status: active
-- file: tests/audit/test_preventive_repair.py
+- file: tests/audit/ops_resilience/test_preventive_repair.py
   name: test_preventive_repair.py
   node_type: test
   status: active
-- file: tests/audit/test_python_compat.py
+- file: tests/audit/quality_static/test_python_compat.py
   name: test_python_compat.py
   node_type: test
   status: active
@@ -763,15 +763,15 @@ items:
   name: test_regime_detector.py
   node_type: test
   status: active
-- file: tests/audit/test_regime_gain_scheduling.py
+- file: tests/audit/intelligence_audit/test_regime_gain_scheduling.py
   name: test_regime_gain_scheduling.py
   node_type: test
   status: active
-- file: tests/audit/test_roi_engine.py
+- file: tests/audit/intelligence_audit/test_roi_engine.py
   name: test_roi_engine.py
   node_type: test
   status: active
-- file: tests/audit/test_scan_mutex.py
+- file: tests/audit/ops_resilience/test_scan_mutex.py
   name: test_scan_mutex.py
   node_type: test
   status: active
@@ -779,11 +779,11 @@ items:
   name: test_serialization_format_tracker.py
   node_type: test
   status: active
-- file: tests/audit/test_sim2real_calibration.py
+- file: tests/audit/drift_integrity/test_sim2real_calibration.py
   name: test_sim2real_calibration.py
   node_type: test
   status: active
-- file: tests/audit/test_socratic_questions.py
+- file: tests/audit/intelligence_audit/test_socratic_questions.py
   name: test_socratic_questions.py
   node_type: test
   status: active
@@ -791,31 +791,31 @@ items:
   name: test_state_machine.py
   node_type: test
   status: active
-- file: tests/audit/test_statistical_hygiene_auditor.py
+- file: tests/audit/quality_static/test_statistical_hygiene_auditor.py
   name: test_statistical_hygiene_auditor.py
   node_type: test
   status: active
-- file: tests/audit/test_sub_agent_collusion.py
+- file: tests/audit/intelligence_audit/test_sub_agent_collusion.py
   name: test_sub_agent_collusion.py
   node_type: test
   status: active
-- file: tests/audit/test_suppression_learner.py
+- file: tests/audit/ops_resilience/test_suppression_learner.py
   name: test_suppression_learner.py
   node_type: test
   status: active
-- file: tests/audit/test_symlink_checker.py
+- file: tests/audit/drift_integrity/test_symlink_checker.py
   name: test_symlink_checker.py
   node_type: test
   status: active
-- file: tests/audit/test_tamper_proof_audit.py
+- file: tests/audit/audit_core/test_tamper_proof_audit.py
   name: test_tamper_proof_audit.py
   node_type: test
   status: active
-- file: tests/audit/test_test_fixture_checker.py
+- file: tests/audit/quality_static/test_test_fixture_checker.py
   name: test_test_fixture_checker.py
   node_type: test
   status: active
-- file: tests/audit/test_toctou_revalidation.py
+- file: tests/audit/drift_integrity/test_toctou_revalidation.py
   name: test_toctou_revalidation.py
   node_type: test
   status: active
@@ -839,7 +839,7 @@ items:
   name: test_trend_analyzer.py
   node_type: test
   status: active
-- file: tests/audit/test_value_added_baseline.py
+- file: tests/audit/drift_integrity/test_value_added_baseline.py
   name: test_value_added_baseline.py
   node_type: test
   status: active
@@ -847,7 +847,7 @@ items:
   name: test_verification_engine.py
   node_type: test
   status: active
-- file: tests/audit/test_zombie_fle_detector.py
+- file: tests/audit/drift_integrity/test_zombie_fle_detector.py
   name: test_zombie_fle_detector.py
   node_type: test
   status: active
