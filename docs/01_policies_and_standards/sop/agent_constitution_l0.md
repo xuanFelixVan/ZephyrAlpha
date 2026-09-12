@@ -1,11 +1,12 @@
 ---
 module_id: SOP-CONSTITUTION-L0
 doc_type: policy
-doc_type_note: L0 候选宪法（#ARCH-310 R3）。切换验收通过后替换 AGENTS.md 正文，本文件转为真源。
+doc_type_note: 现行宪法真源（#ARCH-310 R3）。2026-09-12 经四波极限对抗后替换 AGENTS.md v1；v1 原文归档 agent_constitution_legacy_v1.md。
 ttl: permanent
 title: ZephyrAlpha AI Agent 宪法 L0（≤300 行硬规则+索引）
-version: 0.1.0-draft
-status: candidate
+version: 1.0.0
+status: active
+activated: 2026-09-12
 cutover_plan: 见文末 §切换程序；索引卡真源=capability_cards/ L0-L3 渐进披露体系
 ---
 
