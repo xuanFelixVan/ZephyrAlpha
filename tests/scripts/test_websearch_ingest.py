@@ -361,6 +361,42 @@ def test_ingest_node_close_pit(tmp_path: Path) -> None:
         conn.close()
 
 
+def test_ingest_edge_close_pit(tmp_path: Path) -> None:
+    # 2026-09-12 环节边 PIT 关闭通道: edge_id 直指+reason_doc;幂等(valid_to IS NULL 才关)
+    chain = "__边关闭TMP链__"
+    recs = [
+        {"type": "chain", "name": chain, "category": "半导体", "version_year": 2026,
+         "market": "cn", "source_doc": SD, "source": "websearch"},
+        {"type": "node", "chain_name": chain, "name": "边端A",
+         "market": "cn", "source_doc": SD, "source": "websearch"},
+        {"type": "node", "chain_name": chain, "name": "边端B",
+         "market": "cn", "source_doc": SD, "source": "websearch"},
+        {"type": "node_edge", "chain_name": chain, "from_node": "边端A", "to_node": "边端B",
+         "edge_type": "structure", "market": "cn", "source_doc": SD, "source": "websearch"},
+    ]
+    p = _tmp_batch(tmp_path, recs)
+    assert wi.cmd_ingest(str(p)) == 0
+    from zephyr.governance.depgraph_schema import get_depgraph_pg_connection
+
+    conn = get_depgraph_pg_connection(read_only=False)
+    cur = conn.cursor()
+    try:
+        cur.execute("SELECT edge_id FROM ig_edge e JOIN ig_node n1 ON n1.node_id=e.from_node AND n1.name='边端A' WHERE n1.chain_id=%s", (wi._chain_id(chain),))
+        eid = cur.fetchone()[0]
+        recs2 = [{"type": "edge_close", "edge_ids": [eid],
+                  "reason_doc": "S26 自环/幽灵端点治理|test|2026-09-12"}]
+        p2 = _tmp_batch(tmp_path, recs2)
+        assert wi.cmd_ingest(str(p2)) == 0
+        cur.execute("SELECT valid_to FROM ig_edge WHERE edge_id=%s", (eid,))
+        assert cur.fetchone()[0] is not None  # 已关闭
+    finally:
+        cur.execute("DELETE FROM ig_edge WHERE from_node IN (SELECT node_id FROM ig_node WHERE chain_id=%s)", (wi._chain_id(chain),))
+        cur.execute("DELETE FROM ig_node WHERE chain_id=%s", (wi._chain_id(chain),))
+        cur.execute("DELETE FROM ig_chain WHERE name=%s", (chain,))
+        conn.commit()
+        conn.close()
+
+
 def test_ingest_node_company_resolves_existing_node(tmp_path: Path) -> None:
     # node 先写 + node_company/node_edge 按(链+环节名)解析：不重算 ID、不造重复行、不 FK 违规
     # 2026-09-12 修复: 原夹具名"__节点解析测试TMP__"含"解析"命中 TITLE_JUNK_RE(2026-09-10 收紧)+13字超长,改合规名

@@ -231,6 +231,25 @@ CHECKS: list[dict] = [
           AND valid_from < make_date(year - 1, 1, 1)
     """, "postfilter": "s20"},
     # S19 编码表上市撞名: 需 CH 反查,运行时注入
+    # S26 环节边完整性(2026-09-12 增,ig_edge.valid_to PIT 收口配套): 两项边病灶无引擎检查——
+    # 自环(from=to)/幽灵端点(端点节点不存在或已被 node_close PIT 关闭)。
+    # **跨链端点不判违规**（2026-09-12 口径裁定）：跨链 ig_edge=链间结构投影，galaxy 聚类
+    # 消费其做链对权重(api_server _cm_build_galaxy c1!=c2 分支)——by-design 数据。
+    # 修复方案=edge_close PIT 关闭(禁 DELETE);ig_company_edge 的同类病灶由 S15/S16/S18 覆盖
+    {"id": "S26", "title": "环节边完整(端点存活+无自环)", "sql": """
+        SELECT e.edge_id::text,
+               e.from_node || '->' || e.to_node || ' ' ||
+               CASE WHEN e.from_node=e.to_node THEN '自环'
+                    WHEN n1.node_id IS NULL OR n2.node_id IS NULL THEN '幽灵端点'
+                    ELSE '端点已关闭' END AS why
+        FROM ig_edge e
+        LEFT JOIN ig_node n1 ON n1.node_id=e.from_node
+        LEFT JOIN ig_node n2 ON n2.node_id=e.to_node
+        WHERE e.valid_to IS NULL
+          AND (e.from_node=e.to_node
+               OR n1.node_id IS NULL OR n2.node_id IS NULL
+               OR n1.valid_to IS NOT NULL OR n2.valid_to IS NOT NULL)
+    """},
 ]
 
 DEGRADED_NOTE = "CH 不可达降级,本轮不计违规"
@@ -319,7 +338,7 @@ def _s21_load_graph(cur) -> tuple[dict, dict, dict, dict]:
             node_chain[nid] = cid
             node_tier[nid] = tier
             node_name[nid] = name
-    cur.execute("SELECT from_node, to_node, edge_type FROM ig_edge")  # noqa: bare-sql  S21 专用只读三连查，引擎既有风格
+    cur.execute("SELECT from_node, to_node, edge_type FROM ig_edge WHERE valid_to IS NULL")  # noqa: bare-sql  S21 专用只读三连查，引擎既有风格;2026-09-12 起已关闭边(edge_close PIT)不参与连通
     chain_edges: dict[str, list[tuple[str, str, str]]] = {}
     for u, v, et in cur.fetchall():
         cu, cv = node_chain.get(u), node_chain.get(v)

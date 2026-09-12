@@ -269,6 +269,10 @@ DDL_STATEMENTS = [
     #     先例——孤岛节点等治理对象的唯一合法处置=PIT 关闭(禁 DELETE);关闭只走 websearch_ingest node_close
     #     (幂等可逆,reason_doc 留痕);分析查询默认过滤 valid_to IS NULL） ---
     "ALTER TABLE ig_node ADD COLUMN IF NOT EXISTS valid_to DATE",
+    # --- ig_edge PIT 关闭列（2026-09-12 P1 结构缺口收口: 环节边此前无任何合法处置通道
+    #     (禁 DELETE+无 PIT=坏边永挂);对标 node_close/fact_close 先例,关闭走 websearch_ingest edge_close;
+    #     引擎 S26 同日增配环节边完整性检查（端点存活/同链/无自环）） ---
+    "ALTER TABLE ig_edge ADD COLUMN IF NOT EXISTS valid_to DATE",
     # --- 股权表成本两列（Owner 2026-09-09 裁定: 取得成本+取得日,股权避坑核心） ---
     "ALTER TABLE ig_equity_edge ADD COLUMN IF NOT EXISTS acquisition_cost NUMERIC",
     "ALTER TABLE ig_equity_edge ADD COLUMN IF NOT EXISTS acquisition_date DATE",

@@ -26,6 +26,12 @@
 source_doc="查询词|URL|YYYY-MM-DD"; company_edge 必带 valid_from/as_of(PIT)。
 unlisted_entity 记录(§4.10): name/country/status/listed_symbol,编码表登记与
 上市标定走本通道;UNLISTED symbol 唯一合法格式=UNLISTED:UE-{12hex}。
+
+record 类型全景(2026-09-12): chain(含显式激活 activate:true+status=active)/
+node/node_edge/node_company/company_edge/metric/fact/equity_edge/product_revenue/
+document/chunk/unlisted_entity/node_rename(改名三关)/placement_close(落位 PIT)/
+fact_close(ig_fact PIT)/node_close(ig_node PIT)/edge_close(ig_edge PIT)——
+关闭类幂等可逆(仅 valid_to IS NULL 行),禁 DELETE 的治理唯一合法通道。
 """
 
 from __future__ import annotations
@@ -325,6 +331,16 @@ def _validate_records(records: list[dict], stocks: set[str] | None) -> list[str]
                 errs.append(f"{idx}: node_close 缺 node_ids(非空 ND- 前缀字符串数组)")
             if not r.get("reason_doc"):
                 errs.append(f"{idx}: node_close 缺 reason_doc 留痕")
+        if typ == "edge_close":
+            # 环节边关闭(2026-09-12 ig_edge.valid_to PIT 收口): edge_id 整数数组直指+reason_doc 留痕;
+            # 幂等可逆(valid_to IS NULL 才关),对标 node_close/fact_close;禁 DELETE 的边治理唯一通道
+            eids = r.get("edge_ids")
+            if not eids or not isinstance(eids, list) or not all(
+                isinstance(x, int) and not isinstance(x, bool) for x in eids
+            ):
+                errs.append(f"{idx}: edge_close 缺 edge_ids(非空整数数组)")
+            if not r.get("reason_doc"):
+                errs.append(f"{idx}: edge_close 缺 reason_doc 留痕")
         for k in ("symbol", "from_symbol", "to_symbol"):
             sym = r.get(k)
             if not sym:
@@ -719,6 +735,17 @@ def cmd_ingest(batch_path: str) -> int:
                     """UPDATE ig_node SET valid_to=%s, updated_at=now()
                        WHERE node_id = ANY(%s) AND valid_to IS NULL""",
                     (vt, r["node_ids"]),
+                )
+            elif typ == "edge_close":
+                # 环节边 PIT 关闭(2026-09-12 ig_edge.valid_to 收口): 坏边(自环/跨链/幽灵端点/噪音)
+                # 唯一出清通道,幂等(valid_to IS NULL 才关),禁 DELETE;edge_id 数组直指,reason_doc 留痕
+                vt = r.get("valid_to") or _today()
+                if not re.match(r"\d{4}-\d{2}-\d{2}", str(vt)):
+                    raise ValueError(f"edge_close valid_to 非日期: {vt}")
+                cur.execute(
+                    """UPDATE ig_edge SET valid_to=%s
+                       WHERE edge_id = ANY(%s) AND valid_to IS NULL""",
+                    (vt, r["edge_ids"]),
                 )
             elif typ == "unlisted_entity":
                 # 编码表登记/上市标定(SOP §4.10): name+country 登记幂等;
