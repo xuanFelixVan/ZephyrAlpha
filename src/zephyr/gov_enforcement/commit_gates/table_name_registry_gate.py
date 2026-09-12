@@ -158,6 +158,21 @@ _EXEMPT_SUFFIXES = (
     "table_registry.py",
     "table_name_registry_gate.py",
 )
+# DDL-as-Code 真源豁免（#ARCH-CH-024 补丁 2026-09-12）：schemas/categories/（含子簇）下的表
+# 结构定义文件必然含字面 CREATE TABLE 表名——鸡生蛋（TableRegistry 从 business_data_categories
+# .yaml 读表名，YAML 的 schema_file 又指向 DDL 文件）。语义边界：DDL 定义/部署脚本（apply_*_ddl
+# .py）的 writer CREATE 合法（同 CH-FINAL-GATE apply 豁免先例）；业务代码读表仍 MUST 走
+# TableRegistry.table() 派生。
+_DDL_SCHEMA_EXEMPT = ("schemas/categories/", "apply_")
+_DDL_SCHEMA_EXEMPT_SUFFIX = "_ddl.py"
+
+
+def _is_ddl_schema_exempt(rel_path: str) -> bool:
+    """DDL 真源/部署脚本豁免：schemas/categories/ 树内文件 或 apply_*_ddl.py 部署脚本。"""
+    normalized = rel_path.replace("\\", "/")
+    if normalized.endswith(_DDL_SCHEMA_EXEMPT_SUFFIX):
+        return True
+    return any(seg in normalized for seg in _DDL_SCHEMA_EXEMPT[:1])
 
 
 def _build_table_name_pattern(registered_tables: set[str]) -> re.Pattern | None:
@@ -301,7 +316,7 @@ def make_table_name_registry_gate() -> GateSpec:
         py_files = [
             f
             for f in _get_staged_py_files(gateway, "TABLE-NAME-REGISTRY")
-            if not is_test_exempt(f) and not f.endswith(_EXEMPT_SUFFIXES)
+            if not is_test_exempt(f) and not f.endswith(_EXEMPT_SUFFIXES) and not _is_ddl_schema_exempt(f)
         ]
         for py_file in py_files:
             warnings.extend(check_hardcoded_tables_in_file(gateway, py_file, registered_tables, table_name_pattern))
