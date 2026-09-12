@@ -1085,7 +1085,7 @@ STEP 3: 拆分后验证
 
 | 文件路径 | 实现状态 | 说明 |
 |---------|:---:|------|
-| `tests/audit/test_audit_self_healer_e2e.py` | ✅ 已实现 | |
+| `tests/audit/audit_core/test_audit_self_healer_e2e.py` | ✅ 已实现 | |
 | `tests/semantic_auditor/test_blast_radius.py` | ✅ 已实现 | |
 | `tests/semantic_auditor/test_blast_radius_red_team.py` | ✅ 已实现 | |
 | `tests/semantic_auditor/test_semantic_auditor.py` | ✅ 已实现 | |

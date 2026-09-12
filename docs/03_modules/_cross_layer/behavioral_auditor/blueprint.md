@@ -5,7 +5,7 @@ submodule_path: src/zephyr/compliance/behavioral_auditor
 title: "Behavioral Auditor 蓝图 — 行为审计器·AI行为边界监控"
 doc_type: blueprint
 status: Draft
-version: "3.3.5"
+version: "3.3.6"
 layer: L1_foundation
 owner: ZephyrAlpha-Owner
 classification: confidential
@@ -79,7 +79,7 @@ build_status: planned
 > **什么时候建**: 当 AuditTrail 事件积累 ≥1000 条且 ≥14 天，或 Owner 要求主动行为监控时。基线数据由 Audit Trail 自动积累，达到门槛后自动触发。
 > **自动化宿主**: FLE `_periodic_checks()` → `_behavioral_audit_check()` + CircadianScheduler `hour=6` → `_behavioral_baseline_update()`
 
-> module_id: MOD-INF-033 | version: 3.3.5 | status: draft | layer: cross_layer
+> module_id: MOD-INF-033 | version: 3.3.6 | status: draft | layer: cross_layer
 > actual_disk_path: src/zephyr/behavioral_audit/ | generation: 3 | construction_progress: partially_implemented
 
 ## 概述
@@ -1366,31 +1366,31 @@ STEP 3: 拆分后验证
 |---------|:---:|------|
 | `tests/ai/test_ai_construction_detectors.py` | ✅ 已实现 | |
 | `tests/ai/test_ai_context_injector.py` | ✅ 已实现 | |
-| `tests/audit/test_absence_manager.py` | ✅ 已实现 | |
-| `tests/audit/test_backcompat_checker.py` | ✅ 已实现 | |
-| `tests/audit/test_baseline_manager.py` | ✅ 已实现 | |
-| `tests/audit/test_baseline_poisoning_guard.py` | ✅ 已实现 | |
-| `tests/audit/test_brain_integration_root.py` | ✅ 已实现 | |
-| `tests/audit/test_cascade_detector.py` | ✅ 已实现 | |
-| `tests/audit/test_code_review_ai.py` | ✅ 已实现 | |
-| `tests/audit/test_correlation_engine.py` | ✅ 已实现 | |
-| `tests/audit/test_credibility_engine.py` | ✅ 已实现 | |
-| `tests/audit/test_detector_dispatcher.py` | ✅ 已实现 | |
+| `tests/audit/audit_core/test_tamper_proof_audit.py` | ✅ 已实现 | |
+| `tests/audit/drift_integrity/test_baseline_manager.py` | ✅ 已实现 | |
+| `tests/audit/drift_integrity/test_baseline_poisoning_guard.py` | ✅ 已实现 | |
+| `tests/audit/drift_integrity/test_cascade_detector.py` | ✅ 已实现 | |
+| `tests/audit/drift_integrity/test_detector_dispatcher.py` | ✅ 已实现 | |
+| `tests/audit/drift_integrity/test_gitignore_auditor.py` | ✅ 已实现 | |
+| `tests/audit/drift_integrity/test_orphan_scanner.py` | ✅ 已实现 | |
+| `tests/audit/drift_integrity/test_symlink_checker.py` | ✅ 已实现 | |
+| `tests/audit/intelligence_audit/test_brain_integration_root.py` | ✅ 已实现 | |
+| `tests/audit/intelligence_audit/test_correlation_engine.py` | ✅ 已实现 | |
+| `tests/audit/intelligence_audit/test_credibility_engine.py` | ✅ 已实现 | |
+| `tests/audit/intelligence_audit/test_forensics_engine.py` | ✅ 已实现 | |
+| `tests/audit/intelligence_audit/test_roi_engine.py` | ✅ 已实现 | |
+| `tests/audit/ops_resilience/test_scan_mutex.py` | ✅ 已实现 | |
+| `tests/audit/ops_resilience/test_suppression_learner.py` | ✅ 已实现 | |
+| `tests/audit/quality_static/test_absence_manager.py` | ✅ 已实现 | |
+| `tests/audit/quality_static/test_backcompat_checker.py` | ✅ 已实现 | |
+| `tests/audit/quality_static/test_code_review_ai.py` | ✅ 已实现 | |
+| `tests/audit/quality_static/test_naming_magic_checker.py` | ✅ 已实现 | |
+| `tests/audit/quality_static/test_python_compat.py` | ✅ 已实现 | |
+| `tests/audit/quality_static/test_test_fixture_checker.py` | ✅ 已实现 | |
 | `tests/audit/test_events_ba.py` | ✅ 已实现 | |
-| `tests/audit/test_forensics_engine.py` | ✅ 已实现 | |
-| `tests/audit/test_gitignore_auditor.py` | ✅ 已实现 | |
 | `tests/audit/test_headless_scanner.py` | ✅ 已实现 | |
 | `tests/audit/test_incremental_scanner.py` | ✅ 已实现 | |
-| `tests/audit/test_naming_magic_checker.py` | ✅ 已实现 | |
-| `tests/audit/test_orphan_scanner.py` | ✅ 已实现 | |
-| `tests/audit/test_python_compat.py` | ✅ 已实现 | |
-| `tests/audit/test_roi_engine.py` | ✅ 已实现 | |
-| `tests/audit/test_scan_mutex.py` | ✅ 已实现 | |
 | `tests/audit/test_state_machine.py` | ✅ 已实现 | |
-| `tests/audit/test_suppression_learner.py` | ✅ 已实现 | |
-| `tests/audit/test_symlink_checker.py` | ✅ 已实现 | |
-| `tests/audit/test_tamper_proof_audit.py` | ✅ 已实现 | |
-| `tests/audit/test_test_fixture_checker.py` | ✅ 已实现 | |
 | `tests/audit/test_trend_analyzer.py` | ✅ 已实现 | |
 | `tests/autonomy/test_behavioral_auditor_main.py` | ✅ 已实现 | |
 | `tests/ba/test_ba_canary_controller.py` | ✅ 已实现 | |

@@ -1290,7 +1290,7 @@ STEP 3: 拆分后验证
 
 | 文件路径 | 实现状态 | 说明 |
 |---------|:---:|------|
-| `tests/audit/test_audit_red_blue_e2e.py` | ✅ 已实现 | |
+| `tests/audit/audit_core/test_audit_red_blue_e2e.py` | ✅ 已实现 | |
 | `tests/safety/test_commit_trigger.py` | ✅ 已实现 | |
 | `tests/safety/test_constitution_engine.py` | ✅ 已实现 | |
 | `tests/safety/test_phase_manager_integration.py` | ✅ 已实现 | |

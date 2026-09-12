@@ -1448,7 +1448,7 @@ STEP 3: 拆分后验证
 
 | 文件路径 | 实现状态 | 说明 |
 |---------|:---:|------|
-| `tests/audit/test_audit_orphan_judge_e2e.py` | ✅ 已实现 | |
+| `tests/audit/audit_core/test_audit_orphan_judge_e2e.py` | ✅ 已实现 | |
 | `tests/llm_security/test_orphan_detector.py` | ✅ 已实现 | |
 
 ### 1.5 路径索引使用指南

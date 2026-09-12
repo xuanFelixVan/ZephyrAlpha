@@ -41,4 +41,4 @@ Agent调用链Span模型（意图→工具调用→LLM→决策输出四段）�
 
 ## 3. 测试
 
-`tests/infrastructure/test_agent_call_tracer.py` —— 内存替身全覆盖：正常路径 + 边界 + Fail-Closed 分支 + 确定性。
+`tests/infrastructure/observability/test_agent_call_tracer.py` —— 内存替身全覆盖：正常路径 + 边界 + Fail-Closed 分支 + 确定性。

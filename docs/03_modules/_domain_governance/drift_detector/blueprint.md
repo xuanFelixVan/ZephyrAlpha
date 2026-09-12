@@ -3,7 +3,7 @@ module_id: MOD-INF-023
 title: "Drift Detector 蓝图 — 39检测器漂移检测引擎与10状态漂移生命周期"
 doc_type: blueprint
 status: Active
-version: "3.1.10"
+version: "3.1.11"
 layer: L1_foundation
 layer_name: cross_layer
 functional_domain: governance
@@ -1316,12 +1316,12 @@ detector_dimensions:
 
 | 文件路径 | 实现状态 | 说明 |
 |---------|:---:|------|
-| `tests/audit/test_architecture_contracts.py` | ✅ 已实现 | |
-| `tests/audit/test_architecture_principles.py` | ✅ 已实现 | |
-| `tests/audit/test_benchmark_integrity.py` | ✅ 已实现 | |
-| `tests/audit/test_gov_drift_regime_detector.py` | ✅ 已实现 | |
+| `tests/audit/drift_integrity/test_benchmark_integrity.py` | ✅ 已实现 | |
+| `tests/audit/drift_integrity/test_gov_drift_regime_detector.py` | ✅ 已实现 | |
+| `tests/audit/drift_integrity/test_performance_baseline.py` | ✅ 已实现 | |
+| `tests/audit/quality_static/test_architecture_contracts.py` | ✅ 已实现 | |
+| `tests/audit/quality_static/test_architecture_principles.py` | ✅ 已实现 | |
 | `tests/audit/test_ml_engineering.py` | ✅ 已实现 | |
-| `tests/audit/test_performance_baseline.py` | ✅ 已实现 | |
 | `tests/ba/test_ba_data_lifecycle.py` | ✅ 已实现 | |
 | `tests/ba/test_ba_dependency_manager.py` | ✅ 已实现 | |
 | `tests/cross/test_cross_env_consistency.py` | ✅ 已实现 | |

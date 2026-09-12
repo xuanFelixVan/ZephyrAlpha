@@ -5,7 +5,7 @@ title: "Feedback Loop Engine 蓝图 — 氛围编程原生元自知全维自防�
 doc_type: blueprint
 template_for: blueprint
 status: Draft
-version: "0.35.14"
+version: "0.35.15"
 layer: L1_foundation
 owner: ZephyrAlpha-Owner
 classification: confidential
@@ -54,7 +54,7 @@ responsibility_domain:
 
 本蓝图描述 Feedback Loop Engine——ZephyrAlpha 的自我改进闭环引擎。它解决了系统运行时异常检测、根因诊断、自动修复和自我进化的问题。核心职责包括：regime→predict→detect→diagnose→act→verify→self-heal→govern 全链路自治、67+ Detector 多模态检测、三级检测池并行化、32 代进化×429 盲点覆盖。当前规模单线程 30s 轮询，目标容量 100 AI Session 并发/500 findings/cycle/240 events/s。上游依赖 ScriptSystem(MOD-INF-005)提供扫描结果，下游被 AutoRuntime(MOD-INF-035)消费异常调度。
 
-> module_id: MOD-FEEDBACK_LOOP | version: 0.35.14 | status: Draft | layer: cross_layer
+> module_id: MOD-FEEDBACK_LOOP | version: 0.35.15 | status: Draft | layer: cross_layer
 > actual_disk_path: src/zephyr/feedback_loop/ | generation: 1 | construction_progress: completed
 >
 > **标准锚点（防幻觉）**——本蓝图必须严格遵循以下标准：
@@ -143,7 +143,7 @@ responsibility_domain:
 
 | 图 | 位置 | 状态 | 链接 |
 |----|------|------|------|
-| 依赖图 (depgraph) | `blueprint_id=MOD-FEEDBACK_LOOP` 的 629 个 file 节点 | production | `extract_depgraph.py --modules MOD-FEEDBACK_LOOP` |
+| 依赖图 (depgraph) | `blueprint_id=MOD-FEEDBACK_LOOP` 的 631 个 file 节点 | production | `extract_depgraph.py --modules MOD-FEEDBACK_LOOP` |
 | 数据流图 (dataflow) | （无节点） | N/A | `apply_dataflowgraph.py --list-datasets` |
 | 决策架构图 (decision) | 0 个决策节点 / 1 个决策层 | N/A | `generate_decision_diagram.py` |
 | 蓝图 (blueprint) | 本文件 | Draft | — |
@@ -155,7 +155,7 @@ responsibility_domain:
 | module_id | MOD-FEEDBACK_LOOP | MOD-FEEDBACK_LOOP | ✅ |
 | domain_id | N/A | N/A | ✅ |
 | build_status | generated | generated | ✅ |
-| file_count | 629 文件 | 26 文件（§0.1） | ❌ |
+| file_count | 631 文件 | 26 文件（§0.1） | ❌ |
 
 > 冲突时以 depgraph 为准（ARCH-056 + ARCH-MM-001 声明 vs 验证框架）。
 
@@ -829,42 +829,42 @@ STEP 3: 拆分后验证
 | `tests/agent/test_agent_skill_guard.py` | ✅ 已实现 | |
 | `tests/agent/test_agent_trajectory_anomaly_detector.py` | ✅ 已实现 | |
 | `tests/ai/test_ai_comment_veracity.py` | ✅ 已实现 | |
+| `tests/audit/drift_integrity/test_deterministic_replay.py` | ✅ 已实现 | |
+| `tests/audit/drift_integrity/test_emergent_behavior_detector.py` | ✅ 已实现 | |
+| `tests/audit/drift_integrity/test_human_anomaly_flood_detector.py` | ✅ 已实现 | |
+| `tests/audit/drift_integrity/test_sim2real_calibration.py` | ✅ 已实现 | |
+| `tests/audit/drift_integrity/test_toctou_revalidation.py` | ✅ 已实现 | |
+| `tests/audit/drift_integrity/test_value_added_baseline.py` | ✅ 已实现 | |
+| `tests/audit/drift_integrity/test_zombie_fle_detector.py` | ✅ 已实现 | |
+| `tests/audit/intelligence_audit/test_causal_inference_engine.py` | ✅ 已实现 | |
+| `tests/audit/intelligence_audit/test_cognitive_load_budget.py` | ✅ 已实现 | |
+| `tests/audit/intelligence_audit/test_regime_gain_scheduling.py` | ✅ 已实现 | |
+| `tests/audit/intelligence_audit/test_socratic_questions.py` | ✅ 已实现 | |
+| `tests/audit/intelligence_audit/test_sub_agent_collusion.py` | ✅ 已实现 | |
+| `tests/audit/ops_resilience/test_amplification_guard.py` | ✅ 已实现 | |
+| `tests/audit/ops_resilience/test_burn_rate_alerter.py` | ✅ 已实现 | |
+| `tests/audit/ops_resilience/test_burnout_alarm.py` | ✅ 已实现 | |
+| `tests/audit/ops_resilience/test_pre_flight_simulator.py` | ✅ 已实现 | |
+| `tests/audit/ops_resilience/test_preventive_repair.py` | ✅ 已实现 | |
+| `tests/audit/quality_static/test_build_reproducibility_verifier.py` | ✅ 已实现 | |
+| `tests/audit/quality_static/test_build_reproducibility_verifier_v2.py` | ✅ 已实现 | |
+| `tests/audit/quality_static/test_statistical_hygiene_auditor.py` | ✅ 已实现 | |
 | `tests/audit/test_ab_test.py` | ✅ 已实现 | |
-| `tests/audit/test_amplification_guard.py` | ✅ 已实现 | |
 | `tests/audit/test_api_dependency_metrics.py` | ✅ 已实现 | |
-| `tests/audit/test_build_reproducibility_verifier.py` | ✅ 已实现 | |
-| `tests/audit/test_build_reproducibility_verifier_v2.py` | ✅ 已实现 | |
-| `tests/audit/test_burn_rate_alerter.py` | ✅ 已实现 | |
-| `tests/audit/test_burnout_alarm.py` | ✅ 已实现 | |
-| `tests/audit/test_causal_inference_engine.py` | ✅ 已实现 | |
-| `tests/audit/test_cognitive_load_budget.py` | ✅ 已实现 | |
 | `tests/audit/test_crypto_bootstrap.py` | ✅ 已实现 | |
-| `tests/audit/test_deterministic_replay.py` | ✅ 已实现 | |
 | `tests/audit/test_diagnosis_kpi.py` | ✅ 已实现 | |
-| `tests/audit/test_emergent_behavior_detector.py` | ✅ 已实现 | |
 | `tests/audit/test_global_health_map.py` | ✅ 已实现 | |
-| `tests/audit/test_human_anomaly_flood_detector.py` | ✅ 已实现 | |
 | `tests/audit/test_interactive_diagnosis.py` | ✅ 已实现 | |
 | `tests/audit/test_intermittent_failure_pattern.py` | ✅ 已实现 | |
 | `tests/audit/test_latency_slo.py` | ✅ 已实现 | |
 | `tests/audit/test_mtti_tracker.py` | ✅ 已实现 | |
 | `tests/audit/test_point_in_time_reconstructor.py` | ✅ 已实现 | |
-| `tests/audit/test_pre_flight_simulator.py` | ✅ 已实现 | |
-| `tests/audit/test_preventive_repair.py` | ✅ 已实现 | |
-| `tests/audit/test_regime_gain_scheduling.py` | ✅ 已实现 | |
 | `tests/audit/test_serialization_format_tracker.py` | ✅ 已实现 | |
-| `tests/audit/test_sim2real_calibration.py` | ✅ 已实现 | |
-| `tests/audit/test_socratic_questions.py` | ✅ 已实现 | |
-| `tests/audit/test_statistical_hygiene_auditor.py` | ✅ 已实现 | |
-| `tests/audit/test_sub_agent_collusion.py` | ✅ 已实现 | |
-| `tests/audit/test_toctou_revalidation.py` | ✅ 已实现 | |
 | `tests/audit/test_toil_quantification.py` | ✅ 已实现 | |
 | `tests/audit/test_tone_adapter.py` | ✅ 已实现 | |
 | `tests/audit/test_tone_adapter_v2.py` | ✅ 已实现 | |
 | `tests/audit/test_traffic_replay_validator.py` | ✅ 已实现 | |
-| `tests/audit/test_value_added_baseline.py` | ✅ 已实现 | |
 | `tests/audit/test_verification_engine.py` | ✅ 已实现 | |
-| `tests/audit/test_zombie_fle_detector.py` | ✅ 已实现 | |
 | `tests/automation/test_auto_diagnosis.py` | ✅ 已实现 | |
 | `tests/automation/test_auto_evolution_root.py` | ✅ 已实现 | |
 | `tests/automation/test_auto_reward.py` | ✅ 已实现 | |
@@ -1011,6 +1011,7 @@ STEP 3: 拆分后验证
 | `tests/feedback/governance_audit/test_known_unknown_registry.py` | ✅ 已实现 | |
 | `tests/feedback/governance_audit/test_meta_guard_latency_budget.py` | ✅ 已实现 | |
 | `tests/feedback/governance_audit/test_numerical_stability_guard.py` | ✅ 已实现 | |
+| `tests/feedback/governance_audit/test_protocols.py` | ✅ 已实现 | |
 | `tests/feedback/governance_audit/test_regulatory_audit.py` | ✅ 已实现 | |
 | `tests/feedback/governance_audit/test_state_migration_validator.py` | ✅ 已实现 | |
 | `tests/feedback/governance_audit/test_validator.py` | ✅ 已实现 | |
@@ -1104,6 +1105,7 @@ STEP 3: 拆分后验证
 | `tests/guard/test_guard_interaction_topology_mapper.py` | ✅ 已实现 | |
 | `tests/guard/test_guard_oscillation_detector.py` | ✅ 已实现 | |
 | `tests/guard/test_guard_self_consistency_auditor.py` | ✅ 已实现 | |
+| `tests/infrastructure/process_lifecycle/__init__.py` | ⚠️ 骨架 | |
 | `tests/infrastructure/process_lifecycle/test_graceful_degradation_planner.py` | ✅ 已实现 | |
 | `tests/infrastructure/process_lifecycle/test_split_brain_quorum.py` | ✅ 已实现 | |
 | `tests/infrastructure/test_audit_rename_completeness.py` | ✅ 已实现 | |

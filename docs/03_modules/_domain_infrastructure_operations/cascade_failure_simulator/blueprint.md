@@ -41,4 +41,4 @@ granularity: file
 
 ## 3. 测试
 
-`tests/infrastructure/test_cascade_failure_simulator.py` —— 内存替身全覆盖：正常路径 + 边界 + Fail-Closed 分支 + 确定性。
+`tests/infrastructure/process_lifecycle/test_cascade_failure_simulator.py` —— 内存替身全覆盖：正常路径 + 边界 + Fail-Closed 分支 + 确定性。

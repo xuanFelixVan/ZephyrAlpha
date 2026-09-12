@@ -1503,7 +1503,7 @@ STEP 3: 拆分后验证
 |---------|:---:|------|
 | `tests/action/test_action_reversibility.py` | ✅ 已实现 | |
 | `tests/ai/test_ai_capability_guard.py` | ✅ 已实现 | |
-| `tests/audit/test_audit_chain_verifier.py` | ✅ 已实现 | |
+| `tests/audit/audit_core/test_audit_chain_verifier.py` | ✅ 已实现 | |
 | `tests/autonomy/test_autonomy_credit.py` | ✅ 已实现 | |
 | `tests/autonomy/test_autonomy_maturity.py` | ✅ 已实现 | |
 | `tests/blueprint/test_blueprint_code_reconciler.py` | ✅ 已实现 | |

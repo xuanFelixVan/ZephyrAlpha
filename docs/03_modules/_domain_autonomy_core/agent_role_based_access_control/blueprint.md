@@ -7184,7 +7184,7 @@ class PermissionHooks:
 | `tests/agent_rbac/test_sequence_guard_agent_rbac.py` | ✅ 已实现 | |
 | `tests/agent_rbac/test_toctou_guard_agent_rbac.py` | ✅ 已实现 | |
 | `tests/agent_rbac/test_vibe_coding.py` | ✅ 已实现 | |
-| `tests/audit/test_audit_log_guard.py` | ✅ 已实现 | |
+| `tests/audit/audit_core/test_audit_log_guard.py` | ✅ 已实现 | |
 | `tests/automation/test_auto_maintenance.py` | ✅ 已实现 | |
 | `tests/blueprint/test_blueprint_fidelity.py` | ✅ 已实现 | |
 | `tests/canary/test_canary_rollout_manager.py` | ✅ 已实现 | |

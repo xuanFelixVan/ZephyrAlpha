@@ -1682,7 +1682,7 @@ STEP 3: 拆分后验证
 |---------|:---:|------|
 | `tests/a2a/test_a2a_failure.py` | ✅ 已实现 | |
 | `tests/agent/test_agent_cooldown.py` | ✅ 已实现 | |
-| `tests/audit/test_audit_write_failure_protector.py` | ✅ 已实现 | |
+| `tests/audit/audit_core/test_audit_write_failure_protector.py` | ✅ 已实现 | |
 | `tests/automation/test_auto_rollback_trigger.py` | ✅ 已实现 | |
 | `tests/autonomy/test_autonomy_dashboard.py` | ✅ 已实现 | |
 | `tests/autonomy/test_autonomy_regressor.py` | ✅ 已实现 | |

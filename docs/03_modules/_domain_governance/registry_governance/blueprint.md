@@ -672,7 +672,7 @@ class OverlapResult:
 | 路径树生成脚本 | `scripts/governance/generate_project_path_tree.py` | 物理路径树快照生成 | ≥0 | script-manifest.yaml |
 | 归属图生成脚本 | `scripts/governance/generators/generate_path_ownership_map.py` | 路径归属声明生成+冲突检测 | ≥0 | script-manifest.yaml |
 | 路径树刷新门禁 | `src/zephyr/gov_enforcement/rule_enforcement/g6-path-tree-freshness.yaml` | GOV-DOC-004 §四-A 强制门禁(G6_PT) | ≥0 | gate _registry.yaml |
-| 测试代码 | `tests/infrastructure/test_registry_governance.py` | 测试用例 | ≥0 | pytest自动发现 |
+| 测试代码 | `tests/infrastructure/test_registry_governance_infrastructure.py` | 测试用例 | ≥0 | pytest自动发现 |
 | Frontmatter字段注册表 | `docs/01_policies_and_standards/_registry/catalogs/frontmatter_field_registry.yaml` | 40个Frontmatter字段定义（REG-FRONTMATTER-001） | ≥1 | registry_of_registries.yaml |
 
 ---
@@ -775,7 +775,7 @@ class OverlapResult:
 | 对应蓝图契约 | §4.1 FunctionalDomainRegistry类+RegistryConsistencyChecker类 |
 | 产出位置 | `src/zephyr/infrastructure/runtime_integration/registry_governance.py` |
 | 验收标准 | 所有公共API可调用+单元测试通过+十五字段头部完整 |
-| 验证命令 | `python -m pytest tests/infrastructure/test_registry_governance.py -v` |
+| 验证命令 | `python -m pytest tests/infrastructure/test_registry_governance_infrastructure.py -v` |
 | G7 检查项 | 上游：functional-domain-registry.yaml已创建；下游：scaffold.py可import |
 | AI 自治范围 | ai_modifiable |
 | 检查点 | `python -c "from zephyr.infra_ops.registry_governance import FunctionalDomainRegistry"` exit 0 |
@@ -785,7 +785,7 @@ class OverlapResult:
 | module_id | 文件名 | doc_type | 完整路径（相对优先） |
 |-----------|--------|----------|------------|
 | MOD-INF-037 | registry_governance.py | code | `src/zephyr/infrastructure/runtime_integration/registry_governance.py` |
-| MOD-INF-037 | test_registry_governance.py | test | `tests/infrastructure/test_registry_governance.py` |
+| MOD-INF-037 | test_registry_governance.py | test | `tests/infrastructure/test_registry_governance_infrastructure.py` |
 
 **内容编写指引**：
 
@@ -1055,7 +1055,7 @@ class OverlapResult:
 |---|---------|------------|------|---------|
 | 1 | 功能域注册表 | `docs/01_policies_and_standards/_registry/catalogs/functional_domain_registry.yaml` | 新建 | 创建YAML注册表 |
 | 2 | 业务代码 | `src/zephyr/infrastructure/runtime_integration/registry_governance.py` | 新建 | 创建Python模块 |
-| 3 | 测试代码 | `tests/infrastructure/test_registry_governance.py` | 新建 | 创建测试文件 |
+| 3 | 测试代码 | `tests/infrastructure/test_registry_governance_infrastructure.py` | 新建 | 创建测试文件 |
 | 4 | 校验脚本 | `scripts/governance/d3_metadata/check_registry_consistency.py` | 新建 | 创建CLI脚本 |
 | 5 | scaffold.py | `scripts/scaffold.py` | 修改 | 新增--domain参数+SSoTGate调用 |
 | 6 | 注册表总索引 | `docs/registry_of_registries.yaml` | 修改 | 新增REG-FUNC-DOMAIN-001条目 |

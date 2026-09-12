@@ -1024,13 +1024,13 @@ STEP 3: 拆分后验证
 
 | 文件路径 | 实现状态 | 说明 |
 |---------|:---:|------|
-| `tests/audit/test_audit_dim_d1_d4_e2e.py` | ✅ 已实现 | |
-| `tests/audit/test_audit_dim_d5_d8_e2e.py` | ✅ 已实现 | |
-| `tests/audit/test_audit_dim_d9_d12_e2e.py` | ✅ 已实现 | |
-| `tests/audit/test_audit_full_closure_e2e.py` | ✅ 已实现 | |
-| `tests/audit/test_audit_full_pipeline_e2e.py` | ✅ 已实现 | |
-| `tests/audit/test_audit_orchestrator_e2e.py` | ✅ 已实现 | |
-| `tests/audit/test_audit_registry_gate_e2e.py` | ✅ 已实现 | |
+| `tests/audit/audit_core/test_audit_dim_d1_d4_e2e.py` | ✅ 已实现 | |
+| `tests/audit/audit_core/test_audit_dim_d5_d8_e2e.py` | ✅ 已实现 | |
+| `tests/audit/audit_core/test_audit_dim_d9_d12_e2e.py` | ✅ 已实现 | |
+| `tests/audit/audit_core/test_audit_full_closure_e2e.py` | ✅ 已实现 | |
+| `tests/audit/audit_core/test_audit_full_pipeline_e2e.py` | ✅ 已实现 | |
+| `tests/audit/audit_core/test_audit_orchestrator_e2e.py` | ✅ 已实现 | |
+| `tests/audit/audit_core/test_audit_registry_gate_e2e.py` | ✅ 已实现 | |
 | `tests/governance/audit/test_orchestrator.py` | ✅ 已实现 | |
 
 ### 1.5 路径索引使用指南
