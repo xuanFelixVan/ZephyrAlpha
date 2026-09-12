@@ -159,6 +159,7 @@ _diag_logging.getLogger(__name__).debug("akshare_provider 代理 patch 已执行
 
 import calendar
 import datetime
+import hashlib
 import logging
 import math
 import re
@@ -203,6 +204,12 @@ log = logging.getLogger(__name__)
 
 # Phase 5: 表名从 business_data_categories.yaml 真源派生（裁定 #ARCH-CH-024）
 _TBL_ANALYST_FORECAST = get_registry().table("fund_analyst_forecast")
+_TBL_RESEARCH_REPORT_DETAIL = get_registry().table("fund_research_report")
+# 研报明细（research_report_detail）：PDF 链接 infoCode 提取 + 动态预测列匹配
+# （docs/_working/2026-09-12-research-report-data-plan.md，DDL 真源=schemas/categories/fundamental/fundamental_research_report.py）
+_RE_RESEARCH_INFOCODE = re.compile(r"H3_([A-Za-z0-9]+)_1\.pdf")
+_RE_RESEARCH_FORECAST_COL = re.compile(r"^(\d{4})-盈利预测-(收益|市盈率)$")
+_SQL_RESEARCH_REPORT_IDS = "SELECT DISTINCT report_id FROM {table}"
 _TBL_AUDIT_OPINION = get_registry().table("fund_audit_opinion")
 _TBL_BLOCK_TRADE = get_registry().table("market_block_trade")
 _TBL_BLOCK_TRADE_DETAIL = get_registry().table("market_block_trade_detail")
@@ -367,7 +374,7 @@ _AKSHARE_CAPABILITIES = frozenset(
         "analyst_forecast",
         "rights_issue",
         "research_report",
-        "hk_connect_flow",
+        "research_report_detail",  # 2026-09-12 研报明细全字段（含盈利预测数值）→ c3_fundamental.research_report
         "kline_futures",
         "kline_hk_daily",
         "limit_up_down",
@@ -731,6 +738,7 @@ class AkshareIngestProvider(IngestProviderBase):
             CapabilityContract("money_flow", supports_symbols_null=True),
             CapabilityContract("stock_news_em", supports_symbols_null=True),
             CapabilityContract("research_report", supports_symbols_null=True),
+            CapabilityContract("research_report_detail", supports_symbols_null=True),
             CapabilityContract("share_change", supports_symbols_null=True),
             CapabilityContract("stock_indicator", supports_symbols_null=True),
             CapabilityContract("top10_shareholders", supports_symbols_null=True),
@@ -2946,6 +2954,168 @@ class AkshareIngestProvider(IngestProviderBase):
                 parsed = self._parse_research_row(row)
                 if parsed:
                     batch_rows.append(parsed)
+
+        yield FetchResult(
+            table=table,
+            columns=columns,
+            rows=batch_rows,
+            last_key=last_key,
+            elapsed_sec=time.monotonic() - t0,
+        )
+
+    # ---- 20b. 东方财富研报明细（research_report_detail → c3_fundamental.research_report） ----
+
+    @staticmethod
+    def _research_forecast_map(row) -> tuple[dict[int, float], dict[int, float]]:
+        """从动态年份列"{YYYY}-盈利预测-收益/市盈率"提取 (eps_map, pe_map)。
+
+        NaN 防穿透（接口空预测值常见，val != val 判定）；非数值/无法解析列跳过。
+        """
+        eps: dict[int, float] = {}
+        pe: dict[int, float] = {}
+        for col in row.index:
+            mm = _RE_RESEARCH_FORECAST_COL.match(str(col))
+            if not mm:
+                continue
+            try:
+                val = float(row[col])
+            except (TypeError, ValueError):
+                continue
+            if val != val:  # NaN 防穿透
+                continue
+            target = eps if mm.group(2) == "收益" else pe
+            target[int(mm.group(1))] = val
+        return eps, pe
+
+    @staticmethod
+    def _research_report_id(link: str, code: str, title: str, pub_date: str) -> str:
+        """report_id=PDF 链接 infoCode（H3_{code}_1.pdf）；缺失时 MD5(symbol+title+date) 兜底。"""
+        m = _RE_RESEARCH_INFOCODE.search(link)
+        if m:
+            return m.group(1)
+        return "md5_" + hashlib.md5(f"{code}|{title}|{pub_date}".encode("utf-8")).hexdigest()
+
+    @staticmethod
+    def _parse_research_report_detail_row(code: str, row) -> tuple | None:
+        """解析单行研报为 research_report 全字段行（22 元组，DDL 真源=schemas/categories/fundamental/fundamental_research_report.py）。
+
+        高价值字段：预测期 0/1/2 的 EPS/PE（akshare 动态年份列"{YYYY}-盈利预测-收益/市盈率"
+        按年份升序映射 fy0/fy1/fy2 并落年份值，防年份滚动漂移）。无标题或无日期返回 None。
+        """
+        title = str(row.get("报告名称") or "").strip()
+        pub_date = AkshareIngestProvider._norm_date_str(row.get("日期"))
+        if not title or not pub_date:
+            return None
+        link = str(row.get("报告PDF链接") or "")
+        eps, pe = AkshareIngestProvider._research_forecast_map(row)
+        years = sorted(eps)
+        fy = {i: (years[i] if i < len(years) else 0) for i in range(3)}
+        report_id = AkshareIngestProvider._research_report_id(link, code, title, pub_date)
+        return (
+            report_id,
+            code,
+            title,
+            str(row.get("机构") or "").strip(),
+            str(row.get("东财评级") or "").strip(),
+            str(row.get("评级变动") or "").strip(),
+            str(row.get("行业") or "").strip(),
+            str(row.get("研究员") or "").strip(),
+            pub_date,
+            fy[0], eps.get(fy[0]), pe.get(fy[0]),
+            fy[1], eps.get(fy[1]), pe.get(fy[1]),
+            fy[2], eps.get(fy[2]), pe.get(fy[2]),
+            link,
+            0, "", "akshare_research_report_em",
+        )
+
+    def _load_existing_report_ids(self, table: str) -> set[str]:
+        """库内已有 report_id 预检集（写侧去重）；预检失败不阻断（MergeTree 兜底去重）。"""
+        existing: set[str] = set()
+        try:
+            from zephyr.data import ch_reader
+
+            tsv = ch_reader.query(_SQL_RESEARCH_REPORT_IDS.format(table=table))
+            existing = {ln.strip() for ln in (tsv or "").split("\n") if ln.strip()}
+        except Exception as e:  # noqa: BLE001 — 预检失败不阻断（MergeTree 兜底去重）
+            self._log.debug(f"research_report_detail 已有 report_id 预检失败: {e}")
+        return existing
+
+    @staticmethod
+    def _research_detail_row_kept(
+        parsed: tuple | None, win_start: str, win_end: str, existing_ids: set[str]
+    ) -> bool:
+        """行级三重过滤：解析有效 + publish_date ∈ [win_start, win_end] + report_id 未在库。"""
+        if parsed is None:
+            return False
+        if win_start and parsed[8] < win_start:
+            return False
+        if win_end and parsed[8] > win_end:
+            return False
+        return parsed[0] not in existing_ids
+
+    def _collect_research_detail_rows(
+        self, df, code: str, win_start: str, win_end: str, existing_ids: set[str]
+    ) -> list[tuple]:
+        """单股 DataFrame → 过滤后的明细行列表（解析+窗口+去重三重过滤）。"""
+        rows: list[tuple] = []
+        for _, row in df.iterrows():
+            parsed = self._parse_research_report_detail_row(code, row)
+            if self._research_detail_row_kept(parsed, win_start, win_end, existing_ids):
+                rows.append(parsed)
+        return rows
+
+    def _fetch_research_report_detail(self, payload: FetchPayload, policy: SourcePolicy) -> Iterator[FetchResult]:
+        """获取东方财富研报全字段明细，写入 c3_fundamental.research_report（fund_research_report）。
+
+        与 _fetch_research_report（news_data 共表元数据版）并存：本能力保留盈利预测数值/
+        评级变动/report_id 等高价值字段，是一致预期自聚合的原料
+        （docs/_working/2026-09-12-research-report-data-plan.md）。增量模式按
+        publish_date ∈ [payload.start, payload.end] 过滤；重复行由
+        ReplacingMergeTree(ingest_ts) + report_id 写侧预检双重去重。
+        """
+        import akshare as ak
+
+        from schemas.categories.fundamental.fundamental_research_report import INSERT_COLUMNS
+
+        table = _TBL_RESEARCH_REPORT_DETAIL
+        columns = [c.strip() for c in INSERT_COLUMNS.strip("()").split(",")]
+        symbols = payload.symbols
+        if not symbols:
+            symbols = self._get_all_a_symbols(ak, policy)
+        if not symbols:
+            yield FetchResult(
+                table=table,
+                columns=columns,
+                rows=[],
+                last_key="",
+                elapsed_sec=0.0,
+                error="research_report_detail 无法获取标的列表（akshare + CH stock_list 均为空）",
+            )
+            return
+
+        existing_ids = self._load_existing_report_ids(table)
+        win_start = payload.start.isoformat() if payload.start else ""
+        win_end = payload.end.isoformat() if payload.end else ""
+        last_key = datetime.date.today().isoformat()
+        batch_rows: list[tuple] = []
+        t0 = time.monotonic()
+
+        for idx, sym in enumerate(symbols):
+            code = str(sym).split(".")[0].zfill(6)
+            if (idx + 1) % 50 == 0:
+                self._log.info(f"research_report_detail 进度: {idx + 1}/{len(symbols)}")
+            try:
+                df = self._call_with_policy(
+                    ak.stock_research_report_em,
+                    policy,
+                    symbol=code,
+                )
+            except Exception as e:  # noqa: BLE001 — 与 _fetch_research_report 错误处理策略统一
+                self._log.debug(f"stock_research_report_em({code}) 失败: {e}")
+                continue
+            if df is None or len(df) == 0:
+                continue
+            batch_rows.extend(self._collect_research_detail_rows(df, code, win_start, win_end, existing_ids))
 
         yield FetchResult(
             table=table,
