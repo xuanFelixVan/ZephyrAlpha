@@ -393,6 +393,8 @@ class InternalComputeProvider(IngestProviderBase):
             CapabilityContract("index_valuation_daily", supports_symbols_null=True),
             # 自算指数（2026-09-04）：全A等权等衍生指标，symbols=null=注册表全量（_EQW_INDEXES）
             CapabilityContract("kline_index_calc", supports_symbols_null=True),
+            # 财报派生层（F1-M1/DS-230 2026-09-13）：三表对齐+单季+TTM+比率，symbols=null=全市场
+            CapabilityContract("financial_derived", supports_symbols_null=True),
         ],
         known_issues=[],
     )
@@ -457,7 +459,21 @@ class InternalComputeProvider(IngestProviderBase):
         if payload.table == "c1_market.kline_index_calc":
             yield from self._fetch_kline_index_calc(payload, policy)
             return
+        if payload.table == "c3_fundamental.financial_derived":
+            yield from self._fetch_financial_derived(payload)
+            return
         yield from self._fetch_technical_indicator(payload)
+
+    def _fetch_financial_derived(self, payload: FetchPayload) -> Iterator[FetchResult]:
+        """财报派生层路由分支（financial_derived capability 的命名约定实现，F1-M1/DS-230）。
+
+        委托 financial_derived_compute（三表对齐+单季拆分+TTM+比率，statement 粒度，
+        PIT=三方公告日齐+哨兵守卫）；全量重算幂等（ReplacingMergeTree 同键覆盖）。
+        夜间挂 nightly_financial 档（tasks.yaml financial_derived_build，DAG 依赖三大报表增量）。
+        """
+        from zephyr.data.implementations.financial_derived_compute import run_compute
+
+        yield from run_compute(symbols=payload.symbols, start=payload.start, end=payload.end)
 
     def _fetch_kline_index_calc(self, payload: FetchPayload, policy) -> Iterator[FetchResult]:
         """自算指数路由分支（kline_index_calc capability 的命名约定实现）。

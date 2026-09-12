@@ -209,6 +209,9 @@ _FINANCIAL_PIT_TABLES: dict[str, tuple[str, str | None]] = {
     # 研报明细（2026-09-12 消费端 C1 扩表）：事件流表（每次发布即独立事件，无报告期版本去重，
     # 照 repurchase 模式 period_col=None）；时间锚=publish_date（见 _PIT_ANCHOR_COL_OVERRIDES）
     "research_report": ("fund_research_report", None),
+    # 财报派生层（F1-M1/DS-230 2026-09-13）：statement 粒度宽表（单季/TTM/比率），
+    # 行公告日=对齐事件时点（三方公告日并集），sort key 含 announce_date 与源表同构
+    "financial_derived": ("fund_financial_derived", "report_period"),
 }
 
 # 时间锚列覆盖（默认 announce_date；个别表的公告锚列不同）

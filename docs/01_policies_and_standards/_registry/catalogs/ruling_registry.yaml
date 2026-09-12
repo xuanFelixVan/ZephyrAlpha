@@ -1618,3 +1618,26 @@ entries:
   related_arch: []
   related_rulings: ['裁定#225', '裁定#226']
   superseded_by: null
+- ruling_id: '裁定#228'
+  title: 财报事实侧消费端六裁定（D1-D6）
+  date: '2026-09-12'
+  category: 数据架构
+  status: active
+  summary: >-
+    财报事实侧消费端设计（docs/_working/2026-09-12-fundamental-consumption-design.md 第7节，Owner
+    委托 AI 裁定）六项：D1 哨兵三层防御——pit_query 哨兵过滤（公告日<=1970-01-02 不可见，宁缺毋错防前视）
+    立即落地+akshare_yjbb 修日 5,020 行（已执行，守卫入库 271dd14576）；D2 派生层 statement 粒度
+    （每股x报告期x公告版本），不做每日物化——每日可见性展开是查询语义非存储语义，防第二真源双写漂移；
+    D3 因子双登记串行对照（FQ-01 应计先出证，秩相关>=0.85 则 FQ-02 挂 variant_of）；D4 stock_indicator
+    估值历史回补立项（9/18 miniQMT 退役前窗口）；D5 首发顺序 FQ-01 应计、GR-01 单季营收、FQ-03 GPOA、
+    FQ-06 F-Score；D6 F1 闸门+派生层立即并行不占回测通道，F2 因子回测排队 P0 之后。D2 落地=
+    financial_derived 表（DS-230，297,535 行/5,858 标的全量回补 2026-09-13，13 单测+实库 PIT 交叉验证一致）。
+  affected_files:
+    - d:\ZephyrAlpha\src\zephyr\data\pit_query.py
+    - d:\ZephyrAlpha\schemas\categories\fundamental\financial_derived.py
+    - d:\ZephyrAlpha\src\zephyr\data\implementations\financial_derived_compute.py
+    - d:\ZephyrAlpha\scripts\ch\build_financial_derived.py
+    - d:\ZephyrAlpha\docs\01_policies_and_standards\_registry\catalogs\ruling_registry.yaml
+  related_arch: []
+  related_rulings: []
+  superseded_by: null

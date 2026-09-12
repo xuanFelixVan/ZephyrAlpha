@@ -342,8 +342,9 @@ class TestFinancialPitTables:
             assert "." in qualified, f"{name} 未解析为全限定名: {qualified}"
 
     def test_expected_count(self):
-        # 10 张 PIT 表：8 财报表（含 2026-09-12 扩表的 research_report）+ dividend + repurchase
-        assert len(FINANCIAL_PIT_TABLES) == 10
+        # 11 张 PIT 表：9 财报表（含 2026-09-12 research_report + 2026-09-13 financial_derived）
+        # + dividend + repurchase
+        assert len(FINANCIAL_PIT_TABLES) == 11
 
     def test_balance_sheet_in_fundamental_db(self):
         assert FINANCIAL_PIT_TABLES["balance_sheet"].startswith("c3_fundamental.")
