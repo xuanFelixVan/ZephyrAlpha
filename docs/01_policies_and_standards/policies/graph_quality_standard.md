@@ -7,7 +7,7 @@ title: 产业链图谱质量标准——二十项合格线与循环修复
 owner: ZephyrAlpha-Owner
 language: zh
 status: active
-version: "1.7.0"
+version: "1.8.0"
 date: 2026-09-12
 topic: industry_graph_quality
 scope: global
@@ -64,7 +64,7 @@ related_modules:
 | S13 | 新落位 PIT 覆盖 | 2026-09-08 后新增落位 valid_from IS NULL 违规（存量另立计划：行业锚点回填上市日/环节填盘点日） | 补 valid_from；历史回填走专项脚本 |
 | S14 | 挂链数阈值 | 单 symbol 挂活跃链 >20 =违规候选，必须甄别 | 事故性污染（如 000591.SZ 挂 269 链）→保留真实业务链，其余 PIT 关闭；真多元化公司（比亚迪类）→豁免登记 |
 
-## 5. 边层合格线（S-EDGE，5 条）
+## 5. 边层合格线（S-EDGE，6 条）
 
 | # | 标准 | 判定规则 | 修复方案 |
 |---|---|---|---|
@@ -74,6 +74,7 @@ related_modules:
 | S18 | UNLISTED 格式统一 | symbol 匹配 ^UNLISTED: 但非 UNLISTED:UE-{12hex}=违规 | 登记编码表后换码（migrate 脚本） |
 | S19 | 编码表零上市撞名 | unlisted 实体 name 精确等于在市 A 股简称=违规 | 核对→标 listed+listed_symbol→跑 promote 换码 |
 | S20 | PIT 反造假（2026-09-09 红蓝对抗增补） | websearch 边 valid_from 早于证据年份前一年（year=2025 而 valid_from<2024-01-01）=违规——防"拍脑袋编历史"式前视造假 | 有据修正（上市日/协议签署日）；无据→清空 valid_from 重填盘点日+登记。**2026-09-09 裁定（Owner 委托夜班 AI）**：判定保留不改——year=新闻年/vf=签约日的"追述型长协边"是本条主要误报源（实测 22 条：15 条签约日即披露日+7 条新闻追述），处置=豁免制度化（登记+抽检原文），不改判定放行以保住反造假哨。**2026-09-09 收尾裁定（Owner 签名批准）**：判定两段式化——SQL 只做粗筛（valid_from<year-1），放行核验下沉到原文正则：source_doc/evidence_text 原文含"YYYY年"且 YYYY≤valid_from 年份（如"2022年签署""2019年建立"）=有据回溯，放行；原文无依据的早日期仍判违规。存量 22 条经核原文无"YYYY年"字样（证据日在 URL 与三段式日期段），走豁免台账正式生效（Owner 签名批准，豁免占比 100%>5% 红线由 Owner 签名覆盖）。**【Owner 特别裁定——PIT 消费纪律，最高优先】**豁免只解决数据真实性判定，PIT 消费纪律不放松——一切 valid_from < as_of 的边，回测消费只能从 as_of（证据发布日）起使用，valid_from 更早的部分视为"当时不可知"；消费侧过滤永远 as_of <= 回测日，禁止用 valid_from 过滤可知性；SQL 示例：`WHERE as_of <= :backtest_date` |
+| S26 | 环节边完整（2026-09-12 增，ig_edge.valid_to PIT 收口配套） | ig_edge 自环（from_node=to_node）/幽灵端点（端点节点不存在）/端点已关闭（node_close PIT）=违规。**跨链端点不判违规**（Owner 2026-09-12 口径裁定：跨链 ig_edge=链间结构投影，galaxy 聚类消费其做链对权重——by-design 数据）。ig_company_edge 同类病灶由 S15/S16/S18 覆盖。**首轮实测 473 条存量自环已全部 edge_close PIT 关闭** | edge_close PIT 关闭（禁 DELETE） |
 
 **豁免滥用法防线（红蓝对抗 2026-09-09 增补）**：任一类豁免数 > 该类违规总数 5% 须 Owner 签名（裁定人=Owner 手写），否则视为无效豁免。
 
@@ -96,8 +97,8 @@ related_modules:
 | 身份 | symbol 代码 / name 名称 / market 市场 | 落位表+stock\_basic | MUST | S11/S18 已覆盖 |
 | 坐标 | chains 所属链（多条合法）/ node 环节 / tier 层位 / role 角色 | 落位→节点→链 | MUST≥1 条坐标 | 链-环节-角色三元组完整 |
 | 坐标 | chain\_path 层级路径（L1→L2→…→当前链） | child\_chain\_id 递归 | **渐进** | 样板链（半导体）验收后转 MUST |
-| 上游 | suppliers 供应商边（对手方+product+year+PIT+evidence） | 边表 to\_symbol=我 | SHOULD≥1 | 源头类公司（矿业/材料源头）豁免须登记 |
-| 下游 | customers 客户边（同构） | 边表 from\_symbol=我 | SHOULD≥1 | 终端类公司（整机/应用）豁免须登记 |
+| 上游 | suppliers 供应商边（对手方+product+year+PIT+evidence） | 边表 to\_symbol=我 | SHOULD≥1 | 源头类公司（矿业/材料源头）豁免须登记。**ckg_2021 落位公司（igfact_fill 批）预期无 ig_company_edge 上下游边**——完备度落"基本完备"属预期行为，留待 R5 年报批补边，非违规勿硬造 |
+| 下游 | customers 客户边（同构） | 边表 from\_symbol=我 | SHOULD≥1 | 终端类公司（整机/应用）豁免须登记。同上 ckg 落位公司预期说明 |
 | 网络 | 上二层/下二层（传递上下游） | 图遍历 | DERIVED | 不落库，查询侧实时算（二层闭包 v1.2 已定） |
 | 标签 | ths\_industry THS 行业（二级）/ sw\_category 申万一级 | 行业聚合链落位+链 category | MUST（A 股） | 分层标签架构（开放问题 8 裁定） |
 | 内容 | profile 公司简介 | ig\_chunk ths\_profile | SHOULD | 无简介登记（THS 铺面已 5200 块） |
@@ -127,6 +128,7 @@ related_modules:
 
 ## 11. 版本
 
+- 1.8.0（2026-09-12）：**ig_edge PIT 收口 + S26 环节边完整性入引擎**（igfact 填充任务 P1 缺口清偿）——ig_edge ADD COLUMN valid_to（此前环节边禁 DELETE 且无关闭通道=坏边永挂）；edge_close 通道（对标 node_close/fact_close）；**S26**：ig_edge 自环/幽灵端点/端点已关闭=违规（**跨链端点不判**——galaxy 聚类消费跨链边做链对权重=by-design）；S21 连通与 api_server（galaxy/cluster）同步 valid_to IS NULL 过滤；首轮实测 473 条存量自环全部 edge_close PIT 关闭，引擎即刻回绿。字段字典 v1.2.2 同步。
 - 1.7.0（2026-09-12）：**tier 退役**（Owner 2026-09-12 第一性原理裁定，ig_fact→空壳链填充任务 Phase 0）——S6 tier 检查段废止（function_role 八值检查保留；686 条 unspecified+306 条治理债销案）；S21 起讫改链内拓扑端点（入度0=源头/出度0=终端，环与散点=违规；tier 起讫废止，15 条"缺 tier 层标记"伪缺口根除）；字段字典 v1.2.0 同步（ig_node.tier required→optional，新写入一律不填）；前端 cluster 列改拓扑分层（_cm_chain_cols，存量 tier 仅 fallback）；存量 3,354 行 tier 值保留不清洗。
 - 1.0.0（2026-09-09）：初版十九项合格线（Owner 四裁定确认同日）。
 - 1.1.0（2026-09-09）：红蓝对抗增补——S20 PIT 反造假（防编历史式前视造假）+豁免滥用法防线（>5% 须 Owner 签名）。

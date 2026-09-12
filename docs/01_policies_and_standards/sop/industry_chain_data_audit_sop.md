@@ -7,7 +7,7 @@ title: 产业链供应链全景图数据审计与更新SOP——夜班自主执�
 owner: ZephyrAlpha-Owner
 language: zh
 status: active
-version: "1.8.0"
+version: "1.8.2"
 date: 2026-09-12
 topic: industry_chain_data_audit
 scope: global
@@ -46,6 +46,8 @@ related_modules:
 ## 2. 背景与数据基线
 
 ### 2.1 现状（2026-09-03 实测基线，夜班开工时以第 0 轮重测为准）
+
+> **【历史快照声明 2026-09-12】** 下表为 2026-09-03 基线，仅供考古对照；铁律 7"实测禁记忆"逐字适用——一切计数以 `websearch_ingest.py stats` 实测为准（2026-09-12 实测：ig_chain 887（active 351）、ig_node 5,279、ig_edge 1,476、ig_node_company 18,349、ig_fact 264,072）。
 
 | 表                   | 行数      | 说明                                                   |
 | ------------------- | ------- | ---------------------------------------------------- |
@@ -185,17 +187,19 @@ related_modules:
 | source\_note | TEXT | 新链必填 | `websearch`（或存量采购标记） |
 | created\_at / updated\_at | TIMESTAMPTZ | 自动 | **任何对本链条目的写入必须刷新 updated\_at**（工具强制） |
 
-**ig\_node（环节节点表，9 字段）**
+**ig\_node（环节节点表）**
 
 | 字段 | 类型 | 必填 | 标准 |
 |---|---|---|---|
 | node\_id | TEXT PK | 是 | `ND-{12位hex}` |
 | chain\_id | TEXT FK | 是 | |
 | name | TEXT | 是 | **纯环节功能名**（如"HBM 封装""光引发剂"），禁链名前缀/`-tier` 后缀残留 |
-| tier | TEXT | 新节点必填 | §4.7.2 词表 9 值；**websearch 新写入禁 unspecified** |
+| tier | TEXT | **已退役** | **2026-09-12 停止人工填写**（Owner 裁定：相对位置无机械判定依据）；层位由消费侧从 ig_edge 链内拓扑派生，存量值仅历史快照 |
 | aliases | TEXT\[\] | 否 | 别名数组（含英文名/简称） |
 | description | TEXT | 否 | 一句话环节说明 |
 | market | TEXT | 是 | ∈{cn, global} |
+| function\_role | TEXT | 否 | 八值职能（生产设备/生产原料/辅助材料/辅助设备/加工工艺/技术服务/产品业务/销售渠道）——tier 退役后职能语义唯一载体 |
+| valid\_to | DATE | 否 | PIT 关闭（2026-09-12 增）：孤岛等治理节点唯一处置=ingest node_close，禁 DELETE |
 | created\_at / updated\_at | TIMESTAMPTZ | 自动 | 同上刷新纪律 |
 
 **ig\_edge（环节结构边，8 字段）**
@@ -215,7 +219,7 @@ related_modules:
 | id | BIGSERIAL PK | 自动 | |
 | node\_id | TEXT FK | 是 | 落到具体环节 |
 | symbol | TEXT | 是 | §4.4 正则（cn 反查 stock\_basic / global 豁免）；UNIQUE(node\_id,symbol) |
-| role | TEXT | 否 | ∈{龙头, 核心, 参与, 全球龙头, 潜在}（自由词但须名词性） |
+| role | TEXT | 否 | **五值封闭词表** ∈{龙头, 核心, 主要, 参与, 提及}（2026-09-12 对齐字段字典 roles_std——引擎 S10 硬校验，写其它值=违规；语义归一见字典 standard 行） |
 | confidence | REAL | 是 | §4.3（websearch ≤0.7） |
 | evidence\_text | TEXT | websearch 必填 | **原文摘录一句**（反幻觉锚） |
 | source\_doc | TEXT | 是 | 三段式含采集日期 |
@@ -496,7 +500,7 @@ WHERE valid_from <= :decision_date
     {"type": "chain", "name": "存储芯片产业链", "category": "半导体", "version_year": 2026, "market": "cn", "source_doc": "查询词|https://...|2026-09-03"},
     {"type": "node", "chain_name": "存储芯片产业链", "name": "HBM制造", "tier": "中游", "market": "cn", "source_doc": "..."},
     {"type": "node_edge", "chain_name": "存储芯片产业链", "from_node": "晶圆制造", "to_node": "HBM制造", "edge_type": "structure", "source_doc": "..."},
-    {"type": "node_company", "chain_name": "存储芯片产业链", "node_name": "HBM制造", "symbol": "005930.KS", "role": "全球龙头", "confidence": 0.5, "evidence_text": "原文摘录一句", "market": "global", "source_doc": "..."},
+    {"type": "node_company", "chain_name": "存储芯片产业链", "node_name": "HBM制造", "symbol": "005930.KS", "role": "主要", "confidence": 0.5, "evidence_text": "原文摘录一句", "market": "global", "source_doc": "..."},
     {"type": "company_edge", "from_symbol": "NVDA.US", "to_symbol": "002463.SZ", "year": 2026, "product": "AI服务器整机代工", "source": "websearch", "from_name": "英伟达", "to_name": "沪电股份", "market": "global", "source_doc": "..."},
     {"type": "metric", "symbol": "002463.SZ", "year": 2025, "metric": "top5_ratio", "value": 0.62, "source": "websearch", "market": "cn", "source_doc": "..."}
   ]
@@ -514,7 +518,7 @@ WHERE valid_from <= :decision_date
 7. tier ∈ §4.7.2 词表且 websearch 写入禁 unspecified（§4.6/4.7 标准，2026-09-07 增）。
 8. category ∈ §4.7.3 申万词表（空/兜底"综合"放行但记 warn）。
 9. node.name 禁链名前缀/`-tier` 后缀（正则 `-\d|-[上下游中]|-设备|-材料|-零部件|-原材料|-辅材|-unspecified$` 命中即拒）。
-10. chain 记录 `status` ∈ {active, deprecated}；`deprecated` 必带 `merged_into`（`CH-{12位hex}`，写入时对 source_note **幂等追加** `merged_into:CH-xxx` 不覆盖原值）；重发链记录不带 status 时**不回落 active**（防刷新类目时复活已废弃链）。2026-09-08 v1.3.1 新增——碎片链 deprecated 治理自此可走本工具唯一合法通道。
+10. chain 记录 `status` ∈ {active, deprecated}；`deprecated` 必带 `merged_into`（`CH-{12位hex}`，写入时对 source_note **幂等追加** `merged_into:CH-xxx` 不覆盖原值）；重发链记录不带 status 时**不回落 active**（防刷新类目时复活已废弃链）。2026-09-08 v1.3.1 新增——碎片链 deprecated 治理自此可走本工具唯一合法通道。**2026-09-12 增补**：① deprecated→active 转换唯一合法通道=chain 记录带 `activate: true` + `status: "active"` + 激活留痕 source_doc（普通重发仍不得复活）；② 节点层 PIT 关闭通道 `node_close`（node_ids 数组直指 + reason_doc 留痕，幂等可逆，孤岛等治理节点唯一处置）；③ 2026-09-11 已有 `fact_close`（事实层）与 `node_rename`（改名三关校验）通道。record 类型全景以工具 docstring 为准（chain/node/node_edge/node_company/company_edge/metric/fact/equity_edge/unlisted_entity/document/chunk/fact_close/node_close/node_rename）。
 
 **登记要求**：script-manifest.yaml 新增条目（STARTUP: manual，domain: industry\_graph）+ `tests/scripts/test_websearch_ingest.py` 测试件（幂等/校验拒绝/事务回滚三测）+ GitCommitGateway 提交。
 
@@ -577,6 +581,7 @@ WHERE valid_from <= :decision_date
 3. 每链先与存量比对：已有节点不重写，只补缺；发现存量节点明显错误→登记开放问题。
 4. A 股公司 symbol 从 stock\_basic 精确匹配简称/全称；匹配不到的候选公司→不硬写，登记缺口。
 5. 涉及全球龙头（该链的英伟达/三星级节点）→ 本轮只登记进第 4 轮锚点清单，不在此轮展开。
+6. **igfact 产品网扩产批（2026-09-12 增，数据渠道①施工落地）**：`python scripts/industry_graph/igfact_fill.py plan`（只读映射统计）→ `ingest --top N`（CKG 产品词过滤+链主体词映射+subtype 传递，节点/落位/边三件套全走 ingest 通道）→ `activate`（达标链预检激活）→ `close-orphans`（孤岛 PIT 收口）→ `recategory`（THS 锚点多数票补 category）。纪律：tier 不填（已退役）；零孤岛入图；重建链必须过 activation\_ready 预检。
 
 **通过条件**：链工作清单中已处理链（含"查过无新可补"）100% 有批次记录或缺口登记；P1 链全部处理完才算本轮达标。
 
@@ -810,8 +815,8 @@ WHERE valid_from <= :decision_date
 
 | 方向 | 问的问题 | 图谱反查 | 全网搜索 | 产出 |
 |---|---|---|---|---|
-| ①上游 | 这个环节的投入品从哪来？ | 入边扫描+tier=上游/材料缺口 | `"{环节} 上游 原材料 2026"` | 新节点/供应边 |
-| ②下游 | 产出喂给谁？ | 出边+落位空洞（§7.6 图缺口驱动） | `"{环节} 下游 应用 2026"` | 新节点/供应边 |
+| ①上游 | 这个环节的投入品从哪来？ | 入边扫描+tier=上游/材料缺口+**ig_fact 产品网反查**（`SELECT object FROM ig_fact WHERE relation='supplies_to' AND object=:环节词`，2026-09-12 增——CKG 53K 条产品供应边是现成免费反查源） | `"{环节} 上游 原材料 2026"` | 新节点/供应边 |
+| ②下游 | 产出喂给谁？ | 出边+落位空洞（§7.6 图缺口驱动）+ig_fact 产品网反查（subject=:环节词） | `"{环节} 下游 应用 2026"` | 新节点/供应边 |
 | ③同环节竞争 | 谁也在做这个环节？ | 同 node_id 落位公司清单 | `"{环节} 龙头 公司 A股 2026"` | 落位补全（ig_node_company） |
 | ④替代工艺 | 技术路线替代在发生吗？ | edge_type 词表无此概念→发现即登记 | `"{产品} 替代 技术 路线 2026"` | competitor_of 边/新节点候选 |
 | ⑤资本纽带 | 谁持股/投资谁？ | ig_equity_edge 反查 | 股权公告 | **只入 equity_edge，硬边界重申：股权投资关系禁入 ig_company_edge（开放问题 7 裁定）** |
@@ -953,7 +958,7 @@ progress.json 结构：
   □ 总控锁 acquire（锁被占=静默退出，总则 9）
   □ 开工探测（git status + 文件锁）
   □ 工具就绪检查（websearch_ingest.py 可用；v1.4.0 施工项未完成时先施工：ths_export 来源支持 / ths_import.py / ig_unlisted_entity DDL）
-  □ backup 十表（superuser 通道）
+  □ backup 十二表（superuser 通道；_ALL_TABLES 真源含 ig_fact/ig_unlisted_entity/ig_equity_edge/ig_product_revenue）
   □ stats 基线 + 质量引擎基线（graph_quality_check.py，§12）+ 缺口总账
   □ 链工作清单排优先级（P1/P2/P3）
 □ 大循环 N（§8.4：跑完不结束，连续两个大循环零发现才结束）
@@ -998,7 +1003,7 @@ python scripts/industry_graph/graph_quality_check.py     # 体检: .runtime/indu
 ### 12.3 修复优先级（数据毒性排）
 
 1. **P0 污染源**（量化查询正在中毒）：S14 事故性挂链（000591 类）→ S15 自环 → S16 事故双向 → S4 废弃链残留
-2. **P1 结构垃圾**（图谱不可看）：S1 标题腔 → S7 后缀名 → S6 unspecified → S10 role 归一 → S8 孤岛
+2. **P1 结构垃圾**（图谱不可看）：S1 标题腔 → S7 后缀名 → S6 function_role 非法（tier 已退役不检查，2026-09-12）→ S10 role 归一 → S8 孤岛（处置=node_close PIT 关闭，不再"补边或登记"二选）
 3. **P2 合规**：S19 撞名 → S17 边补全 → S5/S13 PIT 覆盖 → S12 market
 4. **豁免登记**（修不动但判定合法的）：S14 真多元化公司（比亚迪类）→ 逐家登记豁免+原因
 
@@ -1044,5 +1049,7 @@ python scripts/industry_graph/graph_quality_check.py     # 体检: .runtime/indu
 | 2026-09-09 | 1.6.0 | **病菌寻路 v2 升级**：新增 §7.7 六向寻路矩阵（上游/下游/同环节竞争/替代工艺/资本纽带/事件种子——每向图谱反查+全网搜索双动作，资本纽带硬边界重申只入 equity_edge）+防噪音四道闸（来源可溯/交叉验证/适配词表/可验证——§7.2/§7.6 分散规则升格为逐条必过显式闸）+盲点自查机制（每夜第 7 轮与宽度三闸并列跑三项自查，T4 保鲜轮全量跑）；depends_on 挂方法论真源 trading_decision_map_pathfinding_sop | Owner 2026-09-09 深夜裁定：TDM 增长轨沉淀的六向寻路+防噪音四闸升 permanent SOP，产业链寻路同步升级——原 §7.6 只管"怎么扩散"，缺"往哪个方向长"的矩阵和"长出来的东西怎么审"的显式闸 |
 | 2026-09-10 | 1.7.0 | **链名分类学+逐簇梳理规程**（§4.7.0 新增，Owner 2026-09-10 指令"命名专业化、一集一集梳理"）：五类链命名模板封闭分类（行业锚点/产业链/子链挂接/全球主干/废弃）+命名禁令五条（禁报告指数名/禁截断悬空名/禁外文缩写裸名/禁环节名当链名/禁父链缺挂接，引擎 S25+写入工具双拦截）+逐簇梳理六步规程（清点→dry-run→ingest 执行→引擎复跑→汇报→按垃圾密度排集，半导体簇=第一集）；frontmatter 版本号 1.5.0→1.7.0（补 1.6.0 滞后） | Owner 2026-09-10 白班实测反馈：半导体簇点进去链名混乱（截断名"碳化硅（SiC"/报告名"中国绿色工厂科技创新指数"挂 98 家/外文裸名 IC/PVD/大行业套大行业观感），根因=链无类型边界、细分链无挂接机制落地；命名 SOP 先行再逐簇清理 |
 | 2026-09-10 | 1.7.1 | **§4.7.0.1 专业对标节**（Owner 指令"查全网专业机构怎么做"）：三路调研（GICS 自上而下分类树/FactSet RBICS 自下而上 6 层+Revenue 版/Revere 供应链关系独立产品/申万 2021 三级树四原则/中证指数图谱标准课题/Wind 产业链库 16 万条/ChainKnowledgeGraph 三实体六关系/量化社区供应边命名）收敛落地三原则——①双轨分离（行业分类轨锚点链静态树 vs 产业群落轨聚类分群，锚点链退出 galaxy 聚类参与=化学制品簇混进公路运输/游艇的治本）②产业链命名三段法（全球前缀+标准中文名+产业链，依据国标/申万词汇，禁文章句式）③环节命名=标准工序名词≤10 字。 |
-| 2026-09-12 | 1.8.0 | **tier 退役**（Owner 2026-09-12 第一性原理裁定，ig_fact→空壳链填充任务 Phase 0）：§4.7.2 tier 停止人工填写（相对位置无机械判定依据，AI 标注口径漂移实证），层位由 ig_edge 链内拓扑派生（消费侧推导不落库）；引擎 S6 tier 检查废止/S21 拓扑起讫（graph_quality_standard v1.7.0 同步）；字段字典 v1.2.0 ig_node.tier required→optional；新写入（websearch/ckg 填充）一律不填 tier；存量 3,354 行保留不清洗；function_role 八值保留（职能=绝对属性）。 | Owner 2026-09-10 追问"化学制品簇里怎么会有公路铁路运输/游艇"——诊断实锤 5 条跨行业供应边焊接+锚点链参簇设计缺陷，专业机构分类与供应图分离的做法即正解 |
+| 2026-09-12 | 1.8.0 | **tier 退役**（Owner 2026-09-12 第一性原理裁定，ig_fact→空壳链填充任务 Phase 0）：§4.7.2 tier 停止人工填写（相对位置无机械判定依据，AI 标注口径漂移实证），层位由 ig_edge 链内拓扑派生（消费侧推导不落库）；引擎 S6 tier 检查废止/S21 拓扑起讫（graph_quality_standard v1.7.0 同步）；字段字典 v1.2.0 ig_node.tier required→optional；新写入（websearch/ckg 填充）一律不填 tier；存量 3,354 行保留不清洗；function_role 八值保留（职能=绝对属性）。 |
+| 2026-09-12 | 1.8.1 | **速查表纠错对齐**（igfact 填充任务收尾审计发现，防夜班 AI 误读）：§4.6 ig_node_company.role 速查 {龙头,核心,参与,全球龙头,潜在}→**五值 {龙头,核心,主要,参与,提及}**（原值与字段字典 roles_std/引擎 S10 冲突，照抄即违规）；§4.6 ig_node 速查补 valid_to/function_role 行+tier 退役标注；§5 硬校验 10 补显式激活通道/node_close/fact_close/node_rename record 全景；§11 backup 十表→十二表；§12.3 P1 "S6 unspecified"→"S6 function_role"。 |
+| 2026-09-12 | 1.8.2 | **ig_edge PIT 收口 + igfact 渠道入编排**（P1 缺口清偿，Owner"现在做掉"指令）：§4.6 字段字典 v1.2.2 同步 ig_edge.valid_to（edge_close 通道，此前环节边禁 DELETE 且无关闭通道=坏边永挂）；§6 R2 新增第 6 条 igfact 产品网扩产批（igfact_fill.py plan/ingest/activate/close-orphans/recategory 五段式引用）；§7.7 六向矩阵①上游②下游图谱反查列增 ig_fact 产品网（CKG 53K 供应边=现成免费反查源）；引擎 S26 环节边完整性（自环/幽灵端点/端点已关闭=违规；跨链端点不判=galaxy 聚类 by-design 消费；首轮 473 条存量自环全部 edge_close PIT 关闭即刻回绿）；质量标准 v1.8.0 同步 S26+§7 ckg 落位公司完备度预期说明；§2.1 基线加历史快照声明。 | Owner 2026-09-10 追问"化学制品簇里怎么会有公路铁路运输/游艇"——诊断实锤 5 条跨行业供应边焊接+锚点链参簇设计缺陷，专业机构分类与供应图分离的做法即正解 |
 

@@ -1,13 +1,13 @@
 meta:
-  version: 1.2.0
+  version: 1.2.2
   date: '2026-09-12'
   owner: ZephyrAlpha-Owner
-  decision: Owner 2026-09-10 方案 A 拍板（对话记录）；对齐测试=alert_threshold_registry 先例；2026-09-12 tier 退役裁定（第一性原理分析，对话记录）
+  decision: Owner 2026-09-10 方案 A 拍板（对话记录）；对齐测试=alert_threshold_registry 先例；2026-09-12 tier 退役裁定（第一性原理分析，对话记录）；2026-09-12 ig_edge PIT 收口裁定（P1 结构缺口：坏边无合法处置）
   consumers:
   - scripts/industry_graph/websearch_ingest.py
   - scripts/industry_graph/graph_quality_check.py
   - tests/industry_graph/test_field_dictionary_alignment.py
-  changelog: '1.2.1=ig_node.valid_to PIT 列(节点层治理收口,node_close 通道);1.2.0=tier 退役批: ig_node.tier required 降级 optional+停止人工填写(层位由 ig_edge 链内拓扑派生:入度0=源头/出度0=终端,环与散点落通用),存量值保留不清洗,S6 收缩为 function_role 检查,S21 起讫改拓扑端点;1.1.0=词汇审计批: transmission_type/weight_type 词表化+node.name 文章词拦截+chain.name 动词尾禁令+fact.object 产品词纪律'
+  changelog: '1.2.2=ig_edge.valid_to PIT 列(edge_close 通道)+S26 环节边完整性检查+ig_fact 方向语义收录+evidence_chunk_id ckg 管线豁免;1.2.1=ig_node.valid_to PIT 列(节点层治理收口,node_close 通道);1.2.0=tier 退役批: ig_node.tier required 降级 optional+停止人工填写(层位由 ig_edge 链内拓扑派生:入度0=源头/出度0=终端,环与散点落通用),存量值保留不清洗,S6 收缩为 function_role 检查,S21 起讫改拓扑端点;1.1.0=词汇审计批: transmission_type/weight_type 词表化+node.name 文章词拦截+chain.name 动词尾禁令+fact.object 产品词纪律'
 vocab:
   tiers:
     values:
@@ -323,6 +323,11 @@ tables:
         required: true
         standard: websearch 补边=三段式；推断补边（S21 骨架）第二段写明推断依据（如「tier层序与产业流程推断(见evidence字段)」）
         good_example: 光刻胶 产业链 2026|https://...|2026-09-10
+      valid_to:
+        type: date
+        required: false
+        standard: PIT 关闭时间戳（2026-09-12 v1.2.2 增量，环节边治理收口——此前边禁 DELETE 且无关闭通道=坏边永挂）：NULL=存活；关闭只走 ingest edge_close（edge_id 数组直指+reason_doc 留痕，幂等可逆）；引擎 S26 端点存活检查与 S21 连通分析默认过滤 valid_to IS NULL；禁 DELETE
+        good_example: '2026-09-12'
       market:
         type: enum(vocab:markets)
         required: true
@@ -741,7 +746,7 @@ tables:
       relation:
         type: text
         required: true
-        standard: 现存量七值：product_def/supplies_to/produces/subtype_of/belongs_to_sector/sector_parent_of/product_downstream_of；新 relation 须先在本行扩登记（词表封闭纪律）
+        standard: 现存量七值：product_def/supplies_to/produces/subtype_of/belongs_to_sector/sector_parent_of/product_downstream_of；新 relation 须先在本行扩登记（词表封闭纪律）。**方向语义（2026-09-12 实测核实后收录）**：supplies_to=subject(供应方)→object(客户方)；subtype_of=subject(小类)→object(大类)；sector_parent_of=subject(下级行业)→object(上级行业)；product_downstream_of=subject(产品)→object(其下游产品)；produces/belongs_to_sector=subject(公司代码)→object(产品/行业)
         good_example: produces
       object:
         type: text
@@ -756,7 +761,7 @@ tables:
       evidence_chunk_id:
         type: text
         required: false
-        standard: 证据回链 ig_chunk（反幻觉锚，every edge has a citation 对标）——新写入必填
+        standard: 证据回链 ig_chunk（反幻觉锚，every edge has a citation 对标）——websearch/corpus_rag 新写入必填；ckg_2021/483/match_list/J88 采购管线豁免（外采数据集无 chunk 锚，溯源走 source+source_doc）
       confidence:
         type: real
         required: false
