@@ -265,6 +265,10 @@ DDL_STATEMENTS = [
     "ALTER TABLE ig_company_edge ADD COLUMN IF NOT EXISTS keywords TEXT[]",
     # --- 环节职能角色列（Owner 2026-09-09 质疑裁定: tier 三值化位置语义,职能拆出,深交所八值词表） ---
     "ALTER TABLE ig_node ADD COLUMN IF NOT EXISTS function_role TEXT",
+    # --- ig_node PIT 关闭列（2026-09-12 ig_fact 空壳链填充任务: 节点层治理收口,对标 ig_fact.valid_to
+    #     先例——孤岛节点等治理对象的唯一合法处置=PIT 关闭(禁 DELETE);关闭只走 websearch_ingest node_close
+    #     (幂等可逆,reason_doc 留痕);分析查询默认过滤 valid_to IS NULL） ---
+    "ALTER TABLE ig_node ADD COLUMN IF NOT EXISTS valid_to DATE",
     # --- 股权表成本两列（Owner 2026-09-09 裁定: 取得成本+取得日,股权避坑核心） ---
     "ALTER TABLE ig_equity_edge ADD COLUMN IF NOT EXISTS acquisition_cost NUMERIC",
     "ALTER TABLE ig_equity_edge ADD COLUMN IF NOT EXISTS acquisition_date DATE",

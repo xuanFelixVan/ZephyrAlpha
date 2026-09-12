@@ -60,7 +60,7 @@ _SQL_S24_ANCHOR_PLACEMENT = (
 _V = load_vocab()
 # 2026-09-10 扩词(Owner 点名穿透事故:"中国节水装备行业发展现状""环氧丙烷产业链供需格局"原词表漏拦):
 TITLE_JUNK_RE = "一张图看懂|重磅|最新|预测|深度|全景图|解读|盘点|风向标|启幕|ppt|研报|机遇|风口|现状|格局|趋势|展望|前景|图解|一文|解析|洞察|市场和应用"
-TIER_POSITION = tuple(_V["tiers"]["values"])  # v0.4 职能化: tier 仅三位置值(Owner 2026-09-09)
+TIER_POSITION = tuple(_V["tiers"]["values"])  # 2026-09-12 tier 退役:引擎 SQL 不再消费,常量保留供对齐测试断言与存量兼容
 FUNCTION_ROLES = tuple(_V["function_roles"]["values"])
 TIER_SUFFIX_RE = "-(上游|中游|下游|设备|材料|零部件|原材料|辅材|unspecified)$"
 ROLES_STD = tuple(_V["roles_std"]["values"])
@@ -141,18 +141,9 @@ CHECKS: list[dict] = [
         )
     """},
     # ---- 节点层 ----
-    # S6 v0.4 职能化: tier 仅三位置值(残留职能值=违规) + function_role 八值词表检查
-    # 2026-09-09 Owner 委托裁定: 废弃链上节点=历史快照不审(与 S8 同口径),只审活跃链
-    {"id": "S6", "title": "tier 三位置值+function_role 八值+零 unspecified", "sql": f"""
-        SELECT n.node_id, coalesce(n.tier,'(空)') || ' | ' || n.name FROM ig_node n
-        JOIN ig_chain c ON n.chain_id=c.chain_id
-        WHERE (n.tier IS NULL OR (n.tier NOT IN ({','.join(f"'{t}'" for t in TIER_POSITION)}) AND n.tier <> 'unspecified'))
-          AND (c.status IS NULL OR c.status='active')
-        UNION ALL
-        SELECT n.node_id, 'unspecified | ' || n.name FROM ig_node n
-        JOIN ig_chain c ON n.chain_id=c.chain_id
-        WHERE n.tier='unspecified' AND (c.status IS NULL OR c.status='active')
-        UNION ALL
+    # S6 2026-09-12 tier 退役裁定: tier 停止人工填写(层位由边拓扑派生),tier 检查段移除;
+    # function_role 八值词表检查保留(职能=绝对属性,判定客观)
+    {"id": "S6", "title": "function_role 八值词表(tier 已退役不检查)", "sql": f"""
         SELECT node_id, 'function_role非法:' || function_role || ' | ' || name FROM ig_node
         WHERE function_role IS NOT NULL AND function_role NOT IN ({','.join(f"'{f}'" for f in FUNCTION_ROLES)})
     """},
@@ -167,6 +158,7 @@ CHECKS: list[dict] = [
           AND n.name <> '行业聚合'
           AND n.child_chain_id IS NULL
           AND n.name NOT LIKE '%%（已并入%%'
+          AND n.valid_to IS NULL
           AND (c.status IS NULL OR c.status='active')
     """},
     {"id": "S9", "title": "同链同名节点零重复", "sql": """
@@ -318,7 +310,7 @@ def _s21_load_graph(cur) -> tuple[dict, dict, dict, dict]:
     """S21/S24 专用三查：活跃链集/节点归属与 tier/链内边集（只读 SELECT，无法机械化集中）。"""
     cur.execute("SELECT chain_id, name FROM ig_chain WHERE status = 'active'")  # noqa: bare-sql  S21 专用只读三连查，引擎既有风格
     chains = {r[0]: r[1] for r in cur.fetchall()}
-    cur.execute("SELECT node_id, chain_id, tier, name FROM ig_node")  # noqa: bare-sql  S21 专用只读三连查，引擎既有风格
+    cur.execute("SELECT node_id, chain_id, tier, name FROM ig_node WHERE valid_to IS NULL")  # noqa: bare-sql  S21 专用只读三连查，引擎既有风格;2026-09-12 起 PIT 已关闭节点不参与结构审查
     node_chain: dict[str, str] = {}
     node_tier: dict[str, str] = {}
     node_name: dict[str, str] = {}
@@ -357,14 +349,17 @@ def _tombstone(name: str) -> bool:
 
 
 def _check_s21(cur) -> dict:
-    """S21 流程连通性（2026-09-09 增，Owner 口径：structure 流程边与 supply 供应边均计入连通路径）。
-    每条活跃链（实质节点数>=3）：上游 tier 节点 → 下游 tier 节点存在连通路径则合规，断链=违规。
+    """S21 流程连通性（2026-09-09 增；2026-09-12 tier 退役裁定改拓扑起讫）。
+    每条活跃链（实质节点数>=3）：链内**拓扑端点**（入度0=源头，出度0=终端）间存在连通路径则合规。
+    structure 与 supply/supplies_to 边均计入；无向连通 BFS。
+    tier 起讫废止依据：tier 停止人工填写（相对位置无机械判定依据，标注漂移制造伪断链——
+    2026-09-10 口径修正实测 15 条 advisory 全为"缺上游/下游 tier 层标记"型）。
+    边界口径：链内零结构边（散点链）或全部节点入度/出度>=1（环）→ 无拓扑端点 = 违规。
     违规描述附 structure 边占比（附带指标，不判违规）。
 
-    口径修正（2026-09-10，与 S8/S6 既有裁定同源）：墓碑节点（'（已并入'标记=历史合并快照）
-    不计入节点数与起讫集；去墓碑后实质节点<3 的链、实质节点名全等于链名(±'行业'/'行业聚合')
-    的锚点/单环节链跳过——这类链由 S24 僵尸链检测收口，不在 S21 制造伪断链。
-    依据：合并治理墓碑残留曾占 advisory 336 的 93.8%（315/336），伪断链淹没真缺口。
+    墓碑节点（'（已并入'标记=历史合并快照）不计入节点数与起讫集；
+    去墓碑后实质节点<3 的链、实质节点名全等于链名(±'行业'/'行业聚合')的锚点/单环节链跳过
+    ——由 S24 僵尸链检测收口，不在 S21 制造伪断链。
     """
     chains, node_chain, node_tier, node_name, chain_edges = _s21_load_graph(cur)
     violations: list[tuple[str, str]] = []
@@ -383,18 +378,27 @@ def _check_s21(cur) -> dict:
         n_st = sum(1 for _, _, et in edges if et == 'structure')
         n_sp = len(edges) - n_st
         ratio = (n_st / len(edges)) if edges else 0.0
+        alive_set = set(alive)
         adj: dict[str, list[str]] = defaultdict(list)
+        indeg: dict[str, int] = defaultdict(int)
+        outdeg: dict[str, int] = defaultdict(int)
         for u, v, _et in edges:
-            adj[u].append(v)
-            adj[v].append(u)
-        starts = [n for n in alive if node_tier.get(n) == '上游']
-        targets = {n for n in alive if node_tier.get(n) == '下游'}
+            if u in alive_set and v in alive_set:
+                adj[u].append(v)
+                adj[v].append(u)   # 无向连通
+                outdeg[u] += 1
+                indeg[v] += 1
+        # 拓扑端点（2026-09-12 起）：入度0=源头起点集，出度0=终端目标集
+        starts = [n for n in alive if indeg[n] == 0]
+        targets = {n for n in alive if outdeg[n] == 0}
         if not _s21_reachable(starts, targets, adj):
-            violations.append((cid, '%s nodes=%d structure=%d supply=%d 结构占比=%.2f' % (
-                cname, len(alive), n_st, n_sp, ratio)))
+            reason = '无拓扑端点(环/散点)' if not starts and not targets else (
+                '无源头端点(入度均>=1,疑环)' if not starts else '无终端端点(出度均>=1,疑环)')
+            violations.append((cid, '%s nodes=%d structure=%d supply=%d 结构占比=%.2f %s' % (
+                cname, len(alive), n_st, n_sp, ratio, reason)))
     return {
         'id': 'S21',
-        'title': '流程连通性(活跃链上游→下游 structure+supply 连通路径)',
+        'title': '流程连通性(活跃链拓扑端点间 structure+supply 连通路径,tier 退役版)',
         'violations': violations,
         'degraded': False,
         'advisory': True,  # §8 先进度指标后硬闸：样板链验收前只报告不计违规（Owner 2026-09-09 口径）

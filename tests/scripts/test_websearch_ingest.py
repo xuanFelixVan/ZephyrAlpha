@@ -296,9 +296,75 @@ def test_ingest_deprecated_chain_no_resurrect(tmp_path: Path) -> None:
         conn.close()
 
 
+def test_ingest_chain_explicit_activate(tmp_path: Path) -> None:
+    # 2026-09-12 显式激活通道（ig_fact 空壳链填充任务）：activate=true + status=active 才允许
+    # deprecated→active 转换（带留痕）；普通重发（无 activate）仍不得复活——防复活保护不放松
+    chain = "__激活测试TMP链__"
+    recs = [{"type": "chain", "name": chain, "category": "钢铁", "market": "cn",
+             "status": "deprecated", "merged_into": "CH-cbfda16e6c04",
+             "source_doc": SD, "source": "websearch"}]
+    p = _tmp_batch(tmp_path, recs)
+    assert wi.cmd_ingest(str(p)) == 0
+    # 显式激活
+    recs2 = [{"type": "chain", "chain_id": wi._chain_id(chain), "name": chain, "category": "钢铁",
+              "market": "cn", "status": "active", "activate": True,
+              "version_year": 2026, "source_doc": "ckg_2021 链激活|igfact_fill|2026-09-12",
+              "source": "ckg_2021"}]
+    p2 = _tmp_batch(tmp_path, recs2)
+    assert wi.cmd_ingest(str(p2)) == 0
+    # 普通重发（无 activate）→ 不得把 active 链改回任何其它状态，也不得清掉 category
+    recs3 = [{"type": "chain", "name": chain, "market": "cn", "source_doc": SD, "source": "websearch"}]
+    p3 = _tmp_batch(tmp_path, recs3)
+    assert wi.cmd_ingest(str(p3)) == 0
+    from zephyr.governance.depgraph_schema import get_depgraph_pg_connection
+
+    conn = get_depgraph_pg_connection(read_only=False)
+    cur = conn.cursor()
+    try:
+        cur.execute("SELECT status, category, version_year FROM ig_chain WHERE name=%s", (chain,))
+        st, cat, vy = cur.fetchone()
+        assert st == "active", f"显式激活失败: {st}"
+        assert cat == "钢铁" and vy == 2026
+    finally:
+        cur.execute("DELETE FROM ig_chain WHERE name=%s", (chain,))
+        conn.commit()
+        conn.close()
+
+
+def test_ingest_node_close_pit(tmp_path: Path) -> None:
+    # 2026-09-12 节点层 PIT 关闭通道: node_id 直指+reason_doc;幂等(valid_to IS NULL 才关)
+    chain = "__节点关闭TMP链__"
+    recs = [
+        {"type": "chain", "name": chain, "category": "半导体", "version_year": 2026,
+         "market": "cn", "source_doc": SD, "source": "websearch"},
+        {"type": "node", "chain_name": chain, "name": "待关闭环节",
+         "market": "cn", "source_doc": SD, "source": "websearch"},
+    ]
+    p = _tmp_batch(tmp_path, recs)
+    assert wi.cmd_ingest(str(p)) == 0
+    nid = wi._node_id(wi._chain_id(chain), "待关闭环节", "")
+    recs2 = [{"type": "node_close", "node_ids": [nid],
+              "reason_doc": "ckg 填充孤岛:公司在市集外且无同链供应边|igfact_fill|2026-09-12"}]
+    p2 = _tmp_batch(tmp_path, recs2)
+    assert wi.cmd_ingest(str(p2)) == 0
+    from zephyr.governance.depgraph_schema import get_depgraph_pg_connection
+
+    conn = get_depgraph_pg_connection(read_only=False)
+    cur = conn.cursor()
+    try:
+        cur.execute("SELECT valid_to FROM ig_node WHERE node_id=%s", (nid,))
+        assert cur.fetchone()[0] is not None  # 已关闭
+    finally:
+        cur.execute("DELETE FROM ig_node WHERE chain_id=%s", (wi._chain_id(chain),))
+        cur.execute("DELETE FROM ig_chain WHERE name=%s", (chain,))
+        conn.commit()
+        conn.close()
+
+
 def test_ingest_node_company_resolves_existing_node(tmp_path: Path) -> None:
     # node 先写 + node_company/node_edge 按(链+环节名)解析：不重算 ID、不造重复行、不 FK 违规
-    chain = "__节点解析测试TMP__"
+    # 2026-09-12 修复: 原夹具名"__节点解析测试TMP__"含"解析"命中 TITLE_JUNK_RE(2026-09-10 收紧)+13字超长,改合规名
+    chain = "__寻址TMP链__"
     cid = wi._chain_id(chain)
     recs = [
         {"type": "chain", "name": chain, "category": "半导体", "version_year": 2026,

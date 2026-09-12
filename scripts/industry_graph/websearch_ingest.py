@@ -315,6 +315,16 @@ def _validate_records(records: list[dict], stocks: set[str] | None) -> list[str]
                 errs.append(f"{idx}: fact_close 缺 fact_ids(非空整数数组)")
             if not r.get("reason_doc"):
                 errs.append(f"{idx}: fact_close 缺 reason_doc 留痕")
+        if typ == "node_close":
+            # 节点层关闭(2026-09-12 ig_node.valid_to PIT 收口): node_id 数组直指+reason_doc 留痕;
+            # 幂等可逆(valid_to IS NULL 才关),对标 fact_close;禁 DELETE 的节点治理唯一通道
+            nids = r.get("node_ids")
+            if not nids or not isinstance(nids, list) or not all(
+                isinstance(x, str) and x.startswith("ND-") for x in nids
+            ):
+                errs.append(f"{idx}: node_close 缺 node_ids(非空 ND- 前缀字符串数组)")
+            if not r.get("reason_doc"):
+                errs.append(f"{idx}: node_close 缺 reason_doc 留痕")
         for k in ("symbol", "from_symbol", "to_symbol"):
             sym = r.get(k)
             if not sym:
@@ -374,12 +384,16 @@ def _validate_records(records: list[dict], stocks: set[str] | None) -> list[str]
             st = r.get("status")
             if st is not None and st not in CHAIN_STATUSES:
                 errs.append(f"{idx}: status 非法(仅 active/deprecated): {st}")
+            act = bool(r.get("activate"))
+            if act and st != "active":
+                errs.append(f"{idx}: activate=true 仅可与 status='active' 搭配(显式激活通道,须带激活留痕 source_doc)")
             mi = r.get("merged_into")
             if mi is not None and not MERGED_INTO_RE.match(mi):
                 errs.append(f"{idx}: merged_into 非 chain_id 格式: {mi}")
             if st == "deprecated" and not mi:
                 errs.append(f"{idx}: deprecated 链须带 merged_into(SOP §4.6)")
-            # 链名三查只约束新写/活跃链;deprecated 重发=垃圾名废弃动作,旧名豁免(2026-09-10)
+            # 链名三查只约束新写/活跃链;deprecated 重发=垃圾名废弃动作,旧名豁免(2026-09-10);
+            # 显式激活(activate=true)走激活留痕,新名同样过三查(2026-09-12)
             if st != "deprecated":
                 if TITLE_JUNK_RE.search(r.get("name", "")):
                     errs.append(f"{idx}: 链名标题腔拒绝(规范名=XX产业链句式): {r.get('name')}")
@@ -501,19 +515,26 @@ def cmd_ingest(batch_path: str) -> int:
                     if cur.fetchone() is None:
                         raise ValueError(f"chain.chain_id 寻址不存在(防伪,禁造新id行): {cid}")
                 merged = r.get("merged_into")
+                # 2026-09-12 显式激活通道: activate=true+status=active 才允许 deprecated→active
+                # 转换(ig_fact 空壳链填充任务);普通重发防复活保护不变
+                act = bool(r.get("activate")) and r.get("status") == "active"
                 cur.execute(
                     """INSERT INTO ig_chain (chain_id,name,category,version_year,market,status,source_note,created_at,updated_at)
                     VALUES (%s,%s,%s,%s,%s,%s,%s,now(),now())
                     ON CONFLICT (chain_id) DO UPDATE SET updated_at=now(),
                       category=COALESCE(EXCLUDED.category,ig_chain.category),
-                      status=CASE WHEN EXCLUDED.status IS DISTINCT FROM 'active'
-                             THEN EXCLUDED.status ELSE ig_chain.status END,
+                      version_year=COALESCE(EXCLUDED.version_year,ig_chain.version_year),
+                      status=CASE
+                        WHEN EXCLUDED.status IS DISTINCT FROM 'active' THEN EXCLUDED.status
+                        WHEN %s THEN 'active'
+                        ELSE ig_chain.status END,
                       source_note=CASE
                         WHEN %s::text IS NOT NULL AND position(%s::text in ig_chain.source_note)=0
                         THEN ig_chain.source_note||' | merged_into:'||%s::text
                         ELSE ig_chain.source_note END""",
                     (cid, r["name"], r.get("category"), r.get("version_year"), mkt,
-                     r.get("status") or "active", (sd or src) + (f" | merged_into:{merged}" if merged and "merged_into:" not in (sd or src) else ""), merged, merged, merged),
+                     r.get("status") or "active", (sd or src) + (f" | merged_into:{merged}" if merged and "merged_into:" not in (sd or src) else ""),
+                     act, merged, merged, merged),
                 )
             elif typ == "node":
                 cid = _chain_id(r["chain_name"])
@@ -688,6 +709,17 @@ def cmd_ingest(batch_path: str) -> int:
                 if not re.match(r"\d{4}-\d{2}-\d{2}", str(vt)):
                     raise ValueError(f"fact_close valid_to 非日期: {vt}")
                 cur.execute(_SQL_FACT_CLOSE, (vt, r["fact_ids"]))
+            elif typ == "node_close":
+                # 节点层 PIT 关闭(2026-09-12 ig_node.valid_to 收口): 孤岛等治理节点唯一出清通道,
+                # 幂等(valid_to IS NULL 才关),禁 DELETE;node_id 数组直指,reason_doc 校验层留痕
+                vt = r.get("valid_to") or _today()
+                if not re.match(r"\d{4}-\d{2}-\d{2}", str(vt)):
+                    raise ValueError(f"node_close valid_to 非日期: {vt}")
+                cur.execute(
+                    """UPDATE ig_node SET valid_to=%s, updated_at=now()
+                       WHERE node_id = ANY(%s) AND valid_to IS NULL""",
+                    (vt, r["node_ids"]),
+                )
             elif typ == "unlisted_entity":
                 # 编码表登记/上市标定(SOP §4.10): name+country 登记幂等;
                 # listed_symbol 须一手来源(交易所公告),工具只信入参不查外源;
