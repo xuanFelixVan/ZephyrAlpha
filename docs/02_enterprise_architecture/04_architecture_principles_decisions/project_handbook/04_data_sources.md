@@ -68,6 +68,7 @@ language: zh
 | `DS-TICKFLOW` | TickFlow | open_source | active |
 | `DS-TDX` | 通达信 | open_source | active |
 | `DS-RSS` | RSS | open_source | active |
+| `DS-IO_TABLE` | 国家统计局投入产出表 | open_source | active |
 | `DS-CLS` | 财联社电报 | open_source | active |
 | `DS-EASTMONEY_NEWS` | 东方财富新闻 | open_source | active |
 | `DS-BAIDUYUN` | 百度云 | commercial | active |
@@ -78,7 +79,7 @@ language: zh
 | `DS-FRED` | FRED/世界银行 宏观数据 | open_source | active |
 | `DS-EIA` | EIA 能源数据 | open_source | active |
 | `DS-QWEATHER` | 和风天气 | open_source | active |
-| **合计 / Total providers** | | | **19** |
+| **合计 / Total providers** | | | **20** |
 <!-- AUTO-END:task_counts -->
 
 ## 7. CLI 子命令
