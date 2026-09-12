@@ -14312,3 +14312,11 @@ di_seam_exemptions:
   token: pilot-003-zscore-meanrev-st-zcode-c4-20260912
   created_by: st-zcode-c4-20260912
   capability: c4_batch_translation
+- file: scripts/backtest/strategy_screen_query.py
+  token: strategy-screen-query-st-zcode-c4-20260912
+  created_by: st-zcode-c4-20260912
+  capability: c4_batch_translation
+- file: tests/backtest/test_strategy_screen_query.py
+  token: test-strategy-screen-query-st-zcode-c4-20260912
+  created_by: st-zcode-c4-20260912
+  capability: c4_batch_translation
