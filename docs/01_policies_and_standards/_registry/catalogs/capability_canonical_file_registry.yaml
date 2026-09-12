@@ -14405,3 +14405,7 @@ di_seam_exemptions:
   token: strategy-production-map-20260913
   created_by: st-zcode-c4-20260912
   capability: c4_batch_translation
+- file: docs/_working/2026-09-13-tdm-upgrade-blueprint.md
+  token: tdm-upgrade-blueprint-20260913
+  created_by: st-zcode-c4-20260912
+  capability: c4_batch_translation
