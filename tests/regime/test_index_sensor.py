@@ -1,3 +1,5 @@
+# [BLUEPRINT] MOD-REGIME-016 | (auto-injected by S4 reconciler，gw-tdm-20260909 修正为模块级 ID) | §
+# [TTL] permanent
 # [DOMAIN] D_REGIME
 # [TTL] permanent
 """MOD-REGIME-016 index_sensor 单元测试（红蓝对抗：红-边界/红-契约/红-前视姿态）。"""

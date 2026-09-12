@@ -1,3 +1,5 @@
+# [BLUEPRINT] MOD-SIG-038 | (auto-injected by S4 reconciler) | §
+# [TTL] permanent
 # [DOMAIN] D_ASHARE_SIGNAL
 # [TTL] permanent
 """MOD-SIG-136 sector_conduction 单元测试（红蓝对抗：红-边界/红-契约）。"""
