@@ -2,7 +2,7 @@
 # [MODULE] zephyr.gov_drift.suppression_learner
 # [DOMAIN] D_GOV_DRIFT
 # [DEPENDENCIES]
-# [CONSUMERS] src/zephyr/gov_drift/_analysis.py ; tests/audit/test_suppression_learner.py
+# [CONSUMERS] src/zephyr/gov_drift/_analysis.py ; tests/audit/ops_resilience/test_suppression_learner.py
 # [STARTUP] imported
 # [MATURITY] production
 # [INVARIANTS] 抑制规则必须经3次验证
@@ -44,7 +44,7 @@ Suppression Learner — suppression_learner.py
 #   name_zh: 模块公共 API 面（2 定义）
 #   name_en: public defs
 #   intro: SuppressionLearner
-#   downstream: src/zephyr/gov_drift/_analysis.py ; tests/audit/test_suppression_learner.py
+#   downstream: src/zephyr/gov_drift/_analysis.py ; tests/audit/ops_resilience/test_suppression_learner.py
 # [/ALGO_FLOW]
 #
 # 边:

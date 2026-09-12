@@ -2,7 +2,7 @@
 # [MODULE] zephyr.gov_drift.cascade_detector
 # [DOMAIN] D_GOV_DRIFT
 # [DEPENDENCIES]
-# [CONSUMERS] src/zephyr/gov_enforcement/rule_enforcement/drift_detector.py ; tests/audit/test_cascade_detector.py
+# [CONSUMERS] src/zephyr/gov_enforcement/rule_enforcement/drift_detector.py ; tests/audit/drift_integrity/test_cascade_detector.py
 # [STARTUP] imported
 # [MATURITY] production
 # [INVARIANTS] 级联检测不可禁用

@@ -2,7 +2,7 @@
 # [MODULE] zephyr.gov_drift.baseline_poisoning_guard
 # [DOMAIN] D_GOV_DRIFT
 # [DEPENDENCIES]
-# [CONSUMERS] tests/audit/test_baseline_poisoning_guard.py
+# [CONSUMERS] tests/audit/drift_integrity/test_baseline_poisoning_guard.py
 # [STARTUP] imported
 # [MATURITY] production
 # [INVARIANTS] 投毒防护不可禁用
@@ -88,12 +88,12 @@ integrity_manifest: 每DEEP scan签名存Git
 #   name_zh: dict[str, object]
 #   name_en: dict[str, object]
 #   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
-#   downstream: tests/audit/test_baseline_poisoning_guard.py
+#   downstream: tests/audit/drift_integrity/test_baseline_poisoning_guard.py
 # - id: O2
 #   name_zh: list[MultiBaselineVote]
 #   name_en: list[MultiBaselineVote]
 #   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
-#   downstream: tests/audit/test_baseline_poisoning_guard.py
+#   downstream: tests/audit/drift_integrity/test_baseline_poisoning_guard.py
 # [/ALGO_FLOW]
 #
 # 边:

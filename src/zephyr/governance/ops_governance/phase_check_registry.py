@@ -929,8 +929,8 @@ def check_mcp_e2e() -> GateResult:
 
 def check_pipeline_e2e() -> GateResult:
     test_files = [
-        REPO_ROOT / "tests/infrastructure/test_drift_e2e_pipeline.py",
-        REPO_ROOT / "tests/infrastructure/test_escalation_e2e.py",
+        REPO_ROOT / "tests/infrastructure/drift/test_drift_e2e_pipeline.py",
+        REPO_ROOT / "tests/infrastructure/escalation/test_escalation_e2e.py",
         REPO_ROOT / "tests/governance/test_jsonl_pipeline.py",
     ]
     if not any(f.exists() for f in test_files):

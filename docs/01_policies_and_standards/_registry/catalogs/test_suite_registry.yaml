@@ -759,7 +759,7 @@ items:
   name: test_python_compat.py
   node_type: test
   status: active
-- file: tests/audit/test_regime_detector.py
+- file: tests/audit/drift_integrity/test_gov_drift_regime_detector.py
   name: test_regime_detector.py
   node_type: test
   status: active

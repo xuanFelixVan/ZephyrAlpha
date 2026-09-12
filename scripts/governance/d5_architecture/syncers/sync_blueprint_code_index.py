@@ -180,7 +180,7 @@ BLUEPRINT_MODULE_MAP: dict[str, dict] = {
         "source_dirs": ["src/zephyr/feedback_loop"],
         "extra_source_files": [],
         "test_patterns": [
-            "tests/feedback/test_metrics_collector.py",
+            "tests/feedback/observability_notify/test_metrics_collector.py",
             "tests/test_fitness_functions.py",
             "tests/test_feedback_collector.py",
             "tests/test_auto_evolution.py",
@@ -228,7 +228,7 @@ BLUEPRINT_MODULE_MAP: dict[str, dict] = {
         "source_dirs": ["src/zephyr/mcp"],
         "extra_source_files": [],
         "test_patterns": [
-            "tests/infrastructure/test_mcp_servers.py",
+            "tests/infrastructure/mcp/test_mcp_servers.py",
             "tests/integration/test_mcp_e2e.py",
         ],
         "config_files": [],
@@ -316,7 +316,7 @@ BLUEPRINT_MODULE_MAP: dict[str, dict] = {
         ],
         "test_patterns": [
             "tests/test_sqlite_schema.py",
-            "tests/infrastructure/test_mcp_servers.py",
+            "tests/infrastructure/mcp/test_mcp_servers.py",
             "tests/pipeline/test_pipeline_orchestrator.py",
             "tests/test_task_completion_gate.py",
         ],
@@ -336,7 +336,7 @@ BLUEPRINT_MODULE_MAP: dict[str, dict] = {
         "test_patterns": [
             "tests/test_task_repo.py",
             "tests/test_sqlite_schema.py",
-            "tests/infrastructure/test_mcp_servers.py",
+            "tests/infrastructure/mcp/test_mcp_servers.py",
             "tests/pipeline/test_pipeline_orchestrator.py",
             "tests/test_task_completion_gate.py",
             "tests/adversarial/test_task_system_red_team.py",

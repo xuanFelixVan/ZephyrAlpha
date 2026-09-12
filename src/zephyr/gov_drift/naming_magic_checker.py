@@ -2,7 +2,7 @@
 # [MODULE] zephyr.gov_drift.naming_magic_checker
 # [DOMAIN] D_GOV_DRIFT
 # [DEPENDENCIES]
-# [CONSUMERS] src/zephyr/gov_drift/_scanners.py ; tests/audit/test_naming_magic_checker.py
+# [CONSUMERS] src/zephyr/gov_drift/_scanners.py ; tests/audit/quality_static/test_naming_magic_checker.py
 # [STARTUP] imported
 # [MATURITY] production
 # [INVARIANTS] 命名约定检查不可跳过
@@ -56,7 +56,7 @@ manual_inspection: 标注需要人工确认
 #   name_zh: list[NamingMagicAlert]
 #   name_en: list[NamingMagicAlert]
 #   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
-#   downstream: src/zephyr/gov_drift/_scanners.py ; tests/audit/test_naming_magic_checker.py
+#   downstream: src/zephyr/gov_drift/_scanners.py ; tests/audit/quality_static/test_naming_magic_checker.py
 # [/ALGO_FLOW]
 #
 # 边:

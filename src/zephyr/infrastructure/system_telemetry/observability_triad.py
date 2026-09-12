@@ -11,7 +11,7 @@
 # [SAFETY] M
 # [AI_AUTONOMY] human_gated
 # [ERROR_CONTRACT] ObservabilityTriadError(ZA-INF-0018)——空名/重复注册/未知指标/负增量/非法hot_days/归档回调缺失时抛
-# [TESTS] tests/infrastructure/test_observability_triad.py
+# [TESTS] tests/infrastructure/observability/test_observability_triad.py
 # [A_module] module_id=MOD-INF-082 | layer=module | stability=evolving | safety=M | ai_autonomy=human_gated
 # [TTL] permanent
 """

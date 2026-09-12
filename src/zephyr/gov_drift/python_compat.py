@@ -2,7 +2,7 @@
 # [MODULE] zephyr.gov_drift.python_compat
 # [DOMAIN] D_GOV_DRIFT
 # [DEPENDENCIES]
-# [CONSUMERS] src/zephyr/gov_drift/_scanners.py ; tests/audit/test_python_compat.py
+# [CONSUMERS] src/zephyr/gov_drift/_scanners.py ; tests/audit/quality_static/test_python_compat.py
 # [STARTUP] imported
 # [MATURITY] production
 # [INVARIANTS] 兼容性检查不可跳过
@@ -75,12 +75,12 @@ auto_fixable: 自动降级语法到目标Python版本
 #   name_zh: list[PythonCompatIssue]
 #   name_en: list[PythonCompatIssue]
 #   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
-#   downstream: src/zephyr/gov_drift/_scanners.py ; tests/audit/test_python_compat.py
+#   downstream: src/zephyr/gov_drift/_scanners.py ; tests/audit/quality_static/test_python_compat.py
 # - id: O2
 #   name_zh: dict[str, str]
 #   name_en: dict[str, str]
 #   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
-#   downstream: src/zephyr/gov_drift/_scanners.py ; tests/audit/test_python_compat.py
+#   downstream: src/zephyr/gov_drift/_scanners.py ; tests/audit/quality_static/test_python_compat.py
 # [/ALGO_FLOW]
 #
 # 边:

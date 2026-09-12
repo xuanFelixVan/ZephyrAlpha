@@ -2,7 +2,7 @@
 # [MODULE] zephyr.gov_drift.self_test_verifier
 # [DOMAIN] D_GOV_DRIFT
 # [DEPENDENCIES]
-# [CONSUMERS] src/zephyr/gov_drift/__main__.py; tests/infrastructure/drift_red_blue_adversarial.py; tests/infrastructure/test_drift_e2e_pipeline.py; tests/self_check/test_self_test_verifier.py
+# [CONSUMERS] src/zephyr/gov_drift/__main__.py; tests/infrastructure/drift_red_blue_adversarial.py; tests/infrastructure/drift/test_drift_e2e_pipeline.py; tests/self_check/test_self_test_verifier.py
 # [STARTUP] imported
 # [MATURITY] production
 # [INVARIANTS] 自检验证不可跳过

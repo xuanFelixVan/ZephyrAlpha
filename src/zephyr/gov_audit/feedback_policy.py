@@ -11,7 +11,7 @@
 # [SAFETY] M
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] 策略评估失败返回保守策略
-# [TESTS] tests/feedback/test_feedback_policy.py
+# [TESTS] tests/feedback/feedback_loop/test_feedback_policy.py
 # [A_module] module_id=MOD-INF-020 | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 """

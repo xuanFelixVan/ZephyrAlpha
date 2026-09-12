@@ -11,7 +11,7 @@
 # [SAFETY] M
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] ImportError if gov_audit.feedback_self_audit unavailable
-# [TESTS] tests/feedback/test_feedback_self_audit.py; tests/semantic_auditor/test_semantic_auditor.py
+# [TESTS] tests/feedback/feedback_loop/test_feedback_self_audit.py; tests/semantic_auditor/test_semantic_auditor.py
 # [A_module] module_id=MOD-INF-028 | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 """

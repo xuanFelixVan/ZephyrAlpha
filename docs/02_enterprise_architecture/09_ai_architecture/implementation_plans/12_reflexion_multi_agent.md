@@ -101,7 +101,7 @@ scope: 09_ai_architecture
 | 代码模块 | `src/zephyr/feedback_loop/detectors/correlation/agent_trajectory_anomaly_detector.py` | Agent 轨迹静默故障检测（drift/cycle/missing_step，对标 IBM arXiv 2511.04032） | production |
 | 代码模块 | `src/zephyr/infrastructure/a2a_protocol/layer3_coordination/a2a_behavior_fingerprint.py` | Agent 行为指纹偏差检测 | production |
 | 代码模块 | `src/zephyr/risk/core/ai_agent_monitor.py` | MOD-RK-14 组装件：risk_score=0.4×涌现+0.3×轨迹+0.3×指纹，is_breached=score>0.6 或 CRITICAL；消费方仅 MOD-L04-001 | production（告警介入未接线） |
-| 测试 | `tests/audit/test_emergent_behavior_detector.py`、`tests/risk/core/test_ai_agent_monitor.py` | 检测器与组装件测试 | production |
+| 测试 | `tests/audit/drift_integrity/test_emergent_behavior_detector.py`、`tests/risk/core/test_ai_agent_monitor.py` | 检测器与组装件测试 | production |
 
 **治理裁定与主路径承接设施**
 

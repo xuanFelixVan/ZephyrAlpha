@@ -2,7 +2,7 @@
 # [MODULE] zephyr.gov_drift.detector_dispatcher
 # [DOMAIN] D_GOV_DRIFT
 # [DEPENDENCIES] zephyr.gov_drift.drift_models
-# [CONSUMERS] tests/audit/test_detector_dispatcher.py
+# [CONSUMERS] tests/audit/drift_integrity/test_detector_dispatcher.py
 # [STARTUP] imported
 # [MATURITY] production
 # [INVARIANTS] 检测器调度不可绕过
@@ -59,7 +59,7 @@ Detector Dispatcher — detector_dispatcher.py
 #   name_zh: int
 #   name_en: int
 #   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
-#   downstream: tests/audit/test_detector_dispatcher.py
+#   downstream: tests/audit/drift_integrity/test_detector_dispatcher.py
 # [/ALGO_FLOW]
 #
 # 边:

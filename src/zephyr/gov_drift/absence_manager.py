@@ -2,7 +2,7 @@
 # [MODULE] zephyr.gov_drift.absence_manager
 # [DOMAIN] D_GOV_DRIFT
 # [DEPENDENCIES]
-# [CONSUMERS] src/zephyr/gov_drift/_infrastructure.py ; tests/audit/test_absence_manager.py
+# [CONSUMERS] src/zephyr/gov_drift/_infrastructure.py ; tests/audit/quality_static/test_absence_manager.py
 # [STARTUP] imported
 # [MATURITY] production
 # [INVARIANTS] 缺席管理不可禁用
@@ -96,12 +96,12 @@ safe_operate: admin可设置severe级别限制
 #   name_zh: OwnerStatus
 #   name_en: OwnerStatus
 #   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
-#   downstream: src/zephyr/gov_drift/_infrastructure.py ; tests/audit/test_absence_manager.py
+#   downstream: src/zephyr/gov_drift/_infrastructure.py ; tests/audit/quality_static/test_absence_manager.py
 # - id: O2
 #   name_zh: EscalationEntry | None
 #   name_en: EscalationEntry | None
 #   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
-#   downstream: src/zephyr/gov_drift/_infrastructure.py ; tests/audit/test_absence_manager.py
+#   downstream: src/zephyr/gov_drift/_infrastructure.py ; tests/audit/quality_static/test_absence_manager.py
 # [/ALGO_FLOW]
 #
 # 边:

@@ -2,7 +2,7 @@
 # [MODULE] zephyr.gov_drift.test_fixture_checker
 # [DOMAIN] D_GOV_DRIFT
 # [DEPENDENCIES]
-# [CONSUMERS] src/zephyr/gov_drift/_scanners.py ; tests/audit/test_test_fixture_checker.py
+# [CONSUMERS] src/zephyr/gov_drift/_scanners.py ; tests/audit/quality_static/test_test_fixture_checker.py
 # [STARTUP] imported
 # [MATURITY] production
 # [INVARIANTS] 测试夹具检查不可跳过
@@ -82,12 +82,12 @@ auto_fixable=false: 测试漂移最隐蔽——测试通过不代表系统正确
 #   name_zh: list[FixtureDriftEvent]
 #   name_en: list[FixtureDriftEvent]
 #   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
-#   downstream: src/zephyr/gov_drift/_scanners.py ; tests/audit/test_test_fixture_checker.py
+#   downstream: src/zephyr/gov_drift/_scanners.py ; tests/audit/quality_static/test_test_fixture_checker.py
 # - id: O2
 #   name_zh: dict[str, object]
 #   name_en: dict[str, object]
 #   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
-#   downstream: src/zephyr/gov_drift/_scanners.py ; tests/audit/test_test_fixture_checker.py
+#   downstream: src/zephyr/gov_drift/_scanners.py ; tests/audit/quality_static/test_test_fixture_checker.py
 # [/ALGO_FLOW]
 #
 # 边:

@@ -7,7 +7,7 @@
 # [SAFETY] H
 # [AI_AUTONOMY] human_gated
 # [ERROR_CONTRACT]
-# [TESTS] tests/infrastructure/test_process_supervisor.py
+# [TESTS] tests/infrastructure/process_lifecycle/test_process_supervisor.py
 # [A_config] module_id=MOD-INF-066 | layer=config | stability=volatile | safety=H | ai_autonomy=human_gated
 # [TTL] permanent
 

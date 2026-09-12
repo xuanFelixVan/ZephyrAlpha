@@ -11,7 +11,7 @@
 # [SAFETY] M
 # [AI_AUTONOMY] human_gated
 # [ERROR_CONTRACT] CascadeSimError(ZA-INF-0014)——空scenario_id/空steps/重复step_id/非法kind/空target/交易时段/备份未确认/injector缺失或异常/非法超时时抛
-# [TESTS] tests/infrastructure/test_cascade_failure_simulator.py
+# [TESTS] tests/infrastructure/process_lifecycle/test_cascade_failure_simulator.py
 # [A_module] module_id=MOD-INF-089 | layer=module | stability=evolving | safety=M | ai_autonomy=human_gated
 # [TTL] permanent
 """

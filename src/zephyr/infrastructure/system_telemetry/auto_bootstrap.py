@@ -11,7 +11,7 @@
 # [SAFETY] H
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] ImportError; RuntimeError
-# [TESTS] tests/infrastructure/test_auto_telemetry_bootstrap.py
+# [TESTS] tests/infrastructure/observability/test_auto_telemetry_bootstrap.py
 # [A_module] module_id=MOD-INF-015 | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 

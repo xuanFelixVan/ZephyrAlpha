@@ -11,7 +11,7 @@
 # [SAFETY] H
 # [AI_AUTONOMY] human_gated
 # [ERROR_CONTRACT] StrategyCanaryError(ZA-INF-0015)——时段门禁/重复start/未start推进/配置非法/指标缺维时抛
-# [TESTS] tests/infrastructure/test_strategy_canary_release.py
+# [TESTS] tests/infrastructure/process_lifecycle/test_strategy_canary_release.py
 # [A_module] module_id=MOD-INF-072 | layer=module | stability=evolving | safety=H | ai_autonomy=human_gated
 # [TTL] permanent
 """

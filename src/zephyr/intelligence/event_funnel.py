@@ -56,7 +56,7 @@ MOD-INT_EVENT_FUNNEL — 事件驱动选股漏斗（BM-SEL-19 第四层事件侧
 - ``event_source_ready=False`` → ``skipped=True`` 直通不筛（第三层直接进第五层）；
 - ``degraded=True`` → 仅剔除利空，极端反应/条件PDF/传导链不判定。
 
-与既有件边界：``signal_ashare/event_driven_screener.py``（MOD-SIG-049）是 21 号
+与既有件边界：``signal_ashare/screening/event_driven_screener.py``（MOD-SIG-049）是 21 号
 §3.6 侧 A 股域骨架（EventImpactRecord 方向/强度/年龄契约）；本模块是 26 号 §2.5
 事件 sleeve 侧实现（EventRecord + compute_event_score 族契约），两者平行承载
 BM-SEL-19，评分真源唯一在 event_score。

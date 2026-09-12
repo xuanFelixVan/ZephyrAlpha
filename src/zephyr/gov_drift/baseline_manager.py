@@ -2,7 +2,7 @@
 # [MODULE] zephyr.gov_drift.baseline_manager
 # [DOMAIN] D_GOV_DRIFT
 # [DEPENDENCIES]
-# [CONSUMERS] src/zephyr/gov_drift/_infrastructure.py ; tests/audit/test_baseline_manager.py ; tests/drift/test_drift_core.py
+# [CONSUMERS] src/zephyr/gov_drift/_infrastructure.py ; tests/audit/drift_integrity/test_baseline_manager.py ; tests/drift/test_drift_core.py
 # [STARTUP] imported
 # [MATURITY] production
 # [INVARIANTS] 基线更新必须经过投毒防护
@@ -45,7 +45,7 @@ Baseline Manager — baseline_manager.py
 #   name_zh: 模块公共 API 面（2 定义）
 #   name_en: public defs
 #   intro: BaselineManager
-#   downstream: src/zephyr/gov_drift/_infrastructure.py ; tests/audit/test_baseline_manager.py…
+#   downstream: src/zephyr/gov_drift/_infrastructure.py ; tests/audit/drift_integrity/test_baseline_manager.py…
 # [/ALGO_FLOW]
 #
 # 边:

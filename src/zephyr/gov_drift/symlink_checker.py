@@ -2,7 +2,7 @@
 # [MODULE] zephyr.gov_drift.symlink_checker
 # [DOMAIN] D_GOV_DRIFT
 # [DEPENDENCIES]
-# [CONSUMERS] src/zephyr/gov_drift/_scanners.py ; tests/audit/test_symlink_checker.py
+# [CONSUMERS] src/zephyr/gov_drift/_scanners.py ; tests/audit/drift_integrity/test_symlink_checker.py
 # [STARTUP] imported
 # [MATURITY] production
 # [INVARIANTS] 软链接检查不可跳过
@@ -53,7 +53,7 @@ dead_reference_pages: symlink引用已被清理的文档页面
 #   name_zh: list[SymlinkIssue]
 #   name_en: list[SymlinkIssue]
 #   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
-#   downstream: src/zephyr/gov_drift/_scanners.py ; tests/audit/test_symlink_checker.py
+#   downstream: src/zephyr/gov_drift/_scanners.py ; tests/audit/drift_integrity/test_symlink_checker.py
 # [/ALGO_FLOW]
 #
 # 边:

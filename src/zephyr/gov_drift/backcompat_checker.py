@@ -2,7 +2,7 @@
 # [MODULE] zephyr.gov_drift.backcompat_checker
 # [DOMAIN] D_GOV_DRIFT
 # [DEPENDENCIES]
-# [CONSUMERS] tests/audit/test_backcompat_checker.py
+# [CONSUMERS] tests/audit/quality_static/test_backcompat_checker.py
 # [STARTUP] imported
 # [MATURITY] production
 # [INVARIANTS] 向后兼容检查不可跳过
@@ -106,12 +106,12 @@ INTENTIONAL_BREAK: 标记宽恕
 #   name_zh: list[FunctionSignature]
 #   name_en: list[FunctionSignature]
 #   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
-#   downstream: tests/audit/test_backcompat_checker.py
+#   downstream: tests/audit/quality_static/test_backcompat_checker.py
 # - id: O2
 #   name_zh: list[CompatBreakEvent]
 #   name_en: list[CompatBreakEvent]
 #   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
-#   downstream: tests/audit/test_backcompat_checker.py
+#   downstream: tests/audit/quality_static/test_backcompat_checker.py
 # [/ALGO_FLOW]
 #
 # 边:

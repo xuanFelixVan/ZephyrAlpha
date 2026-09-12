@@ -2,7 +2,7 @@
 # [MODULE] zephyr.gov_drift.handoff_manager
 # [DOMAIN] D_GOV_DRIFT
 # [DEPENDENCIES]
-# [CONSUMERS] src/zephyr/gov_drift/_infrastructure.py ; tests/audit/test_handoff_manager.py ; tests/ba/test_ba_handoff_manager.py
+# [CONSUMERS] src/zephyr/gov_drift/_infrastructure.py ; tests/audit/ops_resilience/test_handoff_manager.py ; tests/ba/test_ba_handoff_manager.py
 # [STARTUP] imported
 # [MATURITY] production
 # [INVARIANTS] 交接包完整性不可破坏
@@ -111,12 +111,12 @@ abort: 文件状态不一致->重新生成+通知Owner
 #   name_zh: HandoffPackage
 #   name_en: HandoffPackage
 #   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
-#   downstream: src/zephyr/gov_drift/_infrastructure.py ; tests/audit/test_handoff_manager.py ;…
+#   downstream: src/zephyr/gov_drift/_infrastructure.py ; tests/audit/ops_resilience/test_handoff_manager.py ;…
 # - id: O2
 #   name_zh: str
 #   name_en: str
 #   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
-#   downstream: src/zephyr/gov_drift/_infrastructure.py ; tests/audit/test_handoff_manager.py ;…
+#   downstream: src/zephyr/gov_drift/_infrastructure.py ; tests/audit/ops_resilience/test_handoff_manager.py ;…
 # [/ALGO_FLOW]
 #
 # 边:

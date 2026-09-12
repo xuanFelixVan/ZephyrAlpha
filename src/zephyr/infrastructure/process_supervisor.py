@@ -6,12 +6,12 @@
 # [STARTUP] imported
 # [MATURITY] production
 # [INVARIANTS] P1~P5 编排真源=A9 运维架构 §1.1; 启动升序/关闭降序; P3 先于 P1、P1 先于 Redis 关闭硬约束; HC-01 P3 任何时段不自动重启不可放宽; NSSM 注册/开机自启属 Owner 窗口仅产出就绪件
-# [MODIFY-GUARD] tests/infrastructure/test_process_supervisor.py
+# [MODIFY-GUARD] tests/infrastructure/process_lifecycle/test_process_supervisor.py
 # [STABILITY] evolving
 # [SAFETY] H
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] ProcessSupervisorError(未登记错误码-申请中)
-# [TESTS] tests/infrastructure/test_process_supervisor.py
+# [TESTS] tests/infrastructure/process_lifecycle/test_process_supervisor.py
 # [A_module] module_id=MOD-INF-066 | layer=module | stability=evolving | safety=H | ai_autonomy=ai_modifiable
 # [TTL] permanent
 """

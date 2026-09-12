@@ -2,7 +2,7 @@
 # [MODULE] zephyr.gov_drift.brain_integration
 # [DOMAIN] D_GOV_DRIFT
 # [DEPENDENCIES] zephyr.shared.contracts.protocols
-# [CONSUMERS] tests/audit/test_brain_integration_root.py
+# [CONSUMERS] tests/audit/intelligence_audit/test_brain_integration_root.py
 # [STARTUP] imported
 # [MATURITY] production
 # [INVARIANTS] 大脑集成不可断开
@@ -56,12 +56,12 @@ ProbeHierarchy - K8s 3-Probe + Terraform Reconciliation
 #   name_zh: FullProbeResult
 #   name_en: FullProbeResult
 #   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
-#   downstream: tests/audit/test_brain_integration_root.py
+#   downstream: tests/audit/intelligence_audit/test_brain_integration_root.py
 # - id: O2
 #   name_zh: tuple[ColdStartResult, FullProbeResult…
 #   name_en: tuple[ColdStartResult, FullProbeResult…
 #   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
-#   downstream: tests/audit/test_brain_integration_root.py
+#   downstream: tests/audit/intelligence_audit/test_brain_integration_root.py
 # [/ALGO_FLOW]
 #
 # 边:

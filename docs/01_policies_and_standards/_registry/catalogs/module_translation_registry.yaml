@@ -9921,7 +9921,7 @@ entries:
   desc_zh: ''
   desc_en: ''
   plain_zh: 基础设施的资产清单监视：实时看资产清单的表现，不对劲就响铃，防止基础设施出状况没人知道。
-- module_path: tests/feedback/test_teacher_transfer.py
+- module_path: tests/feedback/learning_evolution/test_teacher_transfer.py
   domain_id: ''
   name_zh: 教师迁移测试
   name_en: Test Teacher Transfer
@@ -9935,7 +9935,7 @@ entries:
   desc_zh: ''
   desc_en: ''
   plain_zh: 共享基础·基础设施的进程池：处理进程池的具体事务，给共享基础·基础设施这条线打下手，保证日常运转不出岔子。
-- module_path: tests/feedback/test_training_data_gov.py
+- module_path: tests/feedback/learning_evolution/test_training_data_gov.py
   domain_id: ''
   name_zh: 训练数据治理测试
   name_en: Test Training Data Gov
@@ -9970,7 +9970,7 @@ entries:
   desc_zh: ''
   desc_en: ''
   plain_zh: 元治理的事前 op校验：按既定规则核对事前 op，不合规就拦住或报出来，防止元治理出问题。
-- module_path: tests/audit/test_value_added_baseline.py
+- module_path: tests/audit/drift_integrity/test_value_added_baseline.py
   domain_id: ''
   name_zh: 值增值基线测试
   name_en: Test Value Added Baseline
@@ -10180,7 +10180,7 @@ entries:
   desc_zh: ''
   desc_en: ''
   plain_zh: 安全·对抗验证的攻击注册表：把攻击集中登记在一张名单上，谁要用就来查，保证安全·对抗验证看到的是同一份。
-- module_path: tests/audit/test_correlation_engine.py
+- module_path: tests/audit/intelligence_audit/test_correlation_engine.py
   domain_id: ''
   name_zh: 相关性引擎测试
   name_en: Test Correlation Engine
@@ -10257,7 +10257,7 @@ entries:
   desc_zh: ''
   desc_en: ''
   plain_zh: 测试：验证验证器的正确性，出问题尽早发现。
-- module_path: tests/audit/test_cascade_detector.py
+- module_path: tests/audit/drift_integrity/test_cascade_detector.py
   domain_id: ''
   name_zh: 级联检测器测试
   name_en: Test Cascade Detector
@@ -10341,7 +10341,7 @@ entries:
   desc_zh: ''
   desc_en: ''
   plain_zh: 治理·D1 结构的临时文件检测器：自动扫描临时文件的异常迹象，一发现就标记报出，防止治理·D1 结构带病往下传。
-- module_path: tests/feedback/test_metrics_collector.py
+- module_path: tests/feedback/observability_notify/test_metrics_collector.py
   domain_id: ''
   name_zh: 指标收集器测试
   name_en: Test Metrics Collector
@@ -10376,7 +10376,7 @@ entries:
   desc_zh: ''
   desc_en: ''
   plain_zh: 安全·载荷包的入口：import 这个包时会先跑这里，把包里的子模块聚成统一的对外出口。
-- module_path: tests/feedback/test_architectural_sod.py
+- module_path: tests/feedback/resilience_dr/test_architectural_sod.py
   domain_id: ''
   name_zh: 架构职责分离测试
   name_en: Test Architectural Sod
@@ -10453,7 +10453,7 @@ entries:
   desc_zh: ''
   desc_en: ''
   plain_zh: 集成·向量记忆的层转接头：让层和外部接上头，集成·向量记忆底层换了也不影响上层用法。
-- module_path: tests/feedback/test_positive_feedback_defense.py
+- module_path: tests/feedback/feedback_loop/test_positive_feedback_defense.py
   domain_id: ''
   name_zh: Positive反馈Defense测试
   name_en: Test Positive Feedback Defense
@@ -10530,7 +10530,7 @@ entries:
   desc_zh: ''
   desc_en: ''
   plain_zh: 基础设施·流水线的roadmap发动机：把roadmap的动力输出给整条链路，没它基础设施·流水线就跑不起来。
-- module_path: tests/feedback/test_dr_automation.py
+- module_path: tests/feedback/resilience_dr/test_dr_automation.py
   domain_id: ''
   name_zh: Dr自动化测试
   name_en: Test Dr Automation
@@ -10852,7 +10852,7 @@ entries:
   desc_zh: ''
   desc_en: ''
   plain_zh: 治理·D11 合规的词汇表覆盖率校验：按既定规则核对词汇表覆盖率，不合规就拦住或报出来，防止治理·D11 合规出问题。
-- module_path: tests/audit/test_baseline_manager.py
+- module_path: tests/audit/drift_integrity/test_baseline_manager.py
   domain_id: ''
   name_zh: 基线管理器测试
   name_en: Test Baseline Manager
@@ -10908,7 +10908,7 @@ entries:
   desc_zh: ''
   desc_en: ''
   plain_zh: 测试：治理漂移修复的行为要符合预期，有偏差尽早抓住。
-- module_path: tests/feedback/test_feedback_self_audit.py
+- module_path: tests/feedback/feedback_loop/test_feedback_self_audit.py
   domain_id: ''
   name_zh: 反馈Self审计测试
   name_en: Test Feedback Self Audit
@@ -11300,7 +11300,7 @@ entries:
   desc_zh: ''
   desc_en: ''
   plain_zh: 测试：验证知识迁移的正确性，出问题尽早发现。
-- module_path: tests/feedback/test_oscillation_damping.py
+- module_path: tests/feedback/anomaly_diagnosis/test_oscillation_damping.py
   domain_id: ''
   name_zh: Oscillation Damping测试
   name_en: Test Oscillation Damping
@@ -11342,7 +11342,7 @@ entries:
   desc_zh: ''
   desc_en: ''
   plain_zh: 测试：验证API 版本契约的正确性，出问题尽早发现。
-- module_path: tests/infrastructure/test_mcp_e2e.py
+- module_path: tests/infrastructure/mcp/test_mcp_e2e.py
   domain_id: ''
   name_zh: 构造合规 JSON-RPC 2.0 请求 dict
   name_en: Test Mcp E2e
@@ -11489,7 +11489,7 @@ entries:
   desc_zh: ''
   desc_en: ''
   plain_zh: 共享基础·看板包的入口：import 这个包时会先跑这里，把包里的子模块聚成统一的对外出口。
-- module_path: tests/feedback/test_ebpf_monitor.py
+- module_path: tests/feedback/observability_notify/test_ebpf_monitor.py
   domain_id: ''
   name_zh: Ebpf监控器测试
   name_en: Test Ebpf Monitor
@@ -11930,7 +11930,7 @@ entries:
   desc_zh: ''
   desc_en: ''
   plain_zh: 测试：验证路径索引的正确性，出问题尽早发现。
-- module_path: tests/infrastructure/test_health_aggregator_unit.py
+- module_path: tests/infrastructure/observability/test_health_aggregator_unit.py
   domain_id: ''
   name_zh: 健康聚合器单元测试
   name_en: Test Health Aggregator Unit
@@ -12021,7 +12021,7 @@ entries:
   desc_zh: ''
   desc_en: ''
   plain_zh: 测试：路径解析器的行为要符合预期，有偏差尽早抓住。
-- module_path: tests/feedback/test_deadman_switch.py
+- module_path: tests/feedback/resilience_dr/test_deadman_switch.py
   domain_id: ''
   name_zh: Deadman Switch测试
   name_en: Test Deadman Switch
@@ -12063,7 +12063,7 @@ entries:
   desc_zh: ''
   desc_en: ''
   plain_zh: 测试：升级治理契约的行为要符合预期，有偏差尽早抓住。
-- module_path: tests/feedback/test_metric_cardinality_guard.py
+- module_path: tests/feedback/observability_notify/test_metric_cardinality_guard.py
   domain_id: ''
   name_zh: 指标Cardinality守卫测试
   name_en: Test Metric Cardinality Guard
@@ -12497,7 +12497,7 @@ entries:
   desc_zh: ''
   desc_en: ''
   plain_zh: 智能·模型评估的activate：管activate这块的活，智能·模型评估需要时来找它，确保链路不卡壳。
-- module_path: tests/infrastructure/test_livelock_detector.py
+- module_path: tests/infrastructure/process_lifecycle/test_livelock_detector.py
   domain_id: ''
   name_zh: Livelock检测器测试
   name_en: Test Livelock Detector
@@ -12658,7 +12658,7 @@ entries:
   desc_zh: ''
   desc_en: ''
   plain_zh: 治理·策略包的入口：import 这个包时会先跑这里，把包里的子模块聚成统一的对外出口。
-- module_path: tests/infrastructure/test_f18_governance_adversarial.py
+- module_path: tests/infrastructure/adversarial/test_f18_governance_adversarial.py
   domain_id: ''
   name_zh: F18 治理脚本系统红蓝对抗极端测试.
   name_en: Test F18 Governance Adversarial
@@ -12994,14 +12994,14 @@ entries:
   desc_zh: ''
   desc_en: ''
   plain_zh: 测试：把l2a 进程沙箱跑一遍，确认这块逻辑没毛病。
-- module_path: tests/infrastructure/test_mcp_red_team.py
+- module_path: tests/infrastructure/mcp/test_mcp_red_team.py
   domain_id: ''
   name_zh: 测试 8 Server + Gateway + 支撑模块全部可导入"""
   name_en: Test Mcp Red Team
   desc_zh: ''
   desc_en: ''
   plain_zh: 测试：MCP 红团队这块逻辑要经得起考验，有毛病立刻报出来。
-- module_path: tests/infrastructure/test_mcp_gateway.py
+- module_path: tests/infrastructure/mcp/test_mcp_gateway.py
   domain_id: ''
   name_zh: MCP Gateway 单元测试
   name_en: Test Mcp Gateway
@@ -13092,7 +13092,7 @@ entries:
   desc_zh: ''
   desc_en: ''
   plain_zh: 测试：模型健康的行为要符合预期，有偏差尽早抓住。
-- module_path: tests/infrastructure/test_kill_switch_sim.py
+- module_path: tests/infrastructure/process_lifecycle/test_kill_switch_sim.py
   domain_id: ''
   name_zh: Kill Switch Sim测试
   name_en: Test Kill Switch Sim
@@ -13352,7 +13352,7 @@ entries:
   desc_zh: ''
   desc_en: ''
   plain_zh: 基础设施·回滚的状态状态机修复模块：状态状态机出问题或需要调整时由它处理，能自动就自动，减少基础设施·回滚人工救火。
-- module_path: tests/audit/test_audit_core.py
+- module_path: tests/audit/audit_core/test_audit_core.py
   domain_id: ''
   name_zh: 审计核心测试
   name_en: Test Audit Core
@@ -13653,7 +13653,7 @@ entries:
   desc_zh: ''
   desc_en: ''
   plain_zh: 组合核心的vwap reversion 策略：处理vwap reversion 策略的具体事务，给组合核心这条线打下手，保证日常运转不出岔子。
-- module_path: tests/feedback/test_slo_capacity_metrics.py
+- module_path: tests/feedback/observability_notify/test_slo_capacity_metrics.py
   domain_id: ''
   name_zh: Slo容量指标测试
   name_en: Test Slo Capacity Metrics
@@ -13688,7 +13688,7 @@ entries:
   desc_zh: ''
   desc_en: ''
   plain_zh: 测试：表名称注册表门禁这块逻辑要经得起考验，有毛病立刻报出来。
-- module_path: tests/audit/test_tamper_proof_audit.py
+- module_path: tests/audit/audit_core/test_tamper_proof_audit.py
   domain_id: ''
   name_zh: TamperProof审计测试
   name_en: Test Tamper Proof Audit
@@ -13941,7 +13941,7 @@ entries:
   desc_zh: ''
   desc_en: ''
   plain_zh: 治理·一次性的重命名 whitelist急救包：重命名 whitelist挂了或跑偏了，它来修或回退，让治理·一次性少停工。
-- module_path: tests/audit/test_audit_contracts.py
+- module_path: tests/audit/audit_core/test_audit_contracts.py
   domain_id: ''
   name_zh: 审计契约测试
   name_en: Test Audit Contracts
@@ -14179,7 +14179,7 @@ entries:
   desc_zh: ''
   desc_en: ''
   plain_zh: 共享基础·基础设施包的入口：import 这个包时会先跑这里，把包里的子模块聚成统一的对外出口。
-- module_path: tests/feedback/test_fitness_functions_feedback_loop.py
+- module_path: tests/feedback/feedback_loop/test_fitness_functions_feedback_loop.py
   domain_id: ''
   name_zh: 使用默认阈值的框架实例
   name_en: Test Fitness Functions Feedback Loop
@@ -14480,7 +14480,7 @@ entries:
   desc_zh: ''
   desc_en: ''
   plain_zh: 测试：把unsafe 字典 spread 门禁跑一遍，确认这块逻辑没毛病。
-- module_path: tests/infrastructure/test_mcp_idle_timeout.py
+- module_path: tests/infrastructure/mcp/test_mcp_idle_timeout.py
   domain_id: ''
   name_zh: MCP idle_timeout 10分钟自动回收验证
   name_en: Test Mcp Idle Timeout
@@ -14844,7 +14844,7 @@ entries:
   desc_zh: ''
   desc_en: ''
   plain_zh: 安全·访问控制的降级发动机：把降级的动力输出给整条链路，没它安全·访问控制就跑不起来。
-- module_path: tests/feedback/test_feedback_policy.py
+- module_path: tests/feedback/feedback_loop/test_feedback_policy.py
   domain_id: ''
   name_zh: 反馈策略测试
   name_en: Test Feedback Policy
@@ -14956,7 +14956,7 @@ entries:
   desc_zh: ''
   desc_en: ''
   plain_zh: 组合核心的默认 equity 策略：负责默认 equity 策略相关的具体事务，是组合核心这条链路里的一个支撑节点。
-- module_path: tests/audit/test_audit_red_blue_e2e.py
+- module_path: tests/audit/audit_core/test_audit_red_blue_e2e.py
   domain_id: ''
   name_zh: 审计RedBlue端到端测试
   name_en: Test Audit Red Blue E2e
@@ -15061,7 +15061,7 @@ entries:
   desc_zh: ''
   desc_en: ''
   plain_zh: 测试：doom 循环守卫是否符合预期，别让毛病悄悄溜过去。
-- module_path: tests/audit/test_test_fixture_checker.py
+- module_path: tests/audit/quality_static/test_test_fixture_checker.py
   domain_id: ''
   name_zh: Fixture检查器测试测试
   name_en: Test Test Fixture Checker
@@ -15166,7 +15166,7 @@ entries:
   desc_zh: ''
   desc_en: ''
   plain_zh: 基础设施·可观测性包的入口：import 这个包时会先跑这里，把包里的子模块聚成统一的对外出口。
-- module_path: tests/feedback/test_evolution_init.py
+- module_path: tests/feedback/learning_evolution/test_evolution_init.py
   domain_id: ''
   name_zh: Evolution包入口测试
   name_en: Test Evolution Init
@@ -15299,7 +15299,7 @@ entries:
   desc_zh: ''
   desc_en: ''
   plain_zh: 运维治理的智能体分发：把智能体分发的逻辑集中在一处，运维治理别处直接拿来用，避免重复造轮子。
-- module_path: tests/feedback/test_hypernetwork.py
+- module_path: tests/feedback/learning_evolution/test_hypernetwork.py
   domain_id: ''
   name_zh: Hypernetwork测试
   name_en: Test Hypernetwork
@@ -15390,7 +15390,7 @@ entries:
   desc_zh: ''
   desc_en: ''
   plain_zh: 测试：money 共享的行为要符合预期，有偏差尽早抓住。
-- module_path: tests/infrastructure/test_topology_change_log.py
+- module_path: tests/infrastructure/process_lifecycle/test_topology_change_log.py
   domain_id: ''
   name_zh: TopologyChange日志测试
   name_en: Test Topology Change Log
@@ -15747,14 +15747,14 @@ entries:
   desc_zh: ''
   desc_en: ''
   plain_zh: 测试：确保actors 初始化不出岔子，让问题在上线前现形。
-- module_path: tests/feedback/test_known_unknown_registry.py
+- module_path: tests/feedback/governance_audit/test_known_unknown_registry.py
   domain_id: ''
   name_zh: KnownUnknown注册表测试
   name_en: Test Known Unknown Registry
   desc_zh: ''
   desc_en: ''
   plain_zh: 测试：验证known unknown 注册表的正确性，出问题尽早发现。
-- module_path: tests/feedback/test_interrupt_coherence_validator.py
+- module_path: tests/feedback/resilience_dr/test_interrupt_coherence_validator.py
   domain_id: ''
   name_zh: InterruptCoherence验证器测试
   name_en: Test Interrupt Coherence Validator
@@ -15922,7 +15922,7 @@ entries:
   desc_zh: ''
   desc_en: ''
   plain_zh: 治理·D8 文档同步的更新 progress：负责更新 progress相关的具体事务，是治理·D8 文档同步这条链路里的一个支撑节点。
-- module_path: tests/feedback/test_online_feature_importance.py
+- module_path: tests/feedback/learning_evolution/test_online_feature_importance.py
   domain_id: ''
   name_zh: Online特征Importance测试
   name_en: Test Online Feature Importance
@@ -16020,7 +16020,7 @@ entries:
   desc_zh: ''
   desc_en: ''
   plain_zh: 共享基础的A2A 协调：处理A2A 协调的具体事务，给共享基础这条线打下手，保证日常运转不出岔子。
-- module_path: tests/infrastructure/test_escalation_phase3.py
+- module_path: tests/infrastructure/escalation/test_escalation_phase3.py
   domain_id: ''
   name_zh: Escalation Phase3测试
   name_en: Test Escalation Phase3
@@ -16307,14 +16307,14 @@ entries:
   desc_zh: ''
   desc_en: ''
   plain_zh: 安全·孤儿评判的注册检查：一条一条过注册的规矩，错的漏的都挑出来，给安全·孤儿评判把关。
-- module_path: tests/infrastructure/test_escalation_adversarial.py
+- module_path: tests/infrastructure/adversarial/test_escalation_adversarial.py
   domain_id: ''
   name_zh: Escalation对抗测试
   name_en: Test Escalation Adversarial
   desc_zh: ''
   desc_en: ''
   plain_zh: 测试：升级对抗这块逻辑要经得起考验，有毛病立刻报出来。
-- module_path: tests/audit/test_build_reproducibility_verifier.py
+- module_path: tests/audit/quality_static/test_build_reproducibility_verifier.py
   domain_id: ''
   name_zh: BuildReproducibility验证器测试
   name_en: Test Build Reproducibility Verifier
@@ -16349,7 +16349,7 @@ entries:
   desc_zh: ''
   desc_en: ''
   plain_zh: 测试：准入控制器是否符合预期，别让毛病悄悄溜过去。
-- module_path: tests/feedback/test_resolution_tracker.py
+- module_path: tests/feedback/anomaly_diagnosis/test_resolution_tracker.py
   domain_id: ''
   name_zh: Resolution跟踪器测试
   name_en: Test Resolution Tracker
@@ -16580,7 +16580,7 @@ entries:
   desc_zh: ''
   desc_en: ''
   plain_zh: 测试：风险报告引擎能不能正常工作，有问题尽早暴露。
-- module_path: tests/feedback/test_infinite_loop_detector.py
+- module_path: tests/feedback/anomaly_diagnosis/test_infinite_loop_detector.py
   domain_id: ''
   name_zh: InfiniteLoop检测器测试
   name_en: Test Infinite Loop Detector
@@ -16615,7 +16615,7 @@ entries:
   desc_zh: ''
   desc_en: ''
   plain_zh: 治理·D7 代码的complexity校验：按既定规则核对complexity，不合规就拦住或报出来，防止治理·D7 代码出问题。
-- module_path: tests/infrastructure/test_mcp_health_check_recovery.py
+- module_path: tests/infrastructure/mcp/test_mcp_health_check_recovery.py
   domain_id: ''
   name_zh: MCP _mcp_health_check死亡进程检测+restart_server验证
   name_en: Test Mcp Health Check Recovery
@@ -16811,7 +16811,7 @@ entries:
   desc_zh: ''
   desc_en: ''
   plain_zh: 基础设施·看板包的入口：import 这个包时会先跑这里，把包里的子模块聚成统一的对外出口。
-- module_path: tests/audit/test_suppression_learner.py
+- module_path: tests/audit/ops_resilience/test_suppression_learner.py
   domain_id: ''
   name_zh: Suppression Learner测试
   name_en: Test Suppression Learner
@@ -16832,7 +16832,7 @@ entries:
   desc_zh: ''
   desc_en: ''
   plain_zh: 规则：TRAE008 反幻觉输出，全库在这方面必须照它行事。
-- module_path: tests/infrastructure/test_economic_guard.py
+- module_path: tests/infrastructure/adversarial/test_economic_guard.py
   domain_id: ''
   name_zh: Economic守卫测试
   name_en: Test Economic Guard
@@ -16973,7 +16973,7 @@ entries:
   desc_zh: ''
   desc_en: ''
   plain_zh: 运维治理的事件钩子：把事件钩子的逻辑集中在一处，运维治理别处直接拿来用，避免重复造轮子。
-- module_path: tests/infrastructure/test_auto_telemetry_bootstrap.py
+- module_path: tests/infrastructure/observability/test_auto_telemetry_bootstrap.py
   domain_id: ''
   name_zh: 端到端验证：auto_bootstrap 自动遥测全链路集成测试
   name_en: Test Auto Telemetry Bootstrap
@@ -17596,7 +17596,7 @@ entries:
   desc_zh: ''
   desc_en: ''
   plain_zh: 测试：检查治理引擎在各种情况下表现对不对，守住质量关。
-- module_path: tests/feedback/test_collectors.py
+- module_path: tests/feedback/scheduling/test_collectors.py
   domain_id: ''
   name_zh: Collectors测试
   name_en: Test Collectors
@@ -17673,7 +17673,7 @@ entries:
   desc_zh: ''
   desc_en: ''
   plain_zh: 测试：单一真源守卫单元是否符合预期，别让毛病悄悄溜过去。
-- module_path: tests/infrastructure/test_health_probes_unit.py
+- module_path: tests/infrastructure/observability/test_health_probes_unit.py
   domain_id: ''
   name_zh: HealthCheck 探针单元测试
   name_en: Test Health Probes Unit
@@ -17764,7 +17764,7 @@ entries:
   desc_zh: ''
   desc_en: ''
   plain_zh: 集成的事件总线升级：把事件总线升级的逻辑集中在一处，集成别处直接拿来用，避免重复造轮子。
-- module_path: tests/infrastructure/test_supervisor.py
+- module_path: tests/infrastructure/process_lifecycle/test_supervisor.py
   domain_id: ''
   name_zh: Supervisor测试
   name_en: Test Supervisor
@@ -17806,7 +17806,7 @@ entries:
   desc_zh: ''
   desc_en: ''
   plain_zh: 测试：RBAC 桥接器桥接器这块逻辑要经得起考验，有毛病立刻报出来。
-- module_path: tests/infrastructure/test_telemetry_red_team.py
+- module_path: tests/infrastructure/observability/test_telemetry_red_team.py
   domain_id: ''
   name_zh: 边界·并发·注入·资源耗尽·关闭韧性
   name_en: Test Telemetry Red Team
@@ -18002,7 +18002,7 @@ entries:
   desc_zh: ''
   desc_en: ''
   plain_zh: 归档·D3 元数据的跨模块依赖校验：按既定规则核对跨模块依赖，不合规就拦住或报出来，防止归档·D3 元数据出问题。
-- module_path: tests/infrastructure/test_blueprint_search_mcp.py
+- module_path: tests/infrastructure/mcp/test_blueprint_search_mcp.py
   domain_id: ''
   name_zh: 蓝图SearchMCP测试
   name_en: Test Blueprint Search Mcp
@@ -18079,7 +18079,7 @@ entries:
   desc_zh: ''
   desc_en: ''
   plain_zh: 治理·原型的生成资产名册：生成资产都录进去，治理·原型想查随时翻，避免信息散落在各处。
-- module_path: tests/audit/test_forensics_engine.py
+- module_path: tests/audit/intelligence_audit/test_forensics_engine.py
   domain_id: ''
   name_zh: Forensics引擎测试
   name_en: Test Forensics Engine
@@ -18170,7 +18170,7 @@ entries:
   desc_zh: ''
   desc_en: ''
   plain_zh: 测试：血缘跟踪器这块逻辑要经得起考验，有毛病立刻报出来。
-- module_path: tests/audit/test_audit_full_pipeline_e2e.py
+- module_path: tests/audit/audit_core/test_audit_full_pipeline_e2e.py
   domain_id: ''
   name_zh: 审计Full管道端到端测试
   name_en: Test Audit Full Pipeline E2e
@@ -18240,7 +18240,7 @@ entries:
   desc_zh: ''
   desc_en: ''
   plain_zh: 组合核心·策略引擎包的入口：import 这个包时会先跑这里，把包里的子模块聚成统一的对外出口。
-- module_path: tests/audit/test_audit_log_guard.py
+- module_path: tests/audit/audit_core/test_audit_log_guard.py
   domain_id: ''
   name_zh: 审计日志守卫测试
   name_en: Test Audit Log Guard
@@ -18394,7 +18394,7 @@ entries:
   desc_zh: ''
   desc_en: ''
   plain_zh: 共享基础·模式包的入口：import 这个包时会先跑这里，把包里的子模块聚成统一的对外出口。
-- module_path: tests/infrastructure/test_blindspot_coverage.py
+- module_path: tests/infrastructure/adversarial/test_blindspot_coverage.py
   domain_id: ''
   name_zh: Blindspot覆盖率测试
   name_en: Test Blindspot Coverage
@@ -18415,7 +18415,7 @@ entries:
   desc_zh: ''
   desc_en: ''
   plain_zh: 共享基础的执行报告：负责执行报告相关的具体事务，是共享基础这条链路里的一个支撑节点。
-- module_path: tests/audit/test_pre_flight_simulator.py
+- module_path: tests/audit/ops_resilience/test_pre_flight_simulator.py
   domain_id: ''
   name_zh: Pre Flight Simulator测试
   name_en: Test Pre Flight Simulator
@@ -18429,7 +18429,7 @@ entries:
   desc_zh: ''
   desc_en: ''
   plain_zh: 运维治理的bandwidth optimizer：负责bandwidth optimizer相关的具体事务，是运维治理这条链路里的一个支撑节点。
-- module_path: tests/feedback/test_feedback_delay_compensator.py
+- module_path: tests/feedback/feedback_loop/test_feedback_delay_compensator.py
   domain_id: ''
   name_zh: 反馈DelayCompensator测试
   name_en: Test Feedback Delay Compensator
@@ -18534,7 +18534,7 @@ entries:
   desc_zh: ''
   desc_en: ''
   plain_zh: 测试：确保fl 智能体生命周期不出岔子，让问题在上线前现形。
-- module_path: tests/audit/test_causal_inference_engine.py
+- module_path: tests/audit/intelligence_audit/test_causal_inference_engine.py
   domain_id: ''
   name_zh: Causal推理引擎测试
   name_en: Test Causal Inference Engine
@@ -18821,7 +18821,7 @@ entries:
   desc_zh: ''
   desc_en: ''
   plain_zh: 测试：守卫 configuration 漂移监控能不能正常工作，有问题尽早暴露。
-- module_path: tests/infrastructure/test_runtime_core.py
+- module_path: tests/infrastructure/process_lifecycle/test_runtime_core.py
   domain_id: ''
   name_zh: 运行时核心测试
   name_en: Test Runtime Core
@@ -18919,7 +18919,7 @@ entries:
   desc_zh: ''
   desc_en: ''
   plain_zh: 测试：验证对账循环的正确性，出问题尽早发现。
-- module_path: tests/audit/test_regime_detector.py
+- module_path: tests/audit/drift_integrity/test_gov_drift_regime_detector.py
   domain_id: ''
   name_zh: 状态检测器测试
   name_en: Test Regime Detector
@@ -18982,7 +18982,7 @@ entries:
   desc_zh: ''
   desc_en: ''
   plain_zh: 测试：验证staleness 管理器的正确性，出问题尽早发现。
-- module_path: tests/audit/test_amplification_guard.py
+- module_path: tests/audit/ops_resilience/test_amplification_guard.py
   domain_id: ''
   name_zh: Amplification守卫测试
   name_en: Test Amplification Guard
@@ -19157,7 +19157,7 @@ entries:
   desc_zh: ''
   desc_en: ''
   plain_zh: 测试：验证e 死锁检测器的正确性，出问题尽早发现。
-- module_path: tests/feedback/test_otel_adapter.py
+- module_path: tests/feedback/observability_notify/test_otel_adapter.py
   domain_id: ''
   name_zh: Otel适配器测试
   name_en: Test Otel Adapter
@@ -19213,7 +19213,7 @@ entries:
   desc_zh: ''
   desc_en: ''
   plain_zh: 测试：检查配置测试代码去重引擎在各种情况下表现对不对，守住质量关。
-- module_path: tests/infrastructure/test_mcp_stress.py
+- module_path: tests/infrastructure/mcp/test_mcp_stress.py
   domain_id: ''
   name_zh: MCP Stress测试
   name_en: Test Mcp Stress
@@ -19304,7 +19304,7 @@ entries:
   desc_zh: ''
   desc_en: ''
   plain_zh: 测试：把意图关键词映射器上下文引擎跑一遍，确认这块逻辑没毛病。
-- module_path: tests/audit/test_statistical_hygiene_auditor.py
+- module_path: tests/audit/quality_static/test_statistical_hygiene_auditor.py
   domain_id: ''
   name_zh: StatisticalHygiene审计器测试
   name_en: Test Statistical Hygiene Auditor
@@ -19437,7 +19437,7 @@ entries:
   desc_zh: ''
   desc_en: ''
   plain_zh: 测试：模式模式注册表能不能正常工作，有问题尽早暴露。
-- module_path: tests/audit/test_audit_orphan_judge_e2e.py
+- module_path: tests/audit/audit_core/test_audit_orphan_judge_e2e.py
   domain_id: ''
   name_zh: 审计孤儿判定端到端测试
   name_en: Test Audit Orphan Judge E2e
@@ -19458,7 +19458,7 @@ entries:
   desc_zh: ''
   desc_en: ''
   plain_zh: 基础设施·回滚的前向修复引擎：驱动前向修复这套流程运转，吃进输入、吐出结果，是基础设施·回滚干活的核心。
-- module_path: tests/infrastructure/test_impact_propagator.py
+- module_path: tests/infrastructure/process_lifecycle/test_impact_propagator.py
   domain_id: ''
   name_zh: Impact Propagator测试
   name_en: Test Impact Propagator
@@ -19696,7 +19696,7 @@ entries:
   desc_zh: ''
   desc_en: ''
   plain_zh: 基础设施·L3 协调的A2A hardware转接头：让A2A hardware和外部接上头，基础设施·L3 协调底层换了也不影响上层用法。
-- module_path: tests/infrastructure/test_sla_monitor.py
+- module_path: tests/infrastructure/observability/test_sla_monitor.py
   domain_id: ''
   name_zh: Sla监控器测试
   name_en: Test Sla Monitor
@@ -19822,7 +19822,7 @@ entries:
   desc_zh: ''
   desc_en: ''
   plain_zh: 交易运营的状态监视：实时看状态的表现，不对劲就响铃，防止交易运营出状况没人知道。
-- module_path: tests/feedback/test_graduated_activation_protocol.py
+- module_path: tests/feedback/learning_evolution/test_graduated_activation_protocol.py
   domain_id: ''
   name_zh: Graduated Activation Protocol测试
   name_en: Test Graduated Activation Protocol
@@ -19885,7 +19885,7 @@ entries:
   desc_zh: ''
   desc_en: ''
   plain_zh: 测试：外部验证器的行为要符合预期，有偏差尽早抓住。
-- module_path: tests/infrastructure/test_mcp_boot_hooks_integration.py
+- module_path: tests/infrastructure/mcp/test_mcp_boot_hooks_integration.py
   domain_id: ''
   name_zh: MCP boot_hooks 集成测试——验证10进程实际启动能力
   name_en: Test Mcp Boot Hooks Integration
@@ -19934,7 +19934,7 @@ entries:
   desc_zh: ''
   desc_en: ''
   plain_zh: 测试：把依赖图新鲜度门禁跑一遍，确认这块逻辑没毛病。
-- module_path: tests/audit/test_build_reproducibility_verifier_v2.py
+- module_path: tests/audit/quality_static/test_build_reproducibility_verifier_v2.py
   domain_id: ''
   name_zh: BuildReproducibility验证器V2测试
   name_en: Test Build Reproducibility Verifier V2
@@ -19969,7 +19969,7 @@ entries:
   desc_zh: ''
   desc_en: ''
   plain_zh: 测试：ba 看板是否符合预期，别让毛病悄悄溜过去。
-- module_path: tests/audit/test_toctou_revalidation.py
+- module_path: tests/audit/drift_integrity/test_toctou_revalidation.py
   domain_id: ''
   name_zh: Toctou Revalidation测试
   name_en: Test Toctou Revalidation
@@ -20053,7 +20053,7 @@ entries:
   desc_zh: ''
   desc_en: ''
   plain_zh: 基础设施·流水线的dead letter 队列：管dead letter 队列这块的活，基础设施·流水线需要时来找它，确保链路不卡壳。
-- module_path: tests/feedback/test_evolution_engine_root.py
+- module_path: tests/feedback/learning_evolution/test_evolution_engine_root.py
   domain_id: ''
   name_zh: Evolution引擎根入口测试
   name_en: Test Evolution Engine Root
@@ -20137,7 +20137,7 @@ entries:
   desc_zh: ''
   desc_en: ''
   plain_zh: 基础设施·配置包的入口：import 这个包时会先跑这里，把包里的子模块聚成统一的对外出口。
-- module_path: tests/audit/test_audit_models.py
+- module_path: tests/audit/audit_core/test_audit_models.py
   domain_id: ''
   name_zh: 审计模型测试
   name_en: Test Audit Models
@@ -20361,7 +20361,7 @@ entries:
   desc_zh: ''
   desc_en: ''
   plain_zh: 任务编排包的入口：import 这个包时会先跑这里，把包里的子模块聚成统一的对外出口（在 core 下）。
-- module_path: tests/feedback/test_digital_twin_sandbox.py
+- module_path: tests/feedback/resilience_dr/test_digital_twin_sandbox.py
   domain_id: ''
   name_zh: 数字孪生Sandbox测试
   name_en: Test Digital Twin Sandbox
@@ -20529,7 +20529,7 @@ entries:
   desc_zh: ''
   desc_en: ''
   plain_zh: 测试：元数据注册表能不能正常工作，有问题尽早暴露。
-- module_path: tests/infrastructure/test_streaming.py
+- module_path: tests/infrastructure/observability/test_streaming.py
   domain_id: ''
   name_zh: Streaming测试
   name_en: Test Streaming
@@ -20578,7 +20578,7 @@ entries:
   desc_zh: ''
   desc_en: ''
   plain_zh: 因子·A股的市场结构包：把市场结构相关的模块聚拢在一起，对外提供统一的引用入口。
-- module_path: tests/feedback/test_validator.py
+- module_path: tests/feedback/governance_audit/test_validator.py
   domain_id: ''
   name_zh: 验证器测试
   name_en: Test Validator
@@ -20641,7 +20641,7 @@ entries:
   desc_zh: ''
   desc_en: ''
   plain_zh: 韧性治理的离线韧性：管离线韧性这块的活，韧性治理需要时来找它，确保链路不卡壳。
-- module_path: tests/infrastructure/test_conflict_detector.py
+- module_path: tests/infrastructure/process_lifecycle/test_conflict_detector.py
   domain_id: ''
   name_zh: 冲突检测器测试
   name_en: Test Conflict Detector
@@ -20942,7 +20942,7 @@ entries:
   desc_zh: ''
   desc_en: ''
   plain_zh: 执行核心的性能监视：实时看性能的表现，不对劲就响铃，防止执行核心出状况没人知道。
-- module_path: tests/feedback/test_docs_init.py
+- module_path: tests/feedback/governance_audit/test_docs_init.py
   domain_id: ''
   name_zh: Docs包入口测试
   name_en: Test Docs Init
@@ -21026,7 +21026,7 @@ entries:
   desc_zh: ''
   desc_en: ''
   plain_zh: 测试：success 校验器的行为要符合预期，有偏差尽早抓住。
-- module_path: tests/audit/test_audit_incremental_review.py
+- module_path: tests/audit/audit_core/test_audit_incremental_review.py
   domain_id: ''
   name_zh: 审计IncrementalReview测试
   name_en: Test Audit Incremental Review
@@ -21040,7 +21040,7 @@ entries:
   desc_zh: ''
   desc_en: ''
   plain_zh: 任务编排·生命周期的synchronizer定义：把synchronizer的数据结构和约定写在一处，大家按同一套约定用，避免各写各的对不上。
-- module_path: tests/audit/test_audit_supply_chain_security.py
+- module_path: tests/audit/audit_core/test_audit_supply_chain_security.py
   domain_id: ''
   name_zh: 审计Supply链安全测试
   name_en: Test Audit Supply Chain Security
@@ -21103,7 +21103,7 @@ entries:
   desc_zh: ''
   desc_en: ''
   plain_zh: 共享基础·补偿的Saga compensator：把Saga compensator的逻辑集中在一处，共享基础·补偿别处直接拿来用，避免重复造轮子。
-- module_path: tests/feedback/test_collaborative_learning.py
+- module_path: tests/feedback/learning_evolution/test_collaborative_learning.py
   domain_id: ''
   name_zh: Collaborative学习测试
   name_en: Test Collaborative Learning
@@ -21202,7 +21202,7 @@ entries:
   desc_zh: ''
   desc_en: ''
   plain_zh: 元治理的环境健康检查：一条一条过环境健康的规矩，错的漏的都挑出来，给元治理把关。
-- module_path: tests/audit/test_handoff_manager.py
+- module_path: tests/audit/ops_resilience/test_handoff_manager.py
   domain_id: ''
   name_zh: Handoff管理器测试
   name_en: Test Handoff Manager
@@ -21686,7 +21686,7 @@ entries:
   desc_zh: ''
   desc_en: ''
   plain_zh: 测试：确保SLO 管理器单元不出岔子，让问题在上线前现形。
-- module_path: tests/feedback/test_confidence_decomposer.py
+- module_path: tests/feedback/learning_evolution/test_confidence_decomposer.py
   domain_id: ''
   name_zh: Confidence Decomposer测试
   name_en: Test Confidence Decomposer
@@ -21700,7 +21700,7 @@ entries:
   desc_zh: ''
   desc_en: ''
   plain_zh: 测试：验证交易会话的正确性，出问题尽早发现。
-- module_path: tests/audit/test_audit_dim_d9_d12_e2e.py
+- module_path: tests/audit/audit_core/test_audit_dim_d9_d12_e2e.py
   domain_id: ''
   name_zh: 审计DimD9D12端到端测试
   name_en: Test Audit Dim D9 D12 E2e
@@ -21868,7 +21868,7 @@ entries:
   desc_zh: ''
   desc_en: ''
   plain_zh: 运维治理的时间对齐：两边时间的记录经常对一对，对不上就提醒，避免运维治理出现不一致。
-- module_path: tests/infrastructure/test_mcp_full_lifecycle_e2e.py
+- module_path: tests/infrastructure/mcp/test_mcp_full_lifecycle_e2e.py
   domain_id: ''
   name_zh: MCP boot→FLE→MCP→shutdown全链路E2E测试
   name_en: Test Mcp Full Lifecycle E2e
@@ -21903,7 +21903,7 @@ entries:
   desc_zh: ''
   desc_en: ''
   plain_zh: 集成·向量记忆的hybrid retriever：管hybrid retriever这块的活，集成·向量记忆需要时来找它，确保链路不卡壳。
-- module_path: tests/infrastructure/test_mcp_adapter.py
+- module_path: tests/infrastructure/mcp/test_mcp_adapter.py
   domain_id: ''
   name_zh: MCP适配器测试
   name_en: Test Mcp Adapter
@@ -22155,7 +22155,7 @@ entries:
   desc_zh: ''
   desc_en: ''
   plain_zh: 安全·访问控制的上下文漂移检测器：自动扫描上下文漂移的异常迹象，一发现就标记报出，防止安全·访问控制带病往下传。
-- module_path: tests/infrastructure/test_mcp_gateway_version_ratelimit.py
+- module_path: tests/infrastructure/mcp/test_mcp_gateway_version_ratelimit.py
   domain_id: ''
   name_zh: 5.35 API 版本管理 + 5.36 限流与配额治本回归测试
   name_en: Test Mcp Gateway Version Ratelimit
@@ -22183,7 +22183,7 @@ entries:
   desc_zh: ''
   desc_en: ''
   plain_zh: 测试：自治守卫的行为要符合预期，有偏差尽早抓住。
-- module_path: tests/audit/test_baseline_poisoning_guard.py
+- module_path: tests/audit/drift_integrity/test_baseline_poisoning_guard.py
   domain_id: ''
   name_zh: 基线Poisoning守卫测试
   name_en: Test Baseline Poisoning Guard
@@ -22232,7 +22232,7 @@ entries:
   desc_zh: ''
   desc_en: ''
   plain_zh: 测试：检查点管理器是否符合预期，别让毛病悄悄溜过去。
-- module_path: tests/infrastructure/test_mcp_signal_shutdown.py
+- module_path: tests/infrastructure/mcp/test_mcp_signal_shutdown.py
   domain_id: ''
   name_zh: MCP SIGINT/SIGTERM 信号优雅关闭进程级测试
   name_en: Test Mcp Signal Shutdown
@@ -22393,7 +22393,7 @@ entries:
   desc_zh: ''
   desc_en: ''
   plain_zh: 测试：检查数据分类在各种情况下表现对不对，守住质量关。
-- module_path: tests/infrastructure/test_l12_telemetry_unit.py
+- module_path: tests/infrastructure/observability/test_l12_telemetry_unit.py
   domain_id: ''
   name_zh: L12Telemetry单元测试
   name_en: Test L12 Telemetry Unit
@@ -22652,7 +22652,7 @@ entries:
   desc_zh: ''
   desc_en: ''
   plain_zh: 任务编排·治理包的入口：import 这个包时会先跑这里，把包里的子模块聚成统一的对外出口。
-- module_path: tests/feedback/test_alert_desensitization_curve.py
+- module_path: tests/feedback/observability_notify/test_alert_desensitization_curve.py
   domain_id: ''
   name_zh: Alert Desensitization Curve测试
   name_en: Test Alert Desensitization Curve
@@ -22736,7 +22736,7 @@ entries:
   desc_zh: ''
   desc_en: ''
   plain_zh: 治理·D6 安全的密钥 leak校验：按既定规则核对密钥 leak，不合规就拦住或报出来，防止治理·D6 安全出问题。
-- module_path: tests/feedback/test_scheduler_integration.py
+- module_path: tests/feedback/scheduling/test_scheduler_integration.py
   domain_id: ''
   name_zh: 调度器集成测试
   name_en: Test Scheduler Integration
@@ -22778,7 +22778,7 @@ entries:
   desc_zh: ''
   desc_en: ''
   plain_zh: 测试：确保上下文开关 governor不出岔子，让问题在上线前现形。
-- module_path: tests/audit/test_regime_gain_scheduling.py
+- module_path: tests/audit/intelligence_audit/test_regime_gain_scheduling.py
   domain_id: ''
   name_zh: 状态Gain调度测试
   name_en: Test Regime Gain Scheduling
@@ -22820,7 +22820,7 @@ entries:
   desc_zh: ''
   desc_en: ''
   plain_zh: 测试：语义意图 preservation 守卫这块逻辑要经得起考验，有毛病立刻报出来。
-- module_path: tests/feedback/test_feedback_collector_feedback_loop.py
+- module_path: tests/feedback/feedback_loop/test_feedback_collector_feedback_loop.py
   domain_id: ''
   name_zh: 反馈收集器反馈Loop测试
   name_en: Test Feedback Collector Feedback Loop
@@ -22883,14 +22883,14 @@ entries:
   desc_zh: ''
   desc_en: ''
   plain_zh: 共享基础·数据库包的入口：import 这个包时会先跑这里，把包里的子模块聚成统一的对外出口。
-- module_path: tests/infrastructure/test_escalation_engine.py
+- module_path: tests/infrastructure/escalation/test_escalation_engine.py
   domain_id: ''
   name_zh: Escalation引擎测试
   name_en: Test Escalation Engine
   desc_zh: ''
   desc_en: ''
   plain_zh: 测试：升级引擎这块逻辑要经得起考验，有毛病立刻报出来。
-- module_path: tests/audit/test_brain_integration_root.py
+- module_path: tests/audit/intelligence_audit/test_brain_integration_root.py
   domain_id: ''
   name_zh: Brain集成根入口测试
   name_en: Test Brain Integration Root
@@ -23107,7 +23107,7 @@ entries:
   desc_zh: ''
   desc_en: ''
   plain_zh: 安全·访问控制的A2A检查：一条一条过A2A的规矩，错的漏的都挑出来，给安全·访问控制把关。
-- module_path: tests/feedback/test_backpressure_bridge_root.py
+- module_path: tests/feedback/resilience_dr/test_backpressure_bridge_root.py
   domain_id: ''
   name_zh: Backpressure桥接器根入口测试
   name_en: Test Backpressure Bridge Root
@@ -23247,7 +23247,7 @@ entries:
   desc_zh: ''
   desc_en: ''
   plain_zh: 治理·一次性的因子设计完整定义：把因子设计完整的数据结构和约定写在一处，大家按同一套约定用，避免各写各的对不上。
-- module_path: tests/audit/test_scan_mutex.py
+- module_path: tests/audit/ops_resilience/test_scan_mutex.py
   domain_id: ''
   name_zh: 扫描Mutex测试
   name_en: Test Scan Mutex
@@ -23527,7 +23527,7 @@ entries:
   desc_zh: ''
   desc_en: ''
   plain_zh: 测试：把提示词注册表上下文引擎跑一遍，确认这块逻辑没毛病。
-- module_path: tests/audit/test_architecture_contracts.py
+- module_path: tests/audit/quality_static/test_architecture_contracts.py
   domain_id: ''
   name_zh: 架构契约测试
   name_en: Test Architecture Contracts
@@ -23555,7 +23555,7 @@ entries:
   desc_zh: ''
   desc_en: ''
   plain_zh: 报告的默认 TCA发动机：把默认 TCA的动力输出给整条链路，没它报告就跑不起来。
-- module_path: tests/audit/test_audit_indexer.py
+- module_path: tests/audit/audit_core/test_audit_indexer.py
   domain_id: ''
   name_zh: 审计Indexer测试
   name_en: Test Audit Indexer
@@ -23590,7 +23590,7 @@ entries:
   desc_zh: ''
   desc_en: ''
   plain_zh: 测试：自动诊断能不能正常工作，有问题尽早暴露。
-- module_path: tests/feedback/test_scheduler_collect_detect.py
+- module_path: tests/feedback/scheduling/test_scheduler_collect_detect.py
   domain_id: ''
   name_zh: 调度器Collect检测测试
   name_en: Test Scheduler Collect Detect
@@ -23751,7 +23751,7 @@ entries:
   desc_zh: ''
   desc_en: ''
   plain_zh: 测试：验证技能 guardrails的正确性，出问题尽早发现。
-- module_path: tests/infrastructure/test_split_brain_quorum.py
+- module_path: tests/infrastructure/process_lifecycle/test_split_brain_quorum.py
   domain_id: ''
   name_zh: Split Brain Quorum测试
   name_en: Test Split Brain Quorum
@@ -23835,7 +23835,7 @@ entries:
   desc_zh: ''
   desc_en: ''
   plain_zh: 基础设施·系统遥测的自动自举：把自动自举的逻辑集中在一处，基础设施·系统遥测别处直接拿来用，避免重复造轮子。
-- module_path: tests/feedback/test_autoscale_remediation.py
+- module_path: tests/feedback/resilience_dr/test_autoscale_remediation.py
   domain_id: ''
   name_zh: Autoscale Remediation测试
   name_en: Test Autoscale Remediation
@@ -23926,7 +23926,7 @@ entries:
   desc_zh: ''
   desc_en: ''
   plain_zh: 测试：提取决策图是否符合预期，别让毛病悄悄溜过去。
-- module_path: tests/infrastructure/test_cost_tracker.py
+- module_path: tests/infrastructure/observability/test_cost_tracker.py
   domain_id: ''
   name_zh: Cost跟踪器测试
   name_en: Test Cost Tracker
@@ -24003,7 +24003,7 @@ entries:
   desc_zh: ''
   desc_en: ''
   plain_zh: 治理的工作树运维遥测校验：按既定规则核对工作树运维遥测，不合规就拦住或报出来，防止治理出问题。
-- module_path: tests/infrastructure/test_mcp_servers.py
+- module_path: tests/infrastructure/mcp/test_mcp_servers.py
   domain_id: ''
   name_zh: 构造 JSON-RPC 请求并调用 handle_request
   name_en: Test Mcp Servers
@@ -24073,7 +24073,7 @@ entries:
   desc_zh: ''
   desc_en: ''
   plain_zh: 测试：验证think 时间模型的正确性，出问题尽早发现。
-- module_path: tests/audit/test_absence_manager.py
+- module_path: tests/audit/quality_static/test_absence_manager.py
   domain_id: ''
   name_zh: Absence管理器测试
   name_en: Test Absence Manager
@@ -24101,7 +24101,7 @@ entries:
   desc_zh: ''
   desc_en: ''
   plain_zh: 因子的配置管理器搬运工：配置管理器的进出都归它管，因子别的模块只管用，不用管格式。
-- module_path: tests/feedback/test_heisenbug_detector.py
+- module_path: tests/feedback/anomaly_diagnosis/test_heisenbug_detector.py
   domain_id: ''
   name_zh: Heisenbug检测器测试
   name_en: Test Heisenbug Detector
@@ -24206,7 +24206,7 @@ entries:
   desc_zh: ''
   desc_en: ''
   plain_zh: 治理·数据质量的Tick 重复检查：一条一条过Tick 重复的规矩，错的漏的都挑出来，给治理·数据质量把关。
-- module_path: tests/feedback/test_diagnosers.py
+- module_path: tests/feedback/anomaly_diagnosis/test_diagnosers.py
   domain_id: ''
   name_zh: Diagnosers测试
   name_en: Test Diagnosers
@@ -24339,7 +24339,7 @@ entries:
   desc_zh: ''
   desc_en: ''
   plain_zh: 交易运营·组合的策略生命周期事件：负责策略生命周期事件相关的具体事务，是交易运营·组合这条链路里的一个支撑节点。
-- module_path: tests/audit/test_audit_provenance_tracker.py
+- module_path: tests/audit/audit_core/test_audit_provenance_tracker.py
   domain_id: ''
   name_zh: 审计Provenance跟踪器测试
   name_en: Test Audit Provenance Tracker
@@ -24570,14 +24570,14 @@ entries:
   desc_zh: ''
   desc_en: ''
   plain_zh: 组合核心的再平衡管家：再平衡的大事小情都归它管，组合核心各模块找它对接，省得各自为政。
-- module_path: tests/infrastructure/test_drift_trigger_recovery.py
+- module_path: tests/infrastructure/drift/test_drift_trigger_recovery.py
   domain_id: ''
   name_zh: 漂移触发器Recovery测试
   name_en: Test Drift Trigger Recovery
   desc_zh: ''
   desc_en: ''
   plain_zh: 测试：漂移触发器恢复是否符合预期，别让毛病悄悄溜过去。
-- module_path: tests/audit/test_audit_chain_verifier.py
+- module_path: tests/audit/audit_core/test_audit_chain_verifier.py
   domain_id: ''
   name_zh: 5.37.8：隔离门禁链持久化路径到 tmp_path，防测试写入生产 data/audit_trail/
   name_en: Test Audit Chain Verifier
@@ -24647,7 +24647,7 @@ entries:
   desc_zh: ''
   desc_en: ''
   plain_zh: 测试：把安全门禁 l40 l41跑一遍，确认这块逻辑没毛病。
-- module_path: tests/feedback/test_feedback_core.py
+- module_path: tests/feedback/feedback_loop/test_feedback_core.py
   domain_id: ''
   name_zh: 反馈核心测试
   name_en: Test Feedback Core
@@ -24696,7 +24696,7 @@ entries:
   desc_zh: ''
   desc_en: ''
   plain_zh: 基础设施·回滚的外部 Merkle 证明：负责外部 Merkle 证明相关的具体事务，是基础设施·回滚这条链路里的一个支撑节点。
-- module_path: tests/feedback/test_meta_guard_latency_budget.py
+- module_path: tests/feedback/governance_audit/test_meta_guard_latency_budget.py
   domain_id: ''
   name_zh: Meta守卫Latency预算测试
   name_en: Test Meta Guard Latency Budget
@@ -24710,7 +24710,7 @@ entries:
   desc_zh: ''
   desc_en: ''
   plain_zh: 测试：把micro 克隆检测器跑一遍，确认这块逻辑没毛病。
-- module_path: tests/audit/test_code_review_ai.py
+- module_path: tests/audit/quality_static/test_code_review_ai.py
   domain_id: ''
   name_zh: 代码ReviewAi测试
   name_en: Test Code Review Ai
@@ -24766,7 +24766,7 @@ entries:
   desc_zh: ''
   desc_en: ''
   plain_zh: 测试：事件汇的行为要符合预期，有偏差尽早抓住。
-- module_path: tests/audit/test_audit_dim_d1_d4_e2e.py
+- module_path: tests/audit/audit_core/test_audit_dim_d1_d4_e2e.py
   domain_id: ''
   name_zh: 审计DimD1D4端到端测试
   name_en: Test Audit Dim D1 D4 E2e
@@ -24808,7 +24808,7 @@ entries:
   desc_zh: ''
   desc_en: ''
   plain_zh: 测试：验证基础废弃声明的正确性，出问题尽早发现。
-- module_path: tests/audit/test_deterministic_replay.py
+- module_path: tests/audit/drift_integrity/test_deterministic_replay.py
   domain_id: ''
   name_zh: Deterministic Replay测试
   name_en: Test Deterministic Replay
@@ -24955,7 +24955,7 @@ entries:
   desc_zh: ''
   desc_en: ''
   plain_zh: 智能·模型画像的考试管理器：统一负责考试的安排和收尾，智能·模型画像别处要用都通过它，避免各管一段乱套。
-- module_path: tests/audit/test_audit_anomaly.py
+- module_path: tests/audit/audit_core/test_audit_anomaly.py
   domain_id: ''
   name_zh: 审计异常测试
   name_en: Test Audit Anomaly
@@ -25047,7 +25047,7 @@ entries:
   desc_zh: ''
   desc_en: ''
   plain_zh: 归档·治理的dm106 p2b 验证：管dm106 p2b 验证这块的活，归档·治理需要时来找它，确保链路不卡壳。
-- module_path: tests/feedback/test_maintenance_coordinator.py
+- module_path: tests/feedback/scheduling/test_maintenance_coordinator.py
   domain_id: ''
   name_zh: Maintenance协调器测试
   name_en: Test Maintenance Coordinator
@@ -25117,7 +25117,7 @@ entries:
   desc_zh: ''
   desc_en: ''
   plain_zh: 基础设施·h1 Redis 热的h1 集成：处理h1 集成的具体事务，给基础设施·h1 Redis 热这条线打下手，保证日常运转不出岔子。
-- module_path: tests/infrastructure/test_escalation_e2e.py
+- module_path: tests/infrastructure/escalation/test_escalation_e2e.py
   domain_id: ''
   name_zh: Escalation端到端测试
   name_en: Test Escalation E2e
@@ -25159,7 +25159,7 @@ entries:
   desc_zh: ''
   desc_en: ''
   plain_zh: 测试：验证e 上下文包的正确性，出问题尽早发现。
-- module_path: tests/feedback/test_global_action_scheduler.py
+- module_path: tests/feedback/scheduling/test_global_action_scheduler.py
   domain_id: ''
   name_zh: Global动作调度器测试
   name_en: Test Global Action Scheduler
@@ -25222,7 +25222,7 @@ entries:
   desc_zh: ''
   desc_en: ''
   plain_zh: 安全·访问控制的asymmetric校验：按既定规则核对asymmetric，不合规就拦住或报出来，防止安全·访问控制出问题。
-- module_path: tests/feedback/test_diagnosis_engine.py
+- module_path: tests/feedback/anomaly_diagnosis/test_diagnosis_engine.py
   domain_id: ''
   name_zh: Diagnosis引擎测试
   name_en: Test Diagnosis Engine
@@ -25278,7 +25278,7 @@ entries:
   desc_zh: ''
   desc_en: ''
   plain_zh: 测试：验证技能上下文隔离的正确性，出问题尽早发现。
-- module_path: tests/audit/test_audit_financial_compliance.py
+- module_path: tests/audit/audit_core/test_audit_financial_compliance.py
   domain_id: ''
   name_zh: 审计Financial合规测试
   name_en: Test Audit Financial Compliance
@@ -25789,7 +25789,7 @@ entries:
   desc_zh: ''
   desc_en: ''
   plain_zh: 测试：门禁仓库的行为要符合预期，有偏差尽早抓住。
-- module_path: tests/audit/test_audit_write_failure_protector.py
+- module_path: tests/audit/audit_core/test_audit_write_failure_protector.py
   domain_id: ''
   name_zh: 审计WriteFailureProtector测试
   name_en: Test Audit Write Failure Protector
@@ -25866,7 +25866,7 @@ entries:
   desc_zh: ''
   desc_en: ''
   plain_zh: 测试：检查A2A consent在各种情况下表现对不对，守住质量关。
-- module_path: tests/audit/test_audit_spec_auditor.py
+- module_path: tests/audit/audit_core/test_audit_spec_auditor.py
   domain_id: ''
   name_zh: 审计Spec审计器测试
   name_en: Test Audit Spec Auditor
@@ -25901,7 +25901,7 @@ entries:
   desc_zh: ''
   desc_en: ''
   plain_zh: 治理·D5 架构的向量记忆单一真源检查：一条一条过向量记忆单一真源的规矩，错的漏的都挑出来，给治理·D5 架构把关。
-- module_path: tests/feedback/test_recovery_time_stats.py
+- module_path: tests/feedback/resilience_dr/test_recovery_time_stats.py
   domain_id: ''
   name_zh: Recovery时间Stats测试
   name_en: Test Recovery Time Stats
@@ -26020,7 +26020,7 @@ entries:
   desc_zh: ''
   desc_en: ''
   plain_zh: 测试：安全门禁 l52 l53能不能正常工作，有问题尽早暴露。
-- module_path: tests/infrastructure/test_quality_monitor.py
+- module_path: tests/infrastructure/observability/test_quality_monitor.py
   domain_id: ''
   name_zh: Quality监控器测试
   name_en: Test Quality Monitor
@@ -26776,7 +26776,7 @@ entries:
   desc_zh: ''
   desc_en: ''
   plain_zh: 测试：验证A2A 上下文腐烂的正确性，出问题尽早发现。
-- module_path: tests/feedback/test_federated_protocol.py
+- module_path: tests/feedback/governance_audit/test_federated_protocol.py
   domain_id: ''
   name_zh: 联邦Protocol测试
   name_en: Test Federated Protocol
@@ -27014,7 +27014,7 @@ entries:
   desc_zh: ''
   desc_en: ''
   plain_zh: 共享基础的审批约定：审批长什么样、怎么传，都在这里写清楚，各模块照这个来。
-- module_path: tests/feedback/test_placebo_action_detector.py
+- module_path: tests/feedback/anomaly_diagnosis/test_placebo_action_detector.py
   domain_id: ''
   name_zh: Placebo动作检测器测试
   name_en: Test Placebo Action Detector
@@ -27175,7 +27175,7 @@ entries:
   desc_zh: ''
   desc_en: ''
   plain_zh: 测试：调度器安全是否符合预期，别让毛病悄悄溜过去。
-- module_path: tests/feedback/test_cascading_rollback_analyzer.py
+- module_path: tests/feedback/resilience_dr/test_cascading_rollback_analyzer.py
   domain_id: ''
   name_zh: Cascading回滚分析器测试
   name_en: Test Cascading Rollback Analyzer
@@ -27189,7 +27189,7 @@ entries:
   desc_zh: ''
   desc_en: ''
   plain_zh: 基础设施·回滚的knowngoodstate名册：knowngoodstate都录进去，基础设施·回滚想查随时翻，避免信息散落在各处。
-- module_path: tests/feedback/test_secondary_alert_channel.py
+- module_path: tests/feedback/observability_notify/test_secondary_alert_channel.py
   domain_id: ''
   name_zh: Secondary Alert Channel测试
   name_en: Test Secondary Alert Channel
@@ -27287,7 +27287,7 @@ entries:
   desc_zh: ''
   desc_en: ''
   plain_zh: 测试：f18 redblue能不能正常工作，有问题尽早暴露。
-- module_path: tests/audit/test_audit_cli.py
+- module_path: tests/audit/audit_core/test_audit_cli.py
   domain_id: ''
   name_zh: 审计Cli测试
   name_en: Test Audit Cli
@@ -27357,7 +27357,7 @@ entries:
   desc_zh: ''
   desc_en: ''
   plain_zh: 执行核心的聚合 root管理器：统一负责聚合 root的安排和收尾，执行核心别处要用都通过它，避免各管一段乱套。
-- module_path: tests/infrastructure/test_telemetry_facade.py
+- module_path: tests/infrastructure/observability/test_telemetry_facade.py
   domain_id: ''
   name_zh: Telemetry 门面 + 9 子系统
   name_en: Test Telemetry Facade
@@ -27679,7 +27679,7 @@ entries:
   desc_zh: ''
   desc_en: ''
   plain_zh: 测试：验证数据库完整性的正确性，出问题尽早发现。
-- module_path: tests/infrastructure/test_escalation_hooks.py
+- module_path: tests/infrastructure/escalation/test_escalation_hooks.py
   domain_id: ''
   name_zh: Escalation Hooks测试
   name_en: Test Escalation Hooks
@@ -28029,7 +28029,7 @@ entries:
   desc_zh: ''
   desc_en: ''
   plain_zh: 共享基础的skill定义：把skill的数据结构和约定写在一处，大家按同一套约定用，避免各写各的对不上。
-- module_path: tests/audit/test_preventive_repair.py
+- module_path: tests/audit/ops_resilience/test_preventive_repair.py
   domain_id: ''
   name_zh: Preventive Repair测试
   name_en: Test Preventive Repair
@@ -28176,7 +28176,7 @@ entries:
   desc_zh: ''
   desc_en: ''
   plain_zh: 安全·载荷的leak 探针 phrases YAML包：把leak 探针 phrases YAML相关的模块聚拢在一起，对外提供统一的引用入口。
-- module_path: tests/audit/test_human_anomaly_flood_detector.py
+- module_path: tests/audit/drift_integrity/test_human_anomaly_flood_detector.py
   domain_id: ''
   name_zh: Human异常Flood检测器测试
   name_en: Test Human Anomaly Flood Detector
@@ -28610,7 +28610,7 @@ entries:
   desc_zh: ''
   desc_en: ''
   plain_zh: 共享基础的草稿助手：把草稿助手的逻辑集中在一处，共享基础别处直接拿来用，避免重复造轮子。
-- module_path: tests/audit/test_python_compat.py
+- module_path: tests/audit/quality_static/test_python_compat.py
   domain_id: ''
   name_zh: Python Compat测试
   name_en: Test Python Compat
@@ -28722,7 +28722,7 @@ entries:
   desc_zh: ''
   desc_en: ''
   plain_zh: 测试：共享 evolver能不能正常工作，有问题尽早暴露。
-- module_path: tests/feedback/test_notification_personalizer.py
+- module_path: tests/feedback/observability_notify/test_notification_personalizer.py
   domain_id: ''
   name_zh: Notification Personalizer测试
   name_en: Test Notification Personalizer
@@ -28736,7 +28736,7 @@ entries:
   desc_zh: ''
   desc_en: ''
   plain_zh: 测试：验证安全门禁 l1 l27的正确性，出问题尽早发现。
-- module_path: tests/feedback/test_market_calendar.py
+- module_path: tests/feedback/scheduling/test_market_calendar.py
   domain_id: ''
   name_zh: 市场Calendar测试
   name_en: Test Market Calendar
@@ -28904,7 +28904,7 @@ entries:
   desc_zh: ''
   desc_en: ''
   plain_zh: 基础设施·L3 协调的A2A监视：实时看A2A的表现，不对劲就响铃，防止基础设施·L3 协调出状况没人知道。
-- module_path: tests/audit/test_burnout_alarm.py
+- module_path: tests/audit/ops_resilience/test_burnout_alarm.py
   domain_id: ''
   name_zh: Burnout Alarm测试
   name_en: Test Burnout Alarm
@@ -28953,7 +28953,7 @@ entries:
   desc_zh: ''
   desc_en: ''
   plain_zh: 测试：验证影子信任校验器的正确性，出问题尽早发现。
-- module_path: tests/feedback/test_feedback_loop.py
+- module_path: tests/feedback/feedback_loop/test_feedback_loop.py
   domain_id: ''
   name_zh: 反馈Loop测试
   name_en: Test Feedback Loop
@@ -28967,7 +28967,7 @@ entries:
   desc_zh: ''
   desc_en: ''
   plain_zh: 安全·访问控制的层守卫：在关键环节把关，发现层越界或违规就拦下，给安全·访问控制加一道保险。
-- module_path: tests/infrastructure/test_capacity_runtime_red_blue.py
+- module_path: tests/infrastructure/adversarial/test_capacity_runtime_red_blue.py
   domain_id: ''
   name_zh: 容量保障体系对抗测试"""
   name_en: Test Capacity Runtime Red Blue
@@ -29219,7 +29219,7 @@ entries:
   desc_zh: ''
   desc_en: ''
   plain_zh: 测试：外部工具审计的行为要符合预期，有偏差尽早抓住。
-- module_path: tests/infrastructure/test_task_manager_mcp.py
+- module_path: tests/infrastructure/mcp/test_task_manager_mcp.py
   domain_id: ''
   name_zh: 任务管理器MCP测试
   name_en: Test Task Manager Mcp
@@ -29247,14 +29247,14 @@ entries:
   desc_zh: ''
   desc_en: ''
   plain_zh: 共享基础的会话边界：负责会话边界相关的具体事务，是共享基础这条链路里的一个支撑节点。
-- module_path: tests/feedback/test_counterfactual.py
+- module_path: tests/feedback/learning_evolution/test_counterfactual.py
   domain_id: ''
   name_zh: Counterfactual测试
   name_en: Test Counterfactual
   desc_zh: ''
   desc_en: ''
   plain_zh: 测试：counterfactual这块逻辑要经得起考验，有毛病立刻报出来。
-- module_path: tests/feedback/test_operational_seasonality.py
+- module_path: tests/feedback/scheduling/test_operational_seasonality.py
   domain_id: ''
   name_zh: Operational Seasonality测试
   name_en: Test Operational Seasonality
@@ -29296,7 +29296,7 @@ entries:
   desc_zh: ''
   desc_en: ''
   plain_zh: 测试：金丝雀登记册是否符合预期，别让毛病悄悄溜过去。
-- module_path: tests/audit/test_audit_api_lifecycle.py
+- module_path: tests/audit/audit_core/test_audit_api_lifecycle.py
   domain_id: ''
   name_zh: 审计API生命周期测试
   name_en: Test Audit Api Lifecycle
@@ -29737,7 +29737,7 @@ entries:
   desc_zh: ''
   desc_en: ''
   plain_zh: 测试：e silence 检测器这块逻辑要经得起考验，有毛病立刻报出来。
-- module_path: tests/feedback/test_nonstationary_effectiveness.py
+- module_path: tests/feedback/learning_evolution/test_nonstationary_effectiveness.py
   domain_id: ''
   name_zh: Nonstationary Effectiveness测试
   name_en: Test Nonstationary Effectiveness
@@ -29933,7 +29933,7 @@ entries:
   desc_zh: ''
   desc_en: ''
   plain_zh: 测试：IC 衰减能不能正常工作，有问题尽早暴露。
-- module_path: tests/infrastructure/test_graceful_degradation_planner.py
+- module_path: tests/infrastructure/process_lifecycle/test_graceful_degradation_planner.py
   domain_id: ''
   name_zh: Graceful Degradation Planner测试
   name_en: Test Graceful Degradation Planner
@@ -30297,7 +30297,7 @@ entries:
   desc_zh: ''
   desc_en: ''
   plain_zh: 测试：确保自校验器不出岔子，让问题在上线前现形。
-- module_path: tests/infrastructure/test_trigger_monitor.py
+- module_path: tests/infrastructure/process_lifecycle/test_trigger_monitor.py
   domain_id: ''
   name_zh: 触发器监控器测试
   name_en: Test Trigger Monitor
@@ -30332,7 +30332,7 @@ entries:
   desc_zh: ''
   desc_en: ''
   plain_zh: 测试：last resort 看门狗是否符合预期，别让毛病悄悄溜过去。
-- module_path: tests/infrastructure/test_deadlock_guard.py
+- module_path: tests/infrastructure/process_lifecycle/test_deadlock_guard.py
   domain_id: ''
   name_zh: Deadlock守卫测试
   name_en: Test Deadlock Guard
@@ -30472,7 +30472,7 @@ entries:
   desc_zh: ''
   desc_en: ''
   plain_zh: 因子·A股的institutional包：把institutional相关的模块聚拢在一起，对外提供统一的引用入口。
-- module_path: tests/audit/test_audit_adversarial.py
+- module_path: tests/audit/audit_core/test_audit_adversarial.py
   domain_id: ''
   name_zh: Audit Trail 审计链攻击面测试.
   name_en: Test Audit Adversarial
@@ -30521,7 +30521,7 @@ entries:
   desc_zh: ''
   desc_en: ''
   plain_zh: 任务编排的提示词版本：负责提示词版本相关的具体事务，是任务编排这条链路里的一个支撑节点。
-- module_path: tests/audit/test_audit_observability_dashboard.py
+- module_path: tests/audit/audit_core/test_audit_observability_dashboard.py
   domain_id: ''
   name_zh: 审计Observability仪表盘测试
   name_en: Test Audit Observability Dashboard
@@ -30556,7 +30556,7 @@ entries:
   desc_zh: ''
   desc_en: ''
   plain_zh: 测试：检查ch 版本 col 门禁在各种情况下表现对不对，守住质量关。
-- module_path: tests/feedback/test_diminishing_returns_detector.py
+- module_path: tests/feedback/learning_evolution/test_diminishing_returns_detector.py
   domain_id: ''
   name_zh: DiminishingReturns检测器测试
   name_en: Test Diminishing Returns Detector
@@ -30640,7 +30640,7 @@ entries:
   desc_zh: ''
   desc_en: ''
   plain_zh: 测试：检查held 重叠门禁在各种情况下表现对不对，守住质量关。
-- module_path: tests/audit/test_socratic_questions.py
+- module_path: tests/audit/intelligence_audit/test_socratic_questions.py
   domain_id: ''
   name_zh: Socratic Questions测试
   name_en: Test Socratic Questions
@@ -30717,7 +30717,7 @@ entries:
   desc_zh: ''
   desc_en: ''
   plain_zh: 治理·误报负面用例的数据质量用例 YAML包：把数据质量用例 YAML相关的模块聚拢在一起，对外提供统一的引用入口。
-- module_path: tests/audit/test_audit_full_closure_e2e.py
+- module_path: tests/audit/audit_core/test_audit_full_closure_e2e.py
   domain_id: ''
   name_zh: 审计FullClosure端到端测试
   name_en: Test Audit Full Closure E2e
@@ -30780,7 +30780,7 @@ entries:
   desc_zh: ''
   desc_en: ''
   plain_zh: 治理·D11 合规的清单准入校验：按既定规则核对清单准入，不合规就拦住或报出来，防止治理·D11 合规出问题。
-- module_path: tests/audit/test_import_smoke_audit_trail.py
+- module_path: tests/audit/audit_core/test_import_smoke_audit_trail.py
   domain_id: ''
   name_zh: 验证核心模块可被导入."""
   name_en: Test Import Smoke Audit Trail
@@ -30913,7 +30913,7 @@ entries:
   desc_zh: ''
   desc_en: ''
   plain_zh: 基础设施·L2 通信的上下文 package：处理上下文 package的具体事务，给基础设施·L2 通信这条线打下手，保证日常运转不出岔子。
-- module_path: tests/feedback/test_numerical_stability_guard.py
+- module_path: tests/feedback/governance_audit/test_numerical_stability_guard.py
   domain_id: ''
   name_zh: NumericalStability守卫测试
   name_en: Test Numerical Stability Guard
@@ -31291,7 +31291,7 @@ entries:
   desc_zh: ''
   desc_en: ''
   plain_zh: 漂移检测的级联检测：盯着级联找毛病，发现不对就报出来，不让问题在漂移检测里潜伏。
-- module_path: tests/feedback/test_eval_harness_feedback_loop.py
+- module_path: tests/feedback/feedback_loop/test_eval_harness_feedback_loop.py
   domain_id: ''
   name_zh: EvalHarness反馈Loop测试
   name_en: Test Eval Harness Feedback Loop
@@ -31375,7 +31375,7 @@ entries:
   desc_zh: ''
   desc_en: ''
   plain_zh: 测试：验证sys 主合规的正确性，出问题尽早发现。
-- module_path: tests/feedback/test_evolution_engine_feedback_loop.py
+- module_path: tests/feedback/feedback_loop/test_evolution_engine_feedback_loop.py
   domain_id: ''
   name_zh: Evolution引擎反馈Loop测试
   name_en: Test Evolution Engine Feedback Loop
@@ -31403,7 +31403,7 @@ entries:
   desc_zh: ''
   desc_en: ''
   plain_zh: 漂移检测的自治 regressor：负责自治 regressor相关的具体事务，是漂移检测这条链路里的一个支撑节点。
-- module_path: tests/audit/test_symlink_checker.py
+- module_path: tests/audit/drift_integrity/test_symlink_checker.py
   domain_id: ''
   name_zh: Symlink检查器测试
   name_en: Test Symlink Checker
@@ -31543,7 +31543,7 @@ entries:
   desc_zh: ''
   desc_en: ''
   plain_zh: 治理·共享的plugin 契约模式 YAML包：把plugin 契约模式 YAML相关的模块聚拢在一起，对外提供统一的引用入口。
-- module_path: tests/feedback/test_regulatory_audit.py
+- module_path: tests/feedback/governance_audit/test_regulatory_audit.py
   domain_id: ''
   name_zh: Regulatory审计测试
   name_en: Test Regulatory Audit
@@ -31676,7 +31676,7 @@ entries:
   desc_zh: ''
   desc_en: ''
   plain_zh: 测试：验证技能 temperature的正确性，出问题尽早发现。
-- module_path: tests/feedback/test_recursive_diagnosis_trust_evaluator.py
+- module_path: tests/feedback/anomaly_diagnosis/test_recursive_diagnosis_trust_evaluator.py
   domain_id: ''
   name_zh: Recursive Diagnosis Trust Evaluator测试
   name_en: Test Recursive Diagnosis Trust Evaluator
@@ -31900,7 +31900,7 @@ entries:
   desc_zh: ''
   desc_en: ''
   plain_zh: 任务编排·故障容错的network partition：负责network partition相关的具体事务，是任务编排·故障容错这条链路里的一个支撑节点。
-- module_path: tests/feedback/test_log_anomaly.py
+- module_path: tests/feedback/anomaly_diagnosis/test_log_anomaly.py
   domain_id: ''
   name_zh: 日志异常测试
   name_en: Test Log Anomaly
@@ -31921,7 +31921,7 @@ entries:
   desc_zh: ''
   desc_en: ''
   plain_zh: 测试：依赖图这块逻辑要经得起考验，有毛病立刻报出来。
-- module_path: tests/infrastructure/test_span_stub.py
+- module_path: tests/infrastructure/observability/test_span_stub.py
   domain_id: ''
   name_zh: Span Stub测试
   name_en: Test Span Stub
@@ -31970,7 +31970,7 @@ entries:
   desc_zh: ''
   desc_en: ''
   plain_zh: 集成包的入口：import 这个包时会先跑这里，把包里的子模块聚成统一的对外出口。
-- module_path: tests/feedback/test_notification_feedback.py
+- module_path: tests/feedback/feedback_loop/test_notification_feedback.py
   domain_id: ''
   name_zh: Notification反馈测试
   name_en: Test Notification Feedback
@@ -32229,7 +32229,7 @@ entries:
   desc_zh: ''
   desc_en: ''
   plain_zh: 运维治理的流中止防护：盯着流中止的边界，谁想越线就挡住，保运维治理不出事。
-- module_path: tests/infrastructure/test_drift_extended_e2e.py
+- module_path: tests/infrastructure/drift/test_drift_extended_e2e.py
   domain_id: ''
   name_zh: 6 个 AI 检测器逐一注入 + 检出验证
   name_en: Test Drift Extended E2e
@@ -32425,7 +32425,7 @@ entries:
   desc_zh: ''
   desc_en: ''
   plain_zh: 基础设施·脚本系统包的入口：import 这个包时会先跑这里，把包里的子模块聚成统一的对外出口。
-- module_path: tests/feedback/test_system_entropy_monitor.py
+- module_path: tests/feedback/observability_notify/test_system_entropy_monitor.py
   domain_id: ''
   name_zh: 系统Entropy监控器测试
   name_en: Test System Entropy Monitor
@@ -32481,7 +32481,7 @@ entries:
   desc_zh: ''
   desc_en: ''
   plain_zh: 测试：因子池管理器是否符合预期，别让毛病悄悄溜过去。
-- module_path: tests/feedback/test_state_migration_validator.py
+- module_path: tests/feedback/governance_audit/test_state_migration_validator.py
   domain_id: ''
   name_zh: 状态Migration验证器测试
   name_en: Test State Migration Validator
@@ -32733,7 +32733,7 @@ entries:
   desc_zh: ''
   desc_en: ''
   plain_zh: 测试：验证升级 API的正确性，出问题尽早发现。
-- module_path: tests/audit/test_sim2real_calibration.py
+- module_path: tests/audit/drift_integrity/test_sim2real_calibration.py
   domain_id: ''
   name_zh: Sim2real Calibration测试
   name_en: Test Sim2real Calibration
@@ -32775,7 +32775,7 @@ entries:
   desc_zh: ''
   desc_en: ''
   plain_zh: 治理·生成器的决策图生成器：按规则自动产出决策图，代替手工编写，保证治理·生成器的格式统一、不漏项。
-- module_path: tests/audit/test_audit_integrity.py
+- module_path: tests/audit/audit_core/test_audit_integrity.py
   domain_id: ''
   name_zh: 审计完整性测试
   name_en: Test Audit Integrity
@@ -33650,7 +33650,7 @@ entries:
   desc_zh: ''
   desc_en: ''
   plain_zh: 运维治理的阶段管家：阶段的大事小情都归它管，运维治理各模块找它对接，省得各自为政。
-- module_path: tests/feedback/test_dry_run_sandbox.py
+- module_path: tests/feedback/resilience_dr/test_dry_run_sandbox.py
   domain_id: ''
   name_zh: Dry运行Sandbox测试
   name_en: Test Dry Run Sandbox
@@ -33762,14 +33762,14 @@ entries:
   desc_zh: ''
   desc_en: ''
   plain_zh: 归档·迁移的preflight校验：按既定规则核对preflight，不合规就拦住或报出来，防止归档·迁移出问题。
-- module_path: tests/infrastructure/test_forward_fix_runner.py
+- module_path: tests/infrastructure/process_lifecycle/test_forward_fix_runner.py
   domain_id: ''
   name_zh: Forward修复运行器测试
   name_en: Test Forward Fix Runner
   desc_zh: ''
   desc_en: ''
   plain_zh: 测试：验证前向修复运行器的正确性，出问题尽早发现。
-- module_path: tests/infrastructure/test_preemption_manager.py
+- module_path: tests/infrastructure/process_lifecycle/test_preemption_manager.py
   domain_id: ''
   name_zh: Preemption管理器测试
   name_en: Test Preemption Manager
@@ -33930,7 +33930,7 @@ entries:
   desc_zh: ''
   desc_en: ''
   plain_zh: 治理·生成器的公共：处理公共的具体事务，给治理·生成器这条线打下手，保证日常运转不出岔子。
-- module_path: tests/feedback/test_no_llm_degradation.py
+- module_path: tests/feedback/resilience_dr/test_no_llm_degradation.py
   domain_id: ''
   name_zh: No LLM Degradation测试
   name_en: Test No Llm Degradation
@@ -34413,7 +34413,7 @@ entries:
   desc_zh: ''
   desc_en: ''
   plain_zh: 数据工程的数据 lake 管理器包：把数据 lake 管理器相关的模块聚拢在一起，对外提供统一的引用入口。
-- module_path: tests/feedback/test_feedback_collector_root.py
+- module_path: tests/feedback/feedback_loop/test_feedback_collector_root.py
   domain_id: ''
   name_zh: 反馈收集器根入口测试
   name_en: Test Feedback Collector Root
@@ -34434,7 +34434,7 @@ entries:
   desc_zh: ''
   desc_en: ''
   plain_zh: 治理·D5 架构的智能体规范检查：一条一条过智能体规范的规矩，错的漏的都挑出来，给治理·D5 架构把关。
-- module_path: tests/feedback/test_stochastic_diagnosis_verifier.py
+- module_path: tests/feedback/anomaly_diagnosis/test_stochastic_diagnosis_verifier.py
   domain_id: ''
   name_zh: StochasticDiagnosis验证器测试
   name_en: Test Stochastic Diagnosis Verifier
@@ -34511,7 +34511,7 @@ entries:
   desc_zh: ''
   desc_en: ''
   plain_zh: 漂移检测·检测器核心的性能基线：处理性能基线的具体事务，给漂移检测·检测器核心这条线打下手，保证日常运转不出岔子。
-- module_path: tests/feedback/test_adaptive_param_tuning.py
+- module_path: tests/feedback/learning_evolution/test_adaptive_param_tuning.py
   domain_id: ''
   name_zh: Adaptive Param Tuning测试
   name_en: Test Adaptive Param Tuning
@@ -34672,7 +34672,7 @@ entries:
   desc_zh: ''
   desc_en: ''
   plain_zh: 漂移检测的Git 二分定位器：把Git 二分定位器的逻辑集中在一处，漂移检测别处直接拿来用，避免重复造轮子。
-- module_path: tests/audit/test_naming_magic_checker.py
+- module_path: tests/audit/quality_static/test_naming_magic_checker.py
   domain_id: ''
   name_zh: NamingMagic检查器测试
   name_en: Test Naming Magic Checker
@@ -34763,7 +34763,7 @@ entries:
   desc_zh: ''
   desc_en: ''
   plain_zh: 安全·LLM 防御包的入口：import 这个包时会先跑这里，把包里的子模块聚成统一的对外出口。
-- module_path: tests/feedback/test_backpressure_bridge_feedback_loop.py
+- module_path: tests/feedback/feedback_loop/test_backpressure_bridge_feedback_loop.py
   domain_id: ''
   name_zh: Backpressure桥接器反馈Loop测试
   name_en: Test Backpressure Bridge Feedback Loop
@@ -34945,7 +34945,7 @@ entries:
   desc_zh: ''
   desc_en: ''
   plain_zh: 测试：检查技能执行器在各种情况下表现对不对，守住质量关。
-- module_path: tests/feedback/test_boot_integrity_attestation.py
+- module_path: tests/feedback/resilience_dr/test_boot_integrity_attestation.py
   domain_id: ''
   name_zh: Boot完整性Attestation测试
   name_en: Test Boot Integrity Attestation
@@ -35078,7 +35078,7 @@ entries:
   desc_zh: ''
   desc_en: ''
   plain_zh: 治理·D3 元数据的模块 singlesource检查：一条一条过模块 singlesource的规矩，错的漏的都挑出来，给治理·D3 元数据把关。
-- module_path: tests/audit/test_audit_self_healer_e2e.py
+- module_path: tests/audit/audit_core/test_audit_self_healer_e2e.py
   domain_id: ''
   name_zh: 端到端：创建一个有语法错误的Python文件→heal修复→验证修复成功"""
   name_en: Test Audit Self Healer E2e
@@ -35435,7 +35435,7 @@ entries:
   desc_zh: ''
   desc_en: ''
   plain_zh: 任务编排·治理的风险名册：风险都录进去，任务编排·治理想查随时翻，避免信息散落在各处。
-- module_path: tests/feedback/test_anomaly_clustering.py
+- module_path: tests/feedback/anomaly_diagnosis/test_anomaly_clustering.py
   domain_id: ''
   name_zh: 异常Clustering测试
   name_en: Test Anomaly Clustering
@@ -35456,7 +35456,7 @@ entries:
   desc_zh: ''
   desc_en: ''
   plain_zh: 测试：确保模型根不出岔子，让问题在上线前现形。
-- module_path: tests/audit/test_burn_rate_alerter.py
+- module_path: tests/audit/ops_resilience/test_burn_rate_alerter.py
   domain_id: ''
   name_zh: Burn速率Alerter测试
   name_en: Test Burn Rate Alerter
@@ -35477,7 +35477,7 @@ entries:
   desc_zh: ''
   desc_en: ''
   plain_zh: 基础设施·自动修复引擎的僵尸 cleaner：负责僵尸 cleaner相关的具体事务，是基础设施·自动修复引擎这条链路里的一个支撑节点。
-- module_path: tests/feedback/test_scheduler_health.py
+- module_path: tests/feedback/scheduling/test_scheduler_health.py
   domain_id: ''
   name_zh: 调度器Health测试
   name_en: Test Scheduler Health
@@ -35582,7 +35582,7 @@ entries:
   desc_zh: ''
   desc_en: ''
   plain_zh: 测试：启动钩子 unlock是否符合预期，别让毛病悄悄溜过去。
-- module_path: tests/audit/test_audit_dim_d5_d8_e2e.py
+- module_path: tests/audit/audit_core/test_audit_dim_d5_d8_e2e.py
   domain_id: ''
   name_zh: 审计DimD5D8端到端测试
   name_en: Test Audit Dim D5 D8 E2e
@@ -35743,7 +35743,7 @@ entries:
   desc_zh: ''
   desc_en: ''
   plain_zh: 测试：验证影子 workspace的正确性，出问题尽早发现。
-- module_path: tests/audit/test_architecture_principles.py
+- module_path: tests/audit/quality_static/test_architecture_principles.py
   domain_id: ''
   name_zh: 架构Principles测试
   name_en: Test Architecture Principles
@@ -35813,7 +35813,7 @@ entries:
   desc_zh: ''
   desc_en: ''
   plain_zh: 执行核心的部署一致性管理器：统一负责部署一致性的安排和收尾，执行核心别处要用都通过它，避免各管一段乱套。
-- module_path: tests/feedback/test_automated_rca_postmortem_generator.py
+- module_path: tests/feedback/anomaly_diagnosis/test_automated_rca_postmortem_generator.py
   domain_id: ''
   name_zh: AutomatedRcaPostmortem生成器测试
   name_en: Test Automated Rca Postmortem Generator
@@ -35946,7 +35946,7 @@ entries:
   desc_zh: ''
   desc_en: ''
   plain_zh: 测试：确保委派安全不出岔子，让问题在上线前现形。
-- module_path: tests/audit/test_zombie_fle_detector.py
+- module_path: tests/audit/drift_integrity/test_zombie_fle_detector.py
   domain_id: ''
   name_zh: ZombieFle检测器测试
   name_en: Test Zombie Fle Detector
@@ -35960,7 +35960,7 @@ entries:
   desc_zh: ''
   desc_en: ''
   plain_zh: 基础设施的事件总线升级：把事件总线升级的逻辑集中在一处，基础设施别处直接拿来用，避免重复造轮子。
-- module_path: tests/infrastructure/test_trace_decorator.py
+- module_path: tests/infrastructure/observability/test_trace_decorator.py
   domain_id: ''
   name_zh: 链路Decorator测试
   name_en: Test Trace Decorator
@@ -36058,7 +36058,7 @@ entries:
   desc_zh: ''
   desc_en: ''
   plain_zh: 测试：检查回滚并发极端在各种情况下表现对不对，守住质量关。
-- module_path: tests/feedback/test_gradual_poisoning_detector.py
+- module_path: tests/feedback/anomaly_diagnosis/test_gradual_poisoning_detector.py
   domain_id: ''
   name_zh: GradualPoisoning检测器测试
   name_en: Test Gradual Poisoning Detector
@@ -36114,7 +36114,7 @@ entries:
   desc_zh: ''
   desc_en: ''
   plain_zh: 基础设施·L3 协调包的入口：import 这个包时会先跑这里，把包里的子模块聚成统一的对外出口。
-- module_path: tests/infrastructure/test_push_notifier.py
+- module_path: tests/infrastructure/observability/test_push_notifier.py
   domain_id: ''
   name_zh: Push Notifier测试
   name_en: Test Push Notifier
@@ -36359,7 +36359,7 @@ entries:
   desc_zh: ''
   desc_en: ''
   plain_zh: 基础设施·L3 协调的A2A debate：处理A2A debate的具体事务，给基础设施·L3 协调这条线打下手，保证日常运转不出岔子。
-- module_path: tests/audit/test_audit_bridge.py
+- module_path: tests/audit/audit_core/test_audit_bridge.py
   domain_id: ''
   name_zh: 审计桥接器测试
   name_en: Test Audit Bridge
@@ -36611,7 +36611,7 @@ entries:
   desc_zh: ''
   desc_en: ''
   plain_zh: 测试：把ba 数据生命周期跑一遍，确认这块逻辑没毛病。
-- module_path: tests/feedback/test_conformal_prediction.py
+- module_path: tests/feedback/learning_evolution/test_conformal_prediction.py
   domain_id: ''
   name_zh: Conformal Prediction测试
   name_en: Test Conformal Prediction
@@ -36653,7 +36653,7 @@ entries:
   desc_zh: ''
   desc_en: ''
   plain_zh: 测试：上下文漂移检测器的行为要符合预期，有偏差尽早抓住。
-- module_path: tests/infrastructure/test_session_continuity_core.py
+- module_path: tests/infrastructure/process_lifecycle/test_session_continuity_core.py
   domain_id: ''
   name_zh: 会话Continuity核心测试
   name_en: Test Session Continuity Core
@@ -36863,7 +36863,7 @@ entries:
   desc_zh: ''
   desc_en: ''
   plain_zh: 测试：引擎根能不能正常工作，有问题尽早暴露。
-- module_path: tests/infrastructure/test_cascade_guard.py
+- module_path: tests/infrastructure/process_lifecycle/test_cascade_guard.py
   domain_id: ''
   name_zh: 级联守卫测试
   name_en: Test Cascade Guard
@@ -37640,7 +37640,7 @@ entries:
   desc_zh: ''
   desc_en: ''
   plain_zh: 基础设施·健康监控包的入口：import 这个包时会先跑这里，把包里的子模块聚成统一的对外出口。
-- module_path: tests/feedback/test_slo_manager_root.py
+- module_path: tests/feedback/observability_notify/test_slo_manager_root.py
   domain_id: ''
   name_zh: Slo管理器根入口测试
   name_en: Test Slo Manager Root
@@ -37829,7 +37829,7 @@ entries:
   desc_zh: ''
   desc_en: ''
   plain_zh: 测试：配置根能不能正常工作，有问题尽早暴露。
-- module_path: tests/audit/test_sub_agent_collusion.py
+- module_path: tests/audit/intelligence_audit/test_sub_agent_collusion.py
   domain_id: ''
   name_zh: Sub代理Collusion测试
   name_en: Test Sub Agent Collusion
@@ -37927,7 +37927,7 @@ entries:
   desc_zh: ''
   desc_en: ''
   plain_zh: 测试：l07 事后交易 analytics的行为要符合预期，有偏差尽早抓住。
-- module_path: tests/infrastructure/test_git_batcher.py
+- module_path: tests/infrastructure/process_lifecycle/test_git_batcher.py
   domain_id: ''
   name_zh: GitCommandBatcher 批量化工具单测
   name_en: Test Git Batcher
@@ -37990,7 +37990,7 @@ entries:
   desc_zh: ''
   desc_en: ''
   plain_zh: 治理·生成器包的入口：import 这个包时会先跑这里，把包里的子模块聚成统一的对外出口（在 generators 下）。
-- module_path: tests/audit/test_detector_dispatcher.py
+- module_path: tests/audit/drift_integrity/test_detector_dispatcher.py
   domain_id: ''
   name_zh: 检测器分发器测试
   name_en: Test Detector Dispatcher
@@ -38060,7 +38060,7 @@ entries:
   desc_zh: ''
   desc_en: ''
   plain_zh: 基础设施·治理包的入口：import 这个包时会先跑这里，把包里的子模块聚成统一的对外出口。
-- module_path: tests/infrastructure/test_analytics_base_contract.py
+- module_path: tests/infrastructure/observability/test_analytics_base_contract.py
   domain_id: ''
   name_zh: OCP 扩展点抽象方法形状
   name_en: Test Analytics Base Contract
@@ -38081,7 +38081,7 @@ entries:
   desc_zh: ''
   desc_en: ''
   plain_zh: 规则：TRAE019 行为安全禁止，给这方面立下统一规矩，谁都不能例外。
-- module_path: tests/audit/test_roi_engine.py
+- module_path: tests/audit/intelligence_audit/test_roi_engine.py
   domain_id: ''
   name_zh: Roi引擎测试
   name_en: Test Roi Engine
@@ -38123,7 +38123,7 @@ entries:
   desc_zh: ''
   desc_en: ''
   plain_zh: 治理·可观测性的缓存守卫：在关键环节把关，发现缓存越界或违规就拦下，给治理·可观测性加一道保险。
-- module_path: tests/audit/test_credibility_engine.py
+- module_path: tests/audit/intelligence_audit/test_credibility_engine.py
   domain_id: ''
   name_zh: Credibility引擎测试
   name_en: Test Credibility Engine
@@ -38270,7 +38270,7 @@ entries:
   desc_zh: ''
   desc_en: ''
   plain_zh: 测试：确保治理微观结构防御不出岔子，让问题在上线前现形。
-- module_path: tests/feedback/test_feedback_bridge.py
+- module_path: tests/feedback/feedback_loop/test_feedback_bridge.py
   domain_id: ''
   name_zh: 反馈桥接器测试
   name_en: Test Feedback Bridge
@@ -38312,7 +38312,7 @@ entries:
   desc_zh: ''
   desc_en: ''
   plain_zh: 测试：确保exit codes不出岔子，让问题在上线前现形。
-- module_path: tests/audit/test_cognitive_load_budget.py
+- module_path: tests/audit/intelligence_audit/test_cognitive_load_budget.py
   domain_id: ''
   name_zh: 认知负载预算测试
   name_en: Test Cognitive Load Budget
@@ -38851,7 +38851,7 @@ entries:
   desc_zh: ''
   desc_en: ''
   plain_zh: 治理的全景模块同步对账：定期比对全景模块的记录是否一致，发现对不上就报出来，防止治理悄悄漂移。
-- module_path: tests/feedback/test_stochastic_diagnosis_verifier_v2.py
+- module_path: tests/feedback/anomaly_diagnosis/test_stochastic_diagnosis_verifier_v2.py
   domain_id: ''
   name_zh: StochasticDiagnosis验证器V2测试
   name_en: Test Stochastic Diagnosis Verifier V2
@@ -39047,7 +39047,7 @@ entries:
   desc_zh: ''
   desc_en: ''
   plain_zh: 组合分配的策略相关性守卫：在关键环节把关，发现策略相关性越界或违规就拦下，给组合分配加一道保险（在 core 下）。
-- module_path: tests/feedback/test_auto_evolution_feedback_loop.py
+- module_path: tests/feedback/feedback_loop/test_auto_evolution_feedback_loop.py
   domain_id: ''
   name_zh: 自动Evolution反馈Loop测试
   name_en: Test Auto Evolution Feedback Loop
@@ -39215,7 +39215,7 @@ entries:
   desc_zh: ''
   desc_en: ''
   plain_zh: 测试：把A2A economics跑一遍，确认这块逻辑没毛病。
-- module_path: tests/audit/test_emergent_behavior_detector.py
+- module_path: tests/audit/drift_integrity/test_emergent_behavior_detector.py
   domain_id: ''
   name_zh: Emergent行为检测器测试
   name_en: Test Emergent Behavior Detector
@@ -39313,7 +39313,7 @@ entries:
   desc_zh: ''
   desc_en: ''
   plain_zh: 测试：验证预算执行器冒烟的正确性，出问题尽早发现。
-- module_path: tests/audit/test_audit_registry_gate_e2e.py
+- module_path: tests/audit/audit_core/test_audit_registry_gate_e2e.py
   domain_id: ''
   name_zh: 审计注册表门禁端到端测试
   name_en: Test Audit Registry Gate E2e
@@ -39356,7 +39356,7 @@ entries:
   desc_zh: ''
   desc_en: ''
   plain_zh: 交易运营·风险包的入口：import 这个包时会先跑这里，把包里的子模块聚成统一的对外出口。
-- module_path: tests/infrastructure/test_telemetry.py
+- module_path: tests/infrastructure/observability/test_telemetry.py
   domain_id: ''
   name_zh: Telemetry测试
   name_en: Test Telemetry
@@ -39699,7 +39699,7 @@ entries:
   desc_zh: ''
   desc_en: ''
   plain_zh: 测试：回撤控制器能不能正常工作，有问题尽早暴露。
-- module_path: tests/audit/test_audit_integration_fracture.py
+- module_path: tests/audit/audit_core/test_audit_integration_fracture.py
   domain_id: ''
   name_zh: 审计集成Fracture测试
   name_en: Test Audit Integration Fracture
@@ -39895,7 +39895,7 @@ entries:
   desc_zh: ''
   desc_en: ''
   plain_zh: 测试：Git 二分定位器的行为要符合预期，有偏差尽早抓住。
-- module_path: tests/audit/test_benchmark_integrity.py
+- module_path: tests/audit/drift_integrity/test_benchmark_integrity.py
   domain_id: ''
   name_zh: 基准测试完整性测试
   name_en: Test Benchmark Integrity
@@ -39944,7 +39944,7 @@ entries:
   desc_zh: ''
   desc_en: ''
   plain_zh: 测试：验证阶段门禁的正确性，出问题尽早发现。
-- module_path: tests/feedback/test_blast_radius_budget.py
+- module_path: tests/feedback/resilience_dr/test_blast_radius_budget.py
   domain_id: ''
   name_zh: BlastRadius预算测试
   name_en: Test Blast Radius Budget
@@ -39972,7 +39972,7 @@ entries:
   desc_zh: ''
   desc_en: ''
   plain_zh: 治理·升级的Git 钩子事前检查：一条一条过Git 钩子事前的规矩，错的漏的都挑出来，给治理·升级把关。
-- module_path: tests/audit/test_gitignore_auditor.py
+- module_path: tests/audit/drift_integrity/test_gitignore_auditor.py
   domain_id: ''
   name_zh: Gitignore审计器测试
   name_en: Test Gitignore Auditor
@@ -40119,7 +40119,7 @@ entries:
   desc_zh: ''
   desc_en: ''
   plain_zh: 测试：冲突仲裁这块逻辑要经得起考验，有毛病立刻报出来。
-- module_path: tests/audit/test_backcompat_checker.py
+- module_path: tests/audit/quality_static/test_backcompat_checker.py
   domain_id: ''
   name_zh: Backcompat检查器测试
   name_en: Test Backcompat Checker
@@ -40203,7 +40203,7 @@ entries:
   desc_zh: ''
   desc_en: ''
   plain_zh: 治理·生成器的生成注册表防护：盯着生成注册表的边界，谁想越线就挡住，保治理·生成器不出事。
-- module_path: tests/infrastructure/test_lifecycle_root.py
+- module_path: tests/infrastructure/process_lifecycle/test_lifecycle_root.py
   domain_id: ''
   name_zh: 生命周期根入口测试
   name_en: Test Lifecycle Root
@@ -40217,7 +40217,7 @@ entries:
   desc_zh: ''
   desc_en: ''
   plain_zh: 测试：预算关停的行为要符合预期，有偏差尽早抓住。
-- module_path: tests/audit/test_performance_baseline.py
+- module_path: tests/audit/drift_integrity/test_performance_baseline.py
   domain_id: ''
   name_zh: 性能基线测试
   name_en: Test Performance Baseline
@@ -40336,7 +40336,7 @@ entries:
   desc_zh: ''
   desc_en: ''
   plain_zh: 执行核心的rl optimal发动机：把rl optimal的动力输出给整条链路，没它执行核心就跑不起来。
-- module_path: tests/infrastructure/test_drift_e2e_pipeline.py
+- module_path: tests/infrastructure/drift/test_drift_e2e_pipeline.py
   domain_id: ''
   name_zh: 创建带有真实 Python 文件的临时项目
   name_en: Test Drift E2e Pipeline
@@ -40539,7 +40539,7 @@ entries:
   desc_zh: ''
   desc_en: ''
   plain_zh: 共享基础包的入口：import 这个包时会先跑这里，把包里的子模块聚成统一的对外出口（在 protocols 下）。
-- module_path: tests/feedback/test_dr_resilience_metrics.py
+- module_path: tests/feedback/resilience_dr/test_dr_resilience_metrics.py
   domain_id: ''
   name_zh: DrResilience指标测试
   name_en: Test Dr Resilience Metrics
@@ -40560,7 +40560,7 @@ entries:
   desc_zh: ''
   desc_en: ''
   plain_zh: 测试：确保共享核心不出岔子，让问题在上线前现形。
-- module_path: tests/feedback/test_worm_write_integrity.py
+- module_path: tests/feedback/governance_audit/test_worm_write_integrity.py
   domain_id: ''
   name_zh: WormWrite完整性测试
   name_en: Test Worm Write Integrity
@@ -40784,7 +40784,7 @@ entries:
   desc_zh: ''
   desc_en: ''
   plain_zh: 配置：沙箱策略相关参数集中放在这里，调整时只改这一处。
-- module_path: tests/audit/test_audit_orchestrator_e2e.py
+- module_path: tests/audit/audit_core/test_audit_orchestrator_e2e.py
   domain_id: ''
   name_zh: 审计编排器端到端测试
   name_en: Test Audit Orchestrator E2e
@@ -40826,7 +40826,7 @@ entries:
   desc_zh: ''
   desc_en: ''
   plain_zh: 治理·D3 元数据的规则扉页校验：按既定规则核对规则扉页，不合规就拦住或报出来，防止治理·D3 元数据出问题。
-- module_path: tests/audit/test_orphan_scanner.py
+- module_path: tests/audit/drift_integrity/test_orphan_scanner.py
   domain_id: ''
   name_zh: 孤儿扫描器测试
   name_en: Test Orphan Scanner
@@ -40917,7 +40917,7 @@ entries:
   desc_zh: ''
   desc_en: ''
   plain_zh: 漂移检测的ROI发动机：把ROI的动力输出给整条链路，没它漂移检测就跑不起来。
-- module_path: tests/feedback/test_synthetic_anomaly_generator.py
+- module_path: tests/feedback/anomaly_diagnosis/test_synthetic_anomaly_generator.py
   domain_id: ''
   name_zh: Synthetic异常生成器测试
   name_en: Test Synthetic Anomaly Generator
@@ -44803,7 +44803,7 @@ entries:
   desc_zh: ""
   desc_en: ""
   plain_zh: "新策略上线不一把梭：先放1%到5%的量试试，六个方面（功能、性能、错误率、资源、风控完整性、数据一致性）都合格了才放到25%-50%，再合格才全量；任何一方面出问题立刻把量归零回滚，十秒内完成；开盘交易时间里一律不许启动新灰度，防止重蹈Knight Capital覆辙。"
-- module_path: tests/infrastructure/test_strategy_canary_release.py
+- module_path: tests/infrastructure/process_lifecycle/test_strategy_canary_release.py
   domain_id: D_INFRA_OPS
   name_zh: "策略灰度发布单测"
   name_en: ""
@@ -45013,7 +45013,7 @@ entries:
   desc_zh: ""
   desc_en: ""
   plain_zh: "把链路追踪、指标、日志三类运行观测数据统一到一个出口：指标可导出成Prometheus文本，日志只能追加且带哈希链防改，旧数据按冷热分层归档。"
-- module_path: tests/infrastructure/test_observability_triad.py
+- module_path: tests/infrastructure/observability/test_observability_triad.py
   domain_id: D_INFRASTRUCTURE
   name_zh: "可观测性三支柱单测"
   name_en: ""
@@ -45027,7 +45027,7 @@ entries:
   desc_zh: ""
   desc_en: ""
   plain_zh: "记录AI智能体从意图、工具调用、大模型请求到决策输出的完整调用链，连成树状结构，超预算或异常的调用会高亮并留审计。"
-- module_path: tests/infrastructure/test_agent_call_tracer.py
+- module_path: tests/infrastructure/observability/test_agent_call_tracer.py
   domain_id: D_INFRASTRUCTURE
   name_zh: "Agent调用链追踪单测"
   name_en: ""
@@ -45111,7 +45111,7 @@ entries:
   desc_zh: ""
   desc_en: ""
   plain_zh: "编排进程崩溃、Redis中断、GPU失效的组合故障演练：全程只做注入式模拟不真杀进程，记录故障传播路径和恢复耗时，交易时段和未备份时拒绝运行。"
-- module_path: tests/infrastructure/test_cascade_failure_simulator.py
+- module_path: tests/infrastructure/process_lifecycle/test_cascade_failure_simulator.py
   domain_id: D_INFRA_RECOVERY
   name_zh: "级联失效仿真单测"
   name_en: ""

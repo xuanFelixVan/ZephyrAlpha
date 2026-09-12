@@ -2,7 +2,7 @@
 # [MODULE] zephyr.gov_drift.roi_engine
 # [DOMAIN] D_GOV_DRIFT
 # [DEPENDENCIES]
-# [CONSUMERS] src/zephyr/gov_drift/_analysis.py ; tests/audit/test_roi_engine.py
+# [CONSUMERS] src/zephyr/gov_drift/_analysis.py ; tests/audit/intelligence_audit/test_roi_engine.py
 # [STARTUP] imported
 # [MATURITY] production
 # [INVARIANTS] ROI计算不可人为调整
@@ -44,7 +44,7 @@ ROI Engine — roi_engine.py
 #   name_zh: 模块公共 API 面（2 定义）
 #   name_en: public defs
 #   intro: ROIEngine
-#   downstream: src/zephyr/gov_drift/_analysis.py ; tests/audit/test_roi_engine.py
+#   downstream: src/zephyr/gov_drift/_analysis.py ; tests/audit/intelligence_audit/test_roi_engine.py
 # [/ALGO_FLOW]
 #
 # 边:

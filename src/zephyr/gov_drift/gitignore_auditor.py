@@ -2,7 +2,7 @@
 # [MODULE] zephyr.gov_drift.gitignore_auditor
 # [DOMAIN] D_GOV_DRIFT
 # [DEPENDENCIES]
-# [CONSUMERS] tests/audit/test_gitignore_auditor.py
+# [CONSUMERS] tests/audit/drift_integrity/test_gitignore_auditor.py
 # [STARTUP] imported
 # [MATURITY] production
 # [INVARIANTS] 审计结果不可篡改
@@ -82,12 +82,12 @@ gitignore_pattern_coverage: 新文件类型未被覆盖建议添加
 #   name_zh: list[str]
 #   name_en: list[str]
 #   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
-#   downstream: tests/audit/test_gitignore_auditor.py
+#   downstream: tests/audit/drift_integrity/test_gitignore_auditor.py
 # - id: O2
 #   name_zh: GitignoreAudit
 #   name_en: GitignoreAudit
 #   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
-#   downstream: tests/audit/test_gitignore_auditor.py
+#   downstream: tests/audit/drift_integrity/test_gitignore_auditor.py
 # [/ALGO_FLOW]
 #
 # 边:

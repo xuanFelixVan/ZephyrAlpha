@@ -300,7 +300,7 @@ class AuditWriter:
         self._write_failures = value
 
     # ── Stage 4 公共化（2026-07-28）：只读 property ──
-    # 消除 tests/audit/test_audit_adversarial.py 中 15 处私有成员访问。
+    # 消除 tests/audit/audit_core/test_audit_adversarial.py 中 15 处私有成员访问。
 
     @property
     def event_log_path(self) -> Path:

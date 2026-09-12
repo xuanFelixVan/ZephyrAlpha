@@ -2,7 +2,7 @@
 # [MODULE] zephyr.gov_drift.scan_mutex
 # [DOMAIN] D_GOV_DRIFT
 # [DEPENDENCIES] zephyr.gov_drift.drift_models
-# [CONSUMERS] src/zephyr/gov_drift/_scanners.py ; tests/audit/test_scan_mutex.py
+# [CONSUMERS] src/zephyr/gov_drift/_scanners.py ; tests/audit/ops_resilience/test_scan_mutex.py
 # [STARTUP] imported
 # [MATURITY] production
 # [INVARIANTS] 扫描互斥不可绕过
@@ -49,7 +49,7 @@ validate_fencing() 供受保护操作前验证未被取代。
 #   name_zh: 模块公共 API 面（3 定义）
 #   name_en: public defs
 #   intro: ScanMutex
-#   downstream: src/zephyr/gov_drift/_scanners.py ; tests/audit/test_scan_mutex.py
+#   downstream: src/zephyr/gov_drift/_scanners.py ; tests/audit/ops_resilience/test_scan_mutex.py
 # [/ALGO_FLOW]
 #
 # 边:

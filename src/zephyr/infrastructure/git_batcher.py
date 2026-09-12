@@ -11,7 +11,7 @@
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] subprocess 超时/失败返回空 dict/list + log warning；tarfile 解析失败返回空 dict + log warning
-# [TESTS] tests/infrastructure/test_git_batcher.py
+# [TESTS] tests/infrastructure/process_lifecycle/test_git_batcher.py
 # [A_module] module_id=MOD-INF-003 | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 """

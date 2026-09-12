@@ -11,7 +11,7 @@
 # [SAFETY] H
 # [AI_AUTONOMY] human_gated
 # [ERROR_CONTRACT] 反序列化失败抛ValidationError
-# [TESTS] tests/audit/test_audit_models.py; tests/audit/test_audit_core.py
+# [TESTS] tests/audit/audit_core/test_audit_models.py; tests/audit/audit_core/test_audit_core.py
 # [A_module] module_id=MOD-INF-020 | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 # 治本（裁定#18 G2）：本文件原为桩实现——AuditEventType/FileActionType/ProvenanceDepth/
@@ -475,7 +475,7 @@ class AuditChain:
     def verify(self) -> bool:
         """基础一致性校验——5.37.2 治本：原实现永返 True（stub，名实分离）。
 
-        RULE-THREE 评估结论：全项目无生产调用方（仅 tests/audit/test_audit_models.py
+        RULE-THREE 评估结论：全项目无生产调用方（仅 tests/audit/audit_core/test_audit_models.py
         构造本类，从不调用 verify()），故不实现完整 hash 链校验，降级为 deprecated
         入口 + 诚实的一致性检查（entry_count 与实际加载的 entries 长度一致）。
 

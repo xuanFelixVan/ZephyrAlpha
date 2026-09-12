@@ -2,7 +2,7 @@
 # [MODULE] zephyr.gov_drift.tamper_proof_audit
 # [DOMAIN] D_GOV_DRIFT
 # [DEPENDENCIES] zephyr.shared.contracts.protocols
-# [CONSUMERS] src/zephyr/gov_drift/_analysis.py ; tests/audit/test_tamper_proof_audit.py
+# [CONSUMERS] src/zephyr/gov_drift/_analysis.py ; tests/audit/audit_core/test_tamper_proof_audit.py
 # [STARTUP] imported
 # [MATURITY] production
 # [INVARIANTS] 审计记录不可篡改
@@ -93,12 +93,12 @@ anomaly_detection: 总行数减少/批量清洗/回溯修改 -> P0 CRITICAL从Gi
 #   name_zh: bool
 #   name_en: bool
 #   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
-#   downstream: src/zephyr/gov_drift/_analysis.py ; tests/audit/test_tamper_proof_audit.py
+#   downstream: src/zephyr/gov_drift/_analysis.py ; tests/audit/audit_core/test_tamper_proof_audit.py
 # - id: O2
 #   name_zh: str
 #   name_en: str
 #   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
-#   downstream: src/zephyr/gov_drift/_analysis.py ; tests/audit/test_tamper_proof_audit.py
+#   downstream: src/zephyr/gov_drift/_analysis.py ; tests/audit/audit_core/test_tamper_proof_audit.py
 # [/ALGO_FLOW]
 #
 # 边:

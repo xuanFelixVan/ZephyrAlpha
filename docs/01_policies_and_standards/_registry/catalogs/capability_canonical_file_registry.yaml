@@ -10279,7 +10279,7 @@ creation_tokens:
   token: auto-mcp-client-discovery-20260824
   created_by: AI-K3-T4-H2
   capability: mcp_client_discovery
-- file: tests/infrastructure/test_mcp_client_discovery.py
+- file: tests/infrastructure/mcp/test_mcp_client_discovery.py
   token: auto-test-mcp-client-discovery-20260824
   created_by: AI-K3-T4-H2
   capability: mcp_client_discovery
@@ -10587,7 +10587,7 @@ creation_tokens:
   token: auto-test-hot-plane-budget-20260825
   created_by: AI-K3-DIGEST-W2（scaffold 无 test 模式，主代理补登，tests/ 豁免自愿随 SELL-001 先例）
   capability: hot_plane_budget
-- file: tests/infrastructure/test_process_supervisor.py
+- file: tests/infrastructure/process_lifecycle/test_process_supervisor.py
   token: auto-test-process-supervisor-20260825
   created_by: AI-K3-DIGEST-W2（scaffold 无 test 模式，主代理补登，tests/ 豁免自愿随 SELL-001 先例）
   capability: process_supervisor
@@ -12153,7 +12153,7 @@ di_seam_exemptions:
   token: auto-observability-triad-20260826
   created_by: AI-P2-DIGEST-W01
   capability: observability_triad
-- file: tests/infrastructure/test_observability_triad.py
+- file: tests/infrastructure/observability/test_observability_triad.py
   token: auto-test-observability-triad-20260826
   created_by: AI-P2-DIGEST-W01
   capability: observability_triad_test
@@ -12165,7 +12165,7 @@ di_seam_exemptions:
   token: auto-agent-call-tracer-20260826
   created_by: AI-P2-DIGEST-W01
   capability: agent_call_tracer
-- file: tests/infrastructure/test_agent_call_tracer.py
+- file: tests/infrastructure/observability/test_agent_call_tracer.py
   token: auto-test-agent-call-tracer-20260826
   created_by: AI-P2-DIGEST-W01
   capability: agent_call_tracer_test
@@ -12237,7 +12237,7 @@ di_seam_exemptions:
   token: auto-cascade-failure-simulator-20260826
   created_by: AI-P2-DIGEST-W01
   capability: cascade_failure_simulator
-- file: tests/infrastructure/test_cascade_failure_simulator.py
+- file: tests/infrastructure/process_lifecycle/test_cascade_failure_simulator.py
   token: auto-test-cascade-failure-simulator-20260826
   created_by: AI-P2-DIGEST-W01
   capability: cascade_failure_simulator_test

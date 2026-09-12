@@ -2,7 +2,7 @@
 # [MODULE] zephyr.red_blue_validator
 # [DOMAIN] D_SECURITY
 # [DEPENDENCIES] zephyr.security.adversarial_validation
-# [CONSUMERS] tests/audit/test_audit_red_blue_e2e.py (import_time measurement)
+# [CONSUMERS] tests/audit/audit_core/test_audit_red_blue_e2e.py (import_time measurement)
 # [STARTUP] imported
 # [MATURITY] production
 # [INVARIANTS] re-export shim for zephyr.security.adversarial_validation
@@ -11,7 +11,7 @@
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] ImportError if adversarial_validation unavailable
-# [TESTS] tests/audit/test_audit_red_blue_e2e.py
+# [TESTS] tests/audit/audit_core/test_audit_red_blue_e2e.py
 # [A_module] module_id=MOD-INF-030 | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 # 治本（裁定#18 + 2026-07-18 表头修正）：测试契约 (test_audit_red_blue_e2e.TestSteadyStateE2E)
@@ -45,7 +45,7 @@ red_blue_validator — re-export shim for zephyr.security.adversarial_validation
 #   name_zh: 红蓝对抗验证公共符号
 #   name_en: RedBlueValidator + ConstitutionGuard 等
 #   intro: 对外提供红蓝验证器与宪法守卫类
-#   downstream: tests/audit/test_audit_red_blue_e2e.py（import_time 测量，# [CONSUMERS] 头）
+#   downstream: tests/audit/audit_core/test_audit_red_blue_e2e.py（import_time 测量，# [CONSUMERS] 头）
 # [/ALGO_FLOW]
 #
 # 边:

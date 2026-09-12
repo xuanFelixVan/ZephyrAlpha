@@ -24,7 +24,7 @@
 
 # [ERROR_CONTRACT] 检测失败返回空结果; detect(dict) 无匹配返回 None
 
-# [TESTS] tests/audit/test_audit_anomaly.py; tests/bridges/test_bridges_anomaly.py
+# [TESTS] tests/audit/audit_core/test_audit_anomaly.py; tests/bridges/test_bridges_anomaly.py
 
 # [A_module] module_id=MOD-INF-020 | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 
@@ -36,7 +36,7 @@
 
 # 缺 UNAUTHORIZED_ACCESS/BULK_DELETE/GATE_BYPASS 等成员；AnomalyResult 无 to_dict。
 
-# 现按 tests/audit/test_audit_anomaly.py 契约重写：AnomalySignature 转 Enum（ANM-XXX 编码），
+# 现按 tests/audit/audit_core/test_audit_anomaly.py 契约重写：AnomalySignature 转 Enum（ANM-XXX 编码），
 
 # AnomalyResult 支持 to_dict + detected_at，AnomalyDetector 实现 scan(events) 规则引擎。
 

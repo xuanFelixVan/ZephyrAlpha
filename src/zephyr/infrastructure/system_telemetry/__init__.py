@@ -8,7 +8,7 @@
 # [MODIFY-GUARD] facade.py; auto_bootstrap.py; health/; alerts/; profiles/; schema/
 # [CONSUMERS] zephyr.feedback_loop.db_writer; zephyr.feedback_loop.scheduler; zephyr.infrastructure.asset_inventory.telemetry; zephyr.integration.mcp.client_discovery; zephyr.integration.mcp.telemetry_server; zephyr.trading.boot_hooks
 # [ERROR_CONTRACT] ValueError; OSError; RuntimeError
-# [TESTS] tests/infrastructure/test_telemetry_facade.py; tests/infrastructure/test_auto_telemetry_bootstrap.py
+# [TESTS] tests/infrastructure/observability/test_telemetry_facade.py; tests/infrastructure/observability/test_auto_telemetry_bootstrap.py
 # [TTL] permanent
 """
 

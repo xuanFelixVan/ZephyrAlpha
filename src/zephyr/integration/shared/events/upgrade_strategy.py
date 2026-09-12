@@ -2,7 +2,7 @@
 # [MODULE] zephyr.integration.shared.events.upgrade_strategy
 # [DOMAIN] D_INTEGRATION
 # [DEPENDENCIES] zephyr.shared.events.upgrade_strategy
-# [CONSUMERS] tests/infrastructure/test_cross_blueprint_e2e.py; tests/infrastructure/test_capacity_runtime_red_blue.py; zephyr.infrastructure.event_bus_upgrade
+# [CONSUMERS] tests/infrastructure/test_cross_blueprint_e2e.py; tests/infrastructure/adversarial/test_capacity_runtime_red_blue.py; zephyr.infrastructure.event_bus_upgrade
 # [STARTUP] imported
 # [MATURITY] production
 # [INVARIANTS] none

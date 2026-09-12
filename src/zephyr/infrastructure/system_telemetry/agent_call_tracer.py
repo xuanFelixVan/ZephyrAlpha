@@ -11,7 +11,7 @@
 # [SAFETY] M
 # [AI_AUTONOMY] human_gated
 # [ERROR_CONTRACT] AgentCallTracerError(ZA-INF-0016)——空trace_id/空name/非法kind/负预算/未知父/跨trace父/父已闭合/未知span/二次闭合/非法状态迁移时抛
-# [TESTS] tests/infrastructure/test_agent_call_tracer.py
+# [TESTS] tests/infrastructure/observability/test_agent_call_tracer.py
 # [A_module] module_id=MOD-INF-083 | layer=module | stability=evolving | safety=M | ai_autonomy=human_gated
 # [TTL] permanent
 """

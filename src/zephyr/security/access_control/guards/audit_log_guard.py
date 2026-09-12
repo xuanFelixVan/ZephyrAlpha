@@ -11,14 +11,14 @@
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT]
-# [TESTS] tests/audit/test_audit_log_guard.py
+# [TESTS] tests/audit/audit_core/test_audit_log_guard.py
 # [A_module] module_id=MOD-INF-018 | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 r"""
 audit_log_guard.py — 审计日志注入防护守卫
 
 治本（裁定#18 G4）：本文件原为桩实现（AuditLogGuard: pass），缺 sanitize/
-validate_entry/validate_dict 方法，导致 tests/audit/test_audit_log_guard.py 15 项
+validate_entry/validate_dict 方法，导致 tests/audit/audit_core/test_audit_log_guard.py 15 项
 失败。现按测试契约实现日志注入防护：
 
 - sanitize(value): 净化字符串中的控制字符（\n/\r/\t/\x00）与字面转义序列（\n/\r/\t），

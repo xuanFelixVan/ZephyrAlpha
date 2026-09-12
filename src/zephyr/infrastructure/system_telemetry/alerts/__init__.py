@@ -3,7 +3,7 @@
 # [MODULE] zephyr.infrastructure.system_telemetry.alerts
 # [INVARIANTS] INFO<WARNING<ERROR<CRITICAL severity order; rules loaded from config/alert_rules.yaml; fail-safe on missing config
 # [MODIFY-GUARD] facade.py; schema.py; config/alert_rules.yaml
-# [CONSUMERS] facade.py (same-package facade); tests/infrastructure/test_telemetry_facade.py
+# [CONSUMERS] facade.py (same-package facade); tests/infrastructure/observability/test_telemetry_facade.py
 # [STABILITY] evolving
 # [SAFETY] H
 # [AI_AUTONOMY] human_gated

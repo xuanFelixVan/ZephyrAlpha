@@ -68,7 +68,7 @@ def main() -> int:
     print("=" * 60)
 
     tests = [
-        "tests/infrastructure/test_drift_e2e_pipeline.py",
+        "tests/infrastructure/drift/test_drift_e2e_pipeline.py",
     ]
 
     for test_path in tests:

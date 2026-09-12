@@ -42,7 +42,7 @@
 
 21 号 memo §3.6（BM-SEL-16/17/18，容量链 ~7000→~1200→~300→~50）四层容量链的
 层序、接口与数据流唯一真源。双域原实现（signal_fundamental/selection_funnel.py
-与 signal_ashare/tiered_screening_filter.py）改为薄适配层：委托本骨架 + 注入
+与 signal_ashare/screening/tiered_screening_filter.py）改为薄适配层：委托本骨架 + 注入
 本域参数/钩子，对外 API 签名不变。
 
 域特性注入位（不丢特性）：
