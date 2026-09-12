@@ -4,7 +4,7 @@ ttl: permanent
 doc_type: register
 title: 规则路径目录（唯一真源 SSoT）
 status: active
-generated_at: '2026-09-12T05:28:32Z'
+generated_at: '2026-09-12T07:28:55Z'
 generated_by: scripts/governance/d3_metadata/generate_rule_catalog.py
 maintenance: auto
 total_files: 243
@@ -49,7 +49,7 @@ files:
   title: 产业链图谱质量标准——二十项合格线与循环修复
   doc_type: policy
   status: active
-  version: 1.4.0
+  version: 1.7.0
   rule_form: standard
   scope: global
   stability: ''
@@ -1904,7 +1904,7 @@ files:
   title: 产业链供应链全景图数据审计与更新SOP——夜班自主执行版
   doc_type: policy
   status: active
-  version: 1.7.1
+  version: 1.8.0
   rule_form: procedural
   scope: global
   stability: ''

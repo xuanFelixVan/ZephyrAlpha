@@ -1,3 +1,5 @@
+# [BLUEPRINT] MOD-SIG-038 | (auto-injected by S4 reconciler) | §
+# [TTL] permanent
 """sector_strength_wiring 接线适配层单元测试（night-gw-2300 接线批）。
 
 红蓝手法：红-边界（空池/缺维度/集中度零分母/平票）/红-契约（rank 归一 0-100/
