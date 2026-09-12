@@ -943,7 +943,9 @@ def make_import_integrity_gate() -> GateSpec:
     """
 
     def _check(gateway, files: list[str], **kwargs) -> tuple[bool, str]:
-        staged = _get_staged_py_files(gateway, "IMPORT-INTEGRITY")
+        # include_renamed=True：R（rename）新路径必须进参考集与扫描集——"import 目标存在性"
+        # 检查对 rename 态失明会把同批 rename+consumer 误判悬空（2026-09-13 拆分批实证）
+        staged = _get_staged_py_files(gateway, "IMPORT-INTEGRITY", include_renamed=True)
         if not staged:
             return True, ""
 

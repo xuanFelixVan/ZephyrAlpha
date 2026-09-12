@@ -11030,7 +11030,7 @@ factors:
   tags: ["情绪", "市场级择时", "44号升级"]
   algorithm_status: "pending_backtest"
   evidence: ""
-  code_symbol: "src/zephyr/signal_ashare/option_sentiment.py::compute_option_sentiment"
+  code_symbol: "src/zephyr/signal_ashare/sentiment/option_sentiment.py::compute_option_sentiment"
   code_fingerprint: null
   params: {}
   inputs: []
@@ -11105,7 +11105,7 @@ factors:
   tags: ["情绪", "市场级择时", "44号升级"]
   algorithm_status: "pending_backtest"
   evidence: ""
-  code_symbol: "src/zephyr/signal_ashare/option_sentiment.py::compute_option_sentiment"
+  code_symbol: "src/zephyr/signal_ashare/sentiment/option_sentiment.py::compute_option_sentiment"
   code_fingerprint: null
   params: {}
   inputs: []
@@ -11180,7 +11180,7 @@ factors:
   tags: ["情绪", "市场级择时", "44号升级"]
   algorithm_status: "pending_backtest"
   evidence: ""
-  code_symbol: "src/zephyr/signal_ashare/market_sentiment_analyzer.py::MarketSentimentAnalyzer.analyze_breadth_acceleration"
+  code_symbol: "src/zephyr/signal_ashare/sentiment/market_sentiment_analyzer.py::MarketSentimentAnalyzer.analyze_breadth_acceleration"
   code_fingerprint: null
   params: {}
   inputs: []
@@ -11255,7 +11255,7 @@ factors:
   tags: ["情绪", "市场级择时", "44号升级"]
   algorithm_status: "pending_backtest"
   evidence: ""
-  code_symbol: "src/zephyr/signal_ashare/market_sentiment_analyzer.py::MarketSentimentAnalyzer.analyze_breadth_acceleration"
+  code_symbol: "src/zephyr/signal_ashare/sentiment/market_sentiment_analyzer.py::MarketSentimentAnalyzer.analyze_breadth_acceleration"
   code_fingerprint: null
   params: {}
   inputs: []
@@ -11330,7 +11330,7 @@ factors:
   tags: ["情绪", "市场级择时", "44号升级"]
   algorithm_status: "pending_backtest"
   evidence: ""
-  code_symbol: "src/zephyr/signal_ashare/market_sentiment_analyzer.py::MarketSentimentAnalyzer.analyze_breadth_acceleration"
+  code_symbol: "src/zephyr/signal_ashare/sentiment/market_sentiment_analyzer.py::MarketSentimentAnalyzer.analyze_breadth_acceleration"
   code_fingerprint: null
   params: {}
   inputs: []
@@ -11405,7 +11405,7 @@ factors:
   tags: ["情绪", "市场级择时", "44号升级"]
   algorithm_status: "pending_backtest"
   evidence: ""
-  code_symbol: "src/zephyr/signal_ashare/market_sentiment_analyzer.py::MarketSentimentAnalyzer.detect_distortion"
+  code_symbol: "src/zephyr/signal_ashare/sentiment/market_sentiment_analyzer.py::MarketSentimentAnalyzer.detect_distortion"
   code_fingerprint: null
   params: {}
   inputs: []
@@ -11480,7 +11480,7 @@ factors:
   tags: ["情绪", "市场级择时", "44号升级"]
   algorithm_status: "pending_backtest"
   evidence: ""
-  code_symbol: "src/zephyr/signal_ashare/market_sentiment_analyzer.py::MarketSentimentAnalyzer.forecast_volume"
+  code_symbol: "src/zephyr/signal_ashare/sentiment/market_sentiment_analyzer.py::MarketSentimentAnalyzer.forecast_volume"
   code_fingerprint: null
   params: {}
   inputs: []
@@ -11555,7 +11555,7 @@ factors:
   tags: ["情绪", "市场级择时", "44号升级"]
   algorithm_status: "pending_backtest"
   evidence: ""
-  code_symbol: "src/zephyr/signal_ashare/market_sentiment_analyzer.py::MarketSentimentAnalyzer.count_large_drawdowns"
+  code_symbol: "src/zephyr/signal_ashare/sentiment/market_sentiment_analyzer.py::MarketSentimentAnalyzer.count_large_drawdowns"
   code_fingerprint: null
   params: {}
   inputs: []
@@ -11630,7 +11630,7 @@ factors:
   tags: ["情绪", "市场级择时", "44号升级"]
   algorithm_status: "pending_backtest"
   evidence: ""
-  code_symbol: "src/zephyr/signal_ashare/sector_divergence.py::compute_sector_divergence"
+  code_symbol: "src/zephyr/signal_ashare/sector/sector_divergence.py::compute_sector_divergence"
   code_fingerprint: null
   params: {}
   inputs: []
@@ -11705,7 +11705,7 @@ factors:
   tags: ["情绪", "市场级择时", "44号升级"]
   algorithm_status: "pending_backtest"
   evidence: ""
-  code_symbol: "src/zephyr/signal_ashare/sector_divergence.py::compute_sector_divergence"
+  code_symbol: "src/zephyr/signal_ashare/sector/sector_divergence.py::compute_sector_divergence"
   code_fingerprint: null
   params: {}
   inputs: []
@@ -11781,7 +11781,7 @@ factors:
   tags: ["情绪"]
   algorithm_status: "pending_backtest"
   evidence: "演示级功能验证（2026-08-22，非正式 G1/G2 回测）：analyze_breadth_acceleration 实测 acc_15m 公式逐值对拍 PASS（确定性合成快照序列，手算值一致）；NaN 纪律 PASS（尾部缺口→acc 置 None 不外推）；合成注入信号演示 rank IC=+0.2860（n=11460，纯管道可跑性演示，非真实 alpha 证据）。正式 G1/G2 回测待 M1-④ 分钟级全市场快照落库积累后按 C-003 排期。"
-  code_symbol: "src/zephyr/signal_ashare/market_sentiment_analyzer.py::MarketSentimentAnalyzer.analyze_breadth_acceleration"
+  code_symbol: "src/zephyr/signal_ashare/sentiment/market_sentiment_analyzer.py::MarketSentimentAnalyzer.analyze_breadth_acceleration"
   code_fingerprint: null
   params: {vel_window_min: 5, acc_window_min: 15, zscore_window_d: 20, gap_nan_threshold_min: 2}
   inputs: ["advancing_count", "limit_up_count", "attempted_limit_up_count", "sealed_limit_up_count", "total_count"]

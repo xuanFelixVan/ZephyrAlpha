@@ -1,7 +1,7 @@
 # [BLUEPRINT] MOD-L08-001 | docs/03_modules/_domain_frontend/blueprint.md
 # [MODULE] zephyr.frontend.dashboard.components.warroom
 # [DOMAIN] D_FRONTEND
-# [DEPENDENCIES] zephyr.reporting.prediction_log_writer(query_predictions); zephyr.signal_ashare.next_day_8state_forecast(惰性); zephyr.regime.index_regime_panel(惰性); zephyr.plan_engine.scenario_playbook(惰性); zephyr.plan_engine.sit_out_list; zephyr.shared.io.paths; zephyr.shared.io.sqlite_factory
+# [DEPENDENCIES] zephyr.reporting.prediction_log_writer(query_predictions); zephyr.signal_ashare.ml_forecast.next_day_8state_forecast(惰性); zephyr.regime.index_regime_panel(惰性); zephyr.plan_engine.scenario_playbook(惰性); zephyr.plan_engine.sit_out_list; zephyr.shared.io.paths; zephyr.shared.io.sqlite_factory
 # [CONSUMERS] zephyr.frontend.dashboard.app_panel
 # [STARTUP] imported
 # [MATURITY] production
@@ -329,7 +329,7 @@ def fetch_next_day_inertia(
     """
     try:
         if forecaster is None:
-            from zephyr.signal_ashare.next_day_8state_forecast import NextDay8StateForecaster
+            from zephyr.signal_ashare.ml_forecast.next_day_8state_forecast import NextDay8StateForecaster
 
             forecaster = NextDay8StateForecaster()
         fc = forecaster.forecast(symbol)

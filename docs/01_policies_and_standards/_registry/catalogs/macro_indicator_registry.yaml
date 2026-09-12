@@ -72,6 +72,7 @@ indicators:
   # CN PRICE（中国物价）
   # ============================================================
   - indicator_id: "MAC-CN-001"
+    module_id: MOD-GOVERNANCE
     name: "China CPI YoY"
     name_zh: 中国 CPI 同比
     aliases: ["cpi", "CPI同比"]
@@ -101,6 +102,7 @@ indicators:
     evidence: ""
 
   - indicator_id: "MAC-CN-002"
+    module_id: MOD-GOVERNANCE
     name: "China PPI YoY"
     name_zh: 中国 PPI 同比
     aliases: ["ppi", "PPI同比"]
@@ -133,6 +135,7 @@ indicators:
   # CN ACTIVITY（中国景气）
   # ============================================================
   - indicator_id: "MAC-CN-003"
+    module_id: MOD-GOVERNANCE
     name: "China Official Manufacturing PMI"
     name_zh: 中国官方制造业 PMI
     aliases: ["pmi", "官方PMI", "NBS PMI"]
@@ -162,6 +165,7 @@ indicators:
     evidence: ""
 
   - indicator_id: "MAC-CN-004"
+    module_id: MOD-GOVERNANCE
     name: "China GDP YoY"
     name_zh: 中国 GDP 同比
     aliases: ["gdp", "GDP同比"]
@@ -194,6 +198,7 @@ indicators:
   # CN MONETARY / CREDIT（中国货币信贷）
   # ============================================================
   - indicator_id: "MAC-CN-005"
+    module_id: MOD-GOVERNANCE
     name: "China Total Social Financing"
     name_zh: 社会融资规模增量
     aliases: ["tsf", "社融"]
@@ -223,6 +228,7 @@ indicators:
     evidence: ""
 
   - indicator_id: "MAC-CN-006"
+    module_id: MOD-GOVERNANCE
     name: "China M2 YoY"
     name_zh: 中国 M2 同比
     aliases: ["m2", "M2同比", "货币供应"]
@@ -252,6 +258,7 @@ indicators:
     evidence: ""
 
   - indicator_id: "MAC-CN-007"
+    module_id: MOD-GOVERNANCE
     name: "China LPR"
     name_zh: 贷款市场报价利率（LPR）
     aliases: ["lpr", "LPR"]
@@ -281,6 +288,7 @@ indicators:
     evidence: ""
 
   - indicator_id: "MAC-CN-008"
+    module_id: MOD-GOVERNANCE
     name: "China MLF Rate & Operation"
     name_zh: MLF 利率与操作量
     aliases: ["mlf", "麻辣粉", "中期借贷便利"]
@@ -310,6 +318,7 @@ indicators:
     evidence: ""
 
   - indicator_id: "MAC-CN-009"
+    module_id: MOD-GOVERNANCE
     name: "China 10Y CGB Yield"
     name_zh: 中国 10 年期国债收益率
     aliases: ["cgb10y", "十债收益率", "中债10Y"]
@@ -342,6 +351,7 @@ indicators:
   # CN EXTERNAL / SENTIMENT（中国外部/情绪）
   # ============================================================
   - indicator_id: "MAC-CN-010"
+    module_id: MOD-GOVERNANCE
     name: "China Trade Balance"
     name_zh: 中国进出口（贸易差额）
     aliases: ["trade", "进出口"]
@@ -371,6 +381,7 @@ indicators:
     evidence: ""
 
   - indicator_id: "MAC-CN-011"
+    module_id: MOD-GOVERNANCE
     name: "USDCNY Exchange Rate"
     name_zh: 人民币兑美元汇率
     aliases: ["usdcny", "人民币汇率"]
@@ -403,6 +414,7 @@ indicators:
   # US（美国——外溢约束，FRED 22 序列已接入 SRC-FRED-001）
   # ============================================================
   - indicator_id: "MAC-US-001"
+    module_id: MOD-GOVERNANCE
     name: "US Fed Funds Rate / FOMC"
     name_zh: 美国联邦基金利率/FOMC 决议
     aliases: ["fomc", "美联储议息"]
@@ -432,6 +444,7 @@ indicators:
     evidence: ""
 
   - indicator_id: "MAC-US-002"
+    module_id: MOD-GOVERNANCE
     name: "US 10Y Treasury Yield"
     name_zh: 美国 10 年期国债收益率
     aliases: ["us10y", "美债10Y"]
@@ -461,6 +474,7 @@ indicators:
     evidence: ""
 
   - indicator_id: "MAC-US-003"
+    module_id: MOD-GOVERNANCE
     name: "US Nonfarm Payrolls"
     name_zh: 美国非农就业
     aliases: ["nfp", "非农"]
@@ -490,6 +504,7 @@ indicators:
     evidence: ""
 
   - indicator_id: "MAC-US-004"
+    module_id: MOD-GOVERNANCE
     name: "VIX"
     name_zh: 恐慌指数（标普 500 隐含波动率）
     aliases: ["vix", "波动率指数"]
@@ -519,6 +534,7 @@ indicators:
     evidence: ""
 
   - indicator_id: "MAC-CN-016"
+    module_id: MOD-GOVERNANCE
     name: "宏观数据监控指标组"
     name_zh: "宏观数据监控指标组"
     aliases: []

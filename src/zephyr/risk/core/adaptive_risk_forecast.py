@@ -1,7 +1,7 @@
 # [BLUEPRINT] MOD-RK-28 | docs/03_modules/_domain_risk/adaptive_risk_forecast/blueprint.md
 # [MODULE] zephyr.risk.core.adaptive_risk_forecast
 # [DOMAIN] D_RISK
-# [DEPENDENCIES] zephyr.signal_ashare.conditional_density_predictor(MOD-SIG-043); zephyr.signal_ashare.conformal_predictor(MOD-SIG-044); zephyr.shared.foundation.errors; numpy
+# [DEPENDENCIES] zephyr.signal_ashare.ml_forecast.conditional_density_predictor(MOD-SIG-043); zephyr.signal_ashare.ml_forecast.conformal_predictor(MOD-SIG-044); zephyr.shared.foundation.errors; numpy
 # [CONSUMERS] MOD-RK-30(Adaptive Risk Coordinator, C-004 三层联动盘前预判); MOD-RK-05D(var_intraday_recalc 盘前基线, 设计契约)
 # [STARTUP] imported
 # [MATURITY] design
@@ -97,11 +97,11 @@ from dataclasses import dataclass
 from typing import Final, Iterable, Sequence
 
 from zephyr.shared.foundation.errors import ZephyrBaseError
-from zephyr.signal_ashare.conditional_density_predictor import (
+from zephyr.signal_ashare.ml_forecast.conditional_density_predictor import (
     ConditionalDensityConfig,
     conditional_density,
 )
-from zephyr.signal_ashare.conformal_predictor import SplitConformalPredictor
+from zephyr.signal_ashare.ml_forecast.conformal_predictor import SplitConformalPredictor
 
 _logger = logging.getLogger(__name__)
 

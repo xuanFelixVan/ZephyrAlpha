@@ -13,7 +13,7 @@ from types import SimpleNamespace
 
 import pytest
 
-from zephyr.signal_ashare.selection_funnel_skeleton import (
+from zephyr.signal_ashare.screening.selection_funnel_skeleton import (
     CapacityTruncation,
     FineScoreHooks,
     FineScoreWeights,

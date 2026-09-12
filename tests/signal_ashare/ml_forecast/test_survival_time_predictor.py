@@ -7,7 +7,7 @@ from __future__ import annotations
 import numpy as np
 import pytest
 
-from zephyr.signal_ashare.survival_time_predictor import (
+from zephyr.signal_ashare.ml_forecast.survival_time_predictor import (
     WeibullAFTModel,
     kaplan_meier,
 )

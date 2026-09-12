@@ -35,7 +35,7 @@ import numpy as np
 import pandas as pd
 import pytest
 
-from zephyr.signal_ashare.relative_strength_screener import (
+from zephyr.signal_ashare.screening.relative_strength_screener import (
     RelativeStrengthConfig,
     RelativeStrengthScreener,
 )

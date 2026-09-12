@@ -30,7 +30,7 @@ import json
 
 import pytest
 
-from zephyr.signal_ashare.sector_momentum_persistence import (
+from zephyr.signal_ashare.sector.sector_momentum_persistence import (
     MomentumPersistenceConfig,
     SectorMomentumInput,
     SectorMomentumPersistence,

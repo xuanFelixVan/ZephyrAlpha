@@ -2,7 +2,7 @@
 # [MODULE] zephyr.factor.core.distribution_feature_engineer
 # [DOMAIN] D_FACTOR
 # [DEPENDENCIES] pandas; numpy
-# [CONSUMERS] （暂无 import 消费方，2026-09-05 AI-08 审计实证；规划消费方 zephyr.signal_ashare.conditional_density_predictor 特征输入接线待排期）
+# [CONSUMERS] （暂无 import 消费方，2026-09-05 AI-08 审计实证；规划消费方 zephyr.signal_ashare.ml_forecast.conditional_density_predictor 特征输入接线待排期）
 # [STARTUP] imported
 # [MATURITY] production
 # [INVARIANTS] PIT 铁律——默认 shift=1，t 行特征只用 ≤t−1 数据；滚动统计仅用 trailing 窗口（无 center）；输入 df 不被修改（返回副本）
@@ -87,7 +87,7 @@ PIT 铁律（INV-004 对齐）：默认 shift=1——t 行特征只使用 ≤t�
 #   name_zh: pd.DataFrame
 #   name_en: pd.DataFrame
 #   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
-#   downstream: zephyr.signal_ashare.conditional_density_predictor（特征输入）
+#   downstream: zephyr.signal_ashare.ml_forecast.conditional_density_predictor（特征输入）
 # [/ALGO_FLOW]
 #
 # 边:

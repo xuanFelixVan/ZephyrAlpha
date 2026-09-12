@@ -6,7 +6,7 @@ from __future__ import annotations
 
 import pytest
 
-from zephyr.signal_ashare.coarse_screening_funnel import (
+from zephyr.signal_ashare.screening.coarse_screening_funnel import (
     CoarseScreenConfig,
     CoarseScreenRecord,
     screen_coarse,

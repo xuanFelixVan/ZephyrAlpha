@@ -90,12 +90,12 @@ universes:
       - 仅含当日涨停（主板+创业板）
     rebalance_frequency: daily
     component_count: null
-    components_ref: src/zephyr/signal_ashare/
+    components_ref: src/zephyr/signal_ashare/limit_up/
     used_by_strategies: [STR-DABAN-001, STR-DABAN-022]
     data_source: SRC-QMT-001
-    module_id: MOD-SIGNAL-ASHARE
+    module_id: MOD-SIGNAL_ASHARE
     doc_ref: 24_daban_strategy_detail.md §3.1
-    code_path: src/zephyr/signal_ashare/
+    code_path: src/zephyr/signal_ashare/limit_up/
     status: active
     version: 1.0.0
     created_at: '2026-08-10'
@@ -133,7 +133,7 @@ universes:
     components_ref: src/zephyr/ex_core/trading_halt_resolver.py
     used_by_strategies: [STR-MULTIFACTOR-096, STR-EVENT-001]
     data_source: SRC-AKSHARE-001
-    module_id: MOD-EX-CORE
+    module_id: MOD-L06-001
     doc_ref: 25_multifactor_strategy_detail.md §选股池
     code_path: src/zephyr/ex_core/trading_halt_resolver.py + pricing_policy.py
     status: active
@@ -237,12 +237,12 @@ universes:
       - 事件触发条件（具体见26号文档）
     rebalance_frequency: daily
     component_count: null
-    components_ref: src/zephyr/signal_ashare/
+    components_ref: src/zephyr/signal_ashare/screening/
     used_by_strategies: [STR-EVENT-001]
     data_source: SRC-AKSHARE-001
-    module_id: MOD-SIGNAL-ASHARE
+    module_id: MOD-SIGNAL_ASHARE
     doc_ref: 26_event_driven_strategy_detail.md
-    code_path: src/zephyr/signal_ashare/
+    code_path: src/zephyr/signal_ashare/screening/
     status: candidate
     version: 1.0.0
     created_at: '2026-08-10'

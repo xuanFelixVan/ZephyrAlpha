@@ -31,7 +31,7 @@ import json
 
 import pytest
 
-from zephyr.signal_ashare.extreme_sentiment_reversal_detector import (
+from zephyr.signal_ashare.sentiment.extreme_sentiment_reversal_detector import (
     ExtremeSentimentReversalDetector,
     SentimentReversalConfig,
 )

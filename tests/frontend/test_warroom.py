@@ -44,7 +44,7 @@ from zephyr.reporting.prediction_log_writer import (
     ensure_prediction_log_table,
     log_prediction,
 )
-from zephyr.signal_ashare.next_day_8state_forecast import (
+from zephyr.signal_ashare.ml_forecast.next_day_8state_forecast import (
     NextDayForecast,
     NextDayState,
 )

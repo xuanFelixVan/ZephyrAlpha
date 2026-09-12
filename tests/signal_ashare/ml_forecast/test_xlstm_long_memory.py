@@ -13,7 +13,7 @@ from __future__ import annotations
 import numpy as np
 import pytest
 
-from zephyr.signal_ashare.xlstm_long_memory import XLstmLongMemory
+from zephyr.signal_ashare.ml_forecast.xlstm_long_memory import XLstmLongMemory
 
 
 class TestFailClosed:

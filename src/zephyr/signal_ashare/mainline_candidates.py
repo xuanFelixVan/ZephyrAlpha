@@ -1,7 +1,7 @@
 # [BLUEPRINT] MOD-SIG-061 | 待统筹登记（blueprint 未建，真源=92号清单 §7.8 + 架构审查报告 §11.5 SEC-05 + 22号板块轮动 spec §3.1⑧⑨④）
 # [MODULE] zephyr.signal_ashare.mainline_candidates
 # [DOMAIN] D_ASHARE_SIGNAL
-# [DEPENDENCIES] zephyr.signal_ashare.sector_rotation_state; zephyr.signal_ashare.sector_momentum; zephyr.signal_ashare.sector_rrg; c1_market.kline_sector_880（只读）; c1_market.sector_constituent（只读）; c1_market.kline_daily（只读）; c1_market.sector_meta（只读）
+# [DEPENDENCIES] zephyr.signal_ashare.sector.sector_rotation_state; zephyr.signal_ashare.sector.sector_momentum; zephyr.signal_ashare.sector.sector_rrg; c1_market.kline_sector_880（只读）; c1_market.sector_constituent（只读）; c1_market.kline_daily（只读）; c1_market.sector_meta（只读）
 # [CONSUMERS] zephyr.data.sector_report_builder（SEC-01 板块盘后全景报告器主线候选维度）; （远期 IDX-02 Dashboard 板块页 D-06）
 # [STARTUP] imported
 # [MATURITY] testing
@@ -96,13 +96,13 @@ from dataclasses import dataclass, field
 from datetime import date, datetime, timedelta
 from typing import Any, Final
 
-from zephyr.signal_ashare.sector_momentum import n_day_return, percentile_ranks
-from zephyr.signal_ashare.sector_rotation_state import (
+from zephyr.signal_ashare.sector.sector_momentum import n_day_return, percentile_ranks
+from zephyr.signal_ashare.sector.sector_rotation_state import (
     classify_rotation_state,
     top_n_hhi,
     watch_score,
 )
-from zephyr.signal_ashare.sector_rrg import compute_rrg_series, confirm_quadrant_series
+from zephyr.signal_ashare.sector.sector_rrg import compute_rrg_series, confirm_quadrant_series
 
 logger = logging.getLogger(__name__)
 

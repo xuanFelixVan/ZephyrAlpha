@@ -379,23 +379,23 @@
 | from_path | to_path | from_dom | to_dom | dep_type | dep_maturity | cross_domain | used_symbol |
 |---|---|---|---|---|---|---|---|
 | src/zephyr/signal_ashare/futures_basis_monitor.py | src/zephyr/data/ch_writer.py | D_ASHARE_SIGNAL | D_DATA | import_depends | active | 1 |  |
-| src/zephyr/signal_ashare/lhb_premium_analyzer.py | src/zephyr/data/ch_writer.py | D_ASHARE_SIGNAL | D_DATA | import_depends | active | 1 |  |
+| src/zephyr/signal_ashare/limit_up/lhb_premium_analyzer.py | src/zephyr/data/ch_writer.py | D_ASHARE_SIGNAL | D_DATA | import_depends | active | 1 |  |
 | src/zephyr/signal_ashare/mainline_candidates.py | src/zephyr/data/ch_writer.py | D_ASHARE_SIGNAL | D_DATA | import_depends | active | 1 |  |
-| src/zephyr/signal_ashare/option_sentiment.py | src/zephyr/data/ch_writer.py | D_ASHARE_SIGNAL | D_DATA | import_depends | active | 1 |  |
-| src/zephyr/signal_ashare/sector_divergence.py | src/zephyr/data/ch_writer.py | D_ASHARE_SIGNAL | D_DATA | import_depends | active | 1 |  |
-| src/zephyr/signal_ashare/sector_leader.py | src/zephyr/data/ch_writer.py | D_ASHARE_SIGNAL | D_DATA | import_depends | active | 1 |  |
+| src/zephyr/signal_ashare/sentiment/option_sentiment.py | src/zephyr/data/ch_writer.py | D_ASHARE_SIGNAL | D_DATA | import_depends | active | 1 |  |
+| src/zephyr/signal_ashare/sector/sector_divergence.py | src/zephyr/data/ch_writer.py | D_ASHARE_SIGNAL | D_DATA | import_depends | active | 1 |  |
+| src/zephyr/signal_ashare/sector/sector_leader.py | src/zephyr/data/ch_writer.py | D_ASHARE_SIGNAL | D_DATA | import_depends | active | 1 |  |
 | tests/data_governance/test_lineage_tracker.py | src/zephyr/data_governance/core/lineage_tracker.py | D_AUDITTEST | D_DATA_GOV | test_depends | active | 1 |  |
 | tests/data_governance/test_metadata_registry.py | src/zephyr/data_governance/core/metadata_registry.py | D_AUDITTEST | D_DATA_GOV | test_depends | active | 1 |  |
 | tests/data_governance/test_schema_registry.py | src/zephyr/data_governance/core/schema_registry.py | D_AUDITTEST | D_DATA_GOV | test_depends | active | 1 |  |
 | src/zephyr/backtest/core/data_handler.py | src/zephyr/data/pit_query.py | D_BACKTEST | D_DATA | import_depends | active | 1 |  |
 | src/zephyr/backtest/core/data_handler.py | src/zephyr/data/ch_reader.py | D_BACKTEST | D_DATA | import_depends | active | 1 |  |
 | src/zephyr/backtest/core/data_handler.py | src/zephyr/data/__init__.py | D_BACKTEST | D_DATA | import_depends | active | 1 |  |
-| src/zephyr/data/intraday_sentiment_loop.py | src/zephyr/signal_ashare/market_sentiment_analyzer.py | D_DATA | D_ASHARE_SIGNAL | import_depends | active | 1 |  |
-| src/zephyr/data/sector_report_builder.py | src/zephyr/signal_ashare/sector_breadth.py | D_DATA | D_ASHARE_SIGNAL | import_depends | active | 1 |  |
-| src/zephyr/data/sector_report_builder.py | src/zephyr/signal_ashare/sector_analyzer.py | D_DATA | D_ASHARE_SIGNAL | import_depends | active | 1 |  |
-| src/zephyr/data/sector_report_builder.py | src/zephyr/signal_ashare/sector_siphon.py | D_DATA | D_ASHARE_SIGNAL | import_depends | active | 1 |  |
+| src/zephyr/data/intraday_sentiment_loop.py | src/zephyr/signal_ashare/sentiment/market_sentiment_analyzer.py | D_DATA | D_ASHARE_SIGNAL | import_depends | active | 1 |  |
+| src/zephyr/data/sector_report_builder.py | src/zephyr/signal_ashare/sector/sector_breadth.py | D_DATA | D_ASHARE_SIGNAL | import_depends | active | 1 |  |
+| src/zephyr/data/sector_report_builder.py | src/zephyr/signal_ashare/sector/sector_analyzer.py | D_DATA | D_ASHARE_SIGNAL | import_depends | active | 1 |  |
+| src/zephyr/data/sector_report_builder.py | src/zephyr/signal_ashare/sector/sector_siphon.py | D_DATA | D_ASHARE_SIGNAL | import_depends | active | 1 |  |
 | src/zephyr/data/sector_report_builder.py | src/zephyr/signal_ashare/mainline_candidates.py | D_DATA | D_ASHARE_SIGNAL | import_depends | active | 1 |  |
-| src/zephyr/data/sector_report_builder.py | src/zephyr/signal_ashare/sector_momentum.py | D_DATA | D_ASHARE_SIGNAL | import_depends | active | 1 |  |
+| src/zephyr/data/sector_report_builder.py | src/zephyr/signal_ashare/sector/sector_momentum.py | D_DATA | D_ASHARE_SIGNAL | import_depends | active | 1 |  |
 | schemas/categories/cross_validation_log.py | schemas/categories/factor_feature_value.py | D_DATA | D_DATA | config_depends | active | 0 |  |
 | schemas/categories/factor_feature_value.py | schemas/categories/fundamental_cashflow_statement.py | D_DATA | D_DATA | config_depends | active | 0 |  |
 | schemas/categories/fundamental_analyst_forecast.py | schemas/categories/factor_feature_value.py | D_DATA | D_DATA | config_depends | active | 0 |  |

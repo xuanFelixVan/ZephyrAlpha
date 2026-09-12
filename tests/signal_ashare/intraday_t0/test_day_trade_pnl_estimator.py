@@ -2,7 +2,7 @@
 # [TTL] permanent
 # [A_test] module_id: MOD-SIG-132 | layer=test | stability=volatile | safety=M | ai_autonomy=human_gated
 # [MODULE] tests.signal_ashare.test_day_trade_pnl_estimator
-# [TESTS] src/zephyr/signal_ashare/day_trade_pnl_estimator.py
+# [TESTS] src/zephyr/signal_ashare/intraday_t0/day_trade_pnl_estimator.py
 """MOD-SIG-132 单元测试：day_trade_pnl_estimator 做T盈亏预估器。
 
 蓝图验收（B11-02600/CAND-TESTB-055，A7 技能day-trade-pnl-estimate）：
@@ -19,11 +19,11 @@ import datetime
 import pytest
 
 pytest.importorskip(
-    "zephyr.signal_ashare.day_trade_pnl_estimator",
+    "zephyr.signal_ashare.intraday_t0.day_trade_pnl_estimator",
     reason="day_trade_pnl_estimator not importable",
 )
 
-from zephyr.signal_ashare.day_trade_pnl_estimator import (  # noqa: E402
+from zephyr.signal_ashare.intraday_t0.day_trade_pnl_estimator import (  # noqa: E402
     DayTradeFeeModel,
     DayTradeFillRecord,
     DayTradePnlConfig,

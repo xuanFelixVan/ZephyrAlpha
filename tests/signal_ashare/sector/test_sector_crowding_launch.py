@@ -2,7 +2,7 @@
 # [BLUEPRINT] MOD-SIG-119 | docs/03_modules/_domain_signal/sector_crowding_launch/blueprint.md
 # [MODULE] tests.signal_ashare.test_sector_crowding_launch
 # [TTL] permanent
-# [DEPENDENCIES] zephyr.signal_ashare.sector_crowding_launch
+# [DEPENDENCIES] zephyr.signal_ashare.sector.sector_crowding_launch
 
 """板块拥挤度与启动条件（MOD-SIG-119，B10-01384）施工验证测试。
 
@@ -21,11 +21,11 @@ import datetime
 import pytest
 
 pytest.importorskip(
-    "zephyr.signal_ashare.sector_crowding_launch",
+    "zephyr.signal_ashare.sector.sector_crowding_launch",
     reason="sector_crowding_launch not importable",
 )
 
-from zephyr.signal_ashare.sector_crowding_launch import (  # noqa: E402
+from zephyr.signal_ashare.sector.sector_crowding_launch import (  # noqa: E402
     CrowdingAssessment,
     CrowdingComponents,
     CrowdingConfig,

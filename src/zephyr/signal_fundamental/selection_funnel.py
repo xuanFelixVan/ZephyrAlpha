@@ -1,7 +1,7 @@
 # [BLUEPRINT] MOD-SIG-086 supplement | docs/03_modules/_domain_signal/selection_funnel_skeleton/blueprint.md
 # [MODULE] zephyr.signal_fundamental.selection_funnel
 # [DOMAIN] D_FUNDAMENTAL_SIGNAL
-# [DEPENDENCIES] zephyr.signal_ashare.selection_funnel_skeleton（MOD-SIG-086 共享骨架）
+# [DEPENDENCIES] zephyr.signal_ashare.screening.selection_funnel_skeleton（MOD-SIG-086 共享骨架）
 # [CONSUMERS] (待 G08/G09/G10 sleeve 接线)
 # [STARTUP] imported
 # [MATURITY] new
@@ -39,7 +39,7 @@
 选股漏斗三层级——基本面信号域薄适配层（21 号 memo §3.6，BM-SEL-16/17/18）。
 
 SIGNAL-ARCH-001 归并裁定落地：层序/接口/数据流唯一真源为
-zephyr.signal_ashare.selection_funnel_skeleton（MOD-SIG-086 共享骨架），
+zephyr.signal_ashare.screening.selection_funnel_skeleton（MOD-SIG-086 共享骨架），
 本模块只保留本域记录/结果类型、阈值常量与钩子装配，全部过滤/初筛/评分
 执行委托骨架，对外公开 API 签名不变（既有调用方/测试零适配）。
 
@@ -139,7 +139,7 @@ from dataclasses import dataclass, field
 from operator import attrgetter
 from typing import Final
 
-from zephyr.signal_ashare.selection_funnel_skeleton import (
+from zephyr.signal_ashare.screening.selection_funnel_skeleton import (
     FineScoreHooks,
     FineScoreWeights,
     GradedExclusionHooks,

@@ -11,7 +11,7 @@
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT]
-# [TESTS] tests/signal_ashare/test_futures_basis_monitor.py; tests/signal_ashare/test_lhb_premium_analyzer.py; tests/signal_ashare/test_mainline_probability.py; tests/signal_ashare/test_market_sentiment_analyzer.py; tests/signal_ashare/test_option_sentiment.py  # 2026-09-05 STEWARD B20 重锚：AI-00 修复脚本 src. 前缀 bug 漏网（AST/patch 直查 7 个测试）
+# [TESTS] tests/signal_ashare/test_futures_basis_monitor.py; tests/signal_ashare/limit_up/test_lhb_premium_analyzer.py; tests/signal_ashare/test_mainline_probability.py; tests/signal_ashare/sentiment/test_market_sentiment_analyzer.py; tests/signal_ashare/sentiment/test_option_sentiment.py  # 2026-09-05 STEWARD B20 重锚：AI-00 修复脚本 src. 前缀 bug 漏网（AST/patch 直查 7 个测试）
 # 在 depgraph 撞号（跨域同 ID 双文件），2026-08-17 审计治本修正为 MOD-SIGNAL_ASHARE，
 # 与本包 6 个子包 __init__ 的既有约定一致。
 # 2026-09-05 AI-08 审计：表头自文件中部（工具不可见，致 depgraph 仍按旧 MOD-SIG-021 归属本文件）
@@ -51,32 +51,32 @@
 from zephyr.signal_ashare.auction_microstructure_analyzer import AuctionMicrostructureAnalyzer
 from zephyr.signal_ashare.bottom_confirmation_entry import BottomConfirmationEntry
 from zephyr.signal_ashare.capital_behavior_orchestrator import CapitalBehaviorOrchestrator
-from zephyr.signal_ashare.extreme_sentiment_reversal_detector import ExtremeSentimentReversalDetector
+from zephyr.signal_ashare.sentiment.extreme_sentiment_reversal_detector import ExtremeSentimentReversalDetector
 from zephyr.signal_ashare.factor_result_bridge import FactorResultBridge
 from zephyr.signal_ashare.false_breakout_trap_detector import FalseBreakoutTrapDetector
-from zephyr.signal_ashare.gap_fill_model import GapFillModel
-from zephyr.signal_ashare.intraday_volume_orderflow import IntradayVolumeOrderflow
-from zephyr.signal_ashare.limit_up_ecosystem_leadership import LimitUpEcosystemLeadership
-from zephyr.signal_ashare.limit_up_potential_scorer import LimitUpPotentialScorer
+from zephyr.signal_ashare.ml_forecast.gap_fill_model import GapFillModel
+from zephyr.signal_ashare.intraday_t0.intraday_volume_orderflow import IntradayVolumeOrderflow
+from zephyr.signal_ashare.limit_up.limit_up_ecosystem_leadership import LimitUpEcosystemLeadership
+from zephyr.signal_ashare.limit_up.limit_up_potential_scorer import LimitUpPotentialScorer
 from zephyr.signal_ashare.multi_indicator_divergence import MultiIndicatorDivergence
-from zephyr.signal_ashare.next_day_probability_gate import NextDayProbabilityGate
-from zephyr.signal_ashare.relative_strength_screener import RelativeStrengthScreener
+from zephyr.signal_ashare.ml_forecast.next_day_probability_gate import NextDayProbabilityGate
+from zephyr.signal_ashare.screening.relative_strength_screener import RelativeStrengthScreener
 from zephyr.signal_ashare.risk_event_consumer import RiskEventConsumer
-from zephyr.signal_ashare.sector_momentum_persistence import SectorMomentumPersistence
-from zephyr.signal_ashare.sentiment_price_divergence import SentimentPriceDivergence
-from zephyr.signal_ashare.signal_factory import SignalFactory
-from zephyr.signal_ashare.t0_trading_pipeline import T0TradingPipeline
-from zephyr.signal_ashare.unified_pattern_engine import UnifiedPatternEngine
+from zephyr.signal_ashare.sector.sector_momentum_persistence import SectorMomentumPersistence
+from zephyr.signal_ashare.sentiment.sentiment_price_divergence import SentimentPriceDivergence
+from zephyr.signal_ashare.strategy_signal.signal_factory import SignalFactory
+from zephyr.signal_ashare.intraday_t0.t0_trading_pipeline import T0TradingPipeline
+from zephyr.signal_ashare.strategy_signal.unified_pattern_engine import UnifiedPatternEngine
 from zephyr.signal_ashare.wyckoff_accumulation_signal import WyckoffAccumulationSignal
 
 # NOTE(P1W05 2026-08-25): scaffold 自动追加的 5 条类级 eager import 已按可逆模式
 # 注释（SellNewsOverdraftDetector/OvernightReturnExpectancy/StrategyCrossVoteFunnel/
 # PatternMatchStrategyLibrary/MultiFactorTimingOverlay）——实现就位前保持包可导入；
 # 实现+测试绿后由后续波次按 P1W06 先例恢复，或届时由主代理统一恢复。
-# from zephyr.signal_ashare.sell_news_overdraft_detector import SellNewsOverdraftDetector
-# from zephyr.signal_ashare.overnight_return_expectancy import OvernightReturnExpectancy
-# from zephyr.signal_ashare.strategy_cross_vote_funnel import StrategyCrossVoteFunnel
-# from zephyr.signal_ashare.pattern_match_strategy_library import PatternMatchStrategyLibrary
+# from zephyr.signal_ashare.sentiment.sell_news_overdraft_detector import SellNewsOverdraftDetector
+# from zephyr.signal_ashare.intraday_t0.overnight_return_expectancy import OvernightReturnExpectancy
+# from zephyr.signal_ashare.strategy_signal.strategy_cross_vote_funnel import StrategyCrossVoteFunnel
+# from zephyr.signal_ashare.strategy_signal.pattern_match_strategy_library import PatternMatchStrategyLibrary
 # from zephyr.signal_ashare.multi_factor_timing_overlay import MultiFactorTimingOverlay
 # NOTE(P1W06 2026-08-25): P1W01 窗口期可逆注释的两行 export 已按 NOTE 约定恢复
 # （FactorResultBridge/RiskEventConsumer 实现就位，88 测全绿）。
@@ -136,8 +136,8 @@ __all__.append("NextDayProbabilityGate")
 
 # ORPHAN-MODULE: 引用登记（让 depgraph 发现 import 边）
 from zephyr.signal_ashare.market_breadth_history_store import load_history_store  # noqa: F401
-from zephyr.signal_ashare.sentiment_cycle_evaluator import evaluate_locator_accuracy  # noqa: F401
-from zephyr.signal_ashare.strategy_vote_integrator import integrate_strategy_votes  # noqa: F401
+from zephyr.signal_ashare.sentiment.sentiment_cycle_evaluator import evaluate_locator_accuracy  # noqa: F401
+from zephyr.signal_ashare.strategy_signal.strategy_vote_integrator import integrate_strategy_votes  # noqa: F401
 from zephyr.signal_ashare.strength_ic_data_assembler import assemble_ic_window  # noqa: F401
 
 # ORPHAN-MODULE: 引用登记（gw-tdm-20260909：C1 五档水温合成核 + C5 强度传导系数）

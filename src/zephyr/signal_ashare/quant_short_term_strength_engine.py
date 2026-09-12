@@ -2,7 +2,7 @@
 # [MODULE] zephyr.signal_ashare.quant_short_term_strength_engine
 # [DOMAIN] D_ASHARE_SIGNAL
 # [DEPENDENCIES]
-# [CONSUMERS] zephyr.signal_ashare.dual_engine_fusion_decision_engine
+# [CONSUMERS] zephyr.signal_ashare.strategy_signal.dual_engine_fusion_decision_engine
 # [STARTUP] imported
 # [MATURITY] production
 # [INVARIANTS] 6维度评分满分100; A~E五级评级单调; 降级路径必须有日志

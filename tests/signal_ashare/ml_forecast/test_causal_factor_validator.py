@@ -7,12 +7,12 @@ from __future__ import annotations
 import numpy as np
 import pytest
 
-from zephyr.signal_ashare.causal_factor_validator import (
+from zephyr.signal_ashare.ml_forecast.causal_factor_validator import (
     CausalValidatorConfig,
     validate_factor,
     validate_factors,
 )
-from zephyr.signal_ashare.causal_inference_engine import CausalVerdict
+from zephyr.signal_ashare.ml_forecast.causal_inference_engine import CausalVerdict
 
 
 def _causal_pair(n: int = 300, seed: int = 7):

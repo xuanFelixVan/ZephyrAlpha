@@ -7,7 +7,7 @@
 # [TTL] permanent
 #
 # 用途：M1-②c 相对强度雷达（rs_ratio = mean_ret(进攻族) − mean_ret(防御族)）的
-# 板块族归属真源；由 zephyr.signal_ashare.sector_divergence 的
+# 板块族归属真源；由 zephyr.signal_ashare.sector.sector_divergence 的
 # load_sector_attribute_labels() 消费。
 #
 # 实证依据（2026-08-22 直查 c1_market 锚定校验，可信）：

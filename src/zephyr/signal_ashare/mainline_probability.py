@@ -1,7 +1,7 @@
 # [BLUEPRINT] MOD-SIG-064 | 待统筹登记（blueprint 未建，真源=缺口总账 GAP-F-12 + 45号作战手册 §5 数据契约 MOD-SIG-061/062 消费层）
 # [MODULE] zephyr.signal_ashare.mainline_probability
 # [DOMAIN] D_ASHARE_SIGNAL
-# [DEPENDENCIES] zephyr.signal_ashare.mainline_candidates（MOD-SIG-061 复用）; zephyr.signal_ashare.sector_leader（MOD-SIG-062 复用）; c1_market.money_flow（只读）; c1_market.sector_constituent（只读）
+# [DEPENDENCIES] zephyr.signal_ashare.mainline_candidates（MOD-SIG-061 复用）; zephyr.signal_ashare.sector.sector_leader（MOD-SIG-062 复用）; c1_market.money_flow（只读）; c1_market.sector_constituent（只读）
 # [CONSUMERS] zephyr.signal_ashare.position_sector_context（MOD-SIG-065）; （候选：板块 Top10 页主线概率列、45号 W2 板块层、GAP-F-30 持仓板块语境）
 # [STARTUP] imported
 # [MATURITY] testing
@@ -91,7 +91,7 @@ from zephyr.signal_ashare.mainline_candidates import (
     MainlineCandidatesResult,
     compute_mainline_candidates,
 )
-from zephyr.signal_ashare.sector_leader import (
+from zephyr.signal_ashare.sector.sector_leader import (
     SectorLeaderBoard,
     SectorRoleGroup,
     identify_sector_leaders,

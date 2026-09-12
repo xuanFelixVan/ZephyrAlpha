@@ -2,7 +2,7 @@
 # [BLUEPRINT] MOD-SIG-117 | docs/03_modules/_domain_signal/overnight_conduction_model/blueprint.md
 # [MODULE] tests.signal_ashare.test_overnight_conduction_model
 # [TTL] permanent
-# [DEPENDENCIES] zephyr.signal_ashare.overnight_conduction_model
+# [DEPENDENCIES] zephyr.signal_ashare.intraday_t0.overnight_conduction_model
 
 """隔夜全球传导评估模型（MOD-SIG-117，B10-01375）施工验证测试。
 
@@ -19,11 +19,11 @@ import datetime
 import pytest
 
 pytest.importorskip(
-    "zephyr.signal_ashare.overnight_conduction_model",
+    "zephyr.signal_ashare.intraday_t0.overnight_conduction_model",
     reason="overnight_conduction_model not importable",
 )
 
-from zephyr.signal_ashare.overnight_conduction_model import (  # noqa: E402
+from zephyr.signal_ashare.intraday_t0.overnight_conduction_model import (  # noqa: E402
     EventExpectation,
     GapSample,
     ImpactLevel,

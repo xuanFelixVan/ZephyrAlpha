@@ -1,7 +1,7 @@
 # [BLUEPRINT] docs/02_enterprise_architecture/07_trading_decision_architecture/design_memos/28_sentiment_cycle_trading.md §3.7
 # [MODULE] scripts.verify_sentiment_hidden_driver
 # [DOMAIN] D_ASHARE_SIGNAL
-# [DEPENDENCIES] zephyr.signal_ashare.sentiment_cycle; numpy
+# [DEPENDENCIES] zephyr.signal_ashare.sentiment.sentiment_cycle; numpy
 # [CONSUMERS] G07 相关性验证批次（人工/CI 运行）
 # [STARTUP] manual
 # [MATURITY] new
@@ -42,7 +42,7 @@ from pathlib import Path
 
 import numpy as np
 
-from zephyr.signal_ashare.sentiment_cycle import (
+from zephyr.signal_ashare.sentiment.sentiment_cycle import (
     SentimentHawkesParams,
     SentimentPhase,
     analyze_sentiment_driven_correlation,

@@ -7,7 +7,7 @@ from __future__ import annotations
 import numpy as np
 import pytest
 
-from zephyr.signal_ashare.causal_inference_engine import (
+from zephyr.signal_ashare.ml_forecast.causal_inference_engine import (
     CausalVerdict,
     ConductionEdge,
     ConductionGraph,

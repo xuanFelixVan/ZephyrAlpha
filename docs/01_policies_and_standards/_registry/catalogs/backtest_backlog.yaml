@@ -179,7 +179,7 @@ objects:
   map_layer: L1
   flow: entry_flow
   market: cn_a
-  module_ref: src/zephyr/signal_ashare/limit_up_followthrough.py
+  module_ref: src/zephyr/signal_ashare/limit_up/limit_up_followthrough.py
   testable: true
   confidence: untested
   plan: null
@@ -192,7 +192,7 @@ objects:
   map_layer: L1
   flow: entry_flow
   market: cn_a
-  module_ref: src/zephyr/signal_ashare/lhb_premium_analyzer.py
+  module_ref: src/zephyr/signal_ashare/limit_up/lhb_premium_analyzer.py
   testable: true
   confidence: untested
   plan: null
@@ -308,7 +308,7 @@ objects:
   map_layer: L2
   flow: entry_flow
   market: cn_a
-  module_ref: src/zephyr/signal_ashare/sector_analyzer.py
+  module_ref: src/zephyr/signal_ashare/sector/sector_analyzer.py
   testable: true
   confidence: untested
   plan: null
@@ -334,7 +334,7 @@ objects:
   map_layer: L2
   flow: entry_flow
   market: cn_a
-  module_ref: src/zephyr/signal_ashare/sector_momentum.py
+  module_ref: src/zephyr/signal_ashare/sector/sector_momentum.py
   testable: true
   confidence: untested
   plan: null
@@ -347,7 +347,7 @@ objects:
   map_layer: L2
   flow: entry_flow
   market: cn_a
-  module_ref: src/zephyr/signal_ashare/sector_breadth.py
+  module_ref: src/zephyr/signal_ashare/sector/sector_breadth.py
   testable: true
   confidence: untested
   plan: null
@@ -373,7 +373,7 @@ objects:
   map_layer: L2
   flow: entry_flow
   market: cn_a
-  module_ref: src/zephyr/signal_ashare/sector_divergence.py
+  module_ref: src/zephyr/signal_ashare/sector/sector_divergence.py
   testable: true
   confidence: untested
   plan: null
@@ -386,7 +386,7 @@ objects:
   map_layer: L2
   flow: entry_flow
   market: cn_a
-  module_ref: src/zephyr/signal_ashare/sector_rrg.py
+  module_ref: src/zephyr/signal_ashare/sector/sector_rrg.py
   testable: true
   confidence: untested
   plan: null
@@ -399,7 +399,7 @@ objects:
   map_layer: L2
   flow: entry_flow
   market: cn_a
-  module_ref: src/zephyr/signal_ashare/sector_analyzer.py
+  module_ref: src/zephyr/signal_ashare/sector/sector_analyzer.py
   testable: true
   confidence: untested
   plan: null
@@ -412,7 +412,7 @@ objects:
   map_layer: L2
   flow: entry_flow
   market: cn_a
-  module_ref: src/zephyr/signal_ashare/sector_adjustment.py
+  module_ref: src/zephyr/signal_ashare/sector/sector_adjustment.py
   testable: true
   confidence: untested
   plan: null
@@ -451,7 +451,7 @@ objects:
   map_layer: L2
   flow: entry_flow
   market: cn_a
-  module_ref: src/zephyr/signal_ashare/sector_rotation_state.py
+  module_ref: src/zephyr/signal_ashare/sector/sector_rotation_state.py
   testable: true
   confidence: untested
   plan: null
@@ -464,7 +464,7 @@ objects:
   map_layer: L2
   flow: entry_flow
   market: cn_a
-  module_ref: src/zephyr/signal_ashare/sector_siphon.py
+  module_ref: src/zephyr/signal_ashare/sector/sector_siphon.py
   testable: true
   confidence: untested
   plan: null
@@ -491,7 +491,7 @@ objects:
   map_layer: L2
   flow: entry_flow
   market: cn_a
-  module_ref: src/zephyr/signal_ashare/sentiment_cycle.py
+  module_ref: src/zephyr/signal_ashare/sentiment/sentiment_cycle.py
   testable: true
   confidence: untested
   plan: null
@@ -504,7 +504,7 @@ objects:
   map_layer: L2
   flow: entry_flow
   market: cn_a
-  module_ref: src/zephyr/signal_ashare/sector_gate.py
+  module_ref: src/zephyr/signal_ashare/sector/sector_gate.py
   testable: true
   confidence: untested
   plan: null
@@ -530,7 +530,7 @@ objects:
   map_layer: L2
   flow: entry_flow
   market: cn_a
-  module_ref: src/zephyr/signal_ashare/sector_gate.py
+  module_ref: src/zephyr/signal_ashare/sector/sector_gate.py
   testable: true
   confidence: untested
   plan: null
@@ -543,7 +543,7 @@ objects:
   map_layer: L2
   flow: entry_flow
   market: cn_a
-  module_ref: src/zephyr/signal_ashare/sector_leader.py
+  module_ref: src/zephyr/signal_ashare/sector/sector_leader.py
   testable: true
   confidence: untested
   plan: null
@@ -569,7 +569,7 @@ objects:
   map_layer: L2
   flow: entry_flow
   market: cn_a
-  module_ref: src/zephyr/signal_ashare/sector_pullback.py
+  module_ref: src/zephyr/signal_ashare/sector/sector_pullback.py
   testable: true
   confidence: untested
   plan: null
@@ -582,7 +582,7 @@ objects:
   map_layer: L2
   flow: entry_flow
   market: cn_a
-  module_ref: src/zephyr/signal_ashare/sector_pullback.py
+  module_ref: src/zephyr/signal_ashare/sector/sector_pullback.py
   testable: true
   confidence: untested
   plan: null
@@ -595,7 +595,7 @@ objects:
   map_layer: L2
   flow: entry_flow
   market: cn_a
-  module_ref: src/zephyr/signal_ashare/sector_momentum_persistence.py
+  module_ref: src/zephyr/signal_ashare/sector/sector_momentum_persistence.py
   testable: true
   confidence: untested
   plan: null
@@ -608,7 +608,7 @@ objects:
   map_layer: L2
   flow: entry_flow
   market: cn_a
-  module_ref: src/zephyr/signal_ashare/event_driven_screener.py
+  module_ref: src/zephyr/signal_ashare/screening/event_driven_screener.py
   testable: true
   confidence: untested
   plan: null
@@ -911,7 +911,7 @@ objects:
   map_layer: L3
   flow: entry_flow
   market: cn_a
-  module_ref: src/zephyr/signal_ashare/intraday_volume_orderflow.py
+  module_ref: src/zephyr/signal_ashare/intraday_t0/intraday_volume_orderflow.py
   testable: true
   confidence: untested
   plan: null
@@ -951,7 +951,7 @@ objects:
   map_layer: L3
   flow: entry_flow
   market: cn_a
-  module_ref: src/zephyr/signal_ashare/seat_pattern_analyzer.py
+  module_ref: src/zephyr/signal_ashare/limit_up/seat_pattern_analyzer.py
   testable: true
   confidence: untested
   plan: null

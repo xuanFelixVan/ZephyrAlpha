@@ -568,7 +568,7 @@ entries:
   desc_zh: 包入口模块
   desc_en: ''
   plain_zh: signal ashare 核心 包入口，整合核心相关子模块导出
-- module_path: src/zephyr/signal_ashare/dual_engine_fusion_decision_engine.py
+- module_path: src/zephyr/signal_ashare/strategy_signal/dual_engine_fusion_decision_engine.py
   domain_id: D_ASHARE_SIGNAL
   name_zh: 双引擎融合决策引擎
   name_en: dual_engine_fusion_decision_engine
@@ -589,14 +589,14 @@ entries:
   desc_zh: 机构行为分析器模块
   desc_en: ''
   plain_zh: 机构行为分析器，信号的分析器，分析数据找出问题或规律（institutional behavior）
-- module_path: src/zephyr/signal_ashare/intraday_buy_sell_point_analyzer.py
+- module_path: src/zephyr/signal_ashare/intraday_t0/intraday_buy_sell_point_analyzer.py
   domain_id: D_ASHARE_SIGNAL
   name_zh: 日内买卖点分析器
   name_en: intraday_buy_sell_point_analyzer
   desc_zh: 日内买卖点分析器模块
   desc_en: ''
   plain_zh: 日内买卖点分析器，信号的分析器，分析数据找出问题或规律（intraday buy sell point）
-- module_path: src/zephyr/signal_ashare/market_sentiment_analyzer.py
+- module_path: src/zephyr/signal_ashare/sentiment/market_sentiment_analyzer.py
   domain_id: D_ASHARE_SIGNAL
   name_zh: 市场情绪分析器
   name_en: market_sentiment_analyzer
@@ -617,7 +617,7 @@ entries:
   desc_zh: 量化短期强度引擎模块
   desc_en: ''
   plain_zh: 量化短期强度引擎，信号的引擎，执行核心逻辑的处理引擎（quant short term strength）
-- module_path: src/zephyr/signal_ashare/sector_analyzer.py
+- module_path: src/zephyr/signal_ashare/sector/sector_analyzer.py
   domain_id: D_ASHARE_SIGNAL
   name_zh: 板块分析器
   name_en: sector_analyzer
@@ -631,14 +631,14 @@ entries:
   desc_zh: 包入口模块
   desc_en: ''
   plain_zh: signal ashare 服务 包入口，整合服务相关子模块导出
-- module_path: src/zephyr/signal_ashare/short_term_stock_selector.py
+- module_path: src/zephyr/signal_ashare/screening/short_term_stock_selector.py
   domain_id: D_ASHARE_SIGNAL
   name_zh: 短期股票选择器
   name_en: short_term_stock_selector
   desc_zh: 短期股票选择器，信号的选择器，按条件选择最优项。
   desc_en: ''
   plain_zh: 短期股票选择器，信号的选择器，按条件选择最优项。
-- module_path: src/zephyr/signal_ashare/youzi_relay_emotion_engine.py
+- module_path: src/zephyr/signal_ashare/limit_up/youzi_relay_emotion_engine.py
   domain_id: D_ASHARE_SIGNAL
   name_zh: 游资中继情绪引擎
   name_en: youzi_relay_emotion_engine
@@ -9778,7 +9778,7 @@ entries:
   desc_zh: ''
   desc_en: ''
   plain_zh: 美股、港股、汇率、商品一异动，立刻算出对A股的传导系数和影响幅度，触发全量或板块重算。
-- module_path: src/zephyr/signal_ashare/regime_change_detector.py
+- module_path: src/zephyr/signal_ashare/ml_forecast/regime_change_detector.py
   domain_id: D_ASHARE_SIGNAL
   name_zh: 体制转换检测
   name_en: Regime Change Detection
@@ -9799,7 +9799,7 @@ entries:
   desc_zh: ''
   desc_en: ''
   plain_zh: 判断行情在春夏秋冬哪一季——冬季禁止抄底，秋季突破失败更倾向强制离场。
-- module_path: src/zephyr/signal_ashare/causal_inference_engine.py
+- module_path: src/zephyr/signal_ashare/ml_forecast/causal_inference_engine.py
   domain_id: D_ASHARE_SIGNAL
   name_zh: 知识图谱与因果推演
   name_en: Knowledge Graph & Causal Inference
@@ -9813,35 +9813,35 @@ entries:
   desc_zh: ''
   desc_en: ''
   plain_zh: 给因子加料——滞后项、交互项、滚动统计量、签名方法，专门喂给密度预测模型。
-- module_path: src/zephyr/signal_ashare/conditional_density_predictor.py
+- module_path: src/zephyr/signal_ashare/ml_forecast/conditional_density_predictor.py
   domain_id: D_ASHARE_SIGNAL
   name_zh: 收益率条件密度预测
   name_en: Conditional Density Prediction
   desc_zh: ''
   desc_en: ''
   plain_zh: 不只预测明天涨多少，而是预测明天收益率的完整概率分布——偏多少、尾巴多厚、极端情况多罕见。
-- module_path: src/zephyr/signal_ashare/conformal_predictor.py
+- module_path: src/zephyr/signal_ashare/ml_forecast/conformal_predictor.py
   domain_id: D_ASHARE_SIGNAL
   name_zh: 共形预测
   name_en: Conformal Prediction
   desc_zh: ''
   desc_en: ''
   plain_zh: 给预测区间加数学保证——不管分布长什么样，区间覆盖率有数学证明。
-- module_path: src/zephyr/signal_ashare/survival_time_predictor.py
+- module_path: src/zephyr/signal_ashare/ml_forecast/survival_time_predictor.py
   domain_id: D_ASHARE_SIGNAL
   name_zh: Survival止盈止损时间预测
   name_en: Survival Stop-Time Prediction
   desc_zh: ''
   desc_en: ''
   plain_zh: 预测止盈止损还有多久发生——不是固定N天，而是时间概率分布。
-- module_path: src/zephyr/signal_ashare/tiered_screening_filter.py
+- module_path: src/zephyr/signal_ashare/screening/tiered_screening_filter.py
   domain_id: D_ASHARE_SIGNAL
   name_zh: 分级指标过滤
   name_en: Tiered Screening Filter
   desc_zh: ''
   desc_en: ''
   plain_zh: 选股漏斗第一层——3秒级把全市场7000只砍到1200只，涨停跌停停牌ST次新弃庄统统按规则排除。
-- module_path: src/zephyr/signal_ashare/coarse_screening_funnel.py
+- module_path: src/zephyr/signal_ashare/screening/coarse_screening_funnel.py
   domain_id: D_ASHARE_SIGNAL
   name_zh: 初筛漏斗
   name_en: Coarse Screening Funnel
@@ -9855,7 +9855,7 @@ entries:
   desc_zh: ''
   desc_en: ''
   plain_zh: 漏斗第三层——60秒级从300只评到50只，多维因子打分+市场状态动态偏移+主力+8态+拥挤度+密度分布全用上。
-- module_path: src/zephyr/signal_ashare/event_driven_screener.py
+- module_path: src/zephyr/signal_ashare/screening/event_driven_screener.py
   domain_id: D_ASHARE_SIGNAL
   name_zh: 事件驱动分布筛选
   name_en: Event-Driven Distribution Screening
@@ -34525,7 +34525,7 @@ entries:
   desc_zh: ''
   desc_en: ''
   plain_zh: 测试：ocp extension points 单元能不能正常工作，有问题尽早暴露。
-- module_path: src/zephyr/signal_ashare/next_day_8state_forecast.py
+- module_path: src/zephyr/signal_ashare/ml_forecast/next_day_8state_forecast.py
   domain_id: D_ASHARE_SIGNAL
   name_zh: NextDay8状态Forecast
   name_en: Next Day 8state Forecast
@@ -41600,7 +41600,7 @@ entries:
   desc_zh: ""
   desc_en: ""
   plain_zh: "commit/merge 前先用 TCP 摸一下 PostgreSQL 5432 通不通（1 秒超时，不通也不拦你，只把结果写进 .runtime/pg_probe_state.json）；几个 depgraph 门禁在数据库连不上被迫放行时，会查这个状态来分清是'数据库真的挂了'还是'别的错误'，并把放行记录写进治理库（同一个原因一天只记一次，防止刷屏），下次提交时横幅提醒你追账；数据库连续挂超 24 小时时，还会豁免 depgraph 新鲜度门禁的误伤"
-- module_path: src/zephyr/signal_ashare/seat_pattern_analyzer.py
+- module_path: src/zephyr/signal_ashare/limit_up/seat_pattern_analyzer.py
   domain_id: D_ASHARE_SIGNAL
   name_zh: "龙虎榜席位形态分析器"
   name_en: "Seat Pattern Analyzer"
@@ -41728,14 +41728,14 @@ entries:
   desc_zh: '规则驱动3×3市场状态分类（趋势×波动率9网格）+分解得分+置信度'
   desc_en: ''
   plain_zh: '市场的体感温度计，看指数价量回答"现在是什么市"——涨还是跌、颠簸还是平稳，二合一给出9宫格状态和把握度；只报状态不出买卖建议，给下游风控当节流依据。'
-- module_path: src/zephyr/signal_ashare/regime_change_detector.py
+- module_path: src/zephyr/signal_ashare/ml_forecast/regime_change_detector.py
   domain_id: D_ASHARE_SIGNAL
   name_zh: 体制转换检测器
   name_en: 'Regime Change Detector'
   desc_zh: '牛/熊2态+CUSUM变点预警+触发→确认状态机（BM-BUY-02-A-1-d）'
   desc_en: ''
   plain_zh: '盯着市场脾气会不会变——跌破60日线或从高点回撤两成就判熊，刚翻转先挂"待确认"，连跌三天以上才坐实切换；切换概率随确认天数爬升，给风控提前拉警报。'
-- module_path: src/zephyr/signal_ashare/next_day_8state_forecast.py
+- module_path: src/zephyr/signal_ashare/ml_forecast/next_day_8state_forecast.py
   domain_id: D_ASHARE_SIGNAL
   name_zh: 次日8状态预测
   name_en: 'Next Day 8-State Forecast'
@@ -42108,21 +42108,21 @@ entries:
   desc_zh: ''
   desc_en: ''
   plain_zh: '盘中 10 点判定"今天实际走了 9 格预案里的哪一格"并记账：开盘涨跌幅 定高中低开、前 30 分钟走势定高中低走，再捎上竞价三细节（偏离/量比/撤单）， 供作战室观察哨点亮格子、盘后复盘对账。'
-- module_path: src/zephyr/signal_ashare/war_pool_generator.py
+- module_path: src/zephyr/signal_ashare/limit_up/war_pool_generator.py
   domain_id: D_ASHARE_SIGNAL
   name_zh: 作战池生成器
   name_en: 'War Pool Generator'
   desc_zh: ''
   desc_en: ''
   plain_zh: '每天挑 2~3 只"今天就盯它"的票：必须是主线板块的龙头（结构）， 又必须有业绩预告/新闻等催化剂（催化），两腿交集才入池。交集是空就空着， 绝不硬凑——池外的票不碰，注意力也是风险预算。'
-- module_path: src/zephyr/signal_ashare/screening_funnel_report.py
+- module_path: src/zephyr/signal_ashare/screening/screening_funnel_report.py
   domain_id: D_ASHARE_SIGNAL
   name_zh: 筛选漏斗全链计数器
   name_en: 'Screening Funnel Report'
   desc_zh: ''
   desc_en: ''
   plain_zh: '把选股漏斗每一层（几千只→1200→300→50→…→作战池）的进数、出数、 通过率、每层因为什么理由踢掉了多少只，全部结构化成一张报表，供盘中实时页 决策链展示。只管计数，不动筛选本身。'
-- module_path: src/zephyr/signal_ashare/limit_up_reason_attribution.py
+- module_path: src/zephyr/signal_ashare/limit_up/limit_up_reason_attribution.py
   domain_id: D_ASHARE_SIGNAL
   name_zh: 涨停原因归因器
   name_en: 'Limit-Up Reason Attribution'
@@ -42136,7 +42136,7 @@ entries:
   desc_zh: '分钟级板块-指数贡献管线：板块分钟收益×权重分摊指数涨跌，恒等式残差留痕（GAP-F-15）。'
   desc_en: 'Minute-level sector-to-index contribution decomposition with identity residual tracking.'
   plain_zh: '贡献度拆解器。把大盘每一分钟的涨跌拆成"各板块各贡献了多少"，拆不干净的部分单独记账不硬塞。'
-- module_path: src/zephyr/signal_ashare/t0_point_analyzer.py
+- module_path: src/zephyr/signal_ashare/intraday_t0/t0_point_analyzer.py
   domain_id: D_ASHARE_SIGNAL
   name_zh: 做T点位分析器
   name_en: 'T0 Intraday Point Analyzer'
@@ -42270,7 +42270,7 @@ entries:
   desc_zh: ''
   desc_en: ''
   plain_zh: '给每个交易预案/候选股配上"证据卡"：核心论点、催化剂、失效条件、支持证据、 反对证据五项强制写全，缺一项就打回并一次列全缺了啥——杜绝只给结论不给证据的决策卡。'
-- module_path: src/zephyr/signal_ashare/mc_path_simulator.py
+- module_path: src/zephyr/signal_ashare/ml_forecast/mc_path_simulator.py
   domain_id: D_ASHARE_SIGNAL
   name_zh: 蒙特卡洛路径模拟引擎
   name_en: 'Monte Carlo Path Simulator'
@@ -42326,21 +42326,21 @@ entries:
   desc_zh: ''
   desc_en: ''
   plain_zh: '五个 AI 分析师开会：趋势派、反转派、基本面派、情绪猎手各摆论点（看多归 多方、看空归空方），风控防守员高置信看空有一票否决权；最后复用多空辩论链出 执行/降档/放弃结论。'
-- module_path: src/zephyr/signal_ashare/sector_attribute_rules.py
+- module_path: src/zephyr/signal_ashare/sector/sector_attribute_rules.py
   domain_id: D_ASHARE_SIGNAL
   name_zh: 板块属性标注规则库
   name_en: 'Sector Attribute Rules'
   desc_zh: ''
   desc_en: ''
   plain_zh: '给每个板块贴"进攻/防御/平衡"标签的小词典——银行、电力这类算防御， 半导体、券商这类算进攻，白酒、家电这类算平衡。规则写在配置文件里，先按 板块代码精确查，查不到再按名字关键词猜，猜不到就老实说"未标注"，不硬归类。'
-- module_path: src/zephyr/signal_ashare/limit_up_followthrough.py
+- module_path: src/zephyr/signal_ashare/limit_up/limit_up_followthrough.py
   domain_id: D_ASHARE_SIGNAL
   name_zh: 昨日涨停今表现与炸板率统计
   name_en: 'Limit-Up Followthrough Stats'
   desc_zh: ''
   desc_en: ''
   plain_zh: '每天收盘后算两笔账：昨天涨停的股票今天平均赚赔多少（封板池）， 昨天盘中摸到涨停但没封住的股票今天又怎么样（炸板池）；再算上全市场 "曾涨停但没封住"的比例（炸板率），用的是宽度快照里现成的字段。'
-- module_path: src/zephyr/signal_ashare/sector_volume_anomaly.py
+- module_path: src/zephyr/signal_ashare/sector/sector_volume_anomaly.py
   domain_id: D_ASHARE_SIGNAL
   name_zh: 板块量能异动检测器
   name_en: 'Sector Volume Anomaly Detector'
@@ -42354,7 +42354,7 @@ entries:
   desc_zh: ''
   desc_en: ''
   plain_zh: '大盘跳水那段谁最硬气——找出指数从高点跌到谷底的"主下跌段"， 然后数四张榜：下跌段里还在涨的板块（逆势上涨）、有钱净流入的板块 （下跌段资金流入）、触底后最快弹起来的板块（率先反弹）、跌得最少的 板块（最抗跌）。资金流数据没接就只空那一张卡。'
-- module_path: src/zephyr/signal_ashare/sector_detail_enricher.py
+- module_path: src/zephyr/signal_ashare/sector/sector_detail_enricher.py
   domain_id: D_ASHARE_SIGNAL
   name_zh: 板块详情补充维度生成器
   name_en: 'Sector Detail Enricher'
@@ -42431,28 +42431,28 @@ entries:
   desc_zh: 'MOD-INF-048。多 agent 独立提案，tally_votes 纯函数加权聚票，平票确定性裁决（字典序小者胜）；单 agent 失败容错，全部失败 fail-closed winner=None。'
   desc_en: 'MOD-INF-048. Agents propose independently; pure-function weighted plurality voting with deterministic tie-break; single-agent failure tolerated, all-failed fail-closed winner=None.'
   plain_zh: '几个 AI 投票表决，票多者赢，平票按字典序定胜负——规则写在明处，单个 AI 掉链子不影响开票。'
-- module_path: src/zephyr/signal_ashare/kronos_tsfm_predictor.py
+- module_path: src/zephyr/signal_ashare/ml_forecast/kronos_tsfm_predictor.py
   domain_id: D_ASHARE_SIGNAL
   name_zh: Kronos TSFM 预测器骨架
   name_en: 'Kronos Tsfm Predictor Skeleton'
   desc_zh: 'MOD-SIG-050。时序基础模型接口契约（predict 签名+输入校验+未训练 fail-closed）+ last-value 朴素基线占位（显式 is_baseline 标记）；不引 torch，真训练/真推理属 B-007。'
   desc_en: 'MOD-SIG-050. TSFM interface contract (predict signature + input validation + untrained fail-closed) + last-value naive baseline (explicit is_baseline flag); no torch, real training/inference gated by B-007.'
   plain_zh: 'Kronos 大模型的空壳插座。接口和校验门都装好了，真模型要等 Owner 批，现在只给个"沿用昨天值"的垫底答案并明确标注是垫底。'
-- module_path: src/zephyr/signal_ashare/mamba_ssm_temporal_enhancer.py
+- module_path: src/zephyr/signal_ashare/ml_forecast/mamba_ssm_temporal_enhancer.py
   domain_id: D_ASHARE_SIGNAL
   name_zh: Mamba-SSM 时序增强器骨架
   name_en: 'Mamba Ssm Temporal Enhancer Skeleton'
   desc_zh: 'MOD-SIG-051。Mamba/SSM 远期候选接口契约（enhance 签名+未训练 fail-closed）+ z-score/EMA 占位增强（形状恒等）；不引 mamba_ssm 依赖，真模型属 B-007。'
   desc_en: 'MOD-SIG-051. Mamba/SSM far-future candidate interface contract (enhance signature + untrained fail-closed) + z-score/EMA placeholder (shape-preserving); no mamba_ssm dep, real model gated by B-007.'
   plain_zh: 'Mamba 模型的占位替身。先把"特征进去增强出来"的口子留好，现在里面装的是标准化加平滑的小算法，真模型另行审批。'
-- module_path: src/zephyr/signal_ashare/adaptive_conformal_tcp_rm_ddci.py
+- module_path: src/zephyr/signal_ashare/ml_forecast/adaptive_conformal_tcp_rm_ddci.py
   domain_id: D_ASHARE_SIGNAL
   name_zh: 自适应保形 TCP-RM/DDCI
   name_en: 'Adaptive Conformal Tcp Rm Ddci'
   desc_zh: 'MOD-SIG-052（91 号 memo BM-SEL-14-A）。SIG-044 rolling 基线的加权变体——校准残差带权重（近期/regime 加权），q̂ 取加权 conformal 分位；未校准 fail-closed。'
   desc_en: 'MOD-SIG-052 (memo 91 BM-SEL-14-A). Weighted variant of SIG-044 rolling baseline — weighted residuals, weighted conformal quantile margin; uncalibrated fail-closed.'
   plain_zh: '保形区间的加权版。最近的误差说话更大声，区间跟着近期行情宽窄自动伸缩；没校准过就不给区间。'
-- module_path: src/zephyr/signal_ashare/xlstm_long_memory.py
+- module_path: src/zephyr/signal_ashare/ml_forecast/xlstm_long_memory.py
   domain_id: D_ASHARE_SIGNAL
   name_zh: xLSTM 长记忆骨架
   name_en: 'Xlstm Long Memory Skeleton'
@@ -43004,7 +43004,7 @@ entries:
   desc_zh: ""
   desc_en: ""
   plain_zh: "用合成盘口数据验证 RL 下单环境骨架：随机策略能跑通整个回合、越界价格被夹回涨跌停带、越界数量被砍到 POV 上限、禁市价时市价动作被拒、奖励等于负的实现短缺、同种子 reset 结果完全可复现。"
-- module_path: src/zephyr/signal_ashare/selection_funnel_skeleton.py
+- module_path: src/zephyr/signal_ashare/screening/selection_funnel_skeleton.py
   domain_id: D_ASHARE_SIGNAL
   name_zh: "选股漏斗共享骨架"
   name_en: "Selection Funnel Skeleton"
@@ -43508,7 +43508,7 @@ entries:
   desc_zh: ""
   desc_en: ""
   plain_zh: "信号域想吃因子域算好的因子结果，不自己去翻因子仓库，而是经过这座桥：桥先看结果的契约版本对不对（完全匹配就放行，同大版本就兼容透传，不认识就拒收并标降级），再把上游的降级标记原样带过来，每次过桥都记一笔审计账。"
-- module_path: src/zephyr/signal_ashare/signal_factory.py
+- module_path: src/zephyr/signal_ashare/strategy_signal/signal_factory.py
   domain_id: D_ASHARE_SIGNAL
   name_zh: "C-028 信号工厂"
   name_en: "Signal Factory"
@@ -43648,7 +43648,7 @@ entries:
   desc_zh: ""
   desc_en: ""
   plain_zh: "验证择时Agent的行为：角色卡含风控前置与不下单边界、非法上下文/配置一律拒绝、七条判定分支各就各位（波动市观望或减仓、破线减仓、卖点联动减仓、强共振市价开、共振限价开、无共振拆单加、其余观望）、建议永远要求风控校验、非观望必发风控前置信号、回调异常不阻断、双审计齐全。"
-- module_path: src/zephyr/signal_ashare/t0_trading_pipeline.py
+- module_path: src/zephyr/signal_ashare/intraday_t0/t0_trading_pipeline.py
   domain_id: D_ASHARE_SIGNAL
   name_zh: "C-012 做T日内套利管线"
   name_en: "T0 Trading Pipeline"
@@ -43711,7 +43711,7 @@ entries:
   desc_zh: ""
   desc_en: ""
   plain_zh: "给87个Alpha公式把门的测试：小工具挨个对答案、87个公式一个不少全部能算、14个被剔除的报得出来由、截断数据重算前缀一模一样证明不偷看未来、注册和IC验证都有钩子替身。"
-- module_path: src/zephyr/signal_ashare/unified_pattern_engine.py
+- module_path: src/zephyr/signal_ashare/strategy_signal/unified_pattern_engine.py
   domain_id: D_ASHARE_SIGNAL
   name_zh: "统一图形识别引擎"
   name_en: "Unified Pattern Engine"
@@ -43725,7 +43725,7 @@ entries:
   desc_zh: ""
   desc_en: ""
   plain_zh: "用合成K线验证统一图形引擎：双顶双底、平台突破、支撑位、缠论笔、DTW模板命中与脱靶、事件去重排序、历史胜率注入和JSON序列化，全部内存数据。"
-- module_path: src/zephyr/signal_ashare/gap_fill_model.py
+- module_path: src/zephyr/signal_ashare/ml_forecast/gap_fill_model.py
   domain_id: D_ASHARE_SIGNAL
   name_zh: "缺口回补概率模型"
   name_en: "Gap Fill Probability Model"
@@ -43802,7 +43802,7 @@ entries:
   desc_zh: ""
   desc_en: ""
   plain_zh: "Non-AI边界守卫的单元测试：占比计量、30%超限阻断信号、非AI恒放行、非法输入拒绝、回调异常不阻断、双审计"
-- module_path: src/zephyr/signal_ashare/intraday_volume_orderflow.py
+- module_path: src/zephyr/signal_ashare/intraday_t0/intraday_volume_orderflow.py
   domain_id: D_ASHARE_SIGNAL
   name_zh: "日内量能结构与订单流分析"
   name_en: "Intraday Volume Orderflow Analyzer"
@@ -43921,7 +43921,7 @@ entries:
   desc_zh: "验证RSI与MACD指标核、顶底背离检出、确认零背离、背离化解、次数与级联概率查表、fail-closed契约"
   desc_en: "Tests for indicator cores, divergence detection, resolution, probability tables and fail-closed contracts"
   plain_zh: "背离检测器的验收测试：用合成价格验证顶背离底背离检不检得出、指标重新走强后背离会不会标记化解、概率查表对不对、坏输入会不会被拦"
-- module_path: src/zephyr/signal_ashare/relative_strength_screener.py
+- module_path: src/zephyr/signal_ashare/screening/relative_strength_screener.py
   domain_id: D_ASHARE_SIGNAL
   name_zh: "多维度相对强弱筛选器"
   name_en: "Multi Dimensional Relative Strength Screener"
@@ -43935,7 +43935,7 @@ entries:
   desc_zh: "验证区间RS方向、结构强弱极端、52周接近度阈值、放量突破确认、合成单调性、批量排序、短历史降级与fail-closed契约"
   desc_en: "Tests for interval RS direction, structural extremes, 52w proximity, breakout confirmation, composite monotonicity, ranking, degraded mode and fail-closed contracts"
   plain_zh: "相对强弱筛选器的验收测试：用合成行情验证强股分高弱股分低、接近52周新高会打标记、突破放量才算确认、历史不够时显式降级、坏输入全被拦"
-- module_path: src/zephyr/signal_ashare/limit_up_ecosystem_leadership.py
+- module_path: src/zephyr/signal_ashare/limit_up/limit_up_ecosystem_leadership.py
   domain_id: D_ASHARE_SIGNAL
   name_zh: "动量领导因子与涨停板生态模型"
   name_en: ""
@@ -43991,7 +43991,7 @@ entries:
   desc_zh: ""
   desc_en: ""
   plain_zh: "验证庄股回避检测器：五类子分映射截断、加权总分、三级判定、回避名单排序、审计留痕和非法输入拒绝。"
-- module_path: src/zephyr/signal_ashare/sector_momentum_persistence.py
+- module_path: src/zephyr/signal_ashare/sector/sector_momentum_persistence.py
   domain_id: D_ASHARE_SIGNAL
   name_zh: "动量层级与板块持续性模型"
   name_en: ""
@@ -44089,7 +44089,7 @@ entries:
   desc_zh: ""
   desc_en: ""
   plain_zh: "检查多源投票器：融合后的概率加起来是不是1、准的源权重会不会变大、失手的源有没有下限保护、冷启动先验对不对、畸形外部信号拦不拦得住、复盘结算能不能正确回写命中率、日志回调挂了会不会阻断产出。"
-- module_path: src/zephyr/signal_ashare/extreme_sentiment_reversal_detector.py
+- module_path: src/zephyr/signal_ashare/sentiment/extreme_sentiment_reversal_detector.py
   domain_id: D_ASHARE_SIGNAL
   name_zh: "极端情绪反转与恐慌底部检测模型"
   name_en: ""
@@ -44145,7 +44145,7 @@ entries:
   desc_zh: ""
   desc_en: ""
   plain_zh: "检查血缘解析器：CTR契约能不能正确抽出生产/消费双向边、模块头三种注解解析对不对、外部库（如numpy）会不会被略过、同一批重复边去重没有、重复入图是不是幂等、循环依赖边会不会被记下且不中断整批。"
-- module_path: src/zephyr/signal_ashare/sentiment_price_divergence.py
+- module_path: src/zephyr/signal_ashare/sentiment/sentiment_price_divergence.py
   domain_id: D_ASHARE_SIGNAL
   name_zh: "情绪-价格背离指数模型"
   name_en: ""
@@ -44173,7 +44173,7 @@ entries:
   desc_zh: ""
   desc_en: ""
   plain_zh: "验证风险信号排序器：阻断期内信号被压制、解除后放行、全局与单标的覆盖范围、乱序风控事件撤销已生效信号、重复事件幂等、非法输入拒绝、审计回调异常不阻断。"
-- module_path: src/zephyr/signal_ashare/limit_up_potential_scorer.py
+- module_path: src/zephyr/signal_ashare/limit_up/limit_up_potential_scorer.py
   domain_id: D_ASHARE_SIGNAL
   name_zh: "IC加权多因子涨停板潜力评分模型"
   name_en: ""
@@ -44299,7 +44299,7 @@ entries:
   desc_zh: ""
   desc_en: ""
   plain_zh: "验证政策主题映射器：五类主题关键词归类与优先序、半衰期热度衰减加总、受益受损清单排序、LLM 归类注入合法采纳与非法回落留痕、未来新闻按 PIT 拒绝、非法输入与主题库拒绝。"
-- module_path: src/zephyr/signal_ashare/next_day_probability_gate.py
+- module_path: src/zephyr/signal_ashare/ml_forecast/next_day_probability_gate.py
   domain_id: D_ASHARE_SIGNAL
   name_zh: "次日上涨概率统一门槛模块"
   name_en: ""
@@ -44411,7 +44411,7 @@ entries:
   desc_zh: ""
   desc_en: ""
   plain_zh: "信号消费方拿因子信号前都先过它：版本对不上主版本号就直接拒收不硬解，少给的字段按契约默认值补齐，多出来的新字段收进扩展袋并留痕，契约版本变更时通知所有订阅方。"
-- module_path: src/zephyr/signal_ashare/pattern_match_strategy_library.py
+- module_path: src/zephyr/signal_ashare/strategy_signal/pattern_match_strategy_library.py
   domain_id: D_ASHARE_SIGNAL
   name_zh: "量化模式匹配与执行策略库"
   name_en: ""
@@ -44425,7 +44425,7 @@ entries:
   desc_zh: ""
   desc_en: ""
   plain_zh: "给消费契约适配器做体检测试：版本协商三态、缺字段补默认、多字段收编、变更订阅通知、非法输入拒收，共43例。"
-- module_path: src/zephyr/signal_ashare/sell_news_overdraft_detector.py
+- module_path: src/zephyr/signal_ashare/sentiment/sell_news_overdraft_detector.py
   domain_id: D_ASHARE_SIGNAL
   name_zh: "利好落地预期透支检测"
   name_en: ""
@@ -44439,7 +44439,7 @@ entries:
   desc_zh: ""
   desc_en: ""
   plain_zh: "因子信号出厂前的质检员：字段齐不齐、数值超不超界、时间戳有没有穿越到未来，违约的信号拦下不让出厂并开出结构化违约单，验证计数接监控，规则与消费侧适配器共用同一份契约源。"
-- module_path: src/zephyr/signal_ashare/overnight_return_expectancy.py
+- module_path: src/zephyr/signal_ashare/intraday_t0/overnight_return_expectancy.py
   domain_id: D_ASHARE_SIGNAL
   name_zh: "隔夜收益预测与开仓期望值"
   name_en: ""
@@ -44474,7 +44474,7 @@ entries:
   desc_zh: ""
   desc_en: ""
   plain_zh: "管集合竞价快照数据：认定9点15到9点25和14点57到15点两段竞价窗口，采集时逐条校验价量撤单等字段并去重后交给落库回调，回放时按标的和时间排好序供微结构分析和命中回放消费，抓取落库读数都靠注入不直连。"
-- module_path: src/zephyr/signal_ashare/strategy_cross_vote_funnel.py
+- module_path: src/zephyr/signal_ashare/strategy_signal/strategy_cross_vote_funnel.py
   domain_id: D_ASHARE_SIGNAL
   name_zh: "多策略交叉投票漏斗"
   name_en: ""
@@ -45881,7 +45881,7 @@ entries:
   desc_zh: ""
   desc_en: ""
   plain_zh: "用假先验参数校验合力方向、分歧度计算和推断性质标注。"
-- module_path: src/zephyr/signal_ashare/pattern_to_signal_mapper.py
+- module_path: src/zephyr/signal_ashare/strategy_signal/pattern_to_signal_mapper.py
   domain_id: D_ASHARE_SIGNAL
   name_zh: "形态信号转化层"
   name_en: ""
@@ -45909,7 +45909,7 @@ entries:
   desc_zh: ""
   desc_en: ""
   plain_zh: "用构造K线校验缩量确认、结构判定、回调概率表和延续反转输出。"
-- module_path: src/zephyr/signal_ashare/overnight_conduction_model.py
+- module_path: src/zephyr/signal_ashare/intraday_t0/overnight_conduction_model.py
   domain_id: D_ASHARE_SIGNAL
   name_zh: "隔夜全球传导评估模型"
   name_en: ""
@@ -45937,7 +45937,7 @@ entries:
   desc_zh: ""
   desc_en: ""
   plain_zh: "用假回归器校验邻接表、上游动量因子、R方筛选和异常标记。"
-- module_path: src/zephyr/signal_ashare/sector_crowding_launch.py
+- module_path: src/zephyr/signal_ashare/sector/sector_crowding_launch.py
   domain_id: D_ASHARE_SIGNAL
   name_zh: "板块拥挤度与启动条件"
   name_en: ""
@@ -45951,7 +45951,7 @@ entries:
   desc_zh: ""
   desc_en: ""
   plain_zh: "校验拥挤度合成、过热预警和启动三日确认状态机。"
-- module_path: src/zephyr/signal_ashare/intraday_size_style.py
+- module_path: src/zephyr/signal_ashare/intraday_t0/intraday_size_style.py
   domain_id: D_ASHARE_SIGNAL
   name_zh: "分时微结构与大小盘风格"
   name_en: ""
@@ -45993,7 +45993,7 @@ entries:
   desc_zh: ""
   desc_en: ""
   plain_zh: "用假统计器校验四类效应检验、分年稳健性和效应日历输出。"
-- module_path: src/zephyr/signal_ashare/event_conditional_density.py
+- module_path: src/zephyr/signal_ashare/ml_forecast/event_conditional_density.py
   domain_id: D_ASHARE_SIGNAL
   name_zh: "事件驱动条件分布预测"
   name_en: ""
@@ -46007,7 +46007,7 @@ entries:
   desc_zh: ""
   desc_en: ""
   plain_zh: "校验分桶直方图、分位数插值、样本不足降级和批量护栏。"
-- module_path: src/zephyr/signal_ashare/fake_move_distribution.py
+- module_path: src/zephyr/signal_ashare/ml_forecast/fake_move_distribution.py
   domain_id: D_ASHARE_SIGNAL
   name_zh: "主力假动作与筹码派发识别"
   name_en: ""
@@ -46049,7 +46049,7 @@ entries:
   desc_zh: ""
   desc_en: ""
   plain_zh: "校验三种邻接图、两路聚合计算、密度预测挂接和规模护栏。"
-- module_path: src/zephyr/signal_ashare/causal_ml_engine.py
+- module_path: src/zephyr/signal_ashare/ml_forecast/causal_ml_engine.py
   domain_id: D_ASHARE_SIGNAL
   name_zh: "因果ML引擎"
   name_en: ""
@@ -46063,7 +46063,7 @@ entries:
   desc_zh: ""
   desc_en: ""
   plain_zh: "用假runner校验四通道降级、因果图缓存和显著性筛选。"
-- module_path: src/zephyr/signal_ashare/tcp_rm_conformal.py
+- module_path: src/zephyr/signal_ashare/ml_forecast/tcp_rm_conformal.py
   domain_id: D_ASHARE_SIGNAL
   name_zh: "时序保形预测增强器"
   name_en: ""
@@ -46105,7 +46105,7 @@ entries:
   desc_zh: ""
   desc_en: ""
   plain_zh: "校验风格序列构建、模型降级分档、参数映射和切换防抖。"
-- module_path: src/zephyr/signal_ashare/strategy_matrix_3d.py
+- module_path: src/zephyr/signal_ashare/strategy_signal/strategy_matrix_3d.py
   domain_id: D_ASHARE_SIGNAL
   name_zh: "量能体制风格三维策略矩阵"
   name_en: ""
@@ -46119,7 +46119,7 @@ entries:
   desc_zh: ""
   desc_en: ""
   plain_zh: "校验18格查找、逐格回测填参和参数版本管理。"
-- module_path: src/zephyr/signal_ashare/signal_weight_adjuster.py
+- module_path: src/zephyr/signal_ashare/strategy_signal/signal_weight_adjuster.py
   domain_id: D_ASHARE_SIGNAL
   name_zh: "信号权重调节器"
   name_en: ""
@@ -46133,7 +46133,7 @@ entries:
   desc_zh: ""
   desc_en: ""
   plain_zh: "校验三指标得分、限幅、审计、回滚和漂移告警。"
-- module_path: src/zephyr/signal_ashare/day_trade_pnl_estimator.py
+- module_path: src/zephyr/signal_ashare/intraday_t0/day_trade_pnl_estimator.py
   domain_id: D_ASHARE_SIGNAL
   name_zh: "做T盈亏预估器"
   name_en: ""
@@ -47008,7 +47008,7 @@ entries:
   desc_zh: ""
   desc_en: ""
   plain_zh: "从Glassnode和CryptoQuant拉取链上指标（交易所净流入、活跃地址、稳定币流动），没配付费API密钥时产出假数据保证管道能跑通，配了密钥自动切真实数据"
-- module_path: src/zephyr/signal_ashare/sector_breadth.py
+- module_path: src/zephyr/signal_ashare/sector/sector_breadth.py
   domain_id: D_ASHARE_SIGNAL
   name_zh: "板块宽度与资金性质聚合"
   name_en: ""
@@ -47022,7 +47022,7 @@ entries:
   desc_zh: ""
   desc_en: ""
   plain_zh: "验证涨停比跨板块可比与边界截断、四档宽度分档阈值、成交额加权聚合（大票主导、权重和为零退化等权、缺失个股按弱托底计0）、四档资金标签阈值边界与强度修正乘数"
-- module_path: src/zephyr/signal_ashare/sector_momentum.py
+- module_path: src/zephyr/signal_ashare/sector/sector_momentum.py
   domain_id: D_ASHARE_SIGNAL
   name_zh: "板块多时间框架动量"
   name_en: ""
@@ -47127,7 +47127,7 @@ entries:
   desc_zh: ""
   desc_en: ""
   plain_zh: "从ClickHouse读取市场宽度分钟快照，30时点重采样后输出给相似日推演模块使用"
-- module_path: src/zephyr/signal_ashare/sentiment_cycle_evaluator.py
+- module_path: src/zephyr/signal_ashare/sentiment/sentiment_cycle_evaluator.py
   domain_id: D_ASHARE_SIGNAL
   name_zh: "情绪周期定位器评估器"
   name_en: ""
@@ -47148,7 +47148,7 @@ entries:
   desc_zh: ""
   desc_en: ""
   plain_zh: "压测预制情景库：市场枯竭、持仓封死、融资断裂三维冲击加全员出逃极端情形，并算出每笔持仓的出场滑点和压力退出天数"
-- module_path: src/zephyr/signal_ashare/strategy_vote_integrator.py
+- module_path: src/zephyr/signal_ashare/strategy_signal/strategy_vote_integrator.py
   domain_id: D_ASHARE_SIGNAL
   name_zh: "多策略投票加权整合器"
   name_en: "StrategyVoteIntegrator"
@@ -57692,49 +57692,49 @@ algo_submodules:
   name_zh: ① 空包初始化
   name_en: __init__
   plain_zh: shared_util 占位包初始化，仅声明空的公共符号表
-- module_path: src/zephyr/signal_ashare/dual_engine_fusion_decision_engine.py
+- module_path: src/zephyr/signal_ashare/strategy_signal/dual_engine_fusion_decision_engine.py
   module_id: MOD-SIG-035
   node_id: A1
   name_zh: ① 情绪周期自适应权重
   name_en: determine_adaptive_weights
   plain_zh: 按情绪周期查表定双引擎权重 冰点信量化 主升信游资
-- module_path: src/zephyr/signal_ashare/dual_engine_fusion_decision_engine.py
+- module_path: src/zephyr/signal_ashare/strategy_signal/dual_engine_fusion_decision_engine.py
   module_id: MOD-SIG-035
   node_id: A2
   name_zh: ② 加权融合评分
   name_en: analyze Step2 fused score
   plain_zh: 两个引擎分数按自适应权重加权合成一个融合分
-- module_path: src/zephyr/signal_ashare/dual_engine_fusion_decision_engine.py
+- module_path: src/zephyr/signal_ashare/strategy_signal/dual_engine_fusion_decision_engine.py
   module_id: MOD-SIG-035
   node_id: A3
   name_zh: ③ 6类决策分类
   name_en: classify_decision
   plain_zh: 按优先级把股票归入主升龙头/二进三/复苏/伪强/跟风/地天反包/中性
-- module_path: src/zephyr/signal_ashare/dual_engine_fusion_decision_engine.py
+- module_path: src/zephyr/signal_ashare/strategy_signal/dual_engine_fusion_decision_engine.py
   module_id: MOD-SIG-035
   node_id: A4
   name_zh: ④ PDF分布信号提取
   name_en: extract_pdf_signal
   plain_zh: 从融合分提取方向/置信度/尾部风险/相对价值4维信号
-- module_path: src/zephyr/signal_ashare/intraday_buy_sell_point_analyzer.py
+- module_path: src/zephyr/signal_ashare/intraday_t0/intraday_buy_sell_point_analyzer.py
   module_id: MOD-SIG-024
   node_id: A1
   name_zh: ① 6种买入模式检测
   name_en: detect_buy_points
   plain_zh: 扫描突破/回调/逆向资金/竞价弱转强/分时突破/回封打板6类买点
-- module_path: src/zephyr/signal_ashare/intraday_buy_sell_point_analyzer.py
+- module_path: src/zephyr/signal_ashare/intraday_t0/intraday_buy_sell_point_analyzer.py
   module_id: MOD-SIG-024
   node_id: A2
   name_zh: ② 6种卖出模式检测
   name_en: detect_sell_points
   plain_zh: 扫描目标价/趋势破位/利好兑现/封单减少/龙头丧失/强分歧6类卖点
-- module_path: src/zephyr/signal_ashare/intraday_buy_sell_point_analyzer.py
+- module_path: src/zephyr/signal_ashare/intraday_t0/intraday_buy_sell_point_analyzer.py
   module_id: MOD-SIG-024
   node_id: A3
   name_zh: ③ 3重确认
   name_en: check_confirmations
   plain_zh: 大盘环境/板块强度/资金流向3道闸门 全过才放行买入
-- module_path: src/zephyr/signal_ashare/intraday_buy_sell_point_analyzer.py
+- module_path: src/zephyr/signal_ashare/intraday_t0/intraday_buy_sell_point_analyzer.py
   module_id: MOD-SIG-024
   node_id: A4
   name_zh: ④ 综合建议
@@ -57812,43 +57812,43 @@ algo_submodules:
   name_zh: ⑥ 综合评分
   name_en: _compute_overall_score
   plain_zh: 形态置信、散户狂热、机构分歧、共振按权重揉成0-100总分
-- module_path: src/zephyr/signal_ashare/sector_analyzer.py
+- module_path: src/zephyr/signal_ashare/sector/sector_analyzer.py
   module_id: MOD-SIG-026
   node_id: A1
   name_zh: ① 板块强度评估
   name_en: evaluate_strength
   plain_zh: 涨停数量+梯队完整性+板块指数趋势三项加评估板块强不强
-- module_path: src/zephyr/signal_ashare/sector_analyzer.py
+- module_path: src/zephyr/signal_ashare/sector/sector_analyzer.py
   module_id: MOD-SIG-026
   node_id: A2
   name_zh: ② 板块延续性判断
   name_en: judge_continuity
   plain_zh: 按连涨天数和资金深度区分短期题材还是趋势题材
-- module_path: src/zephyr/signal_ashare/sector_analyzer.py
+- module_path: src/zephyr/signal_ashare/sector/sector_analyzer.py
   module_id: MOD-SIG-026
   node_id: A3
   name_zh: ③ 板块轮动预警
   name_en: warn_rotation
   plain_zh: 连续大涨+放量+龙头滞涨三信号叠加 预警资金要切换板块
-- module_path: src/zephyr/signal_ashare/sector_analyzer.py
+- module_path: src/zephyr/signal_ashare/sector/sector_analyzer.py
   module_id: MOD-SIG-026
   node_id: A4
   name_zh: ④ 板块启动条件评估
   name_en: evaluate_launch_conditions
   plain_zh: 技术突破+政策支持为必须条件 全满足才算启动就绪
-- module_path: src/zephyr/signal_ashare/sector_analyzer.py
+- module_path: src/zephyr/signal_ashare/sector/sector_analyzer.py
   module_id: MOD-SIG-026
   node_id: A5
   name_zh: ⑤ 大盘成交额风格适配
   name_en: adapt_market_style
   plain_zh: 成交额大做趋势票 成交额小出妖股
-- module_path: src/zephyr/signal_ashare/sector_analyzer.py
+- module_path: src/zephyr/signal_ashare/sector/sector_analyzer.py
   module_id: MOD-SIG-026
   node_id: A6
   name_zh: ⑥ 抱团瓦解信号检测
   name_en: detect_breakdown
   plain_zh: 龙头大跌伴随放量 或板块指数大跌 判定抱团瓦解
-- module_path: src/zephyr/signal_ashare/sector_analyzer.py
+- module_path: src/zephyr/signal_ashare/sector/sector_analyzer.py
   module_id: MOD-SIG-026
   node_id: A7
   name_zh: ⑦ 综合评分与板块状态判定
@@ -57872,61 +57872,61 @@ algo_submodules:
   name_zh: ③ 6类输出分类
   name_en: classify_category
   plain_zh: 结合量化总分+游资情绪+连板+主线 把股票分进6+1类
-- module_path: src/zephyr/signal_ashare/market_sentiment_analyzer.py
+- module_path: src/zephyr/signal_ashare/sentiment/market_sentiment_analyzer.py
   module_id: MOD-SIG-025
   node_id: A1
   name_zh: ① 涨跌家数分析
   name_en: analyze_breadth
   plain_zh: 检测二八分化/普涨/普跌/均衡并打分
-- module_path: src/zephyr/signal_ashare/market_sentiment_analyzer.py
+- module_path: src/zephyr/signal_ashare/sentiment/market_sentiment_analyzer.py
   module_id: MOD-SIG-025
   node_id: A2
   name_zh: ② 涨跌停热情分析
   name_en: analyze_limit_activity
   plain_zh: 看涨停跌停数量判断做多热情还是恐慌蔓延
-- module_path: src/zephyr/signal_ashare/market_sentiment_analyzer.py
+- module_path: src/zephyr/signal_ashare/sentiment/market_sentiment_analyzer.py
   module_id: MOD-SIG-025
   node_id: A3
   name_zh: ③ 赚钱效应与市场士气评估
   name_en: evaluate_profit_effect + evaluate_morale
   plain_zh: 用上涨占比分别评估赚钱强不强和散户跟随士气
-- module_path: src/zephyr/signal_ashare/market_sentiment_analyzer.py
+- module_path: src/zephyr/signal_ashare/sentiment/market_sentiment_analyzer.py
   module_id: MOD-SIG-025
   node_id: A4
   name_zh: ④ 次日回调风险预警
   name_en: warn_next_day_risk
   plain_zh: 指数涨但个股跌占比高→预警次日回调
-- module_path: src/zephyr/signal_ashare/market_sentiment_analyzer.py
+- module_path: src/zephyr/signal_ashare/sentiment/market_sentiment_analyzer.py
   module_id: MOD-SIG-025
   node_id: A5
   name_zh: ⑤ 封板率分档与昨日涨停追踪
   name_en: analyze_seal_rate + track_yesterday_limit_up
   plain_zh: 封板率分好中差 昨日涨停股今日均收益>3%好 <-2%差
-- module_path: src/zephyr/signal_ashare/market_sentiment_analyzer.py
+- module_path: src/zephyr/signal_ashare/sentiment/market_sentiment_analyzer.py
   module_id: MOD-SIG-025
   node_id: A6
   name_zh: ⑥ 综合评分与情绪阶段定位
   name_en: analyze + _determine_phase
   plain_zh: 6维分数加权成综合情绪分 再定位5档情绪阶段
-- module_path: src/zephyr/signal_ashare/youzi_relay_emotion_engine.py
+- module_path: src/zephyr/signal_ashare/limit_up/youzi_relay_emotion_engine.py
   module_id: MOD-SIG-033
   node_id: A1
   name_zh: ① 6因子评分求和
   name_en: YouziRelayEmotionEngine.analyze（评分段）
   plain_zh: 6个因子得分加总封顶100，得综合情绪评分
-- module_path: src/zephyr/signal_ashare/youzi_relay_emotion_engine.py
+- module_path: src/zephyr/signal_ashare/limit_up/youzi_relay_emotion_engine.py
   module_id: MOD-SIG-033
   node_id: A2
   name_zh: ② 情绪周期4+1阶段定位
   name_en: determine_emotion_phase
   plain_zh: 按评分分段定情绪阶段，再用市场广度/断板检测退潮
-- module_path: src/zephyr/signal_ashare/youzi_relay_emotion_engine.py
+- module_path: src/zephyr/signal_ashare/limit_up/youzi_relay_emotion_engine.py
   module_id: MOD-SIG-033
   node_id: A3
   name_zh: ③ 阶段策略映射
   name_en: map_strategy
   plain_zh: 每个情绪阶段对应一条操作建议
-- module_path: src/zephyr/signal_ashare/youzi_relay_emotion_engine.py
+- module_path: src/zephyr/signal_ashare/limit_up/youzi_relay_emotion_engine.py
   module_id: MOD-SIG-033
   node_id: A4
   name_zh: ④ 输入校验与降级路径
@@ -57938,31 +57938,31 @@ algo_submodules:
   name_zh: ① 空API占位包契约
   name_en: __all__ empty list
   plain_zh: A股信号域对外API层的占位包 当前不导出任何符号
-- module_path: src/zephyr/signal_ashare/short_term_stock_selector.py
+- module_path: src/zephyr/signal_ashare/screening/short_term_stock_selector.py
   module_id: MOD-SIG-023
   node_id: A1
   name_zh: ① 机构选股评分器
   name_en: score_institutional
   plain_zh: 目标价空间40%+基本面30%+技术趋势20%+流动性10%加权出机构评分
-- module_path: src/zephyr/signal_ashare/short_term_stock_selector.py
+- module_path: src/zephyr/signal_ashare/screening/short_term_stock_selector.py
   module_id: MOD-SIG-023
   node_id: A2
   name_zh: ② 强庄股识别器
   name_en: identify_strong_stock
   plain_zh: 走势独立+换手率异常+盘口神秘大单三条件累积分判强庄股
-- module_path: src/zephyr/signal_ashare/short_term_stock_selector.py
+- module_path: src/zephyr/signal_ashare/screening/short_term_stock_selector.py
   module_id: MOD-SIG-023
   node_id: A3
   name_zh: ③ 连板潜力评分卡
   name_en: score_limitup_potential
   plain_zh: 7维100分评分卡衡量连板接力潜力
-- module_path: src/zephyr/signal_ashare/short_term_stock_selector.py
+- module_path: src/zephyr/signal_ashare/screening/short_term_stock_selector.py
   module_id: MOD-SIG-023
   node_id: A4
   name_zh: ④ 连板分歧程度评估器
   name_en: evaluate_divergence
   plain_zh: 按开板次数判断分歧度，分歧越高走势越不确定
-- module_path: src/zephyr/signal_ashare/short_term_stock_selector.py
+- module_path: src/zephyr/signal_ashare/screening/short_term_stock_selector.py
   module_id: MOD-SIG-023
   node_id: A5
   name_zh: ⑤ 综合评分与推荐

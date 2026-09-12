@@ -13,7 +13,7 @@ from __future__ import annotations
 import numpy as np
 import pytest
 
-from zephyr.signal_ashare.adaptive_conformal_tcp_rm_ddci import (
+from zephyr.signal_ashare.ml_forecast.adaptive_conformal_tcp_rm_ddci import (
     AdaptiveConformalTcpRmDdci,
 )
 

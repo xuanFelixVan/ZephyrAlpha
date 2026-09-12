@@ -37,7 +37,7 @@ from zephyr.signal_ashare.position_sector_context import (
     PositionHoldingInput,
     query_position_sector_context,
 )
-from zephyr.signal_ashare.sector_leader import (
+from zephyr.signal_ashare.sector.sector_leader import (
     ROLE_BACKBONE,
     ROLE_LEADER,
     SectorLeaderBoard,

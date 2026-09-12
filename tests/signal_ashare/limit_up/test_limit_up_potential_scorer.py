@@ -32,7 +32,7 @@ import math
 
 import pytest
 
-from zephyr.signal_ashare.limit_up_potential_scorer import (
+from zephyr.signal_ashare.limit_up.limit_up_potential_scorer import (
     EMPIRICAL_WEIGHTS,
     LIMIT_UP_FACTOR_NAMES,
     FactorEvidence,

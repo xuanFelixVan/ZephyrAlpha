@@ -58,7 +58,7 @@ from zephyr.reporting.prediction_log_writer import (
     ensure_prediction_log_table,
     query_predictions,
 )
-from zephyr.signal_ashare.next_day_8state_forecast import NextDayForecast, NextDayState
+from zephyr.signal_ashare.ml_forecast.next_day_8state_forecast import NextDayForecast, NextDayState
 
 TRADE_DATE = "2026-08-21"
 _WEIGHTS = {

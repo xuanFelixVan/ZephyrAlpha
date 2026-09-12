@@ -1,7 +1,7 @@
 # [BLUEPRINT] MOD-REGIME-008 | 待统筹登记（supplement：GAP-F-10 四指数分市场分析组合卡；主号=四指数 regime 面板）
 # [MODULE] tests.regime.test_index_market_brief
 # [DOMAIN] D_REGIME
-# [DEPENDENCIES] zephyr.regime.index_market_brief; zephyr.signal_ashare.next_day_8state_forecast
+# [DEPENDENCIES] zephyr.regime.index_market_brief; zephyr.signal_ashare.ml_forecast.next_day_8state_forecast
 # [CONSUMERS] none
 # [STARTUP] pytest
 # [MATURITY] testing
@@ -34,7 +34,7 @@ from zephyr.regime.index_market_brief import (
     IndexBriefConfig,
     build_index_market_brief,
 )
-from zephyr.signal_ashare.next_day_8state_forecast import DailyBar
+from zephyr.signal_ashare.ml_forecast.next_day_8state_forecast import DailyBar
 
 
 class _FakeRegimeCard:

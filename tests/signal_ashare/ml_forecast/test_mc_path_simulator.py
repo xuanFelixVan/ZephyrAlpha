@@ -29,7 +29,7 @@ import json
 import numpy as np
 import pytest
 
-from zephyr.signal_ashare.mc_path_simulator import (
+from zephyr.signal_ashare.ml_forecast.mc_path_simulator import (
     METHOD_BOOTSTRAP,
     METHOD_GBM,
     MCSimConfig,

@@ -9,7 +9,7 @@
 # sector_attribute_mapping.yaml — 板块属性标注规则库（进攻/防御/平衡 三分类静态映射真源）
 #
 # 用途：板块页 Top10「属性」列与下游策略语境（GAP-F-18）；由
-# zephyr.signal_ashare.sector_attribute_rules 消费（load_attribute_mapping）。
+# zephyr.signal_ashare.sector.sector_attribute_rules 消费（load_attribute_mapping）。
 #
 # 与 config/sector_attribute_labels.yaml 的边界（防双轨）：
 #   - sector_attribute_labels.yaml = 攻/防「两族」清单，专供 MOD-SIG-060 相对强度

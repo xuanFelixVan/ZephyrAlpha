@@ -1,7 +1,7 @@
 # [BLUEPRINT] MOD-SIG-077 | 待统筹登记（blueprint 未建，真源=缺口总账 GAP-F-18 行）
 # [MODULE] tests.signal_ashare.test_sector_attribute_rules
 # [DOMAIN] D_ASHARE_SIGNAL
-# [DEPENDENCIES] zephyr.signal_ashare.sector_attribute_rules
+# [DEPENDENCIES] zephyr.signal_ashare.sector.sector_attribute_rules
 # [CONSUMERS] none
 # [STARTUP] pytest
 # [MATURITY] testing
@@ -30,7 +30,7 @@ from pathlib import Path
 
 import pytest
 
-from zephyr.signal_ashare.sector_attribute_rules import (
+from zephyr.signal_ashare.sector.sector_attribute_rules import (
     ATTR_BALANCED,
     ATTR_DEFENSIVE,
     ATTR_OFFENSIVE,

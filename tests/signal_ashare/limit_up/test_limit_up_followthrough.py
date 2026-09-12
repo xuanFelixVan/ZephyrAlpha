@@ -1,7 +1,7 @@
 # [BLUEPRINT] MOD-SIG-078 | 待统筹登记（blueprint 未建，真源=缺口总账 GAP-F-19 行）
 # [MODULE] tests.signal_ashare.test_limit_up_followthrough
 # [DOMAIN] D_ASHARE_SIGNAL
-# [DEPENDENCIES] zephyr.signal_ashare.limit_up_followthrough
+# [DEPENDENCIES] zephyr.signal_ashare.limit_up.limit_up_followthrough
 # [CONSUMERS] none
 # [STARTUP] pytest
 # [MATURITY] testing
@@ -29,7 +29,7 @@ from dataclasses import asdict
 
 import pytest
 
-from zephyr.signal_ashare.limit_up_followthrough import (
+from zephyr.signal_ashare.limit_up.limit_up_followthrough import (
     FollowthroughConfig,
     PoolStock,
     compute_followthrough_stats,
@@ -293,7 +293,7 @@ def test_run_leg_failure_degrades_independently() -> None:
 
 
 def test_run_no_client_degraded(monkeypatch: pytest.MonkeyPatch) -> None:
-    monkeypatch.setattr("zephyr.signal_ashare.limit_up_followthrough._default_client", lambda: None)
+    monkeypatch.setattr("zephyr.signal_ashare.limit_up.limit_up_followthrough._default_client", lambda: None)
     rep = run_limit_up_followthrough(
         trade_date="2026-08-21",
         prev_trade_date="2026-08-20",

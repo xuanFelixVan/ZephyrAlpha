@@ -1,7 +1,7 @@
 # [BLUEPRINT] MOD-L08-001 | docs/03_modules/_domain_frontend/blueprint.md
 # [MODULE] zephyr.frontend.services.dashboard_feeds
 # [DOMAIN] D_FRONTEND
-# [DEPENDENCIES] zephyr.signal_ashare.intraday_buy_sell_point_analyzer; zephyr.position.core.t1_sellable/position_state_machine/drawdown_controller/calendar_position_constraint; zephyr.risk.core.stress_test_engine/liquidity_monitor/tail_risk_monitor; zephyr.shared.foundation.errors; numpy; pandas; zephyr.position.core.calendar_position_constraint; zephyr.position.core.drawdown_controller; zephyr.position.core.position_state_machine; zephyr.risk.core.liquidity_monitor; zephyr.risk.core.tail_risk_monitor
+# [DEPENDENCIES] zephyr.signal_ashare.intraday_t0.intraday_buy_sell_point_analyzer; zephyr.position.core.t1_sellable/position_state_machine/drawdown_controller/calendar_position_constraint; zephyr.risk.core.stress_test_engine/liquidity_monitor/tail_risk_monitor; zephyr.shared.foundation.errors; numpy; pandas; zephyr.position.core.calendar_position_constraint; zephyr.position.core.drawdown_controller; zephyr.position.core.position_state_machine; zephyr.risk.core.liquidity_monitor; zephyr.risk.core.tail_risk_monitor
 # [CONSUMERS] 前端 dashboard 各页（作战室 W5/持仓监控/T分析/盘后复盘/盘中实时风控区）
 # [STARTUP] imported
 # [MATURITY] production
@@ -68,7 +68,7 @@ from zephyr.risk.core.liquidity_monitor import LiquidityMonitor
 from zephyr.risk.core.stress_test_engine import HISTORICAL_SCENARIOS, StressTestEngine
 from zephyr.risk.core.tail_risk_monitor import TailRiskMonitor
 from zephyr.shared.foundation.errors import ZephyrBaseError
-from zephyr.signal_ashare.intraday_buy_sell_point_analyzer import (
+from zephyr.signal_ashare.intraday_t0.intraday_buy_sell_point_analyzer import (
     IntradayBuySellAnalyzer,
     IntradayBuySellInput,
 )

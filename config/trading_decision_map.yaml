@@ -207,7 +207,7 @@ nodes:
   #  零件 next_day_8state_forecast/similar_day_inference/brier_calibration 全在，
   #  缺盘中滚动组合器=施工清单 C13 待建，本节点先以红节点入图占位）
   - node_id: TDM-E-L0-04
-    note_confirmed: 2026-09-12
+    note_confirmed: 2026-09-13
     name_zh: 明日情绪盘中滚动预测
     market: cn_a
     flow: entry_flow
@@ -281,7 +281,7 @@ nodes:
     strategy_mounts: []
 
   - node_id: TDM-E-L1-S2
-    note_confirmed: 2026-09-12
+    note_confirmed: 2026-09-13
     name_zh: 市场内部结构传感器
     market: cn_a
     flow: entry_flow
@@ -295,14 +295,14 @@ nodes:
     factor_refs: []
     # 增长批2（night-pathfinding-2300）：补分钟级宽度快照（MOD-DATA-062 采集器 production 在产）；连板梯队明细表待 DDL 建表（GAP-F-13，limit_up_pool_collector testing）=DATA-GAP 挂账
     data_refs: [DS-082, DS-108]
-    module_ref: src/zephyr/signal_ashare/limit_up_followthrough.py
+    module_ref: src/zephyr/signal_ashare/limit_up/limit_up_followthrough.py
     module_id: MOD-SIG-078
     algo_refs: [DAL-BREADTH-SCORE]
     strategy_mounts: []
 
   - node_id: TDM-E-L1-S3
 
-    note_confirmed: 2026-09-12
+    note_confirmed: 2026-09-13
     name_zh: 赚钱效应传感器
     market: cn_a
     flow: entry_flow
@@ -315,7 +315,7 @@ nodes:
       这是短线最领先的指标——打板资金赚不赚钱直接决定明天还敢不敢接。
     factor_refs: []
     data_refs: [DS-082, DS-107]
-    module_ref: src/zephyr/signal_ashare/lhb_premium_analyzer.py
+    module_ref: src/zephyr/signal_ashare/limit_up/lhb_premium_analyzer.py
     module_id: MOD-SIG-057
     strategy_mounts: []
 
@@ -462,7 +462,7 @@ nodes:
   # ── 树枝01 板块强度综合（22号 §3.1①⑧⑨）────────────────────────
   - node_id: TDM-E-L2-01
     name_zh: 板块强度综合
-    note_confirmed: 2026-09-12
+    note_confirmed: 2026-09-13
     market: cn_a
     flow: entry_flow
     layer: L2
@@ -487,7 +487,7 @@ nodes:
 
   - node_id: TDM-E-L2-01-1
 
-    note_confirmed: 2026-09-12
+    note_confirmed: 2026-09-13
     name_zh: 结构强度评估
     market: cn_a
     flow: entry_flow
@@ -501,7 +501,7 @@ nodes:
     parent_node: TDM-E-L2-01
     factor_refs: [FCT-MOM-011, FCT-SENT-012]
     data_refs: [DS-059]
-    module_ref: src/zephyr/signal_ashare/sector_analyzer.py
+    module_ref: src/zephyr/signal_ashare/sector/sector_analyzer.py
     module_id: MOD-SIG-026
     algo_refs: []
     doc_ref: "docs/02_enterprise_architecture/07_trading_decision_architecture/design_memos/22_sector_rotation_spec.md#§3.1①"
@@ -538,7 +538,7 @@ nodes:
 
   - node_id: TDM-E-L2-01-3
 
-    note_confirmed: 2026-09-12
+    note_confirmed: 2026-09-13
     name_zh: 多周期动量加权
     market: cn_a
     flow: entry_flow
@@ -552,7 +552,7 @@ nodes:
     parent_node: TDM-E-L2-01
     factor_refs: []
     data_refs: [DS-170]
-    module_ref: src/zephyr/signal_ashare/sector_momentum.py
+    module_ref: src/zephyr/signal_ashare/sector/sector_momentum.py
     module_id: MOD-SIG-026
     algo_refs: []
     doc_ref: "docs/02_enterprise_architecture/07_trading_decision_architecture/design_memos/22_sector_rotation_spec.md#§3.1⑧"
@@ -564,7 +564,7 @@ nodes:
 
   - node_id: TDM-E-L2-01-4
 
-    note_confirmed: 2026-09-12
+    note_confirmed: 2026-09-13
     name_zh: 板块资金流聚合
     market: cn_a
     flow: entry_flow
@@ -578,7 +578,7 @@ nodes:
     parent_node: TDM-E-L2-01
     factor_refs: [FCT-LIQ-040, FCT-MOM-021]
     data_refs: [DS-181, DS-186]
-    module_ref: src/zephyr/signal_ashare/sector_breadth.py
+    module_ref: src/zephyr/signal_ashare/sector/sector_breadth.py
     module_id: MOD-SIG-026
     algo_refs: []
     doc_ref: "docs/02_enterprise_architecture/07_trading_decision_architecture/design_memos/22_sector_rotation_spec.md#§3.1⑥"
@@ -590,6 +590,7 @@ nodes:
       - {strategy_ref: STR-DABAN-002, confidence: proposed, evidence: null}
 
   - node_id: TDM-E-L2-01-5
+    note_confirmed: 2026-09-13
     name_zh: 市场级调节注入
     market: cn_a
     flow: entry_flow
@@ -615,7 +616,7 @@ nodes:
 
   # ── 树枝02 轮动序列追踪（BM-SEL-08）────────────────────────
   - node_id: TDM-E-L2-02
-    note_confirmed: 2026-09-12
+    note_confirmed: 2026-09-13
     name_zh: 轮动序列追踪
     market: cn_a
     flow: entry_flow
@@ -629,7 +630,7 @@ nodes:
     parent_node: TDM-E-L2
     factor_refs: []
     data_refs: [DS-170]
-    module_ref: src/zephyr/signal_ashare/sector_divergence.py
+    module_ref: src/zephyr/signal_ashare/sector/sector_divergence.py
     module_id: MOD-SIG-060
     algo_refs: []
     doc_ref: "docs/02_enterprise_architecture/07_trading_decision_architecture/design_memos/22_sector_rotation_spec.md#§3.1④"
@@ -642,7 +643,7 @@ nodes:
 
   - node_id: TDM-E-L2-02-1
 
-    note_confirmed: 2026-09-12
+    note_confirmed: 2026-09-13
     name_zh: RRG 轮动序列
     market: cn_a
     flow: entry_flow
@@ -656,7 +657,7 @@ nodes:
     parent_node: TDM-E-L2-02
     factor_refs: []
     data_refs: [DS-170]
-    module_ref: src/zephyr/signal_ashare/sector_rrg.py
+    module_ref: src/zephyr/signal_ashare/sector/sector_rrg.py
     module_id: MOD-SIG-026
     algo_refs: [DAL-RRG-SEQ]
     doc_ref: "docs/02_enterprise_architecture/07_trading_decision_architecture/design_memos/22_sector_rotation_spec.md#§3.1④"
@@ -668,7 +669,7 @@ nodes:
 
   - node_id: TDM-E-L2-02-2
 
-    note_confirmed: 2026-09-12
+    note_confirmed: 2026-09-13
     name_zh: 单板块轮动预警
     market: cn_a
     flow: entry_flow
@@ -682,7 +683,7 @@ nodes:
     parent_node: TDM-E-L2-02
     factor_refs: []
     data_refs: [DS-059]
-    module_ref: src/zephyr/signal_ashare/sector_analyzer.py
+    module_ref: src/zephyr/signal_ashare/sector/sector_analyzer.py
     module_id: MOD-SIG-026
     algo_refs: []
     doc_ref: "docs/02_enterprise_architecture/07_trading_decision_architecture/design_memos/22_sector_rotation_spec.md#§3.1④"
@@ -694,7 +695,7 @@ nodes:
 
   # ── 树枝03 调整周期进度（BM-SEL-09）────────────────────────
   - node_id: TDM-E-L2-03
-    note_confirmed: 2026-09-12
+    note_confirmed: 2026-09-13
     name_zh: 调整周期进度
     market: cn_a
     flow: entry_flow
@@ -708,7 +709,7 @@ nodes:
     parent_node: TDM-E-L2
     factor_refs: []
     data_refs: [DS-170]
-    module_ref: src/zephyr/signal_ashare/sector_adjustment.py
+    module_ref: src/zephyr/signal_ashare/sector/sector_adjustment.py
     module_id: MOD-SIG-040
     algo_refs: []
     doc_ref: "docs/02_enterprise_architecture/07_trading_decision_architecture/design_memos/22_sector_rotation_spec.md#§3.1③"
@@ -719,6 +720,7 @@ nodes:
     strategy_mounts: []
 
   - node_id: TDM-E-L2-03-1
+    note_confirmed: 2026-09-13
     name_zh: 扩散指标进度追踪
     # C6 施工（gw-tdm-20260909）：adjustment_cycle_tracker 扩展扩散指标段
     market: cn_a
@@ -743,12 +745,11 @@ nodes:
     ai_autonomy: auto
     fallback: 扩散指标滞后（震荡/快轮动期）→以 RRG 序列交叉验证（22号声明分工）
     strategy_mounts: []
-    note_confirmed: "2026-09-10"
 
   # ── 树枝04 板块级市场状态 ────────────────────────
   - node_id: TDM-E-L2-04
     name_zh: 板块级市场状态
-    note_confirmed: 2026-09-12
+    note_confirmed: 2026-09-13
     market: cn_a
     flow: entry_flow
     layer: L2
@@ -773,7 +774,7 @@ nodes:
 
   - node_id: TDM-E-L2-04-1
 
-    note_confirmed: 2026-09-12
+    note_confirmed: 2026-09-13
     name_zh: 轮动状态五分类
     market: cn_a
     flow: entry_flow
@@ -786,7 +787,7 @@ nodes:
     parent_node: TDM-E-L2-04
     factor_refs: []
     data_refs: [DS-059, DS-170]
-    module_ref: src/zephyr/signal_ashare/sector_rotation_state.py
+    module_ref: src/zephyr/signal_ashare/sector/sector_rotation_state.py
     module_id: MOD-SIG-026
     algo_refs: []
     doc_ref: "docs/02_enterprise_architecture/07_trading_decision_architecture/design_memos/22_sector_rotation_spec.md#§3.1⑨"
@@ -798,7 +799,7 @@ nodes:
 
   - node_id: TDM-E-L2-04-2
 
-    note_confirmed: 2026-09-12
+    note_confirmed: 2026-09-13
     name_zh: 虹吸态识别
     market: cn_a
     flow: entry_flow
@@ -812,7 +813,7 @@ nodes:
     parent_node: TDM-E-L2-04
     factor_refs: []
     data_refs: [DS-059, DS-181]
-    module_ref: src/zephyr/signal_ashare/sector_siphon.py
+    module_ref: src/zephyr/signal_ashare/sector/sector_siphon.py
     module_id: MOD-SIG-026
     algo_refs: [DAL-SIPHON-ID]
     doc_ref: "docs/02_enterprise_architecture/07_trading_decision_architecture/design_memos/22_sector_rotation_spec.md#§3.1⑤"
@@ -848,7 +849,7 @@ nodes:
     strategy_mounts: []
 
   - node_id: TDM-E-L2-05-1
-    note_confirmed: 2026-09-12
+    note_confirmed: 2026-09-13
     name_zh: 水温档推导
     market: cn_a
     flow: entry_flow
@@ -862,7 +863,7 @@ nodes:
     parent_node: TDM-E-L2-05
     factor_refs: []
     data_refs: [DS-150, DS-082, DS-059]
-    module_ref: src/zephyr/signal_ashare/sentiment_cycle.py
+    module_ref: src/zephyr/signal_ashare/sentiment/sentiment_cycle.py
     module_id: MOD-SIG-140
     algo_refs: []
     doc_ref: "docs/02_enterprise_architecture/07_trading_decision_architecture/design_memos/22_sector_rotation_spec.md#§3.1⑪"
@@ -875,7 +876,7 @@ nodes:
 
   - node_id: TDM-E-L2-05-2
 
-    note_confirmed: 2026-09-12
+    note_confirmed: 2026-09-13
     name_zh: 信号响应三件套
     market: cn_a
     flow: entry_flow
@@ -889,7 +890,7 @@ nodes:
     parent_node: TDM-E-L2-05
     factor_refs: []
     data_refs: []
-    module_ref: src/zephyr/signal_ashare/sector_gate.py
+    module_ref: src/zephyr/signal_ashare/sector/sector_gate.py
     module_id: MOD-SIG-026
     algo_refs: []
     doc_ref: "docs/02_enterprise_architecture/07_trading_decision_architecture/design_memos/22_sector_rotation_spec.md#§3.1⑪"
@@ -901,7 +902,7 @@ nodes:
 
   # ── 树枝06 板块→个股传导 ────────────────────────
   - node_id: TDM-E-L2-06
-    note_confirmed: 2026-09-12
+    note_confirmed: 2026-09-13
     name_zh: 板块个股传导
     market: cn_a
     flow: entry_flow
@@ -927,7 +928,7 @@ nodes:
 
   - node_id: TDM-E-L2-06-1
 
-    note_confirmed: 2026-09-12
+    note_confirmed: 2026-09-13
     name_zh: 三级放行门槛
     market: cn_a
     flow: entry_flow
@@ -941,7 +942,7 @@ nodes:
     parent_node: TDM-E-L2-06
     factor_refs: []
     data_refs: [DS-059]
-    module_ref: src/zephyr/signal_ashare/sector_gate.py
+    module_ref: src/zephyr/signal_ashare/sector/sector_gate.py
     module_id: MOD-SIG-026
     algo_refs: []
     doc_ref: "docs/02_enterprise_architecture/07_trading_decision_architecture/design_memos/22_sector_rotation_spec.md#§3.1⑩"
@@ -953,7 +954,7 @@ nodes:
 
   - node_id: TDM-E-L2-06-2
 
-    note_confirmed: 2026-09-12
+    note_confirmed: 2026-09-13
     name_zh: 龙头识别定位
     market: cn_a
     flow: entry_flow
@@ -967,7 +968,7 @@ nodes:
     parent_node: TDM-E-L2-06
     factor_refs: []
     data_refs: [DS-059]
-    module_ref: src/zephyr/signal_ashare/sector_leader.py
+    module_ref: src/zephyr/signal_ashare/sector/sector_leader.py
     module_id: MOD-SIG-062
     algo_refs: []
     doc_ref: "docs/02_enterprise_architecture/07_trading_decision_architecture/design_memos/22_sector_rotation_spec.md#§3.1⑦"
@@ -979,6 +980,7 @@ nodes:
     strategy_mounts: []
 
   - node_id: TDM-E-L2-06-3
+    note_confirmed: 2026-09-13
 
     name_zh: 强度加权传导
     # C5 施工（gw-tdm-20260909）：MOD-SIG-136 落码，module_ref 由 sector_attribute_rules 改指传导系数核
@@ -996,7 +998,6 @@ nodes:
     data_refs: [DS-059]
     module_ref: src/zephyr/signal_ashare/core/sector_conduction.py
     module_id: MOD-SIG-136
-    note_confirmed: 2026-09-12
     algo_refs: []
     doc_ref: "docs/02_enterprise_architecture/07_trading_decision_architecture/design_memos/22_sector_rotation_spec.md#§3.1⑦"
     activation: postmarket
@@ -1007,7 +1008,7 @@ nodes:
 
   # ── 树枝07 回踩质量分级（BM-BUY-04 消费）───────────────────
   - node_id: TDM-E-L2-07
-    note_confirmed: 2026-09-12
+    note_confirmed: 2026-09-13
     name_zh: 回踩质量分级
     market: cn_a
     flow: entry_flow
@@ -1022,7 +1023,7 @@ nodes:
     parent_node: TDM-E-L2
     factor_refs: []
     data_refs: [DS-170]
-    module_ref: src/zephyr/signal_ashare/sector_pullback.py
+    module_ref: src/zephyr/signal_ashare/sector/sector_pullback.py
     module_id: MOD-SIG-026
     algo_refs: []
     doc_ref: "docs/02_enterprise_architecture/07_trading_decision_architecture/design_memos/22_sector_rotation_spec.md#§3.1②"
@@ -1034,7 +1035,7 @@ nodes:
 
   - node_id: TDM-E-L2-07-1
 
-    note_confirmed: 2026-09-12
+    note_confirmed: 2026-09-13
     name_zh: 回踩ABC判定
     market: cn_a
     flow: entry_flow
@@ -1048,7 +1049,7 @@ nodes:
     parent_node: TDM-E-L2-07
     factor_refs: []
     data_refs: [DS-170]
-    module_ref: src/zephyr/signal_ashare/sector_pullback.py
+    module_ref: src/zephyr/signal_ashare/sector/sector_pullback.py
     module_id: MOD-SIG-026
     algo_refs: [DAL-PULLBACK-ABC]
     doc_ref: "docs/02_enterprise_architecture/07_trading_decision_architecture/design_memos/22_sector_rotation_spec.md#§3.1②"
@@ -1062,7 +1063,7 @@ nodes:
   # 08 板块个体生命周期——STR-MOMTREND-003 启动/熄火条件库（科技熄火四信号/机器人启动三要素/
   #   消费启动三条件）上挂；与 02 RRG（板块间时序）分工：08 管单板块自身走到哪一段
   - node_id: TDM-E-L2-08
-    note_confirmed: 2026-09-12
+    note_confirmed: 2026-09-13
     name_zh: 板块生命周期判定
     market: cn_a
     flow: entry_flow
@@ -1076,7 +1077,7 @@ nodes:
     parent_node: TDM-E-L2
     factor_refs: [FCT-MOM-005, FCT-MOM-022]
     data_refs: [DS-059, DS-170]
-    module_ref: src/zephyr/signal_ashare/sector_momentum_persistence.py
+    module_ref: src/zephyr/signal_ashare/sector/sector_momentum_persistence.py
     module_id: MOD-SIG-098
     algo_refs: []
     doc_ref: "docs/01_policies_and_standards/_registry/catalogs/strategy_registry.yaml#STR-MOMTREND-003"
@@ -1089,7 +1090,7 @@ nodes:
 
   # 09 催化剂维度——板块过滤三维度（周期契合/主题对齐/估值）中的消息面，DS-107 新闻情绪窗首次入图
   - node_id: TDM-E-L2-09
-    note_confirmed: 2026-09-12
+    note_confirmed: 2026-09-13
     name_zh: 催化剂识别
     market: cn_a
     flow: entry_flow
@@ -1104,7 +1105,7 @@ nodes:
     parent_node: TDM-E-L2
     factor_refs: []
     data_refs: [DS-107]
-    module_ref: src/zephyr/signal_ashare/event_driven_screener.py
+    module_ref: src/zephyr/signal_ashare/screening/event_driven_screener.py
     module_id: MOD-SIG-049
     algo_refs: []
     doc_ref: null
@@ -1240,6 +1241,7 @@ nodes:
       - {strategy_ref: STR-MULTIFACTOR-044, confidence: proposed, evidence: null}
 
   - node_id: TDM-E-L3-02
+    note_confirmed: 2026-09-13
     name_zh: 九阶段选票主链
     market: cn_a
     flow: entry_flow
@@ -1289,6 +1291,7 @@ nodes:
     strategy_mounts: []
 
   - node_id: TDM-E-L3-03-1
+    note_confirmed: 2026-09-13
     name_zh: 短线池5分制
     market: cn_a
     flow: entry_flow
@@ -1314,6 +1317,7 @@ nodes:
       - {strategy_ref: STR-MOMTREND-008, confidence: proposed, evidence: null}
 
   - node_id: TDM-E-L3-03-2
+    note_confirmed: 2026-09-13
     name_zh: 波段池5分制
     market: cn_a
     flow: entry_flow
@@ -1472,6 +1476,7 @@ nodes:
     strategy_mounts: []
 
   - node_id: TDM-E-L3-07-1
+    note_confirmed: 2026-09-13
     name_zh: 打板选股链
     market: cn_a
     flow: entry_flow
@@ -1688,7 +1693,7 @@ nodes:
 
   - node_id: TDM-E-L3-11-2
 
-    note_confirmed: 2026-09-12
+    note_confirmed: 2026-09-13
     name_zh: 盘中涨速异动扫描
     market: cn_a
     flow: entry_flow
@@ -1702,7 +1707,7 @@ nodes:
     parent_node: TDM-E-L3-11
     factor_refs: [FCT-MOM-030]
     data_refs: [DS-150, DS-082]
-    module_ref: src/zephyr/signal_ashare/intraday_volume_orderflow.py
+    module_ref: src/zephyr/signal_ashare/intraday_t0/intraday_volume_orderflow.py
     module_id: MOD-SIG-093
     algo_refs: []
     doc_ref: null
@@ -1738,6 +1743,7 @@ nodes:
     strategy_mounts: []
 
   - node_id: TDM-E-L3-12-1
+    note_confirmed: 2026-09-13
     name_zh: 个股资金面分析
     market: cn_a
     flow: entry_flow
@@ -1763,7 +1769,7 @@ nodes:
 
   - node_id: TDM-E-L3-12-2
 
-    note_confirmed: 2026-09-12
+    note_confirmed: 2026-09-13
     name_zh: 龙虎榜席位追踪
     market: cn_a
     flow: entry_flow
@@ -1778,7 +1784,7 @@ nodes:
     factor_refs: []
     seat_refs: [SEAT-INST-001, SEAT-INST-002, SEAT-INST-003, SEAT-YOUZI-001, SEAT-YOUZI-002, SEAT-YOUZI-003]
     data_refs: []
-    module_ref: src/zephyr/signal_ashare/seat_pattern_analyzer.py
+    module_ref: src/zephyr/signal_ashare/limit_up/seat_pattern_analyzer.py
     module_id: MOD-SIG-056
     algo_refs: []
     model_refs: [ML-CLS-002]
@@ -2506,7 +2512,7 @@ nodes:
 
   - node_id: TDM-P-P2-03
 
-    note_confirmed: 2026-09-12
+    note_confirmed: 2026-09-13
     name_zh: 做T闭环与成功判定
     market: cn_a
     flow: position_flow
@@ -2522,7 +2528,7 @@ nodes:
     factor_refs: []
     cost_model_refs: [CST-T0-001]
     data_refs: []
-    module_ref: src/zephyr/signal_ashare/t0_trading_pipeline.py
+    module_ref: src/zephyr/signal_ashare/intraday_t0/t0_trading_pipeline.py
     module_id: MOD-SIG-090
     algo_refs: [DAL-T0-CLOSE]
     doc_ref: null

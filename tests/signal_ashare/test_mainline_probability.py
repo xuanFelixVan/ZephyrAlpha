@@ -43,7 +43,7 @@ from zephyr.signal_ashare.mainline_probability import (
     score_rrg_quadrant,
     score_sector_mainline,
 )
-from zephyr.signal_ashare.sector_leader import (
+from zephyr.signal_ashare.sector.sector_leader import (
     ROLE_BACKBONE,
     ROLE_FOLLOWER,
     ROLE_LEADER,

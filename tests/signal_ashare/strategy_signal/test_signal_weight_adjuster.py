@@ -2,7 +2,7 @@
 # [TTL] permanent
 # [A_test] module_id: MOD-SIG-131 | layer=test | stability=volatile | safety=M | ai_autonomy=human_gated
 # [MODULE] tests.signal_ashare.test_signal_weight_adjuster
-# [TESTS] src/zephyr/signal_ashare/signal_weight_adjuster.py
+# [TESTS] src/zephyr/signal_ashare/strategy_signal/signal_weight_adjuster.py
 """MOD-SIG-131 单元测试：signal_weight_adjuster 信号权重调节器。
 
 蓝图验收（B11-02593/CAND-TESTB-054，A7 技能signal-weight-adjust）：
@@ -18,11 +18,11 @@ import datetime
 import pytest
 
 pytest.importorskip(
-    "zephyr.signal_ashare.signal_weight_adjuster",
+    "zephyr.signal_ashare.strategy_signal.signal_weight_adjuster",
     reason="signal_weight_adjuster not importable",
 )
 
-from zephyr.signal_ashare.signal_weight_adjuster import (  # noqa: E402
+from zephyr.signal_ashare.strategy_signal.signal_weight_adjuster import (  # noqa: E402
     MetricSample,
     RollingMetrics,
     SignalWeightAdjuster,

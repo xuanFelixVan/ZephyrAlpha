@@ -1,7 +1,7 @@
 # [BLUEPRINT] MOD-L05-001 | docs/03_modules/_domain_portfolio_core/blueprint.md
 # [MODULE] zephyr.pf_core.strategies.daban_sleeve_strategy
 # [DOMAIN] D_PF_CORE
-# [DEPENDENCIES] zephyr.governance.strategies.strategy_base; zephyr.shared.contracts.selection_result; zephyr.signal_ashare.short_term_stock_selector; zephyr.signal_ashare.youzi_relay_emotion_engine; zephyr.signal_ashare.quant_short_term_strength_engine; zephyr.signal_ashare.dual_engine_fusion_decision_engine
+# [DEPENDENCIES] zephyr.governance.strategies.strategy_base; zephyr.shared.contracts.selection_result; zephyr.signal_ashare.screening.short_term_stock_selector; zephyr.signal_ashare.limit_up.youzi_relay_emotion_engine; zephyr.signal_ashare.quant_short_term_strength_engine; zephyr.signal_ashare.strategy_signal.dual_engine_fusion_decision_engine
 # [CONSUMERS] zephyr.pf_core.strategies（lazy re-export）
 # [STARTUP] imported
 # [MATURITY] testing
@@ -97,7 +97,7 @@ from zephyr.shared.contracts.selection_result import (
     SignalInput,
     TargetPosition,
 )
-from zephyr.signal_ashare.dual_engine_fusion_decision_engine import (
+from zephyr.signal_ashare.strategy_signal.dual_engine_fusion_decision_engine import (
     DualEngineFusionDecisionEngine,
     FusionDecisionInput,
 )
@@ -105,11 +105,11 @@ from zephyr.signal_ashare.quant_short_term_strength_engine import (
     QuantShortTermStrengthEngine,
     QuantStrengthInput,
 )
-from zephyr.signal_ashare.short_term_stock_selector import (
+from zephyr.signal_ashare.screening.short_term_stock_selector import (
     ShortTermStockSelector,
     StockSelectionInput,
 )
-from zephyr.signal_ashare.youzi_relay_emotion_engine import (
+from zephyr.signal_ashare.limit_up.youzi_relay_emotion_engine import (
     YouziEmotionInput,
     YouziRelayEmotionEngine,
 )

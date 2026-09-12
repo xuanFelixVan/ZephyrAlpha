@@ -32,7 +32,7 @@ import math
 
 import pytest
 
-from zephyr.signal_ashare.limit_up_ecosystem_leadership import (
+from zephyr.signal_ashare.limit_up.limit_up_ecosystem_leadership import (
     LadderEcosystemConfig,
     LimitUpEcosystemLeadership,
     LimitUpStock,

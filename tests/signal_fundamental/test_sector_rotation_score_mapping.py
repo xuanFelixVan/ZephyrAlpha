@@ -6,7 +6,7 @@ from __future__ import annotations
 
 import pytest
 
-from zephyr.signal_ashare.sector_rrg import RRGQuadrant
+from zephyr.signal_ashare.sector.sector_rrg import RRGQuadrant
 from zephyr.signal_fundamental.sector_rotation_score_mapping import (
     PULLBACK_QUALITY_BONUS,
     SECTOR_QUADRANT_BASE,

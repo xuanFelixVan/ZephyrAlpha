@@ -31,7 +31,7 @@ import json
 import pandas as pd
 import pytest
 
-from zephyr.signal_ashare.intraday_volume_orderflow import (
+from zephyr.signal_ashare.intraday_t0.intraday_volume_orderflow import (
     IntradayOrderflowConfig,
     IntradayVolumeOrderflowAnalyzer,
 )

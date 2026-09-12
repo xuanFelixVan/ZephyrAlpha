@@ -4986,7 +4986,7 @@ chart_patterns:
     outputs: {present: bool, points: list, epa_target: float, eta_bars: int}
     subjectivity: "medium"
     timeframe: "daily"
-    module_id: "MOD-SIG-001"
+    module_id: "MOD-SIGNAL_ASHARE"
     doc_ref: "Bill Wolfe/Brian Wolfe WolfeWave + Bulkowski（2026-08-14 七轮补登）"
     code_path: ""
     used_by_factors: []
@@ -5027,7 +5027,7 @@ chart_patterns:
     outputs: {present: bool, points: list, entry_zone: list, stop_pos: int}
     subjectivity: "medium"
     timeframe: "daily"
-    module_id: "MOD-SIG-001"
+    module_id: "MOD-SIGNAL_ASHARE"
     doc_ref: "Quasimodo/Over&Under 价格行为形态（2026-08-14 七轮补登）"
     code_path: ""
     used_by_factors: []
@@ -5068,7 +5068,7 @@ chart_patterns:
     outputs: {present: bool, scallop_count: int}
     subjectivity: "medium"
     timeframe: "daily"
-    module_id: "MOD-SIG-001"
+    module_id: "MOD-SIGNAL_ASHARE"
     doc_ref: "Bulkowski《Encyclopedia of Chart Patterns》Scallop（2026-08-14 七轮补登）"
     code_path: ""
     used_by_factors: []
@@ -5109,7 +5109,7 @@ chart_patterns:
     outputs: {present: bool, scallop_count: int}
     subjectivity: "medium"
     timeframe: "daily"
-    module_id: "MOD-SIG-001"
+    module_id: "MOD-SIGNAL_ASHARE"
     doc_ref: "Bulkowski Scallop 镜像（2026-08-14 七轮补登）"
     code_path: ""
     used_by_factors: []
@@ -5150,7 +5150,7 @@ chart_patterns:
     outputs: {present: bool, peaks: list}
     subjectivity: "medium"
     timeframe: "weekly"
-    module_id: "MOD-SIG-001"
+    module_id: "MOD-SIGNAL_ASHARE"
     doc_ref: "Bulkowski Horn（2026-08-14 七轮补登）"
     code_path: ""
     used_by_factors: []
@@ -5191,7 +5191,7 @@ chart_patterns:
     outputs: {present: bool, troughs: list}
     subjectivity: "medium"
     timeframe: "weekly"
-    module_id: "MOD-SIG-001"
+    module_id: "MOD-SIGNAL_ASHARE"
     doc_ref: "Bulkowski Horn 镜像（2026-08-14 七轮补登）"
     code_path: ""
     used_by_factors: []
@@ -5232,7 +5232,7 @@ chart_patterns:
     outputs: {present: bool, pipe_pos: int}
     subjectivity: "low"
     timeframe: "weekly"
-    module_id: "MOD-SIG-001"
+    module_id: "MOD-SIGNAL_ASHARE"
     doc_ref: "Bulkowski Pipe（2026-08-14 七轮补登）"
     code_path: ""
     used_by_factors: []
@@ -5273,7 +5273,7 @@ chart_patterns:
     outputs: {present: bool, pipe_pos: int}
     subjectivity: "low"
     timeframe: "weekly"
-    module_id: "MOD-SIG-001"
+    module_id: "MOD-SIGNAL_ASHARE"
     doc_ref: "Bulkowski Pipe 镜像（与镊子底区别： 相邻宽幅钉线， 2026-08-14 七轮补登）"
     code_path: ""
     used_by_factors: []
@@ -5314,7 +5314,7 @@ chart_patterns:
     outputs: {present: bool, phase: str, break_pos: int, target: float}
     subjectivity: "medium"
     timeframe: "daily"
-    module_id: "MOD-SIG-001"
+    module_id: "MOD-SIGNAL_ASHARE"
     doc_ref: "Bulkowski BARR（2026-08-14 七轮补登）"
     code_path: ""
     used_by_factors: []
@@ -5355,7 +5355,7 @@ chart_patterns:
     outputs: {present: bool, phase: str, break_pos: int, target: float}
     subjectivity: "medium"
     timeframe: "daily"
-    module_id: "MOD-SIG-001"
+    module_id: "MOD-SIGNAL_ASHARE"
     doc_ref: "Bulkowski BARR 镜像（2026-08-14 七轮补登）"
     code_path: ""
     used_by_factors: []
@@ -5396,7 +5396,7 @@ chart_patterns:
     outputs: {present: bool, contraction_series: list, pivot_price: float}
     subjectivity: "medium"
     timeframe: "daily"
-    module_id: "MOD-SIG-001"
+    module_id: "MOD-SIGNAL_ASHARE"
     doc_ref: "Mark Minervini VCP《Trade Like a Stock Market Wizard》（2026-08-14 七轮补登）"
     code_path: ""
     used_by_factors: []
@@ -5437,7 +5437,7 @@ chart_patterns:
     outputs: {present: bool, points: list, direction: str}
     subjectivity: "medium"
     timeframe: "daily"
-    module_id: "MOD-SIG-001"
+    module_id: "MOD-SIGNAL_ASHARE"
     doc_ref: "Joe Ross 1-2-3《Trading by the Book》（2026-08-14 七轮补登）"
     code_path: ""
     used_by_factors: []
@@ -5478,7 +5478,7 @@ chart_patterns:
     outputs: {present: bool, hook_pos: int, break_confirmed: bool}
     subjectivity: "medium"
     timeframe: "daily"
-    module_id: "MOD-SIG-001"
+    module_id: "MOD-SIGNAL_ASHARE"
     doc_ref: "Joe Ross Ross Hook（2026-08-14 七轮补登）"
     code_path: ""
     used_by_factors: []
@@ -5601,7 +5601,7 @@ chart_patterns:
     outputs: {present: bool, points: list, phase: str}
     subjectivity: "high"
     timeframe: "weekly"
-    module_id: "MOD-SIG-001"
+    module_id: "MOD-SIGNAL_ASHARE"
     doc_ref: "George Lindsay 1968 三峰穹顶（低优先级候选， 2026-08-14 九轮补登）"
     code_path: ""
     used_by_factors: []
@@ -5642,7 +5642,7 @@ chart_patterns:
     outputs: {present: bool, valleys: list, confirm_price: float}
     subjectivity: "medium"
     timeframe: "daily"
-    module_id: "MOD-SIG-001"
+    module_id: "MOD-SIGNAL_ASHARE"
     doc_ref: "Bulkowski Three Rising Valleys（2026-08-14 十轮补登）"
     code_path: ""
     used_by_factors: []
@@ -5683,7 +5683,7 @@ chart_patterns:
     outputs: {present: bool, peaks: list, confirm_price: float}
     subjectivity: "medium"
     timeframe: "daily"
-    module_id: "MOD-SIG-001"
+    module_id: "MOD-SIGNAL_ASHARE"
     doc_ref: "Bulkowski Three Falling Peaks（2026-08-14 十轮补登）"
     code_path: ""
     used_by_factors: []
@@ -5724,7 +5724,7 @@ chart_patterns:
     outputs: {present: bool, w_points: list}
     subjectivity: "medium"
     timeframe: "weekly"
-    module_id: "MOD-SIG-001"
+    module_id: "MOD-SIGNAL_ASHARE"
     doc_ref: "Bulkowski Big W（2026-08-14 十轮补登）；29_factor_strategy_extraction.md §F2.17"
     code_path: ""
     used_by_factors: []
@@ -5765,7 +5765,7 @@ chart_patterns:
     outputs: {present: bool, m_points: list}
     subjectivity: "medium"
     timeframe: "weekly"
-    module_id: "MOD-SIG-001"
+    module_id: "MOD-SIGNAL_ASHARE"
     doc_ref: "Bulkowski Big M（2026-08-14 十轮补登）"
     code_path: ""
     used_by_factors: []
@@ -5806,7 +5806,7 @@ chart_patterns:
     outputs: {present: bool, gap_type: str, gap_top: float, gap_bottom: float, measured_target: float}
     subjectivity: "medium"
     timeframe: "daily"
-    module_id: "MOD-SIG-001"
+    module_id: "MOD-SIGNAL_ASHARE"
     doc_ref: "E&M/Bulkowski 缺口分类学+A股缺口理论（2026-08-14 十轮补登）"
     code_path: ""
     used_by_factors: []
@@ -5847,7 +5847,7 @@ chart_patterns:
     outputs: {present: bool, heads: int, shoulders: list, neckline: list}
     subjectivity: "high"
     timeframe: "daily"
-    module_id: "MOD-SIG-001"
+    module_id: "MOD-SIGNAL_ASHARE"
     doc_ref: "E&M/Bulkowski 复合头肩（2026-08-14 十轮补登）"
     code_path: ""
     used_by_factors: []
@@ -5888,7 +5888,7 @@ chart_patterns:
     outputs: {present: bool, pole_gain: float, flag_depth: float}
     subjectivity: "medium"
     timeframe: "weekly"
-    module_id: "MOD-SIG-001"
+    module_id: "MOD-SIGNAL_ASHARE"
     doc_ref: "William O'Neil HTF《How to Make Money in Stocks》（2026-08-14 十二轮补登）"
     code_path: ""
     used_by_factors: []
@@ -6394,7 +6394,7 @@ chart_patterns:
     outputs: {present: bool, line_13: list, line_23: list}
     subjectivity: "medium"
     timeframe: "daily"
-    module_id: "MOD-SIG-001"
+    module_id: "MOD-SIGNAL_ASHARE"
     doc_ref: "Edson Gould Speed Resistance Lines（2026-08-14 十一轮补登）"
     code_path: ""
     used_by_factors: []
@@ -6435,7 +6435,7 @@ chart_patterns:
     outputs: {present: bool, swing_dir: str, swing_points: list}
     subjectivity: "low"
     timeframe: "daily"
-    module_id: "MOD-SIG-001"
+    module_id: "MOD-SIGNAL_ASHARE"
     doc_ref: "Gann 摆动图 2-day reaction rule（2026-08-14 十二轮补登）"
     code_path: ""
     used_by_factors: []
@@ -6565,7 +6565,7 @@ chart_patterns:
     timeframe: "intraday"
     module_id: "MOD-SIG-024"
     doc_ref: "intraday_buy_sell_point_analyzer.py §INTRADAY_BREAKOUT"
-    code_path: "src/zephyr/signal_ashare/intraday_buy_sell_point_analyzer.py"
+    code_path: "src/zephyr/signal_ashare/intraday_t0/intraday_buy_sell_point_analyzer.py"
     used_by_factors: []
     variant_of: null
     status: "active"
@@ -6813,7 +6813,7 @@ chart_patterns:
     outputs: {present: bool, mml_levels: dict, current_octave: int}
     subjectivity: "medium"
     timeframe: "daily"
-    module_id: "MOD-SIG-001"
+    module_id: "MOD-SIGNAL_ASHARE"
     doc_ref: "T.Henning Murrey Math（2026-08-14 十一轮补登）"
     code_path: ""
     used_by_factors: []
@@ -10444,7 +10444,7 @@ chart_patterns:
     outputs: {present: bool, zone_type: str, zone_top: float, zone_bottom: float, fresh: bool}
     subjectivity: "medium"
     timeframe: "daily"
-    module_id: "MOD-SIG-001"
+    module_id: "MOD-SIGNAL_ASHARE"
     doc_ref: "Sam Seiden 供需区体系（与 SMC Order Block 同源不同学派， 2026-08-14 八轮补登）"
     code_path: ""
     used_by_factors: []

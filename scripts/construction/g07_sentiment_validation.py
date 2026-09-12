@@ -1,7 +1,7 @@
 # [BLUEPRINT] MOD-INF-005 | scripts/construction/g07_sentiment_validation.py | §
 # [MODULE] scripts.construction.g07_sentiment_validation
 # [DOMAIN] D_GOVERNANCE
-# [DEPENDENCIES] zephyr.data.ch_config; zephyr.signal_ashare.sentiment_cycle（只读消费，禁改本体）
+# [DEPENDENCIES] zephyr.data.ch_config; zephyr.signal_ashare.sentiment.sentiment_cycle（只读消费，禁改本体）
 # [CONSUMERS] docs/_working/2026-09-11-g07-sentiment-validation.md（G07 报告）
 # [STARTUP] manual
 # [MATURITY] testing
@@ -45,7 +45,7 @@ import numpy as np
 import pandas as pd
 
 from zephyr.data.ch_config import ensure_ch_env_loaded, load_ch_reader_config
-from zephyr.signal_ashare.sentiment_cycle import (
+from zephyr.signal_ashare.sentiment.sentiment_cycle import (
     SentimentLocatorInput,
     SentimentPhase,
     _compute_corr_matrix,

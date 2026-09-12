@@ -11,7 +11,7 @@
 # [SAFETY] M
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] 状态字符串非封闭集/集中度或分数越界/非有限 → SectorEcologyInputError（fail-closed）
-# [TESTS] tests/signal_ashare/test_sector_ecology_judge.py
+# [TESTS] tests/signal_ashare/sector/test_sector_ecology_judge.py
 # [TTL] permanent
 """SectorEcologyJudge — 板块级市场状态三态判定（MOD-SIG-143，TDM-E-L2-04）。
 

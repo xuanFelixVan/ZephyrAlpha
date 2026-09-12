@@ -2,7 +2,7 @@
 # [TTL] permanent
 # [A_test] module_id: MOD-SIG-123 | layer=test | stability=volatile | safety=M | ai_autonomy=human_gated
 # [MODULE] tests.signal_ashare.test_event_conditional_density
-# [TESTS] src/zephyr/signal_ashare/event_conditional_density.py
+# [TESTS] src/zephyr/signal_ashare/ml_forecast/event_conditional_density.py
 """MOD-SIG-123 单元测试：event_conditional_density 事件驱动条件分布预测。
 
 蓝图验收（B10-01412/CAND-TESTB-043，A1 B3）：
@@ -19,11 +19,11 @@ import math
 import pytest
 
 pytest.importorskip(
-    "zephyr.signal_ashare.event_conditional_density",
+    "zephyr.signal_ashare.ml_forecast.event_conditional_density",
     reason="event_conditional_density not importable",
 )
 
-from zephyr.signal_ashare.event_conditional_density import (  # noqa: E402
+from zephyr.signal_ashare.ml_forecast.event_conditional_density import (  # noqa: E402
     EventCondDensityConfig,
     EventCondDensityError,
     EventConditionalDensity,

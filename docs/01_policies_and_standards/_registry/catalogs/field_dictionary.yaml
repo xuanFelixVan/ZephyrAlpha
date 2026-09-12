@@ -8169,3 +8169,112 @@ fields:
   evidence: ""
   code_symbol: null
   code_fingerprint: null
+
+- field_id: "FLD-SENT-013"
+  field_name: "attempted_limit_up_count"
+  name_zh: "触板家数（曾涨停）"
+  business_definition: "盘中曾触及涨停价的家数（含炸板）"
+  data_type: int
+  unit: 只
+  allowed_values: null
+  source_system: SRC-QMT-001
+  adjust_method: none
+  pit_property: point_in_time
+  quality_rules:
+  - v≥0
+  steward: ZephyrAlpha-Owner
+  sensitivity: none
+  freshness: daily
+  notes: '来源: 因子引用 FCT-SENT-028（2026-09-11 FK 闭环回填）'
+  module_id: MOD-MKT-DATA
+  doc_ref: 62_business_registry_construction.md §7.1
+  code_path: null
+  status: candidate
+  version: 1.0.0
+  created_at: '2026-09-11'
+  updated_at: '2026-09-11'
+  owner: ZephyrAlpha-Owner
+  entry_role: reference
+  applies_to:
+  - market
+  tags:
+  - 情绪
+  - 打板
+  - 因子
+  algorithm_status: not_applicable
+  evidence: ''
+  code_symbol: null
+  code_fingerprint: null
+
+- field_id: "FLD-SENT-014"
+  field_name: "sealed_limit_up_count"
+  name_zh: "封板家数"
+  business_definition: "收盘封住涨停的家数（封板率=sealed/limit_up）"
+  data_type: int
+  unit: 只
+  allowed_values: null
+  source_system: SRC-QMT-001
+  adjust_method: none
+  pit_property: point_in_time
+  quality_rules:
+  - v≥0
+  steward: ZephyrAlpha-Owner
+  sensitivity: none
+  freshness: daily
+  notes: '来源: 因子引用 FCT-SENT-028（2026-09-11 FK 闭环回填）'
+  module_id: MOD-MKT-DATA
+  doc_ref: 62_business_registry_construction.md §7.1
+  code_path: null
+  status: candidate
+  version: 1.0.0
+  created_at: '2026-09-11'
+  updated_at: '2026-09-11'
+  owner: ZephyrAlpha-Owner
+  entry_role: reference
+  applies_to:
+  - market
+  tags:
+  - 情绪
+  - 打板
+  - 因子
+  algorithm_status: not_applicable
+  evidence: ''
+  code_symbol: null
+  code_fingerprint: null
+
+- field_id: "FLD-SENT-015"
+  field_name: "total_count"
+  name_zh: "全市场家数"
+  business_definition: "全市场上市公司总数（市场宽度比率分母）"
+  data_type: int
+  unit: 只
+  allowed_values: null
+  source_system: SRC-QMT-001
+  adjust_method: none
+  pit_property: point_in_time
+  quality_rules:
+  - v≥0
+  steward: ZephyrAlpha-Owner
+  sensitivity: none
+  freshness: daily
+  notes: '来源: 因子引用 FCT-SENT-028（2026-09-11 FK 闭环回填）'
+  module_id: MOD-MKT-DATA
+  doc_ref: 62_business_registry_construction.md §7.1
+  code_path: null
+  status: candidate
+  version: 1.0.0
+  created_at: '2026-09-11'
+  updated_at: '2026-09-11'
+  owner: ZephyrAlpha-Owner
+  entry_role: reference
+  applies_to:
+  - market
+  tags:
+  - 情绪
+  - 打板
+  - 因子
+  algorithm_status: not_applicable
+  evidence: ''
+  code_symbol: null
+  code_fingerprint: null
+

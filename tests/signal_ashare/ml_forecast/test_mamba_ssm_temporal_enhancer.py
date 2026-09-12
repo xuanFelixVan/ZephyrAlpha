@@ -13,7 +13,7 @@ from __future__ import annotations
 import numpy as np
 import pytest
 
-from zephyr.signal_ashare.mamba_ssm_temporal_enhancer import (
+from zephyr.signal_ashare.ml_forecast.mamba_ssm_temporal_enhancer import (
     MambaSsmTemporalEnhancer,
 )
 

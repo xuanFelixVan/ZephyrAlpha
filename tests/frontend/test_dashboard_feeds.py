@@ -55,7 +55,7 @@ from zephyr.position.core.position_state_machine import (  # noqa: E402
     ObservingReason,
     PositionStateMachine,
 )
-from zephyr.signal_ashare.intraday_buy_sell_point_analyzer import (  # noqa: E402
+from zephyr.signal_ashare.intraday_t0.intraday_buy_sell_point_analyzer import (  # noqa: E402
     IntradayBuySellInput,
 )
 

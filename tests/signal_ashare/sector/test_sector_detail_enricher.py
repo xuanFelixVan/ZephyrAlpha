@@ -1,7 +1,7 @@
 # [BLUEPRINT] MOD-SIG-081 | 待统筹登记（blueprint 未建，真源=缺口总账 GAP-F-17 行 + GAP-F-D1 核查）
 # [MODULE] tests.signal_ashare.test_sector_detail_enricher
 # [DOMAIN] D_ASHARE_SIGNAL
-# [DEPENDENCIES] zephyr.signal_ashare.sector_detail_enricher
+# [DEPENDENCIES] zephyr.signal_ashare.sector.sector_detail_enricher
 # [CONSUMERS] none
 # [STARTUP] pytest
 # [MATURITY] testing
@@ -29,7 +29,7 @@ from dataclasses import asdict
 
 import pytest
 
-from zephyr.signal_ashare.sector_detail_enricher import (
+from zephyr.signal_ashare.sector.sector_detail_enricher import (
     PHASE_CLIMAX,
     PHASE_DORMANT,
     PHASE_FERMENT,

@@ -1,7 +1,7 @@
 # [BLUEPRINT] docs/02_enterprise_architecture/07_trading_decision_architecture/design_memos/21_stock_selection_engine.md §3.1 v1.1.16
 # [MODULE] zephyr.signal_fundamental.sector_rotation_score_mapping
 # [DOMAIN] D_FUNDAMENTAL_SIGNAL
-# [DEPENDENCIES] zephyr.signal_ashare.sector_rrg（只读 import RRGQuadrant，不改动）
+# [DEPENDENCIES] zephyr.signal_ashare.sector.sector_rrg（只读 import RRGQuadrant，不改动）
 # [CONSUMERS] (待 G06 板块轮动定型后 L2-C→sleeve SynthesizedSignal.score 接线)
 # [STARTUP] imported
 # [MATURITY] new
@@ -80,7 +80,7 @@ Lagging 象限+低强度+差回踩 → score 接近 0.1（弱信号/回避）。
 
 from __future__ import annotations
 
-from zephyr.signal_ashare.sector_rrg import RRGQuadrant
+from zephyr.signal_ashare.sector.sector_rrg import RRGQuadrant
 
 # 象限基准分（memo §3.1，待 G06 回测校准）
 SECTOR_QUADRANT_BASE: dict[RRGQuadrant, float] = {

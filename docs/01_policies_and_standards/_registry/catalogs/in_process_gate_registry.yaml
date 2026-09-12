@@ -715,6 +715,12 @@ gates:
   source: in_process
   register_line: 0  # priority=833；2026-09-05 作战地图对齐硬化门禁（#ARCH-BATTLE-MAP-HARD-001：ghost/orphan_steps/missing_narratives 三类硬，BM 相关文件触发，fail-open；基线 0 实证 2026-09-05 G3 驱零）
   enabled: true
+- gate_id: INDUSTRY-CHAIN-MAP
+  module_path: zephyr.gov_enforcement.commit_gates.industry_chain_map_gate
+  factory_function: make_industry_chain_map_gate
+  source: in_process
+  register_line: 0  # priority=141；2026-09-11 产业链全景图（图 8）git 侧工件门禁：字典↔DDL↔引擎三方同 commit 同步（结构四边核查真源=registry_alignment.check_industry_graph_field_dictionary）+chainmap_cluster_names 词表 sanity；数据层质量归 align_all 第七节 graph_quality_check
+  enabled: true
 - gate_id: REGISTRY-MASS-DELETION
   module_path: zephyr.gov_enforcement.commit_gates.registry_mass_deletion_gate
   factory_function: make_registry_mass_deletion_gate

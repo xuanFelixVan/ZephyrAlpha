@@ -31,7 +31,7 @@ import json
 
 import pytest
 
-from zephyr.signal_ashare.sentiment_price_divergence import (
+from zephyr.signal_ashare.sentiment.sentiment_price_divergence import (
     SentimentPriceDivergence,
     SentimentPriceDivergenceConfig,
 )

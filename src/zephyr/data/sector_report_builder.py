@@ -1,7 +1,7 @@
 # [BLUEPRINT] MOD-L00-009 | 待统筹登记（blueprint 未建，真源=92号清单 §7.5 + 架构审查报告 §11.5 SEC-01/§11.2 需求对账 + 22号板块轮动 spec）
 # [MODULE] zephyr.data.sector_report_builder
 # [DOMAIN] D_DATA
-# [DEPENDENCIES] zephyr.data.sector_ranking_engine; zephyr.signal_ashare.sector_breadth; zephyr.signal_ashare.sector_siphon; zephyr.signal_ashare.sector_momentum; zephyr.signal_ashare.sector_analyzer; zephyr.signal_ashare.mainline_candidates; c1_market.kline_sector_880（只读）; c1_market.sector_constituent（只读）; c1_market.kline_daily（只读）; c1_market.money_flow（只读）; c1_market.limit_up_down（只读）; c1_market.stk_limit（只读）; c1_market.sector_snapshot（只读）; c1_market.sector_meta（只读）
+# [DEPENDENCIES] zephyr.data.sector_ranking_engine; zephyr.signal_ashare.sector.sector_breadth; zephyr.signal_ashare.sector.sector_siphon; zephyr.signal_ashare.sector.sector_momentum; zephyr.signal_ashare.sector.sector_analyzer; zephyr.signal_ashare.mainline_candidates; c1_market.kline_sector_880（只读）; c1_market.sector_constituent（只读）; c1_market.kline_daily（只读）; c1_market.money_flow（只读）; c1_market.limit_up_down（只读）; c1_market.stk_limit（只读）; c1_market.sector_snapshot（只读）; c1_market.sector_meta（只读）
 # [CONSUMERS] （MVP 阶段无——候选消费方：IDX-02 Dashboard 板块页 D-02/D-03/D-06、Owner 盘后复盘、.runtime/reports 落盘文件直读）
 # [STARTUP] manual
 # [MATURITY] production
@@ -109,13 +109,13 @@ from zephyr.signal_ashare.mainline_candidates import (
     MainlineCandidatesResult,
     compute_mainline_candidates,
 )
-from zephyr.signal_ashare.sector_analyzer import SectorAnalyzer, SectorData
-from zephyr.signal_ashare.sector_breadth import (
+from zephyr.signal_ashare.sector.sector_analyzer import SectorAnalyzer, SectorData
+from zephyr.signal_ashare.sector.sector_breadth import (
     classify_limit_up_breadth,
     sector_limit_up_ratio,
 )
-from zephyr.signal_ashare.sector_momentum import multi_tf_momentum
-from zephyr.signal_ashare.sector_siphon import SectorFlowSnapshot, detect_siphon_state
+from zephyr.signal_ashare.sector.sector_momentum import multi_tf_momentum
+from zephyr.signal_ashare.sector.sector_siphon import SectorFlowSnapshot, detect_siphon_state
 
 log = logging.getLogger(__name__)
 

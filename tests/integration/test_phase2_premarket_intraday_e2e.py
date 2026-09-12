@@ -77,9 +77,9 @@ from zephyr.signal_ashare.futures_basis_monitor import (
     FuturesBasisSymbol,
     compute_futures_basis,
 )
-from zephyr.signal_ashare.lhb_premium_analyzer import LhbPremiumResult
+from zephyr.signal_ashare.limit_up.lhb_premium_analyzer import LhbPremiumResult
 from zephyr.signal_ashare.mainline_candidates import compute_mainline_candidates
-from zephyr.signal_ashare.market_sentiment_analyzer import (
+from zephyr.signal_ashare.sentiment.market_sentiment_analyzer import (
     BreadthSnapshot,
     BreadthTimeSeries,
     IndexPerformanceData,
@@ -89,12 +89,12 @@ from zephyr.signal_ashare.market_sentiment_analyzer import (
     MarketSentimentInput,
     MarketSentimentResult,
 )
-from zephyr.signal_ashare.option_sentiment import OptionSentimentResult
-from zephyr.signal_ashare.sector_divergence import (
+from zephyr.signal_ashare.sentiment.option_sentiment import OptionSentimentResult
+from zephyr.signal_ashare.sector.sector_divergence import (
     SectorDivergenceResult,
     compute_sector_divergence,
 )
-from zephyr.signal_ashare.sector_leader import identify_sector_leaders
+from zephyr.signal_ashare.sector.sector_leader import identify_sector_leaders
 
 
 def _tsv(rows: list[tuple]) -> str:

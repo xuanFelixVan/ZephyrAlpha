@@ -94,11 +94,11 @@ _CATALOGS: Final[dict[str, tuple[str, str]]] = {
 # 组件在位性清单（锚定 20号文 §2.7 设施盘点 + 2026-08-21 三 sleeve 策略类落码回填）
 G04_COMPONENTS: Final[dict[str, tuple[str, ...]]] = {
     "daban": (
-        "src/zephyr/signal_ashare/short_term_stock_selector.py",
+        "src/zephyr/signal_ashare/screening/short_term_stock_selector.py",
         "src/zephyr/signal_ashare/institutional_behavior_analyzer.py",
-        "src/zephyr/signal_ashare/youzi_relay_emotion_engine.py",
+        "src/zephyr/signal_ashare/limit_up/youzi_relay_emotion_engine.py",
         "src/zephyr/signal_ashare/quant_short_term_strength_engine.py",
-        "src/zephyr/signal_ashare/dual_engine_fusion_decision_engine.py",
+        "src/zephyr/signal_ashare/strategy_signal/dual_engine_fusion_decision_engine.py",
         "src/zephyr/pf_core/strategies/daban_sleeve_strategy.py",
     ),
     "multifactor": (
@@ -113,8 +113,8 @@ G04_COMPONENTS: Final[dict[str, tuple[str, ...]]] = {
         "src/zephyr/pf_core/strategies/multifactor_sleeve_strategy.py",
     ),
     "event_driven": (
-        "src/zephyr/signal_ashare/intraday_buy_sell_point_analyzer.py",
-        "src/zephyr/signal_ashare/event_driven_screener.py",
+        "src/zephyr/signal_ashare/intraday_t0/intraday_buy_sell_point_analyzer.py",
+        "src/zephyr/signal_ashare/screening/event_driven_screener.py",
         "src/zephyr/data/news_collector.py",
         "src/zephyr/pf_core/strategies/event_driven_sleeve_strategy.py",
     ),

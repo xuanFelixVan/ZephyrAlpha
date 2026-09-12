@@ -34,7 +34,7 @@ from zephyr.plan_engine.intraday_tomorrow_forecast import (
     scenario_tilt,
     tilt_prior_along_pessimism,
 )
-from zephyr.signal_ashare.next_day_8state_forecast import NextDayState
+from zephyr.signal_ashare.ml_forecast.next_day_8state_forecast import NextDayState
 
 # ── 构造辅助 ────────────────────────────────────────────────────────────────
 

@@ -35,14 +35,14 @@ from zephyr.plan_engine.closing_session_decision import ClosingSessionDecision
 from zephyr.plan_engine.tomorrow_boundary_planner import TomorrowBoundary
 from zephyr.reporting.prediction_log_writer import ensure_prediction_log_table, query_predictions
 from zephyr.signal_ashare.futures_basis_monitor import FuturesBasisSnapshot, FuturesBasisSymbol
-from zephyr.signal_ashare.market_sentiment_analyzer import (
+from zephyr.signal_ashare.sentiment.market_sentiment_analyzer import (
     BreadthAccelerationResult,
     DistortionDetectionResult,
     DrawdownRiskResult,
     MarketSentimentResult,
     VolumeForecastResult,
 )
-from zephyr.signal_ashare.sector_divergence import SectorDivergenceResult
+from zephyr.signal_ashare.sector.sector_divergence import SectorDivergenceResult
 
 DATE = "2026-08-21"  # 周五
 NEXT_DATE = "2026-08-24"  # 下周一（跨日）

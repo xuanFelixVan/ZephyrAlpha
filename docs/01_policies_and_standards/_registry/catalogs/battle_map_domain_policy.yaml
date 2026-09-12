@@ -320,6 +320,11 @@ domain_classification:
 acknowledged_orphans:
   # 模块侧：业务域中"计划未实现"的模块（工具域模块由 domain_classification.tool_domains 自动排除，无需逐个登记）
   modules:
+    - blueprint_id: MOD-PLAN-025
+      domain: D_PLAN
+      reason: "盘中明日预告器（testing 已落码+测试联动），消费者=作战指挥页明日预案卡（W0 集成未做）；先行落码按 L3-08 接线先例"
+      review_frequency: "monthly"
+      promotion_criteria: "warroom 明日预案卡接线消费后，挂 BM-WAR 对应环节并移出此清单"
     - blueprint_id: MOD-REGIME-001
       domain: D_REGIME
       reason: "体制识别器，planned 待实现；D_REGIME 已补入 business_domains，实现后挂 stock_selection 环节"

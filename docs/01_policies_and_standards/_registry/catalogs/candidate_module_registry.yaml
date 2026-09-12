@@ -6203,7 +6203,7 @@ entries:
   priority: P1
   created_at: '2026-08-14'
   last_reviewed_at: '2026-08-18'
-  promoted_to: "MOD-SIG-056 seat_pattern_analyzer（src/zephyr/signal_ashare/seat_pattern_analyzer.py，2026-08-18 AI-SEAT-001 MVP 施工，#ARCH-120）"
+  promoted_to: "MOD-SIG-056 seat_pattern_analyzer（src/zephyr/signal_ashare/limit_up/seat_pattern_analyzer.py，2026-08-18 AI-SEAT-001 MVP 施工，#ARCH-120）"
   source_draft: 2026-08-14 图形形态循环审查会话——「龙虎榜席位形态」裁定为新建表（CAND 候选，与图形形态表正交）
   source_section: ''
   original_id: ''
@@ -8656,7 +8656,7 @@ entries:
   domain_status: active
   sub_layer: ''
   description: '静态映射表+config/sector_attribute_mapping.yaml 真源；与 sector_attribute_labels.yaml（两族 rs_ratio 专用）粒度边界已留痕'
-  capability: src/zephyr/signal_ashare/sector_attribute_rules.py
+  capability: src/zephyr/signal_ashare/sector/sector_attribute_rules.py
   problem_it_solves: '板块属性标注规则库（进攻/防御/平衡三分类）'
   keywords: []
   upstream_deps: []
@@ -8672,7 +8672,7 @@ entries:
   domain_status: active
   sub_layer: ''
   description: 'MOD-SIG-025 YesterdayLimitUpPerformance 消费侧的生产侧补齐'
-  capability: src/zephyr/signal_ashare/limit_up_followthrough.py
+  capability: src/zephyr/signal_ashare/limit_up/limit_up_followthrough.py
   problem_it_solves: '昨日涨停今表现+炸板率统计（日频任务）'
   keywords: []
   upstream_deps: []
@@ -8688,7 +8688,7 @@ entries:
   domain_status: active
   sub_layer: ''
   description: '板块量能异动检测（成交额 vs N 日均值偏离度）'
-  capability: src/zephyr/signal_ashare/sector_volume_anomaly.py
+  capability: src/zephyr/signal_ashare/sector/sector_volume_anomaly.py
   problem_it_solves: '板块量能异动检测（成交额 vs N 日均值偏离度）'
   keywords: []
   upstream_deps: []
@@ -8720,7 +8720,7 @@ entries:
   domain_status: active
   sub_layer: ''
   description: 'analyst_forecast 约 1 个月覆盖窗限制已内建超窗守卫（GAP-F-D1）'
-  capability: src/zephyr/signal_ashare/sector_detail_enricher.py
+  capability: src/zephyr/signal_ashare/sector/sector_detail_enricher.py
   problem_it_solves: '板块详情补充维度（TDX 周期定位状态机+拉升原因聚合）'
   keywords: []
   upstream_deps: []
@@ -8870,14 +8870,14 @@ entries:
   domain_status: active
   sub_layer: src/zephyr/alt_data/
   problem: 情绪指标量化+历史分位数+冰点/过热判定 ✅
-  proposal: '深挖裁定=做(P1)。业界对标: 雪球/东财情绪指标+FinBERT情感打分;pandas-ta。场内现状: 部分:src/zephyr/signal_ashare/sentiment_cycle.py。最小施工形态:
+  proposal: '深挖裁定=做(P1)。业界对标: 雪球/东财情绪指标+FinBERT情感打分;pandas-ta。场内现状: 部分:src/zephyr/signal_ashare/sentiment/sentiment_cycle.py。最小施工形态:
     建统一SentimentEngine:聚合价量情绪(复用sentiment_cycle)+社媒/新闻情感分,252日滚动历史分位数+冰点<10分位/过热>90分位判定,输出入C-014与筛选漏斗。依赖前置:
     D_ALT_DATA;D_ASHARE_SIGNAL;D_INTELLIGENCE。'
   design_admission:
     q1_implemented:
       result: false
       equivalent_nodes: []
-      evidence: '深挖场内对账: 部分:src/zephyr/signal_ashare/sentiment_cycle.py'
+      evidence: '深挖场内对账: 部分:src/zephyr/signal_ashare/sentiment/sentiment_cycle.py'
     blocking_question: null
     result: candidate
   status: promoted
@@ -9316,13 +9316,13 @@ entries:
   domain_status: active
   sub_layer: src/zephyr/alt_data/
   problem: A股事件因果推理引擎(事件征兆分析+事件连锁逻辑树+政策地缘趋势+隔夜外盘影响);✅能建,NetworkX因果图+LLM辅助
-  proposal: '深挖裁定=做(P2)。业界对标: NetworkX因果图+DoWhy；LLM辅助事件链推理。场内现状: 部分：src/zephyr/signal_ashare/causal_inference_engine.py。最小施工形态:
+  proposal: '深挖裁定=做(P2)。业界对标: NetworkX因果图+DoWhy；LLM辅助事件链推理。场内现状: 部分：src/zephyr/signal_ashare/ml_forecast/causal_inference_engine.py。最小施工形态:
     事件因果图：事件节点+传导边(行业/供应链/情绪)+征兆检测器输出挂接+隔夜外盘影响打分，LLM辅助生成逻辑树人工审核后入图，结论仅作信号输入。依赖前置: D_ALT_DATA;D_ASHARE_SIGNAL;D_INTELLIGENCE。'
   design_admission:
     q1_implemented:
       result: false
       equivalent_nodes: []
-      evidence: '深挖场内对账: 部分：src/zephyr/signal_ashare/causal_inference_engine.py'
+      evidence: '深挖场内对账: 部分：src/zephyr/signal_ashare/ml_forecast/causal_inference_engine.py'
     blocking_question: null
     result: candidate
   status: promoted
@@ -9567,7 +9567,7 @@ entries:
     blocking_question: null
     result: candidate
   status: promoted
-  promoted_to: src/zephyr/signal_ashare/signal_factory.py
+  promoted_to: src/zephyr/signal_ashare/strategy_signal/signal_factory.py
   priority: P1
   source: 2026-08-23 场外草稿深挖批(AUD-DRAFT-001, .runtime/audit_20260823/construction_backlog_dig.tsv 裁定=做)
   created: '2026-08-23'
@@ -9635,17 +9635,17 @@ entries:
   domain_status: active
   sub_layer: src/zephyr/signal_ashare/
   problem: 独立做T信号管线+盘中即时反应决策引擎 ✅
-  proposal: '深挖裁定=做(P1)。业界对标: A股底仓T+0;vnpy日内策略。场内现状: 部分:src/zephyr/signal_ashare/t0_point_analyzer.py。最小施工形态:
+  proposal: '深挖裁定=做(P1)。业界对标: A股底仓T+0;vnpy日内策略。场内现状: 部分:src/zephyr/signal_ashare/intraday_t0/t0_point_analyzer.py。最小施工形态:
     做T管线:信号(t0_point_analyzer)→决策(底仓/价差/次数硬约束)→执行(t_trade_coordinator)→当日复盘,全链路延迟预算与失败回滚。依赖前置: D_ASHARE_SIGNAL;D_EX_CORE;D_POSITION;D_SELL_DECISION。'
   design_admission:
     q1_implemented:
       result: false
       equivalent_nodes: []
-      evidence: '深挖场内对账: 部分:src/zephyr/signal_ashare/t0_point_analyzer.py'
+      evidence: '深挖场内对账: 部分:src/zephyr/signal_ashare/intraday_t0/t0_point_analyzer.py'
     blocking_question: null
     result: candidate
   status: promoted
-  promoted_to: src/zephyr/signal_ashare/t0_trading_pipeline.py
+  promoted_to: src/zephyr/signal_ashare/intraday_t0/t0_trading_pipeline.py
   priority: P1
   source: 2026-08-23 场外草稿深挖批(AUD-DRAFT-001, .runtime/audit_20260823/construction_backlog_dig.tsv 裁定=做)
   created: '2026-08-23'
@@ -9673,7 +9673,7 @@ entries:
     blocking_question: null
     result: candidate
   status: promoted
-  promoted_to: src/zephyr/signal_ashare/unified_pattern_engine.py
+  promoted_to: src/zephyr/signal_ashare/strategy_signal/unified_pattern_engine.py
   priority: P1
   source: 2026-08-23 场外草稿深挖批(AUD-DRAFT-001, .runtime/audit_20260823/construction_backlog_dig.tsv 裁定=做)
   created: '2026-08-23'
@@ -9689,7 +9689,7 @@ entries:
   domain_status: active
   sub_layer: src/zephyr/signal_ashare/
   problem: 缺口标准化(Gap Size=(Open-Close_prev)/ATR_14)+分级(Tiny<0.3x/Small/Medium/Large>1.2x)+回补概率查表(Tiny=77.8%/Large=8.2%)+回补时间分布+部分回补(25/50/75/100%)+MAE止损；归属L1+L2-A+L2-C
-  proposal: '深挖裁定=做(P1)。业界对标: 缺口统计查表法为trading literature常见构造，无重库依赖。场内现状: 无。最小施工形态: 1个模块 src/zephyr/signal_ashare/gap_fill_model.py，核心类GapFillProbabilityModel，输入OHLC+ATR14，输出缺口标准化分级(Tiny/Small/Medium/Large)+回补概率查表+部分回补分布+MAE止损参考。依赖前置:
+  proposal: '深挖裁定=做(P1)。业界对标: 缺口统计查表法为trading literature常见构造，无重库依赖。场内现状: 无。最小施工形态: 1个模块 src/zephyr/signal_ashare/ml_forecast/gap_fill_model.py，核心类GapFillProbabilityModel，输入OHLC+ATR14，输出缺口标准化分级(Tiny/Small/Medium/Large)+回补概率查表+部分回补分布+MAE止损参考。依赖前置:
     D_DATA;D_FACTOR(ATR指标)。'
   design_admission:
     q1_implemented:
@@ -9699,7 +9699,7 @@ entries:
     blocking_question: null
     result: candidate
   status: promoted
-  promoted_to: src/zephyr/signal_ashare/gap_fill_model.py
+  promoted_to: src/zephyr/signal_ashare/ml_forecast/gap_fill_model.py
   priority: P1
   source: 2026-08-23 场外草稿深挖批(AUD-DRAFT-001, .runtime/audit_20260823/construction_backlog_dig.tsv 裁定=做)
   created: '2026-08-23'
@@ -9725,7 +9725,7 @@ entries:
     blocking_question: null
     result: candidate
   status: promoted
-  promoted_to: src/zephyr/signal_ashare/intraday_volume_orderflow.py
+  promoted_to: src/zephyr/signal_ashare/intraday_t0/intraday_volume_orderflow.py
   priority: P1
   source: 2026-08-23 场外草稿深挖批(AUD-DRAFT-001, .runtime/audit_20260823/construction_backlog_dig.tsv 裁定=做)
   created: '2026-08-23'
@@ -9804,7 +9804,7 @@ entries:
     blocking_question: null
     result: candidate
   status: promoted
-  promoted_to: src/zephyr/signal_ashare/relative_strength_screener.py
+  promoted_to: src/zephyr/signal_ashare/screening/relative_strength_screener.py
   priority: P1
   source: 2026-08-23 场外草稿深挖批(AUD-DRAFT-001, .runtime/audit_20260823/construction_backlog_dig.tsv 裁定=做)
   created: '2026-08-23'
@@ -9820,17 +9820,17 @@ entries:
   domain_status: active
   sub_layer: src/zephyr/signal_ashare/
   problem: 截面动量排名+领导力系数(Granger>0.3)+IR>1.0；A股特有：连板高度因子+炸板率因子(<17%强回暖/>30%强分歧)+封板时间因子+中位股断层检测(二进三成功率<30%)；领导-跟随建模(跟涨概率>60%+滞后<10min)+反包强度+次日溢价率；目标IC>0.03,ICIR>0.5；归属L1+L2-B+L3
-  proposal: '深挖裁定=做(P1)。业界对标: 连板高度/炸板率/封单强度为A股游资生态因子(国盛/开源金工研报)。场内现状: 部分:src/zephyr/signal_ashare/limit_up_followthrough.py。最小施工形态:
+  proposal: '深挖裁定=做(P1)。业界对标: 连板高度/炸板率/封单强度为A股游资生态因子(国盛/开源金工研报)。场内现状: 部分:src/zephyr/signal_ashare/limit_up/limit_up_followthrough.py。最小施工形态:
     连板高度+封板时间+梯队断层因子与Granger领导-跟随系数(>0.3)。依赖前置: c1_market.limit_up_down表;limit_up_followthrough;lhb_premium_analyzer。'
   design_admission:
     q1_implemented:
       result: false
       equivalent_nodes: []
-      evidence: '深挖场内对账: 部分:src/zephyr/signal_ashare/limit_up_followthrough.py'
+      evidence: '深挖场内对账: 部分:src/zephyr/signal_ashare/limit_up/limit_up_followthrough.py'
     blocking_question: null
     result: candidate
   status: promoted
-  promoted_to: src/zephyr/signal_ashare/limit_up_ecosystem_leadership.py
+  promoted_to: src/zephyr/signal_ashare/limit_up/limit_up_ecosystem_leadership.py
   priority: P1
   source: 2026-08-23 场外草稿深挖批(AUD-DRAFT-001, .runtime/audit_20260823/construction_backlog_dig.tsv 裁定=做)
   created: '2026-08-23'
@@ -9856,7 +9856,7 @@ entries:
     blocking_question: null
     result: candidate
   status: promoted
-  promoted_to: src/zephyr/signal_ashare/sector_momentum_persistence.py
+  promoted_to: src/zephyr/signal_ashare/sector/sector_momentum_persistence.py
   priority: P1
   source: 2026-08-23 场外草稿深挖批(AUD-DRAFT-001, .runtime/audit_20260823/construction_backlog_dig.tsv 裁定=做)
   created: '2026-08-23'
@@ -9873,17 +9873,17 @@ entries:
   sub_layer: src/zephyr/signal_ashare/
   problem: 情绪冰点(≤22%分位)+指数冰点(RSI<30)+双冰点确认(≤2天修复概率>70%)+Capitulation Detector(SVM+200+特征,AUC=0.89)+Shakeout
     vs真破位区分(收回比例>50%/<20%)；归属L1+L2-C+L3
-  proposal: '深挖裁定=做(P1)。业界对标: 情绪极值反转+Capitulation事件分类为金工情绪研究常见主题。场内现状: 部分:src/zephyr/signal_ashare/sentiment_cycle.py。最小施工形态:
+  proposal: '深挖裁定=做(P1)。业界对标: 情绪极值反转+Capitulation事件分类为金工情绪研究常见主题。场内现状: 部分:src/zephyr/signal_ashare/sentiment/sentiment_cycle.py。最小施工形态:
     双冰点确认规则+Capitulation打分卡(跌幅/量能/广度)+收回比例(>50%/<20%)区分shakeout与真破位。依赖前置: market_sentiment_analyzer;youzi_relay_emotion_engine。'
   design_admission:
     q1_implemented:
       result: false
       equivalent_nodes: []
-      evidence: '深挖场内对账: 部分:src/zephyr/signal_ashare/sentiment_cycle.py'
+      evidence: '深挖场内对账: 部分:src/zephyr/signal_ashare/sentiment/sentiment_cycle.py'
     blocking_question: null
     result: candidate
   status: promoted
-  promoted_to: src/zephyr/signal_ashare/extreme_sentiment_reversal_detector.py
+  promoted_to: src/zephyr/signal_ashare/sentiment/extreme_sentiment_reversal_detector.py
   priority: P1
   source: 2026-08-23 场外草稿深挖批(AUD-DRAFT-001, .runtime/audit_20260823/construction_backlog_dig.tsv 裁定=做)
   created: '2026-08-23'
@@ -9925,18 +9925,18 @@ entries:
   domain_status: active
   sub_layer: src/zephyr/signal_ashare/
   problem: SDI=ΔSentiment_z-ΔPrice_z(\
-  proposal: '深挖裁定=做(P1)。业界对标: 情绪/价格z-score差分背离为技术分析常见构造。场内现状: 部分:src/zephyr/signal_ashare/sector_divergence.py。最小施工形态:
-    1个模块 src/zephyr/signal_ashare/sentiment_price_divergence.py，核心类SentimentPriceDivergence，输入情绪指数与价格的z分差，输出SDI值+背离方向+置信度。依赖前置:
+  proposal: '深挖裁定=做(P1)。业界对标: 情绪/价格z-score差分背离为技术分析常见构造。场内现状: 部分:src/zephyr/signal_ashare/sector/sector_divergence.py。最小施工形态:
+    1个模块 src/zephyr/signal_ashare/sentiment/sentiment_price_divergence.py，核心类SentimentPriceDivergence，输入情绪指数与价格的z分差，输出SDI值+背离方向+置信度。依赖前置:
     D_ASHARE_SIGNAL(market_sentiment_analyzer)。'
   design_admission:
     q1_implemented:
       result: false
       equivalent_nodes: []
-      evidence: '深挖场内对账: 部分:src/zephyr/signal_ashare/sector_divergence.py'
+      evidence: '深挖场内对账: 部分:src/zephyr/signal_ashare/sector/sector_divergence.py'
     blocking_question: null
     result: candidate
   status: promoted
-  promoted_to: src/zephyr/signal_ashare/sentiment_price_divergence.py
+  promoted_to: src/zephyr/signal_ashare/sentiment/sentiment_price_divergence.py
   priority: P1
   source: 2026-08-23 场外草稿深挖批(AUD-DRAFT-001, .runtime/audit_20260823/construction_backlog_dig.tsv 裁定=做)
   created: '2026-08-23'
@@ -9962,7 +9962,7 @@ entries:
     blocking_question: null
     result: candidate
   status: promoted
-  promoted_to: src/zephyr/signal_ashare/limit_up_potential_scorer.py
+  promoted_to: src/zephyr/signal_ashare/limit_up/limit_up_potential_scorer.py
   priority: P1
   source: 2026-08-23 场外草稿深挖批(AUD-DRAFT-001, .runtime/audit_20260823/construction_backlog_dig.tsv 裁定=做)
   created: '2026-08-23'
@@ -10065,17 +10065,17 @@ entries:
   sub_layer: src/zephyr/signal_ashare/
   problem: 密度预测积分法P(r>0)+8态求和法+混合融合+Platt Scaling校准；概率门槛：新开仓≥65%/正T≥55%/反T≤45%(跌>55%)/加仓≥60%/抄底≥70%；动态调整(牛-5%/熊+5%/放量-5%/缩量+10%/利好落地前+10%/黑天鹅+15%/变盘日+5%/情绪>60°+5%)；门槛=决策链第一道门(不过则不进入L2-A→L2-B→L3→L3.5→L4)；拦截需输出原因(对标Man
     Group)；拦截统计回测门槛合理性；对标Kelly临界条件/Jane Street贝叶斯/FinMatic/FinMatic RL校准
-  proposal: '深挖裁定=做(P1)。业界对标: Platt Scaling概率校准(sklearn)+置信门槛决策为量化通用做法。场内现状: 部分:src/zephyr/signal_ashare/next_day_8state_forecast.py。最小施工形态:
+  proposal: '深挖裁定=做(P1)。业界对标: Platt Scaling概率校准(sklearn)+置信门槛决策为量化通用做法。场内现状: 部分:src/zephyr/signal_ashare/ml_forecast/next_day_8state_forecast.py。最小施工形态:
     动作分档概率门槛校验器(新开仓≥65%/加仓≥60%/抄底≥70%等)+牛熊量能动态偏移+拦截原因输出与统计回写。依赖前置: next_day_8state_forecast;conditional_density_predictor;plan_engine/brier_calibration.py。'
   design_admission:
     q1_implemented:
       result: false
       equivalent_nodes: []
-      evidence: '深挖场内对账: 部分:src/zephyr/signal_ashare/next_day_8state_forecast.py'
+      evidence: '深挖场内对账: 部分:src/zephyr/signal_ashare/ml_forecast/next_day_8state_forecast.py'
     blocking_question: null
     result: candidate
   status: promoted
-  promoted_to: src/zephyr/signal_ashare/next_day_probability_gate.py
+  promoted_to: src/zephyr/signal_ashare/ml_forecast/next_day_probability_gate.py
   priority: P1
   source: 2026-08-23 场外草稿深挖批(AUD-DRAFT-001, .runtime/audit_20260823/construction_backlog_dig.tsv 裁定=做)
   created: '2026-08-23'
@@ -10101,7 +10101,7 @@ entries:
     blocking_question: null
     result: candidate
   status: promoted
-  promoted_to: src/zephyr/signal_ashare/pattern_match_strategy_library.py
+  promoted_to: src/zephyr/signal_ashare/strategy_signal/pattern_match_strategy_library.py
   priority: P1
   source: 2026-08-23 场外草稿深挖批(AUD-DRAFT-001, .runtime/audit_20260823/construction_backlog_dig.tsv 裁定=做)
   created: '2026-08-23'
@@ -10128,7 +10128,7 @@ entries:
     blocking_question: null
     result: candidate
   status: promoted
-  promoted_to: src/zephyr/signal_ashare/sell_news_overdraft_detector.py
+  promoted_to: src/zephyr/signal_ashare/sentiment/sell_news_overdraft_detector.py
   priority: P1
   source: 2026-08-23 场外草稿深挖批(AUD-DRAFT-001, .runtime/audit_20260823/construction_backlog_dig.tsv 裁定=做)
   created: '2026-08-23'
@@ -10154,7 +10154,7 @@ entries:
     blocking_question: null
     result: candidate
   status: promoted
-  promoted_to: src/zephyr/signal_ashare/overnight_return_expectancy.py
+  promoted_to: src/zephyr/signal_ashare/intraday_t0/overnight_return_expectancy.py
   priority: P1
   source: 2026-08-23 场外草稿深挖批(AUD-DRAFT-001, .runtime/audit_20260823/construction_backlog_dig.tsv 裁定=做)
   created: '2026-08-23'
@@ -10207,7 +10207,7 @@ entries:
     blocking_question: null
     result: candidate
   status: promoted
-  promoted_to: src/zephyr/signal_ashare/strategy_cross_vote_funnel.py
+  promoted_to: src/zephyr/signal_ashare/strategy_signal/strategy_cross_vote_funnel.py
   priority: P1
   source: 2026-08-23 场外草稿深挖批(AUD-DRAFT-001, .runtime/audit_20260823/construction_backlog_dig.tsv 裁定=做)
   created: '2026-08-23'
@@ -10276,13 +10276,13 @@ entries:
   domain_status: active
   sub_layer: src/zephyr/signal_ashare/
   problem: A股事件因果推理+事件链分析 ✅
-  proposal: '深挖裁定=做(P2)。业界对标: EconML/DoWhy因果推断;事件研究法。场内现状: 部分:src/zephyr/signal_ashare/causal_inference_engine.py。最小施工形态:
+  proposal: '深挖裁定=做(P2)。业界对标: EconML/DoWhy因果推断;事件研究法。场内现状: 部分:src/zephyr/signal_ashare/ml_forecast/causal_inference_engine.py。最小施工形态:
     事件类型→传导边模板(产业链上下游/同业/供应链)+DoWhy反事实校验+事件链时序存储,输出事件影响路径与强度,与B10-01858因果深化共用底座。依赖前置: D_ASHARE_SIGNAL;D_INTELLIGENCE。'
   design_admission:
     q1_implemented:
       result: false
       equivalent_nodes: []
-      evidence: '深挖场内对账: 部分:src/zephyr/signal_ashare/causal_inference_engine.py'
+      evidence: '深挖场内对账: 部分:src/zephyr/signal_ashare/ml_forecast/causal_inference_engine.py'
     blocking_question: null
     result: candidate
   status: promoted
@@ -10367,7 +10367,7 @@ entries:
   promoted_to: 'signal_ashare/unified_pattern_engine.py（MOD-SIG-091）'
   last_reviewed_at: '2026-08-30'
   last_review_outcome: "2026-08-30 候选库核销批（176 条全量核查，四路实证）：P2-W05 重登归并核销"
-  review_note: "# REVIEW: 归并不施工（2026-08-26，P2-W05）——与 P1 已建 MOD-SIG-091 unified_pattern_engine 同为统一技术图形识别引擎（B1-00172/B1-01010 同条目两稿），canonical=src/zephyr/signal_ashare/unified_pattern_engine.py（规则+DTW Phase1 已在，CNN/Transformer 两稿均明示后续档）；CAND-FAC-023（W07 波）同此归并"
+  review_note: "# REVIEW: 归并不施工（2026-08-26，P2-W05）——与 P1 已建 MOD-SIG-091 unified_pattern_engine 同为统一技术图形识别引擎（B1-00172/B1-01010 同条目两稿），canonical=src/zephyr/signal_ashare/strategy_signal/unified_pattern_engine.py（规则+DTW Phase1 已在，CNN/Transformer 两稿均明示后续档）；CAND-FAC-023（W07 波）同此归并"
   priority: P2
   source: 2026-08-23 场外草稿深挖批(AUD-DRAFT-001, .runtime/audit_20260823/construction_backlog_dig.tsv 裁定=做)
   created: '2026-08-23'
@@ -10394,7 +10394,7 @@ entries:
     blocking_question: null
     result: candidate
   status: promoted
-  promoted_to: src/zephyr/signal_ashare/pattern_to_signal_mapper.py
+  promoted_to: src/zephyr/signal_ashare/strategy_signal/pattern_to_signal_mapper.py
   priority: P2
   source: 2026-08-23 场外草稿深挖批(AUD-DRAFT-001, .runtime/audit_20260823/construction_backlog_dig.tsv 裁定=做)
   created: '2026-08-23'
@@ -10439,13 +10439,13 @@ entries:
   domain_status: active
   sub_layer: src/zephyr/signal_ashare/
   problem: DML因子因果筛选+Causal Forest异质性+DoWhy反事实推演+因果发现
-  proposal: '深挖裁定=做(P2)。业界对标: DoWhy+EconML+CausalForest，因果发现在量化界用于因子筛选与反事实推演。场内现状: 部分:src/zephyr/signal_ashare/causal_inference_engine.py(设计态)。最小施工形态:
+  proposal: '深挖裁定=做(P2)。业界对标: DoWhy+EconML+CausalForest，因果发现在量化界用于因子筛选与反事实推演。场内现状: 部分:src/zephyr/signal_ashare/ml_forecast/causal_inference_engine.py(设计态)。最小施工形态:
     完成causal_inference_engine：DML因子筛选+反事实推演，盘前预计算因果图供B10-01178消费。依赖前置: 无。'
   design_admission:
     q1_implemented:
       result: false
       equivalent_nodes: []
-      evidence: '深挖场内对账: 部分:src/zephyr/signal_ashare/causal_inference_engine.py(设计态)'
+      evidence: '深挖场内对账: 部分:src/zephyr/signal_ashare/ml_forecast/causal_inference_engine.py(设计态)'
     blocking_question: null
     result: candidate
   status: promoted
@@ -10505,7 +10505,7 @@ entries:
     blocking_question: null
     result: candidate
   status: promoted
-  promoted_to: src/zephyr/signal_ashare/overnight_conduction_model.py
+  promoted_to: src/zephyr/signal_ashare/intraday_t0/overnight_conduction_model.py
   priority: P2
   source: 2026-08-23 场外草稿深挖批(AUD-DRAFT-001, .runtime/audit_20260823/construction_backlog_dig.tsv 裁定=做)
   created: '2026-08-23'
@@ -10557,7 +10557,7 @@ entries:
     blocking_question: null
     result: candidate
   status: promoted
-  promoted_to: src/zephyr/signal_ashare/sector_crowding_launch.py
+  promoted_to: src/zephyr/signal_ashare/sector/sector_crowding_launch.py
   priority: P2
   source: 2026-08-23 场外草稿深挖批(AUD-DRAFT-001, .runtime/audit_20260823/construction_backlog_dig.tsv 裁定=做)
   created: '2026-08-23'
@@ -10583,7 +10583,7 @@ entries:
     blocking_question: null
     result: candidate
   status: promoted
-  promoted_to: src/zephyr/signal_ashare/intraday_size_style.py
+  promoted_to: src/zephyr/signal_ashare/intraday_t0/intraday_size_style.py
   priority: P2
   source: 2026-08-23 场外草稿深挖批(AUD-DRAFT-001, .runtime/audit_20260823/construction_backlog_dig.tsv 裁定=做)
   created: '2026-08-23'
@@ -10651,17 +10651,17 @@ entries:
   domain_status: active
   sub_layer: src/zephyr/signal_ashare/
   problem: f(r\
-  proposal: '深挖裁定=做(P2)。业界对标: 事件条件密度预测为学术延伸,qlib密度预测可作底座。场内现状: 部分:src/zephyr/signal_ashare/conditional_density_predictor.py。最小施工形态:
+  proposal: '深挖裁定=做(P2)。业界对标: 事件条件密度预测为学术延伸,qlib密度预测可作底座。场内现状: 部分:src/zephyr/signal_ashare/ml_forecast/conditional_density_predictor.py。最小施工形态:
     事件类型作条件变量扩展conditional_density_predictor输出事件条件分布(盘后批≤100只)。依赖前置: signal_ashare/conditional_density_predictor.py;intelligence/event_*事件源;NLP事件分类。'
   design_admission:
     q1_implemented:
       result: false
       equivalent_nodes: []
-      evidence: '深挖场内对账: 部分:src/zephyr/signal_ashare/conditional_density_predictor.py'
+      evidence: '深挖场内对账: 部分:src/zephyr/signal_ashare/ml_forecast/conditional_density_predictor.py'
     blocking_question: null
     result: candidate
   status: promoted
-  promoted_to: src/zephyr/signal_ashare/event_conditional_density.py
+  promoted_to: src/zephyr/signal_ashare/ml_forecast/event_conditional_density.py
   priority: P2
   source: 2026-08-23 场外草稿深挖批(AUD-DRAFT-001, .runtime/audit_20260823/construction_backlog_dig.tsv 裁定=做)
   created: '2026-08-23'
@@ -10687,7 +10687,7 @@ entries:
     blocking_question: null
     result: candidate
   status: promoted
-  promoted_to: src/zephyr/signal_ashare/fake_move_distribution.py
+  promoted_to: src/zephyr/signal_ashare/ml_forecast/fake_move_distribution.py
   priority: P2
   source: 2026-08-23 场外草稿深挖批(AUD-DRAFT-001, .runtime/audit_20260823/construction_backlog_dig.tsv 裁定=做)
   created: '2026-08-23'
@@ -10703,13 +10703,13 @@ entries:
   domain_status: active
   sub_layer: src/zephyr/signal_ashare/
   problem: 量能分类=成交量/20日均量(缩量<0.7x/平量0.7-1.3x/放量>1.3x,极端<5%或>95%分位)；量能×体制3×3策略矩阵(趋势/均值回归/混沌×缩量/平量/放量)；归属L2-C+L3
-  proposal: '深挖裁定=做(P2)。业界对标: 量能三态分类(vol/MA20分档)为量价分析常规做法。场内现状: 部分:src/zephyr/signal_ashare/sector_volume_anomaly.py。最小施工形态:
+  proposal: '深挖裁定=做(P2)。业界对标: 量能三态分类(vol/MA20分档)为量价分析常规做法。场内现状: 部分:src/zephyr/signal_ashare/sector/sector_volume_anomaly.py。最小施工形态:
     个股缩量/平量/放量三态(20日均量比0.7/1.3分档)+量能×体制策略查找表参数回测填充。依赖前置: regime输出;backtest回测。'
   design_admission:
     q1_implemented:
       result: false
       equivalent_nodes: []
-      evidence: '深挖场内对账: 部分:src/zephyr/signal_ashare/sector_volume_anomaly.py'
+      evidence: '深挖场内对账: 部分:src/zephyr/signal_ashare/sector/sector_volume_anomaly.py'
     blocking_question: null
     result: candidate
   status: promoted
@@ -10759,13 +10759,13 @@ entries:
   domain_status: active
   sub_layer: src/zephyr/signal_ashare/
   problem: 定性因果推演→定量因果推断(DML/Causal Forest/DoWhy/因果发现)（§29.18）
-  proposal: '深挖裁定=做(P2)。业界对标: econml DML/CausalForest+DoWhy为因果ML标准开源栈。场内现状: 部分:src/zephyr/signal_ashare/causal_inference_engine.py。最小施工形态:
+  proposal: '深挖裁定=做(P2)。业界对标: econml DML/CausalForest+DoWhy为因果ML标准开源栈。场内现状: 部分:src/zephyr/signal_ashare/ml_forecast/causal_inference_engine.py。最小施工形态:
     econml DML单模型试跑(因子→收益处理效应估计)+DoWhy因果图证伪检验。依赖前置: causal_inference_engine;econml/dowhy库。'
   design_admission:
     q1_implemented:
       result: false
       equivalent_nodes: []
-      evidence: '深挖场内对账: 部分:src/zephyr/signal_ashare/causal_inference_engine.py'
+      evidence: '深挖场内对账: 部分:src/zephyr/signal_ashare/ml_forecast/causal_inference_engine.py'
     blocking_question: null
     result: candidate
   status: promoted
@@ -10798,7 +10798,7 @@ entries:
     blocking_question: null
     result: candidate
   status: promoted
-  promoted_to: src/zephyr/signal_ashare/strategy_matrix_3d.py
+  promoted_to: src/zephyr/signal_ashare/strategy_signal/strategy_matrix_3d.py
   priority: P2
   source: 2026-08-23 场外草稿深挖批(AUD-DRAFT-001, .runtime/audit_20260823/construction_backlog_dig.tsv 裁定=做)
   created: '2026-08-23'
@@ -10841,18 +10841,18 @@ entries:
   sub_layer: src/zephyr/signal_ashare/
   problem: 金融时序非平稳违反可交换假设→TCP-RM残差记忆：分位预测器+Robbins-Monro在线保形校准（α_{t+1}=α_t+γ_t·(1-α)，γ默认0.01）；S&P500/Bitcoin/Gold近标称覆盖95%，危机窗口及时扩展；DDCI双反馈升级（实际反馈+估计反馈抑制过度扩展→更稳定更窄）；CP-VaR等价回测（CP覆盖检验↔VaR回测Kupiec
     POF/Christoffersen CC/动态二元检验+Geometric Conformal Backtesting+Diebold-Mariano，需≥250观测）；3集成点（替换校准层<100行/增回测模块<200行复用VaR代码/DDCI升级<150行）；约束：γ随波动率体制调整/须保持有限样本有效性不可牺牲覆盖换窄区间
-  proposal: '深挖裁定=做(P2)。业界对标: MAPIE/conformal-ml生态；TCP-RM(arXiv）在线保形校准。场内现状: 部分：src/zephyr/signal_ashare/adaptive_conformal_tcp_rm_ddci.py。最小施工形态:
+  proposal: '深挖裁定=做(P2)。业界对标: MAPIE/conformal-ml生态；TCP-RM(arXiv）在线保形校准。场内现状: 部分：src/zephyr/signal_ashare/ml_forecast/adaptive_conformal_tcp_rm_ddci.py。最小施工形态:
     增Robbins-Monro在线校准层（γ默认0.01随波动率体制调整，保持有限样本有效性）+DDCI双反馈升级+CP-VaR回测模块（Kupiec POF/Christoffersen CC/Diebold-Mariano,≥250观测，复用VaR代码）。依赖前置:
     D_ASHARE_SIGNAL;D_BACKTEST。'
   design_admission:
     q1_implemented:
       result: false
       equivalent_nodes: []
-      evidence: '深挖场内对账: 部分：src/zephyr/signal_ashare/adaptive_conformal_tcp_rm_ddci.py'
+      evidence: '深挖场内对账: 部分：src/zephyr/signal_ashare/ml_forecast/adaptive_conformal_tcp_rm_ddci.py'
     blocking_question: null
     result: candidate
   status: promoted
-  promoted_to: src/zephyr/signal_ashare/tcp_rm_conformal.py
+  promoted_to: src/zephyr/signal_ashare/ml_forecast/tcp_rm_conformal.py
   priority: P2
   source: 2026-08-23 场外草稿深挖批(AUD-DRAFT-001, .runtime/audit_20260823/construction_backlog_dig.tsv 裁定=做)
   created: '2026-08-23'
@@ -10870,18 +10870,18 @@ entries:
   sub_layer: src/zephyr/signal_ashare/
   problem: 相关性≠因果性，IC≠因果作用；①DML因子因果效应估计（Double/Debiased ML Neyman正交√n一致；因子池≈60个按因果效应排序：高IC低因果=过拟合噪音谨慎用，低IC高因果=被掩盖真信号重点关注；C-027末位淘汰改"IC衰减+因果效应衰减"综合指标）②Causal
     Forest异质性处理效应（同一事件对不同股票效应不同→τ̂_i>0增仓/<0减仓/≈0不动；替代§14事件→持仓映射）③DoWhy反事实推演（建模→识别→估计→反驳4步；盘中北向情景/事后归因/压力测试增强C-040；C-016提供因果图→DoWhy消费→影响L3）④因果发现（PC/LiNGAM/NOTEARS每周运行更新图谱，新边须人工审核防伪因果）；EconML/DoWhy/Causal-Learn/CausalNex
-  proposal: '深挖裁定=做(P2)。业界对标: EconML/DoWhy/causal-learn/CausalNex（条目自带）。场内现状: 部分：src/zephyr/signal_ashare/causal_inference_engine.py。最小施工形态:
+  proposal: '深挖裁定=做(P2)。业界对标: EconML/DoWhy/causal-learn/CausalNex（条目自带）。场内现状: 部分：src/zephyr/signal_ashare/ml_forecast/causal_inference_engine.py。最小施工形态:
     ①DML(Neyman正交）估计约60因子因果效应，C-027末位淘汰改IC衰减+因果衰减综合指标②CausalForest事件异质效应→增减仓映射③DoWhy反事实（北向情景/压力测试增强C-040)④PC/LiNGAM因果发现每周运行+新边人工审核。依赖前置:
     D_ASHARE_SIGNAL;D_FACTOR。'
   design_admission:
     q1_implemented:
       result: false
       equivalent_nodes: []
-      evidence: '深挖场内对账: 部分：src/zephyr/signal_ashare/causal_inference_engine.py'
+      evidence: '深挖场内对账: 部分：src/zephyr/signal_ashare/ml_forecast/causal_inference_engine.py'
     blocking_question: null
     result: candidate
   status: promoted
-  promoted_to: src/zephyr/signal_ashare/causal_ml_engine.py
+  promoted_to: src/zephyr/signal_ashare/ml_forecast/causal_ml_engine.py
   priority: P2
   source: 2026-08-23 场外草稿深挖批(AUD-DRAFT-001, .runtime/audit_20260823/construction_backlog_dig.tsv 裁定=做)
   created: '2026-08-23'
@@ -10897,13 +10897,13 @@ entries:
   domain_status: active
   sub_layer: src/zephyr/signal_ashare/
   problem: ✅能建；事件征兆分析+事件连锁逻辑树+隔夜外盘影响
-  proposal: '深挖裁定=做(P2)。业界对标: 事件驱动+因果逻辑树，业界以事件库+规则链为主，隔夜外盘映射是A股特色。场内现状: 部分:src/zephyr/signal_ashare/event_driven_screener.py;causal_inference_engine.py;foreign_impact_judge.py。最小施工形态:
+  proposal: '深挖裁定=做(P2)。业界对标: 事件驱动+因果逻辑树，业界以事件库+规则链为主，隔夜外盘映射是A股特色。场内现状: 部分:src/zephyr/signal_ashare/screening/event_driven_screener.py;causal_inference_engine.py;foreign_impact_judge.py。最小施工形态:
     事件征兆规则+连锁逻辑树+隔夜外盘影响映射接入foreign_impact_judge。依赖前置: causal_inference_engine(部分)。'
   design_admission:
     q1_implemented:
       result: false
       equivalent_nodes: []
-      evidence: '深挖场内对账: 部分:src/zephyr/signal_ashare/event_driven_screener.py;causal_inference_engine.py;foreign_impact_judge.py'
+      evidence: '深挖场内对账: 部分:src/zephyr/signal_ashare/screening/event_driven_screener.py;causal_inference_engine.py;foreign_impact_judge.py'
     blocking_question: null
     result: candidate
   status: promoted
@@ -10962,7 +10962,7 @@ entries:
     blocking_question: null
     result: candidate
   status: promoted
-  promoted_to: src/zephyr/signal_ashare/signal_weight_adjuster.py
+  promoted_to: src/zephyr/signal_ashare/strategy_signal/signal_weight_adjuster.py
   priority: P2
   source: 2026-08-23 场外草稿深挖批(AUD-DRAFT-001, .runtime/audit_20260823/construction_backlog_dig.tsv 裁定=做)
   created: '2026-08-23'
@@ -10978,18 +10978,18 @@ entries:
   domain_status: active
   sub_layer: src/zephyr/signal_ashare/
   problem: 做T Agent技能
-  proposal: '深挖裁定=做(P2)。业界对标: T+0做T成本模型(佣金/印花税/滑点/冲击成本)。场内现状: 部分：src/zephyr/signal_ashare/t0_point_analyzer.py。最小施工形态:
+  proposal: '深挖裁定=做(P2)。业界对标: T+0做T成本模型(佣金/印花税/滑点/冲击成本)。场内现状: 部分：src/zephyr/signal_ashare/intraday_t0/t0_point_analyzer.py。最小施工形态:
     day-trade-pnl-estimate技能：候选做T对(买价/卖价/数量)经成本模型(佣金+印花税+滑点+冲击成本)出净盈亏预估+置信度，阈值过滤后提案；实际成交回写校准预估偏差。依赖前置:
     D_ASHARE_SIGNAL;D_EX_SOR;D_SELL_DECISION。'
   design_admission:
     q1_implemented:
       result: false
       equivalent_nodes: []
-      evidence: '深挖场内对账: 部分：src/zephyr/signal_ashare/t0_point_analyzer.py'
+      evidence: '深挖场内对账: 部分：src/zephyr/signal_ashare/intraday_t0/t0_point_analyzer.py'
     blocking_question: null
     result: candidate
   status: promoted
-  promoted_to: src/zephyr/signal_ashare/day_trade_pnl_estimator.py
+  promoted_to: src/zephyr/signal_ashare/intraday_t0/day_trade_pnl_estimator.py
   priority: P2
   source: 2026-08-23 场外草稿深挖批(AUD-DRAFT-001, .runtime/audit_20260823/construction_backlog_dig.tsv 裁定=做)
   created: '2026-08-23'
@@ -11048,7 +11048,7 @@ entries:
   promoted_to: 'signal_ashare/intraday_volume_orderflow.py（MOD-SIG-093，13 测）'
   last_reviewed_at: '2026-08-30'
   last_review_outcome: "2026-08-30 候选库核销批（176 条全量核查，四路实证）：P2-W06 归并核销"
-  review_note: "# REVIEW: 归并不施工（2026-08-26，P2-W06）——与 P1 已建 intraday_volume_orderflow 同为日内量能结构与订单流分析，canonical=src/zephyr/signal_ashare/intraday_volume_orderflow.py（Volume Profile/CVD/VPIN 近似语义已在）"
+  review_note: "# REVIEW: 归并不施工（2026-08-26，P2-W06）——与 P1 已建 intraday_volume_orderflow 同为日内量能结构与订单流分析，canonical=src/zephyr/signal_ashare/intraday_t0/intraday_volume_orderflow.py（Volume Profile/CVD/VPIN 近似语义已在）"
   priority: P2
   source: 2026-08-23 场外草稿深挖批(AUD-DRAFT-001, .runtime/audit_20260823/construction_backlog_dig.tsv 裁定=做)
   created: '2026-08-23'
@@ -11303,13 +11303,13 @@ entries:
   domain_status: active
   sub_layer: src/zephyr/autonomy_core/
   problem: 日内做T信号+即时执行决策 ✅
-  proposal: '深挖裁定=做(P1)。业界对标: vnpy日内策略;A股底仓T+0。场内现状: 部分:src/zephyr/signal_ashare/t0_point_analyzer.py。最小施工形态:
+  proposal: '深挖裁定=做(P1)。业界对标: vnpy日内策略;A股底仓T+0。场内现状: 部分:src/zephyr/signal_ashare/intraday_t0/t0_point_analyzer.py。最小施工形态:
     T0Trader角色:底仓不变硬约束+T+1可卖校验(t1_sellable)+做T信号即时裁决,单笔价差/次数限额,与C-012管线对接。依赖前置: D_AUTONOMY_CORE;D_POSITION;D_EX_CORE。'
   design_admission:
     q1_implemented:
       result: false
       equivalent_nodes: []
-      evidence: '深挖场内对账: 部分:src/zephyr/signal_ashare/t0_point_analyzer.py'
+      evidence: '深挖场内对账: 部分:src/zephyr/signal_ashare/intraday_t0/t0_point_analyzer.py'
     blocking_question: null
     result: candidate
   status: promoted
@@ -11385,14 +11385,14 @@ entries:
   domain_status: active
   sub_layer: src/zephyr/autonomy_core/
   problem: 买卖点择时、信号触发判定；Level 1；C-012/C-013；D-EX-CORE+D-SIGNAL；规则引擎+本地LLM辅助
-  proposal: '深挖裁定=做(P1)。业界对标: 规则引擎+本地LLM辅助的信号触发/择时框架(qlib信号层)。场内现状: 部分：src/zephyr/signal_ashare/intraday_buy_sell_point_analyzer.py。最小施工形态:
+  proposal: '深挖裁定=做(P1)。业界对标: 规则引擎+本地LLM辅助的信号触发/择时框架(qlib信号层)。场内现状: 部分：src/zephyr/signal_ashare/intraday_t0/intraday_buy_sell_point_analyzer.py。最小施工形态:
     Timer Agent：Level 1(建议级)Agent Card；技能=择时决策(买卖点规则引擎复用intraday_buy_sell_point_analyzer/chanlun_structure，本地LLM仅做解释不打分)+触发评估(复用trigger_registry条件单触发判定)；输出接信号质量控制与人工确认回路。依赖前置:
     D_AUTONOMY_CORE;D_ASHARE_SIGNAL;D_SIGQC;D_INTELLIGENCE。'
   design_admission:
     q1_implemented:
       result: false
       equivalent_nodes: []
-      evidence: '深挖场内对账: 部分：src/zephyr/signal_ashare/intraday_buy_sell_point_analyzer.py'
+      evidence: '深挖场内对账: 部分：src/zephyr/signal_ashare/intraday_t0/intraday_buy_sell_point_analyzer.py'
     blocking_question: null
     result: candidate
   status: promoted
@@ -13325,13 +13325,13 @@ entries:
   domain_status: active
   sub_layer: src/zephyr/factor/
   problem: DoWhy/DML区分相关vs因果→因果因子加权提升；消费L2-D预计算因果图（盘前）
-  proposal: '深挖裁定=做(P1)。业界对标: DoWhy+EconML(DML)区分相关与因果是业界标准组合。场内现状: 部分:src/zephyr/signal_ashare/causal_factor_validator.py(设计态)。最小施工形态:
+  proposal: '深挖裁定=做(P1)。业界对标: DoWhy+EconML(DML)区分相关与因果是业界标准组合。场内现状: 部分:src/zephyr/signal_ashare/ml_forecast/causal_factor_validator.py(设计态)。最小施工形态:
     完成causal_factor_validator：DoWhy/DML筛因果因子→加权入因子库。依赖前置: causal_inference_engine(部分，见B10-01198)。'
   design_admission:
     q1_implemented:
       result: false
       equivalent_nodes: []
-      evidence: '深挖场内对账: 部分:src/zephyr/signal_ashare/causal_factor_validator.py(设计态)'
+      evidence: '深挖场内对账: 部分:src/zephyr/signal_ashare/ml_forecast/causal_factor_validator.py(设计态)'
     blocking_question: null
     result: candidate
   status: promoted
@@ -13640,7 +13640,7 @@ entries:
   promoted_to: 'signal_ashare/unified_pattern_engine.py（MOD-SIG-091）'
   last_reviewed_at: '2026-08-30'
   last_review_outcome: "2026-08-30 候选库核销批（176 条全量核查，四路实证）：W05 同族归并核销"
-  review_note: "# REVIEW: 归并不施工（2026-08-26，P2-W07）——与 P1 已建 MOD-SIG-091 unified_pattern_engine 同为统一技术图形识别引擎（B13/B1 两稿），canonical=src/zephyr/signal_ashare/unified_pattern_engine.py（W05 已裁定同族归并）"
+  review_note: "# REVIEW: 归并不施工（2026-08-26，P2-W07）——与 P1 已建 MOD-SIG-091 unified_pattern_engine 同为统一技术图形识别引擎（B13/B1 两稿），canonical=src/zephyr/signal_ashare/strategy_signal/unified_pattern_engine.py（W05 已裁定同族归并）"
   priority: P2
   source: 2026-08-23 场外草稿深挖批(AUD-DRAFT-001, .runtime/audit_20260823/construction_backlog_dig.tsv 裁定=做)
   created: '2026-08-23'
@@ -15608,13 +15608,13 @@ entries:
   domain_status: active
   sub_layer: src/zephyr/intelligence/
   problem: 事件节点(政策/行业数据/公告/海外)+因果边(Granger因果)+贝叶斯网络条件概率P(B\
-  proposal: '深挖裁定=做(P2)。业界对标: pgmpy贝叶斯网络+Granger因果为事件链推理标准工具。场内现状: 部分:src/zephyr/signal_ashare/causal_inference_engine.py。最小施工形态:
+  proposal: '深挖裁定=做(P2)。业界对标: pgmpy贝叶斯网络+Granger因果为事件链推理标准工具。场内现状: 部分:src/zephyr/signal_ashare/ml_forecast/causal_inference_engine.py。最小施工形态:
     事件节点表+Granger因果边+贝叶斯网络P(B|A)条件概率查询接口。依赖前置: causal_inference_engine;intelligence/event_*事件源。'
   design_admission:
     q1_implemented:
       result: false
       equivalent_nodes: []
-      evidence: '深挖场内对账: 部分:src/zephyr/signal_ashare/causal_inference_engine.py'
+      evidence: '深挖场内对账: 部分:src/zephyr/signal_ashare/ml_forecast/causal_inference_engine.py'
     blocking_question: null
     result: candidate
   status: promoted
@@ -16679,13 +16679,13 @@ entries:
   domain_status: active
   sub_layer: src/zephyr/intelligence/model_evaluation/
   problem: 第三时序架构（§29.34）
-  proposal: '深挖裁定=做(P2)。业界对标: xLSTM为2024新时序架构(官方xlstm repo)，与HMM/Transformer互补。场内现状: 部分:src/zephyr/signal_ashare/xlstm_long_memory.py(设计态)。最小施工形态:
+  proposal: '深挖裁定=做(P2)。业界对标: xLSTM为2024新时序架构(官方xlstm repo)，与HMM/Transformer互补。场内现状: 部分:src/zephyr/signal_ashare/ml_forecast/xlstm_long_memory.py(设计态)。最小施工形态:
     完成xlstm_long_memory实现并接入密度/时序预测训练管线。依赖前置: ml_train管线(已有)。'
   design_admission:
     q1_implemented:
       result: false
       equivalent_nodes: []
-      evidence: '深挖场内对账: 部分:src/zephyr/signal_ashare/xlstm_long_memory.py(设计态)'
+      evidence: '深挖场内对账: 部分:src/zephyr/signal_ashare/ml_forecast/xlstm_long_memory.py(设计态)'
     blocking_question: null
     result: candidate
   status: promoted
@@ -17788,13 +17788,13 @@ entries:
   domain_status: active
   sub_layer: src/zephyr/regime/
   problem: 三层融合(系统内部+主播信号+动态加权)+8态叠加模型 ✅
-  proposal: '深挖裁定=做(P1)。业界对标: HMM+集成时序预测。场内现状: 部分:src/zephyr/signal_ashare/next_day_8state_forecast.py。最小施工形态:
+  proposal: '深挖裁定=做(P1)。业界对标: HMM+集成时序预测。场内现状: 部分:src/zephyr/signal_ashare/ml_forecast/next_day_8state_forecast.py。最小施工形态:
     三层融合:系统内部模型+外部主播信号采集打分+滚动准确率动态加权,输出次日8态分布与置信度,预测日志入prediction_log_writer供复盘加权更新。依赖前置: D_REGIME;D_ASHARE_SIGNAL;D_ALT_DATA。'
   design_admission:
     q1_implemented:
       result: false
       equivalent_nodes: []
-      evidence: '深挖场内对账: 部分:src/zephyr/signal_ashare/next_day_8state_forecast.py'
+      evidence: '深挖场内对账: 部分:src/zephyr/signal_ashare/ml_forecast/next_day_8state_forecast.py'
     blocking_question: null
     result: candidate
   status: promoted
@@ -18024,13 +18024,13 @@ entries:
   domain_status: active
   sub_layer: src/zephyr/risk/
   problem: 含C-038/C-040；前瞻性VaR/CVaR(条件PDF)+共形VaR(覆盖率数学保证)
-  proposal: '深挖裁定=做(P0)。业界对标: 前瞻VaR/CVaR+共形预测(MAPIE)覆盖率数学保证是业界前沿标准。场内现状: 部分:src/zephyr/signal_ashare/adaptive_conformal_tcp_rm_ddci.py;conformal_predictor.py;src/zephyr/risk/core/var_intraday_recalc.py。最小施工形态:
+  proposal: '深挖裁定=做(P0)。业界对标: 前瞻VaR/CVaR+共形预测(MAPIE)覆盖率数学保证是业界前沿标准。场内现状: 部分:src/zephyr/signal_ashare/ml_forecast/adaptive_conformal_tcp_rm_ddci.py;conformal_predictor.py;src/zephyr/risk/core/var_intraday_recalc.py。最小施工形态:
     条件PDF VaR/CVaR+共形VaR接入risk限额与var_intraday_recalc。依赖前置: conditional_density_predictor(部分)。'
   design_admission:
     q1_implemented:
       result: false
       equivalent_nodes: []
-      evidence: '深挖场内对账: 部分:src/zephyr/signal_ashare/adaptive_conformal_tcp_rm_ddci.py;conformal_predictor.py;src/zephyr/risk/core/var_intraday_recalc.py'
+      evidence: '深挖场内对账: 部分:src/zephyr/signal_ashare/ml_forecast/adaptive_conformal_tcp_rm_ddci.py;conformal_predictor.py;src/zephyr/risk/core/var_intraday_recalc.py'
     blocking_question: null
     result: candidate
   status: promoted
@@ -18050,13 +18050,13 @@ entries:
   domain_status: active
   sub_layer: src/zephyr/risk/
   problem: 含C-032/C-045+流动性风险监控+相关性体制监控；v8.2 C-045深度增强(策略逻辑相似度+去杠杆原型+悖论防护)
-  proposal: '深挖裁定=做(P0)。业界对标: 流动性+相关性体制监控是风险仪表盘标配，riskfolio-lib提供相关性聚类。场内现状: 部分:src/zephyr/risk/core/liquidity_crisis_manager.py;ashare_systemic_risk_detector.py;src/zephyr/signal_ashare/regime_change_detector.py。最小施工形态:
+  proposal: '深挖裁定=做(P0)。业界对标: 流动性+相关性体制监控是风险仪表盘标配，riskfolio-lib提供相关性聚类。场内现状: 部分:src/zephyr/risk/core/liquidity_crisis_manager.py;ashare_systemic_risk_detector.py;src/zephyr/signal_ashare/ml_forecast/regime_change_detector.py。最小施工形态:
     流动性风险+相关性体制监控挂风险仪表盘并接告警。依赖前置: D_REGIME(已有)。'
   design_admission:
     q1_implemented:
       result: false
       equivalent_nodes: []
-      evidence: '深挖场内对账: 部分:src/zephyr/risk/core/liquidity_crisis_manager.py;ashare_systemic_risk_detector.py;src/zephyr/signal_ashare/regime_change_detector.py'
+      evidence: '深挖场内对账: 部分:src/zephyr/risk/core/liquidity_crisis_manager.py;ashare_systemic_risk_detector.py;src/zephyr/signal_ashare/ml_forecast/regime_change_detector.py'
     blocking_question: null
     result: candidate
   status: promoted

@@ -7,7 +7,7 @@ from __future__ import annotations
 import numpy as np
 import pytest
 
-from zephyr.signal_ashare.sentiment_cycle import (
+from zephyr.signal_ashare.sentiment.sentiment_cycle import (
     EFFECTIVE_COMBINATIONS_60,
     PHASE_CHARACTERISTICS,
     PHASE_DISCIPLINE,

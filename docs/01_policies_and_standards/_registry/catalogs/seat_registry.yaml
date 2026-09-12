@@ -68,6 +68,7 @@ seats:
   # 机构专用席位（institution，中线趋势资金，优先级最高）
   # ============================================================
   - seat_id: "SEAT-INST-001"
+    module_id: MOD-GOVERNANCE
     seat_name: "机构专用"
     seat_type: "institution"
     seat_style: "中线波段"
@@ -96,6 +97,7 @@ seats:
     evidence: ""
 
   - seat_id: "SEAT-INST-002"
+    module_id: MOD-GOVERNANCE
     seat_name: "深股通专用"
     seat_type: "institution"
     seat_style: "北向资金"
@@ -124,6 +126,7 @@ seats:
     evidence: ""
 
   - seat_id: "SEAT-INST-003"
+    module_id: MOD-GOVERNANCE
     seat_name: "沪股通专用"
     seat_type: "institution"
     seat_style: "北向资金"
@@ -155,6 +158,7 @@ seats:
   # 一线知名游资（youzi，短线情绪龙头，抓连板弹性）
   # ============================================================
   - seat_id: "SEAT-YOUZI-001"
+    module_id: MOD-GOVERNANCE
     seat_name: "章盟主"
     seat_type: "youzi"
     seat_style: "龙头连板"
@@ -183,6 +187,7 @@ seats:
     evidence: ""
 
   - seat_id: "SEAT-YOUZI-002"
+    module_id: MOD-GOVERNANCE
     seat_name: "方新侠"
     seat_type: "youzi"
     seat_style: "龙头连板"
@@ -211,6 +216,7 @@ seats:
     evidence: ""
 
   - seat_id: "SEAT-YOUZI-003"
+    module_id: MOD-GOVERNANCE
     seat_name: "作手新一"
     seat_type: "youzi"
     seat_style: "龙头连板"
@@ -239,6 +245,7 @@ seats:
     evidence: ""
 
   - seat_id: "SEAT-YOUZI-004"
+    module_id: MOD-GOVERNANCE
     seat_name: "小鳄鱼"
     seat_type: "youzi"
     seat_style: "低吸"
@@ -267,6 +274,7 @@ seats:
     evidence: ""
 
   - seat_id: "SEAT-YOUZI-005"
+    module_id: MOD-GOVERNANCE
     seat_name: "欢乐海岸"
     seat_type: "youzi"
     seat_style: "首板"
@@ -295,6 +303,7 @@ seats:
     evidence: ""
 
   - seat_id: "SEAT-YOUZI-006"
+    module_id: MOD-GOVERNANCE
     seat_name: "宁波桑田路"
     seat_type: "youzi"
     seat_style: "一日游"
@@ -323,6 +332,7 @@ seats:
     evidence: ""
 
   - seat_id: "SEAT-YOUZI-007"
+    module_id: MOD-GOVERNANCE
     seat_name: "炒股养家"
     seat_type: "youzi"
     seat_style: "波段"
@@ -354,6 +364,7 @@ seats:
   # 量化席位（quant，中性偏利空，尽量回避主导量化票）
   # ============================================================
   - seat_id: "SEAT-QUANT-001"
+    module_id: MOD-GOVERNANCE
     seat_name: "华鑫上海"
     seat_type: "quant"
     seat_style: "量化T0"
@@ -382,6 +393,7 @@ seats:
     evidence: ""
 
   - seat_id: "SEAT-QUANT-002"
+    module_id: MOD-GOVERNANCE
     seat_name: "华泰总部"
     seat_type: "quant"
     seat_style: "量化T0"
@@ -410,6 +422,7 @@ seats:
     evidence: ""
 
   - seat_id: "SEAT-QUANT-003"
+    module_id: MOD-GOVERNANCE
     seat_name: "中金量化分公司"
     seat_type: "quant"
     seat_style: "量化T0"
@@ -441,6 +454,7 @@ seats:
   # 散户席位（retail，拉萨天团=风险标志）
   # ============================================================
   - seat_id: "SEAT-RETAIL-001"
+    module_id: MOD-GOVERNANCE
     seat_name: "拉萨金融城南环路"
     seat_type: "retail"
     seat_style: "散户集合"
@@ -469,6 +483,7 @@ seats:
     evidence: ""
 
   - seat_id: "SEAT-RETAIL-002"
+    module_id: MOD-GOVERNANCE
     seat_name: "拉萨东环路"
     seat_type: "retail"
     seat_style: "散户集合"
@@ -497,6 +512,7 @@ seats:
     evidence: ""
 
   - seat_id: "SEAT-INST-004"
+    module_id: MOD-GOVERNANCE
     seat_name: "龙虎榜席位"
     seat_type: "institution"
     seat_style: "机构净买入跟踪"

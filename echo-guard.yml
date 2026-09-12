@@ -824,3 +824,39 @@ acknowledged:
   note: 2026-09-10 st-legacy-clear-20260910：双 gate 的 src/zephyr 判定 helper 相似 
     60%（type3 部分同构），语义有差异（asyncio gate 版含 tests 豁免口径）非同函数——盲合并有行为回归风险，DEDUP 下沉 
     _diff_helpers 待语义对齐批次；两 gate 均为本会话 own-scope 推广触及的存量函数
+- stable_key: "src/zephyr/signal_ashare/mainline_candidates.py:_lead_streaks||src/zephyr/signal_ashare/sector/sector_divergence.py:_lead_streaks"
+  note: 2026-09-13 schemas-split-20260912：signal_ashare/src 平铺债拆分批（74 移动+全仓 import 改写）使留根/消费方 M 态文件进入 CloneGuard 扫描视野，与移动文件新路径报出存量克隆——重复在 HEAD 既有，非本批引入；函数合并清偿归 DEDUP 专项批
+- stable_key: "src/zephyr/signal_ashare/adjustment_cycle_tracker.py:_resolve_table||src/zephyr/signal_ashare/ml_forecast/next_day_8state_forecast.py:_resolve_table"
+  note: 2026-09-13 schemas-split-20260912：signal_ashare/src 平铺债拆分批（74 移动+全仓 import 改写）使留根/消费方 M 态文件进入 CloneGuard 扫描视野，与移动文件新路径报出存量克隆——重复在 HEAD 既有，非本批引入；函数合并清偿归 DEDUP 专项批
+- stable_key: "src/zephyr/signal_ashare/adjustment_cycle_tracker.py:_resolve_table||src/zephyr/signal_ashare/ml_forecast/regime_change_detector.py:_resolve_table"
+  note: 2026-09-13 schemas-split-20260912：signal_ashare/src 平铺债拆分批（74 移动+全仓 import 改写）使留根/消费方 M 态文件进入 CloneGuard 扫描视野，与移动文件新路径报出存量克隆——重复在 HEAD 既有，非本批引入；函数合并清偿归 DEDUP 专项批
+- stable_key: "src/zephyr/signal_ashare/mainline_candidates.py:_rotation_speeds||src/zephyr/signal_ashare/sector/sector_divergence.py:_rotation_speeds"
+  note: 2026-09-13 schemas-split-20260912：signal_ashare/src 平铺债拆分批（74 移动+全仓 import 改写）使留根/消费方 M 态文件进入 CloneGuard 扫描视野，与移动文件新路径报出存量克隆——重复在 HEAD 既有，非本批引入；函数合并清偿归 DEDUP 专项批
+- stable_key: "src/zephyr/plan_engine/boundary_revision_engine.py:to_dict||src/zephyr/plan_engine/llm_premarket_analysis.py:to_dict"
+  note: 2026-09-13 schemas-split-20260912：signal_ashare/src 平铺债拆分批（74 移动+全仓 import 改写）使留根/消费方 M 态文件进入 CloneGuard 扫描视野，与移动文件新路径报出存量克隆——重复在 HEAD 既有，非本批引入；函数合并清偿归 DEDUP 专项批
+- stable_key: "src/zephyr/plan_engine/boundary_revision_engine.py:to_dict||src/zephyr/signal_ashare/limit_up/war_pool_generator.py:to_dict"
+  note: 2026-09-13 schemas-split-20260912：signal_ashare/src 平铺债拆分批（74 移动+全仓 import 改写）使留根/消费方 M 态文件进入 CloneGuard 扫描视野，与移动文件新路径报出存量克隆——重复在 HEAD 既有，非本批引入；函数合并清偿归 DEDUP 专项批
+- stable_key: "src/zephyr/signal_ashare/adjustment_cycle_tracker.py:_resolve_query_fn||src/zephyr/signal_ashare/ml_forecast/next_day_8state_forecast.py:_resolve_query_fn"
+  note: 2026-09-13 schemas-split-20260912：signal_ashare/src 平铺债拆分批（74 移动+全仓 import 改写）使留根/消费方 M 态文件进入 CloneGuard 扫描视野，与移动文件新路径报出存量克隆——重复在 HEAD 既有，非本批引入；函数合并清偿归 DEDUP 专项批
+- stable_key: "src/zephyr/signal_ashare/adjustment_cycle_tracker.py:_resolve_query_fn||src/zephyr/signal_ashare/ml_forecast/regime_change_detector.py:_resolve_query_fn"
+  note: 2026-09-13 schemas-split-20260912：signal_ashare/src 平铺债拆分批（74 移动+全仓 import 改写）使留根/消费方 M 态文件进入 CloneGuard 扫描视野，与移动文件新路径报出存量克隆——重复在 HEAD 既有，非本批引入；函数合并清偿归 DEDUP 专项批
+- stable_key: "src/zephyr/signal_ashare/mainline_candidates.py:_as_date||src/zephyr/signal_ashare/mainline_probability.py:_as_date"
+  note: 2026-09-13 schemas-split-20260912：signal_ashare/src 平铺债拆分批（74 移动+全仓 import 改写）使留根/消费方 M 态文件进入 CloneGuard 扫描视野，与移动文件新路径报出存量克隆——重复在 HEAD 既有，非本批引入；函数合并清偿归 DEDUP 专项批
+- stable_key: "src/zephyr/signal_ashare/mainline_candidates.py:_as_date||src/zephyr/signal_ashare/position_sector_context.py:_as_date"
+  note: 2026-09-13 schemas-split-20260912：signal_ashare/src 平铺债拆分批（74 移动+全仓 import 改写）使留根/消费方 M 态文件进入 CloneGuard 扫描视野，与移动文件新路径报出存量克隆——重复在 HEAD 既有，非本批引入；函数合并清偿归 DEDUP 专项批
+- stable_key: "src/zephyr/signal_ashare/mainline_candidates.py:_as_date||src/zephyr/signal_ashare/sector/sector_divergence.py:_as_date"
+  note: 2026-09-13 schemas-split-20260912：signal_ashare/src 平铺债拆分批（74 移动+全仓 import 改写）使留根/消费方 M 态文件进入 CloneGuard 扫描视野，与移动文件新路径报出存量克隆——重复在 HEAD 既有，非本批引入；函数合并清偿归 DEDUP 专项批
+- stable_key: "src/zephyr/signal_ashare/mainline_candidates.py:_as_date||src/zephyr/signal_ashare/sector/sector_leader.py:_as_date"
+  note: 2026-09-13 schemas-split-20260912：signal_ashare/src 平铺债拆分批（74 移动+全仓 import 改写）使留根/消费方 M 态文件进入 CloneGuard 扫描视野，与移动文件新路径报出存量克隆——重复在 HEAD 既有，非本批引入；函数合并清偿归 DEDUP 专项批
+- stable_key: "src/zephyr/plan_engine/llm_premarket_analysis.py:_parse_tsv||src/zephyr/signal_ashare/market_breadth_history_store.py:_parse_tsv"
+  note: 2026-09-13 schemas-split-20260912：signal_ashare/src 平铺债拆分批（74 移动+全仓 import 改写）使留根/消费方 M 态文件进入 CloneGuard 扫描视野，与移动文件新路径报出存量克隆——重复在 HEAD 既有，非本批引入；函数合并清偿归 DEDUP 专项批
+- stable_key: "src/zephyr/plan_engine/similar_day_evaluator.py:_parse_eval_date||src/zephyr/signal_ashare/market_breadth_history_store.py:_resolve_end_date"
+  note: 2026-09-13 schemas-split-20260912：signal_ashare/src 平铺债拆分批（74 移动+全仓 import 改写）使留根/消费方 M 态文件进入 CloneGuard 扫描视野，与移动文件新路径报出存量克隆——重复在 HEAD 既有，非本批引入；函数合并清偿归 DEDUP 专项批
+- stable_key: "src/zephyr/plan_engine/llm_premarket_analysis.py:_safe_float||src/zephyr/plan_engine/scenario_probability_model.py:_safe_float"
+  note: 2026-09-13 schemas-split-20260912：signal_ashare/src 平铺债拆分批（74 移动+全仓 import 改写）使留根/消费方 M 态文件进入 CloneGuard 扫描视野，与移动文件新路径报出存量克隆——重复在 HEAD 既有，非本批引入；函数合并清偿归 DEDUP 专项批
+- stable_key: "src/zephyr/plan_engine/llm_premarket_analysis.py:_table||src/zephyr/signal_ashare/market_breadth_history_store.py:_table"
+  note: 2026-09-13 schemas-split-20260912：signal_ashare/src 平铺债拆分批（74 移动+全仓 import 改写）使留根/消费方 M 态文件进入 CloneGuard 扫描视野，与移动文件新路径报出存量克隆——重复在 HEAD 既有，非本批引入；函数合并清偿归 DEDUP 专项批
+- stable_key: "src/zephyr/signal_ashare/fine_scoring_engine.py:compute_density_penalty||src/zephyr/signal_ashare/screening/selection_funnel_skeleton.py:density_penalty_from_summary"
+  note: 2026-09-13 schemas-split-20260912：signal_ashare/src 平铺债拆分批（74 移动+全仓 import 改写）使留根/消费方 M 态文件进入 CloneGuard 扫描视野，与移动文件新路径报出存量克隆——重复在 HEAD 既有，非本批引入；函数合并清偿归 DEDUP 专项批
+- stable_key: "src/zephyr/signal_ashare/mainline_candidates.py:_daily_returns||src/zephyr/signal_ashare/sector/sector_divergence.py:_daily_returns"
+  note: 2026-09-13 schemas-split-20260912：signal_ashare/src 平铺债拆分批（74 移动+全仓 import 改写）使留根/消费方 M 态文件进入 CloneGuard 扫描视野，与移动文件新路径报出存量克隆——重复在 HEAD 既有，非本批引入；函数合并清偿归 DEDUP 专项批

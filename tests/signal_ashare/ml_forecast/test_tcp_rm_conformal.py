@@ -2,7 +2,7 @@
 # [TTL] permanent
 # [A_test] module_id: MOD-SIG-128 | layer=test | stability=volatile | safety=M | ai_autonomy=human_gated
 # [MODULE] tests.signal_ashare.test_tcp_rm_conformal
-# [TESTS] src/zephyr/signal_ashare/tcp_rm_conformal.py
+# [TESTS] src/zephyr/signal_ashare/ml_forecast/tcp_rm_conformal.py
 """MOD-SIG-128 单元测试：tcp_rm_conformal TCP-RM 时序保形预测增强器。
 
 蓝图验收（B10-01854/CAND-TESTB-050，A1 §29.16-5）：
@@ -18,11 +18,11 @@ import datetime
 import pytest
 
 pytest.importorskip(
-    "zephyr.signal_ashare.tcp_rm_conformal",
+    "zephyr.signal_ashare.ml_forecast.tcp_rm_conformal",
     reason="tcp_rm_conformal not importable",
 )
 
-from zephyr.signal_ashare.tcp_rm_conformal import (  # noqa: E402
+from zephyr.signal_ashare.ml_forecast.tcp_rm_conformal import (  # noqa: E402
     TcpRmConformal,
     TcpRmConfig,
     TcpRmError,

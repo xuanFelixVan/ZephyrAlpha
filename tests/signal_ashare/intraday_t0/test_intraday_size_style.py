@@ -2,7 +2,7 @@
 # [TTL] permanent
 # [A_test] module_id: MOD-SIG-120 | layer=test | stability=volatile | safety=M | ai_autonomy=human_gated
 # [MODULE] tests.signal_ashare.test_intraday_size_style
-# [TESTS] src/zephyr/signal_ashare/intraday_size_style.py
+# [TESTS] src/zephyr/signal_ashare/intraday_t0/intraday_size_style.py
 """MOD-SIG-120 单元测试：intraday_size_style 分时微结构与大小盘风格。
 
 蓝图验收（B10-01385/CAND-TESTB-040，A1 模块45）：
@@ -18,11 +18,11 @@ import datetime
 import pytest
 
 pytest.importorskip(
-    "zephyr.signal_ashare.intraday_size_style",
+    "zephyr.signal_ashare.intraday_t0.intraday_size_style",
     reason="intraday_size_style not importable",
 )
 
-from zephyr.signal_ashare.intraday_size_style import (  # noqa: E402
+from zephyr.signal_ashare.intraday_t0.intraday_size_style import (  # noqa: E402
     IntradaySizeStyle,
     IntradaySizeStyleError,
 )

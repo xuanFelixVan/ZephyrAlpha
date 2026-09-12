@@ -2,7 +2,7 @@
 # [TTL] permanent
 # [A_test] module_id: MOD-SIG-115 | layer=test | stability=volatile | safety=M | ai_autonomy=human_gated
 # [MODULE] tests.signal_ashare.test_pattern_to_signal_mapper
-# [TESTS] src/zephyr/signal_ashare/pattern_to_signal_mapper.py
+# [TESTS] src/zephyr/signal_ashare/strategy_signal/pattern_to_signal_mapper.py
 """MOD-SIG-115 单元测试：pattern_to_signal_mapper 形态信号转化层。
 
 蓝图验收（B1-00849/CAND-TESTB-033，C2 97）：
@@ -18,17 +18,17 @@ import datetime
 import pytest
 
 pytest.importorskip(
-    "zephyr.signal_ashare.pattern_to_signal_mapper",
+    "zephyr.signal_ashare.strategy_signal.pattern_to_signal_mapper",
     reason="pattern_to_signal_mapper not importable",
 )
 
-from zephyr.signal_ashare.pattern_to_signal_mapper import (  # noqa: E402
+from zephyr.signal_ashare.strategy_signal.pattern_to_signal_mapper import (  # noqa: E402
     MappedSignal,
     PatternSignalMapError,
     PatternToSignalMapper,
     SignalDirection,
 )
-from zephyr.signal_ashare.unified_pattern_engine import (  # noqa: E402
+from zephyr.signal_ashare.strategy_signal.unified_pattern_engine import (  # noqa: E402
     KeyPoint,
     PatternClass,
     PatternDirection,

@@ -11,7 +11,7 @@
 # [SAFETY] M
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] 板块强度 ∉[0,10] 或个股 score <0 → SectorConductionError（fail-closed）
-# [TESTS] tests/signal_ashare/test_sector_conduction.py
+# [TESTS] tests/signal_ashare/sector/test_sector_conduction.py
 # [TTL] permanent
 """SectorConduction — 板块强度加权传导（MOD-SIG-136）。
 

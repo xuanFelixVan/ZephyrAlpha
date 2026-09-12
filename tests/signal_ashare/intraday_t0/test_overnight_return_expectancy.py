@@ -2,7 +2,7 @@
 # [BLUEPRINT] MOD-SIG-107 | docs/03_modules/_domain_signal/overnight_return_expectancy/blueprint.md
 # [MODULE] tests.signal_ashare.test_overnight_return_expectancy
 # [TTL] permanent
-# [DEPENDENCIES] zephyr.signal_ashare.overnight_return_expectancy
+# [DEPENDENCIES] zephyr.signal_ashare.intraday_t0.overnight_return_expectancy
 
 """隔夜收益预测与开仓期望值（MOD-SIG-107，B10-01464）施工验证测试。
 
@@ -19,7 +19,7 @@ import json
 
 import pytest
 
-from zephyr.signal_ashare.overnight_return_expectancy import (
+from zephyr.signal_ashare.intraday_t0.overnight_return_expectancy import (
     EntryCostContext,
     ExpectancyConfig,
     ExpectancyDecision,

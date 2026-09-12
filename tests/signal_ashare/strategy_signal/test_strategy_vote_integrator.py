@@ -1,7 +1,7 @@
 # [BLUEPRINT] MOD-SIG-134 | docs/03_modules/_domain_signal/strategy_vote_integrator/blueprint.md | §test
 # [MODULE] tests.signal_ashare.test_strategy_vote_integrator
 # [DOMAIN] D_ASHARE_SIGNAL
-# [DEPENDENCIES] zephyr.signal_ashare.strategy_vote_integrator
+# [DEPENDENCIES] zephyr.signal_ashare.strategy_signal.strategy_vote_integrator
 # [STARTUP] imported
 # [MATURITY] evolving
 # [INVARIANTS] tests_must_pass;no_todo_no_pass_no_fixme
@@ -28,11 +28,11 @@ import dataclasses
 import pytest
 
 pytest.importorskip(
-    "zephyr.signal_ashare.strategy_vote_integrator",
+    "zephyr.signal_ashare.strategy_signal.strategy_vote_integrator",
     reason="strategy_vote_integrator not importable",
 )
 
-from zephyr.signal_ashare.strategy_vote_integrator import (  # noqa: E402
+from zephyr.signal_ashare.strategy_signal.strategy_vote_integrator import (  # noqa: E402
     StrategyVoteSignal,
     StrategyVoteIntegratorError,
     VoteIntegratorConfig,

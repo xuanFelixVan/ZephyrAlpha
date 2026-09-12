@@ -1,7 +1,7 @@
 # [BLUEPRINT] MOD-SIG-068 | 待统筹登记（blueprint 未建，真源=缺口总账 GAP-F-25 行）
 # [MODULE] tests.signal_ashare.test_t0_point_analyzer
 # [DOMAIN] D_ASHARE_SIGNAL
-# [DEPENDENCIES] zephyr.signal_ashare.t0_point_analyzer
+# [DEPENDENCIES] zephyr.signal_ashare.intraday_t0.t0_point_analyzer
 # [CONSUMERS] none
 # [STARTUP] pytest
 # [MATURITY] testing
@@ -29,7 +29,7 @@ from dataclasses import asdict
 
 import pytest
 
-from zephyr.signal_ashare.t0_point_analyzer import (
+from zephyr.signal_ashare.intraday_t0.t0_point_analyzer import (
     PATTERN_DEVIATION_REVERT,
     PATTERN_PULLBACK_VWAP,
     PATTERN_VOLUME_DIVERGENCE,

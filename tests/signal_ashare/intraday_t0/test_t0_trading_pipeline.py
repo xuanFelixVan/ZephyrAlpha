@@ -30,12 +30,12 @@ import json
 
 import pytest
 
-from zephyr.signal_ashare.t0_point_analyzer import (
+from zephyr.signal_ashare.intraday_t0.t0_point_analyzer import (
     MinuteBar,
     T0AnalyzerConfig,
     T0Context,
 )
-from zephyr.signal_ashare.t0_trading_pipeline import (
+from zephyr.signal_ashare.intraday_t0.t0_trading_pipeline import (
     T0DayReport,
     T0Fill,
     T0OrderIntent,

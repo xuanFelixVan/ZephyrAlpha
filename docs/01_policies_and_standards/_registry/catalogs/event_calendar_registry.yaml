@@ -72,6 +72,7 @@ event_types:
   # EARNINGS（财报线——披露计划/预告/快报/正式报）
   # ============================================================
   - event_type_id: "EVT-EARN-001"
+    module_id: MOD-GOVERNANCE
     name: "Earnings Disclosure Schedule"
     name_zh: 财报披露计划（预约披露日）
     aliases: ["disclosure_date", "财报预约", "披露日历"]
@@ -100,6 +101,7 @@ event_types:
     evidence: ""
 
   - event_type_id: "EVT-EARN-002"
+    module_id: MOD-GOVERNANCE
     name: "Earnings Forecast"
     name_zh: 业绩预告
     aliases: ["fin_forecast", "业绩预告", "预增预减"]
@@ -128,6 +130,7 @@ event_types:
     evidence: ""
 
   - event_type_id: "EVT-EARN-003"
+    module_id: MOD-GOVERNANCE
     name: "Earnings Express"
     name_zh: 业绩快报
     aliases: ["fin_express", "业绩快报"]
@@ -159,6 +162,7 @@ event_types:
   # CORPORATE ACTION（公司行动——除权/解禁/停复牌）
   # ============================================================
   - event_type_id: "EVT-CA-001"
+    module_id: MOD-GOVERNANCE
     name: "Dividend & Split"
     name_zh: 分红送转（除权除息）
     aliases: ["dividend", "除权除息", "送转"]
@@ -187,6 +191,7 @@ event_types:
     evidence: ""
 
   - event_type_id: "EVT-CA-002"
+    module_id: MOD-GOVERNANCE
     name: "Share Unlock"
     name_zh: 限售解禁
     aliases: ["share_float", "解禁"]
@@ -215,6 +220,7 @@ event_types:
     evidence: ""
 
   - event_type_id: "EVT-CA-003"
+    module_id: MOD-GOVERNANCE
     name: "Suspension & Resumption"
     name_zh: 停复牌
     aliases: ["suspend", "停复牌"]
@@ -246,6 +252,7 @@ event_types:
   # HOLDER / CAPITAL（股东行为/资本运作）
   # ============================================================
   - event_type_id: "EVT-HOLDER-001"
+    module_id: MOD-GOVERNANCE
     name: "Holder Increase & Decrease"
     name_zh: 股东增减持
     aliases: ["holder_trade", "增减持", "大股东减持"]
@@ -274,6 +281,7 @@ event_types:
     evidence: ""
 
   - event_type_id: "EVT-CAP-001"
+    module_id: MOD-GOVERNANCE
     name: "Share Repurchase"
     name_zh: 股票回购
     aliases: ["repurchase", "回购"]
@@ -302,6 +310,7 @@ event_types:
     evidence: ""
 
   - event_type_id: "EVT-CAP-002"
+    module_id: MOD-GOVERNANCE
     name: "Private Placement"
     name_zh: 定增（非公开发行）
     aliases: ["private_placement", "定向增发"]
@@ -333,6 +342,7 @@ event_types:
   # MARKET STRUCTURE / MACRO / GOVERNANCE（市场结构/宏观/治理）
   # ============================================================
   - event_type_id: "EVT-MKT-001"
+    module_id: MOD-GOVERNANCE
     name: "Index Membership Change"
     name_zh: 指数成分调整
     aliases: ["index_rebalance", "指数调整", "成分股调整"]
@@ -361,6 +371,7 @@ event_types:
     evidence: ""
 
   - event_type_id: "EVT-MACRO-001"
+    module_id: MOD-GOVERNANCE
     name: "Macro Data Release"
     name_zh: 宏观数据发布
     aliases: ["macro_release", "宏观发布", "CPI发布"]
@@ -389,6 +400,7 @@ event_types:
     evidence: ""
 
   - event_type_id: "EVT-GOV-001"
+    module_id: MOD-GOVERNANCE
     name: "Shareholder Meeting & Governance"
     name_zh: 股东大会/治理事件
     aliases: ["shareholder_meeting", "股东大会"]
@@ -417,6 +429,7 @@ event_types:
     evidence: ""
 
   - event_type_id: "EVT-EARN-004"
+    module_id: MOD-GOVERNANCE
     name: "关键催化剂日历"
     name_zh: "关键催化剂日历"
     aliases: ["变盘窗事件条件识别"]
@@ -445,6 +458,7 @@ event_types:
     evidence: ""
 
   - event_type_id: "EVT-EARN-005"
+    module_id: MOD-GOVERNANCE
     name: "业绩预告强制披露规则+财报静默期"
     name_zh: "业绩预告强制披露规则+财报静默期"
     aliases: ["融资融券交割日", "交割日类型簇"]

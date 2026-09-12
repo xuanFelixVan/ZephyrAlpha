@@ -17,7 +17,7 @@ from zephyr.signal_ashare.adjustment_cycle_tracker import (
     track_adjustment_cycle,
     track_diffusion_progress,
 )
-from zephyr.signal_ashare.sector_adjustment import (
+from zephyr.signal_ashare.sector.sector_adjustment import (
     ACTION_ACTIVATE_PARTIAL,
     ACTION_BLOCK_DIP,
 )

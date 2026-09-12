@@ -30,8 +30,8 @@ import json
 
 import pytest
 
-from zephyr.signal_ashare.conditional_density_predictor import DensityForecast
-from zephyr.signal_ashare.signal_factory import (
+from zephyr.signal_ashare.ml_forecast.conditional_density_predictor import DensityForecast
+from zephyr.signal_ashare.strategy_signal.signal_factory import (
     SignalDraft,
     SignalFactory,
     SignalFactoryConfig,

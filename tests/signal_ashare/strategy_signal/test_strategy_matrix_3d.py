@@ -2,7 +2,7 @@
 # [TTL] permanent
 # [A_test] module_id: MOD-SIG-130 | layer=test | stability=volatile | safety=M | ai_autonomy=human_gated
 # [MODULE] tests.signal_ashare.test_strategy_matrix_3d
-# [TESTS] src/zephyr/signal_ashare/strategy_matrix_3d.py
+# [TESTS] src/zephyr/signal_ashare/strategy_signal/strategy_matrix_3d.py
 """MOD-SIG-130 单元测试：strategy_matrix_3d 量能体制风格三维策略矩阵。
 
 蓝图验收（B10-01467/CAND-TESTB-048，A1 模块56）：
@@ -18,13 +18,13 @@ import datetime
 import pytest
 
 pytest.importorskip(
-    "zephyr.signal_ashare.strategy_matrix_3d",
+    "zephyr.signal_ashare.strategy_signal.strategy_matrix_3d",
     reason="strategy_matrix_3d not importable",
 )
 
 from zephyr.regime.style_regime_model import SizeAxis  # noqa: E402
 from zephyr.signal_ashare.volume_regime_adaptive import MarketRegime, VolumeState  # noqa: E402
-from zephyr.signal_ashare.strategy_matrix_3d import (  # noqa: E402
+from zephyr.signal_ashare.strategy_signal.strategy_matrix_3d import (  # noqa: E402
     MatrixCell,
     MatrixVersion,
     StrategyMatrix3D,

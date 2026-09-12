@@ -103,7 +103,7 @@ modules:
   wiring_status: exempt
 - candidate_id: CAND-TESTB-002
   name: "C-028 信号工厂"
-  path: src/zephyr/signal_ashare/signal_factory.py
+  path: src/zephyr/signal_ashare/strategy_signal/signal_factory.py
   domain: D_ASHARE_SIGNAL
   wiring_class: pure_library
   wiring_status: exempt
@@ -121,25 +121,25 @@ modules:
   wiring_status: exempt
 - candidate_id: CAND-TESTB-005
   name: "C-012 做T日内套利"
-  path: src/zephyr/signal_ashare/t0_trading_pipeline.py
+  path: src/zephyr/signal_ashare/intraday_t0/t0_trading_pipeline.py
   domain: D_ASHARE_SIGNAL
   wiring_class: pure_library
   wiring_status: exempt
 - candidate_id: CAND-TESTB-006
   name: "统一图形识别引擎(D-FACTOR-97)"
-  path: src/zephyr/signal_ashare/unified_pattern_engine.py
+  path: src/zephyr/signal_ashare/strategy_signal/unified_pattern_engine.py
   domain: D_ASHARE_SIGNAL
   wiring_class: pure_library
   wiring_status: exempt
 - candidate_id: CAND-TESTB-007
   name: "模块3 缺口回补概率模型（Gap Fill Probability Model）"
-  path: src/zephyr/signal_ashare/gap_fill_model.py
+  path: src/zephyr/signal_ashare/ml_forecast/gap_fill_model.py
   domain: D_ASHARE_SIGNAL
   wiring_class: pure_library
   wiring_status: exempt
 - candidate_id: CAND-TESTB-008
   name: "模块5 日内量能结构与订单流分析模型"
-  path: src/zephyr/signal_ashare/intraday_volume_orderflow.py
+  path: src/zephyr/signal_ashare/intraday_t0/intraday_volume_orderflow.py
   domain: D_ASHARE_SIGNAL
   wiring_class: pure_library
   wiring_status: exempt
@@ -157,25 +157,25 @@ modules:
   wiring_status: exempt
 - candidate_id: CAND-TESTB-011
   name: "模块9 多维度相对强弱筛选模型"
-  path: src/zephyr/signal_ashare/relative_strength_screener.py
+  path: src/zephyr/signal_ashare/screening/relative_strength_screener.py
   domain: D_ASHARE_SIGNAL
   wiring_class: pure_library
   wiring_status: exempt
 - candidate_id: CAND-TESTB-012
   name: "模块10 动量领导因子与涨停板生态模型"
-  path: src/zephyr/signal_ashare/limit_up_ecosystem_leadership.py
+  path: src/zephyr/signal_ashare/limit_up/limit_up_ecosystem_leadership.py
   domain: D_ASHARE_SIGNAL
   wiring_class: pure_library
   wiring_status: exempt
 - candidate_id: CAND-TESTB-013
   name: "模块11 动量层级与板块持续性模型"
-  path: src/zephyr/signal_ashare/sector_momentum_persistence.py
+  path: src/zephyr/signal_ashare/sector/sector_momentum_persistence.py
   domain: D_ASHARE_SIGNAL
   wiring_class: pure_library
   wiring_status: exempt
 - candidate_id: CAND-TESTB-014
   name: "模块14 极端情绪反转与恐慌底部检测模型"
-  path: src/zephyr/signal_ashare/extreme_sentiment_reversal_detector.py
+  path: src/zephyr/signal_ashare/sentiment/extreme_sentiment_reversal_detector.py
   domain: D_ASHARE_SIGNAL
   wiring_class: pure_library
   wiring_status: exempt
@@ -187,13 +187,13 @@ modules:
   wiring_status: exempt
 - candidate_id: CAND-TESTB-016
   name: "模块16 情绪-价格背离指数模型（Sentiment-Price Divergence Index）"
-  path: src/zephyr/signal_ashare/sentiment_price_divergence.py
+  path: src/zephyr/signal_ashare/sentiment/sentiment_price_divergence.py
   domain: D_ASHARE_SIGNAL
   wiring_class: pure_library
   wiring_status: exempt
 - candidate_id: CAND-TESTB-017
   name: "模块33 IC加权多因子涨停板潜力评分模型"
-  path: src/zephyr/signal_ashare/limit_up_potential_scorer.py
+  path: src/zephyr/signal_ashare/limit_up/limit_up_potential_scorer.py
   domain: D_ASHARE_SIGNAL
   wiring_class: pure_library
   wiring_status: exempt
@@ -205,25 +205,25 @@ modules:
   wiring_status: exempt
 - candidate_id: CAND-TESTB-021
   name: "模块29 次日上涨概率统一门槛模块"
-  path: src/zephyr/signal_ashare/next_day_probability_gate.py
+  path: src/zephyr/signal_ashare/ml_forecast/next_day_probability_gate.py
   domain: D_ASHARE_SIGNAL
   wiring_class: pure_library
   wiring_status: exempt
 - candidate_id: CAND-TESTB-022
   name: "模块44 量化模式匹配与执行策略库"
-  path: src/zephyr/signal_ashare/pattern_match_strategy_library.py
+  path: src/zephyr/signal_ashare/strategy_signal/pattern_match_strategy_library.py
   domain: D_ASHARE_SIGNAL
   wiring_class: pure_library
   wiring_status: exempt
 - candidate_id: CAND-TESTB-023
   name: "模块28 利好落地变利空（预期透支）模块"
-  path: src/zephyr/signal_ashare/sell_news_overdraft_detector.py
+  path: src/zephyr/signal_ashare/sentiment/sell_news_overdraft_detector.py
   domain: D_ASHARE_SIGNAL
   wiring_class: pure_library
   wiring_status: exempt
 - candidate_id: CAND-TESTB-024
   name: "模块13 隔夜收益预测与开仓期望值模型"
-  path: src/zephyr/signal_ashare/overnight_return_expectancy.py
+  path: src/zephyr/signal_ashare/intraday_t0/overnight_return_expectancy.py
   domain: D_ASHARE_SIGNAL
   wiring_class: pure_library
   wiring_status: exempt
@@ -235,7 +235,7 @@ modules:
   wiring_status: exempt
 - candidate_id: CAND-TESTB-026
   name: "筛选漏斗第五层：多策略交叉（60秒级，→~30）"
-  path: src/zephyr/signal_ashare/strategy_cross_vote_funnel.py
+  path: src/zephyr/signal_ashare/strategy_signal/strategy_cross_vote_funnel.py
   domain: D_ASHARE_SIGNAL
   wiring_class: pure_library
   wiring_status: exempt
@@ -271,7 +271,7 @@ modules:
   wiring_status: exempt
 - candidate_id: CAND-TESTB-033
   name: "97 形态→信号转化"
-  path: src/zephyr/signal_ashare/pattern_to_signal_mapper.py
+  path: src/zephyr/signal_ashare/strategy_signal/pattern_to_signal_mapper.py
   domain: D_ASHARE_SIGNAL
   wiring_class: pure_library
   wiring_status: exempt
@@ -283,7 +283,7 @@ modules:
   wiring_status: exempt
 - candidate_id: CAND-TESTB-037
   name: "模块21 隔夜全球市场传导与事件影响评估模型"
-  path: src/zephyr/signal_ashare/overnight_conduction_model.py
+  path: src/zephyr/signal_ashare/intraday_t0/overnight_conduction_model.py
   domain: D_ASHARE_SIGNAL
   wiring_class: eventbus_consumer
   event_topics: [BLACK_SWAN, DATA, GEOPOLITICAL, POLICY]
@@ -296,13 +296,13 @@ modules:
   wiring_status: exempt
 - candidate_id: CAND-TESTB-039
   name: "模块40 板块拥挤度与启动条件量化模型"
-  path: src/zephyr/signal_ashare/sector_crowding_launch.py
+  path: src/zephyr/signal_ashare/sector/sector_crowding_launch.py
   domain: D_ASHARE_SIGNAL
   wiring_class: pure_library
   wiring_status: exempt
 - candidate_id: CAND-TESTB-040
   name: "模块45 分时微结构分析与大小盘风格检测模型"
-  path: src/zephyr/signal_ashare/intraday_size_style.py
+  path: src/zephyr/signal_ashare/intraday_t0/intraday_size_style.py
   domain: D_ASHARE_SIGNAL
   wiring_class: pure_library
   wiring_status: exempt
@@ -320,13 +320,13 @@ modules:
   wiring_status: exempt
 - candidate_id: CAND-TESTB-043
   name: "B3 事件驱动条件分布预测 🟡未来开通"
-  path: src/zephyr/signal_ashare/event_conditional_density.py
+  path: src/zephyr/signal_ashare/ml_forecast/event_conditional_density.py
   domain: D_ASHARE_SIGNAL
   wiring_class: pure_library
   wiring_status: exempt
 - candidate_id: CAND-TESTB-044
   name: "模块27 主力假动作与筹码派发识别模块"
-  path: src/zephyr/signal_ashare/fake_move_distribution.py
+  path: src/zephyr/signal_ashare/ml_forecast/fake_move_distribution.py
   domain: D_ASHARE_SIGNAL
   wiring_class: pure_library
   wiring_status: exempt
@@ -338,7 +338,7 @@ modules:
   wiring_status: exempt
 - candidate_id: CAND-TESTB-048
   name: "模块56 量能×体制×风格三维策略矩阵模型"
-  path: src/zephyr/signal_ashare/strategy_matrix_3d.py
+  path: src/zephyr/signal_ashare/strategy_signal/strategy_matrix_3d.py
   domain: D_ASHARE_SIGNAL
   wiring_class: pure_library
   wiring_status: exempt
@@ -350,13 +350,13 @@ modules:
   wiring_status: exempt
 - candidate_id: CAND-TESTB-050
   name: "§29.16-5 TCP-RM时序保形预测增强（v8.2合并自§29.26）"
-  path: src/zephyr/signal_ashare/tcp_rm_conformal.py
+  path: src/zephyr/signal_ashare/ml_forecast/tcp_rm_conformal.py
   domain: D_ASHARE_SIGNAL
   wiring_class: pure_library
   wiring_status: exempt
 - candidate_id: CAND-TESTB-051
   name: "§29.18 Causal ML深度补充"
-  path: src/zephyr/signal_ashare/causal_ml_engine.py
+  path: src/zephyr/signal_ashare/ml_forecast/causal_ml_engine.py
   domain: D_ASHARE_SIGNAL
   wiring_class: pure_library
   wiring_status: exempt
@@ -368,13 +368,13 @@ modules:
   wiring_status: exempt
 - candidate_id: CAND-TESTB-054
   name: "技能：signal-weight-adjust 信号权重调整"
-  path: src/zephyr/signal_ashare/signal_weight_adjuster.py
+  path: src/zephyr/signal_ashare/strategy_signal/signal_weight_adjuster.py
   domain: D_ASHARE_SIGNAL
   wiring_class: pure_library
   wiring_status: exempt
 - candidate_id: CAND-TESTB-055
   name: "技能：day-trade-pnl-estimate 做T盈亏预估"
-  path: src/zephyr/signal_ashare/day_trade_pnl_estimator.py
+  path: src/zephyr/signal_ashare/intraday_t0/day_trade_pnl_estimator.py
   domain: D_ASHARE_SIGNAL
   wiring_class: pure_library
   wiring_status: exempt

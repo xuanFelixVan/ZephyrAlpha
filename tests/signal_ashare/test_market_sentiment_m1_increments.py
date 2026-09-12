@@ -13,7 +13,7 @@ from datetime import datetime, timedelta, timezone
 
 import pytest
 
-from zephyr.signal_ashare.market_sentiment_analyzer import (
+from zephyr.signal_ashare.sentiment.market_sentiment_analyzer import (
     BreadthAccelerationResult,
     BreadthSnapshot,
     BreadthTimeSeries,

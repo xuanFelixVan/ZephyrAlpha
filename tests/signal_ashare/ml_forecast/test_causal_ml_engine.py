@@ -2,7 +2,7 @@
 # [TTL] permanent
 # [A_test] module_id: MOD-SIG-127 | layer=test | stability=volatile | safety=M | ai_autonomy=human_gated
 # [MODULE] tests.signal_ashare.test_causal_ml_engine
-# [TESTS] src/zephyr/signal_ashare/causal_ml_engine.py
+# [TESTS] src/zephyr/signal_ashare/ml_forecast/causal_ml_engine.py
 """MOD-SIG-127 单元测试：causal_ml_engine 因果ML引擎。
 
 蓝图验收（B10-01858/CAND-TESTB-051，A1 §29.18；承接 TESTB-035/047 归并）：
@@ -18,11 +18,11 @@ import datetime
 import pytest
 
 pytest.importorskip(
-    "zephyr.signal_ashare.causal_ml_engine",
+    "zephyr.signal_ashare.ml_forecast.causal_ml_engine",
     reason="causal_ml_engine not importable",
 )
 
-from zephyr.signal_ashare.causal_ml_engine import (  # noqa: E402
+from zephyr.signal_ashare.ml_forecast.causal_ml_engine import (  # noqa: E402
     CausalChannel,
     CausalEffect,
     CausalMlEngine,

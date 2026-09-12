@@ -47,7 +47,7 @@ algorithms:
   - dal_id: DAL-WATER-TEMP
     name_zh: 盘中水温五档（S0-S4）
     mechanism_zh: 当日盘中 11 个信号环比（涨跌停比变化/成交额环比/炸板率走向等）合成 S0-S4 五档水温；9:35 首算盘中可更新
-    code_ref: src/zephyr/signal_ashare/sector_gate.py
+    code_ref: src/zephyr/signal_ashare/sector/sector_gate.py
     inputs: [盘中 11 信号环比]
     outputs: [S0-S4 水温档]
     status: production
@@ -126,21 +126,21 @@ algorithms:
   - dal_id: DAL-RRG-SEQ
     name_zh: RRG 相对旋转图四象限
     mechanism_zh: 板块相对大盘收益率×动量双轴旋转，四象限判定（改善/走弱/落后/布局中），目标=刚进领先象限的板块
-    code_ref: src/zephyr/signal_ashare/sector_rrg.py
+    code_ref: src/zephyr/signal_ashare/sector/sector_rrg.py
     inputs: [板块相对收益, 板块动量]
     outputs: [四象限轮动状态]
     status: production
   - dal_id: DAL-SIPHON-ID
     name_zh: 虹吸态识别
     mechanism_zh: 极端分化判定：前 3 板块成交占比>40%=虹吸期，只做头部板块候选、其余板块候选池清空（虹吸期做非头部=接飞刀）
-    code_ref: src/zephyr/signal_ashare/sector_siphon.py
+    code_ref: src/zephyr/signal_ashare/sector/sector_siphon.py
     inputs: [板块成交占比]
     outputs: [虹吸态开关]
     status: production
   - dal_id: DAL-PULLBACK-ABC
     name_zh: 回踩 ABC 质量分级
     mechanism_zh: 四因子合成——Fib 回撤位置（38.2% 附近=A 必要条件）×量能衰减（缩到峰值 1/3）×板块强度（>7）×时间窗（3-8 天），加权定 A/B/C 置信级
-    code_ref: src/zephyr/signal_ashare/sector_pullback.py
+    code_ref: src/zephyr/signal_ashare/sector/sector_pullback.py
     inputs: [Fib 回撤位置, 量能衰减比, 板块强度, 回调天数]
     outputs: [A/B/C 置信级]
     status: production
@@ -154,7 +154,7 @@ algorithms:
   - dal_id: DAL-SEAT-PATTERN
     name_zh: 龙虎榜席位形态分析
     mechanism_zh: 席位定性：一线游资买入=短线接力有戏；机构专用=中线票；拉萨天团（散户大本营）=次日溢价差；席位风格决定玩法
-    code_ref: src/zephyr/signal_ashare/seat_pattern_analyzer.py
+    code_ref: src/zephyr/signal_ashare/limit_up/seat_pattern_analyzer.py
     inputs: [龙虎榜席位数据]
     outputs: [席位定性（游资/机构/散户营）]
     status: production
@@ -203,7 +203,7 @@ algorithms:
   - dal_id: DAL-T0-CLOSE
     name_zh: 做T闭环判定
     mechanism_zh: 盘中每 5 分钟核对做T买卖闭环；14:50 未闭环不管盈亏无条件平敞口（不留隔夜 T）；收盘判定=股数不变+总成本降=成功
-    code_ref: src/zephyr/signal_ashare/t0_trading_pipeline.py
+    code_ref: src/zephyr/signal_ashare/intraday_t0/t0_trading_pipeline.py
     inputs: [当日做T买卖流水]
     outputs: [闭环状态, 成本变化]
     status: production

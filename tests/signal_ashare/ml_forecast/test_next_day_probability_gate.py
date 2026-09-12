@@ -33,7 +33,7 @@ import json
 
 import pytest
 
-from zephyr.signal_ashare.next_day_probability_gate import (
+from zephyr.signal_ashare.ml_forecast.next_day_probability_gate import (
     GATE_ACTIONS,
     GateContext,
     NextDayProbabilityGate,

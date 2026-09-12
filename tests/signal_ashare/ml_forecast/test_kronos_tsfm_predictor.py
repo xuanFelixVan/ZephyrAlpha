@@ -13,7 +13,7 @@ from __future__ import annotations
 import numpy as np
 import pytest
 
-from zephyr.signal_ashare.kronos_tsfm_predictor import (
+from zephyr.signal_ashare.ml_forecast.kronos_tsfm_predictor import (
     KronosTsfmPredictor,
     TsfmConfig,
     TsfmPrediction,

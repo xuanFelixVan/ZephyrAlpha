@@ -40,7 +40,7 @@ class TestSyntheticMode:
         assert events == sorted(events)
 
     def test_daily_intensity_positive(self):
-        from zephyr.signal_ashare.sentiment_cycle import SentimentHawkesParams
+        from zephyr.signal_ashare.sentiment.sentiment_cycle import SentimentHawkesParams
 
         params = SentimentHawkesParams(lambda_0=0.6, alpha=0.45, beta=0.9, critical_ratio=0.5)
         series = verifier.daily_intensity_series([1.0, 2.5, 3.0], params, 10)

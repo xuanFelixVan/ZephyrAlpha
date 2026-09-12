@@ -29,10 +29,10 @@ import json
 
 import pytest
 
-from zephyr.signal_ashare.coarse_screening_funnel import CoarseScreenResult
-from zephyr.signal_ashare.event_driven_screener import EventScreenResult
+from zephyr.signal_ashare.screening.coarse_screening_funnel import CoarseScreenResult
+from zephyr.signal_ashare.screening.event_driven_screener import EventScreenResult
 from zephyr.signal_ashare.fine_scoring_engine import FineScoreResult, ScoredEntry
-from zephyr.signal_ashare.screening_funnel_report import (
+from zephyr.signal_ashare.screening.screening_funnel_report import (
     FunnelStageStat,
     ScreeningFunnelReport,
     build_funnel_report,
@@ -41,7 +41,7 @@ from zephyr.signal_ashare.screening_funnel_report import (
     stage_from_fine,
     stage_from_tiered,
 )
-from zephyr.signal_ashare.tiered_screening_filter import TieredFilterResult
+from zephyr.signal_ashare.screening.tiered_screening_filter import TieredFilterResult
 
 TRADE_DATE = "2026-08-24"
 

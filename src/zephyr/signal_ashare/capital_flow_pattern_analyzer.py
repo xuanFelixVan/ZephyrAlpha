@@ -2,7 +2,7 @@
 # [MODULE] zephyr.signal_ashare.capital_flow_pattern_analyzer
 # [DOMAIN] D_ASHARE_SIGNAL
 # [DEPENDENCIES]
-# [CONSUMERS] zephyr.signal_ashare.short_term_stock_selector（D-SIGNAL-22 数据字段级消费，消费方 [DEPENDENCIES] 互认，无 import 依赖）
+# [CONSUMERS] zephyr.signal_ashare.screening.short_term_stock_selector（D-SIGNAL-22 数据字段级消费，消费方 [DEPENDENCIES] 互认，无 import 依赖）
 # [STARTUP] imported
 # [MATURITY] production
 # [INVARIANTS] 五类形态互斥; 降级路径必须有日志
@@ -136,7 +136,7 @@ D-SIGNAL-22 A股资金线形态分析引擎
 #   name_en: CapitalFlowPatternResult
 #   intro: 含五类形态+置信度+散户狂热度+反向信号+机构分歧+机会标记+共振强度方向+综合评分+审计轨迹，喂给短线选股
 #   invariant: 各分数∈[0,100]; 分歧度∈[0,1]
-#   downstream: zephyr.signal_ashare.short_term_stock_selector(D-SIGNAL-23短线选股)
+#   downstream: zephyr.signal_ashare.screening.short_term_stock_selector(D-SIGNAL-23短线选股)
 # [/ALGO_FLOW]
 #
 # 边:

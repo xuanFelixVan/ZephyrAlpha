@@ -25,8 +25,8 @@ from __future__ import annotations
 
 import pytest
 
-from zephyr.signal_ashare.sentiment_cycle import SentimentPhase
-from zephyr.signal_ashare.sentiment_cycle_evaluator import (
+from zephyr.signal_ashare.sentiment.sentiment_cycle import SentimentPhase
+from zephyr.signal_ashare.sentiment.sentiment_cycle_evaluator import (
     PhasePredictionRecord,
     evaluate_from_records,
     evaluate_locator_accuracy,

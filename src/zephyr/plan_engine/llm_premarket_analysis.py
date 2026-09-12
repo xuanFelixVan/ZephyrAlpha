@@ -131,10 +131,10 @@ from zephyr.shared.io.sqlite_factory import get_db_connection
 
 if TYPE_CHECKING:  # 注入契约类型仅注解用（运行时鸭子类型读字段，缺数据=该族缺省）
     from zephyr.signal_ashare.futures_basis_monitor import FuturesBasisSnapshot
-    from zephyr.signal_ashare.lhb_premium_analyzer import LhbPremiumResult
-    from zephyr.signal_ashare.market_sentiment_analyzer import MarketSentimentResult
-    from zephyr.signal_ashare.option_sentiment import OptionSentimentResult
-    from zephyr.signal_ashare.sector_divergence import SectorDivergenceResult
+    from zephyr.signal_ashare.limit_up.lhb_premium_analyzer import LhbPremiumResult
+    from zephyr.signal_ashare.sentiment.market_sentiment_analyzer import MarketSentimentResult
+    from zephyr.signal_ashare.sentiment.option_sentiment import OptionSentimentResult
+    from zephyr.signal_ashare.sector.sector_divergence import SectorDivergenceResult
 
 log = logging.getLogger(__name__)
 

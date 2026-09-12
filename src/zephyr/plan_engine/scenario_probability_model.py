@@ -1,7 +1,7 @@
 # [BLUEPRINT] MOD-PLAN-017 | 待统筹登记（45号 §4 W2 + 缺口总账 GAP-F-01）
 # [MODULE] zephyr.plan_engine.scenario_probability_model
 # [DOMAIN] D_PLAN
-# [DEPENDENCIES] zephyr.plan_engine.premarket_constraint_loader(SCENARIO_LIST); zephyr.signal_ashare.next_day_8state_forecast(NextDayState/NextDayForecast); zephyr.reporting.prediction_log_writer(log_prediction/query_predictions)
+# [DEPENDENCIES] zephyr.plan_engine.premarket_constraint_loader(SCENARIO_LIST); zephyr.signal_ashare.ml_forecast.next_day_8state_forecast(NextDayState/NextDayForecast); zephyr.reporting.prediction_log_writer(log_prediction/query_predictions)
 # [CONSUMERS] 作战室 W2 矩阵 9 格概率%（compute/forecast 输出）; MOD-PLAN-010 Brier 多分类校准（scenario_probability 预测行×outcome 回写消费位）; W6 历史预案库回看
 # [STARTUP] imported
 # [MATURITY] testing
@@ -73,7 +73,7 @@ from typing import Any, Callable, Final
 
 from zephyr.plan_engine.premarket_constraint_loader import SCENARIO_LIST
 from zephyr.reporting.prediction_log_writer import log_prediction, query_predictions
-from zephyr.signal_ashare.next_day_8state_forecast import NextDayForecast, NextDayState
+from zephyr.signal_ashare.ml_forecast.next_day_8state_forecast import NextDayForecast, NextDayState
 
 log = logging.getLogger(__name__)
 

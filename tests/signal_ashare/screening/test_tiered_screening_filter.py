@@ -6,7 +6,7 @@ from __future__ import annotations
 
 import pytest
 
-from zephyr.signal_ashare.tiered_screening_filter import (
+from zephyr.signal_ashare.screening.tiered_screening_filter import (
     Board,
     TieredFilterConfig,
     TieredFilterRecord,

@@ -1,7 +1,7 @@
 # [BLUEPRINT] MOD-REGIME-008 | 待统筹登记（supplement：GAP-F-10 四指数分市场分析组合卡；主号=四指数 regime 面板 IDX-01）
 # [MODULE] zephyr.regime.index_market_brief
 # [DOMAIN] D_REGIME
-# [DEPENDENCIES] zephyr.signal_ashare.next_day_8state_forecast(build_state_series/forecast_next_day 参数化复用，MOD-SIG-037); zephyr.regime.index_regime_panel(IndexRegimePanel 鸭型消费，MOD-REGIME-008)
+# [DEPENDENCIES] zephyr.signal_ashare.ml_forecast.next_day_8state_forecast(build_state_series/forecast_next_day 参数化复用，MOD-SIG-037); zephyr.regime.index_regime_panel(IndexRegimePanel 鸭型消费，MOD-REGIME-008)
 # [CONSUMERS] （候选：盘中实时页四指数卡——分指数 regime/情绪/预判）
 # [STARTUP] imported
 # [MATURITY] testing
@@ -55,7 +55,7 @@ from dataclasses import dataclass, field
 from datetime import date, datetime
 from typing import Any, Final, Mapping, Sequence
 
-from zephyr.signal_ashare.next_day_8state_forecast import (
+from zephyr.signal_ashare.ml_forecast.next_day_8state_forecast import (
     build_state_series,
     forecast_next_day,
 )

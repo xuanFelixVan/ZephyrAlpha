@@ -2,7 +2,7 @@
 # [BLUEPRINT] MOD-SIG-105 | docs/03_modules/_domain_signal/pattern_match_strategy_library/blueprint.md
 # [MODULE] tests.signal_ashare.test_pattern_match_strategy_library
 # [TTL] permanent
-# [DEPENDENCIES] zephyr.signal_ashare.pattern_match_strategy_library
+# [DEPENDENCIES] zephyr.signal_ashare.strategy_signal.pattern_match_strategy_library
 
 """量化模式匹配与执行策略库（MOD-SIG-105，B10-01416）施工验证测试。
 
@@ -19,7 +19,7 @@ import json
 
 import pytest
 
-from zephyr.signal_ashare.pattern_match_strategy_library import (
+from zephyr.signal_ashare.strategy_signal.pattern_match_strategy_library import (
     BUY_PATTERNS,
     SELL_PATTERNS,
     PatternMatchConfig,

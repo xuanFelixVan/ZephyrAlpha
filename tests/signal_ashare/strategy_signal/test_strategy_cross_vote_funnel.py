@@ -2,7 +2,7 @@
 # [BLUEPRINT] MOD-SIG-109 | docs/03_modules/_domain_signal/strategy_cross_vote_funnel/blueprint.md
 # [MODULE] tests.signal_ashare.test_strategy_cross_vote_funnel
 # [TTL] permanent
-# [DEPENDENCIES] zephyr.signal_ashare.strategy_cross_vote_funnel
+# [DEPENDENCIES] zephyr.signal_ashare.strategy_signal.strategy_cross_vote_funnel
 
 """筛选漏斗第五层多策略交叉投票（MOD-SIG-109，B10-01504）施工验证测试。
 
@@ -19,7 +19,7 @@ import json
 
 import pytest
 
-from zephyr.signal_ashare.strategy_cross_vote_funnel import (
+from zephyr.signal_ashare.strategy_signal.strategy_cross_vote_funnel import (
     CORE_SEAT_WEIGHTS,
     EXTRA_VOTER_WEIGHTS,
     CrossVoteConfig,

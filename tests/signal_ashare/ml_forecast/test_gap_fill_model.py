@@ -31,7 +31,7 @@ import json
 import pandas as pd
 import pytest
 
-from zephyr.signal_ashare.gap_fill_model import (
+from zephyr.signal_ashare.ml_forecast.gap_fill_model import (
     GapFillConfig,
     GapFillProbabilityModel,
     GapGrade,

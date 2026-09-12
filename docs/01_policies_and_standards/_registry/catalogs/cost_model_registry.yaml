@@ -97,7 +97,7 @@ cost_models:
     impact_model: none
     propagator_config: null
     used_by_strategies: [STR-DABAN-022, STR-MULTIFACTOR-096, STR-EVENT-001]
-    module_id: MOD-EX-CORE
+    module_id: MOD-L06-001
     doc_ref: 62_business_registry_construction.md §5.3（2026 费率校准真源；原引 52 号 §G1 悬空，v1.34.0 修正）
     code_path: src/zephyr/backtest/core/engine_base.py
     status: active
@@ -141,7 +141,7 @@ cost_models:
     impact_model: square_root
     propagator_config: null
     used_by_strategies: []
-    module_id: MOD-EX-CORE
+    module_id: MOD-L06-001
     doc_ref: 40_execution_broker.md §冲击模型
     code_path: src/zephyr/backtest/core/engine_base.py
     status: candidate
@@ -172,7 +172,7 @@ cost_models:
     impact_model: none
     propagator_config: null
     used_by_strategies: []
-    module_id: MOD-EX-CORE
+    module_id: MOD-L06-001
     doc_ref: 62_business_registry_construction.md §5.3（原引 52 号 §成本敏感性 悬空，v1.34.0 修正）
     code_path: src/zephyr/backtest/core/engine_base.py
     status: active
@@ -227,7 +227,7 @@ cost_models:
     impact_model: none
     propagator_config: null
     used_by_strategies: []       # 做T三策略（intraday_surge_fall/orderbook_imbalance/vwap_reversion）接线待排期
-    module_id: MOD-XS-T0COST
+    module_id: MOD-EX_SOR
     doc_ref: 90_methodology_open_questions.md §5（v2.0.0 裁定：做T成本条目+最低佣金确认+分档滑点，Phase 1）
     code_path: src/zephyr/ex_sor/services/t0_cost_model.py
     status: candidate            # testing 态；production 启用挂起待 Owner（宪章 B-007）

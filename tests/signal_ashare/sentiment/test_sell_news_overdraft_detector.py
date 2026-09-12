@@ -2,7 +2,7 @@
 # [BLUEPRINT] MOD-SIG-106 | docs/03_modules/_domain_signal/sell_news_overdraft_detector/blueprint.md
 # [MODULE] tests.signal_ashare.test_sell_news_overdraft_detector
 # [TTL] permanent
-# [DEPENDENCIES] zephyr.signal_ashare.sell_news_overdraft_detector
+# [DEPENDENCIES] zephyr.signal_ashare.sentiment.sell_news_overdraft_detector
 
 """利好落地变利空预期透支检测（MOD-SIG-106，B10-01453）施工验证测试。
 
@@ -18,7 +18,7 @@ import json
 
 import pytest
 
-from zephyr.signal_ashare.sell_news_overdraft_detector import (
+from zephyr.signal_ashare.sentiment.sell_news_overdraft_detector import (
     EVENT_PREDICTABILITY,
     NewsEventContext,
     OverdraftConfig,

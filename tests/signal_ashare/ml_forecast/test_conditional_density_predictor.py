@@ -7,7 +7,7 @@ from __future__ import annotations
 import numpy as np
 import pytest
 
-from zephyr.signal_ashare.conditional_density_predictor import (
+from zephyr.signal_ashare.ml_forecast.conditional_density_predictor import (
     ConditionalDensityConfig,
     conditional_density,
     crps_empirical,

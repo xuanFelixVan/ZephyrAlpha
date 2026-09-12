@@ -34,7 +34,7 @@ from zephyr.regime.market_forecast_fusion import (
     MarketForecastFusion,
     RollingAccuracyTracker,
 )
-from zephyr.signal_ashare.next_day_8state_forecast import NextDayForecast, NextDayState
+from zephyr.signal_ashare.ml_forecast.next_day_8state_forecast import NextDayForecast, NextDayState
 
 _STATES = [s.value for s in NextDayState]
 

@@ -1,7 +1,7 @@
 # [BLUEPRINT] MOD-SIG-079 | 待统筹登记（blueprint 未建，真源=缺口总账 GAP-F-20 行）
 # [MODULE] tests.signal_ashare.test_sector_volume_anomaly
 # [DOMAIN] D_ASHARE_SIGNAL
-# [DEPENDENCIES] zephyr.signal_ashare.sector_volume_anomaly
+# [DEPENDENCIES] zephyr.signal_ashare.sector.sector_volume_anomaly
 # [CONSUMERS] none
 # [STARTUP] pytest
 # [MATURITY] testing
@@ -29,7 +29,7 @@ from dataclasses import asdict
 
 import pytest
 
-from zephyr.signal_ashare.sector_volume_anomaly import (
+from zephyr.signal_ashare.sector.sector_volume_anomaly import (
     LABEL_MILD_SHRINK,
     LABEL_MILD_SPIKE,
     LABEL_NORMAL,

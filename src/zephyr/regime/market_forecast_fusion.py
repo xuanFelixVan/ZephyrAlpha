@@ -1,7 +1,7 @@
 # [BLUEPRINT] MOD-REGIME-012 | docs/03_modules/_domain_regime/market_forecast_fusion/blueprint.md
 # [MODULE] zephyr.regime.market_forecast_fusion
 # [DOMAIN] D_REGIME
-# [DEPENDENCIES] zephyr.signal_ashare.next_day_8state_forecast
+# [DEPENDENCIES] zephyr.signal_ashare.ml_forecast.next_day_8state_forecast
 # [CONSUMERS] 运行时装配批（外部主播信号注入 / log_sink 接 prediction_log_writer）
 # [STARTUP] imported
 # [MATURITY] production
@@ -85,7 +85,7 @@ from collections.abc import Callable, Mapping, Sequence
 from dataclasses import dataclass, field
 from typing import Final
 
-from zephyr.signal_ashare.next_day_8state_forecast import NextDayForecast, NextDayState
+from zephyr.signal_ashare.ml_forecast.next_day_8state_forecast import NextDayForecast, NextDayState
 
 __all__: Final = [
     "INTERNAL_SOURCE_ID",

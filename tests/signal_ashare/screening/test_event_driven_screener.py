@@ -6,7 +6,7 @@ from __future__ import annotations
 
 import pytest
 
-from zephyr.signal_ashare.event_driven_screener import (
+from zephyr.signal_ashare.screening.event_driven_screener import (
     EventCategory,
     EventImpactRecord,
     EventScreenConfig,

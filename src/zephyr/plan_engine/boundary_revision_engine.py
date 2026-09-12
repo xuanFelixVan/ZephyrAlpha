@@ -84,12 +84,12 @@ from zephyr.reporting.prediction_log_writer import (
 if TYPE_CHECKING:  # 触发源类型仅注解用（运行时鸭子类型读字段，缺数据=该源跳过）
     from zephyr.shared.state_store import JsonStateStore
     from zephyr.signal_ashare.futures_basis_monitor import FuturesBasisSnapshot
-    from zephyr.signal_ashare.market_sentiment_analyzer import (
+    from zephyr.signal_ashare.sentiment.market_sentiment_analyzer import (
         DistortionDetectionResult,
         MarketSentimentResult,
         VolumeForecastResult,
     )
-    from zephyr.signal_ashare.sector_divergence import SectorDivergenceResult
+    from zephyr.signal_ashare.sector.sector_divergence import SectorDivergenceResult
 
 log = logging.getLogger(__name__)
 

@@ -5507,7 +5507,7 @@ creation_tokens:
   token: auto-market-breadth-history-store-20260830
   created_by: greatwall_20260830
   capability: market_breadth_data_feed
-- file: src/zephyr/signal_ashare/sentiment_cycle_evaluator.py
+- file: src/zephyr/signal_ashare/sentiment/sentiment_cycle_evaluator.py
   token: auto-sentiment-cycle-evaluator-20260830
   created_by: greatwall_20260830
   capability: sentiment_cycle_locator
@@ -8477,7 +8477,7 @@ creation_tokens:
   token: ipo001-market-ipo-calendar-20260817
   created_by: AI-IPO-001
   capability: data_source_provider_abstraction
-- file: src/zephyr/signal_ashare/seat_pattern_analyzer.py
+- file: src/zephyr/signal_ashare/limit_up/seat_pattern_analyzer.py
   token: auto-scaffold-seat_pattern_analyzer-20260818
   created_by: scaffold.py
   capability: seat_pattern_analyzer
@@ -8623,7 +8623,7 @@ creation_tokens:
   token: auto-test-overnight-boundary-reviser-20260822
   created_by: AI-P2-M3PKG
   capability: overnight_boundary_reviser
-- file: src/zephyr/signal_ashare/lhb_premium_analyzer.py
+- file: src/zephyr/signal_ashare/limit_up/lhb_premium_analyzer.py
   token: auto-lhb-premium-analyzer-20260822
   created_by: AI-P2-M3LHB
   capability: lhb_premium_analyzer
@@ -8647,7 +8647,7 @@ creation_tokens:
   token: auto-test-futures-basis-monitor-20260822
   created_by: AI-P2-W4B
   capability: futures_basis_monitor
-- file: src/zephyr/signal_ashare/option_sentiment.py
+- file: src/zephyr/signal_ashare/sentiment/option_sentiment.py
   token: auto-option-sentiment-20260822
   created_by: AI-P2-W4C
   capability: option_sentiment
@@ -8655,7 +8655,7 @@ creation_tokens:
   token: auto-test-option-sentiment-20260822
   created_by: AI-P2-W4C
   capability: option_sentiment
-- file: src/zephyr/signal_ashare/sector_divergence.py
+- file: src/zephyr/signal_ashare/sector/sector_divergence.py
   token: auto-sector-divergence-20260822
   created_by: AI-P2-W4D
   capability: sector_divergence
@@ -8691,7 +8691,7 @@ creation_tokens:
   token: auto-test-sector-intraday-aggregator-20260822
   created_by: AI-P2-W4F
   capability: sector_intraday_aggregator
-- file: src/zephyr/signal_ashare/sector_leader.py
+- file: src/zephyr/signal_ashare/sector/sector_leader.py
   token: auto-sector-leader-20260822
   created_by: AI-P2-W4F
   capability: sector_leader
@@ -8739,7 +8739,7 @@ creation_tokens:
   token: auto-test-us-futures-intraday-20260822
   created_by: AI-P2-W4A
   capability: us_futures_intraday
-- file: src/zephyr/signal_ashare/similar_day_inference.py
+- file: src/zephyr/signal_ashare/ml_forecast/similar_day_inference.py
   token: auto-similar-day-inference-20260822
   created_by: AI-P2-W5A
   capability: similar_day_inference
@@ -9119,11 +9119,11 @@ creation_tokens:
   token: auto-market-state-sensor-20260823
   created_by: AI-K3-GW-REGIME
   capability: market_state_sensing
-- file: src/zephyr/signal_ashare/regime_change_detector.py
+- file: src/zephyr/signal_ashare/ml_forecast/regime_change_detector.py
   token: auto-regime-change-detector-20260823
   created_by: AI-K3-GW-REGIME
   capability: regime_change_detection
-- file: src/zephyr/signal_ashare/next_day_8state_forecast.py
+- file: src/zephyr/signal_ashare/ml_forecast/next_day_8state_forecast.py
   token: auto-next-day-8state-forecast-20260823
   created_by: AI-K3-GW-REGIME
   capability: next_day_state_forecast
@@ -9303,11 +9303,11 @@ creation_tokens:
   token: auto-test-limit-up-pool-collector-20260823
   created_by: AI-K3-GW-SECTOR
   capability: limit_up_pool_collector
-- file: src/zephyr/signal_ashare/tiered_screening_filter.py
+- file: src/zephyr/signal_ashare/screening/tiered_screening_filter.py
   token: auto-tiered-screening-filter-20260823
   created_by: AI-K3-GW-SIGNAL
   capability: signal_screening_funnel
-- file: src/zephyr/signal_ashare/coarse_screening_funnel.py
+- file: src/zephyr/signal_ashare/screening/coarse_screening_funnel.py
   token: auto-coarse-screening-funnel-20260823
   created_by: AI-K3-GW-SIGNAL
   capability: signal_screening_funnel
@@ -9315,27 +9315,27 @@ creation_tokens:
   token: auto-fine-scoring-engine-20260823
   created_by: AI-K3-GW-SIGNAL
   capability: signal_screening_funnel
-- file: src/zephyr/signal_ashare/event_driven_screener.py
+- file: src/zephyr/signal_ashare/screening/event_driven_screener.py
   token: auto-event-driven-screener-20260823
   created_by: AI-K3-GW-SIGNAL
   capability: signal_screening_funnel
-- file: src/zephyr/signal_ashare/causal_inference_engine.py
+- file: src/zephyr/signal_ashare/ml_forecast/causal_inference_engine.py
   token: auto-causal-inference-engine-20260823
   created_by: AI-K3-GW-SIGNAL
   capability: causal_inference
-- file: src/zephyr/signal_ashare/conditional_density_predictor.py
+- file: src/zephyr/signal_ashare/ml_forecast/conditional_density_predictor.py
   token: auto-conditional-density-predictor-20260823
   created_by: AI-K3-GW-SIGNAL
   capability: prediction_family
-- file: src/zephyr/signal_ashare/conformal_predictor.py
+- file: src/zephyr/signal_ashare/ml_forecast/conformal_predictor.py
   token: auto-conformal-predictor-20260823
   created_by: AI-K3-GW-SIGNAL
   capability: prediction_family
-- file: src/zephyr/signal_ashare/survival_time_predictor.py
+- file: src/zephyr/signal_ashare/ml_forecast/survival_time_predictor.py
   token: auto-survival-time-predictor-20260823
   created_by: AI-K3-GW-SIGNAL
   capability: prediction_family
-- file: src/zephyr/signal_ashare/causal_factor_validator.py
+- file: src/zephyr/signal_ashare/ml_forecast/causal_factor_validator.py
   token: auto-causal-factor-validator-20260823
   created_by: AI-K3-GW-SIGNAL
   capability: causal_inference
@@ -9631,7 +9631,7 @@ creation_tokens:
   token: auto-test-auction-hit-recorder-20260823
   created_by: AI-K3-GW-GAPP1A
   capability: auction_hit_recorder
-- file: src/zephyr/signal_ashare/war_pool_generator.py
+- file: src/zephyr/signal_ashare/limit_up/war_pool_generator.py
   token: auto-war-pool-generator-20260823
   created_by: AI-K3-GW-GAPP1A
   capability: war_pool_generator
@@ -9639,7 +9639,7 @@ creation_tokens:
   token: auto-test-war-pool-generator-20260823
   created_by: AI-K3-GW-GAPP1A
   capability: war_pool_generator
-- file: src/zephyr/signal_ashare/screening_funnel_report.py
+- file: src/zephyr/signal_ashare/screening/screening_funnel_report.py
   token: auto-screening-funnel-report-20260823
   created_by: AI-K3-GW-GAPP1A
   capability: screening_funnel_report
@@ -9647,7 +9647,7 @@ creation_tokens:
   token: auto-test-screening-funnel-report-20260823
   created_by: AI-K3-GW-GAPP1A
   capability: screening_funnel_report
-- file: src/zephyr/signal_ashare/limit_up_reason_attribution.py
+- file: src/zephyr/signal_ashare/limit_up/limit_up_reason_attribution.py
   token: auto-limit-up-reason-attribution-20260823
   created_by: AI-K3-GW-GAPP1B
   capability: limit_up_reason_attribution
@@ -9655,7 +9655,7 @@ creation_tokens:
   token: auto-index-contribution-decomposer-20260823
   created_by: AI-K3-GW-GAPP1B
   capability: index_contribution_decomposition
-- file: src/zephyr/signal_ashare/t0_point_analyzer.py
+- file: src/zephyr/signal_ashare/intraday_t0/t0_point_analyzer.py
   token: auto-t0-point-analyzer-20260823
   created_by: AI-K3-GW-GAPP1B
   capability: t0_point_analysis
@@ -9795,7 +9795,7 @@ creation_tokens:
   token: auto-test-evidence-chain-decision-20260823
   created_by: AI-K3-GW-GAP6
   capability: evidence_chain_decision
-- file: src/zephyr/signal_ashare/mc_path_simulator.py
+- file: src/zephyr/signal_ashare/ml_forecast/mc_path_simulator.py
   token: auto-mc-path-simulator-20260823
   created_by: AI-K3-GW-GAP6
   capability: mc_path_simulation
@@ -9859,15 +9859,15 @@ creation_tokens:
   token: auto-test-trading-analyst-agents-20260823
   created_by: AI-K3-GW-GAP6
   capability: trading_analyst_agents
-- file: src/zephyr/signal_ashare/sector_attribute_rules.py
+- file: src/zephyr/signal_ashare/sector/sector_attribute_rules.py
   token: auto-sector-attribute-rules-20260823
   created_by: AI-K3-GW-GAP7
   capability: sector_attribute_rules
-- file: src/zephyr/signal_ashare/limit_up_followthrough.py
+- file: src/zephyr/signal_ashare/limit_up/limit_up_followthrough.py
   token: auto-limit-up-followthrough-20260823
   created_by: AI-K3-GW-GAP7
   capability: limit_up_followthrough
-- file: src/zephyr/signal_ashare/sector_volume_anomaly.py
+- file: src/zephyr/signal_ashare/sector/sector_volume_anomaly.py
   token: auto-sector-volume-anomaly-20260823
   created_by: AI-K3-GW-GAP7
   capability: sector_volume_anomaly
@@ -9875,7 +9875,7 @@ creation_tokens:
   token: auto-counter-trend-board-20260823
   created_by: AI-K3-GW-GAP7
   capability: counter_trend_board
-- file: src/zephyr/signal_ashare/sector_detail_enricher.py
+- file: src/zephyr/signal_ashare/sector/sector_detail_enricher.py
   token: auto-sector-detail-enricher-20260823
   created_by: AI-K3-GW-GAP7
   capability: sector_detail_enrichment
@@ -9967,19 +9967,19 @@ creation_tokens:
   token: auto-voting-first-multi-agent-20260823
   created_by: AI-K3-GW-INFRA
   capability: voting_orchestration
-- file: src/zephyr/signal_ashare/kronos_tsfm_predictor.py
+- file: src/zephyr/signal_ashare/ml_forecast/kronos_tsfm_predictor.py
   token: auto-kronos-tsfm-predictor-20260823
   created_by: AI-K3-GW-INFRA
   capability: ml_candidate_skeleton
-- file: src/zephyr/signal_ashare/mamba_ssm_temporal_enhancer.py
+- file: src/zephyr/signal_ashare/ml_forecast/mamba_ssm_temporal_enhancer.py
   token: auto-mamba-ssm-temporal-enhancer-20260823
   created_by: AI-K3-GW-INFRA
   capability: ml_candidate_skeleton
-- file: src/zephyr/signal_ashare/adaptive_conformal_tcp_rm_ddci.py
+- file: src/zephyr/signal_ashare/ml_forecast/adaptive_conformal_tcp_rm_ddci.py
   token: auto-adaptive-conformal-tcp-rm-ddci-20260823
   created_by: AI-K3-GW-INFRA
   capability: conformal_prediction
-- file: src/zephyr/signal_ashare/xlstm_long_memory.py
+- file: src/zephyr/signal_ashare/ml_forecast/xlstm_long_memory.py
   token: auto-xlstm-long-memory-20260823
   created_by: AI-K3-GW-INFRA
   capability: ml_candidate_skeleton
@@ -10351,7 +10351,7 @@ creation_tokens:
   token: auto-scaffold-execution_report_contract-20260824
   created_by: scaffold.py
   capability: execution_report_contract
-- file: src/zephyr/signal_ashare/selection_funnel_skeleton.py
+- file: src/zephyr/signal_ashare/screening/selection_funnel_skeleton.py
   token: auto-scaffold-selection_funnel_skeleton-20260824
   created_by: scaffold.py
   capability: selection_funnel_skeleton
@@ -10651,7 +10651,7 @@ creation_tokens:
   token: auto-scaffold-format_transformer-20260825
   created_by: scaffold.py
   capability: format_transformer
-- file: src/zephyr/signal_ashare/signal_factory.py
+- file: src/zephyr/signal_ashare/strategy_signal/signal_factory.py
   token: auto-scaffold-signal_factory-20260825
   created_by: scaffold.py
   capability: signal_factory
@@ -10707,7 +10707,7 @@ creation_tokens:
   token: auto-scaffold-signal_analyst_agent-20260825
   created_by: scaffold.py
   capability: signal_analyst_agent
-- file: src/zephyr/signal_ashare/t0_trading_pipeline.py
+- file: src/zephyr/signal_ashare/intraday_t0/t0_trading_pipeline.py
   token: auto-scaffold-t0_trading_pipeline-20260825
   created_by: scaffold.py
   capability: t0_trading_pipeline
@@ -10719,7 +10719,7 @@ creation_tokens:
   token: auto-scaffold-t0_trader_agent-20260825
   created_by: scaffold.py
   capability: t0_trader_agent
-- file: src/zephyr/signal_ashare/unified_pattern_engine.py
+- file: src/zephyr/signal_ashare/strategy_signal/unified_pattern_engine.py
   token: auto-scaffold-unified_pattern_engine-20260825
   created_by: scaffold.py
   capability: unified_pattern_engine
@@ -10799,7 +10799,7 @@ creation_tokens:
   token: auto-test-t0-trader-agent-20260825
   created_by: AI-K3-DIGEST-P1R1（主代理补登，tests/ 豁免自愿随 SELL-001 先例）
   capability: t0_trader_agent
-- file: src/zephyr/signal_ashare/gap_fill_model.py
+- file: src/zephyr/signal_ashare/ml_forecast/gap_fill_model.py
   token: auto-scaffold-gap_fill_model-20260825
   created_by: scaffold.py
   capability: gap_fill_model
@@ -10819,7 +10819,7 @@ creation_tokens:
   token: auto-scaffold-financial_parser-20260825
   created_by: scaffold.py
   capability: financial_parser
-- file: src/zephyr/signal_ashare/intraday_volume_orderflow.py
+- file: src/zephyr/signal_ashare/intraday_t0/intraday_volume_orderflow.py
   token: auto-scaffold-intraday_volume_orderflow-20260825
   created_by: scaffold.py
   capability: intraday_volume_orderflow
@@ -10855,7 +10855,7 @@ creation_tokens:
   token: auto-scaffold-multi_indicator_divergence-20260825
   created_by: scaffold.py
   capability: multi_indicator_divergence
-- file: src/zephyr/signal_ashare/relative_strength_screener.py
+- file: src/zephyr/signal_ashare/screening/relative_strength_screener.py
   token: auto-scaffold-relative_strength_screener-20260825
   created_by: scaffold.py
   capability: relative_strength_screener
@@ -10923,7 +10923,7 @@ creation_tokens:
   token: auto-scaffold-social_sentiment_collector-20260825
   created_by: scaffold.py
   capability: social_sentiment_collector
-- file: src/zephyr/signal_ashare/limit_up_ecosystem_leadership.py
+- file: src/zephyr/signal_ashare/limit_up/limit_up_ecosystem_leadership.py
   token: auto-scaffold-limit_up_ecosystem_leadership-20260825
   created_by: scaffold.py
   capability: limit_up_ecosystem_leadership
@@ -10943,7 +10943,7 @@ creation_tokens:
   token: auto-scaffold-signal_engine_process_spec-20260825
   created_by: scaffold.py
   capability: signal_engine_process_spec
-- file: src/zephyr/signal_ashare/sector_momentum_persistence.py
+- file: src/zephyr/signal_ashare/sector/sector_momentum_persistence.py
   token: auto-scaffold-sector_momentum_persistence-20260825
   created_by: scaffold.py
   capability: sector_momentum_persistence
@@ -10963,7 +10963,7 @@ creation_tokens:
   token: auto-scaffold-post_entry_instant_validator-20260825
   created_by: scaffold.py
   capability: post_entry_instant_validator
-- file: src/zephyr/signal_ashare/extreme_sentiment_reversal_detector.py
+- file: src/zephyr/signal_ashare/sentiment/extreme_sentiment_reversal_detector.py
   token: auto-scaffold-extreme_sentiment_reversal_detector-20260825
   created_by: scaffold.py
   capability: extreme_sentiment_reversal_detector
@@ -10979,7 +10979,7 @@ creation_tokens:
   token: auto-scaffold-lineage_parser-20260825
   created_by: scaffold.py
   capability: lineage_parser
-- file: src/zephyr/signal_ashare/sentiment_price_divergence.py
+- file: src/zephyr/signal_ashare/sentiment/sentiment_price_divergence.py
   token: auto-scaffold-sentiment_price_divergence-20260825
   created_by: scaffold.py
   capability: sentiment_price_divergence
@@ -11047,7 +11047,7 @@ creation_tokens:
   token: auto-test-lineage-parser-20260825
   created_by: AI-K3-DIGEST-P1R3（主代理补登，tests/ 豁免自愿随 SELL-001 先例）
   capability: lineage_parser
-- file: src/zephyr/signal_ashare/limit_up_potential_scorer.py
+- file: src/zephyr/signal_ashare/limit_up/limit_up_potential_scorer.py
   token: auto-scaffold-limit_up_potential_scorer-20260825
   created_by: scaffold.py
   capability: limit_up_potential_scorer
@@ -11087,7 +11087,7 @@ creation_tokens:
   token: auto-scaffold-column_lineage_analyzer-20260825
   created_by: scaffold.py
   capability: column_lineage_analyzer
-- file: src/zephyr/signal_ashare/next_day_probability_gate.py
+- file: src/zephyr/signal_ashare/ml_forecast/next_day_probability_gate.py
   token: auto-scaffold-next_day_probability_gate-20260825
   created_by: scaffold.py
   capability: next_day_probability_gate
@@ -11199,7 +11199,7 @@ creation_tokens:
   token: auto-scaffold-ctr002_producer_validator-20260825
   created_by: scaffold.py
   capability: ctr002_producer_validator
-- file: src/zephyr/signal_ashare/sell_news_overdraft_detector.py
+- file: src/zephyr/signal_ashare/sentiment/sell_news_overdraft_detector.py
   token: auto-scaffold-sell_news_overdraft_detector-20260825
   created_by: scaffold.py
   capability: sell_news_overdraft_detector
@@ -11207,7 +11207,7 @@ creation_tokens:
   token: auto-scaffold-llm_fundamental_analysis-20260825
   created_by: scaffold.py
   capability: llm_fundamental_analysis
-- file: src/zephyr/signal_ashare/overnight_return_expectancy.py
+- file: src/zephyr/signal_ashare/intraday_t0/overnight_return_expectancy.py
   token: auto-scaffold-overnight_return_expectancy-20260825
   created_by: scaffold.py
   capability: overnight_return_expectancy
@@ -11215,7 +11215,7 @@ creation_tokens:
   token: auto-scaffold-agent_memory_architecture-20260825
   created_by: scaffold.py
   capability: agent_memory_architecture
-- file: src/zephyr/signal_ashare/strategy_cross_vote_funnel.py
+- file: src/zephyr/signal_ashare/strategy_signal/strategy_cross_vote_funnel.py
   token: auto-scaffold-strategy_cross_vote_funnel-20260825
   created_by: scaffold.py
   capability: strategy_cross_vote_funnel
@@ -11223,7 +11223,7 @@ creation_tokens:
   token: auto-scaffold-llm_agent_router-20260825
   created_by: scaffold.py
   capability: llm_agent_router
-- file: src/zephyr/signal_ashare/pattern_match_strategy_library.py
+- file: src/zephyr/signal_ashare/strategy_signal/pattern_match_strategy_library.py
   token: auto-scaffold-pattern_match_strategy_library-20260825
   created_by: scaffold.py
   capability: pattern_match_strategy_library
@@ -11351,7 +11351,7 @@ creation_tokens:
   token: auto-warroom-playbook-20260828
   created_by: AI-CLOSURE-AUDIT-001（补登：文档 2026-08-22 已存在于工作区但未入 git，随全量审查批首次提交）
   capability: warroom_playbook
-- file: src/zephyr/signal_ashare/sector_breadth.py
+- file: src/zephyr/signal_ashare/sector/sector_breadth.py
   token: auto-sector-breadth-20260828
   created_by: AI-WAVE2B-001（补登：代码随 AI-NIGHT-001 commit fff6ea6bfc 已入库，token 缺失本批补登）
   capability: sector_breadth
@@ -11359,7 +11359,7 @@ creation_tokens:
   token: auto-test-sector-breadth-20260828
   created_by: AI-WAVE2B-001（补登：代码随 AI-NIGHT-001 commit fff6ea6bfc 已入库，token 缺失本批补登）
   capability: sector_breadth
-- file: src/zephyr/signal_ashare/sector_momentum.py
+- file: src/zephyr/signal_ashare/sector/sector_momentum.py
   token: auto-sector-momentum-20260828
   created_by: AI-WAVE2B-001（补登：代码随 AI-NIGHT-001 commit fff6ea6bfc 已入库，token 缺失本批补登）
   capability: sector_momentum
@@ -11531,7 +11531,7 @@ creation_tokens:
   token: auto-test-liquidity-crisis-scenarios-20260830
   created_by: greatwall_20260830
   capability: liquidity_crisis_manager
-- file: src/zephyr/signal_ashare/strategy_vote_integrator.py
+- file: src/zephyr/signal_ashare/strategy_signal/strategy_vote_integrator.py
   token: auto-strategy-vote-integrator-20260830
   created_by: greatwall_20260830
   capability: strategy_cross_vote_funnel
@@ -12846,7 +12846,7 @@ di_seam_exemptions:
   token: auto-blueprint-20260826
   created_by: AI-P2-W05
   capability: crowd_game_simulator_blueprint
-- file: src/zephyr/signal_ashare/pattern_to_signal_mapper.py
+- file: src/zephyr/signal_ashare/strategy_signal/pattern_to_signal_mapper.py
   token: auto-pattern-to-signal-mapper-20260826
   created_by: AI-P2-W05
   capability: pattern_to_signal_mapper
@@ -12870,7 +12870,7 @@ di_seam_exemptions:
   token: auto-blueprint-20260826
   created_by: AI-P2-W05
   capability: wyckoff_secondary_test_blueprint
-- file: src/zephyr/signal_ashare/overnight_conduction_model.py
+- file: src/zephyr/signal_ashare/intraday_t0/overnight_conduction_model.py
   token: auto-overnight-conduction-model-20260826
   created_by: AI-P2-W05
   capability: overnight_conduction_model
@@ -12894,7 +12894,7 @@ di_seam_exemptions:
   token: auto-blueprint-20260826
   created_by: AI-P2-W05
   capability: supply_chain_momentum_blueprint
-- file: src/zephyr/signal_ashare/sector_crowding_launch.py
+- file: src/zephyr/signal_ashare/sector/sector_crowding_launch.py
   token: auto-sector-crowding-launch-20260826
   created_by: AI-P2-W05
   capability: sector_crowding_launch
@@ -12906,7 +12906,7 @@ di_seam_exemptions:
   token: auto-blueprint-20260826
   created_by: AI-P2-W05
   capability: sector_crowding_launch_blueprint
-- file: src/zephyr/signal_ashare/intraday_size_style.py
+- file: src/zephyr/signal_ashare/intraday_t0/intraday_size_style.py
   token: auto-intraday-size-style-20260826
   created_by: AI-P2-W05
   capability: intraday_size_style
@@ -12942,7 +12942,7 @@ di_seam_exemptions:
   token: auto-blueprint-20260826
   created_by: AI-P2-W05
   capability: calendar_effects_model_blueprint
-- file: src/zephyr/signal_ashare/event_conditional_density.py
+- file: src/zephyr/signal_ashare/ml_forecast/event_conditional_density.py
   token: auto-event-conditional-density-20260826
   created_by: AI-P2-W05
   capability: event_conditional_density
@@ -12954,7 +12954,7 @@ di_seam_exemptions:
   token: auto-blueprint-20260826
   created_by: AI-P2-W05
   capability: event_conditional_density_blueprint
-- file: src/zephyr/signal_ashare/fake_move_distribution.py
+- file: src/zephyr/signal_ashare/ml_forecast/fake_move_distribution.py
   token: auto-fake-move-distribution-20260826
   created_by: AI-P2-W05
   capability: fake_move_distribution
@@ -12990,7 +12990,7 @@ di_seam_exemptions:
   token: auto-blueprint-20260826
   created_by: AI-P2-W06
   capability: stock_relation_gnn_blueprint
-- file: src/zephyr/signal_ashare/causal_ml_engine.py
+- file: src/zephyr/signal_ashare/ml_forecast/causal_ml_engine.py
   token: auto-causal-ml-engine-20260826
   created_by: AI-P2-W06
   capability: causal_ml_engine
@@ -13002,7 +13002,7 @@ di_seam_exemptions:
   token: auto-blueprint-20260826
   created_by: AI-P2-W06
   capability: causal_ml_engine_blueprint
-- file: src/zephyr/signal_ashare/tcp_rm_conformal.py
+- file: src/zephyr/signal_ashare/ml_forecast/tcp_rm_conformal.py
   token: auto-tcp-rm-conformal-20260826
   created_by: AI-P2-W06
   capability: tcp_rm_conformal
@@ -13038,7 +13038,7 @@ di_seam_exemptions:
   token: auto-blueprint-20260826
   created_by: AI-P2-W06
   capability: style_regime_model_blueprint
-- file: src/zephyr/signal_ashare/strategy_matrix_3d.py
+- file: src/zephyr/signal_ashare/strategy_signal/strategy_matrix_3d.py
   token: auto-strategy-matrix-3d-20260826
   created_by: AI-P2-W06
   capability: strategy_matrix_3d
@@ -13050,7 +13050,7 @@ di_seam_exemptions:
   token: auto-blueprint-20260826
   created_by: AI-P2-W06
   capability: strategy_matrix_3d_blueprint
-- file: src/zephyr/signal_ashare/signal_weight_adjuster.py
+- file: src/zephyr/signal_ashare/strategy_signal/signal_weight_adjuster.py
   token: auto-signal-weight-adjuster-20260826
   created_by: AI-P2-W06
   capability: signal_weight_adjuster
@@ -13062,7 +13062,7 @@ di_seam_exemptions:
   token: auto-blueprint-20260826
   created_by: AI-P2-W06
   capability: signal_weight_adjuster_blueprint
-- file: src/zephyr/signal_ashare/day_trade_pnl_estimator.py
+- file: src/zephyr/signal_ashare/intraday_t0/day_trade_pnl_estimator.py
   token: auto-day-trade-pnl-estimator-20260826
   created_by: AI-P2-W06
   capability: day_trade_pnl_estimator

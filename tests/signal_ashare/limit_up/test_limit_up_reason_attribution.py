@@ -1,7 +1,7 @@
 # [BLUEPRINT] MOD-SIG-070 | 待统筹登记（blueprint 未建，真源=缺口总账 GAP-F-14 行）
 # [MODULE] tests.signal_ashare.test_limit_up_reason_attribution
 # [DOMAIN] D_ASHARE_SIGNAL
-# [DEPENDENCIES] zephyr.signal_ashare.limit_up_reason_attribution
+# [DEPENDENCIES] zephyr.signal_ashare.limit_up.limit_up_reason_attribution
 # [CONSUMERS] none
 # [STARTUP] pytest
 # [MATURITY] testing
@@ -29,7 +29,7 @@ from datetime import date
 
 import pytest
 
-from zephyr.signal_ashare.limit_up_reason_attribution import (
+from zephyr.signal_ashare.limit_up.limit_up_reason_attribution import (
     REASON_DIRECT_NEWS,
     REASON_SECTOR_LINKAGE,
     REASON_UNATTRIBUTED,
@@ -228,7 +228,7 @@ def test_main_entry_injected_full():
 
 
 def test_main_entry_client_unavailable_degraded(monkeypatch):
-    monkeypatch.setattr("zephyr.signal_ashare.limit_up_reason_attribution._default_client", lambda: None)
+    monkeypatch.setattr("zephyr.signal_ashare.limit_up.limit_up_reason_attribution._default_client", lambda: None)
     result = attribute_limit_up_reasons(TD)  # 未注入任何腿
     assert result.degraded is True
     assert result.items == []

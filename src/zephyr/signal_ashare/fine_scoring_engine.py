@@ -2,7 +2,7 @@
 # [MODULE] zephyr.signal_ashare.fine_scoring_engine
 # [DOMAIN] D_ASHARE_SIGNAL
 # [DEPENDENCIES] none（密度摘要按鸭子类型消费，与 conditional_density_predictor 解耦）
-# [CONSUMERS] zephyr.signal_ashare.event_driven_screener（经 2026-09-05 AI-08 审计实证未接线——接线待排期）
+# [CONSUMERS] zephyr.signal_ashare.screening.event_driven_screener（经 2026-09-05 AI-08 审计实证未接线——接线待排期）
 # [STARTUP] imported
 # [MATURITY] production
 # [INVARIANTS] 输出 Top-N 按 z_score 降序；kept ≤ top_n；regime_shift 截断 ±0.10；8 态修正暂缓置 0；纯函数无副作用
@@ -81,12 +81,12 @@
 #   name_zh: float
 #   name_en: float
 #   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
-#   downstream: zephyr.signal_ashare.event_driven_screener
+#   downstream: zephyr.signal_ashare.screening.event_driven_screener
 # - id: O2
 #   name_zh: FineScoreResult
 #   name_en: FineScoreResult
 #   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
-#   downstream: zephyr.signal_ashare.event_driven_screener
+#   downstream: zephyr.signal_ashare.screening.event_driven_screener
 # [/ALGO_FLOW]
 #
 # 边:

@@ -2,7 +2,7 @@
 # [TTL] permanent
 # [A_test] module_id: MOD-SIG-124 | layer=test | stability=volatile | safety=M | ai_autonomy=human_gated
 # [MODULE] tests.signal_ashare.test_fake_move_distribution
-# [TESTS] src/zephyr/signal_ashare/fake_move_distribution.py
+# [TESTS] src/zephyr/signal_ashare/ml_forecast/fake_move_distribution.py
 """MOD-SIG-124 单元测试：fake_move_distribution 主力假动作与筹码派发识别。
 
 蓝图验收（B10-01425/CAND-TESTB-044，A1 模块27，canonical承接TESTB-056归并）：
@@ -21,11 +21,11 @@ from dataclasses import replace
 import pytest
 
 pytest.importorskip(
-    "zephyr.signal_ashare.fake_move_distribution",
+    "zephyr.signal_ashare.ml_forecast.fake_move_distribution",
     reason="fake_move_distribution not importable",
 )
 
-from zephyr.signal_ashare.fake_move_distribution import (  # noqa: E402
+from zephyr.signal_ashare.ml_forecast.fake_move_distribution import (  # noqa: E402
     FAKE_MOVE_RULES,
     FakeMoveConfig,
     FakeMoveDetector,

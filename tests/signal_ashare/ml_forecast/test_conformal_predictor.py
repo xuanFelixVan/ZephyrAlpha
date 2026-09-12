@@ -7,7 +7,7 @@ from __future__ import annotations
 import numpy as np
 import pytest
 
-from zephyr.signal_ashare.conformal_predictor import (
+from zephyr.signal_ashare.ml_forecast.conformal_predictor import (
     RollingConformalCalibrator,
     SplitConformalPredictor,
     conformal_band_around_quantiles,

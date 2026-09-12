@@ -37,8 +37,8 @@ from zephyr.signal_ashare.mainline_probability import (
     MainlineProbabilityItem,
     MainlineProbabilityResult,
 )
-from zephyr.signal_ashare.sector_leader import SectorLeaderBoard, SectorRoleGroup, StockRoleEntry
-from zephyr.signal_ashare.war_pool_generator import (
+from zephyr.signal_ashare.sector.sector_leader import SectorLeaderBoard, SectorRoleGroup, StockRoleEntry
+from zephyr.signal_ashare.limit_up.war_pool_generator import (
     CatalystRecord,
     WarPoolConfig,
     WarPoolResult,

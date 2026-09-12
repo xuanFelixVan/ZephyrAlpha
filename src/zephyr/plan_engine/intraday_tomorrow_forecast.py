@@ -1,7 +1,7 @@
 # [BLUEPRINT] MOD-PLAN-025 | docs/03_modules/_domain_plan_engine/intraday_tomorrow_forecast/blueprint.md
 # [MODULE] zephyr.plan_engine.intraday_tomorrow_forecast
 # [DOMAIN] D_PLAN
-# [DEPENDENCIES] zephyr.signal_ashare.next_day_8state_forecast（NextDayState 枚举；先验分布由调用方经 forecast_next_day 产出后注入）
+# [DEPENDENCIES] zephyr.signal_ashare.ml_forecast.next_day_8state_forecast（NextDayState 枚举；先验分布由调用方经 forecast_next_day 产出后注入）
 # [CONSUMERS] TDM-E-L0-04（明日情绪盘中滚动预测）；L0-02 偏离监控（downgrade_warning 消费，待接线）；L3-06 环境开关（情绪档输入，待接线）
 # [STARTUP] imported
 # [MATURITY] design
@@ -33,7 +33,7 @@ import math
 from dataclasses import dataclass, field
 from typing import Final, Mapping
 
-from zephyr.signal_ashare.next_day_8state_forecast import NextDayState
+from zephyr.signal_ashare.ml_forecast.next_day_8state_forecast import NextDayState
 
 _N_STATES: Final = len(NextDayState)
 

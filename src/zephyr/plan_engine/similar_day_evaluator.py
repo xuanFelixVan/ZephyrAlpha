@@ -1,7 +1,7 @@
 # [BLUEPRINT] MOD-PLAN-016 | 待统筹登记（44号 §9.3 纪律开关 + 92号 §8.7 M4-④）
 # [MODULE] zephyr.plan_engine.similar_day_evaluator
 # [DOMAIN] D_PLAN
-# [DEPENDENCIES] zephyr.reporting.prediction_log_writer(query_predictions); zephyr.plan_engine.brier_calibration(brier_score); zephyr.signal_ashare.similar_day_inference(STRONG_LABEL/FLAT_LABEL/WEAK_LABEL)
+# [DEPENDENCIES] zephyr.reporting.prediction_log_writer(query_predictions); zephyr.plan_engine.brier_calibration(brier_score); zephyr.signal_ashare.ml_forecast.similar_day_inference(STRONG_LABEL/FLAT_LABEL/WEAK_LABEL)
 # [CONSUMERS] similar_day_inference（walkforward_hit_rate 回填）; G04 参数校准流程（评审建议）
 # [STARTUP] imported
 # [MATURITY] testing
@@ -94,7 +94,7 @@ from typing import Any, Final
 
 from zephyr.plan_engine.brier_calibration import brier_score
 from zephyr.reporting.prediction_log_writer import query_predictions
-from zephyr.signal_ashare.similar_day_inference import (
+from zephyr.signal_ashare.ml_forecast.similar_day_inference import (
     FLAT_LABEL,
     STRONG_LABEL,
     WEAK_LABEL,

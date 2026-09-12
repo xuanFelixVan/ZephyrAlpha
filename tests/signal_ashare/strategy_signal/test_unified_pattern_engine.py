@@ -31,7 +31,7 @@ import json
 
 import pytest
 
-from zephyr.signal_ashare.unified_pattern_engine import (
+from zephyr.signal_ashare.strategy_signal.unified_pattern_engine import (
     PatternClass,
     PatternDirection,
     PatternEngineConfig,

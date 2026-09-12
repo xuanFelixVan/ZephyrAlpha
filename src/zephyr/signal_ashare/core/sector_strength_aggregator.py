@@ -11,7 +11,7 @@
 # [SAFETY] M
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] 子分缺失/负值/非有限/权重不归一 → SectorStrengthInputError（fail-closed）
-# [TESTS] tests/signal_ashare/test_sector_strength_aggregator.py
+# [TESTS] tests/signal_ashare/sector/test_sector_strength_aggregator.py
 # [TTL] permanent
 """SectorStrengthAggregator — 板块强度四路合分（MOD-SIG-142，TDM-E-L2-01）。
 

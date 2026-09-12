@@ -1,7 +1,7 @@
 # [BLUEPRINT] MOD-SIG-040 | docs/02_enterprise_architecture/07_trading_decision_architecture/design_memos/22_sector_rotation_spec.md §3.1③
 # [MODULE] zephyr.signal_ashare.adjustment_cycle_tracker
 # [DOMAIN] D_ASHARE_SIGNAL
-# [DEPENDENCIES] zephyr.signal_ashare.sector_adjustment; zephyr.data.ch_reader; zephyr.data.table_registry
+# [DEPENDENCIES] zephyr.signal_ashare.sector.sector_adjustment; zephyr.data.ch_reader; zephyr.data.table_registry
 # [CONSUMERS] (待 BM-BUY-04 分批建仓市场级门控 / 下游风控节流层)
 # [STARTUP] imported
 # [MATURITY] production
@@ -114,7 +114,7 @@ from dataclasses import dataclass
 from enum import Enum
 from typing import Callable, Final, Sequence
 
-from zephyr.signal_ashare.sector_adjustment import (
+from zephyr.signal_ashare.sector.sector_adjustment import (
     PROGRESS_ACTIVATE,
     PROGRESS_BLOCK,
     adjustment_action,

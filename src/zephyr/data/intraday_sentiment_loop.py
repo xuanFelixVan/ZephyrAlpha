@@ -1,7 +1,7 @@
 # [BLUEPRINT] MOD-DATA-063 | 待统筹登记（blueprint 未建，真源=44号备忘 §2 M1-④ 行 + 92号清单 §8.2）
 # [MODULE] zephyr.data.intraday_sentiment_loop
 # [DOMAIN] D_DATA
-# [DEPENDENCIES] zephyr.data.sector_intraday_aggregator（SEC-02 挂接）; zephyr.signal_ashare.market_sentiment_analyzer（MOD-SIG-025）; zephyr.reporting.prediction_log_writer（M4-②）; zephyr.data.ch_writer（默认客户端延迟加载，可注入旁路）; c1_market.market_breadth_snapshot / index_quote / kline_index / sector_snapshot（只读）
+# [DEPENDENCIES] zephyr.data.sector_intraday_aggregator（SEC-02 挂接）; zephyr.signal_ashare.sentiment.market_sentiment_analyzer（MOD-SIG-025）; zephyr.reporting.prediction_log_writer（M4-②）; zephyr.data.ch_writer（默认客户端延迟加载，可注入旁路）; c1_market.market_breadth_snapshot / index_quote / kline_index / sector_snapshot（只读）
 # [CONSUMERS] （常驻节拍交 APScheduler/P0-5 日循环 SOP 调度族挂接，本模块不注册任务——波5 交付单拍函数）
 # [STARTUP] imported
 # [MATURITY] production
@@ -118,7 +118,7 @@ from zephyr.data.sector_intraday_aggregator import (
 )
 from zephyr.data.table_registry import get_registry as _get_table_registry
 from zephyr.reporting.prediction_log_writer import log_prediction
-from zephyr.signal_ashare.market_sentiment_analyzer import (
+from zephyr.signal_ashare.sentiment.market_sentiment_analyzer import (
     BreadthSnapshot,
     BreadthTimeSeries,
     IndexPerformanceData,

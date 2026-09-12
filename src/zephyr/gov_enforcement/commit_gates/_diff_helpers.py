@@ -261,14 +261,19 @@ def _read_staged_file(gateway, py_file: str) -> str | None:
     return None
 
 
-def _get_staged_py_files(gateway, gate_name: str = "gate") -> list[str]:
+def _get_staged_py_files(gateway, gate_name: str = "gate", include_renamed: bool = False) -> list[str]:
     """获取 staged added/modified .py 文件列表（fail-open）。
 
     失败时返回空列表并记录 warning。调用方应在返回空时 return True, ""（fail-open）。
     注意：不过滤 tests/，由调用方用 is_test_exempt() 过滤。
+    include_renamed=True 时追加 rename（R）态文件——R 新路径不在 AM filter 内，
+    "import 目标存在性"类检查必须看到 R 新路径，否则同批 rename+consumer 必误报悬空
+    （2026-09-13 src/signal_ashare 拆分批实证；内容扫描型 gate 勿开——R 文件全文
+    进扫描会误报存量克隆）。
     """
     try:
-        result = gateway.run_git(["git", "diff", "--cached", "--name-only", "--diff-filter=AM"])
+        result = gateway.run_git(["git", "diff", "--cached", "--name-only",
+                                  "--diff-filter=AMR" if include_renamed else "--diff-filter=AM"])
         if result.returncode != 0:
             logger.warning(
                 "%s fail-open: git diff 失败(rc=%d)。",

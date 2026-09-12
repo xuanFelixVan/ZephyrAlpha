@@ -11,7 +11,7 @@
 # [SAFETY] M
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] report 非法（非 dict/缺 top_sectors）→ SectorWiringInputError（fail-closed）
-# [TESTS] tests/signal_ashare/test_sector_strength_wiring.py
+# [TESTS] tests/signal_ashare/sector/test_sector_strength_wiring.py
 # [TTL] permanent
 """SectorStrengthWiring — L2-01/L2-04 生产接线适配层。
 
