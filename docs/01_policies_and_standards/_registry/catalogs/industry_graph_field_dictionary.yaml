@@ -1,20 +1,20 @@
 meta:
-  version: 1.1.0
-  date: '2026-09-10'
+  version: 1.2.0
+  date: '2026-09-12'
   owner: ZephyrAlpha-Owner
-  decision: Owner 2026-09-10 方案 A 拍板（对话记录）；对齐测试=alert_threshold_registry 先例
+  decision: Owner 2026-09-10 方案 A 拍板（对话记录）；对齐测试=alert_threshold_registry 先例；2026-09-12 tier 退役裁定（第一性原理分析，对话记录）
   consumers:
   - scripts/industry_graph/websearch_ingest.py
   - scripts/industry_graph/graph_quality_check.py
   - tests/industry_graph/test_field_dictionary_alignment.py
-  changelog: '1.1.0=词汇审计批: transmission_type/weight_type 词表化+node.name 文章词拦截+chain.name 动词尾禁令+fact.object 产品词纪律'
+  changelog: '1.2.1=ig_node.valid_to PIT 列(节点层治理收口,node_close 通道);1.2.0=tier 退役批: ig_node.tier required 降级 optional+停止人工填写(层位由 ig_edge 链内拓扑派生:入度0=源头/出度0=终端,环与散点落通用),存量值保留不清洗,S6 收缩为 function_role 检查,S21 起讫改拓扑端点;1.1.0=词汇审计批: transmission_type/weight_type 词表化+node.name 文章词拦截+chain.name 动词尾禁令+fact.object 产品词纪律'
 vocab:
   tiers:
     values:
     - 上游
     - 中游
     - 下游
-    standard: 仅位置语义（链内上中下游）；设备/材料等职能语义一律填 function_role。websearch 新写入禁用历史兼容值（零部件/原材料/辅材/unspecified 仅为存量）
+    standard: 【2026-09-12 退役】Owner 裁定：tier 停止人工填写（相对位置无客观判定依据，AI 标注口径漂移），层位由 ig_edge 链内拓扑派生（消费/展示侧推导，不落库）；词表值仅为存量兼容保留，websearch/ckg 填充一律不填
   tiers_legacy:
     values:
     - 设备
@@ -248,12 +248,11 @@ tables:
         - S9
       tier:
         type: enum(vocab:tiers)
-        required: true
-        standard: 链内位置三值（vocab:tiers.standard）；websearch 新写禁 legacy 值
-        good_example: 中游
+        required: false
+        standard: 【2026-09-12 退役】停止人工填写：相对位置（上/中/下游）随链相对、无机械判定依据，AI 标注口径漂移（实证 686 条 unspecified+306 条治理债）；层位改由 ig_edge 链内拓扑派生（消费侧推导不落库）；新写入一律不填，存量值保留作历史快照不清洗
+        good_example: 中游（仅存量）
         bad_example: 中游-设备 / unspecified
-        validated_by:
-        - S6
+        validated_by: []
       aliases:
         type: array
         required: false
@@ -284,6 +283,11 @@ tables:
         good_example: 晶圆制造环节=function_role:加工工艺 + tier:中游
         validated_by:
         - S6
+      valid_to:
+        type: date
+        required: false
+        standard: PIT 关闭时间戳（2026-09-12 v1.2.1 增量，节点层治理收口，对标 ig_fact.valid_to 先例）：NULL=存活；关闭只走 ingest node_close（node_id 数组直指+reason_doc 留痕，幂等可逆）；分析查询默认过滤 valid_to IS NULL；禁 DELETE
+        good_example: '2026-09-12'
       created_at:
         type: timestamptz
         required: false

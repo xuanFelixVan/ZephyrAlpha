@@ -4969,6 +4969,10 @@ capabilities:
   description: 图 8 产业链全景图的字典↔DDL↔引擎三方同 commit 同步硬阻断（priority=141）+ chainmap_cluster_names
     词表 sanity
 creation_tokens:
+- file: docs/01_policies_and_standards/sop/agent_constitution_legacy_v1.md
+  token: constitution-legacy-v1-20260912
+  created_by: st-govreform-20260912
+  capability: gate_commit_gw
 - file: src/zephyr/signal_ashare/core/sector_strength_wiring.py
   token: sole-gw-wiring-layer-20260912
   created_by: sole-committer-20260911
