@@ -2447,43 +2447,43 @@ items:
   name: test_actors_init.py
   node_type: test
   status: active
-- file: tests/feedback/test_adaptive_param_tuning.py
+- file: tests/feedback/learning_evolution/test_adaptive_param_tuning.py
   name: test_adaptive_param_tuning.py
   node_type: test
   status: active
-- file: tests/feedback/test_alert_desensitization_curve.py
+- file: tests/feedback/observability_notify/test_alert_desensitization_curve.py
   name: test_alert_desensitization_curve.py
   node_type: test
   status: active
-- file: tests/feedback/test_anomaly_clustering.py
+- file: tests/feedback/anomaly_diagnosis/test_anomaly_clustering.py
   name: test_anomaly_clustering.py
   node_type: test
   status: active
-- file: tests/feedback/test_architectural_sod.py
+- file: tests/feedback/resilience_dr/test_architectural_sod.py
   name: test_architectural_sod.py
   node_type: test
   status: active
-- file: tests/feedback/test_automated_rca_postmortem_generator.py
+- file: tests/feedback/anomaly_diagnosis/test_automated_rca_postmortem_generator.py
   name: test_automated_rca_postmortem_generator.py
   node_type: test
   status: active
-- file: tests/feedback/test_autoscale_remediation.py
+- file: tests/feedback/resilience_dr/test_autoscale_remediation.py
   name: test_autoscale_remediation.py
   node_type: test
   status: active
-- file: tests/feedback/test_backpressure_bridge_root.py
+- file: tests/feedback/resilience_dr/test_backpressure_bridge_root.py
   name: test_backpressure_bridge_root.py
   node_type: test
   status: active
-- file: tests/feedback/test_blast_radius_budget.py
+- file: tests/feedback/resilience_dr/test_blast_radius_budget.py
   name: test_blast_radius_budget.py
   node_type: test
   status: active
-- file: tests/feedback/test_boot_integrity_attestation.py
+- file: tests/feedback/resilience_dr/test_boot_integrity_attestation.py
   name: test_boot_integrity_attestation.py
   node_type: test
   status: active
-- file: tests/feedback/test_cascading_rollback_analyzer.py
+- file: tests/feedback/resilience_dr/test_cascading_rollback_analyzer.py
   name: test_cascading_rollback_analyzer.py
   node_type: test
   status: active
@@ -2491,63 +2491,63 @@ items:
   name: test_cognitive_load.py
   node_type: test
   status: active
-- file: tests/feedback/test_collaborative_learning.py
+- file: tests/feedback/learning_evolution/test_collaborative_learning.py
   name: test_collaborative_learning.py
   node_type: test
   status: active
-- file: tests/feedback/test_collectors.py
+- file: tests/feedback/scheduling/test_collectors.py
   name: test_collectors.py
   node_type: test
   status: active
-- file: tests/feedback/test_confidence_decomposer.py
+- file: tests/feedback/learning_evolution/test_confidence_decomposer.py
   name: test_confidence_decomposer.py
   node_type: test
   status: active
-- file: tests/feedback/test_config_feedback_loop.py
+- file: tests/feedback/feedback_loop/test_config_feedback_loop.py
   name: test_config_feedback_loop.py
   node_type: test
   status: active
-- file: tests/feedback/test_conformal_prediction.py
+- file: tests/feedback/learning_evolution/test_conformal_prediction.py
   name: test_conformal_prediction.py
   node_type: test
   status: active
-- file: tests/feedback/test_counterfactual.py
+- file: tests/feedback/learning_evolution/test_counterfactual.py
   name: test_counterfactual.py
   node_type: test
   status: active
-- file: tests/feedback/test_deadman_switch.py
+- file: tests/feedback/resilience_dr/test_deadman_switch.py
   name: test_deadman_switch.py
   node_type: test
   status: active
-- file: tests/feedback/test_diagnosers.py
+- file: tests/feedback/anomaly_diagnosis/test_diagnosers.py
   name: test_diagnosers.py
   node_type: test
   status: active
-- file: tests/feedback/test_diagnosis_engine.py
+- file: tests/feedback/anomaly_diagnosis/test_diagnosis_engine.py
   name: test_diagnosis_engine.py
   node_type: test
   status: active
-- file: tests/feedback/test_digital_twin_sandbox.py
+- file: tests/feedback/resilience_dr/test_digital_twin_sandbox.py
   name: test_digital_twin_sandbox.py
   node_type: test
   status: active
-- file: tests/feedback/test_diminishing_returns_detector.py
+- file: tests/feedback/learning_evolution/test_diminishing_returns_detector.py
   name: test_diminishing_returns_detector.py
   node_type: test
   status: active
-- file: tests/feedback/test_docs_init.py
+- file: tests/feedback/governance_audit/test_docs_init.py
   name: test_docs_init.py
   node_type: test
   status: active
-- file: tests/feedback/test_dr_automation.py
+- file: tests/feedback/resilience_dr/test_dr_automation.py
   name: test_dr_automation.py
   node_type: test
   status: active
-- file: tests/feedback/test_dr_resilience_metrics.py
+- file: tests/feedback/resilience_dr/test_dr_resilience_metrics.py
   name: test_dr_resilience_metrics.py
   node_type: test
   status: active
-- file: tests/feedback/test_dry_run_sandbox.py
+- file: tests/feedback/resilience_dr/test_dry_run_sandbox.py
   name: test_dry_run_sandbox.py
   node_type: test
   status: active
@@ -2559,7 +2559,7 @@ items:
   name: test_e2e_integration_health.py
   node_type: test
   status: active
-- file: tests/feedback/test_ebpf_monitor.py
+- file: tests/feedback/observability_notify/test_ebpf_monitor.py
   name: test_ebpf_monitor.py
   node_type: test
   status: active
@@ -2575,11 +2575,11 @@ items:
   name: test_eval_harness_root.py
   node_type: test
   status: active
-- file: tests/feedback/test_evolution_engine_root.py
+- file: tests/feedback/learning_evolution/test_evolution_engine_root.py
   name: test_evolution_engine_root.py
   node_type: test
   status: active
-- file: tests/feedback/test_evolution_init.py
+- file: tests/feedback/learning_evolution/test_evolution_init.py
   name: test_evolution_init.py
   node_type: test
   status: active
@@ -2587,7 +2587,7 @@ items:
   name: test_ewc_kb_review.py
   node_type: test
   status: active
-- file: tests/feedback/test_exceptions_feedback_loop.py
+- file: tests/feedback/feedback_loop/test_exceptions_feedback_loop.py
   name: test_exceptions_feedback_loop.py
   node_type: test
   status: active
@@ -2595,35 +2595,35 @@ items:
   name: test_failure_replay.py
   node_type: test
   status: active
-- file: tests/feedback/test_federated_protocol.py
+- file: tests/feedback/governance_audit/test_federated_protocol.py
   name: test_federated_protocol.py
   node_type: test
   status: active
-- file: tests/feedback/test_feedback_bridge.py
+- file: tests/feedback/feedback_loop/test_feedback_bridge.py
   name: test_feedback_bridge.py
   node_type: test
   status: active
-- file: tests/feedback/test_feedback_collector_root.py
+- file: tests/feedback/feedback_loop/test_feedback_collector_root.py
   name: test_feedback_collector_root.py
   node_type: test
   status: active
-- file: tests/feedback/test_feedback_core.py
+- file: tests/feedback/feedback_loop/test_feedback_core.py
   name: test_feedback_core.py
   node_type: test
   status: active
-- file: tests/feedback/test_feedback_delay_compensator.py
+- file: tests/feedback/feedback_loop/test_feedback_delay_compensator.py
   name: test_feedback_delay_compensator.py
   node_type: test
   status: active
-- file: tests/feedback/test_feedback_loop.py
+- file: tests/feedback/feedback_loop/test_feedback_loop.py
   name: test_feedback_loop.py
   node_type: test
   status: active
-- file: tests/feedback/test_feedback_policy.py
+- file: tests/feedback/feedback_loop/test_feedback_policy.py
   name: test_feedback_policy.py
   node_type: test
   status: active
-- file: tests/feedback/test_feedback_self_audit.py
+- file: tests/feedback/feedback_loop/test_feedback_self_audit.py
   name: test_feedback_self_audit.py
   node_type: test
   status: active
@@ -2635,7 +2635,7 @@ items:
   name: test_gamification.py
   node_type: test
   status: active
-- file: tests/feedback/test_global_action_scheduler.py
+- file: tests/feedback/scheduling/test_global_action_scheduler.py
   name: test_global_action_scheduler.py
   node_type: test
   status: active
@@ -2643,19 +2643,19 @@ items:
   name: test_golden_test_external.py
   node_type: test
   status: active
-- file: tests/feedback/test_gradual_poisoning_detector.py
+- file: tests/feedback/anomaly_diagnosis/test_gradual_poisoning_detector.py
   name: test_gradual_poisoning_detector.py
   node_type: test
   status: active
-- file: tests/feedback/test_graduated_activation_protocol.py
+- file: tests/feedback/learning_evolution/test_graduated_activation_protocol.py
   name: test_graduated_activation_protocol.py
   node_type: test
   status: active
-- file: tests/feedback/test_heisenbug_detector.py
+- file: tests/feedback/anomaly_diagnosis/test_heisenbug_detector.py
   name: test_heisenbug_detector.py
   node_type: test
   status: active
-- file: tests/feedback/test_hypernetwork.py
+- file: tests/feedback/learning_evolution/test_hypernetwork.py
   name: test_hypernetwork.py
   node_type: test
   status: active
@@ -2667,27 +2667,27 @@ items:
   name: test_incident_knowledge_injector.py
   node_type: test
   status: active
-- file: tests/feedback/test_infinite_loop_detector.py
+- file: tests/feedback/anomaly_diagnosis/test_infinite_loop_detector.py
   name: test_infinite_loop_detector.py
   node_type: test
   status: active
-- file: tests/feedback/test_interrupt_coherence_validator.py
+- file: tests/feedback/resilience_dr/test_interrupt_coherence_validator.py
   name: test_interrupt_coherence_validator.py
   node_type: test
   status: active
-- file: tests/feedback/test_known_unknown_registry.py
+- file: tests/feedback/governance_audit/test_known_unknown_registry.py
   name: test_known_unknown_registry.py
   node_type: test
   status: active
-- file: tests/feedback/test_log_anomaly.py
+- file: tests/feedback/anomaly_diagnosis/test_log_anomaly.py
   name: test_log_anomaly.py
   node_type: test
   status: active
-- file: tests/feedback/test_maintenance_coordinator.py
+- file: tests/feedback/scheduling/test_maintenance_coordinator.py
   name: test_maintenance_coordinator.py
   node_type: test
   status: active
-- file: tests/feedback/test_market_calendar.py
+- file: tests/feedback/scheduling/test_market_calendar.py
   name: test_market_calendar.py
   node_type: test
   status: active
@@ -2695,79 +2695,79 @@ items:
   name: test_market_event_integrator.py
   node_type: test
   status: active
-- file: tests/feedback/test_meta_guard_latency_budget.py
+- file: tests/feedback/governance_audit/test_meta_guard_latency_budget.py
   name: test_meta_guard_latency_budget.py
   node_type: test
   status: active
-- file: tests/feedback/test_metric_cardinality_guard.py
+- file: tests/feedback/observability_notify/test_metric_cardinality_guard.py
   name: test_metric_cardinality_guard.py
   node_type: test
   status: active
-- file: tests/feedback/test_metrics_collector.py
+- file: tests/feedback/observability_notify/test_metrics_collector.py
   name: test_metrics_collector.py
   node_type: test
   status: active
-- file: tests/feedback/test_no_llm_degradation.py
+- file: tests/feedback/resilience_dr/test_no_llm_degradation.py
   name: test_no_llm_degradation.py
   node_type: test
   status: active
-- file: tests/feedback/test_nonstationary_effectiveness.py
+- file: tests/feedback/learning_evolution/test_nonstationary_effectiveness.py
   name: test_nonstationary_effectiveness.py
   node_type: test
   status: active
-- file: tests/feedback/test_notification_feedback.py
+- file: tests/feedback/feedback_loop/test_notification_feedback.py
   name: test_notification_feedback.py
   node_type: test
   status: active
-- file: tests/feedback/test_notification_personalizer.py
+- file: tests/feedback/observability_notify/test_notification_personalizer.py
   name: test_notification_personalizer.py
   node_type: test
   status: active
-- file: tests/feedback/test_numerical_stability_guard.py
+- file: tests/feedback/governance_audit/test_numerical_stability_guard.py
   name: test_numerical_stability_guard.py
   node_type: test
   status: active
-- file: tests/feedback/test_online_feature_importance.py
+- file: tests/feedback/learning_evolution/test_online_feature_importance.py
   name: test_online_feature_importance.py
   node_type: test
   status: active
-- file: tests/feedback/test_operational_seasonality.py
+- file: tests/feedback/scheduling/test_operational_seasonality.py
   name: test_operational_seasonality.py
   node_type: test
   status: active
-- file: tests/feedback/test_oscillation_damping.py
+- file: tests/feedback/anomaly_diagnosis/test_oscillation_damping.py
   name: test_oscillation_damping.py
   node_type: test
   status: active
-- file: tests/feedback/test_otel_adapter.py
+- file: tests/feedback/observability_notify/test_otel_adapter.py
   name: test_otel_adapter.py
   node_type: test
   status: active
-- file: tests/feedback/test_placebo_action_detector.py
+- file: tests/feedback/anomaly_diagnosis/test_placebo_action_detector.py
   name: test_placebo_action_detector.py
   node_type: test
   status: active
-- file: tests/feedback/test_positive_feedback_defense.py
+- file: tests/feedback/feedback_loop/test_positive_feedback_defense.py
   name: test_positive_feedback_defense.py
   node_type: test
   status: active
-- file: tests/feedback/test_protocols.py
+- file: tests/feedback/governance_audit/test_protocols.py
   name: test_protocols.py
   node_type: test
   status: active
-- file: tests/feedback/test_recovery_time_stats.py
+- file: tests/feedback/resilience_dr/test_recovery_time_stats.py
   name: test_recovery_time_stats.py
   node_type: test
   status: active
-- file: tests/feedback/test_recursive_diagnosis_trust_evaluator.py
+- file: tests/feedback/anomaly_diagnosis/test_recursive_diagnosis_trust_evaluator.py
   name: test_recursive_diagnosis_trust_evaluator.py
   node_type: test
   status: active
-- file: tests/feedback/test_regulatory_audit.py
+- file: tests/feedback/governance_audit/test_regulatory_audit.py
   name: test_regulatory_audit.py
   node_type: test
   status: active
-- file: tests/feedback/test_resolution_tracker.py
+- file: tests/feedback/anomaly_diagnosis/test_resolution_tracker.py
   name: test_resolution_tracker.py
   node_type: test
   status: active
@@ -2783,19 +2783,19 @@ items:
   name: test_runbook_executor.py
   node_type: test
   status: active
-- file: tests/feedback/test_scheduler_collect_detect.py
+- file: tests/feedback/scheduling/test_scheduler_collect_detect.py
   name: test_scheduler_collect_detect.py
   node_type: test
   status: active
-- file: tests/feedback/test_scheduler_health.py
+- file: tests/feedback/scheduling/test_scheduler_health.py
   name: test_scheduler_health.py
   node_type: test
   status: active
-- file: tests/feedback/test_scheduler_integration.py
+- file: tests/feedback/scheduling/test_scheduler_integration.py
   name: test_scheduler_integration.py
   node_type: test
   status: active
-- file: tests/feedback/test_secondary_alert_channel.py
+- file: tests/feedback/observability_notify/test_secondary_alert_channel.py
   name: test_secondary_alert_channel.py
   node_type: test
   status: active
@@ -2803,35 +2803,35 @@ items:
   name: test_silent_corruption_detector.py
   node_type: test
   status: active
-- file: tests/feedback/test_slo_capacity_metrics.py
+- file: tests/feedback/observability_notify/test_slo_capacity_metrics.py
   name: test_slo_capacity_metrics.py
   node_type: test
   status: active
-- file: tests/feedback/test_slo_manager_root.py
+- file: tests/feedback/observability_notify/test_slo_manager_root.py
   name: test_slo_manager_root.py
   node_type: test
   status: active
-- file: tests/feedback/test_state_migration_validator.py
+- file: tests/feedback/governance_audit/test_state_migration_validator.py
   name: test_state_migration_validator.py
   node_type: test
   status: active
-- file: tests/feedback/test_stochastic_diagnosis_verifier.py
+- file: tests/feedback/anomaly_diagnosis/test_stochastic_diagnosis_verifier.py
   name: test_stochastic_diagnosis_verifier.py
   node_type: test
   status: active
-- file: tests/feedback/test_stochastic_diagnosis_verifier_v2.py
+- file: tests/feedback/anomaly_diagnosis/test_stochastic_diagnosis_verifier_v2.py
   name: test_stochastic_diagnosis_verifier_v2.py
   node_type: test
   status: active
-- file: tests/feedback/test_synthetic_anomaly_generator.py
+- file: tests/feedback/anomaly_diagnosis/test_synthetic_anomaly_generator.py
   name: test_synthetic_anomaly_generator.py
   node_type: test
   status: active
-- file: tests/feedback/test_system_entropy_monitor.py
+- file: tests/feedback/observability_notify/test_system_entropy_monitor.py
   name: test_system_entropy_monitor.py
   node_type: test
   status: active
-- file: tests/feedback/test_teacher_transfer.py
+- file: tests/feedback/learning_evolution/test_teacher_transfer.py
   name: test_teacher_transfer.py
   node_type: test
   status: active
@@ -2843,7 +2843,7 @@ items:
   name: test_token_finops.py
   node_type: test
   status: active
-- file: tests/feedback/test_training_data_gov.py
+- file: tests/feedback/learning_evolution/test_training_data_gov.py
   name: test_training_data_gov.py
   node_type: test
   status: active
@@ -2851,7 +2851,7 @@ items:
   name: test_trend_cycle_separator.py
   node_type: test
   status: active
-- file: tests/feedback/test_validator.py
+- file: tests/feedback/governance_audit/test_validator.py
   name: test_validator.py
   node_type: test
   status: active
@@ -2859,7 +2859,7 @@ items:
   name: test_vertical_self_assessment.py
   node_type: test
   status: active
-- file: tests/feedback/test_worm_write_integrity.py
+- file: tests/feedback/governance_audit/test_worm_write_integrity.py
   name: test_worm_write_integrity.py
   node_type: test
   status: active
