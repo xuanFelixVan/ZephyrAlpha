@@ -1,3 +1,5 @@
+# [BLUEPRINT] MOD-DATA_ENG | (auto-injected by S4 reconciler) | §
+# [TTL] permanent
 # -*- coding: utf-8 -*-
 """CryptoProvider 最小单测——纯函数与路由（不依赖网络/CH，FAIL-FAST）。"""
 import datetime
