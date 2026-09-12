@@ -44,7 +44,7 @@
   engine: clickhouse
   database: c1_market
   table: kline_daily
-  schema_file: schemas/categories/market_kline_daily.py
+  schema_file: schemas/categories/kline/market_kline_daily.py
   data_type: 成品
   lifecycle: permanent
   sla_level: L1
@@ -228,7 +228,7 @@
   engine: clickhouse
   database: c1_market
   table: tick_depth_5
-  schema_file: schemas/categories/market_tick_depth_5.py
+  schema_file: schemas/categories/intraday/market_tick_depth_5.py
   data_type: 原料
   lifecycle: permanent
   sla_level: L1
@@ -241,7 +241,7 @@
   engine: clickhouse
   database: c1_market
   table: tick_data
-  schema_file: schemas/categories/market_tick.py
+  schema_file: schemas/categories/intraday/market_tick.py
   data_type: 原料
   lifecycle: permanent
   sla_level: L1
@@ -340,7 +340,7 @@
   engine: clickhouse
   database: c1_market
   table: kline_etf_daily
-  schema_file: schemas/categories/market_kline_etf_daily.py
+  schema_file: schemas/categories/kline/market_kline_etf_daily.py
   data_type: 成品
   lifecycle: permanent
   sla_level: L2
@@ -582,7 +582,7 @@
   engine: clickhouse
   database: c1_market
   table: kline_index_calc
-  schema_file: schemas/categories/market_kline_index_calc.py
+  schema_file: schemas/categories/kline/market_kline_index_calc.py
   data_type: 成品
   lifecycle: permanent
   sla_level: L2
@@ -1449,7 +1449,7 @@
   engine: clickhouse
   database: c1_market
   table: execution_report
-  schema_file: schemas/categories/market_execution_report.py
+  schema_file: schemas/categories/intraday/market_execution_report.py
   data_type: 成品
   lifecycle: permanent
   sla_level: L2
@@ -1746,7 +1746,7 @@
   engine: clickhouse
   database: c1_market
   table: auction_snapshot
-  schema_file: schemas/categories/market_auction.py
+  schema_file: schemas/categories/intraday/market_auction.py
   data_type: 原料
   lifecycle: permanent
   sla_level: L2
@@ -1764,7 +1764,7 @@
   engine: clickhouse
   database: c1_market
   table: auction_book
-  schema_file: schemas/categories/market_auction_book.py
+  schema_file: schemas/categories/intraday/market_auction_book.py
   data_type: 预留
   lifecycle: permanent
   sla_level: L3
@@ -1802,7 +1802,7 @@
   engine: clickhouse
   database: c1_market
   table: l2_tick
-  schema_file: schemas/categories/market_l2_tick.py
+  schema_file: schemas/categories/intraday/market_l2_tick.py
   data_type: 行情
   lifecycle: permanent  # #ARCH-CH-022 P1-6：预留表统一permanent（声明-实现对齐，无TTL即永久保留）
   sla_level: L3
@@ -2355,7 +2355,7 @@
   engine: clickhouse
   database: c1_market
   table: kline_global
-  schema_file: schemas/categories/market_kline_global.py
+  schema_file: schemas/categories/kline/market_kline_global.py
   data_type: 原料
   lifecycle: permanent
   sla_level: L2
@@ -2364,4 +2364,36 @@
   calc_mode: lazy
   frequency: 日频
   data_source: [akshare]
+  blueprint: null
+
+- category_id: crypto_kline_daily
+  name: "币圈现货日线（binance.vision 免费影子 MVP，Top-50 快照+ETHBTC；只记账不进 TDM 决策）"
+  engine: clickhouse
+  database: c1_market
+  table: crypto_kline_daily
+  schema_file: schemas/categories/crypto/crypto_kline_daily.py
+  data_type: 原料
+  lifecycle: permanent
+  sla_level: L3
+  enabled: true
+  hard_constraint: "免费公开源无 SLA；宇宙=24h quote_volume Top-50 USDT 采集时点快照（历史不重算）；FAIL-VISIBLE 退出码 3 不造数"
+  calc_mode: preload
+  frequency: 日频
+  data_source: [crypto_binance]
+  blueprint: null
+
+- category_id: crypto_shadow_gate
+  name: "币圈 C-L1 影子判定（shadow_tier 五档只记账不进决策；DS-227）"
+  engine: clickhouse
+  database: c1_market
+  table: crypto_shadow_gate
+  schema_file: schemas/categories/crypto/crypto_kline_daily.py
+  data_type: 成品
+  lifecycle: permanent
+  sla_level: L3
+  enabled: true
+  hard_constraint: "shadow_version 逻辑变更须升版本防 track record 混轨；判定依赖 crypto_kline_daily 当日入库"
+  calc_mode: preload
+  frequency: 日频
+  data_source: [crypto_binance]
   blueprint: null

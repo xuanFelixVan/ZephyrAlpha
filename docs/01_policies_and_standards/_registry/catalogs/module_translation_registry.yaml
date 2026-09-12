@@ -1842,84 +1842,84 @@ entries:
   desc_zh: 存储 QMT 主源 vs TDX 备源的 tick 数据交叉校验结果，
   desc_en: ''
   plain_zh: 存储 QMT 主源 vs TDX 备源的 tick 数据交叉校验结果，
-- module_path: schemas/categories/fundamental_analyst_forecast.py
+- module_path: schemas/categories/fundamental/fundamental_analyst_forecast.py
   domain_id: D_DATA
   name_zh: fundamentalanalyst预测
   name_en: fundamental_analyst_forecast
   desc_zh: 本文件是 c3_fundamental.analyst_forecast 表结构的唯一真源（DDL-as-Code 模式）。
   desc_en: ''
   plain_zh: 本文件是 c3_fundamental.analyst_forecast 表结构的唯一真源（DDL-as-Code 模式）。
-- module_path: schemas/categories/fundamental_balance_sheet.py
+- module_path: schemas/categories/fundamental/fundamental_balance_sheet.py
   domain_id: D_DATA
   name_zh: fundamental余额sheet
   name_en: fundamental_balance_sheet
   desc_zh: 本文件是 c3_fundamental.balance_sheet 表结构的唯一真源（DDL-as-Code 模式）。
   desc_en: ''
   plain_zh: 本文件是 c3_fundamental.balance_sheet 表结构的唯一真源（DDL-as-Code 模式）。
-- module_path: schemas/categories/fundamental_cashflow_statement.py
+- module_path: schemas/categories/fundamental/fundamental_cashflow_statement.py
   domain_id: D_DATA
   name_zh: fundamentalcashflow报表
   name_en: fundamental_cashflow_statement
   desc_zh: 本文件是 c3_fundamental.cashflow_statement 表结构的唯一真源（DDL-as-Code 模式）。
   desc_en: ''
   plain_zh: 本文件是 c3_fundamental.cashflow_statement 表结构的唯一真源（DDL-as-Code 模式）。
-- module_path: schemas/categories/fundamental_disclosure_plan.py
+- module_path: schemas/categories/fundamental/fundamental_disclosure_plan.py
   domain_id: D_DATA
   name_zh: fundamentaldisclosure计划
   name_en: fundamental_disclosure_plan
   desc_zh: 本文件是 c3_fundamental.disclosure_plan 表结构的唯一真源（DDL-as-Code 模式）。
   desc_en: ''
   plain_zh: 本文件是 c3_fundamental.disclosure_plan 表结构的唯一真源（DDL-as-Code 模式）。
-- module_path: schemas/categories/fundamental_equity_pledge_detail.py
+- module_path: schemas/categories/fundamental/fundamental_equity_pledge_detail.py
   domain_id: D_DATA
   name_zh: fundamentalequitypledge详情
   name_en: fundamental_equity_pledge_detail
   desc_zh: 'fundamentalequitypledge详情（股权质押明细）DDL-as-Code（category_id: fundamental_equity_pledge_detail）。'
   desc_en: ''
   plain_zh: 'fundamentalequitypledge详情（股权质押明细）DDL-as-Code（category_id: fundamental_equity_pledge_detail）。'
-- module_path: schemas/categories/fundamental_income_statement.py
+- module_path: schemas/categories/fundamental/fundamental_income_statement.py
   domain_id: D_DATA
   name_zh: fundamentalincome报表
   name_en: fundamental_income_statement
   desc_zh: 本文件是 c3_fundamental.income_statement 表结构的唯一真源（DDL-as-Code 模式）。
   desc_en: ''
   plain_zh: 本文件是 c3_fundamental.income_statement 表结构的唯一真源（DDL-as-Code 模式）。
-- module_path: schemas/categories/fundamental_industry_class.py
+- module_path: schemas/categories/fundamental/fundamental_industry_class.py
   domain_id: D_DATA
   name_zh: fundamentalindustry类
   name_en: fundamental_industry_class
   desc_zh: 本文件是 c1_market.industry_class 表结构的唯一真源（DDL-as-Code 模式）。
   desc_en: ''
   plain_zh: 本文件是 c1_market.industry_class 表结构的唯一真源（DDL-as-Code 模式）。
-- module_path: schemas/categories/fundamental_industry_class_suppl.py
+- module_path: schemas/categories/fundamental/fundamental_industry_class_suppl.py
   domain_id: D_DATA
   name_zh: fundamentalindustry类suppl
   name_en: fundamental_industry_class_suppl
   desc_zh: 'industry_class_suppl（补充行业分类）DDL-as-Code（category_id: fundamental_industry_class_suppl）。'
   desc_en: ''
   plain_zh: 补充行业分类 DDL，定义 fundamental_industry_class_suppl 分类表结构。
-- module_path: schemas/categories/fundamental_restricted_shares.py
+- module_path: schemas/categories/fundamental/fundamental_restricted_shares.py
   domain_id: D_DATA
   name_zh: restrictedshares（限售股明细）DDL-as-Code（cate
   name_en: fundamental_restricted_shares
   desc_zh: 'restrictedshares（限售股明细）DDL-as-Code（cate（限售股明细）DDL-as-Code（cate（限售股明细）DDL-as-Code（category_id: fundam'
   desc_en: ''
   plain_zh: 'restrictedshares（限售股明细）DDL-as-Code（cate（限售股明细）DDL-as-Code（cate（限售股明细）DDL-as-Code（category_id: fundamental_restricted_shares）。'
-- module_path: schemas/categories/fundamental_rights_issue.py
+- module_path: schemas/categories/fundamental/fundamental_rights_issue.py
   domain_id: D_DATA
   name_zh: rightsissue（分红配股）DDL-as-Code（categoryi
   name_en: fundamental_rights_issue
   desc_zh: 'rightsissue（分红配股）DDL-as-Code（categoryi（分红配股）DDL-as-Code（categoryi（分红配股）DDL-as-Code（category_id: fund'
   desc_en: ''
   plain_zh: 'rightsissue（分红配股）DDL-as-Code（categoryi（分红配股）DDL-as-Code（categoryi（分红配股）DDL-as-Code（category_id: fundamental_rights_issue）。'
-- module_path: schemas/categories/fundamental_share_change.py
+- module_path: schemas/categories/fundamental/fundamental_share_change.py
   domain_id: D_DATA
   name_zh: fundamental股票变更
   name_en: fundamental_share_change
   desc_zh: 'fundamental股票变更（股本变动）DDL-as-Code（category_id: fundamental_share_change）。'
   desc_en: ''
   plain_zh: 'fundamental股票变更（股本变动）DDL-as-Code（category_id: fundamental_share_change）。'
-- module_path: schemas/categories/fundamental_share_unlock.py
+- module_path: schemas/categories/fundamental/fundamental_share_unlock.py
   domain_id: D_DATA
   name_zh: fundamental股票unlock
   name_en: fundamental_share_unlock
@@ -1947,28 +1947,28 @@ entries:
   desc_zh: 本文件是 c1_market.adj_factor 表结构的唯一真源（DDL-as-Code 模式）。
   desc_en: ''
   plain_zh: 本文件是 c1_market.adj_factor 表结构的唯一真源（DDL-as-Code 模式）。
-- module_path: schemas/categories/market_auction.py
+- module_path: schemas/categories/intraday/market_auction.py
   domain_id: D_DATA
   name_zh: 行情拍卖
   name_en: market_auction
   desc_zh: 本文件是 c1_market.auction_snapshot 表结构的唯一真源（DDL-as-Code 模式）。
   desc_en: ''
   plain_zh: 本文件是 c1_market.auction_snapshot 表结构的唯一真源（DDL-as-Code 模式）。
-- module_path: schemas/categories/market_auction_book.py
+- module_path: schemas/categories/intraday/market_auction_book.py
   domain_id: D_DATA
   name_zh: 行情拍卖book
   name_en: market_auction_book
   desc_zh: 本文件是 c1_market.auction_book 表结构的唯一真源（DDL-as-Code 模式）。
   desc_en: ''
   plain_zh: 本文件是 c1_market.auction_book 表结构的唯一真源（DDL-as-Code 模式）。
-- module_path: schemas/categories/market_block_trade.py
+- module_path: schemas/categories/intraday/market_block_trade.py
   domain_id: D_DATA
   name_zh: 行情块交易
   name_en: market_block_trade
   desc_zh: 本文件是 c1_market.block_trade 表结构的唯一真源（DDL-as-Code 模式）。
   desc_en: ''
   plain_zh: 本文件是 c1_market.block_trade 表结构的唯一真源（DDL-as-Code 模式）。
-- module_path: schemas/categories/market_block_trade_detail.py
+- module_path: schemas/categories/intraday/market_block_trade_detail.py
   domain_id: D_DATA
   name_zh: 行情block成交详情
   name_en: market_block_trade_detail
@@ -2143,210 +2143,210 @@ entries:
   desc_zh: 本文件是 c1_market.ipo_calendar 表结构的唯一真源（DDL-as-Code 模式）。
   desc_en: ''
   plain_zh: 新股上市日历和募资规模的落库表结构。哪天有新股上市、预备圈多少钱都提前记下来——大新股上市会抽走市场里的钱，提前知道才能提前收着点仓位。
-- module_path: schemas/categories/market_kline_15min.py
+- module_path: schemas/categories/kline/market_kline_15min.py
   domain_id: D_DATA
   name_zh: 行情kline15min
   name_en: market_kline_15min
   desc_zh: 本文件是 c1_market.kline_15min 表结构的唯一真源（DDL-as-Code 模式）。
   desc_en: ''
   plain_zh: 本文件是 c1_market.kline_15min 表结构的唯一真源（DDL-as-Code 模式）。
-- module_path: schemas/categories/market_kline_1min.py
+- module_path: schemas/categories/kline/market_kline_1min.py
   domain_id: D_DATA
   name_zh: 行情kline1min
   name_en: market_kline_1min
   desc_zh: 本文件是 c1_market.kline_1min 表结构的唯一真源（DDL-as-Code 模式）。
   desc_en: ''
   plain_zh: 本文件是 c1_market.kline_1min 表结构的唯一真源（DDL-as-Code 模式）。
-- module_path: schemas/categories/market_kline_30min.py
+- module_path: schemas/categories/kline/market_kline_30min.py
   domain_id: D_DATA
   name_zh: 行情kline30min
   name_en: market_kline_30min
   desc_zh: 本文件是 c1_market.kline_30min 表结构的唯一真源（DDL-as-Code 模式）。
   desc_en: ''
   plain_zh: 本文件是 c1_market.kline_30min 表结构的唯一真源（DDL-as-Code 模式）。
-- module_path: schemas/categories/market_kline_5min.py
+- module_path: schemas/categories/kline/market_kline_5min.py
   domain_id: D_DATA
   name_zh: 行情kline5min
   name_en: market_kline_5min
   desc_zh: 本文件是 c1_market.kline_5min 表结构的唯一真源（DDL-as-Code 模式）。
   desc_en: ''
   plain_zh: 本文件是 c1_market.kline_5min 表结构的唯一真源（DDL-as-Code 模式）。
-- module_path: schemas/categories/market_kline_60min.py
+- module_path: schemas/categories/kline/market_kline_60min.py
   domain_id: D_DATA
   name_zh: 行情kline60min
   name_en: market_kline_60min
   desc_zh: 本文件是 c1_market.kline_60min 表结构的唯一真源（DDL-as-Code 模式）。
   desc_en: ''
   plain_zh: 本文件是 c1_market.kline_60min 表结构的唯一真源（DDL-as-Code 模式）。
-- module_path: schemas/categories/market_kline_cb.py
+- module_path: schemas/categories/kline/market_kline_cb.py
   domain_id: D_DATA
   name_zh: 行情klinecb
   name_en: market_kline_cb
   desc_zh: 本文件是 c1_market.kline_cb 表结构的唯一真源（DDL-as-Code 模式）。
   desc_en: ''
   plain_zh: 本文件是 c1_market.kline_cb 表结构的唯一真源（DDL-as-Code 模式）。
-- module_path: schemas/categories/market_kline_daily.py
+- module_path: schemas/categories/kline/market_kline_daily.py
   domain_id: D_DATA
   name_zh: 行情klinedaily
   name_en: market_kline_daily
   desc_zh: 本文件是 c1_market.kline_daily 表结构的唯一真源（DDL-as-Code 模式）。
   desc_en: ''
   plain_zh: 本文件是 c1_market.kline_daily 表结构的唯一真源（DDL-as-Code 模式）。
-- module_path: schemas/categories/market_kline_daily_hfq.py
+- module_path: schemas/categories/kline/market_kline_daily_hfq.py
   domain_id: D_DATA
   name_zh: 行情klinedailyhfq
   name_en: market_kline_daily_hfq
   desc_zh: 本文件是 c1_market.kline_daily_hfq 表结构的唯一真源（DDL-as-Code 模式）。
   desc_en: ''
   plain_zh: 本文件是 c1_market.kline_daily_hfq 表结构的唯一真源（DDL-as-Code 模式）。
-- module_path: schemas/categories/market_kline_etf_15min.py
+- module_path: schemas/categories/kline/market_kline_etf_15min.py
   domain_id: D_DATA
   name_zh: 行情klineetf15min
   name_en: market_kline_etf_15min
   desc_zh: 本文件是 c1_market.kline_etf_15min 表结构的唯一真源（DDL-as-Code 模式）。
   desc_en: ''
   plain_zh: 本文件是 c1_market.kline_etf_15min 表结构的唯一真源（DDL-as-Code 模式）。
-- module_path: schemas/categories/market_kline_etf_1min.py
+- module_path: schemas/categories/kline/market_kline_etf_1min.py
   domain_id: D_DATA
   name_zh: 行情klineetf1min
   name_en: market_kline_etf_1min
   desc_zh: 本文件是 c1_market.kline_etf_1min 表结构的唯一真源（DDL-as-Code 模式）。
   desc_en: ''
   plain_zh: 本文件是 c1_market.kline_etf_1min 表结构的唯一真源（DDL-as-Code 模式）。
-- module_path: schemas/categories/market_kline_etf_30min.py
+- module_path: schemas/categories/kline/market_kline_etf_30min.py
   domain_id: D_DATA
   name_zh: 行情klineetf30min
   name_en: market_kline_etf_30min
   desc_zh: 本文件是 c1_market.kline_etf_30min 表结构的唯一真源（DDL-as-Code 模式）。
   desc_en: ''
   plain_zh: 本文件是 c1_market.kline_etf_30min 表结构的唯一真源（DDL-as-Code 模式）。
-- module_path: schemas/categories/market_kline_etf_5min.py
+- module_path: schemas/categories/kline/market_kline_etf_5min.py
   domain_id: D_DATA
   name_zh: 行情klineetf5min
   name_en: market_kline_etf_5min
   desc_zh: 本文件是 c1_market.kline_etf_5min 表结构的唯一真源（DDL-as-Code 模式）。
   desc_en: ''
   plain_zh: 本文件是 c1_market.kline_etf_5min 表结构的唯一真源（DDL-as-Code 模式）。
-- module_path: schemas/categories/market_kline_etf_60min.py
+- module_path: schemas/categories/kline/market_kline_etf_60min.py
   domain_id: D_DATA
   name_zh: 行情klineetf60min
   name_en: market_kline_etf_60min
   desc_zh: 本文件是 c1_market.kline_etf_60min 表结构的唯一真源（DDL-as-Code 模式）。
   desc_en: ''
   plain_zh: 本文件是 c1_market.kline_etf_60min 表结构的唯一真源（DDL-as-Code 模式）。
-- module_path: schemas/categories/market_kline_futures.py
+- module_path: schemas/categories/kline/market_kline_futures.py
   domain_id: D_DATA
   name_zh: 行情klinefutures
   name_en: market_kline_futures
   desc_zh: 本文件是 c1_market.kline_futures 表结构的唯一真源（DDL-as-Code 模式）。
   desc_en: ''
   plain_zh: 本文件是 c1_market.kline_futures 表结构的唯一真源（DDL-as-Code 模式）。
-- module_path: schemas/categories/market_kline_hk_daily.py
+- module_path: schemas/categories/kline/market_kline_hk_daily.py
   domain_id: D_DATA
   name_zh: 行情klinehkdaily
   name_en: market_kline_hk_daily
   desc_zh: 本文件是 c1_market.kline_hk_daily 表结构的唯一真源（DDL-as-Code 模式）。
   desc_en: ''
   plain_zh: 本文件是 c1_market.kline_hk_daily 表结构的唯一真源（DDL-as-Code 模式）。
-- module_path: schemas/categories/market_kline_index.py
+- module_path: schemas/categories/kline/market_kline_index.py
   domain_id: D_DATA
   name_zh: 行情kline索引
   name_en: market_kline_index
   desc_zh: 本文件是 c1_market.kline_index 表结构的唯一真源（DDL-as-Code 模式）。
   desc_en: ''
   plain_zh: 本文件是 c1_market.kline_index 表结构的唯一真源（DDL-as-Code 模式）。
-- module_path: schemas/categories/market_kline_lof_15min.py
+- module_path: schemas/categories/kline/market_kline_lof_15min.py
   domain_id: D_DATA
   name_zh: 行情klinelof15min
   name_en: market_kline_lof_15min
   desc_zh: 本文件是 c1_market.kline_lof_15min 表结构的唯一真源（DDL-as-Code 模式）。
   desc_en: ''
   plain_zh: 本文件是 c1_market.kline_lof_15min 表结构的唯一真源（DDL-as-Code 模式）。
-- module_path: schemas/categories/market_kline_lof_1min.py
+- module_path: schemas/categories/kline/market_kline_lof_1min.py
   domain_id: D_DATA
   name_zh: 行情klinelof1min
   name_en: market_kline_lof_1min
   desc_zh: 本文件是 c1_market.kline_lof_1min 表结构的唯一真源（DDL-as-Code 模式）。
   desc_en: ''
   plain_zh: 本文件是 c1_market.kline_lof_1min 表结构的唯一真源（DDL-as-Code 模式）。
-- module_path: schemas/categories/market_kline_lof_30min.py
+- module_path: schemas/categories/kline/market_kline_lof_30min.py
   domain_id: D_DATA
   name_zh: 行情klinelof30min
   name_en: market_kline_lof_30min
   desc_zh: 本文件是 c1_market.kline_lof_30min 表结构的唯一真源（DDL-as-Code 模式）。
   desc_en: ''
   plain_zh: 本文件是 c1_market.kline_lof_30min 表结构的唯一真源（DDL-as-Code 模式）。
-- module_path: schemas/categories/market_kline_lof_5min.py
+- module_path: schemas/categories/kline/market_kline_lof_5min.py
   domain_id: D_DATA
   name_zh: 行情klinelof5min
   name_en: market_kline_lof_5min
   desc_zh: 本文件是 c1_market.kline_lof_5min 表结构的唯一真源（DDL-as-Code 模式）。
   desc_en: ''
   plain_zh: 本文件是 c1_market.kline_lof_5min 表结构的唯一真源（DDL-as-Code 模式）。
-- module_path: schemas/categories/market_kline_lof_60min.py
+- module_path: schemas/categories/kline/market_kline_lof_60min.py
   domain_id: D_DATA
   name_zh: 行情klinelof60min
   name_en: market_kline_lof_60min
   desc_zh: 本文件是 c1_market.kline_lof_60min 表结构的唯一真源（DDL-as-Code 模式）。
   desc_en: ''
   plain_zh: 本文件是 c1_market.kline_lof_60min 表结构的唯一真源（DDL-as-Code 模式）。
-- module_path: schemas/categories/market_kline_monthly.py
+- module_path: schemas/categories/kline/market_kline_monthly.py
   domain_id: D_DATA
   name_zh: 行情klinemonthly
   name_en: market_kline_monthly
   desc_zh: 本文件是 c1_market.kline_monthly 表结构的唯一真源（DDL-as-Code 模式）。
   desc_en: ''
   plain_zh: 本文件是 c1_market.kline_monthly 表结构的唯一真源（DDL-as-Code 模式）。
-- module_path: schemas/categories/market_kline_monthly_hfq.py
+- module_path: schemas/categories/kline/market_kline_monthly_hfq.py
   domain_id: D_DATA
   name_zh: 行情klinemonthlyhfq
   name_en: market_kline_monthly_hfq
   desc_zh: 本文件是 c1_market.kline_monthly_hfq 表结构的唯一真源（DDL-as-Code 模式）。
   desc_en: ''
   plain_zh: 本文件是 c1_market.kline_monthly_hfq 表结构的唯一真源（DDL-as-Code 模式）。
-- module_path: schemas/categories/market_kline_sector.py
+- module_path: schemas/categories/kline/market_kline_sector.py
   domain_id: D_DATA
   name_zh: 行情klinesector
   name_en: market_kline_sector
   desc_zh: 本文件是 c1_market.kline_sector 表结构的唯一真源（DDL-as-Code 模式）。
   desc_en: ''
   plain_zh: 本文件是 c1_market.kline_sector 表结构的唯一真源（DDL-as-Code 模式）。
-- module_path: schemas/categories/market_kline_sector_880.py
+- module_path: schemas/categories/kline/market_kline_sector_880.py
   domain_id: D_DATA
   name_zh: 行情klinesector880
   name_en: market_kline_sector_880
   desc_zh: 本文件是 c1_market.kline_sector_880 表结构的唯一真源（DDL-as-Code 模式）。
   desc_en: ''
   plain_zh: 本文件是 c1_market.kline_sector_880 表结构的唯一真源（DDL-as-Code 模式）。
-- module_path: schemas/categories/market_kline_sector_intraday.py
+- module_path: schemas/categories/kline/market_kline_sector_intraday.py
   domain_id: D_DATA
   name_zh: 行情klinesectorintraday
   name_en: market_kline_sector_intraday
   desc_zh: 本文件是 c1_market.kline_sector_intraday 表结构的唯一真源（DDL-as-Code 模式）。
   desc_en: ''
   plain_zh: 本文件是 c1_market.kline_sector_intraday 表结构的唯一真源（DDL-as-Code 模式）。
-- module_path: schemas/categories/market_kline_us_daily.py
+- module_path: schemas/categories/kline/market_kline_us_daily.py
   domain_id: D_DATA
   name_zh: 行情klineusdaily
   name_en: market_kline_us_daily
   desc_zh: 本文件是 c1_market.kline_us_daily 表结构的唯一真源（DDL-as-Code 模式）。
   desc_en: ''
   plain_zh: 本文件是 c1_market.kline_us_daily 表结构的唯一真源（DDL-as-Code 模式）。
-- module_path: schemas/categories/market_kline_weekly.py
+- module_path: schemas/categories/kline/market_kline_weekly.py
   domain_id: D_DATA
   name_zh: 行情klineweekly
   name_en: market_kline_weekly
   desc_zh: 本文件是 c1_market.kline_weekly 表结构的唯一真源（DDL-as-Code 模式）。
   desc_en: ''
   plain_zh: 本文件是 c1_market.kline_weekly 表结构的唯一真源（DDL-as-Code 模式）。
-- module_path: schemas/categories/market_kline_weekly_hfq.py
+- module_path: schemas/categories/kline/market_kline_weekly_hfq.py
   domain_id: D_DATA
   name_zh: 行情klineweeklyhfq
   name_en: market_kline_weekly_hfq
   desc_zh: 本文件是 c1_market.kline_weekly_hfq 表结构的唯一真源（DDL-as-Code 模式）。
   desc_en: ''
   plain_zh: 本文件是 c1_market.kline_weekly_hfq 表结构的唯一真源（DDL-as-Code 模式）。
-- module_path: schemas/categories/market_l2_tick.py
+- module_path: schemas/categories/intraday/market_l2_tick.py
   domain_id: D_DATA
   name_zh: 行情l2逐笔
   name_en: market_l2_tick
@@ -2374,7 +2374,7 @@ entries:
   desc_zh: 本文件是 c1_market.margin_trading 表结构的唯一真源（DDL-as-Code 模式）。
   desc_en: ''
   plain_zh: 本文件是 c1_market.margin_trading 表结构的唯一真源（DDL-as-Code 模式）。
-- module_path: schemas/categories/market_money_flow.py
+- module_path: schemas/categories/intraday/market_money_flow.py
   domain_id: D_DATA
   name_zh: 行情money流程
   name_en: market_money_flow
@@ -2402,7 +2402,7 @@ entries:
   desc_zh: 本文件是 c1_market.option_kline 表结构的唯一真源（DDL-as-Code 模式）。
   desc_en: ''
   plain_zh: 本文件是 c1_market.option_kline 表结构的唯一真源（DDL-as-Code 模式）。
-- module_path: schemas/categories/market_realtime_snapshot.py
+- module_path: schemas/categories/intraday/market_realtime_snapshot.py
   domain_id: D_DATA
   name_zh: 行情实时快照
   name_en: market_realtime_snapshot
@@ -2458,7 +2458,7 @@ entries:
   desc_zh: 本文件是 c1_market.stock_list 表结构的唯一真源（DDL-as-Code 模式）。
   desc_en: ''
   plain_zh: 本文件是 c1_market.stock_list 表结构的唯一真源（DDL-as-Code 模式）。
-- module_path: schemas/categories/market_tick.py
+- module_path: schemas/categories/intraday/market_tick.py
   domain_id: D_DATA
   name_zh: 行情逐笔
   name_en: market_tick
@@ -37129,7 +37129,7 @@ entries:
   desc_zh: ''
   desc_en: ''
   plain_zh: 测试：裁定引擎的行为要符合预期，有偏差尽早抓住。
-- module_path: schemas/categories/market_kline_etf_daily.py
+- module_path: schemas/categories/kline/market_kline_etf_daily.py
   domain_id: D_DATA
   name_zh: 市场K线EtfDaily
   name_en: Market Kline Etf Daily
@@ -47330,7 +47330,7 @@ entries:
   desc_zh: ""
   desc_en: ""
   plain_zh: "手动执行五档盘口历史回填的命令行入口，指定标的和日期即可补本地缓存并入库，支持试运行和下载开关。"
-- module_path: schemas/categories/market_tick_depth_5.py
+- module_path: schemas/categories/intraday/market_tick_depth_5.py
   domain_id: D_DATA
   name_zh: "五档盘口表结构真源"
   name_en: "market_tick_depth_5"
@@ -47456,20 +47456,6 @@ entries:
   desc_zh: ""
   desc_en: ""
   plain_zh: "把上次提交时已经检查过的内容记在小本本上，下次提交同样的东西就不用重新查一遍；只有内容完全没变、代码分支没动、配置没改的小本本记录才算数，出任何岔子都退回全量重查。"
-- module_path: src/zephyr/data/implementations/crypto_kline_collector.py
-  domain_id: D_DATA
-  name_zh: "币圈K线采集器"
-  name_en: ""
-  desc_zh: ""
-  desc_en: ""
-  plain_zh: "从 OKX 免费公开接口拉币圈K线存进本地库，不用申请任何密钥，纯影子验证用，拉不到数据就报错退出绝不影响股票主数据链。"
-- module_path: src/zephyr/data/implementations/shadow_gate_c_l1.py
-  domain_id: D_DATA
-  name_zh: "C-L1影子判定脚本"
-  name_en: ""
-  desc_zh: ""
-  desc_en: ""
-  plain_zh: "拿币圈影子数据跑一遍 C-L1 关卡的判定逻辑做纸上验证，只输出判定结果不碰任何真实交易，跑不动就明确报错。"
 - module_path: src/zephyr/gov_enforcement/commit_gates/industry_chain_map_gate.py
   domain_id: D_GOV_ENFORCEMENT
   name_zh: "产业链地图门禁"
@@ -47568,6 +47554,13 @@ entries:
   desc_zh: ""
   desc_en: ""
   plain_zh: "把币圈两张表（日线行情表和影子判定表）的建表语句一键部署到 ClickHouse 数据库，并检查表结构和预期一致。幂等设计：重复执行不会出错，只会在表不存在时创建。"
+- module_path: src/zephyr/data/implementations/crypto_provider.py
+  domain_id: D_DATA
+  name_zh: "币圈数据提供器"
+  name_en: ""
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "从币安公开数据镜像拉取币圈每日行情（价格/成交量等）存进数据库，然后据此每天自动判断币圈市场处于什么状态（趋势向好/山寨币狂热/行情转冷/数据不足），把判断结果记到一张表里供人查看。只做记录，不参与任何买卖决策。"
 
 battle_map_steps:
 - step_id: BM-BUY-05
@@ -54210,19 +54203,19 @@ algo_submodules:
   name_zh: ① 信号域符号懒加载聚合
   name_en: __getattr__ + _lazy 映射
   plain_zh: 按需加载信号生成/合成/资本配置/管线的基类与默认实现
-- module_path: schemas/categories/market_l2_tick.py
+- module_path: schemas/categories/intraday/market_l2_tick.py
   module_id: MOD-L04-002
   node_id: A1
   name_zh: ① l2_tick 表DDL定义
   name_en: L2_TICK_DDL
   plain_zh: 用DDL-as-Code定义ClickHouse逐笔表结构，是唯一真源
-- module_path: schemas/categories/market_l2_tick.py
+- module_path: schemas/categories/intraday/market_l2_tick.py
   module_id: MOD-L04-002
   node_id: A2
   name_zh: ② 交易所码派生
   name_en: exchange MATERIALIZED 列
   plain_zh: 按证券代码前缀自动推导交易所
-- module_path: schemas/categories/market_l2_tick.py
+- module_path: schemas/categories/intraday/market_l2_tick.py
   module_id: MOD-L04-002
   node_id: A3
   name_zh: ③ canonical身份键派生

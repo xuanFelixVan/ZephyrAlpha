@@ -761,6 +761,32 @@ tasks:
   symbols:
   extra:
     description: "申万行业分类全量刷新（tushare index_classify + index_member）"
+- task_id: crypto_kline_daily_incremental
+  table: c1_market.crypto_kline_daily
+  source: crypto_binance   # 币圈免费影子 MVP（Owner 2026-09-11 裁定）：binance.vision 公开镜像免 key；2026-09-11 OKX 全域 DNS 阻断后按 95 号蓝图"币安主源"路线换道；只记账不进 TDM 决策链路
+  schedule: daily_crypto   # 7×24 市场 UTC 日界：北京 08:30=UTC 00:30 拉上一完整 UTC 日（含周末，A 股 daily_kline 档 0-4 会漏周末）
+  incremental: true
+  date_col: trade_date
+  dependencies: []
+  capability: crypto_kline_daily
+  symbols:         # null=Provider 自取宇宙（24h quote_volume Top-50 USDT 快照+ETHBTC 汇率对）
+  extra:
+    description: "币圈现货日线增量（binance.vision /api/v3/klines 1D，回看 5 根幂等重放）"
+    lookback_days: 5
+
+- task_id: crypto_shadow_gate_daily
+  table: c1_market.crypto_shadow_gate
+  source: crypto_binance
+  schedule: daily_crypto
+  incremental: true
+  date_col: trade_date
+  dependencies: ["crypto_kline_daily_incremental"]   # 判定读表内数据，必须在当日 K 线入库后跑
+  capability: crypto_shadow_gate
+  symbols:
+  extra:
+    description: "C-L1 大盘总闸影子判定（shadow_tier 五档，读表直判只记账；shadow_version=v0.1 逻辑变更须升版本）"
+    backfill_days: 1
+
 - task_id: kline_sector_incremental
   table: c1_market.kline_sector
   source: tqcenter       # 2026-09-11 mootdx 通道退化换道（Owner 裁定"完美替换即切"）：mootdx 对 K 线请求回 0 行（三次实证+16:30 同通道日任务零产出），tqcenter 881 系列探针通过（881 行业族 880 表没有，kline_sector 不冗余不可退役）；尺度换算 volume÷100/amount×1e4 保 mootdx 历史特征零漂移

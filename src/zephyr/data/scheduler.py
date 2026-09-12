@@ -1265,6 +1265,11 @@ class IntegratorScheduler:
                 from zephyr.data.implementations.tqcenter_provider import TQCenterProvider
 
                 return TQCenterProvider()
+            elif source == "crypto_binance":
+                # 币圈免费影子 MVP（Owner 2026-09-11 裁定）：binance.vision 公开镜像，只记账不进决策链路
+                from zephyr.data.implementations.crypto_provider import CryptoProvider
+
+                return CryptoProvider()
             elif source == "fred":
                 # #ARCH-EDB-EXPAND（2026-08-04）：FRED + 世界银行免费宏观数据
                 from zephyr.data.implementations.fred_provider import FredProvider

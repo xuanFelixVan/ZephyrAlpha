@@ -4969,7 +4969,15 @@ capabilities:
   description: 图 8 产业链全景图的字典↔DDL↔引擎三方同 commit 同步硬阻断（priority=141）+ chainmap_cluster_names
     词表 sanity
 creation_tokens:
-- file: schemas/categories/crypto_kline_daily.py
+- file: src/zephyr/data/implementations/crypto_provider.py
+  token: crypto-provider-binance-vision-20260912
+  created_by: st-g07-crypto-20260912
+  capability: crypto_shadow_mvp_data_layer
+- file: tests/zephyr/data/test_crypto_provider.py
+  token: crypto-provider-test-20260912
+  created_by: st-g07-crypto-20260912
+  capability: crypto_shadow_mvp_data_layer
+- file: schemas/categories/crypto/crypto_kline_daily.py
   token: crypto-shadow-binancial-vision-20260912
   created_by: st-g07-crypto-20260912
   capability: crypto_shadow_mvp_data_layer
@@ -5297,7 +5305,7 @@ creation_tokens:
   token: qmt-day-depth-backfill-cli-20260909
   created_by: qmt-day-20260909
   capability: market_tick_depth_5
-- file: schemas/categories/market_tick_depth_5.py
+- file: schemas/categories/intraday/market_tick_depth_5.py
   token: qmt-day-depth-ddl-20260909
   created_by: qmt-day-20260909
   capability: market_tick_depth_5
@@ -6119,39 +6127,39 @@ creation_tokens:
   token: auto-schema-truth-verifier-20260725
   created_by: session-sess-78404-20260725001033
   capability: schema_truth_verifier
-- file: schemas/categories/fundamental_analyst_forecast.py
+- file: schemas/categories/fundamental/fundamental_analyst_forecast.py
   token: auto-ddl-truth-c3-analyst-forecast-20260725
   created_by: session-sess-78404-20260725001033
   capability: ddl_truth_source_c3
-- file: schemas/categories/fundamental_disclosure_plan.py
+- file: schemas/categories/fundamental/fundamental_disclosure_plan.py
   token: auto-ddl-truth-c3-disclosure-plan-20260725
   created_by: session-sess-78404-20260725001033
   capability: ddl_truth_source_c3
-- file: schemas/categories/fundamental_equity_pledge_detail.py
+- file: schemas/categories/fundamental/fundamental_equity_pledge_detail.py
   token: auto-ddl-truth-c3-equity-pledge-detail-20260725
   created_by: session-sess-78404-20260725001033
   capability: ddl_truth_source_c3
-- file: schemas/categories/fundamental_industry_class_suppl.py
+- file: schemas/categories/fundamental/fundamental_industry_class_suppl.py
   token: auto-ddl-truth-c3-industry-class-suppl-20260725
   created_by: session-sess-78404-20260725001033
   capability: ddl_truth_source_c3
-- file: schemas/categories/fundamental_restricted_shares.py
+- file: schemas/categories/fundamental/fundamental_restricted_shares.py
   token: auto-ddl-truth-c3-restricted-shares-20260725
   created_by: session-sess-78404-20260725001033
   capability: ddl_truth_source_c3
-- file: schemas/categories/fundamental_rights_issue.py
+- file: schemas/categories/fundamental/fundamental_rights_issue.py
   token: auto-ddl-truth-c3-rights-issue-20260725
   created_by: session-sess-78404-20260725001033
   capability: ddl_truth_source_c3
-- file: schemas/categories/fundamental_share_change.py
+- file: schemas/categories/fundamental/fundamental_share_change.py
   token: auto-ddl-truth-c3-share-change-20260725
   created_by: session-sess-78404-20260725001033
   capability: ddl_truth_source_c3
-- file: schemas/categories/fundamental_share_unlock.py
+- file: schemas/categories/fundamental/fundamental_share_unlock.py
   token: auto-ddl-truth-c3-share-unlock-20260725
   created_by: session-sess-78404-20260725001033
   capability: ddl_truth_source_c3
-- file: schemas/categories/market_l2_tick.py
+- file: schemas/categories/intraday/market_l2_tick.py
   token: auto-ddl-truth-c1-l2-tick-20260728
   created_by: session-sess-29488-20260728171405
   capability: ddl_truth_source_c1
@@ -6767,15 +6775,15 @@ creation_tokens:
   token: auto-schema-sector-list-20260723
   created_by: session-sess-phase3b-20260723
   capability: data_source_provider_abstraction
-- file: schemas/categories/fundamental_income_statement.py
+- file: schemas/categories/fundamental/fundamental_income_statement.py
   token: auto-schema-fundamental-income-20260723
   created_by: session-sess-44880-20260723192247
   capability: data_source_provider_abstraction
-- file: schemas/categories/fundamental_balance_sheet.py
+- file: schemas/categories/fundamental/fundamental_balance_sheet.py
   token: auto-schema-fundamental-balance-20260723
   created_by: session-sess-44880-20260723192247
   capability: data_source_provider_abstraction
-- file: schemas/categories/fundamental_cashflow_statement.py
+- file: schemas/categories/fundamental/fundamental_cashflow_statement.py
   token: auto-schema-fundamental-cashflow-20260723
   created_by: session-sess-44880-20260723192247
   capability: data_source_provider_abstraction
@@ -11635,7 +11643,7 @@ creation_tokens:
   token: auto-ths-profile-import-20260909
   created_by: ths-profile-20260909
   capability: meta_stock_profile_ths
-- file: scripts/schemas/categories/market_tick_depth_5.py
+- file: scripts/schemas/categories/intraday/market_tick_depth_5.py
   token: auto-scaffold-schemas_categories_market_tick_depth_5-20260909
   created_by: scaffold.py
   capability: schemas_categories_market_tick_depth_5
@@ -11815,11 +11823,11 @@ creation_tokens:
   token: gate-cache-preflight-20260911
   created_by: st-perf-plan-20260910
   capability: gate_commit_gw
-- file: src/zephyr/data/implementations/crypto_kline_collector.py
+- file: src/zephyr/data/implementations/crypto_provider.py
   token: crypto-kline-collector-20260911
   created_by: night-gw-2300
   capability: gate_commit_gw
-- file: src/zephyr/data/implementations/shadow_gate_c_l1.py
+- file: src/zephyr/data/implementations/crypto_provider.py
   token: shadow-gate-c-l1-20260911
   created_by: night-gw-2300
   capability: gate_commit_gw
@@ -11883,6 +11891,30 @@ creation_tokens:
   token: auto-scaffold-industry_graph_igfact_fill-20260912
   created_by: workbuddy-session-igfact-fill (scaffold 同格式手工登记, 2026-09-12)
   capability: industry_graph_igfact_fill
+- file: schemas/categories/__init__.py
+  token: schemas-split-root-index-20260912
+  created_by: schemas-split-20260912
+  capability: schemas_categories_root
+- file: schemas/categories/kline/__init__.py
+  token: schemas-split-kline-index-20260912
+  created_by: schemas-split-20260912
+  capability: schemas_categories_kline
+- file: schemas/categories/fundamental/__init__.py
+  token: schemas-split-fundamental-index-20260912
+  created_by: schemas-split-20260912
+  capability: schemas_categories_fundamental
+- file: schemas/categories/crypto/__init__.py
+  token: schemas-split-crypto-index-20260912
+  created_by: schemas-split-20260912
+  capability: schemas_categories_crypto
+- file: schemas/categories/intraday/__init__.py
+  token: schemas-split-intraday-index-20260912
+  created_by: schemas-split-20260912
+  capability: schemas_categories_intraday
+- file: schemas/categories/fundamental/fundamental_research_report.py
+  token: auto-schemas-split-adopt-research-report-20260912
+  created_by: schemas-split-20260912 (adopt 窗口期 orphan 件, 内容零改动随迁)
+  capability: fundamental_research_report
 di_seam_exemptions:
 - module_path: zephyr.trading.auto_runtime_core.AutoRuntimeCore
   reason: P0-5 LSG DI seam 标杆，已有 DI 但 AST 模式不匹配（动态注入）

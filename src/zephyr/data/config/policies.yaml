@@ -30,6 +30,20 @@ akshare:
   - JSONDecodeError
   - ConnectionError
   disconnect_vpn: true
+crypto_binance:
+  rpm: 0
+  concurrency: 1
+  max_retries: 3
+  backoff: fixed
+  initial_wait_sec: 2.0
+  retry_on:
+  - TimeoutError
+  - ConnectionError
+  - URLError
+  session_ttl_sec: 0
+  relogin_on_auth_error: false
+  extra:
+
 baostock:
   rpm: 60
   concurrency: 8
