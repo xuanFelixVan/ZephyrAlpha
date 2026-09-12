@@ -14371,3 +14371,11 @@ di_seam_exemptions:
   token: c5-cluster-differentiation-report-20260913
   created_by: st-zcode-c4-20260912
   capability: c4_batch_translation
+- file: docs/_working/2026-09-13-strategy-factory-pipeline-discussion.md
+  token: strategy-factory-pipeline-discussion-20260913
+  created_by: st-zcode-c4-20260912
+  capability: c4_batch_translation
+- file: docs/_working/2026-09-13-knowledge-reserve-nonpipeline.md
+  token: knowledge-reserve-nonpipeline-20260913
+  created_by: st-zcode-c4-20260912
+  capability: c4_batch_translation
