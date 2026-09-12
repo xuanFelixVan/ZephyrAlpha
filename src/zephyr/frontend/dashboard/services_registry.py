@@ -20,6 +20,8 @@ from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any
 
+from zephyr.shared.infra.process_pool import run_subprocess_hidden
+
 _REPO = Path(__file__).resolve().parents[4]
 _TMP = _REPO / "tmp"
 _LOG = _TMP / "services_control_log.jsonl"
@@ -311,9 +313,10 @@ def _do_stop(item: dict[str, Any]) -> str:
         ended = ""
         if task:
             try:
-                subprocess.run(["schtasks", "/end", "/tn", task], capture_output=True, text=True, timeout=5)
-                subprocess.run(["schtasks", "/change", "/tn", task, "/disable"],
-                               capture_output=True, text=True, timeout=5)
+                run_subprocess_hidden(["schtasks", "/end", "/tn", task], capture_output=True,
+                                      text=True, timeout=5)
+                run_subprocess_hidden(["schtasks", "/change", "/tn", task, "/disable"],
+                                      capture_output=True, text=True, timeout=5)
                 # 失效 schtasks 60s 缓存——否则状态灯最长 1 分钟仍显示旧"运行中"（Owner 实证"点了没反应"）
                 _SCHTASKS_CACHE.pop(task, None)
                 ended = "task ended+disabled; "
@@ -369,16 +372,16 @@ def _do_start(item: dict[str, Any]) -> str:
     task = (item.get("stop") or {}).get("task")
     if task:
         try:
-            subprocess.run(["schtasks", "/change", "/tn", task, "/enable"],
-                           capture_output=True, timeout=5)
+            run_subprocess_hidden(["schtasks", "/change", "/tn", task, "/enable"],
+                                  capture_output=True, timeout=5)
             _SCHTASKS_CACHE.pop(task, None)   # 清缓存，状态页立即反映 Ready（否则 60s 内仍显 Disabled 灰）
         except Exception:  # noqa: BLE001 — enable 失败不阻断手动拉起
             pass
         # 带 watchdog 任务的服必须走任务通道拉起（2026-09-03 实证：直接 spawn ps1 的 guard
         # 随宿主终端死，schtasks /run 脱离作业对象才存活——start_scheduler.ps1 头部明文纪律）
         try:
-            subprocess.run(["schtasks", "/run", "/tn", task],
-                           capture_output=True, timeout=5)
+            run_subprocess_hidden(["schtasks", "/run", "/tn", task],
+                                  capture_output=True, timeout=5)
             return "task run: " + task
         except Exception as e:  # noqa: BLE001 — /run 失败回退直接 spawn
             return f"task run failed ({e}); fallback spawn"
@@ -414,8 +417,10 @@ def _run_decoded(cmd: list[str], timeout: int = 5) -> subprocess.CompletedProces
     而 schtasks/nvidia-smi 等 Windows 命令输出 GBK → 读线程 UnicodeDecodeError
     → CPython subprocess L1646 `stdout[0] if stdout else None` 静默变 None
     （曾误判为「Hidden 进程无 console」怪癖，实为编码）。bytes+显式解码对
-    图标拉起（GBK 环境）/AI 拉起（UTF-8 环境）两种上下文都稳。"""
-    r = subprocess.run(cmd, capture_output=True, timeout=timeout)
+    图标拉起（GBK 环境）/AI 拉起（UTF-8 环境）两种上下文都稳。
+    run_subprocess_hidden=trae_067 统一入口（CREATE_NO_WINDOW 治闪窗——
+    2026-09-12 Owner 实证 api_server DETACHED 派生子进程每轮询闪黑窗）。"""
+    r = run_subprocess_hidden(cmd, capture_output=True, timeout=timeout)
     r.stdout = (r.stdout or b"").decode("gbk", errors="replace")
     r.stderr = (r.stderr or b"").decode("gbk", errors="replace")
     return r

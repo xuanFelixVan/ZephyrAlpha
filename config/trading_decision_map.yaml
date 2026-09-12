@@ -207,7 +207,7 @@ nodes:
   #  零件 next_day_8state_forecast/similar_day_inference/brier_calibration 全在，
   #  缺盘中滚动组合器=施工清单 C13 待建，本节点先以红节点入图占位）
   - node_id: TDM-E-L0-04
-    note_confirmed: 2026-09-11
+    note_confirmed: 2026-09-12
     name_zh: 明日情绪盘中滚动预测
     market: cn_a
     flow: entry_flow
@@ -276,11 +276,12 @@ nodes:
     module_ref: src/zephyr/regime/features/index_sensor.py
     module_id: MOD-REGIME-016
     algo_refs: [DAL-MA-ALIGN]
-    note_confirmed: "2026-09-10"
+    note_confirmed: 2026-09-12
     # （D109 终裁）：攻防板块特征入本层——券商指数 5 日超额/银行指数 5 日超额/券商÷银行涨幅比（>1 且放量=进攻态；银行独涨+科技跌=避险标签；银行与科技 20 日同涨且相关性转正=哑铃市双主线）；数据=DS-170 板块 K 线；先产特征不联动仓位，回测验证预测力后联动
     strategy_mounts: []
 
   - node_id: TDM-E-L1-S2
+    note_confirmed: 2026-09-12
     name_zh: 市场内部结构传感器
     market: cn_a
     flow: entry_flow
@@ -300,6 +301,8 @@ nodes:
     strategy_mounts: []
 
   - node_id: TDM-E-L1-S3
+
+    note_confirmed: 2026-09-12
     name_zh: 赚钱效应传感器
     market: cn_a
     flow: entry_flow
@@ -458,7 +461,6 @@ nodes:
 
   # ── 树枝01 板块强度综合（22号 §3.1①⑧⑨）────────────────────────
   - node_id: TDM-E-L2-01
-    note_confirmed: 2026-09-12
     name_zh: 板块强度综合
     note_confirmed: 2026-09-12
     market: cn_a
@@ -467,7 +469,6 @@ nodes:
     node_type: stage
     point: 盘后
     decision_question: 各板块今天整体强不强、强到值得进候选池吗
-    algo_note_zh: >-
     algo_note_zh: 四路子分（结构强度/动量活跃/多周期动量/资金流，各 0-100）等权 0.25 合成，加市场级调节 ±10 后 clamp [0,100]，总分前 15% 进候选池；实现锚=sector_strength_aggregator（MOD-SIG-142，纯函数零 IO，等权先验待 IC 重校）。
     parent_node: TDM-E-L2
     factor_refs: []
@@ -485,6 +486,8 @@ nodes:
     strategy_mounts: []
 
   - node_id: TDM-E-L2-01-1
+
+    note_confirmed: 2026-09-12
     name_zh: 结构强度评估
     market: cn_a
     flow: entry_flow
@@ -534,6 +537,8 @@ nodes:
     strategy_mounts: []
 
   - node_id: TDM-E-L2-01-3
+
+    note_confirmed: 2026-09-12
     name_zh: 多周期动量加权
     market: cn_a
     flow: entry_flow
@@ -558,6 +563,8 @@ nodes:
     strategy_mounts: []
 
   - node_id: TDM-E-L2-01-4
+
+    note_confirmed: 2026-09-12
     name_zh: 板块资金流聚合
     market: cn_a
     flow: entry_flow
@@ -608,6 +615,7 @@ nodes:
 
   # ── 树枝02 轮动序列追踪（BM-SEL-08）────────────────────────
   - node_id: TDM-E-L2-02
+    note_confirmed: 2026-09-12
     name_zh: 轮动序列追踪
     market: cn_a
     flow: entry_flow
@@ -633,6 +641,8 @@ nodes:
     strategy_mounts: []
 
   - node_id: TDM-E-L2-02-1
+
+    note_confirmed: 2026-09-12
     name_zh: RRG 轮动序列
     market: cn_a
     flow: entry_flow
@@ -657,6 +667,8 @@ nodes:
     strategy_mounts: []
 
   - node_id: TDM-E-L2-02-2
+
+    note_confirmed: 2026-09-12
     name_zh: 单板块轮动预警
     market: cn_a
     flow: entry_flow
@@ -682,6 +694,7 @@ nodes:
 
   # ── 树枝03 调整周期进度（BM-SEL-09）────────────────────────
   - node_id: TDM-E-L2-03
+    note_confirmed: 2026-09-12
     name_zh: 调整周期进度
     market: cn_a
     flow: entry_flow
@@ -734,7 +747,6 @@ nodes:
 
   # ── 树枝04 板块级市场状态 ────────────────────────
   - node_id: TDM-E-L2-04
-    note_confirmed: 2026-09-12
     name_zh: 板块级市场状态
     note_confirmed: 2026-09-12
     market: cn_a
@@ -743,7 +755,6 @@ nodes:
     node_type: aggregation
     point: 盘后
     decision_question: 今天板块间分布结构是高潮/主线/分歧/派发/混沌哪种
-    algo_note_zh: >-
     algo_note_zh: 三态封闭判定（优先级 高潮>主线清晰>混沌）：高潮分≥90=次日分歧警示；梯队连击≥2 且 Top2 集中度≥30%=主线清晰聚焦做；其余混沌降仓等待；实现锚=sector_ecology_judge（MOD-SIG-143，纯函数零 IO，阈值全取自既有文档口径）。
     parent_node: TDM-E-L2
     factor_refs: []
@@ -761,6 +772,8 @@ nodes:
     strategy_mounts: []
 
   - node_id: TDM-E-L2-04-1
+
+    note_confirmed: 2026-09-12
     name_zh: 轮动状态五分类
     market: cn_a
     flow: entry_flow
@@ -784,6 +797,8 @@ nodes:
     strategy_mounts: []
 
   - node_id: TDM-E-L2-04-2
+
+    note_confirmed: 2026-09-12
     name_zh: 虹吸态识别
     market: cn_a
     flow: entry_flow
@@ -833,7 +848,7 @@ nodes:
     strategy_mounts: []
 
   - node_id: TDM-E-L2-05-1
-    note_confirmed: 2026-09-11
+    note_confirmed: 2026-09-12
     name_zh: 水温档推导
     market: cn_a
     flow: entry_flow
@@ -859,6 +874,8 @@ nodes:
     strategy_mounts: []
 
   - node_id: TDM-E-L2-05-2
+
+    note_confirmed: 2026-09-12
     name_zh: 信号响应三件套
     market: cn_a
     flow: entry_flow
@@ -884,6 +901,7 @@ nodes:
 
   # ── 树枝06 板块→个股传导 ────────────────────────
   - node_id: TDM-E-L2-06
+    note_confirmed: 2026-09-12
     name_zh: 板块个股传导
     market: cn_a
     flow: entry_flow
@@ -908,6 +926,8 @@ nodes:
     strategy_mounts: []
 
   - node_id: TDM-E-L2-06-1
+
+    note_confirmed: 2026-09-12
     name_zh: 三级放行门槛
     market: cn_a
     flow: entry_flow
@@ -932,6 +952,8 @@ nodes:
     strategy_mounts: []
 
   - node_id: TDM-E-L2-06-2
+
+    note_confirmed: 2026-09-12
     name_zh: 龙头识别定位
     market: cn_a
     flow: entry_flow
@@ -957,6 +979,7 @@ nodes:
     strategy_mounts: []
 
   - node_id: TDM-E-L2-06-3
+
     name_zh: 强度加权传导
     # C5 施工（gw-tdm-20260909）：MOD-SIG-136 落码，module_ref 由 sector_attribute_rules 改指传导系数核
     market: cn_a
@@ -973,7 +996,7 @@ nodes:
     data_refs: [DS-059]
     module_ref: src/zephyr/signal_ashare/core/sector_conduction.py
     module_id: MOD-SIG-136
-    note_confirmed: "2026-09-10"
+    note_confirmed: 2026-09-12
     algo_refs: []
     doc_ref: "docs/02_enterprise_architecture/07_trading_decision_architecture/design_memos/22_sector_rotation_spec.md#§3.1⑦"
     activation: postmarket
@@ -984,6 +1007,7 @@ nodes:
 
   # ── 树枝07 回踩质量分级（BM-BUY-04 消费）───────────────────
   - node_id: TDM-E-L2-07
+    note_confirmed: 2026-09-12
     name_zh: 回踩质量分级
     market: cn_a
     flow: entry_flow
@@ -1009,6 +1033,8 @@ nodes:
     strategy_mounts: []
 
   - node_id: TDM-E-L2-07-1
+
+    note_confirmed: 2026-09-12
     name_zh: 回踩ABC判定
     market: cn_a
     flow: entry_flow
@@ -1036,6 +1062,7 @@ nodes:
   # 08 板块个体生命周期——STR-MOMTREND-003 启动/熄火条件库（科技熄火四信号/机器人启动三要素/
   #   消费启动三条件）上挂；与 02 RRG（板块间时序）分工：08 管单板块自身走到哪一段
   - node_id: TDM-E-L2-08
+    note_confirmed: 2026-09-12
     name_zh: 板块生命周期判定
     market: cn_a
     flow: entry_flow
@@ -1062,6 +1089,7 @@ nodes:
 
   # 09 催化剂维度——板块过滤三维度（周期契合/主题对齐/估值）中的消息面，DS-107 新闻情绪窗首次入图
   - node_id: TDM-E-L2-09
+    note_confirmed: 2026-09-12
     name_zh: 催化剂识别
     market: cn_a
     flow: entry_flow
@@ -1659,6 +1687,8 @@ nodes:
     strategy_mounts: []
 
   - node_id: TDM-E-L3-11-2
+
+    note_confirmed: 2026-09-12
     name_zh: 盘中涨速异动扫描
     market: cn_a
     flow: entry_flow
@@ -1732,6 +1762,8 @@ nodes:
     strategy_mounts: []
 
   - node_id: TDM-E-L3-12-2
+
+    note_confirmed: 2026-09-12
     name_zh: 龙虎榜席位追踪
     market: cn_a
     flow: entry_flow
@@ -2473,6 +2505,8 @@ nodes:
       - {strategy_ref: vwap-reversion,      confidence: proposed, evidence: null}
 
   - node_id: TDM-P-P2-03
+
+    note_confirmed: 2026-09-12
     name_zh: 做T闭环与成功判定
     market: cn_a
     flow: position_flow

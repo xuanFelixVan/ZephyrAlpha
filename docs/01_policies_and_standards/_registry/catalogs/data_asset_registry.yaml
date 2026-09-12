@@ -9687,6 +9687,36 @@ datasets:
   code_symbol: "src/zephyr/data/implementations/akshare_provider.py::AkshareIngestProvider._fetch_research_report_detail"
   code_fingerprint:
 
+- dataset_id: DS-232
+  entity_name: c3_fundamental.financial_derived
+  entity_type: dataset
+  scope: production
+  contract_ref:
+  physical_type: clickhouse_table
+  produced_by_job:
+  consumed_by_jobs: []
+  domain_id: D_DATA
+  pit_policy: strict
+  format_summary: 财报派生层（消费端 F1-M1｜构建器=scripts/ch/build_financial_derived.py，夜间派生=internal
+    provider financial_derived capability）｜粒度=(symbol,report_period,announce_date)（statement 粒度，
+    D2 裁定不做每日物化）｜字段=三表对齐宽表+单季拆分+单季同比环比+TTM+派生比率（accrual/gpoa/
+    gross_margin/eff_tax_rate/debt_ratio）｜PIT 铁律=哨兵过滤（公告日>1970-01-02）+历史期取衍生公告日
+    时点可见最新版本+对齐事件=三方公告日并集（修正公告独立成行与源表同构）｜用途=M2 事实侧因子族
+    （FQ/GR 族）标准输入｜DDL 真源=schemas/categories/fundamental/financial_derived.py｜
+    设计=docs/_working/2026-09-12-fundamental-consumption-design.md 第1节M1
+  valid_since: "2003-12-31"
+  module_id: MOD-L04-001
+  design_maturity: production
+  name: c3_fundamental.financial_derived
+  name_zh: 财报派生层（事实侧因子族地基）
+  status: active
+  version: 1.0.0
+  created_at: "2026-09-13"
+  updated_at: "2026-09-13"
+  owner: MOD-L04-001
+  produced_by_source: SRC-INTERNAL-001
+  survivorship_free: true
+  pit_available: true
 - dataset_id: DS-229
   entity_name: c3_fundamental.consensus_daily
   entity_type: dataset
@@ -12485,6 +12515,24 @@ jobs:
   code_fingerprint:
 
 # 2026-09-12 另类数据第 1 批免注册直连：千股千评快照 + 航运运价增量/全量（alt-data-handoff §8-1）
+- job_id: JOB-095
+  job_name: build.financial_derived
+  entity_type: job
+  scope: production
+  source_code_ref: scripts/ch/build_financial_derived.py
+  trigger_type: scheduled
+  run_context: production
+  inputs:
+  - DS-109
+  - DS-110
+  - DS-111
+  outputs:
+  - DS-232
+  pit_relevance: strict
+  description: 财报派生层构建（消费端 F1-M1：三表对齐+单季+TTM+比率，statement 粒度；13 单测+
+    实库 PIT 交叉验证；夜间=internal provider，tasks.yaml financial_derived_build；全量回补
+    297,535 行/5,858 标的 2026-09-13）
+  module_id: MOD-L04-001
 - job_id: JOB-092
   job_name: ingest.akshare_alt_stock_comment
   entity_type: job

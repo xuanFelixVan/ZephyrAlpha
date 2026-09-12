@@ -1,3 +1,5 @@
+# [BLUEPRINT] MOD-SIG-038 | (auto-injected by S4 reconciler) | §
+# [TTL] permanent
 """candidate_pool_aggregator 单元测试（L3-08 汇总件施工批 2026-09-11，Owner 立项）。
 
 红蓝手法覆盖：红-边界（空来源/容量端点 10-20/tie-break 链）/红-契约（完全重复对
