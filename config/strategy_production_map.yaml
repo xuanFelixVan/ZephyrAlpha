@@ -82,7 +82,7 @@ nodes:
     algo_note_zh: 聚宽/掘金等社区策略爬取与入库（C1 人工版已收 597 条）；扩容爬虫候选 Scrapling
     compute_class: local
     data_refs: [data/strategy_intake/raw_manifest.csv]
-    module_ref: null
+    module_ref: MOD-BT-035
     build_status: built
     design_refs:
       - Scrapling 自适应爬虫 github.com/D4Vinci/Scrapling（扩容候选）

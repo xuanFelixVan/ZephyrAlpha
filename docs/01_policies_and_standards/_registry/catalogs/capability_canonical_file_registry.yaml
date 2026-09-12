@@ -12043,6 +12043,9 @@ creation_tokens:
 - file: docs/_working/2026-09-13-dedup-analysis.md
   token: dedup-analysis-20260913
   created_by: night-sweep-20260913
+- file: src/zephyr/signal_ashare/core/analysis_utils.py
+  token: sig-analysis-utils-20260913
+  created_by: night-sweep-20260913
 di_seam_exemptions:
 - module_path: zephyr.trading.auto_runtime_core.AutoRuntimeCore
   reason: P0-5 LSG DI seam 标杆，已有 DI 但 AST 模式不匹配（动态注入）
@@ -14407,5 +14410,13 @@ di_seam_exemptions:
   capability: c4_batch_translation
 - file: docs/_working/2026-09-13-tdm-upgrade-blueprint.md
   token: tdm-upgrade-blueprint-20260913
+  created_by: st-zcode-c4-20260912
+  capability: c4_batch_translation
+- file: scripts/governance/d5_architecture/validators/validate_strategy_production_map.py
+  token: factory-map-structure-validator-20260913
+  created_by: st-zcode-c4-20260912
+  capability: c4_batch_translation
+- file: tests/backtest/test_strategy_production_map_adversarial.py
+  token: factory-map-adversarial-tests-20260913
   created_by: st-zcode-c4-20260912
   capability: c4_batch_translation
