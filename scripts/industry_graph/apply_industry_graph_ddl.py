@@ -28,6 +28,8 @@
     ig_product_revenue 产品营收归因表（v4: 图谱侧财务唯一表，通用财务主数据进 c1_market 防双真源）
     （v5 2026-09-09 收尾: ig_chain.level 链层级列——模板决策#8 level 落库、parent 派生）
     （v6 2026-09-10: ig_unlisted_entity.covered 主数据收录标记——外部实体留痕登记,产业链↔主数据对账桥梁）
+    （v7 2026-09-13: ig_io_edge 投入产出结构锚——国家统计局 2020 年 153 部门表直接消耗系数,
+      部门级上下游强度机械判定依据,tier 退役裁定遗留缺口的量化补位;2026-09-13-io-structure-anchor-plan.md）
 
 市场分片规范：各表均带 market 字段（ig_chunk/ig_unlisted_entity 除外——语料/实体无市场语义）。
 
@@ -337,6 +339,30 @@ DDL_STATEMENTS = [
     #     清单逐个 promote 对上,编码表即产业链↔主数据的对账桥梁） ---
     "ALTER TABLE ig_unlisted_entity ADD COLUMN IF NOT EXISTS covered BOOLEAN NOT NULL DEFAULT FALSE",
     "CREATE INDEX IF NOT EXISTS idx_ig_unlisted_covered ON ig_unlisted_entity (covered)",
+    # ========== v7 增量（2026-09-13 投入产出结构锚,方案=docs/_working/2026-09-13-io-structure-anchor-plan.md） ---
+    """
+    CREATE TABLE IF NOT EXISTS ig_io_edge (
+        id               BIGSERIAL PRIMARY KEY,
+        year             SMALLINT NOT NULL,
+        from_sector_code TEXT NOT NULL,
+        from_sector      TEXT NOT NULL,
+        to_sector_code   TEXT NOT NULL,
+        to_sector        TEXT NOT NULL,
+        flow_wan         DOUBLE PRECISION,
+        coefficient      DOUBLE PRECISION,
+        source           TEXT NOT NULL,
+        source_doc       TEXT,
+        market           TEXT NOT NULL DEFAULT 'cn',
+        as_of            DATE,
+        valid_from       DATE,
+        valid_to         DATE,
+        created_at       TIMESTAMPTZ NOT NULL DEFAULT now(),
+        updated_at       TIMESTAMPTZ NOT NULL DEFAULT now(),
+        UNIQUE (year, from_sector_code, to_sector_code)
+    )
+    """,
+    "CREATE INDEX IF NOT EXISTS idx_ig_io_from ON ig_io_edge (from_sector_code)",
+    "CREATE INDEX IF NOT EXISTS idx_ig_io_to ON ig_io_edge (to_sector_code)",
 ]
 
 # 裁定#ARCH-DEPGRAPH_ACCESS_CONTROL: reader 只读 / writer 读写
@@ -353,6 +379,7 @@ _ALL_TABLES = (
     "ig_unlisted_entity",
     "ig_equity_edge",
     "ig_product_revenue",
+    "ig_io_edge",
 )
 GRANT_STATEMENTS = (
     [f"GRANT SELECT ON {t} TO depgraph_reader" for t in _ALL_TABLES]
@@ -366,6 +393,7 @@ GRANT_STATEMENTS = (
         "GRANT USAGE, SELECT ON SEQUENCE ig_fact_fact_id_seq TO depgraph_writer",
         "GRANT USAGE, SELECT ON SEQUENCE ig_equity_edge_edge_id_seq TO depgraph_writer",
         "GRANT USAGE, SELECT ON SEQUENCE ig_product_revenue_id_seq TO depgraph_writer",
+        "GRANT USAGE, SELECT ON SEQUENCE ig_io_edge_id_seq TO depgraph_writer",
     ]
 )
 

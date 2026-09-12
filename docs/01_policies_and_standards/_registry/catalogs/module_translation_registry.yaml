@@ -47925,6 +47925,41 @@ entries:
   desc_zh: "解析国家统计局投入产出表为部门级上下游系数矩阵并入 ig_io_edge 表"
   desc_en: ""
   plain_zh: "这个脚本把国家统计局的投入产出表装进图谱库。投入产出表是官方统计里唯一能量化'谁给谁供货、供多少'的表,装进来之后,判断产业链里上游下游关系就不再靠拍脑袋,而是有官方系数撑腰。用法分三步:parse 解析原始数据文件,load 灌进 ig_io_edge 表(可反复重跑不会灌重),status 看装了多少。"
+- module_path: schemas/categories/fundamental/financial_derived.py
+  domain_id: D_DATA
+  name_zh: "财报派生层表 DDL 真源"
+  name_en: ""
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "定义财报派生宽表的结构：把三大报表对齐成一行，带单季拆分、TTM 和应计毛利率等比率列，是这张 ClickHouse 表结构的唯一真源。"
+- module_path: src/zephyr/data/implementations/financial_derived_compute.py
+  domain_id: D_DATA
+  name_zh: "财报派生层计算核"
+  name_en: ""
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "把三大报表按标的逐期对齐算出单季营收净利润现金流、TTM 和应计比率：只信真实公告日的数据，修正公告不会污染已公告时点的数字，纯函数可单测。"
+- module_path: scripts/ch/build_financial_derived.py
+  domain_id: D_DATA
+  name_zh: "财报派生层构建器"
+  name_en: ""
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "一键把全市场财报重建为派生宽表的命令行工具：全量回补四十秒跑完，写入后自动计数复核，还能用真实报表交叉验算单季数字。"
+- module_path: scripts/ch/apply_financial_derived_ddl.py
+  domain_id: D_DATA
+  name_zh: "财报派生表建表脚本"
+  name_en: ""
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "在 ClickHouse 里建 financial_derived 派生表的部署脚本，可重复跑，建完自动核对表结构。"
+- module_path: tests/zephyr/data/test_financial_derived_compute.py
+  domain_id: D_DATA
+  name_zh: "财报派生计算核单测"
+  name_en: ""
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "十三道测试锁定派生层的时点语义：单季怎么拆、TTM 怎么滚、修正公告不许偷看未来，全靠内存数据不碰生产库。"
 
 battle_map_steps:
 - step_id: BM-BUY-05

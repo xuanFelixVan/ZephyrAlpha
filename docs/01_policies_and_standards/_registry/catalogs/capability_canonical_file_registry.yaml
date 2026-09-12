@@ -11920,6 +11920,10 @@ creation_tokens:
   created_by: st-igbe-20260913 (投入产出结构锚施工件, 方案=docs/_working/2026-09-13-io-structure-anchor-plan.md,
     2026-09-13)
   capability: industry_graph_io_ingest
+- file: docs/01_policies_and_standards/_registry/catalogs/io_sector_sws_map.yaml
+  token: io-sector-sws-map-20260913
+  created_by: st-igbe-20260913 (投入产出部门→申万一级行业映射规则表, 2026-09-13)
+  capability: industry_graph_io_sws_map
 - file: schemas/categories/__init__.py
   token: schemas-split-root-index-20260912
   created_by: schemas-split-20260912

@@ -984,3 +984,82 @@ tables:
         type: text
         required: false
         standard: 自动/存量列，无人工填写标准（补齐对账）
+  ig_io_edge:
+    pk: id
+    fields:
+      year:
+        type: smallint
+        required: true
+        standard: 投入产出表基准年；UNIQUE(year,from_sector_code,to_sector_code) 幂等锚
+        good_example: 2020
+      from_sector_code:
+        type: text
+        required: true
+        standard: 上游部门三位码（国家统计局 153 部门分类）
+        good_example: '094'
+      from_sector:
+        type: text
+        required: true
+        standard: 上游部门中文名
+        good_example: 电子元器件
+      to_sector_code:
+        type: text
+        required: true
+        standard: 下游部门三位码
+        good_example: '090'
+      to_sector:
+        type: text
+        required: true
+        standard: 下游部门中文名
+        good_example: 计算机
+      flow_wan:
+        type: double precision
+        required: false
+        standard: 部门间中间流量（万元，生产者价格）；<=0 不落库（无传导语义）
+        good_example: 365341920.5
+      coefficient:
+        type: double precision
+        required: false
+        standard: 直接消耗系数 a(i,j)=x(i,j)/总投入(j)，[0,1)——部门级上下游强度机械判定依据
+        good_example: 0.5216
+      source:
+        type: text
+        required: true
+        standard: 固定 io_official（官方统计表转存）
+        good_example: io_official
+      source_doc:
+        type: text
+        required: false
+        standard: 三段式留痕：数据集|转存渠道|装载日期
+        good_example: io_china_2020_153|ionet(github Carol-seven/ionet)|2026-09-13
+      market:
+        type: text
+        required: true
+        standard: 默认 cn（国家统计局全国表）
+        good_example: cn
+      as_of:
+        type: date
+        required: false
+        standard: PIT——数据基准年末（表年 12-31）；消费只认 as_of 禁用 valid_from 过滤可知性
+        good_example: 2020-12-31
+      valid_from:
+        type: date
+        required: false
+        standard: PIT 起日=官方发布可知时点（《中国2020年投入产出表》2022-08 出版）
+        good_example: 2022-08-31
+      valid_to:
+        type: date
+        required: false
+        standard: NULL=至今
+      created_at:
+        type: text
+        required: false
+        standard: 自动/存量列，无人工填写标准（补齐对账）
+      updated_at:
+        type: text
+        required: false
+        standard: 自动/存量列，无人工填写标准（补齐对账）
+      id:
+        type: text
+        required: false
+        standard: 自动/存量列，无人工填写标准（补齐对账）
