@@ -42,6 +42,8 @@ CREATE TABLE IF NOT EXISTS c1_market.crypto_kline_daily
 (
     trade_date    Date            COMMENT '交易日期(K线 UTC 日界，币圈 7x24)',
     symbol        String          COMMENT '币安现货交易对，如 BTCUSDT/ETHBTC',
+    exchange          LowCardinality(String) MATERIALIZED LowCardinality(String) MATERIALIZED 'BINANCE' COMMENT '交易所码(TRAE-082 MATERIALIZED派生,2026-09-12 债清偿)',
+    symbol_canonical  String MATERIALIZED String MATERIALIZED if(position(symbol,'.')>0, symbol, concat(replaceRegexpAll(splitByChar('.', symbol)[1], '^(sh|sz|bj|hk)', ''), '.', exchange)) COMMENT 'canonical身份键(TRAE-082 universal,2026-09-12 债清偿)',
     base_asset    LowCardinality(String) DEFAULT '' COMMENT '基础资产，如 BTC/ETH',
     open          Decimal(18,8)   COMMENT '开盘价(USDT)',
     high          Decimal(18,8)   COMMENT '最高价(USDT)',

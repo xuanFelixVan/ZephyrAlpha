@@ -66,5 +66,5 @@ ORDER_BY = "(ts_code)"
 # 列清单（用于 INSERT 时显式指定，排除 DEFAULT 列由 CH 自动填充）
 # valid_to 需显式传入（退市/失效=终止日，有效=NULL/省略）
 INSERT_COLUMNS = (
-    "(ts_code, name, market, publisher, category, base_date, base_point, , list_date, symbol_num, market_id, valid_to)"
+    "(ts_code, name, market, publisher, category, base_date, base_point, list_date, symbol_num, market_id, valid_to)"
 )
