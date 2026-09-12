@@ -1,10 +1,12 @@
+# [BLUEPRINT] MOD-SIG-068 | (auto-injected by S4 reconciler) | §
+# [TTL] permanent
 """D-SIGNAL-24 日内买卖点引擎单元测试。"""
 
 from __future__ import annotations
 
 import pytest
 
-from zephyr.signal_ashare.intraday_buy_sell_point_analyzer import (
+from zephyr.signal_ashare.intraday_t0.intraday_buy_sell_point_analyzer import (
     BuyPointType,
     ConfirmationType,
     IntradayBuySellAnalyzer,

@@ -1,3 +1,5 @@
+# [BLUEPRINT] MOD-SIG-038 | (auto-injected by S4 reconciler) | §
+# [TTL] permanent
 """MOD-SIG-062 板块龙头识别器（SEC-04）单元测试（22号 §3.1⑦ 落码，合成梯队 _FakeCH 注入不触库）"""
 
 from __future__ import annotations
@@ -9,7 +11,7 @@ from datetime import date, timedelta
 import pytest
 
 from zephyr.signal_ashare import sector_leader as mod
-from zephyr.signal_ashare.sector_leader import (
+from zephyr.signal_ashare.sector.sector_leader import (
     SectorLeaderConfig,
     identify_sector_leaders,
 )

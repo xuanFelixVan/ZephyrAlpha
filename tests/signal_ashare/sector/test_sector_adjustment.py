@@ -1,8 +1,10 @@
+# [BLUEPRINT] MOD-SIG-038 | (auto-injected by S4 reconciler) | §
+# [TTL] permanent
 """调整周期进度追踪 单元测试（22 号 spec §3.1③，MOD-SIG-040）"""
 
 import pytest
 
-from zephyr.signal_ashare.sector_adjustment import (
+from zephyr.signal_ashare.sector.sector_adjustment import (
     ACTION_ACTIVATE_PARTIAL,
     ACTION_BLOCK_DIP,
     ACTION_OBSERVE,

@@ -1,8 +1,10 @@
+# [BLUEPRINT] MOD-SIG-038 | (auto-injected by S4 reconciler) | §
+# [TTL] permanent
 """回踩质量 A/B/C 判定 单元测试（22 号 spec §3.1②）"""
 
 import pytest
 
-from zephyr.signal_ashare.sector_pullback import (
+from zephyr.signal_ashare.sector.sector_pullback import (
     VOLUME_EXPANDING,
     VOLUME_MIXED,
     VOLUME_SHRINKING,

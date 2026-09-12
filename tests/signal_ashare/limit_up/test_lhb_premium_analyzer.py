@@ -1,3 +1,5 @@
+# [BLUEPRINT] MOD-SIG-066 | (auto-injected by S4 reconciler) | §
+# [TTL] permanent
 """MOD-SIG-057 龙虎榜盘后溢价分析器 单元测试（44号备忘录 §9.7 四规则）"""
 
 import json
@@ -8,7 +10,7 @@ from datetime import date, timedelta
 import pytest
 
 from zephyr.signal_ashare import lhb_premium_analyzer as mod
-from zephyr.signal_ashare.lhb_premium_analyzer import (
+from zephyr.signal_ashare.limit_up.lhb_premium_analyzer import (
     LhbPremiumResult,
     compute_lhb_premium,
 )

@@ -1,8 +1,10 @@
+# [BLUEPRINT] MOD-SIG-050 | (auto-injected by S4 reconciler) | §
+# [TTL] permanent
 """regime 变更检测器 单元测试（10 号 regime spec §2.1 BM-BUY-02-A-1-d，MOD-SIG-039）"""
 
 import pytest
 
-from zephyr.signal_ashare.regime_change_detector import (
+from zephyr.signal_ashare.ml_forecast.regime_change_detector import (
     ChangePhase,
     MarketRegime,
     RegimeChangeConfig,

@@ -1,8 +1,10 @@
+# [BLUEPRINT] MOD-SIG-066 | (auto-injected by S4 reconciler) | §
+# [TTL] permanent
 """MOD-SIG-056 龙虎榜席位形态分析器 单元测试"""
 
 import pytest
 
-from zephyr.signal_ashare.seat_pattern_analyzer import (
+from zephyr.signal_ashare.limit_up.seat_pattern_analyzer import (
     FollowDirection,
     SeatPatternAnalyzer,
     SeatPatternConfig,

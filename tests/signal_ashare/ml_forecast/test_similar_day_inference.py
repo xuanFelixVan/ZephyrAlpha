@@ -1,3 +1,5 @@
+# [BLUEPRINT] MOD-SIG-050 | (auto-injected by S4 reconciler) | §
+# [TTL] permanent
 """MOD-SIG-063 相似日 KNN 剩余走势推演单元测试（44号 §9.3，合成历史库注入不触库）"""
 
 from __future__ import annotations
@@ -8,7 +10,7 @@ import numpy as np
 import pandas as pd
 import pytest
 
-from zephyr.signal_ashare.similar_day_inference import (
+from zephyr.signal_ashare.ml_forecast.similar_day_inference import (
     SimilarDayConfig,
     infer_remaining_session,
     update_hit_rate_stats,

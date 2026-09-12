@@ -1,3 +1,5 @@
+# [BLUEPRINT] MOD-SIG-065 | (auto-injected by S4 reconciler) | §
+# [TTL] permanent
 """MOD-SIG-059 期权情绪三件套 单元测试（44号备忘录 §9.9，合成 IV 表面不触库）"""
 
 import json
@@ -8,7 +10,7 @@ from datetime import date, timedelta
 import pytest
 
 from zephyr.signal_ashare import option_sentiment as mod
-from zephyr.signal_ashare.option_sentiment import (
+from zephyr.signal_ashare.sentiment.option_sentiment import (
     OptionSentimentResult,
     compute_option_sentiment,
 )

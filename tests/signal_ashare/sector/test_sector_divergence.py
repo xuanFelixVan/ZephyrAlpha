@@ -1,3 +1,5 @@
+# [BLUEPRINT] MOD-SIG-038 | (auto-injected by S4 reconciler) | §
+# [TTL] permanent
 """MOD-SIG-060 板块分歧度与轮动速度计+SEC-03 标定器 单元测试（44号备忘录 §9.13/§9.2c，合成数据不触库）"""
 
 import json
@@ -7,7 +9,7 @@ from datetime import date, timedelta
 import pytest
 
 from zephyr.signal_ashare import sector_divergence as mod
-from zephyr.signal_ashare.sector_divergence import (
+from zephyr.signal_ashare.sector.sector_divergence import (
     SectorDivergenceConfig,
     compute_sector_divergence,
     load_sector_attribute_labels,

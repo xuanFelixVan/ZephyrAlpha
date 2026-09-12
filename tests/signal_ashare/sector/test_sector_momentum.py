@@ -1,8 +1,10 @@
+# [BLUEPRINT] MOD-SIG-038 | (auto-injected by S4 reconciler) | §
+# [TTL] permanent
 """q3/q5/q20 多时间框架动量加权 单元测试（22 号 spec §3.1⑧）"""
 
 import pytest
 
-from zephyr.signal_ashare.sector_momentum import (
+from zephyr.signal_ashare.sector.sector_momentum import (
     multi_tf_momentum,
     n_day_return,
     percentile_ranks,

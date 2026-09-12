@@ -1,10 +1,12 @@
+# [BLUEPRINT] MOD-SIG-087 | (auto-injected by S4 reconciler) | §
+# [TTL] permanent
 """D-SIGNAL-35 双引擎融合决策引擎单元测试。"""
 
 from __future__ import annotations
 
 import pytest
 
-from zephyr.signal_ashare.dual_engine_fusion_decision_engine import (
+from zephyr.signal_ashare.strategy_signal.dual_engine_fusion_decision_engine import (
     DualEngineFusionDecisionEngine,
     FusionDecision,
     FusionDecisionConfig,
@@ -16,7 +18,7 @@ from zephyr.signal_ashare.quant_short_term_strength_engine import (
     StockCategory,
     StrengthGrade,
 )
-from zephyr.signal_ashare.youzi_relay_emotion_engine import (
+from zephyr.signal_ashare.limit_up.youzi_relay_emotion_engine import (
     EmotionPhase,
     StrategyAction,
     YouziEmotionResult,

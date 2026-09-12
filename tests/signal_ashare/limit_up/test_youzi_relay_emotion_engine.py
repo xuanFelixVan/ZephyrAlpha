@@ -1,3 +1,5 @@
+# [BLUEPRINT] MOD-SIG-066 | (auto-injected by S4 reconciler) | §
+# [TTL] permanent
 """D-SIGNAL-33 游资接力情绪引擎单元测试。"""
 
 from __future__ import annotations
@@ -6,7 +8,7 @@ from datetime import datetime
 
 import pytest
 
-from zephyr.signal_ashare.youzi_relay_emotion_engine import (
+from zephyr.signal_ashare.limit_up.youzi_relay_emotion_engine import (
     EmotionPhase,
     StrategyAction,
     YouziEmotionConfig,

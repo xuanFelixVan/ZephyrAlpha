@@ -1,8 +1,10 @@
+# [BLUEPRINT] MOD-SIG-038 | (auto-injected by S4 reconciler) | §
+# [TTL] permanent
 """RRG 相对旋转图 单元测试（22 号 spec §3.1④，JdK DualEma 10/26）"""
 
 import pytest
 
-from zephyr.signal_ashare.sector_rrg import (
+from zephyr.signal_ashare.sector.sector_rrg import (
     RRGQuadrant,
     classify_quadrant,
     compute_rrg_series,

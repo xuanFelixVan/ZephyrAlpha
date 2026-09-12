@@ -1,10 +1,12 @@
+# [BLUEPRINT] MOD-SIG-038 | (auto-injected by S4 reconciler) | §
+# [TTL] permanent
 """D-SIGNAL-26 板块分析引擎 单元测试"""
 
 from datetime import datetime
 
 import pytest
 
-from zephyr.signal_ashare.sector_analyzer import (
+from zephyr.signal_ashare.sector.sector_analyzer import (
     MarketStyle,
     SectorAnalysisConfig,
     SectorAnalysisResult,

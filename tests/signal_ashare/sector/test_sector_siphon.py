@@ -1,8 +1,10 @@
+# [BLUEPRINT] MOD-SIG-038 | (auto-injected by S4 reconciler) | §
+# [TTL] permanent
 """虹吸态 HHI 识别 单元测试（22 号 spec §3.1⑤）"""
 
 import pytest
 
-from zephyr.signal_ashare.sector_siphon import (
+from zephyr.signal_ashare.sector.sector_siphon import (
     SectorFlowSnapshot,
     detect_siphon_state,
     rolling_zscore,

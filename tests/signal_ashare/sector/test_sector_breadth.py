@@ -1,8 +1,10 @@
+# [BLUEPRINT] MOD-SIG-038 | (auto-injected by S4 reconciler) | §
+# [TTL] permanent
 """板块宽度归一化与资金性质板块级聚合 单元测试（22 号 spec §3.1①）"""
 
 import pytest
 
-from zephyr.signal_ashare.sector_breadth import (
+from zephyr.signal_ashare.sector.sector_breadth import (
     aggregate_capital_nature_to_sector,
     capital_nature_multiplier,
     classify_limit_up_breadth,

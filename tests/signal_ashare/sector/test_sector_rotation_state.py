@@ -1,8 +1,10 @@
+# [BLUEPRINT] MOD-SIG-038 | (auto-injected by S4 reconciler) | §
+# [TTL] permanent
 """板块轮动状态 5 分类 单元测试（22 号 spec §3.1⑨）"""
 
 import pytest
 
-from zephyr.signal_ashare.sector_rotation_state import (
+from zephyr.signal_ashare.sector.sector_rotation_state import (
     RotationState,
     classify_rotation_state,
     top_n_hhi,

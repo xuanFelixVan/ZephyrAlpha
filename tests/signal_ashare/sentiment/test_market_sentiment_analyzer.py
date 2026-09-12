@@ -1,10 +1,12 @@
+# [BLUEPRINT] MOD-SIG-065 | (auto-injected by S4 reconciler) | §
+# [TTL] permanent
 """D-SIGNAL-25 市场情绪分析引擎 单元测试"""
 
 from datetime import datetime, timezone
 
 import pytest
 
-from zephyr.signal_ashare.market_sentiment_analyzer import (
+from zephyr.signal_ashare.sentiment.market_sentiment_analyzer import (
     IndexPerformanceData,
     LimitUpDownData,
     MarketBreadthData,

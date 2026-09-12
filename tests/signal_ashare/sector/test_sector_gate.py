@@ -1,8 +1,10 @@
+# [BLUEPRINT] MOD-SIG-038 | (auto-injected by S4 reconciler) | §
+# [TTL] permanent
 """三级放行门槛 + 水温→板块信号响应映射 单元测试（22 号 spec §3.1⑩⑪）"""
 
 import pytest
 
-from zephyr.signal_ashare.sector_gate import (
+from zephyr.signal_ashare.sector.sector_gate import (
     GATE_BLOCKED,
     GATE_CORE_HOT,
     GATE_SECONDARY,

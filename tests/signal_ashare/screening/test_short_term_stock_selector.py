@@ -1,10 +1,12 @@
+# [BLUEPRINT] MOD-SIG-067 | (auto-injected by S4 reconciler) | §
+# [TTL] permanent
 """D-SIGNAL-23 短线选股引擎单元测试。"""
 
 from __future__ import annotations
 
 import pytest
 
-from zephyr.signal_ashare.short_term_stock_selector import (
+from zephyr.signal_ashare.screening.short_term_stock_selector import (
     LimitUpPotential,
     ShortTermStockSelector,
     ShortTermStockSelectorConfig,

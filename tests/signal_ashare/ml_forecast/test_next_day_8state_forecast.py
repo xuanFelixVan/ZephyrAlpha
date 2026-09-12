@@ -1,8 +1,10 @@
+# [BLUEPRINT] MOD-SIG-050 | (auto-injected by S4 reconciler) | §
+# [TTL] permanent
 """次日 8 状态预测 单元测试（交易决策架构 9.2 八态模型，MOD-SIG-037）"""
 
 import pytest
 
-from zephyr.signal_ashare.next_day_8state_forecast import (
+from zephyr.signal_ashare.ml_forecast.next_day_8state_forecast import (
     DailyBar,
     ForecastConfig,
     NextDay8StateForecaster,
