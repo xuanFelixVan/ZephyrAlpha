@@ -4,7 +4,7 @@
 manifest_version: 2.0.0
 generated_by: generate_manifest.py (auto-scan)
 generated_at: '2026-09-12'
-total_scripts: 791
+total_scripts: 798
 scripts:
 - name: __init__.py
   path: __init__.py
@@ -574,6 +574,14 @@ scripts:
   status: registered
   timeout_seconds: 60
   dimensions: []
+- name: backtest/print_regime_history.py
+  path: backtest/print_regime_history.py
+  description: '数据链（复用 G03 C1 real 模式骨架，零新算法）:'
+  domain: test
+  execution_plane: warm-path
+  status: registered
+  timeout_seconds: 60
+  dimensions: []
 - name: backtest/replay_drill.py
   path: backtest/replay_drill.py
   description: 演练语义（裁定 §八 R5）：锁 meta（commit+manifest+参数）→ 重跑 → diff 四件套
@@ -670,6 +678,14 @@ scripts:
   status: registered
   timeout_seconds: 60
   dimensions: []
+- name: ch/apply_crypto_shadow_tables_ddl.py
+  path: ch/apply_crypto_shadow_tables_ddl.py
+  description: DDL-as-Code 模式（同款 apply_market_tables_ddl.py）：
+  domain: ch
+  execution_plane: warm-path
+  status: registered
+  timeout_seconds: 60
+  dimensions: []
 - name: ch/apply_exchange_columns.py
   path: ch/apply_exchange_columns.py
   description: DDL-as-Code 模式：对所有证券表 ADD COLUMN exchange + symbol_canonical，零回填。
@@ -698,6 +714,14 @@ scripts:
   path: ch/apply_rbac.py
   description: RBAC-as-Code 模式：
   domain: rbac
+  execution_plane: warm-path
+  status: registered
+  timeout_seconds: 60
+  dimensions: []
+- name: ch/apply_regime_snapshot_ddl.py
+  path: ch/apply_regime_snapshot_ddl.py
+  description: DDL 真源：schemas/categories/regime_snapshot_history.py（DDL-as-Code）。
+  domain: ch
   execution_plane: warm-path
   status: registered
   timeout_seconds: 60
@@ -977,6 +1001,22 @@ scripts:
 - name: data/backfill_tick_depth5.py
   path: data/backfill_tick_depth5.py
   description: 用法（在仓库根，Python 3.12 + PYTHONPATH=src）：
+  domain: data
+  execution_plane: warm-path
+  status: registered
+  timeout_seconds: 60
+  dimensions: []
+- name: data/crypto_kline_collector.py
+  path: data/crypto_kline_collector.py
+  description: 网络实测(2026-09-11):OKX 公开 API DNS 不可达(www.okx.com/aws.okx.com getaddrinfo failed),
+  domain: data
+  execution_plane: warm-path
+  status: registered
+  timeout_seconds: 60
+  dimensions: []
+- name: data/crypto_shadow_judge.py
+  path: data/crypto_shadow_judge.py
+  description: 判定逻辑（设计稿三档，shadow_version=v0.1）：
   domain: data
   execution_plane: warm-path
   status: registered
@@ -5238,6 +5278,14 @@ scripts:
   status: registered
   timeout_seconds: 60
   dimensions: []
+- name: industry_graph/igfact_fill.py
+  path: industry_graph/igfact_fill.py
+  description: 对接逻辑（Owner 任务书）：
+  domain: industry_graph
+  execution_plane: warm-path
+  status: registered
+  timeout_seconds: 60
+  dimensions: []
 - name: industry_graph/import_ckg_dataset.py
   path: industry_graph/import_ckg_dataset.py
   description: '来源: https://github.com/liuhuanyong/ChainKnowledgeGraph (2021-10 构建, 769★)'
@@ -5667,6 +5715,14 @@ scripts:
   description: 在 pre_commit hook 中调用：
   domain: pre_commit
   execution_plane: warm-path
+  status: registered
+  timeout_seconds: 60
+  dimensions: []
+- name: research/verify_g07_sentiment_stratified_correlation.py
+  path: research/verify_g07_sentiment_stratified_correlation.py
+  description: 验证假设：情绪周期是所有短周期策略的共同隐形驱动 → 策略间相关性可能高于直觉。
+  domain: research
+  execution_plane: hot-path
   status: registered
   timeout_seconds: 60
   dimensions: []
