@@ -277,7 +277,7 @@
       return '<text x="' + cx + '" y="' + (cy + dy + i * 15) + '" text-anchor="middle" font-size="' + fs +
         '" font-weight="700" fill="' + c[4] + '">' + esc(l) + '</text>';
     }).join('');
-    return '<g class="cm-nd' + (variant === 'empty' ? ' empty0' : '') + '" data-node="' + node.id + '">' +
+    return '<g class="cm-nd' + (variant === 'empty' ? ' empty0' : '') + '" data-node="' + node.node_id + '">' +
       '<polygon class="cube-top" points="' + cx + ',' + (cy - hh) + ' ' + (cx + hw) + ',' + cy + ' ' + cx + ',' + (cy + hh) + ' ' + (cx - hw) + ',' + cy +
       '" fill="' + c[0] + '" stroke="' + c[3] + '" stroke-width="' + sw + '"' + dash + '/>' +
       '<polygon points="' + (cx - hw) + ',' + cy + ' ' + cx + ',' + (cy + hh) + ' ' + cx + ',' + (cy + hh + dp) + ' ' + (cx - hw) + ',' + (cy + dp) +

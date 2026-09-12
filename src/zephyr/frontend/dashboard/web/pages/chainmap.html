@@ -148,8 +148,9 @@
   #cm-canvas-cluster .cm-legend .d-r { background:#e06a6a; }
   #cm-canvas-cluster .cm-legend .d-l { background:#6f95e0; }
   #cm-nodes-cluster { position:absolute; left:0; top:0; }
-  /* SVG 交互层：wires 从纯装饰线层升级为唯一画布（收点击/hover；拖拽靠冒泡到 cm-canvas） */
-  #cm-wires-cluster { pointer-events:auto; }
+  /* SVG 交互层：wires 从纯装饰线层升级为唯一画布（收点击/hover；拖拽靠冒泡到 cm-canvas）。
+     双 ID 提优先级压过上方 #p-chainmap .cm-wires 的 pointer-events:none（110 vs 200） */
+  #p-chainmap #cm-wires-cluster { pointer-events:auto; }
   #cm-wires-cluster text { user-select:none; }
   #cm-wires-cluster .cm-nd { cursor:pointer; }
   #cm-wires-cluster .cm-nd:hover .cube-top { stroke-width:2.6; }

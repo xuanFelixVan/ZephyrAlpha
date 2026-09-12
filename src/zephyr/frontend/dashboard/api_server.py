@@ -2915,7 +2915,7 @@ def chainmap_node(node_id: str = Query(..., min_length=1)) -> dict[str, Any]:
         conn = _cm_pg()
         try:
             cur = conn.cursor()
-            cur.execute("SELECT n.name, n.tier, n.chain_id, c.name FROM ig_node n "
+            cur.execute("SELECT n.name, n.tier, n.chain_id, c.name, n.function_role FROM ig_node n "
                         "JOIN ig_chain c ON c.chain_id = n.chain_id WHERE n.node_id = %s"
                         " AND n.name NOT LIKE '%%（已并入%%'", (node_id,))
             row = cur.fetchone()
@@ -2948,7 +2948,8 @@ def chainmap_node(node_id: str = Query(..., min_length=1)) -> dict[str, Any]:
                      for s, r, cf in rows]
         companies.sort(key=lambda x: (_cm_role_rank(x["role"]), -(x["confidence"] or 0), x["symbol"]))
         return {"ok": True, "node": {"node_id": node_id, "name": row[0], "tier": row[1] or "",
-                                     "chain_id": row[2], "chain_name": row[3]},
+                                     "chain_id": row[2], "chain_name": row[3],
+                                     "function_role": (row[4] or "").strip()},
                 "companies": companies[:200], "total": len(companies)}
     except Exception as exc:
         return {"ok": False, "error": str(exc)[:200], "companies": []}
