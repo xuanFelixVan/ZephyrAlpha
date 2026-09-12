@@ -97,6 +97,7 @@ Version: 0.1.0
 from __future__ import annotations
 
 import logging
+from collections.abc import Callable
 from datetime import datetime
 from typing import Any
 
@@ -414,6 +415,7 @@ class RegimeFeatureBuilder:
         refit_freq: str = "QE",
         train_years: int = 5,
         detect_window: int = 60,
+        prob_sink: Callable[[datetime, Any], None] | None = None,
     ) -> dict[datetime, float]:
         """walk-forward 季度重拟合 + 逐日 detect → Shrinkage schedule。
 
@@ -428,6 +430,8 @@ class RegimeFeatureBuilder:
             refit_freq: 重拟合频率偏移字符串（"QE"=季末，pandas 锚点偏移）。
             train_years: 训练窗口年数（默认5）。
             detect_window: detect 时 trailing 特征窗口（默认60日，给 HMM 序列上下文）。
+            prob_sink: 概率收集钩子（P0 印教材用，P-BT-001）：每成功 detect 一日回调
+                prob_sink(dt, RegimeProbabilities)，None 时零行为变化（契约不变）。
 
         Returns:
             {datetime: shrinkage_value∈[0,1]}，PIT as-of join 供 ScheduleShrinkageProvider。
@@ -547,6 +551,8 @@ class RegimeFeatureBuilder:
                         overlay_signals=overlay_signals,
                         risk_signal_inputs=risk_inputs,
                     )
+                    if prob_sink is not None:
+                        prob_sink(dt.to_pydatetime(), _probs)
                     schedule[dt.to_pydatetime()] = float(shrinkage.value)
                 except Exception as exc:  # noqa: BLE001
                     _logger.warning("detect 异常 (date=%s)，退化为 1.0: %s", dt, exc)
