@@ -56,6 +56,8 @@ CREATE TABLE IF NOT EXISTS c1_market.daban_board_event
 (
     trade_date        Date                        COMMENT '交易日期',
     symbol            String                      COMMENT '证券代码(6位裸码)',
+    exchange          LowCardinality(String) MATERIALIZED LowCardinality(String) MATERIALIZED multiIf(substring(replaceRegexpAll(splitByChar('.', symbol)[1], '^(sh|sz|bj|hk)', ''),1,3) IN ('110', '113', '204', '900', '901', '902', '903'), 'SH', substring(replaceRegexpAll(splitByChar('.', symbol)[1], '^(sh|sz|bj|hk)', ''),1,3) IN ('123', '128'), 'SZ', substring(replaceRegexpAll(splitByChar('.', symbol)[1], '^(sh|sz|bj|hk)', ''),1,2) IN ('43', '83', '87', '92', '93', '94'), 'BJ', substring(replaceRegexpAll(splitByChar('.', symbol)[1], '^(sh|sz|bj|hk)', ''),1,1) IN ('4', '8'), 'BJ', substring(replaceRegexpAll(splitByChar('.', symbol)[1], '^(sh|sz|bj|hk)', ''),1,1) IN ('5', '6', '9'), 'SH', substring(replaceRegexpAll(splitByChar('.', symbol)[1], '^(sh|sz|bj|hk)', ''),1,1) IN ('0', '1', '2', '3'), 'SZ', '') COMMENT '交易所码(TRAE-082 MATERIALIZED派生,2026-09-12 债清偿)',
+    symbol_canonical  String MATERIALIZED String MATERIALIZED if(position(symbol,'.')>0, symbol, concat(replaceRegexpAll(splitByChar('.', symbol)[1], '^(sh|sz|bj|hk)', ''), '.', exchange)) COMMENT 'canonical身份键(TRAE-082 universal,2026-09-12 债清偿)',
     board             LowCardinality(String)      COMMENT '板块(sh_main/sz_main/star/chinext/bj)',
     st_flag           UInt8                       COMMENT 'ST标记(库内stk_limit源直给;其余源按有效幅度推断)',
     pre_close         Nullable(Decimal(18, 4))    COMMENT '昨收(kline昨收链,原始价口径除权日不复权)',

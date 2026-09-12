@@ -14,6 +14,7 @@
 # [TESTS] scripts/ch/apply_exchange_columns.py --verify (smoke test: 所有证券表含exchange+symbol_canonical列+碰撞消歧验证)
 # [A_module] module_id=MOD-L04-001 | layer=module | stability=evolving | safety=M | ai_autonomy=ai_modifiable
 # [TTL] permanent
+# noqa: m11-perm-manual-legitimate  M11豁免: 手动 DDL 列部署脚本（A 类一次性运维，幂等 ADD IF NOT EXISTS 按需手动执行；列语义真源=symbol_normalizer 前缀映射+TRAE-082 规则，非常驻服务）
 # [ARCH-REF] #ARCH-DATA-SYMBOL-002 TRAE-082
 """ClickHouse exchange+symbol_canonical 列部署脚本（TRAE-082 1.1.0 治本 #ARCH-DATA-SYMBOL-002）。
 
@@ -64,15 +65,18 @@ DB = "c1_market"
 
 # Tier-1 指数表：symbol 存指数代码（非股票代码），须用指数专用 multiIf
 # 关键：000001 在股票表→SZ(平安银行)，在指数表→SH(上证指数)。若误用股票规则会碰撞。
-TIER1_INDEX_TABLES: set[str] = {"kline_index"}
+# 2026-09-12 债清偿：index_valuation_daily（指数估值，000300/000905/399006）入指数层
+TIER1_INDEX_TABLES: set[str] = {"kline_index", "index_valuation_daily"}
 
 # Tier-2：市场隐含表（exchange 由表语义决定，MATERIALIZED 常量）
 #   key=表名, value=exchange 码
+# 2026-09-12 债清偿：crypto_kline_daily（币圈单源 binance.vision MVP，exchange 由数据源语义隐含）
 TIER2_TABLES: dict[str, str] = {
     "kline_hk_daily": "HK",
     "hk_kline": "HK",
     "kline_us_daily": "US",
     "us_index": "US",
+    "crypto_kline_daily": "BINANCE",
 }
 
 # Tier-3：逐行 exchange 表（期货/期权，symbol 无法前缀推导，provider 按 stock_list 写入）

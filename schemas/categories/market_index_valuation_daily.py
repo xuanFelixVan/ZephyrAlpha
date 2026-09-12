@@ -23,11 +23,10 @@ ClickHouse 实际表结构必须与本文件 DDL 一致；结构变更通过 app
     fallback：akshare stock_index_pe_lg（乐咕月度，交叉验证）。
     内部计算列：CAPE/分位/ERP 由 internal compute 管道产出。
 
-TRAE-082 派生列适用性说明：
-    本表含 symbol 列（指数代码 000300/000905/399006），属 securities 表范畴，
-    但指数代码无交易所后缀语义（000300 非个股），exchange/symbol_canonical
-    MATERIALIZED 派生规则不适用——参照同库无个股语义表先例
-    （market_index_kline/market_index_meta）不挂 TRAE-082 派生列；
+TRAE-082 派生列清偿记录（2026-09-12，Owner 指令"登记在案后续债全部执行"）：
+    原"指数代码无交易所后缀语义"判断被 _INDEX_PREFIX3_TO_EXCHANGE 指数专用映射覆盖
+    （000/880/930/931/932→SH, 399→SZ：000300→SH、399006→SZ 正确归位，与 kline_index
+    同层），本表已挂 exchange+symbol_canonical MATERIALIZED 列（零回填）；
     惯例遵循点=data_source LowCardinality + ingest_ts DateTime64(3,'UTC') DEFAULT now()
     审计列（audit 1.7 #ARCH-CH-025）+ ReplacingMergeTree + 月分区。
 
@@ -58,6 +57,8 @@ CREATE TABLE IF NOT EXISTS c1_market.index_valuation_daily
 (
     trade_date       Date                     COMMENT '交易日期',
     symbol           String                   COMMENT '指数代码(000300/000905/399006)',
+    exchange          LowCardinality(String) MATERIALIZED LowCardinality(String) MATERIALIZED multiIf(substring(replaceRegexpAll(splitByChar('.', symbol)[1], '^(sh|sz|bj|hk)', ''),1,3) IN ('000', '880', '930', '931', '932'), 'SH', substring(replaceRegexpAll(splitByChar('.', symbol)[1], '^(sh|sz|bj|hk)', ''),1,3) IN ('399'), 'SZ', '') COMMENT '交易所码(TRAE-082 MATERIALIZED派生,2026-09-12 债清偿)',
+    symbol_canonical  String MATERIALIZED String MATERIALIZED if(position(symbol,'.')>0, symbol, concat(replaceRegexpAll(splitByChar('.', symbol)[1], '^(sh|sz|bj|hk)', ''), '.', exchange)) COMMENT 'canonical身份键(TRAE-082 universal,2026-09-12 债清偿)',
     pe_ttm           Decimal(18, 4)           COMMENT '市盈率TTM(中证官网滚动市盈率)',
     pb_mrq           Nullable(Decimal(18, 4)) COMMENT '市净率MRQ(一期暂缺,二期升级)',
     dividend_yield   Nullable(Decimal(18, 4)) COMMENT '股息率(中证官网股息率1,%)',

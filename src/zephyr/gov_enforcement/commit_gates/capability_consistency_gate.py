@@ -88,7 +88,10 @@ import logging
 from zephyr.data.capability_symbol_gate import check_declaration_impl_consistency_content
 from zephyr.data.capability_validator import check_route_meta_consistency_content
 from zephyr.gov_enforcement.commit_gates._diff_helpers import (
+    _audit_foreign_staged,
+    _build_own_scope,
     _get_staged_py_files,
+    _norm_rel,
     _read_staged_file,
 )
 from zephyr.gov_enforcement.rule_bridge.commit_gate_registry import GateSpec
@@ -162,6 +165,24 @@ def make_capability_consistency_gate() -> GateSpec:
         provider_files = [f for f in staged if _is_provider_file(f)]
         if not provider_files:
             return True, ""
+
+        # 2.5 只查自己（#ARCH-GATE-OWN-SCOPE-001 推广补齐，2026-09-12）：扫描范围=
+        # 全暂存区∩本 session 范围；外来 staged 不扫描、降级 warn+审计；own_scope=None
+        # 退化旧行为扫全量；本 session 自身违规仍硬阻断；fail-open 红线不变。
+        session_id = kwargs.get("session_id")
+        own_scope = _build_own_scope(gateway, files, session_id)
+        if own_scope is not None:
+            foreign_staged = [f for f in provider_files if _norm_rel(gateway, f) not in own_scope]
+            provider_files = [f for f in provider_files if _norm_rel(gateway, f) in own_scope]
+            if foreign_staged:
+                _audit_foreign_staged(gateway, session_id, foreign_staged, gate_name="CAP-CONSISTENCY")
+                logger.warning(
+                    "CAP-CONSISTENCY: %d 个外来 session staged 文件未检查（warn+审计，不阻断）: %s",
+                    len(foreign_staged),
+                    ", ".join(foreign_staged[:5]) + ("..." if len(foreign_staged) > 5 else ""),
+                )
+            if not provider_files:
+                return True, ""
 
         # 3. 检测每个 provider 文件的路由-meta 一致性
         violations: list[str] = []

@@ -45,9 +45,10 @@ ClickHouse 实际表结构必须与本文件 DDL 一致；结构变更通过 app
     SETTINGS allow_nullable_key=1：trade_id Nullable 入键所需（持仓/资金层
     trade_id=NULL 语义保留，不劣化为空串）。
 
-TRAE-082 派生列适用性说明：
-    symbol 含组合级占位值 '__PORTFOLIO__'（L3 层）且 trade_id 为主维度，
-    exchange/symbol_canonical 前缀推导对占位值无意义——不挂 TRAE-082 派生列；
+TRAE-082 派生列清偿记录（2026-09-12，Owner 指令"登记在案后续债全部执行"）：
+    占位值 '__PORTFOLIO__' 经 universal multiIf 推导为空串（默认分支），MATERIALIZED
+    零存储零回填，无查询代价；真实 trade 层 symbol 照常归位。本表已挂
+    exchange+symbol_canonical MATERIALIZED 列；
     惯例遵循点=data_source LowCardinality + ingest_ts DateTime64(3,'UTC')
     DEFAULT now() 审计列（audit 1.7 #ARCH-CH-025）。
 """
@@ -66,6 +67,8 @@ CREATE TABLE IF NOT EXISTS c1_market.reconciliation_differences
     recon_layer     LowCardinality(String) COMMENT '对账层级(trade/position/cash 三层)',
     trade_id        Nullable(String)       COMMENT '券商结算单 trade_id(持仓/资金层为 NULL)',
     symbol          String                 COMMENT '证券代码(L3 组合级=__PORTFOLIO__ 占位)',
+    exchange          LowCardinality(String) MATERIALIZED LowCardinality(String) MATERIALIZED multiIf(substring(replaceRegexpAll(splitByChar('.', symbol)[1], '^(sh|sz|bj|hk)', ''),1,3) IN ('110', '113', '204', '900', '901', '902', '903'), 'SH', substring(replaceRegexpAll(splitByChar('.', symbol)[1], '^(sh|sz|bj|hk)', ''),1,3) IN ('123', '128'), 'SZ', substring(replaceRegexpAll(splitByChar('.', symbol)[1], '^(sh|sz|bj|hk)', ''),1,2) IN ('43', '83', '87', '92', '93', '94'), 'BJ', substring(replaceRegexpAll(splitByChar('.', symbol)[1], '^(sh|sz|bj|hk)', ''),1,1) IN ('4', '8'), 'BJ', substring(replaceRegexpAll(splitByChar('.', symbol)[1], '^(sh|sz|bj|hk)', ''),1,1) IN ('5', '6', '9'), 'SH', substring(replaceRegexpAll(splitByChar('.', symbol)[1], '^(sh|sz|bj|hk)', ''),1,1) IN ('0', '1', '2', '3'), 'SZ', '') COMMENT '交易所码(TRAE-082 MATERIALIZED派生,2026-09-12 债清偿)',
+    symbol_canonical  String MATERIALIZED String MATERIALIZED if(position(symbol,'.')>0, symbol, concat(replaceRegexpAll(splitByChar('.', symbol)[1], '^(sh|sz|bj|hk)', ''), '.', exchange)) COMMENT 'canonical身份键(TRAE-082 universal,2026-09-12 债清偿)',
     drift_type      String                 COMMENT '差异类型(L1 DriftType 5 类 price/quantity/commission/missing_in_system/missing_in_broker; L2 position_qty_mismatch; L3 pnl_gap_mismatch)',
     system_value    Nullable(String)       COMMENT '系统侧值(Decimal 字符串,缺失侧为 NULL)',
     broker_value    Nullable(String)       COMMENT '券商侧值(Decimal 字符串)',
