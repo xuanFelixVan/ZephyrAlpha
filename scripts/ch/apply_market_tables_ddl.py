@@ -358,6 +358,9 @@ SETTINGS index_granularity = 8192
 # a50_futures_daily（富时A50期货日K，44号 §9.6 通道1）
 from schemas.categories.market_a50_futures_daily import A50_FUTURES_DAILY_DDL
 from schemas.categories.market_account_nav_daily import MARKET_ACCOUNT_NAV_DAILY_DDL
+# 另类数据第 1 批免注册直连（2026-09-12，alt-data-handoff §8-1）：fail-closed 直接导入
+from schemas.categories.market_alt_shipping_index import ALT_SHIPPING_INDEX_DDL
+from schemas.categories.market_alt_stock_comment import ALT_STOCK_COMMENT_DDL
 from schemas.categories.market_breadth_snapshot import MARKET_BREADTH_SNAPSHOT_DDL
 from schemas.categories.market_daban_board_event import MARKET_DABAN_BOARD_EVENT_DDL
 from schemas.categories.intraday.market_execution_report import MARKET_EXECUTION_REPORT_DDL
@@ -389,6 +392,9 @@ _ALL_DDL: list[tuple[str, str]] = [
     ("c1_market.hog_spot_index", HOG_SPOT_INDEX_DDL),
     ("c1_market.hog_futures_core", HOG_FUTURES_CORE_DDL),
     ("c1_market.hog_province_spot", HOG_PROVINCE_SPOT_DDL),
+    # 另类数据第 1 批免注册直连（2026-09-12，alt-data-handoff §8-1）
+    ("c1_market.alt_stock_comment", ALT_STOCK_COMMENT_DDL),
+    ("c1_market.alt_shipping_index", ALT_SHIPPING_INDEX_DDL),
     # JOB-077 市场元数据与约束接入（DS-081~083，2026-08-15）
     ("c1_market.stock_basic", STOCK_BASIC_DDL),
     ("c1_market.stk_limit", STK_LIMIT_DDL),
@@ -444,6 +450,9 @@ _EXPECTED_ENGINES: dict[str, str] = {
     "hog_spot_index": "ReplacingMergeTree",
     "hog_futures_core": "ReplacingMergeTree",
     "hog_province_spot": "ReplacingMergeTree",
+    # 另类数据第 1 批免注册直连（2026-09-12，alt-data-handoff §8-1）：快照/长表同键替换幂等
+    "alt_stock_comment": "ReplacingMergeTree",
+    "alt_shipping_index": "ReplacingMergeTree",
     # JOB-077（DS-081~083，2026-08-15）
     "stock_basic": "ReplacingMergeTree",
     "stk_limit": "ReplacingMergeTree",

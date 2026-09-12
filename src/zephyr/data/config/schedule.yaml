@@ -88,6 +88,13 @@ schedules:
     executor: default
     description: "盘后事件层——分析师预期/财报快报/审计/分红配股/质押/披露计划"
 
+  # L6.5 研报明细层：20:30 周一至周五（全市场逐股拉取约 2h，独立时段不与 daily_event 抢池）
+  research_nightly:
+    cron: "30 20 * * 0-4"
+    executor: default
+    max_instances: 1
+    description: "研报明细层——research_report_detail_incremental（东财研报中心全字段含预测期EPS/PE；历史已回补 14.7 万行，日度仅补增量窗口）"
+
   # L7 夜间财务层：22:00 周一至周五（融资融券T+1此时已发布）
   nightly_financial:
     cron: "00 22 * * 0-4"

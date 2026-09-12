@@ -74,15 +74,39 @@ description: >-
 owner: MOD-GOVERNANCE
 tier: tier_2_data_runtime
 status: active
-version: 1.4.2
+version: 1.9.0
 created: '2026-08-13'
-last_updated: '2026-09-11'
+last_updated: '2026-09-12'
 related_arch: '#ARCH-BREG-001'
 unique_key:
   sources: [source_id]
   datasets: [dataset_id]
   jobs: [job_id]
-entry_counts: {sources: 16, datasets: 226, jobs: 88}  # 2026-09-11 v1.6.x：DS-224/225 产业链图谱底座+盘中事件冲击流（接线指令 W6）；jobs 87=本次实测勘正（原声明 88 为陈旧派生值）；派生快照值，以 yaml 实测为准——禁止凭此报数（#83 漏报教训）
+entry_counts: {sources: 17, datasets: 230, jobs: 93}  # 2026-09-12 v1.9.0：+SRC-AKSHARE-ALT-001 +DS-230/231 +JOB-092/093/094（另类数据第 1 批）；派生快照值，以 yaml 实测为准——禁止凭此报数（#83 漏报教训）
+
+# v1.9.0 changelog(2026-09-12): 另类数据第 1 批免注册直连（docs/_working/2026-09-12-alt-data-handoff.md
+#   §8-1）——+SRC-AKSHARE-ALT-001（AkshareAltProvider 独立成件，避开 akshare 主 provider 在途 claim，
+#   接口漂移风险由 alt_source_health_manager 独立监控）+DS-230 c1_market.alt_stock_comment（千股千评
+#   全表日快照：关注指数=股吧关注度代理——akshare 无股吧发帖量直连接口 2026-09-12 实测枚举确认，
+#   人气榜 stock_hot_rank 已在跑；接口仅当日无历史通道，每日累积）+DS-231 c1_market.alt_shipping_index
+#   （航运运价指数长表：BDI 金十源 1988-10 起含日涨跌幅+BCI/BSI/BHMI/HRCI/BCTI/BDTI 约 2006 起，
+#   BDI 双源重叠以 macro_shipping_bdi 为准免重）+JOB-092/093/094（daily_event 快照+增量、
+#   weekend_calibration 全量）；电影票房缺口登记 known_data_gaps（akshare 艺恩 endata 权限墙，
+#   免注册替代源 zgdypw 无结构化 API，爬虫路径属第 3 批 web_scraper_engine 试点范围）；
+#   治理三件（alt_data_catalog/compliance_reviewer/health_manager）首次实弹接线=
+#   src/zephyr/alt_data/alt_source_bootstrap.py。
+
+# v1.8.0 changelog(2026-09-12): 消费端 C1——+DS-229 c3_fundamental.consensus_daily（一致预期每日
+#   快照：(symbol,trade_date,forecast_year) 粒度，eps 均值/中位/分歧度+评级统计，PIT 铁律=只聚合
+#   publish_date<=trade_date 零 embargo，无覆盖不成行禁前向填充；构建器=scripts/ch/build_consensus_daily.py
+#   纯函数核 7 单测）+JOB-091 build.consensus_daily（manual，夜间调度接线=C1.5 待办）——华泰一致
+#   预期因子族（EXP-01~06）标准输入；设计=docs/_working/2026-09-12-expectation-consumption-design.md。
+
+# v1.7.0 changelog(2026-09-12): 研报数据侧施工——+DS-228 c3_fundamental.research_report（券商研报
+#   明细全字段：机构/东财评级/预测期0-2 EPS+PE/PDF直链，report_id=infoCode；14.7 万行历史 backfill
+#   当日完成，验收 92.7% EPS 覆盖）+JOB-090 ingest.akshare_research_report_detail（research_nightly
+#   20:30 工作日）——一致预期自聚合原料（PIT 正确，对标朝阳永续原理免付费）；
+#   施工方案=docs/_working/2026-09-12-research-report-data-plan.md。
 
 # v1.5.0 changelog(2026-09-04): 全A等权立项——DS-221 自算衍生指数日K c1_market.kline_index_calc（datasets 220→221）。
 #   首条 EQW_ALLA：internal 复权收益等权平均链乘，基期 2019-01-03=1000（2018 及以前 kline_daily 仅 237 只样本，
@@ -649,6 +673,37 @@ sources:
   module_id: MOD-L00-004
   doc_ref: docs/_working/2026-09-11-crypto-shadow-mvp.md
   code_path: src/zephyr/data/implementations/crypto_provider.py
+
+# 2026-09-12 另类数据第 1 批：akshare 免注册直连另类源（千股千评/航运运价，独立 provider 成件）
+- source_id: SRC-AKSHARE-ALT-001
+  provider_name: AKShare
+  name: AKShare-Alt
+  name_zh: AKShare 另类数据直连（千股千评/航运运价；与 SRC-AKSHARE-001 同上游异成件）
+  connection_type: api
+  frequency: day
+  sla: anonymous shared 60RPM 限流；接口漂移风险 alt_source_health_manager 探针兜底
+  cost: 免费
+  compliance: 东财数据中心公开展示数据（综合评价/运价指数），仅个人研究用途不转售不分发
+  license_type: public_reference_data
+  latency_profile: wan（公网 HTTP，日频非延迟敏感）
+  colocation_eligible: false
+  provides_datasets: [DS-230, DS-231]
+  env_config: 无（anonymous，免注册免密钥）
+  module_id: MOD-L00-004
+  doc_ref: docs/_working/2026-09-12-alt-data-handoff.md §8-1
+  code_path: src/zephyr/data/implementations/akshare_alt_provider.py
+  status: active
+  version: 1.0.0
+  created_at: '2026-09-12'
+  updated_at: '2026-09-12'
+  owner: MOD-L00-004
+  entry_role: "reference"
+  applies_to: ["market"]
+  tags: ["另类数据", "数据", "情绪", "产业"]
+  algorithm_status: "not_applicable"
+  evidence: ""
+  code_symbol:
+  code_fingerprint:
 
 # 2026-09-11 币圈免费影子 MVP：crypto 日线采集 job（backfill/incremental 双模式，手动触发）
 datasets:
@@ -5209,10 +5264,10 @@ datasets:
   design_maturity: production
   name: c1_market.daily_valuation
   name_zh: 每日估值
-  status: active
+  status: degraded
   version: 1.0.0
   created_at: "2026-09-03"
-  updated_at: "2026-09-03"
+  updated_at: "2026-09-12"
   owner: MOD-L00-004
   produced_by_source: SRC-AKSHARE-001
   survivorship_free: unknown
@@ -5226,6 +5281,7 @@ datasets:
   applies_to:
   - stock
   - market
+  degradation_note: "2026-09-12 白班抽检：整表 close/volume/amount 全 0（600519 近 3 日与全表近 30 天 131168 行 100% close=0，全表无一行非零 close）——采集管道产空壳，禁消费；健康替代=stock_indicator（估值倍数）+kline_daily_hfq（行情）。修复前 status 维持 degraded（数据质量黑名单，巡检器跟踪）；【2026-09-12 晚班修复：本 note 插入位置曾截断 applies_to 列表致全文件 YAML 解析失败，已按最小改动恢复列表顺序——白班会话请知悉】"
   tags:
   - 数据
   - 行情
@@ -8215,8 +8271,11 @@ datasets:
   consumed_by_jobs: []
   domain_id: D_MARKET
   pit_policy: strict
-  format_summary: Tick 逐笔（源 miniqmt｜任务 tick_data_snapshot｜时段 
-    intraday_realtime）；CH 实况 84.2 亿 行（66 parts，分区 2025-01-01 ~ 
+  format_summary: Tick 3秒快照（源 miniqmt get_full_tick，含买卖一档 bid/ask｜任务 tick_data_snapshot｜时段
+    intraday_realtime）——非逐笔（原文"Tick 逐笔"系误标，Owner 2026-09-12 勘正：Level-2 逐笔
+    为 l2_tick 通道，当前 disabled（ARCH-DATA-014 需付费 L2 行情权限，且 miniQMT 桥无 L2））；
+    CH 实况 84.2 亿 行
+    （66 parts，分区 2025-01-01 ~
     2026-09-01，2026-09-03 system.parts）
   valid_since: "2025-01-01"
   module_id: MOD-L00-004
@@ -9582,7 +9641,179 @@ datasets:
   code_symbol: "src/zephyr/data/implementations/crypto_provider.py::CryptoProvider._fetch_shadow_gate"
   code_fingerprint:
 
-# 2026-09-11 币圈免费影子 MVP：OKX 公开行情源（免 API key，公开 REST 端点）
+- dataset_id: DS-228
+  entity_name: c3_fundamental.research_report
+  entity_type: dataset
+  scope: production
+  contract_ref:
+  physical_type: clickhouse_table
+  produced_by_job: research_report_detail_incremental
+  consumed_by_jobs: []
+  domain_id: D_FACTOR
+  pit_policy: strict
+  format_summary: 券商研报明细全字段（源 akshare 东财研报中心 stock_research_report_em｜任务
+    research_report_detail_incremental｜时段 research_nightly 20:30 工作日）；CH 实况 146,633
+    行（覆盖 4,695 只，2026-09-12 探针实测）；历史回补 scripts/ch/backfill_research_report_full.py
+    2026-09-12 完成（exit 0）；每行=一份研报（机构/东财评级/行业/发布日期/预测期0-2 EPS+PE/PDF直链，
+    report_id=infoCode 自 PDF 链接提取）；一致预期自聚合原料（按 publish_date 聚合=PIT 正确，
+    对标朝阳永续原理免付费）；DDL 真源=schemas/categories/fundamental/fundamental_research_report.py
+    （ReplacingMergeTree(ingest_ts)，ORDER BY (symbol,publish_date,report_id)；apply=
+    scripts/ch/apply_research_report_ddl.py）；施工方案=docs/_working/2026-09-12-research-report-data-plan.md
+  valid_since: "2017-01-02"
+  module_id: MOD-L00-004
+  design_maturity: production
+  name: c3_fundamental.research_report
+  name_zh: 券商研报明细（全字段含盈利预测）
+  status: active
+  version: 1.0.0
+  created_at: "2026-09-12"
+  updated_at: "2026-09-12"
+  owner: MOD-L00-004
+  produced_by_source: SRC-AKSHARE-001
+  survivorship_free: true
+  pit_available: true
+  earnings_lag_days:
+  llm_training_cutoff: N/A
+  lookahead_test_method: N/A
+  label_delay_days:
+  drift_detector: none
+  entry_role: "reference"
+  applies_to: ["stock"]
+  tags: ["数据", "研报", "财报", "事件", "基本面"]
+  algorithm_status: "not_applicable"
+  evidence: "2026-09-12 验收通过：146,633 行/4,695 只/2017-01-02~2026-09-11/eps_fy0 非空率 92.7%；
+    茅台抽查与东财源值一致（AP202608211828244348 西南证券 EPS 69.83/PE 18.59）；评级分布买入+增持 91%
+    （卖方乐观偏置留痕，评级因子化须数值化+去偏）"
+  code_symbol: "src/zephyr/data/implementations/akshare_provider.py::AkshareIngestProvider._fetch_research_report_detail"
+  code_fingerprint:
+
+- dataset_id: DS-229
+  entity_name: c3_fundamental.consensus_daily
+  entity_type: dataset
+  scope: production
+  contract_ref:
+  physical_type: clickhouse_table
+  produced_by_job:
+  consumed_by_jobs: []
+  domain_id: D_FACTOR
+  pit_policy: strict
+  format_summary: 一致预期每日快照（消费端 C1 派生层｜构建器=scripts/ch/build_consensus_daily.py
+    纯函数核+CLI，内部算子非外部源）｜粒度=(symbol,trade_date,forecast_year)（日历年锚定，非槽位序）｜
+    字段=eps_consensus/median/std/min/max + pe_consensus + n_reports/n_orgs + rating_score_mean
+    （买入7/增持5/中性持有3/减持2/卖出1，空值不计入）+n_buy/add/neutral/negative/unrated +
+    last_report_date + window_days（默认 90 自然日）｜PIT 铁律=只聚合 publish_date<=trade_date
+    （零 embargo），无覆盖不成行禁前向填充｜聚合源=DS-228 研报明细（14.7 万行）｜用途=华泰一致
+    预期因子族（EXP-01~06）标准输入｜DDL 真源=schemas/categories/fundamental/consensus_daily.py；
+    设计=docs/_working/2026-09-12-expectation-consumption-design.md §M1
+  valid_since: "2017-01-02"
+  module_id: MOD-L00-004
+  design_maturity: production
+  name: c3_fundamental.consensus_daily
+  name_zh: 一致预期每日快照（预期因子族地基）
+  status: active
+  version: 1.0.0
+  created_at: "2026-09-12"
+  updated_at: "2026-09-12"
+  owner: MOD-L00-004
+  produced_by_source: SRC-INTERNAL-001
+  survivorship_free: true
+  pit_available: true
+  earnings_lag_days:
+  llm_training_cutoff: N/A
+  lookahead_test_method: N/A
+  label_delay_days:
+  drift_detector: none
+  entry_role: "state"
+  applies_to: ["stock"]
+  tags: ["数据", "研报", "财报", "基本面", "因子"]
+  algorithm_status: "not_applicable"
+  evidence: "2026-09-12 构建器纯函数核 7 单测全绿（PIT 窗口/日历年展开/评级映射/多机构聚合）；
+    --check 模式=SQL 现算 vs 表内值交叉验证（茅台逐年 eps/n_reports 比对）；全量构建实况见 evidence 回填"
+  code_symbol: "scripts/ch/build_consensus_daily.py::build_consensus_rows"
+  code_fingerprint:
+
+# 2026-09-12 另类数据第 1 批免注册直连（alt-data-handoff §8-1）：千股千评快照 + 航运运价长表
+- dataset_id: DS-230
+  entity_name: c1_market.alt_stock_comment
+  entity_type: dataset
+  scope: production
+  contract_ref:
+  physical_type: clickhouse_table
+  produced_by_job: alt_stock_comment_snapshot
+  consumed_by_jobs: []
+  domain_id: D_MARKET
+  pit_policy: strict
+  format_summary: 千股千评全表日快照（源 akshare stock_comment_em 东财数据中心｜任务
+    alt_stock_comment_snapshot｜时段 daily_event）；关注指数=股吧关注度代理（akshare 无股吧发帖量
+    直连接口，2026-09-12 实测枚举确认）；接口仅当日无历史通道，每日累积（快照日=接口交易日列，
+    常为 T-1，PIT 锚）
+  valid_since: "2026-09-12"
+  module_id: MOD-L00-004
+  design_maturity: production
+  name: c1_market.alt_stock_comment
+  name_zh: 千股千评日快照
+  status: active
+  version: 1.0.0
+  created_at: "2026-09-12"
+  updated_at: "2026-09-12"
+  owner: MOD-L00-004
+  produced_by_source: SRC-AKSHARE-ALT-001
+  survivorship_free: true
+  pit_available:
+  lookahead_test_method: N/A
+  label_delay_days:
+  drift_detector: none
+  entry_role: "state"
+  applies_to: ["market"]
+  tags: ["另类数据", "数据", "情绪", "关注度"]
+  algorithm_status: "not_applicable"
+  evidence: "DDL schemas/categories/market_alt_stock_comment.py；接口实测 5196 行/13 列
+    （2026-09-12，含机构参与度/综合得分/排名变动/关注指数）；ReplacingMergeTree
+    (trade_date,symbol) 幂等；治理三件接线 src/zephyr/alt_data/alt_source_bootstrap.py"
+  code_symbol:
+  code_fingerprint:
+
+- dataset_id: DS-231
+  entity_name: c1_market.alt_shipping_index
+  entity_type: dataset
+  scope: production
+  contract_ref:
+  physical_type: clickhouse_table
+  produced_by_job: alt_shipping_index_incremental
+  consumed_by_jobs: []
+  domain_id: D_MARKET
+  pit_policy: strict
+  format_summary: 航运运价指数长表（源 akshare macro_shipping_bdi 1988-10 起含日涨跌幅 +
+    macro_china_freight_index 约 2006 起｜任务 alt_shipping_index_incremental 日度增量 +
+    alt_shipping_index_full_refresh 周末全量）；(trade_date,index_code) 粒度 7 指数：
+    BDI/BCI/BSI/BHMI/HRCI/BCTI/BDTI；BDI 双源重叠以 macro_shipping_bdi 为准免重
+  valid_since: "2026-09-12"
+  module_id: MOD-L00-004
+  design_maturity: production
+  name: c1_market.alt_shipping_index
+  name_zh: 航运运价指数长表
+  status: active
+  version: 1.0.0
+  created_at: "2026-09-12"
+  updated_at: "2026-09-12"
+  owner: MOD-L00-004
+  produced_by_source: SRC-AKSHARE-ALT-001
+  survivorship_free: true
+  pit_available:
+  lookahead_test_method: N/A
+  label_delay_days:
+  drift_detector: none
+  entry_role: "state"
+  applies_to: ["market"]
+  tags: ["另类数据", "数据", "运价", "产业"]
+  algorithm_status: "not_applicable"
+  evidence: "DDL schemas/categories/market_alt_shipping_index.py；接口实测 BDI 9537 行
+    （1988-10-19~2026-09-11）+ 六指数 5000 行（2026-09-12）；长表一表装 7 指数免 7 张同构表；
+    出口链/航运板块景气前瞻，与产业链 ig_* 事件传导打通"
+  code_symbol:
+  code_fingerprint:
+
+# 2026-09-11 币圈免费影子 MVP：crypto 日线采集 job（backfill/incremental 双模式，手动触发）
 jobs:
 - job_id: JOB-001
   job_name: ingest.minqmt_kline
@@ -12180,5 +12411,169 @@ jobs:
     MVP 报告），执行配方=集成器 run crypto_kline_daily_incremental（历史 backfill 已完成
     BTC-USDT,ETH-USDT 后 incremental --symbols-file config/crypto_top50_usdt.yaml"
   code_symbol: "src/zephyr/data/implementations/crypto_provider.py::CryptoProvider.fetch"
+  code_fingerprint:
+- job_id: JOB-090
+  job_name: ingest.akshare_research_report_detail
+  entity_type: job
+  scope: production
+  source_code_ref: src/zephyr/data/implementations/akshare_provider.py
+  trigger_type: scheduled
+  run_context: production
+  inputs: []
+  outputs:
+  - DS-228
+  pit_relevance: strict
+  description: 券商研报明细全字段接入（tasks.yaml research_report_detail_incremental，research_nightly
+    20:30 工作日独立时段——全市场逐股拉取约 2h 不与 daily_event 抢池；capability=research_report_detail
+    supports_symbols_null；每行=一份研报含预测期0-2 EPS/PE 数值+PDF直链，report_id=infoCode
+    写侧预检+ReplacingMergeTree(ingest_ts) 双重去重；增量窗口 payload.start/end 按 publish_date
+    过滤）；一次性历史回补=scripts/ch/backfill_research_report_full.py（2026-09-12 完成
+    146,633 行/4,695 只/2017-01-02 起）；与旧 research_report（news_data 共表元数据版）并存，
+    旧链路退役为二期项；天然无副源（券商研报明细仅东财研报中心免费可得），fallback_sources 显式置空留痕
+  module_id: MOD-L00-004
+  design_maturity: production
+  name: ingest.akshare_research_report_detail
+  name_zh: 东财研报明细采集（全字段）
+  status: active
+  version: 1.0.0
+  created_at: "2026-09-12"
+  updated_at: "2026-09-12"
+  owner: MOD-L00-004
+  entry_role: "reference"
+  applies_to: ["stock"]
+  tags: ["数据", "研报", "财报", "采集", "基本面"]
+  algorithm_status: "not_applicable"
+  evidence: "2026-09-12 建表+回补+接线同日闭环：DDL apply --verify exit 0；backfill exit 0；
+    capability 注册 _AKSHARE_CAPABILITIES+CapabilityContract 双侧；验收探针 146,633 行/
+    eps_fy0 非空率 92.7%/茅台抽查一致"
+  code_symbol: "src/zephyr/data/implementations/akshare_provider.py::AkshareIngestProvider._fetch_research_report_detail"
+  code_fingerprint:
+- job_id: JOB-091
+  job_name: build.consensus_daily
+  entity_type: job
+  scope: production
+  source_code_ref: scripts/ch/build_consensus_daily.py
+  trigger_type: manual
+  run_context: production
+  inputs:
+  - DS-228
+  outputs:
+  - DS-229
+  pit_relevance: strict
+  description: 一致预期每日快照构建（消费端 C1 派生层——DS-228 研报事件流聚合为每股每日×预测目标
+    日历年矩阵；纯函数核 build_consensus_rows（bisect 窗口+逐日聚合，7 单测）+CLI（--start/--end/
+    --window/--symbols/--check）；PIT 铁律=只聚合 publish_date<=trade_date 零 embargo，无覆盖不成行
+    禁前向填充；评级分 买入7/增持5/中性持有3/减持卖出回避2-1 空值不计入；ReplacingMergeTree(ingest_ts)
+    同键重建幂等）；全量重建分钟级（14.7 万研报→数百万行矩阵）；夜间调度接线（research_nightly 后
+    串跑）=C1.5 待办，当前 manual 触发；--check=SQL 现算 vs 表内值 PIT 交叉验证（茅台逐年比对）
+  module_id: MOD-L00-004
+  design_maturity: production
+  name: build.consensus_daily
+  name_zh: 一致预期每日快照构建（研报明细聚合）
+  status: active
+  version: 1.0.0
+  created_at: "2026-09-12"
+  updated_at: "2026-09-12"
+  owner: MOD-L00-004
+  entry_role: "state"
+  applies_to: ["stock"]
+  tags: ["数据", "研报", "财报", "因子", "派生"]
+  algorithm_status: "not_applicable"
+  evidence: "2026-09-12 建表+构建同日闭环：DDL apply --verify exit 0；纯函数核 7 单测全绿
+    （pytest tests/scripts/test_build_consensus_daily.py）；全量构建+--check 交叉验证实况见 DS-229 evidence"
+  code_symbol: "scripts/ch/build_consensus_daily.py::build_consensus_rows"
+  code_fingerprint:
+
+# 2026-09-12 另类数据第 1 批免注册直连：千股千评快照 + 航运运价增量/全量（alt-data-handoff §8-1）
+- job_id: JOB-092
+  job_name: ingest.akshare_alt_stock_comment
+  entity_type: job
+  scope: production
+  source_code_ref: src/zephyr/data/implementations/akshare_alt_provider.py
+  trigger_type: scheduled
+  run_context: production
+  inputs: []
+  outputs:
+  - DS-230
+  pit_relevance: strict
+  description: 千股千评全表日快照（AKShare stock_comment_em 东财数据中心：关注指数/综合得分/
+    机构参与度/排名及变动，约 5200 行/日；快照日=接口交易日列常为 T-1，PIT 锚不信运行日；
+    接口仅当日无历史通道，每日累积模式，ReplacingMergeTree 幂等）
+  module_id: MOD-L00-004
+  design_maturity: production
+  name: ingest.akshare_alt_stock_comment
+  name_zh: 千股千评日快照采集
+  status: active
+  version: 1.0.0
+  created_at: "2026-09-12"
+  updated_at: "2026-09-12"
+  owner: MOD-L00-004
+  entry_role: "state"
+  applies_to: ["market"]
+  tags: ["另类数据", "数据", "情绪", "关注度"]
+  algorithm_status: "not_applicable"
+  evidence: "接口实测 5196 行/13 列（2026-09-12）；治理三件接线 src/zephyr/alt_data/alt_source_bootstrap.py"
+  code_symbol: "src/zephyr/data/implementations/akshare_alt_provider.py::AkshareAltProvider._fetch_alt_stock_comment"
+  code_fingerprint:
+
+- job_id: JOB-093
+  job_name: ingest.akshare_alt_shipping_index
+  entity_type: job
+  scope: production
+  source_code_ref: src/zephyr/data/implementations/akshare_alt_provider.py
+  trigger_type: scheduled
+  run_context: production
+  inputs: []
+  outputs:
+  - DS-231
+  pit_relevance: strict
+  description: 航运运价指数日度增量（BDI 金十源+六指数 macro_china_freight_index 长表；
+    按 payload.start 过滤，ReplacingMergeTree (index_code,trade_date) 幂等；BDI 双源重叠
+    以 macro_shipping_bdi 为准免重；出口链/航运板块景气前瞻）
+  module_id: MOD-L00-004
+  design_maturity: production
+  name: ingest.akshare_alt_shipping_index
+  name_zh: 航运运价指数增量采集
+  status: active
+  version: 1.0.0
+  created_at: "2026-09-12"
+  updated_at: "2026-09-12"
+  owner: MOD-L00-004
+  entry_role: "state"
+  applies_to: ["market"]
+  tags: ["另类数据", "数据", "运价", "产业"]
+  algorithm_status: "not_applicable"
+  evidence: "接口实测 BDI 9537 行（1988-10-19~2026-09-11）+ 六指数 5000 行（2026-09-12）"
+  code_symbol: "src/zephyr/data/implementations/akshare_alt_provider.py::AkshareAltProvider._fetch_alt_shipping_index"
+  code_fingerprint:
+
+- job_id: JOB-094
+  job_name: ingest.akshare_alt_shipping_index_full
+  entity_type: job
+  scope: production
+  source_code_ref: src/zephyr/data/implementations/akshare_alt_provider.py
+  trigger_type: scheduled
+  run_context: production
+  inputs: []
+  outputs:
+  - DS-231
+  pit_relevance: strict
+  description: 航运运价指数全量刷新（weekend_calibration：BDI 1988-10 起约 9500 行 +
+    六指数约 5000 行历史回补，同键替换幂等；与 hog_* 全量刷新同节奏）
+  module_id: MOD-L00-004
+  design_maturity: production
+  name: ingest.akshare_alt_shipping_index_full
+  name_zh: 航运运价指数全量刷新
+  status: active
+  version: 1.0.0
+  created_at: "2026-09-12"
+  updated_at: "2026-09-12"
+  owner: MOD-L00-004
+  entry_role: "state"
+  applies_to: ["market"]
+  tags: ["另类数据", "数据", "运价", "回补"]
+  algorithm_status: "not_applicable"
+  evidence: "同 JOB-093 双接口；全量模式约 1.45 万行单批写入"
+  code_symbol: "src/zephyr/data/implementations/akshare_alt_provider.py::AkshareAltProvider._fetch_alt_shipping_index"
   code_fingerprint:
 

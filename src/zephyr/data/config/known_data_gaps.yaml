@@ -548,3 +548,26 @@ gaps:
     primary_alternative: "无（bdpan 无 LOF 分钟归档）"
     created: "2026-09-11"
     last_updated: "2026-09-11"
+
+  # === 2026-09-12: 电影票房源断供（另类数据第 1 批 D7，akshare 艺恩 endata 权限墙）===
+  - id: "alt_movie_boxoffice_source_dead"
+    table: "c1_market.alt_movie_boxoffice"   # 未建表——源断供，第 1 批施工范围收束为千股千评+运价
+    gap_type: "permission_required"
+    start_date: "2026-09-12"
+    end_date: ""
+    date_column: "trade_date"
+    detection_threshold: 1
+    status: "open"  # akshare 1.18.75 与最新 1.18.94 的 movie_yien.py 均无 token 机制（wheel 解包比对实证），升级无解
+    root_cause: "akshare 票房全家桶（movie_boxoffice_daily/cinema_daily/monthly/weekly/
+      yearly/realtime）均走艺恩 ys.endata.cn 接口，2026-09-12 实弹全部返回『没有权限
+      (Status code: -1)』——endata 已改登录制，akshare 匿名 header 无法 spoof（无
+      token/sign 机制可补）。免费替代源核查：中国电影数据信息网 zgdypw.cn（专资办）
+      仅周报文章无结构化 API；猫眼专业版 signed 接口/灯塔 auth 均非免注册直连。"
+    resolution_plan: "不硬做爬虫（爬虫路径属第 3 批 web_scraper_engine + compliance_reviewer
+      试点范围，服务条款评估前置）；可选路径：① 第 3 批爬虫试点覆盖猫眼/zgdypw 页面解析；
+      ② akshare 后续版本若恢复 endata 匿名通道则直接启用 movie_boxoffice_cinema_daily
+      （DDL 届时按 alt_* 模板补）；③ 若 Owner 认可影视板块因子价值，可评估灯塔/艺恩
+      付费层（当前裁定=不买付费另类，除非分析师预期历史级别例外）。"
+    primary_alternative: "无直接替代；传媒/院线景气短期用既有 L2/L1 量价+新闻情绪代理"
+    created: "2026-09-12"
+    last_updated: "2026-09-12"

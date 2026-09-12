@@ -47911,6 +47911,20 @@ entries:
   desc_zh: ""
   desc_en: ""
   plain_zh: "从东财研报中心按股补采全部历史研报明细的一次性脚本：断点续作限速写侧重检，日度增量另有排班任务。"
+- module_path: scripts/backtest/strategy_screen_query.py
+  domain_id: D_BACKTEST
+  name_zh: "策略台账查询器"
+  name_en: ""
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "strategy_screen 台账一站式只读查询：summary 看批次判定分布、trace 按策略翻全史（C2 筛入→C4 成绩→run 档案→原文/翻译件逐段存在性）、failed 按理由码检索失败挂起清单供改造候选、scored 出成绩单；解决失败原因可查可追溯的运营需求，台账只读禁写。"
+- module_path: scripts/industry_graph/io_ingest.py
+  domain_id: D_DATA
+  name_zh: "投入产出结构锚装载器"
+  name_en: "IO Structure Anchor Ingest"
+  desc_zh: "解析国家统计局投入产出表为部门级上下游系数矩阵并入 ig_io_edge 表"
+  desc_en: ""
+  plain_zh: "这个脚本把国家统计局的投入产出表装进图谱库。投入产出表是官方统计里唯一能量化'谁给谁供货、供多少'的表,装进来之后,判断产业链里上游下游关系就不再靠拍脑袋,而是有官方系数撑腰。用法分三步:parse 解析原始数据文件,load 灌进 ig_io_edge 表(可反复重跑不会灌重),status 看装了多少。"
 
 battle_map_steps:
 - step_id: BM-BUY-05

@@ -1283,6 +1283,13 @@ class IntegratorScheduler:
                 from zephyr.data.implementations.qweather_provider import QWeatherProvider
 
                 return QWeatherProvider()
+            elif source == "akshare_alt":
+                # 另类数据第 1 批免注册直连源（千股千评/航运运价，2026-09-12，
+                # docs/_working/2026-09-12-alt-data-handoff.md §8-1）：独立于 akshare 主
+                # provider 成件，接口漂移风险由 alt_source_health_manager 独立监控
+                from zephyr.data.implementations.akshare_alt_provider import AkshareAltProvider
+
+                return AkshareAltProvider()
             elif source == "internal":
                 # #222（64号 Q18，P0）：内部计算源——读 CH K线本地计算指标/港股日历，
                 # 缺失本分支时 hk_trade_calendar_refresh 等 source=internal 任务报"未知数据源"。

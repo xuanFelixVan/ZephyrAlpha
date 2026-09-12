@@ -2023,6 +2023,54 @@
   data_source: [akshare]
   blueprint: null
 
+- category_id: fund_research_report
+  name: "券商研报明细"
+  engine: clickhouse
+  database: c3_fundamental
+  table: research_report
+  schema_file: null
+  data_type: 原料
+  lifecycle: permanent
+  sla_level: L2
+  enabled: true
+  hard_constraint: null
+  calc_mode: preload
+  frequency: 事件驱动
+  data_source: [akshare]
+  blueprint: null
+
+- category_id: fund_consensus_daily
+  name: "一致预期每日快照"
+  engine: clickhouse
+  database: c3_fundamental
+  table: consensus_daily
+  schema_file: null
+  data_type: 成品
+  lifecycle: permanent
+  sla_level: L2
+  enabled: true
+  hard_constraint: null
+  calc_mode: preload
+  frequency: 日频
+  data_source: [internal]
+  blueprint: null
+
+- category_id: fund_financial_derived
+  name: "财报派生层（单季/TTM/跨表对齐）"
+  engine: clickhouse
+  database: c3_fundamental
+  table: financial_derived
+  schema_file: null
+  data_type: 成品
+  lifecycle: permanent
+  sla_level: L2
+  enabled: true
+  hard_constraint: null
+  calc_mode: preload
+  frequency: 季频
+  data_source: [internal]
+  blueprint: null
+
 - category_id: fund_express_report
   name: "业绩快报"
   engine: clickhouse
@@ -2280,6 +2328,40 @@
   calc_mode: preload
   frequency: 日频
   data_source: [akshare]
+  blueprint: null
+
+# --- 另类数据第 1 批：免注册直连（2026-09-12，alt-data-handoff §8-1，source=akshare_alt） ---
+
+- category_id: market_alt_stock_comment
+  name: "千股千评全表日快照"
+  engine: clickhouse
+  database: c1_market
+  table: alt_stock_comment
+  schema_file: schemas/categories/market_alt_stock_comment.py
+  data_type: 原料
+  lifecycle: permanent
+  sla_level: L2
+  enabled: true
+  hard_constraint: null
+  calc_mode: preload
+  frequency: 日频
+  data_source: [akshare_alt]
+  blueprint: null
+
+- category_id: market_alt_shipping_index
+  name: "航运运价指数长表"
+  engine: clickhouse
+  database: c1_market
+  table: alt_shipping_index
+  schema_file: schemas/categories/market_alt_shipping_index.py
+  data_type: 原料
+  lifecycle: permanent
+  sla_level: L2
+  enabled: true
+  hard_constraint: null
+  calc_mode: preload
+  frequency: 日频
+  data_source: [akshare_alt]
   blueprint: null
 
 # --- 时间敏感型数据（免费+只能获取最近，必须每日积累，#ARCH-REALTIME-ACCUM） ---

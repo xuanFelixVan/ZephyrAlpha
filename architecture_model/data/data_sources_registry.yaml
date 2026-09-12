@@ -96,6 +96,34 @@ data_sources:
       retry_on: ["JSONDecodeError", "ConnectionError"]
       disconnect_vpn: true
 
+  # 2026-09-12 另类数据第 1 批免注册直连（docs/_working/2026-09-12-alt-data-handoff.md §8-1）：
+  # 独立 runtime 成件（避开 akshare 主 provider 在途 claim），接口漂移由 alt_source_health_manager 独立监控
+  - id: DS-AKSHARE-ALT
+    runtime_id: akshare_alt
+    name: "AKShare-Alt"
+    name_en: "AKShare Alt"
+    type: open_source
+    account_type: free
+    category: alt_data
+    vendor: "开源社区"
+    interface_types: ["Python函数"]
+    api_count: 2
+    auth_required: false
+    auth_method: "无"
+    rate_limit: "东财数据中心公开接口,60RPM 自限速"
+    status: active
+    coverage: "千股千评日快照/航运运价指数(BDI 1988起+六指数约2006起);电影票房源断供见 known_data_gaps(艺恩endata权限墙)"
+    owner: ZephyrAlpha-Owner
+    operation_manual: "docs/03_modules/_domain_data/data_source_operation_manual.md §4"
+    policy:
+      rpm: 60
+      concurrency: 2
+      max_retries: 5
+      backoff: jittered
+      initial_wait_sec: 2.0
+      retry_on: ["JSONDecodeError", "ConnectionError"]
+      disconnect_vpn: true
+
   - id: DS-BAOSTOCK
     runtime_id: baostock
     name: "Baostock"

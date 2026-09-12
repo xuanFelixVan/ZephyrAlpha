@@ -576,6 +576,33 @@ tasks:
   extra:
     description: "分析师一致预期增量（同花顺一致预期EPS）"
 
+- task_id: research_report_detail_incremental
+  table: c3_fundamental.research_report
+  source: akshare
+  schedule: research_nightly
+  incremental: true
+  date_col: publish_date
+  dependencies: []
+  capability: research_report_detail
+  symbols:
+  fallback_sources: []    # 天然无副源：券商研报明细仅东财研报中心免费可得（2026-09-12 施工方案 §5）
+  extra:
+    description: "研报明细全字段增量（东财研报中心：机构/评级/预测期EPS/PE/PDF链接；一致预期自聚合原料，docs/_working/2026-09-12-research-report-data-plan.md；历史已回补 14.7 万行）"
+
+- task_id: financial_derived_build
+  table: c3_fundamental.financial_derived
+  source: internal  # 本地计算（读 c3_fundamental 三大报表派生，不从外部API拉取）
+  schedule: nightly_financial
+  incremental: true
+  date_col: announce_date
+  dependencies: ["income_statement_incremental", "balance_sheet_incremental", "cashflow_statement_incremental"]    # DAG: 三表增量落库后重建派生层
+  capability: financial_derived
+  symbols:
+  fallback_sources: []    # internal 派生源天然无副源
+  extra:
+    description: "财报派生层重建（F1-M1/DS-230：跨表对齐+单季拆分+TTM+应计/GPOA 比率，statement 粒度；PIT=三方公告日齐+哨兵守卫；全量重算幂等，设计=docs/_working/2026-09-12-fundamental-consumption-design.md §M1）"
+    trading_day_only: false    # 纯 CH 派生，非交易日也可运行
+
 - task_id: earnings_forecast_incremental
   table: c3_fundamental.earnings_forecast
   source: miniqmt
@@ -2316,6 +2343,46 @@ tasks:
   symbols:
   extra:
     description: "分省生猪现价快照（AKShare spot_hog_soozhu，当天28省区域价差）"
+
+# ============== 另类数据第 1 批：免注册直连（2026-09-12，docs/_working/2026-09-12-alt-data-handoff.md §8-1）==============
+# source=akshare_alt（AkshareAltProvider 独立成件，避开 akshare 主 provider 在途 claim）；
+# 千股千评=东财数据中心综合评价（关注指数=股吧关注度代理，akshare 无股吧发帖量直连接口）；
+# 航运运价=BDI(1988起)+六指数(约2006起)长表；电影票房缺口登记 known_data_gaps（艺恩 endata 权限墙）
+
+- task_id: alt_stock_comment_snapshot
+  table: c1_market.alt_stock_comment
+  source: akshare_alt
+  schedule: daily_event
+  incremental: false
+  dependencies: []
+  capability: alt_stock_comment
+  symbols:
+  extra:
+    description: "千股千评全表日快照（AKShare stock_comment_em，东财综合评价：关注指数/综合得分/机构参与度/排名；接口仅当日无历史通道，每日累积；PIT 锚=接口交易日列）"
+
+- task_id: alt_shipping_index_incremental
+  table: c1_market.alt_shipping_index
+  source: akshare_alt
+  schedule: daily_event
+  incremental: true
+  date_col: trade_date
+  dependencies: []
+  capability: alt_shipping_index
+  symbols:
+  extra:
+    description: "航运运价指数增量（BDI 金十源1988起+BCI/BSI/BHMI/HRCI/BCTI/BDTI 约2006起长表；出口链/航运板块景气前瞻，与产业链 ig_* 事件传导打通）"
+
+- task_id: alt_shipping_index_full_refresh
+  table: c1_market.alt_shipping_index
+  source: akshare_alt
+  schedule: weekend_calibration
+  incremental: false
+  dependencies: []
+  capability: alt_shipping_index
+  symbols:
+  extra:
+    description: "航运运价指数全量刷新（BDI 1988-10 起约 9500 行+六指数约 5000 行历史回补）"
+
 
 # ============== EDB 国际宏观数据扩展（#ARCH-EDB-EXPAND，2026-08-04）==============
 # FRED（美联储经济数据库）+ 世界银行 免费国际宏观数据
