@@ -1,3 +1,5 @@
+# [BLUEPRINT] MOD-DATA_ENG | (auto-injected by S4 reconciler) | §
+# [TTL] permanent
 # tests/zephyr/data 包
 
 # 【GOV-DOC-018 命名约定（T_soft=120 资格声明，2026-09-13 DEDUP/平铺债批）】

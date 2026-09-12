@@ -1,3 +1,5 @@
+# [BLUEPRINT] MOD-GOV_ASSET_INDEX_RECONCILER | (auto-injected by S4 reconciler) | §
+# [TTL] permanent
 # tests/governance/audit
 
 # 【GOV-DOC-018 命名约定（T_soft=120 资格声明，2026-09-13 DEDUP/平铺债批）】

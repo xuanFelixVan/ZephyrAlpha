@@ -3,7 +3,7 @@ module_id: MOD-SIG-142
 title: "板块强度四路合分蓝图 — 等权先验+Top15%候选池"
 doc_type: blueprint
 status: Active
-version: "0.1.1"
+version: "0.1.2"
 design_maturity: design
 ttl: permanent
 layer: L01_market
@@ -53,7 +53,7 @@ composite 降序 Top-ceil(N×15%)（节点真源"总分进前 15%"），保底 1
 
 | 图 | 位置 | 状态 | 链接 |
 |----|------|------|------|
-| 依赖图 (depgraph) | `blueprint_id=MOD-SIG-142` 的 10 个 file 节点 | design | `extract_depgraph.py --modules MOD-SIG-142` |
+| 依赖图 (depgraph) | `blueprint_id=MOD-SIG-142` 的 11 个 file 节点 | design | `extract_depgraph.py --modules MOD-SIG-142` |
 | 数据流图 (dataflow) | 0 个 Dataset / 1 个 Job | planned | `apply_dataflowgraph.py --list-datasets` |
 | 决策架构图 (decision) | 0 个决策节点 / 1 个决策层 | N/A | `generate_decision_diagram.py` |
 | 蓝图 (blueprint) | 本文件 | Active | — |
@@ -65,7 +65,7 @@ composite 降序 Top-ceil(N×15%)（节点真源"总分进前 15%"），保底 1
 | module_id | MOD-SIG-142 | MOD-SIG-142 | ✅ |
 | domain_id | N/A | N/A | ✅ |
 | build_status | generated | N/A | — |
-| file_count | 10 文件 | N/A | — |
+| file_count | 11 文件 | N/A | — |
 
 > 冲突时以 depgraph 为准（ARCH-056 + ARCH-MM-001 声明 vs 验证框架）。
 
@@ -82,6 +82,7 @@ composite 降序 Top-ceil(N×15%)（节点真源"总分进前 15%"），保底 1
 
 | 文件路径 | 实现状态 | 说明 |
 |---------|:---:|------|
+| `src/zephyr/signal_ashare/core/analysis_utils.py` | ✅ 已实现 | |
 | `src/zephyr/signal_ashare/core/candidate_pool_aggregator.py` | ✅ 已实现 | |
 
 ### 4.5 路径索引使用指南
