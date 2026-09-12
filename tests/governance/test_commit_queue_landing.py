@@ -70,7 +70,9 @@ def _git(cwd: Path, *args: str, check: bool = True) -> subprocess.CompletedProce
     r = subprocess.run(["git", *args], cwd=str(cwd), capture_output=True, timeout=60)
     if check and r.returncode != 0:
         raise AssertionError(
-            f"git {' '.join(args)} -> rc={r.returncode}: {r.stderr.decode('utf-8', errors='replace')[:400]}"
+            f"git {' '.join(args)} -> rc={r.returncode}: "
+            f"stderr={r.stderr.decode('utf-8', errors='replace')[:400]} "
+            f"stdout={r.stdout.decode('utf-8', errors='replace')[:400]}"
         )
     return r
 

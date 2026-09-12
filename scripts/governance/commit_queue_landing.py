@@ -98,6 +98,7 @@ import logging
 import os
 import re
 import subprocess
+import sys
 import tempfile
 import time
 from pathlib import Path
@@ -555,6 +556,46 @@ class WorktreeLanding:
     # ------------------------------------------------------------------
     # 网关（惰性构造一次，跨项复用）
     # ------------------------------------------------------------------
+    _RULES_PREFIXES_FOR_BASELINE = (
+        "architecture_model/contracts/",
+        "src/zephyr/shared/contracts/",
+        "docs/01_policies_and_standards/rules/",
+        "scripts/governance/_shared/thresholds.yaml",
+        "scripts/governance/meta/",
+        "scripts/governance/quickstart.md",
+        "scripts/governance/quality_standard.md",
+        "AGENTS.md",
+    )
+
+    def _refresh_integrity_baseline_main_repo(self, item: dict) -> str:
+        """落地成功后在主仓补跑 integrity 基线注册（fail-open，返回空=成功）。
+
+        与直提路径 GATE-INTEGRITY-AUDIT reconciler 完全对齐：该 reconciler trigger
+        always-True（每次 commit 无条件注册），本方法同样不设前缀过滤——任何队列
+        落地后都刷新主仓基线（幂等，fail-open 留痕）。ZEPHYR_RECONCILER_MODE=1 是
+        该脚本自带的防手动重注册门禁，此处为网关内部等价通道（landing 即网关延长
+        的落盘臂）。
+        """
+        script = self.repo_root / "scripts" / "governance" / "meta" / "validate_rules_integrity.py"
+        if not script.is_file():
+            return f"integrity register script missing: {script}"
+        env = {**os.environ, "ZEPHYR_RECONCILER_MODE": "1"}
+        try:
+            r = subprocess.run(
+                [sys.executable, str(script), "--register"],
+                cwd=str(self.repo_root),
+                env=env,
+                capture_output=True,
+                text=True,
+                timeout=180,
+                check=False,
+            )
+        except subprocess.TimeoutExpired:
+            return "register timeout(180s)"
+        if r.returncode != 0:
+            return f"rc={r.returncode}: {(r.stderr or r.stdout).strip()[:200]}"
+        return ""
+
     def _get_gateway(self):
         """_get_gateway implementation."""
         if self._gateway is None:
@@ -703,6 +744,18 @@ class WorktreeLanding:
                 self._converge_main_workspace(item, old_dev, result.commit_hash)
             except Exception as exc:  # noqa: BLE001 — 收敛 fail-open
                 logger.warning("[landing] qid=%s 主工作区收敛异常（non-blocking）: %s", qid, exc)
+            # 6) 规则类文件落地后主仓完整性基线刷新（#ARCH-310 认证战役 P1 F1 治本，
+            #    2026-09-12）：gateway 直提路径的 post-commit reconciler 在主仓跑
+            #    validate_rules_integrity --register；队列落地路径的同一 reconciler 跑
+            #    在 serializer worktree 内——基线写进 worktree 副本，主仓基线恒 stale
+            #    → TAMPERED 误报（宪法替换 c964c376c0 实证）。此处按 ritual 同款
+            #    触发口径（_RULES_PREFIXES 命中）在主仓补跑一次注册；fail-open 留痕。
+            try:
+                reg_note = self._refresh_integrity_baseline_main_repo(item)
+                if reg_note:
+                    logger.warning("[landing] qid=%s 主仓基线注册失败（non-blocking）: %s", qid, reg_note)
+            except Exception as exc:  # noqa: BLE001 — 注册 fail-open
+                logger.warning("[landing] qid=%s 主仓基线注册异常（non-blocking）: %s", qid, exc)
             return cq.LandingResult(ok=True, landed_id=result.commit_hash)
 
         return cq.LandingResult(

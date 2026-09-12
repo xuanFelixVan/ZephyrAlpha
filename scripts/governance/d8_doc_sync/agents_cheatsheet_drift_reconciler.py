@@ -386,16 +386,42 @@ def _reconcile(committed_files: list[str], session_id: str) -> Any:
     roor = _load_roor_truth(roor_text)
     capability_count = _count_capabilities(capability_text)
 
-    # 3. 解析失败=fail-visible warn（速查区/真源格式已变，检测器需跟进，不静默）
-    parse_failures = [f"AGENTS.md 侧: {f}" for f in agents["parse_failures"]] + [
-        f"ROOR 侧: {f}" for f in roor["parse_failures"]
-    ]
-    if parse_failures:
-        summary = "; ".join(parse_failures)
-        logger.warning("agents_cheatsheet_drift: parse failure: %s", summary)
+    # 3. AGENTS.md 侧锚点缺失不再在此提前拦截——L0 达标态判定（3.5 节）优先分流；
+    #    真源侧（ROOR）解析失败仍 fail-visible warn（检测器跟进，不静默）。
+
+    # 3.5 L0 达标态判定（#ARCH-310 R3 宪法切换，2026-09-12）：AGENTS.md 完全不硬编码
+    # 计数（速查区标题/明细行/告警阈值/能力计数锚点**全部**缺失）= 无可漂移对象 =
+    # clean——宪法 L0 规则5「计数勿写死」的达标形态。真源侧（ROOR）解析失败仍须
+    # fail-visible（检测器跟进），不受本判定影响；锚点**部分**存在（半删除状态）也
+    # 不适用本判定，继续按原逻辑报解析失败防静默漏检。
+    agents_has_any_anchor = (
+        agents["table_total"] is not None
+        or bool(agents["rows"])
+        or agents.get("capability") is not None
+    )
+    roor_failures = [f"ROOR 侧: {f}" for f in roor["parse_failures"]]
+    if roor_failures:
+        summary = "; ".join(roor_failures)
+        logger.warning("agents_cheatsheet_drift: ROOR parse failure: %s", summary)
         return ReconcileResult(
             action="warn",
-            detail=f"速查区格式已变，检测器需跟进（{len(parse_failures)} 处解析失败）: {summary}",
+            detail=f"速查区真源侧格式已变，检测器需跟进（{len(roor_failures)} 处解析失败）: {summary}",
+        )
+    if not agents_has_any_anchor and all(
+        ("未找到" in f or "未匹配到" in f) for f in agents["parse_failures"]
+    ):
+        return ReconcileResult(
+            action="clean",
+            detail="AGENTS.md 无硬编码计数锚点（L0 达标态，规则5「计数勿写死」）——零漂移对象；ROOR/capability 真值不受影响",
+        )
+    agents_failures = [f"AGENTS.md 侧: {f}" for f in agents["parse_failures"]]
+    if agents_failures:
+        # 锚点部分存在/半删除状态 → fail-visible warn（防 4.x 解包异常，防静默漏检）
+        summary = "; ".join(agents_failures)
+        logger.warning("agents_cheatsheet_drift: AGENTS parse failure: %s", summary)
+        return ReconcileResult(
+            action="warn",
+            detail=f"速查区格式已变，检测器需跟进（{len(agents_failures)} 处解析失败）: {summary}",
         )
 
     # 4. 比对：任一数字漂移 → 逐行报告「AGENTS.md L<行号> 写 X，实测 Y（真源=<文件>），请更新」
