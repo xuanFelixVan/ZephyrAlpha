@@ -30220,13 +30220,6 @@ entries:
   desc_zh: ''
   desc_en: ''
   plain_zh: 测试：检查向量记忆对抗注入在各种情况下表现对不对，守住质量关。
-- module_path: tests/infrastructure/test_blueprint_decomposer_depends_core.py
-  domain_id: ''
-  name_zh: depends_on 与 extract_depends_from_content
-  name_en: Test Blueprint Decomposer Depends Core
-  desc_zh: ''
-  desc_en: ''
-  plain_zh: 测试：确保蓝图分解器依赖核心不出岔子，让问题在上线前现形。
 - module_path: src/zephyr/shared/capacity_governance/model_capacity_probe.py
   domain_id: D_SHARED
   name_zh: 模型容量Probe
