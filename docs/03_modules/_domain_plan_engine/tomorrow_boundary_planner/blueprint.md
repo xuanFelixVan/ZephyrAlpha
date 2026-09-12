@@ -3,7 +3,7 @@ module_id: MOD-PLAN-001
 title: "明日预案引擎 — 盘后生成TomorrowBoundary操作边界（箱体上下沿+加仓上限+禁加仓/必出价位）"
 doc_type: blueprint
 status: Active
-version: "0.1.6"
+version: "0.1.7"
 ttl: permanent
 layer: L2_domain
 functional_domain: plan_engine
@@ -28,7 +28,7 @@ summary: "BM-PLAN-01 明日预案引擎：盘后收盘基于当日数据冷静�
 ---
 # Tomorrow Boundary Planner 蓝图+施工图 — 明日预案引擎 — 盘后生成TomorrowBoundary操作边界（箱体上下沿+加仓上限+禁加仓/必出价位）
 
-> module_id: MOD-PLAN-001 | version: 0.1.6 | status: Active | layer: L2_domain (plan_engine)
+> module_id: MOD-PLAN-001 | version: 0.1.7 | status: Active | layer: L2_domain (plan_engine)
 > actual_disk_path: src/zephyr/plan_engine/tomorrow_boundary_planner.py | generation: 1
 > 设计真源: 41_buy_flow v1.7.0 §3.10.2 | 施工性质: 回填蓝图（代码已完工，83用例通过，2026-08-13 补建，遗留项 #29）
 
@@ -81,8 +81,8 @@ summary: "BM-PLAN-01 明日预案引擎：盘后收盘基于当日数据冷静�
 
 | 图 | 位置 | 状态 | 链接 |
 |----|------|------|------|
-| 依赖图 (depgraph) | `blueprint_id=MOD-PLAN-001` 的 3 个 file 节点 | production | `extract_depgraph.py --modules MOD-PLAN-001` |
-| 数据流图 (dataflow) | 0 个 Dataset / 1 个 Job | active | `apply_dataflowgraph.py --list-datasets` |
+| 依赖图 (depgraph) | `blueprint_id=MOD-PLAN-001` 的 5 个 file 节点 | production | `extract_depgraph.py --modules MOD-PLAN-001` |
+| 数据流图 (dataflow) | （无节点） | N/A | `apply_dataflowgraph.py --list-datasets` |
 | 决策架构图 (decision) | 0 个决策节点 / 1 个决策层 | N/A | `generate_decision_diagram.py` |
 | 蓝图 (blueprint) | 本文件 | Active | — |
 
@@ -93,7 +93,7 @@ summary: "BM-PLAN-01 明日预案引擎：盘后收盘基于当日数据冷静�
 | module_id | MOD-PLAN-001 | MOD-PLAN-001 | ✅ |
 | domain_id | N/A | N/A | ✅ |
 | build_status | production | production | ✅ |
-| file_count | 3 文件 | 1 文件（§0.1） | ❌ |
+| file_count | 5 文件 | 1 文件（§0.1） | ❌ |
 
 > 冲突时以 depgraph 为准（ARCH-056 + ARCH-MM-001 声明 vs 验证框架）。
 
@@ -466,7 +466,9 @@ class TomorrowBoundary:
 
 | 文件路径 | 实现状态 | 说明 |
 |---------|:---:|------|
+| `tests/plan_engine/test_boundary_revision_engine.py` | ✅ 已实现 | |
 | `tests/plan_engine/test_intraday_tomorrow_forecast.py` | ✅ 已实现 | |
+| `tests/plan_engine/test_llm_premarket_analysis.py` | ✅ 已实现 | |
 | `tests/plan_engine/test_plan_engine.py` | ✅ 已实现 | |
 
 ### 1.5 路径索引使用指南
