@@ -19,7 +19,7 @@ cutover_plan: 见文末 §切换程序；索引卡真源=capability_cards/ L0-L3
 1. **RULE-ENV**：`$env:PATH = "$env:LOCALAPPDATA\Programs\Python\Python312;...Scripts;" + $env:PATH`，
    验证 `python --version` = 3.12.x（TRAE 注入 3.10 会崩 `datetime.UTC`）。
 2. **RULE-GUARDIAN**：`python scripts/lock_files.py cleanup && python -m zephyr.trading.process_reaper --status`。
-   计划任务不存在 = 禁止任何写操作。长批任务先登记 `.runtime/process_reaper_keep.txt` 防误杀。
+   计划任务不存在 = 禁止任何写操作。长批任务先登记 `data/runtime/process_reaper_keep.txt` 防误杀(每行一个 cmdline 子串)。
 3. **RULE-WORKTREE**：`session_worktree_start`（或按既定裁定降级走 `scripts/git_commit.py` 正门）。
    提交必经 GitCommitGateway / git_commit.py，禁止裸 `git commit`。
 4. **RULE-CAPABILITY-LOOKUP**：写第一行业务代码前调
@@ -45,8 +45,9 @@ cutover_plan: 见文末 §切换程序；索引卡真源=capability_cards/ L0-L3
 | 10 | RULE-SCHEMA-TZ | DateTime64(3)+显式时区；生成器禁 datetime.now()/time.time() | trae_065 时区批/AGENTS §11.1.1 |
 | 11 | RULE-SECRETS | 密钥走 secrets.py，禁裸 getenv/硬编码（三道 gate） | SECRETS.md |
 | 12 | RULE-GIT-SAFE | 危险 git 命令清单禁用；每轮修改即 git add；改前 claim | scripts/git_safety_wrapper.ps1 |
+| 13 | 热文件写入 | 注册表/宪法/tracker 等热文件必用 `safe_write_text`（CAS 防并发覆盖，`src/zephyr/shared/io/file_utils.py`），禁裸 Edit/Write 后不复核；写后进程外核实 | file_utils.py |
 
-补充铁律（同硬阻断级）：RULE-CLONEGUARD（extract 级克隆无逃生）；
+补充铁律（同硬阻断级）：RULE-CLONEGUARD（extract 级克隆无逃生）；新建 .py 模块须登记大白话简介（`add_module_translation.py`，TRANSLATION-COVERAGE gate 拦截）；
 RULE-WORKSPACE-WIP（脏文件先跑 classify_workspace_wip.py，禁肉眼判罚）；
 CREATE-GUARD（新建 .py/.yaml/.md 等 7 格式须登记 creation_token，tests/ 豁免）。
 
