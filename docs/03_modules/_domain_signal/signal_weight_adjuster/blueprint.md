@@ -41,4 +41,4 @@ granularity: file
 
 ## 3. 测试
 
-`tests/signal_ashare/test_signal_weight_adjuster.py` —— 内存替身全覆盖：正常路径 + 边界 + Fail-Closed 分支 + 确定性。
+`tests/signal_ashare/strategy_signal/test_signal_weight_adjuster.py` —— 内存替身全覆盖：正常路径 + 边界 + Fail-Closed 分支 + 确定性。

@@ -41,4 +41,4 @@ Size因子（大盘-小盘收益差序列）+风格持续性统计（同向>5天
 
 ## 3. 测试
 
-`tests/signal_ashare/test_intraday_size_style.py` —— 内存替身全覆盖：正常路径 + 边界 + Fail-Closed 分支 + 确定性。
+`tests/signal_ashare/intraday_t0/test_intraday_size_style.py` —— 内存替身全覆盖：正常路径 + 边界 + Fail-Closed 分支 + 确定性。

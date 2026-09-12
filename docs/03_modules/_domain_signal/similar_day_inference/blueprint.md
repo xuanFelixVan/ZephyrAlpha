@@ -68,4 +68,4 @@ def infer_remaining_session(
 
 ## 6. 测试
 
-tests/signal_ashare/test_similar_day_inference.py
+tests/signal_ashare/ml_forecast/test_similar_day_inference.py

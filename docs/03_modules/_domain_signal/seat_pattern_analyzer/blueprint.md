@@ -118,7 +118,7 @@ priority: P1
 | 图 | 位置 | 状态 | 链接 |
 |----|------|------|------|
 | 依赖图 (depgraph) | `blueprint_id=MOD-SIG-056` 的 1 个 file 节点 | production | `extract_depgraph.py --modules MOD-SIG-056` |
-| 数据流图 (dataflow) | （无节点） | N/A | `apply_dataflowgraph.py --list-datasets` |
+| 数据流图 (dataflow) | 0 个 Dataset / 1 个 Job | active | `apply_dataflowgraph.py --list-datasets` |
 | 决策架构图 (decision) | 0 个决策节点 / 1 个决策层 | N/A | `generate_decision_diagram.py` |
 | 蓝图 (blueprint) | 本文件 | Draft | — |
 
@@ -377,7 +377,7 @@ class SeatPatternAnalyzer:
 | A2 联动 | 接力/集中度/散户主导 | 3 |
 | A3 信号 | long/avoid/neutral/独食罚分/截断 | 5 |
 | 降级契约 | 空输入/混票/混日/registry 缺失/零成交额 | 5 |
-| 合计 | `pytest tests/signal_ashare/test_seat_pattern_analyzer.py` | 17 |
+| 合计 | `pytest tests/signal_ashare/limit_up/test_seat_pattern_analyzer.py` | 17 |
 
 ---
 
@@ -458,8 +458,8 @@ class SeatPatternAnalyzer:
 | 项 | 值 |
 |----|-----|
 | 模块 | src/zephyr/signal_ashare/seat_pattern_analyzer.py |
-| 测试 | tests/signal_ashare/test_seat_pattern_analyzer.py（17 用例） |
-| 验证 | `python -m pytest tests/signal_ashare/test_seat_pattern_analyzer.py -q` 两轮全绿 |
+| 测试 | tests/signal_ashare/limit_up/test_seat_pattern_analyzer.py（17 用例） |
+| 验证 | `python -m pytest tests/signal_ashare/limit_up/test_seat_pattern_analyzer.py -q` 两轮全绿 |
 
 ### 14.10 故障与操作
 
@@ -553,7 +553,7 @@ design（v0.1 代码已实现+测试，depgraph design 态；merge 后统筹重�
 | 文件 | 操作 |
 |------|------|
 | src/zephyr/signal_ashare/seat_pattern_analyzer.py | 新建 |
-| tests/signal_ashare/test_seat_pattern_analyzer.py | 新建 |
+| tests/signal_ashare/limit_up/test_seat_pattern_analyzer.py | 新建 |
 | docs/03_modules/_domain_signal/seat_pattern_analyzer/blueprint.md | 新建（本文件） |
 | capability_canonical_file_registry.yaml / module_translation_registry.yaml / architecture_issue_registry.yaml | 追加登记 |
 

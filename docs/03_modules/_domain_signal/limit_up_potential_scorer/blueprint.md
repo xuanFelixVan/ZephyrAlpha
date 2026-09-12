@@ -65,6 +65,6 @@ class LimitUpPotentialScorer:
 
 ## 4. 测试
 
-`tests/signal_ashare/test_limit_up_potential_scorer.py`（24 用例）：
+`tests/signal_ashare/limit_up/test_limit_up_potential_scorer.py`（24 用例）：
 配置/证据 fail-closed、RankIC 单调±1/噪声出局、权重比例与归一、回退语义、
 样本不足出局不阻断、综合分与分档边界、frozen/JSON 契约。

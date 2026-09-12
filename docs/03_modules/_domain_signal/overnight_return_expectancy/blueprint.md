@@ -75,7 +75,7 @@ class OvernightReturnExpectancy:
 
 ## 4. 测试
 
-`tests/signal_ashare/test_overnight_return_expectancy.py`：
+`tests/signal_ashare/intraday_t0/test_overnight_return_expectancy.py`：
 期望值公式、E>0.5% 边界、盈亏比>1.5（含 E跌=0 退化）、成本优势>2ATR
 （含 cost=None 降级）、踏空成本量化、多门槛归因、非法输入 fail-closed、
 frozen/JSON 契约。

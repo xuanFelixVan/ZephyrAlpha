@@ -41,4 +41,4 @@ TCP-RM时序保形预测：Robbins-Monro在线校准（分位数误差反馈步�
 
 ## 3. 测试
 
-`tests/signal_ashare/test_tcp_rm_conformal.py` —— 内存替身全覆盖：正常路径 + 边界 + Fail-Closed 分支 + 确定性。
+`tests/signal_ashare/ml_forecast/test_tcp_rm_conformal.py` —— 内存替身全覆盖：正常路径 + 边界 + Fail-Closed 分支 + 确定性。

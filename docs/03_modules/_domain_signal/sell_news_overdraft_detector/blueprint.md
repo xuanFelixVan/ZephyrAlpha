@@ -79,7 +79,7 @@ class SellNewsOverdraftDetector:
 
 ## 4. 测试
 
-`tests/signal_ashare/test_sell_news_overdraft_detector.py`：
+`tests/signal_ashare/sentiment/test_sell_news_overdraft_detector.py`：
 事件5类可预测性映射、四维透支度计算与边界、3档判定、5阶段标注（含 T=0/负天）、
 落地前减仓/已落地清仓/尚早 watch、黑天鹅不适用、非法输入 fail-closed、
 frozen/JSON 契约。

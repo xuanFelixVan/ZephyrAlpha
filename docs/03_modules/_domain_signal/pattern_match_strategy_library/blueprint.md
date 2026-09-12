@@ -80,7 +80,7 @@ class PatternMatchStrategyLibrary:
 
 ## 4. 测试
 
-`tests/signal_ashare/test_pattern_match_strategy_library.py`：
+`tests/signal_ashare/strategy_signal/test_pattern_match_strategy_library.py`：
 模式封闭集注册、DTW 距离（同型零距/平移放大/带窗截断/非法输入）、案例匹配
 排序与 top_k、双门控全组合（胜率/IC/案例数/缺IC fail-closed）、异 pattern
 案例剔除、frozen/JSON 契约。

@@ -68,4 +68,4 @@ def compute_option_sentiment(
 
 ## 6. 测试
 
-tests/signal_ashare/test_option_sentiment.py
+tests/signal_ashare/sentiment/test_option_sentiment.py

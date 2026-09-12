@@ -67,4 +67,4 @@ def identify_sector_leaders(
 
 ## 6. 测试
 
-tests/signal_ashare/test_sector_leader.py
+tests/signal_ashare/sector/test_sector_leader.py

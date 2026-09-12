@@ -70,6 +70,6 @@ class NextDayProbabilityGate:
 
 ## 4. 测试
 
-`tests/signal_ashare/test_next_day_probability_gate.py`（24 用例）：
+`tests/signal_ashare/ml_forecast/test_next_day_probability_gate.py`（24 用例）：
 配置/上下文/输入 fail-closed、五档门槛边界、反T 方向概率、八偏移叠加与钳制、
 拦截归因文本、统计累计与 sink 回写、frozen/JSON 契约。

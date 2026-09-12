@@ -84,6 +84,6 @@ TieredFilterResult/PreliminaryScreenResult/FineSelectionResult 等）。
 
 ## 6. 测试
 
-tests/signal_ashare/test_selection_funnel_skeleton.py（21 例：三层排除/放行语义、
+tests/signal_ashare/screening/test_selection_funnel_skeleton.py（21 例：三层排除/放行语义、
 降级链路、extra_tier_checks 注入位、容量截断注入位、密度鸭子类型、tie_break 双口径、
 链式数据流）

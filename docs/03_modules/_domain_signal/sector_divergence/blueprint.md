@@ -67,4 +67,4 @@ def compute_sector_divergence(
 
 ## 6. 测试
 
-tests/signal_ashare/test_sector_divergence.py
+tests/signal_ashare/sector/test_sector_divergence.py

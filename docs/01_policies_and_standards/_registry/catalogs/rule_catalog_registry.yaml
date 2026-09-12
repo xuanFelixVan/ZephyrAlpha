@@ -4,7 +4,7 @@ ttl: permanent
 doc_type: register
 title: 规则路径目录（唯一真源 SSoT）
 status: active
-generated_at: '2026-09-12T11:33:28Z'
+generated_at: '2026-09-12T12:14:33Z'
 generated_by: scripts/governance/d3_metadata/generate_rule_catalog.py
 maintenance: auto
 total_files: 244
@@ -2455,11 +2455,11 @@ files:
   aliases: []
   section_count: 0
 - path: docs/01_policies_and_standards/_registry/catalogs/data_asset_registry.yaml
-  module_id: MOD-GOVERNANCE
+  module_id: ''
   title: ''
   doc_type: ''
-  status: active
-  version: 1.4.2
+  status: ''
+  version: ''
   rule_form: ''
   scope: ''
   stability: ''

@@ -83,7 +83,7 @@ class StrategyCrossVoteFunnel:
 
 ## 4. 测试
 
-`tests/signal_ashare/test_strategy_cross_vote_funnel.py`：
+`tests/signal_ashare/strategy_signal/test_strategy_cross_vote_funnel.py`：
 三席+额外投票方权重封闭集、加权投票通过与否决、弃权口径（含全弃权）、
 C-021 否决门（含降级直通）、容量截断排序（~30）、无投票剔除、非法输入
 fail-closed、frozen/JSON 契约。

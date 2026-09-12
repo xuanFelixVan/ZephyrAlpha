@@ -66,4 +66,4 @@ def compute_lhb_premium(
 
 ## 6. 测试
 
-tests/signal_ashare/test_lhb_premium_analyzer.py
+tests/signal_ashare/limit_up/test_lhb_premium_analyzer.py
