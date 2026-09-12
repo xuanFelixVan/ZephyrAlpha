@@ -248,6 +248,9 @@ nodes:
     algo_note_zh: >-
       不自己算宏观——消费 RegimeSnapshot 的 7 态概率分布当谨慎度系数：概率越分裂越谨慎。
       再查六段情绪预算带（如吸筹 30-50%/点火 50-70%/扩张 60-80%/亢奋封顶 30% 只卖不买），月级定大档、日级水温微调，输出当日总仓位上限。
+      候选升级（蓝图 UP-1，2026-09-13 批准待建）：叠加波动率目标化仓位系数
+      （凯利简版：滚动 σ 目标化，模块建后由 src/zephyr/portfolio_alloc 域承接），
+      设计稿=docs/_working/2026-09-13-tdm-upgrade-blueprint.md。
     factor_refs: []
     data_refs: [DS-150]
     module_ref: src/zephyr/regime/core/regime_detector.py
@@ -301,8 +304,8 @@ nodes:
     strategy_mounts: []
 
   - node_id: TDM-E-L1-S3
-
     note_confirmed: 2026-09-13
+
     name_zh: 赚钱效应传感器
     market: cn_a
     flow: entry_flow
@@ -953,8 +956,8 @@ nodes:
     strategy_mounts: []
 
   - node_id: TDM-E-L2-06-2
-
     note_confirmed: 2026-09-13
+
     name_zh: 龙头识别定位
     market: cn_a
     flow: entry_flow
@@ -1768,8 +1771,8 @@ nodes:
     strategy_mounts: []
 
   - node_id: TDM-E-L3-12-2
-
     note_confirmed: 2026-09-13
+
     name_zh: 龙虎榜席位追踪
     market: cn_a
     flow: entry_flow
