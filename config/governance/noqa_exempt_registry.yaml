@@ -442,3 +442,9 @@ exemptions:
   reason: 产业链字段字典=registry catalog（industry_graph_field_dictionary.yaml），vocab 
     段是被交叉校验的数据而非加载的合法值词表——check_industry_graph_field_dictionary 
     校验字典结构，gate-vocab豁免合理（2026-09-11 满贯批）
+- category: business_subset
+  file: scripts/research/verify_g07_sentiment_stratified_correlation.py
+  line: 64   # 行号自 63 漂移（TableRegistry import 行插入）
+  reason: STRATEGIES 策略键名元组=业务数据 schema 值（daban/multifactor/event_driven 为
+    交易决策地图既定策略键），非 knowledge_taxonomy 词表校验对象——gate-vocab 豁免合理
+    （2026-09-13 夜班收编批 G07 验证脚本入库时补登记）

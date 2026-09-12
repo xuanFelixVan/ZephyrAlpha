@@ -12021,6 +12021,10 @@ creation_tokens:
 - file: src/zephyr/signal_ashare/strategy_signal/__init__.py
   token: sig-init-strategy_signal-20260913
   created_by: schemas-split-20260912
+- file: scripts/research/verify_g07_sentiment_stratified_correlation.py
+  token: g07-sentiment-verify-20260913
+  created_by: night-sweep-20260913
+  capability: g07_sentiment_validation
 di_seam_exemptions:
 - module_path: zephyr.trading.auto_runtime_core.AutoRuntimeCore
   reason: P0-5 LSG DI seam 标杆，已有 DI 但 AST 模式不匹配（动态注入）

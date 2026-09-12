@@ -583,6 +583,9 @@ data/sla/
 # ── 2026-09-02 裁定：运行时/调试产物收口 ──
 # 回测产物（run_backtest.py 产出，可重跑再生产物）
 data/backtest_artifacts/
+# 策略入库归一副本（SOP-C C1：从 E 盘源可重跑再生的中间产物，2026-09-12 收口沿同款裁定；
+# 清单类 raw_manifest.csv / screen_c2.csv 结论性产物仍入库）
+data/strategy_intake/normalized/
 # 崩溃转储（runtime diagnostics）
 data/diagnostics/
 # 模型 profiling 运行时数据
@@ -603,3 +606,9 @@ data/asset_index/offrepo_scan_report.json
 data/integrator_progress.db.bak*
 docs/_working/同花顺资料/*.xlsx
 docs/03_modules/_domain_frontend/acceptance/screenshots/
+
+# 币圈烟测/运行时产物（可再生：binance.vision 下载+smoke 脚本重跑，2026-09-13 判读裁定）；
+# 清单类结论性产物 universe_manifest.csv 仍入库（SOP-C C1 同款裁定）
+data/crypto/_smoke_test/
+data/crypto/_smoke_test_50alt/
+data/crypto/shadow/

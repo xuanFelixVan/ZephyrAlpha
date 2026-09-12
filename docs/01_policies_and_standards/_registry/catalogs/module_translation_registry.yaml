@@ -47960,6 +47960,13 @@ entries:
   desc_zh: ""
   desc_en: ""
   plain_zh: "十三道测试锁定派生层的时点语义：单季怎么拆、TTM 怎么滚、修正公告不许偷看未来，全靠内存数据不碰生产库。"
+- module_path: scripts/research/verify_g07_sentiment_stratified_correlation.py
+  domain_id: D_ASHARE_SIGNAL
+  name_zh: "G07情绪分层相关性验证"
+  name_en: ""
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "G07 情绪分层相关性验证脚本：拉情绪因子分层收益算相关性，人工跑一次出报告归档（一次性验证批）"
 
 battle_map_steps:
 - step_id: BM-BUY-05
