@@ -14401,3 +14401,7 @@ di_seam_exemptions:
   token: knowledge-reserve-nonpipeline-20260913
   created_by: st-zcode-c4-20260912
   capability: c4_batch_translation
+- file: config/strategy_production_map.yaml
+  token: strategy-production-map-20260913
+  created_by: st-zcode-c4-20260912
+  capability: c4_batch_translation

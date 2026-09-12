@@ -1,0 +1,303 @@
+# 策略生产全景图（strategy_production_map，昵称"策略工厂"）v0.1 结构稿
+# 图 9（拟）：生产级全景图第二张（图 7 交易决策全景图=消费端，本图=供给端）
+# 状态：增长轨设计稿（task_bound）——四关验收件（校验器/对抗测试/九图挂轴/gate）未建，
+#       建成前本图仅为结构真源草案；正式落图按 strategy_factory 落图批流程执行
+# 设计来源：docs/_working/2026-09-13-strategy-factory-pipeline-discussion.md（v1-v9.1，含五轮检索）
+# 字段约定：TDM 字段集 + 工厂新增四件（build_status/store_refs/lane/gate_refs），v9.1 定稿
+
+schema_version: '0.1'
+map_id: strategy_production_map
+name_zh: 策略生产全景图
+nickname: 策略工厂
+effective_from: '2026-09-13'
+markets: [cn_a]
+layers:
+  - layer_id: E0
+    name_zh: 算力调度
+    growth: 低-中
+  - layer_id: E1
+    name_zh: 想法进货
+    growth: 极大（五车道子节点无限生长）
+  - layer_id: E2
+    name_zh: 假说预审
+    growth: 中
+  - layer_id: E3
+    name_zh: 构造代码
+    growth: 极大
+  - layer_id: E4
+    name_zh: 考试咽喉
+    growth: 中-高
+  - layer_id: E5
+    name_zh: 协同去重
+    growth: 低-中
+  - layer_id: E6
+    name_zh: 入库监控
+    growth: 中
+  - layer_id: E7
+    name_zh: 模拟盘前哨
+    growth: 中
+  - layer_id: E8
+    name_zh: 组装与资金分配
+    growth: 中-高
+  - layer_id: E9
+    name_zh: 实盘归因
+    growth: 中
+
+nodes:
+  - node_id: FAC-E0
+    name_zh: 算力调度心跳
+    stage: E0
+    node_type: stage
+    decision_question: 现在能不能跑重算力任务？该跑哪条车道的活？
+    algo_note_zh: 交易日白天只许轻任务（监控巡检），重算力（挖掘训练/批测/遗传优化）全排
+      收盘后和休市日；trade_calendar 当闸门；事件触发禁定时器（宪法铁律）
+    data_refs: [c1_market.trade_calendar]
+    module_ref: null
+    build_status: pending
+    store_refs:
+      - artifact: 调度日志
+        location: .runtime/logs/
+        key: 时间窗
+        retention: 90 天
+
+  - node_id: FAC-E1
+    name_zh: 想法进货（五车道）
+    stage: E1
+    node_type: stage
+    decision_question: 下一批策略想法从哪条车道进来？每条车道进什么货？
+    algo_note_zh: 五车道并发进货：A 社区爬取/B AI 生成/C 公式挖掘机/D 产业链三高/E 模型基线；
+      所有货统一卸到策略入库台账，带出生证（渠道+批次+原文指针）
+    data_refs: [c1_market.news_data, docs/_working/ 产业研究]
+    module_ref: null
+    build_status: pending
+    store_refs:
+      - artifact: 候选想法清单
+        location: data/strategy_intake/
+        key: md5_12
+        retention: 永久
+
+  - node_id: FAC-E1A
+    name_zh: 车道A-社区货源
+    stage: E1
+    node_type: lane
+    lane: A
+    decision_question: 社区里有哪些新策略值得收？
+    algo_note_zh: 聚宽/掘金等社区策略爬取与入库（C1 人工版已收 597 条）；扩容爬虫候选 Scrapling
+    data_refs: [data/strategy_intake/raw_manifest.csv]
+    module_ref: null
+    build_status: built  # C1 人工版+入库管线
+    store_refs:
+      - artifact: 策略原文
+        location: data/strategy_intake/normalized/
+        key: md5_12
+        retention: 永久（盘面留存，git 不跟踪）
+
+  - node_id: FAC-E1B
+    name_zh: 车道B-AI生成
+    stage: E1
+    node_type: lane
+    lane: B
+    decision_question: 自然语言能生成哪些新策略？
+    algo_note_zh: 自然语言→策略生成（Vibe-Trading 式），量产思路；货最便宜也最杂，靠 E2 预审把关
+    data_refs: []
+    module_ref: null
+    build_status: pending
+    store_refs: []
+
+  - node_id: FAC-E1C
+    name_zh: 车道C-公式挖掘机
+    stage: E1
+    node_type: lane
+    lane: C
+    decision_question: 公式空间里还有哪些未挖的因子组合？
+    algo_note_zh: 强化学习拼公式（AlphaGen，KDD 2023）/遗传规划（gplearn）；受控搜索空间
+      防乱写代码；选型待小批量试产（AlphaGen vs gplearn vs 双轨）
+    data_refs: []
+    module_ref: null
+    build_status: pending
+    store_refs: []
+
+  - node_id: FAC-E1D
+    name_zh: 车道D-产业链三高
+    stage: E1
+    node_type: lane
+    lane: D
+    decision_question: 产业链图谱上哪些咽喉环节符合三高特征？
+    algo_note_zh: BOM 拆解找高增长/高壁垒/高利润环节；ig_fact 供应链图谱为独家数据资产；
+      学术验证=图谱多跳结构比直接关系样本外 Sharpe 高 50%+（Capponi）
+    data_refs: [ig_fact, chainmap_cluster_names.yaml]
+    module_ref: null
+    build_status: pending
+    store_refs: []
+
+  - node_id: FAC-E1E
+    name_zh: 车道E-模型基线
+    stage: E1
+    node_type: lane
+    lane: E
+    decision_question: 分布预测/机器学习这条线有没有肉？
+    algo_note_zh: Kronos 论文本身做了 A 股实证（多头组合跑赢 25 基线，官方 Qlib 微调管线）；
+      深化方向=分布预测（分位数回归起步，沪深300 原型）；只当基线对台不当交易信号
+    data_refs: []
+    module_ref: null
+    build_status: pending
+    store_refs: []
+
+  - node_id: FAC-E2
+    name_zh: 假说预审逻辑门
+    stage: E2
+    node_type: stage
+    decision_question: 这个想法在经济学上讲不讲得通？
+    algo_note_zh: 防噪音总闸：讲不通的想法在此死，不花回测算力（FaVOR 框架同构设计）；
+      哲学溯源=Owner 2025-09 笔记"主观经验是先验过滤器，AI 无中生有=冰淇淋销量式巧合"；
+      本地模型 8B-32B 可扛
+    data_refs: []
+    module_ref: null
+    build_status: pending
+    store_refs:
+      - artifact: 预审判定记录
+        location: 待定（E2 施工时定）
+        key: strategy_id
+        retention: 永久
+
+  - node_id: FAC-E3
+    name_zh: 构造与翻译
+    stage: E3
+    node_type: stage
+    decision_question: 外来策略怎么变成咱们的标准件？新想法怎么变成可执行代码？
+    algo_note_zh: C3 翻译（原文→权重函数+D1-D5 差异声明+因子拆解）——模板已定型、35 条
+      人工翻译=验收集；QuantCode-Bench 实证最强模型单轮通过率仅 70-76%，
+      必须带验收集+编译重试环+人工抽检；本地 32B 初翻+API 复核两档
+    data_refs: [data/strategy_intake/normalized/]
+    module_ref: MOD-BT-041..075
+    build_status: partial  # 人工版已完成 35 条，LLM 自动化待建
+    store_refs:
+      - artifact: 翻译件
+        location: scripts/backtest/translated/
+        key: strategy_id
+        retention: 永久
+
+  - node_id: FAC-E4
+    name_zh: 考试咽喉
+    stage: E4
+    node_type: stage
+    decision_question: 这策略在没见过的考卷上还活着吗？
+    algo_note_zh: 全厂唯一判定权。IS 2020-2023 冻结窗口+冻结土规成本（2.5bp+10bp+5bp）
+      →DSR 批内折减→OOS 新考卷（2024-2026 已跑）→双窗口及格线。护栏栈：WFO/purged
+      CV/CPCV（测试在库）/Optuna-on-purged/PBO+DSR 签核；分布预测件加双标准
+      （PIT 校准+锐度）。是否拆 E4a 免回测快筛+E4b 全量=开放决策点 7
+    data_refs: [c1_market.kline_daily_hfq, c1_market.stk_limit, c1_market.kline_index]
+    module_ref: MOD-BT-039
+    build_status: built  # C4 引擎+DSR+OOS 双批已实战
+    store_refs:
+      - artifact: 考试成绩+判定书
+        location: c1_backtest.strategy_screen + data/backtest_artifacts/runs/
+        key: strategy_id + screen_batch
+        retention: 永久
+
+  - node_id: FAC-E5
+    name_zh: 协同去重
+    stage: E5
+    node_type: stage
+    decision_question: 单因子好看没用——加进池子能涨分吗？
+    algo_note_zh: 对称正交化（保可解释性最佳，天风金工）→对动量/波动/流动性基准因子
+      正交化后增量 IC 显著才准入；组合权重走 IC_IR 加权禁朴素等权（SSRN：朴素合成
+      摧毁价值+动量的分散收益）
+    data_refs: []
+    module_ref: null
+    build_status: pending
+    store_refs: []
+
+  - node_id: FAC-E6
+    name_zh: 入库监控
+    stage: E6
+    node_type: stage
+    decision_question: 入库的策略还活着吗？为什么衰减了？
+    algo_note_zh: 台账只增+判死行追加；oos_years_decay≥0.5 判存疑；decay_cause 枚举
+      （crowding/regime/overfitting/tech/depletion）；业界规则参照=月度 IC 连续 3 月
+      降超 20% 挂起；反馈回灌 E2 假说库（RD-Agent 式闭环）
+    data_refs: [c1_backtest.strategy_screen]
+    module_ref: MOD-BT-078
+    build_status: built  # 台账+查询器
+    store_refs:
+      - artifact: 判定书/衰减巡检
+        location: data/backtest_artifacts/runs/
+        key: run_id
+        retention: 永久
+
+  - node_id: FAC-E7
+    name_zh: 模拟盘前哨
+    stage: E7
+    node_type: stage
+    decision_question: 过了考试的策略，用真行情跑还灵吗？
+    algo_note_zh: registry 幸存者以 live 数据跑模拟盘 N 周，逐日对账预测 vs 实际
+      （分布校准的实盘版）+滑点/容量实测；行业统计回测夸大实盘盈亏 30-60%，
+      此门不可跳；不达标退回 E6 标 decayed；对应 lifecycle_status=sim/paper
+    data_refs: [c1_market.realtime_snapshot, c1_market.execution_report]
+    module_ref: null
+    build_status: pending
+    store_refs:
+      - artifact: 前哨对账报告
+        location: 待定（E7 施工时定）
+        key: strategy_id+前哨批次
+        retention: 永久
+
+  - node_id: FAC-E8
+    name_zh: 组装与资金分配
+    stage: E8
+    node_type: stage
+    decision_question: 资金怎么在各策略 sleeve 之间分配和轮动？
+    algo_note_zh: 多策略 sleeve 装配=Owner 既定"多策略赛马"方针的赛道本体；
+      regime 切换选 sleeve（Markov/跳跃模型）+风险平价/等风险贡献权重+
+      IC_IR 加权禁朴素等权+资金渐进爬坡（drawdown 控制）；组合数学=低相关
+      sleeve 合成 Sharpe 按子集提升
+    data_refs: [c1_backtest.account_nav_daily]
+    module_ref: null
+    build_status: pending
+    store_refs:
+      - artifact: 组合权重方案
+        location: 待定（E8 施工时定）
+        key: portfolio_id
+        retention: 永久
+
+  - node_id: FAC-E9
+    name_zh: 实盘归因
+    stage: E9
+    node_type: stage
+    decision_question: 实盘赚的钱/亏的钱，到底来自哪里？
+    algo_note_zh: 影子组合工作流（实盘账本旁跑信号复刻影子组合做对照，可复用 C4 引擎）+
+      IS 分解（Perold 1988：延迟/执行/机会/费用）+Brinson-Fachler+Barra 因子归因；
+      归因回灌 E2 假说库完成价值链闭环。FIELD-GAP：决策时间戳/决策价（信号产生时落印）
+    data_refs: [c1_market.execution_report, c1_backtest.account_nav_daily]
+    module_ref: null
+    build_status: pending
+    store_refs:
+      - artifact: 归因报告
+        location: 待定（E9 施工时定）
+        key: portfolio_id+期间
+        retention: 永久
+
+edges:
+  - [FAC-E0, FAC-E1]
+  - [FAC-E1, FAC-E2]
+  - [FAC-E2, FAC-E3]
+  - [FAC-E3, FAC-E4]
+  - [FAC-E4, FAC-E5]
+  - [FAC-E5, FAC-E6]
+  - [FAC-E6, FAC-E7]
+  - [FAC-E7, FAC-E8]
+  - [FAC-E8, FAC-E9]
+  - [FAC-E9, FAC-E2]   # 归因反馈回灌假说库（价值链闭环）
+  - [FAC-E1, FAC-E1A]
+  - [FAC-E1, FAC-E1B]
+  - [FAC-E1, FAC-E1C]
+  - [FAC-E1, FAC-E1D]
+  - [FAC-E1, FAC-E1E]
+
+feedback_loops:
+  - from: FAC-E9
+    to: FAC-E2
+    note: 实盘归因回灌假说先验（RD-Agent 式闭环）
+  - from: FAC-E6
+    to: FAC-E1
+    note: 衰减/失效结论反馈进货方向（哪类策略值得多进/少进）
