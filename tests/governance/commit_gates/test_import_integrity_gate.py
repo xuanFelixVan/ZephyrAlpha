@@ -674,7 +674,7 @@ class TestCheckClosurePhase25Hint:
         import zephyr.gov_enforcement.commit_gates.import_integrity_gate as gate_mod
 
         with pytest.MonkeyPatch.context() as mp:
-            mp.setattr(gate_mod, "_get_staged_py_files", lambda g, gid: [staged_py])
+            mp.setattr(gate_mod, "_get_staged_py_files", lambda g, gid, **_kw: [staged_py])
             mp.setattr(gate_mod, "_read_staged_file", lambda g, f: staged_content)
             gate = make_import_integrity_gate()
             passed, detail = gate.check(gw, [staged_py], session_id="sess-A")
@@ -698,7 +698,7 @@ class TestCheckClosurePhase25Hint:
         import zephyr.gov_enforcement.commit_gates.import_integrity_gate as gate_mod
 
         with pytest.MonkeyPatch.context() as mp:
-            mp.setattr(gate_mod, "_get_staged_py_files", lambda g, gid: [staged_py])
+            mp.setattr(gate_mod, "_get_staged_py_files", lambda g, gid, **_kw: [staged_py])
             mp.setattr(gate_mod, "_read_staged_file", lambda g, f: staged_content)
             gate = make_import_integrity_gate()
             passed, detail = gate.check(gw, [staged_py], session_id="sess-A")
@@ -720,7 +720,7 @@ class TestCheckClosurePhase25Hint:
         import zephyr.gov_enforcement.commit_gates.import_integrity_gate as gate_mod
 
         with pytest.MonkeyPatch.context() as mp:
-            mp.setattr(gate_mod, "_get_staged_py_files", lambda g, gid: [staged_py])
+            mp.setattr(gate_mod, "_get_staged_py_files", lambda g, gid, **_kw: [staged_py])
             mp.setattr(gate_mod, "_read_staged_file", lambda g, f: staged_content)
             gate = make_import_integrity_gate()
             passed, detail = gate.check(gw, [staged_py], session_id="sess-A")
@@ -750,7 +750,7 @@ class TestCheckClosurePhase25Hint:
         import zephyr.gov_enforcement.commit_gates.import_integrity_gate as gate_mod
 
         with pytest.MonkeyPatch.context() as mp:
-            mp.setattr(gate_mod, "_get_staged_py_files", lambda g, gid: [staged_py])
+            mp.setattr(gate_mod, "_get_staged_py_files", lambda g, gid, **_kw: [staged_py])
             mp.setattr(gate_mod, "_read_staged_file", lambda g, f: staged_content)
             gate = make_import_integrity_gate()
             # 不传 session_id
@@ -1189,7 +1189,7 @@ class TestOnlyOwnSessionScanned:
         import zephyr.gov_enforcement.commit_gates.import_integrity_gate as gate_mod
 
         with pytest.MonkeyPatch.context() as mp:
-            mp.setattr(gate_mod, "_get_staged_py_files", lambda g, gid: [own_py, foreign_py])
+            mp.setattr(gate_mod, "_get_staged_py_files", lambda g, gid, **_kw: [own_py, foreign_py])
             mp.setattr(
                 gate_mod,
                 "_read_staged_file",
@@ -1227,7 +1227,7 @@ class TestOnlyOwnSessionScanned:
         import zephyr.gov_enforcement.commit_gates.import_integrity_gate as gate_mod
 
         with pytest.MonkeyPatch.context() as mp:
-            mp.setattr(gate_mod, "_get_staged_py_files", lambda g, gid: [own_py, foreign_py])
+            mp.setattr(gate_mod, "_get_staged_py_files", lambda g, gid, **_kw: [own_py, foreign_py])
             mp.setattr(
                 gate_mod,
                 "_read_staged_file",
@@ -1258,7 +1258,7 @@ class TestOnlyOwnSessionScanned:
         import zephyr.gov_enforcement.commit_gates.import_integrity_gate as gate_mod
 
         with pytest.MonkeyPatch.context() as mp:
-            mp.setattr(gate_mod, "_get_staged_py_files", lambda g, gid: [own_py, foreign_py])
+            mp.setattr(gate_mod, "_get_staged_py_files", lambda g, gid, **_kw: [own_py, foreign_py])
             mp.setattr(
                 gate_mod,
                 "_read_staged_file",
@@ -1281,7 +1281,7 @@ class TestOnlyOwnSessionScanned:
         import zephyr.gov_enforcement.commit_gates.import_integrity_gate as gate_mod
 
         with pytest.MonkeyPatch.context() as mp:
-            mp.setattr(gate_mod, "_get_staged_py_files", lambda g, gid: [ghost_py])
+            mp.setattr(gate_mod, "_get_staged_py_files", lambda g, gid, **_kw: [ghost_py])
             mp.setattr(gate_mod, "_read_staged_file", lambda g, f: ghost_content)
             gate = make_import_integrity_gate()
             passed, detail = gate.check(gw, [])  # 无 files 无 session_id
@@ -1309,7 +1309,7 @@ class TestOnlyOwnSessionScanned:
         import zephyr.gov_enforcement.commit_gates.import_integrity_gate as gate_mod
 
         with pytest.MonkeyPatch.context() as mp:
-            mp.setattr(gate_mod, "_get_staged_py_files", lambda g, gid: [claimed_py, foreign_py])
+            mp.setattr(gate_mod, "_get_staged_py_files", lambda g, gid, **_kw: [claimed_py, foreign_py])
             mp.setattr(
                 gate_mod,
                 "_read_staged_file",

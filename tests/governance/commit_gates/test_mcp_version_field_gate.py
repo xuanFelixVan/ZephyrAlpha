@@ -35,7 +35,8 @@ _PROJECT_ROOT = Path(__file__).resolve().parents[3]
 if str(_PROJECT_ROOT) not in sys.path:
     sys.path.insert(0, str(_PROJECT_ROOT))
 
-from tests.governance.commit_gates.gate_test_helpers import make_mock_gateway  # noqa: E402
+# 同目录直导：repo tests 命名空间被 site-packages 同名包遮蔽，绝对导入不可用
+from gate_test_helpers import make_mock_gateway  # noqa: E402
 from zephyr.gov_enforcement.commit_gates.mcp_version_field_gate import (  # noqa: E402
     make_mcp_version_field_gate,
 )

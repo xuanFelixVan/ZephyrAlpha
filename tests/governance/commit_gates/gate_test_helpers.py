@@ -8,7 +8,9 @@
 本模块提供公共路径，实际实现在 ``_gate_test_helpers.py``。
 """
 
-from tests.governance.commit_gates._gate_test_helpers import *  # noqa: F401,F403
-from tests.governance.commit_gates._gate_test_helpers import (  # noqa: F401
+# 同目录直导：repo tests 命名空间被 site-packages 同名 regular 包遮蔽（import tests
+# 解析到 site-packages/tests，tests.governance 不存在），绝对导入转发不可用
+from _gate_test_helpers import *  # noqa: F401,F403
+from _gate_test_helpers import (  # noqa: F401
     make_mock_gateway,
 )
