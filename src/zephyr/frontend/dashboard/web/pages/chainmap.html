@@ -37,7 +37,7 @@
         </div>
         <!-- L2/L3 链层（chainmap-cluster 模块持有；2026-09-12 iFinD 等距流程图：分区块蜿蜒+锚点大块，列概念废除） -->
         <div class="cm-canvas card" id="cm-canvas-cluster" style="display:none">
-          <div class="cm-legend" id="cm-legend-cluster"><i class="d d-p"></i>环节＝点开公司名单<i class="d d-g"></i>绿色＝全球环节<i class="d d-d"></i>暗虚线＝暂无落位<i class="d d-g2"></i>⚙＝股权（悬停明细）<i class="d d-o"></i>⚡＝催化命中<i class="d d-r"></i>红线＝供应流向<i class="d d-l"></i>蓝线＝构成关系</div>
+          <div class="cm-legend" id="cm-legend-cluster"><i class="d d-p"></i>环节＝点开公司名单<i class="d d-g"></i>绿色＝全球环节<i class="d d-d"></i>暗虚线＝暂无落位<i class="d d-g2"></i>⚙＝股权（悬停明细）<i class="d d-o"></i>⚡＝催化命中<i class="d d-r"></i>红线＝供应流向<i class="d d-l"></i>蓝线＝构成关系｜连线＝悬停/点环节后显示其上下游</div>
           <div class="cm-world" id="cm-world-cluster">
             <svg class="cm-wires" id="cm-wires-cluster"></svg>
             <div class="cm-nodes" id="cm-nodes-cluster"></div>
@@ -176,6 +176,9 @@
   #cm-wires-cluster g.cm-ch { transition:opacity .18s; }
   #cm-wires-cluster g.cm-ch.dimmed { opacity:.09; }   /* .15→.09：聚焦时他链幽灵感降噪（Owner 2026-09-13"画面乱"） */
   #cm-wires-cluster .cm-catb { cursor:pointer; }
+  /* 连线显隐（Owner 2026-09-13 拍板）：默认全隐；悬停环节临时亮，点开抽屉钉选常亮（.lit 由 litEdges 管理） */
+  #cm-wires-cluster .cm-edge { opacity:0; transition:opacity .18s; }
+  #cm-wires-cluster .cm-edge.lit { opacity:.6; }
   #cm-eq-overlay { position:fixed; z-index:880; width:330px; max-width:92vw; background:#0d131d; border:1px solid #2c3a52;
     border-radius:8px; box-shadow:0 8px 24px rgba(0,0,0,.5); padding:8px; font-size:11px; color:#c6cdd8; }
   #cm-eq-overlay .cm-eq-h { font-weight:700; color:#7db4e8; margin-bottom:5px; }

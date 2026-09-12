@@ -559,7 +559,7 @@
     var body = '';
     plates.forEach(function (p) {
       var g = '<g class="cm-ov-pl" data-cid="' + esc2(p.c.id) + '">';
-      g += '<rect x="' + p.x + '" y="' + p.y + '" width="' + p.w + '" height="' + p.h + '" rx="12" fill="#141f38" stroke="#2b3d64"/>';
+      g += '<rect x="' + p.x + '" y="' + p.y + '" width="' + p.w + '" height="' + p.h + '" rx="12" fill="rgba(20,31,56,.48)" stroke="rgba(74,102,158,.45)"/>';
       g += '<g class="cm-ov-pl-h"><title>' + esc2(p.c.name) + ' · ' + p.c.n_chains + ' 链 · ' + p.c.n_companies + ' 公司——点击进链层</title>' +
         '<text x="' + (p.x + OV.ZPAD) + '" y="' + (p.y + 18) + '" font-size="12.5" font-weight="700" fill="#8fb0ea">' + esc2(p.c.name) + '</text>' +
         '<text x="' + (p.x + p.w - OV.ZPAD) + '" y="' + (p.y + 18) + '" text-anchor="end" font-size="10" fill="#525d70">' + p.c.n_chains + ' 链 · ' + p.c.n_companies + ' 公司</text></g>';

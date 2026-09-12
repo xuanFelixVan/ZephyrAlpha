@@ -20,8 +20,9 @@
     cubeE: ['#2a1c0e', '#221708', '#1a1206', '#8a4a12', '#c9a06a'],
     chip: ['#1b2843', '#31456e', '#c6d4f0'],
     chipMore: ['#16223a', '#31456e', '#8fb0ea'],
-    zone: ['#141f38', '#2b3d64', '#8fb0ea'],
-    anchorPlate: ['#1a2a4e', '#35507f', '#9fc4f8'],
+    /* 底板半透明淡色（Owner 2026-09-13：实底太唐突，要淡+透） */
+    zone: ['rgba(20,31,56,.55)', 'rgba(74,102,158,.5)', '#8fb0ea'],
+    anchorPlate: ['rgba(26,42,78,.55)', 'rgba(90,126,190,.5)', '#9fc4f8'],
     edgeR: '#e06a6a', edgeB: '#6f95e0'
   };
   var ZONE_NAMES = ['材料与零部件', '装备', '工艺', '产品', '服务'];
@@ -40,7 +41,7 @@
 
   var C = { cid: null, name: '', data: null, busy: false, view: { z: 1, x: 0, y: 0 },
             pos: {}, focusChain: null, focusChainName: null, focusNode: null, market: 'all', cat: null,
-            focusOff: false, autoFocused: false };
+            focusOff: false, autoFocused: false, pin: null };   /* pin=抽屉钉选环节（其上下游连线常亮，Owner 2026-09-13 拍板：默认不显线） */
 
   function canvasEl() { return document.getElementById('cm-canvas-cluster'); }
   function worldEl() { return document.getElementById('cm-world-cluster'); }
@@ -354,7 +355,7 @@
         var mx = (p1.x + p2.x) / 2, my = (p1.y + p2.y) / 2 - 18;
         g += '<path class="cm-edge" data-f="' + e[0] + '" data-t="' + e[1] + '" d="M' + p1.x + ',' + p1.y +
           ' Q' + mx + ',' + my + ' ' + p2.x + ',' + p2.y + '" fill="none" stroke="' + (red ? T.edgeR : T.edgeB) +
-          '" stroke-width="1.8" opacity=".55" marker-end="url(#' + (red ? 'cmArR' : 'cmArB') + ')"/>';
+          '" stroke-width="1.8" marker-end="url(#' + (red ? 'cmArR' : 'cmArB') + ')"/>';
       });
       ch.nodes.forEach(function (n) {
         var p = C.pos[n.node_id];
@@ -398,11 +399,32 @@
     fitView();
   }
 
+  /* ── 连线显隐（Owner 2026-09-13 拍板）：默认全隐；悬停环节=临时亮其上下游线；
+   * 点开抽屉=钉选（pin），抽屉关闭才熄灭 ── */
+  function litEdges(nid) {
+    var svg = svgEl();
+    if (!svg) return;
+    Array.prototype.forEach.call(svg.querySelectorAll('.cm-edge.lit'), function (p) { p.classList.remove('lit'); });
+    if (!nid) return;
+    Array.prototype.forEach.call(svg.querySelectorAll('.cm-edge'), function (p) {
+      if (p.getAttribute('data-f') === nid || p.getAttribute('data-t') === nid) p.classList.add('lit');
+    });
+  }
+
   /* ── SVG 事件委托：环节/「+N」点击开抽屉、股权徽章 hover/click 浮层、链名聚焦开关 ── */
   function bindSvgEvents(view) {
     var svg = svgEl();
     if (!svg || svg.dataset.bound) return;
     svg.dataset.bound = '1';
+    svg.addEventListener('mouseover', function (e) {
+      if (!e.target.closest) return;
+      var nd = e.target.closest('.cm-nd');
+      if (nd) litEdges(nd.getAttribute('data-node'));   /* 悬停预览 */
+    });
+    svg.addEventListener('mouseout', function (e) {
+      if (!e.target.closest) return;
+      if (e.target.closest('.cm-nd')) litEdges(C.pin);   /* 恢复钉选态（无钉选=熄灭） */
+    });
     svg.addEventListener('click', function (e) {
       if (!e.target.closest) return;
       var eq = e.target.closest('.cm-eqb');
@@ -656,6 +678,8 @@
     var side = document.getElementById('cm-side');
     if (!side) return;
     hideEqOverlay(true);
+    C.pin = n.node_id;   /* 钉选：其上下游连线常亮（litEdges），关抽屉熄灭 */
+    litEdges(n.node_id);
     side.style.display = 'block';
     side.innerHTML = '<div class="dim" style="font-size:12px">加载公司落位…</div>';
     var catalyzed = !!(C.cat && C.cat.nodes && C.cat.nodes[n.node_id]);
@@ -700,7 +724,7 @@
             ' ｜ 公司 ' + d.total + ' 家（按角色/置信度排序，最多展示 200）</div>' +
             (rows || '<div class="dim" style="font-size:12px">该环节暂无公司映射</div>');
           var x = side.querySelector('.cm-x');
-          if (x) x.addEventListener('click', function () { side.style.display = 'none'; });
+          if (x) x.addEventListener('click', function () { side.style.display = 'none'; C.pin = null; litEdges(null); });
           Array.prototype.forEach.call(side.querySelectorAll('.cm-co[data-sym]'), function (el) {
             el.addEventListener('click', function () {
               ZK.bus.emit('cm:open-company', { symbol: el.getAttribute('data-sym'), name: el.getAttribute('data-name') });
@@ -728,7 +752,7 @@
     var c = canvasEl(), side = document.getElementById('cm-side');
     if (c) c.style.display = showIt ? 'block' : 'none';
     if (side && !showIt) side.style.display = 'none';
-    if (!showIt) clearRail();
+    if (!showIt) { clearRail(); C.pin = null; litEdges(null); }
   }
 
   var nameMaps = {};
