@@ -52,7 +52,7 @@ CREATE TABLE IF NOT EXISTS c1_backtest.node_verdict
     hit_ratio         Nullable(Float64)       COMMENT '命中方向占比 0~1(方法相关,无值为 NULL)',
     significance      LowCardinality(String)  DEFAULT '' COMMENT '显著性土规标记(ok/insufficient_samples/oos_decay_suspect,空=不适用)',
     verdict           LowCardinality(String)  COMMENT '结论(valid/noise/pending/untested/decaying)',
-    verdict_reason    LowCardinality(String)  DEFAULT 'legacy_notes' COMMENT '判定原因枚举(runner 代码生成禁手填,G2/R2): insufficient_samples/oos_decay_suspect/slip_within_tolerance/slip_marginal/slip_above_tolerance/counterfactual_missing/counterfactual_confirmed/avoided_negative/reference_price_missing/method_not_applicable; 存量=legacy_notes',
+    verdict_reason    LowCardinality(String)  DEFAULT 'legacy_notes' COMMENT '判定原因枚举(runner 代码生成禁手填,G2/R2): insufficient_samples/oos_decay_suspect/slip_within_tolerance/slip_marginal/slip_above_tolerance/counterfactual_missing/counterfactual_confirmed/avoided_negative/reference_price_missing/method_not_applicable/discrimination_confirmed/discrimination_below_threshold/discrimination_reversed(P0-001/002 agg_discrimination 扩展,2026-09-12); 存量=legacy_notes',
     verdict_at        DateTime64(3, 'Asia/Shanghai') COMMENT '结论时间',
     notes             String                  DEFAULT '' COMMENT '一句话结论备注(AI/人可读)'
 )

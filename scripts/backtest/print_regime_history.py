@@ -68,10 +68,10 @@ DEFAULT_LOAD_START = "2014-01-01"  # walk-forward 5 年训练历史
 
 
 def _tsv_cell(v: Any) -> str:
-    """CH TSV 转义：None→\\N，制表符清洗（runner 同款，防列错位）。"""
+    """CH TSV 转义：None→\\N；清洗 \\t/\\r/\\n（红蓝对抗 A1：probs_json 含换行断列）。"""
     if v is None:
         return "\\N"
-    return str(v).replace("\t", " ")
+    return str(v).replace("\t", " ").replace("\r", " ").replace("\n", " ")
 
 
 def _state_health(dominants: pd.Series) -> str:
@@ -151,11 +151,15 @@ def run(args: argparse.Namespace) -> dict[str, Any]:
         # build_shrinkage_schedule 的 schedule 值=float(shrinkage.value)；分量（confidence_signal/
         # risk_signal）不经该接口暴露，置 None（教材核心=7 维概率；P0-002 需分量时再扩展 builder）
         sh_val = schedule.get(dt)
+        # 红蓝对抗 A2：概率含 NaN/Inf 时 allow_nan=False 会抛异常——先清洗
+        # （QA 报告已单独统计 NaN 格数；nan 清洗为保守值，异常概率在 QA 可见不静默）
+        clean = {k: float(np.nan_to_num(float(p.probabilities.get(k, 0.0)), nan=0.0, posinf=1.0, neginf=0.0))
+                 for k in _STATE_KEYS}
         probs_json = json.dumps(
             {
-                "probabilities": {k: round(float(p.probabilities.get(k, 0.0)), 6) for k in _STATE_KEYS},
-                "hmm": {k: round(float(v), 6) for k, v in (p.hmm_probabilities or {}).items()},
-                "overlay": {k: round(float(v), 6) for k, v in (p.overlay_probabilities or {}).items()},
+                "probabilities": {k: round(v, 6) for k, v in clean.items()},
+                "hmm": {k: round(float(np.nan_to_num(float(v), nan=0.0)), 6) for k, v in (p.hmm_probabilities or {}).items()},
+                "overlay": {k: round(float(np.nan_to_num(float(v), nan=0.0)), 6) for k, v in (p.overlay_probabilities or {}).items()},
                 "schema_version": p.schema_version,
             },
             allow_nan=False,
@@ -163,15 +167,15 @@ def run(args: argparse.Namespace) -> dict[str, Any]:
         rows.append(
             {
                 "trade_date": dt.strftime("%Y-%m-%d"),
-                "p_r1": float(p.probabilities.get("r1", 0.0)),
-                "p_r2": float(p.probabilities.get("r2", 0.0)),
-                "p_r3": float(p.probabilities.get("r3", 0.0)),
-                "p_r4": float(p.probabilities.get("r4", 0.0)),
-                "p_r10": float(p.probabilities.get("r10", 0.0)),
-                "p_r11": float(p.probabilities.get("r11", 0.0)),
-                "p_r12": float(p.probabilities.get("r12", 0.0)),
+                "p_r1": clean["r1"],
+                "p_r2": clean["r2"],
+                "p_r3": clean["r3"],
+                "p_r4": clean["r4"],
+                "p_r10": clean["r10"],
+                "p_r11": clean["r11"],
+                "p_r12": clean["r12"],
                 "dominant": p.dominant_regime,
-                "confidence": float(p.confidence),
+                "confidence": float(np.nan_to_num(float(p.confidence), nan=0.0)),
                 "confidence_signal": None,
                 "risk_signal": None,
                 "shrinkage": float(sh_val) if sh_val is not None else None,
