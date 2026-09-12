@@ -94,6 +94,16 @@ from dataclasses import dataclass, field
 from datetime import date, datetime, timedelta
 from typing import Any, Final
 
+from zephyr.signal_ashare.core.analysis_utils import (
+    as_date as _as_date,
+    daily_returns as _daily_returns,
+    lead_streaks as _lead_streaks,
+    normalize_trade_date as _normalize_date,
+    resolve_query_fn as _resolve_query_fn_impl,
+    resolve_table as _resolve_table_impl,
+    rotation_speeds as _rotation_speeds,
+)
+
 logger = logging.getLogger(__name__)
 
 __all__: Final = [
@@ -235,18 +245,8 @@ class SectorLeaderBoard:
 # ------------------------------------------------------------------
 
 
-def _normalize_date(trade_date: str | date | datetime) -> date:
-    """归一化交易日（str 须 YYYY-MM-DD，非法格式抛 ValueError）。"""
-    if isinstance(trade_date, datetime):
-        return trade_date.date()
-    if isinstance(trade_date, date):
-        return trade_date
-    return datetime.strptime(str(trade_date), "%Y-%m-%d").date()
 
 
-def _as_date(v: Any) -> date:
-    """CH 日期行值归一（date 原样返回，str 按 YYYY-MM-DD 解析）。"""
-    return v if isinstance(v, date) else _normalize_date(v)
 
 
 def _default_client() -> Any | None:

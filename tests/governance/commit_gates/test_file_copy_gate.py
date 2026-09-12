@@ -49,6 +49,7 @@ if str(_PROJECT_ROOT) not in sys.path:
     sys.path.insert(0, str(_PROJECT_ROOT))
 
 import zephyr.gov_enforcement.commit_gates.file_copy_gate as _fc_mod  # noqa: E402
+import zephyr.gov_enforcement.commit_gates.file_copy_gate as _gate_mod_file_copy_gate  # noqa: E402
 from zephyr.gov_enforcement.commit_gates.file_copy_gate import (  # noqa: E402
     _THRESHOLD,
     make_file_copy_gate,
@@ -118,10 +119,10 @@ def _patch_subprocess(monkeypatch, result=None, raises=None):
         def _raise(*a, **k):
             raise raises
 
-        monkeypatch.setattr(subprocess, "run", _raise)
+        monkeypatch.setattr(_gate_mod_file_copy_gate, "run_checker_script", _raise)
     else:
         res = result or _SubResult(0, "", "")
-        monkeypatch.setattr(subprocess, "run", lambda *a, **k: res)
+        monkeypatch.setattr(_gate_mod_file_copy_gate, "run_checker_script", lambda *a, **k: res)
 
 
 # ---------------------------------------------------------------------------

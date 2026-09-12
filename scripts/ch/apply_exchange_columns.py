@@ -337,6 +337,16 @@ def verify() -> tuple[bool, list[str]]:
     diffs: list[str] = []
     ok_count = 0
 
+    # View 无物理列（其 SELECT 已输出 canonical 化数据），排除出物理列检查
+    views = {
+        ln.strip()
+        for ln in ch_writer.query(
+            f"SELECT name FROM system.tables WHERE database = '{DB}' AND engine = 'View' FORMAT TabSeparated"
+        ).splitlines()
+        if ln.strip()
+    }
+    tables = [t for t in tables if t not in views]
+
     for tbl in tables:
         desc = ch_writer.query(f"DESCRIBE TABLE {DB}.{tbl}")
         names = {ln.split("\t")[0] for ln in desc.splitlines() if ln.strip()}

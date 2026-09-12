@@ -8,7 +8,7 @@ from datetime import date, timedelta
 
 import pytest
 
-from zephyr.signal_ashare import sector_divergence as mod
+from zephyr.signal_ashare.sector import sector_divergence as mod
 from zephyr.signal_ashare.sector.sector_divergence import (
     SectorDivergenceConfig,
     compute_sector_divergence,

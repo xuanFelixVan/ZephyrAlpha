@@ -10,7 +10,7 @@ from datetime import date, timedelta
 
 import pytest
 
-from zephyr.signal_ashare import sector_leader as mod
+from zephyr.signal_ashare.sector import sector_leader as mod
 from zephyr.signal_ashare.sector.sector_leader import (
     SectorLeaderConfig,
     identify_sector_leaders,

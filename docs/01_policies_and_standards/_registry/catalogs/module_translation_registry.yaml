@@ -47960,6 +47960,20 @@ entries:
   desc_zh: ""
   desc_en: ""
   plain_zh: "G07 情绪分层相关性验证脚本：拉情绪因子分层收益算相关性，人工跑一次出报告归档（一次性验证批）"
+- module_path: src/zephyr/signal_ashare/core/analysis_utils.py
+  domain_id: D_ASHARE_SIGNAL
+  name_zh: "信号域共享分析原语"
+  name_en: ""
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "信号域的公共小函数库：日期归一、日收益、领涨连击、轮动速度、表名和查询函数解析——8个模块共用一份，不再各自复制"
+- module_path: scripts/governance/d5_architecture/validators/validate_strategy_production_map.py
+  domain_id: D_BACKTEST
+  name_zh: "策略工厂图结构校验器"
+  name_en: ""
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "校验策略生产全景图 YAML 的结构合法性：字段完整性/边引用闭合/十层位合法/laws 与产品清单存在/built 节点必有代码锚/未声明反馈环拒绝/store_refs 三要素；另提供仓储存在性检查（磁盘路径与 CH 表实测，待定入库位降级为警告）。只读禁写，坏图必须被拦。"
 
 battle_map_steps:
 - step_id: BM-BUY-05

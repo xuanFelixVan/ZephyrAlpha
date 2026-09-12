@@ -654,3 +654,95 @@ R8（本轮）=signal（E9 归因方法论+字段缺口发现）。六向寻路�
 选型/施工级细节（影子组合工程实现、IS 分解工程化等），按 SOP 时间盒记档为施工轨材料，
 骨架讨论层完成度=职能完备性达成（上游数据/中段工厂/下游运营/末段资本，四段无断链）。
 下一班 R9 起：若 Owner 要继续，转向施工级深挖；否则骨架层维持封矿+下游半场待拍板。
+
+
+---
+
+# v9：字段设计定稿提案（2026-09-13 第五轮讨论，全网调研后）
+
+## 工厂产品清单定稿（生产什么）
+
+1. **策略**（主产品）——身份证 strategy_id（CAND-* 或 STR-*，永久）；
+2. **因子**（双重身份：中间品+独立产品，v3.1 PDF 因子化后地位升级）——factor_id；
+3. **组合方案**（E8 输出：sleeve 装配=策略的策略）——portfolio_id；
+4. **证据链**（每件产品的判定书+成绩单+run 档案——防幻觉的实体载体）；
+5. **阴性档案**（挂起/失败/无效记录——防重复挖的负资产，c4_deferrals.csv 为首例）。
+
+## 产品字段定稿（身份证+出生证，对标 C2PA 溯源标准+HF Model Card+业界因子卡）
+
+### 身份证块（永久不变）
+id / type(strategy|factor|portfolio) / version / lifecycle_status
+
+### 出生证块（C2PA digitalSourceType 式溯源，机器生成禁手填）
+birth_channel（五车道 A-E/人工/混合——Owner 问的"哪个渠道生的"）
+birth_batch（run_id，指向出生考试档案）
+birth_source（原文指针或父策略 id——lineage 血统链，支撑"改一改再用"）
+author（AI 会话 id/人工）
+birth_context（可选短文本：出生时针对什么行情/情境——仅当人工有明确先验时填，默认空）
+
+### 防幻觉块（来源可溯闸的字段化）
+evidence_refs（判定书+run 档案+外部来源 URL/发布方/年份）
+cross_validated（≥2 独立来源互证？）
+hallucination_check（来源可溯闸通过状态；**出生证由流水线机器写入，AI 禁手填**
+——业界警示：AI 伪造自己的溯源元数据（metadata hallucination）是新兴风险，
+我方对策=SOP"verdict_reason 由代码生成禁手填"同一原则的延伸）
+
+### 防漂移块（registry v1.x 字段已全，不重造，引用即可）
+baseline_sharpe/expectancy/win_rate/max_drawdown（出生基线快照）
+last_evaluated_at / decay_cause / decay_threshold / drift_psi
+——防漂移字段清单与 strategy_registry 现行 schema 完全一致，零新增。
+
+## 调研对标（全网实查）
+
+- 业界因子卡通用六块：Identity/Expression/Data lineage/Simulation settings/
+  Performance/Taxonomy（WorldQuant alpha 属性+Qlib Alpha158 惯例+101 Alphas 模板）——
+  与本方案同构，我方多出防幻觉块（100% AI 施工特有）；
+- 溯源标准：C2PA digitalSourceType（AI 生成内容强制标注的业界标准）——出生证块对标；
+- 元数据幻觉风险有司法级警示（HERAM 框架/Guardrails 溯源验证器）——
+  机器写入+禁手填原则成立；
+- 防漂移：NIST AI RMF/ISO 42001 均列 drift 检测为治理核心——registry 字段先行正确。
+
+## 落点
+
+① 工厂图节点字段集=v8 基座+store_refs+本表四块（产品实体）；② 出生证由 E 车道
+流水线机器写入；③ 防漂移块直接引用 strategy_registry 现行字段，schema 零改动。
+
+
+---
+
+# v9.1：字段修订——author 降级 + 字典归口（2026-09-13）
+
+## author 字段降级（不设独立字段）
+
+Owner 质疑成立：模型选择是成本经济学非质量信号（长期接最便宜模型），字段值随成本漂移。
+处理：
+1. 产品字段集删除 author；
+2. 生成方式语义沿用 strategy_registry 现有 origin 枚举（human/llm_distilled/llm_assisted/hybrid）
+   ——稳定语义类别，不随平台过时；
+3. 平台/会话细度走 birth_batch→run 档案→created_by 指针反查（档案已记录，不复制）；
+   未来按模型分析幸存率的需求，加"会话→平台"维表查询时解决，不动产品 schema。
+
+## 字典归口（新增字段的对齐义务）
+
+| 字段 | 归口 |
+|---|---|
+| 图节点字段（store_refs/lane/build_status/gate_refs） | 工厂图 entry_schema 内嵌（学 TDM）+ 落图批同步 field_dictionary |
+| 产品出生证字段（birth_channel/birth_batch/birth_source） | strategy_registry entry_schema 扩展（origin/created_at/evidence 已在，增量小） |
+| 防漂移字段（baseline_*/decay_cause/drift_psi） | registry 现行字段，零改动 |
+| CH 列 | 一列不加；出生证细节住 run 档案（指针原则） |
+
+字段设计至此收口：基座(TDM 字段集)+四新增(store_refs/lane/build_status/gate_refs)
++产品实体四块(身份证/出生证/防幻觉/防漂移)+author 降级。下一步=逐环节流程细节（从 E1 起）。
+
+
+---
+
+# v10：全景图已落盘（2026-09-13）
+
+本讨论稿的历史使命完成——全部讨论已消化为正式结构稿：
+**config/strategy_production_map.yaml**（策略生产全景图 v0.1，commit 489f433165）：
+10 层 15 节点 15 边 2 反馈环，四段价值链（调度→进货→构造→考试→去重→监控→前哨→组装→归因），
+字段=TDM 集+工厂四件，4 处已建锚点挂图，E7-E9 下游半场已批进第一版。
+
+后续讨论改为**在图上改**（边聊边改边落盘），本稿转为背景设计文集（不再追加）。
+遗留施工件见图内 build_status=pending 节点与 §六 决策点 1-7。

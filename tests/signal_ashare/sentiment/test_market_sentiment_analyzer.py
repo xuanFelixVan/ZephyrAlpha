@@ -324,7 +324,7 @@ class TestGrayscaleAnalysis:
         self, analyzer: MarketSentimentAnalyzer, monkeypatch: pytest.MonkeyPatch
     ):
         # 人为压低 max(P) → fallback_triggered=True
-        from zephyr.signal_ashare import market_sentiment_analyzer as msa
+        from zephyr.signal_ashare.sentiment import market_sentiment_analyzer as msa
 
         monkeypatch.setattr(msa, "GRAYSCALE_SIGMA", 200.0)  # 极大带宽 → 分布近似均匀
         result = analyzer.analyze_grayscale(make_input())

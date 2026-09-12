@@ -121,7 +121,7 @@ __all__ = [
 ]
 
 _SEAT_REGISTRY_PATH = (
-    Path(__file__).resolve().parents[3] / "docs/01_policies_and_standards/_registry/catalogs/seat_registry.yaml"
+    Path(__file__).resolve().parents[4] / "docs/01_policies_and_standards/_registry/catalogs/seat_registry.yaml"
 )
 
 

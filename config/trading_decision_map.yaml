@@ -304,8 +304,7 @@ nodes:
     strategy_mounts: []
 
   - node_id: TDM-E-L1-S3
-    note_confirmed: 2026-09-13
-
+    note_confirmed: "2026-09-13"
     name_zh: 赚钱效应传感器
     market: cn_a
     flow: entry_flow
@@ -316,6 +315,7 @@ nodes:
     algo_note_zh: >-
       算昨日涨停股今天的平均溢价（低开多少/高开多少）和晋级率（昨天涨停今天又板的占比）：平均溢价>2% 且晋级率>50%=情绪健康；连续两天负溢价=退潮确认。
       这是短线最领先的指标——打板资金赚不赚钱直接决定明天还敢不敢接。
+      注：2026-09-13 DEDUP 批将本节点引用的公共分析原语抽取至 core/analysis_utils 共享实现，行为等价
     factor_refs: []
     data_refs: [DS-082, DS-107]
     module_ref: src/zephyr/signal_ashare/limit_up/lhb_premium_analyzer.py
@@ -619,7 +619,7 @@ nodes:
 
   # ── 树枝02 轮动序列追踪（BM-SEL-08）────────────────────────
   - node_id: TDM-E-L2-02
-    note_confirmed: 2026-09-13
+    note_confirmed: "2026-09-13"
     name_zh: 轮动序列追踪
     market: cn_a
     flow: entry_flow
@@ -630,6 +630,7 @@ nodes:
     algo_note_zh: >-
       看板块指数与资金的移动方向：谁在连涨+资金连进=接棒区，谁在连跌+资金连出=撤离区。
       输出接棒榜单（资金正在去的方向）。
+      注：2026-09-13 DEDUP 批将本节点引用的公共分析原语抽取至 core/analysis_utils 共享实现，行为等价
     parent_node: TDM-E-L2
     factor_refs: []
     data_refs: [DS-170]
@@ -723,7 +724,7 @@ nodes:
     strategy_mounts: []
 
   - node_id: TDM-E-L2-03-1
-    note_confirmed: 2026-09-13
+    note_confirmed: "2026-09-13"
     name_zh: 扩散指标进度追踪
     # C6 施工（gw-tdm-20260909）：adjustment_cycle_tracker 扩展扩散指标段
     market: cn_a
@@ -736,6 +737,7 @@ nodes:
       扩散指标：板块内站上 20 日线的个股占比。
       从 <30% 回升穿 50%=调整结束信号；从 >80% 掉头向下=见顶信号。
       给出进度百分比。
+      注：2026-09-13 DEDUP 批将本节点引用的公共分析原语抽取至 core/analysis_utils 共享实现，行为等价
     parent_node: TDM-E-L2-03
     factor_refs: []
     data_refs: [DS-170]
@@ -956,8 +958,7 @@ nodes:
     strategy_mounts: []
 
   - node_id: TDM-E-L2-06-2
-    note_confirmed: 2026-09-13
-
+    note_confirmed: "2026-09-13"
     name_zh: 龙头识别定位
     market: cn_a
     flow: entry_flow
@@ -968,6 +969,7 @@ nodes:
     algo_note_zh: >-
       龙头四定位：板块强度榜第一+最先涨停=龙头；跟涨大盘股=中军；后涨小票=跟风；不上不下的=中位股。
       定位决定持股预期与止损宽度（龙头宽/跟风窄）。
+      注：2026-09-13 DEDUP 批将本节点引用的公共分析原语抽取至 core/analysis_utils 共享实现，行为等价
     parent_node: TDM-E-L2-06
     factor_refs: []
     data_refs: [DS-059]
@@ -1771,8 +1773,7 @@ nodes:
     strategy_mounts: []
 
   - node_id: TDM-E-L3-12-2
-    note_confirmed: 2026-09-13
-
+    note_confirmed: "2026-09-13"
     name_zh: 龙虎榜席位追踪
     market: cn_a
     flow: entry_flow
@@ -1783,6 +1784,7 @@ nodes:
     algo_note_zh: >-
       龙虎榜席位定性：知名游资（一线席位）买入=短线情绪票接力有戏；机构专用席位=中线票；'拉萨天团'（散户大本营）=次日溢价差。
       席位风格决定这只票的玩法。
+      注：2026-09-13 DEDUP 批将本节点引用的公共分析原语抽取至 core/analysis_utils 共享实现，行为等价
     parent_node: TDM-E-L3-12
     factor_refs: []
     seat_refs: [SEAT-INST-001, SEAT-INST-002, SEAT-INST-003, SEAT-YOUZI-001, SEAT-YOUZI-002, SEAT-YOUZI-003]

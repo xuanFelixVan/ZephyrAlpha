@@ -49,6 +49,7 @@ if str(_PROJECT_ROOT) not in sys.path:
     sys.path.insert(0, str(_PROJECT_ROOT))
 
 import zephyr.gov_enforcement.commit_gates.vocab_hardcode_gate as _vocab_mod  # noqa: E402
+import zephyr.gov_enforcement.commit_gates.vocab_hardcode_gate as _gate_mod_vocab_hardcode_gate  # noqa: E402
 from zephyr.gov_enforcement.commit_gates.vocab_hardcode_gate import (  # noqa: E402
     make_vocab_hardcode_gate,
 )
@@ -123,10 +124,10 @@ def _patch_subprocess(monkeypatch, result=None, raises=None):
         def _raise(*a, **k):
             raise raises
 
-        monkeypatch.setattr(subprocess, "run", _raise)
+        monkeypatch.setattr(_gate_mod_vocab_hardcode_gate, "run_checker_script", _raise)
     else:
         res = result or _SubResult(0, "", "")
-        monkeypatch.setattr(subprocess, "run", lambda *a, **k: res)
+        monkeypatch.setattr(_gate_mod_vocab_hardcode_gate, "run_checker_script", lambda *a, **k: res)
 
 
 # ---------------------------------------------------------------------------

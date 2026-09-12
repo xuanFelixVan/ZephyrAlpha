@@ -29,6 +29,7 @@ if str(_SRC) not in sys.path:
 # 模块自身有 bootstrap（L54-57）把 _shared 所在目录加到 sys.path，exec_module 时自动执行。
 import importlib.util  # noqa: E402
 
+import zephyr.gov_enforcement.commit_gates.directory_contract_gate as _gate_mod_directory_contract_gate  # noqa: E402
 from zephyr.gov_enforcement.commit_gates.directory_contract_gate import (  # noqa: E402
     make_directory_contract_gate,
 )
@@ -185,7 +186,7 @@ class TestCheckSubprocessException:
         def _raise_timeout(*args, **kwargs):
             raise subprocess.TimeoutExpired(cmd="mock", timeout=60)
 
-        monkeypatch.setattr(subprocess, "run", _raise_timeout)
+        monkeypatch.setattr(_gate_mod_directory_contract_gate, "run_checker_script", _raise_timeout)
         spec = make_directory_contract_gate()
         passed, detail = spec.check(gw, [str(tmp_path / "foo.py")])
         assert passed is False
@@ -200,7 +201,7 @@ class TestCheckSubprocessException:
         def _raise_oserror(*args, **kwargs):
             raise OSError("mock permission denied")
 
-        monkeypatch.setattr(subprocess, "run", _raise_oserror)
+        monkeypatch.setattr(_gate_mod_directory_contract_gate, "run_checker_script", _raise_oserror)
         spec = make_directory_contract_gate()
         passed, detail = spec.check(gw, [str(tmp_path / "foo.py")])
         assert passed is False
@@ -221,7 +222,9 @@ class TestRelativePathHandling:
         captured_cmd: list[str] = []
 
         def _capture_cmd(*args, **kwargs):
-            captured_cmd.extend(args[0])
+            # run_checker_script(check_script: Path, cmd_args: list, ...) → 拼全命令
+            captured_cmd.extend([str(args[0])])
+            captured_cmd.extend(args[1])
 
             class _R:
                 returncode = 0
@@ -230,13 +233,13 @@ class TestRelativePathHandling:
 
             return _R()
 
-        monkeypatch.setattr(subprocess, "run", _capture_cmd)
+        monkeypatch.setattr(_gate_mod_directory_contract_gate, "run_checker_script", _capture_cmd)
         spec = make_directory_contract_gate()
         spec.check(gw, [str(tmp_path / "docs/sub/foo.py")])
         # cmd = [python, checker_script, rel_path]
         # rel_path 应该是 "docs/sub/foo.py"（正斜杠），不是 "docs\\sub\\foo.py"
-        assert len(captured_cmd) >= 3
-        rel_arg = captured_cmd[2]
+        assert len(captured_cmd) >= 2
+        rel_arg = captured_cmd[1]
         assert "\\" not in rel_arg, f"expected forward slash, got {rel_arg!r}"
         assert rel_arg == "docs/sub/foo.py"
 

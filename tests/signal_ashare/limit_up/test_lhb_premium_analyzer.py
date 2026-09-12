@@ -9,7 +9,7 @@ from datetime import date, timedelta
 
 import pytest
 
-from zephyr.signal_ashare import lhb_premium_analyzer as mod
+from zephyr.signal_ashare.limit_up import lhb_premium_analyzer as mod
 from zephyr.signal_ashare.limit_up.lhb_premium_analyzer import (
     LhbPremiumResult,
     compute_lhb_premium,

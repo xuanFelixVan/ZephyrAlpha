@@ -24,6 +24,7 @@ _SRC = Path(__file__).parent.parent.parent.parent / "src"
 if str(_SRC) not in sys.path:
     sys.path.insert(0, str(_SRC))
 
+import zephyr.gov_enforcement.commit_gates.ttl_gate as _gate_mod_ttl_gate  # noqa: E402
 from zephyr.gov_enforcement.commit_gates.ttl_gate import make_ttl_gate  # noqa: E402
 from zephyr.gov_enforcement.rule_bridge.commit_gate_registry import GateSpec  # noqa: E402
 
@@ -166,7 +167,7 @@ class TestCheckSubprocessException:
         def _raise_timeout(*args, **kwargs):
             raise subprocess.TimeoutExpired(cmd="mock", timeout=60)
 
-        monkeypatch.setattr(subprocess, "run", _raise_timeout)
+        monkeypatch.setattr(_gate_mod_ttl_gate, "run_checker_script", _raise_timeout)
         spec = make_ttl_gate()
         passed, detail = spec.check(gw, [str(tmp_path / "foo.py")])
         assert passed is False
@@ -181,7 +182,7 @@ class TestCheckSubprocessException:
         def _raise_oserror(*args, **kwargs):
             raise OSError("mock permission denied")
 
-        monkeypatch.setattr(subprocess, "run", _raise_oserror)
+        monkeypatch.setattr(_gate_mod_ttl_gate, "run_checker_script", _raise_oserror)
         spec = make_ttl_gate()
         passed, detail = spec.check(gw, [str(tmp_path / "foo.py")])
         assert passed is False

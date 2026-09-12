@@ -161,6 +161,16 @@ from zephyr.signal_ashare.sector.sector_siphon import (
     detect_siphon_state,
 )
 
+from zephyr.signal_ashare.core.analysis_utils import (
+    as_date as _as_date,
+    daily_returns as _daily_returns,
+    lead_streaks as _lead_streaks,
+    normalize_trade_date as _normalize_date,
+    resolve_query_fn as _resolve_query_fn_impl,
+    resolve_table as _resolve_table_impl,
+    rotation_speeds as _rotation_speeds,
+)
+
 logger = logging.getLogger(__name__)
 
 __all__: Final = [
@@ -173,9 +183,9 @@ __all__: Final = [
     "load_sector_attribute_labels",
 ]
 
-_LABELS_PATH: Final = Path(__file__).resolve().parents[3] / "config" / "sector_attribute_labels.yaml"
+_LABELS_PATH: Final = Path(__file__).resolve().parents[4] / "config" / "sector_attribute_labels.yaml"
 _SEAT_REGISTRY_PATH: Final = (
-    Path(__file__).resolve().parents[3] / "docs/01_policies_and_standards/_registry/catalogs/seat_registry.yaml"
+    Path(__file__).resolve().parents[4] / "docs/01_policies_and_standards/_registry/catalogs/seat_registry.yaml"
 )
 
 #: 市场统计指数代码（剔除出板块全集；880001 作市场收益代理）
@@ -382,13 +392,6 @@ def load_sector_attribute_labels(path: str | Path | None = None) -> SectorAttrib
 # ------------------------------------------------------------------
 
 
-def _normalize_date(trade_date: str | date | datetime) -> date:
-    """归一化交易日（str 须 YYYY-MM-DD，非法格式抛 ValueError）。"""
-    if isinstance(trade_date, datetime):
-        return trade_date.date()
-    if isinstance(trade_date, date):
-        return trade_date
-    return datetime.strptime(str(trade_date), "%Y-%m-%d").date()
 
 
 def _default_client():
@@ -402,9 +405,6 @@ def _default_client():
         return None
 
 
-def _as_date(v: Any) -> date:
-    """CH 日期行值归一（date 原样返回，str 按 YYYY-MM-DD 解析）。"""
-    return v if isinstance(v, date) else _normalize_date(v)
 
 
 def _midrank_percentile(sorted_values: list[float], current: float) -> float:
@@ -469,14 +469,6 @@ def _daily_close_amount(
     return by_sector, sorted(dates)
 
 
-def _daily_returns(series: list[tuple[date, float, float]]) -> dict[date, float]:
-    """(日期, 收盘, 成交额) 序列 → {日期: 日收益}（相邻收盘比，基准 ≤0 跳过）。"""
-    out: dict[date, float] = {}
-    for i in range(1, len(series)):
-        prev_close = series[i - 1][1]
-        if prev_close > 0:
-            out[series[i][0]] = series[i][1] / prev_close - 1.0
-    return out
 
 
 def _amount_maps(
@@ -504,21 +496,6 @@ def _leader_series(
     return leaders, cross
 
 
-def _lead_streaks(leaders: dict[date, str], all_dates: list[date]) -> dict[date, int]:
-    """逐日连续领涨天数（同一板块截至当日连续领涨日数；当日无领涨 → 不出键）。"""
-    streaks: dict[date, int] = {}
-    prev_leader: str | None = None
-    streak = 0
-    for d in all_dates:
-        leader = leaders.get(d)
-        if leader is None:
-            prev_leader = None
-            streak = 0
-            continue
-        streak = streak + 1 if leader == prev_leader else 1
-        prev_leader = leader
-        streaks[d] = streak
-    return streaks
 
 
 def _disp_signal(
@@ -549,22 +526,6 @@ def _disp_signal(
     return 1 if amount_today > mean_amt * 1.2 and ret_today < ret_prev * 0.5 else 0
 
 
-def _rotation_speeds(
-    amounts: dict[str, dict[date, float]],
-    all_dates: list[date],
-) -> dict[date, float]:
-    """逐日轮动速度 = 0.5 × Σ|今日成交额占比 − 昨日占比|（22 号 §3.1⑨ fast_rotation 口径）。"""
-    speeds: dict[date, float] = {}
-    prev_shares: dict[str, float] | None = None
-    for d in all_dates:
-        today = {c: amap[d] for c, amap in amounts.items() if d in amap}
-        total = sum(today.values())
-        shares = {c: a / total for c, a in today.items()} if total > 0 else {}
-        if prev_shares is not None and shares:
-            codes = set(shares) | set(prev_shares)
-            speeds[d] = 0.5 * sum(abs(shares.get(c, 0.0) - prev_shares.get(c, 0.0)) for c in codes)
-        prev_shares = shares
-    return speeds
 
 
 def _build_rotation_states(

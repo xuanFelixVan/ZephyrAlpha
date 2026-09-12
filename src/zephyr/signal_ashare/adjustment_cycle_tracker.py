@@ -121,6 +121,11 @@ from zephyr.signal_ashare.sector.sector_adjustment import (
     compute_adjustment_progress,
 )
 
+from zephyr.signal_ashare.core.analysis_utils import (
+    resolve_query_fn as _resolve_query_fn_impl,
+    resolve_table as _resolve_table_impl,
+)
+
 _logger = logging.getLogger(__name__)
 
 __all__: Final = [
@@ -318,19 +323,10 @@ class AdjustmentCycleTracker:
         self._config = config or AdjustmentCycleConfig()
 
     def _resolve_query_fn(self) -> Callable[..., str]:
-        if self._query_fn is not None:
-            return self._query_fn
-        from zephyr.data import ch_reader  # 延迟导入，保持纯函数路径零 DB 依赖
-
-        return ch_reader.query
+        return _resolve_query_fn_impl(self._query_fn)
 
     def _resolve_table(self) -> str:
-        registry = self._registry
-        if registry is None:
-            from zephyr.data.table_registry import get_registry
-
-            registry = get_registry()
-        return registry.table("market_index_kline")
+        return _resolve_table_impl(self._registry)
 
     def load_index_closes(
         self,

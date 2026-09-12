@@ -9,7 +9,7 @@ from datetime import date, timedelta
 
 import pytest
 
-from zephyr.signal_ashare import option_sentiment as mod
+from zephyr.signal_ashare.sentiment import option_sentiment as mod
 from zephyr.signal_ashare.sentiment.option_sentiment import (
     OptionSentimentResult,
     compute_option_sentiment,

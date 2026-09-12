@@ -112,7 +112,7 @@ __all__: Final = [
 ]
 
 _SEAT_REGISTRY_PATH: Final = (
-    Path(__file__).resolve().parents[3] / "docs/01_policies_and_standards/_registry/catalogs/seat_registry.yaml"
+    Path(__file__).resolve().parents[4] / "docs/01_policies_and_standards/_registry/catalogs/seat_registry.yaml"
 )
 
 # SQL 集中化（§5.160.2）：模块级 SQL_* 常量，参数化查询禁 f-string 插值
