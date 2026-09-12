@@ -928,13 +928,18 @@ def backtest_run(body: dict[str, Any]) -> dict[str, Any]:
 
 
 @app.get("/api/backtest-run")
-def backtest_run_status(task_id: str = Query(..., min_length=3)) -> dict[str, Any]:
-    """轮询回测任务状态：running / done / failed（done 附 run_id 可跳详情）。"""
-    with _BT_RUN_LOCK:
-        st = _BT_RUN_STATE.get(task_id.strip())
+def _run_status_of(lock: object, state: dict, task_id: str) -> dict[str, Any]:
+    """回测任务状态轮询公共实现（backtest/整装两管道同构，克隆合并 2026-09-12）。"""
+    with lock:
+        st = state.get(task_id.strip())
     if st is None:
         return {"ok": False, "error": "task not found", "status": "unknown"}
     return {"ok": True, **st}
+
+
+def backtest_run_status(task_id: str = Query(..., min_length=3)) -> dict[str, Any]:
+    """轮询回测任务状态：running / done / failed（done 附 run_id 可跳详情）。"""
+    return _run_status_of(_BT_RUN_LOCK, _BT_RUN_STATE, task_id)
 
 
 # ── 整装回测三端点（二期整装回测后端，MOD-FWCOMP-001；追加式，复用 backtest-run task 模式）──
@@ -1119,11 +1124,7 @@ def framework_backtest_run(body: dict[str, Any]) -> dict[str, Any]:
 @app.get("/api/framework-backtest-run")
 def framework_backtest_run_status(task_id: str = Query(..., min_length=3)) -> dict[str, Any]:
     """轮询整装回测任务状态：running / done / failed（done 附 run_id=bt-fw-* 可跳详情）。"""
-    with _FW_RUN_LOCK:
-        st = _FW_RUN_STATE.get(task_id.strip())
-    if st is None:
-        return {"ok": False, "error": "task not found", "status": "unknown"}
-    return {"ok": True, **st}
+    return _run_status_of(_FW_RUN_LOCK, _FW_RUN_STATE, task_id)
 
 
 # ── 信号两接口（#BT-PIPELINE-001 阶段三）：market_signal_history 两管道 ──
@@ -2312,6 +2313,7 @@ def tdm_map() -> dict[str, Any]:
             "fallback": n.get("fallback"),
             "module_ref": n.get("module_ref"),
             "module_id": n.get("module_id"),
+            "red_reason": n.get("red_reason"),   # v1.10 红因徽标（structural/pending_gate/not_built/terminal）
             "mounts": [m.get("strategy_ref") if isinstance(m, dict) else str(m)
                        for m in (n.get("strategy_mounts") or [])],
             "refs": {k: n.get(k) or [] for k in (
@@ -2455,9 +2457,67 @@ def _cm_name_override() -> dict[str, str]:
 
 
 def _cm_col(tier: str | None) -> str:
-    """tier 三值直读（上游/中游/下游）；空/unspecified/未知值落"通用"（禁编造列）。"""
+    """tier 三值直读（上游/中游/下游）；空/unspecified/未知值落"通用"（禁编造列）。
+
+    2026-09-12 tier 退役：仅作存量 fallback（拓扑分层失败时的历史值兜底），
+    cluster 主视图列改由 _cm_chain_cols 拓扑推导（本函数保留防其它调用点回归）。"""
     t = (tier or "").strip()
     return t if t in ("上游", "中游", "下游") else "通用"
+
+
+def _cm_chain_cols(nodes: list[tuple[str, str]], edges: list[tuple[str, str]]) -> dict[str, str]:
+    """链内拓扑分层 → 三列映射（2026-09-12 tier 退役裁定：层位由边结构派生，不读人工标注）。
+
+    Kahn 剥洋葱：入度0=第0层（源头→"上游"列），逐层推进，最末层→"下游"列，中间层→"中游"列。
+    分层失败（链内成环）或零内部边的散点节点 → fallback 存量 tier 值（无则"通用"）。
+    nodes=[(node_id, tier)]，edges=[(from,to)]（调用方保证两端属同链）。
+    """
+    tiers = {nid: t for nid, t in nodes}
+    fallback = {nid: _cm_col(t) for nid, t in nodes}
+    ids = set(fallback)
+    indeg = {nid: 0 for nid in ids}
+    outdeg = {nid: 0 for nid in ids}
+    adj: dict[str, list[str]] = {nid: [] for nid in ids}
+    n_inner = 0
+    for a, b in edges:
+        if a in ids and b in ids and a != b:
+            adj[a].append(b)
+            indeg[b] += 1
+            outdeg[a] += 1
+            n_inner += 1
+    if n_inner == 0:
+        return fallback
+    layer = {nid: 0 for nid in ids if indeg[nid] == 0}
+    frontier = [nid for nid, d in indeg.items() if d == 0]
+    if not frontier:          # 全部入度>=1 → 链内成环，整体 fallback 存量 tier
+        return fallback
+    seen = set(frontier)
+    depth = 0
+    while frontier:
+        depth += 1
+        nxt: list[str] = []
+        for u in frontier:
+            for v in adj[u]:
+                indeg[v] -= 1
+                if indeg[v] == 0:
+                    layer[v] = depth
+                    seen.add(v)
+                    nxt.append(v)
+        frontier = nxt
+    max_layer = max(layer.values())
+    out: dict[str, str] = {}
+    for nid in ids:
+        if nid not in seen or (indeg[nid] == 0 and outdeg[nid] == 0):
+            out[nid] = fallback[nid]                 # 环上节点/链内零边散点 → 存量兜底
+        elif max_layer == 0:                          # 无内部边可达推进（退化）→ 兜底
+            out[nid] = fallback[nid]
+        elif layer[nid] == 0:
+            out[nid] = "上游"
+        elif layer[nid] == max_layer:
+            out[nid] = "下游"
+        else:
+            out[nid] = "中游"
+    return out
 
 
 def _cm_fr_rank(function_role: str | None) -> int:
@@ -2510,7 +2570,7 @@ def _cm_build_galaxy(market: str = "all") -> dict[str, Any]:
             c = node_chain.get(nid)
             if c:
                 sym_chains.setdefault(sym, set()).add(c)
-        cur.execute("SELECT from_node, to_node FROM ig_edge")
+        cur.execute("SELECT from_node, to_node FROM ig_edge WHERE valid_to IS NULL")  # 2026-09-12: 已关闭边不参与 galaxy 链对权重
         pair_w: dict[tuple[str, str], float] = {}
         for a, b in cur.fetchall():
             c1, c2 = node_chain.get(a), node_chain.get(b)
@@ -2735,7 +2795,7 @@ def chainmap_cluster(cid: str = Query(..., min_length=2, max_length=8),
             # 簇级 LIMIT 防大簇失控（计数在前端按行累加，明细行每环节另截 _CM_EQUITY_ROWS_CAP）
             cur.execute(_SQL_CM_EQ_AGG, (ids, ids))
             eq_rows = cur.fetchall()
-            cur.execute("SELECT from_node, to_node FROM ig_edge")
+            cur.execute("SELECT from_node, to_node FROM ig_edge WHERE valid_to IS NULL")  # 2026-09-12: 已关闭边(edge_close PIT)不参与分层与展示
             all_edges = cur.fetchall()
             conn.close()
         except Exception:
@@ -2761,9 +2821,23 @@ def chainmap_cluster(cid: str = Query(..., min_length=2, max_length=8),
                     "relation": rel or "", "verification": verif or "",
                     "as_of": str(asof) if asof else None,
                 })
+        # 拓扑分层列（2026-09-12 tier 退役裁定）：列由链内边结构派生（入度0=上游列/最末层=下游列），
+        # 存量 tier 仅作环/散点节点的 fallback 展示——列结构与前端组件契约不变
+        node_chain_of = {r[0]: r[1] for r in node_rows}
+        chain_nodes: dict[str, list[tuple[str, str]]] = {c["chain_id"]: [] for c in members}
+        chain_edges_in: dict[str, list[tuple[str, str]]] = {}
+        for a, b in all_edges:
+            ca, cb = node_chain_of.get(a), node_chain_of.get(b)
+            if ca is not None and ca == cb:
+                chain_edges_in.setdefault(ca, []).append((a, b))
+        for nid, ch, name, tier, frole in node_rows:
+            chain_nodes.setdefault(ch, []).append((nid, tier or ""))
+        colmap: dict[str, str] = {}
+        for _ch, nl in chain_nodes.items():
+            colmap.update(_cm_chain_cols(nl, chain_edges_in.get(_ch, [])))
         for nid, ch, name, tier, frole in node_rows:
             nodes_by_chain[ch].append({"node_id": nid, "name": name, "tier": tier or "",
-                                       "col": _cm_col(tier), "function_role": (frole or "").strip(),
+                                       "col": colmap.get(nid) or _cm_col(tier), "function_role": (frole or "").strip(),
                                        "n_companies": ncomp.get(nid, 0), "equity": eq_by_node.get(nid)})
         for lst in nodes_by_chain.values():
             # 链内按 function_role 分组聚集（八值展示序），同组内公司数降序（项 2 分列适配）
@@ -2897,14 +2971,16 @@ _CM_CAT_IND_ALIAS: dict[str, str] = {
 # 裸 SQL 集中化（R96 常量豁免通道；NOQA-VALIDATION 密度闸否决行级 noqa 后的正道）：
 # chainmap 只读诊断 SQL，参数化绑定无注入面，与既有 chainmap 段手写 execute 同一读口径
 # 墓碑过滤统一口径(NO-BARE-SQL 集中化;墓碑=已合并历史快照,S8/S21/S24/api 同口径)
-_SQL_CM_NODES_ALL = "SELECT node_id, chain_id FROM ig_node WHERE name NOT LIKE '%%（已并入%%'"
+# 2026-09-12 增：valid_to IS NULL（node_close/edge_close PIT 收口后，已关闭节点/边不参与地图）
+_SQL_CM_NODES_ALL = ("SELECT node_id, chain_id FROM ig_node"
+                     " WHERE name NOT LIKE '%%（已并入%%' AND valid_to IS NULL")
 _SQL_CM_NODES_BY_CHAIN = (
     "SELECT node_id, chain_id, name, tier, function_role FROM ig_node"
-    " WHERE chain_id = ANY(%s) AND name NOT LIKE '%%（已并入%%'"
+    " WHERE chain_id = ANY(%s) AND name NOT LIKE '%%（已并入%%' AND valid_to IS NULL"
 )
 _SQL_CM_NODE_COMPS_BY_CHAIN = (
     "SELECT node_id, count(DISTINCT symbol) FROM ig_node_company WHERE valid_to IS NULL AND node_id IN "
-    "(SELECT node_id FROM ig_node WHERE chain_id = ANY(%s) AND name NOT LIKE '%%（已并入%%') GROUP BY node_id"
+    "(SELECT node_id FROM ig_node WHERE chain_id = ANY(%s) AND name NOT LIKE '%%（已并入%%' AND valid_to IS NULL) GROUP BY node_id"
 )
 _SQL_CM_EQ_AGG = (
     "SELECT node_id, dir, other, stake_pct, relation, verification, as_of, ue_name FROM ("
