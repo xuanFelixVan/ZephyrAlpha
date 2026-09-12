@@ -30,7 +30,7 @@ tier: tier_2_data_runtime
 status: active
 version: 1.3.0
 created: '2026-08-10'
-last_updated: '2026-08-15'
+last_updated: '2026-09-13'
 related_arch: '#ARCH-BREG-001'
 unique_key:
 - strategy_id
@@ -139,7 +139,7 @@ strategies:
     risk_rules: []
     holding_period: "波段"
     benchmark_id: "BMK-INDEX-001"
-    module_id: "MOD-STRATEGY"
+    module_id: "MOD-L05-001"
     doc_ref: "29_factor_strategy_extraction.md §F2.29"
     code_path: ""
     lifecycle_status: "candidate"
@@ -219,7 +219,7 @@ strategies:
     risk_rules: []
     holding_period: "波段"
     benchmark_id: "BMK-INDEX-001"
-    module_id: "MOD-STRATEGY"
+    module_id: "MOD-L05-001"
     doc_ref: "29_factor_strategy_extraction.md §F2.34"
     code_path: ""
     lifecycle_status: "candidate"
@@ -299,7 +299,7 @@ strategies:
     risk_rules: []
     holding_period: "波段"
     benchmark_id: "BMK-INDEX-001"
-    module_id: "MOD-STRATEGY"
+    module_id: "MOD-L05-001"
     doc_ref: "29_factor_strategy_extraction.md §F2.42"
     code_path: ""
     lifecycle_status: "candidate"
@@ -361,7 +361,7 @@ strategies:
     applies_to: ["stock"]
     tags: ["信号", "均线", "止损", "趋势"]
     algorithm_status: "pending_backtest"
-    evidence: ""
+    evidence: "家族替身证据|窗口=IS 2020-2023|Sharpe=1.08|run=SCR-C4-20260913-002056|台账键=CAND-b1ab42050d68|同族=pilot_002 MA5/10金叉(沪深300池)|登记=2026-09-13 C5聚类对质报告"
     code_symbol: null
     code_fingerprint: null
 
@@ -379,7 +379,7 @@ strategies:
     risk_rules: []
     holding_period: "波段"
     benchmark_id: "BMK-INDEX-001"
-    module_id: "MOD-STRATEGY"
+    module_id: "MOD-L05-001"
     doc_ref: "29_factor_strategy_extraction.md §F5.20"
     code_path: ""
     lifecycle_status: "candidate"
@@ -459,7 +459,7 @@ strategies:
     risk_rules: []
     holding_period: "波段"
     benchmark_id: "BMK-INDEX-001"
-    module_id: "MOD-STRATEGY"
+    module_id: "MOD-L05-001"
     doc_ref: "29_factor_strategy_extraction.md §F5.34"
     code_path: ""
     lifecycle_status: "candidate"
@@ -539,7 +539,7 @@ strategies:
     risk_rules: []
     holding_period: "波段"
     benchmark_id: "BMK-INDEX-001"
-    module_id: "MOD-STRATEGY"
+    module_id: "MOD-L05-001"
     doc_ref: "29_factor_strategy_extraction.md §F5.45"
     code_path: ""
     lifecycle_status: "candidate"
@@ -619,7 +619,7 @@ strategies:
     risk_rules: []
     holding_period: "波段"
     benchmark_id: "BMK-INDEX-001"
-    module_id: "MOD-STRATEGY"
+    module_id: "MOD-L05-001"
     doc_ref: "29_factor_strategy_extraction.md §F5.46"
     code_path: ""
     lifecycle_status: "candidate"
@@ -699,7 +699,7 @@ strategies:
     risk_rules: []
     holding_period: "波段"
     benchmark_id: "BMK-INDEX-001"
-    module_id: "MOD-STRATEGY"
+    module_id: "MOD-L05-001"
     doc_ref: "29_factor_strategy_extraction.md §F6.9"
     code_path: ""
     lifecycle_status: "candidate"
@@ -779,7 +779,7 @@ strategies:
     risk_rules: []
     holding_period: "波段"
     benchmark_id: "BMK-INDEX-001"
-    module_id: "MOD-STRATEGY"
+    module_id: "MOD-L05-001"
     doc_ref: "29_factor_strategy_extraction.md §F6.10"
     code_path: ""
     lifecycle_status: "candidate"
@@ -859,7 +859,7 @@ strategies:
     risk_rules: []
     holding_period: "波段"
     benchmark_id: "BMK-INDEX-001"
-    module_id: "MOD-STRATEGY"
+    module_id: "MOD-L05-001"
     doc_ref: "29_factor_strategy_extraction.md §F6.31"
     code_path: ""
     lifecycle_status: "candidate"
@@ -939,7 +939,7 @@ strategies:
     risk_rules: []
     holding_period: "波段"
     benchmark_id: "BMK-INDEX-001"
-    module_id: "MOD-STRATEGY"
+    module_id: "MOD-L05-001"
     doc_ref: "29_factor_strategy_extraction.md §F6.40"
     code_path: ""
     lifecycle_status: "candidate"
@@ -1019,7 +1019,7 @@ strategies:
     risk_rules: []
     holding_period: "波段"
     benchmark_id: "BMK-INDEX-001"
-    module_id: "MOD-STRATEGY"
+    module_id: "MOD-L05-001"
     doc_ref: "29_factor_strategy_extraction.md §F7.11"
     code_path: ""
     lifecycle_status: "candidate"
@@ -1081,7 +1081,7 @@ strategies:
     applies_to: ["stock"]
     tags: ["情绪", "规则", "资金", "超跌"]
     algorithm_status: "pending_backtest"
-    evidence: ""
+    evidence: "家族替身证据|窗口=IS 2020-2023|Sharpe=1.15|DSR=0.5309|run=SCR-C4-20260913-002056|台账键=CAND-e3da6fa71af1|同族=恐慌反弹持有19日(000852指数口径)|登记=2026-09-13 C5聚类对质报告"
     code_symbol: null
     code_fingerprint: null
 
@@ -1099,7 +1099,7 @@ strategies:
     risk_rules: []
     holding_period: "波段"
     benchmark_id: "BMK-INDEX-001"
-    module_id: "MOD-STRATEGY"
+    module_id: "MOD-L05-001"
     doc_ref: "29_factor_strategy_extraction.md §F7.33"
     code_path: ""
     lifecycle_status: "candidate"
@@ -1186,7 +1186,7 @@ strategies:
     risk_rules: []
     holding_period: "波段"
     benchmark_id: "BMK-INDEX-001"
-    module_id: "MOD-STRATEGY"
+    module_id: "MOD-L05-001"
     doc_ref: "29_factor_strategy_extraction.md §F8.46"
     code_path: ""
     lifecycle_status: "candidate"
@@ -1266,7 +1266,7 @@ strategies:
     risk_rules: []
     holding_period: "波段"
     benchmark_id: "BMK-INDEX-001"
-    module_id: "MOD-STRATEGY"
+    module_id: "MOD-L05-001"
     doc_ref: "29_factor_strategy_extraction.md §F8.55"
     code_path: ""
     lifecycle_status: "candidate"
@@ -1346,7 +1346,7 @@ strategies:
     risk_rules: []
     holding_period: "波段"
     benchmark_id: "BMK-INDEX-001"
-    module_id: "MOD-STRATEGY"
+    module_id: "MOD-L05-001"
     doc_ref: "29_factor_strategy_extraction.md §S9.1（吸收 S9.6/S9.7/S9.12）"
     code_path: ""
     lifecycle_status: "candidate"
@@ -1426,7 +1426,7 @@ strategies:
     risk_rules: []
     holding_period: "波段"
     benchmark_id: "BMK-INDEX-001"
-    module_id: "MOD-STRATEGY"
+    module_id: "MOD-L05-001"
     doc_ref: "29_factor_strategy_extraction.md §S9.2"
     code_path: ""
     lifecycle_status: "candidate"
@@ -1506,7 +1506,7 @@ strategies:
     risk_rules: []
     holding_period: "波段"
     benchmark_id: "BMK-INDEX-001"
-    module_id: "MOD-STRATEGY"
+    module_id: "MOD-L05-001"
     doc_ref: "29_factor_strategy_extraction.md §S9.3"
     code_path: ""
     lifecycle_status: "candidate"
@@ -1586,7 +1586,7 @@ strategies:
     risk_rules: []
     holding_period: "波段"
     benchmark_id: "BMK-INDEX-001"
-    module_id: "MOD-STRATEGY"
+    module_id: "MOD-L05-001"
     doc_ref: "29_factor_strategy_extraction.md §S9.4"
     code_path: ""
     lifecycle_status: "candidate"
@@ -1666,7 +1666,7 @@ strategies:
     risk_rules: []
     holding_period: "波段"
     benchmark_id: "BMK-INDEX-001"
-    module_id: "MOD-STRATEGY"
+    module_id: "MOD-L05-001"
     doc_ref: "29_factor_strategy_extraction.md §S9.5（吸收 S15.3）"
     code_path: ""
     lifecycle_status: "candidate"
@@ -1746,7 +1746,7 @@ strategies:
     risk_rules: []
     holding_period: "波段"
     benchmark_id: "BMK-INDEX-001"
-    module_id: "MOD-STRATEGY"
+    module_id: "MOD-L05-001"
     doc_ref: "29_factor_strategy_extraction.md §S9.8"
     code_path: ""
     lifecycle_status: "candidate"
@@ -1826,7 +1826,7 @@ strategies:
     risk_rules: []
     holding_period: "波段"
     benchmark_id: "BMK-INDEX-001"
-    module_id: "MOD-STRATEGY"
+    module_id: "MOD-L05-001"
     doc_ref: "29_factor_strategy_extraction.md §S9.10"
     code_path: ""
     lifecycle_status: "candidate"
@@ -1906,7 +1906,7 @@ strategies:
     risk_rules: []
     holding_period: "波段"
     benchmark_id: "BMK-INDEX-001"
-    module_id: "MOD-STRATEGY"
+    module_id: "MOD-L05-001"
     doc_ref: "29_factor_strategy_extraction.md §S9.11（吸收 S9.57）"
     code_path: ""
     lifecycle_status: "candidate"
@@ -1986,7 +1986,7 @@ strategies:
     risk_rules: []
     holding_period: "波段"
     benchmark_id: "BMK-INDEX-001"
-    module_id: "MOD-STRATEGY"
+    module_id: "MOD-L05-001"
     doc_ref: "29_factor_strategy_extraction.md §S9.13"
     code_path: ""
     lifecycle_status: "candidate"
@@ -2066,7 +2066,7 @@ strategies:
     risk_rules: []
     holding_period: "波段"
     benchmark_id: "BMK-INDEX-001"
-    module_id: "MOD-STRATEGY"
+    module_id: "MOD-L05-001"
     doc_ref: "29_factor_strategy_extraction.md §S9.14"
     code_path: ""
     lifecycle_status: "candidate"
@@ -2146,7 +2146,7 @@ strategies:
     risk_rules: []
     holding_period: "波段"
     benchmark_id: "BMK-INDEX-001"
-    module_id: "MOD-STRATEGY"
+    module_id: "MOD-L05-001"
     doc_ref: "29_factor_strategy_extraction.md §S9.15"
     code_path: ""
     lifecycle_status: "candidate"
@@ -2226,7 +2226,7 @@ strategies:
     risk_rules: []
     holding_period: "波段"
     benchmark_id: "BMK-INDEX-001"
-    module_id: "MOD-STRATEGY"
+    module_id: "MOD-L05-001"
     doc_ref: "29_factor_strategy_extraction.md §S9.16"
     code_path: ""
     lifecycle_status: "candidate"
@@ -2306,7 +2306,7 @@ strategies:
     risk_rules: []
     holding_period: "波段"
     benchmark_id: "BMK-INDEX-001"
-    module_id: "MOD-STRATEGY"
+    module_id: "MOD-L05-001"
     doc_ref: "29_factor_strategy_extraction.md §S9.17"
     code_path: ""
     lifecycle_status: "candidate"
@@ -2386,7 +2386,7 @@ strategies:
     risk_rules: []
     holding_period: "波段"
     benchmark_id: "BMK-INDEX-001"
-    module_id: "MOD-STRATEGY"
+    module_id: "MOD-L05-001"
     doc_ref: "29_factor_strategy_extraction.md §S9.18"
     code_path: ""
     lifecycle_status: "candidate"
@@ -2466,7 +2466,7 @@ strategies:
     risk_rules: []
     holding_period: "波段"
     benchmark_id: "BMK-INDEX-001"
-    module_id: "MOD-STRATEGY"
+    module_id: "MOD-L05-001"
     doc_ref: "29_factor_strategy_extraction.md §S9.19"
     code_path: ""
     lifecycle_status: "candidate"
@@ -2546,7 +2546,7 @@ strategies:
     risk_rules: []
     holding_period: "波段"
     benchmark_id: "BMK-INDEX-001"
-    module_id: "MOD-STRATEGY"
+    module_id: "MOD-L05-001"
     doc_ref: "29_factor_strategy_extraction.md §S9.20"
     code_path: ""
     lifecycle_status: "candidate"
@@ -2626,7 +2626,7 @@ strategies:
     risk_rules: []
     holding_period: "波段"
     benchmark_id: "BMK-INDEX-001"
-    module_id: "MOD-STRATEGY"
+    module_id: "MOD-L05-001"
     doc_ref: "29_factor_strategy_extraction.md §S9.21"
     code_path: ""
     lifecycle_status: "candidate"
@@ -2706,7 +2706,7 @@ strategies:
     risk_rules: []
     holding_period: "波段"
     benchmark_id: "BMK-INDEX-001"
-    module_id: "MOD-STRATEGY"
+    module_id: "MOD-L05-001"
     doc_ref: "29_factor_strategy_extraction.md §S9.22"
     code_path: ""
     lifecycle_status: "candidate"
@@ -2786,7 +2786,7 @@ strategies:
     risk_rules: []
     holding_period: "波段"
     benchmark_id: "BMK-INDEX-001"
-    module_id: "MOD-STRATEGY"
+    module_id: "MOD-L05-001"
     doc_ref: "29_factor_strategy_extraction.md §S9.23"
     code_path: ""
     lifecycle_status: "candidate"
@@ -2866,7 +2866,7 @@ strategies:
     risk_rules: []
     holding_period: "波段"
     benchmark_id: "BMK-INDEX-001"
-    module_id: "MOD-STRATEGY"
+    module_id: "MOD-L05-001"
     doc_ref: "29_factor_strategy_extraction.md §S9.27"
     code_path: ""
     lifecycle_status: "candidate"
@@ -2946,7 +2946,7 @@ strategies:
     risk_rules: []
     holding_period: "波段"
     benchmark_id: "BMK-INDEX-001"
-    module_id: "MOD-STRATEGY"
+    module_id: "MOD-L05-001"
     doc_ref: "29_factor_strategy_extraction.md §S9.29"
     code_path: ""
     lifecycle_status: "candidate"
@@ -3026,7 +3026,7 @@ strategies:
     risk_rules: []
     holding_period: "波段"
     benchmark_id: "BMK-INDEX-001"
-    module_id: "MOD-STRATEGY"
+    module_id: "MOD-L05-001"
     doc_ref: "29_factor_strategy_extraction.md §S9.30（吸收 S9.56）"
     code_path: ""
     lifecycle_status: "candidate"
@@ -3106,7 +3106,7 @@ strategies:
     risk_rules: []
     holding_period: "波段"
     benchmark_id: "BMK-INDEX-001"
-    module_id: "MOD-STRATEGY"
+    module_id: "MOD-L05-001"
     doc_ref: "29_factor_strategy_extraction.md §S9.31"
     code_path: ""
     lifecycle_status: "candidate"
@@ -3187,7 +3187,7 @@ strategies:
     risk_rules: []
     holding_period: "波段"
     benchmark_id: "BMK-INDEX-001"
-    module_id: "MOD-STRATEGY"
+    module_id: "MOD-L05-001"
     doc_ref: "29_factor_strategy_extraction.md §S9.32"
     code_path: ""
     lifecycle_status: "candidate"
@@ -3267,7 +3267,7 @@ strategies:
     risk_rules: []
     holding_period: "波段"
     benchmark_id: "BMK-INDEX-001"
-    module_id: "MOD-STRATEGY"
+    module_id: "MOD-L05-001"
     doc_ref: "29_factor_strategy_extraction.md §S9.33"
     code_path: ""
     lifecycle_status: "candidate"
@@ -3347,7 +3347,7 @@ strategies:
     risk_rules: []
     holding_period: "波段"
     benchmark_id: "BMK-INDEX-001"
-    module_id: "MOD-STRATEGY"
+    module_id: "MOD-L05-001"
     doc_ref: "29_factor_strategy_extraction.md §S9.34"
     code_path: ""
     lifecycle_status: "candidate"
@@ -3427,7 +3427,7 @@ strategies:
     risk_rules: []
     holding_period: "波段"
     benchmark_id: "BMK-INDEX-001"
-    module_id: "MOD-STRATEGY"
+    module_id: "MOD-L05-001"
     doc_ref: "29_factor_strategy_extraction.md §S9.35"
     code_path: ""
     lifecycle_status: "candidate"
@@ -3507,7 +3507,7 @@ strategies:
     risk_rules: []
     holding_period: "波段"
     benchmark_id: "BMK-INDEX-001"
-    module_id: "MOD-STRATEGY"
+    module_id: "MOD-L05-001"
     doc_ref: "29_factor_strategy_extraction.md §S9.36"
     code_path: ""
     lifecycle_status: "candidate"
@@ -3587,7 +3587,7 @@ strategies:
     risk_rules: []
     holding_period: "波段"
     benchmark_id: "BMK-INDEX-001"
-    module_id: "MOD-STRATEGY"
+    module_id: "MOD-L05-001"
     doc_ref: "29_factor_strategy_extraction.md §S9.37"
     code_path: ""
     lifecycle_status: "candidate"
@@ -3667,7 +3667,7 @@ strategies:
     risk_rules: []
     holding_period: "波段"
     benchmark_id: "BMK-INDEX-001"
-    module_id: "MOD-STRATEGY"
+    module_id: "MOD-L05-001"
     doc_ref: "29_factor_strategy_extraction.md §S9.39"
     code_path: ""
     lifecycle_status: "candidate"
@@ -3747,7 +3747,7 @@ strategies:
     risk_rules: []
     holding_period: "波段"
     benchmark_id: "BMK-INDEX-001"
-    module_id: "MOD-STRATEGY"
+    module_id: "MOD-L05-001"
     doc_ref: "29_factor_strategy_extraction.md §S9.40"
     code_path: ""
     lifecycle_status: "candidate"
@@ -3827,7 +3827,7 @@ strategies:
     risk_rules: []
     holding_period: "波段"
     benchmark_id: "BMK-INDEX-001"
-    module_id: "MOD-STRATEGY"
+    module_id: "MOD-L05-001"
     doc_ref: "29_factor_strategy_extraction.md §S9.41"
     code_path: ""
     lifecycle_status: "candidate"
@@ -3907,7 +3907,7 @@ strategies:
     risk_rules: []
     holding_period: "波段"
     benchmark_id: "BMK-INDEX-001"
-    module_id: "MOD-STRATEGY"
+    module_id: "MOD-L05-001"
     doc_ref: "29_factor_strategy_extraction.md §S9.42"
     code_path: ""
     lifecycle_status: "candidate"
@@ -3987,7 +3987,7 @@ strategies:
     risk_rules: []
     holding_period: "波段"
     benchmark_id: "BMK-INDEX-001"
-    module_id: "MOD-STRATEGY"
+    module_id: "MOD-L05-001"
     doc_ref: "29_factor_strategy_extraction.md §S9.43"
     code_path: ""
     lifecycle_status: "candidate"
@@ -4067,7 +4067,7 @@ strategies:
     risk_rules: []
     holding_period: "波段"
     benchmark_id: "BMK-INDEX-001"
-    module_id: "MOD-STRATEGY"
+    module_id: "MOD-L05-001"
     doc_ref: "29_factor_strategy_extraction.md §S9.44"
     code_path: ""
     lifecycle_status: "candidate"
@@ -4147,7 +4147,7 @@ strategies:
     risk_rules: []
     holding_period: "波段"
     benchmark_id: "BMK-INDEX-001"
-    module_id: "MOD-STRATEGY"
+    module_id: "MOD-L05-001"
     doc_ref: "29_factor_strategy_extraction.md §S9.45"
     code_path: ""
     lifecycle_status: "candidate"
@@ -4227,7 +4227,7 @@ strategies:
     risk_rules: []
     holding_period: "波段"
     benchmark_id: "BMK-INDEX-001"
-    module_id: "MOD-STRATEGY"
+    module_id: "MOD-L05-001"
     doc_ref: "29_factor_strategy_extraction.md §S9.46"
     code_path: ""
     lifecycle_status: "candidate"
@@ -4307,7 +4307,7 @@ strategies:
     risk_rules: []
     holding_period: "波段"
     benchmark_id: "BMK-INDEX-001"
-    module_id: "MOD-STRATEGY"
+    module_id: "MOD-L05-001"
     doc_ref: "29_factor_strategy_extraction.md §S9.47"
     code_path: ""
     lifecycle_status: "candidate"
@@ -4387,7 +4387,7 @@ strategies:
     risk_rules: []
     holding_period: "波段"
     benchmark_id: "BMK-INDEX-001"
-    module_id: "MOD-STRATEGY"
+    module_id: "MOD-L05-001"
     doc_ref: "29_factor_strategy_extraction.md §S9.48"
     code_path: ""
     lifecycle_status: "candidate"
@@ -4467,7 +4467,7 @@ strategies:
     risk_rules: []
     holding_period: "波段"
     benchmark_id: "BMK-INDEX-001"
-    module_id: "MOD-STRATEGY"
+    module_id: "MOD-L05-001"
     doc_ref: "29_factor_strategy_extraction.md §S9.49"
     code_path: ""
     lifecycle_status: "candidate"
@@ -4547,7 +4547,7 @@ strategies:
     risk_rules: []
     holding_period: "波段"
     benchmark_id: "BMK-INDEX-001"
-    module_id: "MOD-STRATEGY"
+    module_id: "MOD-L05-001"
     doc_ref: "29_factor_strategy_extraction.md §S9.50"
     code_path: ""
     lifecycle_status: "candidate"
@@ -4627,7 +4627,7 @@ strategies:
     risk_rules: []
     holding_period: "波段"
     benchmark_id: "BMK-INDEX-001"
-    module_id: "MOD-STRATEGY"
+    module_id: "MOD-L05-001"
     doc_ref: "29_factor_strategy_extraction.md §S9.51"
     code_path: ""
     lifecycle_status: "candidate"
@@ -4707,7 +4707,7 @@ strategies:
     risk_rules: []
     holding_period: "波段"
     benchmark_id: "BMK-INDEX-001"
-    module_id: "MOD-STRATEGY"
+    module_id: "MOD-L05-001"
     doc_ref: "29_factor_strategy_extraction.md §S9.52"
     code_path: ""
     lifecycle_status: "candidate"
@@ -4787,7 +4787,7 @@ strategies:
     risk_rules: []
     holding_period: "波段"
     benchmark_id: "BMK-INDEX-001"
-    module_id: "MOD-STRATEGY"
+    module_id: "MOD-L05-001"
     doc_ref: "29_factor_strategy_extraction.md §S9.54"
     code_path: ""
     lifecycle_status: "candidate"
@@ -4867,7 +4867,7 @@ strategies:
     risk_rules: []
     holding_period: "波段"
     benchmark_id: "BMK-INDEX-001"
-    module_id: "MOD-STRATEGY"
+    module_id: "MOD-L05-001"
     doc_ref: "29_factor_strategy_extraction.md §S9.58"
     code_path: ""
     lifecycle_status: "candidate"
@@ -4947,7 +4947,7 @@ strategies:
     risk_rules: []
     holding_period: "波段"
     benchmark_id: "BMK-INDEX-001"
-    module_id: "MOD-STRATEGY"
+    module_id: "MOD-L05-001"
     doc_ref: "29_factor_strategy_extraction.md §S9.59"
     code_path: ""
     lifecycle_status: "candidate"
@@ -5027,7 +5027,7 @@ strategies:
     risk_rules: []
     holding_period: "波段"
     benchmark_id: "BMK-INDEX-001"
-    module_id: "MOD-STRATEGY"
+    module_id: "MOD-L05-001"
     doc_ref: "29_factor_strategy_extraction.md §S9.60"
     code_path: ""
     lifecycle_status: "candidate"
@@ -5107,7 +5107,7 @@ strategies:
     risk_rules: []
     holding_period: "波段"
     benchmark_id: "BMK-INDEX-001"
-    module_id: "MOD-STRATEGY"
+    module_id: "MOD-L05-001"
     doc_ref: "29_factor_strategy_extraction.md §S10.1"
     code_path: ""
     lifecycle_status: "candidate"
@@ -5169,7 +5169,7 @@ strategies:
     applies_to: ["stock"]
     tags: ["尾盘", "执行", "放量", "突破", "竞价", "股票池"]
     algorithm_status: "pending_backtest"
-    evidence: ""
+    evidence: "家族替身证据|窗口=IS 2020-2023|Sharpe=-0.308|DSR=0.0026|run=SCR-C4-20260913-002056|台账键=CAND-a4543012b464|同族=趋势交易5.0(HHV30+回归趋势,沪深300池)|登记=2026-09-13 C5聚类对质报告"
     code_symbol: null
     code_fingerprint: null
 
@@ -5187,7 +5187,7 @@ strategies:
     risk_rules: []
     holding_period: "波段"
     benchmark_id: "BMK-INDEX-001"
-    module_id: "MOD-STRATEGY"
+    module_id: "MOD-L05-001"
     doc_ref: "29_factor_strategy_extraction.md §S10.2"
     code_path: ""
     lifecycle_status: "candidate"
@@ -5249,7 +5249,7 @@ strategies:
     applies_to: ["stock"]
     tags: ["出货", "均线", "形态", "放量", "缩量", "趋势"]
     algorithm_status: "pending_backtest"
-    evidence: ""
+    evidence: "家族替身证据|窗口=IS 2020-2023|Sharpe=0.0|run=SCR-C4-20260913-002056|台账键=CAND-1970782c2adb|同族=回踩均线搏反弹(MA21/55回踩,全A池)|登记=2026-09-13 C5聚类对质报告"
     code_symbol: null
     code_fingerprint: null
 
@@ -5268,7 +5268,7 @@ strategies:
     risk_rules: []
     holding_period: "波段"
     benchmark_id: "BMK-INDEX-001"
-    module_id: "MOD-STRATEGY"
+    module_id: "MOD-L05-001"
     doc_ref: "29_factor_strategy_extraction.md §S10.3"
     code_path: ""
     lifecycle_status: "candidate"
@@ -5348,7 +5348,7 @@ strategies:
     risk_rules: []
     holding_period: "波段"
     benchmark_id: "BMK-INDEX-001"
-    module_id: "MOD-STRATEGY"
+    module_id: "MOD-L05-001"
     doc_ref: "29_factor_strategy_extraction.md §S10.4"
     code_path: ""
     lifecycle_status: "candidate"
@@ -5428,7 +5428,7 @@ strategies:
     risk_rules: []
     holding_period: "波段"
     benchmark_id: "BMK-INDEX-001"
-    module_id: "MOD-STRATEGY"
+    module_id: "MOD-L05-001"
     doc_ref: "29_factor_strategy_extraction.md §S10.5"
     code_path: ""
     lifecycle_status: "candidate"
@@ -5508,7 +5508,7 @@ strategies:
     risk_rules: []
     holding_period: "波段"
     benchmark_id: "BMK-INDEX-001"
-    module_id: "MOD-STRATEGY"
+    module_id: "MOD-L05-001"
     doc_ref: "29_factor_strategy_extraction.md §S10.7（吸收 S10.25/S14.34）"
     code_path: ""
     lifecycle_status: "candidate"
@@ -5588,7 +5588,7 @@ strategies:
     risk_rules: []
     holding_period: "波段"
     benchmark_id: "BMK-INDEX-001"
-    module_id: "MOD-STRATEGY"
+    module_id: "MOD-L05-001"
     doc_ref: "29_factor_strategy_extraction.md §S10.8"
     code_path: ""
     lifecycle_status: "candidate"
@@ -5668,7 +5668,7 @@ strategies:
     risk_rules: []
     holding_period: "波段"
     benchmark_id: "BMK-INDEX-001"
-    module_id: "MOD-STRATEGY"
+    module_id: "MOD-L05-001"
     doc_ref: "29_factor_strategy_extraction.md §S10.10"
     code_path: ""
     lifecycle_status: "candidate"
@@ -5748,7 +5748,7 @@ strategies:
     risk_rules: []
     holding_period: "波段"
     benchmark_id: "BMK-INDEX-001"
-    module_id: "MOD-STRATEGY"
+    module_id: "MOD-L05-001"
     doc_ref: "29_factor_strategy_extraction.md §S10.11"
     code_path: ""
     lifecycle_status: "candidate"
@@ -5828,7 +5828,7 @@ strategies:
     risk_rules: []
     holding_period: "波段"
     benchmark_id: "BMK-INDEX-001"
-    module_id: "MOD-STRATEGY"
+    module_id: "MOD-L05-001"
     doc_ref: "29_factor_strategy_extraction.md §S10.12"
     code_path: ""
     lifecycle_status: "candidate"
@@ -5908,7 +5908,7 @@ strategies:
     risk_rules: []
     holding_period: "波段"
     benchmark_id: "BMK-INDEX-001"
-    module_id: "MOD-STRATEGY"
+    module_id: "MOD-L05-001"
     doc_ref: "29_factor_strategy_extraction.md §S10.13"
     code_path: ""
     lifecycle_status: "candidate"
@@ -5988,7 +5988,7 @@ strategies:
     risk_rules: []
     holding_period: "波段"
     benchmark_id: "BMK-INDEX-001"
-    module_id: "MOD-STRATEGY"
+    module_id: "MOD-L05-001"
     doc_ref: "29_factor_strategy_extraction.md §S10.15（吸收 S10.14/S10.39）"
     code_path: ""
     lifecycle_status: "candidate"
@@ -6068,7 +6068,7 @@ strategies:
     risk_rules: []
     holding_period: "波段"
     benchmark_id: "BMK-INDEX-001"
-    module_id: "MOD-STRATEGY"
+    module_id: "MOD-L05-001"
     doc_ref: "29_factor_strategy_extraction.md §S10.16（吸收 S10.9）"
     code_path: ""
     lifecycle_status: "candidate"
@@ -6148,7 +6148,7 @@ strategies:
     risk_rules: []
     holding_period: "波段"
     benchmark_id: "BMK-INDEX-001"
-    module_id: "MOD-STRATEGY"
+    module_id: "MOD-L05-001"
     doc_ref: "29_factor_strategy_extraction.md §S10.18"
     code_path: ""
     lifecycle_status: "candidate"
@@ -6228,7 +6228,7 @@ strategies:
     risk_rules: []
     holding_period: "波段"
     benchmark_id: "BMK-INDEX-001"
-    module_id: "MOD-STRATEGY"
+    module_id: "MOD-L05-001"
     doc_ref: "29_factor_strategy_extraction.md §S10.19（吸收 S10.21/S10.33/S10.37）"
     code_path: ""
     lifecycle_status: "candidate"
@@ -6308,7 +6308,7 @@ strategies:
     risk_rules: []
     holding_period: "波段"
     benchmark_id: "BMK-INDEX-001"
-    module_id: "MOD-STRATEGY"
+    module_id: "MOD-L05-001"
     doc_ref: "29_factor_strategy_extraction.md §S10.20（吸收 S10.38）"
     code_path: ""
     lifecycle_status: "candidate"
@@ -6388,7 +6388,7 @@ strategies:
     risk_rules: []
     holding_period: "波段"
     benchmark_id: "BMK-INDEX-001"
-    module_id: "MOD-STRATEGY"
+    module_id: "MOD-L05-001"
     doc_ref: "29_factor_strategy_extraction.md §S10.22"
     code_path: ""
     lifecycle_status: "candidate"
@@ -6468,7 +6468,7 @@ strategies:
     risk_rules: []
     holding_period: "波段"
     benchmark_id: "BMK-INDEX-001"
-    module_id: "MOD-STRATEGY"
+    module_id: "MOD-L05-001"
     doc_ref: "29_factor_strategy_extraction.md §S10.23"
     code_path: ""
     lifecycle_status: "candidate"
@@ -6548,7 +6548,7 @@ strategies:
     risk_rules: []
     holding_period: "波段"
     benchmark_id: "BMK-INDEX-001"
-    module_id: "MOD-STRATEGY"
+    module_id: "MOD-L05-001"
     doc_ref: "29_factor_strategy_extraction.md §S10.24"
     code_path: ""
     lifecycle_status: "candidate"
@@ -6628,7 +6628,7 @@ strategies:
     risk_rules: []
     holding_period: "波段"
     benchmark_id: "BMK-INDEX-001"
-    module_id: "MOD-STRATEGY"
+    module_id: "MOD-L05-001"
     doc_ref: "29_factor_strategy_extraction.md §S10.26"
     code_path: ""
     lifecycle_status: "candidate"
@@ -6708,7 +6708,7 @@ strategies:
     risk_rules: []
     holding_period: "波段"
     benchmark_id: "BMK-INDEX-001"
-    module_id: "MOD-STRATEGY"
+    module_id: "MOD-L05-001"
     doc_ref: "29_factor_strategy_extraction.md §S10.27"
     code_path: ""
     lifecycle_status: "candidate"
@@ -6788,7 +6788,7 @@ strategies:
     risk_rules: []
     holding_period: "波段"
     benchmark_id: "BMK-INDEX-001"
-    module_id: "MOD-STRATEGY"
+    module_id: "MOD-L05-001"
     doc_ref: "29_factor_strategy_extraction.md §S10.29"
     code_path: ""
     lifecycle_status: "candidate"
@@ -6868,7 +6868,7 @@ strategies:
     risk_rules: []
     holding_period: "波段"
     benchmark_id: "BMK-INDEX-001"
-    module_id: "MOD-STRATEGY"
+    module_id: "MOD-L05-001"
     doc_ref: "29_factor_strategy_extraction.md §S10.30"
     code_path: ""
     lifecycle_status: "candidate"
@@ -6948,7 +6948,7 @@ strategies:
     risk_rules: []
     holding_period: "波段"
     benchmark_id: "BMK-INDEX-001"
-    module_id: "MOD-STRATEGY"
+    module_id: "MOD-L05-001"
     doc_ref: "29_factor_strategy_extraction.md §S10.31"
     code_path: ""
     lifecycle_status: "candidate"
@@ -7028,7 +7028,7 @@ strategies:
     risk_rules: []
     holding_period: "波段"
     benchmark_id: "BMK-INDEX-001"
-    module_id: "MOD-STRATEGY"
+    module_id: "MOD-L05-001"
     doc_ref: "29_factor_strategy_extraction.md §S10.32"
     code_path: ""
     lifecycle_status: "candidate"
@@ -7109,7 +7109,7 @@ strategies:
     risk_rules: []
     holding_period: "波段"
     benchmark_id: "BMK-INDEX-001"
-    module_id: "MOD-STRATEGY"
+    module_id: "MOD-L05-001"
     doc_ref: "29_factor_strategy_extraction.md §S10.34"
     code_path: ""
     lifecycle_status: "candidate"
@@ -7189,7 +7189,7 @@ strategies:
     risk_rules: []
     holding_period: "波段"
     benchmark_id: "BMK-INDEX-001"
-    module_id: "MOD-STRATEGY"
+    module_id: "MOD-L05-001"
     doc_ref: "29_factor_strategy_extraction.md §S10.35"
     code_path: ""
     lifecycle_status: "candidate"
@@ -7269,7 +7269,7 @@ strategies:
     risk_rules: []
     holding_period: "波段"
     benchmark_id: "BMK-INDEX-001"
-    module_id: "MOD-STRATEGY"
+    module_id: "MOD-L05-001"
     doc_ref: "29_factor_strategy_extraction.md §S10.36"
     code_path: ""
     lifecycle_status: "candidate"
@@ -7349,7 +7349,7 @@ strategies:
     risk_rules: []
     holding_period: "波段"
     benchmark_id: "BMK-INDEX-001"
-    module_id: "MOD-STRATEGY"
+    module_id: "MOD-L05-001"
     doc_ref: "29_factor_strategy_extraction.md §S10.40"
     code_path: ""
     lifecycle_status: "candidate"
@@ -7429,7 +7429,7 @@ strategies:
     risk_rules: []
     holding_period: "波段"
     benchmark_id: "BMK-INDEX-001"
-    module_id: "MOD-STRATEGY"
+    module_id: "MOD-L05-001"
     doc_ref: "29_factor_strategy_extraction.md §S11.1"
     code_path: ""
     lifecycle_status: "candidate"
@@ -7509,7 +7509,7 @@ strategies:
     risk_rules: []
     holding_period: "波段"
     benchmark_id: "BMK-INDEX-001"
-    module_id: "MOD-STRATEGY"
+    module_id: "MOD-L05-001"
     doc_ref: "29_factor_strategy_extraction.md §S11.2"
     code_path: ""
     lifecycle_status: "candidate"
@@ -7589,7 +7589,7 @@ strategies:
     risk_rules: []
     holding_period: "波段"
     benchmark_id: "BMK-INDEX-001"
-    module_id: "MOD-STRATEGY"
+    module_id: "MOD-L05-001"
     doc_ref: "29_factor_strategy_extraction.md §S11.3"
     code_path: ""
     lifecycle_status: "candidate"
@@ -7669,7 +7669,7 @@ strategies:
     risk_rules: []
     holding_period: "波段"
     benchmark_id: "BMK-INDEX-001"
-    module_id: "MOD-STRATEGY"
+    module_id: "MOD-L05-001"
     doc_ref: "29_factor_strategy_extraction.md §S11.6"
     code_path: ""
     lifecycle_status: "candidate"
@@ -7749,7 +7749,7 @@ strategies:
     risk_rules: []
     holding_period: "波段"
     benchmark_id: "BMK-INDEX-001"
-    module_id: "MOD-STRATEGY"
+    module_id: "MOD-L05-001"
     doc_ref: "29_factor_strategy_extraction.md §S11.10"
     code_path: ""
     lifecycle_status: "candidate"
@@ -7829,7 +7829,7 @@ strategies:
     risk_rules: []
     holding_period: "波段"
     benchmark_id: "BMK-INDEX-001"
-    module_id: "MOD-STRATEGY"
+    module_id: "MOD-L05-001"
     doc_ref: "29_factor_strategy_extraction.md §S11.12"
     code_path: ""
     lifecycle_status: "candidate"
@@ -7909,7 +7909,7 @@ strategies:
     risk_rules: []
     holding_period: "波段"
     benchmark_id: "BMK-INDEX-001"
-    module_id: "MOD-STRATEGY"
+    module_id: "MOD-L05-001"
     doc_ref: "29_factor_strategy_extraction.md §S11.13"
     code_path: ""
     lifecycle_status: "candidate"
@@ -7989,7 +7989,7 @@ strategies:
     risk_rules: []
     holding_period: "波段"
     benchmark_id: "BMK-INDEX-001"
-    module_id: "MOD-STRATEGY"
+    module_id: "MOD-L05-001"
     doc_ref: "29_factor_strategy_extraction.md §S11.14"
     code_path: ""
     lifecycle_status: "candidate"
@@ -8069,7 +8069,7 @@ strategies:
     risk_rules: []
     holding_period: "波段"
     benchmark_id: "BMK-INDEX-001"
-    module_id: "MOD-STRATEGY"
+    module_id: "MOD-L05-001"
     doc_ref: "29_factor_strategy_extraction.md §S11.15"
     code_path: ""
     lifecycle_status: "candidate"
@@ -8149,7 +8149,7 @@ strategies:
     risk_rules: []
     holding_period: "波段"
     benchmark_id: "BMK-INDEX-001"
-    module_id: "MOD-STRATEGY"
+    module_id: "MOD-L05-001"
     doc_ref: "29_factor_strategy_extraction.md §S11.16"
     code_path: ""
     lifecycle_status: "candidate"
@@ -8229,7 +8229,7 @@ strategies:
     risk_rules: []
     holding_period: "波段"
     benchmark_id: "BMK-INDEX-001"
-    module_id: "MOD-STRATEGY"
+    module_id: "MOD-L05-001"
     doc_ref: "29_factor_strategy_extraction.md §S11.17（吸收 S11.22）"
     code_path: ""
     lifecycle_status: "candidate"
@@ -8309,7 +8309,7 @@ strategies:
     risk_rules: []
     holding_period: "波段"
     benchmark_id: "BMK-INDEX-001"
-    module_id: "MOD-STRATEGY"
+    module_id: "MOD-L05-001"
     doc_ref: "29_factor_strategy_extraction.md §S11.18"
     code_path: ""
     lifecycle_status: "candidate"
@@ -8389,7 +8389,7 @@ strategies:
     risk_rules: []
     holding_period: "波段"
     benchmark_id: "BMK-INDEX-001"
-    module_id: "MOD-STRATEGY"
+    module_id: "MOD-L05-001"
     doc_ref: "29_factor_strategy_extraction.md §S11.19"
     code_path: ""
     lifecycle_status: "candidate"
@@ -8469,7 +8469,7 @@ strategies:
     risk_rules: []
     holding_period: "波段"
     benchmark_id: "BMK-INDEX-001"
-    module_id: "MOD-STRATEGY"
+    module_id: "MOD-L05-001"
     doc_ref: "29_factor_strategy_extraction.md §S11.20"
     code_path: ""
     lifecycle_status: "candidate"
@@ -8549,7 +8549,7 @@ strategies:
     risk_rules: []
     holding_period: "波段"
     benchmark_id: "BMK-INDEX-001"
-    module_id: "MOD-STRATEGY"
+    module_id: "MOD-L05-001"
     doc_ref: "29_factor_strategy_extraction.md §S11.21"
     code_path: ""
     lifecycle_status: "candidate"
@@ -8629,7 +8629,7 @@ strategies:
     risk_rules: []
     holding_period: "波段"
     benchmark_id: "BMK-INDEX-001"
-    module_id: "MOD-STRATEGY"
+    module_id: "MOD-L05-001"
     doc_ref: "29_factor_strategy_extraction.md §S11.23"
     code_path: ""
     lifecycle_status: "candidate"
@@ -8709,7 +8709,7 @@ strategies:
     risk_rules: []
     holding_period: "波段"
     benchmark_id: "BMK-INDEX-001"
-    module_id: "MOD-STRATEGY"
+    module_id: "MOD-L05-001"
     doc_ref: "29_factor_strategy_extraction.md §S11.24"
     code_path: ""
     lifecycle_status: "candidate"
@@ -8791,7 +8791,7 @@ strategies:
     benchmark_id: "BMK-ABSOLUTE-001"
     universe_id: "UNI-RULE-001"
     cost_model_id: "CST-ASTOCK-001"
-    module_id: "MOD-STRATEGY"
+    module_id: "MOD-L05-001"
     doc_ref: "29_factor_strategy_extraction.md §S13.1"
     code_path: "src/zephyr/pf_core/vwap_reversion_strategy.py + src/zephyr/pf_core/intraday_surge_fall_strategy.py"
     lifecycle_status: "backtest"
@@ -8874,7 +8874,7 @@ strategies:
     benchmark_id: "BMK-ABSOLUTE-001"
     universe_id: "UNI-RULE-001"
     cost_model_id: "CST-ASTOCK-001"
-    module_id: "MOD-STRATEGY"
+    module_id: "MOD-L05-001"
     doc_ref: "29_factor_strategy_extraction.md §S13.3"
     code_path: "src/zephyr/pf_core/intraday_surge_fall_strategy.py"
     lifecycle_status: "backtest"
@@ -8956,7 +8956,7 @@ strategies:
     benchmark_id: "BMK-ABSOLUTE-001"
     universe_id: "UNI-RULE-001"
     cost_model_id: "CST-ASTOCK-001"
-    module_id: "MOD-STRATEGY"
+    module_id: "MOD-L05-001"
     doc_ref: "29_factor_strategy_extraction.md §S13.4"
     code_path: "src/zephyr/pf_core/vwap_reversion_strategy.py"
     lifecycle_status: "backtest"
@@ -9038,7 +9038,7 @@ strategies:
     benchmark_id: "BMK-ABSOLUTE-001"
     universe_id: "UNI-RULE-001"
     cost_model_id: "CST-ASTOCK-001"
-    module_id: "MOD-STRATEGY"
+    module_id: "MOD-L05-001"
     doc_ref: "29_factor_strategy_extraction.md §S13.6"
     code_path: "src/zephyr/pf_core/vwap_reversion_strategy.py"
     lifecycle_status: "backtest"
@@ -9119,7 +9119,7 @@ strategies:
     risk_rules: []
     holding_period: "波段"
     benchmark_id: "BMK-INDEX-001"
-    module_id: "MOD-STRATEGY"
+    module_id: "MOD-L05-001"
     doc_ref: "29_factor_strategy_extraction.md §S13.7"
     code_path: ""
     lifecycle_status: "candidate"
@@ -9201,7 +9201,7 @@ strategies:
     benchmark_id: "BMK-ABSOLUTE-001"
     universe_id: "UNI-RULE-001"
     cost_model_id: "CST-ASTOCK-001"
-    module_id: "MOD-STRATEGY"
+    module_id: "MOD-L05-001"
     doc_ref: "29_factor_strategy_extraction.md §S13.1"
     code_path: "src/zephyr/pf_core/orderbook_imbalance_strategy.py"
     lifecycle_status: "backtest"
@@ -9282,7 +9282,7 @@ strategies:
     risk_rules: []
     holding_period: "波段"
     benchmark_id: "BMK-INDEX-001"
-    module_id: "MOD-STRATEGY"
+    module_id: "MOD-L05-001"
     doc_ref: "29_factor_strategy_extraction.md §S14.1（吸收 S14.22/S14.35）"
     code_path: ""
     lifecycle_status: "candidate"
@@ -9362,7 +9362,7 @@ strategies:
     risk_rules: []
     holding_period: "波段"
     benchmark_id: "BMK-INDEX-001"
-    module_id: "MOD-STRATEGY"
+    module_id: "MOD-L05-001"
     doc_ref: "29_factor_strategy_extraction.md §S14.3"
     code_path: ""
     lifecycle_status: "candidate"
@@ -9442,7 +9442,7 @@ strategies:
     risk_rules: []
     holding_period: "波段"
     benchmark_id: "BMK-INDEX-001"
-    module_id: "MOD-STRATEGY"
+    module_id: "MOD-L05-001"
     doc_ref: "29_factor_strategy_extraction.md §S14.4"
     code_path: ""
     lifecycle_status: "candidate"
@@ -9522,7 +9522,7 @@ strategies:
     risk_rules: []
     holding_period: "波段"
     benchmark_id: "BMK-INDEX-001"
-    module_id: "MOD-STRATEGY"
+    module_id: "MOD-L05-001"
     doc_ref: "29_factor_strategy_extraction.md §S14.9"
     code_path: ""
     lifecycle_status: "candidate"
@@ -9602,7 +9602,7 @@ strategies:
     risk_rules: []
     holding_period: "波段"
     benchmark_id: "BMK-INDEX-001"
-    module_id: "MOD-STRATEGY"
+    module_id: "MOD-L05-001"
     doc_ref: "29_factor_strategy_extraction.md §S14.10（吸收 S14.32）"
     code_path: ""
     lifecycle_status: "candidate"
@@ -9682,7 +9682,7 @@ strategies:
     risk_rules: []
     holding_period: "波段"
     benchmark_id: "BMK-INDEX-001"
-    module_id: "MOD-STRATEGY"
+    module_id: "MOD-L05-001"
     doc_ref: "29_factor_strategy_extraction.md §S14.14"
     code_path: ""
     lifecycle_status: "candidate"
@@ -9762,7 +9762,7 @@ strategies:
     risk_rules: []
     holding_period: "波段"
     benchmark_id: "BMK-INDEX-001"
-    module_id: "MOD-STRATEGY"
+    module_id: "MOD-L05-001"
     doc_ref: "29_factor_strategy_extraction.md §S14.15"
     code_path: ""
     lifecycle_status: "candidate"
@@ -9842,7 +9842,7 @@ strategies:
     risk_rules: []
     holding_period: "波段"
     benchmark_id: "BMK-INDEX-001"
-    module_id: "MOD-STRATEGY"
+    module_id: "MOD-L05-001"
     doc_ref: "29_factor_strategy_extraction.md §S14.16"
     code_path: ""
     lifecycle_status: "candidate"
@@ -9922,7 +9922,7 @@ strategies:
     risk_rules: []
     holding_period: "波段"
     benchmark_id: "BMK-INDEX-001"
-    module_id: "MOD-STRATEGY"
+    module_id: "MOD-L05-001"
     doc_ref: "29_factor_strategy_extraction.md §S14.17"
     code_path: ""
     lifecycle_status: "candidate"
@@ -10002,7 +10002,7 @@ strategies:
     risk_rules: []
     holding_period: "波段"
     benchmark_id: "BMK-INDEX-001"
-    module_id: "MOD-STRATEGY"
+    module_id: "MOD-L05-001"
     doc_ref: "29_factor_strategy_extraction.md §S14.19"
     code_path: ""
     lifecycle_status: "candidate"
@@ -10082,7 +10082,7 @@ strategies:
     risk_rules: []
     holding_period: "波段"
     benchmark_id: "BMK-INDEX-001"
-    module_id: "MOD-STRATEGY"
+    module_id: "MOD-L05-001"
     doc_ref: "29_factor_strategy_extraction.md §S14.20"
     code_path: ""
     lifecycle_status: "candidate"
@@ -10162,7 +10162,7 @@ strategies:
     risk_rules: []
     holding_period: "波段"
     benchmark_id: "BMK-INDEX-001"
-    module_id: "MOD-STRATEGY"
+    module_id: "MOD-L05-001"
     doc_ref: "29_factor_strategy_extraction.md §S14.21（吸收 S14.36）"
     code_path: ""
     lifecycle_status: "candidate"
@@ -10242,7 +10242,7 @@ strategies:
     risk_rules: []
     holding_period: "波段"
     benchmark_id: "BMK-INDEX-001"
-    module_id: "MOD-STRATEGY"
+    module_id: "MOD-L05-001"
     doc_ref: "29_factor_strategy_extraction.md §S14.23"
     code_path: ""
     lifecycle_status: "candidate"
@@ -10322,7 +10322,7 @@ strategies:
     risk_rules: []
     holding_period: "波段"
     benchmark_id: "BMK-INDEX-001"
-    module_id: "MOD-STRATEGY"
+    module_id: "MOD-L05-001"
     doc_ref: "29_factor_strategy_extraction.md §S14.24"
     code_path: ""
     lifecycle_status: "candidate"
@@ -10402,7 +10402,7 @@ strategies:
     risk_rules: []
     holding_period: "波段"
     benchmark_id: "BMK-INDEX-001"
-    module_id: "MOD-STRATEGY"
+    module_id: "MOD-L05-001"
     doc_ref: "29_factor_strategy_extraction.md §S14.29"
     code_path: ""
     lifecycle_status: "candidate"
@@ -10482,7 +10482,7 @@ strategies:
     risk_rules: []
     holding_period: "波段"
     benchmark_id: "BMK-INDEX-001"
-    module_id: "MOD-STRATEGY"
+    module_id: "MOD-L05-001"
     doc_ref: "29_factor_strategy_extraction.md §S14.31"
     code_path: ""
     lifecycle_status: "candidate"
@@ -10562,7 +10562,7 @@ strategies:
     risk_rules: []
     holding_period: "波段"
     benchmark_id: "BMK-INDEX-001"
-    module_id: "MOD-STRATEGY"
+    module_id: "MOD-L05-001"
     doc_ref: "29_factor_strategy_extraction.md §S14.33"
     code_path: ""
     lifecycle_status: "candidate"
@@ -10642,7 +10642,7 @@ strategies:
     risk_rules: []
     holding_period: "波段"
     benchmark_id: "BMK-INDEX-001"
-    module_id: "MOD-STRATEGY"
+    module_id: "MOD-L05-001"
     doc_ref: "29_factor_strategy_extraction.md §S15.18"
     code_path: ""
     lifecycle_status: "candidate"
@@ -10722,7 +10722,7 @@ strategies:
     risk_rules: []
     holding_period: "波段"
     benchmark_id: "BMK-INDEX-001"
-    module_id: "MOD-STRATEGY"
+    module_id: "MOD-L05-001"
     doc_ref: "29_factor_strategy_extraction.md §S15.27"
     code_path: ""
     lifecycle_status: "candidate"
@@ -10802,7 +10802,7 @@ strategies:
     risk_rules: []
     holding_period: "波段"
     benchmark_id: "BMK-INDEX-001"
-    module_id: "MOD-STRATEGY"
+    module_id: "MOD-L05-001"
     doc_ref: "29_factor_strategy_extraction.md §S15.28"
     code_path: ""
     lifecycle_status: "candidate"
@@ -10882,7 +10882,7 @@ strategies:
     risk_rules: []
     holding_period: "波段"
     benchmark_id: "BMK-INDEX-001"
-    module_id: "MOD-STRATEGY"
+    module_id: "MOD-L05-001"
     doc_ref: "29_factor_strategy_extraction.md §S15.29"
     code_path: ""
     lifecycle_status: "candidate"
@@ -10962,7 +10962,7 @@ strategies:
     risk_rules: []
     holding_period: "波段"
     benchmark_id: "BMK-INDEX-001"
-    module_id: "MOD-STRATEGY"
+    module_id: "MOD-L05-001"
     doc_ref: "29_factor_strategy_extraction.md §S15.31"
     code_path: ""
     lifecycle_status: "candidate"
@@ -11042,7 +11042,7 @@ strategies:
     risk_rules: []
     holding_period: "波段"
     benchmark_id: "BMK-INDEX-001"
-    module_id: "MOD-STRATEGY"
+    module_id: "MOD-L05-001"
     doc_ref: "29_factor_strategy_extraction.md §S15.32"
     code_path: ""
     lifecycle_status: "candidate"
@@ -11122,7 +11122,7 @@ strategies:
     risk_rules: []
     holding_period: "波段"
     benchmark_id: "BMK-INDEX-001"
-    module_id: "MOD-STRATEGY"
+    module_id: "MOD-L05-001"
     doc_ref: "29_factor_strategy_extraction.md §S15.39"
     code_path: ""
     lifecycle_status: "candidate"
@@ -11205,7 +11205,7 @@ strategies:
     risk_rules: []
     holding_period: "波段"
     benchmark_id: "BMK-INDEX-001"
-    module_id: "MOD-STRATEGY"
+    module_id: "MOD-L05-001"
     doc_ref: "29_factor_strategy_extraction.md §S15.51"
     code_path: ""
     lifecycle_status: "candidate"
@@ -11285,7 +11285,7 @@ strategies:
     risk_rules: []
     holding_period: "波段"
     benchmark_id: "BMK-INDEX-001"
-    module_id: "MOD-STRATEGY"
+    module_id: "MOD-L05-001"
     doc_ref: "29_factor_strategy_extraction.md §S15.52"
     code_path: ""
     lifecycle_status: "candidate"
@@ -11365,7 +11365,7 @@ strategies:
     risk_rules: []
     holding_period: "波段"
     benchmark_id: "BMK-INDEX-001"
-    module_id: "MOD-STRATEGY"
+    module_id: "MOD-L05-001"
     doc_ref: "29_factor_strategy_extraction.md §S15.53"
     code_path: ""
     lifecycle_status: "candidate"
@@ -11445,7 +11445,7 @@ strategies:
     risk_rules: []
     holding_period: "波段"
     benchmark_id: "BMK-INDEX-001"
-    module_id: "MOD-STRATEGY"
+    module_id: "MOD-L05-001"
     doc_ref: "29_factor_strategy_extraction.md §S15.59"
     code_path: ""
     lifecycle_status: "candidate"
@@ -11525,7 +11525,7 @@ strategies:
     risk_rules: []
     holding_period: "波段"
     benchmark_id: "BMK-INDEX-001"
-    module_id: "MOD-STRATEGY"
+    module_id: "MOD-L05-001"
     doc_ref: "29_factor_strategy_extraction.md §S16.16"
     code_path: ""
     lifecycle_status: "candidate"
@@ -11606,7 +11606,7 @@ strategies:
     risk_rules: []
     holding_period: "波段"
     benchmark_id: "BMK-INDEX-001"
-    module_id: "MOD-STRATEGY"
+    module_id: "MOD-L05-001"
     doc_ref: "29_factor_strategy_extraction.md §S16.17"
     code_path: ""
     lifecycle_status: "candidate"
@@ -11686,7 +11686,7 @@ strategies:
     risk_rules: []
     holding_period: "波段"
     benchmark_id: "BMK-INDEX-001"
-    module_id: "MOD-STRATEGY"
+    module_id: "MOD-L05-001"
     doc_ref: "29_factor_strategy_extraction.md §S16.18（吸收 S16.36/S16.37）"
     code_path: ""
     lifecycle_status: "candidate"
@@ -11766,7 +11766,7 @@ strategies:
     risk_rules: []
     holding_period: "波段"
     benchmark_id: "BMK-INDEX-001"
-    module_id: "MOD-STRATEGY"
+    module_id: "MOD-L05-001"
     doc_ref: "29_factor_strategy_extraction.md §S16.22"
     code_path: ""
     lifecycle_status: "candidate"
@@ -11846,7 +11846,7 @@ strategies:
     risk_rules: []
     holding_period: "波段"
     benchmark_id: "BMK-INDEX-001"
-    module_id: "MOD-STRATEGY"
+    module_id: "MOD-L05-001"
     doc_ref: "29_factor_strategy_extraction.md §S16.29"
     code_path: ""
     lifecycle_status: "candidate"
@@ -11928,7 +11928,7 @@ strategies:
     benchmark_id: "BMK-INDEX-001"
     universe_id: "UNI-DYNAMIC-001"
     cost_model_id: "CST-ASTOCK-001"
-    module_id: "MOD-STRATEGY"
+    module_id: "MOD-L05-001"
     doc_ref: "20_first_batch_strategies.md §2.2; 24_daban_strategy_detail.md §3.5; 21_stock_selection_engine.md §3.5/§3.6"
     code_path: "src/zephyr/pf_core/strategies/daban_sleeve_strategy.py"
     lifecycle_status: "backtest"
@@ -12010,7 +12010,7 @@ strategies:
     benchmark_id: "BMK-INDEX-001"
     universe_id: "UNI-RULE-001"
     cost_model_id: "CST-ASTOCK-001"
-    module_id: "MOD-STRATEGY"
+    module_id: "MOD-L05-001"
     doc_ref: "20_first_batch_strategies.md §2.3; 25_multifactor_strategy_detail.md §3.1; 21_stock_selection_engine.md §3.5/§3.6"
     code_path: "src/zephyr/pf_core/strategies/multifactor_sleeve_strategy.py"
     lifecycle_status: "backtest"
@@ -12092,7 +12092,7 @@ strategies:
     benchmark_id: "BMK-INDEX-001"
     universe_id: "UNI-RULE-001"
     cost_model_id: "CST-ASTOCK-001"
-    module_id: "MOD-STRATEGY"
+    module_id: "MOD-L05-001"
     doc_ref: "20_first_batch_strategies.md §2.4; 26_event_driven_strategy_detail.md §2.5; 21_stock_selection_engine.md §3.5/§3.6"
     code_path: "src/zephyr/pf_core/strategies/event_driven_sleeve_strategy.py"
     lifecycle_status: "backtest"

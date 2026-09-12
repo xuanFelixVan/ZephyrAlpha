@@ -246,7 +246,11 @@ def batch_deflated_sharpe(nets_by_id: dict[str, pd.Series]) -> dict[str, float |
 
     try:
         rep = run_deflated_sharpe_batch(clean)
-    except C4DeflatedSharpeError:
+    except C4DeflatedSharpeError as exc:
+        # 静默吞错=排查灾难（2026-09-13 OOS 批全 None 教训）：留日志可见
+        import logging
+
+        logging.getLogger(__name__).warning("batch_deflated_sharpe 官方件拒绝: %s", exc)
         return {sid: None for sid in nets_by_id}
     out: dict[str, float | None] = {sid: None for sid in nets_by_id}
     for v in rep.variants:

@@ -59,9 +59,12 @@ def test_trace_full_history():
     out = json.loads(_run(mod.cmd_trace, argparse_ns(pattern="6a6ec8869ddb")))
     assert len(out) == 1
     hist = out[0]["history"]
-    assert len(hist) == 3  # 2022/2024 两份原文的 C2 行 + 一行 C4 成绩
-    c4 = [h for h in hist if h["batch"].startswith("C4")]
-    assert len(c4) == 1 and c4[0]["is_sharpe"] == 0.727
+    # 台账只增：C2 两份原文行 + IS 成绩行 + 若干复测批行；断言关键事实而非行数
+    assert len(hist) >= 3
+    c2 = [h for h in hist if h["batch"].startswith("C2")]
+    assert len(c2) == 2 and all(h["verdict"] == "screened_in" for h in c2)
+    is_row = [h for h in hist if h["verdict"] == "translated_c4"]
+    assert len(is_row) == 1 and is_row[0]["is_sharpe"] == 0.727
     assert all(h["run_archive_exists"] for h in hist)
 
 

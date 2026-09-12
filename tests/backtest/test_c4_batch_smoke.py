@@ -118,6 +118,18 @@ class TestWindowAndContract:
             assert mod.WINDOW_KIND in {"stock", "index", "etf"}, f"WINDOW_KIND 非法: {p.name}"
             assert callable(mod.build), f"build 缺失: {p.name}"
 
+    def test_oos_mode_dsr_computed(self):
+        """回归：OOS 模式（include_pilots=False）不得提前返回跳过 DSR 计算（2026-09-13 实测 bug）。"""
+        sys.path.insert(0, str(_REPO / "scripts" / "backtest"))
+        import c4_batch_screen as runner
+
+        results, failures = runner.run_batch(limit=3, window=("2024-01-01", "2026-06-30"),
+                                             include_pilots=False)
+        assert not failures
+        assert results
+        assert not any(r.get("pilot") for r in results)
+        assert all(r.get("deflated_sharpe") is not None for r in results)
+
     def test_runner_exists(self):
         runner = _REPO / "scripts" / "backtest" / "c4_batch_screen.py"
         assert runner.exists()

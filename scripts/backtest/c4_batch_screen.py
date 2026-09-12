@@ -78,7 +78,8 @@ def discover() -> list[Path]:
     return sorted(_TRANSLATED_DIR.glob("c4_*.py"))
 
 
-def run_batch(limit: int | None) -> tuple[list[dict[str, Any]], list[dict[str, Any]]]:
+def run_batch(limit: int | None, window: tuple[str, str] | None = None,
+              include_pilots: bool = True) -> tuple[list[dict[str, Any]], list[dict[str, Any]]]:
     sys.path.insert(0, str(_TRANSLATED_DIR))
     from _c4_engine import batch_deflated_sharpe, daily_net_returns, run_backtest, window_for
 
@@ -90,7 +91,7 @@ def run_batch(limit: int | None) -> tuple[list[dict[str, Any]], list[dict[str, A
     for path in mods:
         try:
             mod = _load_module(path)
-            start, end = window_for(mod.WINDOW_KIND)
+            start, end = window if window else window_for(mod.WINDOW_KIND)
             weights, closes = mod.build(start, end)
             stats = run_backtest(weights, closes)
             net = daily_net_returns(weights, closes)
@@ -103,8 +104,9 @@ def run_batch(limit: int | None) -> tuple[list[dict[str, Any]], list[dict[str, A
         except Exception as exc:  # noqa: BLE001 单件失败不阻断批测
             failures.append({"module": path.name, "error": f"{type(exc).__name__}: {exc}"})
             logger.warning("FAIL %s: %s", path.name, exc)
-    # pilot 特载
-    for sid, meta in _PILOTS.items():
+    # pilot 特载（仅默认 IS 批；OOS 复测批不含——pilot OOS 另批补）
+    pilots = _PILOTS.items() if include_pilots else ()
+    for sid, meta in pilots:
         results.append({
             "strategy_id": sid, "module": meta["name"], "window_kind": "stock",
             "window": ["2020-01-01", "2023-12-31"], "stats": meta["stats"],
@@ -138,9 +140,18 @@ def main() -> None:
     parser = argparse.ArgumentParser(description="C4 快筛批测（translated 全量+pilot 特载）")
     parser.add_argument("--limit", type=int, default=None, help="只跑前 N 个模块（冒烟用）")
     parser.add_argument("--dry-run", action="store_true", help="不落库不写档案，只打印汇总")
+    parser.add_argument("--start", default=None, help="复测窗口起点（如 2024-01-01；给出即 OOS 复测批）")
+    parser.add_argument("--end", default=None, help="复测窗口终点（如 2026-06-30）")
+    parser.add_argument("--batch", default=_BATCH, help="落库批次标签（默认=冻结 IS 批）")
+    parser.add_argument("--verdict", default="translated_c4", help="落库判定（OOS 批用 oos_tested）")
     args = parser.parse_args()
+    oos_mode = bool(args.start and args.end)
+    if oos_mode:
+        args.batch = args.batch if args.batch != _BATCH else f"C4-OOS-{args.start[:4]}-{args.end[:4].replace('-', '')}"
+        args.verdict = "oos_tested"
 
-    results, failures = run_batch(args.limit)
+    results, failures = run_batch(args.limit, window=(args.start, args.end) if oos_mode else None,
+                                  include_pilots=not oos_mode)
     if not results:
         raise RuntimeError("批测零结果（模块发现/加载全失败）")
 
@@ -160,7 +171,7 @@ def main() -> None:
     }
 
     # 挂起行
-    deferrals = load_deferrals()
+    deferrals = [] if oos_mode else load_deferrals()
     if not args.dry_run:
         from zephyr.backtest.run_archive import create_run, finalize_run, write_step
 
@@ -200,23 +211,38 @@ def main() -> None:
         f"SELECT screen_batch, strategy_id FROM {_TABLE} WHERE screen_batch = '{_BATCH}'")}
     ts = now.strftime("%Y-%m-%d %H:%M:%S")
     rows: list[list[Any]] = []
+    is_sharpe_map: dict[str, Any] = {}
+    if oos_mode:
+        for sid, isv in c.execute(
+            f"SELECT strategy_id, is_sharpe FROM {_TABLE} "
+            f"WHERE screen_batch = '{_BATCH}' AND verdict = 'translated_c4'"
+        ):
+            is_sharpe_map[sid] = isv
     for r in results:
-        if (_BATCH, r["strategy_id"]) in existing:
+        if (args.batch, r["strategy_id"]) in existing:
             continue
+        decay = None
+        if oos_mode:
+            isv = is_sharpe_map.get(r["strategy_id"])
+            oos_years = 2.5
+            if isv:
+                decay = round(min(1.0, max(0.0, (float(isv) - r["stats"]["sharpe"])
+                           / max(abs(float(isv)), 1e-9) / oos_years)), 4)
         rows.append([
-            run_id, _BATCH, r["strategy_id"],
+            run_id, args.batch, r["strategy_id"],
             f"scripts/backtest/translated/{r['module']}",
             1, r["stats"]["sharpe"], r.get("deflated_sharpe"),
-            r["stats"].get("max_drawdown"), r["stats"].get("avg_turnover_1side"), None, "",
-            "translated_c4", "c4_batch_screen", ts,
-            f"window={'/'.join(r['window'])}; kind={r['window_kind']}",
+            r["stats"].get("max_drawdown"), r["stats"].get("avg_turnover_1side"), decay, "",
+            args.verdict, "c4_batch_screen", ts,
+            f"window={'/'.join(r['window'])}; kind={r['window_kind']}"
+            + (f"; is_sharpe_ref={is_sharpe_map.get(r['strategy_id'])}" if oos_mode else ""),
         ])
     for d in deferrals:
         sid = f"CAND-{d['md5_12']}"
-        if (_BATCH, sid) in existing:
+        if (args.batch, sid) in existing:
             continue
         rows.append([
-            run_id, _BATCH, sid, d.get("orig_name", ""), 0, None, None, None, None, None, "",
+            run_id, args.batch, sid, d.get("orig_name", ""), 0, None, None, None, None, None, "",
             "deferred_c4", f"deferred_{d.get('defer_reason', 'unknown')}", ts,
             d.get("note", "")[:160],
         ])

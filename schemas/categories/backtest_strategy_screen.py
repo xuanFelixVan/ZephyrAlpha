@@ -30,7 +30,11 @@
    （真源 §3.4 指定——按批拉 scoreboard 是主读模式）。
 4. 时区铁律（RULE-SCHEMA-TZ / #ARCH-CH-022）：系统列 ingest_ts 用 UTC；
    业务列 screened_at 用 Asia/Shanghai。
-5. verdict 三值（真源裁定）：screened_in(筛入)/rejected(粗筛或快筛出局)/failed_translate(翻译失败)；
+5. verdict 枚举（2026-09-13 C4 批扩充，DDL 为 LowCardinality(String) 无迁移）：
+   screened_in(筛入)/rejected(粗筛或快筛出局)/failed_translate(翻译失败)/
+   translated_c4(C4 已批测，成绩列全)/deferred_c4(C4 挂起，理由码在 verdict_reason)/
+   oos_tested(样本外复测行，is_sharpe=OOS 成绩，oos_years_decay=按年衰减率)/
+   failed_obsolete(整族样本期漂移失效，语义对齐 registry decay_cause=regime)；
    verdict_reason 由快筛管道代码生成（排除类别/判决原因，禁 AI 手填），对齐 R2 语义。
 6. is_sharpe=IS(2019-2023) Sharpe；deflated_sharpe=按试验次数折减后 Sharpe（SOP-C C4 强制，
    600 条海选的多重检验校正）；oos_years_decay=按年外样本衰减率（C4 验收线）。
