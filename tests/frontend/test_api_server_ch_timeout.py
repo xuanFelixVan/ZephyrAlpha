@@ -1,3 +1,5 @@
+# [BLUEPRINT] MOD-FE-003 | (auto-injected by S4 reconciler) | §
+# [TTL] permanent
 # [MODULE] tests.frontend.test_api_server_ch_timeout
 # [DOMAIN] D_FRONTEND
 # [TTL] permanent
