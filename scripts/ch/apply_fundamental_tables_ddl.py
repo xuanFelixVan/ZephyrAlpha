@@ -5,7 +5,7 @@
 # [CONSUMERS]
 # [STARTUP] manual
 # [MATURITY] production
-# [INVARIANTS] DDL-as-Code: income_statement DDL 真源为 schemas/categories/fundamental_income_statement.py; balance_sheet 真源为 fundamental_balance_sheet.py; cashflow_statement 真源为 fundamental_cashflow_statement.py; apply() 通过 ch_writer.query 执行 DDL; verify() 通过 ch_reader.query 读取 system.tables/system.columns 验证引擎+Decimal 精度(audit 1.2)
+# [INVARIANTS] DDL-as-Code: income_statement DDL 真源为 schemas/categories/fundamental/fundamental_income_statement.py; balance_sheet 真源为 fundamental_balance_sheet.py; cashflow_statement 真源为 fundamental_cashflow_statement.py; apply() 通过 ch_writer.query 执行 DDL; verify() 通过 ch_reader.query 读取 system.tables/system.columns 验证引擎+Decimal 精度(audit 1.2)
 # [MODIFY-GUARD] none
 # [STABILITY] evolving
 # [SAFETY] L
@@ -17,9 +17,9 @@
 """ClickHouse c3_fundamental 财务三表 DDL 部署 + 精度验证脚本（audit 1.2 治本）。
 
 DDL-as-Code 模式：
-    - income_statement  DDL 真源为 schemas/categories/fundamental_income_statement.py
-    - balance_sheet     DDL 真源为 schemas/categories/fundamental_balance_sheet.py
-    - cashflow_statement DDL 真源为 schemas/categories/fundamental_cashflow_statement.py
+    - income_statement  DDL 真源为 schemas/categories/fundamental/fundamental_income_statement.py
+    - balance_sheet     DDL 真源为 schemas/categories/fundamental/fundamental_balance_sheet.py
+    - cashflow_statement DDL 真源为 schemas/categories/fundamental/fundamental_cashflow_statement.py
 
 精度裁定（audit 1.2 #ARCH-CH-026，2026-07-23）：
     金额字段 Decimal(18,2)、EPS 字段 Decimal(18,4)；verify() 强制校验金额字段为 Decimal
@@ -51,9 +51,9 @@ _DATABASE = "c3_fundamental"
 
 # ========== DDL 真源导入 ==========
 try:
-    from schemas.categories.fundamental_balance_sheet import BALANCE_SHEET_DDL
-    from schemas.categories.fundamental_cashflow_statement import CASHFLOW_STATEMENT_DDL
-    from schemas.categories.fundamental_income_statement import INCOME_STATEMENT_DDL
+    from schemas.categories.fundamental.fundamental_balance_sheet import BALANCE_SHEET_DDL
+    from schemas.categories.fundamental.fundamental_cashflow_statement import CASHFLOW_STATEMENT_DDL
+    from schemas.categories.fundamental.fundamental_income_statement import INCOME_STATEMENT_DDL
 except ImportError:
     print("[ERROR] 无法导入 schemas.categories.fundamental_* DDL 真源")
     sys.exit(2)

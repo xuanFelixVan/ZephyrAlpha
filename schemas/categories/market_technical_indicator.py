@@ -1,7 +1,7 @@
 # [BLUEPRINT] MOD-L04-001
 # [MODULE] schemas.categories.market_technical_indicator
 # [DOMAIN] D_DATA
-# [DEPENDENCIES] schemas.categories.market_kline_daily (输入 OHLCV)
+# [DEPENDENCIES] schemas.categories.kline.market_kline_daily (输入 OHLCV)
 # [CONSUMERS] apply_market_tables_ddl; zephyr.data.implementations.internal_compute_provider
 # [STARTUP] imported
 # [MATURITY] production

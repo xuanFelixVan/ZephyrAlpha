@@ -367,7 +367,7 @@ class TestTickFlowProvider:
             assert len(results) == 1
             assert results[0].error is None
 
-            from schemas.categories.market_kline_us_daily import INSERT_COLUMNS
+            from schemas.categories.kline.market_kline_us_daily import INSERT_COLUMNS
 
             ddl_cols = {c.strip() for c in INSERT_COLUMNS.strip("()").split(",")}
             r = results[0]

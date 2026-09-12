@@ -1257,10 +1257,10 @@ class TestBaostockKlineDailyFallback:
         修复前透传 baostock 原始列名 date/code——write_result 按表列交集过滤后
         仅剩 6 价格列，date/code 丢弃 → CH 键列落 DEFAULT 产 symbol=''/
         trade_date=1970-01-01 垃圾键行。本用例钉住：列名对齐 DDL 真源
-        （schemas/categories/market_kline_daily.py INSERT_COLUMNS）、symbol 值
+        （schemas/categories/kline/market_kline_daily.py INSERT_COLUMNS）、symbol 值
         转纯数字（对齐 miniqmt 主写口径）、不再产垃圾键。
         """
-        from schemas.categories.market_kline_daily import INSERT_COLUMNS
+        from schemas.categories.kline.market_kline_daily import INSERT_COLUMNS
 
         p = self._provider()
         p.tls.bs.query_history_k_data_plus = MagicMock(
@@ -2062,7 +2062,7 @@ class TestTushareKlineDailyBj:
 
     def test_columns_align_kline_daily_schema(self):
         """产出列 ⊆ kline_daily schema INSERT_COLUMNS（写层交集过滤零丢弃，对标 #219）。"""
-        from schemas.categories.market_kline_daily import INSERT_COLUMNS
+        from schemas.categories.kline.market_kline_daily import INSERT_COLUMNS
 
         schema_cols = {c.strip() for c in INSERT_COLUMNS.strip("()").split(",")}
         assert set(TushareProvider._KLINE_DAILY_BJ_COLUMNS) <= schema_cols
@@ -2182,7 +2182,7 @@ class TestAkshareKlineDailyBj:
         assert r[12] == 1 and r[13] == "A_share" and r[14] == "akshare" and r[15] == 1
 
     def test_columns_align_kline_daily_schema(self):
-        from schemas.categories.market_kline_daily import INSERT_COLUMNS
+        from schemas.categories.kline.market_kline_daily import INSERT_COLUMNS
 
         schema_cols = {c.strip() for c in INSERT_COLUMNS.strip("()").split(",")}
         assert set(AkshareIngestProvider._KLINE_DAILY_BJ_COLUMNS) <= schema_cols

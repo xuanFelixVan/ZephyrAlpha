@@ -2,24 +2,24 @@
 # [TTL] permanent
 # [MODULE] scripts.ch.apply_crypto_shadow_tables_ddl
 # [DOMAIN] D_DATA
-# [DEPENDENCIES] zephyr.data.ch_writer; schemas.categories.crypto_kline_daily
+# [DEPENDENCIES] zephyr.data.ch_writer; schemas.categories.crypto.crypto_kline_daily
 # [CONSUMERS]
 # [STARTUP] manual
 # [MATURITY] testing
-# [INVARIANTS] DDL-as-Code: crypto_kline_daily/crypto_shadow_gate DDL 真源为 schemas/categories/crypto_kline_daily.py; 全部幂等(CREATE IF NOT EXISTS); 影子表只记账不进决策链路; apply() 通过 ch_writer.query 执行; verify() 查 system.tables 验证引擎
+# [INVARIANTS] DDL-as-Code: crypto_kline_daily/crypto_shadow_gate DDL 真源为 schemas/categories/crypto/crypto_kline_daily.py; 全部幂等(CREATE IF NOT EXISTS); 影子表只记账不进决策链路; apply() 通过 ch_writer.query 执行; verify() 查 system.tables 验证引擎
 # [MODIFY-GUARD] none
 # [STABILITY] evolving
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] CH不可达->打印错误+退出码2; 引擎不匹配->列出差异+退出码1; 全部匹配->退出码0
 # [TESTS] none
-# noqa: m11-perm-manual-legitimate  M11豁免: 手动 DDL 部署脚本（A 类一次性运维，按需手动执行；DDL 语义真源=schemas/categories/crypto_kline_daily.py 才是 permanent）
+# noqa: m11-perm-manual-legitimate  M11豁免: 手动 DDL 部署脚本（A 类一次性运维，按需手动执行；DDL 语义真源=schemas/categories/crypto/crypto_kline_daily.py 才是 permanent）
 # [TTL] task_bound
 """ClickHouse crypto 影子 MVP 两表 DDL 部署 + 引擎验证脚本。
 
 DDL-as-Code 模式（同款 apply_market_tables_ddl.py）：
-    - crypto_kline_daily DDL 真源 = schemas/categories/crypto_kline_daily.py
-    - crypto_shadow_gate  DDL 真源 = schemas/categories/crypto_kline_daily.py
+    - crypto_kline_daily DDL 真源 = schemas/categories/crypto/crypto_kline_daily.py
+    - crypto_shadow_gate  DDL 真源 = schemas/categories/crypto/crypto_kline_daily.py
 
 背景：Owner 2026-09-11 免费影子模式裁定——C-L1 影子判定只记账不进决策；
 两表落 c1_market 库（ClickHouse Hyper-V VM，与 A 股行情同库不同表，复用既有备份/监控通道）。
@@ -45,7 +45,7 @@ sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", "..", "src"))
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", ".."))
 
 from zephyr.data import ch_reader, ch_writer
-from schemas.categories.crypto_kline_daily import (
+from schemas.categories.crypto.crypto_kline_daily import (
     CRYPTO_KLINE_DAILY_DDL,
     CRYPTO_SHADOW_GATE_DDL,
 )

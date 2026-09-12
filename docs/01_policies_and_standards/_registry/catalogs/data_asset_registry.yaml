@@ -648,7 +648,7 @@ sources:
   env_config: 无（免 API key，公开端点）
   module_id: MOD-L00-004
   doc_ref: docs/_working/2026-09-11-crypto-shadow-mvp.md
-  code_path: src/zephyr/data/implementations/crypto_kline_collector.py
+  code_path: src/zephyr/data/implementations/crypto_provider.py
 
 # 2026-09-11 币圈免费影子 MVP：crypto 日线采集 job（backfill/incremental 双模式，手动触发）
 datasets:
@@ -9506,9 +9506,9 @@ datasets:
     API key，实测可达；2026-09-11 OKX 全域 DNS 阻断降级预案触发后按 95 号蓝图'币安主源'路线换道；
     口径=24h quote_volume Top-50 USDT 现货对采集时点快照（剔稳定币对/杠杆代币，BTC 恒入）+ETHBTC
     原生汇率对，1D bar UTC 日界 7×24；含 base_asset/universe_rank/宇宙成员标记/trades 列；
-    只采集公开行情不碰 okx_broker/TDM 决策路径；DDL 真源=schemas/categories/crypto_kline_daily.py
+    只采集公开行情不碰 okx_broker/TDM 决策路径；DDL 真源=schemas/categories/crypto/crypto_kline_daily.py
     （DDL-as-Code，部署验证=scripts/ch/apply_crypto_shadow_tables_ddl.py）；采集器=scripts/data/
-    crypto_kline_collector.py（backfill --days N + daily 增量两模式，FAIL-VISIBLE 退出码 3）；
+    crypto_provider.py CryptoProvider（集成器任务化：backfill/daily 语义由 lookback_days 表达，FAIL-VISIBLE）；
     影子判定消费方=DS-227
   valid_since: "2026-09-11"
   module_id: MOD-L00-004
@@ -9534,8 +9534,8 @@ datasets:
   algorithm_status: "not_applicable"
   evidence: "v1.1.0（2026-09-12）首采完成：binance.vision 实测可达（HTTP 200），backfill 400 天
     17698 行 CH_COMMITTED 落库（2025-08-08~2026-09-11，44+ 币对+ETHBTC）；OKX 网络闸经 binance.vision
-    换道解除；表结构以 DDL-as-Code 为准（schemas/categories/crypto_kline_daily.py，apply 脚本 verify 引擎一致）"
-  code_symbol: "scripts/data/crypto_kline_collector.py::main"
+    换道解除；表结构以 DDL-as-Code 为准（schemas/categories/crypto/crypto_kline_daily.py，apply 脚本 verify 引擎一致）"
+  code_symbol: "src/zephyr/data/implementations/crypto_provider.py::CryptoProvider.fetch"
   code_fingerprint:
 
 - dataset_id: DS-227
@@ -9554,7 +9554,7 @@ datasets:
     insufficient_history(FAIL-VISIBLE 不判档)/sentiment_only(行情源降级仅恐惧贪婪记账)；辅证列=
     MA200 十日斜率/ETHBTC 原生汇率对及其 MA20/恐惧贪婪指数(alternative.me 免费源)；判定器=
     scripts/data/crypto_shadow_judge.py（读 DS-226 表内数据直判）；DDL 
-    真源=schemas/categories/crypto_kline_daily.py；前版 crypto_shadow_gate_c_l1 空表已退役（0 行）
+    真源=schemas/categories/crypto/crypto_kline_daily.py；前版 crypto_shadow_gate_c_l1 空表已退役（0 行）
   valid_since: "2026-09-11"
   module_id: MOD-L00-004
   design_maturity: testing
@@ -9579,7 +9579,7 @@ datasets:
   algorithm_status: "not_applicable"
   evidence: "2026-09-11 影子 MVP 首建：判定器零第三方依赖（csv+math），--print-tail 支持首跑样例输出；首跑样例因
     OKX 网络不可达暂缺（降级模式），报告已披露；gate_reason 列逐日可读留痕，Phase 2 转 TDM/gate_registry 正门时以本表留痕为对齐依据"
-  code_symbol: "src/zephyr/data/implementations/shadow_gate_c_l1.py::run"
+  code_symbol: "src/zephyr/data/implementations/crypto_provider.py::CryptoProvider._fetch_shadow_gate"
   code_fingerprint:
 
 # 2026-09-11 币圈免费影子 MVP：OKX 公开行情源（免 API key，公开 REST 端点）
@@ -12151,7 +12151,7 @@ jobs:
   job_name: ingest.crypto_kline_daily_binance_vision
   entity_type: job
   scope: production
-  source_code_ref: scripts/data/crypto_kline_collector.py
+  source_code_ref: src/zephyr/data/implementations/crypto_provider.py
   trigger_type: manual
   run_context: production
   inputs: []
@@ -12177,8 +12177,8 @@ jobs:
   tags: ["数据", "行情", "币圈", "采集"]
   algorithm_status: "not_applicable"
   evidence: "2026-09-11 影子 MVP 首建：trigger=manual（影子阶段不进调度族）；首采因 OKX 网络不可达未执行（降级模式披露于
-    MVP 报告），执行配方=python scripts/data/crypto_kline_collector.py backfill --symbols
+    MVP 报告），执行配方=集成器 run crypto_kline_daily_incremental（历史 backfill 已完成
     BTC-USDT,ETH-USDT 后 incremental --symbols-file config/crypto_top50_usdt.yaml"
-  code_symbol: "src/zephyr/data/implementations/crypto_kline_collector.py::main"
+  code_symbol: "src/zephyr/data/implementations/crypto_provider.py::CryptoProvider.fetch"
   code_fingerprint:
 

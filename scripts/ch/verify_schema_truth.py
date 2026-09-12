@@ -61,8 +61,8 @@ if str(_SRC_DIR) not in sys.path:
 
 
 def _discover_truth_files() -> list[Path]:
-    """枚举 schemas/categories/*.py 真源文件。"""
-    return sorted(_SCHEMA_DIR.glob("*.py"))
+    """枚举 schemas/categories/**/*.py 真源文件（含 kline/fundamental/crypto/intraday/meta 子目录，2026-09-12 目录拆分）。"""
+    return sorted(_SCHEMA_DIR.rglob("*.py"))
 
 
 def _load_module(path: Path):

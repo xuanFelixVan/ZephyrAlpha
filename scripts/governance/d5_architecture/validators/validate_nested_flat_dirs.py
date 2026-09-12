@@ -26,7 +26,7 @@ validate_nested_flat_dirs.py — 递归嵌套目录平铺检测器
 
 检查项
 ------
-1. 递归扫描 src/zephyr/、tests/、scripts/governance/ 下所有目录
+1. 递归扫描 src/zephyr/、tests/、scripts/governance/、schemas/、scripts/industry_graph/ 下所有目录
 2. 每个目录的 .py 文件数超过 warn/error 阈值即报警
 3. 阈值来自 thresholds.yaml directory_scalability 节（src_py_warn=60, src_py_error=120）
 4. --check-prefix 模式（ARCH-043 Risk 2-B）：对 >T_hard(60) 的目录验证 __init__.py
@@ -67,6 +67,10 @@ SCAN_ROOTS = [
     REPO_ROOT / "src" / "zephyr",
     REPO_ROOT / "tests",
     REPO_ROOT / "scripts" / "governance",
+    # 2026-09-12 拆分批补盲：schemas/（DDL-as-Code，曾被 128 文件平铺债击穿）
+    # 与 scripts/industry_graph/（35+ 文件且持续增长）此前均不在扫描范围，属机器盲区
+    REPO_ROOT / "schemas",
+    REPO_ROOT / "scripts" / "industry_graph",
 ]
 
 SKIP_DIRS = {"__pycache__", ".git", "node_modules", ".mypy_cache", ".pytest_cache"}

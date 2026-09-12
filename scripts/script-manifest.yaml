@@ -4,7 +4,7 @@
 manifest_version: 2.0.0
 generated_by: generate_manifest.py (auto-scan)
 generated_at: '2026-09-12'
-total_scripts: 798
+total_scripts: 796
 scripts:
 - name: __init__.py
   path: __init__.py
@@ -1001,22 +1001,6 @@ scripts:
 - name: data/backfill_tick_depth5.py
   path: data/backfill_tick_depth5.py
   description: 用法（在仓库根，Python 3.12 + PYTHONPATH=src）：
-  domain: data
-  execution_plane: warm-path
-  status: registered
-  timeout_seconds: 60
-  dimensions: []
-- name: data/crypto_kline_collector.py
-  path: data/crypto_kline_collector.py
-  description: 网络实测(2026-09-11):OKX 公开 API DNS 不可达(www.okx.com/aws.okx.com getaddrinfo failed),
-  domain: data
-  execution_plane: warm-path
-  status: registered
-  timeout_seconds: 60
-  dimensions: []
-- name: data/crypto_shadow_judge.py
-  path: data/crypto_shadow_judge.py
-  description: 判定逻辑（设计稿三档，shadow_version=v0.1）：
   domain: data
   execution_plane: warm-path
   status: registered

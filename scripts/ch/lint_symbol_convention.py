@@ -51,8 +51,8 @@ _SCHEMA_DIR = _REPO_ROOT / "schemas" / "categories"
 
 
 def _discover_truth_files() -> list[Path]:
-    """枚举 schemas/categories/*.py 真源文件。"""
-    return sorted(_SCHEMA_DIR.glob("*.py"))
+    """枚举含 *_DDL 的真源文件（静态 lint 全量扫描用；2026-09-12 目录拆分后含各子目录；跳过无 DDL 的 __init__.py）。"""
+    return sorted(p for p in _SCHEMA_DIR.rglob("*.py") if p.name != "__init__.py")
 
 
 def _load_ddl(path: Path) -> str | None:

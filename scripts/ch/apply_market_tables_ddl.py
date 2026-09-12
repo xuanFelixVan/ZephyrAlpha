@@ -5,7 +5,7 @@
 # [CONSUMERS]
 # [STARTUP] manual
 # [MATURITY] production
-# [INVARIANTS] DDL-as-Code: tick_data DDL 真源为 schemas/categories/market_tick.py; kline_daily DDL 真源为 schemas/categories/market_kline_daily.py; auction_book DDL 真源为 schemas/categories/market_auction_book.py; sector_snapshot DDL 真源为 schemas/categories/market_sector_snapshot.py; apply() 通过 ch_writer.query 执行; verify() 查询 system.tables 验证引擎
+# [INVARIANTS] DDL-as-Code: tick_data DDL 真源为 schemas/categories/intraday/market_tick.py; kline_daily DDL 真源为 schemas/categories/kline/market_kline_daily.py; auction_book DDL 真源为 schemas/categories/intraday/market_auction_book.py; sector_snapshot DDL 真源为 schemas/categories/market_sector_snapshot.py; apply() 通过 ch_writer.query 执行; verify() 查询 system.tables 验证引擎
 # [MODIFY-GUARD] none
 # [STABILITY] evolving
 # [SAFETY] L
@@ -17,9 +17,9 @@
 """ClickHouse c1_market 建表 DDL 部署 + 引擎验证脚本（Phase F）。
 
 DDL-as-Code 模式：
-    - tick_data DDL 真源为 schemas/categories/market_tick.py（本脚本导入引用）
-    - kline_daily DDL 真源为 schemas/categories/market_kline_daily.py（本脚本导入引用）
-    - auction_book DDL 真源为 schemas/categories/market_auction_book.py（本脚本导入引用）
+    - tick_data DDL 真源为 schemas/categories/intraday/market_tick.py（本脚本导入引用）
+    - kline_daily DDL 真源为 schemas/categories/kline/market_kline_daily.py（本脚本导入引用）
+    - auction_book DDL 真源为 schemas/categories/intraday/market_auction_book.py（本脚本导入引用）
     - sector_snapshot DDL 真源为 schemas/categories/market_sector_snapshot.py（本脚本导入引用）
 
 引擎选型矩阵（设计文档 §5 Phase F，裁定 #ARCH-SSOT-REFERENCE-INTEGRITY-001 Phase F 治本）：
@@ -54,9 +54,9 @@ from zephyr.data import ch_writer
 
 # ========== DDL 定义 ==========
 
-# tick_data DDL — 真源: schemas/categories/market_tick.py
+# tick_data DDL — 真源: schemas/categories/intraday/market_tick.py
 try:
-    from schemas.categories.market_tick import TICK_DATA_DDL
+    from schemas.categories.intraday.market_tick import TICK_DATA_DDL
 except ImportError:
     # fallback: 内联定义（与 schema 文件保持一致）
     TICK_DATA_DDL = """
@@ -84,9 +84,9 @@ ORDER BY (market_type, symbol, trade_date, timestamp, price)
 SETTINGS index_granularity = 8192
 """
 
-# l2_tick DDL — 真源: schemas/categories/market_l2_tick.py（2026-07-28 建表，#ARCH-DATA-PIPELINE-001）
+# l2_tick DDL — 真源: schemas/categories/intraday/market_l2_tick.py（2026-07-28 建表，#ARCH-DATA-PIPELINE-001）
 try:
-    from schemas.categories.market_l2_tick import L2_TICK_DDL
+    from schemas.categories.intraday.market_l2_tick import L2_TICK_DDL
 except ImportError:
     L2_TICK_DDL = """
 CREATE TABLE IF NOT EXISTS c1_market.l2_tick
@@ -116,9 +116,9 @@ ORDER BY (market_type, symbol, trade_date, timestamp, price)
 SETTINGS index_granularity = 8192
 """
 
-# kline_daily DDL — 真源: schemas/categories/market_kline_daily.py
+# kline_daily DDL — 真源: schemas/categories/kline/market_kline_daily.py
 try:
-    from schemas.categories.market_kline_daily import KLINE_DAILY_DDL
+    from schemas.categories.kline.market_kline_daily import KLINE_DAILY_DDL
 except ImportError:
     # fallback: 内联定义（与 schema 文件保持一致）
     KLINE_DAILY_DDL = """
@@ -147,9 +147,9 @@ ORDER BY (symbol, trade_date)
 SETTINGS index_granularity = 8192
 """
 
-# kline_etf_daily DDL — 真源: schemas/categories/market_kline_etf_daily.py
+# kline_etf_daily DDL — 真源: schemas/categories/kline/market_kline_etf_daily.py
 try:
-    from schemas.categories.market_kline_etf_daily import MARKET_KLINE_ETF_DAILY_DDL
+    from schemas.categories.kline.market_kline_etf_daily import MARKET_KLINE_ETF_DAILY_DDL
 except ImportError:
     # fallback: 内联定义（与 schema 文件保持一致）
     MARKET_KLINE_ETF_DAILY_DDL = """
@@ -173,9 +173,9 @@ PARTITION BY toYYYYMM(trade_date)
 ORDER BY (symbol, trade_date)
 """
 
-# auction_book DDL — 真源: schemas/categories/market_auction_book.py
+# auction_book DDL — 真源: schemas/categories/intraday/market_auction_book.py
 try:
-    from schemas.categories.market_auction_book import AUCTION_BOOK_DDL
+    from schemas.categories.intraday.market_auction_book import AUCTION_BOOK_DDL
 except ImportError:
     # fallback: 内联定义（与 schema 文件保持一致）
     AUCTION_BOOK_DDL = """
@@ -360,10 +360,10 @@ from schemas.categories.market_a50_futures_daily import A50_FUTURES_DAILY_DDL
 from schemas.categories.market_account_nav_daily import MARKET_ACCOUNT_NAV_DAILY_DDL
 from schemas.categories.market_breadth_snapshot import MARKET_BREADTH_SNAPSHOT_DDL
 from schemas.categories.market_daban_board_event import MARKET_DABAN_BOARD_EVENT_DDL
-from schemas.categories.market_execution_report import MARKET_EXECUTION_REPORT_DDL
+from schemas.categories.intraday.market_execution_report import MARKET_EXECUTION_REPORT_DDL
 from schemas.categories.market_index_valuation_daily import MARKET_INDEX_VALUATION_DAILY_DDL
 from schemas.categories.market_ipo_calendar import IPO_CALENDAR_DDL
-from schemas.categories.market_kline_global import KLINE_GLOBAL_DDL
+from schemas.categories.kline.market_kline_global import KLINE_GLOBAL_DDL
 from schemas.categories.market_limit_up_pool import MARKET_LIMIT_UP_POOL_DDL
 from schemas.categories.market_news_sentiment_window import NEWS_SENTIMENT_WINDOW_DDL
 from schemas.categories.market_reconciliation_differences import (
