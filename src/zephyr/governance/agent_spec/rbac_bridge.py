@@ -16,7 +16,7 @@
 # [TTL] permanent
 
 """
-[BLUEPRINT] MOD-INF-024 | docs/03_modules/_domain_autonomy_perm/budget-enforcer/blueprint.md | §12
+[BLUEPRINT] MOD-INF-024 | docs/03_modules/_domain_autonomy_perm/budget_enforcer/blueprint.md | §12
 
 G-CT-007 契约：Budget -> RBAC 配额限制.
 G-CT-005 契约：Escalation -> RBAC 权限升级 + Pipeline 前置 RBAC 检查.

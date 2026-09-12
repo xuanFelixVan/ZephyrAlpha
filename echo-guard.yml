@@ -816,3 +816,11 @@ acknowledged:
     fail-closed 独立于扫描器，scanner 刻意零仓库依赖（仅 
     _shared.constants）可单机跑；双向合并任一方向破坏另一运行契约；算法一致性由裁定#215 
     注释互指背书。intentional=算法演进时需人工同步两侧
+- id: "src\\zephyr\\gov_enforcement\\commit_gates\asyncio_run_in_context_gate.py:_is_src_zephyr_file:00000000||src\\\
+    zephyr\\gov_enforcement\\commit_gates\\datetime_now_forbidden_gate.py:_is_src_zephyr_file:00000000"
+  verdict: intentional
+  stable_key: "src\\zephyr\\gov_enforcement\\commit_gates\asyncio_run_in_context_gate.py:_is_src_zephyr_file||src\\\
+    zephyr\\gov_enforcement\\commit_gates\\datetime_now_forbidden_gate.py:_is_src_zephyr_file"
+  note: 2026-09-10 st-legacy-clear-20260910：双 gate 的 src/zephyr 判定 helper 相似 
+    60%（type3 部分同构），语义有差异（asyncio gate 版含 tests 豁免口径）非同函数——盲合并有行为回归风险，DEDUP 下沉 
+    _diff_helpers 待语义对齐批次；两 gate 均为本会话 own-scope 推广触及的存量函数

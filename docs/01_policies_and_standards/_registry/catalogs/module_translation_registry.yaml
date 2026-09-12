@@ -47547,6 +47547,20 @@ entries:
   desc_zh: "SOP-C §2：硬排除四类判据（非股票标的/非日线级/结构不可迁移/演示作业）机器第一遍"
   desc_en: ""
   plain_zh: "六百个进门策略的第一道筛子：专挑不要的——炒期货的、买基金的、玩分钟线的、做对冲套利的、明显是教学演示的，按硬标准直接出局；拿不准的一律放行进下一关。故意宁漏勿误，因为错杀好策略的代价远大于多看几个平庸的。"
+- module_path: scripts/industry_graph/igfact_fill.py
+  domain_id: D_DATA
+  name_zh: "ig_fact 空壳链填充施工件"
+  name_en: "igfact_fill"
+  desc_zh: "CKG2021 外采供应链事实分类映射到 deprecated 空壳链并分批入图激活"
+  desc_en: ""
+  plain_zh: "ig_fact 外采事实到空壳链填充施工件：产品噪音过滤、链主体词映射、节点供应边落位三件套生成、达标链激活，全走 websearch_ingest 通道"
+- module_path: src/zephyr/signal_ashare/core/sector_strength_wiring.py
+  domain_id: D_ASHARE_SIGNAL
+  name_zh: "板块强度生产接线"
+  name_en: ""
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "把板块报告的四路打分换算统一排名后合成总分排候选池，再判定今天市场生态"
 
 battle_map_steps:
 - step_id: BM-BUY-05

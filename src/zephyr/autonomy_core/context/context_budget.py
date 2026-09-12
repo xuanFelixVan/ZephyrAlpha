@@ -16,7 +16,7 @@
 # [TTL] permanent
 
 """
-[BLUEPRINT] MOD-CONTEXT_ENGINE | docs/03_modules/_cross_layer/context-engine/blueprint.md | §3-§8
+[BLUEPRINT] MOD-CONTEXT_ENGINE | docs/03_modules/_cross_layer/context_engine/blueprint.md | §3-§8
 
 TruncationStrategy — TruncationStrategy
 
