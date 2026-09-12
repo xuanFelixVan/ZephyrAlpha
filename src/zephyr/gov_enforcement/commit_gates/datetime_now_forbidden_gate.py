@@ -243,7 +243,7 @@ def _scan_file_for_violations(gateway, py_file: str) -> list[str]:
 def _format_violation_detail(violations: list[str]) -> str:
     # 硬阻断：检出违规则 fail-closed
     return (
-        "DATETIME-NOW-FORBIDDEN：检测到时间戳误用（5.46 时区处理防复发 + AGENTS.md §11.1.1），\n"
+        "DATETIME-NOW-FORBIDDEN：检测到时间戳误用（5.46 时区处理防复发 + 宪法 L0 硬规则10 SCHEMA-TZ），\n"
         "  生成器代码禁止 datetime.now() 任何形式；src/zephyr/ 全量禁止 time.time() 和 datetime.now() 无参数。\n"  # noqa: m46-time  M46豁免: 检测器源码含检测模式字符串用于违规消息构造
         + "\n".join(violations)
         + "\n-> 改用 now_utc()（time_utils SSoT）或 datetime.now(UTC)；合法场景用 # noqa: m46-time 豁免。"  # noqa: m46-time  M46豁免: 检测器源码含检测模式字符串用于违规消息构造
