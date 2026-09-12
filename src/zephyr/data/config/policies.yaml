@@ -3,7 +3,7 @@
 # [DOMAIN] D_DATA
 # [TTL] permanent
 # 派生物（#183）：由 generate_policies.py 从 data_sources_registry.yaml 派生
-# 真源：architecture_model/data/data_sources_registry.yaml v2.3.0
+# 真源：architecture_model/data/data_sources_registry.yaml v2.4.0
 # 禁止手工修改此文件——改真源后由 reconciler 自动重生
 # policy_registry.py 的 maybe_reload 会在 mtime 变化时热更新
 
@@ -101,6 +101,9 @@ rss:
   - '503'
   - '504'
   respect_robots_txt: true
+io_table:
+  frequency: manual_lowfreq
+  check: fetch 子命令探测 ionet repo 新年份表,数年一更,无需集成器日频调度
 cls:
   rpm: 30
   concurrency: 1

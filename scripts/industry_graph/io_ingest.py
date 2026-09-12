@@ -1,3 +1,5 @@
+# [BLUEPRINT] D-DATA-IO-ANCHOR | (auto-injected by S4 reconciler) | §
+# [TTL] permanent
 # [MODULE] scripts.industry_graph.io_ingest
 # [DOMAIN] D_DATA
 # [DEPENDENCIES] zephyr.governance.depgraph_schema (get_depgraph_pg_connection); parse 段另需 pyreadr(仅解析 .rda 时)
