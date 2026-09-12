@@ -122,6 +122,6 @@ app1.js 留守：L1-76 全局 chrome（go/gToast/fold/theme/lang）+ L135-137 �
 ### 遗留登记（不在本批范围，交后续批）
 
 - ~~frontend_map 幽灵引用~~ → **已治理（2026-09-12 深夜续批）**：245 条 auto_scanned 幽灵条目（core/<page>.js 从未存在）按"条目内容检索归属真源"全部修复——9 条命中拆分引擎文件、236 条归属页面片段 pages/<page>.html（区块普查条目的自然归宿）；frontend_map v2.3.1；7 条 status:pending 规划条目（sq-kline-main 等待建族）为合法占位保留
-- **Tier-2 契约化**：37 个页面引擎为全局函数族物理模块（非 registerFeature 组件）——待各页数据源接通时按 stockq sq-* 先例逐件契约化（onclick 重接线随页施工）。
+- **Tier-2 契约化（零件级拆分）——Owner 裁定路线 A（2026-09-12 对话拍板）**：37 个页面引擎为全局函数族物理模块（非 registerFeature 组件），**严格等各页后端数据源接入时再拆零件**（SOP 正序：Step 3.5 后端盘点先行，拆件第一判据=数据源边界，无盘点不拆件）；现状"一页一总成"为合规稳态，禁止提前对演示引擎做零件化（毛坯房不精装修——真数据接入时零件边界按真数据源重划，提前拆=拆两遍）。各页接线时按 stockq sq-* 样板逐件契约化（onclick 重接线随页施工）。曾议路线 B（全量立即零件化）/路线 C（试点先行）均否。
 - **app2/3/4 批脚本**：多页混装 IIFE 渲染批留在 core/（迁移=为拆而拆，见裁定 R4）——随数据源接通逐页拆。
 - **他会话 staged 改动**：features/tdm.js + pages/tdm.html 的 RED_GLYPH 红因徽章批系前班会话滞留暂存区，本批提交严格按 --files pathspec 避开，归属他会话。
