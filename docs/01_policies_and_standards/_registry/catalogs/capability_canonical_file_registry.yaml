@@ -4969,7 +4969,10 @@ capabilities:
   description: 图 8 产业链全景图的字典↔DDL↔引擎三方同 commit 同步硬阻断（priority=141）+ chainmap_cluster_names
     词表 sanity
 creation_tokens:
-# 2026-09-12 另类数据第 1 批免注册直连（st-altdata-20260912）
+- file: docs/_working/2026-09-12-alt-data-batch1-construction-report.md
+  token: altdata-report-20260912
+  created_by: st-altdata-20260912
+  capability: alt_data_batch1_free_sources
 - file: src/zephyr/data/implementations/akshare_alt_provider.py
   token: altdata-provider-20260912
   created_by: st-altdata-20260912
@@ -11912,6 +11915,11 @@ creation_tokens:
   token: auto-scaffold-industry_graph_igfact_fill-20260912
   created_by: workbuddy-session-igfact-fill (scaffold 同格式手工登记, 2026-09-12)
   capability: industry_graph_igfact_fill
+- file: scripts/industry_graph/io_ingest.py
+  token: io-structure-anchor-ioingest-20260913
+  created_by: st-igbe-20260913 (投入产出结构锚施工件, 方案=docs/_working/2026-09-13-io-structure-anchor-plan.md,
+    2026-09-13)
+  capability: industry_graph_io_ingest
 - file: schemas/categories/__init__.py
   token: schemas-split-root-index-20260912
   created_by: schemas-split-20260912
@@ -11972,6 +11980,22 @@ creation_tokens:
   token: auto-adopt-backfill-research-report-full-20260912
   created_by: st-fingov-20260912 (adopt 研报数据侧批在途件, 补 M11 noqa)
   capability: backfill_research_report_full
+- file: schemas/categories/fundamental/financial_derived.py
+  token: st-fingov-financial-derived-ddl-20260913
+  created_by: st-fingov-20260912
+  capability: fund_financial_derived
+- file: src/zephyr/data/implementations/financial_derived_compute.py
+  token: st-fingov-financial-derived-compute-20260913
+  created_by: st-fingov-20260912
+  capability: fund_financial_derived
+- file: scripts/ch/build_financial_derived.py
+  token: st-fingov-build-financial-derived-20260913
+  created_by: st-fingov-20260912
+  capability: build_financial_derived
+- file: scripts/ch/apply_financial_derived_ddl.py
+  token: st-fingov-apply-financial-derived-ddl-20260913
+  created_by: st-fingov-20260912
+  capability: apply_financial_derived_ddl
 di_seam_exemptions:
 - module_path: zephyr.trading.auto_runtime_core.AutoRuntimeCore
   reason: P0-5 LSG DI seam 标杆，已有 DI 但 AST 模式不匹配（动态注入）
@@ -14146,8 +14170,6 @@ di_seam_exemptions:
   token: asset-v2-lof-minute-backfill-20260911
   created_by: st-asset-v2
   capability: backfill_lof_minute_history
-
-# creation_tokens 追加（C4 批量翻译批，2026-09-12）
 - file: scripts/backtest/translated/_c4_engine.py
   token: c4-engine-st-zcode-c4-20260912
   created_by: st-zcode-c4-20260912
