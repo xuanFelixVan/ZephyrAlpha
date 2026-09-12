@@ -97,3 +97,16 @@ composite 降序 Top-ceil(N×15%)（节点真源"总分进前 15%"），保底 1
 - 测试在 `tests/` 下
 - 配置在 `config/` 下
 - 治理脚本在 `scripts/governance/` 下
+
+
+## 4. 研究依据（2026-09-12 全网调研，架构师复核）
+
+- **等权 vs 优化的样本外证据**：DeMiguel/Garlappi/Uppal《Optimal Versus Naive Diversification》(RFS 2009，引用 5300+)——14 个优化模型在 7 个数据集上无一稳定跑赢 1/N 等权（误差估算是优化法的死穴）；Quantpedia 五种加权方案对比研究——忽略价格的方案样本外表现惊人地接近。**等权先验=学术最优稳健起点**。
+- **IC/ICIR 加权**：样本内常胜但受估计误差污染；ICIR 优于裸 IC（稳定性加权）。North Trust"Factor Momentum within Factors"提出机器学习动态权重作为第三条路。
+- **开源实践**：Microsoft Qlib（Alpha158/360 为中/美市场标准特征集，组合信号为一等公民），板块轮动在其管线之上自建（无内置）。
+
+## 5. 升级路线（生产接线时实施）
+
+1. **rank-based 跨截面归一**（Quantpedia rank 方案，抗离群）：生产接线时将四路子分先按当日全池跨截面排名归一到 0-100 再加权（mode 参数切换，默认 raw 保持已落库行为）。
+2. **ICIR 加权重校**（≥60 交易日样本后）：对齐 multifactor_synthesis IC 加权惯例，按 ICIR 稳定性加权。
+3. 触发条件：模块获得首个生产消费者（L2-06/L3 接线）时同步实施 1+2。
