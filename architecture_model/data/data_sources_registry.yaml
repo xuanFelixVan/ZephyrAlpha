@@ -12,8 +12,8 @@
 # 同步到 DB data_source_assets 表,派生 asset_catalog.md;派生 policies.yaml(generate_policies.py)
 
 module_id: MOD-L00-001
-version: "2.3.0"
-description: "外部数据源资产清单真源。从 data_source_operation_manual.md 提取结构化数据,同步到 DB 供 AI 高频查询。#183 合并调用策略到 policy 字段,policies.yaml 改为派生物。v2.1.0: 新增 account_type 顶层字段;DS-IFIND policy.extra 修正 monthly→weekly 配额+补齐 EDB 配额详情(5万条/周/试用版=正式版)。v2.2.0: 补登 DS-CLS(财联社电报,RSSHub路由)和 DS-EASTMONEY_NEWS(东方财富7x24快讯,HTTP直连),修复 policy_registry 运行时无注册策略 WARNING。v2.3.0: DS-IFIND 退役(#ARCH-DATA-IFIND-RETIRE-001,2026-08-14 用户裁定彻底删除+留痕)——provider 代码/tasks/policies/健康检查全项目切除,本条仅留痕。"
+version: "2.4.0"
+description: "外部数据源资产清单真源。从 data_source_operation_manual.md 提取结构化数据,同步到 DB 供 AI 高频查询。#183 合并调用策略到 policy 字段,policies.yaml 改为派生物。v2.1.0: 新增 account_type 顶层字段;DS-IFIND policy.extra 修正 monthly→weekly 配额+补齐 EDB 配额详情(5万条/周/试用版=正式版)。v2.2.0: 补登 DS-CLS(财联社电报,RSSHub路由)和 DS-EASTMONEY_NEWS(东方财富7x24快讯,HTTP直连),修复 policy_registry 运行时无注册策略 WARNING。v2.3.0: DS-IFIND 退役(#ARCH-DATA-IFIND-RETIRE-001,2026-08-14 用户裁定彻底删除+留痕)——provider 代码/tasks/policies/健康检查全项目切除,本条仅留痕。v2.4.0: 新增 DS-IO_TABLE(国家统计局投入产出表,低频结构锚,io_ingest 装载 ig_io_edge)。"
 
 data_sources:
   - id: DS-IFIND
@@ -265,6 +265,27 @@ data_sources:
       # status code 字符串按 retry 机制 substring 匹配 HTTPError.message（如 "503 Server Error"）
       retry_on: ["SSLError", "ConnectionError", "500", "502", "503", "504"]
       respect_robots_txt: true
+
+  - id: DS-IO_TABLE
+    runtime_id: io_table
+    name: "国家统计局投入产出表"
+    name_en: "NBS Input-Output Tables"
+    type: open_source
+    account_type: free
+    category: industry_chain
+    vendor: "国家统计局(ionet 学术包转存)"
+    interface_types: ["GitHub静态文件(.rda)", "官方出版物"]
+    api_count: 0
+    auth_required: false
+    auth_method: "无(公开仓库直取)"
+    rate_limit: "GitHub raw 无明确限制;数据本身逢2逢7年编表/中间年延长表,数年一更"
+    status: active
+    coverage: "全国153部门(2020调查表)/42部门直接消耗系数——部门级上下游强度机械判定依据;消费=ig_io_edge(2020已入库16859边);2025调查表最早2027年发布"
+    owner: ZephyrAlpha-Owner
+    operation_manual: "docs/_working/2026-09-13-io-structure-anchor-plan.md;装载=scripts/industry_graph/io_ingest.py(parse/load/fetch/status)"
+    policy:
+      frequency: manual_lowfreq
+      check: "fetch 子命令探测 ionet repo 新年份表,数年一更,无需集成器日频调度"
 
   - id: DS-CLS
     runtime_id: cls

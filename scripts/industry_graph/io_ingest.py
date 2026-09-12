@@ -143,6 +143,62 @@ def cmd_load(matrix: str) -> int:
     return 0
 
 
+def _ionet_inventory() -> list[dict]:
+    """探测 ionet 学术包(GitHub 转存官方表)的在库文件清单。"""
+    import json as _json
+    import urllib.request
+
+    url = "https://api.github.com/repos/Carol-seven/ionet/contents/data"
+    req = urllib.request.Request(url, headers={"User-Agent": "zephyr-io-ingest"})
+    with urllib.request.urlopen(req, timeout=30) as resp:
+        items = _json.loads(resp.read().decode("utf-8"))
+    out = []
+    for it in items:
+        name = it.get("name", "")
+        if name.startswith("china_") and name.endswith(".rda"):
+            parts = name[:-4].split("_")  # china_YYYY_N
+            if len(parts) < 3 or not parts[1].isdigit() or not parts[2].isdigit():
+                continue  # china_employment 等非表文件
+            out.append({"name": name, "year": int(parts[1]), "sectors": int(parts[2]),
+                        "size": it.get("size", 0), "url": it.get("download_url")})
+    return sorted(out, key=lambda x: (x["year"], x["sectors"]))
+
+
+def cmd_fetch(year: int | None, out_dir: str) -> int:
+    inv = _ionet_inventory()
+    if not inv:
+        print("[ERROR] ionet repo 探测失败(网络/接口变更)")
+        return 2
+    conn = get_depgraph_pg_connection(read_only=True)
+    cur = conn.cursor()
+    cur.execute("SELECT DISTINCT year FROM ig_io_edge")
+    have = {r[0] for r in cur.fetchall()}
+    conn.close()
+    print(f"上游可用表: {[(i['year'], i['sectors']) for i in inv]}")
+    print(f"库内已装载年份: {sorted(have)}")
+    targets = [i for i in inv if (year is None and i["year"] not in have and i["year"] > max(have, default=0))
+               or (year is not None and i["year"] == year)]
+    # 同年取部门数最细版
+    by_year: dict[int, dict] = {}
+    for i in targets:
+        if i["year"] not in by_year or i["sectors"] > by_year[i["year"]]["sectors"]:
+            by_year[i["year"]] = i
+    if not by_year:
+        print("[OK] 无新表可取(上游无库外新年份;显式取表用 --year)")
+        return 0
+    outp = Path(out_dir)
+    outp.mkdir(parents=True, exist_ok=True)
+    for i in by_year.values():
+        dest = outp / i["name"]
+        import urllib.request
+
+        print(f"下载 {i['name']} ({i['size']} bytes) ...")
+        urllib.request.urlretrieve(i["url"], dest)  # noqa: S310 白名单域名静态文件
+        print(f"[OK] -> {dest}")
+        print(f"后续: python scripts/industry_graph/io_ingest.py parse --rda {dest} --out {dest.with_suffix('.matrix.json')}")
+    return 0
+
+
 def cmd_status() -> int:
     conn = get_depgraph_pg_connection(read_only=True)
     cur = conn.cursor()
@@ -166,12 +222,17 @@ def main() -> int:
     p1.add_argument("--out", required=True)
     p2 = sub.add_parser("load")
     p2.add_argument("--matrix", required=True)
+    p3 = sub.add_parser("fetch")
+    p3.add_argument("--year", type=int, default=None, help="显式取某年表(默认只取库外新年份)")
+    p3.add_argument("--out-dir", default=".runtime/tmp")
     sub.add_parser("status")
     a = ap.parse_args()
     if a.cmd == "parse":
         return cmd_parse(a.rda, a.out)
     if a.cmd == "load":
         return cmd_load(a.matrix)
+    if a.cmd == "fetch":
+        return cmd_fetch(a.year, a.out_dir)
     return cmd_status()
 
 
