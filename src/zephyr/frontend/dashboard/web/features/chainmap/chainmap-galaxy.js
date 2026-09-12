@@ -420,7 +420,7 @@
    * 族间流向线=links 权重投影（贝塞尔+箭头，画在底板下层）。
    * 交互：点链块=cm:goto-chain 直达链视图；点底板=cm:open-cluster 进链层；
    * 滚轮缩放/拖拽平移/双击复位。纯 SVG，#cm-wires-overview 唯一画布。 */
-  var OV = { BUDGET: 2360, GAPX: 34, GAPY: 46, ZPAD: 16, HEAD: 26, CELL_GAP: 14, CELL_BUDGET: 620 };
+  var OV = { BUDGET: 2360, GAPX: 34, GAPY: 46, ZPAD: 16, HEAD: 26, CELL_GAP: 14, CELL_BUDGET: 620, MAX_LINKS: 20 };
   var ovIndex = { chains: {}, clusters: {} };   /* chain_id→链记录、cid→族记录（点击委托用） */
 
   function ovCanvasEl() { return document.getElementById('cm-canvas-overview'); }
@@ -539,17 +539,19 @@
     var w = ovWorldEl();
     if (w) { w.style.width = worldW + 'px'; w.style.height = worldH + 'px'; }
     var defs = '<defs><marker id="cmOvAr" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0L10,5L0,10z" fill="#6f95e0"/></marker></defs>';
-    /* 族间流向线：底板下层，透明度/线宽随权重对数增长 */
+    /* 族间流向线：底板下层；全量边画出来是线团（Owner 2026-09-13 实景反馈"很混乱"）——
+     * 只画权重前 MAX_OV_LINKS 条主干，弱化常驻样式，悬停底板高亮其相关线（bindOvEvents） */
+    var ranked = d.links.slice().sort(function (a, b) { return (b.w || 0) - (a.w || 0); }).slice(0, OV.MAX_LINKS);
     var links = '';
-    d.links.forEach(function (l) {
+    ranked.forEach(function (l) {
       var pa = null, pb = null;
       plates.forEach(function (p) { if (p.c.id === l.s) pa = p; if (p.c.id === l.t) pb = p; });
       if (!pa || !pb) return;
       var lw = l.w || 0;
-      var op = Math.min(0.5, 0.1 + Math.log10(lw + 1) * 0.1);
-      var swd = (1 + Math.min(2.6, Math.log10(lw + 1) * 0.8)).toFixed(1);
+      var op = Math.min(0.3, 0.07 + Math.log10(lw + 1) * 0.06);
+      var swd = (1 + Math.min(1.4, Math.log10(lw + 1) * 0.4)).toFixed(1);
       var mx = (pa.center.x + pb.center.x) / 2, my = (pa.center.y + pb.center.y) / 2 - 26;
-      links += '<path class="cm-ov-link" d="M' + pa.center.x + ',' + pa.center.y + ' Q' + mx + ',' + my + ' ' + pb.center.x + ',' + pb.center.y +
+      links += '<path class="cm-ov-link" data-s="' + esc2(l.s) + '" data-t="' + esc2(l.t) + '" d="M' + pa.center.x + ',' + pa.center.y + ' Q' + mx + ',' + my + ' ' + pb.center.x + ',' + pb.center.y +
         '" fill="none" stroke="#6f95e0" stroke-width="' + swd + '" opacity="' + op.toFixed(2) +
         '" marker-end="url(#cmOvAr)"><title>' + esc2((ovIndex.clusters[l.s] || {}).name || l.s) + ' → ' +
         esc2((ovIndex.clusters[l.t] || {}).name || l.t) + ' · 族间供应连接 权重 ' + lw + '</title></path>';
@@ -602,6 +604,24 @@
         ZK.bus.emit('cm:open-cluster', { cid: cid, name: c.name, market: G.market });
       }
     });
+    /* 悬停底板=高亮其相关流向线、压暗其余（降噪后的主干线可读性） */
+    svg.addEventListener('mouseover', function (e) {
+      if (!e.target.closest) return;
+      var pl = e.target.closest('.cm-ov-pl');
+      if (!pl) return;
+      var cid = pl.getAttribute('data-cid');
+      svg.classList.add('linkfocus');
+      Array.prototype.forEach.call(svg.querySelectorAll('.cm-ov-link'), function (p) {
+        p.classList.toggle('on', p.getAttribute('data-s') === cid || p.getAttribute('data-t') === cid);
+      });
+    });
+    svg.addEventListener('mouseout', function (e) {
+      if (!e.target.closest) return;
+      var to = e.relatedTarget;
+      if (to && to.closest && to.closest('.cm-ov-pl')) return;
+      svg.classList.remove('linkfocus');
+      Array.prototype.forEach.call(svg.querySelectorAll('.cm-ov-link.on'), function (p) { p.classList.remove('on'); });
+    });
   }
 
   /* ── L1 形态切换（顶栏 星云/总图）── 契约不变：cm:view 'galaxy' 恒指 L1（按 G.mode 落到对应画布） */
@@ -617,8 +637,11 @@
       else hideLoading();
     } else {
       stopLoop();
-      if (G.data) { hideLoading(); renderOverview(); }
-      else if (!G.busy) load();        /* showLoading 内部按可见性落覆盖层 */
+      if (G.data) {
+        hideLoading();
+        var osv = ovSvgEl();
+        if (!osv || !osv.querySelector('.cm-ov-pl')) renderOverview();   /* 首切/切档清空后重排；已有内容保镜头不重置 */
+      } else if (!G.busy) load();        /* showLoading 内部按可见性落覆盖层 */
       else refreshLoading();
     }
   }
@@ -635,8 +658,9 @@
     if (m !== '3d' && m !== 'ifind') return;
     G.mode = m;
     syncToggle();
-    setCrumb();
-    if (l1Visible()) showL1();
+    /* 任意层级（L2 链层/L3 公司）点切换钮=一键回 L1（Owner 2026-09-13 反馈：此前仅换模式不动视图）；
+     * 已在 L1 时幂等：cm:view 处理器重落当前 mode 画布 */
+    ZK.bus.emit('cm:view', { view: 'galaxy' });
   }
 
   function bindToggle() {

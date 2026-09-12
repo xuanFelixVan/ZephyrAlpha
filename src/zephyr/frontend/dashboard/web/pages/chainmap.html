@@ -2,7 +2,7 @@
     <div class="cm-top">
       <div class="cm-crumb" id="cm-crumb">产业地图</div>
       <div id="cm-search-slot" class="cm-search-slot"></div>
-      <span class="cm-l1sw" id="cm-l1sw" title="一级视图切换：星云=3D 族星云；总图=iFinD 族总图（链块=链，点链块直达链视图）"><b data-mode="3d" class="act">星云</b><b data-mode="ifind">总图</b></span>
+      <span class="cm-l1sw" id="cm-l1sw" title="一级视图切换：星云=3D 族星云；总图=iFinD 族总图——任意层级点此一键回全景"><b data-mode="3d" class="act">星云</b><b data-mode="ifind">总图</b></span>
       <span class="cm-legend dim" style="font-size:11px">三层缩放：星系（族聚合）→ 产业链图谱（环节流程）→ 公司 ｜ 滚轮缩放 · 拖动平移 · 双击重置
         <i class="cm-info" title="板块页答'哪个板块强'（横向同环节并列）；本页答'强势沿产业链传导给谁'（纵向）。
 真源=INDUSTRY-GRAPH-001 ig_* 七表（PostgreSQL 只读）：族=按跨链供应连接紧密度聚类（Louvain，30~48 族）；
@@ -22,7 +22,7 @@
         <!-- L1 一级总图（chainmap-galaxy 模块 ifind 模式持有；Owner 2026-09-12 拍板④：星云保留，
              另做同风格 iFinD 一级总图，顶栏切换。族=分区底板蛇形排布、链=小等距块、族间流向线=边权投影） -->
         <div class="cm-canvas card" id="cm-canvas-overview" style="display:none">
-          <div class="cm-legend" id="cm-legend-overview">族＝分区底板（点底板进链层）｜链块大小＝公司数｜点链块直达链视图</div>
+          <div class="cm-legend" id="cm-legend-overview">族＝分区底板（点底板进链层）｜链块大小＝公司数｜流向线＝族间权重前 20（悬停底板高亮）｜点链块直达链视图</div>
           <div class="cm-world" id="cm-world-overview">
             <svg class="cm-wires" id="cm-wires-overview"></svg>
           </div>
@@ -75,7 +75,8 @@
     border:1px solid #263042; border-radius:99px; padding:2px 10px; font-size:11px; color:#7d8aa0; pointer-events:none; }
   #p-chainmap .cm-empty { position:absolute; inset:0; display:flex; align-items:center; justify-content:center;
     color:#525d70; font-size:13px; z-index:6; background:rgba(10,13,20,.6); }
-  #p-chainmap .cm-side { position:absolute; top:0; right:0; bottom:0; width:360px; z-index:8; overflow:auto; padding:12px; }
+  #p-chainmap .cm-side { position:absolute; top:0; right:0; bottom:0; width:360px; z-index:8; overflow:auto; padding:12px;
+    background:#0e1420; }   /* 实色：全局 .card 底=rgba(238,238,240,.055) 高透，Owner 2026-09-13 反馈透底花屏 */
   #p-chainmap .cm-bad { color:#e2b155 !important; }
 
   /* ── L1 星系（chainmap-galaxy）── B2 起 3D 星云：2D 节点/连线样式已随 DOM 退役（git 历史留存），活渲染=WebGL 画布+标签投影层 */
@@ -173,7 +174,7 @@
   #cm-wires-cluster .cm-chipm.chipmore { cursor:pointer; }
   #cm-wires-cluster .cm-chipm.chipmore:hover rect { stroke:#8fb0ea; }
   #cm-wires-cluster g.cm-ch { transition:opacity .18s; }
-  #cm-wires-cluster g.cm-ch.dimmed { opacity:.15; }
+  #cm-wires-cluster g.cm-ch.dimmed { opacity:.09; }   /* .15→.09：聚焦时他链幽灵感降噪（Owner 2026-09-13"画面乱"） */
   #cm-wires-cluster .cm-catb { cursor:pointer; }
   #cm-eq-overlay { position:fixed; z-index:880; width:330px; max-width:92vw; background:#0d131d; border:1px solid #2c3a52;
     border-radius:8px; box-shadow:0 8px 24px rgba(0,0,0,.5); padding:8px; font-size:11px; color:#c6cdd8; }
@@ -246,4 +247,7 @@
   #cm-wires-overview .cm-ov-pl-h { cursor:pointer; }
   #cm-wires-overview .cm-ov-pl-h:hover text { fill:#e6c34c; }
   #cm-wires-overview .cm-ov-link { transition:opacity .18s; }
+  /* 流向线降噪：常驻只画权重前 20 且低透明；悬停底板时聚焦其相关线（Owner 2026-09-13"总图混乱"） */
+  #cm-wires-overview.linkfocus .cm-ov-link { opacity:.05; }
+  #cm-wires-overview.linkfocus .cm-ov-link.on { opacity:.85; }
 </style>
