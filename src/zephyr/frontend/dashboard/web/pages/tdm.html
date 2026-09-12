@@ -8,6 +8,7 @@
       <span style="font-size:12px"><span style="display:inline-block;width:10px;height:10px;background:#2a1c0e;border:1.5px dashed #8a4a12;border-radius:3px;vertical-align:middle"></span> 🔴 红节点（设计态）</span>
       <span style="font-size:12px"><span style="display:inline-block;width:10px;height:10px;background:#0e2612;border:1.5px solid #2e7d32;border-radius:3px;vertical-align:middle"></span> 📄paper 实盘执行</span>
       <span class="dim" style="font-size:11px">｜ 连线：<span style="color:#44546e">━</span> 主链/sequence <span style="color:#44546e">╌</span> 虚线=喂给/feedback ｜ 层级：列位+字号（L1 大 → L4 小）</span>
+      <span class="dim" style="font-size:11px">红因：◇ 结构位 ｜ ○ 验证/裁定挂起 ｜ △ 未施工 ｜ · 流根终态</span>
       <input id="tdm-srch" placeholder="搜索节点（ID / 名称）…" oninput="tdmFilter(this.value)"
              style="background:#0d1117;border:1px solid #263042;border-radius:6px;color:var(--text);padding:4px 10px;font-size:12px;width:180px">
       <span id="tdm-mode" onclick="tdmToggleMode()" title="切换 拖动画布 / 文字选择复制（快捷键 Ctrl+Shift+D）"
@@ -85,6 +86,9 @@
   #tdm-tree .tn.vd { border-color:#8a94a6; }
   #tdm-tree .tn .tn-v { position:absolute; top:-7px; right:6px; font-size:9.5px; line-height:1.4;
     color:#8a94a6; border:1px solid #525d70; border-radius:99px; padding:0 6px; background:#10151d; z-index:1; }
+  /* 红因角标（v1.10，Owner 2026-09-11）：红节点左上角字符徽标——色语义不变，红因四分 */
+  #tdm-tree .tn .tn-r { position:absolute; top:-7px; left:6px; font-size:9.5px; line-height:1.4;
+    color:#d29a5b; border:1px dashed #8a4a12; border-radius:99px; padding:0 6px; background:#10151d; z-index:1; }
   /* 流根标签=树的根部视觉锚点：24px > L1 卡 19px，全图最大字号，一眼锁定树根 */
   #tdm-tree .tg { position:absolute; background:#1a2436; border:1.5px solid #3d8bff; border-radius:10px;
     padding:12px 18px; font-size:24px; font-weight:700; color:var(--text); user-select:none; white-space:nowrap; z-index:2; }

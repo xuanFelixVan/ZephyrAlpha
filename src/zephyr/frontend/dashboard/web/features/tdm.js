@@ -208,6 +208,10 @@
       var vd = TDM.verdicts && TDM.verdicts[n.id];
       var vtag = '';
       var fd = (F && !F.set[n.id]) ? ' fdim' : '';   /* 聚焦模式：血统主线外压暗（只动透明度，色语义不动） */
+      var rtag = '';
+      if (n.autonomy !== 'paper' && !n.module_ref && n.red_reason && RED_GLYPH[n.red_reason]) {
+        rtag = '<span class="tn-r" title="红因：' + (RED_ZH[n.red_reason] || n.red_reason) + '">' + RED_GLYPH[n.red_reason] + '</span>';
+      }
       if (vd && (vd.verdict === 'noise' || vd.verdict === 'decaying')) {
         el.className = 'tn tn-d' + depth + ' ' + cls(n) + fd + ' v' + (vd.verdict === 'noise' ? 'n' : 'd') + (n.id === TDM.sel ? ' sel' : '');
         vtag = '<span class="tn-v">' + (vd.verdict === 'noise' ? '噪音' : '衰减') + '</span>';
@@ -216,10 +220,10 @@
       }
       el.style.left = cx + 'px'; el.style.top = cy + 'px'; el.style.width = colW + 'px';
       /* 小字=「问」全文（不 slice 截断），CSS line-clamp 2：一排放不下自动提行成两行；标题保留 📄 前缀 */
-      el.innerHTML = vtag +
+      el.innerHTML = rtag + vtag +
         '<div class="tn-n">' + (n.autonomy === 'paper' ? '📄 ' : '') + (n.name || n.id) + '</div>' +
         '<div class="tn-g">' + (n.q || '（问待补）') + '</div>';
-      el.title = n.id;
+      el.title = n.id + (rtag ? ' · 红因：' + (RED_ZH[n.red_reason] || n.red_reason) : '');
       el.onclick = function () { if (TDM.dragDist > 3) return; TDM.sel = n.id; TDM.focus = n.id; render(); drawer(); };   /* 拖动平移后松手不算点击；点选即聚焦血统 */
       el.dataset.id = n.id;
       host.appendChild(el);
@@ -412,6 +416,9 @@
     roTimer = setTimeout(render, 120);
   });
 
+  /* 红因徽标（v1.10，Owner 2026-09-11）：红节点四分红因——三态色语义不变，只加字符角标 */
+  var RED_ZH = { structural: '结构位（子件已锚）', pending_gate: '验证/裁定挂起', not_built: '未施工', terminal: '流根终态（设计不锚）' };
+  var RED_GLYPH = { structural: '◇', pending_gate: '○', not_built: '△', terminal: '·' };
   var FLOW_ZH = { entry_flow: '建仓流 E', position_flow: '持仓流 P', exit_flow: '离场流 X', portfolio_flow: '组合流 F' };
   var REF_ZH = { factor: '因子', data: '数据源', cost_model: '成本模型', risk_limit: '风险限额', threshold: '阈值',
     event: '事件', algo: '算法', universe: '股票域', strategy: '策略', indicator: '技术指标' };
@@ -446,7 +453,7 @@
       ? '<span class="bdg bdg-paper">📄 paper · 实盘执行</span>'
       : (n.module_ref
         ? '<span class="bdg bdg-prod">实锚 · 已接模块</span>'
-        : '<span class="bdg bdg-design">🔴 红节点 · 设计态</span>');
+        : '<span class="bdg bdg-design">🔴 红节点 · ' + (RED_ZH[n.red_reason] || '设计态') + '</span>');
     var meta = (n.id.indexOf('TDM-C') === 0 ? '币圈镜像' : (FLOW_ZH[n.flow] || n.flow || '—')) +
       ' ｜ 层 ' + (n.layer || '—') + ' ｜ ' + (n.point || '—');
     /* 引用 chip：编号+中文名；hover title 全称（名称截断时兜底可读） */

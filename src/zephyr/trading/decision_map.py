@@ -224,6 +224,10 @@ class DecisionMapNode:
     #   运行时超时联动既有 fallback 字段；批量补值需逐节点工程实测，禁拍脑袋）
     tags: tuple[str, ...] = ()
     latency_budget: str | None = None
+    # v1.10（Owner 2026-09-11 红因徽标批复）：红节点红因显式登记——module_ref 缺失且非 paper 时必填
+    #   （缺=R40 warning，不阻断）；枚举=structural（结构位聚合）/pending_gate（验证或裁定挂起）/
+    #   not_built（未施工）/terminal（流根终态）。前端画布角标+抽屉徽标消费，三态色语义不变
+    red_reason: str | None = None
 
 
 @dataclass(frozen=True)
@@ -355,6 +359,7 @@ def _parse_node(raw: dict) -> DecisionMapNode:
         note_confirmed=(str(raw["note_confirmed"]) if raw.get("note_confirmed") else None),
         tags=tuple(str(x) for x in raw.get("tags", []) or []),
         latency_budget=(str(raw["latency_budget"]) if raw.get("latency_budget") else None),
+        red_reason=(str(raw["red_reason"]) if raw.get("red_reason") else None),
         module_id=(str(raw["module_id"]) if raw.get("module_id") else None),
         # v1.8 大白话算法说明（全景图可读性）
         algo_note_zh=str(raw.get("algo_note_zh", "") or ""),
@@ -730,6 +735,15 @@ def _validate_governance(
                 "R39",
                 n.node_id,
                 "盘中/持续节点缺 latency_budget（时效预算欠账——运行时超时监控与 fallback 联动的依据）",
+            )
+        # v1.10 红因登记欠账（Owner 2026-09-11 红因徽标批复）：红节点必须显式登记红因，
+        # 缺=warning 浮出（不阻断；四枚举见字段注释，登记防再误读）
+        if n.module_ref is None and n.ai_autonomy != "paper" and not n.red_reason:
+            add(
+                "warning",
+                "R40",
+                n.node_id,
+                "红节点缺 red_reason（红因登记欠账——structural/pending_gate/not_built/terminal 四选一）",
             )
         # R17 粒度门禁：一句话说清楚（长度上限+禁模糊词）；空串防御（折叠块头被截断的历史病根）
         if not n.decision_question.strip():
