@@ -12046,6 +12046,10 @@ creation_tokens:
 - file: src/zephyr/signal_ashare/core/analysis_utils.py
   token: sig-analysis-utils-20260913
   created_by: night-sweep-20260913
+- file: scripts/governance/commit_perf_report.py
+  token: commit-perf-report-20260913
+  created_by: night-sweep-20260913
+  capability: gov_perf_monitor
 di_seam_exemptions:
 - module_path: zephyr.trading.auto_runtime_core.AutoRuntimeCore
   reason: P0-5 LSG DI seam 标杆，已有 DI 但 AST 模式不匹配（动态注入）

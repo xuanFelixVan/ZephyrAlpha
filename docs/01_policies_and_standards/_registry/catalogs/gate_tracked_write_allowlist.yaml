@@ -60,3 +60,13 @@ entries:
   # shutdown_snapshot.json）已 git rm --cached + .gitignore 登记，写入方继续在盘
   # 追加但不再入 git 跟踪面——白名单 C 类条目数即燃尽指标，当前=0。
   # 新增"运行期写 tracked"的写入方仍 MUST 登记本表（C 类）或改走 .runtime/。
+- path: scripts/governance/meta/rules_integrity_db.json
+  class: B
+  writer: "post-flush re-register reconciler（chore(integrity) 批）+ depgraph regenerate 后台波次"
+  note: 规则完整性库派生缓存（2026-09-13 夜班实测：depgraph --add-design-node 后台
+    regenerate 在 gate 窗口写此文件引发 TRACKED-DRIFT-READONLY 误红，提交前 sleep
+    45-60s 等收敛为临时缓解，allowlist 化为治本）
+- path: data/architecture_health/latest.json
+  class: C
+  writer: "architecture_health auto-sync（post-commit 还原对象）"
+  note: 运行时遥测写 tracked 数据文件（judged auto-sync 产物，勿动清单成员）

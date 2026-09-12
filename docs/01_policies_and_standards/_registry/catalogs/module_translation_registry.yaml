@@ -47974,6 +47974,20 @@ entries:
   desc_zh: ""
   desc_en: ""
   plain_zh: "校验策略生产全景图 YAML 的结构合法性：字段完整性/边引用闭合/十层位合法/laws 与产品清单存在/built 节点必有代码锚/未声明反馈环拒绝/store_refs 三要素；另提供仓储存在性检查（磁盘路径与 CH 表实测，待定入库位降级为警告）。只读禁写，坏图必须被拦。"
+- module_path: src/zephyr/pf_alloc/core/vol_target_allocator.py
+  domain_id: D_BACKTEST
+  name_zh: "波动率目标化仓位计算器"
+  name_en: ""
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "UP-1 凯利简版：滚动窗口年化波动率除以目标波动率得到仓位系数，EWMA 平滑抑制换手，区间硬截断；窗口不足或波动率为零输出下限（不可测量=不满仓）。纯函数无 IO，TDM-E-L1 大盘总闸消费其最新仓位系数；Phase 2 待车道 E 分布预测接入后升级完整凯利 K=E(R)/σ²。"
+- module_path: scripts/governance/commit_perf_report.py
+  domain_id: D_GOV_CODE_QUALITY
+  name_zh: "提交性能健康报表"
+  name_en: ""
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "统计最近的提交构成、竞态拦截次数和漂移记录，输出一张并发健康体检表（正式提交占比低就说明并发在互相拖累）"
 
 battle_map_steps:
 - step_id: BM-BUY-05
