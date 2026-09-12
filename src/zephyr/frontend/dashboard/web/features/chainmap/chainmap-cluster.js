@@ -41,7 +41,7 @@
 
   var C = { cid: null, name: '', data: null, busy: false, view: { z: 1, x: 0, y: 0 },
             pos: {}, focusChain: null, focusChainName: null, focusNode: null, market: 'all', cat: null,
-            focusOff: false, autoFocused: false, pin: null };   /* pin=抽屉钉选环节（其上下游连线常亮，Owner 2026-09-13 拍板：默认不显线） */
+            pin: null };   /* pin=抽屉钉选环节（其上下游连线常亮）；聚焦只由点链名/链选轨/导航直达触发（Owner 2026-09-13 对齐 TDM：进场全亮） */
 
   function canvasEl() { return document.getElementById('cm-canvas-cluster'); }
   function worldEl() { return document.getElementById('cm-world-cluster'); }
@@ -75,7 +75,11 @@
       applyView();
     });
     window.addEventListener('mouseup', function () { drag = null; c.classList.remove('dragging'); });
-    c.addEventListener('dblclick', function (e) { if (e.target.closest('.cm-nd, .cm-eqb, .cm-rail')) return; fitView(); });
+    c.addEventListener('dblclick', function (e) {
+    if (e.target.closest('.cm-nd, .cm-eqb, .cm-rail')) return;
+    if (C.focusChain) unfocusFocus();   /* 双击复原：取消聚焦回全亮（对齐 TDM 双击复位）+镜头重适配 */
+    fitView();
+  });
   }
 
   function zoomAt(mx, my, factor) {
@@ -481,20 +485,8 @@
     });
   }
 
-  /* ── 聚焦模式（B4r3 沿用：整族全量绘制，压暗他链不删卡）── */
-  function defaultFocus(d) {
-    function score(c) {
-      var act = 0;
-      c.nodes.forEach(function (n) { if (n.n_companies > 0) act++; });
-      return [act, c.n_companies, c.n_nodes];
-    }
-    return d.chains.slice().sort(function (a, b) {
-      var sa = score(a), sb = score(b);
-      for (var i = 0; i < 3; i++) { if (sb[i] !== sa[i]) return sb[i] - sa[i]; }
-      return 0;
-    })[0];
-  }
-
+  /* ── 聚焦模式（对齐 TDM 交互，Owner 2026-09-13）：进场全亮；聚焦只由点链名/链选轨/导航直达
+   * 触发——聚焦链排首位+镜头对锚点，他链压暗；双击空白=复原全亮。B4r3 的自动聚焦废除。 ── */
   function render() {
     var d = C.data;
     if (!d) return;
@@ -502,13 +494,6 @@
     drawView(d);
     bindSvgEvents(d);
     if (d.chains.length > RAIL_MIN) {
-      if (!C.focusChain && !C.focusOff) {
-        var def = defaultFocus(d);
-        C.focusChain = def.chain_id;
-        C.focusChainName = def.name;
-        C.autoFocused = true;
-        C.needCenter = true;
-      }
       buildRail(d, C.focusChain);
       applyFocus();
     }
@@ -521,15 +506,6 @@
     }
     setCrumb(C.focusChainName);
     fitView();
-    if (C.needCenter) {
-      C.needCenter = false;
-      var fch = d.chains.filter(function (c) { return c.chain_id === C.focusChain; })[0];
-      if (fch && fch._layout) {
-        /* 首屏镜头落在聚焦链锚点大块（无锚点回退首节点） */
-        var target = fch._layout.anchorId || (fch.nodes[0] && fch.nodes[0].node_id);
-        if (target) centerOn(target);
-      }
-    }
   }
 
   function buildRail(d, activeId) {
@@ -564,11 +540,14 @@
   function focusChain(chainId, chainName) {
     C.focusChain = chainId;
     C.focusChainName = chainName || null;
-    C.focusOff = false;
-    C.autoFocused = false;
     if (C.data) render();
     applyFocus();
-    if (C.focusNode) centerOn(C.focusNode);
+    var target = C.focusNode;
+    if (!target && C.data) {
+      var fch = C.data.chains.filter(function (c) { return c.chain_id === chainId; })[0];
+      target = fch && fch._layout && (fch._layout.anchorId || (fch.nodes[0] && fch.nodes[0].node_id));
+    }
+    if (target) centerOn(target);   /* 聚焦即镜头对准该链锚点大块（TDM 式自动排列跟进） */
     ZK.bus.emit('cm:chain-active', { chain_id: chainId });
   }
 
@@ -576,8 +555,6 @@
     C.focusChain = null;
     C.focusChainName = null;
     C.focusNode = null;
-    C.focusOff = true;
-    C.autoFocused = false;
     render();
   }
 
@@ -808,7 +785,7 @@
   ZK.bus.on('cm:open-cluster', function (d) {
     if (!d || !d.cid) return;
     var mkt = d.market || C.market || 'all';
-    C.focusChain = null; C.focusNode = null; C.focusChainName = null; C.focusOff = false; C.autoFocused = false;
+    C.focusChain = null; C.focusNode = null; C.focusChainName = null;
     C.name = d.name || (nameMaps[mkt] && nameMaps[mkt][d.cid]) || C.name;
     show(true);
     if (C.cid === d.cid && C.market === mkt && C.data) { render(); return; }
