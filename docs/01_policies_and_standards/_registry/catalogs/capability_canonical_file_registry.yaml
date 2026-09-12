@@ -4997,7 +4997,7 @@ creation_tokens:
   token: sole-gw-wiring144-bp-20260912
   created_by: sole-committer-20260911
   capability: sector_strength_wiring
-- file: tests/signal_ashare/test_sector_strength_wiring.py
+- file: tests/signal_ashare/sector/test_sector_strength_wiring.py
   token: sole-gw-wiring-tests-20260912
   created_by: sole-committer-20260911
   capability: sector_strength_wiring
@@ -8462,7 +8462,7 @@ creation_tokens:
   created_by: AI-SEAT-001
   capability: seat_pattern_analyzer
   note: MOD-SIG-056 模块蓝图（CAND-SEAT-001 转正 MVP），随源文件一并登记
-- file: tests/signal_ashare/test_seat_pattern_analyzer.py
+- file: tests/signal_ashare/limit_up/test_seat_pattern_analyzer.py
   token: auto-seat-pattern-analyzer-test-20260818
   created_by: AI-SEAT-001
   capability: seat_pattern_analyzer
@@ -8603,7 +8603,7 @@ creation_tokens:
   token: auto-lhb-premium-analyzer-20260822
   created_by: AI-P2-M3LHB
   capability: lhb_premium_analyzer
-- file: tests/signal_ashare/test_lhb_premium_analyzer.py
+- file: tests/signal_ashare/limit_up/test_lhb_premium_analyzer.py
   token: auto-test-lhb-premium-analyzer-20260822
   created_by: AI-P2-M3LHB
   capability: lhb_premium_analyzer
@@ -8627,7 +8627,7 @@ creation_tokens:
   token: auto-option-sentiment-20260822
   created_by: AI-P2-W4C
   capability: option_sentiment
-- file: tests/signal_ashare/test_option_sentiment.py
+- file: tests/signal_ashare/sentiment/test_option_sentiment.py
   token: auto-test-option-sentiment-20260822
   created_by: AI-P2-W4C
   capability: option_sentiment
@@ -8635,7 +8635,7 @@ creation_tokens:
   token: auto-sector-divergence-20260822
   created_by: AI-P2-W4D
   capability: sector_divergence
-- file: tests/signal_ashare/test_sector_divergence.py
+- file: tests/signal_ashare/sector/test_sector_divergence.py
   token: auto-test-sector-divergence-20260822
   created_by: AI-P2-W4D
   capability: sector_divergence
@@ -8671,7 +8671,7 @@ creation_tokens:
   token: auto-sector-leader-20260822
   created_by: AI-P2-W4F
   capability: sector_leader
-- file: tests/signal_ashare/test_sector_leader.py
+- file: tests/signal_ashare/sector/test_sector_leader.py
   token: auto-test-sector-leader-20260822
   created_by: AI-P2-W4F
   capability: sector_leader
@@ -8719,7 +8719,7 @@ creation_tokens:
   token: auto-similar-day-inference-20260822
   created_by: AI-P2-W5A
   capability: similar_day_inference
-- file: tests/signal_ashare/test_similar_day_inference.py
+- file: tests/signal_ashare/ml_forecast/test_similar_day_inference.py
   token: auto-test-similar-day-inference-20260822
   created_by: AI-P2-W5A
   capability: similar_day_inference
@@ -9119,11 +9119,11 @@ creation_tokens:
   token: auto-test-market-state-sensor-20260823
   created_by: AI-K3-GW-REGIME
   capability: market_state_sensing
-- file: tests/signal_ashare/test_regime_change_detector.py
+- file: tests/signal_ashare/ml_forecast/test_regime_change_detector.py
   token: auto-test-regime-change-detector-20260823
   created_by: AI-K3-GW-REGIME
   capability: regime_change_detection
-- file: tests/signal_ashare/test_next_day_8state_forecast.py
+- file: tests/signal_ashare/ml_forecast/test_next_day_8state_forecast.py
   token: auto-test-next-day-8state-forecast-20260823
   created_by: AI-K3-GW-REGIME
   capability: next_day_state_forecast
@@ -9355,11 +9355,11 @@ creation_tokens:
   token: auto-ohlcv-normalizer-20260823
   created_by: AI-K3-GW-SIGNAL
   capability: data_normalizers
-- file: tests/signal_ashare/test_tiered_screening_filter.py
+- file: tests/signal_ashare/screening/test_tiered_screening_filter.py
   token: auto-test-tiered-screening-filter-20260823
   created_by: AI-K3-GW-SIGNAL
   capability: signal_screening_funnel
-- file: tests/signal_ashare/test_coarse_screening_funnel.py
+- file: tests/signal_ashare/screening/test_coarse_screening_funnel.py
   token: auto-test-coarse-screening-funnel-20260823
   created_by: AI-K3-GW-SIGNAL
   capability: signal_screening_funnel
@@ -9367,27 +9367,27 @@ creation_tokens:
   token: auto-test-fine-scoring-engine-20260823
   created_by: AI-K3-GW-SIGNAL
   capability: signal_screening_funnel
-- file: tests/signal_ashare/test_event_driven_screener.py
+- file: tests/signal_ashare/screening/test_event_driven_screener.py
   token: auto-test-event-driven-screener-20260823
   created_by: AI-K3-GW-SIGNAL
   capability: signal_screening_funnel
-- file: tests/signal_ashare/test_causal_inference_engine.py
+- file: tests/signal_ashare/ml_forecast/test_causal_inference_engine.py
   token: auto-test-causal-inference-engine-20260823
   created_by: AI-K3-GW-SIGNAL
   capability: causal_inference
-- file: tests/signal_ashare/test_conditional_density_predictor.py
+- file: tests/signal_ashare/ml_forecast/test_conditional_density_predictor.py
   token: auto-test-conditional-density-predictor-20260823
   created_by: AI-K3-GW-SIGNAL
   capability: prediction_family
-- file: tests/signal_ashare/test_conformal_predictor.py
+- file: tests/signal_ashare/ml_forecast/test_conformal_predictor.py
   token: auto-test-conformal-predictor-20260823
   created_by: AI-K3-GW-SIGNAL
   capability: prediction_family
-- file: tests/signal_ashare/test_survival_time_predictor.py
+- file: tests/signal_ashare/ml_forecast/test_survival_time_predictor.py
   token: auto-test-survival-time-predictor-20260823
   created_by: AI-K3-GW-SIGNAL
   capability: prediction_family
-- file: tests/signal_ashare/test_causal_factor_validator.py
+- file: tests/signal_ashare/ml_forecast/test_causal_factor_validator.py
   token: auto-test-causal-factor-validator-20260823
   created_by: AI-K3-GW-SIGNAL
   capability: causal_inference
@@ -9611,7 +9611,7 @@ creation_tokens:
   token: auto-war-pool-generator-20260823
   created_by: AI-K3-GW-GAPP1A
   capability: war_pool_generator
-- file: tests/signal_ashare/test_war_pool_generator.py
+- file: tests/signal_ashare/limit_up/test_war_pool_generator.py
   token: auto-test-war-pool-generator-20260823
   created_by: AI-K3-GW-GAPP1A
   capability: war_pool_generator
@@ -9619,7 +9619,7 @@ creation_tokens:
   token: auto-screening-funnel-report-20260823
   created_by: AI-K3-GW-GAPP1A
   capability: screening_funnel_report
-- file: tests/signal_ashare/test_screening_funnel_report.py
+- file: tests/signal_ashare/screening/test_screening_funnel_report.py
   token: auto-test-screening-funnel-report-20260823
   created_by: AI-K3-GW-GAPP1A
   capability: screening_funnel_report
@@ -9651,7 +9651,7 @@ creation_tokens:
   token: auto-alert-aggregator-20260823
   created_by: AI-K3-GW-GAPP1B
   capability: alert_aggregation
-- file: tests/signal_ashare/test_limit_up_reason_attribution.py
+- file: tests/signal_ashare/limit_up/test_limit_up_reason_attribution.py
   token: auto-test-limit-up-reason-attribution-20260823
   created_by: AI-K3-GW-GAPP1B
   capability: limit_up_reason_attribution
@@ -9659,7 +9659,7 @@ creation_tokens:
   token: auto-test-index-contribution-decomposer-20260823
   created_by: AI-K3-GW-GAPP1B
   capability: index_contribution_decomposition
-- file: tests/signal_ashare/test_t0_point_analyzer.py
+- file: tests/signal_ashare/intraday_t0/test_t0_point_analyzer.py
   token: auto-test-t0-point-analyzer-20260823
   created_by: AI-K3-GW-GAPP1B
   capability: t0_point_analysis
@@ -9775,7 +9775,7 @@ creation_tokens:
   token: auto-mc-path-simulator-20260823
   created_by: AI-K3-GW-GAP6
   capability: mc_path_simulation
-- file: tests/signal_ashare/test_mc_path_simulator.py
+- file: tests/signal_ashare/ml_forecast/test_mc_path_simulator.py
   token: auto-test-mc-path-simulator-20260823
   created_by: AI-K3-GW-GAP6
   capability: mc_path_simulation
@@ -9883,15 +9883,15 @@ creation_tokens:
   token: auto-sector-attribute-mapping-yaml-20260823
   created_by: AI-K3-GW-GAP7
   capability: sector_attribute_rules
-- file: tests/signal_ashare/test_sector_attribute_rules.py
+- file: tests/signal_ashare/sector/test_sector_attribute_rules.py
   token: auto-test-sector-attribute-rules-20260823
   created_by: AI-K3-GW-GAP7
   capability: sector_attribute_rules
-- file: tests/signal_ashare/test_limit_up_followthrough.py
+- file: tests/signal_ashare/limit_up/test_limit_up_followthrough.py
   token: auto-test-limit-up-followthrough-20260823
   created_by: AI-K3-GW-GAP7
   capability: limit_up_followthrough
-- file: tests/signal_ashare/test_sector_volume_anomaly.py
+- file: tests/signal_ashare/sector/test_sector_volume_anomaly.py
   token: auto-test-sector-volume-anomaly-20260823
   created_by: AI-K3-GW-GAP7
   capability: sector_volume_anomaly
@@ -9899,7 +9899,7 @@ creation_tokens:
   token: auto-test-counter-trend-board-20260823
   created_by: AI-K3-GW-GAP7
   capability: counter_trend_board
-- file: tests/signal_ashare/test_sector_detail_enricher.py
+- file: tests/signal_ashare/sector/test_sector_detail_enricher.py
   token: auto-test-sector-detail-enricher-20260823
   created_by: AI-K3-GW-GAP7
   capability: sector_detail_enrichment
@@ -9995,19 +9995,19 @@ creation_tokens:
   token: auto-test-performance-monitor-20260823
   created_by: AI-K3-GW-INFRA
   capability: execution_performance_monitor
-- file: tests/signal_ashare/test_kronos_tsfm_predictor.py
+- file: tests/signal_ashare/ml_forecast/test_kronos_tsfm_predictor.py
   token: auto-test-kronos-tsfm-predictor-20260823
   created_by: AI-K3-GW-INFRA
   capability: ml_candidate_skeleton
-- file: tests/signal_ashare/test_mamba_ssm_temporal_enhancer.py
+- file: tests/signal_ashare/ml_forecast/test_mamba_ssm_temporal_enhancer.py
   token: auto-test-mamba-ssm-temporal-enhancer-20260823
   created_by: AI-K3-GW-INFRA
   capability: ml_candidate_skeleton
-- file: tests/signal_ashare/test_adaptive_conformal_tcp_rm_ddci.py
+- file: tests/signal_ashare/ml_forecast/test_adaptive_conformal_tcp_rm_ddci.py
   token: auto-test-adaptive-conformal-tcp-rm-ddci-20260823
   created_by: AI-K3-GW-INFRA
   capability: conformal_prediction
-- file: tests/signal_ashare/test_xlstm_long_memory.py
+- file: tests/signal_ashare/ml_forecast/test_xlstm_long_memory.py
   token: auto-test-xlstm-long-memory-20260823
   created_by: AI-K3-GW-INFRA
   capability: ml_candidate_skeleton
@@ -10331,7 +10331,7 @@ creation_tokens:
   token: auto-scaffold-selection_funnel_skeleton-20260824
   created_by: scaffold.py
   capability: selection_funnel_skeleton
-- file: tests/signal_ashare/test_selection_funnel_skeleton.py
+- file: tests/signal_ashare/screening/test_selection_funnel_skeleton.py
   token: auto-test-selection-funnel-skeleton-20260824
   created_by: AI-K3-A4-FUNNEL
   capability: signal_screening_funnel
@@ -10699,7 +10699,7 @@ creation_tokens:
   token: auto-scaffold-unified_pattern_engine-20260825
   created_by: scaffold.py
   capability: unified_pattern_engine
-- file: tests/signal_ashare/test_signal_factory.py
+- file: tests/signal_ashare/strategy_signal/test_signal_factory.py
   token: auto-test-signal-factory-20260825
   created_by: AI-K3-DIGEST-P1R1（主代理补登，tests/ 豁免自愿随 SELL-001 先例）
   capability: signal_factory
@@ -10711,11 +10711,11 @@ creation_tokens:
   token: auto-test-auction-microstructure-analyzer-20260825
   created_by: AI-K3-DIGEST-P1R1（主代理补登，tests/ 豁免自愿随 SELL-001 先例）
   capability: auction_microstructure_analyzer
-- file: tests/signal_ashare/test_t0_trading_pipeline.py
+- file: tests/signal_ashare/intraday_t0/test_t0_trading_pipeline.py
   token: auto-test-t0-trading-pipeline-20260825
   created_by: AI-K3-DIGEST-P1R1（主代理补登，tests/ 豁免自愿随 SELL-001 先例）
   capability: t0_trading_pipeline
-- file: tests/signal_ashare/test_unified_pattern_engine.py
+- file: tests/signal_ashare/strategy_signal/test_unified_pattern_engine.py
   token: auto-test-unified-pattern-engine-20260825
   created_by: AI-K3-DIGEST-P1R1（主代理补登，tests/ 豁免自愿随 SELL-001 先例）
   capability: unified_pattern_engine
@@ -10835,11 +10835,11 @@ creation_tokens:
   token: auto-scaffold-relative_strength_screener-20260825
   created_by: scaffold.py
   capability: relative_strength_screener
-- file: tests/signal_ashare/test_gap_fill_model.py
+- file: tests/signal_ashare/ml_forecast/test_gap_fill_model.py
   token: auto-test-gap-fill-model-20260825
   created_by: AI-K3-DIGEST-P1R2（主代理补登，tests/ 豁免自愿随 SELL-001 先例）
   capability: gap_fill_model
-- file: tests/signal_ashare/test_intraday_volume_orderflow.py
+- file: tests/signal_ashare/intraday_t0/test_intraday_volume_orderflow.py
   token: auto-test-intraday-volume-orderflow-20260825
   created_by: AI-K3-DIGEST-P1R2（主代理补登，tests/ 豁免自愿随 SELL-001 先例）
   capability: intraday_volume_orderflow
@@ -10851,7 +10851,7 @@ creation_tokens:
   token: auto-test-multi-indicator-divergence-20260825
   created_by: AI-K3-DIGEST-P1R2（主代理补登，tests/ 豁免自愿随 SELL-001 先例）
   capability: multi_indicator_divergence
-- file: tests/signal_ashare/test_relative_strength_screener.py
+- file: tests/signal_ashare/screening/test_relative_strength_screener.py
   token: auto-test-relative-strength-screener-20260825
   created_by: AI-K3-DIGEST-P1R2（主代理补登，tests/ 豁免自愿随 SELL-001 先例）
   capability: relative_strength_screener
@@ -10959,15 +10959,15 @@ creation_tokens:
   token: auto-scaffold-sentiment_price_divergence-20260825
   created_by: scaffold.py
   capability: sentiment_price_divergence
-- file: tests/signal_ashare/test_limit_up_ecosystem_leadership.py
+- file: tests/signal_ashare/limit_up/test_limit_up_ecosystem_leadership.py
   token: auto-test-limit-up-ecosystem-leadership-20260825
   created_by: AI-K3-DIGEST-P1R3（主代理补登，tests/ 豁免自愿随 SELL-001 先例）
   capability: limit_up_ecosystem_leadership
-- file: tests/signal_ashare/test_sector_momentum_persistence.py
+- file: tests/signal_ashare/sector/test_sector_momentum_persistence.py
   token: auto-test-sector-momentum-persistence-20260825
   created_by: AI-K3-DIGEST-P1R3（主代理补登，tests/ 豁免自愿随 SELL-001 先例）
   capability: sector_momentum_persistence
-- file: tests/signal_ashare/test_extreme_sentiment_reversal_detector.py
+- file: tests/signal_ashare/sentiment/test_extreme_sentiment_reversal_detector.py
   token: auto-test-extreme-sentiment-reversal-detector-20260825
   created_by: AI-K3-DIGEST-P1R3（主代理补登，tests/ 豁免自愿随 SELL-001 先例）
   capability: extreme_sentiment_reversal_detector
@@ -10975,7 +10975,7 @@ creation_tokens:
   token: auto-test-false-breakout-trap-detector-20260825
   created_by: AI-K3-DIGEST-P1R3（主代理补登，tests/ 豁免自愿随 SELL-001 先例）
   capability: false_breakout_trap_detector
-- file: tests/signal_ashare/test_sentiment_price_divergence.py
+- file: tests/signal_ashare/sentiment/test_sentiment_price_divergence.py
   token: auto-test-sentiment-price-divergence-20260825
   created_by: AI-K3-DIGEST-P1R3（主代理补登，tests/ 豁免自愿随 SELL-001 先例）
   capability: sentiment_price_divergence
@@ -11095,7 +11095,7 @@ creation_tokens:
   token: auto-qmt-file-bridge-playbook-20260825
   created_by: AI-QMTBRIDGE-001
   capability: qmt_file_bridge
-- file: tests/signal_ashare/test_limit_up_potential_scorer.py
+- file: tests/signal_ashare/limit_up/test_limit_up_potential_scorer.py
   token: auto-test-limit-up-potential-scorer-20260825
   created_by: AI-K3-DIGEST-P1R4（主代理补登，tests/ 豁免自愿随 SELL-001 先例）
   capability: limit_up_potential_scorer
@@ -11103,7 +11103,7 @@ creation_tokens:
   token: auto-test-bottom-confirmation-entry-20260825
   created_by: AI-K3-DIGEST-P1R4（主代理补登，tests/ 豁免自愿随 SELL-001 先例）
   capability: bottom_confirmation_entry
-- file: tests/signal_ashare/test_next_day_probability_gate.py
+- file: tests/signal_ashare/ml_forecast/test_next_day_probability_gate.py
   token: auto-test-next-day-probability-gate-20260825
   created_by: AI-K3-DIGEST-P1R4（主代理补登，tests/ 豁免自愿随 SELL-001 先例）
   capability: next_day_probability_gate
@@ -11227,15 +11227,15 @@ creation_tokens:
   token: auto-scaffold-patchtst_density_encoder-20260825
   created_by: scaffold.py
   capability: patchtst_density_encoder
-- file: tests/signal_ashare/test_pattern_match_strategy_library.py
+- file: tests/signal_ashare/strategy_signal/test_pattern_match_strategy_library.py
   token: auto-test-pattern-match-strategy-library-20260825
   created_by: AI-K3-DIGEST-P1R5（主代理补登，tests/ 豁免自愿随 SELL-001 先例）
   capability: pattern_match_strategy_library
-- file: tests/signal_ashare/test_sell_news_overdraft_detector.py
+- file: tests/signal_ashare/sentiment/test_sell_news_overdraft_detector.py
   token: auto-test-sell-news-overdraft-detector-20260825
   created_by: AI-K3-DIGEST-P1R5（主代理补登，tests/ 豁免自愿随 SELL-001 先例）
   capability: sell_news_overdraft_detector
-- file: tests/signal_ashare/test_overnight_return_expectancy.py
+- file: tests/signal_ashare/intraday_t0/test_overnight_return_expectancy.py
   token: auto-test-overnight-return-expectancy-20260825
   created_by: AI-K3-DIGEST-P1R5（主代理补登，tests/ 豁免自愿随 SELL-001 先例）
   capability: overnight_return_expectancy
@@ -11243,7 +11243,7 @@ creation_tokens:
   token: auto-test-multi-factor-timing-overlay-20260825
   created_by: AI-K3-DIGEST-P1R5（主代理补登，tests/ 豁免自愿随 SELL-001 先例）
   capability: multi_factor_timing_overlay
-- file: tests/signal_ashare/test_strategy_cross_vote_funnel.py
+- file: tests/signal_ashare/strategy_signal/test_strategy_cross_vote_funnel.py
   token: auto-test-strategy-cross-vote-funnel-20260825
   created_by: AI-K3-DIGEST-P1R5（主代理补登，tests/ 豁免自愿随 SELL-001 先例）
   capability: strategy_cross_vote_funnel
@@ -11331,7 +11331,7 @@ creation_tokens:
   token: auto-sector-breadth-20260828
   created_by: AI-WAVE2B-001（补登：代码随 AI-NIGHT-001 commit fff6ea6bfc 已入库，token 缺失本批补登）
   capability: sector_breadth
-- file: tests/signal_ashare/test_sector_breadth.py
+- file: tests/signal_ashare/sector/test_sector_breadth.py
   token: auto-test-sector-breadth-20260828
   created_by: AI-WAVE2B-001（补登：代码随 AI-NIGHT-001 commit fff6ea6bfc 已入库，token 缺失本批补登）
   capability: sector_breadth
@@ -11339,7 +11339,7 @@ creation_tokens:
   token: auto-sector-momentum-20260828
   created_by: AI-WAVE2B-001（补登：代码随 AI-NIGHT-001 commit fff6ea6bfc 已入库，token 缺失本批补登）
   capability: sector_momentum
-- file: tests/signal_ashare/test_sector_momentum.py
+- file: tests/signal_ashare/sector/test_sector_momentum.py
   token: auto-test-sector-momentum-20260828
   created_by: AI-WAVE2B-001（补登：代码随 AI-NIGHT-001 commit fff6ea6bfc 已入库，token 缺失本批补登）
   capability: sector_momentum
@@ -11511,7 +11511,7 @@ creation_tokens:
   token: auto-strategy-vote-integrator-20260830
   created_by: greatwall_20260830
   capability: strategy_cross_vote_funnel
-- file: tests/signal_ashare/test_strategy_vote_integrator.py
+- file: tests/signal_ashare/strategy_signal/test_strategy_vote_integrator.py
   token: auto-test-strategy-vote-integrator-20260830
   created_by: greatwall_20260830
   capability: strategy_cross_vote_funnel
@@ -11735,7 +11735,7 @@ creation_tokens:
   token: gw-tdm-conduction-module-20260910
   created_by: gw-tdm-20260909
   capability: trading_decision_map
-- file: tests/signal_ashare/test_sector_conduction.py
+- file: tests/signal_ashare/sector/test_sector_conduction.py
   token: gw-tdm-conduction-test-20260910
   created_by: gw-tdm-20260909
   capability: trading_decision_map
@@ -11915,6 +11915,22 @@ creation_tokens:
   token: auto-schemas-split-adopt-research-report-20260912
   created_by: schemas-split-20260912 (adopt 窗口期 orphan 件, 内容零改动随迁)
   capability: fundamental_research_report
+- file: schemas/categories/fundamental/consensus_daily.py
+  token: auto-adopt-consensus-daily-20260912
+  created_by: schemas-split-20260912 (adopt 研报消费端批在途件, 内容零改动)
+  capability: fund_consensus_daily
+- file: docs/_working/2026-09-12-expectation-consumption-design.md
+  token: auto-adopt-expectation-design-20260912
+  created_by: schemas-split-20260912 (adopt 研报消费端批在途件, 内容零改动)
+  capability: expectation_consumption_design
+- file: docs/_working/2026-09-12-fundamental-consumption-design.md
+  token: st-fingov-fund-cons-design-20260912
+  created_by: st-fingov-20260912
+  capability: fundamental_consumption_design
+- file: docs/_working/2026-09-12-work-roadmap.md
+  token: st-fingov-work-roadmap-20260912
+  created_by: st-fingov-20260912
+  capability: work_roadmap_20260912
 di_seam_exemptions:
 - module_path: zephyr.trading.auto_runtime_core.AutoRuntimeCore
   reason: P0-5 LSG DI seam 标杆，已有 DI 但 AST 模式不匹配（动态注入）
@@ -12765,7 +12781,7 @@ di_seam_exemptions:
   token: auto-pattern-to-signal-mapper-20260826
   created_by: AI-P2-W05
   capability: pattern_to_signal_mapper
-- file: tests/signal_ashare/test_pattern_to_signal_mapper.py
+- file: tests/signal_ashare/strategy_signal/test_pattern_to_signal_mapper.py
   token: auto-test-pattern-to-signal-mapper-20260826
   created_by: AI-P2-W05
   capability: pattern_to_signal_mapper_test
@@ -12789,7 +12805,7 @@ di_seam_exemptions:
   token: auto-overnight-conduction-model-20260826
   created_by: AI-P2-W05
   capability: overnight_conduction_model
-- file: tests/signal_ashare/test_overnight_conduction_model.py
+- file: tests/signal_ashare/intraday_t0/test_overnight_conduction_model.py
   token: auto-test-overnight-conduction-model-20260826
   created_by: AI-P2-W05
   capability: overnight_conduction_model_test
@@ -12813,7 +12829,7 @@ di_seam_exemptions:
   token: auto-sector-crowding-launch-20260826
   created_by: AI-P2-W05
   capability: sector_crowding_launch
-- file: tests/signal_ashare/test_sector_crowding_launch.py
+- file: tests/signal_ashare/sector/test_sector_crowding_launch.py
   token: auto-test-sector-crowding-launch-20260826
   created_by: AI-P2-W05
   capability: sector_crowding_launch_test
@@ -12825,7 +12841,7 @@ di_seam_exemptions:
   token: auto-intraday-size-style-20260826
   created_by: AI-P2-W05
   capability: intraday_size_style
-- file: tests/signal_ashare/test_intraday_size_style.py
+- file: tests/signal_ashare/intraday_t0/test_intraday_size_style.py
   token: auto-test-intraday-size-style-20260826
   created_by: AI-P2-W05
   capability: intraday_size_style_test
@@ -12861,7 +12877,7 @@ di_seam_exemptions:
   token: auto-event-conditional-density-20260826
   created_by: AI-P2-W05
   capability: event_conditional_density
-- file: tests/signal_ashare/test_event_conditional_density.py
+- file: tests/signal_ashare/ml_forecast/test_event_conditional_density.py
   token: auto-test-event-conditional-density-20260826
   created_by: AI-P2-W05
   capability: event_conditional_density_test
@@ -12873,7 +12889,7 @@ di_seam_exemptions:
   token: auto-fake-move-distribution-20260826
   created_by: AI-P2-W05
   capability: fake_move_distribution
-- file: tests/signal_ashare/test_fake_move_distribution.py
+- file: tests/signal_ashare/ml_forecast/test_fake_move_distribution.py
   token: auto-test-fake-move-distribution-20260826
   created_by: AI-P2-W05
   capability: fake_move_distribution_test
@@ -12909,7 +12925,7 @@ di_seam_exemptions:
   token: auto-causal-ml-engine-20260826
   created_by: AI-P2-W06
   capability: causal_ml_engine
-- file: tests/signal_ashare/test_causal_ml_engine.py
+- file: tests/signal_ashare/ml_forecast/test_causal_ml_engine.py
   token: auto-test-causal-ml-engine-20260826
   created_by: AI-P2-W06
   capability: causal_ml_engine_test
@@ -12921,7 +12937,7 @@ di_seam_exemptions:
   token: auto-tcp-rm-conformal-20260826
   created_by: AI-P2-W06
   capability: tcp_rm_conformal
-- file: tests/signal_ashare/test_tcp_rm_conformal.py
+- file: tests/signal_ashare/ml_forecast/test_tcp_rm_conformal.py
   token: auto-test-tcp-rm-conformal-20260826
   created_by: AI-P2-W06
   capability: tcp_rm_conformal_test
@@ -12957,7 +12973,7 @@ di_seam_exemptions:
   token: auto-strategy-matrix-3d-20260826
   created_by: AI-P2-W06
   capability: strategy_matrix_3d
-- file: tests/signal_ashare/test_strategy_matrix_3d.py
+- file: tests/signal_ashare/strategy_signal/test_strategy_matrix_3d.py
   token: auto-test-strategy-matrix-3d-20260826
   created_by: AI-P2-W06
   capability: strategy_matrix_3d_test
@@ -12969,7 +12985,7 @@ di_seam_exemptions:
   token: auto-signal-weight-adjuster-20260826
   created_by: AI-P2-W06
   capability: signal_weight_adjuster
-- file: tests/signal_ashare/test_signal_weight_adjuster.py
+- file: tests/signal_ashare/strategy_signal/test_signal_weight_adjuster.py
   token: auto-test-signal-weight-adjuster-20260826
   created_by: AI-P2-W06
   capability: signal_weight_adjuster_test
@@ -12981,7 +12997,7 @@ di_seam_exemptions:
   token: auto-day-trade-pnl-estimator-20260826
   created_by: AI-P2-W06
   capability: day_trade_pnl_estimator
-- file: tests/signal_ashare/test_day_trade_pnl_estimator.py
+- file: tests/signal_ashare/intraday_t0/test_day_trade_pnl_estimator.py
   token: auto-test-day-trade-pnl-estimator-20260826
   created_by: AI-P2-W06
   capability: day_trade_pnl_estimator_test
@@ -14089,3 +14105,169 @@ di_seam_exemptions:
   token: asset-v2-lof-minute-backfill-20260911
   created_by: st-asset-v2
   capability: backfill_lof_minute_history
+
+# creation_tokens 追加（C4 批量翻译批，2026-09-12）
+- file: scripts/backtest/translated/_c4_engine.py
+  token: c4-engine-st-zcode-c4-20260912
+  created_by: st-zcode-c4-20260912
+  capability: c4_batch_translation
+- file: scripts/backtest/c4_batch_screen.py
+  token: c4-batch-screen-st-zcode-c4-20260912
+  created_by: st-zcode-c4-20260912
+  capability: c4_batch_translation
+- file: tests/backtest/test_c4_batch_smoke.py
+  token: test-c4-batch-smoke-st-zcode-c4-20260912
+  created_by: st-zcode-c4-20260912
+  capability: c4_batch_translation
+- file: scripts/backtest/translated/c4_06d4cf3d7dcc_pairs_zscore.py
+  token: c4-06d4cf3d7dcc-pairs-zscore-st-zcode-c4-20260912
+  created_by: st-zcode-c4-20260912
+  capability: c4_batch_translation
+- file: scripts/backtest/translated/c4_091fee38cd01_alpha022.py
+  token: c4-091fee38cd01-alpha022-st-zcode-c4-20260912
+  created_by: st-zcode-c4-20260912
+  capability: c4_batch_translation
+- file: scripts/backtest/translated/c4_12286499cb19_rsrs_60m.py
+  token: c4-12286499cb19-rsrs-60m-st-zcode-c4-20260912
+  created_by: st-zcode-c4-20260912
+  capability: c4_batch_translation
+- file: scripts/backtest/translated/c4_14d3e787ea4b_cgo_factor.py
+  token: c4-14d3e787ea4b-cgo-factor-st-zcode-c4-20260912
+  created_by: st-zcode-c4-20260912
+  capability: c4_batch_translation
+- file: scripts/backtest/translated/c4_1970782c2adb_ma_pullback.py
+  token: c4-1970782c2adb-ma-pullback-st-zcode-c4-20260912
+  created_by: st-zcode-c4-20260912
+  capability: c4_batch_translation
+- file: scripts/backtest/translated/c4_29eb91dbaf60_crash_dodge.py
+  token: c4-29eb91dbaf60-crash-dodge-st-zcode-c4-20260912
+  created_by: st-zcode-c4-20260912
+  capability: c4_batch_translation
+- file: scripts/backtest/translated/c4_2b351fd05d5f_ultrashort_lowopen.py
+  token: c4-2b351fd05d5f-ultrashort-lowopen-st-zcode-c4-20260912
+  created_by: st-zcode-c4-20260912
+  capability: c4_batch_translation
+- file: scripts/backtest/translated/c4_2e4d39a3f50b_multi_ma.py
+  token: c4-2e4d39a3f50b-multi-ma-st-zcode-c4-20260912
+  created_by: st-zcode-c4-20260912
+  capability: c4_batch_translation
+- file: scripts/backtest/translated/c4_4440d07f973f_ultrashort.py
+  token: c4-4440d07f973f-ultrashort-st-zcode-c4-20260912
+  created_by: st-zcode-c4-20260912
+  capability: c4_batch_translation
+- file: scripts/backtest/translated/c4_5efe26d1992e_rsrs_timing.py
+  token: c4-5efe26d1992e-rsrs-timing-st-zcode-c4-20260912
+  created_by: st-zcode-c4-20260912
+  capability: c4_batch_translation
+- file: scripts/backtest/translated/c4_6485e4cd0844_kdj_timing.py
+  token: c4-6485e4cd0844-kdj-timing-st-zcode-c4-20260912
+  created_by: st-zcode-c4-20260912
+  capability: c4_batch_translation
+- file: scripts/backtest/translated/c4_6a6ec8869ddb_momentum62.py
+  token: c4-6a6ec8869ddb-momentum62-st-zcode-c4-20260912
+  created_by: st-zcode-c4-20260912
+  capability: c4_batch_translation
+- file: scripts/backtest/translated/c4_6cb29d4d9ba8_mom_rev_300.py
+  token: c4-6cb29d4d9ba8-mom-rev-300-st-zcode-c4-20260912
+  created_by: st-zcode-c4-20260912
+  capability: c4_batch_translation
+- file: scripts/backtest/translated/c4_7f7e5f935dfc_dmi_timing.py
+  token: c4-7f7e5f935dfc-dmi-timing-st-zcode-c4-20260912
+  created_by: st-zcode-c4-20260912
+  capability: c4_batch_translation
+- file: scripts/backtest/translated/c4_93aa8f5a2bdd_multi_period.py
+  token: c4-93aa8f5a2bdd-multi-period-st-zcode-c4-20260912
+  created_by: st-zcode-c4-20260912
+  capability: c4_batch_translation
+- file: scripts/backtest/translated/c4_99873fd0bc17_macd_single.py
+  token: c4-99873fd0bc17-macd-single-st-zcode-c4-20260912
+  created_by: st-zcode-c4-20260912
+  capability: c4_batch_translation
+- file: scripts/backtest/translated/c4_9c0136ec8f42_kucoffee_trend.py
+  token: c4-9c0136ec8f42-kucoffee-trend-st-zcode-c4-20260912
+  created_by: st-zcode-c4-20260912
+  capability: c4_batch_translation
+- file: scripts/backtest/translated/c4_9c0424f53fe4_zscore_meanrev5.py
+  token: c4-9c0424f53fe4-zscore-meanrev5-st-zcode-c4-20260912
+  created_by: st-zcode-c4-20260912
+  capability: c4_batch_translation
+- file: scripts/backtest/translated/c4_9ce75aa27ce5_bluechip_ma.py
+  token: c4-9ce75aa27ce5-bluechip-ma-st-zcode-c4-20260912
+  created_by: st-zcode-c4-20260912
+  capability: c4_batch_translation
+- file: scripts/backtest/translated/c4_a4543012b464_trend5.py
+  token: c4-a4543012b464-trend5-st-zcode-c4-20260912
+  created_by: st-zcode-c4-20260912
+  capability: c4_batch_translation
+- file: scripts/backtest/translated/c4_b37f550ba2af_gftd.py
+  token: c4-b37f550ba2af-gftd-st-zcode-c4-20260912
+  created_by: st-zcode-c4-20260912
+  capability: c4_batch_translation
+- file: scripts/backtest/translated/c4_c21459b71a42_boll_np.py
+  token: c4-c21459b71a42-boll-np-st-zcode-c4-20260912
+  created_by: st-zcode-c4-20260912
+  capability: c4_batch_translation
+- file: scripts/backtest/translated/c4_c30a620e114d_boll_break.py
+  token: c4-c30a620e114d-boll-break-st-zcode-c4-20260912
+  created_by: st-zcode-c4-20260912
+  capability: c4_batch_translation
+- file: scripts/backtest/translated/c4_c4ec6332c07f_trend_score.py
+  token: c4-c4ec6332c07f-trend-score-st-zcode-c4-20260912
+  created_by: st-zcode-c4-20260912
+  capability: c4_batch_translation
+- file: scripts/backtest/translated/c4_c72318f2da1c_bias_ql.py
+  token: c4-c72318f2da1c-bias-ql-st-zcode-c4-20260912
+  created_by: st-zcode-c4-20260912
+  capability: c4_batch_translation
+- file: scripts/backtest/translated/c4_c7a8ddbab748_ma10_ma5.py
+  token: c4-c7a8ddbab748-ma10-ma5-st-zcode-c4-20260912
+  created_by: st-zcode-c4-20260912
+  capability: c4_batch_translation
+- file: scripts/backtest/translated/c4_d06cab686cef_rsrs_opt.py
+  token: c4-d06cab686cef-rsrs-opt-st-zcode-c4-20260912
+  created_by: st-zcode-c4-20260912
+  capability: c4_batch_translation
+- file: scripts/backtest/translated/c4_e2e7f033d97c_kd_cross.py
+  token: c4-e2e7f033d97c-kd-cross-st-zcode-c4-20260912
+  created_by: st-zcode-c4-20260912
+  capability: c4_batch_translation
+- file: scripts/backtest/translated/c4_e3da6fa71af1_panic_rebound.py
+  token: c4-e3da6fa71af1-panic-rebound-st-zcode-c4-20260912
+  created_by: st-zcode-c4-20260912
+  capability: c4_batch_translation
+- file: scripts/backtest/translated/c4_e40a0a1bcda8_ma5_ma10.py
+  token: c4-e40a0a1bcda8-ma5-ma10-st-zcode-c4-20260912
+  created_by: st-zcode-c4-20260912
+  capability: c4_batch_translation
+- file: scripts/backtest/translated/c4_ea8b60272c03_300etf_1060.py
+  token: c4-ea8b60272c03-300etf-1060-st-zcode-c4-20260912
+  created_by: st-zcode-c4-20260912
+  capability: c4_batch_translation
+- file: scripts/backtest/translated/c4_eaddc3f9db4e_rsrs_r2.py
+  token: c4-eaddc3f9db4e-rsrs-r2-st-zcode-c4-20260912
+  created_by: st-zcode-c4-20260912
+  capability: c4_batch_translation
+- file: scripts/backtest/translated/c4_f284270f0ef0_macd_timing.py
+  token: c4-f284270f0ef0-macd-timing-st-zcode-c4-20260912
+  created_by: st-zcode-c4-20260912
+  capability: c4_batch_translation
+- file: scripts/backtest/translated/c4_fd47fa0e6401_macd_resonance.py
+  token: c4-fd47fa0e6401-macd-resonance-st-zcode-c4-20260912
+  created_by: st-zcode-c4-20260912
+  capability: c4_batch_translation
+- file: scripts/backtest/translated/c4_fdbc279fba99_rps_oinl.py
+  token: c4-fdbc279fba99-rps-oinl-st-zcode-c4-20260912
+  created_by: st-zcode-c4-20260912
+  capability: c4_batch_translation
+- file: scripts/backtest/translated/pilot_001_ml_multifactor.py
+  token: pilot-001-ml-multifactor-st-zcode-c4-20260912
+  created_by: st-zcode-c4-20260912
+  capability: c4_batch_translation
+- file: scripts/backtest/translated/pilot_002_ma_cross.py
+  token: pilot-002-ma-cross-st-zcode-c4-20260912
+  created_by: st-zcode-c4-20260912
+  capability: c4_batch_translation
+- file: scripts/backtest/translated/pilot_003_zscore_meanrev.py
+  token: pilot-003-zscore-meanrev-st-zcode-c4-20260912
+  created_by: st-zcode-c4-20260912
+  capability: c4_batch_translation
