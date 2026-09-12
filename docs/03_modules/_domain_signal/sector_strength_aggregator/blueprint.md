@@ -64,7 +64,7 @@ composite 降序 Top-ceil(N×15%)（节点真源"总分进前 15%"），保底 1
 |------|-------------------|--------------------------|:-------:|
 | module_id | MOD-SIG-142 | MOD-SIG-142 | ✅ |
 | domain_id | N/A | N/A | ✅ |
-| build_status | planned | N/A | — |
+| build_status | generated | N/A | — |
 | file_count | 10 文件 | N/A | — |
 
 > 冲突时以 depgraph 为准（ARCH-056 + ARCH-MM-001 声明 vs 验证框架）。
