@@ -2881,8 +2881,8 @@ error_codes:
   introduced: '2026-08-30: 候选核销批桶B CAND-RSK-022 转正（greatwall_20260830，MOD-RK-047 流动性危机情景族；RK 段顺延 0046 后）'
 - code: ZA-SIG-0134
   class: StrategyVoteIntegratorError
-  module: zephyr.signal_ashare.strategy_vote_integrator
-  file: src/zephyr/signal_ashare/strategy_vote_integrator.py
+  module: zephyr.signal_ashare.strategy_signal.strategy_vote_integrator
+  file: src/zephyr/signal_ashare/strategy_signal/strategy_vote_integrator.py
   introduced: '2026-08-30: 候选核销批桶B CAND-SIG-004 转正（greatwall_20260830，MOD-SIG-134 多策略投票整合；SIG 段顺延 0133 后）'
 # --- 2026-09-06 占位码转正批 XS（Owner 批准 B17-②，取号=段内 max+1 顺延）---
 - code: ZA-XS-0015
@@ -3753,8 +3753,8 @@ error_codes:
   introduced: '2026-09-06: Owner 批准占位码转正批（B17-②）——ZA-SIG-UNREGISTERED-CALENDAR-EFFECTS 转正'
 - code: ZA-SIG-0137
   class: CausalMlError
-  module: zephyr.signal_ashare.causal_ml_engine
-  file: src/zephyr/signal_ashare/causal_ml_engine.py
+  module: zephyr.signal_ashare.ml_forecast.causal_ml_engine
+  file: src/zephyr/signal_ashare/ml_forecast/causal_ml_engine.py
   introduced: '2026-09-06: Owner 批准占位码转正批（B17-②）——ZA-SIG-UNREGISTERED-CAUSAL-ML 转正'
 - code: ZA-SIG-0138
   class: CrowdGameError
@@ -3763,8 +3763,8 @@ error_codes:
   introduced: '2026-09-06: Owner 批准占位码转正批（B17-②）——ZA-SIG-UNREGISTERED-CROWD-GAME 转正'
 - code: ZA-SIG-0139
   class: DayTradePnlError
-  module: zephyr.signal_ashare.day_trade_pnl_estimator
-  file: src/zephyr/signal_ashare/day_trade_pnl_estimator.py
+  module: zephyr.signal_ashare.intraday_t0.day_trade_pnl_estimator
+  file: src/zephyr/signal_ashare/intraday_t0/day_trade_pnl_estimator.py
   introduced: '2026-09-06: Owner 批准占位码转正批（B17-②）——ZA-SIG-UNREGISTERED-DAY-TRADE-PNL 转正'
 - code: ZA-SIG-0140
   class: EventCausalError
@@ -3773,13 +3773,13 @@ error_codes:
   introduced: '2026-09-06: Owner 批准占位码转正批（B17-②）——ZA-SIG-UNREGISTERED-EVENT-CAUSAL 转正'
 - code: ZA-SIG-0141
   class: EventCondDensityError
-  module: zephyr.signal_ashare.event_conditional_density
-  file: src/zephyr/signal_ashare/event_conditional_density.py
+  module: zephyr.signal_ashare.ml_forecast.event_conditional_density
+  file: src/zephyr/signal_ashare/ml_forecast/event_conditional_density.py
   introduced: '2026-09-06: Owner 批准占位码转正批（B17-②）——ZA-SIG-UNREGISTERED-EVENT-COND-DENSITY 转正'
 - code: ZA-SIG-0142
   class: FakeMoveError
-  module: zephyr.signal_ashare.fake_move_distribution
-  file: src/zephyr/signal_ashare/fake_move_distribution.py
+  module: zephyr.signal_ashare.ml_forecast.fake_move_distribution
+  file: src/zephyr/signal_ashare/ml_forecast/fake_move_distribution.py
   introduced: '2026-09-06: Owner 批准占位码转正批（B17-②）——ZA-SIG-UNREGISTERED-FAKE-MOVE 转正'
 - code: ZA-SIG-0143
   class: IndustryChainError
@@ -3788,8 +3788,8 @@ error_codes:
   introduced: '2026-09-06: Owner 批准占位码转正批（B17-②）——ZA-SIG-UNREGISTERED-INDUSTRY-CHAIN 转正'
 - code: ZA-SIG-0144
   class: IntradaySizeStyleError
-  module: zephyr.signal_ashare.intraday_size_style
-  file: src/zephyr/signal_ashare/intraday_size_style.py
+  module: zephyr.signal_ashare.intraday_t0.intraday_size_style
+  file: src/zephyr/signal_ashare/intraday_t0/intraday_size_style.py
   introduced: '2026-09-06: Owner 批准占位码转正批（B17-②）——ZA-SIG-UNREGISTERED-INTRADAY-SIZE-STYLE 转正'
 - code: ZA-SIG-0145
   class: OrderflowPanicError
@@ -3798,18 +3798,18 @@ error_codes:
   introduced: '2026-09-06: Owner 批准占位码转正批（B17-②）——ZA-SIG-UNREGISTERED-ORDERFLOW-PANIC 转正'
 - code: ZA-SIG-0146
   class: OvernightConductionError
-  module: zephyr.signal_ashare.overnight_conduction_model
-  file: src/zephyr/signal_ashare/overnight_conduction_model.py
+  module: zephyr.signal_ashare.intraday_t0.overnight_conduction_model
+  file: src/zephyr/signal_ashare/intraday_t0/overnight_conduction_model.py
   introduced: '2026-09-06: Owner 批准占位码转正批（B17-②）——ZA-SIG-UNREGISTERED-OVERNIGHT-CONDUCTION 转正'
 - code: ZA-SIG-0147
   class: PatternSignalMapError
-  module: zephyr.signal_ashare.pattern_to_signal_mapper
-  file: src/zephyr/signal_ashare/pattern_to_signal_mapper.py
+  module: zephyr.signal_ashare.strategy_signal.pattern_to_signal_mapper
+  file: src/zephyr/signal_ashare/strategy_signal/pattern_to_signal_mapper.py
   introduced: '2026-09-06: Owner 批准占位码转正批（B17-②）——ZA-SIG-UNREGISTERED-PATTERN-SIGNAL-MAP 转正'
 - code: ZA-SIG-0148
   class: SectorCrowdingError
-  module: zephyr.signal_ashare.sector_crowding_launch
-  file: src/zephyr/signal_ashare/sector_crowding_launch.py
+  module: zephyr.signal_ashare.sector.sector_crowding_launch
+  file: src/zephyr/signal_ashare/sector/sector_crowding_launch.py
   introduced: '2026-09-06: Owner 批准占位码转正批（B17-②）——ZA-SIG-UNREGISTERED-SECTOR-CROWDING 转正'
 - code: ZA-SIG-0149
   class: SharedKernelError
@@ -3818,8 +3818,8 @@ error_codes:
   introduced: '2026-09-06: Owner 批准占位码转正批（B17-②）——ZA-SIG-UNREGISTERED-SHARED-KERNEL 转正'
 - code: ZA-SIG-0150
   class: SignalWeightError
-  module: zephyr.signal_ashare.signal_weight_adjuster
-  file: src/zephyr/signal_ashare/signal_weight_adjuster.py
+  module: zephyr.signal_ashare.strategy_signal.signal_weight_adjuster
+  file: src/zephyr/signal_ashare/strategy_signal/signal_weight_adjuster.py
   introduced: '2026-09-06: Owner 批准占位码转正批（B17-②）——ZA-SIG-UNREGISTERED-SIGNAL-WEIGHT 转正'
 - code: ZA-SIG-0151
   class: StockRelationGnnError
@@ -3828,8 +3828,8 @@ error_codes:
   introduced: '2026-09-06: Owner 批准占位码转正批（B17-②）——ZA-SIG-UNREGISTERED-STOCK-RELATION-GNN 转正'
 - code: ZA-SIG-0152
   class: StrategyMatrixError
-  module: zephyr.signal_ashare.strategy_matrix_3d
-  file: src/zephyr/signal_ashare/strategy_matrix_3d.py
+  module: zephyr.signal_ashare.strategy_signal.strategy_matrix_3d
+  file: src/zephyr/signal_ashare/strategy_signal/strategy_matrix_3d.py
   introduced: '2026-09-06: Owner 批准占位码转正批（B17-②）——ZA-SIG-UNREGISTERED-STRATEGY-MATRIX 转正'
 - code: ZA-SIG-0153
   class: SupplyChainMomentumError
@@ -3838,8 +3838,8 @@ error_codes:
   introduced: '2026-09-06: Owner 批准占位码转正批（B17-②）——ZA-SIG-UNREGISTERED-SUPPLY-CHAIN-MOMENTUM 转正'
 - code: ZA-SIG-0154
   class: TcpRmError
-  module: zephyr.signal_ashare.tcp_rm_conformal
-  file: src/zephyr/signal_ashare/tcp_rm_conformal.py
+  module: zephyr.signal_ashare.ml_forecast.tcp_rm_conformal
+  file: src/zephyr/signal_ashare/ml_forecast/tcp_rm_conformal.py
   introduced: '2026-09-06: Owner 批准占位码转正批（B17-②）——ZA-SIG-UNREGISTERED-TCP-RM 转正'
 - code: ZA-SIG-0155
   class: VolumeRegimeError
