@@ -5,7 +5,7 @@ title: "Seat Pattern Analyzer 蓝图+施工图 — 龙虎榜席位形态分析�
 doc_type: blueprint
 status: Draft
 design_maturity: production
-version: "0.1.3"
+version: "0.1.4"
 layer: L2_domain
 functional_domain: ashare_signal
 responsibility_domain: 
@@ -43,7 +43,7 @@ priority: P1
 
 # Seat Pattern Analyzer 蓝图+施工图 — 龙虎榜席位形态分析（谁在买）
 
-> module_id: MOD-SIG-056 | version: 0.1.3 | status: Draft | layer: L2_domain
+> module_id: MOD-SIG-056 | version: 0.1.4 | status: Draft | layer: L2_domain
 > actual_disk_path: src/zephyr/signal_ashare/limit_up/seat_pattern_analyzer.py | generation: 1
 
 ## 概述
@@ -118,7 +118,7 @@ priority: P1
 | 图 | 位置 | 状态 | 链接 |
 |----|------|------|------|
 | 依赖图 (depgraph) | `blueprint_id=MOD-SIG-056` 的 1 个 file 节点 | production | `extract_depgraph.py --modules MOD-SIG-056` |
-| 数据流图 (dataflow) | 0 个 Dataset / 1 个 Job | active | `apply_dataflowgraph.py --list-datasets` |
+| 数据流图 (dataflow) | （无节点） | N/A | `apply_dataflowgraph.py --list-datasets` |
 | 决策架构图 (decision) | 0 个决策节点 / 1 个决策层 | N/A | `generate_decision_diagram.py` |
 | 蓝图 (blueprint) | 本文件 | Draft | — |
 
@@ -570,7 +570,7 @@ design（v0.1 代码已实现+测试，depgraph design 态；merge 后统筹重�
 
 | 文件路径 | 实现状态 | 说明 |
 |---------|:---:|------|
-| — | — | 本模块尚无已实现代码 |
+| `src/zephyr/signal_ashare/limit_up/seat_pattern_analyzer.py` | ✅ 已实现 | |
 
 ### 1.5 路径索引使用指南
 

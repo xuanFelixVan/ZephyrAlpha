@@ -1,3 +1,5 @@
+# [BLUEPRINT] MOD-PLAN-001 | (auto-injected by S4 reconciler) | §
+# [TTL] permanent
 """LlmPremarketAnalysis (MOD-PLAN-007) 施工验证测试（92号清单 §8.6 / 44号 §9.14 M3-⑨）。
 
 全 mock（ch_client/llm_client 注入，离线可跑）：

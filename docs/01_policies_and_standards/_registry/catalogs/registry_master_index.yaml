@@ -1,11 +1,11 @@
-# 自动生成于 2026-09-12T12:09:10Z
+# 自动生成于 2026-09-12T19:28:47Z
 # 来源: _registry/catalogs/*.yaml frontmatter
 # 手工编辑无效——修改请通过各登记表的 frontmatter
 
-generated_at: '2026-09-12T12:09:10Z'
+generated_at: '2026-09-12T19:28:47Z'
 generated_by: scripts/governance/generators/generate_registry_master_index.py
 source: _registry/catalogs/*.yaml → frontmatter
-total_registries: 51
+total_registries: 50
 registries:
 - registry_id: GOV-AI-001
   name: AI 自治权限登记表（全模块权限终表）
@@ -103,14 +103,6 @@ registries:
   maintenance: manual
   entry_count: 132
   status: active
-- registry_id: REG-DATAFLOW-001
-  name: data_asset_registry
-  category: governance_rule
-  physical_path: docs/01_policies_and_standards/_registry/catalogs/data_asset_registry.yaml
-  format: yaml
-  maintenance: manual
-  entry_count: 0
-  status: unknown
 - registry_id: REG-DAL-001
   name: Decision Algorithm Registry
   category: governance_rule
@@ -277,7 +269,7 @@ registries:
   physical_path: docs/01_policies_and_standards/_registry/catalogs/module_translation_registry.yaml
   format: yaml
   maintenance: manual
-  entry_count: 6779
+  entry_count: 6836
   status: active
 - registry_id: CFG-noqa-exempt-registry
   name: noqa_exempt_registry
@@ -357,7 +349,7 @@ registries:
   physical_path: docs/01_policies_and_standards/_registry/catalogs/rule_catalog_registry.yaml
   format: yaml
   maintenance: auto
-  entry_count: 244
+  entry_count: 245
   status: active
 - registry_id: REG-RULING-001
   name: 裁定中央登记表
@@ -365,7 +357,7 @@ registries:
   physical_path: docs/01_policies_and_standards/_registry/catalogs/ruling_registry.yaml
   format: yaml
   maintenance: manual
-  entry_count: 62
+  entry_count: 63
   status: active
 - registry_id: REG-SEAT-001
   name: Seat Registry

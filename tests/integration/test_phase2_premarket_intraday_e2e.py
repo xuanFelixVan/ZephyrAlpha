@@ -1,3 +1,5 @@
+# [BLUEPRINT] MOD-INF-042 | (auto-injected by S4 reconciler) | §
+# [TTL] permanent
 """阶段二（92号清单 §9 波6）盘前/盘中新模块跨模块端到端集成测试。
 
 真实调用链（非单测堆砌），全合成数据 + mock CH + tmp SQLite，不触生产 CH/DB、不触网络：

@@ -1,3 +1,5 @@
+# [BLUEPRINT] MOD-SIG-038 | (auto-injected by S4 reconciler) | §
+# [TTL] permanent
 """MOD-SIG-025 M1 情绪增量包（44 号 §9.1/§9.2/§9.4 + 92 号 §6.1）单元测试
 
 6 增量已知答案合成用例 + 缺数据全降级 + 既有 7 维零破坏回归 + 灰度链兼容：

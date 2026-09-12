@@ -1,3 +1,5 @@
+# [BLUEPRINT] MOD-PLAN-001 | (auto-injected by S4 reconciler) | §
+# [TTL] permanent
 """BoundaryRevisionEngine (MOD-PLAN-006) 施工验证测试（92号清单 §8.3 / 44号 §3 M2 + §9.5）。
 
 覆盖：
