@@ -1,3 +1,5 @@
+# [BLUEPRINT] MOD-BT-031 | (auto-injected by S4 reconciler) | §
+# [TTL] permanent
 # [MODULE] scripts.ch.apply_crypto_shadow_tables_ddl
 # [DOMAIN] D_DATA
 # [DEPENDENCIES] zephyr.data.ch_writer; schemas.categories.crypto_kline_daily

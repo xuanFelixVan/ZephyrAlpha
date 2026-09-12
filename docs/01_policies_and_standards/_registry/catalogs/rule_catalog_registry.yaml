@@ -4,7 +4,7 @@ ttl: permanent
 doc_type: register
 title: 规则路径目录（唯一真源 SSoT）
 status: active
-generated_at: '2026-09-12T07:39:06Z'
+generated_at: '2026-09-12T08:16:59Z'
 generated_by: scripts/governance/d3_metadata/generate_rule_catalog.py
 maintenance: auto
 total_files: 244
@@ -1827,7 +1827,7 @@ files:
 - path: docs/01_policies_and_standards/sop/agent_constitution_legacy_v1.md
   module_id: SOP-CONSTITUTION-LEGACY-V1
   title: AI Agent 宪法 v1 归档（1639 行全文，2026-09-12 被 L0 替换）
-  doc_type: archive
+  doc_type: policy
   status: archived
   version: ''
   rule_form: ''
@@ -1919,7 +1919,7 @@ files:
   title: 产业链供应链全景图数据审计与更新SOP——夜班自主执行版
   doc_type: policy
   status: active
-  version: 1.8.0
+  version: 1.8.1
   rule_form: procedural
   scope: global
   stability: ''
