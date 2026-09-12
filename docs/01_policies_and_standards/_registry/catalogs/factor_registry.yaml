@@ -13,6 +13,18 @@
 # schema v2.1（2026-08-15，#ARCH-BREG-002 分域真源裁定）：新增 code_symbol 代码符号锚点 / code_fingerprint 实现指纹——库↔代码双向索引与漂移对账。实现域真源移交规则：代码未落地=库（设计态），代码落地锚定后=代码；业务语义域/治理评估域永属库。既有条目一律 null 占位，回填随条目重填与指纹扫描器施工（门禁A存在性校验/门禁B指纹对账立项#ARCH-BREG-002）。
 # applies_to 推导补充（2026-08-15）：全库 universe=UNI-RULE-001（全A可交易池），二跳推导 applies_to=[stock]。
 # ============================================================================
+# ── 准入与晋级判据（2026-09-12 成文；SOP-C C3 翻译拆因子前的准入门，Owner 裁定精神"凡进库必有门槛"）──
+# 登记五要素（缺一不收）：①出处（belongs_to_strategies 或人工提案 doc_ref）②公式可复算（formula+params）
+#   ③分类（factor_class 十类之一）④PIT 声明（pit_policy）⑤标签（tags 用本库词表，防同义漂移）
+# 生命周期五态：candidate（登记未考）→ experimental（回测≥1 窗口通过）→ active（晋级门槛过+被策略消费）
+#   → deprecated（失效/被马甲合并）→ retired（退役存档）——任何状态变更留痕（updated_at+owner）
+# candidate→experimental 晋级门槛（预注册禁挪）：IS 2019-2023 截面 IC 均值 |IC|>=0.02 且 IC 序列 t 检验
+#   p<0.05，且覆盖>=60% 交易日；不足→保持 candidate 并留 failed_eval 记录（不删条目）
+# 去马甲（合并判据）：与库内同 class 因子日度秩相关>=0.85 → 不新登记，挂 variant_of 指向已有条目
+#   （G07 策略层"三件马甲"教训的因子层前置防）
+# 状态适配强制项：翻译拆解的因子必须填 regime_valid/regime_invalid（G07 教训：无状态标注的因子会在
+#   退潮期伪装成全天候）；空值条目视为待补，C3/C4 批次强制补齐
+# ============================================================================
 # module_id: MOD-GOVERNANCE
 module_id: MOD-GOVERNANCE
 ttl: permanent
@@ -274,7 +286,7 @@ factors:
   benchmark_id: "BMK-INDEX-001"
   neutralization: "none"
   pit_policy: "price_only"
-  module_id: "MOD-FACTOR"
+  module_id: "MOD-L02-001"
   doc_ref: "29_factor_strategy_extraction.md §F1.2"
   code_path: ""
   belongs_to_strategies: []
@@ -348,7 +360,7 @@ factors:
   benchmark_id: "BMK-INDEX-001"
   neutralization: "none"
   pit_policy: "price_only"
-  module_id: "MOD-FACTOR"
+  module_id: "MOD-L02-001"
   doc_ref: "29_factor_strategy_extraction.md §F1.4（吸收 F1.3/F1.23）"
   code_path: ""
   belongs_to_strategies: []
@@ -422,7 +434,7 @@ factors:
   benchmark_id: "BMK-INDEX-001"
   neutralization: "none"
   pit_policy: "price_only"
-  module_id: "MOD-FACTOR"
+  module_id: "MOD-L02-001"
   doc_ref: "29_factor_strategy_extraction.md §F1.6（吸收 F1.5/F1.11）"
   code_path: ""
   belongs_to_strategies: []
@@ -496,7 +508,7 @@ factors:
   benchmark_id: "BMK-INDEX-001"
   neutralization: "none"
   pit_policy: "price_only"
-  module_id: "MOD-FACTOR"
+  module_id: "MOD-L02-001"
   doc_ref: "29_factor_strategy_extraction.md §F1.7"
   code_path: ""
   belongs_to_strategies: []
@@ -570,7 +582,7 @@ factors:
   benchmark_id: "BMK-INDEX-001"
   neutralization: "none"
   pit_policy: "price_only"
-  module_id: "MOD-FACTOR"
+  module_id: "MOD-L02-001"
   doc_ref: "29_factor_strategy_extraction.md §F1.8"
   code_path: ""
   belongs_to_strategies: []
@@ -644,7 +656,7 @@ factors:
   benchmark_id: "BMK-INDEX-001"
   neutralization: "none"
   pit_policy: "price_only"
-  module_id: "MOD-FACTOR"
+  module_id: "MOD-L02-001"
   doc_ref: "29_factor_strategy_extraction.md §F1.10"
   code_path: ""
   belongs_to_strategies: []
@@ -718,7 +730,7 @@ factors:
   benchmark_id: "BMK-INDEX-001"
   neutralization: "none"
   pit_policy: "price_only"
-  module_id: "MOD-FACTOR"
+  module_id: "MOD-L02-001"
   doc_ref: "29_factor_strategy_extraction.md §F1.12"
   code_path: ""
   belongs_to_strategies: []
@@ -792,7 +804,7 @@ factors:
   benchmark_id: "BMK-INDEX-001"
   neutralization: "none"
   pit_policy: "price_only"
-  module_id: "MOD-FACTOR"
+  module_id: "MOD-L02-001"
   doc_ref: "29_factor_strategy_extraction.md §F1.14"
   code_path: ""
   belongs_to_strategies: []
@@ -866,7 +878,7 @@ factors:
   benchmark_id: "BMK-INDEX-001"
   neutralization: "none"
   pit_policy: "price_only"
-  module_id: "MOD-FACTOR"
+  module_id: "MOD-L02-001"
   doc_ref: "29_factor_strategy_extraction.md §F1.16（吸收 F1.19）"
   code_path: ""
   belongs_to_strategies: []
@@ -940,7 +952,7 @@ factors:
   benchmark_id: "BMK-INDEX-001"
   neutralization: "none"
   pit_policy: "price_only"
-  module_id: "MOD-FACTOR"
+  module_id: "MOD-L02-001"
   doc_ref: "29_factor_strategy_extraction.md §F1.17"
   code_path: ""
   belongs_to_strategies: []
@@ -1014,7 +1026,7 @@ factors:
   benchmark_id: "BMK-INDEX-001"
   neutralization: "none"
   pit_policy: "price_only"
-  module_id: "MOD-FACTOR"
+  module_id: "MOD-L02-001"
   doc_ref: "29_factor_strategy_extraction.md §F1.18"
   code_path: ""
   belongs_to_strategies: []
@@ -1088,7 +1100,7 @@ factors:
   benchmark_id: "BMK-INDEX-001"
   neutralization: "none"
   pit_policy: "price_only"
-  module_id: "MOD-FACTOR"
+  module_id: "MOD-L02-001"
   doc_ref: "29_factor_strategy_extraction.md §F1.20"
   code_path: ""
   belongs_to_strategies: []
@@ -1162,7 +1174,7 @@ factors:
   benchmark_id: "BMK-INDEX-001"
   neutralization: "none"
   pit_policy: "price_only"
-  module_id: "MOD-FACTOR"
+  module_id: "MOD-L02-001"
   doc_ref: "29_factor_strategy_extraction.md §F1.21"
   code_path: ""
   belongs_to_strategies: []
@@ -1236,7 +1248,7 @@ factors:
   benchmark_id: "BMK-INDEX-001"
   neutralization: "none"
   pit_policy: "price_only"
-  module_id: "MOD-FACTOR"
+  module_id: "MOD-L02-001"
   doc_ref: "29_factor_strategy_extraction.md §F1.22"
   code_path: ""
   belongs_to_strategies: []
@@ -1310,7 +1322,7 @@ factors:
   benchmark_id: "BMK-INDEX-001"
   neutralization: "none"
   pit_policy: "price_only"
-  module_id: "MOD-FACTOR"
+  module_id: "MOD-L02-001"
   doc_ref: "29_factor_strategy_extraction.md §F2.1（吸收 F2.2/F2.4）"
   code_path: ""
   belongs_to_strategies: []
@@ -1384,7 +1396,7 @@ factors:
   benchmark_id: "BMK-INDEX-001"
   neutralization: "none"
   pit_policy: "price_only"
-  module_id: "MOD-FACTOR"
+  module_id: "MOD-L02-001"
   doc_ref: "29_factor_strategy_extraction.md §F2.3（吸收 S10.28）"
   code_path: ""
   belongs_to_strategies: []
@@ -1458,7 +1470,7 @@ factors:
   benchmark_id: "BMK-INDEX-001"
   neutralization: "none"
   pit_policy: "price_only"
-  module_id: "MOD-FACTOR"
+  module_id: "MOD-L02-001"
   doc_ref: "29_factor_strategy_extraction.md §F2.5（吸收 F2.6/F2.35）"
   code_path: ""
   belongs_to_strategies: []
@@ -1532,7 +1544,7 @@ factors:
   benchmark_id: "BMK-INDEX-001"
   neutralization: "none"
   pit_policy: "price_only"
-  module_id: "MOD-FACTOR"
+  module_id: "MOD-L02-001"
   doc_ref: "29_factor_strategy_extraction.md §F2.11"
   code_path: ""
   belongs_to_strategies: []
@@ -1606,7 +1618,7 @@ factors:
   benchmark_id: "BMK-INDEX-001"
   neutralization: "none"
   pit_policy: "price_only"
-  module_id: "MOD-FACTOR"
+  module_id: "MOD-L02-001"
   doc_ref: "29_factor_strategy_extraction.md §F2.14"
   code_path: ""
   belongs_to_strategies: []
@@ -1680,7 +1692,7 @@ factors:
   benchmark_id: "BMK-INDEX-001"
   neutralization: "none"
   pit_policy: "price_only"
-  module_id: "MOD-FACTOR"
+  module_id: "MOD-L02-001"
   doc_ref: "29_factor_strategy_extraction.md §F2.19"
   code_path: ""
   belongs_to_strategies: []
@@ -1754,7 +1766,7 @@ factors:
   benchmark_id: "BMK-INDEX-001"
   neutralization: "none"
   pit_policy: "price_only"
-  module_id: "MOD-FACTOR"
+  module_id: "MOD-L02-001"
   doc_ref: "29_factor_strategy_extraction.md §F2.21"
   code_path: ""
   belongs_to_strategies: []
@@ -1828,7 +1840,7 @@ factors:
   benchmark_id: "BMK-INDEX-001"
   neutralization: "none"
   pit_policy: "price_only"
-  module_id: "MOD-FACTOR"
+  module_id: "MOD-L02-001"
   doc_ref: "29_factor_strategy_extraction.md §F2.22"
   code_path: ""
   belongs_to_strategies: []
@@ -1902,7 +1914,7 @@ factors:
   benchmark_id: "BMK-INDEX-001"
   neutralization: "none"
   pit_policy: "price_only"
-  module_id: "MOD-FACTOR"
+  module_id: "MOD-L02-001"
   doc_ref: "29_factor_strategy_extraction.md §F2.23（吸收 F2.41）"
   code_path: ""
   belongs_to_strategies: []
@@ -1976,7 +1988,7 @@ factors:
   benchmark_id: "BMK-INDEX-001"
   neutralization: "none"
   pit_policy: "price_only"
-  module_id: "MOD-FACTOR"
+  module_id: "MOD-L02-001"
   doc_ref: "29_factor_strategy_extraction.md §F2.25"
   code_path: ""
   belongs_to_strategies: []
@@ -2050,7 +2062,7 @@ factors:
   benchmark_id: "BMK-INDEX-001"
   neutralization: "none"
   pit_policy: "price_only"
-  module_id: "MOD-FACTOR"
+  module_id: "MOD-L02-001"
   doc_ref: "29_factor_strategy_extraction.md §F2.27"
   code_path: ""
   belongs_to_strategies: []
@@ -2124,7 +2136,7 @@ factors:
   benchmark_id: "BMK-INDEX-001"
   neutralization: "none"
   pit_policy: "price_only"
-  module_id: "MOD-FACTOR"
+  module_id: "MOD-L02-001"
   doc_ref: "29_factor_strategy_extraction.md §F2.28"
   code_path: ""
   belongs_to_strategies: []
@@ -2198,7 +2210,7 @@ factors:
   benchmark_id: "BMK-INDEX-001"
   neutralization: "none"
   pit_policy: "price_only"
-  module_id: "MOD-FACTOR"
+  module_id: "MOD-L02-001"
   doc_ref: "29_factor_strategy_extraction.md §F2.30（吸收 F2.12/S9.55）"
   code_path: ""
   belongs_to_strategies: []
@@ -2272,7 +2284,7 @@ factors:
   benchmark_id: "BMK-INDEX-001"
   neutralization: "none"
   pit_policy: "price_only"
-  module_id: "MOD-FACTOR"
+  module_id: "MOD-L02-001"
   doc_ref: "29_factor_strategy_extraction.md §F2.31"
   code_path: ""
   belongs_to_strategies: []
@@ -2347,7 +2359,7 @@ factors:
   benchmark_id: "BMK-INDEX-001"
   neutralization: "none"
   pit_policy: "price_only"
-  module_id: "MOD-FACTOR"
+  module_id: "MOD-L02-001"
   doc_ref: "29_factor_strategy_extraction.md §F2.33（吸收 F2.8/F3.6）"
   code_path: ""
   belongs_to_strategies: []
@@ -2422,7 +2434,7 @@ factors:
   benchmark_id: "BMK-INDEX-001"
   neutralization: "none"
   pit_policy: "price_only"
-  module_id: "MOD-FACTOR"
+  module_id: "MOD-L02-001"
   doc_ref: "29_factor_strategy_extraction.md §F2.36"
   code_path: ""
   belongs_to_strategies: []
@@ -2496,7 +2508,7 @@ factors:
   benchmark_id: "BMK-INDEX-001"
   neutralization: "none"
   pit_policy: "price_only"
-  module_id: "MOD-FACTOR"
+  module_id: "MOD-L02-001"
   doc_ref: "29_factor_strategy_extraction.md §F2.37（吸收 F4.34）"
   code_path: ""
   belongs_to_strategies: []
@@ -2570,7 +2582,7 @@ factors:
   benchmark_id: "BMK-INDEX-001"
   neutralization: "none"
   pit_policy: "price_only"
-  module_id: "MOD-FACTOR"
+  module_id: "MOD-L02-001"
   doc_ref: "29_factor_strategy_extraction.md §F2.38（吸收 F2.24）"
   code_path: ""
   belongs_to_strategies: []
@@ -2644,7 +2656,7 @@ factors:
   benchmark_id: "BMK-INDEX-001"
   neutralization: "none"
   pit_policy: "price_only"
-  module_id: "MOD-FACTOR"
+  module_id: "MOD-L02-001"
   doc_ref: "29_factor_strategy_extraction.md §F2.39"
   code_path: ""
   belongs_to_strategies: []
@@ -2718,7 +2730,7 @@ factors:
   benchmark_id: "BMK-INDEX-001"
   neutralization: "none"
   pit_policy: "price_only"
-  module_id: "MOD-FACTOR"
+  module_id: "MOD-L02-001"
   doc_ref: "29_factor_strategy_extraction.md §F3.1（吸收 F3.4/F3.5）"
   code_path: ""
   belongs_to_strategies: []
@@ -2792,7 +2804,7 @@ factors:
   benchmark_id: "BMK-INDEX-001"
   neutralization: "none"
   pit_policy: "price_only"
-  module_id: "MOD-FACTOR"
+  module_id: "MOD-L02-001"
   doc_ref: "29_factor_strategy_extraction.md §F3.3"
   code_path: ""
   belongs_to_strategies: []
@@ -2866,7 +2878,7 @@ factors:
   benchmark_id: "BMK-INDEX-001"
   neutralization: "none"
   pit_policy: "price_only"
-  module_id: "MOD-FACTOR"
+  module_id: "MOD-L02-001"
   doc_ref: "29_factor_strategy_extraction.md §F3.7"
   code_path: ""
   belongs_to_strategies: []
@@ -2940,7 +2952,7 @@ factors:
   benchmark_id: "BMK-INDEX-001"
   neutralization: "none"
   pit_policy: "price_only"
-  module_id: "MOD-FACTOR"
+  module_id: "MOD-L02-001"
   doc_ref: "29_factor_strategy_extraction.md §F3.8"
   code_path: ""
   belongs_to_strategies: []
@@ -3014,7 +3026,7 @@ factors:
   benchmark_id: "BMK-INDEX-001"
   neutralization: "none"
   pit_policy: "price_only"
-  module_id: "MOD-FACTOR"
+  module_id: "MOD-L02-001"
   doc_ref: "29_factor_strategy_extraction.md §F3.9（吸收 F8.2/F8.3）"
   code_path: ""
   belongs_to_strategies: []
@@ -3088,7 +3100,7 @@ factors:
   benchmark_id: "BMK-INDEX-001"
   neutralization: "none"
   pit_policy: "price_only"
-  module_id: "MOD-FACTOR"
+  module_id: "MOD-L02-001"
   doc_ref: "29_factor_strategy_extraction.md §F3.10"
   code_path: ""
   belongs_to_strategies: []
@@ -3162,7 +3174,7 @@ factors:
   benchmark_id: "BMK-INDEX-001"
   neutralization: "none"
   pit_policy: "price_only"
-  module_id: "MOD-FACTOR"
+  module_id: "MOD-L02-001"
   doc_ref: "29_factor_strategy_extraction.md §F3.11"
   code_path: ""
   belongs_to_strategies: []
@@ -3236,7 +3248,7 @@ factors:
   benchmark_id: "BMK-INDEX-001"
   neutralization: "none"
   pit_policy: "price_only"
-  module_id: "MOD-FACTOR"
+  module_id: "MOD-L02-001"
   doc_ref: "29_factor_strategy_extraction.md §F3.12"
   code_path: ""
   belongs_to_strategies: []
@@ -3310,7 +3322,7 @@ factors:
   benchmark_id: "BMK-INDEX-001"
   neutralization: "none"
   pit_policy: "price_only"
-  module_id: "MOD-FACTOR"
+  module_id: "MOD-L02-001"
   doc_ref: "29_factor_strategy_extraction.md §F3.21"
   code_path: ""
   belongs_to_strategies: []
@@ -3384,7 +3396,7 @@ factors:
   benchmark_id: "BMK-INDEX-001"
   neutralization: "none"
   pit_policy: "price_only"
-  module_id: "MOD-FACTOR"
+  module_id: "MOD-L02-001"
   doc_ref: "29_factor_strategy_extraction.md §F3.22（吸收 F3.2/F3.13/F3.14/F3.15/F3.16/F3.17/F3.18/F3.19/F3.20/F3.23）"
   code_path: ""
   belongs_to_strategies: []
@@ -3458,7 +3470,7 @@ factors:
   benchmark_id: "BMK-INDEX-001"
   neutralization: "none"
   pit_policy: "price_only"
-  module_id: "MOD-FACTOR"
+  module_id: "MOD-L02-001"
   doc_ref: "29_factor_strategy_extraction.md §F4.3"
   code_path: ""
   belongs_to_strategies: []
@@ -3532,7 +3544,7 @@ factors:
   benchmark_id: "BMK-INDEX-001"
   neutralization: "none"
   pit_policy: "price_only"
-  module_id: "MOD-FACTOR"
+  module_id: "MOD-L02-001"
   doc_ref: "29_factor_strategy_extraction.md §F4.4"
   code_path: ""
   belongs_to_strategies: []
@@ -3606,7 +3618,7 @@ factors:
   benchmark_id: "BMK-INDEX-001"
   neutralization: "none"
   pit_policy: "price_only"
-  module_id: "MOD-FACTOR"
+  module_id: "MOD-L02-001"
   doc_ref: "29_factor_strategy_extraction.md §F4.9"
   code_path: ""
   belongs_to_strategies: []
@@ -3680,7 +3692,7 @@ factors:
   benchmark_id: "BMK-INDEX-001"
   neutralization: "none"
   pit_policy: "price_only"
-  module_id: "MOD-FACTOR"
+  module_id: "MOD-L02-001"
   doc_ref: "29_factor_strategy_extraction.md §F4.10"
   code_path: ""
   belongs_to_strategies: []
@@ -3754,7 +3766,7 @@ factors:
   benchmark_id: "BMK-INDEX-001"
   neutralization: "none"
   pit_policy: "price_only"
-  module_id: "MOD-FACTOR"
+  module_id: "MOD-L02-001"
   doc_ref: "29_factor_strategy_extraction.md §F4.22（吸收 F4.28）"
   code_path: ""
   belongs_to_strategies: []
@@ -3828,7 +3840,7 @@ factors:
   benchmark_id: "BMK-INDEX-001"
   neutralization: "none"
   pit_policy: "price_only"
-  module_id: "MOD-FACTOR"
+  module_id: "MOD-L02-001"
   doc_ref: "29_factor_strategy_extraction.md §F4.24（吸收 F4.6/F4.33/F8.5）"
   code_path: ""
   belongs_to_strategies: []
@@ -3902,7 +3914,7 @@ factors:
   benchmark_id: "BMK-INDEX-001"
   neutralization: "none"
   pit_policy: "price_only"
-  module_id: "MOD-FACTOR"
+  module_id: "MOD-L02-001"
   doc_ref: "29_factor_strategy_extraction.md §F4.25（吸收 F4.26/F4.27）"
   code_path: ""
   belongs_to_strategies: []
@@ -3976,7 +3988,7 @@ factors:
   benchmark_id: "BMK-INDEX-001"
   neutralization: "none"
   pit_policy: "price_only"
-  module_id: "MOD-FACTOR"
+  module_id: "MOD-L02-001"
   doc_ref: "29_factor_strategy_extraction.md §F4.29"
   code_path: ""
   belongs_to_strategies: []
@@ -4050,7 +4062,7 @@ factors:
   benchmark_id: "BMK-INDEX-001"
   neutralization: "none"
   pit_policy: "price_only"
-  module_id: "MOD-FACTOR"
+  module_id: "MOD-L02-001"
   doc_ref: "29_factor_strategy_extraction.md §F4.30"
   code_path: ""
   belongs_to_strategies: []
@@ -4124,7 +4136,7 @@ factors:
   benchmark_id: "BMK-INDEX-001"
   neutralization: "none"
   pit_policy: "price_only"
-  module_id: "MOD-FACTOR"
+  module_id: "MOD-L02-001"
   doc_ref: "29_factor_strategy_extraction.md §F4.31（吸收 F4.7/F4.8）"
   code_path: ""
   belongs_to_strategies: []
@@ -4198,7 +4210,7 @@ factors:
   benchmark_id: "BMK-INDEX-001"
   neutralization: "none"
   pit_policy: "price_only"
-  module_id: "MOD-FACTOR"
+  module_id: "MOD-L02-001"
   doc_ref: "29_factor_strategy_extraction.md §F4.32"
   code_path: ""
   belongs_to_strategies: []
@@ -4272,7 +4284,7 @@ factors:
   benchmark_id: "BMK-INDEX-001"
   neutralization: "none"
   pit_policy: "price_only"
-  module_id: "MOD-FACTOR"
+  module_id: "MOD-L02-001"
   doc_ref: "29_factor_strategy_extraction.md §F4.35（吸收 F4.2）"
   code_path: ""
   belongs_to_strategies: []
@@ -4346,7 +4358,7 @@ factors:
   benchmark_id: "BMK-INDEX-001"
   neutralization: "none"
   pit_policy: "price_only"
-  module_id: "MOD-FACTOR"
+  module_id: "MOD-L02-001"
   doc_ref: "29_factor_strategy_extraction.md §F5.1（吸收 F5.2/F5.28）"
   code_path: ""
   belongs_to_strategies: []
@@ -4421,7 +4433,7 @@ factors:
   benchmark_id: "BMK-INDEX-001"
   neutralization: "none"
   pit_policy: "price_only"
-  module_id: "MOD-FACTOR"
+  module_id: "MOD-L02-001"
   doc_ref: "29_factor_strategy_extraction.md §F5.3"
   code_path: ""
   belongs_to_strategies: []
@@ -4495,7 +4507,7 @@ factors:
   benchmark_id: "BMK-INDEX-001"
   neutralization: "none"
   pit_policy: "price_only"
-  module_id: "MOD-FACTOR"
+  module_id: "MOD-L02-001"
   doc_ref: "29_factor_strategy_extraction.md §F5.6（吸收 F5.13/F5.14/F5.15/F5.44）"
   code_path: ""
   belongs_to_strategies: []
@@ -4569,7 +4581,7 @@ factors:
   benchmark_id: "BMK-INDEX-001"
   neutralization: "none"
   pit_policy: "price_only"
-  module_id: "MOD-FACTOR"
+  module_id: "MOD-L02-001"
   doc_ref: "29_factor_strategy_extraction.md §F5.7（吸收 F5.5）"
   code_path: ""
   belongs_to_strategies: []
@@ -4643,7 +4655,7 @@ factors:
   benchmark_id: "BMK-INDEX-001"
   neutralization: "none"
   pit_policy: "price_only"
-  module_id: "MOD-FACTOR"
+  module_id: "MOD-L02-001"
   doc_ref: "29_factor_strategy_extraction.md §F5.17（吸收 F5.4）"
   code_path: ""
   belongs_to_strategies: []
@@ -4717,7 +4729,7 @@ factors:
   benchmark_id: "BMK-INDEX-001"
   neutralization: "none"
   pit_policy: "price_only"
-  module_id: "MOD-FACTOR"
+  module_id: "MOD-L02-001"
   doc_ref: "29_factor_strategy_extraction.md §F5.18"
   code_path: ""
   belongs_to_strategies: []
@@ -4791,7 +4803,7 @@ factors:
   benchmark_id: "BMK-INDEX-001"
   neutralization: "none"
   pit_policy: "price_only"
-  module_id: "MOD-FACTOR"
+  module_id: "MOD-L02-001"
   doc_ref: "29_factor_strategy_extraction.md §F5.19"
   code_path: ""
   belongs_to_strategies: []
@@ -4865,7 +4877,7 @@ factors:
   benchmark_id: "BMK-INDEX-001"
   neutralization: "none"
   pit_policy: "price_only"
-  module_id: "MOD-FACTOR"
+  module_id: "MOD-L02-001"
   doc_ref: "29_factor_strategy_extraction.md §F5.21（吸收 F5.56）"
   code_path: ""
   belongs_to_strategies: []
@@ -4939,7 +4951,7 @@ factors:
   benchmark_id: "BMK-INDEX-001"
   neutralization: "none"
   pit_policy: "price_only"
-  module_id: "MOD-FACTOR"
+  module_id: "MOD-L02-001"
   doc_ref: "29_factor_strategy_extraction.md §F5.24（吸收 F5.23/F5.25/F5.27）"
   code_path: ""
   belongs_to_strategies: []
@@ -5013,7 +5025,7 @@ factors:
   benchmark_id: "BMK-INDEX-001"
   neutralization: "none"
   pit_policy: "price_only"
-  module_id: "MOD-FACTOR"
+  module_id: "MOD-L02-001"
   doc_ref: "29_factor_strategy_extraction.md §F5.26（吸收 F5.49）"
   code_path: ""
   belongs_to_strategies: []
@@ -5087,7 +5099,7 @@ factors:
   benchmark_id: "BMK-INDEX-001"
   neutralization: "none"
   pit_policy: "price_only"
-  module_id: "MOD-FACTOR"
+  module_id: "MOD-L02-001"
   doc_ref: "29_factor_strategy_extraction.md §F5.29（吸收 F5.58）"
   code_path: ""
   belongs_to_strategies: []
@@ -5161,7 +5173,7 @@ factors:
   benchmark_id: "BMK-INDEX-001"
   neutralization: "none"
   pit_policy: "price_only"
-  module_id: "MOD-FACTOR"
+  module_id: "MOD-L02-001"
   doc_ref: "29_factor_strategy_extraction.md §F5.30"
   code_path: ""
   belongs_to_strategies: []
@@ -5235,7 +5247,7 @@ factors:
   benchmark_id: "BMK-INDEX-001"
   neutralization: "none"
   pit_policy: "price_only"
-  module_id: "MOD-FACTOR"
+  module_id: "MOD-L02-001"
   doc_ref: "29_factor_strategy_extraction.md §F5.31（吸收 F5.8）"
   code_path: ""
   belongs_to_strategies: []
@@ -5310,7 +5322,7 @@ factors:
   benchmark_id: "BMK-CRYPTO-001"
   neutralization: "none"
   pit_policy: "price_only"
-  module_id: "MOD-FACTOR"
+  module_id: "MOD-L02-001"
   doc_ref: "94_crypto_quant_expansion.md §7.6-7"
   code_path: ""
   belongs_to_strategies: []
@@ -5385,7 +5397,7 @@ factors:
   benchmark_id: "BMK-CRYPTO-001"
   neutralization: "none"
   pit_policy: "price_only"
-  module_id: "MOD-FACTOR"
+  module_id: "MOD-L02-001"
   doc_ref: "94_crypto_quant_expansion.md §7.6-7"
   code_path: ""
   belongs_to_strategies: []
@@ -5460,7 +5472,7 @@ factors:
   benchmark_id: "BMK-CRYPTO-001"
   neutralization: "none"
   pit_policy: "price_only"
-  module_id: "MOD-FACTOR"
+  module_id: "MOD-L02-001"
   doc_ref: "94_crypto_quant_expansion.md §4.2/§7.6-7"
   code_path: ""
   belongs_to_strategies: []
@@ -5535,7 +5547,7 @@ factors:
   benchmark_id: "BMK-INDEX-001"
   neutralization: "none"
   pit_policy: "price_only"
-  module_id: "MOD-FACTOR"
+  module_id: "MOD-L02-001"
   doc_ref: "29_factor_strategy_extraction.md §F5.37"
   code_path: ""
   belongs_to_strategies: []
@@ -5610,7 +5622,7 @@ factors:
   benchmark_id: "BMK-INDEX-001"
   neutralization: "none"
   pit_policy: "price_only"
-  module_id: "MOD-FACTOR"
+  module_id: "MOD-L02-001"
   doc_ref: "29_factor_strategy_extraction.md §F5.38（吸收 F5.39/F6.38/F7.35）"
   code_path: ""
   belongs_to_strategies: []
@@ -5684,7 +5696,7 @@ factors:
   benchmark_id: "BMK-INDEX-001"
   neutralization: "none"
   pit_policy: "price_only"
-  module_id: "MOD-FACTOR"
+  module_id: "MOD-L02-001"
   doc_ref: "29_factor_strategy_extraction.md §F5.40"
   code_path: ""
   belongs_to_strategies: []
@@ -5758,7 +5770,7 @@ factors:
   benchmark_id: "BMK-INDEX-001"
   neutralization: "none"
   pit_policy: "price_only"
-  module_id: "MOD-FACTOR"
+  module_id: "MOD-L02-001"
   doc_ref: "29_factor_strategy_extraction.md §F5.43"
   code_path: ""
   belongs_to_strategies: []
@@ -5832,7 +5844,7 @@ factors:
   benchmark_id: "BMK-INDEX-001"
   neutralization: "none"
   pit_policy: "price_only"
-  module_id: "MOD-FACTOR"
+  module_id: "MOD-L02-001"
   doc_ref: "29_factor_strategy_extraction.md §F5.47"
   code_path: ""
   belongs_to_strategies: []
@@ -5906,7 +5918,7 @@ factors:
   benchmark_id: "BMK-INDEX-001"
   neutralization: "none"
   pit_policy: "price_only"
-  module_id: "MOD-FACTOR"
+  module_id: "MOD-L02-001"
   doc_ref: "29_factor_strategy_extraction.md §F5.50（吸收 F5.41/F5.42）"
   code_path: ""
   belongs_to_strategies: []
@@ -5980,7 +5992,7 @@ factors:
   benchmark_id: "BMK-INDEX-001"
   neutralization: "none"
   pit_policy: "price_only"
-  module_id: "MOD-FACTOR"
+  module_id: "MOD-L02-001"
   doc_ref: "29_factor_strategy_extraction.md §F5.51"
   code_path: ""
   belongs_to_strategies: []
@@ -6054,7 +6066,7 @@ factors:
   benchmark_id: "BMK-INDEX-001"
   neutralization: "none"
   pit_policy: "price_only"
-  module_id: "MOD-FACTOR"
+  module_id: "MOD-L02-001"
   doc_ref: "29_factor_strategy_extraction.md §F5.52（吸收 F8.6）"
   code_path: ""
   belongs_to_strategies: []
@@ -6128,7 +6140,7 @@ factors:
   benchmark_id: "BMK-INDEX-001"
   neutralization: "none"
   pit_policy: "price_only"
-  module_id: "MOD-FACTOR"
+  module_id: "MOD-L02-001"
   doc_ref: "29_factor_strategy_extraction.md §F5.53（吸收 F5.9/F5.11/F5.35/F5.48）（F5.12/F5.36 链式并入 F5.9）"
   code_path: ""
   belongs_to_strategies: []
@@ -6202,7 +6214,7 @@ factors:
   benchmark_id: "BMK-INDEX-001"
   neutralization: "none"
   pit_policy: "price_only"
-  module_id: "MOD-FACTOR"
+  module_id: "MOD-L02-001"
   doc_ref: "29_factor_strategy_extraction.md §F5.54"
   code_path: ""
   belongs_to_strategies: []
@@ -6276,7 +6288,7 @@ factors:
   benchmark_id: "BMK-INDEX-001"
   neutralization: "none"
   pit_policy: "price_only"
-  module_id: "MOD-FACTOR"
+  module_id: "MOD-L02-001"
   doc_ref: "29_factor_strategy_extraction.md §F5.55"
   code_path: ""
   belongs_to_strategies: []
@@ -6350,7 +6362,7 @@ factors:
   benchmark_id: "BMK-INDEX-001"
   neutralization: "none"
   pit_policy: "price_only"
-  module_id: "MOD-FACTOR"
+  module_id: "MOD-L02-001"
   doc_ref: "29_factor_strategy_extraction.md §F5.59（吸收 F5.16/S16.21）"
   code_path: ""
   belongs_to_strategies: []
@@ -6424,7 +6436,7 @@ factors:
   benchmark_id: "BMK-INDEX-001"
   neutralization: "none"
   pit_policy: "price_only"
-  module_id: "MOD-FACTOR"
+  module_id: "MOD-L02-001"
   doc_ref: "29_factor_strategy_extraction.md §F5.60"
   code_path: ""
   belongs_to_strategies: []
@@ -6498,7 +6510,7 @@ factors:
   benchmark_id: "BMK-INDEX-001"
   neutralization: "none"
   pit_policy: "price_only"
-  module_id: "MOD-FACTOR"
+  module_id: "MOD-L02-001"
   doc_ref: "29_factor_strategy_extraction.md §F5.61（吸收 F5.57）"
   code_path: ""
   belongs_to_strategies: []
@@ -6572,7 +6584,7 @@ factors:
   benchmark_id: "BMK-INDEX-001"
   neutralization: "none"
   pit_policy: "price_only"
-  module_id: "MOD-FACTOR"
+  module_id: "MOD-L02-001"
   doc_ref: "29_factor_strategy_extraction.md §F5.62"
   code_path: ""
   belongs_to_strategies: []
@@ -6646,7 +6658,7 @@ factors:
   benchmark_id: "BMK-INDEX-001"
   neutralization: "none"
   pit_policy: "price_only"
-  module_id: "MOD-FACTOR"
+  module_id: "MOD-L02-001"
   doc_ref: "29_factor_strategy_extraction.md §F6.1（吸收 F6.27）"
   code_path: ""
   belongs_to_strategies: []
@@ -6720,7 +6732,7 @@ factors:
   benchmark_id: "BMK-INDEX-001"
   neutralization: "none"
   pit_policy: "price_only"
-  module_id: "MOD-FACTOR"
+  module_id: "MOD-L02-001"
   doc_ref: "29_factor_strategy_extraction.md §F6.4（吸收 F6.16）"
   code_path: ""
   belongs_to_strategies: []
@@ -6794,7 +6806,7 @@ factors:
   benchmark_id: "BMK-INDEX-001"
   neutralization: "none"
   pit_policy: "price_only"
-  module_id: "MOD-FACTOR"
+  module_id: "MOD-L02-001"
   doc_ref: "29_factor_strategy_extraction.md §F6.19（吸收 F6.52）"
   code_path: ""
   belongs_to_strategies: []
@@ -6868,7 +6880,7 @@ factors:
   benchmark_id: "BMK-INDEX-001"
   neutralization: "none"
   pit_policy: "price_only"
-  module_id: "MOD-FACTOR"
+  module_id: "MOD-L02-001"
   doc_ref: "29_factor_strategy_extraction.md §F6.22（吸收 S9.28）"
   code_path: ""
   belongs_to_strategies: []
@@ -6942,7 +6954,7 @@ factors:
   benchmark_id: "BMK-INDEX-001"
   neutralization: "none"
   pit_policy: "price_only"
-  module_id: "MOD-FACTOR"
+  module_id: "MOD-L02-001"
   doc_ref: "29_factor_strategy_extraction.md §F6.25（吸收 F6.14）"
   code_path: ""
   belongs_to_strategies: []
@@ -7016,7 +7028,7 @@ factors:
   benchmark_id: "BMK-INDEX-001"
   neutralization: "none"
   pit_policy: "price_only"
-  module_id: "MOD-FACTOR"
+  module_id: "MOD-L02-001"
   doc_ref: "29_factor_strategy_extraction.md §F6.26"
   code_path: ""
   belongs_to_strategies: []
@@ -7090,7 +7102,7 @@ factors:
   benchmark_id: "BMK-INDEX-001"
   neutralization: "none"
   pit_policy: "price_only"
-  module_id: "MOD-FACTOR"
+  module_id: "MOD-L02-001"
   doc_ref: "29_factor_strategy_extraction.md §F6.29（吸收 F6.30）"
   code_path: ""
   belongs_to_strategies: []
@@ -7165,7 +7177,7 @@ factors:
   benchmark_id: "BMK-INDEX-001"
   neutralization: "none"
   pit_policy: "price_only"
-  module_id: "MOD-FACTOR"
+  module_id: "MOD-L02-001"
   doc_ref: "29_factor_strategy_extraction.md §F6.32"
   code_path: ""
   belongs_to_strategies: []
@@ -7239,7 +7251,7 @@ factors:
   benchmark_id: "BMK-INDEX-001"
   neutralization: "none"
   pit_policy: "price_only"
-  module_id: "MOD-FACTOR"
+  module_id: "MOD-L02-001"
   doc_ref: "29_factor_strategy_extraction.md §F6.33（吸收 F6.50/F6.54）"
   code_path: ""
   belongs_to_strategies: []
@@ -7313,7 +7325,7 @@ factors:
   benchmark_id: "BMK-INDEX-001"
   neutralization: "none"
   pit_policy: "price_only"
-  module_id: "MOD-FACTOR"
+  module_id: "MOD-L02-001"
   doc_ref: "29_factor_strategy_extraction.md §F6.34（吸收 F6.35）"
   code_path: ""
   belongs_to_strategies: []
@@ -7387,7 +7399,7 @@ factors:
   benchmark_id: "BMK-INDEX-001"
   neutralization: "none"
   pit_policy: "price_only"
-  module_id: "MOD-FACTOR"
+  module_id: "MOD-L02-001"
   doc_ref: "29_factor_strategy_extraction.md §F6.39"
   code_path: ""
   belongs_to_strategies: []
@@ -7461,7 +7473,7 @@ factors:
   benchmark_id: "BMK-INDEX-001"
   neutralization: "none"
   pit_policy: "price_only"
-  module_id: "MOD-FACTOR"
+  module_id: "MOD-L02-001"
   doc_ref: "29_factor_strategy_extraction.md §F6.45（吸收 F6.3/F6.6/F6.7/F6.15/F6.17/F6.24）"
   code_path: ""
   belongs_to_strategies: []
@@ -7536,7 +7548,7 @@ factors:
   benchmark_id: "BMK-INDEX-001"
   neutralization: "none"
   pit_policy: "price_only"
-  module_id: "MOD-FACTOR"
+  module_id: "MOD-L02-001"
   doc_ref: "29_factor_strategy_extraction.md §F6.46（吸收 F6.8）"
   code_path: ""
   belongs_to_strategies: []
@@ -7610,7 +7622,7 @@ factors:
   benchmark_id: "BMK-INDEX-001"
   neutralization: "none"
   pit_policy: "price_only"
-  module_id: "MOD-FACTOR"
+  module_id: "MOD-L02-001"
   doc_ref: "29_factor_strategy_extraction.md §F6.47"
   code_path: ""
   belongs_to_strategies: []
@@ -7684,7 +7696,7 @@ factors:
   benchmark_id: "BMK-INDEX-001"
   neutralization: "none"
   pit_policy: "price_only"
-  module_id: "MOD-FACTOR"
+  module_id: "MOD-L02-001"
   doc_ref: "29_factor_strategy_extraction.md §F6.48"
   code_path: ""
   belongs_to_strategies: []
@@ -7758,7 +7770,7 @@ factors:
   benchmark_id: "BMK-INDEX-001"
   neutralization: "none"
   pit_policy: "price_only"
-  module_id: "MOD-FACTOR"
+  module_id: "MOD-L02-001"
   doc_ref: "29_factor_strategy_extraction.md §F6.49（吸收 F6.13/F6.20/S16.23）"
   code_path: ""
   belongs_to_strategies: []
@@ -7832,7 +7844,7 @@ factors:
   benchmark_id: "BMK-INDEX-001"
   neutralization: "none"
   pit_policy: "price_only"
-  module_id: "MOD-FACTOR"
+  module_id: "MOD-L02-001"
   doc_ref: "29_factor_strategy_extraction.md §F6.55（吸收 F6.21）"
   code_path: ""
   belongs_to_strategies: []
@@ -7906,7 +7918,7 @@ factors:
   benchmark_id: "BMK-INDEX-001"
   neutralization: "none"
   pit_policy: "price_only"
-  module_id: "MOD-FACTOR"
+  module_id: "MOD-L02-001"
   doc_ref: "29_factor_strategy_extraction.md §F7.6"
   code_path: ""
   belongs_to_strategies: []
@@ -7980,7 +7992,7 @@ factors:
   benchmark_id: "BMK-INDEX-001"
   neutralization: "none"
   pit_policy: "price_only"
-  module_id: "MOD-FACTOR"
+  module_id: "MOD-L02-001"
   doc_ref: "29_factor_strategy_extraction.md §F7.12（吸收 F2.10/F7.26/F7.27/F7.32）"
   code_path: ""
   belongs_to_strategies: []
@@ -8054,7 +8066,7 @@ factors:
   benchmark_id: "BMK-INDEX-001"
   neutralization: "none"
   pit_policy: "price_only"
-  module_id: "MOD-FACTOR"
+  module_id: "MOD-L02-001"
   doc_ref: "29_factor_strategy_extraction.md §F7.13（吸收 F7.36）"
   code_path: ""
   belongs_to_strategies: []
@@ -8128,7 +8140,7 @@ factors:
   benchmark_id: "BMK-INDEX-001"
   neutralization: "none"
   pit_policy: "price_only"
-  module_id: "MOD-FACTOR"
+  module_id: "MOD-L02-001"
   doc_ref: "29_factor_strategy_extraction.md §F7.16（吸收 F7.2/F7.7/F7.14）"
   code_path: ""
   belongs_to_strategies: []
@@ -8202,7 +8214,7 @@ factors:
   benchmark_id: "BMK-INDEX-001"
   neutralization: "none"
   pit_policy: "price_only"
-  module_id: "MOD-FACTOR"
+  module_id: "MOD-L02-001"
   doc_ref: "29_factor_strategy_extraction.md §F7.22（吸收 F7.31）"
   code_path: ""
   belongs_to_strategies: []
@@ -8276,7 +8288,7 @@ factors:
   benchmark_id: "BMK-INDEX-001"
   neutralization: "none"
   pit_policy: "price_only"
-  module_id: "MOD-FACTOR"
+  module_id: "MOD-L02-001"
   doc_ref: "29_factor_strategy_extraction.md §F7.23"
   code_path: ""
   belongs_to_strategies: []
@@ -8350,7 +8362,7 @@ factors:
   benchmark_id: "BMK-INDEX-001"
   neutralization: "none"
   pit_policy: "price_only"
-  module_id: "MOD-FACTOR"
+  module_id: "MOD-L02-001"
   doc_ref: "29_factor_strategy_extraction.md §F7.28（吸收 F7.29）"
   code_path: ""
   belongs_to_strategies: []
@@ -8424,7 +8436,7 @@ factors:
   benchmark_id: "BMK-INDEX-001"
   neutralization: "none"
   pit_policy: "price_only"
-  module_id: "MOD-FACTOR"
+  module_id: "MOD-L02-001"
   doc_ref: "29_factor_strategy_extraction.md §F7.30（吸收 F7.24）"
   code_path: ""
   belongs_to_strategies: []
@@ -8498,7 +8510,7 @@ factors:
   benchmark_id: "BMK-INDEX-001"
   neutralization: "none"
   pit_policy: "price_only"
-  module_id: "MOD-FACTOR"
+  module_id: "MOD-L02-001"
   doc_ref: "29_factor_strategy_extraction.md §F7.37（吸收 F7.25）"
   code_path: ""
   belongs_to_strategies: []
@@ -8572,7 +8584,7 @@ factors:
   benchmark_id: "BMK-INDEX-001"
   neutralization: "none"
   pit_policy: "price_only"
-  module_id: "MOD-FACTOR"
+  module_id: "MOD-L02-001"
   doc_ref: "29_factor_strategy_extraction.md §F7.38"
   code_path: ""
   belongs_to_strategies: []
@@ -8646,7 +8658,7 @@ factors:
   benchmark_id: "BMK-INDEX-001"
   neutralization: "none"
   pit_policy: "price_only"
-  module_id: "MOD-FACTOR"
+  module_id: "MOD-L02-001"
   doc_ref: "29_factor_strategy_extraction.md §F8.1"
   code_path: ""
   belongs_to_strategies: []
@@ -8720,7 +8732,7 @@ factors:
   benchmark_id: "BMK-INDEX-001"
   neutralization: "none"
   pit_policy: "price_only"
-  module_id: "MOD-FACTOR"
+  module_id: "MOD-L02-001"
   doc_ref: "29_factor_strategy_extraction.md §F8.7"
   code_path: ""
   belongs_to_strategies: []
@@ -8795,7 +8807,7 @@ factors:
   benchmark_id: "BMK-INDEX-001"
   neutralization: "none"
   pit_policy: "price_only"
-  module_id: "MOD-FACTOR"
+  module_id: "MOD-L02-001"
   doc_ref: "29_factor_strategy_extraction.md §F8.11"
   code_path: ""
   belongs_to_strategies: []
@@ -8869,7 +8881,7 @@ factors:
   benchmark_id: "BMK-INDEX-001"
   neutralization: "none"
   pit_policy: "price_only"
-  module_id: "MOD-FACTOR"
+  module_id: "MOD-L02-001"
   doc_ref: "29_factor_strategy_extraction.md §F8.12"
   code_path: ""
   belongs_to_strategies: []
@@ -8944,7 +8956,7 @@ factors:
   benchmark_id: "BMK-INDEX-001"
   neutralization: "none"
   pit_policy: "price_only"
-  module_id: "MOD-FACTOR"
+  module_id: "MOD-L02-001"
   doc_ref: "29_factor_strategy_extraction.md §F8.13"
   code_path: ""
   belongs_to_strategies: []
@@ -9018,7 +9030,7 @@ factors:
   benchmark_id: "BMK-INDEX-001"
   neutralization: "none"
   pit_policy: "price_only"
-  module_id: "MOD-FACTOR"
+  module_id: "MOD-L02-001"
   doc_ref: "29_factor_strategy_extraction.md §F8.14"
   code_path: ""
   belongs_to_strategies: []
@@ -9092,7 +9104,7 @@ factors:
   benchmark_id: "BMK-INDEX-001"
   neutralization: "none"
   pit_policy: "price_only"
-  module_id: "MOD-FACTOR"
+  module_id: "MOD-L02-001"
   doc_ref: "29_factor_strategy_extraction.md §F8.15（吸收 F8.48）"
   code_path: ""
   belongs_to_strategies: []
@@ -9166,7 +9178,7 @@ factors:
   benchmark_id: "BMK-INDEX-001"
   neutralization: "none"
   pit_policy: "price_only"
-  module_id: "MOD-FACTOR"
+  module_id: "MOD-L02-001"
   doc_ref: "29_factor_strategy_extraction.md §F8.17（吸收 F7.15/F8.9/F8.18/F8.47）"
   code_path: ""
   belongs_to_strategies: []
@@ -9240,7 +9252,7 @@ factors:
   benchmark_id: "BMK-INDEX-001"
   neutralization: "none"
   pit_policy: "price_only"
-  module_id: "MOD-FACTOR"
+  module_id: "MOD-L02-001"
   doc_ref: "29_factor_strategy_extraction.md §F8.19（吸收 F8.51/F8.58/S9.25）"
   code_path: ""
   belongs_to_strategies: []
@@ -9314,7 +9326,7 @@ factors:
   benchmark_id: "BMK-INDEX-001"
   neutralization: "none"
   pit_policy: "price_only"
-  module_id: "MOD-FACTOR"
+  module_id: "MOD-L02-001"
   doc_ref: "29_factor_strategy_extraction.md §F8.20（吸收 F8.21/F8.37/F8.57）"
   code_path: ""
   belongs_to_strategies: []
@@ -9388,7 +9400,7 @@ factors:
   benchmark_id: "BMK-INDEX-001"
   neutralization: "none"
   pit_policy: "price_only"
-  module_id: "MOD-FACTOR"
+  module_id: "MOD-L02-001"
   doc_ref: "29_factor_strategy_extraction.md §F8.22"
   code_path: ""
   belongs_to_strategies: []
@@ -9462,7 +9474,7 @@ factors:
   benchmark_id: "BMK-INDEX-001"
   neutralization: "none"
   pit_policy: "price_only"
-  module_id: "MOD-FACTOR"
+  module_id: "MOD-L02-001"
   doc_ref: "29_factor_strategy_extraction.md §F8.23"
   code_path: ""
   belongs_to_strategies: []
@@ -9536,7 +9548,7 @@ factors:
   benchmark_id: "BMK-INDEX-001"
   neutralization: "none"
   pit_policy: "price_only"
-  module_id: "MOD-FACTOR"
+  module_id: "MOD-L02-001"
   doc_ref: "29_factor_strategy_extraction.md §F8.24（吸收 F8.25/F8.26）"
   code_path: ""
   belongs_to_strategies: []
@@ -9610,7 +9622,7 @@ factors:
   benchmark_id: "BMK-INDEX-001"
   neutralization: "none"
   pit_policy: "price_only"
-  module_id: "MOD-FACTOR"
+  module_id: "MOD-L02-001"
   doc_ref: "29_factor_strategy_extraction.md §F8.27"
   code_path: ""
   belongs_to_strategies: []
@@ -9684,7 +9696,7 @@ factors:
   benchmark_id: "BMK-INDEX-001"
   neutralization: "none"
   pit_policy: "price_only"
-  module_id: "MOD-FACTOR"
+  module_id: "MOD-L02-001"
   doc_ref: "29_factor_strategy_extraction.md §F8.28"
   code_path: ""
   belongs_to_strategies: []
@@ -9758,7 +9770,7 @@ factors:
   benchmark_id: "BMK-INDEX-001"
   neutralization: "none"
   pit_policy: "price_only"
-  module_id: "MOD-FACTOR"
+  module_id: "MOD-L02-001"
   doc_ref: "29_factor_strategy_extraction.md §F8.29（吸收 F8.30/F8.31/F8.32/F8.33/F8.34/F8.35/F8.36/F8.42）"
   code_path: ""
   belongs_to_strategies: []
@@ -9832,7 +9844,7 @@ factors:
   benchmark_id: "BMK-INDEX-001"
   neutralization: "none"
   pit_policy: "price_only"
-  module_id: "MOD-FACTOR"
+  module_id: "MOD-L02-001"
   doc_ref: "29_factor_strategy_extraction.md §F8.39（吸收 F8.53）"
   code_path: ""
   belongs_to_strategies: []
@@ -9906,7 +9918,7 @@ factors:
   benchmark_id: "BMK-INDEX-001"
   neutralization: "none"
   pit_policy: "price_only"
-  module_id: "MOD-FACTOR"
+  module_id: "MOD-L02-001"
   doc_ref: "29_factor_strategy_extraction.md §F8.40"
   code_path: ""
   belongs_to_strategies: []
@@ -9980,7 +9992,7 @@ factors:
   benchmark_id: "BMK-INDEX-001"
   neutralization: "none"
   pit_policy: "price_only"
-  module_id: "MOD-FACTOR"
+  module_id: "MOD-L02-001"
   doc_ref: "29_factor_strategy_extraction.md §F8.41"
   code_path: ""
   belongs_to_strategies: []
@@ -10054,7 +10066,7 @@ factors:
   benchmark_id: "BMK-INDEX-001"
   neutralization: "none"
   pit_policy: "price_only"
-  module_id: "MOD-FACTOR"
+  module_id: "MOD-L02-001"
   doc_ref: "29_factor_strategy_extraction.md §F8.43"
   code_path: ""
   belongs_to_strategies: []
@@ -10128,7 +10140,7 @@ factors:
   benchmark_id: "BMK-INDEX-001"
   neutralization: "none"
   pit_policy: "price_only"
-  module_id: "MOD-FACTOR"
+  module_id: "MOD-L02-001"
   doc_ref: "29_factor_strategy_extraction.md §F8.44（吸收 F8.4）"
   code_path: ""
   belongs_to_strategies: []
@@ -10202,7 +10214,7 @@ factors:
   benchmark_id: "BMK-INDEX-001"
   neutralization: "none"
   pit_policy: "price_only"
-  module_id: "MOD-FACTOR"
+  module_id: "MOD-L02-001"
   doc_ref: "29_factor_strategy_extraction.md §F8.45（吸收 F8.56）"
   code_path: ""
   belongs_to_strategies: []
@@ -10276,7 +10288,7 @@ factors:
   benchmark_id: "BMK-INDEX-001"
   neutralization: "none"
   pit_policy: "price_only"
-  module_id: "MOD-FACTOR"
+  module_id: "MOD-L02-001"
   doc_ref: "29_factor_strategy_extraction.md §F8.50"
   code_path: ""
   belongs_to_strategies: []
@@ -10350,7 +10362,7 @@ factors:
   benchmark_id: "BMK-INDEX-001"
   neutralization: "none"
   pit_policy: "price_only"
-  module_id: "MOD-FACTOR"
+  module_id: "MOD-L02-001"
   doc_ref: "29_factor_strategy_extraction.md §F8.52"
   code_path: ""
   belongs_to_strategies: []
@@ -10424,7 +10436,7 @@ factors:
   benchmark_id: "BMK-INDEX-001"
   neutralization: "none"
   pit_policy: "price_only"
-  module_id: "MOD-FACTOR"
+  module_id: "MOD-L02-001"
   doc_ref: "29_factor_strategy_extraction.md §F8.54"
   code_path: ""
   belongs_to_strategies: []
@@ -10498,7 +10510,7 @@ factors:
   benchmark_id: "BMK-INDEX-001"
   neutralization: "none"
   pit_policy: "price_only"
-  module_id: "MOD-FACTOR"
+  module_id: "MOD-L02-001"
   doc_ref: "29_factor_strategy_extraction.md §F8.59"
   code_path: ""
   belongs_to_strategies: []
@@ -10572,7 +10584,7 @@ factors:
   benchmark_id: "BMK-INDEX-001"
   neutralization: "none"
   pit_policy: "price_only"
-  module_id: "MOD-FACTOR"
+  module_id: "MOD-L02-001"
   doc_ref: "29_factor_strategy_extraction.md §F8.60"
   code_path: ""
   belongs_to_strategies: []
@@ -10646,7 +10658,7 @@ factors:
   benchmark_id: "BMK-INDEX-001"
   neutralization: "none"
   pit_policy: "price_only"
-  module_id: "MOD-FACTOR"
+  module_id: "MOD-L02-001"
   doc_ref: "29_factor_strategy_extraction.md §F8.61"
   code_path: ""
   belongs_to_strategies: []
@@ -10720,7 +10732,7 @@ factors:
   benchmark_id: "BMK-INDEX-001"
   neutralization: "none"
   pit_policy: "price_only"
-  module_id: "MOD-FACTOR"
+  module_id: "MOD-L02-001"
   doc_ref: "29_factor_strategy_extraction.md §F8.62"
   code_path: ""
   belongs_to_strategies: []
@@ -10794,7 +10806,7 @@ factors:
   benchmark_id: "BMK-INDEX-001"
   neutralization: "none"
   pit_policy: "price_only"
-  module_id: "MOD-FACTOR"
+  module_id: "MOD-L02-001"
   doc_ref: "29_factor_strategy_extraction.md §S9.24"
   code_path: ""
   belongs_to_strategies: []
@@ -10879,7 +10891,7 @@ factors:
   benchmark_id: "BMK-INDEX-001"
   neutralization: "none"
   pit_policy: "price_only"
-  module_id: "MOD-FACTOR"
+  module_id: "MOD-L02-001"
   code_path: ""
   belongs_to_strategies: []
   variant_of: null
@@ -10954,7 +10966,7 @@ factors:
   benchmark_id: "BMK-INDEX-001"
   neutralization: "none"
   pit_policy: "price_only"
-  module_id: "MOD-FACTOR"
+  module_id: "MOD-L02-001"
   code_path: ""
   belongs_to_strategies: []
   variant_of: null
@@ -11029,7 +11041,7 @@ factors:
   benchmark_id: "BMK-INDEX-001"
   neutralization: "none"
   pit_policy: "price_only"
-  module_id: "MOD-FACTOR"
+  module_id: "MOD-L02-001"
   code_path: ""
   belongs_to_strategies: []
   variant_of: null
@@ -11104,7 +11116,7 @@ factors:
   benchmark_id: "BMK-INDEX-001"
   neutralization: "none"
   pit_policy: "price_only"
-  module_id: "MOD-FACTOR"
+  module_id: "MOD-L02-001"
   code_path: ""
   belongs_to_strategies: []
   variant_of: null
@@ -11179,7 +11191,7 @@ factors:
   benchmark_id: "BMK-INDEX-001"
   neutralization: "none"
   pit_policy: "price_only"
-  module_id: "MOD-FACTOR"
+  module_id: "MOD-L02-001"
   code_path: ""
   belongs_to_strategies: []
   variant_of: null
@@ -11254,7 +11266,7 @@ factors:
   benchmark_id: "BMK-INDEX-001"
   neutralization: "none"
   pit_policy: "price_only"
-  module_id: "MOD-FACTOR"
+  module_id: "MOD-L02-001"
   code_path: ""
   belongs_to_strategies: []
   variant_of: null
@@ -11329,7 +11341,7 @@ factors:
   benchmark_id: "BMK-INDEX-001"
   neutralization: "none"
   pit_policy: "price_only"
-  module_id: "MOD-FACTOR"
+  module_id: "MOD-L02-001"
   code_path: ""
   belongs_to_strategies: []
   variant_of: null
@@ -11404,7 +11416,7 @@ factors:
   benchmark_id: "BMK-INDEX-001"
   neutralization: "none"
   pit_policy: "price_only"
-  module_id: "MOD-FACTOR"
+  module_id: "MOD-L02-001"
   code_path: ""
   belongs_to_strategies: []
   variant_of: null
@@ -11479,7 +11491,7 @@ factors:
   benchmark_id: "BMK-INDEX-001"
   neutralization: "none"
   pit_policy: "price_only"
-  module_id: "MOD-FACTOR"
+  module_id: "MOD-L02-001"
   code_path: ""
   belongs_to_strategies: []
   variant_of: null
@@ -11554,7 +11566,7 @@ factors:
   benchmark_id: "BMK-INDEX-001"
   neutralization: "none"
   pit_policy: "price_only"
-  module_id: "MOD-FACTOR"
+  module_id: "MOD-L02-001"
   code_path: ""
   belongs_to_strategies: []
   variant_of: null
@@ -11629,7 +11641,7 @@ factors:
   benchmark_id: "BMK-INDEX-001"
   neutralization: "none"
   pit_policy: "price_only"
-  module_id: "MOD-FACTOR"
+  module_id: "MOD-L02-001"
   code_path: ""
   belongs_to_strategies: []
   variant_of: null
@@ -11704,7 +11716,7 @@ factors:
   benchmark_id: "BMK-INDEX-001"
   neutralization: "none"
   pit_policy: "price_only"
-  module_id: "MOD-FACTOR"
+  module_id: "MOD-L02-001"
   code_path: ""
   belongs_to_strategies: []
   variant_of: null
@@ -11772,7 +11784,7 @@ factors:
   code_symbol: "src/zephyr/signal_ashare/market_sentiment_analyzer.py::MarketSentimentAnalyzer.analyze_breadth_acceleration"
   code_fingerprint: null
   params: {vel_window_min: 5, acc_window_min: 15, zscore_window_d: 20, gap_nan_threshold_min: 2}
-  inputs: ["分钟级全市场快照序列（advancing_count/limit_up_count/attempted_limit_up_count/sealed_limit_up_count）", "全市场家数 total_count"]
+  inputs: ["advancing_count", "limit_up_count", "attempted_limit_up_count", "sealed_limit_up_count", "total_count"]
   outputs: ["breadth_acc_15m", "breadth_acc_15m_z"]
   frequency: "intraday"
   lookback_period: 20
@@ -11780,7 +11792,7 @@ factors:
   benchmark_id: "BMK-INDEX-001"
   neutralization: "none"
   pit_policy: "price_only"
-  module_id: "MOD-FACTOR"
+  module_id: "MOD-L02-001"
   code_path: ""
   belongs_to_strategies: []
   variant_of: "FCT-SENT-020"
@@ -11853,7 +11865,7 @@ factors:
   benchmark_id: "BMK-INDEX-001"
   neutralization: "none"
   pit_policy: "price_only"
-  module_id: "MOD-FACTOR"
+  module_id: "MOD-L02-001"
   doc_ref: "ICBATCH_report.md（2026-08-24）"
   code_path: "src/zephyr/factor/momentum_factor.py"
   belongs_to_strategies: []
@@ -11894,7 +11906,7 @@ factors:
   benchmark_id: "BMK-INDEX-001"
   neutralization: "none"
   pit_policy: "price_only"
-  module_id: "MOD-FACTOR"
+  module_id: "MOD-L02-001"
   doc_ref: "29_factor_strategy_extraction.md §F8.46"
   code_path: ""
   belongs_to_strategies: []
@@ -11934,7 +11946,7 @@ factors:
   benchmark_id: "BMK-INDEX-001"
   neutralization: "none"
   pit_policy: "price_only"
-  module_id: "MOD-FACTOR"
+  module_id: "MOD-L02-001"
   doc_ref: "ICBATCH_report.md（2026-08-24）"
   code_path: "src/zephyr/factor/value_factor.py"
   belongs_to_strategies: []
@@ -11974,7 +11986,7 @@ factors:
   benchmark_id: "BMK-INDEX-001"
   neutralization: "none"
   pit_policy: "price_only"
-  module_id: "MOD-FACTOR"
+  module_id: "MOD-L02-001"
   doc_ref: "ICBATCH_report.md（2026-08-24）"
   code_path: "src/zephyr/factor/intraday_snapshot_factors.py"
   belongs_to_strategies: []
@@ -12014,7 +12026,7 @@ factors:
   benchmark_id: "BMK-INDEX-001"
   neutralization: "none"
   pit_policy: "price_only"
-  module_id: "MOD-FACTOR"
+  module_id: "MOD-L02-001"
   doc_ref: "ICBATCH_report.md（2026-08-24）"
   code_path: "src/zephyr/factor/intraday_snapshot_factors.py"
   belongs_to_strategies: []
