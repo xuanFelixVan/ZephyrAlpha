@@ -106,6 +106,35 @@ priority: P1
 | 2 | 已知副本目录 | 无 |
 | 3 | 副本处置状态 | 无副本 |
 
+### §0.6 五图对齐视图
+
+<!-- AUTOGEN: source=depgraph+dataflow+decision, generator=generate_blueprint_panorama.py, reconciler=sync_panorama_module.py -->
+
+> **自动生成**：本节由 generate_blueprint_panorama.py 从全景真源派生，禁止手写。
+> 生成命令：`python scripts/governance/d5_architecture/generators/generate_blueprint_panorama.py MOD-SIG-056`
+
+#### 全景位置
+
+| 图 | 位置 | 状态 | 链接 |
+|----|------|------|------|
+| 依赖图 (depgraph) | `blueprint_id=MOD-SIG-056` 的 1 个 file 节点 | production | `extract_depgraph.py --modules MOD-SIG-056` |
+| 数据流图 (dataflow) | 0 个 Dataset / 1 个 Job | active | `apply_dataflowgraph.py --list-datasets` |
+| 决策架构图 (decision) | 0 个决策节点 / 1 个决策层 | N/A | `generate_decision_diagram.py` |
+| 蓝图 (blueprint) | 本文件 | Draft | — |
+
+#### 四核心字段
+
+| 字段 | depgraph 值（真源） | 蓝图 frontmatter 值（声明） | 是否一致 |
+|------|-------------------|--------------------------|:-------:|
+| module_id | MOD-SIG-056 | MOD-SIG-056 | ✅ |
+| domain_id | N/A | N/A | ✅ |
+| build_status | stable | N/A | — |
+| file_count | 1 文件 | 2 文件（§0.1） | ❌ |
+
+> 冲突时以 depgraph 为准（ARCH-056 + ARCH-MM-001 声明 vs 验证框架）。
+
+---
+
 ## §1 设计背景与目标
 
 ### 1.1 背景
