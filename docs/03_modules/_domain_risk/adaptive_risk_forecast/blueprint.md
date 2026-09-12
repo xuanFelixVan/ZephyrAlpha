@@ -39,8 +39,8 @@ C-004 自适应风控三层体系（battle_map_positioning L4：预判层+监控
 limit_scale / sit_out 盘前建议；输出作为 MOD-RK-05D var_intraday_recalc 的盘前基线。
 
 **底座复用裁定（W1c 同族整合）**：本模块不重复实现 VaR/密度/共形算法——
-- 条件 PDF：import `zephyr.signal_ashare.conditional_density_predictor`（MOD-SIG-043）
-- 共形缓冲：import `zephyr.signal_ashare.conformal_predictor`（MOD-SIG-044）
+- 条件 PDF：import `zephyr.signal_ashare.ml_forecast.conditional_density_predictor`（MOD-SIG-043）
+- 共形缓冲：import `zephyr.signal_ashare.ml_forecast.conformal_predictor`（MOD-SIG-044）
 - 限额对照/基线契约：对齐 MOD-RK-05 / MOD-RK-05D（不改其存量代码）
 
 与 C-004 编排层（MOD-RK-30）的分工：本模块只产出**数据契约**，裁决与三层联动在

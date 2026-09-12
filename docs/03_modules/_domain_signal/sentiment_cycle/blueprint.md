@@ -36,35 +36,6 @@ design_memos/28_sentiment_cycle_trading.md §3.2-§3.10（原 [BLUEPRINT] 头引
 - 编号 MOD-SIG-140 于 2026-09-11 由 night-gw-2300 会话在 D1 批内分配注册（depgraph 设计态）。
 - 本蓝图只做身份注册与语义索引，不改模块行为；模块成熟度见代码头 [MATURITY]。
 
-### §0.6 五图对齐视图
-
-<!-- AUTOGEN: source=depgraph+dataflow+decision, generator=generate_blueprint_panorama.py, reconciler=sync_panorama_module.py -->
-
-> **自动生成**：本节由 generate_blueprint_panorama.py 从全景真源派生，禁止手写。
-> 生成命令：`python scripts/governance/d5_architecture/generators/generate_blueprint_panorama.py MOD-SIG-140`
-
-#### 全景位置
-
-| 图 | 位置 | 状态 | 链接 |
-|----|------|------|------|
-| 依赖图 (depgraph) | `blueprint_id=MOD-SIG-140` 的 1 个 file 节点 | production | `extract_depgraph.py --modules MOD-SIG-140` |
-| 数据流图 (dataflow) | （无节点） | N/A | `apply_dataflowgraph.py --list-datasets` |
-| 决策架构图 (decision) | 0 个决策节点 / 1 个决策层 | N/A | `generate_decision_diagram.py` |
-| 蓝图 (blueprint) | 本文件 | Active | — |
-
-#### 四核心字段
-
-| 字段 | depgraph 值（真源） | 蓝图 frontmatter 值（声明） | 是否一致 |
-|------|-------------------|--------------------------|:-------:|
-| module_id | MOD-SIG-140 | MOD-SIG-140 | ✅ |
-| domain_id | N/A | N/A | ✅ |
-| build_status | stable | N/A | — |
-| file_count | 1 文件 | N/A | — |
-
-> 冲突时以 depgraph 为准（ARCH-056 + ARCH-MM-001 声明 vs 验证框架）。
-
----
-
 ## 4. 已实现代码完整路径索引
 
 > **AGENTS.md §6.1 蓝图-代码同步强制约定**——本节是蓝图与磁盘代码的「地址簿」。
@@ -76,7 +47,7 @@ design_memos/28_sentiment_cycle_trading.md §3.2-§3.10（原 [BLUEPRINT] 头引
 
 | 文件路径 | 实现状态 | 说明 |
 |---------|:---:|------|
-| `src/zephyr/signal_ashare/sentiment_cycle.py` | ✅ 已实现 | |
+| `src/zephyr/signal_ashare/sentiment/sentiment_cycle.py` | ✅ 已实现 | |
 
 ### 4.5 路径索引使用指南
 
