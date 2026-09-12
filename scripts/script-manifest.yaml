@@ -4,7 +4,7 @@
 manifest_version: 2.0.0
 generated_by: generate_manifest.py (auto-scan)
 generated_at: '2026-09-13'
-total_scripts: 847
+total_scripts: 848
 scripts:
 - name: __init__.py
   path: __init__.py
@@ -3457,6 +3457,14 @@ scripts:
 - name: governance/d5_architecture/validators/validate_static_manifest_drift.py
   path: governance/d5_architecture/validators/validate_static_manifest_drift.py
   description: validate_static_manifest_drift.py — GATE-21 静态清单漂移阻断
+  domain: governance
+  execution_plane: warm-path
+  status: registered
+  timeout_seconds: 60
+  dimensions: []
+- name: governance/d5_architecture/validators/validate_strategy_production_map.py
+  path: governance/d5_architecture/validators/validate_strategy_production_map.py
+  description: 对照 TDM decision_map validate 的工厂版：本工具只读校验 config/strategy_production_map.yaml，
   domain: governance
   execution_plane: warm-path
   status: registered

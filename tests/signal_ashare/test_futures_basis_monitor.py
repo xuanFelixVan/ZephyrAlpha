@@ -1,3 +1,5 @@
+# [BLUEPRINT] MOD-SIG-038 | (auto-injected by S4 reconciler) | §
+# [TTL] permanent
 """MOD-SIG-058 期指基差情绪监测器 单元测试（44号备忘录 §9.8 通道2）"""
 
 import json
