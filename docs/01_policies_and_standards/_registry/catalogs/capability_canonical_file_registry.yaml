@@ -12000,6 +12000,27 @@ creation_tokens:
   token: st-fingov-apply-financial-derived-ddl-20260913
   created_by: st-fingov-20260912
   capability: apply_financial_derived_ddl
+- file: src/zephyr/signal_ashare/intraday_t0/__init__.py
+  token: sig-init-intraday_t0-20260913
+  created_by: schemas-split-20260912
+- file: src/zephyr/signal_ashare/limit_up/__init__.py
+  token: sig-init-limit_up-20260913
+  created_by: schemas-split-20260912
+- file: src/zephyr/signal_ashare/ml_forecast/__init__.py
+  token: sig-init-ml_forecast-20260913
+  created_by: schemas-split-20260912
+- file: src/zephyr/signal_ashare/screening/__init__.py
+  token: sig-init-screening-20260913
+  created_by: schemas-split-20260912
+- file: src/zephyr/signal_ashare/sector/__init__.py
+  token: sig-init-sector-20260913
+  created_by: schemas-split-20260912
+- file: src/zephyr/signal_ashare/sentiment/__init__.py
+  token: sig-init-sentiment-20260913
+  created_by: schemas-split-20260912
+- file: src/zephyr/signal_ashare/strategy_signal/__init__.py
+  token: sig-init-strategy_signal-20260913
+  created_by: schemas-split-20260912
 di_seam_exemptions:
 - module_path: zephyr.trading.auto_runtime_core.AutoRuntimeCore
   reason: P0-5 LSG DI seam 标杆，已有 DI 但 AST 模式不匹配（动态注入）
