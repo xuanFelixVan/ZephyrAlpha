@@ -62,6 +62,7 @@ language: zh
 | `DS-IFIND` | 同花顺iFind | commercial | deprecated |
 | `DS-MINIQMT` | miniQMT | commercial | active |
 | `DS-AKSHARE` | AKShare | open_source | active |
+| `DS-AKSHARE-ALT` | AKShare-Alt | open_source | active |
 | `DS-BAOSTOCK` | Baostock | open_source | active |
 | `DS-TUSHARE` | Tushare | commercial | active |
 | `DS-TICKFLOW` | TickFlow | open_source | active |
@@ -77,7 +78,7 @@ language: zh
 | `DS-FRED` | FRED/世界银行 宏观数据 | open_source | active |
 | `DS-EIA` | EIA 能源数据 | open_source | active |
 | `DS-QWEATHER` | 和风天气 | open_source | active |
-| **合计 / Total providers** | | | **18** |
+| **合计 / Total providers** | | | **19** |
 <!-- AUTO-END:task_counts -->
 
 ## 7. CLI 子命令
