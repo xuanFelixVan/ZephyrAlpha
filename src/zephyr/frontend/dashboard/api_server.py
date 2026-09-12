@@ -2045,10 +2045,13 @@ def bridge_status() -> dict[str, Any]:
     mini_alive = False
     try:
         # xtdata 快照通道（58610 由 QMT 客户端起）非严格判定，用进程特征兜底
-        import subprocess as _sp
+        # run_subprocess_hidden=trae_067 统一入口（CREATE_NO_WINDOW 治闪窗）；bytes+GBK
+        # 显式解码治 UnicodeDecodeError 刷屏（text=True 在 PYTHONUTF8=1 环境撞 tasklist
+        # GBK 输出，同 services_registry._run_decoded 2026-09-03 实证）
+        from zephyr.shared.infra.process_pool import run_subprocess_hidden as _rsh
 
-        r = _sp.run(["tasklist", "/FI", "IMAGENAME eq XtMiniQmt.exe"], capture_output=True, text=True, timeout=5)
-        mini_alive = "XtMiniQmt.exe" in (r.stdout or "")
+        r = _rsh(["tasklist", "/FI", "IMAGENAME eq XtMiniQmt.exe"], capture_output=True, timeout=5)
+        mini_alive = "XtMiniQmt.exe" in (r.stdout or b"").decode("gbk", errors="replace")
     except Exception:  # noqa: BLE001
         mini_alive = False
     return {
@@ -2461,51 +2464,83 @@ def _cm_col(tier: str | None) -> str:
     return "未分层"
 
 
-def _cm_chain_cols(nodes: list[tuple[str, str]], edges: list[tuple[str, str]]) -> dict[str, str]:
-    """链内拓扑分层 → 层号列（2026-09-12 tier 退役裁定：层位由边结构派生，不读人工标注）。
+def _cm_chain_layers(nodes: list[tuple[str, str]], edges: list[tuple[str, str]]) -> dict[str, int]:
+    """链内拓扑分层 → 整数层号（0 基；iFinD 等距布局参数，2026-09-12 前端重构批）。
 
-    Kahn 剥洋葱：入度0=第1层（列头 L1），逐层推进 L2/L3/...（真实推导层数，不再压缩成三段）。
-    分层失败（链内成环）或零内部边的散点节点 → "未分层"（不显示任何层级字样）。
+    Kahn 剥洋葱：入度0=第 0 层，逐层推进。分层失败（链内成环）或链内零边散点 → -1（未分层）。
+    层号只做前端布局参数，不作为可见标签（Owner 2026-09-12 裁定）。
     nodes=[(node_id, tier)]（tier 参数仅为签名兼容，已不再消费），edges=[(from,to)]。
     """
     ids = {nid for nid, _t in nodes}
-    fallback = {nid: "未分层" for nid in ids}
-    indeg = {nid: 0 for nid in ids}
+    layers = {nid: -1 for nid in ids}
+    indeg0 = {nid: 0 for nid in ids}
     outdeg = {nid: 0 for nid in ids}
     adj: dict[str, list[str]] = {nid: [] for nid in ids}
     n_inner = 0
     for a, b in edges:
         if a in ids and b in ids and a != b:
             adj[a].append(b)
-            indeg[b] += 1
+            indeg0[b] += 1
             outdeg[a] += 1
             n_inner += 1
     if n_inner == 0:
-        return fallback
-    layer = {nid: 0 for nid in ids if indeg[nid] == 0}
+        return layers
+    indeg = dict(indeg0)
     frontier = [nid for nid, d in indeg.items() if d == 0]
     if not frontier:          # 全部入度>=1 → 链内成环，整体 fallback
-        return fallback
-    seen = set(frontier)
+        return layers
     depth = 0
+    seen: set[str] = set()
     while frontier:
-        depth += 1
         nxt: list[str] = []
         for u in frontier:
+            layers[u] = depth
+            seen.add(u)
             for v in adj[u]:
                 indeg[v] -= 1
                 if indeg[v] == 0:
-                    layer[v] = depth
-                    seen.add(v)
                     nxt.append(v)
         frontier = nxt
-    out: dict[str, str] = {}
-    for nid in ids:
-        if nid not in seen or (indeg[nid] == 0 and outdeg[nid] == 0):
-            out[nid] = fallback[nid]                 # 环上节点/链内零边散点 → 未分层
+        depth += 1
+    for nid in ids:           # 环上节点/链内零边散点 → 未分层（-1，兼容原 col 口径）
+        if nid not in seen or (indeg0[nid] == 0 and outdeg[nid] == 0):
+            layers[nid] = -1
+    return layers
+
+
+def _cm_chain_cols(nodes: list[tuple[str, str]], edges: list[tuple[str, str]]) -> dict[str, str]:
+    """层号列字符串（L1..Ln/未分层）——向后兼容包装，新消费方用 _cm_chain_layers。"""
+    layers = _cm_chain_layers(nodes, edges)
+    return {nid: ("未分层" if v < 0 else f"L{v + 1}") for nid, v in layers.items()}
+
+
+# iFinD 职能分区（2026-09-12 前端重构批）：区名只做底板标题，无任何 上游/中游/下游 字样
+_CM_ZONE_NAMES = ["材料与零部件", "装备", "工艺", "产品", "服务"]
+_CM_FR_ZONE = {"生产原料": 0, "辅助材料": 0, "生产设备": 1, "辅助设备": 1,
+               "加工工艺": 2, "产品业务": 3, "技术服务": 4, "销售渠道": 4}
+
+
+def _cm_node_zones(names: dict[str, str], froles: dict[str, str], indeg: dict[str, int]) -> dict[str, int]:
+    """环节 → 职能分区索引（0..4，iFinD 底板分区参数）。
+
+    function_role 八值直接映射 _CM_FR_ZONE；fr 空=拓扑兜底（链内入度0→材料区0，入度>0→产品区3）；
+    「X（全球）」跟随基础节点 X 的分区（X 同链内任一节点）。"""
+    zones: dict[str, int] = {}
+    for nid, name in names.items():
+        if "（全球）" in name:
+            continue
+        f = (froles.get(nid) or "").strip()
+        zones[nid] = _CM_FR_ZONE.get(f, 0 if indeg.get(nid, 0) == 0 else 3)
+    by_name = {n: i for i, n in names.items()}
+    for nid, name in names.items():
+        if nid in zones or "（全球）" not in name:
+            continue
+        base_id = by_name.get(name[:name.index("（全球）")])
+        if base_id is not None and base_id in zones:
+            zones[nid] = zones[base_id]
         else:
-            out[nid] = f"L{layer[nid] + 1}"          # 拓扑层号（L1=源头层，依次向下游）
-    return out
+            zones[nid] = 0 if indeg.get(nid, 0) == 0 else 3
+    return zones
 
 
 def _cm_fr_rank(function_role: str | None) -> int:
@@ -2783,8 +2818,11 @@ def chainmap_cluster(cid: str = Query(..., min_length=2, max_length=8),
             # 簇级 LIMIT 防大簇失控（计数在前端按行累加，明细行每环节另截 _CM_EQUITY_ROWS_CAP）
             cur.execute(_SQL_CM_EQ_AGG, (ids, ids))
             eq_rows = cur.fetchall()
-            cur.execute("SELECT from_node, to_node FROM ig_edge WHERE valid_to IS NULL")  # 2026-09-12: 已关闭边(edge_close PIT)不参与分层与展示
+            # edge_type 随边输出（iFinD 流向线红蓝分类：supply 系=红，其余=蓝）；已关闭边(edge_close PIT)不参与
+            cur.execute("SELECT from_node, to_node, COALESCE(edge_type, '') FROM ig_edge WHERE valid_to IS NULL")
             all_edges = cur.fetchall()
+            cur.execute(_SQL_CM_NODE_TOPCOMPS_BY_CHAIN, (ids,))
+            topcomp_rows = cur.fetchall()
             conn.close()
         except Exception:
             try:
@@ -2795,6 +2833,15 @@ def chainmap_cluster(cid: str = Query(..., min_length=2, max_length=8),
         nodes_by_chain: dict[str, list[dict[str, Any]]] = {c["chain_id"]: [] for c in members}
         nid_set = {r[0] for r in node_rows}
         eq_names = _cm_symbol_names()
+        # 节点直挂公司 chip 名单（每环节前 4 家；排序同抽屉 _cm_role_rank，名字映射同源）
+        _tc_group: dict[str, list[tuple[str, str, Any]]] = {}
+        for _nid, _sym, _role, _cf in topcomp_rows:
+            _tc_group.setdefault(_nid, []).append((_sym, _role or "", _cf))
+        topcomps: dict[str, list[dict[str, Any]]] = {}
+        for _nid, _lst in _tc_group.items():
+            _lst.sort(key=lambda x: (_cm_role_rank(x[1]), -(x[2] if x[2] is not None else 0), x[0]))
+            topcomps[_nid] = [{"symbol": _s, "name": eq_names.get(_s, ""), "role": _r}
+                              for _s, _r, _cf in _lst[:8]]
         eq_by_node: dict[str, dict[str, Any]] = {}
         for nid, dirn, other, stake, rel, verif, asof, uename in eq_rows:
             agg = eq_by_node.setdefault(nid, {"out": 0, "inn": 0, "rows": []})
@@ -2814,25 +2861,46 @@ def chainmap_cluster(cid: str = Query(..., min_length=2, max_length=8),
         node_chain_of = {r[0]: r[1] for r in node_rows}
         chain_nodes: dict[str, list[tuple[str, str]]] = {c["chain_id"]: [] for c in members}
         chain_edges_in: dict[str, list[tuple[str, str]]] = {}
-        for a, b in all_edges:
+        for a, b, _rel in all_edges:
             ca, cb = node_chain_of.get(a), node_chain_of.get(b)
             if ca is not None and ca == cb:
                 chain_edges_in.setdefault(ca, []).append((a, b))
         for nid, ch, name, tier, frole in node_rows:
             chain_nodes.setdefault(ch, []).append((nid, tier or ""))
+        # 布局参数（iFinD 等距流程图前端重构 2026-09-12）：layer=拓扑层 int（-1 未分层）/
+        # zone=职能分区 int（0..4，区名 _CM_ZONE_NAMES）；col 字符串保留向后兼容，前端不再消费
         colmap: dict[str, str] = {}
+        layermap: dict[str, int] = {}
+        zonemap: dict[str, int] = {}
+        chain_meta: dict[str, tuple[dict[str, str], dict[str, str], dict[str, int]]] = {}
+        for nid, ch, name, tier, frole in node_rows:
+            names_m, fr_m, indeg_m = chain_meta.setdefault(ch, ({}, {}, {}))
+            names_m[nid] = name
+            fr_m[nid] = (frole or "").strip()
         for _ch, nl in chain_nodes.items():
-            colmap.update(_cm_chain_cols(nl, chain_edges_in.get(_ch, [])))
+            inner = chain_edges_in.get(_ch, [])
+            colmap.update(_cm_chain_cols(nl, inner))
+            layermap.update(_cm_chain_layers(nl, inner))
+            _nm, _fr, indeg_m = chain_meta.setdefault(_ch, ({}, {}, {}))
+            for a, b in inner:
+                if a != b:
+                    indeg_m[b] = indeg_m.get(b, 0) + 1
+        for _ch, (names_m, fr_m, indeg_m) in chain_meta.items():
+            for _nid, _z in _cm_node_zones(names_m, fr_m, indeg_m).items():
+                zonemap[_nid] = _z
         for nid, ch, name, tier, frole in node_rows:
             nodes_by_chain[ch].append({"node_id": nid, "name": name, "tier": tier or "",
-                                       "col": colmap.get(nid) or _cm_col(tier), "function_role": (frole or "").strip(),
-                                       "n_companies": ncomp.get(nid, 0), "equity": eq_by_node.get(nid)})
+                                       "col": colmap.get(nid) or _cm_col(tier),
+                                       "layer": layermap.get(nid, -1), "zone": zonemap.get(nid, 0),
+                                       "function_role": (frole or "").strip(),
+                                       "n_companies": ncomp.get(nid, 0), "equity": eq_by_node.get(nid),
+                                       "companies": topcomps.get(nid, [])})
         for lst in nodes_by_chain.values():
             # 链内按 function_role 分组聚集（八值展示序），同组内公司数降序（项 2 分列适配）
             lst.sort(key=lambda n: (_cm_fr_rank(n["function_role"]), -n["n_companies"], n["name"]))
         chains_out = [{**c, "nodes": nodes_by_chain[c["chain_id"]]} for c in
                       sorted(members, key=lambda c: -c["n_companies"])]
-        edges_out = [[a, b] for a, b in all_edges if a in nid_set and b in nid_set]
+        edges_out = [[a, b, rel] for a, b, rel in all_edges if a in nid_set and b in nid_set]
         data = {"cluster": cluster, "chains": chains_out, "edges": edges_out, "market": market}
         _CM_CLUSTER_CACHE[(market, cid)] = data
         return {"ok": True, **data}
@@ -2969,6 +3037,14 @@ _SQL_CM_NODES_BY_CHAIN = (
 _SQL_CM_NODE_COMPS_BY_CHAIN = (
     "SELECT node_id, count(DISTINCT symbol) FROM ig_node_company WHERE valid_to IS NULL AND node_id IN "
     "(SELECT node_id FROM ig_node WHERE chain_id = ANY(%s) AND name NOT LIKE '%%（已并入%%' AND valid_to IS NULL) GROUP BY node_id"
+)
+# iFinD 节点直挂公司 chip（2026-09-12 前端重构批）：每环节前 8 家名单（锚点大块直挂 8 家/普通节点取前 4；
+# 排序在 Python 侧 _cm_role_rank，与 /api/chainmap-node 抽屉同口径同 PIT 过滤；LIMIT 防大簇失控，
+# 计数仍以 _SQL_CM_NODE_COMPS_BY_CHAIN 为准）
+_SQL_CM_NODE_TOPCOMPS_BY_CHAIN = (
+    "SELECT node_id, symbol, role, confidence FROM ig_node_company"
+    " WHERE valid_to IS NULL AND node_id IN (SELECT node_id FROM ig_node"
+    " WHERE chain_id = ANY(%s) AND name NOT LIKE '%%（已并入%%' AND valid_to IS NULL) LIMIT 6000"
 )
 _SQL_CM_EQ_AGG = (
     "SELECT node_id, dir, other, stake_pct, relation, verification, as_of, ue_name FROM ("
@@ -3641,7 +3717,15 @@ def chain_impact_stream_endpoint(
 
 
 def main() -> None:
+    import ctypes
+
     import uvicorn
+
+    # SEM_FAILCRITICALERRORS(0x8003)：子进程继承错误模式——子进程硬错误（如 schtasks
+    # 0xc0000142 DLL 初始化失败）不再弹 GUI 对话框，只以非零退出码返回。
+    # 背景 2026-09-12 弹窗风暴：病变 api_server 实例每次 schtasks /query 都弹窗，
+    # 前端 60s 缓存轮询 → 每分钟多个弹窗。本防线保证同类故障只降级为状态灯红色。
+    ctypes.windll.kernel32.SetErrorMode(0x8003)
 
     uvicorn.run(app, host="127.0.0.1", port=8890, log_level="warning")
 
