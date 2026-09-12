@@ -94,9 +94,9 @@ C1 market_clickhouse 是业务数据库仓库层的**行情仓库**，存储 L1 
 
 | # | 文件名 | 对应蓝图章节 | 职责 | 存在性 |
 |---|--------|------------|------|:---:|
-| 1 | schemas/categories/market_tick.py | §4.1 | tick_data 表 DDL-as-Code | 已建 |
-| 2 | schemas/categories/market_kline_daily.py | §4.2 | kline_daily 表 DDL-as-Code | 已建 |
-| 3 | schemas/categories/market_auction.py | §4.3 | auction_snapshot 表 DDL-as-Code | 已建 |
+| 1 | schemas/categories/intraday/market_tick.py | §4.1 | tick_data 表 DDL-as-Code | 已建 |
+| 2 | schemas/categories/kline/market_kline_daily.py | §4.2 | kline_daily 表 DDL-as-Code | 已建 |
+| 3 | schemas/categories/intraday/market_auction.py | §4.3 | auction_snapshot 表 DDL-as-Code | 已建 |
 | 4 | schemas/categories/market_index.py | §4.4 | index_quote 表 DDL-as-Code | 已建 |
 | 5 | schemas/categories/market_option_iv.py | §4.5 | option_iv_surface 表 DDL-as-Code | 已建 |
 | 6 | schemas/categories/market_futures_position.py | §4.6 | futures_position 表 DDL-as-Code | 已建 |
@@ -331,7 +331,7 @@ ZephyrAlpha 业务数据库母蓝图（ARCH-BIZDB-001 §5.2）定义了 **C1 mar
 
 ### §4.1 tick_data（3秒Tick — replay模式）
 
-> **DDL 真源**：`schemas/categories/market_tick.py`（DDL-as-Code 模式）。
+> **DDL 真源**：`schemas/categories/intraday/market_tick.py`（DDL-as-Code 模式）。
 > 本节为**单向派生文档**，表结构以 `market_tick.py` 的 `TICK_DATA_DDL` 为唯一真源；
 > 禁止在本节反向修改 DDL——结构变更必须改 `market_tick.py` 并经 `apply_schema.py` 执行。
 > 下方属性表由真源派生，仅作速查，冲突时以 `market_tick.py` 为准。
@@ -354,7 +354,7 @@ ZephyrAlpha 业务数据库母蓝图（ARCH-BIZDB-001 §5.2）定义了 **C1 mar
 | TTL | **无TTL**（永久保留，INV-RET-003 铁律） |
 | calc_mode | **replay**（回测时逐笔回放，保证=实盘） |
 | category_id | **market_tick** |
-| schema_file | `schemas/categories/market_tick.py` |
+| schema_file | `schemas/categories/intraday/market_tick.py` |
 
 ### §4.2 kline_daily（日线OHLCV — preload模式）
 
@@ -364,7 +364,7 @@ ZephyrAlpha 业务数据库母蓝图（ARCH-BIZDB-001 §5.2）定义了 **C1 mar
      （§4.2 DDL 未定义 ingest_ts 列，蓝图内部矛盾）。 -->
 
 ```python
-# schemas/categories/market_kline_daily.py
+# schemas/categories/kline/market_kline_daily.py
 # category_id: market_kline_daily
 # calc_mode: preload（回测时预加载到内存）
 
@@ -413,7 +413,7 @@ COMMENT '日线OHLCV(成品聚合,preload)'
 ### §4.3 auction_snapshot（集合竞价快照 — preload模式）
 
 ```python
-# schemas/categories/market_auction.py
+# schemas/categories/intraday/market_auction.py
 # category_id: market_auction
 # calc_mode: preload
 
@@ -1052,7 +1052,7 @@ INFRA-DB-006 ClickHouse部署 → apply_schema.py 建表 → C1MarketWriter 写�
   engine: clickhouse
   database: c1_market
   table: tick_data
-  schema_file: schemas/categories/market_tick.py
+  schema_file: schemas/categories/intraday/market_tick.py
   data_type: 原料
   lifecycle: hot_only  # INV-RET-003 铁律：无TTL，永久Hot保留
   sla_level: P0
@@ -1066,7 +1066,7 @@ INFRA-DB-006 ClickHouse部署 → apply_schema.py 建表 → C1MarketWriter 写�
   engine: clickhouse
   database: c1_market
   table: kline_daily
-  schema_file: schemas/categories/market_kline_daily.py
+  schema_file: schemas/categories/kline/market_kline_daily.py
   data_type: 成品
   lifecycle: permanent  # 永久保留
   sla_level: P0
