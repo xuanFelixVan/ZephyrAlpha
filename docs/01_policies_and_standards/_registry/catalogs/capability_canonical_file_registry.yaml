@@ -12040,6 +12040,9 @@ creation_tokens:
 - file: docs/_working/2026-09-12-igfact-ckg2021-data-asset-analysis.md
   token: igfact-ckg2021-analysis-20260912
   created_by: sess-igfact-fill-20260912
+- file: docs/_working/2026-09-13-dedup-analysis.md
+  token: dedup-analysis-20260913
+  created_by: night-sweep-20260913
 di_seam_exemptions:
 - module_path: zephyr.trading.auto_runtime_core.AutoRuntimeCore
   reason: P0-5 LSG DI seam 标杆，已有 DI 但 AST 模式不匹配（动态注入）
