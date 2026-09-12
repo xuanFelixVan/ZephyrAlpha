@@ -11,7 +11,7 @@ ttl: task_bound
 
 ## 候选条目（五条，按四道闸逐条过）
 
-### UP-1 组合流·仓位管理升级：凯利动态仓位（Phase 1 可行）
+### UP-1 组合流·仓位管理升级：凯利动态仓位（Phase 1 可行）【已建成 2026-09-13：src/zephyr/pf_alloc/core/vol_target_allocator.py MOD-BT-082，单测 8 用例全绿；A/B 回测对比验证待跑】
 - 简版（Phase 1）：K 基于**滚动历史波动率**目标化（无分布预测也可跑）；
 - 完整版（Phase 2）：K=E(R)/σ²，E(R)/σ 来自车道 E 分布预测；
 - 四闸：来源可溯 ✓（Owner 笔记 2.1+凯利经典）；交叉验证 ✓（AQR 风险平价/bfinance

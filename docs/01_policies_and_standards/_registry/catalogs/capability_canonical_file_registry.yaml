@@ -14420,3 +14420,11 @@ di_seam_exemptions:
   token: factory-map-adversarial-tests-20260913
   created_by: st-zcode-c4-20260912
   capability: c4_batch_translation
+- file: src/zephyr/pf_alloc/core/vol_target_allocator.py
+  token: vol-target-allocator-20260913
+  created_by: st-zcode-c4-20260912
+  capability: c4_batch_translation
+- file: tests/pf_alloc/test_vol_target_allocator.py
+  token: vol-target-allocator-tests-20260913
+  created_by: st-zcode-c4-20260912
+  capability: c4_batch_translation
