@@ -4,7 +4,7 @@ submodule_path: src/zephyr/governance/escalation
 title: Escalation Protocol 蓝图
 doc_type: blueprint
 status: Active
-version: "2.1.8"
+version: "2.1.9"
 layer: L0_infrastructure
 owner: ZephyrAlpha-Owner
 classification: confidential
@@ -281,7 +281,7 @@ Escalation Protocol 是 ZephyrAlpha 安全升级与委托治理核心协议。�
 | 图 | 位置 | 状态 | 链接 |
 |----|------|------|------|
 | 依赖图 (depgraph) | `blueprint_id=MOD-INF-022` 的 191 个 file 节点 | production | `extract_depgraph.py --modules MOD-INF-022` |
-| 数据流图 (dataflow) | 0 个 Dataset / 1 个 Job | active | `apply_dataflowgraph.py --list-datasets` |
+| 数据流图 (dataflow) | （无节点） | N/A | `apply_dataflowgraph.py --list-datasets` |
 | 决策架构图 (decision) | 0 个决策节点 / 1 个决策层 | N/A | `generate_decision_diagram.py` |
 | 蓝图 (blueprint) | 本文件 | Active | — |
 
@@ -1601,8 +1601,8 @@ STEP 3: 拆分后验证
 | `tests/f_lifecycle/test_f5_e2e_lifecycle.py` | ✅ 已实现 | |
 | `tests/f_lifecycle/test_f5_event_startup.py` | ✅ 已实现 | |
 | `tests/f_lifecycle/test_f5_red_team_extreme.py` | ✅ 已实现 | |
-| `tests/feedback/test_docs_init.py` | ✅ 已实现 | |
-| `tests/feedback/test_evolution_init.py` | ✅ 已实现 | |
+| `tests/feedback/governance_audit/test_docs_init.py` | ✅ 已实现 | |
+| `tests/feedback/learning_evolution/test_evolution_init.py` | ✅ 已实现 | |
 | `tests/governance/adversarial/test_compositional_safety_tester.py` | ✅ 已实现 | |
 | `tests/governance/budget/test_error_budget_burst_limiter.py` | ✅ 已实现 | |
 | `tests/governance/compliance/test_compliance_mapper.py` | ✅ 已实现 | |

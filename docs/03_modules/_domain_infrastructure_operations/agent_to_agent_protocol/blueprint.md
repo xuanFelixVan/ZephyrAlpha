@@ -5,7 +5,7 @@ submodule_path: src/zephyr/infrastructure/a2a_protocol
 title: "A2A Protocol 蓝图 — Agent间通信协议与冲突解决"
 doc_type: blueprint
 status: Active
-version: "0.12.7"
+version: "0.12.8"
 layer: L0_infrastructure
 layer_name: infrastructure
 functional_domain: infra
@@ -78,7 +78,7 @@ design_maturity: production
 > **什么时候建**: 当同时活跃 AI Agent ≥3，或跨 Agent 任务依赖 ≥5，或 Owner 要求多 Agent 协作调度时。
 > **自动化宿主**: FLE `_periodic_checks()` → `_a2a_health_check()` + CircadianScheduler `hour=5` → `_a2a_discovery_scan()`
 
-> module_id: MOD-INF-025 | version: 0.12.7 | status: active | domain: infra_ops
+> module_id: MOD-INF-025 | version: 0.12.8 | status: active | domain: infra_ops
 > actual_disk_path: src/zephyr/infra_ops/a2a_protocol/ | generation: 3 | construction_progress: scaffold
 
 # A2A Protocol 蓝图 — Agent间通信协议与冲突解决
@@ -237,7 +237,7 @@ design_maturity: production
 | 图 | 位置 | 状态 | 链接 |
 |----|------|------|------|
 | 依赖图 (depgraph) | `blueprint_id=MOD-INF-025` 的 156 个 file 节点 | production | `extract_depgraph.py --modules MOD-INF-025` |
-| 数据流图 (dataflow) | 0 个 Dataset / 1 个 Job | active | `apply_dataflowgraph.py --list-datasets` |
+| 数据流图 (dataflow) | （无节点） | N/A | `apply_dataflowgraph.py --list-datasets` |
 | 决策架构图 (decision) | 0 个决策节点 / 1 个决策层 | N/A | `generate_decision_diagram.py` |
 | 蓝图 (blueprint) | 本文件 | Active | — |
 
@@ -1565,17 +1565,17 @@ STEP 3: 拆分后验证
 | `tests/a2a/test_spec_sync.py` | ✅ 已实现 | |
 | `tests/audit/test_handoff_manager.py` | ✅ 已实现 | |
 | `tests/context/test_context_package.py` | ✅ 已实现 | |
+| `tests/infrastructure/observability/test_push_notifier.py` | ✅ 已实现 | |
+| `tests/infrastructure/observability/test_streaming.py` | ✅ 已实现 | |
+| `tests/infrastructure/process_lifecycle/test_cascade_guard.py` | ✅ 已实现 | |
+| `tests/infrastructure/process_lifecycle/test_conflict_detector.py` | ✅ 已实现 | |
+| `tests/infrastructure/process_lifecycle/test_deadlock_guard.py` | ✅ 已实现 | |
+| `tests/infrastructure/process_lifecycle/test_livelock_detector.py` | ✅ 已实现 | |
+| `tests/infrastructure/process_lifecycle/test_supervisor.py` | ✅ 已实现 | |
+| `tests/infrastructure/process_lifecycle/test_trigger_monitor.py` | ✅ 已实现 | |
 | `tests/infrastructure/test_arbiter.py` | ✅ 已实现 | |
 | `tests/infrastructure/test_arbitrator.py` | ✅ 已实现 | |
-| `tests/infrastructure/test_cascade_guard.py` | ✅ 已实现 | |
-| `tests/infrastructure/test_conflict_detector.py` | ✅ 已实现 | |
-| `tests/infrastructure/test_deadlock_guard.py` | ✅ 已实现 | |
-| `tests/infrastructure/test_livelock_detector.py` | ✅ 已实现 | |
 | `tests/infrastructure/test_message_router.py` | ✅ 已实现 | |
-| `tests/infrastructure/test_push_notifier.py` | ✅ 已实现 | |
-| `tests/infrastructure/test_streaming.py` | ✅ 已实现 | |
-| `tests/infrastructure/test_supervisor.py` | ✅ 已实现 | |
-| `tests/infrastructure/test_trigger_monitor.py` | ✅ 已实现 | |
 | `tests/multi/test_multi_agent_root.py` | ✅ 已实现 | |
 | `tests/phase/test_phase_hold.py` | ✅ 已实现 | |
 | `tests/semantic_auditor/test_semantic_diff.py` | ✅ 已实现 | |

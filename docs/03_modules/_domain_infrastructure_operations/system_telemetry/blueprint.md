@@ -4,7 +4,7 @@ submodule_path: src/zephyr/infrastructure/system_telemetry
 title: "System Telemetry 蓝图+施工图 — 全系统可观测性"
 doc_type: blueprint
 status: Active
-version: "2.0.7"
+version: "2.0.8"
 layer: L0_infrastructure
 owner: ZephyrAlpha-Owner
 classification: confidential
@@ -58,7 +58,7 @@ design_maturity: production
 
 # System Telemetry 蓝图+施工图 — 全系统可观测性
 
-> module_id: MOD-INF-015 | version: 2.0.7 | status: Active | layer: L0_infrastructure
+> module_id: MOD-INF-015 | version: 2.0.8 | status: Active | layer: L0_infrastructure
 > actual_disk_path: src/zephyr/system_telemetry/ | generation: 3 | construction_progress: completed
 
 ## 概述
@@ -174,7 +174,7 @@ design_maturity: production
 | 图 | 位置 | 状态 | 链接 |
 |----|------|------|------|
 | 依赖图 (depgraph) | `blueprint_id=MOD-INF-015` 的 43 个 file 节点 | production | `extract_depgraph.py --modules MOD-INF-015` |
-| 数据流图 (dataflow) | 0 个 Dataset / 1 个 Job | active | `apply_dataflowgraph.py --list-datasets` |
+| 数据流图 (dataflow) | （无节点） | N/A | `apply_dataflowgraph.py --list-datasets` |
 | 决策架构图 (decision) | 0 个决策节点 / 1 个决策层 | N/A | `generate_decision_diagram.py` |
 | 蓝图 (blueprint) | 本文件 | Active | — |
 
@@ -1128,7 +1128,7 @@ construction_status=completed | verification_status=passed | code_alignment_veri
 | `tests/cold/test_cold_stub.py` | ✅ 已实现 | |
 | `tests/contracts/test_contract_metrics_root.py` | ✅ 已实现 | |
 | `tests/event/test_event_sink.py` | ✅ 已实现 | |
-| `tests/infrastructure/test_span_stub.py` | ✅ 已实现 | |
+| `tests/infrastructure/observability/test_span_stub.py` | ✅ 已实现 | |
 | `tests/observability/test_facade.py` | ✅ 已实现 | |
 | `tests/observability/test_health_aggregator_root.py` | ✅ 已实现 | |
 | `tests/observability/test_health_probes_root.py` | ✅ 已实现 | |

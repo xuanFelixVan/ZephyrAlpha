@@ -4,7 +4,7 @@ submodule_path: src/zephyr/integration/mcp
 title: "MCP Servers 蓝图 — MCP 服务器管理与调度"
 doc_type: blueprint
 status: Draft
-version: "0.3.45"
+version: "0.3.46"
 layer: L1_foundation
 owner: ZephyrAlpha-Owner
 classification: confidential
@@ -192,7 +192,7 @@ END_REQUIRED_SECTIONS
 | 图 | 位置 | 状态 | 链接 |
 |----|------|------|------|
 | 依赖图 (depgraph) | `blueprint_id=MOD-INF-013` 的 29 个 file 节点 | production | `extract_depgraph.py --modules MOD-INF-013` |
-| 数据流图 (dataflow) | 0 个 Dataset / 1 个 Job | active | `apply_dataflowgraph.py --list-datasets` |
+| 数据流图 (dataflow) | （无节点） | N/A | `apply_dataflowgraph.py --list-datasets` |
 | 决策架构图 (decision) | 0 个决策节点 / 1 个决策层 | N/A | `generate_decision_diagram.py` |
 | 蓝图 (blueprint) | 本文件 | Draft | — |
 
@@ -798,12 +798,12 @@ MCP 职责：通过 stdio 向外部 Agent 暴露任务管理/门禁决策等能�
 | 文件路径 | 实现状态 | 说明 |
 |---------|:---:|------|
 | `tests/a2a/test_mcp.py` | ✅ 已实现 | |
-| `tests/infrastructure/test_mcp_boot_hooks_integration.py` | ✅ 已实现 | |
-| `tests/infrastructure/test_mcp_full_lifecycle_e2e.py` | ✅ 已实现 | |
-| `tests/infrastructure/test_mcp_gateway_version_ratelimit.py` | ✅ 已实现 | |
-| `tests/infrastructure/test_mcp_health_check_recovery.py` | ✅ 已实现 | |
-| `tests/infrastructure/test_mcp_idle_timeout.py` | ✅ 已实现 | |
-| `tests/infrastructure/test_mcp_signal_shutdown.py` | ✅ 已实现 | |
+| `tests/infrastructure/mcp/test_mcp_boot_hooks_integration.py` | ✅ 已实现 | |
+| `tests/infrastructure/mcp/test_mcp_full_lifecycle_e2e.py` | ✅ 已实现 | |
+| `tests/infrastructure/mcp/test_mcp_gateway_version_ratelimit.py` | ✅ 已实现 | |
+| `tests/infrastructure/mcp/test_mcp_health_check_recovery.py` | ✅ 已实现 | |
+| `tests/infrastructure/mcp/test_mcp_idle_timeout.py` | ✅ 已实现 | |
+| `tests/infrastructure/mcp/test_mcp_signal_shutdown.py` | ✅ 已实现 | |
 | `tests/io/test_mcp_launcher.py` | ✅ 已实现 | |
 
 ### 1.5 路径索引使用指南

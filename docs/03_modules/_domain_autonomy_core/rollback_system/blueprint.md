@@ -4,7 +4,7 @@ submodule_path: src/zephyr/infrastructure/rollback
 title: "Rollback System 蓝图 — Git-native回滚+自动触发+运维治理持续性"
 doc_type: blueprint
 status: Active
-version: 9.0.9
+version: 9.0.10
 layer: L0_infrastructure
 layer_name: infrastructure
 functional_domain: execution
@@ -237,7 +237,7 @@ build_status: production
 | 图 | 位置 | 状态 | 链接 |
 |----|------|------|------|
 | 依赖图 (depgraph) | `blueprint_id=MOD-INF-021` 的 193 个 file 节点 | production | `extract_depgraph.py --modules MOD-INF-021` |
-| 数据流图 (dataflow) | 0 个 Dataset / 1 个 Job | active | `apply_dataflowgraph.py --list-datasets` |
+| 数据流图 (dataflow) | （无节点） | N/A | `apply_dataflowgraph.py --list-datasets` |
 | 决策架构图 (decision) | 0 个决策节点 / 1 个决策层 | N/A | `generate_decision_diagram.py` |
 | 蓝图 (blueprint) | 本文件 | Active | — |
 
@@ -1770,9 +1770,9 @@ STEP 3: 拆分后验证
 | `tests/governance/trading/test_exchange_reg_monitor.py` | ✅ 已实现 | |
 | `tests/governance/trading/test_paper_live_transition.py` | ✅ 已实现 | |
 | `tests/governance/trading/test_strategy_scoper.py` | ✅ 已实现 | |
+| `tests/infrastructure/process_lifecycle/test_forward_fix_runner.py` | ✅ 已实现 | |
+| `tests/infrastructure/process_lifecycle/test_topology_change_log.py` | ✅ 已实现 | |
 | `tests/infrastructure/test_commit_quality_gate.py` | ✅ 已实现 | |
-| `tests/infrastructure/test_forward_fix_runner.py` | ✅ 已实现 | |
-| `tests/infrastructure/test_topology_change_log.py` | ✅ 已实现 | |
 | `tests/intent/test_intent_archiver.py` | ✅ 已实现 | |
 | `tests/memory/test_memory_poison_guard.py` | ✅ 已实现 | |
 | `tests/memory/test_memory_provenance.py` | ✅ 已实现 | |

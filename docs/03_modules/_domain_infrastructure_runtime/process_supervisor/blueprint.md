@@ -3,7 +3,7 @@ module_id: MOD-INF-066
 title: "NSSM+5 进程架构与自研 Supervisor 蓝图 — 启动升序/关闭降序编排+分级心跳+崩溃重启策略+服务定义就绪件"
 doc_type: blueprint
 status: Active
-version: "0.1.2"
+version: "0.1.3"
 ttl: permanent
 layer: L00_infrastructure
 layer_name: infrastructure_runtime
@@ -82,7 +82,7 @@ MOD-INF-039 startup_sequencer）齐备，但 **NSSM 服务化注册与 P1~P5 优
 | 图 | 位置 | 状态 | 链接 |
 |----|------|------|------|
 | 依赖图 (depgraph) | `blueprint_id=MOD-INF-066` 的 2 个 file 节点 | production | `extract_depgraph.py --modules MOD-INF-066` |
-| 数据流图 (dataflow) | 0 个 Dataset / 1 个 Job | active | `apply_dataflowgraph.py --list-datasets` |
+| 数据流图 (dataflow) | （无节点） | N/A | `apply_dataflowgraph.py --list-datasets` |
 | 决策架构图 (decision) | 0 个决策节点 / 1 个决策层 | N/A | `generate_decision_diagram.py` |
 | 蓝图 (blueprint) | 本文件 | Active | — |
 
@@ -110,7 +110,7 @@ MOD-INF-039 startup_sequencer）齐备，但 **NSSM 服务化注册与 P1~P5 优
 
 | 文件路径 | 实现状态 | 说明 |
 |---------|:---:|------|
-| `tests/infrastructure/test_process_supervisor.py` | ✅ 已实现 | |
+| `tests/infrastructure/process_lifecycle/test_process_supervisor.py` | ✅ 已实现 | |
 
 ### 6.5 路径索引使用指南
 

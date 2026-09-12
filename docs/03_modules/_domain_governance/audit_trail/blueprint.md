@@ -4,7 +4,7 @@ submodule_path: src/zephyr/gov_audit
 title: "Audit Trail 蓝图 — 不可变动作审计与密码学完整性保证"
 doc_type: blueprint
 status: Active
-version: "2.1.8"
+version: "2.1.9"
 generation: 9
 layer: L0_infrastructure
 layer_name: infrastructure
@@ -63,7 +63,7 @@ design_maturity: production
 build_status: generated
 ---
 
-> module_id: MOD-INF-020 | version: 2.1.8 | status: active | domain: infra_ops
+> module_id: MOD-INF-020 | version: 2.1.9 | status: active | domain: infra_ops
 > actual_disk_path: src/zephyr/audit-trail/ (352 .py files) | generation: 9 | construction_progress: partially_implemented
 
 # Audit Trail 蓝图 — 不可变动作审计与密码学完整性保证
@@ -196,7 +196,7 @@ build_status: generated
 | 图 | 位置 | 状态 | 链接 |
 |----|------|------|------|
 | 依赖图 (depgraph) | `blueprint_id=MOD-INF-020` 的 128 个 file 节点 | production | `extract_depgraph.py --modules MOD-INF-020` |
-| 数据流图 (dataflow) | 0 个 Dataset / 1 个 Job | active | `apply_dataflowgraph.py --list-datasets` |
+| 数据流图 (dataflow) | （无节点） | N/A | `apply_dataflowgraph.py --list-datasets` |
 | 决策架构图 (decision) | 0 个决策节点 / 1 个决策层 | N/A | `generate_decision_diagram.py` |
 | 蓝图 (blueprint) | 本文件 | Active | — |
 
@@ -1753,9 +1753,9 @@ class LamportClockV2:
 | `tests/bridges/test_bridges_tiered_storage_bridge.py` | ✅ 已实现 | |
 | `tests/drift/test_drift_bridge.py` | ✅ 已实现 | |
 | `tests/external/test_external_tool_audit.py` | ✅ 已实现 | |
-| `tests/feedback/test_feedback_bridge.py` | ✅ 已实现 | |
-| `tests/feedback/test_feedback_policy.py` | ✅ 已实现 | |
-| `tests/feedback/test_feedback_self_audit.py` | ✅ 已实现 | |
+| `tests/feedback/feedback_loop/test_feedback_bridge.py` | ✅ 已实现 | |
+| `tests/feedback/feedback_loop/test_feedback_policy.py` | ✅ 已实现 | |
+| `tests/feedback/feedback_loop/test_feedback_self_audit.py` | ✅ 已实现 | |
 | `tests/governance/audit/test_anomaly.py` | ✅ 已实现 | |
 | `tests/governance/audit/test_bridge.py` | ✅ 已实现 | |
 | `tests/governance/audit/test_changelog_manager.py` | ✅ 已实现 | |

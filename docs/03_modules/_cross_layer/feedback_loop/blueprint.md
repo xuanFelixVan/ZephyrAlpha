@@ -5,7 +5,7 @@ title: "Feedback Loop Engine 蓝图 — 氛围编程原生元自知全维自防�
 doc_type: blueprint
 template_for: blueprint
 status: Draft
-version: "0.35.13"
+version: "0.35.14"
 layer: L1_foundation
 owner: ZephyrAlpha-Owner
 classification: confidential
@@ -54,7 +54,7 @@ responsibility_domain:
 
 本蓝图描述 Feedback Loop Engine——ZephyrAlpha 的自我改进闭环引擎。它解决了系统运行时异常检测、根因诊断、自动修复和自我进化的问题。核心职责包括：regime→predict→detect→diagnose→act→verify→self-heal→govern 全链路自治、67+ Detector 多模态检测、三级检测池并行化、32 代进化×429 盲点覆盖。当前规模单线程 30s 轮询，目标容量 100 AI Session 并发/500 findings/cycle/240 events/s。上游依赖 ScriptSystem(MOD-INF-005)提供扫描结果，下游被 AutoRuntime(MOD-INF-035)消费异常调度。
 
-> module_id: MOD-FEEDBACK_LOOP | version: 0.35.13 | status: Draft | layer: cross_layer
+> module_id: MOD-FEEDBACK_LOOP | version: 0.35.14 | status: Draft | layer: cross_layer
 > actual_disk_path: src/zephyr/feedback_loop/ | generation: 1 | construction_progress: completed
 >
 > **标准锚点（防幻觉）**——本蓝图必须严格遵循以下标准：
@@ -144,7 +144,7 @@ responsibility_domain:
 | 图 | 位置 | 状态 | 链接 |
 |----|------|------|------|
 | 依赖图 (depgraph) | `blueprint_id=MOD-FEEDBACK_LOOP` 的 629 个 file 节点 | production | `extract_depgraph.py --modules MOD-FEEDBACK_LOOP` |
-| 数据流图 (dataflow) | 0 个 Dataset / 1 个 Job | active | `apply_dataflowgraph.py --list-datasets` |
+| 数据流图 (dataflow) | （无节点） | N/A | `apply_dataflowgraph.py --list-datasets` |
 | 决策架构图 (decision) | 0 个决策节点 / 1 个决策层 | N/A | `generate_decision_diagram.py` |
 | 蓝图 (blueprint) | 本文件 | Draft | — |
 
@@ -987,101 +987,101 @@ STEP 3: 拆分后验证
 | `tests/federated_learning/test_fl_slo_manager.py` | ✅ 已实现 | |
 | `tests/federated_learning/test_fl_template.py` | ✅ 已实现 | |
 | `tests/federated_learning/test_fl_validator.py` | ✅ 已实现 | |
-| `tests/feedback/test_adaptive_param_tuning.py` | ✅ 已实现 | |
-| `tests/feedback/test_alert_desensitization_curve.py` | ✅ 已实现 | |
-| `tests/feedback/test_anomaly_clustering.py` | ✅ 已实现 | |
-| `tests/feedback/test_architectural_sod.py` | ✅ 已实现 | |
-| `tests/feedback/test_automated_rca_postmortem_generator.py` | ✅ 已实现 | |
-| `tests/feedback/test_autoscale_remediation.py` | ✅ 已实现 | |
-| `tests/feedback/test_backpressure_bridge_root.py` | ✅ 已实现 | |
-| `tests/feedback/test_blast_radius_budget.py` | ✅ 已实现 | |
-| `tests/feedback/test_boot_integrity_attestation.py` | ✅ 已实现 | |
-| `tests/feedback/test_cascading_rollback_analyzer.py` | ✅ 已实现 | |
+| `tests/feedback/anomaly_diagnosis/test_anomaly_clustering.py` | ✅ 已实现 | |
+| `tests/feedback/anomaly_diagnosis/test_automated_rca_postmortem_generator.py` | ✅ 已实现 | |
+| `tests/feedback/anomaly_diagnosis/test_diagnosers.py` | ✅ 已实现 | |
+| `tests/feedback/anomaly_diagnosis/test_diagnosis_engine.py` | ✅ 已实现 | |
+| `tests/feedback/anomaly_diagnosis/test_gradual_poisoning_detector.py` | ✅ 已实现 | |
+| `tests/feedback/anomaly_diagnosis/test_heisenbug_detector.py` | ✅ 已实现 | |
+| `tests/feedback/anomaly_diagnosis/test_infinite_loop_detector.py` | ✅ 已实现 | |
+| `tests/feedback/anomaly_diagnosis/test_log_anomaly.py` | ✅ 已实现 | |
+| `tests/feedback/anomaly_diagnosis/test_oscillation_damping.py` | ✅ 已实现 | |
+| `tests/feedback/anomaly_diagnosis/test_placebo_action_detector.py` | ✅ 已实现 | |
+| `tests/feedback/anomaly_diagnosis/test_recursive_diagnosis_trust_evaluator.py` | ✅ 已实现 | |
+| `tests/feedback/anomaly_diagnosis/test_resolution_tracker.py` | ✅ 已实现 | |
+| `tests/feedback/anomaly_diagnosis/test_stochastic_diagnosis_verifier.py` | ✅ 已实现 | |
+| `tests/feedback/anomaly_diagnosis/test_stochastic_diagnosis_verifier_v2.py` | ✅ 已实现 | |
+| `tests/feedback/anomaly_diagnosis/test_synthetic_anomaly_generator.py` | ✅ 已实现 | |
+| `tests/feedback/feedback_loop/test_feedback_collector_root.py` | ✅ 已实现 | |
+| `tests/feedback/feedback_loop/test_feedback_core.py` | ✅ 已实现 | |
+| `tests/feedback/feedback_loop/test_feedback_delay_compensator.py` | ✅ 已实现 | |
+| `tests/feedback/feedback_loop/test_notification_feedback.py` | ✅ 已实现 | |
+| `tests/feedback/feedback_loop/test_positive_feedback_defense.py` | ✅ 已实现 | |
+| `tests/feedback/governance_audit/test_federated_protocol.py` | ✅ 已实现 | |
+| `tests/feedback/governance_audit/test_known_unknown_registry.py` | ✅ 已实现 | |
+| `tests/feedback/governance_audit/test_meta_guard_latency_budget.py` | ✅ 已实现 | |
+| `tests/feedback/governance_audit/test_numerical_stability_guard.py` | ✅ 已实现 | |
+| `tests/feedback/governance_audit/test_regulatory_audit.py` | ✅ 已实现 | |
+| `tests/feedback/governance_audit/test_state_migration_validator.py` | ✅ 已实现 | |
+| `tests/feedback/governance_audit/test_validator.py` | ✅ 已实现 | |
+| `tests/feedback/governance_audit/test_worm_write_integrity.py` | ✅ 已实现 | |
+| `tests/feedback/learning_evolution/test_adaptive_param_tuning.py` | ✅ 已实现 | |
+| `tests/feedback/learning_evolution/test_collaborative_learning.py` | ✅ 已实现 | |
+| `tests/feedback/learning_evolution/test_confidence_decomposer.py` | ✅ 已实现 | |
+| `tests/feedback/learning_evolution/test_conformal_prediction.py` | ✅ 已实现 | |
+| `tests/feedback/learning_evolution/test_counterfactual.py` | ✅ 已实现 | |
+| `tests/feedback/learning_evolution/test_diminishing_returns_detector.py` | ✅ 已实现 | |
+| `tests/feedback/learning_evolution/test_evolution_engine_root.py` | ✅ 已实现 | |
+| `tests/feedback/learning_evolution/test_graduated_activation_protocol.py` | ✅ 已实现 | |
+| `tests/feedback/learning_evolution/test_hypernetwork.py` | ✅ 已实现 | |
+| `tests/feedback/learning_evolution/test_nonstationary_effectiveness.py` | ✅ 已实现 | |
+| `tests/feedback/learning_evolution/test_online_feature_importance.py` | ✅ 已实现 | |
+| `tests/feedback/learning_evolution/test_teacher_transfer.py` | ✅ 已实现 | |
+| `tests/feedback/learning_evolution/test_training_data_gov.py` | ✅ 已实现 | |
+| `tests/feedback/observability_notify/test_alert_desensitization_curve.py` | ✅ 已实现 | |
+| `tests/feedback/observability_notify/test_ebpf_monitor.py` | ✅ 已实现 | |
+| `tests/feedback/observability_notify/test_metric_cardinality_guard.py` | ✅ 已实现 | |
+| `tests/feedback/observability_notify/test_metrics_collector.py` | ✅ 已实现 | |
+| `tests/feedback/observability_notify/test_notification_personalizer.py` | ✅ 已实现 | |
+| `tests/feedback/observability_notify/test_otel_adapter.py` | ✅ 已实现 | |
+| `tests/feedback/observability_notify/test_secondary_alert_channel.py` | ✅ 已实现 | |
+| `tests/feedback/observability_notify/test_slo_capacity_metrics.py` | ✅ 已实现 | |
+| `tests/feedback/observability_notify/test_slo_manager_root.py` | ✅ 已实现 | |
+| `tests/feedback/observability_notify/test_system_entropy_monitor.py` | ✅ 已实现 | |
+| `tests/feedback/resilience_dr/test_architectural_sod.py` | ✅ 已实现 | |
+| `tests/feedback/resilience_dr/test_autoscale_remediation.py` | ✅ 已实现 | |
+| `tests/feedback/resilience_dr/test_backpressure_bridge_root.py` | ✅ 已实现 | |
+| `tests/feedback/resilience_dr/test_blast_radius_budget.py` | ✅ 已实现 | |
+| `tests/feedback/resilience_dr/test_boot_integrity_attestation.py` | ✅ 已实现 | |
+| `tests/feedback/resilience_dr/test_cascading_rollback_analyzer.py` | ✅ 已实现 | |
+| `tests/feedback/resilience_dr/test_deadman_switch.py` | ✅ 已实现 | |
+| `tests/feedback/resilience_dr/test_digital_twin_sandbox.py` | ✅ 已实现 | |
+| `tests/feedback/resilience_dr/test_dr_automation.py` | ✅ 已实现 | |
+| `tests/feedback/resilience_dr/test_dr_resilience_metrics.py` | ✅ 已实现 | |
+| `tests/feedback/resilience_dr/test_dry_run_sandbox.py` | ✅ 已实现 | |
+| `tests/feedback/resilience_dr/test_interrupt_coherence_validator.py` | ✅ 已实现 | |
+| `tests/feedback/resilience_dr/test_no_llm_degradation.py` | ✅ 已实现 | |
+| `tests/feedback/resilience_dr/test_recovery_time_stats.py` | ✅ 已实现 | |
+| `tests/feedback/scheduling/test_collectors.py` | ✅ 已实现 | |
+| `tests/feedback/scheduling/test_global_action_scheduler.py` | ✅ 已实现 | |
+| `tests/feedback/scheduling/test_maintenance_coordinator.py` | ✅ 已实现 | |
+| `tests/feedback/scheduling/test_market_calendar.py` | ✅ 已实现 | |
+| `tests/feedback/scheduling/test_operational_seasonality.py` | ✅ 已实现 | |
+| `tests/feedback/scheduling/test_scheduler_collect_detect.py` | ✅ 已实现 | |
+| `tests/feedback/scheduling/test_scheduler_health.py` | ✅ 已实现 | |
+| `tests/feedback/scheduling/test_scheduler_integration.py` | ✅ 已实现 | |
 | `tests/feedback/test_cognitive_load.py` | ✅ 已实现 | |
-| `tests/feedback/test_collaborative_learning.py` | ✅ 已实现 | |
-| `tests/feedback/test_collectors.py` | ✅ 已实现 | |
-| `tests/feedback/test_confidence_decomposer.py` | ✅ 已实现 | |
-| `tests/feedback/test_conformal_prediction.py` | ✅ 已实现 | |
-| `tests/feedback/test_counterfactual.py` | ✅ 已实现 | |
-| `tests/feedback/test_deadman_switch.py` | ✅ 已实现 | |
-| `tests/feedback/test_diagnosers.py` | ✅ 已实现 | |
-| `tests/feedback/test_diagnosis_engine.py` | ✅ 已实现 | |
-| `tests/feedback/test_digital_twin_sandbox.py` | ✅ 已实现 | |
-| `tests/feedback/test_diminishing_returns_detector.py` | ✅ 已实现 | |
-| `tests/feedback/test_dr_automation.py` | ✅ 已实现 | |
-| `tests/feedback/test_dr_resilience_metrics.py` | ✅ 已实现 | |
-| `tests/feedback/test_dry_run_sandbox.py` | ✅ 已实现 | |
 | `tests/feedback/test_dynamic_threshold.py` | ✅ 已实现 | |
 | `tests/feedback/test_e2e_integration_health.py` | ✅ 已实现 | |
-| `tests/feedback/test_ebpf_monitor.py` | ✅ 已实现 | |
 | `tests/feedback/test_ensemble_detector.py` | ✅ 已实现 | |
 | `tests/feedback/test_ensemble_drift.py` | ✅ 已实现 | |
 | `tests/feedback/test_eval_harness_root.py` | ✅ 已实现 | |
-| `tests/feedback/test_evolution_engine_root.py` | ✅ 已实现 | |
 | `tests/feedback/test_ewc_kb_review.py` | ✅ 已实现 | |
 | `tests/feedback/test_failure_replay.py` | ✅ 已实现 | |
-| `tests/feedback/test_federated_protocol.py` | ✅ 已实现 | |
-| `tests/feedback/test_feedback_collector_root.py` | ✅ 已实现 | |
-| `tests/feedback/test_feedback_core.py` | ✅ 已实现 | |
-| `tests/feedback/test_feedback_delay_compensator.py` | ✅ 已实现 | |
 | `tests/feedback/test_flapping_detector.py` | ✅ 已实现 | |
 | `tests/feedback/test_gamification.py` | ✅ 已实现 | |
-| `tests/feedback/test_global_action_scheduler.py` | ✅ 已实现 | |
 | `tests/feedback/test_golden_test_external.py` | ✅ 已实现 | |
-| `tests/feedback/test_gradual_poisoning_detector.py` | ✅ 已实现 | |
-| `tests/feedback/test_graduated_activation_protocol.py` | ✅ 已实现 | |
-| `tests/feedback/test_heisenbug_detector.py` | ✅ 已实现 | |
-| `tests/feedback/test_hypernetwork.py` | ✅ 已实现 | |
 | `tests/feedback/test_impact_predictor.py` | ✅ 已实现 | |
 | `tests/feedback/test_incident_knowledge_injector.py` | ✅ 已实现 | |
-| `tests/feedback/test_infinite_loop_detector.py` | ✅ 已实现 | |
-| `tests/feedback/test_interrupt_coherence_validator.py` | ✅ 已实现 | |
-| `tests/feedback/test_known_unknown_registry.py` | ✅ 已实现 | |
-| `tests/feedback/test_log_anomaly.py` | ✅ 已实现 | |
-| `tests/feedback/test_maintenance_coordinator.py` | ✅ 已实现 | |
-| `tests/feedback/test_market_calendar.py` | ✅ 已实现 | |
 | `tests/feedback/test_market_event_integrator.py` | ✅ 已实现 | |
-| `tests/feedback/test_meta_guard_latency_budget.py` | ✅ 已实现 | |
-| `tests/feedback/test_metric_cardinality_guard.py` | ✅ 已实现 | |
-| `tests/feedback/test_metrics_collector.py` | ✅ 已实现 | |
-| `tests/feedback/test_no_llm_degradation.py` | ✅ 已实现 | |
-| `tests/feedback/test_nonstationary_effectiveness.py` | ✅ 已实现 | |
-| `tests/feedback/test_notification_feedback.py` | ✅ 已实现 | |
-| `tests/feedback/test_notification_personalizer.py` | ✅ 已实现 | |
-| `tests/feedback/test_numerical_stability_guard.py` | ✅ 已实现 | |
-| `tests/feedback/test_online_feature_importance.py` | ✅ 已实现 | |
-| `tests/feedback/test_operational_seasonality.py` | ✅ 已实现 | |
-| `tests/feedback/test_oscillation_damping.py` | ✅ 已实现 | |
-| `tests/feedback/test_otel_adapter.py` | ✅ 已实现 | |
-| `tests/feedback/test_placebo_action_detector.py` | ✅ 已实现 | |
-| `tests/feedback/test_positive_feedback_defense.py` | ✅ 已实现 | |
-| `tests/feedback/test_recovery_time_stats.py` | ✅ 已实现 | |
-| `tests/feedback/test_recursive_diagnosis_trust_evaluator.py` | ✅ 已实现 | |
-| `tests/feedback/test_regulatory_audit.py` | ✅ 已实现 | |
-| `tests/feedback/test_resolution_tracker.py` | ✅ 已实现 | |
 | `tests/feedback/test_retirement_planner.py` | ✅ 已实现 | |
 | `tests/feedback/test_rumor_noise_filter.py` | ✅ 已实现 | |
 | `tests/feedback/test_runbook_executor.py` | ✅ 已实现 | |
-| `tests/feedback/test_scheduler_collect_detect.py` | ✅ 已实现 | |
-| `tests/feedback/test_scheduler_health.py` | ✅ 已实现 | |
-| `tests/feedback/test_scheduler_integration.py` | ✅ 已实现 | |
-| `tests/feedback/test_secondary_alert_channel.py` | ✅ 已实现 | |
 | `tests/feedback/test_silent_corruption_detector.py` | ✅ 已实现 | |
-| `tests/feedback/test_slo_capacity_metrics.py` | ✅ 已实现 | |
-| `tests/feedback/test_slo_manager_root.py` | ✅ 已实现 | |
-| `tests/feedback/test_state_migration_validator.py` | ✅ 已实现 | |
-| `tests/feedback/test_stochastic_diagnosis_verifier.py` | ✅ 已实现 | |
-| `tests/feedback/test_stochastic_diagnosis_verifier_v2.py` | ✅ 已实现 | |
-| `tests/feedback/test_synthetic_anomaly_generator.py` | ✅ 已实现 | |
-| `tests/feedback/test_system_entropy_monitor.py` | ✅ 已实现 | |
-| `tests/feedback/test_teacher_transfer.py` | ✅ 已实现 | |
 | `tests/feedback/test_timezone_semantic_reasoner.py` | ✅ 已实现 | |
 | `tests/feedback/test_token_finops.py` | ✅ 已实现 | |
-| `tests/feedback/test_training_data_gov.py` | ✅ 已实现 | |
 | `tests/feedback/test_trend_cycle_separator.py` | ✅ 已实现 | |
-| `tests/feedback/test_validator.py` | ✅ 已实现 | |
 | `tests/feedback/test_vertical_self_assessment.py` | ✅ 已实现 | |
-| `tests/feedback/test_worm_write_integrity.py` | ✅ 已实现 | |
 | `tests/fle/test_fle_anomaly_detector.py` | ✅ 已实现 | |
 | `tests/fle/test_fle_chaos_engineering.py` | ✅ 已实现 | |
 | `tests/fle/test_fle_config.py` | ✅ 已实现 | |
@@ -1104,9 +1104,9 @@ STEP 3: 拆分后验证
 | `tests/guard/test_guard_interaction_topology_mapper.py` | ✅ 已实现 | |
 | `tests/guard/test_guard_oscillation_detector.py` | ✅ 已实现 | |
 | `tests/guard/test_guard_self_consistency_auditor.py` | ✅ 已实现 | |
+| `tests/infrastructure/process_lifecycle/test_graceful_degradation_planner.py` | ✅ 已实现 | |
+| `tests/infrastructure/process_lifecycle/test_split_brain_quorum.py` | ✅ 已实现 | |
 | `tests/infrastructure/test_audit_rename_completeness.py` | ✅ 已实现 | |
-| `tests/infrastructure/test_graceful_degradation_planner.py` | ✅ 已实现 | |
-| `tests/infrastructure/test_split_brain_quorum.py` | ✅ 已实现 | |
 | `tests/intent/test_intent_driven_ops.py` | ✅ 已实现 | |
 | `tests/llm_security/test_dep_cve_correlator.py` | ✅ 已实现 | |
 | `tests/llm_security/test_llm_cost_accounting.py` | ✅ 已实现 | |

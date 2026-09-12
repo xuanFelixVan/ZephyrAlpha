@@ -5,7 +5,7 @@ title: "资产盘点系统蓝图 — 全量资产发现→自动分类→统一�
 doc_type: blueprint
 template_for: blueprint
 status: Active
-version: "3.1.5"
+version: "3.1.6"
 layer: L0_infrastructure
 owner: ZephyrAlpha-Owner
 classification: confidential
@@ -41,7 +41,7 @@ responsibility_domain:
 build_status: production
 design_maturity: production
 ---
-> module_id: MOD-INF-026 | version: 3.1.5 | status: active | layer: L0_infrastructure
+> module_id: MOD-INF-026 | version: 3.1.6 | status: active | layer: L0_infrastructure
 > actual_disk_path: src/zephyr/asset-inventory/ | generation: 3 | construction_progress: completed
 
 # Asset Inventory 蓝图 — 全量资产发现→自动分类→统一登记→持续对账→生命周期管理
@@ -886,7 +886,7 @@ class AssetEventBus:
 | 图 | 位置 | 状态 | 链接 |
 |----|------|------|------|
 | 依赖图 (depgraph) | `blueprint_id=MOD-INF-026` 的 29 个 file 节点 | production | `extract_depgraph.py --modules MOD-INF-026` |
-| 数据流图 (dataflow) | 0 个 Dataset / 1 个 Job | active | `apply_dataflowgraph.py --list-datasets` |
+| 数据流图 (dataflow) | （无节点） | N/A | `apply_dataflowgraph.py --list-datasets` |
 | 决策架构图 (decision) | 0 个决策节点 / 1 个决策层 | N/A | `generate_decision_diagram.py` |
 | 蓝图 (blueprint) | 本文件 | Active | — |
 
@@ -3869,16 +3869,16 @@ ZephyrAlpha MOD-INF-026 Asset Inventory Blueprint
 |---------|:---:|------|
 | `tests/asset_inventory/test_asset_inventory.py` | ✅ 已实现 | |
 | `tests/dependency/test_dependency_root.py` | ✅ 已实现 | |
+| `tests/infrastructure/observability/test_telemetry.py` | ✅ 已实现 | |
+| `tests/infrastructure/process_lifecycle/test_lifecycle_root.py` | ✅ 已实现 | |
 | `tests/infrastructure/test_classifier_root.py` | ✅ 已实现 | |
 | `tests/infrastructure/test_dashboard_root.py` | ✅ 已实现 | |
 | `tests/infrastructure/test_discover_all_registries.py` | ✅ 已实现 | |
 | `tests/infrastructure/test_index_generator_root.py` | ✅ 已实现 | |
-| `tests/infrastructure/test_lifecycle_root.py` | ✅ 已实现 | |
 | `tests/infrastructure/test_metadata.py` | ✅ 已实现 | |
 | `tests/infrastructure/test_reconciler_root.py` | ✅ 已实现 | |
 | `tests/infrastructure/test_registry_adapter_root.py` | ✅ 已实现 | |
 | `tests/infrastructure/test_scanner_root.py` | ✅ 已实现 | |
-| `tests/infrastructure/test_telemetry.py` | ✅ 已实现 | |
 | `tests/infrastructure/test_trust_anchor_root.py` | ✅ 已实现 | |
 
 ### 40.5 路径索引使用指南

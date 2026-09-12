@@ -4,7 +4,7 @@ submodule_path: src/zephyr/integration
 title: "Pipeline 蓝图 — 管线编排器·M1-M11门控流水线"
 doc_type: blueprint
 status: Active
-version: "0.39.10"
+version: "0.39.11"
 layer: L1_foundation
 owner: ZephyrAlpha-Owner
 classification: confidential
@@ -38,7 +38,7 @@ build_status: generated
 responsibility_domain: 
 ---
 
-> module_id: MOD-INF-009 | version: 0.39.10 | status: active | layer: cross_layer
+> module_id: MOD-INF-009 | version: 0.39.11 | status: active | layer: cross_layer
 > actual_disk_path: src/zephyr/integration/pipeline_orchestrator.py | generation: 2 | construction_progress: partially_implemented
 
 # Pipeline 蓝图 — 管线编排器·M1-M11门控流水线
@@ -144,7 +144,7 @@ responsibility_domain:
 | 图 | 位置 | 状态 | 链接 |
 |----|------|------|------|
 | 依赖图 (depgraph) | `blueprint_id=MOD-INF-009` 的 33 个 file 节点 | production | `extract_depgraph.py --modules MOD-INF-009` |
-| 数据流图 (dataflow) | 0 个 Dataset / 1 个 Job | active | `apply_dataflowgraph.py --list-datasets` |
+| 数据流图 (dataflow) | （无节点） | N/A | `apply_dataflowgraph.py --list-datasets` |
 | 决策架构图 (decision) | 0 个决策节点 / 1 个决策层 | N/A | `generate_decision_diagram.py` |
 | 蓝图 (blueprint) | 本文件 | Active | — |
 
@@ -1034,7 +1034,7 @@ STEP 3: 拆分后验证
 | 文件路径 | 实现状态 | 说明 |
 |---------|:---:|------|
 | `tests/contracts/test_ct_pipe_routing_root.py` | ✅ 已实现 | |
-| `tests/infrastructure/test_preemption_manager.py` | ✅ 已实现 | |
+| `tests/infrastructure/process_lifecycle/test_preemption_manager.py` | ✅ 已实现 | |
 | `tests/llm_security/test_llm_gateway.py` | ✅ 已实现 | |
 | `tests/llm_security/test_llm_gateway_route_perf_aware.py` | ✅ 已实现 | |
 | `tests/model/test_model_router.py` | ✅ 已实现 | |

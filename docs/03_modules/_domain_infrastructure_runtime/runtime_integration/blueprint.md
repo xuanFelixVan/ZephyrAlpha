@@ -4,7 +4,7 @@ submodule_path: src/zephyr/infrastructure/runtime
 title: "Runtime Integration 蓝图 — 15核心RI模块跨层协同与运行时基础设施"
 doc_type: blueprint
 status: Active
-version: 6.1.11
+version: 6.1.12
 layer: L0_infrastructure
 layer_name: infrastructure
 functional_domain: infra
@@ -197,7 +197,7 @@ design_maturity: production
 | 图 | 位置 | 状态 | 链接 |
 |----|------|------|------|
 | 依赖图 (depgraph) | `blueprint_id=MOD-INF-002` 的 80 个 file 节点 | production | `extract_depgraph.py --modules MOD-INF-002` |
-| 数据流图 (dataflow) | 0 个 Dataset / 1 个 Job | active | `apply_dataflowgraph.py --list-datasets` |
+| 数据流图 (dataflow) | （无节点） | N/A | `apply_dataflowgraph.py --list-datasets` |
 | 决策架构图 (decision) | 0 个决策节点 / 1 个决策层 | N/A | `generate_decision_diagram.py` |
 | 蓝图 (blueprint) | 本文件 | Active | — |
 
@@ -2040,11 +2040,11 @@ STEP 3: 拆分后验证
 | `tests/event/test_event_store.py` | ✅ 已实现 | |
 | `tests/event/test_event_store_stress.py` | ✅ 已实现 | |
 | `tests/file/test_file_watcher.py` | ✅ 已实现 | |
-| `tests/infrastructure/test_cost_tracker.py` | ✅ 已实现 | |
+| `tests/infrastructure/observability/test_cost_tracker.py` | ✅ 已实现 | |
+| `tests/infrastructure/process_lifecycle/test_kill_switch_sim.py` | ✅ 已实现 | |
 | `tests/infrastructure/test_dry_run_simulator.py` | ✅ 已实现 | |
 | `tests/infrastructure/test_finding_task_bridge.py` | ✅ 已实现 | |
 | `tests/infrastructure/test_infrastructure_base.py` | ✅ 已实现 | |
-| `tests/infrastructure/test_kill_switch_sim.py` | ✅ 已实现 | |
 | `tests/infrastructure/test_pydantic_v2_migrator.py` | ✅ 已实现 | |
 | `tests/infrastructure/test_warm_hot_gate.py` | ✅ 已实现 | |
 | `tests/pipeline/test_alpha_signal_pipeline.py` | ✅ 已实现 | |

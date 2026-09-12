@@ -4,7 +4,7 @@ submodule_path: src/zephyr/autonomy_core
 title: "可执行 Agent Spec 蓝图 — 蓝图→Skill 升级引擎"
 doc_type: blueprint
 status: Active
-version: "0.19.8"
+version: "0.19.9"
 layer: L1_foundation
 owner: ZephyrAlpha-Owner
 classification: confidential
@@ -75,7 +75,7 @@ build_status: deprecated
 > **什么时候建**: 当未注册 Skill ≥3（新模块大量增加），或 Skill 加载失败率 ≥10%，或 Owner 要求 Skill 自发现自注册时。
 > **自动化宿主**: CircadianScheduler `hour=4` → `_skill_registration_scan()` + FLE `_periodic_checks()` → `_skill_health_check()`
 
-> module_id: MOD-INF-019 | version: 0.19.8 | status: Active | layer: cross_layer
+> module_id: MOD-INF-019 | version: 0.19.9 | status: Active | layer: cross_layer
 > actual_disk_path: src/zephyr/agent-spec/ | generation: 2 | construction_progress: partially_implemented
 
 ## 概述
@@ -1598,7 +1598,7 @@ Factory Agent 问 3 个问题：Q1 核心操作？Q2 独特约束/模式？Q3 �
 | `tests/context/test_context_value_attribution.py` | ✅ 已实现 | |
 | `tests/dependency/test_dependency_tracker.py` | ✅ 已实现 | |
 | `tests/file/test_file_autoregister.py` | ✅ 已实现 | |
-| `tests/infrastructure/test_mcp_adapter.py` | ✅ 已实现 | |
+| `tests/infrastructure/mcp/test_mcp_adapter.py` | ✅ 已实现 | |
 | `tests/intent/test_intent_keyword_mapper_root.py` | ✅ 已实现 | |
 | `tests/intent/test_intent_parser_root.py` | ✅ 已实现 | |
 | `tests/memory/test_memory_bank_root.py` | ✅ 已实现 | |
