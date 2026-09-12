@@ -18,7 +18,7 @@ owner: ZephyrAlpha-Owner
 
 > 设计真源：AUD-DRAFT-001 深挖批 B10-01366（模块10 动量领导因子与涨停板生态模型，
 > 裁定=做 P1）+ 候选注册表 CAND-TESTB-012。
-> 代码：`src/zephyr/signal_ashare/limit_up_ecosystem_leadership.py`
+> 代码：`src/zephyr/signal_ashare/limit_up/limit_up_ecosystem_leadership.py`
 
 ## 0. 定位
 

@@ -15,7 +15,7 @@ owner: ZephyrAlpha-Owner
 priority: P2
 blueprint_level: module
 domain_id: D_ASHARE_SIGNAL
-path: src/zephyr/signal_ashare/sector_crowding_launch.py
+path: src/zephyr/signal_ashare/sector/sector_crowding_launch.py
 granularity: file
 ---
 
@@ -23,7 +23,7 @@ granularity: file
 
 > **module_id**: MOD-SIG-119 | **域**: D_ASHARE_SIGNAL | **优先级**: P2
 > **来源**: B10-01384（AUD-DRAFT-001-DIGEST P2 波 P2-W05，CAND-TESTB-039，A1 模块40）
-> 代码：`src/zephyr/signal_ashare/sector_crowding_launch.py`
+> 代码：`src/zephyr/signal_ashare/sector/sector_crowding_launch.py`
 
 ## 0. 定位
 

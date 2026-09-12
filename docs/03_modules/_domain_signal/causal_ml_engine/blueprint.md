@@ -15,7 +15,7 @@ owner: ZephyrAlpha-Owner
 priority: P2
 blueprint_level: module
 domain_id: D_ASHARE_SIGNAL
-path: src/zephyr/signal_ashare/causal_ml_engine.py
+path: src/zephyr/signal_ashare/ml_forecast/causal_ml_engine.py
 granularity: file
 ---
 
@@ -23,7 +23,7 @@ granularity: file
 
 > **module_id**: MOD-SIG-127 | **域**: D_ASHARE_SIGNAL | **优先级**: P2
 > **来源**: B10-01858（AUD-DRAFT-001-DIGEST P2 波 P2-W06，CAND-TESTB-051，A1 §29.18）
-> 代码：`src/zephyr/signal_ashare/causal_ml_engine.py`
+> 代码：`src/zephyr/signal_ashare/ml_forecast/causal_ml_engine.py`
 
 ## 0. 定位
 

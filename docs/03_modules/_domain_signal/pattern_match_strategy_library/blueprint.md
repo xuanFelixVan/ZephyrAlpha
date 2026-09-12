@@ -17,7 +17,7 @@ owner: ZephyrAlpha-Owner
 # MOD-SIG-105 pattern_match_strategy_library 蓝图
 
 > 设计真源：AUD-DRAFT-001 深挖批 B10-01416（模块44 量化模式匹配与执行策略库，裁定=做 P1）+ 候选注册表 CAND-TESTB-022。
-> 代码：`src/zephyr/signal_ashare/pattern_match_strategy_library.py`
+> 代码：`src/zephyr/signal_ashare/strategy_signal/pattern_match_strategy_library.py`
 
 ## 0. 定位
 

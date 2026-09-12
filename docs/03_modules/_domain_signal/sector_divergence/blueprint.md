@@ -17,7 +17,7 @@ owner: ZephyrAlpha-Owner
 # MOD-SIG-060 sector_divergence 蓝图
 
 > 紧凑版（SOP Step 4 补建）。设计真源：44号备忘录 §9.13 + §9.2 通道 c；92号清单 §7.4+§7.10 合并施工；架构审查报告 §11.5 SEC-03 同一工件裁定。M1-⑩ + M1-②c。
-> 代码：`src/zephyr/signal_ashare/sector_divergence.py`
+> 代码：`src/zephyr/signal_ashare/sector/sector_divergence.py`
 
 ## 0. 定位
 

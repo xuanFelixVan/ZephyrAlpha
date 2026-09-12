@@ -15,7 +15,7 @@ owner: ZephyrAlpha-Owner
 priority: P2
 blueprint_level: module
 domain_id: D_ASHARE_SIGNAL
-path: src/zephyr/signal_ashare/day_trade_pnl_estimator.py
+path: src/zephyr/signal_ashare/intraday_t0/day_trade_pnl_estimator.py
 granularity: file
 ---
 
@@ -23,7 +23,7 @@ granularity: file
 
 > **module_id**: MOD-SIG-132 | **域**: D_ASHARE_SIGNAL | **优先级**: P2
 > **来源**: B11-02600（AUD-DRAFT-001-DIGEST P2 波 P2-W06，CAND-TESTB-055，A7 技能day-trade-pnl-estimate）
-> 代码：`src/zephyr/signal_ashare/day_trade_pnl_estimator.py`
+> 代码：`src/zephyr/signal_ashare/intraday_t0/day_trade_pnl_estimator.py`
 
 ## 0. 定位
 

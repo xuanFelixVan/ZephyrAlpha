@@ -17,7 +17,7 @@ owner: ZephyrAlpha-Owner
 # MOD-SIG-086 selection_funnel_skeleton 蓝图
 
 > 设计真源：21 号备忘录 §3.6（BM-SEL-16/17/18）+ SIGNAL-ARCH-001 双域归并 Owner 裁定（A4 落地）。
-> 代码：`src/zephyr/signal_ashare/selection_funnel_skeleton.py`
+> 代码：`src/zephyr/signal_ashare/screening/selection_funnel_skeleton.py`
 
 ## 0. 定位
 

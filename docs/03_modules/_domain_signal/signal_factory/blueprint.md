@@ -17,7 +17,7 @@ owner: ZephyrAlpha-Owner
 # MOD-SIG-087 signal_factory 蓝图
 
 > 设计真源：AUD-DRAFT-001 深挖批 B1-00149（C-028 信号工厂，裁定=做 P1）+
-> 候选注册表 CAND-TESTB-002。代码：`src/zephyr/signal_ashare/signal_factory.py`
+> 候选注册表 CAND-TESTB-002。代码：`src/zephyr/signal_ashare/strategy_signal/signal_factory.py`
 
 ## 0. 定位
 

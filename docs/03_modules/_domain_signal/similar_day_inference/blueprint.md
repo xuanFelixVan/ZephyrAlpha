@@ -17,7 +17,7 @@ owner: ZephyrAlpha-Owner
 # MOD-SIG-063 similar_day_inference 蓝图
 
 > 紧凑版（SOP Step 4 补建）。设计真源：44号备忘录 §9.3 + 92号清单 §8.1，M1-③ 剩余走势推演——相似日 KNN。
-> 代码：`src/zephyr/signal_ashare/similar_day_inference.py`
+> 代码：`src/zephyr/signal_ashare/ml_forecast/similar_day_inference.py`
 
 ## 0. 定位
 

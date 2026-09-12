@@ -18,7 +18,7 @@ owner: ZephyrAlpha-Owner
 
 > 设计真源：AUD-DRAFT-001 深挖批 B10-01361（模块5 日内量能结构与订单流分析模型，
 > 裁定=做 P1）+ 候选注册表 CAND-TESTB-008。
-> 代码：`src/zephyr/signal_ashare/intraday_volume_orderflow.py`
+> 代码：`src/zephyr/signal_ashare/intraday_t0/intraday_volume_orderflow.py`
 
 ## 0. 定位
 

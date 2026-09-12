@@ -15,7 +15,7 @@ owner: ZephyrAlpha-Owner
 priority: P2
 blueprint_level: module
 domain_id: D_ASHARE_SIGNAL
-path: src/zephyr/signal_ashare/pattern_to_signal_mapper.py
+path: src/zephyr/signal_ashare/strategy_signal/pattern_to_signal_mapper.py
 granularity: file
 ---
 
@@ -23,7 +23,7 @@ granularity: file
 
 > **module_id**: MOD-SIG-115 | **域**: D_ASHARE_SIGNAL | **优先级**: P2
 > **来源**: B1-00849（AUD-DRAFT-001-DIGEST P2 波 P2-W05，CAND-TESTB-033，C2 97）
-> 代码：`src/zephyr/signal_ashare/pattern_to_signal_mapper.py`
+> 代码：`src/zephyr/signal_ashare/strategy_signal/pattern_to_signal_mapper.py`
 
 ## 0. 定位
 

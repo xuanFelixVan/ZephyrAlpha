@@ -18,7 +18,7 @@ owner: ZephyrAlpha-Owner
 
 > 设计真源：AUD-DRAFT-001 深挖批 B10-01369（模块14 极端情绪反转与恐慌底部检测模型，
 > 裁定=做 P1）+ 候选注册表 CAND-TESTB-014。
-> 代码：`src/zephyr/signal_ashare/extreme_sentiment_reversal_detector.py`
+> 代码：`src/zephyr/signal_ashare/sentiment/extreme_sentiment_reversal_detector.py`
 
 ## 0. 定位
 

@@ -17,7 +17,7 @@ owner: ZephyrAlpha-Owner
 # MOD-SIG-091 unified_pattern_engine 蓝图
 
 > 设计真源：AUD-DRAFT-001 深挖批 B1-01010（统一图形识别引擎 D-FACTOR-97，裁定=做 P1）+
-> 候选注册表 CAND-TESTB-006。代码：`src/zephyr/signal_ashare/unified_pattern_engine.py`
+> 候选注册表 CAND-TESTB-006。代码：`src/zephyr/signal_ashare/strategy_signal/unified_pattern_engine.py`
 > **canonical 声明**：本条目与 W-P1-04 的 B10-01391（模块58 统一技术图形识别引擎）
 > 同名同源；本波先施工，本模块即 canonical 实现，B10-01391 由其波次裁定 REVIEW。
 

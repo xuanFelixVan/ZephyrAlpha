@@ -17,7 +17,7 @@ owner: ZephyrAlpha-Owner
 # MOD-SIG-106 sell_news_overdraft_detector 蓝图
 
 > 设计真源：AUD-DRAFT-001 深挖批 B10-01453（模块28 利好落地变利空（预期透支）模块，裁定=做 P1）+ 候选注册表 CAND-TESTB-023。
-> 代码：`src/zephyr/signal_ashare/sell_news_overdraft_detector.py`
+> 代码：`src/zephyr/signal_ashare/sentiment/sell_news_overdraft_detector.py`
 
 ## 0. 定位
 

@@ -17,7 +17,7 @@ owner: ZephyrAlpha-Owner
 # MOD-SIG-090 t0_trading_pipeline 蓝图
 
 > 设计真源：AUD-DRAFT-001 深挖批 B1-00191（C-012 做T日内套利，裁定=做 P1）+
-> 候选注册表 CAND-TESTB-005。代码：`src/zephyr/signal_ashare/t0_trading_pipeline.py`
+> 候选注册表 CAND-TESTB-005。代码：`src/zephyr/signal_ashare/intraday_t0/t0_trading_pipeline.py`
 
 ## 0. 定位
 

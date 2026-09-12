@@ -17,7 +17,7 @@ owner: ZephyrAlpha-Owner
 # MOD-SIG-092 gap_fill_model 蓝图
 
 > 设计真源：AUD-DRAFT-001 深挖批 B10-01359（模块3 缺口回补概率模型，裁定=做 P1）+
-> 候选注册表 CAND-TESTB-007。代码：`src/zephyr/signal_ashare/gap_fill_model.py`
+> 候选注册表 CAND-TESTB-007。代码：`src/zephyr/signal_ashare/ml_forecast/gap_fill_model.py`
 
 ## 0. 定位
 

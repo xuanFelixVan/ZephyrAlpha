@@ -17,7 +17,7 @@ owner: ZephyrAlpha-Owner
 # MOD-SIG-059 option_sentiment 蓝图
 
 > 紧凑版（SOP Step 4 补建）。设计真源：44号备忘录 §9.9（华泰 2026-03 机构范式），M1-⑨ 情绪注解维度⑨。
-> 代码：`src/zephyr/signal_ashare/option_sentiment.py`
+> 代码：`src/zephyr/signal_ashare/sentiment/option_sentiment.py`
 
 ## 0. 定位
 

@@ -17,7 +17,7 @@ owner: ZephyrAlpha-Owner
 # MOD-SIG-062 sector_leader 蓝图
 
 > 紧凑版（SOP Step 4 补建）。设计真源：22号 spec §3.1⑦ 步骤① 龙头识别 + 架构审查报告 §11.5 SEC-04 行 + 92号清单 §7.7。
-> 代码：`src/zephyr/signal_ashare/sector_leader.py`
+> 代码：`src/zephyr/signal_ashare/sector/sector_leader.py`
 
 ## 0. 定位
 

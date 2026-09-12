@@ -18,7 +18,7 @@ owner: ZephyrAlpha-Owner
 
 > 设计真源：AUD-DRAFT-001 深挖批 B10-01367（模块11 动量层级与板块持续性模型，
 > 裁定=做 P1）+ 候选注册表 CAND-TESTB-013。
-> 代码：`src/zephyr/signal_ashare/sector_momentum_persistence.py`
+> 代码：`src/zephyr/signal_ashare/sector/sector_momentum_persistence.py`
 
 ## 0. 定位
 

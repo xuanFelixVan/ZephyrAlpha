@@ -17,7 +17,7 @@ owner: ZephyrAlpha-Owner
 # MOD-SIG-104 next_day_probability_gate 蓝图
 
 > 设计真源：AUD-DRAFT-001 深挖批 B10-01415（模块29 次日上涨概率统一门槛模块，裁定=做 P1）+ 候选注册表 CAND-TESTB-021。
-> 代码：`src/zephyr/signal_ashare/next_day_probability_gate.py`
+> 代码：`src/zephyr/signal_ashare/ml_forecast/next_day_probability_gate.py`
 
 ## 0. 定位
 

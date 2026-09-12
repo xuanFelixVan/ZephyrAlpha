@@ -15,7 +15,7 @@ owner: ZephyrAlpha-Owner
 priority: P2
 blueprint_level: module
 domain_id: D_ASHARE_SIGNAL
-path: src/zephyr/signal_ashare/event_conditional_density.py
+path: src/zephyr/signal_ashare/ml_forecast/event_conditional_density.py
 granularity: file
 ---
 
@@ -23,7 +23,7 @@ granularity: file
 
 > **module_id**: MOD-SIG-123 | **域**: D_ASHARE_SIGNAL | **优先级**: P2
 > **来源**: B10-01412（AUD-DRAFT-001-DIGEST P2 波 P2-W05，CAND-TESTB-043，A1 B3）
-> 代码：`src/zephyr/signal_ashare/event_conditional_density.py`
+> 代码：`src/zephyr/signal_ashare/ml_forecast/event_conditional_density.py`
 
 ## 0. 定位
 

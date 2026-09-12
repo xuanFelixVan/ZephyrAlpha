@@ -17,7 +17,7 @@ owner: ZephyrAlpha-Owner
 # MOD-SIG-057 lhb_premium_analyzer 蓝图
 
 > 紧凑版（SOP Step 4 补建）。设计真源：44号备忘录 §9.7（yueniuzq 2026-07 口径），M3-⑤ 次日预判。
-> 代码：`src/zephyr/signal_ashare/lhb_premium_analyzer.py`
+> 代码：`src/zephyr/signal_ashare/limit_up/lhb_premium_analyzer.py`
 
 ## 0. 定位
 

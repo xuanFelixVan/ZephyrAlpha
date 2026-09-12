@@ -17,7 +17,7 @@ owner: ZephyrAlpha-Owner
 # MOD-SIG-102 limit_up_potential_scorer 蓝图
 
 > 设计真源：AUD-DRAFT-001 深挖批 B10-01380（模块33 IC加权多因子涨停板潜力评分模型，裁定=做 P1）+ 候选注册表 CAND-TESTB-017。
-> 代码：`src/zephyr/signal_ashare/limit_up_potential_scorer.py`
+> 代码：`src/zephyr/signal_ashare/limit_up/limit_up_potential_scorer.py`
 
 ## 0. 定位
 

@@ -18,7 +18,7 @@ owner: ZephyrAlpha-Owner
 
 > 设计真源：AUD-DRAFT-001 深挖批 B10-01371（模块16 情绪-价格背离指数模型
 > Sentiment-Price Divergence Index，裁定=做 P1）+ 候选注册表 CAND-TESTB-016。
-> 代码：`src/zephyr/signal_ashare/sentiment_price_divergence.py`
+> 代码：`src/zephyr/signal_ashare/sentiment/sentiment_price_divergence.py`
 
 ## 0. 定位
 

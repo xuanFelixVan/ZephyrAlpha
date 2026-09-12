@@ -17,7 +17,7 @@ owner: ZephyrAlpha-Owner
 # MOD-SIG-107 overnight_return_expectancy 蓝图
 
 > 设计真源：AUD-DRAFT-001 深挖批 B10-01464（模块13 隔夜收益预测与开仓期望值模型，裁定=做 P1）+ 候选注册表 CAND-TESTB-024。
-> 代码：`src/zephyr/signal_ashare/overnight_return_expectancy.py`
+> 代码：`src/zephyr/signal_ashare/intraday_t0/overnight_return_expectancy.py`
 
 ## 0. 定位
 

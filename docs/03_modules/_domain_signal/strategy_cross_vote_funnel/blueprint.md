@@ -17,7 +17,7 @@ owner: ZephyrAlpha-Owner
 # MOD-SIG-109 strategy_cross_vote_funnel 蓝图
 
 > 设计真源：AUD-DRAFT-001 深挖批 B10-01504（筛选漏斗第五层：多策略交叉（60秒级，→~30），裁定=做 P1）+ 候选注册表 CAND-TESTB-026。
-> 代码：`src/zephyr/signal_ashare/strategy_cross_vote_funnel.py`
+> 代码：`src/zephyr/signal_ashare/strategy_signal/strategy_cross_vote_funnel.py`
 
 ## 0. 定位（R4 双视图裁定在案）
 

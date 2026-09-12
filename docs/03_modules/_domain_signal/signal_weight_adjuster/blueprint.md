@@ -15,7 +15,7 @@ owner: ZephyrAlpha-Owner
 priority: P2
 blueprint_level: module
 domain_id: D_ASHARE_SIGNAL
-path: src/zephyr/signal_ashare/signal_weight_adjuster.py
+path: src/zephyr/signal_ashare/strategy_signal/signal_weight_adjuster.py
 granularity: file
 ---
 
@@ -23,7 +23,7 @@ granularity: file
 
 > **module_id**: MOD-SIG-131 | **域**: D_ASHARE_SIGNAL | **优先级**: P2
 > **来源**: B11-02593（AUD-DRAFT-001-DIGEST P2 波 P2-W06，CAND-TESTB-054，A7 技能signal-weight-adjust）
-> 代码：`src/zephyr/signal_ashare/signal_weight_adjuster.py`
+> 代码：`src/zephyr/signal_ashare/strategy_signal/signal_weight_adjuster.py`
 
 ## 0. 定位
 

@@ -18,7 +18,7 @@ owner: ZephyrAlpha-Owner
 
 > 设计真源：AUD-DRAFT-001 深挖批 B10-01365（模块9 多维度相对强弱筛选模型，
 > 裁定=做 P1）+ 候选注册表 CAND-TESTB-011。
-> 代码：`src/zephyr/signal_ashare/relative_strength_screener.py`
+> 代码：`src/zephyr/signal_ashare/screening/relative_strength_screener.py`
 
 ## 0. 定位
 
