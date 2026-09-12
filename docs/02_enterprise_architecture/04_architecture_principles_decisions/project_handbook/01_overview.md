@@ -130,16 +130,16 @@ pytest --cov=zephyr --cov-report=term-missing   # 覆盖率（阈值 70%）
 | 指标 | 值 |
 |------|----|
 | 域总数 / Total domains | 74 |
-| 节点总数 / Total nodes | 8237 |
-| 依赖边总数 / Total edges | 20599 |
-| 孤儿节点数 / Orphan nodes | 388 |
+| 节点总数 / Total nodes | 8251 |
+| 依赖边总数 / Total edges | 20598 |
+| 孤儿节点数 / Orphan nodes | 384 |
 
 | build_status | 节点数 |
 |--------------|--------|
 | `deprecated` | 93 |
-| `generated` | 5095 |
-| `planned` | 42 |
-| `production` | 2826 |
+| `generated` | 5106 |
+| `planned` | 49 |
+| `production` | 2822 |
 | `stable` | 181 |
 <!-- AUTO-END:dependency_stats -->
 

@@ -4383,7 +4383,7 @@ items:
   name: test_audit_rename_completeness.py
   node_type: test
   status: active
-- file: tests/infrastructure/test_cascade_guard.py
+- file: tests/infrastructure/process_lifecycle/test_cascade_guard.py
   name: test_cascade_guard.py
   node_type: test
   status: active
@@ -4395,11 +4395,11 @@ items:
   name: test_commit_quality_gate.py
   node_type: test
   status: active
-- file: tests/infrastructure/test_conflict_detector.py
+- file: tests/infrastructure/process_lifecycle/test_conflict_detector.py
   name: test_conflict_detector.py
   node_type: test
   status: active
-- file: tests/infrastructure/test_cost_tracker.py
+- file: tests/infrastructure/observability/test_cost_tracker.py
   name: test_cost_tracker.py
   node_type: test
   status: active
@@ -4407,7 +4407,7 @@ items:
   name: test_dashboard_root.py
   node_type: test
   status: active
-- file: tests/infrastructure/test_deadlock_guard.py
+- file: tests/infrastructure/process_lifecycle/test_deadlock_guard.py
   name: test_deadlock_guard.py
   node_type: test
   status: active
@@ -4415,7 +4415,7 @@ items:
   name: test_dry_run_simulator.py
   node_type: test
   status: active
-- file: tests/infrastructure/test_f18_governance_adversarial.py
+- file: tests/infrastructure/adversarial/test_f18_governance_adversarial.py
   name: test_f18_governance_adversarial.py
   node_type: test
   status: active
@@ -4423,11 +4423,11 @@ items:
   name: test_finding_task_bridge.py
   node_type: test
   status: active
-- file: tests/infrastructure/test_forward_fix_runner.py
+- file: tests/infrastructure/process_lifecycle/test_forward_fix_runner.py
   name: test_forward_fix_runner.py
   node_type: test
   status: active
-- file: tests/infrastructure/test_graceful_degradation_planner.py
+- file: tests/infrastructure/process_lifecycle/test_graceful_degradation_planner.py
   name: test_graceful_degradation_planner.py
   node_type: test
   status: active
@@ -4463,39 +4463,39 @@ items:
   name: test_infrastructure_base.py
   node_type: test
   status: active
-- file: tests/infrastructure/test_kill_switch_sim.py
+- file: tests/infrastructure/process_lifecycle/test_kill_switch_sim.py
   name: test_kill_switch_sim.py
   node_type: test
   status: active
-- file: tests/infrastructure/test_lifecycle_root.py
+- file: tests/infrastructure/process_lifecycle/test_lifecycle_root.py
   name: test_lifecycle_root.py
   node_type: test
   status: active
-- file: tests/infrastructure/test_livelock_detector.py
+- file: tests/infrastructure/process_lifecycle/test_livelock_detector.py
   name: test_livelock_detector.py
   node_type: test
   status: active
-- file: tests/infrastructure/test_mcp_adapter.py
+- file: tests/infrastructure/mcp/test_mcp_adapter.py
   name: test_mcp_adapter.py
   node_type: test
   status: active
-- file: tests/infrastructure/test_mcp_boot_hooks_integration.py
+- file: tests/infrastructure/mcp/test_mcp_boot_hooks_integration.py
   name: test_mcp_boot_hooks_integration.py
   node_type: test
   status: active
-- file: tests/infrastructure/test_mcp_full_lifecycle_e2e.py
+- file: tests/infrastructure/mcp/test_mcp_full_lifecycle_e2e.py
   name: test_mcp_full_lifecycle_e2e.py
   node_type: test
   status: active
-- file: tests/infrastructure/test_mcp_health_check_recovery.py
+- file: tests/infrastructure/mcp/test_mcp_health_check_recovery.py
   name: test_mcp_health_check_recovery.py
   node_type: test
   status: active
-- file: tests/infrastructure/test_mcp_idle_timeout.py
+- file: tests/infrastructure/mcp/test_mcp_idle_timeout.py
   name: test_mcp_idle_timeout.py
   node_type: test
   status: active
-- file: tests/infrastructure/test_mcp_signal_shutdown.py
+- file: tests/infrastructure/mcp/test_mcp_signal_shutdown.py
   name: test_mcp_signal_shutdown.py
   node_type: test
   status: active
@@ -4507,11 +4507,11 @@ items:
   name: test_metadata.py
   node_type: test
   status: active
-- file: tests/infrastructure/test_preemption_manager.py
+- file: tests/infrastructure/process_lifecycle/test_preemption_manager.py
   name: test_preemption_manager.py
   node_type: test
   status: active
-- file: tests/infrastructure/test_push_notifier.py
+- file: tests/infrastructure/observability/test_push_notifier.py
   name: test_push_notifier.py
   node_type: test
   status: active
@@ -4539,31 +4539,31 @@ items:
   name: test_scanner_root.py
   node_type: test
   status: active
-- file: tests/infrastructure/test_span_stub.py
+- file: tests/infrastructure/observability/test_span_stub.py
   name: test_span_stub.py
   node_type: test
   status: active
-- file: tests/infrastructure/test_split_brain_quorum.py
+- file: tests/infrastructure/process_lifecycle/test_split_brain_quorum.py
   name: test_split_brain_quorum.py
   node_type: test
   status: active
-- file: tests/infrastructure/test_streaming.py
+- file: tests/infrastructure/observability/test_streaming.py
   name: test_streaming.py
   node_type: test
   status: active
-- file: tests/infrastructure/test_supervisor.py
+- file: tests/infrastructure/process_lifecycle/test_supervisor.py
   name: test_supervisor.py
   node_type: test
   status: active
-- file: tests/infrastructure/test_telemetry.py
+- file: tests/infrastructure/observability/test_telemetry.py
   name: test_telemetry.py
   node_type: test
   status: active
-- file: tests/infrastructure/test_topology_change_log.py
+- file: tests/infrastructure/process_lifecycle/test_topology_change_log.py
   name: test_topology_change_log.py
   node_type: test
   status: active
-- file: tests/infrastructure/test_trigger_monitor.py
+- file: tests/infrastructure/process_lifecycle/test_trigger_monitor.py
   name: test_trigger_monitor.py
   node_type: test
   status: active
