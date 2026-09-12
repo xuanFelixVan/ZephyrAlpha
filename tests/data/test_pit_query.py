@@ -169,6 +169,11 @@ class TestBuildAsOfSql:
         sql = pit.build_as_of_sql("balance_sheet", ["000001.SZ"], "2026-06-01", "*", single=True)
         assert "announce_date <= toDate('2026-06-01') - INTERVAL 5 DAY" in sql
 
+    def test_sentinel_guard_clause(self):
+        # D1 裁定（2026-09-12）：锚列<=1970-01-02 的哨兵行 PIT 不可见（宁缺毋错防前视）
+        sql = self.pit.build_as_of_sql("financial_indicator", ["002514"], "2026-09-01", "*", single=True)
+        assert "AND announce_date > toDate('1970-01-02')" in sql
+
     def test_repurchase_no_limit_by(self):
         sql = self.pit.build_as_of_sql("repurchase", ["000001.SZ"], "2026-06-01", "*", single=True)
         assert "LIMIT 1 BY" not in sql
@@ -216,6 +221,13 @@ class TestQueryMethods:
         self.pit.as_of_latest("balance_sheet", "000001.SZ", "2026-06-01")
         called_sql = self.mock_query.call_args[0][0]
         assert "ORDER BY report_period DESC, announce_date DESC LIMIT 1" in called_sql
+
+    def test_as_of_latest_sentinel_guard(self):
+        # D1 裁定（2026-09-12）：as_of_latest 同样带哨兵守卫
+        self.mock_query.return_value = ""
+        self.pit.as_of_latest("financial_indicator", "002514", "2026-09-01")
+        called_sql = self.mock_query.call_args[0][0]
+        assert "AND announce_date > toDate('1970-01-02')" in called_sql
 
     def test_as_of_latest_no_period_raises(self):
         # repurchase 无报告期列，as_of_latest 不适用
@@ -330,8 +342,8 @@ class TestFinancialPitTables:
             assert "." in qualified, f"{name} 未解析为全限定名: {qualified}"
 
     def test_expected_count(self):
-        # 9 张财报表：7 报表 + dividend + repurchase
-        assert len(FINANCIAL_PIT_TABLES) == 9
+        # 10 张 PIT 表：8 财报表（含 2026-09-12 扩表的 research_report）+ dividend + repurchase
+        assert len(FINANCIAL_PIT_TABLES) == 10
 
     def test_balance_sheet_in_fundamental_db(self):
         assert FINANCIAL_PIT_TABLES["balance_sheet"].startswith("c3_fundamental.")

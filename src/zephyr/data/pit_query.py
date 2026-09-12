@@ -5,7 +5,7 @@
 # [CONSUMERS] zephyr.backtest.core.data_handler; zephyr.backtest.core.pit_manager
 # [STARTUP] imported
 # [MATURITY] production
-# [INVARIANTS] PIT三公理对齐(as_of_join/embargo/survivorship); announce_date<=query_time; LIMIT 1 BY取查询时点可见最新版本; 仅查白名单财务表
+# [INVARIANTS] PIT三公理对齐(as_of_join/embargo/survivorship); announce_date<=query_time; LIMIT 1 BY取查询时点可见最新版本; 仅查白名单财务表; 哨兵守卫=锚列<=1970-01-02不可见(D1裁定2026-09-12,宁缺毋错防前视)
 # [MODIFY-GUARD] none
 # [STABILITY] evolving
 # [SAFETY] M
@@ -171,15 +171,22 @@ __all__ = [
 ]
 
 # SQL 模板常量（NO-BARE-SQL gate 豁免：_SQL_* 前缀）
+# anchor_col：时间锚列（公告时点），由 _anchor_col(table) 按表注入——存量 9 表默认
+# announce_date（行为不变）；research_report 锚列=publish_date（2026-09-12 参数化扩表）。
+# 哨兵守卫（D1 裁定 2026-09-12）：announce<=1970-01-02 = 公告时间未知（源接口缺日期列，
+# 占位哨兵），PIT 一律视为不可见——宁缺毋错，防"永远可见"前视。修复批
+# （data_source='akshare_yjbb_repair'，5,020 行）已为全部无好版本键补真实公告日。
 _SQL_AS_OF = (
     "SELECT {columns} FROM {tbl}{final} "
-    "WHERE {symbol_clause} AND announce_date <= toDate('{qt}'){embargo} "
-    "ORDER BY announce_date DESC{limit_by}"
+    "WHERE {symbol_clause} AND {anchor_col} <= toDate('{qt}'){embargo} "
+    "AND {anchor_col} > toDate('1970-01-02') "
+    "ORDER BY {anchor_col} DESC{limit_by}"
 )
 _SQL_LATEST = (
     "SELECT {columns} FROM {tbl}{final} "
-    "WHERE symbol = '{sym}' AND announce_date <= toDate('{qt}'){embargo} "
-    "ORDER BY {period_col} DESC, announce_date DESC LIMIT 1"
+    "WHERE symbol = '{sym}' AND {anchor_col} <= toDate('{qt}'){embargo} "
+    "AND {anchor_col} > toDate('1970-01-02') "
+    "ORDER BY {period_col} DESC, {anchor_col} DESC LIMIT 1"
 )
 _SQL_SURVIVORSHIP = (
     "SELECT symbol FROM {tbl}{final} "
@@ -199,7 +206,19 @@ _FINANCIAL_PIT_TABLES: dict[str, tuple[str, str | None]] = {
     "earnings_forecast": ("fund_earnings_forecast", "report_period"),
     "dividend": ("fund_dividend", "dividend_year"),
     "repurchase": ("fund_repurchase", None),
+    # 研报明细（2026-09-12 消费端 C1 扩表）：事件流表（每次发布即独立事件，无报告期版本去重，
+    # 照 repurchase 模式 period_col=None）；时间锚=publish_date（见 _PIT_ANCHOR_COL_OVERRIDES）
+    "research_report": ("fund_research_report", None),
 }
+
+# 时间锚列覆盖（默认 announce_date；个别表的公告锚列不同）
+_PIT_DEFAULT_ANCHOR_COL = "announce_date"
+_PIT_ANCHOR_COL_OVERRIDES: dict[str, str] = {"research_report": "publish_date"}
+
+
+def _anchor_col(table: str) -> str:
+    """返回表的时间锚列名（默认 announce_date，research_report=publish_date）。"""
+    return _PIT_ANCHOR_COL_OVERRIDES.get(table, _PIT_DEFAULT_ANCHOR_COL)
 
 # 解析为全限定表名（真源：business_data_categories.yaml via table_registry）
 FINANCIAL_PIT_TABLES: dict[str, str] = {
@@ -495,6 +514,7 @@ class FinancialPITQuery:
             qt=qt,
             embargo=embargo,
             period_col=period_col,
+            anchor_col=_anchor_col(table),
         )
         return ch_reader.query(sql)
 
@@ -569,4 +589,5 @@ class FinancialPITQuery:
             qt=qt,
             embargo=embargo,
             limit_by=limit_by,
+            anchor_col=_anchor_col(table),
         )
