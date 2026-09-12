@@ -44,3 +44,7 @@ date: 2026-09-12
 ## 5. 登记跳过项（自裁依据）
 
 - **R2 前端徽章透出**（api_server SELECT + tdm.js 徽章）：api_server.py/tdm.js 全夜被前端章程会话热持有——按 TDM 前端负责人会话章程职权边界不越权，留给前端线下批（后端台账列已就绪，纯透出改动）。
+
+## 6. 决策点第 1 问处置结果（2026-09-12 Owner 裁定：删除）
+
+4 条 9-09 烟测 run（033145/033219/035130/164042，60 行全 triggers=0/pending/锁窗冒烟）经数据操作三步铁律执行删除：实物核验→全字段备份（data/backtest_artifacts/backup_val_20260909_smoke/node_verdict_backup.tsv，60 行完整）→admin 通道 mutations_sync 删除→复核残留 0、巡检结论=干净（台账 run=2 磁盘 run=2）。台账现仅存今晚真验证 34 行（均带 run 档案与 verdict_reason）。
