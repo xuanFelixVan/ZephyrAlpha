@@ -118,9 +118,15 @@ def _is_infra_exempt(rel_path: str) -> bool:
 
     2026-08-20 波3 实证：本 gate 源码 docstring/pattern 含 ch_writer.query() 字面量（检测语义描述），
     modified 路径文本扫描自扫误报——与 msg_style/msg_exposure/perm_trigger/manual_only 自豁免
-    同族补齐（commit_gates/ 子串匹配不限定父目录，防 governance→gov_enforcement 式迁移漂移）。"""
+    同族补齐（commit_gates/ 子串匹配不限定父目录，防 governance→gov_enforcement 式迁移漂移）。
+    2026-09-12 实证（apply_crypto_shadow_tables_ddl.py 首采批）：DDL 部署脚本（apply_*_ddl.py）
+    的 writer.query 执行 CREATE/ALTER 语句是合法场景（FINAL 语义只作用于 SELECT，reader 只读账号
+    无权建表）——部署脚本文件级豁免；配套纪律=部署脚本内 SELECT 验证一律 ch_reader.query。"""
     normalized = rel_path.replace("\\", "/")
     if "commit_gates/" in normalized:
+        return True
+    basename = normalized.rsplit("/", 1)[-1]
+    if basename.startswith("apply_") and basename.endswith("_ddl.py"):
         return True
     return any(normalized.endswith(s) for s in _INFRA_EXEMPT_SUFFIXES)
 

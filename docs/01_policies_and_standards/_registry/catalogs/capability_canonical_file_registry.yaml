@@ -4969,6 +4969,14 @@ capabilities:
   description: 图 8 产业链全景图的字典↔DDL↔引擎三方同 commit 同步硬阻断（priority=141）+ chainmap_cluster_names
     词表 sanity
 creation_tokens:
+- file: schemas/categories/crypto_kline_daily.py
+  token: crypto-shadow-binancial-vision-20260912
+  created_by: st-g07-crypto-20260912
+  capability: crypto_shadow_mvp_data_layer
+- file: scripts/ch/apply_crypto_shadow_tables_ddl.py
+  token: crypto-shadow-ddl-apply-20260912
+  created_by: st-g07-crypto-20260912
+  capability: crypto_shadow_mvp_data_layer
 - file: docs/01_policies_and_standards/sop/agent_constitution_legacy_v1.md
   token: constitution-legacy-v1-20260912
   created_by: st-govreform-20260912

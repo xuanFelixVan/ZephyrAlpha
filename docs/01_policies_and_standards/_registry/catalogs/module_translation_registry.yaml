@@ -47561,6 +47561,13 @@ entries:
   desc_zh: ""
   desc_en: ""
   plain_zh: "把板块报告的四路打分换算统一排名后合成总分排候选池，再判定今天市场生态"
+- module_path: scripts/ch/apply_crypto_shadow_tables_ddl.py
+  domain_id: D_DATA
+  name_zh: "币圈影子表部署脚本"
+  name_en: ""
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "把币圈两张表（日线行情表和影子判定表）的建表语句一键部署到 ClickHouse 数据库，并检查表结构和预期一致。幂等设计：重复执行不会出错，只会在表不存在时创建。"
 
 battle_map_steps:
 - step_id: BM-BUY-05

@@ -9502,24 +9502,25 @@ datasets:
   consumed_by_jobs: []
   domain_id: D_MARKET
   pit_policy: partial
-  format_summary: 币圈现货日线行情（OKX 公开 /api/v5/market/candles 
-    近端+/api/v5/market/history-candles 历史，免 API key；BTC/ETH+Top-50 USDT 现货 1D 
-    bar，UTC 日界，7×24 无休市自然日=交易日；影子 MVP 口径：只采集公开行情，不碰 okx_broker/TDM 决策路径；DDL 
-    真源=scripts/data/crypto_shadow_mvp_ddl.sql（独立 SQL，转正时按 human_only 流程并入 
-    schemas/categories/）；采集器=src/zephyr/data/implementations/crypto_kline_collector.py（backfill
-    2019-01-01 起 history-candles 分页+incremental 7 日回看补缺两模式，confirm=1 
-    才可被判定消费）；影子判定消费方=DS-227
+  format_summary: 币圈现货日线行情（v1.1.0 换源 binance.vision——币安官方公开数据镜像，免
+    API key，实测可达；2026-09-11 OKX 全域 DNS 阻断降级预案触发后按 95 号蓝图'币安主源'路线换道；
+    口径=24h quote_volume Top-50 USDT 现货对采集时点快照（剔稳定币对/杠杆代币，BTC 恒入）+ETHBTC
+    原生汇率对，1D bar UTC 日界 7×24；含 base_asset/universe_rank/宇宙成员标记/trades 列；
+    只采集公开行情不碰 okx_broker/TDM 决策路径；DDL 真源=schemas/categories/crypto_kline_daily.py
+    （DDL-as-Code，部署验证=scripts/ch/apply_crypto_shadow_tables_ddl.py）；采集器=scripts/data/
+    crypto_kline_collector.py（backfill --days N + daily 增量两模式，FAIL-VISIBLE 退出码 3）；
+    影子判定消费方=DS-227
   valid_since: "2026-09-11"
   module_id: MOD-L00-004
   design_maturity: testing
   name: c1_market.crypto_kline_daily
-  name_zh: 币圈现货日线行情（OKX 免费）
+  name_zh: 币圈现货日线行情（binance.vision 免费）
   status: active
-  version: 1.0.0
+  version: 1.1.0
   created_at: "2026-09-11"
-  updated_at: "2026-09-11"
+  updated_at: "2026-09-12"
   owner: MOD-L00-004
-  produced_by_source: SRC-OKX-001
+  produced_by_source: SRC-INTERNAL-001
   survivorship_free: partial
   pit_available:
   earnings_lag_days:
@@ -9531,14 +9532,14 @@ datasets:
   applies_to: ["crypto", "market"]
   tags: ["数据", "行情", "币圈", "日线"]
   algorithm_status: "not_applicable"
-  evidence: "2026-09-11 影子 MVP 首建：网络实测 OKX API 当前不可达（直连 DNS getaddrinfo failed+本机代理
-    10808 未运行），按会话硬约束降级'脚本+DDL+报告披露'模式，首采留待网络恢复执行（报告 docs/_working/2026-09-11-crypto-shadow-mvp.md
-    披露实测细节）；DDL/采集器/影子判定器三件已落盘并经语法验证"
-  code_symbol: "src/zephyr/data/implementations/crypto_kline_collector.py::main"
+  evidence: "v1.1.0（2026-09-12）首采完成：binance.vision 实测可达（HTTP 200），backfill 400 天
+    17698 行 CH_COMMITTED 落库（2025-08-08~2026-09-11，44+ 币对+ETHBTC）；OKX 网络闸经 binance.vision
+    换道解除；表结构以 DDL-as-Code 为准（schemas/categories/crypto_kline_daily.py，apply 脚本 verify 引擎一致）"
+  code_symbol: "scripts/data/crypto_kline_collector.py::main"
   code_fingerprint:
 
 - dataset_id: DS-227
-  entity_name: c1_market.crypto_shadow_gate_c_l1
+  entity_name: c1_market.crypto_shadow_gate
   entity_type: dataset
   scope: production
   contract_ref:
@@ -9547,22 +9548,22 @@ datasets:
   consumed_by_jobs: []
   domain_id: D_MARKET
   pit_policy: partial
-  format_summary: C-L1 影子判定记录（逐日一行只记录不进决策，shadow_only 恒=1；三档=off(BTC 
-    close<MA200)/tightened(BTC 门开+山寨季门开)/normal(BTC 门开+山寨季未触发)；门 1=BTC 1D 收盘 200
-    日均线趋势门，门 2=Top-50 USDT 现货 90 日滚动窗跑赢 BTC 占比>=75% 山寨季门（有效样本>=40/50 
-    才就绪）；三档组合为影子 MVP 解释口径，Phase 2 Owner 拍板后对齐 
-    TDM/gate_registry；判定器=src/zephyr/data/implementations/shadow_gate_c_l1.py（输入
-    DS-226 confirm=1 行，CSV 镜像先于 CH 落库）；DDL 
-    真源=scripts/data/crypto_shadow_mvp_ddl.sql 表 2
+  format_summary: C-L1 影子判定记录 v0.1（逐日一行只记账不进决策链路；档位枚举 shadow_tier=
+    trend(BTC 站稳 200 日线且 MA200 斜率向上)/altseason(趋势档成立且山寨季比率>=0.75，业界口径
+    BlockchainCenter 75% Top-50 跑赢 BTC/90 日滚动)/tighten(BTC 破位或斜率向下)/
+    insufficient_history(FAIL-VISIBLE 不判档)/sentiment_only(行情源降级仅恐惧贪婪记账)；辅证列=
+    MA200 十日斜率/ETHBTC 原生汇率对及其 MA20/恐惧贪婪指数(alternative.me 免费源)；判定器=
+    scripts/data/crypto_shadow_judge.py（读 DS-226 表内数据直判）；DDL 
+    真源=schemas/categories/crypto_kline_daily.py；前版 crypto_shadow_gate_c_l1 空表已退役（0 行）
   valid_since: "2026-09-11"
   module_id: MOD-L00-004
   design_maturity: testing
-  name: c1_market.crypto_shadow_gate_c_l1
+  name: c1_market.crypto_shadow_gate
   name_zh: 币圈 C-L1 影子判定记录（不进决策）
   status: active
-  version: 1.0.0
+  version: 1.1.0
   created_at: "2026-09-11"
-  updated_at: "2026-09-11"
+  updated_at: "2026-09-12"
   owner: MOD-L00-004
   produced_by_source: SRC-INTERNAL-001
   survivorship_free: partial
@@ -12147,21 +12148,21 @@ jobs:
   code_symbol: "src/zephyr/data/implementations/miniqmt_provider.py::MiniQmtIngestProvider._fetch_market_breadth_snapshot"
   code_fingerprint:
 - job_id: JOB-089
-  job_name: ingest.okx_crypto_kline_daily
+  job_name: ingest.crypto_kline_daily_binance_vision
   entity_type: job
   scope: production
-  source_code_ref: src/zephyr/data/implementations/crypto_kline_collector.py
+  source_code_ref: scripts/data/crypto_kline_collector.py
   trigger_type: manual
   run_context: production
   inputs: []
   outputs:
   - DS-226
   pit_relevance: strict
-  description: 币圈现货日线采集（OKX 公开端点免 key；backfill 模式 2019-01-01 起 history-candles 
-    分页回填，incremental 模式读已有最大 trade_date 7 日回看补缺；CSV 落地 
-    data/crypto/kline_daily/<SYMBOL>.csv 幂等去重，CH 落库走表 1 DDL；confirm=1 已完结行才可被 
-    DS-227 影子判定消费；静态 Top-50 清单 config/crypto_top50_usdt.yaml，动态 Top-50 属 Phase 2 
-    解锁项；不进 TDM 决策路径不碰 okx_broker）
+  description: 币圈现货日线采集（v1.1.0 换源 binance.vision 币安公开镜像免 key——2026-09-11 OKX
+    全域 DNS 阻断触发降级预案，95 号蓝图'币安主源'路线；backfill --days N 分页回填 + daily 增量两
+    模式；直写 c1_market.crypto_kline_daily（ReplacingMergeTree 幂等可重放），宇宙=24h quote_volume
+    Top-50 USDT 现货对采集时点快照+ETHBTC 原生汇率对；FAIL-VISIBLE 退出码 3 不造数；不进 TDM 决策
+    路径不碰 okx_broker；首采 2026-09-12 完成 17698 行）
   module_id: MOD-L00-004
   design_maturity: testing
   name: ingest.okx_crypto_kline_daily
