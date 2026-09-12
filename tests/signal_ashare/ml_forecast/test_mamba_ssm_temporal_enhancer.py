@@ -3,7 +3,7 @@
 # [STABILITY] evolving
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
-# [TESTS] pytest tests/signal_ashare/test_mamba_ssm_temporal_enhancer.py -q
+# [TESTS] pytest tests/signal_ashare/ml_forecast/test_mamba_ssm_temporal_enhancer.py -q
 # [TTL] permanent
 
 """Mamba-SSM 时序增强器骨架（MOD-SIG-051）单元测试——接口契约/输入校验/未训练 fail-closed。"""

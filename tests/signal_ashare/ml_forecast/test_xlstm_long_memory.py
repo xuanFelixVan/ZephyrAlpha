@@ -3,7 +3,7 @@
 # [STABILITY] evolving
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
-# [TESTS] pytest tests/signal_ashare/test_xlstm_long_memory.py -q
+# [TESTS] pytest tests/signal_ashare/ml_forecast/test_xlstm_long_memory.py -q
 # [TTL] permanent
 
 """xLSTM 长记忆骨架（MOD-SIG-053）单元测试——接口契约/输入校验/未训练 fail-closed。"""

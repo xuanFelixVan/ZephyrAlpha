@@ -3,7 +3,7 @@
 # [STABILITY] evolving
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
-# [TESTS] pytest tests/signal_ashare/test_adaptive_conformal_tcp_rm_ddci.py -q
+# [TESTS] pytest tests/signal_ashare/ml_forecast/test_adaptive_conformal_tcp_rm_ddci.py -q
 # [TTL] permanent
 
 """自适应保形 TCP-RM/DDCI（MOD-SIG-052）单元测试——加权分位数/未校准 fail-closed。"""

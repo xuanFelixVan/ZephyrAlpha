@@ -3,7 +3,7 @@
 # [STABILITY] evolving
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
-# [TESTS] pytest tests/signal_ashare/test_kronos_tsfm_predictor.py -q
+# [TESTS] pytest tests/signal_ashare/ml_forecast/test_kronos_tsfm_predictor.py -q
 # [TTL] permanent
 
 """Kronos TSFM 时序预测骨架（MOD-SIG-050）单元测试——接口契约/输入校验/未训练 fail-closed。"""
