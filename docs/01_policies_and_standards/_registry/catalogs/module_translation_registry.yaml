@@ -42522,28 +42522,28 @@ entries:
   desc_zh: ''
   desc_en: ''
   plain_zh: '测试：窗口统计/p95/阈值告警/输入校验。'
-- module_path: tests/signal_ashare/test_kronos_tsfm_predictor.py
+- module_path: tests/signal_ashare/ml_forecast/test_kronos_tsfm_predictor.py
   domain_id: 
   name_zh: Kronos TSFM 骨架测试
   name_en: 'Test Kronos Tsfm Predictor'
   desc_zh: ''
   desc_en: ''
   plain_zh: '测试：接口契约/未训练 fail-closed/基线标记。'
-- module_path: tests/signal_ashare/test_mamba_ssm_temporal_enhancer.py
+- module_path: tests/signal_ashare/ml_forecast/test_mamba_ssm_temporal_enhancer.py
   domain_id: 
   name_zh: Mamba-SSM 骨架测试
   name_en: 'Test Mamba Ssm Temporal Enhancer'
   desc_zh: ''
   desc_en: ''
   plain_zh: '测试：形状恒等/维度校验/未训练 fail-closed。'
-- module_path: tests/signal_ashare/test_adaptive_conformal_tcp_rm_ddci.py
+- module_path: tests/signal_ashare/ml_forecast/test_adaptive_conformal_tcp_rm_ddci.py
   domain_id: 
   name_zh: 自适应保形测试
   name_en: 'Test Adaptive Conformal'
   desc_zh: ''
   desc_en: ''
   plain_zh: '测试：加权分位数/权重校验/未校准 fail-closed。'
-- module_path: tests/signal_ashare/test_xlstm_long_memory.py
+- module_path: tests/signal_ashare/ml_forecast/test_xlstm_long_memory.py
   domain_id: 
   name_zh: xLSTM 骨架测试
   name_en: 'Test Xlstm Long Memory'
@@ -43018,7 +43018,7 @@ entries:
   desc_zh: "CTR-P1-007 执行报告的Fail-Closed校验、序列化往返与消费方Protocol对接位"
   desc_en: ""
   plain_zh: "给执行报告这份成交成绩单做收货体检和快递打包：下游收货前先把关（方向错、数量超、价格负、时间倒、非整手、破涨跌停都拒收），还能把它打包成可入库可发网络的字典并原样拆回；同时给绩效归因和mSPRT晋升两个下游留好标准取货口和配对比价器。"
-- module_path: tests/signal_ashare/test_selection_funnel_skeleton.py
+- module_path: tests/signal_ashare/screening/test_selection_funnel_skeleton.py
   domain_id: D_ASHARE_SIGNAL
   name_zh: "选股漏斗共享骨架单元测试"
   name_en: "Selection Funnel Skeleton Tests"
@@ -43522,7 +43522,7 @@ entries:
   desc_zh: ""
   desc_en: ""
   plain_zh: "风险域一出事（比如VaR突破）会往消息流里扔事件，这个处理器就是信号域派去收件的：按消费组拉事件，凭幂等键认出重复件直接跳过，处理不了的扔进死信队列兜底，该给信号降级、撤销还是调权重就交给信号侧执行，最后给每张事件开回执，顺带盯着收件有没有拖太久。"
-- module_path: tests/signal_ashare/test_signal_factory.py
+- module_path: tests/signal_ashare/strategy_signal/test_signal_factory.py
   domain_id: D_ASHARE_SIGNAL
   name_zh: "C-028 信号工厂测试"
   name_en: "Signal Factory Tests"
@@ -43655,7 +43655,7 @@ entries:
   desc_zh: "做T信号决策执行复盘全链路+底仓价差次数硬约束+延迟预算+失败回滚+尾盘强制平衡"
   desc_en: ""
   plain_zh: "拿着底仓做当天高抛低吸的流水线：先听做T信号，符合价差和次数规矩才动手，卖出后必须买回来、买入后必须卖出去，当天账必须做平；平衡腿没成交就自动反向撤回来，撤不回来立刻报警留痕；快收盘还没做平就按收盘价强制做平，绝不隔夜变仓。"
-- module_path: tests/signal_ashare/test_t0_trading_pipeline.py
+- module_path: tests/signal_ashare/intraday_t0/test_t0_trading_pipeline.py
   domain_id: D_ASHARE_SIGNAL
   name_zh: "C-012 做T管线测试"
   name_en: "T0 Trading Pipeline Tests"
@@ -43718,7 +43718,7 @@ entries:
   desc_zh: "OHLCV多级别输入到统一PatternEvent契约+规则引擎优先缠论支撑阻力经典六类+DTW模板匹配+历史胜率注入"
   desc_en: ""
   plain_zh: "把双顶双底、平台突破、趋势线、支撑压力、缠论笔中枢这些各管一摊的看图手艺收进一个引擎：喂进去K线高低收，统一吐出图形事件——什么形态、朝哪个方向、把握多大、关键价位在哪、历史胜率多少，全部一个格式，后面的信号转化只管对接这一种契约。"
-- module_path: tests/signal_ashare/test_unified_pattern_engine.py
+- module_path: tests/signal_ashare/strategy_signal/test_unified_pattern_engine.py
   domain_id: D_ASHARE_SIGNAL
   name_zh: "统一图形识别引擎测试"
   name_en: "Unified Pattern Engine Tests"
@@ -43732,7 +43732,7 @@ entries:
   desc_zh: "缺口按ATR14标准化分四档，查表输出回补概率、部分回补分布、回补时间与MAE止损参考"
   desc_en: "ATR-normalized gap grading with lookup-table fill probability, partial fill distribution and MAE stop reference"
   plain_zh: "开盘跳空缺口有多大概率被补回来：把缺口按波动率分成小中大四档，查历史统计表给出回补概率、分批回补比例和止损参考价，供买入侧判断追高或抄缺口的风险"
-- module_path: tests/signal_ashare/test_gap_fill_model.py
+- module_path: tests/signal_ashare/ml_forecast/test_gap_fill_model.py
   domain_id: D_ASHARE_SIGNAL
   name_zh: "缺口回补概率模型测试"
   name_en: "Gap Fill Probability Model Tests"
@@ -43809,7 +43809,7 @@ entries:
   desc_zh: "分钟K聚合量能分布POC与VA70价值区，CVD累积量差峰谷对位背离追踪，50桶VPIN知情交易度量日频输出"
   desc_en: "Minute-bar Volume Profile (POC/VA70), CVD divergence tracking and 50-bucket VPIN daily factor"
   plain_zh: "看日内谁在真买真卖：把分钟K的量按价位堆出分布找到主成本区，追踪买卖量差和价格是否背离，再用等量桶算出知情交易占比，判断日内量能健不健康"
-- module_path: tests/signal_ashare/test_intraday_volume_orderflow.py
+- module_path: tests/signal_ashare/intraday_t0/test_intraday_volume_orderflow.py
   domain_id: D_ASHARE_SIGNAL
   name_zh: "日内量能订单流测试"
   name_en: "Intraday Volume Orderflow Tests"
@@ -43928,7 +43928,7 @@ entries:
   desc_zh: "区间相对强度加均线多头结构加52周新高接近度加放量突破确认四维合成RS评分，批量降序输出供精筛"
   desc_en: "Composite RS score from interval RS, MA structure, 52-week high proximity and volume breakout confirmation"
   plain_zh: "筛出比大盘强的股票：看个股中期跑赢基准多少、均线是不是多头排列、离52周新高近不近、创新高时有没有放量，四项加权成一个0到100的强弱分并排名次"
-- module_path: tests/signal_ashare/test_relative_strength_screener.py
+- module_path: tests/signal_ashare/screening/test_relative_strength_screener.py
   domain_id: D_ASHARE_SIGNAL
   name_zh: "多维度相对强弱筛选测试"
   name_en: "Relative Strength Screener Tests"
@@ -43942,7 +43942,7 @@ entries:
   desc_zh: ""
   desc_en: ""
   plain_zh: "看涨停板这锅水的生态结构：今天最高几连板、每个高度层有几只票、中间哪层断了档、大家封板封得早不早、昨天N板的票今天有几成晋级成功；另外用统计检验判断一只股票是不是另一只的领涨龙头（龙头先动、跟风后动且解释力够强才算）。"
-- module_path: tests/signal_ashare/test_limit_up_ecosystem_leadership.py
+- module_path: tests/signal_ashare/limit_up/test_limit_up_ecosystem_leadership.py
   domain_id: D_AUDITTEST
   name_zh: "动量领导因子与涨停板生态模型测试"
   name_en: ""
@@ -43998,7 +43998,7 @@ entries:
   desc_zh: ""
   desc_en: ""
   plain_zh: "回答'这条主线还能火多久'：给一个板块最近一段日子的表现打分——上涨的日子占几成、主力资金是不是连续多天净流入、板块内最高连板的高度稳不稳、板块跟大盘指数是不是同涨同跌、上次大跌之后几天能涨回来，五项合成一个0到100的持续分；还能看全市场有多少板块动量为正，判断现在是主线生态还是投机生态。"
-- module_path: tests/signal_ashare/test_sector_momentum_persistence.py
+- module_path: tests/signal_ashare/sector/test_sector_momentum_persistence.py
   domain_id: D_AUDITTEST
   name_zh: "动量层级与板块持续性模型测试"
   name_en: ""
@@ -44096,7 +44096,7 @@ entries:
   desc_zh: ""
   desc_en: ""
   plain_zh: "专门抓'恐慌到极点要反转'的时刻：情绪分数跌到历史最低两成多、大盘RSI也跌破30，两个冰点前后脚出现才算数；再用一张打分卡量当天有多恐慌（跌得多狠、量放得多异常、上涨家数剩多少）；最后看跌破关键位之后收盘能不能收回来——收回大半是洗盘假破位，收不回两成是真破位，真破位不许喊反转。"
-- module_path: tests/signal_ashare/test_extreme_sentiment_reversal_detector.py
+- module_path: tests/signal_ashare/sentiment/test_extreme_sentiment_reversal_detector.py
   domain_id: D_AUDITTEST
   name_zh: "极端情绪反转与恐慌底部检测模型测试"
   name_en: ""
@@ -44152,7 +44152,7 @@ entries:
   desc_zh: ""
   desc_en: ""
   plain_zh: "量一量'情绪跑赢了价格还是跑输了价格'：把市场情绪指数和价格各自换算成相对自己近期水平的标准化分，再看最近几天两者的变化幅度差——情绪明显比价格涨得快是正向背离（可能领先见底或启动），情绪明显比价格跌得快是负向背离，差得越多置信度越高；还能把整段历史扫一遍列出所有背离时点。"
-- module_path: tests/signal_ashare/test_sentiment_price_divergence.py
+- module_path: tests/signal_ashare/sentiment/test_sentiment_price_divergence.py
   domain_id: D_AUDITTEST
   name_zh: "情绪-价格背离指数模型测试"
   name_en: ""
@@ -44180,7 +44180,7 @@ entries:
   desc_zh: ""
   desc_en: ""
   plain_zh: "给打板候选票算一个0到100的潜力分。它把连板高度、封单强度、板块动量、筹码集中度、龙虎榜、量能配合、市场情绪这七个分项先做过往预测力验证（IC和ICIR门槛），验证通过的分项按预测力大小自动配权重，加权合成总分并分A到D四档；全部分项都没通过验证时退回经验权重并明确标记降级，不静默。"
-- module_path: tests/signal_ashare/test_limit_up_potential_scorer.py
+- module_path: tests/signal_ashare/limit_up/test_limit_up_potential_scorer.py
   domain_id: D_ASHARE_SIGNAL
   name_zh: "IC加权多因子涨停板潜力评分模型测试"
   name_en: ""
@@ -44306,7 +44306,7 @@ entries:
   desc_zh: ""
   desc_en: ""
   plain_zh: "给每个交易动作先过一道概率门。新开仓要次日上涨概率到六成五、加仓六成、抄底七成、正T五成五、反T看下跌概率到五成五；碰到牛市、熊市、放量、缩量、利好落地前、黑天鹅、变盘日、情绪高位这些情况门槛会相应放宽或收紧。概率不够就拦下并写清拦截原因（基准门槛、各项偏移、差多少），拦截次数和平均缺口都记账，供事后回看门槛定得合不合理。"
-- module_path: tests/signal_ashare/test_next_day_probability_gate.py
+- module_path: tests/signal_ashare/ml_forecast/test_next_day_probability_gate.py
   domain_id: D_ASHARE_SIGNAL
   name_zh: "次日上涨概率统一门槛模块测试"
   name_en: ""
@@ -44495,14 +44495,14 @@ entries:
   desc_zh: ""
   desc_en: ""
   plain_zh: "把Agent做任务的轨迹（输入行动结果反思）存起来，新任务来了能按相似度找出以前的经验，最多留一千条，老了的自动归档，存取都走注入的存储口"
-- module_path: tests/signal_ashare/test_pattern_match_strategy_library.py
+- module_path: tests/signal_ashare/strategy_signal/test_pattern_match_strategy_library.py
   domain_id: D_AUDITTEST
   name_zh: "量化模式匹配与执行策略库测试"
   name_en: ""
   desc_zh: ""
   desc_en: ""
   plain_zh: "MOD-SIG-105 双门控/DTW/模式注册表/JSON 契约测试"
-- module_path: tests/signal_ashare/test_sell_news_overdraft_detector.py
+- module_path: tests/signal_ashare/sentiment/test_sell_news_overdraft_detector.py
   domain_id: D_AUDITTEST
   name_zh: "利好落地预期透支检测测试"
   name_en: ""
@@ -44516,7 +44516,7 @@ entries:
   desc_zh: ""
   desc_en: ""
   plain_zh: "管本地几个大模型谁常驻显存：注册表记主力和备选，装模型前先算显存预算，盘中超六G就拒装并建议改用云端API，还管健康度和画像上报"
-- module_path: tests/signal_ashare/test_overnight_return_expectancy.py
+- module_path: tests/signal_ashare/intraday_t0/test_overnight_return_expectancy.py
   domain_id: D_AUDITTEST
   name_zh: "隔夜收益预测与开仓期望值测试"
   name_en: ""
@@ -44530,7 +44530,7 @@ entries:
   desc_zh: ""
   desc_en: ""
   plain_zh: "MOD-SIG-108 权重/方向/共振/降级/JSON 契约测试"
-- module_path: tests/signal_ashare/test_strategy_cross_vote_funnel.py
+- module_path: tests/signal_ashare/strategy_signal/test_strategy_cross_vote_funnel.py
   domain_id: D_AUDITTEST
   name_zh: "多策略交叉投票漏斗测试"
   name_en: ""
@@ -45888,7 +45888,7 @@ entries:
   desc_zh: ""
   desc_en: ""
   plain_zh: "把图形识别结果翻译成交易语言：这个形态该看多还是看空、信心多大、止损放哪，最后按标准信号格式输出给下游。"
-- module_path: tests/signal_ashare/test_pattern_to_signal_mapper.py
+- module_path: tests/signal_ashare/strategy_signal/test_pattern_to_signal_mapper.py
   domain_id: D_ASHARE_SIGNAL
   name_zh: "形态信号转化单测"
   name_en: ""
@@ -45916,7 +45916,7 @@ entries:
   desc_zh: ""
   desc_en: ""
   plain_zh: "隔夜美股等外盘涨跌对A股的影响量化：算传导系数、验证开盘后30分钟影响是否消退、按事件类型统计影响持续几天。"
-- module_path: tests/signal_ashare/test_overnight_conduction_model.py
+- module_path: tests/signal_ashare/intraday_t0/test_overnight_conduction_model.py
   domain_id: D_ASHARE_SIGNAL
   name_zh: "隔夜传导单测"
   name_en: ""
@@ -45944,7 +45944,7 @@ entries:
   desc_zh: ""
   desc_en: ""
   plain_zh: "量板块是不是太挤了：换手率、融资占比、持仓相关性都超过历史九成就是过热要预警；刚启动的板块要连续三天确认才采信。"
-- module_path: tests/signal_ashare/test_sector_crowding_launch.py
+- module_path: tests/signal_ashare/sector/test_sector_crowding_launch.py
   domain_id: D_ASHARE_SIGNAL
   name_zh: "板块拥挤单测"
   name_en: ""
@@ -45958,7 +45958,7 @@ entries:
   desc_zh: ""
   desc_en: ""
   plain_zh: "盯大小盘风格切换：大盘小盘收益差持续五天以上算风格确立；早盘前半小时的动量对后半小时有预测力，配合VWAP偏离和分时趋势强度使用。"
-- module_path: tests/signal_ashare/test_intraday_size_style.py
+- module_path: tests/signal_ashare/intraday_t0/test_intraday_size_style.py
   domain_id: D_ASHARE_SIGNAL
   name_zh: "分时风格单测"
   name_en: ""
@@ -46000,7 +46000,7 @@ entries:
   desc_zh: ""
   desc_en: ""
   plain_zh: "看不同类型事件发生后股价通常怎么分布：按事件类型分桶统计收益分布直方图和分位数，盘后批量处理不超过100只。"
-- module_path: tests/signal_ashare/test_event_conditional_density.py
+- module_path: tests/signal_ashare/ml_forecast/test_event_conditional_density.py
   domain_id: D_ASHARE_SIGNAL
   name_zh: "事件条件分布单测"
   name_en: ""
@@ -46014,7 +46014,7 @@ entries:
   desc_zh: ""
   desc_en: ""
   plain_zh: "识破主力的六种假动作：假拉升真出货、假突破真派发等，用七个维度打分，嫌疑超过85%就提示暂停追涨。"
-- module_path: tests/signal_ashare/test_fake_move_distribution.py
+- module_path: tests/signal_ashare/ml_forecast/test_fake_move_distribution.py
   domain_id: D_ASHARE_SIGNAL
   name_zh: "假动作识别单测"
   name_en: ""
@@ -46056,7 +46056,7 @@ entries:
   desc_zh: ""
   desc_en: ""
   plain_zh: "用因果机器学习回答「这个因子真的导致收益吗」：双重机器学习估效应、因果森林看异质性、反事实证伪、自动发现因果图，显著才采信。"
-- module_path: tests/signal_ashare/test_causal_ml_engine.py
+- module_path: tests/signal_ashare/ml_forecast/test_causal_ml_engine.py
   domain_id: D_ASHARE_SIGNAL
   name_zh: "因果ML单测"
   name_en: ""
@@ -46070,7 +46070,7 @@ entries:
   desc_zh: ""
   desc_en: ""
   plain_zh: "给预测区间在线校准：实际覆盖率不够就放宽、太宽就收窄，步长越调越小最终稳定，保证预测区间长期命中率贴近目标。"
-- module_path: tests/signal_ashare/test_tcp_rm_conformal.py
+- module_path: tests/signal_ashare/ml_forecast/test_tcp_rm_conformal.py
   domain_id: D_ASHARE_SIGNAL
   name_zh: "保形预测单测"
   name_en: ""
@@ -46112,7 +46112,7 @@ entries:
   desc_zh: ""
   desc_en: ""
   plain_zh: "把量能、体制、风格三个维度组合成18个格子，每个格子存一套仓位、方向、持仓周期、止损参数，参数靠历史回测逐格填。"
-- module_path: tests/signal_ashare/test_strategy_matrix_3d.py
+- module_path: tests/signal_ashare/strategy_signal/test_strategy_matrix_3d.py
   domain_id: D_ASHARE_SIGNAL
   name_zh: "三维矩阵单测"
   name_en: ""
@@ -46126,7 +46126,7 @@ entries:
   desc_zh: ""
   desc_en: ""
   plain_zh: "按信号最近的实际表现动态调权重：胜率高、回撤小的信号加权，单次调整不超过两成，全程留审计，调坏了可按版本回滚。"
-- module_path: tests/signal_ashare/test_signal_weight_adjuster.py
+- module_path: tests/signal_ashare/strategy_signal/test_signal_weight_adjuster.py
   domain_id: D_ASHARE_SIGNAL
   name_zh: "信号权重单测"
   name_en: ""
@@ -46140,7 +46140,7 @@ entries:
   desc_zh: ""
   desc_en: ""
   plain_zh: "做T之前先算账：价差扣掉双边佣金、印花税、冲击成本还剩多少净利，给置信度，实际成交后回写校准成本参数。"
-- module_path: tests/signal_ashare/test_day_trade_pnl_estimator.py
+- module_path: tests/signal_ashare/intraday_t0/test_day_trade_pnl_estimator.py
   domain_id: D_ASHARE_SIGNAL
   name_zh: "做T盈亏单测"
   name_en: ""
@@ -47015,7 +47015,7 @@ entries:
   desc_zh: ""
   desc_en: ""
   plain_zh: "把板块涨停数换成涨停比（涨停数÷成分股数），让200只成分股的大板块和30只的小板块能公平比较情绪宽度；再把个股资金性质（拉升/吸筹/弱托底/对倒嫌疑/出货）按成交额加权汇总成板块级得分，给出主力流入/中性/对倒主导/主力流出四档标签，作为板块强度分的输出层乘法修正因子"
-- module_path: tests/signal_ashare/test_sector_breadth.py
+- module_path: tests/signal_ashare/sector/test_sector_breadth.py
   domain_id: D_AUDITTEST
   name_zh: "板块宽度与资金性质聚合单测"
   name_en: ""
@@ -47029,7 +47029,7 @@ entries:
   desc_zh: ""
   desc_en: ""
   plain_zh: "对付板块一日游：给每个板块算3日/5日/20日累计涨跌幅，在全板块截面做百分位排名后按0.3/0.3/0.4加权合成0到1的动量分——3日超短窗口最快感知方向变化、20日锚定中期趋势，作为板块强度综合层第三维输入；历史不足21日的板块跳过"
-- module_path: tests/signal_ashare/test_sector_momentum.py
+- module_path: tests/signal_ashare/sector/test_sector_momentum.py
   domain_id: D_AUDITTEST
   name_zh: "板块多时间框架动量单测"
   name_en: ""
@@ -47162,7 +47162,7 @@ entries:
   desc_zh: ""
   desc_en: ""
   plain_zh: "验证流动性危机三族情景的冲击幅度、封死持仓不可卖且滑点封顶、ADV地板抬升滑点以及与压测引擎的消费集成"
-- module_path: tests/signal_ashare/test_strategy_vote_integrator.py
+- module_path: tests/signal_ashare/strategy_signal/test_strategy_vote_integrator.py
   domain_id: D_ASHARE_SIGNAL
   name_zh: "多策略投票加权整合器单测"
   name_en: "TestStrategyVoteIntegrator"
@@ -47561,6 +47561,356 @@ entries:
   desc_zh: ""
   desc_en: ""
   plain_zh: "从币安公开数据镜像拉取币圈每日行情（价格/成交量等）存进数据库，然后据此每天自动判断币圈市场处于什么状态（趋势向好/山寨币狂热/行情转冷/数据不足），把判断结果记到一张表里供人查看。只做记录，不参与任何买卖决策。"
+- module_path: scripts/backtest/translated/_c4_engine.py
+  domain_id: D_BACKTEST
+  name_zh: "C4 翻译共享引擎"
+  name_en: ""
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "C4 批量翻译的共享底座：统一装载行情/指数/涨跌停等健康表，冻结土规成本回测引擎（与 pilot_002 逐行同口径），Deflated Sharpe 折减全委托官方件 c4_deflated_sharpe_runner。做什么=让 35 条翻译策略共用同一把尺子；解决什么=口径漂移导致批测不可比；怎么做=翻译件只写 generate 权重函数，回测统一走本模块。"
+- module_path: scripts/backtest/translated/c4_06d4cf3d7dcc_pairs_zscore.py
+  domain_id: D_BACKTEST
+  name_zh: "C4 翻译 060: 双股价差 zscore 轮动"
+  name_en: ""
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "把聚宽策略《C4 翻译 060: 双股价差 zscore 轮动》（2020年度精选策略/02 我好像破解了聚宽擂台排第一的策略）。\n\n原文逻辑: 固定配对 600887）翻译为本项目日频权重矩阵回测：逐日 zscore 状态机（持有方=单标的全仓，信号 T-1 确认 T 收盘执行）；。三件套=权重函数+D1-D5 差异声明+因子拆解；供 C4 快筛出 is_sharpe 并供 C5 差异化聚类。"
+- module_path: scripts/backtest/translated/c4_091fee38cd01_alpha022.py
+  domain_id: D_BACKTEST
+  name_zh: "C4 翻译 071: WorldQuant Alpha#22 月频前 5"
+  name_en: ""
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "把聚宽策略《C4 翻译 071: WorldQuant Alpha#22 月频前 5》（2023年度精选策略/61 分享一个最近两年非常有效的因子）。\n\n原文逻辑: 池=沪深300；每月首个交易日按 jqlib.alpha101 的 alpha_022 因子降序取前 5；\n  新买入等分 available_cash，调出清仓。\n译文实现: Alpha#22 = -1×）翻译为本项目日频权重矩阵回测：Alpha#22 = -1×(delta(corr(high,volume,5),5)×rank(stddev(close,20)))（WorldQuant。三件套=权重函数+D1-D5 差异声明+因子拆解；供 C4 快筛出 is_sharpe 并供 C5 差异化聚类。"
+- module_path: scripts/backtest/translated/c4_12286499cb19_rsrs_60m.py
+  domain_id: D_BACKTEST
+  name_zh: "C4 翻译 059: RSRS 指标择时（60 分钟线版）"
+  name_en: ""
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "把聚宽策略《C4 翻译 059: RSRS 指标择时（60 分钟线版）》（2020年度精选策略/69，标的 510300 ETF）。\n\n原文逻辑: 标的 510300）翻译为本项目日频权重矩阵回测：60 分钟数据不进 C4 统一口径 → 声明降为日线 RSRS（N=18 日，标准化窗口。三件套=权重函数+D1-D5 差异声明+因子拆解；供 C4 快筛出 is_sharpe 并供 C5 差异化聚类。"
+- module_path: scripts/backtest/translated/c4_14d3e787ea4b_cgo_factor.py
+  domain_id: D_BACKTEST
+  name_zh: "C4 翻译 074: CGO 处置效应因子"
+  name_en: ""
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "把聚宽策略《C4 翻译 074: CGO 处置效应因子》（2025年度精选策略/37 处置效应的CGO因子 行为金融学因子）。\n\n原文逻辑: 全 A；剔上市<220 日/停牌/ST/退/涨跌停；再剔 100 日内停牌>50 日、近 10 日有\n  单日跌幅>9.5% 者；每 5 个交易日调仓；CGO=close/RP-1，RP=100 日换手率加权参考成交均价）翻译为本项目日频权重矩阵回测：参考价 avg=amount/volume（成交均价，kline 有 amount/volume）；换手率=turnover。三件套=权重函数+D1-D5 差异声明+因子拆解；供 C4 快筛出 is_sharpe 并供 C5 差异化聚类。"
+- module_path: scripts/backtest/translated/c4_1970782c2adb_ma_pullback.py
+  domain_id: D_BACKTEST
+  name_zh: "C4 翻译 062: 回踩均线搏反弹"
+  name_en: ""
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "把聚宽策略《C4 翻译 062: 回踩均线搏反弹》（2023年度精选策略/70 回踩均线搏反弹 测试第一弹）。\n\n原文逻辑: 池=全 A 换手率 3%~10% 按换手降序，剔 688/上市<365 交易日/ST/退；\n  条件）翻译为本项目日频权重矩阵回测：换手率用 kline turnover 字段；box=逐日(MA13,MA21,MA55) 三元组对其中位数的。三件套=权重函数+D1-D5 差异声明+因子拆解；供 C4 快筛出 is_sharpe 并供 C5 差异化聚类。"
+- module_path: scripts/backtest/translated/c4_29eb91dbaf60_crash_dodge.py
+  domain_id: D_BACKTEST
+  name_zh: "C4 翻译 067: 躲大跌股债切换"
+  name_en: ""
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "把聚宽策略《C4 翻译 067: 躲大跌股债切换》（2023年度精选策略/17 20行代码8年胜率100%躲过了牛年第一场大跌）。\n\n原文逻辑: 信号源=上证指数收盘；买股信号）翻译为本项目日频权重矩阵回测：上证指数 000001 kline_index；持股资产=沪深300 指数收益（510300 无窗口数据，D1）；。三件套=权重函数+D1-D5 差异声明+因子拆解；供 C4 快筛出 is_sharpe 并供 C5 差异化聚类。"
+- module_path: scripts/backtest/translated/c4_2b351fd05d5f_ultrashort_lowopen.py
+  domain_id: D_BACKTEST
+  name_zh: "C4 翻译 065: MA 死叉+MACD 临界+低开变体"
+  name_en: ""
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "把聚宽策略《C4 翻译 065: MA 死叉+MACD 临界+低开变体》（2022年度精选策略/80 短线策略 45%）。\n\n原文逻辑: 与 042）翻译为本项目日频权重矩阵回测：同 042 引擎口径，gap 条件反向（低开）；1 日持仓轮换。。三件套=权重函数+D1-D5 差异声明+因子拆解；供 C4 快筛出 is_sharpe 并供 C5 差异化聚类。"
+- module_path: scripts/backtest/translated/c4_2e4d39a3f50b_multi_ma.py
+  domain_id: D_BACKTEST
+  name_zh: "C4 翻译 052: 多均线择时"
+  name_en: ""
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "把聚宽策略《C4 翻译 052: 多均线择时》（2020年度精选策略/89 test1，单标的 600196）。\n\n原文逻辑: 单标的 600196）翻译为本项目日频权重矩阵回测：日线向量化状态机；信号 T-1，T 收盘执行（纠缠日维持原状）。。三件套=权重函数+D1-D5 差异声明+因子拆解；供 C4 快筛出 is_sharpe 并供 C5 差异化聚类。"
+- module_path: scripts/backtest/translated/c4_4440d07f973f_ultrashort.py
+  domain_id: D_BACKTEST
+  name_zh: "C4 翻译 042: MA 死叉+MACD 临界+高开 1 日轮换"
+  name_en: ""
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "把聚宽策略《C4 翻译 042: MA 死叉+MACD 临界+高开 1 日轮换》（2022年度精选策略/8. 14个月200%超短线）。\n\n原文逻辑: 全 A 主板）翻译为本项目日频权重矩阵回测：同规则日线向量化；1 日持仓=持有 T-1 候选首只，T 收盘换仓。。三件套=权重函数+D1-D5 差异声明+因子拆解；供 C4 快筛出 is_sharpe 并供 C5 差异化聚类。"
+- module_path: scripts/backtest/translated/c4_5efe26d1992e_rsrs_timing.py
+  domain_id: D_BACKTEST
+  name_zh: "C4 翻译 056: RSRS 大盘择时（标准版）"
+  name_en: ""
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "把聚宽策略《C4 翻译 056: RSRS 大盘择时（标准版）》（2020年度精选策略/93 RSRS——大盘择时）。\n\n原文逻辑: 标的 000300；RSRS 斜率=过去 N=18 日 low→high OLS 斜率；标准化\n  z=）翻译为本项目日频权重矩阵回测：kline_index 000300 日线，逐日 rolling OLS 斜率+滚动标准化；信号 T-1，T 收盘执行。。三件套=权重函数+D1-D5 差异声明+因子拆解；供 C4 快筛出 is_sharpe 并供 C5 差异化聚类。"
+- module_path: scripts/backtest/translated/c4_6485e4cd0844_kdj_timing.py
+  domain_id: D_BACKTEST
+  name_zh: "C4 翻译 055: Stoch(KDJ) 大盘择时"
+  name_en: ""
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "把聚宽策略《C4 翻译 055: Stoch(KDJ) 大盘择时》（2020年度精选策略/91，标的 399300=沪深300）。\n\n原文逻辑: talib STOCH）翻译为本项目日频权重矩阵回测：kline_index 000300 日线；RSV(17) 平滑（slowk=9/slowd=7 递推 SMA）；。三件套=权重函数+D1-D5 差异声明+因子拆解；供 C4 快筛出 is_sharpe 并供 C5 差异化聚类。"
+- module_path: scripts/backtest/translated/c4_6a6ec8869ddb_momentum62.py
+  domain_id: D_BACKTEST
+  name_zh: "C4 翻译 064: \"动量\"策略实为低动量反转"
+  name_en: ""
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "把聚宽策略《C4 翻译 064: \"动量\"策略实为低动量反转》（2024年度精选策略1/49 年化62%的动量策略）。\n\n原文逻辑: 全 A 剔次新/停牌/ST；91 日动量=close[-1]/close[0]-1；**取动量最小的 10 只**）翻译为本项目日频权重矩阵回测：动量/反转用 HFQ 收盘；股价>5 元用不复权 kline_daily 收盘（价格水平口径，D3）；。三件套=权重函数+D1-D5 差异声明+因子拆解；供 C4 快筛出 is_sharpe 并供 C5 差异化聚类。"
+- module_path: scripts/backtest/translated/c4_6cb29d4d9ba8_mom_rev_300.py
+  domain_id: D_BACKTEST
+  name_zh: "C4 翻译 069: 反转效应月频 25 只"
+  name_en: ""
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "把聚宽策略《C4 翻译 069: 反转效应月频 25 只》（2023年度精选策略/66 基于动量和反转效应的沪深300成分股策略）。\n\n原文逻辑: 池=沪深300；反转腿）翻译为本项目日频权重矩阵回测：5 日线=收盘每 5 日取样（周线由日线聚合）；信号=T-1 截面，触发日收盘重建；。三件套=权重函数+D1-D5 差异声明+因子拆解；供 C4 快筛出 is_sharpe 并供 C5 差异化聚类。"
+- module_path: scripts/backtest/translated/c4_7f7e5f935dfc_dmi_timing.py
+  domain_id: D_BACKTEST
+  name_zh: "C4 翻译 054: DMI 大盘择时"
+  name_en: ""
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "把聚宽策略《C4 翻译 054: DMI 大盘择时》（2020年度精选策略/79，标的 399300=沪深300）。\n\n原文逻辑: talib ADX）翻译为本项目日频权重矩阵回测：kline_index 000300 日线，Wilder 平滑实现 ADX/DI；信号 T-1，T 收盘执行。。三件套=权重函数+D1-D5 差异声明+因子拆解；供 C4 快筛出 is_sharpe 并供 C5 差异化聚类。"
+- module_path: scripts/backtest/translated/c4_93aa8f5a2bdd_multi_period.py
+  domain_id: D_BACKTEST
+  name_zh: "C4 翻译 072: 多期限均线因子 OLS 预测选股"
+  name_en: ""
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "把聚宽策略《C4 翻译 072: 多期限均线因子 OLS 预测选股》（2020年度精选策略/15 基于多期限的选股策略）翻译为本项目日频权重矩阵回测：12 因子整面向量化；训练集=过去 25 个周度截面（每周回退 7 自然日近似 5 交易日）；。三件套=权重函数+D1-D5 差异声明+因子拆解；供 C4 快筛出 is_sharpe 并供 C5 差异化聚类。"
+- module_path: scripts/backtest/translated/c4_99873fd0bc17_macd_single.py
+  domain_id: D_BACKTEST
+  name_zh: "C4 翻译 044: MACD 单因子多头——金叉日轮换"
+  name_en: ""
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "把聚宽策略《C4 翻译 044: MACD 单因子多头——金叉日轮换》（2020年度精选策略/08 MACD单因子多头策略）。\n\n原文逻辑: kuanke wizard 框架；池=中证500）翻译为本项目日频权重矩阵回测：中证500 成分快照；T-1 日 MACD 金叉（dif 上穿 dea）等权持有（≤100），非金叉日移出。。三件套=权重函数+D1-D5 差异声明+因子拆解；供 C4 快筛出 is_sharpe 并供 C5 差异化聚类。"
+- module_path: scripts/backtest/translated/c4_9c0136ec8f42_kucoffee_trend.py
+  domain_id: D_BACKTEST
+  name_zh: "C4 翻译 066: 苦咖啡——120 日强趋势周频双持"
+  name_en: ""
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "把聚宽策略《C4 翻译 066: 苦咖啡——120 日强趋势周频双持》（2023年度精选策略/3 苦咖啡-默默赚钱系列-改）。\n\n原文逻辑: 池=沪深300，剔 688/停牌/涨跌停开盘/昨收>500 元/HHV）翻译为本项目日频权重矩阵回测：全规则向量化（与 061 同款闭式回归）；周频=每周首个交易日按 T-1 信号重设权重。。三件套=权重函数+D1-D5 差异声明+因子拆解；供 C4 快筛出 is_sharpe 并供 C5 差异化聚类。"
+- module_path: scripts/backtest/translated/c4_9c0424f53fe4_zscore_meanrev5.py
+  domain_id: D_BACKTEST
+  name_zh: "C4 翻译 046: 5 股固定池 zscore 均值回归"
+  name_en: ""
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "把聚宽策略《C4 翻译 046: 5 股固定池 zscore 均值回归》（2020年度精选策略/18 均值回归策略分享）。\n\n原文逻辑: 固定池 [002241,000333,002230,002747,002415]；zscore=）翻译为本项目日频权重矩阵回测：同规则逐标的向量化状态机（持仓期高点回撤替代 avg_cost 亏损口径，D3）；。三件套=权重函数+D1-D5 差异声明+因子拆解；供 C4 快筛出 is_sharpe 并供 C5 差异化聚类。"
+- module_path: scripts/backtest/translated/c4_9ce75aa27ce5_bluechip_ma.py
+  domain_id: D_BACKTEST
+  name_zh: "C4 翻译 045: 蓝筹&均线——MA5>MA20 多头持有前 5"
+  name_en: ""
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "把聚宽策略《C4 翻译 045: 蓝筹&均线——MA5>MA20 多头持有前 5》（2020年度精选策略/70 蓝筹&均线）。\n\n原文逻辑: kuanke wizard；池=沪深300）翻译为本项目日频权重矩阵回测：沪深300 成分快照；T-1 日 MA5>MA20 者按代码序取前 5 等权持有，日频刷新。。三件套=权重函数+D1-D5 差异声明+因子拆解；供 C4 快筛出 is_sharpe 并供 C5 差异化聚类。"
+- module_path: scripts/backtest/translated/c4_a4543012b464_trend5.py
+  domain_id: D_BACKTEST
+  name_zh: "C4 翻译 061: 趋势交易 5.0"
+  name_en: ""
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "把聚宽策略《C4 翻译 061: 趋势交易 5.0》（2023年度精选策略/33 趋势交易5.0 无择时）。\n\n原文逻辑: 池=沪深300 剔 688；①多头结构: 最新收盘>MA100 且 MA30>MA60>MA100；\n  ②100 日 linregress: R>0.5 且 slope/intercept>0.005；按 slope 降序；\n  ③HHV）翻译为本项目日频权重矩阵回测：全规则日线向量化（sliding_window_view 闭式回归）；信号 T-1，T 收盘等权。。三件套=权重函数+D1-D5 差异声明+因子拆解；供 C4 快筛出 is_sharpe 并供 C5 差异化聚类。"
+- module_path: scripts/backtest/translated/c4_b37f550ba2af_gftd.py
+  domain_id: D_BACKTEST
+  name_zh: "C4 翻译 043: GFTD 指标择时"
+  name_en: ""
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "把聚宽策略《C4 翻译 043: GFTD 指标择时》（2020年度精选策略/78 GFTD第二版，标的=沪深300 指数）。\n\n原文逻辑）翻译为本项目日频权重矩阵回测：kline_index 000300 日线，状态机逐日推进，信号 T-1 确认 T 收盘执行。。三件套=权重函数+D1-D5 差异声明+因子拆解；供 C4 快筛出 is_sharpe 并供 C5 差异化聚类。"
+- module_path: scripts/backtest/translated/c4_c21459b71a42_boll_np.py
+  domain_id: D_BACKTEST
+  name_zh: "C4 翻译 049: 布林带1（手写 numpy 版）"
+  name_en: ""
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "把聚宽策略《C4 翻译 049: 布林带1（手写 numpy 版）》（2020年度精选策略/52 布林带1）。\n\n原文逻辑: 单标的 600519；手写 20 日均线±2×标准差）翻译为本项目日频权重矩阵回测：与 048 同构（轨道参数一致，std 口径 ddof=0 原文 numpy 默认→按总体标准差）。。三件套=权重函数+D1-D5 差异声明+因子拆解；供 C4 快筛出 is_sharpe 并供 C5 差异化聚类。"
+- module_path: scripts/backtest/translated/c4_c30a620e114d_boll_break.py
+  domain_id: D_BACKTEST
+  name_zh: "C4 翻译 048: 布林带突破（talib BBANDS）"
+  name_en: ""
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "把聚宽策略《C4 翻译 048: 布林带突破（talib BBANDS）》（2020年度精选策略/45 布林带策略）。\n\n原文逻辑: 单标的 600519）翻译为本项目日频权重矩阵回测：日线 20 日均线±2 倍标准差轨道；信号 T-1，T 收盘执行。。三件套=权重函数+D1-D5 差异声明+因子拆解；供 C4 快筛出 is_sharpe 并供 C5 差异化聚类。"
+- module_path: scripts/backtest/translated/c4_c4ec6332c07f_trend_score.py
+  domain_id: D_BACKTEST
+  name_zh: "C4 翻译 070: 趋与势量化定义——势分分位带择时"
+  name_en: ""
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "把聚宽策略《C4 翻译 070: 趋与势量化定义——势分分位带择时》（2023年度精选策略/80 趋与势的量化定义）。\n\n原文逻辑: 标的 000300；score=close.rolling）翻译为本项目日频权重矩阵回测：势分按 82 篇公式重实现（rolling 60 逐窗计算，性能可接受）；信号 T-1，T 收盘执行。。三件套=权重函数+D1-D5 差异声明+因子拆解；供 C4 快筛出 is_sharpe 并供 C5 差异化聚类。"
+- module_path: scripts/backtest/translated/c4_c72318f2da1c_bias_ql.py
+  domain_id: D_BACKTEST
+  name_zh: "C4 翻译 041: BIAS_QL 乖离率金叉死叉"
+  name_en: ""
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "把聚宽策略《C4 翻译 041: BIAS_QL 乖离率金叉死叉》（2020年度精选策略/21 果核量化 BIAS_QL乖离率策略指数择时1.0）。\n\n原文逻辑: 全 A 池，bias=）翻译为本项目日频权重矩阵回测：池=沪深300 成分快照；信号=T-1 收盘金叉/死叉；持仓≤50 等权，死叉次日移出；。三件套=权重函数+D1-D5 差异声明+因子拆解；供 C4 快筛出 is_sharpe 并供 C5 差异化聚类。"
+- module_path: scripts/backtest/translated/c4_c7a8ddbab748_ma10_ma5.py
+  domain_id: D_BACKTEST
+  name_zh: "C4 翻译 050: 高于 MA10 买入低于 MA20 卖出"
+  name_en: ""
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "把聚宽策略《C4 翻译 050: 高于 MA10 买入低于 MA20 卖出》（2020年度精选策略/66，单标的 000333）。\n\n原文逻辑: 单标的 000333）翻译为本项目日频权重矩阵回测：按原文实参忠实翻译（卖出用 20 日均值，D3 声明笔误保真）；信号 T-1，T 收盘执行。。三件套=权重函数+D1-D5 差异声明+因子拆解；供 C4 快筛出 is_sharpe 并供 C5 差异化聚类。"
+- module_path: scripts/backtest/translated/c4_d06cab686cef_rsrs_opt.py
+  domain_id: D_BACKTEST
+  name_zh: "C4 翻译 058: RSRS 大盘择时优化"
+  name_en: ""
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "把聚宽策略《C4 翻译 058: RSRS 大盘择时优化》（2020年度精选策略/77，标的 160706 基金）。\n\n原文逻辑: 标的 160706.XSHE）翻译为本项目日频权重矩阵回测：kline_etf_daily 无 160706 且窗口无数据 → 以 000300 指数收益替代（D1）；。三件套=权重函数+D1-D5 差异声明+因子拆解；供 C4 快筛出 is_sharpe 并供 C5 差异化聚类。"
+- module_path: scripts/backtest/translated/c4_e2e7f033d97c_kd_cross.py
+  domain_id: D_BACKTEST
+  name_zh: "C4 翻译 047: KD 指标金叉死叉择时"
+  name_en: ""
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "把聚宽策略《C4 翻译 047: KD 指标金叉死叉择时》（2020年度精选策略/29 KD指标量化交易策略）。\n\n原文逻辑: 单标的 000016）翻译为本项目日频权重矩阵回测：kline_daily_hfq 000016 日线；K=RSV 的 3 日 SMA、D=K 的 3 日 SMA；。三件套=权重函数+D1-D5 差异声明+因子拆解；供 C4 快筛出 is_sharpe 并供 C5 差异化聚类。"
+- module_path: scripts/backtest/translated/c4_e3da6fa71af1_panic_rebound.py
+  domain_id: D_BACKTEST
+  name_zh: "C4 翻译 068: 恐慌反弹持有 19 日"
+  name_en: ""
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "把聚宽策略《C4 翻译 068: 恐慌反弹持有 19 日》（2022年度精选策略/57 别人恐惧我贪婪3——股债组合）。\n\n原文逻辑: 信号源=上证指数；昨日跌幅<=-1.5% 且 今日 14:55 跌幅<=-1.4% → 卖债全仓买\n  512100）翻译为本项目日频权重矩阵回测：14:55 tick 跌幅 → T 收盘跌幅（D2 声明近似，尾盘介入收益损失已声明）；。三件套=权重函数+D1-D5 差异声明+因子拆解；供 C4 快筛出 is_sharpe 并供 C5 差异化聚类。"
+- module_path: scripts/backtest/translated/c4_e40a0a1bcda8_ma5_ma10.py
+  domain_id: D_BACKTEST
+  name_zh: "C4 翻译 051: 5 日线穿十日线"
+  name_en: ""
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "把聚宽策略《C4 翻译 051: 5 日线穿十日线》（2020年度精选策略/86，单标的 601111）。\n\n原文逻辑: 单标的 601111）翻译为本项目日频权重矩阵回测：日线向量化；信号 T-1，T 收盘执行。。三件套=权重函数+D1-D5 差异声明+因子拆解；供 C4 快筛出 is_sharpe 并供 C5 差异化聚类。"
+- module_path: scripts/backtest/translated/c4_ea8b60272c03_300etf_1060.py
+  domain_id: D_BACKTEST
+  name_zh: "C4 翻译 075: 沪深300ETF 10/60 双均线"
+  name_en: ""
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "把聚宽策略《C4 翻译 075: 沪深300ETF 10/60 双均线》（2020年度精选策略/83 沪深300ETF-1060双均线）。\n\n原文逻辑: 单标的 510310）翻译为本项目日频权重矩阵回测：510310 无窗口内 ETF 数据 → 000300 指数收益替代（D1）；MA10/60 于指数收盘；。三件套=权重函数+D1-D5 差异声明+因子拆解；供 C4 快筛出 is_sharpe 并供 C5 差异化聚类。"
+- module_path: scripts/backtest/translated/c4_eaddc3f9db4e_rsrs_r2.py
+  domain_id: D_BACKTEST
+  name_zh: "C4 翻译 057: RSRS 大盘择时（R² 加权 M=1100）"
+  name_en: ""
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "把聚宽策略《C4 翻译 057: RSRS 大盘择时（R² 加权 M=1100）》（2020年度精选策略/05 兄台且慢）。\n\n原文逻辑: 标的 000300；RSRS N=18 斜率序列，标准化窗口 M=1100；z 乘以当期 R²）翻译为本项目日频权重矩阵回测：同 056 引擎口径 + R² 加权；信号 T-1，T 收盘执行。。三件套=权重函数+D1-D5 差异声明+因子拆解；供 C4 快筛出 is_sharpe 并供 C5 差异化聚类。"
+- module_path: scripts/backtest/translated/c4_f284270f0ef0_macd_timing.py
+  domain_id: D_BACKTEST
+  name_zh: "C4 翻译 053: MACD 大盘择时"
+  name_en: ""
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "把聚宽策略《C4 翻译 053: MACD 大盘择时》（2020年度精选策略/76，标的 399300=沪深300）。\n\n原文逻辑: 标的 399300.XSHE）翻译为本项目日频权重矩阵回测：kline_index 000300 日线；EMA9-EMA24 差与信号线 EMA9；。三件套=权重函数+D1-D5 差异声明+因子拆解；供 C4 快筛出 is_sharpe 并供 C5 差异化聚类。"
+- module_path: scripts/backtest/translated/c4_fd47fa0e6401_macd_resonance.py
+  domain_id: D_BACKTEST
+  name_zh: "C4 翻译 063: MACD 多周期共振"
+  name_en: ""
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "把聚宽策略《C4 翻译 063: MACD 多周期共振》（2023年度精选策略/73 MACD多周期共振）。\n\n原文逻辑: 全 A 剔停/退/ST/科创/上市<60 天；周线 MACD 金叉）翻译为本项目日频权重矩阵回测：共振降为 周线MACD金叉×日线MACD金叉（60m→日线，D3）；卖出规则日线向量化；。三件套=权重函数+D1-D5 差异声明+因子拆解；供 C4 快筛出 is_sharpe 并供 C5 差异化聚类。"
+- module_path: scripts/backtest/translated/c4_fdbc279fba99_rps_oinl.py
+  domain_id: D_BACKTEST
+  name_zh: "C4 翻译 073: 欧奈尔 RPS 相对强度选股"
+  name_en: ""
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "把聚宽策略《C4 翻译 073: 欧奈尔 RPS 相对强度选股》（2025年度精选策略/91 欧奈尔 RPS选股战法回测）。\n\n原文逻辑: 池=沪深300；每日对池内取 120 日收盘涨幅，剔除涨幅>50% 者；按涨幅降序排名\n  rps=）翻译为本项目日频权重矩阵回测：全规则日线向量化；候选按排名序取前 5 等权（槽位语义：持仓不足 5 时买入，。三件套=权重函数+D1-D5 差异声明+因子拆解；供 C4 快筛出 is_sharpe 并供 C5 差异化聚类。"
+- module_path: scripts/backtest/translated/pilot_001_ml_multifactor.py
+  domain_id: D_BACKTEST
+  name_zh: "C3 试点第 1 条 SVR 多因子（挂起）"
+  name_en: ""
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "SVR 多因子翻译试点：因历史估值数据缺失（stock_indicator 仅近两月）挂起，保留翻译骨架待数据回补后激活。"
+- module_path: scripts/backtest/translated/pilot_002_ma_cross.py
+  domain_id: D_BACKTEST
+  name_zh: "C3 试点第 2 条 MA 金叉死叉"
+  name_en: ""
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "聚宽 kuanke 模板策略翻译试点：沪深300 池上 MA5/MA10 金叉死叉，持仓≤2 等权；验证翻译方法论（逐日权重矩阵+D1-D5 差异声明），IS 窗口 Sharpe 1.08，是 C4 批测的口径基准。"
+- module_path: scripts/backtest/translated/pilot_003_zscore_meanrev.py
+  domain_id: D_BACKTEST
+  name_zh: "C3 试点第 3 条 zscore 均值回归"
+  name_en: ""
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "单标的 zscore 均值回归翻译试点：原文宣传胜率 100% 经本项目口径复测 Sharpe -0.06 证伪；证明翻译批测能拆穿宣传数据，方法论第三形态验证。"
+- module_path: scripts/backtest/c4_batch_screen.py
+  domain_id: D_BACKTEST
+  name_zh: "C4 快筛批测入口"
+  name_en: ""
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "发现并批跑 translated/ 下全部 c4 翻译件与 pilot 两件特载，IS 2020-2023 冻结窗口统一批测，Deflated Sharpe 批内折减全委托官方件，成绩以追加行落 strategy_screen 台账只增不改，挂起策略按理由码登记 deferred 行，产物含 SCREEN kind run 档案与批测汇总。"
+- module_path: src/zephyr/data/implementations/akshare_alt_provider.py
+  domain_id: D_DATA
+  name_zh: "akshare另类源provider"
+  name_en: ""
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "akshare另类源provider（2026-09-12 另类数据第1批施工：akshare 免注册直连，千股千评+航运运价）"
+- module_path: src/zephyr/alt_data/alt_source_bootstrap.py
+  domain_id: D_ALT_DATA
+  name_zh: "alt治理三件接线器"
+  name_en: ""
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "alt治理三件接线器（2026-09-12 另类数据第1批施工：akshare 免注册直连，千股千评+航运运价）"
+- module_path: schemas/categories/market_alt_stock_comment.py
+  domain_id: D_DATA
+  name_zh: "千股千评快照表DDL"
+  name_en: ""
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "千股千评全表日快照（c1_market.alt_stock_comment）的建表语句唯一真源：每天存一次全市场约5200只股票的关注指数、综合得分、机构参与度和排名，用于散户关注度因子"
+- module_path: schemas/categories/market_alt_shipping_index.py
+  domain_id: D_DATA
+  name_zh: "航运运价指数长表DDL"
+  name_en: ""
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "航运运价指数长表（c1_market.alt_shipping_index）的建表语句唯一真源：一张表装下BDI等7个运价指数从1988年至今的日度数值，用于出口链和航运板块景气度分析"
+- module_path: schemas/categories/fundamental/consensus_daily.py
+  domain_id: D_FACTOR
+  name_zh: "一致预期每日快照表 DDL 真源"
+  name_en: ""
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "把券商研报的盈利预测按天聚合成每股一致预期快照表的结构定义文件，是这张 ClickHouse 表结构的唯一真源。"
+- module_path: scripts/ch/apply_consensus_daily_ddl.py
+  domain_id: D_FACTOR
+  name_zh: "一致预期表建表脚本"
+  name_en: ""
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "按 DDL 真源在 ClickHouse 里建 consensus_daily 表的运维脚本，可重复跑，建完带结构核对。"
+- module_path: scripts/ch/build_consensus_daily.py
+  domain_id: D_FACTOR
+  name_zh: "一致预期每日快照构建器"
+  name_en: ""
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "把研报明细滚动聚合成每天每股的一致预期矩阵：算均值中位数和评级分布，只聚合发布日当天之前的研究报告防止回测偷看未来。"
+- module_path: src/zephyr/factor/expectations.py
+  domain_id: D_FACTOR
+  name_zh: "分析师一致预期因子族"
+  name_en: ""
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "六个一致预期因子公式库（预期差评级动量等），输入时点正确的一致预期数据输出因子值，纯计算不碰数据库。"
+- module_path: scripts/ch/apply_research_report_ddl.py
+  domain_id: D_DATA
+  name_zh: "研报明细表建表脚本"
+  name_en: ""
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "在 ClickHouse 里建 research_report 研报明细表的部署脚本，建完自动核对表结构是否和定义一致。"
+- module_path: scripts/ch/backfill_research_report_full.py
+  domain_id: D_DATA
+  name_zh: "研报明细全历史补采脚本"
+  name_en: ""
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "从东财研报中心按股补采全部历史研报明细的一次性脚本：断点续作限速写侧重检，日度增量另有排班任务。"
 
 battle_map_steps:
 - step_id: BM-BUY-05

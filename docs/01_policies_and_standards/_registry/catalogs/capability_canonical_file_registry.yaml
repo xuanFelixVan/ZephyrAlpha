@@ -4969,6 +4969,27 @@ capabilities:
   description: 图 8 产业链全景图的字典↔DDL↔引擎三方同 commit 同步硬阻断（priority=141）+ chainmap_cluster_names
     词表 sanity
 creation_tokens:
+# 2026-09-12 另类数据第 1 批免注册直连（st-altdata-20260912）
+- file: src/zephyr/data/implementations/akshare_alt_provider.py
+  token: altdata-provider-20260912
+  created_by: st-altdata-20260912
+  capability: alt_data_batch1_free_sources
+- file: src/zephyr/alt_data/alt_source_bootstrap.py
+  token: altdata-bootstrap-20260912
+  created_by: st-altdata-20260912
+  capability: alt_data_batch1_free_sources
+- file: schemas/categories/market_alt_stock_comment.py
+  token: altdata-comment-ddl-20260912
+  created_by: st-altdata-20260912
+  capability: alt_data_batch1_free_sources
+- file: schemas/categories/market_alt_shipping_index.py
+  token: altdata-shipping-ddl-20260912
+  created_by: st-altdata-20260912
+  capability: alt_data_batch1_free_sources
+- file: tests/zephyr/data/test_alt_sources.py
+  token: altdata-test-20260912
+  created_by: st-altdata-20260912
+  capability: alt_data_batch1_free_sources
 - file: src/zephyr/data/implementations/crypto_provider.py
   token: crypto-provider-binance-vision-20260912
   created_by: st-g07-crypto-20260912
@@ -11931,6 +11952,26 @@ creation_tokens:
   token: st-fingov-work-roadmap-20260912
   created_by: st-fingov-20260912
   capability: work_roadmap_20260912
+- file: scripts/ch/apply_consensus_daily_ddl.py
+  token: auto-adopt-apply-consensus-ddl-20260912
+  created_by: st-fingov-20260912 (adopt 研报消费端批在途件, 内容零改动+M11 noqa)
+  capability: apply_consensus_daily_ddl
+- file: scripts/ch/build_consensus_daily.py
+  token: auto-adopt-build-consensus-daily-20260912
+  created_by: st-fingov-20260912 (adopt 研报消费端批在途件, 内容零改动)
+  capability: build_consensus_daily
+- file: src/zephyr/factor/expectations.py
+  token: auto-adopt-expectations-20260912
+  created_by: st-fingov-20260912 (adopt 研报消费端批在途件, 内容零改动)
+  capability: factor_expectations
+- file: scripts/ch/apply_research_report_ddl.py
+  token: auto-adopt-apply-research-report-ddl-20260912
+  created_by: st-fingov-20260912 (adopt 研报数据侧批在途件, 补 M11 noqa)
+  capability: apply_research_report_ddl
+- file: scripts/ch/backfill_research_report_full.py
+  token: auto-adopt-backfill-research-report-full-20260912
+  created_by: st-fingov-20260912 (adopt 研报数据侧批在途件, 补 M11 noqa)
+  capability: backfill_research_report_full
 di_seam_exemptions:
 - module_path: zephyr.trading.auto_runtime_core.AutoRuntimeCore
   reason: P0-5 LSG DI seam 标杆，已有 DI 但 AST 模式不匹配（动态注入）
