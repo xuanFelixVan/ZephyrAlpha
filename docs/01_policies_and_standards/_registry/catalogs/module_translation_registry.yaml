@@ -49189,6 +49189,27 @@ entries:
   desc_zh: "薄编排层：E1D三高筛选→E1B AI生成（可选）→E2预审自动接续，一条命令出排产清单"
   desc_en: ""
   plain_zh: "策略工厂进货线的总调度：一条命令串起'找好环节→编新点子→守门员预审'，先问电力闸再开工，结果汇总成一份待构造清单（过了预审的想法id），重活车道登记在案将来自动受闸。自己不评分，只搬货和记总账。"
+- module_path: scripts/backtest/translated/c4_311220235636_slater_value.py
+  domain_id: D_BACKTEST
+  name_zh: "Slater价值精选"
+  name_en: ""
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "按祖鲁法则四条件（流通市值高于均值、流动比率高于均值、近四季ROE每季高于均值、五年自由现金流逐年为正）在财报公告日严格PIT选股，月频全选等权持有；给C4快筛提供价值类考卷，并把筛选逻辑导出成共用函数供精选35和价值55复用；IS窗口Sharpe约-0.04平盘"
+- module_path: scripts/backtest/translated/c4_68cc0a6b40ba_value_select35.py
+  domain_id: D_BACKTEST
+  name_zh: "Slater精选35"
+  name_en: ""
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "直接复用价值精选件的slater_screen共用函数跑同样四条件筛选，月频按流通市值降序取前10只等权持有；原文是精选35只股票池思路的日线近似，给C4快筛出成绩；IS窗口Sharpe约-0.52"
+- module_path: scripts/backtest/translated/c4_40ca0da1a3ca_value55.py
+  domain_id: D_BACKTEST
+  name_zh: "Slater价值55改进版"
+  name_en: ""
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "在Slater四条件同族筛选上叠加沪深300指数200日月线强势门（弱势空仓避险），双周调仓取前4只等权，另加双止损线；给C4快筛验证防守型价值改进是否有效；IS窗口Sharpe约-1.20，价值类在成长市整体承压的又一实证"
 
 battle_map_steps:
 - step_id: BM-BUY-05
