@@ -133,7 +133,48 @@ def default_provider() -> PatternWinRateProvider:
     return PatternWinRateProvider()
 
 
+# 引擎事件名 → 方向（经典腿封闭集；name-only 契约下方向可由名字唯一确定。
+# 缠论/SR/趋势线等名字方向随事件变化，不在本表→wrapper 返回 None 走无统计路径）
+_ENGINE_NAME_DIRECTION = {
+    "双底": "向上",
+    "双顶": "向下",
+    "平台突破": "向上",
+    "平台跌破": "向下",
+}
+
+
+def engine_win_rate_callable(
+    provider: PatternWinRateProvider | None = None,
+    *,
+    timeframe: str = "day",
+    fwd_window: int = 10,
+    regime_tag: str = "",
+) -> "callable":
+    """组装 MOD-SIG-091 引擎的 win_rate_provider 注入物（Callable[[name], float|None]）。
+
+    引擎契约只传事件 name（unified_pattern_engine L475）；本 wrapper 用
+    name→方向封闭集补全查询键。查不到方向的名字（缠论/SR/趋势线等）返回
+    None——引擎按"无统计"路径处理，行为退化为现状（fail-open 保持）。
+    """
+    provider = provider or PatternWinRateProvider()
+
+    def _rate(name: str) -> float | None:
+        direction = _ENGINE_NAME_DIRECTION.get(str(name))
+        if direction is None:
+            return None
+        return provider.get(
+            str(name),
+            timeframe=timeframe,
+            direction=direction,
+            fwd_window=fwd_window,
+            regime_tag=regime_tag,
+        )
+
+    return _rate
+
+
 __all__ = [
     "PatternWinRateProvider",
     "default_provider",
+    "engine_win_rate_callable",
 ]

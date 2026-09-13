@@ -3433,7 +3433,7 @@ chart_patterns:
     applies_to: []
     tags: ["反转", "形态", "信号"]
     algorithm_status: "quantized"
-    evidence: ""
+    evidence: "[机生 evidence src=market_pattern_win_rate 物化=2026-09-14] w10: 空 hit=64.1% avg=-2.16% n=583175 | w20: 空 hit=61.0% avg=-1.86% n=577072 | regime: r1(空) hit=63.6% n=204182 / r3(空) hit=66.1% n=162823 / r2(空) hit=62.6% n=93933 / r10(空) hit=56.5% n=60660 / r4(空) hit=67.8% n=54245"
     code_symbol: null
     code_fingerprint: null
 
@@ -3556,7 +3556,7 @@ chart_patterns:
     applies_to: []
     tags: ["反转", "形态"]
     algorithm_status: "pending_backtest"
-    evidence: ""
+    evidence: "[机生 evidence src=market_pattern_win_rate 物化=2026-09-14] w10: 多 hit=59.7% avg=+2.58% n=567392 | w20: 多 hit=55.0% avg=+2.93% n=561596 | regime: r1(多) hit=59.4% n=196777 / r3(多) hit=56.4% n=156840 / r2(多) hit=60.9% n=87662 / r10(多) hit=67.7% n=70429 / r4(多) hit=56.5% n=53344"
     code_symbol: null
     code_fingerprint: null
 

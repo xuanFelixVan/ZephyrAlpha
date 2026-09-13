@@ -21,6 +21,7 @@ import pytest
 
 from zephyr.signal_ashare.strategy_signal.pattern_win_rate_provider import (
     PatternWinRateProvider,
+    engine_win_rate_callable,
 )
 
 
@@ -64,3 +65,24 @@ def test_without_client_raises(monkeypatch):
     p = PatternWinRateProvider(client=None)
     with pytest.raises(RuntimeError, match="clickhouse-driver"):
         p.get("x")
+
+
+# ── 引擎 wrapper（name-only 契约）─────────────────────────────
+
+
+def test_engine_callable_maps_name_to_direction():
+    captured = {}
+
+    class _Spy(PatternWinRateProvider):
+        def get(self, pattern_id, *, timeframe="day", direction="向上", fwd_window=10, regime_tag=""):
+            captured = (pattern_id, direction, fwd_window, regime_tag)
+            return 0.75
+
+    rates = engine_win_rate_callable(_Spy(), fwd_window=10)
+    assert rates("双底") == 0.75  # 双底→向上 查询命中
+    assert rates("未知形态名") is None  # 封闭集外→None（无统计路径）
+
+
+def test_engine_callable_none_for_ambiguous_names():
+    rates = engine_win_rate_callable(PatternWinRateProvider(client=_FakeClient([])))
+    assert rates("缠论中枢") is None  # 方向随事件变化，name-only 契约下不猜

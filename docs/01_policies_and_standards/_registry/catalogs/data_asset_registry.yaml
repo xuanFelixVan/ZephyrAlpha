@@ -74,7 +74,7 @@ description: >-
 owner: MOD-GOVERNANCE
 tier: tier_2_data_runtime
 status: active
-version: 1.9.2
+version: 1.9.3
 created: '2026-08-13'
 last_updated: '2026-09-14'
 related_arch: '#ARCH-BREG-001'
@@ -82,7 +82,7 @@ unique_key:
   sources: [source_id]
   datasets: [dataset_id]
   jobs: [job_id]
-entry_counts: {sources: 18, datasets: 239, jobs: 103}  # 2026-09-14 v1.9.2：+SRC-SZOPENDATA-001 +DS-234~240 +JOB-099~105（深圳开放数据批量源 7 表 16 系列）；派生快照值，以 yaml 实测为准——禁止凭此报数（#83 漏报教训）  # 2026-09-14 v1.9.1：+DS-233 台风路径 +JOB-097/098（气象事件层）；派生快照值，以 yaml 实测为准——禁止凭此报数（#83 漏报教训）
+entry_counts: {sources: 18, datasets: 241, jobs: 105}  # 2026-09-14 v1.9.3：+DS-241/242 +JOB-106/107（C-1 消费端首批：sentiment_panel+alt_regime_signal）；派生快照值，以 yaml 实测为准——禁止凭此报数（#83 漏报教训）  # 2026-09-14 v1.9.2：+SRC-SZOPENDATA-001 +DS-234~240 +JOB-099~105（深圳开放数据批量源 7 表 16 系列）；派生快照值，以 yaml 实测为准——禁止凭此报数（#83 漏报教训）  # 2026-09-14 v1.9.1：+DS-233 台风路径 +JOB-097/098（气象事件层）；派生快照值，以 yaml 实测为准——禁止凭此报数（#83 漏报教训）
 
 # v1.9.2 changelog(2026-09-14): 深圳开放数据批量源——+SRC-SZOPENDATA-001（appKey 订阅制，
 #   Owner 已全量订阅 17 接口实测通过）+DS-234~240 七表（统计月报长表 7 系列并表/口岸流量
@@ -10117,9 +10117,116 @@ datasets:
   code_symbol: "src/zephyr/data/implementations/akshare_alt_provider.py::AkshareAltProvider._fetch_sz_open_data"
 
 # 2026-09-11 币圈免费影子 MVP：crypto 日线采集 job（backfill/incremental 双模式，手动触发）
-jobs:
+# 2026-09-14 C-1 消费端首批（alt_data_consumption_plan §7.3）：情绪面板+市场级 regime 信号
+- dataset_id: DS-241
+  entity_name: c1_market.sentiment_panel
+  entity_type: dataset
+  scope: production
+  physical_type: clickhouse_table
+  produced_by_job: crypto_fear_greed_incremental
+  consumed_by_jobs: [alt_regime_signal_refresh]
+  domain_id: D_ALT_DATA
+  pit_policy: strict
+  format_summary: 币圈宏观情绪面板（源 alternative.me 恐贪指数｜任务 crypto_fear_greed_incremental｜
+    时段 daily_event）；(metric,trade_date) 粒度，fear_greed_index 0-100 六因子加权；
+    F15 极值反转信号源（<20 extreme_fear，C4 双窗及格策略联动）
+  valid_since: "2026-09-14"
+  module_id: MOD-L00-004
+  design_maturity: production
+  name: c1_market.sentiment_panel
+  name_zh: 币圈宏观情绪面板
+  status: active
+  version: 1.0.0
+  created_at: "2026-09-14"
+  updated_at: "2026-09-14"
+  owner: MOD-L00-004
+  produced_by_source: SRC-AKSHARE-ALT-001
+  survivorship_free: true
+  entry_role: "state"
+  applies_to: ["market"]
+  tags: ["另类数据", "数据", "情绪", "币圈"]
+  algorithm_status: "not_applicable"
+  evidence: "DDL schemas/categories/market_sentiment_panel.py；实弹 2 行（09-12/09-13）；provider=sentiment_panel_provider（CAND-CRYPTO-010 收尾，scheduler 路由本批补齐）"
+  code_symbol:
+  code_fingerprint:
 
-# 2026-09-11 币圈免费影子 MVP：crypto 日线采集 job（backfill/incremental 双模式，手动触发）
+- dataset_id: DS-242
+  entity_name: c1_market.alt_regime_signal
+  entity_type: dataset
+  scope: production
+  physical_type: clickhouse_table
+  produced_by_job: alt_regime_signal_refresh
+  consumed_by_jobs: []
+  domain_id: D_ALT_DATA
+  pit_policy: strict
+  format_summary: 市场级另类 regime 信号成品表（源=库内另类管线｜任务 alt_regime_signal_refresh｜
+    时段 daily_event）；(signal_id,signal_date) 粒度五信号：F4 BDI 动量z/F14 BTC 动量/F15 恐贪分档/
+    F23 涨停情绪周期/F7 台风登陆事件（116 场）；全历史重算幂等，PIT=仅用≤当日收盘数据
+  valid_since: "2026-09-14"
+  module_id: MOD-L00-004
+  design_maturity: production
+  name: c1_market.alt_regime_signal
+  name_zh: 市场级另类 regime 信号
+  status: active
+  version: 1.0.0
+  created_at: "2026-09-14"
+  updated_at: "2026-09-14"
+  owner: MOD-L00-004
+  produced_by_source: SRC-AKSHARE-ALT-001
+  survivorship_free: true
+  entry_role: "state"
+  applies_to: ["market"]
+  tags: ["另类数据", "数据", "信号", "regime"]
+  algorithm_status: "not_applicable"
+  evidence: "DDL schemas/categories/market_alt_regime_signal.py；实弹五信号出值（F4 z=1.10 risk_on/F14 +21.7% risk_on/F15 61 greed/F23 0.214 退潮/F7 116 场）；F7 P0 校准=风险日历非收益预测（c1a962e9）；F23 阈值 provisional 待 OOS 毕业"
+  code_symbol: "src/zephyr/alt_data/alt_regime_signals.py::AltRegimeSignalProvider.fetch"
+  code_fingerprint:
+- dataset_id: DS-243
+  entity_name: c1_market.market_pattern_event
+  entity_type: dataset
+  scope: production
+  physical_type: clickhouse_table
+  produced_by_job: JOB-108
+  consumed_by_jobs: []
+  domain_id: D_SIGNAL
+  pit_policy: strict
+  format_summary: 图形形态事件（MOD-SIG-091 引擎扫描；全量回填 5758 票 131.9 万事件 + JOB-108 增量；ReplacingMergeTree 确定性 event_id 幂等）
+  valid_since: "2021-09-01"
+  module_id: MOD-SIG-145
+  design_maturity: testing
+  name: c1_market.market_pattern_event
+  name_zh: 图形形态事件
+  status: active
+  version: 1.0.0
+  created_at: "2026-09-14"
+  updated_at: "2026-09-14"
+  owner: MOD-SIG-145
+  produced_by_source: SRC-INTERNAL-001
+  blueprint: "docs/03_modules/_domain_signal/pattern_event_stats/blueprint.md"
+  tags: ["数据", "信号", "图形"]
+- dataset_id: DS-244
+  entity_name: c1_market.market_pattern_win_rate
+  entity_type: dataset
+  scope: production
+  physical_type: clickhouse_table
+  produced_by_job: JOB-108
+  consumed_by_jobs: []
+  domain_id: D_SIGNAL
+  pit_policy: not_applicable
+  format_summary: 图形形态历史胜率统计（market_pattern_event × kline 前视窗口物化；基础名粒度×方向×窗口×regime 切片；pattern_win_rate_provider 读出口）
+  valid_since: "2021-09-01"
+  module_id: MOD-SIG-145
+  design_maturity: testing
+  name: c1_market.market_pattern_win_rate
+  name_zh: 图形形态胜率统计
+  status: active
+  version: 1.0.0
+  created_at: "2026-09-14"
+  updated_at: "2026-09-14"
+  owner: MOD-SIG-145
+  produced_by_source: SRC-INTERNAL-001
+  blueprint: "docs/03_modules/_domain_signal/pattern_event_stats/blueprint.md"
+  tags: ["数据", "信号", "图形", "统计"]
 jobs:
 - job_id: JOB-001
   job_name: ingest.minqmt_kline
@@ -13160,3 +13267,66 @@ jobs:
   code_symbol: "src/zephyr/data/implementations/akshare_alt_provider.py::AkshareAltProvider._fetch_alt_typhoon_track"
   code_fingerprint:
 
+
+# 2026-09-14 C-1 消费端首批：恐贪采集+市场级 regime 信号重算
+- job_id: JOB-106
+  job_name: ingest.crypto_fear_greed
+  entity_type: job
+  scope: production
+  source_code_ref: src/zephyr/data/implementations/sentiment_panel_provider.py
+  trigger_type: scheduled
+  run_context: production
+  inputs: []
+  outputs:
+  - DS-241
+  pit_relevance: strict
+  description: 恐惧贪婪指数日度采集（alternative.me 免费 API；F15 极值反转信号源）
+  module_id: MOD-L00-004
+  design_maturity: production
+  name: ingest.crypto_fear_greed
+  name_zh: 恐贪指数日度采集
+  status: active
+  version: 1.0.0
+  created_at: "2026-09-14"
+  updated_at: "2026-09-14"
+  owner: MOD-L00-004
+  entry_role: "state"
+  applies_to: ["market"]
+  tags: ["另类数据", "数据", "情绪"]
+  algorithm_status: "not_applicable"
+  evidence: "实弹 2 行（09-12/09-13，61/63 greed）"
+  code_symbol: "src/zephyr/data/implementations/sentiment_panel_provider.py::SentimentPanelProvider._fetch_fear_greed"
+  code_fingerprint:
+
+- job_id: JOB-107
+  job_name: compute.alt_regime_signal
+  entity_type: job
+  scope: production
+  source_code_ref: src/zephyr/alt_data/alt_regime_signals.py
+  trigger_type: scheduled
+  run_context: production
+  inputs:
+  - DS-230
+  - DS-231
+  - DS-241
+  outputs:
+  - DS-242
+  pit_relevance: strict
+  description: 市场级另类 regime 信号全量重算（F4/F14/F15/F23/F7；依赖恐贪采集先行；
+    全历史重算 RMT 幂等；PIT=仅用≤当日收盘）
+  module_id: MOD-L00-004
+  design_maturity: production
+  name: compute.alt_regime_signal
+  name_zh: 市场级另类 regime 信号计算
+  status: active
+  version: 1.0.0
+  created_at: "2026-09-14"
+  updated_at: "2026-09-14"
+  owner: MOD-L00-004
+  entry_role: "state"
+  applies_to: ["market"]
+  tags: ["另类数据", "数据", "信号", "regime"]
+  algorithm_status: "not_applicable"
+  evidence: "实弹五信号出值；测试 8/8（tests/zephyr/alt_data/test_alt_regime_signals.py）"
+  code_symbol: "src/zephyr/alt_data/alt_regime_signals.py::AltRegimeSignalProvider.fetch"
+  code_fingerprint:
