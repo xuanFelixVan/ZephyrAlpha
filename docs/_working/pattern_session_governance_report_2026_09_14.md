@@ -1,0 +1,98 @@
+---
+ttl: task_bound
+---
+
+# [BLUEPRINT] | docs/_working/pattern_session_governance_report_2026_09_14.md |
+<!-- [MODULE] MOD-SIG-145 -->
+<!-- [STABILITY] evolving -->
+<!-- [SAFETY] L -->
+
+# 图形库会话治理上报（st-pattern-20260914，2026-09-14 深夜班）
+
+> 背景：图形库全链施工批（MOD-SIG-145/146，P1+P2 共 11 commit）。本报告上报施工中
+> 发现的基础设施问题五件 + JOB-108 接线规格书。详尽过程记忆在会话 st-pattern-20260914。
+
+## 一、上报五件（按危害排序）
+
+### 1. capability_canonical_file_registry.yaml 并发死区插入 → YAML 炸全仓【已修标，需治本】
+- 现象：c4 会话把 creation_token 条目 EOF 追加到 `di_seam_exemptions: []` 之后
+  （12250 行处），整个文件 parse 失败——**所有新文件创建（scaffold 重复检测）
+  即报错**，阻断面是全仓级。
+- 已做：悬挂块上移回 creation_tokens 序列尾（st-pattern-20260914 修复，CAS 留痕）。
+- 治本建议：所有向该 registry 插入的工具（scaffold.py / batch_creation_tokens.py /
+  其他会话自写脚本）统一加**写后 `yaml.safe_load` 校验，失败即回滚**；
+  写路径全部收口 safe_write_text CAS。
+- 相关：altdata 会话 2026-09-13 曾上报同文件"并发损坏（12112 行）"挂账——同一根因复发。
+
+### 2. scaffold.py 嵌套包斜杠 bug【四连发，未修】
+- 现象：`scaffold.py module signal_ashare/strategy_signal <name>` 时
+  `_register_to_init` 用 package 原文（含斜杠）拼 import 行
+  → `from zephyr.signal_ashare/strategy_signal.x import Y`（SyntaxError），
+  且 `__all__.append(...)` 偶发多参数。本会话手工修复 4 次。
+- 修法建议：`package.replace('/', '.')` + 写入前后 `ast.parse` 自检 + 追加式
+  `__all__` 注册改幂等集合语义。
+
+### 3. data_asset_registry.yaml 双 `datasets:` 根键【历史遗留，未修】
+- 现象：752/755 行两个 `datasets:` 键，PyYAML 静默取后者；人工/工具插条目到
+  前段会被解析层忽略。
+- 修法建议：合并两段（一次性脚本+parse 对账），并在 verify 门禁加"根键唯一"检查。
+
+### 4. registry v1 老条目缺 schema v2.1 字段行【已兼容，未回填】
+- 现象：部分 PAT-CANDLE 条目（如 PAT-CANDLE-003）无 `code_symbol:` 字段行，
+  生成器"null→值"替换打不中。
+- 已做：pattern_catalog_sync.py 加"无则插入"兼容分支。
+- 修法建议：一次性回填脚本给全部 v1 条目补齐 v2.1 占位字段（null 化），
+  之后生成器可回归纯替换语义。
+
+### 5. 幽灵锚点 anchor_id=674【已按门禁指令清理，留痕】
+- 现象：battle_map_anchors 存在 02:07 创建的锚点（BM-SEL-01→MOD-L02-028，
+  target_id_not_found），GATE-BATTLE-MAP-ALIGNMENT 全仓扫描连坐阻断无辜提交。
+- 已做：`apply_battle_map.py --remove-anchor --anchor-id 674`（门禁指令的指定动作）。
+- 建议：①create-anchor 时校验 target 存在；②GATE-BATTLE-MAP-ALIGNMENT 按 §3
+  改造 own-scope 或降 warn（幽灵锚点非提交人过错）。
+
+## 二、JOB-108 接线规格书（数据域会话可直接施工）
+
+目标：pattern_event 增量扫描接入 IntegratorScheduler 声明式 DAG。
+当时未直接施工原因：两处落点文件（tasks.yaml / internal_compute_provider.py）
+在本会话窗口内有他会话在途未提交改动（' M'），按共享文件纪律不硬闯。
+
+### 落点 1：`src/zephyr/data/config/tasks.yaml` 追加任务块
+
+```yaml
+- task_id: pattern_event_incremental
+  table: c1_market.market_pattern_event
+  source: internal
+  schedule: daily_kline
+  incremental: true
+  date_col: anchor_trade_date
+  dependencies: ["kline_daily_incremental"]   # 日K线落地后事件触发
+  capability: pattern_event
+  symbols:
+  fallback_sources: []
+  extra:
+    description: "图形形态事件增量（MOD-SIG-145/JOB-108：引擎扫描器滚动回看 400 日上下文、
+      只产出近 15 日确认事件；确定性 event_id+ReplacingMergeTree 幂等）"
+```
+
+### 落点 2：`src/zephyr/data/implementations/internal_compute_provider.py`
+
+1. `meta.capabilities` 追加 `CapabilityContract("pattern_event", supports_symbols_null=True)`。
+2. `fetch()` 增加 capability 分支：`pattern_event` → 调用
+   `scripts/data/pattern_event_incremental.py` 主流程（建议抽为
+   `zephyr.signal_ashare.strategy_signal.pattern_event_job.run_incremental()` 薄适配），
+   扫描器自行经 pattern_event_store 落库，返回空 FetchResult 即可。
+
+### 落点 3（接线后一次性）
+- 手动跑一轮 `scripts/data/pattern_win_rate_materialize.py`，
+  之后每次增量事件落库后由同一 DAG 尾部触发重物化。
+
+## 三、本会话施工台账（自证留痕）
+
+- commit：84f4679a（设计）→ 7057d15c49（W1 表+store）→ 9ca0f62b95（W2 回填器
+  +canonical YAML 修复）→ 59544e35cb（W3 统计+provider）→ 1190e235b9（W4 引擎
+  注入物+evidence+DS/JOB）→ a1b5c7f525（P2-a 蜡烛）→ 271c62d27f68（P2-c 变换层）
+  → ac52af85f6c4（目录同步 77/77）→ c963b928aa（classic2 头肩三重）→ classic3
+  三角矩形楔形（本批）。
+- 形态实现：15 → 102（77 蜡烛+15 原有+4 头肩三重+6 三角矩形楔形）。
+- 事件表 131.9 万（重扫扩容中）；胜率统计/机生 evidence/DS-243/244+JOB-108 已登记。
