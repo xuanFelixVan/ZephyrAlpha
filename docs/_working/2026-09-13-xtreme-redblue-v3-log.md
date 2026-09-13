@@ -395,3 +395,12 @@ error: refs/heads/dev: invalid reflog entry 4d361d27fad160f280d696ab5d7538af46b9
 - **重要发现：blackout 波及面不对称**——纯删除提交（无新文件）在 registry blackout 期间照常通过（7ee8b5f6 实证），只有含新文件的提交被 CREATE-GUARD fail-closed 拦。停电半径=新文件，非全仓。
 - 磁盘清理：f_para_1-5、f_bypass、f_lock 及怪文件名四件全删；xt_lab3 目录移除。沙盒 D:\_xt3_sandbox 已删（0 残留）。xt3 worktree/分支/会话注册全零。
 - 待注册表愈合后：登记 2 个 creation_token（log+report）→ 两份 md 走网关终提交。
+
+### 终局（阶段 7 收尾实录）
+- 时间：02:30
+- **注册表第三次坏窗**：token 登记途中他会话又写坏注册表（12115→12205 行，12205 断裂）——本次 CAS 预检 yaml 失败**未写盘**（safe_write_text base-hash 防碰撞按设计工作）。5 分钟后自愈。
+- **token 登记未遂即放行**：registry 愈合后直接试提交两份 md，CREATE-GUARD 未要求 token 即过——证实"S4.0 沙盒拦/真仓放行"不对称源于真仓 .runtime 运行时状态（session 级豁免或缓存），非注册表静态 token。
+- **ENCODING-SAFETY 反讽闭环**：日志如实摘录系统乱码原文当证据 → INJ-007 判我的交付物含 GBK-as-UTF8 mojibake 拦截（日志先中，改后报告又中）。证据忠实性与编码门正面冲突——已把乱码原文转义为「应为…」描述式保语义。记 P2：编码门无"证据引用"豁免通道。
+- **死信复活实录**：锁忙自动入队（qid xt3-final-0001）→ ENCODING 拦 → 死信；修文件后 `commit_queue.py requeue` → 0002 又死（替换没生效，markdown 换行拆了匹配串）→ 修净 → 0003 **落库**（done=1 dead=0）。requeue→drain→land 全链一次走通，队列机制获得意外正交实弹。落库留痕"主工作区收敛存在跳过项（skipped_dirty 2）"=他会话 WIP 正确隔离。
+- **终提交**：9b55a63075，name-only 核实=恰好两份 md，零吸收零搭便车。
+- 残留终态：git status xt3 相关=0；沙盒=0；worktree/分支/会话=0。
