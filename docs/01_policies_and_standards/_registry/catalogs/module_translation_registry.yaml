@@ -49105,6 +49105,27 @@ entries:
   desc_zh: "hypothesis_precheck 表 DDL 部署+逐列探针验证"
   desc_en: ""
   plain_zh: "一键在数据库里把预审记账本的表建出来，建完逐列点名确认没漏。"
+- module_path: src/zephyr/factor/indicator_reader.py
+  domain_id: D_FACTOR
+  name_zh: "技术指标PIT读取API"
+  name_en: "indicator reader"
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "这个模块是技术指标表的统一读入口。以前谁要用指标都得自己写查询语句，容易写错列名、也容易不小心读到未来数据。现在统一走这一个函数：列名拼错直接报错而不是悄悄返回空表，回测时给了 as_of 截止日就硬性禁止读到截止日之后，预热期保持空值不造数。指标库一百三十多列从此有了唯一的合规读法。"
+- module_path: scripts/backtest/lane_b_idea_generator.py
+  domain_id: D_BACKTEST
+  name_zh: "AI生成车道B"
+  name_en: ""
+  desc_zh: "主题种子驱动NL→策略假说量产（本地qwen3:8b经LSG），内容寻址去重后带出生证卸进货台账"
+  desc_en: ""
+  plain_zh: "策略工厂的脑洞车间：给12个策略主题，让本地大模型批量编'为什么能赚钱'的假说（只出点子不写代码不打分），每条点子带身份证和出生证落到进货台账，等守门员预审。想过的点子不会重复记。"
+- module_path: schemas/categories/backtest_regime_state_anchored.py
+  domain_id: D_DATA
+  name_zh: "锚定态历史表DDL"
+  name_en: ""
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "锚定风险四档历史表（c1_backtest.regime_state_anchored）的建表语句唯一真源：按固定波动率阈值把市场划成四个锚定状态每天记一条，零拟合不重估，供风险节流和回测对齐使用"
 
 battle_map_steps:
 - step_id: BM-BUY-05
