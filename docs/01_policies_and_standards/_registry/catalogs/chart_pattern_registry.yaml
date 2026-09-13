@@ -265,10 +265,10 @@ chart_patterns:
     applies_to: []
     tags: ["反转", "k线", "形态", "指标"]
     algorithm_status: "quantized"
-    evidence: ""
+    evidence: "[机生 evidence src=market_pattern_win_rate 物化=2026-09-14] w10: 多 hit=45.2% avg=-0.12% n=134415 | w20: 多 hit=44.8% avg=+0.08% n=133139 | regime: r1(多) hit=45.8% n=47689 / r3(多) hit=39.2% n=33425 / r2(多) hit=44.2% n=21175 / r10(多) hit=56.6% n=18605 / r4(多) hit=44.0% n=13428"
     code_symbol: "src/zephyr/signal_ashare/strategy_signal/candlestick_scanner.py::scan_candles"
     code_fingerprint: null
-
+    applicable_series: ["time_bars"]
   - pattern_id: "PAT-CANDLE-002"
     name: "Bullish Engulfing"
     name_zh: "看涨吞没"
@@ -306,10 +306,10 @@ chart_patterns:
     applies_to: []
     tags: ["反转", "k线", "形态", "指标"]
     algorithm_status: "quantized"
-    evidence: ""
+    evidence: "[机生 evidence src=market_pattern_win_rate 物化=2026-09-14] w10: 多 hit=47.2% avg=+0.29% n=349739 / 空 hit=51.4% avg=+0.39% n=353061 | w20: 多 hit=46.6% avg=+0.51% n=345734 / 空 hit=51.7% avg=+0.75% n=350544 | regime: r1(空) hit=50.1% n=131224 / r1(多) hit=48.0% n=129678 / r3(空) hit=54.3% n=93878 / r3(多) hit=40.6% n=85293 / r2(空) hit=53.6% n=60978"
     code_symbol: "src/zephyr/signal_ashare/strategy_signal/candlestick_scanner.py::scan_candles"
     code_fingerprint: null
-
+    applicable_series: ["time_bars"]
   - pattern_id: "PAT-CANDLE-003"
     name: "Bearish Engulfing"
     name_zh: "看跌吞没"
@@ -350,7 +350,7 @@ chart_patterns:
     evidence: ""
     code_symbol: "src/zephyr/signal_ashare/strategy_signal/candlestick_scanner.py::scan_candles"
     code_fingerprint: null
-
+    applicable_series: ["time_bars"]
   - pattern_id: "PAT-CANDLE-004"
     name: "Morning Star"
     name_zh: "启明星"
@@ -388,10 +388,10 @@ chart_patterns:
     applies_to: []
     tags: ["反转", "k线", "形态", "指标"]
     algorithm_status: "quantized"
-    evidence: ""
+    evidence: "[机生 evidence src=market_pattern_win_rate 物化=2026-09-14] w10: 多 hit=48.7% avg=+0.44% n=28953 | w20: 多 hit=48.4% avg=+1.21% n=28677 | regime: r1(多) hit=51.2% n=11210 / r3(多) hit=44.6% n=8084 / r2(多) hit=48.9% n=4388 / r4(多) hit=45.4% n=2740 / r10(多) hit=55.1% n=2405"
     code_symbol: "src/zephyr/signal_ashare/strategy_signal/candlestick_scanner.py::scan_candles"
     code_fingerprint: null
-
+    applicable_series: ["time_bars"]
   - pattern_id: "PAT-CANDLE-005"
     name: "Evening Star"
     name_zh: "黄昏星"
@@ -429,10 +429,10 @@ chart_patterns:
     applies_to: []
     tags: ["反转", "k线", "形态", "指标"]
     algorithm_status: "quantized"
-    evidence: ""
+    evidence: "[机生 evidence src=market_pattern_win_rate 物化=2026-09-14] w10: 空 hit=52.5% avg=-0.15% n=20178 | w20: 空 hit=54.0% avg=+0.14% n=19947 | regime: r1(空) hit=52.5% n=7120 / r3(空) hit=52.2% n=5547 / r2(空) hit=52.4% n=3326 / r10(空) hit=52.4% n=2174"
     code_symbol: "src/zephyr/signal_ashare/strategy_signal/candlestick_scanner.py::scan_candles"
     code_fingerprint: null
-
+    applicable_series: ["time_bars"]
   - pattern_id: "PAT-CANDLE-006"
     name: "Doji"
     name_zh: "十字星"
@@ -470,10 +470,10 @@ chart_patterns:
     applies_to: []
     tags: ["反转", "k线", "形态", "指标"]
     algorithm_status: "quantized"
-    evidence: ""
+    evidence: "[机生 evidence src=market_pattern_win_rate 物化=2026-09-14] w10: 多 hit=47.0% avg=+0.28% n=876138 | w20: 多 hit=46.7% avg=+0.58% n=867616 | regime: r1(多) hit=47.4% n=325526 / r3(多) hit=42.5% n=227616 / r2(多) hit=47.2% n=134507 / r10(多) hit=58.2% n=106619 / r4(多) hit=43.0% n=78980"
     code_symbol: "src/zephyr/signal_ashare/strategy_signal/candlestick_scanner.py::scan_candles"
     code_fingerprint: null
-
+    applicable_series: ["time_bars"]
   - pattern_id: "PAT-CANDLE-007"
     name: "Inverted Hammer"
     name_zh: "倒锤子线"
@@ -511,10 +511,10 @@ chart_patterns:
     applies_to: []
     tags: ["反转", "机器学习", "k线", "形态"]
     algorithm_status: "quantized"
-    evidence: ""
+    evidence: "[机生 evidence src=market_pattern_win_rate 物化=2026-09-14] w10: 多 hit=47.6% avg=+0.31% n=113117 | w20: 多 hit=46.8% avg=+0.60% n=112580 | regime: r1(多) hit=48.4% n=43051 / r3(多) hit=41.2% n=30797 / r2(多) hit=48.2% n=16660 / r10(多) hit=61.1% n=12006 / r4(多) hit=47.2% n=10212"
     code_symbol: "src/zephyr/signal_ashare/strategy_signal/candlestick_scanner.py::scan_candles"
     code_fingerprint: null
-
+    applicable_series: ["time_bars"]
   - pattern_id: "PAT-CANDLE-008"
     name: "Hanging Man"
     name_zh: "上吊线"
@@ -552,10 +552,10 @@ chart_patterns:
     applies_to: []
     tags: ["反转", "机器学习", "k线", "形态"]
     algorithm_status: "quantized"
-    evidence: ""
+    evidence: "[机生 evidence src=market_pattern_win_rate 物化=2026-09-14] w10: 空 hit=49.8% avg=+0.53% n=75211 | w20: 空 hit=49.9% avg=+1.19% n=74303 | regime: r1(空) hit=47.2% n=28926 / r3(空) hit=54.5% n=18794 / r2(空) hit=47.4% n=10775 / r10(空) hit=42.3% n=8401 / r4(空) hit=55.7% n=6793"
     code_symbol: "src/zephyr/signal_ashare/strategy_signal/candlestick_scanner.py::scan_candles"
     code_fingerprint: null
-
+    applicable_series: ["time_bars"]
   - pattern_id: "PAT-CANDLE-009"
     name: "Shooting Star"
     name_zh: "射击之星"
@@ -593,10 +593,10 @@ chart_patterns:
     applies_to: []
     tags: ["反转", "机器学习", "k线", "形态"]
     algorithm_status: "quantized"
-    evidence: ""
+    evidence: "[机生 evidence src=market_pattern_win_rate 物化=2026-09-14] w10: 空 hit=47.9% avg=+1.40% n=45605 | w20: 空 hit=48.2% avg=+2.36% n=45349 | regime: r1(空) hit=50.5% n=15655 / r3(空) hit=54.9% n=11694 / r10(空) hit=34.5% n=8901 / r2(空) hit=43.3% n=6508 / r4(空) hit=56.6% n=2718"
     code_symbol: "src/zephyr/signal_ashare/strategy_signal/candlestick_scanner.py::scan_candles"
     code_fingerprint: null
-
+    applicable_series: ["time_bars"]
   - pattern_id: "PAT-CANDLE-010"
     name: "Gravestone Doji"
     name_zh: "墓碑十字"
@@ -634,10 +634,10 @@ chart_patterns:
     applies_to: []
     tags: ["反转", "机器学习", "k线", "形态"]
     algorithm_status: "quantized"
-    evidence: ""
+    evidence: "[机生 evidence src=market_pattern_win_rate 物化=2026-09-14] w10: 多 hit=48.3% avg=+0.56% n=103561 | w20: 多 hit=47.8% avg=+0.99% n=102923 | regime: r1(多) hit=47.2% n=37575 / r3(多) hit=41.4% n=26306 / r2(多) hit=47.2% n=15290 / r10(多) hit=66.4% n=15135 / r4(多) hit=45.0% n=8916"
     code_symbol: "src/zephyr/signal_ashare/strategy_signal/candlestick_scanner.py::scan_candles"
     code_fingerprint: null
-
+    applicable_series: ["time_bars"]
   - pattern_id: "PAT-CANDLE-011"
     name: "Dragonfly Doji"
     name_zh: "蜻蜓十字"
@@ -675,10 +675,10 @@ chart_patterns:
     applies_to: []
     tags: ["反转", "机器学习", "k线", "形态"]
     algorithm_status: "quantized"
-    evidence: ""
+    evidence: "[机生 evidence src=market_pattern_win_rate 物化=2026-09-14] w10: 多 hit=47.2% avg=+0.29% n=88266 | w20: 多 hit=46.6% avg=+0.56% n=87260 | regime: r1(多) hit=48.5% n=32979 / r3(多) hit=41.5% n=22004 / r2(多) hit=49.0% n=13176 / r10(多) hit=58.2% n=10645 / r4(多) hit=42.0% n=8566"
     code_symbol: "src/zephyr/signal_ashare/strategy_signal/candlestick_scanner.py::scan_candles"
     code_fingerprint: null
-
+    applicable_series: ["time_bars"]
   - pattern_id: "PAT-CANDLE-012"
     name: "Long-legged Doji"
     name_zh: "长腿十字"
@@ -716,10 +716,10 @@ chart_patterns:
     applies_to: []
     tags: ["机器学习", "k线", "形态"]
     algorithm_status: "quantized"
-    evidence: ""
+    evidence: "[机生 evidence src=market_pattern_win_rate 物化=2026-09-14] w10: 多 hit=47.4% avg=+0.29% n=846503 | w20: 多 hit=47.0% avg=+0.64% n=838991 | regime: r1(多) hit=47.7% n=315218 / r3(多) hit=42.8% n=220268 / r2(多) hit=47.7% n=130311 / r10(多) hit=58.9% n=101887 / r4(多) hit=43.6% n=76107"
     code_symbol: "src/zephyr/signal_ashare/strategy_signal/candlestick_scanner.py::scan_candles"
     code_fingerprint: null
-
+    applicable_series: ["time_bars"]
   - pattern_id: "PAT-CANDLE-013"
     name: "Spinning Top"
     name_zh: "纺锤顶"
@@ -757,10 +757,10 @@ chart_patterns:
     applies_to: []
     tags: ["机器学习", "k线", "形态"]
     algorithm_status: "quantized"
-    evidence: ""
+    evidence: "[机生 evidence src=market_pattern_win_rate 物化=2026-09-14] w10: 多 hit=47.3% avg=+0.26% n=738168 / 空 hit=52.6% avg=+0.16% n=538723 | w20: 多 hit=47.1% avg=+0.61% n=731503 / 空 hit=53.4% avg=+0.38% n=533966 | regime: r1(多) hit=47.8% n=278296 / r1(空) hit=52.3% n=196935 / r3(多) hit=43.4% n=191906 / r3(空) hit=56.7% n=143821 / r2(多) hit=47.3% n=115046"
     code_symbol: "src/zephyr/signal_ashare/strategy_signal/candlestick_scanner.py::scan_candles"
     code_fingerprint: null
-
+    applicable_series: ["time_bars"]
   - pattern_id: "PAT-CANDLE-014"
     name: "Marubozu"
     name_zh: "光头光脚大实体线"
@@ -798,10 +798,10 @@ chart_patterns:
     applies_to: []
     tags: ["持续", "机器学习", "k线", "形态"]
     algorithm_status: "quantized"
-    evidence: ""
+    evidence: "[机生 evidence src=market_pattern_win_rate 物化=2026-09-14] w10: 多 hit=51.6% avg=+1.17% n=135227 / 空 hit=51.4% avg=+0.44% n=198988 | w20: 多 hit=50.3% avg=+1.57% n=134015 / 空 hit=51.3% avg=+1.02% n=197762 | regime: r1(空) hit=49.3% n=69309 / r3(空) hit=54.7% n=54646 / r1(多) hit=54.0% n=51197 / r2(空) hit=54.9% n=34266 / r3(多) hit=44.4% n=33529"
     code_symbol: "src/zephyr/signal_ashare/strategy_signal/candlestick_scanner.py::scan_candles"
     code_fingerprint: null
-
+    applicable_series: ["time_bars"]
   - pattern_id: "PAT-CANDLE-015"
     name: "Closing Marubozu"
     name_zh: "收盘光头光脚线"
@@ -839,10 +839,10 @@ chart_patterns:
     applies_to: []
     tags: ["持续", "机器学习", "k线", "形态"]
     algorithm_status: "quantized"
-    evidence: ""
+    evidence: "[机生 evidence src=market_pattern_win_rate 物化=2026-09-14] w10: 多 hit=49.3% avg=+0.70% n=375502 / 空 hit=50.2% avg=+0.62% n=502178 | w20: 多 hit=48.3% avg=+1.11% n=371379 / 空 hit=50.8% avg=+1.15% n=498879 | regime: r1(空) hit=48.1% n=179740 / r3(空) hit=52.8% n=142725 / r1(多) hit=50.7% n=136400 / r3(多) hit=42.9% n=95318 / r2(空) hit=54.0% n=81360"
     code_symbol: "src/zephyr/signal_ashare/strategy_signal/candlestick_scanner.py::scan_candles"
     code_fingerprint: null
-
+    applicable_series: ["time_bars"]
   - pattern_id: "PAT-CANDLE-016"
     name: "High-Wave"
     name_zh: "高浪线"
@@ -880,10 +880,10 @@ chart_patterns:
     applies_to: []
     tags: ["机器学习", "k线", "形态"]
     algorithm_status: "quantized"
-    evidence: ""
+    evidence: "[机生 evidence src=market_pattern_win_rate 物化=2026-09-14] w10: 多 hit=47.4% avg=+0.29% n=462924 / 空 hit=52.8% avg=+0.14% n=290439 | w20: 多 hit=47.2% avg=+0.66% n=458797 / 空 hit=53.5% avg=+0.37% n=287831 | regime: r1(多) hit=48.0% n=174378 / r3(多) hit=43.6% n=120785 / r1(空) hit=52.4% n=106241 / r3(空) hit=56.8% n=77281 / r2(多) hit=47.4% n=72733"
     code_symbol: "src/zephyr/signal_ashare/strategy_signal/candlestick_scanner.py::scan_candles"
     code_fingerprint: null
-
+    applicable_series: ["time_bars"]
   - pattern_id: "PAT-CANDLE-017"
     name: "Rickshaw Man"
     name_zh: "黄包车夫"
@@ -921,10 +921,10 @@ chart_patterns:
     applies_to: []
     tags: ["机器学习", "k线", "形态"]
     algorithm_status: "quantized"
-    evidence: ""
+    evidence: "[机生 evidence src=market_pattern_win_rate 物化=2026-09-14] w10: 多 hit=47.2% avg=+0.26% n=616619 | w20: 多 hit=47.0% avg=+0.61% n=611076 | regime: r1(多) hit=47.5% n=231199 / r3(多) hit=42.8% n=160315 / r2(多) hit=47.2% n=95340 / r10(多) hit=58.8% n=74002 / r4(多) hit=43.3% n=54622"
     code_symbol: "src/zephyr/signal_ashare/strategy_signal/candlestick_scanner.py::scan_candles"
     code_fingerprint: null
-
+    applicable_series: ["time_bars"]
   - pattern_id: "PAT-CANDLE-018"
     name: "Takuri"
     name_zh: "探水竿"
@@ -962,10 +962,10 @@ chart_patterns:
     applies_to: []
     tags: ["反转", "机器学习", "k线", "形态"]
     algorithm_status: "quantized"
-    evidence: ""
+    evidence: "[机生 evidence src=market_pattern_win_rate 物化=2026-09-14] w10: 多 hit=47.1% avg=+0.28% n=85818 | w20: 多 hit=46.6% avg=+0.56% n=84834 | regime: r1(多) hit=48.5% n=31991 / r3(多) hit=41.7% n=21464 / r2(多) hit=48.9% n=12813 / r10(多) hit=57.6% n=10294 / r4(多) hit=42.1% n=8358"
     code_symbol: "src/zephyr/signal_ashare/strategy_signal/candlestick_scanner.py::scan_candles"
     code_fingerprint: null
-
+    applicable_series: ["time_bars"]
   - pattern_id: "PAT-CANDLE-019"
     name: "Belt Hold"
     name_zh: "腰带线"
@@ -1003,10 +1003,10 @@ chart_patterns:
     applies_to: []
     tags: ["反转", "机器学习", "k线", "形态"]
     algorithm_status: "quantized"
-    evidence: ""
+    evidence: "[机生 evidence src=market_pattern_win_rate 物化=2026-09-14] w10: 多 hit=48.9% avg=+0.65% n=472774 / 空 hit=52.2% avg=+0.30% n=544572 | w20: 多 hit=48.1% avg=+1.05% n=468453 / 空 hit=52.4% avg=+0.72% n=540170 | regime: r1(空) hit=50.3% n=195067 / r1(多) hit=50.1% n=176894 / r3(空) hit=56.0% n=148037 / r3(多) hit=42.6% n=120511 / r2(空) hit=54.0% n=93377"
     code_symbol: "src/zephyr/signal_ashare/strategy_signal/candlestick_scanner.py::scan_candles"
     code_fingerprint: null
-
+    applicable_series: ["time_bars"]
   - pattern_id: "PAT-CANDLE-020"
     name: "Harami"
     name_zh: "孕线"
@@ -1044,10 +1044,10 @@ chart_patterns:
     applies_to: []
     tags: ["反转", "机器学习", "k线", "形态"]
     algorithm_status: "quantized"
-    evidence: ""
+    evidence: "[机生 evidence src=market_pattern_win_rate 物化=2026-09-14] w10: 多 hit=48.3% avg=+0.36% n=263185 / 空 hit=53.0% avg=+0.06% n=296959 | w20: 多 hit=47.7% avg=+0.86% n=260393 / 空 hit=54.1% avg=+0.21% n=293468 | regime: r1(空) hit=52.7% n=110992 / r1(多) hit=48.0% n=91314 / r3(空) hit=57.1% n=79435 / r3(多) hit=45.1% n=73774 / r2(多) hit=46.3% n=45595"
     code_symbol: "src/zephyr/signal_ashare/strategy_signal/candlestick_scanner.py::scan_candles"
     code_fingerprint: null
-
+    applicable_series: ["time_bars"]
   - pattern_id: "PAT-CANDLE-021"
     name: "Harami Cross"
     name_zh: "孕线十字"
@@ -1085,10 +1085,10 @@ chart_patterns:
     applies_to: []
     tags: ["反转", "机器学习", "k线", "形态"]
     algorithm_status: "quantized"
-    evidence: ""
+    evidence: "[机生 evidence src=market_pattern_win_rate 物化=2026-09-14] w10: 多 hit=47.2% avg=+0.21% n=82654 / 空 hit=52.1% avg=+0.16% n=86923 | w20: 多 hit=46.7% avg=+0.63% n=81833 / 空 hit=53.3% avg=+0.35% n=85808 | regime: r1(空) hit=52.0% n=32812 / r1(多) hit=46.9% n=29003 / r3(空) hit=56.4% n=23028 / r3(多) hit=44.2% n=23011 / r2(多) hit=46.5% n=14529"
     code_symbol: "src/zephyr/signal_ashare/strategy_signal/candlestick_scanner.py::scan_candles"
     code_fingerprint: null
-
+    applicable_series: ["time_bars"]
   - pattern_id: "PAT-CANDLE-022"
     name: "Morning Doji Star"
     name_zh: "启明十字星"
@@ -1126,10 +1126,10 @@ chart_patterns:
     applies_to: []
     tags: ["反转", "机器学习", "k线", "形态"]
     algorithm_status: "quantized"
-    evidence: ""
+    evidence: "[机生 evidence src=market_pattern_win_rate 物化=2026-09-14] w10: 多 hit=48.4% avg=+0.36% n=10451 | w20: 多 hit=48.3% avg=+1.31% n=10371 | regime: r1(多) hit=51.5% n=3914 / r3(多) hit=44.3% n=2953"
     code_symbol: "src/zephyr/signal_ashare/strategy_signal/candlestick_scanner.py::scan_candles"
     code_fingerprint: null
-
+    applicable_series: ["time_bars"]
   - pattern_id: "PAT-CANDLE-023"
     name: "Evening Doji Star"
     name_zh: "黄昏十字星"
@@ -1167,10 +1167,10 @@ chart_patterns:
     applies_to: []
     tags: ["反转", "机器学习", "k线", "形态"]
     algorithm_status: "quantized"
-    evidence: ""
+    evidence: "[机生 evidence src=market_pattern_win_rate 物化=2026-09-14] w10: 空 hit=53.2% avg=-0.26% n=7026 | w20: 空 hit=53.9% avg=-0.10% n=6953 | regime: r1(空) hit=51.8% n=2509"
     code_symbol: "src/zephyr/signal_ashare/strategy_signal/candlestick_scanner.py::scan_candles"
     code_fingerprint: null
-
+    applicable_series: ["time_bars"]
   - pattern_id: "PAT-CANDLE-024"
     name: "Doji Star"
     name_zh: "十字星组合"
@@ -1208,10 +1208,10 @@ chart_patterns:
     applies_to: []
     tags: ["反转", "机器学习", "k线", "形态", "组合"]
     algorithm_status: "quantized"
-    evidence: ""
+    evidence: "[机生 evidence src=market_pattern_win_rate 物化=2026-09-14] w10: 多 hit=45.8% avg=-0.13% n=67322 / 空 hit=49.0% avg=+1.02% n=51249 | w20: 多 hit=45.9% avg=+0.41% n=66913 / 空 hit=49.5% avg=+1.79% n=50810 | regime: r1(多) hit=49.0% n=24379 / r1(空) hit=48.7% n=18348 / r3(多) hit=40.9% n=18314 / r3(空) hit=53.8% n=12906 / r2(多) hit=43.9% n=10879"
     code_symbol: "src/zephyr/signal_ashare/strategy_signal/candlestick_scanner.py::scan_candles"
     code_fingerprint: null
-
+    applicable_series: ["time_bars"]
   - pattern_id: "PAT-CANDLE-025"
     name: "Piercing Pattern"
     name_zh: "刺透线"
@@ -1249,10 +1249,10 @@ chart_patterns:
     applies_to: []
     tags: ["反转", "机器学习", "k线", "形态"]
     algorithm_status: "quantized"
-    evidence: ""
+    evidence: "[机生 evidence src=market_pattern_win_rate 物化=2026-09-14] w10: 多 hit=50.8% avg=+0.85% n=22354 | w20: 多 hit=49.6% avg=+1.45% n=22202 | regime: r1(多) hit=54.9% n=8919 / r3(多) hit=43.9% n=5604 / r10(多) hit=63.7% n=3368 / r2(多) hit=38.6% n=2818"
     code_symbol: "src/zephyr/signal_ashare/strategy_signal/candlestick_scanner.py::scan_candles"
     code_fingerprint: null
-
+    applicable_series: ["time_bars"]
   - pattern_id: "PAT-CANDLE-026"
     name: "Dark Cloud Cover"
     name_zh: "乌云盖顶"
@@ -1290,10 +1290,10 @@ chart_patterns:
     applies_to: []
     tags: ["反转", "机器学习", "k线", "形态"]
     algorithm_status: "quantized"
-    evidence: ""
+    evidence: "[机生 evidence src=market_pattern_win_rate 物化=2026-09-14] w10: 空 hit=54.0% avg=-0.10% n=17047 | w20: 空 hit=54.4% avg=+0.08% n=16898 | regime: r1(空) hit=51.2% n=6088 / r3(空) hit=55.7% n=4506 / r2(空) hit=58.9% n=2508 / r10(空) hit=46.7% n=2297"
     code_symbol: "src/zephyr/signal_ashare/strategy_signal/candlestick_scanner.py::scan_candles"
     code_fingerprint: null
-
+    applicable_series: ["time_bars"]
   - pattern_id: "PAT-CANDLE-027"
     name: "Kicking"
     name_zh: "反冲双胞胎"
@@ -1331,10 +1331,10 @@ chart_patterns:
     applies_to: []
     tags: ["反转", "机器学习", "k线", "形态"]
     algorithm_status: "quantized"
-    evidence: ""
+    evidence: "[机生 evidence src=market_pattern_win_rate 物化=2026-09-14] w10: 多 hit=48.6% avg=+1.14% n=37 / 空 hit=33.3% avg=+3.72% n=39 | w20: 多 hit=33.3% avg=-3.31% n=36 / 空 hit=23.1% avg=+9.43% n=39"
     code_symbol: "src/zephyr/signal_ashare/strategy_signal/candlestick_scanner.py::scan_candles"
     code_fingerprint: null
-
+    applicable_series: ["time_bars"]
   - pattern_id: "PAT-CANDLE-028"
     name: "Kicking by Length"
     name_zh: "长度反冲"
@@ -1372,10 +1372,10 @@ chart_patterns:
     applies_to: []
     tags: ["反转", "机器学习", "k线", "形态"]
     algorithm_status: "quantized"
-    evidence: ""
+    evidence: "[机生 evidence src=market_pattern_win_rate 物化=2026-09-14] w10: 多 hit=48.7% avg=+1.66% n=39 / 空 hit=32.4% avg=+3.32% n=37 | w20: 多 hit=34.2% avg=-2.64% n=38 / 空 hit=21.6% avg=+9.43% n=37"
     code_symbol: "src/zephyr/signal_ashare/strategy_signal/candlestick_scanner.py::scan_candles"
     code_fingerprint: null
-
+    applicable_series: ["time_bars"]
   - pattern_id: "PAT-CANDLE-029"
     name: "Three White Soldiers"
     name_zh: "红三兵"
@@ -1413,10 +1413,10 @@ chart_patterns:
     applies_to: []
     tags: ["持续", "机器学习", "k线", "形态"]
     algorithm_status: "quantized"
-    evidence: ""
+    evidence: "[机生 evidence src=market_pattern_win_rate 物化=2026-09-14] w10: 多 hit=46.8% avg=-0.55% n=1861 | w20: 多 hit=45.1% avg=-0.41% n=1848"
     code_symbol: "src/zephyr/signal_ashare/strategy_signal/candlestick_scanner.py::scan_candles"
     code_fingerprint: null
-
+    applicable_series: ["time_bars"]
   - pattern_id: "PAT-CANDLE-030"
     name: "Three Black Crows"
     name_zh: "三只乌鸦"
@@ -1454,10 +1454,10 @@ chart_patterns:
     applies_to: []
     tags: ["持续", "机器学习", "k线", "形态"]
     algorithm_status: "quantized"
-    evidence: ""
+    evidence: "[机生 evidence src=market_pattern_win_rate 物化=2026-09-14] w10: 空 hit=48.3% avg=+2.10% n=1303 | w20: 空 hit=46.7% avg=+3.48% n=1303"
     code_symbol: "src/zephyr/signal_ashare/strategy_signal/candlestick_scanner.py::scan_candles"
     code_fingerprint: null
-
+    applicable_series: ["time_bars"]
   - pattern_id: "PAT-CANDLE-031"
     name: "Identical Three Crows"
     name_zh: "同款三乌鸦"
@@ -1495,10 +1495,10 @@ chart_patterns:
     applies_to: []
     tags: ["持续", "机器学习", "k线", "形态"]
     algorithm_status: "quantized"
-    evidence: ""
+    evidence: "[机生 evidence src=market_pattern_win_rate 物化=2026-09-14] w10: 空 hit=51.0% avg=+0.33% n=2219 | w20: 空 hit=48.9% avg=+1.56% n=2216"
     code_symbol: "src/zephyr/signal_ashare/strategy_signal/candlestick_scanner.py::scan_candles"
     code_fingerprint: null
-
+    applicable_series: ["time_bars"]
   - pattern_id: "PAT-CANDLE-032"
     name: "Three Inside Up/Down"
     name_zh: "内含三线"
@@ -1536,10 +1536,10 @@ chart_patterns:
     applies_to: []
     tags: ["反转", "机器学习", "k线", "形态"]
     algorithm_status: "quantized"
-    evidence: ""
+    evidence: "[机生 evidence src=market_pattern_win_rate 物化=2026-09-14] w10: 多 hit=47.9% avg=+0.39% n=38107 / 空 hit=52.8% avg=+0.10% n=46324 | w20: 多 hit=46.7% avg=+0.80% n=37473 / 空 hit=55.0% avg=-0.01% n=45616 | regime: r1(空) hit=51.5% n=16341 / r1(多) hit=46.0% n=14451 / r3(空) hit=55.8% n=13181 / r3(多) hit=46.8% n=11547 / r2(空) hit=50.9% n=7608"
     code_symbol: "src/zephyr/signal_ashare/strategy_signal/candlestick_scanner.py::scan_candles"
     code_fingerprint: null
-
+    applicable_series: ["time_bars"]
   - pattern_id: "PAT-CANDLE-033"
     name: "Three Outside Up/Down"
     name_zh: "外包三线"
@@ -1577,10 +1577,10 @@ chart_patterns:
     applies_to: []
     tags: ["反转", "机器学习", "k线", "形态"]
     algorithm_status: "quantized"
-    evidence: ""
+    evidence: "[机生 evidence src=market_pattern_win_rate 物化=2026-09-14] w10: 多 hit=48.1% avg=+0.46% n=114626 / 空 hit=52.5% avg=+0.29% n=113726 | w20: 多 hit=46.8% avg=+0.66% n=113372 / 空 hit=53.1% avg=+0.60% n=113105 | regime: r1(多) hit=48.1% n=42350 / r1(空) hit=51.7% n=42088 / r3(空) hit=55.7% n=31093 / r3(多) hit=42.5% n=27341 / r2(空) hit=52.4% n=20490"
     code_symbol: "src/zephyr/signal_ashare/strategy_signal/candlestick_scanner.py::scan_candles"
     code_fingerprint: null
-
+    applicable_series: ["time_bars"]
   - pattern_id: "PAT-CANDLE-034"
     name: "Three-Line Strike"
     name_zh: "三线打击"
@@ -1618,10 +1618,10 @@ chart_patterns:
     applies_to: []
     tags: ["反转", "机器学习", "k线", "形态"]
     algorithm_status: "quantized"
-    evidence: ""
+    evidence: "[机生 evidence src=market_pattern_win_rate 物化=2026-09-14] w10: 多 hit=57.6% avg=+2.17% n=4877 / 空 hit=52.9% avg=+0.38% n=4675 | w20: 多 hit=56.3% avg=+2.47% n=4847 / 空 hit=53.9% avg=+0.23% n=4631 | regime: r1(多) hit=68.3% n=2047"
     code_symbol: "src/zephyr/signal_ashare/strategy_signal/candlestick_scanner.py::scan_candles"
     code_fingerprint: null
-
+    applicable_series: ["time_bars"]
   - pattern_id: "PAT-CANDLE-035"
     name: "Three Stars in the South"
     name_zh: "南方三星"
@@ -1662,7 +1662,7 @@ chart_patterns:
     evidence: ""
     code_symbol: "src/zephyr/signal_ashare/strategy_signal/candlestick_scanner.py::scan_candles"
     code_fingerprint: null
-
+    applicable_series: ["time_bars"]
   - pattern_id: "PAT-CANDLE-036"
     name: "Unique Three River"
     name_zh: "独特三河底"
@@ -1700,10 +1700,10 @@ chart_patterns:
     applies_to: []
     tags: ["反转", "机器学习", "k线", "形态"]
     algorithm_status: "quantized"
-    evidence: ""
+    evidence: "[机生 evidence src=market_pattern_win_rate 物化=2026-09-14] w10: 多 hit=47.1% avg=-0.05% n=6987 | w20: 多 hit=46.6% avg=+0.69% n=6801 | regime: r1(多) hit=46.4% n=2516 / r3(多) hit=44.5% n=2058"
     code_symbol: "src/zephyr/signal_ashare/strategy_signal/candlestick_scanner.py::scan_candles"
     code_fingerprint: null
-
+    applicable_series: ["time_bars"]
   - pattern_id: "PAT-CANDLE-037"
     name: "Ladder Bottom"
     name_zh: "阶梯底"
@@ -1741,10 +1741,10 @@ chart_patterns:
     applies_to: []
     tags: ["反转", "机器学习", "k线", "形态"]
     algorithm_status: "quantized"
-    evidence: ""
+    evidence: "[机生 evidence src=market_pattern_win_rate 物化=2026-09-14] w10: 多 hit=48.7% avg=+0.24% n=4678 | w20: 多 hit=46.6% avg=+0.72% n=4638"
     code_symbol: "src/zephyr/signal_ashare/strategy_signal/candlestick_scanner.py::scan_candles"
     code_fingerprint: null
-
+    applicable_series: ["time_bars"]
   - pattern_id: "PAT-CANDLE-038"
     name: "Stick Sandwich"
     name_zh: "条形三明治"
@@ -1782,10 +1782,10 @@ chart_patterns:
     applies_to: []
     tags: ["反转", "机器学习", "k线", "形态"]
     algorithm_status: "quantized"
-    evidence: ""
+    evidence: "[机生 evidence src=market_pattern_win_rate 物化=2026-09-14] w10: 多 hit=47.5% avg=+0.27% n=5268 | w20: 多 hit=46.5% avg=+0.43% n=5205 | regime: r1(多) hit=46.3% n=2103"
     code_symbol: "src/zephyr/signal_ashare/strategy_signal/candlestick_scanner.py::scan_candles"
     code_fingerprint: null
-
+    applicable_series: ["time_bars"]
   - pattern_id: "PAT-CANDLE-039"
     name: "Tristar"
     name_zh: "三星形态"
@@ -1823,10 +1823,10 @@ chart_patterns:
     applies_to: []
     tags: ["反转", "机器学习", "k线", "形态"]
     algorithm_status: "quantized"
-    evidence: ""
+    evidence: "[机生 evidence src=market_pattern_win_rate 物化=2026-09-14] w10: 多 hit=45.5% avg=+0.54% n=3037 / 空 hit=53.6% avg=+0.42% n=2823 | w20: 多 hit=46.5% avg=+0.66% n=3013 / 空 hit=54.8% avg=+0.48% n=2802"
     code_symbol: "src/zephyr/signal_ashare/strategy_signal/candlestick_scanner.py::scan_candles"
     code_fingerprint: null
-
+    applicable_series: ["time_bars"]
   - pattern_id: "PAT-CANDLE-040"
     name: "Abandoned Baby"
     name_zh: "弃婴"
@@ -1864,10 +1864,10 @@ chart_patterns:
     applies_to: []
     tags: ["反转", "机器学习", "k线", "形态"]
     algorithm_status: "quantized"
-    evidence: ""
+    evidence: "[机生 evidence src=market_pattern_win_rate 物化=2026-09-14] w10: 多 hit=61.3% avg=+3.77% n=31 / 空 hit=55.3% avg=-2.24% n=38 | w20: 多 hit=58.1% avg=+5.83% n=31 / 空 hit=55.3% avg=+1.91% n=38"
     code_symbol: "src/zephyr/signal_ashare/strategy_signal/candlestick_scanner.py::scan_candles"
     code_fingerprint: null
-
+    applicable_series: ["time_bars"]
   - pattern_id: "PAT-CANDLE-041"
     name: "Concealing Baby Swallow"
     name_zh: "藏燕吞没"
@@ -1905,10 +1905,10 @@ chart_patterns:
     applies_to: []
     tags: ["反转", "机器学习", "k线", "形态"]
     algorithm_status: "quantized"
-    evidence: ""
+    evidence: "[机生 evidence src=market_pattern_win_rate 物化=2026-09-14] w10: 多 hit=71.0% avg=+4.30% n=31 | w20: 多 hit=71.0% avg=+7.43% n=31"
     code_symbol: "src/zephyr/signal_ashare/strategy_signal/candlestick_scanner.py::scan_candles"
     code_fingerprint: null
-
+    applicable_series: ["time_bars"]
   - pattern_id: "PAT-CANDLE-042"
     name: "Advance Block"
     name_zh: "大敌当前"
@@ -1946,10 +1946,10 @@ chart_patterns:
     applies_to: []
     tags: ["持续", "机器学习", "k线", "形态"]
     algorithm_status: "quantized"
-    evidence: ""
+    evidence: "[机生 evidence src=market_pattern_win_rate 物化=2026-09-14] w10: 空 hit=47.2% avg=+0.97% n=35960 | w20: 空 hit=46.9% avg=+1.72% n=35677 | regime: r1(空) hit=44.5% n=13276 / r3(空) hit=50.6% n=9298 / r2(空) hit=47.5% n=5504 / r10(空) hit=46.3% n=5324 / r4(空) hit=50.5% n=2509"
     code_symbol: "src/zephyr/signal_ashare/strategy_signal/candlestick_scanner.py::scan_candles"
     code_fingerprint: null
-
+    applicable_series: ["time_bars"]
   - pattern_id: "PAT-CANDLE-043"
     name: "Stalled Pattern"
     name_zh: "停滞形态"
@@ -1990,7 +1990,7 @@ chart_patterns:
     evidence: ""
     code_symbol: "src/zephyr/signal_ashare/strategy_signal/candlestick_scanner.py::scan_candles"
     code_fingerprint: null
-
+    applicable_series: ["time_bars"]
   - pattern_id: "PAT-CANDLE-044"
     name: "Upside Gap Two Crows"
     name_zh: "向上跳空双鸦"
@@ -2028,10 +2028,10 @@ chart_patterns:
     applies_to: []
     tags: ["反转", "缺口", "机器学习", "k线", "形态"]
     algorithm_status: "quantized"
-    evidence: ""
+    evidence: "[机生 evidence src=market_pattern_win_rate 物化=2026-09-14] w10: 空 hit=51.4% avg=+0.05% n=650 | w20: 空 hit=51.9% avg=+0.54% n=647"
     code_symbol: "src/zephyr/signal_ashare/strategy_signal/candlestick_scanner.py::scan_candles"
     code_fingerprint: null
-
+    applicable_series: ["time_bars"]
   - pattern_id: "PAT-CANDLE-045"
     name: "Two Crows"
     name_zh: "两只乌鸦"
@@ -2069,10 +2069,10 @@ chart_patterns:
     applies_to: []
     tags: ["反转", "机器学习", "k线", "形态"]
     algorithm_status: "quantized"
-    evidence: ""
+    evidence: "[机生 evidence src=market_pattern_win_rate 物化=2026-09-14] w10: 空 hit=51.4% avg=+0.40% n=2590 | w20: 空 hit=53.0% avg=+0.75% n=2574"
     code_symbol: "src/zephyr/signal_ashare/strategy_signal/candlestick_scanner.py::scan_candles"
     code_fingerprint: null
-
+    applicable_series: ["time_bars"]
   - pattern_id: "PAT-CANDLE-046"
     name: "Homing Pigeon"
     name_zh: "归鸽"
@@ -2110,10 +2110,10 @@ chart_patterns:
     applies_to: []
     tags: ["反转", "机器学习", "k线", "形态"]
     algorithm_status: "quantized"
-    evidence: ""
+    evidence: "[机生 evidence src=market_pattern_win_rate 物化=2026-09-14] w10: 多 hit=48.2% avg=+0.39% n=46772 | w20: 多 hit=46.6% avg=+0.74% n=46052 | regime: r1(多) hit=45.9% n=15995 / r3(多) hit=46.5% n=13975 / r2(多) hit=47.5% n=7841 / r10(多) hit=59.9% n=5742 / r4(多) hit=46.7% n=3117"
     code_symbol: "src/zephyr/signal_ashare/strategy_signal/candlestick_scanner.py::scan_candles"
     code_fingerprint: null
-
+    applicable_series: ["time_bars"]
   - pattern_id: "PAT-CANDLE-047"
     name: "Matching Low"
     name_zh: "相抵双阳"
@@ -2151,10 +2151,10 @@ chart_patterns:
     applies_to: []
     tags: ["持续", "机器学习", "k线", "形态"]
     algorithm_status: "quantized"
-    evidence: ""
+    evidence: "[机生 evidence src=market_pattern_win_rate 物化=2026-09-14] w10: 多 hit=46.6% avg=+0.15% n=89546 | w20: 多 hit=46.2% avg=+0.47% n=88855 | regime: r1(多) hit=45.8% n=31832 / r3(多) hit=44.5% n=24818 / r2(多) hit=48.2% n=15566 / r10(多) hit=54.0% n=8989 / r4(多) hit=44.4% n=8159"
     code_symbol: "src/zephyr/signal_ashare/strategy_signal/candlestick_scanner.py::scan_candles"
     code_fingerprint: null
-
+    applicable_series: ["time_bars"]
   - pattern_id: "PAT-CANDLE-048"
     name: "In Neck"
     name_zh: "入颈线"
@@ -2192,10 +2192,10 @@ chart_patterns:
     applies_to: []
     tags: ["持续", "机器学习", "k线", "形态"]
     algorithm_status: "quantized"
-    evidence: ""
+    evidence: "[机生 evidence src=market_pattern_win_rate 物化=2026-09-14] w10: 空 hit=52.4% avg=+0.13% n=11990 | w20: 空 hit=52.6% avg=+0.82% n=11927 | regime: r1(空) hit=50.3% n=4473 / r3(空) hit=55.0% n=3341"
     code_symbol: "src/zephyr/signal_ashare/strategy_signal/candlestick_scanner.py::scan_candles"
     code_fingerprint: null
-
+    applicable_series: ["time_bars"]
   - pattern_id: "PAT-CANDLE-049"
     name: "On Neck"
     name_zh: "上颈线"
@@ -2233,10 +2233,10 @@ chart_patterns:
     applies_to: []
     tags: ["持续", "机器学习", "k线", "形态"]
     algorithm_status: "quantized"
-    evidence: ""
+    evidence: "[机生 evidence src=market_pattern_win_rate 物化=2026-09-14] w10: 空 hit=52.7% avg=+0.20% n=17183 | w20: 空 hit=52.4% avg=+0.99% n=17102 | regime: r1(空) hit=51.5% n=6324 / r3(空) hit=55.2% n=4821 / r2(空) hit=56.4% n=2488 / r10(空) hit=47.8% n=2212"
     code_symbol: "src/zephyr/signal_ashare/strategy_signal/candlestick_scanner.py::scan_candles"
     code_fingerprint: null
-
+    applicable_series: ["time_bars"]
   - pattern_id: "PAT-CANDLE-050"
     name: "Thrusting"
     name_zh: "插入线"
@@ -2274,10 +2274,10 @@ chart_patterns:
     applies_to: []
     tags: ["持续", "机器学习", "k线", "形态"]
     algorithm_status: "quantized"
-    evidence: ""
+    evidence: "[机生 evidence src=market_pattern_win_rate 物化=2026-09-14] w10: 空 hit=50.6% avg=+0.45% n=55618 | w20: 空 hit=50.6% avg=+1.28% n=55351 | regime: r1(空) hit=47.5% n=20851 / r3(空) hit=55.8% n=14856 / r10(空) hit=40.4% n=8075 / r2(空) hit=59.3% n=7554 / r4(空) hit=51.1% n=4254"
     code_symbol: "src/zephyr/signal_ashare/strategy_signal/candlestick_scanner.py::scan_candles"
     code_fingerprint: null
-
+    applicable_series: ["time_bars"]
   - pattern_id: "PAT-CANDLE-051"
     name: "Counterattack"
     name_zh: "反击线"
@@ -2315,10 +2315,10 @@ chart_patterns:
     applies_to: []
     tags: ["反转", "机器学习", "k线", "形态"]
     algorithm_status: "quantized"
-    evidence: ""
+    evidence: "[机生 evidence src=market_pattern_win_rate 物化=2026-09-14] w10: 多 hit=49.5% avg=+0.90% n=1939 / 空 hit=54.9% avg=-0.30% n=2725 | w20: 多 hit=48.3% avg=+1.59% n=1917 / 空 hit=56.3% avg=-0.17% n=2702"
     code_symbol: "src/zephyr/signal_ashare/strategy_signal/candlestick_scanner.py::scan_candles"
     code_fingerprint: null
-
+    applicable_series: ["time_bars"]
   - pattern_id: "PAT-CANDLE-052"
     name: "Separating Lines"
     name_zh: "分手线"
@@ -2356,10 +2356,10 @@ chart_patterns:
     applies_to: []
     tags: ["持续", "机器学习", "k线", "形态"]
     algorithm_status: "quantized"
-    evidence: ""
+    evidence: "[机生 evidence src=market_pattern_win_rate 物化=2026-09-14] w10: 多 hit=48.5% avg=+0.65% n=9056 / 空 hit=52.3% avg=+0.23% n=20778 | w20: 多 hit=47.1% avg=+1.11% n=8979 / 空 hit=52.9% avg=+0.53% n=20567 | regime: r1(空) hit=49.6% n=7399 / r3(空) hit=57.4% n=5692 / r2(空) hit=55.1% n=3748 / r1(多) hit=50.2% n=3401 / r3(多) hit=43.2% n=2527"
     code_symbol: "src/zephyr/signal_ashare/strategy_signal/candlestick_scanner.py::scan_candles"
     code_fingerprint: null
-
+    applicable_series: ["time_bars"]
   - pattern_id: "PAT-CANDLE-053"
     name: "Side-by-side White Lines"
     name_zh: "并排阳线"
@@ -2397,10 +2397,10 @@ chart_patterns:
     applies_to: []
     tags: ["持续", "机器学习", "k线", "形态"]
     algorithm_status: "quantized"
-    evidence: ""
+    evidence: "[机生 evidence src=market_pattern_win_rate 物化=2026-09-14] w10: 多 hit=51.0% avg=+0.89% n=10505 / 空 hit=52.0% avg=+0.06% n=6053 | w20: 多 hit=51.5% avg=+1.71% n=10425 / 空 hit=54.0% avg=-0.18% n=5979 | regime: r1(多) hit=51.4% n=4073 / r3(多) hit=45.3% n=2684 / r1(空) hit=50.0% n=2352"
     code_symbol: "src/zephyr/signal_ashare/strategy_signal/candlestick_scanner.py::scan_candles"
     code_fingerprint: null
-
+    applicable_series: ["time_bars"]
   - pattern_id: "PAT-CANDLE-054"
     name: "Rising/Falling Three Methods"
     name_zh: "上升/下降三法"
@@ -2438,10 +2438,10 @@ chart_patterns:
     applies_to: []
     tags: ["持续", "机器学习", "k线", "形态"]
     algorithm_status: "quantized"
-    evidence: ""
+    evidence: "[机生 evidence src=market_pattern_win_rate 物化=2026-09-14] w10: 多 hit=46.2% avg=+0.04% n=798 / 空 hit=51.0% avg=+0.42% n=1094 | w20: 多 hit=42.7% avg=+0.45% n=793 / 空 hit=48.5% avg=+2.00% n=1067"
     code_symbol: "src/zephyr/signal_ashare/strategy_signal/candlestick_scanner.py::scan_candles"
     code_fingerprint: null
-
+    applicable_series: ["time_bars"]
   - pattern_id: "PAT-CANDLE-055"
     name: "Mat Hold"
     name_zh: "垫形整理"
@@ -2479,10 +2479,10 @@ chart_patterns:
     applies_to: []
     tags: ["持续", "震荡", "机器学习", "k线", "形态"]
     algorithm_status: "quantized"
-    evidence: ""
+    evidence: "[机生 evidence src=market_pattern_win_rate 物化=2026-09-14] w10: 多 hit=45.2% avg=-1.19% n=62 | w20: 多 hit=41.9% avg=-0.13% n=62"
     code_symbol: "src/zephyr/signal_ashare/strategy_signal/candlestick_scanner.py::scan_candles"
     code_fingerprint: null
-
+    applicable_series: ["time_bars"]
   - pattern_id: "PAT-CANDLE-056"
     name: "Breakaway"
     name_zh: "脱离形态"
@@ -2520,10 +2520,10 @@ chart_patterns:
     applies_to: []
     tags: ["反转", "机器学习", "k线", "形态"]
     algorithm_status: "quantized"
-    evidence: ""
+    evidence: "[机生 evidence src=market_pattern_win_rate 物化=2026-09-14] w10: 多 hit=47.5% avg=+0.37% n=387 / 空 hit=50.2% avg=+1.38% n=249 | w20: 多 hit=47.7% avg=-0.04% n=386 / 空 hit=50.2% avg=+2.37% n=247"
     code_symbol: "src/zephyr/signal_ashare/strategy_signal/candlestick_scanner.py::scan_candles"
     code_fingerprint: null
-
+    applicable_series: ["time_bars"]
   - pattern_id: "PAT-CANDLE-057"
     name: "Upside/Downside Gap Three Methods"
     name_zh: "跳空三法"
@@ -2561,10 +2561,10 @@ chart_patterns:
     applies_to: []
     tags: ["持续", "缺口", "机器学习", "k线", "形态"]
     algorithm_status: "quantized"
-    evidence: ""
+    evidence: "[机生 evidence src=market_pattern_win_rate 物化=2026-09-14] w10: 多 hit=44.4% avg=-0.32% n=18545 / 空 hit=50.0% avg=+0.69% n=20593 | w20: 多 hit=43.7% avg=-0.33% n=18400 / 空 hit=51.6% avg=+1.11% n=20357 | regime: r1(空) hit=45.9% n=8236 / r1(多) hit=44.8% n=6668 / r3(空) hit=54.5% n=5223 / r3(多) hit=42.8% n=5072 / r2(空) hit=53.1% n=3306"
     code_symbol: "src/zephyr/signal_ashare/strategy_signal/candlestick_scanner.py::scan_candles"
     code_fingerprint: null
-
+    applicable_series: ["time_bars"]
   - pattern_id: "PAT-CANDLE-058"
     name: "Tasuki Gap"
     name_zh: "兔跳缺口"
@@ -2602,10 +2602,10 @@ chart_patterns:
     applies_to: []
     tags: ["持续", "缺口", "机器学习", "k线", "形态"]
     algorithm_status: "quantized"
-    evidence: ""
+    evidence: "[机生 evidence src=market_pattern_win_rate 物化=2026-09-14] w10: 多 hit=46.4% avg=+0.24% n=9854 / 空 hit=51.5% avg=+0.34% n=11399 | w20: 多 hit=45.9% avg=+0.40% n=9750 / 空 hit=52.8% avg=+0.55% n=11260 | regime: r1(空) hit=50.5% n=4179 / r1(多) hit=47.5% n=3889 / r3(空) hit=55.7% n=2980 / r3(多) hit=43.3% n=2715"
     code_symbol: "src/zephyr/signal_ashare/strategy_signal/candlestick_scanner.py::scan_candles"
     code_fingerprint: null
-
+    applicable_series: ["time_bars"]
   - pattern_id: "PAT-CANDLE-059"
     name: "Hikkake"
     name_zh: "日垣陷阱"
@@ -2643,10 +2643,10 @@ chart_patterns:
     applies_to: []
     tags: ["反转", "突破", "机器学习", "k线", "形态"]
     algorithm_status: "quantized"
-    evidence: ""
+    evidence: "[机生 evidence src=market_pattern_win_rate 物化=2026-09-14] w10: 多 hit=45.9% avg=+0.01% n=402180 / 空 hit=51.7% avg=+0.48% n=329247 | w20: 多 hit=45.1% avg=+0.23% n=398278 / 空 hit=52.2% avg=+0.82% n=326303 | regime: r1(多) hit=45.7% n=151703 / r1(空) hit=50.7% n=123091 / r3(多) hit=41.5% n=105734 / r3(空) hit=56.5% n=86616 / r2(多) hit=45.9% n=62651"
     code_symbol: "src/zephyr/signal_ashare/strategy_signal/candlestick_scanner.py::scan_candles"
     code_fingerprint: null
-
+    applicable_series: ["time_bars"]
   - pattern_id: "PAT-CANDLE-060"
     name: "Hikkake Modified"
     name_zh: "日垣修正陷阱"
@@ -2684,10 +2684,10 @@ chart_patterns:
     applies_to: []
     tags: ["反转", "机器学习", "k线", "形态"]
     algorithm_status: "quantized"
-    evidence: ""
+    evidence: "[机生 evidence src=market_pattern_win_rate 物化=2026-09-14] w10: 多 hit=44.9% avg=-0.22% n=3924 / 空 hit=54.6% avg=+0.30% n=3140 | w20: 多 hit=43.7% avg=-0.23% n=3910 / 空 hit=56.6% avg=+0.03% n=3119"
     code_symbol: "src/zephyr/signal_ashare/strategy_signal/candlestick_scanner.py::scan_candles"
     code_fingerprint: null
-
+    applicable_series: ["time_bars"]
   - pattern_id: "PAT-CANDLE-061"
     name: "Long Line"
     name_zh: "长线"
@@ -2725,10 +2725,10 @@ chart_patterns:
     applies_to: []
     tags: ["持续", "机器学习", "k线", "形态"]
     algorithm_status: "quantized"
-    evidence: ""
+    evidence: "[机生 evidence src=market_pattern_win_rate 物化=2026-09-14] w10: 多 hit=49.8% avg=+0.75% n=506668 / 空 hit=51.5% avg=+0.40% n=702510 | w20: 多 hit=48.8% avg=+1.10% n=500859 / 空 hit=51.9% avg=+0.80% n=697236 | regime: r1(空) hit=50.0% n=251603 / r3(空) hit=54.7% n=198026 / r1(多) hit=50.8% n=187357 / r3(多) hit=43.4% n=128021 / r2(空) hit=53.9% n=117138"
     code_symbol: "src/zephyr/signal_ashare/strategy_signal/candlestick_scanner.py::scan_candles"
     code_fingerprint: null
-
+    applicable_series: ["time_bars"]
   - pattern_id: "PAT-CANDLE-062"
     name: "Short Line"
     name_zh: "短线"
@@ -2766,10 +2766,10 @@ chart_patterns:
     applies_to: []
     tags: ["机器学习", "k线", "形态"]
     algorithm_status: "quantized"
-    evidence: ""
+    evidence: "[机生 evidence src=market_pattern_win_rate 物化=2026-09-14] w10: 多 hit=48.8% avg=+0.67% n=455343 / 空 hit=52.8% avg=+0.31% n=496636 | w20: 多 hit=48.4% avg=+1.05% n=451360 / 空 hit=53.4% avg=+0.52% n=493293 | regime: r1(空) hit=52.8% n=183960 / r1(多) hit=49.3% n=171298 / r3(空) hit=58.8% n=129377 / r3(多) hit=41.4% n=111954 / r2(空) hit=51.2% n=75976"
     code_symbol: "src/zephyr/signal_ashare/strategy_signal/candlestick_scanner.py::scan_candles"
     code_fingerprint: null
-
+    applicable_series: ["time_bars"]
   - pattern_id: "PAT-CANDLE-063"
     name: "A-Share Limit-Up Flat"
     name_zh: "一字涨停板"
@@ -2807,10 +2807,10 @@ chart_patterns:
     applies_to: ["stock"]
     tags: ["持续", "打板", "k线", "形态"]
     algorithm_status: "quantized"
-    evidence: ""
+    evidence: "[机生 evidence src=market_pattern_win_rate 物化=2026-09-14] w10: 多 hit=48.4% avg=+9.64% n=6009 | w20: 多 hit=44.6% avg=+9.11% n=5944 | regime: r1(多) hit=50.0% n=2112"
     code_symbol: "src/zephyr/signal_ashare/strategy_signal/candlestick_scanner.py::scan_candles"
     code_fingerprint: null
-
+    applicable_series: ["time_bars"]
   - pattern_id: "PAT-CANDLE-064"
     name: "A-Share Limit-Down Flat"
     name_zh: "一字跌停板"
@@ -2848,7 +2848,7 @@ chart_patterns:
     applies_to: ["stock"]
     tags: ["持续", "k线", "形态"]
     algorithm_status: "quantized"
-    evidence: ""
+    evidence: "[机生 evidence src=market_pattern_win_rate 物化=2026-09-14] w10: 空 hit=67.9% avg=-5.05% n=1773 | w20: 空 hit=65.6% avg=-3.65% n=1765"
     code_symbol: "src/zephyr/signal_ashare/strategy_signal/candlestick_scanner.py::scan_candles"
     code_fingerprint: null
 
@@ -2856,7 +2856,7 @@ chart_patterns:
   # CANDLESTICK A股游资/涨跌停制度特色（2026-08-14 二轮补登）
   # 来源：涨停板 21 型分类（九阳公社 2026-05）+ 搓搓线量化条件（CSDN 2026-07）
   # ============================================================
-
+    applicable_series: ["time_bars"]
   - pattern_id: "PAT-CANDLE-065"
     name: "Rubbing Lines (Cuoxian)"
     name_zh: "搓揉线"
@@ -2897,7 +2897,7 @@ chart_patterns:
     evidence: ""
     code_symbol: "src/zephyr/signal_ashare/strategy_signal/candlestick_scanner.py::scan_candles"
     code_fingerprint: null
-
+    applicable_series: ["time_bars"]
   - pattern_id: "PAT-CANDLE-066"
     name: "Sky-to-Limit-Down"
     name_zh: "天地板"
@@ -2935,10 +2935,10 @@ chart_patterns:
     applies_to: ["stock"]
     tags: ["k线", "形态"]
     algorithm_status: "quantized"
-    evidence: ""
+    evidence: "[机生 evidence src=market_pattern_win_rate 物化=2026-09-14] w10: 空 hit=69.7% avg=-4.56% n=132 | w20: 空 hit=73.5% avg=-6.68% n=132"
     code_symbol: "src/zephyr/signal_ashare/strategy_signal/candlestick_scanner.py::scan_candles"
     code_fingerprint: null
-
+    applicable_series: ["time_bars"]
   - pattern_id: "PAT-CANDLE-067"
     name: "Ground-to-Limit-Up (Ditian)"
     name_zh: "地天板"
@@ -2976,10 +2976,10 @@ chart_patterns:
     applies_to: ["stock"]
     tags: ["打板", "k线", "形态"]
     algorithm_status: "quantized"
-    evidence: ""
+    evidence: "[机生 evidence src=market_pattern_win_rate 物化=2026-09-14] w10: 空 hit=67.7% avg=-7.04% n=133 | w20: 空 hit=69.2% avg=-7.76% n=133"
     code_symbol: "src/zephyr/signal_ashare/strategy_signal/candlestick_scanner.py::scan_candles"
     code_fingerprint: null
-
+    applicable_series: ["time_bars"]
   - pattern_id: "PAT-CANDLE-068"
     name: "Single Yang Threading MAs"
     name_zh: "一阳穿多线"
@@ -3017,10 +3017,10 @@ chart_patterns:
     applies_to: ["stock"]
     tags: ["突破", "打板", "k线", "形态"]
     algorithm_status: "quantized"
-    evidence: ""
+    evidence: "[机生 evidence src=market_pattern_win_rate 物化=2026-09-14] w10: 多 hit=45.6% avg=-0.19% n=83475 | w20: 多 hit=42.7% avg=-0.34% n=82745 | regime: r1(多) hit=49.6% n=31589 / r3(多) hit=42.6% n=20047 / r2(多) hit=38.4% n=17557 / r4(多) hit=45.8% n=8069 / r10(多) hit=55.6% n=6015"
     code_symbol: "src/zephyr/signal_ashare/strategy_signal/candlestick_scanner.py::scan_candles"
     code_fingerprint: null
-
+    applicable_series: ["time_bars"]
   - pattern_id: "PAT-CANDLE-069"
     name: "Tweezer Bottom"
     name_zh: "镊子底（双针探底）"
@@ -3058,10 +3058,10 @@ chart_patterns:
     applies_to: ["stock"]
     tags: ["反转", "k线", "形态"]
     algorithm_status: "quantized"
-    evidence: ""
+    evidence: "[机生 evidence src=market_pattern_win_rate 物化=2026-09-14] w10: 多 hit=47.2% avg=+0.27% n=668574 | w20: 多 hit=47.1% avg=+0.50% n=661417 | regime: r1(多) hit=48.3% n=248932 / r3(多) hit=42.7% n=177543 / r2(多) hit=48.8% n=119943 / r4(多) hit=41.9% n=64156 / r10(多) hit=59.4% n=56890"
     code_symbol: "src/zephyr/signal_ashare/strategy_signal/candlestick_scanner.py::scan_candles"
     code_fingerprint: null
-
+    applicable_series: ["time_bars"]
   - pattern_id: "PAT-CANDLE-070"
     name: "Tweezer Top"
     name_zh: "镊子顶"
@@ -3099,10 +3099,10 @@ chart_patterns:
     applies_to: []
     tags: ["反转", "k线", "形态"]
     algorithm_status: "quantized"
-    evidence: ""
+    evidence: "[机生 evidence src=market_pattern_win_rate 物化=2026-09-14] w10: 空 hit=50.5% avg=+0.30% n=607617 | w20: 空 hit=51.5% avg=+0.55% n=601197 | regime: r1(空) hit=50.0% n=229684 / r3(空) hit=54.3% n=160184 / r2(空) hit=49.2% n=104011 / r4(空) hit=56.1% n=61771 / r10(空) hit=37.2% n=51094"
     code_symbol: "src/zephyr/signal_ashare/strategy_signal/candlestick_scanner.py::scan_candles"
     code_fingerprint: null
-
+    applicable_series: ["time_bars"]
   - pattern_id: "PAT-CANDLE-071"
     name: "Narrow Range Day NR7/NR4"
     name_zh: "窄幅整理日"
@@ -3143,7 +3143,7 @@ chart_patterns:
     evidence: ""
     code_symbol: "src/zephyr/signal_ashare/strategy_signal/candlestick_scanner.py::scan_candles"
     code_fingerprint: null
-
+    applicable_series: ["time_bars"]
   - pattern_id: "PAT-CANDLE-072"
     name: "Key Reversal (Outside Reversal)"
     name_zh: "关键反转日（外包反转）"
@@ -3181,10 +3181,10 @@ chart_patterns:
     applies_to: []
     tags: ["反转", "k线", "形态"]
     algorithm_status: "quantized"
-    evidence: ""
+    evidence: "[机生 evidence src=market_pattern_win_rate 物化=2026-09-14] w10: 多 hit=46.8% avg=+0.16% n=786449 / 空 hit=51.4% avg=+0.37% n=591148 | w20: 多 hit=46.3% avg=+0.52% n=779589 / 空 hit=52.5% avg=+0.57% n=585405 | regime: r1(多) hit=47.7% n=286798 / r1(空) hit=51.0% n=213436 / r3(多) hit=40.5% n=196565 / r3(空) hit=53.6% n=161073 / r2(多) hit=45.0% n=119219"
     code_symbol: "src/zephyr/signal_ashare/strategy_signal/candlestick_scanner.py::scan_candles"
     code_fingerprint: null
-
+    applicable_series: ["time_bars"]
   - pattern_id: "PAT-CANDLE-073"
     name: "Wide Range Bar (WRB)"
     name_zh: "宽幅推进K线"
@@ -3222,10 +3222,10 @@ chart_patterns:
     applies_to: []
     tags: ["波动", "震荡", "k线", "形态"]
     algorithm_status: "quantized"
-    evidence: ""
+    evidence: "[机生 evidence src=market_pattern_win_rate 物化=2026-09-14] w10: 多 hit=43.6% avg=+0.08% n=244286 / 空 hit=49.3% avg=+0.56% n=119788 | w20: 多 hit=43.1% avg=+0.27% n=242384 / 空 hit=49.8% avg=+1.51% n=118722 | regime: r1(多) hit=44.5% n=91735 / r3(多) hit=38.4% n=59874 / r1(空) hit=43.8% n=44643 / r2(多) hit=44.1% n=39867 / r3(空) hit=51.1% n=36666"
     code_symbol: "src/zephyr/signal_ashare/strategy_signal/candlestick_scanner.py::scan_candles"
     code_fingerprint: null
-
+    applicable_series: ["time_bars"]
   - pattern_id: "PAT-CANDLE-074"
     name: "Oops Pattern"
     name_zh: "跳空反向陷阱"
@@ -3263,10 +3263,10 @@ chart_patterns:
     applies_to: []
     tags: ["缺口", "事件", "k线", "形态"]
     algorithm_status: "quantized"
-    evidence: ""
+    evidence: "[机生 evidence src=market_pattern_win_rate 物化=2026-09-14] w10: 多 hit=47.7% avg=+0.34% n=266719 / 空 hit=52.1% avg=+0.23% n=193076 | w20: 多 hit=46.8% avg=+0.71% n=264941 / 空 hit=53.1% avg=+0.42% n=191352 | regime: r1(多) hit=48.3% n=100594 / r3(多) hit=42.0% n=68039 / r1(空) hit=51.5% n=67808 / r3(空) hit=52.8% n=54259 / r10(多) hit=61.8% n=41016"
     code_symbol: "src/zephyr/signal_ashare/strategy_signal/candlestick_scanner.py::scan_candles"
     code_fingerprint: null
-
+    applicable_series: ["time_bars"]
   - pattern_id: "PAT-CANDLE-075"
     name: "Three Gaps (Sanku)"
     name_zh: "三空（酒田五法）"
@@ -3304,10 +3304,10 @@ chart_patterns:
     applies_to: []
     tags: ["缺口", "事件", "k线", "形态"]
     algorithm_status: "quantized"
-    evidence: ""
+    evidence: "[机生 evidence src=market_pattern_win_rate 物化=2026-09-14] w10: 多 hit=49.6% avg=-1.37% n=12949 / 空 hit=64.9% avg=-0.28% n=15728 | w20: 多 hit=50.1% avg=-1.06% n=12864 / 空 hit=60.6% avg=+1.24% n=15669 | regime: r12(空) hit=84.8% n=4569 / r1(多) hit=54.1% n=4344 / r1(空) hit=53.5% n=4234 / r10(多) hit=75.3% n=3287 / r3(多) hit=33.4% n=2961"
     code_symbol: "src/zephyr/signal_ashare/strategy_signal/candlestick_scanner.py::scan_candles"
     code_fingerprint: null
-
+    applicable_series: ["time_bars"]
   - pattern_id: "PAT-CANDLE-076"
     name: "Tower Top"
     name_zh: "塔形顶"
@@ -3345,10 +3345,10 @@ chart_patterns:
     applies_to: []
     tags: ["反转", "k线", "形态"]
     algorithm_status: "quantized"
-    evidence: ""
+    evidence: "[机生 evidence src=market_pattern_win_rate 物化=2026-09-14] w10: 空 hit=69.6% avg=-3.34% n=353670 | w20: 空 hit=64.9% avg=-3.11% n=351405 | regime: r1(空) hit=68.3% n=132014 / r3(空) hit=72.4% n=98875 / r2(空) hit=69.1% n=58080 / r10(空) hit=65.2% n=33029 / r4(空) hit=71.5% n=29823"
     code_symbol: "src/zephyr/signal_ashare/strategy_signal/candlestick_scanner.py::scan_candles"
     code_fingerprint: null
-
+    applicable_series: ["time_bars"]
   - pattern_id: "PAT-CANDLE-077"
     name: "Tower Bottom"
     name_zh: "塔形底"
@@ -3386,7 +3386,7 @@ chart_patterns:
     applies_to: []
     tags: ["反转", "k线", "形态"]
     algorithm_status: "quantized"
-    evidence: ""
+    evidence: "[机生 evidence src=market_pattern_win_rate 物化=2026-09-14] w10: 多 hit=65.6% avg=+3.95% n=286554 | w20: 多 hit=58.9% avg=+4.31% n=283741 | regime: r1(多) hit=65.8% n=106179 / r3(多) hit=61.6% n=67726 / r2(多) hit=66.7% n=43835 / r10(多) hit=71.2% n=41723 / r4(多) hit=63.8% n=26313"
     code_symbol: "src/zephyr/signal_ashare/strategy_signal/candlestick_scanner.py::scan_candles"
     code_fingerprint: null
 
@@ -3395,7 +3395,7 @@ chart_patterns:
   # 来源：sell_signal_collector.py 8类卖出信号第②类"技术面卖出"
   # 代码状态：信号类型已登记，独立检测算法待施工
   # ============================================================
-
+    applicable_series: ["time_bars"]
   - pattern_id: "PAT-CHART-001"
     name: "Double Top"
     name_zh: "双头"
@@ -3436,7 +3436,7 @@ chart_patterns:
     evidence: "[机生 evidence src=market_pattern_win_rate 物化=2026-09-14] w10: 空 hit=64.1% avg=-2.16% n=583175 | w20: 空 hit=61.0% avg=-1.86% n=577072 | regime: r1(空) hit=63.6% n=204182 / r3(空) hit=66.1% n=162823 / r2(空) hit=62.6% n=93933 / r10(空) hit=56.5% n=60660 / r4(空) hit=67.8% n=54245"
     code_symbol: null
     code_fingerprint: null
-
+    applicable_series: ["time_bars", "renko", "pnf", "kagi"]
   - pattern_id: "PAT-CHART-002"
     name: "Head and Shoulders Top"
     name_zh: "头肩顶"
@@ -3477,7 +3477,7 @@ chart_patterns:
     evidence: "[机生 evidence src=market_pattern_win_rate 物化=2026-09-14] w10: 空 hit=51.7% avg=+0.01% n=23289 | w20: 空 hit=50.6% avg=+0.97% n=23171 | regime: r1(空) hit=47.7% n=9003 / r3(空) hit=56.3% n=6785 / r2(空) hit=58.6% n=3906 / r4(空) hit=45.5% n=2047"
     code_symbol: null
     code_fingerprint: null
-
+    applicable_series: ["time_bars", "renko", "pnf", "kagi"]
   - pattern_id: "PAT-CHART-003"
     name: "Wedge Breakdown"
     name_zh: "楔形破位"
@@ -3518,7 +3518,7 @@ chart_patterns:
     evidence: ""
     code_symbol: null
     code_fingerprint: null
-
+    applicable_series: ["time_bars", "renko", "pnf", "kagi"]
   - pattern_id: "PAT-CHART-004"
     name: "Double Bottom"
     name_zh: "双底"
@@ -3564,7 +3564,7 @@ chart_patterns:
   # CHART_PATTERN 扩充（2026-08-14，Edwards&Magee + Bulkowski 经典全集）
   # 算法：峰谷法(zigzag+枢轴) / 回归法(两条边界线拟合) / 模板匹配法
   # ============================================================
-
+    applicable_series: ["time_bars", "renko", "pnf", "kagi"]
   - pattern_id: "PAT-CHART-005"
     name: "Ascending Triangle"
     name_zh: "上升三角形"
@@ -3605,7 +3605,7 @@ chart_patterns:
     evidence: "[机生 evidence src=market_pattern_win_rate 物化=2026-09-14] w10: 多 hit=45.0% avg=+0.31% n=42914 | w20: 多 hit=43.8% avg=+0.38% n=42502 | regime: r1(多) hit=44.8% n=15419 / r3(多) hit=42.9% n=11416 / r2(多) hit=50.5% n=7169 / r4(多) hit=40.6% n=3810 / r10(多) hit=46.5% n=3594"
     code_symbol: null
     code_fingerprint: null
-
+    applicable_series: ["time_bars", "renko", "pnf", "kagi"]
   - pattern_id: "PAT-CHART-006"
     name: "Descending Triangle"
     name_zh: "下降三角形"
@@ -3646,7 +3646,7 @@ chart_patterns:
     evidence: "[机生 evidence src=market_pattern_win_rate 物化=2026-09-14] w10: 空 hit=50.6% avg=+0.42% n=49594 | w20: 空 hit=49.4% avg=+1.33% n=49395 | regime: r1(空) hit=46.1% n=19656 / r3(空) hit=57.3% n=13420 / r2(空) hit=54.8% n=7787 / r4(空) hit=49.8% n=4534 / r10(空) hit=44.4% n=3988"
     code_symbol: null
     code_fingerprint: null
-
+    applicable_series: ["time_bars", "renko", "pnf", "kagi"]
   - pattern_id: "PAT-CHART-007"
     name: "Symmetrical Triangle"
     name_zh: "对称三角形"
@@ -3687,7 +3687,7 @@ chart_patterns:
     evidence: "[机生 evidence src=market_pattern_win_rate 物化=2026-09-14] w10: 多 hit=42.0% avg=+0.10% n=74359 / 空 hit=49.4% avg=+0.59% n=79290 | w20: 多 hit=41.5% avg=+0.16% n=73908 / 空 hit=47.4% avg=+2.11% n=79055 | regime: r1(空) hit=46.9% n=30696 / r1(多) hit=42.8% n=25483 / r3(空) hit=52.7% n=22326 / r3(多) hit=39.3% n=18288 / r2(多) hit=44.3% n=11955"
     code_symbol: null
     code_fingerprint: null
-
+    applicable_series: ["time_bars", "renko", "pnf", "kagi"]
   - pattern_id: "PAT-CHART-008"
     name: "Rising Wedge"
     name_zh: "上升楔形"
@@ -3728,7 +3728,7 @@ chart_patterns:
     evidence: "[机生 evidence src=market_pattern_win_rate 物化=2026-09-14] w10: 空 hit=48.5% avg=+0.73% n=55498 | w20: 空 hit=45.6% avg=+2.61% n=55370 | regime: r1(空) hit=48.0% n=22227 / r3(空) hit=49.3% n=13825 / r2(空) hit=51.7% n=7982 / r10(空) hit=47.1% n=7911 / r4(空) hit=45.0% n=3324"
     code_symbol: null
     code_fingerprint: null
-
+    applicable_series: ["time_bars", "renko", "pnf", "kagi"]
   - pattern_id: "PAT-CHART-009"
     name: "Falling Wedge"
     name_zh: "下降楔形"
@@ -3769,7 +3769,7 @@ chart_patterns:
     evidence: "[机生 evidence src=market_pattern_win_rate 物化=2026-09-14] w10: 多 hit=41.4% avg=+0.14% n=75908 | w20: 多 hit=41.7% avg=+0.50% n=75351 | regime: r1(多) hit=42.2% n=24235 / r3(多) hit=38.5% n=19311 / r2(多) hit=45.5% n=12297 / r10(多) hit=39.8% n=7504 / r12(多) hit=44.3% n=6604"
     code_symbol: null
     code_fingerprint: null
-
+    applicable_series: ["time_bars", "renko", "pnf", "kagi"]
   - pattern_id: "PAT-CHART-010"
     name: "Bull Flag"
     name_zh: "多头旗形"
@@ -3810,7 +3810,7 @@ chart_patterns:
     evidence: ""
     code_symbol: null
     code_fingerprint: null
-
+    applicable_series: ["time_bars", "renko", "pnf", "kagi"]
   - pattern_id: "PAT-CHART-011"
     name: "Bear Flag"
     name_zh: "空头旗形"
@@ -3851,7 +3851,7 @@ chart_patterns:
     evidence: ""
     code_symbol: null
     code_fingerprint: null
-
+    applicable_series: ["time_bars", "renko", "pnf", "kagi"]
   - pattern_id: "PAT-CHART-012"
     name: "Pennant"
     name_zh: "三角旗"
@@ -3892,7 +3892,7 @@ chart_patterns:
     evidence: ""
     code_symbol: null
     code_fingerprint: null
-
+    applicable_series: ["time_bars", "renko", "pnf", "kagi"]
   - pattern_id: "PAT-CHART-013"
     name: "Cup and Handle"
     name_zh: "杯柄形"
@@ -3933,7 +3933,7 @@ chart_patterns:
     evidence: ""
     code_symbol: null
     code_fingerprint: null
-
+    applicable_series: ["time_bars", "renko", "pnf", "kagi"]
   - pattern_id: "PAT-CHART-014"
     name: "Inverse Cup and Handle"
     name_zh: "倒杯柄形"
@@ -3974,7 +3974,7 @@ chart_patterns:
     evidence: ""
     code_symbol: null
     code_fingerprint: null
-
+    applicable_series: ["time_bars", "renko", "pnf", "kagi"]
   - pattern_id: "PAT-CHART-015"
     name: "Rectangle"
     name_zh: "矩形箱体"
@@ -4015,7 +4015,7 @@ chart_patterns:
     evidence: "[机生 evidence src=market_pattern_win_rate 物化=2026-09-14] w10: 多 hit=45.5% avg=+0.35% n=24177 / 空 hit=49.2% avg=+0.48% n=24767 | w20: 多 hit=44.5% avg=+0.65% n=24006 / 空 hit=48.4% avg=+1.34% n=24639 | regime: r1(空) hit=46.8% n=10395 / r1(多) hit=46.8% n=8992 / r3(空) hit=54.0% n=6393 / r3(多) hit=42.7% n=6234 / r2(多) hit=49.4% n=4342"
     code_symbol: null
     code_fingerprint: null
-
+    applicable_series: ["time_bars", "renko", "pnf", "kagi"]
   - pattern_id: "PAT-CHART-016"
     name: "Head and Shoulders Bottom"
     name_zh: "头肩底"
@@ -4056,7 +4056,7 @@ chart_patterns:
     evidence: "[机生 evidence src=market_pattern_win_rate 物化=2026-09-14] w10: 多 hit=46.2% avg=+0.54% n=24122 | w20: 多 hit=44.9% avg=+0.69% n=23988 | regime: r1(多) hit=46.6% n=9031 / r3(多) hit=43.6% n=6318 / r2(多) hit=51.0% n=4259 / r4(多) hit=40.0% n=2154"
     code_symbol: null
     code_fingerprint: null
-
+    applicable_series: ["time_bars", "renko", "pnf", "kagi"]
   - pattern_id: "PAT-CHART-017"
     name: "Triple Top"
     name_zh: "三重顶"
@@ -4097,7 +4097,7 @@ chart_patterns:
     evidence: "[机生 evidence src=market_pattern_win_rate 物化=2026-09-14] w10: 空 hit=49.7% avg=+0.11% n=6962 | w20: 空 hit=48.8% avg=+1.12% n=6919 | regime: r1(空) hit=48.9% n=2987"
     code_symbol: null
     code_fingerprint: null
-
+    applicable_series: ["time_bars", "renko", "pnf", "kagi"]
   - pattern_id: "PAT-CHART-018"
     name: "Triple Bottom"
     name_zh: "三重底"
@@ -4138,7 +4138,7 @@ chart_patterns:
     evidence: "[机生 evidence src=market_pattern_win_rate 物化=2026-09-14] w10: 多 hit=45.8% avg=+0.45% n=7239 | w20: 多 hit=44.9% avg=+0.72% n=7195 | regime: r1(多) hit=45.6% n=2757"
     code_symbol: null
     code_fingerprint: null
-
+    applicable_series: ["time_bars", "renko", "pnf", "kagi"]
   - pattern_id: "PAT-CHART-019"
     name: "Rounding Top"
     name_zh: "圆弧顶"
@@ -4179,7 +4179,7 @@ chart_patterns:
     evidence: ""
     code_symbol: null
     code_fingerprint: null
-
+    applicable_series: ["time_bars", "renko", "pnf", "kagi"]
   - pattern_id: "PAT-CHART-020"
     name: "Rounding Bottom"
     name_zh: "圆弧底"
@@ -4220,7 +4220,7 @@ chart_patterns:
     evidence: ""
     code_symbol: null
     code_fingerprint: null
-
+    applicable_series: ["time_bars", "renko", "pnf", "kagi"]
   - pattern_id: "PAT-CHART-021"
     name: "Broadening Formation"
     name_zh: "扩散喇叭形"
@@ -4261,7 +4261,7 @@ chart_patterns:
     evidence: ""
     code_symbol: null
     code_fingerprint: null
-
+    applicable_series: ["time_bars", "renko", "pnf", "kagi"]
   - pattern_id: "PAT-CHART-022"
     name: "Diamond"
     name_zh: "钻石形"
@@ -4302,7 +4302,7 @@ chart_patterns:
     evidence: ""
     code_symbol: null
     code_fingerprint: null
-
+    applicable_series: ["time_bars", "renko", "pnf", "kagi"]
   - pattern_id: "PAT-CHART-023"
     name: "V-Top"
     name_zh: "V形顶"
@@ -4343,7 +4343,7 @@ chart_patterns:
     evidence: ""
     code_symbol: null
     code_fingerprint: null
-
+    applicable_series: ["time_bars", "renko", "pnf", "kagi"]
   - pattern_id: "PAT-CHART-024"
     name: "V-Bottom"
     name_zh: "V形底"
@@ -4384,7 +4384,7 @@ chart_patterns:
     evidence: ""
     code_symbol: null
     code_fingerprint: null
-
+    applicable_series: ["time_bars", "renko", "pnf", "kagi"]
   - pattern_id: "PAT-CHART-025"
     name: "Island Reversal"
     name_zh: "岛形反转"
@@ -4425,7 +4425,7 @@ chart_patterns:
     evidence: ""
     code_symbol: null
     code_fingerprint: null
-
+    applicable_series: ["time_bars", "renko", "pnf", "kagi"]
   - pattern_id: "PAT-CHART-026"
     name: "Dead Cat Bounce"
     name_zh: "死猫跳"
@@ -4472,7 +4472,7 @@ chart_patterns:
   # 来源：游资起爆铁律（新浪 2026-08）+ 反包低吸战法（淘股吧 2026-03）+
   #       涨停板 21 型（九阳公社 2026-05）——打板连板梯队体系核心输入
   # ============================================================
-
+    applicable_series: ["time_bars", "renko", "pnf", "kagi"]
   - pattern_id: "PAT-CHART-027"
     name: "Limit-Up Reversal Engulfing (Fanbao)"
     name_zh: "反包涨停"
@@ -4513,7 +4513,7 @@ chart_patterns:
     evidence: ""
     code_symbol: null
     code_fingerprint: null
-
+    applicable_series: ["time_bars", "renko", "pnf", "kagi"]
   - pattern_id: "PAT-CHART-028"
     name: "Double Cannon N-Shape"
     name_zh: "涨停双响炮"
@@ -4554,7 +4554,7 @@ chart_patterns:
     evidence: ""
     code_symbol: null
     code_fingerprint: null
-
+    applicable_series: ["time_bars", "renko", "pnf", "kagi"]
   - pattern_id: "PAT-CHART-029"
     name: "Golden Pit"
     name_zh: "黄金坑"
@@ -4595,7 +4595,7 @@ chart_patterns:
     evidence: ""
     code_symbol: null
     code_fingerprint: null
-
+    applicable_series: ["time_bars", "renko", "pnf", "kagi"]
   - pattern_id: "PAT-CHART-030"
     name: "Fragmented Yang Accumulation"
     name_zh: "碎阳慢涨吸筹"
@@ -4636,7 +4636,7 @@ chart_patterns:
     evidence: ""
     code_symbol: null
     code_fingerprint: null
-
+    applicable_series: ["time_bars", "renko", "pnf", "kagi"]
   - pattern_id: "PAT-CHART-031"
     name: "Low Box Consolidation"
     name_zh: "低位箱体蓄势"
@@ -4677,7 +4677,7 @@ chart_patterns:
     evidence: ""
     code_symbol: null
     code_fingerprint: null
-
+    applicable_series: ["time_bars", "renko", "pnf", "kagi"]
   - pattern_id: "PAT-CHART-032"
     name: "First Board Probe"
     name_zh: "首板试盘"
@@ -4718,7 +4718,7 @@ chart_patterns:
     evidence: ""
     code_symbol: null
     code_fingerprint: null
-
+    applicable_series: ["time_bars", "renko", "pnf", "kagi"]
   - pattern_id: "PAT-CHART-033"
     name: "Consecutive Limit-Up Ladder"
     name_zh: "连板梯队结构"
@@ -4759,7 +4759,7 @@ chart_patterns:
     evidence: ""
     code_symbol: null
     code_fingerprint: null
-
+    applicable_series: ["time_bars", "renko", "pnf", "kagi"]
   - pattern_id: "PAT-CHART-034"
     name: "Mild Board Break"
     name_zh: "断板温和洗盘"
@@ -4800,7 +4800,7 @@ chart_patterns:
     evidence: ""
     code_symbol: null
     code_fingerprint: null
-
+    applicable_series: ["time_bars", "renko", "pnf", "kagi"]
   - pattern_id: "PAT-CHART-035"
     name: "Broken Board Re-Seal"
     name_zh: "烂板回封"
@@ -4841,7 +4841,7 @@ chart_patterns:
     evidence: ""
     code_symbol: null
     code_fingerprint: null
-
+    applicable_series: ["time_bars", "renko", "pnf", "kagi"]
   - pattern_id: "PAT-CHART-036"
     name: "Late-Day Sneak Board"
     name_zh: "尾盘偷袭板"
@@ -4888,7 +4888,7 @@ chart_patterns:
   # 来源：Tom DeMark《The New Science of Technical Analysis》
   # TD Setup：连续 9 根收盘 < / > 4 根前收盘；TD Countdown：13 计数衰竭
   # ============================================================
-
+    applicable_series: ["time_bars", "renko", "pnf", "kagi"]
   - pattern_id: "PAT-CHART-037"
     name: "TD Sequential Buy Setup"
     name_zh: "TD 序列买入计数"
@@ -4929,7 +4929,7 @@ chart_patterns:
     evidence: ""
     code_symbol: null
     code_fingerprint: null
-
+    applicable_series: ["time_bars", "renko", "pnf", "kagi"]
   - pattern_id: "PAT-CHART-038"
     name: "TD Sequential Sell Setup"
     name_zh: "TD 序列卖出计数"
@@ -4970,7 +4970,7 @@ chart_patterns:
     evidence: ""
     code_symbol: null
     code_fingerprint: null
-
+    applicable_series: ["time_bars", "renko", "pnf", "kagi"]
   - pattern_id: "PAT-CHART-039"
     name: "Wolfe Wave"
     name_zh: "沃尔夫浪"
@@ -5011,7 +5011,7 @@ chart_patterns:
     evidence: ""
     code_symbol: null
     code_fingerprint: null
-
+    applicable_series: ["time_bars", "renko", "pnf", "kagi"]
   - pattern_id: "PAT-CHART-040"
     name: "Quasimodo"
     name_zh: "卡西莫多反转"
@@ -5052,7 +5052,7 @@ chart_patterns:
     evidence: ""
     code_symbol: null
     code_fingerprint: null
-
+    applicable_series: ["time_bars", "renko", "pnf", "kagi"]
   - pattern_id: "PAT-CHART-041"
     name: "Ascending Scallop"
     name_zh: "上升扇贝"
@@ -5093,7 +5093,7 @@ chart_patterns:
     evidence: ""
     code_symbol: null
     code_fingerprint: null
-
+    applicable_series: ["time_bars", "renko", "pnf", "kagi"]
   - pattern_id: "PAT-CHART-042"
     name: "Descending Scallop"
     name_zh: "下降扇贝"
@@ -5134,7 +5134,7 @@ chart_patterns:
     evidence: ""
     code_symbol: null
     code_fingerprint: null
-
+    applicable_series: ["time_bars", "renko", "pnf", "kagi"]
   - pattern_id: "PAT-CHART-043"
     name: "Horn Top"
     name_zh: "牛角顶"
@@ -5175,7 +5175,7 @@ chart_patterns:
     evidence: ""
     code_symbol: null
     code_fingerprint: null
-
+    applicable_series: ["time_bars", "renko", "pnf", "kagi"]
   - pattern_id: "PAT-CHART-044"
     name: "Horn Bottom"
     name_zh: "牛角底"
@@ -5216,7 +5216,7 @@ chart_patterns:
     evidence: ""
     code_symbol: null
     code_fingerprint: null
-
+    applicable_series: ["time_bars", "renko", "pnf", "kagi"]
   - pattern_id: "PAT-CHART-045"
     name: "Pipe Top"
     name_zh: "管道顶"
@@ -5257,7 +5257,7 @@ chart_patterns:
     evidence: ""
     code_symbol: null
     code_fingerprint: null
-
+    applicable_series: ["time_bars", "renko", "pnf", "kagi"]
   - pattern_id: "PAT-CHART-046"
     name: "Pipe Bottom"
     name_zh: "管道底"
@@ -5298,7 +5298,7 @@ chart_patterns:
     evidence: ""
     code_symbol: null
     code_fingerprint: null
-
+    applicable_series: ["time_bars", "renko", "pnf", "kagi"]
   - pattern_id: "PAT-CHART-047"
     name: "Bump-and-Run Reversal Top"
     name_zh: "冲高回撤反转顶"
@@ -5339,7 +5339,7 @@ chart_patterns:
     evidence: ""
     code_symbol: null
     code_fingerprint: null
-
+    applicable_series: ["time_bars", "renko", "pnf", "kagi"]
   - pattern_id: "PAT-CHART-048"
     name: "Bump-and-Run Reversal Bottom"
     name_zh: "冲高回撤反转底"
@@ -5380,7 +5380,7 @@ chart_patterns:
     evidence: ""
     code_symbol: null
     code_fingerprint: null
-
+    applicable_series: ["time_bars", "renko", "pnf", "kagi"]
   - pattern_id: "PAT-CHART-049"
     name: "Volatility Contraction Pattern"
     name_zh: "波动收缩形态"
@@ -5421,7 +5421,7 @@ chart_patterns:
     evidence: ""
     code_symbol: null
     code_fingerprint: null
-
+    applicable_series: ["time_bars", "renko", "pnf", "kagi"]
   - pattern_id: "PAT-CHART-050"
     name: "1-2-3 Reversal"
     name_zh: "一二三反转"
@@ -5462,7 +5462,7 @@ chart_patterns:
     evidence: ""
     code_symbol: null
     code_fingerprint: null
-
+    applicable_series: ["time_bars", "renko", "pnf", "kagi"]
   - pattern_id: "PAT-CHART-051"
     name: "Ross Hook"
     name_zh: "罗斯钩"
@@ -5503,7 +5503,7 @@ chart_patterns:
     evidence: ""
     code_symbol: null
     code_fingerprint: null
-
+    applicable_series: ["time_bars", "renko", "pnf", "kagi"]
   - pattern_id: "PAT-CHART-052"
     name: "Old Duck Head"
     name_zh: "老鸭头"
@@ -5544,7 +5544,7 @@ chart_patterns:
     evidence: ""
     code_symbol: null
     code_fingerprint: null
-
+    applicable_series: ["time_bars", "renko", "pnf", "kagi"]
   - pattern_id: "PAT-CHART-053"
     name: "Mid-air Refueling"
     name_zh: "空中加油"
@@ -5585,7 +5585,7 @@ chart_patterns:
     evidence: ""
     code_symbol: null
     code_fingerprint: null
-
+    applicable_series: ["time_bars", "renko", "pnf", "kagi"]
   - pattern_id: "PAT-CHART-054"
     name: "Three Peaks and a Domed House"
     name_zh: "三峰穹顶"
@@ -5626,7 +5626,7 @@ chart_patterns:
     evidence: ""
     code_symbol: null
     code_fingerprint: null
-
+    applicable_series: ["time_bars", "renko", "pnf", "kagi"]
   - pattern_id: "PAT-CHART-055"
     name: "Three Rising Valleys"
     name_zh: "三升谷"
@@ -5667,7 +5667,7 @@ chart_patterns:
     evidence: ""
     code_symbol: null
     code_fingerprint: null
-
+    applicable_series: ["time_bars", "renko", "pnf", "kagi"]
   - pattern_id: "PAT-CHART-056"
     name: "Three Falling Peaks"
     name_zh: "三降峰"
@@ -5708,7 +5708,7 @@ chart_patterns:
     evidence: ""
     code_symbol: null
     code_fingerprint: null
-
+    applicable_series: ["time_bars", "renko", "pnf", "kagi"]
   - pattern_id: "PAT-CHART-057"
     name: "Big W"
     name_zh: "大W底"
@@ -5749,7 +5749,7 @@ chart_patterns:
     evidence: ""
     code_symbol: null
     code_fingerprint: null
-
+    applicable_series: ["time_bars", "renko", "pnf", "kagi"]
   - pattern_id: "PAT-CHART-058"
     name: "Big M"
     name_zh: "大M顶"
@@ -5790,7 +5790,7 @@ chart_patterns:
     evidence: ""
     code_symbol: null
     code_fingerprint: null
-
+    applicable_series: ["time_bars", "renko", "pnf", "kagi"]
   - pattern_id: "PAT-CHART-059"
     name: "Gap Classification"
     name_zh: "缺口四型（普通/突破/逃逸/衰竭）"
@@ -5831,7 +5831,7 @@ chart_patterns:
     evidence: ""
     code_symbol: null
     code_fingerprint: null
-
+    applicable_series: ["time_bars", "renko", "pnf", "kagi"]
   - pattern_id: "PAT-CHART-060"
     name: "Complex Head and Shoulders"
     name_zh: "复合头肩"
@@ -5872,7 +5872,7 @@ chart_patterns:
     evidence: ""
     code_symbol: null
     code_fingerprint: null
-
+    applicable_series: ["time_bars", "renko", "pnf", "kagi"]
   - pattern_id: "PAT-CHART-061"
     name: "High Tight Flag"
     name_zh: "高紧旗"
@@ -5913,7 +5913,7 @@ chart_patterns:
     evidence: ""
     code_symbol: null
     code_fingerprint: null
-
+    applicable_series: ["time_bars", "renko", "pnf", "kagi"]
   - pattern_id: "PAT-CHART-062"
     name: "Brooks H2/L2 Two-Legged Pullback"
     name_zh: "布鲁克斯 H2/L2 两腿回撤计数"
@@ -5959,7 +5959,7 @@ chart_patterns:
   # TRENDLINE_CHANNEL（趋势线与通道类）— 1条
   # 来源：sell_signal_collector.py 8类卖出信号第②类"均线死叉"
   # ============================================================
-
+    applicable_series: ["time_bars", "renko", "pnf", "kagi"]
   - pattern_id: "PAT-TREND-001"
     name: "MA Death Cross"
     name_zh: "均线死叉"
@@ -6004,7 +6004,7 @@ chart_patterns:
   # ============================================================
   # TRENDLINE_CHANNEL 扩充（2026-08-14，趋势线/通道/音叉/金叉全集）
   # ============================================================
-
+    applicable_series: ["time_bars", "renko", "pnf", "kagi"]
   - pattern_id: "PAT-TREND-002"
     name: "Uptrend Line"
     name_zh: "上升趋势线"
@@ -6045,7 +6045,7 @@ chart_patterns:
     evidence: ""
     code_symbol: null
     code_fingerprint: null
-
+    applicable_series: ["time_bars", "renko", "pnf", "kagi"]
   - pattern_id: "PAT-TREND-003"
     name: "Downtrend Line"
     name_zh: "下降趋势线"
@@ -6086,7 +6086,7 @@ chart_patterns:
     evidence: ""
     code_symbol: null
     code_fingerprint: null
-
+    applicable_series: ["time_bars", "renko", "pnf", "kagi"]
   - pattern_id: "PAT-TREND-004"
     name: "Ascending Channel"
     name_zh: "上升通道"
@@ -6127,7 +6127,7 @@ chart_patterns:
     evidence: ""
     code_symbol: null
     code_fingerprint: null
-
+    applicable_series: ["time_bars", "renko", "pnf", "kagi"]
   - pattern_id: "PAT-TREND-005"
     name: "Descending Channel"
     name_zh: "下降通道"
@@ -6168,7 +6168,7 @@ chart_patterns:
     evidence: ""
     code_symbol: null
     code_fingerprint: null
-
+    applicable_series: ["time_bars", "renko", "pnf", "kagi"]
   - pattern_id: "PAT-TREND-006"
     name: "Horizontal Channel"
     name_zh: "水平箱体通道"
@@ -6209,7 +6209,7 @@ chart_patterns:
     evidence: ""
     code_symbol: null
     code_fingerprint: null
-
+    applicable_series: ["time_bars", "renko", "pnf", "kagi"]
   - pattern_id: "PAT-TREND-007"
     name: "Golden Cross"
     name_zh: "均线金叉"
@@ -6250,7 +6250,7 @@ chart_patterns:
     evidence: ""
     code_symbol: null
     code_fingerprint: null
-
+    applicable_series: ["time_bars", "renko", "pnf", "kagi"]
   - pattern_id: "PAT-TREND-008"
     name: "Andrew's Pitchfork"
     name_zh: "安德鲁音叉"
@@ -6296,7 +6296,7 @@ chart_patterns:
   # GANN 江恩几何（2026-08-14 四轮补登）
   # 现代量化重述：角度=回归斜率+标准差通道；九方图=√price 变换+角度偏移再平方
   # ============================================================
-
+    applicable_series: ["time_bars", "renko", "pnf", "kagi"]
   - pattern_id: "PAT-TREND-009"
     name: "Gann Angle 1x1 (45°)"
     name_zh: "江恩 1x1 角度线"
@@ -6337,7 +6337,7 @@ chart_patterns:
     evidence: ""
     code_symbol: null
     code_fingerprint: null
-
+    applicable_series: ["time_bars", "renko", "pnf", "kagi"]
   - pattern_id: "PAT-TREND-010"
     name: "Gann Square of Nine"
     name_zh: "江恩九方图"
@@ -6378,7 +6378,7 @@ chart_patterns:
     evidence: ""
     code_symbol: null
     code_fingerprint: null
-
+    applicable_series: ["time_bars", "renko", "pnf", "kagi"]
   - pattern_id: "PAT-TREND-011"
     name: "Speed Resistance Lines"
     name_zh: "速度阻力线"
@@ -6419,7 +6419,7 @@ chart_patterns:
     evidence: ""
     code_symbol: null
     code_fingerprint: null
-
+    applicable_series: ["time_bars", "renko", "pnf", "kagi"]
   - pattern_id: "PAT-TREND-012"
     name: "Gann Swing Chart"
     name_zh: "江恩摆动图"
@@ -6460,7 +6460,7 @@ chart_patterns:
     evidence: ""
     code_symbol: null
     code_fingerprint: null
-
+    applicable_series: ["time_bars", "renko", "pnf", "kagi"]
   - pattern_id: "PAT-TREND-013"
     name: "MA Alignment State Classification"
     name_zh: "均线排列状态分类"
@@ -6506,7 +6506,7 @@ chart_patterns:
   # SUPPORT_RESISTANCE（支撑阻力类）— 3条
   # 代码已施工：breakout_failure_detector + intraday_buy_sell_point_analyzer + stop_loss_engine
   # ============================================================
-
+    applicable_series: ["time_bars", "renko", "pnf", "kagi"]
   - pattern_id: "PAT-SR-001"
     name: "Breakout Failure Detection"
     name_zh: "压力位突破失败检测"
@@ -6547,7 +6547,7 @@ chart_patterns:
     evidence: ""
     code_symbol: null
     code_fingerprint: null
-
+    applicable_series: ["time_bars", "renko", "pnf", "kagi"]
   - pattern_id: "PAT-SR-002"
     name: "Intraday Breakout/Breakdown"
     name_zh: "分时突破/破位"
@@ -6588,7 +6588,7 @@ chart_patterns:
     evidence: ""
     code_symbol: null
     code_fingerprint: null
-
+    applicable_series: ["time_bars", "renko", "pnf", "kagi"]
   - pattern_id: "PAT-SR-003"
     name: "Intraday Stop-Loss Break"
     name_zh: "分时止损破位"
@@ -6633,7 +6633,7 @@ chart_patterns:
   # ============================================================
   # SUPPORT_RESISTANCE 扩充（2026-08-14，枢轴点/成交量分布/昨日高低）
   # ============================================================
-
+    applicable_series: ["time_bars", "renko", "pnf", "kagi"]
   - pattern_id: "PAT-SR-004"
     name: "Pivot Points (Classic)"
     name_zh: "经典枢轴点"
@@ -6674,7 +6674,7 @@ chart_patterns:
     evidence: ""
     code_symbol: null
     code_fingerprint: null
-
+    applicable_series: ["time_bars", "renko", "pnf", "kagi"]
   - pattern_id: "PAT-SR-005"
     name: "Pivot Points (Fibonacci)"
     name_zh: "斐波那契枢轴点"
@@ -6715,7 +6715,7 @@ chart_patterns:
     evidence: ""
     code_symbol: null
     code_fingerprint: null
-
+    applicable_series: ["time_bars", "renko", "pnf", "kagi"]
   - pattern_id: "PAT-SR-006"
     name: "Volume Profile Support/Resistance"
     name_zh: "成交量分布支撑阻力"
@@ -6756,7 +6756,7 @@ chart_patterns:
     evidence: ""
     code_symbol: null
     code_fingerprint: null
-
+    applicable_series: ["time_bars", "renko", "pnf", "kagi"]
   - pattern_id: "PAT-SR-007"
     name: "Previous Day High/Low"
     name_zh: "昨日高低点"
@@ -6797,7 +6797,7 @@ chart_patterns:
     evidence: ""
     code_symbol: null
     code_fingerprint: null
-
+    applicable_series: ["time_bars", "renko", "pnf", "kagi"]
   - pattern_id: "PAT-SR-008"
     name: "Murrey Math Levels"
     name_zh: "穆雷数学线"
@@ -6838,7 +6838,7 @@ chart_patterns:
     evidence: ""
     code_symbol: null
     code_fingerprint: null
-
+    applicable_series: ["time_bars", "renko", "pnf", "kagi"]
   - pattern_id: "PAT-SR-009"
     name: "Camarilla Pivots"
     name_zh: "卡玛利拉枢轴"
@@ -6879,7 +6879,7 @@ chart_patterns:
     evidence: ""
     code_symbol: null
     code_fingerprint: null
-
+    applicable_series: ["time_bars", "renko", "pnf", "kagi"]
   - pattern_id: "PAT-SR-010"
     name: "Support Resistance Polarity Shift"
     name_zh: "支撑压力互换"
@@ -6925,7 +6925,7 @@ chart_patterns:
   # FIBONACCI（斐波那契工具类）— 6条（2026-08-14 新建）
   # 算法：规则法(极值点锁定+比例位计算)
   # ============================================================
-
+    applicable_series: ["time_bars", "renko", "pnf", "kagi"]
   - pattern_id: "PAT-FIB-001"
     name: "Fibonacci Retracement"
     name_zh: "斐波那契回撤"

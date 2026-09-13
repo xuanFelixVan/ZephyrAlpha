@@ -116,7 +116,34 @@ Ross Hook/1-2-3 等）。逐条比对后疑似差额候选（**候选≠登记**
 | Earnings Flag（财报旗形） | 事件形态族，A股语境=业绩缺口形态 | 低（依赖财报事件层） |
 | Gutters（双沟） | 罕见，统计样本薄 | 低 |
 
-## 五、IND-REV-001 退役协调提案（挂 Owner 门位，未执行）
+## 五、IND-REV-001 退役协调（Owner 倾向 B；消费清查已完，B 的最大成本归零）
+
+- Owner 倾向（2026-09-14）：**方案 B 直接退役**（最彻底最治本）。
+- 消费清查结果（st-pattern-20260914，2026-09-14）：**零下游消费方**——
+  src/tests/scripts 全量 grep `candle_pattern` 列与 `IND-REV-001` 引用，
+  除 reversal.py 自身+其测试外无任何读取者；前端/配置零引用。
+  CH technical_indicator 表确有 candle_pattern 列（Nullable Float64）。
+- 结论：B 的"查名单、迁消费方"成本实测=零，可直接进入退役执行。
+- 执行清单（指标队会话执行，退役 commit 走 ruling_registry 同 commit）：
+  1. reversal.py 删 CandlestickPattern 类 + 对应测试断言；
+  2. schemas/categories/market_technical_indicator.py：INSERT_COLUMNS 去掉
+     candle_pattern（列物理保留、停产为全 NULL，观察一季度后 ALTER DROP）；
+  3. technical_indicator_registry：IND-REV-001 标 deprecated → 下季删除
+     （注册表净删，本条即 Owner 批准依据）；
+  4. 可选：在 REG-PAT-001 头部注记"蜡烛实现唯一真源=candlestick_scanner"。
+- 现状安全说明：退役前两管道并存互不干扰（旧产指标表列/新产事件表），无时效压力。
+
+## 六、applicable_series 标注批（已完成，2026-09-14）
+
+REG-PAT-001 全部 256 条中 162 条已标注：
+- 几何类（chart_pattern 62 + trendline_channel 13 + support_resistance 10）=85 条：
+  `["time_bars", "renko", "pnf", "kagi"]`——既有几何形态在替代序列上同样成立，
+  适配器由 MOD-SIG-146 series_transform 提供；
+- 蜡烛类 77 条：`["time_bars"]`——蜡烛依赖 OHLC 影线，替代序列无此语义；
+- 其余 94 条（缠论/波浪/fib/structure/DL 等）本批不动，待各域语义裁定后补。
+生成器：pattern_catalog_sync.py --annotate-series（幂等，禁手填）。
+
+## 五-附、原方案 A/B 对照（提案原文存档，2026-09-14 早版）
 
 - 现状：P2-a 后 77 条蜡烛实现已全在 `candlestick_scanner.py`（目录 code_path
   77/77 已迁移）；指标域 `factor/technical_indicators/reversal.py` 的
