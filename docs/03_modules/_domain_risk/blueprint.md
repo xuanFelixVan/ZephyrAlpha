@@ -4,7 +4,7 @@ submodule_path: src/zephyr/risk
 title: "Risk Management Core 蓝图+施工图 — 风险管理引擎"
 doc_type: blueprint
 status: Active
-version: "2.2.27"
+version: "2.2.28"
 layer: L2_domain
 layer_name: risk_management
 functional_domain: risk
@@ -26,7 +26,7 @@ generation: 2
 rule_form: structural
 scope: module
 stability: evolving
-design_maturity: design
+design_maturity: production
 verifiability: manual
 depends_on:
   - target: "MOD-L02-001"
@@ -59,7 +59,7 @@ build_status: generated
 > 本蓝图仅做审查、回填、压缩、对齐，不触发任何代码变更。
 
 > actual_disk_path: src/zephyr/risk/ (10 .py files)
-> module_id: MOD-L04-001 | version: 2.2.27 | status: Active | layer: L2_domain
+> module_id: MOD-L04-001 | version: 2.2.28 | status: Active | layer: L2_domain
 > generation: 2 | construction_progress: partially_implemented
 
 # Risk Management Core 蓝图+施工图 — 风险管理引擎
@@ -143,8 +143,8 @@ build_status: generated
 
 | 图 | 位置 | 状态 | 链接 |
 |----|------|------|------|
-| 依赖图 (depgraph) | `blueprint_id=MOD-L04-001` 的 178 个 file 节点 | design | `extract_depgraph.py --modules MOD-L04-001` |
-| 数据流图 (dataflow) | 1 个 Dataset / 2 个 Job | planned | `apply_dataflowgraph.py --list-datasets` |
+| 依赖图 (depgraph) | `blueprint_id=MOD-L04-001` 的 178 个 file 节点 | production | `extract_depgraph.py --modules MOD-L04-001` |
+| 数据流图 (dataflow) | 1 个 Dataset / 2 个 Job | active | `apply_dataflowgraph.py --list-datasets` |
 | 决策架构图 (decision) | 76 个决策节点 / 2 个决策层 | design | `generate_decision_diagram.py` |
 | 蓝图 (blueprint) | 本文件 | Active | — |
 
@@ -993,8 +993,14 @@ class ViolationDetail(BaseModel):
 | `schemas/categories/market_a50_futures_daily.py` | ✅ 已实现 | |
 | `schemas/categories/market_account_nav_daily.py` | ✅ 已实现 | |
 | `schemas/categories/market_adj_factor.py` | ✅ 已实现 | |
+| `schemas/categories/market_alt_regime_signal.py` | ✅ 已实现 | |
 | `schemas/categories/market_alt_shipping_index.py` | ✅ 已实现 | |
 | `schemas/categories/market_alt_stock_comment.py` | ✅ 已实现 | |
+| `schemas/categories/market_alt_sz_house_daily.py` | ✅ 已实现 | |
+| `schemas/categories/market_alt_sz_marine_forecast.py` | ✅ 已实现 | |
+| `schemas/categories/market_alt_sz_port_monthly.py` | ✅ 已实现 | |
+| `schemas/categories/market_alt_sz_stat_monthly.py` | ✅ 已实现 | |
+| `schemas/categories/market_alt_sz_weather_warning.py` | ✅ 已实现 | |
 | `schemas/categories/market_alt_typhoon_track.py` | ✅ 已实现 | |
 | `schemas/categories/market_breadth_snapshot.py` | ✅ 已实现 | |
 | `schemas/categories/market_calendar_event.py` | ✅ 已实现 | |
@@ -1048,6 +1054,7 @@ class ViolationDetail(BaseModel):
 | `schemas/categories/market_sector_list.py` | ✅ 已实现 | |
 | `schemas/categories/market_sector_meta.py` | ✅ 已实现 | |
 | `schemas/categories/market_sector_snapshot.py` | ✅ 已实现 | |
+| `schemas/categories/market_sentiment_panel.py` | ✅ 已实现 | |
 | `schemas/categories/market_st_stock_list.py` | ✅ 已实现 | |
 | `schemas/categories/market_stk_limit.py` | ✅ 已实现 | |
 | `schemas/categories/market_stock_indicator.py` | ✅ 已实现 | |
@@ -1056,6 +1063,8 @@ class ViolationDetail(BaseModel):
 | `schemas/categories/market_suspend.py` | ✅ 已实现 | |
 | `schemas/categories/market_technical_indicator.py` | ✅ 已实现 | |
 | `schemas/categories/market_trade_calendar.py` | ✅ 已实现 | |
+| `schemas/categories/market_typhoon_landfall_history.py` | ✅ 已实现 | |
+| `schemas/categories/market_typhoon_names.py` | ✅ 已实现 | |
 | `schemas/categories/market_us_futures_intraday.py` | ✅ 已实现 | |
 | `schemas/categories/market_us_index.py` | ✅ 已实现 | |
 | `schemas/categories/meta/meta_stock_profile_ths.py` | ✅ 已实现 | |

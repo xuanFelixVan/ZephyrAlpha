@@ -4,7 +4,7 @@ submodule_path: src/zephyr/factor
 title: "Alpha Factor Core 蓝图+施工图 — 因子工厂·C-027管理+C-009执行双角色"
 doc_type: blueprint
 status: Active
-version: "4.0.14"
+version: "4.0.15"
 layer: L2_domain
 layer_name: alpha_factor
 functional_domain: intelligence
@@ -308,7 +308,7 @@ build_status: production
 
 | 图 | 位置 | 状态 | 链接 |
 |----|------|------|------|
-| 依赖图 (depgraph) | `blueprint_id=MOD-L02-001` 的 124 个 file 节点 | design | `extract_depgraph.py --modules MOD-L02-001` |
+| 依赖图 (depgraph) | `blueprint_id=MOD-L02-001` 的 127 个 file 节点 | design | `extract_depgraph.py --modules MOD-L02-001` |
 | 数据流图 (dataflow) | 23 个 Dataset / 24 个 Job | planned | `apply_dataflowgraph.py --list-datasets` |
 | 决策架构图 (decision) | 0 个决策节点 / 2 个决策层 | N/A | `generate_decision_diagram.py` |
 | 蓝图 (blueprint) | 本文件 | Active | — |
@@ -320,7 +320,7 @@ build_status: production
 | module_id | MOD-L02-001 | MOD-L02-001 | ✅ |
 | domain_id | N/A | N/A | ✅ |
 | build_status | production | production | ✅ |
-| file_count | 124 文件 | 14 文件（§0.1） | ❌ |
+| file_count | 127 文件 | 14 文件（§0.1） | ❌ |
 
 > 冲突时以 depgraph 为准（ARCH-056 + ARCH-MM-001 声明 vs 验证框架）。
 
@@ -1123,6 +1123,7 @@ class FactorMeta(BaseModel):
 | `src/zephyr/factor/core/factor_dag/__init__.py` | ✅ 已实现 | |
 | `src/zephyr/factor/core/factor_dag/dag.py` | ✅ 已实现 | |
 | `src/zephyr/factor/expectations.py` | ✅ 已实现 | |
+| `src/zephyr/factor/fundamentals.py` | ✅ 已实现 | |
 
 ### 1.2 测试文件
 
@@ -1146,6 +1147,7 @@ class FactorMeta(BaseModel):
 | `tests/factor/test_factor_dag.py` | ✅ 已实现 | |
 | `tests/factor/test_factor_decay_monitor.py` | ✅ 已实现 | |
 | `tests/factor/test_factor_optimization.py` | ✅ 已实现 | |
+| `tests/factor/test_fundamentals.py` | ✅ 已实现 | |
 | `tests/factor/test_governance_engine.py` | ✅ 已实现 | |
 | `tests/factor/test_grayscale_rollout.py` | ✅ 已实现 | |
 | `tests/factor/test_ic_decay.py` | ✅ 已实现 | |
@@ -1160,6 +1162,7 @@ class FactorMeta(BaseModel):
 | `tests/zephyr/factor/technical_indicators/test_indicator_base.py` | ✅ 已实现 | |
 | `tests/zephyr/factor/technical_indicators/test_momentum.py` | ✅ 已实现 | |
 | `tests/zephyr/factor/technical_indicators/test_reversal.py` | ✅ 已实现 | |
+| `tests/zephyr/factor/technical_indicators/test_statistics.py` | ✅ 已实现 | |
 | `tests/zephyr/factor/technical_indicators/test_trend.py` | ✅ 已实现 | |
 | `tests/zephyr/factor/technical_indicators/test_volatility.py` | ✅ 已实现 | |
 | `tests/zephyr/factor/technical_indicators/test_volume.py` | ✅ 已实现 | |

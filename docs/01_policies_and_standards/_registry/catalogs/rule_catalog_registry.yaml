@@ -4,10 +4,10 @@ ttl: permanent
 doc_type: register
 title: 规则路径目录（唯一真源 SSoT）
 status: active
-generated_at: '2026-09-13T18:19:22Z'
+generated_at: '2026-09-13T18:34:42Z'
 generated_by: scripts/governance/d3_metadata/generate_rule_catalog.py
 maintenance: auto
-total_files: 246
+total_files: 247
 total_rules: 61
 tier_distribution:
   L0: 21
@@ -1952,6 +1952,21 @@ files:
   version: 1.2.0
   rule_form: procedural
   scope: 07_trading_decision_architecture
+  stability: ''
+  layer: ''
+  superseded_by: ''
+  severity: ''
+  tier: ''
+  aliases: []
+  section_count: 0
+- path: docs/01_policies_and_standards/sop/trading_decision_map_pathfinding_sop.md
+  module_id: ''
+  title: 交易决策全景图病菌寻路增长 SOP——六向寻路+防噪音四闸（长期增长机制真源）
+  doc_type: policy
+  status: active
+  version: 1.0.0
+  rule_form: procedural
+  scope: global
   stability: ''
   layer: ''
   superseded_by: ''
