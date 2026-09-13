@@ -59,7 +59,7 @@ CREATE TABLE IF NOT EXISTS c1_market.market_pattern_event
 (
     event_id      UInt64         COMMENT '事件确定性ID(blake2b-64: pattern_id+timeframe+symbol+anchor_trade_date+confirmed_at+name)，重放幂等键',
     pattern_id    LowCardinality(String) COMMENT '形态ID(REG-PAT-001 PAT-* 或引擎 name@anchor)',
-    pattern_class LowCardinality(String) COMMENT '图形类别(引擎封闭集原文): 反转|持续|趋势|支撑阻力|缠论|波浪',
+    pattern_class LowCardinality(String) COMMENT '图形类别(封闭集原文): 反转|持续|趋势|支撑阻力|缠论|波浪|K线(P2-a 蜡烛扫描器)',
     direction     LowCardinality(String) COMMENT '预测方向(引擎封闭集原文): 向上|向下|中性',
     confidence    Float64        COMMENT '置信度[0,1](引擎初拍值，回验标定批后更新)',
     timeframe     LowCardinality(String) COMMENT '周期: 1m/5m/15m/30m/60m/120m/day/week/month(9 周期口径)',

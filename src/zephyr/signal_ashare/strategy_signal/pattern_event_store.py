@@ -51,7 +51,7 @@ _FULL_TABLE = "c1_market.market_pattern_event"
 
 # 引擎封闭集原文（PatternClass/PatternDirection .value，与 MOD-SIG-091 对齐）
 _VALID_DIRECTIONS = ("向上", "向下", "中性")
-_VALID_PATTERN_CLASSES = ("反转", "持续", "趋势", "支撑阻力", "缠论", "波浪")
+_VALID_PATTERN_CLASSES = ("反转", "持续", "趋势", "支撑阻力", "缠论", "波浪", "K线")
 
 _REQUIRED_FIELDS = (
     "pattern_id",
