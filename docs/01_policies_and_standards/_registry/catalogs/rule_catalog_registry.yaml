@@ -4,7 +4,7 @@ ttl: permanent
 doc_type: register
 title: 规则路径目录（唯一真源 SSoT）
 status: active
-generated_at: '2026-09-13T19:59:57Z'
+generated_at: '2026-09-13T20:00:56Z'
 generated_by: scripts/governance/d3_metadata/generate_rule_catalog.py
 maintenance: auto
 total_files: 249
@@ -1916,7 +1916,7 @@ files:
   section_count: 0
 - path: docs/01_policies_and_standards/sop/construction_sop/construction_workflow_policy.md
   module_id: ''
-  title: 07 域施工流程标准作业规程（SOP）——端到端 15 步施工闭环
+  title: 交易决策域施工流程标准作业规程（SOP）——端到端 15 步施工闭环
   doc_type: policy
   status: active
   version: 1.5.5

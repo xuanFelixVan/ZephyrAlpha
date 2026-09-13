@@ -2,9 +2,9 @@
 module_id: SOP-INDEX-001
 doc_type: index
 ttl: permanent
-title: SOP 方法论真源地图（七族文件夹导航）
+title: SOP 方法论真源地图（八族文件夹导航）
 status: active
-version: 1.2.0
+version: 1.3.0
 owner: ZephyrAlpha-Owner
 language: zh
 ---
@@ -25,6 +25,7 @@ language: zh
 | `trading_decision_map_sop/` | **TDM 地图族**：逐层讨论六步法（trading_decision_map_layering_policy：四道前置检查防撞车——资产盘点/四路调研/上层完整性/枝干分级） | TDM 地图结构讨论、血肉填充任务开工前 |
 | `ops_sop/` | **运维协作与应急族**：冲突三分法（merge_conflict_resolution_policy：全项目冲突处理唯一真源）+ worktree 四证清理（worktree_cleanup_policy）+ 保命轨人工 Runbook（emergency_runbook，D-L1~D-L3） | 合并冲突时；清理 worktree 前（四证缺一不可）；系统应急时 |
 | `data_audit_sop/` | **数据审计族**：产业链数据审计修复循环（industry_chain_data_audit_policy，配套标准=policies/graph_quality_standard.md） | 图谱数据质量修复、数据审计班次开工前 |
+| 根下 `tdm_consumption_sop.md` | **草案待审定**：TDM 消费场景规程 v0.1（09-14 班起草，untracked 未入库）——Owner 审定后迁 `trading_decision_map_sop/tdm_consumption_policy.md` 升 permanent+三通道注册；退回 _working 或退役 |
 | 根下 `audit_prompts_20_ai.md` | **21 域 AI 审计流水线提示词**（PROTECTED：skip-worktree + 只读属性，禁删禁挪禁改位置） | 发起多模型交叉审计前（design memo 68 的执行蓝本） |
 
 ## 使用纪律

@@ -27,9 +27,9 @@ related_modules:
 
 > **简称：全图全库对齐**（Owner 2026-09-05 裁定 #ARCH-ALIGN-NAMING-001——计数无关命名：本体系历经五图→六图→七图三次改名，每次都迫使文档返工；本名不随全景图/注册表数量增长腐化。口语"跑一下全图全库对齐"=`python scripts/governance/d5_architecture/generators/align_all.py`。当前实际数量：全景图 9 张+注册表 49 个，见 §3/§4）
 > 本清单是 **全项目对齐** 的**资产清单层真源**，列出"要对齐哪些东西、每个东西的对齐规则、用什么工具、不一致怎么办"。
-> **性质**：清单层，只列对齐对象+规则+工具+处置，不编排流程。流程见 [construction_workflow_sop](construction_workflow_sop.md)（施工 SOP，管"什么时候对齐、怎么对齐"）。
+> **性质**：清单层，只列对齐对象+规则+工具+处置，不编排流程。流程见 [construction_workflow_sop](../construction_sop/construction_workflow_policy.md)（施工 SOP，管"什么时候对齐、怎么对齐"）。
 > **适用范围**：**全项目所有模块/前端/文档/注册表**，不限于 07 域。新 AI 进项目必读。
-> **管理规范**：[01_design_memo_management_spec](../../02_enterprise_architecture/07_trading_decision_architecture/design_memos/01_design_memo_management_spec.md)。
+> **管理规范**：[01_design_memo_management_spec](../../../02_enterprise_architecture/07_trading_decision_architecture/design_memos/01_design_memo_management_spec.md)。
 
 ## 1. 主题组信息
 
@@ -39,7 +39,7 @@ related_modules:
 | 创建 | 2026-08-31 |
 | 优先级 | P0（所有施工的前置依赖） |
 | 状态 | active v1.1.0 |
-| 上游 | [construction_workflow_sop](construction_workflow_sop.md)（施工流程）、[trae_080_panorama_alignment](../rules/trae_080_panorama_alignment.yaml)（五图对齐铁律） |
+| 上游 | [construction_workflow_sop](../construction_sop/construction_workflow_policy.md)（施工流程）、[trae_080_panorama_alignment](../rules/trae_080_panorama_alignment.yaml)（五图对齐铁律） |
 | 下游 | 所有施工 AI session（必读）、panorama_alignment_gate（门禁扩展依据） |
 | 真源边界 | 本文件只列对齐对象+规则+工具+处置；流程步骤以 construction_workflow_sop 为准 |
 | 冲突解决 | 流程以 SOP 为准，清单以本文件为准 |
@@ -58,7 +58,7 @@ related_modules:
 
 - **三层分类**：全图（第一层，现 7 张）+ 注册表（第二层）+ 代码文档（第三层），每层列出全量对象+对齐规则
 - **每个对象四要素**：对齐对象（和什么对齐）/ 对齐时机（什么时候检查）/ 对齐工具（用什么脚本/门禁）/ 失败处置（不一致怎么办）
-- **新 AI 入口**：本文档列入 [construction_workflow_sop](construction_workflow_sop.md) Step 0 必看文件清单，新 AI 冷启动时强制加载
+- **新 AI 入口**：本文档列入 [construction_workflow_sop](../construction_sop/construction_workflow_policy.md) Step 0 必看文件清单，新 AI 冷启动时强制加载
 
 ## 3. 第一层：全景图对齐（九图，全图全库对齐之"图"）
 
@@ -207,7 +207,7 @@ python scripts/governance/d5_architecture/validators/validate_strategy_productio
 新 AI 进项目 MUST 按顺序读完以下三份文件：
 
 1. **本清单**（alignment_checklist.md）——知道要对齐哪些东西
-2. **[construction_workflow_sop](construction_workflow_sop.md)**——知道什么时候对齐、怎么对齐
+2. **[construction_workflow_sop](../construction_sop/construction_workflow_policy.md)**——知道什么时候对齐、怎么对齐
 3. **[frontend_handbook](../../../docs/03_modules/_domain_frontend/frontend_handbook/)**（如涉及前端，2026-09-01 已建）——知道前端怎么做
 
 **冷启动验证**：读完后必须能回答"六图是哪六张、注册表分几类、代码文档测试怎么对齐"——答不出=没读懂，重读。

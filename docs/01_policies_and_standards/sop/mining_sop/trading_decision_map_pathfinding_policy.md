@@ -25,8 +25,8 @@ related_modules:
 
 > **一句话**：交易决策全景图不是一次画完的——本 SOP 定义它**长期增长**的标准作业：往哪个方向长（六向寻路）、长出来的东西怎么审（防噪音四道闸）、怎么落图（批次边界+四关验收）、什么时候算完（职能完备性）、以及**半年后怎么重跑一遍找最新的东西**（T2 复审模式）。
 > **亲缘**：通用研究方法论真源=[mining_sop.md](mining_sop_policy.md)（2026-09-14 升 permanent，含双噪音终止/时间盒封批/失败模式——本文件为其在 TDM 地图增长域的专用实例）。
-> **诞生**：2026-09-09 夜，Owner 裁定"每个节点延伸新节点直到能查的都查到；搜到的东西必须专业审查，编出来的噪音没意义"，由 TDM 后端负责人会话沉淀升 permanent。首次执行实例：[docs/_working/2026-09-09-tdm-growth-blueprint.md](../../_working/2026-09-09-tdm-growth-blueprint.md)（task_bound，方法论冲突以本 SOP 为准）。
-> **姊妹 SOP**：产业链图谱的寻路=[industry_chain_data_audit_sop §7.6/§7.7](industry_chain_data_audit_sop.md)（群落编排+六向产业链版）；地图层位讨论闸=[trading_decision_map_layering_sop](trading_decision_map_layering_sop.md)（本 SOP 第 2 步的真源）。
+> **诞生**：2026-09-09 夜，Owner 裁定"每个节点延伸新节点直到能查的都查到；搜到的东西必须专业审查，编出来的噪音没意义"，由 TDM 后端负责人会话沉淀升 permanent。首次执行实例：[docs/_working/2026-09-09-tdm-growth-blueprint.md](../../../_working/2026-09-09-tdm-growth-blueprint.md)（task_bound，方法论冲突以本 SOP 为准）。
+> **姊妹 SOP**：产业链图谱的寻路=[industry_chain_data_audit_sop §7.6/§7.7](../data_audit_sop/industry_chain_data_audit_policy.md)（群落编排+六向产业链版）；地图层位讨论闸=[trading_decision_map_layering_sop](../trading_decision_map_sop/trading_decision_map_layering_policy.md)（本 SOP 第 2 步的真源）。
 
 ## 1. 主题组信息
 

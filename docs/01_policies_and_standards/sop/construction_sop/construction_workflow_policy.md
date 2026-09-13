@@ -3,7 +3,7 @@ ttl: permanent
 doc_type: policy
 rule_form: procedural
 verifiability: manual
-title: 07 域施工流程标准作业规程（SOP）——端到端 15 步施工闭环
+title: 交易决策域施工流程标准作业规程（SOP）——端到端 15 步施工闭环
 owner: ZephyrAlpha-Owner
 language: zh
 status: active
@@ -32,13 +32,13 @@ related_modules:
   - src/zephyr/gov_enforcement/rule_bridge/session_worktree.py
 ---
 
-# 07 域施工流程标准作业规程（SOP）——端到端 15 步施工闭环
+# 交易决策域施工流程标准作业规程（SOP）——端到端 15 步施工闭环
 
 > 本 SOP 是 **07_trading_decision_architecture** 域施工流程的**编排层真源**，把散落在 84 个 trae_xxx 规则文件 + 多个 design_memo 中的流程性内容串联成端到端 15 步施工闭环。
 > **性质**：编排层，**只串联流程+引用真源规则，不重复规则内容**。每一步明确"何时触发 / 做什么 / 怎么做 / 产出什么 / 不通过怎么办"。
-> **适用范围**：仅 07 域施工（regime/选股/仓位/风控/买卖/执行/对账/治理）。数据层/基础设施/治理脚本走全局规则。
-> **管理规范**：[01_design_memo_management_spec](../../02_enterprise_architecture/07_trading_decision_architecture/design_memos/01_design_memo_management_spec.md)。
-> **关联**：[AI_review_instructions](../../_archive/AI_review_instructions.md)（文档审查指令集，Step 1 真源）｜ [60_cross_cutting_cleanup](../../_archive/60_cross_cutting_cleanup.md)｜ [65_git_safety_governance](../../02_enterprise_architecture/07_trading_decision_architecture/design_memos/65_git_safety_governance.md)｜ [66_commit_queue_serialization](../../02_enterprise_architecture/07_trading_decision_architecture/design_memos/66_commit_queue_serialization.md)
+> **适用范围**：仅交易决策域施工（regime/选股/仓位/风控/买卖/执行/对账/治理——对应 docs/02_enterprise_architecture/07_trading_decision_architecture 业务族，"07"只是目录编号勿再当域名使用）。数据层/基础设施/治理脚本走全局规则；数据回灌/修复/判重另必读 [data_ops_policy](../data_ops_sop/data_ops_policy.md)。
+> **管理规范**：[01_design_memo_management_spec](../../../02_enterprise_architecture/07_trading_decision_architecture/design_memos/01_design_memo_management_spec.md)。
+> **关联**：[AI_review_instructions](../../../_archive/AI_review_instructions.md)（文档审查指令集，Step 1 真源）｜ [60_cross_cutting_cleanup](../../../_archive/60_cross_cutting_cleanup.md)｜ [65_git_safety_governance](../../../02_enterprise_architecture/07_trading_decision_architecture/design_memos/65_git_safety_governance.md)｜ [66_commit_queue_serialization](../../../02_enterprise_architecture/07_trading_decision_architecture/design_memos/66_commit_queue_serialization.md)
 
 ## 1. 主题组信息
 
@@ -48,8 +48,8 @@ related_modules:
 | 创建 | 2026-08-12 |
 | 优先级 | P0（施工前置依赖） |
 | 状态 | active v1.0.0 |
-| 上游 | [01_design_memo_management_spec](../../02_enterprise_architecture/07_trading_decision_architecture/design_memos/01_design_memo_management_spec.md)（设计备忘管理规范） |
-| 下游 | 所有 07 域施工 AI session（必读） |
+| 上游 | [01_design_memo_management_spec](../../../02_enterprise_architecture/07_trading_decision_architecture/design_memos/01_design_memo_management_spec.md)（设计备忘管理规范） |
+| 下游 | 所有交易决策域施工 AI session（必读） |
 | 真源边界 | 本文件只编排流程步骤+命令+通过条件+失败处置；规则约束（禁止/必须/约束条件）以原 trae_xxx 文件为准 |
 | 冲突解决 | 规则约束以原文件为准，流程编排以本文件为准 |
 
@@ -64,10 +64,10 @@ related_modules:
 | [trae_035_task_construction_verification.yaml](../rules/trae_035_task_construction_verification.yaml) | 搬家规则/前置检查/循环验收/全景图对齐/门禁命令 | ❌ 缺文档审查+长清单审查+施工完毕文档更新+worktree 合并+只清理自己 |
 | [trae_056_module_creation_workflow.yaml](../rules/trae_056_module_creation_workflow.yaml) | 模块创建 10 phase 完整工作流（冷启动→搜索→设计态→准入→蓝图→文件→路径→文件头→启动→注册表→三方对齐） | ❌ 仅"新建模块"流程，不含文档审查/测试/commit/清理/merge |
 | [trae_080_panorama_alignment.yaml](../rules/trae_080_panorama_alignment.yaml) | 五图对齐铁律（设计态先行+派生+对齐验证） | ❌ 仅五图对齐环节（第六图 frontend_map 对齐规则在 alignment_checklist §3） |
-| [AI_review_instructions.md](../../_archive/AI_review_instructions.md) | 文档审查指令集 | ❌ 只是审查指令，不是端到端施工流程 |
-| [65_git_safety_governance.md](../../02_enterprise_architecture/07_trading_decision_architecture/design_memos/65_git_safety_governance.md) | git 安全防护层 | ❌ 只管 git 安全 |
-| [66_commit_queue_serialization.md](../../02_enterprise_architecture/07_trading_decision_architecture/design_memos/66_commit_queue_serialization.md) | 多 AI 并发提交队列 | ❌ 只管提交期串行化 |
-| [01_design_memo_management_spec.md](../../02_enterprise_architecture/07_trading_decision_architecture/design_memos/01_design_memo_management_spec.md) | 设计备忘三层分治原则 | ❌ 是文档管理规范，不是施工流程 |
+| [AI_review_instructions.md](../../../_archive/AI_review_instructions.md) | 文档审查指令集 | ❌ 只是审查指令，不是端到端施工流程 |
+| [65_git_safety_governance.md](../../../02_enterprise_architecture/07_trading_decision_architecture/design_memos/65_git_safety_governance.md) | git 安全防护层 | ❌ 只管 git 安全 |
+| [66_commit_queue_serialization.md](../../../02_enterprise_architecture/07_trading_decision_architecture/design_memos/66_commit_queue_serialization.md) | 多 AI 并发提交队列 | ❌ 只管提交期串行化 |
+| [01_design_memo_management_spec.md](../../../02_enterprise_architecture/07_trading_decision_architecture/design_memos/01_design_memo_management_spec.md) | 设计备忘三层分治原则 | ❌ 是文档管理规范，不是施工流程 |
 
 ### 2.2 定位
 
@@ -155,7 +155,7 @@ python scripts/lock_files.py status
 **不通过处置**：守护进程未运行 → **禁止执行任何后续步骤**（trae_056 明示：非协商必做）/ boot_sequence 失败 → 查 lifecycle_manager 日志
 **产出物**：Session 就绪状态
 **HookRegistry 说明**：任务状态变更回调注册表（`src/zephyr/governance/ops_governance/event_hook.py` §HookRegistry L73，单例 `hook_registry`），按 priority 排序执行，异常隔离。AI 触发任务状态变更时相关 hook 自动执行
-**handoff 交接包读取**（[parallel_session_coordination_policy.md](../policies/parallel_session_coordination_policy.md)）：Session Continuity 恢复时 MUST 读取上一 session 的 handoff 交接包 `.runtime/handoffs/handoff_<sid>.json`（含 pending_tasks/warnings），否则状态丢失
+**handoff 交接包读取**（[parallel_session_coordination_policy.md](../../policies/parallel_session_coordination_policy.md)）：Session Continuity 恢复时 MUST 读取上一 session 的 handoff 交接包 `.runtime/handoffs/handoff_<sid>.json`（含 pending_tasks/warnings），否则状态丢失
 **ABS 绝对禁止清单**（[trae_018_behavior_code_prohibition.yaml](../rules/trae_018_behavior_code_prohibition.yaml) ABS-01~08，全流程红线）：
 - ABS-01：禁止修改 immutable_core 文件（safety_level=H 且 ai_autonomy=immutable_core）
 - ABS-02：禁止删除任何文档（删除走 [trae_029](../rules/trae_029_doc_operation_security.yaml) 三步审判）
@@ -174,7 +174,7 @@ python scripts/lock_files.py status
 **何时触发**：施工 AI 接到施工任务后第一步
 **前置条件**：Step 0 完成 / 待施工文档 frontmatter status=active（draft 文档先回讨论环节补齐）
 **操作摘要**：按 AI_review_instructions 12 节指令审查文档完整性 / 施工算法成熟度 / 四图对齐情况
-**引用真源**：[AI_review_instructions.md](../../_archive/AI_review_instructions.md)（审查指令集真源，不重复内容）
+**引用真源**：[AI_review_instructions.md](../../../_archive/AI_review_instructions.md)（审查指令集真源，不重复内容）
 **执行要点**：
 1. 按改动分类（A/B/C/D/E）跳过不适用的审查条款
 2. 逐节核查：工作完成性 / 责任唯一 / 向内收 / 文件夹容量 / AI 可发现性 / 红蓝对抗 / 命名路径 / 影响同步 / 版本控制 / 文件元数据 / depgraph 登记审查结论与零问题闭环
@@ -183,7 +183,7 @@ python scripts/lock_files.py status
 **通过判据**：AI_review 12 节全部 PASS / 已知 GAP 已记录在 design_memo 或 ARCH 条目
 **不通过处置**：发现 GAP → 回讨论备忘补齐施工算法/接口签名/状态机 → 重新审查（禁止边审边改，按"先报告→再修复→再自检"分轮处理）
 **产出物**：审查结论（对话内）+ GAP 清单（如需回补则登记在 design_memo 或新建 ARCH 条目）
-**交易决策地图逐层讨论任务加读**（2026-09-05 v1.5.5）：地图血肉填充的每层讨论（板块层/个股层/买卖点层/持仓流/离场流/组合流/币圈）MUST 先过 [trading_decision_map_layering_sop.md](trading_decision_map_layering_sop.md) 四道前置检查（①已有资产盘点五选一处置 ②四路外部调研 ③上层完整性检查 ④枝干分级检查）——检查通过后的落盘与提交回归本 SOP Step 2-12 标准施工闭环。防撞车/防越级/防枝末先行（事故案例：情绪六段 vs 已有情绪周期五态词汇撞车）。
+**交易决策地图逐层讨论任务加读**（2026-09-05 v1.5.5）：地图血肉填充的每层讨论（板块层/个股层/买卖点层/持仓流/离场流/组合流/币圈）MUST 先过 [trading_decision_map_layering_sop.md](../trading_decision_map_sop/trading_decision_map_layering_policy.md) 四道前置检查（①已有资产盘点五选一处置 ②四路外部调研 ③上层完整性检查 ④枝干分级检查）——检查通过后的落盘与提交回归本 SOP Step 2-12 标准施工闭环。防撞车/防越级/防枝末先行（事故案例：情绪六段 vs 已有情绪周期五态词汇撞车）。
 **地图定位声明**（layering SOP §2，2026-09-05 Owner 裁定）：交易决策地图=**唯一动作流程真源**（"这个项目怎么交易的就看这张图"）——同等职责文档一律按第一性原理判定后吸收进节点；节点规范 v1.3 七要素+五联锚（strategy_refs/factor_refs/data_refs/algo_refs/module_id+module_ref），algo_refs 指向算法库条目（REG-IND-001 IND-* / REG-EXA-001 EXA-*，条目自身索引代码）而非文档，公式细节走 doc_ref 指向算法附件。
 
 ---
@@ -272,7 +272,7 @@ python scripts/governance/apply_depgraph.py --add-edge ...
 **何时触发**：Step 2 完成
 **前置条件**：depgraph planned 节点已登记
 **操作摘要**：sync_panorama_module 派生其余三图 + align_all 验证五图对齐 + frontend_map 人工核对（涉前端施工时）
-**引用真源**：[trae_080_panorama_alignment.yaml](../rules/trae_080_panorama_alignment.yaml) §panorama_alignment + [alignment_checklist.md](alignment_checklist.md) §3（六图对齐规则真源）
+**引用真源**：[trae_080_panorama_alignment.yaml](../rules/trae_080_panorama_alignment.yaml) §panorama_alignment + [alignment_checklist.md](../governance_sop/alignment_checklist.md) §3（六图对齐规则真源）
 **执行命令**：
 
 ```powershell
@@ -308,9 +308,9 @@ python scripts/governance/d5_architecture/generators/align_all.py
 **操作摘要**：取数清单 → 后端三查+前端一查 → 三分支决策 → 拆件判定 → 接线验收
 **引用真源**：
 - [trae_086_frontend_module_construction.yaml](../rules/trae_086_frontend_module_construction.yaml) §truth_source_wiring（铁律全文）+ §split_judgment（拆件判据）
-- [frontend_component_split_sop.md](frontend_component_split_sop.md)（拆件操作闭环——"有得拆"分支的施工路径真源）
+- [frontend_component_split_sop.md](frontend_component_split_policy.md)（拆件操作闭环——"有得拆"分支的施工路径真源）
 - [data_asset_registry.yaml](../_registry/catalogs/data_asset_registry.yaml)（数据资产登记，查"后端有没有"第二查）
-- [alignment_checklist.md](alignment_checklist.md) §3（frontend_map 前端全景图——查"前端有没有重复造轮子"）
+- [alignment_checklist.md](../governance_sop/alignment_checklist.md) §3（frontend_map 前端全景图——查"前端有没有重复造轮子"）
 - FRONTEND-TRUTH-SOURCE gate（commit 阶段 warn 兜底，审计 .runtime/gate_audit/frontend_truth_source.jsonl）
 
 **执行要点**：
@@ -321,7 +321,7 @@ python scripts/governance/d5_architecture/generators/align_all.py
    - 有重复 → **先治后端**：裁定唯一真源、废弃其余，再接（禁止前端"挑一个好用的接着用"）
    - 没有 → **先建后端**：立项加端点（真源走 registry 登记），端点验收后前端才接线；此前最多画占位骨架，**禁止造数据顶上**
 4. **拆件判定**（后端盘点先行供输入——拆件第一判据=数据源边界，没有数据源清单就没法判）：按 TRAE-086 §split_judgment 四判据逐区块过（数据源边界/单一功能/经典五信号/反向不拆）：
-   - **有得拆** → 转入 [frontend_component_split_sop.md](frontend_component_split_sop.md) 8 步拆件闭环施工（其 Step 3 API 接口=本步"没有→先建后端"分支的落地），拆完回本 SOP Step 4 续行
+   - **有得拆** → 转入 [frontend_component_split_sop.md](frontend_component_split_policy.md) 8 步拆件闭环施工（其 Step 3 API 接口=本步"没有→先建后端"分支的落地），拆完回本 SOP Step 4 续行
    - **没得拆** → 直接进 Step 4 施工编码
 5. **接线验收**：页面真源徽章亮 + 端点实测返回；演示回退（若有）必须标"断线·演示"（演示诚实纪律，15s 自动重试至真源）
 **通过判据**：每条数据需求都有唯一后端真源且前端已接线 + 拆件判定结论留痕（拆/不拆+判据）
@@ -341,7 +341,7 @@ python scripts/governance/d5_architecture/generators/align_all.py
 - 各设计备忘 §施工算法章节
 
 **执行要点**：
-1. **蓝图创建**（仅新建模块）：按 [blueprint_construction_template.md](../templates/blueprint_construction_template.md) 模板
+1. **蓝图创建**（仅新建模块）：按 [blueprint_construction_template.md](../../templates/blueprint_construction_template.md) 模板
 2. **文件创建**：用 scaffold.py + 锁协议（[trae_001_file_operation_security.yaml](../rules/trae_001_file_operation_security.yaml) RULE-ZERO）
 3. **路径多维审查**：名字+路径+上层文件夹+容量对齐（[trae_055_arch_domain_capacity.yaml](../rules/trae_055_arch_domain_capacity.yaml) ARCH-CAP-002：≤150 通过 / >150 必须拆分）
 4. **文件头部锚定**：15 字段注释头部（[BLUEPRINT]/[MODULE]/[DOMAIN]/[DEPENDENCIES]/[CONSUMERS]/[STARTUP]/[MATURITY]/[INVARIANTS]/[MODIFY-GUARD]/[STABILITY]/[SAFETY]/[AI_AUTONOMY]/[ERROR_CONTRACT]/[TESTS]/[TTL]）
@@ -454,7 +454,7 @@ pytest tests/path/to/test_xxx.py -v
 **何时触发**：Step 6 长清单审查通过
 **前置条件**：审查遗留项已登记到 design_memos/construction_progress_tracker.md §六（不要求零遗留，但要求已登记）
 **操作摘要**：设计备忘 frontmatter 升版 + 正文施工完毕标注 + 已施工设施盘点补模块路径 + 00_index 同步
-**引用真源**：[01_design_memo_management_spec.md](../../02_enterprise_architecture/07_trading_decision_architecture/design_memos/01_design_memo_management_spec.md) §5.3 + [trae_052_cross_blueprint_change_cleanup.yaml](../rules/trae_052_cross_blueprint_change_cleanup.yaml) §rule_eleven（跨蓝图变更通知）
+**引用真源**：[01_design_memo_management_spec.md](../../../02_enterprise_architecture/07_trading_decision_architecture/design_memos/01_design_memo_management_spec.md) §5.3 + [trae_052_cross_blueprint_change_cleanup.yaml](../rules/trae_052_cross_blueprint_change_cleanup.yaml) §rule_eleven（跨蓝图变更通知）
 **执行要点**：
 1. **设计备忘 frontmatter**：status→active（如原 draft）/ version+1（如 v1.0.0→v1.1.0）/ last_updated→今日
 2. **正文 §施工完毕标注**：在 §施工算法章节顶部加 "**已施工**（commit XXXXX）" 标注
@@ -540,7 +540,7 @@ python scripts/governance/diagnose_depgraph.py
 **何时触发**：Step 8 全景图流转完成
 **前置条件**：全景图对齐通过
 **操作摘要**：git status 确认无回退/无清理 + 对比施工前后 staged 文件清单 + 验证 worktree 修改已 merge 到主树 + held_files 检查
-**引用真源**：[65_git_safety_governance.md](../../02_enterprise_architecture/07_trading_decision_architecture/design_memos/65_git_safety_governance.md) §备份先行 / project_memory #ARCH-GIT-CLEAN-GUARD-FIX 灾难教训
+**引用真源**：[65_git_safety_governance.md](../../../02_enterprise_architecture/07_trading_decision_architecture/design_memos/65_git_safety_governance.md) §备份先行 / project_memory #ARCH-GIT-CLEAN-GUARD-FIX 灾难教训
 **执行命令**：
 
 ```powershell
@@ -559,10 +559,10 @@ python scripts/lock_files.py status
 ```
 
 **通过判据**：所有 staged 文件存在 / 无 git clean 痕迹 / worktree 已 merge（若使用）/ held_files 无冲突
-**不通过处置**：文件丢失 → git reflog / dangling blob 恢复（[65_git_safety_governance.md](../../02_enterprise_architecture/07_trading_decision_architecture/design_memos/65_git_safety_governance.md) §灾难恢复）
+**不通过处置**：文件丢失 → git reflog / dangling blob 恢复（[65_git_safety_governance.md](../../../02_enterprise_architecture/07_trading_decision_architecture/design_memos/65_git_safety_governance.md) §灾难恢复）
 **产出物**：完整性确认
 **铁律**：所有新建/修改文件必须立即 `git add`（project_memory #ARCH-GIT-CLEAN-GUARD-FIX 教训——git clean -fd 会物理删除 untracked 文件不进回收站）
-**工作区治理**（[workspace_governance_policy.md](../policies/workspace_governance_policy.md) + [scripts/rollback.py](../../../scripts/rollback.py)）：
+**工作区治理**（[workspace_governance_policy.md](../../policies/workspace_governance_policy.md) + [scripts/rollback.py](../../../scripts/rollback.py)）：
 - auto-sync 产物还原优先：git checkout 还原 auto-sync 产物，禁手动提交残留（工作区永远有 modified 噪音）
 - .gitignore 维护：.aidrafts/access/metadata/.ailocks 等必忽略
 - 会话开始/提交前检查清单
@@ -575,7 +575,7 @@ python scripts/lock_files.py status
 **何时触发**：Step 9 完整性确认
 **前置条件**：文件完整性已确认
 **操作摘要**：走 GitCommitGateway 网关提交 + stash 生命周期检查 + pre-commit 增量守门
-**引用真源**：[66_commit_queue_serialization.md](../../02_enterprise_architecture/07_trading_decision_architecture/design_memos/66_commit_queue_serialization.md) / [trae_075_stash_lifecycle.yaml](../rules/trae_075_stash_lifecycle.yaml) / [trae_084_precommit_incremental_discipline.yaml](../rules/trae_084_precommit_incremental_discipline.yaml)
+**引用真源**：[66_commit_queue_serialization.md](../../../02_enterprise_architecture/07_trading_decision_architecture/design_memos/66_commit_queue_serialization.md) / [trae_075_stash_lifecycle.yaml](../rules/trae_075_stash_lifecycle.yaml) / [trae_084_precommit_incremental_discipline.yaml](../rules/trae_084_precommit_incremental_discipline.yaml)
 **执行命令**：
 
 ```powershell
@@ -621,7 +621,7 @@ python scripts/session_worktree.py commit <sid> "commit message"
 **产出物**：commit hash
 **铁律**：
 - 禁止 `--no-verify` 绕过 pre-commit（[project_memory](file:///c:\Users\fanzi\.trae-cn\memory\projects\-d-ZephyrAlpha--p2-1c552864b6a6a396cfb0\project_memory.md)）
-- 禁止裸 `git commit`（pre-commit 框架全树 stash 会冲掉其他会话暂存，[66_commit_queue_serialization.md](../../02_enterprise_architecture/07_trading_decision_architecture/design_memos/66_commit_queue_serialization.md) §2.1 事故 1）
+- 禁止裸 `git commit`（pre-commit 框架全树 stash 会冲掉其他会话暂存，[66_commit_queue_serialization.md](../../../02_enterprise_architecture/07_trading_decision_architecture/design_memos/66_commit_queue_serialization.md) §2.1 事故 1）
 **commit 四件套**（[trae_072](../rules/trae_072_cross_commit_atomicity.yaml)+[trae_073](../rules/trae_073_precommit_offline_discipline.yaml)+[trae_068](../rules/trae_068_preventability_layer.yaml)+[trae_069](../rules/trae_069_commit_gateway_abuse_thresholds.yaml)）：
 - 跨 commit 原子性：同功能多文件同 commit，跨 session 依赖登记 depends_on_sessions，GATE-IMPORT-INTEGRITY 硬阻断悬空 import
 - pre-commit hook 离线纪律：禁外部 repo/local hook language:system/纯 stdlib，删"双防线"（网络依赖会卡死 commit）
@@ -681,7 +681,7 @@ python scripts/session_worktree.py mark-completed <sid>
 **前置条件**：临时文件已清理
 **操作摘要**：session_worktree merge 回 dev + merge 成功后清理 worktree + 有风险暂保留逃生通道
 **引用真源**：[trae_078_force_merge_safety.yaml](../rules/trae_078_force_merge_safety.yaml) / [trae_076_worktree_commit_persistence.yaml](../rules/trae_076_worktree_commit_persistence.yaml) / [project_memory session_worktree 隔离施工可靠路径](file:///c:\Users\fanzi\.trae-cn\memory\projects\-d-ZephyrAlpha--p2-1c552864b6a6a396cfb0\project_memory.md)
-**冲突处理**：merge 遇冲突 MUST 按 [merge_conflict_resolution_sop.md](merge_conflict_resolution_sop.md) 执行——冲突三分法（叠加型合并/迭代型取新/互斥型升级用户裁定）+标准 7 步流程，禁止盲选边
+**冲突处理**：merge 遇冲突 MUST 按 [merge_conflict_resolution_sop.md](../ops_sop/merge_conflict_resolution_policy.md) 执行——冲突三分法（叠加型合并/迭代型取新/互斥型升级用户裁定）+标准 7 步流程，禁止盲选边
 **执行命令**：
 
 ```powershell
@@ -737,12 +737,12 @@ python scripts/session_worktree.py cleanup <sid>
 **产出物**：worktree 清理确认
 **铁律**：
 - 1 任务 = 1 start + 多次 Edit/Write + 1 commit + 1 merge（worktree 君子协定）
-- held_files 重叠走逃生通道（2026-08-13 裁定更新：`--allow-overlap` AI 可默认使用，前置=已读对方改动按 [67 号](merge_conflict_resolution_sop.md)三分法判定非互斥；[GW:<sid>:overlap] 留痕 + trae_069 阈值监控兜底，替代原"不当正门用"的事前禁用口径）
+- held_files 重叠走逃生通道（2026-08-13 裁定更新：`--allow-overlap` AI 可默认使用，前置=已读对方改动按 [67 号](../ops_sop/merge_conflict_resolution_policy.md)三分法判定非互斥；[GW:<sid>:overlap] 留痕 + trae_069 阈值监控兜底，替代原"不当正门用"的事前禁用口径）
 **worktree base 新鲜度全生命周期**（[trae_074_worktree_base_freshness.yaml](../rules/trae_074_worktree_base_freshness.yaml)）：
 - 三阶段检测：start(fail-open warning)/commit(fail-closed 阻断)/merge(fail-closed 阻断，薛定谔的回退高发点)
 - emergency_commit 主工作区 vs HEAD 一致性检查（warn-only）+reflog 审计标记
 - force=True 不可绕过 base freshness（#ARCH-FORCE-MERGE-SAFETY-001 治本）
-**分支策略**（[branch_strategy_policy.md](../policies/branch_strategy_policy.md)）：
+**分支策略**（[branch_strategy_policy.md](../../policies/branch_strategy_policy.md)）：
 - dev 即主分支/master FF 镜像/session/* 命名（sess-NNNNN-YYYYMMDDHHMMSS）
 - 3 个月未合并废弃
 - 6 条禁止：禁 master commit/禁裸 git commit/禁 push --force/禁议题性分支名
@@ -775,7 +775,7 @@ python scripts/session_worktree.py cleanup <sid>
 - **不重复** trae_035/056/080 等规则内容（禁止/必须/约束条件以原文件为准）
 - **不替代**任务卡系统（[trae_034_task_card_standard.yaml](../rules/trae_034_task_card_standard.yaml)，33 字段+粒度约束）
 - **不引入**新门禁脚本（复用现有 GitCommitGateway/session_worktree 等）
-- **不扩展**到 07 域外（数据层/基础设施/治理脚本走全局规则）
+- **不扩展**到交易决策域外（数据层/基础设施/治理脚本走全局规则）
 - **不创建**审查报告文件（审查结论在对话内给出，禁止 MD/txt/json 报告文件）
 
 ### 5.2 适用边界

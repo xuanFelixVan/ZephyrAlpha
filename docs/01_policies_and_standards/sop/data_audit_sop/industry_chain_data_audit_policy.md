@@ -22,12 +22,12 @@ related_modules:
   - src/zephyr/governance/depgraph_schema.py
 ---
 
-# ZEPHYR数据审计与更新 SOP——夜班自主执行版
+# 产业链供应链全景图数据审计与更新SOP——夜班自主执行版
 
 > 本 SOP 是 **产业链/供应链全景图数据**（PG depgraph 库 ig\_\* 七表）的**审计、更新、补充流程真源**。
 > **核心用途**：Owner 睡前对 AI 说一句"按照 industry\_chain\_data\_audit\_sop 执行夜班"，AI 自主执行到 Owner 醒来，中途不问用户、不汇报中间态，醒后一次性大白话汇报。
-> **性质**：编排层 + 数据契约。表结构真源是 [apply\_industry\_graph\_ddl.py](../../../../../scripts/industry_graph/apply_industry_graph_ddl.py)（DDL-as-Code），五视图设计真源是 [2026-08-28-industry-graph-frontend.md](../../02_enterprise_architecture/07_trading_decision_architecture/design_memos/2026-08-28-industry-graph-frontend.md)。本文件不重复表结构，只规定：审计什么 / 怎么补 / 数据怎么写 / 写成什么样算合格 / 怎么汇报。
-> **方法论参考**：[document\_review\_and\_optimization\_sop](document_review_and_optimization_sop.md)（轮次循环+连续零发现退出）｜[audit\_prompts\_20\_ai](audit_prompts_20_ai.md)（总控派单+自包含提示词+无人值守编排）。
+> **性质**：编排层 + 数据契约。表结构真源是 [apply\_industry\_graph\_ddl.py](../../../../../scripts/industry_graph/apply_industry_graph_ddl.py)（DDL-as-Code），五视图设计真源是 [2026-08-28-industry-graph-frontend.md](../../../02_enterprise_architecture/07_trading_decision_architecture/design_memos/2026-08-28-industry-graph-frontend.md)。本文件不重复表结构，只规定：审计什么 / 怎么补 / 数据怎么写 / 写成什么样算合格 / 怎么汇报。
+> **方法论参考**：[document\_review\_and\_optimization\_sop](../construction_sop/document_review_and_optimization_policy.md)（轮次循环+连续零发现退出）｜[audit\_prompts\_20\_ai](../audit_prompts_20_ai.md)（总控派单+自包含提示词+无人值守编排）。
 > **不做什么**：不动交易/实盘模块（只写 depgraph PG 库）；不做前端接线（chainmap 页接线走 DAL-C01/C02 另行派单）；不做 lead-lag 因子（2026-08-28 已证伪裁定，不推翻）。
 
 ## 1. 主题组信息
@@ -38,7 +38,7 @@ related_modules:
 | 创建   | 2026-09-03                                                                                                                                                            |
 | 优先级  | P1（数据底座保鲜的常态机制）                                                                                                                                                       |
 | 状态   | active v1.0.0                                                                                                                                                         |
-| 上游   | [2026-08-28-industry-graph-frontend.md](../../02_enterprise_architecture/07_trading_decision_architecture/design_memos/2026-08-28-industry-graph-frontend.md)（数据底座验收） |
+| 上游   | [2026-08-28-industry-graph-frontend.md](../../../02_enterprise_architecture/07_trading_decision_architecture/design_memos/2026-08-28-industry-graph-frontend.md)（数据底座验收） |
 | 下游   | 所有执行夜班数据审计的 AI session（必读）                                                                                                                                            |
 | 真源边界 | 表结构以 DDL 脚本为准，数据契约以本文件 §4 为准，流程编排以本文件为准                                                                                                                               |
 | 冲突解决 | 表结构冲突→DDL 脚本为准；数据写入约定冲突→本文件为准；与既有裁定冲突→既有裁定为准并登记开放问题                                                                                                                   |
@@ -479,7 +479,7 @@ WHERE valid_from <= :decision_date
 
 ## 5. 写入工具（第 0 轮施工件）
 
-夜班开工先施工统一写入工具 `scripts/industry_graph/websearch_ingest.py`，之后所有轮次的写入**只准走这个工具**。施工遵循 [construction\_workflow\_sop](construction_workflow_sop.md) 纪律。
+夜班开工先施工统一写入工具 `scripts/industry_graph/websearch_ingest.py`，之后所有轮次的写入**只准走这个工具**。施工遵循 [construction\_workflow\_sop](../construction_sop/construction_workflow_policy.md) 纪律。
 
 **子命令**：
 
@@ -809,7 +809,7 @@ WHERE valid_from <= :decision_date
 
 ### 7.7 病菌寻路 v2：六向矩阵与防噪音四道闸（v1.6.0 升级）
 
-> **方法论真源**：[trading_decision_map_pathfinding_sop](trading_decision_map_pathfinding_sop.md)（Owner 2026-09-09 深夜裁定升 permanent）。§7.6 的群落编排/预算/合流焊点机制**全部保留**——本节补两块缺失拼图：**往哪个方向长**（六向矩阵）与**长出来的东西怎么审**（四道闸显式化，把 §7.2/§7.6 既有分散规则升格为逐条必过的闸）。
+> **方法论真源**：[trading_decision_map_pathfinding_sop](../mining_sop/trading_decision_map_pathfinding_policy.md)（Owner 2026-09-09 深夜裁定升 permanent）。§7.6 的群落编排/预算/合流焊点机制**全部保留**——本节补两块缺失拼图：**往哪个方向长**（六向矩阵）与**长出来的东西怎么审**（四道闸显式化，把 §7.2/§7.6 既有分散规则升格为逐条必过的闸）。
 
 **六向寻路矩阵（产业链版）**——每个环节节点/候选公司的寻路按六向展开，每向=图谱反查（SQL）+全网搜索双动作，产出发现或"已查无"结论：
 
@@ -926,7 +926,7 @@ progress.json 结构：
 
 ## 9. 铁律（逐字适用）
 
-1. **Git 安全**（同 [document\_review\_and\_optimization\_sop §6.4](document_review_and_optimization_sop.md)）：改文件后立即 `git add`；禁止 `git clean` / `git reset --hard` / `git checkout --` / `git restore` / `git stash` / `git checkout .`；提交一律走 GitCommitGateway（`python scripts/git_commit.py`，禁裸 commit、禁 --no-verify）；commit ≠ push，push 需 Owner 明确指令。
+1. **Git 安全**（同 [document\_review\_and\_optimization\_sop §6.4](../construction_sop/document_review_and_optimization_policy.md)）：改文件后立即 `git add`；禁止 `git clean` / `git reset --hard` / `git checkout --` / `git restore` / `git stash` / `git checkout .`；提交一律走 GitCommitGateway（`python scripts/git_commit.py`，禁裸 commit、禁 --no-verify）；commit ≠ push，push 需 Owner 明确指令。
 2. **文件锁**：修改 scripts/ 或 docs/ 文件前 `python scripts/lock_files.py acquire <file> <session_id>`，完成后 release。
 3. **不碰交易面**：本 SOP 全程只读写 PG depgraph 库 + 项目文件，禁止触碰实盘/模拟盘/交易模块。
 4. **不删数据**：§4.5，逐字适用。
@@ -976,7 +976,7 @@ progress.json 结构：
 
 ## 12. 质量验收与循环修复（v1.5.0 新增——审查判定权归引擎，AI 只修不判）
 
-> **真源引用**：合格线定义（十九项 S1~S19）与修复方案见 [graph\_quality\_standard](../policies/graph_quality_standard.md)——本节只定**编排**，不重复标准内容。引擎=[graph\_quality\_check.py](../../../../../scripts/industry_graph/graph_quality_check.py)（只读，每条标准一条 SQL）。
+> **真源引用**：合格线定义（十九项 S1~S19）与修复方案见 [graph\_quality\_standard](../../policies/graph_quality_standard.md)——本节只定**编排**，不重复标准内容。引擎=[graph\_quality\_check.py](../../../../../scripts/industry_graph/graph_quality_check.py)（只读，每条标准一条 SQL）。
 > **治什么**：2026-09-09 全库体检实测 18,160 项违规（role 失控 11,207/后缀名 2,911/自环边 1,874/孤岛 718/unspecified 686/标题腔 61…），此前靠 AI 主观审查口径漂移、治不动——v1.5.0 起**判定权移交脚本**。
 
 ### 12.1 引擎使用

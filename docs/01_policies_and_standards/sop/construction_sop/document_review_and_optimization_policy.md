@@ -27,8 +27,8 @@ related_modules:
 > 本 SOP 是 **文档审查与优化** 流程的**编排层真源**，把散落在 AI_review_instructions（原 07 域 23 路并发审查指令集）中的文档优化流程升级为**全项目通用**的循环审查方法。
 > **性质**：编排层，只串联流程步骤+引用真源规则，不重复规则内容。每一步明确"做什么 / 怎么做 / 通过条件 / 失败处置"。
 > **适用范围**：**全项目所有文档**（design_memo、SOP、技术手册、全景图、规范、蓝图等），不限于 07 域。前端技术手册 / 前端全景图等新增文档审查也走本流程。
-> **管理规范**：[01_design_memo_management_spec](../../02_enterprise_architecture/07_trading_decision_architecture/design_memos/01_design_memo_management_spec.md)。
-> **关联**：[AI_review_instructions](../../_archive/AI_review_instructions.md)（原 23 路并发指令集，已归档，使命已完成，审计链保留）｜ [construction_workflow_sop](construction_workflow_sop.md)（施工 SOP，走代码建设流程）
+> **管理规范**：[01_design_memo_management_spec](../../../02_enterprise_architecture/07_trading_decision_architecture/design_memos/01_design_memo_management_spec.md)。
+> **关联**：[AI_review_instructions](../../../_archive/AI_review_instructions.md)（原 23 路并发指令集，已归档，使命已完成，审计链保留）｜ [construction_workflow_sop](construction_workflow_policy.md)（施工 SOP，走代码建设流程）
 
 ## 1. 主题组信息
 
@@ -38,7 +38,7 @@ related_modules:
 | 创建 | 2026-08-31 |
 | 优先级 | P0（所有文档维护的前置依赖） |
 | 状态 | active v1.0.0 |
-| 上游 | [01_design_memo_management_spec](../../02_enterprise_architecture/07_trading_decision_architecture/design_memos/01_design_memo_management_spec.md) |
+| 上游 | [01_design_memo_management_spec](../../../02_enterprise_architecture/07_trading_decision_architecture/design_memos/01_design_memo_management_spec.md) |
 | 下游 | 所有涉及文档审查/优化的 AI session（必读） |
 | 真源边界 | 本文件只编排流程步骤+命令+通过条件+失败处置；规则约束（禁止/必须/约束条件）以原文件为准 |
 | 冲突解决 | 规则约束以原文件为准，流程编排以本文件为准 |
@@ -152,7 +152,7 @@ related_modules:
 
 **目的**：防文档写太多、太复杂、太提前——个人项目不需要团队级/集群级/多期工程级设计。
 
-**判定基准**：以 [system_charter.md §2 硬边界约束](../../02_enterprise_architecture/04_architecture_principles_decisions/system_charter.md) + 实际施工方式为唯一基准：
+**判定基准**：以 [system_charter.md §2 硬边界约束](../../../02_enterprise_architecture/04_architecture_principles_decisions/system_charter.md) + 实际施工方式为唯一基准：
 - 人力：1 人全栈+AI 协作，代码 100% AI 生成
 - 硬件：单机 PC 工作站（i7-12700KF / RTX 3090 24GB / 64GB RAM），无集群/K8s
 - 资金：个人双账户（实盘+QMT 模拟），miniQMT 10笔/秒、Tick=3秒

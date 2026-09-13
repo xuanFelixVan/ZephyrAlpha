@@ -28,7 +28,7 @@ related_modules:
 
 > 本备忘是全项目**冲突处理的唯一真源**，从 2026-08-13 "17 个 worktree 大 merge" 实战提炼：当日 4 处冲突全部按本文方法解决，零业务逻辑误判、零内容丢失。
 > 性质：**操作规范（SOP）**，任何 AI 遇到 git 冲突时必须遵循。
-> 关联：[65_git_safety_governance](../../02_enterprise_architecture/07_trading_decision_architecture/design_memos/65_git_safety_governance.md)（git 安全总案）｜[66_commit_queue_serialization](../../02_enterprise_architecture/07_trading_decision_architecture/design_memos/66_commit_queue_serialization.md)（提交队列）｜[construction_workflow_sop](construction_workflow_sop.md) Step 12（施工流程 merge 环节）
+> 关联：[65_git_safety_governance](../../../02_enterprise_architecture/07_trading_decision_architecture/design_memos/65_git_safety_governance.md)（git 安全总案）｜[66_commit_queue_serialization](../../../02_enterprise_architecture/07_trading_decision_architecture/design_memos/66_commit_queue_serialization.md)（提交队列）｜[construction_workflow_sop](../construction_sop/construction_workflow_policy.md) Step 12（施工流程 merge 环节）
 
 ## 1. 适用范围与触发场景
 

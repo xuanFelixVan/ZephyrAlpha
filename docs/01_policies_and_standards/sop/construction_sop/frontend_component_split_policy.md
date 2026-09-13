@@ -27,7 +27,7 @@ related_modules:
 > **来源**：2026-09-01 stockq 页 sq-stock-header / sq-search-box 拆分实证；v1.1.0 增量合并当日全量实证（QMT 文件桥真源 / 事件行 / Electron 桌面壳 / 首页纯视频 / 浏览器缓存排查法）。
 > **核心原则**：单一功能 = 单一组件 = 积木（TRAE-086）。
 > **目标**：拆件 → 登记 → 接数据 → 验收 → 提交，四件套闭环。
-> **上游入口（Owner 2026-09-04 接线）**：本 SOP 由 [construction_workflow_sop.md](construction_workflow_sop.md) **Step 3.5 拆件判定**触发——后端盘点先行产出数据源清单（拆件第一判据=数据源边界，盘点是拆件的输入）；判定"有得拆"→ 走本 SOP 8 步闭环，"没得拆"→ 回总 SOP Step 4 直接施工。本 SOP Step 3（API 接口）= 后端盘点"没有→先建后端"分支的落地动作。
+> **上游入口（Owner 2026-09-04 接线）**：本 SOP 由 [construction_workflow_sop.md](construction_workflow_policy.md) **Step 3.5 拆件判定**触发——后端盘点先行产出数据源清单（拆件第一判据=数据源边界，盘点是拆件的输入）；判定"有得拆"→ 走本 SOP 8 步闭环，"没得拆"→ 回总 SOP Step 4 直接施工。本 SOP Step 3（API 接口）= 后端盘点"没有→先建后端"分支的落地动作。
 > **v1.2.0 变更**：接入总施工流程——上游入口声明 + Step 1 补后端盘点输入要求。
 > **v1.3.0 变更**：接入对齐体系——必读清单加 alignment_checklist.md（frontend_map 对齐规则真源）+ Step 7 全景图登记挂对齐规则（backend_ref 类型化禁悬空/feature_id 对齐 key/与 manifest 双向一致）。
 

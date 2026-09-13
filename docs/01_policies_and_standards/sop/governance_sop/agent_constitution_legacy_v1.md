@@ -1021,7 +1021,7 @@ python scripts/governance/d5_architecture/pre_delete_safety_check.py <file_path>
 
 ### 10.0 改完立即入队铁律（66 号 v1.0.0，2026-08-12）
 
-> **来源**：[66_commit_queue_serialization](docs/02_enterprise_architecture/07_trading_decision_architecture/design_memos/66_commit_queue_serialization.md) §4 裁定 6——用户已确认。
+> **来源**：[66_commit_queue_serialization](../../../02_enterprise_architecture/07_trading_decision_architecture/design_memos/66_commit_queue_serialization.md) §4 裁定 6——用户已确认。
 > **背景**：2026-08-12 23 会话并发事故证明"改完统一 add"在多会话 stash 周期下不保险（dangling blob 恢复实战）。队列方案落地后，会话提交 = 快照入队即返回，add 只是暂存保护、入队才是内容落袋。
 
 **铁律**：AI 每完成一个文件的编辑（Edit/Write），**立即**将该文件入队（enqueue）到提交队列。不等"一批改完再统一入队"——多会话并发下，未入队的修改随时可能被其他会话的 stash/restore/read-tree 抹掉。
