@@ -5,7 +5,7 @@
 # （fail-closed：白名单有而引擎无=版本漂移拒绝开工；引擎有而白名单无=挖掘机禁用）。
 
 schema_version: '1.0'
-status: draft_pending_owner_review   # 审定通过后改 active 才允许正式量产（烟测不受限）
+status: active   # Owner 2026-09-14 审定通过（大白话原话：清单行）；正式量产开放，仍受 E0 问闸约束
 decided_by_owner:
   - {item: 选型, decision: 双轨分期, date: '2026-09-14'}
   - {item: 增量IC基座, decision: REG-IND-001 技术指标库, date: '2026-09-14'}

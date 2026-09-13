@@ -12464,6 +12464,14 @@ creation_tokens:
   token: factory-backend-lane-c-formula-miner-20260913
   created_by: st-facbe-20260914
   capability: factory_backend
+- file: scripts/run_factory_lane_c.ps1
+  token: factory-backend-run-factory-lane-c-20260913
+  created_by: st-facbe-20260914
+  capability: factory_backend
+- file: scripts/register_factory_lane_c_task.ps1
+  token: factory-backend-register-factory-lane-c-task-20260913
+  created_by: st-facbe-20260914
+  capability: factory_backend
 - file: scripts/backtest/translated/c4_21af8c66c15e_small_cap.py
   token: c4-21af8c66c15e-small-cap-20260914
   created_by: st-zcode-c4-20260912

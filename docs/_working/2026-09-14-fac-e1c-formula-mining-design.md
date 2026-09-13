@@ -99,5 +99,4 @@ factor_registry；阴性结果（挖出即废的公式族）落 `c4_deferrals.cs
 - 防过拟合四件套对接：白名单受控搜索（YAML 唯一真源，引擎交集 fail-closed）/双窗考试（E4 现行）/
   DSR 折减（E4 现行）/E2 公式预审（复用 MOD-BT-091 管道，hypothesis_zh 已含机制审问句）；
 - 算力纪律：E0 问闸 heavy 档接死（交易日盘中拒，--smoke 工程烟测豁免仅限小规模并留痕）；
-- 待办：①白名单审定后 status 改 active ②正式 1000×50 跑夜窗（E0 闸放行后）③v2 自定义算子批
-  ④AlphaGen 立项。
+- 待办进展（同日续班）：①白名单 Owner 已审定（"清单行"）→ status=active ②正式档已自动化=ZephyrAlpha_FactoryLaneC 计划任务（每周六 10:00，包装器 scripts/run_factory_lane_c.ps1，日志 .runtime/logs/factory_lane_c.log；任意交易日 15:30 后可 Start-ScheduledTask 手动点火，E0 闸每火必查）③v2 自定义算子批 ④AlphaGen 立项。首火验证=周一盘中被 E0 闸拒 exit 3（纪律生效）。
