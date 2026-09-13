@@ -98,6 +98,9 @@ from zephyr.gov_enforcement.commit_gates.business_registry_gate import (  # noqa
 from zephyr.gov_enforcement.commit_gates.industry_chain_map_gate import (  # noqa: F401  # INDUSTRY-CHAIN-MAP 产业链全景图 git 侧工件门禁（图 8 挂总线，alignment_checklist §3 图 8 行 2026-09-11）
     make_industry_chain_map_gate as _make_industry_chain_map_gate,
 )
+from zephyr.gov_enforcement.commit_gates.strategy_factory_map_gate import (  # noqa: F401  # FACTORY-MAP 策略生产全景图结构门禁（图 9 挂总线，alignment_checklist §3 图 9 行，#ARCH-FACTORY-MAP-GATE-001 2026-09-13）
+    make_strategy_factory_map_gate as _make_strategy_factory_map_gate,
+)
 from zephyr.gov_enforcement.commit_gates.battle_map_alignment_gate import (  # noqa: F401  # GATE-BATTLE-MAP-ALIGNMENT 作战地图对齐硬化门禁（#ARCH-BATTLE-MAP-HARD-001 2026-09-05，三类升硬）
     make_battle_map_alignment_gate as _make_battle_map_alignment_gate,
 )

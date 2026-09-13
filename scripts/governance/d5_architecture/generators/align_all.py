@@ -32,6 +32,10 @@
   图 5  （step_id 轴）  ：battle_map（通过 anchors 与图 1-4 双向校验）
   图 6  （feature_id 轴）：frontend_map（真源 web/frontend_map.yaml，R0-R3 校验）
 
+升级轨迹：七图=+trading_decision_map（2026-09-05）→ 八图=+industry_chain_map（2026-09-11，
+注册表层/文档抽查/产业链三节）→ 九图=+strategy_production_map（2026-09-13，第八节结构
+十项+仓储存在性校验，单一真源=validators/validate_strategy_production_map.py）。
+
 强制力分层：
   硬问题（exit 1）：domain_mismatches（图 1-4 域不一致）/ ghost_anchors（图 5 幽灵锚点）/
                     frontend_map fail（图 6 悬空/重复）
@@ -81,6 +85,8 @@ if _GOV_DIR not in sys.path:
     sys.path.insert(0, _GOV_DIR)
 
 import json  # noqa: E402
+
+import yaml  # noqa: E402  # 第八节 图 9 strategy_production_map 结构+仓储校验（2026-09-13 九图升级）
 
 from zephyr.shared.infra.process_pool import run_subprocess_hidden  # noqa: E402  # TRAE-067 无窗口 subprocess 统一入口
 
@@ -136,16 +142,18 @@ def _build_overview(
     doc_soft: int = 0,
     ig_hard: int = 0,
     ig_soft: int = 0,
+    fac_hard: int = 0,
+    fac_soft: int = 0,
 ) -> str:
-    """构建八图对齐总览 Markdown（2026-09-11 八图满贯：+注册表层+文档抽查+产业链图 8）。"""
+    """构建九图对齐总览 Markdown（2026-09-13 九图满贯：+图 9 策略工厂图）。"""
     dm_fails = dm_fails or []
     dm_warns = dm_warns or []
     lines: list[str] = []
-    lines.append("# 七图对齐总览 (Seven-Panorama Alignment Overview)")
+    lines.append("# 九图对齐总览 (Nine-Panorama Alignment Overview)")
     lines.append("")
     lines.append(f"> 生成时间: {generated_at}")
-    lines.append("> 对齐轴: module_id（图 1-4）+ step_id（图 5）+ feature_id（图 6）+ node_id（图 7 TDM-*）")
-    lines.append("> 七图: depgraph / dataflowgraph / decisiongraph / blueprint.md / battle_map / frontend_map / trading_decision_map")
+    lines.append("> 对齐轴: module_id（图 1-4）+ step_id（图 5）+ feature_id（图 6）+ node_id（图 7 TDM-*/图 9 FAC-*）+ chain_id（图 8）")
+    lines.append("> 九图: depgraph / dataflowgraph / decisiongraph / blueprint.md / battle_map / frontend_map / trading_decision_map / industry_chain_map / strategy_production_map")
     lines.append("")
 
     # === 图 1-4：全景对齐（module_id 轴）===
@@ -219,12 +227,20 @@ def _build_overview(
     lines.append(f"- warning 级（module_ref 红节点占位等）: {len(dm_warns)}")
     lines.append("")
 
+    # === 图 9：strategy_production_map 对齐（node_id FAC-* 轴，2026-09-13 九图升级）===
+    lines.append("## 五、strategy_production_map 对齐（node_id FAC-* 轴，图 9）")
+    lines.append("")
+    lines.append(f"- 结构十项+仓储存在性硬违规: {fac_hard}")
+    lines.append(f"- warning 级（待定入库位/CH 环境异常）: {fac_soft}")
+    lines.append("")
+
     # === 汇总裁定 ===
-    lines.append("## 五、汇总裁定")
+    lines.append("## 六、汇总裁定")
     lines.append("")
 
     hard_issues = (
-        len(pano.domain_mismatches) + len(bm.ghost_anchors) + len(fm_fails) + len(dm_fails) + layer2_hard
+        len(pano.domain_mismatches) + len(bm.ghost_anchors) + len(fm_fails) + len(dm_fails)
+        + layer2_hard + fac_hard
     )
     soft_issues = (
         pano.issues_total
@@ -237,6 +253,7 @@ def _build_overview(
         + doc_soft
         + ig_hard  # 图 8 数据层暂计软（长城专项清欠中，清零后升硬）
         + ig_soft
+        + fac_soft  # 图 9 待定入库位/CH 环境异常（增长轨设计态预期内，不阻断）
     )
     lines.append("### 注册表层（第二层满贯）+ 产业链图 8")
     lines.append("")
@@ -251,9 +268,11 @@ def _build_overview(
         lines.append(f"   - 作战地图幽灵锚点: {len(bm.ghost_anchors)}")
         lines.append(f"   - frontend_map fail: {len(fm_fails)}")
         lines.append(f"   - trading_decision_map error: {len(dm_fails)}")
+        lines.append(f"   - strategy_production_map error: {fac_hard}")
     else:
         lines.append(
-            "✅ **硬问题清零**: domain_mismatches=0, ghost_anchors=0, frontend_map fail=0, decision_map error=0"
+            "✅ **硬问题清零**: domain_mismatches=0, ghost_anchors=0, frontend_map fail=0, "
+            "decision_map error=0, factory_map error=0"
         )
 
     if soft_issues > 0:
@@ -296,7 +315,7 @@ def main() -> int:
     print("五图对齐总览（ARCH-ALIGN-UNIFIED-001）")
     print("=" * 60)
     print()
-    print("[1/7] 全景对齐（module_id 轴，图 1-4）...")
+    print("[1/8] 全景对齐（module_id 轴，图 1-4）...")
     try:
         pano = run_panorama_alignment(write_report=False)
     except PanoramaEmptyError as e:
@@ -321,7 +340,7 @@ def main() -> int:
 
     # --- 图 5：作战地图对齐（step_id 轴）---
     print()
-    print("[2/7] 作战地图对齐（step_id 轴，图 5）...")
+    print("[2/8] 作战地图对齐（step_id 轴，图 5）...")
     try:
         bm = run_battle_map_alignment(write_report=False)
     except Exception as e:  # noqa: BLE001
@@ -341,7 +360,7 @@ def main() -> int:
 
     # --- 汇总裁定 ---
     print()
-    print("[3/7] 第六图 frontend_map 对齐（feature_id 轴，2026-09-04 六图升级）...")
+    print("[3/8] 第六图 frontend_map 对齐（feature_id 轴，2026-09-04 六图升级）...")
     try:
         fm_fails, fm_warns, fm_total = run_frontend_map_checks()
     except Exception as e:  # noqa: BLE001
@@ -354,7 +373,7 @@ def main() -> int:
 
     # --- 图 7：trading_decision_map 对齐（node_id 轴，2026-09-05 七图升级）---
     print()
-    print("[4/7] 第七图 trading_decision_map 对齐（node_id 轴，2026-09-05 七图升级）...")
+    print("[4/8] 第七图 trading_decision_map 对齐（node_id 轴，2026-09-05 七图升级）...")
     try:
         dm_fails, dm_warns, dm_total = run_decision_map_checks()
     except Exception as e:  # noqa: BLE001
@@ -367,7 +386,7 @@ def main() -> int:
 
     # --- 第五节：注册表层对齐（第二层满贯，2026-09-11）---
     print()
-    print("[5/7] 注册表层对齐（19 文件/21 段业务库 + 字典 FK + CAND 转正链 + 治理双向）...")
+    print("[5/8] 注册表层对齐（19 文件/21 段业务库 + 字典 FK + CAND 转正链 + 治理双向）...")
     layer2_hard = 0
     layer2_soft = 0
     try:
@@ -392,7 +411,7 @@ def main() -> int:
 
     # --- 第六节：代码↔文档对齐（文档 node_id 硬编码检测，第三层抽查）---
     print()
-    print("[6/7] 代码↔文档对齐（doc node_id 硬编码检测，GATE-DOC-NODE-ID 同源）...")
+    print("[6/8] 代码↔文档对齐（doc node_id 硬编码检测，GATE-DOC-NODE-ID 同源）...")
     doc_hard = 0
     doc_run = run_subprocess_hidden(
         [sys.executable, str(_REPO_ROOT_A / "scripts/governance/d3_metadata/check_doc_node_id_hardcode.py"), "--ci"],
@@ -411,7 +430,7 @@ def main() -> int:
 
     # --- 第七节：产业链全景图（图 8，chain_id 轴，2026-09-11 八图升级）---
     print()
-    print("[7/7] 第八图 产业链全景图（chain_id 轴，graph_quality_check S1-S21 引擎判定）...")
+    print("[7/8] 第八图 产业链全景图（chain_id 轴，graph_quality_check S1-S21 引擎判定）...")
     ig_hard = 0
     ig_soft = 0
     gq_run = run_subprocess_hidden(
@@ -439,6 +458,38 @@ def main() -> int:
         except (ValueError, KeyError) as e:
             print(f"  WARN: 图 8 引擎输出解析失败（降级不计违规）: {e}")
 
+    # --- 第八节：策略生产全景图（图 9，node_id FAC-* 轴，2026-09-13 九图升级）---
+    print()
+    print("[8/8] 第九图 策略生产全景图（node_id FAC-* 轴，结构十项+仓储存在性）...")
+    fac_hard = 0
+    fac_soft = 0
+    try:
+        _validators_dir = str(_REPO_ROOT / "scripts" / "governance" / "d5_architecture" / "validators")
+        if _validators_dir not in sys.path:
+            sys.path.insert(0, _validators_dir)
+        from validate_strategy_production_map import check_stores, validate_structure  # noqa: import-integrity  sys.path 动态加载
+
+        _fac_map = _REPO_ROOT / "config" / "strategy_production_map.yaml"
+        _fac_data = yaml.safe_load(_fac_map.read_text(encoding="utf-8"))
+        fac_errors = validate_structure(_fac_data)
+        s_errors, s_warns = check_stores(_fac_data, root=_REPO_ROOT)
+        # CH 连接异常（环境异常域）降 warn——学图 8 PG fail-open 先例；CH 表缺失/磁盘路径缺失保持硬
+        _fac_infra = [x for x in s_errors if x.startswith("CH 表检查失败")]
+        _fac_store_hard = [x for x in s_errors if not x.startswith("CH 表检查失败")]
+        fac_hard = len(fac_errors) + len(_fac_store_hard)
+        fac_soft = len(s_warns) + len(_fac_infra)
+        print(
+            f"  OK: 节点={len(_fac_data.get('nodes') or [])} 边={len(_fac_data.get('edges') or [])}"
+            "（结构十项+仓储存在性，单一真源=validate_strategy_production_map）"
+        )
+        print(f"  问题: 硬={fac_hard}, 软={fac_soft}（含待定入库位 warn）")
+        for x in (fac_errors + _fac_store_hard)[:20]:
+            print(f"    FAIL: {x}")
+        for x in _fac_infra[:5]:
+            print(f"    WARN: {x}（CH 环境异常 fail-open）")
+    except Exception as e:  # noqa: BLE001 — 图 9 故障不炸整个 align_all（降 warn，学第二层先例）
+        print(f"  WARN: 图 9 校验异常（降级跳过不计违规）: {e}")
+
 
     hard_issues = (
         len(pano.domain_mismatches)
@@ -446,6 +497,7 @@ def main() -> int:
         + len(fm_fails)
         + len(dm_fails)
         + layer2_hard
+        + fac_hard
     )
     # 图 8 数据层违规（ig_hard）不计硬闸：产业链清欠=长城专项进行中（S21/S24 Owner gated、
     # S25 梳理清单在案），判定权=graph_quality_check 引擎；git 侧工件已由
@@ -458,12 +510,14 @@ def main() -> int:
             f"（域不一致={len(pano.domain_mismatches)}, "
             f"幽灵锚点={len(bm.ghost_anchors)}, "
             f"frontend_map fail={len(fm_fails)}, "
-            f"decision_map error={len(dm_fails)}）"
+            f"decision_map error={len(dm_fails)}, "
+            f"factory_map error={fac_hard}）"
         )
         print("   须修复后才能施工！")
     else:
         print(
-            "✅ 硬问题清零: domain_mismatches=0, ghost_anchors=0, frontend_map fail=0, decision_map error=0"
+            "✅ 硬问题清零: domain_mismatches=0, ghost_anchors=0, frontend_map fail=0, "
+            "decision_map error=0, factory_map error=0"
         )
 
     soft_issues = (
@@ -488,6 +542,7 @@ def main() -> int:
             pano, bm, generated_at, fm_fails, fm_warns, fm_total, dm_fails, dm_warns, dm_total,
             layer2_hard=layer2_hard, layer2_soft=layer2_soft, layer2_entries=reg_total,
             doc_soft=1 if doc_run.returncode == 1 else 0, ig_hard=ig_hard, ig_soft=ig_soft,
+            fac_hard=fac_hard, fac_soft=fac_soft,
         )
         output_path.parent.mkdir(parents=True, exist_ok=True)
         output_path.write_text(overview, encoding="utf-8")

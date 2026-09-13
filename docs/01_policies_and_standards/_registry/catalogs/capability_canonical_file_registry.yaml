@@ -12050,6 +12050,18 @@ creation_tokens:
   token: commit-perf-report-20260913
   created_by: night-sweep-20260913
   capability: gov_perf_monitor
+- file: docs/_working/2026-09-13-factory-gate-review.md
+  token: factory-gate-review-20260913
+  created_by: factory-gate-b2-20260913
+  capability: factory_map_gate
+- file: src/zephyr/gov_enforcement/commit_gates/strategy_factory_map_gate.py
+  token: factory-map-gate-20260913
+  created_by: factory-gate-b2-20260913
+  capability: factory_map_gate
+- file: tests/governance/commit_gates/test_strategy_factory_map_gate.py
+  token: factory-map-gate-tests-20260913
+  created_by: factory-gate-b2-20260913
+  capability: factory_map_gate
 di_seam_exemptions:
 - module_path: zephyr.trading.auto_runtime_core.AutoRuntimeCore
   reason: P0-5 LSG DI seam 标杆，已有 DI 但 AST 模式不匹配（动态注入）

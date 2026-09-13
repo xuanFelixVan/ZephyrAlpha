@@ -47988,6 +47988,20 @@ entries:
   desc_zh: ""
   desc_en: ""
   plain_zh: "统计最近的提交构成、竞态拦截次数和漂移记录，输出一张并发健康体检表（正式提交占比低就说明并发在互相拖累）"
+- module_path: src/zephyr/gov_enforcement/commit_gates/strategy_factory_map_gate.py
+  domain_id: D_GOV_CODE_QUALITY
+  name_zh: "策略工厂图结构门禁"
+  name_en: ""
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "提交时守住策略生产全景图：改动工厂图或校验器就现场跑结构十项校验，断边缺字段非法层位直接拦下提交，图坏了必须先修再提；不动图的提交零开销放行"
+- module_path: tests/governance/commit_gates/test_strategy_factory_map_gate.py
+  domain_id: D_GOV_CODE_QUALITY
+  name_zh: "策略工厂图门禁红蓝测试"
+  name_en: ""
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "给工厂图门禁做攻防演习：红队拿断边缺字段坏图和损坏 YAML 猛攻必须全被拦，蓝队拿真好图和非触发文件验证必须全放行，触发面规则改动也同步练到"
 
 battle_map_steps:
 - step_id: BM-BUY-05

@@ -3,12 +3,12 @@ ttl: permanent
 doc_type: policy
 rule_form: checklist
 verifiability: manual
-title: 全项目对齐清单——全图全库+代码文档三层对齐规则（八图满贯版）
+title: 全项目对齐清单——全图全库+代码文档三层对齐规则（九图满贯版）
 owner: ZephyrAlpha-Owner
 language: zh
 status: active
-version: "1.4.0"
-date: 2026-09-11
+version: "1.5.0"
+date: 2026-09-13
 topic: full_project_alignment_checklist
 scope: global
 depends_on:
@@ -25,7 +25,7 @@ related_modules:
 
 # 全项目对齐清单——全图全库+代码文档三层对齐规则
 
-> **简称：全图全库对齐**（Owner 2026-09-05 裁定 #ARCH-ALIGN-NAMING-001——计数无关命名：本体系历经五图→六图→七图三次改名，每次都迫使文档返工；本名不随全景图/注册表数量增长腐化。口语"跑一下全图全库对齐"=`python scripts/governance/d5_architecture/generators/align_all.py`。当前实际数量：全景图 8 张+注册表 49 个，见 §3/§4）
+> **简称：全图全库对齐**（Owner 2026-09-05 裁定 #ARCH-ALIGN-NAMING-001——计数无关命名：本体系历经五图→六图→七图三次改名，每次都迫使文档返工；本名不随全景图/注册表数量增长腐化。口语"跑一下全图全库对齐"=`python scripts/governance/d5_architecture/generators/align_all.py`。当前实际数量：全景图 9 张+注册表 49 个，见 §3/§4）
 > 本清单是 **全项目对齐** 的**资产清单层真源**，列出"要对齐哪些东西、每个东西的对齐规则、用什么工具、不一致怎么办"。
 > **性质**：清单层，只列对齐对象+规则+工具+处置，不编排流程。流程见 [construction_workflow_sop](construction_workflow_sop.md)（施工 SOP，管"什么时候对齐、怎么对齐"）。
 > **适用范围**：**全项目所有模块/前端/文档/注册表**，不限于 07 域。新 AI 进项目必读。
@@ -60,9 +60,9 @@ related_modules:
 - **每个对象四要素**：对齐对象（和什么对齐）/ 对齐时机（什么时候检查）/ 对齐工具（用什么脚本/门禁）/ 失败处置（不一致怎么办）
 - **新 AI 入口**：本文档列入 [construction_workflow_sop](construction_workflow_sop.md) Step 0 必看文件清单，新 AI 冷启动时强制加载
 
-## 3. 第一层：全景图对齐（八图，全图全库对齐之"图"）
+## 3. 第一层：全景图对齐（九图，全图全库对齐之"图"）
 
-> 八图=七图（depgraph/dataflowgraph/decisiongraph/blueprint/battle_map/frontend_map/trading_decision_map）+ 产业链全景图（industry_chain_map，2026-09-11 八图升级：PG industry_chain 表组+config/chainmap_cluster_names.yaml，D38"新图必挂总线"落地）
+> 九图=八图（depgraph/dataflowgraph/decisiongraph/blueprint/battle_map/frontend_map/trading_decision_map/industry_chain_map）+ 策略生产全景图（strategy_production_map，2026-09-13 九图升级：E0-E9 供给端全景 `config/strategy_production_map.yaml`，D38"新图必挂总线"同源——结构校验器/对抗测试先行落地 681a7fc806，FACTORY-MAP gate+本挂轴同批闭环）
 
 | 图名 | 真源 | 对齐 key | 对齐规则 | 对齐时机 | 对齐工具 | 失败处置 |
 |---|---|---|---|---|---|---|
@@ -74,17 +74,19 @@ related_modules:
 | **frontend_map**（前端全景图，已建 2026-09-01；v2.0.0 双真源合并+302 功能点补登） | `src/zephyr/frontend/dashboard/web/frontend_map.yaml`（git YAML 真源） | feature_id（F-页面-名） | 前端功能必须挂 backend_ref 到模块注册表（类型化：module:/registry:/table:/api:/none:）；模块必须声明 has_frontend；与 features/manifest.yaml 双向一致 | commit 前 / 新前端功能上线时 | [check_frontend_map.py](../../../scripts/governance/d5_architecture/generators/check_frontend_map.py) 校验器 + **FRONTEND-MAP gate（commit 自动阻断，priority=137）** + scan_frontend_pages.py 半自动补登 | frontend_ref 空→阻断（commit gate 已闭环 2026-09-04） |
 | **trading_decision_map**（交易决策地图，2026-09-05 七图升级） | `config/trading_decision_map.yaml`（git YAML 真源） | node_id（TDM-*） | R1-R12 引用校验（策略挂载/因子/数据/module_ref 断链=error 阻断；数据实存性四态=warn）+R8 sequence 成环检测 | commit 前（恒跑 gate）/ align_all 第 7 项 | [check_decision_map.py](../../../scripts/governance/d5_architecture/generators/check_decision_map.py) 校验器 + **DECISION-MAP gate（commit 自动阻断，priority=138）**（校验单一真源=zephyr.trading.decision_map.validate_decision_map） | R1-R8/R10/R12 error>0→阻断；module_ref 缺失→warn（红节点占位） |
 
-**八图统一验证命令（2026-09-11 八图升级：单命令跑全图+注册表层+代码文档抽查）**：
+**九图统一验证命令（2026-09-13 九图升级：单命令跑全图+注册表层+代码文档抽查）**：
 ```powershell
-python scripts/governance/d5_architecture/generators/align_all.py  # 全图全库统一入口：图 1-5 自动 + 图 6/7 校验内嵌 + 第五节注册表层满贯（19 文件/21 段+字典FK+CAND 转正链+治理双向）+ 第六节文档抽查 + 第七节产业链图 8，硬>0=exit 1
+python scripts/governance/d5_architecture/generators/align_all.py  # 全图全库统一入口：图 1-5 自动 + 图 6/7 校验内嵌 + 第五节注册表层满贯（19 文件/21 段+字典FK+CAND 转正链+治理双向）+ 第六节文档抽查 + 第七节产业链图 8 + 第八节策略工厂图 9，硬>0=exit 1
 python scripts/governance/d5_architecture/generators/check_frontend_map.py  # 图 6 单独跑（快速诊断用）
 python scripts/governance/d5_architecture/generators/check_decision_map.py  # 图 7 单独跑（快速诊断用）
 python scripts/industry_graph/graph_quality_check.py --json -  # 图 8 数据层单独跑（引擎判定权）
+python scripts/governance/d5_architecture/validators/validate_strategy_production_map.py  # 图 9 单独跑（结构+仓储存在性全量，快速诊断用）
 ```
 
 | **industry_chain_map**（产业链全景图，图 8，2026-09-11 八图升级） | PG industry_chain 表组 + `config/chainmap_cluster_names.yaml` | chain_id（节点经锚点链挂 module_id，MOD 总线两跳） | git 侧：字典↔DDL↔引擎三方同 commit 同步（结构四边）+簇名词表 sanity；数据层：S1-S21 合格线引擎体检（判定权=graph_quality_check，AI 只修复不判定） | align_all 第 7 节恒跑 / 链数据 apply 后 / 触及 git 侧工件 commit 时 | [graph_quality_check.py](../../../scripts/industry_graph/graph_quality_check.py)（数据层）+ **INDUSTRY-CHAIN-MAP gate（priority=141）**（git 侧硬阻断）+ [check_registry_code_anchor 同源共享核心 registry_alignment](../../../src/zephyr/gov_enforcement/registry_alignment.py) | git 侧违规→阻断 commit；数据层违规→引擎判定+align_all 报告（长城专项清欠中，非 advisory 清零后升硬） |
+| **strategy_production_map**（策略生产全景图/策略工厂，图 9，2026-09-13 九图升级） | `config/strategy_production_map.yaml`（git YAML 真源） | node_id（FAC-*） | 结构十项校验（字段完整性/边引用闭合/E0-E9 层位/laws/产品清单/built 必有代码锚/lane 归属/未声明反馈环/自环/store_refs 三要素）error>0=阻断；仓储存在性（磁盘路径+CH 表）error=硬、CH 连接异常=warn、待定入库位=warn | commit 前（触发式 gate：图 YAML/校验器变更）/ align_all 第 8 节 | [validate_strategy_production_map.py](../../../scripts/governance/d5_architecture/validators/validate_strategy_production_map.py) 校验器 + **FACTORY-MAP gate（commit 自动阻断，priority=142）**（校验单一真源=validate_structure 动态复用；仓储存在性归 align_all/CLI，CH 环境异常不误伤提交） | 结构 error>0→阻断 commit；仓储缺失→align_all 硬报告 |
 
-**硬阻断条件**：domain_mismatches>0 / ghost_anchors>0 / frontend_ref 悬空（自动门禁建成后；建成前人工确认）；八图 git 侧工件违规（FRONTEND-MAP/DECISION-MAP/INDUSTRY-CHAIN-MAP gate）
+**硬阻断条件**：domain_mismatches>0 / ghost_anchors>0 / frontend_ref 悬空（自动门禁建成后；建成前人工确认）；九图 git 侧工件违规（FRONTEND-MAP/DECISION-MAP/INDUSTRY-CHAIN-MAP/FACTORY-MAP gate）
 
 ## 4. 第二层：注册表对齐
 

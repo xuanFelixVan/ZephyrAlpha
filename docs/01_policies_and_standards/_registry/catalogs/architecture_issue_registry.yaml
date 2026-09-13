@@ -21393,6 +21393,14 @@ entries:
   status: decided
   created: '2026-09-05'
   last_updated: '2026-09-05'
+- issue_id: '#ARCH-FACTORY-MAP-GATE-001'
+  title: 策略工厂图门禁闭环——图 9 结构校验 FACTORY-MAP commit gate+九图挂轴（增长轨防断链）
+  severity: P2中
+  adjudication: '策略生产全景图（图 9，E0-E9 供给端 15 节点）为增长轨设计（E1 五车道无限生长/E3 构造层极大），无 commit 门禁则结构腐坏静默累积（批1 校验器上线即抓到 FAC-E1A built 无锚实证）。建造分两批：批1（681a7fc806）结构校验器+对抗测试 15 用例+仓储存在性检查；批2 FACTORY-MAP gate（priority=142，触发式=图 YAML/校验器真源变更，结构十项校验单一真源=validate_strategy_production_map.validate_structure 懒加载复用，仓储存在性含 CH 连通性=环境异常域归 align_all 第八节 CH fail-open 不入 gate）+ 九图挂轴（alignment_checklist §3 图 9 行 v1.5.0 + align_all 第八节）。任务审查报告 docs/_working/2026-09-13-factory-gate-review.md（结论 B：五件套 3/5 已由批1 完成，本批=裁剪后第二批；field_dictionary 登记缓办留痕）。'
+  fix_phase: '已落地（2026-09-13：strategy_factory_map_gate.py + 红蓝 13 用例 + align_all 第八节 + checklist v1.5.0 九图化 + 双注册表/capability/翻译/depgraph 登记；commit_gates 全量 2318 passed）'
+  status: decided
+  created: '2026-09-13'
+  last_updated: '2026-09-13'
 - issue_id: '#ARCH-BUSINESS-REG-GATE-001'
   title: 业务资产库入库门禁——6 库 module_id 强制（alignment_checklist §4.1 待建转正式）
   severity: P1高

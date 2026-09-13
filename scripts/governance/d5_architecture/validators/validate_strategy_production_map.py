@@ -3,7 +3,9 @@
 # [DOMAIN] D_BACKTEST
 # [DEPENDENCIES] yaml; zephyr.data.ch_config(仅 check-stores 模式)
 # [CONSUMERS] 策略生产全景图（config/strategy_production_map.yaml）质量门禁；
-#   tests/backtest/test_strategy_production_map_adversarial.py
+#   tests/backtest/test_strategy_production_map_adversarial.py；
+#   zephyr.gov_enforcement.commit_gates.strategy_factory_map_gate（FACTORY-MAP gate，
+#   结构校验单一真源复用）；scripts.governance.d5_architecture.generators.align_all（第八节）
 # [STARTUP] manual
 # [MATURITY] experimental
 # [INVARIANTS] 台账只读（本工具禁写）；结构错误=exit 1，警告（待定入库位）不阻断；
@@ -124,11 +126,17 @@ def validate_structure(data: dict) -> list[str]:
     return errors
 
 
-def check_stores(data: dict) -> tuple[list[str], list[str]]:
-    """store_refs 入库位存在性：磁盘路径或 CH 表（c1_x.y 形态）。待定=警告。"""
+def check_stores(data: dict, root: Path | None = None) -> tuple[list[str], list[str]]:
+    """store_refs 入库位存在性：磁盘路径或 CH 表（c1_x.y 形态）。待定=警告。
+
+    Args:
+        data: 图 YAML 解析结果。
+        root: 磁盘路径解析根（默认 cwd；align_all 第八节传仓库根防 CWD 漂移，
+              2026-09-13 九图挂轴批扩展）。
+    """
     errors: list[str] = []
     warnings: list[str] = []
-    root = Path.cwd()
+    root = root or Path.cwd()
     seen_targets: set[str] = set()
     for n in data.get("nodes", []):
         for sr in n.get("store_refs", []):

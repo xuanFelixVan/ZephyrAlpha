@@ -721,6 +721,12 @@ gates:
   source: in_process
   register_line: 0  # priority=141；2026-09-11 产业链全景图（图 8）git 侧工件门禁：字典↔DDL↔引擎三方同 commit 同步（结构四边核查真源=registry_alignment.check_industry_graph_field_dictionary）+chainmap_cluster_names 词表 sanity；数据层质量归 align_all 第七节 graph_quality_check
   enabled: true
+- gate_id: FACTORY-MAP
+  module_path: zephyr.gov_enforcement.commit_gates.strategy_factory_map_gate
+  factory_function: make_strategy_factory_map_gate
+  source: in_process
+  register_line: 0  # priority=142；2026-09-13 策略生产全景图（图 9）结构门禁：触发式（图 YAML/校验器真源变更），v0.2 schema 结构十项校验（单一真源=validate_strategy_production_map.validate_structure 动态复用，禁复制）；仓储存在性（含 CH 连通性）不入 gate——归 align_all 第八节（CH fail-open）与 CLI 校验器；YAML 损坏 fail-closed；测试 tests/governance/commit_gates/test_strategy_factory_map_gate.py
+  enabled: true
 - gate_id: REGISTRY-MASS-DELETION
   module_path: zephyr.gov_enforcement.commit_gates.registry_mass_deletion_gate
   factory_function: make_registry_mass_deletion_gate

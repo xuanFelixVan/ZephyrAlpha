@@ -1,7 +1,9 @@
 # 策略生产全景图（strategy_production_map，昵称"策略工厂"）v0.2 结构稿
-# 图 9（拟）：生产级全景图第二张（图 7 交易决策全景图=消费端，本图=供给端）
-# 状态：增长轨设计稿（task_bound）——四关验收件（校验器/对抗测试/九图挂轴/gate）未建，
-#       建成前本图仅为结构真源草案；正式落图按 strategy_factory 落图批流程执行
+# 图 9：生产级全景图第二张（图 7 交易决策全景图=消费端，本图=供给端）
+# 状态：增长轨已落图（2026-09-13 九图挂轴批）——四关验收件齐备：结构校验器+对抗测试
+#       （681a7fc806）+ FACTORY-MAP gate（priority=142 触发式硬阻断）+ 九图挂轴
+#       （alignment_checklist §3 图 9 行 + align_all 第八节）；治理地位对齐 TDM。
+#       增长轨性质不变：新节点/车道按层位规约追加，结构校验即改即拦
 # 设计来源：docs/_working/2026-09-13-strategy-factory-pipeline-discussion.md（v1-v10，五轮检索+Owner 2025-09 笔记）
 # 字段约定：TDM 字段集 + 工厂四件（build_status/store_refs/lane/gate_refs）+ 本次新增
 #           （design_refs 设计出处/compute_class 算力档），v9.1+v0.2 定稿
