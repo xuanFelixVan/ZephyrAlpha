@@ -64,48 +64,84 @@ _AUM = 1_000_000.0              # 组合名义额（最小佣金分摊基数；F
 
 
 def load_consensus_fy1() -> pd.DataFrame:
-    """consensus_daily → fy1 快照长表（每股每日一行：>=当年最小预测年）。"""
+    """consensus_daily → fy1 快照长表（每股每日一行：>=当年最小预测年）。
+
+    按月分块拉取（防御性；坏列名会被 TCP/HTTP 双通道报错掩盖成空串，逐块易定位），
+    fy1 选择在客户端完成（forecast_year 升序取首行）。
+    表无 eps_mean 列——窗口均值即 eps_consensus（DS-229 口径），客户端同名派生。
+    """
     from zephyr.data import ch_reader
 
-    tsv = ch_reader.query(
-        "SELECT symbol, trade_date, eps_consensus, eps_std, eps_mean FROM ("
-        "SELECT symbol, trade_date, forecast_year, eps_consensus, eps_std, eps_mean,"
-        " row_number() OVER (PARTITION BY symbol, trade_date ORDER BY forecast_year ASC) AS rn"
-        " FROM c3_fundamental.consensus_daily FINAL"
-        " WHERE forecast_year >= toYear(trade_date) AND trade_date >= toDate('" + _PANEL_START + "'))"
-        " WHERE rn = 1 FORMAT TSV")
-    if not tsv or not tsv.strip():
+    frames = []
+    ym = (2018, 6)
+    while (ym[0], ym[1]) <= (2026, 9):
+        y, m = ym
+        last_day = [31, 29 if y % 4 == 0 and (y % 100 != 0 or y % 400 == 0) else 28,
+                    31, 30, 31, 30, 31, 31, 30, 31, 30, 31][m - 1]
+        q = ("SELECT symbol, trade_date, forecast_year, eps_consensus, eps_std "
+             "FROM c3_fundamental.consensus_daily FINAL "
+             f"WHERE trade_date >= toDate('{y}-{m:02d}-01') "
+             f"AND trade_date <= toDate('{y}-{m:02d}-{last_day:02d}') FORMAT TSV")
+        tsv = ch_reader.query(q, timeout=300)
+        if tsv and tsv.strip():
+            rows = [ln.split("\t") for ln in tsv.strip().split("\n")]
+            frames.append(pd.DataFrame(rows, columns=["symbol", "td", "fy", "eps_consensus", "eps_std"]))
+        ym = (y + 1, 1) if m == 12 else (y, m + 1)
+    if not frames:
         raise RuntimeError("consensus_daily fy1 快照为空")
-    rows = [ln.split("\t") for ln in tsv.strip().split("\n")]
-    df = pd.DataFrame(rows, columns=["symbol", "td", "eps_consensus", "eps_std", "eps_mean"])
+    df = pd.concat(frames, ignore_index=True)
     df["td"] = pd.to_datetime(df["td"])
-    for c in ("eps_consensus", "eps_std", "eps_mean"):
+    df["fy"] = pd.to_numeric(df["fy"], errors="coerce")
+    for c in ("eps_consensus", "eps_std"):
         df[c] = pd.to_numeric(df[c].replace("\\N", np.nan), errors="coerce")
-    return df.dropna(subset=["eps_consensus"])
+    df["eps_mean"] = df["eps_consensus"]  # 表内均值列=eps_consensus（exp02 分歧度分母）
+    df = df[df["fy"] >= df["td"].dt.year].dropna(subset=["eps_consensus"])
+    df = df.sort_values(["symbol", "td", "fy"]).drop_duplicates(["symbol", "td"], keep="first")
+    return df.drop(columns=["fy"])
 
 
-def load_calendar_and_prices() -> tuple[list[str], pd.DataFrame, pd.Series]:
-    """交易日历（SSE）+ 全A收盘长表 + 000300 收盘（超额基准）。"""
+def load_calendar() -> list[str]:
+    """交易日历（SSE，>=2018-06-01）。"""
     from zephyr.data import ch_reader
 
-    cal = [ln.strip()[:10] for ln in ch_reader.query(
+    return [ln.strip()[:10] for ln in ch_reader.query(
         "SELECT DISTINCT cal_date FROM c1_market.trade_calendar FINAL "
         "WHERE exchange='SSE' AND is_open=1 AND cal_date >= toDate('2018-06-01') "
         "ORDER BY cal_date FORMAT TSV").strip().split("\n")]
-    tsv = ch_reader.query(
-        "SELECT trade_date, symbol, toFloat64(close) AS close FROM c1_market.kline_daily "
-        "WHERE trade_date >= toDate('" + _PANEL_START + "') FORMAT TSV")
-    rows = [ln.split("\t") for ln in tsv.strip().split("\n")]
-    px = pd.DataFrame(rows, columns=["td", "symbol", "close"])
+
+
+def load_prices(needed_dates: list[str]) -> pd.DataFrame:
+    """需要日期的全A收盘（FQ 同款日期白名单配方，避开 CH 结果集限额；日期分块防 URL 超长）。"""
+    from zephyr.data import ch_reader
+
+    frames = []
+    for i in range(0, len(needed_dates), 50):
+        chunk = needed_dates[i:i + 50]
+        quoted = ",".join(f"'{d}'" for d in chunk)
+        tsv = ch_reader.query(
+            "SELECT trade_date, symbol, toFloat64(close) AS close FROM c1_market.kline_daily "
+            f"WHERE trade_date IN ({quoted}) FORMAT TSV", timeout=300)
+        if tsv and tsv.strip():
+            rows = [ln.split("\t") for ln in tsv.strip().split("\n")]
+            frames.append(pd.DataFrame(rows, columns=["td", "symbol", "close"]))
+    if not frames:
+        raise RuntimeError("kline_daily 价格为空")
+    px = pd.concat(frames, ignore_index=True)
     px["td"] = pd.to_datetime(px["td"])
     px["close"] = pd.to_numeric(px["close"], errors="coerce")
+    return px
+
+
+def load_bench() -> pd.Series:
+    """000300 收盘（超额基准）。"""
+    from zephyr.data import ch_reader
+
     bench_tsv = ch_reader.query(
         "SELECT trade_date, toFloat64(close) AS close FROM c1_market.kline_index "
         "WHERE symbol='000300' AND trade_date >= toDate('" + _PANEL_START + "') "
         "ORDER BY trade_date FORMAT TSV")
     b = [ln.split("\t") for ln in bench_tsv.strip().split("\n")]
-    bench = pd.Series({pd.Timestamp(r[0]): float(r[1]) for r in b}).sort_index()
-    return cal, px, bench
+    return pd.Series({pd.Timestamp(r[0]): float(r[1]) for r in b}).sort_index()
 
 
 def month_ends(cal: list[str], lo: str, hi: str) -> list[str]:
@@ -206,6 +242,10 @@ def _prune_material(fac_wide: pd.DataFrame, px_close: pd.DataFrame,
 def _narrow(fac_wide: pd.DataFrame, px_close: pd.DataFrame, bench: pd.Series,
             mes: list[str], fwd_map: dict) -> dict:
     """⑥ Top50 等权月频多头（成本五项读 MatchingConfig）+ 滑点四档压力，超额对 000300。"""
+    import dataclasses
+
+    from zephyr.backtest.core.matching_logic import MatchingConfig
+
     out: dict = {}
     valid_mes = [t for t in mes if fwd_map.get(t)]
     bench_ret = {}
@@ -216,9 +256,8 @@ def _narrow(fac_wide: pd.DataFrame, px_close: pd.DataFrame, bench: pd.Series,
             bench_ret[t] = bn / bt - 1.0
 
     for slip in _SLIP_STRESS:
-        cfg = MatchingConfig()
-        if slip is not None:
-            cfg.slippage_bps = Decimal(str(slip))
+        cfg = MatchingConfig() if slip is None else dataclasses.replace(
+            MatchingConfig(), slippage_bps=Decimal(str(slip)))
         one_side = float(cfg.commission_rate + cfg.transfer_fee_rate
                          + cfg.slippage_bps / Decimal(10000))
         sell_extra = float(cfg.stamp_tax_rate)
@@ -276,13 +315,22 @@ def main() -> None:
     args = ap.parse_args()
 
     cons = load_consensus_fy1()
-    cal, px, bench = load_calendar_and_prices()
-    px_close = px.pivot(index="td", columns="symbol", values="close").sort_index()
-    cal_all = [d.strftime("%Y-%m-%d") for d in px_close.index]
-    mes = month_ends(cal_all, _IS[0], _OOS[1])
-    cal_pos = {d: i for i, d in enumerate(cal_all)}
-    fwd_map = {d: (cal_all[cal_pos[d] + _FWD] if cal_pos[d] + _FWD < len(cal_all) else None)
+    cal = load_calendar()
+    mes = month_ends(cal, _IS[0], _OOS[1])
+    cal_pos = {d: i for i, d in enumerate(cal)}
+    fwd_map = {d: (cal[cal_pos[d] + _FWD] if cal_pos[d] + _FWD < len(cal) else None)
                for d in mes}
+    # 需要日期=月末 ∪ t+20（前向收益）∪ t-k（动量对照，k=各预注册回看窗）
+    needed = set(mes) | {fwd_map[t] for t in mes if fwd_map[t]}
+    for t in mes:
+        for k in _K_GRID:
+            j = cal_pos[t] - k
+            if j >= 0:
+                needed.add(cal[j])
+    px = load_prices(sorted(needed))
+    bench = load_bench()
+    px_close = px.pivot(index="td", columns="symbol", values="close").reindex(
+        pd.to_datetime(cal)).sort_index()
 
     report: dict = {"factor": args.factor, "is_window": list(_IS),
                     "oos_window": list(_OOS), "fwd_td": _FWD}

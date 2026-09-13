@@ -12448,8 +12448,8 @@ factors:
   last_decay_scan_at: null
   turnover: null
   capacity: null
-  last_evaluated_at: null
-  evidence: null
+  last_evaluated_at: "2026-09-14"
+  evidence: "SOP-B④ 2026-09-14 首跑出证=data-gap（非noise非valid）：IS/OOS IC=NaN——因子全市场零方差（快照回放使 20 交易日零修正）。根因=research_report 预测槽位字段系东财源站当前快照语义（infoCode AP201807161166783168 2018 年报告携带 2026 槽位+当前值；2020 前研报 40,176/47,610 份槽位年=2026，uniq(eps_fy0)=487），历史区间无 PIT。评估真源=设计文档 §9 数据缺口档案；run=EXP-FACTOR-EVAL-001。修复路径=前向积累（2026-09 起 PIT 干净）+analyst_forecast 同花顺快照（2026-07 起）双源，预估干净回测窗 2027-07 起；C4 PDF 原文提取为历史修复候选。coverage IS 908/月、OOS 1262/月（覆盖计数真实）"
   code_symbol: "src/zephyr/factor/expectations.py::exp02_revision_momentum"
   code_fingerprint: null
   entry_role: "ranking"

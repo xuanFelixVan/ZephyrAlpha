@@ -594,6 +594,55 @@ experiments:
     code_symbol: null
     code_fingerprint: null
 
+  - experiment_id: EXP-FACTOR-EVAL-001
+    name: EXP-02 Revision Momentum First Evaluation (SOP-B IV)
+    name_zh: EXP-02 修正动量首跑评估（SOP-B ④宽测，数据缺口定性）
+    experiment_type: factor_eval
+    target_type: factor
+    target_id: FCT-EXP-002
+    params_summary:
+      k_td_grid: [20, 60]          # §8.2 预注册（主档 20=1m，复核档 60=3m）
+      forecast_year: fy1
+      fwd_td: 20
+      rebalance: monthly_month_end
+      narrow: {top_n: 50, slip_stress_bps: [cfg1, 20, 40, 80]}
+      windows: {is: 2019-01-01~2023-12-31, oos: 2024-01-01~2026-09-11}
+    data_period: "2019-01-01~2026-09-11"
+    universe: UNI-RULE-001           # 覆盖 IS 均值 908 只/月、OOS 1262 只/月（覆盖计数真实）
+    benchmark_id: BMK-INDEX-000300
+    cost_model_ref: CST-ASTOCK-001
+    result_summary:
+      sharpe: null                   # ⑥ 窄测数值在退化因子上构建，弃用不采信
+      max_dd: null
+      ic: null                       # IS/OOS IC=NaN（因子全市场零方差）——见 conclusion
+    conclusion: >-
+      出证=data-gap（非 noise 非 valid）。IC 全 NaN 根因=research_report 预测槽位字段系
+      东财源站当前快照语义（2018 年报告 infoCode AP201807161166783168 携带 2026 槽位+当前值；
+      2020 前研报 40,176/47,610 份槽位年=2026，uniq(eps_fy0)=487），历史区间无 PIT——
+      consensus_daily 历史快照=今天预期回放。定性档案=expectation-consumption-design.md §9；
+      修复=前向积累+analyst_forecast 双源（干净窗预估 2027-07 起），C4 PDF 原文提取为历史
+      修复候选。方法论教训：同源对账（SQL 重算 vs 表）验聚合逻辑，验不了源语义。
+    is_overfit: null                 # 数据无效，过拟合判定不适用
+    pbo_value: null
+    dsr_value: null
+    psr_value: null
+    n_trials: 6
+    pre_registered: true             # §8 预注册先于首跑（commit 2f65e004）
+    backtest_bias_checks:
+      survivorship: unknown
+      lookahead: failed              # 源级快照语义=前视（本实验的核心发现）
+      stop_exit: unknown
+    log_location: logs/experiment_tracking_fallback/exp02_eval_run1_20260914.json
+    artifact_path: logs/experiment_tracking_fallback/
+    fallback_ref: null
+    mace_env_ref: null
+    status: completed
+    module_id: MOD-BT-033
+    doc_ref: docs/_working/2026-09-12-expectation-consumption-design.md §8+§9
+    code_path: scripts/backtest/eval_exp_expectations.py
+    created_at: '2026-09-14'
+    completed_at: '2026-09-14'
+
 # ── Step 4 交叉引用校验记录（dangling FK 登记，62 号 §4.6 弱 FK 规则）──
 pending_fk:
   - fk_field: universe
