@@ -2406,6 +2406,31 @@ tasks:
   extra:
     description: "台风路径全量刷新（全史约 12.8 万条，2017 年起含历史台风；万行/页分页回补）"
 
+# ============== C-1 消费端首批：市场级 regime 信号（2026-09-14，alt_data_consumption_plan §7.3）==============
+
+- task_id: crypto_fear_greed_incremental
+  table: c1_market.sentiment_panel
+  source: crypto_sentiment_panel
+  schedule: daily_event
+  incremental: true
+  date_col: trade_date
+  dependencies: []
+  capability: crypto_fear_greed_index
+  symbols:
+  extra:
+    description: "恐惧贪婪指数日度采集（alternative.me 免费 API，0-100 六因子加权；F15 极值反转信号源，C4 双窗及格策略联动）"
+
+- task_id: alt_regime_signal_refresh
+  table: c1_market.alt_regime_signal
+  source: alt_regime_signal
+  schedule: daily_event
+  incremental: false
+  dependencies: [crypto_fear_greed_incremental]
+  capability: alt_regime_signal
+  symbols:
+  extra:
+    description: "市场级另类 regime 信号全量重算（F4 BDI 动量z/F14 BTC 动量/F15 恐贪分档/F23 涨停情绪周期/F7 台风登陆事件=landfall_history×track 联合推导；RMT 幂等；PIT=仅用≤当日收盘数据）"
+
 - task_id: alt_sz_stat_monthly_refresh
   table: c1_market.alt_sz_stat_monthly
   source: akshare_alt

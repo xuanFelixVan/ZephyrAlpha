@@ -1290,6 +1290,17 @@ class IntegratorScheduler:
                 from zephyr.data.implementations.akshare_alt_provider import AkshareAltProvider
 
                 return AkshareAltProvider()
+            elif source == "alt_regime_signal":
+                # C-1 消费端首批（2026-09-14）：市场级另类 regime 信号计算器
+                # （F4 BDI 动量/F14 BTC 动量/F15 恐贪/F23 涨停情绪/F7 台风日历）
+                from zephyr.alt_data.alt_regime_signals import AltRegimeSignalProvider
+
+                return AltRegimeSignalProvider()
+            elif source == "crypto_sentiment_panel":
+                # 币圈宏观情绪面板（CAND-CRYPTO-010 落表：F15 恐贪信号数据源）
+                from zephyr.data.implementations.sentiment_panel_provider import SentimentPanelProvider
+
+                return SentimentPanelProvider()
             elif source == "internal":
                 # #222（64号 Q18，P0）：内部计算源——读 CH K线本地计算指标/港股日历，
                 # 缺失本分支时 hk_trade_calendar_refresh 等 source=internal 任务报"未知数据源"。

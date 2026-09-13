@@ -360,6 +360,8 @@ from schemas.categories.market_a50_futures_daily import A50_FUTURES_DAILY_DDL
 from schemas.categories.market_account_nav_daily import MARKET_ACCOUNT_NAV_DAILY_DDL
 # 另类数据第 1 批免注册直连（2026-09-12，alt-data-handoff §8-1）：fail-closed 直接导入
 from schemas.categories.market_alt_shipping_index import ALT_SHIPPING_INDEX_DDL
+from schemas.categories.market_alt_regime_signal import ALT_REGIME_SIGNAL_DDL
+from schemas.categories.market_sentiment_panel import SENTIMENT_PANEL_DDL
 from schemas.categories.market_alt_stock_comment import ALT_STOCK_COMMENT_DDL
 # 气象事件层：台风路径（2026-09-14，深圳开放数据平台 appKey 通道）
 from schemas.categories.market_alt_typhoon_track import ALT_TYPHOON_TRACK_DDL
@@ -405,6 +407,8 @@ _ALL_DDL: list[tuple[str, str]] = [
     # 另类数据第 1 批免注册直连（2026-09-12，alt-data-handoff §8-1）
     ("c1_market.alt_stock_comment", ALT_STOCK_COMMENT_DDL),
     ("c1_market.alt_shipping_index", ALT_SHIPPING_INDEX_DDL),
+    ("c1_market.sentiment_panel", SENTIMENT_PANEL_DDL),
+    ("c1_market.alt_regime_signal", ALT_REGIME_SIGNAL_DDL),
     # 气象事件层：台风路径（2026-09-14）
     ("c1_market.alt_typhoon_track", ALT_TYPHOON_TRACK_DDL),
     # 深圳开放数据批量源 ×7（2026-09-14）
@@ -492,6 +496,8 @@ _EXPECTED_ENGINES: dict[str, str] = {
     "hog_province_spot": "ReplacingMergeTree",
     # 另类数据第 1 批免注册直连（2026-09-12，alt-data-handoff §8-1）：快照/长表同键替换幂等
     "alt_stock_comment": "ReplacingMergeTree",
+    "sentiment_panel": "ReplacingMergeTree",
+    "alt_regime_signal": "ReplacingMergeTree",
     "alt_shipping_index": "ReplacingMergeTree",
     # 气象事件层：台风路径（2026-09-14）：KEYID 全局唯一替换幂等
     "alt_typhoon_track": "ReplacingMergeTree",

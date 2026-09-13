@@ -2396,6 +2396,40 @@
   data_source: [akshare_alt]
   blueprint: null
 
+# --- C-1 消费端首批：市场级 regime 信号（2026-09-14，st-altdata-20260914） ---
+
+- category_id: market_sentiment_panel
+  name: "币圈宏观情绪面板"
+  engine: clickhouse
+  database: c1_market
+  table: sentiment_panel
+  schema_file: schemas/categories/market_sentiment_panel.py
+  data_type: 原料
+  lifecycle: permanent
+  sla_level: L2
+  enabled: true
+  hard_constraint: null
+  calc_mode: preload
+  frequency: 日频
+  data_source: [crypto_sentiment_panel]
+  blueprint: null
+
+- category_id: market_alt_regime_signal
+  name: "市场级另类 regime 信号"
+  engine: clickhouse
+  database: c1_market
+  table: alt_regime_signal
+  schema_file: schemas/categories/market_alt_regime_signal.py
+  data_type: 成品
+  lifecycle: permanent
+  sla_level: L2
+  enabled: true
+  hard_constraint: null
+  calc_mode: preload
+  frequency: 日频
+  data_source: [alt_regime_signal]
+  blueprint: null
+
 # --- 深圳开放数据平台批量源（2026-09-14，st-altdata-20260914） ---
 
 - category_id: market_alt_sz_stat_monthly
