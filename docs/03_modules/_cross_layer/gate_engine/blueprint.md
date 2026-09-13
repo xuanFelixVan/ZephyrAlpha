@@ -5,7 +5,7 @@ title: "Gate Engine 蓝图 — G0-G7任务门禁 + G1-G5 KMS决策门 + 门禁�
 doc_type: blueprint
 template_for: blueprint
 status: Draft
-version: "0.8.32"
+version: "0.8.34"
 layer: L1_foundation
 owner: ZephyrAlpha-Owner
 classification: confidential
@@ -50,7 +50,7 @@ ssot_claims:
   - {claim: "法证审计协议SSoT", scope: "module"}
   - {claim: "自指硬化协议SSoT", scope: "module"}
 responsibility_domain: 
-design_maturity: design
+design_maturity: production
 build_status: stable
 ---
 
@@ -297,8 +297,8 @@ build_status: stable
 
 | 图 | 位置 | 状态 | 链接 |
 |----|------|------|------|
-| 依赖图 (depgraph) | `blueprint_id=MOD-GATE_ENGINE` 的 330 个 file 节点 | design | `extract_depgraph.py --modules MOD-GATE_ENGINE` |
-| 数据流图 (dataflow) | 0 个 Dataset / 1 个 Job | planned | `apply_dataflowgraph.py --list-datasets` |
+| 依赖图 (depgraph) | `blueprint_id=MOD-GATE_ENGINE` 的 332 个 file 节点 | production | `extract_depgraph.py --modules MOD-GATE_ENGINE` |
+| 数据流图 (dataflow) | （无节点） | N/A | `apply_dataflowgraph.py --list-datasets` |
 | 决策架构图 (decision) | 0 个决策节点 / 1 个决策层 | N/A | `generate_decision_diagram.py` |
 | 蓝图 (blueprint) | 本文件 | Draft | — |
 
@@ -309,7 +309,7 @@ build_status: stable
 | module_id | MOD-GATE_ENGINE | MOD-GATE_ENGINE | ✅ |
 | domain_id | N/A | N/A | ✅ |
 | build_status | stable | stable | ✅ |
-| file_count | 330 文件 | 28 文件（§0.1） | ❌ |
+| file_count | 332 文件 | 28 文件（§0.1） | ❌ |
 
 > 冲突时以 depgraph 为准（ARCH-056 + ARCH-MM-001 声明 vs 验证框架）。
 
@@ -1488,6 +1488,7 @@ STEP 3: 拆分后验证
 | `src/zephyr/gov_enforcement/commit_gates/noqa_validation_gate.py` | ✅ 已实现 | |
 | `src/zephyr/gov_enforcement/commit_gates/pure_shim_gate.py` | ✅ 已实现 | |
 | `src/zephyr/gov_enforcement/commit_gates/registry_mass_deletion_gate.py` | ✅ 已实现 | |
+| `src/zephyr/gov_enforcement/commit_gates/registry_yaml_parse_gate.py` | ✅ 已实现 | |
 | `src/zephyr/gov_enforcement/commit_gates/relative_path_literal_gate.py` | ✅ 已实现 | |
 | `src/zephyr/gov_enforcement/commit_gates/split_coordination_gate.py` | ✅ 已实现 | |
 | `src/zephyr/gov_enforcement/commit_gates/stash_accumulation_gate.py` | ✅ 已实现 | |
@@ -1572,6 +1573,7 @@ STEP 3: 拆分后验证
 | `tests/governance/commit_gates/test_registry_batch_edit_and_mass_deletion_gate.py` | ✅ 已实现 | |
 | `tests/governance/commit_gates/test_registry_code_anchor_gate.py` | ✅ 已实现 | |
 | `tests/governance/commit_gates/test_registry_mass_deletion_gate.py` | ✅ 已实现 | |
+| `tests/governance/commit_gates/test_registry_yaml_parse_gate.py` | ✅ 已实现 | |
 | `tests/governance/commit_gates/test_scripts_import_integrity_gate.py` | ✅ 已实现 | |
 | `tests/governance/commit_gates/test_secret_registry_consistency_gate.py` | ✅ 已实现 | |
 | `tests/governance/commit_gates/test_split_coordination_gate.py` | ✅ 已实现 | |
@@ -1598,6 +1600,7 @@ STEP 3: 拆分后验证
 | `tests/governance/rule_enforcement/test_triple_alignment.py` | ✅ 已实现 | |
 | `tests/governance/test_alignment_gates_red_blue.py` | ✅ 已实现 | |
 | `tests/governance/test_risk_tier_registry.py` | ✅ 已实现 | |
+| `tests/governance/test_split_coordination.py` | ✅ 已实现 | |
 | `tests/llm_security/test_llm_cost_router.py` | ✅ 已实现 | |
 | `tests/risk/test_risk_ssot.py` | ✅ 已实现 | |
 | `tests/safety/test_safety_gate_l1_l27.py` | ✅ 已实现 | |

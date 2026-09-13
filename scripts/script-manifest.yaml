@@ -4,7 +4,7 @@
 manifest_version: 2.0.0
 generated_by: generate_manifest.py (auto-scan)
 generated_at: '2026-09-14'
-total_scripts: 878
+total_scripts: 898
 scripts:
 - name: __init__.py
   path: __init__.py
@@ -566,6 +566,14 @@ scripts:
   status: registered
   timeout_seconds: 60
   dimensions: []
+- name: backtest/_f2_eval_common.py
+  path: backtest/_f2_eval_common.py
+  description: 消费端 F2 出证脚本（IC/分层/窄回测）共享的 PIT 装载口径唯一实现
+  domain: test
+  execution_plane: warm-path
+  status: registered
+  timeout_seconds: 60
+  dimensions: []
 - name: backtest/backfill_stock_indicator_daily_basic.py
   path: backtest/backfill_stock_indicator_daily_basic.py
   description: 设计真源：docs/_working/2026-09-13-c5-cluster-differentiation-report.md 附三。
@@ -593,6 +601,22 @@ scripts:
 - name: backtest/eval_f2_layers_styles.py
   path: backtest/eval_f2_layers_styles.py
   description: 对 FCT-FQ-001/FCT-FQ-002（experimental）产出 ⑤ 剪枝三件：
+  domain: test
+  execution_plane: warm-path
+  status: registered
+  timeout_seconds: 60
+  dimensions: []
+- name: backtest/eval_f2_narrow_backtest.py
+  path: backtest/eval_f2_narrow_backtest.py
+  description: 把 experimental 因子变成可交易口径再考一次：Top-N 等权多头月频组合，
+  domain: test
+  execution_plane: warm-path
+  status: registered
+  timeout_seconds: 60
+  dimensions: []
+- name: backtest/eval_f2_rework_variants.py
+  path: backtest/eval_f2_rework_variants.py
+  description: 基线（⑥ 窄回测）：月频 Top50 多头 IS 超额 Sharpe=+0.421（差 0.5 准入线），
   domain: test
   execution_plane: warm-path
   status: registered
@@ -670,6 +694,14 @@ scripts:
   status: registered
   timeout_seconds: 60
   dimensions: []
+- name: backtest/sim_governance.py
+  path: backtest/sim_governance.py
+  description: 规则（全部引用既存真源，零新增规范对象）：
+  domain: test
+  execution_plane: warm-path
+  status: registered
+  timeout_seconds: 60
+  dimensions: []
 - name: backtest/sim_paper_ledger.py
   path: backtest/sim_paper_ledger.py
   description: 规则（与回测翻译件 c4_e3da6fa71af1 同口径）：上证昨日收盘跌幅<=-1.5% 且当日<=-1.4% →
@@ -742,6 +774,14 @@ scripts:
   status: registered
   timeout_seconds: 60
   dimensions: []
+- name: backtest/translated/_valuation_engine.py
+  path: backtest/translated/_valuation_engine.py
+  description: 估值因子族策略同构：按估值指标排序取前/后 N 只等权持有，月频/周频/日频调仓。
+  domain: test
+  execution_plane: warm-path
+  status: registered
+  timeout_seconds: 60
+  dimensions: []
 - name: backtest/translated/c4_06d4cf3d7dcc_pairs_zscore.py
   path: backtest/translated/c4_06d4cf3d7dcc_pairs_zscore.py
   description: '原文逻辑: 固定配对 600887（伊利）×600036（招行），回归比 1.0；价差序列'
@@ -782,6 +822,14 @@ scripts:
   status: registered
   timeout_seconds: 60
   dimensions: []
+- name: backtest/translated/c4_25028ae0c266_high_div5y.py
+  path: backtest/translated/c4_25028ae0c266_high_div5y.py
+  description: '原文逻辑: 周频。全 A 剔科创北交；近 5 年分红总额/当前市值=五年股息率，降序取前 10 等权。'
+  domain: test
+  execution_plane: warm-path
+  status: registered
+  timeout_seconds: 60
+  dimensions: []
 - name: backtest/translated/c4_29eb91dbaf60_crash_dodge.py
   path: backtest/translated/c4_29eb91dbaf60_crash_dodge.py
   description: '原文逻辑: 信号源=上证指数收盘；买股信号（32 日窗，不含当日）: c[2]==max(c[2:])（30 日前'
@@ -801,6 +849,38 @@ scripts:
 - name: backtest/translated/c4_2e4d39a3f50b_multi_ma.py
   path: backtest/translated/c4_2e4d39a3f50b_multi_ma.py
   description: '原文逻辑: 单标的 600196（复星医药）；MA5/10/20/30 多头排列（5>10>20>30）持有；'
+  domain: test
+  execution_plane: warm-path
+  status: registered
+  timeout_seconds: 60
+  dimensions: []
+- name: backtest/translated/c4_311220235636_slater_value.py
+  path: backtest/translated/c4_311220235636_slater_value.py
+  description: '原文逻辑（祖鲁/Slater 四条件，月频）: 全 A；①流通市值>截面均值 ②流动比率>截面均值'
+  domain: test
+  execution_plane: warm-path
+  status: registered
+  timeout_seconds: 60
+  dimensions: []
+- name: backtest/translated/c4_311220235636_zulu_value.py
+  path: backtest/translated/c4_311220235636_zulu_value.py
+  description: 原文逻辑（月频，每月第 5 交易日）：①流通市值≥全市场均值 ②流动比率≥全市场均值
+  domain: test
+  execution_plane: warm-path
+  status: registered
+  timeout_seconds: 60
+  dimensions: []
+- name: backtest/translated/c4_40ca0da1a3ca_value55.py
+  path: backtest/translated/c4_40ca0da1a3ca_value55.py
+  description: '原文逻辑: 07 Slater 同族选股（get_stock_list 共用）+ max_hold 4 + 双周调仓（g.num%2）+'
+  domain: test
+  execution_plane: warm-path
+  status: registered
+  timeout_seconds: 60
+  dimensions: []
+- name: backtest/translated/c4_40ca0da1a3ca_value_improved.py
+  path: backtest/translated/c4_40ca0da1a3ca_value_improved.py
+  description: '原文逻辑: 祖鲁六条选股（同 087 家族）；双周调仓（num%2）；持仓 4 只等权；'
   domain: test
   execution_plane: warm-path
   status: registered
@@ -838,6 +918,22 @@ scripts:
   status: registered
   timeout_seconds: 60
   dimensions: []
+- name: backtest/translated/c4_68cc0a6b40ba_value_select.py
+  path: backtest/translated/c4_68cc0a6b40ba_value_select.py
+  description: '原文逻辑: 月频。祖鲁六条选股（同 087）+ 周期行业剔除（申万 20 代码），'
+  domain: test
+  execution_plane: warm-path
+  status: registered
+  timeout_seconds: 60
+  dimensions: []
+- name: backtest/translated/c4_68cc0a6b40ba_value_select35.py
+  path: backtest/translated/c4_68cc0a6b40ba_value_select35.py
+  description: '原文逻辑: 与 07（Slater 四条件）同族+行业过滤（周期行业剔除白名单 801xxx）+'
+  domain: test
+  execution_plane: warm-path
+  status: registered
+  timeout_seconds: 60
+  dimensions: []
 - name: backtest/translated/c4_6a6ec8869ddb_momentum62.py
   path: backtest/translated/c4_6a6ec8869ddb_momentum62.py
   description: '原文逻辑: 全 A 剔次新/停牌/ST；91 日动量=close[-1]/close[0]-1；**取动量最小的 10 只**'
@@ -857,6 +953,14 @@ scripts:
 - name: backtest/translated/c4_7f7e5f935dfc_dmi_timing.py
   path: backtest/translated/c4_7f7e5f935dfc_dmi_timing.py
   description: '原文逻辑: talib ADX(18)/PLUS_DI(18)/MINUS_DI(18)：ADX 上行 且 +DI>-DI → 全仓；'
+  domain: test
+  execution_plane: warm-path
+  status: registered
+  timeout_seconds: 60
+  dimensions: []
+- name: backtest/translated/c4_8d000bf3ccc3_pb_poe.py
+  path: backtest/translated/c4_8d000bf3ccc3_pb_poe.py
+  description: '原文逻辑: 每 30 交易日调仓：market_cap>800(亿) + pb_ratio<20 + roe>7(%)，'
   domain: test
   execution_plane: warm-path
   status: registered
@@ -921,6 +1025,14 @@ scripts:
 - name: backtest/translated/c4_b37f550ba2af_gftd.py
   path: backtest/translated/c4_b37f550ba2af_gftd.py
   description: '原文逻辑（TD-序列变体，n1=n2=n3=4, count_lag=2）:'
+  domain: test
+  execution_plane: warm-path
+  status: registered
+  timeout_seconds: 60
+  dimensions: []
+- name: backtest/translated/c4_bd42540f86e4_pe_pb.py
+  path: backtest/translated/c4_bd42540f86e4_pe_pb.py
+  description: '原文: 沪深300 池；PB∈(3,10) 且 PE(LYR)∈(10,20)；max_hold=5；日频调仓。'
   domain: test
   execution_plane: warm-path
   status: registered
@@ -1041,6 +1153,30 @@ scripts:
 - name: backtest/translated/c4_fdbc279fba99_rps_oinl.py
   path: backtest/translated/c4_fdbc279fba99_rps_oinl.py
   description: '原文逻辑: 池=沪深300；每日对池内取 120 日收盘涨幅，剔除涨幅>50% 者；按涨幅降序排名'
+  domain: test
+  execution_plane: warm-path
+  status: registered
+  timeout_seconds: 60
+  dimensions: []
+- name: backtest/translated/c4_valuation_div_high.py
+  path: backtest/translated/c4_valuation_div_high.py
+  description: from __future__ import annotations
+  domain: test
+  execution_plane: warm-path
+  status: registered
+  timeout_seconds: 60
+  dimensions: []
+- name: backtest/translated/c4_valuation_pb_low.py
+  path: backtest/translated/c4_valuation_pb_low.py
+  description: from __future__ import annotations
+  domain: test
+  execution_plane: warm-path
+  status: registered
+  timeout_seconds: 60
+  dimensions: []
+- name: backtest/translated/c4_valuation_pe_low.py
+  path: backtest/translated/c4_valuation_pe_low.py
+  description: from __future__ import annotations
   domain: test
   execution_plane: warm-path
   status: registered
@@ -1558,6 +1694,14 @@ scripts:
   status: registered
   timeout_seconds: 60
   dimensions: []
+- name: data/backfill_stock_indicator_daily_basic.py
+  path: data/backfill_stock_indicator_daily_basic.py
+  description: 设计真源：docs/_working/2026-09-13-c5-cluster-differentiation-report.md 附三。
+  domain: data
+  execution_plane: warm-path
+  status: registered
+  timeout_seconds: 60
+  dimensions: []
 - name: data/backfill_technical_indicator_dwm.py
   path: data/backfill_technical_indicator_dwm.py
   description: c1_market.technical_indicator 的 daily/weekly/monthly 数据起点=2026-08（调度闭环日），
@@ -1578,6 +1722,22 @@ scripts:
   path: data/import_bdpan_tick_zip.py
   description: tick_data_2026_jul_aug_qmt_range_gap 的可复用导入器；复刻 2026-06 回补配方并持久化）。
   domain: data
+  execution_plane: warm-path
+  status: registered
+  timeout_seconds: 60
+  dimensions: []
+- name: data/miniqmt_midreport_backfill_20260630.py
+  path: data/miniqmt_midreport_backfill_20260630.py
+  description: 数据源：miniQMT xtdata（Owner 终端，带真公告日 m_anntime——小样已验证 600519=20260815）。
+  domain: data
+  execution_plane: warm-path
+  status: registered
+  timeout_seconds: 60
+  dimensions: []
+- name: data/pattern_catalog_sync.py
+  path: data/pattern_catalog_sync.py
+  description: candlestick_scanner.py 已实现 CDL 61 + extras 16（共 77 条 PAT-CANDLE 目录）。
+  domain: sync
   execution_plane: warm-path
   status: registered
   timeout_seconds: 60
