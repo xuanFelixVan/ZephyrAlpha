@@ -48758,7 +48758,7 @@ entries:
   desc_en: ""
   plain_zh: "DDL 用 base 账号建表+列验证（IF NOT EXISTS 幂等），服务 STR-VREV-025 恐慌反弹模拟盘观察（Owner 批先C后A）"
 - module_path: scripts/backtest/sim_paper_ledger.py
-  module_id: MOD-BT-099
+  module_id: MOD-BT-133
   domain_id: D_BACKTEST
   name_zh: "模拟盘钱包账本"
   name_en: ""
@@ -49058,11 +49058,11 @@ entries:
   plain_zh: "把一堆券商研报按日期汇总成一张表：每只股票每天算出大家平均预计的每股赚多少钱、有多少家机构在覆盖、评级偏多偏空。只统计发布日期在那一天之前的研报，绝不偷看未来。"
 - module_path: scripts/backtest/translated/c4_5301c5d9d7c8_small_cap_hl.py
   domain_id: D_BACKTEST
-  name_zh: "小市值高收益低回撤"
+  name_zh: "小市值高低波动选股"
   name_en: ""
   desc_zh: ""
   desc_en: ""
-  plain_zh: "流通市值<100亿升序前10等权+300MA1000比率滞回双状态机风控。DS-230 公告门 PIT。供 C4 快筛。"
+  plain_zh: "小市值股中按高低波动筛选的选股策略翻译件，从估值翻译批同框架复制，模块号从撞号的094改为130；供C4快筛出Sharpe并入库"
 - module_path: scripts/backtest/translated/c4_65ae80c577c9_small_cap95.py
   domain_id: D_BACKTEST
   name_zh: "持仓95只大容量小市值"
@@ -49077,6 +49077,34 @@ entries:
   desc_zh: ""
   desc_en: ""
   plain_zh: "ROE>15%+ROA>10%市值升序前十每日等权。DS-230 公告门 PIT。供 C4 快筛。"
+- module_path: scripts/backtest/compare_state_dualrun.py
+  domain_id: D_BACKTEST
+  name_zh: "新旧状态双轨对照器"
+  name_en: ""
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "每天把旧 HMM 状态机和新锚定四档并排摆出来看分档差异、再对 L1 谨慎度看一致率：切换前盯分歧，切换后盯衰减，一个工具两用。"
+- module_path: scripts/backtest/hypothesis_precheck.py
+  domain_id: D_BACKTEST
+  name_zh: "假说预审逻辑门"
+  name_en: ""
+  desc_zh: "本地qwen3:8b是非题预审候选策略想法的经济学机制，三态判定+理由码落c1_backtest.hypothesis_precheck"
+  desc_en: ""
+  plain_zh: "策略工厂的守门员：新想法进门先让本地大模型问六个问题（谁给你赚钱、是不是偷看未来数据、成本吃不吃得掉、能不能被证伪等），讲不通的直接枪毙省下回测算力，说不准的挂起来重审，判定全程记账。"
+- module_path: schemas/categories/backtest_hypothesis_precheck.py
+  domain_id: D_BACKTEST
+  name_zh: "预审判定台账表结构"
+  name_en: ""
+  desc_zh: "c1_backtest.hypothesis_precheck 表 DDL 唯一真源"
+  desc_en: ""
+  plain_zh: "预审记账本的表结构说明书：每条想法每次预审记一行（结论/理由/置信度/模型原话），只加不改。"
+- module_path: scripts/ch/apply_hypothesis_precheck_ddl.py
+  domain_id: D_BACKTEST
+  name_zh: "预审台账建表工具"
+  name_en: ""
+  desc_zh: "hypothesis_precheck 表 DDL 部署+逐列探针验证"
+  desc_en: ""
+  plain_zh: "一键在数据库里把预审记账本的表建出来，建完逐列点名确认没漏。"
 
 battle_map_steps:
 - step_id: BM-BUY-05
