@@ -49049,6 +49049,34 @@ entries:
   desc_zh: ""
   desc_en: ""
   plain_zh: "三正过滤(PB>0+ROE>0+OCF/营>0)市值升序前120→百只等权日频——DS-230 质量过滤有效 IS+1.07。供 C4 快筛。"
+- module_path: src/zephyr/data/implementations/consensus_daily_compute.py
+  domain_id: D_DATA
+  name_zh: "一致预期矩阵计算核"
+  name_en: "consensus_daily_compute"
+  desc_zh: "研报事件流到一致预期每日快照矩阵的窗口聚合计算核（PIT 只认 publish_date），供夜间调度与 CLI 复用"
+  desc_en: ""
+  plain_zh: "把一堆券商研报按日期汇总成一张表：每只股票每天算出大家平均预计的每股赚多少钱、有多少家机构在覆盖、评级偏多偏空。只统计发布日期在那一天之前的研报，绝不偷看未来。"
+- module_path: scripts/backtest/translated/c4_5301c5d9d7c8_small_cap_hl.py
+  domain_id: D_BACKTEST
+  name_zh: "小市值高收益低回撤"
+  name_en: ""
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "流通市值<100亿升序前10等权+300MA1000比率滞回双状态机风控。DS-230 公告门 PIT。供 C4 快筛。"
+- module_path: scripts/backtest/translated/c4_65ae80c577c9_small_cap95.py
+  domain_id: D_BACKTEST
+  name_zh: "持仓95只大容量小市值"
+  name_en: ""
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "三正过滤市值升序95只月频等权+涨停保护。DS-230 公告门 PIT。供 C4 快筛。"
+- module_path: scripts/backtest/translated/c4_8664521af1a0_snake_cap.py
+  domain_id: D_BACKTEST
+  name_zh: "蛇皮走位小市值"
+  name_en: ""
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "ROE>15%+ROA>10%市值升序前十每日等权。DS-230 公告门 PIT。供 C4 快筛。"
 
 battle_map_steps:
 - step_id: BM-BUY-05

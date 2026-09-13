@@ -138,11 +138,14 @@ nodes:
     algo_note_zh: BOM 拆解找高增长/高壁垒/高利润环节；ig_fact 供应链图谱为独家数据资产；
       学术验证=图谱多跳结构比只用直接关系样本外 Sharpe 高 50%+（Capponi）。
       升级路线（v5.1）=LLM 自动抽取/增补图谱关系（年报/公告→关系抽取），
-      防幻觉技巧=只抽业务描述段；A股先例=ChainKnowledgeGraph 开源+永安期货 KG 实践
+      防幻觉技巧=只抽业务描述段；A股先例=ChainKnowledgeGraph 开源+永安期货 KG 实践；
+      已建=MOD-BT-090 三高筛选（belongs_to_sector 环节×财务中位数×客户集中度壁垒
+      ×supplies_to 咽喉度四支柱 z 分合成，候选想法带出生证卸
+      data/strategy_intake/three_high_candidates.csv；LLM 增补管线未建=partial）
     compute_class: mixed
     data_refs: [ig_fact, chainmap_cluster_names.yaml]
-    module_ref: null
-    build_status: pending
+    module_ref: MOD-BT-090
+    build_status: partial
     design_refs:
       - Capponi 供应链图谱讲座（Luohan Academy） luohanacademy.com/en/webinar/1088/
       - Zero-Shot 股票关系图抽取（FinNLP 2025） aclanthology.org/2025.finnlp-2.2.pdf

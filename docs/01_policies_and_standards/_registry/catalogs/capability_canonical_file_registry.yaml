@@ -1,9 +1,4 @@
 schema_version: 1.1.0
-- file: docs/_working/2026-09-14-tilib-batch7-wiring-plan.md
-  token: tilib-batch7-wiring-plan-20260914
-  created_by: st-tilib-20260914d
-  capability: technical_indicator
-di_seam_exemptions: []
 module_id: PS-REG-021
 ttl: permanent
 doc_type: gate
@@ -12444,3 +12439,8 @@ creation_tokens:
   token: c4-dc5b80aa3614-tsmall100-20260914
   created_by: st-zcode-c4-20260912
   capability: c4_batch_translation
+- file: docs/_working/2026-09-14-tilib-batch7-wiring-plan.md
+  token: tilib-batch7-wiring-plan-20260914
+  created_by: st-tilib-20260914d
+  capability: technical_indicator
+di_seam_exemptions: []
