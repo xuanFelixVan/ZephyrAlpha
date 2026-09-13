@@ -245,13 +245,13 @@ chart_patterns:
     timeframe: "daily"
     module_id: "MOD-L02-020"
     doc_ref: "16_technical_indicator_catalog.md §6.5；29_factor_strategy_extraction.md §F2.20（回踩加分项口径）"
-    code_path: "src/zephyr/factor/technical_indicators/reversal.py"
+    code_path: "src/zephyr/signal_ashare/strategy_signal/candlestick_scanner.py"
     used_by_factors: []
     variant_of: null
     status: "active"
     version: "1.0.0"
     created_at: "2026-08-13"
-    updated_at: "2026-08-15"
+    updated_at: "2026-09-14"
     owner: "MOD-GOVERNANCE"
     hit_rate: null
     false_positive_rate: null
@@ -266,7 +266,7 @@ chart_patterns:
     tags: ["反转", "k线", "形态", "指标"]
     algorithm_status: "quantized"
     evidence: ""
-    code_symbol: null
+    code_symbol: "src/zephyr/signal_ashare/strategy_signal/candlestick_scanner.py::scan_candles"
     code_fingerprint: null
 
   - pattern_id: "PAT-CANDLE-002"
@@ -286,13 +286,13 @@ chart_patterns:
     timeframe: "daily"
     module_id: "MOD-L02-020"
     doc_ref: "16_technical_indicator_catalog.md §6.5"
-    code_path: "src/zephyr/factor/technical_indicators/reversal.py"
+    code_path: "src/zephyr/signal_ashare/strategy_signal/candlestick_scanner.py"
     used_by_factors: []
     variant_of: null
     status: "active"
     version: "1.0.0"
     created_at: "2026-08-13"
-    updated_at: "2026-08-13"
+    updated_at: "2026-09-14"
     owner: "MOD-GOVERNANCE"
     hit_rate: null
     false_positive_rate: null
@@ -307,7 +307,7 @@ chart_patterns:
     tags: ["反转", "k线", "形态", "指标"]
     algorithm_status: "quantized"
     evidence: ""
-    code_symbol: null
+    code_symbol: "src/zephyr/signal_ashare/strategy_signal/candlestick_scanner.py::scan_candles"
     code_fingerprint: null
 
   - pattern_id: "PAT-CANDLE-003"
@@ -327,13 +327,13 @@ chart_patterns:
     timeframe: "daily"
     module_id: "MOD-L02-020"
     doc_ref: "16_technical_indicator_catalog.md §6.5"
-    code_path: "src/zephyr/factor/technical_indicators/reversal.py"
+    code_path: "src/zephyr/signal_ashare/strategy_signal/candlestick_scanner.py"
     used_by_factors: []
     variant_of: "PAT-CANDLE-002"
     status: "active"
     version: "1.0.0"
     created_at: "2026-08-13"
-    updated_at: "2026-08-13"
+    updated_at: "2026-09-14"
     owner: "MOD-GOVERNANCE"
     hit_rate: null
     false_positive_rate: null
@@ -348,7 +348,7 @@ chart_patterns:
     tags: ["反转", "k线", "形态", "指标"]
     algorithm_status: "quantized"
     evidence: ""
-    code_symbol: null
+    code_symbol: "src/zephyr/signal_ashare/strategy_signal/candlestick_scanner.py::scan_candles"
     code_fingerprint: null
 
   - pattern_id: "PAT-CANDLE-004"
@@ -368,13 +368,13 @@ chart_patterns:
     timeframe: "daily"
     module_id: "MOD-L02-020"
     doc_ref: "16_technical_indicator_catalog.md §6.5"
-    code_path: "src/zephyr/factor/technical_indicators/reversal.py"
+    code_path: "src/zephyr/signal_ashare/strategy_signal/candlestick_scanner.py"
     used_by_factors: []
     variant_of: null
     status: "active"
     version: "1.0.0"
     created_at: "2026-08-13"
-    updated_at: "2026-08-13"
+    updated_at: "2026-09-14"
     owner: "MOD-GOVERNANCE"
     hit_rate: null
     false_positive_rate: null
@@ -389,7 +389,7 @@ chart_patterns:
     tags: ["反转", "k线", "形态", "指标"]
     algorithm_status: "quantized"
     evidence: ""
-    code_symbol: null
+    code_symbol: "src/zephyr/signal_ashare/strategy_signal/candlestick_scanner.py::scan_candles"
     code_fingerprint: null
 
   - pattern_id: "PAT-CANDLE-005"
@@ -409,13 +409,13 @@ chart_patterns:
     timeframe: "daily"
     module_id: "MOD-L02-020"
     doc_ref: "16_technical_indicator_catalog.md §6.5"
-    code_path: "src/zephyr/factor/technical_indicators/reversal.py"
+    code_path: "src/zephyr/signal_ashare/strategy_signal/candlestick_scanner.py"
     used_by_factors: []
     variant_of: null
     status: "active"
     version: "1.0.0"
     created_at: "2026-08-13"
-    updated_at: "2026-08-13"
+    updated_at: "2026-09-14"
     owner: "MOD-GOVERNANCE"
     hit_rate: null
     false_positive_rate: null
@@ -430,7 +430,7 @@ chart_patterns:
     tags: ["反转", "k线", "形态", "指标"]
     algorithm_status: "quantized"
     evidence: ""
-    code_symbol: null
+    code_symbol: "src/zephyr/signal_ashare/strategy_signal/candlestick_scanner.py::scan_candles"
     code_fingerprint: null
 
   - pattern_id: "PAT-CANDLE-006"
@@ -450,13 +450,13 @@ chart_patterns:
     timeframe: "daily"
     module_id: "MOD-L02-020"
     doc_ref: "16_technical_indicator_catalog.md §6.5"
-    code_path: "src/zephyr/factor/technical_indicators/reversal.py"
+    code_path: "src/zephyr/signal_ashare/strategy_signal/candlestick_scanner.py"
     used_by_factors: []
     variant_of: null
     status: "active"
     version: "1.0.0"
     created_at: "2026-08-13"
-    updated_at: "2026-08-13"
+    updated_at: "2026-09-14"
     owner: "MOD-GOVERNANCE"
     hit_rate: null
     false_positive_rate: null
@@ -471,7 +471,7 @@ chart_patterns:
     tags: ["反转", "k线", "形态", "指标"]
     algorithm_status: "quantized"
     evidence: ""
-    code_symbol: null
+    code_symbol: "src/zephyr/signal_ashare/strategy_signal/candlestick_scanner.py::scan_candles"
     code_fingerprint: null
 
   - pattern_id: "PAT-CANDLE-007"
@@ -491,13 +491,13 @@ chart_patterns:
     timeframe: "daily"
     module_id: "MOD-L02-020"
     doc_ref: "TA-Lib CDL 函数族 61 全集对齐（2026-08-14 补登）"
-    code_path: ""
+    code_path: "src/zephyr/signal_ashare/strategy_signal/candlestick_scanner.py"
     used_by_factors: []
     variant_of: null
     status: "candidate"
     version: "1.0.0"
     created_at: "2026-08-14"
-    updated_at: "2026-08-14"
+    updated_at: "2026-09-14"
     owner: "MOD-GOVERNANCE"
     hit_rate: null
     false_positive_rate: null
@@ -510,9 +510,9 @@ chart_patterns:
     entry_role: "trigger"
     applies_to: []
     tags: ["反转", "机器学习", "k线", "形态"]
-    algorithm_status: "pending_backtest"
+    algorithm_status: "quantized"
     evidence: ""
-    code_symbol: null
+    code_symbol: "src/zephyr/signal_ashare/strategy_signal/candlestick_scanner.py::scan_candles"
     code_fingerprint: null
 
   - pattern_id: "PAT-CANDLE-008"
@@ -532,13 +532,13 @@ chart_patterns:
     timeframe: "daily"
     module_id: "MOD-L02-020"
     doc_ref: "TA-Lib CDL 函数族 61 全集对齐（2026-08-14 补登）"
-    code_path: ""
+    code_path: "src/zephyr/signal_ashare/strategy_signal/candlestick_scanner.py"
     used_by_factors: []
     variant_of: "PAT-CANDLE-001"
     status: "candidate"
     version: "1.0.0"
     created_at: "2026-08-14"
-    updated_at: "2026-08-14"
+    updated_at: "2026-09-14"
     owner: "MOD-GOVERNANCE"
     hit_rate: null
     false_positive_rate: null
@@ -551,9 +551,9 @@ chart_patterns:
     entry_role: "trigger"
     applies_to: []
     tags: ["反转", "机器学习", "k线", "形态"]
-    algorithm_status: "pending_backtest"
+    algorithm_status: "quantized"
     evidence: ""
-    code_symbol: null
+    code_symbol: "src/zephyr/signal_ashare/strategy_signal/candlestick_scanner.py::scan_candles"
     code_fingerprint: null
 
   - pattern_id: "PAT-CANDLE-009"
@@ -573,13 +573,13 @@ chart_patterns:
     timeframe: "daily"
     module_id: "MOD-L02-020"
     doc_ref: "TA-Lib CDL 函数族 61 全集对齐（2026-08-14 补登）"
-    code_path: ""
+    code_path: "src/zephyr/signal_ashare/strategy_signal/candlestick_scanner.py"
     used_by_factors: []
     variant_of: "PAT-CANDLE-007"
     status: "candidate"
     version: "1.0.0"
     created_at: "2026-08-14"
-    updated_at: "2026-08-14"
+    updated_at: "2026-09-14"
     owner: "MOD-GOVERNANCE"
     hit_rate: null
     false_positive_rate: null
@@ -592,9 +592,9 @@ chart_patterns:
     entry_role: "trigger"
     applies_to: []
     tags: ["反转", "机器学习", "k线", "形态"]
-    algorithm_status: "pending_backtest"
+    algorithm_status: "quantized"
     evidence: ""
-    code_symbol: null
+    code_symbol: "src/zephyr/signal_ashare/strategy_signal/candlestick_scanner.py::scan_candles"
     code_fingerprint: null
 
   - pattern_id: "PAT-CANDLE-010"
@@ -614,13 +614,13 @@ chart_patterns:
     timeframe: "daily"
     module_id: "MOD-L02-020"
     doc_ref: "TA-Lib CDL 函数族 61 全集对齐（2026-08-14 补登）"
-    code_path: ""
+    code_path: "src/zephyr/signal_ashare/strategy_signal/candlestick_scanner.py"
     used_by_factors: []
     variant_of: "PAT-CANDLE-006"
     status: "candidate"
     version: "1.0.0"
     created_at: "2026-08-14"
-    updated_at: "2026-08-14"
+    updated_at: "2026-09-14"
     owner: "MOD-GOVERNANCE"
     hit_rate: null
     false_positive_rate: null
@@ -633,9 +633,9 @@ chart_patterns:
     entry_role: "trigger"
     applies_to: []
     tags: ["反转", "机器学习", "k线", "形态"]
-    algorithm_status: "pending_backtest"
+    algorithm_status: "quantized"
     evidence: ""
-    code_symbol: null
+    code_symbol: "src/zephyr/signal_ashare/strategy_signal/candlestick_scanner.py::scan_candles"
     code_fingerprint: null
 
   - pattern_id: "PAT-CANDLE-011"
@@ -655,13 +655,13 @@ chart_patterns:
     timeframe: "daily"
     module_id: "MOD-L02-020"
     doc_ref: "TA-Lib CDL 函数族 61 全集对齐（2026-08-14 补登）"
-    code_path: ""
+    code_path: "src/zephyr/signal_ashare/strategy_signal/candlestick_scanner.py"
     used_by_factors: []
     variant_of: "PAT-CANDLE-006"
     status: "candidate"
     version: "1.0.0"
     created_at: "2026-08-14"
-    updated_at: "2026-08-14"
+    updated_at: "2026-09-14"
     owner: "MOD-GOVERNANCE"
     hit_rate: null
     false_positive_rate: null
@@ -674,9 +674,9 @@ chart_patterns:
     entry_role: "trigger"
     applies_to: []
     tags: ["反转", "机器学习", "k线", "形态"]
-    algorithm_status: "pending_backtest"
+    algorithm_status: "quantized"
     evidence: ""
-    code_symbol: null
+    code_symbol: "src/zephyr/signal_ashare/strategy_signal/candlestick_scanner.py::scan_candles"
     code_fingerprint: null
 
   - pattern_id: "PAT-CANDLE-012"
@@ -696,13 +696,13 @@ chart_patterns:
     timeframe: "daily"
     module_id: "MOD-L02-020"
     doc_ref: "TA-Lib CDL 函数族 61 全集对齐（2026-08-14 补登）"
-    code_path: ""
+    code_path: "src/zephyr/signal_ashare/strategy_signal/candlestick_scanner.py"
     used_by_factors: []
     variant_of: "PAT-CANDLE-006"
     status: "candidate"
     version: "1.0.0"
     created_at: "2026-08-14"
-    updated_at: "2026-08-14"
+    updated_at: "2026-09-14"
     owner: "MOD-GOVERNANCE"
     hit_rate: null
     false_positive_rate: null
@@ -715,9 +715,9 @@ chart_patterns:
     entry_role: "trigger"
     applies_to: []
     tags: ["机器学习", "k线", "形态"]
-    algorithm_status: "pending_backtest"
+    algorithm_status: "quantized"
     evidence: ""
-    code_symbol: null
+    code_symbol: "src/zephyr/signal_ashare/strategy_signal/candlestick_scanner.py::scan_candles"
     code_fingerprint: null
 
   - pattern_id: "PAT-CANDLE-013"
@@ -737,13 +737,13 @@ chart_patterns:
     timeframe: "daily"
     module_id: "MOD-L02-020"
     doc_ref: "TA-Lib CDL 函数族 61 全集对齐（2026-08-14 补登）"
-    code_path: ""
+    code_path: "src/zephyr/signal_ashare/strategy_signal/candlestick_scanner.py"
     used_by_factors: []
     variant_of: null
     status: "candidate"
     version: "1.0.0"
     created_at: "2026-08-14"
-    updated_at: "2026-08-14"
+    updated_at: "2026-09-14"
     owner: "MOD-GOVERNANCE"
     hit_rate: null
     false_positive_rate: null
@@ -756,9 +756,9 @@ chart_patterns:
     entry_role: "trigger"
     applies_to: []
     tags: ["机器学习", "k线", "形态"]
-    algorithm_status: "pending_backtest"
+    algorithm_status: "quantized"
     evidence: ""
-    code_symbol: null
+    code_symbol: "src/zephyr/signal_ashare/strategy_signal/candlestick_scanner.py::scan_candles"
     code_fingerprint: null
 
   - pattern_id: "PAT-CANDLE-014"
@@ -778,13 +778,13 @@ chart_patterns:
     timeframe: "daily"
     module_id: "MOD-L02-020"
     doc_ref: "TA-Lib CDL 函数族 61 全集对齐（2026-08-14 补登）；29_factor_strategy_extraction.md §F2.7/§F2.32"
-    code_path: ""
+    code_path: "src/zephyr/signal_ashare/strategy_signal/candlestick_scanner.py"
     used_by_factors: []
     variant_of: null
     status: "candidate"
     version: "1.0.0"
     created_at: "2026-08-14"
-    updated_at: "2026-08-15"
+    updated_at: "2026-09-14"
     owner: "MOD-GOVERNANCE"
     hit_rate: null
     false_positive_rate: null
@@ -797,9 +797,9 @@ chart_patterns:
     entry_role: "trigger"
     applies_to: []
     tags: ["持续", "机器学习", "k线", "形态"]
-    algorithm_status: "pending_backtest"
+    algorithm_status: "quantized"
     evidence: ""
-    code_symbol: null
+    code_symbol: "src/zephyr/signal_ashare/strategy_signal/candlestick_scanner.py::scan_candles"
     code_fingerprint: null
 
   - pattern_id: "PAT-CANDLE-015"
@@ -819,13 +819,13 @@ chart_patterns:
     timeframe: "daily"
     module_id: "MOD-L02-020"
     doc_ref: "TA-Lib CDL 函数族 61 全集对齐（2026-08-14 补登）"
-    code_path: ""
+    code_path: "src/zephyr/signal_ashare/strategy_signal/candlestick_scanner.py"
     used_by_factors: []
     variant_of: "PAT-CANDLE-014"
     status: "candidate"
     version: "1.0.0"
     created_at: "2026-08-14"
-    updated_at: "2026-08-14"
+    updated_at: "2026-09-14"
     owner: "MOD-GOVERNANCE"
     hit_rate: null
     false_positive_rate: null
@@ -838,9 +838,9 @@ chart_patterns:
     entry_role: "trigger"
     applies_to: []
     tags: ["持续", "机器学习", "k线", "形态"]
-    algorithm_status: "pending_backtest"
+    algorithm_status: "quantized"
     evidence: ""
-    code_symbol: null
+    code_symbol: "src/zephyr/signal_ashare/strategy_signal/candlestick_scanner.py::scan_candles"
     code_fingerprint: null
 
   - pattern_id: "PAT-CANDLE-016"
@@ -860,13 +860,13 @@ chart_patterns:
     timeframe: "daily"
     module_id: "MOD-L02-020"
     doc_ref: "TA-Lib CDL 函数族 61 全集对齐（2026-08-14 补登）"
-    code_path: ""
+    code_path: "src/zephyr/signal_ashare/strategy_signal/candlestick_scanner.py"
     used_by_factors: []
     variant_of: "PAT-CANDLE-013"
     status: "candidate"
     version: "1.0.0"
     created_at: "2026-08-14"
-    updated_at: "2026-08-14"
+    updated_at: "2026-09-14"
     owner: "MOD-GOVERNANCE"
     hit_rate: null
     false_positive_rate: null
@@ -879,9 +879,9 @@ chart_patterns:
     entry_role: "trigger"
     applies_to: []
     tags: ["机器学习", "k线", "形态"]
-    algorithm_status: "pending_backtest"
+    algorithm_status: "quantized"
     evidence: ""
-    code_symbol: null
+    code_symbol: "src/zephyr/signal_ashare/strategy_signal/candlestick_scanner.py::scan_candles"
     code_fingerprint: null
 
   - pattern_id: "PAT-CANDLE-017"
@@ -901,13 +901,13 @@ chart_patterns:
     timeframe: "daily"
     module_id: "MOD-L02-020"
     doc_ref: "TA-Lib CDL 函数族 61 全集对齐（2026-08-14 补登）"
-    code_path: ""
+    code_path: "src/zephyr/signal_ashare/strategy_signal/candlestick_scanner.py"
     used_by_factors: []
     variant_of: "PAT-CANDLE-012"
     status: "candidate"
     version: "1.0.0"
     created_at: "2026-08-14"
-    updated_at: "2026-08-14"
+    updated_at: "2026-09-14"
     owner: "MOD-GOVERNANCE"
     hit_rate: null
     false_positive_rate: null
@@ -920,9 +920,9 @@ chart_patterns:
     entry_role: "trigger"
     applies_to: []
     tags: ["机器学习", "k线", "形态"]
-    algorithm_status: "pending_backtest"
+    algorithm_status: "quantized"
     evidence: ""
-    code_symbol: null
+    code_symbol: "src/zephyr/signal_ashare/strategy_signal/candlestick_scanner.py::scan_candles"
     code_fingerprint: null
 
   - pattern_id: "PAT-CANDLE-018"
@@ -942,13 +942,13 @@ chart_patterns:
     timeframe: "daily"
     module_id: "MOD-L02-020"
     doc_ref: "TA-Lib CDL 函数族 61 全集对齐（2026-08-14 补登）"
-    code_path: ""
+    code_path: "src/zephyr/signal_ashare/strategy_signal/candlestick_scanner.py"
     used_by_factors: []
     variant_of: "PAT-CANDLE-011"
     status: "candidate"
     version: "1.0.0"
     created_at: "2026-08-14"
-    updated_at: "2026-08-14"
+    updated_at: "2026-09-14"
     owner: "MOD-GOVERNANCE"
     hit_rate: null
     false_positive_rate: null
@@ -961,9 +961,9 @@ chart_patterns:
     entry_role: "trigger"
     applies_to: []
     tags: ["反转", "机器学习", "k线", "形态"]
-    algorithm_status: "pending_backtest"
+    algorithm_status: "quantized"
     evidence: ""
-    code_symbol: null
+    code_symbol: "src/zephyr/signal_ashare/strategy_signal/candlestick_scanner.py::scan_candles"
     code_fingerprint: null
 
   - pattern_id: "PAT-CANDLE-019"
@@ -983,13 +983,13 @@ chart_patterns:
     timeframe: "daily"
     module_id: "MOD-L02-020"
     doc_ref: "TA-Lib CDL 函数族 61 全集对齐（2026-08-14 补登）"
-    code_path: ""
+    code_path: "src/zephyr/signal_ashare/strategy_signal/candlestick_scanner.py"
     used_by_factors: []
     variant_of: "PAT-CANDLE-014"
     status: "candidate"
     version: "1.0.0"
     created_at: "2026-08-14"
-    updated_at: "2026-08-14"
+    updated_at: "2026-09-14"
     owner: "MOD-GOVERNANCE"
     hit_rate: null
     false_positive_rate: null
@@ -1002,9 +1002,9 @@ chart_patterns:
     entry_role: "trigger"
     applies_to: []
     tags: ["反转", "机器学习", "k线", "形态"]
-    algorithm_status: "pending_backtest"
+    algorithm_status: "quantized"
     evidence: ""
-    code_symbol: null
+    code_symbol: "src/zephyr/signal_ashare/strategy_signal/candlestick_scanner.py::scan_candles"
     code_fingerprint: null
 
   - pattern_id: "PAT-CANDLE-020"
@@ -1024,13 +1024,13 @@ chart_patterns:
     timeframe: "daily"
     module_id: "MOD-L02-020"
     doc_ref: "TA-Lib CDL 函数族 61 全集对齐（2026-08-14 补登）"
-    code_path: ""
+    code_path: "src/zephyr/signal_ashare/strategy_signal/candlestick_scanner.py"
     used_by_factors: []
     variant_of: null
     status: "candidate"
     version: "1.0.0"
     created_at: "2026-08-14"
-    updated_at: "2026-08-14"
+    updated_at: "2026-09-14"
     owner: "MOD-GOVERNANCE"
     hit_rate: null
     false_positive_rate: null
@@ -1043,9 +1043,9 @@ chart_patterns:
     entry_role: "trigger"
     applies_to: []
     tags: ["反转", "机器学习", "k线", "形态"]
-    algorithm_status: "pending_backtest"
+    algorithm_status: "quantized"
     evidence: ""
-    code_symbol: null
+    code_symbol: "src/zephyr/signal_ashare/strategy_signal/candlestick_scanner.py::scan_candles"
     code_fingerprint: null
 
   - pattern_id: "PAT-CANDLE-021"
@@ -1065,13 +1065,13 @@ chart_patterns:
     timeframe: "daily"
     module_id: "MOD-L02-020"
     doc_ref: "TA-Lib CDL 函数族 61 全集对齐（2026-08-14 补登）"
-    code_path: ""
+    code_path: "src/zephyr/signal_ashare/strategy_signal/candlestick_scanner.py"
     used_by_factors: []
     variant_of: "PAT-CANDLE-020"
     status: "candidate"
     version: "1.0.0"
     created_at: "2026-08-14"
-    updated_at: "2026-08-14"
+    updated_at: "2026-09-14"
     owner: "MOD-GOVERNANCE"
     hit_rate: null
     false_positive_rate: null
@@ -1084,9 +1084,9 @@ chart_patterns:
     entry_role: "trigger"
     applies_to: []
     tags: ["反转", "机器学习", "k线", "形态"]
-    algorithm_status: "pending_backtest"
+    algorithm_status: "quantized"
     evidence: ""
-    code_symbol: null
+    code_symbol: "src/zephyr/signal_ashare/strategy_signal/candlestick_scanner.py::scan_candles"
     code_fingerprint: null
 
   - pattern_id: "PAT-CANDLE-022"
@@ -1106,13 +1106,13 @@ chart_patterns:
     timeframe: "daily"
     module_id: "MOD-L02-020"
     doc_ref: "TA-Lib CDL 函数族 61 全集对齐（2026-08-14 补登）"
-    code_path: ""
+    code_path: "src/zephyr/signal_ashare/strategy_signal/candlestick_scanner.py"
     used_by_factors: []
     variant_of: "PAT-CANDLE-004"
     status: "candidate"
     version: "1.0.0"
     created_at: "2026-08-14"
-    updated_at: "2026-08-14"
+    updated_at: "2026-09-14"
     owner: "MOD-GOVERNANCE"
     hit_rate: null
     false_positive_rate: null
@@ -1125,9 +1125,9 @@ chart_patterns:
     entry_role: "trigger"
     applies_to: []
     tags: ["反转", "机器学习", "k线", "形态"]
-    algorithm_status: "pending_backtest"
+    algorithm_status: "quantized"
     evidence: ""
-    code_symbol: null
+    code_symbol: "src/zephyr/signal_ashare/strategy_signal/candlestick_scanner.py::scan_candles"
     code_fingerprint: null
 
   - pattern_id: "PAT-CANDLE-023"
@@ -1147,13 +1147,13 @@ chart_patterns:
     timeframe: "daily"
     module_id: "MOD-L02-020"
     doc_ref: "TA-Lib CDL 函数族 61 全集对齐（2026-08-14 补登）"
-    code_path: ""
+    code_path: "src/zephyr/signal_ashare/strategy_signal/candlestick_scanner.py"
     used_by_factors: []
     variant_of: "PAT-CANDLE-005"
     status: "candidate"
     version: "1.0.0"
     created_at: "2026-08-14"
-    updated_at: "2026-08-14"
+    updated_at: "2026-09-14"
     owner: "MOD-GOVERNANCE"
     hit_rate: null
     false_positive_rate: null
@@ -1166,9 +1166,9 @@ chart_patterns:
     entry_role: "trigger"
     applies_to: []
     tags: ["反转", "机器学习", "k线", "形态"]
-    algorithm_status: "pending_backtest"
+    algorithm_status: "quantized"
     evidence: ""
-    code_symbol: null
+    code_symbol: "src/zephyr/signal_ashare/strategy_signal/candlestick_scanner.py::scan_candles"
     code_fingerprint: null
 
   - pattern_id: "PAT-CANDLE-024"
@@ -1188,13 +1188,13 @@ chart_patterns:
     timeframe: "daily"
     module_id: "MOD-L02-020"
     doc_ref: "TA-Lib CDL 函数族 61 全集对齐（2026-08-14 补登）；29_factor_strategy_extraction.md §F2.13"
-    code_path: ""
+    code_path: "src/zephyr/signal_ashare/strategy_signal/candlestick_scanner.py"
     used_by_factors: []
     variant_of: "PAT-CANDLE-006"
     status: "candidate"
     version: "1.0.0"
     created_at: "2026-08-14"
-    updated_at: "2026-08-15"
+    updated_at: "2026-09-14"
     owner: "MOD-GOVERNANCE"
     hit_rate: null
     false_positive_rate: null
@@ -1207,9 +1207,9 @@ chart_patterns:
     entry_role: "trigger"
     applies_to: []
     tags: ["反转", "机器学习", "k线", "形态", "组合"]
-    algorithm_status: "pending_backtest"
+    algorithm_status: "quantized"
     evidence: ""
-    code_symbol: null
+    code_symbol: "src/zephyr/signal_ashare/strategy_signal/candlestick_scanner.py::scan_candles"
     code_fingerprint: null
 
   - pattern_id: "PAT-CANDLE-025"
@@ -1229,13 +1229,13 @@ chart_patterns:
     timeframe: "daily"
     module_id: "MOD-L02-020"
     doc_ref: "TA-Lib CDL 函数族 61 全集对齐（2026-08-14 补登）"
-    code_path: ""
+    code_path: "src/zephyr/signal_ashare/strategy_signal/candlestick_scanner.py"
     used_by_factors: []
     variant_of: null
     status: "candidate"
     version: "1.0.0"
     created_at: "2026-08-14"
-    updated_at: "2026-08-14"
+    updated_at: "2026-09-14"
     owner: "MOD-GOVERNANCE"
     hit_rate: null
     false_positive_rate: null
@@ -1248,9 +1248,9 @@ chart_patterns:
     entry_role: "trigger"
     applies_to: []
     tags: ["反转", "机器学习", "k线", "形态"]
-    algorithm_status: "pending_backtest"
+    algorithm_status: "quantized"
     evidence: ""
-    code_symbol: null
+    code_symbol: "src/zephyr/signal_ashare/strategy_signal/candlestick_scanner.py::scan_candles"
     code_fingerprint: null
 
   - pattern_id: "PAT-CANDLE-026"
@@ -1270,13 +1270,13 @@ chart_patterns:
     timeframe: "daily"
     module_id: "MOD-L02-020"
     doc_ref: "TA-Lib CDL 函数族 61 全集对齐（2026-08-14 补登）；29_factor_strategy_extraction.md §F4.11（吸收F5.32/F5.33）"
-    code_path: ""
+    code_path: "src/zephyr/signal_ashare/strategy_signal/candlestick_scanner.py"
     used_by_factors: []
     variant_of: "PAT-CANDLE-025"
     status: "candidate"
     version: "1.0.0"
     created_at: "2026-08-14"
-    updated_at: "2026-08-15"
+    updated_at: "2026-09-14"
     owner: "MOD-GOVERNANCE"
     hit_rate: null
     false_positive_rate: null
@@ -1289,9 +1289,9 @@ chart_patterns:
     entry_role: "trigger"
     applies_to: []
     tags: ["反转", "机器学习", "k线", "形态"]
-    algorithm_status: "pending_backtest"
+    algorithm_status: "quantized"
     evidence: ""
-    code_symbol: null
+    code_symbol: "src/zephyr/signal_ashare/strategy_signal/candlestick_scanner.py::scan_candles"
     code_fingerprint: null
 
   - pattern_id: "PAT-CANDLE-027"
@@ -1311,13 +1311,13 @@ chart_patterns:
     timeframe: "daily"
     module_id: "MOD-L02-020"
     doc_ref: "TA-Lib CDL 函数族 61 全集对齐（2026-08-14 补登）"
-    code_path: ""
+    code_path: "src/zephyr/signal_ashare/strategy_signal/candlestick_scanner.py"
     used_by_factors: []
     variant_of: "PAT-CANDLE-014"
     status: "candidate"
     version: "1.0.0"
     created_at: "2026-08-14"
-    updated_at: "2026-08-14"
+    updated_at: "2026-09-14"
     owner: "MOD-GOVERNANCE"
     hit_rate: null
     false_positive_rate: null
@@ -1330,9 +1330,9 @@ chart_patterns:
     entry_role: "trigger"
     applies_to: []
     tags: ["反转", "机器学习", "k线", "形态"]
-    algorithm_status: "pending_backtest"
+    algorithm_status: "quantized"
     evidence: ""
-    code_symbol: null
+    code_symbol: "src/zephyr/signal_ashare/strategy_signal/candlestick_scanner.py::scan_candles"
     code_fingerprint: null
 
   - pattern_id: "PAT-CANDLE-028"
@@ -1352,13 +1352,13 @@ chart_patterns:
     timeframe: "daily"
     module_id: "MOD-L02-020"
     doc_ref: "TA-Lib CDL 函数族 61 全集对齐（2026-08-14 补登）"
-    code_path: ""
+    code_path: "src/zephyr/signal_ashare/strategy_signal/candlestick_scanner.py"
     used_by_factors: []
     variant_of: "PAT-CANDLE-027"
     status: "candidate"
     version: "1.0.0"
     created_at: "2026-08-14"
-    updated_at: "2026-08-14"
+    updated_at: "2026-09-14"
     owner: "MOD-GOVERNANCE"
     hit_rate: null
     false_positive_rate: null
@@ -1371,9 +1371,9 @@ chart_patterns:
     entry_role: "trigger"
     applies_to: []
     tags: ["反转", "机器学习", "k线", "形态"]
-    algorithm_status: "pending_backtest"
+    algorithm_status: "quantized"
     evidence: ""
-    code_symbol: null
+    code_symbol: "src/zephyr/signal_ashare/strategy_signal/candlestick_scanner.py::scan_candles"
     code_fingerprint: null
 
   - pattern_id: "PAT-CANDLE-029"
@@ -1393,13 +1393,13 @@ chart_patterns:
     timeframe: "daily"
     module_id: "MOD-L02-020"
     doc_ref: "TA-Lib CDL 函数族 61 全集对齐（2026-08-14 补登）"
-    code_path: ""
+    code_path: "src/zephyr/signal_ashare/strategy_signal/candlestick_scanner.py"
     used_by_factors: []
     variant_of: null
     status: "candidate"
     version: "1.0.0"
     created_at: "2026-08-14"
-    updated_at: "2026-08-14"
+    updated_at: "2026-09-14"
     owner: "MOD-GOVERNANCE"
     hit_rate: null
     false_positive_rate: null
@@ -1412,9 +1412,9 @@ chart_patterns:
     entry_role: "trigger"
     applies_to: []
     tags: ["持续", "机器学习", "k线", "形态"]
-    algorithm_status: "pending_backtest"
+    algorithm_status: "quantized"
     evidence: ""
-    code_symbol: null
+    code_symbol: "src/zephyr/signal_ashare/strategy_signal/candlestick_scanner.py::scan_candles"
     code_fingerprint: null
 
   - pattern_id: "PAT-CANDLE-030"
@@ -1434,13 +1434,13 @@ chart_patterns:
     timeframe: "daily"
     module_id: "MOD-L02-020"
     doc_ref: "TA-Lib CDL 函数族 61 全集对齐（2026-08-14 补登）"
-    code_path: ""
+    code_path: "src/zephyr/signal_ashare/strategy_signal/candlestick_scanner.py"
     used_by_factors: []
     variant_of: "PAT-CANDLE-029"
     status: "candidate"
     version: "1.0.0"
     created_at: "2026-08-14"
-    updated_at: "2026-08-14"
+    updated_at: "2026-09-14"
     owner: "MOD-GOVERNANCE"
     hit_rate: null
     false_positive_rate: null
@@ -1453,9 +1453,9 @@ chart_patterns:
     entry_role: "trigger"
     applies_to: []
     tags: ["持续", "机器学习", "k线", "形态"]
-    algorithm_status: "pending_backtest"
+    algorithm_status: "quantized"
     evidence: ""
-    code_symbol: null
+    code_symbol: "src/zephyr/signal_ashare/strategy_signal/candlestick_scanner.py::scan_candles"
     code_fingerprint: null
 
   - pattern_id: "PAT-CANDLE-031"
@@ -1475,13 +1475,13 @@ chart_patterns:
     timeframe: "daily"
     module_id: "MOD-L02-020"
     doc_ref: "TA-Lib CDL 函数族 61 全集对齐（2026-08-14 补登）"
-    code_path: ""
+    code_path: "src/zephyr/signal_ashare/strategy_signal/candlestick_scanner.py"
     used_by_factors: []
     variant_of: "PAT-CANDLE-030"
     status: "candidate"
     version: "1.0.0"
     created_at: "2026-08-14"
-    updated_at: "2026-08-14"
+    updated_at: "2026-09-14"
     owner: "MOD-GOVERNANCE"
     hit_rate: null
     false_positive_rate: null
@@ -1494,9 +1494,9 @@ chart_patterns:
     entry_role: "trigger"
     applies_to: []
     tags: ["持续", "机器学习", "k线", "形态"]
-    algorithm_status: "pending_backtest"
+    algorithm_status: "quantized"
     evidence: ""
-    code_symbol: null
+    code_symbol: "src/zephyr/signal_ashare/strategy_signal/candlestick_scanner.py::scan_candles"
     code_fingerprint: null
 
   - pattern_id: "PAT-CANDLE-032"
@@ -1516,13 +1516,13 @@ chart_patterns:
     timeframe: "daily"
     module_id: "MOD-L02-020"
     doc_ref: "TA-Lib CDL 函数族 61 全集对齐（2026-08-14 补登）"
-    code_path: ""
+    code_path: "src/zephyr/signal_ashare/strategy_signal/candlestick_scanner.py"
     used_by_factors: []
     variant_of: "PAT-CANDLE-020"
     status: "candidate"
     version: "1.0.0"
     created_at: "2026-08-14"
-    updated_at: "2026-08-14"
+    updated_at: "2026-09-14"
     owner: "MOD-GOVERNANCE"
     hit_rate: null
     false_positive_rate: null
@@ -1535,9 +1535,9 @@ chart_patterns:
     entry_role: "trigger"
     applies_to: []
     tags: ["反转", "机器学习", "k线", "形态"]
-    algorithm_status: "pending_backtest"
+    algorithm_status: "quantized"
     evidence: ""
-    code_symbol: null
+    code_symbol: "src/zephyr/signal_ashare/strategy_signal/candlestick_scanner.py::scan_candles"
     code_fingerprint: null
 
   - pattern_id: "PAT-CANDLE-033"
@@ -1557,13 +1557,13 @@ chart_patterns:
     timeframe: "daily"
     module_id: "MOD-L02-020"
     doc_ref: "TA-Lib CDL 函数族 61 全集对齐（2026-08-14 补登）"
-    code_path: ""
+    code_path: "src/zephyr/signal_ashare/strategy_signal/candlestick_scanner.py"
     used_by_factors: []
     variant_of: "PAT-CANDLE-002"
     status: "candidate"
     version: "1.0.0"
     created_at: "2026-08-14"
-    updated_at: "2026-08-14"
+    updated_at: "2026-09-14"
     owner: "MOD-GOVERNANCE"
     hit_rate: null
     false_positive_rate: null
@@ -1576,9 +1576,9 @@ chart_patterns:
     entry_role: "trigger"
     applies_to: []
     tags: ["反转", "机器学习", "k线", "形态"]
-    algorithm_status: "pending_backtest"
+    algorithm_status: "quantized"
     evidence: ""
-    code_symbol: null
+    code_symbol: "src/zephyr/signal_ashare/strategy_signal/candlestick_scanner.py::scan_candles"
     code_fingerprint: null
 
   - pattern_id: "PAT-CANDLE-034"
@@ -1598,13 +1598,13 @@ chart_patterns:
     timeframe: "daily"
     module_id: "MOD-L02-020"
     doc_ref: "TA-Lib CDL 函数族 61 全集对齐（2026-08-14 补登）"
-    code_path: ""
+    code_path: "src/zephyr/signal_ashare/strategy_signal/candlestick_scanner.py"
     used_by_factors: []
     variant_of: "PAT-CANDLE-029"
     status: "candidate"
     version: "1.0.0"
     created_at: "2026-08-14"
-    updated_at: "2026-08-14"
+    updated_at: "2026-09-14"
     owner: "MOD-GOVERNANCE"
     hit_rate: null
     false_positive_rate: null
@@ -1617,9 +1617,9 @@ chart_patterns:
     entry_role: "trigger"
     applies_to: []
     tags: ["反转", "机器学习", "k线", "形态"]
-    algorithm_status: "pending_backtest"
+    algorithm_status: "quantized"
     evidence: ""
-    code_symbol: null
+    code_symbol: "src/zephyr/signal_ashare/strategy_signal/candlestick_scanner.py::scan_candles"
     code_fingerprint: null
 
   - pattern_id: "PAT-CANDLE-035"
@@ -1639,13 +1639,13 @@ chart_patterns:
     timeframe: "daily"
     module_id: "MOD-L02-020"
     doc_ref: "TA-Lib CDL 函数族 61 全集对齐（2026-08-14 补登）"
-    code_path: ""
+    code_path: "src/zephyr/signal_ashare/strategy_signal/candlestick_scanner.py"
     used_by_factors: []
     variant_of: null
     status: "candidate"
     version: "1.0.0"
     created_at: "2026-08-14"
-    updated_at: "2026-08-14"
+    updated_at: "2026-09-14"
     owner: "MOD-GOVERNANCE"
     hit_rate: null
     false_positive_rate: null
@@ -1658,9 +1658,9 @@ chart_patterns:
     entry_role: "trigger"
     applies_to: []
     tags: ["反转", "机器学习", "k线", "形态"]
-    algorithm_status: "pending_backtest"
+    algorithm_status: "quantized"
     evidence: ""
-    code_symbol: null
+    code_symbol: "src/zephyr/signal_ashare/strategy_signal/candlestick_scanner.py::scan_candles"
     code_fingerprint: null
 
   - pattern_id: "PAT-CANDLE-036"
@@ -1680,13 +1680,13 @@ chart_patterns:
     timeframe: "daily"
     module_id: "MOD-L02-020"
     doc_ref: "TA-Lib CDL 函数族 61 全集对齐（2026-08-14 补登）"
-    code_path: ""
+    code_path: "src/zephyr/signal_ashare/strategy_signal/candlestick_scanner.py"
     used_by_factors: []
     variant_of: null
     status: "candidate"
     version: "1.0.0"
     created_at: "2026-08-14"
-    updated_at: "2026-08-14"
+    updated_at: "2026-09-14"
     owner: "MOD-GOVERNANCE"
     hit_rate: null
     false_positive_rate: null
@@ -1699,9 +1699,9 @@ chart_patterns:
     entry_role: "trigger"
     applies_to: []
     tags: ["反转", "机器学习", "k线", "形态"]
-    algorithm_status: "pending_backtest"
+    algorithm_status: "quantized"
     evidence: ""
-    code_symbol: null
+    code_symbol: "src/zephyr/signal_ashare/strategy_signal/candlestick_scanner.py::scan_candles"
     code_fingerprint: null
 
   - pattern_id: "PAT-CANDLE-037"
@@ -1721,13 +1721,13 @@ chart_patterns:
     timeframe: "daily"
     module_id: "MOD-L02-020"
     doc_ref: "TA-Lib CDL 函数族 61 全集对齐（2026-08-14 补登）"
-    code_path: ""
+    code_path: "src/zephyr/signal_ashare/strategy_signal/candlestick_scanner.py"
     used_by_factors: []
     variant_of: null
     status: "candidate"
     version: "1.0.0"
     created_at: "2026-08-14"
-    updated_at: "2026-08-14"
+    updated_at: "2026-09-14"
     owner: "MOD-GOVERNANCE"
     hit_rate: null
     false_positive_rate: null
@@ -1740,9 +1740,9 @@ chart_patterns:
     entry_role: "trigger"
     applies_to: []
     tags: ["反转", "机器学习", "k线", "形态"]
-    algorithm_status: "pending_backtest"
+    algorithm_status: "quantized"
     evidence: ""
-    code_symbol: null
+    code_symbol: "src/zephyr/signal_ashare/strategy_signal/candlestick_scanner.py::scan_candles"
     code_fingerprint: null
 
   - pattern_id: "PAT-CANDLE-038"
@@ -1762,13 +1762,13 @@ chart_patterns:
     timeframe: "daily"
     module_id: "MOD-L02-020"
     doc_ref: "TA-Lib CDL 函数族 61 全集对齐（2026-08-14 补登）"
-    code_path: ""
+    code_path: "src/zephyr/signal_ashare/strategy_signal/candlestick_scanner.py"
     used_by_factors: []
     variant_of: null
     status: "candidate"
     version: "1.0.0"
     created_at: "2026-08-14"
-    updated_at: "2026-08-14"
+    updated_at: "2026-09-14"
     owner: "MOD-GOVERNANCE"
     hit_rate: null
     false_positive_rate: null
@@ -1781,9 +1781,9 @@ chart_patterns:
     entry_role: "trigger"
     applies_to: []
     tags: ["反转", "机器学习", "k线", "形态"]
-    algorithm_status: "pending_backtest"
+    algorithm_status: "quantized"
     evidence: ""
-    code_symbol: null
+    code_symbol: "src/zephyr/signal_ashare/strategy_signal/candlestick_scanner.py::scan_candles"
     code_fingerprint: null
 
   - pattern_id: "PAT-CANDLE-039"
@@ -1803,13 +1803,13 @@ chart_patterns:
     timeframe: "daily"
     module_id: "MOD-L02-020"
     doc_ref: "TA-Lib CDL 函数族 61 全集对齐（2026-08-14 补登）"
-    code_path: ""
+    code_path: "src/zephyr/signal_ashare/strategy_signal/candlestick_scanner.py"
     used_by_factors: []
     variant_of: "PAT-CANDLE-006"
     status: "candidate"
     version: "1.0.0"
     created_at: "2026-08-14"
-    updated_at: "2026-08-14"
+    updated_at: "2026-09-14"
     owner: "MOD-GOVERNANCE"
     hit_rate: null
     false_positive_rate: null
@@ -1822,9 +1822,9 @@ chart_patterns:
     entry_role: "trigger"
     applies_to: []
     tags: ["反转", "机器学习", "k线", "形态"]
-    algorithm_status: "pending_backtest"
+    algorithm_status: "quantized"
     evidence: ""
-    code_symbol: null
+    code_symbol: "src/zephyr/signal_ashare/strategy_signal/candlestick_scanner.py::scan_candles"
     code_fingerprint: null
 
   - pattern_id: "PAT-CANDLE-040"
@@ -1844,13 +1844,13 @@ chart_patterns:
     timeframe: "daily"
     module_id: "MOD-L02-020"
     doc_ref: "TA-Lib CDL 函数族 61 全集对齐（2026-08-14 补登）"
-    code_path: ""
+    code_path: "src/zephyr/signal_ashare/strategy_signal/candlestick_scanner.py"
     used_by_factors: []
     variant_of: "PAT-CANDLE-022"
     status: "candidate"
     version: "1.0.0"
     created_at: "2026-08-14"
-    updated_at: "2026-08-14"
+    updated_at: "2026-09-14"
     owner: "MOD-GOVERNANCE"
     hit_rate: null
     false_positive_rate: null
@@ -1863,9 +1863,9 @@ chart_patterns:
     entry_role: "trigger"
     applies_to: []
     tags: ["反转", "机器学习", "k线", "形态"]
-    algorithm_status: "pending_backtest"
+    algorithm_status: "quantized"
     evidence: ""
-    code_symbol: null
+    code_symbol: "src/zephyr/signal_ashare/strategy_signal/candlestick_scanner.py::scan_candles"
     code_fingerprint: null
 
   - pattern_id: "PAT-CANDLE-041"
@@ -1885,13 +1885,13 @@ chart_patterns:
     timeframe: "daily"
     module_id: "MOD-L02-020"
     doc_ref: "TA-Lib CDL 函数族 61 全集对齐（2026-08-14 补登）"
-    code_path: ""
+    code_path: "src/zephyr/signal_ashare/strategy_signal/candlestick_scanner.py"
     used_by_factors: []
     variant_of: null
     status: "candidate"
     version: "1.0.0"
     created_at: "2026-08-14"
-    updated_at: "2026-08-14"
+    updated_at: "2026-09-14"
     owner: "MOD-GOVERNANCE"
     hit_rate: null
     false_positive_rate: null
@@ -1904,9 +1904,9 @@ chart_patterns:
     entry_role: "trigger"
     applies_to: []
     tags: ["反转", "机器学习", "k线", "形态"]
-    algorithm_status: "pending_backtest"
+    algorithm_status: "quantized"
     evidence: ""
-    code_symbol: null
+    code_symbol: "src/zephyr/signal_ashare/strategy_signal/candlestick_scanner.py::scan_candles"
     code_fingerprint: null
 
   - pattern_id: "PAT-CANDLE-042"
@@ -1926,13 +1926,13 @@ chart_patterns:
     timeframe: "daily"
     module_id: "MOD-L02-020"
     doc_ref: "TA-Lib CDL 函数族 61 全集对齐（2026-08-14 补登）"
-    code_path: ""
+    code_path: "src/zephyr/signal_ashare/strategy_signal/candlestick_scanner.py"
     used_by_factors: []
     variant_of: "PAT-CANDLE-029"
     status: "candidate"
     version: "1.0.0"
     created_at: "2026-08-14"
-    updated_at: "2026-08-14"
+    updated_at: "2026-09-14"
     owner: "MOD-GOVERNANCE"
     hit_rate: null
     false_positive_rate: null
@@ -1945,9 +1945,9 @@ chart_patterns:
     entry_role: "trigger"
     applies_to: []
     tags: ["持续", "机器学习", "k线", "形态"]
-    algorithm_status: "pending_backtest"
+    algorithm_status: "quantized"
     evidence: ""
-    code_symbol: null
+    code_symbol: "src/zephyr/signal_ashare/strategy_signal/candlestick_scanner.py::scan_candles"
     code_fingerprint: null
 
   - pattern_id: "PAT-CANDLE-043"
@@ -1967,13 +1967,13 @@ chart_patterns:
     timeframe: "daily"
     module_id: "MOD-L02-020"
     doc_ref: "TA-Lib CDL 函数族 61 全集对齐（2026-08-14 补登）"
-    code_path: ""
+    code_path: "src/zephyr/signal_ashare/strategy_signal/candlestick_scanner.py"
     used_by_factors: []
     variant_of: "PAT-CANDLE-042"
     status: "candidate"
     version: "1.0.0"
     created_at: "2026-08-14"
-    updated_at: "2026-08-14"
+    updated_at: "2026-09-14"
     owner: "MOD-GOVERNANCE"
     hit_rate: null
     false_positive_rate: null
@@ -1986,9 +1986,9 @@ chart_patterns:
     entry_role: "trigger"
     applies_to: []
     tags: ["持续", "机器学习", "k线", "形态"]
-    algorithm_status: "pending_backtest"
+    algorithm_status: "quantized"
     evidence: ""
-    code_symbol: null
+    code_symbol: "src/zephyr/signal_ashare/strategy_signal/candlestick_scanner.py::scan_candles"
     code_fingerprint: null
 
   - pattern_id: "PAT-CANDLE-044"
@@ -2008,13 +2008,13 @@ chart_patterns:
     timeframe: "daily"
     module_id: "MOD-L02-020"
     doc_ref: "TA-Lib CDL 函数族 61 全集对齐（2026-08-14 补登）"
-    code_path: ""
+    code_path: "src/zephyr/signal_ashare/strategy_signal/candlestick_scanner.py"
     used_by_factors: []
     variant_of: "PAT-CANDLE-030"
     status: "candidate"
     version: "1.0.0"
     created_at: "2026-08-14"
-    updated_at: "2026-08-14"
+    updated_at: "2026-09-14"
     owner: "MOD-GOVERNANCE"
     hit_rate: null
     false_positive_rate: null
@@ -2027,9 +2027,9 @@ chart_patterns:
     entry_role: "trigger"
     applies_to: []
     tags: ["反转", "缺口", "机器学习", "k线", "形态"]
-    algorithm_status: "pending_backtest"
+    algorithm_status: "quantized"
     evidence: ""
-    code_symbol: null
+    code_symbol: "src/zephyr/signal_ashare/strategy_signal/candlestick_scanner.py::scan_candles"
     code_fingerprint: null
 
   - pattern_id: "PAT-CANDLE-045"
@@ -2049,13 +2049,13 @@ chart_patterns:
     timeframe: "daily"
     module_id: "MOD-L02-020"
     doc_ref: "TA-Lib CDL 函数族 61 全集对齐（2026-08-14 补登）"
-    code_path: ""
+    code_path: "src/zephyr/signal_ashare/strategy_signal/candlestick_scanner.py"
     used_by_factors: []
     variant_of: "PAT-CANDLE-044"
     status: "candidate"
     version: "1.0.0"
     created_at: "2026-08-14"
-    updated_at: "2026-08-14"
+    updated_at: "2026-09-14"
     owner: "MOD-GOVERNANCE"
     hit_rate: null
     false_positive_rate: null
@@ -2068,9 +2068,9 @@ chart_patterns:
     entry_role: "trigger"
     applies_to: []
     tags: ["反转", "机器学习", "k线", "形态"]
-    algorithm_status: "pending_backtest"
+    algorithm_status: "quantized"
     evidence: ""
-    code_symbol: null
+    code_symbol: "src/zephyr/signal_ashare/strategy_signal/candlestick_scanner.py::scan_candles"
     code_fingerprint: null
 
   - pattern_id: "PAT-CANDLE-046"
@@ -2090,13 +2090,13 @@ chart_patterns:
     timeframe: "daily"
     module_id: "MOD-L02-020"
     doc_ref: "TA-Lib CDL 函数族 61 全集对齐（2026-08-14 补登）"
-    code_path: ""
+    code_path: "src/zephyr/signal_ashare/strategy_signal/candlestick_scanner.py"
     used_by_factors: []
     variant_of: "PAT-CANDLE-020"
     status: "candidate"
     version: "1.0.0"
     created_at: "2026-08-14"
-    updated_at: "2026-08-14"
+    updated_at: "2026-09-14"
     owner: "MOD-GOVERNANCE"
     hit_rate: null
     false_positive_rate: null
@@ -2109,9 +2109,9 @@ chart_patterns:
     entry_role: "trigger"
     applies_to: []
     tags: ["反转", "机器学习", "k线", "形态"]
-    algorithm_status: "pending_backtest"
+    algorithm_status: "quantized"
     evidence: ""
-    code_symbol: null
+    code_symbol: "src/zephyr/signal_ashare/strategy_signal/candlestick_scanner.py::scan_candles"
     code_fingerprint: null
 
   - pattern_id: "PAT-CANDLE-047"
@@ -2131,13 +2131,13 @@ chart_patterns:
     timeframe: "daily"
     module_id: "MOD-L02-020"
     doc_ref: "TA-Lib CDL 函数族 61 全集对齐（2026-08-14 补登）"
-    code_path: ""
+    code_path: "src/zephyr/signal_ashare/strategy_signal/candlestick_scanner.py"
     used_by_factors: []
     variant_of: null
     status: "candidate"
     version: "1.0.0"
     created_at: "2026-08-14"
-    updated_at: "2026-08-14"
+    updated_at: "2026-09-14"
     owner: "MOD-GOVERNANCE"
     hit_rate: null
     false_positive_rate: null
@@ -2150,9 +2150,9 @@ chart_patterns:
     entry_role: "trigger"
     applies_to: []
     tags: ["持续", "机器学习", "k线", "形态"]
-    algorithm_status: "pending_backtest"
+    algorithm_status: "quantized"
     evidence: ""
-    code_symbol: null
+    code_symbol: "src/zephyr/signal_ashare/strategy_signal/candlestick_scanner.py::scan_candles"
     code_fingerprint: null
 
   - pattern_id: "PAT-CANDLE-048"
@@ -2172,13 +2172,13 @@ chart_patterns:
     timeframe: "daily"
     module_id: "MOD-L02-020"
     doc_ref: "TA-Lib CDL 函数族 61 全集对齐（2026-08-14 补登）"
-    code_path: ""
+    code_path: "src/zephyr/signal_ashare/strategy_signal/candlestick_scanner.py"
     used_by_factors: []
     variant_of: null
     status: "candidate"
     version: "1.0.0"
     created_at: "2026-08-14"
-    updated_at: "2026-08-14"
+    updated_at: "2026-09-14"
     owner: "MOD-GOVERNANCE"
     hit_rate: null
     false_positive_rate: null
@@ -2191,9 +2191,9 @@ chart_patterns:
     entry_role: "trigger"
     applies_to: []
     tags: ["持续", "机器学习", "k线", "形态"]
-    algorithm_status: "pending_backtest"
+    algorithm_status: "quantized"
     evidence: ""
-    code_symbol: null
+    code_symbol: "src/zephyr/signal_ashare/strategy_signal/candlestick_scanner.py::scan_candles"
     code_fingerprint: null
 
   - pattern_id: "PAT-CANDLE-049"
@@ -2213,13 +2213,13 @@ chart_patterns:
     timeframe: "daily"
     module_id: "MOD-L02-020"
     doc_ref: "TA-Lib CDL 函数族 61 全集对齐（2026-08-14 补登）"
-    code_path: ""
+    code_path: "src/zephyr/signal_ashare/strategy_signal/candlestick_scanner.py"
     used_by_factors: []
     variant_of: "PAT-CANDLE-048"
     status: "candidate"
     version: "1.0.0"
     created_at: "2026-08-14"
-    updated_at: "2026-08-14"
+    updated_at: "2026-09-14"
     owner: "MOD-GOVERNANCE"
     hit_rate: null
     false_positive_rate: null
@@ -2232,9 +2232,9 @@ chart_patterns:
     entry_role: "trigger"
     applies_to: []
     tags: ["持续", "机器学习", "k线", "形态"]
-    algorithm_status: "pending_backtest"
+    algorithm_status: "quantized"
     evidence: ""
-    code_symbol: null
+    code_symbol: "src/zephyr/signal_ashare/strategy_signal/candlestick_scanner.py::scan_candles"
     code_fingerprint: null
 
   - pattern_id: "PAT-CANDLE-050"
@@ -2254,13 +2254,13 @@ chart_patterns:
     timeframe: "daily"
     module_id: "MOD-L02-020"
     doc_ref: "TA-Lib CDL 函数族 61 全集对齐（2026-08-14 补登）"
-    code_path: ""
+    code_path: "src/zephyr/signal_ashare/strategy_signal/candlestick_scanner.py"
     used_by_factors: []
     variant_of: "PAT-CANDLE-048"
     status: "candidate"
     version: "1.0.0"
     created_at: "2026-08-14"
-    updated_at: "2026-08-14"
+    updated_at: "2026-09-14"
     owner: "MOD-GOVERNANCE"
     hit_rate: null
     false_positive_rate: null
@@ -2273,9 +2273,9 @@ chart_patterns:
     entry_role: "trigger"
     applies_to: []
     tags: ["持续", "机器学习", "k线", "形态"]
-    algorithm_status: "pending_backtest"
+    algorithm_status: "quantized"
     evidence: ""
-    code_symbol: null
+    code_symbol: "src/zephyr/signal_ashare/strategy_signal/candlestick_scanner.py::scan_candles"
     code_fingerprint: null
 
   - pattern_id: "PAT-CANDLE-051"
@@ -2295,13 +2295,13 @@ chart_patterns:
     timeframe: "daily"
     module_id: "MOD-L02-020"
     doc_ref: "TA-Lib CDL 函数族 61 全集对齐（2026-08-14 补登）"
-    code_path: ""
+    code_path: "src/zephyr/signal_ashare/strategy_signal/candlestick_scanner.py"
     used_by_factors: []
     variant_of: null
     status: "candidate"
     version: "1.0.0"
     created_at: "2026-08-14"
-    updated_at: "2026-08-14"
+    updated_at: "2026-09-14"
     owner: "MOD-GOVERNANCE"
     hit_rate: null
     false_positive_rate: null
@@ -2314,9 +2314,9 @@ chart_patterns:
     entry_role: "trigger"
     applies_to: []
     tags: ["反转", "机器学习", "k线", "形态"]
-    algorithm_status: "pending_backtest"
+    algorithm_status: "quantized"
     evidence: ""
-    code_symbol: null
+    code_symbol: "src/zephyr/signal_ashare/strategy_signal/candlestick_scanner.py::scan_candles"
     code_fingerprint: null
 
   - pattern_id: "PAT-CANDLE-052"
@@ -2336,13 +2336,13 @@ chart_patterns:
     timeframe: "daily"
     module_id: "MOD-L02-020"
     doc_ref: "TA-Lib CDL 函数族 61 全集对齐（2026-08-14 补登）"
-    code_path: ""
+    code_path: "src/zephyr/signal_ashare/strategy_signal/candlestick_scanner.py"
     used_by_factors: []
     variant_of: null
     status: "candidate"
     version: "1.0.0"
     created_at: "2026-08-14"
-    updated_at: "2026-08-14"
+    updated_at: "2026-09-14"
     owner: "MOD-GOVERNANCE"
     hit_rate: null
     false_positive_rate: null
@@ -2355,9 +2355,9 @@ chart_patterns:
     entry_role: "trigger"
     applies_to: []
     tags: ["持续", "机器学习", "k线", "形态"]
-    algorithm_status: "pending_backtest"
+    algorithm_status: "quantized"
     evidence: ""
-    code_symbol: null
+    code_symbol: "src/zephyr/signal_ashare/strategy_signal/candlestick_scanner.py::scan_candles"
     code_fingerprint: null
 
   - pattern_id: "PAT-CANDLE-053"
@@ -2377,13 +2377,13 @@ chart_patterns:
     timeframe: "daily"
     module_id: "MOD-L02-020"
     doc_ref: "TA-Lib CDL 函数族 61 全集对齐（2026-08-14 补登）"
-    code_path: ""
+    code_path: "src/zephyr/signal_ashare/strategy_signal/candlestick_scanner.py"
     used_by_factors: []
     variant_of: null
     status: "candidate"
     version: "1.0.0"
     created_at: "2026-08-14"
-    updated_at: "2026-08-14"
+    updated_at: "2026-09-14"
     owner: "MOD-GOVERNANCE"
     hit_rate: null
     false_positive_rate: null
@@ -2396,9 +2396,9 @@ chart_patterns:
     entry_role: "trigger"
     applies_to: []
     tags: ["持续", "机器学习", "k线", "形态"]
-    algorithm_status: "pending_backtest"
+    algorithm_status: "quantized"
     evidence: ""
-    code_symbol: null
+    code_symbol: "src/zephyr/signal_ashare/strategy_signal/candlestick_scanner.py::scan_candles"
     code_fingerprint: null
 
   - pattern_id: "PAT-CANDLE-054"
@@ -2418,13 +2418,13 @@ chart_patterns:
     timeframe: "daily"
     module_id: "MOD-L02-020"
     doc_ref: "TA-Lib CDL 函数族 61 全集对齐（2026-08-14 补登）"
-    code_path: ""
+    code_path: "src/zephyr/signal_ashare/strategy_signal/candlestick_scanner.py"
     used_by_factors: []
     variant_of: null
     status: "candidate"
     version: "1.0.0"
     created_at: "2026-08-14"
-    updated_at: "2026-08-14"
+    updated_at: "2026-09-14"
     owner: "MOD-GOVERNANCE"
     hit_rate: null
     false_positive_rate: null
@@ -2437,9 +2437,9 @@ chart_patterns:
     entry_role: "trigger"
     applies_to: []
     tags: ["持续", "机器学习", "k线", "形态"]
-    algorithm_status: "pending_backtest"
+    algorithm_status: "quantized"
     evidence: ""
-    code_symbol: null
+    code_symbol: "src/zephyr/signal_ashare/strategy_signal/candlestick_scanner.py::scan_candles"
     code_fingerprint: null
 
   - pattern_id: "PAT-CANDLE-055"
@@ -2459,13 +2459,13 @@ chart_patterns:
     timeframe: "daily"
     module_id: "MOD-L02-020"
     doc_ref: "TA-Lib CDL 函数族 61 全集对齐（2026-08-14 补登）"
-    code_path: ""
+    code_path: "src/zephyr/signal_ashare/strategy_signal/candlestick_scanner.py"
     used_by_factors: []
     variant_of: "PAT-CANDLE-054"
     status: "candidate"
     version: "1.0.0"
     created_at: "2026-08-14"
-    updated_at: "2026-08-14"
+    updated_at: "2026-09-14"
     owner: "MOD-GOVERNANCE"
     hit_rate: null
     false_positive_rate: null
@@ -2478,9 +2478,9 @@ chart_patterns:
     entry_role: "trigger"
     applies_to: []
     tags: ["持续", "震荡", "机器学习", "k线", "形态"]
-    algorithm_status: "pending_backtest"
+    algorithm_status: "quantized"
     evidence: ""
-    code_symbol: null
+    code_symbol: "src/zephyr/signal_ashare/strategy_signal/candlestick_scanner.py::scan_candles"
     code_fingerprint: null
 
   - pattern_id: "PAT-CANDLE-056"
@@ -2500,13 +2500,13 @@ chart_patterns:
     timeframe: "daily"
     module_id: "MOD-L02-020"
     doc_ref: "TA-Lib CDL 函数族 61 全集对齐（2026-08-14 补登）"
-    code_path: ""
+    code_path: "src/zephyr/signal_ashare/strategy_signal/candlestick_scanner.py"
     used_by_factors: []
     variant_of: null
     status: "candidate"
     version: "1.0.0"
     created_at: "2026-08-14"
-    updated_at: "2026-08-14"
+    updated_at: "2026-09-14"
     owner: "MOD-GOVERNANCE"
     hit_rate: null
     false_positive_rate: null
@@ -2519,9 +2519,9 @@ chart_patterns:
     entry_role: "trigger"
     applies_to: []
     tags: ["反转", "机器学习", "k线", "形态"]
-    algorithm_status: "pending_backtest"
+    algorithm_status: "quantized"
     evidence: ""
-    code_symbol: null
+    code_symbol: "src/zephyr/signal_ashare/strategy_signal/candlestick_scanner.py::scan_candles"
     code_fingerprint: null
 
   - pattern_id: "PAT-CANDLE-057"
@@ -2541,13 +2541,13 @@ chart_patterns:
     timeframe: "daily"
     module_id: "MOD-L02-020"
     doc_ref: "TA-Lib CDL 函数族 61 全集对齐（2026-08-14 补登）"
-    code_path: ""
+    code_path: "src/zephyr/signal_ashare/strategy_signal/candlestick_scanner.py"
     used_by_factors: []
     variant_of: "PAT-CANDLE-054"
     status: "candidate"
     version: "1.0.0"
     created_at: "2026-08-14"
-    updated_at: "2026-08-14"
+    updated_at: "2026-09-14"
     owner: "MOD-GOVERNANCE"
     hit_rate: null
     false_positive_rate: null
@@ -2560,9 +2560,9 @@ chart_patterns:
     entry_role: "trigger"
     applies_to: []
     tags: ["持续", "缺口", "机器学习", "k线", "形态"]
-    algorithm_status: "pending_backtest"
+    algorithm_status: "quantized"
     evidence: ""
-    code_symbol: null
+    code_symbol: "src/zephyr/signal_ashare/strategy_signal/candlestick_scanner.py::scan_candles"
     code_fingerprint: null
 
   - pattern_id: "PAT-CANDLE-058"
@@ -2582,13 +2582,13 @@ chart_patterns:
     timeframe: "daily"
     module_id: "MOD-L02-020"
     doc_ref: "TA-Lib CDL 函数族 61 全集对齐（2026-08-14 补登）"
-    code_path: ""
+    code_path: "src/zephyr/signal_ashare/strategy_signal/candlestick_scanner.py"
     used_by_factors: []
     variant_of: null
     status: "candidate"
     version: "1.0.0"
     created_at: "2026-08-14"
-    updated_at: "2026-08-14"
+    updated_at: "2026-09-14"
     owner: "MOD-GOVERNANCE"
     hit_rate: null
     false_positive_rate: null
@@ -2601,9 +2601,9 @@ chart_patterns:
     entry_role: "trigger"
     applies_to: []
     tags: ["持续", "缺口", "机器学习", "k线", "形态"]
-    algorithm_status: "pending_backtest"
+    algorithm_status: "quantized"
     evidence: ""
-    code_symbol: null
+    code_symbol: "src/zephyr/signal_ashare/strategy_signal/candlestick_scanner.py::scan_candles"
     code_fingerprint: null
 
   - pattern_id: "PAT-CANDLE-059"
@@ -2623,13 +2623,13 @@ chart_patterns:
     timeframe: "daily"
     module_id: "MOD-L02-020"
     doc_ref: "TA-Lib CDL 函数族 61 全集对齐（2026-08-14 补登）"
-    code_path: ""
+    code_path: "src/zephyr/signal_ashare/strategy_signal/candlestick_scanner.py"
     used_by_factors: []
     variant_of: null
     status: "candidate"
     version: "1.0.0"
     created_at: "2026-08-14"
-    updated_at: "2026-08-14"
+    updated_at: "2026-09-14"
     owner: "MOD-GOVERNANCE"
     hit_rate: null
     false_positive_rate: null
@@ -2642,9 +2642,9 @@ chart_patterns:
     entry_role: "trigger"
     applies_to: []
     tags: ["反转", "突破", "机器学习", "k线", "形态"]
-    algorithm_status: "pending_backtest"
+    algorithm_status: "quantized"
     evidence: ""
-    code_symbol: null
+    code_symbol: "src/zephyr/signal_ashare/strategy_signal/candlestick_scanner.py::scan_candles"
     code_fingerprint: null
 
   - pattern_id: "PAT-CANDLE-060"
@@ -2664,13 +2664,13 @@ chart_patterns:
     timeframe: "daily"
     module_id: "MOD-L02-020"
     doc_ref: "TA-Lib CDL 函数族 61 全集对齐（2026-08-14 补登）"
-    code_path: ""
+    code_path: "src/zephyr/signal_ashare/strategy_signal/candlestick_scanner.py"
     used_by_factors: []
     variant_of: "PAT-CANDLE-059"
     status: "candidate"
     version: "1.0.0"
     created_at: "2026-08-14"
-    updated_at: "2026-08-14"
+    updated_at: "2026-09-14"
     owner: "MOD-GOVERNANCE"
     hit_rate: null
     false_positive_rate: null
@@ -2683,9 +2683,9 @@ chart_patterns:
     entry_role: "trigger"
     applies_to: []
     tags: ["反转", "机器学习", "k线", "形态"]
-    algorithm_status: "pending_backtest"
+    algorithm_status: "quantized"
     evidence: ""
-    code_symbol: null
+    code_symbol: "src/zephyr/signal_ashare/strategy_signal/candlestick_scanner.py::scan_candles"
     code_fingerprint: null
 
   - pattern_id: "PAT-CANDLE-061"
@@ -2705,13 +2705,13 @@ chart_patterns:
     timeframe: "daily"
     module_id: "MOD-L02-020"
     doc_ref: "TA-Lib CDL 函数族 61 全集对齐（2026-08-14 补登）"
-    code_path: ""
+    code_path: "src/zephyr/signal_ashare/strategy_signal/candlestick_scanner.py"
     used_by_factors: []
     variant_of: "PAT-CANDLE-014"
     status: "candidate"
     version: "1.0.0"
     created_at: "2026-08-14"
-    updated_at: "2026-08-14"
+    updated_at: "2026-09-14"
     owner: "MOD-GOVERNANCE"
     hit_rate: null
     false_positive_rate: null
@@ -2724,9 +2724,9 @@ chart_patterns:
     entry_role: "trigger"
     applies_to: []
     tags: ["持续", "机器学习", "k线", "形态"]
-    algorithm_status: "pending_backtest"
+    algorithm_status: "quantized"
     evidence: ""
-    code_symbol: null
+    code_symbol: "src/zephyr/signal_ashare/strategy_signal/candlestick_scanner.py::scan_candles"
     code_fingerprint: null
 
   - pattern_id: "PAT-CANDLE-062"
@@ -2746,13 +2746,13 @@ chart_patterns:
     timeframe: "daily"
     module_id: "MOD-L02-020"
     doc_ref: "TA-Lib CDL 函数族 61 全集对齐（2026-08-14 补登）"
-    code_path: ""
+    code_path: "src/zephyr/signal_ashare/strategy_signal/candlestick_scanner.py"
     used_by_factors: []
     variant_of: "PAT-CANDLE-013"
     status: "candidate"
     version: "1.0.0"
     created_at: "2026-08-14"
-    updated_at: "2026-08-14"
+    updated_at: "2026-09-14"
     owner: "MOD-GOVERNANCE"
     hit_rate: null
     false_positive_rate: null
@@ -2765,9 +2765,9 @@ chart_patterns:
     entry_role: "trigger"
     applies_to: []
     tags: ["机器学习", "k线", "形态"]
-    algorithm_status: "pending_backtest"
+    algorithm_status: "quantized"
     evidence: ""
-    code_symbol: null
+    code_symbol: "src/zephyr/signal_ashare/strategy_signal/candlestick_scanner.py::scan_candles"
     code_fingerprint: null
 
   - pattern_id: "PAT-CANDLE-063"
@@ -2787,13 +2787,13 @@ chart_patterns:
     timeframe: "daily"
     module_id: "MOD-L02-020"
     doc_ref: "A股特色形态（打板连板梯队体系，2026-08-14 补登）"
-    code_path: ""
+    code_path: "src/zephyr/signal_ashare/strategy_signal/candlestick_scanner.py"
     used_by_factors: []
     variant_of: null
     status: "candidate"
     version: "1.0.0"
     created_at: "2026-08-14"
-    updated_at: "2026-08-14"
+    updated_at: "2026-09-14"
     owner: "MOD-GOVERNANCE"
     hit_rate: null
     false_positive_rate: null
@@ -2806,9 +2806,9 @@ chart_patterns:
     entry_role: "trigger"
     applies_to: ["stock"]
     tags: ["持续", "打板", "k线", "形态"]
-    algorithm_status: "pending_backtest"
+    algorithm_status: "quantized"
     evidence: ""
-    code_symbol: null
+    code_symbol: "src/zephyr/signal_ashare/strategy_signal/candlestick_scanner.py::scan_candles"
     code_fingerprint: null
 
   - pattern_id: "PAT-CANDLE-064"
@@ -2828,13 +2828,13 @@ chart_patterns:
     timeframe: "daily"
     module_id: "MOD-L02-020"
     doc_ref: "A股特色形态（跌停排板/地天板体系，2026-08-14 补登）"
-    code_path: ""
+    code_path: "src/zephyr/signal_ashare/strategy_signal/candlestick_scanner.py"
     used_by_factors: []
     variant_of: "PAT-CANDLE-063"
     status: "candidate"
     version: "1.0.0"
     created_at: "2026-08-14"
-    updated_at: "2026-08-14"
+    updated_at: "2026-09-14"
     owner: "MOD-GOVERNANCE"
     hit_rate: null
     false_positive_rate: null
@@ -2847,9 +2847,9 @@ chart_patterns:
     entry_role: "trigger"
     applies_to: ["stock"]
     tags: ["持续", "k线", "形态"]
-    algorithm_status: "pending_backtest"
+    algorithm_status: "quantized"
     evidence: ""
-    code_symbol: null
+    code_symbol: "src/zephyr/signal_ashare/strategy_signal/candlestick_scanner.py::scan_candles"
     code_fingerprint: null
 
   # ============================================================
@@ -2874,13 +2874,13 @@ chart_patterns:
     timeframe: "daily"
     module_id: "MOD-L02-020"
     doc_ref: "搓揉线量化四条件（CSDN 2026-07-30 检索证据）（2026-08-14 二轮补登）"
-    code_path: ""
+    code_path: "src/zephyr/signal_ashare/strategy_signal/candlestick_scanner.py"
     used_by_factors: []
     variant_of: null
     status: "candidate"
     version: "1.0.0"
     created_at: "2026-08-14"
-    updated_at: "2026-08-14"
+    updated_at: "2026-09-14"
     owner: "MOD-GOVERNANCE"
     hit_rate: null
     false_positive_rate: null
@@ -2893,9 +2893,9 @@ chart_patterns:
     entry_role: "trigger"
     applies_to: ["stock"]
     tags: ["k线", "形态", "量化"]
-    algorithm_status: "pending_backtest"
+    algorithm_status: "quantized"
     evidence: ""
-    code_symbol: null
+    code_symbol: "src/zephyr/signal_ashare/strategy_signal/candlestick_scanner.py::scan_candles"
     code_fingerprint: null
 
   - pattern_id: "PAT-CANDLE-066"
@@ -2915,13 +2915,13 @@ chart_patterns:
     timeframe: "daily"
     module_id: "MOD-SELL-001"
     doc_ref: "A涨跌停制度极端形态（2026-08-14 二轮补登）"
-    code_path: ""
+    code_path: "src/zephyr/signal_ashare/strategy_signal/candlestick_scanner.py"
     used_by_factors: []
     variant_of: "PAT-CANDLE-064"
     status: "candidate"
     version: "1.0.0"
     created_at: "2026-08-14"
-    updated_at: "2026-08-14"
+    updated_at: "2026-09-14"
     owner: "MOD-GOVERNANCE"
     hit_rate: null
     false_positive_rate: null
@@ -2934,9 +2934,9 @@ chart_patterns:
     entry_role: "trigger"
     applies_to: ["stock"]
     tags: ["k线", "形态"]
-    algorithm_status: "pending_backtest"
+    algorithm_status: "quantized"
     evidence: ""
-    code_symbol: null
+    code_symbol: "src/zephyr/signal_ashare/strategy_signal/candlestick_scanner.py::scan_candles"
     code_fingerprint: null
 
   - pattern_id: "PAT-CANDLE-067"
@@ -2956,13 +2956,13 @@ chart_patterns:
     timeframe: "daily"
     module_id: "MOD-SIG-024"
     doc_ref: "涨停板 21 型第 15 类（九阳公社 2026-05 检索证据）（2026-08-14 二轮补登）"
-    code_path: ""
+    code_path: "src/zephyr/signal_ashare/strategy_signal/candlestick_scanner.py"
     used_by_factors: []
     variant_of: "PAT-CANDLE-066"
     status: "candidate"
     version: "1.0.0"
     created_at: "2026-08-14"
-    updated_at: "2026-08-14"
+    updated_at: "2026-09-14"
     owner: "MOD-GOVERNANCE"
     hit_rate: null
     false_positive_rate: null
@@ -2975,9 +2975,9 @@ chart_patterns:
     entry_role: "trigger"
     applies_to: ["stock"]
     tags: ["打板", "k线", "形态"]
-    algorithm_status: "pending_backtest"
+    algorithm_status: "quantized"
     evidence: ""
-    code_symbol: null
+    code_symbol: "src/zephyr/signal_ashare/strategy_signal/candlestick_scanner.py::scan_candles"
     code_fingerprint: null
 
   - pattern_id: "PAT-CANDLE-068"
@@ -2997,13 +2997,13 @@ chart_patterns:
     timeframe: "daily"
     module_id: "MOD-SIG-024"
     doc_ref: "涨停板 21 型第 11 类（2026-08-14 二轮补登）"
-    code_path: ""
+    code_path: "src/zephyr/signal_ashare/strategy_signal/candlestick_scanner.py"
     used_by_factors: []
     variant_of: null
     status: "candidate"
     version: "1.0.0"
     created_at: "2026-08-14"
-    updated_at: "2026-08-14"
+    updated_at: "2026-09-14"
     owner: "MOD-GOVERNANCE"
     hit_rate: null
     false_positive_rate: null
@@ -3016,9 +3016,9 @@ chart_patterns:
     entry_role: "trigger"
     applies_to: ["stock"]
     tags: ["突破", "打板", "k线", "形态"]
-    algorithm_status: "pending_backtest"
+    algorithm_status: "quantized"
     evidence: ""
-    code_symbol: null
+    code_symbol: "src/zephyr/signal_ashare/strategy_signal/candlestick_scanner.py::scan_candles"
     code_fingerprint: null
 
   - pattern_id: "PAT-CANDLE-069"
@@ -3038,13 +3038,13 @@ chart_patterns:
     timeframe: "daily"
     module_id: "MOD-SIG-024"
     doc_ref: "Nison 镊子底/A股双针探底（TA-Lib 无此函数， 2026-08-14 七轮补登）"
-    code_path: ""
+    code_path: "src/zephyr/signal_ashare/strategy_signal/candlestick_scanner.py"
     used_by_factors: []
     variant_of: null
     status: "candidate"
     version: "1.0.0"
     created_at: "2026-08-14"
-    updated_at: "2026-08-14"
+    updated_at: "2026-09-14"
     owner: "MOD-GOVERNANCE"
     hit_rate: null
     false_positive_rate: null
@@ -3057,9 +3057,9 @@ chart_patterns:
     entry_role: "trigger"
     applies_to: ["stock"]
     tags: ["反转", "k线", "形态"]
-    algorithm_status: "pending_backtest"
+    algorithm_status: "quantized"
     evidence: ""
-    code_symbol: null
+    code_symbol: "src/zephyr/signal_ashare/strategy_signal/candlestick_scanner.py::scan_candles"
     code_fingerprint: null
 
   - pattern_id: "PAT-CANDLE-070"
@@ -3079,13 +3079,13 @@ chart_patterns:
     timeframe: "daily"
     module_id: "MOD-SIG-024"
     doc_ref: "Nison 镊子顶（TA-Lib 无此函数， 2026-08-14 七轮补登）"
-    code_path: ""
+    code_path: "src/zephyr/signal_ashare/strategy_signal/candlestick_scanner.py"
     used_by_factors: []
     variant_of: "PAT-CANDLE-069"
     status: "candidate"
     version: "1.0.0"
     created_at: "2026-08-14"
-    updated_at: "2026-08-14"
+    updated_at: "2026-09-14"
     owner: "MOD-GOVERNANCE"
     hit_rate: null
     false_positive_rate: null
@@ -3098,9 +3098,9 @@ chart_patterns:
     entry_role: "trigger"
     applies_to: []
     tags: ["反转", "k线", "形态"]
-    algorithm_status: "pending_backtest"
+    algorithm_status: "quantized"
     evidence: ""
-    code_symbol: null
+    code_symbol: "src/zephyr/signal_ashare/strategy_signal/candlestick_scanner.py::scan_candles"
     code_fingerprint: null
 
   - pattern_id: "PAT-CANDLE-071"
@@ -3120,13 +3120,13 @@ chart_patterns:
     timeframe: "daily"
     module_id: "MOD-SIG-024"
     doc_ref: "Toby Crabel NR7/NR4 波动收缩突破（2026-08-14 七轮补登）"
-    code_path: ""
+    code_path: "src/zephyr/signal_ashare/strategy_signal/candlestick_scanner.py"
     used_by_factors: []
     variant_of: null
     status: "candidate"
     version: "1.0.0"
     created_at: "2026-08-14"
-    updated_at: "2026-08-14"
+    updated_at: "2026-09-14"
     owner: "MOD-GOVERNANCE"
     hit_rate: null
     false_positive_rate: null
@@ -3139,9 +3139,9 @@ chart_patterns:
     entry_role: "trigger"
     applies_to: []
     tags: ["突破", "波动", "震荡", "k线", "形态"]
-    algorithm_status: "pending_backtest"
+    algorithm_status: "quantized"
     evidence: ""
-    code_symbol: null
+    code_symbol: "src/zephyr/signal_ashare/strategy_signal/candlestick_scanner.py::scan_candles"
     code_fingerprint: null
 
   - pattern_id: "PAT-CANDLE-072"
@@ -3161,13 +3161,13 @@ chart_patterns:
     timeframe: "daily"
     module_id: "MOD-SIG-024"
     doc_ref: "经典关键反转日（TA-Lib 无此函数， 2026-08-14 九轮补登）"
-    code_path: ""
+    code_path: "src/zephyr/signal_ashare/strategy_signal/candlestick_scanner.py"
     used_by_factors: []
     variant_of: null
     status: "candidate"
     version: "1.0.0"
     created_at: "2026-08-14"
-    updated_at: "2026-08-14"
+    updated_at: "2026-09-14"
     owner: "MOD-GOVERNANCE"
     hit_rate: null
     false_positive_rate: null
@@ -3180,9 +3180,9 @@ chart_patterns:
     entry_role: "trigger"
     applies_to: []
     tags: ["反转", "k线", "形态"]
-    algorithm_status: "pending_backtest"
+    algorithm_status: "quantized"
     evidence: ""
-    code_symbol: null
+    code_symbol: "src/zephyr/signal_ashare/strategy_signal/candlestick_scanner.py::scan_candles"
     code_fingerprint: null
 
   - pattern_id: "PAT-CANDLE-073"
@@ -3202,13 +3202,13 @@ chart_patterns:
     timeframe: "daily"
     module_id: "MOD-SIG-024"
     doc_ref: "WRB Analysis（M.A.Perry）宽幅K线（与 CANDLE-071 NR7 伸缩对， 2026-08-14 九轮补登）"
-    code_path: ""
+    code_path: "src/zephyr/signal_ashare/strategy_signal/candlestick_scanner.py"
     used_by_factors: []
     variant_of: null
     status: "candidate"
     version: "1.0.0"
     created_at: "2026-08-14"
-    updated_at: "2026-08-14"
+    updated_at: "2026-09-14"
     owner: "MOD-GOVERNANCE"
     hit_rate: null
     false_positive_rate: null
@@ -3221,9 +3221,9 @@ chart_patterns:
     entry_role: "trigger"
     applies_to: []
     tags: ["波动", "震荡", "k线", "形态"]
-    algorithm_status: "pending_backtest"
+    algorithm_status: "quantized"
     evidence: ""
-    code_symbol: null
+    code_symbol: "src/zephyr/signal_ashare/strategy_signal/candlestick_scanner.py::scan_candles"
     code_fingerprint: null
 
   - pattern_id: "PAT-CANDLE-074"
@@ -3243,13 +3243,13 @@ chart_patterns:
     timeframe: "daily"
     module_id: "MOD-SIG-024"
     doc_ref: "Larry Williams Oops（2026-08-14 九轮补登）"
-    code_path: ""
+    code_path: "src/zephyr/signal_ashare/strategy_signal/candlestick_scanner.py"
     used_by_factors: []
     variant_of: null
     status: "candidate"
     version: "1.0.0"
     created_at: "2026-08-14"
-    updated_at: "2026-08-14"
+    updated_at: "2026-09-14"
     owner: "MOD-GOVERNANCE"
     hit_rate: null
     false_positive_rate: null
@@ -3262,9 +3262,9 @@ chart_patterns:
     entry_role: "trigger"
     applies_to: []
     tags: ["缺口", "事件", "k线", "形态"]
-    algorithm_status: "pending_backtest"
+    algorithm_status: "quantized"
     evidence: ""
-    code_symbol: null
+    code_symbol: "src/zephyr/signal_ashare/strategy_signal/candlestick_scanner.py::scan_candles"
     code_fingerprint: null
 
   - pattern_id: "PAT-CANDLE-075"
@@ -3284,13 +3284,13 @@ chart_patterns:
     timeframe: "daily"
     module_id: "MOD-SIG-024"
     doc_ref: "酒田五法·三空（本间宗久《酒田战法》， 2026-08-14 十三轮补登）"
-    code_path: ""
+    code_path: "src/zephyr/signal_ashare/strategy_signal/candlestick_scanner.py"
     used_by_factors: []
     variant_of: null
     status: "candidate"
     version: "1.0.0"
     created_at: "2026-08-14"
-    updated_at: "2026-08-14"
+    updated_at: "2026-09-14"
     owner: "MOD-GOVERNANCE"
     hit_rate: null
     false_positive_rate: null
@@ -3303,9 +3303,9 @@ chart_patterns:
     entry_role: "trigger"
     applies_to: []
     tags: ["缺口", "事件", "k线", "形态"]
-    algorithm_status: "pending_backtest"
+    algorithm_status: "quantized"
     evidence: ""
-    code_symbol: null
+    code_symbol: "src/zephyr/signal_ashare/strategy_signal/candlestick_scanner.py::scan_candles"
     code_fingerprint: null
 
   - pattern_id: "PAT-CANDLE-076"
@@ -3325,13 +3325,13 @@ chart_patterns:
     timeframe: "daily"
     module_id: "MOD-SIG-024"
     doc_ref: "Nison 塔形顶（TA-Lib 无此函数， 2026-08-14 十四轮补登）"
-    code_path: ""
+    code_path: "src/zephyr/signal_ashare/strategy_signal/candlestick_scanner.py"
     used_by_factors: []
     variant_of: null
     status: "candidate"
     version: "1.0.0"
     created_at: "2026-08-14"
-    updated_at: "2026-08-14"
+    updated_at: "2026-09-14"
     owner: "MOD-GOVERNANCE"
     hit_rate: null
     false_positive_rate: null
@@ -3344,9 +3344,9 @@ chart_patterns:
     entry_role: "trigger"
     applies_to: []
     tags: ["反转", "k线", "形态"]
-    algorithm_status: "pending_backtest"
+    algorithm_status: "quantized"
     evidence: ""
-    code_symbol: null
+    code_symbol: "src/zephyr/signal_ashare/strategy_signal/candlestick_scanner.py::scan_candles"
     code_fingerprint: null
 
   - pattern_id: "PAT-CANDLE-077"
@@ -3366,13 +3366,13 @@ chart_patterns:
     timeframe: "daily"
     module_id: "MOD-SIG-024"
     doc_ref: "Nison 塔形底（TA-Lib 无此函数， 2026-08-14 十四轮补登）"
-    code_path: ""
+    code_path: "src/zephyr/signal_ashare/strategy_signal/candlestick_scanner.py"
     used_by_factors: []
     variant_of: "PAT-CANDLE-076"
     status: "candidate"
     version: "1.0.0"
     created_at: "2026-08-14"
-    updated_at: "2026-08-14"
+    updated_at: "2026-09-14"
     owner: "MOD-GOVERNANCE"
     hit_rate: null
     false_positive_rate: null
@@ -3385,9 +3385,9 @@ chart_patterns:
     entry_role: "trigger"
     applies_to: []
     tags: ["反转", "k线", "形态"]
-    algorithm_status: "pending_backtest"
+    algorithm_status: "quantized"
     evidence: ""
-    code_symbol: null
+    code_symbol: "src/zephyr/signal_ashare/strategy_signal/candlestick_scanner.py::scan_candles"
     code_fingerprint: null
 
   # ============================================================
