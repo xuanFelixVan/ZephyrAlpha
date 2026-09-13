@@ -8289,6 +8289,10 @@ creation_tokens:
   token: technical-indicator-statistics-20260913
   created_by: st-tilib-20260914
   capability: technical_indicator
+- file: src/zephyr/factor/technical_indicators/cycle.py
+  token: technical-indicator-cycle-20260913
+  created_by: st-tilib-20260914c
+  capability: technical_indicator
 - file: docs/01_policies_and_standards/_registry/catalogs/factor_registry.yaml
   token: auto-reg-factor-20260810
   created_by: session-registry-v130

@@ -13,7 +13,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] RuntimeError(行情缺失/落库未确认)
 # [TESTS] tests/backtest/test_c4_batch_smoke.py
-# [A_module] module_id=MOD-BT-084 | layer=module | stability=experimental | safety=L | ai_autonomy=ai_modifiable
+# [A_module] module_id=MOD-BT-099 | layer=module | stability=experimental | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 """模拟盘方案 C 账本——恐慌反弹（STR-VREV-025）虚拟钱包。
 

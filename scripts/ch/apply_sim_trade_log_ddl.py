@@ -11,7 +11,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] SystemExit(1)(DDL 失败)
 # [TESTS] tests/backtest/test_sim_paper_ledger.py
-# [A_module] module_id=MOD-BT-086 | layer=module | stability=experimental | safety=L | ai_autonomy=ai_modifiable
+# [A_module] module_id=MOD-BT-098 | layer=module | stability=experimental | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 """sim_trade_log 建表 DDL 部署+验证（平台蓝图批 1：成交事件流水）。"""
 
