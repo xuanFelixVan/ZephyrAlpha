@@ -49014,6 +49014,13 @@ entries:
   desc_zh: "Renko/P&F/Kagi 替代价格表示与引擎适配器"
   desc_en: ""
   plain_zh: "把每天的K线换成三种\"只记真实波动\"的记账方式（砖块图、点数图、阈值拐弯线），滤掉没意义的小抖动，然后让已有的双顶双底等图形在这张更干净的图上重新认一遍——同一套引擎，第二张图，信号更干净。"
+- module_path: scripts/data/backfill_stock_indicator_daily_basic.py
+  domain_id: D_DATA
+  name_zh: "个股估值回补器"
+  name_en: ""
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "tushare daily_basic 按交易日拉全市场估值（PE/PB/PS/股息率/总市值/流通市值）落 stock_indicator 表，幂等可全量重拉（ReplacingMergeTree 去重），单日三次退避重试防网络超时；解锁估值类策略翻译批的核心食材管道"
 
 battle_map_steps:
 - step_id: BM-BUY-05

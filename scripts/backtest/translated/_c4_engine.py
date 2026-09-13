@@ -181,6 +181,24 @@ def fin_snapshot(as_of: str, metrics: tuple[str, ...] | None = None) -> pd.DataF
     return ok.groupby("symbol").last()
 
 
+def fin_history(as_of: str, metrics: tuple[str, ...]) -> pd.DataFrame:
+    """逐期财务历史（公告门 PIT）：announce_date<=as_of 的全部行，按 (symbol,report_period)
+    取最新公告版。用于"近四季 ROE/近五年 FCFF"类逐期规则。"""
+    cols = ", ".join(metrics)
+    if "finh" not in _fin_cache:
+        rows = _q(
+            f"SELECT symbol, report_period, announce_date, {cols} FROM c3_fundamental.financial_derived "
+            f"WHERE announce_date IS NOT NULL ORDER BY symbol, report_period, announce_date"
+        )
+        df = pd.DataFrame(rows, columns=["symbol", "report_period", "announce_date", *metrics])
+        df["announce_date"] = pd.to_datetime(df["announce_date"])
+        df["report_period"] = pd.to_datetime(df["report_period"])
+        _fin_cache["finh"] = df
+    df = _fin_cache["finh"]
+    ok = df[df["announce_date"] <= pd.Timestamp(as_of)]
+    return ok.groupby(["symbol", "report_period"], as_index=False).last()
+
+
 def load_hs300() -> set[str]:
     """沪深300 成分快照（纯 6 位代码）。失败时抛 RuntimeError（D1 不静默降级）。"""
     rows = _q(
