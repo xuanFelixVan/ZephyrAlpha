@@ -1478,6 +1478,22 @@
   data_source: [internal]
   blueprint: "docs/03_modules/_domain_signal/blueprint.md"
 
+- category_id: market_pattern_event
+  name: "图形形态事件表（MOD-SIG-091 引擎扫描产出落库；PIT 铁律=确认bar收盘；W3 胜率统计+W4 evidence 回填的源头表；蓝图 _domain_signal/pattern_event_stats/blueprint.md）"
+  engine: clickhouse
+  database: c1_market
+  table: market_pattern_event
+  schema_file: schemas/categories/market_pattern_event.py
+  data_type: 成品
+  lifecycle: permanent
+  sla_level: L2
+  enabled: true
+  hard_constraint: "confirmed_at 必须是形态最后一根bar收盘完成时刻（盘中未确认禁入）；事件只记账不直连 order；枚举存引擎封闭集原文不翻译"
+  calc_mode: preload
+  frequency: 日频
+  data_source: [internal]
+  blueprint: "docs/03_modules/_domain_signal/pattern_event_stats/blueprint.md"
+
 - category_id: market_sector_fund_flow
   name: "板块级资金流快照（THS即时源，行业+概念，亿元当日累计；分钟粒度=轮询差分）"
   engine: clickhouse
@@ -2379,6 +2395,121 @@
   frequency: 日频
   data_source: [akshare_alt]
   blueprint: null
+
+# --- 深圳开放数据平台批量源（2026-09-14，st-altdata-20260914） ---
+
+- category_id: market_alt_sz_stat_monthly
+  name: "深圳统计月报长表"
+  engine: clickhouse
+  database: c1_market
+  table: alt_sz_stat_monthly
+  schema_file: schemas/categories/market_alt_sz_stat_monthly.py
+  data_type: 原料
+  lifecycle: permanent
+  sla_level: L2
+  enabled: true
+  hard_constraint: null
+  calc_mode: preload
+  frequency: 日频
+  data_source: [akshare_alt]
+  blueprint: null
+
+- category_id: market_alt_sz_port_monthly
+  name: "深圳口岸月度流量长表"
+  engine: clickhouse
+  database: c1_market
+  table: alt_sz_port_monthly
+  schema_file: schemas/categories/market_alt_sz_port_monthly.py
+  data_type: 原料
+  lifecycle: permanent
+  sla_level: L2
+  enabled: true
+  hard_constraint: null
+  calc_mode: preload
+  frequency: 日频
+  data_source: [akshare_alt]
+  blueprint: null
+
+- category_id: market_alt_sz_house_daily
+  name: "深圳楼市日度成交表"
+  engine: clickhouse
+  database: c1_market
+  table: alt_sz_house_daily
+  schema_file: schemas/categories/market_alt_sz_house_daily.py
+  data_type: 原料
+  lifecycle: permanent
+  sla_level: L2
+  enabled: true
+  hard_constraint: null
+  calc_mode: preload
+  frequency: 日频
+  data_source: [akshare_alt]
+  blueprint: null
+
+- category_id: market_alt_sz_weather_warning
+  name: "深圳灾害天气预警信号流"
+  engine: clickhouse
+  database: c1_market
+  table: alt_sz_weather_warning
+  schema_file: schemas/categories/market_alt_sz_weather_warning.py
+  data_type: 原料
+  lifecycle: permanent
+  sla_level: L2
+  enabled: true
+  hard_constraint: null
+  calc_mode: preload
+  frequency: 日频
+  data_source: [akshare_alt]
+  blueprint: null
+
+- category_id: market_alt_sz_marine_forecast
+  name: "深圳海洋气象预报"
+  engine: clickhouse
+  database: c1_market
+  table: alt_sz_marine_forecast
+  schema_file: schemas/categories/market_alt_sz_marine_forecast.py
+  data_type: 原料
+  lifecycle: permanent
+  sla_level: L2
+  enabled: true
+  hard_constraint: null
+  calc_mode: preload
+  frequency: 日频
+  data_source: [akshare_alt]
+  blueprint: null
+
+- category_id: market_typhoon_landfall_history
+  name: "台风历史登陆档案"
+  engine: clickhouse
+  database: c1_market
+  table: alt_typhoon_landfall_history
+  schema_file: schemas/categories/market_typhoon_landfall_history.py
+  data_type: 原料
+  lifecycle: permanent
+  sla_level: L2
+  enabled: true
+  hard_constraint: null
+  calc_mode: preload
+  frequency: 日频
+  data_source: [akshare_alt]
+  blueprint: null
+
+- category_id: market_typhoon_names
+  name: "台风名称对照字典"
+  engine: clickhouse
+  database: c1_market
+  table: alt_typhoon_names
+  schema_file: schemas/categories/market_typhoon_names.py
+  data_type: 原料
+  lifecycle: permanent
+  sla_level: L2
+  enabled: true
+  hard_constraint: null
+  calc_mode: preload
+  frequency: 日频
+  data_source: [akshare_alt]
+  blueprint: null
+
 
 # --- 时间敏感型数据（免费+只能获取最近，必须每日积累，#ARCH-REALTIME-ACCUM） ---
 

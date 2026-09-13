@@ -74,7 +74,7 @@ description: >-
 owner: MOD-GOVERNANCE
 tier: tier_2_data_runtime
 status: active
-version: 1.9.1
+version: 1.9.2
 created: '2026-08-13'
 last_updated: '2026-09-14'
 related_arch: '#ARCH-BREG-001'
@@ -82,8 +82,14 @@ unique_key:
   sources: [source_id]
   datasets: [dataset_id]
   jobs: [job_id]
-entry_counts: {sources: 17, datasets: 232, jobs: 96}  # 2026-09-14 v1.9.1：+DS-233 台风路径 +JOB-097/098（气象事件层）；派生快照值，以 yaml 实测为准——禁止凭此报数（#83 漏报教训）
+entry_counts: {sources: 18, datasets: 239, jobs: 103}  # 2026-09-14 v1.9.2：+SRC-SZOPENDATA-001 +DS-234~240 +JOB-099~105（深圳开放数据批量源 7 表 16 系列）；派生快照值，以 yaml 实测为准——禁止凭此报数（#83 漏报教训）  # 2026-09-14 v1.9.1：+DS-233 台风路径 +JOB-097/098（气象事件层）；派生快照值，以 yaml 实测为准——禁止凭此报数（#83 漏报教训）
 
+# v1.9.2 changelog(2026-09-14): 深圳开放数据批量源——+SRC-SZOPENDATA-001（appKey 订阅制，
+#   Owner 已全量订阅 17 接口实测通过）+DS-234~240 七表（统计月报长表 7 系列并表/口岸流量
+#   3 系列并表/楼市日度成交 2 系列并表/灾害天气预警信号流/海洋气象预报/台风历史登陆档案/
+#   台风名称对照字典）+JOB-099~105（daily_event 5 + weekend_calibration 2）；全史回补实弹
+#   合计约 51.8 万行（楼市 22.1 万/海洋 14.8 万/统计月报 1.03 万/预警 9,349（源止 2020-09-23）/
+#   口岸 273/历史登陆 845/名称 1,260）；provider 侧 spec 驱动通用拉取器（akshare_alt）。
 # v1.9.1 changelog(2026-09-14): 气象事件层——+DS-232 c1_market.alt_typhoon_track（热带气旋路径
 #   22 字段：路径/强度/风圈/预报时效，KEYID 幂等，深圳气象局"热带气旋数据5.0"）
 #   +JOB-097/098（daily_event 增量按入库日期 + weekend_calibration 全史回补）；
@@ -709,6 +715,41 @@ sources:
   evidence: ""
   code_symbol:
   code_fingerprint:
+
+# 2026-09-14 深圳开放数据平台批量源（appKey 订阅制，独立于 akshare 的政府数据通道）
+- source_id: SRC-SZOPENDATA-001
+  provider_name: ShenzhenOpenData
+  name: SZ-OpenData
+  name_zh: 深圳市数据开放平台（气象/统计/口岸/住建，appKey 订阅制）
+  connection_type: api
+  frequency: day
+  sla: 无条件开放订阅制无限速承诺；provider 自限速 0.4s/页；errorCode 10001=未订阅
+  cost: 免费
+  compliance: 政府公开数据，个人研究用途，不转售不二次分发
+  license_type: public_reference_data
+  latency_profile: wan（公网 HTTP，日频非延迟敏感）
+  colocation_eligible: false
+  provides_datasets: [DS-234, DS-235, DS-236, DS-237, DS-238, DS-239, DS-240]
+  env_config: SZ_OPEN_DATA_APPKEY（.env，get_secret_or_default 通道）
+  module_id: MOD-L00-004
+  doc_ref: docs/_working/2026-09-12-alt-data-handoff.md §8-1
+  code_path: src/zephyr/data/implementations/akshare_alt_provider.py
+  status: active
+  version: 1.0.0
+  created_at: '2026-09-14'
+  updated_at: '2026-09-14'
+  owner: MOD-L00-004
+  entry_role: "reference"
+  applies_to: ["market"]
+  tags: ["另类数据", "数据", "政府数据", "深圳"]
+  algorithm_status: "not_applicable"
+  evidence: "17/17 接口实弹核验通过（subscribe_check.json）；catalog 3,157 条全量采集
+    （catalog_full.csv）；数据集 539 条有条件开放/2,906 条无条件开放"
+  code_symbol:
+  code_fingerprint:
+
+# 2026-09-11 币圈免费影子 MVP：crypto 日线采集 job（backfill/incremental 双模式，手动触发）
+datasets:
 
 # 2026-09-11 币圈免费影子 MVP：crypto 日线采集 job（backfill/incremental 双模式，手动触发）
 datasets:
@@ -9890,6 +9931,195 @@ datasets:
   code_fingerprint:
 
 # 2026-09-11 币圈免费影子 MVP：crypto 日线采集 job（backfill/incremental 双模式，手动触发）
+- dataset_id: DS-234
+  entity_name: c1_market.alt_sz_stat_monthly
+  entity_type: dataset
+  scope: production
+  physical_type: clickhouse_table
+  produced_by_job: alt_sz_stat_monthly_refresh
+  domain_id: D_MARKET
+  pit_policy: strict
+  format_summary: 深圳统计月报长表 7 系列并表（GDP/物价/财政金融/运输/外贸/快报/固投；
+    (series,report_ym,zbmc) 粒度，本月/累计/累计同比三值列+原始行 JSON 无损留存；
+    10,290 行=71 个月份×~145 指标）
+  valid_since: "2026-09-14"
+  module_id: MOD-L00-004
+  design_maturity: production
+  name: c1_market.alt_sz_stat_monthly
+  name_zh: 深圳统计月报长表
+  status: active
+  created_at: "2026-09-14"
+  updated_at: "2026-09-14"
+  owner: MOD-L00-004
+  produced_by_source: SRC-SZOPENDATA-001
+  survivorship_free: true
+  entry_role: "state"
+  applies_to: ["market"]
+  tags: ["另类数据", "数据", "宏观", "深圳"]
+  evidence: "DDL schemas/categories/market_alt_sz_stat_monthly.py；实测 10,290 行"
+  code_symbol: "src/zephyr/data/implementations/akshare_alt_provider.py::AkshareAltProvider._fetch_sz_open_data"
+- dataset_id: DS-235
+  entity_name: c1_market.alt_sz_port_monthly
+  entity_type: dataset
+  scope: production
+  physical_type: clickhouse_table
+  produced_by_job: alt_sz_port_monthly_refresh
+  domain_id: D_MARKET
+  pit_policy: strict
+  format_summary: 深圳口岸月度流量长表 3 系列并表（海港集装箱TEU/进出口货物量/空运货物量；
+    273 行=91 个月×3 系列，2018-01 起）；与 alt_shipping_index 运价链事件对齐
+  valid_since: "2026-09-14"
+  module_id: MOD-L00-004
+  design_maturity: production
+  name: c1_market.alt_sz_port_monthly
+  name_zh: 深圳口岸月度流量长表
+  status: active
+  created_at: "2026-09-14"
+  updated_at: "2026-09-14"
+  owner: MOD-L00-004
+  produced_by_source: SRC-SZOPENDATA-001
+  survivorship_free: true
+  entry_role: "state"
+  applies_to: ["market"]
+  tags: ["另类数据", "数据", "贸易", "深圳"]
+  evidence: "DDL schemas/categories/market_alt_sz_port_monthly.py；实测 273 行"
+  code_symbol: "src/zephyr/data/implementations/akshare_alt_provider.py::AkshareAltProvider._fetch_sz_open_data"
+- dataset_id: DS-236
+  entity_name: c1_market.alt_sz_house_daily
+  entity_type: dataset
+  scope: production
+  physical_type: clickhouse_table
+  produced_by_job: alt_sz_house_daily_incremental
+  domain_id: D_MARKET
+  pit_policy: strict
+  format_summary: 深圳楼市日度成交 2 系列并表（一手 8 字段含可售/二手房 6 字段；
+    (series,src_id) 粒度按区×日；221,227 行，2018-01 起）
+  valid_since: "2026-09-14"
+  module_id: MOD-L00-004
+  design_maturity: production
+  name: c1_market.alt_sz_house_daily
+  name_zh: 深圳楼市日度成交表
+  status: active
+  created_at: "2026-09-14"
+  updated_at: "2026-09-14"
+  owner: MOD-L00-004
+  produced_by_source: SRC-SZOPENDATA-001
+  survivorship_free: true
+  entry_role: "state"
+  applies_to: ["market"]
+  tags: ["另类数据", "数据", "地产", "深圳"]
+  evidence: "DDL schemas/categories/market_alt_sz_house_daily.py；实测 221,227 行"
+  code_symbol: "src/zephyr/data/implementations/akshare_alt_provider.py::AkshareAltProvider._fetch_sz_open_data"
+- dataset_id: DS-237
+  entity_name: c1_market.alt_sz_weather_warning
+  entity_type: dataset
+  scope: production
+  physical_type: clickhouse_table
+  produced_by_job: alt_sz_weather_warning_incremental
+  domain_id: D_MARKET
+  pit_policy: strict
+  format_summary: 深圳灾害天气预警信号流（台风/暴雨/大风/高温等发布与解除全记录；
+    9,349 行 2012-10 起；注意源平台侧止于 2020-09-23——历史档案定位）
+  valid_since: "2026-09-14"
+  module_id: MOD-L00-004
+  design_maturity: production
+  name: c1_market.alt_sz_weather_warning
+  name_zh: 深圳灾害天气预警信号流
+  status: degraded
+  created_at: "2026-09-14"
+  updated_at: "2026-09-14"
+  owner: MOD-L00-004
+  produced_by_source: SRC-SZOPENDATA-001
+  survivorship_free: true
+  entry_role: "state"
+  applies_to: ["market"]
+  tags: ["另类数据", "数据", "气象", "事件"]
+  evidence: "DDL schemas/categories/market_alt_sz_weather_warning.py；实测 9,349 行；
+    status=degraded 源断更（2020-09-23 后无新记录），历史事件窗研究仍可用"
+  code_symbol: "src/zephyr/data/implementations/akshare_alt_provider.py::AkshareAltProvider._fetch_sz_open_data"
+- dataset_id: DS-238
+  entity_name: c1_market.alt_sz_marine_forecast
+  entity_type: dataset
+  scope: production
+  physical_type: clickhouse_table
+  produced_by_job: alt_sz_marine_forecast_incremental
+  domain_id: D_MARKET
+  pit_policy: strict
+  format_summary: 深圳海洋气象预报 27 字段（分海区逐日风/浪/能见度/气温/湿度/降水/气压；
+    147,716 行 2015-07 起至 2026-09-12 活跃更新；港口作业窗口参考）
+  valid_since: "2026-09-14"
+  module_id: MOD-L00-004
+  design_maturity: production
+  name: c1_market.alt_sz_marine_forecast
+  name_zh: 深圳海洋气象预报表
+  status: active
+  created_at: "2026-09-14"
+  updated_at: "2026-09-14"
+  owner: MOD-L00-004
+  produced_by_source: SRC-SZOPENDATA-001
+  survivorship_free: true
+  entry_role: "state"
+  applies_to: ["market"]
+  tags: ["另类数据", "数据", "气象", "海洋"]
+  evidence: "DDL schemas/categories/market_alt_sz_marine_forecast.py；实测 147,716 行"
+  code_symbol: "src/zephyr/data/implementations/akshare_alt_provider.py::AkshareAltProvider._fetch_sz_open_data"
+- dataset_id: DS-239
+  entity_name: c1_market.alt_typhoon_landfall_history
+  entity_type: dataset
+  scope: production
+  physical_type: clickhouse_table
+  produced_by_job: alt_typhoon_landfall_history_refresh
+  domain_id: D_MARKET
+  pit_policy: strict
+  format_summary: 历史登陆我国气旋全表（1949 年起 845 条：年份/编号/中英文名/登陆序号/
+    登陆强度/省份；静态档案周末刷新；与 alt_typhoon_track 事件对齐）
+  valid_since: "2026-09-14"
+  module_id: MOD-L00-004
+  design_maturity: production
+  name: c1_market.alt_typhoon_landfall_history
+  name_zh: 台风历史登陆档案
+  status: active
+  created_at: "2026-09-14"
+  updated_at: "2026-09-14"
+  owner: MOD-L00-004
+  produced_by_source: SRC-SZOPENDATA-001
+  survivorship_free: true
+  entry_role: "state"
+  applies_to: ["market"]
+  tags: ["另类数据", "数据", "气象", "历史"]
+  evidence: "DDL schemas/categories/market_typhoon_landfall_history.py；实测 845 行"
+  code_symbol: "src/zephyr/data/implementations/akshare_alt_provider.py::AkshareAltProvider._fetch_sz_open_data"
+- dataset_id: DS-240
+  entity_name: c1_market.alt_typhoon_names
+  entity_type: dataset
+  scope: production
+  physical_type: clickhouse_table
+  produced_by_job: alt_typhoon_names_refresh
+  domain_id: D_MARKET
+  pit_policy: strict
+  format_summary: 历年台风中英文对照字典（1,260 条：英文名/中文名/命名国家/启用停用期；
+    静态字典周末刷新）
+  valid_since: "2026-09-14"
+  module_id: MOD-L00-004
+  design_maturity: production
+  name: c1_market.alt_typhoon_names
+  name_zh: 台风名称对照字典
+  status: active
+  created_at: "2026-09-14"
+  updated_at: "2026-09-14"
+  owner: MOD-L00-004
+  produced_by_source: SRC-SZOPENDATA-001
+  survivorship_free: true
+  entry_role: "state"
+  applies_to: ["market"]
+  tags: ["另类数据", "数据", "气象", "字典"]
+  evidence: "DDL schemas/categories/market_typhoon_names.py；实测 1,260 行"
+  code_symbol: "src/zephyr/data/implementations/akshare_alt_provider.py::AkshareAltProvider._fetch_sz_open_data"
+
+# 2026-09-11 币圈免费影子 MVP：crypto 日线采集 job（backfill/incremental 双模式，手动触发）
+jobs:
+
+# 2026-09-11 币圈免费影子 MVP：crypto 日线采集 job（backfill/incremental 双模式，手动触发）
 jobs:
 - job_id: JOB-001
   job_name: ingest.minqmt_kline
@@ -12702,6 +12932,202 @@ jobs:
   evidence: "22 字段经匿名预览通道实测校准（2026-09-13 实时记录在案）；appKey=
     SZ_OPEN_DATA_APPKEY（get_service_secret 通道，禁裸 getenv）"
   code_symbol: "src/zephyr/data/implementations/akshare_alt_provider.py::AkshareAltProvider._fetch_alt_typhoon_track"
+  code_fingerprint:
+- job_id: JOB-099
+  job_name: ingest.sz_stat_monthly
+  entity_type: job
+  scope: production
+  source_code_ref: src/zephyr/data/implementations/akshare_alt_provider.py
+  trigger_type: scheduled
+  run_context: production
+  inputs: []
+  outputs:
+  - DS-234
+  pit_relevance: strict
+  description: 统计月报长表 7 系列并拉（GDP/物价/财政金融/运输/外贸/快报/固投；全量幂等重拉）
+  module_id: MOD-L00-004
+  design_maturity: production
+  name: ingest.sz_stat_monthly
+  name_zh: 深圳统计月报采集
+  status: active
+  version: 1.0.0
+  created_at: "2026-09-14"
+  updated_at: "2026-09-14"
+  owner: MOD-L00-004
+  entry_role: "state"
+  applies_to: ["market"]
+  tags: ["另类数据", "数据", "宏观", "深圳"]
+  algorithm_status: "not_applicable"
+  evidence: "实测 10,290 行"
+  code_symbol: "src/zephyr/data/implementations/akshare_alt_provider.py::AkshareAltProvider._fetch_sz_open_data"
+  code_fingerprint:
+- job_id: JOB-100
+  job_name: ingest.sz_port_monthly
+  entity_type: job
+  scope: production
+  source_code_ref: src/zephyr/data/implementations/akshare_alt_provider.py
+  trigger_type: scheduled
+  run_context: production
+  inputs: []
+  outputs:
+  - DS-235
+  pit_relevance: strict
+  description: 口岸月度流量 3 系列并拉（TEU/货物/空运；全量幂等重拉）
+  module_id: MOD-L00-004
+  design_maturity: production
+  name: ingest.sz_port_monthly
+  name_zh: 深圳口岸流量采集
+  status: active
+  version: 1.0.0
+  created_at: "2026-09-14"
+  updated_at: "2026-09-14"
+  owner: MOD-L00-004
+  entry_role: "state"
+  applies_to: ["market"]
+  tags: ["另类数据", "数据", "贸易", "深圳"]
+  algorithm_status: "not_applicable"
+  evidence: "实测 273 行"
+  code_symbol: "src/zephyr/data/implementations/akshare_alt_provider.py::AkshareAltProvider._fetch_sz_open_data"
+  code_fingerprint:
+- job_id: JOB-101
+  job_name: ingest.sz_house_daily
+  entity_type: job
+  scope: production
+  source_code_ref: src/zephyr/data/implementations/akshare_alt_provider.py
+  trigger_type: scheduled
+  run_context: production
+  inputs: []
+  outputs:
+  - DS-236
+  pit_relevance: strict
+  description: 楼市日度成交 2 系列并拉（一手/二手；startDate 增量，src_id 幂等）
+  module_id: MOD-L00-004
+  design_maturity: production
+  name: ingest.sz_house_daily
+  name_zh: 深圳楼市日度采集
+  status: active
+  version: 1.0.0
+  created_at: "2026-09-14"
+  updated_at: "2026-09-14"
+  owner: MOD-L00-004
+  entry_role: "state"
+  applies_to: ["market"]
+  tags: ["另类数据", "数据", "地产", "深圳"]
+  algorithm_status: "not_applicable"
+  evidence: "实测 221,227 行（含全史回补）"
+  code_symbol: "src/zephyr/data/implementations/akshare_alt_provider.py::AkshareAltProvider._fetch_sz_open_data"
+  code_fingerprint:
+- job_id: JOB-102
+  job_name: ingest.sz_weather_warning
+  entity_type: job
+  scope: production
+  source_code_ref: src/zephyr/data/implementations/akshare_alt_provider.py
+  trigger_type: scheduled
+  run_context: production
+  inputs: []
+  outputs:
+  - DS-237
+  pit_relevance: strict
+  description: 灾害天气预警信号流（startDate 增量，RECID 幂等；源止 2020-09-23 转历史档案）
+  module_id: MOD-L00-004
+  design_maturity: production
+  name: ingest.sz_weather_warning
+  name_zh: 深圳灾害预警采集
+  status: active
+  version: 1.0.0
+  created_at: "2026-09-14"
+  updated_at: "2026-09-14"
+  owner: MOD-L00-004
+  entry_role: "state"
+  applies_to: ["market"]
+  tags: ["另类数据", "数据", "气象", "事件"]
+  algorithm_status: "not_applicable"
+  evidence: "实测 9,349 行"
+  code_symbol: "src/zephyr/data/implementations/akshare_alt_provider.py::AkshareAltProvider._fetch_sz_open_data"
+  code_fingerprint:
+- job_id: JOB-103
+  job_name: ingest.sz_marine_forecast
+  entity_type: job
+  scope: production
+  source_code_ref: src/zephyr/data/implementations/akshare_alt_provider.py
+  trigger_type: scheduled
+  run_context: production
+  inputs: []
+  outputs:
+  - DS-238
+  pit_relevance: strict
+  description: 海洋气象预报 27 字段（startDate 增量，RECID 幂等）
+  module_id: MOD-L00-004
+  design_maturity: production
+  name: ingest.sz_marine_forecast
+  name_zh: 深圳海洋预报采集
+  status: active
+  version: 1.0.0
+  created_at: "2026-09-14"
+  updated_at: "2026-09-14"
+  owner: MOD-L00-004
+  entry_role: "state"
+  applies_to: ["market"]
+  tags: ["另类数据", "数据", "气象", "海洋"]
+  algorithm_status: "not_applicable"
+  evidence: "实测 147,716 行（含全史回补）"
+  code_symbol: "src/zephyr/data/implementations/akshare_alt_provider.py::AkshareAltProvider._fetch_sz_open_data"
+  code_fingerprint:
+- job_id: JOB-104
+  job_name: ingest.sz_typhoon_landfall_history
+  entity_type: job
+  scope: production
+  source_code_ref: src/zephyr/data/implementations/akshare_alt_provider.py
+  trigger_type: scheduled
+  run_context: production
+  inputs: []
+  outputs:
+  - DS-239
+  pit_relevance: strict
+  description: 历史登陆气旋全表周末刷新（1949 年起静态档案）
+  module_id: MOD-L00-004
+  design_maturity: production
+  name: ingest.sz_typhoon_landfall_history
+  name_zh: 台风历史登陆档案刷新
+  status: active
+  version: 1.0.0
+  created_at: "2026-09-14"
+  updated_at: "2026-09-14"
+  owner: MOD-L00-004
+  entry_role: "state"
+  applies_to: ["market"]
+  tags: ["另类数据", "数据", "气象", "历史"]
+  algorithm_status: "not_applicable"
+  evidence: "实测 845 行"
+  code_symbol: "src/zephyr/data/implementations/akshare_alt_provider.py::AkshareAltProvider._fetch_sz_open_data"
+  code_fingerprint:
+- job_id: JOB-105
+  job_name: ingest.sz_typhoon_names
+  entity_type: job
+  scope: production
+  source_code_ref: src/zephyr/data/implementations/akshare_alt_provider.py
+  trigger_type: scheduled
+  run_context: production
+  inputs: []
+  outputs:
+  - DS-240
+  pit_relevance: strict
+  description: 台风中英文对照字典周末刷新
+  module_id: MOD-L00-004
+  design_maturity: production
+  name: ingest.sz_typhoon_names
+  name_zh: 台风名称字典刷新
+  status: active
+  version: 1.0.0
+  created_at: "2026-09-14"
+  updated_at: "2026-09-14"
+  owner: MOD-L00-004
+  entry_role: "state"
+  applies_to: ["market"]
+  tags: ["另类数据", "数据", "气象", "字典"]
+  algorithm_status: "not_applicable"
+  evidence: "实测 1,260 行"
+  code_symbol: "src/zephyr/data/implementations/akshare_alt_provider.py::AkshareAltProvider._fetch_sz_open_data"
   code_fingerprint:
 
 - job_id: JOB-098

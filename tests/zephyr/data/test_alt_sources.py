@@ -55,7 +55,10 @@ def test_to_int_variants():
 
 def test_provider_meta_capabilities():
     caps = {c.capability_id for c in AkshareAltProvider.meta.capabilities}
-    assert caps == {"alt_stock_comment", "alt_shipping_index", "alt_typhoon_track"}
+    assert caps == {"alt_stock_comment", "alt_shipping_index", "alt_typhoon_track",
+                    "alt_sz_stat_monthly", "alt_sz_port_monthly", "alt_sz_house_daily",
+                    "alt_sz_weather_warning", "alt_sz_marine_forecast",
+                    "alt_typhoon_landfall_history", "alt_typhoon_names"}
     assert _AKSHARE_ALT_CAPABILITIES == caps
 
 
@@ -320,7 +323,7 @@ def test_typhoon_fetch_full_pagination(monkeypatch):
 
     calls = []
 
-    def fake_get(self, params):
+    def fake_get(self, url, params):
         calls.append(dict(params))
         if params["page"] == 1:
             return {"result": [_typhoon_stub_row(i) for i in range(10000)]}
@@ -352,8 +355,73 @@ def test_typhoon_fetch_error_code(monkeypatch):
     monkeypatch.setattr(mod, "get_secret_or_default", lambda *a, **k: "stub-key")
     monkeypatch.setattr(
         mod.AkshareAltProvider, "_sz_api_get",
-        lambda self, params: {"errorCode": "10001", "message": "未经许可的证书，请先订阅接口"},
+        lambda self, url, params: {"errorCode": "10001", "message": "未经许可的证书，请先订阅接口"},
     )
     p = mod.AkshareAltProvider()
     r = list(p.fetch(_make_payload("alt_typhoon_track", table="c1_market.alt_typhoon_track"), SourcePolicy()))[0]
     assert r.error and "10001" in r.error and "订阅" in r.error
+
+
+def test_sz_stat_monthly_fetch(monkeypatch):
+    """统计月报 7 系列并拉：解析/归一化/series 标记。"""
+    from zephyr.data.implementations import akshare_alt_provider as mod
+
+    def fake_get(self, url, params):
+        ctx = url.rsplit("/", 2)[0].rsplit("/", 1)[-1]
+        return [{"NY": "201907", "ZBMC": "地区生产总值", "DW": "亿元",
+                 "BENYUE": 2418.32, "BYZLJ": 15787.53, "LJTB": 7.4, "XH": "1"}]
+
+    monkeypatch.setattr(mod, "get_secret_or_default", lambda *a, **k: "stub-key")
+    monkeypatch.setattr(mod.AkshareAltProvider, "_sz_api_get", fake_get)
+    p = mod.AkshareAltProvider()
+    r = list(p.fetch(_make_payload("alt_sz_stat_monthly", table="c1_market.alt_sz_stat_monthly",
+                                   incremental=False), SourcePolicy()))[0]
+    assert r.error is None
+    assert len(r.rows) == 7  # 7 系列各 1 行
+    series_set = {row[0] for row in r.rows}
+    assert series_set == {s for s, _ in mod._SZ_STAT_SERIES}
+    row = [x for x in r.rows if x[0] == "stat_gdp"][0]
+    assert row[1] == "201907"
+    assert row[3] == "地区生产总值"
+    assert row[6] == pytest.approx(2418.32)  # BENYUE -> val_month
+    assert row[7] == pytest.approx(15787.53)  # BYZLJ -> val_cum
+    assert row[8] == pytest.approx(7.4)  # LJTB -> yoy_cum
+
+
+def test_sz_warning_fetch_incremental(monkeypatch):
+    from zephyr.data.implementations import akshare_alt_provider as mod
+
+    captured = {}
+
+    def fake_get(self, url, params):
+        captured["startDate"] = params.get("startDate")
+        return [{"RECID": 19148, "KEYID": 1921, "TNUMBER": 577, "SIGNALTYPE": "大风",
+                 "SIGNALLEVEL": "蓝色", "ISSUESTATE": "发布", "DISTRICT": "南山区",
+                 "ISSUECONTENT": "【深圳市大风蓝色预警】...", "ISSUETIME": "2012-12-23 03:50:00",
+                 "CRTTIME": "2012-12-23 03:49:51", "UNDERWRITER": "", "AUTOSENTFLAG": 1,
+                 "AUTOSENTCOUNT": 0, "TRACEFLAG": 0, "TRACOUNT": 0, "SYNC_ROWNUM": "AA"}]
+
+    monkeypatch.setattr(mod, "get_secret_or_default", lambda *a, **k: "stub-key")
+    monkeypatch.setattr(mod.AkshareAltProvider, "_sz_api_get", fake_get)
+    p = mod.AkshareAltProvider()
+    r = list(p.fetch(_make_payload("alt_sz_weather_warning", table="c1_market.alt_sz_weather_warning",
+                                   start=datetime.date(2026, 9, 1)), SourcePolicy()))[0]
+    assert r.error is None
+    assert captured["startDate"] == "20260901"
+    assert r.rows[0][0] == 19148
+    assert r.rows[0][3] == "大风"
+    assert r.rows[0][10] == "2012-12-23"
+
+
+def test_sz_error_passthrough(monkeypatch):
+    from zephyr.data.implementations import akshare_alt_provider as mod
+
+    monkeypatch.setattr(mod, "get_secret_or_default", lambda *a, **k: "stub-key")
+    monkeypatch.setattr(
+        mod.AkshareAltProvider, "_sz_api_get",
+        lambda self, url, params: {"errorCode": "10001", "message": "未经许可的证书，请先订阅接口"},
+    )
+    p = mod.AkshareAltProvider()
+    r = list(p.fetch(_make_payload("alt_sz_marine_forecast", table="c1_market.alt_sz_marine_forecast",
+                                   incremental=False), SourcePolicy()))[0]
+    assert r.error and "10001" in r.error

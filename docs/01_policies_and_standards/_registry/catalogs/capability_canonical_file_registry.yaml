@@ -11,6 +11,15 @@ summary: capability → canonical_file 反查注册表，解决"AI 不知道某�
   removed_duplicates 全部由 CapabilityLookup 从磁盘头部 + git log 自动派生，消除 YAML↔代码头部同步漂移成本。对标
   K8s Service(声明) + Endpoints(实时发现) 模式。
 capabilities:
+- capability_id: mining_sop
+  aliases:
+  - 挖矿SOP
+  - web_mining
+  - research_mining
+  - 全网调研
+  description: 挖矿 SOP——全网调研+内部反查的全面挖掘方法论。触发=建策略/建方案/建文档/任何需全网搜索的内容工作；六向寻路+防噪音四闸+连续两轮噪音终止+时间盒封批；挖矿日志必入产出文档。canonical
+    = docs/01_policies_and_standards/sop/mining_sop/mining_sop_policy.md。
+  canonical_override: docs/01_policies_and_standards/sop/mining_sop/mining_sop_policy.md
 - capability_id: qmt_file_bridge_broker
   aliases:
   - QmtFileBridgeBroker
@@ -12193,7 +12202,18 @@ creation_tokens:
   token: synergy-dedup-tests-20260913
   created_by: st-zcode-c4-20260912
   capability: c4_batch_translation
-di_seam_exemptions: []
+- file: src/zephyr/factor/fundamentals.py
+  token: st-fingov-fundamentals-factors-20260914
+  created_by: st-fingov-20260912
+  capability: factor_fundamentals
+- file: tests/factor/test_fundamentals.py
+  token: st-fingov-test-fundamentals-20260914
+  created_by: st-fingov-20260912
+  capability: test_factor_fundamentals
+- file: scripts/backtest/eval_f2_fundamental_ic.py
+  token: st-fingov-eval-f2-ic-20260914
+  created_by: st-fingov-20260912
+  capability: eval_f2_fundamental_ic
 - file: schemas/categories/sim_pocket_daily.py
   token: sim-pocket-daily-20260914
   created_by: st-zcode-c4-20260912
@@ -12206,3 +12226,16 @@ di_seam_exemptions: []
   token: sim-paper-ledger-20260914
   created_by: st-zcode-c4-20260912
   capability: sim_paper_ledger_c
+- file: src/zephyr/signal_ashare/strategy_signal/pattern_event_store.py
+  token: auto-scaffold-pattern_event_store-20260914
+  created_by: scaffold.py
+  capability: pattern_event_store
+- file: scripts/ch/apply_pattern_event_ddl.py
+  token: auto-scaffold-ch_apply_pattern_event_ddl-20260914
+  created_by: scaffold.py
+  capability: ch_apply_pattern_event_ddl
+- file: schemas/categories/market_pattern_event.py
+  token: pattern-event-ddl-truth-market-pattern-event-20260913
+  created_by: st-pattern-20260914
+  capability: pattern-event-ddl-truth
+di_seam_exemptions: []

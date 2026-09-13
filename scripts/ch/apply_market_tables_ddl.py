@@ -363,6 +363,14 @@ from schemas.categories.market_alt_shipping_index import ALT_SHIPPING_INDEX_DDL
 from schemas.categories.market_alt_stock_comment import ALT_STOCK_COMMENT_DDL
 # 气象事件层：台风路径（2026-09-14，深圳开放数据平台 appKey 通道）
 from schemas.categories.market_alt_typhoon_track import ALT_TYPHOON_TRACK_DDL
+# 深圳开放数据批量源 ×7（2026-09-14，st-altdata-20260914）：fail-closed 直接导入
+from schemas.categories.market_alt_sz_stat_monthly import MARKET_ALT_SZ_STAT_MONTHLY_DDL
+from schemas.categories.market_alt_sz_port_monthly import MARKET_ALT_SZ_PORT_MONTHLY_DDL
+from schemas.categories.market_alt_sz_house_daily import MARKET_ALT_SZ_HOUSE_DAILY_DDL
+from schemas.categories.market_alt_sz_weather_warning import MARKET_ALT_SZ_WEATHER_WARNING_DDL
+from schemas.categories.market_alt_sz_marine_forecast import MARKET_ALT_SZ_MARINE_FORECAST_DDL
+from schemas.categories.market_typhoon_landfall_history import MARKET_TYPHOON_LANDFALL_HISTORY_DDL
+from schemas.categories.market_typhoon_names import MARKET_TYPHOON_NAMES_DDL
 from schemas.categories.market_breadth_snapshot import MARKET_BREADTH_SNAPSHOT_DDL
 from schemas.categories.market_daban_board_event import MARKET_DABAN_BOARD_EVENT_DDL
 from schemas.categories.intraday.market_execution_report import MARKET_EXECUTION_REPORT_DDL
@@ -399,6 +407,14 @@ _ALL_DDL: list[tuple[str, str]] = [
     ("c1_market.alt_shipping_index", ALT_SHIPPING_INDEX_DDL),
     # 气象事件层：台风路径（2026-09-14）
     ("c1_market.alt_typhoon_track", ALT_TYPHOON_TRACK_DDL),
+    # 深圳开放数据批量源 ×7（2026-09-14）
+    ("c1_market.alt_sz_stat_monthly", MARKET_ALT_SZ_STAT_MONTHLY_DDL),
+    ("c1_market.alt_sz_port_monthly", MARKET_ALT_SZ_PORT_MONTHLY_DDL),
+    ("c1_market.alt_sz_house_daily", MARKET_ALT_SZ_HOUSE_DAILY_DDL),
+    ("c1_market.alt_sz_weather_warning", MARKET_ALT_SZ_WEATHER_WARNING_DDL),
+    ("c1_market.alt_sz_marine_forecast", MARKET_ALT_SZ_MARINE_FORECAST_DDL),
+    ("c1_market.alt_typhoon_landfall_history", MARKET_TYPHOON_LANDFALL_HISTORY_DDL),
+    ("c1_market.alt_typhoon_names", MARKET_TYPHOON_NAMES_DDL),
     # JOB-077 市场元数据与约束接入（DS-081~083，2026-08-15）
     ("c1_market.stock_basic", STOCK_BASIC_DDL),
     ("c1_market.stk_limit", STK_LIMIT_DDL),
@@ -440,6 +456,26 @@ _MIGRATIONS: list[tuple[str, str]] = [
         "ADD COLUMN IF NOT EXISTS recorded_time DateTime64(3, 'UTC') DEFAULT now() "
         "COMMENT '录制器本地接收时间(用于延迟分析)' AFTER timestamp",
     ),
+    # 2026-09-14 A股标配批+统计族批（st-tilib-20260914）: technical_indicator +14 指标列
+    # 趋势+2（DKX）/动量+7（BIAS/PSY/LWR）/统计族+5（CORREL/BETA/LINEARREG/TSF/ROLLVAR）
+    (
+        "c1_market.technical_indicator",
+        "ALTER TABLE c1_market.technical_indicator "
+        "ADD COLUMN IF NOT EXISTS dkx_20 Nullable(Float64) COMMENT '20日多空线', "
+        "ADD COLUMN IF NOT EXISTS dkx_ma10 Nullable(Float64) COMMENT '多空线10日移动平均', "
+        "ADD COLUMN IF NOT EXISTS bias_6 Nullable(Float64) COMMENT '6日乖离率', "
+        "ADD COLUMN IF NOT EXISTS bias_12 Nullable(Float64) COMMENT '12日乖离率', "
+        "ADD COLUMN IF NOT EXISTS bias_24 Nullable(Float64) COMMENT '24日乖离率', "
+        "ADD COLUMN IF NOT EXISTS psy_12 Nullable(Float64) COMMENT '12日心理线', "
+        "ADD COLUMN IF NOT EXISTS psy_ma6 Nullable(Float64) COMMENT '心理线6日移动平均', "
+        "ADD COLUMN IF NOT EXISTS lwr_1 Nullable(Float64) COMMENT '慢速威廉LWR1(9,3,3)', "
+        "ADD COLUMN IF NOT EXISTS lwr_2 Nullable(Float64) COMMENT '慢速威廉LWR2(9,3,3)', "
+        "ADD COLUMN IF NOT EXISTS correl_30 Nullable(Float64) COMMENT '30日close×volume滚动相关系数', "
+        "ADD COLUMN IF NOT EXISTS beta_30 Nullable(Float64) COMMENT '30日close对volume滚动beta系数', "
+        "ADD COLUMN IF NOT EXISTS linearreg_14 Nullable(Float64) COMMENT '14日线性回归线(当前拟合值)', "
+        "ADD COLUMN IF NOT EXISTS tsf_14 Nullable(Float64) COMMENT '14日时间序列预测(一步外推)', "
+        "ADD COLUMN IF NOT EXISTS var_20 Nullable(Float64) COMMENT '20日滚动总体方差(ddof=0)'",
+    ),
 ]
 
 # 引擎选型矩阵（用于验证）
@@ -459,6 +495,14 @@ _EXPECTED_ENGINES: dict[str, str] = {
     "alt_shipping_index": "ReplacingMergeTree",
     # 气象事件层：台风路径（2026-09-14）：KEYID 全局唯一替换幂等
     "alt_typhoon_track": "ReplacingMergeTree",
+    # 深圳开放数据批量源 ×7（2026-09-14）：同键替换幂等
+    "alt_sz_stat_monthly": "ReplacingMergeTree",
+    "alt_sz_port_monthly": "ReplacingMergeTree",
+    "alt_sz_house_daily": "ReplacingMergeTree",
+    "alt_sz_weather_warning": "ReplacingMergeTree",
+    "alt_sz_marine_forecast": "ReplacingMergeTree",
+    "alt_typhoon_landfall_history": "ReplacingMergeTree",
+    "alt_typhoon_names": "ReplacingMergeTree",
     # JOB-077（DS-081~083，2026-08-15）
     "stock_basic": "ReplacingMergeTree",
     "stk_limit": "ReplacingMergeTree",

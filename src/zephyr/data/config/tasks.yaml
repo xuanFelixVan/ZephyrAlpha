@@ -2406,6 +2406,86 @@ tasks:
   extra:
     description: "台风路径全量刷新（全史约 12.8 万条，2017 年起含历史台风；万行/页分页回补）"
 
+- task_id: alt_sz_stat_monthly_refresh
+  table: c1_market.alt_sz_stat_monthly
+  source: akshare_alt
+  schedule: daily_event
+  incremental: false
+  dependencies: []
+  capability: alt_sz_stat_monthly
+  symbols:
+  extra:
+    description: "深圳统计月报长表（7 系列并拉：GDP/物价/财政金融/运输/外贸/快报/固投；全量幂等重拉，月度数据日度跟新）"
+
+- task_id: alt_sz_port_monthly_refresh
+  table: c1_market.alt_sz_port_monthly
+  source: akshare_alt
+  schedule: daily_event
+  incremental: false
+  dependencies: []
+  capability: alt_sz_port_monthly
+  symbols:
+  extra:
+    description: "深圳口岸月度流量（3 系列并拉：海港集装箱TEU/进出口货物量/空运货物量；全量幂等重拉）"
+
+- task_id: alt_sz_house_daily_incremental
+  table: c1_market.alt_sz_house_daily
+  source: akshare_alt
+  schedule: daily_event
+  incremental: true
+  date_col: tj_date
+  dependencies: []
+  capability: alt_sz_house_daily
+  symbols:
+  extra:
+    description: "深圳楼市日度成交（一手+二手房并拉，按区成交套数/面积；startDate 增量，src_id 幂等）"
+
+- task_id: alt_sz_weather_warning_incremental
+  table: c1_market.alt_sz_weather_warning
+  source: akshare_alt
+  schedule: daily_event
+  incremental: true
+  date_col: crt_date
+  dependencies: []
+  capability: alt_sz_weather_warning
+  symbols:
+  extra:
+    description: "深圳灾害天气预警信号流（台风/暴雨/大风等发布与解除全记录；按入库日期增量，RECID 幂等；气象事件日历主干）"
+
+- task_id: alt_sz_marine_forecast_incremental
+  table: c1_market.alt_sz_marine_forecast
+  source: akshare_alt
+  schedule: daily_event
+  incremental: true
+  date_col: write_time
+  dependencies: []
+  capability: alt_sz_marine_forecast
+  symbols:
+  extra:
+    description: "深圳海洋气象预报（分海区风/浪/能见度/气温逐日；startDate 增量，RECID 幂等；港口作业窗口参考）"
+
+- task_id: alt_typhoon_landfall_history_refresh
+  table: c1_market.alt_typhoon_landfall_history
+  source: akshare_alt
+  schedule: weekend_calibration
+  incremental: false
+  dependencies: []
+  capability: alt_typhoon_landfall_history
+  symbols:
+  extra:
+    description: "历史登陆我国气旋全表（1949 年起静态档案；周末全量刷新，ID 幂等）"
+
+- task_id: alt_typhoon_names_refresh
+  table: c1_market.alt_typhoon_names
+  source: akshare_alt
+  schedule: weekend_calibration
+  incremental: false
+  dependencies: []
+  capability: alt_typhoon_names
+  symbols:
+  extra:
+    description: "历年台风中英文对照字典（命名表及除名史；周末全量刷新，KEYID 幂等）"
+
 # ============== EDB 国际宏观数据扩展（#ARCH-EDB-EXPAND，2026-08-04）==============
 # FRED（美联储经济数据库）+ 世界银行 免费国际宏观数据
 # 与 akshare macro_data 共表 c1_market.macro_data，通过 indicator_name 前缀区分：
