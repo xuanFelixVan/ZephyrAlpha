@@ -5,7 +5,7 @@
 # [CONSUMERS] zephyr.data.implementations.internal_compute_provider（包级 autodiscover 动态接线：internal_compute_provider L545/L1113 延迟导入本包+注册表消费）; sleeve alpha 择时
 # [STARTUP] imported
 # [MATURITY] production
-# [INVARIANTS] 波动类指标 8 个，纯自实现 pandas/numpy；compute→DataFrame 多列输出；复用 trend._ema
+# [INVARIANTS] 波动类指标 10 个，纯自实现 pandas/numpy；compute→DataFrame 多列输出；复用 trend._ema
 # [MODIFY-GUARD] none
 # [STABILITY] evolving
 # [SAFETY] L
@@ -18,7 +18,7 @@
 
 波动类技术指标（8 个，v1.0.0 全部施工完成）。
 
-指标清单：ATR/BOLL/Keltner/Donchian/STDDEV/BandWidth/%B/HistVol
+指标清单：ATR/BOLL/Keltner/Donchian/STDDEV/BandWidth/%B/HistVol/NATR/TRANGE（批2a 补 TA-Lib 波动组）
 
 算法对齐通达信：
   - ATR 通达信用 MA（简单移动平均，非 Wilder's RMA）
@@ -91,6 +91,14 @@
 #   inputs: I1
 #   outputs: (upper, middle, lower) 三元组
 # 层: 输出
+# - id: VOL2A
+#   name_zh: 归一化与原始真实波幅（批2a）
+#   name_en: NATR/TRANGE
+#   intro: TR 消量纲版本与原始值，跨标的波动比较与底层原料（TA-Lib 波动组补全）
+#   formula: NATR=MA(TR/Close×100,N)；TRANGE=TR=max(H-L,|H-Cp|,|L-Cp|)
+#   code: volatility.py 尾部两类（复用 _true_range）
+#   registry: 指标表: 有natr_14/trange列（本模块即指标计算实现）
+#   is_break: true
 # - id: O1
 #   name_zh: 波动指标 DataFrame（8指标多列）
 #   name_en: volatility indicators DataFrame
@@ -366,3 +374,54 @@ class HistVol(TechnicalIndicatorBase):
         log_ret = np.log(data["close"] / data["close"].shift(1))
         hv = log_ret.rolling(window=n).std(ddof=1) * np.sqrt(252) * 100
         return pd.DataFrame({f"histvol_{n}": hv}, index=data.index)
+
+
+@TechnicalIndicatorRegistry.register
+class NATR(TechnicalIndicatorBase):
+    """归一化真实波幅（Normalized ATR，TA-Lib 口径）。"""
+
+    meta = TechnicalIndicatorMeta(
+        indicator_id="natr",
+        name="归一化真实波幅",
+        category="volatility",
+        output_columns=["natr_14"],
+        input_columns=["high", "low", "close"],
+        params={"period": 14},
+        version="1.0.0",
+        description="NATR=TR/Close×100，消除价格量纲便于跨标的比较波动率（TA-Lib NATR）",
+    )
+
+    def compute(self, data: pd.DataFrame, **kwargs) -> pd.DataFrame:
+        self.validate(data)
+        if data.empty:
+            return pd.DataFrame(columns=self.meta.output_columns)
+        params = self.get_params(**kwargs)
+        n = params["period"]
+        tr = _true_range(data["high"], data["low"], data["close"])
+        natr = tr / data["close"] * 100
+        # MA 平滑对齐 ATR 同族口径
+        natr_ma = natr.rolling(window=n).mean()
+        return pd.DataFrame({f"natr_{n}": natr_ma}, index=data.index)
+
+
+@TechnicalIndicatorRegistry.register
+class TRANGE(TechnicalIndicatorBase):
+    """真实波幅原始值（True Range，TA-Lib 口径）。"""
+
+    meta = TechnicalIndicatorMeta(
+        indicator_id="trange",
+        name="真实波幅",
+        category="volatility",
+        output_columns=["trange"],
+        input_columns=["high", "low", "close"],
+        params={},
+        version="1.0.0",
+        description="TR=max(H-L,|H-Cp|,|L-Cp|)，首行=H-L（无前收盘）；ATR/NATR 的底层原料",
+    )
+
+    def compute(self, data: pd.DataFrame, **kwargs) -> pd.DataFrame:
+        self.validate(data)
+        if data.empty:
+            return pd.DataFrame(columns=self.meta.output_columns)
+        tr = _true_range(data["high"], data["low"], data["close"])
+        return pd.DataFrame({"trange": tr}, index=data.index)

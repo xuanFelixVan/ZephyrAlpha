@@ -32,6 +32,9 @@ BANDWIDTH = TechnicalIndicatorRegistry.get("bandwidth")
 PERCENT_B = TechnicalIndicatorRegistry.get("percent_b")
 HISTVOL = TechnicalIndicatorRegistry.get("histvol")
 
+NATR = TechnicalIndicatorRegistry.get("natr")
+TRANGE = TechnicalIndicatorRegistry.get("trange")
+
 # 期望契约（catalog §2.3）：indicator_id → (name, output_columns)
 EXPECTED = {
     "atr": ("真实波幅", ["atr_14"]),
@@ -42,6 +45,8 @@ EXPECTED = {
     "bandwidth": ("布林带宽度", ["boll_bw"]),
     "percent_b": ("布林带%B", ["boll_pctb"]),
     "histvol": ("历史波动率", ["histvol_20"]),
+    "natr": ("归一化真实波幅", ["natr_14"]),
+    "trange": ("真实波幅", ["trange"]),
 }
 
 # 全部已实现
@@ -76,7 +81,7 @@ class TestVolatilityRegistered:
             assert iid in metas, f"波动指标 '{iid}' 未注册"
 
     def test_count(self):
-        assert len(TechnicalIndicatorRegistry.list_by_category("volatility")) == len(EXPECTED) == 8
+        assert len(TechnicalIndicatorRegistry.list_by_category("volatility")) == len(EXPECTED) == 10
 
 
 class TestVolatilityMetaContract:
@@ -448,3 +453,28 @@ class TestHistVolCompute:
     def test_missing_column_raises(self):
         with pytest.raises(ValueError, match="缺少列"):
             HISTVOL().compute(pd.DataFrame({"open": [10.0]}))
+
+
+# ===========================================================================
+# 2026-09-14 主流热门批 2a：NATR/TRANGE 数值正确性
+# ===========================================================================
+
+
+class TestNatrTrangeNumeric:
+    def test_trange_first_row_hl(self):
+        df = _make_ohlcv(20)
+        result = TRANGE().compute(df)
+        assert result["trange"].iloc[0] == pytest.approx(df["high"].iloc[0] - df["low"].iloc[0])
+
+    def test_natr_constant(self):
+        df = _make_ohlcv(30)
+        df["close"] = 100.0
+        df["high"] = 101.0
+        df["low"] = 99.0
+        result = NATR().compute(df)
+        np.testing.assert_allclose(result["natr_14"].dropna(), 2.0)
+
+    def test_natr_no_negative(self):
+        df = _make_ohlcv(40)
+        result = NATR().compute(df)
+        assert (result["natr_14"].dropna() >= 0).all()

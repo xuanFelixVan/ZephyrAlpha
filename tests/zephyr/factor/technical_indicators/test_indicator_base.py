@@ -40,10 +40,10 @@ from zephyr.factor.technical_indicators.indicator_base import (
     autodiscover_technical_indicators,
 )
 
-# 6 类指标数量契约（catalog §2：趋势11/动量13/波动8/成交量7/反转5/统计4[TSF与LINEARREG同类]）
-_EXPECTED_TOTAL = 48
-# 全部输出列数契约（catalog §2.6：趋势20+动量22+波动13+成交量7+反转5+统计5 = 72）
-_EXPECTED_COLUMN_TOTAL = 72
+# 6 类指标数量契约（catalog §2：趋势16/动量14/波动10/成交量7/反转5/统计4[TSF与LINEARREG同类]）
+_EXPECTED_TOTAL = 56
+# 全部输出列数契约（catalog §2.6：趋势27+动量23+波动15+成交量7+反转5+统计5 = 82）
+_EXPECTED_COLUMN_TOTAL = 82
 
 
 # ============== TechnicalIndicatorMeta ==============
@@ -123,9 +123,9 @@ class TestRegistryMechanics:
         assert len(metas) == _EXPECTED_TOTAL
 
     def test_list_by_category_counts(self):
-        assert len(TechnicalIndicatorRegistry.list_by_category("trend")) == 11
-        assert len(TechnicalIndicatorRegistry.list_by_category("momentum")) == 13
-        assert len(TechnicalIndicatorRegistry.list_by_category("volatility")) == 8
+        assert len(TechnicalIndicatorRegistry.list_by_category("trend")) == 16
+        assert len(TechnicalIndicatorRegistry.list_by_category("momentum")) == 14
+        assert len(TechnicalIndicatorRegistry.list_by_category("volatility")) == 10
         assert len(TechnicalIndicatorRegistry.list_by_category("volume")) == 7
         assert len(TechnicalIndicatorRegistry.list_by_category("reversal")) == 5
         assert len(TechnicalIndicatorRegistry.list_by_category("statistics")) == 4

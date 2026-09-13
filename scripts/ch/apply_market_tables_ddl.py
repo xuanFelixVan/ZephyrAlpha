@@ -480,6 +480,58 @@ _MIGRATIONS: list[tuple[str, str]] = [
         "ADD COLUMN IF NOT EXISTS tsf_14 Nullable(Float64) COMMENT '14日时间序列预测(一步外推)', "
         "ADD COLUMN IF NOT EXISTS var_20 Nullable(Float64) COMMENT '20日滚动总体方差(ddof=0)'",
     ),
+    # 2026-09-14 主流热门批 2a（st-tilib-20260914）: technical_indicator +10 指标列
+    # 注意：必须逐列一条 ALTER——多列逗号连发经 ch_writer 双通道失败且假成功（2026-09-14 实证）
+    (
+        "c1_market.technical_indicator",
+        "ALTER TABLE c1_market.technical_indicator "
+        "ADD COLUMN IF NOT EXISTS hma_16 Nullable(Float64) COMMENT '16日Hull均线'",
+    ),
+    (
+        "c1_market.technical_indicator",
+        "ALTER TABLE c1_market.technical_indicator "
+        "ADD COLUMN IF NOT EXISTS zlema_21 Nullable(Float64) COMMENT '21日零滞后EMA'",
+    ),
+    (
+        "c1_market.technical_indicator",
+        "ALTER TABLE c1_market.technical_indicator "
+        "ADD COLUMN IF NOT EXISTS kama_10 Nullable(Float64) COMMENT '10日Kaufman自适应均线'",
+    ),
+    (
+        "c1_market.technical_indicator",
+        "ALTER TABLE c1_market.technical_indicator "
+        "ADD COLUMN IF NOT EXISTS vip_14 Nullable(Float64) COMMENT '14日涡旋指标VI+'",
+    ),
+    (
+        "c1_market.technical_indicator",
+        "ALTER TABLE c1_market.technical_indicator "
+        "ADD COLUMN IF NOT EXISTS vim_14 Nullable(Float64) COMMENT '14日涡旋指标VI-'",
+    ),
+    (
+        "c1_market.technical_indicator",
+        "ALTER TABLE c1_market.technical_indicator "
+        "ADD COLUMN IF NOT EXISTS supertrend_10 Nullable(Float64) COMMENT '超级趋势线(10,3)'",
+    ),
+    (
+        "c1_market.technical_indicator",
+        "ALTER TABLE c1_market.technical_indicator "
+        "ADD COLUMN IF NOT EXISTS supertrend_dir Nullable(Float64) COMMENT '超级趋势方向(1=多,-1=空)'",
+    ),
+    (
+        "c1_market.technical_indicator",
+        "ALTER TABLE c1_market.technical_indicator "
+        "ADD COLUMN IF NOT EXISTS dpo_20 Nullable(Float64) COMMENT '20日区间震荡'",
+    ),
+    (
+        "c1_market.technical_indicator",
+        "ALTER TABLE c1_market.technical_indicator "
+        "ADD COLUMN IF NOT EXISTS natr_14 Nullable(Float64) COMMENT '14日归一化真实波幅(TR/Close×100)'",
+    ),
+    (
+        "c1_market.technical_indicator",
+        "ALTER TABLE c1_market.technical_indicator "
+        "ADD COLUMN IF NOT EXISTS trange Nullable(Float64) COMMENT '真实波幅原始值(首行=H-L)'",
+    ),
 ]
 
 # 引擎选型矩阵（用于验证）

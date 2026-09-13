@@ -5,7 +5,7 @@
 # [CONSUMERS] zephyr.data.implementations.internal_compute_provider（包级 autodiscover 动态接线：internal_compute_provider L545/L1113 延迟导入本包+注册表消费）; sleeve alpha 择时
 # [STARTUP] imported
 # [MATURITY] production
-# [INVARIANTS] 动量类指标 13 个，纯自实现 pandas/numpy；compute→DataFrame 多列输出
+# [INVARIANTS] 动量类指标 14 个，纯自实现 pandas/numpy；compute→DataFrame 多列输出
 # [MODIFY-GUARD] none
 # [STABILITY] evolving
 # [SAFETY] L
@@ -16,9 +16,9 @@
 # [TTL] permanent
 """
 
-动量类技术指标（13 个，v1.0.0 全部施工完成；2026-09-14 A股标配批 +3）。
+动量类技术指标（14 个；2026-09-14 A股标配批 +3、主流热门批 2a +1）。
 
-指标清单：KDJ/RSI/WR/ROC/MTM/CMF/UOS/AO/CMO/StochRSI/BIAS/PSY/LWR
+指标清单：KDJ/RSI/WR/ROC/MTM/CMF/UOS/AO/CMO/StochRSI/BIAS/PSY/LWR/DPO
 
 算法对齐通达信：
   - KDJ K/D 用通达信 SMA(X,N,1)=ewm(alpha=1/N, adjust=False)（非标准 EMA alpha=2/(N+1)）
@@ -84,6 +84,14 @@
 #   code: momentum.py 尾部 PSY 类
 #   registry: 指标表: 有psy_12/psy_ma6列 但代码未读表（本模块即指标计算实现）
 #   is_break: true
+# - id: DPO
+#   name_zh: 区间震荡DPO 20
+#   name_en: DPO
+#   intro: 收盘价减去前置均线，剔除趋势后看短期循环摆动（批2a）
+#   formula: DPO=C−REF(MA(C,N),N/2+1)
+#   code: momentum.py 尾部 DPO 类
+#   registry: 指标表: 有dpo_20列（本模块即指标计算实现）
+#   is_break: true
 # - id: LWR
 #   name_zh: 慢速威廉LWR 9,3,3
 #   name_en: LWR
@@ -117,10 +125,10 @@
 #   outputs: RSI Series
 # 层: 输出
 # - id: O1
-#   name_zh: 动量指标 DataFrame（13指标多列）
+#   name_zh: 动量指标 DataFrame（14指标多列）
 #   name_en: momentum indicators DataFrame
-#   intro: KDJ/RSI/WR/ROC/MTM/CMF/UOS/AO/CMO/StochRSI/BIAS/PSY/LWR 共13个动量指标的多列输出，index 与输入对齐
-#   invariant: 输出列严格等于各 meta.output_columns（kdj_k/d/j、rsi_6/12/24、wr_14、roc_12、mtm_12/mtmma_12、cmf_20、uos、ao、cmo_14、stochrsi、bias_6/12/24、psy_12/psy_ma6、lwr_1/lwr_2）
+#   intro: KDJ/RSI/WR/ROC/MTM/CMF/UOS/AO/CMO/StochRSI/BIAS/PSY/LWR/DPO 共14个动量指标的多列输出，index 与输入对齐
+#   invariant: 输出列严格等于各 meta.output_columns（kdj_k/d/j、rsi_6/12/24、wr_14、roc_12、mtm_12/mtmma_12、cmf_20、uos、ao、cmo_14、stochrsi、bias_6/12/24、psy_12/psy_ma6、lwr_1/lwr_2、dpo_20）
 #   downstream: zephyr.data.implementations.internal_compute_provider（批量计算写入 c1_market.technical_indicator）；sleeve alpha 择时
 # [/ALGO_FLOW]
 #
@@ -136,6 +144,7 @@
 # A1 -.->|断点| BIAS
 # A1 -.->|断点| PSY
 # A1 -.->|断点| LWR
+# A1 -.->|断点| DPO
 # A2 -.->|断点| KDJ
 # A2 -.->|断点| RSI
 # A3 -.->|断点| RSI
@@ -551,3 +560,29 @@ class LWR(TechnicalIndicatorBase):
         lwr1 = _sma(rsv, k_n)
         lwr2 = _sma(lwr1, d_n)
         return pd.DataFrame({"lwr_1": lwr1, "lwr_2": lwr2}, index=data.index)
+
+
+@TechnicalIndicatorRegistry.register
+class DPO(TechnicalIndicatorBase):
+    """区间震荡（Detrended Price Oscillator，通达信口径）。"""
+
+    meta = TechnicalIndicatorMeta(
+        indicator_id="dpo",
+        name="区间震荡",
+        category="momentum",
+        output_columns=["dpo_20"],
+        input_columns=["close"],
+        params={"period": 20},
+        version="1.0.0",
+        description="DPO=C−REF(MA(C,N),N/2+1)，剔除趋势后的短期震荡摆动指标",
+    )
+
+    def compute(self, data: pd.DataFrame, **kwargs) -> pd.DataFrame:
+        self.validate(data)
+        if data.empty:
+            return pd.DataFrame(columns=self.meta.output_columns)
+        params = self.get_params(**kwargs)
+        n = params["period"]
+        ma = data["close"].rolling(window=n).mean()
+        dpo = data["close"] - ma.shift(n // 2 + 1)
+        return pd.DataFrame({f"dpo_{n}": dpo}, index=data.index)

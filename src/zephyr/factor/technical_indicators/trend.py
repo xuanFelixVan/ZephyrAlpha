@@ -5,7 +5,7 @@
 # [CONSUMERS] zephyr.data.implementations.internal_compute_provider（包级 autodiscover 动态接线：internal_compute_provider L545/L1113 延迟导入本包+注册表消费）; sleeve alpha 择时
 # [STARTUP] imported
 # [MATURITY] production
-# [INVARIANTS] 趋势类指标 11 个，纯自实现 pandas/numpy；compute→DataFrame 多列输出
+# [INVARIANTS] 趋势类指标 16 个，纯自实现 pandas/numpy；compute→DataFrame 多列输出
 # [MODIFY-GUARD] none
 # [STABILITY] evolving
 # [SAFETY] L
@@ -16,9 +16,9 @@
 # [TTL] permanent
 """
 
-趋势类技术指标（11 个，v1.0.0 全部施工完成；2026-09-14 A股标配批 +1）。
+趋势类技术指标（16 个；2026-09-14 A股标配批 +1、主流热门批 2a +5）。
 
-指标清单：MA/EMA/WMA/DEMA/MACD/ADX/DMI/CCI/SAR/TRIX/DKX
+指标清单：MA/EMA/WMA/DEMA/MACD/ADX/DMI/CCI/SAR/TRIX/DKX/HMA/ZLEMA/KAMA/VORTEX/SUPERTREND
 
 算法对齐通达信：
   - EMA 系列（EMA/DEMA/MACD/TRIX）统一 adjust=False，种子=首值，无预热 NaN
@@ -26,7 +26,8 @@
   - CCI 使用 AVEDEV（平均绝对偏差），对齐通达信 AVEDEV 函数
   - SAR 逐 bar 迭推，AF 从 step 递增至 max，趋势翻转时重置
   - MACD HIST = 2×(DIF-DEA)，对齐通达信 MACD 柱
-  - DKX 多空线：MID 线性加权 20..1/210，对齐通达信 DKX 函数
+  - DKX 多空线：MID 线性加权 20..1/210，对齐通达信
+  - HMA/ZLEMA 为低滞后均线（WMA 差值再造 / 误差修正 EMA）；KAMA/VORTEX/SUPERTREND 逐 bar 或滚动矩实现（TA-Lib/pandas-ta 口径） DKX 函数
 
 设计文档：docs/02_enterprise_architecture/07_trading_decision_architecture/design_memos/16_technical_indicator_catalog.md §2.1
 
@@ -77,6 +78,14 @@
 #   code: trend.py 尾部 DKX 类
 #   registry: 指标表: 有dkx_20/dkx_ma10列 但代码未读表（本模块即指标计算实现）
 #   is_break: true
+# - id: TREND2A
+#   name_zh: 低滞后与自适应均线族（批2a）
+#   name_en: HMA/ZLEMA/KAMA/VORTEX/SUPERTREND
+#   intro: 低滞后均线（HMA/ZLEMA）、波动自适应均线（KAMA）、方向涡旋（VORTEX）、ATR 跟踪止损带（SUPERTREND）
+#   formula: HMA=WMA(2×WMA(N/2)−WMA(N),√N)；ZLEMA=EMA(2C−REF(C,lag))；KAMA 逐 bar 递推 SC²；VIP/VIM=ΣVM/ΣTR；SUPERTREND final 带单向收紧+收盘穿越翻转
+#   code: trend.py 尾部五类
+#   registry: 指标表: 有hma_16/zlema_21/kama_10/vip_14/vim_14/supertrend_10/supertrend_dir列（本模块即指标计算实现）
+#   is_break: true
 # 层: 算法
 # - id: A1
 #   name_zh: ① 校验+参数合并+空表短路 compute统一契约
@@ -111,8 +120,8 @@
 # - id: O1
 #   name_zh: 趋势指标 DataFrame（11指标多列）
 #   name_en: trend indicators DataFrame
-#   intro: MA/EMA/WMA/DEMA/MACD/ADX/DMI/CCI/SAR/TRIX/DKX 共11个趋势指标的多列输出，index 与输入对齐
-#   invariant: 输出列严格等于各 meta.output_columns（ma_5/10/20/60、ema_12/26、wma_10、dema_12、macd_*、adx_14、pdi_14/mdi_14、cci_14、sar、trix/trma、dkx_20/dkx_ma10）
+#   intro: MA/EMA/WMA/DEMA/MACD/ADX/DMI/CCI/SAR/TRIX/DKX/HMA/ZLEMA/KAMA/VORTEX/SUPERTREND 共16个趋势指标的多列输出，index 与输入对齐
+#   invariant: 输出列严格等于各 meta.output_columns（ma_5/10/20/60、ema_12/26、wma_10、dema_12、macd_*、adx_14、pdi_14/mdi_14、cci_14、sar、trix/trma、dkx_20/dkx_ma10、hma_16、zlema_21、kama_10、vip_14/vim_14、supertrend_10/supertrend_dir）
 #   downstream: zephyr.data.implementations.internal_compute_provider（批量计算写入 c1_market.technical_indicator）；sleeve alpha 择时；volatility.py/reversal.py 复用 _ema
 # [/ALGO_FLOW]
 #
@@ -126,6 +135,7 @@
 # A1 -.->|断点| CCI
 # A1 -.->|断点| SAR
 # A1 -.->|断点| DKX
+# A1 -.->|断点| TREND2A
 # A2 -.->|断点| MACD
 # A4 -.->|断点| ADX
 # MACD --> O1
@@ -133,6 +143,7 @@
 # CCI --> O1
 # SAR --> O1
 # DKX --> O1
+# TREND2A --> O1
 """
 
 from __future__ import annotations
@@ -171,6 +182,20 @@ def _wma(series: pd.Series, n: int) -> pd.Series:
     """
     weights = np.arange(1, n + 1, dtype=float)
     return series.rolling(window=n).apply(lambda x: np.dot(x, weights) / weights.sum(), raw=True)
+
+
+def _true_range(high: pd.Series, low: pd.Series, close: pd.Series) -> pd.Series:
+    """真实波幅 TR = max(H-L, |H-Cp|, |L-Cp|)，首行=H-L。
+
+    与 volatility._true_range 同式——volatility 单向依赖本模块（_ema），
+    此处独立定义避免循环导入（VORTEX/SUPERTREND 使用）。
+    """
+    prev_close = close.shift(1)
+    tr = pd.concat(
+        [high - low, (high - prev_close).abs(), (low - prev_close).abs()],
+        axis=1,
+    ).max(axis=1)
+    return tr
 
 
 def _di(high: pd.Series, low: pd.Series, close: pd.Series, n: int) -> tuple[pd.Series, pd.Series]:
@@ -541,3 +566,194 @@ class DKX(TechnicalIndicatorBase):
         dkx = weighted / (n * (n + 1) / 2)
         dkx_ma = dkx.rolling(window=ma_n).mean()
         return pd.DataFrame({f"dkx_{n}": dkx, f"dkx_ma{ma_n}": dkx_ma}, index=data.index)
+
+
+@TechnicalIndicatorRegistry.register
+class HMA(TechnicalIndicatorBase):
+    """Hull 均线（Hull Moving Average）。"""
+
+    meta = TechnicalIndicatorMeta(
+        indicator_id="hma",
+        name="Hull均线",
+        category="trend",
+        output_columns=["hma_16"],
+        input_columns=["close"],
+        params={"period": 16},
+        version="1.0.0",
+        description="HMA=WMA(2×WMA(C,N/2)−WMA(C,N), ⌊√N⌋)，低滞后高平滑",
+    )
+
+    def compute(self, data: pd.DataFrame, **kwargs) -> pd.DataFrame:
+        self.validate(data)
+        if data.empty:
+            return pd.DataFrame(columns=self.meta.output_columns)
+        params = self.get_params(**kwargs)
+        n = params["period"]
+        half = _wma(data["close"], max(2, n // 2))
+        full = _wma(data["close"], n)
+        raw = 2 * half - full
+        hma = _wma(raw, max(1, int(np.sqrt(n))))
+        return pd.DataFrame({f"hma_{n}": hma}, index=data.index)
+
+
+@TechnicalIndicatorRegistry.register
+class ZLEMA(TechnicalIndicatorBase):
+    """零滞后 EMA（Zero-Lag EMA）。"""
+
+    meta = TechnicalIndicatorMeta(
+        indicator_id="zlema",
+        name="零滞后EMA",
+        category="trend",
+        output_columns=["zlema_21"],
+        input_columns=["close"],
+        params={"period": 21},
+        version="1.0.0",
+        description="lag=(N−1)/2；ZLEMA=EMA(2C−REF(C,lag))，误差修正项抵消 EMA 滞后",
+    )
+
+    def compute(self, data: pd.DataFrame, **kwargs) -> pd.DataFrame:
+        self.validate(data)
+        if data.empty:
+            return pd.DataFrame(columns=self.meta.output_columns)
+        params = self.get_params(**kwargs)
+        n = params["period"]
+        lag = (n - 1) // 2
+        de_lagged = 2 * data["close"] - data["close"].shift(lag)
+        zlema = _ema(de_lagged, n)
+        return pd.DataFrame({f"zlema_{n}": zlema}, index=data.index)
+
+
+@TechnicalIndicatorRegistry.register
+class KAMA(TechnicalIndicatorBase):
+    """Kaufman 自适应均线（Kaufman's Adaptive Moving Average）。"""
+
+    meta = TechnicalIndicatorMeta(
+        indicator_id="kama",
+        name="Kaufman自适应均线",
+        category="trend",
+        output_columns=["kama_10"],
+        input_columns=["close"],
+        params={"period": 10, "fast": 2, "slow": 30},
+        version="1.0.0",
+        description="ER=|C−C_N|/Σ|ΔC|；SC=(ER×(2/(f+1)−2/(s+1))+2/(s+1))²；KAMA 逐 bar 递推",
+    )
+
+    def compute(self, data: pd.DataFrame, **kwargs) -> pd.DataFrame:
+        self.validate(data)
+        if data.empty:
+            return pd.DataFrame(columns=self.meta.output_columns)
+        params = self.get_params(**kwargs)
+        n, fast, slow = params["period"], params["fast"], params["slow"]
+        close = data["close"]
+        change = (close - close.shift(n)).abs()
+        volatility = close.diff().abs().rolling(window=n).sum()
+        er = change / volatility
+        fast_sc = 2.0 / (fast + 1)
+        slow_sc = 2.0 / (slow + 1)
+        sc = (er * (fast_sc - slow_sc) + slow_sc) ** 2
+        # 逐 bar 递推（ER 逐日变化，无闭式滚动解；SAR 同族实现）
+        kama_values = np.full(len(close), np.nan)
+        closes = close.to_numpy(dtype=float)
+        sc_vals = sc.to_numpy()
+        prev = np.nan
+        # 种子=第 N 根收盘价（预热窗口结束点）
+        for i in range(len(closes)):
+            if i < n or np.isnan(sc_vals[i]):
+                if i == n - 1:
+                    prev = closes[i]
+                    kama_values[i] = prev
+                continue
+            prev = prev + sc_vals[i] * (closes[i] - prev)
+            kama_values[i] = prev
+        kama = pd.Series(kama_values, index=data.index)
+        return pd.DataFrame({f"kama_{n}": kama}, index=data.index)
+
+
+@TechnicalIndicatorRegistry.register
+class VORTEX(TechnicalIndicatorBase):
+    """涡旋指标（Vortex Indicator）。"""
+
+    meta = TechnicalIndicatorMeta(
+        indicator_id="vortex",
+        name="涡旋指标",
+        category="trend",
+        output_columns=["vip_14", "vim_14"],
+        input_columns=["high", "low", "close"],
+        params={"period": 14},
+        version="1.0.0",
+        description="VI+=Σ|H−L_prev|/ΣTR；VI−=Σ|L−H_prev|/ΣTR；VIP 上穿 VIM 看涨",
+    )
+
+    def compute(self, data: pd.DataFrame, **kwargs) -> pd.DataFrame:
+        self.validate(data)
+        if data.empty:
+            return pd.DataFrame(columns=self.meta.output_columns)
+        params = self.get_params(**kwargs)
+        n = params["period"]
+        prev_close = data["close"].shift(1)
+        vmp = (data["high"] - data["low"].shift(1)).abs()
+        vmn = (data["low"] - data["high"].shift(1)).abs()
+        tr = _true_range(data["high"], data["low"], data["close"])
+        tr_sum = tr.rolling(window=n).sum()
+        vip = vmp.rolling(window=n).sum() / tr_sum
+        vim = vmn.rolling(window=n).sum() / tr_sum
+        return pd.DataFrame({f"vip_{n}": vip, f"vim_{n}": vim}, index=data.index)
+
+
+@TechnicalIndicatorRegistry.register
+class SUPERTREND(TechnicalIndicatorBase):
+    """超级趋势（Supertrend，10/3 通通行情口径）。"""
+
+    meta = TechnicalIndicatorMeta(
+        indicator_id="supertrend",
+        name="超级趋势",
+        category="trend",
+        output_columns=["supertrend_10", "supertrend_dir"],
+        input_columns=["high", "low", "close"],
+        params={"period": 10, "multiplier": 3.0},
+        version="1.0.0",
+        description="基础带=(H+L)/2±mul×ATR；带随趋势单向收紧；收盘穿越带→翻转；dir=1 多/−1 空",
+    )
+
+    def compute(self, data: pd.DataFrame, **kwargs) -> pd.DataFrame:
+        self.validate(data)
+        if data.empty:
+            return pd.DataFrame(columns=self.meta.output_columns)
+        params = self.get_params(**kwargs)
+        n, mult = params["period"], params["multiplier"]
+        high, low, close = data["high"], data["low"], data["close"]
+        atr = _true_range(high, low, close).rolling(window=n).mean()
+        mid = (high + low) / 2
+        upper_basic = mid + mult * atr
+        lower_basic = mid - mult * atr
+        # 逐 bar 递推：final 带只随趋势单向收紧；收盘穿越带→翻转（canonical close 口径）
+        ub = upper_basic.to_numpy()
+        lb = lower_basic.to_numpy()
+        c = close.to_numpy()
+        m = len(c)
+        st = np.full(m, np.nan)
+        direction = np.full(m, np.nan)  # 预热期 NaN，不冒充方向信号
+        final_ub = np.nan
+        final_lb = np.nan
+        prev_close = np.nan
+        trend = 0.0
+        for i in range(m):
+            if np.isnan(ub[i]) or np.isnan(lb[i]):
+                continue
+            # final 带收紧规则：带宽只能朝趋势方向收，除非前收越带解锁反向放宽
+            if np.isnan(final_ub):
+                final_ub, final_lb = ub[i], lb[i]
+                trend = 1.0 if c[i] >= mid.to_numpy()[i] else -1.0
+            else:
+                final_ub = ub[i] if (ub[i] < final_ub or prev_close > final_ub) else final_ub
+                final_lb = lb[i] if (lb[i] > final_lb or prev_close < final_lb) else final_lb
+                if trend == 1.0 and c[i] < final_lb:
+                    trend = -1.0
+                elif trend == -1.0 and c[i] > final_ub:
+                    trend = 1.0
+            prev_close = c[i]
+            direction[i] = trend
+            st[i] = final_lb if trend == 1.0 else final_ub
+        return pd.DataFrame(
+            {f"supertrend_{n}": st, "supertrend_dir": direction}, index=data.index
+        )

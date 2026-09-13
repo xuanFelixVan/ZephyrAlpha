@@ -35,6 +35,11 @@ CCI = TechnicalIndicatorRegistry.get("cci")
 SAR = TechnicalIndicatorRegistry.get("sar")
 TRIX = TechnicalIndicatorRegistry.get("trix")
 DKX = TechnicalIndicatorRegistry.get("dkx")
+HMA = TechnicalIndicatorRegistry.get("hma")
+ZLEMA = TechnicalIndicatorRegistry.get("zlema")
+KAMA = TechnicalIndicatorRegistry.get("kama")
+VORTEX = TechnicalIndicatorRegistry.get("vortex")
+SUPERTREND = TechnicalIndicatorRegistry.get("supertrend")
 
 # 期望契约（catalog §2.1）：indicator_id → (name, output_columns)
 EXPECTED = {
@@ -49,10 +54,15 @@ EXPECTED = {
     "sar": ("抛物线指标", ["sar"]),
     "trix": ("三重指数平滑平均", ["trix", "trma"]),
     "dkx": ("多空线", ["dkx_20", "dkx_ma10"]),
+    "hma": ("Hull均线", ["hma_16"]),
+    "zlema": ("零滞后EMA", ["zlema_21"]),
+    "kama": ("Kaufman自适应均线", ["kama_10"]),
+    "vortex": ("涡旋指标", ["vip_14", "vim_14"]),
+    "supertrend": ("超级趋势", ["supertrend_10", "supertrend_dir"]),
 }
 
 # 已施工算法的指标（version >= 1.0.0）
-IMPLEMENTED = {"ma", "ema", "wma", "dema", "macd", "adx", "dmi", "cci", "sar", "trix", "dkx"}
+IMPLEMENTED = {"ma", "ema", "wma", "dema", "macd", "adx", "dmi", "cci", "sar", "trix", "dkx", "hma", "zlema", "kama", "vortex", "supertrend"}
 # 仍为骨架的指标（compute 抛 NotImplementedError）
 SKELETON = set(EXPECTED) - IMPLEMENTED
 
@@ -69,7 +79,7 @@ class TestTrendRegistered:
             assert iid in metas, f"趋势指标 '{iid}' 未注册"
 
     def test_count(self):
-        assert len(TechnicalIndicatorRegistry.list_by_category("trend")) == len(EXPECTED) == 11
+        assert len(TechnicalIndicatorRegistry.list_by_category("trend")) == len(EXPECTED) == 16
 
 
 class TestTrendMetaContract:
@@ -669,3 +679,84 @@ class TestDkxNumeric:
         result = DKX().compute(df)
         assert result["dkx_20"].iloc[:19].isna().all()
         assert result["dkx_20"].iloc[19:].notna().all()
+
+
+# ===========================================================================
+# 2026-09-14 主流热门批 2a：HMA/ZLEMA/KAMA/VORTEX/SUPERTREND 数值正确性
+# ===========================================================================
+
+
+class TestLowLagMaNumeric:
+    def test_hma_constant(self):
+        df = _make_ohlcv(40)
+        df["close"] = 100.0
+        result = HMA().compute(df)
+        assert (result["hma_16"].dropna() == 100.0).all()
+
+    def test_zlema_constant(self):
+        df = _make_ohlcv(40)
+        df["close"] = 100.0
+        result = ZLEMA().compute(df)
+        assert (result["zlema_21"].dropna() == 100.0).all()
+
+    def test_hma_warmup(self):
+        df = _make_ohlcv(40)
+        result = HMA().compute(df)
+        assert result["hma_16"].isna().sum() >= 16  # WMA(N)+WMA(√N) 级联预热
+
+    def test_kama_constant(self):
+        df = _make_ohlcv(40)
+        df["close"] = 100.0
+        result = KAMA().compute(df)
+        assert (result["kama_10"].dropna() == 100.0).all()
+
+    def test_kama_tracks_uptrend(self):
+        df = _make_ohlcv(40)
+        df["close"] = np.linspace(100, 140, 40)
+        result = KAMA().compute(df)
+        valid = result["kama_10"].dropna()
+        assert (valid.diff().dropna() > 0).all()  # 上升趋势中 KAMA 逐日抬升
+
+
+class TestVortexNumeric:
+    def test_nonnegative(self):
+        df = _make_ohlcv(50)
+        result = VORTEX().compute(df)
+        for col in ("vip_14", "vim_14"):
+            assert (result[col].dropna() >= 0).all()
+
+    def test_uptrend_vip_dominates(self):
+        df = _make_ohlcv(50)
+        rising = np.linspace(100, 150, 50)
+        df["high"] = rising + 0.5
+        df["low"] = rising - 0.5
+        df["close"] = rising
+        result = VORTEX().compute(df)
+        assert (result["vip_14"].dropna() > result["vim_14"].dropna()).all()
+
+
+class TestSupertrendNumeric:
+    def test_uptrend_direction_positive(self):
+        df = _make_ohlcv(60)
+        rising = np.linspace(100, 160, 60)
+        df["high"] = rising + 0.5
+        df["low"] = rising - 0.5
+        df["close"] = rising
+        result = SUPERTREND().compute(df)
+        assert (result["supertrend_dir"].dropna() == 1.0).all()
+
+    def test_direction_binary(self):
+        df = _make_ohlcv(60)
+        result = SUPERTREND().compute(df)
+        valid = result["supertrend_dir"].dropna()
+        assert valid.isin([1.0, -1.0]).all()
+
+    def test_uptrend_line_below_close(self):
+        df = _make_ohlcv(60)
+        rising = np.linspace(100, 160, 60)
+        df["high"] = rising + 0.5
+        df["low"] = rising - 0.5
+        df["close"] = rising
+        result = SUPERTREND().compute(df)
+        pair = result.dropna()
+        assert (pair["supertrend_10"] < pair["supertrend_dir"] * 0 + rising[-len(pair):]).all()

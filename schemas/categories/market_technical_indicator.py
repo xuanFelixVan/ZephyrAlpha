@@ -43,7 +43,7 @@ ClickHouse 实际表结构必须与本文件 DDL 一致；结构变更通过 app
 数据来源：
     data_source = 'internal'（纯本地 pandas/numpy 计算，非外部数据源下载）
     输入：c1_market.kline_{period} 的 OHLCV 数据（120min 由 kline_60min 两根聚合）
-    输出：72 个技术指标列（Nullable(Float64)），覆盖 6 类 49 个指标（2026-09-14 统计族批 +9 指标）
+    输出：82 个技术指标列（Nullable(Float64)），覆盖 6 类 56 个指标（2026-09-14 统计族批+9、主流热门批 2a +8）
 
 列设计说明：
     所有指标列均为 Nullable(Float64)——预热期无值时为 NULL（不前向填充，避免前视偏差）
@@ -83,6 +83,13 @@ CREATE TABLE IF NOT EXISTS c1_market.technical_indicator
     trma         Nullable(Float64)  COMMENT 'TRIX的移动平均',
     dkx_20       Nullable(Float64)  COMMENT '20日多空线',
     dkx_ma10     Nullable(Float64)  COMMENT '多空线10日移动平均',
+    hma_16       Nullable(Float64)  COMMENT '16日Hull均线',
+    zlema_21     Nullable(Float64)  COMMENT '21日零滞后EMA',
+    kama_10      Nullable(Float64)  COMMENT '10日Kaufman自适应均线',
+    vip_14       Nullable(Float64)  COMMENT '14日涡旋指标VI+',
+    vim_14       Nullable(Float64)  COMMENT '14日涡旋指标VI-',
+    supertrend_10  Nullable(Float64)  COMMENT '超级趋势线(10,3)',
+    supertrend_dir Nullable(Float64)  COMMENT '超级趋势方向(1=多,-1=空)',
 
     kdj_k        Nullable(Float64)  COMMENT 'KDJ K线',
     kdj_d        Nullable(Float64)  COMMENT 'KDJ D线',
@@ -106,6 +113,7 @@ CREATE TABLE IF NOT EXISTS c1_market.technical_indicator
     psy_ma6      Nullable(Float64)  COMMENT '心理线6日移动平均',
     lwr_1        Nullable(Float64)  COMMENT '慢速威廉LWR1(9,3,3)',
     lwr_2        Nullable(Float64)  COMMENT '慢速威廉LWR2(9,3,3)',
+    dpo_20       Nullable(Float64)  COMMENT '20日区间震荡',
 
     correl_30      Nullable(Float64)  COMMENT '30日close×volume滚动相关系数',
     beta_30        Nullable(Float64)  COMMENT '30日close对volume滚动beta系数',
@@ -114,6 +122,8 @@ CREATE TABLE IF NOT EXISTS c1_market.technical_indicator
     var_20         Nullable(Float64)  COMMENT '20日滚动总体方差(ddof=0)',
 
     atr_14       Nullable(Float64)  COMMENT '14日真实波幅',
+    natr_14      Nullable(Float64)  COMMENT '14日归一化真实波幅(TR/Close×100)',
+    trange       Nullable(Float64)  COMMENT '真实波幅原始值(首行=H-L)',
     boll_upper   Nullable(Float64)  COMMENT '布林带上轨',
     boll_middle  Nullable(Float64)  COMMENT '布林带中轨(MA20)',
     boll_lower   Nullable(Float64)  COMMENT '布林带下轨',
@@ -170,15 +180,15 @@ INSERT_COLUMNS = (
     # 趋势类
     "ma_5, ma_10, ma_20, ma_60, ema_12, ema_26, wma_10, dema_12, "
     "macd_dif, macd_dea, macd_hist, adx_14, pdi_14, mdi_14, cci_14, sar, trix, trma, "
-    "dkx_20, dkx_ma10, "
+    "dkx_20, dkx_ma10, hma_16, zlema_21, kama_10, vip_14, vim_14, supertrend_10, supertrend_dir, "
     # 动量类
     "kdj_k, kdj_d, kdj_j, rsi_6, rsi_12, rsi_24, wr_14, roc_12, mtm_12, mtmma_12, "
     "cmf_20, uos, ao, cmo_14, stochrsi, "
-    "bias_6, bias_12, bias_24, psy_12, psy_ma6, lwr_1, lwr_2, "
+    "bias_6, bias_12, bias_24, psy_12, psy_ma6, lwr_1, lwr_2, dpo_20, "
     # 统计族
     "correl_30, beta_30, linearreg_14, tsf_14, var_20, "
     # 波动类
-    "atr_14, boll_upper, boll_middle, boll_lower, "
+    "atr_14, natr_14, trange, boll_upper, boll_middle, boll_lower, "
     "kc_upper, kc_middle, kc_lower, dc_upper, dc_lower, "
     "stddev_20, boll_bw, boll_pctb, histvol_20, "
     # 成交量类

@@ -36,6 +36,7 @@ STOCHRSI = TechnicalIndicatorRegistry.get("stochrsi")
 BIAS = TechnicalIndicatorRegistry.get("bias")
 PSY = TechnicalIndicatorRegistry.get("psy")
 LWR = TechnicalIndicatorRegistry.get("lwr")
+DPO = TechnicalIndicatorRegistry.get("dpo")
 
 # 期望契约（catalog §2.2）
 EXPECTED = {
@@ -52,6 +53,7 @@ EXPECTED = {
     "bias": ("乖离率", ["bias_6", "bias_12", "bias_24"]),
     "psy": ("心理线", ["psy_12", "psy_ma6"]),
     "lwr": ("慢速威廉", ["lwr_1", "lwr_2"]),
+    "dpo": ("区间震荡", ["dpo_20"]),
 }
 
 IMPLEMENTED = set(EXPECTED)
@@ -80,7 +82,7 @@ class TestMomentumRegistered:
             assert iid in metas, f"动量指标 '{iid}' 未注册"
 
     def test_count(self):
-        assert len(TechnicalIndicatorRegistry.list_by_category("momentum")) == len(EXPECTED) == 13
+        assert len(TechnicalIndicatorRegistry.list_by_category("momentum")) == len(EXPECTED) == 14
 
 
 class TestMomentumMetaContract:
@@ -536,3 +538,18 @@ class TestLwrNumeric:
         df = pd.DataFrame({"open": close, "high": high, "low": low, "close": close, "volume": 1000.0})
         result = LWR().compute(df)
         assert (result["lwr_1"].dropna() == 0.0).all()
+
+
+class TestDpoNumeric:
+    def test_constant_zero(self):
+        df = _make_ohlcv(40)
+        df["close"] = 100.0
+        result = DPO().compute(df)
+        assert (result["dpo_20"].dropna() == 0.0).all()
+
+    def test_warmup_includes_shift(self):
+        df = _make_ohlcv(40)
+        result = DPO().compute(df)
+        # MA(20) 首值在第 19 行，再 shift(11) → 首个非 NaN 在第 30 行
+        assert result["dpo_20"].iloc[:30].isna().all()
+        assert result["dpo_20"].iloc[30:].notna().all()
