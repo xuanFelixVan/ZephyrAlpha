@@ -155,7 +155,7 @@ def load_valuation(start: str, end: str, fields: tuple[str, ...] = ("pe", "pb"))
 _FIN_METRICS: tuple[str, ...] = (
     "announce_date", "report_period", "np_excl_cum", "equity_incl_minority",
     "rev_q_yoy", "np_q_yoy", "total_current_assets", "total_current_liabilities",
-    "fcff_cum", "np_q", "np_cum",
+    "fcff_cum", "np_q", "np_cum", "np_ttm", "ocf_ttm", "rev_ttm", "operating_profit_cum",
 )
 _fin_cache: dict[str, pd.DataFrame] = {}
 

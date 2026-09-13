@@ -49021,6 +49021,34 @@ entries:
   desc_zh: ""
   desc_en: ""
   plain_zh: "tushare daily_basic 按交易日拉全市场估值（PE/PB/PS/股息率/总市值/流通市值）落 stock_indicator 表，幂等可全量重拉（ReplacingMergeTree 去重），单日三次退避重试防网络超时；解锁估值类策略翻译批的核心食材管道"
+- module_path: scripts/backtest/eval_f2_rework_variants.py
+  domain_id: D_BACKTEST
+  name_zh: "FQ-02 改造变体评估器"
+  name_en: ""
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "给现金流实现率因子试四种改造方案：月频周频、按市场风险状态加减仓，全部用同样成本和门槛对比，结论是都不如原版月频——负结果也留痕防止以后走回头路。"
+- module_path: scripts/backtest/three_high_screen.py
+  domain_id: D_BACKTEST
+  name_zh: "产业链三高筛选车道"
+  name_en: "Three-High Supply-Chain Screen"
+  desc_zh: "ig_fact图谱BOM拆解+三高筛选（高增长/高壁垒/高利润），产出候选想法带出生证卸到strategy_intake"
+  desc_en: ""
+  plain_zh: "给策略工厂进货用的：在自家产业链图谱上自动找'卖得涨、难模仿、赚钱多'的黄金环节，每个环节生成一条候选策略想法（附证据和出生证），卸到进货台账等预审。不用大模型，纯数据查询和打分。"
+- module_path: scripts/backtest/translated/c4_21af8c66c15e_small_cap.py
+  domain_id: D_BACKTEST
+  name_zh: "小市值再优化三条"
+  name_en: ""
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "中小板综流通市值升序前9→MA5确认→前3等权日频（D1 全A近似中小板）。供 C4 快筛。"
+- module_path: scripts/backtest/translated/c4_dc5b80aa3614_tsmall100.py
+  domain_id: D_BACKTEST
+  name_zh: "TSmall100微盘三正"
+  name_en: ""
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "三正过滤(PB>0+ROE>0+OCF/营>0)市值升序前120→百只等权日频——DS-230 质量过滤有效 IS+1.07。供 C4 快筛。"
 
 battle_map_steps:
 - step_id: BM-BUY-05

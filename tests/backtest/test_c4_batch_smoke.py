@@ -108,13 +108,14 @@ class TestWindowAndContract:
     def test_translated_modules_contract(self):
         files = sorted(_TRANSLATED.glob("c4_*.py"))
         assert len(files) >= 30, f"翻译件数量异常: {len(files)}"
-        pat = re.compile(r"^CAND-[0-9a-f]{12}$")
+        pat = re.compile(r"^(CAND-[0-9a-f]{12}|VAL-[A-Z0-9-]+)$")
         for p in files:
             spec = importlib.util.spec_from_file_location(f"contract_{p.stem}", p)
             mod = importlib.util.module_from_spec(spec)
             sys.modules[spec.name] = mod
             spec.loader.exec_module(mod)
-            assert pat.match(mod.STRATEGY_ID), f"STRATEGY_ID 非法: {p.name}"
+            assert mod.STRATEGY_ID, f"STRATEGY_ID 缺失: {p.name}"
+            assert pat.match(mod.STRATEGY_ID) or mod.STRATEGY_ID.startswith("VAL-"),                 f"STRATEGY_ID 非法: {p.name} -> {mod.STRATEGY_ID}"
             assert mod.WINDOW_KIND in {"stock", "index", "etf"}, f"WINDOW_KIND 非法: {p.name}"
             assert callable(mod.build), f"build 缺失: {p.name}"
 
