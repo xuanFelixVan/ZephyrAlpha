@@ -66,14 +66,14 @@ D_BACKTEST (镜像实盘路径 via MatchingEngine+Portfolio+metrics, DecisionGat
 | 域 ID | 域名 | 层 | 节点数 |
 |-------|------|----|-------|
 | `D_GOVERNANCE` | 生命周期管理 | L2_domain | 774 |
-| `D_GOV_SCRIPTS` | 脚本治理 | L2_domain | 553 |
+| `D_GOV_SCRIPTS` | 脚本治理 | L2_domain | 557 |
 | `D_AUDITTEST` | 审计测试套件 | L2_domain | 519 |
 | `D_AUTONOMY_CORE` | 自治核心 | L1_foundation | 513 |
 | `D_INFRA_RUNTIME` | 运行时集成 | L0_infrastructure | 471 |
 | `D_DATA` | 数据接入层 | L1_foundation | 451 |
 | `D_SHARED` | 共享服务 | L0_infrastructure | 399 |
 | `D_GOV_AUDIT` | 审计追踪 | L2_domain | 390 |
-| `D_GOV_CODE_QUALITY` | 代码质量治理 | L1_foundation | 258 |
+| `D_GOV_CODE_QUALITY` | 代码质量治理 | L1_foundation | 260 |
 | `D_FEEDBACK_LOOP` | 反馈循环引擎 | L1_foundation | 242 |
 | `D_SECURITY` | 对抗验证 | L1_foundation | 237 |
 | `D_GOV_ENFORCEMENT` | 规则执行 | L2_domain | 210 |

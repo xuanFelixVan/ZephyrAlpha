@@ -30,7 +30,7 @@ language: zh
 | 指标 | 值 |
 |------|----|
 | commit_gates 目录 / Directory | `src\zephyr\gov_enforcement\commit_gates` |
-| 门禁 .py 文件数 / Gate files (excl. __init__) | 112 |
+| 门禁 .py 文件数 / Gate files (excl. __init__) | 113 |
 
 > 门禁按 priority 升序执行（AST/diff/路径/命名/依赖/blueprint 格式/depgraph 预登记/能力反查等维度）。
 <!-- AUTO-END:gate_counts -->
@@ -70,7 +70,7 @@ python scripts/governance/d5_architecture/generators/align_panoramas.py  # 五�
 | d12_ai_hallucination | d12_ai_hallucination / d12_ai_hallucination | 4 |
 | d1_structure | 目录结构验证 / Directory structure | 25 |
 | d2_links | 断链检测 / Broken link detection | 2 |
-| d3_metadata | frontmatter 校验 / Frontmatter validation | 25 |
+| d3_metadata | frontmatter 校验 / Frontmatter validation | 26 |
 | d4_paths | 路径守卫 / Path guard | 4 |
 | d5_architecture | 架构合规（最大） / Architecture compliance (largest) | 12 |
 | d6_security | 安全扫描 / Security scan | 15 |
@@ -78,7 +78,7 @@ python scripts/governance/d5_architecture/generators/align_panoramas.py  # 五�
 | d8_doc_sync | 文档一致性 / Doc consistency | 14 |
 | d9_knowledge | 知识库 / Knowledge base | 2 |
 | data_quality | data_quality / data_quality | 2 |
-| **合计** | **Total** | **171** |
+| **合计** | **Total** | **172** |
 <!-- AUTO-END:governance_script_counts -->
 
 ## 7. 基础设施件（永久系统）
