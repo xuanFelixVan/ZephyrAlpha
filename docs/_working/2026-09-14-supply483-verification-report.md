@@ -60,3 +60,18 @@ API 建议：`GET /api/company/{symbol}/supply_chain` 返回 `{suppliers:[], cus
 - 483 层验证后可信度：代码层 100%、方向层 99.96%（3 条错向已关）。
 - 双边行 7,337 条可直接支撑详情页上下游展示与图谱方向印证。
 - B 组 44,008 条客户名的二次代码化=下一增量批（官方数据补充主战场）。
+
+
+## 6. 追加（2026-09-14）：概念展示+代码化回填进展
+
+- **代码化回填已执行**：558 个客户名回写 to_symbol，B 组 44,008 行中 1,248 行升级为双边行（7,337→8,585），审计留痕 .runtime/audit/name_backfill_actions.json，可逆（edge_id 清单在案）。
+- **概念体系已落地**：stock_concept 表（22,111 行/3,365 公司/1,853 概念，市场分类标签已过滤），装载器 scripts/industry_graph/concept_ingest.py。
+- **概念展示规格（交 chainmap 前端会话）**：
+
+```sql
+-- 公司所属概念（详情页标签行）
+SELECT concept FROM stock_concept
+WHERE symbol=:sym AND valid_to IS NULL ORDER BY concept;
+```
+
+API 建议：`GET /api/company/{symbol}` 返回体并入 `concepts: []` 数组（与 §4 的 supply_chain 同源复用）；链图节点详情弹窗可加同名标签。概念动态更新未来接 akshare concept_sector 定期刷新。
