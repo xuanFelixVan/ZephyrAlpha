@@ -1,6 +1,6 @@
 /* R22 拆分版加载器：fetch 47 页面片段注入 main → 顺序加载 core/app1.js（宿主 chrome）→ 2026-09-12 拆件批 37 个页面引擎文件（保序）→ core/app2~4.js → features/backtest/bt-engine.js（回测页逻辑族，2026-09-12 自 core/ 迁入，依赖 app1 全局工具故居后）
  * 版本戳 ZK_BUILD：loader.js 经 ?v=Date.now() 破缓存加载，必为最新——页头品牌行若缺"b<版本>"即浏览器在跑旧代码（"改了看不到"类问题一键定位，2026-09-01 实证：⚑12 不显示=浏览器残留 2.5h 前旧 JS） */
-window.ZK_BUILD='20260912-1';
+window.ZK_BUILD='20260912-2';
 (function(){try{var el=document.querySelector('.tb-brand small');if(el&&(' '+el.textContent+' ').indexOf('b'+window.ZK_BUILD)<0)el.textContent+=' · b'+window.ZK_BUILD;}catch(e){}})();
 (function(){
   var PAGES = ["home", "overview", "warroom", "live", "sector", "sentiment", "news", "policy", "overseas", "t0", "review", "index", "position", "backtest", "experiment", "task", "fitness", "govana", "modledger", "sysstatus", "services", "pano", "projmap", "macro", "chainmap", "strategy", "factor", "stock", "screener", "calendar", "reglib", "tdm", "stockq", "cryptomarket", "cryptopos", "cryptostrat", "cryptobt", "cryptoinfo", "design", "modlib", "rating", "datasrc", "download", "bridge", "models", "aichat", "aitask"];
@@ -106,6 +106,8 @@ window.ZK_BUILD='20260912-1';
   }).then(function(){
     return loadJs('services/api.js');   /* 数据服务层·HTTP 通道（dashboard-api:8890，失败回退演示） */
   }).then(function(){
+    return loadJs('core/pool.js');   /* 作战池共享真源（ZK.Pool，localStorage zk-warroom-pool；chainmap/筛选器写、作战室读） */
+  }).then(function(){
     return loadJs('features/cost-line.js');   /* 成本线功能模块（模块契约 pilot，验收单 ACC-F-STOCKQ-COSTLINE） */
   }).then(function(){
     return loadJs('features/stockq/sq-stock-header.js');   /* 股票标题功能模块（模块契约，验收单 ACC-F-STOCKQ-STOCK-HEADER） */
@@ -135,6 +137,8 @@ window.ZK_BUILD='20260912-1';
     return loadJs('features/stockq/sq-quant-analysis.js');   /* 量化分析·右栏双源信号真源（验收单 ACC-F-STOCKQ-QUANT-ANALYSIS） */
   }).then(function(){
     return loadJs('features/warroom/wr-signal-strip.js');   /* 量化信号总览·warroom 聚合真源（验收单 ACC-F-WR-SIGNAL-STRIP） */
+  }).then(function(){
+    return loadJs('features/warroom/wr-pool.js');   /* 作战池面板·跨页共享选中真源 ZK.Pool（验收单 ACC-F-WR-POOL） */
   }).then(function(){
     return loadJs('core/app2.js');
   }).then(function(){

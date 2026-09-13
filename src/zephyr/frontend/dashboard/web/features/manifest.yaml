@@ -136,6 +136,18 @@ modules:
     acceptance: ACC-F-WR-SIGNAL-STRIP
     handbook: []
     status: active
+  - id: wr-pool
+    name: 作战池面板（跨页共享选中真源）
+    file: features/warroom/wr-pool.js
+    page: warroom
+    init: "IIFE 自举（warroom.html 容器 #wr-pool 注入 script 不执行，loader.js 显式加载；无 init/destroy 契约）"
+    destroy: none
+    depends: [ZK.api, ZK.bus, core/pool.js]   # 真源=ZK.Pool（localStorage zk-warroom-pool）；wr:pool 总线联动；写方=产业链受益清单/筛选器 scrPool
+    toggle: none
+    styles: pages/warroom.html 内联
+    acceptance: ACC-F-WR-POOL
+    handbook: []
+    status: active
   - id: bt-battle-stage
     name: 策略所处环节（作战地图阶段树+环节定位+撮合模式）
     file: features/backtest/bt-battle-stage.js

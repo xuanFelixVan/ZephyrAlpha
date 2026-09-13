@@ -175,7 +175,7 @@ function scrGoStock(code){
 }
 function scrOpCell(s){
   var a='<span style="color:var(--text);cursor:pointer;text-decoration:underline" onclick="scrGoStock(\''+s.code+'\')" title="去个股档案页">档案</span>';
-  if(scrInPool[s.code]) return a+' <span class="badge b-pass">已加入（演示）</span>';
+  if((window.ZK && ZK.Pool && ZK.Pool.has(s.code)) || scrInPool[s.code]) return a+' <span class="badge b-pass">已在池</span>';
   return a+' <span class="btn" style="padding:2px 10px;font-size:11px" onclick="scrPool(\''+s.code+'\')">入作战池</span>';
 }
 /* ---- I-8 循环升级 R10：个股档案搜索（stockSrchGo——池内切换/池外待接入负反馈） ---- */
@@ -242,11 +242,12 @@ function scrToggleCol(k,on){
   scrRenderTable();
 }
 function scrPool(code){
-  scrInPool[code]=1;
-  scrRenderTable();
   var nm='';
   SCR_STOCKS.forEach(function(s){ if(s.code===code) nm=s.name; });
-  scrToast(nm+' 已加入作战池（演示）——作战室 W1 作战池联动示意');
+  /* B8 解禁（Owner 2026-09-14 全部开工）：真源=ZK.Pool（localStorage zk-warroom-pool），作战室面板可见 */
+  var added = (window.ZK && ZK.Pool) ? ZK.Pool.add(code, nm, '筛选器') : false;
+  scrRenderTable();
+  scrToast(nm+' '+(added?'已入作战池（作战室「作战池」面板可见）':'已在作战池'));
 }
 function scrPreset(i){
   var p=SCR_PRESETS[i];

@@ -2788,6 +2788,64 @@ def chainmap_galaxy(market: str = Query("all", pattern="^(all|cn|global)$")) -> 
         return {"ok": False, "error": str(exc)[:200], "clusters": [], "links": [], "chains": []}
 
 
+def _cm_s21_flags(chains_out: list[dict[str, Any]], chain_edges_in: dict[str, list[tuple[str, str]]]) -> dict[str, dict[str, Any]]:
+    """S21 流程连通性链级标记（B7，需求卡 2026-09-11/全部开工 2026-09-14）：口径移植引擎
+    scripts/industry_graph/graph_quality_check._check_s21（2026-09-12 拓扑端点版）——
+    墓碑节点（名含"（已并入"）不计；实质节点≥3 且非行业锚点链才判；
+    入度0=源头/出度0=终端，无向 BFS 起点→终端可达=合规，端点缺失/不可达=断链。
+    簇内子图规模小，请求内现算零新表；advisory 语义由前端 ⚠ 弱化标注承载（不删卡）。"""
+    out: dict[str, dict[str, Any]] = {}
+    for ch in chains_out:
+        cid = ch["chain_id"]
+        alive = [n for n in ch["nodes"] if "（已并入" not in (n.get("name") or "")]
+        if len(alive) < 3:
+            continue
+        cname = ch.get("name") or ""
+        alive_names = {n.get("name") or "" for n in alive}
+        if alive_names <= {cname, cname + "行业", "行业聚合"}:
+            continue
+        alive_ids = {n["node_id"] for n in alive}
+        edges = [(a, b) for a, b in chain_edges_in.get(cid, []) if a in alive_ids and b in alive_ids]
+        indeg: dict[str, int] = {}
+        outdeg: dict[str, int] = {}
+        adj: dict[str, list[str]] = {}
+        for a, b in edges:
+            outdeg[b] = outdeg.get(b, 0) + 1
+            indeg[a] = indeg.get(a, 0) + 1
+            adj.setdefault(a, []).append(b)
+            adj.setdefault(b, []).append(a)
+        alive_list = list(alive_ids)
+        starts = [n for n in alive_list if indeg.get(n, 0) == 0]
+        targets = {n for n in alive_list if outdeg.get(n, 0) == 0}
+        reason = ""
+        if not starts and not targets:
+            reason = "无拓扑端点(环/散点)"
+        else:
+            seen = set(starts)
+            queue = list(starts)
+            hit = False
+            while queue and not hit:
+                u = queue.pop()
+                if u in targets:
+                    hit = True
+                    break
+                for v in adj.get(u, []):
+                    if v not in seen:
+                        seen.add(v)
+                        queue.append(v)
+            if not hit:
+                if not starts:
+                    reason = "无源头端点(入度均>=1,疑环)"
+                elif not targets:
+                    reason = "无终端端点(出度均>=1,疑环)"
+                else:
+                    reason = "拓扑端点间无连通路径"
+        if reason:
+            out[cid] = {"s21_broken": True,
+                        "s21_note": "S21 流程连通性：%s（实质环节 %d，结构边 %d）" % (reason, len(alive_ids), len(edges))}
+    return out
+
+
 @app.get("/api/chainmap-cluster")
 def chainmap_cluster(cid: str = Query(..., min_length=2, max_length=8),
                      market: str = Query("all", pattern="^(all|cn|global)$")) -> dict[str, Any]:
@@ -2823,6 +2881,16 @@ def chainmap_cluster(cid: str = Query(..., min_length=2, max_length=8),
             all_edges = cur.fetchall()
             cur.execute(_SQL_CM_NODE_TOPCOMPS_BY_CHAIN, (ids,))
             topcomp_rows = cur.fetchall()
+            # B5 下钻子链元数据（child_chain_id→子链名/族归属）：须在 conn.close() 前查
+            cc_ids = {r[5] for r in node_rows if len(r) > 5 and r[5]}
+            cc_meta: dict[str, dict[str, str]] = {}
+            if cc_ids:
+                cur.execute("SELECT chain_id, name FROM ig_chain WHERE chain_id = ANY(%s)", (list(cc_ids),))
+                cc_names = {r[0]: r[1] for r in cur.fetchall()}
+                cc_cluster = {c["chain_id"]: c.get("cluster", "") for c in g["chains"]}
+                for _cc in cc_ids:
+                    if _cc in cc_names:
+                        cc_meta[_cc] = {"chain_id": _cc, "name": cc_names[_cc], "cluster": cc_cluster.get(_cc, "")}
             conn.close()
         except Exception:
             try:
@@ -2865,7 +2933,7 @@ def chainmap_cluster(cid: str = Query(..., min_length=2, max_length=8),
             ca, cb = node_chain_of.get(a), node_chain_of.get(b)
             if ca is not None and ca == cb:
                 chain_edges_in.setdefault(ca, []).append((a, b))
-        for nid, ch, name, tier, frole in node_rows:
+        for nid, ch, name, tier, frole, _cc, _al in node_rows:
             chain_nodes.setdefault(ch, []).append((nid, tier or ""))
         # 布局参数（iFinD 等距流程图前端重构 2026-09-12）：layer=拓扑层 int（-1 未分层）/
         # zone=职能分区 int（0..4，区名 _CM_ZONE_NAMES）；col 字符串保留向后兼容，前端不再消费
@@ -2873,7 +2941,7 @@ def chainmap_cluster(cid: str = Query(..., min_length=2, max_length=8),
         layermap: dict[str, int] = {}
         zonemap: dict[str, int] = {}
         chain_meta: dict[str, tuple[dict[str, str], dict[str, str], dict[str, int]]] = {}
-        for nid, ch, name, tier, frole in node_rows:
+        for nid, ch, name, tier, frole, _cc, _al in node_rows:
             names_m, fr_m, indeg_m = chain_meta.setdefault(ch, ({}, {}, {}))
             names_m[nid] = name
             fr_m[nid] = (frole or "").strip()
@@ -2888,19 +2956,36 @@ def chainmap_cluster(cid: str = Query(..., min_length=2, max_length=8),
         for _ch, (names_m, fr_m, indeg_m) in chain_meta.items():
             for _nid, _z in _cm_node_zones(names_m, fr_m, indeg_m).items():
                 zonemap[_nid] = _z
-        for nid, ch, name, tier, frole in node_rows:
-            nodes_by_chain[ch].append({"node_id": nid, "name": name, "tier": tier or "",
-                                       "col": colmap.get(nid) or _cm_col(tier),
-                                       "layer": layermap.get(nid, -1), "zone": zonemap.get(nid, 0),
-                                       "function_role": (frole or "").strip(),
-                                       "n_companies": ncomp.get(nid, 0), "equity": eq_by_node.get(nid),
-                                       "companies": topcomps.get(nid, [])})
+        # B5 下钻（child_chain_id）+环节别名（aliases）：元数据已在 conn.close() 前查好（cc_meta）
+        import json as _json
+        for nid, ch, name, tier, frole, _cc, _al in node_rows:
+            entry = {"node_id": nid, "name": name, "tier": tier or "",
+                     "col": colmap.get(nid) or _cm_col(tier),
+                     "layer": layermap.get(nid, -1), "zone": zonemap.get(nid, 0),
+                     "function_role": (frole or "").strip(),
+                     "n_companies": ncomp.get(nid, 0), "equity": eq_by_node.get(nid),
+                     "companies": topcomps.get(nid, [])}
+            if _cc and _cc in cc_meta:
+                entry["child_chain"] = cc_meta[_cc]
+            if _al:
+                try:
+                    al = _json.loads(_al) if isinstance(_al, str) else _al
+                    if isinstance(al, list) and al:
+                        entry["aliases"] = [str(x) for x in al][:6]
+                except Exception:
+                    pass
+            nodes_by_chain[ch].append(entry)
         for lst in nodes_by_chain.values():
             # 链内按 function_role 分组聚集（八值展示序），同组内公司数降序（项 2 分列适配）
             lst.sort(key=lambda n: (_cm_fr_rank(n["function_role"]), -n["n_companies"], n["name"]))
         chains_out = [{**c, "nodes": nodes_by_chain[c["chain_id"]]} for c in
                       sorted(members, key=lambda c: -c["n_companies"])]
         edges_out = [[a, b, rel] for a, b, rel in all_edges if a in nid_set and b in nid_set]
+        # S21 流程连通性链级标记（B7）：断链链挂 s21_broken/s21_note，前端 ⚠ 弱化标注
+        s21 = _cm_s21_flags(chains_out, chain_edges_in)
+        for _c in chains_out:
+            if _c["chain_id"] in s21:
+                _c.update(s21[_c["chain_id"]])
         data = {"cluster": cluster, "chains": chains_out, "edges": edges_out, "market": market}
         _CM_CLUSTER_CACHE[(market, cid)] = data
         return {"ok": True, **data}
@@ -3032,7 +3117,7 @@ _CM_CAT_IND_ALIAS: dict[str, str] = {
 _SQL_CM_NODES_ALL = ("SELECT node_id, chain_id FROM ig_node"
                      " WHERE name NOT LIKE '%%（已并入%%' AND valid_to IS NULL")
 _SQL_CM_NODES_BY_CHAIN = (
-    "SELECT node_id, chain_id, name, tier, function_role FROM ig_node"
+    "SELECT node_id, chain_id, name, tier, function_role, child_chain_id, aliases FROM ig_node"
     " WHERE chain_id = ANY(%s) AND name NOT LIKE '%%（已并入%%' AND valid_to IS NULL"
 )
 _SQL_CM_NODE_COMPS_BY_CHAIN = (

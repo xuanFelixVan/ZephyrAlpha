@@ -64,3 +64,15 @@ ttl: task_bound
 3. child_chain_id 下钻树：等后端字段（面包屑已承载 L1→L2→L3）。
 4. profile.country 值缺失（字段在、数据缺，002371 实测 None）——数据侧问题。
 5. B8 作战池：HOLD（等 warroom 领地裁定）；浅色主题：挂起（全局项）。
+
+
+---
+
+## 复启附记（2026-09-14"全部开工"批）
+
+- **S21（B7）落地**：_cm_s21_flags 请求内现算（口径移植引擎 _check_s21 拓扑端点版：墓碑过滤/实质≥3/锚点豁免/入度0=源头/出度0=终端/无向 BFS），断链链挂 s21_broken+s21_note，前端链 chip 琥珀 ⚠断链+选单轨 ⚠ 前缀+悬浮 note。合成单测三态全过（环链命中/线性通过/墓碑过滤跳过）；当前图谱 0 断链=健康空态（引擎 9-12 口径修正后伪断链清零的延续）。
+- **B8 作战池落地**：core/pool.js（ZK.Pool，localStorage zk-warroom-pool，50 FIFO，wr:pool 广播）+warroom wr-pool 面板（新功能点 F-WR-POOL/ACC-F-WR-POOL）+筛选器 scrPool/产业链受益清单双写方真实入池。e2e：筛选器入池→作战室面板可见→移出，全过。
+- **B5 下钻点亮**：ig_node.child_chain_id 列已建、11 节点有数据（半导体材料/半导体/先进封装三链）；_cm_cluster 输出 child_chain{name,cluster}+aliases 字段，前端立方体 ⤵ 徽章点击跳子链（cm:goto-chain 契约）、别名进悬浮。C05 实测 10 节点可下钻。
+- **领地演进**：api_server chainmap 段（_cm_*）由本会话接手（原后端会话 st-igbe-20260910 已不在活跃名单；三期下半场/收尾批两指令均授权"前端+API 施工 AI"），编辑前 git diff 核对基线+CAS 重试。
+- **排障**：PC-018 重启假成功两次（代理排定未生效，进程 StartTime 23:30 老进程照常服务）→taskkill+手动拉起根治；ig_chain 无 cluster 列（簇归属=galaxy 计算产物）自查 SQL 修正；并发 CAS 连拒=他会话热写，避让重试窗口通过。
+- 本批 commit：见 git log B4r4 后续（S21+作战池+B5 下钻+aliases 同文件合并单原子提交）。

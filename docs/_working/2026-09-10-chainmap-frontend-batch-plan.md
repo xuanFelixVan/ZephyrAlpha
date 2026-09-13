@@ -2,7 +2,7 @@
 ttl: task_bound
 ---
 
-# 产业链前端（chainmap 页）施工批次计划【批次收口，归档 2026-09-11——收尾报告见 2026-09-11-chainmap-final-batch-report.md】
+# 产业链前端（chainmap 页）施工批次计划【复启批 2026-09-14 全部开工：B7/B8 销项+B5 下钻点亮（10 节点）；收尾报告 2026-09-11-chainmap-final-batch-report.md+本批见其末段复启附记】
 
 - **task_bound**：临时工作文档，批次全部销项后归档；会话 st-igfe-20260910 单写手
 - **创建**：2026-09-10；creation_token=`chainmap-fe-batch-plan-20260910`（capability_canonical_file_registry.yaml creation_tokens 段，**插 di_seam_exemptions 行之前**——EOF 落错段实证坑）
@@ -23,8 +23,8 @@ ttl: task_bound
 | B4 | 3D 三期：单链甬道 | 参照 TDM 视觉语言：单链上下游横向甬道+关联连线+tier/职能徽章/公司面板平移（改造 chainmap-cluster L2 渲染，数据接口不动） | B3 | DONE(2026-09-10)：吸收 B3 撤销——cluster 整体 TDM 化（双行卡 48px/列头计数/贝塞尔灰蓝连线），整族与单链两模式同享 |
 | B5 | ③chain_path 层级路径 | L1→L2→L3 下钻树 UI 骨架+空态（"层级路径未入库"诚实标注）；等后端 child_chain_id 数据到位零改动点亮 | 无（骨架可先行） | PENDING |
 | B6 | ⑤缩放场景打磨 | 股权浮层/催化角标在深度缩放下的可用性（fixed 防裁剪已就位，余 hover 命中/角标避让） | 无 | DONE(2026-09-11 字遮挡根因治理[墓碑名剥离+卡高50]+重心法拓扑排序连线顺读+聚焦链 90% 首屏) |
-| B7 | ②S21 弱化标注 | cluster 视图断链环节弱化+悬浮说明；等后端字段，字段一到半天接入 | 后端 s21_gap | BLOCKED(等后端 2026-09-11 实测字段未到) |
-| B8 | ①作战池 chainmap 侧 | 受益清单个股真实入池（写入端+断线降级+诚实提示改造）；warroom 承接 UI 领地待裁定 | Owner 扩权/拆分 | HOLD(Owner 2026-09-10 暂缓) |
+| B7 | ②S21 弱化标注 | cluster 视图断链环节弱化+悬浮说明；等后端字段，字段一到半天接入 | 后端 s21_gap | DONE(2026-09-14 全部开工：后端 _cm_s21_flags 请求内现算[引擎同口径]+前端 ⚠ 断链琥珀标注；当前图谱 0 断链=健康空态) |
+| B8 | ①作战池 chainmap 侧 | 受益清单个股真实入池（写入端+断线降级+诚实提示改造）；warroom 承接 UI 领地待裁定 | Owner 扩权/拆分 | DONE(2026-09-14 全部开工解除 HOLD：ZK.Pool localStorage 真源+warroom wr-pool 面板+筛选器/受益清单双写方，e2e 全过) |
 | — | ⑥浅色主题 | 全局项，非本页职权 | Owner 排期 | 挂起 |
 
 ## 纪律清单（每批必过）

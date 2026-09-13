@@ -289,14 +289,20 @@
       return '<text x="' + cx + '" y="' + (cy + dy + i * 15) + '" text-anchor="middle" font-size="' + fs +
         '" font-weight="700" fill="' + c[4] + '">' + esc(l) + '</text>';
     }).join('');
+    var drill = node.child_chain ? '<g class="cm-drill" data-child="' +
+      esc(JSON.stringify(node.child_chain)) + '" style="cursor:pointer">' +
+      '<title>下钻子链：' + esc(node.child_chain.name || '') + '（点击进入）</title>' +
+      '<circle cx="' + (cx + hw - 8) + '" cy="' + (cy - hh - 4) + '" r="9" fill="#1a2436" stroke="#3d8bff"/>' +
+      '<text x="' + (cx + hw - 8) + '" y="' + (cy - hh + 0) + '" text-anchor="middle" font-size="10" fill="#7db4e8">⤵</text></g>' : '';
+    var aliasTip = (node.aliases && node.aliases.length) ? '（别名：' + node.aliases.join(' / ') + '）' : '';
     return '<g class="cm-nd' + (variant === 'empty' ? ' empty0' : '') + '" data-node="' + node.node_id + '">' +
-      '<title>' + esc(node.name) + '</title>' +
+      '<title>' + esc(node.name + aliasTip) + '</title>' +
       '<polygon class="cube-top" points="' + cx + ',' + (cy - hh) + ' ' + (cx + hw) + ',' + cy + ' ' + cx + ',' + (cy + hh) + ' ' + (cx - hw) + ',' + cy +
       '" fill="' + c[0] + '" stroke="' + c[3] + '" stroke-width="' + sw + '"' + dash + '/>' +
       '<polygon points="' + (cx - hw) + ',' + cy + ' ' + cx + ',' + (cy + hh) + ' ' + cx + ',' + (cy + hh + dp) + ' ' + (cx - hw) + ',' + (cy + dp) +
       '" fill="' + c[1] + '" stroke="' + c[3] + '" stroke-width="1"/>' +
       '<polygon points="' + (cx + hw) + ',' + cy + ' ' + cx + ',' + (cy + hh) + ' ' + cx + ',' + (cy + hh + dp) + ' ' + (cx + hw) + ',' + (cy + dp) +
-      '" fill="' + c[2] + '" stroke="' + c[3] + '" stroke-width="1"/>' + txt;
+      '" fill="' + c[2] + '" stroke="' + c[3] + '" stroke-width="1"/>' + txt + drill;
   }
 
   function eqBadgeSvg(cx, cy, node) {
@@ -343,10 +349,11 @@
     view.chains.forEach(function (ch) {
       var lay = ch._layout, ox = ch._ox, oy = ch._oy;
       var g = '<g class="cm-ch" data-chain="' + ch.chain_id + '">';
-      var title = ch.name + ' · ' + ch.n_companies + ' 公司';
+      var title = ch.name + ' · ' + ch.n_companies + ' 公司' + (ch.s21_broken ? ' · ⚠断链' : '');
       g += '<g class="cm-chainchip" data-chain="' + ch.chain_id + '">' +
+        (ch.s21_broken ? '<title>' + esc(ch.s21_note || 'S21 流程连通性断链') + '</title>' : '') +
         '<rect x="' + ox + '" y="' + oy + '" width="' + Math.max(lay.W, 200) + '" height="20" fill="rgba(0,0,0,0)"/>' +
-        '<text x="' + (ox + 2) + '" y="' + (oy + 15) + '" font-size="12.5" font-weight="700" fill="#8fb0ea">' + esc(title) + '</text></g>';
+        '<text x="' + (ox + 2) + '" y="' + (oy + 15) + '" font-size="12.5" font-weight="700" fill="' + (ch.s21_broken ? '#e6a23c' : '#8fb0ea') + '">' + esc(title) + '</text></g>';
       var anchorBlock = null;
       lay.blocks.forEach(function (b) {
         var by = oy + 24 + b.y;
@@ -460,6 +467,18 @@
         else focusChain(cid, ch.name);
         return;
       }
+      var dr = e.target.closest('.cm-drill');
+      if (dr) {   /* B5 下钻：子链跳转（cm:goto-chain 契约） */
+        e.stopPropagation();
+        try {
+          var meta = JSON.parse(dr.getAttribute('data-child'));
+          if (meta && meta.chain_id) {
+            ZK.bus.emit('cm:view', { view: 'cluster' });
+            ZK.bus.emit('cm:goto-chain', { chain_id: meta.chain_id, cluster: meta.cluster, chain_name: meta.name, market: C.market });
+          }
+        } catch (err) { /* 坏数据忽略 */ }
+        return;
+      }
       var more = e.target.closest('.chipmore');
       var nd = e.target.closest('.cm-nd');
       var hit = more || nd;
@@ -522,7 +541,7 @@
     d.chains.forEach(function (ch) {
       var r = document.createElement('div');
       r.className = 'cm-rail-i' + (ch.chain_id === activeId ? ' act' : '');
-      r.innerHTML = '<span class="nm" title="' + ch.name + '">' + ch.name + '</span><span class="ct">' + ch.n_companies + '</span>';
+      r.innerHTML = '<span class="nm" title="' + esc(ch.s21_note || ch.name) + '">' + (ch.s21_broken ? '⚠ ' : '') + ch.name + '</span><span class="ct">' + ch.n_companies + '</span>';
       r.addEventListener('click', function () {
         if (C.focusChain === ch.chain_id) unfocusFocus();
         else focusChain(ch.chain_id, ch.name);
@@ -718,9 +737,11 @@
           Array.prototype.forEach.call(side.querySelectorAll('.cm-ben-r .wr[data-sym]'), function (el) {
             el.addEventListener('click', function (ev) {
               ev.stopPropagation();
+              /* B8 解禁（Owner 2026-09-14 全部开工）：真源=ZK.Pool，作战室「作战池」面板可见 */
+              var added = (window.ZK && ZK.Pool) ? ZK.Pool.add(el.getAttribute('data-sym'), el.getAttribute('data-name'), '产业链受益清单') : false;
               if (typeof go === 'function') go('warroom');
               if (typeof gToast === 'function') {
-                gToast('「' + (el.getAttribute('data-name') || '') + ' ' + el.getAttribute('data-sym') + '」来自催化受益清单——作战池选中接口为演示态，未真实入池');
+                gToast('「' + (el.getAttribute('data-name') || '') + ' ' + el.getAttribute('data-sym') + '」' + (added ? '已真实入池——作战室「作战池」面板可见' : '已在作战池——作战室面板可见'));
               }
             });
           });

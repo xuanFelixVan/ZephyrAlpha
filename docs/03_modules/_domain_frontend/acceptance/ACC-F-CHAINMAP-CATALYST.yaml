@@ -8,8 +8,12 @@ feature_id: F-CHAINMAP-CATALYST
 feature_name: 催化剂角标（事件命中环节标"催"+受益清单段+作战池跳转）
 frozen_at: 2026-09-10
 frozen_by: ZephyrAlpha-Owner
-revision: 1
+revision: 2
 revision_policy: "修订=Owner 批准+改原文+revision 链留痕；AI 不可自改已冻结条项"
+
+# rev2 (2026-09-14, Owner 全部开工 B8 解禁): 受益清单「作战池→」由导航+演示提示改为真实入池
+# （ZK.Pool/localStorage zk-warroom-pool，source=产业链受益清单；作战室 wr-pool 面板承接），
+# 受益判定/清单渲染语义不变。
 
 # check 取值：目检（截图人工/AI 视觉对） | 机断（DOM/接口断言）
 # 后端盘点留痕（TRAE-086 truth_source_wiring，2026-09-10）：
