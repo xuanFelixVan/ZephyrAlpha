@@ -12247,3 +12247,7 @@ creation_tokens:
   created_by: st-fingov-20260912
   capability: schemas_package_marker
 di_seam_exemptions: []
+- file: docs/_working/2026-09-14-sim-platform-blueprint.md
+  token: sim-platform-blueprint-20260914
+  created_by: st-zcode-c4-20260912
+  capability: c4_batch_translation
