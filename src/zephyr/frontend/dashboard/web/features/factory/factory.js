@@ -593,6 +593,7 @@
           (it.members != null ? Math.round(it.members) : '—') + ' 只 · 合成 z <b style="color:#7db4e8">' +
           Number(it.total_z || 0).toFixed(2) + '</b> ' +
           (flags.length ? '<span class="bdg bdg-partial">' + flags.map(esc).join('+') + '</span>' : '<span class="bdg bdg-gray">未过旗线</span>') +
+          ' <span class="chip" style="cursor:pointer" data-th-sector="' + esc(it.sector) + '" title="在产业地图查看「' + esc(it.sector) + '」环节（搜索落位）">产业地图 ⇗</span>' +
           '<div style="margin-top:5px;display:flex;gap:5px;flex-wrap:wrap">' +
           pillars.map(function (p) {
             return '<span class="chip"><i>' + p[0] + '</i><b>' + (p[1] == null ? '—' : (p[1] >= 0 ? '+' : '') + Number(p[1]).toFixed(2) + 'σ') + '</b></span>';
@@ -601,6 +602,45 @@
           '</div>';
       }).join('');
       return html;
+    }
+    /* 三高候选 → 产业地图联动（Owner 点名"三高结果联动 chainmap"）：
+     * 先 /api/chainmap-search 搜环节名拿 chain_id（nodes 优先/chains 兜底）。链名与申万板块不同源，
+     * 全名常匹配不到（锂电专用设备 vs 锂电池链）——逐级截短重试（全名→3 字→2 字）提高命中；
+     * 再 go('chainmap') 切页后发 cm:view+cm:goto-chain 深链（监听器全局常驻，切页即达）；
+     * 全部落空 gToast 降级（注明不同源） */
+    function bindThLinks(box) {
+      box.querySelectorAll('[data-th-sector]').forEach(function (el) {
+        el.addEventListener('click', function (ev) {
+          ev.stopPropagation();
+          var sector = el.getAttribute('data-th-sector');
+          var tries = [sector];
+          [3, 2].forEach(function (n) {
+            if (sector.length > n && tries.indexOf(sector.slice(0, n)) < 0) tries.push(sector.slice(0, n));
+          });
+          var tryAt = function (i) {
+            if (i >= tries.length) {
+              if (window.gToast) gToast('产业地图未收录「' + sector + '」环节（申万板块与产业链链名不同源，短词也未命中）');
+              return;
+            }
+            fetch(API_BASE + '/api/chainmap-search?q=' + encodeURIComponent(tries[i]))
+              .then(function (r) { return r.json(); })
+              .then(function (d) {
+                var hit = d && d.ok && (((d.nodes || [])[0]) || ((d.chains || [])[0]));
+                if (!hit || !hit.chain_id) { tryAt(i + 1); return; }
+                window.go('chainmap');
+                setTimeout(function () {
+                  if (window.ZK && window.ZK.bus) {
+                    ZK.bus.emit('cm:view', { view: 'cluster' });
+                    ZK.bus.emit('cm:goto-chain', { chain_id: hit.chain_id, cluster: hit.cluster || '',
+                      chain_name: hit.chain_name || hit.name || '', market: 'all' });
+                  }
+                }, 350);
+              })
+              .catch(function () { if (window.gToast) gToast('产业地图搜索失败（面板 API 未启动?）'); });
+          };
+          tryAt(0);
+        });
+      });
     }
     var scroll = box.scrollTop;   /* 30s 轮询重绘保持阅读位置（DDT 实证坑） */
     box.style.display = 'block';
@@ -683,6 +723,7 @@
           FAC.th = th;
           var vs = box.scrollTop;
           thBox.innerHTML = thHtml(th);
+          bindThLinks(box);   /* 候选行「产业地图 ⇗」联动（渲染后才存在，此处绑） */
           var tc = box.querySelector('#factory-th-cnt');
           if (tc) tc.textContent = (th.batches && th.batches.length) ? String(th.batches[0].count) : '';
           box.scrollTop = vs;
