@@ -252,6 +252,15 @@ scope: frontend
 - 关联：TRAE-086 §folder_assignment · FEH-PC-012（registerFeature 只登记不初始化）· FEH-PC-005（playwright 三坑）
 - 来源：2026-09-12 前端全量拆件夜班（app1.js 34 区块/441 声明拆分实证）
 
+# FEH-PC-021｜改造函数三坑——同名定义遮蔽/对象当 id 传/探针脚本自杀
+- 触发词：改了函数行为没生效但语法全对 / 相机或视图没动但参数全对 / 验证脚本把自己杀掉退出码 15
+- 想做什么：chainmap 甬道批（B4r3/r4）重构渲染与镜头逻辑；Playwright 实景验收
+- 坑：①**同名函数双定义遮蔽**——插入新 render() 时旧 render() 未删，函数声明后者胜出：改"前面的死函数"全白干（语法对/调用对/行为旧）。动函数前必 `grep -n "function 函数名"` 查重复。②**传参语义错**：centerOn(nodeId) 内部自查 C.pos，却把位置对象传进去→静默 return 镜像失效（无报错）。凡 API 收 id 就传 id，别替它预查。③**探针/脚本自杀**：psutil 按 cmdline 子串匹配杀进程，自己脚本的 -c 参数文本就含匹配串→kill 自身（exit 15）。修=校验 name=='python.exe' 且排除自身 pid。④附加：渲染范式切换（DOM 卡片→SVG g 元素）后验证选择器必须跟着换容器（iFinD 重构后节点在 #cm-wires-cluster 的 g.cm-nd）。
+- 正确做法：可疑"改了没生效"先做进程外核实验证文件真被加载（版本戳/console 探针），再查双定义；验收断言跟随渲染范式
+- 代码锚点：src/zephyr/frontend/dashboard/web/features/chainmap/chainmap-cluster.js
+- 关联：PC-018（8890 重启假成功）· PC-019（.catch 吞异常伪装断线+元素遮挡）
+- 来源：2026-09-11~14 chainmap 甬道批 B4r3/r4 实证（双 render 三轮排查+自杀两次）
+
 ## 修订记录
 
 | 日期 | 版本 | 改动 | 为什么改 |
@@ -267,3 +276,4 @@ scope: frontend
 | 2026-09-09 | 1.8.0 | +PC-016 creation_tokens CAS 落错键 / +PC-017 commit message 与实物不符排查法 | chainmap 二期 Commit A 实证：di_seam_exemptions 落键事故 + 一期后端假提交移植 |
 | 2026-09-10 | 1.9.0 | +PC-018 8890 面板服务重启权限墙 | chainmap 三项施工夜班实证：restart×3 假成功，8891 隔离实例+playwright route 改道方案全绿 |
 | 2026-09-12 | 2.0.0 | +PC-020 app1.js 宿主拆件（跨文件提升失效+core/ 收口） | 前端全量拆件夜班：7116 行宿主→37 模块，脚本化搬运+保全校验+全页扫掠实证 |
+| 2026-09-14 | 2.1.0 | +PC-021 改造函数三坑（同名定义遮蔽/对象当 id 传/探针自杀）+渲染范式切换选择器跟改 | chainmap 甬道批 B4r3/r4 实证：双 render 三轮排查+centerOn 传参错+psutil 自杀两次 |
