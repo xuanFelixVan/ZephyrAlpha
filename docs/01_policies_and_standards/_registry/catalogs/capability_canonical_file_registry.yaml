@@ -12154,3 +12154,7 @@ di_seam_exemptions: []
   token: forward-stop-loss-tests-20260913
   created_by: st-zcode-c4-20260912
   capability: c4_batch_translation
+- file: docs/_working/2026-09-14-sim-partition-discussion.md
+  token: sim-partition-discussion-20260914
+  created_by: st-zcode-c4-20260912
+  capability: c4_batch_translation
