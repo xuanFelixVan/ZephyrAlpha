@@ -11980,6 +11980,10 @@ creation_tokens:
   token: io-sector-sws-map-20260913
   created_by: st-igbe-20260913 (投入产出部门→申万一级行业映射规则表, 2026-09-13)
   capability: industry_graph_io_sws_map
+- file: scripts/industry_graph/concept_ingest.py
+  token: concept-system-conceptingest-20260914
+  created_by: st-igbe-20260913 (概念体系装载件, Owner 2026-09-14 批准, 2026-09-14)
+  capability: industry_graph_concept_ingest
 - file: schemas/categories/__init__.py
   token: schemas-split-root-index-20260912
   created_by: schemas-split-20260912
@@ -12246,8 +12250,16 @@ creation_tokens:
   token: st-fingov-schemas-init-20260914
   created_by: st-fingov-20260912
   capability: schemas_package_marker
-di_seam_exemptions: []
 - file: docs/_working/2026-09-14-sim-platform-blueprint.md
   token: sim-platform-blueprint-20260914
   created_by: st-zcode-c4-20260912
   capability: c4_batch_translation
+- file: scripts/data/pattern_event_backfill.py
+  token: auto-scaffold-data_pattern_event_backfill-20260914
+  created_by: scaffold.py
+  capability: data_pattern_event_backfill
+- file: scripts/backtest/eval_f2_layers_styles.py
+  token: st-fingov-eval-f2-layers-20260914
+  created_by: st-fingov-20260912
+  capability: eval_f2_layers_styles
+di_seam_exemptions: []
