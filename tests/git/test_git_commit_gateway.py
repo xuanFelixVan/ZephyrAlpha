@@ -2021,6 +2021,27 @@ class TestCommitAnomalyAudit:
         evs = self._events(tmp_path)
         assert evs[-1]["gate_id"] == "UNKNOWN"
 
+    def test_block_event_status_gate_id_mapping(self, tmp_path: Path) -> None:
+        """专用 status → gate_id 映射（2026-09-13 UNKNOWN×6 治本）：
+        FOREIGN_CHANGE/COMMIT_SCOPE 等专用门禁的 message 无「门禁 XXX 阻断」前缀，
+        纯正则提取恒落 UNKNOWN（近 24h 实证 6 条归因失效）——status 映射精确还原。"""
+        from zephyr.gov_enforcement.rule_bridge.git_commit_gateway import CommitResult, CommitStatus
+
+        gw = self._gw(tmp_path)
+        cases = [
+            (CommitStatus.FOREIGN_CHANGE_VIOLATION, "目标文件在 claim 时已有外来变更（FOREIGN_CHANGE_VIOLATION）: [...]", "FOREIGN-CHANGE"),
+            (CommitStatus.COMMIT_SCOPE_VIOLATION, "commit 跨越多个功能域（COMMIT_SCOPE_VIOLATION）: 检测到 3 个域", "COMMIT-SCOPE"),
+            (CommitStatus.HELD_OVERLAP_VIOLATION, "HELD_OVERLAP_VIOLATION: 文件被其他活跃 session 持有", "HELD-OVERLAP"),
+            (CommitStatus.CLAIM_REQUIRED_VIOLATION, "文件未经 claim 登记", "CLAIM-REQUIRED"),
+            (CommitStatus.WORKTREE_VIOLATION, "worktree 检测失败", "WORKTREE-REQUIRED"),
+            (CommitStatus.PROMOTION_BLOCKED, "PROMOTION_BLOCKED: 永久区准入", "FILE-PLACEMENT-TTL"),
+        ]
+        for status, message, expected in cases:
+            blocked = CommitResult(status=status, message=message)
+            gw._audit_commit_block_event("sess-map", blocked, [], 1.0)
+            ev = self._events(tmp_path)[-1]
+            assert ev["gate_id"] == expected, f"{status} 应映射为 {expected}，实际 {ev['gate_id']}"
+
     def test_slow_event_fields(self, tmp_path: Path) -> None:
         """慢提交事件：total_ms/阈值/文件数落盘，event=commit_slow。"""
         gw = self._gw(tmp_path)

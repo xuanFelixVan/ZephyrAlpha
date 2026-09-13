@@ -252,6 +252,20 @@ class CommitStatus(str, Enum):
     MERGE_IN_PROGRESS = "MERGE_IN_PROGRESS"  # B2 治本①：MERGE_HEAD 晾置截胡防护（AI-FILL-14 事故）
 
 
+# 专用 CommitStatus → 真实 gate_id 映射（堵点审计归因，2026-09-13 UNKNOWN×6 治本）。
+# _check_gate_results 把这些门禁转成专用 status（message 无「门禁 XXX 阻断」前缀），
+# 审计按 status 精确还原 gate_id（与 _check_gate_results 的转换分支一一对应）；
+# COMMIT_FAILED 不入表——其 message 带「门禁 {gate_id} 阻断」前缀，走正则提取。
+_STATUS_GATE_ID: dict[str, str] = {
+    CommitStatus.HELD_OVERLAP_VIOLATION: "HELD-OVERLAP",
+    CommitStatus.FOREIGN_CHANGE_VIOLATION: "FOREIGN-CHANGE",
+    CommitStatus.CLAIM_REQUIRED_VIOLATION: "CLAIM-REQUIRED",
+    CommitStatus.WORKTREE_VIOLATION: "WORKTREE-REQUIRED",
+    CommitStatus.COMMIT_SCOPE_VIOLATION: "COMMIT-SCOPE",
+    CommitStatus.PROMOTION_BLOCKED: "FILE-PLACEMENT-TTL",
+}
+
+
 class GatewayError(RuntimeError):
     """Gateway 层错误（锁超时等）。"""
 
@@ -1443,11 +1457,20 @@ class GitCommitGateway:
         仅在 gate 链**阻断**时写一行。记录：ts/session/阻断门禁/文件数/门禁链耗时/
         失败详情摘要（200 字截断）。消费方：commit_perf_report.py 聚合 TOP 阻断门禁
         与堵点趋势（溯源→修复闭环）。
+
+        gate_id 判定链（2026-09-13 UNKNOWN×6 治本）：status 映射 > message 正则。
+        _check_gate_results 把专用门禁（HELD-OVERLAP/FOREIGN-CHANGE/COMMIT-SCOPE 等）
+        转成专用 CommitStatus，其 message 不带「门禁 XXX 阻断」前缀——纯正则提取
+        恒落 UNKNOWN（近 24h 实证 6/25 条归因失效，FOREIGN_CHANGE_VIOLATION 与
+        COMMIT_SCOPE_VIOLATION 全被吞成 UNKNOWN，报表 TOP 失真）。status 是
+        _check_gate_results 转换时的第一手信息源，映射即精确还原 gate_id。
         """
         import re  # noqa: PLC0415
 
-        m = re.search(r"门禁 ([A-Z\-]+) 阻断", blocked.message or "")
-        gate_id = m.group(1) if m else "UNKNOWN"
+        gate_id = _STATUS_GATE_ID.get(blocked.status)
+        if gate_id is None:
+            m = re.search(r"门禁 ([A-Z\-]+) 阻断", blocked.message or "")
+            gate_id = m.group(1) if m else "UNKNOWN"
         self._append_commit_anomaly_jsonl({
             "session_id": session_id,
             "event": "commit_blocked",
