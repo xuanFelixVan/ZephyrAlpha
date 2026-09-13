@@ -12062,6 +12062,10 @@ creation_tokens:
   token: factory-map-gate-tests-20260913
   created_by: factory-gate-b2-20260913
   capability: factory_map_gate
+- file: tests/governance/d3_metadata/test_generate_rule_catalog_idempotent.py
+  token: rule-catalog-idempotent-tests-20260913
+  created_by: factory-gate-b2-20260913
+  capability: rule_catalog_idempotent
 di_seam_exemptions:
 - module_path: zephyr.trading.auto_runtime_core.AutoRuntimeCore
   reason: P0-5 LSG DI seam 标杆，已有 DI 但 AST 模式不匹配（动态注入）

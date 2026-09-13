@@ -48002,6 +48002,13 @@ entries:
   desc_zh: ""
   desc_en: ""
   plain_zh: "给工厂图门禁做攻防演习：红队拿断边缺字段坏图和损坏 YAML 猛攻必须全被拦，蓝队拿真好图和非触发文件验证必须全放行，触发面规则改动也同步练到"
+- module_path: tests/governance/d3_metadata/test_generate_rule_catalog_idempotent.py
+  domain_id: D_GOV_SCRIPTS
+  name_zh: "规则目录生成器幂等测试"
+  name_en: ""
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "守卫生成器的新规矩：规则文件一个没变就重跑生成，必须连时间戳都不碰直接跳过；真变了才落盘刷新时间戳；老格式文件重写一次后自愈进稳态"
 
 battle_map_steps:
 - step_id: BM-BUY-05

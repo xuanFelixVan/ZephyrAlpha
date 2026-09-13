@@ -5,13 +5,13 @@
 # [CONSUMERS]
 # [STARTUP] event_driven
 # [MATURITY] production
-# [INVARIANTS] 输出文件名必须为 rule_catalog_registry.yaml（snake_case 硬约束）
+# [INVARIANTS] 输出文件名必须为 rule_catalog_registry.yaml（snake_case 硬约束）；generate_catalog 幂等——内容零变更跳过写入（2026-09-13 Owner 指令，reconciler 周期触发防时间戳噪音）
 # [MODIFY-GUARD]
 # [STABILITY] evolving
 # [SAFETY] M
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] scan_dir 不存在 → stderr 警告并返回空列表
-# [TESTS]
+# [TESTS] tests/governance/d3_metadata/test_generate_rule_catalog_idempotent.py
 # [A_module] module_id=MOD-INF-005 | layer=module | stability=evolving | safety=M | ai_autonomy=ai_modifiable
 # [TTL] permanent
 #!/usr/bin/env python3
@@ -202,7 +202,7 @@ def scan_directory(scan_dir: str, repo_root: Path) -> list[dict]:
 
 
 def generate_catalog(entries: list[dict], output_path: str) -> None:
-    """Write rule_catalog_registry.yaml（原子写入：tmp + os.replace）."""
+    """Write rule_catalog_registry.yaml（原子写入：tmp + os.replace；内容零变更跳过）."""
     gen_ts = datetime.now(UTC).strftime("%Y-%m-%dT%H:%M:%SZ")
 
     # 派生 tier_distribution 和 total_rules（仅统计有 tier 的规则文件）
@@ -237,6 +237,37 @@ def generate_catalog(entries: list[dict], output_path: str) -> None:
 
     output = Path(output_path)
     output.parent.mkdir(parents=True, exist_ok=True)
+
+    # 幂等跳过（2026-09-13 Owner 指令"内容没变就不刷时间戳"）：本生成器被
+    # reconciler 周期触发（实测约 12min/次），原实现每次必刷 generated_at=
+    # 工作区永久漂移噪音（08:59→09:12 零内容变更实证，watchdog 反复收敛）。
+    # 判定法：用旧时间戳重渲染（与历史写入同源 yaml.dump 参数）→ 与现文件
+    # 逐字节一致=零变更，跳过写入（文件 mtime/git 状态全不动）；不一致=真内容
+    # 变更，落盘并刷新时间戳。首次遇到渲染格式漂移（生成器代码曾改版）会重写
+    # 一次后重新进入稳态——自愈，无需迁移逻辑。
+    if output.exists():
+        try:
+            old_text = output.read_text(encoding="utf-8")
+            old_ts = (yaml.safe_load(old_text) or {}).get("generated_at")
+        except yaml.YAMLError:
+            old_ts = None
+        if old_ts:
+            same_catalog = dict(catalog)
+            same_catalog["generated_at"] = old_ts
+            if (
+                yaml.dump(
+                    same_catalog,
+                    allow_unicode=True,
+                    default_flow_style=False,
+                    sort_keys=False,
+                )
+                == old_text
+            ):
+                print(
+                    f"Catalog unchanged ({len(entries)} entries), skip rewrite (idempotent)",
+                    file=sys.stderr,
+                )
+                return
 
     atomic_write_safe(
         output,
