@@ -4,10 +4,10 @@ ttl: permanent
 doc_type: register
 title: 规则路径目录（唯一真源 SSoT）
 status: active
-generated_at: '2026-09-13T18:34:42Z'
+generated_at: '2026-09-13T18:39:25Z'
 generated_by: scripts/governance/d3_metadata/generate_rule_catalog.py
 maintenance: auto
-total_files: 247
+total_files: 248
 total_rules: 61
 tier_distribution:
   L0: 21
@@ -19,7 +19,7 @@ files:
   title: 规则体系总索引
   doc_type: index
   status: active
-  version: 2.2.1
+  version: 2.2.2
   rule_form: declarative
   scope: global
   stability: stable
@@ -1794,59 +1794,14 @@ files:
   - 模块契约
   - DS-11
   section_count: 6
-- path: docs/01_policies_and_standards/sop/2026-08-22-emergency-runbook.md
-  module_id: ''
-  title: 保命轨 D-L1~D-L3 人工 Runbook
-  doc_type: policy
-  status: active
-  version: 1.0.0
-  rule_form: procedural
-  scope: ''
-  stability: ''
-  layer: ''
-  superseded_by: ''
-  severity: ''
-  tier: ''
-  aliases: []
-  section_count: 0
-- path: docs/01_policies_and_standards/sop/agent_constitution_l0.md
-  module_id: SOP-CONSTITUTION-L0
-  title: ZephyrAlpha AI Agent 宪法 L0（≤300 行硬规则+索引）
-  doc_type: policy
+- path: docs/01_policies_and_standards/sop/README.md
+  module_id: SOP-INDEX-001
+  title: SOP 方法论真源地图（七族文件夹导航）
+  doc_type: index
   status: active
   version: 1.0.0
   rule_form: ''
   scope: ''
-  stability: ''
-  layer: ''
-  superseded_by: ''
-  severity: ''
-  tier: ''
-  aliases: []
-  section_count: 0
-- path: docs/01_policies_and_standards/sop/agent_constitution_legacy_v1.md
-  module_id: SOP-CONSTITUTION-LEGACY-V1
-  title: AI Agent 宪法 v1 归档（1639 行全文，2026-09-12 被 L0 替换）
-  doc_type: policy
-  status: archived
-  version: ''
-  rule_form: ''
-  scope: ''
-  stability: ''
-  layer: ''
-  superseded_by: agent_constitution_l0.md
-  severity: ''
-  tier: ''
-  aliases: []
-  section_count: 0
-- path: docs/01_policies_and_standards/sop/alignment_checklist.md
-  module_id: ''
-  title: 全项目对齐清单——全图全库+代码文档三层对齐规则（九图满贯版）
-  doc_type: policy
-  status: active
-  version: 1.5.0
-  rule_form: checklist
-  scope: global
   stability: ''
   layer: ''
   superseded_by: ''
@@ -1869,114 +1824,9 @@ files:
   tier: ''
   aliases: []
   section_count: 0
-- path: docs/01_policies_and_standards/sop/construction_workflow_sop.md
-  module_id: ''
-  title: 07 域施工流程标准作业规程（SOP）——端到端 15 步施工闭环
-  doc_type: policy
-  status: active
-  version: 1.5.5
-  rule_form: procedural
-  scope: global
-  stability: ''
-  layer: ''
-  superseded_by: ''
-  severity: ''
-  tier: ''
-  aliases: []
-  section_count: 0
-- path: docs/01_policies_and_standards/sop/document_review_and_optimization_sop.md
-  module_id: ''
-  title: 文档审查与优化流程标准作业规程（SOP）——七轮循环工作法
-  doc_type: policy
-  status: active
-  version: 1.0.0
-  rule_form: procedural
-  scope: global
-  stability: ''
-  layer: ''
-  superseded_by: ''
-  severity: ''
-  tier: ''
-  aliases: []
-  section_count: 0
-- path: docs/01_policies_and_standards/sop/frontend_component_split_sop.md
-  module_id: ''
-  title: 前端组件拆分与数据接通 SOP（stockq 页实证）
-  doc_type: policy
-  status: active
-  version: 1.2.0
-  rule_form: procedural
-  scope: frontend
-  stability: ''
-  layer: ''
-  superseded_by: ''
-  severity: ''
-  tier: ''
-  aliases: []
-  section_count: 0
-- path: docs/01_policies_and_standards/sop/industry_chain_data_audit_sop.md
-  module_id: ''
-  title: 产业链供应链全景图数据审计与更新SOP——夜班自主执行版
-  doc_type: policy
-  status: active
-  version: 1.8.2
-  rule_form: procedural
-  scope: global
-  stability: ''
-  layer: ''
-  superseded_by: ''
-  severity: ''
-  tier: ''
-  aliases: []
-  section_count: 0
-- path: docs/01_policies_and_standards/sop/merge_conflict_resolution_sop.md
-  module_id: ''
-  title: Merge 冲突处理 SOP——冲突三分法 + 标准 7 步流程（不盲选边，逐个读内容，结果留痕）
-  doc_type: policy
-  status: active
-  version: 1.0.1
-  rule_form: procedural
-  scope: global
-  stability: ''
-  layer: ''
-  superseded_by: ''
-  severity: ''
-  tier: ''
-  aliases: []
-  section_count: 0
-- path: docs/01_policies_and_standards/sop/trading_decision_map_layering_sop.md
-  module_id: ''
-  title: 交易决策地图逐层讨论 SOP——防撞车·防越级·防枝末先行
-  doc_type: policy
-  status: active
-  version: 1.2.0
-  rule_form: procedural
-  scope: 07_trading_decision_architecture
-  stability: ''
-  layer: ''
-  superseded_by: ''
-  severity: ''
-  tier: ''
-  aliases: []
-  section_count: 0
 - path: docs/01_policies_and_standards/sop/trading_decision_map_pathfinding_sop.md
   module_id: ''
   title: 交易决策全景图病菌寻路增长 SOP——六向寻路+防噪音四闸（长期增长机制真源）
-  doc_type: policy
-  status: active
-  version: 1.0.0
-  rule_form: procedural
-  scope: global
-  stability: ''
-  layer: ''
-  superseded_by: ''
-  severity: ''
-  tier: ''
-  aliases: []
-  section_count: 0
-- path: docs/01_policies_and_standards/sop/worktree_cleanup_sop.md
-  module_id: ''
-  title: Worktree 清理 SOP——四证齐全方可删除（死亡证明/无未合并工作/统筹批准/可恢复证明）
   doc_type: policy
   status: active
   version: 1.0.0
@@ -2064,6 +1914,111 @@ files:
   tier: ''
   aliases: []
   section_count: 0
+- path: docs/01_policies_and_standards/sop/construction_sop/construction_workflow_sop.md
+  module_id: ''
+  title: 07 域施工流程标准作业规程（SOP）——端到端 15 步施工闭环
+  doc_type: policy
+  status: active
+  version: 1.5.5
+  rule_form: procedural
+  scope: global
+  stability: ''
+  layer: ''
+  superseded_by: ''
+  severity: ''
+  tier: ''
+  aliases: []
+  section_count: 0
+- path: docs/01_policies_and_standards/sop/construction_sop/document_review_and_optimization_sop.md
+  module_id: ''
+  title: 文档审查与优化流程标准作业规程（SOP）——七轮循环工作法
+  doc_type: policy
+  status: active
+  version: 1.0.0
+  rule_form: procedural
+  scope: global
+  stability: ''
+  layer: ''
+  superseded_by: ''
+  severity: ''
+  tier: ''
+  aliases: []
+  section_count: 0
+- path: docs/01_policies_and_standards/sop/construction_sop/frontend_component_split_sop.md
+  module_id: ''
+  title: 前端组件拆分与数据接通 SOP（stockq 页实证）
+  doc_type: policy
+  status: active
+  version: 1.2.0
+  rule_form: procedural
+  scope: frontend
+  stability: ''
+  layer: ''
+  superseded_by: ''
+  severity: ''
+  tier: ''
+  aliases: []
+  section_count: 0
+- path: docs/01_policies_and_standards/sop/data_audit_sop/industry_chain_data_audit_sop.md
+  module_id: ''
+  title: 产业链供应链全景图数据审计与更新SOP——夜班自主执行版
+  doc_type: policy
+  status: active
+  version: 1.8.2
+  rule_form: procedural
+  scope: global
+  stability: ''
+  layer: ''
+  superseded_by: ''
+  severity: ''
+  tier: ''
+  aliases: []
+  section_count: 0
+- path: docs/01_policies_and_standards/sop/governance_sop/agent_constitution_l0.md
+  module_id: SOP-CONSTITUTION-L0
+  title: ZephyrAlpha AI Agent 宪法 L0（≤300 行硬规则+索引）
+  doc_type: policy
+  status: active
+  version: 1.0.0
+  rule_form: ''
+  scope: ''
+  stability: ''
+  layer: ''
+  superseded_by: ''
+  severity: ''
+  tier: ''
+  aliases: []
+  section_count: 0
+- path: docs/01_policies_and_standards/sop/governance_sop/agent_constitution_legacy_v1.md
+  module_id: SOP-CONSTITUTION-LEGACY-V1
+  title: AI Agent 宪法 v1 归档（1639 行全文，2026-09-12 被 L0 替换）
+  doc_type: policy
+  status: archived
+  version: ''
+  rule_form: ''
+  scope: ''
+  stability: ''
+  layer: ''
+  superseded_by: agent_constitution_l0.md
+  severity: ''
+  tier: ''
+  aliases: []
+  section_count: 0
+- path: docs/01_policies_and_standards/sop/governance_sop/alignment_checklist.md
+  module_id: ''
+  title: 全项目对齐清单——全图全库+代码文档三层对齐规则（九图满贯版）
+  doc_type: policy
+  status: active
+  version: 1.5.0
+  rule_form: checklist
+  scope: global
+  stability: ''
+  layer: ''
+  superseded_by: ''
+  severity: ''
+  tier: ''
+  aliases: []
+  section_count: 0
 - path: docs/01_policies_and_standards/sop/mining_sop/mining_sop_policy.md
   module_id: ''
   title: 挖矿 SOP——全网调研+内部反查的全面挖掘方法论（六向寻路/防噪音四闸/双噪音终止）
@@ -2087,6 +2042,66 @@ files:
   version: 1.0.0
   rule_form: procedural
   scope: global
+  stability: ''
+  layer: ''
+  superseded_by: ''
+  severity: ''
+  tier: ''
+  aliases: []
+  section_count: 0
+- path: docs/01_policies_and_standards/sop/ops_sop/2026-08-22-emergency-runbook.md
+  module_id: ''
+  title: 保命轨 D-L1~D-L3 人工 Runbook
+  doc_type: policy
+  status: active
+  version: 1.0.0
+  rule_form: procedural
+  scope: ''
+  stability: ''
+  layer: ''
+  superseded_by: ''
+  severity: ''
+  tier: ''
+  aliases: []
+  section_count: 0
+- path: docs/01_policies_and_standards/sop/ops_sop/merge_conflict_resolution_sop.md
+  module_id: ''
+  title: Merge 冲突处理 SOP——冲突三分法 + 标准 7 步流程（不盲选边，逐个读内容，结果留痕）
+  doc_type: policy
+  status: active
+  version: 1.0.1
+  rule_form: procedural
+  scope: global
+  stability: ''
+  layer: ''
+  superseded_by: ''
+  severity: ''
+  tier: ''
+  aliases: []
+  section_count: 0
+- path: docs/01_policies_and_standards/sop/ops_sop/worktree_cleanup_sop.md
+  module_id: ''
+  title: Worktree 清理 SOP——四证齐全方可删除（死亡证明/无未合并工作/统筹批准/可恢复证明）
+  doc_type: policy
+  status: active
+  version: 1.0.0
+  rule_form: procedural
+  scope: global
+  stability: ''
+  layer: ''
+  superseded_by: ''
+  severity: ''
+  tier: ''
+  aliases: []
+  section_count: 0
+- path: docs/01_policies_and_standards/sop/trading_decision_map_sop/trading_decision_map_layering_sop.md
+  module_id: ''
+  title: 交易决策地图逐层讨论 SOP——防撞车·防越级·防枝末先行
+  doc_type: policy
+  status: active
+  version: 1.2.0
+  rule_form: procedural
+  scope: 07_trading_decision_architecture
   stability: ''
   layer: ''
   superseded_by: ''
