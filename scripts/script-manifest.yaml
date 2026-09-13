@@ -1,7 +1,7 @@
 manifest_version: 2.0.0
 generated_by: generate_manifest.py (auto-scan)
 generated_at: '2026-09-14'
-total_scripts: 856
+total_scripts: 875
 scripts:
 - name: __init__.py
   path: __init__.py
@@ -575,6 +575,22 @@ scripts:
   status: registered
   timeout_seconds: 60
   dimensions: []
+- name: backtest/eval_f2_fundamental_ic.py
+  path: backtest/eval_f2_fundamental_ic.py
+  description: 月度再平衡截面评估：每月末交易日，取每标的 announce_date<=t 的可见最新派生行算因子，
+  domain: test
+  execution_plane: warm-path
+  status: registered
+  timeout_seconds: 60
+  dimensions: []
+- name: backtest/eval_f2_layers_styles.py
+  path: backtest/eval_f2_layers_styles.py
+  description: 对 FCT-FQ-001/FCT-FQ-002（experimental）产出 ⑤ 剪枝三件：
+  domain: test
+  execution_plane: warm-path
+  status: registered
+  timeout_seconds: 60
+  dimensions: []
 - name: backtest/generate_backtest_backlog.py
   path: backtest/generate_backtest_backlog.py
   description: 规范真源：docs/01_policies_and_standards/sop/backtest_system_sop/sop_a_full_map_orchestration.md
@@ -593,9 +609,33 @@ scripts:
   status: registered
   timeout_seconds: 60
   dimensions: []
+- name: backtest/lane_e_enhanced.py
+  path: backtest/lane_e_enhanced.py
+  description: 对比矩阵：
+  domain: test
+  execution_plane: warm-path
+  status: registered
+  timeout_seconds: 60
+  dimensions: []
+- name: backtest/lane_e_enhanced_cli.py
+  path: backtest/lane_e_enhanced_cli.py
+  description: from __future__ import annotations
+  domain: test
+  execution_plane: warm-path
+  status: registered
+  timeout_seconds: 60
+  dimensions: []
 - name: backtest/lane_e_quantile_baseline.py
   path: backtest/lane_e_quantile_baseline.py
   description: 特征（全部 ≤T-1 可得）：滞后收益 1/5/10/20 日 + 滚动波动率 5/20 日 + 均值比 close/MA20。
+  domain: test
+  execution_plane: warm-path
+  status: registered
+  timeout_seconds: 60
+  dimensions: []
+- name: backtest/panic_rebound_depth.py
+  path: backtest/panic_rebound_depth.py
+  description: 三阶段：
   domain: test
   execution_plane: warm-path
   status: registered
@@ -612,6 +652,22 @@ scripts:
 - name: backtest/replay_drill.py
   path: backtest/replay_drill.py
   description: 演练语义（裁定 §八 R5）：锁 meta（commit+manifest+参数）→ 重跑 → diff 四件套
+  domain: test
+  execution_plane: warm-path
+  status: registered
+  timeout_seconds: 60
+  dimensions: []
+- name: backtest/sim_paper_ledger.py
+  path: backtest/sim_paper_ledger.py
+  description: 规则（与回测翻译件 c4_e3da6fa71af1 同口径）：上证昨日收盘跌幅<=-1.5% 且当日<=-1.4% →
+  domain: test
+  execution_plane: warm-path
+  status: registered
+  timeout_seconds: 60
+  dimensions: []
+- name: backtest/sim_platform_journal.py
+  path: backtest/sim_platform_journal.py
+  description: 每日收盘后跑一次：汇总所有钱包（sim_pocket_daily）权益与当日事件（sim_trade_log），
   domain: test
   execution_plane: warm-path
   status: registered
@@ -743,6 +799,14 @@ scripts:
 - name: backtest/translated/c4_4440d07f973f_ultrashort.py
   path: backtest/translated/c4_4440d07f973f_ultrashort.py
   description: '原文逻辑: 全 A 主板（剔创业板/科创/ST/退）；昨日 MA5 下穿 MA10（死叉）+死叉前日 MA5 量>'
+  domain: test
+  execution_plane: warm-path
+  status: registered
+  timeout_seconds: 60
+  dimensions: []
+- name: backtest/translated/c4_4879b2c6f2bb_div_value.py
+  path: backtest/translated/c4_4879b2c6f2bb_div_value.py
+  description: '原文逻辑: 月频首个交易日调仓：全 A 剔科创北交/ST/上市<300 天/停牌/涨停；'
   domain: test
   execution_plane: warm-path
   status: registered
@@ -913,6 +977,14 @@ scripts:
 - name: backtest/translated/c4_e40a0a1bcda8_ma5_ma10.py
   path: backtest/translated/c4_e40a0a1bcda8_ma5_ma10.py
   description: '原文逻辑: 单标的 601111（中国国航）；MA5>MA10 且 close>MA5 买入；close<MA5 卖出。'
+  domain: test
+  execution_plane: warm-path
+  status: registered
+  timeout_seconds: 60
+  dimensions: []
+- name: backtest/translated/c4_e8017cc1adc5_cheap_stock.py
+  path: backtest/translated/c4_e8017cc1adc5_cheap_stock.py
+  description: '原文逻辑: 每半年调仓一次：全 A 中选 PB∈(0,1.5) 且（PE 条件段，原文该段不可见）股票，'
   domain: test
   execution_plane: warm-path
   status: registered
@@ -1102,6 +1174,22 @@ scripts:
   status: registered
   timeout_seconds: 60
   dimensions: []
+- name: ch/apply_pattern_event_ddl.py
+  path: ch/apply_pattern_event_ddl.py
+  description: DDL 真源：schemas/categories/market_pattern_event.py（DDL-as-Code）。
+  domain: ch
+  execution_plane: warm-path
+  status: registered
+  timeout_seconds: 60
+  dimensions: []
+- name: ch/apply_pattern_win_rate_ddl.py
+  path: ch/apply_pattern_win_rate_ddl.py
+  description: DDL 真源：schemas/categories/market_pattern_win_rate.py（DDL-as-Code）。
+  domain: ch
+  execution_plane: warm-path
+  status: registered
+  timeout_seconds: 60
+  dimensions: []
 - name: ch/apply_rbac.py
   path: ch/apply_rbac.py
   description: RBAC-as-Code 模式：
@@ -1129,6 +1217,30 @@ scripts:
 - name: ch/apply_signal_history_ddl.py
   path: ch/apply_signal_history_ddl.py
   description: DDL 真源：schemas/categories/market_signal_history.py（DDL-as-Code）。
+  domain: ch
+  execution_plane: warm-path
+  status: registered
+  timeout_seconds: 60
+  dimensions: []
+- name: ch/apply_sim_platform_journal_ddl.py
+  path: ch/apply_sim_platform_journal_ddl.py
+  description: from __future__ import annotations
+  domain: ch
+  execution_plane: warm-path
+  status: registered
+  timeout_seconds: 60
+  dimensions: []
+- name: ch/apply_sim_pocket_daily_ddl.py
+  path: ch/apply_sim_pocket_daily_ddl.py
+  description: from __future__ import annotations
+  domain: ch
+  execution_plane: warm-path
+  status: registered
+  timeout_seconds: 60
+  dimensions: []
+- name: ch/apply_sim_trade_log_ddl.py
+  path: ch/apply_sim_trade_log_ddl.py
+  description: from __future__ import annotations
   domain: ch
   execution_plane: warm-path
   status: registered
@@ -1439,6 +1551,14 @@ scripts:
   status: registered
   timeout_seconds: 60
   dimensions: []
+- name: data/backfill_technical_indicator_dwm.py
+  path: data/backfill_technical_indicator_dwm.py
+  description: c1_market.technical_indicator 的 daily/weekly/monthly 数据起点=2026-08（调度闭环日），
+  domain: data
+  execution_plane: warm-path
+  status: registered
+  timeout_seconds: 60
+  dimensions: []
 - name: data/backfill_tick_depth5.py
   path: data/backfill_tick_depth5.py
   description: 用法（在仓库根，Python 3.12 + PYTHONPATH=src）：
@@ -1450,6 +1570,22 @@ scripts:
 - name: data/import_bdpan_tick_zip.py
   path: data/import_bdpan_tick_zip.py
   description: tick_data_2026_jul_aug_qmt_range_gap 的可复用导入器；复刻 2026-06 回补配方并持久化）。
+  domain: data
+  execution_plane: warm-path
+  status: registered
+  timeout_seconds: 60
+  dimensions: []
+- name: data/pattern_event_backfill.py
+  path: data/pattern_event_backfill.py
+  description: 用 MOD-SIG-091 统一图形引擎对全市场日线（2021-09-01 起）做全量回扫，
+  domain: data
+  execution_plane: warm-path
+  status: registered
+  timeout_seconds: 60
+  dimensions: []
+- name: data/pattern_win_rate_materialize.py
+  path: data/pattern_win_rate_materialize.py
+  description: 从 c1_market.market_pattern_event × c1_market.kline_daily 计算前视窗口命中
   domain: data
   execution_plane: warm-path
   status: registered
@@ -1877,6 +2013,14 @@ scripts:
   path: governance/test_remediation_progress_smoke.py
   description: 真实调用 record_remediation_progress / query_all_dimensions / query_stale_dimensions
     /
+  domain: governance
+  execution_plane: warm-path
+  status: registered
+  timeout_seconds: 60
+  dimensions: []
+- name: governance/upgrade_tdm_v13_metadata.py
+  path: governance/upgrade_tdm_v13_metadata.py
+  description: materiality 推导规则：node_id ∈ {P0 冻结对象（testable=true）的 node_ids} → critical；
   domain: governance
   execution_plane: warm-path
   status: registered
@@ -5764,6 +5908,14 @@ scripts:
   status: registered
   timeout_seconds: 60
   dimensions: []
+- name: industry_graph/concept_ingest.py
+  path: industry_graph/concept_ingest.py
+  description: 概念=公司属性标签（与产业链结构正交）：ig_chain 只承载真产业链，"AI眼镜""固态电池"
+  domain: industry_graph
+  execution_plane: warm-path
+  status: registered
+  timeout_seconds: 60
+  dimensions: []
 - name: industry_graph/execute_r1_chain_plans.py
   path: industry_graph/execute_r1_chain_plans.py
   description: 执行对象（链级：改名/deprecated+merged_into/新建母链；节点与公司并集归并明细不在本通道，
@@ -6912,8 +7064,8 @@ scripts:
   status: registered
   timeout_seconds: 60
   dimensions: []
-- path: ch/apply_pattern_event_ddl.py
-  description: market_pattern_event 建表 DDL 部署+验证脚本（DDL-as-Code 真源 schemas/categories/market_pattern_event.py）
-  domain: ch
+- path: data/pattern_evidence_backfill.py
+  description: REG-PAT-001 evidence 字段回填生成器（读 market_pattern_win_rate，生成器产出禁手填）
+  domain: data
   execution_plane: warm-path
   status: registered
