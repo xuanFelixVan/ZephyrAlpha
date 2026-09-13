@@ -2046,6 +2046,131 @@ class TestCommitAnomalyAudit:
         assert [e["session_id"] for e in evs] == ["s1", "s2", "s3"]
 
 
+class TestBottleneckBanner:
+    """D5 推模式堵点提醒横幅（Owner 裁定"每次交付都提醒"）——近 24h 有事件必打印，
+    零事件/过期事件零输出（正常流量无噪音）。"""
+
+    def _gw(self, tmp_path: Path) -> GitCommitGateway:
+        _init_git_repo(tmp_path)
+        return GitCommitGateway(project_root=tmp_path)
+
+    def _write_events(self, tmp_path: Path, rows: list[dict]) -> None:
+        import json as _json
+
+        p = tmp_path / ".runtime" / "audit" / "commit_block_events.jsonl"
+        p.parent.mkdir(parents=True, exist_ok=True)
+        p.write_text(
+            "".join(_json.dumps(r, ensure_ascii=False) + "\n" for r in rows), encoding="utf-8"
+        )
+
+    def test_banner_prints_recent_events(self, tmp_path: Path, capsys) -> None:
+        """近 24h 有事件 → 打印横幅（TOP 门禁+次数+P50+详情指引）。"""
+        from zephyr.gov_enforcement.rule_bridge.git_commit_gateway import _print_bottleneck_banner
+        from zephyr.shared.utils.time_utils import now_utc
+
+        gw = self._gw(tmp_path)
+        ts = now_utc().isoformat()
+        self._write_events(tmp_path, [
+            {"timestamp": ts, "session_id": "a", "event": "commit_blocked",
+             "gate_id": "SPLIT-COORDINATION", "files_count": 3, "gate_chain_ms": 10531},
+            {"timestamp": ts, "session_id": "b", "event": "commit_blocked",
+             "gate_id": "SPLIT-COORDINATION", "files_count": 3, "gate_chain_ms": 7250},
+            {"timestamp": ts, "session_id": "c", "event": "commit_slow",
+             "gate_id": "-", "files_count": 14, "total_ms": 99047},
+        ])
+        _print_bottleneck_banner(tmp_path, context="post_commit")
+        out = capsys.readouterr().out
+        assert "提交堵点提醒" in out and "近 24h 共 3 次" in out
+        assert "SPLIT-COORDINATION ×2" in out
+        assert "commit_perf_report.py" in out, "必须给出详情查询指引"
+
+    def test_banner_silent_when_no_events(self, tmp_path: Path, capsys) -> None:
+        """零事件 → 零输出（正常提交无噪音）。"""
+        from zephyr.gov_enforcement.rule_bridge.git_commit_gateway import _print_bottleneck_banner
+
+        self._gw(tmp_path)
+        _print_bottleneck_banner(tmp_path, context="post_commit")
+        assert capsys.readouterr().out == ""
+
+    def test_banner_silent_when_stale_events_only(self, tmp_path: Path, capsys) -> None:
+        """仅 >24h 旧事件 → 零输出（滚动窗口自愈，修复后提醒自动消失）。"""
+        from datetime import datetime, timedelta, timezone
+
+        from zephyr.gov_enforcement.rule_bridge.git_commit_gateway import _print_bottleneck_banner
+
+        self._gw(tmp_path)
+        old = (datetime.now(timezone.utc) - timedelta(hours=72)).isoformat()
+        self._write_events(tmp_path, [
+            {"timestamp": old, "session_id": "a", "event": "commit_blocked",
+             "gate_id": "X", "files_count": 1, "gate_chain_ms": 1000},
+        ])
+        _print_bottleneck_banner(tmp_path, context="post_commit")
+        assert capsys.readouterr().out == ""
+
+
+class TestPhantomStagedAddSweep:
+    """P3-2 治本（2026-09-13 红蓝复测发现）：被拦提交的预暂存 AD 幻影自动清扫。
+
+    病根链：预暂存（gate 读 staged blob 必需）→ 提交被拦 → re-base 删工作区文件
+    → index 残留 staged-add+worktree-deleted 幻影。清扫在 commit 起点自动回收。"""
+
+    def _repo(self, tmp_path: Path) -> GitCommitGateway:
+        _init_git_repo(tmp_path)
+        env = {
+            **os.environ,
+            "GIT_AUTHOR_NAME": "T",
+            "GIT_AUTHOR_EMAIL": "t@t.com",
+            "GIT_COMMITTER_NAME": "T",
+            "GIT_COMMITTER_EMAIL": "t@t.com",
+        }
+
+        def _git(*args: str) -> None:
+            subprocess.run(["git", *args], cwd=str(tmp_path), capture_output=True, env=env, check=True)
+
+        # 初始 commit 一个无关文件（保证 HEAD 存在）
+        _write_file(tmp_path, "base.txt", "b\n")
+        _git("add", "base.txt")
+        _git("commit", "-m", "init", "--no-verify")
+        # 构造幻影：暂存新文件后删除工作区文件（index=A + worktree=D）
+        _write_file(tmp_path, "phantom.txt", "p\n")
+        _git("add", "phantom.txt")
+        (tmp_path / "phantom.txt").unlink()
+        return GitCommitGateway(project_root=tmp_path)
+
+    def test_sweep_removes_phantom_ad(self, tmp_path: Path) -> None:
+        """AD 幻影被清扫（git reset 只动 index）；正常 staged 条目不受影响。"""
+        gw = self._repo(tmp_path)
+        env = {**os.environ, "GIT_AUTHOR_NAME": "T", "GIT_AUTHOR_EMAIL": "t@t.com",
+               "GIT_COMMITTER_NAME": "T", "GIT_COMMITTER_EMAIL": "t@t.com"}
+        # 正常 staged：修改已跟踪文件
+        _write_file(tmp_path, "base.txt", "b2\n")
+        subprocess.run(["git", "add", "base.txt"], cwd=str(tmp_path), capture_output=True, env=env)
+
+        swept = gw._sweep_phantom_staged_adds("sess-x", set())
+        assert swept == ["phantom.txt"], "AD 幻影必须被识别清扫"
+        st = gw.run_git(["git", "status", "--porcelain=v1"])
+        lines = [l for l in st.stdout.splitlines() if l.strip()]
+        assert not any(l.startswith("AD") for l in lines), "清扫后不应再有 AD 条目"
+        assert any(l.startswith("M") for l in lines), "正常 staged 修改不受影响"
+
+    def test_sweep_excludes_commit_targets(self, tmp_path: Path) -> None:
+        """本提交目标清单内文件不清扫（防误扫，对齐 ita 清扫先例）。"""
+        gw = self._repo(tmp_path)
+        swept = gw._sweep_phantom_staged_adds("sess-x", {"phantom.txt"})
+        assert swept == [], "目标清单内文件必须排除"
+
+    def test_sweep_noop_on_clean_index(self, tmp_path: Path) -> None:
+        """干净 index → 空清扫零副作用。"""
+        _init_git_repo(tmp_path)
+        env = {**os.environ, "GIT_AUTHOR_NAME": "T", "GIT_AUTHOR_EMAIL": "t@t.com",
+               "GIT_COMMITTER_NAME": "T", "GIT_COMMITTER_EMAIL": "t@t.com"}
+        _write_file(tmp_path, "f.txt", "x\n")
+        subprocess.run(["git", "add", "f.txt"], cwd=str(tmp_path), capture_output=True, env=env)
+        subprocess.run(["git", "commit", "-m", "t", "--no-verify"], cwd=str(tmp_path), capture_output=True, env=env)
+        gw = GitCommitGateway(project_root=tmp_path)
+        assert gw._sweep_phantom_staged_adds("sess-x", set()) == []
+
+
 # ---------------------------------------------------------------------------
 # AI-R1-003 红队治本：MERGE_HEAD 检测 worktree 盲区
 # ---------------------------------------------------------------------------

@@ -152,6 +152,32 @@ class TestRed:
         )
         assert not passed, "编辑者旧路径重建未拦——双重存在事故复发"
 
+    def test_multi_cluster_actual_location_guidance(self, gate, tmp_path):
+        """P3-1 治本（2026-09-13 复测发现）：多簇拆分（a/b/c）时声明 new_root 只是
+        首簇单值指针——消息必须逐文件反查『实际新位置』给精确指引。"""
+        gw = _init_repo(tmp_path)
+        # mover 搬移落地：seg_002 → b/（非声明的 new_root=a）
+        (tmp_path / "lab" / "seg_002.md").unlink()
+        (tmp_path / "lab" / "b").mkdir()
+        (tmp_path / "lab" / "b" / "seg_002.md").write_text("moved\n", encoding="utf-8")
+        _declare(gw)  # new_root=lab/a（首簇）
+        passed, detail = gate.check(
+            gw, files=[str(tmp_path / "lab" / "seg_002.md")], session_id="editor-B"
+        )
+        assert not passed
+        assert "实际新位置: lab/b/seg_002.md" in detail, "必须给出逐文件精确新位置（非首簇指针）"
+
+    def test_single_cluster_falls_back_to_new_root(self, gate, tmp_path):
+        """搬移未发生（磁盘无同名文件）→ 无逐文件『→ 实际新位置』行，回退 new_root 指引。"""
+        gw = _init_repo(tmp_path)
+        _declare(gw)
+        passed, detail = gate.check(
+            gw, files=[str(tmp_path / "lab" / "seg_001.md")], session_id="editor-B"
+        )
+        assert not passed
+        assert "→ 实际新位置:" not in detail, "磁盘无同名文件时不应有逐文件指针"
+        assert "lab/a" in detail, "回退声明 new_root 指引"
+
 
 class TestBlue:
     """蓝队：合法流量零误拦。"""

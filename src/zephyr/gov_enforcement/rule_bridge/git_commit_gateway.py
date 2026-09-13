@@ -434,6 +434,57 @@ def _audit_index_hygiene(project_root: Path, session_id: str, kind: str, payload
         logger.debug("index_hygiene audit write failed (non-blocking)", exc_info=True)
 
 
+def _print_bottleneck_banner(project_root: Path, context: str) -> None:
+    """D5 推模式堵点提醒横幅（2026-09-13 Owner 裁定"每次交付都提醒，不累积"）。
+
+    近 24h commit_block_events.jsonl 存在堵点事件（gate 拦截/慢提交）→ 在提交
+    输出打印醒目横幅——任何走提交通道的 AI 会话（TRAE/Zcode/Kimi 等）必然看到，
+    交付总结自然携带"有堵点待修"状态；修复后 24h 滚动窗口自动消失（零噪音）。
+    零事件零输出；详情查 commit_perf_report.py --hours 24。
+
+    防爆炸账（Owner 问证）：阈值化只记异常（拦截+超 60s 慢提交），正常提交零
+    记录——最坏 50 提交/日全异常也仅 ~450KB/月，远低于 watchdog 既有量级。
+    """
+    try:
+        from datetime import datetime, timedelta, timezone  # noqa: PLC0415
+
+        p = Path(str(project_root)) / ".runtime" / "audit" / "commit_block_events.jsonl"
+        if not p.exists():
+            return
+        cutoff = datetime.now(timezone.utc) - timedelta(hours=24)
+        groups: dict[str, list[dict]] = {}
+        for line in p.read_text(encoding="utf-8", errors="ignore").splitlines():
+            if not line.strip():
+                continue
+            try:
+                ev = json.loads(line)
+                ts = datetime.fromisoformat(str(ev.get("timestamp", "")))
+                if ts.tzinfo is None:
+                    ts = ts.replace(tzinfo=timezone.utc)
+                if ts < cutoff:
+                    continue
+                groups.setdefault(str(ev.get("gate_id", "?")), []).append(ev)
+            except (ValueError, KeyError):  # noqa: BLE001 — 单行坏数据跳过
+                continue
+        if not groups:
+            return
+        total = sum(len(v) for v in groups.values())
+        top = sorted(groups.items(), key=lambda kv: -len(kv[1]))[:3]
+        parts = []
+        for gate_id, evs in top:
+            ms = sorted(e.get("gate_chain_ms", e.get("total_ms", 0)) for e in evs)
+            parts.append(f"{gate_id} ×{len(evs)}（P50 {ms[len(ms) // 2] / 1000:.0f}s）")
+        print(
+            f"\n!! 提交堵点提醒（近 24h 共 {total} 次，修复后本提醒自动消失）-- context: {context}\n"
+            f"   TOP: {'；'.join(parts)}\n"
+            "   修复指引：python scripts/governance/commit_perf_report.py --hours 24"
+            "（堵点溯源：.runtime/audit/commit_block_events.jsonl）",
+            flush=True,
+        )
+    except Exception:  # noqa: BLE001 — 横幅失败绝不影响 commit 主链路
+        logger.debug("bottleneck banner failed (non-blocking)", exc_info=True)
+
+
 def _log_allow_overlap_usage(project_root: object, session_id: str, files: list[str]) -> None:
     """O2 裁定（#ARCH-264）：--allow-overlap 逃生通道使用计量落盘。
 
@@ -1944,7 +1995,10 @@ class GitCommitGateway:
                 if not merge_finalize and self._is_merge_in_progress():
                     return self._merge_in_progress_result()
                 # B2 治本②：gate 链前清扫 ita 存量残留（staged 校验盲区，merge 误报源）
-                self._sweep_intent_to_add_residue(session_id, self._target_rel_set(existing))
+                _own_rel = self._target_rel_set(existing)
+                self._sweep_intent_to_add_residue(session_id, _own_rel)
+                # P3-2 治本（2026-09-13 红蓝复测）：清扫幻影 AD 暂存（上次被拦提交的预暂存残留）
+                self._sweep_phantom_staged_adds(session_id, _own_rel)
                 # P2⑦ 锁内指纹重验：F′==F 才采信预跑（任一 staged/HEAD/config 变化→全量重跑）
                 _usable_preflight = None
                 if preflight_results is not None and preflight_fp is not None:
@@ -1977,6 +2031,7 @@ class GitCommitGateway:
                 blocked = self._check_gate_results(gate_results)
                 if blocked is not None:
                     self._audit_commit_block_event(session_id, blocked, existing, (time.monotonic() - _gate_t0) * 1000)
+                    _print_bottleneck_banner(self.project_root, context="post_commit")
                     return blocked
                 result = self._commit_locked(session_id, existing, full_message, gw_marker)
         except GatewayError as e:
@@ -1997,7 +2052,9 @@ class GitCommitGateway:
             # 无锁降级：直接执行 gate + commit（不串行化，但 gate 仍在）
             if not merge_finalize and self._is_merge_in_progress():
                 return self._merge_in_progress_result()
-            self._sweep_intent_to_add_residue(session_id, self._target_rel_set(existing))
+            _own_rel_fb = self._target_rel_set(existing)
+            self._sweep_intent_to_add_residue(session_id, _own_rel_fb)
+            self._sweep_phantom_staged_adds(session_id, _own_rel_fb)
             _gate_t0 = time.monotonic()
             gate_results = self._check_gates_with_drift_watch(
                 existing,
@@ -2014,6 +2071,7 @@ class GitCommitGateway:
             blocked = self._check_gate_results(gate_results)
             if blocked is not None:
                 self._audit_commit_block_event(session_id, blocked, existing, (time.monotonic() - _gate_t0) * 1000)
+                _print_bottleneck_banner(self.project_root, context="post_commit")
                 return blocked
             result = self._commit_locked(session_id, existing, full_message, gw_marker)
 
@@ -2022,6 +2080,8 @@ class GitCommitGateway:
             self._audit_commit_slow_event(session_id, existing, _total_ms)
         self._snapshot_worktree_status(session_id, result)
         self._run_post_commit_reconcile(existing, session_id, result, commit_message=message)
+        # D5 推模式堵点提醒：成功路径也打印近 24h 堵点横幅（AI 交付总结必见，Owner 裁定）
+        _print_bottleneck_banner(self.project_root, context="post_commit")
         return result
 
     def is_git_tracked(self, rel_path: str) -> bool:
@@ -3144,6 +3204,48 @@ class GitCommitGateway:
         )
         _audit_index_hygiene(self.project_root, session_id, "ita_sweep", {"swept": ita})
         return ita
+
+    def _sweep_phantom_staged_adds(self, session_id: str, exclude_rel: set[str]) -> list[str]:
+        """清扫 index 幻影 AD 条目（2026-09-13 红蓝复测 P3-2 治本）。
+
+        病根：会话预暂存文件（gate 读 staged blob 所必需）→ 提交被拦 → 会话
+        re-base 删掉工作区文件 → index 残留 staged-add+worktree-deleted（AD）幻影。
+        下次整索引提交存在幻影入库理论风险。本清扫在 commit 起点扫
+        ``git status --porcelain`` 的 AD 条目（staged 新增+工作区已删=index 有/
+        HEAD 无/盘无=确定性垃圾），``git reset -q --`` 只动 index。
+        exclude_rel=本次 commit 目标（normcase 相对路径，防误扫目标，对齐 ita
+        清扫先例）；MERGE_HEAD 存续期全禁；审计落 gateway_index_hygiene.jsonl。
+        """
+        if self._is_merge_in_progress():
+            return []
+        try:
+            st = self.run_git(["git", "status", "--porcelain=v1"])
+            if st.returncode != 0:
+                return []
+        except Exception:  # noqa: BLE001 — 状态读取失败不阻断（fail-open）
+            return []
+        phantoms: list[str] = []
+        for line in st.stdout.splitlines():
+            # AD = index:staged-add + worktree:deleted（幻影签名；带引号的路径跳过=fail-open）
+            if len(line) >= 4 and line[0] == "A" and line[1] == "D" and not line.startswith("A\""):
+                rel = line[3:].strip().replace("\\", "/")
+                if rel and os.path.normcase(rel) not in exclude_rel:
+                    phantoms.append(rel)
+        if not phantoms:
+            return []
+        result = self.run_git(["git", "reset", "-q", "--"] + phantoms)
+        if result.returncode != 0:
+            logger.warning(
+                "GitCommitGateway: 幻影 AD 清扫失败（不阻断）: %s", result.stderr.strip()
+            )
+            return []
+        logger.warning(
+            "GitCommitGateway: 清扫幻影 AD 暂存 %d 条（被拦提交预暂存残留，P3-2 治本）: %s",
+            len(phantoms),
+            phantoms,
+        )
+        _audit_index_hygiene(self.project_root, session_id, "phantom_ad_sweep", {"swept": phantoms})
+        return phantoms
 
     def _verify_post_commit_index(self, files: list[str], session_id: str) -> None:
         """B2 治本③：commit 后 index-HEAD 一致性校验（warn-only，commit 已成功不阻断）。

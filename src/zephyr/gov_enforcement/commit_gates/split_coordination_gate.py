@@ -112,6 +112,7 @@ def _load_active_splits(gateway) -> tuple[list[dict], str]:
 def _find_foreign_hit(gateway, files: list[str], session_id: str, splits: list[dict]) -> tuple[dict, list[str]] | None:
     """扫描声明找首个需要阻断的 (entry, hits)——他会话提交清单 ∩ 活跃声明 old_paths。
 
+    hits 返回**原始相对路径**（正斜杠，非 normcase——供展示与磁盘反查）。
     mover 本人放行；陈旧声明（>48h 弃单）降级放行（warn，防砖）。
     保护拆除正门=mover finish；**不做**"已落地自动失活"——搬移落地=旧路径消失
     =重建风险开始，恰是保护最需要存在的时点（设计教训：落地即失活会把保护
@@ -123,16 +124,38 @@ def _find_foreign_hit(gateway, files: list[str], session_id: str, splits: list[d
         old_paths = [str(p).replace("\\", "/") for p in entry.get("old_paths") or []]
         if not mover or not old_paths or mover == session_id:
             continue  # 声明残缺跳过 / mover 本人的搬移提交（协议正主）
-        hits = sorted(norm_files & {os.path.normcase(p) for p in old_paths})
-        if not hits:
+        by_norm = {os.path.normcase(p): p for p in old_paths}
+        hit_norms = sorted(norm_files & set(by_norm))
+        if not hit_norms:
             continue
         if _declaration_stale(entry):
             logger.warning(
                 "SPLIT-COORDINATION: 声明已陈旧（mover=%s 弃单自愈降级 warn 放行）", mover
             )
             continue
-        return entry, hits
+        return entry, [by_norm[n] for n in hit_norms]
     return None
+
+
+def _locate_rebased(gateway, old_rel: str) -> str:
+    """反查命中文件的**实际新位置**（P3-1 治本，2026-09-13 红蓝复测发现）。
+
+    多簇拆分（a/b/c）时声明 new_root 只是单值指针（首簇），编辑者按它指引会
+    re-base 到错误子目录。本函数在父目录下一层深找同名文件（拆分者已搬移/
+    已提交时磁盘可寻）：``lab/seg_050.md`` → 找到 ``lab/b/seg_050.md`` 则返回
+    实际新路径；找不到（搬移未发生/单簇场景）返回空串（消息回退 new_root 指引）。
+    """
+    if "/" not in old_rel:
+        return ""
+    parent, base = old_rel.rsplit("/", 1)
+    pdir = Path(str(getattr(gateway, "project_root", "."))) / parent
+    try:
+        for child in sorted(pdir.iterdir()):
+            if child.is_dir() and (child / base).is_file():
+                return f"{parent}/{child.name}/{base}"
+    except OSError:
+        return ""
+    return ""
 
 
 def make_split_coordination_gate() -> GateSpec:
@@ -154,17 +177,22 @@ def make_split_coordination_gate() -> GateSpec:
         if hit is None:
             return True, ""
         entry, hits = hit
-        # 生产形态=绝对路径（gateway abspath），_norm_rel 归一在 _find_foreign_hit 内完成
+        # P3-1 治本：逐命中文件反查实际新位置（多簇拆分精确指引；找不到回退 new_root）
+        lines = []
+        for h in hits[:10]:
+            actual = _locate_rebased(gateway, h)
+            lines.append(f"  - {h}" + (f"  → 实际新位置: {actual}" if actual else ""))
         new_root = str(entry.get("new_root") or "见声明")
         declared_at = str(entry.get("declared_at") or "?")
         mover = str(entry.get("mover_session") or "?")
         detail = (
             f"SPLIT-COORDINATION：{len(hits)} 个文件处于拆分搬移协调窗口，"
             f"禁止在旧平铺路径提交/重建（防双重存在事故）：\n"
-            + "\n".join(f"  - {h}" for h in hits[:10])
-            + f"\n拆分者={mover}（声明于 {declared_at}），新挂基点={new_root}。"
-            "处置：①编辑请 re-base 到新挂基点路径；②或协调拆分者（拆分未完成时可 finish 解除、"
-            "已完成时确认消费方全部 re-base 后 finish）；"
+            + "\n".join(lines)
+            + f"\n拆分者={mover}（声明于 {declared_at}），新挂基点={new_root}"
+            "（多簇拆分以逐文件『实际新位置』指引为准）。"
+            "处置：①编辑请 re-base 到实际新位置（无指引时用新挂基点）；②或协调拆分者"
+            "（拆分未完成时可 finish 解除、已完成时确认消费方全部 re-base 后 finish）；"
             "③查看声明：python scripts/governance/split_coordination.py status"
         )
         logger.warning("SPLIT-COORDINATION gate block (mover=%s, hits=%d)", mover, len(hits))
