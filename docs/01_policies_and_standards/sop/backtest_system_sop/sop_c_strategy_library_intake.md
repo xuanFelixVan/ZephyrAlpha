@@ -90,3 +90,15 @@ related_issues:
 - [ ] 差异化论证三轴齐备；
 - [ ] 挂图位置有对应 state_matrix 格子且格子状态适用（如打板只进点火后三档）；
 - [ ] INV-1 自检：策略内容没有以任何形式复制进地图文件。
+
+
+## 8. 双窗口及格门槛（C4/C5 验收土规，2026-09-13 Owner 批准立规）
+
+**门槛定义**：外部策略进入 sim/paper（模拟盘/纸面）候选前，必须同时满足：
+1. IS 窗口（冻结 2020-2023）Sharpe > 0；
+2. 每一段样本外复测窗口（OOS 2024-2026、2016-2019、及未来新增段）Sharpe > 0；
+3. 年衰减率 oos_years_decay < 0.5（>=0.5 判存疑，土规真源=schemas/categories/backtest_strategy_screen.py DDL 注释）。
+
+**净零声明**：本条非新增规范对象——是 backtest_strategy_screen DDL `oos_years_decay` 存疑土规（>=0.5）
+与 BT-P0-002 decay_watch 框架在策略入库线的显式化合并；执行工具=strategy_screen_query.py bothwin
+子命令（只读判定，结果可检索）；lifecycle 变更（candidate→sim）仍走规则册治理动作留痕。

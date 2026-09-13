@@ -12157,3 +12157,85 @@ strategies:
     evidence: "P0-4① 施工（2026-08-21，CAND-SIG-012 晋升）：代码落地 [MATURITY] testing（宪章B-007 新模块封顶，production 启用属 Owner）；单测 10 项全绿（tests/pf_core/test_eventdriven_sleeve_strategy.py）；未回测"
     code_symbol: "src/zephyr/pf_core/strategies/event_driven_sleeve_strategy.py::EventDrivenSleeveStrategy"
     code_fingerprint: "8ae95d92bb4eaabb"
+
+  - strategy_id: "STR-VREV-025"
+    name: "恐慌反弹持有 19 日"
+    name_zh: "恐慌反弹持有 19 日"
+    aliases: ["panic-rebound-19d"]
+    strategy_class: "value_reversal"
+    sleeve: "alpha"
+    alpha_sources: []
+    variant_of: null
+    entry_logic: "上证指数昨日跌幅<=-1.5% 且当日跌幅<=-1.4%（原文 14:55 tick 口径，翻译批按收盘跌幅声明近似）时满仓切入中证1000（回测以 000852 指数收益替代 512100 ETF，D1 声明）。"
+    exit_logic: "持有满 19 个交易日强制切回防御腿（原版回国债 ETF，窗口内债券数据缺省为空仓，D3 声明）；期间不再看信号。"
+    position_sizing: ""
+    risk_rules: []
+    holding_period: "波段（19 交易日）"
+    benchmark_id: "BMK-ABSOLUTE-001"
+    universe_id: "UNI-RULE-001"
+    cost_model_id: "CST-ASTOCK-001"
+    module_id: "MOD-BT-068"
+    doc_ref: "docs/_working/2026-09-13-c5-cluster-differentiation-report.md（附一/附二）"
+    code_path: "scripts/backtest/translated/c4_e3da6fa71af1_panic_rebound.py"
+    lifecycle_status: "sim"
+    status: "active"
+    version: "1.0.0"
+    created_at: "2026-09-13"
+    updated_at: "2026-09-13"
+    go_live_date: null
+    retired_date: null
+    owner: "MOD-GOVERNANCE"
+    decay_detection_method: null
+    decay_threshold: null
+    last_decay_scan_at: null
+    mrp_baseline: null
+    adaptation_level: null
+    last_refit_at: null
+    baseline_sharpe: 0.83
+    baseline_expectancy: null
+    baseline_win_rate: null
+    baseline_profit_factor: null
+    baseline_max_drawdown: null
+    combination_strategy: {}
+    meta_labeling_config: {}
+    origin: "llm_distilled"
+    distilled_to_code: true
+    capacity_aum_limit: null
+    participation_rate_limit: 0.05
+    market_impact_model: "square_root"
+    baseline_trade_frequency: null
+    decay_cause: "unknown"
+    decay_scan_frequency: "monthly"
+    sharpe: null
+    max_drawdown: null
+    annual_return: null
+    capacity: null
+    turnover: null
+    last_evaluated_at: 2026-09-13
+    code_commit: null
+    data_quality_policy:
+      null_rate: {threshold: 0.02, window: "1d"}
+      drift_method: "psi"
+      drift_threshold: 0.2
+      freshness: {staleness_sla: "2d"}
+      semantic_contract:
+        null_semantics: "null=未计算/未产生（非零值），禁止零填充"
+        default_fill_policy: "none"
+    null_rate: null
+    drift_psi: null
+    drift_ks_pvalue: null
+    last_quality_scan_at: null
+    entry_series: null
+    range_bounds: {}
+    primary_timeframe: "daily"
+    applicable_timeframes: ["1min", "5min"]
+    regime_valid: []
+    regime_invalid: []
+    direction: "long"
+    entry_role: "trigger"
+    applies_to: ["index", "etf"]
+    tags: ["恐慌反弹", "反转", "指数择时", "危机alpha"]
+    algorithm_status: "quantized"
+    evidence: "C4 三窗全绿：IS 2020-2023 Sharpe=1.15(DSR=0.53) / OOS 2024-2026H1 Sharpe=0.83(年衰减11%) / 2016-2019 Sharpe=0.98(DSR=0.98)；参数网格 81 格 77 正（95% 稳健，唯一退化区=10 日短持）；逐年全正；短板=十年 15 笔（统计功效弱）在市 10%。run=SCR-C4-20260913-002056/SCR-C4-20260913-013339/C4-OOS2-20260913/C4-2016-2019-sample3；Owner 批准入 sim（2026-09-13）"
+    code_symbol: "scripts/backtest/translated/c4_e3da6fa71af1_panic_rebound.py::build"
+    code_fingerprint: null
