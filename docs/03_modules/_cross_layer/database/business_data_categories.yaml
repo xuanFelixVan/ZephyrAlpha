@@ -2676,3 +2676,21 @@
   frequency: 日频
   data_source: [crypto_binance]
   blueprint: null
+
+# --- c1_backtest 锚定态（2026-09-14，N-06 解冻批补登：唯一 c1_backtest 任务表） ---
+
+- category_id: backtest_regime_state_anchored
+  name: "锚定风险四档历史"
+  engine: clickhouse
+  database: c1_backtest
+  table: regime_state_anchored
+  schema_file: schemas/categories/backtest_regime_state_anchored.py
+  data_type: 成品
+  lifecycle: permanent
+  sla_level: L2
+  enabled: true
+  hard_constraint: null
+  calc_mode: preload
+  frequency: 日频
+  data_source: [internal]
+  blueprint: null
