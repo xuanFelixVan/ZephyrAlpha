@@ -91,17 +91,29 @@ def _tsv_cell(v: Any) -> str:
     return str(v).replace("\t", " ").replace("\r", " ").replace("\n", " ")
 
 
-def load_data() -> tuple[pd.DataFrame, pd.DataFrame]:
-    """教材表 1809 日概率 + 000300 收盘价（前向收益/回撤窗口原料）。"""
+def load_data(prob_table: str = _PROB_TABLE) -> tuple[pd.DataFrame, pd.DataFrame]:
+    """教材表概率 + 000300 收盘价（前向收益/回撤窗口原料）。
+
+    prob_table 可指向替代判定器历史（如 regime_state_anchored，重印批裁定#229）——
+    阈值/分段/链假设全部冻结不变，仅换状态输入源；替代表无 shrinkage 列时置 NaN
+    （BT-P0-001 需 shrinkage，替代表场景用 --only BT-P0-002）。
+    """
     ensure_ch_env_loaded()
     cfg = load_ch_reader_config()
     from clickhouse_driver import Client
 
     c = Client(host=cfg["host"], port=int(cfg.get("port", 9000)), user=cfg.get("user", "default"),
                password=cfg.get("password", ""), connect_timeout=5)
-    probs = pd.DataFrame(c.execute(
-        f"SELECT trade_date, dominant, shrinkage FROM {_PROB_TABLE} ORDER BY trade_date"
-    ), columns=["trade_date", "dominant", "shrinkage"])
+    if prob_table == _PROB_TABLE:
+        probs = pd.DataFrame(c.execute(
+            f"SELECT trade_date, dominant, shrinkage FROM {prob_table} ORDER BY trade_date"
+        ), columns=["trade_date", "dominant", "shrinkage"])
+    else:
+        # FINAL：替代表走幂等重建（ReplacingMergeTree 同键多版本），禁读未合并旧版
+        probs = pd.DataFrame(c.execute(
+            f"SELECT trade_date, dominant FROM {prob_table} FINAL ORDER BY trade_date"
+        ), columns=["trade_date", "dominant"])
+        probs["shrinkage"] = np.nan
     px = pd.DataFrame(c.execute(
         "SELECT trade_date, toFloat64(close) AS close FROM c1_market.kline_index "
         "WHERE symbol = '000300' AND trade_date >= '2019-01-01' ORDER BY trade_date"
@@ -113,9 +125,9 @@ def load_data() -> tuple[pd.DataFrame, pd.DataFrame]:
     return probs, px
 
 
-def build_dataset() -> pd.DataFrame:
+def build_dataset(prob_table: str = _PROB_TABLE) -> pd.DataFrame:
     """合并 + 前向 20 日收益与前向 20 日窗口最大回撤（PIT：只用 t 之后数据作标签，检验允许）。"""
-    probs, px = load_data()
+    probs, px = load_data(prob_table)
     px = px.sort_values("trade_date").reset_index(drop=True)
     px["fwd_20d"] = px["close"].shift(-_FWD_DAYS) / px["close"] - 1.0
     # 前向 20 日窗口最大回撤：min(close[t+1..t+20])/close[t]-1（更负=更深）
@@ -204,9 +216,11 @@ def main() -> None:
     parser.add_argument("--dry-run", action="store_true", help="只算不写台账/不归档")
     parser.add_argument("--only", choices=["BT-P0-001", "BT-P0-002"], default=None,
                         help="只跑单对象（BT-P0-002 已出分的续跑场景）")
+    parser.add_argument("--prob-table", default=_PROB_TABLE,
+                        help="状态历史源表（默认教材表；重印批=regime_state_anchored，裁定#229）")
     args = parser.parse_args()
 
-    df = build_dataset()
+    df = build_dataset(args.prob_table)
     logger.info("数据集: %d 日（fwd_20d 有值 %d）", len(df), int(df["fwd_20d"].notna().sum()))
 
     now = datetime.now()

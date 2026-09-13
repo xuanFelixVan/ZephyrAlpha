@@ -4972,9 +4972,14 @@ capabilities:
   name: construction_workflow_sop
   canonical_file: docs/01_policies_and_standards/sop/construction_workflow_sop.md
   name_zh: 端到端 15 步施工闭环 SOP（07 域施工编排真源）
-  description: 施工 新模块 建新文件 写代码 施工流程 15步闭环 前必读的端到端编排 SOP——设计备忘→文档审查→蓝图→depgraph 登记→施工→测试→git 提交→全景对齐→清理 全流程步骤与失败处置；适用 07 域（regime/选股/仓位/风控/买卖/执行/对账/治理）施工，RULE-CAPABILITY-LOOKUP 检索"施工"应命中本条
-
+  description: 施工 新模块 建新文件 写代码 施工流程 15步闭环 前必读的端到端编排 SOP——设计备忘→文档审查→蓝图→depgraph 登记→施工→测试→git
+    提交→全景对齐→清理 全流程步骤与失败处置；适用 07 域（regime/选股/仓位/风控/买卖/执行/对账/治理）施工，RULE-CAPABILITY-LOOKUP
+    检索"施工"应命中本条
 creation_tokens:
+- file: schemas/categories/market_alt_typhoon_track.py
+  token: altdata-typhoon-ddl-20260914
+  created_by: st-altdata-20260913
+  capability: alt_data_batch1_free_sources
 - file: docs/_working/2026-09-13-xtreme-redblue-v3-plan.md
   token: redblue-v3-plan-20260913
   created_by: solo_agent
@@ -12112,14 +12117,32 @@ creation_tokens:
   token: lane-e-quantile-baseline-20260913
   created_by: st-zcode-c4-20260912
   capability: c4_batch_translation
-# di_seam_exemptions 清零（2026-09-13 Owner 裁定"直接改造"）：
-# 三条豁免全部过时摘除——AutoRuntimeCore 实测已通过（动态注入重构完成）；
-# AdmissionController 主类已通过（global_config | None=None 接缝），文件内私有小类
-# _TokenBucket/_CircuitBreaker 经时钟注入改造获得真实接缝；AgentOrchestrator 本就
-# 有 6 个 kw-only 可注入参数，被检查器 kw-only 盲区误判（generate_project_depgraph
-# _init_has_injectable_param 治本后通过）。检测器 v2+豁免清零=零豁免运行。
 - file: docs/_working/2026-09-13-p002-semantic-review.md
   token: st-fingov-p002-semantic-review-20260913
   created_by: st-fingov-20260912
   capability: p0_002_semantic_review
+- file: docs/03_modules/_domain_frontend/acceptance/ACC-F-WR-POOL.yaml
+  token: wr-pool-acc-20260914
+  created_by: st-igfe-20260910
+  capability: warroom_pool
+- file: docs/_working/2026-09-14-p002-reprint-result.md
+  token: st-fingov-p002-reprint-result-20260914
+  created_by: st-fingov-20260912
+  capability: p0_002_reprint_result
+- file: src/zephyr/regime/core/anchored_state_machine.py
+  token: st-fingov-anchored-state-machine-20260914
+  created_by: st-fingov-20260912
+  capability: anchored_state_machine
+- file: scripts/ch/build_anchored_state_history.py
+  token: st-fingov-build-anchored-state-20260914
+  created_by: st-fingov-20260912
+  capability: build_anchored_state_history
+- file: scripts/ch/apply_anchored_state_ddl.py
+  token: st-fingov-apply-anchored-state-ddl-20260914
+  created_by: st-fingov-20260912
+  capability: apply_anchored_state_ddl
+- file: tests/zephyr/regime/__init__.py
+  token: st-fingov-tests-regime-init-20260914
+  created_by: st-fingov-20260912
+  capability: tests_zephyr_regime
 di_seam_exemptions: []
