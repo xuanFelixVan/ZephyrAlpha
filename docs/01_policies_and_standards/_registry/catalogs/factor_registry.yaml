@@ -12083,7 +12083,7 @@ factors:
   turnover: null
   capacity: null
   last_evaluated_at: "2026-09-14"
-  evidence: "SOP-B4 2026-09-14 IS 2019-2023 月度截面 Spearman IC=+0.0284 t_p=0.0014 覆盖98.8%（60月）通过晋级门槛；OOS 2024+ IC=+0.0061 未达线如实记录；评估器=eval_f2_fundamental_ic.py PIT as-of announce_date"
+  evidence: "SOP-B4 2026-09-14 IS 2019-2023 月度截面 Spearman IC=+0.0284 t_p=0.0014 覆盖98.8%（60月）通过晋级门槛；OOS 2024+ IC=+0.0061 未达线如实记录；评估器=eval_f2_fundamental_ic.py PIT as-of announce_date。SOP-B5 2026-09-14（eval_f2_layers_styles.py 91月）：五分位单调秩相关0.9；多空价差月均+0.51% t_p=0.028；分状态条件IC=r1中高风险态+0.0487最强/r4+0.0258/r2+0.0176/r3低风险+0.0049（高波动期财务质量成幸存因子，机制合理）——适用状态条件化候选；衰减视图=2021峰+1.29%→2024-2026约+0.1%（OOS衰减如实，decay_watch月巡检盯守）"
   code_symbol: "src/zephyr/factor/fundamentals.py::fq01_accrual"
   code_fingerprint: null
   entry_role: "ranking"
@@ -12122,7 +12122,7 @@ factors:
   turnover: null
   capacity: null
   last_evaluated_at: "2026-09-14"
-  evidence: "SOP-B4 2026-09-14 IS 同款评估 IC=+0.0246 t_p=0.0046 覆盖99.4% 通过晋级门槛；OOS +0.0077 如实；D3 对照=FQ-01 池化秩相关 0.2813<0.85 真双因子不挂 variant_of"
+  evidence: "SOP-B4 2026-09-14 IS 同款评估 IC=+0.0246 t_p=0.0046 覆盖99.4% 通过晋级门槛；OOS +0.0077 如实；D3 对照=FQ-01 池化秩相关 0.2813<0.85 真双因子不挂 variant_of。SOP-B5 2026-09-14：五分位两端单调（Q1反常偏高中段平，秩相关0.6）；多空价差月均+0.26% t_p=0.238 无条件不显著（弱于FQ-01）；分状态条件IC=r2+0.0263/r1+0.0305/r4+0.0217 强而r3低风险+0.0027弱——状态条件化（剔低风险态）候选，下批验证"
   code_symbol: "src/zephyr/factor/fundamentals.py::fq02_cash_conversion"
   code_fingerprint: null
   entry_role: "ranking"
@@ -12161,7 +12161,7 @@ factors:
   turnover: null
   capacity: null
   last_evaluated_at: "2026-09-14"
-  evidence: "SOP-B4 2026-09-14 failed_eval：IS IC=-0.0144 t_p=0.337 |IC|<0.02 未达晋级门槛，保持 candidate（不删条目）；OOS -0.0133 同向弱——Novy-Marx 毛利率在 2019-2023 A股全市场未显效，留档观察"
+  evidence: "SOP-B4 2026-09-14 failed_eval：IS IC=-0.0144 t_p=0.337 |IC|<0.02 未达晋级门槛，保持 candidate（不删条目）；OOS -0.0133 同向弱——Novy-Marx 毛利率在 2019-2023 A股全市场未显效，留档观察。SOP-B5 分域 2026-09-14：三档全负（小盘-0.0080/中盘-0.0077/大盘-0.0105），分域亦无效——退役候审"
   code_symbol: "src/zephyr/factor/fundamentals.py::fq03_gpoa"
   code_fingerprint: null
   entry_role: "ranking"
@@ -12200,7 +12200,7 @@ factors:
   turnover: null
   capacity: null
   last_evaluated_at: "2026-09-14"
-  evidence: "SOP-B4 2026-09-14 failed_eval：IS IC=+0.0171 t_p=0.069 未达（差临界）；OOS IC=+0.0200 方向一致——留 candidate 下批复核（ΔROEq 信号方向稳定但强度不足）"
+  evidence: "SOP-B4 2026-09-14 failed_eval：IS IC=+0.0171 t_p=0.069 未达（差临界）；OOS IC=+0.0200 方向一致。SOP-B5 分域复检 2026-09-14 通过：市值三档 IC=小盘+0.0286/中盘+0.0213/大盘+0.0192（91月）——全档高于混样，小盘域明确达标；域条件化（中性化/小盘域）转正候选，判据条款留批次决策点"
   code_symbol: "src/zephyr/factor/fundamentals.py::fq04_delta_roe_q"
   code_fingerprint: null
   entry_role: "ranking"
@@ -12239,7 +12239,7 @@ factors:
   turnover: null
   capacity: null
   last_evaluated_at: "2026-09-14"
-  evidence: "SOP-B4 2026-09-14 failed_eval：IS IC=+0.0031 t_p=0.757 远未达；OOS +0.0226 反弹——IS 段失效疑似 2019-2023 小盘成长风格逆风，保持 candidate 待风格分层复检"
+  evidence: "SOP-B4 2026-09-14 failed_eval：IS IC=+0.0031 t_p=0.757 远未达；OOS +0.0226 反弹。SOP-B5 分域复检 2026-09-14：市值三档 IC=小盘+0.0208/中盘+0.0177/大盘+0.0107（91月）——小盘域达标（风格分层证实大盘稀释假说）；小盘域条件化候选"
   code_symbol: "src/zephyr/factor/fundamentals.py::gr01_rev_q_yoy"
   code_fingerprint: null
   entry_role: "ranking"
@@ -12278,7 +12278,7 @@ factors:
   turnover: null
   capacity: null
   last_evaluated_at: "2026-09-14"
-  evidence: "SOP-B4 2026-09-14 failed_eval：IS IC=+0.0100 t_p=0.112 未达；OOS +0.0081——保持 candidate"
+  evidence: "SOP-B4 2026-09-14 failed_eval：IS IC=+0.0100 t_p=0.112 未达；OOS +0.0081——保持 candidate。SOP-B5 分域 2026-09-14：小盘+0.0173/中盘+0.0106/大盘+0.0100，小盘边缘未达标"
   code_symbol: "src/zephyr/factor/fundamentals.py::gr02_np_q_qoq"
   code_fingerprint: null
   entry_role: "ranking"

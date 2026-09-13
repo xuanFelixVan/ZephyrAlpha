@@ -95,7 +95,7 @@ def load_factor_panel() -> pd.DataFrame:
         panel["total_current_assets"], panel["total_current_liabilities"], panel["total_shares"],
         panel["rev_ttm"], panel["gross_margin_q"])
     panel["announce_date"] = pd.to_datetime(panel["announce_date"])
-    return panel[["announce_date"] + _FACTOR_COLS]
+    return panel[["announce_date", "total_shares"] + _FACTOR_COLS]
 
 
 def load_rebalance_prices(dates: list[str]) -> pd.DataFrame:
