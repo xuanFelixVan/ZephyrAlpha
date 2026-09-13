@@ -3,8 +3,8 @@
 #
 manifest_version: 2.0.0
 generated_by: generate_manifest.py (auto-scan)
-generated_at: '2026-09-13'
-total_scripts: 851
+generated_at: '2026-09-14'
+total_scripts: 855
 scripts:
 - name: __init__.py
   path: __init__.py
@@ -590,6 +590,14 @@ scripts:
   status: registered
   timeout_seconds: 60
   dimensions: []
+- name: backtest/lane_e_quantile_baseline.py
+  path: backtest/lane_e_quantile_baseline.py
+  description: 特征（全部 ≤T-1 可得）：滞后收益 1/5/10/20 日 + 滚动波动率 5/20 日 + 均值比 close/MA20。
+  domain: test
+  execution_plane: warm-path
+  status: registered
+  timeout_seconds: 60
+  dimensions: []
 - name: backtest/print_regime_history.py
   path: backtest/print_regime_history.py
   description: '数据链（复用 G03 C1 real 模式骨架，零新算法）:'
@@ -1030,6 +1038,14 @@ scripts:
   status: registered
   timeout_seconds: 60
   dimensions: []
+- name: ch/apply_anchored_state_ddl.py
+  path: ch/apply_anchored_state_ddl.py
+  description: 裁定沿用：writer 账号无 CREATE 权限，DDL 用 base 账号直连（#ARCH-CH-027 RBAC，
+  domain: ch
+  execution_plane: warm-path
+  status: registered
+  timeout_seconds: 60
+  dimensions: []
 - name: ch/apply_consensus_daily_ddl.py
   path: ch/apply_consensus_daily_ddl.py
   description: DDL 真源：schemas/categories/fundamental/consensus_daily.py（DDL-as-Code）。
@@ -1137,6 +1153,14 @@ scripts:
 - name: ch/backfill_research_report_full.py
   path: ch/backfill_research_report_full.py
   description: 背景（docs/_working/2026-09-12-research-report-data-plan.md）：现有 research_report_incremental
+  domain: ch
+  execution_plane: warm-path
+  status: registered
+  timeout_seconds: 60
+  dimensions: []
+- name: ch/build_anchored_state_history.py
+  path: ch/build_anchored_state_history.py
+  description: 把 000300 收盘价经特征锚定四态状态机（零拟合）重建为
   domain: ch
   execution_plane: warm-path
   status: registered
@@ -1393,6 +1417,14 @@ scripts:
 - name: data/backfill_sector880_history.py
   path: data/backfill_sector880_history.py
   description: 背景（数据总览 v2 二批 B2，2026-09-11）：表内 1d 段 312 个交易日断档——任务 2026-07-30
+  domain: data
+  execution_plane: warm-path
+  status: registered
+  timeout_seconds: 60
+  dimensions: []
+- name: data/backfill_stock_indicator_daily_basic.py
+  path: data/backfill_stock_indicator_daily_basic.py
+  description: 设计真源：docs/_working/2026-09-13-c5-cluster-differentiation-report.md 附三。
   domain: data
   execution_plane: warm-path
   status: registered
