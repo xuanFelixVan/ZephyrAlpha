@@ -4,10 +4,10 @@ ttl: permanent
 doc_type: register
 title: 规则路径目录（唯一真源 SSoT）
 status: active
-generated_at: '2026-09-13T18:58:07Z'
+generated_at: '2026-09-13T19:08:00Z'
 generated_by: scripts/governance/d3_metadata/generate_rule_catalog.py
 maintenance: auto
-total_files: 248
+total_files: 246
 total_rules: 61
 tier_distribution:
   L0: 21
@@ -1799,7 +1799,7 @@ files:
   title: SOP 方法论真源地图（七族文件夹导航）
   doc_type: index
   status: active
-  version: 1.0.0
+  version: 1.1.0
   rule_form: ''
   scope: ''
   stability: ''
@@ -1817,21 +1817,6 @@ files:
   version: ''
   rule_form: ''
   scope: ''
-  stability: ''
-  layer: ''
-  superseded_by: ''
-  severity: ''
-  tier: ''
-  aliases: []
-  section_count: 0
-- path: docs/01_policies_and_standards/sop/trading_decision_map_pathfinding_sop.md
-  module_id: ''
-  title: 交易决策全景图病菌寻路增长 SOP——六向寻路+防噪音四闸（长期增长机制真源）
-  doc_type: policy
-  status: active
-  version: 1.0.0
-  rule_form: procedural
-  scope: global
   stability: ''
   layer: ''
   superseded_by: ''
@@ -1914,7 +1899,7 @@ files:
   tier: ''
   aliases: []
   section_count: 0
-- path: docs/01_policies_and_standards/sop/construction_sop/construction_workflow_sop.md
+- path: docs/01_policies_and_standards/sop/construction_sop/construction_workflow_policy.md
   module_id: ''
   title: 07 域施工流程标准作业规程（SOP）——端到端 15 步施工闭环
   doc_type: policy
@@ -1929,7 +1914,7 @@ files:
   tier: ''
   aliases: []
   section_count: 0
-- path: docs/01_policies_and_standards/sop/construction_sop/document_review_and_optimization_sop.md
+- path: docs/01_policies_and_standards/sop/construction_sop/document_review_and_optimization_policy.md
   module_id: ''
   title: 文档审查与优化流程标准作业规程（SOP）——七轮循环工作法
   doc_type: policy
@@ -1944,7 +1929,7 @@ files:
   tier: ''
   aliases: []
   section_count: 0
-- path: docs/01_policies_and_standards/sop/construction_sop/frontend_component_split_sop.md
+- path: docs/01_policies_and_standards/sop/construction_sop/frontend_component_split_policy.md
   module_id: ''
   title: 前端组件拆分与数据接通 SOP（stockq 页实证）
   doc_type: policy
@@ -1959,7 +1944,7 @@ files:
   tier: ''
   aliases: []
   section_count: 0
-- path: docs/01_policies_and_standards/sop/data_audit_sop/industry_chain_data_audit_sop.md
+- path: docs/01_policies_and_standards/sop/data_audit_sop/industry_chain_data_audit_policy.md
   module_id: ''
   title: 产业链供应链全景图数据审计与更新SOP——夜班自主执行版
   doc_type: policy
@@ -2049,7 +2034,7 @@ files:
   tier: ''
   aliases: []
   section_count: 0
-- path: docs/01_policies_and_standards/sop/ops_sop/2026-08-22-emergency-runbook.md
+- path: docs/01_policies_and_standards/sop/ops_sop/emergency_runbook.md
   module_id: ''
   title: 保命轨 D-L1~D-L3 人工 Runbook
   doc_type: policy
@@ -2064,7 +2049,7 @@ files:
   tier: ''
   aliases: []
   section_count: 0
-- path: docs/01_policies_and_standards/sop/ops_sop/merge_conflict_resolution_sop.md
+- path: docs/01_policies_and_standards/sop/ops_sop/merge_conflict_resolution_policy.md
   module_id: ''
   title: Merge 冲突处理 SOP——冲突三分法 + 标准 7 步流程（不盲选边，逐个读内容，结果留痕）
   doc_type: policy
@@ -2079,7 +2064,7 @@ files:
   tier: ''
   aliases: []
   section_count: 0
-- path: docs/01_policies_and_standards/sop/ops_sop/worktree_cleanup_sop.md
+- path: docs/01_policies_and_standards/sop/ops_sop/worktree_cleanup_policy.md
   module_id: ''
   title: Worktree 清理 SOP——四证齐全方可删除（死亡证明/无未合并工作/统筹批准/可恢复证明）
   doc_type: policy
@@ -2094,7 +2079,7 @@ files:
   tier: ''
   aliases: []
   section_count: 0
-- path: docs/01_policies_and_standards/sop/trading_decision_map_sop/trading_decision_map_layering_sop.md
+- path: docs/01_policies_and_standards/sop/trading_decision_map_sop/trading_decision_map_layering_policy.md
   module_id: ''
   title: 交易决策地图逐层讨论 SOP——防撞车·防越级·防枝末先行
   doc_type: policy
@@ -2415,21 +2400,6 @@ files:
   doc_type: register
   status: active
   version: 1.1.3
-  rule_form: ''
-  scope: ''
-  stability: ''
-  layer: ''
-  superseded_by: ''
-  severity: ''
-  tier: ''
-  aliases: []
-  section_count: 0
-- path: docs/01_policies_and_standards/_registry/catalogs/capability_canonical_file_registry.yaml
-  module_id: PS-REG-021
-  title: 能力→真源文件反查注册表
-  doc_type: gate
-  status: active
-  version: 1.1.1
   rule_form: ''
   scope: ''
   stability: ''
