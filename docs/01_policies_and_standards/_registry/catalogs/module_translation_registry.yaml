@@ -48079,6 +48079,13 @@ entries:
   desc_zh: ""
   desc_en: ""
   plain_zh: "在 ClickHouse 里建锚定态历史表的部署脚本，可重复跑，建完自动核对结构。"
+- module_path: src/zephyr/pf_alloc/core/forward_stop_loss.py
+  domain_id: D_BACKTEST
+  name_zh: "前瞻概率止损模块"
+  name_en: ""
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "TDM 升级蓝图 UP-2：用分布预测的 P(跌) 替代固定百分比止损，超过阈值输出止损评审信号而非强制平仓。含基础版（滚动负收益占比）和升级版（三分布位点插值 P(跌)+左尾厚比复合评分），保守语义——止损评审不等于强制平仓，供上游决策参考。"
 
 battle_map_steps:
 - step_id: BM-BUY-05

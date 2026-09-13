@@ -2383,6 +2383,28 @@ tasks:
   extra:
     description: "航运运价指数全量刷新（BDI 1988-10 起约 9500 行+六指数约 5000 行历史回补）"
 
+- task_id: alt_typhoon_track_incremental
+  table: c1_market.alt_typhoon_track
+  source: akshare_alt
+  schedule: daily_event
+  incremental: true
+  date_col: crt_date
+  dependencies: []
+  capability: alt_typhoon_track
+  symbols:
+  extra:
+    description: "台风路径日度增量（深圳气象局热带气旋数据5.0，按入库日期 startDate 增量；KEYID 幂等；气象事件层主表，与运价/生猪/天气资产事件对齐）"
+
+- task_id: alt_typhoon_track_full_refresh
+  table: c1_market.alt_typhoon_track
+  source: akshare_alt
+  schedule: weekend_calibration
+  incremental: false
+  dependencies: []
+  capability: alt_typhoon_track
+  symbols:
+  extra:
+    description: "台风路径全量刷新（全史约 12.8 万条，2017 年起含历史台风；万行/页分页回补）"
 
 # ============== EDB 国际宏观数据扩展（#ARCH-EDB-EXPAND，2026-08-04）==============
 # FRED（美联储经济数据库）+ 世界银行 免费国际宏观数据

@@ -361,6 +361,8 @@ from schemas.categories.market_account_nav_daily import MARKET_ACCOUNT_NAV_DAILY
 # 另类数据第 1 批免注册直连（2026-09-12，alt-data-handoff §8-1）：fail-closed 直接导入
 from schemas.categories.market_alt_shipping_index import ALT_SHIPPING_INDEX_DDL
 from schemas.categories.market_alt_stock_comment import ALT_STOCK_COMMENT_DDL
+# 气象事件层：台风路径（2026-09-14，深圳开放数据平台 appKey 通道）
+from schemas.categories.market_alt_typhoon_track import ALT_TYPHOON_TRACK_DDL
 from schemas.categories.market_breadth_snapshot import MARKET_BREADTH_SNAPSHOT_DDL
 from schemas.categories.market_daban_board_event import MARKET_DABAN_BOARD_EVENT_DDL
 from schemas.categories.intraday.market_execution_report import MARKET_EXECUTION_REPORT_DDL
@@ -395,6 +397,8 @@ _ALL_DDL: list[tuple[str, str]] = [
     # 另类数据第 1 批免注册直连（2026-09-12，alt-data-handoff §8-1）
     ("c1_market.alt_stock_comment", ALT_STOCK_COMMENT_DDL),
     ("c1_market.alt_shipping_index", ALT_SHIPPING_INDEX_DDL),
+    # 气象事件层：台风路径（2026-09-14）
+    ("c1_market.alt_typhoon_track", ALT_TYPHOON_TRACK_DDL),
     # JOB-077 市场元数据与约束接入（DS-081~083，2026-08-15）
     ("c1_market.stock_basic", STOCK_BASIC_DDL),
     ("c1_market.stk_limit", STK_LIMIT_DDL),
@@ -453,6 +457,8 @@ _EXPECTED_ENGINES: dict[str, str] = {
     # 另类数据第 1 批免注册直连（2026-09-12，alt-data-handoff §8-1）：快照/长表同键替换幂等
     "alt_stock_comment": "ReplacingMergeTree",
     "alt_shipping_index": "ReplacingMergeTree",
+    # 气象事件层：台风路径（2026-09-14）：KEYID 全局唯一替换幂等
+    "alt_typhoon_track": "ReplacingMergeTree",
     # JOB-077（DS-081~083，2026-08-15）
     "stock_basic": "ReplacingMergeTree",
     "stk_limit": "ReplacingMergeTree",

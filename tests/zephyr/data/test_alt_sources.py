@@ -55,7 +55,7 @@ def test_to_int_variants():
 
 def test_provider_meta_capabilities():
     caps = {c.capability_id for c in AkshareAltProvider.meta.capabilities}
-    assert caps == {"alt_stock_comment", "alt_shipping_index"}
+    assert caps == {"alt_stock_comment", "alt_shipping_index", "alt_typhoon_track"}
     assert _AKSHARE_ALT_CAPABILITIES == caps
 
 
@@ -257,7 +257,7 @@ def test_bootstrap_record_outcome_and_evaluate():
         "alt_stock_comment",
         success=True,
         latency_seconds=2.5,
-        data_ts=datetime.datetime(2026, 9, 12, 8, 30, 0),
+        data_ts=datetime.datetime.now(),  # 相对真实时钟取新鲜样本（避免硬编码时间戳随日期衰减）
     )
     report = health.evaluate("alt_stock_comment")
     assert health.state_of("alt_stock_comment") is HealthState.NORMAL
@@ -277,3 +277,83 @@ def test_bootstrap_fail_closed_on_bad_evidence(monkeypatch):
     )
     with pytest.raises(AltComplianceError):
         build_governance_triple()
+
+
+# ---------- 台风路径（深圳开放数据平台 appKey 通道） ----------
+
+def _typhoon_stub_row(keyid: int, crt: str = "2026-09-13 17:00:00") -> dict:
+    return {
+        "KEYID": str(keyid), "TCIDX": "2845", "TCNO": "0000", "CNAME": "南海低压",
+        "ENAME": "(nameless)", "TCLEVEL": "TD", "ISSUEDATE": crt, "FORECASTDATE": crt,
+        "INTERVALTIME": "0", "LONGITUDE": "106.9", "LATITUDE": "17.2",
+        "AIRPRESSURE": "1006", "WIND": "12", "GUST": "0", "MOVESPEED": "12",
+        "MOVEDIR": "W", "SIXRADII": "0", "SEVENRADII": "0", "EIGHTRADII": "0",
+        "TENRADII": "0", "ISSUETYPE": "BABJ", "CRTTIME": crt,
+    }
+
+
+def test_typhoon_row_parse():
+    from zephyr.data.implementations.akshare_alt_provider import AkshareAltProvider
+
+    row = AkshareAltProvider._typhoon_row(_typhoon_stub_row(1371860533))
+    assert row[0] == 1371860533          # keyid int
+    assert row[3] == "南海低压"
+    assert row[7] == "2026-09-13 17:00:00"  # forecast_ts 原文
+    assert row[9] == pytest.approx(106.9)   # longitude
+    assert row[22] == "2026-09-13"          # crt_date 派生
+    assert AkshareAltProvider._typhoon_row({"FOO": 1}) is None  # 缺 KEYID 跳过
+
+
+def test_typhoon_unwrap_defensive():
+    from zephyr.data.implementations.akshare_alt_provider import AkshareAltProvider
+
+    u = AkshareAltProvider._unwrap_sz_api
+    assert u([{"KEYID": 1}]) == [{"KEYID": 1}]
+    assert u({"result": [{"KEYID": 1}]}) == [{"KEYID": 1}]
+    assert u({"result": {"rows": [{"KEYID": 1}]}}) == [{"KEYID": 1}]
+    assert u({"errorCode": 1, "message": "x"}) == []
+
+
+def test_typhoon_fetch_full_pagination(monkeypatch):
+    """分页循环：满页继续、缺页即止；增量带 startDate；KEYID 幂等排序。"""
+    from zephyr.data.implementations import akshare_alt_provider as mod
+
+    calls = []
+
+    def fake_get(self, params):
+        calls.append(dict(params))
+        if params["page"] == 1:
+            return {"result": [_typhoon_stub_row(i) for i in range(10000)]}
+        return {"result": [_typhoon_stub_row(10000)]}
+
+    monkeypatch.setattr(mod, "get_service_secret", lambda *a, **k: "stub-key")
+    monkeypatch.setattr(mod.AkshareAltProvider, "_sz_api_get", fake_get)
+    p = mod.AkshareAltProvider()
+    payload = _make_payload(
+        "alt_typhoon_track",
+        table="c1_market.alt_typhoon_track",
+        start=datetime.date(2026, 9, 1),
+        end=datetime.date(2026, 9, 14),
+    )
+    r = list(p.fetch(payload, SourcePolicy()))[0]
+    assert r.error is None
+    assert len(calls) == 2
+    assert calls[0]["appKey"] == "stub-key"
+    assert calls[0]["startDate"] == "20260901"   # 增量按入库日期
+    assert calls[0]["rows"] == 10000
+    keyids = [row[0] for row in r.rows]
+    assert keyids == sorted(keyids)               # 排序确定性
+    assert r.last_key == "2026-09-13"
+
+
+def test_typhoon_fetch_error_code(monkeypatch):
+    from zephyr.data.implementations import akshare_alt_provider as mod
+
+    monkeypatch.setattr(mod, "get_service_secret", lambda *a, **k: "stub-key")
+    monkeypatch.setattr(
+        mod.AkshareAltProvider, "_sz_api_get",
+        lambda self, params: {"errorCode": "10001", "message": "未经许可的证书，请先订阅接口"},
+    )
+    p = mod.AkshareAltProvider()
+    r = list(p.fetch(_make_payload("alt_typhoon_track", table="c1_market.alt_typhoon_track"), SourcePolicy()))[0]
+    assert r.error and "10001" in r.error and "订阅" in r.error

@@ -2364,6 +2364,22 @@
   data_source: [akshare_alt]
   blueprint: null
 
+- category_id: market_alt_typhoon_track
+  name: "台风路径结构化数据"
+  engine: clickhouse
+  database: c1_market
+  table: alt_typhoon_track
+  schema_file: schemas/categories/market_alt_typhoon_track.py
+  data_type: 原料
+  lifecycle: permanent
+  sla_level: L2
+  enabled: true
+  hard_constraint: null
+  calc_mode: preload
+  frequency: 日频
+  data_source: [akshare_alt]
+  blueprint: null
+
 # --- 时间敏感型数据（免费+只能获取最近，必须每日积累，#ARCH-REALTIME-ACCUM） ---
 
 - category_id: market_weather_data

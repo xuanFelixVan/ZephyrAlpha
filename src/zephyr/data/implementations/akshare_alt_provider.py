@@ -39,8 +39,11 @@ PIT 三公理：快照/指数即所得，无前视；trade_date 取接口自带�
 
 from __future__ import annotations
 
+import json
 import logging
 import time
+import urllib.parse
+import urllib.request
 from typing import Iterator
 
 from zephyr.data.policy_registry import SourcePolicy
@@ -52,6 +55,7 @@ from zephyr.data.provider_base import (
     IngestProviderMeta,
 )
 from zephyr.data.table_registry import get_registry
+from zephyr.shared.security.secrets import get_service_secret
 
 log = logging.getLogger(__name__)
 
@@ -75,6 +79,17 @@ _ALT_COMMENT_COLUMNS = [
 # 运价长表列
 _ALT_SHIPPING_COLUMNS = ["trade_date", "index_code", "index_name", "value", "change_pct", "source"]
 
+# 台风路径表列（顺序与 DDL INSERT_COLUMNS 一致）
+_ALT_TYPHOON_COLUMNS = [
+    "keyid", "tcidx", "tcno", "cname", "ename", "tclevel",
+    "issue_ts", "forecast_ts", "interval_hours",
+    "longitude", "latitude", "airpressure", "wind", "gust", "movespeed", "movedir",
+    "radius6", "radius7", "radius8", "radius10", "issuer", "crt_time", "crt_date", "source",
+]
+_SZ_TYPHOON_URL = "https://opendata.sz.gov.cn/api/1049994100/1/service.xhtml"
+_SZ_TYPHOON_PAGE_SIZE = 10000  # 平台单页上限
+_SZ_TYPHOON_MAX_PAGES = 60     # 全量约 13 页，60 页为防御性天花板
+
 # macro_china_freight_index 列 -> (index_code, index_name)；
 # BDI 不在本表（双源重叠以 macro_shipping_bdi 为准，历史更长且带涨跌幅）
 _FREIGHT_INDEX_MAP: tuple[tuple[str, str, str], ...] = (
@@ -86,7 +101,7 @@ _FREIGHT_INDEX_MAP: tuple[tuple[str, str, str], ...] = (
     ("油轮运价指数原油运价指数BDTI", "BDTI", "原油运价指数"),
 )
 
-_AKSHARE_ALT_CAPABILITIES = frozenset({"alt_stock_comment", "alt_shipping_index"})
+_AKSHARE_ALT_CAPABILITIES = frozenset({"alt_stock_comment", "alt_shipping_index", "alt_typhoon_track"})
 
 
 def _norm_date(v) -> str | None:
@@ -149,10 +164,19 @@ class AkshareAltProvider(IngestProviderBase):
                 expected_market="macro",
                 expected_variety="index",
             ),
+            # 台风路径：深圳开放数据平台 API（appKey 走 secrets 通道，非 anonymous）
+            CapabilityContract(
+                "alt_typhoon_track",
+                supports_symbols_null=True,
+                supports_incremental=True,
+                supports_full_refresh=True,
+                requires_date_range=True,
+            ),
         ],
         known_issues=[
             "千股千评接口仅返回当日快照，无历史回补通道（每日累积模式）",
             "akshare 上游网页改版风险 -> alt_source_health_manager 探针兜底",
+            "台风接口要求 appKey 已订阅（errorCode 10001=未订阅），依赖 Owner 账号订阅状态",
         ],
     )
 
@@ -342,3 +366,132 @@ class AkshareAltProvider(IngestProviderBase):
                 elapsed_sec=time.monotonic() - t0,
                 error=str(e),
             )
+
+    # ---- 台风路径（深圳开放数据平台 API，appKey 通道） ----
+
+    @staticmethod
+    def _unwrap_sz_api(payload_obj):
+        """平台成功响应包裹层防御式解包。
+
+        订阅生效前无法取得成功样例，兼容常见形态：裸 list / {result|data|rows|
+        list|content|records: [...]} / 一层嵌套 dict 后再挂上述键。解析失败返回
+        空列表（上层按 0 行处理，不伪装成功）。
+        """
+        cur = payload_obj
+        for _ in range(2):
+            if isinstance(cur, list):
+                return cur
+            if isinstance(cur, dict):
+                for key in ("result", "data", "rows", "list", "content", "records"):
+                    v = cur.get(key)
+                    if isinstance(v, list):
+                        return v
+                    if isinstance(v, dict):
+                        cur = v
+                        break
+                else:
+                    return []
+        return []
+
+    def _sz_api_get(self, params: dict):
+        """单次 GET 请求深圳开放数据平台数据接口（供 _call_with_policy 重试包裹）。"""
+        import requests
+
+        resp = requests.get(_SZ_TYPHOON_URL, params=params, timeout=60,
+                            headers={"User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) "
+                                                   "Apache/537.36 zephyr-alt-provider"})
+        resp.raise_for_status()
+        return resp.json()
+
+    @staticmethod
+    def _typhoon_row(raw: dict) -> tuple | None:
+        """单行 dict -> 列序元组；缺 keyid 返回 None（跳过）。"""
+        keyid = _to_int(raw.get("KEYID"))
+        if keyid is None:
+            return None
+        crt_time = str(raw.get("CRTTIME") or "")
+        return (
+            keyid,
+            _to_int(raw.get("TCIDX")) or 0,
+            str(raw.get("TCNO") or ""),
+            str(raw.get("CNAME") or ""),
+            str(raw.get("ENAME") or ""),
+            str(raw.get("TCLEVEL") or ""),
+            str(raw.get("ISSUEDATE") or ""),
+            str(raw.get("FORECASTDATE") or ""),
+            _to_int(raw.get("INTERVALTIME")) or 0,
+            _to_float(raw.get("LONGITUDE")) or 0.0,
+            _to_float(raw.get("LATITUDE")) or 0.0,
+            _to_float(raw.get("AIRPRESSURE")) or 0.0,
+            _to_float(raw.get("WIND")) or 0.0,
+            _to_float(raw.get("GUST")) or 0.0,
+            _to_float(raw.get("MOVESPEED")) or 0.0,
+            str(raw.get("MOVEDIR") or ""),
+            _to_float(raw.get("SIXRADII")) or 0.0,
+            _to_float(raw.get("SEVENRADII")) or 0.0,
+            _to_float(raw.get("EIGHTRADII")) or 0.0,
+            _to_float(raw.get("TENRADII")) or 0.0,
+            str(raw.get("ISSUETYPE") or ""),
+            crt_time,
+            crt_time[:10] or "1970-01-01",
+            "sz_api_1049994100",
+        )
+
+    def _fetch_alt_typhoon_track(self, payload: FetchPayload, policy: SourcePolicy) -> Iterator[FetchResult]:
+        """台风路径结构化数据，写入 c1_market.alt_typhoon_track。
+
+        深圳开放数据平台 API（appKey 经 get_service_secret 读取，禁裸 getenv）。
+        增量按 crt_date（平台入库日期）过滤：startDate=last_key；全量不带日期翻页。
+        KEYID 平台全局唯一，ReplacingMergeTree 幂等重放。
+        """
+        table = payload.table or _TBL_ALT_TYPHOON
+        t0 = time.monotonic()
+        try:
+            app_key = get_service_secret("SZ_OPEN_DATA_APPKEY", service="shenzhen_open_data")
+        except Exception as e:  # noqa: BLE001 — 密钥缺失即断供
+            yield FetchResult(table=table, columns=_ALT_TYPHOON_COLUMNS, rows=[], last_key="",
+                              elapsed_sec=time.monotonic() - t0, error=f"appKey 缺失: {e}")
+            return
+        if not app_key:
+            yield FetchResult(table=table, columns=_ALT_TYPHOON_COLUMNS, rows=[], last_key="",
+                              elapsed_sec=time.monotonic() - t0, error="SZ_OPEN_DATA_APPKEY 为空")
+            return
+
+        base_params = {"appKey": app_key, "rows": _SZ_TYPHOON_PAGE_SIZE}
+        if payload.incremental and payload.start:
+            base_params["startDate"] = payload.start.strftime("%Y%m%d")
+        rows_out: list[tuple] = []
+        seen_first: int | None = None
+        try:
+            for page in range(1, _SZ_TYPHOON_MAX_PAGES + 1):
+                resp = self._call_with_policy(
+                    self._sz_api_get, policy, {**base_params, "page": page}
+                )
+                if isinstance(resp, dict) and resp.get("errorCode"):
+                    yield FetchResult(table=table, columns=_ALT_TYPHOON_COLUMNS, rows=[],
+                                      last_key="", elapsed_sec=time.monotonic() - t0,
+                                      error=f"平台错误 {resp.get('errorCode')}: {resp.get('message')}")
+                    return
+                batch = self._unwrap_sz_api(resp)
+                if not batch:
+                    break
+                for raw in batch:
+                    row = self._typhoon_row(raw)
+                    if row is not None:
+                        rows_out.append(row)
+                # 服务端忽略分页的防御：首页首条重复即止（防死循环刷同一批）
+                first_keyid = _to_int(batch[0].get("KEYID")) if isinstance(batch[0], dict) else None
+                if page > 1 and first_keyid is not None and first_keyid == seen_first:
+                    break
+                seen_first = first_keyid
+                if len(batch) < _SZ_TYPHOON_PAGE_SIZE:
+                    break
+                time.sleep(0.5)
+            rows_out.sort(key=lambda t: t[0])
+            last_key = max((t[21][:10] for t in rows_out if t[21]), default="")
+            yield FetchResult(table=table, columns=_ALT_TYPHOON_COLUMNS, rows=rows_out,
+                              last_key=last_key, elapsed_sec=time.monotonic() - t0)
+        except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
+            self._log.warning(f"alt_typhoon_track 获取失败: {e}")
+            yield FetchResult(table=table, columns=_ALT_TYPHOON_COLUMNS, rows=[], last_key="",
+                              elapsed_sec=time.monotonic() - t0, error=str(e))

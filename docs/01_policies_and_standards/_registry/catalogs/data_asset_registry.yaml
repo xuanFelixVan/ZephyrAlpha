@@ -74,15 +74,20 @@ description: >-
 owner: MOD-GOVERNANCE
 tier: tier_2_data_runtime
 status: active
-version: 1.9.0
+version: 1.9.1
 created: '2026-08-13'
-last_updated: '2026-09-12'
+last_updated: '2026-09-14'
 related_arch: '#ARCH-BREG-001'
 unique_key:
   sources: [source_id]
   datasets: [dataset_id]
   jobs: [job_id]
-entry_counts: {sources: 17, datasets: 230, jobs: 93}  # 2026-09-12 v1.9.0：+SRC-AKSHARE-ALT-001 +DS-230/231 +JOB-092/093/094（另类数据第 1 批）；派生快照值，以 yaml 实测为准——禁止凭此报数（#83 漏报教训）
+entry_counts: {sources: 17, datasets: 232, jobs: 96}  # 2026-09-14 v1.9.1：+DS-233 台风路径 +JOB-097/098（气象事件层）；派生快照值，以 yaml 实测为准——禁止凭此报数（#83 漏报教训）
+
+# v1.9.1 changelog(2026-09-14): 气象事件层——+DS-232 c1_market.alt_typhoon_track（热带气旋路径
+#   22 字段：路径/强度/风圈/预报时效，KEYID 幂等，深圳气象局"热带气旋数据5.0"）
+#   +JOB-097/098（daily_event 增量按入库日期 + weekend_calibration 全史回补）；
+#   appKey 通道入库（SZ_OPEN_DATA_APPKEY，订阅制无审批）；与 alt_shipping_index 运价链事件对齐。
 
 # v1.9.0 changelog(2026-09-12): 另类数据第 1 批免注册直连（docs/_working/2026-09-12-alt-data-handoff.md
 #   §8-1）——+SRC-AKSHARE-ALT-001（AkshareAltProvider 独立成件，避开 akshare 主 provider 在途 claim，
@@ -687,7 +692,7 @@ sources:
   license_type: public_reference_data
   latency_profile: wan（公网 HTTP，日频非延迟敏感）
   colocation_eligible: false
-  provides_datasets: [DS-230, DS-231]
+  provides_datasets: [DS-230, DS-231, DS-233]
   env_config: 无（anonymous，免注册免密钥）
   module_id: MOD-L00-004
   doc_ref: docs/_working/2026-09-12-alt-data-handoff.md §8-1
@@ -9843,6 +9848,47 @@ datasets:
   code_symbol:
   code_fingerprint:
 
+# 2026-09-14 气象事件层：热带气旋路径（深圳气象局，深圳开放数据平台 appKey 通道）
+- dataset_id: DS-233
+  entity_name: c1_market.alt_typhoon_track
+  entity_type: dataset
+  scope: production
+  contract_ref:
+  physical_type: clickhouse_table
+  produced_by_job: alt_typhoon_track_incremental
+  consumed_by_jobs: []
+  domain_id: D_MARKET
+  pit_policy: strict
+  format_summary: 热带气旋路径 22 字段（源 深圳市气象局"热带气旋数据5.0"｜任务
+    alt_typhoon_track_incremental 日度增量 + full_refresh 全史回补｜时段 daily_event/
+    weekend_calibration）；路径/强度/风圈6-7-8-10级/预报时效；KEYID 全局唯一幂等；
+    全史约 12.8 万条；与运价/生猪/天气资产事件对齐
+  valid_since: "2026-09-14"
+  module_id: MOD-L00-004
+  design_maturity: production
+  name: c1_market.alt_typhoon_track
+  name_zh: 台风路径结构化数据
+  status: active
+  version: 1.0.0
+  created_at: "2026-09-14"
+  updated_at: "2026-09-14"
+  owner: MOD-L00-004
+  produced_by_source: SRC-AKSHARE-ALT-001
+  survivorship_free: true
+  pit_available:
+  lookahead_test_method: N/A
+  label_delay_days:
+  drift_detector: none
+  entry_role: "state"
+  applies_to: ["market"]
+  tags: ["另类数据", "数据", "气象", "事件"]
+  algorithm_status: "not_applicable"
+  evidence: "DDL schemas/categories/market_alt_typhoon_track.py；22 字段经匿名预览通道实测
+    校准（含 2026-09-13 实时记录）；appKey 通道 errorCode 10001 实测（订阅生效前）；
+    治理三件接线 src/zephyr/alt_data/alt_source_bootstrap.py"
+  code_symbol:
+  code_fingerprint:
+
 # 2026-09-11 币圈免费影子 MVP：crypto 日线采集 job（backfill/incremental 双模式，手动触发）
 jobs:
 - job_id: JOB-001
@@ -12623,5 +12669,68 @@ jobs:
   algorithm_status: "not_applicable"
   evidence: "同 JOB-093 双接口；全量模式约 1.45 万行单批写入"
   code_symbol: "src/zephyr/data/implementations/akshare_alt_provider.py::AkshareAltProvider._fetch_alt_shipping_index"
+  code_fingerprint:
+
+# 2026-09-14 气象事件层：台风路径日度增量 + 全史回补（深圳开放数据平台 appKey 通道）
+- job_id: JOB-097
+  job_name: ingest.akshare_alt_typhoon_track
+  entity_type: job
+  scope: production
+  source_code_ref: src/zephyr/data/implementations/akshare_alt_provider.py
+  trigger_type: scheduled
+  run_context: production
+  inputs: []
+  outputs:
+  - DS-232
+  pit_relevance: strict
+  description: 台风路径日度增量（深圳气象局热带气旋数据5.0：路径/强度/风圈6-7-8-10级/
+    预报时效 22 字段；按入库日期 startDate 增量，万行/页分页；KEYID 全局唯一
+    ReplacingMergeTree 幂等；气象事件层主表，与运价/生猪/天气资产事件对齐）
+  module_id: MOD-L00-004
+  design_maturity: production
+  name: ingest.akshare_alt_typhoon_track
+  name_zh: 台风路径日度增量采集
+  status: active
+  version: 1.0.0
+  created_at: "2026-09-14"
+  updated_at: "2026-09-14"
+  owner: MOD-L00-004
+  entry_role: "state"
+  applies_to: ["market"]
+  tags: ["另类数据", "数据", "气象", "事件"]
+  algorithm_status: "not_applicable"
+  evidence: "22 字段经匿名预览通道实测校准（2026-09-13 实时记录在案）；appKey=
+    SZ_OPEN_DATA_APPKEY（get_service_secret 通道，禁裸 getenv）"
+  code_symbol: "src/zephyr/data/implementations/akshare_alt_provider.py::AkshareAltProvider._fetch_alt_typhoon_track"
+  code_fingerprint:
+
+- job_id: JOB-098
+  job_name: ingest.akshare_alt_typhoon_track_full
+  entity_type: job
+  scope: production
+  source_code_ref: src/zephyr/data/implementations/akshare_alt_provider.py
+  trigger_type: scheduled
+  run_context: production
+  inputs: []
+  outputs:
+  - DS-232
+  pit_relevance: strict
+  description: 台风路径全史回补（weekend_calibration：约 12.8 万条，2017 年起含历史台风；
+    万行/页分页约 13 页；同键替换幂等）
+  module_id: MOD-L00-004
+  design_maturity: production
+  name: ingest.akshare_alt_typhoon_track_full
+  name_zh: 台风路径全量刷新
+  status: active
+  version: 1.0.0
+  created_at: "2026-09-14"
+  updated_at: "2026-09-14"
+  owner: MOD-L00-004
+  entry_role: "state"
+  applies_to: ["market"]
+  tags: ["另类数据", "数据", "气象", "回补"]
+  algorithm_status: "not_applicable"
+  evidence: "同 JOB-095；全量约 13 页×万行分页"
+  code_symbol: "src/zephyr/data/implementations/akshare_alt_provider.py::AkshareAltProvider._fetch_alt_typhoon_track"
   code_fingerprint:
 
