@@ -103,12 +103,14 @@ nodes:
       生成件必须走 E3 验收集重试环
     compute_class: api
     data_refs: []
-    module_ref: null
-    build_status: pending
+    module_ref: MOD-BT-150
+    build_status: partial
     design_refs:
       - HKUDS/Vibe-Trading（75+技能/452 因子，可作 Claude 技能包） github.com/HKUDS/Vibe-Trading
       - QuantCode-Bench github.com/LimexAILab/QuantCode-Bench
-    store_refs: []
+    store_refs:
+      - {artifact: 生成假说清单, location: data/strategy_intake/lane_b_candidates.csv,
+         key: candidate_id, retention: 永久}
 
   - node_id: FAC-E1C
     name_zh: 车道C-公式挖掘机
@@ -183,14 +185,15 @@ nodes:
       笔记"主观经验是先验过滤器，AI 无中生有=冰淇淋销量式巧合"；本地 8B-32B 可扛
     compute_class: local
     data_refs: []
-    module_ref: null
-    build_status: pending
+    module_ref: MOD-BT-091
+    build_status: partial
     design_refs:
       - FaVOR arxiv.org/html/2608.30192
       - Can AI Do Financial Research? SSRN 6569258
       - Harvey-Liu-Zhu 因子动物园多重检验（t≥3.0）
     store_refs:
-      - {artifact: 预审判定记录, location: 待定（E2 施工时定）, key: strategy_id, retention: 永久}
+      - {artifact: 预审判定记录, location: c1_backtest.hypothesis_precheck, key: candidate_id,
+         retention: 永久}
 
   - node_id: FAC-E3
     name_zh: 构造与翻译
