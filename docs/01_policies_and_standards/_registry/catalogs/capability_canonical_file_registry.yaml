@@ -20,6 +20,15 @@ capabilities:
   description: 挖矿 SOP——全网调研+内部反查的全面挖掘方法论。触发=建策略/建方案/建文档/任何需全网搜索的内容工作；六向寻路+防噪音四闸+连续两轮噪音终止+时间盒封批；挖矿日志必入产出文档。canonical
     = docs/01_policies_and_standards/sop/mining_sop/mining_sop_policy.md。
   canonical_override: docs/01_policies_and_standards/sop/mining_sop/mining_sop_policy.md
+- capability_id: data_ops_sop
+  aliases:
+  - 数据操作SOP
+  - data_backfill
+  - data_repair
+  - 数据回灌
+  - 数据修复
+  description: 数据操作 SOP——回灌/修复/判重/PIT/探针全流程方法论。触发=数据回灌/坏数据修复/表结构变更/判重/数据探针/缺口处置；三步验证+幂等回补+FINAL 逐位验证+PIT 口径+勿物理删+探针手法+实战范例索引。canonical = docs/01_policies_and_standards/sop/data_ops_sop/data_ops_policy.md。
+  canonical_override: docs/01_policies_and_standards/sop/data_ops_sop/data_ops_policy.md
 - capability_id: qmt_file_bridge_broker
   aliases:
   - QmtFileBridgeBroker
@@ -12318,8 +12327,20 @@ creation_tokens:
   token: test-sim-platform-journal-20260914-b2
   created_by: st-zcode-c4-20260912
   capability: sim_paper_ledger_c
-di_seam_exemptions: []
+- file: docs/01_policies_and_standards/sop/data_ops_sop/data_ops_policy.md
+  token: data-ops-sop-methodology-20260914
+  created_by: st-sopreorg-20260914
+  capability: data_ops_sop
 - file: scripts/governance/upgrade_tdm_v13_metadata.py
   token: upgrade-tdm-v13-metadata-20260914
   created_by: st-zcode-c4-20260912
   capability: c4_batch_translation
+- file: scripts/backtest/sim_deviation_report.py
+  token: sim-deviation-report-20260914-b3
+  created_by: st-zcode-c4-20260912
+  capability: sim_paper_ledger_c
+- file: tests/backtest/test_sim_deviation_report.py
+  token: test-sim-deviation-report-20260914-b3
+  created_by: st-zcode-c4-20260912
+  capability: sim_paper_ledger_c
+di_seam_exemptions: []
