@@ -176,6 +176,53 @@ def _check_registered(file_path: str, is_create: bool) -> tuple[bool, str]:
     return True, "OK"
 
 
+def _check_module_id_format(file_path: str) -> tuple[bool, str]:
+    """裁定#232.1 铸造时点校验：文件内 module_id 值须过双轨制（fail-fast 于写前）。
+
+    - 仅 .py/.md/.yaml 文本文件；tests/ 豁免（违规样例夹具集中地）
+    - 复用 validate_module_id_naming 权威正则（真源唯一，裁定#232 派生轨 -/_ 等价）
+    - 存量违规文件本就冻结于 claim 闸（N-06），本检查提前到写前给出同一反馈
+    """
+    p = Path(file_path)
+    if not p.exists():
+        return True, "OK (new file)"
+    if p.suffix not in (".py", ".md", ".yaml", ".yml"):
+        return True, "OK (non-text)"
+    norm = str(file_path).replace("\\", "/")
+    if "/tests/" in norm or norm.startswith("tests/"):
+        return True, "OK (tests exempt)"
+    try:
+        content = p.read_text(encoding="utf-8")
+    except (OSError, UnicodeDecodeError):
+        return True, "OK (unreadable)"
+    import importlib.util as _ilu
+
+    _vp = Path(__file__).resolve().parent.parent / "d3_metadata" / "validate_module_id_naming.py"
+    spec = _ilu.spec_from_file_location("_validate_module_id_naming", _vp)
+    vmod = _ilu.module_from_spec(spec)
+    spec.loader.exec_module(vmod)
+    if not hasattr(vmod, "is_valid_module_id"):
+        return True, "OK (validator unavailable)"
+    seen: set[str] = set()
+    import re as _re
+
+    _mid_re = _re.compile(r"module_id[:=]\s*[\"']?([A-Za-z][A-Za-z0-9_-]+)", _re.MULTILINE)
+    for m in _mid_re.finditer(content):
+        value = m.group(1).strip()
+        if not value or value in seen:
+            continue
+        seen.add(value)
+        if value.startswith(("MOD-", "MOD", "D-", "D_", "SH-")):
+            _ok, _why = vmod.is_valid_module_id(value)
+            if not _ok:
+                return (
+                    False,
+                    f"N06_MINT_BLOCK: {file_path} 含非法 module_id '{value}'（{_why}；裁定#208+#232）"
+                    "——改为合法格式后再写入（派生轨段分隔符 -/_ 均可）",
+                )
+    return True, "OK"
+
+
 def _check_encoding_safety(file_path: str) -> tuple[bool, str]:
     """Check that existing file has no mojibake, and warn about encoding safety."""
     p = Path(file_path)
@@ -345,6 +392,8 @@ def main() -> int:
 
         ok, msg = _check_encoding_safety(target)
         checks.append({"check": "encoding_safety", "pass": ok, "message": msg})
+        ok, msg = _check_module_id_format(target)
+        checks.append({"check": "module_id_format", "pass": ok, "message": msg})
 
         ok, msg = _check_session_overlap(target, args.session)
         checks.append({"check": "session_overlap", "pass": ok, "message": msg})

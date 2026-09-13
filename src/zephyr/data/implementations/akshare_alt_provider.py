@@ -39,10 +39,13 @@ PIT 三公理：快照/指数即所得，无前视；trade_date 取接口自带�
 
 from __future__ import annotations
 
+import datetime
 import json
 import logging
 import re
 import time
+
+import pandas as pd
 import urllib.parse
 import urllib.request
 from typing import Iterator
@@ -161,12 +164,14 @@ _FREIGHT_INDEX_MAP: tuple[tuple[str, str, str], ...] = (
     ("油轮运价指数原油运价指数BDTI", "BDTI", "原油运价指数"),
 )
 
+# 情绪面板通用列（与 sentiment_panel 表 INSERT_COLUMNS 对齐）
+_CB_PANEL_COLUMNS = ("metric", "trade_date", "value", "value_classification", "source", "extra")
+
 _AKSHARE_ALT_CAPABILITIES = frozenset({
     "alt_stock_comment", "alt_shipping_index", "alt_typhoon_track",
     "alt_sz_stat_monthly", "alt_sz_port_monthly", "alt_sz_house_daily",
     "alt_sz_weather_warning", "alt_sz_marine_forecast",
-    "alt_typhoon_landfall_history", "alt_typhoon_names",
-})
+    "alt_typhoon_landfall_history", "alt_typhoon_names", "cb_premium_median"})
 
 
 def _norm_date(v) -> str | None:
@@ -247,6 +252,8 @@ class AkshareAltProvider(IngestProviderBase):
                                supports_incremental=False, requires_date_range=False),
             CapabilityContract("alt_typhoon_names", supports_symbols_null=True,
                                supports_incremental=False, requires_date_range=False),
+            CapabilityContract("cb_premium_median", supports_symbols_null=True,
+                               supports_incremental=True, requires_date_range=True),
         ],
         known_issues=[
             "千股千评接口仅返回当日快照，无历史回补通道（每日累积模式）",
@@ -275,6 +282,52 @@ class AkshareAltProvider(IngestProviderBase):
         """无持久连接资源，仅重置状态。"""
 
     # ---- 拉取入口 ----
+
+    def _fetch_cb_premium_median(self, payload: FetchPayload, policy: SourcePolicy) -> Iterator[FetchResult]:
+        """转债转股溢价率中位数（集思录 bond_cb_jsl 全市场）→ c1_market.sentiment_panel。
+
+        metric='cb_conversion_premium_median'；F25 风险偏好温度计数据源。
+        cookie 经 get_secret_or_default('CB_JSL_COOKIE')（.env 可选登记；匿名可取部分数据，
+        覆盖不足时 F25 信号自然 warmup）。
+        """
+        import akshare as ak
+
+        t0 = time.monotonic()
+        table = payload.table or get_registry().table("market_sentiment_panel")
+        try:
+            cookie = get_secret_or_default("CB_JSL_COOKIE") or None
+            df = self._call_with_policy(ak.bond_cb_jsl, policy, cookie) if cookie else self._call_with_policy(ak.bond_cb_jsl, policy)
+            if df is None or len(df) == 0:
+                yield FetchResult(
+                    table=table, columns=list(_CB_PANEL_COLUMNS), rows=[], last_key="",
+                    elapsed_sec=time.monotonic() - t0, error="bond_cb_jsl 返回空",
+                )
+                return
+            prem = df["转股溢价率"].astype(str).str.rstrip("%")
+            prem = pd.to_numeric(prem, errors="coerce").dropna()
+            if prem.empty:
+                yield FetchResult(
+                    table=table, columns=list(_CB_PANEL_COLUMNS), rows=[], last_key="",
+                    elapsed_sec=time.monotonic() - t0, error="转股溢价率列解析为空",
+                )
+                return
+            d = (payload.end or datetime.date.today()).strftime("%Y-%m-%d")
+            median = round(float(prem.median()), 4)
+            row = (
+                "cb_conversion_premium_median", d, median,
+                "overheat" if median > 50 else ("freezing" if median < 10 else "normal"),
+                "akshare_alt.bond_cb_jsl", f"coverage={len(prem)}",
+            )
+            yield FetchResult(
+                table=table, columns=list(_CB_PANEL_COLUMNS), rows=[row], last_key=d,
+                elapsed_sec=time.monotonic() - t0,
+            )
+        except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
+            self._log.warning(f"cb_premium_median 获取失败: {e}")
+            yield FetchResult(
+                table=table, columns=list(_CB_PANEL_COLUMNS), rows=[], last_key="",
+                elapsed_sec=time.monotonic() - t0, error=str(e),
+            )
 
     def fetch(self, payload: FetchPayload, policy: SourcePolicy) -> Iterator[FetchResult]:
         """按 payload.extra["capability"] 路由；未知能力 yield error。"""

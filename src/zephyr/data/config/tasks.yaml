@@ -589,6 +589,20 @@ tasks:
   extra:
     description: "研报明细全字段增量（东财研报中心：机构/评级/预测期EPS/PE/PDF链接；一致预期自聚合原料，docs/_working/2026-09-12-research-report-data-plan.md；历史已回补 14.7 万行）"
 
+- task_id: anchored_state_build
+  table: c1_backtest.regime_state_anchored
+  source: internal  # 本地计算（读 c1_market.kline_index 000300 特征锚定，零拟合零重估）
+  schedule: daily_kline
+  incremental: true
+  date_col: trade_date
+  dependencies: ["kline_index_incremental"]    # DAG: 指数日K落库后重算当日锚定态
+  capability: anchored_state
+  symbols:
+  fallback_sources: []    # internal 派生源天然无副源
+  extra:
+    description: "锚定风险四档历史重建（P0-002 重印批/裁定#229：vol_pct 结构阈值四档，零拟合——态身份跨期恒定；全量重算幂等 40s；TDM AGG 生产消费切换的前置供给）"
+    trading_day_only: true    # 依赖当日 000300 收盘
+
 - task_id: financial_derived_build
   table: c3_fundamental.financial_derived
   source: internal  # 本地计算（读 c3_fundamental 三大报表派生，不从外部API拉取）
@@ -2419,6 +2433,18 @@ tasks:
   symbols:
   extra:
     description: "恐惧贪婪指数日度采集（alternative.me 免费 API，0-100 六因子加权；F15 极值反转信号源，C4 双窗及格策略联动）"
+
+- task_id: cb_premium_median_daily
+  table: c1_market.sentiment_panel
+  source: akshare_alt
+  schedule: daily_event
+  incremental: true
+  date_col: trade_date
+  dependencies: []
+  capability: cb_premium_median
+  symbols:
+  extra:
+    description: "转债转股溢价率中位数日度采集（集思录 bond_cb_jsl，全市场；F25 风险偏好温度计数据源；cookie 经 CB_JSL_COOKIE 可选增强覆盖）"
 
 - task_id: alt_regime_signal_refresh
   table: c1_market.alt_regime_signal

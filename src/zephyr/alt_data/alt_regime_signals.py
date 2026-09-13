@@ -95,6 +95,20 @@ def ret_state(ret_pct: float, band_pct: float = 0.0) -> str:
     return "risk_on" if ret_pct > band_pct else "risk_off"
 
 
+def _tf(v) -> float | None:
+    """TSV 值安全转 float：None 字面量/反斜杠N/nan/空 全挡（C-2 解析守卫）。"""
+    if v is None:
+        return None
+    s = str(v).strip()
+    if s in ("", "None", "nan", "NaN", "\\N"):
+        return None
+    try:
+        f = float(s)
+    except ValueError:
+        return None
+    return None if f != f else f
+
+
 def fng_state(value: float) -> str:
     for upper, label in _FNG_BANDS:
         if value < upper:
@@ -208,6 +222,11 @@ class AltRegimeSignalProvider(IngestProviderBase):
         yield "F15_FNG_INDEX", self._compute_fng(ch_reader)
         yield "F23_LIMITUP_EMOTION", self._compute_limitup(ch_reader)
         yield "F7_TYPHOON_EVENT", self._compute_typhoon(ch_reader)
+        yield "F8_HEAT_EVENT", self._compute_heat(ch_reader)
+        yield "F10_HOG_BASIS_Z", self._compute_hog_basis(ch_reader)
+        yield "F11_HOG_CYCLE_PHASE", self._compute_hog_phase(ch_reader)
+        yield "F12_HOG_DISPERSION", self._compute_hog_dispersion(ch_reader)
+        yield "F25_CB_PREMIUM", self._compute_cb_premium(ch_reader)
 
     @staticmethod
     def _row(signal_date: str, sid: str, value: float, state: str, detail: dict) -> tuple:
@@ -377,4 +396,155 @@ class AltRegimeSignalProvider(IngestProviderBase):
                 d, "F7_TYPHOON_EVENT", float(len(events)), "landfall",
                 {"events": events, "window_days": 10},
             ))
+        return out
+
+    def _compute_heat(self, ch_reader) -> list[tuple]:
+        """F8 v1：极端高温日历（当日 temp_max≥35°C 城市数）。
+
+        数据成熟度注记：weather_data 仅 ~195 天，年季基准距平需多年积累——
+        季节距平版 F8 登记为 2027 数据成熟后升级；本版仅高温事件计数（迎峰度夏 regime 输入）。
+        """
+        tsv = ch_reader.query(
+            "SELECT record_date, countIf(temp_max >= 35), avg(temp_max) "
+            "FROM c1_market.weather_data FINAL GROUP BY record_date ORDER BY record_date"
+        )
+        out = []
+        for ln in tsv.strip().split("\n"):
+            if not ln.strip():
+                continue
+            parts = ln.split("\t")
+            if len(parts) < 3:
+                continue
+            d, hot, avg_t = parts[0], _tf(parts[1]), _tf(parts[2])
+            if hot is None:
+                continue
+            state = "heat_wave" if hot >= 10 else ("hot" if hot >= 3 else "normal")
+            out.append(self._row(d, "F8_HEAT_EVENT", float(hot), state, {"avg_temp_max": round(avg_t, 1) if avg_t is not None else None}))
+        return out
+
+    def _compute_hog_basis(self, ch_reader) -> list[tuple]:
+        """F10：生猪期现价差 z（期货/分省现货日均价-1 对 120 日分布标准化）。
+
+        现货腿=分省现货日均价（日频；周度 spot_index 与期货交集仅 54 天不可用）。
+        数据成熟度：分省表 2026-09 起积累，130 交易日暖机后出值（约 2026-11）。
+        """
+        f_tsv = ch_reader.query("SELECT trade_date, value FROM c1_market.hog_futures_core FINAL ORDER BY trade_date")
+        s_tsv = ch_reader.query(
+            "SELECT trade_date, avg(price) FROM c1_market.hog_province_spot FINAL "
+            "WHERE price > 0 GROUP BY trade_date ORDER BY trade_date"
+        )
+        f = {p[0]: v for ln in f_tsv.strip().split("\n") if ln.strip() and (p := ln.split("\t")) and (v := _tf(p[1])) is not None}
+        s = {p[0]: v for ln in s_tsv.strip().split("\n") if ln.strip() and (p := ln.split("\t")) and (v := _tf(p[1])) is not None}
+        common = sorted(set(f) & set(s))
+        if len(common) < 130:
+            return []
+        basis = pd.Series([f[d] / s[d] - 1 for d in common])
+        z = (basis - basis.rolling(120).mean()) / basis.rolling(120).std()
+        out = []
+        for i in range(len(common)):
+            zv = z.iloc[i]
+            if zv != zv:
+                continue
+            zval = round(float(zv), 4)
+            state = "premium" if zval >= 1 else ("discount" if zval <= -1 else "neutral")
+            out.append(self._row(common[i], "F10_HOG_BASIS_Z", zval, state, {}))
+        return out
+
+    def _compute_hog_phase(self, ch_reader) -> list[tuple]:
+        """F11：猪周期相位（现货指数 / 12 月均线，>1 扩张 <1 收缩）。"""
+        tsv = ch_reader.query(
+            "SELECT trade_date, index_value, ma_12m FROM c1_market.hog_spot_index FINAL "
+            "WHERE index_value > 0 AND ma_12m > 0 ORDER BY trade_date"
+        )
+        out = []
+        for ln in tsv.strip().split("\n"):
+            parts = ln.split("\t")
+            if len(parts) < 3:
+                continue
+            d = parts[0]
+            idx, ma = _tf(parts[1]), _tf(parts[2])
+            if idx is None or ma is None or ma <= 0 or idx <= 0:
+                continue
+            ratio = round(idx / ma, 4)
+            state = "扩张" if ratio > 1 else "收缩"
+            out.append(self._row(d, "F11_HOG_CYCLE_PHASE", ratio, state, {}))
+        return out
+
+    def _compute_hog_dispersion(self, ch_reader) -> list[tuple]:
+        """F12：分省价差离散度（各省现货价 cross-section CV；走高=调运受阻/区域分化）。"""
+        tsv = ch_reader.query(
+            "SELECT trade_date, stddev_samp(price), avg(price), count() FROM c1_market.hog_province_spot FINAL "
+            "WHERE price > 0 GROUP BY trade_date ORDER BY trade_date"
+        )
+        out = []
+        for ln in tsv.strip().split("\n"):
+            parts = ln.split("\t")
+            if len(parts) < 4:
+                continue
+            d, n = parts[0], _tf(parts[3])
+            sd, avg = _tf(parts[1]), _tf(parts[2])
+            if n is None or n <= 0 or sd is None or avg is None or avg <= 0:
+                continue
+            cv = round(sd / avg, 4)
+            state = "dispersion_high" if cv > 0.03 else "normal"
+            out.append(self._row(d, "F12_HOG_DISPERSION", cv, state, {"provinces": n}))
+        return out
+
+    def _compute_cb_premium(self, ch_reader) -> list[tuple]:
+        """F25：转债转股溢价率中位数分位（风险偏好温度计，裁定参考 F25 设计卡）。
+
+        数据源 c1_market.sentiment_panel metric='cb_conversion_premium_median'
+        （akshare_alt.cb_premium_median 任务采集，集思录全市场）。
+        状态=滚动 250 日分位：>0.8 风险偏好过热 / <0.2 冰点。
+        """
+        tsv = ch_reader.query(
+            "SELECT trade_date, value FROM c1_market.sentiment_panel FINAL "
+            "WHERE metric='cb_conversion_premium_median' ORDER BY trade_date"
+        )
+        data = []
+        for ln in tsv.strip().split("\n"):
+            if not ln.strip():
+                continue
+            parts = ln.split("\t")
+            v = _tf(parts[1]) if len(parts) > 1 else None
+            if v is not None:
+                data.append((parts[0], v))
+        vals = [v for _, v in data]
+        if len(vals) < 60:
+            return []
+        s = pd.Series(vals)
+        pctl = s.rolling(250, min_periods=60).rank(pct=True)
+        out = []
+        for i in range(len(data)):
+            pv = pctl.iloc[i]
+            if pv != pv:
+                continue
+            pv = round(float(pv), 4)
+            state = "overheat" if pv > 0.8 else ("freezing" if pv < 0.2 else "normal")
+            out.append(self._row(data[i][0], "F25_CB_PREMIUM", float(vals[i]), state, {"pctl": pv}))
+        return out
+
+    # ── 消费 API（稳定读取接口，regime 链/仪表盘/策略即取即用） ──────────────
+
+    @staticmethod
+    def load_latest_regime_signals(as_of: str | None = None) -> dict[str, dict]:
+        """读取各信号最新状态（regime 消费链稳定入口；PIT：as_of 后于使用需自行裁定）。
+
+        Returns:
+            {signal_id: {"date": str, "value": float, "state": str}}
+        """
+        from zephyr.data import ch_reader
+
+        where = f"WHERE signal_date <= '{as_of}'" if as_of else ""
+        tsv = ch_reader.query(
+            "SELECT signal_id, argMax(signal_date, signal_date), argMax(signal_value, signal_date), "
+            f"argMax(state, signal_date) FROM c1_market.alt_regime_signal FINAL {where} "
+            "GROUP BY signal_id ORDER BY signal_id"
+        )
+        out: dict[str, dict] = {}
+        for ln in tsv.strip().split("\n"):
+            if not ln.strip():
+                continue
+            sid, d, v, st = ln.split("\t")
+            out[sid] = {"date": d, "value": float(v), "state": st}
         return out
