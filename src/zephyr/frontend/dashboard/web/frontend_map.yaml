@@ -84,6 +84,14 @@ features:
   file: features/warroom/wr-signal-strip.js
   backend_ref: api:/api/signals-overview（CH.market_signal_history 聚合）
   status: active
+- id: F-WR-POOL
+  name: 作战池面板（跨页共享选中真源 ZK.Pool）
+  page: warroom
+  module_id: wr-pool
+  file: features/warroom/wr-pool.js
+  backend_ref: none:localStorage 本机真源（zk-warroom-pool），零后端端点；写方=产业链受益清单（api:/api/chainmap-catalyst 下游）/筛选器（纯前端）
+  status: active
+
 - id: F-STOCKQ-KLINE-DATA
   name: K线主图（真源数据接通）
   page: stockq
