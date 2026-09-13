@@ -1,23 +1,23 @@
-# 自动生成于 2026-09-12T22:34:19Z
+# 自动生成于 2026-09-13T11:47:17Z
 # 来源: scripts/governance/**/*.py __manifest__ 块
 # 手工编辑无效——修改请通过各 .py 文件的 __manifest__ 块
 
-generated_at: '2026-09-12T22:34:19Z'
+generated_at: '2026-09-13T11:47:17Z'
 generated_by: scripts/governance/generators/generate_script_manifest.py
 source: scripts/governance/**/*.py → __manifest__ 块
-total_scripts: 424
+total_scripts: 426
 with_manifest: 407
-missing_manifest: 17
+missing_manifest: 19
 categories:
   governance:_sync: 4
   governance:_tasks: 3
-  governance: 52
+  governance: 53
   governance:d10_performance: 1
   governance:d11_compliance: 24
   governance:d12_ai_hallucination: 4
   governance:d1_structure: 25
   governance:d2_links: 2
-  governance:d3_metadata: 25
+  governance:d3_metadata: 26
   governance:d4_paths: 4
   governance:d5_architecture: 119
   governance:d6_security: 15
@@ -1153,6 +1153,16 @@ scripts:
   description: 批量回填/重判 ttl 字段（6 格式统一入口，GATE-15 存量治理 + GATE-VOCAB-CHANGE 纠偏）
   tags:
   - Quick
+- name: d3_metadata/batch_creation_tokens.py
+  owner: governance:d3_metadata
+  dimensions: []
+  priority: P2
+  timeout_seconds: 60
+  args: []
+  warn_only: false
+  description: ⚠ __manifest__ 缺失——请添加元数据块
+  tags: []
+  _manifest_missing: true
 - name: d3_metadata/check_blueprint_compliance.py
   owner: governance:d3_metadata
   dimensions:
@@ -5176,6 +5186,16 @@ scripts:
   description: 公共模块别名（R5 公共化）— 从 _shared.frontmatter 重新导出。
   tags:
   - Quick
+- name: split_coordination.py
+  owner: governance
+  dimensions: []
+  priority: P2
+  timeout_seconds: 60
+  args: []
+  warn_only: false
+  description: ⚠ __manifest__ 缺失——请添加元数据块
+  tags: []
+  _manifest_missing: true
 - name: status.py
   owner: governance
   dimensions:
