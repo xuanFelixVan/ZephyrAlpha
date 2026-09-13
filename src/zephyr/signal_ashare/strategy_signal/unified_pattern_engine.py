@@ -44,7 +44,7 @@ Version: 0.1.0
 # [ALGO_FLOW]
 # 输入: symbol + highs/lows/closes 等长序列 + timeframe
 # 特征: 摆动点/平台振幅/缠论结构/水平位趋势线/归一化序列
-# 算法: 经典腿 → 缠论腿 → SR腿 → DTW腿 → 胜率注入 → 去重排序
+# 算法: 经典腿 → 经典腿v2(头肩/三重) → 缠论腿 → SR腿 → DTW腿 → 胜率注入 → 去重排序
 # 输出: PatternScanResult（events tuple[PatternEvent] + detector_stats + notes）
 """
 
@@ -162,6 +162,10 @@ class PatternEngineConfig:
     dtw_max_distance: float = 0.08  # DTW 距离上限（归一化，/(n+m) 口径）
     chanlun_min_bi_bars: int = 3  # 缠论腿严格笔跨距（引擎口径，比散件默认 5 宽松）
     enable_classic: bool = True
+    hs_shoulder_tolerance_pct: float = 3.0  # 头肩两肩对称容差 %
+    triple_extreme_tolerance_pct: float = 1.5  # 三重顶/底三极端等高容差 %
+    classic2_confirm_horizon: int = 60  # classic2 颈线确认搜索上限根数（自形态完成 bar 起）
+    enable_classic2: bool = True
     enable_chanlun: bool = True
     enable_sr: bool = True
     enable_dtw: bool = True
@@ -348,6 +352,168 @@ class UnifiedPatternEngine:
                     )
         return events
 
+    # ── 经典腿 v2：头肩顶/底 + 三重顶/底（P2-b，颈线收盘确认=PIT）──
+    def _classic2_leg(
+        self, highs: Sequence[float], lows: Sequence[float], closes: Sequence[float]
+    ) -> list[PatternEvent]:
+        cfg = self._cfg
+        events: list[PatternEvent] = []
+        n = len(closes)
+        tops = _swing_points(highs, cfg.swing_window, True)
+        bots = _swing_points(lows, cfg.swing_window, False)
+        sh_tol = cfg.hs_shoulder_tolerance_pct / 100.0
+        tri_tol = cfg.triple_extreme_tolerance_pct / 100.0
+        horizon = cfg.classic2_confirm_horizon
+
+        def _confirm_below(start_idx: int, level: float) -> int | None:
+            for j in range(start_idx + 1, min(n, start_idx + 1 + horizon)):
+                if closes[j] < level:
+                    return j
+            return None
+
+        def _confirm_above(start_idx: int, level: float) -> int | None:
+            for j in range(start_idx + 1, min(n, start_idx + 1 + horizon)):
+                if closes[j] > level:
+                    return j
+            return None
+
+        def _gaps_ok(i1: int, i2: int, i3: int) -> bool:
+            return (
+                i2 - i1 >= cfg.double_extreme_min_gap
+                and i3 - i2 >= cfg.double_extreme_min_gap
+            )
+
+        # 头肩顶：连续三峰，头最高、两肩对称，颈线=两谷低者；收盘破颈线确认
+        for a in range(len(tops) - 2):
+            (i1, p1), (i2, p2), (i3, p3) = tops[a], tops[a + 1], tops[a + 2]
+            if not _gaps_ok(i1, i2, i3) or not (p2 > p1 and p2 > p3):
+                continue
+            if abs(p1 - p3) / ((p1 + p3) / 2) > sh_tol:
+                continue
+            g1 = [b for b in bots if i1 < b[0] < i2]
+            g2 = [b for b in bots if i2 < b[0] < i3]
+            if not g1 or not g2:
+                continue
+            neck = min(g1[0][1], g2[0][1])
+            j = _confirm_below(i3, neck)
+            if j is None:
+                continue
+            events.append(
+                self._event(
+                    name="头肩顶",
+                    cls=PatternClass.REVERSAL,
+                    direction=PatternDirection.DOWN,
+                    confidence=0.75,
+                    key_points=(
+                        KeyPoint(i1, p1, "左肩"),
+                        KeyPoint(g1[0][0], g1[0][1], "谷1"),
+                        KeyPoint(i2, p2, "头"),
+                        KeyPoint(g2[0][0], g2[0][1], "谷2"),
+                        KeyPoint(i3, p3, "右肩"),
+                        KeyPoint(j, closes[j], "颈线破位"),
+                    ),
+                    anchor=j,
+                )
+            )
+
+        # 头肩底（镜像）：连续三谷，头最低、两肩对称，颈线=两峰高者；收盘破颈线确认
+        for a in range(len(bots) - 2):
+            (i1, b1), (i2, b2), (i3, b3) = bots[a], bots[a + 1], bots[a + 2]
+            if not _gaps_ok(i1, i2, i3) or not (b2 < b1 and b2 < b3):
+                continue
+            if abs(b1 - b3) / ((b1 + b3) / 2) > sh_tol:
+                continue
+            p1 = [t for t in tops if i1 < t[0] < i2]
+            p2 = [t for t in tops if i2 < t[0] < i3]
+            if not p1 or not p2:
+                continue
+            neck = max(p1[0][1], p2[0][1])
+            j = _confirm_above(i3, neck)
+            if j is None:
+                continue
+            events.append(
+                self._event(
+                    name="头肩底",
+                    cls=PatternClass.REVERSAL,
+                    direction=PatternDirection.UP,
+                    confidence=0.75,
+                    key_points=(
+                        KeyPoint(i1, b1, "左肩"),
+                        KeyPoint(p1[0][0], p1[0][1], "峰1"),
+                        KeyPoint(i2, b2, "头"),
+                        KeyPoint(p2[0][0], p2[0][1], "峰2"),
+                        KeyPoint(i3, b3, "右肩"),
+                        KeyPoint(j, closes[j], "颈线突破"),
+                    ),
+                    anchor=j,
+                )
+            )
+
+        # 三重顶：三峰等高（容差内），收盘破两谷低者确认
+        for a in range(len(tops) - 2):
+            (i1, p1), (i2, p2), (i3, p3) = tops[a], tops[a + 1], tops[a + 2]
+            if not _gaps_ok(i1, i2, i3):
+                continue
+            mid = (p1 + p2 + p3) / 3
+            if max(p1, p2, p3) - min(p1, p2, p3) > mid * tri_tol:
+                continue
+            g1 = [b for b in bots if i1 < b[0] < i2]
+            g2 = [b for b in bots if i2 < b[0] < i3]
+            if not g1 or not g2:
+                continue
+            level = min(g1[0][1], g2[0][1])
+            j = _confirm_below(i3, level)
+            if j is None:
+                continue
+            events.append(
+                self._event(
+                    name="三重顶",
+                    cls=PatternClass.REVERSAL,
+                    direction=PatternDirection.DOWN,
+                    confidence=0.7,
+                    key_points=(
+                        KeyPoint(i1, p1, "顶1"),
+                        KeyPoint(i2, p2, "顶2"),
+                        KeyPoint(i3, p3, "顶3"),
+                        KeyPoint(j, closes[j], "颈线破位"),
+                    ),
+                    anchor=j,
+                )
+            )
+
+        # 三重底（镜像）：三谷等高，收盘破两峰高者确认
+        for a in range(len(bots) - 2):
+            (i1, b1), (i2, b2), (i3, b3) = bots[a], bots[a + 1], bots[a + 2]
+            if not _gaps_ok(i1, i2, i3):
+                continue
+            mid = (b1 + b2 + b3) / 3
+            if max(b1, b2, b3) - min(b1, b2, b3) > mid * tri_tol:
+                continue
+            p1 = [t for t in tops if i1 < t[0] < i2]
+            p2 = [t for t in tops if i2 < t[0] < i3]
+            if not p1 or not p2:
+                continue
+            level = max(p1[0][1], p2[0][1])
+            j = _confirm_above(i3, level)
+            if j is None:
+                continue
+            events.append(
+                self._event(
+                    name="三重底",
+                    cls=PatternClass.REVERSAL,
+                    direction=PatternDirection.UP,
+                    confidence=0.7,
+                    key_points=(
+                        KeyPoint(i1, b1, "底1"),
+                        KeyPoint(i2, b2, "底2"),
+                        KeyPoint(i3, b3, "底3"),
+                        KeyPoint(j, closes[j], "颈线突破"),
+                    ),
+                    anchor=j,
+                )
+            )
+        return events
+
     # ── 缠论腿（收编 MOD-SIG-072）────────────────────────
     def _chanlun_leg(self, highs: Sequence[float], lows: Sequence[float], notes: list[str]) -> list[PatternEvent]:
         events: list[PatternEvent] = []
@@ -519,6 +685,10 @@ class UnifiedPatternEngine:
             ev = self._classic_leg(highs, lows, closes)
             raw.extend(ev)
             stats["classic"] = len(ev)
+        if cfg.enable_classic2:
+            ev = self._classic2_leg(highs, lows, closes)
+            raw.extend(ev)
+            stats["classic2"] = len(ev)
         if cfg.enable_chanlun:
             ev = self._chanlun_leg(highs, lows, notes)
             raw.extend(ev)
