@@ -294,6 +294,29 @@ class RegimeDataLoader:
         """
         return self._load_or_cache("money_flow", self._load_money_flow)
 
+    def load_alt_regime_signals(self) -> pd.DataFrame | None:
+        """另类数据市场级 regime 信号（alt_regime_signal 全表，C-1/C-2 消费端）。
+
+        Returns:
+            DataFrame(cols=[signal_date, signal_id, signal_value, state])
+            或 None（查询失败降级）。供 F4/F8/F10-F12/F14/F15/F23/F25 维度用
+            （docs/_working/alt_data_consumption_plan.md）。
+        """
+        table = self._registry.table("market_alt_regime_signal")
+        sql = (
+            f"SELECT signal_date, signal_id, toFloat64(signal_value) AS signal_value, state "
+            f"FROM {table} FINAL "
+            f"WHERE signal_date >= toDate('{self.data_load_start}') "
+            f"AND signal_date <= toDate('{self.backtest_end}') "
+            f"ORDER BY signal_date, signal_id"
+        )
+        tsv = self._query(sql, "alt_regime_signals")
+        rows = parse_tsv(tsv, ncols=4)
+        if not rows:
+            _logger.warning("alt_regime_signals 无数据，相关维度将降级")
+            return None
+        return pd.DataFrame(rows, columns=["signal_date", "signal_id", "signal_value", "state"])
+
     def load_sector_kline(self) -> pd.DataFrame | None:
         """行业板块K线（code/trade_date/OHLCV）。
 
