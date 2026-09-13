@@ -27,7 +27,8 @@ capabilities:
   - data_repair
   - 数据回灌
   - 数据修复
-  description: 数据操作 SOP——回灌/修复/判重/PIT/探针全流程方法论。触发=数据回灌/坏数据修复/表结构变更/判重/数据探针/缺口处置；三步验证+幂等回补+FINAL 逐位验证+PIT 口径+勿物理删+探针手法+实战范例索引。canonical = docs/01_policies_and_standards/sop/data_ops_sop/data_ops_policy.md。
+  description: 数据操作 SOP——回灌/修复/判重/PIT/探针全流程方法论。触发=数据回灌/坏数据修复/表结构变更/判重/数据探针/缺口处置；三步验证+幂等回补+FINAL
+    逐位验证+PIT 口径+勿物理删+探针手法+实战范例索引。canonical = docs/01_policies_and_standards/sop/data_ops_sop/data_ops_policy.md。
   canonical_override: docs/01_policies_and_standards/sop/data_ops_sop/data_ops_policy.md
 - capability_id: qmt_file_bridge_broker
   aliases:
@@ -12371,4 +12372,8 @@ creation_tokens:
   token: st-fingov-f2-eval-common-20260914
   created_by: st-fingov-20260912
   capability: f2_eval_common
+- file: src/zephyr/signal_ashare/strategy_signal/series_transform.py
+  token: auto-scaffold-series_transform-20260914
+  created_by: scaffold.py
+  capability: series_transform
 di_seam_exemptions: []
