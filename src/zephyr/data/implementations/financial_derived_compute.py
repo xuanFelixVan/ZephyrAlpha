@@ -44,7 +44,15 @@ from __future__ import annotations
 import calendar
 import datetime as dt
 import logging
+import sys
 from collections.abc import Iterator
+from pathlib import Path
+
+# schemas.categories.*（DDL 真源）在项目根而非 src/——本模块懒加载它，先把根放上行-path
+# （IMPORT-INTEGRITY 门禁 importlib 解析口径；与本仓 scripts 侧 sys.path.insert 同款模式）
+_REPO_ROOT = str(Path(__file__).resolve().parents[3])
+if _REPO_ROOT not in sys.path:
+    sys.path.insert(0, _REPO_ROOT)
 
 from zephyr.data.provider_base import FetchResult
 
@@ -69,6 +77,7 @@ _LOAD_COLS: dict[str, list[str]] = {
         "total_assets", "total_liabilities", "total_current_assets",
         "total_current_liabilities", "accounts_receivable", "inventory", "goodwill",
         "equity_incl_minority", "retained_earnings", "short_term_loan", "long_term_loan",
+        "total_shares",
     ],
     "cashflow_statement": [
         "symbol", "report_period", "announce_date",
@@ -101,6 +110,7 @@ _WIDE_FROM_BALANCE = {
     "retained_earnings": "retained_earnings",
     "short_term_loan": "short_term_loan",
     "long_term_loan": "long_term_loan",
+    "total_shares": "total_shares",
 }
 
 # 版本 store：stmt -> symbol -> report_period -> [(announce_date, {col: raw_str})]

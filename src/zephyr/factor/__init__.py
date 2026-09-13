@@ -87,6 +87,8 @@ from zephyr.factor.factor_availability_monitor import FactorAvailabilityMonitor
 from zephyr.factor.factor_factory import FactorFactory
 from zephyr.factor.factor_production_pipeline import FactorProductionPipeline
 from zephyr.factor.wq_alpha_87 import WqAlpha87
+# F2 财报事实侧八因子门面（ORPHAN-MODULE src 侧接线，消费=eval_f2_fundamental_ic/tests）
+from zephyr.factor import fundamentals  # noqa: F401
 from zephyr.factor.ufl_deterministic_layer import UflDeterministicLayer
 from zephyr.factor.offline_store import OfflineStore
 

@@ -80,6 +80,7 @@ CREATE TABLE IF NOT EXISTS c3_fundamental.financial_derived
     retained_earnings Nullable(Float64)     COMMENT '未分配利润（时点）',
     short_term_loan Nullable(Float64)       COMMENT '短期借款（时点）',
     long_term_loan Nullable(Float64)        COMMENT '长期借款（时点）',
+    total_shares  Nullable(Float64)         COMMENT '总股本（时点，F-Score 无增发项，v1.1）',
     rev_q          Nullable(Float64)        COMMENT '单季营业收入（累计差分，Q1=累计）',
     cost_q         Nullable(Float64)        COMMENT '单季营业成本',
     np_q           Nullable(Float64)        COMMENT '单季净利润含少数股东',
@@ -128,7 +129,7 @@ INSERT_COLUMNS = (
     "ocf_cum, icf_cum, fcff_cum, "
     "total_assets, total_liabilities, total_current_assets, total_current_liabilities, "
     "accounts_receivable, inventory, goodwill, equity_incl_minority, retained_earnings, "
-    "short_term_loan, long_term_loan, "
+    "short_term_loan, long_term_loan, total_shares, "
     "rev_q, cost_q, np_q, ocf_q, "
     "rev_q_yoy, np_q_yoy, ocf_q_yoy, rev_q_qoq, np_q_qoq, "
     "rev_ttm, cost_ttm, np_ttm, ocf_ttm, total_profit_ttm, income_tax_ttm, "

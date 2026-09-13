@@ -12049,3 +12049,315 @@ factors:
   code_fingerprint: null
   entry_role: "factor"
   note: "截面价格水平无预测力（符合设计定位——盘中基准价因子）；*overfit=true 系 check_overfitting 在 IC≈0 时比值判定失真，无实际过拟合含义"
+- factor_id: "FCT-FQ-001"
+  name: "应计因子（Sloan）"
+  name_zh: "应计因子（Sloan）"
+  aliases: []
+  factor_class: "quality"
+  formula: "-(net_profit_ttm-ocf_ttm)/total_assets"
+  params: {}
+  inputs: ["c3_fundamental.financial_derived(DS-230) 对应列"]
+  outputs: ["截面因子值（方向=值大预期收益高）"]
+  alpha_source: "Sloan 1996 The Accounting Review 应计异象；A股公告期28%年超额实证"
+  frequency: "quarterly"
+  lookback_period: 4
+  universe: "UNI-RULE-001"
+  benchmark_id: "BMK-INDEX-001"
+  neutralization: "none"
+  pit_policy: "statement_announce_date"
+  module_id: "MOD-L02-001"
+  doc_ref: "docs/_working/2026-09-12-fundamental-consumption-design.md M2"
+  code_path: "src/zephyr/factor/fundamentals.py"
+  belongs_to_strategies: []
+  variant_of: null
+  status: "experimental"
+  version: "1.0.0"
+  created_at: "2026-09-14"
+  updated_at: "2026-09-14"
+  owner: "MOD-GOVERNANCE"
+  ic: 0.0284
+  ir: 0.4334
+  decay_halflife: null
+  decay_detection_method: null
+  last_decay_scan_at: null
+  turnover: null
+  capacity: null
+  last_evaluated_at: "2026-09-14"
+  evidence: "SOP-B4 2026-09-14 IS 2019-2023 月度截面 Spearman IC=+0.0284 t_p=0.0014 覆盖98.8%（60月）通过晋级门槛；OOS 2024+ IC=+0.0061 未达线如实记录；评估器=eval_f2_fundamental_ic.py PIT as-of announce_date"
+  code_symbol: "src/zephyr/factor/fundamentals.py::fq01_accrual"
+  code_fingerprint: null
+  entry_role: "ranking"
+  note: "D5 首发第一/D3 主登记；FQ-02 为其改进对照（裁定#229 D3）"
+- factor_id: "FCT-FQ-002"
+  name: "现金流实现率"
+  name_zh: "现金流实现率"
+  aliases: []
+  factor_class: "quality"
+  formula: "mean(ocf_ttm/|np_ttm|,8q)-std((np_ttm-ocf_ttm)/total_assets,8q)"
+  params: {}
+  inputs: ["c3_fundamental.financial_derived(DS-230) 对应列"]
+  outputs: ["截面因子值（方向=值大预期收益高）"]
+  alpha_source: "券商量化专题 2026-04 改进应计（转化效率+残差波动率，RankIC 2.61%→2.93%）"
+  frequency: "quarterly"
+  lookback_period: 8
+  universe: "UNI-RULE-001"
+  benchmark_id: "BMK-INDEX-001"
+  neutralization: "none"
+  pit_policy: "statement_announce_date"
+  module_id: "MOD-L02-001"
+  doc_ref: "docs/_working/2026-09-12-fundamental-consumption-design.md M2"
+  code_path: "src/zephyr/factor/fundamentals.py"
+  belongs_to_strategies: []
+  variant_of: null
+  status: "experimental"
+  version: "1.0.0"
+  created_at: "2026-09-14"
+  updated_at: "2026-09-14"
+  owner: "MOD-GOVERNANCE"
+  ic: 0.0246
+  ir: 0.3909
+  decay_halflife: null
+  decay_detection_method: null
+  last_decay_scan_at: null
+  turnover: null
+  capacity: null
+  last_evaluated_at: "2026-09-14"
+  evidence: "SOP-B4 2026-09-14 IS 同款评估 IC=+0.0246 t_p=0.0046 覆盖99.4% 通过晋级门槛；OOS +0.0077 如实；D3 对照=FQ-01 池化秩相关 0.2813<0.85 真双因子不挂 variant_of"
+  code_symbol: "src/zephyr/factor/fundamentals.py::fq02_cash_conversion"
+  code_fingerprint: null
+  entry_role: "ranking"
+  note: "D3 双登记对照件：与 FCT-FQ-001 秩相关 0.2813<0.85 判真双因子"
+- factor_id: "FCT-FQ-003"
+  name: "GPOA 毛利率资产比"
+  name_zh: "GPOA 毛利率资产比"
+  aliases: []
+  factor_class: "quality"
+  formula: "(revenue_ttm-cost_ttm)/total_assets"
+  params: {}
+  inputs: ["c3_fundamental.financial_derived(DS-230) 对应列"]
+  outputs: ["截面因子值（方向=值大预期收益高）"]
+  alpha_source: "Novy-Marx 2013 JFE The Other Side of Value"
+  frequency: "quarterly"
+  lookback_period: 4
+  universe: "UNI-RULE-001"
+  benchmark_id: "BMK-INDEX-001"
+  neutralization: "none"
+  pit_policy: "statement_announce_date"
+  module_id: "MOD-L02-001"
+  doc_ref: "docs/_working/2026-09-12-fundamental-consumption-design.md M2"
+  code_path: "src/zephyr/factor/fundamentals.py"
+  belongs_to_strategies: []
+  variant_of: null
+  status: "candidate"
+  version: "1.0.0"
+  created_at: "2026-09-14"
+  updated_at: "2026-09-14"
+  owner: "MOD-GOVERNANCE"
+  ic: -0.0144
+  ir: None
+  decay_halflife: null
+  decay_detection_method: null
+  last_decay_scan_at: null
+  turnover: null
+  capacity: null
+  last_evaluated_at: "2026-09-14"
+  evidence: "SOP-B4 2026-09-14 failed_eval：IS IC=-0.0144 t_p=0.337 |IC|<0.02 未达晋级门槛，保持 candidate（不删条目）；OOS -0.0133 同向弱——Novy-Marx 毛利率在 2019-2023 A股全市场未显效，留档观察"
+  code_symbol: "src/zephyr/factor/fundamentals.py::fq03_gpoa"
+  code_fingerprint: null
+  entry_role: "ranking"
+  note: ""
+- factor_id: "FCT-FQ-004"
+  name: "单季盈利变化 ΔROEq"
+  name_zh: "单季盈利变化 ΔROEq"
+  aliases: []
+  factor_class: "quality"
+  formula: "4*np_q/equity_incl_minority - 上年同期值"
+  params: {}
+  inputs: ["c3_fundamental.financial_derived(DS-230) 对应列"]
+  outputs: ["截面因子值（方向=值大预期收益高）"]
+  alpha_source: "雪球 V4.x 单季拆解框架（roe_q 同比差）"
+  frequency: "quarterly"
+  lookback_period: 4
+  universe: "UNI-RULE-001"
+  benchmark_id: "BMK-INDEX-001"
+  neutralization: "none"
+  pit_policy: "statement_announce_date"
+  module_id: "MOD-L02-001"
+  doc_ref: "docs/_working/2026-09-12-fundamental-consumption-design.md M2"
+  code_path: "src/zephyr/factor/fundamentals.py"
+  belongs_to_strategies: []
+  variant_of: null
+  status: "candidate"
+  version: "1.0.0"
+  created_at: "2026-09-14"
+  updated_at: "2026-09-14"
+  owner: "MOD-GOVERNANCE"
+  ic: 0.0171
+  ir: None
+  decay_halflife: null
+  decay_detection_method: null
+  last_decay_scan_at: null
+  turnover: null
+  capacity: null
+  last_evaluated_at: "2026-09-14"
+  evidence: "SOP-B4 2026-09-14 failed_eval：IS IC=+0.0171 t_p=0.069 未达（差临界）；OOS IC=+0.0200 方向一致——留 candidate 下批复核（ΔROEq 信号方向稳定但强度不足）"
+  code_symbol: "src/zephyr/factor/fundamentals.py::fq04_delta_roe_q"
+  code_fingerprint: null
+  entry_role: "ranking"
+  note: ""
+- factor_id: "FCT-GR-001"
+  name: "单季营收同比"
+  name_zh: "单季营收同比"
+  aliases: []
+  factor_class: "momentum"
+  formula: "(rev_q_t-rev_q_base)/|rev_q_base|（DS-230 rev_q_yoy 列）"
+  params: {}
+  inputs: ["c3_fundamental.financial_derived(DS-230) 对应列"]
+  outputs: ["截面因子值（方向=值大预期收益高）"]
+  alpha_source: "RevSUE 口径（营收难操纵，雪球 V4.x）"
+  frequency: "quarterly"
+  lookback_period: 4
+  universe: "UNI-RULE-001"
+  benchmark_id: "BMK-INDEX-001"
+  neutralization: "none"
+  pit_policy: "statement_announce_date"
+  module_id: "MOD-L02-001"
+  doc_ref: "docs/_working/2026-09-12-fundamental-consumption-design.md M2"
+  code_path: "src/zephyr/factor/fundamentals.py"
+  belongs_to_strategies: []
+  variant_of: null
+  status: "candidate"
+  version: "1.0.0"
+  created_at: "2026-09-14"
+  updated_at: "2026-09-14"
+  owner: "MOD-GOVERNANCE"
+  ic: 0.0031
+  ir: None
+  decay_halflife: null
+  decay_detection_method: null
+  last_decay_scan_at: null
+  turnover: null
+  capacity: null
+  last_evaluated_at: "2026-09-14"
+  evidence: "SOP-B4 2026-09-14 failed_eval：IS IC=+0.0031 t_p=0.757 远未达；OOS +0.0226 反弹——IS 段失效疑似 2019-2023 小盘成长风格逆风，保持 candidate 待风格分层复检"
+  code_symbol: "src/zephyr/factor/fundamentals.py::gr01_rev_q_yoy"
+  code_fingerprint: null
+  entry_role: "ranking"
+  note: "registry 无 growth 类，就近登记 momentum（基本面动量惯例）"
+- factor_id: "FCT-GR-002"
+  name: "盈利加速度"
+  name_zh: "盈利加速度"
+  aliases: []
+  factor_class: "momentum"
+  formula: "np_q 环比变化率（DS-230 np_q_qoq 列）"
+  params: {}
+  inputs: ["c3_fundamental.financial_derived(DS-230) 对应列"]
+  outputs: ["截面因子值（方向=值大预期收益高）"]
+  alpha_source: "雪球 QoQ_Acc 盈利二阶导"
+  frequency: "quarterly"
+  lookback_period: 4
+  universe: "UNI-RULE-001"
+  benchmark_id: "BMK-INDEX-001"
+  neutralization: "none"
+  pit_policy: "statement_announce_date"
+  module_id: "MOD-L02-001"
+  doc_ref: "docs/_working/2026-09-12-fundamental-consumption-design.md M2"
+  code_path: "src/zephyr/factor/fundamentals.py"
+  belongs_to_strategies: []
+  variant_of: null
+  status: "candidate"
+  version: "1.0.0"
+  created_at: "2026-09-14"
+  updated_at: "2026-09-14"
+  owner: "MOD-GOVERNANCE"
+  ic: 0.01
+  ir: None
+  decay_halflife: null
+  decay_detection_method: null
+  last_decay_scan_at: null
+  turnover: null
+  capacity: null
+  last_evaluated_at: "2026-09-14"
+  evidence: "SOP-B4 2026-09-14 failed_eval：IS IC=+0.0100 t_p=0.112 未达；OOS +0.0081——保持 candidate"
+  code_symbol: "src/zephyr/factor/fundamentals.py::gr02_np_q_qoq"
+  code_fingerprint: null
+  entry_role: "ranking"
+  note: "registry 无 growth 类，就近登记 momentum"
+- factor_id: "FCT-FQ-005"
+  name: "信息质量代理"
+  name_zh: "信息质量代理"
+  aliases: []
+  factor_class: "quality"
+  formula: "-|z(应收/营收TTM,12q)| - std(eff_tax_rate_ttm,12q)"
+  params: {}
+  inputs: ["c3_fundamental.financial_derived(DS-230) 对应列"]
+  outputs: ["截面因子值（方向=值大预期收益高）"]
+  alpha_source: "国盛多因子 14 刻画财报信息质量（可得子集：应收异常+税率波动）"
+  frequency: "quarterly"
+  lookback_period: 12
+  universe: "UNI-RULE-001"
+  benchmark_id: "BMK-INDEX-001"
+  neutralization: "none"
+  pit_policy: "statement_announce_date"
+  module_id: "MOD-L02-001"
+  doc_ref: "docs/_working/2026-09-12-fundamental-consumption-design.md M2"
+  code_path: "src/zephyr/factor/fundamentals.py"
+  belongs_to_strategies: []
+  variant_of: null
+  status: "candidate"
+  version: "1.0.0"
+  created_at: "2026-09-14"
+  updated_at: "2026-09-14"
+  owner: "MOD-GOVERNANCE"
+  ic: 0.0002
+  ir: None
+  decay_halflife: null
+  decay_detection_method: null
+  last_decay_scan_at: null
+  turnover: null
+  capacity: null
+  last_evaluated_at: "2026-09-14"
+  evidence: "SOP-B4 2026-09-14 failed_eval：IS IC=+0.0002 t_p=0.956 无信号（可得子集信息量不足——国盛 14 附注级主项缺失所致），保持 candidate 或退役候审"
+  code_symbol: "src/zephyr/factor/fundamentals.py::fq05_info_quality"
+  code_fingerprint: null
+  entry_role: "ranking"
+  note: ""
+- factor_id: "FCT-FQ-006"
+  name: "Piotroski F-Score"
+  name_zh: "Piotroski F-Score"
+  aliases: []
+  factor_class: "quality"
+  formula: "9 项 0/1 计数（ROA>0/CFO>0/ROA升/应计<0/杠杆降/流动比升/无增发/毛利率升/周转率升）"
+  params: {}
+  inputs: ["c3_fundamental.financial_derived(DS-230) 对应列"]
+  outputs: ["截面因子值（方向=值大预期收益高）"]
+  alpha_source: "Piotroski 2000 JAR F-Score"
+  frequency: "quarterly"
+  lookback_period: 4
+  universe: "UNI-RULE-001"
+  benchmark_id: "BMK-INDEX-001"
+  neutralization: "none"
+  pit_policy: "statement_announce_date"
+  module_id: "MOD-L02-001"
+  doc_ref: "docs/_working/2026-09-12-fundamental-consumption-design.md M2"
+  code_path: "src/zephyr/factor/fundamentals.py"
+  belongs_to_strategies: []
+  variant_of: null
+  status: "candidate"
+  version: "1.0.0"
+  created_at: "2026-09-14"
+  updated_at: "2026-09-14"
+  owner: "MOD-GOVERNANCE"
+  ic: 0.0097
+  ir: None
+  decay_halflife: null
+  decay_detection_method: null
+  last_decay_scan_at: null
+  turnover: null
+  capacity: null
+  last_evaluated_at: "2026-09-14"
+  evidence: "SOP-B4 2026-09-14 failed_eval：IS IC=+0.0097 t_p=0.278 未达（F-Score 在全市场偏弱符合文献——小市值/价值域更有效），保持 candidate 待分域复检"
+  code_symbol: "src/zephyr/factor/fundamentals.py::fq06_fscore"
+  code_fingerprint: null
+  entry_role: "ranking"
+  note: "九项齐才出分（缺项 NaN 严格语义）；total_shares 列为 v1.1 为本因子新增"

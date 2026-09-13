@@ -54,6 +54,12 @@ def apply() -> int:
         c = Client(host=cfg["host"], port=int(cfg.get("port", 9000)), user=cfg["user"],
                    password=cfg.get("password", ""), connect_timeout=5)
         c.execute(FINANCIAL_DERIVED_DDL)
+        # v1.1 增列（CREATE IF NOT EXISTS 不会给存量表加列；幂等）
+        c.execute(
+            "ALTER TABLE c3_fundamental.financial_derived "
+            "ADD COLUMN IF NOT EXISTS total_shares Nullable(Float64) "
+            "COMMENT '总股本（时点，F-Score 无增发项，v1.1）'"
+        )
         print(f"OK: {TABLE_NAME} DDL executed (IF NOT EXISTS, 幂等)")
     except Exception as exc:  # noqa: BLE001
         print(f"FAIL: DDL 执行失败: {exc}")
