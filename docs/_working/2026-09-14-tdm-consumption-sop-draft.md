@@ -40,3 +40,28 @@ ttl: task_bound
    knowledge-drift 声明）——按规范预算净零，用"FRONTEND-MAP/battle-map 同款对齐门禁"模式实现，
    不新增规范对象数量（合并现散落在 D120 的口头要求）；
 3. S2 的 evidence 回填已在本次会话出现实例（RSRS 三窗成绩→STR 条目），流程已跑通一次。
+
+
+---
+
+## 寻路批次 #1（2026-09-14，按 TDM 寻路 SOP 对 S1-S6 挖矿）
+
+### S3 知识漂移预检——挖到学术硬支撑
+
+- 机构共识：PiT（时点数据）是量化机构的付费标配——回测在 T 日只能用 T 日前可得的信息
+  （[Quant Builder](https://www.quant-builder.ai/articles/point-in-time-data)、
+  [Hedge Fund Alpha](https://hedgefundalpha.com/education/why-quants-pay-more-for-point-in-time-data/)、
+  [CFA L2 教材](https://analystprep.com/study-notes/cfa-level-2/problems-in-backtesting/)）；
+- **学术前沿（直击本图）**：[arXiv:2601.13770 Look-Ahead-Bench](https://arxiv.org/pdf/2601.13770)
+  （Benhenda 2026）把 **LLM 的知识截止日**当作时点约束标准化测量——本项目 AI 生成的翻译件/
+  判据/SOP 全部适用：**每个 AI 产物应携带"知识生效日"（源发布日+模型日期），供 S3 预检消费**。
+  地图现有 effective_from 轴从"规则层"扩展到"AI 产物层"= 状态机升级依据。
+
+**拆分三条件过滤**：独立数据输入（生效日语轴）✓ / 行为差异可回测区分（漂移报告前后对比）✓ /
+非纯参数变化（新增哨兵机制）✓ → **立得住，升格为正式场景条款**。
+
+### 其余场景挖掘状态（SOP 纪律：搜不到不硬编）
+
+- S2 evidence 回填：机构对应物=因子生命周期管理（research→verified→production），搜索被限流，
+  下窗补挖；本班已有活例（RSRS 三窗→STR-VREV-025 evidence 回填）；
+- S1/S4/S5/S6：S4/S5 已有真源 SOP 覆盖；S1/S6 挖矿排队下批（批次边界，寻路 SOP §4）。
