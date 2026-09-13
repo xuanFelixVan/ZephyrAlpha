@@ -47,19 +47,30 @@ _COLS = ("(trade_date, strategy_id, initial_capital, cash, position_symbol, shar
          " equity, daily_pnl, signal, mode, run_id, note)")
 
 
+_client = None
+
+
 def _q(sql: str):
-    from zephyr.data.ch_config import ensure_ch_env_loaded, load_ch_reader_config
+    """只读查询（进程内单客户端缓存+退出关闭，禁 socket 泄漏）。"""
+    global _client
+    if _client is None:
+        import atexit
 
-    ensure_ch_env_loaded()
-    cfg = load_ch_reader_config()
-    from clickhouse_driver import Client
+        from zephyr.data.ch_config import ensure_ch_env_loaded, load_ch_reader_config
 
-    c = Client(host=cfg["host"], port=int(cfg.get("port", 9000)), user=cfg.get("user", "default"),
-               password=cfg.get("password", ""), connect_timeout=5)
-    return c.execute(sql)
+        ensure_ch_env_loaded()
+        cfg = load_ch_reader_config()
+        from clickhouse_driver import Client
+
+        _client = Client(host=cfg["host"], port=int(cfg.get("port", 9000)),
+                         user=cfg.get("user", "default"), password=cfg.get("password", ""),
+                         connect_timeout=5)
+        atexit.register(_client.disconnect)
+    return _client.execute(sql)
 
 
-def run(mode: str, start: str, end: str) -> dict:
+def run(mode: str, start: str, end: str, run_id: str | None = None) -> dict:
+    run_id = run_id or f"sim-{mode}-{datetime.now(timezone.utc).strftime('%Y%m%d%H%M%S')}"
     sh = pd_idx("000001", start, end)
     px = pd_idx(SYMBOL, start, end)
     if sh.empty or px.empty:
@@ -71,6 +82,7 @@ def run(mode: str, start: str, end: str) -> dict:
     cash, shares, hold_day = INITIAL_CAPITAL, 0.0, 0
     entry_px = 0.0
     out_rows = []
+    events = []
     prev_equity = INITIAL_CAPITAL
     for dt in dates:
         px_now = float(px_map[dt])
@@ -79,25 +91,32 @@ def run(mode: str, start: str, end: str) -> dict:
             hold_day += 1
             signal = "holding"
             if hold_day >= HOLD_N:
+                cost = shares * px_now * SELL_COST
                 proceeds = shares * px_now * (1 - SELL_COST)
+                events.append([dt.strftime("%Y-%m-%d"), STRATEGY_ID, SYMBOL, "exit",
+                               shares, px_now, cost, proceeds,
+                               f"持有满{HOLD_N - 1}交易日平仓(入场价{entry_px:.2f})", mode, run_id])
                 cash, shares, hold_day = proceeds, 0.0, 0
                 signal = "exit"
         elif bool(panic.loc[dt]):
+            buy_cost = cash * BUY_COST
             shares = cash / px_now * (1 - BUY_COST)
             entry_px = px_now
             cash = 0.0
             hold_day = 1
             signal = "entry"
+            events.append([dt.strftime("%Y-%m-%d"), STRATEGY_ID, SYMBOL, "entry",
+                           shares, px_now, buy_cost, 0.0,
+                           f"恐慌触发:上证两日跌幅达阈值({DROP_PREV}/{DROP_TODAY})", mode, run_id])
         pos_val = shares * px_now
         equity = cash + pos_val
         daily_pnl = equity - prev_equity
         prev_equity = equity
         out_rows.append([dt.strftime("%Y-%m-%d"), STRATEGY_ID, INITIAL_CAPITAL, round(cash, 2),
                          SYMBOL if shares > 0 else "", round(shares, 2), round(pos_val, 2),
-                         round(equity, 2), round(daily_pnl, 2), signal, mode,
-                         f"sim-{mode}-{datetime.now(timezone.utc).strftime('%Y%m%d%H%M%S')}", ""])
-    return {"rows": out_rows, "final_equity": round(prev_equity, 2), "days": len(dates),
-            "entry_px_last": entry_px}
+                         round(equity, 2), round(daily_pnl, 2), signal, mode, run_id, ""])
+    return {"rows": out_rows, "events": events, "final_equity": round(prev_equity, 2),
+            "days": len(dates), "entry_px_last": entry_px}
 
 
 def pd_idx(sym: str, start: str, end: str):
@@ -108,18 +127,66 @@ def pd_idx(sym: str, start: str, end: str):
     return df
 
 
+def rebuild(strategy_id: str, mode: str, start: str, end: str) -> list[list]:
+    """从 sim_trade_log 事件流重建钱包日账（后备方案：账本损毁可全量重建）。"""
+    ev = _q(f"SELECT trade_date, action, shares, cash_after, run_id FROM c1_backtest.sim_trade_log FINAL "
+            f"WHERE strategy_id = '{strategy_id}' AND mode = '{mode}' "
+            f"ORDER BY trade_date, action")
+    ev_by_date = {str(r[0]): r for r in ev}
+    px = pd_idx(SYMBOL, start, end)
+    px_map = px["close"].to_dict()
+    cash, shares = INITIAL_CAPITAL, 0.0
+    rows = []
+    prev_equity = INITIAL_CAPITAL
+    for dt in px.index:
+        ds = dt.strftime("%Y-%m-%d")
+        signal = "holding" if shares > 0 else "cash"
+        run_id = "rebuild"
+        if ds in ev_by_date:
+            _, action, sh, cash_after, run_id = ev_by_date[ds]
+            if action == "entry":
+                shares, cash = float(sh), float(cash_after)
+            else:
+                shares, cash = 0.0, float(cash_after)
+            signal = action
+        pos_val = shares * float(px_map[dt]) if shares > 0 else 0.0
+        equity = cash + pos_val
+        daily_pnl = equity - prev_equity
+        prev_equity = equity
+        rows.append([ds, strategy_id, INITIAL_CAPITAL, round(cash, 2),
+                     SYMBOL if shares > 0 else "", round(shares, 2), round(pos_val, 2),
+                     round(equity, 2), round(daily_pnl, 2), signal, mode, f"rebuild-{run_id}", ""])
+    return rows
+
+
 def main() -> None:
     logging.basicConfig(level=logging.INFO, format="%(levelname)s %(name)s: %(message)s")
     ap = argparse.ArgumentParser(description="模拟盘方案C钱包（恐慌反弹）")
     ap.add_argument("--mode", choices=["replay_demo", "sim_daily"], required=True)
     ap.add_argument("--start", default=None)
     ap.add_argument("--end", default=None)
+    ap.add_argument("--rebuild", action="store_true",
+                    help="从事件流重建钱包日账（后备方案，不产生新事件）")
     args = ap.parse_args()
     if args.mode == "replay_demo":
         start, end = args.start or "2026-07-01", args.end or date.today().strftime("%Y-%m-%d")
     else:
         start = end = args.start or date.today().strftime("%Y-%m-%d")
-    res = run(args.mode, start, end)
+    if args.rebuild:
+        rows = rebuild(STRATEGY_ID, args.mode, start, end)
+        from zephyr.data import ch_writer
+
+        def cell2(v):
+            if v is None:
+                return chr(92) + "N"
+            return str(v).replace(chr(9), " ").replace(chr(10), " ")
+
+        tsv = "\n".join("\t".join(cell2(v) for v in r) for r in rows) + "\n"
+        if not ch_writer.write_tsv(_TABLE, _COLS, tsv.encode("utf-8")):
+            raise RuntimeError("重建落库未确认——fail-closed")
+        print(json.dumps({"rebuild": True, "rows": len(rows)}, ensure_ascii=False))
+        return
+    res = run(args.mode, start, end, run_id=f"sim-{args.mode}-{datetime.now(timezone.utc).strftime('%Y%m%d%H%M%S')}")
     from zephyr.data import ch_writer
 
     def cell(v):
@@ -130,8 +197,14 @@ def main() -> None:
     tsv = "\n".join("\t".join(cell(v) for v in r) for r in res["rows"]) + "\n"
     if not ch_writer.write_tsv(_TABLE, _COLS, tsv.encode("utf-8")):
         raise RuntimeError("落库未确认——fail-closed")
+    ev_cols = ("(trade_date, strategy_id, symbol, action, shares, price, cost_paid, cash_after,"
+               " signal_reason, mode, run_id)")
+    if res["events"]:
+        ev_tsv = "\n".join("\t".join(cell(v) for v in r) for r in res["events"]) + "\n"
+        if not ch_writer.write_tsv("c1_backtest.sim_trade_log", ev_cols, ev_tsv.encode("utf-8")):
+            raise RuntimeError("事件流水落库未确认——fail-closed")
     print(json.dumps({"mode": args.mode, "days": res["days"], "final_equity": res["final_equity"],
-                      "rows": len(res["rows"])}, ensure_ascii=False))
+                      "rows": len(res["rows"]), "events": len(res["events"])}, ensure_ascii=False))
 
 
 if __name__ == "__main__":

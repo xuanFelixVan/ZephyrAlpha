@@ -12278,8 +12278,20 @@ creation_tokens:
   token: auto-scaffold-pattern_win_rate_provider-20260914
   created_by: scaffold.py
   capability: pattern_win_rate_provider
-di_seam_exemptions: []
 - file: docs/02_enterprise_architecture/07_trading_decision_architecture/design_memos/96_tdm_v13_validation_metadata.md
   token: tdm-v13-validation-metadata-memo-20260914
   created_by: st-zcode-c4-20260912
   capability: c4_batch_translation
+di_seam_exemptions: []
+- file: schemas/categories/sim_trade_log.py
+  token: sim-trade-log-20260914-b1
+  created_by: st-zcode-c4-20260912
+  capability: sim_paper_ledger_c
+- file: scripts/ch/apply_sim_trade_log_ddl.py
+  token: apply-sim-trade-log-ddl-20260914-b1
+  created_by: st-zcode-c4-20260912
+  capability: sim_paper_ledger_c
+- file: tests/backtest/test_sim_paper_ledger.py
+  token: test-sim-paper-ledger-20260914-b1
+  created_by: st-zcode-c4-20260912
+  capability: sim_paper_ledger_c
