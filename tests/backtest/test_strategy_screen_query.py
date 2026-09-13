@@ -50,7 +50,7 @@ def test_summary_counts_consistent():
     assert out["uniq_strategy"] >= 556
     verdicts = {(b["batch"], b["verdict"]): b["rows"] for b in out["batches"]}
     assert verdicts[("C2-intake-2026-09-12", "screened_in")] == 381
-    assert verdicts[("C4-translated-20260912", "translated_c4")] == 37
+    assert verdicts[("C4-translated-20260912", "translated_c4")] >= 37  # 台账只增：估值批后 39
     assert verdicts[("C4-translated-20260912", "deferred_c4")] == 321
     assert any(r["reason"].startswith("deferred_") for r in out["failure_reasons"])
 
