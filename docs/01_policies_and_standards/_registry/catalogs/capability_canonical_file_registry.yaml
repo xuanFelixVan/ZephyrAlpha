@@ -12319,3 +12319,7 @@ creation_tokens:
   created_by: st-zcode-c4-20260912
   capability: sim_paper_ledger_c
 di_seam_exemptions: []
+- file: scripts/governance/upgrade_tdm_v13_metadata.py
+  token: upgrade-tdm-v13-metadata-20260914
+  created_by: st-zcode-c4-20260912
+  capability: c4_batch_translation

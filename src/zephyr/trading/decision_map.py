@@ -201,6 +201,11 @@ class DecisionMapNode:
     # 任务三（Owner 2026-09-09）：大白话确认日期（YYYY-MM-DD）——代码触碰节点时 algo_note_zh
     # 同 commit 修订或本字段同 commit 更新，否则 ALGO-NOTE-SYNC 门禁阻断（module_ref=null 豁免）
     note_confirmed: str | None = None
+    # 备忘 96 治理元数据（SR 11-7 对齐，2026-09-14）：节点验证账+重要性分档（全部可选）
+    last_validated_at: str | None = None
+    validated_by: str | None = None
+    materiality: str | None = None
+    decay_scan_frequency: str | None = None
     # v1.6（D34 交叉索引）：MOD-* 交叉锚——对齐五图体系（depgraph 以 module_id 为对齐 key）
     module_id: str | None = None
     # v1.7（D36/D37 全库交叉轴）：11 业务库引用（PAT/SEAT/MAC/CYC/UNI/CST/EVT/RLM/PFM/BMK/THD；表驱动见 _XREF_SPECS）
@@ -357,6 +362,11 @@ def _parse_node(raw: dict) -> DecisionMapNode:
         algo_refs=tuple(str(x) for x in raw.get("algo_refs", []) or []),
         doc_ref=(str(raw["doc_ref"]) if raw.get("doc_ref") else None),
         note_confirmed=(str(raw["note_confirmed"]) if raw.get("note_confirmed") else None),
+        # 备忘 96 治理元数据（缺失=None）
+        last_validated_at=(str(raw["last_validated_at"]) if raw.get("last_validated_at") else None),
+        validated_by=(str(raw["validated_by"]) if raw.get("validated_by") else None),
+        materiality=(str(raw["materiality"]) if raw.get("materiality") else None),
+        decay_scan_frequency=(str(raw["decay_scan_frequency"]) if raw.get("decay_scan_frequency") else None),
         tags=tuple(str(x) for x in raw.get("tags", []) or []),
         latency_budget=(str(raw["latency_budget"]) if raw.get("latency_budget") else None),
         red_reason=(str(raw["red_reason"]) if raw.get("red_reason") else None),
