@@ -4995,6 +4995,10 @@ capabilities:
     提交→全景对齐→清理 全流程步骤与失败处置；适用 07 域（regime/选股/仓位/风控/买卖/执行/对账/治理）施工，RULE-CAPABILITY-LOOKUP
     检索"施工"应命中本条
 creation_tokens:
+- file: docs/_working/2026-09-14-p1-p2-fix-batch1.md
+  token: fixbatch1-log-20260914
+  created_by: solo_agent
+  capability: redblue_v3_fix_batch1
 - file: tests/governance/code_quality/test_module_id_derived_separator.py
   token: ruling232-separator-test-20260914
   created_by: st-altdata-20260914
