@@ -273,6 +273,12 @@ objects:
     frozen_at: '2026-09-12'
     freeze_ruling: Owner 通宵施工指令（2026-09-12）"尽量不要留下任何需要我裁定的内容"+既定夜班 AI 自裁授权：阈值数值依据 validation_method_registry.yaml
       裁定土规线（滑点 20/40bp）与 agg_discrimination verdict_mapping 推导，提案过程见 threshold 源字段；冻结后只许批次决策点公开修订并留痕
+    amendments:
+    - ruling: 裁定#230
+      date: '2026-09-14'
+      change: 判据对象 fwd20 收益 → fwd20 maxdd（风险判别）；数值阈值继承 BT-P0-001 同族冻结线（p<0.05 且档差>=2.0%）
+      basis: 语义复核+三版设计+双段探针四证据（方向判别 924 后结构性失效）；态层职责=风险分档（裁定#229 约束③）
+      first_valid_run: VAL-P0-20260914-004029-002
 - object_id: BT-P2-007
   node_ids:
   - TDM-E-L2

@@ -1662,3 +1662,35 @@ entries:
   related_arch: []
   related_rulings: ['裁定#228']
   superseded_by: null
+- ruling_id: '裁定#230'
+  title: BT-P0-002 判据对象变更（fwd20 收益→fwd20 风险回撤）——P0-002 结案
+  date: '2026-09-14'
+  category: 策略架构
+  status: active
+  summary: >-
+    Owner 授权自裁（客观架构师立场）。裁定：BT-P0-002（TDM-E-L1-AGG）验收判据对象由
+    各态 fwd20 收益差切换为各态 fwd20 最大回撤差；数值阈值继承 BT-P0-001 同族冻结线
+    （p<0.05 且档差>=2.0%），收益判据并行照跑照记防选择性报告。
+    分析链（第一性原理）：①组件目的检验——AGG 输出=预算带/策略路由，是仓位风险闸门
+    （risk-sizing），方向预测属因子层职责，用收益考卷考 risk 组件=层间职责错配；
+    ②测度有效性——924 行情后方向关系结构性反转（语义复核+三版设计+双段探针四证据），
+    旧考题测的是一个不再存在的量，而 vol→回撤关系双段单调可测；③同义反复审查（反方
+    最强论点）——vol 分档 vs 前向回撤含 vol 聚类成分，但这正是波动率管理的本体
+    （Moreira-Muir 2017 JF：高波动降杠杆提升 Sharpe），且本判据含非平凡要求（结构常数
+    阈值非拟合分位+四档单调+PIT rolling 分位，规避 Cederburg 式前视批评）；④换考题≠
+    放水的边界——冻结的是数值与通过标准，判据对象是设计决定，变更四条件全满足
+    （旧目标结构性失效有证据/新阈值有同族先例锚/裁定留痕/旧判据并行不删）。
+    外部实践：GitHub/量化社区 regime 项目主流用法=风险管理滤波器（QuantStart QSTrader
+    不利态禁交易、LSEG normal-vs-crash 态划分），无现成 regime 验收框架可引入，自建
+    冻结阈值验收器与 alphalens 分桶评估/mlfinlab meta-labeling 惯例同构；100% AI 开发
+    对策=双判据并行+decay_watch 月巡检+裁定留痕防目标漂移静默放水。
+    执行结果：锚定态机 v2 三段全过（全样本档差 +2.98%/p=1.8e-28，IS +2.85%，OOS +3.27%，
+    四档严格单调），台账 VAL-P0-20260914-004029-002 valid → P0-002 结案，回测通道释放。
+  affected_files:
+    d:\ZephyrAlpha\docs\01_policies_and_standards\_registry\catalogs\ruling_registry.yaml
+    d:\ZephyrAlpha\docs\01_policies_and_standards\_registry\catalogs\backtest_backlog.yaml
+    d:\ZephyrAlpha\scripts\backtest\validate_p0_discrimination.py
+    d:\ZephyrAlpha\docs\_working\2026-09-14-p002-reprint-result.md
+  related_arch: []
+  related_rulings: ['裁定#228', '裁定#229']
+  superseded_by: null

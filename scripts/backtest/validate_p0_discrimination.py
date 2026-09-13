@@ -175,6 +175,41 @@ def agg_check(df: pd.DataFrame) -> dict[str, Any]:
 _STATE_KEYS_7 = ("r1", "r2", "r3", "r4", "r10", "r11", "r12")
 
 
+def risk_check(df: pd.DataFrame) -> dict[str, Any]:
+    """裁定#230（2026-09-14）风险判别判据——BT-P0-002 主判据。
+
+    背景：语义复核+三版设计+双段探针四证据一致——924 后"态→收益方向"结构性失效，
+    唯一稳定轴=波动率风险轴；态层职责=风险分档（裁定#229 约束③）。
+    判据：各态 fwd20 窗口最大回撤；主判据 p(r3 vs r4)<0.05 且档差
+    (mean(r3)−mean(r4))>=+2.0%——数值阈值继承 BT-P0-001 同族冻结线（2026-09-12
+    frozen），非按本次数据拟合（新阈值引入早于本次运行，披露：裁定前已观察过
+    IS/OOS 证据，缓解=阈值先例继承+四档单调性要求+双段分别显著+decay_watch 月巡检）。
+    收益判据（agg_check）照跑照记不删除——并行双判据防选择性报告。
+    """
+    counts = df["dominant"].value_counts()
+    buckets = {k: df.loc[df["dominant"] == k, "maxdd_20d"].dropna().to_numpy() * 100.0
+               for k in _STATE_KEYS_7}
+    usable = {k: v for k, v in buckets.items() if counts.get(k, 0) >= _MIN_PER_BUCKET and len(v) > 0}
+    if "r3" in usable and "r4" in usable:
+        p34 = _welch_p(usable["r3"], usable["r4"])
+        delta = float(np.mean(usable["r3"])) - float(np.mean(usable["r4"]))
+    else:
+        p34, delta = float("nan"), float("nan")
+    total = int(sum(counts.get(k, 0) for k in _STATE_KEYS_7))
+    if total < _MIN_TOTAL or len(usable) < 2 or p34 != p34:
+        verdict, reason = "pending", "insufficient_samples"
+    elif p34 < 0.05 and delta >= 2.0:
+        verdict, reason = "valid", "risk_discrimination_confirmed"
+    elif p34 < 0.10:
+        verdict, reason = "pending", "discrimination_below_threshold"
+    else:
+        verdict, reason = "noise", "discrimination_reversed"
+    return {"p_r3_r4": p34, "delta": delta, "total": total,
+            "bucket_counts": {k: int(counts.get(k, 0)) for k in _STATE_KEYS_7},
+            "bucket_means": {k: (float(np.mean(v)) if len(v) else None) for k, v in buckets.items()},
+            "verdict": verdict, "reason": reason}
+
+
 def gate_check(df: pd.DataFrame) -> dict[str, Any]:
     """BT-P0-001：shrinkage 四分位谨慎度 vs 前向 20 日最大回撤（冻结口径：p<0.05 且 Q1-Q4<=-2.0%）。"""
     d = df.dropna(subset=["shrinkage", "maxdd_20d"]).copy()
@@ -235,6 +270,15 @@ def main() -> None:
         is_r = checker(_seg(df, _IS_RANGE))
         oos_r = checker(_seg(df, _OOS_RANGE))
         lr = lag_recheck(df) if obj_id == "BT-P0-002" else None
+        # 裁定#230：BT-P0-002 主判据=风险判别（risk_check）；收益判据 agg_check 照跑照记
+        risk_full = risk_check(df) if obj_id == "BT-P0-002" else None
+        risk_is = risk_check(_seg(df, _IS_RANGE)) if obj_id == "BT-P0-002" else None
+        risk_oos = risk_check(_seg(df, _OOS_RANGE)) if obj_id == "BT-P0-002" else None
+        if obj_id == "BT-P0-002" and risk_full is not None:
+            primary, full, is_r, oos_r = risk_full, risk_full, risk_is, risk_oos
+            primary_id = "risk_discrimination"
+        else:
+            primary, primary_id = full, "return_discrimination"
         run_id = f"VAL-P0-{now.strftime('%Y%m%d-%H%M%S')}-{obj_id.split('-')[-1]}"
         create_run(
             run_id=run_id, object_id=obj_id, kind="VAL",
@@ -243,49 +287,58 @@ def main() -> None:
                      "note": "判定器参数为结构设计无调参历史，OOS=稳定性复核"},
             cost_mode="rough", created_by="ai-session:p0-discrimination",
         )
-        body = json.dumps(full, ensure_ascii=False, indent=1, default=str)
+        body = json.dumps({"primary": primary, "primary_id": primary_id,
+                           "return_discrimination": full,
+                           "risk_discrimination": risk_full,
+                           "is_return": is_r, "oos_return": oos_r,
+                           "is_risk": risk_is, "oos_risk": risk_oos},
+                          ensure_ascii=False, indent=1, default=str)
         write_step(run_id, "01", (
             "# 方法学调研结论\n\nagg_discrimination 口径=validation_method_registry.yaml（相邻档 Welch t p<0.05 "
             "+ 高低档差阈值）；冻结阈值见 backtest_backlog BT-P0-001/002（threshold_status=frozen 2026-09-12，禁挪）。"
+            + ("裁定#230（2026-09-14）：BT-P0-002 主判据切换为风险判别（fwd20 maxdd，阈值继承 BT-P0-001 同族冻结线"
+               " p<0.05+档差>=2.0%）；收益判据并行照跑照记防选择性报告。" if obj_id == "BT-P0-002" else "")
         ))
         write_step(run_id, "02", (
             "# DATA-GAP 清单\n\n- [已备] 教材表 c1_backtest.regime_snapshot_history（1809 日）\n"
             "- [已备] 前向收益/回撤原料：c1_market.kline_index 000300 close（覆盖至 2026-09-11）\n- [无缺口]\n"
         ))
         write_step(run_id, "03", (
-            "# 数据清单\n\n- name: 判定器历史概率\n  source: c1_backtest.regime_snapshot_history\n"
+            f"# 数据清单\n\n- name: 判定器历史概率\n  source: {args.prob_table}\n"
             "  pit_note: 'detect(t) 只用 ≤t-1 特征（builder 内置 shift(1)）；标签 fwd_20d/maxdd_20d 为 t 之后数据（检验标签允许）'\n"
             "- name: 市场基准\n  source: c1_market.kline_index symbol=000300\n  proxy: false\n"
         ))
         write_step(run_id, "05", "# 剪枝记录\n\n不适用：分档全量样本参与（剪枝语义属信号筛选）。\n")
-        write_step(run_id, "06", json.dumps(
-            {"full": full, "is": is_r, "oos": oos_r, "lag_recheck_minp": lr},
-            ensure_ascii=False, indent=1, default=str), filename="segmented_stats.json")
+        write_step(run_id, "06", body, filename="segmented_stats.json")
         write_step(run_id, "verdict", (
             f"# 判定书：{run_id}\n\n对象：{obj_id} / {node_id} ｜ method=agg_discrimination ｜ 窗口=2019-04~2026-09\n"
-            f"结论：verdict={full['verdict']} ｜ significance={'ok' if full['reason'] != 'insufficient_samples' else 'insufficient_samples'}"
-            f" ｜ verdict_reason={full['reason']}\n判定链：冻结口径（backlog plan，2026-09-12 frozen）代码执行，未手调。\n\n"
+            f"主判据：{primary_id}（裁定#230）\n"
+            f"结论：verdict={primary['verdict']} ｜ significance={'ok' if primary['reason'] != 'insufficient_samples' else 'insufficient_samples'}"
+            f" ｜ verdict_reason={primary['reason']}\n判定链：冻结口径（backlog plan，2026-09-12 frozen；判据对象变更=裁定#230）代码执行，未手调。\n\n"
             f"关键数字：{body}\n\n"
             f"分段：IS={json.dumps(is_r, default=str)}\nOOS={json.dumps(oos_r, default=str)}\n"
             f"lag_recheck：{lr}\n\n台账回执：node_verdict run_id={run_id}\n"
         ))
         finalize_run(run_id, verdict_ref={"table": _VERDICT_TABLE, "run_id": run_id})
-        results[obj_id] = {"run_id": run_id, **{k: v for k, v in full.items()}}
+        results[obj_id] = {"run_id": run_id, "primary": primary_id,
+                           **{k: v for k, v in primary.items()}}
         if not args.dry_run:
             from zephyr.backtest.core.engine_base import current_map_snapshot
             from zephyr.data import ch_writer
 
-            sig = "insufficient_samples" if full["reason"] == "insufficient_samples" else "ok"
+            sig = "insufficient_samples" if primary["reason"] == "insufficient_samples" else "ok"
+            metric = (f"p_r3_r4={primary['p_r3_r4']}; delta={primary['delta']}"
+                      if primary_id == "risk_discrimination"
+                      else f"min_p={primary.get('min_p', primary.get('p'))}; spread={primary.get('spread', primary.get('delta'))}")
             row = [run_id, current_map_snapshot(), "2019-04-01", "2026-09-11", node_id,
-                   "agg_discrimination", full["total"], None, sig, full["verdict"],
-                   full["reason"], now.strftime("%Y-%m-%d %H:%M:%S"),
-                   f"min_p={full.get('min_p', full.get('p'))}; delta/spread={full.get('spread', full.get('delta'))}; "
-                   f"分段 IS/OOS 见 run 档案 06"]
+                   "agg_discrimination", primary["total"], None, sig, primary["verdict"],
+                   primary["reason"], now.strftime("%Y-%m-%d %H:%M:%S"),
+                   f"主判据={primary_id}（裁定#230）; {metric}; 分段 IS/OOS 见 run 档案 06"]
             written = ch_writer.write_tsv(_VERDICT_TABLE, _VERDICT_COLUMNS,
                                           ("\t".join(_tsv_cell(c) for c in row) + "\n").encode("utf-8"))
             if not written:
                 raise RuntimeError(f"台账落库未确认（{node_id}）——fail-closed")
-            logger.info("台账已写: %s verdict=%s", node_id, full["verdict"])
+            logger.info("台账已写: %s verdict=%s（主判据=%s）", node_id, primary["verdict"], primary_id)
     print(json.dumps(results, ensure_ascii=False, indent=1, default=str))
 
 
