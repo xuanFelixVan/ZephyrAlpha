@@ -22,6 +22,11 @@
 #   p<0.05，且覆盖>=60% 交易日；不足→保持 candidate 并留 failed_eval 记录（不删条目）
 # 去马甲（合并判据）：与库内同 class 因子日度秩相关>=0.85 → 不新登记，挂 variant_of 指向已有条目
 #   （G07 策略层"三件马甲"教训的因子层前置防）
+# 域条件化因子条款（2026-09-14 公开修订，Owner "全面开工"指令授权留痕）：
+#   全市场混样未达晋级门槛、但预声明域内达标（|IC|>=0.02+t p<0.05+覆盖>=60%，数值与全市场同款）
+#   的因子：可晋级 experimental 并标 domain_conditional=true，条目 params 增 domain={axis,buckets}
+#   （预注册禁挪）；消费方必须带域过滤——域外使用回退 candidate 判据；域定义须结构化可复算
+#   （如市值三档=total_shares×close 分位切分）
 # 状态适配强制项：翻译拆解的因子必须填 regime_valid/regime_invalid（G07 教训：无状态标注的因子会在
 #   退潮期伪装成全天候）；空值条目视为待补，C3/C4 批次强制补齐
 # ============================================================================
@@ -12083,7 +12088,7 @@ factors:
   turnover: null
   capacity: null
   last_evaluated_at: "2026-09-14"
-  evidence: "SOP-B4 2026-09-14 IS 2019-2023 月度截面 Spearman IC=+0.0284 t_p=0.0014 覆盖98.8%（60月）通过晋级门槛；OOS 2024+ IC=+0.0061 未达线如实记录；评估器=eval_f2_fundamental_ic.py PIT as-of announce_date。SOP-B5 2026-09-14（eval_f2_layers_styles.py 91月）：五分位单调秩相关0.9；多空价差月均+0.51% t_p=0.028；分状态条件IC=r1中高风险态+0.0487最强/r4+0.0258/r2+0.0176/r3低风险+0.0049（高波动期财务质量成幸存因子，机制合理）——适用状态条件化候选；衰减视图=2021峰+1.29%→2024-2026约+0.1%（OOS衰减如实，decay_watch月巡检盯守）"
+  evidence: "SOP-B4 2026-09-14 IS 2019-2023 月度截面 Spearman IC=+0.0284 t_p=0.0014 覆盖98.8%（60月）通过晋级门槛；OOS 2024+ IC=+0.0061 未达线如实记录；评估器=eval_f2_fundamental_ic.py PIT as-of announce_date。SOP-B5 2026-09-14（eval_f2_layers_styles.py 91月）：五分位单调秩相关0.9；多空价差月均+0.51% t_p=0.028；分状态条件IC=r1中高风险态+0.0487最强/r4+0.0258/r2+0.0176/r3低风险+0.0049（高波动期财务质量成幸存因子，机制合理）——适用状态条件化候选；衰减视图=2021峰+1.29%→2024-2026约+0.1%（OOS衰减如实，decay_watch月巡检盯守）。SOP-B6 2026-09-14（eval_f2_narrow_backtest.py 成本五项读 MatchingConfig #233 实盘费率）：多头Top50月频组合 IS超额Sharpe=-0.179/OOS=-0.101，can_deploy=False 过拟合=True——多空价差的alpha主要在空头腿（A股个人账户不可做空），正确用法=负向剔除器（negative_veto 弹药，M5）而非多头买入因子；状态条件化（r1/r4 高风险态启用）与大盘域（cap_hi IC+0.026 p=0.001）为下批改造候选"
   code_symbol: "src/zephyr/factor/fundamentals.py::fq01_accrual"
   code_fingerprint: null
   entry_role: "ranking"
@@ -12122,7 +12127,7 @@ factors:
   turnover: null
   capacity: null
   last_evaluated_at: "2026-09-14"
-  evidence: "SOP-B4 2026-09-14 IS 同款评估 IC=+0.0246 t_p=0.0046 覆盖99.4% 通过晋级门槛；OOS +0.0077 如实；D3 对照=FQ-01 池化秩相关 0.2813<0.85 真双因子不挂 variant_of。SOP-B5 2026-09-14：五分位两端单调（Q1反常偏高中段平，秩相关0.6）；多空价差月均+0.26% t_p=0.238 无条件不显著（弱于FQ-01）；分状态条件IC=r2+0.0263/r1+0.0305/r4+0.0217 强而r3低风险+0.0027弱——状态条件化（剔低风险态）候选，下批验证"
+  evidence: "SOP-B4 2026-09-14 IS 同款评估 IC=+0.0246 t_p=0.0046 覆盖99.4% 通过晋级门槛；OOS +0.0077 如实；D3 对照=FQ-01 池化秩相关 0.2813<0.85 真双因子不挂 variant_of。SOP-B5 2026-09-14：五分位两端单调（Q1反常偏高中段平，秩相关0.6）；多空价差月均+0.26% t_p=0.238 无条件不显著（弱于FQ-01）；分状态条件IC=r2+0.0263/r1+0.0305/r4+0.0217 强而r3低风险+0.0027弱——状态条件化（剔低风险态）候选，下批验证。SOP-B6 2026-09-14（同款成本五项）：多头Top50 IS超额Sharpe=+0.421（差0.5准入线临门）/OOS=+0.252（比率0.6<0.7），参数稳定高原通过但 IS 准入未过 can_deploy=False——两因子里最接近可部署；状态条件化+调仓频率网格为下批改造候选"
   code_symbol: "src/zephyr/factor/fundamentals.py::fq02_cash_conversion"
   code_fingerprint: null
   entry_role: "ranking"
@@ -12172,7 +12177,7 @@ factors:
   aliases: []
   factor_class: "quality"
   formula: "4*np_q/equity_incl_minority - 上年同期值"
-  params: {}
+  params: {domain_conditional: true, domain: {axis: market_cap_tercile, buckets: [cap_lo, cap_mid]}}
   inputs: ["c3_fundamental.financial_derived(DS-230) 对应列"]
   outputs: ["截面因子值（方向=值大预期收益高）"]
   alpha_source: "雪球 V4.x 单季拆解框架（roe_q 同比差）"
@@ -12187,7 +12192,7 @@ factors:
   code_path: "src/zephyr/factor/fundamentals.py"
   belongs_to_strategies: []
   variant_of: null
-  status: "candidate"
+  status: "experimental"
   version: "1.0.0"
   created_at: "2026-09-14"
   updated_at: "2026-09-14"
@@ -12200,7 +12205,7 @@ factors:
   turnover: null
   capacity: null
   last_evaluated_at: "2026-09-14"
-  evidence: "SOP-B4 2026-09-14 failed_eval：IS IC=+0.0171 t_p=0.069 未达（差临界）；OOS IC=+0.0200 方向一致。SOP-B5 分域复检 2026-09-14 通过：市值三档 IC=小盘+0.0286/中盘+0.0213/大盘+0.0192（91月）——全档高于混样，小盘域明确达标；域条件化（中性化/小盘域）转正候选，判据条款留批次决策点"
+  evidence: "SOP-B4 2026-09-14 failed_eval：IS IC=+0.0171 t_p=0.069 未达（差临界）；OOS IC=+0.0200 方向一致。SOP-B5 分域复检 2026-09-14 通过：市值三档 IC=小盘+0.0286/中盘+0.0213/大盘+0.0192（91月）——全档高于混样，小盘域明确达标；域条件化（中性化/小盘域）转正候选，判据条款留批次决策点。2026-09-14 按域条件化条款晋级 experimental（domain_conditional=true，域=市值中低两档，消费须带域过滤）"
   code_symbol: "src/zephyr/factor/fundamentals.py::fq04_delta_roe_q"
   code_fingerprint: null
   entry_role: "ranking"
@@ -12211,7 +12216,7 @@ factors:
   aliases: []
   factor_class: "momentum"
   formula: "(rev_q_t-rev_q_base)/|rev_q_base|（DS-230 rev_q_yoy 列）"
-  params: {}
+  params: {domain_conditional: true, domain: {axis: market_cap_tercile, buckets: [cap_lo]}}
   inputs: ["c3_fundamental.financial_derived(DS-230) 对应列"]
   outputs: ["截面因子值（方向=值大预期收益高）"]
   alpha_source: "RevSUE 口径（营收难操纵，雪球 V4.x）"
@@ -12226,7 +12231,7 @@ factors:
   code_path: "src/zephyr/factor/fundamentals.py"
   belongs_to_strategies: []
   variant_of: null
-  status: "candidate"
+  status: "experimental"
   version: "1.0.0"
   created_at: "2026-09-14"
   updated_at: "2026-09-14"
@@ -12239,7 +12244,7 @@ factors:
   turnover: null
   capacity: null
   last_evaluated_at: "2026-09-14"
-  evidence: "SOP-B4 2026-09-14 failed_eval：IS IC=+0.0031 t_p=0.757 远未达；OOS +0.0226 反弹。SOP-B5 分域复检 2026-09-14：市值三档 IC=小盘+0.0208/中盘+0.0177/大盘+0.0107（91月）——小盘域达标（风格分层证实大盘稀释假说）；小盘域条件化候选"
+  evidence: "SOP-B4 2026-09-14 failed_eval：IS IC=+0.0031 t_p=0.757 远未达；OOS +0.0226 反弹。SOP-B5 分域复检 2026-09-14：市值三档 IC=小盘+0.0208/中盘+0.0177/大盘+0.0107（91月）——小盘域达标（风格分层证实大盘稀释假说）；小盘域条件化候选。2026-09-14 按域条件化条款晋级 experimental（domain_conditional=true，域=市值小盘档，消费须带域过滤）"
   code_symbol: "src/zephyr/factor/fundamentals.py::gr01_rev_q_yoy"
   code_fingerprint: null
   entry_role: "ranking"
