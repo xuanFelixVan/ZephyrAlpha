@@ -12302,7 +12302,6 @@ creation_tokens:
   token: pattern-win-rate-ddl-truth-market-pattern-win-rate-20260913
   created_by: st-pattern-20260914
   capability: pattern-win-rate-ddl-truth
-di_seam_exemptions: []
 - file: schemas/categories/sim_platform_journal.py
   token: sim-platform-journal-20260914-b2
   created_by: st-zcode-c4-20260912
@@ -12319,3 +12318,4 @@ di_seam_exemptions: []
   token: test-sim-platform-journal-20260914-b2
   created_by: st-zcode-c4-20260912
   capability: sim_paper_ledger_c
+di_seam_exemptions: []
