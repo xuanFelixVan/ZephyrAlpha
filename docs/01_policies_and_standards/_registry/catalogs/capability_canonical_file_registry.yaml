@@ -12343,7 +12343,6 @@ creation_tokens:
   token: test-sim-deviation-report-20260914-b3
   created_by: st-zcode-c4-20260912
   capability: sim_paper_ledger_c
-di_seam_exemptions: []
 - file: scripts/backtest/sim_governance.py
   token: sim-governance-20260914-b4
   created_by: st-zcode-c4-20260912
@@ -12352,3 +12351,20 @@ di_seam_exemptions: []
   token: test-sim-governance-20260914-b4
   created_by: st-zcode-c4-20260912
   capability: sim_paper_ledger_c
+- file: src/zephyr/gov_enforcement/commit_gates/registry_yaml_parse_gate.py
+  token: sopreorg-registry-yaml-parse-gate-20260914
+  created_by: st-sopreorg-20260914
+  capability: registry_yaml_parse_gate
+- file: tests/governance/commit_gates/test_registry_yaml_parse_gate.py
+  token: sopreorg-registry-yaml-parse-gate-test-20260914
+  created_by: st-sopreorg-20260914
+  capability: registry_yaml_parse_gate
+- file: scripts/backtest/eval_f2_narrow_backtest.py
+  token: st-fingov-eval-f2-narrow-20260914
+  created_by: st-fingov-20260912
+  capability: eval_f2_narrow_backtest
+- file: scripts/backtest/_f2_eval_common.py
+  token: st-fingov-f2-eval-common-20260914
+  created_by: st-fingov-20260912
+  capability: f2_eval_common
+di_seam_exemptions: []
