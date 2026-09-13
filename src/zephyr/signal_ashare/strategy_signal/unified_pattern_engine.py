@@ -166,6 +166,9 @@ class PatternEngineConfig:
     triple_extreme_tolerance_pct: float = 1.5  # 三重顶/底三极端等高容差 %
     classic2_confirm_horizon: int = 60  # classic2 颈线确认搜索上限根数（自形态完成 bar 起）
     enable_classic2: bool = True
+    classic3_flat_tolerance_pct: float = 1.2  # classic3 平坦边界容差 %（矩形/水平三角边）
+    classic3_breakout_margin_pct: float = 0.5  # classic3 边界突破边际 %
+    enable_classic3: bool = True
     enable_chanlun: bool = True
     enable_sr: bool = True
     enable_dtw: bool = True
@@ -514,6 +517,151 @@ class UnifiedPatternEngine:
             )
         return events
 
+    # ── 经典腿 v3：三角形/矩形/楔形（两点边界线+突破收盘确认=PIT）──
+    def _classic3_leg(
+        self, highs: Sequence[float], lows: Sequence[float], closes: Sequence[float]
+    ) -> list[PatternEvent]:
+        cfg = self._cfg
+        events: list[PatternEvent] = []
+        n = len(closes)
+        tops = _swing_points(highs, cfg.swing_window, True)
+        bots = _swing_points(lows, cfg.swing_window, False)
+        flat_tol = cfg.classic3_flat_tolerance_pct / 100.0
+        margin = cfg.classic3_breakout_margin_pct / 100.0
+        gap = cfg.double_extreme_min_gap
+
+        def _alt_quads() -> list[tuple[tuple[int, float], tuple[int, float], tuple[int, float], tuple[int, float]]]:
+            """(顶,谷,顶,谷) 四点窗口：同侧相邻顶对/谷对锚定，对侧点取区间内/后继首点。"""
+            quads: list = []
+            for a in range(len(tops) - 1):
+                (i1, p1), (i2, p2) = tops[a], tops[a + 1]
+                if i2 - i1 < gap:
+                    continue
+                b1c = [b for b in bots if i1 < b[0] < i2]
+                b2c = [b for b in bots if i2 < b[0] < i2 + max(i2 - i1, gap)]
+                if b1c and b2c:
+                    quads.append(((i1, p1), b1c[0], (i2, p2), b2c[0]))
+            for a in range(len(bots) - 1):
+                (i1, v1), (i2, v2) = bots[a], bots[a + 1]
+                if i2 - i1 < gap:
+                    continue
+                t1c = [t for t in tops if i1 < t[0] < i2]
+                t2c = [t for t in tops if i2 < t[0] < i2 + max(i2 - i1, gap)]
+                if t1c and t2c:
+                    quads.append((t1c[0], (i1, v1), t2c[0], (i2, v2)))
+            return quads
+
+        def _slope(p1: tuple[int, float], p2: tuple[int, float]) -> float:
+            return (p2[1] - p1[1]) / (p2[0] - p1[0])
+
+        def _flat(p1: tuple[int, float], p2: tuple[int, float]) -> bool:
+            mid = (p1[1] + p2[1]) / 2
+            return abs(p2[1] - p1[1]) / mid <= flat_tol
+
+        def _confirm(start_idx: int, level: float, upward: bool) -> int | None:
+            for j in range(start_idx + 1, n):
+                if upward and closes[j] > level * (1 + margin):
+                    return j
+                if not upward and closes[j] < level * (1 - margin):
+                    return j
+            return None
+
+        for t1, b1, t2, b2 in _alt_quads():
+            st = _slope(t1, t2)
+            sb = _slope(b1, b2)
+            flat_t = _flat(t1, t2)
+            flat_b = _flat(b1, b2)
+            rising_lows = sb > 0
+            falling_highs = st < 0
+            converging = (t2[1] - b2[1]) < (t1[1] - b1[1])
+
+            spec: tuple[str, PatternClass, str, bool] | None = None
+            # (name, 类别, 方向, 向上突破?)
+            if flat_t and flat_b:
+                spec = None  # 矩形双向突破：先按上破/下破各试
+                j_up = _confirm(t2[0], t2[1], True)
+                if j_up is not None:
+                    events.append(
+                        self._event(
+                            name="矩形箱体", cls=PatternClass.CONTINUATION, direction=PatternDirection.UP,
+                            confidence=0.6,
+                            key_points=(KeyPoint(*t1, "上沿1"), KeyPoint(*t2, "上沿2"), KeyPoint(j_up, closes[j_up], "上破点")),
+                            anchor=j_up,
+                        )
+                    )
+                j_dn = _confirm(b2[0], b2[1], False)
+                if j_dn is not None:
+                    events.append(
+                        self._event(
+                            name="矩形箱体", cls=PatternClass.CONTINUATION, direction=PatternDirection.DOWN,
+                            confidence=0.6,
+                            key_points=(KeyPoint(*b1, "下沿1"), KeyPoint(*b2, "下沿2"), KeyPoint(j_dn, closes[j_dn], "下破点")),
+                            anchor=j_dn,
+                        )
+                    )
+                continue
+            if flat_t and rising_lows:
+                spec = ("上升三角形", PatternClass.CONTINUATION, "向上", True)
+            elif flat_b and falling_highs:
+                spec = ("下降三角形", PatternClass.CONTINUATION, "向下", False)
+            elif falling_highs and rising_lows and converging:
+                spec = None  # 对称三角：双侧突破皆可
+                up_level = max(t1[1], t2[1])
+                j_up = _confirm(t2[0], up_level, True)
+                if j_up is not None:
+                    events.append(
+                        self._event(
+                            name="对称三角形", cls=PatternClass.CONTINUATION, direction=PatternDirection.UP,
+                            confidence=0.6,
+                            key_points=(KeyPoint(*t1, "高1"), KeyPoint(*t2, "高2"), KeyPoint(j_up, closes[j_up], "上破点")),
+                            anchor=j_up,
+                        )
+                    )
+                dn_level = min(b1[1], b2[1])
+                j_dn = _confirm(b2[0], dn_level, False)
+                if j_dn is not None:
+                    events.append(
+                        self._event(
+                            name="对称三角形", cls=PatternClass.CONTINUATION, direction=PatternDirection.DOWN,
+                            confidence=0.6,
+                            key_points=(KeyPoint(*b1, "低1"), KeyPoint(*b2, "低2"), KeyPoint(j_dn, closes[j_dn], "下破点")),
+                            anchor=j_dn,
+                        )
+                    )
+                continue
+            elif st > 0 and sb > 0 and converging:
+                spec = ("上升楔形", PatternClass.REVERSAL, "向下", False)
+            elif st < 0 and sb < 0 and converging:
+                spec = ("下降楔形", PatternClass.REVERSAL, "向上", True)
+            if spec is None:
+                continue
+            name, pcls, direction, upward = spec
+            if upward:
+                level = max(t1[1], t2[1])
+                j = _confirm(t2[0], level, True)
+            else:
+                level = min(b1[1], b2[1])
+                j = _confirm(b2[0], level, False)
+            if j is None:
+                continue
+            events.append(
+                self._event(
+                    name=name,
+                    cls=pcls,
+                    direction=PatternDirection.UP if direction == "向上" else PatternDirection.DOWN,
+                    confidence=0.65,
+                    key_points=(
+                        KeyPoint(*t1, "上界1"),
+                        KeyPoint(*t2, "上界2"),
+                        KeyPoint(*b1, "下界1"),
+                        KeyPoint(*b2, "下界2"),
+                        KeyPoint(j, closes[j], "突破点"),
+                    ),
+                    anchor=j,
+                )
+            )
+        return events
+
     # ── 缠论腿（收编 MOD-SIG-072）────────────────────────
     def _chanlun_leg(self, highs: Sequence[float], lows: Sequence[float], notes: list[str]) -> list[PatternEvent]:
         events: list[PatternEvent] = []
@@ -689,6 +837,10 @@ class UnifiedPatternEngine:
             ev = self._classic2_leg(highs, lows, closes)
             raw.extend(ev)
             stats["classic2"] = len(ev)
+        if cfg.enable_classic3:
+            ev = self._classic3_leg(highs, lows, closes)
+            raw.extend(ev)
+            stats["classic3"] = len(ev)
         if cfg.enable_chanlun:
             ev = self._chanlun_leg(highs, lows, notes)
             raw.extend(ev)
