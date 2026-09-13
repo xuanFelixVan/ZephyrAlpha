@@ -12303,3 +12303,19 @@ creation_tokens:
   created_by: st-pattern-20260914
   capability: pattern-win-rate-ddl-truth
 di_seam_exemptions: []
+- file: schemas/categories/sim_platform_journal.py
+  token: sim-platform-journal-20260914-b2
+  created_by: st-zcode-c4-20260912
+  capability: sim_paper_ledger_c
+- file: scripts/ch/apply_sim_platform_journal_ddl.py
+  token: apply-sim-platform-journal-ddl-20260914-b2
+  created_by: st-zcode-c4-20260912
+  capability: sim_paper_ledger_c
+- file: scripts/backtest/sim_platform_journal.py
+  token: sim-platform-journal-20260914-b2
+  created_by: st-zcode-c4-20260912
+  capability: sim_paper_ledger_c
+- file: tests/backtest/test_sim_platform_journal.py
+  token: test-sim-platform-journal-20260914-b2
+  created_by: st-zcode-c4-20260912
+  capability: sim_paper_ledger_c
