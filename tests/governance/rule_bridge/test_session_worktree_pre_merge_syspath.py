@@ -120,6 +120,13 @@ def test_force_param_skips_pre_merge_topo_check(monkeypatch: pytest.MonkeyPatch)
 
 
 def test_worktree_skip_gates_unchanged():
-    """_WORKTREE_SKIP_GATES 保持原有 3 个 gate（治本未破坏既有 skip 逻辑）。"""
+    """_WORKTREE_SKIP_GATES 原有 3 个 gate 不被移除（治本未破坏既有 skip 逻辑）。
+
+    红蓝 v3 P1-4（2026-09-14）新增 WORKTREE-REQUIRED（worktree 通道调用被
+    "请用 worktree 提交"的门禁拦属语义错误）——守卫改为子集断言：原集永不缩水，
+    允许有理由的扩充（单一真源仍是 _WORKTREE_SKIP_GATES 本身）。
+    """
     expected = frozenset({"HELD-OVERLAP", "CLAIM-REQUIRED", "FOREIGN-CHANGE-DETECTION"})
-    assert _WORKTREE_SKIP_GATES == expected, f"_WORKTREE_SKIP_GATES 应保持 {expected}，实际 {_WORKTREE_SKIP_GATES}"
+    assert expected <= _WORKTREE_SKIP_GATES, (
+        f"_WORKTREE_SKIP_GATES 不得移除原有 gate {expected}，实际 {_WORKTREE_SKIP_GATES}"
+    )

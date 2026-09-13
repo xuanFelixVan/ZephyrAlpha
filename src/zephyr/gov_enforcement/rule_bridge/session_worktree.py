@@ -461,11 +461,15 @@ def _inject_ok(fn):
 
 # worktree 路径下跳过的 gate（session_worktree 有自己的 held_files 机制替代
 
-# HELD-OVERLAP/CLAIM-REQUIRED；worktree 物理隔离消除搭便车风险，FOREIGN-CHANGE-DETECTION 无需）。
+# HELD-OVERLAP/CLAIM-REQUIRED；worktree 物理隔离消除搭便车风险，FOREIGN-CHANGE-DETECTION 无需；
+
+# WORKTREE-REQUIRED 拦的是"非 worktree 并发 commit"——worktree 通道调用本身即 worktree 提交，
+
+# 被其拦截属语义错误（红蓝 v3 P1-4，2026-09-14））。
 
 # session_worktree_commit 和 _pre_merge_gate_check 共用。
 
-_WORKTREE_SKIP_GATES = frozenset({"HELD-OVERLAP", "CLAIM-REQUIRED", "FOREIGN-CHANGE-DETECTION"})
+_WORKTREE_SKIP_GATES = frozenset({"HELD-OVERLAP", "CLAIM-REQUIRED", "FOREIGN-CHANGE-DETECTION", "WORKTREE-REQUIRED"})
 
 # 注意：docstring/注释中引用本常量时禁止硬编码具体数量/名称，必须引用 _WORKTREE_SKIP_GATES 本身（裁定 D 治本 2026-07-19）
 

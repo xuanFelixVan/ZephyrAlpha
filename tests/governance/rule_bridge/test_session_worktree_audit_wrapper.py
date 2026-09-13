@@ -102,6 +102,19 @@ class TestBlockEventAudit:
         evs = _read_events(tmp_path)
         assert evs[0]["gate_id"] == "FILE-PLACEMENT-TTL"
 
+    def test_worktree_required_gate_results_attribution(self, mocked_impl, tmp_path):
+        """WORKTREE-REQUIRED 归因（红蓝 v3 P1-2+P1-4 组合）：worktree 通道调用被其拦截
+        属语义错误（skip 名单治本防复发）；万一真拦，落账归因经 gate_results 直取仍精确。"""
+        mocked_impl.result = {
+            "session_id": "s1", "status": "FAILED", "commit_hash": "",
+            "message": "pre-commit gate 阻断（worktree 路径对标 GitCommitGateway）"
+                       ": WORKTREE-REQUIRED: 非 worktree 提交被拦截",
+            "gate_results": [{"gate_id": "WORKTREE-REQUIRED", "detail": "非 worktree 提交被拦截"}],
+        }
+        session_worktree_commit("s1", ["a.py"], "m", project_root=tmp_path)
+        evs = _read_events(tmp_path)
+        assert evs[0]["gate_id"] == "WORKTREE-REQUIRED", "组合验证：直取 gate_results 归因精确"
+
     def test_dcr_and_cross_dep_flags(self, mocked_impl, tmp_path):
         for flag, expected in (
             ("directory_contract_violation", "DIRECTORY-CONTRACT"),
