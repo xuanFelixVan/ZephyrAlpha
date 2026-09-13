@@ -4968,6 +4968,12 @@ capabilities:
   name_zh: 产业链全景图 git 侧工件门禁
   description: 图 8 产业链全景图的字典↔DDL↔引擎三方同 commit 同步硬阻断（priority=141）+ chainmap_cluster_names
     词表 sanity
+- capability_id: construction_workflow_sop
+  name: construction_workflow_sop
+  canonical_file: docs/01_policies_and_standards/sop/construction_workflow_sop.md
+  name_zh: 端到端 15 步施工闭环 SOP（07 域施工编排真源）
+  description: 施工 新模块 建新文件 写代码 施工流程 15步闭环 前必读的端到端编排 SOP——设计备忘→文档审查→蓝图→depgraph 登记→施工→测试→git 提交→全景对齐→清理 全流程步骤与失败处置；适用 07 域（regime/选股/仓位/风控/买卖/执行/对账/治理）施工，RULE-CAPABILITY-LOOKUP 检索"施工"应命中本条
+
 creation_tokens:
 - file: docs/_working/2026-09-13-xtreme-redblue-v3-plan.md
   token: redblue-v3-plan-20260913
@@ -12102,10 +12108,18 @@ creation_tokens:
   token: wt-audit-test-session-worktree-audit-wrapper-20260913
   created_by: factory-bottleneck-20260913
   capability: wt_audit
+- file: scripts/backtest/lane_e_quantile_baseline.py
+  token: lane-e-quantile-baseline-20260913
+  created_by: st-zcode-c4-20260912
+  capability: c4_batch_translation
 # di_seam_exemptions 清零（2026-09-13 Owner 裁定"直接改造"）：
 # 三条豁免全部过时摘除——AutoRuntimeCore 实测已通过（动态注入重构完成）；
 # AdmissionController 主类已通过（global_config | None=None 接缝），文件内私有小类
 # _TokenBucket/_CircuitBreaker 经时钟注入改造获得真实接缝；AgentOrchestrator 本就
 # 有 6 个 kw-only 可注入参数，被检查器 kw-only 盲区误判（generate_project_depgraph
 # _init_has_injectable_param 治本后通过）。检测器 v2+豁免清零=零豁免运行。
+- file: docs/_working/2026-09-13-p002-semantic-review.md
+  token: st-fingov-p002-semantic-review-20260913
+  created_by: st-fingov-20260912
+  capability: p0_002_semantic_review
 di_seam_exemptions: []

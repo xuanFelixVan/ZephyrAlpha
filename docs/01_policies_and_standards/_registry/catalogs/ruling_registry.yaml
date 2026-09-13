@@ -1641,3 +1641,24 @@ entries:
   related_arch: []
   related_rulings: []
   superseded_by: null
+- ruling_id: '裁定#229'
+  title: P0-002 批次决策点裁定（语义复核先行→判定器重印→窗口重训押后）
+  date: '2026-09-13'
+  category: 策略架构
+  status: active
+  summary: >-
+    Owner 拍板 P0-002（TDM-E-L1-AGG，pending：全样本高低档差 0.459<1.0 冻结线）处置顺序：
+    第一步状态语义复核（先行执行，纯案头审计不占回测通道）→ 第二步判定器重印（主攻）→
+    第三步窗口重训（押后）。复核已执行（docs/_working/2026-09-13-p002-semantic-review.md），
+    实证：档位方向样本外整体反转（IS 段 r3 牛市 +1.33/r1 低波 -2.20 成立，OOS 段 r1 +2.93
+    最赚/r3 -0.52 最亏，全样本被两段对冲稀释至 0.459；证据=VAL-P0-20260912-164116-002），
+    L1 谨慎度轴双段同向 valid——病在 HMM 态标签语义（label switching 或 924 后态收益映射
+    时变）非合成架构；死态 r11/r12（1809 日仅主导 1/6 日）。重印设计约束三条：态身份可锚定、
+    死态清理、态层降级为风险分档与 L1 谨慎度轴合流。重训同语义换窗大概率复现翻转，押后。
+  affected_files:
+    d:\ZephyrAlpha\docs\01_policies_and_standards\_registry\catalogs\ruling_registry.yaml
+    d:\ZephyrAlpha\docs\_working\2026-09-13-p002-semantic-review.md
+    d:\ZephyrAlpha\scripts\backtest\validate_p0_discrimination.py
+  related_arch: []
+  related_rulings: ['裁定#228']
+  superseded_by: null
