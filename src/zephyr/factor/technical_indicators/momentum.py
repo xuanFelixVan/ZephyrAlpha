@@ -740,9 +740,9 @@ class CONNORSRSI(TechnicalIndicatorBase):
         rsi_n, streak_n, rank_n = params["rsi_period"], params["streak_rsi"], params["rank_period"]
         close = data["close"]
         rsi_1 = _rsi(close, rsi_n)
-        # 连涨/连跌天数序列（涨=+1 递增，跌=-1 递减，平/首行=0）
+        # 连涨/连跌天数序列（涨=+1 递增，跌=-1 递减，平/首行=0）；np 数组避免 Series 位置索引警告/标签错位
         delta = close.diff()
-        sign = np.sign(delta)
+        sign = np.sign(delta).to_numpy(dtype=float)
         streak = np.zeros(len(close))
         for i in range(1, len(close)):
             if np.isnan(sign[i]) or sign[i] == 0:
