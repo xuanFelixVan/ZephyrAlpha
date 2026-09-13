@@ -12431,6 +12431,18 @@ creation_tokens:
   token: factory-backend-three-high-screen-20260913
   created_by: st-facbe-20260914
   capability: factory_backend
+- file: scripts/backtest/hypothesis_precheck.py
+  token: factory-backend-hypothesis-precheck-20260913
+  created_by: st-facbe-20260914
+  capability: factory_backend
+- file: schemas/categories/backtest_hypothesis_precheck.py
+  token: factory-backend-backtest-hypothesis-precheck-20260913
+  created_by: st-facbe-20260914
+  capability: factory_backend
+- file: scripts/ch/apply_hypothesis_precheck_ddl.py
+  token: factory-backend-apply-hypothesis-precheck-ddl-20260913
+  created_by: st-facbe-20260914
+  capability: factory_backend
 - file: scripts/backtest/translated/c4_21af8c66c15e_small_cap.py
   token: c4-21af8c66c15e-small-cap-20260914
   created_by: st-zcode-c4-20260912
@@ -12443,4 +12455,12 @@ creation_tokens:
   token: tilib-batch7-wiring-plan-20260914
   created_by: st-tilib-20260914d
   capability: technical_indicator
+- file: scripts/backtest/compare_state_dualrun.py
+  token: st-fingov-compare-dualrun-20260914
+  created_by: st-fingov-20260912
+  capability: compare_state_dualrun
+- file: docs/_working/2026-09-14-agg-switch-design.md
+  token: st-fingov-agg-switch-design-20260914
+  created_by: st-fingov-20260912
+  capability: agg_switch_design
 di_seam_exemptions: []
