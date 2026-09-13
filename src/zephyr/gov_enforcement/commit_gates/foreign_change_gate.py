@@ -5,7 +5,7 @@
 # [CONSUMERS] zephyr.gov_enforcement.rule_bridge.git_commit_gateway.GitCommitGateway.__init__
 # [STARTUP] imported
 # [MATURITY] production
-# [INVARIANTS] allow_overlap=True 时直接放行（逃生通道，与 HELD-OVERLAP 对齐）；无基线快照时 PASS（reconciler auto-commit 等未走 claim_files 的路径不阻断）；基线为空时 PASS（claim 时文件干净，所有变更都是本 session 的）；基线非空时 BLOCK（claim 时文件已有外来变更）；_claim_snapshots 读取异常安全降级为无快照（不阻断 commit）；P1 post-claim 修改审计 warn-only（在 block 决策前运行，捕获 claim 后到 commit 前的文件变化记录到 .runtime/gate_audit/post_claim_modifications.jsonl，审计失败不阻断 commit）
+# [INVARIANTS] allow_overlap=True 时直接放行（逃生通道，与 HELD-OVERLAP 对齐）；无基线快照时 PASS（reconciler auto-commit 等未走 claim_files 的路径不阻断）；基线为空时 PASS（claim 时文件干净，所有变更都是本 session 的）；基线非空时默认 BLOCK——**trust-hold 自动信任**（2026-09-13 Owner 裁定）：本 session 独占持有该文件（claim 成功=无他会话持有）且无他会话 claim 快照痕迹（死会话残留快照=前序认领者在场的证据）时视为本 session 的先编辑后 claim，放行+落审计；他会话快照痕迹存在（死会话 WIP 需显式 adopt）或快照/registry 读取异常（信任判定 fail-closed=维持阻断）时仍 BLOCK；_claim_snapshots 读取异常安全降级为无快照（不阻断 commit）；P1 post-claim 修改审计 warn-only（在 block 决策前运行，捕获 claim 后到 commit 前的文件变化记录到 .runtime/gate_audit/post_claim_modifications.jsonl，审计失败不阻断 commit）
 # [MODIFY-GUARD] gate_id="FOREIGN-CHANGE-DETECTION"；check 闭包签名 (gateway, files, **kwargs) -> tuple[bool, str]
 # [STABILITY] evolving
 # [SAFETY] L
@@ -39,7 +39,14 @@ HELD-OVERLAP gate 只检测目标文件是否被其他**活跃** session **claim
 ---------
 - 无基线快照（reconciler auto-commit 等未走 claim_files 的路径）→ PASS
 - 基线为空（claim 时文件干净，所有变更都是本 session 的）→ PASS
-- 基线非空（claim 时文件已有外来变更）→ BLOCK，逃生通道 ``allow_overlap=True``
+- 基线非空（claim 时文件已有未提交变更）：
+  - trust-hold（2026-09-13 Owner 裁定）：本 session 独占持有 + 无他会话 claim
+    快照痕迹（死会话残留快照=前序认领者在场）→ 视为本 session 先编辑后 claim
+    的自身工作，放行+落审计 trust_hold_adoptions.jsonl——AI 自然工作流
+    （编辑在前、claim 在 commit 时）不再每笔首撞，--allow-overlap 高频使用
+    （热文件限流连锁）根治；
+  - 有他会话痕迹（死会话 WIP 须显式 adopt_prior_work）或信号读取异常
+    （fail-closed on trust）→ BLOCK，逃生通道 allow_overlap=True / --adopt-prior-work
 
 时序缺口审计（P1，13a5e1d512 治本补强）
 -----------------------------------------
@@ -229,6 +236,77 @@ def _audit_post_claim_modifications(gateway, session_id: str, files: list[str], 
         )
 
 
+def _other_claimer_trace(gateway, session_id: str, abs_f: str) -> bool:
+    """他会话认领痕迹检测（trust-hold 判别核心，2026-09-13 Owner 裁定）。
+
+    痕迹=**活跃**会话的 claim 快照含该文件。活/死由 SessionRegistry 判定
+    （PID+TTL 双判据权威——registry 放行了本 session 的 claim 即已裁定前任
+    持有者的 claim 失效，本 gate 不拿死会话的陈旧快照否定 registry 的裁定：
+    worker-XXX 机器会话提交后从不 release，快照在共享文件上无限累积
+    （2026-09-13 实证 33 个死快照），死快照计入痕迹=共享文件永久假阳性阻断）。
+    死会话 WIP 残留的防线：post-claim 审计+watchdog 漂移检测+提交内容评审
+    （入库 diff 可见）。registry 读取异常 → 保守返回 True（fail-closed on trust）。
+    """
+    try:
+        candidate_sids = [
+            sid
+            for sid, snaps in gateway.claim_snapshots.items()
+            if sid != session_id and isinstance(snaps, dict) and abs_f in snaps
+        ]
+    except Exception:  # noqa: BLE001 — 快照读取异常=保守不信任
+        return True
+    try:
+        registry = getattr(gateway, "registry", None)
+        if registry is None:
+            return True  # registry 不可达=无法判活=保守不信任
+        active_infos = list(registry.list_active())
+        active_ids = {getattr(info, "session_id", "") for info in active_infos}
+        # ① 活跃会话的快照含该文件=在场的真实前序认领者
+        for sid in candidate_sids:
+            if sid in active_ids:
+                return True
+        # ② 双保险：任一活跃会话 held_files 含该文件（claim/快照脱钩 desync 场景，
+        # 无快照候选也须检查——快照缺失≠无持有）
+        for info in active_infos:
+            if getattr(info, "session_id", "") == session_id:
+                continue
+            for held in getattr(info, "held_files", None) or []:
+                if os.path.abspath(str(held)) == abs_f:
+                    return True
+    except Exception:  # noqa: BLE001 — registry 读取异常=保守不信任
+        return True
+    return False  # 快照持有者全为死会话（registry 已裁定其 claim 失效）→ 垃圾快照不构成痕迹
+
+
+def _audit_trust_hold(gateway, session_id: str, trusted: list[str], snapshots: dict[str, str]) -> None:
+    """trust-hold 自动信任审计（放行留痕，供事后取证/滥用监控）。
+
+    记录被信任文件+基线 diff 规模到 .runtime/gate_audit/trust_hold_adoptions.jsonl
+    （与 post_claim_modifications.jsonl 同目录惯例）。审计失败不阻断（fail-open）。
+    """
+    try:
+        audit_path = Path(str(gateway.project_root)) / ".runtime" / "gate_audit" / "trust_hold_adoptions.jsonl"
+        from zephyr.shared.io.audit_jsonl_writer import append_audit_jsonl
+
+        for abs_f in trusted:
+            try:
+                rel = os.path.relpath(abs_f, str(gateway.project_root))
+            except (ValueError, AttributeError):
+                rel = abs_f
+            append_audit_jsonl(
+                audit_path.parent,
+                audit_path.name,
+                {
+                    "timestamp": time.time(),  # noqa: m46-time — 审计事件时间戳（Unix 秒格式）
+                    "session_id": session_id,
+                    "file": rel.replace("\\", "/"),
+                    "baseline_size": len(snapshots.get(abs_f, "")),
+                },
+            )
+    except Exception:  # noqa: BLE001 — 审计写入失败不阻断 commit
+        logger.debug("FOREIGN-CHANGE: trust-hold audit write failed (non-blocking)", exc_info=True)
+
+
 def make_foreign_change_gate() -> GateSpec:
     """构造外来变更检测门禁 GateSpec。
 
@@ -276,16 +354,32 @@ def make_foreign_change_gate() -> GateSpec:
                 dirty_files.append(abs_f)
 
         if dirty_files:
+            # trust-hold 自动信任（2026-09-13 Owner 裁定"信任持有权本身"）：
+            # 本 session 独占持有 + 无他会话 claim 快照痕迹 → 基线是本 session
+            # 先编辑后 claim 的自身工作（AI 自然工作流），放行+审计；
+            # 有他会话痕迹（死会话残留快照）→ 维持阻断（WIP 须显式 adopt）。
+            trusted = [f for f in dirty_files if not _other_claimer_trace(gateway, session_id, f)]
+            if trusted:
+                _audit_trust_hold(gateway, session_id, trusted, snapshots)
+                if len(trusted) == len(dirty_files):
+                    return True, ""
+                logger.warning(
+                    "FOREIGN-CHANGE: %d/%d 脏基线文件经 trust-hold 自动信任放行，其余阻断",
+                    len(trusted),
+                    len(dirty_files),
+                )
+            still_dirty = [f for f in dirty_files if f not in trusted]
             # 显示相对路径更易读（调试用）
             try:
-                dirty_rel = sorted(os.path.relpath(f, str(gateway.project_root)) for f in dirty_files)
+                dirty_rel = sorted(os.path.relpath(f, str(gateway.project_root)) for f in still_dirty)
             except Exception:  # noqa: BLE001 — 5.135治标: broad exception catch
-                dirty_rel = dirty_files
+                dirty_rel = still_dirty
             return False, (
                 f"目标文件在 claim 时已有外来变更（FOREIGN_CHANGE_VIOLATION）: "
-                f"{dirty_rel}. 这些变更不属于本 session，commit 会将其搭便车提交。"
-                f"如确认需提交，用 commit(allow_overlap=True) 或 CLI --allow-overlap "
-                f"逃生通道。"
+                f"{dirty_rel}. 检测到他会话 claim 痕迹（可能是其他会话的未提交 WIP），"
+                f"commit 会将其搭便车提交。如确认需认领前序工作，用 --adopt-prior-work"
+                f"（claim 时认领+审计）；如确认需提交，用 commit(allow_overlap=True) 或"
+                f" CLI --allow-overlap 逃生通道。"
             )
         return True, ""
 

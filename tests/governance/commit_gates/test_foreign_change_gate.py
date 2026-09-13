@@ -45,25 +45,67 @@ from zephyr.gov_enforcement.rule_bridge.commit_gate_registry import GateSpec
 from zephyr.gov_enforcement.rule_bridge.git_commit_gateway import GitCommitGateway
 
 
+class _RaisingGetDict(dict):
+    """get() 抛异常的 dict（模拟快照损坏）。"""
+
+    def get(self, *args, **kwargs):  # noqa: A003 — 测试桩故意模拟 dict.get 损坏
+        raise RuntimeError("snapshots dict corrupted")
+
+
 def _make_gateway(
     project_root: Path,
     session_snapshots: dict[str, str] | None = None,
     raise_exc: Exception | None = None,
+    all_snapshots: dict[str, dict[str, str]] | None = None,
+    other_active_held: list[str] | None = None,
+    other_active_sessions: list[str] | None = None,
+    snapshots_items_raise: bool = False,
 ) -> MagicMock:
-    """构造 mock gateway，模拟 _claim_snapshots。
+    """构造 mock gateway，模拟 _claim_snapshots（真实 dict——trust-hold 需 .items()）。
 
     Args:
         project_root: 项目根目录。
-        session_snapshots: per-session 快照内层 dict（abs_path -> baseline）。
-            模拟 _claim_snapshots.get(session_id, {}) 的返回值。
-        raise_exc: 若非 None，_claim_snapshots.get 抛此异常（测试安全降级）。
+        session_snapshots: 本 session（s1）快照内层 dict（abs_path -> baseline）。
+        raise_exc: 若非 None，claim_snapshots.get 抛此异常（测试安全降级）。
+        all_snapshots: 全 session 快照外层 dict（trust-hold 他会话痕迹检测用；
+            缺省={"s1": session_snapshots}）。
+        other_active_held: 他活跃会话持有文件清单（registry mock，双保险路径）。
+        other_active_sessions: 他**活跃**会话 id 清单（快照痕迹活性判定用）。
+        snapshots_items_raise: items() 抛异常（信任判定 fail-closed 测试）。
     """
     gw = MagicMock()
     gw.project_root = project_root
-    if raise_exc is not None:
-        gw.claim_snapshots.get.side_effect = raise_exc
+
+    class _Snapshots(dict):
+        pass
+
+    if snapshots_items_raise:
+        class _RaisingItemsDict(dict):
+            def items(self):  # noqa: A003
+                raise RuntimeError("items() corrupted")
+
+        snap_obj = _RaisingItemsDict(all_snapshots or {})
+    elif raise_exc is not None:
+        snap_obj = _RaisingGetDict(all_snapshots or {})
     else:
-        gw.claim_snapshots.get.return_value = session_snapshots or {}
+        snap_obj = _Snapshots(all_snapshots if all_snapshots is not None else {"s1": session_snapshots or {}})
+    gw.claim_snapshots = snap_obj
+
+    # registry mock：活跃会话（快照痕迹活性判定+held_files 双保险；缺省无他会话）
+    registry = MagicMock()
+    active = []
+    for sid in other_active_sessions or []:
+        info = MagicMock()
+        info.session_id = sid
+        info.held_files = []
+        active.append(info)
+    if other_active_held:
+        info = MagicMock()
+        info.session_id = "s-other"
+        info.held_files = other_active_held
+        active.append(info)
+    registry.list_active.return_value = active
+    gw.registry = registry
     return gw
 
 
@@ -107,16 +149,20 @@ class TestCleanBaselinePasses:
 
 
 class TestDirtyBaselineBlocked:
-    """基线非空（claim 时文件已有外来变更）→ 阻断。"""
+    """基线非空 + 存在**活跃**他会话 claim 痕迹 → 阻断（trust-hold 语义，2026-09-13）。"""
 
     def test_dirty_baseline_blocked(self, tmp_path):
-        """文件基线非空 → passed=False，detail 含 FOREIGN_CHANGE_VIOLATION。"""
+        """基线非空 + **活跃**他会话快照含该文件 → passed=False（真实前序认领者在场）。"""
         target = tmp_path / "a.py"
         target.touch()
         abs_target = os.path.abspath(str(target))
         gw = _make_gateway(
             tmp_path,
-            session_snapshots={abs_target: "-old foreign line\n+new foreign line"},
+            all_snapshots={
+                "s1": {abs_target: "-old foreign line\n+new foreign line"},
+                "s-live": {abs_target: "live claimer WIP baseline"},
+            },
+            other_active_sessions=["s-live"],
         )
         gate = make_foreign_change_gate()
         passed, detail = gate.check(
@@ -128,19 +174,24 @@ class TestDirtyBaselineBlocked:
         assert passed is False
         assert "FOREIGN_CHANGE_VIOLATION" in detail
         assert "a.py" in detail  # 相对路径显示
+        assert "adopt-prior-work" in detail  # 处置指引
 
     def test_partial_dirty_blocked(self, tmp_path):
-        """多文件中部分基线非空 → 阻断。"""
+        """多文件中部分基线非空（含活跃他会话痕迹）→ 阻断。"""
         a = tmp_path / "a.py"
         b = tmp_path / "b.py"
         a.touch()
         b.touch()
         abs_a = os.path.abspath(str(a))
         abs_b = os.path.abspath(str(b))
-        # a 干净，b 脏
+        # a 干净，b 脏（活跃他会话痕迹在场）
         gw = _make_gateway(
             tmp_path,
-            session_snapshots={abs_a: "", abs_b: "dirty diff content"},
+            all_snapshots={
+                "s1": {abs_a: "", abs_b: "dirty diff content"},
+                "s-live": {abs_b: "live claimer WIP"},
+            },
+            other_active_sessions=["s-live"],
         )
         gate = make_foreign_change_gate()
         passed, detail = gate.check(
@@ -152,6 +203,145 @@ class TestDirtyBaselineBlocked:
         assert passed is False
         assert "b.py" in detail
         assert "a.py" not in detail  # a 干净不在违规列表
+
+
+class TestTrustHoldAutoAdopt:
+    """trust-hold 自动信任（2026-09-13 Owner 裁定）：脏基线但无他会话痕迹 → 放行+审计。
+
+    病根：AI 自然工作流=先编辑后 claim（CLI commit 时自动 claim），基线捕获的
+    就是本 session 自己的工作——旧语义无差别阻断，每 session 首笔提交必撞，
+    逼出 --allow-overlap 高频使用（热文件限流连锁）。"""
+
+    def test_own_prior_edit_auto_trusted(self, tmp_path):
+        """脏基线 + 无他会话快照痕迹 → 放行（本 session 先编辑后 claim）。"""
+        target = tmp_path / "a.py"
+        target.touch()
+        abs_target = os.path.abspath(str(target))
+        gw = _make_gateway(
+            tmp_path,
+            all_snapshots={"s1": {abs_target: "-old\n+my own edit"}},
+        )
+        gate = make_foreign_change_gate()
+        passed, detail = gate.check(
+            gw, [str(target)], session_id="s1", allow_overlap=False
+        )
+        assert passed is True
+        assert detail == ""
+
+    def test_trust_hold_audited(self, tmp_path):
+        """自动信任必须落审计（trust_hold_adoptions.jsonl——放行留痕可取证）。"""
+        target = tmp_path / "a.py"
+        target.touch()
+        abs_target = os.path.abspath(str(target))
+        gw = _make_gateway(
+            tmp_path,
+            all_snapshots={"s1": {abs_target: "-old\n+my own edit"}},
+        )
+        gate = make_foreign_change_gate()
+        passed, _ = gate.check(gw, [str(target)], session_id="s1", allow_overlap=False)
+        assert passed is True
+        audit = tmp_path / ".runtime" / "gate_audit" / "trust_hold_adoptions.jsonl"
+        assert audit.is_file(), "信任放行必须留审计"
+        rec = json.loads(audit.read_text(encoding="utf-8").splitlines()[-1])
+        assert rec["session_id"] == "s1"
+        assert rec["file"].endswith("a.py")
+        assert rec["baseline_size"] > 0
+
+    def test_other_session_snapshot_for_different_file_not_blocking(self, tmp_path):
+        """他会话快照存在但不含本文件 → 不构成痕迹（信任照常）。"""
+        target = tmp_path / "a.py"
+        other = tmp_path / "other.py"
+        target.touch()
+        other.touch()
+        abs_target = os.path.abspath(str(target))
+        abs_other = os.path.abspath(str(other))
+        gw = _make_gateway(
+            tmp_path,
+            all_snapshots={
+                "s1": {abs_target: "-old\n+my edit"},
+                "s-live": {abs_other: "WIP on other file"},
+            },
+            other_active_sessions=["s-live"],
+        )
+        gate = make_foreign_change_gate()
+        passed, _ = gate.check(gw, [str(target)], session_id="s1", allow_overlap=False)
+        assert passed is True
+
+    def test_dead_session_snapshot_garbage_not_trace(self, tmp_path):
+        """死会话残留快照不构成痕迹（活性判定，2026-09-13 二次修正）：
+        worker-XXX 机器会话提交后从不 release，快照在共享文件（registry 等）
+        无限累积（实证 33 个死快照）——registry 已裁定其 claim 失效（放行了
+        本 session 的 claim），gate 不拿陈旧快照否定 registry 裁定。"""
+        target = tmp_path / "a.py"
+        target.touch()
+        abs_target = os.path.abspath(str(target))
+        gw = _make_gateway(
+            tmp_path,
+            all_snapshots={
+                "s1": {abs_target: "-old\n+my edit"},
+                "s-dead-worker": {abs_target: "committed-but-never-released baseline"},
+                "s-dead-worker-2": {abs_target: "another garbage baseline"},
+            },
+            # registry 无活跃他会话（全死）
+        )
+        gate = make_foreign_change_gate()
+        passed, _ = gate.check(gw, [str(target)], session_id="s1", allow_overlap=False)
+        assert passed is True, "死会话垃圾快照不应阻断（共享文件永久假阳性根除）"
+
+    def test_active_other_holder_blocks(self, tmp_path):
+        """双保险：他**活跃**会话 registry 持有该文件 → 不信任（阻断）。"""
+        target = tmp_path / "a.py"
+        target.touch()
+        abs_target = os.path.abspath(str(target))
+        gw = _make_gateway(
+            tmp_path,
+            all_snapshots={"s1": {abs_target: "-old\n+edit"}},
+            other_active_held=[abs_target],
+        )
+        gate = make_foreign_change_gate()
+        passed, detail = gate.check(gw, [str(target)], session_id="s1", allow_overlap=False)
+        assert passed is False
+
+    def test_mixed_trusted_and_blocked(self, tmp_path):
+        """混合：一文件可信任（无痕迹）+ 一文件有活跃他会话痕迹 → 仅阻断后者。"""
+        a = tmp_path / "a.py"
+        b = tmp_path / "b.py"
+        a.touch()
+        b.touch()
+        abs_a = os.path.abspath(str(a))
+        abs_b = os.path.abspath(str(b))
+        gw = _make_gateway(
+            tmp_path,
+            all_snapshots={
+                "s1": {abs_a: "own edit", abs_b: "dirty"},
+                "s-live": {abs_b: "live claimer WIP"},
+            },
+            other_active_sessions=["s-live"],
+        )
+        gate = make_foreign_change_gate()
+        passed, detail = gate.check(
+            gw, [str(a), str(b)], session_id="s1", allow_overlap=False
+        )
+        assert passed is False
+        assert "b.py" in detail
+        assert "a.py" not in detail
+        # 可信任文件仍留审计
+        audit = tmp_path / ".runtime" / "gate_audit" / "trust_hold_adoptions.jsonl"
+        assert audit.is_file()
+
+    def test_snapshot_items_read_fail_closed(self, tmp_path):
+        """快照 items() 读取异常 → 信任判定 fail-closed（保守维持阻断）。"""
+        target = tmp_path / "a.py"
+        target.touch()
+        abs_target = os.path.abspath(str(target))
+        gw = _make_gateway(
+            tmp_path,
+            all_snapshots={"s1": {abs_target: "-old\n+edit"}},
+            snapshots_items_raise=True,
+        )
+        gate = make_foreign_change_gate()
+        passed, _ = gate.check(gw, [str(target)], session_id="s1", allow_overlap=False)
+        assert passed is False, "快照读取异常必须保守阻断（fail-closed on trust）"
 
 
 class TestAllowOverlapEscape:
@@ -415,7 +605,9 @@ class TestAdoptPriorWork:
         assert gw.claim_snapshots["s1"][abs_target] == ""
 
     def test_adopt_default_false_unchanged(self, tmp_path):
-        """adopt_prior_work=False（默认）→ dirty 基线保留 → gate BLOCK（行为不变）。"""
+        """adopt_prior_work=False（默认）→ dirty 基线保留（未认领）。
+        gate 行为按 trust-hold 语义（2026-09-13）：无他会话痕迹 → 自动信任放行；
+        有他会话痕迹 → BLOCK。本用例验证两种形态。"""
         target = tmp_path / "a.py"
         target.touch()
         abs_target = os.path.abspath(str(target))
@@ -424,18 +616,26 @@ class TestAdoptPriorWork:
         gw.claim_files("s1", [str(target)])  # 默认 adopt_prior_work=False
         # 快照保留 dirty 基线（未认领）
         assert gw.claim_snapshots["s1"][abs_target] == dirty
-        # gate 检查：dirty 基线 → BLOCK
         gate = make_foreign_change_gate()
+        # 形态①：无他会话痕迹 → trust-hold 自动信任放行
         gw_mock = _make_gateway(tmp_path, session_snapshots={abs_target: dirty})
         passed, detail = gate.check(
-            gw_mock,
-            [str(target)],
-            session_id="s1",
-            allow_overlap=False,
+            gw_mock, [str(target)], session_id="s1", allow_overlap=False
         )
-        assert passed is False
-        assert "FOREIGN_CHANGE_VIOLATION" in detail
-        # 无 adopt 审计日志
+        assert passed is True
+        assert detail == ""
+        # 形态②：活跃他会话痕迹在场 → BLOCK
+        gw_mock2 = _make_gateway(
+            tmp_path,
+            all_snapshots={"s1": {abs_target: dirty}, "s-live": {abs_target: "leftover"}},
+            other_active_sessions=["s-live"],
+        )
+        passed2, detail2 = gate.check(
+            gw_mock2, [str(target)], session_id="s1", allow_overlap=False
+        )
+        assert passed2 is False
+        assert "FOREIGN_CHANGE_VIOLATION" in detail2
+        # 无 adopt 审计日志（未走显式 adopt 通道）
         audit_file = gw.claim_snapshots_dir / "s1_adopted.jsonl"
         assert not audit_file.exists()
 
@@ -482,7 +682,10 @@ class TestIdempotentClaimPreservesBaseline:
         assert passed is True
 
     def test_reclaim_preserves_dirty_baseline(self, tmp_path):
-        """首次脏 claim（基线真）→ 重 claim 不重捕获 → 基线仍真 → gate 仍 BLOCK（不削弱防护）。"""
+        """首次脏 claim（基线真）→ 重 claim 不重捕获 → 基线仍真。
+        gate 行为按 trust-hold 语义（2026-09-13）：无他会话痕迹 → 放行（自身
+        先编辑后 claim）；基线保真使他会话痕迹场景（显式 adopt/逃生通道判定）
+        仍有正确锚点——形态②验证。"""
         target = tmp_path / "a.py"
         target.touch()
         abs_target = os.path.abspath(str(target))
@@ -496,10 +699,19 @@ class TestIdempotentClaimPreservesBaseline:
         gw.claim_files("s1", [str(target)])
         assert gw.claim_snapshots["s1"][abs_target] == dirty
         gate = make_foreign_change_gate()
+        # 形态①：无他会话痕迹 → trust-hold 放行
         gw_mock = _make_gateway(tmp_path, session_snapshots={abs_target: dirty})
-        passed, detail = gate.check(gw_mock, [str(target)], session_id="s1", allow_overlap=False)
-        assert passed is False
-        assert "FOREIGN_CHANGE_VIOLATION" in detail
+        passed, _ = gate.check(gw_mock, [str(target)], session_id="s1", allow_overlap=False)
+        assert passed is True
+        # 形态②：活跃他会话痕迹在场（真实前序认领者）→ 基线保真支撑 BLOCK
+        gw_mock2 = _make_gateway(
+            tmp_path,
+            all_snapshots={"s1": {abs_target: dirty}, "s-live": {abs_target: "wip"}},
+            other_active_sessions=["s-live"],
+        )
+        passed2, detail2 = gate.check(gw_mock2, [str(target)], session_id="s1", allow_overlap=False)
+        assert passed2 is False
+        assert "FOREIGN_CHANGE_VIOLATION" in detail2
 
     def test_adopt_then_bare_reclaim_keeps_empty_baseline(self, tmp_path):
         """#92 核心回归：adopt 认领（空基线+审计）→ 裸重 claim（无 adopt）→ 空基线不被冲掉。"""
@@ -567,8 +779,11 @@ def _make_audit_gateway(
     """
     gw = MagicMock()
     gw.project_root = project_root
-    gw.claim_snapshots.get.return_value = session_snapshots or {}
+    # 真实 dict（trust-hold 需 .items()；本 session=s1，无他会话痕迹）
+    gw.claim_snapshots = {"s1": session_snapshots or {}}
     gw.claim_snapshots_dir = project_root / ".runtime" / "claim_snapshots"
+    gw.registry = MagicMock()
+    gw.registry.list_active.return_value = []
     capture_map = capture_map or {}
 
     def _capture(abs_f):
@@ -618,7 +833,9 @@ class TestPostClaimAuditDirtyBaselineChanged:
     """基线非空 + 当前≠基线 → 记审计（可疑：claim 时已脏且继续变）。"""
 
     def test_dirty_baseline_change_audited(self, tmp_path):
-        """基线非空（claim 时脏）+ 当前 diff 变化 → 审计记录（gate 同时阻断）。"""
+        """基线非空（claim 时脏）+ 当前 diff 变化 → 审计记录。
+        trust-hold 语义（2026-09-13）：无他会话痕迹 gate 放行，但 post-claim
+        审计照记（warn-only 审计在 block 决策前运行，放行也留痕）。"""
         target = tmp_path / "a.py"
         target.touch()
         abs_target = os.path.abspath(str(target))
@@ -634,9 +851,9 @@ class TestPostClaimAuditDirtyBaselineChanged:
             session_id="s1",
             allow_overlap=False,
         )
-        assert passed is False  # gate 阻断（基线非空）
+        assert passed is True  # trust-hold 放行（无他会话痕迹）
         records = _read_audit_log(tmp_path)
-        assert len(records) == 1, "基线非空+变化应记审计"
+        assert len(records) == 1, "基线非空+变化应记审计（放行也留痕）"
         assert records[0]["file"] == "a.py"
         assert records[0]["baseline_size"] > 0
         assert records[0]["current_size"] > records[0]["baseline_size"]
