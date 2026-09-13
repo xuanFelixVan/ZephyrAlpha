@@ -124,11 +124,15 @@ nodes:
     decision_question: 公式空间里还有哪些未挖的因子组合？
     algo_note_zh: 强化学习拼公式（AlphaGen）/遗传规划（gplearn）；受控搜索空间防乱写代码；
       组合协同思想=不追求单因子好看、追求整组合强；选型待小批量试产
-      （AlphaGen vs gplearn vs 双轨）；GP 计算胃口最大，LLM 辅助生成是省算力替代
+      （AlphaGen vs gplearn vs 双轨）；GP 计算胃口最大，LLM 辅助生成是省算力替代；
+      Owner 2026-09-14 四项裁定=双轨分期/增量IC基座 REG-IND-001/种群1000×50/白名单审定制；
+      已建=MOD-BT-155 gplearn 轨 MVP（config/factor_mining_whitelist.yaml 算子约束真源，
+      搜索=内置 spearman、验收=对基座残差增量 IC，E0 问闸 heavy 档；烟测通过，正式量产
+      待白名单 status=active）；AlphaGen 轨立项另批
     compute_class: local_gpu
-    data_refs: []
-    module_ref: null
-    build_status: pending
+    data_refs: [config/factor_mining_whitelist.yaml]
+    module_ref: MOD-BT-155
+    build_status: partial
     design_refs:
       - AlphaGen（KDD 2023） github.com/ICT-FinD-Lab/alphagen
       - AlphaForge（挖掘+动态组合） arxiv.org/html/2406.18394

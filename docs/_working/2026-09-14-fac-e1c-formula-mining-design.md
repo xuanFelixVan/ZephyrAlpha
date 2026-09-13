@@ -72,3 +72,32 @@ factor_registry；阴性结果（挖出即废的公式族）落 `c4_deferrals.cs
    新公式须对它增量 IC>0 才算贡献（E5 判据），是否认可；
 4. 算力档位：gplearn 种群规模×代数预算（建议首版：种群 1000×50 代，E0 闸 heavy 档
    夜批窗执行）；AlphaGen 是否立 GPU 档期。
+
+
+---
+
+# 附：Owner 裁定与施工落地（2026-09-14 夜班补记）
+
+## §六 裁定记录（Owner 2026-09-14 全批）
+
+1. **选型=双轨分期**（gplearn 打底 + AlphaGen 立项另批）；
+2. **算子白名单=需要**，起草后交审——v1 草稿已落 `config/factor_mining_whitelist.yaml`
+   （status=draft_pending_owner_review：10 算子过审口径+4 禁用（三角函数/inv）+4 个 v2 候选
+   （rank_cs/ts_delta_5/ts_zscore_20/ts_corr_20，需 make_function 自定义）），**等 Owner 审定后改
+   status=active 才开放正式量产**；
+3. **增量 IC 基座=REG-IND-001 认**（实施取 c1_market.technical_indicator 日频全数值列，
+   首烟测 118 列有效基座）；
+4. **种群 1000×50 代 认**（白名单 constraints 固化，随机种子 42 可复算）。
+
+## §七 gplearn 轨 MVP 施工实绩（MOD-BT-155）
+
+- 架构落定：**搜索目标与验收目标分离**——gplearn Transformer 只收内置 metric，故搜索用内置
+  spearman（plain IC），验收用自算**增量 IC**（候选因子对基座残差的 rank IC）；终审判定权仍在
+  E2 预审/E4 考试（运动员不兼裁判不破）；
+- 烟测实弹（pop 50×4 代，universe 40 股×~180 交易日，基座 118 列）：挖出 8 条增量 IC>0 公式，
+  头名 `log(abs(ret_5d))` 增量 IC=0.049（对|5日收益|取对数——波动/关注度结构，与基座正交）；
+- 防过拟合四件套对接：白名单受控搜索（YAML 唯一真源，引擎交集 fail-closed）/双窗考试（E4 现行）/
+  DSR 折减（E4 现行）/E2 公式预审（复用 MOD-BT-091 管道，hypothesis_zh 已含机制审问句）；
+- 算力纪律：E0 问闸 heavy 档接死（交易日盘中拒，--smoke 工程烟测豁免仅限小规模并留痕）；
+- 待办：①白名单审定后 status 改 active ②正式 1000×50 跑夜窗（E0 闸放行后）③v2 自定义算子批
+  ④AlphaGen 立项。

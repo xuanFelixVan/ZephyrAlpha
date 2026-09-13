@@ -1,0 +1,49 @@
+# FAC-E1C 公式挖掘机——算子白名单 v1（草稿，待 Owner 审定）
+# Owner 2026-09-14 已批：双轨分期 / 增量 IC 基座=REG-IND-001 / 种群 1000×50 代。
+# 本清单是"搜索空间受控"防过拟合件的第一道闸：挖掘机只能用 approved 清单里的积木拼公式。
+# 规则：本文件是算子约束唯一真源；模块 build_function_set 与 gplearn 实际算子表做交集
+# （fail-closed：白名单有而引擎无=版本漂移拒绝开工；引擎有而白名单无=挖掘机禁用）。
+
+schema_version: '1.0'
+status: draft_pending_owner_review   # 审定通过后改 active 才允许正式量产（烟测不受限）
+decided_by_owner:
+  - {item: 选型, decision: 双轨分期, date: '2026-09-14'}
+  - {item: 增量IC基座, decision: REG-IND-001 技术指标库, date: '2026-09-14'}
+  - {item: 首版算力预算, decision: 种群1000x50代, date: '2026-09-14'}
+
+approved:
+  # —— gplearn 0.4.3 内置，逐一审定（经济含义/防过拟合双标准）——
+  arithmetic:
+    - {op: add, zh: 加法, meaning: 因子合成（多信号加权）}
+    - {op: sub, zh: 减法, meaning: 价差/背离结构}
+    - {op: mul, zh: 乘法, meaning: 交互项（条件放大）}
+    - {op: div, zh: 保护除法, meaning: 比率（估值/强度类结构）}
+  nonlinear_safe:
+    - {op: sqrt, zh: 保护平方根, meaning: 压缩右尾（量/额类因子的量纲治理）}
+    - {op: log, zh: 保护对数, meaning: 对数收益/乘性结构线性化}
+    - {op: abs, zh: 绝对值, meaning: 波动幅度（方向中性）}
+    - {op: neg, zh: 取负, meaning: 反转方向}
+  order_stat:
+    - {op: max, zh: 逐点最大, meaning: 双信号取强}
+    - {op: min, zh: 逐点最小, meaning: 双信号取弱/保守侧}
+
+forbidden:
+  - {op: sin, reason: 周期函数对日频收益无经济含义，纯过拟合放大器}
+  - {op: cos, reason: 同上}
+  - {op: tan, reason: 同上+值域爆炸}
+  - {op: inv, reason: 1/x 可由保护除法表达，剔除以收缩搜索空间}
+
+v2_pending_owner_review:
+  # gplearn 内置缺失、需 make_function 自定义的时间序列/横截面算子（车道 C 二批）：
+  - {op: rank_cs, zh: 横截面排名, meaning: 截面相对强弱（日频因子标准口径），需自定义}
+  - {op: ts_delta_5, zh: 5日差分, meaning: 动量/变化率，需自定义}
+  - {op: ts_zscore_20, zh: 20日标准化, meaning: 均值回复结构，需自定义}
+  - {op: ts_corr_20, zh: 20日滚动相关, meaning: 量价背离，需自定义}
+
+constraints:
+  population_size: 1000        # Owner 批 2026-09-14
+  generations: 50              # Owner 批 2026-09-14
+  init_depth: [2, 6]           # 公式树深度上限（嵌套约束，防指数爆炸+保可读）
+  parsimony_coefficient: 0.0005
+  random_state: 42             # 确定性（同种子同结果，审计可复算）
+  n_jobs: 1                    # 单线程保序（gplearn 多进程会破坏确定性）

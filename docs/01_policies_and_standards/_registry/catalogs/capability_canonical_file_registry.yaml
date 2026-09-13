@@ -12460,6 +12460,10 @@ creation_tokens:
   token: factory-backend-factory-intake-pipeline-20260913
   created_by: st-facbe-20260914
   capability: factory_backend
+- file: scripts/backtest/lane_c_formula_miner.py
+  token: factory-backend-lane-c-formula-miner-20260913
+  created_by: st-facbe-20260914
+  capability: factory_backend
 - file: scripts/backtest/translated/c4_21af8c66c15e_small_cap.py
   token: c4-21af8c66c15e-small-cap-20260914
   created_by: st-zcode-c4-20260912
@@ -12488,4 +12492,28 @@ creation_tokens:
   token: factor-eval-eval-exp-expectations-20260913
   created_by: st-expectation-20260914
   capability: factor_eval
+- file: src/zephyr/signal_ashare/strategy_signal/candlestick_scanner.py
+  token: pattern-event-job-candlestick-scanner-20260913
+  created_by: st-patwire-20260914
+  capability: pattern_event_job
+- file: src/zephyr/signal_ashare/strategy_signal/dual_engine_fusion_decision_engine.py
+  token: pattern-event-job-dual-engine-fusion-decision-engine-20260913
+  created_by: st-patwire-20260914
+  capability: pattern_event_job
+- file: src/zephyr/signal_ashare/strategy_signal/pattern_event_job.py
+  token: pattern-event-job-pattern-event-job-20260913
+  created_by: st-patwire-20260914
+  capability: pattern_event_job
+- file: src/zephyr/signal_ashare/strategy_signal/pattern_to_signal_mapper.py
+  token: pattern-event-job-pattern-to-signal-mapper-20260913
+  created_by: st-patwire-20260914
+  capability: pattern_event_job
+- file: src/zephyr/signal_ashare/strategy_signal/signal_weight_adjuster.py
+  token: pattern-event-job-signal-weight-adjuster-20260913
+  created_by: st-patwire-20260914
+  capability: pattern_event_job
+- file: src/zephyr/signal_ashare/strategy_signal/strategy_matrix_3d.py
+  token: pattern-event-job-strategy-matrix-3d-20260913
+  created_by: st-patwire-20260914
+  capability: pattern_event_job
 di_seam_exemptions: []

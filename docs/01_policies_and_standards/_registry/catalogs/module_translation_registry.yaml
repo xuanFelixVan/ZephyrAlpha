@@ -49210,6 +49210,20 @@ entries:
   desc_zh: ""
   desc_en: ""
   plain_zh: "在Slater四条件同族筛选上叠加沪深300指数200日月线强势门（弱势空仓避险），双周调仓取前4只等权，另加双止损线；给C4快筛验证防守型价值改进是否有效；IS窗口Sharpe约-1.20，价值类在成长市整体承压的又一实证"
+- module_path: src/zephyr/signal_ashare/strategy_signal/pattern_event_job.py
+  domain_id: D_ASHARE_SIGNAL
+  name_zh: "图形事件增量接线件"
+  name_en: ""
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "把图形形态事件扫描接进数据调度器：每天日K线落地后自动扫最近15天新确认的图形事件（头肩底、双底之类）写进数据库，再重算一遍各形态的历史胜率统计，供信号层查用。"
+- module_path: scripts/backtest/lane_c_formula_miner.py
+  domain_id: D_BACKTEST
+  name_zh: "公式挖掘机gplearn轨"
+  name_en: ""
+  desc_zh: "白名单算子遗传规划挖因子公式，验收=对REG-IND-001基座的增量IC，带出生证卸进货台账"
+  desc_en: ""
+  plain_zh: "策略工厂的公式挖掘机（第一台便宜的）：用'积木清单'里的运算符让公式自己进化繁衍，挖出来的公式先考试——扣掉现有118个指标已经能解释的部分，还有真预测力才算数；每条公式带出生证落到进货台账等守门员审。白天不许开机（问电力闸），正式量产等老板审定积木清单。"
 
 battle_map_steps:
 - step_id: BM-BUY-05
