@@ -66,6 +66,7 @@
 | **结束 session** | 锁释放？临时文件清？ | `python scripts/lock_files.py release-all` + 零残留扫描 |
 | **处理任何任务** | 有对应 Agent Skill？ | 查看 `data/capability_cards/` 目录（skill_*.yaml）→ 匹配 → Read |
 | **写方案/建策略/调研找方法（任何需全网搜索的内容工作）** | 挖矿 SOP 走了吗？ | 直读 `docs/01_policies_and_standards/sop/mining_sop/mining_sop_policy.md`（六向寻路+防噪音四闸+连续两轮噪音终止+时间盒封批；挖矿日志表必入产出文档；实战范例=docs/_working/alt_data_consumption_plan.md §5-7） |
+| **数据回灌/坏数据修复/表结构变更/判重/数据探针/缺口处置** | 数据操作 SOP 走了吗？ | 直读 `docs/01_policies_and_standards/sop/data_ops_sop/data_ops_policy.md`（三步验证+幂等回补+FINAL 逐位验证+PIT 口径+勿物理删+探针手法；范例索引在卷尾） |
 | **读取/修改 depgraph** | 用 extract_depgraph.py 提取？不是直接裸连？ | `extract_depgraph.py --summary`（读取）/ `apply_depgraph.py --batch`（修改）。连接用 `get_depgraph_pg_connection()` |
 
 跳过任何一步 → 可能产生孤儿文件、死锁、重复轮子。

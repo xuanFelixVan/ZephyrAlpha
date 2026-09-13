@@ -12344,3 +12344,11 @@ creation_tokens:
   created_by: st-zcode-c4-20260912
   capability: sim_paper_ledger_c
 di_seam_exemptions: []
+- file: scripts/backtest/sim_governance.py
+  token: sim-governance-20260914-b4
+  created_by: st-zcode-c4-20260912
+  capability: sim_paper_ledger_c
+- file: tests/backtest/test_sim_governance.py
+  token: test-sim-governance-20260914-b4
+  created_by: st-zcode-c4-20260912
+  capability: sim_paper_ledger_c
