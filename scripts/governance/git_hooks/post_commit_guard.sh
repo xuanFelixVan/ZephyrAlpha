@@ -53,11 +53,16 @@ commit_msg=$(git log -1 --format=%B)
 # 检查是否含 [GW: 标记（GitCommitGateway / session_worktree_commit / session_worktree_merge 的合法标识）
 if echo "$commit_msg" | grep -q '\[GW:'; then
     # === session_id 真实性验证（治本伪造标记，#ARCH-050 强化 2026-07-08）===
-    # 解析 session_id：要求 sess- 前缀，避免匹配描述文本中误含的 [GW: 片段
-    session_id=$(echo "$commit_msg" | sed -n 's/.*\[GW:\(sess-[^]:}]*\).*/\1/p' | head -1)
+    # === P1-1 治本（2026-09-14 红蓝 v3 c224e15d63）：提取口径从 sess- 前缀放宽为广义标识符 + 多标记全量校验 ===
+    # 病根：原 sed 只认 sess- 前缀，对现行会话命名（solo_agent/xt3-*/st-*/factory-* 等）
+    # 全盲——提取恒空 → 保守放行 → 伪造标记畅通、guard reset 从未触发（红蓝 v3 S1.9 实弹）。
+    # 新口径：[GW: 后紧跟标识符首字符（[A-Za-z0-9_][A-Za-z0-9_-]*）即提取；
+    # [GW: 后是空格/标点（文档性提及「[GW: 标记」）不提取、放行。
+    # 多标记全量校验：原 head -1 只查第一个（「首个合法+次个伪造」可绕过）。
+    session_ids=$(echo "$commit_msg" | grep -o '\[GW:[A-Za-z0-9_][A-Za-z0-9_-]*' | sed 's/^\[GW://' | sort -u)
 
-    # 解析失败 → 保守放行（避免误判）
-    if [ -z "$session_id" ]; then
+    # 无可解析标识符（文档性提及）→ 保守放行（避免误判）
+    if [ -z "$session_ids" ]; then
         exit 0
     fi
 
@@ -75,9 +80,20 @@ if echo "$commit_msg" | grep -q '\[GW:'; then
         exit 0
     fi
 
-    # 验证 session_id 在注册表中（register 写入/unregister 删除；merge commit 已被 ^merge 豁免）
-    if grep -q "\"$session_id\"" "$registry_file" 2>/dev/null; then
-        exit 0  # session_id 已注册 → 合法放行
+    # 逐标记校验：任一未注册 → 记为待处理标记（进入下方 env 检查，
+    # 与 Python gate 的 session_id kwarg 判定互补——本 hook 看到的是含
+    # 网关追加标记的 full message，无法得知提交时的 session 归属）
+    session_id=""
+    for sid in $session_ids; do
+        if ! grep -q "\"$sid\"" "$registry_file" 2>/dev/null; then
+            session_id="$sid"
+            break
+        fi
+    done
+
+    # 全部标记已注册 → 合法放行（merge commit 的 [GW:sid:merge] 亦在此通过）
+    if [ -z "$session_id" ]; then
+        exit 0
     fi
 
     # session_id 未注册 → 检查环境变量确认是否通过 GitCommitGateway
