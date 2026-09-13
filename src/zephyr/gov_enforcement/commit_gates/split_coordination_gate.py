@@ -5,12 +5,12 @@
 # [CONSUMERS] zephyr.gov_enforcement.rule_bridge.git_commit_gateway.GitCommitGateway.__init__（经 in_process_gate_registry.yaml 自动注册）
 # [STARTUP] imported
 # [MATURITY] testing
-# [INVARIANTS] 硬阻断（协调协议执行点）——触发式：存在活跃拆分声明（mover≠本 session）且本 commit 清单命中声明 old_paths 时阻断（防旧平铺路径重建=双重存在事故）；mover 本人放行；声明全部落地（HEAD 无+盘无）自动失活；声明文件缺失/解析失败 fail-open（协调态运行时文件，非真源——损坏不砖死全库提交）
+# [INVARIANTS] 硬阻断（协调协议执行点）——触发式：存在活跃拆分声明（mover≠本 session）且本 commit 清单命中声明 old_paths 时阻断（防旧平铺路径重建=双重存在事故）；mover 本人放行；声明拆除正门=mover finish（显式收尾），陈旧声明（>48h 弃单）降级 warn 放行防砖；不做"已落地自动失活"（落地=旧路径消失=重建风险开始，恰是保护最需存在的时点）；声明文件缺失/解析失败 fail-open（协调态运行时文件，非真源——损坏不砖死全库提交）
 # [MODIFY-GUARD] gate_id="SPLIT-COORDINATION"；声明 schema（splits[].mover_session/old_paths/new_root/declared_at）变更须同步 split_coordination.py 工具与测试；check 闭包签名 (gateway, files, **kwargs) -> tuple[bool, str]
 # [STABILITY] evolving
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
-# [ERROR_CONTRACT] 声明 YAML 解析失败=fail-open 放行+warn（非真源）；git ls-tree 失败=保守视为未落地（声明保持活跃，fail-safe 方向）；命中活跃声明=硬阻断给出 re-base 指引
+# [ERROR_CONTRACT] 声明 YAML 解析失败=fail-open 放行+warn（非真源）；declared_at 解析失败=视为不陈旧（保守，保护不静默消失）；命中活跃声明=硬阻断给出 re-base 指引
 # [TESTS] tests/governance/commit_gates/test_split_coordination_gate.py
 # [A_module] module_id=MOD-GATE_ENGINE | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
@@ -32,18 +32,19 @@ commit 时点门禁无法拦截**组合事故**，因为缺乏跨会话的"拆�
    new_root 新挂基点）。
 2. 本 gate 在每个 commit 上执行协调校验：他会话提交清单命中活跃声明的 old_paths
    → 硬阻断，给出 re-base 指引（新路径/找 mover 协调）。
-3. 声明自动失活：old_paths 全部不在 HEAD 且不在磁盘（搬移已落地且无人重建）
-   → 协调窗口关闭，编辑者自由。
-4. ``finish``（mover 主动收尾）或 ``sweep``（清扫已落地声明）移除条目。
+3. 声明拆除正门=``finish``（mover 确认消费方已 re-base 后显式收尾）；
+   陈旧自愈=声明超 48h（mover 弃单）降级 warn 放行（防砖）。
+   **刻意不做**"已落地自动失活"：搬移落地=旧路径从 HEAD 消失=重建风险开始的
+   时点——恰是保护最需要存在的时刻（落地即失活会在风险窗口起点拆掉保护）。
+4. ``sweep`` 清扫陈旧声明（>48h 弃单，防目录被永久锁死）。
 
 设计权衡
 --------
 1. **触发式零基线开销**：无声明文件（绝大多数时间）= 一次 Path.exists，零 git 调用。
 2. **fail-open（声明侧）**：声明文件是运行时协调态，非治理真源——解析失败放行+warn，
    不砖死全库提交（对比 FACTORY-MAP 真源损坏 fail-closed：那是数据真源，这是协调信号）。
-3. **fail-safe（落地判定侧）**：git ls-tree 失败时保守视为"未落地"（声明保持活跃），
-   宁可多拦一次（指引清晰）不可漏放双重存在。
-4. **mover 放行**：mover 本人的搬移提交（旧路径删除+新路径新增）是协议的正主。
+3. **mover 放行**：mover 本人的搬移提交（旧路径删除+新路径新增）是协议的正主。
+4. **陈旧降级**：mover 弃单后声明残留不永久锁目录——48h 后自动降级 warn（弃单自愈）。
 
 Usage::
 
@@ -71,34 +72,25 @@ __all__: Final = ["make_split_coordination_gate"]
 # 声明真源（运行时协调态，scripts/governance/split_coordination.py 单一写入方+本 gate 只读）
 DECLARATION_REL: Final[str] = ".runtime/coordination/active_splits.yaml"
 
+# 声明陈旧度上限（小时）：mover 弃单（begin 后消失）不会永久锁死目录——超过即降级
+# warn 放行（协调信号自愈，防砖）。拆除保护的正门=mover finish（显式收尾）。
+_STALE_AFTER_H: Final[float] = 48.0
 
-def _split_landed(gateway, entry: dict) -> bool:
-    """声明是否已全部落地：old_paths 全部不在 HEAD 树且不在磁盘。
 
-    fail-safe：git ls-tree 任一失败 → 返回 False（视为未落地，声明保持活跃——
-    宁可多拦（指引清晰）不可漏放双重存在）。
-    编辑者在旧路径重建未提交时：磁盘存在 → 未落地（继续拦，正确）。
+def _declaration_stale(entry: dict) -> bool:
+    """声明是否陈旧（declared_at 超过 _STALE_AFTER_H 小时）——弃单自愈。
+
+    解析失败视为不陈旧（保守：解析不出就当新鲜，保护不静默消失）。
     """
-    root = Path(str(getattr(gateway, "project_root", ".")))
-    old_paths = [str(p).replace("\\", "/") for p in entry.get("old_paths") or []]
-    if not old_paths:
-        return True
-    dirs = sorted({p.rsplit("/", 1)[0] for p in old_paths if "/" in p})
-    tracked: set[str] = set()
-    for d in dirs:
-        try:
-            r = gateway.run_git(["git", "ls-tree", "-r", "--name-only", "HEAD", "--", d])
-            if r.returncode != 0:
-                return False  # fail-safe：HEAD 查询失败=未落地
-            tracked |= {os.path.normcase(ln.strip()) for ln in r.stdout.splitlines() if ln.strip()}
-        except Exception:  # noqa: BLE001 — git 设施异常=fail-safe 未落地
-            return False
-    for p in old_paths:
-        if os.path.normcase(p) in tracked:
-            return False  # 旧路径仍被 HEAD 跟踪=搬移未提交
-        if (root / p).exists():
-            return False  # 磁盘仍有旧路径文件（含编辑者重建）=窗口未关
-    return True
+    from datetime import datetime, timedelta, timezone  # noqa: PLC0415
+
+    try:
+        declared = datetime.fromisoformat(str(entry.get("declared_at") or ""))
+    except ValueError:
+        return False
+    if declared.tzinfo is None:
+        declared = declared.replace(tzinfo=timezone.utc)
+    return datetime.now(timezone.utc) - declared > timedelta(hours=_STALE_AFTER_H)
 
 
 def _load_active_splits(gateway) -> tuple[list[dict], str]:
@@ -120,7 +112,10 @@ def _load_active_splits(gateway) -> tuple[list[dict], str]:
 def _find_foreign_hit(gateway, files: list[str], session_id: str, splits: list[dict]) -> tuple[dict, list[str]] | None:
     """扫描声明找首个需要阻断的 (entry, hits)——他会话提交清单 ∩ 活跃声明 old_paths。
 
-    mover 本人放行；命中但已落地（HEAD 无+盘无）自动失活放行。
+    mover 本人放行；陈旧声明（>48h 弃单）降级放行（warn，防砖）。
+    保护拆除正门=mover finish；**不做**"已落地自动失活"——搬移落地=旧路径消失
+    =重建风险开始，恰是保护最需要存在的时点（设计教训：落地即失活会把保护
+    在风险窗口起点拆掉）。
     """
     norm_files = {_norm_rel(gateway, f) for f in files}
     for entry in splits:
@@ -129,8 +124,14 @@ def _find_foreign_hit(gateway, files: list[str], session_id: str, splits: list[d
         if not mover or not old_paths or mover == session_id:
             continue  # 声明残缺跳过 / mover 本人的搬移提交（协议正主）
         hits = sorted(norm_files & {os.path.normcase(p) for p in old_paths})
-        if hits and not _split_landed(gateway, entry):
-            return entry, hits
+        if not hits:
+            continue
+        if _declaration_stale(entry):
+            logger.warning(
+                "SPLIT-COORDINATION: 声明已陈旧（mover=%s 弃单自愈降级 warn 放行）", mover
+            )
+            continue
+        return entry, hits
     return None
 
 
@@ -162,8 +163,8 @@ def make_split_coordination_gate() -> GateSpec:
             f"禁止在旧平铺路径提交/重建（防双重存在事故）：\n"
             + "\n".join(f"  - {h}" for h in hits[:10])
             + f"\n拆分者={mover}（声明于 {declared_at}），新挂基点={new_root}。"
-            "处置：①编辑请 re-base 到新挂基点路径；②或协调拆分者 finish 后再操作"
-            "（拆分已落地时运维可 sweep 清扫残留声明）；"
+            "处置：①编辑请 re-base 到新挂基点路径；②或协调拆分者（拆分未完成时可 finish 解除、"
+            "已完成时确认消费方全部 re-base 后 finish）；"
             "③查看声明：python scripts/governance/split_coordination.py status"
         )
         logger.warning("SPLIT-COORDINATION gate block (mover=%s, hits=%d)", mover, len(hits))

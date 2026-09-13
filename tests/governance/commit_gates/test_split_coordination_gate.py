@@ -18,10 +18,12 @@
 
 红队（必拦）：他会话提交清单命中活跃声明 old_paths → 阻断（防旧平铺路径重建=
              双重存在事故）；**生产形态绝对路径**亦必命中（2026-09-13 触发面
-             归一实弹教训：朴素反斜杠替换对绝对路径恒 miss）。
+             归一实弹教训：朴素反斜杠替换对绝对路径恒 miss）；**搬移落地后旧路径
+             重建仍必拦**（落地≠失活——落地即失活会在风险窗口起点拆掉保护）。
 蓝队（必过）：无声明文件 skip；mover 本人放行；他会话文件不在 old_paths（含
-             re-base 后新路径）放行；声明损坏 fail-open 放行；已落地声明失活放行。
-工具：begin 幂等声明 / finish 权限 / sweep 清扫已落地 / 原子写可解析。
+             re-base 后新路径）放行；声明损坏 fail-open 放行；陈旧声明（>48h
+             弃单）降级放行防砖。
+工具：begin 幂等声明 / finish 权限 / sweep 只清陈旧（不按落地清）/ 原子写可解析。
 """
 
 from __future__ import annotations
@@ -200,15 +202,44 @@ class TestBlue:
         )
         assert passed and "fail-open" in detail
 
-    def test_landed_declaration_inactive(self, gate, tmp_path):
-        """已落地声明（HEAD 无+盘无）→ 失活放行（mover 忘 finish 的兜底）。"""
+    def test_stale_declaration_fail_open(self, gate, tmp_path):
+        """陈旧声明（>48h mover 弃单）→ 降级 warn 放行（防砖自愈）。"""
         gw = _init_repo(tmp_path)
-        # 旧路径在 HEAD 有 → 先构造"已落地"：用 HEAD 里不存在的路径声明
-        _declare(gw, old_paths=["lab/never_existed.md"])
-        passed, detail = gate.check(
-            gw, files=["lab/never_existed.md"], session_id="editor-B"
+        _declare(gw)
+        p = Path(str(gw.project_root)) / ".runtime" / "coordination" / "active_splits.yaml"
+        data = yaml.safe_load(p.read_text(encoding="utf-8"))
+        from datetime import datetime, timedelta, timezone
+
+        data["splits"][0]["declared_at"] = (
+            datetime.now(timezone.utc) - timedelta(hours=72)
+        ).isoformat()
+        p.write_text(yaml.safe_dump(data, allow_unicode=True), encoding="utf-8")
+        passed, _ = gate.check(
+            gw, files=[str(tmp_path / "lab" / "seg_001.md")], session_id="editor-B"
         )
-        assert passed, f"已落地声明未失活: {detail}"
+        assert passed, "陈旧声明（弃单）应降级放行，防目录被永久锁死"
+
+    def test_protection_survives_move_landing(self, gate, tmp_path):
+        """设计核心（教训用例）：mover 已搬移落地（旧路径 HEAD 无+盘无）后，
+        编辑者旧路径重建仍必须被拦——落地≠失活（落地即失活会在风险窗口起点
+        拆掉保护）。"""
+        gw = _init_repo(tmp_path)
+        env = {**os.environ, "GIT_AUTHOR_NAME": "T", "GIT_AUTHOR_EMAIL": "t@t.com",
+               "GIT_COMMITTER_NAME": "T", "GIT_COMMITTER_EMAIL": "t@t.com"}
+        _declare(gw)
+        # mover 搬移落地：删旧路径+建新路径+提交（不 finish——声明继续保护）
+        (tmp_path / "lab" / "a").mkdir()
+        for f in ("seg_001.md", "seg_002.md"):
+            (tmp_path / "lab" / f).rename(tmp_path / "lab" / "a" / f)
+        subprocess.run(["git", "add", "-A"], cwd=str(tmp_path), capture_output=True, env=env)
+        subprocess.run(["git", "commit", "-m", "move", "--no-verify"],
+                       cwd=str(tmp_path), capture_output=True, env=env)
+        # 编辑者旧路径重建（事故形态）
+        (tmp_path / "lab" / "seg_001.md").write_text("recreated\n", encoding="utf-8")
+        passed, _ = gate.check(
+            gw, files=[str(tmp_path / "lab" / "seg_001.md")], session_id="editor-B"
+        )
+        assert not passed, "搬移落地后旧路径重建未拦——落地即失活缺陷复发"
 
     def test_empty_files_skip(self, gate, tmp_path):
         gw = _init_repo(tmp_path)
@@ -252,24 +283,23 @@ class TestTool:
         data = yaml.safe_load(target.read_text(encoding="utf-8"))
         assert len(data["splits"]) == 1
 
-    def test_sweep_removes_landed(self, monkeypatch, tmp_path):
-        """sweep 清扫已落地声明（盘无+HEAD 无），进行中保留。"""
+    def test_sweep_removes_stale_only(self, monkeypatch, tmp_path):
+        """sweep 只清扫陈旧声明（>max-age 弃单），新鲜声明保留——
+        不按"已落地"清扫（落地=保护最需存在的时点，教训语义）。"""
         target = self._load_tool(monkeypatch, tmp_path)
-        subprocess.run(["git", "init"], cwd=str(tmp_path), capture_output=True)
-        env = {**os.environ, "GIT_AUTHOR_NAME": "T", "GIT_AUTHOR_EMAIL": "t@t.com",
-               "GIT_COMMITTER_NAME": "T", "GIT_COMMITTER_EMAIL": "t@t.com"}
-        subprocess.run(["git", "commit", "--allow-empty", "-m", "init", "--no-verify"],
-                       cwd=str(tmp_path), capture_output=True, env=env)
+        from datetime import datetime, timedelta, timezone
+
+        now = datetime.now(timezone.utc)
         target.parent.mkdir(parents=True, exist_ok=True)
         target.write_text(
             yaml.safe_dump({"splits": [
-                {"dir": "gone", "mover_session": "m1", "old_paths": ["gone/x.md"], "new_root": "", "declared_at": "t"},
-                {"dir": "live", "mover_session": "m2", "old_paths": ["live/y.md"], "new_root": "", "declared_at": "t"},
+                {"dir": "stale", "mover_session": "m1", "old_paths": ["stale/x.md"],
+                 "new_root": "", "declared_at": (now - timedelta(hours=72)).isoformat()},
+                {"dir": "live", "mover_session": "m2", "old_paths": ["live/y.md"],
+                 "new_root": "", "declared_at": now.isoformat()},
             ]}, allow_unicode=True),
             encoding="utf-8",
         )
-        (tmp_path / "live").mkdir()
-        (tmp_path / "live" / "y.md").write_text("wip\n", encoding="utf-8")  # 盘上存在=进行中
         assert sc.main(["sweep"]) == 0
         data = yaml.safe_load(target.read_text(encoding="utf-8"))
         assert [s["dir"] for s in data["splits"]] == ["live"]

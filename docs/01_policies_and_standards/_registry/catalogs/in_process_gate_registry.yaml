@@ -737,5 +737,5 @@ gates:
   module_path: zephyr.gov_enforcement.commit_gates.split_coordination_gate
   factory_function: make_split_coordination_gate
   source: in_process
-  register_line: 0  # priority=143；2026-09-13 拆分×编辑双重存在协议门禁（#ARCH-SPLIT-COORDINATION-001，极限红蓝 F5 100% 复现治本）：他会话提交命中活跃拆分声明的 old_paths 硬阻断（防旧平铺路径重建=双重存在事故），mover 放行；声明真源=.runtime/coordination/active_splits.yaml（scripts/governance/split_coordination.py begin/finish/sweep 单一写入方）；声明缺失/损坏 fail-open（协调态非真源）；已落地（HEAD 无+盘无）自动失活；测试 tests/governance/commit_gates/test_split_coordination_gate.py
+  register_line: 0  # priority=143；2026-09-13 拆分×编辑双重存在协议门禁（#ARCH-SPLIT-COORDINATION-001，极限红蓝 F5 100% 复现治本）：他会话提交命中活跃拆分声明的 old_paths 硬阻断（防旧平铺路径重建=双重存在事故），mover 放行；声明拆除正门=mover finish，陈旧声明（>48h 弃单）降级 warn 防砖，刻意不做"已落地自动失活"（落地=重建风险开始时点）；声明真源=.runtime/coordination/active_splits.yaml（scripts/governance/split_coordination.py begin/finish/status/sweep 单一写入方）；声明缺失/损坏 fail-open（协调态非真源）；测试 tests/governance/commit_gates/test_split_coordination_gate.py
   enabled: true

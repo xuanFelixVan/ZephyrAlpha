@@ -21626,8 +21626,8 @@ entries:
 - issue_id: '#ARCH-SPLIT-COORDINATION-001'
   title: 拆分×编辑双重存在协议根治——SPLIT-COORDINATION commit gate+协调声明工具（极限红蓝 F5 100% 复现治本）
   severity: P2中
-  adjudication: 2026-09-13 极限红蓝对抗（docs/_working/2026-09-13-xtreme-redblue-report.md §3-F5）100% 复现历史"651 处失效路径引用"事故根源形态：拆分者搬移 121 文件后 3 个并发编辑者在旧平铺路径重建文件，每笔提交单看合法（token 有/门禁过），组合成 HEAD 9 组双重存在——commit 时点门禁无法拦组合事故（缺跨会话"拆分进行中"信号）。Owner 裁定堵点总账"全部往深里挖，最彻底地根治"后施工协议级根治（机器强制替代纸面 SOP）：①声明真源 .runtime/coordination/active_splits.yaml（scripts/governance/split_coordination.py begin/finish/status/sweep 单一写入方，原子写+EACCES 退避）；②SPLIT-COORDINATION gate（priority=143）：他会话提交清单命中活跃声明 old_paths 硬阻断给 re-base 指引，mover 放行，声明缺失/损坏 fail-open（协调态非真源），已落地（HEAD 无+盘无）自动失活，落地判定 git 失败 fail-safe 保守视为未落地；③正常流量零开销（无声明=一次 Path.exists）。
-  fix_phase: 已落地（2026-09-13：split_coordination_gate.py+split_coordination.py 工具+红蓝 14 用例全绿（含历史事故形态复现必拦+生产形态绝对路径触发面归一用例）+双注册表（in_process 109 gate 自动注册实测+gate_registry 派生 164）+capability token 3 件（批量工具狗粮）+翻译登记；报告待重跑极限红蓝对抗验证后补 docs/_working/）
+  adjudication: 2026-09-13 极限红蓝对抗（docs/_working/2026-09-13-xtreme-redblue-report.md §3-F5）100% 复现历史"651 处失效路径引用"事故根源形态：拆分者搬移 121 文件后 3 个并发编辑者在旧平铺路径重建文件，每笔提交单看合法（token 有/门禁过），组合成 HEAD 9 组双重存在——commit 时点门禁无法拦组合事故（缺跨会话"拆分进行中"信号）。Owner 裁定堵点总账"全部往深里挖，最彻底地根治"后施工协议级根治（机器强制替代纸面 SOP）：①声明真源 .runtime/coordination/active_splits.yaml（scripts/governance/split_coordination.py begin/finish/status/sweep 单一写入方，原子写+EACCES 退避）；②SPLIT-COORDINATION gate（priority=143）：他会话提交清单命中活跃声明 old_paths 硬阻断给 re-base 指引，mover 放行，声明缺失/损坏 fail-open（协调态非真源）；③声明拆除正门=mover finish（显式收尾），陈旧声明（>48h 弃单）降级 warn 防砖；刻意不做"已落地自动失活"——搬移落地=旧路径消失=重建风险开始的时点，恰是保护最需存在的时刻（落地即失活会在风险窗口起点拆掉保护，施工中自查发现并根治的设计缺陷）；④正常流量零开销（无声明=一次 Path.exists，命中也零 git 调用）。
+  fix_phase: 已落地（2026-09-13：split_coordination_gate.py+split_coordination.py 工具+红蓝 15 用例全绿（含历史事故形态复现必拦+生产形态绝对路径触发面归一用例+搬移落地后重建必拦教训用例）+双注册表（in_process 109 gate 自动注册实测+gate_registry 派生 164）+capability token 3 件（批量工具狗粮）+翻译登记；重跑极限红蓝对抗验证后补报告 docs/_working/）
   status: decided
   related_adjudication: ""
   created: "2026-09-13"

@@ -26,9 +26,12 @@
 协议（机器强制，配合 SPLIT-COORDINATION gate）：
 1. 拆分者动盘**前**：``begin`` 声明（old_paths 清单+新挂基点）——gate 开始拦
    他会话对 old_paths 的一切提交（mover 本人放行）。
-2. 搬移+提交完成后：``finish`` 移除声明（或等 ``sweep`` 清扫已落地声明——
-   gate 对"old_paths 全部不在 HEAD 且不在磁盘"的声明自动视为失活，双保险）。
+2. 搬移+提交完成、消费方（编辑者等）全部 re-base 后：``finish`` 移除声明
+   （拆除保护的正门——刻意不做"已落地自动失活"：落地=旧路径消失=重建风险
+   开始，恰是保护最需存在的时点）。
 3. 编辑者被 gate 拦截时按指引 re-base 到 new_root。
+4. mover 弃单自愈：声明超 48h 陈旧 → gate 降级 warn 放行（防砖），
+   ``sweep`` 可清扫陈旧声明。
 
 用法::
 
@@ -36,7 +39,7 @@
     python scripts/governance/split_coordination.py begin \\
         --session my-session --dir docs/_working/lab --new-root docs/_working/lab/a
 
-    # 状态 / mover 收尾 / 清扫已落地
+    # 状态 / mover 收尾 / 清扫陈旧
     python scripts/governance/split_coordination.py status
     python scripts/governance/split_coordination.py finish --session my-session --dir docs/_working/lab
     python scripts/governance/split_coordination.py sweep
@@ -45,10 +48,9 @@ from __future__ import annotations
 
 import argparse
 import os
-import subprocess
 import sys
 import time as _time
-from datetime import datetime, timezone
+from datetime import datetime, timedelta, timezone
 from pathlib import Path
 
 import yaml
@@ -105,24 +107,15 @@ def scan_flat_files(dir_rel: str) -> list[str]:
     )
 
 
-def _landed(entry: dict) -> bool:
-    """落地判定（与 gate._split_landed 同语义，工具侧复检：HEAD 无+盘无）。"""
-    old_paths = [str(p).replace("\\", "/") for p in entry.get("old_paths") or []]
-    if not old_paths:
-        return True
-    dirs = sorted({p.rsplit("/", 1)[0] for p in old_paths if "/" in p})
-    tracked: set[str] = set()
-    for d in dirs:
-        r = subprocess.run(  # noqa: bare-subprocess  轻量协调工具直调 git ls-tree，避免反向依赖 zephyr.shared（拉入 process_pool 重依赖），窗口闪现无影响
-            ["git", "ls-tree", "-r", "--name-only", "HEAD", "--", d],
-            capture_output=True, text=True, encoding="utf-8", errors="replace", cwd=str(_REPO),
-        )
-        if r.returncode != 0:
-            return False
-        tracked |= {os.path.normcase(ln.strip()) for ln in r.stdout.splitlines() if ln.strip()}
-    return all(
-        os.path.normcase(p) not in tracked and not (_REPO / p).exists() for p in old_paths
-    )
+def _stale(entry: dict, max_age_h: float = 48.0) -> bool:
+    """声明是否陈旧（declared_at 超过 max_age_h 小时）——mover 弃单判定（与 gate 同语义）。"""
+    try:
+        declared = datetime.fromisoformat(str(entry.get("declared_at") or ""))
+    except ValueError:
+        return False
+    if declared.tzinfo is None:
+        declared = declared.replace(tzinfo=timezone.utc)
+    return datetime.now(timezone.utc) - declared > timedelta(hours=max_age_h)
 
 
 def cmd_begin(args: argparse.Namespace) -> int:
@@ -150,7 +143,7 @@ def cmd_begin(args: argparse.Namespace) -> int:
     )
     save_declarations(splits)
     print(f"OK: 已声明拆分协调窗口 dir={args.dir} mover={args.session} old_paths={len(old_paths)} 条")
-    print("    gate 将拦截他会话对上述旧路径的提交（mover 本人放行）；搬移落地后 finish/sweep 收尾")
+    print("    gate 将拦截他会话对上述旧路径的提交（mover 本人放行）；消费方 re-base 完成后 finish 收尾")
     return 0
 
 
@@ -168,7 +161,7 @@ def cmd_finish(args: argparse.Namespace) -> int:
         )
         return 1
     save_declarations([s for s in splits if s.get("dir") != args.dir])
-    print(f"OK: 已移除 {args.dir} 拆分声明（协调窗口关闭）")
+    print(f"OK: 已移除 {args.dir} 拆分声明（协调窗口关闭——确认消费方已全部 re-base）")
     return 0
 
 
@@ -178,22 +171,24 @@ def cmd_status(_args: argparse.Namespace) -> int:
         print("无活跃拆分声明")
         return 0
     for s in splits:
-        landed = _landed(s)
+        stale = _stale(s)
         print(
             f"dir={s.get('dir')} mover={s.get('mover_session')} "
             f"old_paths={len(s.get('old_paths') or [])} new_root={s.get('new_root') or '-'} "
-            f"declared_at={s.get('declared_at', '?')} [{'已落地(可 sweep)' if landed else '进行中'}]"
+            f"declared_at={s.get('declared_at', '?')} "
+            f"[{'陈旧(弃单,gate 已降级 warn,可 sweep)' if stale else '进行中'}]"
         )
     return 0
 
 
-def cmd_sweep(_args: argparse.Namespace) -> int:
+def cmd_sweep(args: argparse.Namespace) -> int:
+    """清扫陈旧声明（>max-age 小时弃单）——不按"已落地"清扫（落地=保护最需存在的时点）。"""
     splits = load_declarations()
-    keep = [s for s in splits if not _landed(s)]
+    keep = [s for s in splits if not _stale(s, args.max_age)]
     removed = len(splits) - len(keep)
     if removed:
         save_declarations(keep)
-    print(f"OK: sweep 清扫 {removed} 条已落地声明（保留 {len(keep)} 条进行中）")
+    print(f"OK: sweep 清扫 {removed} 条陈旧声明（保留 {len(keep)} 条活跃）")
     return 0
 
 
@@ -214,10 +209,11 @@ def main(argv: list[str] | None = None) -> int:
     p_fin.add_argument("--force", action="store_true", help="非 mover 强制收尾（运维清理）")
     p_fin.set_defaults(func=cmd_finish)
 
-    p_st = sub.add_parser("status", help="列出活跃声明与落地状态")
+    p_st = sub.add_parser("status", help="列出活跃声明与陈旧状态")
     p_st.set_defaults(func=cmd_status)
 
-    p_sw = sub.add_parser("sweep", help="清扫已落地声明")
+    p_sw = sub.add_parser("sweep", help="清扫陈旧声明（mover 弃单 > max-age 小时）")
+    p_sw.add_argument("--max-age", type=float, default=48.0, help="陈旧阈值（小时，默认 48）")
     p_sw.set_defaults(func=cmd_sweep)
 
     args = ap.parse_args(argv)
