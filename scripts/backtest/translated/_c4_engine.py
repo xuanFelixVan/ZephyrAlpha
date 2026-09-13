@@ -131,6 +131,56 @@ def load_etf(symbols: list[str], start: str, end: str, field: str = "close") -> 
     return wide(df, field)
 
 
+def load_valuation(start: str, end: str, fields: tuple[str, ...] = ("pe", "pb")) -> dict[str, pd.DataFrame]:
+    """个股估值宽面板（stock_indicator，tushare_daily_basic 源，2020-01 起覆盖）。
+
+    返回 {field: 宽表(index=trade_date, columns=symbol)}。
+    """
+    cols = ", ".join(f"toFloat64({f}) AS {f}" for f in fields)
+    rows = _q(
+        f"SELECT trade_date, symbol, {cols} FROM c1_market.stock_indicator "
+        f"WHERE trade_date >= '{start}' AND trade_date <= '{end}' AND data_source = 'tushare_daily_basic' "
+        f"ORDER BY ingest_ts DESC LIMIT 1 BY trade_date, symbol"
+    )
+    df = pd.DataFrame(rows, columns=["trade_date", "symbol", *fields])
+    if df.empty:
+        raise RuntimeError("stock_indicator 估值数据缺失（回补窗口不足）")
+    df["trade_date"] = pd.to_datetime(df["trade_date"])
+    out = {}
+    for f in fields:
+        out[f] = wide(df[["trade_date", "symbol", f]].copy(), f)
+    return out
+
+
+_FIN_METRICS: tuple[str, ...] = (
+    "announce_date", "report_period", "np_excl_cum", "equity_incl_minority",
+    "rev_q_yoy", "np_q_yoy", "total_current_assets", "total_current_liabilities",
+    "fcff_cum", "np_q", "np_cum",
+)
+_fin_cache: dict[str, pd.DataFrame] = {}
+
+
+def fin_snapshot(as_of: str, metrics: tuple[str, ...] | None = None) -> pd.DataFrame:
+    """财务快照：每 symbol 取 announce_date<=as_of 的最新一期（PIT 安全，DS-230 派生层）。
+
+    整表一次入进程缓存（~40 万行），as-of 在 pandas 内选。返回 index=symbol。
+    """
+    if "fin" not in _fin_cache:
+        cols = ", ".join(_FIN_METRICS)
+        rows = _q(f"SELECT symbol, {cols} FROM c3_fundamental.financial_derived")
+        df = pd.DataFrame(rows, columns=["symbol", *_FIN_METRICS])
+        df["announce_date"] = pd.to_datetime(df["announce_date"])
+        df = df.sort_values(["symbol", "announce_date"])
+        _fin_cache["fin"] = df
+    df = _fin_cache["fin"]
+    asof_ts = pd.Timestamp(as_of)
+    ok = df[df["announce_date"] <= asof_ts]
+    keep = ["symbol", "announce_date", "report_period", *(metrics or ())] if metrics else None
+    if keep:
+        ok = ok[keep]
+    return ok.groupby("symbol").last()
+
+
 def load_hs300() -> set[str]:
     """沪深300 成分快照（纯 6 位代码）。失败时抛 RuntimeError（D1 不静默降级）。"""
     rows = _q(
