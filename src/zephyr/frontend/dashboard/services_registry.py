@@ -856,20 +856,31 @@ def _audit(sid: str, name: str, action: str, result: dict[str, Any]) -> None:
 
 
 # 分离重启代理源码（-c 内联执行；数字旗标=DETACHED_PROCESS|CREATE_NEW_PROCESS_GROUP，
-# 内联串里不可引用本模块常量故用字面量。链路：等 3 秒（HTTP 响应先达前端）→ 杀旧
-# 进程树（psutil 失败回退 taskkill）→ 等端口释放（≤10 秒）→ 按原命令重拉并写桌面壳
-# 同一日志（data/runtime/api_server_desktop.log，现场唯一）。
+# 内联串里不可引用本模块常量故用字面量。链路：等 3 秒（HTTP 响应先达前端）→ 快照宿主旁系
+# 子进程（排除代理自身）→ 先杀宿主 → 再杀旁系 → 等端口释放（≤10 秒）→ 按原命令重拉并写
+# 桌面壳同一日志（data/runtime/api_server_desktop.log，现场唯一）→ 6 秒后回查端口写
+# respawn ok/FAILED 标记。
+# 2026-09-14 治本（Owner 令"现在就治理"）：旧版 children(recursive=True) 先杀子进程——代理
+# 本身是宿主子进程（DETACHED_PROCESS 只脱控制台不脱进程树），枚举即自杀，pr.kill() 永不
+# 执行 → 宿主存活、无 respawn、日志无标记（实证 2026-09-14 02:44）。修复三原则：
+# ①先快照后动手（快照排除自身）②先杀父后杀子（父死后代理成孤儿但存活，旁系按快照补杀）
+# ③taskkill 回退不带 /T（/T 按进程树连坐，代理在树内同样自杀）。
 _RESTARTER_SRC = (
     "import os,sys,time,subprocess\n"
     "pid,port,repo,logp=int(sys.argv[1]),int(sys.argv[2]),sys.argv[3],sys.argv[4]\n"
+    "me=os.getpid()\n"
     "time.sleep(3)\n"
+    "others=[]\n"
     "try:\n"
     "    import psutil\n"
     "    pr=psutil.Process(pid)\n"
-    "    [c.kill() for c in pr.children(recursive=True)]\n"
+    "    others=[c.pid for c in pr.children(recursive=True) if c.pid!=me]\n"
     "    pr.kill()\n"
+    "    pr.wait(timeout=5)\n"
     "except Exception:\n"
-    "    os.system('taskkill /PID %d /T /F >nul 2>&1' % pid)\n"
+    "    os.system('taskkill /PID %d /F >nul 2>&1' % pid)\n"
+    "for cp in others:\n"
+    "    os.system('taskkill /PID %d /F >nul 2>&1' % cp)\n"
     "time.sleep(1)\n"
     "import socket\n"
     "for _ in range(10):\n"
@@ -881,12 +892,17 @@ _RESTARTER_SRC = (
     "subprocess.Popen([sys.executable,'-m','zephyr.frontend.dashboard.api_server'],"
     "cwd=repo,stdout=lf,stderr=lf,creationflags=0x00000008|0x00000200)\n"
     "lf.write(b'[restarter] respawn issued\\n'); lf.close()\n"
+    "time.sleep(6)\n"
+    "s=socket.socket(); ok=s.connect_ex(('127.0.0.1',port))==0; s.close()\n"
+    "lf=open(logp,'ab'); lf.write(('[restarter] respawn %s\\n'%('ok' if ok else 'FAILED: port not bound')).encode()); lf.close()\n"
 )
 
 
 def _do_restart_self(item: dict[str, Any]) -> str:
     """宿主自重启：起分离代理后立即返回（HTTP 响应先达前端，宿主随后被代理杀掉重拉）。
 
+    代理先杀宿主再杀旁系（自身是宿主子进程，绝不可先枚举先杀——2026-09-14 自杀 bug 治本，
+    见 _RESTARTER_SRC 头注）；respawn 后回查端口，成败均落日志标记可溯源。
     端口真源=8890（tools/desktop/main.js API_HEALTH 同一口径）；日志=桌面壳同一文件，
     重启现场不分裂。代理与壳的 apiProc 脱钩：壳退出时 killApi 杀的是已死引用，
     代理拉起的新实例存活到下一次壳启动时被 ensureApi 复用。
