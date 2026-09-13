@@ -166,6 +166,64 @@ def _ionet_inventory() -> list[dict]:
     return sorted(out, key=lambda x: (x["year"], x["sectors"]))
 
 
+def _download_to(dest_dir: Path, info: dict) -> Path:
+    import urllib.request
+
+    dest = dest_dir / info["name"]
+    urllib.request.urlretrieve(info["url"], dest)  # noqa: S310 白名单域名静态文件
+    return dest
+
+
+def _targets_new() -> list[dict]:
+    """上游存在而库内未装载的表(同年取最细部门版)。"""
+    inv = _ionet_inventory()
+    conn = get_depgraph_pg_connection(read_only=True)
+    cur = conn.cursor()
+    cur.execute("SELECT DISTINCT year FROM ig_io_edge")
+    have = {r[0] for r in cur.fetchall()}
+    conn.close()
+    by_year: dict[int, dict] = {}
+    for i in inv:
+        if i["year"] <= max(have, default=0):
+            continue
+        if i["year"] not in by_year or i["sectors"] > by_year[i["year"]]["sectors"]:
+            by_year[i["year"]] = i
+    return sorted(by_year.values(), key=lambda x: x["year"])
+
+
+def cmd_check(out_dir: str) -> int:
+    """自动化检查入口(计划任务调用): 探测上游新表→有则 parse+load 全链,无则零写操作。
+    输出单行 JSON 状态(供日志采集/告警)。幂等安全: parse 有 sanity 硬校验,load 幂等 ON CONFLICT。"""
+    import json as _json
+
+    try:
+        targets = _targets_new()
+    except Exception as exc:  # noqa: BLE001 — 网络失败必须可见但不能崩任务
+        print(_json.dumps({"check": "io_table", "status": "probe_failed", "error": str(exc)[:120]},
+                          ensure_ascii=False))
+        return 2
+    if not targets:
+        print(_json.dumps({"check": "io_table", "status": "up_to_date"}, ensure_ascii=False))
+        return 0
+    outp = Path(out_dir)
+    outp.mkdir(parents=True, exist_ok=True)
+    loaded = []
+    for info in targets:
+        rda = _download_to(outp, info)
+        matrix = rda.with_suffix(".matrix.json")
+        if cmd_parse(str(rda), str(matrix)) != 0:
+            print(_json.dumps({"check": "io_table", "status": "parse_failed", "table": info["name"]},
+                              ensure_ascii=False))
+            return 3
+        if cmd_load(str(matrix)) != 0:
+            print(_json.dumps({"check": "io_table", "status": "load_failed", "table": info["name"]},
+                              ensure_ascii=False))
+            return 4
+        loaded.append(info["name"])
+    print(_json.dumps({"check": "io_table", "status": "updated", "loaded": loaded}, ensure_ascii=False))
+    return 0
+
+
 def cmd_fetch(year: int | None, out_dir: str) -> int:
     inv = _ionet_inventory()
     if not inv:
@@ -191,11 +249,8 @@ def cmd_fetch(year: int | None, out_dir: str) -> int:
     outp = Path(out_dir)
     outp.mkdir(parents=True, exist_ok=True)
     for i in by_year.values():
-        dest = outp / i["name"]
-        import urllib.request
-
         print(f"下载 {i['name']} ({i['size']} bytes) ...")
-        urllib.request.urlretrieve(i["url"], dest)  # noqa: S310 白名单域名静态文件
+        dest = _download_to(outp, i)
         print(f"[OK] -> {dest}")
         print(f"后续: python scripts/industry_graph/io_ingest.py parse --rda {dest} --out {dest.with_suffix('.matrix.json')}")
     return 0
@@ -227,6 +282,8 @@ def main() -> int:
     p3 = sub.add_parser("fetch")
     p3.add_argument("--year", type=int, default=None, help="显式取某年表(默认只取库外新年份)")
     p3.add_argument("--out-dir", default=".runtime/tmp")
+    p4 = sub.add_parser("check")
+    p4.add_argument("--out-dir", default=".runtime/industry_graph/io_check")
     sub.add_parser("status")
     a = ap.parse_args()
     if a.cmd == "parse":
@@ -235,6 +292,8 @@ def main() -> int:
         return cmd_load(a.matrix)
     if a.cmd == "fetch":
         return cmd_fetch(a.year, a.out_dir)
+    if a.cmd == "check":
+        return cmd_check(a.out_dir)
     return cmd_status()
 
 
