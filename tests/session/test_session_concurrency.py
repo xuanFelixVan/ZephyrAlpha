@@ -244,6 +244,63 @@ class TestSessionRegistrySaveRace:
         assert out.exists()
         assert foreign.exists()  # 他进程 tmp 不被吞
 
+    def test_save_retries_on_access_denied_then_succeeds(self, tmp_path, monkeypatch):
+        """WinError 5 治本（2026-09-13）：读方持锁的前两次 replace 报 EACCES
+        → 退避重试后第三次成功，注册表内容完整落盘（watchdog/心跳 daemon 读
+        窗口毫秒级，实证连锁：保存失败→会话不在表→漂移误报 critical）。"""
+        import errno
+
+        monkeypatch.setattr(os, "getpid", lambda: 424245)
+        reg = SessionRegistry(project_root=tmp_path)
+        calls = {"n": 0}
+        real_replace = os.replace
+
+        def flaky_replace(src, dst):
+            calls["n"] += 1
+            if calls["n"] <= 2:
+                raise OSError(errno.EACCES, "Permission denied (simulated reader lock)")
+            return real_replace(src, dst)
+
+        monkeypatch.setattr(os, "replace", flaky_replace)
+        # 压缩退避等待（模拟即可，真实 10/50/100ms 语义不变）
+        import zephyr.security.access_control.session_concurrency as sc
+        monkeypatch.setattr(sc, "time", type("T", (), {"sleep": staticmethod(lambda *_: None)}))
+        reg._save({"sess-A": {"x": 1}})
+        assert calls["n"] == 3, "EACCES 必须重试到成功"
+        final = json.loads((tmp_path / ".runtime" / "session_registry.json").read_text(encoding="utf-8"))
+        assert final == {"sess-A": {"x": 1}}
+
+    def test_save_gives_up_after_max_retries(self, tmp_path, monkeypatch):
+        """持续 EACCES（读方死锁等病态场景）→ 重试耗尽后抛 OSError 由 _save
+        捕获降 warning（不崩进程，下一心跳自愈重写）——重试有界，不无限转。"""
+        import errno
+
+        monkeypatch.setattr(os, "getpid", lambda: 424246)
+        reg = SessionRegistry(project_root=tmp_path)
+        monkeypatch.setattr(os, "replace", lambda *_: (_ for _ in ()).throw(
+            OSError(errno.EACCES, "Permission denied (persistent)")
+        ))
+        import zephyr.security.access_control.session_concurrency as sc
+        monkeypatch.setattr(sc, "time", type("T", (), {"sleep": staticmethod(lambda *_: None)}))
+        reg._save({"sess-A": {"x": 1}})  # 不抛——_save 捕获 OSError 降 warning
+        assert not (tmp_path / ".runtime" / "session_registry.json").exists()
+
+    def test_save_no_retry_on_other_oserror(self, tmp_path, monkeypatch):
+        """非 EACCES 错误（如 ENOENT）不重试——一次即抛，维持原语义。"""
+        import errno
+
+        monkeypatch.setattr(os, "getpid", lambda: 424247)
+        reg = SessionRegistry(project_root=tmp_path)
+        calls = {"n": 0}
+
+        def enoent_replace(*_):
+            calls["n"] += 1
+            raise OSError(errno.ENOENT, "No such file")
+
+        monkeypatch.setattr(os, "replace", enoent_replace)
+        reg._save({"sess-A": {"x": 1}})  # _save 捕获降 warning
+        assert calls["n"] == 1, "非 EACCES 不得重试"
+
 
 class TestSessionConflictDetectorAcquireWriteback:
     """SessionConflictDetector.acquire_files 写回 registry 测试（修复验证）。"""
