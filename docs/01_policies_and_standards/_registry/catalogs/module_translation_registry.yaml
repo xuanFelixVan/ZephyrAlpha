@@ -48044,6 +48044,13 @@ entries:
   desc_zh: ""
   desc_en: ""
   plain_zh: "守卫生成器的新规矩：规则文件一个没变就重跑生成，必须连时间戳都不碰直接跳过；真变了才落盘刷新时间戳；老格式文件重写一次后自愈进稳态"
+- module_path: scripts/backtest/lane_e_quantile_baseline.py
+  domain_id: D_BACKTEST
+  name_zh: "车道E分位数回归分布预测基线"
+  name_en: ""
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "沪深300日收益分位数回归分布预测基线（车道E MVP）：滞后收益+滚动波动率+均值比特征，QuantileRegressor q05/q50/q95 三分位滚动前推预测，评估用 PIT 经验覆盖率+区间锐度双标准。起步原型（去年笔记建议落地），供策略与 UP-2..5 升级候选当对照锚与依赖解锁件，非交易信号。"
 
 battle_map_steps:
 - step_id: BM-BUY-05
