@@ -158,11 +158,12 @@ nodes:
     algo_note_zh: Kronos 论文本身做了 A 股实证（多头组合 AER/IR 跑赢 25 基线，官方 Qlib
       微调管线）；深化方向=分布预测（分位数回归起步，沪深300 原型，LightGBM 分位数
       进阶）；分布预测输出登记为前瞻性因子（factor_registry 准入）反哺全厂；
-      只当基线对台，不直接当交易信号
+      只当基线对台，不直接当交易信号；
+      已建起步=MOD-BT-084 分位数回归分布预测原型（1ce3e275，tests/backtest/test_lane_e_quantile_baseline.py）；Kronos 接入/深化待建
     compute_class: local_gpu
     data_refs: []
-    module_ref: null
-    build_status: pending
+    module_ref: MOD-BT-084
+    build_status: partial
     design_refs:
       - Kronos（AAAI 2026） arxiv.org/html/2508.02739v1
       - github.com/shiyu-coder/Kronos（含 Qlib+A 股微调管线）
@@ -292,11 +293,15 @@ nodes:
     algo_note_zh: 多策略 sleeve 装配=Owner 既定"多策略赛马"方针的赛道本体；regime 切换
       选 sleeve（Markov/跳跃模型）+风险平价/等风险贡献权重+IC_IR 加权禁朴素等权+
       资金渐进爬坡（drawdown 控制）；组合数学=低相关 sleeve 合成 Sharpe 提升
-      （0.5+0.7→0.85，bfinance）；因果出处=Owner 2025-09 决策树 2.1/2.4 层
+      （0.5+0.7→0.85，bfinance）；因果出处=Owner 2025-09 决策树 2.1/2.4 层；
+      已建算法件族=MOD-PA-002..024（多策略资金分配 MOD-PA-003/regime 元分配 MOD-PA-007
+      消费 MOD-REGIME-001/风险预算 MOD-PA-022/回撤限额 MOD-PA-013/相关性闸 MOD-PA-004/
+      三维筛选 MOD-PA-014/BMA 加权 MOD-PA-015，有 pf_core/signal 域消费端）；
+      sleeve 装配落库+再平衡调度+TDM 组合流对接未闭环=partial 非 built
     compute_class: local
     data_refs: [c1_backtest.account_nav_daily]
-    module_ref: null
-    build_status: pending
+    module_ref: MOD-PA-002..024
+    build_status: partial
     design_refs:
       - regime-switching 动态因子分配 arxiv.org/html/2410.14841
       - 风险平价 AQR white paper aqr.com/-/media/AQR/Documents/Insights/White-Papers/Understanding-Risk-Parity.pdf
@@ -312,11 +317,14 @@ nodes:
     algo_note_zh: 影子组合工作流（实盘账本旁跑信号复刻影子组合做对照，可复用 C4 引擎）+
       IS 分解（Perold 1988：延迟/执行/机会/费用）+Brinson-Fachler（配置/选股）+
       Barra 式因子归因（风格/beta/alpha 分离）+QuantConnect 对账框架；
-      归因回灌 E2 假说库完成价值链闭环。因果出处=Owner 2025-09 决策树第 8 层
+      归因回灌 E2 假说库完成价值链闭环。因果出处=Owner 2025-09 决策树第 8 层；
+      已建引擎=MOD-PF-007 绩效归因（Brinson-Fachler 三因子+因子归因+风险归因复用
+      MOD-RK-16，813 行有 risk 域消费端）；IS 分解决策时间戳 FIELD-GAP 未落+
+      影子组合工作流未建=partial 非 built
     compute_class: local
     data_refs: [c1_market.execution_report, c1_backtest.account_nav_daily]
-    module_ref: null
-    build_status: pending
+    module_ref: MOD-PF-007
+    build_status: partial
     design_refs:
       - 影子组合工作流 ompnt.com/insights/refining-portfolio-construction-with-shadow-portfolios
       - IS 分解（Perold 1988 框架） quantitativebrokers.com/blog/a-brief-history-of-implementation-shortfall
