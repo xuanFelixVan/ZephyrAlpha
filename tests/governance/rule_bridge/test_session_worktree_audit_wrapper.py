@@ -191,8 +191,26 @@ class TestPreMergeGateAudit:
         assert evs[1]["event"] == "commit_blocked" and evs[1]["source"] == "pre_merge_gate"
 
     def test_gate_id_extraction_helper(self, tmp_path):
-        """_wt_block_gate_id 判定链：标志字段 > message 正则 > UNKNOWN。"""
+        """_wt_block_gate_id 判定链：gate_results 直取 > 标志字段 > message 正则 > UNKNOWN。"""
         assert sw._wt_block_gate_id({"held_overlap": True, "message": "anything"}) == "HELD-OVERLAP"
         assert sw._wt_block_gate_id({"message": "门禁 CREATE-GUARD 阻断: 无 token"}) == "CREATE-GUARD"
         assert sw._wt_block_gate_id({"message": "FOREIGN_CHANGE_VIOLATION: xxx"}) == "FOREIGN-CHANGE"
         assert sw._wt_block_gate_id({"message": "奇怪的错误"}) == "UNKNOWN"
+
+    def test_gate_results_direct_attribution(self, mocked_impl, tmp_path):
+        """gate_results 直取归因（红蓝 v3 P1-2 治本）：拼接 message 正则失配不再落 UNKNOWN。"""
+        # 防御空值：条目缺 gate_id / 空 gate_results → 回退原判定链
+        assert sw._wt_block_gate_id({"gate_results": [{"gate_id": "", "detail": "x"}], "message": "门禁 SPLIT-COORDINATION 阻断: x"}) == "SPLIT-COORDINATION"
+        assert sw._wt_block_gate_id({"gate_results": [], "message": "奇怪的错误"}) == "UNKNOWN"
+        mocked_impl.result = {
+            "session_id": "s1", "status": "GATE_VIOLATION", "commit_hash": "",
+            "message": "pre-commit gate 阻断（worktree 路径对标 GitCommitGateway）"
+                       ": CREATE-GUARD: 无 creation_token（红蓝 v3 实证失配样本）",
+            "gate_violation": True,
+            "gate_results": [{"gate_id": "CREATE-GUARD", "detail": "无 creation_token"}],
+        }
+        session_worktree_commit("s1", ["a.py"], "m", project_root=tmp_path)
+        evs = _read_events(tmp_path)
+        assert evs[0]["event"] == "commit_blocked"
+        assert evs[0]["gate_id"] == "CREATE-GUARD", "直取 gate_results 而非正则失配落 UNKNOWN"
+        assert evs[0]["source"] == "worktree_commit"
