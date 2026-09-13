@@ -12094,6 +12094,10 @@ creation_tokens:
   token: xt2-retest-2026-09-13-xtreme-redblue-retest-20260913
   created_by: factory-bottleneck-20260913
   capability: xt2_retest
+- file: tests/governance/rule_bridge/test_session_worktree_audit_wrapper.py
+  token: wt-audit-test-session-worktree-audit-wrapper-20260913
+  created_by: factory-bottleneck-20260913
+  capability: wt_audit
 # di_seam_exemptions 清零（2026-09-13 Owner 裁定"直接改造"）：
 # 三条豁免全部过时摘除——AutoRuntimeCore 实测已通过（动态注入重构完成）；
 # AdmissionController 主类已通过（global_config | None=None 接缝），文件内私有小类

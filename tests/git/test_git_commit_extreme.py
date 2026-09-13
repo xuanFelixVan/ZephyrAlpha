@@ -506,11 +506,14 @@ class TestTimeoutAndResourceExhaustion:
         )
 
         # 用短超时的锁替换默认锁（避免测试等 60 秒）
+        # 桩签名兼容 91d1ae4（--wait 锁参数化）：commit() 锁调用恒传 timeout kwarg，
+        # 桩吸收之并强制 2s 短超时（测试意图不变；2026-09-13 修复既有断裂——
+        # 桩单参签名与 gateway 演进错位 3 天未被常用跑集覆盖）
         from zephyr.gov_enforcement.rule_bridge.git_commit_gateway import _GlobalCommitLock
 
         class FastLock(_GlobalCommitLock):
-            def __init__(self, project_root):
-                super().__init__(project_root, timeout=2.0)
+            def __init__(self, project_root, timeout=None, **kwargs):
+                super().__init__(project_root, timeout=2.0, **kwargs)
 
         gw = GitCommitGateway(project_root=tmp_path)
         with patch("zephyr.gov_enforcement.rule_bridge.git_commit_gateway._GlobalCommitLock", FastLock):

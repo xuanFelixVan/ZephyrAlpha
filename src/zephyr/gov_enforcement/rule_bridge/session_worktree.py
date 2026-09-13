@@ -4570,6 +4570,80 @@ def _check_cross_commit_deps(
     return None
 
 
+def _audit_wt_block_event(
+    root: Path,
+    session_id: str,
+    gate_id: str,
+    files_count: int,
+    elapsed_ms: float,
+    detail: str,
+    source: str = "worktree_commit",
+) -> None:
+    """worktree 路径堵点溯源审计（D5 覆盖面补齐，2026-09-13 Owner 复核发现）。
+
+    病根：session_worktree_commit 绕过 GitCommitGateway（worktree 独立 index 设计
+    决策），其自有门禁（HELD-OVERLAP/DCR/CROSS-COMMIT-DEP/pre-commit gates）的
+    阻断不进 commit_block_events.jsonl——堵点本只见共享区提交，worktree 会话的
+    堵点静默丢失。本 helper 对齐 gateway._append_commit_anomaly_jsonl 记录格式
+    （同 jsonl 追加，报表 commit_perf_report 无差别聚合），加 source 字段区分
+    来源（worktree_commit/pre_merge_gate）。
+    event 语义由 detail 推导（NO-LONG-PARAM-LIST §5.150 治本 2026-09-13）：
+    detail 以 "commit_slow" 开头 → commit_slow（超 60s 慢提交，报表分流域），
+    否则 commit_blocked（门禁阻断）。审计写永不阻断主流程（fail-open）；
+    延迟导入防循环（gateway 反向 import 本模块，_WORKTREE_SKIP_GATES 先例）。
+    """
+    try:
+        import json as _json
+
+        from zephyr.shared.utils.time_utils import now_utc
+
+        audit_dir = root / ".runtime" / "audit"
+        audit_dir.mkdir(parents=True, exist_ok=True)
+        record = {
+            "timestamp": now_utc().isoformat(),
+            "session_id": session_id,
+            "event": "commit_slow" if (detail or "").startswith("commit_slow") else "commit_blocked",
+            "gate_id": gate_id,
+            "files_count": files_count,
+            "gate_chain_ms": round(elapsed_ms),
+            "source": source,
+            "detail": (detail or "")[:200],
+        }
+        with (audit_dir / "commit_block_events.jsonl").open("a", encoding="utf-8") as f:
+            f.write(_json.dumps(record, ensure_ascii=False) + "\n")
+    except Exception:  # noqa: BLE001 — 审计失败不阻断提交主流程
+        logger.debug("worktree block event audit failed (non-blocking)", exc_info=True)
+
+
+def _wt_block_gate_id(result: dict) -> str:
+    """从 worktree 提交结果 dict 提取阻断门禁号（与 gateway message 正则口径对齐）。"""
+    if result.get("held_overlap"):
+        return "HELD-OVERLAP"
+    if result.get("directory_contract_violation"):
+        return "DIRECTORY-CONTRACT"
+    if result.get("cross_commit_dep_blocked"):
+        return "CROSS-COMMIT-DEP"
+    import re as _re
+
+    m = _re.search(r"门禁 ([A-Z][A-Z\-]+) 阻断", str(result.get("message", "")))
+    if m:
+        return m.group(1)
+    m = _re.search(r"\b([A-Z][A-Z_]{3,}(?:-[A-Z]+)*)_VIOLATION", str(result.get("message", "")))
+    if m:
+        return m.group(1).replace("_", "-")  # 归一连字符（与 gateway 门禁号族一致）
+    return "UNKNOWN"
+
+
+def _print_wt_bottleneck_banner(root: Path) -> None:
+    """复用 gateway 堵点提醒横幅（延迟导入防循环；失败静默）。"""
+    try:
+        from zephyr.gov_enforcement.rule_bridge.git_commit_gateway import _print_bottleneck_banner
+
+        _print_bottleneck_banner(root, context="worktree_commit")
+    except Exception:  # noqa: BLE001 — 横幅失败不影响提交
+        logger.debug("worktree bottleneck banner failed (non-blocking)", exc_info=True)
+
+
 @_inject_ok
 def session_worktree_commit(
     session_id: str,
@@ -4582,7 +4656,192 @@ def session_worktree_commit(
     allow_migration: bool = False,
     depends_on_sessions: list[str] | None = None,
 ) -> CommitResult:
+    """在 worktree 内提交修改（薄包装：D5 堵点审计+提醒横幅，实现在 _impl）。
+
+    包装职责（2026-09-13 Owner 复核发现的覆盖面缺口）：
+    - 阻断结果（status=FAILED，排除 not_found/NOTHING_TO_COMMIT）落
+      commit_block_events.jsonl（与 gateway 共用堵点本，source=worktree_commit）
+    - 所有路径收尾打堵点提醒横幅（与 gateway.commit 行为对齐）
+    - 成功但全程>60s 记 commit_slow（对齐 gateway _SLOW_COMMIT_THRESHOLD_S）
+    参数语义见 _session_worktree_commit_impl docstring。
+    """
+    import time as _time
+
+    _t0 = _time.monotonic()
+    # 经 globals() 动态查 impl（非闭包直引）——测试 monkeypatch 模块属性可生效
+    # （@_inject_ok 装饰器闭包会锁死 impl 引用，patch 不可达）。
+    # 4 个开关打包 opts dict 传递（NO-LONG-PARAM-LIST §5.150 治本：impl 8→5 参数）。
+    result = globals()["_session_worktree_commit_impl"](
+        session_id,
+        files,
+        message,
+        {
+            "allow_overlap": allow_overlap,
+            "allow_promote": allow_promote,
+            "allow_migration": allow_migration,
+            "depends_on_sessions": depends_on_sessions,
+        },
+        project_root,
+    )
+    try:
+        root = Path(project_root) if project_root else REPO_ROOT
+        status = result.get("status")
+        if status not in ("OK", "NOTHING_TO_COMMIT") and not result.get("not_found"):
+            _audit_wt_block_event(
+                root,
+                session_id,
+                _wt_block_gate_id(result),
+                len(files),
+                (_time.monotonic() - _t0) * 1000,
+                str(result.get("message", "")),
+                source="worktree_commit",
+            )
+        elif status == "OK" and (_time.monotonic() - _t0) > 60_000:
+            _audit_wt_block_event(
+                root,
+                session_id,
+                "-",
+                len(files),
+                (_time.monotonic() - _t0) * 1000,
+                f"commit_slow: worktree commit {(_time.monotonic() - _t0):.1f}s > 60s",
+                source="worktree_commit",
+            )
+        _print_wt_bottleneck_banner(root)
+    except Exception:  # noqa: BLE001 — 审计/横幅失败绝不影响提交结果
+        logger.debug("session_worktree_commit audit wrapper failed (non-blocking)", exc_info=True)
+    return result
+
+
+def _wt_stage_changes(
+    root: Path,
+    wt_path: Path,
+    session_id: str,
+    rel_files: list[str],
+    allow_overlap: bool,
+) -> dict | None:
+    """暂存前置链（自 _session_worktree_commit_impl 抽出，§5.158 复杂度治本 2026-09-13）。
+
+    顺序：HELD-OVERLAP 硬阻断 → DCR 检测 → base 新鲜度（裁定#19-B：reset/rebase
+    防搭便车）→ stash auto-recover → 主区→worktree 文件同步 → git add → 空变更
+    检测（NOTHING_TO_COMMIT+改动丢失警示）。
+    Returns: None=暂存成功（staged 就绪，可进 gate 链）；dict=直接作为 commit
+    结果返回（阻断/失败/NOTHING_TO_COMMIT）。
+    """
+    if not allow_overlap:
+        err = _check_held_overlap(_get_registry(root), session_id, rel_files)
+
+        if err:
+            return err
+
+    err = _run_dcr_check(root, rel_files, session_id)
+
+    if err:
+        return err
+
+    # 裁定#19-B（2026-07-18）：worktree base 新鲜度检查
+
+    # 病根：session_worktree_start 创建 worktree 时 base = dev HEAD(T0)，并发 session merge
+
+    #   到 dev 后 dev HEAD 前进到 T1，AI Edit 主工作区文件（含 dev T1 内容 + AI 改动），
+
+    #   _sync_files_to_worktree copy2 主工作区文件到 worktree，commit 内容 =
+
+    #   (dev T1 + AI 改动) − (worktree base T0) = dev T0→T1 改动（搭便车）+ AI 改动。
+
+    #   后果：① git 历史污染（dev 多 commit 被塞进 session commit）；② ARCH-REFERENCE L2
+
+    #   误判（dev 新 #ARCH-XXX 引用被算作本次 commit 新增，要求 registry 同 commit → 硬阻断）。
+
+    # 治本：_sync_files_to_worktree 之前检测 worktree HEAD 是否落后于主工作区 HEAD，落后则
+
+    #   ① 无 session commit → git reset --hard <main HEAD>（安全，worktree 无未提交工作可丢）
+
+    #   ② 有 session commit → git rebase <main HEAD>（保留 session 工作，冲突 fail-loud）
+
+    base_err = _ensure_worktree_base_fresh(root, wt_path, session_id, stage="commit")
+
+    if base_err:
+        return base_err
+
+    # auto-recover（2026-07-19 bug 治本修复）：检测主工作区改动是否被外部 stash
+
+    # 移走（safety-net stash / recovery 脚本 / 并发 session merge auto-clean），
+
+    # 命中则自动 git checkout <stash> -- <files> 恢复目标文件到主工作区。治本
+
+    # session_worktree_commit 假设 AI 改动在主工作区，但外部 stash 移走改动后
+
+    # sync 复制 HEAD 内容 → diff 为 0 → NOTHING_TO_COMMIT，AI 误判"数据丢失"。
+
+    # auto-recover 只恢复目标文件（不带入无关改动），覆盖式恢复（不冲突）。
+
+    _recover_changes_from_stash(root, rel_files, session_id)
+
+    _sync_files_to_worktree(root, wt_path, rel_files)
+
+    add_cmd = ["git", "add", "-A", "--"] + rel_files
+
+    add_r = run_subprocess_hidden(
+        add_cmd,
+        cwd=str(wt_path),
+        capture_output=True,
+        text=True,
+        encoding="utf-8",
+        errors="replace",
+        timeout=60,
+    )
+
+    if add_r.returncode != 0:
+        return {
+            "session_id": session_id,
+            "status": "FAILED",
+            "message": f"git add failed: {add_r.stderr.strip()}",
+            "commit_hash": "",
+        }
+
+    diff_r = run_subprocess_hidden(
+        ["git", "diff", "--cached", "--quiet"],
+        cwd=str(wt_path),
+        capture_output=True,
+        timeout=30,
+    )
+
+    if diff_r.returncode == 0:
+        # 诊断盲区修复（2026-07-19 bug）：返回 NOTHING_TO_COMMIT 前，检测主工作区
+
+        # 目标文件是否意外干净（改动被外部 stash 移走）。命中则打印 LOUD warning +
+
+        # 恢复命令。病根：session_worktree_commit 假设 AI 改动在主工作区，但并发
+
+        # 场景下可能被 safety-net stash / recovery 脚本移走，导致 AI 误判"数据丢失"。
+
+        # 实际改动在 stash 中可恢复。warn-only 不阻断业务流程。
+
+        _warn_if_changes_missing(root, rel_files, session_id)
+
+        return {
+            "session_id": session_id,
+            "status": "NOTHING_TO_COMMIT",
+            "message": "no staged changes after git add",
+            "commit_hash": "",
+        }
+
+
+    return None
+
+
+def _session_worktree_commit_impl(
+    session_id: str,
+    files: list[str],
+    message: str,
+    opts: dict | None = None,
+    project_root: str | Path | None = None,
+) -> CommitResult:
     """在 worktree 内提交修改（直接 git add + commit，绕过 GitCommitGateway）。
+
+    ``opts``（NO-LONG-PARAM-LIST §5.150 治本 2026-09-13：8→5 参数，开关打包）：
+    ``allow_overlap`` / ``allow_promote`` / ``allow_migration`` /
+    ``depends_on_sessions``——语义同 wrapper session_worktree_commit 同名参数。
 
     worktree 有独立 git index，session 独占整个 worktree，不存在共享冲突，
 
@@ -4688,6 +4947,12 @@ def session_worktree_commit(
 
     """
 
+    _opts = opts or {}
+    allow_overlap = bool(_opts.get("allow_overlap"))
+    allow_promote = bool(_opts.get("allow_promote"))
+    allow_migration = bool(_opts.get("allow_migration"))
+    depends_on_sessions = _opts.get("depends_on_sessions")
+
     root = Path(project_root) if project_root else REPO_ROOT
 
     manager = _get_manager(root)
@@ -4718,7 +4983,6 @@ def session_worktree_commit(
         }
 
     rel_files = _normalize_commit_files(files, wt_path, root)
-
     # #ARCH-WORKSPACE-DRIFT-SYSTEMIC-001 Phase 1.5: commit 前 workspace drift 遥测（fail-open）
 
     # 检测主工作区 modified 中"未在 rel_files 列出的真实代码修改"，落盘遥测供后续 reconciler 兜底。
@@ -4731,104 +4995,12 @@ def session_worktree_commit(
     except Exception as _drift_err:  # noqa: BLE001 — fail-open
         logger.warning("[commit] workspace drift warn failed: %s", _drift_err)
 
-    if not allow_overlap:
-        err = _check_held_overlap(_get_registry(root), session_id, rel_files)
 
-        if err:
-            return err
-
-    err = _run_dcr_check(root, rel_files, session_id)
-
-    if err:
-        return err
-
-    # 裁定#19-B（2026-07-18）：worktree base 新鲜度检查
-
-    # 病根：session_worktree_start 创建 worktree 时 base = dev HEAD(T0)，并发 session merge
-
-    #   到 dev 后 dev HEAD 前进到 T1，AI Edit 主工作区文件（含 dev T1 内容 + AI 改动），
-
-    #   _sync_files_to_worktree copy2 主工作区文件到 worktree，commit 内容 =
-
-    #   (dev T1 + AI 改动) − (worktree base T0) = dev T0→T1 改动（搭便车）+ AI 改动。
-
-    #   后果：① git 历史污染（dev 多 commit 被塞进 session commit）；② ARCH-REFERENCE L2
-
-    #   误判（dev 新 #ARCH-XXX 引用被算作本次 commit 新增，要求 registry 同 commit → 硬阻断）。
-
-    # 治本：_sync_files_to_worktree 之前检测 worktree HEAD 是否落后于主工作区 HEAD，落后则
-
-    #   ① 无 session commit → git reset --hard <main HEAD>（安全，worktree 无未提交工作可丢）
-
-    #   ② 有 session commit → git rebase <main HEAD>（保留 session 工作，冲突 fail-loud）
-
-    base_err = _ensure_worktree_base_fresh(root, wt_path, session_id, stage="commit")
-
-    if base_err:
-        return base_err
-
-    # auto-recover（2026-07-19 bug 治本修复）：检测主工作区改动是否被外部 stash
-
-    # 移走（safety-net stash / recovery 脚本 / 并发 session merge auto-clean），
-
-    # 命中则自动 git checkout <stash> -- <files> 恢复目标文件到主工作区。治本
-
-    # session_worktree_commit 假设 AI 改动在主工作区，但外部 stash 移走改动后
-
-    # sync 复制 HEAD 内容 → diff 为 0 → NOTHING_TO_COMMIT，AI 误判"数据丢失"。
-
-    # auto-recover 只恢复目标文件（不带入无关改动），覆盖式恢复（不冲突）。
-
-    _recover_changes_from_stash(root, rel_files, session_id)
-
-    _sync_files_to_worktree(root, wt_path, rel_files)
-
-    add_cmd = ["git", "add", "-A", "--"] + rel_files
-
-    add_r = run_subprocess_hidden(
-        add_cmd,
-        cwd=str(wt_path),
-        capture_output=True,
-        text=True,
-        encoding="utf-8",
-        errors="replace",
-        timeout=60,
-    )
-
-    if add_r.returncode != 0:
-        return {
-            "session_id": session_id,
-            "status": "FAILED",
-            "message": f"git add failed: {add_r.stderr.strip()}",
-            "commit_hash": "",
-        }
-
-    diff_r = run_subprocess_hidden(
-        ["git", "diff", "--cached", "--quiet"],
-        cwd=str(wt_path),
-        capture_output=True,
-        timeout=30,
-    )
-
-    if diff_r.returncode == 0:
-        # 诊断盲区修复（2026-07-19 bug）：返回 NOTHING_TO_COMMIT 前，检测主工作区
-
-        # 目标文件是否意外干净（改动被外部 stash 移走）。命中则打印 LOUD warning +
-
-        # 恢复命令。病根：session_worktree_commit 假设 AI 改动在主工作区，但并发
-
-        # 场景下可能被 safety-net stash / recovery 脚本移走，导致 AI 误判"数据丢失"。
-
-        # 实际改动在 stash 中可恢复。warn-only 不阻断业务流程。
-
-        _warn_if_changes_missing(root, rel_files, session_id)
-
-        return {
-            "session_id": session_id,
-            "status": "NOTHING_TO_COMMIT",
-            "message": "no staged changes after git add",
-            "commit_hash": "",
-        }
+    # 暂存前置链（held-overlap→DCR→base 新鲜度→stash 恢复→sync→git add→diff 检查）
+    # 抽出为 _wt_stage_changes（NO-HIGH-COMPLEXITY §5.158 治本：impl 复杂度 18→拆分）
+    stage_err = _wt_stage_changes(root, wt_path, session_id, rel_files, allow_overlap)
+    if stage_err is not None:
+        return stage_err
 
     # P1-2 (2026-07-20): per-session active guard 防止 sweep 并发删除 worktree
 
@@ -6167,6 +6339,19 @@ def _pre_merge_gate_check(
             # 是主工作区最新版本。topo check 独立于 commit gate——不受 gate 代码修改降级影响。
 
             if _gate_violations:
+                # D5 覆盖面补齐（2026-09-13）：pre-merge gate 阻断同落堵点本
+                # （commit_block_events.jsonl，source=pre_merge_gate）——merge 阶段
+                # 堵点不再静默；逐 violation 记一条（多门禁同拦全留痕）
+                for _v in _gate_violations:
+                    _audit_wt_block_event(
+                        root,
+                        session_id,
+                        str(_v.get("gate_id", "UNKNOWN")),
+                        len(rel_files),
+                        0.0,
+                        str(_v.get("detail", ""))[:200],
+                        source="pre_merge_gate",
+                    )
                 return False, _gate_violations
 
             return True, []

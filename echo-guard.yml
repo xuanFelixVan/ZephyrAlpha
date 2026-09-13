@@ -869,3 +869,20 @@ acknowledged:
   verdict: dismissed
   stable_key: "scripts/governance/generate_project_depgraph.py:derive_autonomy_fallback||scripts/governance/generate_project_depgraph.py:derive_stability_fallback"
   note: "2026-09-13：单行词表 lookup 结构撞车语义各异（stability vs autonomy 映射），合并=过早抽象；存量雷同非真重复"
+  # 2026-09-13 solo_agent（堵点本覆盖面批）：session_worktree.py 单行路径拼装 helper 族
+  # （root/.runtime/.../session_xxx 模板）与单例构造器（root 归一+构造）结构同构但语义各殊
+  # （lockfile vs 心跳 pid vs 持久化 marker vs Manager vs Registry——五个不同物理资源），
+  # 合并=参数化无谓间接层（三相似行优于早抽象先例）；存量雷同（函数 2026-07 已在 HEAD），
+  # 本次因堵点本覆盖面批触碰 session_worktree.py 进入 CloneGuard 扫描视野浮现，非本批引入
+- id: "src/zephyr/gov_enforcement/rule_bridge/session_worktree.py:_session_active_lockfile:00000000||src/zephyr/gov_enforcement/rule_bridge/session_worktree.py:_heartbeat_pid_file:00000000"
+  verdict: dismissed
+  stable_key: "src/zephyr/gov_enforcement/rule_bridge/session_worktree.py:_heartbeat_pid_file||src/zephyr/gov_enforcement/rule_bridge/session_worktree.py:_session_active_lockfile"
+  note: "2026-09-13：单行路径拼装 helper 结构撞车语义各异（active lockfile vs 心跳 pid 文件），合并=过早抽象；存量雷同非真重复"
+- id: "src/zephyr/gov_enforcement/rule_bridge/session_worktree.py:_session_active_lockfile:00000000||src/zephyr/gov_enforcement/rule_bridge/session_worktree.py:_commit_persisted_marker_path:00000000"
+  verdict: dismissed
+  stable_key: "src/zephyr/gov_enforcement/rule_bridge/session_worktree.py:_commit_persisted_marker_path||src/zephyr/gov_enforcement/rule_bridge/session_worktree.py:_session_active_lockfile"
+  note: "2026-09-13：单行路径拼装 helper 结构撞车语义各异（active lockfile vs commit 持久化 marker），合并=过早抽象；存量雷同非真重复"
+- id: "src/zephyr/gov_enforcement/rule_bridge/session_worktree.py:_get_manager:00000000||src/zephyr/gov_enforcement/rule_bridge/session_worktree.py:_get_registry:00000000"
+  verdict: dismissed
+  stable_key: "src/zephyr/gov_enforcement/rule_bridge/session_worktree.py:_get_manager||src/zephyr/gov_enforcement/rule_bridge/session_worktree.py:_get_registry"
+  note: "2026-09-13：单例构造器模板撞车语义各异（WorktreeManager vs SessionRegistry，worktree 主进程两类资源），合并=过早抽象；存量雷同非真重复"
