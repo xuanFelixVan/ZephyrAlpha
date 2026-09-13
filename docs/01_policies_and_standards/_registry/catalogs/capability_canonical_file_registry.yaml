@@ -12146,3 +12146,11 @@ creation_tokens:
   created_by: st-fingov-20260912
   capability: tests_zephyr_regime
 di_seam_exemptions: []
+- file: src/zephyr/pf_alloc/core/forward_stop_loss.py
+  token: forward-stop-loss-20260913
+  created_by: st-zcode-c4-20260912
+  capability: c4_batch_translation
+- file: tests/pf_alloc/test_forward_stop_loss.py
+  token: forward-stop-loss-tests-20260913
+  created_by: st-zcode-c4-20260912
+  capability: c4_batch_translation
