@@ -12090,6 +12090,10 @@ creation_tokens:
   token: batch-tokens-test-batch-creation-tokens-20260913
   created_by: factory-bottleneck-20260913
   capability: batch_tokens
+- file: docs/_working/2026-09-13-xtreme-redblue-retest.md
+  token: xt2-retest-2026-09-13-xtreme-redblue-retest-20260913
+  created_by: factory-bottleneck-20260913
+  capability: xt2_retest
 di_seam_exemptions:
 - module_path: zephyr.trading.auto_runtime_core.AutoRuntimeCore
   reason: P0-5 LSG DI seam 标杆，已有 DI 但 AST 模式不匹配（动态注入）
