@@ -68,6 +68,17 @@ def test_trace_full_history():
     assert all(h["run_archive_exists"] for h in hist)
 
 
+def test_bothwin_gate():
+    out = json.loads(_run(mod.cmd_bothwin, argparse_ns()))
+    assert out["tested"] >= 35
+    assert 0 < out["passed"] < out["tested"]
+    assert "CAND-e3da6fa71af1" in out["passed_ids"]  # 恐慌反弹：唯一三窗全绿已知
+    for i in out["items"]:
+        if i["gate_bothwin_pass"]:
+            assert i["is_sharpe"] > 0
+            assert all(s["sharpe"] > 0 for s in i["segments"])
+
+
 def test_failed_reason_filter():
     out = json.loads(_run(mod.cmd_failed, argparse_ns(reason="fundamental_gate", limit=5)))
     assert 0 < out["count"] <= 5

@@ -79,13 +79,18 @@ def discover() -> list[Path]:
 
 
 def run_batch(limit: int | None, window: tuple[str, str] | None = None,
-              include_pilots: bool = True) -> tuple[list[dict[str, Any]], list[dict[str, Any]]]:
+              include_pilots: bool = True, only: str | None = None) -> tuple[list[dict[str, Any]], list[dict[str, Any]]]:
     sys.path.insert(0, str(_TRANSLATED_DIR))
     from _c4_engine import batch_deflated_sharpe, daily_net_returns, run_backtest, window_for
 
     results: list[dict[str, Any]] = []
     failures: list[dict[str, Any]] = []
     mods = discover()
+    if only:
+        pats = [x.strip() for x in only.split(",") if x.strip()]
+        mods = [m for m in mods if any(x in m.name for x in pats)]
+        if not mods:
+            raise RuntimeError(f"--only 过滤后零模块: {only}")
     if limit:
         mods = mods[:limit]
     for path in mods:
@@ -144,6 +149,7 @@ def main() -> None:
     parser.add_argument("--end", default=None, help="复测窗口终点（如 2026-06-30）")
     parser.add_argument("--batch", default=_BATCH, help="落库批次标签（默认=冻结 IS 批）")
     parser.add_argument("--verdict", default="translated_c4", help="落库判定（OOS 批用 oos_tested）")
+    parser.add_argument("--only", default=None, help="模块名子串过滤（逗号分隔，如 rsrs,panic）")
     args = parser.parse_args()
     oos_mode = bool(args.start and args.end)
     if oos_mode:
@@ -151,7 +157,7 @@ def main() -> None:
         args.verdict = "oos_tested"
 
     results, failures = run_batch(args.limit, window=(args.start, args.end) if oos_mode else None,
-                                  include_pilots=not oos_mode)
+                                  include_pilots=not oos_mode, only=args.only)
     if not results:
         raise RuntimeError("批测零结果（模块发现/加载全失败）")
 
