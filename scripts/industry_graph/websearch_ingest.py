@@ -1,3 +1,5 @@
+# [BLUEPRINT] MOD-D-CONCEPT-SYS | (auto-injected by S4 reconciler) | §
+# [TTL] permanent
 # [MODULE] scripts.industry_graph.websearch_ingest
 # [DOMAIN] D_DATA
 # [DEPENDENCIES] zephyr.governance.depgraph_schema (get_depgraph_pg_connection); zephyr.data.ch_writer (stock_basic 反查)
