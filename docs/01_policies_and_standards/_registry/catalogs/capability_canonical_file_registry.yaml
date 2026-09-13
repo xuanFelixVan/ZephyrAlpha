@@ -12456,6 +12456,10 @@ creation_tokens:
   token: factory-backend-compute-window-gate-20260913
   created_by: st-facbe-20260914
   capability: factory_backend
+- file: scripts/backtest/factory_intake_pipeline.py
+  token: factory-backend-factory-intake-pipeline-20260913
+  created_by: st-facbe-20260914
+  capability: factory_backend
 - file: scripts/backtest/translated/c4_21af8c66c15e_small_cap.py
   token: c4-21af8c66c15e-small-cap-20260914
   created_by: st-zcode-c4-20260912
@@ -12480,4 +12484,8 @@ creation_tokens:
   token: st-fingov-agg-switch-design-20260914
   created_by: st-fingov-20260912
   capability: agg_switch_design
+- file: scripts/backtest/eval_exp_expectations.py
+  token: factor-eval-eval-exp-expectations-20260913
+  created_by: st-expectation-20260914
+  capability: factor_eval
 di_seam_exemptions: []

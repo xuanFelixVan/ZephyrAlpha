@@ -68,11 +68,13 @@ nodes:
     stage: E1
     node_type: stage
     decision_question: 下一批策略想法从哪条车道进来？每条车道进什么货？
-    algo_note_zh: 五车道并发进货，所有货统一卸到策略入库台账并带出生证（渠道+批次+原文指针）
+    algo_note_zh: 五车道并发进货，所有货统一卸到策略入库台账并带出生证（渠道+批次+原文指针）；
+      已建=MOD-BT-154 进货编排（薄编排层：E1D 进货→E1B 可选→E2 幂等预审自动接续，
+      E0 问闸预检接线，E3 排产清单产出；C 车道重算力闸点已声明待 E1C 施工）
     compute_class: mixed
     data_refs: [c1_market.news_data]
-    module_ref: null
-    build_status: pending
+    module_ref: MOD-BT-154
+    build_status: partial
     design_refs: []
     store_refs:
       - {artifact: 候选想法清单, location: data/strategy_intake/, key: md5_12, retention: 永久}
