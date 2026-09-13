@@ -143,7 +143,7 @@ def _load_registry_yaml(gateway, staged: list[str]) -> tuple[dict | None, tuple[
         return None, (
             False,
             f"SSOT-REDEFINITION gate fail-closed: capability registry 缺失"
-            f"({REGISTRY_YAML})。修复 registry（在提交中包含该文件）"
+            f"({REGISTRY_YAML})。修复 registry（由持有该文件的会话提交修复后自动恢复）"
             f"或恢复 registry 后重试。",
         )
     try:
@@ -168,7 +168,7 @@ def _load_registry_yaml(gateway, staged: list[str]) -> tuple[dict | None, tuple[
             False,
             f"SSOT-REDEFINITION gate fail-closed: capability registry 解析失败"
             f"({type(e).__name__}: {e})。修复 registry YAML 语法"
-            f"（在提交中包含该文件）后重试。",
+            f"（由持有该文件的会话提交修复后自动恢复）后重试。",
         )
 
     if not isinstance(data, dict):
