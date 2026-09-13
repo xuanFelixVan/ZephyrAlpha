@@ -4995,6 +4995,10 @@ capabilities:
     提交→全景对齐→清理 全流程步骤与失败处置；适用 07 域（regime/选股/仓位/风控/买卖/执行/对账/治理）施工，RULE-CAPABILITY-LOOKUP
     检索"施工"应命中本条
 creation_tokens:
+- file: tests/governance/code_quality/test_module_id_derived_separator.py
+  token: ruling232-separator-test-20260914
+  created_by: st-altdata-20260914
+  capability: mining_sop
 - file: docs/01_policies_and_standards/sop/README.md
   token: sop-index-true-source-map-20260914
   created_by: st-sopreorg-20260914
@@ -12376,8 +12380,24 @@ creation_tokens:
   token: auto-scaffold-series_transform-20260914
   created_by: scaffold.py
   capability: series_transform
-di_seam_exemptions: []
 - file: scripts/backtest/translated/c4_bd42540f86e4_pe_pb.py
   token: c4-pe-pb-bd42540f86e4-20260914
   created_by: st-zcode-c4-20260912
-    capability: sim_paper_ledger_c
+  capability: c4_batch_translation
+- file: scripts/backtest/translated/c4_311220235636_slater_value.py
+  token: c4-311220235636-slater-value-20260914
+  created_by: st-zcode-c4-20260912
+  capability: c4_batch_translation
+- file: scripts/backtest/translated/c4_68cc0a6b40ba_value_select35.py
+  token: c4-68cc0a6b40ba-value-select35-20260914
+  created_by: st-zcode-c4-20260912
+  capability: c4_batch_translation
+- file: scripts/backtest/translated/c4_40ca0da1a3ca_value55.py
+  token: c4-40ca0da1a3ca-value55-20260914
+  created_by: st-zcode-c4-20260912
+  capability: c4_batch_translation
+- file: docs/_working/2026-09-14-indicator-mining-batch4.md
+  token: indicator-mining-batch4-20260914
+  created_by: st-tilib-20260914c
+  capability: technical_indicator
+di_seam_exemptions: []
