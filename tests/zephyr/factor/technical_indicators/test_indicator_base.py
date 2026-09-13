@@ -26,6 +26,7 @@ import pytest
 
 # 导入 6 类指标模块触发注册（__init__ 不自动 autodiscover，需显式 import）
 from zephyr.factor.technical_indicators import (  # noqa: F401 — 注册副作用
+    cycle,
     momentum,
     reversal,
     statistics,
@@ -40,10 +41,10 @@ from zephyr.factor.technical_indicators.indicator_base import (
     autodiscover_technical_indicators,
 )
 
-# 6 类指标数量契约（catalog §2：趋势17/动量22/波动11/成交量13/反转5/统计4）
-_EXPECTED_TOTAL = 72
-# 全部输出列数契约（catalog §2.6：趋势28+动量36+波动16+成交量14+反转5+统计5 = 104）
-_EXPECTED_COLUMN_TOTAL = 104
+# 7 类指标数量契约（catalog §2：趋势17/动量22/波动11/成交量13/反转5/统计4/复合1/循环5）
+_EXPECTED_TOTAL = 78
+# 全部输出列数契约（catalog §2.6：趋势28+动量36+波动16+成交量14+反转5+统计5+复合5+循环7 = 116）
+_EXPECTED_COLUMN_TOTAL = 116
 
 
 # ============== TechnicalIndicatorMeta ==============
@@ -129,6 +130,8 @@ class TestRegistryMechanics:
         assert len(TechnicalIndicatorRegistry.list_by_category("volume")) == 13
         assert len(TechnicalIndicatorRegistry.list_by_category("reversal")) == 5
         assert len(TechnicalIndicatorRegistry.list_by_category("statistics")) == 4
+        assert len(TechnicalIndicatorRegistry.list_by_category("composite")) == 1
+        assert len(TechnicalIndicatorRegistry.list_by_category("cycle")) == 5
 
     def test_list_by_category_empty(self):
         assert TechnicalIndicatorRegistry.list_by_category("nonexistent") == []

@@ -5,7 +5,7 @@
 # [CONSUMERS] zephyr.data.implementations.internal_compute_provider（包级 autodiscover 动态接线：internal_compute_provider L545/L1113 延迟导入本包+注册表消费）; sleeve alpha 择时
 # [STARTUP] imported
 # [MATURITY] production
-# [INVARIANTS] 趋势类指标 17 个，纯自实现 pandas/numpy；compute→DataFrame 多列输出
+# [INVARIANTS] 趋势类文件指标 18 个（17 趋势类 + 1 复合类 Ichimoku），纯自实现 pandas/numpy；compute→DataFrame 多列输出
 # [MODIFY-GUARD] none
 # [STABILITY] evolving
 # [SAFETY] L
@@ -16,9 +16,9 @@
 # [TTL] permanent
 """
 
-趋势类技术指标（17 个；2026-09-14 A股标配批+1、批2a +5、批2b +1）。
+趋势类技术指标（17 个；2026-09-14 A股标配批+1、批2a +5、批2b +1、批3 +1 Ichimoku[复合类]）。
 
-指标清单：MA/EMA/WMA/DEMA/MACD/ADX/DMI/CCI/SAR/TRIX/DKX/HMA/ZLEMA/KAMA/VORTEX/SUPERTREND/MCGINLEY
+指标清单：MA/EMA/WMA/DEMA/MACD/ADX/DMI/CCI/SAR/TRIX/DKX/HMA/ZLEMA/KAMA/VORTEX/SUPERTREND/MCGINLEY/ICHIMOKU(复合类)
 
 算法对齐通达信：
   - EMA 系列（EMA/DEMA/MACD/TRIX）统一 adjust=False，种子=首值，无预热 NaN
@@ -120,8 +120,8 @@
 # - id: O1
 #   name_zh: 趋势指标 DataFrame（11指标多列）
 #   name_en: trend indicators DataFrame
-#   intro: MA/EMA/WMA/DEMA/MACD/ADX/DMI/CCI/SAR/TRIX/DKX/HMA/ZLEMA/KAMA/VORTEX/SUPERTREND 共17个趋势指标的多列输出，index 与输入对齐
-#   invariant: 输出列严格等于各 meta.output_columns（ma_5/10/20/60、ema_12/26、wma_10、dema_12、macd_*、adx_14、pdi_14/mdi_14、cci_14、sar、trix/trma、dkx_20/dkx_ma10、hma_16、zlema_21、kama_10、vip_14/vim_14、supertrend_10/supertrend_dir、md_14）
+#   intro: MA/EMA/WMA/DEMA/MACD/ADX/DMI/CCI/SAR/TRIX/DKX/HMA/ZLEMA/KAMA/VORTEX/SUPERTREND 共18个指标（17趋势+1复合）的多列输出，index 与输入对齐
+#   invariant: 输出列严格等于各 meta.output_columns（ma_5/10/20/60、ema_12/26、wma_10、dema_12、macd_*、adx_14、pdi_14/mdi_14、cci_14、sar、trix/trma、dkx_20/dkx_ma10、hma_16、zlema_21、kama_10、vip_14/vim_14、supertrend_10/supertrend_dir、md_14、tenkan_sen/kijun_sen/senkou_span_a/senkou_span_b/chikou_span）
 #   downstream: zephyr.data.implementations.internal_compute_provider（批量计算写入 c1_market.technical_indicator）；sleeve alpha 择时；volatility.py/reversal.py 复用 _ema
 # [/ALGO_FLOW]
 #
@@ -794,3 +794,47 @@ class MCGINLEY(TechnicalIndicatorBase):
             prev = prev + (c[i] - prev) / denom
             md[i] = prev
         return pd.DataFrame({f"md_{n}": pd.Series(md, index=data.index)}, index=data.index)
+
+
+@TechnicalIndicatorRegistry.register
+class ICHIMOKU(TechnicalIndicatorBase):
+    """一目均衡表（Ichimoku Kinko Hyo，9/26/52，位移 26）。"""
+
+    meta = TechnicalIndicatorMeta(
+        indicator_id="ichimoku",
+        name="一目均衡表",
+        category="composite",
+        output_columns=["tenkan_sen", "kijun_sen", "senkou_span_a", "senkou_span_b", "chikou_span"],
+        input_columns=["high", "low", "close"],
+        params={"tenkan": 9, "kijun": 26, "senkou_b": 52, "displacement": 26},
+        version="1.0.0",
+        description=(
+            "转折=(HH9+LL9)/2；基准=(HH26+LL26)/2；先行A=(转折+基准)/2 先移26；"
+            "先行B=(HH52+LL52)/2 先移26；迟行=收盘（后移26 为显示位移，存储取计算时点值）。"
+            "存储口径 PIT 安全：先行跨度存显示位（值来自 26 根之前，无前视）；迟行存现值"
+        ),
+    )
+
+    def compute(self, data: pd.DataFrame, **kwargs) -> pd.DataFrame:
+        self.validate(data)
+        if data.empty:
+            return pd.DataFrame(columns=self.meta.output_columns)
+        params = self.get_params(**kwargs)
+        t_n, k_n, b_n, disp = params["tenkan"], params["kijun"], params["senkou_b"], params["displacement"]
+        hh = lambda n: data["high"].rolling(window=n).max()  # noqa: E731
+        ll = lambda n: data["low"].rolling(window=n).min()  # noqa: E731
+        tenkan = (hh(t_n) + ll(t_n)) / 2
+        kijun = (hh(k_n) + ll(k_n)) / 2
+        senkou_a = ((tenkan + kijun) / 2).shift(disp)
+        senkou_b = ((hh(b_n) + ll(b_n)) / 2).shift(disp)
+        chikou = data["close"]
+        return pd.DataFrame(
+            {
+                "tenkan_sen": tenkan,
+                "kijun_sen": kijun,
+                "senkou_span_a": senkou_a,
+                "senkou_span_b": senkou_b,
+                "chikou_span": chikou,
+            },
+            index=data.index,
+        )

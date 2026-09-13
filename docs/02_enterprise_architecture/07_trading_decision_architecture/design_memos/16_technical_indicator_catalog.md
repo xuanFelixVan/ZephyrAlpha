@@ -70,10 +70,10 @@ scope: 07_trading_decision_architecture
 
 why 栈映射：多周期共振是 A 股技术分析的主流用法；指标全周期回算后，策略可按栈取数（趋势层定方向、交易层定信号、入场层定点位），避免单周期信号的噪声交易。
 
-## 6. 指标清单（72 指标 / 104 输出列，已施工）
+## 6. 指标清单（78 指标 / 116 输出列，已施工）
 
-> 注册表真源：`TechnicalIndicatorRegistry`（运行时装饰器注册）；YAML 注册表 REG-IND-001 已在位（条目真源）。测试 621 个用例锁定数值正确性 + Registry↔DDL 双向交叉校验。
-> **48 指标 vs "MVP 只需 15-20 个"的裁定**：全部已施工且 470 测试已绿，**裁剪已完成的指标 = 删已绿代码 + 删表列，纯负收益**；指标是数据不是策略，多算一列的边际成本≈0（单表 Nullable 列），而策略侧"只用其中一部分"的选择自由始终在消费方。故维持全集（2026-09-14 扩至 72：标配批+统计族+批 2a/2b 收官）。
+> 注册表真源：`TechnicalIndicatorRegistry`（运行时装饰器注册）；YAML 注册表 REG-IND-001 已在位（条目真源）。测试 639 个用例锁定数值正确性 + Registry↔DDL 双向交叉校验。
+> **48 指标 vs "MVP 只需 15-20 个"的裁定**：全部已施工且 470 测试已绿，**裁剪已完成的指标 = 删已绿代码 + 删表列，纯负收益**；指标是数据不是策略，多算一列的边际成本≈0（单表 Nullable 列），而策略侧"只用其中一部分"的选择自由始终在消费方。故维持全集（2026-09-14 扩至 78：标配批+统计族+批 2a/2b+批 3 Ichimoku 补实现与循环族 HT 系）。
 
 ### 6.1 趋势类 trend.py（17 指标 / 28 列）
 
@@ -179,7 +179,27 @@ why 栈映射：多周期共振是 A 股技术分析的主流用法；指标全�
 | linearreg | linearreg_14/tsf_14 | period=14 | 滚动拟合 y=a+bx：LINEARREG=a+b(N−1)；TSF=a+bN（一步外推）；矩法向量化（Σxy 恒等式拆解），不用 rolling.apply |
 | rollvar | var_20 | period=20 | 滚动总体方差 ddof=0（与 BOLL 中轨 std 口径一致） |
 
-### 6.7 与 factor_registry 的正交边界
+### 6.7 复合类 trend.py 内 Ichimoku（1 指标 / 5 列，2026-09-14 批 3 补实现）
+
+IND-COMP-001 candidate→active；类别 composite，代码在 trend.py（registry 既定 code_path）。
+
+| indicator_id | 输出列 | 默认参数 | 公式要点 |
+|---|---|---|---|
+| ichimoku | tenkan_sen/kijun_sen/senkou_span_a/senkou_span_b/chikou_span | 9/26/52/位移26 | 转折/基准=(HH+LL)/2；先行 A/B 存**显示位移后**位置（值来自 26 根前，PIT 无前视）；迟行存计算时点收盘（后移 26 是显示语义，存储不前视） |
+
+### 6.8 循环族 cycle.py（5 指标 / 7 列，2026-09-14 批 3 新建，MOD-L02-029）
+
+对齐 TA-Lib HT 家族理论源（Ehlers, Rocket Science for Traders），实现采用**相位累积**口径（homodyne 移植实证存在带通自锁：初始周期钳位使自适应带通自锁于 6，纯正弦/随机游走全收敛 6——故弃用）。
+
+| indicator_id | 输出列 | 默认参数 | 公式要点 |
+|---|---|---|---|
+| ht_dcperiod | ht_dcperiod | 无 | 瞬时周期=2π/Δφ（unwrap+限幅），EMA 平滑，钳位 [6,50]；预热 63 |
+| ht_dcphase | ht_dcphase | 无 | 累积相位 mod 360 |
+| ht_phasor | ht_ip/ht_qp | 无 | 同相=延迟 3 根平滑价；正交=4-tap Hilbert 滤波 |
+| ht_sine | ht_sine/ht_leadsine | 无 | sin(累积相位) 与 sin(+45°)；交叉标记周期转折 |
+| ht_trendmode | ht_trendmode | 无 | 主导周期窗口内正弦交叉计数：少=趋势 1/多=循环 0 |
+
+### 6.9 与 factor_registry 的正交边界
 
 技术指标（technical_indicator_registry / 本目录）与因子（factor_registry）正交：**技术指标=OHLCV 的确定性变换，无 alpha 断言；因子=对未来收益有假设的截面/时序信号，需过 ABS001 门禁**。技术指标可作为因子输入（如 boll_pctb 进动量因子），但指标本身不进 factor_registry、不做 IC 评估。why 分开：指标是"数据"（一次回算全市场复用），因子是"假设"（需治理流水线生老病死）——混在一起会让因子注册表被无假设列稀释。
 
@@ -199,6 +219,7 @@ why 栈映射：多周期共振是 A 股技术分析的主流用法；指标全�
 | 2026-08-10 | 0.1.0 | 初稿骨架 | 技术指标目录文档。**注意**：本文件曾因未 git commit 丢失，后从代码引用和 architecture_issue_registry 描述重建骨架 |
 | 2026-08-12 | 1.0.0 | 骨架→active：§6 回填 40 指标/58 列全表（5 大类公式/参数/输出列）；修正 55→58 口径；§6 增"40 指标不裁剪"裁定；补 §6.6 与 factor_registry 正交边界；新增 §7 开放问题（调度未闭环/REG-IND-001 待施工/00_index 同步） | 回填已施工代码 why；口径以测试契约为准；缺口入开放问题不擅自施工 |
 | 2026-08-15 | 1.0.1 | 第二轮循环压缩：可压缩点收敛=0（AI-DC2-08） | 清单/公式/裁定无冗余，通读+自审零发现，不为压而压 |
+| 2026-09-14 | 1.4.0 | 批 3：IND-COMP-001 Ichimoku 补实现（candidate→active，5 列，PIT 存储口径裁定入档）+ 循环族 HT 系 5 指标（新建 cycle.py MOD-L02-029，Ehlers 相位累积口径）；全表 72→78 指标/104→116 列；§6.7/6.8 新增、正交边界→6.9；homodyne 自锁实证弃用记录入档 | 缺口清单批 3；Owner 批 3 精选指令 |
 | 2026-09-14 | 1.3.0 | 主流热门批 2b 收官：+TSI/SMI/FISHER/KST/CONNORSRSI/QQE/STC/RVGI（动量 14→22）+MCGINLEY（趋势 16→17）+MASSI（波动 10→11）+VWMA/ADOSC/EOM/KVO/NVI/PVI（量能 7→13）；全表 56→72 指标/82→104 列 | 缺口清单批 2b（TA-Lib/pandas-ta 主流热门全谱清偿完毕）；TA-Lib 波动组补全；量能族 TA-Lib 全覆盖 |
 | 2026-09-14 | 1.2.0 | 主流热门批 2a：+HMA/ZLEMA/KAMA/VORTEX/SUPERTREND（趋势 11→16）+DPO（动量 13→14）+NATR/TRANGE（波动 8→10）；全表 48→56 指标/72→82 列 | 缺口清单批 2a（TA-Lib 波动组补全+低滞后/自适应均线族）；同批附带 d/w/m 历史回填器 scripts/data/backfill_technical_indicator_dwm.py 落盘 |
 | 2026-09-14 | 1.1.0 | A股标配批+统计族批：+BIAS/PSY/LWR（动量 10→13）+DKX（趋势 10→11）+统计族 4 指标（新建 statistics.py MOD-L02-028，§6.6）；全表 40→48 指标/58→72 列；原 §6.6 正交边界→§6.7；§7 增开放问题⑥日/周/月历史深度缺口（探针实锤） | 全网对照缺口清单（TA-Lib 158/pandas-ta 130+ 基线）第一二批落地；Owner 两库分工裁定后本会话线开工 |

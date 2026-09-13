@@ -642,6 +642,66 @@ _MIGRATIONS: list[tuple[str, str]] = [
         "ALTER TABLE c1_market.technical_indicator "
         "ADD COLUMN IF NOT EXISTS pvi Nullable(Float64) COMMENT '正成交量指标'",
     ),
+    (
+        "c1_market.technical_indicator",
+        "ALTER TABLE c1_market.technical_indicator "
+        "ADD COLUMN IF NOT EXISTS tenkan_sen Nullable(Float64) COMMENT '一目均衡转折线(9)'",
+    ),
+    (
+        "c1_market.technical_indicator",
+        "ALTER TABLE c1_market.technical_indicator "
+        "ADD COLUMN IF NOT EXISTS kijun_sen Nullable(Float64) COMMENT '一目均衡基准线(26)'",
+    ),
+    (
+        "c1_market.technical_indicator",
+        "ALTER TABLE c1_market.technical_indicator "
+        "ADD COLUMN IF NOT EXISTS senkou_span_a Nullable(Float64) COMMENT '一目先行跨度A(显示位移26,PIT安全)'",
+    ),
+    (
+        "c1_market.technical_indicator",
+        "ALTER TABLE c1_market.technical_indicator "
+        "ADD COLUMN IF NOT EXISTS senkou_span_b Nullable(Float64) COMMENT '一目先行跨度B(52,显示位移26)'",
+    ),
+    (
+        "c1_market.technical_indicator",
+        "ALTER TABLE c1_market.technical_indicator "
+        "ADD COLUMN IF NOT EXISTS chikou_span Nullable(Float64) COMMENT '一目迟行跨度(计算时点收盘值)'",
+    ),
+    (
+        "c1_market.technical_indicator",
+        "ALTER TABLE c1_market.technical_indicator "
+        "ADD COLUMN IF NOT EXISTS ht_dcperiod Nullable(Float64) COMMENT '希尔伯特主导周期(6-50)'",
+    ),
+    (
+        "c1_market.technical_indicator",
+        "ALTER TABLE c1_market.technical_indicator "
+        "ADD COLUMN IF NOT EXISTS ht_dcphase Nullable(Float64) COMMENT '主导周期相位(度)'",
+    ),
+    (
+        "c1_market.technical_indicator",
+        "ALTER TABLE c1_market.technical_indicator "
+        "ADD COLUMN IF NOT EXISTS ht_ip Nullable(Float64) COMMENT '同相分量in_phase'",
+    ),
+    (
+        "c1_market.technical_indicator",
+        "ALTER TABLE c1_market.technical_indicator "
+        "ADD COLUMN IF NOT EXISTS ht_qp Nullable(Float64) COMMENT '正交分量quadrature'",
+    ),
+    (
+        "c1_market.technical_indicator",
+        "ALTER TABLE c1_market.technical_indicator "
+        "ADD COLUMN IF NOT EXISTS ht_sine Nullable(Float64) COMMENT '主正弦波'",
+    ),
+    (
+        "c1_market.technical_indicator",
+        "ALTER TABLE c1_market.technical_indicator "
+        "ADD COLUMN IF NOT EXISTS ht_leadsine Nullable(Float64) COMMENT '超前45度正弦波'",
+    ),
+    (
+        "c1_market.technical_indicator",
+        "ALTER TABLE c1_market.technical_indicator "
+        "ADD COLUMN IF NOT EXISTS ht_trendmode Nullable(Float64) COMMENT '趋势/循环模式(1趋势,0循环)'",
+    ),
 ]
 
 # 引擎选型矩阵（用于验证）

@@ -20,7 +20,7 @@ name: Technical Indicator Registry
 name_zh: 技术指标注册表
 description: >-
   技术指标唯一真源（SSoT）。登记全部纯 OHLCV 计算指标（编号/公式/参数/输入输出列/预热期/状态/代码位置），
-  6 大类 72 指标 104 输出列（对齐 16 号 §6.1-6.6 + 代码 src/zephyr/factor/technical_indicators/ 7 个 .py，2026-09-14 A股标配批+3/趋势+1/统计族+4：BIAS/PSY/LWR/DKX/CORREL/BETA/LINEARREG+TSF/ROLLVAR；批2a+8：HMA/ZLEMA/KAMA/VORTEX/SUPERTREND/DPO/NATR/TRANGE；批2b+16 收官：TSI/SMI/FISHER/KST/CONNORSRSI/QQE/STC/RVGI/MCGINLEY/MASSI/VWMA/ADOSC/EOM/KVO/NVI/PVI；
+  8 大类 78 指标 116 输出列（对齐 16 号 §6.1-6.6 + 代码 src/zephyr/factor/technical_indicators/ 7 个 .py，2026-09-14 A股标配批+3/趋势+1/统计族+4：BIAS/PSY/LWR/DKX/CORREL/BETA/LINEARREG+TSF/ROLLVAR；批2a+8：HMA/ZLEMA/KAMA/VORTEX/SUPERTREND/DPO/NATR/TRANGE；批2b+16：TSI/SMI/FISHER/KST/CONNORSRSI/QQE/STC/RVGI/MCGINLEY/MASSI/VWMA/ADOSC/EOM/KVO/NVI/PVI；批3：Ichimoku 补实现（IND-COMP-001 candidate→active）+ 循环族 HT 系 5 指标（MOD-L02-029 cycle.py）；
   数值正确性由 243 测试用例 + Registry↔DDL 双向交叉校验锁定）。
   全指标覆盖 9 周期（1min/5min/15min/30min/60min/120min/日/周/月，120min 由 60min 两根聚合），
   存储单表 c1_market.technical_indicator 按 (period, toYYYYMM(trade_date)) 分区。
@@ -37,7 +37,7 @@ last_updated: '2026-08-15'
 related_arch: '#ARCH-BREG-001'
 unique_key:
 - indicator_id
-entry_count: 73
+entry_count: 78
 
 entry_schema:
   indicator_id: str              # IND-{CLASS}-{NNN}，如 IND-TREND-001
@@ -2421,6 +2421,172 @@ indicators:
   code_symbol: null
   code_fingerprint: null
 
+# ══════════════ 循环族 cycle（5 指标 / 7 列，MOD-L02-029 cycle.py，doc §6.8，2026-09-14 批3 新建，Ehlers 同质变换）══════════════
+- indicator_id: IND-CYC-001
+  name: HT_DCPERIOD
+  name_zh: 主导周期
+  aliases: ["Dominant Cycle Period"]
+  indicator_class: cycle
+  formula: Ehlers 同质变换主导周期（平滑周期钳位 [6,50]）
+  params: {}
+  inputs: [close]
+  outputs: [ht_dcperiod]
+  warmup_period: 63
+  computation_mode: vectorized
+  module_id: MOD-L02-001
+  doc_ref: 16_technical_indicator_catalog.md §6.8
+  code_path: src/zephyr/factor/technical_indicators/cycle.py
+  used_by_factors: []
+  status: active
+  version: 1.0.0
+  created_at: '2026-09-14'
+  updated_at: '2026-09-14'
+  owner: MOD-GOVERNANCE
+  primary_timeframe: "daily"
+  applicable_timeframes: ["1min", "5min", "15min", "30min", "60min", "120min", "daily", "weekly", "monthly"]
+  regime_valid: []
+  regime_invalid: []
+  direction: "neutral"
+  entry_role: "state"
+  applies_to: []
+  tags: ["循环", "指标"]
+  algorithm_status: "quantized"
+  evidence: ""
+  code_symbol: null
+  code_fingerprint: null
+
+- indicator_id: IND-CYC-002
+  name: HT_DCPHASE
+  name_zh: 主导周期相位
+  aliases: ["Dominant Cycle Phase"]
+  indicator_class: cycle
+  formula: 当前相位角（度，90° 偏移 ±180 归一）
+  params: {}
+  inputs: [close]
+  outputs: [ht_dcphase]
+  warmup_period: 63
+  computation_mode: vectorized
+  module_id: MOD-L02-001
+  doc_ref: 16_technical_indicator_catalog.md §6.8
+  code_path: src/zephyr/factor/technical_indicators/cycle.py
+  used_by_factors: []
+  status: active
+  version: 1.0.0
+  created_at: '2026-09-14'
+  updated_at: '2026-09-14'
+  owner: MOD-GOVERNANCE
+  primary_timeframe: "daily"
+  applicable_timeframes: ["1min", "5min", "15min", "30min", "60min", "120min", "daily", "weekly", "monthly"]
+  regime_valid: []
+  regime_invalid: []
+  direction: "neutral"
+  entry_role: "state"
+  applies_to: []
+  tags: ["循环", "指标"]
+  algorithm_status: "quantized"
+  evidence: ""
+  code_symbol: null
+  code_fingerprint: null
+
+- indicator_id: IND-CYC-003
+  name: HT_PHASOR
+  name_zh: 同相正交分量
+  aliases: ["Phasor"]
+  indicator_class: cycle
+  formula: 同相分量 i2 与正交分量 q2（平滑后）
+  params: {}
+  inputs: [close]
+  outputs: [ht_ip, ht_qp]
+  warmup_period: 63
+  computation_mode: vectorized
+  module_id: MOD-L02-001
+  doc_ref: 16_technical_indicator_catalog.md §6.8
+  code_path: src/zephyr/factor/technical_indicators/cycle.py
+  used_by_factors: []
+  status: active
+  version: 1.0.0
+  created_at: '2026-09-14'
+  updated_at: '2026-09-14'
+  owner: MOD-GOVERNANCE
+  primary_timeframe: "daily"
+  applicable_timeframes: ["1min", "5min", "15min", "30min", "60min", "120min", "daily", "weekly", "monthly"]
+  regime_valid: []
+  regime_invalid: []
+  direction: "neutral"
+  entry_role: "state"
+  applies_to: []
+  tags: ["循环", "指标"]
+  algorithm_status: "quantized"
+  evidence: ""
+  code_symbol: null
+  code_fingerprint: null
+
+- indicator_id: IND-CYC-004
+  name: HT_SINE
+  name_zh: 正弦波
+  aliases: ["Sine Wave"]
+  indicator_class: cycle
+  formula: 主正弦与超前 45° 正弦；两线交叉标记周期转折
+  params: {}
+  inputs: [close]
+  outputs: [ht_sine, ht_leadsine]
+  warmup_period: 63
+  computation_mode: vectorized
+  module_id: MOD-L02-001
+  doc_ref: 16_technical_indicator_catalog.md §6.8
+  code_path: src/zephyr/factor/technical_indicators/cycle.py
+  used_by_factors: []
+  status: active
+  version: 1.0.0
+  created_at: '2026-09-14'
+  updated_at: '2026-09-14'
+  owner: MOD-GOVERNANCE
+  primary_timeframe: "daily"
+  applicable_timeframes: ["1min", "5min", "15min", "30min", "60min", "120min", "daily", "weekly", "monthly"]
+  regime_valid: []
+  regime_invalid: []
+  direction: "neutral"
+  entry_role: "state"
+  applies_to: []
+  tags: ["循环", "指标"]
+  algorithm_status: "quantized"
+  evidence: ""
+  code_symbol: null
+  code_fingerprint: null
+
+- indicator_id: IND-CYC-005
+  name: HT_TRENDMODE
+  name_zh: 趋势循环模式
+  aliases: ["Trend vs Cycle Mode"]
+  indicator_class: cycle
+  formula: 主导周期窗口内正弦交叉计数：少=趋势态 1，多=循环态 0
+  params: {}
+  inputs: [close]
+  outputs: [ht_trendmode]
+  warmup_period: 63
+  computation_mode: vectorized
+  module_id: MOD-L02-001
+  doc_ref: 16_technical_indicator_catalog.md §6.8
+  code_path: src/zephyr/factor/technical_indicators/cycle.py
+  used_by_factors: []
+  status: active
+  version: 1.0.0
+  created_at: '2026-09-14'
+  updated_at: '2026-09-14'
+  owner: MOD-GOVERNANCE
+  primary_timeframe: "daily"
+  applicable_timeframes: ["1min", "5min", "15min", "30min", "60min", "120min", "daily", "weekly", "monthly"]
+  regime_valid: []
+  regime_invalid: []
+  direction: "neutral"
+  entry_role: "state"
+  applies_to: []
+  tags: ["循环", "趋势", "指标"]
+  algorithm_status: "quantized"
+  evidence: ""
+  code_symbol: null
+  code_fingerprint: null
+
 # ══════════════ 复合类 composite（1 指标 / 5 列，2026-08-14 补登）══════════════
 - indicator_id: IND-COMP-001
   name: Ichimoku Kinko Hyo
@@ -2434,10 +2600,11 @@ indicators:
   warmup_period: 78
   computation_mode: vectorized
   module_id: MOD-L02-021
+  code_symbol: ICHIMOKU.compute
   doc_ref: "16_technical_indicator_catalog.md §6.1（扩展）"
   code_path: src/zephyr/factor/technical_indicators/trend.py
   used_by_factors: []
-  status: candidate
+  status: active
   version: 1.0.0
   created_at: '2026-08-14'
   updated_at: '2026-08-14'
@@ -2452,7 +2619,7 @@ indicators:
   tags: ["基准", "指标"]
   # 2026-08-17 审计修正（AI-AUDIT08）：trend.py 实际无一目均衡表实现（code_symbol=null 设计态），
   # algorithm_status 由机械推导的 quantized 更正为 pending_backtest，与 status=candidate 对齐。
-  algorithm_status: "pending_backtest"
+  algorithm_status: "quantized"
   evidence: ""
   code_symbol: null
   code_fingerprint: null
