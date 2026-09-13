@@ -48051,6 +48051,34 @@ entries:
   desc_zh: ""
   desc_en: ""
   plain_zh: "沪深300日收益分位数回归分布预测基线（车道E MVP）：滞后收益+滚动波动率+均值比特征，QuantileRegressor q05/q50/q95 三分位滚动前推预测，评估用 PIT 经验覆盖率+区间锐度双标准。起步原型（去年笔记建议落地），供策略与 UP-2..5 升级候选当对照锚与依赖解锁件，非交易信号。"
+- module_path: schemas/categories/market_alt_typhoon_track.py
+  domain_id: D_DATA
+  name_zh: "台风路径表DDL"
+  name_en: ""
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "台风路径结构化数据表（c1_market.alt_typhoon_track）的建表语句唯一真源：存深圳市气象局的热带气旋预报记录，每条含台风编号、中心经纬度、气压风速、各级风圈半径和预报时效，用于气象事件与运价等资产的日历对齐"
+- module_path: src/zephyr/regime/core/anchored_state_machine.py
+  domain_id: D_REGIME
+  name_zh: "锚定风险四档状态机"
+  name_en: ""
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "用固定波动率阈值把市场分成低中高四档风险：阈值是写死的结构常数不是拟合出来的，所以同样的市场永远同样的档，彻底治好旧状态机每次重训就变卦的毛病。"
+- module_path: scripts/ch/build_anchored_state_history.py
+  domain_id: D_REGIME
+  name_zh: "锚定态历史构建器"
+  name_en: ""
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "把沪深300十年行情过一遍状态机生成每天的档位历史：全量重算半分钟，写完自动查有没有没人用的死档位，还会随机抽三天手工复核。"
+- module_path: scripts/ch/apply_anchored_state_ddl.py
+  domain_id: D_REGIME
+  name_zh: "锚定态表建表脚本"
+  name_en: ""
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "在 ClickHouse 里建锚定态历史表的部署脚本，可重复跑，建完自动核对结构。"
 
 battle_map_steps:
 - step_id: BM-BUY-05
