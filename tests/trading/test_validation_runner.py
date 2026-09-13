@@ -237,6 +237,89 @@ class TestDecayWatch:
         assert "衰减" in line[12]
 
 
+# ── 备忘 96 批 2：衰减巡检按 materiality 分档接线 ──────────────────────────
+
+_TIER_CASES = [
+    # (node_id, baseline_hit, latest_hit) —— 两个节点都达衰减线，靠档位区分是否被扫到
+    ("TDM-E-L1", 0.80, 0.30),      # critical → monthly
+    ("TDM-E-L4-09", 0.90, 0.40),   # critical → monthly
+    ("TDM-X-S9", 0.60, 0.20),      # normal → semiannual
+]
+
+
+def _tier_tsv() -> str:
+    return "".join(
+        f"{nid}\tvalid\t2025-01-01\tVAL-A\t2025-01-02 10:00:00\t{b}\tagg_discrimination\n"
+        f"{nid}\tvalid\t2026-06-01\tVAL-B\t2026-06-02 10:00:00\t{l}\tagg_discrimination\n"
+        for nid, b, l in _TIER_CASES
+    )
+
+
+def test_load_node_scan_tiers_follows_materiality():
+    """档位表取自地图真源：critical 节点=monthly，normal 节点=semiannual。"""
+    from zephyr.trading.validation.decay_watch import load_node_scan_tiers
+
+    tiers = load_node_scan_tiers()
+    assert tiers, "地图真源应已回填 decay_scan_frequency（备忘 96 批 1）"
+    assert set(tiers.values()) <= {"monthly", "quarterly", "semiannual"}
+    # 批 1 回填事实：6 个 critical 节点月扫（断言用下限+档位存在性，不写死总数）
+    critical = [n for n, f in tiers.items() if f == "monthly"]
+    assert len(critical) >= 1, "至少应有 critical 节点挂月扫"
+    assert len(tiers) >= 100, f"地图节点应已全量分档，实得 {len(tiers)}"
+
+
+def test_detect_decays_filters_by_tier():
+    """按档扫描：monthly 档只扫 critical 节点，semiannual 档只扫 normal 节点。"""
+    from zephyr.trading.validation.decay_watch import detect_decays
+
+    rows = [
+        {"node_id": nid, "verdict": "valid", "window_end": w, "run_id": f"VAL-{w}",
+         "verdict_at": f"{w} 10:00:00", "hit_ratio": h, "validation_method": "agg_discrimination"}
+        for nid, b, l in _TIER_CASES for w, h in (("2025-01-01", b), ("2026-06-01", l))
+    ]
+    tiers = {"TDM-E-L1": "monthly", "TDM-E-L4-09": "monthly", "TDM-X-S9": "semiannual"}
+
+    monthly = detect_decays(rows, scan_frequency="monthly", tiers=tiers)
+    assert {d["node_id"] for d in monthly} == {"TDM-E-L1", "TDM-E-L4-09"}
+
+    semiannual = detect_decays(rows, scan_frequency="semiannual", tiers=tiers)
+    assert [d["node_id"] for d in semiannual] == ["TDM-X-S9"]
+
+    # 不传档位=全量扫描（旧行为向后兼容）
+    assert len(detect_decays(rows)) == 3
+
+
+def test_detect_decays_tier_requires_tiers_fail_closed():
+    """给了 scan_frequency 却不给档位表 → 报错，不静默退化成全量扫描。"""
+    import pytest
+    from zephyr.trading.validation import decay_watch
+
+    with pytest.raises(decay_watch.ValidationError):
+        decay_watch.detect_decays([], scan_frequency="monthly", tiers=None)
+    with pytest.raises(decay_watch.ValidationError):
+        decay_watch.detect_decays([], scan_frequency="weekly", tiers={})
+
+
+def test_run_decay_check_tier_end_to_end():
+    """整链：按档扫描 → 只写该档 decaying 行，run_id 带档位后缀，notes 留档位痕迹。"""
+    from zephyr.trading.validation.decay_watch import run_decay_check
+
+    captured = {}
+    tiers = {"TDM-E-L1": "monthly", "TDM-E-L4-09": "monthly", "TDM-X-S9": "semiannual"}
+    report = run_decay_check(
+        ledger_tsv=_tier_tsv(), as_of=AS_OF, scan_frequency="monthly",
+        tiers=tiers, writer=lambda t, c, b: captured.update(table=t, tsv=b) or True,
+    )
+    assert report["decayed"] == 2 and report["written"] is True
+    assert report["scan_frequency"] == "monthly"
+    assert report["scanned_nodes"] == 2
+    lines = captured["tsv"].decode("utf-8").strip().split("\n")
+    assert len(lines) == 2
+    assert all(line.split("\t")[4].startswith("TDM-E-") for line in lines)
+    assert "DECAY-20260909-120000-MONTHLY" in lines[0]
+    assert "monthly 档巡检" in lines[0]
+
+
 # ── 第二批：X 流（exit_counterfactual，Owner 2026-09-10 指令 T3）──────────
 
 _XFLOW_BASELINE_18 = {

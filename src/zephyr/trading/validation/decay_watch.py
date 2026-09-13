@@ -24,12 +24,19 @@ verdict=decaying 行；面板「验证档案」区渲染该行为"衰减中"徽�
 run_validation() 写台账成功后尾随调用本巡检（decay_check=True 默认开，失败不阻断验证批）。
 不挂 DataScheduler cron（巡检无新数据时空转）、不动 trigger_router（Human-Gated）。
 衰减判据本函数独立可手动触发（run_decay_check），调度解耦。
+
+重要性分档联动（备忘 96 批 2，2026-09-14）：节点在地图里带 materiality 档 →
+decay_scan_frequency（critical=monthly/high=quarterly/normal=semiannual）。
+按档扫描=调 run_decay_check(scan_frequency="monthly") 时只看该档节点——
+生死线节点月月查、边缘节点半年查一次，验证资源按影响面分配（SR 26-2）。
+不传 scan_frequency=全节点扫描（旧行为，向后兼容）。
 """
 
 from __future__ import annotations
 
 import logging
 from datetime import datetime
+from pathlib import Path
 from typing import Any, Callable
 
 from zephyr.data import ch_reader, ch_writer
@@ -45,6 +52,40 @@ _LEDGER_QUERY = (
     "SELECT node_id, verdict, toString(window_end), run_id, toString(verdict_at), hit_ratio,"
     " validation_method FROM c1_backtest.node_verdict ORDER BY node_id, verdict_at, window_end"
 )
+
+# 地图真源（备忘 96 批 1 已回填 materiality/decay_scan_frequency）——本模块只读不写
+_DEFAULT_MAP_PATH = Path(__file__).resolve().parents[4] / "config" / "trading_decision_map.yaml"
+
+# materiality → 缺省扫描频率（decay_scan_frequency 显式写了就以显式为准）
+_MATERIALITY_DEFAULT_FREQUENCY = {
+    "critical": "monthly",
+    "high": "quarterly",
+    "normal": "semiannual",
+}
+
+_SCAN_FREQUENCIES = ("monthly", "quarterly", "semiannual")
+
+
+def load_node_scan_tiers(map_path: Path | None = None) -> dict[str, str]:
+    """地图真源 → {node_id: scan_frequency}（备忘 96 批 2 接线点）。
+
+    优先级：节点显式 decay_scan_frequency > materiality 档推导 > 不纳入分档扫描。
+    地图解析走 decision_map.load_decision_map（SSOT，禁手挑 YAML）。
+    """
+    from zephyr.trading.decision_map import load_decision_map  # 延迟导入避免循环依赖
+
+    path = Path(map_path) if map_path is not None else _DEFAULT_MAP_PATH
+    if not path.exists():
+        raise ValidationError(f"地图真源不存在: {path}")
+    dm = load_decision_map(path)
+    tiers: dict[str, str] = {}
+    for node in dm.nodes:
+        freq = node.decay_scan_frequency
+        if not freq and node.materiality:
+            freq = _MATERIALITY_DEFAULT_FREQUENCY.get(str(node.materiality))
+        if freq:
+            tiers[node.node_id] = str(freq)
+    return tiers
 
 
 def _parse_ledger_tsv(tsv: str) -> list[dict[str, Any]]:
@@ -70,18 +111,36 @@ def _parse_ledger_tsv(tsv: str) -> list[dict[str, Any]]:
 
 
 def detect_decays(
-    rows: list[dict[str, Any]], decay_threshold: float = 0.50
+    rows: list[dict[str, Any]],
+    decay_threshold: float = 0.50,
+    scan_frequency: str | None = None,
+    tiers: dict[str, str] | None = None,
 ) -> list[dict[str, Any]]:
     """纯函数：台账历史 → 待追加的 decaying 行。
 
     判定：节点存在 verdict=valid 的首验行（基线 hit_ratio），且最新行 hit_ratio
     <= 基线×(1-decay_threshold) → 判衰减。基线/最新缺值（NULL）不判（宁漏勿误）。
+
+    分档扫描（备忘 96 批 2）：传 scan_frequency 时只判该档节点——
+    tiers 必须由 load_node_scan_tiers() 从地图真源取得；缺 tiers 一律报错 fail-closed
+    （宁可响一声也不静默退化成全量扫描，否则档位形同虚设）。
     """
+    if scan_frequency is not None:
+        if scan_frequency not in _SCAN_FREQUENCIES:
+            raise ValidationError(
+                f"未知扫描频率 {scan_frequency!r}，须为 {_SCAN_FREQUENCIES}"
+            )
+        if tiers is None:
+            raise ValidationError(
+                "按档扫描必须提供 tiers（load_node_scan_tiers() 取自地图真源）"
+            )
     by_node: dict[str, list[dict[str, Any]]] = {}
     for r in rows:
         by_node.setdefault(r["node_id"], []).append(r)
     out: list[dict[str, Any]] = []
     for node_id, hist in by_node.items():
+        if scan_frequency is not None and tiers.get(node_id) != scan_frequency:
+            continue
         valid_rows = [r for r in hist if r["verdict"] == "valid" and r["hit_ratio"] is not None]
         if not valid_rows:
             continue
@@ -101,6 +160,7 @@ def detect_decays(
                 "window_end": latest["window_end"],
                 "run_id": latest["run_id"],
                 "validation_method": latest.get("validation_method"),
+                "scan_frequency": (tiers or {}).get(node_id),
             })
     return out
 
@@ -111,26 +171,44 @@ def run_decay_check(
     writer: Callable[[str, str, bytes], bool] | None = None,
     ledger_tsv: str | None = None,
     as_of: datetime | None = None,
+    scan_frequency: str | None = None,
+    map_path: Path | None = None,
+    tiers: dict[str, str] | None = None,
 ) -> dict[str, Any]:
     """衰减巡检批：读台账 → detect_decays → 追加 decaying 行。
 
     writer/ledger_tsv 供测试注入；dry_run 只报不写。
+
+    分档扫描（备忘 96 批 2）：scan_frequency 给定时只扫该档节点，
+    档位表默认从地图真源 load_node_scan_tiers() 取（tiers 可注入供测试）。
     """
     writer = writer or (lambda t, c, b: ch_writer.write_tsv(t, c, b))
+    if scan_frequency is not None and tiers is None:
+        tiers = load_node_scan_tiers(map_path)
     if ledger_tsv is None:
         # 读路径走 ch_reader（#ARCH-CH-007：SELECT 应自动注入 FINAL 的正道）
         ledger_tsv = ch_reader.query(_LEDGER_QUERY)
     if not ledger_tsv:
-        return {"checked": 0, "decayed": 0, "written": False, "rows": []}
+        return {"checked": 0, "decayed": 0, "written": False, "rows": [],
+                "scan_frequency": scan_frequency, "scanned_nodes": 0}
     rows = _parse_ledger_tsv(ledger_tsv)
-    decays = detect_decays(rows, decay_threshold)
+    decays = detect_decays(rows, decay_threshold, scan_frequency, tiers)
+    scanned_nodes = (
+        len({r["node_id"] for r in rows})
+        if scan_frequency is None
+        else sum(1 for nid in {r["node_id"] for r in rows} if tiers.get(nid) == scan_frequency)
+    )
     if not decays:
-        return {"checked": len(rows), "decayed": 0, "written": False, "rows": []}
+        return {"checked": len(rows), "decayed": 0, "written": False, "rows": [],
+                "scan_frequency": scan_frequency, "scanned_nodes": scanned_nodes}
 
     now = (as_of or datetime.now()).strftime("%Y-%m-%d %H:%M:%S")
     run_id = f"DECAY-{(as_of or datetime.now()).strftime('%Y%m%d-%H%M%S')}"
+    if scan_frequency:
+        run_id = f"{run_id}-{scan_frequency.upper()}"
     out_rows = []
     for d in decays:
+        tier_note = f"｜{scan_frequency} 档巡检" if d.get("scan_frequency") else ""
         out_rows.append({
             "run_id": run_id,
             "snapshot_commit": "",
@@ -146,7 +224,7 @@ def run_decay_check(
             "verdict_at": now,
             "notes": (
                 f"衰减巡检：首验命中 {d['baseline_hit']:.0%} → 最新 {d['latest_hit']:.0%}"
-                f"（衰减 {d['decay']:.0%}>=50% 土规线）——报警触发复审（PB-14）"
+                f"（衰减 {d['decay']:.0%}>=50% 土规线）——报警触发复审（PB-14）{tier_note}"
             ),
         })
     tsv = ("\n".join(
@@ -160,7 +238,14 @@ def run_decay_check(
         written = writer(_VERDICT_TABLE, _VERDICT_COLUMNS, tsv)
         if not written:
             logger.error("decaying 行写入未确认（run_id=%s）", run_id)
-    return {"checked": len(rows), "decayed": len(out_rows), "written": written, "rows": out_rows}
+    return {"checked": len(rows), "decayed": len(out_rows), "written": written,
+            "rows": out_rows, "scan_frequency": scan_frequency,
+            "scanned_nodes": scanned_nodes}
 
 
-__all__ = ["detect_decays", "run_decay_check", "ValidationError"]
+__all__ = [
+    "detect_decays",
+    "run_decay_check",
+    "load_node_scan_tiers",
+    "ValidationError",
+]
