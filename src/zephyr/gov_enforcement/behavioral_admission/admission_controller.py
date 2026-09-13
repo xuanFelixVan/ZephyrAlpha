@@ -66,6 +66,7 @@ from __future__ import annotations
 import logging
 import threading
 import time
+from collections.abc import Callable
 from enum import Enum
 from typing import Any
 
@@ -141,13 +142,18 @@ class AdmissionMetrics(BaseModel):
 
 # class-name-alias: migrated from governance/behavioral_admission; pre-existing same-name class in trading/integration (ARCH-034 debt, to be resolved in dedicated cleanup)
 class _TokenBucket:
-    __slots__ = ("_burst", "_last_refill", "_lock", "_rate", "_tokens")
+    __slots__ = ("_burst", "_clock", "_last_refill", "_lock", "_rate", "_tokens")
 
-    def __init__(self, rate: float, burst: float) -> None:
+    def __init__(
+        self, rate: float, burst: float, clock: Callable[[], float] | None = None
+    ) -> None:
         self._rate = rate
         self._burst = burst
+        # 时钟注入（DI seam，#ARCH-DI-SEAM-001 豁免摘除改造）：默认 time.monotonic，
+        # 测试可注入确定性时钟（token 回填逻辑可测）；先例=HealthMonitor now 参数
+        self._clock = clock or time.monotonic
         self._tokens = burst
-        self._last_refill = time.monotonic()
+        self._last_refill = self._clock()
         self._lock = threading.Lock()
 
     def consume(self, tokens: float = 1.0) -> bool:
@@ -159,7 +165,7 @@ class _TokenBucket:
             return False
 
     def _refill(self) -> None:
-        now = time.monotonic()
+        now = self._clock()
         elapsed = now - self._last_refill
         self._tokens = min(self._burst, self._tokens + elapsed * self._rate)
         self._last_refill = now
@@ -188,9 +194,12 @@ class _CircuitBreaker:
         self,
         failure_threshold: int = 50,
         recovery_timeout_s: float = 30.0,
+        clock: Callable[[], float] | None = None,
     ) -> None:
         self._failure_threshold = failure_threshold
         self._recovery_timeout_s = recovery_timeout_s
+        # 时钟注入（DI seam，#ARCH-DI-SEAM-001 豁免摘除改造）：半开恢复逻辑可确定性测试
+        self._clock = clock or time.monotonic
         self._failure_count: int = 0
         self._state = self._STATE_CLOSED
         self._last_failure_time: float = 0.0
@@ -199,7 +208,7 @@ class _CircuitBreaker:
     def record_failure(self) -> None:
         with self._lock:
             self._failure_count += 1
-            self._last_failure_time = time.monotonic()
+            self._last_failure_time = self._clock()
             if self._failure_count >= self._failure_threshold:
                 self._state = self._STATE_OPEN
 
@@ -212,7 +221,7 @@ class _CircuitBreaker:
     def is_open(self) -> bool:
         with self._lock:
             if self._state == self._STATE_OPEN:
-                elapsed = time.monotonic() - self._last_failure_time
+                elapsed = self._clock() - self._last_failure_time
                 if elapsed >= self._recovery_timeout_s:
                     self._state = self._STATE_HALF_OPEN
                     return False
@@ -223,7 +232,7 @@ class _CircuitBreaker:
     def state(self) -> str:
         with self._lock:
             if self._state == self._STATE_OPEN:
-                elapsed = time.monotonic() - self._last_failure_time
+                elapsed = self._clock() - self._last_failure_time
                 if elapsed >= self._recovery_timeout_s:
                     self._state = self._STATE_HALF_OPEN
             return self._state
@@ -238,7 +247,7 @@ class _CircuitBreaker:
         with self._lock:
             if self._state != self._STATE_OPEN:
                 return 0
-            remaining = self._recovery_timeout_s - (time.monotonic() - self._last_failure_time)
+            remaining = self._recovery_timeout_s - (self._clock() - self._last_failure_time)
             return max(0, int(remaining * 1000))
 
 

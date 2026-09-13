@@ -860,3 +860,12 @@ acknowledged:
   note: 2026-09-13 schemas-split-20260912：signal_ashare/src 平铺债拆分批（74 移动+全仓 import 改写）使留根/消费方 M 态文件进入 CloneGuard 扫描视野，与移动文件新路径报出存量克隆——重复在 HEAD 既有，非本批引入；函数合并清偿归 DEDUP 专项批
 - stable_key: "src/zephyr/signal_ashare/mainline_candidates.py:_daily_returns||src/zephyr/signal_ashare/sector/sector_divergence.py:_daily_returns"
   note: 2026-09-13 schemas-split-20260912：signal_ashare/src 平铺债拆分批（74 移动+全仓 import 改写）使留根/消费方 M 态文件进入 CloneGuard 扫描视野，与移动文件新路径报出存量克隆——重复在 HEAD 既有，非本批引入；函数合并清偿归 DEDUP 专项批
+
+  # 2026-09-13 factory-bottleneck-20260913：derive_stability_fallback vs derive_autonomy_fallback
+  # 结构同构（单行词表 .get+默认值）但语义各异（stability 三值映射 vs autonomy 三值映射，
+  # 真源各为 node_type_vocabulary.yaml 不同字段）——合并=两个域映射的过早抽象，dismissed 登记；
+  # 存量雷同（2026-06-30 G3/G4 修复引入），本次因文件被 DI seam 盲区修复触达而浮现
+- id: "scripts/governance/generate_project_depgraph.py:derive_stability_fallback:00000000||scripts/governance/generate_project_depgraph.py:derive_autonomy_fallback:00000000"
+  verdict: dismissed
+  stable_key: "scripts/governance/generate_project_depgraph.py:derive_autonomy_fallback||scripts/governance/generate_project_depgraph.py:derive_stability_fallback"
+  note: "2026-09-13：单行词表 lookup 结构撞车语义各异（stability vs autonomy 映射），合并=过早抽象；存量雷同非真重复"

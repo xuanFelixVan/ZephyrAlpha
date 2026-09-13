@@ -132,7 +132,72 @@ class TestPanoramaDomainDerivation:
 
 
 # ============================================================================
-# Test 2: CLI smoke —— --help 可运行（只读，不写 DB）
+# Test 2b: DI seam 检查器 kw-only 盲区回归（#ARCH-DI-SEAM-001，2026-09-13 治本）
+# ============================================================================
+
+
+class TestDiSeamKwOnlyBlindSpot:
+    """kw-only 参数是合法 DI 接缝（v2 检测逻辑）——AgentOrchestrator 误判防复发。
+
+    病根（2026-09-13 Owner 复核发现）：_init_has_injectable_param 只扫位置参数，
+    ``__init__(self, router, *, dep: Dep | None = None)`` 式"全 kw-only 注入"
+    构造器被误判缺 seam，靠豁免清单遮蔽近 2 个月。v2 修复后豁免清零。"""
+
+    @staticmethod
+    def _init(src: str):
+        import ast
+
+        return ast.parse(src).body[0].body[0]  # class X: def __init__
+
+    def test_kwonly_none_default_is_seam(self, gpd):
+        """kw-only 参数默认 None = 可注入接缝（AgentOrchestrator 形态）。"""
+        init = self._init(
+            "class A:\n"
+            "    def __init__(self, router, *, tool_invoker: TI | None = None, monitor=None) -> None:\n"
+            "        pass\n"
+        )
+        assert gpd._init_has_injectable_param(init) is True
+
+    def test_kwonly_protocol_annotation_is_seam(self, gpd):
+        """kw-only 参数注解含 Protocol/ABC/Interface = 接缝。"""
+        init = self._init(
+            "class A:\n"
+            "    def __init__(self, *, dep: SomeProtocol) -> None:\n"
+            "        pass\n"
+        )
+        assert gpd._init_has_injectable_param(init) is True
+
+    def test_positional_only_no_seam_still_flagged(self, gpd):
+        """位置参数无注解无默认 → 仍判违规（不放松旧语义）。"""
+        init = self._init(
+            "class A:\n"
+            "    def __init__(self, rate: float, burst: float) -> None:\n"
+            "        pass\n"
+        )
+        assert gpd._init_has_injectable_param(init) is False
+
+    def test_mixed_kwonly_none_default(self, gpd):
+        """位置参数无接缝 + kw-only 带 None 默认 → 有接缝（混合形态）。"""
+        init = self._init(
+            "class A:\n"
+            "    def __init__(self, rate: float, burst: float, clock=None) -> None:\n"
+            "        pass\n"
+        )
+        assert gpd._init_has_injectable_param(init) is True
+
+    def test_agent_orchestrator_and_admission_pass(self, gpd, tmp_path):
+        """实弹回归：三个曾豁免模块在豁免清零后必须零违规（v2+时钟注入改造）。"""
+        for rel in (
+            "src/zephyr/orchestrator/agent_orchestrator.py",
+            "src/zephyr/gov_enforcement/behavioral_admission/admission_controller.py",
+            "src/zephyr/trading/auto_runtime_core.py",
+        ):
+            raw = gpd._check_file_di_seam_raw(_REPO_ROOT / rel)
+            assert raw == [], f"{rel} 豁免摘除后仍有违规: {raw}"
+
+
+# ============================================================================
+# Test 3: CLI smoke —— --help 可运行（只读，不写 DB）
 # ============================================================================
 class TestCLISmoke:
     """验证 generate_project_depgraph.py CLI 入口可运行。"""

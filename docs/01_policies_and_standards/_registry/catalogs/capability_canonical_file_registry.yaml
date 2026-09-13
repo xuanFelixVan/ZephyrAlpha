@@ -12094,13 +12094,10 @@ creation_tokens:
   token: xt2-retest-2026-09-13-xtreme-redblue-retest-20260913
   created_by: factory-bottleneck-20260913
   capability: xt2_retest
-di_seam_exemptions:
-- module_path: zephyr.trading.auto_runtime_core.AutoRuntimeCore
-  reason: P0-5 LSG DI seam 标杆，已有 DI 但 AST 模式不匹配（动态注入）
-  created: '2026-07-18'
-- module_path: zephyr.gov_enforcement.behavioral_admission.admission_controller.AdmissionController
-  reason: 行为准入控制器，依赖图已知 DI seam，待后续重构
-  created: '2026-07-18'
-- module_path: zephyr.orchestrator.agent_orchestrator.AgentOrchestrator
-  reason: 编排器核心，P1-3 RoutingRole 改造期暂豁免
-  created: '2026-07-18'
+# di_seam_exemptions 清零（2026-09-13 Owner 裁定"直接改造"）：
+# 三条豁免全部过时摘除——AutoRuntimeCore 实测已通过（动态注入重构完成）；
+# AdmissionController 主类已通过（global_config | None=None 接缝），文件内私有小类
+# _TokenBucket/_CircuitBreaker 经时钟注入改造获得真实接缝；AgentOrchestrator 本就
+# 有 6 个 kw-only 可注入参数，被检查器 kw-only 盲区误判（generate_project_depgraph
+# _init_has_injectable_param 治本后通过）。检测器 v2+豁免清零=零豁免运行。
+di_seam_exemptions: []

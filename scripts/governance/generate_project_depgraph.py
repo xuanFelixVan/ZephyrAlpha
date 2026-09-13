@@ -1439,8 +1439,13 @@ def extract_public_api(filepath: Path) -> str:
     return _extract_public_api_from_tree(tree)
 
 
-def extract_md_references(filepath: Path) -> list:
-    """extract_md_references implementation."""
+def extract_id_references(filepath: Path) -> list:
+    """从文件内容提取 ARCH-* 引用 id（md/json 通用——ID_PATTERN 扫描与扩展名无关）。
+
+    治本（2026-09-13，CloneGuard extract 级阻断实证）：extract_md_references 与
+    extract_json_references 两函数 100% 逐字节相同（同一 ID_PATTERN 扫描）——
+    真重复合并为单一实现，两个旧名保留为别名（调用点零改动）。
+    """
     refs = []
     try:
         with open(filepath, encoding="utf-8", errors="ignore") as f:
@@ -1452,17 +1457,9 @@ def extract_md_references(filepath: Path) -> list:
     return list(set(refs))
 
 
-def extract_json_references(filepath: Path) -> list:
-    """extract_json_references implementation."""
-    refs = []
-    try:
-        with open(filepath, encoding="utf-8", errors="ignore") as f:
-            content = f.read()
-        for m in ID_PATTERN.finditer(content):
-            refs.append(m.group(1))
-    except Exception:  # noqa: BLE001 — 单文件读取失败返回已收集引用，不中断全量扫描
-        pass
-    return list(set(refs))
+# 向后兼容别名（调用点零改动；CloneGuard 扫描按函数名注册，别名指向同实现）
+extract_md_references = extract_id_references
+extract_json_references = extract_id_references
 
 
 def classify_file(rel_path: str) -> str:
@@ -3131,6 +3128,10 @@ def _init_has_injectable_param(init_func: ast.FunctionDef) -> bool:
     """判断 __init__ 是否含可注入参数（True=有 seam，False=候选违规）。
 
     跳过 *args/**kwargs-only 动态签名。
+    kw-only 参数同样是合法 DI 接缝（2026-09-13 盲区治本，#ARCH-DI-SEAM-001）：
+    原实现只扫位置参数——``__init__(self, router, *, dep: Dep | None = None)``
+    式"全 kw-only 注入"构造器被误判缺 seam（AgentOrchestrator 实证：6 个可注入
+    kw-only 参数仍被标违规，靠豁免清单遮蔽近 2 个月）。治本后豁免可摘除。
     """
     args = init_func.args
     named = args.args[1:]  # 跳过 self
@@ -3144,6 +3145,14 @@ def _init_has_injectable_param(init_func: ast.FunctionDef) -> bool:
             default_src = ast.unparse(default) if hasattr(ast, "unparse") else ""
             if default_src == "None":
                 return True  # | None = None 可注入
+    # kw-only 参数：注解含 Protocol/ABC/Interface 或默认值 None 均为 DI 接缝
+    for arg, default in zip(args.kwonlyargs, args.kw_defaults):
+        if _is_injectable_param(arg):
+            return True
+        if default is not None:
+            default_src = ast.unparse(default) if hasattr(ast, "unparse") else ""
+            if default_src == "None":
+                return True  # *, dep: Dep | None = None 可注入
     return False
 
 
@@ -3168,7 +3177,7 @@ def _class_has_di_seam(class_node: ast.ClassDef) -> bool:
 # 无变化文件直接命中跳过 ast.parse；失效：检测逻辑变更 → bump _DI_SEAM_LOGIC_VERSION 全失效。
 # 豁免清单在缓存命中后运行时过滤（豁免变更无需失效缓存）。
 # ============================================================================
-_DI_SEAM_LOGIC_VERSION = 1  # _class_has_di_seam 等检测逻辑变更时 bump → 全缓存失效
+_DI_SEAM_LOGIC_VERSION = 2  # v2（2026-09-13）：kw-only 参数纳入可注入接缝扫描（盲区治本，#ARCH-DI-SEAM-001）→ 全缓存失效
 _DI_SEAM_CACHE_FILE = PROJECT_ROOT / ".runtime" / "depgraph_di_seam_cache.json"
 
 
