@@ -52,17 +52,24 @@ def cmd_load(files: list[str]) -> int:
             print(f"[ERROR] 文件不存在: {p}")
             return 2
         txt = p.read_bytes().decode("gbk", errors="replace")
-        for ln in txt.splitlines()[1:]:
+        lines = txt.splitlines()
+        header = [h.strip() for h in lines[0].split("\t")]
+        if "所属概念" not in header:
+            print(f"[ERROR] {p.name} 表头无'所属概念'列,口径不符")
+            return 2
+        cidx = header.index("所属概念")
+        for ln in lines[1:]:
             parts = ln.split("\t")
-            if len(parts) < 3 or not parts[1].strip():
+            if len(parts) <= cidx or not parts[1].strip():
                 continue
             code, name = parts[0].strip(), parts[1].strip()
             sym = code[-6:] + "." + code[:2].upper() if code[:2].upper() in ("SZ", "SH", "BJ") else code
-            ccol = next((c for c in parts[2:] if (";" in c or "；" in c) and "所属概念" not in c and "行业" not in c[:4]), "")
-            for tag in re.split(r"[;；]", ccol.strip("【】")):
+            for tag in re.split(r"[;；]", parts[cidx].strip("【】")):
                 tag = tag.strip()
                 if not tag or MARKET_TAG.search(tag):
                     continue
+                if len(tag) > 20 or re.search(r"主营|有限公司|股份公司", tag):
+                    continue  # 简介污染防御: 真概念标签=2-15字短词
                 rows.append((sym, name, tag, SD))
     if not rows:
         print("[ERROR] 解析出 0 行,文件口径不符")
