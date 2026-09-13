@@ -30,6 +30,13 @@ capabilities:
   description: 数据操作 SOP——回灌/修复/判重/PIT/探针全流程方法论。触发=数据回灌/坏数据修复/表结构变更/判重/数据探针/缺口处置；三步验证+幂等回补+FINAL
     逐位验证+PIT 口径+勿物理删+探针手法+实战范例索引。canonical = docs/01_policies_and_standards/sop/data_ops_sop/data_ops_policy.md。
   canonical_override: docs/01_policies_and_standards/sop/data_ops_sop/data_ops_policy.md
+- capability_id: tdm_consumption_policy
+  aliases:
+  - TDM消费场景
+  - tdm_consumption
+  - 消费场景规程
+  description: 交易决策全景图消费场景规程——S1-S9 九场合（施工前找节点/策略挂图/回测预检/改判据/寻路/引擎变更/退役/复盘/转级）必须打开 TDM 地图做什么。canonical = docs/01_policies_and_standards/sop/trading_decision_map_sop/tdm_consumption_policy.md。
+  canonical_override: docs/01_policies_and_standards/sop/trading_decision_map_sop/tdm_consumption_policy.md
 - capability_id: qmt_file_bridge_broker
   aliases:
   - QmtFileBridgeBroker
@@ -12404,4 +12411,8 @@ creation_tokens:
   token: indicator-mining-batch4-20260914
   created_by: st-tilib-20260914c
   capability: technical_indicator
+- file: docs/01_policies_and_standards/sop/trading_decision_map_sop/tdm_consumption_policy.md
+  token: tdm-consumption-policy-20260915
+  created_by: st-sopreorg-20260914
+  capability: tdm_consumption_policy
 di_seam_exemptions: []

@@ -25,11 +25,14 @@
     F4_BDI_MOMENTUM_Z20   c1_market.alt_shipping_index (BDI)      20 日动量 vs 252 日分布 z 分数
     F14_BTC_MOMENTUM_30D  c1_market.crypto_kline_daily (BTCUSDT)  30 日收益 %
     F15_FNG_INDEX         c1_market.sentiment_panel (fear_greed_index) 恐贪 0-100 + 极值分档
-    F23_LIMITUP_EMOTION   c1_market.limit_up_down (涨停)          连板高度/晋级率/涨停家数 -> 阶段
-    F7_TYPHOON_EVENT      内置事件表（11 次登陆台风，已实弹验证 BDI 后 10 日均值 +8.86%）
+    F23_LIMITUP_EMOTION   c1_market.limit_up_down + kline×stk_limit  连板高度/晋级率/炸板率 -> 阶段
+    F7_TYPHOON_EVENT      台风登陆事件（landfall_history×track 联合推导，116 场）
 
 消费定位：market regime 输入（轮动/风险节流），非个股 alpha；F15 极值反转与 F23 阶段
 为 C4 双窗及格策略（恐慌反弹）的信号源候选，毕业前不得进决策硬链。
+F7 校准（P0 全样本事件研究 c1a962e9，217 场）：先导 11 场 +8.86% 系季节性+幸存者偏差——
+季节调整后台风→BDI 收益不可预测（各切面 t 全不过线）。F7 定位=风险日历/状态标记
+（regime 层），禁作 BDI 收益预测因子；复开条件登记于 EVT-TYPHOON-BDI-001 档案。
 """
 
 from __future__ import annotations
@@ -277,6 +280,7 @@ class AltRegimeSignalProvider(IngestProviderBase):
         for d, sym in data:
             by_date.setdefault(d, set()).add(sym)
         dates = sorted(by_date)
+        zhaban_map = self._compute_zhaban(ch_reader, dates[0] if dates else None)
         out: list[tuple] = []
         streaks: dict[str, int] = {}
         prev_symbols: set[str] = set()
@@ -286,12 +290,43 @@ class AltRegimeSignalProvider(IngestProviderBase):
             height = max(streaks.values()) if streaks else 0
             promotion = (len(today & prev_symbols) / len(prev_symbols)) if prev_symbols else float("nan")
             phase = limitup_emotion_phase(height, promotion) if promotion == promotion else "warmup"
+            zb = zhaban_map.get(d)
+            # 炸板率 >40% = 分歧预警（挖矿 R10 社区共识）：高潮封顶降级为分歧（v1.1 provisional）
+            if zb is not None and zb > 0.4 and phase == "高潮":
+                phase = "分歧"
             out.append(self._row(
                 d, "F23_LIMITUP_EMOTION", round(promotion, 4) if promotion == promotion else 0.0,
                 phase,
-                {"height": height, "limit_count": len(today), "promotion": round(promotion, 4) if promotion == promotion else None},
+                {"height": height, "limit_count": len(today),
+                 "promotion": round(promotion, 4) if promotion == promotion else None,
+                 "zhaban_rate": round(zb, 4) if zb is not None else None},
             ))
             prev_symbols = today
+        return out
+
+    @staticmethod
+    def _compute_zhaban(ch_reader, min_date: str | None) -> dict[str, float]:
+        """炸板率：触及涨停价未封住 / (封板+炸板)。
+
+        触及=high≥limit_up；封板=close≥limit_up；炸板=high≥limit_up 且 close<limit_up。
+        涨停价取 stk_limit 规则计算价（各板块 10/20/5% 差异由价格表吸收）。
+        """
+        where = f"AND trade_date >= '{min_date}'" if min_date else ""
+        tsv = ch_reader.query(
+            "SELECT trade_date, countIf(high >= limit_up AND close < limit_up), "
+            "countIf(close >= limit_up) "
+            "FROM c1_market.kline_daily INNER JOIN c1_market.stk_limit "
+            "USING (symbol_canonical, trade_date) "
+            f"WHERE limit_up > 0 {where} GROUP BY trade_date ORDER BY trade_date"
+        )
+        out: dict[str, float] = {}
+        for ln in tsv.strip().split("\n"):
+            if not ln.strip():
+                continue
+            d, zb, sealed = ln.split("\t")
+            total = int(zb) + int(sealed)
+            if total > 0:
+                out[d.strip()] = int(zb) / total
         return out
 
     def _compute_typhoon(self, ch_reader) -> list[tuple]:

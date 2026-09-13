@@ -29,7 +29,7 @@ module_id / domain_id / submodule_id 格式校验真源（裁定#208 双轨制 +
 
 正则真源（本文件是唯一真源）:
   - MODULE_ID_LAYER_MASTER_RE: MOD-{LAYER_CODE}-{SEQ}（如 MOD-INF-005）
-  - MODULE_ID_DOMAIN_DERIVED_RE: MOD-{DOMAIN_FRAGMENT}[-NNN]（如 MOD-SHARED-002）
+  - MODULE_ID_DOMAIN_DERIVED_RE: MOD-{DOMAIN_FRAGMENT}[-NNN]（如 MOD-SHARED-002；段分隔符 -/_ 等价，裁定#232）
   - MODULE_ID_SHARED_RE: SH-{ABBR}-{NNN}（如 SH-DB-001）
   - SUBMODULE_ID_RE: D-{DOMAIN}-NNN（如 D-FACTOR-01，仅用于蓝图内部子模块编号）
   - DOMAIN_ID_RE: D_{DOMAIN}（如 D_GOVERNANCE，无序号）
@@ -71,8 +71,10 @@ MODULE_ID_LAYER_MASTER_RE = re.compile(
     r"^MOD-[A-Z][A-Z0-9]{1,5}-[0-9]+\Z"
 )  # layer-master 轨: MOD-{LAYER_CODE}-{SEQ} 序号必填（LAYER_CODE 大写缩写）
 MODULE_ID_DOMAIN_DERIVED_RE = re.compile(
-    r"^MOD-[A-Za-z][A-Za-z0-9]{0,19}(?:_[A-Za-z][A-Za-z0-9]{0,19})*(?:-[0-9]+)?\Z"
-)  # 派生轨: MOD-{DOMAIN_FRAGMENT}[-NNN] 序号可选（每段首字符字母+后续可含数字，兼容 v2/l27 等）
+    r"^MOD-[A-Za-z][A-Za-z0-9]{0,19}(?:[-_][A-Za-z][A-Za-z0-9]{0,19})*(?:-[0-9]+)?\Z"
+)  # 派生轨: MOD-{DOMAIN_FRAGMENT}[-NNN] 序号可选（段分隔符 - 或 _ 等价——裁定#232，2026-09-14：
+#  AI 会话天然写连字符（MOD-INT-NEWS-CHAIN），原正则仅容下划线致共享注册表反复冻结；
+#  层主轨仍要求单段大写+纯数字序号，两轨可区分性不受影响；存量连字符 id 就地合法化（零文件翻动））
 MODULE_ID_SHARED_RE = re.compile(
     r"^SH-[A-Z]{1,20}(?:_[A-Z]{1,20})*-[0-9]+\Z"
 )  # 跨域共享轨: SH-{ABBR}-{NNN} 序号必填（ABBR 大写缩写）

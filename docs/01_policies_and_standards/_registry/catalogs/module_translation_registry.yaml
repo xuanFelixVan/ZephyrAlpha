@@ -48813,7 +48813,7 @@ entries:
   name_en: ""
   desc_zh: ""
   desc_en: ""
-  plain_zh: "alt_regime市场级信号provider（C-1消费端首批：把另类数据算成市场级regime信号——BDI动量/币圈动量/恐贪极值/涨停情绪周期+台风事件日历）"
+  plain_zh: "把另类数据算成市场级regime信号的纯函数计算器：BDI二十日动量z分位、BTC三十日动量、恐贪极值分档、涨停连板高度晋级率炸板率和情绪阶段判定，外加台风登陆事件日历推导"
 - module_path: schemas/categories/market_alt_regime_signal.py
   domain_id: D_DATA
   name_zh: "alt_regime_signal表DDL"
@@ -48834,7 +48834,7 @@ entries:
   name_en: ""
   desc_zh: ""
   desc_en: ""
-  plain_zh: "市场级另类信号计算器的纯函数单测：用合成数据验证BDI二十日动量z分位、BTC三十日动量、恐贪极值分档、涨停连板高度晋级率和情绪阶段判定的计算正确性，不依赖数据库和网络"
+  plain_zh: "市场级另类信号计算器的纯函数单测：用合成数据验证BDI动量z分位、BTC动量、恐贪分档、涨停连板晋级率炸板率和情绪阶段判定，并用stub注入验证五信号全链路与单信号降级"
 - module_path: scripts/backtest/eval_f2_layers_styles.py
   domain_id: D_BACKTEST
   name_zh: "因子分层分域出证器"
