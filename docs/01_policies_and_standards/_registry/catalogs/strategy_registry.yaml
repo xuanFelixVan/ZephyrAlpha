@@ -125,6 +125,42 @@ entry_schema:
   code_fingerprint: str|null    # 实现指纹 Code Fingerprint — 代码侧实现（参数/签名/AST）canonical hash 快照，由扫描器写入；库侧快照与代码重算不一致=漂移告警（门禁B reconciler 对账，告警不自动双写）；null=未计算
 
 strategies:
+
+  - strategy_id: "STR-E-TIMING-001"
+    name: "恐慌反弹分布预测"
+    name_zh: "恐慌反弹分布预测"
+    aliases: ["panic_rebound", "lane_e_baseline"]
+    strategy_class: value_reversal
+    sleeve: "alpha"
+    alpha_sources: []
+    variant_of: null
+    entry_logic: "昨日跌幅≤-1.5% 且今日跌幅≤-1.4% 时买入中证1000，持有20交易日后回债"
+    exit_logic: "持有满20交易日自动退出（日频检查 day%20==0）"
+    position_sizing: "波动率目标化 K=target_vol/σ，EWMA 平滑，区间截断"
+    risk_rules: []
+    holding_period: "波段"
+    benchmark_id: null
+    universe_id: null
+    cost_model_id: null
+    module_id: MOD-BT-084
+    doc_ref: "docs/_working/2026-09-13-strategy-factory-pipeline-discussion.md"
+    code_path: "scripts/backtest/lane_e_quantile_baseline.py"
+    lifecycle_status: "sim"
+    status: "active"
+    version: "1.0.0"
+    created_at: 2026-09-13
+    updated_at: 2026-09-13
+    owner: "st-zcode-c4-20260912"
+    decay_detection_method: null
+    decay_threshold: null
+    last_decay_scan_at: null
+    adaptation_level: 0
+    origin: "llm_assisted"
+    distilled_to_code: true
+    evidence: "三窗口全绿：IS 2020-2023 Sharpe=+1.15 / OOS 2024-2026 Sharpe=+0.83 / S3 2016-2019 Sharpe=+0.98；年衰减11%；唯一三窗全绿策略（run=SCR-C4-OOS2-20260913/SCR-C4-2016-2019-sample3）；台账=CAND-e3da6fa71af1"
+    tags: ["恐慌反弹", "超跌反转", "分布预测", "三窗全绿"]
+    algorithm_status: "quantized"
+
   - strategy_id: "STR-MULTIFACTOR-027"
     name: "双底右侧确认四条件"
     name_zh: "双底右侧确认四条件"
