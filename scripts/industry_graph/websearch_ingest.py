@@ -553,7 +553,13 @@ def cmd_ingest(batch_path: str) -> int:
                      act, merged, merged, merged),
                 )
             elif typ == "node":
-                cid = _chain_id(r["chain_name"])
+                # 2026-09-14 legacy-id 支持: node/node_edge/node_company 可带 chain_id 显式寻址
+                # (chain/placement_close 同款先例,带值 MUST 命中存量行防伪造)
+                cid = r.get("chain_id") or _chain_id(r["chain_name"])
+                if r.get("chain_id"):
+                    cur.execute(_SQL_CHAIN_EXISTS, (cid,))
+                    if cur.fetchone() is None:
+                        raise ValueError(f"node.chain_id 寻址不存在(防伪,禁造新id行): {cid}")
                 nid = _resolve_node(cur, cid, r["name"])
                 if nid is not None:
                     # drill_manual=Owner 钉死值: AI 更新不得触碰该两列(节点模板裁定1)
@@ -582,7 +588,11 @@ def cmd_ingest(batch_path: str) -> int:
                          r.get("function_role"), r.get("child_chain_id"), r.get("drill_status")),
                     )
             elif typ == "node_edge":
-                cid = _chain_id(r["chain_name"])
+                cid = r.get("chain_id") or _chain_id(r["chain_name"])
+                if r.get("chain_id"):
+                    cur.execute(_SQL_CHAIN_EXISTS, (cid,))
+                    if cur.fetchone() is None:
+                        raise ValueError(f"node_edge.chain_id 寻址不存在(防伪,禁造新id行): {cid}")
                 fn, tn = _resolve_node(cur, cid, r["from_node"]), _resolve_node(cur, cid, r["to_node"])
                 if fn is None or tn is None:
                     raise ValueError(
@@ -595,7 +605,11 @@ def cmd_ingest(batch_path: str) -> int:
                     (fn, tn, r.get("edge_type", "structure"), sd, mkt),
                 )
             elif typ == "node_company":
-                cid = _chain_id(r["chain_name"])
+                cid = r.get("chain_id") or _chain_id(r["chain_name"])
+                if r.get("chain_id"):
+                    cur.execute(_SQL_CHAIN_EXISTS, (cid,))
+                    if cur.fetchone() is None:
+                        raise ValueError(f"node_company.chain_id 寻址不存在(防伪,禁造新id行): {cid}")
                 nid = _resolve_node(cur, cid, r["node_name"])
                 if nid is None:
                     raise ValueError(
