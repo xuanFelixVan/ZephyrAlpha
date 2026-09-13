@@ -92,7 +92,39 @@ ttl: task_bound
 - commit：84f4679a（设计）→ 7057d15c49（W1 表+store）→ 9ca0f62b95（W2 回填器
   +canonical YAML 修复）→ 59544e35cb（W3 统计+provider）→ 1190e235b9（W4 引擎
   注入物+evidence+DS/JOB）→ a1b5c7f525（P2-a 蜡烛）→ 271c62d27f68（P2-c 变换层）
-  → ac52af85f6c4（目录同步 77/77）→ c963b928aa（classic2 头肩三重）→ classic3
-  三角矩形楔形（本批）。
+  → ac52af85f6c4（目录同步 77/77）→ c963b928aa（classic2 头肩三重）→ 7ea45c09281b
+  （classic3 三角矩形楔形）→ d95e290421（治理报告）→ 2d65147cf10c（类目补登）。
 - 形态实现：15 → 102（77 蜡烛+15 原有+4 头肩三重+6 三角矩形楔形）。
-- 事件表 131.9 万（重扫扩容中）；胜率统计/机生 evidence/DS-243/244+JOB-108 已登记。
+- 事件表约 2340 万（重扫扩容后）；胜率统计 4309 行；机生 evidence 12 条。
+
+## 四、P3 Bulkowski 差额候选清单（EOC3 75 vs 目录 62，待原书核对后登记，禁自编）
+
+目录 PAT-CHART 62 条已覆盖 Bulkowski 经典族的绝大部分（双顶底/头肩/三重/三角×3/
+楔形×2/矩形/旗形×3/杯柄×2/圆弧×2/扩散/钻石/岛反/扇贝×2/牛角×2/管道×2/冲回×2/
+V×2/死猫跳/三峰穹顶/三升谷三降峰/BigW BigM/高紧旗/复合头肩/Wolfe/Quasimodo/VCP/
+Ross Hook/1-2-3 等）。逐条比对后疑似差额候选（**候选≠登记**，须 EOC3 原书或权威
+来源核对定义与统计后再走 CREATE 流程）：
+
+| 候选 | 说明 | 优先级 |
+|---|---|---|
+| Measured Move Up / Down（量度涨跌） | 最经典缺口，与箱体/旗形目标价直接联动 | 高 |
+| Broadening Right-angled Ascending / Descending（直角扩散×2） | 目录 021 只有对称扩散 | 高 |
+| Eve & Adam Double Bottom / Top（亚当夏娃双底/顶变体） | Bulkowski 双底顶细分族 | 中 |
+| Three Drives（三驱） | 谐波族近亲，fib 类已有铺垫 | 中 |
+| Inverted Dead Cat Bounce（反死猫跳） | 事件形态族 | 中 |
+| Straight-Line Run（直线运行） | 事件形态族 | 中 |
+| Earnings Flag（财报旗形） | 事件形态族，A股语境=业绩缺口形态 | 低（依赖财报事件层） |
+| Gutters（双沟） | 罕见，统计样本薄 | 低 |
+
+## 五、IND-REV-001 退役协调提案（挂 Owner 门位，未执行）
+
+- 现状：P2-a 后 77 条蜡烛实现已全在 `candlestick_scanner.py`（目录 code_path
+  77/77 已迁移）；指标域 `factor/technical_indicators/reversal.py` 的
+  CandlestickPattern（5 形态 pandas 版）与指标注册表 IND-REV-001 仍在，
+  且指标 CH 表 technical_indicator 的 CDL 输出列仍由指标队增量任务生产。
+- 提案（二选一，Owner 拍板后由指标队会话执行，退役走 ruling_registry 同 commit）：
+  - 方案 A（推荐）：IND-REV-001 改薄视图——保留指标表既有 CDL 列的消费兼容，
+    计算内部转发 candlestick_scanner（单一实现真源），注册表标注 view_of=MOD-SIG-145；
+  - 方案 B：IND-REV-001 直接退役——需同步评估 technical_indicator 表 CDL 列的
+    下游消费（编译消费清单→迁移或公告断供），涉及注册表净删+表结构变更，流程更重。
+- 无论 A/B：reversal.py 旧实现代码的删除/保留属指标域文件操作，由指标队执行。

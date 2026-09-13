@@ -3474,7 +3474,7 @@ chart_patterns:
     applies_to: []
     tags: ["反转", "形态", "信号"]
     algorithm_status: "quantized"
-    evidence: ""
+    evidence: "[机生 evidence src=market_pattern_win_rate 物化=2026-09-14] w10: 空 hit=51.7% avg=+0.01% n=23289 | w20: 空 hit=50.6% avg=+0.97% n=23171 | regime: r1(空) hit=47.7% n=9003 / r3(空) hit=56.3% n=6785 / r2(空) hit=58.6% n=3906 / r4(空) hit=45.5% n=2047"
     code_symbol: null
     code_fingerprint: null
 
@@ -3602,7 +3602,7 @@ chart_patterns:
     applies_to: []
     tags: ["持续", "形态"]
     algorithm_status: "pending_backtest"
-    evidence: ""
+    evidence: "[机生 evidence src=market_pattern_win_rate 物化=2026-09-14] w10: 多 hit=45.0% avg=+0.31% n=42914 | w20: 多 hit=43.8% avg=+0.38% n=42502 | regime: r1(多) hit=44.8% n=15419 / r3(多) hit=42.9% n=11416 / r2(多) hit=50.5% n=7169 / r4(多) hit=40.6% n=3810 / r10(多) hit=46.5% n=3594"
     code_symbol: null
     code_fingerprint: null
 
@@ -3643,7 +3643,7 @@ chart_patterns:
     applies_to: []
     tags: ["持续", "形态"]
     algorithm_status: "pending_backtest"
-    evidence: ""
+    evidence: "[机生 evidence src=market_pattern_win_rate 物化=2026-09-14] w10: 空 hit=50.6% avg=+0.42% n=49594 | w20: 空 hit=49.4% avg=+1.33% n=49395 | regime: r1(空) hit=46.1% n=19656 / r3(空) hit=57.3% n=13420 / r2(空) hit=54.8% n=7787 / r4(空) hit=49.8% n=4534 / r10(空) hit=44.4% n=3988"
     code_symbol: null
     code_fingerprint: null
 
@@ -3684,7 +3684,7 @@ chart_patterns:
     applies_to: []
     tags: ["持续", "形态"]
     algorithm_status: "pending_backtest"
-    evidence: ""
+    evidence: "[机生 evidence src=market_pattern_win_rate 物化=2026-09-14] w10: 多 hit=42.0% avg=+0.10% n=74359 / 空 hit=49.4% avg=+0.59% n=79290 | w20: 多 hit=41.5% avg=+0.16% n=73908 / 空 hit=47.4% avg=+2.11% n=79055 | regime: r1(空) hit=46.9% n=30696 / r1(多) hit=42.8% n=25483 / r3(空) hit=52.7% n=22326 / r3(多) hit=39.3% n=18288 / r2(多) hit=44.3% n=11955"
     code_symbol: null
     code_fingerprint: null
 
@@ -3725,7 +3725,7 @@ chart_patterns:
     applies_to: []
     tags: ["反转", "形态"]
     algorithm_status: "pending_backtest"
-    evidence: ""
+    evidence: "[机生 evidence src=market_pattern_win_rate 物化=2026-09-14] w10: 空 hit=48.5% avg=+0.73% n=55498 | w20: 空 hit=45.6% avg=+2.61% n=55370 | regime: r1(空) hit=48.0% n=22227 / r3(空) hit=49.3% n=13825 / r2(空) hit=51.7% n=7982 / r10(空) hit=47.1% n=7911 / r4(空) hit=45.0% n=3324"
     code_symbol: null
     code_fingerprint: null
 
@@ -3766,7 +3766,7 @@ chart_patterns:
     applies_to: []
     tags: ["反转", "形态"]
     algorithm_status: "pending_backtest"
-    evidence: ""
+    evidence: "[机生 evidence src=market_pattern_win_rate 物化=2026-09-14] w10: 多 hit=41.4% avg=+0.14% n=75908 | w20: 多 hit=41.7% avg=+0.50% n=75351 | regime: r1(多) hit=42.2% n=24235 / r3(多) hit=38.5% n=19311 / r2(多) hit=45.5% n=12297 / r10(多) hit=39.8% n=7504 / r12(多) hit=44.3% n=6604"
     code_symbol: null
     code_fingerprint: null
 
@@ -4012,7 +4012,7 @@ chart_patterns:
     applies_to: []
     tags: ["持续", "震荡", "形态"]
     algorithm_status: "pending_backtest"
-    evidence: ""
+    evidence: "[机生 evidence src=market_pattern_win_rate 物化=2026-09-14] w10: 多 hit=45.5% avg=+0.35% n=24177 / 空 hit=49.2% avg=+0.48% n=24767 | w20: 多 hit=44.5% avg=+0.65% n=24006 / 空 hit=48.4% avg=+1.34% n=24639 | regime: r1(空) hit=46.8% n=10395 / r1(多) hit=46.8% n=8992 / r3(空) hit=54.0% n=6393 / r3(多) hit=42.7% n=6234 / r2(多) hit=49.4% n=4342"
     code_symbol: null
     code_fingerprint: null
 
@@ -4053,7 +4053,7 @@ chart_patterns:
     applies_to: []
     tags: ["反转", "形态"]
     algorithm_status: "pending_backtest"
-    evidence: ""
+    evidence: "[机生 evidence src=market_pattern_win_rate 物化=2026-09-14] w10: 多 hit=46.2% avg=+0.54% n=24122 | w20: 多 hit=44.9% avg=+0.69% n=23988 | regime: r1(多) hit=46.6% n=9031 / r3(多) hit=43.6% n=6318 / r2(多) hit=51.0% n=4259 / r4(多) hit=40.0% n=2154"
     code_symbol: null
     code_fingerprint: null
 
@@ -4094,7 +4094,7 @@ chart_patterns:
     applies_to: []
     tags: ["反转", "形态"]
     algorithm_status: "pending_backtest"
-    evidence: ""
+    evidence: "[机生 evidence src=market_pattern_win_rate 物化=2026-09-14] w10: 空 hit=49.7% avg=+0.11% n=6962 | w20: 空 hit=48.8% avg=+1.12% n=6919 | regime: r1(空) hit=48.9% n=2987"
     code_symbol: null
     code_fingerprint: null
 
@@ -4135,7 +4135,7 @@ chart_patterns:
     applies_to: []
     tags: ["反转", "形态"]
     algorithm_status: "pending_backtest"
-    evidence: ""
+    evidence: "[机生 evidence src=market_pattern_win_rate 物化=2026-09-14] w10: 多 hit=45.8% avg=+0.45% n=7239 | w20: 多 hit=44.9% avg=+0.72% n=7195 | regime: r1(多) hit=45.6% n=2757"
     code_symbol: null
     code_fingerprint: null
 
