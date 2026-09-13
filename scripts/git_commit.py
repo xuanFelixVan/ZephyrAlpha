@@ -40,6 +40,7 @@ from __future__ import annotations
 import argparse
 import logging
 import os
+import subprocess
 import sys
 from pathlib import Path
 
@@ -463,6 +464,33 @@ def _cleanup_message_file(args, exit_code: int | None = None) -> None:
         logger.warning("message-file 清理失败（不阻断）: %s — %s", msg_file, e)
 
 
+def _git_tracked_subset(wt: Path, rel_files: list[str]) -> list[str]:
+    """过滤出 git index 已跟踪的路径子集（保序；git 异常/失败时返回空，由调用方拒绝）。
+
+    用于 --enqueue 删除分区：worktree 盘上缺失但 index 在册的文件走队列 deletes
+    通道（66 号 §6.1 action=delete）；缺失且不在册=清单笔误。`git ls-files` 对
+    worktree 已删除但 index 仍在的文件照常列出，正好是删除通道的目标集合。
+    """
+    if not rel_files:
+        return []
+    try:
+        r = subprocess.run(  # noqa: S603 — 固定 argv，无 shell
+            ["git", "ls-files", "--"] + rel_files,
+            cwd=str(wt),
+            capture_output=True,
+            text=True,
+            encoding="utf-8",
+            errors="replace",
+            timeout=30,
+        )
+    except Exception:
+        return []
+    if r.returncode != 0:
+        return []
+    tracked = {line.strip().replace("\\", "/") for line in r.stdout.splitlines() if line.strip()}
+    return [f for f in rel_files if f.replace("\\", "/") in tracked]
+
+
 def _enqueue_mode(args, files: list[str], message: str) -> int:
     """P2⑨ --enqueue 模式：快照入袋即返回 qid（方案 §2.4-4b）。
 
@@ -501,9 +529,24 @@ def _enqueue_mode(args, files: list[str], message: str) -> int:
         return p.as_posix()
 
     rel_files = [_norm_to_rel(f) for f in files]
+    # 删除项先分区再读快照（2026-09-14 实弹 DENIED 教训）：_read_files_from_worktree
+    # 对盘上缺失文件直接 QueueReject，原 try 内的 deletes 兜底永不可达=死代码。
+    # 缺失文件改走 EnqueueOptions.deletes 通道（66 号 §6.1 action=delete，landing
+    # _apply_snapshot 已支持），与 requeue 快照重建同口径；缺失且未被 git 跟踪=
+    # 清单笔误，fail-closed 拒绝。
+    missing = [f for f in rel_files if not (wt / f).exists()]
+    deletes = _git_tracked_subset(wt, missing)
+    untracked_missing = sorted(set(missing) - set(deletes))
+    if untracked_missing:
+        print(
+            "ERROR: 文件不存在且未被 git 跟踪（不可入队也不可删除）: "
+            + ", ".join(untracked_missing),
+            file=sys.stderr,
+        )
+        return 2
+    readable = [f for f in rel_files if (wt / f).exists()]
     try:
-        payload = _read_files_from_worktree(wt, rel_files)
-        deletes = [f for f in rel_files if not (wt / f).exists()]
+        payload = _read_files_from_worktree(wt, readable)
     except Exception as exc:  # noqa: BLE001 — 轻检拒绝（QueueReject）fail-closed 报错
         print(f"DENIED: {exc}", file=sys.stderr)
         return 2

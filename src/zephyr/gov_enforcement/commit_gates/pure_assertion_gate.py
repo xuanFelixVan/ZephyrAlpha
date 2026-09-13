@@ -5,7 +5,7 @@
 # [CONSUMERS] zephyr.gov_enforcement.rule_bridge.git_commit_gateway.GitCommitGateway.__init__
 # [STARTUP] imported
 # [MATURITY] production
-# [INVARIANTS] 硬阻断——staged .md 文件 added 行含纯陈述违规（GOV-DOC-016）时阻断 commit；只检 staged .md added 行（增量检测，现存违规 grandfather）；checker 缺失/超时/exit 2 时 fail-open（不阻断）；exit 1 时硬阻断；scope 过滤在 checker 内（SSoT）
+# [INVARIANTS] 硬阻断——本 session staged .md 文件 added 行含纯陈述违规（GOV-DOC-016）时阻断 commit；只检 staged .md added 行（增量检测，现存违规 grandfather）；scope=own-diff（#ARCH-310 R2 推广 2026-09-14：外来 staged .md 降级 warn+审计不阻断，宪法 §3.1——外来大归档件毒化全员提交实例 2026-09-13 夜）；own_scope=None 退化扫全量；checker 缺失/超时/exit 2 时 fail-open（不阻断）；exit 1 时硬阻断；scope 过滤在 checker 内（SSoT）
 # [MODIFY-GUARD] gate_id="PURE-ASSERTION"；check 闭包签名 (gateway, files, **kwargs) -> tuple[bool, str]
 # [STABILITY] evolving
 # [SAFETY] L
@@ -60,6 +60,11 @@ import os
 import subprocess
 import sys
 
+from zephyr.gov_enforcement.commit_gates._diff_helpers import (
+    _audit_foreign_staged,
+    _build_own_scope,
+    _norm_rel,
+)
 from zephyr.gov_enforcement.rule_bridge.commit_gate_registry import GateSpec
 from zephyr.shared.infra.process_pool import run_subprocess_hidden
 
@@ -159,6 +164,27 @@ def make_pure_assertion_gate() -> GateSpec:
         staged_md = _get_staged_md_files(gateway)
         if not staged_md:
             return True, ""
+
+        # 只查自己（#ARCH-310 R2 own-diff 默认推广，2026-09-14）：扫描范围=全暂存区
+        # staged .md ∩ 本 session 范围；外来 staged 件（如他会话搬迁的历史归档大文件）
+        # 不得毒化无辜提交人——降级 warn+审计不阻断（宪法 §3.1，2026-09-13 夜实弹
+        # 路障实例）；own_scope=None（历史直调/无归属）退化旧行为扫全量；本 session
+        # 自身违规仍硬阻断；fail-open 红线不变。
+        session_id = kwargs.get("session_id")
+        own_scope = _build_own_scope(gateway, files, session_id)
+        if own_scope is not None:
+            foreign_staged = [f for f in staged_md if _norm_rel(gateway, f) not in own_scope]
+            staged_md = [f for f in staged_md if _norm_rel(gateway, f) in own_scope]
+            if foreign_staged:
+                _audit_foreign_staged(gateway, session_id, foreign_staged, gate_name="PURE-ASSERTION")
+                logger.warning(
+                    "PURE-ASSERTION: %d 个外来 session staged .md 未检查（warn+审计，不阻断）: %s",
+                    len(foreign_staged),
+                    ", ".join(foreign_staged[:5]) + ("..." if len(foreign_staged) > 5 else ""),
+                )
+            if not staged_md:
+                return True, ""
+
         wt_root = _resolve_worktree_root(gateway)
         abs_files = _resolve_abs_paths(staged_md, wt_root)
         if not abs_files:
