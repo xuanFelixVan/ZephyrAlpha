@@ -37,9 +37,6 @@ def risk_budget_allocate(
         var_estimates: {symbol: 预测 VaR(5%)} 正值（风险越大值越大）。
         er_estimates: {symbol: 预测 E(R)}（仅 sharpe_weight 模式需要）。
         mode: inverse_var | risk_parity | sharpe_weight。
-
-    Returns:
-        {symbol: weight}，权重和 = 1.0。
     """
     if not var_estimates:
         raise ValueError("var_estimates 不得为空")

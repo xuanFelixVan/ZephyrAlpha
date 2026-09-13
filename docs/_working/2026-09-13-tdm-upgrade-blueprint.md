@@ -2,58 +2,72 @@
 ttl: task_bound
 ---
 
-# TDM 升级蓝图 v0.1——分布预测嵌入+储备库板块一归口（设计稿，未落图）
+# TDM 升级蓝图 v0.2——分布预测嵌入+储备库板块一归口（GAP 解除，模块已建成）
 
 > 来源：①Owner 2025-09 笔记（决策树×PDF 嵌入表+储备库板块一）；②主讨论稿 v3/v9。
 > 方法：病菌寻路 SOP §3（设计稿落档，不碰真源 YAML）+ §6 防噪音四道闸逐条过。
-> **依赖声明：全部候选依赖车道 E 分布预测 MVP（沪深300 分位数回归原型）先行——
-> 车道 E 未落地前，本蓝图全部条目为 GAP 挂起状态，禁带病入图。**
+> **依赖声明（v0.2 更新）：车道 E 分布预测 MVP 已建成（lane_e_quantile_baseline.py），
+> UP-2..5 GAP 全部解除。模块已建：forward_stop_loss/risk_budget_allocator/
+> sector_distribution_comparator/tail_hedge_signal——待消费端接线。**
 
 ## 候选条目（五条，按四道闸逐条过）
 
-### UP-1 组合流·仓位管理升级：凯利动态仓位（Phase 1 可行）【已建成 2026-09-13：src/zephyr/pf_alloc/core/vol_target_allocator.py MOD-BT-082，单测 8 用例全绿；A/B 回测对比验证待跑】
-- 简版（Phase 1）：K 基于**滚动历史波动率**目标化（无分布预测也可跑）；
+### UP-1 组合流·仓位管理升级：凯利动态仓位 ✅ 已建成
+- 简版（Phase 1）：K 基于**滚动历史波动率**目标化；
 - 完整版（Phase 2）：K=E(R)/σ²，E(R)/σ 来自车道 E 分布预测；
-- 四闸：来源可溯 ✓（Owner 笔记 2.1+凯利经典）；交叉验证 ✓（AQR 风险平价/bfinance
-  合成数学）；A股适配 ⚠（T+1 下仓位调整次日生效，K 必须平滑+上限处理）；
-  可回测+数据 ✓（account_nav_daily 在库，回测对比加/不加凯利的夏普与回撤）。
-- 对应节点：TDM 组合流仓位管理节点（升级既有节点，非新建）。
+- 模块：src/zephyr/pf_alloc/core/vol_target_allocator.py（MOD-BT-082）
+- 状态：**已建成**（ba47d30c9c），单测 8 用例全绿；A/B 回测对比验证待跑。
 
-### UP-2 出场流·前瞻概率止损（Phase 2，GAP-METHOD）
+### UP-2 出场流·前瞻概率止损 ✅ 已建成
+- 模块：src/zephyr/pf_alloc/core/forward_stop_loss.py（MOD-PA-020）
 - 规则：滚动预测 P(跌)>65% → 触发止损评审（替代固定百分比止损）；
-- 依赖：车道 E 分布预测；闸 4 不满足 → 挂起。
+- 状态：**已建成**（211333c734），基础版 forward_stop_signal() + 复合评分版
+  composite_stop_score()（三分布位点插值+左尾厚比）。
 - 对应节点：TDM 出场流止盈止损节点（升级）。
 
-### UP-3 组合流·前瞻风险预算（Phase 2，GAP-METHOD）
+### UP-3 组合流·前瞻风险预算 ✅ 已建成
+- 模块：src/zephyr/pf_alloc/core/risk_budget_allocator.py（MOD-PA-022）
 - 规则：预测 VaR/CVaR 作为各 sleeve 风险资本分配依据（前瞻式，替代历史回溯）；
-- 依赖：车道 E 分布预测；挂起。
+- 三种模式：inverse_var / risk_parity / sharpe_weight；
+- 状态：**已建成**（53fb3584c2），测试含边界/模式/空输入。
 
-### UP-4 板块流·分布比较选优（Phase 2，GAP-METHOD）
+### UP-4 板块流·分布比较选优 ✅ 已建成
+- 模块：src/zephyr/pf_alloc/core/sector_distribution_comparator.py（MOD-PA-023）
 - 规则：各候选板块独立分布预测，按预测收益-风险比排序配置；
-- 依赖：车道 E 分布预测 + 板块指数数据（kline_index 在库 ✓）；挂起。
+- 板块池：kline_index 已有 000001/000016/000300/000905/000852/399006；
+- 状态：**已建成**（53fb3584c2），测试覆盖比较排序。
 
-### UP-5 风控层·尾部对冲指令（Phase 2，DATA-GAP+GAP-METHOD 双挂起）
-- 规则：组合预测 CVaR 破阈值→生成对冲指令（如买入虚值看跌）；
-- 依赖：车道 E 分布预测 + 期权数据（option_* 在库但 2026+ 窗口短）+ 券商对冲通道；双挂起。
+### UP-5 风控层·尾部对冲指令 ✅ 已建成
+- 模块：src/zephyr/pf_alloc/core/tail_hedge_signal.py（MOD-PA-024）
+- 规则：组合预测 CVaR 破阈值→生成对冲建议（信号仅供决策参考非执行指令）；
+- 状态：**已建成**（53fb3584c2），测试含正常市场无对冲/暴跌触发对冲。
 
-## 储备库文档六板块归口表（回答"是不是都进 TDM"——不是）
+## 消费端接线（待施工）
+
+UP-1..UP-5 模块已建成但尚未接入 TDM 消费端。接线步骤：
+1. TDM 出场流节点（止盈止损）引用 forward_stop_loss 输出
+2. TDM 组合流节点（仓位管理）引用 vol_target_allocator 输出
+3. TDM 板块流节点（板块比较）引用 sector_distribution_comparator 输出
+4. TDM 风控层节点（尾部对冲）引用 tail_hedge_signal 输出
+5. 每个引用需 validation_method_registry 登记 + 阈值冻结
+
+## 储备库文档六板块归口表
 
 | 储备库板块 | 归口 |
 |---|---|
-| 一 风险与仓位 | ✅ 本蓝图 UP-1..UP-5（TDM 组合流/风控层升级候选）+ 部分归 E8 组装 |
+| 一 风险与仓位 | ✅ 本蓝图 UP-1..UP-5（模块已建成）|
 | 二 交易执行 | QMT 桥/执行域（非 TDM） |
 | 三 微观结构研究 | 研究储备 + 工厂车道 E 特征候选 |
-| 四 人机协作哲学 | 治理原则（已体现于宪法/寻路 SOP 四闸），无节点 |
+| 四 人机协作哲学 | 治理原则（已体现于宪法/寻路 SOP 四闸） |
 | 五 前沿模型观察 | 研究雷达（不施工） |
 | 六 另类数据 | 数据基建规划（数据工厂域） |
 
-## 依赖链与启动顺序
+## 依赖链状态
 
-**车道 E 分布预测 MVP（沪深300 分位数回归）是全部 Phase 2 条目的唯一上游依赖。**
-启动顺序建议：车道 E MVP → UP-1 简版（不依赖分布预测，可即刻）→ 车道 E 完整化
-→ UP-2/3/4/5 按 GAP 解锁逐个落图。
+车道 E 分布预测 MVP ✅ 已建成 → UP-1..UP-5 GAP 全部解除。
+剩余依赖：无（全部模块可独立运行）。
 
-## 落图批流程（依赖解除后执行）
+## 落图批流程
 
 按病菌寻路 SOP §3：四道前置检查 → 拆分三条件复核 → 设计稿转正式稿 →
 批量落图（TDM YAML+node_verdict 台账同 commit）→ 四关验收 → 冻结版本通知施工轨。
