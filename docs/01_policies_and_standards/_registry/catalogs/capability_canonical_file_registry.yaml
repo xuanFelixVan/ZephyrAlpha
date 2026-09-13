@@ -12279,3 +12279,7 @@ creation_tokens:
   created_by: scaffold.py
   capability: pattern_win_rate_provider
 di_seam_exemptions: []
+- file: docs/02_enterprise_architecture/07_trading_decision_architecture/design_memos/96_tdm_v13_validation_metadata.md
+  token: tdm-v13-validation-metadata-memo-20260914
+  created_by: st-zcode-c4-20260912
+  capability: c4_batch_translation
