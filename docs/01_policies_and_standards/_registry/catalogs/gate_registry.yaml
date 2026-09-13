@@ -3,11 +3,11 @@ doc_type: register
 ttl: permanent
 title: GATE 门禁登记表
 status: active
-generated_at: '2026-09-12T12:14:43Z'
+generated_at: '2026-09-13T08:46:37Z'
 generated_by: scripts/governance/generators/generate_gate_registry.py
 maintenance: auto
 source: .pre-commit-config.yaml + commit_gates/*.py + MANUAL_GATES
-total_gates: 162
+total_gates: 163
 gates:
 - gate_id: GATE-PROTECTED-PATHS
   name: 'GATE-PROTECTED-PATHS: 受保护路径写入检测（#ARCH-MODEL-LIFECYCLE-001 P1 Layer 2）'
@@ -954,16 +954,6 @@ gates:
   status: active
   source: commit-gate
   own_scope: false
-- gate_id: FACTORY-MAP
-  name: 'FACTORY-MAP: 策略生产全景图（图 9）结构门禁（FACTORY-MAP，priority=142）（CommitGate, priority=142）'
-  entry: in-process (GitCommitGateway)
-  description: 策略生产全景图（图 9）结构门禁（FACTORY-MAP，priority=142）
-  files_trigger: ''
-  always_run: false
-  category: commit_gate
-  status: active
-  source: commit-gate
-  own_scope: false
 - gate_id: FILE-COPY
   name: 'FILE-COPY: FILE-COPY（CommitGate, priority=85）'
   entry: in-process (GitCommitGateway)
@@ -1522,6 +1512,16 @@ gates:
   name: 'STASH-ACCUMULATION: STASH-ACCUMULATION（CommitGate, priority=118）'
   entry: in-process (GitCommitGateway)
   description: STASH-ACCUMULATION
+  files_trigger: ''
+  always_run: false
+  category: commit_gate
+  status: active
+  source: commit-gate
+  own_scope: false
+- gate_id: FACTORY-MAP
+  name: 'FACTORY-MAP: 策略生产全景图（图 9）结构门禁（FACTORY-MAP，priority=142）（CommitGate, priority=142）'
+  entry: in-process (GitCommitGateway)
+  description: 策略生产全景图（图 9）结构门禁（FACTORY-MAP，priority=142）
   files_trigger: ''
   always_run: false
   category: commit_gate
