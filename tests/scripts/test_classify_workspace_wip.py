@@ -1,4 +1,4 @@
-# [BLUEPRINT] MOD-GOV_DRIFT_WATCHDOG | docs/01_policies_and_standards/sop/data_audit_sop/industry_chain_data_audit_sop.md | §#ARCH-308 B1
+# [BLUEPRINT] MOD-GOV_DRIFT_WATCHDOG | docs/01_policies_and_standards/sop/data_audit_sop/industry_chain_data_audit_policy.md | §#ARCH-308 B1
 # [A_module] module_id=MOD-GOV_DRIFT_WATCHDOG | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 # [MODULE] tests.scripts.test_classify_workspace_wip

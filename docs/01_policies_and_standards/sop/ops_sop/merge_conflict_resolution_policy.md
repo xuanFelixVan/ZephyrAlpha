@@ -157,4 +157,4 @@ merge: <任务名> 完工 merge 回 dev
 | 版本 | 日期 | 变更 |
 |---|---|---|
 | v1.0.0 | 2026-08-13 | 初版：冲突三分法 + 标准 7 步流程 + 5 红线，源自当日 17 worktree 大 merge 实战（用户裁定立项："教科书级别处理方式写成标准 SOP"） |
-| v1.0.1 | 2026-08-13 | **搬迁**：从 design_memos/67_merge_conflict_resolution_sop.md 迁至 docs/01_policies_and_standards/sop/ops_sop/merge_conflict_resolution_sop.md（SOP 属永久规则，与施工图纸临时区生命周期分离）；doc_type→policy（rule_form: procedural）；去编号改名 |
+| v1.0.1 | 2026-08-13 | **搬迁**：从 design_memos/67_merge_conflict_resolution_sop.md 迁至 docs/01_policies_and_standards/sop/ops_sop/merge_conflict_resolution_policy.md（SOP 属永久规则，与施工图纸临时区生命周期分离）；doc_type→policy（rule_form: procedural）；去编号改名 |

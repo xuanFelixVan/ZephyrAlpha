@@ -87,7 +87,7 @@ EXCLUDE_PATH_PARTS = (
     "docs/02_enterprise_architecture/07_trading_decision_architecture/design_memos/00_index_trading_decision.md",
     # 同上理据（2026-08-18 AI-00 全量复审实证）：git 安全协议/审计规范真源文档枚举"禁止执行的危险命令"
     # （`git reset --hard`/`git clean -fd` 等），属策略定义非操作指令
-    "docs/01_policies_and_standards/sop/construction_sop/construction_workflow_sop.md",
+    "docs/01_policies_and_standards/sop/construction_sop/construction_workflow_policy.md",
     "docs/02_enterprise_architecture/07_trading_decision_architecture/design_memos/63_data_utilization_audit.md",
     "docs/02_enterprise_architecture/07_trading_decision_architecture/design_memos/AI_review_instructions.md",
     # 循环审计 R1（2026-08-19 AI-00 基线治本）：以下豁免类经逐文件人工甄别，全部属
@@ -118,7 +118,7 @@ EXCLUDE_PATH_PARTS = (
     #    引文随真源再生）+ SOP/备忘录/基础文档枚举（危险命令说明属规范文本）
     "docs/02_enterprise_architecture/02_domain_architecture_docs/",
     "docs/02_enterprise_architecture/08_algorithm_overview/system_foundation.md",
-    "docs/01_policies_and_standards/sop/ops_sop/merge_conflict_resolution_sop.md",
+    "docs/01_policies_and_standards/sop/ops_sop/merge_conflict_resolution_policy.md",
     "docs/02_enterprise_architecture/07_trading_decision_architecture/design_memos/34_regime_meta_allocator.md",
     "docs/02_enterprise_architecture/09_ai_architecture/implementation_plans/AI_fill_instructions.md",
     # ⑤ 分支策略政策真源（枚举禁止命令属策略定义）

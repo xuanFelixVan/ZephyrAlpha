@@ -18,7 +18,7 @@
    提交必经 GitCommitGateway / git_commit.py，禁止裸 `git commit`。改前 claim：`lock_files.py acquire <file> <sid>`；
    reconciler 链路验证走 `--reconciler-verify`（专用豁免通道，三前置：主区 clean/无活跃会话/claim 全成）。
 4. **RULE-CAPABILITY-LOOKUP**：写第一行业务代码前调
-   `capability_lookup.find(<kw>, session_id=<sid>)` 或 MCP `rule_discovery`（写审计）；施工/新模块另必读 `sop/construction_sop/construction_workflow_sop.md`（07 域 15 步闭环编排真源）。
+   `capability_lookup.find(<kw>, session_id=<sid>)` 或 MCP `rule_discovery`（写审计）；施工/新模块另必读 `sop/construction_sop/construction_workflow_policy.md`（07 域 15 步闭环编排真源）。
 5. **RULE-DEPGRAPH**：施工前 `apply_depgraph.py --add-design-node` 登记；文件重命名后
    `generate_project_depgraph.py --force`。
 6. **RULE-REGISTRY**：查注册表先读 `docs/registry_of_registries.yaml`（ROOR，勿背数）。

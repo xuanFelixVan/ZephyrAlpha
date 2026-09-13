@@ -12,7 +12,7 @@ completes_when: "全部批次施工完工、遗留项清零、tracker 归档后�
 > **创建**：2026-08-13（第一统筹会话）
 > **重建说明**：⚠️ 本文件于 2026-08-13 晚重建。原文件从未 commit，会话关闭后丢失；本版依据会话记忆 + tracker 备份重建。
 > **迁移说明（2026-08-14）**：自 `docs/_working/` 迁入 design_memos——_working 临时区两次被 reconciler 误删（事故 #49），迁入永久区根治。
-> **关联 SOP**：[construction_workflow_sop.md](../../../01_policies_and_standards/sop/construction_sop/construction_workflow_sop.md) v1.4.0（2026-08-13 自 design_memos/02 迁入 01/sop 专区）
+> **关联 SOP**：[construction_workflow_sop.md](../../../01_policies_and_standards/sop/construction_sop/construction_workflow_policy.md) v1.4.0（2026-08-13 自 design_memos/02 迁入 01/sop 专区）
 
 ## 一、统筹 AI 角色定位
 
@@ -30,7 +30,7 @@ completes_when: "全部批次施工完工、遗留项清零、tracker 归档后�
 
 1. 读本文件（角色 + 铁律）。
 2. 读 [construction_progress_tracker.md](construction_progress_tracker.md)（施工队状态 + 遗留项）。
-3. 读 [construction_workflow_sop.md](../../../01_policies_and_standards/sop/construction_sop/construction_workflow_sop.md)（15 步施工流程 + 附录 A 长清单）。
+3. 读 [construction_workflow_sop.md](../../../01_policies_and_standards/sop/construction_sop/construction_workflow_policy.md)（15 步施工流程 + 附录 A 长清单）。
 4. 实证环境状态：
    ```powershell
    git branch --show-current          # 应为 dev
@@ -78,7 +78,7 @@ completes_when: "全部批次施工完工、遗留项清零、tracker 归档后�
 - **待推进（GOVA 收尾期）**：①#ARCH-ERRCODE-001 错误码改号（登记时自定"择无并发窗口"——四路已 merge 仅剩 GOVA 在途；GOVA 涉 regime_detector.py 一行与 ERRCODE regime 域潜在交集，待 GOVA merge 后窗口独占执行）；②全量测试复跑终证（#115/116 已 OBE，全量背书可待）；③~~QUANT-002 registry 流转~~ ✅ 已收口（resolved 标注，REDIS 落地）；④#61-64 专项裁定挂起；⑤#96 观察项；⑥小项顺手批（#8 capability 补登/#10 UNI-BASKET 补登/#11 16 号对齐/#12 data_asset 锚点/#14 DSR 阈值裁定/#113 私有 loader 收敛等，收口窗口执行）。
 - **环境**：PG 5432 Running；#99 单实例锁治本已落地；depgraph 23:37 已刷（9df037441c）；主仓当前仅剩 timestamp 派生噪声。
 - **明日待办**：2026-08-17 开盘 tick 实盘验证（订阅序列/biz 心跳/断流重订阅三项清单）。
-- **SOP**：v1.4.0 在 dev（01/sop 专区）；merge 冲突处理 SOP=01/sop/ops_sop/merge_conflict_resolution_sop.md；worktree 清理 SOP=01/sop/ops_sop/worktree_cleanup_sop.md。
+- **SOP**：v1.4.0 在 dev（01/sop 专区）；merge 冲突处理 SOP=01/sop/ops_sop/merge_conflict_resolution_policy.md；worktree 清理 SOP=01/sop/ops_sop/worktree_cleanup_policy.md。
 - **教训登记（2026-08-17 第六统筹增补）**：①CAPABILITY-LOOKUP 门禁首次实证——CapabilityLookup().find() 需显式传 session_id 或设 ZEPHYR_SESSION_ID，否则静默跳过审计写盘（向后兼容无 session 场景），门禁按 MAIN_REPO_ROOT/.runtime/lookup_audit/<sid>.jsonl 二值判定；②CRLF 幻影 stash 复活实证——幻影 stash push 后 checkout 恢复又按 CRLF 写回工作区，幻影原地复活，正确处置=人工确认零内容差异（git diff 等行互换+EOL 警告）+--force-skip-checks 清理落审计；③【证伪订正】merge --yes 幂等性不成立——REDIS-001 手工完成冲突解决后再跑 merge --yes，脚本未检测"已 merge"反而重试全量 merge 再造冲突（MERGE_HEAD 残留），正确处置=手工 merge 完成后直接 abort 残留+按四证清理，勿指望幂等重跑；④merge 后分支尖残余 integrity flush 派生 commit（post-commit 自动生成）无价值可弃合直删（实证 REDIS-001 8003e122d5 仅 rules_integrity_db 3 行派生）；⑤新文件 depgraph 登记链实证——NEW-FILE-DEPGRAPH 门禁要设计态登记→DEPGRAPH-PRE-REGISTRATION 门禁要 production，planned→production 直转非法（合法链 planned→generated→testing→stable），正解=add-design-node 后跑 generate_project_depgraph --force 全量重扫走 #ARCH-70 同身份 UPDATE 通道自动转 stable+production；⑥worktree 提交新文件引用新 #ARCH 编号时，须先把该 ARCH 条目同步进 worktree 的 architecture_issue_registry 副本（ARCH-REFERENCE 门禁查 worktree 副本不查 dev）。
 - **教训登记（2026-08-16）**：①派发类文件一律落 tracked 区（docs/_working/dispatch/），.runtime 免跟踪区违防丢铁律 #6；②网关正确姿势=--adopt-prior-work 必须挂在 **commit 主命令**上（tracker 遗留 #92 专项复现坐实）；③merge 配号前必全文件 grep 最大号——本日三起撞号（TRD/SEC/GOV）均因施工队各自取号；④IDE 脏缓冲区陷阱——Edit 报成功≠落盘，重要写盘后须进程外工具回读校验（GOV registry 条目回滚事故两度命中）；⑤merge 事故两起已留痕（误取基点漏链/theirs 覆盖，见 0bd6a2b55d/02dd2cc70f 自纠 commit）。
 
@@ -89,5 +89,5 @@ completes_when: "全部批次施工完工、遗留项清零、tracker 归档后�
 - 反馈必须含：commit hash + Step 1 结论 + Step 6 结论 + 测试结果 + worktree 状态 + 遗留项
 - commit 走网关；FOREIGN-CHANGE 对子代理/代编辑误报走 --allow-overlap 并留痕
 - 涉及 AGENTS.md 显化修改：走 Owner 审批（PROTECTED-PATHS 门禁，遗留项 #9/#41）
-- merge 冲突处理唯一真源：01/sop/ops_sop/merge_conflict_resolution_sop.md（三分法：叠加合并/迭代取新/互斥升级用户）
-- worktree 清理必须走 01/sop/ops_sop/worktree_cleanup_sop.md 四证（死亡证明/无未合并工作/统筹批准/可恢复快照）
+- merge 冲突处理唯一真源：01/sop/ops_sop/merge_conflict_resolution_policy.md（三分法：叠加合并/迭代取新/互斥升级用户）
+- worktree 清理必须走 01/sop/ops_sop/worktree_cleanup_policy.md 四证（死亡证明/无未合并工作/统筹批准/可恢复快照）

@@ -41,7 +41,7 @@ related_modules:
 |---|---|---|---|
 | 1 | `AGENTS.md` | 「新 AI 必读三件套」+ RULE-WORKTREE + 提交规范 | 项目总纲，知道规矩再动手 |
 | 2 | `docs/01_policies_and_standards/rules/trae_086_frontend_module_construction.yaml` | 拆件判据 + 命名规则 + 目录归属 + 四件套闭环 | **本 SOP 的上位规则**，拆件铁律真源 |
-| 3 | `docs/01_policies_and_standards/sop/construction_sop/construction_workflow_sop.md` | Step 0 必看清单 + 施工流程 15 步（Step 3.5 后端盘点与拆件判定=本 SOP 的上游触发点） | 知道自己在哪一步 |
+| 3 | `docs/01_policies_and_standards/sop/construction_sop/construction_workflow_policy.md` | Step 0 必看清单 + 施工流程 15 步（Step 3.5 后端盘点与拆件判定=本 SOP 的上游触发点） | 知道自己在哪一步 |
 | 3.5 | `docs/01_policies_and_standards/sop/governance_sop/alignment_checklist.md` | §3 frontend_map 对齐规则（backend_ref 类型化契约）+ §4 注册表对齐统一原则 | 四件套登记的对齐规则真源，登记不符=对齐事故 |
 | 4 | `src/zephyr/frontend/dashboard/web/frontend_map.yaml` | 现有功能点清单（page → module_id → file → backend_ref） | 避免重复造轮子，看已有组件 |
 | 5 | `src/zephyr/frontend/dashboard/web/features/manifest.yaml` | 模块注册表（id/name/file/page/depends/acceptance） | 新组件必须登记 |
@@ -308,7 +308,7 @@ services:
 **参考**：
 - 冒烟测试：`tests/frontend/test_dashboard_smoke.py`
 - 提交网关：`scripts/git_commit.py`
-- 施工流程 SOP：`docs/01_policies_and_standards/sop/construction_sop/construction_workflow_sop.md`
+- 施工流程 SOP：`docs/01_policies_and_standards/sop/construction_sop/construction_workflow_policy.md`
 
 ---
 
@@ -404,7 +404,7 @@ services:
 **规则真源**：
 - `AGENTS.md` — 项目总纲（新 AI 必读三件套 + RULE-WORKTREE + 提交规范）
 - `docs/01_policies_and_standards/rules/trae_086_frontend_module_construction.yaml` — 拆件铁律（数据源边界/单一功能/命名/目录归属/四件套闭环）
-- `docs/01_policies_and_standards/sop/construction_sop/construction_workflow_sop.md` — 施工流程 15 步（Step 0 必看清单）
+- `docs/01_policies_and_standards/sop/construction_sop/construction_workflow_policy.md` — 施工流程 15 步（Step 0 必看清单）
 
 **前端真源**：
 - `src/zephyr/frontend/dashboard/web/frontend_map.yaml` — 前端全景图（page → module → file → backend_ref）
