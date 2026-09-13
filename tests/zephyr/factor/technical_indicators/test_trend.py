@@ -34,6 +34,7 @@ DMI = TechnicalIndicatorRegistry.get("dmi")
 CCI = TechnicalIndicatorRegistry.get("cci")
 SAR = TechnicalIndicatorRegistry.get("sar")
 TRIX = TechnicalIndicatorRegistry.get("trix")
+DKX = TechnicalIndicatorRegistry.get("dkx")
 
 # 期望契约（catalog §2.1）：indicator_id → (name, output_columns)
 EXPECTED = {
@@ -47,10 +48,11 @@ EXPECTED = {
     "cci": ("顺势指标", ["cci_14"]),
     "sar": ("抛物线指标", ["sar"]),
     "trix": ("三重指数平滑平均", ["trix", "trma"]),
+    "dkx": ("多空线", ["dkx_20", "dkx_ma10"]),
 }
 
 # 已施工算法的指标（version >= 1.0.0）
-IMPLEMENTED = {"ma", "ema", "wma", "dema", "macd", "adx", "dmi", "cci", "sar", "trix"}
+IMPLEMENTED = {"ma", "ema", "wma", "dema", "macd", "adx", "dmi", "cci", "sar", "trix", "dkx"}
 # 仍为骨架的指标（compute 抛 NotImplementedError）
 SKELETON = set(EXPECTED) - IMPLEMENTED
 
@@ -67,7 +69,7 @@ class TestTrendRegistered:
             assert iid in metas, f"趋势指标 '{iid}' 未注册"
 
     def test_count(self):
-        assert len(TechnicalIndicatorRegistry.list_by_category("trend")) == len(EXPECTED) == 10
+        assert len(TechnicalIndicatorRegistry.list_by_category("trend")) == len(EXPECTED) == 11
 
 
 class TestTrendMetaContract:
@@ -624,3 +626,46 @@ class TestSARCompute:
     def test_missing_column_raises(self):
         with pytest.raises(ValueError, match="缺少列"):
             SAR().compute(pd.DataFrame({"high": [10.0] * 30}))
+
+
+# ===========================================================================
+# 2026-09-14 A股标配批：DKX 数值正确性
+# ===========================================================================
+
+
+class TestDkxNumeric:
+    def test_constant_price_constant_line(self):
+        df = _make_ohlcv(40)
+        for c in ("open", "high", "low", "close"):
+            df[c] = 100.0
+        result = DKX().compute(df)
+        assert (result["dkx_20"].dropna() == 100.0).all()
+
+    def test_manual_weighted_match(self):
+        """小样本手算对照：MID=(3C+L+O+H)/6 线性加权 20..1/210。"""
+        n = 25
+        rng = np.random.default_rng(7)
+        close = pd.Series(100 + rng.standard_normal(n).cumsum())
+        df = pd.DataFrame({
+            "open": close + 0.1, "high": close + 0.3,
+            "low": close - 0.3, "close": close, "volume": 1000.0,
+        })
+        result = DKX().compute(df)
+        mid = (3 * close + df["low"] + df["open"] + df["high"]) / 6
+        # 窗口按时间升序（旧→新），权重 1..20（新值权重 20，对齐通达信）
+        weights = list(range(1, 21))
+        expected = []
+        for t in range(n):
+            window = mid.iloc[max(0, t - 19):t + 1]
+            if len(window) < 20:
+                expected.append(np.nan)
+            else:
+                expected.append(float(np.dot(weights, window)) / 210.0)
+        got = result["dkx_20"].reset_index(drop=True)
+        np.testing.assert_allclose(got.iloc[19:], np.array(expected[19:]), rtol=1e-10)
+
+    def test_warmup_nan(self):
+        df = _make_ohlcv(40)
+        result = DKX().compute(df)
+        assert result["dkx_20"].iloc[:19].isna().all()
+        assert result["dkx_20"].iloc[19:].notna().all()

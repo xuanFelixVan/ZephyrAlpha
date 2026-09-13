@@ -33,6 +33,9 @@ UOS = TechnicalIndicatorRegistry.get("uos")
 AO = TechnicalIndicatorRegistry.get("ao")
 CMO = TechnicalIndicatorRegistry.get("cmo")
 STOCHRSI = TechnicalIndicatorRegistry.get("stochrsi")
+BIAS = TechnicalIndicatorRegistry.get("bias")
+PSY = TechnicalIndicatorRegistry.get("psy")
+LWR = TechnicalIndicatorRegistry.get("lwr")
 
 # 期望契约（catalog §2.2）
 EXPECTED = {
@@ -46,6 +49,9 @@ EXPECTED = {
     "ao": ("震荡指标", ["ao"]),
     "cmo": ("钱德动量摆动", ["cmo_14"]),
     "stochrsi": ("随机RSI", ["stochrsi"]),
+    "bias": ("乖离率", ["bias_6", "bias_12", "bias_24"]),
+    "psy": ("心理线", ["psy_12", "psy_ma6"]),
+    "lwr": ("慢速威廉", ["lwr_1", "lwr_2"]),
 }
 
 IMPLEMENTED = set(EXPECTED)
@@ -74,7 +80,7 @@ class TestMomentumRegistered:
             assert iid in metas, f"动量指标 '{iid}' 未注册"
 
     def test_count(self):
-        assert len(TechnicalIndicatorRegistry.list_by_category("momentum")) == len(EXPECTED) == 10
+        assert len(TechnicalIndicatorRegistry.list_by_category("momentum")) == len(EXPECTED) == 13
 
 
 class TestMomentumMetaContract:
@@ -448,3 +454,85 @@ class TestStochRSICompute:
     def test_missing_column_raises(self):
         with pytest.raises(ValueError, match="缺少列"):
             STOCHRSI().compute(pd.DataFrame({"open": [10.0]}))
+
+
+# ===========================================================================
+# 2026-09-14 A股标配批：BIAS/PSY/LWR 数值正确性
+# ===========================================================================
+
+
+class TestBiasNumeric:
+    def test_constant_close_zero_bias(self):
+        df = _make_ohlcv(30)
+        df["close"] = 100.0
+        df["high"] = 100.5
+        df["low"] = 99.5
+        result = BIAS().compute(df)
+        assert (result["bias_6"].dropna() == 0.0).all()
+        assert (result["bias_24"].dropna() == 0.0).all()
+
+    def test_warmup_nan(self):
+        df = _make_ohlcv(30)
+        result = BIAS().compute(df)
+        assert result["bias_6"].iloc[:5].isna().all()
+        assert result["bias_6"].iloc[6:].notna().all()
+
+    def test_rising_close_positive_bias(self):
+        df = _make_ohlcv(30)
+        df["close"] = np.linspace(100, 130, 30)
+        result = BIAS().compute(df)
+        assert (result["bias_12"].dropna() > 0).all()
+
+
+class TestPsyNumeric:
+    def test_all_up_is_100(self):
+        df = _make_ohlcv(30)
+        df["close"] = np.arange(1, 31) * 1.0
+        result = PSY().compute(df)
+        assert (result["psy_12"].dropna() == 100.0).all()
+
+    def test_alternating_is_50(self):
+        df = _make_ohlcv(30)
+        base = np.arange(1, 31) * 1.0
+        df["close"] = base + np.where(np.arange(30) % 2 == 0, 0, 5)
+        result = PSY().compute(df)
+        assert (result["psy_12"].dropna() == 50.0).all()
+
+    def test_first_row_nan_not_counted(self):
+        df = _make_ohlcv(30)
+        result = PSY().compute(df)
+        # 首行无前值 → warmup 内 NaN（不会冒充"未上涨"拉低 PSY）
+        assert result["psy_12"].isna().sum() == 12
+
+    def test_psy_ma_warmup(self):
+        df = _make_ohlcv(30)
+        result = PSY().compute(df)
+        assert result["psy_ma6"].isna().sum() == 17
+
+
+class TestLwrNumeric:
+    def test_range_0_100(self):
+        df = _make_ohlcv(50)
+        result = LWR().compute(df)
+        for col in ("lwr_1", "lwr_2"):
+            assert result[col].dropna().between(0, 100).all()
+
+    def test_close_at_low_is_100(self):
+        # 单调下跌且收在最低价 → 每个窗口 C=LL → 威廉值恒 100（超卖方向）
+        n = 20
+        low = np.linspace(120, 101, n)  # 严格单调递减
+        high = low + 1.0
+        close = low.copy()  # 收在最低价
+        df = pd.DataFrame({"open": close, "high": high, "low": low, "close": close, "volume": 1000.0})
+        result = LWR().compute(df)
+        assert (result["lwr_1"].dropna() == 100.0).all()
+
+    def test_close_at_high_is_0(self):
+        # 单调上涨且收在最高价 → 每个窗口 C=HH → 威廉值恒 0
+        n = 20
+        high = np.linspace(101, 120, n)  # 严格单调递增
+        low = high - 1.0
+        close = high.copy()  # 收在最高价
+        df = pd.DataFrame({"open": close, "high": high, "low": low, "close": close, "volume": 1000.0})
+        result = LWR().compute(df)
+        assert (result["lwr_1"].dropna() == 0.0).all()

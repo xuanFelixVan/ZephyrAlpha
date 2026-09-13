@@ -5,7 +5,7 @@
 # [CONSUMERS] zephyr.data.implementations.internal_compute_provider（包级 autodiscover 动态接线：internal_compute_provider L545/L1113 延迟导入本包+注册表消费）; sleeve alpha 择时
 # [STARTUP] imported
 # [MATURITY] production
-# [INVARIANTS] 趋势类指标 10 个，纯自实现 pandas/numpy；compute→DataFrame 多列输出
+# [INVARIANTS] 趋势类指标 11 个，纯自实现 pandas/numpy；compute→DataFrame 多列输出
 # [MODIFY-GUARD] none
 # [STABILITY] evolving
 # [SAFETY] L
@@ -16,9 +16,9 @@
 # [TTL] permanent
 """
 
-趋势类技术指标（10 个，v1.0.0 全部施工完成）。
+趋势类技术指标（11 个，v1.0.0 全部施工完成；2026-09-14 A股标配批 +1）。
 
-指标清单：MA/EMA/WMA/DEMA/MACD/ADX/DMI/CCI/SAR/TRIX
+指标清单：MA/EMA/WMA/DEMA/MACD/ADX/DMI/CCI/SAR/TRIX/DKX
 
 算法对齐通达信：
   - EMA 系列（EMA/DEMA/MACD/TRIX）统一 adjust=False，种子=首值，无预热 NaN
@@ -26,6 +26,7 @@
   - CCI 使用 AVEDEV（平均绝对偏差），对齐通达信 AVEDEV 函数
   - SAR 逐 bar 迭推，AF 从 step 递增至 max，趋势翻转时重置
   - MACD HIST = 2×(DIF-DEA)，对齐通达信 MACD 柱
+  - DKX 多空线：MID 线性加权 20..1/210，对齐通达信 DKX 函数
 
 设计文档：docs/02_enterprise_architecture/07_trading_decision_architecture/design_memos/16_technical_indicator_catalog.md §2.1
 
@@ -33,7 +34,7 @@
 # 层: 输入
 # - id: I1
 #   name: 行情OHLC数据 DataFrame
-#   fields: high/low/close 列（各指标按 meta.input_columns 取用）
+#   fields: open/high/low/close 列（各指标按 meta.input_columns 取用，DKX 需 open）
 #   code: compute(data: pd.DataFrame)
 # 层: 指标
 # - id: MACD
@@ -68,6 +69,14 @@
 #   code: trend.py L324-373
 #   registry: 指标表: 有sar列 但代码未读表（本模块即指标计算实现）
 #   is_break: true
+# - id: DKX
+#   name_zh: 多空线DKX 20+MA10
+#   name_en: DKX
+#   intro: 四价均价的线性加权累积线，度量多空力量对比（A股行情软件标配）
+#   formula: MID=(3C+L+O+H)/6 → DKX=(20·MID+19·REF(MID,1)+…+1·REF(MID,19))/210；MADKX=MA(DKX,10)
+#   code: trend.py 尾部 DKX 类
+#   registry: 指标表: 有dkx_20/dkx_ma10列 但代码未读表（本模块即指标计算实现）
+#   is_break: true
 # 层: 算法
 # - id: A1
 #   name_zh: ① 校验+参数合并+空表短路 compute统一契约
@@ -100,10 +109,10 @@
 #   outputs: (pdi, mdi) 二元组
 # 层: 输出
 # - id: O1
-#   name_zh: 趋势指标 DataFrame（10指标多列）
+#   name_zh: 趋势指标 DataFrame（11指标多列）
 #   name_en: trend indicators DataFrame
-#   intro: MA/EMA/WMA/DEMA/MACD/ADX/DMI/CCI/SAR/TRIX 共10个趋势指标的多列输出，index 与输入对齐
-#   invariant: 输出列严格等于各 meta.output_columns（ma_5/10/20/60、ema_12/26、wma_10、dema_12、macd_*、adx_14、pdi_14/mdi_14、cci_14、sar、trix/trma）
+#   intro: MA/EMA/WMA/DEMA/MACD/ADX/DMI/CCI/SAR/TRIX/DKX 共11个趋势指标的多列输出，index 与输入对齐
+#   invariant: 输出列严格等于各 meta.output_columns（ma_5/10/20/60、ema_12/26、wma_10、dema_12、macd_*、adx_14、pdi_14/mdi_14、cci_14、sar、trix/trma、dkx_20/dkx_ma10）
 #   downstream: zephyr.data.implementations.internal_compute_provider（批量计算写入 c1_market.technical_indicator）；sleeve alpha 择时；volatility.py/reversal.py 复用 _ema
 # [/ALGO_FLOW]
 #
@@ -116,12 +125,14 @@
 # A1 -.->|断点| ADX
 # A1 -.->|断点| CCI
 # A1 -.->|断点| SAR
+# A1 -.->|断点| DKX
 # A2 -.->|断点| MACD
 # A4 -.->|断点| ADX
 # MACD --> O1
 # ADX --> O1
 # CCI --> O1
 # SAR --> O1
+# DKX --> O1
 """
 
 from __future__ import annotations
@@ -499,3 +510,34 @@ class TRIX(TechnicalIndicatorBase):
         # TRMA = MA(TRIX)
         trma = trix.rolling(window=n).mean()
         return pd.DataFrame({"trix": trix, "trma": trma}, index=data.index)
+
+
+@TechnicalIndicatorRegistry.register
+class DKX(TechnicalIndicatorBase):
+    """多空线（DKX，A股行情软件标配 20+MA10）。"""
+
+    meta = TechnicalIndicatorMeta(
+        indicator_id="dkx",
+        name="多空线",
+        category="trend",
+        output_columns=["dkx_20", "dkx_ma10"],
+        input_columns=["open", "high", "low", "close"],
+        params={"period": 20, "ma_period": 10},
+        version="1.0.0",
+        description="MID=(3C+L+O+H)/6；DKX=(20·MID+19·REF(MID,1)+…+1·REF(MID,19))/210；MADKX=MA(DKX,10)",
+    )
+
+    def compute(self, data: pd.DataFrame, **kwargs) -> pd.DataFrame:
+        self.validate(data)
+        if data.empty:
+            return pd.DataFrame(columns=self.meta.output_columns)
+        params = self.get_params(**kwargs)
+        n, ma_n = params["period"], params["ma_period"]
+        mid = (3 * data["close"] + data["low"] + data["open"] + data["high"]) / 6
+        # 线性加权 20..1，分母 210=Σ20..1（对齐通达信 DKX）
+        weighted = pd.Series(0.0, index=data.index)
+        for i in range(n):
+            weighted = weighted + (n - i) * mid.shift(i)
+        dkx = weighted / (n * (n + 1) / 2)
+        dkx_ma = dkx.rolling(window=ma_n).mean()
+        return pd.DataFrame({f"dkx_{n}": dkx, f"dkx_ma{ma_n}": dkx_ma}, index=data.index)

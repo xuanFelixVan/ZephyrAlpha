@@ -43,7 +43,7 @@ ClickHouse 实际表结构必须与本文件 DDL 一致；结构变更通过 app
 数据来源：
     data_source = 'internal'（纯本地 pandas/numpy 计算，非外部数据源下载）
     输入：c1_market.kline_{period} 的 OHLCV 数据（120min 由 kline_60min 两根聚合）
-    输出：~55 个技术指标列（Nullable(Float64)），覆盖 5 类 40 个指标
+    输出：72 个技术指标列（Nullable(Float64)），覆盖 6 类 49 个指标（2026-09-14 统计族批 +9 指标）
 
 列设计说明：
     所有指标列均为 Nullable(Float64)——预热期无值时为 NULL（不前向填充，避免前视偏差）
@@ -81,6 +81,8 @@ CREATE TABLE IF NOT EXISTS c1_market.technical_indicator
     sar          Nullable(Float64)  COMMENT '抛物线指标(Stop and Reverse)',
     trix         Nullable(Float64)  COMMENT '三重指数平滑平均',
     trma         Nullable(Float64)  COMMENT 'TRIX的移动平均',
+    dkx_20       Nullable(Float64)  COMMENT '20日多空线',
+    dkx_ma10     Nullable(Float64)  COMMENT '多空线10日移动平均',
 
     kdj_k        Nullable(Float64)  COMMENT 'KDJ K线',
     kdj_d        Nullable(Float64)  COMMENT 'KDJ D线',
@@ -97,6 +99,19 @@ CREATE TABLE IF NOT EXISTS c1_market.technical_indicator
     ao           Nullable(Float64)  COMMENT '震荡指标(Awesome Oscillator)',
     cmo_14       Nullable(Float64)  COMMENT '14日钱德动量摆动',
     stochrsi     Nullable(Float64)  COMMENT '随机RSI',
+    bias_6       Nullable(Float64)  COMMENT '6日乖离率',
+    bias_12      Nullable(Float64)  COMMENT '12日乖离率',
+    bias_24      Nullable(Float64)  COMMENT '24日乖离率',
+    psy_12       Nullable(Float64)  COMMENT '12日心理线',
+    psy_ma6      Nullable(Float64)  COMMENT '心理线6日移动平均',
+    lwr_1        Nullable(Float64)  COMMENT '慢速威廉LWR1(9,3,3)',
+    lwr_2        Nullable(Float64)  COMMENT '慢速威廉LWR2(9,3,3)',
+
+    correl_30      Nullable(Float64)  COMMENT '30日close×volume滚动相关系数',
+    beta_30        Nullable(Float64)  COMMENT '30日close对volume滚动beta系数',
+    linearreg_14   Nullable(Float64)  COMMENT '14日线性回归线(当前拟合值)',
+    tsf_14         Nullable(Float64)  COMMENT '14日时间序列预测(一步外推)',
+    var_20         Nullable(Float64)  COMMENT '20日滚动总体方差(ddof=0)',
 
     atr_14       Nullable(Float64)  COMMENT '14日真实波幅',
     boll_upper   Nullable(Float64)  COMMENT '布林带上轨',
@@ -155,9 +170,13 @@ INSERT_COLUMNS = (
     # 趋势类
     "ma_5, ma_10, ma_20, ma_60, ema_12, ema_26, wma_10, dema_12, "
     "macd_dif, macd_dea, macd_hist, adx_14, pdi_14, mdi_14, cci_14, sar, trix, trma, "
+    "dkx_20, dkx_ma10, "
     # 动量类
     "kdj_k, kdj_d, kdj_j, rsi_6, rsi_12, rsi_24, wr_14, roc_12, mtm_12, mtmma_12, "
     "cmf_20, uos, ao, cmo_14, stochrsi, "
+    "bias_6, bias_12, bias_24, psy_12, psy_ma6, lwr_1, lwr_2, "
+    # 统计族
+    "correl_30, beta_30, linearreg_14, tsf_14, var_20, "
     # 波动类
     "atr_14, boll_upper, boll_middle, boll_lower, "
     "kc_upper, kc_middle, kc_lower, dc_upper, dc_lower, "

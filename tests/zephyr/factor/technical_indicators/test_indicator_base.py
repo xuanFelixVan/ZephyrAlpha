@@ -24,10 +24,11 @@ import re
 import pandas as pd
 import pytest
 
-# 导入 5 类指标模块触发注册（__init__ 不自动 autodiscover，需显式 import）
+# 导入 6 类指标模块触发注册（__init__ 不自动 autodiscover，需显式 import）
 from zephyr.factor.technical_indicators import (  # noqa: F401 — 注册副作用
     momentum,
     reversal,
+    statistics,
     trend,
     volatility,
     volume,
@@ -39,10 +40,10 @@ from zephyr.factor.technical_indicators.indicator_base import (
     autodiscover_technical_indicators,
 )
 
-# 5 类指标数量契约（catalog §2：趋势10/动量10/波动8/成交量7/反转5）
-_EXPECTED_TOTAL = 40
-# 全部输出列数契约（catalog §2.6：趋势18+动量15+波动13+成交量7+反转5 = 58）
-_EXPECTED_COLUMN_TOTAL = 58
+# 6 类指标数量契约（catalog §2：趋势11/动量13/波动8/成交量7/反转5/统计4[TSF与LINEARREG同类]）
+_EXPECTED_TOTAL = 48
+# 全部输出列数契约（catalog §2.6：趋势20+动量22+波动13+成交量7+反转5+统计5 = 72）
+_EXPECTED_COLUMN_TOTAL = 72
 
 
 # ============== TechnicalIndicatorMeta ==============
@@ -122,11 +123,12 @@ class TestRegistryMechanics:
         assert len(metas) == _EXPECTED_TOTAL
 
     def test_list_by_category_counts(self):
-        assert len(TechnicalIndicatorRegistry.list_by_category("trend")) == 10
-        assert len(TechnicalIndicatorRegistry.list_by_category("momentum")) == 10
+        assert len(TechnicalIndicatorRegistry.list_by_category("trend")) == 11
+        assert len(TechnicalIndicatorRegistry.list_by_category("momentum")) == 13
         assert len(TechnicalIndicatorRegistry.list_by_category("volatility")) == 8
         assert len(TechnicalIndicatorRegistry.list_by_category("volume")) == 7
         assert len(TechnicalIndicatorRegistry.list_by_category("reversal")) == 5
+        assert len(TechnicalIndicatorRegistry.list_by_category("statistics")) == 4
 
     def test_list_by_category_empty(self):
         assert TechnicalIndicatorRegistry.list_by_category("nonexistent") == []

@@ -17,12 +17,13 @@
 """
 ZephyrAlpha — 技术指标计算子包（D_FACTOR 域，#ARCH-DATA-TI-001）。
 
-~40 个技术指标（KDJ/MACD/RSI/BOLL/ATR 等），分五类：
-  - trend: MA/EMA/WMA/DEMA/MACD/ADX/DMI/CCI/SAR/TRIX
-  - momentum: KDJ/RSI/WR/ROC/MTM/CMF/UOS/AO/CMO/StochRSI
+~48 个技术指标（KDJ/MACD/RSI/BOLL/ATR 等），分六类：
+  - trend: MA/EMA/WMA/DEMA/MACD/ADX/DMI/CCI/SAR/TRIX/DKX
+  - momentum: KDJ/RSI/WR/ROC/MTM/CMF/UOS/AO/CMO/StochRSI/BIAS/PSY/LWR
   - volatility: ATR/BOLL/Keltner/Donchian/STDDEV/BandWidth/%B/HistVol
   - volume: OBV/MFI/VWAP/VR/AD/PVT/WVAD
   - reversal: K线形态/RSI背离/MACD背离/BOLL突破/量价背离
+  - statistics: CORREL/BETA/LINEARREG+TSF/ROLLVAR（2026-09-14 统计族批）
 
 设计原则：
   - 纯自实现 pandas/numpy（不引入 TA-Lib，避免 C 依赖 + Windows 编译问题）
@@ -71,6 +72,7 @@ from typing import Final
 from zephyr.factor.technical_indicators import (  # noqa: I001  包内子模块显式导出
     momentum,
     reversal,
+    statistics,
     trend,
     volatility,
     volume,
@@ -89,6 +91,7 @@ __all__: Final[list[str]] = [
     "autodiscover_technical_indicators",
     "momentum",
     "reversal",
+    "statistics",
     "trend",
     "volatility",
     "volume",

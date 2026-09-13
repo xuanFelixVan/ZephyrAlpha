@@ -5,7 +5,7 @@
 # [CONSUMERS] zephyr.data.implementations.internal_compute_provider（包级 autodiscover 动态接线：internal_compute_provider L545/L1113 延迟导入本包+注册表消费）; sleeve alpha 择时
 # [STARTUP] imported
 # [MATURITY] production
-# [INVARIANTS] 动量类指标 10 个，纯自实现 pandas/numpy；compute→DataFrame 多列输出
+# [INVARIANTS] 动量类指标 13 个，纯自实现 pandas/numpy；compute→DataFrame 多列输出
 # [MODIFY-GUARD] none
 # [STABILITY] evolving
 # [SAFETY] L
@@ -16,14 +16,16 @@
 # [TTL] permanent
 """
 
-动量类技术指标（10 个，v1.0.0 全部施工完成）。
+动量类技术指标（13 个，v1.0.0 全部施工完成；2026-09-14 A股标配批 +3）。
 
-指标清单：KDJ/RSI/WR/ROC/MTM/CMF/UOS/AO/CMO/StochRSI
+指标清单：KDJ/RSI/WR/ROC/MTM/CMF/UOS/AO/CMO/StochRSI/BIAS/PSY/LWR
 
 算法对齐通达信：
   - KDJ K/D 用通达信 SMA(X,N,1)=ewm(alpha=1/N, adjust=False)（非标准 EMA alpha=2/(N+1)）
   - RSI 用通达信 SMA 平滑：RSI=SMA(up)/SMA(|Δ|)×100
   - StochRSI 依赖 RSI 计算，复用 _rsi 辅助函数
+  - LWR 为威廉 %R 的 SMA 平滑版（慢速威廉），方向与 KDJ 相反（超卖=高值）
+  - PSY 首行无前值记 NaN，不冒充"未上涨"
 
 设计文档：16_technical_indicator_catalog.md §2.2
 
@@ -66,6 +68,30 @@
 #   code: momentum.py L247-263
 #   registry: 指标表: 有uos列 但代码未读表（本模块即指标计算实现）
 #   is_break: true
+# - id: BIAS
+#   name_zh: 乖离率BIAS 6/12/24
+#   name_en: BIAS
+#   intro: 收盘价偏离均线的百分比，度量短期超买超卖（A股行情软件标配）
+#   formula: BIAS_N=(C−MA(C,N))/MA(C,N)×100，N=6/12/24
+#   code: momentum.py 尾部 BIAS 类
+#   registry: 指标表: 有bias_6/bias_12/bias_24列 但代码未读表（本模块即指标计算实现）
+#   is_break: true
+# - id: PSY
+#   name_zh: 心理线PSY 12+MA6
+#   name_en: PSY
+#   intro: 近 N 日上涨天数占比，度量市场情绪偏多偏空（A股行情软件标配）
+#   formula: PSY=COUNT(C>REF(C,1),12)/12×100；PSYMA=MA(PSY,6)；首行无前值=NaN
+#   code: momentum.py 尾部 PSY 类
+#   registry: 指标表: 有psy_12/psy_ma6列 但代码未读表（本模块即指标计算实现）
+#   is_break: true
+# - id: LWR
+#   name_zh: 慢速威廉LWR 9,3,3
+#   name_en: LWR
+#   intro: 威廉 %R 的双重 SMA 平滑版，方向与 KDJ 相反（超卖=高值）
+#   formula: RSV=(HH9−C)/(HH9−LL9)×100 → LWR1=SMA(RSV,3,1) → LWR2=SMA(LWR1,3,1)
+#   code: momentum.py 尾部 LWR 类
+#   registry: 指标表: 有lwr_1/lwr_2列 但代码未读表（本模块即指标计算实现）
+#   is_break: true
 # 层: 算法
 # - id: A1
 #   name_zh: ① 校验+参数合并+空表短路 compute统一契约
@@ -91,10 +117,10 @@
 #   outputs: RSI Series
 # 层: 输出
 # - id: O1
-#   name_zh: 动量指标 DataFrame（10指标多列）
+#   name_zh: 动量指标 DataFrame（13指标多列）
 #   name_en: momentum indicators DataFrame
-#   intro: KDJ/RSI/WR/ROC/MTM/CMF/UOS/AO/CMO/StochRSI 共10个动量指标的多列输出，index 与输入对齐
-#   invariant: 输出列严格等于各 meta.output_columns（kdj_k/d/j、rsi_6/12/24、wr_14、roc_12、mtm_12/mtmma_12、cmf_20、uos、ao、cmo_14、stochrsi）
+#   intro: KDJ/RSI/WR/ROC/MTM/CMF/UOS/AO/CMO/StochRSI/BIAS/PSY/LWR 共13个动量指标的多列输出，index 与输入对齐
+#   invariant: 输出列严格等于各 meta.output_columns（kdj_k/d/j、rsi_6/12/24、wr_14、roc_12、mtm_12/mtmma_12、cmf_20、uos、ao、cmo_14、stochrsi、bias_6/12/24、psy_12/psy_ma6、lwr_1/lwr_2）
 #   downstream: zephyr.data.implementations.internal_compute_provider（批量计算写入 c1_market.technical_indicator）；sleeve alpha 择时
 # [/ALGO_FLOW]
 #
@@ -107,6 +133,9 @@
 # A1 -.->|断点| RSI
 # A1 -.->|断点| CMF
 # A1 -.->|断点| UOS
+# A1 -.->|断点| BIAS
+# A1 -.->|断点| PSY
+# A1 -.->|断点| LWR
 # A2 -.->|断点| KDJ
 # A2 -.->|断点| RSI
 # A3 -.->|断点| RSI
@@ -435,3 +464,90 @@ class StochRSI(TechnicalIndicatorBase):
         rsi_max = rsi.rolling(window=stoch_n).max()
         stochrsi = (rsi - rsi_min) / (rsi_max - rsi_min)
         return pd.DataFrame({"stochrsi": stochrsi}, index=data.index)
+
+
+@TechnicalIndicatorRegistry.register
+class BIAS(TechnicalIndicatorBase):
+    """乖离率（Bias Ratio，A股行情软件标配 N=6/12/24）。"""
+
+    meta = TechnicalIndicatorMeta(
+        indicator_id="bias",
+        name="乖离率",
+        category="momentum",
+        output_columns=["bias_6", "bias_12", "bias_24"],
+        input_columns=["close"],
+        params={"periods": [6, 12, 24]},
+        version="1.0.0",
+        description="BIAS_N=(C−MA(C,N))/MA(C,N)×100，正=收盘价在均线上方（超买倾向），负=下方",
+    )
+
+    def compute(self, data: pd.DataFrame, **kwargs) -> pd.DataFrame:
+        self.validate(data)
+        if data.empty:
+            return pd.DataFrame(columns=self.meta.output_columns)
+        params = self.get_params(**kwargs)
+        close = data["close"]
+        out = {}
+        for n in params["periods"]:
+            ma = close.rolling(window=n).mean()
+            out[f"bias_{n}"] = (close - ma) / ma * 100
+        return pd.DataFrame(out, index=data.index)
+
+
+@TechnicalIndicatorRegistry.register
+class PSY(TechnicalIndicatorBase):
+    """心理线（Psychological Line，A股行情软件标配 12+MA6）。"""
+
+    meta = TechnicalIndicatorMeta(
+        indicator_id="psy",
+        name="心理线",
+        category="momentum",
+        output_columns=["psy_12", "psy_ma6"],
+        input_columns=["close"],
+        params={"period": 12, "ma_period": 6},
+        version="1.0.0",
+        description="PSY=COUNT(C>REF(C,1),12)/12×100；PSYMA=MA(PSY,6)；首行无前值记 NaN",
+    )
+
+    def compute(self, data: pd.DataFrame, **kwargs) -> pd.DataFrame:
+        self.validate(data)
+        if data.empty:
+            return pd.DataFrame(columns=self.meta.output_columns)
+        params = self.get_params(**kwargs)
+        n, ma_n = params["period"], params["ma_period"]
+        delta = data["close"].diff()
+        up = (delta > 0).astype(float)
+        up[delta.isna()] = np.nan  # 首行无前值，不计入分母也不冒充"未上涨"
+        psy = up.rolling(window=n).mean() * 100
+        psy_ma = psy.rolling(window=ma_n).mean()
+        return pd.DataFrame({"psy_12": psy, "psy_ma6": psy_ma}, index=data.index)
+
+
+@TechnicalIndicatorRegistry.register
+class LWR(TechnicalIndicatorBase):
+    """慢速威廉（LW&R，威廉 %R 的双重 SMA 平滑，方向与 KDJ 相反：超卖=高值）。"""
+
+    meta = TechnicalIndicatorMeta(
+        indicator_id="lwr",
+        name="慢速威廉",
+        category="momentum",
+        output_columns=["lwr_1", "lwr_2"],
+        input_columns=["high", "low", "close"],
+        params={"period": 9, "k_smooth": 3, "d_smooth": 3},
+        version="1.0.0",
+        description="RSV=(HH9−C)/(HH9−LL9)×100；LWR1=SMA(RSV,3,1)；LWR2=SMA(LWR1,3,1)，对齐通达信",
+    )
+
+    def compute(self, data: pd.DataFrame, **kwargs) -> pd.DataFrame:
+        self.validate(data)
+        if data.empty:
+            return pd.DataFrame(columns=self.meta.output_columns)
+        params = self.get_params(**kwargs)
+        n, k_n, d_n = params["period"], params["k_smooth"], params["d_smooth"]
+        hh = data["high"].rolling(window=n).max()
+        ll = data["low"].rolling(window=n).min()
+        # 威廉口径：分子为 HH−C（与 KDJ 的 C−LL 相反），高值=接近最低价=超卖
+        rsv = (hh - data["close"]) / (hh - ll) * 100
+        lwr1 = _sma(rsv, k_n)
+        lwr2 = _sma(lwr1, d_n)
+        return pd.DataFrame({"lwr_1": lwr1, "lwr_2": lwr2}, index=data.index)
