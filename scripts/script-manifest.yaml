@@ -4,7 +4,7 @@
 manifest_version: 2.0.0
 generated_by: generate_manifest.py (auto-scan)
 generated_at: '2026-09-14'
-total_scripts: 898
+total_scripts: 910
 scripts:
 - name: __init__.py
   path: __init__.py
@@ -590,6 +590,14 @@ scripts:
   status: registered
   timeout_seconds: 60
   dimensions: []
+- name: backtest/compare_state_dualrun.py
+  path: backtest/compare_state_dualrun.py
+  description: 每日并排三路：旧 HMM 7 态 dominant（regime_snapshot_history）× 新锚定四档
+  domain: test
+  execution_plane: warm-path
+  status: registered
+  timeout_seconds: 60
+  dimensions: []
 - name: backtest/eval_f2_fundamental_ic.py
   path: backtest/eval_f2_fundamental_ic.py
   description: 月度再平衡截面评估：每月末交易日，取每标的 announce_date<=t 的可见最新派生行算因子，
@@ -630,9 +638,25 @@ scripts:
   status: registered
   timeout_seconds: 60
   dimensions: []
+- name: backtest/hypothesis_precheck.py
+  path: backtest/hypothesis_precheck.py
+  description: 原理（讨论稿 v4/v5：FaVOR 回测前机制验证同构；Owner 原则"主观经验是先验过滤器，
+  domain: test
+  execution_plane: warm-path
+  status: registered
+  timeout_seconds: 60
+  dimensions: []
 - name: backtest/intake_load_screen_c2.py
   path: backtest/intake_load_screen_c2.py
   description: C2 粗筛（2026-09-12 夜班批,commit 52cb9e8ab6）判定 597 条：candidate 381 / excluded 216
+  domain: test
+  execution_plane: warm-path
+  status: registered
+  timeout_seconds: 60
+  dimensions: []
+- name: backtest/lane_b_idea_generator.py
+  path: backtest/lane_b_idea_generator.py
+  description: 原理（讨论稿 §五）：车道 B 货最便宜也最杂，靠 E2 预审把关；本车道只负责按主题种子
   domain: test
   execution_plane: warm-path
   status: registered
@@ -742,6 +766,14 @@ scripts:
   status: registered
   timeout_seconds: 60
   dimensions: []
+- name: backtest/three_high_screen.py
+  path: backtest/three_high_screen.py
+  description: 原理（讨论稿 §五：产业链三高拆解法，Capponi 供应链图谱多跳验证）：
+  domain: test
+  execution_plane: warm-path
+  status: registered
+  timeout_seconds: 60
+  dimensions: []
 - name: backtest/validate_p0_cost.py
   path: backtest/validate_p0_cost.py
   description: 对象：TDM-E-L4-09（订单级预检）/ TDM-P-P2-01（做T资格门）/ TDM-P-P2-03（做T闭环）/ TDM-X-S2-01（卖出执行路由）
@@ -817,6 +849,14 @@ scripts:
 - name: backtest/translated/c4_1970782c2adb_ma_pullback.py
   path: backtest/translated/c4_1970782c2adb_ma_pullback.py
   description: '原文逻辑: 池=全 A 换手率 3%~10% 按换手降序，剔 688/上市<365 交易日/ST/退；'
+  domain: test
+  execution_plane: warm-path
+  status: registered
+  timeout_seconds: 60
+  dimensions: []
+- name: backtest/translated/c4_21af8c66c15e_small_cap.py
+  path: backtest/translated/c4_21af8c66c15e_small_cap.py
+  description: '原文逻辑: 每日 14:30：中小板综(399101) 成分→按流通市值升序取 9 只→过滤 ST/停牌/涨跌停→'
   domain: test
   execution_plane: warm-path
   status: registered
@@ -902,6 +942,14 @@ scripts:
   status: registered
   timeout_seconds: 60
   dimensions: []
+- name: backtest/translated/c4_5301c5d9d7c8_small_cap_hl.py
+  path: backtest/translated/c4_5301c5d9d7c8_small_cap_hl.py
+  description: '原文: 每日 14:40：中小板综(399101) 成分、流通市值<100 亿→按流通市值升序前 10→剔 ST/停牌/涨跌停→'
+  domain: test
+  execution_plane: warm-path
+  status: registered
+  timeout_seconds: 60
+  dimensions: []
 - name: backtest/translated/c4_5efe26d1992e_rsrs_timing.py
   path: backtest/translated/c4_5efe26d1992e_rsrs_timing.py
   description: '原文逻辑: 标的 000300；RSRS 斜率=过去 N=18 日 low→high OLS 斜率；标准化'
@@ -913,6 +961,14 @@ scripts:
 - name: backtest/translated/c4_6485e4cd0844_kdj_timing.py
   path: backtest/translated/c4_6485e4cd0844_kdj_timing.py
   description: '原文逻辑: talib STOCH(fastk=17, slowk=9, slowd=7)：卖出=slowk 从 >80 下穿 80，或'
+  domain: test
+  execution_plane: warm-path
+  status: registered
+  timeout_seconds: 60
+  dimensions: []
+- name: backtest/translated/c4_65ae80c577c9_small_cap95.py
+  path: backtest/translated/c4_65ae80c577c9_small_cap95.py
+  description: '原文: 月频首个交易日：全 A 剔科创北交/ST，三正过滤（PB>0+ROE>0+增收>0+增利>0+OCF/营营利>5），'
   domain: test
   execution_plane: warm-path
   status: registered
@@ -953,6 +1009,14 @@ scripts:
 - name: backtest/translated/c4_7f7e5f935dfc_dmi_timing.py
   path: backtest/translated/c4_7f7e5f935dfc_dmi_timing.py
   description: '原文逻辑: talib ADX(18)/PLUS_DI(18)/MINUS_DI(18)：ADX 上行 且 +DI>-DI → 全仓；'
+  domain: test
+  execution_plane: warm-path
+  status: registered
+  timeout_seconds: 60
+  dimensions: []
+- name: backtest/translated/c4_8664521af1a0_snake_cap.py
+  path: backtest/translated/c4_8664521af1a0_snake_cap.py
+  description: '原文: 每日 14:30：上市≥250 天全 A 剔科创/北交/ST/现价≥涨停×0.97/现价≤跌停×1.04/现价≥10 元'
   domain: test
   execution_plane: warm-path
   status: registered
@@ -1086,6 +1150,14 @@ scripts:
   status: registered
   timeout_seconds: 60
   dimensions: []
+- name: backtest/translated/c4_dc5b80aa3614_tsmall100.py
+  path: backtest/translated/c4_dc5b80aa3614_tsmall100.py
+  description: '原文逻辑: 每日开盘：三正过滤（PB>0 + ROE>0 + OCF/营收>0）按总市值升序取 120 只候选，'
+  domain: test
+  execution_plane: warm-path
+  status: registered
+  timeout_seconds: 60
+  dimensions: []
 - name: backtest/translated/c4_e2e7f033d97c_kd_cross.py
   path: backtest/translated/c4_e2e7f033d97c_kd_cross.py
   description: '原文逻辑: 单标的 000016（原文写 000016.XSHE）；KD(9,3,3)：K 上穿 D 全仓买入，K 下穿 D 清仓。'
@@ -1176,6 +1248,22 @@ scripts:
   dimensions: []
 - name: backtest/translated/c4_valuation_pe_low.py
   path: backtest/translated/c4_valuation_pe_low.py
+  description: from __future__ import annotations
+  domain: test
+  execution_plane: warm-path
+  status: registered
+  timeout_seconds: 60
+  dimensions: []
+- name: backtest/translated/c4_valuation_pe_pb_double.py
+  path: backtest/translated/c4_valuation_pe_pb_double.py
+  description: from __future__ import annotations
+  domain: test
+  execution_plane: warm-path
+  status: registered
+  timeout_seconds: 60
+  dimensions: []
+- name: backtest/translated/c4_valuation_pe_zz500.py
+  path: backtest/translated/c4_valuation_pe_zz500.py
   description: from __future__ import annotations
   domain: test
   execution_plane: warm-path
@@ -1318,6 +1406,14 @@ scripts:
   status: registered
   timeout_seconds: 60
   dimensions: []
+- name: ch/apply_hypothesis_precheck_ddl.py
+  path: ch/apply_hypothesis_precheck_ddl.py
+  description: from __future__ import annotations
+  domain: ch
+  execution_plane: warm-path
+  status: registered
+  timeout_seconds: 60
+  dimensions: []
 - name: ch/apply_market_tables_ddl.py
   path: ch/apply_market_tables_ddl.py
   description: DDL-as-Code 模式：
@@ -1440,7 +1536,7 @@ scripts:
   dimensions: []
 - name: ch/build_consensus_daily.py
   path: ch/build_consensus_daily.py
-  description: 把 c3_fundamental.research_report（研报事件流，146,633 行）聚合为
+  description: 把 c3_fundamental.research_report（研报事件流，14.6 万行）聚合为
   domain: ch
   execution_plane: warm-path
   status: registered
