@@ -1,4 +1,8 @@
 schema_version: 1.1.0
+- file: docs/_working/2026-09-14-tilib-batch7-wiring-plan.md
+  token: tilib-batch7-wiring-plan-20260914
+  created_by: st-tilib-20260914d
+  capability: technical_indicator
 di_seam_exemptions: []
 module_id: PS-REG-021
 ttl: permanent
@@ -12050,6 +12054,10 @@ creation_tokens:
   token: auto-adopt-consensus-daily-20260912
   created_by: schemas-split-20260912 (adopt 研报消费端批在途件, 内容零改动)
   capability: fund_consensus_daily
+- file: src/zephyr/data/implementations/consensus_daily_compute.py
+  token: fund-consensus-daily-consensus-daily-compute-20260913
+  created_by: st-expectation-20260914
+  capability: fund_consensus_daily
 - file: docs/_working/2026-09-12-expectation-consumption-design.md
   token: auto-adopt-expectation-design-20260912
   created_by: schemas-split-20260912 (adopt 研报消费端批在途件, 内容零改动)
@@ -12435,4 +12443,4 @@ creation_tokens:
 - file: scripts/backtest/translated/c4_dc5b80aa3614_tsmall100.py
   token: c4-dc5b80aa3614-tsmall100-20260914
   created_by: st-zcode-c4-20260912
-  capability: c4_batch_translation
+  capability: c4_batch_translation
