@@ -363,6 +363,27 @@ DDL_STATEMENTS = [
     """,
     "CREATE INDEX IF NOT EXISTS idx_ig_io_from ON ig_io_edge (from_sector_code)",
     "CREATE INDEX IF NOT EXISTS idx_ig_io_to ON ig_io_edge (to_sector_code)",
+    # ========== v8 增量（2026-09-14 概念体系: 公司×概念标签,同花顺导出装载;
+    #     概念≠产业链——ig_chain 只承载真产业链,概念型名称归宿=本表;
+    #     消费=详情页所属概念展示+链名分流判定;讨论稿 Owner 2026-09-14 批准） ---
+    """
+    CREATE TABLE IF NOT EXISTS stock_concept (
+        id           BIGSERIAL PRIMARY KEY,
+        symbol       TEXT NOT NULL,
+        name         TEXT,
+        concept      TEXT NOT NULL,
+        source       TEXT NOT NULL DEFAULT 'ths_export',
+        source_doc   TEXT,
+        market       TEXT NOT NULL DEFAULT 'cn',
+        as_of        DATE,
+        valid_from   DATE,
+        valid_to     DATE,
+        created_at   TIMESTAMPTZ NOT NULL DEFAULT now(),
+        updated_at   TIMESTAMPTZ NOT NULL DEFAULT now(),
+        UNIQUE (symbol, concept, source)
+    )
+    """,
+    "CREATE INDEX IF NOT EXISTS idx_stock_concept_concept ON stock_concept (concept)",
 ]
 
 # 裁定#ARCH-DEPGRAPH_ACCESS_CONTROL: reader 只读 / writer 读写
@@ -380,6 +401,7 @@ _ALL_TABLES = (
     "ig_equity_edge",
     "ig_product_revenue",
     "ig_io_edge",
+    "stock_concept",
 )
 GRANT_STATEMENTS = (
     [f"GRANT SELECT ON {t} TO depgraph_reader" for t in _ALL_TABLES]
@@ -394,6 +416,7 @@ GRANT_STATEMENTS = (
         "GRANT USAGE, SELECT ON SEQUENCE ig_equity_edge_edge_id_seq TO depgraph_writer",
         "GRANT USAGE, SELECT ON SEQUENCE ig_product_revenue_id_seq TO depgraph_writer",
         "GRANT USAGE, SELECT ON SEQUENCE ig_io_edge_id_seq TO depgraph_writer",
+        "GRANT USAGE, SELECT ON SEQUENCE stock_concept_id_seq TO depgraph_writer",
     ]
 )
 
