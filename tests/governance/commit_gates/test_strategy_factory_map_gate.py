@@ -85,6 +85,32 @@ class TestBlue:
         assert passed
         assert "skip" not in detail
 
+    def test_absolute_path_triggers_and_blocks_bad_map(self, gate, monkeypatch, tmp_path):
+        """生产形态：commit() 传入绝对路径（gateway abspath）必命中触发面——
+        2026-09-13 实弹教训（7af850ac/a839ad38 断边图放行）：朴素反斜杠替换对
+        绝对路径恒 miss，触发面归一治本后坏图必须被拦。"""
+        d = copy.deepcopy(_GOOD)
+        d["edges"].append(["FAC-E0", "FAC-GHOST"])
+        monkeypatch.setattr(gate_mod, "_MAP_PATH", _write_map(tmp_path, d))
+
+        class _FakeGW:  # 最小 gateway 桩：_norm_rel 读 project_root
+            project_root = _REPO
+
+        abs_path = str(_REPO / _MAP_REL)
+        passed, detail = gate.check(gateway=_FakeGW(), files=[abs_path])
+        assert not passed
+        assert "不存在的节点" in detail
+
+    def test_absolute_path_non_trigger_skips(self, gate):
+        """生产形态：绝对路径非触发文件 → skip 放行。"""
+
+        class _FakeGW:
+            project_root = _REPO
+
+        passed, detail = gate.check(gateway=_FakeGW(), files=[str(_REPO / "src" / "zephyr" / "some_module.py")])
+        assert passed
+        assert "skip" in detail
+
 
 class TestRed:
     """红队：坏图必拦（tmp 副本 monkeypatch，先例=TestRedDecisionMap）。"""

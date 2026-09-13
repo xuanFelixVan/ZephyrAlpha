@@ -41,12 +41,14 @@ Usage::
 from __future__ import annotations
 
 import logging
+import os
 import re
 from pathlib import Path
 from typing import Final
 
 import yaml
 
+from zephyr.gov_enforcement.commit_gates._diff_helpers import _norm_rel
 from zephyr.gov_enforcement.rule_bridge.commit_gate_registry import GateSpec
 
 logger = logging.getLogger(__name__)
@@ -64,6 +66,14 @@ _TRIGGER_FILES: Final[frozenset[str]] = frozenset(
 )
 
 _CLUSTER_KEY_PAT = re.compile(r"^C\d+$")
+
+# 触发面 normcase 归一（commit() 传入绝对路径——git_commit_gateway abspath；朴素
+# 反斜杠替换对绝对路径恒 miss=本 gate 注册以来生产链路零触发实证，2026-09-13
+# FACTORY-MAP 实弹暴露同款缺陷连带修复；与 _norm_rel 输出同域可比，
+# 学 DECISION-MAP _MAP_INPUT_YAML 先例）
+_TRIGGER_FILES_NORMCASE: Final[frozenset[str]] = frozenset(
+    os.path.normcase(p) for p in _TRIGGER_FILES
+)
 
 
 def _check_cluster_names() -> list[str]:
@@ -87,8 +97,9 @@ def make_industry_chain_map_gate() -> GateSpec:
     def _check(gateway, files: list[str], **kwargs) -> tuple[bool, str]:
         if not files:
             return True, ""
-        norm = [f.replace("\\", "/") for f in files]
-        triggered = sorted(_TRIGGER_FILES & set(norm))
+        # 生产形态=绝对路径（gateway abspath），_norm_rel 归一到 normcase 相对路径
+        norm = {_norm_rel(gateway, f) for f in files}
+        triggered = sorted(_TRIGGER_FILES_NORMCASE & norm)
         if not triggered:
             return True, ""
 

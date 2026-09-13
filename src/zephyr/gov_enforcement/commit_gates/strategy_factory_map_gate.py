@@ -49,12 +49,14 @@ Usage::
 from __future__ import annotations
 
 import logging
+import os
 import sys
 from pathlib import Path
 from typing import Final
 
 import yaml
 
+from zephyr.gov_enforcement.commit_gates._diff_helpers import _norm_rel
 from zephyr.gov_enforcement.rule_bridge.commit_gate_registry import GateSpec
 
 logger = logging.getLogger(__name__)
@@ -72,6 +74,13 @@ _TRIGGER_FILES: Final[frozenset[str]] = frozenset(
     }
 )
 
+# 触发面 normcase 归一（commit() 传入绝对路径——git_commit_gateway abspath，朴素
+# 反斜杠替换对绝对路径恒 miss=实弹实证 7af850ac/a839ad38 断边图放行；本集合与
+# _norm_rel 输出同域可比，学 DECISION-MAP _MAP_INPUT_YAML 先例）
+_TRIGGER_FILES_NORMCASE: Final[frozenset[str]] = frozenset(
+    os.path.normcase(p) for p in _TRIGGER_FILES
+)
+
 # 图真源路径（模块级常量=测试可替换挂点，红蓝 tmp 图直调 gate.check 先例=TestRedDecisionMap）
 _MAP_PATH: Final[Path] = _REPO_ROOT / "config" / "strategy_production_map.yaml"
 
@@ -86,8 +95,10 @@ def make_strategy_factory_map_gate() -> GateSpec:
     def _check(gateway, files: list[str], **kwargs) -> tuple[bool, str]:
         if not files:
             return True, ""
-        norm = [f.replace("\\", "/") for f in files]
-        triggered = sorted(_TRIGGER_FILES & set(norm))
+        # 生产形态=绝对路径（gateway abspath），_norm_rel 归一到 normcase 相对路径
+        # （实弹教训 2026-09-13：朴素反斜杠替换对绝对路径恒 miss）
+        norm = {_norm_rel(gateway, f) for f in files}
+        triggered = sorted(_TRIGGER_FILES_NORMCASE & norm)
         if not triggered:
             return True, "skip: 本 commit 未触及工厂图触发面（图 YAML/校验器真源）"
 

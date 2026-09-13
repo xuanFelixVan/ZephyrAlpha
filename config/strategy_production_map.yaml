@@ -324,7 +324,7 @@ nodes:
       - {artifact: 归因报告, location: 待定（E9 施工时定）, key: portfolio_id+期间, retention: 永久}
 
 edges:
-  - [FAC-E0, FAC-GHOST]
+  - [FAC-E0, FAC-E1]
   - [FAC-E1, FAC-E2]
   - [FAC-E2, FAC-E3]
   - [FAC-E3, FAC-E4]
