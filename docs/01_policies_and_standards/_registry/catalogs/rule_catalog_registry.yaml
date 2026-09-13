@@ -4,7 +4,7 @@ ttl: permanent
 doc_type: register
 title: 规则路径目录（唯一真源 SSoT）
 status: active
-generated_at: '2026-09-13T20:16:36Z'
+generated_at: '2026-09-13T20:21:54Z'
 generated_by: scripts/governance/d3_metadata/generate_rule_catalog.py
 maintenance: auto
 total_files: 249
@@ -1799,7 +1799,7 @@ files:
   title: SOP 方法论真源地图（八族文件夹导航）
   doc_type: index
   status: active
-  version: 1.3.1
+  version: 1.4.0
   rule_form: ''
   scope: ''
   stability: ''
@@ -1817,21 +1817,6 @@ files:
   version: ''
   rule_form: ''
   scope: ''
-  stability: ''
-  layer: ''
-  superseded_by: ''
-  severity: ''
-  tier: ''
-  aliases: []
-  section_count: 0
-- path: docs/01_policies_and_standards/sop/tdm_consumption_sop.md
-  module_id: ''
-  title: 交易决策全景图·消费场景规程（TDM Consumption SOP）
-  doc_type: policy
-  status: active
-  version: 1.0.0
-  rule_form: ''
-  scope: 07_trading_decision_architecture
   stability: ''
   layer: ''
   superseded_by: ''
@@ -2102,6 +2087,21 @@ files:
   version: 1.0.0
   rule_form: procedural
   scope: global
+  stability: ''
+  layer: ''
+  superseded_by: ''
+  severity: ''
+  tier: ''
+  aliases: []
+  section_count: 0
+- path: docs/01_policies_and_standards/sop/trading_decision_map_sop/tdm_consumption_policy.md
+  module_id: ''
+  title: 交易决策全景图·消费场景规程（TDM Consumption Policy）——什么场合必须打开地图、读什么、验证什么
+  doc_type: policy
+  status: active
+  version: 1.0.0
+  rule_form: procedural
+  scope: ''
   stability: ''
   layer: ''
   superseded_by: ''
