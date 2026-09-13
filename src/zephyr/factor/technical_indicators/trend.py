@@ -5,7 +5,7 @@
 # [CONSUMERS] zephyr.data.implementations.internal_compute_provider（包级 autodiscover 动态接线：internal_compute_provider L545/L1113 延迟导入本包+注册表消费）; sleeve alpha 择时
 # [STARTUP] imported
 # [MATURITY] production
-# [INVARIANTS] 趋势类指标 16 个，纯自实现 pandas/numpy；compute→DataFrame 多列输出
+# [INVARIANTS] 趋势类指标 17 个，纯自实现 pandas/numpy；compute→DataFrame 多列输出
 # [MODIFY-GUARD] none
 # [STABILITY] evolving
 # [SAFETY] L
@@ -16,9 +16,9 @@
 # [TTL] permanent
 """
 
-趋势类技术指标（16 个；2026-09-14 A股标配批 +1、主流热门批 2a +5）。
+趋势类技术指标（17 个；2026-09-14 A股标配批+1、批2a +5、批2b +1）。
 
-指标清单：MA/EMA/WMA/DEMA/MACD/ADX/DMI/CCI/SAR/TRIX/DKX/HMA/ZLEMA/KAMA/VORTEX/SUPERTREND
+指标清单：MA/EMA/WMA/DEMA/MACD/ADX/DMI/CCI/SAR/TRIX/DKX/HMA/ZLEMA/KAMA/VORTEX/SUPERTREND/MCGINLEY
 
 算法对齐通达信：
   - EMA 系列（EMA/DEMA/MACD/TRIX）统一 adjust=False，种子=首值，无预热 NaN
@@ -120,8 +120,8 @@
 # - id: O1
 #   name_zh: 趋势指标 DataFrame（11指标多列）
 #   name_en: trend indicators DataFrame
-#   intro: MA/EMA/WMA/DEMA/MACD/ADX/DMI/CCI/SAR/TRIX/DKX/HMA/ZLEMA/KAMA/VORTEX/SUPERTREND 共16个趋势指标的多列输出，index 与输入对齐
-#   invariant: 输出列严格等于各 meta.output_columns（ma_5/10/20/60、ema_12/26、wma_10、dema_12、macd_*、adx_14、pdi_14/mdi_14、cci_14、sar、trix/trma、dkx_20/dkx_ma10、hma_16、zlema_21、kama_10、vip_14/vim_14、supertrend_10/supertrend_dir）
+#   intro: MA/EMA/WMA/DEMA/MACD/ADX/DMI/CCI/SAR/TRIX/DKX/HMA/ZLEMA/KAMA/VORTEX/SUPERTREND 共17个趋势指标的多列输出，index 与输入对齐
+#   invariant: 输出列严格等于各 meta.output_columns（ma_5/10/20/60、ema_12/26、wma_10、dema_12、macd_*、adx_14、pdi_14/mdi_14、cci_14、sar、trix/trma、dkx_20/dkx_ma10、hma_16、zlema_21、kama_10、vip_14/vim_14、supertrend_10/supertrend_dir、md_14）
 #   downstream: zephyr.data.implementations.internal_compute_provider（批量计算写入 c1_market.technical_indicator）；sleeve alpha 择时；volatility.py/reversal.py 复用 _ema
 # [/ALGO_FLOW]
 #
@@ -757,3 +757,40 @@ class SUPERTREND(TechnicalIndicatorBase):
         return pd.DataFrame(
             {f"supertrend_{n}": st, "supertrend_dir": direction}, index=data.index
         )
+
+
+@TechnicalIndicatorRegistry.register
+class MCGINLEY(TechnicalIndicatorBase):
+    """McGinley 动态均线（McGinley Dynamic，14）。"""
+
+    meta = TechnicalIndicatorMeta(
+        indicator_id="mcginley",
+        name="McGinley动态均线",
+        category="trend",
+        output_columns=["md_14"],
+        input_columns=["close"],
+        params={"period": 14, "k": 0.6},
+        version="1.0.0",
+        description="MD=prev+(C−prev)/(k×N×(C/prev)⁴)，追踪速度随偏离自动调节，分离度低于 EMA",
+    )
+
+    def compute(self, data: pd.DataFrame, **kwargs) -> pd.DataFrame:
+        self.validate(data)
+        if data.empty:
+            return pd.DataFrame(columns=self.meta.output_columns)
+        params = self.get_params(**kwargs)
+        n, k = params["period"], params["k"]
+        c = data["close"].to_numpy()
+        m = len(c)
+        md = np.full(m, np.nan)
+        prev = np.nan
+        for i in range(m):
+            if np.isnan(prev):
+                prev = c[i]
+                md[i] = prev
+                continue
+            ratio = c[i] / prev if prev != 0 else 1.0
+            denom = k * n * max(ratio**4, 1e-12)
+            prev = prev + (c[i] - prev) / denom
+            md[i] = prev
+        return pd.DataFrame({f"md_{n}": pd.Series(md, index=data.index)}, index=data.index)

@@ -532,6 +532,116 @@ _MIGRATIONS: list[tuple[str, str]] = [
         "ALTER TABLE c1_market.technical_indicator "
         "ADD COLUMN IF NOT EXISTS trange Nullable(Float64) COMMENT '真实波幅原始值(首行=H-L)'",
     ),
+    (
+        "c1_market.technical_indicator",
+        "ALTER TABLE c1_market.technical_indicator "
+        "ADD COLUMN IF NOT EXISTS md_14 Nullable(Float64) COMMENT '14日McGinley动态均线'",
+    ),
+    (
+        "c1_market.technical_indicator",
+        "ALTER TABLE c1_market.technical_indicator "
+        "ADD COLUMN IF NOT EXISTS tsi Nullable(Float64) COMMENT '真实强度指数(25/13)'",
+    ),
+    (
+        "c1_market.technical_indicator",
+        "ALTER TABLE c1_market.technical_indicator "
+        "ADD COLUMN IF NOT EXISTS smi Nullable(Float64) COMMENT '随机动量指数(10,3,3)'",
+    ),
+    (
+        "c1_market.technical_indicator",
+        "ALTER TABLE c1_market.technical_indicator "
+        "ADD COLUMN IF NOT EXISTS smi_signal Nullable(Float64) COMMENT 'SMI信号线(EMA3)'",
+    ),
+    (
+        "c1_market.technical_indicator",
+        "ALTER TABLE c1_market.technical_indicator "
+        "ADD COLUMN IF NOT EXISTS fisher_9 Nullable(Float64) COMMENT '费雪变换(9)'",
+    ),
+    (
+        "c1_market.technical_indicator",
+        "ALTER TABLE c1_market.technical_indicator "
+        "ADD COLUMN IF NOT EXISTS fisher_sig9 Nullable(Float64) COMMENT '费雪变换信号(前值)'",
+    ),
+    (
+        "c1_market.technical_indicator",
+        "ALTER TABLE c1_market.technical_indicator "
+        "ADD COLUMN IF NOT EXISTS kst Nullable(Float64) COMMENT '确知量KST'",
+    ),
+    (
+        "c1_market.technical_indicator",
+        "ALTER TABLE c1_market.technical_indicator "
+        "ADD COLUMN IF NOT EXISTS kst_signal Nullable(Float64) COMMENT 'KST信号线(SMA9)'",
+    ),
+    (
+        "c1_market.technical_indicator",
+        "ALTER TABLE c1_market.technical_indicator "
+        "ADD COLUMN IF NOT EXISTS crsi Nullable(Float64) COMMENT 'ConnorsRSI(3,2,100)'",
+    ),
+    (
+        "c1_market.technical_indicator",
+        "ALTER TABLE c1_market.technical_indicator "
+        "ADD COLUMN IF NOT EXISTS qqe_14 Nullable(Float64) COMMENT 'QQE线(14,5,27)'",
+    ),
+    (
+        "c1_market.technical_indicator",
+        "ALTER TABLE c1_market.technical_indicator "
+        "ADD COLUMN IF NOT EXISTS qqe_rsi_ma Nullable(Float64) COMMENT 'QQE平滑RSI线(EMA5)'",
+    ),
+    (
+        "c1_market.technical_indicator",
+        "ALTER TABLE c1_market.technical_indicator "
+        "ADD COLUMN IF NOT EXISTS stc Nullable(Float64) COMMENT 'Schaff趋势周期(23,50,10,3)'",
+    ),
+    (
+        "c1_market.technical_indicator",
+        "ALTER TABLE c1_market.technical_indicator "
+        "ADD COLUMN IF NOT EXISTS rvgi_10 Nullable(Float64) COMMENT '相对活力指数(10)'",
+    ),
+    (
+        "c1_market.technical_indicator",
+        "ALTER TABLE c1_market.technical_indicator "
+        "ADD COLUMN IF NOT EXISTS rvgi_sig Nullable(Float64) COMMENT 'RVGI信号线(SMA4)'",
+    ),
+    (
+        "c1_market.technical_indicator",
+        "ALTER TABLE c1_market.technical_indicator "
+        "ADD COLUMN IF NOT EXISTS massi_25 Nullable(Float64) COMMENT '质量指数(9,25)'",
+    ),
+    (
+        "c1_market.technical_indicator",
+        "ALTER TABLE c1_market.technical_indicator "
+        "ADD COLUMN IF NOT EXISTS vwma_20 Nullable(Float64) COMMENT '20日成交量加权均线'",
+    ),
+    (
+        "c1_market.technical_indicator",
+        "ALTER TABLE c1_market.technical_indicator "
+        "ADD COLUMN IF NOT EXISTS adosc Nullable(Float64) COMMENT '蔡金震荡器(3/10)'",
+    ),
+    (
+        "c1_market.technical_indicator",
+        "ALTER TABLE c1_market.technical_indicator "
+        "ADD COLUMN IF NOT EXISTS eom_14 Nullable(Float64) COMMENT '14日简易波动量'",
+    ),
+    (
+        "c1_market.technical_indicator",
+        "ALTER TABLE c1_market.technical_indicator "
+        "ADD COLUMN IF NOT EXISTS kvo Nullable(Float64) COMMENT 'Klinger量震荡器(34/55)'",
+    ),
+    (
+        "c1_market.technical_indicator",
+        "ALTER TABLE c1_market.technical_indicator "
+        "ADD COLUMN IF NOT EXISTS kvo_signal Nullable(Float64) COMMENT 'KVO信号线(EMA13)'",
+    ),
+    (
+        "c1_market.technical_indicator",
+        "ALTER TABLE c1_market.technical_indicator "
+        "ADD COLUMN IF NOT EXISTS nvi Nullable(Float64) COMMENT '负成交量指标'",
+    ),
+    (
+        "c1_market.technical_indicator",
+        "ALTER TABLE c1_market.technical_indicator "
+        "ADD COLUMN IF NOT EXISTS pvi Nullable(Float64) COMMENT '正成交量指标'",
+    ),
 ]
 
 # 引擎选型矩阵（用于验证）

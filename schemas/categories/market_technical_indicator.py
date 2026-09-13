@@ -43,7 +43,7 @@ ClickHouse 实际表结构必须与本文件 DDL 一致；结构变更通过 app
 数据来源：
     data_source = 'internal'（纯本地 pandas/numpy 计算，非外部数据源下载）
     输入：c1_market.kline_{period} 的 OHLCV 数据（120min 由 kline_60min 两根聚合）
-    输出：82 个技术指标列（Nullable(Float64)），覆盖 6 类 56 个指标（2026-09-14 统计族批+9、主流热门批 2a +8）
+    输出：104 个技术指标列（Nullable(Float64)），覆盖 6 类 72 个指标（2026-09-14 批2a +8/批2b +16 收官）
 
 列设计说明：
     所有指标列均为 Nullable(Float64)——预热期无值时为 NULL（不前向填充，避免前视偏差）
@@ -90,6 +90,7 @@ CREATE TABLE IF NOT EXISTS c1_market.technical_indicator
     vim_14       Nullable(Float64)  COMMENT '14日涡旋指标VI-',
     supertrend_10  Nullable(Float64)  COMMENT '超级趋势线(10,3)',
     supertrend_dir Nullable(Float64)  COMMENT '超级趋势方向(1=多,-1=空)',
+    md_14        Nullable(Float64)  COMMENT '14日McGinley动态均线',
 
     kdj_k        Nullable(Float64)  COMMENT 'KDJ K线',
     kdj_d        Nullable(Float64)  COMMENT 'KDJ D线',
@@ -114,6 +115,19 @@ CREATE TABLE IF NOT EXISTS c1_market.technical_indicator
     lwr_1        Nullable(Float64)  COMMENT '慢速威廉LWR1(9,3,3)',
     lwr_2        Nullable(Float64)  COMMENT '慢速威廉LWR2(9,3,3)',
     dpo_20       Nullable(Float64)  COMMENT '20日区间震荡',
+    tsi          Nullable(Float64)  COMMENT '真实强度指数(25/13)',
+    smi          Nullable(Float64)  COMMENT '随机动量指数(10,3,3)',
+    smi_signal   Nullable(Float64)  COMMENT 'SMI信号线(EMA3)',
+    fisher_9     Nullable(Float64)  COMMENT '费雪变换(9)',
+    fisher_sig9  Nullable(Float64)  COMMENT '费雪变换信号(前值)',
+    kst          Nullable(Float64)  COMMENT '确知量KST',
+    kst_signal   Nullable(Float64)  COMMENT 'KST信号线(SMA9)',
+    crsi         Nullable(Float64)  COMMENT 'ConnorsRSI(3,2,100)',
+    qqe_14       Nullable(Float64)  COMMENT 'QQE线(14,5,27)',
+    qqe_rsi_ma   Nullable(Float64)  COMMENT 'QQE平滑RSI线(EMA5)',
+    stc          Nullable(Float64)  COMMENT 'Schaff趋势周期(23,50,10,3)',
+    rvgi_10      Nullable(Float64)  COMMENT '相对活力指数(10)',
+    rvgi_sig     Nullable(Float64)  COMMENT 'RVGI信号线(SMA4)',
 
     correl_30      Nullable(Float64)  COMMENT '30日close×volume滚动相关系数',
     beta_30        Nullable(Float64)  COMMENT '30日close对volume滚动beta系数',
@@ -124,6 +138,7 @@ CREATE TABLE IF NOT EXISTS c1_market.technical_indicator
     atr_14       Nullable(Float64)  COMMENT '14日真实波幅',
     natr_14      Nullable(Float64)  COMMENT '14日归一化真实波幅(TR/Close×100)',
     trange       Nullable(Float64)  COMMENT '真实波幅原始值(首行=H-L)',
+    massi_25     Nullable(Float64)  COMMENT '质量指数(9,25)',
     boll_upper   Nullable(Float64)  COMMENT '布林带上轨',
     boll_middle  Nullable(Float64)  COMMENT '布林带中轨(MA20)',
     boll_lower   Nullable(Float64)  COMMENT '布林带下轨',
@@ -144,6 +159,13 @@ CREATE TABLE IF NOT EXISTS c1_market.technical_indicator
     ad           Nullable(Float64)  COMMENT '累积/派发线',
     pvt          Nullable(Float64)  COMMENT '价量趋势',
     wvad_24      Nullable(Float64)  COMMENT '24日威廉变异离散量',
+    vwma_20      Nullable(Float64)  COMMENT '20日成交量加权均线',
+    adosc        Nullable(Float64)  COMMENT '蔡金震荡器(3/10)',
+    eom_14       Nullable(Float64)  COMMENT '14日简易波动量',
+    kvo          Nullable(Float64)  COMMENT 'Klinger量震荡器(34/55)',
+    kvo_signal   Nullable(Float64)  COMMENT 'KVO信号线(EMA13)',
+    nvi          Nullable(Float64)  COMMENT '负成交量指标',
+    pvi          Nullable(Float64)  COMMENT '正成交量指标',
 
     candle_pattern    Nullable(Float64)  COMMENT 'K线形态编码(0=无,1=锤子,2=吞没,3=启明星,4=黄昏星,5=十字星...)',
     rsi_divergence    Nullable(Float64)  COMMENT 'RSI背离信号(0=无,1=顶背离,-1=底背离)',
@@ -180,19 +202,21 @@ INSERT_COLUMNS = (
     # 趋势类
     "ma_5, ma_10, ma_20, ma_60, ema_12, ema_26, wma_10, dema_12, "
     "macd_dif, macd_dea, macd_hist, adx_14, pdi_14, mdi_14, cci_14, sar, trix, trma, "
-    "dkx_20, dkx_ma10, hma_16, zlema_21, kama_10, vip_14, vim_14, supertrend_10, supertrend_dir, "
+    "dkx_20, dkx_ma10, hma_16, zlema_21, kama_10, vip_14, vim_14, supertrend_10, supertrend_dir, md_14, "
     # 动量类
     "kdj_k, kdj_d, kdj_j, rsi_6, rsi_12, rsi_24, wr_14, roc_12, mtm_12, mtmma_12, "
     "cmf_20, uos, ao, cmo_14, stochrsi, "
     "bias_6, bias_12, bias_24, psy_12, psy_ma6, lwr_1, lwr_2, dpo_20, "
+    "tsi, smi, smi_signal, fisher_9, fisher_sig9, kst, kst_signal, crsi, "
+    "qqe_14, qqe_rsi_ma, stc, rvgi_10, rvgi_sig, "
     # 统计族
     "correl_30, beta_30, linearreg_14, tsf_14, var_20, "
     # 波动类
-    "atr_14, natr_14, trange, boll_upper, boll_middle, boll_lower, "
+    "atr_14, natr_14, trange, massi_25, boll_upper, boll_middle, boll_lower, "
     "kc_upper, kc_middle, kc_lower, dc_upper, dc_lower, "
     "stddev_20, boll_bw, boll_pctb, histvol_20, "
     # 成交量类
-    "obv, mfi_14, vwap, vr_26, ad, pvt, wvad_24, "
+    "obv, mfi_14, vwap, vr_26, ad, pvt, wvad_24, vwma_20, adosc, eom_14, kvo, kvo_signal, nvi, pvi, "
     # 反转类
     "candle_pattern, rsi_divergence, macd_divergence, boll_breakout, vol_price_div, "
     # 元数据

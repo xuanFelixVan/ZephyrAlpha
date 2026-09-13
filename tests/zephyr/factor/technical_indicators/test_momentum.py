@@ -37,6 +37,14 @@ BIAS = TechnicalIndicatorRegistry.get("bias")
 PSY = TechnicalIndicatorRegistry.get("psy")
 LWR = TechnicalIndicatorRegistry.get("lwr")
 DPO = TechnicalIndicatorRegistry.get("dpo")
+TSI = TechnicalIndicatorRegistry.get("tsi")
+SMI = TechnicalIndicatorRegistry.get("smi")
+FISHER = TechnicalIndicatorRegistry.get("fisher")
+KST = TechnicalIndicatorRegistry.get("kst")
+CONNORSRSI = TechnicalIndicatorRegistry.get("connorsrsi")
+QQE = TechnicalIndicatorRegistry.get("qqe")
+STC = TechnicalIndicatorRegistry.get("stc")
+RVGI = TechnicalIndicatorRegistry.get("rvgi")
 
 # 期望契约（catalog §2.2）
 EXPECTED = {
@@ -54,6 +62,14 @@ EXPECTED = {
     "psy": ("心理线", ["psy_12", "psy_ma6"]),
     "lwr": ("慢速威廉", ["lwr_1", "lwr_2"]),
     "dpo": ("区间震荡", ["dpo_20"]),
+    "tsi": ("真实强度指数", ["tsi"]),
+    "smi": ("随机动量指数", ["smi", "smi_signal"]),
+    "fisher": ("费雪变换", ["fisher_9", "fisher_sig9"]),
+    "kst": ("确知量", ["kst", "kst_signal"]),
+    "connorsrsi": ("ConnorsRSI", ["crsi"]),
+    "qqe": ("QQE", ["qqe_14", "qqe_rsi_ma"]),
+    "stc": ("Schaff趋势周期", ["stc"]),
+    "rvgi": ("相对活力指数", ["rvgi_10", "rvgi_sig"]),
 }
 
 IMPLEMENTED = set(EXPECTED)
@@ -82,7 +98,7 @@ class TestMomentumRegistered:
             assert iid in metas, f"动量指标 '{iid}' 未注册"
 
     def test_count(self):
-        assert len(TechnicalIndicatorRegistry.list_by_category("momentum")) == len(EXPECTED) == 14
+        assert len(TechnicalIndicatorRegistry.list_by_category("momentum")) == len(EXPECTED) == 22
 
 
 class TestMomentumMetaContract:
@@ -553,3 +569,60 @@ class TestDpoNumeric:
         # MA(20) 首值在第 19 行，再 shift(11) → 首个非 NaN 在第 30 行
         assert result["dpo_20"].iloc[:30].isna().all()
         assert result["dpo_20"].iloc[30:].notna().all()
+
+
+# ===========================================================================
+# 2026-09-14 主流热门批 2b：TSI/SMI/FISHER/KST/CONNORSRSI/QQE/STC/RVGI
+# ===========================================================================
+
+
+class TestBatch2bMomentumNumeric:
+    def test_tsi_constant_zero(self):
+        df = _make_ohlcv(60)
+        df["close"] = 100.0
+        result = TSI().compute(df)
+        assert (result["tsi"].dropna() == 0.0).all()
+
+    def test_smi_uptrend_positive(self):
+        df = _make_ohlcv(60)
+        rising = np.linspace(100, 130, 60)
+        df["high"] = rising + 0.5
+        df["low"] = rising - 0.5
+        df["close"] = rising
+        result = SMI().compute(df)
+        assert (result["smi"].dropna() > 0).all()
+
+    def test_fisher_range_bounded(self):
+        df = _make_ohlcv(80)
+        result = FISHER().compute(df)
+        valid = result["fisher_9"].dropna()
+        assert valid.abs().max() < 15  # 费雪值量级有限
+
+    def test_kst_columns_match_signal_lags(self):
+        df = _make_ohlcv(80)
+        result = KST().compute(df)
+        assert result["kst"].notna().sum() == result["kst_signal"].notna().sum() + 8
+
+    def test_connorsrsi_range(self):
+        df = _make_ohlcv(150)
+        result = CONNORSRSI().compute(df)
+        valid = result["crsi"].dropna()
+        assert valid.between(0, 100).all()
+
+    def test_qqe_columns_align(self):
+        df = _make_ohlcv(80)
+        result = QQE().compute(df)
+        assert result["qqe_14"].dropna().shape[0] > 0
+        assert (result["qqe_rsi_ma"].dropna().between(0, 100)).all()
+
+    def test_stc_range(self):
+        df = _make_ohlcv(120)
+        result = STC().compute(df)
+        assert result["stc"].dropna().between(0, 100).all()
+
+    def test_rvgi_constant_close_near_zero(self):
+        df = _make_ohlcv(40)
+        for c in ("open", "close"):
+            df[c] = 100.0
+        result = RVGI().compute(df)
+        assert (result["rvgi_10"].dropna().abs() < 1e-9).all()

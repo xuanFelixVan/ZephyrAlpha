@@ -5,7 +5,7 @@
 # [CONSUMERS] zephyr.data.implementations.internal_compute_provider（包级 autodiscover 动态接线：internal_compute_provider L545/L1113 延迟导入本包+注册表消费）; sleeve alpha 择时
 # [STARTUP] imported
 # [MATURITY] production
-# [INVARIANTS] 成交量类指标 7 个，纯自实现 pandas/numpy；compute→DataFrame 多列输出
+# [INVARIANTS] 成交量类指标 13 个，纯自实现 pandas/numpy；compute→DataFrame 多列输出
 # [MODIFY-GUARD] none
 # [STABILITY] evolving
 # [SAFETY] L
@@ -18,7 +18,7 @@
 
 成交量类技术指标（7 个，v1.0.0 全部施工完成）。
 
-指标清单：OBV/MFI/VWAP/VR/AD/PVT/WVAD
+指标清单：OBV/MFI/VWAP/VR/AD/PVT/WVAD/VWMA/ADOSC/EOM/KVO/NVI/PVI（批2b +6）
 
 算法对齐通达信：
   - OBV/AD/PVT 为累积量（cumsum），首值为 0
@@ -329,3 +329,185 @@ class WVAD(TechnicalIndicatorBase):
         ratio = ((c - o) / hl_range).where(hl_range != 0, 0.0)
         wvad = (ratio * v).rolling(window=n).sum()
         return pd.DataFrame({f"wvad_{n}": wvad}, index=data.index)
+
+
+@TechnicalIndicatorRegistry.register
+class VWMA(TechnicalIndicatorBase):
+    """成交量加权均线（Volume Weighted Moving Average，20）。"""
+
+    meta = TechnicalIndicatorMeta(
+        indicator_id="vwma",
+        name="成交量加权均线",
+        category="volume",
+        output_columns=["vwma_20"],
+        input_columns=["close", "volume"],
+        params={"period": 20},
+        version="1.0.0",
+        description="VWMA=Σ(C×V,N)/Σ(V,N)（滚动窗口；区别于累积口径的 vwap）",
+    )
+
+    def compute(self, data: pd.DataFrame, **kwargs) -> pd.DataFrame:
+        self.validate(data)
+        if data.empty:
+            return pd.DataFrame(columns=self.meta.output_columns)
+        params = self.get_params(**kwargs)
+        n = params["period"]
+        cv = (data["close"] * data["volume"]).rolling(window=n).sum()
+        v_sum = data["volume"].rolling(window=n).sum()
+        vwma = cv / v_sum
+        return pd.DataFrame({f"vwma_{n}": vwma}, index=data.index)
+
+
+@TechnicalIndicatorRegistry.register
+class ADOSC(TechnicalIndicatorBase):
+    """蔡金震荡器（Chaikin A/D Oscillator，3/10）。"""
+
+    meta = TechnicalIndicatorMeta(
+        indicator_id="adosc",
+        name="蔡金震荡器",
+        category="volume",
+        output_columns=["adosc"],
+        input_columns=["high", "low", "close", "volume"],
+        params={"fast": 3, "slow": 10},
+        version="1.0.0",
+        description="ADOSC=EMA3(AD)−EMA10(AD)，AD 线短期与长期平滑之差（TA-Lib ADOSC）",
+    )
+
+    def compute(self, data: pd.DataFrame, **kwargs) -> pd.DataFrame:
+        self.validate(data)
+        if data.empty:
+            return pd.DataFrame(columns=self.meta.output_columns)
+        params = self.get_params(**kwargs)
+        fast_n, slow_n = params["fast"], params["slow"]
+        h, l, c, v = data["high"], data["low"], data["close"], data["volume"]
+        clv = ((c - l) - (c - h)).where(h != l, 0.0)
+        ad_line = (clv * v).cumsum()
+        adosc = ad_line.ewm(span=fast_n, adjust=False).mean() - ad_line.ewm(
+            span=slow_n, adjust=False
+        ).mean()
+        return pd.DataFrame({"adosc": adosc}, index=data.index)
+
+
+@TechnicalIndicatorRegistry.register
+class EOM(TechnicalIndicatorBase):
+    """简易波动量（Ease of Movement，14）。"""
+
+    meta = TechnicalIndicatorMeta(
+        indicator_id="eom",
+        name="简易波动量",
+        category="volume",
+        output_columns=["eom_14"],
+        input_columns=["high", "low", "volume"],
+        params={"period": 14, "divisor": 100000000.0},
+        version="1.0.0",
+        description="EMV=中价差/(量/1e8/(H−L))；EOM=SMA(EMV,14)，价格上涨轻松度（H=L 时该项取 0）",
+    )
+
+    def compute(self, data: pd.DataFrame, **kwargs) -> pd.DataFrame:
+        self.validate(data)
+        if data.empty:
+            return pd.DataFrame(columns=self.meta.output_columns)
+        params = self.get_params(**kwargs)
+        n, divisor = params["period"], params["divisor"]
+        h, l, v = data["high"], data["low"], data["volume"]
+        mid = 0.5 * (h + l)
+        mid_shift = 0.5 * (h.shift(1) + l.shift(1))
+        dm = mid - mid_shift
+        br = (v / divisor) / (h - l)
+        emv = (dm / br).where((h - l) != 0, 0.0)
+        eom = emv.rolling(window=n).mean()
+        return pd.DataFrame({f"eom_{n}": eom}, index=data.index)
+
+
+@TechnicalIndicatorRegistry.register
+class KVO(TechnicalIndicatorBase):
+    """Klinger 量震荡器（Klinger Volume Oscillator，34/55，signal 13）。"""
+
+    meta = TechnicalIndicatorMeta(
+        indicator_id="kvo",
+        name="Klinger量震荡器",
+        category="volume",
+        output_columns=["kvo", "kvo_signal"],
+        input_columns=["high", "low", "close", "volume"],
+        params={"fast": 34, "slow": 55, "signal": 13},
+        version="1.0.0",
+        description="VF=V×trend×|2×DM/CM−1|（CM 随趋势翻转重置）；KVO=EMA34(VF)−EMA55(VF)；sig=EMA13",
+    )
+
+    def compute(self, data: pd.DataFrame, **kwargs) -> pd.DataFrame:
+        self.validate(data)
+        if data.empty:
+            return pd.DataFrame(columns=self.meta.output_columns)
+        params = self.get_params(**kwargs)
+        fast_n, slow_n, sig_n = params["fast"], params["slow"], params["signal"]
+        h, l, v = data["high"], data["low"], data["volume"]
+        dm = (h - l).to_numpy()
+        hl2_prev = (h + l).shift(1).to_numpy()
+        sv = np.sign((h + l).to_numpy() - hl2_prev)
+        m = len(dm)
+        vol = v.to_numpy()
+        vf = np.zeros(m)
+        cm = 0.0
+        prev_sv = 0.0
+        for i in range(1, m):
+            if sv[i] != prev_sv:
+                cm = abs(dm[i - 1]) + dm[i]
+            else:
+                cm = cm + dm[i]
+            prev_sv = sv[i]
+            if cm != 0:
+                vf[i] = vol[i] * sv[i] * abs(2 * dm[i] / cm - 1)
+        vf_s = pd.Series(vf, index=data.index)
+        kvo = vf_s.ewm(span=fast_n, adjust=False).mean() - vf_s.ewm(span=slow_n, adjust=False).mean()
+        kvo_signal = kvo.ewm(span=sig_n, adjust=False).mean()
+        return pd.DataFrame({"kvo": kvo, "kvo_signal": kvo_signal}, index=data.index)
+
+
+@TechnicalIndicatorRegistry.register
+class NVI(TechnicalIndicatorBase):
+    """负成交量指标（Negative Volume Index）。"""
+
+    meta = TechnicalIndicatorMeta(
+        indicator_id="nvi",
+        name="负成交量指标",
+        category="volume",
+        output_columns=["nvi"],
+        input_columns=["close", "volume"],
+        params={},
+        version="1.0.0",
+        description="缩量日累乘 (1+收益率)，放量日不动；种子=100。度量'聪明钱'行为",
+    )
+
+    def compute(self, data: pd.DataFrame, **kwargs) -> pd.DataFrame:
+        self.validate(data)
+        if data.empty:
+            return pd.DataFrame(columns=self.meta.output_columns)
+        ret = data["close"].pct_change()
+        factor = (1 + ret).where(data["volume"] < data["volume"].shift(1), 1.0).fillna(1.0)
+        nvi = 100.0 * factor.cumprod()
+        return pd.DataFrame({"nvi": nvi}, index=data.index)
+
+
+@TechnicalIndicatorRegistry.register
+class PVI(TechnicalIndicatorBase):
+    """正成交量指标（Positive Volume Index）。"""
+
+    meta = TechnicalIndicatorMeta(
+        indicator_id="pvi",
+        name="正成交量指标",
+        category="volume",
+        output_columns=["pvi"],
+        input_columns=["close", "volume"],
+        params={},
+        version="1.0.0",
+        description="放量日累乘 (1+收益率)，缩量日不动；种子=100。度量'散户钱'行为",
+    )
+
+    def compute(self, data: pd.DataFrame, **kwargs) -> pd.DataFrame:
+        self.validate(data)
+        if data.empty:
+            return pd.DataFrame(columns=self.meta.output_columns)
+        ret = data["close"].pct_change()
+        factor = (1 + ret).where(data["volume"] > data["volume"].shift(1), 1.0).fillna(1.0)
+        pvi = 100.0 * factor.cumprod()
+        return pd.DataFrame({"pvi": pvi}, index=data.index)

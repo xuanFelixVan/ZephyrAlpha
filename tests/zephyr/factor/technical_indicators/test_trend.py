@@ -40,6 +40,7 @@ ZLEMA = TechnicalIndicatorRegistry.get("zlema")
 KAMA = TechnicalIndicatorRegistry.get("kama")
 VORTEX = TechnicalIndicatorRegistry.get("vortex")
 SUPERTREND = TechnicalIndicatorRegistry.get("supertrend")
+MCGINLEY = TechnicalIndicatorRegistry.get("mcginley")
 
 # 期望契约（catalog §2.1）：indicator_id → (name, output_columns)
 EXPECTED = {
@@ -59,10 +60,11 @@ EXPECTED = {
     "kama": ("Kaufman自适应均线", ["kama_10"]),
     "vortex": ("涡旋指标", ["vip_14", "vim_14"]),
     "supertrend": ("超级趋势", ["supertrend_10", "supertrend_dir"]),
+    "mcginley": ("McGinley动态均线", ["md_14"]),
 }
 
 # 已施工算法的指标（version >= 1.0.0）
-IMPLEMENTED = {"ma", "ema", "wma", "dema", "macd", "adx", "dmi", "cci", "sar", "trix", "dkx", "hma", "zlema", "kama", "vortex", "supertrend"}
+IMPLEMENTED = {"ma", "ema", "wma", "dema", "macd", "adx", "dmi", "cci", "sar", "trix", "dkx", "hma", "zlema", "kama", "vortex", "supertrend", "mcginley"}
 # 仍为骨架的指标（compute 抛 NotImplementedError）
 SKELETON = set(EXPECTED) - IMPLEMENTED
 
@@ -79,7 +81,7 @@ class TestTrendRegistered:
             assert iid in metas, f"趋势指标 '{iid}' 未注册"
 
     def test_count(self):
-        assert len(TechnicalIndicatorRegistry.list_by_category("trend")) == len(EXPECTED) == 16
+        assert len(TechnicalIndicatorRegistry.list_by_category("trend")) == len(EXPECTED) == 17
 
 
 class TestTrendMetaContract:
@@ -760,3 +762,20 @@ class TestSupertrendNumeric:
         result = SUPERTREND().compute(df)
         pair = result.dropna()
         assert (pair["supertrend_10"] < pair["supertrend_dir"] * 0 + rising[-len(pair):]).all()
+
+
+class TestMcGinleyNumeric:
+    def test_constant_price_constant_line(self):
+        df = _make_ohlcv(40)
+        df["close"] = 100.0
+        result = MCGINLEY().compute(df)
+        assert (result["md_14"].dropna() == 100.0).all()
+
+    def test_lags_behind_close_uptrend(self):
+        df = _make_ohlcv(60)
+        df["close"] = np.linspace(100, 160, 60)
+        result = MCGINLEY().compute(df)
+        pair = result["md_14"].to_numpy()
+        closes = df["close"].to_numpy()
+        valid = ~np.isnan(pair)
+        assert (pair[valid][1:] < closes[valid][1:]).all()  # 首行 md=C，其余在价格下方

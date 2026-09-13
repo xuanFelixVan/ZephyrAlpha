@@ -20,7 +20,7 @@ name: Technical Indicator Registry
 name_zh: 技术指标注册表
 description: >-
   技术指标唯一真源（SSoT）。登记全部纯 OHLCV 计算指标（编号/公式/参数/输入输出列/预热期/状态/代码位置），
-  6 大类 56 指标 82 输出列（对齐 16 号 §6.1-6.6 + 代码 src/zephyr/factor/technical_indicators/ 7 个 .py，2026-09-14 A股标配批+3/趋势+1/统计族+4：BIAS/PSY/LWR/DKX/CORREL/BETA/LINEARREG+TSF/ROLLVAR；批2a+8：HMA/ZLEMA/KAMA/VORTEX/SUPERTREND/DPO/NATR/TRANGE；
+  6 大类 72 指标 104 输出列（对齐 16 号 §6.1-6.6 + 代码 src/zephyr/factor/technical_indicators/ 7 个 .py，2026-09-14 A股标配批+3/趋势+1/统计族+4：BIAS/PSY/LWR/DKX/CORREL/BETA/LINEARREG+TSF/ROLLVAR；批2a+8：HMA/ZLEMA/KAMA/VORTEX/SUPERTREND/DPO/NATR/TRANGE；批2b+16 收官：TSI/SMI/FISHER/KST/CONNORSRSI/QQE/STC/RVGI/MCGINLEY/MASSI/VWMA/ADOSC/EOM/KVO/NVI/PVI；
   数值正确性由 243 测试用例 + Registry↔DDL 双向交叉校验锁定）。
   全指标覆盖 9 周期（1min/5min/15min/30min/60min/120min/日/周/月，120min 由 60min 两根聚合），
   存储单表 c1_market.technical_indicator 按 (period, toYYYYMM(trade_date)) 分区。
@@ -37,7 +37,7 @@ last_updated: '2026-08-15'
 related_arch: '#ARCH-BREG-001'
 unique_key:
 - indicator_id
-entry_count: 57
+entry_count: 73
 
 entry_schema:
   indicator_id: str              # IND-{CLASS}-{NNN}，如 IND-TREND-001
@@ -74,7 +74,40 @@ entry_schema:
   code_fingerprint: str|null    # 实现指纹 Code Fingerprint — 代码侧实现（参数/签名/AST）canonical hash 快照，由扫描器写入；库侧快照与代码重算不一致=漂移告警（门禁B reconciler 对账，告警不自动双写）；null=未计算
 
 indicators:
-# ══════════════ 趋势类 trend（16 指标 / 27 列，MOD-L02-021 trend.py，doc §6.1）══════════════
+- indicator_id: IND-TREND-017
+  name: MCGINLEY
+  name_zh: McGinley动态均线
+  aliases: ["McGinley Dynamic"]
+  indicator_class: trend
+  formula: MD=prev+(C−prev)/(k×N×(C/prev)⁴)，k=0.6
+  params: {period: 14, k: 0.6}
+  inputs: [close]
+  outputs: [md_14]
+  warmup_period: 1
+  computation_mode: vectorized
+  module_id: MOD-L02-021
+  doc_ref: 16_technical_indicator_catalog.md §6.1
+  code_path: src/zephyr/factor/technical_indicators/trend.py
+  used_by_factors: []
+  status: active
+  version: 1.0.0
+  created_at: '2026-09-14'
+  updated_at: '2026-09-14'
+  owner: MOD-GOVERNANCE
+  primary_timeframe: "daily"
+  applicable_timeframes: ["1min", "5min", "15min", "30min", "60min", "120min", "daily", "weekly", "monthly"]
+  regime_valid: []
+  regime_invalid: []
+  direction: "neutral"
+  entry_role: "state"
+  applies_to: []
+  tags: ["趋势", "均线", "指标"]
+  algorithm_status: "quantized"
+  evidence: ""
+  code_symbol: null
+  code_fingerprint: null
+
+# ══════════════ 趋势类 trend（17 指标 / 28 列，MOD-L02-021 trend.py，doc §6.1）══════════════
 - indicator_id: IND-TREND-001
   name: MA
   name_zh: 简单移动平均
@@ -594,7 +627,271 @@ indicators:
   code_symbol: null
   code_fingerprint: null
 
-# ══════════════ 动量类 momentum（14 指标 / 23 列，MOD-L02-019 momentum.py，doc §6.2）══════════════
+- indicator_id: IND-MOM-015
+  name: TSI
+  name_zh: 真实强度指数
+  aliases: ["True Strength Index"]
+  indicator_class: momentum
+  formula: TSI=100×EMA13(EMA25(ΔC))/EMA13(EMA25(|ΔC|))
+  params: {long: 25, short: 13}
+  inputs: [close]
+  outputs: [tsi]
+  warmup_period: 38
+  computation_mode: vectorized
+  module_id: MOD-L02-019
+  doc_ref: 16_technical_indicator_catalog.md §6.2
+  code_path: src/zephyr/factor/technical_indicators/momentum.py
+  used_by_factors: []
+  status: active
+  version: 1.0.0
+  created_at: '2026-09-14'
+  updated_at: '2026-09-14'
+  owner: MOD-GOVERNANCE
+  primary_timeframe: "daily"
+  applicable_timeframes: ["1min", "5min", "15min", "30min", "60min", "120min", "daily", "weekly", "monthly"]
+  regime_valid: []
+  regime_invalid: []
+  direction: "neutral"
+  entry_role: "state"
+  applies_to: []
+  tags: ["动量", "指标"]
+  algorithm_status: "quantized"
+  evidence: ""
+  code_symbol: null
+  code_fingerprint: null
+
+- indicator_id: IND-MOM-016
+  name: SMI
+  name_zh: 随机动量指数
+  aliases: ["Stochastic Momentum Index"]
+  indicator_class: momentum
+  formula: SMI=100×EMAEMA(C−中点)/(0.5×EMAEMA(HH−LL))；sig=EMA(SMI,3)
+  params: {period: 10, smooth1: 3, smooth2: 3, signal: 3}
+  inputs: [high, low, close]
+  outputs: [smi, smi_signal]
+  warmup_period: 16
+  computation_mode: vectorized
+  module_id: MOD-L02-019
+  doc_ref: 16_technical_indicator_catalog.md §6.2
+  code_path: src/zephyr/factor/technical_indicators/momentum.py
+  used_by_factors: []
+  status: active
+  version: 1.0.0
+  created_at: '2026-09-14'
+  updated_at: '2026-09-14'
+  owner: MOD-GOVERNANCE
+  primary_timeframe: "daily"
+  applicable_timeframes: ["1min", "5min", "15min", "30min", "60min", "120min", "daily", "weekly", "monthly"]
+  regime_valid: []
+  regime_invalid: []
+  direction: "neutral"
+  entry_role: "state"
+  applies_to: []
+  tags: ["动量", "指标"]
+  algorithm_status: "quantized"
+  evidence: ""
+  code_symbol: null
+  code_fingerprint: null
+
+- indicator_id: IND-MOM-017
+  name: FISHER
+  name_zh: 费雪变换
+  aliases: ["Fisher Transform"]
+  indicator_class: momentum
+  formula: norm=2(HL2−LLn)/(HHn−LLn)−1；value=0.66norm+0.67prev；F=0.5ln((1+v)/(1−v))+0.5prev
+  params: {period: 9}
+  inputs: [high, low]
+  outputs: [fisher_9, fisher_sig9]
+  warmup_period: 9
+  computation_mode: vectorized
+  module_id: MOD-L02-019
+  doc_ref: 16_technical_indicator_catalog.md §6.2
+  code_path: src/zephyr/factor/technical_indicators/momentum.py
+  used_by_factors: []
+  status: active
+  version: 1.0.0
+  created_at: '2026-09-14'
+  updated_at: '2026-09-14'
+  owner: MOD-GOVERNANCE
+  primary_timeframe: "daily"
+  applicable_timeframes: ["1min", "5min", "15min", "30min", "60min", "120min", "daily", "weekly", "monthly"]
+  regime_valid: []
+  regime_invalid: []
+  direction: "neutral"
+  entry_role: "state"
+  applies_to: []
+  tags: ["动量", "反转", "指标"]
+  algorithm_status: "quantized"
+  evidence: ""
+  code_symbol: null
+  code_fingerprint: null
+
+- indicator_id: IND-MOM-018
+  name: KST
+  name_zh: 确知量
+  aliases: ["Know Sure Thing"]
+  indicator_class: momentum
+  formula: KST=1×SMA10(ROC10)+2×SMA10(ROC15)+3×SMA10(ROC20)+4×SMA15(ROC30)；sig=SMA9
+  params: {roc: [10, 15, 20, 30], sma: [10, 10, 10, 15], weights: [1, 2, 3, 4], signal: 9}
+  inputs: [close]
+  outputs: [kst, kst_signal]
+  warmup_period: 45
+  computation_mode: vectorized
+  module_id: MOD-L02-019
+  doc_ref: 16_technical_indicator_catalog.md §6.2
+  code_path: src/zephyr/factor/technical_indicators/momentum.py
+  used_by_factors: []
+  status: active
+  version: 1.0.0
+  created_at: '2026-09-14'
+  updated_at: '2026-09-14'
+  owner: MOD-GOVERNANCE
+  primary_timeframe: "daily"
+  applicable_timeframes: ["1min", "5min", "15min", "30min", "60min", "120min", "daily", "weekly", "monthly"]
+  regime_valid: []
+  regime_invalid: []
+  direction: "neutral"
+  entry_role: "state"
+  applies_to: []
+  tags: ["动量", "趋势", "指标"]
+  algorithm_status: "quantized"
+  evidence: ""
+  code_symbol: null
+  code_fingerprint: null
+
+- indicator_id: IND-MOM-019
+  name: CONNORSRSI
+  name_zh: ConnorsRSI
+  aliases: ["CRSI"]
+  indicator_class: momentum
+  formula: CRSI=(RSI(C,3)+RSI(连涨跌,2)+PercentRank(收益,100))/3
+  params: {rsi_period: 3, streak_rsi: 2, rank_period: 100}
+  inputs: [close]
+  outputs: [crsi]
+  warmup_period: 103
+  computation_mode: vectorized
+  module_id: MOD-L02-019
+  doc_ref: 16_technical_indicator_catalog.md §6.2
+  code_path: src/zephyr/factor/technical_indicators/momentum.py
+  used_by_factors: []
+  status: active
+  version: 1.0.0
+  created_at: '2026-09-14'
+  updated_at: '2026-09-14'
+  owner: MOD-GOVERNANCE
+  primary_timeframe: "daily"
+  applicable_timeframes: ["1min", "5min", "15min", "30min", "60min", "120min", "daily", "weekly", "monthly"]
+  regime_valid: []
+  regime_invalid: []
+  direction: "neutral"
+  entry_role: "state"
+  applies_to: []
+  tags: ["动量", "均值回归", "指标"]
+  algorithm_status: "quantized"
+  evidence: ""
+  code_symbol: null
+  code_fingerprint: null
+
+- indicator_id: IND-MOM-020
+  name: QQE
+  name_zh: QQE
+  aliases: ["Quantitative Qualitative Estimation"]
+  indicator_class: momentum
+  formula: RSI14→EMA5 平滑→DAR=EMA27×4.236 跟踪带递推；与 RSI_MA 交叉为信号
+  params: {period: 14, smooth: 5, atr_period: 27, factor: 4.236}
+  inputs: [close]
+  outputs: [qqe_14, qqe_rsi_ma]
+  warmup_period: 38
+  computation_mode: vectorized
+  module_id: MOD-L02-019
+  doc_ref: 16_technical_indicator_catalog.md §6.2
+  code_path: src/zephyr/factor/technical_indicators/momentum.py
+  used_by_factors: []
+  status: active
+  version: 1.0.0
+  created_at: '2026-09-14'
+  updated_at: '2026-09-14'
+  owner: MOD-GOVERNANCE
+  primary_timeframe: "daily"
+  applicable_timeframes: ["1min", "5min", "15min", "30min", "60min", "120min", "daily", "weekly", "monthly"]
+  regime_valid: []
+  regime_invalid: []
+  direction: "neutral"
+  entry_role: "state"
+  applies_to: []
+  tags: ["动量", "趋势", "指标"]
+  algorithm_status: "quantized"
+  evidence: ""
+  code_symbol: null
+  code_fingerprint: null
+
+- indicator_id: IND-MOM-021
+  name: STC
+  name_zh: Schaff趋势周期
+  aliases: ["Schaff Trend Cycle"]
+  indicator_class: momentum
+  formula: MACD(23,50)→双随机(10)→EMA(3)，0-100 循环
+  params: {fast: 23, slow: 50, cycle: 10, smooth: 3}
+  inputs: [close]
+  outputs: [stc]
+  warmup_period: 63
+  computation_mode: vectorized
+  module_id: MOD-L02-019
+  doc_ref: 16_technical_indicator_catalog.md §6.2
+  code_path: src/zephyr/factor/technical_indicators/momentum.py
+  used_by_factors: []
+  status: active
+  version: 1.0.0
+  created_at: '2026-09-14'
+  updated_at: '2026-09-14'
+  owner: MOD-GOVERNANCE
+  primary_timeframe: "daily"
+  applicable_timeframes: ["1min", "5min", "15min", "30min", "60min", "120min", "daily", "weekly", "monthly"]
+  regime_valid: []
+  regime_invalid: []
+  direction: "neutral"
+  entry_role: "state"
+  applies_to: []
+  tags: ["动量", "震荡", "指标"]
+  algorithm_status: "quantized"
+  evidence: ""
+  code_symbol: null
+  code_fingerprint: null
+
+- indicator_id: IND-MOM-022
+  name: RVGI
+  name_zh: 相对活力指数
+  aliases: ["Relative Vigor Index"]
+  indicator_class: momentum
+  formula: RVGI=SMA10(swma(C−O))/SMA10(swma(H−L))（1-2-2-1 加权）；sig=SMA4
+  params: {period: 10, signal: 4}
+  inputs: [open, high, low, close]
+  outputs: [rvgi_10, rvgi_sig]
+  warmup_period: 14
+  computation_mode: vectorized
+  module_id: MOD-L02-019
+  doc_ref: 16_technical_indicator_catalog.md §6.2
+  code_path: src/zephyr/factor/technical_indicators/momentum.py
+  used_by_factors: []
+  status: active
+  version: 1.0.0
+  created_at: '2026-09-14'
+  updated_at: '2026-09-14'
+  owner: MOD-GOVERNANCE
+  primary_timeframe: "daily"
+  applicable_timeframes: ["1min", "5min", "15min", "30min", "60min", "120min", "daily", "weekly", "monthly"]
+  regime_valid: []
+  regime_invalid: []
+  direction: "neutral"
+  entry_role: "state"
+  applies_to: []
+  tags: ["动量", "指标"]
+  algorithm_status: "quantized"
+  evidence: ""
+  code_symbol: null
+  code_fingerprint: null
+
+# ══════════════ 动量类 momentum（22 指标 / 36 列，MOD-L02-019 momentum.py，doc §6.2）══════════════
 - indicator_id: IND-MOM-001
   name: KDJ
   name_zh: 随机指标
@@ -1015,7 +1312,40 @@ indicators:
   code_symbol: null
   code_fingerprint: null
 
-# ══════════════ 波动类 volatility（10 指标 / 15 列，MOD-L02-022 volatility.py，doc §6.3）══════════════
+- indicator_id: IND-VOL-011
+  name: MASSI
+  name_zh: 质量指数
+  aliases: ["Mass Index"]
+  indicator_class: volatility
+  formula: MI=Σ25[EMA9(H−L)/EMA9(EMA9(H−L))]；>27 预警反转
+  params: {ema: 9, period: 25}
+  inputs: [high, low]
+  outputs: [massi_25]
+  warmup_period: 25
+  computation_mode: vectorized
+  module_id: MOD-L02-022
+  doc_ref: 16_technical_indicator_catalog.md §6.3
+  code_path: src/zephyr/factor/technical_indicators/volatility.py
+  used_by_factors: []
+  status: active
+  version: 1.0.0
+  created_at: '2026-09-14'
+  updated_at: '2026-09-14'
+  owner: MOD-GOVERNANCE
+  primary_timeframe: "daily"
+  applicable_timeframes: ["1min", "5min", "15min", "30min", "60min", "120min", "daily", "weekly", "monthly"]
+  regime_valid: []
+  regime_invalid: []
+  direction: "neutral"
+  entry_role: "state"
+  applies_to: []
+  tags: ["波动", "反转", "指标"]
+  algorithm_status: "quantized"
+  evidence: ""
+  code_symbol: null
+  code_fingerprint: null
+
+# ══════════════ 波动类 volatility（11 指标 / 16 列，MOD-L02-022 volatility.py，doc §6.3）══════════════
 - indicator_id: IND-VOL-001
   name: ATR
   name_zh: 真实波幅
@@ -1273,7 +1603,205 @@ indicators:
   code_symbol: null
   code_fingerprint: null
 
-# ══════════════ 量能类 volume（7 指标 / 7 列，MOD-L02-023 volume.py，doc §6.4）══════════════
+- indicator_id: IND-VOLUME-008
+  name: VWMA
+  name_zh: 成交量加权均线
+  aliases: ["Volume Weighted MA"]
+  indicator_class: volume
+  formula: VWMA=Σ(C×V,N)/Σ(V,N)（滚动）
+  params: {period: 20}
+  inputs: [close, volume]
+  outputs: [vwma_20]
+  warmup_period: 20
+  computation_mode: vectorized
+  module_id: MOD-L02-023
+  doc_ref: 16_technical_indicator_catalog.md §6.4
+  code_path: src/zephyr/factor/technical_indicators/volume.py
+  used_by_factors: []
+  status: active
+  version: 1.0.0
+  created_at: '2026-09-14'
+  updated_at: '2026-09-14'
+  owner: MOD-GOVERNANCE
+  primary_timeframe: "daily"
+  applicable_timeframes: ["1min", "5min", "15min", "30min", "60min", "120min", "daily", "weekly", "monthly"]
+  regime_valid: []
+  regime_invalid: []
+  direction: "neutral"
+  entry_role: "state"
+  applies_to: []
+  tags: ["量能", "均线", "指标"]
+  algorithm_status: "quantized"
+  evidence: ""
+  code_symbol: null
+  code_fingerprint: null
+
+- indicator_id: IND-VOLUME-009
+  name: ADOSC
+  name_zh: 蔡金震荡器
+  aliases: ["Chaikin A/D Oscillator"]
+  indicator_class: volume
+  formula: ADOSC=EMA3(AD)−EMA10(AD)
+  params: {fast: 3, slow: 10}
+  inputs: [high, low, close, volume]
+  outputs: [adosc]
+  warmup_period: 10
+  computation_mode: vectorized
+  module_id: MOD-L02-023
+  doc_ref: 16_technical_indicator_catalog.md §6.4
+  code_path: src/zephyr/factor/technical_indicators/volume.py
+  used_by_factors: []
+  status: active
+  version: 1.0.0
+  created_at: '2026-09-14'
+  updated_at: '2026-09-14'
+  owner: MOD-GOVERNANCE
+  primary_timeframe: "daily"
+  applicable_timeframes: ["1min", "5min", "15min", "30min", "60min", "120min", "daily", "weekly", "monthly"]
+  regime_valid: []
+  regime_invalid: []
+  direction: "neutral"
+  entry_role: "state"
+  applies_to: []
+  tags: ["量能", "资金", "指标"]
+  algorithm_status: "quantized"
+  evidence: ""
+  code_symbol: null
+  code_fingerprint: null
+
+- indicator_id: IND-VOLUME-010
+  name: EOM
+  name_zh: 简易波动量
+  aliases: ["Ease of Movement"]
+  indicator_class: volume
+  formula: EMV=中价差/(量/1e8/(H−L))；EOM=SMA(EMV,14)
+  params: {period: 14, divisor: 100000000.0}
+  inputs: [high, low, volume]
+  outputs: [eom_14]
+  warmup_period: 14
+  computation_mode: vectorized
+  module_id: MOD-L02-023
+  doc_ref: 16_technical_indicator_catalog.md §6.4
+  code_path: src/zephyr/factor/technical_indicators/volume.py
+  used_by_factors: []
+  status: active
+  version: 1.0.0
+  created_at: '2026-09-14'
+  updated_at: '2026-09-14'
+  owner: MOD-GOVERNANCE
+  primary_timeframe: "daily"
+  applicable_timeframes: ["1min", "5min", "15min", "30min", "60min", "120min", "daily", "weekly", "monthly"]
+  regime_valid: []
+  regime_invalid: []
+  direction: "neutral"
+  entry_role: "state"
+  applies_to: []
+  tags: ["量能", "指标"]
+  algorithm_status: "quantized"
+  evidence: ""
+  code_symbol: null
+  code_fingerprint: null
+
+- indicator_id: IND-VOLUME-011
+  name: KVO
+  name_zh: Klinger量震荡器
+  aliases: ["Klinger Volume Oscillator"]
+  indicator_class: volume
+  formula: VF=V×trend×|2×DM/CM−1|；KVO=EMA34(VF)−EMA55(VF)；sig=EMA13
+  params: {fast: 34, slow: 55, signal: 13}
+  inputs: [high, low, close, volume]
+  outputs: [kvo, kvo_signal]
+  warmup_period: 55
+  computation_mode: vectorized
+  module_id: MOD-L02-023
+  doc_ref: 16_technical_indicator_catalog.md §6.4
+  code_path: src/zephyr/factor/technical_indicators/volume.py
+  used_by_factors: []
+  status: active
+  version: 1.0.0
+  created_at: '2026-09-14'
+  updated_at: '2026-09-14'
+  owner: MOD-GOVERNANCE
+  primary_timeframe: "daily"
+  applicable_timeframes: ["1min", "5min", "15min", "30min", "60min", "120min", "daily", "weekly", "monthly"]
+  regime_valid: []
+  regime_invalid: []
+  direction: "neutral"
+  entry_role: "state"
+  applies_to: []
+  tags: ["量能", "资金", "指标"]
+  algorithm_status: "quantized"
+  evidence: ""
+  code_symbol: null
+  code_fingerprint: null
+
+- indicator_id: IND-VOLUME-012
+  name: NVI
+  name_zh: 负成交量指标
+  aliases: ["Negative Volume Index"]
+  indicator_class: volume
+  formula: 缩量日累乘(1+收益率)，种子=100
+  params: {}
+  inputs: [close, volume]
+  outputs: [nvi]
+  warmup_period: 1
+  computation_mode: vectorized
+  module_id: MOD-L02-023
+  doc_ref: 16_technical_indicator_catalog.md §6.4
+  code_path: src/zephyr/factor/technical_indicators/volume.py
+  used_by_factors: []
+  status: active
+  version: 1.0.0
+  created_at: '2026-09-14'
+  updated_at: '2026-09-14'
+  owner: MOD-GOVERNANCE
+  primary_timeframe: "daily"
+  applicable_timeframes: ["1min", "5min", "15min", "30min", "60min", "120min", "daily", "weekly", "monthly"]
+  regime_valid: []
+  regime_invalid: []
+  direction: "neutral"
+  entry_role: "state"
+  applies_to: []
+  tags: ["量能", "资金", "指标"]
+  algorithm_status: "quantized"
+  evidence: ""
+  code_symbol: null
+  code_fingerprint: null
+
+- indicator_id: IND-VOLUME-013
+  name: PVI
+  name_zh: 正成交量指标
+  aliases: ["Positive Volume Index"]
+  indicator_class: volume
+  formula: 放量日累乘(1+收益率)，种子=100
+  params: {}
+  inputs: [close, volume]
+  outputs: [pvi]
+  warmup_period: 1
+  computation_mode: vectorized
+  module_id: MOD-L02-023
+  doc_ref: 16_technical_indicator_catalog.md §6.4
+  code_path: src/zephyr/factor/technical_indicators/volume.py
+  used_by_factors: []
+  status: active
+  version: 1.0.0
+  created_at: '2026-09-14'
+  updated_at: '2026-09-14'
+  owner: MOD-GOVERNANCE
+  primary_timeframe: "daily"
+  applicable_timeframes: ["1min", "5min", "15min", "30min", "60min", "120min", "daily", "weekly", "monthly"]
+  regime_valid: []
+  regime_invalid: []
+  direction: "neutral"
+  entry_role: "state"
+  applies_to: []
+  tags: ["量能", "资金", "指标"]
+  algorithm_status: "quantized"
+  evidence: ""
+  code_symbol: null
+  code_fingerprint: null
+
+# ══════════════ 量能类 volume（13 指标 / 14 列，MOD-L02-023 volume.py，doc §6.4）══════════════
 - indicator_id: IND-VOLUME-001
   name: OBV
   name_zh: 能量潮

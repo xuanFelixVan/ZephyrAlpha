@@ -70,12 +70,12 @@ scope: 07_trading_decision_architecture
 
 why 栈映射：多周期共振是 A 股技术分析的主流用法；指标全周期回算后，策略可按栈取数（趋势层定方向、交易层定信号、入场层定点位），避免单周期信号的噪声交易。
 
-## 6. 指标清单（56 指标 / 82 输出列，已施工）
+## 6. 指标清单（72 指标 / 104 输出列，已施工）
 
-> 注册表真源：`TechnicalIndicatorRegistry`（运行时装饰器注册）；YAML 注册表 REG-IND-001 已在位（条目真源）。测试 525 个用例锁定数值正确性 + Registry↔DDL 双向交叉校验。
-> **48 指标 vs "MVP 只需 15-20 个"的裁定**：全部已施工且 470 测试已绿，**裁剪已完成的指标 = 删已绿代码 + 删表列，纯负收益**；指标是数据不是策略，多算一列的边际成本≈0（单表 Nullable 列），而策略侧"只用其中一部分"的选择自由始终在消费方。故维持全集（2026-09-14 扩至 56：标配批+统计族+批 2a）。
+> 注册表真源：`TechnicalIndicatorRegistry`（运行时装饰器注册）；YAML 注册表 REG-IND-001 已在位（条目真源）。测试 621 个用例锁定数值正确性 + Registry↔DDL 双向交叉校验。
+> **48 指标 vs "MVP 只需 15-20 个"的裁定**：全部已施工且 470 测试已绿，**裁剪已完成的指标 = 删已绿代码 + 删表列，纯负收益**；指标是数据不是策略，多算一列的边际成本≈0（单表 Nullable 列），而策略侧"只用其中一部分"的选择自由始终在消费方。故维持全集（2026-09-14 扩至 72：标配批+统计族+批 2a/2b 收官）。
 
-### 6.1 趋势类 trend.py（16 指标 / 27 列）
+### 6.1 趋势类 trend.py（17 指标 / 28 列）
 
 | indicator_id | 输出列 | 默认参数 | 公式要点 |
 |---|---|---|---|
@@ -95,8 +95,9 @@ why 栈映射：多周期共振是 A 股技术分析的主流用法；指标全�
 | kama | kama_10 | 10/2/30 | ER=|C−C_N|/Σ\|ΔC\|；SC² 逐 bar 递推，波动自适应（批2a） |
 | vortex | vip_14/vim_14 | 14 | VI±=Σ\|H/L−L/H_prev\|/ΣTR，方向涡旋（批2a） |
 | supertrend | supertrend_10/supertrend_dir | 10/3.0 | (H+L)/2±3×ATR final 带单向收紧，收盘穿越翻转（批2a） |
+| mcginley | md_14 | 14/0.6 | MD=prev+(C−prev)/(k×N×(C/prev)⁴)，追踪速度自适应（批2b） |
 
-### 6.2 动量类 momentum.py（14 指标 / 23 列）
+### 6.2 动量类 momentum.py（22 指标 / 36 列）
 
 | indicator_id | 输出列 | 默认参数 | 公式要点 |
 |---|---|---|---|
@@ -114,8 +115,16 @@ why 栈映射：多周期共振是 A 股技术分析的主流用法；指标全�
 | psy | psy_12/psy_ma6 | 12/6 | COUNT(C>REF(C,1),12)/12×100；首行无前值=NaN（A股标配批） |
 | lwr | lwr_1/lwr_2 | 9/3/3 | 威廉 %R 双重 SMA 平滑，方向与 KDJ 相反（A股标配批） |
 | dpo | dpo_20 | 20 | C−REF(MA(C,N),N/2+1)，去趋势循环摆动（批2a） |
+| tsi | tsi | 25/13 | 双重 EMA 平滑动量比×100（批2b） |
+| smi | smi/smi_signal | 10/3/3 | 对中点距离双重平滑，双顶背离更早（批2b） |
+| fisher | fisher_9/fisher_sig9 | 9 | 递推费雪变换，拐点锐化（批2b） |
+| kst | kst/kst_signal | 4 组 ROC 加权 | 1/2/3/4 权重多周期动量共振（批2b） |
+| connorsrsi | crsi | 3/2/100 | RSI+连涨跌 RSI+收益百分位三合成（批2b） |
+| qqe | qqe_14/qqe_rsi_ma | 14/5/27 | RSI 平滑+DAR 跟踪带递推（批2b） |
+| stc | stc | 23/50/10/3 | MACD 双随机化 0-100 循环（批2b） |
+| rvgi | rvgi_10/rvgi_sig | 10/4 | 开收盘力度 swma 比（批2b） |
 
-### 6.3 波动类 volatility.py（10 指标 / 15 列）
+### 6.3 波动类 volatility.py（11 指标 / 16 列）
 
 | indicator_id | 输出列 | 默认参数 | 公式要点 |
 |---|---|---|---|
@@ -129,8 +138,9 @@ why 栈映射：多周期共振是 A 股技术分析的主流用法；指标全�
 | histvol | histvol_20 | period=20 | STD(log 收益, ddof=1)×√252×100 年化 |
 | natr | natr_14 | period=14 | MA(TR/Close×100,N)，消量纲跨标的可比（批2a，TA-Lib） |
 | trange | trange | 无 | TR 原始值，首行=H-L；ATR/NATR 底层原料（批2a，TA-Lib） |
+| massi | massi_25 | 9/25 | Σ EMA9(H−L)/EMA9(EMA9)；>27 预警反转（批2b） |
 
-### 6.4 量能类 volume.py（7 指标 / 7 列）
+### 6.4 量能类 volume.py（13 指标 / 14 列）
 
 | indicator_id | 输出列 | 默认参数 | 公式要点 |
 |---|---|---|---|
@@ -141,6 +151,12 @@ why 栈映射：多周期共振是 A 股技术分析的主流用法；指标全�
 | ad | ad | 无 | cumsum(CLV×V) |
 | pvt | pvt | 无 | cumsum(V×pct_change) |
 | wvad | wvad_24 | period=24 | SUM((C−O)/(H−L)×V, N) |
+| vwma | vwma_20 | 20 | 滚动 Σ(C×V)/ΣV（区别累积 vwap，批2b） |
+| adosc | adosc | 3/10 | EMA3(AD)−EMA10(AD)（批2b，TA-Lib） |
+| eom | eom_14 | 14 | 中价差/箱体量比 SMA（批2b） |
+| kvo | kvo/kvo_signal | 34/55/13 | Klinger VF 双 EMA 震荡（批2b） |
+| nvi | nvi | 无 | 缩量日累乘收益，聪明钱视角（批2b） |
+| pvi | pvi | 无 | 放量日累乘收益（批2b） |
 
 ### 6.5 反转类 reversal.py（5 指标 / 5 列）
 
@@ -183,5 +199,6 @@ why 栈映射：多周期共振是 A 股技术分析的主流用法；指标全�
 | 2026-08-10 | 0.1.0 | 初稿骨架 | 技术指标目录文档。**注意**：本文件曾因未 git commit 丢失，后从代码引用和 architecture_issue_registry 描述重建骨架 |
 | 2026-08-12 | 1.0.0 | 骨架→active：§6 回填 40 指标/58 列全表（5 大类公式/参数/输出列）；修正 55→58 口径；§6 增"40 指标不裁剪"裁定；补 §6.6 与 factor_registry 正交边界；新增 §7 开放问题（调度未闭环/REG-IND-001 待施工/00_index 同步） | 回填已施工代码 why；口径以测试契约为准；缺口入开放问题不擅自施工 |
 | 2026-08-15 | 1.0.1 | 第二轮循环压缩：可压缩点收敛=0（AI-DC2-08） | 清单/公式/裁定无冗余，通读+自审零发现，不为压而压 |
+| 2026-09-14 | 1.3.0 | 主流热门批 2b 收官：+TSI/SMI/FISHER/KST/CONNORSRSI/QQE/STC/RVGI（动量 14→22）+MCGINLEY（趋势 16→17）+MASSI（波动 10→11）+VWMA/ADOSC/EOM/KVO/NVI/PVI（量能 7→13）；全表 56→72 指标/82→104 列 | 缺口清单批 2b（TA-Lib/pandas-ta 主流热门全谱清偿完毕）；TA-Lib 波动组补全；量能族 TA-Lib 全覆盖 |
 | 2026-09-14 | 1.2.0 | 主流热门批 2a：+HMA/ZLEMA/KAMA/VORTEX/SUPERTREND（趋势 11→16）+DPO（动量 13→14）+NATR/TRANGE（波动 8→10）；全表 48→56 指标/72→82 列 | 缺口清单批 2a（TA-Lib 波动组补全+低滞后/自适应均线族）；同批附带 d/w/m 历史回填器 scripts/data/backfill_technical_indicator_dwm.py 落盘 |
 | 2026-09-14 | 1.1.0 | A股标配批+统计族批：+BIAS/PSY/LWR（动量 10→13）+DKX（趋势 10→11）+统计族 4 指标（新建 statistics.py MOD-L02-028，§6.6）；全表 40→48 指标/58→72 列；原 §6.6 正交边界→§6.7；§7 增开放问题⑥日/周/月历史深度缺口（探针实锤） | 全网对照缺口清单（TA-Lib 158/pandas-ta 130+ 基线）第一二批落地；Owner 两库分工裁定后本会话线开工 |

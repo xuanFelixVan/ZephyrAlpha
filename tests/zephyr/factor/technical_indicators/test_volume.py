@@ -31,6 +31,12 @@ EXPECTED = {
     "ad": ("累积/派发线", ["ad"]),
     "pvt": ("价量趋势", ["pvt"]),
     "wvad": ("威廉变异离散量", ["wvad_24"]),
+    "vwma": ("成交量加权均线", ["vwma_20"]),
+    "adosc": ("蔡金震荡器", ["adosc"]),
+    "eom": ("简易波动量", ["eom_14"]),
+    "kvo": ("Klinger量震荡器", ["kvo", "kvo_signal"]),
+    "nvi": ("负成交量指标", ["nvi"]),
+    "pvi": ("正成交量指标", ["pvi"]),
 }
 
 IMPLEMENTED = set(EXPECTED)  # 全部 7 个已施工完成
@@ -54,7 +60,7 @@ class TestVolumeRegistered:
             assert iid in metas, f"成交量指标 '{iid}' 未注册"
 
     def test_count(self):
-        assert len(TechnicalIndicatorRegistry.list_by_category("volume")) == len(EXPECTED) == 7
+        assert len(TechnicalIndicatorRegistry.list_by_category("volume")) == len(EXPECTED) == 13
 
 
 class TestVolumeMetaContract:
@@ -274,6 +280,12 @@ class TestPVTCompute:
 # ===========================================================================
 
 WVAD = TechnicalIndicatorRegistry.get("wvad")
+VWMA = TechnicalIndicatorRegistry.get("vwma")
+ADOSC = TechnicalIndicatorRegistry.get("adosc")
+EOM = TechnicalIndicatorRegistry.get("eom")
+KVO = TechnicalIndicatorRegistry.get("kvo")
+NVI = TechnicalIndicatorRegistry.get("nvi")
+PVI = TechnicalIndicatorRegistry.get("pvi")
 
 
 class TestWVADCompute:
@@ -302,3 +314,36 @@ class TestWVADCompute:
     def test_missing_column_raises(self):
         with pytest.raises(ValueError, match="缺少列"):
             WVAD().compute(pd.DataFrame({"close": [10.0] * 30}))
+
+
+# ===========================================================================
+# 2026-09-14 主流热门批 2b：VWMA/ADOSC/EOM/KVO/NVI/PVI 数值正确性
+# ===========================================================================
+
+
+class TestBatch2bVolumeNumeric:
+    def test_vwma_constant_equals_close(self):
+        df = _make_ohlcv(40)
+        df["close"] = 100.0
+        result = VWMA().compute(df)
+        assert (result["vwma_20"].dropna() == 100.0).all()
+
+    def test_adosc_constant_price_zero(self):
+        df = _make_ohlcv(40)
+        df["close"] = 100.0
+        df["high"] = 100.0
+        df["low"] = 100.0
+        result = ADOSC().compute(df)
+        assert (result["adosc"].dropna() == 0.0).all()
+
+    def test_nvi_pvi_seed_100_and_monotone_factors(self):
+        df = _make_ohlcv(40)
+        nvi = NVI().compute(df)["nvi"]
+        pvi = PVI().compute(df)["pvi"]
+        assert nvi.iloc[0] == 100.0 and pvi.iloc[0] == 100.0
+        assert (nvi > 0).all() and (pvi > 0).all()
+
+    def test_kvo_signal_smoothing(self):
+        df = _make_ohlcv(120)
+        result = KVO().compute(df)
+        assert result["kvo"].notna().sum() == result["kvo_signal"].notna().sum()  # EMA 无预热 NaN

@@ -5,7 +5,7 @@
 # [CONSUMERS] zephyr.data.implementations.internal_compute_provider（包级 autodiscover 动态接线：internal_compute_provider L545/L1113 延迟导入本包+注册表消费）; sleeve alpha 择时
 # [STARTUP] imported
 # [MATURITY] production
-# [INVARIANTS] 波动类指标 10 个，纯自实现 pandas/numpy；compute→DataFrame 多列输出；复用 trend._ema
+# [INVARIANTS] 波动类指标 11 个，纯自实现 pandas/numpy；compute→DataFrame 多列输出；复用 trend._ema
 # [MODIFY-GUARD] none
 # [STABILITY] evolving
 # [SAFETY] L
@@ -18,7 +18,7 @@
 
 波动类技术指标（8 个，v1.0.0 全部施工完成）。
 
-指标清单：ATR/BOLL/Keltner/Donchian/STDDEV/BandWidth/%B/HistVol/NATR/TRANGE（批2a 补 TA-Lib 波动组）
+指标清单：ATR/BOLL/Keltner/Donchian/STDDEV/BandWidth/%B/HistVol/NATR/TRANGE/MASSI（批2a+2b 补 TA-Lib 波动组族）
 
 算法对齐通达信：
   - ATR 通达信用 MA（简单移动平均，非 Wilder's RMA）
@@ -425,3 +425,32 @@ class TRANGE(TechnicalIndicatorBase):
             return pd.DataFrame(columns=self.meta.output_columns)
         tr = _true_range(data["high"], data["low"], data["close"])
         return pd.DataFrame({"trange": tr}, index=data.index)
+
+
+@TechnicalIndicatorRegistry.register
+class MASSI(TechnicalIndicatorBase):
+    """质量指数（Mass Index，9/25，Donald Dorsey）。"""
+
+    meta = TechnicalIndicatorMeta(
+        indicator_id="massi",
+        name="质量指数",
+        category="volatility",
+        output_columns=["massi_25"],
+        input_columns=["high", "low"],
+        params={"ema": 9, "period": 25},
+        version="1.0.0",
+        description="MI=Σ25[EMA9(H−L)/EMA9(EMA9(H−L))]，度量区间膨胀速率；>27 预警趋势反转",
+    )
+
+    def compute(self, data: pd.DataFrame, **kwargs) -> pd.DataFrame:
+        self.validate(data)
+        if data.empty:
+            return pd.DataFrame(columns=self.meta.output_columns)
+        params = self.get_params(**kwargs)
+        ema_n, n = params["ema"], params["period"]
+        rng = data["high"] - data["low"]
+        ema1 = rng.ewm(span=ema_n, adjust=False).mean()
+        ema2 = ema1.ewm(span=ema_n, adjust=False).mean()
+        ratio = ema1 / ema2
+        massi = ratio.rolling(window=n).sum()
+        return pd.DataFrame({f"massi_{n}": massi}, index=data.index)

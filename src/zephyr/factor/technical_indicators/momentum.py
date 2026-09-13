@@ -5,7 +5,7 @@
 # [CONSUMERS] zephyr.data.implementations.internal_compute_provider（包级 autodiscover 动态接线：internal_compute_provider L545/L1113 延迟导入本包+注册表消费）; sleeve alpha 择时
 # [STARTUP] imported
 # [MATURITY] production
-# [INVARIANTS] 动量类指标 14 个，纯自实现 pandas/numpy；compute→DataFrame 多列输出
+# [INVARIANTS] 动量类指标 22 个，纯自实现 pandas/numpy；compute→DataFrame 多列输出
 # [MODIFY-GUARD] none
 # [STABILITY] evolving
 # [SAFETY] L
@@ -16,9 +16,9 @@
 # [TTL] permanent
 """
 
-动量类技术指标（14 个；2026-09-14 A股标配批 +3、主流热门批 2a +1）。
+动量类技术指标（22 个；2026-09-14 A股标配批+3、批2a +1、批2b +8）。
 
-指标清单：KDJ/RSI/WR/ROC/MTM/CMF/UOS/AO/CMO/StochRSI/BIAS/PSY/LWR/DPO
+指标清单：KDJ/RSI/WR/ROC/MTM/CMF/UOS/AO/CMO/StochRSI/BIAS/PSY/LWR/DPO/TSI/SMI/FISHER/KST/CONNORSRSI/QQE/STC/RVGI
 
 算法对齐通达信：
   - KDJ K/D 用通达信 SMA(X,N,1)=ewm(alpha=1/N, adjust=False)（非标准 EMA alpha=2/(N+1)）
@@ -125,10 +125,10 @@
 #   outputs: RSI Series
 # 层: 输出
 # - id: O1
-#   name_zh: 动量指标 DataFrame（14指标多列）
+#   name_zh: 动量指标 DataFrame（22指标多列）
 #   name_en: momentum indicators DataFrame
-#   intro: KDJ/RSI/WR/ROC/MTM/CMF/UOS/AO/CMO/StochRSI/BIAS/PSY/LWR/DPO 共14个动量指标的多列输出，index 与输入对齐
-#   invariant: 输出列严格等于各 meta.output_columns（kdj_k/d/j、rsi_6/12/24、wr_14、roc_12、mtm_12/mtmma_12、cmf_20、uos、ao、cmo_14、stochrsi、bias_6/12/24、psy_12/psy_ma6、lwr_1/lwr_2、dpo_20）
+#   intro: KDJ/RSI/WR/ROC/MTM/CMF/UOS/AO/CMO/StochRSI/BIAS/PSY/LWR/DPO 共22个动量指标的多列输出，index 与输入对齐
+#   invariant: 输出列严格等于各 meta.output_columns（kdj_k/d/j、rsi_6/12/24、wr_14、roc_12、mtm_12/mtmma_12、cmf_20、uos、ao、cmo_14、stochrsi、bias_6/12/24、psy_12/psy_ma6、lwr_1/lwr_2、dpo_20、tsi、smi/smi_signal、fisher_9/fisher_sig9、kst/kst_signal、crsi、qqe_14/qqe_rsi_ma、stc、rvgi_10/rvgi_sig）
 #   downstream: zephyr.data.implementations.internal_compute_provider（批量计算写入 c1_market.technical_indicator）；sleeve alpha 择时
 # [/ALGO_FLOW]
 #
@@ -586,3 +586,300 @@ class DPO(TechnicalIndicatorBase):
         ma = data["close"].rolling(window=n).mean()
         dpo = data["close"] - ma.shift(n // 2 + 1)
         return pd.DataFrame({f"dpo_{n}": dpo}, index=data.index)
+
+
+@TechnicalIndicatorRegistry.register
+class TSI(TechnicalIndicatorBase):
+    """真实强度指数（True Strength Index，25/13）。"""
+
+    meta = TechnicalIndicatorMeta(
+        indicator_id="tsi",
+        name="真实强度指数",
+        category="momentum",
+        output_columns=["tsi"],
+        input_columns=["close"],
+        params={"long": 25, "short": 13},
+        version="1.0.0",
+        description="TSI=100×EMA_s(EMA_l(ΔC))/EMA_s(EMA_l(|ΔC|))，双重平滑动量，零线穿越看趋势",
+    )
+
+    def compute(self, data: pd.DataFrame, **kwargs) -> pd.DataFrame:
+        self.validate(data)
+        if data.empty:
+            return pd.DataFrame(columns=self.meta.output_columns)
+        params = self.get_params(**kwargs)
+        long_n, short_n = params["long"], params["short"]
+        pc = data["close"].diff()
+        num = pc.ewm(span=long_n, adjust=False).mean().ewm(span=short_n, adjust=False).mean()
+        den = pc.abs().ewm(span=long_n, adjust=False).mean().ewm(span=short_n, adjust=False).mean()
+        tsi = 100 * num / den
+        return pd.DataFrame({"tsi": tsi}, index=data.index)
+
+
+@TechnicalIndicatorRegistry.register
+class SMI(TechnicalIndicatorBase):
+    """随机动量指数（Stochastic Momentum Index，10/3/3）。"""
+
+    meta = TechnicalIndicatorMeta(
+        indicator_id="smi",
+        name="随机动量指数",
+        category="momentum",
+        output_columns=["smi", "smi_signal"],
+        input_columns=["high", "low", "close"],
+        params={"period": 10, "smooth1": 3, "smooth2": 3, "signal": 3},
+        version="1.0.0",
+        description="SMI=100×EMAEMA(C−中点)/(0.5×EMAEMA(HH−LL))；signal=EMA(SMI,3)",
+    )
+
+    def compute(self, data: pd.DataFrame, **kwargs) -> pd.DataFrame:
+        self.validate(data)
+        if data.empty:
+            return pd.DataFrame(columns=self.meta.output_columns)
+        params = self.get_params(**kwargs)
+        n, s1, s2, sig = params["period"], params["smooth1"], params["smooth2"], params["signal"]
+        hh = data["high"].rolling(window=n).max()
+        ll = data["low"].rolling(window=n).min()
+        mid = 0.5 * (hh + ll)
+        sh = (data["close"] - mid).ewm(span=s1, adjust=False).mean().ewm(span=s2, adjust=False).mean()
+        sm = (0.5 * (hh - ll)).ewm(span=s1, adjust=False).mean().ewm(span=s2, adjust=False).mean()
+        smi = 100 * sh / sm
+        smi_signal = smi.ewm(span=sig, adjust=False).mean()
+        return pd.DataFrame({"smi": smi, "smi_signal": smi_signal}, index=data.index)
+
+
+@TechnicalIndicatorRegistry.register
+class FISHER(TechnicalIndicatorBase):
+    """费雪变换（Fisher Transform，9）。"""
+
+    meta = TechnicalIndicatorMeta(
+        indicator_id="fisher",
+        name="费雪变换",
+        category="momentum",
+        output_columns=["fisher_9", "fisher_sig9"],
+        input_columns=["high", "low"],
+        params={"period": 9},
+        version="1.0.0",
+        description="norm=2(HL2−LLn)/(HHn−LLn)−1；value=0.66norm+0.67prev；F=0.5ln((1+v)/(1−v))+0.5prev，递推",
+    )
+
+    def compute(self, data: pd.DataFrame, **kwargs) -> pd.DataFrame:
+        self.validate(data)
+        if data.empty:
+            return pd.DataFrame(columns=self.meta.output_columns)
+        params = self.get_params(**kwargs)
+        n = params["period"]
+        hl2 = 0.5 * (data["high"] + data["low"])
+        hh = hl2.rolling(window=n).max()
+        ll = hl2.rolling(window=n).min()
+        norm = (2 * (hl2 - ll) / (hh - ll) - 1).clip(-0.999, 0.999)
+        norm_v = norm.to_numpy()
+        m = len(norm_v)
+        value = np.zeros(m)
+        fisher = np.full(m, np.nan)
+        for i in range(m):
+            if np.isnan(norm_v[i]):
+                continue
+            pv = value[i - 1] if i > 0 and not np.isnan(fisher[i - 1]) else 0.0
+            value[i] = 0.66 * norm_v[i] + 0.67 * pv
+            v = max(-0.999, min(0.999, value[i]))
+            pf = fisher[i - 1] if i > 0 and not np.isnan(fisher[i - 1]) else 0.0
+            fisher[i] = 0.5 * np.log((1 + v) / (1 - v)) + 0.5 * pf
+        fisher_s = pd.Series(fisher, index=data.index)
+        return pd.DataFrame({"fisher_9": fisher_s, "fisher_sig9": fisher_s.shift(1)}, index=data.index)
+
+
+@TechnicalIndicatorRegistry.register
+class KST(TechnicalIndicatorBase):
+    """确知量指标（Know Sure Thing）。"""
+
+    meta = TechnicalIndicatorMeta(
+        indicator_id="kst",
+        name="确知量",
+        category="momentum",
+        output_columns=["kst", "kst_signal"],
+        input_columns=["close"],
+        params={"roc": [10, 15, 20, 30], "sma": [10, 10, 10, 15], "weights": [1, 2, 3, 4], "signal": 9},
+        version="1.0.0",
+        description="KST=Σwᵢ×SMA(ROC(nᵢ),sᵢ)（1/2/3/4 权重）；signal=SMA(KST,9)",
+    )
+
+    def compute(self, data: pd.DataFrame, **kwargs) -> pd.DataFrame:
+        self.validate(data)
+        if data.empty:
+            return pd.DataFrame(columns=self.meta.output_columns)
+        params = self.get_params(**kwargs)
+        rocs, smas, weights, sig = params["roc"], params["sma"], params["weights"], params["signal"]
+        kst = pd.Series(0.0, index=data.index)
+        for rc, sm, w in zip(rocs, smas, weights):
+            kst = kst + w * (data["close"].pct_change(rc) * 100).rolling(window=sm).mean()
+        kst_signal = kst.rolling(window=sig).mean()
+        return pd.DataFrame({"kst": kst, "kst_signal": kst_signal}, index=data.index)
+
+
+@TechnicalIndicatorRegistry.register
+class CONNORSRSI(TechnicalIndicatorBase):
+    """Connors RSI（3/2/100 三分量合成）。"""
+
+    meta = TechnicalIndicatorMeta(
+        indicator_id="connorsrsi",
+        name="ConnorsRSI",
+        category="momentum",
+        output_columns=["crsi"],
+        input_columns=["close"],
+        params={"rsi_period": 3, "streak_rsi": 2, "rank_period": 100},
+        version="1.0.0",
+        description="CRSI=(RSI(C,3)+RSI(连涨跌天数,2)+PercentRank(1日收益,100))/3，短周期均值回归摆动",
+    )
+
+    def compute(self, data: pd.DataFrame, **kwargs) -> pd.DataFrame:
+        self.validate(data)
+        if data.empty:
+            return pd.DataFrame(columns=self.meta.output_columns)
+        params = self.get_params(**kwargs)
+        rsi_n, streak_n, rank_n = params["rsi_period"], params["streak_rsi"], params["rank_period"]
+        close = data["close"]
+        rsi_1 = _rsi(close, rsi_n)
+        # 连涨/连跌天数序列（涨=+1 递增，跌=-1 递减，平/首行=0）
+        delta = close.diff()
+        sign = np.sign(delta)
+        streak = np.zeros(len(close))
+        for i in range(1, len(close)):
+            if np.isnan(sign[i]) or sign[i] == 0:
+                streak[i] = 0
+            elif sign[i] == sign[i - 1] and streak[i - 1] != 0:
+                streak[i] = streak[i - 1] + sign[i]
+            else:
+                streak[i] = sign[i]
+        streak_s = pd.Series(streak, index=data.index)
+        rsi_streak = _rsi(streak_s, streak_n)
+        ret = close.pct_change()
+        pct_rank = ret.rolling(window=rank_n).apply(
+            lambda x: (x < x[-1]).sum() / (len(x) - 1) * 100, raw=True
+        )
+        crsi = (rsi_1 + rsi_streak + pct_rank) / 3
+        return pd.DataFrame({"crsi": crsi}, index=data.index)
+
+
+@TechnicalIndicatorRegistry.register
+class QQE(TechnicalIndicatorBase):
+    """量化质化估计（Quantitative Qualitative Estimation，14/5/27×4.236）。"""
+
+    meta = TechnicalIndicatorMeta(
+        indicator_id="qqe",
+        name="QQE",
+        category="momentum",
+        output_columns=["qqe_14", "qqe_rsi_ma"],
+        input_columns=["close"],
+        params={"period": 14, "smooth": 5, "atr_period": 27, "factor": 4.236},
+        version="1.0.0",
+        description="RSI 双 EMA 平滑后按 DAR 跟踪带逐 bar 递推；QQE 线与 RSI_MA 交叉为信号",
+    )
+
+    def compute(self, data: pd.DataFrame, **kwargs) -> pd.DataFrame:
+        self.validate(data)
+        if data.empty:
+            return pd.DataFrame(columns=self.meta.output_columns)
+        params = self.get_params(**kwargs)
+        n, smooth_n, atr_n, factor = params["period"], params["smooth"], params["atr_period"], params["factor"]
+        rsi = _rsi(data["close"], n)
+        rsi_ma = rsi.ewm(span=smooth_n, adjust=False).mean()
+        dar = (
+            (rsi_ma - rsi_ma.shift(1)).abs().ewm(span=atr_n, adjust=False).mean().ewm(
+                span=atr_n, adjust=False
+            ).mean()
+            * factor
+        )
+        rm = rsi_ma.to_numpy()
+        dv = dar.to_numpy()
+        m = len(rm)
+        qqe = np.full(m, np.nan)
+        long_band = np.nan
+        short_band = np.nan
+        trend = 1.0
+        for i in range(m):
+            if np.isnan(rm[i]) or np.isnan(dv[i]):
+                continue
+            if np.isnan(long_band):
+                long_band = rm[i] - dv[i]
+                short_band = rm[i] + dv[i]
+                qqe[i] = long_band
+                continue
+            new_long = rm[i] - dv[i]
+            new_short = rm[i] + dv[i]
+            long_band = new_long if (new_long > long_band or rm[i - 1] < long_band) else long_band
+            short_band = new_short if (new_short < short_band or rm[i - 1] > short_band) else short_band
+            prev_trend = trend
+            if prev_trend == 1.0 and rm[i] < long_band:
+                trend = -1.0
+            elif prev_trend == -1.0 and rm[i] > short_band:
+                trend = 1.0
+            qqe[i] = long_band if trend == 1.0 else short_band
+        return pd.DataFrame({"qqe_14": pd.Series(qqe, index=data.index), "qqe_rsi_ma": rsi_ma}, index=data.index)
+
+
+@TechnicalIndicatorRegistry.register
+class STC(TechnicalIndicatorBase):
+    """Schaff 趋势周期（Schaff Trend Cycle，23/50/10/3）。"""
+
+    meta = TechnicalIndicatorMeta(
+        indicator_id="stc",
+        name="Schaff趋势周期",
+        category="momentum",
+        output_columns=["stc"],
+        input_columns=["close"],
+        params={"fast": 23, "slow": 50, "cycle": 10, "smooth": 3},
+        version="1.0.0",
+        description="MACD(23,50)→双随机(10)→EMA(3) 平滑，0-100 循环摆动",
+    )
+
+    def compute(self, data: pd.DataFrame, **kwargs) -> pd.DataFrame:
+        self.validate(data)
+        if data.empty:
+            return pd.DataFrame(columns=self.meta.output_columns)
+        params = self.get_params(**kwargs)
+        fast_n, slow_n, cyc, sm = params["fast"], params["slow"], params["cycle"], params["smooth"]
+        macd = data["close"].ewm(span=fast_n, adjust=False).mean() - data["close"].ewm(
+            span=slow_n, adjust=False
+        ).mean()
+        macd_min = macd.rolling(window=cyc).min()
+        macd_max = macd.rolling(window=cyc).max()
+        k1 = 100 * (macd - macd_min) / (macd_max - macd_min)
+        d1 = k1.ewm(span=sm, adjust=False).mean()
+        d1_min = d1.rolling(window=cyc).min()
+        d1_max = d1.rolling(window=cyc).max()
+        k2 = 100 * (d1 - d1_min) / (d1_max - d1_min)
+        stc = k2.ewm(span=sm, adjust=False).mean()
+        return pd.DataFrame({"stc": stc}, index=data.index)
+
+
+@TechnicalIndicatorRegistry.register
+class RVGI(TechnicalIndicatorBase):
+    """相对活力指数（Relative Vigor Index，10/4）。"""
+
+    meta = TechnicalIndicatorMeta(
+        indicator_id="rvgi",
+        name="相对活力指数",
+        category="momentum",
+        output_columns=["rvgi_10", "rvgi_sig"],
+        input_columns=["open", "high", "low", "close"],
+        params={"period": 10, "signal": 4},
+        version="1.0.0",
+        description="num=C−O、den=H−L 经 1-2-2-1 加权后再 SMA(10)：RVGI=SMA(w:num)/SMA(w:den)；sig=SMA(RVGI,4)",
+    )
+
+    def compute(self, data: pd.DataFrame, **kwargs) -> pd.DataFrame:
+        self.validate(data)
+        if data.empty:
+            return pd.DataFrame(columns=self.meta.output_columns)
+        params = self.get_params(**kwargs)
+        n, sig_n = params["period"], params["signal"]
+        w = np.array([1.0, 2.0, 2.0, 1.0]) / 6.0
+
+        def swma(series: pd.Series) -> pd.Series:
+            return series.rolling(window=4).apply(lambda x: float(np.dot(x, w)), raw=True)
+
+        num = swma(data["close"] - data["open"]).rolling(window=n).mean()
+        den = swma(data["high"] - data["low"]).rolling(window=n).mean()
+        rvgi = num / den
+        rvgi_signal = rvgi.rolling(window=sig_n).mean()
+        return pd.DataFrame({"rvgi_10": rvgi, "rvgi_sig": rvgi_signal}, index=data.index)

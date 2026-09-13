@@ -34,6 +34,7 @@ HISTVOL = TechnicalIndicatorRegistry.get("histvol")
 
 NATR = TechnicalIndicatorRegistry.get("natr")
 TRANGE = TechnicalIndicatorRegistry.get("trange")
+MASSI = TechnicalIndicatorRegistry.get("massi")
 
 # 期望契约（catalog §2.3）：indicator_id → (name, output_columns)
 EXPECTED = {
@@ -47,6 +48,7 @@ EXPECTED = {
     "histvol": ("历史波动率", ["histvol_20"]),
     "natr": ("归一化真实波幅", ["natr_14"]),
     "trange": ("真实波幅", ["trange"]),
+    "massi": ("质量指数", ["massi_25"]),
 }
 
 # 全部已实现
@@ -81,7 +83,7 @@ class TestVolatilityRegistered:
             assert iid in metas, f"波动指标 '{iid}' 未注册"
 
     def test_count(self):
-        assert len(TechnicalIndicatorRegistry.list_by_category("volatility")) == len(EXPECTED) == 10
+        assert len(TechnicalIndicatorRegistry.list_by_category("volatility")) == len(EXPECTED) == 11
 
 
 class TestVolatilityMetaContract:
@@ -478,3 +480,20 @@ class TestNatrTrangeNumeric:
         df = _make_ohlcv(40)
         result = NATR().compute(df)
         assert (result["natr_14"].dropna() >= 0).all()
+
+
+class TestMassiNumeric:
+    def test_constant_range_baseline(self):
+        df = _make_ohlcv(50)
+        df["high"] = 101.0
+        df["low"] = 99.0
+        result = MASSI().compute(df)
+        # 恒定区间 EMA1=EMA2 → ratio=1 → MI=25
+        np.testing.assert_allclose(result["massi_25"].dropna(), 25.0)
+
+    def test_warmup(self):
+        df = _make_ohlcv(50)
+        result = MASSI().compute(df)
+        # EMA 无预热 NaN，唯一窗口来自 rolling(25)
+        assert result["massi_25"].iloc[:24].isna().all()
+        assert result["massi_25"].iloc[24:].notna().all()
