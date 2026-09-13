@@ -4,10 +4,10 @@ ttl: permanent
 doc_type: register
 title: 规则路径目录（唯一真源 SSoT）
 status: active
-generated_at: '2026-09-13T17:46:53Z'
+generated_at: '2026-09-13T18:19:22Z'
 generated_by: scripts/governance/d3_metadata/generate_rule_catalog.py
 maintenance: auto
-total_files: 245
+total_files: 246
 total_rules: 61
 tier_distribution:
   L0: 21
@@ -1959,21 +1959,6 @@ files:
   tier: ''
   aliases: []
   section_count: 0
-- path: docs/01_policies_and_standards/sop/trading_decision_map_pathfinding_sop.md
-  module_id: ''
-  title: 交易决策全景图病菌寻路增长 SOP——六向寻路+防噪音四闸（长期增长机制真源）
-  doc_type: policy
-  status: active
-  version: 1.0.0
-  rule_form: procedural
-  scope: global
-  stability: ''
-  layer: ''
-  superseded_by: ''
-  severity: ''
-  tier: ''
-  aliases: []
-  section_count: 0
 - path: docs/01_policies_and_standards/sop/worktree_cleanup_sop.md
   module_id: ''
   title: Worktree 清理 SOP——四证齐全方可删除（死亡证明/无未合并工作/统筹批准/可恢复证明）
@@ -2057,6 +2042,36 @@ files:
   version: 1.0.0
   rule_form: procedural
   scope: 07_trading_decision_architecture
+  stability: ''
+  layer: ''
+  superseded_by: ''
+  severity: ''
+  tier: ''
+  aliases: []
+  section_count: 0
+- path: docs/01_policies_and_standards/sop/mining_sop/mining_sop_policy.md
+  module_id: ''
+  title: 挖矿 SOP——全网调研+内部反查的全面挖掘方法论（六向寻路/防噪音四闸/双噪音终止）
+  doc_type: policy
+  status: active
+  version: 1.0.0
+  rule_form: procedural
+  scope: ''
+  stability: ''
+  layer: ''
+  superseded_by: ''
+  severity: ''
+  tier: ''
+  aliases: []
+  section_count: 0
+- path: docs/01_policies_and_standards/sop/mining_sop/trading_decision_map_pathfinding_policy.md
+  module_id: ''
+  title: 交易决策全景图病菌寻路增长 SOP——六向寻路+防噪音四闸（长期增长机制真源）
+  doc_type: policy
+  status: active
+  version: 1.0.0
+  rule_form: procedural
+  scope: global
   stability: ''
   layer: ''
   superseded_by: ''
