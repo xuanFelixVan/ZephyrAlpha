@@ -48751,6 +48751,13 @@ entries:
   desc_zh: "c1_market.market_pattern_event 读写与确定性事件ID"
   desc_en: ""
   plain_zh: "把图形引擎认出的每个形态事件（什么形态、哪只股票、哪天确认、方向多空、置信度多少）存进数据库表；存之前给每个事件算一个固定编号，重复扫描不会存重；后面整套形态胜率统计都从这张表取数。"
+- module_path: src/zephyr/factor/technical_indicators/statistics.py
+  domain_id: D_FACTOR
+  name_zh: "统计族技术指标"
+  name_en: "statistics indicators"
+  desc_zh: "CORREL/BETA/LINEARREG+TSF/ROLLVAR 五列统计指标，对齐 TA-Lib Statistic Functions，滚动矩法向量化实现"
+  desc_en: ""
+  plain_zh: "这个模块算五条统计类指标列：量价相关系数、量价贝塔、线性回归线和它的一步预测、滚动方差。别的指标看的是涨跌形态，这族给的是统计学基线——比如量价相关性可以用来查背离是否真有其事。全部纯 pandas 滚动窗口实现，和 TA-Lib 同名函数口径一致，不依赖任何第三方 TA 库。"
 
 battle_map_steps:
 - step_id: BM-BUY-05

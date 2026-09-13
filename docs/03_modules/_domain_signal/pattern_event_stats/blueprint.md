@@ -35,14 +35,18 @@ owner: ZephyrAlpha-Owner
 背景依据：JFQA 2016 对冲基金实证（TA 超额挂高情绪 regime）+ 2026-09 37 万形态
 检测实证（"完美"形态反而跑输）→ 证据先于目录扩张。
 
-## 1. 数据契约（拟）
+## 1. 数据契约（拟，W1 已落地）
 
-- `c1_signal.pattern_event`（CH 表，DatabaseService 正门，pit_policy=strict）：
-  event_id / pattern_id / pattern_class / direction / confidence /
-  key_points(json) / timeframe / symbol / anchor_ts / confirmed_ts /
-  regime_tag / scan_run_id；分区 toYYYYMM(confirmed_ts)。
+- `c1_market.market_pattern_event`（CH 表，DatabaseService/ch_writer 正门，
+  pit_policy=strict；DDL 真源 schemas/categories/market_pattern_event.py，
+  apply 脚本 scripts/ch/apply_pattern_event_ddl.py）：
+  event_id / pattern_id / pattern_class / direction / confidence / timeframe /
+  symbol / anchor_trade_date / confirmed_at / name / key_points(json) /
+  regime_tag / scan_run_id / data_source；ReplacingMergeTree(computed_at)，
+  分区 toYYYYMM(anchor_trade_date)。沿 market_signal_history 先例落 c1_market
+  （单用户系统不为一张表建第二库，c1_signal 预留名不建）。
   锚=确认 bar 收盘，仅已完成 bar 入库（盘中未确认形态禁入）。
-- `c1_signal.pattern_win_rate`（物化统计表）：pattern_id / timeframe /
+- `c1_market.market_pattern_win_rate`（物化统计表，W3）：pattern_id / timeframe /
   regime_tag / fwd_window(+1/+5/+10/+20) / n_events / hit_rate /
   avg_fwd_ret / baseline_ret / low_sample / updated_at。
 - 回填范围：日线 2021-09-01 起全 A 股；增量任务 pattern_event_incremental
