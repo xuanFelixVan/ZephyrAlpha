@@ -55,7 +55,7 @@ from zephyr.data.provider_base import (
     IngestProviderMeta,
 )
 from zephyr.data.table_registry import get_registry
-from zephyr.shared.security.secrets import get_service_secret
+from zephyr.shared.security.secrets import get_secret_or_default
 
 log = logging.getLogger(__name__)
 
@@ -447,7 +447,7 @@ class AkshareAltProvider(IngestProviderBase):
         table = payload.table or _TBL_ALT_TYPHOON
         t0 = time.monotonic()
         try:
-            app_key = get_service_secret("SZ_OPEN_DATA_APPKEY", service="shenzhen_open_data")
+            app_key = get_secret_or_default("SZ_OPEN_DATA_APPKEY")
         except Exception as e:  # noqa: BLE001 — 密钥缺失即断供
             yield FetchResult(table=table, columns=_ALT_TYPHOON_COLUMNS, rows=[], last_key="",
                               elapsed_sec=time.monotonic() - t0, error=f"appKey 缺失: {e}")

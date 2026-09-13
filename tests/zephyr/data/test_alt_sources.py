@@ -326,7 +326,7 @@ def test_typhoon_fetch_full_pagination(monkeypatch):
             return {"result": [_typhoon_stub_row(i) for i in range(10000)]}
         return {"result": [_typhoon_stub_row(10000)]}
 
-    monkeypatch.setattr(mod, "get_service_secret", lambda *a, **k: "stub-key")
+    monkeypatch.setattr(mod, "get_secret_or_default", lambda *a, **k: "stub-key")
     monkeypatch.setattr(mod.AkshareAltProvider, "_sz_api_get", fake_get)
     p = mod.AkshareAltProvider()
     payload = _make_payload(
@@ -349,7 +349,7 @@ def test_typhoon_fetch_full_pagination(monkeypatch):
 def test_typhoon_fetch_error_code(monkeypatch):
     from zephyr.data.implementations import akshare_alt_provider as mod
 
-    monkeypatch.setattr(mod, "get_service_secret", lambda *a, **k: "stub-key")
+    monkeypatch.setattr(mod, "get_secret_or_default", lambda *a, **k: "stub-key")
     monkeypatch.setattr(
         mod.AkshareAltProvider, "_sz_api_get",
         lambda self, params: {"errorCode": "10001", "message": "未经许可的证书，请先订阅接口"},
