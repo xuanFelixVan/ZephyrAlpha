@@ -4,14 +4,14 @@ title: "backup_inventory — 备份内容与方法清单"
 doc_type: register
 ttl: permanent
 status: Active
-version: "1.0.0"
+version: "1.1.0"
 layer: L0_infrastructure
 owner: ZephyrAlpha-Owner
 classification: confidential
 language: zh
 created_by: human_plus_agent
 date: "2026-07-28"
-last_updated: "2026-07-28"
+last_updated: "2026-09-14"
 summary: "完整记录备份内容/位置/方法/频率的清单——代码/PG/SQLite/CH数据/CH配置/CH虚拟机全覆盖，AI无需猜测即可理解备份布局"
 tags: [backup, inventory, register, MOD-INF-043]
 responsibility_domain: 
@@ -22,7 +22,7 @@ design_maturity: production
 
 > **用途**：完整记录备份了什么内容、存在哪里、用什么方法——让任何 AI 代理
 > （或人类）无需猜测就能理解备份布局。
-> **最后更新**：2026-07-28 | 模块：MOD-INF-043
+> **最后更新**：2026-09-14 | 模块：MOD-INF-043
 > **配套文档**：[dr_runbook.md](./dr_runbook.md) — 如何从这些备份中恢复。
 
 ---
@@ -33,7 +33,7 @@ design_maturity: production
 |------|------|
 | 驱动器 | F:（外接硬盘） |
 | 总容量 | 1863 GB |
-| 可用空间（截至 2026-07-28） | 1240 GB |
+| 可用空间 | 2026-07-28: 1240 GB → 2026-09-14 审计: 162 GB（主因 VHDX 虚胖 ~626 GB，见 §10.1） |
 | 单点故障 | 是 — #ARCH-CH-032 用户已推翻（单用户回测期，已接受该风险） |
 
 ---
@@ -56,7 +56,7 @@ F:\
 │   └── AGENTS.md, ...
 │
 ├── db_dumps\                  ← PG 转储 + SQLite 转储（robocopy /MIR 镜像）
-│   ├── depgraph.dump          （PG 自定义格式转储，约 1.5 MB）
+│   ├── depgraph.dump          （PG 自定义格式转储，约 81 MB——2026-09 起库含 ig_* 产业链数据，全库 944 MB）
 │   ├── pg_globals.sql         （PG 角色，密码已掩码）
 │   ├── governance_backup.db   （SQLite governance.db 副本）
 │   └── session_backup.db      （SQLite session_continuity.db 副本）
@@ -79,13 +79,13 @@ F:\
 | # | 组件 | 来源 | 备份目标 | 方法 | 频率 | 覆盖策略 | 预估每日写入量 |
 |---|------|------|----------|------|------|----------|----------------|
 | 1 | 代码 + 配置 | `D:\ZephyrAlpha\` | `F:\code_backup\` | robocopy /MIR | 每日（06:00）+ 提交后 | 镜像（仅变更文件） | 约 10-100 MB |
-| 2 | PG 数据 | PG `depgraph` 库 | `F:\db_dumps\depgraph.dump` | pg_dump -Fc | 每日 | 覆盖 | 约 1.5 MB |
+| 2 | PG 数据 | PG `depgraph` 库 | `F:\db_dumps\depgraph.dump` | pg_dump -Fc | 每日 | 覆盖 | 约 81 MB（2026-09 实测） |
 | 3 | PG 角色 | PG `pg_roles` | `F:\db_dumps\pg_globals.sql` | psql 查询 | 每日 | 覆盖（密码已掩码） | <1 KB |
 | 4 | PG 配置 | `C:\Program Files\PostgreSQL\16\data\*.conf` | `config\system_configs\pg\`（→ code_backup） | Copy-Item | 每日 | 覆盖 | 约 100 KB |
 | 5 | SQLite（治理库） | `data\databases\governance.db` | `F:\db_dumps\governance_backup.db` | sqlite3 .backup / Python | 每日 | 覆盖 | 约几 MB |
 | 6 | SQLite（会话库） | `data\databases\session_continuity.db` | `F:\db_dumps\session_backup.db` | sqlite3 .backup / Python | 每日 | 覆盖 | 约几 MB |
 | 7 | CH 数据（基线） | CH c1_market + c3_fundamental | `F:\ch_backup_disk.vhdx` → market.zip | CH BACKUP TO Disk | 一次性 + 自动重建基线（增量 ≥50% 基线时） | 重建基线时覆盖 | 0（稳定不变） |
-| 8 | CH 数据（增量） | CH c1_market + c3_fundamental | `F:\ch_backup_disk.vhdx` → inc.zip | CH BACKUP ... SETTINGS base_backup | 每日 | 覆盖（单文件） | 约 1-5 GiB |
+| 8 | CH 数据（增量） | CH c1_market + c3_fundamental | `F:\ch_backup_disk.vhdx` → inc.zip | CH BACKUP ... SETTINGS base_backup | 每日 | 覆盖（单文件） | 约 1-5 GiB（2026-09-14 实测：inc.zip 已累积 93 GB/日覆盖重写，临近 50% 重建阈值） |
 | 9 | CH 配置 | 虚拟机 `/etc/clickhouse-server/*.xml` + `/etc/fstab` | `config\system_configs\ch\`（→ code_backup） | SSH cat（ch_vm_ssh.py --sync-config） | 每日 | 覆盖 | 约 110 KB |
 | 10 | CH 虚拟机（系统+程序） | `D:\HyperV\VMs\zephyr-ch\` | `F:\ch_vm_backup\` | Stop-VM → robocopy → Start-VM | 每周六 06:00 AutoCheck；仅在 CH 版本/配置变更时全量 | robocopy /MIR | 0（跳过）或约 555 GB（罕见） |
 | 11 | CH RBAC 用户 | CH `system.users` | （不备份 — 配置即代码） | `apply_rbac.py` 从 YAML 重建 | 恢复时 | 不适用 | 不适用 |
@@ -202,6 +202,43 @@ Get-Content D:\ZephyrAlpha\data\databases\backup_state.json
 
 新系统首次全量备份成功后，`F:\restic-zephyr\`（405 GB）已删除。
 `config/.env.restic` 已删除。restic 密码（ZephyrBackup2026!）不再需要。
+
+
+### §10.1 F 盘容量审计 + PG 备份权限事故（2026-09-14）
+
+**F 盘账目（总量 1863 GB / 已用 1701 GB / 剩 162 GB）**：
+
+| 占用 | 内容 | 定性 |
+|------|------|------|
+| 913 GB | ch_backup_disk.vhdx | 内部实仅 287 GB（market.zip 207 + inc.zip 93），**约 626 GB 为 VHDX 高水位虚胖** |
+| 592 GB | ch_vm_backup\data.vhdx | 2026-08-22 虚拟机全量备份（设计内，仅 CH 升级时刷新） |
+| 171 GB | offrepo_backup | 2026-09-08 新增仓外资产镜像（robocopy /MIR 增量，源为 cold_archive 等） |
+| 25 GB | code_backup | /MIR 镜像增量；内含 .git.backup.20260803 占 6.4 GB（清理候选，待 Owner 拍板） |
+| 1.3 GB | 个人文件 + db_dumps | 正常 |
+
+**结论：备份设计本身是增量（robocopy /MIR + CH base/inc），并非"每天全量复制"。盘满主因
+是动态 VHDX 只涨不缩**：VM 内 ext4 删除文件（每日 inc.zip 覆盖重写 + 基线重建删旧写新）后
+宿主从不知情；2026-07-27 建盘至 09-01 fstrim.timer 启用期间无任何 trim，高水位涨到 913 GB。
+guest unmap 可让宿主内部复用空间，但**文件外观大小不回缩，必须 Optimize-VHD 压缩**。
+
+**已执行（2026-09-14）**：
+1. VM 内手动 `fstrim -v /mnt/chbackup_local` → 送出 609.9 GiB unmap。此步有紧迫性：inc.zip
+   93 GB 已达基线 48%，基线重建随时触发，若无释放会把 VHDX 顶到 1 TB 上限致备份失败。
+   fstrim.timer（VM 内）自 2026-09-01 已 enabled，每周一自动跑。
+2. PG 备份事故修复：depgraph.dump 自 2026-08-26 17:50 起连续 72 次失败（0 字节）。根因=9 月初
+   产业链接线以 postgres 超级用户做 ig_* DDL，产出 81 张备份角色 zephyr 无 SELECT 权限的表，
+   pg_dump 全表 LOCK 被 migration_log 卡死。修复=以 postgres 执行 GRANT SELECT ON ALL
+   TABLES/SEQUENCES + ALTER DEFAULT PRIVILEGES FOR ROLE postgres（防复发），实测 pg_dump
+   恢复（80.9 MB，2026-09-14 02:04）。今后 DDL 若用超级用户身份建表，需沿用 default privileges。
+
+**待 Owner 维护窗执行（需管理员 PowerShell + 停 CH 虚拟机约 10-30 分钟，避开 06:00 备份窗与交易时段）**：
+
+```powershell
+Stop-VM -Name zephyr-ch
+Optimize-VHD -Path F:\ch_backup_disk.vhdx -Mode Full
+Start-VM -Name zephyr-ch
+```
+执行后 VHDX 预计 913 GB → 约 290 GB（F 盘剩余 162 GB → 约 790 GB）；完成后更新本节实测值。
 
 ### §0.6 五图对齐视图
 
