@@ -26,6 +26,8 @@
   D3 行业剔除降级未实现（申万代码映射缺，已声明；剩余规则与 087 同源）
   D4 因子登记: 公开因子组不登记
   D5 框架样板: wizard 壳不翻译
+
+[KNOWLEDGE_EFFECTIVE_FROM] 2026-09-14 | 源=策略原文公开发布日 | 生成=AI 会话（取晚者）
 """
 
 from __future__ import annotations

@@ -25,6 +25,8 @@
   D3 标准差口径: 原文 pd.rolling_std（样本 ddof=1）→ pandas rolling.std 同口径
   D4 因子登记: RSRS 不入 factor_registry（高低价衍生）
   D5 框架样板: 预计算壳/日志不翻译
+
+[KNOWLEDGE_EFFECTIVE_FROM] 2026-09-12 | 源=策略原文公开发布日 | 生成=AI 会话（取晚者）
 """
 
 from __future__ import annotations

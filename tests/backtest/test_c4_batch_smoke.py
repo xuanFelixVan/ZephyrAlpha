@@ -33,7 +33,10 @@ sys.path.insert(0, str(_TRANSLATED))
 from _c4_engine import (  # noqa: E402
     batch_deflated_sharpe,
     daily_net_returns,
+    knowledge_drift_report,
+    parse_knowledge_effective_from,
     run_backtest,
+    scan_knowledge_sentinels,
     window_for,
 )
 
@@ -98,6 +101,51 @@ class TestDeflatedSharpe:
         flat = pd.Series([0.0] * 50)
         out = batch_deflated_sharpe({"flat": flat})
         assert out["flat"] is None
+
+
+class TestKnowledgeEffectiveSentinel:
+    """S3 知识生效日哨兵（备忘 96 批 3）：AI 产物携带生效日，回测预检查漂移。"""
+
+    def test_every_translation_carries_sentinel(self):
+        """所有翻译件必须带哨兵——漏标=预检看不见该产物的知识漂移。"""
+        files = sorted(_TRANSLATED.glob("c4_*.py"))
+        missing = [p.name for p in files if parse_knowledge_effective_from(p) is None]
+        assert not missing, f"缺知识生效日哨兵: {missing}"
+
+    def test_sentinel_parse_format(self, tmp_path):
+        p = tmp_path / "c4_dummy.py"
+        p.write_text(
+            '"""假翻译件。\n\n'
+            '[KNOWLEDGE_EFFECTIVE_FROM] 2026-09-14 | 源=策略原文 | 生成=AI 会话\n'
+            '"""\n',
+            encoding="utf-8",
+        )
+        assert parse_knowledge_effective_from(p) == "2026-09-14"
+        assert parse_knowledge_effective_from(tmp_path / "nope.py") is None
+
+    def test_drift_report_three_states(self, tmp_path):
+        (tmp_path / "c4_a.py").write_text(
+            '"""a.\n\n[KNOWLEDGE_EFFECTIVE_FROM] 2020-01-01 | 源=x\n"""\n', encoding="utf-8")
+        # 无哨兵文件不进字典（诚实缺，不假装扫过）
+        (tmp_path / "c4_b.py").write_text('"""b."""\n', encoding="utf-8")
+
+        clean = knowledge_drift_report("2021-01-01", "2023-12-31", root=tmp_path)
+        assert clean["verdict"] == "clean" and clean["scanned"] == 1
+
+        drift = knowledge_drift_report("2019-01-01", "2019-12-31", root=tmp_path)
+        assert drift["verdict"] == "drift" and drift["drift_count"] == 1
+        assert drift["drift_items"][0]["artifact"] == "c4_a.py"
+
+        empty = knowledge_drift_report("2020-01-01", "2023-12-31", root=tmp_path / "nope")
+        assert empty["verdict"] == "empty"
+
+    def test_is_window_declares_drift(self):
+        """事实断言：IS 2020-2023 窗口早于全部 AI 翻译件的生成日 → 必判 drift（须声明）。"""
+        rep = knowledge_drift_report(*window_for("stock"))
+        assert rep["verdict"] == "drift"
+        assert rep["drift_count"] == rep["scanned"] > 0
+        # 未来窗口（晚于所有哨兵）→ clean，证明判据不是恒真
+        assert knowledge_drift_report("2030-01-01", "2030-12-31")["verdict"] == "clean"
 
 
 class TestWindowAndContract:

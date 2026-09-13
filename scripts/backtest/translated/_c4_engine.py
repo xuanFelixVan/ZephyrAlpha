@@ -31,6 +31,9 @@ DSR = Φ( (SR-SR0)·sqrt(T-1) / sqrt(1 - γ3·SR + ((γ4-1)/4)·SR²) )，γ3/γ
 
 from __future__ import annotations
 
+import re
+from datetime import date
+from pathlib import Path
 from typing import Any
 
 import numpy as np
@@ -155,7 +158,7 @@ def load_valuation(start: str, end: str, fields: tuple[str, ...] = ("pe", "pb"))
 _FIN_METRICS: tuple[str, ...] = (
     "announce_date", "report_period", "np_excl_cum", "equity_incl_minority",
     "rev_q_yoy", "np_q_yoy", "total_current_assets", "total_current_liabilities",
-    "fcff_cum", "np_q", "np_cum", "np_ttm", "ocf_ttm", "rev_ttm", "operating_profit_cum",
+    "fcff_cum", "np_q", "np_cum", "np_ttm", "ocf_ttm", "rev_ttm", "operating_profit_cum", "total_assets",
 )
 _fin_cache: dict[str, pd.DataFrame] = {}
 
@@ -329,6 +332,68 @@ def batch_deflated_sharpe(nets_by_id: dict[str, pd.Series]) -> dict[str, float |
 def window_for(kind: str = "stock") -> tuple[str, str]:
     """C4 批测窗口：股票/指数=IS 冻结窗口；ETF=2021-04 起（覆盖起点声明）。"""
     return (ETF_START, C4_END) if kind == "etf" else (C4_START, C4_END)
+
+
+# ── S3 知识生效日哨兵（备忘 96 批 3，2026-09-14）───────────────────────────
+# 依据：arXiv:2601.13770 Look-Ahead-Bench——LLM 的知识截止日本质是时点约束。
+# 本目录 c4_*.py 全是 AI 翻译产物：策略原文发表于某日、译文由某次会话生成，
+# 二者取晚者=该产物的"知识生效日"。回测窗口早于它=用了当时的未来知识，
+# 按 D120 三态（clean/drift/blocked）判漂移，放行但必须声明。
+_KNOWLEDGE_SENTINEL_RE = re.compile(
+    r"\[KNOWLEDGE_EFFECTIVE_FROM\]\s*(\d{4}-\d{2}-\d{2})"
+)
+_KNOWLEDGE_SCAN_DIR = Path(__file__).resolve().parent
+
+
+def parse_knowledge_effective_from(path: str | Path) -> str | None:
+    """读单个 AI 产物的知识生效日哨兵（写在模块 docstring 内，无哨兵=None）。"""
+    try:
+        text = Path(path).read_text(encoding="utf-8")
+    except OSError:
+        return None
+    m = _KNOWLEDGE_SENTINEL_RE.search(text)
+    return m.group(1) if m else None
+
+
+def scan_knowledge_sentinels(root: str | Path | None = None) -> dict[str, str]:
+    """扫翻译目录 → {文件名: 知识生效日}（无哨兵的文件不进字典，诚实缺）。"""
+    base = Path(root) if root is not None else _KNOWLEDGE_SCAN_DIR
+    out: dict[str, str] = {}
+    for p in sorted(base.glob("c4_*.py")):
+        eff = parse_knowledge_effective_from(p)
+        if eff:
+            out[p.name] = eff
+    return out
+
+
+def knowledge_drift_report(
+    start: str, end: str, root: str | Path | None = None
+) -> dict[str, Any]:
+    """S3 预检：回测窗口 vs AI 产物知识生效日（D120 三态，复用地图漂移口径）。
+
+    clean   = 所有带哨兵产物的生效日都 <= 窗口起点 → 无漂移
+    drift   = 存在产物生效日晚于窗口起点 → 放行但 drift_items 必须声明
+    empty   = 目录下没有任何带哨兵的产物（哨兵未铺开，提示补标，不阻断）
+
+    注：本函数只读不写，纯报告；是否阻断由调用方按 SOP 决定（S3 现为"声明制"）。
+    """
+    sents = scan_knowledge_sentinels(root)
+    if not sents:
+        return {"verdict": "empty", "reason": "翻译目录无带哨兵的 AI 产物",
+                "backtest_range": [start, end], "drift_items": [], "scanned": 0}
+    s_d = date.fromisoformat(start[:10])
+    drift_items = [
+        {"artifact": name, "knowledge_effective_from": eff}
+        for name, eff in sorted(sents.items(), key=lambda kv: kv[1])
+        if date.fromisoformat(eff) > s_d
+    ]
+    return {
+        "verdict": "drift" if drift_items else "clean",
+        "backtest_range": [start, end],
+        "drift_count": len(drift_items),
+        "drift_items": drift_items,
+        "scanned": len(sents),
+    }
 
 
 def emit(strategy_id: str, stats: dict[str, Any], diffs: list[str], extra: dict[str, Any] | None = None) -> dict[str, Any]:

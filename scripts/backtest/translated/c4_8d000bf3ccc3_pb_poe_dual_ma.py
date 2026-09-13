@@ -26,6 +26,8 @@
   D3 财报 PIT: roe 按 announce_date 进信号（公告前不可见，严格时点）
   D4 因子登记: 公开 PB-ROE 不登记
   D5 框架样板: 停牌过滤不可得（HFQ 无停牌列），声明
+
+[KNOWLEDGE_EFFECTIVE_FROM] 2026-09-14 | 源=策略原文公开发布日 | 生成=AI 会话（取晚者）
 """
 
 from __future__ import annotations

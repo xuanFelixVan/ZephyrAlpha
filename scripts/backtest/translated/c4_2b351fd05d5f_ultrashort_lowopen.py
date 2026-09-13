@@ -26,6 +26,8 @@
   D3 阈值尺度: MACD 绝对阈值 0.1 在复权价尺度存在漂移（同 042）
   D4 因子登记: 技术指标不入 factor_registry
   D5 框架样板: 框架壳不翻译
+
+[KNOWLEDGE_EFFECTIVE_FROM] 2026-09-13 | 源=策略原文公开发布日 | 生成=AI 会话（取晚者）
 """
 
 from __future__ import annotations

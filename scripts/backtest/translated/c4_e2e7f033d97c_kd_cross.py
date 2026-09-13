@@ -25,6 +25,8 @@
   D3 KD 口径: talib KD_judge 与 jqlib KD 平滑细节（SMA 递推 vs 滚动均值）存在实现差
   D4 因子登记: KD 技术指标不入 factor_registry
   D5 框架样板: send_message/log 壳不翻译
+
+[KNOWLEDGE_EFFECTIVE_FROM] 2026-09-12 | 源=策略原文公开发布日 | 生成=AI 会话（取晚者）
 """
 
 from __future__ import annotations

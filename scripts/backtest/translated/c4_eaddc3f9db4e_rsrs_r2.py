@@ -25,6 +25,8 @@
   D3 std 口径: 原文 np.std（总体 ddof=0）→ 同口径 ddof=0
   D4 因子登记: RSRS 不入 factor_registry
   D5 框架样板: send_message 壳不翻译
+
+[KNOWLEDGE_EFFECTIVE_FROM] 2026-09-12 | 源=策略原文公开发布日 | 生成=AI 会话（取晚者）
 """
 
 from __future__ import annotations

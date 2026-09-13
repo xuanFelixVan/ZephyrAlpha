@@ -28,6 +28,8 @@
      按函数名+参数语义实现（90 日涨幅<0.3 且 close<MA100），UNCERTAIN 已登记
   D4 因子登记: 公开动量因子不登记
   D5 框架样板: kuanke wizard 空壳不翻译
+
+[KNOWLEDGE_EFFECTIVE_FROM] 2026-09-12 | 源=策略原文公开发布日 | 生成=AI 会话（取晚者）
 """
 
 from __future__ import annotations

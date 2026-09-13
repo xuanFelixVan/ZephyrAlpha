@@ -27,6 +27,8 @@
   D3 周线: 聚宽 5d bar → 日线每 5 日取样对齐
   D4 因子登记: 公开反转因子不登记
   D5 框架样板: —
+
+[KNOWLEDGE_EFFECTIVE_FROM] 2026-09-12 | 源=策略原文公开发布日 | 生成=AI 会话（取晚者）
 """
 
 from __future__ import annotations

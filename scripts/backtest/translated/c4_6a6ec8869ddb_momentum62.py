@@ -27,6 +27,8 @@
   D3 价格过滤: 原文真实价>5 元 → 不复权 kline_daily close>5 元（复权价水平不可比）
   D4 因子登记: 91 日动量反转不登记（公开因子，未过 IC/去马甲检验）
   D5 框架样板: heapq 壳不翻译
+
+[KNOWLEDGE_EFFECTIVE_FROM] 2026-09-12 | 源=策略原文公开发布日 | 生成=AI 会话（取晚者）
 """
 
 from __future__ import annotations

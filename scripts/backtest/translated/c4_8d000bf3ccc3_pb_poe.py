@@ -26,6 +26,8 @@
   D3 roe 口径: 聚宽 indicator.roe（季报）→ DS-230 单季 np_q/equity×100 近似
   D4 因子登记: 公开因子组不登记
   D5 框架样板: 壳不翻译
+
+[KNOWLEDGE_EFFECTIVE_FROM] 2026-09-14 | 源=策略原文公开发布日 | 生成=AI 会话（取晚者）
 """
 
 from __future__ import annotations

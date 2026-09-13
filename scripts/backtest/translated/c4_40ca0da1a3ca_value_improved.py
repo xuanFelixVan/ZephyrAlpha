@@ -26,6 +26,8 @@
   D3 止损口径: 原文 avg_cost 盘中价 → 信号日收盘近似；指数 5 日 -13% 清仓保真
   D4 因子登记: 公开因子组不登记
   D5 框架样板: run_weekly 壳不翻译
+
+[KNOWLEDGE_EFFECTIVE_FROM] 2026-09-14 | 源=策略原文公开发布日 | 生成=AI 会话（取晚者）
 """
 
 from __future__ import annotations

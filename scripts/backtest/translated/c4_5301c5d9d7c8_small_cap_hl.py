@@ -23,6 +23,8 @@
 因子拆解: 市值排序——规模因子，不登记。
 翻译差异声明:
   D1 池: 中小板综→全 A 近似; D2 14:40→T+1 收盘; D3 市值<100 亿=circ_mv/1e4<100; D4 不登记; D5 壳不译
+
+[KNOWLEDGE_EFFECTIVE_FROM] 2026-09-14 | 源=策略原文公开发布日 | 生成=AI 会话（取晚者）
 """
 
 from __future__ import annotations

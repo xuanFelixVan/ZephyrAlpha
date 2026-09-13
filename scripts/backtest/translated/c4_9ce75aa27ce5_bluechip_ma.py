@@ -25,6 +25,8 @@
   D3 仓位: 原文 by_cap_mean（流通市值均值加权）→ 等权（市值数据缺）
   D4 因子登记: MA 技术指标不入 factor_registry
   D5 框架样板: wizard 空壳（财务/概念/形态全空）不翻译
+
+[KNOWLEDGE_EFFECTIVE_FROM] 2026-09-12 | 源=策略原文公开发布日 | 生成=AI 会话（取晚者）
 """
 
 from __future__ import annotations

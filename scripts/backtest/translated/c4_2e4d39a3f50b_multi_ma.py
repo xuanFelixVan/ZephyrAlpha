@@ -25,6 +25,8 @@
   D3 纠缠判定: 原文按 handle_data 逐日现价语义，译文以收盘均线序列等价实现
   D4 因子登记: MA 技术指标不入 factor_registry
   D5 框架样板: record 壳不翻译
+
+[KNOWLEDGE_EFFECTIVE_FROM] 2026-09-12 | 源=策略原文公开发布日 | 生成=AI 会话（取晚者）
 """
 
 from __future__ import annotations

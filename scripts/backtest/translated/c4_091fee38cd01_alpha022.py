@@ -26,6 +26,8 @@
   D3 公式: jqlib.alpha101 → WorldQuant 101 公开公式直接实现（库不可用时口径）
   D4 因子登记: 公开因子不登记
   D5 框架样板: log 壳不翻译
+
+[KNOWLEDGE_EFFECTIVE_FROM] 2026-09-12 | 源=策略原文公开发布日 | 生成=AI 会话（取晚者）
 """
 
 from __future__ import annotations

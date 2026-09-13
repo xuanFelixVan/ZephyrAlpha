@@ -25,6 +25,8 @@
   D3 原文笔误保真: 卖出线变量名 MA5 但窗口=20，按 20 日均值实现
   D4 因子登记: MA 技术指标不入 factor_registry
   D5 框架样板: record/log 壳不翻译
+
+[KNOWLEDGE_EFFECTIVE_FROM] 2026-09-12 | 源=策略原文公开发布日 | 生成=AI 会话（取晚者）
 """
 
 from __future__ import annotations

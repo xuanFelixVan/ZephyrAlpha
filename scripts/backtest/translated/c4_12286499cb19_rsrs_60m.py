@@ -26,6 +26,8 @@
   D3 频率: 60m 线 RSRS → 日线 RSRS（窗口 N/M 同比折算，形态保真度有限已声明）
   D4 因子登记: RSRS 不入 factor_registry
   D5 框架样板: log 壳不翻译
+
+[KNOWLEDGE_EFFECTIVE_FROM] 2026-09-12 | 源=策略原文公开发布日 | 生成=AI 会话（取晚者）
 """
 
 from __future__ import annotations

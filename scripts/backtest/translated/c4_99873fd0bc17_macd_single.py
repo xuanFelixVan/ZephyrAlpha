@@ -26,6 +26,8 @@
   D3 仓位: 原文 by_market_cap_percent（市值加权）→ 等权（市值数据缺）
   D4 因子登记: MACD 技术指标不入 factor_registry
   D5 框架样板: wizard 财务/行情/形态空壳过滤（原文件 452 行约 400 行空壳）不翻译
+
+[KNOWLEDGE_EFFECTIVE_FROM] 2026-09-12 | 源=策略原文公开发布日 | 生成=AI 会话（取晚者）
 """
 
 from __future__ import annotations

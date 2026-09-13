@@ -27,6 +27,8 @@
   D3 共振频率: 周线×60分钟 → 周线×日线
   D4 因子登记: MACD 技术指标不入 factor_registry
   D5 框架样板: heapq/绘图壳不翻译
+
+[KNOWLEDGE_EFFECTIVE_FROM] 2026-09-13 | 源=策略原文公开发布日 | 生成=AI 会话（取晚者）
 """
 
 from __future__ import annotations

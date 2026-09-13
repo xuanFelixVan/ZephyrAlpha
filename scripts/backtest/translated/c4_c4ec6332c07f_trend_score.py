@@ -28,6 +28,8 @@
   D3 势分实现: 依同作者 82.势的度量 公式重实现（原 notebook 类管线不可直接 import）
   D4 因子登记: 势分不入 factor_registry
   D5 框架样板: 绘图壳不翻译
+
+[KNOWLEDGE_EFFECTIVE_FROM] 2026-09-12 | 源=策略原文公开发布日 | 生成=AI 会话（取晚者）
 """
 
 from __future__ import annotations

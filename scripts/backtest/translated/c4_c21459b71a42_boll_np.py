@@ -25,6 +25,8 @@
   D3 std 口径: numpy 默认总体标准差（ddof=0）vs 048 的样本标准差（ddof=1），两份原文实现本就不同
   D4 因子登记: BOLL 技术指标不入 factor_registry
   D5 框架样板: log 壳不翻译
+
+[KNOWLEDGE_EFFECTIVE_FROM] 2026-09-12 | 源=策略原文公开发布日 | 生成=AI 会话（取晚者）
 """
 
 from __future__ import annotations

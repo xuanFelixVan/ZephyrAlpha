@@ -26,6 +26,8 @@
   D3 价上限: 昨收<=500 元按不复权 kline_daily 收盘（复权价水平不可比）
   D4 因子登记: 趋势回归量不入 factor_registry
   D5 框架样板: log 壳不翻译
+
+[KNOWLEDGE_EFFECTIVE_FROM] 2026-09-13 | 源=策略原文公开发布日 | 生成=AI 会话（取晚者）
 """
 
 from __future__ import annotations

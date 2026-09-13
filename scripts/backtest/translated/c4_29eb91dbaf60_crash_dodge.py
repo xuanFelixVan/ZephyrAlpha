@@ -28,6 +28,8 @@
   D3 防御腿: 511010 国债 ETF 无窗口数据 → 空仓替代（防御收益缺失已声明）
   D4 因子登记: 均线/位置量不入 factor_registry
   D5 框架样板: —
+
+[KNOWLEDGE_EFFECTIVE_FROM] 2026-09-12 | 源=策略原文公开发布日 | 生成=AI 会话（取晚者）
 """
 
 from __future__ import annotations

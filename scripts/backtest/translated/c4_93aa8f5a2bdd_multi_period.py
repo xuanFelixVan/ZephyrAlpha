@@ -29,6 +29,8 @@
   D3 rf 列错位 bug 保真转录（UNCERTAIN 已在原文卡标注）
   D4 因子登记: 公开均线因子组不登记
   D5 框架样板: sklearn LinearRegression → numpy lstsq（数值等价）
+
+[KNOWLEDGE_EFFECTIVE_FROM] 2026-09-12 | 源=策略原文公开发布日 | 生成=AI 会话（取晚者）
 """
 
 from __future__ import annotations

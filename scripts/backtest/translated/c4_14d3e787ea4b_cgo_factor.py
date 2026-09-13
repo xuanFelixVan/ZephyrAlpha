@@ -28,6 +28,8 @@
   D3 参考价: 原文 attribute_history avg 列 → amount/volume 代理
   D4 因子登记: 未登记（如晋级另走准入流程）
   D5 框架样板: —
+
+[KNOWLEDGE_EFFECTIVE_FROM] 2026-09-12 | 源=策略原文公开发布日 | 生成=AI 会话（取晚者）
 """
 
 from __future__ import annotations

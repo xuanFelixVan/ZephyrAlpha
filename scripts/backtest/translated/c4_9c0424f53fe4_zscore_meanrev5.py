@@ -27,6 +27,8 @@
   D3 止损: 原文按持仓成本价（avg_cost）→ 译文按信号日收盘基准（向量化无逐笔成本）
   D4 因子登记: 技术指标组合不入 factor_registry
   D5 框架样板: record/send_message 日志壳不翻译
+
+[KNOWLEDGE_EFFECTIVE_FROM] 2026-09-12 | 源=策略原文公开发布日 | 生成=AI 会话（取晚者）
 """
 
 from __future__ import annotations

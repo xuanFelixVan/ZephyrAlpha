@@ -25,6 +25,8 @@
   D3 空头分支: 原文 close<下轨 时若持仓<=0 则下空单——A 股多头约束下译为清仓
   D4 因子登记: BOLL 技术指标不入 factor_registry
   D5 框架样板: record/send_message 壳不翻译
+
+[KNOWLEDGE_EFFECTIVE_FROM] 2026-09-12 | 源=策略原文公开发布日 | 生成=AI 会话（取晚者）
 """
 
 from __future__ import annotations

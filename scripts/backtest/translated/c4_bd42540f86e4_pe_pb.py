@@ -19,6 +19,8 @@
 译文: stock_indicator 表 pe_ttm 代理 pe_lyr（D3）；无排序（wizard input_dict 空壳）→按代码序取前 5 等权。
 因子拆解: PE/PB 价值双因子——公开因子，不登记 factor_registry（未过 IC/去马甲检验）。
 差异声明: D1 成分快照 / D2 T+1 收盘 / D3 pe_lyr→pe_ttm 代理 / D4 公开因子不登记 / D5 空壳不译。
+
+[KNOWLEDGE_EFFECTIVE_FROM] 2026-09-14 | 源=策略原文公开发布日 | 生成=AI 会话（取晚者）
 """
 
 from __future__ import annotations

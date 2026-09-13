@@ -26,6 +26,8 @@
   D3 仓位: 原文每信号逐只全仓（时序依赖）→ 等权分散（上限 50=holdSize）
   D4 因子登记: BIAS 属技术指标，不登记 factor_registry，无新增因子
   D5 框架样板: 原文止盈止损参数表（stpPftPrice/stpLosRate）未在主路径生效，不翻译
+
+[KNOWLEDGE_EFFECTIVE_FROM] 2026-09-12 | 源=策略原文公开发布日 | 生成=AI 会话（取晚者）
 """
 
 from __future__ import annotations

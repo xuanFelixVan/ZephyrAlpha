@@ -28,6 +28,8 @@
      对 side1 不调仓的保守读法）
   D4 因子登记: 价差 zscore 不入 factor_registry
   D5 框架样板: 状态打印壳不翻译
+
+[KNOWLEDGE_EFFECTIVE_FROM] 2026-09-12 | 源=策略原文公开发布日 | 生成=AI 会话（取晚者）
 """
 
 from __future__ import annotations

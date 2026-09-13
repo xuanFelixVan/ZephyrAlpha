@@ -156,6 +156,18 @@ def main() -> None:
         args.batch = args.batch if args.batch != _BATCH else f"C4-OOS-{args.start[:4]}-{args.end[:4].replace('-', '')}"
         args.verdict = "oos_tested"
 
+    # S3 知识生效日哨兵预检（备忘 96 批 3）：翻译件写成日晚于回测窗口起点=知识漂移，
+    # D120 声明制——不阻断，但 verdict 必须打印并随 run 档案 summary 留证。
+    win = (args.start, args.end) if oos_mode else ("2020-01-01", "2023-12-31")
+    if str(_TRANSLATED_DIR) not in sys.path:
+        sys.path.insert(0, str(_TRANSLATED_DIR))
+    from _c4_engine import knowledge_drift_report
+
+    s3_drift = knowledge_drift_report(win[0], win[1], root=_TRANSLATED_DIR)
+    print(f"[S3] 知识生效日预检 verdict={s3_drift['verdict']} scanned={s3_drift['scanned']}"
+          f" drift_count={s3_drift.get('drift_count', 0)} window={win[0]}..{win[1]}"
+          + ("（声明制放行，详情见 run 档案 summary）" if s3_drift["verdict"] == "drift" else ""))
+
     results, failures = run_batch(args.limit, window=(args.start, args.end) if oos_mode else None,
                                   include_pilots=not oos_mode, only=args.only)
     if not results:
@@ -165,6 +177,7 @@ def main() -> None:
     run_id = f"SCR-C4-{now.strftime('%Y%m%d-%H%M%S')}"
     sr_dist = [r["stats"]["sharpe"] for r in results]
     summary = {
+        "s3_knowledge_drift": s3_drift,
         "total_modules": len(results) - len(_PILOTS),
         "pilots": len(_PILOTS),
         "failures": failures,
@@ -213,8 +226,9 @@ def main() -> None:
 
     c = Client(host=cfg["host"], port=int(cfg.get("port", 9000)), user=cfg.get("user", "default"),
                password=cfg.get("password", ""), connect_timeout=5)
+    # 幂等按 (batch, strategy_id, verdict) 判重：同 sid 的 deferred 行不挡 translated 行（2026-09-14 估值批教训）
     existing = {tuple(r) for r in c.execute(
-        f"SELECT screen_batch, strategy_id FROM {_TABLE} WHERE screen_batch = '{_BATCH}'")}
+        f"SELECT screen_batch, strategy_id, verdict FROM {_TABLE} WHERE screen_batch = '{args.batch}'")}
     ts = now.strftime("%Y-%m-%d %H:%M:%S")
     rows: list[list[Any]] = []
     is_sharpe_map: dict[str, Any] = {}
@@ -225,7 +239,7 @@ def main() -> None:
         ):
             is_sharpe_map[sid] = isv
     for r in results:
-        if (args.batch, r["strategy_id"]) in existing:
+        if (args.batch, r["strategy_id"], args.verdict) in existing:
             continue
         decay = None
         if oos_mode:
@@ -245,7 +259,7 @@ def main() -> None:
         ])
     for d in deferrals:
         sid = f"CAND-{d['md5_12']}"
-        if (args.batch, sid) in existing:
+        if (args.batch, sid, "deferred_c4") in existing:
             continue
         rows.append([
             run_id, args.batch, sid, d.get("orig_name", ""), 0, None, None, None, None, None, "",

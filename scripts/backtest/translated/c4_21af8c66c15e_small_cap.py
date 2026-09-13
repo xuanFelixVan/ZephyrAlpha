@@ -25,6 +25,8 @@
   D3 涨跌停过滤: HFQ 无涨跌停列→不剔除（声明）
   D4 因子登记: 规模因子不登记
   D5 框架样板: 壳不翻译
+
+[KNOWLEDGE_EFFECTIVE_FROM] 2026-09-14 | 源=策略原文公开发布日 | 生成=AI 会话（取晚者）
 """
 
 from __future__ import annotations

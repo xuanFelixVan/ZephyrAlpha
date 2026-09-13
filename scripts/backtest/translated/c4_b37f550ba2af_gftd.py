@@ -28,6 +28,8 @@
   D3 止损线: 原文 g.line 止损在注释块未启用 → 不翻译（只保留计数推进）
   D4 因子登记: GFTD 计数不入 factor_registry
   D5 手续费: 原文单笔 0.2% 双边 → 冻结土规（2.5bp+10bp+5bp）
+
+[KNOWLEDGE_EFFECTIVE_FROM] 2026-09-12 | 源=策略原文公开发布日 | 生成=AI 会话（取晚者）
 """
 
 from __future__ import annotations

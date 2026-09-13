@@ -27,6 +27,8 @@
   D3 规则⑤⑥原文 eps 口径 → DS-230 净利同比近似；行业过滤无（07 无此条）
   D4 因子登记: 公开基本面因子组不登记
   D5 框架样板: get_data 财务面板 → fin_history 逐期公告门等价实现
+
+[KNOWLEDGE_EFFECTIVE_FROM] 2026-09-14 | 源=策略原文公开发布日 | 生成=AI 会话（取晚者）
 """
 
 from __future__ import annotations
