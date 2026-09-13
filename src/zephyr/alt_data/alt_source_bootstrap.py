@@ -95,17 +95,17 @@ class AltSourceSpec:
 
 
 ALT_SOURCES: tuple[AltSourceSpec, ...] = (
+    # ── 第 1 批（2026-09-12）：千股千评 + 航运运价 ──
     AltSourceSpec(
         source_id="alt_stock_comment",
         source_type=CatalogSourceType.SOCIAL,
         update_frequency="daily_snapshot",
         quality_score=0.85,
-        cost_quota=60,  # RPM 自限速（与 meta.rate_limit_default 一致）
+        cost_quota=60,
         description=(
             "千股千评全表日快照（东财数据中心综合评价）：关注指数/综合得分/机构参与度/"
             "排名及变动，约 5200 行/日；关注指数=股吧关注度代理（akshare 无股吧发帖量"
             "直连接口，2026-09-12 实测枚举确认）；接口仅当日无历史通道，每日累积。"
-            "表 c1_market.alt_stock_comment，任务 alt_stock_comment_snapshot。"
         ),
         tags=("情绪", "关注度", "千股千评", "东财"),
         collection_method="akshare stock_comment_em（东财数据中心公开展示数据，HTTP 拉取）",
@@ -115,7 +115,7 @@ ALT_SOURCES: tuple[AltSourceSpec, ...] = (
         review_evidence={
             "license_cleared": (True, "东财公开展示数据+个人研究用途（SRC-AKSHARE-ALT-001 compliance 字段）"),
             "attribution_recorded": (True, "data_asset_registry DS-230/JOB-092；DDL schemas/categories/market_alt_stock_comment.py"),
-            "no_personal_data": (True, "全表为股票级聚合评价指标（关注指数/得分/排名），无任何个人信息字段（接口 13 列实测）"),
+            "no_personal_data": (True, "全表为股票级聚合评价指标（关注指数/得分/排名），无任何个人信息字段"),
             "rate_limit_declared": (True, "provider meta.rate_limit_default=60 RPM，_call_with_policy 统一限频重试"),
             "no_redistribution": (True, "SRC-AKSHARE-ALT-001 license_scope=public_reference_data 承诺不转售不分发"),
         },
@@ -130,7 +130,6 @@ ALT_SOURCES: tuple[AltSourceSpec, ...] = (
             "航运运价指数长表：BDI（金十源 1988-10 起含日涨跌幅）+ BCI/BSI/BHMI/HRCI/"
             "BCTI/BDTI（macro_china_freight_index 约 2006 起）；(trade_date,index_code) 粒度，"
             "BDI 双源重叠以 macro_shipping_bdi 为准免重。出口链/航运板块景气前瞻。"
-            "表 c1_market.alt_shipping_index，任务 alt_shipping_index_incremental/full_refresh。"
         ),
         tags=("运价", "航运", "BDI", "产业景气"),
         collection_method="akshare macro_shipping_bdi + macro_china_freight_index（金十/公开指数数据）",
@@ -145,8 +144,92 @@ ALT_SOURCES: tuple[AltSourceSpec, ...] = (
             "no_redistribution": (True, "SRC-AKSHARE-ALT-001 license_scope=public_reference_data 承诺不转售不分发"),
         },
     ),
+    # ── C-2（2026-09-14）：四信号源补入治理登记册 ──
+    AltSourceSpec(
+        source_id="heat_weather",
+        source_type=CatalogSourceType.OTHER,
+        update_frequency="daily",
+        quality_score=0.8,
+        cost_quota=60,
+        description=
+        ("极端高温日历（F8 v1）：当日 temp_max≥35°C 城市数，迎峰度夏 regime 输入。季节距平版 2027 数据成熟后升级"),
+        tags=("高温", "天气", "迎峰度夏"),
+        collection_method="weather_data 表派生（和风免费源已在跑管线）",
+        tos_terms="和风天气免费层；个人研究用途",
+        license_scope="public_reference_data（不转售不二次分发）",
+        privacy_impact="none（城市级气象，无个人信息）",
+        review_evidence={
+            "license_cleared": (True, "和风免费层已在跑（weather_data 管线 2026-08 起）"),
+            "attribution_recorded": (True, "weather_data asset 在册；本信号为派生计算（C-2 消费端）"),
+            "no_personal_data": (True, "城市级气象聚合"),
+            "rate_limit_declared": (True, "派生计算无新增外部调用"),
+            "no_redistribution": (True, "同族承诺"),
+        },
+    ),
+    AltSourceSpec(
+        source_id="hog_supply",
+        source_type=CatalogSourceType.OTHER,
+        update_frequency="daily",
+        quality_score=0.85,
+        cost_quota=60,
+        description=
+        ("生猪产业链三信号（F10 期现 basis z / F11 周期相位 / F12 分省离散度）。源=hog 三表（akshare，已在跑）"),
+        tags=("生猪", "产业", "周期"),
+        collection_method="akshare hog 三表（已在跑管线，本信号为派生计算）",
+        tos_terms="东财/搜猪公开数据；个人研究用途",
+        license_scope="public_reference_data（不转售不二次分发）",
+        privacy_impact="none（商品价格，无个人信息）",
+        review_evidence={
+            "license_cleared": (True, "akshare 公开接口，生猪管线 2026-07 起在跑"),
+            "attribution_recorded": (True, "生猪三 asset 在册；信号落 alt_regime_signal 表"),
+            "no_personal_data": (True, "商品价格数据"),
+            "rate_limit_declared": (True, "派生计算无新增外部调用"),
+            "no_redistribution": (True, "同族承诺"),
+        },
+    ),
+    AltSourceSpec(
+        source_id="limitup_emotion",
+        source_type=CatalogSourceType.SOCIAL,
+        update_frequency="daily",
+        quality_score=0.8,
+        cost_quota=60,
+        description=
+        ("涨停板情绪周期（F23）：连板高度/晋级率/炸板率 → 四阶段状态机（阈值 provisional 待 OOS 毕业）。源=limit_up_down + kline×stk_limit"),
+        tags=("涨停", "情绪周期", "短线"),
+        collection_method="limit_up_down 表 + kline×stk_limit 派生（东财源已在跑管线）",
+        tos_terms="东财公开行情数据；个人研究用途",
+        license_scope="public_reference_data（不转售不二次分发）",
+        privacy_impact="none（市场聚合指标）",
+        review_evidence={
+            "license_cleared": (True, "东财公开行情，limit_up_down 管线在跑"),
+            "attribution_recorded": (True, "limit_up_down asset 在册；派生信号落 alt_regime_signal"),
+            "no_personal_data": (True, "市场聚合指标"),
+            "rate_limit_declared": (True, "派生计算无新增外部调用"),
+            "no_redistribution": (True, "同族承诺"),
+        },
+    ),
+    AltSourceSpec(
+        source_id="cb_premium",
+        source_type=CatalogSourceType.OTHER,
+        update_frequency="daily",
+        quality_score=0.8,
+        cost_quota=30,
+        description=
+        ("转债转股溢价率中位数（F25 风险偏好温度计）：集思录 bond_cb_jsl 全市场，滚动 250 日分位 >0.8 过热 / <0.2 冰点。cookie 经 CB_JSL_COOKIE 可选增强"),
+        tags=("转债", "风险偏好", "集思录"),
+        collection_method="akshare bond_cb_jsl（cookie=get_secret_or_default('CB_JSL_COOKIE') 可选）",
+        tos_terms="集思录公开数据页；登录身份查看；不转售不二次分发；守限频",
+        license_scope="public_reference_data（个人研究用途）",
+        privacy_impact="none（市场聚合指标）",
+        review_evidence={
+            "license_cleared": (True, "集思录公开数据页，登录身份查看（Owner 账号）"),
+            "attribution_recorded": (True, "cb_premium_median_daily 任务 + sentiment_panel metric=cb_conversion_premium_median"),
+            "no_personal_data": (True, "市场聚合指标"),
+            "rate_limit_declared": (True, "日频一次，akshare _call_with_policy 限频"),
+            "no_redistribution": (True, "同族承诺"),
+        },
+    ),
 )
-
 
 def build_governance_triple(
     *,
