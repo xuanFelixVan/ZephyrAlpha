@@ -1,0 +1,138 @@
+# [BLUEPRINT] MOD-BT-084 | docs/03_modules/_domain_backtest/blueprint.md
+# [MODULE] scripts.backtest.sim_paper_ledger
+# [DOMAIN] D_BACKTEST
+# [DEPENDENCIES] zephyr.data.ch_writer; zephyr.data.ch_config
+# [CONSUMERS] c1_backtest.sim_pocket_daily（STR-VREV-025 模拟盘钱包）；每日自动化（接线另批）
+# [STARTUP] manual
+# [MATURITY] experimental
+# [INVARIANTS] 一策略一钱包（STR-VREV-025，初始 100 万=Owner 批准）；信号=当日收盘判定收盘执行
+#   （方案 C 口径）；成本=冻结土规（买 2.5bp+5bp，卖 2.5bp+10bp+5bp）；幂等（同策略+日替换写）；
+#   模拟盘模式 mode 标记 replay_demo/sim_daily
+# [STABILITY] experimental
+# [SAFETY] L
+# [AI_AUTONOMY] ai_modifiable
+# [ERROR_CONTRACT] RuntimeError(行情缺失/落库未确认)
+# [TESTS] tests/backtest/test_c4_batch_smoke.py
+# [A_module] module_id=MOD-BT-084 | layer=module | stability=experimental | safety=L | ai_autonomy=ai_modifiable
+# [TTL] permanent
+"""模拟盘方案 C 账本——恐慌反弹（STR-VREV-025）虚拟钱包。
+
+规则（与回测翻译件 c4_e3da6fa71af1 同口径）：上证昨日收盘跌幅<=-1.5% 且当日<=-1.4% →
+次日按中证1000 收盘价全仓买入；持有满 19 交易日强制平仓。钱包初始 100 万（Owner 批）。
+mode=replay_demo 历史演示（验证管线）/sim_daily 正式模拟盘日账。
+用法：python scripts/backtest/sim_paper_ledger.py --mode replay_demo（回放验证）
+      python scripts/backtest/sim_paper_ledger.py --mode sim_daily（每日收盘后跑一次）
+"""
+
+from __future__ import annotations
+
+import argparse
+import json
+import logging
+import sys
+from datetime import date, datetime, timezone
+from pathlib import Path
+
+import pandas as pd
+
+logger = logging.getLogger(__name__)
+
+STRATEGY_ID = "STR-VREV-025"
+INITIAL_CAPITAL = 1_000_000.0
+DROP_PREV, DROP_TODAY, HOLD_N = -0.015, -0.014, 20
+SYMBOL = "000852"
+BUY_COST, SELL_COST = (2.5 + 5.0) / 10000.0, (2.5 + 10.0 + 5.0) / 10000.0
+_TABLE = "c1_backtest.sim_pocket_daily"
+_COLS = ("(trade_date, strategy_id, initial_capital, cash, position_symbol, shares, position_value,"
+         " equity, daily_pnl, signal, mode, run_id, note)")
+
+
+def _q(sql: str):
+    from zephyr.data.ch_config import ensure_ch_env_loaded, load_ch_reader_config
+
+    ensure_ch_env_loaded()
+    cfg = load_ch_reader_config()
+    from clickhouse_driver import Client
+
+    c = Client(host=cfg["host"], port=int(cfg.get("port", 9000)), user=cfg.get("user", "default"),
+               password=cfg.get("password", ""), connect_timeout=5)
+    return c.execute(sql)
+
+
+def run(mode: str, start: str, end: str) -> dict:
+    sh = pd_idx("000001", start, end)
+    px = pd_idx(SYMBOL, start, end)
+    if sh.empty or px.empty:
+        raise RuntimeError("指数行情缺失")
+    ret = sh["close"].pct_change()
+    panic = (ret.shift(1) <= DROP_PREV) & (ret <= DROP_TODAY)
+    dates = list(px.index)
+    px_map = px["close"].to_dict()
+    cash, shares, hold_day = INITIAL_CAPITAL, 0.0, 0
+    entry_px = 0.0
+    out_rows = []
+    prev_equity = INITIAL_CAPITAL
+    for dt in dates:
+        px_now = float(px_map[dt])
+        signal = "cash"
+        if shares > 0:
+            hold_day += 1
+            signal = "holding"
+            if hold_day >= HOLD_N:
+                proceeds = shares * px_now * (1 - SELL_COST)
+                cash, shares, hold_day = proceeds, 0.0, 0
+                signal = "exit"
+        elif bool(panic.loc[dt]):
+            shares = cash / px_now * (1 - BUY_COST)
+            entry_px = px_now
+            cash = 0.0
+            hold_day = 1
+            signal = "entry"
+        pos_val = shares * px_now
+        equity = cash + pos_val
+        daily_pnl = equity - prev_equity
+        prev_equity = equity
+        out_rows.append([dt.strftime("%Y-%m-%d"), STRATEGY_ID, INITIAL_CAPITAL, round(cash, 2),
+                         SYMBOL if shares > 0 else "", round(shares, 2), round(pos_val, 2),
+                         round(equity, 2), round(daily_pnl, 2), signal, mode,
+                         f"sim-{mode}-{datetime.now(timezone.utc).strftime('%Y%m%d%H%M%S')}", ""])
+    return {"rows": out_rows, "final_equity": round(prev_equity, 2), "days": len(dates),
+            "entry_px_last": entry_px}
+
+
+def pd_idx(sym: str, start: str, end: str):
+    sys.path.insert(0, str(Path(__file__).resolve().parent / "translated"))
+    from _c4_engine import load_index
+
+    df = load_index(sym, start, end, fields=("close",))
+    return df
+
+
+def main() -> None:
+    logging.basicConfig(level=logging.INFO, format="%(levelname)s %(name)s: %(message)s")
+    ap = argparse.ArgumentParser(description="模拟盘方案C钱包（恐慌反弹）")
+    ap.add_argument("--mode", choices=["replay_demo", "sim_daily"], required=True)
+    ap.add_argument("--start", default=None)
+    ap.add_argument("--end", default=None)
+    args = ap.parse_args()
+    if args.mode == "replay_demo":
+        start, end = args.start or "2026-07-01", args.end or date.today().strftime("%Y-%m-%d")
+    else:
+        start = end = args.start or date.today().strftime("%Y-%m-%d")
+    res = run(args.mode, start, end)
+    from zephyr.data import ch_writer
+
+    def cell(v):
+        if v is None:
+            return chr(92) + "N"
+        return str(v).replace(chr(9), " ").replace(chr(10), " ")
+
+    tsv = "\n".join("\t".join(cell(v) for v in r) for r in res["rows"]) + "\n"
+    if not ch_writer.write_tsv(_TABLE, _COLS, tsv.encode("utf-8")):
+        raise RuntimeError("落库未确认——fail-closed")
+    print(json.dumps({"mode": args.mode, "days": res["days"], "final_equity": res["final_equity"],
+                      "rows": len(res["rows"])}, ensure_ascii=False))
+
+
+if __name__ == "__main__":
+    main()

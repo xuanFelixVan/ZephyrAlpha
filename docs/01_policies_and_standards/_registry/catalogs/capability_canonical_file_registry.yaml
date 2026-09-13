@@ -4976,6 +4976,34 @@ capabilities:
     提交→全景对齐→清理 全流程步骤与失败处置；适用 07 域（regime/选股/仓位/风控/买卖/执行/对账/治理）施工，RULE-CAPABILITY-LOOKUP
     检索"施工"应命中本条
 creation_tokens:
+- file: schemas/categories/market_typhoon_names.py
+  token: szopen-typhoon_names-20260914
+  created_by: st-altdata-20260914
+  capability: alt_data_batch1_free_sources
+- file: schemas/categories/market_typhoon_landfall_history.py
+  token: szopen-typhoon_landfall_history-20260914
+  created_by: st-altdata-20260914
+  capability: alt_data_batch1_free_sources
+- file: schemas/categories/market_alt_sz_marine_forecast.py
+  token: szopen-alt_sz_marine_forecast-20260914
+  created_by: st-altdata-20260914
+  capability: alt_data_batch1_free_sources
+- file: schemas/categories/market_alt_sz_weather_warning.py
+  token: szopen-alt_sz_weather_warning-20260914
+  created_by: st-altdata-20260914
+  capability: alt_data_batch1_free_sources
+- file: schemas/categories/market_alt_sz_house_daily.py
+  token: szopen-alt_sz_house_daily-20260914
+  created_by: st-altdata-20260914
+  capability: alt_data_batch1_free_sources
+- file: schemas/categories/market_alt_sz_port_monthly.py
+  token: szopen-alt_sz_port_monthly-20260914
+  created_by: st-altdata-20260914
+  capability: alt_data_batch1_free_sources
+- file: schemas/categories/market_alt_sz_stat_monthly.py
+  token: szopen-alt_sz_stat_monthly-20260914
+  created_by: st-altdata-20260914
+  capability: alt_data_batch1_free_sources
 - file: schemas/categories/market_alt_typhoon_track.py
   token: altdata-typhoon-ddl-20260914
   created_by: st-altdata-20260913
@@ -12145,7 +12173,6 @@ creation_tokens:
   token: st-fingov-tests-regime-init-20260914
   created_by: st-fingov-20260912
   capability: tests_zephyr_regime
-di_seam_exemptions: []
 - file: src/zephyr/pf_alloc/core/forward_stop_loss.py
   token: forward-stop-loss-20260913
   created_by: st-zcode-c4-20260912
@@ -12166,3 +12193,16 @@ di_seam_exemptions: []
   token: synergy-dedup-tests-20260913
   created_by: st-zcode-c4-20260912
   capability: c4_batch_translation
+di_seam_exemptions: []
+- file: schemas/categories/sim_pocket_daily.py
+  token: sim-pocket-daily-20260914
+  created_by: st-zcode-c4-20260912
+  capability: sim_paper_ledger_c
+- file: scripts/ch/apply_sim_pocket_daily_ddl.py
+  token: apply-sim-pocket-daily-ddl-20260914
+  created_by: st-zcode-c4-20260912
+  capability: sim_paper_ledger_c
+- file: scripts/backtest/sim_paper_ledger.py
+  token: sim-paper-ledger-20260914
+  created_by: st-zcode-c4-20260912
+  capability: sim_paper_ledger_c
