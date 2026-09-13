@@ -109,19 +109,38 @@ def insert_block(block: str, anchor_capability: str) -> None:
     """纯插入：锚定 creation_tokens **段内**最后一条 capability: <anchor> 行之后。
 
     锚点行找不到（段内）→ fail-closed 拒绝写入（防盲插/防落段外死区）。
+    写入走 safe_write_text（CAS+原子写）+ 重试——2026-09-14 四连炸实证：裸 write_text
+    全文重写在读改写窗口被他会话并发写交割，文件头/尾部结构反复炸裂。
     """
-    text = _REGISTRY.read_text(encoding="utf-8")
-    sec_start, sec_end = _creation_tokens_section(text)
-    section = text[sec_start:sec_end]
-    rel = section.rfind(f"  capability: {anchor_capability}\n")
-    if rel < 0:
-        print(
-            f"FAIL: 锚点 capability: {anchor_capability} 不在 creation_tokens 段内，拒写（fail-closed）",
-            file=sys.stderr,
-        )
-        sys.exit(1)
-    line_end = sec_start + section.find("\n", rel)
-    _REGISTRY.write_text(text[: line_end + 1] + block + text[line_end + 1 :], encoding="utf-8")
+    import hashlib
+    import time
+
+    from zephyr.shared.io.file_utils import safe_write_text
+
+    for attempt in range(5):
+        raw = _REGISTRY.read_bytes()
+        text = raw.decode("utf-8").replace("\r\n", "\n")
+        base_sha = hashlib.sha256(text.encode("utf-8")).hexdigest()
+        sec_start, sec_end = _creation_tokens_section(text)
+        section = text[sec_start:sec_end]
+        rel = section.rfind(f"  capability: {anchor_capability}\n")
+        if rel < 0:
+            print(
+                f"FAIL: 锚点 capability: {anchor_capability} 不在 creation_tokens 段内，拒写（fail-closed）",
+                file=sys.stderr,
+            )
+            sys.exit(1)
+        line_end = sec_start + section.find("\n", rel)
+        new_text = text[: line_end + 1] + block + text[line_end + 1 :]
+        try:
+            res = safe_write_text(_REGISTRY, new_text, expected_base_sha256=base_sha, newline="")
+            print(f"落盘: {res.written} (CAS attempt {attempt + 1})")
+            return
+        except Exception as exc:  # noqa: BLE001 — CAS 冲突重读基线重放
+            print(f"WARN: 写入冲突 ({type(exc).__name__})，重读基线重放 (attempt {attempt + 1})")
+            time.sleep(3)
+    print("FAIL: 5 次 CAS 重试仍冲突——有会话高频写此文件，稍后再试", file=sys.stderr)
+    sys.exit(1)
 
 
 def main() -> int:

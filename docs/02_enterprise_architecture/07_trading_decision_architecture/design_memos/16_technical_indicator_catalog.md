@@ -224,7 +224,8 @@ IND-COMP-001 candidate→active；类别 composite，代码在 trend.py（regist
 3. **命名陷阱**：tasks.yaml 的 `stock_indicator_full_refresh` 实为 AKShare 估值指标写 stock_indicator 表，与本表无关——后续调度挂接时防止误挂。
 4. **公式简化项**：rsi/macd_divergence 为简化趋势对比（非峰谷检测），精度需求出现时再升级。
 5. **00_index 同步（越界登记）** → **已闭环（2026-08-31 终审批实证核销）**：00_index 现行描述已为"5大类指标规范"，分类口径一致，无需再同步。
-6. **日/周/月线历史深度缺口（2026-09-14 探针发现）**：daily/weekly/monthly 指标数据起点=2026-08（调度闭环日），仅 ~1 个月；而 30/60/120min 有 5 年、15min 2 年、5min 1 年历史。三级时间框架栈（§5）的交易层/趋势层以日/周/月为主战场，长历史缺失直接影响回测消费。待办：一次性 full_refresh 回填日/周/月（或裁定滚动窗口口径），挂下一施工批。
+6. **日/周/月线历史深度缺口（2026-09-14 探针发现）**：daily/weekly/monthly 指标数据起点=2026-08（调度闭环日），仅 ~1 个月；而 30/60/120min 有 5 年、15min 2 年、5min 1 年历史。三级时间框架栈（§5）的交易层/趋势层以日/周/月为主战场，长历史缺失直接影响回测消费。待办：一次性 full_refresh 回填日/周/月（或裁定滚动窗口口径），挂下一施工批。 → **已闭环（2026-09-14 回填六轮）**：回填器 scripts/data/backfill_technical_indicator_dwm.py 补齐 d(2021-01)/w/m(2019-01) 历史；daily 批 3-6 新列由六轮重跑覆盖；CH Code 241 内存超限中断由 local_fallback 兜底（scheduler 自动回灌）。
+6a. **消费端接线（批 7 立项）** → **已闭环（53a00cdfb7）**：indicator_reader.py PIT 读取 API （as_of 硬拒/列白名单/FINAL 去重/预热 NaN 不填充）+ 消费样板 indicator_consumption_demo.py （B1 ATR 止损带/B2 均值回归因子，真实 CH 端到端）+ REG-IND-001 四条目 used_by_factors 锚点回填；后续=更多因子照 demo 模式扩展。
 
 ## 8. 修订记录
 

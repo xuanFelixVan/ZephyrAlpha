@@ -42,7 +42,9 @@ DDL-as-Code 模式：
 from __future__ import annotations
 
 import os
+import re
 import sys
+from pathlib import Path
 
 # 确保 src/ 在 path 中
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", "..", "src"))
@@ -874,13 +876,52 @@ def apply() -> int:
         ch_writer.query(ddl)
         print("✓")
 
-    print("\n=== 执行增量迁移（ALTER TABLE） ===")
+    print("\n=== 执行增量迁移（ALTER TABLE，子进程隔离+探针） ===")
+    # 2026-09-14 治本两层：①探针核实（ch_writer 吞错+无条件 ✓ 曾致多批假成功）
+    # ②子进程隔离——主进程大 DDL 触发通道污染（Code 62→TCP 失效→HTTP 500 全军覆没），
+    #   迁移在独立干净进程执行+进程内探针
+    import subprocess
+
+    migrate_failed = 0
+    probe_py = (
+        "import re, sys\n"
+        "from zephyr.data import ch_reader, ch_writer\n"
+        "ch_writer.query(sys.argv[1])\n"
+        "m = re.search(r'ADD COLUMN IF NOT EXISTS (\\w+)', sys.argv[1])\n"
+        "if not m:\n"
+        "    print('OK-noprobe')\n"
+        "    sys.exit(0)\n"
+        "col = m.group(1)\n"
+        "db, tbl = sys.argv[2].split('.', 1)\n"
+        "got = ch_reader.query(\n"
+        "    f\"SELECT count() FROM system.columns WHERE database='{db}' \"\n"
+        "    f\"AND table='{tbl}' AND name='{col}' FORMAT TSV\"\n"
+        ").strip()\n"
+        "print('OK' if got == '1' else 'MISS')\n"
+        "sys.exit(0 if got == '1' else 1)\n"
+    )
+    repo_root = str(Path(__file__).resolve().parents[2])
     for table, sql in _MIGRATIONS:
-        print(f"  {table} ...", end=" ")
-        ch_writer.query(sql)
-        print("✓")
+        print(f"  {table} ...", end=" ", flush=True)
+        r = subprocess.run(
+            [sys.executable, "-c", probe_py, sql, table],
+            capture_output=True, text=True, encoding="utf-8", errors="replace",
+            cwd=repo_root,
+        )
+        out_lines = (r.stdout or "").strip().splitlines()
+        verdict = out_lines[-1] if out_lines else f"rc={r.returncode}"
+        if r.returncode == 0 and "OK" in verdict:
+            print(f"✓ (探针核实: {verdict})")
+        else:
+            err_tail = (r.stderr or "").strip().splitlines()
+            err_msg = err_tail[-1][:90] if err_tail else ""
+            print(f"✗ 探针未过: {verdict} {err_msg}")
+            migrate_failed += 1
 
     print("\n=== 建表 + 迁移完成 ===")
+    if migrate_failed:
+        print(f"[FAIL] {migrate_failed} 条迁移探针未通过——ALTER 实际未生效", file=sys.stderr)
+        return 3
     return 0
 
 
