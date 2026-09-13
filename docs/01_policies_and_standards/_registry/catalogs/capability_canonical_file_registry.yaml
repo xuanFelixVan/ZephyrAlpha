@@ -12066,6 +12066,10 @@ creation_tokens:
   token: rule-catalog-idempotent-tests-20260913
   created_by: factory-gate-b2-20260913
   capability: rule_catalog_idempotent
+- file: docs/_working/2026-09-13-xtreme-redblue-report.md
+  token: xtreme-redblue-report-20260913
+  created_by: xt-serial-20260913
+  capability: xtreme_lab
 di_seam_exemptions:
 - module_path: zephyr.trading.auto_runtime_core.AutoRuntimeCore
   reason: P0-5 LSG DI seam 标杆，已有 DI 但 AST 模式不匹配（动态注入）
