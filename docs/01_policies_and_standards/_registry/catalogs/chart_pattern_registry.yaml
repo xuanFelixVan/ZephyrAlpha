@@ -10846,7 +10846,9 @@ chart_patterns:
   # - 情绪周期五阶段（冰点/启动/发酵/高潮/退潮）：属市场级周期/择时，与项目
   #   「情绪周期 vs regime 分工边界」约束一致，归 regime/sleeve 层，非图形形态
   # - Ichimoku 一目均衡表：属指标交叉体系，归 technical_indicator_registry
-  # - Renko/P&F/Kagi：属数据图表类型（数据层转换），非形态语义
+  # - Renko/P&F/Kagi：原裁定"属数据图表类型，非形态语义"→ 2026-09-14 Owner 拍板升级为立项施工：
+  #   MOD-SIG-146 pattern_series_transform 变换层（蓝图 _domain_signal/pattern_series_transform/blueprint.md），
+  #   close-to-close 防前视；目录侧仅补 P&F 原生形态 10-15 条+既有几何条目 applicable_series 标注（待批）
   # - Gann 时间周期/周年日：属 regime 周期分析，非形态
   # 第六轮判定不登（2026-08-14）：
   # - 跨市场相关性形态（金/油/币/股联动）：属宏观资产配置/regime 层，非单资产图形形态

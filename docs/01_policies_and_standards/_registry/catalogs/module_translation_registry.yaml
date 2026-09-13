@@ -48972,6 +48972,48 @@ entries:
   desc_zh: ""
   desc_en: ""
   plain_zh: "这个模块算市场周期类指标：用希尔伯特变换从价格里提取主导周期、相位角、同相正交分量和正弦波，还能判断当前是趋势市还是震荡市。简单说就是把价格波动拆成'多久转一圈'和'转到哪了'两个问题，五个指标共用一个递推内核，全部对齐 TA-Lib 同名函数。"
+- module_path: scripts/backtest/translated/c4_311220235636_zulu_value.py
+  domain_id: D_BACKTEST
+  name_zh: "祖鲁六条选股"
+  name_en: ""
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "穿越牛熊价值精选——流通市值≥均值+流动比率≥均值+四季ROE≥均值+五年FCF>0+营收6-30%+净利8-50%，市值降序全列表等权月频（DS-230 公告门 PIT）。供 C4 快筛与 C5 差异化。"
+- module_path: scripts/backtest/translated/c4_68cc0a6b40ba_value_select.py
+  domain_id: D_BACKTEST
+  name_zh: "精选价值十强"
+  name_en: ""
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "祖鲁六条+市值降序前十月频（行业剔除降级已声明，DS-230 公告门 PIT）。供 C4 快筛与 C5 差异化。"
+- module_path: scripts/backtest/translated/c4_40ca0da1a3ca_value_improved.py
+  domain_id: D_BACKTEST
+  name_zh: "价值投资改进版"
+  name_en: ""
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "祖鲁六条+双周调仓四强+300弱势停买+个股-10%止损+指数5日-13%清仓（DS-230 PIT）。供 C4 快筛与 C5 差异化。"
+- module_path: scripts/backtest/translated/c4_25028ae0c266_high_div5y.py
+  domain_id: D_BACKTEST
+  name_zh: "五年高股息十强"
+  name_en: ""
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "近5年累计每股分红/现价降序前十周频（c3_fundamental.dividend 除息日入窗）。供 C4 快筛与 C5 差异化。"
+- module_path: scripts/backtest/translated/c4_8d000bf3ccc3_pb_poe.py
+  domain_id: D_BACKTEST
+  name_zh: "PB-POE双均线"
+  name_en: ""
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "市值>800亿+PB<20+ROE>7 按 ROE-PB 降序+MA10/60 双均线确认前五等权 30 日调仓（DS-230 PIT）。供 C4 快筛与 C5 差异化。"
+- module_path: src/zephyr/signal_ashare/strategy_signal/series_transform.py
+  domain_id: D_SIGNAL
+  name_zh: "序列变换层"
+  name_en: "SeriesTransform"
+  desc_zh: "Renko/P&F/Kagi 替代价格表示与引擎适配器"
+  desc_en: ""
+  plain_zh: "把每天的K线换成三种\"只记真实波动\"的记账方式（砖块图、点数图、阈值拐弯线），滤掉没意义的小抖动，然后让已有的双顶双底等图形在这张更干净的图上重新认一遍——同一套引擎，第二张图，信号更干净。"
 
 battle_map_steps:
 - step_id: BM-BUY-05
