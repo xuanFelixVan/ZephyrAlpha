@@ -65,6 +65,7 @@
 | **任何新功能 / 自动化系统** | 已有脚本覆盖？自动化已过两轨分类？ | 搜 registry_of_registries.yaml → 复用决策；自动化走 RULE-FIFTEEN |
 | **结束 session** | 锁释放？临时文件清？ | `python scripts/lock_files.py release-all` + 零残留扫描 |
 | **处理任何任务** | 有对应 Agent Skill？ | 查看 `data/capability_cards/` 目录（skill_*.yaml）→ 匹配 → Read |
+| **写方案/建策略/调研找方法（任何需全网搜索的内容工作）** | 挖矿 SOP 走了吗？ | 直读 `docs/01_policies_and_standards/sop/mining_sop/mining_sop_policy.md`（六向寻路+防噪音四闸+连续两轮噪音终止+时间盒封批；挖矿日志表必入产出文档；实战范例=docs/_working/alt_data_consumption_plan.md §5-7） |
 | **读取/修改 depgraph** | 用 extract_depgraph.py 提取？不是直接裸连？ | `extract_depgraph.py --summary`（读取）/ `apply_depgraph.py --batch`（修改）。连接用 `get_depgraph_pg_connection()` |
 
 跳过任何一步 → 可能产生孤儿文件、死锁、重复轮子。

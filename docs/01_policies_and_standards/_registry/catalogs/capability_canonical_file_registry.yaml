@@ -8268,6 +8268,10 @@ creation_tokens:
   token: auto-ti-internal-provider-20260810
   created_by: session-ti-skeleton
   capability: technical_indicator
+- file: src/zephyr/factor/technical_indicators/statistics.py
+  token: technical-indicator-statistics-20260913
+  created_by: st-tilib-20260914
+  capability: technical_indicator
 - file: docs/01_policies_and_standards/_registry/catalogs/factor_registry.yaml
   token: auto-reg-factor-20260810
   created_by: session-registry-v130
@@ -12238,4 +12242,8 @@ creation_tokens:
   token: pattern-event-ddl-truth-market-pattern-event-20260913
   created_by: st-pattern-20260914
   capability: pattern-event-ddl-truth
+- file: schemas/__init__.py
+  token: st-fingov-schemas-init-20260914
+  created_by: st-fingov-20260912
+  capability: schemas_package_marker
 di_seam_exemptions: []

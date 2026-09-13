@@ -90,7 +90,8 @@ CREATE-GUARD（新建 .py/.yaml/.md 等 7 格式须登记 creation_token，tests
 
 1. 本宪法 ≤300 行是硬上限；新增内容必须等长替换。
 2. 细节检索序：capability_cards/（L0-L3 渐进披露）→ docs/01.../rules/*.yaml →
-   capability_canonical_file_registry.yaml → Grep 符号发现。
+   capability_canonical_file_registry.yaml → Grep 符号发现。全网调研/找方案/建策略类任务先读
+   sop/mining_sop/mining_sop_policy.md（挖矿 SOP，2026-09-14 升 permanent）。
 3. 会话内不复制大段规则进上下文；引用真源路径+锚点。
 
 ## 7. 核心系统速查（细节按需检索）
