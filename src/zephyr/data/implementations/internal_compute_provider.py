@@ -127,6 +127,11 @@ _INTERNAL_COMPUTE_CAPABILITIES = frozenset(
         "hk_trade_calendar",
         "index_valuation_daily",  # S2 估值路A（2026-08-29）：委托 IndexValuationComputeProvider
         "kline_index_calc",  # 自算指数（2026-09-04）：全A等权 EQW_ALLA，委托 IndexEqwComputeProvider
+        "financial_derived",  # 财报派生层（F1-M1/DS-230）——声明后补（CAP-CONSISTENCY 拦截实证，e7c3a41b9c 批欠账）
+        "anchored_state",  # 锚定风险四档（裁定#229）——声明后补（同上，954b15ce9e 批欠账）
+        "fund_consensus_daily",  # 一致预期矩阵（C1.5）——声明后补（同上）
+        "pattern_event",  # 图形事件增量（MOD-SIG-145/JOB-108）
+        "pattern_win_rate_materialize",  # 胜率统计重物化（MOD-SIG-145/JOB-108）
     }
 )
 
@@ -399,6 +404,11 @@ class InternalComputeProvider(IngestProviderBase):
             CapabilityContract("anchored_state", supports_symbols_null=True),
             # 一致预期矩阵夜间重建（C1.5 2026-09-14）：研报明细→每股每日快照，symbols=null=全市场
             CapabilityContract("fund_consensus_daily", supports_symbols_null=True),
+            # 图形事件增量扫描（MOD-SIG-145/JOB-108 2026-09-14）：滚动窗重扫自行落库，
+            # symbols=null=全市场（扫描器内取 kline_daily 宇宙）
+            CapabilityContract("pattern_event", supports_symbols_null=True),
+            # 胜率统计全量重物化（MOD-SIG-145/JOB-108 2026-09-14）：事件表×日K重算，symbols=null=全表
+            CapabilityContract("pattern_win_rate_materialize", supports_symbols_null=True),
         ],
         known_issues=[],
     )
@@ -472,6 +482,12 @@ class InternalComputeProvider(IngestProviderBase):
         if payload.table == "c3_fundamental.consensus_daily":
             yield from self._fetch_fund_consensus_daily(payload)
             return
+        if payload.table == "c1_market.market_pattern_event":
+            yield from self._fetch_pattern_event(payload)
+            return
+        if payload.table == "c1_market.market_pattern_win_rate":
+            yield from self._fetch_pattern_win_rate_materialize(payload)
+            return
         yield from self._fetch_technical_indicator(payload)
 
     def _fetch_anchored_state(self, payload: FetchPayload) -> Iterator[FetchResult]:
@@ -515,6 +531,32 @@ class InternalComputeProvider(IngestProviderBase):
         from zephyr.data.implementations.financial_derived_compute import run_compute
 
         yield from run_compute(symbols=payload.symbols, start=payload.start, end=payload.end)
+
+    def _fetch_pattern_event(self, payload: FetchPayload) -> Iterator[FetchResult]:
+        """图形事件增量扫描路由分支（pattern_event capability 命名约定实现，MOD-SIG-145/JOB-108）。
+
+        委托 pattern_event_job.run_incremental（薄适配：滚动窗调 scripts/data
+        扫描器正身，扫描器自行经 pattern_event_store 落库——本 Provider 不产
+        rows，FetchResult 仅记账实产行数）。盘后挂 daily_kline 档（tasks.yaml
+        pattern_event_incremental，DAG 依赖 kline_daily_incremental——日K线
+        落地后事件触发，禁 cron 自轮询）。
+        """
+        from zephyr.signal_ashare.strategy_signal.pattern_event_job import run_incremental
+
+        yield from run_incremental()
+
+    def _fetch_pattern_win_rate_materialize(self, payload: FetchPayload) -> Iterator[FetchResult]:
+        """胜率统计重物化路由分支（pattern_win_rate_materialize capability 命名约定，MOD-SIG-145/JOB-108）。
+
+        委托 pattern_event_job.run_win_rate_materialize（全量重算重放，物化脚本
+        自行写 CH）。挂增量扫描下游（tasks.yaml pattern_win_rate_materialize，
+        DAG 依赖 pattern_event_incremental——事件落库后同 DAG 尾部触发重物化）。
+        """
+        from zephyr.signal_ashare.strategy_signal.pattern_event_job import (
+            run_win_rate_materialize,
+        )
+
+        yield from run_win_rate_materialize()
 
     def _fetch_kline_index_calc(self, payload: FetchPayload, policy) -> Iterator[FetchResult]:
         """自算指数路由分支（kline_index_calc capability 的命名约定实现）。

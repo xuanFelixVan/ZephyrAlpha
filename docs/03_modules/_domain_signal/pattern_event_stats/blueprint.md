@@ -75,6 +75,10 @@ owner: ZephyrAlpha-Owner
 - W2：回填扫描器（批量 / 断点续扫 / scan_run_id 幂等）+ 全量历史回填。
 - W3：胜率统计物化任务 + win_rate_provider 接线 MOD-SIG-115。
 - W4：REG-PAT-001 evidence 回填 + 增量任务上线。
+  - W4b 增量接线已落地（JOB-108，st-patwire-20260914）：pattern_event_incremental
+    + pattern_win_rate_materialize 两任务块入 tasks.yaml daily_kline 档（DAG 依赖
+    kline_daily_incremental），internal_compute_provider 注册 pattern_event /
+    pattern_win_rate_materialize 两 capability，薄适配=pattern_event_job.py。
 
 ## 5. 边界
 

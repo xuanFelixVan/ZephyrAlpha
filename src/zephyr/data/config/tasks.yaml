@@ -600,7 +600,7 @@ tasks:
   symbols:
   fallback_sources: []    # internal 派生源天然无副源
   extra:
-    description: "一致预期每日快照重建（C1.5：研报事件流→每股每日×日历年矩阵，EXP 因子族标准输入；PIT=只认 publish_date；增量起点按表内实况推断-重叠窗吸收迟到研报，ReplacingMergeTree 幂等；docs/_working/2026-09-12-expectation-consumption-design.md §M1）"
+    description: "一致预期每日快照重建（C1.5：研报事件流→每股每日×日历年矩阵，EXP 因子族标准输入；PIT=只认 publish_date；增量起点按表内实况推断-重叠窗吸收迟到研报，ReplacingMergeTree 幂等；docs/01_policies_and_standards/policies/expectation_consumption_design_policy.md §M1）"
 
 - task_id: anchored_state_build
   table: c1_backtest.regime_state_anchored
@@ -2823,3 +2823,29 @@ tasks:
     disabled: true
     disabled_reason: "登记跳过——免费日频历史源实证全失效（2026-08-30）：sina forex JSONP 404 / sina hf USDCNH 返回 null / 东财 push2his 不可达 / FRED 无 CNH 序列 / currencyscoop 需付费 key。有源后启用。"
     description: "离岸人民币USDCNH日K（GAP-F-23 外盘8标的，清单#6；暂无源登记跳过）"
+
+- task_id: pattern_event_incremental
+  table: c1_market.market_pattern_event
+  source: internal  # 本地计算（滚动窗调图形引擎扫描器，读 c1_market.kline_daily 上下文）
+  schedule: daily_kline
+  incremental: true
+  date_col: anchor_trade_date
+  dependencies: ["kline_daily_incremental"]   # DAG: 日K线落地后事件触发（禁 cron 自轮询）
+  capability: pattern_event
+  symbols:
+  fallback_sources: []    # internal 派生源天然无副源
+  extra:
+    description: "图形形态事件增量（MOD-SIG-145/JOB-108：引擎扫描器滚动回看 400 日上下文、只产出近 15 日确认事件；确定性 event_id+ReplacingMergeTree 幂等，重扫不膨胀）"
+
+- task_id: pattern_win_rate_materialize
+  table: c1_market.market_pattern_win_rate
+  source: internal  # 本地计算（事件表×日K 全量重算胜率统计，非外部API）
+  schedule: daily_kline
+  incremental: true
+  date_col: updated_at
+  dependencies: ["pattern_event_incremental"]   # DAG: 增量事件落库后同链尾部触发重物化
+  capability: pattern_win_rate_materialize
+  symbols:
+  fallback_sources: []    # internal 派生源天然无副源
+  extra:
+    description: "胜率统计全量重物化（MOD-SIG-145/JOB-108：market_pattern_event × kline_daily 前视窗口命中率，(pattern_id,timeframe,regime,direction,fwd_window) 粒度+baseline 对照；ReplacingMergeTree(updated_at) 全量重放幂等；喂 pattern_win_rate_provider/MOD-SIG-115）"
