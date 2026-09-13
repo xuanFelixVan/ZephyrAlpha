@@ -176,7 +176,7 @@ why 栈映射：多周期共振是 A 股技术分析的主流用法；指标全�
 
 | indicator_id | 输出列 | 默认参数 | 公式要点 |
 |---|---|---|---|
-| candlestick_pattern | candle_pattern | patterns="all" | 6 形态编码：0无/1锤子/±2吞没/3启明星/4黄昏星/5十字星 |
+| candlestick_pattern | candle_pattern | patterns="all" | **薄视图 v2.0**（裁定①方案A）：实现移交图形域 candlestick_scanner.scan_candles（77 条事件流），本列=6 编码映射视图（0无/1锤子/±2吞没/3启明星/4黄昏星/5十字星），talib 缺失降级全 0；升级退役（方案B）挂 Owner 门位 |
 | rsi_divergence | rsi_divergence | rsi=12, lookback=20 | 价升 RSI 降→1；价跌 RSI 升→−1（简化趋势对比） |
 | macd_divergence | macd_divergence | lookback=20, 12/26/9 | 价格 vs MACD HIST 趋势对比 |
 | boll_breakout | boll_breakout | 20/2 | C>上轨→1；C<下轨→−1 |
@@ -233,6 +233,7 @@ IND-COMP-001 candidate→active；类别 composite，代码在 trend.py（regist
 | 2026-08-10 | 0.1.0 | 初稿骨架 | 技术指标目录文档。**注意**：本文件曾因未 git commit 丢失，后从代码引用和 architecture_issue_registry 描述重建骨架 |
 | 2026-08-12 | 1.0.0 | 骨架→active：§6 回填 40 指标/58 列全表（5 大类公式/参数/输出列）；修正 55→58 口径；§6 增"40 指标不裁剪"裁定；补 §6.6 与 factor_registry 正交边界；新增 §7 开放问题（调度未闭环/REG-IND-001 待施工/00_index 同步） | 回填已施工代码 why；口径以测试契约为准；缺口入开放问题不擅自施工 |
 | 2026-08-15 | 1.0.1 | 第二轮循环压缩：可压缩点收敛=0（AI-DC2-08） | 清单/公式/裁定无冗余，通读+自审零发现，不为压而压 |
+| 2026-09-14 | 1.5.1 | IND-REV-001 薄视图化（裁定①方案A，Owner 拍板）：CandlestickPattern.compute 转调图形域 scan_candles，6 编码映射回旧 candle_pattern 列语义（覆盖序复刻），talib 缺失降级全 0 不炸生产批；自研 5 形态灶台停用 | 图形会话 CDL 新家落地（a1b5c7f5/ac52af8），两店做一道菜根治 |
 | 2026-09-14 | 1.5.0 | 批 6（挖矿立卡清偿）：+RV 波动率族 4（波动 11→15）+BBI（趋势 17→18）+STOCH 本体/AROON/AROONOSC/BOP/PPO/APO/DX/BRAR/CR（动量 22→31）；全表 78→92 指标/116→135 列；施工方案=docs/_working/2026-09-14-tilib-batch6-plan.md（方案级病菌寻路 5 轮）；§7 消费端接线批立项 | Owner"施工批 6"指令；批 4/5 挖矿立卡全清偿 |
 | 2026-09-14 | 1.4.0 | 批 3：IND-COMP-001 Ichimoku 补实现（candidate→active，5 列，PIT 存储口径裁定入档）+ 循环族 HT 系 5 指标（新建 cycle.py MOD-L02-029，Ehlers 相位累积口径）；全表 72→78 指标/104→116 列；§6.7/6.8 新增、正交边界→6.9；homodyne 自锁实证弃用记录入档 | 缺口清单批 3；Owner 批 3 精选指令 |
 | 2026-09-14 | 1.3.0 | 主流热门批 2b 收官：+TSI/SMI/FISHER/KST/CONNORSRSI/QQE/STC/RVGI（动量 14→22）+MCGINLEY（趋势 16→17）+MASSI（波动 10→11）+VWMA/ADOSC/EOM/KVO/NVI/PVI（量能 7→13）；全表 56→72 指标/82→104 列 | 缺口清单批 2b（TA-Lib/pandas-ta 主流热门全谱清偿完毕）；TA-Lib 波动组补全；量能族 TA-Lib 全覆盖 |

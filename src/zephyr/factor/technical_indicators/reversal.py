@@ -124,6 +124,8 @@
 
 from __future__ import annotations
 
+import logging
+
 import numpy as np
 import pandas as pd
 
@@ -199,7 +201,12 @@ def _divergence_signal(
 
 @TechnicalIndicatorRegistry.register
 class CandlestickPattern(TechnicalIndicatorBase):
-    """K线形态识别（Candlestick Pattern Recognition）。"""
+    """K线形态识别（薄视图——实现移交图形域 candlestick_scanner，裁定①方案 A 2026-09-14）。
+
+    自研 5 形态灶台已停用；compute 转调 signal_ashare.candlestick_scanner.scan_candles
+    （TA-Lib CDL 61 + A股/酒田 16 条），取 6 编码对应形态映射回旧 candle_pattern 列语义，
+    旧接口消费方无感。登记条目 IND-REV-001 保留（退役升级留待方案 B，挂 Owner 门位）。
+    """
 
     meta = TechnicalIndicatorMeta(
         indicator_id="candlestick_pattern",
@@ -208,55 +215,75 @@ class CandlestickPattern(TechnicalIndicatorBase):
         output_columns=["candle_pattern"],
         input_columns=["open", "high", "low", "close"],
         params={"patterns": "all"},
-        version="1.0.0",
-        description="识别锤子/吞没/启明星/黄昏星/十字星，编码(0=无,1=锤子,2=看涨吞没,-2=看跌吞没,3=启明星,4=黄昏星,5=十字星)",
+        version="2.0.0",
+        description="薄视图：编码(0=无,1=锤子,2=看涨吞没,-2=看跌吞没,3=启明星,4=黄昏星,5=十字星)；实现=图形域 scan_candles 映射（CDLHAMMER/CDLENGULFING/CDLMORNINGSTAR/CDLEVENINGSTAR/CDLDOJI），talib 缺失时降级全 0",
     )
+
+    # 旧编码 → 图形域 scan_candles 的 CDL pattern_id
+    _ENC_TO_CDL = {
+        1.0: "CDLHAMMER",
+        2.0: "CDLENGULFING",
+        3.0: "CDLMORNINGSTAR",
+        4.0: "CDLEVENINGSTAR",
+        5.0: "CDLDOJI",
+    }
+    # 同 bar 多形态命中时的覆盖序（低→高，复刻旧实现：星类/吞没覆盖锤子与十字星）
+    _WRITE_ORDER = (5.0, 1.0, -2.0, 2.0, 3.0, 4.0)
 
     def compute(self, data: pd.DataFrame, **kwargs) -> pd.DataFrame:
         self.validate(data)
         if data.empty:
             return pd.DataFrame(columns=self.meta.output_columns)
-        o, h, l, c = data["open"], data["high"], data["low"], data["close"]
-        body = (c - o).abs()
-        hl_range = h - l
-        upper_shadow = h - pd.concat([o, c], axis=1).max(axis=1)
-        lower_shadow = pd.concat([o, c], axis=1).min(axis=1) - l
-        # 避免除零
-        body_safe = body.where(body > 0, np.nan)
-        ratio = lower_shadow / body_safe
+
+        symbol = str(kwargs.get("symbol", "") or "UNKNOWN")
+        try:
+            # 懒加载：跨域（D_FACTOR→D_SIGNAL）薄视图调用；缺失 talib 时降级而非炸生产批
+            from zephyr.signal_ashare.strategy_signal.candlestick_scanner import scan_candles
+
+            if "trade_date" in data.columns:
+                scanner_df = data
+                row_keys = pd.to_datetime(data["trade_date"]).dt.date
+            else:
+                # 无日期列的输入（测试/实时切片）：合成行序日期，scanner 锚回传后按位置对齐
+                scanner_df = data.copy()
+                scanner_df["trade_date"] = pd.date_range("2000-01-01", periods=len(data), freq="D")
+                row_keys = scanner_df["trade_date"].dt.date
+            events = scan_candles(symbol, scanner_df)
+        except Exception as exc:  # noqa: BLE001 — 降级可见不阻断（log 告警留痕）
+            logging.getLogger(__name__).warning(
+                "candle_pattern 薄视图降级全 0（scan_candles 不可用: %s）", exc
+            )
+            return pd.DataFrame(
+                {"candle_pattern": pd.Series(0.0, index=data.index)}, index=data.index
+            )
+
+        if "trade_date" in data.columns:
+            row_keys = pd.to_datetime(data["trade_date"]).dt.date
+        key_to_pos = {k: i for i, k in enumerate(row_keys)}
+
+        # 事件按 anchor_trade_date 聚到 bar → 编码；direction 决定吞没符号
+        enc_by_pos: dict[int, float] = {}
+        for ev in events:
+            pid = ev.get("pattern_id")
+            if pid not in set(self._ENC_TO_CDL.values()):
+                continue
+            ad = ev.get("anchor_trade_date")
+            pos = key_to_pos.get(pd.to_datetime(ad).date())
+            if pos is None:
+                continue
+            if pid == "CDLENGULFING":
+                enc_by_pos[pos] = 2.0 if ev.get("direction") == "向上" else -2.0
+            else:
+                for enc, cdl in self._ENC_TO_CDL.items():
+                    if cdl == pid:
+                        enc_by_pos[pos] = enc
+                        break
 
         pattern = pd.Series(0.0, index=data.index, dtype=float)
-
-        # 5=十字星：实体极小（<10% 振幅）
-        doji = (body / hl_range.where(hl_range > 0, np.nan) < 0.1) & (hl_range > 0)
-        pattern[doji] = 5.0
-
-        # 1=锤子线：下影线 > 2×实体，上影线小，实体在上方
-        hammer = (ratio > 2) & (upper_shadow < body_safe * 0.3) & (body > 0)
-        pattern[hammer] = 1.0
-
-        # 2=看涨吞没 / -2=看跌吞没（2 bar）
-        prev_bearish = c.shift(1) < o.shift(1)
-        curr_bullish = c > o
-        prev_bullish = c.shift(1) > o.shift(1)
-        curr_bearish = c < o
-        bull_engulf = prev_bearish & curr_bullish & (o <= c.shift(1)) & (c >= o.shift(1))
-        bear_engulf = prev_bullish & curr_bearish & (o >= c.shift(1)) & (c <= o.shift(1))
-        pattern[bull_engulf] = 2.0
-        pattern[bear_engulf] = -2.0
-
-        # 3=启明星 / 4=黄昏星（3 bar）
-        bar1_bear = c.shift(2) < o.shift(2)
-        bar1_bull = c.shift(2) > o.shift(2)
-        bar2_small = (c.shift(1) - o.shift(1)).abs() < body.shift(2) * 0.5
-        bar3_bull = c > o
-        bar3_bear = c < o
-        bar1_mid = (o.shift(2) + c.shift(2)) / 2
-        morning_star = bar1_bear & bar2_small & bar3_bull & (c > bar1_mid)
-        evening_star = bar1_bull & bar2_small & bar3_bear & (c < bar1_mid)
-        pattern[morning_star] = 3.0
-        pattern[evening_star] = 4.0
-
+        for enc in self._WRITE_ORDER:
+            for pos, e in enc_by_pos.items():
+                if e == enc:
+                    pattern.iloc[pos] = enc
         return pd.DataFrame({"candle_pattern": pattern}, index=data.index)
 
 

@@ -2571,11 +2571,12 @@ indicators:
   module_id: MOD-L02-020
   doc_ref: 16_technical_indicator_catalog.md §6.5
   code_path: src/zephyr/factor/technical_indicators/reversal.py
+  code_symbol: CandlestickPattern.compute（薄视图→signal_ashare.candlestick_scanner.scan_candles 映射，裁定①方案A 2026-09-14）
   used_by_factors: []
   status: active
-  version: 1.0.0
+  version: 2.0.0
   created_at: '2026-08-13'
-  updated_at: '2026-08-13'
+  updated_at: '2026-09-14'
   owner: MOD-GOVERNANCE
   primary_timeframe: "daily"
   applicable_timeframes: ["1min", "5min", "15min", "30min", "60min", "120min", "daily", "weekly", "monthly"]
