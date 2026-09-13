@@ -189,6 +189,12 @@ GLOBAL_LOCK_FILE = _GLOBAL_LOCK_FILE
 # 提交队列改道 feature flag（66 号 §7 / 08 号文 §4.2 步骤 5，B 段 2026-08-21）
 _COMMIT_QUEUE_SERIALIZER_FLAG = "commit_queue_serializer"
 
+# 慢提交审计阈值（秒）——commit() 全程墙钟（含锁等待+门禁链+提交）超过即记 commit_slow
+# 异常事件（2026-09-13 Owner 裁定"只记超阈堵点防日志爆炸"）。基线实测（xtreme 红蓝 §4）：
+# 小提交 24-37.5s / 大提交（122 文件）51.8s → 60s 只捕病理值，正常流量零记录。
+# 调优=改此常量（flags.yaml 是布尔语义真源，数值阈值不混入）。
+_SLOW_COMMIT_THRESHOLD_S = 60.0
+
 
 def _commit_queue_serializer_enabled() -> bool:
     """commit_queue_serializer flag 读取唯一点（fail-closed：设施异常=OFF 现状直提不变）。
@@ -1363,6 +1369,59 @@ class GitCommitGateway:
                     existing.append(f)
         return existing
 
+    def _append_commit_anomaly_jsonl(self, record: dict) -> None:
+        """堵点审计共用写入器（append 一行 .runtime/audit/commit_block_events.jsonl）。
+
+        审计写永不回 tracked 区（T4-1 铁律）；落盘失败静默（不阻断主链路）。
+        """
+        try:
+            from zephyr.shared.utils.time_utils import now_utc  # noqa: PLC0415
+
+            audit_dir = Path(str(self.project_root)) / ".runtime" / "audit"
+            audit_dir.mkdir(parents=True, exist_ok=True)
+            record = {"timestamp": now_utc().isoformat(), **record}
+            with open(audit_dir / "commit_block_events.jsonl", "a", encoding="utf-8") as f:
+                f.write(json.dumps(record, ensure_ascii=False) + "\n")
+        except OSError:
+            pass
+
+    def _audit_commit_block_event(self, session_id: str, blocked, existing: list[str], elapsed_ms: float) -> None:
+        """堵点溯源审计①阻断事件（2026-09-13 极限红蓝对抗 D5，Owner 指令堵点可查可修）。
+
+        阈值化设计（防日志爆炸——全量事件记录月万级必爆，只记异常）：
+        仅在 gate 链**阻断**时写一行。记录：ts/session/阻断门禁/文件数/门禁链耗时/
+        失败详情摘要（200 字截断）。消费方：commit_perf_report.py 聚合 TOP 阻断门禁
+        与堵点趋势（溯源→修复闭环）。
+        """
+        import re  # noqa: PLC0415
+
+        m = re.search(r"门禁 ([A-Z\-]+) 阻断", blocked.message or "")
+        gate_id = m.group(1) if m else "UNKNOWN"
+        self._append_commit_anomaly_jsonl({
+            "session_id": session_id,
+            "event": "commit_blocked",
+            "gate_id": gate_id,
+            "files_count": len(existing),
+            "gate_chain_ms": round(elapsed_ms),
+            "detail": (blocked.message or "")[:200],
+        })
+
+    def _audit_commit_slow_event(self, session_id: str, existing: list[str], total_ms: float) -> None:
+        """堵点溯源审计②慢提交事件（D5 补强，Owner 2026-09-13 裁定"超阈堵点才记"）。
+
+        成功提交但全程墙钟（锁等待+门禁链+提交）超 _SLOW_COMMIT_THRESHOLD_S 时记
+        一行 commit_slow——慢而未阻的堵点画像（锁排队/门禁链膨胀），与 commit_blocked
+        互补构成完整堵点观测。正常流量零记录（阈值化防爆炸）。
+        """
+        self._append_commit_anomaly_jsonl({
+            "session_id": session_id,
+            "event": "commit_slow",
+            "gate_id": "-",
+            "files_count": len(existing),
+            "total_ms": round(total_ms),
+            "threshold_s": _SLOW_COMMIT_THRESHOLD_S,
+        })
+
     def _check_gate_results(self, gate_results: list) -> CommitResult | None:
         """检查门禁结果，返回 CommitResult 表示阻断、None 表示全部通过。"""
         for gr in gate_results:
@@ -1734,6 +1793,7 @@ class GitCommitGateway:
             return CommitResult(status=CommitStatus.NOTHING_TO_COMMIT, message="empty files list")
         if not session_id:
             session_id = "unknown"
+        _commit_t0 = time.monotonic()  # 全程墙钟（锁等待+门禁链+提交）——commit_slow 审计用
 
         # 归一化为绝对路径（用 abspath 而非 resolve()——保留传入大小写与 git index 一致）
         abs_files = [os.path.abspath(f) for f in files]
@@ -1900,6 +1960,7 @@ class GitCommitGateway:
                 # 新增门禁 MUST 走 CommitGateRegistry 注册制（commit_gates/ 下 make_xxx_gate() + __init__ register）
                 # commit_message 透传：CAPABILITY-LOOKUP-REQUIRED gate 据此检测 [no-lookup:reason] 逃生标记
                 # （#ARCH-CAPABILITY-LOOKUP-BYPASS-DEAD-S1 止血修复：与 session_worktree._run_pre_commit_gates L1174 对称）
+                _gate_t0 = time.monotonic()
                 gate_results = self._check_gates_with_drift_watch(
                     existing,
                     session_id,
@@ -1915,8 +1976,8 @@ class GitCommitGateway:
                 )
                 blocked = self._check_gate_results(gate_results)
                 if blocked is not None:
+                    self._audit_commit_block_event(session_id, blocked, existing, (time.monotonic() - _gate_t0) * 1000)
                     return blocked
-
                 result = self._commit_locked(session_id, existing, full_message, gw_marker)
         except GatewayError as e:
             # 2026-09-11 诊断性治本：此前 message 固定 "internal error" 吞掉真实异常，
@@ -1937,6 +1998,7 @@ class GitCommitGateway:
             if not merge_finalize and self._is_merge_in_progress():
                 return self._merge_in_progress_result()
             self._sweep_intent_to_add_residue(session_id, self._target_rel_set(existing))
+            _gate_t0 = time.monotonic()
             gate_results = self._check_gates_with_drift_watch(
                 existing,
                 session_id,
@@ -1951,9 +2013,13 @@ class GitCommitGateway:
             )
             blocked = self._check_gate_results(gate_results)
             if blocked is not None:
+                self._audit_commit_block_event(session_id, blocked, existing, (time.monotonic() - _gate_t0) * 1000)
                 return blocked
             result = self._commit_locked(session_id, existing, full_message, gw_marker)
 
+        _total_ms = (time.monotonic() - _commit_t0) * 1000
+        if result.status == CommitStatus.OK and _total_ms > _SLOW_COMMIT_THRESHOLD_S * 1000:
+            self._audit_commit_slow_event(session_id, existing, _total_ms)
         self._snapshot_worktree_status(session_id, result)
         self._run_post_commit_reconcile(existing, session_id, result, commit_message=message)
         return result
@@ -2265,30 +2331,51 @@ class GitCommitGateway:
             unattributed = self._attribute_tracked_writes(changed)
             self._audit_gate_tracked_drift(session_id, changed, unattributed, allowed=allow_tracked_drift)
             if unattributed:
-                if allow_tracked_drift:
+                # 连坐降级（2026-09-13 极限红蓝对抗 F3 治本，Owner 批准"全部往深里挖"）：
+                # 阻断的真正安全语义=TOCTOU——本 commit 清单内的文件在 gate 窗口被改，
+                # 门禁验过的内容 ≠ 最终 add 落盘的内容。清单外文件的窗口写入是其他
+                # session/进程的 WIP：本 commit 走 --pathspec-from-file 物理隔离，
+                # 清单外文件进不了本次提交（搭便车由 pathspec 语义构造性排除），
+                # 其漂移归 watchdog/claim 体系管——此前无差别连坐硬阻断，实测三连中
+                # 每次整链白跑 19-58s（重试放大 4-6× 的病灶本体，夜班报告 §2.3 印证）。
+                own_scope = self._target_rel_set(existing)
+                own_drift = [f for f in unattributed if os.path.normcase(f) in own_scope]
+                foreign_drift = [f for f in unattributed if os.path.normcase(f) not in own_scope]
+                if foreign_drift:
                     logger.warning(
-                        "TRACKED-DRIFT-READONLY: %d 个未归因 tracked 写入经逃生通道放行 (session=%s): %s",
-                        len(unattributed),
+                        "TRACKED-DRIFT-READONLY: %d 个窗口漂移文件与本提交清单零交集"
+                        "（他会话 WIP，pathspec 隔离不搭便车）→ 降级 warn 不阻断 (session=%s): %s",
+                        len(foreign_drift),
                         session_id,
-                        unattributed[:10],
+                        foreign_drift[:10],
                     )
-                else:
-                    from zephyr.gov_enforcement.rule_bridge.commit_gate_registry import (  # noqa: PLC0415
-                        GateResult,
-                    )
-
-                    results.append(
-                        GateResult(
-                            gate_id="TRACKED-DRIFT-READONLY",
-                            passed=False,
-                            detail=(
-                                "gate 链执行窗口内 tracked 区发生未归因写入（CAND-GATEMECH-004 禁写即红）："
-                                f"{unattributed[:10]}。治本：写入方登记 "
-                                "gate_tracked_write_allowlist.yaml（或迁 .runtime/退库）；"
-                                "逃生通道：--allow-tracked-drift（留痕审计）"
-                            ),
+                if own_drift:
+                    if allow_tracked_drift:
+                        logger.warning(
+                            "TRACKED-DRIFT-READONLY: %d 个提交清单内未归因写入经逃生通道放行 (session=%s): %s",
+                            len(own_drift),
+                            session_id,
+                            own_drift[:10],
                         )
-                    )
+                    else:
+                        from zephyr.gov_enforcement.rule_bridge.commit_gate_registry import (  # noqa: PLC0415
+                            GateResult,
+                        )
+
+                        results.append(
+                            GateResult(
+                                gate_id="TRACKED-DRIFT-READONLY",
+                                passed=False,
+                                detail=(
+                                    "gate 链执行窗口内本提交清单中的文件发生未归因写入（CAND-GATEMECH-004 禁写即红，"
+                                    "TOCTOU：门禁校验内容≠提交内容）："
+                                    f"{own_drift[:10]}。治本：写入方登记 "
+                                    "gate_tracked_write_allowlist.yaml（或迁 .runtime/退库）；"
+                                    "逃生通道：--allow-tracked-drift（留痕审计）；"
+                                    "清单外漂移已降级 warn（他会话 WIP 不连坐）"
+                                ),
+                            )
+                        )
         return results
 
     def _commit_locked(

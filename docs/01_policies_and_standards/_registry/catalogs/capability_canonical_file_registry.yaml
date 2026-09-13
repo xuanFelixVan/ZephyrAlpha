@@ -12070,6 +12070,26 @@ creation_tokens:
   token: xtreme-redblue-report-20260913
   created_by: xt-serial-20260913
   capability: xtreme_lab
+- file: src/zephyr/gov_enforcement/commit_gates/split_coordination_gate.py
+  token: split-coordination-split-coordination-gate-20260913
+  created_by: factory-bottleneck-20260913
+  capability: split_coordination
+- file: scripts/governance/split_coordination.py
+  token: split-coordination-split-coordination-20260913
+  created_by: factory-bottleneck-20260913
+  capability: split_coordination
+- file: tests/governance/commit_gates/test_split_coordination_gate.py
+  token: split-coordination-test-split-coordination-gate-20260913
+  created_by: factory-bottleneck-20260913
+  capability: split_coordination
+- file: scripts/governance/d3_metadata/batch_creation_tokens.py
+  token: batch-tokens-batch-creation-tokens-20260913
+  created_by: factory-bottleneck-20260913
+  capability: batch_tokens
+- file: tests/governance/d3_metadata/test_batch_creation_tokens.py
+  token: batch-tokens-test-batch-creation-tokens-20260913
+  created_by: factory-bottleneck-20260913
+  capability: batch_tokens
 di_seam_exemptions:
 - module_path: zephyr.trading.auto_runtime_core.AutoRuntimeCore
   reason: P0-5 LSG DI seam 标杆，已有 DI 但 AST 模式不匹配（动态注入）

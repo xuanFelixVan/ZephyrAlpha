@@ -733,3 +733,9 @@ gates:
   source: in_process
   register_line: 0  # priority=140；2026-09-09 登记表 mass-deletion 门禁（2026-09-09 夜 4703 行蒸发治本第二道保险：净删行/条目数减少阻断，message 标记 [allow-mass-deletion:reason>=10字] 白名单放行+审计；配套 scripts/governance/registry_batch_edit.py 纯插入工具为第一道保险；测试 tests/governance/commit_gates/test_registry_batch_edit_and_mass_deletion_gate.py）
   enabled: true
+- gate_id: SPLIT-COORDINATION
+  module_path: zephyr.gov_enforcement.commit_gates.split_coordination_gate
+  factory_function: make_split_coordination_gate
+  source: in_process
+  register_line: 0  # priority=143；2026-09-13 拆分×编辑双重存在协议门禁（#ARCH-SPLIT-COORDINATION-001，极限红蓝 F5 100% 复现治本）：他会话提交命中活跃拆分声明的 old_paths 硬阻断（防旧平铺路径重建=双重存在事故），mover 放行；声明真源=.runtime/coordination/active_splits.yaml（scripts/governance/split_coordination.py begin/finish/sweep 单一写入方）；声明缺失/损坏 fail-open（协调态非真源）；已落地（HEAD 无+盘无）自动失活；测试 tests/governance/commit_gates/test_split_coordination_gate.py
+  enabled: true

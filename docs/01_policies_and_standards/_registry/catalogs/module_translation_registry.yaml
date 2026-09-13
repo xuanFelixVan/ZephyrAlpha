@@ -48002,6 +48002,41 @@ entries:
   desc_zh: ""
   desc_en: ""
   plain_zh: "给工厂图门禁做攻防演习：红队拿断边缺字段坏图和损坏 YAML 猛攻必须全被拦，蓝队拿真好图和非触发文件验证必须全放行，触发面规则改动也同步练到"
+- module_path: src/zephyr/gov_enforcement/commit_gates/split_coordination_gate.py
+  domain_id: D_GOV_CODE_QUALITY
+  name_zh: "拆分协调协议门禁"
+  name_en: ""
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "提交时守住拆分协调窗口：有人声明拆目录后，其他会话再往旧平铺路径提交重建文件就直接拦下并指路去新路径，拆分者本人放行；没拆分声明时零开销放行，声明损坏也放行（协调信号不是数据真源）"
+- module_path: scripts/governance/split_coordination.py
+  domain_id: D_GOV_SCRIPTS
+  name_zh: "拆分协调声明工具"
+  name_en: ""
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "拆目录前的登记台：begin 声明哪些旧路径要搬去哪（门禁据此拦截他会话），搬完 finish 收摊，sweep 清扫已落地的残留声明；写入原子带重试防并发丢"
+- module_path: tests/governance/commit_gates/test_split_coordination_gate.py
+  domain_id: D_GOV_CODE_QUALITY
+  name_zh: "拆分协调门禁红蓝测试"
+  name_en: ""
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "给拆分协调协议做攻防演习：红队复现历史事故（编辑者旧路径重建）必须被拦，蓝队验证拆分者本人/无声明/新路径/声明损坏全放行，工具 begin-finish-sweep 生命周期闭环也练到"
+- module_path: scripts/governance/d3_metadata/batch_creation_tokens.py
+  domain_id: D_GOV_SCRIPTS
+  name_zh: "creation_token 批量登记工具"
+  name_en: ""
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "批量新文件的登记台：扫一个目录下所有还没登记 creation_token 的文件，一键批量生成合规 token 纯插入登记表（不动既有条目、重复跑自动跳过），替代拆分批逐条手写"
+- module_path: tests/governance/d3_metadata/test_batch_creation_tokens.py
+  domain_id: D_GOV_SCRIPTS
+  name_zh: "creation_token 批量登记工具测试"
+  name_en: ""
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "验证批量登记工具：批量插入格式正确、已登记跳过（幂等）、锚点缺失拒写（fail-closed）、dry-run 零写入、真实落库后 YAML 可解析"
 - module_path: tests/governance/d3_metadata/test_generate_rule_catalog_idempotent.py
   domain_id: D_GOV_SCRIPTS
   name_zh: "规则目录生成器幂等测试"

@@ -3,11 +3,11 @@ doc_type: register
 ttl: permanent
 title: GATE 门禁登记表
 status: active
-generated_at: '2026-09-13T08:46:37Z'
+generated_at: '2026-09-13T11:00:49Z'
 generated_by: scripts/governance/generators/generate_gate_registry.py
 maintenance: auto
 source: .pre-commit-config.yaml + commit_gates/*.py + MANUAL_GATES
-total_gates: 163
+total_gates: 164
 gates:
 - gate_id: GATE-PROTECTED-PATHS
   name: 'GATE-PROTECTED-PATHS: 受保护路径写入检测（#ARCH-MODEL-LIFECYCLE-001 P1 Layer 2）'
@@ -1492,6 +1492,17 @@ gates:
   name: 'SNAPSHOT-DRIFT: SNAPSHOT-DRIFT（CommitGate, priority=40）'
   entry: in-process (GitCommitGateway)
   description: SNAPSHOT-DRIFT
+  files_trigger: ''
+  always_run: false
+  category: commit_gate
+  status: active
+  source: commit-gate
+  own_scope: false
+- gate_id: SPLIT-COORDINATION
+  name: 'SPLIT-COORDINATION: 拆分×编辑双重存在协议门禁（SPLIT-COORDINATION，priority=143）（CommitGate,
+    priority=143）'
+  entry: in-process (GitCommitGateway)
+  description: 拆分×编辑双重存在协议门禁（SPLIT-COORDINATION，priority=143）
   files_trigger: ''
   always_run: false
   category: commit_gate

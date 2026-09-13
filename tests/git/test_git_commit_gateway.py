@@ -1884,15 +1884,45 @@ class TestTrackedDriftReadonlyHardening:
         return [_json.loads(line) for line in audit.read_text(encoding="utf-8").splitlines() if line.strip()]
 
     def test_unattributed_write_hard_blocks(self, tmp_path: Path) -> None:
-        """白名单存在但未覆盖写入文件 → TRACKED-DRIFT-READONLY 硬阻断结果注入。"""
+        """白名单存在但未覆盖写入文件，且漂移文件在**本提交清单内** → 硬阻断（TOCTOU）。"""
         gw = self._prepare(tmp_path, "entries:\n- path: scripts/governance/script_manifest.yaml\n  class: B\n")
         gw._gate_registry = self._WritingRegistry()
-        results = gw._check_gates_with_drift_watch([], "sess-hard")
+        results = gw._check_gates_with_drift_watch(
+            [str(tmp_path / "tracked_audit.jsonl")], "sess-hard"
+        )
         hard = [r for r in results if r.gate_id == "TRACKED-DRIFT-READONLY"]
-        assert hard and not hard[0].passed, "未归因写入未触发硬阻断"
+        assert hard and not hard[0].passed, "提交清单内未归因写入未触发硬阻断"
         assert "tracked_audit.jsonl" in hard[0].detail
         rec = self._records(tmp_path)
         assert rec and rec[-1].get("unattributed_files") == ["tracked_audit.jsonl"]
+
+    def test_foreign_drift_downgraded_to_warn(self, tmp_path: Path) -> None:
+        """连坐降级（2026-09-13 极限红蓝对抗 F3 治本）：漂移文件与本提交清单
+        **零交集**（他会话 WIP）→ 不注入硬阻断结果，审计照落。pathspec 物理隔离
+        构造性排除搭便车；安全网（审计/watchdog/reconciler-health）不受降级影响。"""
+        gw = self._prepare(tmp_path, "entries:\n- path: scripts/governance/script_manifest.yaml\n  class: B\n")
+        gw._gate_registry = self._WritingRegistry()  # 写 tracked_audit.jsonl
+        # 提交清单=另一文件 other_file.py → 漂移文件在清单外
+        results = gw._check_gates_with_drift_watch(
+            [str(tmp_path / "other_file.py")], "sess-foreign"
+        )
+        assert not [r for r in results if not r.passed], "零交集漂移不应阻断（他会话 WIP 不连坐）"
+        rec = self._records(tmp_path)
+        assert rec and rec[-1].get("unattributed_files") == ["tracked_audit.jsonl"], "降级仍须落审计"
+
+    def test_mixed_drift_only_own_blocks(self, tmp_path: Path) -> None:
+        """混合漂移：清单内+清单外同时写入 → 仅因清单内阻断，detail 注明降级语义。"""
+        gw = self._prepare(tmp_path, "entries:\n- path: scripts/governance/script_manifest.yaml\n  class: B\n")
+        gw._gate_registry = self._WritingRegistry()  # 写 tracked_audit.jsonl
+        _write_file(tmp_path, "other_wip.py", "x=1\n")  # 模拟他会话 WIP 漂移（无白名单）
+        # 清单内=tracked_audit.jsonl；other_wip.py 在清单外
+        results = gw._check_gates_with_drift_watch(
+            [str(tmp_path / "tracked_audit.jsonl")], "sess-mixed"
+        )
+        hard = [r for r in results if r.gate_id == "TRACKED-DRIFT-READONLY"]
+        assert hard and not hard[0].passed
+        assert "tracked_audit.jsonl" in hard[0].detail
+        assert "清单外漂移已降级" in hard[0].detail
 
     def test_attributed_write_warns_only(self, tmp_path: Path) -> None:
         """白名单精确路径命中 → 维持 warn+审计，不追加阻断结果。"""
@@ -1926,6 +1956,94 @@ class TestTrackedDriftReadonlyHardening:
         results = gw._check_gates_with_drift_watch([], "sess-noallow")
         assert not [r for r in results if not r.passed]
         assert self._records(tmp_path), "降级路径仍须审计落盘"
+
+
+# ---------------------------------------------------------------------------
+# 堵点溯源审计（D5，2026-09-13 极限红蓝对抗 Owner 指令"堵点可查可修"）
+# ---------------------------------------------------------------------------
+class TestCommitAnomalyAudit:
+    """commit_block_events.jsonl 双事件审计器（阈值化防爆炸）。
+
+    commit_blocked：gate 链阻断时记（session/门禁/文件数/门禁链白跑耗时）。
+    commit_slow：成功但全程墙钟超 _SLOW_COMMIT_THRESHOLD_S 时记（慢而未阻画像）。
+    正常流量零记录——本测试直接调审计器验证落盘格式与幂等 append。
+    """
+
+    def _gw(self, tmp_path: Path) -> GitCommitGateway:
+        _init_git_repo(tmp_path)
+        _write_file(tmp_path, "f.txt", "x\n")
+        env = {
+            **os.environ,
+            "GIT_AUTHOR_NAME": "T",
+            "GIT_AUTHOR_EMAIL": "t@t.com",
+            "GIT_COMMITTER_NAME": "T",
+            "GIT_COMMITTER_EMAIL": "t@t.com",
+        }
+        subprocess.run(["git", "add", "f.txt"], cwd=str(tmp_path), capture_output=True, env=env)
+        subprocess.run(["git", "commit", "-m", "t", "--no-verify"], cwd=str(tmp_path), capture_output=True, env=env)
+        return GitCommitGateway(project_root=tmp_path)
+
+    def _events(self, tmp_path: Path) -> list[dict]:
+        import json as _json
+
+        p = tmp_path / ".runtime" / "audit" / "commit_block_events.jsonl"
+        if not p.exists():
+            return []
+        return [_json.loads(line) for line in p.read_text(encoding="utf-8").splitlines() if line.strip()]
+
+    def test_block_event_fields(self, tmp_path: Path) -> None:
+        """阻断事件：门禁号从 message 提取，gate_chain_ms/文件数落盘。"""
+        from zephyr.gov_enforcement.rule_bridge.git_commit_gateway import CommitResult, CommitStatus
+
+        gw = self._gw(tmp_path)
+        blocked = CommitResult(
+            status=CommitStatus.COMMIT_FAILED,
+            message="门禁 FOLDER-CAPACITY 阻断：磁盘文件数超限",
+        )
+        gw._audit_commit_block_event("sess-x", blocked, ["a.py", "b.py"], 51_800.4)
+        evs = self._events(tmp_path)
+        assert len(evs) == 1
+        ev = evs[0]
+        assert ev["event"] == "commit_blocked"
+        assert ev["gate_id"] == "FOLDER-CAPACITY"
+        assert ev["session_id"] == "sess-x"
+        assert ev["files_count"] == 2
+        assert ev["gate_chain_ms"] == 51800
+        assert "timestamp" in ev, "共用写入器补 timestamp"
+
+    def test_block_event_unknown_gate(self, tmp_path: Path) -> None:
+        """message 无门禁号匹配 → gate_id=UNKNOWN 不炸。"""
+        from zephyr.gov_enforcement.rule_bridge.git_commit_gateway import CommitResult, CommitStatus
+
+        gw = self._gw(tmp_path)
+        blocked = CommitResult(status=CommitStatus.COMMIT_FAILED, message="奇怪的错误")
+        gw._audit_commit_block_event("sess-y", blocked, [], 1000.0)
+        evs = self._events(tmp_path)
+        assert evs[-1]["gate_id"] == "UNKNOWN"
+
+    def test_slow_event_fields(self, tmp_path: Path) -> None:
+        """慢提交事件：total_ms/阈值/文件数落盘，event=commit_slow。"""
+        gw = self._gw(tmp_path)
+        gw._audit_commit_slow_event("sess-slow", ["f.txt"] * 3, 72_345.6)
+        ev = self._events(tmp_path)[-1]
+        assert ev["event"] == "commit_slow"
+        assert ev["session_id"] == "sess-slow"
+        assert ev["files_count"] == 3
+        assert ev["total_ms"] == 72346
+        assert ev["threshold_s"] == 60.0
+
+    def test_events_append_not_overwrite(self, tmp_path: Path) -> None:
+        """多次异常 append 追加（jsonl 不覆盖——月千次阻断也线性增长可轮转）。"""
+        from zephyr.gov_enforcement.rule_bridge.git_commit_gateway import CommitResult, CommitStatus
+
+        gw = self._gw(tmp_path)
+        blocked = CommitResult(status=CommitStatus.COMMIT_FAILED, message="门禁 A 阻断")
+        gw._audit_commit_block_event("s1", blocked, [], 1.0)
+        gw._audit_commit_slow_event("s2", [], 61_000.0)
+        gw._audit_commit_block_event("s3", blocked, [], 2.0)
+        evs = self._events(tmp_path)
+        assert [e["event"] for e in evs] == ["commit_blocked", "commit_slow", "commit_blocked"]
+        assert [e["session_id"] for e in evs] == ["s1", "s2", "s3"]
 
 
 # ---------------------------------------------------------------------------

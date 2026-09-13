@@ -101,6 +101,9 @@ from zephyr.gov_enforcement.commit_gates.industry_chain_map_gate import (  # noq
 from zephyr.gov_enforcement.commit_gates.strategy_factory_map_gate import (  # noqa: F401  # FACTORY-MAP 策略生产全景图结构门禁（图 9 挂总线，alignment_checklist §3 图 9 行，#ARCH-FACTORY-MAP-GATE-001 2026-09-13）
     make_strategy_factory_map_gate as _make_strategy_factory_map_gate,
 )
+from zephyr.gov_enforcement.commit_gates.split_coordination_gate import (  # noqa: F401  # SPLIT-COORDINATION 拆分×编辑双重存在协议门禁（#ARCH-SPLIT-COORDINATION-001 2026-09-13，极限红蓝 F5 治本）
+    make_split_coordination_gate as _make_split_coordination_gate,
+)
 from zephyr.gov_enforcement.commit_gates.battle_map_alignment_gate import (  # noqa: F401  # GATE-BATTLE-MAP-ALIGNMENT 作战地图对齐硬化门禁（#ARCH-BATTLE-MAP-HARD-001 2026-09-05，三类升硬）
     make_battle_map_alignment_gate as _make_battle_map_alignment_gate,
 )
@@ -137,5 +140,6 @@ __all__: list[str] = []  # 子模块各自导出 make_*_gate()，包级不 re-ex
 #   - msg_* (2 件)
 #   - pure_* (2 件)
 #   - reconciler_* (2 件)
+#   - split_* (1 件，2026-09-13 新簇登记：SPLIT-COORDINATION 拆分协调协议门禁)
 # 约定：新增文件必须延续所属簇前缀；新簇须先在本约定登记再落文件；
 # 单簇超过 20 件时应拆子目录（参照 tests/signal_ashare 拆分先例）。
