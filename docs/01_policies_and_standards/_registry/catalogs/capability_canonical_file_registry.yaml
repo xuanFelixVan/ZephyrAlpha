@@ -4985,6 +4985,10 @@ capabilities:
     提交→全景对齐→清理 全流程步骤与失败处置；适用 07 域（regime/选股/仓位/风控/买卖/执行/对账/治理）施工，RULE-CAPABILITY-LOOKUP
     检索"施工"应命中本条
 creation_tokens:
+- file: docs/_working/2026-09-14-typhoon-bdi-factor-mining-plan.md
+  token: typhoon-bdi-mining-20260914
+  created_by: st-altdata-20260914
+  capability: alt_data_batch1_free_sources
 - file: schemas/categories/market_typhoon_names.py
   token: szopen-typhoon_names-20260914
   created_by: st-altdata-20260914
@@ -12262,4 +12266,16 @@ creation_tokens:
   token: st-fingov-eval-f2-layers-20260914
   created_by: st-fingov-20260912
   capability: eval_f2_layers_styles
+- file: scripts/ch/apply_pattern_win_rate_ddl.py
+  token: auto-scaffold-ch_apply_pattern_win_rate_ddl-20260914
+  created_by: scaffold.py
+  capability: ch_apply_pattern_win_rate_ddl
+- file: scripts/data/pattern_win_rate_materialize.py
+  token: auto-scaffold-data_pattern_win_rate_materialize-20260914
+  created_by: scaffold.py
+  capability: data_pattern_win_rate_materialize
+- file: src/zephyr/signal_ashare/strategy_signal/pattern_win_rate_provider.py
+  token: auto-scaffold-pattern_win_rate_provider-20260914
+  created_by: scaffold.py
+  capability: pattern_win_rate_provider
 di_seam_exemptions: []
