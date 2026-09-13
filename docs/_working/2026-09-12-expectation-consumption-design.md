@@ -120,3 +120,35 @@ PDF 下载（body 列已预留）→ PyMuPDF 解析 → LLM 结构化提取（De
 - 学术：Gleason & Lee 2003；Lee & So 2017；Jegadeesh et al. 2002；Diether et al. 2002；Engelberg et al. 2019；Ball & Brown 1968；Lv 2025 (arXiv 2411.13813 / 2502.20489, AFA 2025)；韩国卖方研报 LLM 对比（2025）
 - 开源：microsoft/qlib（RD-Agent）；AI4Finance-Foundation/FinGPT；TradingAgents
 - 项目内契约：event_factor_matrix.py L288-312/L393-410/L457-469；negative_veto.py L46-111；pit_query.py L176-202；factor_registry L194/L273-299；sop_b_node_loop.md:30-100；experiment_registry entry_schema
+
+---
+
+## 8. EXP 族预注册（2026-09-14，SOP-B 护栏③——跑前冻结禁挪）
+
+> 依据=裁定 2026-09-14（Owner 授权夜班自裁，全天候协议）：C2 放行进回测通道。排队条款 D5 的原约束
+> "回测通道空闲（排队在 P0 后）"已消失（P0-001/002 判 valid，P0-003 为壁钟积累型不占通道）；
+> FQ 批同通道先例在案。研究判定与部署门位解耦：EXP 因子 can_deploy=False 直到 BT-P0-003 转正。
+
+### 8.1 窗口与门槛（与 FCT-FQ/GR 同款，registry 头 2026-09-12 成文判据）
+
+- IS（晋级窗）= 2019-01-01~2023-12-31 月末截面（60 月）；OOS = 2024-01-01~2026-09-11 稳定性复核。
+  IS 从 2019 起的依据=数据核对电池实证：2017-2018 研报覆盖 1.5-1.8k 只显著稀薄（2022 后 2.3k+）。
+- ④ IC 门槛：IS 截面 RankIC 均值 |IC|≥0.02 且 IC 序列 t 检验 p<0.05 且月度覆盖≥60%。
+- ⑤ 剪枝：五分位单调性（分位秩相关≥0.6）；分状态条件 IC（c1_backtest.regime_state_anchored 四档，
+  上游已 valid）；与 20td 价格动量秩相关≥0.85 → 挂 variant_of 或否决（华泰"剔动量改进"对照）。
+- ⑥ 窄测：Top50 等权月频多头，成本五项读 MatchingConfig #233（零硬编码）；
+  准入线=IS 超额 Sharpe≥0.5 且 OOS/IS≥0.7（FQ 同款）；过拟合门禁=OverfittingDetector+DSR。
+- **滑点压力协议（本批新增，裁定 2026-09-14）**：⑥ 附 slippage_bps∈{土规20, 40, 80} 三档重跑；
+  结论对 80bp 仍稳健 → P0-003 pending 不实质；仅 20bp 档达标 → 标 cost-fragile 自动降级。
+
+### 8.2 预注册参数网格（禁越界）
+
+- EXP-02：k_td∈{20, 60}×forecast_year∈{fy1}（主档 k=20，3m 为复核档）；disp_floor=1e-6。
+- 试验计数进 n_trials（DSR 校正原料）：④ 每因子 ≤4 配置（k×fy 网格）+ ⑤ 四状态 + ⑥ 三滑点档。
+- ⑥ 组合窗 2019-01~2026-08（月末→月末持有）；AUM/最小佣金/费率全读 MatchingConfig。
+
+### 8.3 台账约定
+
+- 逐因子 run 落 experiment_registry（EXP-FACTOR-EVAL-001 起，factor_eval 型开山）；
+- evidence 写 factor_registry 条目（SOP-B ④⑤⑥⑦ 分段留痕，同 FQ 批格式）；
+- 评估器=scripts/backtest/eval_exp_expectations.py（④⑤⑥ 单脚本链，JSON 出证）。

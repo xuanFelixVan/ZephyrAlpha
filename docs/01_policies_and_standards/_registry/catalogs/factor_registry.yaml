@@ -268,6 +268,16 @@ factor_family_glossary:
     money_logic: 盘口是多空实时博弈的现场——买盘厚实（大买单托底）短期易涨，卖盘压顶（大卖单压制）短期易跌。高频/短线交易员的主战场
     common_types: 买卖盘口不平衡度（bid/ask 量比）、大单净流入、撤单率、封单强度（涨停板封单额/流通盘）
     ashare_notes: 这是高频因子——宪章 §4.5 B-017 明确不做 HFT，3 秒 Tick 用于信号触发/风控而非盘口博弈。要点：项目层面仅取封单强度用于打板监控（BFE-36）和 T+0 风控；不做微秒级盘口预测。频率边界与宪章一致
+  - family_id: expectations
+    name_zh: 一致预期因子
+    name_en: Analyst Expectations
+    one_liner: 用卖方分析师的预期变化选股（预期是领先锚，财报是滞后锚）
+    direction: 做多预期上修/低分歧
+    ashare_effectiveness: ⭐⭐⭐⭐ 强（华泰金工系列 A 股公开实证最完整）
+    definition: 基于券商研报聚合的 PIT 一致预期矩阵（c3_fundamental.consensus_daily，DS-229）构造因子——预期自身怎么变（修正动量/广度）、预期与实际的差（超预期）、认知分歧深度（分歧度）、关注度变化（覆盖度/评级）
+    money_logic: 卖方分析师上调盈利预测后股价倾向漂移（Gleason-Lee 2003 修正后漂移）；预期与实际的差=盈余惊喜（PEAD，Ball-Brown 1968）。财报数据人人同时看到，预期修正的传播有过程——赚认知差传导的钱
+    common_types: 一致预期EP（EXP-01）、修正动量（EXP-02）、修正广度（EXP-03）、异常覆盖（EXP-04）、分歧度（EXP-05）、评级动量（EXP-06）
+    ashare_notes: 华泰单因子测试之九/AI54/基本面量化之二=公式可直译的公开方法论。数据真源=自建研报明细聚合（对标朝阳永续原理，免付费）。要点：研报覆盖 2019 前稀薄（评估 IS 窗 2019 起）；个人账户不可做空——空头腿结论按 FQ-01 同款纪律标注"不可实现，作剔除器弹药"
   combination_discipline:
     multi_factor: 单因子易失效，多因子分散风险——如同招聘看"成绩+竞赛+特长"多维。对应宪章 §3 约束四（策略三维解耦）：因子是"选股信号"维的输入，与组合权重、执行方式解耦
     orthogonality: 同族因子信息冗余（如 5 日反转与 20 日反转高度相关），组合时需去重——对应因子库页"相似组聚类"（GAP-F-38）：同组只留代表因子
@@ -12366,3 +12376,237 @@ factors:
   code_fingerprint: null
   entry_role: "ranking"
   note: "九项齐才出分（缺项 NaN 严格语义）；total_shares 列为 v1.1 为本因子新增"
+- factor_id: "FCT-EXP-001"
+  name: "一致预期EP"
+  name_zh: "一致预期EP（盈利收益率）"
+  aliases: ["consensus_ep"]
+  factor_class: "expectations"
+  formula: "eps_consensus_fy1 / close"
+  params: {"forecast_year": "fy1(>=当年最小预测年)"}
+  inputs: ["c3_fundamental.consensus_daily(DS-229)", "c1_market.kline_daily close"]
+  outputs: ["截面因子值（方向=值大预期收益高）"]
+  alpha_source: "华泰单因子测试之九(2018) 一致预期EP 沪深300 RankIC 6.32% 长期稳定；Ball-Brown 1968 预期锚"
+  frequency: "daily"
+  lookback_period: 1
+  universe: "UNI-RULE-001"
+  benchmark_id: "BMK-INDEX-000300"
+  neutralization: "none"
+  pit_policy: "publish_date(研报发布即得零embargo，consensus_daily 只聚合 publish_date<=trade_date)"
+  module_id: "MOD-L02-001"
+  doc_ref: "docs/_working/2026-09-12-expectation-consumption-design.md §M2+§8预注册"
+  code_path: "src/zephyr/factor/expectations.py"
+  belongs_to_strategies: []
+  variant_of: null
+  status: "candidate"
+  version: "1.0.0"
+  created_at: "2026-09-14"
+  updated_at: "2026-09-14"
+  owner: "MOD-GOVERNANCE"
+  ic: null
+  ir: null
+  decay_halflife: null
+  decay_detection_method: null
+  last_decay_scan_at: null
+  turnover: null
+  capacity: null
+  last_evaluated_at: null
+  evidence: null
+  code_symbol: "src/zephyr/factor/expectations.py::exp01_consensus_ep"
+  code_fingerprint: null
+  entry_role: "ranking"
+  note: "预期条目与在库估值因子的去马甲对照：与 FCT-VAL 系静态估值秩相关>=0.85 则挂 variant_of（预期侧价值=预期变化而非水平）"
+- factor_id: "FCT-EXP-002"
+  name: "修正动量"
+  name_zh: "盈利修正动量"
+  aliases: ["revision_momentum"]
+  factor_class: "expectations"
+  formula: "(eps_consensus_t - eps_consensus_{t-20td})/|eps_consensus_{t-20td}| / max(eps_std_t/|eps_mean_t|, 1e-6)"
+  params: {"k_td": 20, "disp_floor": 1e-06, "forecast_year": "fy1"}
+  inputs: ["c3_fundamental.consensus_daily(DS-229) eps_consensus/eps_std/eps_mean"]
+  outputs: ["截面因子值（方向=值大=上修=预期收益高）"]
+  alpha_source: "华泰 AI54 一致预期变化率 ts_return=最高频构件+DEGREE 分歧度归一改进；Gleason & Lee 2003 修正后价格漂移（高创新性修正更强）"
+  frequency: "daily"
+  lookback_period: 20
+  universe: "UNI-RULE-001"
+  benchmark_id: "BMK-INDEX-000300"
+  neutralization: "none"
+  pit_policy: "publish_date（t 与 t-20td 两个快照日均只含各自时点可见研报，consensus_daily 结构性保证）"
+  module_id: "MOD-L02-001"
+  doc_ref: "docs/_working/2026-09-12-expectation-consumption-design.md §M2+§8预注册"
+  code_path: "src/zephyr/factor/expectations.py"
+  belongs_to_strategies: []
+  variant_of: null
+  status: "candidate"
+  version: "1.0.0"
+  created_at: "2026-09-14"
+  updated_at: "2026-09-14"
+  owner: "MOD-GOVERNANCE"
+  ic: null
+  ir: null
+  decay_halflife: null
+  decay_detection_method: null
+  last_decay_scan_at: null
+  turnover: null
+  capacity: null
+  last_evaluated_at: null
+  evidence: null
+  code_symbol: "src/zephyr/factor/expectations.py::exp02_revision_momentum"
+  code_fingerprint: null
+  entry_role: "ranking"
+  note: "C2 首测因子（文献最强+自建明细数据最独特）；与价格动量因子的相关性对照必做（华泰=剔动量改进，秩相关>=0.85 挂 variant_of）；预注册判据=本文件头 2026-09-12 成文门槛+设计文档 §8（滑点三档压力+can_deploy 与 P0-003 解耦条款）"
+- factor_id: "FCT-EXP-003"
+  name: "修正广度"
+  name_zh: "预期修正广度（上调占比）"
+  aliases: ["revision_breadth"]
+  factor_class: "expectations"
+  formula: "窗口90d内 fy1 上调研报数 / 上调+下调研报数（fy1/fy2 双期）"
+  params: {"window_d": 90}
+  inputs: ["c3_fundamental.research_report(DS-228) 逐报 eps_fy0/fy1/fy2 槽位"]
+  outputs: ["截面因子值（方向=值大=广度上修）"]
+  alpha_source: "华泰基本面量化之二(2024-12) 盈利修正=修正幅度+上调占比；Gleason & Lee 2003"
+  frequency: "daily"
+  lookback_period: 90
+  universe: "UNI-RULE-001"
+  benchmark_id: "BMK-INDEX-000300"
+  neutralization: "none"
+  pit_policy: "publish_date（窗口右端=trade_date 严格截断）"
+  module_id: "MOD-L02-001"
+  doc_ref: "docs/_working/2026-09-12-expectation-consumption-design.md §M2+§8预注册"
+  code_path: "src/zephyr/factor/expectations.py"
+  belongs_to_strategies: []
+  variant_of: null
+  status: "candidate"
+  version: "1.0.0"
+  created_at: "2026-09-14"
+  updated_at: "2026-09-14"
+  owner: "MOD-GOVERNANCE"
+  ic: null
+  ir: null
+  decay_halflife: null
+  decay_detection_method: null
+  last_decay_scan_at: null
+  turnover: null
+  capacity: null
+  last_evaluated_at: null
+  evidence: null
+  code_symbol: "src/zephyr/factor/expectations.py::exp03_revision_breadth"
+  code_fingerprint: null
+  entry_role: "ranking"
+  note: null
+- factor_id: "FCT-EXP-004"
+  name: "异常覆盖"
+  name_zh: "异常研报覆盖度"
+  aliases: ["anomaly_coverage"]
+  factor_class: "expectations"
+  formula: "n_reports/n_orgs 对 log市值+20d动量+20d换手 横截面回归取残差"
+  params: {"window_d": 90}
+  inputs: ["c3_fundamental.consensus_daily(DS-229) n_reports/n_orgs", "c1_market.kline_daily 市值/动量/换手代理"]
+  outputs: ["截面因子值（方向=残差大=关注度异常高）"]
+  alpha_source: "Lee & So 2017 异常覆盖度预测收益；华泰基本面量化之二(2024-12) RankIC 2.34%（报告数+机构数双代理，作者数维度缺）"
+  frequency: "daily"
+  lookback_period: 90
+  universe: "UNI-RULE-001"
+  benchmark_id: "BMK-INDEX-000300"
+  neutralization: "residual(市值+动量+换手回归)"
+  pit_policy: "publish_date"
+  module_id: "MOD-L02-001"
+  doc_ref: "docs/_working/2026-09-12-expectation-consumption-design.md §M2+§8预注册"
+  code_path: "src/zephyr/factor/expectations.py"
+  belongs_to_strategies: []
+  variant_of: null
+  status: "candidate"
+  version: "1.0.0"
+  created_at: "2026-09-14"
+  updated_at: "2026-09-14"
+  owner: "MOD-GOVERNANCE"
+  ic: null
+  ir: null
+  decay_halflife: null
+  decay_detection_method: null
+  last_decay_scan_at: null
+  turnover: null
+  capacity: null
+  last_evaluated_at: null
+  evidence: null
+  code_symbol: "src/zephyr/factor/expectations.py::exp04_anomaly_coverage"
+  code_fingerprint: null
+  entry_role: "ranking"
+  note: "残差化回归的输入因子（市值/动量/换手）本身须 PIT——用 t 日可见 close 派生"
+- factor_id: "FCT-EXP-005"
+  name: "分歧度"
+  name_zh: "分析师分歧度"
+  aliases: ["dispersion"]
+  factor_class: "expectations"
+  formula: "eps_std / |eps_mean|"
+  params: {"forecast_year": "fy1"}
+  inputs: ["c3_fundamental.consensus_daily(DS-229)"]
+  outputs: ["截面因子值（方向=值小=低分歧=预期收益高，负向因子）"]
+  alpha_source: "Diether Malloy Scherbina 2002 高分歧未来收益偏低；兼作 EXP-02 分母（DEGREE 改进法）"
+  frequency: "daily"
+  lookback_period: 1
+  universe: "UNI-RULE-001"
+  benchmark_id: "BMK-INDEX-000300"
+  neutralization: "none"
+  pit_policy: "publish_date"
+  module_id: "MOD-L02-001"
+  doc_ref: "docs/_working/2026-09-12-expectation-consumption-design.md §M2+§8预注册"
+  code_path: "src/zephyr/factor/expectations.py"
+  belongs_to_strategies: []
+  variant_of: null
+  status: "candidate"
+  version: "1.0.0"
+  created_at: "2026-09-14"
+  updated_at: "2026-09-14"
+  owner: "MOD-GOVERNANCE"
+  ic: null
+  ir: null
+  decay_halflife: null
+  decay_detection_method: null
+  last_decay_scan_at: null
+  turnover: null
+  capacity: null
+  last_evaluated_at: null
+  evidence: null
+  code_symbol: "src/zephyr/factor/expectations.py::exp05_dispersion"
+  code_fingerprint: null
+  entry_role: "ranking"
+  note: "负向因子：评估时按 |IC| 判门槛、按符号定向"
+- factor_id: "FCT-EXP-006"
+  name: "评级动量"
+  name_zh: "评级动量（评分制）"
+  aliases: ["rating_momentum"]
+  factor_class: "expectations"
+  formula: "rating_score_mean 的 60td 变化 + 窗口内上调事件计数（7/5/3/2/1 评分制）"
+  params: {"k_td": 60, "score_map": "买入7/增持5/中性持有3/减持卖出1-2/回避2"}
+  inputs: ["c3_fundamental.consensus_daily(DS-229) rating_score_mean/n_buy/n_add/n_neutral"]
+  outputs: ["截面因子值（方向=值大=评级上调动量）"]
+  alpha_source: "华泰基本面量化之二(2024-12) 改进评级 7/5/3/2/1/0 评分 RankIC 2.26%；Jegadeesh et al. 2002 买入评级组合超额"
+  frequency: "daily"
+  lookback_period: 60
+  universe: "UNI-RULE-001"
+  benchmark_id: "BMK-INDEX-000300"
+  neutralization: "none"
+  pit_policy: "publish_date"
+  module_id: "MOD-L02-001"
+  doc_ref: "docs/_working/2026-09-12-expectation-consumption-design.md §M2+§8预注册"
+  code_path: "src/zephyr/factor/expectations.py"
+  belongs_to_strategies: []
+  variant_of: null
+  status: "candidate"
+  version: "1.0.0"
+  created_at: "2026-09-14"
+  updated_at: "2026-09-14"
+  owner: "MOD-GOVERNANCE"
+  ic: null
+  ir: null
+  decay_halflife: null
+  decay_detection_method: null
+  last_decay_scan_at: null
+  turnover: null
+  capacity: null
+  last_evaluated_at: null
+  evidence: null
+  code_symbol: "src/zephyr/factor/expectations.py::exp06_rating_momentum"
+  code_fingerprint: null
+  entry_role: "ranking"
+  note: 
