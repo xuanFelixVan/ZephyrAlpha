@@ -1,0 +1,141 @@
+<section class="page" id="p-factory">
+    <h2 class="page-title">策略生产全景 <span class="badge b-pass">实时映射</span></h2>
+    <div class="page-sub">研究组 · <b>核心：策略生产全景图（<span id="factory-count">—</span> 节点）的原生实时视图——真源 YAML 一改这边自动变（30 秒轮询）</b>· 横向流水线：E0→E9 十环节一行贯通，五车道挂 E1 下方 ｜ 点节点开右侧抽屉看"怎么算的"完整机制+台账成绩</div>
+
+    <div class="card" style="margin-bottom:10px;display:flex;gap:10px;align-items:center;flex-wrap:wrap">
+      <span class="dim" style="font-size:12px">图例</span>
+      <span style="font-size:12px"><span style="display:inline-block;width:10px;height:10px;background:#0f2740;border:1.5px solid #1e5a8f;border-radius:3px;vertical-align:middle"></span> 已建（实锚有模块）</span>
+      <span style="font-size:12px"><span style="display:inline-block;width:10px;height:10px;background:#0e2612;border:1.5px solid #2e7d32;border-radius:3px;vertical-align:middle"></span> 部分建成（人工版实战）</span>
+      <span style="font-size:12px"><span style="display:inline-block;width:10px;height:10px;background:#2a1c0e;border:1.5px dashed #8a4a12;border-radius:3px;vertical-align:middle"></span> 🔴 未建（设计态）</span>
+      <span class="dim" style="font-size:11px">｜ 连线：<span style="color:#44546e">━</span> 主链/车道挂载 <span style="color:#44546e">╌</span> 虚线=反馈环 ｜ 卡内小字=台账成绩（strategy_screen 实时）</span>
+      <input id="factory-srch" placeholder="搜索节点（ID / 名称）…" oninput="factoryFilter(this.value)"
+             style="background:#0d1117;border:1px solid #263042;border-radius:6px;color:var(--text);padding:4px 10px;font-size:12px;width:180px">
+      <span id="factory-mode" onclick="factoryToggleMode()" title="切换 拖动画布 / 文字选择复制（快捷键 Ctrl+Shift+D）"
+            style="cursor:pointer;user-select:none;background:#0d1117;border:1px solid #263042;border-radius:6px;color:var(--text);padding:3px 10px;font-size:12px">✋ 拖动模式</span>
+      <span id="factory-focus" onclick="factoryExitFocus()" title="退出聚焦，还原全景（Esc / 双击空白 同效）"
+            style="display:none;cursor:pointer;user-select:none;background:#0d1117;border:1px solid #3d8bff;border-radius:6px;color:#7db4e8;padding:3px 10px;font-size:12px">🎯 聚焦 <b id="factory-focus-name" style="color:#e2e8f2;font-weight:600">—</b> ✕</span>
+      <span class="dim" style="font-size:11px">滚轮缩放 ｜ 拖动平移 ｜ 点节点=聚焦血统（上游居左·下游居右）｜ Esc/双击空白还原全景</span>
+      <span style="margin-left:auto;font-size:11px" class="dim" id="factory-meta">加载中…</span>
+    </div>
+
+    <!-- 满屏布局：页节=视口减去顶栏46+ticker32+main上下padding，流水线区 flex:1 吃掉全部剩余（同 tdm 先例） -->
+    <div class="factory-fill">
+      <div class="card factory-canvas">
+        <!-- factory-world=缩放平移世界层：滚轮/拖动作用在它上面（transform），画布本体 overflow:hidden 不走原生滚动 -->
+        <div id="factory-world">
+          <svg id="factory-wire"></svg>
+          <div id="factory-tree"></div>
+        </div>
+        <span id="factory-zoom">100% ｜ ✋ 拖动</span>
+      </div>
+      <div class="card" id="factory-drawer"></div>
+    </div>
+</section>
+<style>
+  /* 满屏精确对齐（同 tdm.html 先例照抄）：section 高度=视口-顶栏46- main顶padding8 - ticker32；
+   * :has() 豁免 .main 56px 庄部预留 padding（仅本页生效） */
+  .main:has(#p-factory.active) { padding-bottom: 0; }
+  #p-factory.active { display:flex; flex-direction:column; height:calc(100vh - 86px); }
+  #p-factory .factory-fill { flex:1; min-height:0; display:flex; gap:12px; align-items:stretch; }
+  #p-factory .factory-canvas { flex:1; position:relative; overflow:hidden; cursor:grab; }
+  #p-factory .factory-canvas.dragging { cursor:grabbing; }
+  #p-factory .factory-canvas.select-mode { cursor:text; }
+  #factory-world { position:absolute; left:0; top:0; transform-origin:0 0; }
+  #factory-zoom { position:absolute; top:8px; right:12px; z-index:5; background:rgba(13,17,23,.88); border:1px solid #263042;
+    border-radius:99px; padding:2px 10px; font-size:11px; color:#7d8aa0; pointer-events:none; }
+  #factory-wire { position:absolute; left:0; top:0; pointer-events:none; }
+  #factory-tree { position:relative; padding:8px 4px; }
+  #factory-drawer { width:400px; flex:none; overflow:auto; display:none; }
+  /* 卡片：颜色=施工状态三态（与 TDM 三态色板逐色号对齐，Owner 色语义裁定沿用）：
+   * 蓝=已建 built / 绿=部分建成 partial / 橙虚=未建 pending；
+   * 全部色类显式带 #factory-tree 前缀——否则 ID 基础规则(1-1-0)压过类选择器，状态色全部失效（tdm b20260908-05 实测坑照抄规避） */
+  #factory-tree .tn { position:absolute; border-radius:8px; cursor:pointer; user-select:none; transition:border-color .15s; box-sizing:border-box;
+    border:1.5px solid #263042; background:#0d1117; }
+  #p-factory .factory-canvas.select-mode .tn, #p-factory .factory-canvas.select-mode .tg { user-select:text; cursor:text; }
+  #factory-tree .tn:hover { border-color:#3d8bff; }
+  #factory-tree .tn .tn-n { font-weight:600; color:var(--text); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+  #factory-tree .tn .tn-s { color:#8a94a6; font-size:10.5px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+  #factory-tree .tn .tn-g { color:#8a94a6; display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical;
+    overflow:hidden; white-space:normal; line-height:1.5; }
+  #factory-tree .tn.production { background:#0f2740; border-color:#1e5a8f; }
+  #factory-tree .tn.partial { background:#0e2612; border-color:#2e7d32; }
+  #factory-tree .tn.design { background:#2a1c0e; border-style:dashed; border-color:#8a4a12; }
+  /* 环节卡（主链）与车道卡两级字号：主链 16px / 车道 12.5px——梯度承载层级（同 tdm tn-d 梯度思路） */
+  #factory-tree .tn.tn-stage { padding:10px 13px; }
+  #factory-tree .tn.tn-stage .tn-n { font-size:16px; }
+  #factory-tree .tn.tn-stage .tn-s { font-size:11px; margin-top:3px; }
+  #factory-tree .tn.tn-stage .tn-g { font-size:11.5px; margin-top:3px; color:#b9c6da; }
+  #factory-tree .tn.tn-lane { padding:6px 10px; }
+  #factory-tree .tn.tn-lane .tn-n { font-size:12.5px; }
+  #factory-tree .tn.tn-lane .tn-s { font-size:10px; margin-top:2px; }
+  #factory-tree .tn.tn-lane .tn-g { font-size:10.5px; margin-top:2px; }
+  #factory-tree .tn.hit { border-color:#e6c34c; box-shadow:0 0 0 2px rgba(230,195,76,.25); }
+  #factory-tree .tn.dimmed { opacity:.25; }
+  #factory-tree .tn.sel { outline:2px solid #3d8bff; }
+  /* 聚焦模式（同 tdm）：血统主线外压暗——只动透明度不改三态色语义；悬停提亮=压暗卡片预览 */
+  #factory-tree .tn.fdim { opacity:.12; }
+  #factory-tree .tn.fdim:hover { opacity:.5; }
+  /* 流根标签=树的根部视觉锚点（同 tdm .tg 逐样式照抄）：全图最大字号，一眼锁定图根 */
+  #factory-tree .tg { position:absolute; background:#1a2436; border:1.5px solid #3d8bff; border-radius:10px;
+    padding:12px 18px; font-size:24px; font-weight:700; color:var(--text); user-select:none; white-space:nowrap; z-index:2; }
+  #factory-tree .tg .cnt { color:#7d8aa0; font-weight:400; font-size:14px; margin-left:8px; }
+  #factory-wire path { fill:none; stroke:#2c3a52; stroke-width:1.4; }
+  /* ── 右侧详情抽屉 v2（照抄 tdm 抽屉 v2 分区契约：标题徽标 → 问 → 机制 → 治理键值网格 →
+   * 模块锚 → 台账成绩 → 依据锚 chip 流 → 上/下游导航行 → 设计备注；纯 HTML+CSS）── */
+  #factory-drawer .dr-name { font-size:16px; font-weight:700; color:var(--text); line-height:1.35; }
+  #factory-drawer .dr-id { font-size:11px; color:#7d8aa0; margin-top:3px; }
+  #factory-drawer .dr-badges { display:flex; flex-wrap:wrap; gap:5px; margin:8px 0 0; }
+  #factory-drawer .bdg { font-size:10.5px; line-height:1; padding:3px 8px; border-radius:99px;
+    border:1px solid #263042; color:#8a94a6; white-space:nowrap; }
+  /* 徽标三态=画布卡片同语义同色号（DDT 铁律）：绿 partial / 蓝已建 / 橙虚未建 */
+  #factory-drawer .bdg-partial { color:#7fc98a; border-color:#2e7d32; background:#0e2612; }
+  #factory-drawer .bdg-prod { color:#7db4e8; border-color:#1e5a8f; background:#0f2740; }
+  #factory-drawer .bdg-design { color:#d29a5b; border:1px dashed #8a4a12; background:#2a1c0e; }
+  #factory-drawer .bdg-gray { color:#8a94a6; border-color:#263042; background:#10151d; }
+  #factory-drawer .dr-par { font-size:11px; color:#7d8aa0; margin-top:7px; line-height:1.5; }
+  /* 分区标题：蓝色小标题+右延发丝线（同 tdm） */
+  #factory-drawer .sec { display:flex; align-items:center; gap:8px; font-size:11px; font-weight:700;
+    letter-spacing:.4px; color:#3d8bff; margin:14px 0 6px; }
+  #factory-drawer .sec::after { content:''; flex:1; height:1px; background:#1c2534; }
+  #factory-drawer .sec .cnt { color:#7d8aa0; font-weight:400; }
+  #factory-drawer .txt { font-size:12.5px; line-height:1.7; color:#c6cdd8; word-break:break-word; }
+  #factory-drawer .txt.q { color:#e2e8f2; }
+  /* 键值网格（同 tdm）：禁长句拼接，空值 '—' 留位 */
+  #factory-drawer .kgrid { display:grid; grid-template-columns:44px 1fr; gap:5px 10px; font-size:12px; line-height:1.6; }
+  #factory-drawer .kgrid .k { color:#7d8aa0; }
+  #factory-drawer .kgrid .v { color:#c6cdd8; word-break:break-word; }
+  #factory-drawer .kgrid .v.na { color:#525d70; }
+  /* 引用 chip（同 tdm）：编号(蓝)+中文名，流式排布，hover 亮边+title 全称 */
+  #factory-drawer .chips { display:flex; flex-wrap:wrap; gap:5px; }
+  #factory-drawer .chip { display:inline-flex; align-items:baseline; gap:5px; max-width:100%; font-size:11px;
+    line-height:1.5; background:#10151d; border:1px solid #263042; border-radius:6px; padding:2px 8px; }
+  #factory-drawer .chip i { font-style:normal; color:#5b8fd6; flex:none; }
+  #factory-drawer .chip b { font-weight:500; color:#c6cdd8; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+  #factory-drawer .chip:hover { border-color:#3d8bff; }
+  /* 依据锚轴分组：轴名+计数一行，chip 流另起一行（同 tdm） */
+  #factory-drawer .axis { margin:7px 0; }
+  #factory-drawer .axis-h { font-size:11px; color:#8a94a6; margin-bottom:4px; }
+  #factory-drawer .axis-h b { color:#c6cdd8; font-weight:600; }
+  #factory-drawer .axis-h .cnt { color:#525d70; }
+  /* 上下游节点导航行（同 tdm）：状态点+名称+边型+id，点击跳选 */
+  #factory-drawer .nl { display:flex; align-items:center; gap:7px; padding:3px 6px; margin:2px -6px;
+    border-radius:6px; font-size:12px; cursor:pointer; }
+  #factory-drawer .nl:hover { background:#131a26; }
+  #factory-drawer .nl .dot { width:7px; height:7px; border-radius:2px; flex:none; }
+  #factory-drawer .dot-prod { background:#1e5a8f; }
+  #factory-drawer .dot-partial { background:#2e7d32; }
+  #factory-drawer .dot-design { background:#8a4a12; }
+  #factory-drawer .nl .nl-n { color:#c6cdd8; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+  #factory-drawer .nl .nl-t { color:#525d70; font-size:10px; flex:none; }
+  #factory-drawer .nl .nl-i { margin-left:auto; color:#525d70; font-size:10.5px; flex:none; }
+  /* 设计备注/成绩单引用块（同 tdm .cm）：卡片化引用块，行高 1.65 保长文可读 */
+  #factory-drawer .cm { font-size:11.5px; color:#9aa5b5; line-height:1.65; border-left:2px solid #263042;
+    background:#10151d; border-radius:0 6px 6px 0; padding:5px 8px 5px 9px; margin:5px 0; word-break:break-word; }
+  #factory-drawer .empty { font-size:12px; color:#525d70; line-height:1.6; }
+  /* 代码锚（同 tdm）：module_ref 文件名可点击复制全路径 */
+  #factory-drawer .code-anchor { font-size:11px; color:#8a94a6; line-height:1.6; margin-top:6px;
+    word-break:break-all; }
+  #factory-drawer .code-anchor a { color:#5b8fd6; cursor:pointer; text-decoration:none; }
+  #factory-drawer .code-anchor a:hover { text-decoration:underline; }
+  #factory-drawer .code-anchor.na { color:#525d70; }
+</style>

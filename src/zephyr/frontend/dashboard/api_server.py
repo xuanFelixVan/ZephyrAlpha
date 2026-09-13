@@ -2418,6 +2418,161 @@ def tdm_verdicts() -> dict[str, Any]:
     return {"ok": True, "verdicts": verdicts, "count": len(verdicts)}
 
 
+# ═══════════════ 策略生产全景图/策略工厂（真源 config/strategy_production_map.yaml，图 9 供给端） ═══════════════
+
+_FACTORY_CACHE: dict[str, Any] = {}           # /api/factory mtime 缓存（改 YAML 即失效重算，同 /api/tdm 模式）
+_FACTORY_LEDGER: dict[str, Any] = {"built_at": 0.0, "payload": None}
+_FACTORY_LEDGER_TTL = 300.0                   # 台账统计缓存 5 分钟（台账只增，低频变更）
+# 节点 → strategy_screen 行归属过滤（只读统计；未列出的节点=尚未接管台账行，前端空态留位）。
+# SQL 经 _ch_exec 恒带 params dict → clickhouse_driver 做 % 格式化，LIKE 通配符必须写 %%（与 _SQL_TABLE_FRESH 同款）
+_FACTORY_NODE_FILTERS: dict[str, str] = {
+    "FAC-E1":  "screen_batch LIKE 'C2-intake%%'",                       # 进货台账全量（现阶段只有车道A有货）
+    "FAC-E1A": "screen_batch LIKE 'C2-intake%%'",                       # 车道A=社区货源（C1 人工版 597 条）
+    "FAC-E3":  "screen_batch LIKE 'C4-translated%%'",                   # 翻译件（translated+deferred 同批）
+    "FAC-E4":  "verdict IN ('translated_c4', 'oos_tested')",           # 考试过手=IS 成绩行+OOS 成绩行
+    "FAC-E6":  "verdict = 'failed_obsolete' OR oos_years_decay >= 0.5",  # 入库监控=失效章+年衰减≥0.5 存疑
+}
+_FACTORY_DECAY_SUSPECT = 0.5                  # DDL 注释口径：oos_years_decay>=0.5 判存疑（MOD-BT-078 同源）
+
+
+def _factory_ledger() -> dict[str, Any]:
+    """strategy_screen 台账统计（只读；TTL 缓存）。CH 不可达降级 ok:false——画布照常渲染，成绩区显降级。
+
+    双窗及格判定与 scripts/backtest/strategy_screen_query.py bothwin 同口径只读复算：
+    IS Sharpe>0 且每段 OOS Sharpe>0 且年衰减率<0.5；判定只读不落库（lifecycle 变更属规则册治理动作）。
+    """
+    now = time.time()
+    if _FACTORY_LEDGER["payload"] and now - _FACTORY_LEDGER["built_at"] < _FACTORY_LEDGER_TTL:
+        return _FACTORY_LEDGER["payload"]
+    try:
+        total, uniq = _ch_exec(
+            "SELECT count(), uniqExact(strategy_id) FROM c1_backtest.strategy_screen")[0]
+        batches = [
+            {"batch": b, "verdict": v, "rows": n}
+            for b, v, n in _ch_exec(
+                "SELECT screen_batch, verdict, count() FROM c1_backtest.strategy_screen"
+                " GROUP BY screen_batch, verdict ORDER BY screen_batch, verdict")
+        ]
+        reasons = [
+            {"reason": r, "rows": n}
+            for r, n in _ch_exec(
+                "SELECT verdict_reason, count() FROM c1_backtest.strategy_screen"
+                " WHERE verdict IN ('deferred_c4', 'rejected', 'failed_obsolete')"
+                " GROUP BY verdict_reason ORDER BY count() DESC LIMIT 12")
+        ]
+        is_rows = _ch_exec(
+            "SELECT strategy_id, is_sharpe FROM c1_backtest.strategy_screen"
+            " WHERE screen_batch LIKE 'C4-translated%%' AND verdict = 'translated_c4'")
+        oos_rows = _ch_exec(
+            "SELECT strategy_id, screen_batch, is_sharpe, oos_years_decay"
+            " FROM c1_backtest.strategy_screen WHERE verdict = 'oos_tested' ORDER BY screen_batch")
+        oos_map: dict[str, list[dict[str, Any]]] = {}
+        for sid, batch, sh, decay in oos_rows:
+            oos_map.setdefault(sid, []).append({"batch": batch, "sharpe": sh, "decay": decay})
+        bothwin = []
+        for sid, is_sh in is_rows:
+            segs = oos_map.get(sid, [])
+            if not segs:
+                continue
+            passed = (is_sh or 0) > 0 and all(
+                (s["sharpe"] or 0) > 0 and (s["decay"] is None or s["decay"] < _FACTORY_DECAY_SUSPECT)
+                for s in segs)
+            if passed:
+                bothwin.append({"strategy_id": sid, "is_sharpe": is_sh, "segments": segs})
+        bothwin.sort(key=lambda x: -(x["is_sharpe"] or 0))
+        node_stats: dict[str, Any] = {}
+        for nid, cond in _FACTORY_NODE_FILTERS.items():
+            rows = _ch_exec(
+                "SELECT verdict, count(), max(is_sharpe)"
+                f" FROM c1_backtest.strategy_screen WHERE {cond} GROUP BY verdict")
+            breakdown = [{"verdict": v, "rows": n, "sharpe_max": mx} for v, n, mx in rows]
+            node_stats[nid] = {"total": sum(b["rows"] for b in breakdown), "breakdown": breakdown}
+        out: dict[str, Any] = {
+            "ok": True,
+            "global": {"total": total, "uniq_strategy": uniq, "batches": batches,
+                       "failure_reasons": reasons},
+            "nodes": node_stats,
+            "bothwin": {"gate": "IS>0 且每段样本>0 且年衰减率<0.5",
+                        "tested": len(oos_map), "passed": len(bothwin),
+                        "items": bothwin[:10]},
+            "generated_at": now_utc().isoformat(" ", "seconds"),
+        }
+    except Exception as exc:   # 台账不可达不阻断地图——降级披露，画布零依赖
+        logger.warning("factory ledger query failed: %s", exc)
+        out = {"ok": False, "reason": f"台账不可达: {exc}", "nodes": {}, "global": {},
+               "bothwin": {"tested": 0, "passed": 0, "items": []}}
+    _FACTORY_LEDGER["built_at"] = now
+    _FACTORY_LEDGER["payload"] = out
+    return out
+
+
+@app.get("/api/factory")
+def factory_map() -> dict[str, Any]:
+    """策略生产全景图全量（前端原生渲染真源）——真源=config/strategy_production_map.yaml（图 9 供给端）。
+
+    每请求按 mtime 缓存（改 YAML 即自动生效，无需重启）；payload=nodes+edges+layers+laws+
+    feedback_loops+ref_names（MOD 中文名复用 TDM 翻译源，零硬编码）。
+    消费者=web/features/factory/factory.js（策略工厂页，交互范式学 tdm 页，Owner 2026-09-14 指定）。
+    """
+    p = _REPO / "config" / "strategy_production_map.yaml"
+    mtime = p.stat().st_mtime
+    cached = _FACTORY_CACHE.get("mtime")
+    if cached == mtime and _FACTORY_CACHE.get("payload"):
+        return _FACTORY_CACHE["payload"]
+
+    import yaml as _yaml
+
+    raw = _yaml.safe_load(p.read_text(encoding="utf-8"))
+    nodes_out = []
+    for n in raw.get("nodes", []):
+        note = str(n.get("algo_note_zh") or "").replace("\n", " ").strip()
+        while "。 " in note:
+            note = note.replace("。 ", "。")
+        nodes_out.append({
+            "id": n.get("node_id", ""),
+            "name": n.get("name_zh", ""),
+            "q": n.get("decision_question", ""),
+            "note": note,
+            "stage": n.get("stage"),
+            "node_type": n.get("node_type"),
+            "lane": n.get("lane"),
+            "build_status": n.get("build_status"),
+            "compute_class": n.get("compute_class"),
+            "module_ref": n.get("module_ref"),
+            "data_refs": n.get("data_refs") or [],
+            "design_refs": n.get("design_refs") or [],
+            "store_refs": n.get("store_refs") or [],
+        })
+    payload = {
+        "ok": True,
+        "map_id": raw.get("map_id"),
+        "name_zh": raw.get("name_zh"),
+        "nickname": raw.get("nickname"),
+        "schema_version": raw.get("schema_version"),
+        "laws": raw.get("laws", []),
+        "products": raw.get("products", []),
+        "layers": raw.get("layers", []),
+        "nodes": nodes_out,
+        "edges": raw.get("edges", []),
+        "feedback_loops": raw.get("feedback_loops", []),
+        "ref_names": _tdm_ref_names(),   # MOD-*/策略/数据集中文名翻译真源复用（零硬编码翻译）
+        "generated_at": now_utc().isoformat(" ", "seconds"),
+    }
+    _FACTORY_CACHE["mtime"] = mtime
+    _FACTORY_CACHE["payload"] = payload
+    return payload
+
+
+@app.get("/api/factory/ledger")
+def factory_ledger() -> dict[str, Any]:
+    """工厂台账统计（只读）——strategy_screen 行按环节归属聚合+双窗及格名单+理由码分布。
+
+    消费者=web/features/factory/factory.js（卡片策略数徽标+抽屉「台账成绩」区+顶栏总览条）；
+    TTL 300s 缓存，CH 不可达降级 ok:false（画布照常，成绩区显降级说明）。
+    """
+    return _factory_ledger()
+
+
 # ═══════════════ 产业地图 chainmap（真源 ig_* 七表，depgraph PG 只读；Owner 2026-09-08 三层缩放方案） ═══════════════
 
 _CM_MARKETS = ("all", "cn", "global")   # 市场过滤档（项 4）：all=全部链（基线口径），cn/global=ig_chain.market 单档

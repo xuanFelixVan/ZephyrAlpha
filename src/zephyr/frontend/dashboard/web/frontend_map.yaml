@@ -465,6 +465,27 @@ features:
   file: features/tdm.js
   backend_ref: [module:MOD-L08-001, api:/api/tdm]   # algo_refs/model_refs+ref_names(DAL/ML)=数据域锚定，前端只读渲染
   status: active
+- id: F-FAC-MAP
+  name: 策略工厂全景画布（十环节流水线实时映射，交互照抄 tdm）
+  page: factory
+  module_id: factory-map
+  file: features/factory/factory.js
+  backend_ref: [module:MOD-L08-001, api:/api/factory]   # 真源=config/strategy_production_map.yaml（图 9，校验器 MOD-BT-080）经 /api/factory 投影
+  status: active
+- id: F-FAC-DRAWER
+  name: 节点详情抽屉（问/机制/治理/模块锚/台账成绩/依据锚/上下游导航，DDT 契约）
+  page: factory
+  module_id: factory-map
+  file: features/factory/factory.js
+  backend_ref: [module:MOD-L08-001, api:/api/factory]
+  status: active
+- id: F-FAC-LEDGER
+  name: 台账成绩区（节点策略数徽标+双窗及格名单，读 strategy_screen）
+  page: factory
+  module_id: factory-map
+  file: features/factory/factory.js
+  backend_ref: [module:MOD-L08-001, api:/api/factory/ledger]   # 真源=c1_backtest.strategy_screen（查询口径同 MOD-BT-078 bothwin）
+  status: active
 - id: F-CRYPTOBT-AUTO-01
   name: 净值曲线（演示）
   page: cryptobt
