@@ -10,7 +10,7 @@
 # [STABILITY] evolving
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
-# [ERROR_CONTRACT] 声明文件不可读/解析失败 → exit 1（fail-closed，工具类零静默）；begin 无 old_paths → exit 1
+# [ERROR_CONTRACT] 声明文件解析失败 → exit 2（fail-loud，status/begin 统一防御，红蓝 v3 P2-4 治本；文件不存在返回 [] 属正常）；begin 无 old_paths → exit 1（fail-closed，工具类零静默）
 # [TESTS] tests/governance/commit_gates/test_split_coordination_gate.py（工具部分）
 # [A_module] module_id=MOD-GATE_ENGINE | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
@@ -86,7 +86,14 @@ def _atomic_write_retry(path: Path, text: str) -> None:
 def load_declarations() -> list[dict]:
     if not DECL_PATH.exists():
         return []
-    data = yaml.safe_load(DECL_PATH.read_text(encoding="utf-8"))
+    try:
+        data = yaml.safe_load(DECL_PATH.read_text(encoding="utf-8"))
+    except Exception as e:  # noqa: BLE001 — 红蓝 v3 P2-4：损坏态统一 fail-loud（原 status 裸 traceback 崩/begin 静默失效双副面孔）
+        print(
+            f"FAIL: 协调声明文件损坏（.runtime/coordination/active_splits.yaml），请修复或删除后重试（{type(e).__name__}）",
+            file=sys.stderr,
+        )
+        sys.exit(2)
     return list((data or {}).get("splits") or []) if isinstance(data, dict) else []
 
 
