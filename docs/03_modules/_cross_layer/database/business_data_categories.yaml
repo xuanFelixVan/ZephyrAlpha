@@ -1494,6 +1494,22 @@
   data_source: [internal]
   blueprint: "docs/03_modules/_domain_signal/pattern_event_stats/blueprint.md"
 
+- category_id: market_pattern_win_rate
+  name: "图形形态历史胜率统计（market_pattern_event 前视窗口物化；MOD-SIG-115 胜率加权+REG-PAT-001 evidence 回填的唯一数据源；派生表禁手填）"
+  engine: clickhouse
+  database: c1_market
+  table: market_pattern_win_rate
+  schema_file: schemas/categories/market_pattern_win_rate.py
+  data_type: 成品
+  lifecycle: permanent
+  sla_level: L2
+  enabled: true
+  hard_constraint: "派生统计禁手填；hit_rate 判据=向上:ret>0/向下:ret<0/中性:NULL；n<30 low_sample 消费方按无统计处理"
+  calc_mode: preload
+  frequency: 日频
+  data_source: [internal]
+  blueprint: "docs/03_modules/_domain_signal/pattern_event_stats/blueprint.md"
+
 - category_id: market_sector_fund_flow
   name: "板块级资金流快照（THS即时源，行业+概念，亿元当日累计；分钟粒度=轮询差分）"
   engine: clickhouse
