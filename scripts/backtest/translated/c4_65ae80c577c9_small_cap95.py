@@ -57,7 +57,7 @@ def build(start: str, end: str) -> tuple[pd.DataFrame, pd.DataFrame]:
     for dt in month_first:
         asof = str((pd.Timestamp(dt) - pd.Timedelta(days=1)).date())
         h = fin_history(asof, ("np_ttm", "rev_ttm", "ocf_ttm", "operating_profit_cum",
-                               "equity_incl_minority", "np_cum", "rev_cum"))
+                               "equity_incl_minority", "np_cum", "revenue_cum"))
         if h.empty:
             continue
         latest = h.groupby("symbol").last()

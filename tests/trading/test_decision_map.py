@@ -669,6 +669,11 @@ _GOVERNANCE_EXEMPT = frozenset(
         # schema 字典类（同 field_dictionary 先例）：不入 TDM 决策索引；其强制=
         # tests/industry_graph/test_field_dictionary_alignment.py 四方测试 + INDUSTRY-CHAIN-MAP gate(141) 结构四边
         "industry_graph_field_dictionary.yaml",
+        # io_sector_sws_map.yaml 已于 2026-09-14 登记豁免（D38 移交清偿，原 IO 结构锚会话 1676074961 落地时
+        # 未走登记姿势致 TDM 双套件 5 红）——词表映射类（IO 153 部门→申万 L1 行业桥接，同
+        # industry_graph_field_dictionary 字典先例）：TDM 节点零引用（grep 实证 src/scripts/tests 零消费方），
+        # 消费归属=产业链图谱 ig_io_edge 桥接（IO 结构锚任务线）；豁免卫生由 K3 stale 检查保底
+        "io_sector_sws_map.yaml",
         # risk_tier_registry.yaml 已于 2026-09-12 登记豁免（A5 同步）——治理类（域风险分级与人机门位，
         # R5 human-gate 治理改革交付物），不入 TDM 决策索引
         "risk_tier_registry.yaml",
