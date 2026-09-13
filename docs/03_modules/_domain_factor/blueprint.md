@@ -4,7 +4,7 @@ submodule_path: src/zephyr/factor
 title: "Alpha Factor Core 蓝图+施工图 — 因子工厂·C-027管理+C-009执行双角色"
 doc_type: blueprint
 status: Active
-version: "4.0.16"
+version: "4.0.17"
 layer: L2_domain
 layer_name: alpha_factor
 functional_domain: intelligence
@@ -308,7 +308,7 @@ build_status: production
 
 | 图 | 位置 | 状态 | 链接 |
 |----|------|------|------|
-| 依赖图 (depgraph) | `blueprint_id=MOD-L02-001` 的 130 个 file 节点 | design | `extract_depgraph.py --modules MOD-L02-001` |
+| 依赖图 (depgraph) | `blueprint_id=MOD-L02-001` 的 132 个 file 节点 | design | `extract_depgraph.py --modules MOD-L02-001` |
 | 数据流图 (dataflow) | 23 个 Dataset / 24 个 Job | planned | `apply_dataflowgraph.py --list-datasets` |
 | 决策架构图 (decision) | 0 个决策节点 / 2 个决策层 | N/A | `generate_decision_diagram.py` |
 | 蓝图 (blueprint) | 本文件 | Active | — |
@@ -320,7 +320,7 @@ build_status: production
 | module_id | MOD-L02-001 | MOD-L02-001 | ✅ |
 | domain_id | N/A | N/A | ✅ |
 | build_status | production | production | ✅ |
-| file_count | 130 文件 | 14 文件（§0.1） | ❌ |
+| file_count | 132 文件 | 14 文件（§0.1） | ❌ |
 
 > 冲突时以 depgraph 为准（ARCH-056 + ARCH-MM-001 声明 vs 验证框架）。
 
@@ -1169,6 +1169,7 @@ class FactorMeta(BaseModel):
 | `tests/zephyr/factor/technical_indicators/test_trend.py` | ✅ 已实现 | |
 | `tests/zephyr/factor/technical_indicators/test_volatility.py` | ✅ 已实现 | |
 | `tests/zephyr/factor/technical_indicators/test_volume.py` | ✅ 已实现 | |
+| `tests/zephyr/factor/test_indicator_reader.py` | ✅ 已实现 | |
 
 ### 1.5 路径索引使用指南
 

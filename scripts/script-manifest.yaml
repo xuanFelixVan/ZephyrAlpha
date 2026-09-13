@@ -4,7 +4,7 @@
 manifest_version: 2.0.0
 generated_by: generate_manifest.py (auto-scan)
 generated_at: '2026-09-14'
-total_scripts: 910
+total_scripts: 914
 scripts:
 - name: __init__.py
   path: __init__.py
@@ -592,7 +592,23 @@ scripts:
   dimensions: []
 - name: backtest/compare_state_dualrun.py
   path: backtest/compare_state_dualrun.py
-  description: 每日并排三路：旧 HMM 7 态 dominant（regime_snapshot_history）× 新锚定四档
+  description: from __future__ import annotations
+  domain: test
+  execution_plane: warm-path
+  status: registered
+  timeout_seconds: 60
+  dimensions: []
+- name: backtest/compute_window_gate.py
+  path: backtest/compute_window_gate.py
+  description: 原理（图9 FAC-E0 algo_note + 讨论稿 v4/v5）：回测量是算力成本大头，自研薄调度层
+  domain: test
+  execution_plane: hot-path
+  status: registered
+  timeout_seconds: 60
+  dimensions: []
+- name: backtest/eval_exp_expectations.py
+  path: backtest/eval_exp_expectations.py
+  description: 月度再平衡截面评估：月末交易日，取 consensus_daily fy1（>=当年最小预测年）快照，
   domain: test
   execution_plane: warm-path
   status: registered
@@ -630,6 +646,14 @@ scripts:
   status: registered
   timeout_seconds: 60
   dimensions: []
+- name: backtest/factory_intake_pipeline.py
+  path: backtest/factory_intake_pipeline.py
+  description: 原理（图9 FAC-E1 节点 + 讨论稿 §二）：五车道并发进货，所有货统一卸到进货台账并带
+  domain: test
+  execution_plane: warm-path
+  status: registered
+  timeout_seconds: 60
+  dimensions: []
 - name: backtest/generate_backtest_backlog.py
   path: backtest/generate_backtest_backlog.py
   description: 规范真源：docs/01_policies_and_standards/sop/backtest_system_sop/sop_a_full_map_orchestration.md §1-§3。
@@ -641,6 +665,14 @@ scripts:
 - name: backtest/hypothesis_precheck.py
   path: backtest/hypothesis_precheck.py
   description: 原理（讨论稿 v4/v5：FaVOR 回测前机制验证同构；Owner 原则"主观经验是先验过滤器，
+  domain: test
+  execution_plane: warm-path
+  status: registered
+  timeout_seconds: 60
+  dimensions: []
+- name: backtest/indicator_consumption_demo.py
+  path: backtest/indicator_consumption_demo.py
+  description: 两个场景演示"经 indicator_reader 消费指标列"的标准姿势，后续因子/策略照抄：
   domain: test
   execution_plane: warm-path
   status: registered
@@ -1232,7 +1264,7 @@ scripts:
   dimensions: []
 - name: backtest/translated/c4_valuation_div_high.py
   path: backtest/translated/c4_valuation_div_high.py
-  description: from __future__ import annotations
+  description: '[KNOWLEDGE_EFFECTIVE_FROM] 2026-09-14 | 源=策略原文公开发布日 | 生成=AI 会话（取晚者）'
   domain: test
   execution_plane: warm-path
   status: registered
@@ -1240,7 +1272,7 @@ scripts:
   dimensions: []
 - name: backtest/translated/c4_valuation_pb_low.py
   path: backtest/translated/c4_valuation_pb_low.py
-  description: from __future__ import annotations
+  description: '[KNOWLEDGE_EFFECTIVE_FROM] 2026-09-14 | 源=策略原文公开发布日 | 生成=AI 会话（取晚者）'
   domain: test
   execution_plane: warm-path
   status: registered
@@ -1248,7 +1280,7 @@ scripts:
   dimensions: []
 - name: backtest/translated/c4_valuation_pe_low.py
   path: backtest/translated/c4_valuation_pe_low.py
-  description: from __future__ import annotations
+  description: '[KNOWLEDGE_EFFECTIVE_FROM] 2026-09-14 | 源=策略原文公开发布日 | 生成=AI 会话（取晚者）'
   domain: test
   execution_plane: warm-path
   status: registered
@@ -1256,7 +1288,7 @@ scripts:
   dimensions: []
 - name: backtest/translated/c4_valuation_pe_pb_double.py
   path: backtest/translated/c4_valuation_pe_pb_double.py
-  description: from __future__ import annotations
+  description: '[KNOWLEDGE_EFFECTIVE_FROM] 2026-09-14 | 源=策略原文公开发布日 | 生成=AI 会话（取晚者）'
   domain: test
   execution_plane: warm-path
   status: registered
@@ -1264,7 +1296,7 @@ scripts:
   dimensions: []
 - name: backtest/translated/c4_valuation_pe_zz500.py
   path: backtest/translated/c4_valuation_pe_zz500.py
-  description: from __future__ import annotations
+  description: '[KNOWLEDGE_EFFECTIVE_FROM] 2026-09-14 | 源=策略原文公开发布日 | 生成=AI 会话（取晚者）'
   domain: test
   execution_plane: warm-path
   status: registered
