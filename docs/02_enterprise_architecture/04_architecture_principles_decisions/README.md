@@ -81,10 +81,10 @@ depgraph 节点两态生命周期：`design`（设计态，蓝图阶段代码未
 | 指标 | 值 |
 |------|----|
 | 功能域 / Domains | 74 |
-| 代码节点 / Nodes | 8306 |
+| 代码节点 / Nodes | 8312 |
 | 依赖边 / Edges | 20645 |
 | 孤儿节点 / Orphans | 386 |
-| 运营态占比 / Production ratio | 64.2%（stable+generated） |
+| 运营态占比 / Production ratio | 64.1%（stable+generated） |
 <!-- AUTO-END:project_snapshot -->
 
 > 完整统计见 [project_handbook/07_dependencies.md](project_handbook/07_dependencies.md)。

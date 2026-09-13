@@ -96,8 +96,8 @@ ZephyrAlpha/
 |------|------|
 | `src/zephyr/` | 3029 |
 | `scripts/governance/` | 495 |
-| `tests/` | 3320 |
-| **合计 / Total** | **6844** |
+| `tests/` | 3321 |
+| **合计 / Total** | **6845** |
 <!-- AUTO-END:py_file_total -->
 
 ## 4. 外部权威源（全量明细）
