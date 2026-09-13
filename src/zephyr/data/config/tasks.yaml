@@ -589,6 +589,19 @@ tasks:
   extra:
     description: "研报明细全字段增量（东财研报中心：机构/评级/预测期EPS/PE/PDF链接；一致预期自聚合原料，docs/_working/2026-09-12-research-report-data-plan.md；历史已回补 14.7 万行）"
 
+- task_id: consensus_daily_build
+  table: c3_fundamental.consensus_daily
+  source: internal  # 本地计算（读 c3_fundamental.research_report 窗口聚合，不从外部API拉取）
+  schedule: research_nightly
+  incremental: true
+  date_col: trade_date
+  dependencies: ["research_report_detail_incremental"]    # DAG: 研报明细落库后重建一致预期矩阵（C1.5）
+  capability: fund_consensus_daily
+  symbols:
+  fallback_sources: []    # internal 派生源天然无副源
+  extra:
+    description: "一致预期每日快照重建（C1.5：研报事件流→每股每日×日历年矩阵，EXP 因子族标准输入；PIT=只认 publish_date；增量起点按表内实况推断-重叠窗吸收迟到研报，ReplacingMergeTree 幂等；docs/_working/2026-09-12-expectation-consumption-design.md §M1）"
+
 - task_id: anchored_state_build
   table: c1_backtest.regime_state_anchored
   source: internal  # 本地计算（读 c1_market.kline_index 000300 特征锚定，零拟合零重估）

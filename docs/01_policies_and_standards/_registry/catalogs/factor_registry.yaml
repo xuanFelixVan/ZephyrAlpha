@@ -12127,7 +12127,7 @@ factors:
   turnover: null
   capacity: null
   last_evaluated_at: "2026-09-14"
-  evidence: "SOP-B4 2026-09-14 IS 同款评估 IC=+0.0246 t_p=0.0046 覆盖99.4% 通过晋级门槛；OOS +0.0077 如实；D3 对照=FQ-01 池化秩相关 0.2813<0.85 真双因子不挂 variant_of。SOP-B5 2026-09-14：五分位两端单调（Q1反常偏高中段平，秩相关0.6）；多空价差月均+0.26% t_p=0.238 无条件不显著（弱于FQ-01）；分状态条件IC=r2+0.0263/r1+0.0305/r4+0.0217 强而r3低风险+0.0027弱——状态条件化（剔低风险态）候选，下批验证。SOP-B6 2026-09-14（同款成本五项）：多头Top50 IS超额Sharpe=+0.421（差0.5准入线临门）/OOS=+0.252（比率0.6<0.7），参数稳定高原通过但 IS 准入未过 can_deploy=False——两因子里最接近可部署；状态条件化+调仓频率网格为下批改造候选"
+  evidence: "SOP-B4 2026-09-14 IS 同款评估 IC=+0.0246 t_p=0.0046 覆盖99.4% 通过晋级门槛；OOS +0.0077 如实；D3 对照=FQ-01 池化秩相关 0.2813<0.85 真双因子不挂 variant_of。SOP-B5 2026-09-14：五分位两端单调（Q1反常偏高中段平，秩相关0.6）；多空价差月均+0.26% t_p=0.238 无条件不显著（弱于FQ-01）；分状态条件IC=r2+0.0263/r1+0.0305/r4+0.0217 强而r3低风险+0.0027弱——状态条件化（剔低风险态）候选，下批验证。SOP-B6 2026-09-14（同款成本五项）：多头Top50 IS超额Sharpe=+0.421（差0.5准入线临门）/OOS=+0.252（比率0.6<0.7），参数稳定高原通过但 IS 准入未过 can_deploy=False——两因子里最接近可部署；状态条件化+调仓频率网格为下批改造候选。改造变体评估 2026-09-14（eval_f2_rework_variants.py，超额对 000300）：月频基线 IS+0.421/OOS+0.252/全样本+0.359 = 最优；月频+状态条件化(剔r3转现金) IS+0.161/OOS-0.317（r3 低风险态=上涨市，空仓错过——IC 弱≠持有有害，首版翻译错误）；周频 IS+0.831/OOS-0.521（IS 放大 OOS 崩=频率过拟合样貌）；周频+条件化 +0.59/-0.557。四变体全数否决：FQ-02 保持月频形态，⑥ 症结（OOS 衰减）未解，SOP-B ⑦ 出口2 失败假设留痕（假设=状态条件化可救——已证伪；下次假设：换股票域或与质量因子复合）"
   code_symbol: "src/zephyr/factor/fundamentals.py::fq02_cash_conversion"
   code_fingerprint: null
   entry_role: "ranking"
@@ -12153,7 +12153,7 @@ factors:
   code_path: "src/zephyr/factor/fundamentals.py"
   belongs_to_strategies: []
   variant_of: null
-  status: "candidate"
+  status: "deprecated"
   version: "1.0.0"
   created_at: "2026-09-14"
   updated_at: "2026-09-14"
@@ -12166,7 +12166,7 @@ factors:
   turnover: null
   capacity: null
   last_evaluated_at: "2026-09-14"
-  evidence: "SOP-B4 2026-09-14 failed_eval：IS IC=-0.0144 t_p=0.337 |IC|<0.02 未达晋级门槛，保持 candidate（不删条目）；OOS -0.0133 同向弱——Novy-Marx 毛利率在 2019-2023 A股全市场未显效，留档观察。SOP-B5 分域 2026-09-14：三档全负（小盘-0.0080/中盘-0.0077/大盘-0.0105），分域亦无效——退役候审"
+  evidence: "SOP-B4 2026-09-14 failed_eval：IS IC=-0.0144 t_p=0.337 |IC|<0.02 未达晋级门槛，保持 candidate（不删条目）；OOS -0.0133 同向弱——Novy-Marx 毛利率在 2019-2023 A股全市场未显效，留档观察。SOP-B5 分域 2026-09-14：三档全负（小盘-0.0080/中盘-0.0077/大盘-0.0105），分域亦无效。退役评审 2026-09-14（SOP-B ⑦ 出口3 判死）：④ IC=-0.0144 ns/⑤ 三市值域全负/方向稳定为负——三窗口三域四证据一致无效，判死 deprecated。失败假设留痕：①Novy-Marx 毛利率溢价系美股周期股样本，A股 2019-2023 全市场不成立；②口径差异（我们用 TTM 毛利/总资产，原文献用年化季度毛利）不足以解释符号翻转；③行业中性化后或有效（未试，留待有消费方需求时重启）。排除候选清单：GPOA（本条）、信息质量代理（FCT-FQ-005 无信号候审）；同批存活对照=应计/现金流实现率（experimental）。"
   code_symbol: "src/zephyr/factor/fundamentals.py::fq03_gpoa"
   code_fingerprint: null
   entry_role: "ranking"

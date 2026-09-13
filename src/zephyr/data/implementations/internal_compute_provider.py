@@ -395,6 +395,10 @@ class InternalComputeProvider(IngestProviderBase):
             CapabilityContract("kline_index_calc", supports_symbols_null=True),
             # 财报派生层（F1-M1/DS-230 2026-09-13）：三表对齐+单季+TTM+比率，symbols=null=全市场
             CapabilityContract("financial_derived", supports_symbols_null=True),
+            # 锚定风险四档历史（P0-002 重印批/裁定#229 2026-09-14）：特征锚定零拟合，symbols=null=全市场单标的
+            CapabilityContract("anchored_state", supports_symbols_null=True),
+            # 一致预期矩阵夜间重建（C1.5 2026-09-14）：研报明细→每股每日快照，symbols=null=全市场
+            CapabilityContract("fund_consensus_daily", supports_symbols_null=True),
         ],
         known_issues=[],
     )
@@ -462,7 +466,44 @@ class InternalComputeProvider(IngestProviderBase):
         if payload.table == "c3_fundamental.financial_derived":
             yield from self._fetch_financial_derived(payload)
             return
+        if payload.table == "c1_backtest.regime_state_anchored":
+            yield from self._fetch_anchored_state(payload)
+            return
+        if payload.table == "c3_fundamental.consensus_daily":
+            yield from self._fetch_fund_consensus_daily(payload)
+            return
         yield from self._fetch_technical_indicator(payload)
+
+    def _fetch_anchored_state(self, payload: FetchPayload) -> Iterator[FetchResult]:
+        """锚定风险四档路由分支（anchored_state capability 的命名约定实现，裁定#229 重印批）。
+
+        委托 anchored_state_machine（vol_pct 结构阈值四档，零拟合零重估——态身份跨期恒定）；
+        全量重算幂等（ReplacingMergeTree 同键覆盖）。TDM 生产消费切换（AGG 改读锚定表）
+        的前置=本表每日随 000300 收盘更新。
+        """
+        from zephyr.regime.core.anchored_state_machine import run_compute
+
+        yield from run_compute()
+
+    def _fetch_fund_consensus_daily(self, payload: FetchPayload) -> Iterator[FetchResult]:
+        """一致预期矩阵重建路由分支（fund_consensus_daily capability 命名约定实现，C1.5）。
+
+        委托 consensus_daily_compute（研报事件流→每股每日×日历年快照；PIT=只认 publish_date）。
+        增量起点按表内实况推断（最新快照日-重叠窗，吸收迟到入库的同日研报），刻意不取
+        payload.start——ReplacingMergeTree 同键重建幂等，表状态即真源。
+        夜间挂 research_nightly 档（tasks.yaml consensus_daily_build，
+        DAG 依赖 research_report_detail_incremental）。
+        """
+        from zephyr.data.implementations.consensus_daily_compute import (
+            infer_incremental_start,
+            run_compute,
+        )
+
+        yield from run_compute(
+            symbols=payload.symbols,
+            start=infer_incremental_start(),
+            end=payload.end,
+        )
 
     def _fetch_financial_derived(self, payload: FetchPayload) -> Iterator[FetchResult]:
         """财报派生层路由分支（financial_derived capability 的命名约定实现，F1-M1/DS-230）。

@@ -81,6 +81,17 @@ def run_build(args: argparse.Namespace) -> int:
     return 0
 
 
+def _prev_quarter_end(rp: str) -> str:
+    """报告期 → 上季季末（06-30→03-31；跨年 03-31→上年 12-31 类推）。"""
+    y, m = int(rp[:4]), int(rp[5:7])
+    m2 = m - 3
+    if m2 <= 0:
+        m2 += 12
+        y -= 1
+    qday = {3: "31", 6: "30", 9: "30", 12: "31"}.get(m2, "30")
+    return f"{y:04d}-{m2:02d}-{qday}"
+
+
 def run_check() -> int:
     """实库 PIT 交叉验证：茅台最新派生行的单季营收 vs SQL 现算（H1累计−Q1累计，as-of 衍生公告日）。"""
     from zephyr.data import ch_reader
@@ -109,41 +120,31 @@ def run_check() -> int:
     log.info("校验标的 600519 最新行：%s ann=%s rev_q=%s rev_ttm=%s accrual=%s debt=%s",
              rp, ann, rev_q, rev_ttm, accrual, debt)
 
-    # SQL 现算：单季营收 = Q1→累计本身；Q2+→本期累计−上季累计（各取 ann 时点可见最新版本）
-    if rp[5:7] == "03":
-        sub_sql = (
-            "(SELECT operating_revenue FROM c3_fundamental.income_statement FINAL "
-            " WHERE symbol='600519' AND report_period = toDate('" + rp + "') "
-            " AND announce_date <= toDate('" + ann + "') AND announce_date > toDate('1970-01-02') "
-            " ORDER BY announce_date DESC LIMIT 1)"
-        )
-    else:
-        sub_sql = (
-            "(SELECT operating_revenue FROM c3_fundamental.income_statement FINAL "
-            " WHERE symbol='600519' AND report_period = toDate('" + rp + "') "
-            " AND announce_date <= toDate('" + ann + "') AND announce_date > toDate('1970-01-02') "
-            " ORDER BY announce_date DESC LIMIT 1) "
-            "- "
-            "(SELECT operating_revenue FROM c3_fundamental.income_statement FINAL "
-            " WHERE symbol='600519' AND report_period = toDate('" + rp + "') - INTERVAL 3 MONTH "
-            " AND announce_date <= toDate('" + ann + "') AND announce_date > toDate('1970-01-02') "
-            " ORDER BY announce_date DESC LIMIT 1)"
-        )
-    t3 = ch_reader.query("SELECT " + sub_sql + " FORMAT TSV")
-    sql_rev_q = (t3 or "").strip()
-    if not sql_rev_q or sql_rev_q == "\\N":
-        log.error("CHECK FAIL: SQL 现算不可得（%r）", sql_rev_q)
+    # SQL 现算：单季营收 = Q1→累计本身；Q2+→本期累计−上季累计（各取 ann 时点可见最新版本）。
+    # 两次独立查询+Python 相减（子查询相减经 ch_reader 偶发返回 'None'，拆开稳定）。
+    def _cum_rev(period: str) -> float | None:
+        q = ("SELECT operating_revenue FROM c3_fundamental.income_statement FINAL "
+             " WHERE symbol='600519' AND report_period = toDate('" + period + "') "
+             " AND announce_date <= toDate('" + ann + "') AND announce_date > toDate('1970-01-02') "
+             " ORDER BY announce_date DESC LIMIT 1 FORMAT TSV")
+        v = (ch_reader.query(q) or "").strip()
+        if not v or v == "\\N" or v == "None":
+            return None
+        try:
+            return float(v)
+        except ValueError:
+            return None
+
+    cur_val = _cum_rev(rp)
+    base_val = cur_val if rp[5:7] == "03" else _cum_rev(_prev_quarter_end(rp))
+    if cur_val is None or (rp[5:7] != "03" and base_val is None):
+        log.error("CHECK FAIL: SQL 现算不可得（cur=%r base=%r）", cur_val, base_val)
         return 1
-    try:
-        sql_val = float(sql_rev_q)
-    except ValueError:
-        log.error("CHECK FAIL: SQL 现算不可得（%r）", sql_rev_q)
-        return 1
+    sql_val = cur_val if rp[5:7] == "03" else cur_val - base_val
     if abs(float(rev_q) - sql_val) > max(1.0, abs(sql_val) * 1e-6):
         log.error("MISMATCH: 表内 rev_q=%s vs SQL 现算=%.4f", rev_q, sql_val)
         return 1
     log.info("PIT 交叉验证 OK: 600519 %s rev_q 表内=%.2f SQL=%.2f", rp, float(rev_q), sql_val)
-    log.info("CHECK OK: rows=%s symbols=%s", n_rows, n_sym)
     return 0
 
 
