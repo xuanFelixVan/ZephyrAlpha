@@ -574,6 +574,16 @@ def _enqueue_mode(args, files: list[str], message: str) -> int:
 
 
 def main() -> int:
+    # P2-5 治本（红蓝 v3，2026-09-14）：输出链路强制 UTF-8。病根：管道/重定向场景
+    # Windows Python 默认按 ANSI 代码页（GBK）编码中文门禁消息，采集端（agent
+    # harness/IDE 终端）按 UTF-8 解码 → GBK-AS-UTF8 双重编码乱码（SESSION-REQUIRED
+    # 阻断消息/worktree abort 消息实证）；交互控制台走 WriteConsoleW 不受影响。
+    # errors=replace 防御不可编码序列防崩溃；reconfigure 失败静默降级不阻断主链路。
+    for _stream in (sys.stdout, sys.stderr):
+        try:
+            _stream.reconfigure(encoding="utf-8", errors="replace")
+        except Exception:  # noqa: BLE001 — 编码修复失败永不阻断 commit 主链路
+            pass
     # CAND-GOVSEC-001 ② 翻硬拦（批5b，2026-08-26）：观测期 42h 零误伤（333万 allow /
     # 402 would_block 全测试噪音归因完毕），commit 入口 in-process 删除护栏转正硬拦。
     # 裸删除命中保护区即 DeleteBlockedError；授权通道（safe_rmtree/guard_*）直通。
