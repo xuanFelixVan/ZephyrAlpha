@@ -123,18 +123,56 @@
       if (meta) meta.textContent = d.nodes.length + ' 节点 / ' + d.edges.length + ' 边 · 更新 ' + d.generated_at.slice(5, 16);
       var cnt = document.getElementById('factory-count');   /* 页头节点数=实时真源值，禁硬编码（防节点增减漂移） */
       if (cnt) cnt.textContent = d.nodes.length;
+      updateKpi();   /* 施工状态统计即时可见（漏斗部分等 ledger 回来再填） */
       if (changed) { drawer(); }   /* 真源变了：重开抽屉刷新内容 */
       else if (FAC.sel) { drawer(); }
       if (!view.fitted) fitView();   /* 首载自适应镜头（用户手动缩放后不再打扰） */
-      /* 台账成绩（卡片成绩行+抽屉数据源）：失败降级无成绩行不阻断地图（tdm verdicts 同款套路） */
+      /* 台账成绩（卡片成绩行+漏斗+抽屉数据源）：失败降级无成绩行不阻断地图（tdm verdicts 同款套路） */
       fetch(API_BASE + '/api/factory/ledger').then(function (r) { return r.json(); }).then(function (lg) {
-        if (lg && (lg.ok || lg.reason)) { FAC.ledger = lg; render(); if (FAC.sel) drawer(); }
+        if (lg && (lg.ok || lg.reason)) { FAC.ledger = lg; render(); updateKpi(); if (FAC.sel) drawer(); }
       }).catch(function () { });
     }).catch(function () {
       FAC.busy = false;
       var meta = document.getElementById('factory-meta');
       if (meta) meta.textContent = 'API 断开（面板 API 未启动?）';
     });
+  }
+
+  /* 生产漏斗总览条（v2）：收货→过审→已翻译→考生→双窗及格，全部 ledger 实时值（禁硬编码防漂移）；
+   * 尾部附施工状态统计（图节点现算 4 built/4 partial/7 pending 式）——台账未达时降级显原因 */
+  function updateKpi() {
+    var box = document.getElementById('factory-funnel');
+    if (!box) return;
+    var lg = FAC.ledger;
+    if (!lg || lg.ok === false) {
+      box.textContent = lg && lg.reason ? '台账不可达：' + lg.reason : '台账加载中…';
+    } else {
+      function bd(nid, verdict) {
+        var ns = lg.nodes && lg.nodes[nid];
+        if (!ns) return 0;
+        var hit = (ns.breakdown || []).filter(function (b) { return b.verdict === verdict; })[0];
+        return hit ? hit.rows : 0;
+      }
+      var intake = (lg.nodes && lg.nodes['FAC-E1A'] && lg.nodes['FAC-E1A'].total) || 0;
+      var passed = bd('FAC-E1A', 'screened_in'), translated = bd('FAC-E3', 'translated_c4');
+      var tested = lg.bothwin ? lg.bothwin.tested : 0, win = lg.bothwin ? lg.bothwin.passed : 0;
+      function chip(n, label, pct, cls) {
+        return '<span class="fn' + (cls ? ' ' + cls : '') + '" title="' + label + '"><b>' + n + '</b><i>' + label +
+          (pct != null ? ' · ' + pct + '%' : '') + '</i></span>';
+      }
+      box.innerHTML =
+        chip(intake, '收货') + '<span class="fn-arrow">→</span>' +
+        chip(passed, '过审', intake ? Math.round(passed / intake * 100) : null, 'hot') + '<span class="fn-arrow">→</span>' +
+        chip(translated, '已翻译') + '<span class="fn-arrow">→</span>' +
+        chip(tested, 'OOS考生') + '<span class="fn-arrow">→</span>' +
+        chip(win, '双窗及格', tested ? Math.round(win / tested * 100) : null, 'win');
+    }
+    var bs = document.getElementById('factory-buildstat');
+    if (bs && FAC.data) {
+      var c = { built: 0, partial: 0, pending: 0 };
+      FAC.data.nodes.forEach(function (n) { c[n.build_status] = (c[n.build_status] || 0) + 1; });
+      bs.textContent = '施工 ' + (c.built || 0) + ' 已建 · ' + (c.partial || 0) + ' 部分 · ' + (c.pending || 0) + ' 未建';
+    }
   }
 
   function render() {
@@ -512,6 +550,17 @@
         }).join('') + '<div class="axis-h" style="margin-top:5px">合计 ' + ns.total + ' 行（台账只增，判定书可溯）</div>';
       } else {
         html += '<div class="empty">该环节尚未接管台账行——施工接通 strategy_screen 后自动亮起</div>';
+      }
+      /* 理由码分布（v2）：E1A 筛出理由/E3 挂起失效理由——API 节点级 reasons，比例条一眼看主死因 */
+      if (ns && ns.reasons && ns.reasons.length) {
+        var mx = ns.reasons[0].rows || 1;
+        html += '<div class="axis-h" style="margin-top:9px"><b>理由码分布</b>（' +
+          (n.id === 'FAC-E1A' ? '筛出/击杀' : '挂起/失效') + '主因 Top ' + ns.reasons.length + '）</div>';
+        html += ns.reasons.map(function (r) {
+          return '<div class="rs"><span class="rs-n" title="' + esc(r.reason) + '">' + esc(r.reason) + '</span>' +
+            '<span class="rs-b"><i style="width:' + Math.max(4, Math.round(r.rows / mx * 100)) + '%"></i></span>' +
+            '<span class="rs-c">' + r.rows + '</span></div>';
+        }).join('');
       }
       /* 双窗及格名单（全厂唯一判定权的产出物）：挂 E4 考试咽喉，其余环节不重复展示 */
       if (n.id === 'FAC-E4' && lg.bothwin) {

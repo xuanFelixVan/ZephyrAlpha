@@ -2487,6 +2487,17 @@ def _factory_ledger() -> dict[str, Any]:
                 f" FROM c1_backtest.strategy_screen WHERE {cond} GROUP BY verdict")
             breakdown = [{"verdict": v, "rows": n, "sharpe_max": mx} for v, n, mx in rows]
             node_stats[nid] = {"total": sum(b["rows"] for b in breakdown), "breakdown": breakdown}
+        # 理由码分布（节点级，抽屉条形图数据源）：E1A=筛出理由（C2 批），E3=挂起/失效理由（C4 翻译批）。
+        # batch_like 写 %% —— _ch_exec 恒带 params dict 做 % 格式化（本文件 _FACTORY_NODE_FILTERS 同款坑）
+        for nid, batch_like in (("FAC-E1A", "C2-intake%%"), ("FAC-E3", "C4-translated%%")):
+            node_stats[nid]["reasons"] = [
+                {"reason": r, "rows": n}
+                for r, n in _ch_exec(
+                    "SELECT verdict_reason, count() FROM c1_backtest.strategy_screen"
+                    " WHERE verdict IN ('deferred_c4', 'rejected', 'failed_obsolete')"
+                    f" AND screen_batch LIKE '{batch_like}'"
+                    " GROUP BY verdict_reason ORDER BY count() DESC LIMIT 8")
+            ]
         out: dict[str, Any] = {
             "ok": True,
             "global": {"total": total, "uniq_strategy": uniq, "batches": batches,

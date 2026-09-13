@@ -18,6 +18,13 @@
       <span style="margin-left:auto;font-size:11px" class="dim" id="factory-meta">加载中…</span>
     </div>
 
+    <!-- 生产漏斗总览条（ledger 实时：收货→过审→翻译→考生→及格）+ 施工状态统计（图节点现算） -->
+    <div class="card" style="margin-bottom:10px;display:flex;gap:14px;align-items:center;flex-wrap:wrap">
+      <span class="dim" style="font-size:12px">生产漏斗</span>
+      <span id="factory-funnel" style="display:flex;gap:6px;align-items:center;flex-wrap:wrap;font-size:12px;color:#8a94a6">台账加载中…</span>
+      <span style="margin-left:auto" class="dim" style="font-size:11px" id="factory-buildstat"></span>
+    </div>
+
     <!-- 满屏布局：页节=视口减去顶栏46+ticker32+main上下padding，流水线区 flex:1 吃掉全部剩余（同 tdm 先例） -->
     <div class="factory-fill">
       <div class="card factory-canvas">
@@ -46,6 +53,22 @@
   #factory-wire { position:absolute; left:0; top:0; pointer-events:none; }
   #factory-tree { position:relative; padding:8px 4px; }
   #factory-drawer { width:400px; flex:none; overflow:auto; display:none; }
+  /* 生产漏斗 chip（v2）：环节计数牌+通过率小字；色板全沿既有（蓝过审/绿及格/灰中性，不发明新色） */
+  #p-factory .fn { display:inline-flex; align-items:baseline; gap:5px; background:#10151d; border:1px solid #263042;
+    border-radius:6px; padding:2px 9px; font-size:12px; }
+  #p-factory .fn b { color:#c6cdd8; font-size:13px; }
+  #p-factory .fn i { font-style:normal; color:#7d8aa0; font-size:10.5px; }
+  #p-factory .fn.hot { border-color:#1e5a8f; background:#0f2740; }
+  #p-factory .fn.hot b { color:#7db4e8; }
+  #p-factory .fn.win { border-color:#2e7d32; background:#0e2612; }
+  #p-factory .fn.win b { color:#7fc98a; }
+  #p-factory .fn-arrow { color:#44546e; font-size:11px; }
+  /* 抽屉理由码条形（v2）：名字+计数+比例条，比例条=#263042 底 #1e5a8f 填充 */
+  #factory-drawer .rs { display:flex; align-items:center; gap:7px; font-size:11px; line-height:1.7; }
+  #factory-drawer .rs .rs-n { color:#c6cdd8; flex:none; min-width:150px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+  #factory-drawer .rs .rs-b { flex:1; height:7px; background:#10151d; border-radius:99px; overflow:hidden; }
+  #factory-drawer .rs .rs-b i { display:block; height:100%; background:#1e5a8f; border-radius:99px; }
+  #factory-drawer .rs .rs-c { color:#7d8aa0; flex:none; }
   /* 卡片：颜色=施工状态三态（与 TDM 三态色板逐色号对齐，Owner 色语义裁定沿用）：
    * 蓝=已建 built / 绿=部分建成 partial / 橙虚=未建 pending；
    * 全部色类显式带 #factory-tree 前缀——否则 ID 基础规则(1-1-0)压过类选择器，状态色全部失效（tdm b20260908-05 实测坑照抄规避） */
