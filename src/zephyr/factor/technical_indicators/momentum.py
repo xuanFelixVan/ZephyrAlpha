@@ -5,7 +5,7 @@
 # [CONSUMERS] zephyr.data.implementations.internal_compute_provider（包级 autodiscover 动态接线：internal_compute_provider L545/L1113 延迟导入本包+注册表消费）; sleeve alpha 择时
 # [STARTUP] imported
 # [MATURITY] production
-# [INVARIANTS] 动量类指标 22 个，纯自实现 pandas/numpy；compute→DataFrame 多列输出
+# [INVARIANTS] 动量类指标 31 个，纯自实现 pandas/numpy；compute→DataFrame 多列输出
 # [MODIFY-GUARD] none
 # [STABILITY] evolving
 # [SAFETY] L
@@ -16,9 +16,9 @@
 # [TTL] permanent
 """
 
-动量类技术指标（22 个；2026-09-14 A股标配批+3、批2a +1、批2b +8）。
+动量类技术指标（31 个；2026-09-14 A股标配批+3、批2a +1、批2b +8、批6 +9）。
 
-指标清单：KDJ/RSI/WR/ROC/MTM/CMF/UOS/AO/CMO/StochRSI/BIAS/PSY/LWR/DPO/TSI/SMI/FISHER/KST/CONNORSRSI/QQE/STC/RVGI
+指标清单：KDJ/RSI/WR/ROC/MTM/CMF/UOS/AO/CMO/StochRSI/BIAS/PSY/LWR/DPO/TSI/SMI/FISHER/KST/CONNORSRSI/QQE/STC/RVGI/STOCH/AROON/AROONOSC/BOP/PPO/APO/DX/BRAR/CR
 
 算法对齐通达信：
   - KDJ K/D 用通达信 SMA(X,N,1)=ewm(alpha=1/N, adjust=False)（非标准 EMA alpha=2/(N+1)）
@@ -125,10 +125,10 @@
 #   outputs: RSI Series
 # 层: 输出
 # - id: O1
-#   name_zh: 动量指标 DataFrame（22指标多列）
+#   name_zh: 动量指标 DataFrame（31指标多列）
 #   name_en: momentum indicators DataFrame
-#   intro: KDJ/RSI/WR/ROC/MTM/CMF/UOS/AO/CMO/StochRSI/BIAS/PSY/LWR/DPO 共22个动量指标的多列输出，index 与输入对齐
-#   invariant: 输出列严格等于各 meta.output_columns（kdj_k/d/j、rsi_6/12/24、wr_14、roc_12、mtm_12/mtmma_12、cmf_20、uos、ao、cmo_14、stochrsi、bias_6/12/24、psy_12/psy_ma6、lwr_1/lwr_2、dpo_20、tsi、smi/smi_signal、fisher_9/fisher_sig9、kst/kst_signal、crsi、qqe_14/qqe_rsi_ma、stc、rvgi_10/rvgi_sig）
+#   intro: KDJ/RSI/WR/ROC/MTM/CMF/UOS/AO/CMO/StochRSI/BIAS/PSY/LWR/DPO 共31个动量指标的多列输出，index 与输入对齐
+#   invariant: 输出列严格等于各 meta.output_columns（kdj_k/d/j、rsi_6/12/24、wr_14、roc_12、mtm_12/mtmma_12、cmf_20、uos、ao、cmo_14、stochrsi、bias_6/12/24、psy_12/psy_ma6、lwr_1/lwr_2、dpo_20、tsi、smi/smi_signal、fisher_9/fisher_sig9、kst/kst_signal、crsi、qqe_14/qqe_rsi_ma、stc、rvgi_10/rvgi_sig、stoch_fastk/fastd/slowk/slowd、aroon_up/down、aroonosc、bop、ppo、apo、dx_14、ar_26/br_26、cr_26）
 #   downstream: zephyr.data.implementations.internal_compute_provider（批量计算写入 c1_market.technical_indicator）；sleeve alpha 择时
 # [/ALGO_FLOW]
 #
@@ -164,6 +164,7 @@ from zephyr.factor.technical_indicators.indicator_base import (
     TechnicalIndicatorMeta,
     TechnicalIndicatorRegistry,
 )
+from zephyr.factor.technical_indicators.trend import _di  # noqa: PLC0415 — DX 复用 DMI 的 ±DI
 
 # ---------------------------------------------------------------------------
 # 模块级辅助函数
@@ -883,3 +884,262 @@ class RVGI(TechnicalIndicatorBase):
         rvgi = num / den
         rvgi_signal = rvgi.rolling(window=sig_n).mean()
         return pd.DataFrame({"rvgi_10": rvgi, "rvgi_sig": rvgi_signal}, index=data.index)
+
+
+@TechnicalIndicatorRegistry.register
+class STOCH(TechnicalIndicatorBase):
+    """经典随机振荡器（TA-Lib STOCH+STOCHF 合一，5/3/3/3）。"""
+
+    meta = TechnicalIndicatorMeta(
+        indicator_id="stoch",
+        name="随机振荡器",
+        category="momentum",
+        output_columns=["stoch_fastk", "stoch_fastd", "stoch_slowk", "stoch_slowd"],
+        input_columns=["high", "low", "close"],
+        params={"fastk": 5, "fastd": 3, "slowk": 3, "slowd": 3},
+        version="1.0.0",
+        description="FastK=100(C−LL)/(HH−LL)；fastd=SMA(fastk,3)；slowk=SMA(fastk,3)；slowd=SMA(slowk,3)（TA-Lib 口径，HH=LL 时 FastK 取 50）",
+    )
+
+    def compute(self, data: pd.DataFrame, **kwargs) -> pd.DataFrame:
+        self.validate(data)
+        if data.empty:
+            return pd.DataFrame(columns=self.meta.output_columns)
+        params = self.get_params(**kwargs)
+        fk_n, fd_n, sk_n, sd_n = params["fastk"], params["fastd"], params["slowk"], params["slowd"]
+        hh = data["high"].rolling(window=fk_n).max()
+        ll = data["low"].rolling(window=fk_n).min()
+        rng = hh - ll
+        # HH=LL（一字板等）时 FastK 取中性 50；预热 NaN 保持 NaN
+        fastk = (100 * (data["close"] - ll) / rng).where(rng != 0, 50.0)
+        fastd = fastk.rolling(window=fd_n).mean()
+        slowk = fastk.rolling(window=sk_n).mean()
+        slowd = slowk.rolling(window=sd_n).mean()
+        return pd.DataFrame(
+            {"stoch_fastk": fastk, "stoch_fastd": fastd, "stoch_slowk": slowk, "stoch_slowd": slowd},
+            index=data.index,
+        )
+
+
+@TechnicalIndicatorRegistry.register
+class AROON(TechnicalIndicatorBase):
+    """阿隆指标（Aroon Up/Down，14）。"""
+
+    meta = TechnicalIndicatorMeta(
+        indicator_id="aroon",
+        name="阿隆指标",
+        category="momentum",
+        output_columns=["aroon_up", "aroon_down"],
+        input_columns=["high", "low"],
+        params={"period": 14},
+        version="1.0.0",
+        description="AroonUp=100×(N−距最高价根数)/N；AroonDown=100×(N−距最低价根数)/N",
+    )
+
+    def compute(self, data: pd.DataFrame, **kwargs) -> pd.DataFrame:
+        self.validate(data)
+        if data.empty:
+            return pd.DataFrame(columns=self.meta.output_columns)
+        params = self.get_params(**kwargs)
+        n = params["period"]
+        # 窗口 [t−n..t]（n+1 个）内 argmax/argmin 位置 pos：距当前根数 = n−pos
+        # AroonUp=100×(N−距最高根数)/N = 100×pos_argmax/N（新 High→pos=n→100）
+        pos_hh = data["high"].rolling(window=n + 1).apply(np.argmax, raw=True)
+        pos_ll = data["low"].rolling(window=n + 1).apply(np.argmin, raw=True)
+        aroon_up = 100 * pos_hh / n
+        aroon_down = 100 * pos_ll / n
+        return pd.DataFrame({"aroon_up": aroon_up, "aroon_down": aroon_down}, index=data.index)
+
+
+@TechnicalIndicatorRegistry.register
+class AROONOSC(TechnicalIndicatorBase):
+    """阿隆震荡器（Aroon Oscillator，14）。"""
+
+    meta = TechnicalIndicatorMeta(
+        indicator_id="aroonosc",
+        name="阿隆震荡器",
+        category="momentum",
+        output_columns=["aroonosc"],
+        input_columns=["high", "low"],
+        params={"period": 14},
+        version="1.0.0",
+        description="AroonOsc=AroonUp−AroonDown，值域 [-100,100]，上穿零线看多",
+    )
+
+    def compute(self, data: pd.DataFrame, **kwargs) -> pd.DataFrame:
+        self.validate(data)
+        if data.empty:
+            return pd.DataFrame(columns=self.meta.output_columns)
+        params = self.get_params(**kwargs)
+        n = params["period"]
+        pos_hh = data["high"].rolling(window=n + 1).apply(np.argmax, raw=True)
+        pos_ll = data["low"].rolling(window=n + 1).apply(np.argmin, raw=True)
+        osc = 100 * (pos_hh - pos_ll) / n
+        return pd.DataFrame({"aroonosc": osc}, index=data.index)
+
+
+@TechnicalIndicatorRegistry.register
+class BOP(TechnicalIndicatorBase):
+    """力量平衡（Balance of Power，16 平滑）。"""
+
+    meta = TechnicalIndicatorMeta(
+        indicator_id="bop",
+        name="力量平衡",
+        category="momentum",
+        output_columns=["bop"],
+        input_columns=["open", "high", "low", "close"],
+        params={"period": 16},
+        version="1.0.0",
+        description="原始值=(C−O)/(H−L)（H=L 取 0），SMA 16 平滑；值域 [-1,1] 度量买卖力量",
+    )
+
+    def compute(self, data: pd.DataFrame, **kwargs) -> pd.DataFrame:
+        self.validate(data)
+        if data.empty:
+            return pd.DataFrame(columns=self.meta.output_columns)
+        params = self.get_params(**kwargs)
+        n = params["period"]
+        o, h, l, c = data["open"], data["high"], data["low"], data["close"]
+        raw = ((c - o) / (h - l)).where(h != l, 0.0)
+        bop = raw.rolling(window=n).mean()
+        return pd.DataFrame({"bop": bop}, index=data.index)
+
+
+@TechnicalIndicatorRegistry.register
+class PPO(TechnicalIndicatorBase):
+    """百分比价格振荡器（Percentage Price Oscillator，12/26）。"""
+
+    meta = TechnicalIndicatorMeta(
+        indicator_id="ppo",
+        name="百分比价格振荡器",
+        category="momentum",
+        output_columns=["ppo"],
+        input_columns=["close"],
+        params={"fast": 12, "slow": 26},
+        version="1.0.0",
+        description="PPO=(EMA12−EMA26)/EMA26×100，MACD 的百分比归一变体，跨标的可比",
+    )
+
+    def compute(self, data: pd.DataFrame, **kwargs) -> pd.DataFrame:
+        self.validate(data)
+        if data.empty:
+            return pd.DataFrame(columns=self.meta.output_columns)
+        params = self.get_params(**kwargs)
+        fast_n, slow_n = params["fast"], params["slow"]
+        ema_fast = data["close"].ewm(span=fast_n, adjust=False).mean()
+        ema_slow = data["close"].ewm(span=slow_n, adjust=False).mean()
+        ppo = (ema_fast - ema_slow) / ema_slow * 100
+        return pd.DataFrame({"ppo": ppo}, index=data.index)
+
+
+@TechnicalIndicatorRegistry.register
+class APO(TechnicalIndicatorBase):
+    """绝对价格振荡器（Absolute Price Oscillator，12/26）。"""
+
+    meta = TechnicalIndicatorMeta(
+        indicator_id="apo",
+        name="绝对价格振荡器",
+        category="momentum",
+        output_columns=["apo"],
+        input_columns=["close"],
+        params={"fast": 12, "slow": 26},
+        version="1.0.0",
+        description="APO=EMA12−EMA26（MACD DIF 同式），绝对差值口径（TA-Lib APO）",
+    )
+
+    def compute(self, data: pd.DataFrame, **kwargs) -> pd.DataFrame:
+        self.validate(data)
+        if data.empty:
+            return pd.DataFrame(columns=self.meta.output_columns)
+        params = self.get_params(**kwargs)
+        fast_n, slow_n = params["fast"], params["slow"]
+        apo = data["close"].ewm(span=fast_n, adjust=False).mean() - data["close"].ewm(
+            span=slow_n, adjust=False
+        ).mean()
+        return pd.DataFrame({"apo": apo}, index=data.index)
+
+
+@TechnicalIndicatorRegistry.register
+class DX(TechnicalIndicatorBase):
+    """动向指数（Directional Movement Index，14，复用 DMI 的 ±DI）。"""
+
+    meta = TechnicalIndicatorMeta(
+        indicator_id="dx",
+        name="动向指数",
+        category="momentum",
+        output_columns=["dx_14"],
+        input_columns=["high", "low", "close"],
+        params={"period": 14},
+        version="1.0.0",
+        description="DX=100×|+DI−−DI|/(+DI+−DI)，ADX 的未平滑原料（复用 trend._di）",
+    )
+
+    def compute(self, data: pd.DataFrame, **kwargs) -> pd.DataFrame:
+        self.validate(data)
+        if data.empty:
+            return pd.DataFrame(columns=self.meta.output_columns)
+        params = self.get_params(**kwargs)
+        n = params["period"]
+        pdi, mdi = _di(data["high"], data["low"], data["close"], n)
+        dx = 100 * (pdi - mdi).abs() / (pdi + mdi).where((pdi + mdi) != 0)
+        return pd.DataFrame({f"dx_{n}": dx}, index=data.index)
+
+
+@TechnicalIndicatorRegistry.register
+class BRAR(TechnicalIndicatorBase):
+    """人气意愿指标（BRAR，通达信标配 26）。"""
+
+    meta = TechnicalIndicatorMeta(
+        indicator_id="brar",
+        name="人气意愿指标",
+        category="momentum",
+        output_columns=["ar_26", "br_26"],
+        input_columns=["open", "high", "low", "close"],
+        params={"period": 26},
+        version="1.0.0",
+        description="AR=Σ(H−O)/Σ(O−L)×100（开盘基准人气）；BR=Σmax(0,H−Cp)/Σmax(0,Cp−L)×100（前收基准意愿）",
+    )
+
+    def compute(self, data: pd.DataFrame, **kwargs) -> pd.DataFrame:
+        self.validate(data)
+        if data.empty:
+            return pd.DataFrame(columns=self.meta.output_columns)
+        params = self.get_params(**kwargs)
+        n = params["period"]
+        o, h, l = data["open"], data["high"], data["low"]
+        cp = data["close"].shift(1)
+        ar = (h - o).rolling(window=n).sum() / (o - l).replace(0, np.nan).rolling(window=n).sum() * 100
+        br_num = (h - cp).clip(lower=0).rolling(window=n).sum()
+        br_den = (cp - l).clip(lower=0).replace(0, np.nan).rolling(window=n).sum()
+        br = br_num / br_den * 100
+        return pd.DataFrame({"ar_26": ar, "br_26": br}, index=data.index)
+
+
+@TechnicalIndicatorRegistry.register
+class CR(TechnicalIndicatorBase):
+    """能量指标（CR，中间意愿，通达信标配 26）。"""
+
+    meta = TechnicalIndicatorMeta(
+        indicator_id="cr",
+        name="能量指标",
+        category="momentum",
+        output_columns=["cr_26"],
+        input_columns=["high", "low"],
+        params={"period": 26},
+        version="1.0.0",
+        description="MID=(H+L)/2 前值基准；CR=Σmax(0,H−MIDp)/Σmax(0,MIDp−L)×100（带状能量线）",
+    )
+
+    def compute(self, data: pd.DataFrame, **kwargs) -> pd.DataFrame:
+        self.validate(data)
+        if data.empty:
+            return pd.DataFrame(columns=self.meta.output_columns)
+        params = self.get_params(**kwargs)
+        n = params["period"]
+        h, l = data["high"], data["low"]
+        mid = (h + l) / 2
+        mid_prev = mid.shift(1)
+        up = (h - mid_prev).clip(lower=0)
+        dn = (mid_prev - l).clip(lower=0)
+        cr = up.rolling(window=n).sum() / dn.replace(0, np.nan).rolling(window=n).sum() * 100
+        return pd.DataFrame({f"cr_{n}": cr}, index=data.index)

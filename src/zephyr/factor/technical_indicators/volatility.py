@@ -5,7 +5,7 @@
 # [CONSUMERS] zephyr.data.implementations.internal_compute_provider（包级 autodiscover 动态接线：internal_compute_provider L545/L1113 延迟导入本包+注册表消费）; sleeve alpha 择时
 # [STARTUP] imported
 # [MATURITY] production
-# [INVARIANTS] 波动类指标 11 个，纯自实现 pandas/numpy；compute→DataFrame 多列输出；复用 trend._ema
+# [INVARIANTS] 波动类指标 15 个，纯自实现 pandas/numpy；compute→DataFrame 多列输出；复用 trend._ema
 # [MODIFY-GUARD] none
 # [STABILITY] evolving
 # [SAFETY] L
@@ -18,7 +18,7 @@
 
 波动类技术指标（8 个，v1.0.0 全部施工完成）。
 
-指标清单：ATR/BOLL/Keltner/Donchian/STDDEV/BandWidth/%B/HistVol/NATR/TRANGE/MASSI（批2a+2b 补 TA-Lib 波动组族）
+指标清单：ATR/BOLL/Keltner/Donchian/STDDEV/BandWidth/%B/HistVol/NATR/TRANGE/MASSI（批2a+2b）/PARKINSON/GARMAN_KLASS/ROGERS_SATCHELL/YANG_ZHANG（批6 学术 RV 族）
 
 算法对齐通达信：
   - ATR 通达信用 MA（简单移动平均，非 Wilder's RMA）
@@ -454,3 +454,119 @@ class MASSI(TechnicalIndicatorBase):
         ratio = ema1 / ema2
         massi = ratio.rolling(window=n).sum()
         return pd.DataFrame({f"massi_{n}": massi}, index=data.index)
+
+
+@TechnicalIndicatorRegistry.register
+class PARKINSON(TechnicalIndicatorBase):
+    """Parkinson 波动率（1980，高低价极差估计）。"""
+
+    meta = TechnicalIndicatorMeta(
+        indicator_id="parkinson",
+        name="Parkinson波动率",
+        category="volatility",
+        output_columns=["parkinson_20"],
+        input_columns=["high", "low"],
+        params={"period": 20},
+        version="1.0.0",
+        description="σ²=Σ[ln(H/L)]²/(4ln2·N) 开方×100；只用高低极差（Parkinson 1980, J. Bus.）",
+    )
+
+    def compute(self, data: pd.DataFrame, **kwargs) -> pd.DataFrame:
+        self.validate(data)
+        if data.empty:
+            return pd.DataFrame(columns=self.meta.output_columns)
+        params = self.get_params(**kwargs)
+        n = params["period"]
+        hl2 = np.log(data["high"] / data["low"]) ** 2
+        est = hl2.rolling(window=n).sum() / (4 * np.log(2) * n)
+        return pd.DataFrame({f"parkinson_{n}": np.sqrt(est) * 100}, index=data.index)
+
+
+@TechnicalIndicatorRegistry.register
+class GARMAN_KLASS(TechnicalIndicatorBase):
+    """Garman-Klass 波动率（1980，OHLC 全用，效率≈7.4× close-to-close）。"""
+
+    meta = TechnicalIndicatorMeta(
+        indicator_id="garman_klass",
+        name="Garman-Klass波动率",
+        category="volatility",
+        output_columns=["garman_klass_20"],
+        input_columns=["open", "high", "low", "close"],
+        params={"period": 20},
+        version="1.0.0",
+        description="σ²=mean{0.5ln²(H/L)−(2ln2−1)ln²(C/O)} 开方×100（零漂移假设，忽略隔夜跳空）",
+    )
+
+    def compute(self, data: pd.DataFrame, **kwargs) -> pd.DataFrame:
+        self.validate(data)
+        if data.empty:
+            return pd.DataFrame(columns=self.meta.output_columns)
+        params = self.get_params(**kwargs)
+        n = params["period"]
+        hl = np.log(data["high"] / data["low"])
+        co = np.log(data["close"] / data["open"])
+        term = 0.5 * hl**2 - (2 * np.log(2) - 1) * co**2
+        est = term.rolling(window=n).mean()
+        return pd.DataFrame({f"garman_klass_{n}": np.sqrt(est.clip(lower=0)) * 100}, index=data.index)
+
+
+@TechnicalIndicatorRegistry.register
+class ROGERS_SATCHELL(TechnicalIndicatorBase):
+    """Rogers-Satchell 波动率（1991，漂移无关）。"""
+
+    meta = TechnicalIndicatorMeta(
+        indicator_id="rogers_satchell",
+        name="Rogers-Satchell波动率",
+        category="volatility",
+        output_columns=["rogers_satchell_20"],
+        input_columns=["open", "high", "low", "close"],
+        params={"period": 20},
+        version="1.0.0",
+        description="σ²=mean{ln(H/O)ln(C/O)+ln(L/O)ln(C/O)} 开方×100（漂移独立估计）",
+    )
+
+    def compute(self, data: pd.DataFrame, **kwargs) -> pd.DataFrame:
+        self.validate(data)
+        if data.empty:
+            return pd.DataFrame(columns=self.meta.output_columns)
+        params = self.get_params(**kwargs)
+        n = params["period"]
+        ho = np.log(data["high"] / data["open"])
+        lo = np.log(data["low"] / data["open"])
+        co = np.log(data["close"] / data["open"])
+        term = ho * co + lo * co
+        est = term.rolling(window=n).mean()
+        return pd.DataFrame({f"rogers_satchell_{n}": np.sqrt(est.clip(lower=0)) * 100}, index=data.index)
+
+
+@TechnicalIndicatorRegistry.register
+class YANG_ZHANG(TechnicalIndicatorBase):
+    """Yang-Zhang 波动率（2000，处理隔夜跳空+漂移）。"""
+
+    meta = TechnicalIndicatorMeta(
+        indicator_id="yang_zhang",
+        name="Yang-Zhang波动率",
+        category="volatility",
+        output_columns=["yang_zhang_20"],
+        input_columns=["open", "high", "low", "close"],
+        params={"period": 20},
+        version="1.0.0",
+        description="σ²=σ_o²+kσ_c²+(1−k)σ_rs²，k=0.34/(1.34+(N+1)/(N−1))；唯一同时处理隔夜跳空与漂移（YZ 2000, J. Bus.）",
+    )
+
+    def compute(self, data: pd.DataFrame, **kwargs) -> pd.DataFrame:
+        self.validate(data)
+        if data.empty:
+            return pd.DataFrame(columns=self.meta.output_columns)
+        params = self.get_params(**kwargs)
+        n = params["period"]
+        o, h, l, c = data["open"], data["high"], data["low"], data["close"]
+        sigma_o2 = (np.log(o / o.shift(1)) ** 2).rolling(window=n).mean()
+        sigma_c2 = (np.log(c / o) ** 2).rolling(window=n).mean()
+        ho = np.log(h / o)
+        lo = np.log(l / o)
+        co = np.log(c / o)
+        sigma_rs2 = (ho * co + lo * co).rolling(window=n).mean()
+        k = 0.34 / (1.34 + (n + 1) / (n - 1))
+        est = sigma_o2 + k * sigma_c2 + (1 - k) * sigma_rs2
+        return pd.DataFrame({f"yang_zhang_{n}": np.sqrt(est.clip(lower=0)) * 100}, index=data.index)

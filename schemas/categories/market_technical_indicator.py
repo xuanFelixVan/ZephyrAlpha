@@ -43,7 +43,7 @@ ClickHouse 实际表结构必须与本文件 DDL 一致；结构变更通过 app
 数据来源：
     data_source = 'internal'（纯本地 pandas/numpy 计算，非外部数据源下载）
     输入：c1_market.kline_{period} 的 OHLCV 数据（120min 由 kline_60min 两根聚合）
-    输出：116 个技术指标列（Nullable(Float64)），覆盖 8 类 78 个指标（2026-09-14 批3：Ichimoku 补实现 + 循环族 HT 系 5 指标）
+    输出：134 个技术指标列（Nullable(Float64)），覆盖 8 类 92 个指标（2026-09-14 批6：RV 波动率族+BBI+STOCH 本体+动量清偿+BRAR/CR）
 
 列设计说明：
     所有指标列均为 Nullable(Float64)——预热期无值时为 NULL（不前向填充，避免前视偏差）
@@ -96,6 +96,7 @@ CREATE TABLE IF NOT EXISTS c1_market.technical_indicator
     senkou_span_a Nullable(Float64)  COMMENT '一目先行跨度A(显示位移26,PIT安全)',
     senkou_span_b Nullable(Float64)  COMMENT '一目先行跨度B(52,显示位移26)',
     chikou_span  Nullable(Float64)  COMMENT '一目迟行跨度(计算时点收盘值)',
+    bbi          Nullable(Float64)  COMMENT '多空指数(MA3/6/12/24均值)',
 
     kdj_k        Nullable(Float64)  COMMENT 'KDJ K线',
     kdj_d        Nullable(Float64)  COMMENT 'KDJ D线',
@@ -133,6 +134,20 @@ CREATE TABLE IF NOT EXISTS c1_market.technical_indicator
     stc          Nullable(Float64)  COMMENT 'Schaff趋势周期(23,50,10,3)',
     rvgi_10      Nullable(Float64)  COMMENT '相对活力指数(10)',
     rvgi_sig     Nullable(Float64)  COMMENT 'RVGI信号线(SMA4)',
+    stoch_fastk  Nullable(Float64)  COMMENT '随机振荡FastK(5)',
+    stoch_fastd  Nullable(Float64)  COMMENT '随机振荡FastD(SMA3)',
+    stoch_slowk  Nullable(Float64)  COMMENT '随机振荡SlowK(SMA3)',
+    stoch_slowd  Nullable(Float64)  COMMENT '随机振荡SlowD(SMA3)',
+    aroon_up     Nullable(Float64)  COMMENT 'Aroon上(14)',
+    aroon_down   Nullable(Float64)  COMMENT 'Aroon下(14)',
+    aroonosc     Nullable(Float64)  COMMENT 'Aroon震荡器(14)',
+    bop          Nullable(Float64)  COMMENT '力量平衡(SMA16)',
+    ppo          Nullable(Float64)  COMMENT '百分比价格振荡器(12/26)',
+    apo          Nullable(Float64)  COMMENT '绝对价格振荡器(12/26)',
+    dx_14        Nullable(Float64)  COMMENT '动向指数DX(14)',
+    ar_26        Nullable(Float64)  COMMENT '人气指标AR(26)',
+    br_26        Nullable(Float64)  COMMENT '意愿指标BR(26)',
+    cr_26        Nullable(Float64)  COMMENT '能量指标CR(26)',
     ht_dcperiod  Nullable(Float64)  COMMENT '希尔伯特主导周期(6-50)',
     ht_dcphase   Nullable(Float64)  COMMENT '主导周期相位(度)',
     ht_ip        Nullable(Float64)  COMMENT '同相分量in_phase',
@@ -140,6 +155,10 @@ CREATE TABLE IF NOT EXISTS c1_market.technical_indicator
     ht_sine      Nullable(Float64)  COMMENT '主正弦波',
     ht_leadsine  Nullable(Float64)  COMMENT '超前45度正弦波',
     ht_trendmode Nullable(Float64)  COMMENT '趋势/循环模式(1趋势,0循环)',
+    parkinson_20      Nullable(Float64)  COMMENT 'Parkinson波动率(高低极差)',
+    garman_klass_20   Nullable(Float64)  COMMENT 'Garman-Klass波动率(OHLC)',
+    rogers_satchell_20 Nullable(Float64)  COMMENT 'Rogers-Satchell波动率(漂移无关)',
+    yang_zhang_20     Nullable(Float64)  COMMENT 'Yang-Zhang波动率(隔夜跳空+漂移)',
 
     correl_30      Nullable(Float64)  COMMENT '30日close×volume滚动相关系数',
     beta_30        Nullable(Float64)  COMMENT '30日close对volume滚动beta系数',
@@ -214,7 +233,7 @@ INSERT_COLUMNS = (
     # 趋势类
     "ma_5, ma_10, ma_20, ma_60, ema_12, ema_26, wma_10, dema_12, "
     "macd_dif, macd_dea, macd_hist, adx_14, pdi_14, mdi_14, cci_14, sar, trix, trma, "
-    "dkx_20, dkx_ma10, hma_16, zlema_21, kama_10, vip_14, vim_14, supertrend_10, supertrend_dir, md_14, "
+    "dkx_20, dkx_ma10, hma_16, zlema_21, kama_10, vip_14, vim_14, supertrend_10, supertrend_dir, md_14, bbi, "
     "tenkan_sen, kijun_sen, senkou_span_a, senkou_span_b, chikou_span, "
     # 动量类
     "kdj_k, kdj_d, kdj_j, rsi_6, rsi_12, rsi_24, wr_14, roc_12, mtm_12, mtmma_12, "
@@ -222,7 +241,10 @@ INSERT_COLUMNS = (
     "bias_6, bias_12, bias_24, psy_12, psy_ma6, lwr_1, lwr_2, dpo_20, "
     "tsi, smi, smi_signal, fisher_9, fisher_sig9, kst, kst_signal, crsi, "
     "qqe_14, qqe_rsi_ma, stc, rvgi_10, rvgi_sig, "
+    "stoch_fastk, stoch_fastd, stoch_slowk, stoch_slowd, aroon_up, aroon_down, aroonosc, "
+    "bop, ppo, apo, dx_14, ar_26, br_26, cr_26, "
     "ht_dcperiod, ht_dcphase, ht_ip, ht_qp, ht_sine, ht_leadsine, ht_trendmode, "
+    "parkinson_20, garman_klass_20, rogers_satchell_20, yang_zhang_20, "
     # 统计族
     "correl_30, beta_30, linearreg_14, tsf_14, var_20, "
     # 波动类

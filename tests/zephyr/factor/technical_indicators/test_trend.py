@@ -41,6 +41,7 @@ KAMA = TechnicalIndicatorRegistry.get("kama")
 VORTEX = TechnicalIndicatorRegistry.get("vortex")
 SUPERTREND = TechnicalIndicatorRegistry.get("supertrend")
 MCGINLEY = TechnicalIndicatorRegistry.get("mcginley")
+BBI = TechnicalIndicatorRegistry.get("bbi")
 
 # 期望契约（catalog §2.1）：indicator_id → (name, output_columns)
 EXPECTED = {
@@ -61,10 +62,11 @@ EXPECTED = {
     "vortex": ("涡旋指标", ["vip_14", "vim_14"]),
     "supertrend": ("超级趋势", ["supertrend_10", "supertrend_dir"]),
     "mcginley": ("McGinley动态均线", ["md_14"]),
+    "bbi": ("多空指数", ["bbi"]),
 }
 
 # 已施工算法的指标（version >= 1.0.0）
-IMPLEMENTED = {"ma", "ema", "wma", "dema", "macd", "adx", "dmi", "cci", "sar", "trix", "dkx", "hma", "zlema", "kama", "vortex", "supertrend", "mcginley"}
+IMPLEMENTED = {"ma", "ema", "wma", "dema", "macd", "adx", "dmi", "cci", "sar", "trix", "dkx", "hma", "zlema", "kama", "vortex", "supertrend", "mcginley", "bbi"}
 # 仍为骨架的指标（compute 抛 NotImplementedError）
 SKELETON = set(EXPECTED) - IMPLEMENTED
 
@@ -81,7 +83,7 @@ class TestTrendRegistered:
             assert iid in metas, f"趋势指标 '{iid}' 未注册"
 
     def test_count(self):
-        assert len(TechnicalIndicatorRegistry.list_by_category("trend")) == len(EXPECTED) == 17
+        assert len(TechnicalIndicatorRegistry.list_by_category("trend")) == len(EXPECTED) == 18
 
 
 class TestTrendMetaContract:
@@ -779,3 +781,28 @@ class TestMcGinleyNumeric:
         closes = df["close"].to_numpy()
         valid = ~np.isnan(pair)
         assert (pair[valid][1:] < closes[valid][1:]).all()  # 首行 md=C，其余在价格下方
+
+
+class TestBbiNumeric:
+    def test_constant_price_constant_line(self):
+        df = _make_ohlcv(40)
+        df["close"] = 100.0
+        result = BBI().compute(df)
+        assert (result["bbi"].dropna() == 100.0).all()
+
+    def test_manual_four_ma_average(self):
+        df = _make_ohlcv(40)
+        result = BBI().compute(df)
+        expected = (
+            df["close"].rolling(3).mean()
+            + df["close"].rolling(6).mean()
+            + df["close"].rolling(12).mean()
+            + df["close"].rolling(24).mean()
+        ) / 4
+        np.testing.assert_allclose(result["bbi"].dropna(), expected.dropna(), rtol=1e-12)
+
+    def test_warmup_24(self):
+        df = _make_ohlcv(40)
+        result = BBI().compute(df)
+        assert result["bbi"].iloc[:23].isna().all()
+        assert result["bbi"].iloc[23:].notna().all()

@@ -35,6 +35,10 @@ HISTVOL = TechnicalIndicatorRegistry.get("histvol")
 NATR = TechnicalIndicatorRegistry.get("natr")
 TRANGE = TechnicalIndicatorRegistry.get("trange")
 MASSI = TechnicalIndicatorRegistry.get("massi")
+PARKINSON = TechnicalIndicatorRegistry.get("parkinson")
+GARMAN_KLASS = TechnicalIndicatorRegistry.get("garman_klass")
+ROGERS_SATCHELL = TechnicalIndicatorRegistry.get("rogers_satchell")
+YANG_ZHANG = TechnicalIndicatorRegistry.get("yang_zhang")
 
 # 期望契约（catalog §2.3）：indicator_id → (name, output_columns)
 EXPECTED = {
@@ -49,6 +53,10 @@ EXPECTED = {
     "natr": ("归一化真实波幅", ["natr_14"]),
     "trange": ("真实波幅", ["trange"]),
     "massi": ("质量指数", ["massi_25"]),
+    "parkinson": ("Parkinson波动率", ["parkinson_20"]),
+    "garman_klass": ("Garman-Klass波动率", ["garman_klass_20"]),
+    "rogers_satchell": ("Rogers-Satchell波动率", ["rogers_satchell_20"]),
+    "yang_zhang": ("Yang-Zhang波动率", ["yang_zhang_20"]),
 }
 
 # 全部已实现
@@ -83,7 +91,7 @@ class TestVolatilityRegistered:
             assert iid in metas, f"波动指标 '{iid}' 未注册"
 
     def test_count(self):
-        assert len(TechnicalIndicatorRegistry.list_by_category("volatility")) == len(EXPECTED) == 11
+        assert len(TechnicalIndicatorRegistry.list_by_category("volatility")) == len(EXPECTED) == 15
 
 
 class TestVolatilityMetaContract:
@@ -497,3 +505,43 @@ class TestMassiNumeric:
         # EMA 无预热 NaN，唯一窗口来自 rolling(25)
         assert result["massi_25"].iloc[:24].isna().all()
         assert result["massi_25"].iloc[24:].notna().all()
+
+
+# ===========================================================================
+# 2026-09-14 批 6：学术 RV 族数值正确性
+# ===========================================================================
+
+
+class TestRvFamilyNumeric:
+    def _flat(self, n=40, o=100.0, h=101.0, l=99.0, c=100.0):
+        df = _make_ohlcv(n)
+        df["open"], df["high"], df["low"], df["close"] = o, h, l, c
+        return df
+
+    def test_all_nonnegative_and_warmup(self):
+        df = _make_ohlcv(40)
+        for cls in (PARKINSON, GARMAN_KLASS, ROGERS_SATCHELL, YANG_ZHANG):
+            result = cls().compute(df)
+            assert (result.iloc[:, 0].dropna() >= 0).all()
+
+    def test_parkinson_known_value(self):
+        """恒定区间 H=101/L=99 → ln(H/L)²=(ln(101/99))²；日频 σ=sqrt(sum/(4ln2·N))×100。"""
+        df = self._flat(30)
+        result = PARKINSON().compute(df)
+        x = np.log(101.0 / 99.0)
+        expected = np.sqrt(x**2 / (4 * np.log(2))) * 100
+        assert result["parkinson_20"].dropna().iloc[-1] == pytest.approx(expected, rel=1e-10)
+
+    def test_gk_zero_when_oc_constant(self):
+        """C=O 恒定 → ln(C/O)=0，GK 只剩 0.5ln²(H/L) 项。"""
+        df = self._flat(30, o=100.0, h=101.0, l=99.0, c=100.0)
+        result = GARMAN_KLASS().compute(df)
+        x = np.log(101.0 / 99.0)
+        expected = np.sqrt(0.5 * x**2) * 100
+        assert result["garman_klass_20"].dropna().iloc[-1] == pytest.approx(expected, rel=1e-10)
+
+    def test_yz_between_reasonable_bounds(self):
+        df = _make_ohlcv(60)
+        result = YANG_ZHANG().compute(df)
+        assert (result["yang_zhang_20"].dropna() >= 0).all()
+        assert result["yang_zhang_20"].dropna().max() < 100

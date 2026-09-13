@@ -45,6 +45,15 @@ CONNORSRSI = TechnicalIndicatorRegistry.get("connorsrsi")
 QQE = TechnicalIndicatorRegistry.get("qqe")
 STC = TechnicalIndicatorRegistry.get("stc")
 RVGI = TechnicalIndicatorRegistry.get("rvgi")
+STOCH = TechnicalIndicatorRegistry.get("stoch")
+AROON = TechnicalIndicatorRegistry.get("aroon")
+AROONOSC = TechnicalIndicatorRegistry.get("aroonosc")
+BOP = TechnicalIndicatorRegistry.get("bop")
+PPO = TechnicalIndicatorRegistry.get("ppo")
+APO = TechnicalIndicatorRegistry.get("apo")
+DX = TechnicalIndicatorRegistry.get("dx")
+BRAR = TechnicalIndicatorRegistry.get("brar")
+CR = TechnicalIndicatorRegistry.get("cr")
 
 # 期望契约（catalog §2.2）
 EXPECTED = {
@@ -70,6 +79,15 @@ EXPECTED = {
     "qqe": ("QQE", ["qqe_14", "qqe_rsi_ma"]),
     "stc": ("Schaff趋势周期", ["stc"]),
     "rvgi": ("相对活力指数", ["rvgi_10", "rvgi_sig"]),
+    "stoch": ("随机振荡器", ["stoch_fastk", "stoch_fastd", "stoch_slowk", "stoch_slowd"]),
+    "aroon": ("阿隆指标", ["aroon_up", "aroon_down"]),
+    "aroonosc": ("阿隆震荡器", ["aroonosc"]),
+    "bop": ("力量平衡", ["bop"]),
+    "ppo": ("百分比价格振荡器", ["ppo"]),
+    "apo": ("绝对价格振荡器", ["apo"]),
+    "dx": ("动向指数", ["dx_14"]),
+    "brar": ("人气意愿指标", ["ar_26", "br_26"]),
+    "cr": ("能量指标", ["cr_26"]),
 }
 
 IMPLEMENTED = set(EXPECTED)
@@ -98,7 +116,7 @@ class TestMomentumRegistered:
             assert iid in metas, f"动量指标 '{iid}' 未注册"
 
     def test_count(self):
-        assert len(TechnicalIndicatorRegistry.list_by_category("momentum")) == len(EXPECTED) == 22
+        assert len(TechnicalIndicatorRegistry.list_by_category("momentum")) == len(EXPECTED) == 31
 
 
 class TestMomentumMetaContract:
@@ -626,3 +644,104 @@ class TestBatch2bMomentumNumeric:
             df[c] = 100.0
         result = RVGI().compute(df)
         assert (result["rvgi_10"].dropna().abs() < 1e-9).all()
+
+
+# ===========================================================================
+# 2026-09-14 批 6：STOCH/AROON/AROONOSC/BOP/PPO/APO/DX/BRAR/CR
+# ===========================================================================
+
+
+class TestStochNumeric:
+    def test_uptrend_fastk_100(self):
+        df = _make_ohlcv(30)
+        rising = np.linspace(100, 130, 30)
+        df["high"] = rising + 0.5
+        df["low"] = rising - 0.5
+        df["close"] = df["high"]  # 收在窗口最高 → FastK=100（浮点 ULP 容差）
+        result = STOCH().compute(df)
+        np.testing.assert_allclose(result["stoch_fastk"].dropna(), 100.0)
+
+    def test_flat_price_fastk_50(self):
+        df = _make_ohlcv(30)
+        df["close"] = 100.0
+        df["high"] = 100.0
+        df["low"] = 100.0
+        result = STOCH().compute(df)
+        assert (result["stoch_fastk"].dropna() == 50.0).all()
+
+    def test_range(self):
+        df = _make_ohlcv(40)
+        result = STOCH().compute(df)
+        for col in ("stoch_fastk", "stoch_fastd", "stoch_slowk", "stoch_slowd"):
+            assert result[col].dropna().between(0, 100).all()
+
+
+class TestAroonNumeric:
+    def test_new_high_up_100(self):
+        df = _make_ohlcv(30)
+        rising = np.linspace(100, 130, 30)
+        df["high"] = rising
+        df["low"] = rising - 1.0
+        result = AROON().compute(df)
+        assert (result["aroon_up"].dropna() == 100.0).all()
+        assert (result["aroon_down"].dropna() == 0.0).all()
+
+    def test_osc_identity(self):
+        df = _make_ohlcv(40)
+        result = AROONOSC().compute(df)
+        aroon = AROON().compute(df)
+        np.testing.assert_allclose(
+            result["aroonosc"].dropna(),
+            (aroon["aroon_up"] - aroon["aroon_down"]).reindex(result["aroonosc"].dropna().index),
+            rtol=1e-10,
+        )
+
+
+class TestBopPpoApoDxNumeric:
+    def test_bop_constant_doji_zero(self):
+        df = _make_ohlcv(30)
+        df["open"] = df["close"] = 100.0
+        df["high"] = 101.0
+        df["low"] = 99.0
+        result = BOP().compute(df)
+        assert (result["bop"].dropna() == 0.0).all()
+
+    def test_bop_range(self):
+        result = BOP().compute(_make_ohlcv(40))
+        assert result["bop"].dropna().abs().max() <= 1.0
+
+    def test_ppo_apo_relation(self):
+        df = _make_ohlcv(60)
+        ppo = PPO().compute(df)["ppo"]
+        apo = APO().compute(df)["apo"]
+        ema_slow = df["close"].ewm(span=26, adjust=False).mean()
+        np.testing.assert_allclose(ppo.dropna(), (apo / ema_slow * 100).reindex(ppo.dropna().index), rtol=1e-10)
+
+    def test_dx_range_and_matches_dmi(self):
+        df = _make_ohlcv(60)
+        result = DX().compute(df)
+        assert result["dx_14"].dropna().between(0, 100).all()
+
+
+class TestBrarCrNumeric:
+    def test_constant_price_all_100(self):
+        df = _make_ohlcv(40)
+        df["open"] = df["high"] = df["low"] = df["close"] = 100.0
+        result = BRAR().compute(df)
+        np.testing.assert_allclose(result["ar_26"].dropna(), 0.0)
+        np.testing.assert_allclose(result["br_26"].dropna(), 0.0)
+
+    def test_cr_symmetric_mid(self):
+        df = _make_ohlcv(40)
+        df["high"] = 101.0
+        df["low"] = 99.0
+        result = CR().compute(df)
+        assert (result["cr_26"].dropna() == 100.0).all()
+
+    def test_ar_known_value(self):
+        df = _make_ohlcv(30)
+        df["open"] = 100.0
+        df["high"] = 102.0
+        df["low"] = 98.0
+        result = BRAR().compute(df)
+        np.testing.assert_allclose(result["ar_26"].dropna(), 100.0)

@@ -20,7 +20,7 @@ name: Technical Indicator Registry
 name_zh: 技术指标注册表
 description: >-
   技术指标唯一真源（SSoT）。登记全部纯 OHLCV 计算指标（编号/公式/参数/输入输出列/预热期/状态/代码位置），
-  8 大类 78 指标 116 输出列（对齐 16 号 §6.1-6.6 + 代码 src/zephyr/factor/technical_indicators/ 7 个 .py，2026-09-14 A股标配批+3/趋势+1/统计族+4：BIAS/PSY/LWR/DKX/CORREL/BETA/LINEARREG+TSF/ROLLVAR；批2a+8：HMA/ZLEMA/KAMA/VORTEX/SUPERTREND/DPO/NATR/TRANGE；批2b+16：TSI/SMI/FISHER/KST/CONNORSRSI/QQE/STC/RVGI/MCGINLEY/MASSI/VWMA/ADOSC/EOM/KVO/NVI/PVI；批3：Ichimoku 补实现（IND-COMP-001 candidate→active）+ 循环族 HT 系 5 指标（MOD-L02-029 cycle.py）；
+  8 大类 92 指标 135 输出列（对齐 16 号 §6.1-6.6 + 代码 src/zephyr/factor/technical_indicators/ 7 个 .py，2026-09-14 A股标配批+3/趋势+1/统计族+4：BIAS/PSY/LWR/DKX/CORREL/BETA/LINEARREG+TSF/ROLLVAR；批2a+8：HMA/ZLEMA/KAMA/VORTEX/SUPERTREND/DPO/NATR/TRANGE；批2b+16：TSI/SMI/FISHER/KST/CONNORSRSI/QQE/STC/RVGI/MCGINLEY/MASSI/VWMA/ADOSC/EOM/KVO/NVI/PVI；批3：Ichimoku 补实现（IND-COMP-001 candidate→active）+ 循环族 HT 系 5 指标（MOD-L02-029 cycle.py）；批6：RV 波动率族 4+BBI+STOCH 本体+动量清偿（AROON/AROONOSC/BOP/PPO/APO/DX）+BRAR/CR 能量族共 14 指标（挖矿立卡 1/2/3+批5 增补全清偿）；
   数值正确性由 243 测试用例 + Registry↔DDL 双向交叉校验锁定）。
   全指标覆盖 9 周期（1min/5min/15min/30min/60min/120min/日/周/月，120min 由 60min 两根聚合），
   存储单表 c1_market.technical_indicator 按 (period, toYYYYMM(trade_date)) 分区。
@@ -37,7 +37,7 @@ last_updated: '2026-08-15'
 related_arch: '#ARCH-BREG-001'
 unique_key:
 - indicator_id
-entry_count: 78
+entry_count: 92
 
 entry_schema:
   indicator_id: str              # IND-{CLASS}-{NNN}，如 IND-TREND-001
@@ -107,7 +107,40 @@ indicators:
   code_symbol: null
   code_fingerprint: null
 
-# ══════════════ 趋势类 trend（17 指标 / 28 列，MOD-L02-021 trend.py，doc §6.1）══════════════
+- indicator_id: IND-TREND-018
+  name: BBI
+  name_zh: 多空指数
+  aliases: ["Bull and Bear Index"]
+  indicator_class: trend
+  formula: BBI=(MA3+MA6+MA12+MA24)/4
+  params: {periods: [3, 6, 12, 24]}
+  inputs: [close]
+  outputs: [bbi]
+  warmup_period: 24
+  computation_mode: vectorized
+  module_id: MOD-L02-021
+  doc_ref: 16_technical_indicator_catalog.md §6.1
+  code_path: src/zephyr/factor/technical_indicators/trend.py
+  used_by_factors: []
+  status: active
+  version: 1.0.0
+  created_at: '2026-09-14'
+  updated_at: '2026-09-14'
+  owner: MOD-GOVERNANCE
+  primary_timeframe: "daily"
+  applicable_timeframes: ["1min", "5min", "15min", "30min", "60min", "120min", "daily", "weekly", "monthly"]
+  regime_valid: []
+  regime_invalid: []
+  direction: "neutral"
+  entry_role: "state"
+  applies_to: []
+  tags: ["趋势", "均线", "指标"]
+  algorithm_status: "quantized"
+  evidence: ""
+  code_symbol: null
+  code_fingerprint: null
+
+# ══════════════ 趋势类 trend（18 指标 / 29 列，MOD-L02-021 trend.py，doc §6.1）══════════════
 - indicator_id: IND-TREND-001
   name: MA
   name_zh: 简单移动平均
@@ -891,7 +924,304 @@ indicators:
   code_symbol: null
   code_fingerprint: null
 
-# ══════════════ 动量类 momentum（22 指标 / 36 列，MOD-L02-019 momentum.py，doc §6.2）══════════════
+- indicator_id: IND-MOM-023
+  name: STOCH
+  name_zh: 随机振荡器
+  aliases: ["Stochastic Oscillator", "Stoch"]
+  indicator_class: momentum
+  formula: FastK=100(C−LL5)/(HH5−LL5)（HH=LL 取 50）；fastd=SMA(fastk,3)；slowk=SMA(fastk,3)；slowd=SMA(slowk,3)（TA-Lib STOCH+STOCHF 合一）
+  params: {fastk: 5, fastd: 3, slowk: 3, slowd: 3}
+  inputs: [high, low, close]
+  outputs: [stoch_fastk, stoch_fastd, stoch_slowk, stoch_slowd]
+  warmup_period: 9
+  computation_mode: vectorized
+  module_id: MOD-L02-019
+  doc_ref: 16_technical_indicator_catalog.md §6.2
+  code_path: src/zephyr/factor/technical_indicators/momentum.py
+  used_by_factors: []
+  status: active
+  version: 1.0.0
+  created_at: '2026-09-14'
+  updated_at: '2026-09-14'
+  owner: MOD-GOVERNANCE
+  primary_timeframe: "daily"
+  applicable_timeframes: ["1min", "5min", "15min", "30min", "60min", "120min", "daily", "weekly", "monthly"]
+  regime_valid: []
+  regime_invalid: []
+  direction: "neutral"
+  entry_role: "state"
+  applies_to: []
+  tags: ["动量", "超买", "超跌", "指标"]
+  algorithm_status: "quantized"
+  evidence: ""
+  code_symbol: null
+  code_fingerprint: null
+
+- indicator_id: IND-MOM-024
+  name: AROON
+  name_zh: 阿隆指标
+  aliases: ["Aroon Up/Down"]
+  indicator_class: momentum
+  formula: AroonUp=100×pos_argmax/N；AroonDown=100×pos_argmin/N（窗口 [t−N..t] 内极值位置）
+  params: {period: 14}
+  inputs: [high, low]
+  outputs: [aroon_up, aroon_down]
+  warmup_period: 14
+  computation_mode: vectorized
+  module_id: MOD-L02-019
+  doc_ref: 16_technical_indicator_catalog.md §6.2
+  code_path: src/zephyr/factor/technical_indicators/momentum.py
+  used_by_factors: []
+  status: active
+  version: 1.0.0
+  created_at: '2026-09-14'
+  updated_at: '2026-09-14'
+  owner: MOD-GOVERNANCE
+  primary_timeframe: "daily"
+  applicable_timeframes: ["1min", "5min", "15min", "30min", "60min", "120min", "daily", "weekly", "monthly"]
+  regime_valid: []
+  regime_invalid: []
+  direction: "neutral"
+  entry_role: "state"
+  applies_to: []
+  tags: ["动量", "趋势", "指标"]
+  algorithm_status: "quantized"
+  evidence: ""
+  code_symbol: null
+  code_fingerprint: null
+
+- indicator_id: IND-MOM-025
+  name: AROONOSC
+  name_zh: 阿隆震荡器
+  aliases: ["Aroon Oscillator"]
+  indicator_class: momentum
+  formula: AroonOsc=AroonUp−AroonDown，值域 [-100,100]
+  params: {period: 14}
+  inputs: [high, low]
+  outputs: [aroonosc]
+  warmup_period: 14
+  computation_mode: vectorized
+  module_id: MOD-L02-019
+  doc_ref: 16_technical_indicator_catalog.md §6.2
+  code_path: src/zephyr/factor/technical_indicators/momentum.py
+  used_by_factors: []
+  status: active
+  version: 1.0.0
+  created_at: '2026-09-14'
+  updated_at: '2026-09-14'
+  owner: MOD-GOVERNANCE
+  primary_timeframe: "daily"
+  applicable_timeframes: ["1min", "5min", "15min", "30min", "60min", "120min", "daily", "weekly", "monthly"]
+  regime_valid: []
+  regime_invalid: []
+  direction: "neutral"
+  entry_role: "state"
+  applies_to: []
+  tags: ["动量", "趋势", "指标"]
+  algorithm_status: "quantized"
+  evidence: ""
+  code_symbol: null
+  code_fingerprint: null
+
+- indicator_id: IND-MOM-026
+  name: BOP
+  name_zh: 力量平衡
+  aliases: ["Balance of Power"]
+  indicator_class: momentum
+  formula: BOP=SMA16[(C−O)/(H−L)]（H=L 取 0），值域 [-1,1]
+  params: {period: 16}
+  inputs: [open, high, low, close]
+  outputs: [bop]
+  warmup_period: 16
+  computation_mode: vectorized
+  module_id: MOD-L02-019
+  doc_ref: 16_technical_indicator_catalog.md §6.2
+  code_path: src/zephyr/factor/technical_indicators/momentum.py
+  used_by_factors: []
+  status: active
+  version: 1.0.0
+  created_at: '2026-09-14'
+  updated_at: '2026-09-14'
+  owner: MOD-GOVERNANCE
+  primary_timeframe: "daily"
+  applicable_timeframes: ["1min", "5min", "15min", "30min", "60min", "120min", "daily", "weekly", "monthly"]
+  regime_valid: []
+  regime_invalid: []
+  direction: "neutral"
+  entry_role: "state"
+  applies_to: []
+  tags: ["动量", "指标"]
+  algorithm_status: "quantized"
+  evidence: ""
+  code_symbol: null
+  code_fingerprint: null
+
+- indicator_id: IND-MOM-027
+  name: PPO
+  name_zh: 百分比价格振荡器
+  aliases: ["Percentage Price Oscillator"]
+  indicator_class: momentum
+  formula: PPO=(EMA12−EMA26)/EMA26×100（MACD 百分比归一变体）
+  params: {fast: 12, slow: 26}
+  inputs: [close]
+  outputs: [ppo]
+  warmup_period: 26
+  computation_mode: vectorized
+  module_id: MOD-L02-019
+  doc_ref: 16_technical_indicator_catalog.md §6.2
+  code_path: src/zephyr/factor/technical_indicators/momentum.py
+  used_by_factors: []
+  status: active
+  version: 1.0.0
+  created_at: '2026-09-14'
+  updated_at: '2026-09-14'
+  owner: MOD-GOVERNANCE
+  primary_timeframe: "daily"
+  applicable_timeframes: ["1min", "5min", "15min", "30min", "60min", "120min", "daily", "weekly", "monthly"]
+  regime_valid: []
+  regime_invalid: []
+  direction: "neutral"
+  entry_role: "state"
+  applies_to: []
+  tags: ["动量", "趋势", "指标"]
+  algorithm_status: "quantized"
+  evidence: ""
+  code_symbol: null
+  code_fingerprint: null
+
+- indicator_id: IND-MOM-028
+  name: APO
+  name_zh: 绝对价格振荡器
+  aliases: ["Absolute Price Oscillator"]
+  indicator_class: momentum
+  formula: APO=EMA12−EMA26（绝对差值）
+  params: {fast: 12, slow: 26}
+  inputs: [close]
+  outputs: [apo]
+  warmup_period: 26
+  computation_mode: vectorized
+  module_id: MOD-L02-019
+  doc_ref: 16_technical_indicator_catalog.md §6.2
+  code_path: src/zephyr/factor/technical_indicators/momentum.py
+  used_by_factors: []
+  status: active
+  version: 1.0.0
+  created_at: '2026-09-14'
+  updated_at: '2026-09-14'
+  owner: MOD-GOVERNANCE
+  primary_timeframe: "daily"
+  applicable_timeframes: ["1min", "5min", "15min", "30min", "60min", "120min", "daily", "weekly", "monthly"]
+  regime_valid: []
+  regime_invalid: []
+  direction: "neutral"
+  entry_role: "state"
+  applies_to: []
+  tags: ["动量", "趋势", "指标"]
+  algorithm_status: "quantized"
+  evidence: ""
+  code_symbol: null
+  code_fingerprint: null
+
+- indicator_id: IND-MOM-029
+  name: DX
+  name_zh: 动向指数
+  aliases: ["Directional Movement Index"]
+  indicator_class: momentum
+  formula: DX=100×|+DI−−DI|/(+DI+−DI)（复用 trend._di，ADX 未平滑原料）
+  params: {period: 14}
+  inputs: [high, low, close]
+  outputs: [dx_14]
+  warmup_period: 14
+  computation_mode: vectorized
+  module_id: MOD-L02-019
+  doc_ref: 16_technical_indicator_catalog.md §6.2
+  code_path: src/zephyr/factor/technical_indicators/momentum.py
+  used_by_factors: []
+  status: active
+  version: 1.0.0
+  created_at: '2026-09-14'
+  updated_at: '2026-09-14'
+  owner: MOD-GOVERNANCE
+  primary_timeframe: "daily"
+  applicable_timeframes: ["1min", "5min", "15min", "30min", "60min", "120min", "daily", "weekly", "monthly"]
+  regime_valid: []
+  regime_invalid: []
+  direction: "neutral"
+  entry_role: "state"
+  applies_to: []
+  tags: ["动量", "趋势", "指标"]
+  algorithm_status: "quantized"
+  evidence: ""
+  code_symbol: null
+  code_fingerprint: null
+
+- indicator_id: IND-MOM-030
+  name: BRAR
+  name_zh: 人气意愿指标
+  aliases: ["BRAR"]
+  indicator_class: momentum
+  formula: AR=Σ(H−O)/Σ(O−L)×100；BR=Σmax(0,H−Cp)/Σmax(0,Cp−L)×100（通达信 26）
+  params: {period: 26}
+  inputs: [open, high, low, close]
+  outputs: [ar_26, br_26]
+  warmup_period: 26
+  computation_mode: vectorized
+  module_id: MOD-L02-019
+  doc_ref: 16_technical_indicator_catalog.md §6.2
+  code_path: src/zephyr/factor/technical_indicators/momentum.py
+  used_by_factors: []
+  status: active
+  version: 1.0.0
+  created_at: '2026-09-14'
+  updated_at: '2026-09-14'
+  owner: MOD-GOVERNANCE
+  primary_timeframe: "daily"
+  applicable_timeframes: ["1min", "5min", "15min", "30min", "60min", "120min", "daily", "weekly", "monthly"]
+  regime_valid: []
+  regime_invalid: []
+  direction: "neutral"
+  entry_role: "state"
+  applies_to: []
+  tags: ["动量", "情绪", "指标"]
+  algorithm_status: "quantized"
+  evidence: ""
+  code_symbol: null
+  code_fingerprint: null
+
+- indicator_id: IND-MOM-031
+  name: CR
+  name_zh: 能量指标
+  aliases: ["CR Energy"]
+  indicator_class: momentum
+  formula: MID=(H+L)/2 前值基准；CR=Σmax(0,H−MIDp)/Σmax(0,MIDp−L)×100（通达信 26）
+  params: {period: 26}
+  inputs: [high, low]
+  outputs: [cr_26]
+  warmup_period: 26
+  computation_mode: vectorized
+  module_id: MOD-L02-019
+  doc_ref: 16_technical_indicator_catalog.md §6.2
+  code_path: src/zephyr/factor/technical_indicators/momentum.py
+  used_by_factors: []
+  status: active
+  version: 1.0.0
+  created_at: '2026-09-14'
+  updated_at: '2026-09-14'
+  owner: MOD-GOVERNANCE
+  primary_timeframe: "daily"
+  applicable_timeframes: ["1min", "5min", "15min", "30min", "60min", "120min", "daily", "weekly", "monthly"]
+  regime_valid: []
+  regime_invalid: []
+  direction: "neutral"
+  entry_role: "state"
+  applies_to: []
+  tags: ["动量", "情绪", "指标"]
+  algorithm_status: "quantized"
+  evidence: ""
+  code_symbol: null
+  code_fingerprint: null
+
+# ══════════════ 动量类 momentum（31 指标 / 50 列，MOD-L02-019 momentum.py，doc §6.2）══════════════
 - indicator_id: IND-MOM-001
   name: KDJ
   name_zh: 随机指标
@@ -1345,7 +1675,139 @@ indicators:
   code_symbol: null
   code_fingerprint: null
 
-# ══════════════ 波动类 volatility（11 指标 / 16 列，MOD-L02-022 volatility.py，doc §6.3）══════════════
+- indicator_id: IND-VOL-012
+  name: PARKINSON
+  name_zh: Parkinson波动率
+  aliases: ["Parkinson Volatility"]
+  indicator_class: volatility
+  formula: σ²=Σ[ln(H/L)]²/(4ln2·N) 开方×100
+  params: {period: 20}
+  inputs: [high, low]
+  outputs: [parkinson_20]
+  warmup_period: 20
+  computation_mode: vectorized
+  module_id: MOD-L02-022
+  doc_ref: 16_technical_indicator_catalog.md §6.3
+  code_path: src/zephyr/factor/technical_indicators/volatility.py
+  used_by_factors: []
+  status: active
+  version: 1.0.0
+  created_at: '2026-09-14'
+  updated_at: '2026-09-14'
+  owner: MOD-GOVERNANCE
+  primary_timeframe: "daily"
+  applicable_timeframes: ["1min", "5min", "15min", "30min", "60min", "120min", "daily", "weekly", "monthly"]
+  regime_valid: []
+  regime_invalid: []
+  direction: "neutral"
+  entry_role: "state"
+  applies_to: []
+  tags: ["波动", "指标"]
+  algorithm_status: "quantized"
+  evidence: ""
+  code_symbol: null
+  code_fingerprint: null
+
+- indicator_id: IND-VOL-013
+  name: GARMAN_KLASS
+  name_zh: Garman-Klass波动率
+  aliases: ["Garman Klass"]
+  indicator_class: volatility
+  formula: σ²=mean{0.5ln²(H/L)−(2ln2−1)ln²(C/O)} 开方×100（零漂移假设）
+  params: {period: 20}
+  inputs: [open, high, low, close]
+  outputs: [garman_klass_20]
+  warmup_period: 20
+  computation_mode: vectorized
+  module_id: MOD-L02-022
+  doc_ref: 16_technical_indicator_catalog.md §6.3
+  code_path: src/zephyr/factor/technical_indicators/volatility.py
+  used_by_factors: []
+  status: active
+  version: 1.0.0
+  created_at: '2026-09-14'
+  updated_at: '2026-09-14'
+  owner: MOD-GOVERNANCE
+  primary_timeframe: "daily"
+  applicable_timeframes: ["1min", "5min", "15min", "30min", "60min", "120min", "daily", "weekly", "monthly"]
+  regime_valid: []
+  regime_invalid: []
+  direction: "neutral"
+  entry_role: "state"
+  applies_to: []
+  tags: ["波动", "指标"]
+  algorithm_status: "quantized"
+  evidence: ""
+  code_symbol: null
+  code_fingerprint: null
+
+- indicator_id: IND-VOL-014
+  name: ROGERS_SATCHELL
+  name_zh: Rogers-Satchell波动率
+  aliases: ["Rogers Satchell"]
+  indicator_class: volatility
+  formula: σ²=mean{ln(H/O)ln(C/O)+ln(L/O)ln(C/O)} 开方×100（漂移独立）
+  params: {period: 20}
+  inputs: [open, high, low, close]
+  outputs: [rogers_satchell_20]
+  warmup_period: 20
+  computation_mode: vectorized
+  module_id: MOD-L02-022
+  doc_ref: 16_technical_indicator_catalog.md §6.3
+  code_path: src/zephyr/factor/technical_indicators/volatility.py
+  used_by_factors: []
+  status: active
+  version: 1.0.0
+  created_at: '2026-09-14'
+  updated_at: '2026-09-14'
+  owner: MOD-GOVERNANCE
+  primary_timeframe: "daily"
+  applicable_timeframes: ["1min", "5min", "15min", "30min", "60min", "120min", "daily", "weekly", "monthly"]
+  regime_valid: []
+  regime_invalid: []
+  direction: "neutral"
+  entry_role: "state"
+  applies_to: []
+  tags: ["波动", "指标"]
+  algorithm_status: "quantized"
+  evidence: ""
+  code_symbol: null
+  code_fingerprint: null
+
+- indicator_id: IND-VOL-015
+  name: YANG_ZHANG
+  name_zh: Yang-Zhang波动率
+  aliases: ["Yang Zhang"]
+  indicator_class: volatility
+  formula: σ²=σ_o²+kσ_c²+(1−k)σ_rs²，k=0.34/(1.34+(N+1)/(N−1))；处理隔夜跳空+漂移
+  params: {period: 20}
+  inputs: [open, high, low, close]
+  outputs: [yang_zhang_20]
+  warmup_period: 21
+  computation_mode: vectorized
+  module_id: MOD-L02-022
+  doc_ref: 16_technical_indicator_catalog.md §6.3
+  code_path: src/zephyr/factor/technical_indicators/volatility.py
+  used_by_factors: []
+  status: active
+  version: 1.0.0
+  created_at: '2026-09-14'
+  updated_at: '2026-09-14'
+  owner: MOD-GOVERNANCE
+  primary_timeframe: "daily"
+  applicable_timeframes: ["1min", "5min", "15min", "30min", "60min", "120min", "daily", "weekly", "monthly"]
+  regime_valid: []
+  regime_invalid: []
+  direction: "neutral"
+  entry_role: "state"
+  applies_to: []
+  tags: ["波动", "指标"]
+  algorithm_status: "quantized"
+  evidence: ""
+  code_symbol: null
+  code_fingerprint: null
+
+# ══════════════ 波动类 volatility（15 指标 / 20 列，MOD-L02-022 volatility.py，doc §6.3）══════════════
 - indicator_id: IND-VOL-001
   name: ATR
   name_zh: 真实波幅

@@ -12415,4 +12415,16 @@ creation_tokens:
   token: tdm-consumption-policy-20260915
   created_by: st-sopreorg-20260914
   capability: tdm_consumption_policy
+- file: scripts/backtest/eval_f2_rework_variants.py
+  token: st-fingov-eval-f2-rework-20260914
+  created_by: st-fingov-20260912
+  capability: eval_f2_rework_variants
+- file: docs/_working/2026-09-14-tilib-batch6-plan.md
+  token: tilib-batch6-plan-20260914
+  created_by: st-tilib-20260914c
+  capability: technical_indicator
+- file: scripts/backtest/three_high_screen.py
+  token: factory-backend-three-high-screen-20260913
+  created_by: st-facbe-20260914
+  capability: factory_backend
 di_seam_exemptions: []

@@ -702,6 +702,101 @@ _MIGRATIONS: list[tuple[str, str]] = [
         "ALTER TABLE c1_market.technical_indicator "
         "ADD COLUMN IF NOT EXISTS ht_trendmode Nullable(Float64) COMMENT '趋势/循环模式(1趋势,0循环)'",
     ),
+    (
+        "c1_market.technical_indicator",
+        "ALTER TABLE c1_market.technical_indicator "
+        "ADD COLUMN IF NOT EXISTS bbi Nullable(Float64) COMMENT '多空指数(MA3/6/12/24均值)'",
+    ),
+    (
+        "c1_market.technical_indicator",
+        "ALTER TABLE c1_market.technical_indicator "
+        "ADD COLUMN IF NOT EXISTS parkinson_20 Nullable(Float64) COMMENT 'Parkinson波动率(高低极差)'",
+    ),
+    (
+        "c1_market.technical_indicator",
+        "ALTER TABLE c1_market.technical_indicator "
+        "ADD COLUMN IF NOT EXISTS garman_klass_20 Nullable(Float64) COMMENT 'Garman-Klass波动率(OHLC)'",
+    ),
+    (
+        "c1_market.technical_indicator",
+        "ALTER TABLE c1_market.technical_indicator "
+        "ADD COLUMN IF NOT EXISTS rogers_satchell_20 Nullable(Float64) COMMENT 'Rogers-Satchell波动率(漂移无关)'",
+    ),
+    (
+        "c1_market.technical_indicator",
+        "ALTER TABLE c1_market.technical_indicator "
+        "ADD COLUMN IF NOT EXISTS yang_zhang_20 Nullable(Float64) COMMENT 'Yang-Zhang波动率(隔夜跳空+漂移)'",
+    ),
+    (
+        "c1_market.technical_indicator",
+        "ALTER TABLE c1_market.technical_indicator "
+        "ADD COLUMN IF NOT EXISTS stoch_fastk Nullable(Float64) COMMENT '随机振荡FastK(5)'",
+    ),
+    (
+        "c1_market.technical_indicator",
+        "ALTER TABLE c1_market.technical_indicator "
+        "ADD COLUMN IF NOT EXISTS stoch_fastd Nullable(Float64) COMMENT '随机振荡FastD(SMA3)'",
+    ),
+    (
+        "c1_market.technical_indicator",
+        "ALTER TABLE c1_market.technical_indicator "
+        "ADD COLUMN IF NOT EXISTS stoch_slowk Nullable(Float64) COMMENT '随机振荡SlowK(SMA3)'",
+    ),
+    (
+        "c1_market.technical_indicator",
+        "ALTER TABLE c1_market.technical_indicator "
+        "ADD COLUMN IF NOT EXISTS stoch_slowd Nullable(Float64) COMMENT '随机振荡SlowD(SMA3)'",
+    ),
+    (
+        "c1_market.technical_indicator",
+        "ALTER TABLE c1_market.technical_indicator "
+        "ADD COLUMN IF NOT EXISTS aroon_up Nullable(Float64) COMMENT 'Aroon上(14)'",
+    ),
+    (
+        "c1_market.technical_indicator",
+        "ALTER TABLE c1_market.technical_indicator "
+        "ADD COLUMN IF NOT EXISTS aroon_down Nullable(Float64) COMMENT 'Aroon下(14)'",
+    ),
+    (
+        "c1_market.technical_indicator",
+        "ALTER TABLE c1_market.technical_indicator "
+        "ADD COLUMN IF NOT EXISTS aroonosc Nullable(Float64) COMMENT 'Aroon震荡器(14)'",
+    ),
+    (
+        "c1_market.technical_indicator",
+        "ALTER TABLE c1_market.technical_indicator "
+        "ADD COLUMN IF NOT EXISTS bop Nullable(Float64) COMMENT '力量平衡(SMA16)'",
+    ),
+    (
+        "c1_market.technical_indicator",
+        "ALTER TABLE c1_market.technical_indicator "
+        "ADD COLUMN IF NOT EXISTS ppo Nullable(Float64) COMMENT '百分比价格振荡器(12/26)'",
+    ),
+    (
+        "c1_market.technical_indicator",
+        "ALTER TABLE c1_market.technical_indicator "
+        "ADD COLUMN IF NOT EXISTS apo Nullable(Float64) COMMENT '绝对价格振荡器(12/26)'",
+    ),
+    (
+        "c1_market.technical_indicator",
+        "ALTER TABLE c1_market.technical_indicator "
+        "ADD COLUMN IF NOT EXISTS dx_14 Nullable(Float64) COMMENT '动向指数DX(14)'",
+    ),
+    (
+        "c1_market.technical_indicator",
+        "ALTER TABLE c1_market.technical_indicator "
+        "ADD COLUMN IF NOT EXISTS ar_26 Nullable(Float64) COMMENT '人气指标AR(26)'",
+    ),
+    (
+        "c1_market.technical_indicator",
+        "ALTER TABLE c1_market.technical_indicator "
+        "ADD COLUMN IF NOT EXISTS br_26 Nullable(Float64) COMMENT '意愿指标BR(26)'",
+    ),
+    (
+        "c1_market.technical_indicator",
+        "ALTER TABLE c1_market.technical_indicator "
+        "ADD COLUMN IF NOT EXISTS cr_26 Nullable(Float64) COMMENT '能量指标CR(26)'",
+    ),
 ]
 
 # 引擎选型矩阵（用于验证）
