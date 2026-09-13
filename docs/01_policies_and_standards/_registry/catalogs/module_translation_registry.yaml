@@ -49126,6 +49126,20 @@ entries:
   desc_zh: ""
   desc_en: ""
   plain_zh: "锚定风险四档历史表（c1_backtest.regime_state_anchored）的建表语句唯一真源：按固定波动率阈值把市场划成四个锚定状态每天记一条，零拟合不重估，供风险节流和回测对齐使用"
+- module_path: scripts/backtest/compute_window_gate.py
+  domain_id: D_BACKTEST
+  name_zh: "算力调度闸门"
+  name_en: ""
+  desc_zh: "trade_calendar 当闸：交易日盘中拒重放轻，重算力排收盘后/休市日，拉式闸门事件触发"
+  desc_en: ""
+  plain_zh: "策略工厂的电力闸：重活（挖因子/跑回测/遗传优化）不许在交易日白天抢机器，开盘时间来了先问一句'现在能干重活吗'，收盘后和周末才放行；日历查不到时宁可拒也不裸奔。没有定时器，谁来开工谁来问。"
+- module_path: scripts/backtest/translated/_valuation_engine.py
+  domain_id: D_BACKTEST
+  name_zh: "_valuation_engine"
+  name_en: ""
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "估值因子族策略或引擎翻译件，使用参数化估值引擎从 stock_indicator 表读取 PE/PB/股息率截面排序选股，按 pilot_002 模板输出权重矩阵供 C4 快筛批测，IS 窗口 2020-2023 冻结成本实测"
 
 battle_map_steps:
 - step_id: BM-BUY-05

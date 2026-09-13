@@ -49,11 +49,13 @@ nodes:
     decision_question: 现在能不能跑重算力任务？该跑哪条车道的活？
     algo_note_zh: 交易日白天只许轻任务（监控巡检），重算力（挖掘训练/批测/遗传优化）全排收盘后和休市日；
       trade_calendar 当闸门；事件触发禁定时器。回测量是算力成本大头（工厂经济学），
-      加速备选=vectorbt(Numba/JAX GPU)/Polars GPU 13x/DuckDB 10-20x
+      加速备选=vectorbt(Numba/JAX GPU)/Polars GPU 13x/DuckDB 10-20x；
+      已建=MOD-BT-151 拉式闸门（重任务开工事件问闸，classify_window+gate_decision
+      四枚理由码，日历缺失 fail-closed，收盘缓冲 15:30）
     compute_class: local
     data_refs: [c1_market.trade_calendar]
-    module_ref: null
-    build_status: pending
+    module_ref: MOD-BT-151
+    build_status: partial
     design_refs:
       - AWS 回测参考架构（Batch+Airflow 算力窗爆发扩缩容） aws.amazon.com/blogs/industries/how-to-build-and-backtest-systematic-trading-strategies-on-aws-with-aws-batch-and-airflow/
       - Dagster 资产传感器（事件驱动+新鲜度策略，与本项目事件触发铁律同构） docs.dagster.io/guides/automate/asset-sensors

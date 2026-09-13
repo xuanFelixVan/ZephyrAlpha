@@ -12452,6 +12452,10 @@ creation_tokens:
   token: factory-backend-lane-b-idea-generator-20260913
   created_by: st-facbe-20260914
   capability: factory_backend
+- file: scripts/backtest/compute_window_gate.py
+  token: factory-backend-compute-window-gate-20260913
+  created_by: st-facbe-20260914
+  capability: factory_backend
 - file: scripts/backtest/translated/c4_21af8c66c15e_small_cap.py
   token: c4-21af8c66c15e-small-cap-20260914
   created_by: st-zcode-c4-20260912
