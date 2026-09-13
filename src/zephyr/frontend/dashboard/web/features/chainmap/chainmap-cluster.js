@@ -350,10 +350,17 @@
       var lay = ch._layout, ox = ch._ox, oy = ch._oy;
       var g = '<g class="cm-ch" data-chain="' + ch.chain_id + '">';
       var title = ch.name + ' · ' + ch.n_companies + ' 公司' + (ch.s21_broken ? ' · ⚠断链' : '');
+      /* 结构边稀疏诚实提示（Owner 2026-09-14："没连线是前端还是后端"实为 ig_edge 覆盖不足）——
+       * 明示"数据待补"防误读为渲染 bug；探针实证：ig_fact 投影零覆盖（公司宇宙不相交），
+       * 补边只能走数据采集通道。阈值：≥8 环节且均边 <0.15；断链链已有 ⚠ 标注不重复加 */
+      var nEdges = (ch._edges || []).length, nNodes = ch.nodes ? ch.nodes.length : 0;
+      var sparse = !ch.s21_broken && nNodes >= 8 && nEdges < nNodes * 0.15;
       g += '<g class="cm-chainchip" data-chain="' + ch.chain_id + '">' +
         (ch.s21_broken ? '<title>' + esc(ch.s21_note || 'S21 流程连通性断链') + '</title>' : '') +
         '<rect x="' + ox + '" y="' + oy + '" width="' + Math.max(lay.W, 200) + '" height="20" fill="rgba(0,0,0,0)"/>' +
-        '<text x="' + (ox + 2) + '" y="' + (oy + 15) + '" font-size="12.5" font-weight="700" fill="' + (ch.s21_broken ? '#e6a23c' : '#8fb0ea') + '">' + esc(title) + '</text></g>';
+        '<text x="' + (ox + 2) + '" y="' + (oy + 15) + '" font-size="12.5" font-weight="700" fill="' + (ch.s21_broken ? '#e6a23c' : '#8fb0ea') + '">' + esc(title) +
+        (sparse ? '<tspan fill="#8a6d3b" font-weight="400" font-size="11"> ｜ 结构边 ' + nEdges + ' 条（稀疏·数据待补）</tspan>' : '') +
+        '</text></g>';
       var anchorBlock = null;
       lay.blocks.forEach(function (b) {
         var by = oy + 24 + b.y;
@@ -723,7 +730,8 @@
           side.innerHTML =
             '<span class="cm-x" title="关闭">✕</span>' + ben +
             '<div class="cm-sd-t" title="' + d.node.name + '">' + nodeLabel(d.node.name) + '</div>' +
-            '<div class="cm-sd-s">' + d.node.chain_name +
+            '<div class="cm-sd-s">' + (d.node.name === '行业聚合' ? '兜底聚合节点：以下公司未细分到具体环节，待数据治理迁移；真名「行业聚合」 · ' : '') +
+            d.node.chain_name +
             (d.node.function_role ? ' · ' + d.node.function_role : '') +
             ' ｜ 公司 ' + d.total + ' 家（按角色/置信度排序，最多展示 200）</div>' +
             (rows || '<div class="dim" style="font-size:12px">该环节暂无公司映射</div>');
