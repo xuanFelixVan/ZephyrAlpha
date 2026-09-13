@@ -1268,7 +1268,7 @@ indicators:
   module_id: MOD-L02-019
   doc_ref: 16_technical_indicator_catalog.md §6.2
   code_path: src/zephyr/factor/technical_indicators/momentum.py
-  used_by_factors: []
+  used_by_factors: ["indicator_consumption_demo(批7消费端接线B1止损/B2因子输入)"]
   status: active
   version: 1.0.0
   created_at: '2026-08-13'
@@ -1788,7 +1788,7 @@ indicators:
   module_id: MOD-L02-022
   doc_ref: 16_technical_indicator_catalog.md §6.3
   code_path: src/zephyr/factor/technical_indicators/volatility.py
-  used_by_factors: []
+  used_by_factors: ["indicator_consumption_demo(批7消费端接线B1止损/B2因子输入)"]
   status: active
   version: 1.0.0
   created_at: '2026-09-14'
@@ -1822,7 +1822,7 @@ indicators:
   module_id: MOD-L02-022
   doc_ref: 16_technical_indicator_catalog.md §6.3
   code_path: src/zephyr/factor/technical_indicators/volatility.py
-  used_by_factors: []
+  used_by_factors: ["indicator_consumption_demo(批7消费端接线B1止损/B2因子输入)"]
   status: active
   version: 1.0.0
   created_at: '2026-08-13'
@@ -2014,7 +2014,7 @@ indicators:
   module_id: MOD-L02-022
   doc_ref: 16_technical_indicator_catalog.md §6.3
   code_path: src/zephyr/factor/technical_indicators/volatility.py
-  used_by_factors: []
+  used_by_factors: ["indicator_consumption_demo(批7消费端接线B1止损/B2因子输入)"]
   status: active
   version: 1.0.0
   created_at: '2026-08-13'
