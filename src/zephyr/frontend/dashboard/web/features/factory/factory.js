@@ -13,7 +13,7 @@
  *           镜头自动适配主带（仅聚焦切换时，轮询重绘不打断手动平移缩放）；退出=Esc/双击空白/工具栏。 */
 (function () {
   'use strict';
-  var FAC = { data: null, ledger: null, sel: null, stamp: null, busy: false, dragDist: 0, focus: null, focusFit: null };
+  var FAC = { data: null, ledger: null, th: null, sel: null, stamp: null, busy: false, dragDist: 0, focus: null, focusFit: null };
   var API_BASE = 'http://127.0.0.1:8890';   /* 与 services/api.js 同源——app:// 模式下相对 fetch 会打到 app://api/factory 必断（tdm 同款坑） */
   /* 画布视图状态（交互规范=visualization_view_template.md §6.6，同 tdm）：滚轮缩放/拖动平移/双击重置/Ctrl+Shift+D 切模式 */
   var view = { z: 1, x: 0, y: 0, dragMode: true, fitted: false };
@@ -577,6 +577,31 @@
       }
       return html;
     }
+    /* 三高候选榜助手（v3，E1D 消费端）：真源=data/strategy_intake/three_high_candidates.csv（MOD-BT-090 产出）。
+     * 最新批 Top 榜：排名+环节+三高旗徽章+合成 z+四支柱 z chip+确定性假说全文；空态显 hint 不冒充失败 */
+    function thHtml(th) {
+      if (!th) return '<div class="empty">查询中…</div>';
+      if (th.ok === false) return '<div class="empty">' + esc(th.reason || '查询失败') + '</div>';
+      if (!th.batches || !th.batches.length) return '<div class="empty">' + esc(th.hint || '暂无产出') + '</div>';
+      var b = th.batches[0];
+      var html = '<div class="axis-h"><b>最新批</b> ' + esc(b.batch) + ' · ' + b.count + ' 候选' +
+        (th.batches.length > 1 ? ' ｜ 历史 ' + th.batches.length + ' 批/共 ' + th.total_rows + ' 行' : '') + '</div>';
+      html += b.items.map(function (it, i) {
+        var flags = (it.three_high_flags || '').split('+').filter(Boolean);
+        var pillars = [['增长', it.growth_z], ['壁垒', it.barrier_z], ['利润', it.margin_z], ['咽喉', it.choke_z]];
+        return '<div class="cm"><b style="color:#c6cdd8">#' + (i + 1) + ' ' + esc(it.sector) + '</b> · 成员 ' +
+          (it.members != null ? Math.round(it.members) : '—') + ' 只 · 合成 z <b style="color:#7db4e8">' +
+          Number(it.total_z || 0).toFixed(2) + '</b> ' +
+          (flags.length ? '<span class="bdg bdg-partial">' + flags.map(esc).join('+') + '</span>' : '<span class="bdg bdg-gray">未过旗线</span>') +
+          '<div style="margin-top:5px;display:flex;gap:5px;flex-wrap:wrap">' +
+          pillars.map(function (p) {
+            return '<span class="chip"><i>' + p[0] + '</i><b>' + (p[1] == null ? '—' : (p[1] >= 0 ? '+' : '') + Number(p[1]).toFixed(2) + 'σ') + '</b></span>';
+          }).join('') + '</div>' +
+          (it.hypothesis_zh ? '<div style="margin-top:5px">' + esc(it.hypothesis_zh) + '</div>' : '') +
+          '</div>';
+      }).join('');
+      return html;
+    }
     var scroll = box.scrollTop;   /* 30s 轮询重绘保持阅读位置（DDT 实证坑） */
     box.style.display = 'block';
     box.innerHTML =
@@ -591,6 +616,8 @@
       '<div class="sec">模块锚（MOD）</div>' + mod +
       '<div class="sec">台账成绩（strategy_screen）<span class="cnt" id="factory-led-cnt"></span></div>' +
       '<div id="factory-led">' + ledgerHtml(FAC.ledger) + '</div>' +
+      (n.id === 'FAC-E1D' ? '<div class="sec">三高候选榜（E1D 产出）<span class="cnt" id="factory-th-cnt"></span></div>' +
+        '<div id="factory-th">' + thHtml(FAC.th) + '</div>' : '') +
       (refsHtml ? '<div class="sec">依据锚（引用）</div>' + refsHtml : '') +
       '<div class="sec">仓储（store_refs）</div>' + storeHtml +
       '<div class="sec">上游（谁喂给它）<span class="cnt">' + ups.length + '</span></div>' +
@@ -646,6 +673,25 @@
         if (FAC.sel !== ledNode || !ledBox || !ledBox.isConnected) return;
         ledBox.innerHTML = '<div class="empty">台账不可达（面板 API 未启动?）</div>';
       });
+    /* 三高候选榜（仅 E1D 抽屉）：异步拉产出台账——过期响应丢弃同套路 */
+    if (n.id === 'FAC-E1D') {
+      var thBox = box.querySelector('#factory-th');
+      fetch(API_BASE + '/api/factory/threehigh')
+        .then(function (r) { return r.json(); })
+        .then(function (th) {
+          if (FAC.sel !== ledNode || !thBox || !thBox.isConnected) return;
+          FAC.th = th;
+          var vs = box.scrollTop;
+          thBox.innerHTML = thHtml(th);
+          var tc = box.querySelector('#factory-th-cnt');
+          if (tc) tc.textContent = (th.batches && th.batches.length) ? String(th.batches[0].count) : '';
+          box.scrollTop = vs;
+        })
+        .catch(function () {
+          if (FAC.sel !== ledNode || !thBox || !thBox.isConnected) return;
+          thBox.innerHTML = '<div class="empty">查询失败（面板 API 未启动?）</div>';
+        });
+    }
   }
 
   window.factoryFilter = function (q) {

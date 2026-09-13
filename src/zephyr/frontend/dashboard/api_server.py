@@ -2584,6 +2584,60 @@ def factory_ledger() -> dict[str, Any]:
     return _factory_ledger()
 
 
+_THREEHIGH_CACHE: dict[str, Any] = {"mtime": None, "payload": None}
+_THREEHIGH_CSV = _REPO / "data" / "strategy_intake" / "three_high_candidates.csv"
+
+
+@app.get("/api/factory/threehigh")
+def factory_threehigh() -> dict[str, Any]:
+    """E1D 三高候选榜（只读）——真源=data/strategy_intake/three_high_candidates.csv（MOD-BT-090 产出）。
+
+    追加台账按 birth_batch 分组（批 id=E1D-YYYYMMDD-HHMMSS 字典序=时序），最新批在前；
+    文件未生成（模块已落码未首跑）=ok:true+空批+hint 不冒充失败；
+    消费者=web/features/factory/factory.js FAC-E1D 抽屉「三高候选榜」区。
+    """
+    p = _THREEHIGH_CSV
+    if not p.exists():
+        return {"ok": True, "batches": [], "total_rows": 0,
+                "hint": "E1D 模块已落码（MOD-BT-090）未首跑——three_high_screen screen 后自动亮起",
+                "generated_at": now_utc().isoformat(" ", "seconds")}
+    mtime = p.stat().st_mtime
+    if _THREEHIGH_CACHE["mtime"] == mtime and _THREEHIGH_CACHE["payload"]:
+        return _THREEHIGH_CACHE["payload"]
+    import csv as _csv
+
+    try:
+        with p.open(encoding="utf-8-sig", newline="") as f:
+            rows = [r for r in _csv.DictReader(f) if r.get("candidate_id")]
+    except OSError as exc:
+        return {"ok": False, "reason": f"台账不可读: {exc}", "batches": []}
+    num_cols = ("members", "fin_coverage", "rev_yoy_med", "profit_yoy_med", "gross_margin_med",
+                "net_margin_med", "cust_top5_med", "hhi_med", "downstream_breadth",
+                "supply_pressure", "growth_z", "margin_z", "barrier_z", "choke_z", "total_z")
+    keep = ("candidate_id", "sector", "three_high_flags", "hypothesis_zh", "birth_batch", "birth_source")
+    items: list[dict[str, Any]] = []
+    for r in rows:
+        it: dict[str, Any] = {k: r.get(k, "") for k in keep}
+        for k in num_cols:
+            try:
+                it[k] = float(r[k]) if r.get(k) not in (None, "") else None
+            except ValueError:
+                it[k] = None
+        items.append(it)
+    batches: dict[str, list[dict[str, Any]]] = {}
+    for it in items:
+        batches.setdefault(it["birth_batch"], []).append(it)
+    out_batches = []
+    for b in sorted(batches, reverse=True):
+        items_b = sorted(batches[b], key=lambda x: -(x["total_z"] or 0))
+        out_batches.append({"batch": b, "count": len(items_b), "items": items_b})
+    payload: dict[str, Any] = {"ok": True, "batches": out_batches, "total_rows": len(items),
+                               "generated_at": now_utc().isoformat(" ", "seconds")}
+    _THREEHIGH_CACHE["mtime"] = mtime
+    _THREEHIGH_CACHE["payload"] = payload
+    return payload
+
+
 # ═══════════════ 产业地图 chainmap（真源 ig_* 七表，depgraph PG 只读；Owner 2026-09-08 三层缩放方案） ═══════════════
 
 _CM_MARKETS = ("all", "cn", "global")   # 市场过滤档（项 4）：all=全部链（基线口径），cn/global=ig_chain.market 单档
