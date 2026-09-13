@@ -21,6 +21,7 @@ import pandas as pd
 import pytest
 
 from src.zephyr.pf_alloc.core.vol_target_allocator import (
+    kelly_full_weight,
     latest_weight,
     vol_target_weight,
 )
@@ -77,3 +78,25 @@ class TestVolTargetWeight:
             vol_target_weight(r, target_vol=0.0)
         with pytest.raises(ValueError):
             vol_target_weight(r, max_weight=0.2, min_weight=0.5)
+
+
+class TestKellyFull:
+    def test_positive_er_positive_sigma(self):
+        k = kelly_full_weight(expected_return=0.01, sigma=0.20, max_weight=5.0, kelly_fraction=1.0)
+        assert k == pytest.approx(0.01 / 0.04, abs=0.01)
+
+    def test_negative_er_clamps_to_min(self):
+        k = kelly_full_weight(expected_return=-0.10, sigma=0.20, kelly_fraction=1.0)
+        assert k == 0.0
+
+    def test_half_kelly_fraction(self):
+        k_full = kelly_full_weight(expected_return=0.01, sigma=0.20, max_weight=5.0, kelly_fraction=1.0)
+        k_half = kelly_full_weight(expected_return=0.01, sigma=0.20, max_weight=5.0, kelly_fraction=0.5)
+        assert k_half == pytest.approx(k_full / 2, abs=0.01)
+
+    def test_zero_sigma_returns_min(self):
+        assert kelly_full_weight(expected_return=0.10, sigma=0.0) == 0.0
+
+    def test_clamp_to_max(self):
+        k = kelly_full_weight(expected_return=10.0, sigma=0.01, kelly_fraction=1.0)
+        assert k <= 1.0

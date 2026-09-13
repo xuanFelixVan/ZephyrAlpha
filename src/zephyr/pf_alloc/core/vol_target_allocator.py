@@ -69,3 +69,28 @@ def vol_target_weight(
 def latest_weight(returns: pd.Series, **kwargs) -> float:
     """便捷入口：返回最新一根的仓位系数。"""
     return float(vol_target_weight(returns, **kwargs).iloc[-1])
+
+
+def kelly_full_weight(
+    expected_return: float,
+    sigma: float,
+    max_weight: float = 1.0,
+    min_weight: float = 0.0,
+    kelly_fraction: float = 0.5,
+) -> float:
+    """完整凯利仓位系数 K = f × E(R) / σ²（Half-Kelly 分数默认 0.5）。
+
+    Args:
+        expected_return: 预测期望收益（年化，来自车道 E 分布预测中位数）。
+        sigma: 预测波动率（年化，来自分位数 spread 折算）。
+        max_weight: 仓位上限。
+        min_weight: 仓位下限。
+        kelly_fraction: 凯利分数（0.5=Half-Kelly，实践中防高估）。
+
+    Returns:
+        仓位系数 K ∈ [min_weight, max_weight]。
+    """
+    if sigma <= 0:
+        return min_weight
+    kelly = expected_return / (sigma ** 2) * kelly_fraction
+    return max(min_weight, min(max_weight, kelly))
