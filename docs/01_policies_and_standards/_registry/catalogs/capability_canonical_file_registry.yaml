@@ -12377,3 +12377,7 @@ creation_tokens:
   created_by: scaffold.py
   capability: series_transform
 di_seam_exemptions: []
+- file: scripts/backtest/translated/c4_bd42540f86e4_pe_pb.py
+  token: c4-pe-pb-bd42540f86e4-20260914
+  created_by: st-zcode-c4-20260912
+    capability: sim_paper_ledger_c
