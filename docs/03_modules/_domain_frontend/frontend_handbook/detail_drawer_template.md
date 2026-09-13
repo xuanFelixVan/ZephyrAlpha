@@ -113,7 +113,7 @@ function sec(t) { /* 分区标题 */ }
 
 - FEH-PC-009 版本戳排查法（改了看不到先查 b 戳）
 - FEH-PC-012 registerFeature 只登记不初始化（抽屉若拆为独立组件，样式注入必须文件顶层做）
-- 拆件 SOP：`docs/01_policies_and_standards/sop/frontend_component_split_sop.md`（抽屉够「单一功能+独立样式+跨页复用」三条判据，新页应直接拆为 sq-<page>-drawer 组件而非内联）
+- 拆件 SOP：`docs/01_policies_and_standards/sop/construction_sop/frontend_component_split_sop.md`（抽屉够「单一功能+独立样式+跨页复用」三条判据，新页应直接拆为 sq-<page>-drawer 组件而非内联）
 
 ---
 

@@ -3,7 +3,7 @@ module_id: PS-IDX-001
 title: 规则体系总索引
 doc_type: index
 status: active
-version: "2.2.1"
+version: "2.2.2"
 layer: cross_layer
 owner: ZephyrAlpha-Owner
 classification: confidential
@@ -11,7 +11,7 @@ language: zh
 created_by: human_plus_agent
 date: "2026-08-17"
 ttl: permanent
-summary: "01_policies_and_standards/ 的顶层导航入口。v2.2.1：AI-17 审计复检——§4.1 冷启动路径术语表悬挂引用修正（vocabularies/glossary.yaml → catalogs/terminology_glossary.yaml，文件 2026-06-27 已删除）。v2.2.0：规则计数 60→84（补 trae_061~084），catalogs/contracts/vocabularies 实测计数更正，补 sop/ 目录，功能域计数 39→82 实测。"
+summary: "01_policies_and_standards/ 的顶层导航入口。v2.2.2：sop/ 七族重分类（11 文件归位五新族）+真源地图 sop/README.md。v2.2.1：AI-17 审计复检——§4.1 冷启动路径术语表悬挂引用修正（vocabularies/glossary.yaml → catalogs/terminology_glossary.yaml，文件 2026-06-27 已删除）。v2.2.0：规则计数 60→84（补 trae_061~084），catalogs/contracts/vocabularies 实测计数更正，补 sop/ 目录，功能域计数 39→82 实测。"
 tags: [index, root, navigation, policies-and-standards]
 rule_form: declarative
 scope: global
@@ -125,7 +125,7 @@ verifiability: manual
 │   ├── branch_strategy_policy.md                   ← 分支策略（单一主分支模型）
 │   └── workspace_governance_policy.md              ← 工作区治理规则
 │
-├── sop/                        ← 标准作业流程（3 个）
+├── sop/                        ← 标准作业流程（7 族方法论文件夹，真源地图 sop/README.md）
 │   ├── construction_workflow_sop.md                ← 施工工作流 SOP
 │   ├── merge_conflict_resolution_sop.md            ← 合并冲突解决 SOP
 │   └── worktree_cleanup_sop.md                     ← worktree 清理 SOP
@@ -152,7 +152,7 @@ verifiability: manual
 | `rules/` | 规则文件唯一真源——84 个 trae_*.yaml（涵盖文件操作/防幻觉/架构/行为/方法论/文档/任务/运维/域策略/SSoT/提交治理/五图对齐） | 85 | [rule_catalog_registry.yaml](_registry/catalogs/rule_catalog_registry.yaml) |
 | `_registry/` | 注册表+契约+Schema+词表——4 个子目录（catalogs 67 + contracts 6 + schemas 3 + vocabularies 40 + index.md） | 117 | [_registry/index.md](_registry/index.md) |
 | `policies/` | 策略文件——并行协调/分支/工作区治理 | 3 | 本目录直接导航 |
-| `sop/` | 标准作业流程——施工/冲突解决/worktree 清理 | 3 | 本目录直接导航 |
+| `sop/` | 标准作业流程——七族方法论真源地图（宪法对齐/施工/挖矿/回测/TDM 分层/运维应急/数据审计；详见 sop/README.md） | 20 | 本目录直接导航 |
 | `templates/` | 文档模板——9 个标准模板 + index.md | 10 | [templates/index.md](templates/index.md) |
 
 > **合计**：5 个子目录，218 个文件（含本 index.md 共 219）。
@@ -254,6 +254,7 @@ verifiability: manual
 
 | 版本 | 日期 | 变更内容 |
 |------|------|---------|
+| 2.2.2 | 2026-09-14 | sop/ 七族文件夹重分类：11 文件归位 governance/construction/trading_decision_map/ops/data_audit 五新族（mining/backtest 既有），全仓活引用路径同步；新建 sop/README.md 真源地图+creation token；目录树与 §二表 sop 行实测同步。 |
 | 2.2.1 | 2026-08-17 | AI-17 审计复检。§4.1 冷启动路径第 4 步悬挂引用修正：`_registry/vocabularies/glossary.yaml`（2026-06-27 已删除）→ `_registry/catalogs/terminology_glossary.yaml`（术语仲裁源真源）。 |
 | 2.2.0 | 2026-08-17 | AI-17 审计治本修复。(1) 规则计数 60→84 实测更正（目录树补 trae_061~084 全量 24 条+§3.1/§3.3 同步）。(2) catalogs 计数 26→64 登记表 YAML 实测更正（补 architecture_issue/candidate_module/capability_canonical/module_translation/terminology_glossary 等关键条目导航）。(3) contracts 3→5（补 data_retention/directory）。(4) vocabularies 29→39 实测更正，删除不存在的 vocabularies/glossary.yaml 引用（术语表真源= catalogs/terminology_glossary.yaml）。(5) 补 sop/ 目录（此前整目录缺失于索引）。(6) §二表补 policies/sop 行，合计更正为 5 子目录 219 文件。(7) §五功能域 39→82 实测更正，新增 ROOR（docs/registry_of_registries.yaml，73 项登记实测）行。(8) 正文 version 2.0.0 与 frontmatter 不一致修正。 |
 | 2.1.0 | 2026-06-26 | P0 审查修复。(1) §4.1 冷启动路径加入 trae_060（向内收三原则）作为第 2 步必读真源，与 `.trae/rules/project_rules.md` 第二原则对称接入。(2) 目录树补全 058/059/060。(3) 修正"48 个 trae_*.yaml"为"60 个"（3 处）+ 管辖文件数 49→61。(4) 分类体系表 040-057→040-060。对齐 trae_060 §2 唯一真源与 §4 新AI可发现性。 |

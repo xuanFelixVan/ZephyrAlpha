@@ -1,4 +1,4 @@
-# [BLUEPRINT] MOD-GOV_DRIFT_WATCHDOG | docs/01_policies_and_standards/sop/industry_chain_data_audit_sop.md | §#ARCH-308 B1 工作区脏文件判读器
+# [BLUEPRINT] MOD-GOV_DRIFT_WATCHDOG | docs/01_policies_and_standards/sop/data_audit_sop/industry_chain_data_audit_sop.md | §#ARCH-308 B1 工作区脏文件判读器
 # [MODULE] scripts.governance.classify_workspace_wip
 # [DOMAIN] D_GOV_AUDIT
 # [DEPENDENCIES] zephyr.security.access_control.session_concurrency (SessionRegistry); stdlib (json/os/subprocess/argparse)

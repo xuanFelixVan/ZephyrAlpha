@@ -115,8 +115,8 @@ scope: 09_ai_architecture
 | worktree 执行体 | `src/zephyr/gov_enforcement/rule_bridge/`：`session_worktree.py`、`worktree_manager.py`、`worktree_pool.py`、`worktree_lifecycle.py` | worktree 创建/池化/生命周期管理；`.aidrafts/` 隔离区 | production |
 | 会话活性 | `rule_bridge/session_claim.py` + `heartbeat_daemon.py` | 会话活性登记 + 心跳守护（66 号第二层强化：防「死会话持锁/持 worktree」） | production |
 | 漂移看门狗 | `rule_bridge/worktree_drift_watchdog.py` | worktree 漂移监控 | production |
-| 四证清理 SOP | `docs/01_policies_and_standards/sop/worktree_cleanup_sop.md` | worktree 清理四证流程（wipe 治本 S2，首次真实清理走通：refs/quarantine + bundle 双存证） | active |
-| 冲突裁决 SOP | `docs/01_policies_and_standards/sop/merge_conflict_resolution_sop.md` | 67 号冲突三分法（overlap 类前置判定非互斥才可用逃生通道） | active |
+| 四证清理 SOP | `docs/01_policies_and_standards/sop/ops_sop/worktree_cleanup_sop.md` | worktree 清理四证流程（wipe 治本 S2，首次真实清理走通：refs/quarantine + bundle 双存证） | active |
+| 冲突裁决 SOP | `docs/01_policies_and_standards/sop/ops_sop/merge_conflict_resolution_sop.md` | 67 号冲突三分法（overlap 类前置判定非互斥才可用逃生通道） | active |
 | 并发压测 | `scripts/governance/test_concurrent_safety.ps1` | 47 个治理脚本原子写并发安全压测（借鉴其 Start-Job 并发模式，队列压测需新建） | production |
 
 **E. 未施工缺口**

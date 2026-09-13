@@ -124,8 +124,8 @@ python scripts/ide_health_service.py --start
 # - .trae/rules/project_rules.md（L0 硬规则，FIRST-READ 6 步）
 # - 本 SOP（construction_workflow_sop.md）
 # - alignment_checklist.md（全项目对齐清单——六图+注册表+代码文档三层对齐规则，新 AI 必知）
-# - 涉前端施工加读：docs/03_modules/_domain_frontend/frontend_handbook/（避坑事实库）+ trae_086_frontend_module_construction.yaml（拆件铁律）+ sop/frontend_component_split_sop.md（拆件操作闭环——Step 3.5 判定"有得拆"时的施工路径真源）
-# - 交易决策地图逐层讨论/血肉填充任务加读：sop/trading_decision_map_layering_sop.md（防撞车·防越级·防枝末先行——六步流程+层位状态表，每层讨论 MUST 先过四道前置检查：已有资产盘点五选一处置/四路外部调研/上层完整性/枝干分级）
+# - 涉前端施工加读：docs/03_modules/_domain_frontend/frontend_handbook/（避坑事实库）+ trae_086_frontend_module_construction.yaml（拆件铁律）+ sop/construction_sop/frontend_component_split_sop.md（拆件操作闭环——Step 3.5 判定"有得拆"时的施工路径真源）
+# - 交易决策地图逐层讨论/血肉填充任务加读：sop/trading_decision_map_sop/trading_decision_map_layering_sop.md（防撞车·防越级·防枝末先行——六步流程+层位状态表，每层讨论 MUST 先过四道前置检查：已有资产盘点五选一处置/四路外部调研/上层完整性/枝干分级）
 
 # 3. Session Continuity 恢复
 python scripts/lock_files.py status
@@ -805,7 +805,7 @@ python scripts/session_worktree.py cleanup <sid>
 | 2026-08-12 | 1.1.0 | 第三轮扫描补充 22 项盲点 | 补充：handoff 交接包/ABS 绝对禁止清单/SECRETS.md 密钥管理/设计意图真源/向内收三原则/架构变更分级 L1-L4/治理顺序因果链/八指标机械门/并行执行原子事务/防幻觉四件套/代码组织类型导入/数据库破坏性操作三步验证/RunCommand 命令纯洁性/Symbol 约定/方法论根因分析/漂移检测套件/文档规格化三清单/删除安全门禁/架构版本化/工作区治理+回滚系统/commit 四件套/临时文件放置 5 铁律/worktree base 新鲜度+分支策略；附录 B 补充 d2/d4/d9 检测脚本 |
 | 2026-08-13 | 1.2.0 | Step 6 补遗留项登记机制 | AI-STD-001 审查实践发现：审查遗留项（如文件被占用无法同步）不登记=必忘项。Step 6 新增"遗留项登记"铁律（MUST 登记到 construction_progress_tracker.md §七）；Step 7 前置条件从"审查无遗留"改为"审查遗留项已登记"（不要求零遗留，但要求已登记） |
 | 2026-08-13 | 1.3.0 | 附录 A 升级：新增 A.13 五图对齐验证 + A.14 代码质量专项 | 用户提出审查清单老化。对比 trae_081 的 54 维度发现附录 A 12 节未覆盖五图对齐验证和代码质量具体检查点。新增 A.13（五图对齐 7 项，引用 trae_080）+ A.14（代码质量 10 项，从 54 维度选取最关键的 10 个）。附录 A 从 12 节升级到 14 节 |
-| 2026-08-13 | 1.4.0 | **搬迁**：从 design_memos/02_construction_workflow_sop.md 迁至 docs/01_policies_and_standards/sop/construction_workflow_sop.md | 用户裁定：design_memos 是施工图纸临时区（施工完毕后清理），SOP 是永久规则，生命周期不匹配。迁入规则管理区新建 sop/ 专区；doc_type architecture_view→policy（rule_form: procedural + verifiability: manual，01 目录契约合规）；去编号改名；全部相对链接按新基址重写 |
+| 2026-08-13 | 1.4.0 | **搬迁**：从 design_memos/02_construction_workflow_sop.md 迁至 docs/01_policies_and_standards/sop/construction_sop/construction_workflow_sop.md | 用户裁定：design_memos 是施工图纸临时区（施工完毕后清理），SOP 是永久规则，生命周期不匹配。迁入规则管理区新建 sop/ 专区；doc_type architecture_view→policy（rule_form: procedural + verifiability: manual，01 目录契约合规）；去编号改名；全部相对链接按新基址重写 |
 | 2026-08-31 | 1.5.0 | **对齐体系升级**：Step 0 必看文件清单新增 alignment_checklist.md；Step 3 从"五图对齐"升级为"六图对齐"（新增 frontend_map 前端全景图，待建）；Step 4/8 检查清单同步升级；新增注册表对齐要求 | 项目对齐体系片段化，缺前端全景图和注册表统一对齐规则；新 AI 进项目不知道要对齐什么。配合《全项目对齐清单》（alignment_checklist.md）落地三层对齐体系（六图+40+注册表+代码文档） |
 | 2026-09-04 | 1.5.1 | 新增 Step 3.5 后端盘点（前端施工前置）+ Checklist 第 13 项 | Owner 2026-09-04 裁定"前端不许自建数据世界"（TRAE-086 v1.2.0 §truth_source_wiring 配套）：执行前端任务前 MUST 后端盘点四步（取数清单→后端三查→三分支决策→接线验收），FRONTEND-TRUTH-SOURCE gate warn 兜底；红蓝对抗 9 手法实测（4 击穿已修+2 接受风险文档化） |
 | 2026-09-04 | 1.5.2 | Step 3.5 升级"后端盘点与拆件判定"——拆件 SOP 正式接入总流程 | Owner 追问"拆件判定在哪一步"发现两 SOP 断链：Step 0 必看清单+Step 3.5 补 frontend_component_split_sop.md 引用；新增执行要点 4 拆件判定（盘点先行供输入——拆件第一判据=数据源边界；有得拆→拆件 8 步闭环，没得拆→直接施工）；Checklist 13 同步 |

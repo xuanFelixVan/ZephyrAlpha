@@ -23,7 +23,7 @@ related_modules:
 
 > **用途**：产业链图谱（PG depgraph 库 ig_* 十表）的**质量验收真源**。定义"什么样子算合格"的合格线族（§2~§8，S1~S24，数量以本文件条目为准勿在他处写死）。
 > **机判引擎**：本标准的每条合格线由 [graph_quality_check.py](../../../../../scripts/industry_graph/graph_quality_check.py) 固化为 SQL 一键体检——**审查判定权归脚本，AI 只负责修复不负责判定**（治 AI 审查口径漂移）。
-> **配套编排**：修复循环、退出条件、时间盒见 [industry_chain_data_audit_sop](../sop/industry_chain_data_audit_sop.md) §11（v1.5.0 起）。
+> **配套编排**：修复循环、退出条件、时间盒见 [industry_chain_data_audit_sop](../sop/data_audit_sop/industry_chain_data_audit_sop.md) §11（v1.5.0 起）。
 > **四大裁定（Owner 2026-09-09 确认）**：① role 词表五值 ② 垃圾修复一律 PIT 关闭零物理 DELETE ③ 单公司挂链阈值 20 ④ 本文件为验收真源、SOP 引用不重复。
 
 ## 1. 术语与豁免机制

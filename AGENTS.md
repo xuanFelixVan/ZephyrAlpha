@@ -1,7 +1,7 @@
 # ZephyrAlpha — AI Agent 接入宪法 L0
 
 > **硬规则入口**: [`.trae/rules/project_rules.md`](file:///d:/ZephyrAlpha/.trae/rules/project_rules.md)（IDE 自动注入，与本宪法正交）
-> **历史规则索引**: v1 全文归档=[`agent_constitution_legacy_v1.md`](file:///d:/ZephyrAlpha/docs/01_policies_and_standards/sop/agent_constitution_legacy_v1.md)；规则细节正式真源=[`docs/01_policies_and_standards/rules/`](file:///d:/ZephyrAlpha/docs/01_policies_and_standards/rules/)（86 个 trae_*.yaml）；渐进披露=[`data/capability_cards/`](file:///d:/ZephyrAlpha/data/capability_cards/)
+> **历史规则索引**: v1 全文归档=[`agent_constitution_legacy_v1.md`](file:///d:/ZephyrAlpha/docs/01_policies_and_standards/sop/governance_sop/agent_constitution_legacy_v1.md)；规则细节正式真源=[`docs/01_policies_and_standards/rules/`](file:///d:/ZephyrAlpha/docs/01_policies_and_standards/rules/)（86 个 trae_*.yaml）；渐进披露=[`data/capability_cards/`](file:///d:/ZephyrAlpha/data/capability_cards/)
 > 本宪法经 #ARCH-310 R3 极限对抗测试后于 2026-09-12 替换 v1（1639 行→本文件）；回滚=revert。
 
 # ZephyrAlpha — AI Agent 宪法 L0
@@ -18,7 +18,7 @@
    提交必经 GitCommitGateway / git_commit.py，禁止裸 `git commit`。改前 claim：`lock_files.py acquire <file> <sid>`；
    reconciler 链路验证走 `--reconciler-verify`（专用豁免通道，三前置：主区 clean/无活跃会话/claim 全成）。
 4. **RULE-CAPABILITY-LOOKUP**：写第一行业务代码前调
-   `capability_lookup.find(<kw>, session_id=<sid>)` 或 MCP `rule_discovery`（写审计）；施工/新模块另必读 `sop/construction_workflow_sop.md`（07 域 15 步闭环编排真源）。
+   `capability_lookup.find(<kw>, session_id=<sid>)` 或 MCP `rule_discovery`（写审计）；施工/新模块另必读 `sop/construction_sop/construction_workflow_sop.md`（07 域 15 步闭环编排真源）。
 5. **RULE-DEPGRAPH**：施工前 `apply_depgraph.py --add-design-node` 登记；文件重命名后
    `generate_project_depgraph.py --force`。
 6. **RULE-REGISTRY**：查注册表先读 `docs/registry_of_registries.yaml`（ROOR，勿背数）。
@@ -90,8 +90,8 @@ CREATE-GUARD（新建 .py/.yaml/.md 等 7 格式须登记 creation_token，tests
 
 1. 本宪法 ≤300 行是硬上限；新增内容必须等长替换。
 2. 细节检索序：capability_cards/（L0-L3 渐进披露）→ docs/01.../rules/*.yaml →
-   capability_canonical_file_registry.yaml → Grep 符号发现。全网调研/找方案/建策略类任务先读
-   sop/mining_sop/mining_sop_policy.md（挖矿 SOP，2026-09-14 升 permanent）。
+   capability_canonical_file_registry.yaml → Grep 符号发现。方法论真源地图=sop/README.md（七族
+   索引）：调研建策略先读 mining_sop/；施工先读 construction_sop/；改图改库先读 governance_sop/。
 3. 会话内不复制大段规则进上下文；引用真源路径+锚点。
 
 ## 7. 核心系统速查（细节按需检索）

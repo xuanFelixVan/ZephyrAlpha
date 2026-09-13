@@ -15949,7 +15949,7 @@ entries:
 
 # --- #ARCH-CONSTRUCTION-SOP-001: 施工流程 SOP 端到端编排载体（02 号文档引用）---
 - issue_id: '#ARCH-CONSTRUCTION-SOP-001'
-  title: '07 域施工流程 SOP——端到端 15 步施工闭环编排层（docs/01_policies_and_standards/sop/construction_workflow_sop.md）'
+  title: '07 域施工流程 SOP——端到端 15 步施工闭环编排层（docs/01_policies_and_standards/sop/construction_sop/construction_workflow_sop.md）'
   severity: P1高
   category: process_governance
   adjudication: |
@@ -15962,7 +15962,7 @@ entries:
     2026-08-13 搬迁：自 design_memos/02_construction_workflow_sop.md 迁至 01_policies_and_standards/sop/
     （用户裁定——SOP 属永久规则，与施工图纸临时区生命周期分离；doc_type 转 policy/procedural）。
   impact:
-    - 'docs/01_policies_and_standards/sop/construction_workflow_sop.md（2026-08-13 迁入，active v1.4.0）'
+    - 'docs/01_policies_and_standards/sop/construction_sop/construction_workflow_sop.md（2026-08-13 迁入，active v1.4.0）'
     - 'docs/02_enterprise_architecture/07_trading_decision_architecture/design_memos/00_index_trading_decision.md（§0 目录 02 行标记已迁出）'
     - 'docs/01_policies_and_standards/_registry/catalogs/capability_canonical_file_registry.yaml（creation_token 路径同步）'
   fix_phase: '已落盘（待实践验证）'
@@ -16595,7 +16595,7 @@ entries:
     变更文件：
     - 'scripts/ops_guard.py（新建 S1，creation_token auto-ops-guard-s1-20260814）'
     - 'tests/governance/test_ops_guard_red_team.py（新建，42 红队向量）'
-    - 'docs/01_policies_and_standards/sop/worktree_cleanup_sop.md（新建 S2 四证 SOP）'
+    - 'docs/01_policies_and_standards/sop/ops_sop/worktree_cleanup_sop.md（新建 S2 四证 SOP）'
     - 'scripts/session_worktree.py（S2 四证检查接入 + activate_env 注入 ZEPHYR_WORKTREE_ROOT）'
     - 'scripts/git_commit.py（S4 bootstrap cwd 解析 + CREATE_NO_WINDOW 合规）'
     - 'src/zephyr/shared/io/paths.py（S4 find_repo_root worktree 感知）'
@@ -16607,7 +16607,7 @@ entries:
     - 'scripts/governance/apply_depgraph.py（S5 _cascade_anchor_hint 三流程接入）'
     - 'docs/02_enterprise_architecture/07_trading_decision_architecture/design_memos/65_git_safety_governance.md（v2.2.0 精简 + v2.3.0 定稿转 active）'
     - 'docs/02_enterprise_architecture/07_trading_decision_architecture/design_memos/66_commit_queue_serialization.md（v1.1.0 精简）'
-    - 'docs/01_policies_and_standards/sop/construction_workflow_sop.md（§七→§六 漂移修正）'
+    - 'docs/01_policies_and_standards/sop/construction_sop/construction_workflow_sop.md（§七→§六 漂移修正）'
     关联文档：
     - 'docs/_working/audit/architecture-reviews/2026-08-14_ai-liq-001_worktree_wipe_incident_review.md（裁定书真源）'
     - 'docs/02_enterprise_architecture/07_trading_decision_architecture/design_memos/construction_progress_tracker.md §六（38-40/43/25/49-52 号项）'
@@ -18523,7 +18523,7 @@ entries:
   impact:
     - 'src/zephyr/security/security_event_bus.py（新建，testing 封顶）'
     - 'tests/security/test_security_event_bus.py（21 用例）'
-    - 'docs/_working/reports/2026-08-22-tnr-drill.md（已随 2026-08-28 清理退役）+ docs/01_policies_and_standards/sop/2026-08-22-emergency-runbook.md'
+    - 'docs/_working/reports/2026-08-22-tnr-drill.md（已随 2026-08-28 清理退役）+ docs/01_policies_and_standards/sop/ops_sop/2026-08-22-emergency-runbook.md'
   fix_phase: '已落地（2026-08-22）：21 新用例全绿+llm_security+fix 1470/safety+agent_rbac 1140/escalation+security 370 零新增红'
   status: decided
   confirmed_by_user: '2026-08-22 Owner 长城任务指令'

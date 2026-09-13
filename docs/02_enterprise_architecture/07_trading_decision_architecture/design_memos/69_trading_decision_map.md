@@ -158,7 +158,7 @@ L1 结构（D4/D6，Owner 裁定+行业修正）：**四路同层级传感器阵
 - 当日预案：作战预案引擎（D_PLAN）管辖，地图只挂引用
 - AGG 双轴合成定稿：RegimeSnapshot 概率（谨慎度→预算带）× 情绪六段分布（机会→策略路由）× 仲裁三规则
 
-**SOP 沉淀**：本轮撞车教训固化为《交易决策地图逐层讨论 SOP》（docs/01_policies_and_standards/sop/trading_decision_map_layering_sop.md）——已有资产清单先行+四路外部调研+上层完整性检查+枝干分级检查。
+**SOP 沉淀**：本轮撞车教训固化为《交易决策地图逐层讨论 SOP》（docs/01_policies_and_standards/sop/trading_decision_map_sop/trading_decision_map_layering_sop.md）——已有资产清单先行+四路外部调研+上层完整性检查+枝干分级检查。
 
 **传感器数据引用定稿**：S1 指数→DS-150（日K）；S2 内部结构→DS-082（涨跌停价，涨停/跌停/炸板统计地基）；S3 赚钱效应→DS-082+DS-107（新闻情绪窗）；S4 波动率→DS-150（VIX 表未登记=数据缺口）；AGG→DS-098（两融杠杆环境）。因子层缺口：情绪类因子在 REG-FCT-001 仅 family 级（sentiment），FCT-* 级条目未建——factor_refs 留空=缺口节点，补登后回填。
 
