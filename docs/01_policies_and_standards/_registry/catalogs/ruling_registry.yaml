@@ -1694,3 +1694,75 @@ entries:
   related_arch: []
   related_rulings: ['裁定#228', '裁定#229']
   superseded_by: null
+- ruling_id: '裁定#231'
+  title: 全图全库荒废终审——battle_map 判活留用+两空壳注册表退役+ROOR 死路径清理（要么自动化要么删除）
+  date: '2026-09-14'
+  category: 治理架构
+  status: active
+  summary: >-
+    Owner 授权自裁（客观架构师立场），对全图全库使用审计发现的四个对象按"要么全自动化用起来、
+    要么删除"框架终审。第一性原理判据（三问）：①有无机械消费点（gate/reconciler/生成器/运行时
+    端点）②有无 AI 决策消费痕迹（lookup/引用/挂轴）③承担责任是否唯一。有机械消费=活着（哪怕
+    无人手动看）；三问全无=负资产（占 lookup 语料/占对齐扫描/误导反查）=删除。100% AI 开发无
+    人类"路过看一眼"的润滑，登记物活性完全依赖机械回路，标准须比人类团队更严。
+    对象A battle_map（图5）判活留用：①08-12 全覆盖补丁完工（340环节/321活跃零缺口/26 篇备忘
+    逐环节锚定），步骤表冻结=完工非废弃；②anchors 绑定表 2026-09-14 02:07 仍在写入（锚672-674
+    BM-SEL-01→MOD-L02 系列），并发会话实际回填中；③运行时消费三处（api_server /battle_map_flow、
+    前端 bt-battle-stage.js、策略行 battle_map_ref 字段读取）；④门禁在岗（commit 面
+    battle_map_alignment_gate + align_all 第二节 ghost_anchors 硬阻断 + reconcile 面自动同步）。
+    唯一死支线=strategy_registry 152 策略 0 声明 battle_map_ref：归因轴 E8 sleeve 组装前无人用，
+    冬眠至 E8（不删 schema，届时重建成本更高）；复核触发器=anchors 停写满 30 天→重评退役。
+    对象B REG-PATHWAY-001 判死退役：index.md 2026-07-16 已标 DEPRECATED（功能被
+    path_ownership_map.yaml 覆盖），0 条目/0 引用/45 天，仅 ROOR 仍记 active=登记漂移。删除文件+条目。
+    对象C REG-CACHE-001 判死退役：MOD-INF-035 auto-runtime-core 脚手架空壳（0 条目/0 代码消费，
+    08-19 出生未填充）。删除文件+条目；将来需要时按用时再建惯例（creation_token+生成器），不留空壳。
+    对象D ROOR 自身滞后修复：删 4 条死路径（上述 2 壳 + module_registry.yaml 已于批次4 SSoT 收敛
+    删除 + blueprint_registry.yaml 派生退库盘上无文件），summary 77→73 并顺带修正 by_tier 预存漂移
+    （29/35→28/34）；ROOR 自身无活性自检，挂靠宪法 §4.2 季度退役审计覆盖（非新规则，净零合规）。
+    外部实践对照：Backstage catalog 孤儿实体默认自动删除+orphan 标注（本裁定取温和版=可见+限期
+    复核，因 AI 开发误删代价高于人工团队）；数据目录界公理"被动目录必腐烂、承重目录才保鲜"
+    （active metadata 流派）+DataHub/OpenMetadata 以使用统计为陈旧信号+软退役流程；vibe coding
+    社区 spec-kit/memory bank 模式共同教训=文档必须进 agent 机械闭环（读/写/校验）才保鲜，纯靠
+    自觉必漂移，印证"唯一责任+全自动化"路线；Feast 特征注册表缺生命周期治理为社区公认（一般
+    工程常识），用量统计+最近刷新时间戳是业界标准陈旧信号。
+    执行结果：system_pathway_registry.yaml 与 grandfather_registry.yaml 已删；ROOR 73 条
+    summary 自洽（进程外复核）；index.md 状态行更新；本裁定与执行同 commit 原子落库。
+  affected_files:
+    d:\ZephyrAlpha\docs\01_policies_and_standards\_registry\catalogs\ruling_registry.yaml
+    d:\ZephyrAlpha\docs\registry_of_registries.yaml
+    d:\ZephyrAlpha\docs\03_modules\index.md
+    d:\ZephyrAlpha\docs\03_modules\system_pathway_registry.yaml
+    d:\ZephyrAlpha\data\cache\grandfather_registry.yaml
+  related_arch: ['#ARCH-310']
+  related_rulings: ['裁定#230']
+  superseded_by: null
+
+- ruling_id: '裁定#232'
+  title: module_id 派生轨分隔符等价（-/_ 通用）——AI 天然命名与 #208 双轨制的冲突治本
+  date: '2026-09-14'
+  category: 治理架构
+  status: active
+  summary: >-
+    Owner 授权自裁（客观架构师立场+全网实践调研）。现象：三个在产模块 id（MOD-INT-AISA/
+    MOD-INT-NEWS-CHAIN/MOD-INT-IMPACT-STREAM）加翻译注册表三个（MOD-REGIME-VAL-002/
+    MOD-NLP-INFERENCE-001/MOD-DAT-fred_ingest）触发 N-06，毒化 data_asset_registry 与
+    module_translation_registry 两个共享注册表——任何人 claim 即被拒，多会话连带冻结
+    （24h 提交堵点 CLAIM-REQUIRED ×10 实证）。
+    第一性原理分析：module_id 的职能=跨代码头/depgraph/注册表/翻译表的稳定机器身份，
+    要求唯一性/稳定性/可归属域，不要求分隔符风格。违规根因不是 AI 不守规矩，而是
+    ①派生轨合法分段符=下划线（validate_module_id_naming.py 正则），与全项目连字符
+    主流风格及 AI 天然命名习惯相悖；②铸造时点（设计文档/脚手架）零校验，闸在 claim
+    时才炸，炸的恰是共享状态=最坏失败模式。外部实践对照：qlib/vnpy/dbt/ESLint 类
+    体系均为"生成/lint 时点 fail-fast + 存量 baseline 豁免"，无一例靠冻结共享登记表。
+    裁定：①派生轨段分隔符 - 与 _ 等价（MODULE_ID_DOMAIN_DERIVED_RE 放宽为 [-_]），
+    存量六 id 就地合法化、零文件翻动（42 文件×历史设计记录不改写）；层主轨
+    MOD-{LAYER}-NNN 单段大写+纯数字序号定义不变，两轨可区分性不受影响；D-/MOD_ 非法
+    形态维持拒绝。②铸造时点校验=后续债：设计节点登记（apply_depgraph）与脚手架
+    （scaffold）生成 module_id 时调 is_valid_module_id fail-fast（本轮未实施，登记为
+    #232.1 跟进项）。③共享注册表冻结行为保留（它迫使本次治本曝光），防复发靠①+②。
+    实现：validate_module_id_naming.py 正则一处修改+新增
+    tests/governance/code_quality/test_module_id_derived_separator.py 13 用例
+    （存量六 id 回归锁定），既有 36 用例零回归。
+  related_arch: ['#ARCH-310']
+  related_rulings: ['裁定#208']
+  superseded_by: null

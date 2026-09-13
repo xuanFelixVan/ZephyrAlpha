@@ -57,15 +57,6 @@ tiers:
         status: active
         description: Governance 脚本子集（可能与 REG-SCRIPT-001 有重叠）
 
-      - registry_id: REG-MOD-ALPHA_SIGNAL_DOMAIN
-        name: 模块登记表
-        physical_path: docs/03_modules/module_registry.yaml
-        format: yaml
-        maintenance: manual
-        entry_count: 0
-        status: retired  # 2026-09-05 AI-00：module_registry.yaml 从未落盘（幽灵登记），维护 advisory
-        description: 已退役（commit 94c44f435b SSoT 收敛）。模块登记数据已合并至 architecture_model/module_id_registry.yaml（REG-001），本文件已删除。
-
       - registry_id: REG-PIPE-001
         name: Pipeline 路由清单
         physical_path: config/blueprint_routing.yaml
@@ -454,15 +445,6 @@ tiers:
     name: 数据与运行时级
     description: 数据缓存/快照/蓝图等运行时的临时或衍生登记表
     registries:
-      - registry_id: REG-BLUEPRINT-001
-        name: 蓝图注册表
-        physical_path: docs/03_modules/blueprint_registry.yaml
-        format: yaml
-        maintenance: auto  # 2026-09-05 AI-00 G2：03df6215e8 派生退库，sync_registry_from_blueprints.py 运行时再生
-        entry_count: 60
-        status: active
-        description: 60 个施工蓝图汇总
-
       - registry_id: REG-SYS-MASTER-001
         name: 系统总蓝图（SYS-MASTER-001）
         physical_path: docs/03_modules/_system_master/blueprint.md
@@ -490,15 +472,6 @@ tiers:
         status: active
         description: 13 个文档模板登记
 
-      - registry_id: REG-PATHWAY-001
-        name: 系统路径注册表
-        physical_path: docs/03_modules/system_pathway_registry.yaml
-        format: yaml
-        maintenance: manual
-        entry_count: 27
-        status: deprecated
-        description: "[DEPRECATED 2026-07-16] 功能已被 REG-BLUEPRINT-001 (blueprint_registry.yaml) + REG-PATH-OWN-001 (path_ownership_map.yaml) 覆盖。停留在 v1.2.1/2026-05-07，保留作历史参考。"
-
       - registry_id: REG-MOD-ID-001
         name: 模块 ID 注册表（EA 级）
         physical_path: architecture_model/module_id_registry.yaml
@@ -516,15 +489,6 @@ tiers:
         entry_count: 74
         status: active
         description: 74 个架构分区项
-
-      - registry_id: REG-CACHE-001
-        name: Grandfather 缓存注册表
-        physical_path: data/cache/grandfather_registry.yaml
-        format: yaml
-        maintenance: auto
-        entry_count: 0
-        status: active
-        description: 三级缓存策略索引（当前为空——策略定义就位，缓存条目待生成）
 
       - registry_id: REG-FREEZE-001
         name: 契约冻结清单
@@ -860,11 +824,11 @@ known_issues:
 
 summary:
   total_tiers: 3
-  total_registries: 77  # 2026-09-12 +1：REG-BTB-001 回测对象预注册登记表；+1：REG-RISK-TIER-001 域风险分级与人机门位注册表（#ARCH-310 R5）
+  total_registries: 73  # 2026-09-12 +1：REG-BTB-001 回测对象预注册登记表；+1：REG-RISK-TIER-001 域风险分级与人机门位注册表（#ARCH-310 R5）
   fully_scanned: 19
   pending_scan: 5
   broken: 1
   by_tier:
-    tier_0_core: 12
-    tier_1_governance: 29  # 2026-09-12 +1：REG-BTB-001
-    tier_2_runtime: 35  # #172 漂移修正：手写 29 → 2026-08-19 实测 33
+    tier_0_core: 11
+    tier_1_governance: 28  # 2026-09-12 +1：REG-BTB-001
+    tier_2_runtime: 34  # #172 漂移修正：手写 29 → 2026-08-19 实测 33
