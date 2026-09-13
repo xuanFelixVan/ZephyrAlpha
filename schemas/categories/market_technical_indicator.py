@@ -198,7 +198,7 @@ CREATE TABLE IF NOT EXISTS c1_market.technical_indicator
     nvi          Nullable(Float64)  COMMENT '负成交量指标',
     pvi          Nullable(Float64)  COMMENT '正成交量指标',
 
-    candle_pattern    Nullable(Float64)  COMMENT 'K线形态编码(0=无,1=锤子,2=吞没,3=启明星,4=黄昏星,5=十字星...)',
+    candle_pattern    Nullable(Float64)  COMMENT '[已停产2026-09-14 裁定#233→图形域 market_pattern_event] K线形态编码(0=无,1=锤子,2=吞没,3=启明星,4=黄昏星,5=十字星...)',
     rsi_divergence    Nullable(Float64)  COMMENT 'RSI背离信号(0=无,1=顶背离,-1=底背离)',
     macd_divergence   Nullable(Float64)  COMMENT 'MACD背离信号(0=无,1=顶背离,-1=底背离)',
     boll_breakout     Nullable(Float64)  COMMENT '布林带突破信号(0=无,1=向上突破,-1=向下突破)',
@@ -254,7 +254,7 @@ INSERT_COLUMNS = (
     # 成交量类
     "obv, mfi_14, vwap, vr_26, ad, pvt, wvad_24, vwma_20, adosc, eom_14, kvo, kvo_signal, nvi, pvi, "
     # 反转类
-    "candle_pattern, rsi_divergence, macd_divergence, boll_breakout, vol_price_div, "
+    "rsi_divergence, macd_divergence, boll_breakout, vol_price_div, "
     # 元数据
     "data_source)"
 )

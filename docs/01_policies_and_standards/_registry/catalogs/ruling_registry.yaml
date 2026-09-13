@@ -1766,3 +1766,16 @@ entries:
   related_arch: ['#ARCH-310']
   related_rulings: ['裁定#208']
   superseded_by: null
+- ruling_id: '裁定#233'
+  title: IND-REV-001/candle_pattern 列退役——蜡烛实现唯一真源迁移图形域（MOD-SIG-145）
+  date: '2026-09-14'
+  category: 治理架构
+  status: active
+  summary: >-
+    Owner 倾向方案 B（2026-09-14，图形库会话 st-pattern-20260914 提案）。蜡烛形态实现
+    唯一真源=candlestick_scanner（TA-Lib CDL61+A股16，MOD-SIG-145/事件表 market_pattern_event
+    2340 万事件+胜率统计闭环）；消费清查=零下游消费方（candle_pattern 列/IND-REV-001
+    全仓 grep 仅 reversal.py 自家+测试）。执行：reversal.py 删 CandlestickPattern 类、
+    market_technical_indicator INSERT_COLUMNS 停产 candle_pattern（列物理保留一季度
+    后 ALTER DROP）、IND-REV-001 标 deprecated（注册表净删留季删缓冲）。
+  evidence: pattern_session_governance_report_2026_09_14.md §五；清查记录 st-pattern-20260914

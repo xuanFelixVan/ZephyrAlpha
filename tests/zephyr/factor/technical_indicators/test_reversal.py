@@ -1,6 +1,6 @@
 # [BLUEPRINT] MOD-L02-001 | (auto-injected by S4 reconciler) | §
 # [TTL] permanent
-"""反转类技术指标测试（5 个，v1.0.0 全部施工完成）。
+"""反转类技术指标测试（4 个，v1.0.0 全部施工完成）。
 
 测试内容：
 - 5 个反转指标全部注册到 Registry
@@ -9,7 +9,6 @@
 - 已实现指标（全部 5 个）：信号输出正确性 + 边界测试
 
 信号输出约定：0.0=无信号, 1.0=正信号(看涨), -1.0=负信号(看跌)
-K线形态编码：0=无, 1=锤子, 2=看涨吞没, -2=看跌吞没, 3=启明星, 4=黄昏星, 5=十字星
 
 设计文档：docs/02_enterprise_architecture/07_trading_decision_architecture/design_memos/16_technical_indicator_catalog.md §2.5
 """
@@ -26,7 +25,6 @@ from zephyr.factor.technical_indicators.indicator_base import TechnicalIndicator
 
 # 期望契约（catalog §2.5）：indicator_id → (name, output_columns)
 EXPECTED = {
-    "candlestick_pattern": ("K线形态", ["candle_pattern"]),
     "rsi_divergence": ("RSI背离", ["rsi_divergence"]),
     "macd_divergence": ("MACD背离", ["macd_divergence"]),
     "boll_breakout": ("布林带突破", ["boll_breakout"]),
@@ -54,7 +52,7 @@ class TestReversalRegistered:
             assert iid in metas, f"反转指标 '{iid}' 未注册"
 
     def test_count(self):
-        assert len(TechnicalIndicatorRegistry.list_by_category("reversal")) == len(EXPECTED) == 5
+        assert len(TechnicalIndicatorRegistry.list_by_category("reversal")) == len(EXPECTED) == 4
 
 
 class TestReversalMetaContract:
@@ -92,84 +90,3 @@ class TestReversalComputeNotImplemented:
             cls().compute(df)
 
 
-# ===========================================================================
-# CandlestickPattern 信号正确性测试
-# ===========================================================================
-
-CandlestickPattern = TechnicalIndicatorRegistry.get("candlestick_pattern")
-
-
-class TestCandlestickThinView:
-    """薄视图（实现移交图形域 scan_candles，裁定①方案A）——映射/降级/边界。"""
-
-    def _event(self, pid: str, day: int, direction: str = "向上") -> dict:
-        from datetime import date, timedelta
-
-        return {
-            "pattern_id": pid,
-            "pattern_class": "K线",
-            "direction": direction,
-            "confidence": 0.8,
-            "anchor_trade_date": (date(2000, 1, 1) + timedelta(days=day)).isoformat(),
-            "symbol": "TEST",
-        }
-
-    def test_mapping_hammer(self):
-        """CDLHAMMER 事件 → 编码 1 落在正确 bar。"""
-        df = _make_ohlcv(30)
-        with patch(
-            "zephyr.signal_ashare.strategy_signal.candlestick_scanner.scan_candles",
-            return_value=[self._event("CDLHAMMER", 10)],
-        ):
-            result = CandlestickPattern().compute(df)
-        assert result["candle_pattern"].iloc[10] == 1.0
-        assert (result["candle_pattern"].drop(index=10) == 0.0).all()
-
-    def test_mapping_engulfing_direction(self):
-        """吞没方向：向上→+2，向下→-2。"""
-        df = _make_ohlcv(30)
-        with patch(
-            "zephyr.signal_ashare.strategy_signal.candlestick_scanner.scan_candles",
-            return_value=[
-                self._event("CDLENGULFING", 5, "向上"),
-                self._event("CDLENGULFING", 15, "向下"),
-            ],
-        ):
-            result = CandlestickPattern().compute(df)
-        assert result["candle_pattern"].iloc[5] == 2.0
-        assert result["candle_pattern"].iloc[15] == -2.0
-
-    def test_unknown_cdl_ignored(self):
-        """非 6 编码形态（如 CDL3BLACKCROWS）不进旧列。"""
-        df = _make_ohlcv(30)
-        with patch(
-            "zephyr.signal_ashare.strategy_signal.candlestick_scanner.scan_candles",
-            return_value=[self._event("CDL3BLACKCROWS", 8)],
-        ):
-            result = CandlestickPattern().compute(df)
-        assert (result["candle_pattern"] == 0.0).all()
-
-    def test_degrade_to_zero_on_scanner_failure(self):
-        """scan_candles 不可用（talib 缺失等）→ 降级全 0 不炸生产批。"""
-        df = _make_ohlcv(30)
-        with patch(
-            "zephyr.signal_ashare.strategy_signal.candlestick_scanner.scan_candles",
-            side_effect=RuntimeError("talib 不可得"),
-        ):
-            result = CandlestickPattern().compute(df)
-        assert (result["candle_pattern"] == 0.0).all()
-
-    def test_signal_range_real_scanner(self):
-        """真实 scan_candles（talib 0.7 在装）：值域 {-2,0,1,2,3,4,5}。"""
-        df = _make_ohlcv(50)
-        result = CandlestickPattern().compute(df)
-        valid = result["candle_pattern"].dropna().unique()
-        assert set(valid) <= {-2.0, 0.0, 1.0, 2.0, 3.0, 4.0, 5.0}
-
-    def test_empty_dataframe(self):
-        result = CandlestickPattern().compute(pd.DataFrame(columns=["open", "high", "low", "close"]))
-        assert result.empty
-
-    def test_missing_column_raises(self):
-        with pytest.raises(ValueError, match="缺少列"):
-            CandlestickPattern().compute(pd.DataFrame({"close": [10.0]}))

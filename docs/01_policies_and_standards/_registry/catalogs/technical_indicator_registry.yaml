@@ -2573,7 +2573,7 @@ indicators:
   code_path: src/zephyr/factor/technical_indicators/reversal.py
   code_symbol: CandlestickPattern.compute（薄视图→signal_ashare.candlestick_scanner.scan_candles 映射，裁定①方案A 2026-09-14）
   used_by_factors: []
-  status: active
+  status: deprecated
   version: 2.0.0
   created_at: '2026-08-13'
   updated_at: '2026-09-14'
@@ -2590,6 +2590,7 @@ indicators:
   evidence: ""
   code_symbol: null
   code_fingerprint: null
+  deprecation_note: "2026-09-14 裁定#233：实现唯一真源=图形域 candlestick_scanner（MOD-SIG-145），candle_pattern 列停产保物理；零下游消费方清查见 pattern_session_governance_report §五"
 - indicator_id: IND-REV-002
   name: RSIDivergence
   name_zh: RSI背离

@@ -5,7 +5,7 @@
 # [CONSUMERS] zephyr.data.implementations.internal_compute_provider（包级 autodiscover 动态接线：internal_compute_provider L545/L1113 延迟导入本包+注册表消费）; sleeve alpha 择时
 # [STARTUP] imported
 # [MATURITY] production
-# [INVARIANTS] 反转类指标 5 个，纯自实现 pandas/numpy；compute→DataFrame 多列输出（信号列 0/1/-1）
+# [INVARIANTS] 反转类指标 4 个（CandlestickPattern 类已退役→唯一实现=图形域 candlestick_scanner，裁定#233），纯自实现 pandas/numpy；compute→DataFrame 多列输出（信号列 0/1/-1）
 # [MODIFY-GUARD] none
 # [STABILITY] evolving
 # [SAFETY] L
@@ -18,7 +18,7 @@
 
 反转类技术指标（5 个，v1.0.0 全部施工完成）。
 
-指标清单：CandlestickPattern/RSIDivergence/MACDDivergence/BOLLBreakout/VolumePriceDivergence
+指标清单：RSIDivergence/MACDDivergence/BOLLBreakout/VolumePriceDivergence
 
 输出约定：
   - 信号列 Float64: 0.0=无信号, 1.0=正信号(看涨), -1.0=负信号(看跌)
@@ -39,14 +39,6 @@
 #   fields: open/high/low/close/volume 列（各指标按 meta.input_columns 取用）
 #   code: compute(data: pd.DataFrame)
 # 层: 指标
-# - id: CANDLE
-#   name_zh: K线形态识别
-#   name_en: CandlestickPattern
-#   intro: 按实体/影线比例识别锤子、吞没、启明星、黄昏星、十字星并编码
-#   formula: body=|C-O|；doji: body/(H-L)<0.1→5；hammer: 下影/实体>2 且上影<0.3实体→1；吞没±2（2bar）；启明/黄昏星 3/4（3bar）
-#   code: reversal.py L62-107
-#   registry: 指标表: 有candle_pattern列 但代码未读表（本模块即指标计算实现）
-#   is_break: true
 # - id: RSIDIV
 #   name_zh: RSI背离 12,20
 #   name_en: RSIDivergence
@@ -96,10 +88,10 @@
 #   outputs: 信号 Series（0=无 1=顶背离 -1=底背离）
 # 层: 输出
 # - id: O1
-#   name_zh: 反转信号 DataFrame（5指标）
+#   name_zh: 反转信号 DataFrame（4指标）
 #   name_en: reversal indicators DataFrame
 #   intro: K线形态编码 + 4个背离/突破信号列，识别趋势反转点
-#   invariant: 信号列取值 ∈{0.0,1.0,-1.0}；candle_pattern 编码 ∈{0,1,2,-2,3,4,5}
+#   invariant: 信号列取值 ∈{0.0,1.0,-1.0}
 #   downstream: zephyr.data.implementations.internal_compute_provider（批量计算写入 c1_market.technical_indicator）；sleeve alpha 择时
 # [/ALGO_FLOW]
 #
@@ -108,7 +100,6 @@
 # I1 --> A2
 # I1 --> A3
 # A2 --> A3
-# A1 -.->|断点| CANDLE
 # A1 -.->|断点| RSIDIV
 # A1 -.->|断点| BOLLBRK
 # A1 -.->|断点| VPDIV
@@ -116,7 +107,6 @@
 # A2 -.->|断点| BOLLBRK
 # A3 -.->|断点| RSIDIV
 # A3 -.->|断点| VPDIV
-# CANDLE --> O1
 # RSIDIV --> O1
 # BOLLBRK --> O1
 # VPDIV --> O1
@@ -197,94 +187,6 @@ def _divergence_signal(
             elif sign == -1.0 and p[curr] < p[prev] and i_curr > i_prev:
                 signal.iloc[confirm] = -1.0
     return signal
-
-
-@TechnicalIndicatorRegistry.register
-class CandlestickPattern(TechnicalIndicatorBase):
-    """K线形态识别（薄视图——实现移交图形域 candlestick_scanner，裁定①方案 A 2026-09-14）。
-
-    自研 5 形态灶台已停用；compute 转调 signal_ashare.candlestick_scanner.scan_candles
-    （TA-Lib CDL 61 + A股/酒田 16 条），取 6 编码对应形态映射回旧 candle_pattern 列语义，
-    旧接口消费方无感。登记条目 IND-REV-001 保留（退役升级留待方案 B，挂 Owner 门位）。
-    """
-
-    meta = TechnicalIndicatorMeta(
-        indicator_id="candlestick_pattern",
-        name="K线形态",
-        category="reversal",
-        output_columns=["candle_pattern"],
-        input_columns=["open", "high", "low", "close"],
-        params={"patterns": "all"},
-        version="2.0.0",
-        description="薄视图：编码(0=无,1=锤子,2=看涨吞没,-2=看跌吞没,3=启明星,4=黄昏星,5=十字星)；实现=图形域 scan_candles 映射（CDLHAMMER/CDLENGULFING/CDLMORNINGSTAR/CDLEVENINGSTAR/CDLDOJI），talib 缺失时降级全 0",
-    )
-
-    # 旧编码 → 图形域 scan_candles 的 CDL pattern_id
-    _ENC_TO_CDL = {
-        1.0: "CDLHAMMER",
-        2.0: "CDLENGULFING",
-        3.0: "CDLMORNINGSTAR",
-        4.0: "CDLEVENINGSTAR",
-        5.0: "CDLDOJI",
-    }
-    # 同 bar 多形态命中时的覆盖序（低→高，复刻旧实现：星类/吞没覆盖锤子与十字星）
-    _WRITE_ORDER = (5.0, 1.0, -2.0, 2.0, 3.0, 4.0)
-
-    def compute(self, data: pd.DataFrame, **kwargs) -> pd.DataFrame:
-        self.validate(data)
-        if data.empty:
-            return pd.DataFrame(columns=self.meta.output_columns)
-
-        symbol = str(kwargs.get("symbol", "") or "UNKNOWN")
-        try:
-            # 懒加载：跨域（D_FACTOR→D_SIGNAL）薄视图调用；缺失 talib 时降级而非炸生产批
-            from zephyr.signal_ashare.strategy_signal.candlestick_scanner import scan_candles
-
-            if "trade_date" in data.columns:
-                scanner_df = data
-                row_keys = pd.to_datetime(data["trade_date"]).dt.date
-            else:
-                # 无日期列的输入（测试/实时切片）：合成行序日期，scanner 锚回传后按位置对齐
-                scanner_df = data.copy()
-                scanner_df["trade_date"] = pd.date_range("2000-01-01", periods=len(data), freq="D")
-                row_keys = scanner_df["trade_date"].dt.date
-            events = scan_candles(symbol, scanner_df)
-        except Exception as exc:  # noqa: BLE001 — 降级可见不阻断（log 告警留痕）
-            logging.getLogger(__name__).warning(
-                "candle_pattern 薄视图降级全 0（scan_candles 不可用: %s）", exc
-            )
-            return pd.DataFrame(
-                {"candle_pattern": pd.Series(0.0, index=data.index)}, index=data.index
-            )
-
-        if "trade_date" in data.columns:
-            row_keys = pd.to_datetime(data["trade_date"]).dt.date
-        key_to_pos = {k: i for i, k in enumerate(row_keys)}
-
-        # 事件按 anchor_trade_date 聚到 bar → 编码；direction 决定吞没符号
-        enc_by_pos: dict[int, float] = {}
-        for ev in events:
-            pid = ev.get("pattern_id")
-            if pid not in set(self._ENC_TO_CDL.values()):
-                continue
-            ad = ev.get("anchor_trade_date")
-            pos = key_to_pos.get(pd.to_datetime(ad).date())
-            if pos is None:
-                continue
-            if pid == "CDLENGULFING":
-                enc_by_pos[pos] = 2.0 if ev.get("direction") == "向上" else -2.0
-            else:
-                for enc, cdl in self._ENC_TO_CDL.items():
-                    if cdl == pid:
-                        enc_by_pos[pos] = enc
-                        break
-
-        pattern = pd.Series(0.0, index=data.index, dtype=float)
-        for enc in self._WRITE_ORDER:
-            for pos, e in enc_by_pos.items():
-                if e == enc:
-                    pattern.iloc[pos] = enc
-        return pd.DataFrame({"candle_pattern": pattern}, index=data.index)
 
 
 @TechnicalIndicatorRegistry.register

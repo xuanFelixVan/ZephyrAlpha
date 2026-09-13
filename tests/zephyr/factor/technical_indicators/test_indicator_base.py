@@ -42,9 +42,9 @@ from zephyr.factor.technical_indicators.indicator_base import (
 )
 
 # 8 类指标数量契约（catalog §2：趋势18/动量31/波动15/成交量13/反转5/统计4/复合1/循环5）
-_EXPECTED_TOTAL = 92
+_EXPECTED_TOTAL = 91  # 裁定#233：IND-REV-001/candle_pattern 退役（-1）
 # 全部输出列数契约（catalog §2.6：趋势29+动量50+波动20+成交量14+反转5+统计5+复合5+循环7 = 135）
-_EXPECTED_COLUMN_TOTAL = 135
+_EXPECTED_COLUMN_TOTAL = 134  # 裁定#233：candle_pattern 列退役（-1）
 
 
 # ============== TechnicalIndicatorMeta ==============
@@ -128,7 +128,7 @@ class TestRegistryMechanics:
         assert len(TechnicalIndicatorRegistry.list_by_category("momentum")) == 31
         assert len(TechnicalIndicatorRegistry.list_by_category("volatility")) == 15
         assert len(TechnicalIndicatorRegistry.list_by_category("volume")) == 13
-        assert len(TechnicalIndicatorRegistry.list_by_category("reversal")) == 5
+        assert len(TechnicalIndicatorRegistry.list_by_category("reversal")) == 4  # 裁定#233
         assert len(TechnicalIndicatorRegistry.list_by_category("statistics")) == 4
         assert len(TechnicalIndicatorRegistry.list_by_category("composite")) == 1
         assert len(TechnicalIndicatorRegistry.list_by_category("cycle")) == 5
@@ -271,6 +271,7 @@ class TestDDLColumnCrossCheck:
     def test_registry_columns_match_ddl(self):
         """Registry 输出列集合 == DDL Nullable(Float64) 列集合（双向一致）。"""
         ddl_cols = _parse_ddl_indicator_columns()
+        ddl_cols.discard("candle_pattern")  # 裁定#233 已停产列（物理保留、写入已停）
         registry_cols = set(TechnicalIndicatorRegistry.list_output_columns())
         assert registry_cols == ddl_cols, (
             f"Registry 与 DDL 列不一致。\n"
@@ -279,6 +280,8 @@ class TestDDLColumnCrossCheck:
         )
 
     def test_ddl_column_count(self):
-        """DDL 指标列总数 == 58（catalog §2.6 契约）。"""
+        """DDL 活跃指标列总数 == 134（裁定#233 后）；candle_pattern 物理保留钉死。"""
         ddl_cols = _parse_ddl_indicator_columns()
+        assert "candle_pattern" in ddl_cols  # 已停产列物理保留（季度观察后 ALTER DROP）
+        ddl_cols.discard("candle_pattern")   # 活跃列计数排除停产列
         assert len(ddl_cols) == _EXPECTED_COLUMN_TOTAL
