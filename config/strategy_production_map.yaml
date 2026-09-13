@@ -235,11 +235,12 @@ nodes:
     decision_question: 单因子好看没用——加进池子能涨分吗？
     algo_note_zh: 正交化四法对照后选**对称正交化**（保可解释性最佳且不依赖收益数据，
       天风金工）→对动量/波动/流动性基准因子正交化后增量 IC 显著才准入；
-      组合权重走 IC_IR 加权禁朴素等权（SSRN：朴素合成摧毁价值+动量的分散收益）
+      组合权重走 IC_IR 加权禁朴素等权（SSRN：朴素合成摧毁价值+动量的分散收益）；
+      已建=MOD-BT-086 相关性聚类+簇首选择（贪心 O(n²) 单遍，tests/backtest/test_synergy_dedup.py）
     compute_class: local
     data_refs: []
-    module_ref: null
-    build_status: pending
+    module_ref: MOD-BT-086
+    build_status: built
     design_refs:
       - 天风金工因子正交全攻略 sohu.com/a/201668064_619347
       - 朴素合成警告 papers.ssrn.com/sol3/papers.cfm?abstract_id=6255159
