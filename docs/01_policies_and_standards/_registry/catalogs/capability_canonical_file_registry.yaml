@@ -4979,12 +4979,16 @@ capabilities:
     词表 sanity
 - capability_id: construction_workflow_sop
   name: construction_workflow_sop
-  canonical_file: docs/01_policies_and_standards/sop/construction_workflow_sop.md
+  canonical_file: docs/01_policies_and_standards/sop/construction_sop/construction_workflow_sop.md
   name_zh: 端到端 15 步施工闭环 SOP（07 域施工编排真源）
   description: 施工 新模块 建新文件 写代码 施工流程 15步闭环 前必读的端到端编排 SOP——设计备忘→文档审查→蓝图→depgraph 登记→施工→测试→git
     提交→全景对齐→清理 全流程步骤与失败处置；适用 07 域（regime/选股/仓位/风控/买卖/执行/对账/治理）施工，RULE-CAPABILITY-LOOKUP
     检索"施工"应命中本条
 creation_tokens:
+- file: docs/01_policies_and_standards/sop/README.md
+  token: sop-index-true-source-map-20260914
+  created_by: st-sopreorg-20260914
+  capability: sop_true_source_map
 - file: docs/_working/2026-09-14-typhoon-bdi-factor-mining-plan.md
   token: typhoon-bdi-mining-20260914
   created_by: st-altdata-20260914
@@ -5065,7 +5069,7 @@ creation_tokens:
   token: crypto-shadow-ddl-apply-20260912
   created_by: st-g07-crypto-20260912
   capability: crypto_shadow_mvp_data_layer
-- file: docs/01_policies_and_standards/sop/agent_constitution_legacy_v1.md
+- file: docs/01_policies_and_standards/sop/governance_sop/agent_constitution_legacy_v1.md
   token: constitution-legacy-v1-20260912
   created_by: st-govreform-20260912
   capability: gate_commit_gw
@@ -5507,7 +5511,7 @@ creation_tokens:
   token: auto-trading-decision-map-20260904-review
   created_by: solo-20260904-decision-map
   capability: trading_decision_map
-- file: docs/01_policies_and_standards/sop/trading_decision_map_layering_sop.md
+- file: docs/01_policies_and_standards/sop/trading_decision_map_sop/trading_decision_map_layering_sop.md
   token: auto-trading-decision-map-20260905-layering-sop
   created_by: solo-20260905-decision-map-v12
   capability: trading_decision_map
@@ -6043,11 +6047,11 @@ creation_tokens:
   token: auto-43-compliance-discipline-20260812
   created_by: session-bm-fill
   capability: compliance_discipline_memo
-- file: docs/01_policies_and_standards/sop/construction_workflow_sop.md
+- file: docs/01_policies_and_standards/sop/construction_sop/construction_workflow_sop.md
   token: auto-02-construction-workflow-sop-20260812
   created_by: session-ai-sop-001
   capability: construction_workflow_sop
-- file: docs/01_policies_and_standards/sop/merge_conflict_resolution_sop.md
+- file: docs/01_policies_and_standards/sop/ops_sop/merge_conflict_resolution_sop.md
   token: auto-67-merge-conflict-resolution-sop-20260813
   created_by: session-sess-recovery-0813
   capability: merge_conflict_resolution_sop
@@ -8362,7 +8366,7 @@ creation_tokens:
   created_by: AI-GIT-001
   capability: ops_guard_delete_interception
   note: S1 红队验收测试（42条攻击向量100%拦截率断言）
-- file: docs/01_policies_and_standards/sop/worktree_cleanup_sop.md
+- file: docs/01_policies_and_standards/sop/ops_sop/worktree_cleanup_sop.md
   token: auto-worktree-cleanup-sop-20260814
   created_by: AI-GIT-001
   capability: worktree_cleanup_safety
@@ -8999,7 +9003,7 @@ creation_tokens:
   token: auto-tnr-drill-20260822
   created_by: AI-P3-W1C
   capability: security_event_bus
-- file: docs/01_policies_and_standards/sop/2026-08-22-emergency-runbook.md
+- file: docs/01_policies_and_standards/sop/ops_sop/2026-08-22-emergency-runbook.md
   token: auto-emergency-runbook-20260822
   created_by: AI-P3-W1C
   capability: security_event_bus
@@ -12282,7 +12286,6 @@ creation_tokens:
   token: tdm-v13-validation-metadata-memo-20260914
   created_by: st-zcode-c4-20260912
   capability: c4_batch_translation
-di_seam_exemptions: []
 - file: schemas/categories/sim_trade_log.py
   token: sim-trade-log-20260914-b1
   created_by: st-zcode-c4-20260912
@@ -12295,3 +12298,8 @@ di_seam_exemptions: []
   token: test-sim-paper-ledger-20260914-b1
   created_by: st-zcode-c4-20260912
   capability: sim_paper_ledger_c
+- file: schemas/categories/market_pattern_win_rate.py
+  token: pattern-win-rate-ddl-truth-market-pattern-win-rate-20260913
+  created_by: st-pattern-20260914
+  capability: pattern-win-rate-ddl-truth
+di_seam_exemptions: []
