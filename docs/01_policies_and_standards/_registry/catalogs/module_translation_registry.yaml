@@ -48086,6 +48086,13 @@ entries:
   desc_zh: ""
   desc_en: ""
   plain_zh: "TDM 升级蓝图 UP-2：用分布预测的 P(跌) 替代固定百分比止损，超过阈值输出止损评审信号而非强制平仓。含基础版（滚动负收益占比）和升级版（三分布位点插值 P(跌)+左尾厚比复合评分），保守语义——止损评审不等于强制平仓，供上游决策参考。"
+- module_path: src/zephyr/pf_alloc/core/synergy_dedup.py
+  domain_id: D_BACKTEST
+  name_zh: "策略协同去重器"
+  name_en: ""
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "多策略日收益相关性聚类去重：贪心按 Sharpe 降序扫全量策略，相关系数超阈值者归簇并保留簇首（Sharpe 最高者），消除冗余策略提升组合信息比。贪心 O(n²) 单遍，适用于工厂批量产出去重场景。"
 
 battle_map_steps:
 - step_id: BM-BUY-05

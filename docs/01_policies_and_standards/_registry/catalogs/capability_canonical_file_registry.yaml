@@ -12158,3 +12158,11 @@ di_seam_exemptions: []
   token: sim-partition-discussion-20260914
   created_by: st-zcode-c4-20260912
   capability: c4_batch_translation
+- file: src/zephyr/pf_alloc/core/synergy_dedup.py
+  token: synergy-dedup-20260913
+  created_by: st-zcode-c4-20260912
+  capability: c4_batch_translation
+- file: tests/backtest/test_synergy_dedup.py
+  token: synergy-dedup-tests-20260913
+  created_by: st-zcode-c4-20260912
+  capability: c4_batch_translation
