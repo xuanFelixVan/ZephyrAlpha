@@ -36,6 +36,39 @@ from scripts.scaffold import ScaffoldError, check_duplicate_functionality
 from zephyr.gov_enforcement.rule_bridge.git_commit_gateway import CommitStatus, GitCommitGateway
 from zephyr.governance.capability_lookup import CapabilityLookup, HeaderInfo, SSoTConflict
 
+_REPO_ROOT = Path(__file__).resolve().parents[3]
+
+
+def _commit_queue_busy() -> bool:
+    """提交队列是否有待落盘/落盘中批次（只读探测，fail-open）。"""
+    import os
+
+    root = Path(os.environ.get("ZEPHYR_COMMIT_QUEUE_DIR", str(_REPO_ROOT / ".runtime" / "commit_queue")))
+    try:
+        for state in ("pending", "processing"):
+            if any((root / state).glob("q-*.json")):
+                return True
+    except OSError:
+        return False
+    return False
+
+
+@pytest.fixture(scope="module", autouse=True)
+def _require_quiet_commit_queue():
+    """本套件做真 git 操作（共享 index/工作区），与提交队列 serializer 并发必假红。
+
+    2026-09-15 实测（治理上报件6）：与队列 landing 并发跑 24 红全假（100 秒快速失败
+    vs 套件内在 32 分钟；红队用例真 git diff/commit 撞上序列化器的 index 变更）。
+    队列 busy → 整模块 skip（可见跳过非静默通过），队列排空后重跑即真。
+    探测失败 fail-open（不因探测器故障停摆测试）。
+    """
+    if _commit_queue_busy():
+        pytest.skip(
+            "提交队列存在 pending/processing 批次——本套件需独占 git index，"
+            "并发运行必假红（2026-09-15 件6 实测）；队列排空后重跑"
+        )
+
+
 # ---------------------------------------------------------------------------
 # 辅助 fixture
 # ---------------------------------------------------------------------------
