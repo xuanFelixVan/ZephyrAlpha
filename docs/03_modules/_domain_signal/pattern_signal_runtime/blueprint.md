@@ -78,8 +78,15 @@ W-C2 已落位：①regime 门=runtime 构造参数 regime_filter（symbol,regim
 （SignalFactory 鸭子型），逐方向取最强分量注册 SignalDraft（signal_id=幂等键:方向，
 NEUTRAL 跳过，重复幂等跳过留痕 notes）。
 
-仍不做：权重持久化与调权决策（W-C3/MOD-SIG-131 职责）；前端呈现（W-C4）；
-执行层（方案 C6）。
+W-C3 已落位：①PatternWeightSync——物化完成→sync_from_provider：拉全行统计
+（low_sample/查无跳过=不录样本不调权）→win_rate=Wilson LB、ic=ic_scale×(命中率−基准)
+截断代理（方向优势代理非真实 IC，真实 IC 待逐笔 PnL 证据层；drawdown=0.0 不伪造，
+装配建议 dd_coef=0）→131 record_metrics+adjust 限幅调权；②PatternWeightStore——
+权重状态 JSON 持久化（data/runtime/pattern_signal_weights.json，safe_write CAS，
+tmp_path 注入测试，重启恢复上次权重）；③main(--sync-weights) CLI=物化完成事件钩子
+可挂载正身（JOB-108 日链 materialize 之后追加本步，禁 cron/Timer）。
+
+仍不做：前端呈现（W-C4）；执行层（方案 C6）。
 
 ## 5. 测试
 

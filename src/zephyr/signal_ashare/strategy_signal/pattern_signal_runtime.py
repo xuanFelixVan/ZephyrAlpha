@@ -53,9 +53,13 @@ docs/_working/2026-09-14-pattern-consumer-plan.md）：
 
 from __future__ import annotations
 
+import argparse
 import datetime
 import hashlib
+import json
+import sys
 from collections.abc import Callable, Mapping
+from pathlib import Path
 from typing import Any
 
 from zephyr.shared.contracts.ctr002_producer_validator import Ctr002ProducerValidator
@@ -66,17 +70,29 @@ from zephyr.signal_ashare.strategy_signal.pattern_to_signal_mapper import (
 )
 from zephyr.signal_ashare.strategy_signal.pattern_win_rate_provider import (
     PatternWinRateProvider,
+    _wilson_lower_bound,
 )
 from zephyr.signal_ashare.strategy_signal.signal_factory import SignalDraft
+from zephyr.signal_ashare.strategy_signal.signal_weight_adjuster import (
+    SignalWeightAdjuster,
+)
 from zephyr.signal_ashare.strategy_signal.unified_pattern_engine import (
     UnifiedPatternEngine,
 )
+from zephyr.shared.io.file_utils import safe_write_text
 
-__all__ = ["Ctr002PayloadValidator", "PatternSignalRuntime"]
+__all__ = [
+    "Ctr002PayloadValidator",
+    "PatternSignalRuntime",
+    "PatternWeightStore",
+    "PatternWeightSync",
+    "main",
+]
 
 _DEFAULT_TIMEFRAME = "day"
 _DEFAULT_FWD_WINDOW = 10
 _DEFAULT_SOURCE = "pattern_signal_runtime"
+_DEFAULT_STATE_PATH = "data/runtime/pattern_signal_weights.json"
 
 
 def _payload_idempotency_key(payload: Mapping[str, Any]) -> str:
@@ -276,3 +292,183 @@ class PatternSignalRuntime:
                 if isinstance(log_note, list) and metadata_note not in log_note:
                     log_note.append(metadata_note)
         return ids
+
+
+class PatternWeightStore:
+    """调权状态 JSON 持久化（W-C3 权重持久化目标落地）。
+
+    path 注入（生产=data/runtime/pattern_signal_weights.json，测试走
+    tmp_path）；safe_write_text CAS 落盘；损坏/缺失→load 返回 {}，
+    save 抛错交调用方（状态写失败不静默吞）。
+    """
+
+    def __init__(self, path: str | Path = _DEFAULT_STATE_PATH) -> None:
+        self._path = Path(path)
+
+    def load(self) -> dict[str, dict[str, Any]]:
+        if not self._path.exists():
+            return {}
+        data = json.loads(self._path.read_text(encoding="utf-8"))
+        patterns = data.get("patterns")
+        if not isinstance(patterns, dict):
+            raise ValueError(f"调权状态结构非法: {self._path}")
+        return patterns
+
+    def save(self, patterns: dict[str, dict[str, Any]], *, updated_at: datetime.datetime) -> None:
+        doc = {
+            "schema": "pattern_signal_weights/1",
+            "updated_at": updated_at.isoformat(),
+            "patterns": patterns,
+        }
+        self._path.parent.mkdir(parents=True, exist_ok=True)
+        safe_write_text(
+            str(self._path), json.dumps(doc, ensure_ascii=False, indent=1) + "\n", newline="\n"
+        )
+
+
+class PatternWeightSync:
+    """物化完成→调权同步（W-C3：MOD-SIG-131 纯消费装配，事件触发式）。
+
+    触发契约：胜率物化任务（JOB-108 日链 pattern_win_rate_materialize）
+    完成后调用 sync_from_provider(reason="materialize_done")——CLI 入口
+    main(--sync-weights) 即该钩子的可挂载正身；禁 cron/Timer。
+
+    指标映射（145 统计表只有方向命中率，无逐笔 PnL——代理口径如实声明）：
+    - win_rate = Wilson 95% 下界（get_conservative 同法）
+    - ic = ic_scale ×(形态命中率 − 基准命中率)，截断 [-1,1]（方向优势代理，
+      非真实 IC；真实 IC 待逐笔 PnL 证据层立项）
+    - drawdown = 0.0（无逐笔回撤源；不伪造）——sync 装配的 adjuster 配置
+      建议 dd_coef=0，避免死权重参与得分
+    """
+
+    def __init__(
+        self,
+        *,
+        adjuster: SignalWeightAdjuster | None = None,
+        provider: PatternWinRateProvider | None = None,
+        patterns: list[str] | None = None,
+        timeframe: str = _DEFAULT_TIMEFRAME,
+        fwd_window: int = _DEFAULT_FWD_WINDOW,
+        regime_tag: str = "",
+        initial_weight: float = 1.0,
+        ic_scale: float = 2.0,
+        store: PatternWeightStore | None = None,
+        clock: Callable[[], datetime.datetime] | None = None,
+    ) -> None:
+        self._clock = clock or datetime.datetime.now
+        self._adjuster = adjuster or SignalWeightAdjuster(clock=self._clock)
+        self._provider = provider if provider is not None else PatternWinRateProvider()
+        self._timeframe = timeframe
+        self._fwd_window = int(fwd_window)
+        self._regime_tag = regime_tag
+        self._initial_weight = initial_weight
+        self._ic_scale = float(ic_scale)
+        self._store = store
+        self._patterns = list(patterns) if patterns else self._discover()
+        state = self._store.load() if self._store is not None else {}
+        for pid in self._patterns:
+            w = initial_weight
+            saved = state.get(pid)
+            if isinstance(saved, dict) and isinstance(saved.get("weight"), (int, float)):
+                w = float(saved["weight"])
+            self._adjuster.register_signal(pid, w)
+
+    def _discover(self) -> list[str]:
+        """自动发现：统计表在册形态键（list_pattern_ids）。"""
+        return self._provider.list_pattern_ids(
+            timeframe=self._timeframe,
+            direction="向上",
+            fwd_window=self._fwd_window,
+            regime_tag=self._regime_tag,
+        )
+
+    @property
+    def patterns(self) -> list[str]:
+        return list(self._patterns)
+
+    def weight_of(self, pattern_id: str) -> float | None:
+        return self._adjuster.current_weight(pattern_id)
+
+    def version_of(self, pattern_id: str) -> int | None:
+        return self._adjuster.version_of(pattern_id)
+
+    def sync_from_provider(self, *, reason: str = "materialize_done") -> list:
+        """拉物化胜率→录滚动样本→限幅调权；返回变更审计记录。"""
+        baseline = self._provider.get_baseline(
+            timeframe=self._timeframe,
+            direction="向上",
+            fwd_window=self._fwd_window,
+            regime_tag=self._regime_tag,
+        )
+        base = float(baseline) if baseline is not None else 0.5
+        records = []
+        for pid in self._patterns:
+            detail = self._provider.get_detail(
+                pid,
+                timeframe=self._timeframe,
+                direction="向上",
+                fwd_window=self._fwd_window,
+                regime_tag=self._regime_tag,
+            )
+            if not detail or detail.get("low_sample") or detail.get("hit_rate") is None:
+                continue  # 无统计=不录样本不调权（None 语义契约）
+            raw = float(detail["hit_rate"])
+            n = int(detail.get("n_events") or 0)
+            win_rate = _wilson_lower_bound(raw, n)
+            ic = max(-1.0, min(1.0, self._ic_scale * (raw - base)))
+            self._adjuster.record_metrics(pid, ic=ic, win_rate=win_rate, drawdown=0.0)
+            records.append(self._adjuster.adjust(pid, reason=reason))
+        self._persist()
+        return records
+
+    def _persist(self) -> None:
+        if self._store is None:
+            return
+        state = {
+            pid: {
+                "weight": self._adjuster.current_weight(pid),
+                "version": self._adjuster.version_of(pid),
+            }
+            for pid in self._patterns
+        }
+        self._store.save(state, updated_at=self._clock())
+
+
+def main(argv: list[str] | None = None) -> int:
+    """物化完成钩子 CLI（事件触发式挂载正身）：--sync-weights。
+
+    用法：python -m zephyr.signal_ashare.strategy_signal.pattern_signal_runtime
+             --sync-weights [--timeframe day] [--fwd-window 10]
+             [--regime_tag ""] [--state-path data/runtime/pattern_signal_weights.json]
+    JOB-108 日链在 pattern_win_rate_materialize 之后追加本步即完成闭环挂载。
+    """
+    parser = argparse.ArgumentParser(description="图形库消费端调权同步钩子（W-C3）")
+    parser.add_argument("--sync-weights", action="store_true", help="执行一次调权同步")
+    parser.add_argument("--timeframe", default=_DEFAULT_TIMEFRAME)
+    parser.add_argument("--fwd-window", type=int, default=_DEFAULT_FWD_WINDOW)
+    parser.add_argument("--regime-tag", default="")
+    parser.add_argument("--state-path", default=_DEFAULT_STATE_PATH)
+    parser.add_argument("--reason", default="materialize_done")
+    args = parser.parse_args(argv)
+    if not args.sync_weights:
+        parser.print_help()
+        return 2
+    sync = PatternWeightSync(
+        provider=PatternWinRateProvider(),
+        timeframe=args.timeframe,
+        fwd_window=args.fwd_window,
+        regime_tag=args.regime_tag,
+        store=PatternWeightStore(args.state_path),
+    )
+    records = sync.sync_from_provider(reason=args.reason)
+    summary = {
+        "patterns": len(sync.patterns),
+        "adjusted": len(records),
+        "weights": {pid: sync.weight_of(pid) for pid in sync.patterns},
+    }
+    print(json.dumps(summary, ensure_ascii=False))
+    return 0
+
+
+if __name__ == "__main__":
+    raise SystemExit(main())

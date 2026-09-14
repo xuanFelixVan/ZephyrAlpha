@@ -239,3 +239,126 @@ def test_factory_duplicate_skips_with_note() -> None:
     second = rt.on_events("000001", [ev], as_of=_FROZEN_NOW)
     assert first["metadata"]["signal_ids"] == second["metadata"]["signal_ids"]
     assert "factory_duplicate_skipped" in second.get("notes", [])
+
+
+# ── W-C3：调权同步 + 持久化 ──────────────────────────────────────────────────
+
+
+class _SyncStubProvider:
+    """同步链 stub：命中行按 pid 应答，其余查无。"""
+
+    def __init__(self, rows, baseline=0.52, ids=None):
+        self._rows = rows
+        self._baseline = baseline
+        self._ids = ids if ids is not None else sorted(rows)
+
+    def get_detail(self, pid, **kw):
+        return self._rows.get(pid)
+
+    def get_baseline(self, **kw):
+        return self._baseline
+
+    def list_pattern_ids(self, **kw):
+        return list(self._ids)
+
+
+def test_sync_records_and_adjusts(tmp_path):
+    from zephyr.signal_ashare.strategy_signal.pattern_signal_runtime import (
+        PatternWeightSync,
+    )
+
+    provider = _SyncStubProvider(
+        rows={
+            "双顶": {"n_events": 500, "hit_rate": 0.72, "low_sample": 0},
+            # 双底：查无（不在 rows）→ 跳过
+        },
+        ids=["双顶", "双底"],
+    )
+    sync = PatternWeightSync(provider=provider, store=None, clock=_clock)
+    assert sync.patterns == ["双顶", "双底"]
+    records = sync.sync_from_provider(reason="materialize_done")
+    assert len(records) == 1  # 双底无统计不调权
+    rec = records[0]
+    assert rec.signal_id == "双顶"
+    assert 0.0 <= rec.new_weight <= 1.0
+    assert sync.weight_of("双底") == pytest.approx(1.0)  # 无统计不动权重
+
+
+def test_sync_persists_and_restores(tmp_path):
+    from zephyr.signal_ashare.strategy_signal.pattern_signal_runtime import (
+        PatternWeightStore,
+        PatternWeightSync,
+    )
+
+    state_path = tmp_path / "weights.json"
+    provider = _SyncStubProvider(rows={"双顶": {"n_events": 500, "hit_rate": 0.72, "low_sample": 0}})
+    store = PatternWeightStore(state_path)
+    sync = PatternWeightSync(provider=provider, patterns=["双顶"], store=store, clock=_clock)
+    sync.sync_from_provider()
+    saved = store.load()
+    assert saved["双顶"]["weight"] == pytest.approx(sync.weight_of("双顶"))
+    assert saved["双顶"]["version"] >= 2  # 注册=1，adjust 后 ≥2
+
+    restored = PatternWeightSync(provider=provider, patterns=["双顶"], store=store, clock=_clock)
+    assert restored.weight_of("双顶") == pytest.approx(sync.weight_of("双顶"))
+
+
+def test_sync_low_sample_skipped(tmp_path):
+    from zephyr.signal_ashare.strategy_signal.pattern_signal_runtime import (
+        PatternWeightStore,
+        PatternWeightSync,
+    )
+
+    provider = _SyncStubProvider(rows={"双顶": {"n_events": 8, "hit_rate": 0.9, "low_sample": 1}})
+    store = PatternWeightStore(tmp_path / "w.json")
+    sync = PatternWeightSync(provider=provider, patterns=["双顶"], store=store, clock=_clock)
+    assert sync.sync_from_provider() == []
+    assert sync.weight_of("双顶") == pytest.approx(1.0)
+
+
+def test_sync_ic_proxy_bounded():
+    """命中率大幅超基准→ic 代理截断在 [-1,1]。"""
+    from zephyr.signal_ashare.strategy_signal.pattern_signal_runtime import (
+        PatternWeightSync,
+    )
+
+    provider = _SyncStubProvider(
+        rows={"双顶": {"n_events": 500, "hit_rate": 0.99, "low_sample": 0}}, baseline=0.3
+    )
+    sync = PatternWeightSync(provider=provider, patterns=["双顶"], clock=_clock)
+    records = sync.sync_from_provider()
+    assert len(records) == 1
+    assert 0.0 <= records[0].new_weight <= 1.0
+
+
+def test_cli_sync_weights(tmp_path, capsys, monkeypatch):
+    """CLI 钩子：--sync-weights 出摘要 JSON 且状态落盘。"""
+    import json as _json
+
+    from zephyr.signal_ashare.strategy_signal import pattern_signal_runtime as mod
+
+    class _StubCls:
+        def __init__(self):
+            self._inner = _SyncStubProvider(
+                rows={"双顶": {"n_events": 500, "hit_rate": 0.72, "low_sample": 0}}
+            )
+
+        def get_detail(self, pid, **kw):
+            return self._inner.get_detail(pid, **kw)
+
+        def get_baseline(self, **kw):
+            return self._inner.get_baseline(**kw)
+
+        def list_pattern_ids(self, **kw):
+            return self._inner.list_pattern_ids(**kw)
+
+    monkeypatch.setattr(mod, "PatternWinRateProvider", _StubCls)
+    state_path = tmp_path / "cli_weights.json"
+    rc = mod.main(
+        ["--sync-weights", "--state-path", str(state_path), "--reason", "materialize_done"]
+    )
+    assert rc == 0
+    summary = _json.loads(capsys.readouterr().out.strip())
+    assert summary["patterns"] == 1
+    assert summary["adjusted"] == 1
+    assert state_path.exists()

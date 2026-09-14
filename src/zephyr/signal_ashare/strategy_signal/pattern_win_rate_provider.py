@@ -162,6 +162,29 @@ class PatternWinRateProvider:
         n = int(row.get("n_events") or 0)
         return _wilson_lower_bound(rate, n, z=z)
 
+    def list_pattern_ids(
+        self,
+        *,
+        timeframe: str = "day",
+        direction: str = "向上",
+        fwd_window: int = 10,
+        regime_tag: str = "",
+    ) -> list[str]:
+        """枚举统计表在册形态键（W-C3 调权同步的自动发现入口）。
+
+        只返回键列表；样本门禁由 get/get_conservative 各自把关。
+        """
+        client = self._ensure_client()
+        rows = client.execute(
+            f"SELECT pattern_id FROM {self._table} FINAL "
+            "WHERE timeframe = %(tf)s AND direction = %(d)s "
+            "AND fwd_window = %(w)d AND regime_tag = %(rt)s "
+            "AND pattern_id != %(base)s "
+            "ORDER BY pattern_id",
+            {"tf": timeframe, "d": direction, "w": int(fwd_window), "rt": regime_tag, "base": _BASELINE_ID},
+        )
+        return [str(r[0]) for r in rows]
+
     def _fetch_one(
         self,
         *,
