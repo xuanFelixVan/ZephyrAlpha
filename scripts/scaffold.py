@@ -47,6 +47,7 @@
 from __future__ import annotations
 
 import argparse
+import ast
 import os
 import re
 import sys
@@ -395,7 +396,7 @@ class ScaffoldEngine:
             domain,
             subdomain,
             force_override=force_override,
-            expected_module_path=f"zephyr.{package}.{name}",
+            expected_module_path=f"zephyr.{package.replace('/', '.')}.{name}",
         )
 
         # ── 检查 4: __init__.py 中无重复 ──
@@ -425,7 +426,7 @@ class ScaffoldEngine:
 
         print(f"\n  CREATED  {file_path}")
         print(f"  REGISTERED  {init_py}  (export '{class_name}')")
-        print(f"  ACTION:  from zephyr.{package} import {class_name}")
+        print(f"  ACTION:  from zephyr.{package.replace('/', '.')} import {class_name}")
         _remind_sys_master_dispatch(package, name, description)
         _remind_path_tree_refresh()
         return file_path
@@ -762,6 +763,18 @@ class ScaffoldEngine:
 # ===================================================================
 
 
+def _parse_or_raise(content: str, origin: Path, *, post: bool = False) -> None:
+    """ast.parse 自检——语法不过即 ScaffoldError（写入前拦截坏档 / 写入后即刻暴露）。"""
+    try:
+        ast.parse(content)
+    except SyntaxError as exc:
+        stage = "写后回读" if post else "写入前"
+        raise ScaffoldError(
+            f"__init__.py {stage} ast.parse 自检失败（拒绝生成语法坏档）: {origin}\n"
+            f"  {exc.msg} (line {exc.lineno})"
+        ) from exc
+
+
 def _register_to_init(
     init_py: Path,
     class_name: str,
@@ -770,17 +783,32 @@ def _register_to_init(
     dry_run: bool,
     actions: list[str],
 ) -> None:
-    """向 __init__.py 追加 import + __all__ 条目。"""
+    """向 __init__.py 追加 import + __all__ 条目（幂等；写入前后 ast.parse 双自检）。
+
+    2026-09-15 治本（图形库会话治理上报件2，施工中四连发全靠手工救）：package 允许
+    嵌套斜杠形式（signal_ashare/strategy_signal）——旧版用原文拼 import 生成
+    ``from zephyr.signal_ashare/strategy_signal.x import Y``（SyntaxError）。
+    统一 package.replace('/', '.') 后再拼；生成内容写入前 ast.parse 预检 +
+    写后回读复核；__all__ 注册幂等集合语义（查重后才追加，杜绝重复尾追）。
+    """
+    dotted = package.replace("/", ".")
+
     if not init_py.exists():
-        init_py.write_text(
-            f'from zephyr.{package}.{module_name} import {class_name}\n\n__all__ = [\n    "{class_name}",\n]\n',
-            encoding="utf-8",
+        content = (
+            f"from zephyr.{dotted}.{module_name} import {class_name}\n\n"
+            f'__all__ = [\n    "{class_name}",\n]\n'
         )
+        _parse_or_raise(content, init_py)
+        if dry_run:
+            actions.append(f"[DRY-RUN] Would create {init_py}")
+            return
+        _atomic_write(init_py, content, False, actions)
+        _parse_or_raise(init_py.read_text(encoding="utf-8"), init_py, post=True)
         return
 
     content = init_py.read_text(encoding="utf-8")
 
-    import_line = f"from zephyr.{package}.{module_name} import {class_name}"
+    import_line = f"from zephyr.{dotted}.{module_name} import {class_name}"
     if import_line not in content:
         lines = content.split("\n")
         insert_pos = 0
@@ -790,33 +818,44 @@ def _register_to_init(
         lines.insert(insert_pos, import_line)
         content = "\n".join(lines)
 
+    append_marker = f'__all__.append("{class_name}")'
     if "__all__" in content:
-        all_line = f'    "{class_name}",'
-        if all_line not in content:
+        # 幂等：列表成员或 append 式残留任一已存在即跳过（旧版 append 尾追不查重）
+        if f'    "{class_name}",' not in content and append_marker not in content:
             content = _insert_into_all_list(content, class_name)
     else:
         content += f'\n__all__ = [\n    "{class_name}",\n]\n'
 
+    _parse_or_raise(content, init_py)
     if dry_run:
         actions.append(f"[DRY-RUN] Would update {init_py}")
         return
 
     _atomic_write(init_py, content, False, actions)
+    _parse_or_raise(init_py.read_text(encoding="utf-8"), init_py, post=True)
 
 
 def _insert_into_all_list(text: str, name: str) -> str:
-    """在 __all__ 列表中插入条目（字母序）。"""
-    pattern = r"(\[ __all__\s*=\s*\[)(.*?)(\])"
+    """在 __all__ 列表中插入条目（字母序+幂等集合语义）。
+
+    2026-09-15 修复（治理上报件2 病根之一）：旧正则 ``\\[ __all__\\s*=`` 带前导
+    ``[ `` 字面量，对正常 ``__all__ = [`` 永不匹配 → 全部落 ``__all__.append`` 尾追，
+    重复 scaffold 触发反复尾追/重复条目由此而来。现支持注解形态
+    ``__all__: list[str] = [...]``，段内查重幂等。
+    """
+    pattern = r"(__all__(?::\s*[^=\n]+?)?\s*=\s*\[)(.*?)(\])"
     match = re.search(pattern, text, re.DOTALL)
     if not match:
-        text += f'\n__all__.append("{name}")\n'
+        if f'__all__.append("{name}")' not in text:
+            text += f'\n__all__.append("{name}")\n'
         return text
 
     prefix = match.group(1)
     middle = match.group(2)
-    suffix = match.group(3)
 
     entries = [e.strip().strip('"').strip("'") for e in middle.split(",") if e.strip()]
+    if name in entries:
+        return text
     entries.append(name)
     entries = sorted(set(entries))
 
