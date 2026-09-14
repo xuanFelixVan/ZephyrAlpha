@@ -195,3 +195,17 @@ def test_create_module_nested_package_end_to_end(tmp_path: Path, monkeypatch, ca
     out = capsys.readouterr().out
     assert "from zephyr.signal_ashare.strategy_signal import MyAlgo" in out  # ACTION 提示 dotted
     assert "signal_ashare/strategy_signal import" not in out  # 斜杠原文不得出现
+
+
+def test_trailing_slash_package_normalized(tmp_path: Path):
+    """红蓝回归：尾斜杠包名（sig/sub/）→ dotted 化不得产生双点 import（2026-09-15 红蓝攻击1）。"""
+    tmp_pkg = tmp_path / _PKG
+    tmp_pkg.mkdir(parents=True)
+    init = _init_of(tmp_pkg)
+    init.write_text(_INIT_ANNOTATED, encoding="utf-8")
+
+    scaffold._register_to_init(init, "MyAlgo", "my_algo", _PKG + "/", False, [])
+
+    content = init.read_text(encoding="utf-8")
+    assert ".." not in content
+    ast.parse(content)

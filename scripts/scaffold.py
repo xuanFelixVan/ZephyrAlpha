@@ -376,6 +376,7 @@ class ScaffoldEngine:
         force_override: bool = False,
     ) -> Path:
         """在 src/zephyr/<package>/<name>.py 创建模块，注册到 __init__.py。"""
+        package = package.strip("/")  # 红蓝加固：尾斜杠会产生 'a.b..' 双点 import（ast 自检可拦，入口归一治本）
         package_dir = SRC_ZEPHYR / package
         file_path = package_dir / f"{name}.py"
         class_name = _to_class_name(name)
