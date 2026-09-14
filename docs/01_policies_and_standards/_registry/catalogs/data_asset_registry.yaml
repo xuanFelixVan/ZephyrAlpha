@@ -70,11 +70,11 @@ description: >-
 #   （survivorship_free/pit_available=true：新闻流 append-only 全市场覆盖无股票池筛选、news_id 锚定 SCD 时序天然时点化，
 #   与同族 DS-107 同口径；entry_role/applies_to/tags/algorithm_status 按事件族惯例；code_symbol=news_collector.py::collect_news
 #   实证锚）；DS-105 补 7 字段（E14 相关 survivorship_free/pit_available=true：ReplacingMergeTree ORDER BY (trade_date,symbol)
-#   键含日期历史快照保留可 PIT，DDL schemas/categories/market_ipo_calendar.py 实证）；全部字段证据驱动，无编造值。
+#   键含日期历史快照保留可 PIT，DDL schemas/categories/market/market_ipo_calendar.py 实证）；全部字段证据驱动，无编造值。
 owner: MOD-GOVERNANCE
 tier: tier_2_data_runtime
 status: active
-version: 1.9.5
+version: 1.9.6
 created: '2026-08-13'
 last_updated: '2026-09-14'
 related_arch: '#ARCH-BREG-001'
@@ -4545,7 +4545,7 @@ datasets:
   entity_type: dataset
   scope: production
   contract_ref:
-  physical_type: schemas/categories/market_us_futures_intraday.py
+  physical_type: schemas/categories/market/market_us_futures_intraday.py
   produced_by_job: JOB-087
   consumed_by_jobs: []
   domain_id: D_MARKET
@@ -4628,7 +4628,7 @@ datasets:
   entity_type: dataset
   scope: production
   contract_ref:
-  physical_type: schemas/categories/market_news_sentiment_window.py
+  physical_type: schemas/categories/market/market_news_sentiment_window.py
   produced_by_job:
   consumed_by_jobs: []
   domain_id: D_ASHARE_SIGNAL
@@ -4671,7 +4671,7 @@ datasets:
   entity_type: dataset
   scope: production
   contract_ref:
-  physical_type: schemas/categories/market_breadth_snapshot.py
+  physical_type: schemas/categories/market/market_breadth_snapshot.py
   produced_by_job: JOB-088
   consumed_by_jobs: []
   domain_id: D_MARKET
@@ -9433,7 +9433,7 @@ datasets:
   pit_policy: strict
   format_summary: 节点验证台账（交易决策地图 TDM 节点回测成绩单：run_id/地图快照 
     commit/验证窗口/节点/方法/触发次数/命中占比/显著性土规/结论三态+decaying）；DDL 真源 
-    schemas/categories/backtest_node_verdict.py；写入=zephyr.trading.validation.runner（P1-2），消费=/api/tdm/validation
+    schemas/categories/backtest/backtest_node_verdict.py；写入=zephyr.trading.validation.runner（P1-2），消费=/api/tdm/validation
     只读+衰减巡检；2026-09-09 建表 0 行
   valid_since: "2026-09-09"
   module_id: MOD-TDMVAL-001
@@ -9462,7 +9462,7 @@ datasets:
   - 绩效
   algorithm_status: not_applicable
   evidence: "节点级可回测治理 P0-1（docs/_working/2026-09-09-node-backtest-governance.md §8.1）：验证状态只进台账不进地图
-    YAML（设计真源与运行产物分层）；holdout 窗口排除纪律随 validation_method_registry 约束；DDL 真源=schemas/categories/backtest_node_verdict.py（verify_schema_truth
+    YAML（设计真源与运行产物分层）；holdout 窗口排除纪律随 validation_method_registry 约束；DDL 真源=schemas/categories/backtest/backtest_node_verdict.py（verify_schema_truth
     校验链）"
   code_symbol:
   code_fingerprint:
@@ -9853,7 +9853,7 @@ datasets:
   applies_to: ["market"]
   tags: ["另类数据", "数据", "情绪", "关注度"]
   algorithm_status: "not_applicable"
-  evidence: "DDL schemas/categories/market_alt_stock_comment.py；接口实测 5196 行/13 列
+  evidence: "DDL schemas/categories/market/market_alt_stock_comment.py；接口实测 5196 行/13 列
     （2026-09-12，含机构参与度/综合得分/排名变动/关注指数）；ReplacingMergeTree
     (trade_date,symbol) 幂等；治理三件接线 src/zephyr/alt_data/alt_source_bootstrap.py"
   code_symbol:
@@ -9893,7 +9893,7 @@ datasets:
   applies_to: ["market"]
   tags: ["另类数据", "数据", "运价", "产业"]
   algorithm_status: "not_applicable"
-  evidence: "DDL schemas/categories/market_alt_shipping_index.py；接口实测 BDI 9537 行
+  evidence: "DDL schemas/categories/market/market_alt_shipping_index.py；接口实测 BDI 9537 行
     （1988-10-19~2026-09-11）+ 六指数 5000 行（2026-09-12）；长表一表装 7 指数免 7 张同构表；
     出口链/航运板块景气前瞻，与产业链 ig_* 事件传导打通"
   code_symbol:
@@ -9934,7 +9934,7 @@ datasets:
   applies_to: ["market"]
   tags: ["另类数据", "数据", "气象", "事件"]
   algorithm_status: "not_applicable"
-  evidence: "DDL schemas/categories/market_alt_typhoon_track.py；22 字段经匿名预览通道实测
+  evidence: "DDL schemas/categories/market/market_alt_typhoon_track.py；22 字段经匿名预览通道实测
     校准（含 2026-09-13 实时记录）；appKey 通道 errorCode 10001 实测（订阅生效前）；
     治理三件接线 src/zephyr/alt_data/alt_source_bootstrap.py"
   code_symbol:
@@ -9966,7 +9966,7 @@ datasets:
   entry_role: "state"
   applies_to: ["market"]
   tags: ["另类数据", "数据", "宏观", "深圳"]
-  evidence: "DDL schemas/categories/market_alt_sz_stat_monthly.py；实测 10,290 行"
+  evidence: "DDL schemas/categories/market/market_alt_sz_stat_monthly.py；实测 10,290 行"
   code_symbol: "src/zephyr/data/implementations/akshare_alt_provider.py::AkshareAltProvider._fetch_sz_open_data"
 - dataset_id: DS-235
   entity_name: c1_market.alt_sz_port_monthly
@@ -9992,7 +9992,7 @@ datasets:
   entry_role: "state"
   applies_to: ["market"]
   tags: ["另类数据", "数据", "贸易", "深圳"]
-  evidence: "DDL schemas/categories/market_alt_sz_port_monthly.py；实测 273 行"
+  evidence: "DDL schemas/categories/market/market_alt_sz_port_monthly.py；实测 273 行"
   code_symbol: "src/zephyr/data/implementations/akshare_alt_provider.py::AkshareAltProvider._fetch_sz_open_data"
 - dataset_id: DS-236
   entity_name: c1_market.alt_sz_house_daily
@@ -10018,7 +10018,7 @@ datasets:
   entry_role: "state"
   applies_to: ["market"]
   tags: ["另类数据", "数据", "地产", "深圳"]
-  evidence: "DDL schemas/categories/market_alt_sz_house_daily.py；实测 221,227 行"
+  evidence: "DDL schemas/categories/market/market_alt_sz_house_daily.py；实测 221,227 行"
   code_symbol: "src/zephyr/data/implementations/akshare_alt_provider.py::AkshareAltProvider._fetch_sz_open_data"
 - dataset_id: DS-237
   entity_name: c1_market.alt_sz_weather_warning
@@ -10044,7 +10044,7 @@ datasets:
   entry_role: "state"
   applies_to: ["market"]
   tags: ["另类数据", "数据", "气象", "事件"]
-  evidence: "DDL schemas/categories/market_alt_sz_weather_warning.py；实测 9,349 行；
+  evidence: "DDL schemas/categories/market/market_alt_sz_weather_warning.py；实测 9,349 行；
     status=degraded 源断更（2020-09-23 后无新记录），历史事件窗研究仍可用"
   code_symbol: "src/zephyr/data/implementations/akshare_alt_provider.py::AkshareAltProvider._fetch_sz_open_data"
 - dataset_id: DS-238
@@ -10071,7 +10071,7 @@ datasets:
   entry_role: "state"
   applies_to: ["market"]
   tags: ["另类数据", "数据", "气象", "海洋"]
-  evidence: "DDL schemas/categories/market_alt_sz_marine_forecast.py；实测 147,716 行"
+  evidence: "DDL schemas/categories/market/market_alt_sz_marine_forecast.py；实测 147,716 行"
   code_symbol: "src/zephyr/data/implementations/akshare_alt_provider.py::AkshareAltProvider._fetch_sz_open_data"
 - dataset_id: DS-239
   entity_name: c1_market.alt_typhoon_landfall_history
@@ -10097,7 +10097,7 @@ datasets:
   entry_role: "state"
   applies_to: ["market"]
   tags: ["另类数据", "数据", "气象", "历史"]
-  evidence: "DDL schemas/categories/market_typhoon_landfall_history.py；实测 845 行"
+  evidence: "DDL schemas/categories/market/market_typhoon_landfall_history.py；实测 845 行"
   code_symbol: "src/zephyr/data/implementations/akshare_alt_provider.py::AkshareAltProvider._fetch_sz_open_data"
 - dataset_id: DS-240
   entity_name: c1_market.alt_typhoon_names
@@ -10123,7 +10123,7 @@ datasets:
   entry_role: "state"
   applies_to: ["market"]
   tags: ["另类数据", "数据", "气象", "字典"]
-  evidence: "DDL schemas/categories/market_typhoon_names.py；实测 1,260 行"
+  evidence: "DDL schemas/categories/market/market_typhoon_names.py；实测 1,260 行"
   code_symbol: "src/zephyr/data/implementations/akshare_alt_provider.py::AkshareAltProvider._fetch_sz_open_data"
 
 # 2026-09-11 币圈免费影子 MVP：crypto 日线采集 job（backfill/incremental 双模式，手动触发）
@@ -10156,7 +10156,7 @@ datasets:
   applies_to: ["market"]
   tags: ["另类数据", "数据", "情绪", "币圈"]
   algorithm_status: "not_applicable"
-  evidence: "DDL schemas/categories/market_sentiment_panel.py；实弹 2 行（09-12/09-13）；provider=sentiment_panel_provider（CAND-CRYPTO-010 收尾，scheduler 路由本批补齐）"
+  evidence: "DDL schemas/categories/market/market_sentiment_panel.py；实弹 2 行（09-12/09-13）；provider=sentiment_panel_provider（CAND-CRYPTO-010 收尾，scheduler 路由本批补齐）"
   code_symbol:
   code_fingerprint:
 
@@ -10188,7 +10188,7 @@ datasets:
   applies_to: ["market"]
   tags: ["另类数据", "数据", "信号", "regime"]
   algorithm_status: "not_applicable"
-  evidence: "DDL schemas/categories/market_alt_regime_signal.py；实弹五信号出值（F4 z=1.10 risk_on/F14 +21.7% risk_on/F15 61 greed/F23 0.214 退潮/F7 116 场）；F7 P0 校准=风险日历非收益预测（c1a962e9）；F23 阈值 provisional 待 OOS 毕业"
+  evidence: "DDL schemas/categories/market/market_alt_regime_signal.py；实弹五信号出值（F4 z=1.10 risk_on/F14 +21.7% risk_on/F15 61 greed/F23 0.214 退潮/F7 116 场）；F7 P0 校准=风险日历非收益预测（c1a962e9）；F23 阈值 provisional 待 OOS 毕业"
   code_symbol: "src/zephyr/alt_data/alt_regime_signals.py::AltRegimeSignalProvider.fetch"
   code_fingerprint:
 - dataset_id: DS-243
@@ -10260,7 +10260,7 @@ datasets:
   entry_role: "state"
   applies_to: ["market"]
   tags: ["另类数据", "数据", "深圳", "批2"]
-  evidence: "DDL schemas/categories/market_alt_sz_air_quality_daily.py；FINAL 实测回补（见任务书 §五·七）"
+  evidence: "DDL schemas/categories/market/market_alt_sz_air_quality_daily.py；FINAL 实测回补（见任务书 §五·七）"
   code_symbol: "src/zephyr/data/implementations/akshare_alt_provider.py::AkshareAltProvider._fetch_sz_open_data"
 - dataset_id: DS-257
   entity_name: c1_market.alt_sz_air_quality_region
@@ -10285,7 +10285,7 @@ datasets:
   entry_role: "state"
   applies_to: ["market"]
   tags: ["另类数据", "数据", "深圳", "批2"]
-  evidence: "DDL schemas/categories/market_alt_sz_air_quality_region.py；FINAL 实测回补（见任务书 §五·七）"
+  evidence: "DDL schemas/categories/market/market_alt_sz_air_quality_region.py；FINAL 实测回补（见任务书 §五·七）"
   code_symbol: "src/zephyr/data/implementations/akshare_alt_provider.py::AkshareAltProvider._fetch_sz_open_data"
 - dataset_id: DS-258
   entity_name: c1_market.alt_sz_reservoir_station
@@ -10310,7 +10310,7 @@ datasets:
   entry_role: "state"
   applies_to: ["market"]
   tags: ["另类数据", "数据", "深圳", "批2"]
-  evidence: "DDL schemas/categories/market_alt_sz_reservoir_station.py；FINAL 实测回补（见任务书 §五·七）"
+  evidence: "DDL schemas/categories/market/market_alt_sz_reservoir_station.py；FINAL 实测回补（见任务书 §五·七）"
   code_symbol: "src/zephyr/data/implementations/akshare_alt_provider.py::AkshareAltProvider._fetch_sz_open_data"
 - dataset_id: DS-259
   entity_name: c1_market.alt_sz_reservoir_rain_day
@@ -10335,7 +10335,7 @@ datasets:
   entry_role: "state"
   applies_to: ["market"]
   tags: ["另类数据", "数据", "深圳", "批2"]
-  evidence: "DDL schemas/categories/market_alt_sz_reservoir_rain_day.py；FINAL 实测回补（见任务书 §五·七）"
+  evidence: "DDL schemas/categories/market/market_alt_sz_reservoir_rain_day.py；FINAL 实测回补（见任务书 §五·七）"
   code_symbol: "src/zephyr/data/implementations/akshare_alt_provider.py::AkshareAltProvider._fetch_sz_open_data"
 - dataset_id: DS-260
   entity_name: c1_market.alt_sz_reservoir_rain_month
@@ -10360,7 +10360,7 @@ datasets:
   entry_role: "state"
   applies_to: ["market"]
   tags: ["另类数据", "数据", "深圳", "批2"]
-  evidence: "DDL schemas/categories/market_alt_sz_reservoir_rain_month.py；FINAL 实测回补（见任务书 §五·七）"
+  evidence: "DDL schemas/categories/market/market_alt_sz_reservoir_rain_month.py；FINAL 实测回补（见任务书 §五·七）"
   code_symbol: "src/zephyr/data/implementations/akshare_alt_provider.py::AkshareAltProvider._fetch_sz_open_data"
 - dataset_id: DS-261
   entity_name: c1_market.alt_sz_house_area
@@ -10385,7 +10385,7 @@ datasets:
   entry_role: "state"
   applies_to: ["market"]
   tags: ["另类数据", "数据", "深圳", "批2"]
-  evidence: "DDL schemas/categories/market_alt_sz_house_area.py；FINAL 实测回补（见任务书 §五·七）"
+  evidence: "DDL schemas/categories/market/market_alt_sz_house_area.py；FINAL 实测回补（见任务书 §五·七）"
   code_symbol: "src/zephyr/data/implementations/akshare_alt_provider.py::AkshareAltProvider._fetch_sz_open_data"
 - dataset_id: DS-262
   entity_name: c1_market.alt_sz_house_listing
@@ -10410,7 +10410,7 @@ datasets:
   entry_role: "state"
   applies_to: ["market"]
   tags: ["另类数据", "数据", "深圳", "批2"]
-  evidence: "DDL schemas/categories/market_alt_sz_house_listing.py；FINAL 实测回补（见任务书 §五·七）"
+  evidence: "DDL schemas/categories/market/market_alt_sz_house_listing.py；FINAL 实测回补（见任务书 §五·七）"
   code_symbol: "src/zephyr/data/implementations/akshare_alt_provider.py::AkshareAltProvider._fetch_sz_open_data"
 - dataset_id: DS-263
   entity_name: c1_market.alt_sz_house_presale
@@ -10435,7 +10435,7 @@ datasets:
   entry_role: "state"
   applies_to: ["market"]
   tags: ["另类数据", "数据", "深圳", "批2"]
-  evidence: "DDL schemas/categories/market_alt_sz_house_presale.py；FINAL 实测回补（见任务书 §五·七）"
+  evidence: "DDL schemas/categories/market/market_alt_sz_house_presale.py；FINAL 实测回补（见任务书 §五·七）"
   code_symbol: "src/zephyr/data/implementations/akshare_alt_provider.py::AkshareAltProvider._fetch_sz_open_data"
 - dataset_id: DS-264
   entity_name: c1_market.alt_sz_market_subject
@@ -10460,7 +10460,7 @@ datasets:
   entry_role: "state"
   applies_to: ["market"]
   tags: ["另类数据", "数据", "深圳", "批2"]
-  evidence: "DDL schemas/categories/market_alt_sz_market_subject.py；FINAL 实测回补（见任务书 §五·七）"
+  evidence: "DDL schemas/categories/market/market_alt_sz_market_subject.py；FINAL 实测回补（见任务书 §五·七）"
   code_symbol: "src/zephyr/data/implementations/akshare_alt_provider.py::AkshareAltProvider._fetch_sz_open_data"
 - dataset_id: DS-265
   entity_name: c1_market.alt_sz_stat_analysis
@@ -10485,7 +10485,7 @@ datasets:
   entry_role: "state"
   applies_to: ["market"]
   tags: ["另类数据", "数据", "深圳", "批2"]
-  evidence: "DDL schemas/categories/market_alt_sz_stat_analysis.py；FINAL 实测回补（见任务书 §五·七）"
+  evidence: "DDL schemas/categories/market/market_alt_sz_stat_analysis.py；FINAL 实测回补（见任务书 §五·七）"
   code_symbol: "src/zephyr/data/implementations/akshare_alt_provider.py::AkshareAltProvider._fetch_sz_open_data"
 - dataset_id: DS-266
   entity_name: c1_market.alt_sz_enterprise_year
@@ -10510,7 +10510,107 @@ datasets:
   entry_role: "state"
   applies_to: ["market"]
   tags: ["另类数据", "数据", "深圳", "批2"]
-  evidence: "DDL schemas/categories/market_alt_sz_enterprise_year.py；FINAL 实测回补（见任务书 §五·七）"
+  evidence: "DDL schemas/categories/market/market_alt_sz_enterprise_year.py；FINAL 实测回补（见任务书 §五·七）"
+  code_symbol: "src/zephyr/data/implementations/akshare_alt_provider.py::AkshareAltProvider._fetch_sz_open_data"
+- dataset_id: DS-267
+  entity_name: c1_market.alt_sz_reservoir_level
+  entity_type: dataset
+  scope: production
+  physical_type: clickhouse_table
+  produced_by_job: alt_sz_reservoir_level_incremental
+  domain_id: D_MARKET
+  pit_policy: strict
+  format_summary: 深圳水库水位分钟级序列（服务 1952552493 主钥匙；无过滤参数二分增量；40 万行近窗首刷，全史 7630 万行报批；ID 幂等）
+  valid_since: "2026-09-14"
+  module_id: MOD-L00-004
+  design_maturity: production
+  name: c1_market.alt_sz_reservoir_level
+  name_zh: 深圳水库水位分钟级序列表
+  status: active
+  created_at: "2026-09-14"
+  updated_at: "2026-09-14"
+  owner: MOD-L00-004
+  produced_by_source: SRC-SZOPENDATA-001
+  survivorship_free: true
+  entry_role: "state"
+  applies_to: ["market"]
+  tags: ["另类数据", "数据", "深圳", "批3"]
+  evidence: "DDL schemas/categories/market/alt_sz_reservoir_level.py；FINAL 实测回补（final_count_b3）"
+  code_symbol: "src/zephyr/data/implementations/akshare_alt_provider.py::AkshareAltProvider._fetch_sz_open_data"
+- dataset_id: DS-268
+  entity_name: c1_market.alt_sz_env_meteor
+  entity_type: dataset
+  scope: production
+  physical_type: clickhouse_table
+  produced_by_job: alt_sz_env_meteor_refresh
+  domain_id: D_MARKET
+  pit_policy: strict
+  format_summary: 深圳环境气象预报（气象等级/污染扩散条件评价；27,843 行；主钥匙；ID 幂等）
+  valid_since: "2026-09-14"
+  module_id: MOD-L00-004
+  design_maturity: production
+  name: c1_market.alt_sz_env_meteor
+  name_zh: 深圳环境气象预报表
+  status: active
+  created_at: "2026-09-14"
+  updated_at: "2026-09-14"
+  owner: MOD-L00-004
+  produced_by_source: SRC-SZOPENDATA-001
+  survivorship_free: true
+  entry_role: "state"
+  applies_to: ["market"]
+  tags: ["另类数据", "数据", "深圳", "批3"]
+  evidence: "DDL schemas/categories/market/alt_sz_env_meteor.py；FINAL 实测回补（final_count_b3）"
+  code_symbol: "src/zephyr/data/implementations/akshare_alt_provider.py::AkshareAltProvider._fetch_sz_open_data"
+- dataset_id: DS-269
+  entity_name: c1_market.alt_sz_climate_hist
+  entity_type: dataset
+  scope: production
+  physical_type: clickhouse_table
+  produced_by_job: alt_sz_climate_hist_refresh
+  domain_id: D_MARKET
+  pit_policy: strict
+  format_summary: 深圳基本站气候历史（1953 起逐时观测；366,654 行；主钥匙；混合日期格式归一化；DDATETIME 幂等）
+  valid_since: "2026-09-14"
+  module_id: MOD-L00-004
+  design_maturity: production
+  name: c1_market.alt_sz_climate_hist
+  name_zh: 深圳基本站气候历史表
+  status: active
+  created_at: "2026-09-14"
+  updated_at: "2026-09-14"
+  owner: MOD-L00-004
+  produced_by_source: SRC-SZOPENDATA-001
+  survivorship_free: true
+  entry_role: "state"
+  applies_to: ["market"]
+  tags: ["另类数据", "数据", "深圳", "批3"]
+  evidence: "DDL schemas/categories/market/alt_sz_climate_hist.py；FINAL 实测回补（final_count_b3）"
+  code_symbol: "src/zephyr/data/implementations/akshare_alt_provider.py::AkshareAltProvider._fetch_sz_open_data"
+- dataset_id: DS-270
+  entity_name: c1_market.alt_sz_ground_obs
+  entity_type: dataset
+  scope: production
+  physical_type: clickhouse_table
+  produced_by_job: alt_sz_ground_obs_incremental
+  domain_id: D_MARKET
+  pit_policy: strict
+  format_summary: 深圳地面观测实况（2017 起逐时；40 万行近窗，源 64.8 万；主钥匙；startDate 增量；DDATETIME 幂等）
+  valid_since: "2026-09-14"
+  module_id: MOD-L00-004
+  design_maturity: production
+  name: c1_market.alt_sz_ground_obs
+  name_zh: 深圳地面观测实况表
+  status: active
+  created_at: "2026-09-14"
+  updated_at: "2026-09-14"
+  owner: MOD-L00-004
+  produced_by_source: SRC-SZOPENDATA-001
+  survivorship_free: true
+  entry_role: "state"
+  applies_to: ["market"]
+  tags: ["另类数据", "数据", "深圳", "批3"]
+  evidence: "DDL schemas/categories/market/alt_sz_ground_obs.py；FINAL 实测回补（final_count_b3）"
   code_symbol: "src/zephyr/data/implementations/akshare_alt_provider.py::AkshareAltProvider._fetch_sz_open_data"
 - dataset_id: DS-245
   entity_name: c1_market.alt_sz_visibility
@@ -10537,7 +10637,7 @@ datasets:
   entry_role: "state"
   applies_to: ["market"]
   tags: ["另类数据", "数据", "气象", "能见度"]
-  evidence: "DDL schemas/categories/market_alt_sz_visibility.py；实测 24,167 行
+  evidence: "DDL schemas/categories/market/market_alt_sz_visibility.py；实测 24,167 行
     （2026-09-02~09-14）；7 站=深汕/松岗/大浪/南澳/邮轮中心/铁岗水库/市民中心"
   code_symbol: "src/zephyr/data/implementations/akshare_alt_provider.py::AkshareAltProvider._fetch_sz_open_data"
 jobs:
@@ -14007,5 +14107,117 @@ jobs:
   tags: ["另类数据", "数据", "深圳", "批2"]
   algorithm_status: "not_applicable"
   evidence: "回补实测（backfill_r2 日志）；测试 24/24"
+  code_symbol: "src/zephyr/data/implementations/akshare_alt_provider.py::AkshareAltProvider._fetch_sz_open_data"
+  code_fingerprint:
+- job_id: JOB-122
+  job_name: ingest.alt_sz_reservoir_level_incremental
+  entity_type: job
+  scope: production
+  source_code_ref: src/zephyr/data/implementations/akshare_alt_provider.py
+  trigger_type: scheduled
+  run_context: production
+  inputs: []
+  outputs:
+  - DS-267
+  pit_relevance: strict
+  description: alt_sz_reservoir_level_incremental（深圳开放数据批3；口岸/水位/气象观测族补全）
+  module_id: MOD-L00-004
+  design_maturity: production
+  name: ingest.alt_sz_reservoir_level_incremental
+  name_zh: 深圳水库水位分钟级序列表采集
+  status: active
+  version: 1.0.0
+  created_at: "2026-09-14"
+  updated_at: "2026-09-14"
+  owner: MOD-L00-004
+  entry_role: "state"
+  applies_to: ["market"]
+  tags: ["另类数据", "数据", "深圳", "批3"]
+  algorithm_status: "not_applicable"
+  evidence: "回补实测（backfill_b3）；FINAL 核数 uniq 全 OK"
+  code_symbol: "src/zephyr/data/implementations/akshare_alt_provider.py::AkshareAltProvider._fetch_sz_open_data"
+  code_fingerprint:
+- job_id: JOB-123
+  job_name: ingest.alt_sz_env_meteor_refresh
+  entity_type: job
+  scope: production
+  source_code_ref: src/zephyr/data/implementations/akshare_alt_provider.py
+  trigger_type: scheduled
+  run_context: production
+  inputs: []
+  outputs:
+  - DS-268
+  pit_relevance: strict
+  description: alt_sz_env_meteor_refresh（深圳开放数据批3；口岸/水位/气象观测族补全）
+  module_id: MOD-L00-004
+  design_maturity: production
+  name: ingest.alt_sz_env_meteor_refresh
+  name_zh: 深圳环境气象预报表采集
+  status: active
+  version: 1.0.0
+  created_at: "2026-09-14"
+  updated_at: "2026-09-14"
+  owner: MOD-L00-004
+  entry_role: "state"
+  applies_to: ["market"]
+  tags: ["另类数据", "数据", "深圳", "批3"]
+  algorithm_status: "not_applicable"
+  evidence: "回补实测（backfill_b3）；FINAL 核数 uniq 全 OK"
+  code_symbol: "src/zephyr/data/implementations/akshare_alt_provider.py::AkshareAltProvider._fetch_sz_open_data"
+  code_fingerprint:
+- job_id: JOB-124
+  job_name: ingest.alt_sz_climate_hist_refresh
+  entity_type: job
+  scope: production
+  source_code_ref: src/zephyr/data/implementations/akshare_alt_provider.py
+  trigger_type: scheduled
+  run_context: production
+  inputs: []
+  outputs:
+  - DS-269
+  pit_relevance: strict
+  description: alt_sz_climate_hist_refresh（深圳开放数据批3；口岸/水位/气象观测族补全）
+  module_id: MOD-L00-004
+  design_maturity: production
+  name: ingest.alt_sz_climate_hist_refresh
+  name_zh: 深圳基本站气候历史表采集
+  status: active
+  version: 1.0.0
+  created_at: "2026-09-14"
+  updated_at: "2026-09-14"
+  owner: MOD-L00-004
+  entry_role: "state"
+  applies_to: ["market"]
+  tags: ["另类数据", "数据", "深圳", "批3"]
+  algorithm_status: "not_applicable"
+  evidence: "回补实测（backfill_b3）；FINAL 核数 uniq 全 OK"
+  code_symbol: "src/zephyr/data/implementations/akshare_alt_provider.py::AkshareAltProvider._fetch_sz_open_data"
+  code_fingerprint:
+- job_id: JOB-125
+  job_name: ingest.alt_sz_ground_obs_incremental
+  entity_type: job
+  scope: production
+  source_code_ref: src/zephyr/data/implementations/akshare_alt_provider.py
+  trigger_type: scheduled
+  run_context: production
+  inputs: []
+  outputs:
+  - DS-270
+  pit_relevance: strict
+  description: alt_sz_ground_obs_incremental（深圳开放数据批3；口岸/水位/气象观测族补全）
+  module_id: MOD-L00-004
+  design_maturity: production
+  name: ingest.alt_sz_ground_obs_incremental
+  name_zh: 深圳地面观测实况表采集
+  status: active
+  version: 1.0.0
+  created_at: "2026-09-14"
+  updated_at: "2026-09-14"
+  owner: MOD-L00-004
+  entry_role: "state"
+  applies_to: ["market"]
+  tags: ["另类数据", "数据", "深圳", "批3"]
+  algorithm_status: "not_applicable"
+  evidence: "回补实测（backfill_b3）；FINAL 核数 uniq 全 OK"
   code_symbol: "src/zephyr/data/implementations/akshare_alt_provider.py::AkshareAltProvider._fetch_sz_open_data"
   code_fingerprint:

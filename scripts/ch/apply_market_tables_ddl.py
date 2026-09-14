@@ -5,7 +5,7 @@
 # [CONSUMERS]
 # [STARTUP] manual
 # [MATURITY] production
-# [INVARIANTS] DDL-as-Code: tick_data DDL 真源为 schemas/categories/intraday/market_tick.py; kline_daily DDL 真源为 schemas/categories/kline/market_kline_daily.py; auction_book DDL 真源为 schemas/categories/intraday/market_auction_book.py; sector_snapshot DDL 真源为 schemas/categories/market_sector_snapshot.py; apply() 通过 ch_writer.query 执行; verify() 查询 system.tables 验证引擎
+# [INVARIANTS] DDL-as-Code: tick_data DDL 真源为 schemas/categories/intraday/market_tick.py; kline_daily DDL 真源为 schemas/categories/kline/market_kline_daily.py; auction_book DDL 真源为 schemas/categories/intraday/market_auction_book.py; sector_snapshot DDL 真源为 schemas/categories/market/market_sector_snapshot.py; apply() 通过 ch_writer.query 执行; verify() 查询 system.tables 验证引擎
 # [MODIFY-GUARD] none
 # [STABILITY] evolving
 # [SAFETY] L
@@ -20,7 +20,7 @@ DDL-as-Code 模式：
     - tick_data DDL 真源为 schemas/categories/intraday/market_tick.py（本脚本导入引用）
     - kline_daily DDL 真源为 schemas/categories/kline/market_kline_daily.py（本脚本导入引用）
     - auction_book DDL 真源为 schemas/categories/intraday/market_auction_book.py（本脚本导入引用）
-    - sector_snapshot DDL 真源为 schemas/categories/market_sector_snapshot.py（本脚本导入引用）
+    - sector_snapshot DDL 真源为 schemas/categories/market/market_sector_snapshot.py（本脚本导入引用）
 
 引擎选型矩阵（设计文档 §5 Phase F，裁定 #ARCH-SSOT-REFERENCE-INTEGRITY-001 Phase F 治本）：
     tick_data        → ReplacingMergeTree（tick 天然唯一）
@@ -223,7 +223,7 @@ ORDER BY (symbol, trade_date, timestamp)
 SETTINGS index_granularity = 8192
 """
 
-# sector_snapshot DDL — 真源: schemas/categories/market_sector_snapshot.py
+# sector_snapshot DDL — 真源: schemas/categories/market/market_sector_snapshot.py
 # 引擎治本迁移（#ARCH-SSOT-REFERENCE-INTEGRITY-001 Phase F）：
 # 原 MergeTree（板块快照允许重复）→ ReplacingMergeTree（高频推送按 (sector_code,timestamp) 去重）
 # 原因：sector_snapshot 是高频表（30秒轮询+99只推送），MergeTree 写前 DELETE 留 mutations 累积；
@@ -231,7 +231,7 @@ SETTINGS index_granularity = 8192
 # Phase 2 治本（2026-07-22）：DDL 从 sector_snapshot_collector.py 内联迁移到独立 schema 文件，
 # 消除双真源（本脚本与 collector 共用同一 schema 文件作为 SSoT）。
 try:
-    from schemas.categories.market_sector_snapshot import SECTOR_SNAPSHOT_DDL
+    from schemas.categories.market.market_sector_snapshot import SECTOR_SNAPSHOT_DDL
 except ImportError:
     # fallback: 内联定义（与 schema 文件保持一致）
     SECTOR_SNAPSHOT_DDL = """
@@ -287,9 +287,9 @@ PARTITION BY toYYYYMM(check_date)
 ORDER BY (check_date, symbol, metric, check_time)
 """
 
-# hog_spot_index DDL — 真源: schemas/categories/market_hog_spot_index.py (2026-07-29 生猪价格接入)
+# hog_spot_index DDL — 真源: schemas/categories/market/market_hog_spot_index.py (2026-07-29 生猪价格接入)
 try:
-    from schemas.categories.market_hog_spot_index import HOG_SPOT_INDEX_DDL
+    from schemas.categories.market.market_hog_spot_index import HOG_SPOT_INDEX_DDL
 except ImportError:
     HOG_SPOT_INDEX_DDL = """
 CREATE TABLE IF NOT EXISTS c1_market.hog_spot_index
@@ -310,9 +310,9 @@ ORDER BY (trade_date)
 SETTINGS index_granularity = 8192
 """
 
-# hog_futures_core DDL — 真源: schemas/categories/market_hog_futures_core.py
+# hog_futures_core DDL — 真源: schemas/categories/market/market_hog_futures_core.py
 try:
-    from schemas.categories.market_hog_futures_core import HOG_FUTURES_CORE_DDL
+    from schemas.categories.market.market_hog_futures_core import HOG_FUTURES_CORE_DDL
 except ImportError:
     HOG_FUTURES_CORE_DDL = """
 CREATE TABLE IF NOT EXISTS c1_market.hog_futures_core
@@ -327,9 +327,9 @@ ORDER BY (trade_date)
 SETTINGS index_granularity = 8192
 """
 
-# hog_province_spot DDL — 真源: schemas/categories/market_hog_province_spot.py
+# hog_province_spot DDL — 真源: schemas/categories/market/market_hog_province_spot.py
 try:
-    from schemas.categories.market_hog_province_spot import HOG_PROVINCE_SPOT_DDL
+    from schemas.categories.market.market_hog_province_spot import HOG_PROVINCE_SPOT_DDL
 except ImportError:
     HOG_PROVINCE_SPOT_DDL = """
 CREATE TABLE IF NOT EXISTS c1_market.hog_province_spot
@@ -358,52 +358,56 @@ SETTINGS index_granularity = 8192
 # sector_fund_flow（D3/GAP-F-16 THS 板块资金流快照）/ daban_board_event（STR-DABAN-022 打板事件推导）
 # 2026-08-29 S2 估值路A + A22：index_valuation_daily（指数估值 PE_TTM/CAPE/分位/ERP）/
 # a50_futures_daily（富时A50期货日K，44号 §9.6 通道1）
-from schemas.categories.market_a50_futures_daily import A50_FUTURES_DAILY_DDL
-from schemas.categories.market_account_nav_daily import MARKET_ACCOUNT_NAV_DAILY_DDL
+from schemas.categories.market.market_a50_futures_daily import A50_FUTURES_DAILY_DDL
+from schemas.categories.market.market_account_nav_daily import MARKET_ACCOUNT_NAV_DAILY_DDL
 # 另类数据第 1 批免注册直连（2026-09-12，alt-data-handoff §8-1）：fail-closed 直接导入
-from schemas.categories.market_alt_shipping_index import ALT_SHIPPING_INDEX_DDL
-from schemas.categories.market_alt_regime_signal import ALT_REGIME_SIGNAL_DDL
-from schemas.categories.market_sentiment_panel import SENTIMENT_PANEL_DDL
-from schemas.categories.market_alt_stock_comment import ALT_STOCK_COMMENT_DDL
+from schemas.categories.market.market_alt_shipping_index import ALT_SHIPPING_INDEX_DDL
+from schemas.categories.market.market_alt_regime_signal import ALT_REGIME_SIGNAL_DDL
+from schemas.categories.market.market_sentiment_panel import SENTIMENT_PANEL_DDL
+from schemas.categories.market.market_alt_stock_comment import ALT_STOCK_COMMENT_DDL
 # 气象事件层：台风路径（2026-09-14，深圳开放数据平台 appKey 通道）
-from schemas.categories.market_alt_typhoon_track import ALT_TYPHOON_TRACK_DDL
+from schemas.categories.market.market_alt_typhoon_track import ALT_TYPHOON_TRACK_DDL
 # 深圳开放数据批量源 ×7（2026-09-14，st-altdata-20260914）：fail-closed 直接导入
-from schemas.categories.market_alt_sz_stat_monthly import MARKET_ALT_SZ_STAT_MONTHLY_DDL
-from schemas.categories.market_alt_sz_port_monthly import MARKET_ALT_SZ_PORT_MONTHLY_DDL
-from schemas.categories.market_alt_sz_house_daily import MARKET_ALT_SZ_HOUSE_DAILY_DDL
-from schemas.categories.market_alt_sz_weather_warning import MARKET_ALT_SZ_WEATHER_WARNING_DDL
-from schemas.categories.market_alt_sz_marine_forecast import MARKET_ALT_SZ_MARINE_FORECAST_DDL
+from schemas.categories.market.market_alt_sz_stat_monthly import MARKET_ALT_SZ_STAT_MONTHLY_DDL
+from schemas.categories.market.market_alt_sz_port_monthly import MARKET_ALT_SZ_PORT_MONTHLY_DDL
+from schemas.categories.market.market_alt_sz_house_daily import MARKET_ALT_SZ_HOUSE_DAILY_DDL
+from schemas.categories.market.market_alt_sz_weather_warning import MARKET_ALT_SZ_WEATHER_WARNING_DDL
+from schemas.categories.market.market_alt_sz_marine_forecast import MARKET_ALT_SZ_MARINE_FORECAST_DDL
 # 深圳能见度探测分钟级站点流（2026-09-14，任务 2：服务 1580458478）
-from schemas.categories.market_alt_sz_visibility import MARKET_ALT_SZ_VISIBILITY_DDL
+from schemas.categories.market.market_alt_sz_visibility import MARKET_ALT_SZ_VISIBILITY_DDL
 # 批 2 十一表（2026-09-14 深夜，新钥匙通道 0ecc2b46：环境/水库/楼市/口岸/统计扩展）
-from schemas.categories.market_alt_sz_air_quality_daily import MARKET_ALT_SZ_AIR_QUALITY_DAILY_DDL
-from schemas.categories.market_alt_sz_air_quality_region import MARKET_ALT_SZ_AIR_QUALITY_REGION_DDL
-from schemas.categories.market_alt_sz_reservoir_station import MARKET_ALT_SZ_RESERVOIR_STATION_DDL
-from schemas.categories.market_alt_sz_reservoir_rain_day import MARKET_ALT_SZ_RESERVOIR_RAIN_DAY_DDL
-from schemas.categories.market_alt_sz_reservoir_rain_month import MARKET_ALT_SZ_RESERVOIR_RAIN_MONTH_DDL
-from schemas.categories.market_alt_sz_house_area import MARKET_ALT_SZ_HOUSE_AREA_DDL
-from schemas.categories.market_alt_sz_house_listing import MARKET_ALT_SZ_HOUSE_LISTING_DDL
-from schemas.categories.market_alt_sz_house_presale import MARKET_ALT_SZ_HOUSE_PRESALE_DDL
-from schemas.categories.market_alt_sz_market_subject import MARKET_ALT_SZ_MARKET_SUBJECT_DDL
-from schemas.categories.market_alt_sz_stat_analysis import MARKET_ALT_SZ_STAT_ANALYSIS_DDL
-from schemas.categories.market_alt_sz_enterprise_year import MARKET_ALT_SZ_ENTERPRISE_YEAR_DDL
-from schemas.categories.market_typhoon_landfall_history import MARKET_TYPHOON_LANDFALL_HISTORY_DDL
-from schemas.categories.market_typhoon_names import MARKET_TYPHOON_NAMES_DDL
-from schemas.categories.market_breadth_snapshot import MARKET_BREADTH_SNAPSHOT_DDL
-from schemas.categories.market_daban_board_event import MARKET_DABAN_BOARD_EVENT_DDL
+from schemas.categories.market.market_alt_sz_air_quality_daily import MARKET_ALT_SZ_AIR_QUALITY_DAILY_DDL
+from schemas.categories.market.market_alt_sz_air_quality_region import MARKET_ALT_SZ_AIR_QUALITY_REGION_DDL
+from schemas.categories.market.market_alt_sz_reservoir_station import MARKET_ALT_SZ_RESERVOIR_STATION_DDL
+from schemas.categories.market.market_alt_sz_reservoir_rain_day import MARKET_ALT_SZ_RESERVOIR_RAIN_DAY_DDL
+from schemas.categories.market.market_alt_sz_reservoir_rain_month import MARKET_ALT_SZ_RESERVOIR_RAIN_MONTH_DDL
+from schemas.categories.market.market_alt_sz_house_area import MARKET_ALT_SZ_HOUSE_AREA_DDL
+from schemas.categories.market.market_alt_sz_house_listing import MARKET_ALT_SZ_HOUSE_LISTING_DDL
+from schemas.categories.market.market_alt_sz_house_presale import MARKET_ALT_SZ_HOUSE_PRESALE_DDL
+from schemas.categories.market.market_alt_sz_market_subject import MARKET_ALT_SZ_MARKET_SUBJECT_DDL
+from schemas.categories.market.market_alt_sz_stat_analysis import MARKET_ALT_SZ_STAT_ANALYSIS_DDL
+from schemas.categories.market.market_alt_sz_enterprise_year import MARKET_ALT_SZ_ENTERPRISE_YEAR_DDL
+from schemas.categories.market.market_alt_sz_reservoir_level import MARKET_ALT_SZ_RESERVOIR_LEVEL_DDL
+from schemas.categories.market.market_alt_sz_env_meteor import MARKET_ALT_SZ_ENV_METEOR_DDL
+from schemas.categories.market.market_alt_sz_climate_hist import MARKET_ALT_SZ_CLIMATE_HIST_DDL
+from schemas.categories.market.market_alt_sz_ground_obs import MARKET_ALT_SZ_GROUND_OBS_DDL
+from schemas.categories.market.market_typhoon_landfall_history import MARKET_TYPHOON_LANDFALL_HISTORY_DDL
+from schemas.categories.market.market_typhoon_names import MARKET_TYPHOON_NAMES_DDL
+from schemas.categories.market.market_breadth_snapshot import MARKET_BREADTH_SNAPSHOT_DDL
+from schemas.categories.market.market_daban_board_event import MARKET_DABAN_BOARD_EVENT_DDL
 from schemas.categories.intraday.market_execution_report import MARKET_EXECUTION_REPORT_DDL
-from schemas.categories.market_index_valuation_daily import MARKET_INDEX_VALUATION_DAILY_DDL
-from schemas.categories.market_ipo_calendar import IPO_CALENDAR_DDL
+from schemas.categories.market.market_index_valuation_daily import MARKET_INDEX_VALUATION_DAILY_DDL
+from schemas.categories.market.market_ipo_calendar import IPO_CALENDAR_DDL
 from schemas.categories.kline.market_kline_global import KLINE_GLOBAL_DDL
-from schemas.categories.market_limit_up_pool import MARKET_LIMIT_UP_POOL_DDL
-from schemas.categories.market_news_sentiment_window import NEWS_SENTIMENT_WINDOW_DDL
-from schemas.categories.market_reconciliation_differences import (
+from schemas.categories.market.market_limit_up_pool import MARKET_LIMIT_UP_POOL_DDL
+from schemas.categories.market.market_news_sentiment_window import NEWS_SENTIMENT_WINDOW_DDL
+from schemas.categories.market.market_reconciliation_differences import (
     MARKET_RECONCILIATION_DIFFERENCES_DDL,
 )
-from schemas.categories.market_sector_fund_flow import MARKET_SECTOR_FUND_FLOW_DDL
-from schemas.categories.market_stk_limit import STK_LIMIT_DDL
-from schemas.categories.market_suspend import SUSPEND_DDL
-from schemas.categories.market_us_futures_intraday import US_FUTURES_INTRADAY_DDL
+from schemas.categories.market.market_sector_fund_flow import MARKET_SECTOR_FUND_FLOW_DDL
+from schemas.categories.market.market_stk_limit import STK_LIMIT_DDL
+from schemas.categories.market.market_suspend import SUSPEND_DDL
+from schemas.categories.market.market_us_futures_intraday import US_FUTURES_INTRADAY_DDL
 from schemas.categories.meta_stock_basic import STOCK_BASIC_DDL
 from schemas.categories.meta.meta_stock_profile_ths import STOCK_PROFILE_THS_DDL
 from schemas.categories.meta.meta_stock_profile_ths import TABLE_NAME as _THS_PROFILE_TABLE
@@ -446,6 +450,10 @@ _ALL_DDL: list[tuple[str, str]] = [
     ("c1_market.alt_sz_market_subject", MARKET_ALT_SZ_MARKET_SUBJECT_DDL),
     ("c1_market.alt_sz_stat_analysis", MARKET_ALT_SZ_STAT_ANALYSIS_DDL),
     ("c1_market.alt_sz_enterprise_year", MARKET_ALT_SZ_ENTERPRISE_YEAR_DDL),
+    ("c1_market.alt_sz_reservoir_level", MARKET_ALT_SZ_RESERVOIR_LEVEL_DDL),
+    ("c1_market.alt_sz_env_meteor", MARKET_ALT_SZ_ENV_METEOR_DDL),
+    ("c1_market.alt_sz_climate_hist", MARKET_ALT_SZ_CLIMATE_HIST_DDL),
+    ("c1_market.alt_sz_ground_obs", MARKET_ALT_SZ_GROUND_OBS_DDL),
     ("c1_market.alt_typhoon_landfall_history", MARKET_TYPHOON_LANDFALL_HISTORY_DDL),
     ("c1_market.alt_typhoon_names", MARKET_TYPHOON_NAMES_DDL),
     # JOB-077 市场元数据与约束接入（DS-081~083，2026-08-15）
@@ -865,6 +873,10 @@ _EXPECTED_ENGINES: dict[str, str] = {
     "alt_sz_market_subject": "ReplacingMergeTree",
     "alt_sz_stat_analysis": "ReplacingMergeTree",
     "alt_sz_enterprise_year": "ReplacingMergeTree",
+    "alt_sz_reservoir_level": "ReplacingMergeTree",
+    "alt_sz_env_meteor": "ReplacingMergeTree",
+    "alt_sz_climate_hist": "ReplacingMergeTree",
+    "alt_sz_ground_obs": "ReplacingMergeTree",
     "alt_typhoon_landfall_history": "ReplacingMergeTree",
     "alt_typhoon_names": "ReplacingMergeTree",
     # JOB-077（DS-081~083，2026-08-15）

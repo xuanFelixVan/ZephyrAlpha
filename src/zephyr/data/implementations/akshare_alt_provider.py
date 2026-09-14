@@ -123,12 +123,17 @@ _SZ_STAT_SERIES_BATCH2: tuple[tuple[str, str], ...] = (
 # 异构两件（字段形不兼容 stat 解析器）：统计分析（文章型 XH/BT/NY/ZW）与
 # 企业登记发展（年表 NF+分类企业数）走独立 cap + 独立表
 _SZ_STAT_SERIES_ALL = _SZ_STAT_SERIES + _SZ_STAT_SERIES_BATCH2
-# 口岸流量 3 系列 -> alt_sz_port_monthly
+# 口岸流量 3+4 系列 -> alt_sz_port_monthly（批3：出入境人员/车辆/机场旅客/客船，新钥匙通道）
 _SZ_PORT_SERIES: tuple[tuple[str, str], ...] = (
     ("port_teu", "29200_51400003"),
     ("port_goods", "29200_51400004"),
     ("port_air", "29200_51400006"),
+    ("port_pax", "29200_51400001"),
+    ("port_vehicles", "29200_51400002"),
+    ("port_airpax", "29200_51400005"),
+    ("port_ferry", "29200_51400020"),
 )
+_SZ_PORT_BATCH2_SIDS = {"29200_51400001", "29200_51400002", "29200_51400005", "29200_51400020"}
 # 楼市日度 2 系列 -> alt_sz_house_daily
 _SZ_HOUSE_SERIES: tuple[tuple[str, str], ...] = (
     ("house_new", "29200_01903510"),
@@ -155,6 +160,10 @@ _SZ_SINGLE_APIS: dict[str, str] = {
     "alt_sz_market_subject": "1485642496/1/service.xhtml",
     "alt_sz_stat_analysis": "29200_03302372/1/service.xhtml",
     "alt_sz_enterprise_year": "29200_03302396/1/service.xhtml",
+    "alt_sz_reservoir_level": "1952552493/1/service.xhtml",
+    "alt_sz_env_meteor": "675294854/1/service.xhtml",
+    "alt_sz_climate_hist": "1287807159/1/service.xhtml",
+    "alt_sz_ground_obs": "120238293/1/service.xhtml",
     "alt_typhoon_landfall_history": "29200_00903514/1/service.xhtml",
     "alt_typhoon_names": "29200_00903513/1/service.xhtml",
 }
@@ -166,6 +175,8 @@ _SZ_NEW_KEY_CAPS = frozenset({
     "alt_sz_market_subject", "alt_sz_stat_analysis", "alt_sz_enterprise_year",
     "alt_sz_stat_monthly_batch2",
 })
+# 批3 系列级钥匙路由：口岸 4 新系列绑新钥匙应用（主钥匙 10001 实证）
+_SZ_PORT_BATCH2_SIDS = {"29200_51400001", "29200_51400002", "29200_51400005", "29200_51400020"}
 # batch2 系列级钥匙路由（新批订阅绑在新钥匙 0ecc2b46 应用名下，主钥匙 10001 实证）
 _SZ_STAT_BATCH2_SIDS = {sid for _, sid in _SZ_STAT_SERIES_BATCH2}
 _SZ_OPEN_BASE = "https://opendata.sz.gov.cn/api/"
@@ -182,6 +193,7 @@ _SZ_OPEN_CAPS = frozenset({
     "alt_sz_house_area", "alt_sz_house_listing", "alt_sz_house_presale",
     "alt_sz_port_passengers", "alt_sz_port_vehicles", "alt_sz_port_air_pax", "alt_sz_port_ferry",
     "alt_sz_market_subject", "alt_sz_stat_analysis", "alt_sz_enterprise_year",
+    "alt_sz_env_meteor", "alt_sz_climate_hist", "alt_sz_ground_obs",
     "alt_typhoon_landfall_history", "alt_typhoon_names",
 })
 
@@ -201,6 +213,10 @@ _ALT_SZ_HOUSE_PRESALE_COLUMNS = ["xh", "zone", "project", "buildings", "purpose"
 _ALT_SZ_MARKET_SUBJECT_COLUMNS = ["year", "nzi_ent", "nzi_cap", "wzi_ent", "wzi_cap", "wzi_invest", "gsh_ent", "gsh_cap", "sy_ent", "nmzy_hz", "nmzy_cz"]
 _ALT_SZ_STAT_ANALYSIS_COLUMNS = ["xh", "ny", "title", "body"]
 _ALT_SZ_ENTERPRISE_YEAR_COLUMNS = ["year", "total", "wzi", "domestic", "private", "individual", "others1", "others2", "ext1", "ext2", "ext3", "ext4", "ext5", "ext6"]
+_ALT_SZ_RES_LEVEL_COLUMNS = ["id", "stcd", "tm", "tdate", "rz"]
+_ALT_SZ_ENV_METEOR_COLUMNS = ["id", "datetime", "area", "type", "wr_level", "wr_index", "evaluate", "c_level", "continue_time", "kq_rank", "zyfomite"]
+_ALT_SZ_CLIMATE_HIST_COLUMNS = ["ddatetime", "ddate", "pressure", "rain", "temp", "humidity", "wind_speed", "wind_dir_deg", "wind_dir"]
+_ALT_SZ_GROUND_OBS_COLUMNS = ["ddatetime", "ddate", "pressure", "rain", "wind_dir_deg", "temp", "humidity", "visibility", "wind_speed", "crt_time", "crt_date"]
 _ALT_SZ_MARINE_COLUMNS = ["recid", "area_name", "ddatetime", "forecast_time", "is_next_day", "weather_status", "weather_pic", "wind_direct", "wind_speed", "wind_gust", "wind_gust_direct", "temp_max", "temp_min", "humidity", "humidity_max", "rain", "rain_min", "visibility", "visibility_min", "wave_level", "wave_height", "liusu", "qiya", "zwx", "yujing", "write_time"]
 _ALT_LANDFALL_COLUMNS = ["id", "year", "tcno", "tc_en_name", "tc_cn_name", "land_no", "land_lev", "land_prov", "cyclone_num", "land_sum", "memo"]
 _ALT_TYNAMES_COLUMNS = ["keyid", "name", "name_chn", "country", "start_time", "end_time", "name_meanings"]
@@ -221,6 +237,10 @@ _TBL_ALT_SZ_HOUSE_PRESALE = get_registry().table("market_alt_sz_house_presale")
 _TBL_ALT_SZ_MARKET_SUBJECT = get_registry().table("market_alt_sz_market_subject")
 _TBL_ALT_SZ_STAT_ANALYSIS = get_registry().table("market_alt_sz_stat_analysis")
 _TBL_ALT_SZ_ENTERPRISE_YEAR = get_registry().table("market_alt_sz_enterprise_year")
+_TBL_ALT_SZ_RES_LEVEL = get_registry().table("market_alt_sz_reservoir_level")
+_TBL_ALT_SZ_ENV_METEOR = get_registry().table("market_alt_sz_env_meteor")
+_TBL_ALT_SZ_CLIMATE_HIST = get_registry().table("market_alt_sz_climate_hist")
+_TBL_ALT_SZ_GROUND_OBS = get_registry().table("market_alt_sz_ground_obs")
 _TBL_ALT_LANDFALL = get_registry().table("market_typhoon_landfall_history")
 _TBL_ALT_TYNAMES = get_registry().table("market_typhoon_names")
 
@@ -254,8 +274,24 @@ _AKSHARE_ALT_CAPABILITIES = frozenset({
     "alt_sz_reservoir_rain_day", "alt_sz_reservoir_rain_month",
     "alt_sz_house_area", "alt_sz_house_listing", "alt_sz_house_presale",
     "alt_sz_market_subject", "alt_sz_stat_analysis", "alt_sz_enterprise_year",
+    "alt_sz_reservoir_level", "alt_sz_env_meteor", "alt_sz_climate_hist", "alt_sz_ground_obs",
     "alt_typhoon_landfall_history", "alt_typhoon_names", "cb_premium_median"})
 
+
+
+def _tsv_safe(v) -> str:
+    """TSV 值中和：Tab/CR/LF 替换为空格（String 列防污染）。"""
+    return str(v or "").replace("\t", " ").replace("\r", " ").replace("\n", " ")
+
+
+def _num_or_safe(v):
+    """数值优先（浮点可解析则返回 float），否则 TSV 安全字符串。"""
+    if v is None or str(v).strip() == "":
+        return None
+    try:
+        return float(v)
+    except (TypeError, ValueError):
+        return _tsv_safe(v)
 
 def _norm_date(v) -> str | None:
     """规范化 akshare 日期为 'YYYY-MM-DD' 字符串（兼容 Timestamp/str/NaT）。"""
@@ -345,6 +381,11 @@ class AkshareAltProvider(IngestProviderBase):
             CapabilityContract("alt_sz_market_subject", supports_symbols_null=True, supports_incremental=False),
             CapabilityContract("alt_sz_stat_analysis", supports_symbols_null=True, supports_incremental=False),
             CapabilityContract("alt_sz_enterprise_year", supports_symbols_null=True, supports_incremental=False),
+            # 批3（2026-09-14 深夜）：水位大表二分增量/环境气象/气候历史/地面观测
+            CapabilityContract("alt_sz_reservoir_level", supports_symbols_null=True, requires_date_range=True),
+            CapabilityContract("alt_sz_env_meteor", supports_symbols_null=True, supports_incremental=False),
+            CapabilityContract("alt_sz_climate_hist", supports_symbols_null=True, supports_incremental=False),
+            CapabilityContract("alt_sz_ground_obs", supports_symbols_null=True, requires_date_range=True),
             CapabilityContract("alt_typhoon_landfall_history", supports_symbols_null=True,
                                supports_incremental=False, requires_date_range=False),
             CapabilityContract("alt_typhoon_names", supports_symbols_null=True,
@@ -901,11 +942,31 @@ class AkshareAltProvider(IngestProviderBase):
     def _port_row(series: str, raw: dict) -> tuple | None:
         m = re.match(r"(\d{4})年(\d{1,2})月", str(raw.get("MONTH") or ""))
         if not m:
-            return None
+            # 客船进出港族无 MONTH 字段（TJSJ=统计月，GXSJ=更新时间）
+            m2 = re.match(r"(\d{4})年(\d{1,2})月", str(raw.get("TJSJ") or ""))
+            if not m2:
+                return None
+            month = f"{m2.group(1)}-{int(m2.group(2)):02d}-01"
+            val = _to_float(raw.get("KCJCG"))
+            if val is None:
+                return None
+            return (series, str(raw.get("TJSJ") or ""), month, val,
+                    str(raw.get("GXSJ") or ""))
         month = f"{m.group(1)}-{int(m.group(2)):02d}-01"
-        val = _to_float(raw.get("TEU") if series == "port_teu" else
-                        raw.get("GOODS_QUANTITY") if series == "port_goods" else
-                        raw.get("AIR_GOODS_QUANTITY"))
+        if series == "port_teu":
+            val = _to_float(raw.get("TEU"))
+        elif series == "port_goods":
+            val = _to_float(raw.get("GOODS_QUANTITY"))
+        elif series == "port_air":
+            val = _to_float(raw.get("AIR_GOODS_QUANTITY"))
+        elif series == "port_pax":
+            val = _to_float(raw.get("CUSTOMS_NUMBER"))
+        elif series == "port_vehicles":
+            val = _to_float(raw.get("CAR_NUMBER"))
+        elif series == "port_airpax":
+            val = _to_float(raw.get("AIRPORT_CUSTOMS_NUMBER"))
+        else:
+            return None
         if val is None:
             return None
         return (series, str(raw.get("MONTH") or ""), month, val, str(raw.get("RELEASE_TIME") or ""))
@@ -1089,6 +1150,80 @@ class AkshareAltProvider(IngestProviderBase):
                 _to_int(raw.get("YYYS1")) if _to_int(raw.get("YYYS1")) is not None else None)
 
     @staticmethod
+    def _res_level_row(raw: dict | None) -> tuple | None:
+        """水库水位行（服务 1952552493，主钥匙，7630 万行，无过滤参数）。"""
+        if not isinstance(raw, dict):
+            return None
+        rid = str(raw.get("ID") or "")
+        tm = str(raw.get("TM") or "")
+        if not rid or not tm:
+            return None
+        return (rid, str(raw.get("STCD") or ""), tm, tm[:10] or "1970-01-01",
+                _to_float(raw.get("RZ")))
+
+    @staticmethod
+    def _env_meteor_row(raw: dict | None) -> tuple | None:
+        """环境气象预报行（服务 675294854，环境气象等级/污染扩散评价）。"""
+        if not isinstance(raw, dict):
+            return None
+        rid = str(raw.get("ID") or "")
+        if not rid:
+            return None
+        return (rid, str(raw.get("DATETIME") or ""), str(raw.get("AREA") or ""),
+                str(raw.get("TYPE") or ""), str(raw.get("WRLEVEL") or ""),
+                str(raw.get("WRINDEX") or ""), str(raw.get("EVALUATE") or ""),
+                str(raw.get("CLEVEL") or ""), str(raw.get("CONTINUETIME") or ""),
+                str(raw.get("KQRANK") or ""), str(raw.get("ZYFOMITE") or ""))
+
+    @staticmethod
+    def _climate_hist_row(raw: dict | None) -> tuple | None:
+        """气候历史行（服务 1287807159，1953 起基本站逐时观测）。
+
+        三坑全踩（2026-09-15 实弹）：
+        1. 源 String 列内嵌 Tab/换行污染 TSV 分隔 -> 值经 _num_or_safe 中和；
+        2. DDATETIME 混合格式：新数据 '1952-07-01 02:00:00'，老数据
+           '20041231220000'（14 位 YYYYMMDDHHMMSS）-> 统一归一化 ISO；
+        3. DDL 9 列（含 ddate 派生列），早期版本漏传致 8/9 列错位。
+        """
+        if not isinstance(raw, dict):
+            return None
+        ts_raw = str(raw.get("DDATETIME") or "").strip()
+        if not ts_raw:
+            return None
+        digits = re.sub(r"\D", "", ts_raw)
+        if len(digits) >= 14:  # YYYYMMDDHHMMSS
+            ts = (f"{digits[0:4]}-{digits[4:6]}-{digits[6:8]} "
+                  f"{digits[8:10]}:{digits[10:12]}:{digits[12:14]}")
+        elif len(digits) == 8:  # YYYYMMDD
+            ts = f"{digits[0:4]}-{digits[4:6]}-{digits[6:8]} 00:00:00"
+        elif "-" in ts_raw:
+            ts = ts_raw if len(ts_raw) > 10 else ts_raw + " 00:00:00"
+        else:
+            return None  # 未知格式丢弃（幂等键必须可归一）
+        ddate = ts[:10]
+        if len(ddate) != 10 or ddate[4] != "-" or ddate[7] != "-":
+            return None
+        vals = [raw.get(k) for k in ("P", "R", "T", "U", "V", "WDDD", "WDDF")]
+        return (ts, ddate, *[_num_or_safe(v) for v in vals])
+
+    @staticmethod
+    def _ground_obs_row(raw: dict | None) -> tuple | None:
+        """地面观测实况行（服务 120238293，2017 起逐时观测）。"""
+        if not isinstance(raw, dict):
+            return None
+        ts = str(raw.get("DDATETIME") or "")
+        if not ts:
+            return None
+        crt = str(raw.get("CRTTIME") or "")
+        # DDL 11 列：ddatetime, ddate, pressure, rain, wind_dir_deg, temp, humidity,
+        # visibility, wind_speed, crt_time, crt_date（ddate 曾漏传致 10/11 列错位）
+        return (ts, ts[:10] or "1970-01-01",
+                _to_float(raw.get("P")), _to_float(raw.get("R")),
+                _to_float(raw.get("FX")), _to_float(raw.get("T")),
+                _to_float(raw.get("U")), _to_float(raw.get("V")),
+                _to_float(raw.get("FS")), crt, crt[:10] or "1970-01-01")
+
+    @staticmethod
     def _landfall_row(raw: dict) -> tuple | None:
         rid = _to_int(raw.get("ID"))
         if rid is None:
@@ -1129,6 +1264,10 @@ class AkshareAltProvider(IngestProviderBase):
             "alt_sz_market_subject": (_TBL_ALT_SZ_MARKET_SUBJECT, _ALT_SZ_MARKET_SUBJECT_COLUMNS),
             "alt_sz_stat_analysis": (_TBL_ALT_SZ_STAT_ANALYSIS, _ALT_SZ_STAT_ANALYSIS_COLUMNS),
             "alt_sz_enterprise_year": (_TBL_ALT_SZ_ENTERPRISE_YEAR, _ALT_SZ_ENTERPRISE_YEAR_COLUMNS),
+            "alt_sz_reservoir_level": (_TBL_ALT_SZ_RES_LEVEL, _ALT_SZ_RES_LEVEL_COLUMNS),
+            "alt_sz_env_meteor": (_TBL_ALT_SZ_ENV_METEOR, _ALT_SZ_ENV_METEOR_COLUMNS),
+            "alt_sz_climate_hist": (_TBL_ALT_SZ_CLIMATE_HIST, _ALT_SZ_CLIMATE_HIST_COLUMNS),
+            "alt_sz_ground_obs": (_TBL_ALT_SZ_GROUND_OBS, _ALT_SZ_GROUND_OBS_COLUMNS),
             "alt_typhoon_landfall_history": (_TBL_ALT_LANDFALL, _ALT_LANDFALL_COLUMNS),
             "alt_typhoon_names": (_TBL_ALT_TYNAMES, _ALT_TYNAMES_COLUMNS),
         }
@@ -1151,8 +1290,12 @@ class AkshareAltProvider(IngestProviderBase):
                         if t:
                             rows_out.append(t)
             elif cap == "alt_sz_port_monthly":
+                key_new = get_secret_or_default("SZ_OPEN_DATA_APPKEY_NEW")
                 for series, ctx in _SZ_PORT_SERIES:
-                    for r in self._sz_open_fetch_rows(policy, ctx, extra):
+                    key = key_new if ctx in _SZ_PORT_BATCH2_SIDS else None
+                    if ctx in _SZ_PORT_BATCH2_SIDS and not key:
+                        raise ValueError("port batch2 系列需 SZ_OPEN_DATA_APPKEY_NEW")
+                    for r in self._sz_open_fetch_rows(policy, ctx, extra, app_key=key):
                         t = self._port_row(series, r)
                         if t:
                             rows_out.append(t)
@@ -1209,6 +1352,10 @@ class AkshareAltProvider(IngestProviderBase):
                           "alt_sz_market_subject": self._market_subject_row,
                           "alt_sz_stat_analysis": self._stat_analysis_row,
                           "alt_sz_enterprise_year": self._enterprise_year_row,
+                          "alt_sz_reservoir_level": self._res_level_row,
+                          "alt_sz_env_meteor": self._env_meteor_row,
+                          "alt_sz_climate_hist": self._climate_hist_row,
+                          "alt_sz_ground_obs": self._ground_obs_row,
                           "alt_typhoon_landfall_history": self._landfall_row,
                           "alt_typhoon_names": self._tynames_row}[cap]
                 key = get_secret_or_default("SZ_OPEN_DATA_APPKEY_NEW") if cap in _SZ_NEW_KEY_CAPS else None
@@ -1240,6 +1387,18 @@ class AkshareAltProvider(IngestProviderBase):
                     last_key = max(dts) if dts else ""
                 elif cap == "alt_sz_house_area":
                     last_key = max(t[1] for t in rows_out) if rows_out else ""
+                elif cap == "alt_sz_reservoir_level":
+                    dts = [t[2][:10] for t in rows_out if t[2]]
+                    last_key = max(dts) if dts else ""
+                elif cap == "alt_sz_env_meteor":
+                    dts = [t[1][:10] for t in rows_out if t[1]]
+                    last_key = max(dts) if dts else ""
+                elif cap == "alt_sz_climate_hist":
+                    dts = [t[0][:10] for t in rows_out if t[0]]
+                    last_key = max(dts) if dts else ""
+                elif cap == "alt_sz_ground_obs":
+                    dts = [t[10] for t in rows_out if t[10]]
+                    last_key = max(dts) if dts else ""
             yield FetchResult(table=table, columns=columns, rows=rows_out,
                               last_key=last_key, elapsed_sec=time.monotonic() - t0)
         except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch

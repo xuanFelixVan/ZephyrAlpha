@@ -536,7 +536,7 @@
   engine: clickhouse
   database: c1_market
   table: convertible_bond_iv
-  schema_file: schemas/categories/market_cb_iv.py
+  schema_file: schemas/categories/market/market_cb_iv.py
   data_type: 成品
   lifecycle: permanent
   sla_level: L2
@@ -630,7 +630,7 @@
   engine: clickhouse
   database: c1_market
   table: index_weight
-  schema_file: schemas/categories/market_index_weight.py
+  schema_file: schemas/categories/market/market_index_weight.py
   data_type: 元数据
   lifecycle: permanent
   sla_level: L2
@@ -646,7 +646,7 @@
   engine: clickhouse
   database: c1_market
   table: index_quote
-  schema_file: schemas/categories/market_index.py
+  schema_file: schemas/categories/market/market_index.py
   data_type: 原料
   lifecycle: permanent
   sla_level: L1
@@ -695,7 +695,7 @@
   engine: clickhouse
   database: c1_market
   table: us_futures_intraday
-  schema_file: schemas/categories/market_us_futures_intraday.py
+  schema_file: schemas/categories/market/market_us_futures_intraday.py
   data_type: 原料
   lifecycle: permanent
   sla_level: L1
@@ -748,7 +748,7 @@
   engine: clickhouse
   database: c1_market
   table: futures_position
-  schema_file: schemas/categories/market_futures_position.py
+  schema_file: schemas/categories/market/market_futures_position.py
   data_type: 原料
   lifecycle: permanent
   sla_level: L2
@@ -764,7 +764,7 @@
   engine: clickhouse
   database: c1_market
   table: futures_term_structure
-  schema_file: schemas/categories/market_futures_term.py
+  schema_file: schemas/categories/market/market_futures_term.py
   data_type: 原料
   lifecycle: permanent
   sla_level: L2
@@ -851,7 +851,7 @@
   engine: clickhouse
   database: c1_market
   table: calendar_event
-  schema_file: schemas/categories/market_calendar_event.py
+  schema_file: schemas/categories/market/market_calendar_event.py
   data_type: 成品
   lifecycle: permanent
   sla_level: L2
@@ -867,7 +867,7 @@
   engine: clickhouse
   database: c1_market
   table: index_adjustment
-  schema_file: schemas/categories/market_index_adjustment.py
+  schema_file: schemas/categories/market/market_index_adjustment.py
   data_type: 预留
   lifecycle: permanent
   sla_level: L3
@@ -883,7 +883,7 @@
   engine: clickhouse
   database: c1_market
   table: ipo_schedule
-  schema_file: schemas/categories/market_ipo_schedule.py
+  schema_file: schemas/categories/market/market_ipo_schedule.py
   data_type: 预留
   lifecycle: permanent
   sla_level: L3
@@ -899,7 +899,7 @@
   engine: clickhouse
   database: c1_market
   table: margin_target_adjustment
-  schema_file: schemas/categories/market_margin_target_adjustment.py
+  schema_file: schemas/categories/market/market_margin_target_adjustment.py
   data_type: 预留
   lifecycle: permanent
   sla_level: L3
@@ -915,7 +915,7 @@
   engine: clickhouse
   database: c1_market
   table: dividend_tax_node
-  schema_file: schemas/categories/market_dividend_tax_node.py
+  schema_file: schemas/categories/market/market_dividend_tax_node.py
   data_type: 成品
   lifecycle: permanent
   sla_level: L2
@@ -931,7 +931,7 @@
   engine: clickhouse
   database: c1_market
   table: msci_adjustment
-  schema_file: schemas/categories/market_msci_adjustment.py
+  schema_file: schemas/categories/market/market_msci_adjustment.py
   data_type: 预留
   lifecycle: permanent
   sla_level: L3
@@ -963,7 +963,7 @@
   engine: clickhouse
   database: c1_market
   table: northbound_hold_snapshot
-  schema_file: schemas/categories/market_northbound_hold_snapshot.py
+  schema_file: schemas/categories/market/market_northbound_hold_snapshot.py
   data_type: 成品
   lifecycle: permanent
   sla_level: L2
@@ -1055,7 +1055,7 @@
   engine: clickhouse
   database: c1_market
   table: sector_meta
-  schema_file: schemas/categories/market_sector_meta.py
+  schema_file: schemas/categories/market/market_sector_meta.py
   data_type: 元数据
   lifecycle: permanent
   sla_level: L2
@@ -1071,7 +1071,7 @@
   engine: clickhouse
   database: c1_market
   table: sector_list
-  schema_file: schemas/categories/market_sector_list.py
+  schema_file: schemas/categories/market/market_sector_list.py
   data_type: 元数据
   lifecycle: permanent
   sla_level: L2
@@ -1151,7 +1151,7 @@
   engine: clickhouse
   database: c1_market
   table: sector_snapshot
-  schema_file: schemas/categories/market_sector_snapshot.py
+  schema_file: schemas/categories/market/market_sector_snapshot.py
   data_type: 原料
   lifecycle: permanent  # #ARCH-CH-022 P1-6：回测需要历史板块快照（板块轮动策略），hot_90d→permanent
   sla_level: L1
@@ -1168,7 +1168,7 @@
   engine: clickhouse
   database: c1_market
   table: market_breadth_snapshot
-  schema_file: schemas/categories/market_breadth_snapshot.py
+  schema_file: schemas/categories/market/market_breadth_snapshot.py
   data_type: 原料
   lifecycle: permanent
   sla_level: L1
@@ -1282,7 +1282,7 @@
   engine: clickhouse
   database: c1_market
   table: dragon_tiger_seat
-  schema_file: schemas/categories/market_dragon_tiger_seat.py
+  schema_file: schemas/categories/market/market_dragon_tiger_seat.py
   data_type: 成品
   lifecycle: permanent
   sla_level: L2
@@ -1399,7 +1399,7 @@
   engine: clickhouse
   database: c1_market
   table: limit_up_pool
-  schema_file: schemas/categories/market_limit_up_pool.py
+  schema_file: schemas/categories/market/market_limit_up_pool.py
   data_type: 成品
   lifecycle: permanent
   sla_level: L2
@@ -1415,7 +1415,7 @@
   engine: clickhouse
   database: c1_market
   table: account_nav_daily
-  schema_file: schemas/categories/market_account_nav_daily.py
+  schema_file: schemas/categories/market/market_account_nav_daily.py
   data_type: 成品
   lifecycle: permanent
   sla_level: L2
@@ -1431,7 +1431,7 @@
   engine: clickhouse
   database: c1_market
   table: reconciliation_differences
-  schema_file: schemas/categories/market_reconciliation_differences.py
+  schema_file: schemas/categories/market/market_reconciliation_differences.py
   data_type: 成品
   lifecycle: permanent
   sla_level: L2
@@ -1467,7 +1467,7 @@
   engine: clickhouse
   database: c1_market
   table: market_signal_history
-  schema_file: schemas/categories/market_signal_history.py
+  schema_file: schemas/categories/market/market_signal_history.py
   data_type: 成品
   lifecycle: permanent
   sla_level: L2
@@ -1483,7 +1483,7 @@
   engine: clickhouse
   database: c1_market
   table: market_pattern_event
-  schema_file: schemas/categories/market_pattern_event.py
+  schema_file: schemas/categories/market/market_pattern_event.py
   data_type: 成品
   lifecycle: permanent
   sla_level: L2
@@ -1499,7 +1499,7 @@
   engine: clickhouse
   database: c1_market
   table: market_pattern_win_rate
-  schema_file: schemas/categories/market_pattern_win_rate.py
+  schema_file: schemas/categories/market/market_pattern_win_rate.py
   data_type: 成品
   lifecycle: permanent
   sla_level: L2
@@ -1515,7 +1515,7 @@
   engine: clickhouse
   database: c1_market
   table: sector_fund_flow
-  schema_file: schemas/categories/market_sector_fund_flow.py
+  schema_file: schemas/categories/market/market_sector_fund_flow.py
   data_type: 原料
   lifecycle: permanent
   sla_level: L2
@@ -1531,7 +1531,7 @@
   engine: clickhouse
   database: c1_market
   table: daban_board_event
-  schema_file: schemas/categories/market_daban_board_event.py
+  schema_file: schemas/categories/market/market_daban_board_event.py
   data_type: 成品
   lifecycle: permanent
   sla_level: L2
@@ -1596,7 +1596,7 @@
   engine: clickhouse
   database: c1_market
   table: stk_limit
-  schema_file: schemas/categories/market_stk_limit.py
+  schema_file: schemas/categories/market/market_stk_limit.py
   data_type: 元数据
   lifecycle: permanent
   sla_level: L2
@@ -1612,7 +1612,7 @@
   engine: clickhouse
   database: c1_market
   table: suspend
-  schema_file: schemas/categories/market_suspend.py
+  schema_file: schemas/categories/market/market_suspend.py
   data_type: 元数据
   lifecycle: permanent
   sla_level: L2
@@ -1629,7 +1629,7 @@
   engine: clickhouse
   database: c1_market
   table: ipo_calendar
-  schema_file: schemas/categories/market_ipo_calendar.py
+  schema_file: schemas/categories/market/market_ipo_calendar.py
   data_type: 元数据
   lifecycle: permanent
   sla_level: L2
@@ -1662,7 +1662,7 @@
   engine: clickhouse
   database: c1_market
   table: technical_indicator
-  schema_file: schemas/categories/market_technical_indicator.py
+  schema_file: schemas/categories/market/market_technical_indicator.py
   data_type: 成品
   lifecycle: permanent
   sla_level: L2
@@ -1728,7 +1728,7 @@
   engine: clickhouse
   database: c1_market
   table: option_iv_surface
-  schema_file: schemas/categories/market_option_iv.py
+  schema_file: schemas/categories/market/market_option_iv.py
   data_type: 原料
   lifecycle: permanent
   sla_level: L2
@@ -1746,7 +1746,7 @@
   engine: clickhouse
   database: c1_market
   table: stock_list
-  schema_file: schemas/categories/market_stock_list.py
+  schema_file: schemas/categories/market/market_stock_list.py
   data_type: 元数据
   lifecycle: permanent
   sla_level: L1
@@ -1948,7 +1948,7 @@
   engine: clickhouse
   database: c3_fundamental
   table: ex_dividend_event
-  schema_file: schemas/categories/market_ex_dividend_event.py
+  schema_file: schemas/categories/market/market_ex_dividend_event.py
   data_type: 原料
   lifecycle: permanent
   sla_level: L2
@@ -2319,7 +2319,7 @@
   engine: clickhouse
   database: c1_market
   table: hog_spot_index
-  schema_file: schemas/categories/market_hog_spot_index.py
+  schema_file: schemas/categories/market/market_hog_spot_index.py
   data_type: 原料
   lifecycle: permanent
   sla_level: L2
@@ -2335,7 +2335,7 @@
   engine: clickhouse
   database: c1_market
   table: hog_futures_core
-  schema_file: schemas/categories/market_hog_futures_core.py
+  schema_file: schemas/categories/market/market_hog_futures_core.py
   data_type: 原料
   lifecycle: permanent
   sla_level: L2
@@ -2351,7 +2351,7 @@
   engine: clickhouse
   database: c1_market
   table: hog_province_spot
-  schema_file: schemas/categories/market_hog_province_spot.py
+  schema_file: schemas/categories/market/market_hog_province_spot.py
   data_type: 原料
   lifecycle: permanent
   sla_level: L2
@@ -2369,7 +2369,7 @@
   engine: clickhouse
   database: c1_market
   table: alt_stock_comment
-  schema_file: schemas/categories/market_alt_stock_comment.py
+  schema_file: schemas/categories/market/market_alt_stock_comment.py
   data_type: 原料
   lifecycle: permanent
   sla_level: L2
@@ -2385,7 +2385,7 @@
   engine: clickhouse
   database: c1_market
   table: alt_shipping_index
-  schema_file: schemas/categories/market_alt_shipping_index.py
+  schema_file: schemas/categories/market/market_alt_shipping_index.py
   data_type: 原料
   lifecycle: permanent
   sla_level: L2
@@ -2401,7 +2401,7 @@
   engine: clickhouse
   database: c1_market
   table: alt_typhoon_track
-  schema_file: schemas/categories/market_alt_typhoon_track.py
+  schema_file: schemas/categories/market/market_alt_typhoon_track.py
   data_type: 原料
   lifecycle: permanent
   sla_level: L2
@@ -2419,7 +2419,7 @@
   engine: clickhouse
   database: c1_market
   table: sentiment_panel
-  schema_file: schemas/categories/market_sentiment_panel.py
+  schema_file: schemas/categories/market/market_sentiment_panel.py
   data_type: 原料
   lifecycle: permanent
   sla_level: L2
@@ -2435,7 +2435,7 @@
   engine: clickhouse
   database: c1_market
   table: alt_regime_signal
-  schema_file: schemas/categories/market_alt_regime_signal.py
+  schema_file: schemas/categories/market/market_alt_regime_signal.py
   data_type: 成品
   lifecycle: permanent
   sla_level: L2
@@ -2453,7 +2453,7 @@
   engine: clickhouse
   database: c1_market
   table: alt_sz_stat_monthly
-  schema_file: schemas/categories/market_alt_sz_stat_monthly.py
+  schema_file: schemas/categories/market/market_alt_sz_stat_monthly.py
   data_type: 原料
   lifecycle: permanent
   sla_level: L2
@@ -2469,7 +2469,7 @@
   engine: clickhouse
   database: c1_market
   table: alt_sz_port_monthly
-  schema_file: schemas/categories/market_alt_sz_port_monthly.py
+  schema_file: schemas/categories/market/market_alt_sz_port_monthly.py
   data_type: 原料
   lifecycle: permanent
   sla_level: L2
@@ -2485,7 +2485,7 @@
   engine: clickhouse
   database: c1_market
   table: alt_sz_house_daily
-  schema_file: schemas/categories/market_alt_sz_house_daily.py
+  schema_file: schemas/categories/market/market_alt_sz_house_daily.py
   data_type: 原料
   lifecycle: permanent
   sla_level: L2
@@ -2501,7 +2501,7 @@
   engine: clickhouse
   database: c1_market
   table: alt_sz_weather_warning
-  schema_file: schemas/categories/market_alt_sz_weather_warning.py
+  schema_file: schemas/categories/market/market_alt_sz_weather_warning.py
   data_type: 原料
   lifecycle: permanent
   sla_level: L2
@@ -2517,7 +2517,7 @@
   engine: clickhouse
   database: c1_market
   table: alt_sz_marine_forecast
-  schema_file: schemas/categories/market_alt_sz_marine_forecast.py
+  schema_file: schemas/categories/market/market_alt_sz_marine_forecast.py
   data_type: 原料
   lifecycle: permanent
   sla_level: L2
@@ -2533,7 +2533,7 @@
   engine: clickhouse
   database: c1_market
   table: alt_sz_air_quality_daily
-  schema_file: schemas/categories/market_alt_sz_air_quality_daily.py
+  schema_file: schemas/categories/market/market_alt_sz_air_quality_daily.py
   data_type: 原料
   lifecycle: permanent
   sla_level: L2
@@ -2548,7 +2548,7 @@
   engine: clickhouse
   database: c1_market
   table: alt_sz_air_quality_region
-  schema_file: schemas/categories/market_alt_sz_air_quality_region.py
+  schema_file: schemas/categories/market/market_alt_sz_air_quality_region.py
   data_type: 原料
   lifecycle: permanent
   sla_level: L2
@@ -2563,7 +2563,7 @@
   engine: clickhouse
   database: c1_market
   table: alt_sz_reservoir_station
-  schema_file: schemas/categories/market_alt_sz_reservoir_station.py
+  schema_file: schemas/categories/market/market_alt_sz_reservoir_station.py
   data_type: 原料
   lifecycle: permanent
   sla_level: L2
@@ -2578,7 +2578,7 @@
   engine: clickhouse
   database: c1_market
   table: alt_sz_reservoir_rain_day
-  schema_file: schemas/categories/market_alt_sz_reservoir_rain_day.py
+  schema_file: schemas/categories/market/market_alt_sz_reservoir_rain_day.py
   data_type: 原料
   lifecycle: permanent
   sla_level: L2
@@ -2593,7 +2593,7 @@
   engine: clickhouse
   database: c1_market
   table: alt_sz_reservoir_rain_month
-  schema_file: schemas/categories/market_alt_sz_reservoir_rain_month.py
+  schema_file: schemas/categories/market/market_alt_sz_reservoir_rain_month.py
   data_type: 原料
   lifecycle: permanent
   sla_level: L2
@@ -2608,7 +2608,7 @@
   engine: clickhouse
   database: c1_market
   table: alt_sz_house_area
-  schema_file: schemas/categories/market_alt_sz_house_area.py
+  schema_file: schemas/categories/market/market_alt_sz_house_area.py
   data_type: 原料
   lifecycle: permanent
   sla_level: L2
@@ -2623,7 +2623,7 @@
   engine: clickhouse
   database: c1_market
   table: alt_sz_house_listing
-  schema_file: schemas/categories/market_alt_sz_house_listing.py
+  schema_file: schemas/categories/market/market_alt_sz_house_listing.py
   data_type: 原料
   lifecycle: permanent
   sla_level: L2
@@ -2638,7 +2638,7 @@
   engine: clickhouse
   database: c1_market
   table: alt_sz_house_presale
-  schema_file: schemas/categories/market_alt_sz_house_presale.py
+  schema_file: schemas/categories/market/market_alt_sz_house_presale.py
   data_type: 原料
   lifecycle: permanent
   sla_level: L2
@@ -2653,7 +2653,7 @@
   engine: clickhouse
   database: c1_market
   table: alt_sz_market_subject
-  schema_file: schemas/categories/market_alt_sz_market_subject.py
+  schema_file: schemas/categories/market/market_alt_sz_market_subject.py
   data_type: 原料
   lifecycle: permanent
   sla_level: L2
@@ -2668,7 +2668,7 @@
   engine: clickhouse
   database: c1_market
   table: alt_sz_stat_analysis
-  schema_file: schemas/categories/market_alt_sz_stat_analysis.py
+  schema_file: schemas/categories/market/market_alt_sz_stat_analysis.py
   data_type: 原料
   lifecycle: permanent
   sla_level: L2
@@ -2683,7 +2683,67 @@
   engine: clickhouse
   database: c1_market
   table: alt_sz_enterprise_year
-  schema_file: schemas/categories/market_alt_sz_enterprise_year.py
+  schema_file: schemas/categories/market/market_alt_sz_enterprise_year.py
+  data_type: 原料
+  lifecycle: permanent
+  sla_level: L2
+  enabled: true
+  hard_constraint: null
+  calc_mode: preload
+  frequency: 日频
+  data_source: [akshare_alt]
+  blueprint: null
+- category_id: market_alt_sz_reservoir_level
+  name: "深圳水库水位分钟级序列"
+  engine: clickhouse
+  database: c1_market
+  table: alt_sz_reservoir_level
+  schema_file: schemas/categories/market/market_alt_sz_reservoir_level.py
+  data_type: 原料
+  lifecycle: permanent
+  sla_level: L2
+  enabled: true
+  hard_constraint: null
+  calc_mode: preload
+  frequency: 日频
+  data_source: [akshare_alt]
+  blueprint: null
+- category_id: market_alt_sz_env_meteor
+  name: "深圳环境气象预报"
+  engine: clickhouse
+  database: c1_market
+  table: alt_sz_env_meteor
+  schema_file: schemas/categories/market/market_alt_sz_env_meteor.py
+  data_type: 原料
+  lifecycle: permanent
+  sla_level: L2
+  enabled: true
+  hard_constraint: null
+  calc_mode: preload
+  frequency: 日频
+  data_source: [akshare_alt]
+  blueprint: null
+- category_id: market_alt_sz_climate_hist
+  name: "深圳基本站气候历史"
+  engine: clickhouse
+  database: c1_market
+  table: alt_sz_climate_hist
+  schema_file: schemas/categories/market/market_alt_sz_climate_hist.py
+  data_type: 原料
+  lifecycle: permanent
+  sla_level: L2
+  enabled: true
+  hard_constraint: null
+  calc_mode: preload
+  frequency: 日频
+  data_source: [akshare_alt]
+  blueprint: null
+- category_id: market_alt_sz_ground_obs
+  name: "深圳地面观测实况"
+  engine: clickhouse
+  database: c1_market
+  table: alt_sz_ground_obs
+  schema_file: schemas/categories/market/market_alt_sz_ground_obs.py
   data_type: 原料
   lifecycle: permanent
   sla_level: L2
@@ -2698,7 +2758,7 @@
   engine: clickhouse
   database: c1_market
   table: alt_sz_visibility
-  schema_file: schemas/categories/market_alt_sz_visibility.py
+  schema_file: schemas/categories/market/market_alt_sz_visibility.py
   data_type: 原料
   lifecycle: permanent
   sla_level: L2
@@ -2714,7 +2774,7 @@
   engine: clickhouse
   database: c1_market
   table: alt_typhoon_landfall_history
-  schema_file: schemas/categories/market_typhoon_landfall_history.py
+  schema_file: schemas/categories/market/market_typhoon_landfall_history.py
   data_type: 原料
   lifecycle: permanent
   sla_level: L2
@@ -2730,7 +2790,7 @@
   engine: clickhouse
   database: c1_market
   table: alt_typhoon_names
-  schema_file: schemas/categories/market_typhoon_names.py
+  schema_file: schemas/categories/market/market_typhoon_names.py
   data_type: 原料
   lifecycle: permanent
   sla_level: L2
@@ -2783,7 +2843,7 @@
   engine: clickhouse
   database: c1_market
   table: index_valuation_daily
-  schema_file: schemas/categories/market_index_valuation_daily.py
+  schema_file: schemas/categories/market/market_index_valuation_daily.py
   data_type: 成品
   lifecycle: permanent
   sla_level: L2
@@ -2799,7 +2859,7 @@
   engine: clickhouse
   database: c1_market
   table: a50_futures_daily
-  schema_file: schemas/categories/market_a50_futures_daily.py
+  schema_file: schemas/categories/market/market_a50_futures_daily.py
   data_type: 原料
   lifecycle: permanent
   sla_level: L2
@@ -2865,7 +2925,7 @@
   engine: clickhouse
   database: c1_backtest
   table: regime_state_anchored
-  schema_file: schemas/categories/backtest_regime_state_anchored.py
+  schema_file: schemas/categories/backtest/backtest_regime_state_anchored.py
   data_type: 成品
   lifecycle: permanent
   sla_level: L2

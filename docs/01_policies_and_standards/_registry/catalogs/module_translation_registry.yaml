@@ -2017,21 +2017,21 @@ entries:
   desc_zh: 本文件是 c3_fundamental.share_unlock 表结构的唯一真源。
   desc_en: ''
   plain_zh: 本文件是 c3_fundamental.share_unlock 表结构的唯一真源。
-- module_path: schemas/categories/macro_edb_data.py
+- module_path: schemas/categories/macro/macro_edb_data.py
   domain_id: D_DATA
   name_zh: macroedb数据
   name_en: macro_edb_data
   desc_zh: 本文件是 c1_market.edb_data 表结构的唯一真源（DDL-as-Code 模式）。
   desc_en: ''
   plain_zh: 本文件是 c1_market.edb_data 表结构的唯一真源（DDL-as-Code 模式）。
-- module_path: schemas/categories/macro_macro_data.py
+- module_path: schemas/categories/macro/macro_macro_data.py
   domain_id: D_DATA
   name_zh: macromacro数据
   name_en: macro_macro_data
   desc_zh: 本文件是 c1_market.macro_data 表结构的唯一真源（DDL-as-Code 模式）。
   desc_en: ''
   plain_zh: 本文件是 c1_market.macro_data 表结构的唯一真源（DDL-as-Code 模式）。
-- module_path: schemas/categories/market_adj_factor.py
+- module_path: schemas/categories/market/market_adj_factor.py
   domain_id: D_DATA
   name_zh: 行情adj因子
   name_en: market_adj_factor
@@ -2066,168 +2066,168 @@ entries:
   desc_zh: 本文件是 c1_market.block_trade_detail 表结构的唯一真源（DDL-as-Code 模式）。
   desc_en: ''
   plain_zh: 本文件是 c1_market.block_trade_detail 表结构的唯一真源（DDL-as-Code 模式）。
-- module_path: schemas/categories/market_cb_iv.py
+- module_path: schemas/categories/market/market_cb_iv.py
   domain_id: D_DATA
   name_zh: 行情cb隐含波动率
   name_en: market_cb_iv
   desc_zh: 本文件是 c1_market.convertible_bond_iv 表结构的唯一真源（DDL-as-Code 模式）。
   desc_en: ''
   plain_zh: 本文件是 c1_market.convertible_bond_iv 表结构的唯一真源（DDL-as-Code 模式）。
-- module_path: schemas/categories/market_concept_board.py
+- module_path: schemas/categories/market/market_concept_board.py
   domain_id: D_DATA
   name_zh: 行情conceptboard
   name_en: market_concept_board
   desc_zh: 本文件从 ClickHouse 实际表结构转录为 DDL-as-Code 真源，消除"DB 有表无真源"漂移债务。
   desc_en: ''
   plain_zh: 行情conceptboard，实现业务功能（market concept board）
-- module_path: schemas/categories/market_concept_board_constituent.py
+- module_path: schemas/categories/market/market_concept_board_constituent.py
   domain_id: D_DATA
   name_zh: 行情conceptboardconstituent
   name_en: market_concept_board_constituent
   desc_zh: 本文件从 ClickHouse 实际表结构转录为 DDL-as-Code 真源，消除"DB 有表无真源"漂移债务。
   desc_en: ''
   plain_zh: 行情conceptboardconstituent，实现业务功能（market concept board constituent）
-- module_path: schemas/categories/market_concept_sector.py
+- module_path: schemas/categories/market/market_concept_sector.py
   domain_id: D_DATA
   name_zh: 行情conceptsector
   name_en: market_concept_sector
   desc_zh: 本文件从 ClickHouse 实际表结构转录为 DDL-as-Code 真源，消除"DB 有表无真源"漂移债务。
   desc_en: ''
   plain_zh: 行情conceptsector，实现业务功能（market concept sector）
-- module_path: schemas/categories/market_convertible_bond_list.py
+- module_path: schemas/categories/market/market_convertible_bond_list.py
   domain_id: D_DATA
   name_zh: 行情convertiblebondlist
   name_en: market_convertible_bond_list
   desc_zh: 本文件从 ClickHouse 实际表结构转录为 DDL-as-Code 真源，消除"DB 有表无真源"漂移债务。
   desc_en: ''
   plain_zh: 行情convertiblebondlist，实现业务功能（market convertible bond list）
-- module_path: schemas/categories/market_daily_valuation.py
+- module_path: schemas/categories/market/market_daily_valuation.py
   domain_id: D_DATA
   name_zh: 行情dailyvaluation
   name_en: market_daily_valuation
   desc_zh: 本文件是 c1_market.daily_valuation 表结构的唯一真源（DDL-as-Code 模式）。
   desc_en: ''
   plain_zh: 本文件是 c1_market.daily_valuation 表结构的唯一真源（DDL-as-Code 模式）。
-- module_path: schemas/categories/market_dragon_tiger.py
+- module_path: schemas/categories/market/market_dragon_tiger.py
   domain_id: D_DATA
   name_zh: 行情dragontiger
   name_en: market_dragon_tiger
   desc_zh: 本文件是 c1_market.dragon_tiger 表结构的唯一真源（DDL-as-Code 模式）。
   desc_en: ''
   plain_zh: 本文件是 c1_market.dragon_tiger 表结构的唯一真源（DDL-as-Code 模式）。
-- module_path: schemas/categories/market_dragon_tiger_seat.py
+- module_path: schemas/categories/market/market_dragon_tiger_seat.py
   domain_id: D_DATA
   name_zh: 行情dragontigerseat
   name_en: market_dragon_tiger_seat
   desc_zh: 龙虎榜席位明细：存储个股龙虎榜 Top5 买入/卖出营业部席位买卖额明细。
   desc_en: ''
   plain_zh: 龙虎榜席位明细：存储个股龙虎榜 Top5 买入/卖出营业部席位买卖额明细。
-- module_path: schemas/categories/market_etf_benchmark.py
+- module_path: schemas/categories/market/market_etf_benchmark.py
   domain_id: D_DATA
   name_zh: 行情etf基准
   name_en: market_etf_benchmark
   desc_zh: 本文件从 ClickHouse 实际表结构转录为 DDL-as-Code 真源，消除"DB 有表无真源"漂移债务。
   desc_en: ''
   plain_zh: 行情etf基准，categories相关功能（market etf benchmark）
-- module_path: schemas/categories/market_etf_list.py
+- module_path: schemas/categories/market/market_etf_list.py
   domain_id: D_DATA
   name_zh: 行情etf列表
   name_en: market_etf_list
   desc_zh: 本文件从 ClickHouse 实际表结构转录为 DDL-as-Code 真源，消除"DB 有表无真源"漂移债务。
   desc_en: ''
   plain_zh: 行情etf列表，categories相关功能（market etf list）
-- module_path: schemas/categories/market_etf_nav.py
+- module_path: schemas/categories/market/market_etf_nav.py
   domain_id: D_DATA
   name_zh: 行情etfnav
   name_en: market_etf_nav
   desc_zh: 本文件是 c1_market.etf_nav 表结构的唯一真源（DDL-as-Code 模式）。
   desc_en: ''
   plain_zh: 本文件是 c1_market.etf_nav 表结构的唯一真源（DDL-as-Code 模式）。
-- module_path: schemas/categories/market_futures_kline_qmt.py
+- module_path: schemas/categories/market/market_futures_kline_qmt.py
   domain_id: D_DATA
   name_zh: 行情futuresklineqmt
   name_en: market_futures_kline_qmt
   desc_zh: 本文件是 c1_market.futures_kline_qmt 表结构的唯一真源（DDL-as-Code 模式）。
   desc_en: ''
   plain_zh: 本文件是 c1_market.futures_kline_qmt 表结构的唯一真源（DDL-as-Code 模式）。
-- module_path: schemas/categories/market_futures_position.py
+- module_path: schemas/categories/market/market_futures_position.py
   domain_id: D_DATA
   name_zh: 行情futures持仓
   name_en: market_futures_position
   desc_zh: 本文件是 c1_market.futures_position 表结构的唯一真源（DDL-as-Code 模式）。
   desc_en: ''
   plain_zh: 本文件是 c1_market.futures_position 表结构的唯一真源（DDL-as-Code 模式）。
-- module_path: schemas/categories/market_futures_term.py
+- module_path: schemas/categories/market/market_futures_term.py
   domain_id: D_DATA
   name_zh: 行情futures期限
   name_en: market_futures_term
   desc_zh: 本文件是 c1_market.futures_term_structure 表结构的唯一真源（DDL-as-Code 模式）。
   desc_en: ''
   plain_zh: 本文件是 c1_market.futures_term_structure 表结构的唯一真源（DDL-as-Code 模式）。
-- module_path: schemas/categories/market_hk_connect_flow.py
+- module_path: schemas/categories/market/market_hk_connect_flow.py
   domain_id: D_DATA
   name_zh: 行情hkconnect流程
   name_en: market_hk_connect_flow
   desc_zh: 本文件是 c1_market.hk_connect_flow 表结构的唯一真源（DDL-as-Code 模式）。
   desc_en: ''
   plain_zh: 本文件是 c1_market.hk_connect_flow 表结构的唯一真源（DDL-as-Code 模式）。
-- module_path: schemas/categories/market_hk_kline.py
+- module_path: schemas/categories/market/market_hk_kline.py
   domain_id: D_DATA
   name_zh: 行情hkkline
   name_en: market_hk_kline
   desc_zh: 本文件是 c1_market.hk_kline 表结构的唯一真源（DDL-as-Code 模式）。
   desc_en: ''
   plain_zh: 本文件是 c1_market.hk_kline 表结构的唯一真源（DDL-as-Code 模式）。
-- module_path: schemas/categories/market_hk_stock_list.py
+- module_path: schemas/categories/market/market_hk_stock_list.py
   domain_id: D_DATA
   name_zh: 行情hk股票列表
   name_en: market_hk_stock_list
   desc_zh: 本文件从 ClickHouse 实际表结构转录为 DDL-as-Code 真源，消除"DB 有表无真源"漂移债务。
   desc_en: ''
   plain_zh: 行情hk股票列表，categories相关功能（market hk stock list）
-- module_path: schemas/categories/market_hk_trade_calendar.py
+- module_path: schemas/categories/market/market_hk_trade_calendar.py
   domain_id: D_DATA
   name_zh: 行情hk成交日历
   name_en: market_hk_trade_calendar
   desc_zh: 本文件从 ClickHouse 实际表结构转录为 DDL-as-Code 真源，消除"DB 有表无真源"漂移债务。
   desc_en: ''
   plain_zh: 行情hk成交日历，categories相关功能（market hk trade calendar）
-- module_path: schemas/categories/market_index.py
+- module_path: schemas/categories/market/market_index.py
   domain_id: D_DATA
   name_zh: 行情索引
   name_en: market_index
   desc_zh: 本文件是 c1_market.index_quote 表结构的唯一真源（DDL-as-Code 模式）。
   desc_en: ''
   plain_zh: 本文件是 c1_market.index_quote 表结构的唯一真源（DDL-as-Code 模式）。
-- module_path: schemas/categories/market_index_constituent.py
+- module_path: schemas/categories/market/market_index_constituent.py
   domain_id: D_DATA
   name_zh: 行情索引constituent
   name_en: market_index_constituent
   desc_zh: 本文件从 ClickHouse 实际表结构转录为 DDL-as-Code 真源，消除"DB 有表无真源"漂移债务。
   desc_en: ''
   plain_zh: 行情索引constituent，categories相关功能（market index constituent）
-- module_path: schemas/categories/market_index_list.py
+- module_path: schemas/categories/market/market_index_list.py
   domain_id: D_DATA
   name_zh: 行情索引列表
   name_en: market_index_list
   desc_zh: 本文件从 ClickHouse 实际表结构转录为 DDL-as-Code 真源，消除"DB 有表无真源"漂移债务。
   desc_en: ''
   plain_zh: 行情索引列表，categories相关功能（market index list）
-- module_path: schemas/categories/market_index_meta.py
+- module_path: schemas/categories/market/market_index_meta.py
   domain_id: D_DATA
   name_zh: 行情索引元
   name_en: market_index_meta
   desc_zh: 本文件是 c1_market.market_index_meta 表结构的唯一真源（DDL-as-Code 模式）。
   desc_en: ''
   plain_zh: 本文件是 c1_market.market_index_meta 表结构的唯一真源（DDL-as-Code 模式）。
-- module_path: schemas/categories/market_index_weight.py
+- module_path: schemas/categories/market/market_index_weight.py
   domain_id: D_DATA
   name_zh: 行情索引weight
   name_en: market_index_weight
   desc_zh: 本文件是 c1_market.index_weight 表结构的唯一真源（DDL-as-Code 模式）。
   desc_en: ''
   plain_zh: 本文件是 c1_market.index_weight 表结构的唯一真源（DDL-as-Code 模式）。
-- module_path: schemas/categories/market_ipo_calendar.py
+- module_path: schemas/categories/market/market_ipo_calendar.py
   domain_id: D_DATA
   name_zh: IPO日历与募资规模表
   name_en: market_ipo_calendar
@@ -2444,21 +2444,21 @@ entries:
   desc_zh: 本文件是 c1_market.l2_tick 表结构的唯一真源（DDL-as-Code 模式）。
   desc_en: ''
   plain_zh: 本文件是 c1_market.l2_tick 表结构的唯一真源（DDL-as-Code 模式）。
-- module_path: schemas/categories/market_limit_up_down.py
+- module_path: schemas/categories/market/market_limit_up_down.py
   domain_id: D_DATA
   name_zh: 行情限制上下
   name_en: market_limit_up_down
   desc_zh: 本文件是 c1_market.limit_up_down 表结构的唯一真源（DDL-as-Code 模式）。
   desc_en: ''
   plain_zh: 本文件是 c1_market.limit_up_down 表结构的唯一真源（DDL-as-Code 模式）。
-- module_path: schemas/categories/market_lof_list.py
+- module_path: schemas/categories/market/market_lof_list.py
   domain_id: D_DATA
   name_zh: 行情lof列表
   name_en: market_lof_list
   desc_zh: 本文件从 ClickHouse 实际表结构转录为 DDL-as-Code 真源，消除"DB 有表无真源"漂移债务。
   desc_en: ''
   plain_zh: 行情lof列表，categories相关功能（market lof list）
-- module_path: schemas/categories/market_margin_trading.py
+- module_path: schemas/categories/market/market_margin_trading.py
   domain_id: D_DATA
   name_zh: 行情保证金交易
   name_en: market_margin_trading
@@ -2472,21 +2472,21 @@ entries:
   desc_zh: 本文件是 c1_market.money_flow 表结构的唯一真源（DDL-as-Code 模式）。
   desc_en: ''
   plain_zh: 本文件是 c1_market.money_flow 表结构的唯一真源（DDL-as-Code 模式）。
-- module_path: schemas/categories/market_option_greeks.py
+- module_path: schemas/categories/market/market_option_greeks.py
   domain_id: D_DATA
   name_zh: 行情选项greeks
   name_en: market_option_greeks
   desc_zh: 本文件是 c1_market.option_greeks 表结构的唯一真源（DDL-as-Code 模式）。
   desc_en: ''
   plain_zh: 本文件是 c1_market.option_greeks 表结构的唯一真源（DDL-as-Code 模式）。
-- module_path: schemas/categories/market_option_iv.py
+- module_path: schemas/categories/market/market_option_iv.py
   domain_id: D_DATA
   name_zh: 行情选项隐含波动率
   name_en: market_option_iv
   desc_zh: 本文件是 c1_market.option_iv_surface 表结构的唯一真源（DDL-as-Code 模式）。
   desc_en: ''
   plain_zh: 本文件是 c1_market.option_iv_surface 表结构的唯一真源（DDL-as-Code 模式）。
-- module_path: schemas/categories/market_option_kline.py
+- module_path: schemas/categories/market/market_option_kline.py
   domain_id: D_DATA
   name_zh: 行情选项kline
   name_en: market_option_kline
@@ -2500,49 +2500,49 @@ entries:
   desc_zh: 本文件是 c1_market.realtime_snapshot 表结构的唯一真源（DDL-as-Code 模式）。
   desc_en: ''
   plain_zh: 本文件是 c1_market.realtime_snapshot 表结构的唯一真源（DDL-as-Code 模式）。
-- module_path: schemas/categories/market_sector_constituent.py
+- module_path: schemas/categories/market/market_sector_constituent.py
   domain_id: D_DATA
   name_zh: 行情sectorconstituent
   name_en: market_sector_constituent
   desc_zh: 本文件从 ClickHouse 实际表结构转录为 DDL-as-Code 真源，消除"DB 有表无真源"漂移债务。
   desc_en: ''
   plain_zh: 行情sectorconstituent，实现业务功能（market sector constituent）
-- module_path: schemas/categories/market_sector_list.py
+- module_path: schemas/categories/market/market_sector_list.py
   domain_id: D_DATA
   name_zh: 行情板块列表
   name_en: market_sector_list
   desc_zh: 本文件是 c1_market.sector_list 表结构的唯一真源（DDL-as-Code 模式）。
   desc_en: ''
   plain_zh: 本文件是 c1_market.sector_list 表结构的唯一真源（DDL-as-Code 模式）。
-- module_path: schemas/categories/market_sector_meta.py
+- module_path: schemas/categories/market/market_sector_meta.py
   domain_id: D_DATA
   name_zh: 行情板块元
   name_en: market_sector_meta
   desc_zh: 本文件是 c1_market.sector_meta 表结构的唯一真源（DDL-as-Code 模式）。
   desc_en: ''
   plain_zh: 本文件是 c1_market.sector_meta 表结构的唯一真源（DDL-as-Code 模式）。
-- module_path: schemas/categories/market_sector_snapshot.py
+- module_path: schemas/categories/market/market_sector_snapshot.py
   domain_id: D_DATA
   name_zh: 行情板块快照
   name_en: market_sector_snapshot
   desc_zh: 本文件是 c1_market.sector_snapshot 表结构的唯一真源（DDL-as-Code 模式）。
   desc_en: ''
   plain_zh: 本文件是 c1_market.sector_snapshot 表结构的唯一真源（DDL-as-Code 模式）。
-- module_path: schemas/categories/market_st_stock_list.py
+- module_path: schemas/categories/market/market_st_stock_list.py
   domain_id: D_DATA
   name_zh: 行情st股票列表
   name_en: market_st_stock_list
   desc_zh: 本文件从 ClickHouse 实际表结构转录为 DDL-as-Code 真源，消除"DB 有表无真源"漂移债务。
   desc_en: ''
   plain_zh: 行情st股票列表，categories相关功能（market st stock list）
-- module_path: schemas/categories/market_stock_indicator.py
+- module_path: schemas/categories/market/market_stock_indicator.py
   domain_id: D_DATA
   name_zh: 行情股票指标
   name_en: market_stock_indicator
   desc_zh: 本文件是 c1_market.stock_indicator 表结构的唯一真源（DDL-as-Code 模式）。
   desc_en: ''
   plain_zh: 本文件是 c1_market.stock_indicator 表结构的唯一真源（DDL-as-Code 模式）。
-- module_path: schemas/categories/market_stock_list.py
+- module_path: schemas/categories/market/market_stock_list.py
   domain_id: D_DATA
   name_zh: 行情股票列表
   name_en: market_stock_list
@@ -2556,14 +2556,14 @@ entries:
   desc_zh: 本文件是 c1_market.tick_data 表结构的唯一真源（DDL-as-Code 模式）。
   desc_en: ''
   plain_zh: 本文件是 c1_market.tick_data 表结构的唯一真源（DDL-as-Code 模式）。
-- module_path: schemas/categories/market_trade_calendar.py
+- module_path: schemas/categories/market/market_trade_calendar.py
   domain_id: D_DATA
   name_zh: 行情成交日历
   name_en: market_trade_calendar
   desc_zh: 本文件从 ClickHouse 实际表结构转录为 DDL-as-Code 真源，消除"DB 有表无真源"漂移债务。
   desc_en: ''
   plain_zh: 行情成交日历，categories相关功能（market trade calendar）
-- module_path: schemas/categories/market_us_index.py
+- module_path: schemas/categories/market/market_us_index.py
   domain_id: D_DATA
   name_zh: 行情us索引
   name_en: market_us_index
@@ -2891,7 +2891,7 @@ entries:
     quarter-end full snapshot (SH/SZ only), PIT guard=quarter_end+20d, full-overwrite
     into c1_market.northbound_hold_snapshot (ReplacingMergeTree idempotent)
   plain_zh: 北向资金（外资通过沪深股通买A股的钱）的日频数据 2024 年 8 月起港交所不再公布，但每季度还会公布一次"季末各股票被外资持有多少股"。本模块每季度把这个快照整张拉回来存进数据库，只取北向（上海/深圳）不要南向（香港）；为防一次拉太多被截断，按上海、深圳分两次拉；新季度数据官方发布后才采，没发布就跳过。
-- module_path: schemas/categories/market_northbound_hold_snapshot.py
+- module_path: schemas/categories/market/market_northbound_hold_snapshot.py
   domain_id: D_DATA
   name_zh: 北向持仓快照表结构
   name_en: market_northbound_hold_snapshot
@@ -10109,7 +10109,7 @@ entries:
   desc_zh: ''
   desc_en: ''
   plain_zh: 治理·D7 代码的静默降级检测器：自动扫描静默降级的异常迹象，一发现就标记报出，防止治理·D7 代码带病往下传。
-- module_path: schemas/categories/market_hog_spot_index.py
+- module_path: schemas/categories/market/market_hog_spot_index.py
   domain_id: D_DATA
   name_zh: 市场生猪现货索引
   name_en: Market Hog Spot Index
@@ -20338,7 +20338,7 @@ entries:
   desc_zh: ''
   desc_en: ''
   plain_zh: 治理·D1 结构的草稿 zone archiver：把草稿 zone archiver的逻辑集中在一处，治理·D1 结构别处直接拿来用，避免重复造轮子。
-- module_path: schemas/categories/market_hog_province_spot.py
+- module_path: schemas/categories/market/market_hog_province_spot.py
   domain_id: D_DATA
   name_zh: 市场生猪Province现货
   name_en: Market Hog Province Spot
@@ -38902,7 +38902,7 @@ entries:
   desc_zh: ''
   desc_en: ''
   plain_zh: 审计追踪的漂移转接头：让漂移和外部接上头，审计追踪底层换了也不影响上层用法。
-- module_path: schemas/categories/market_hog_futures_core.py
+- module_path: schemas/categories/market/market_hog_futures_core.py
   domain_id: D_DATA
   name_zh: 市场生猪Futures核心
   name_en: Market Hog Futures Core
@@ -48460,14 +48460,14 @@ entries:
   desc_zh: ''
   desc_en: ''
   plain_zh: alt治理三件接线器（2026-09-12 另类数据第1批施工：akshare 免注册直连，千股千评+航运运价）
-- module_path: schemas/categories/market_alt_stock_comment.py
+- module_path: schemas/categories/market/market_alt_stock_comment.py
   domain_id: D_DATA
   name_zh: 千股千评快照表DDL
   name_en: ''
   desc_zh: ''
   desc_en: ''
   plain_zh: 千股千评全表日快照（c1_market.alt_stock_comment）的建表语句唯一真源：每天存一次全市场约5200只股票的关注指数、综合得分、机构参与度和排名，用于散户关注度因子
-- module_path: schemas/categories/market_alt_shipping_index.py
+- module_path: schemas/categories/market/market_alt_shipping_index.py
   domain_id: D_DATA
   name_zh: 航运运价指数长表DDL
   name_en: ''
@@ -48671,7 +48671,7 @@ entries:
   desc_en: ''
   plain_zh: 沪深300日收益分位数回归分布预测基线（车道E MVP）：滞后收益+滚动波动率+均值比特征，QuantileRegressor q05/q50/q95
     三分位滚动前推预测，评估用 PIT 经验覆盖率+区间锐度双标准。起步原型（去年笔记建议落地），供策略与 UP-2..5 升级候选当对照锚与依赖解锁件，非交易信号。
-- module_path: schemas/categories/market_alt_typhoon_track.py
+- module_path: schemas/categories/market/market_alt_typhoon_track.py
   domain_id: D_DATA
   name_zh: 台风路径表DDL
   name_en: ''
@@ -48715,31 +48715,31 @@ entries:
   desc_en: ''
   plain_zh: 多策略日收益相关性聚类去重：贪心按 Sharpe 降序扫全量策略，相关系数超阈值者归簇并保留簇首（Sharpe 最高者），消除冗余策略提升组合信息比。贪心
     O(n²) 单遍，适用于工厂批量产出去重场景。
-- module_path: schemas/categories/market_alt_sz_stat_monthly.py
+- module_path: schemas/categories/market/market_alt_sz_stat_monthly.py
   domain: D_DATA
   name_zh: 深圳统计月报长表DDL
   plain_zh: 深圳统计局月度数据长表（c1_market.alt_sz_stat_monthly）建表真源：一张表装下GDP、物价、财政金融、运输、外贸等七类月度指标，每月每指标一行，用于本地宏观面板
-- module_path: schemas/categories/market_alt_sz_port_monthly.py
+- module_path: schemas/categories/market/market_alt_sz_port_monthly.py
   domain: D_DATA
   name_zh: 深圳口岸月度流量表DDL
   plain_zh: 深圳口岸月度流量表（c1_market.alt_sz_port_monthly）建表真源：海港集装箱、进出口货物、空运货物三条月度序列，验证运价与贸易景气
-- module_path: schemas/categories/market_alt_sz_house_daily.py
+- module_path: schemas/categories/market/market_alt_sz_house_daily.py
   domain: D_DATA
   name_zh: 深圳楼市日度成交表DDL
   plain_zh: 深圳楼市日度成交表（c1_market.alt_sz_house_daily）建表真源：新房和二手房按区域每日成交套数面积，地产链高频因子
-- module_path: schemas/categories/market_alt_sz_weather_warning.py
+- module_path: schemas/categories/market/market_alt_sz_weather_warning.py
   domain: D_DATA
   name_zh: 灾害预警信号流表DDL
   plain_zh: 深圳灾害天气预警信号表（c1_market.alt_sz_weather_warning）建表真源：台风暴雨大风等预警发布与解除全记录，气象事件日历主干
-- module_path: schemas/categories/market_alt_sz_marine_forecast.py
+- module_path: schemas/categories/market/market_alt_sz_marine_forecast.py
   domain: D_DATA
   name_zh: 海洋气象预报表DDL
   plain_zh: 深圳海洋气象预报表（c1_market.alt_sz_marine_forecast）建表真源：各海区风力浪高能见度逐日预报，港口作业窗口参考
-- module_path: schemas/categories/market_typhoon_landfall_history.py
+- module_path: schemas/categories/market/market_typhoon_landfall_history.py
   domain: D_DATA
   name_zh: 台风历史登陆表DDL
   plain_zh: 台风历史登陆表（c1_market.alt_typhoon_landfall_history）建表真源：1949年以来登陆我国的台风档案，事件研究历史回补
-- module_path: schemas/categories/market_typhoon_names.py
+- module_path: schemas/categories/market/market_typhoon_names.py
   domain: D_DATA
   name_zh: 台风名称对照表DDL
   plain_zh: 台风名称对照表（c1_market.alt_typhoon_names）建表真源：台风中英文名与命名国家字典
@@ -48814,14 +48814,14 @@ entries:
   desc_zh: ""
   desc_en: ""
   plain_zh: "把另类数据算成市场级regime信号的纯函数计算器：BDI二十日动量z分位、BTC三十日动量、恐贪极值分档、涨停连板高度晋级率炸板率和情绪阶段判定，外加台风登陆事件日历推导"
-- module_path: schemas/categories/market_alt_regime_signal.py
+- module_path: schemas/categories/market/market_alt_regime_signal.py
   domain_id: D_DATA
   name_zh: "alt_regime_signal表DDL"
   name_en: ""
   desc_zh: ""
   desc_en: ""
   plain_zh: "alt_regime_signal表DDL（C-1消费端首批：把另类数据算成市场级regime信号——BDI动量/币圈动量/恐贪极值/涨停情绪周期+台风事件日历）"
-- module_path: schemas/categories/market_sentiment_panel.py
+- module_path: schemas/categories/market/market_sentiment_panel.py
   domain_id: D_DATA
   name_zh: "sentiment_panel表DDL"
   name_en: ""
@@ -49091,7 +49091,7 @@ entries:
   desc_zh: "本地qwen3:8b是非题预审候选策略想法的经济学机制，三态判定+理由码落c1_backtest.hypothesis_precheck"
   desc_en: ""
   plain_zh: "策略工厂的守门员：新想法进门先让本地大模型问六个问题（谁给你赚钱、是不是偷看未来数据、成本吃不吃得掉、能不能被证伪等），讲不通的直接枪毙省下回测算力，说不准的挂起来重审，判定全程记账。"
-- module_path: schemas/categories/backtest_hypothesis_precheck.py
+- module_path: schemas/categories/backtest/backtest_hypothesis_precheck.py
   domain_id: D_BACKTEST
   name_zh: "预审判定台账表结构"
   name_en: ""
@@ -49119,7 +49119,7 @@ entries:
   desc_zh: "主题种子驱动NL→策略假说量产（本地qwen3:8b经LSG），内容寻址去重后带出生证卸进货台账"
   desc_en: ""
   plain_zh: "策略工厂的脑洞车间：给12个策略主题，让本地大模型批量编'为什么能赚钱'的假说（只出点子不写代码不打分），每条点子带身份证和出生证落到进货台账，等守门员预审。想过的点子不会重复记。"
-- module_path: schemas/categories/backtest_regime_state_anchored.py
+- module_path: schemas/categories/backtest/backtest_regime_state_anchored.py
   domain_id: D_DATA
   name_zh: "锚定态历史表DDL"
   name_en: ""
@@ -49245,7 +49245,7 @@ entries:
   desc_zh: "按年分层抽样实测东财研报 PDF 直链存活率（C4 历史修复第一步侦察）"
   desc_en: ""
   plain_zh: "开工前先探路：随机抽一千份八年间的研报原文，看看还有多少份能正常打开，摸清哪些年份的资料是完好的，再决定修复工程怎么排兵。"
-- module_path: schemas/categories/market_alt_sz_visibility.py
+- module_path: schemas/categories/market/market_alt_sz_visibility.py
   domain_id: D_DATA
   name_zh: "能见度探测表DDL"
   name_en: ""
@@ -49322,35 +49322,35 @@ entries:
   desc_zh: ""
   desc_en: ""
   plain_zh: "把图形库的零件(识别引擎+胜率查询+信号映射器+校验器)拼成一台能开机的机器：喂它K线或图形事件，它吐出带方向、强度、止损位的合规信号；零件全是现成的，本模块只负责接线组装，不含任何业务算法"
-- module_path: schemas/categories/market_alt_sz_air_quality_daily.py
+- module_path: schemas/categories/market/market_alt_sz_air_quality_daily.py
   domain_id: D_DATA
   name_zh: "air_quality_daily表DDL"
   name_en: ""
   desc_zh: ""
   desc_en: ""
   plain_zh: "深圳开放数据批2表（c1_market.alt_sz_air_quality_daily）建表真源：新钥匙 0ecc2b46 通道，Owner 控制台地址 2026-09-14 接入"
-- module_path: schemas/categories/market_alt_sz_air_quality_region.py
+- module_path: schemas/categories/market/market_alt_sz_air_quality_region.py
   domain_id: D_DATA
   name_zh: "air_quality_region表DDL"
   name_en: ""
   desc_zh: ""
   desc_en: ""
   plain_zh: "深圳开放数据批2表（c1_market.alt_sz_air_quality_region）建表真源：新钥匙 0ecc2b46 通道，Owner 控制台地址 2026-09-14 接入"
-- module_path: schemas/categories/market_alt_sz_reservoir_station.py
+- module_path: schemas/categories/market/market_alt_sz_reservoir_station.py
   domain_id: D_DATA
   name_zh: "reservoir_station表DDL"
   name_en: ""
   desc_zh: ""
   desc_en: ""
   plain_zh: "深圳开放数据批2表（c1_market.alt_sz_reservoir_station）建表真源：新钥匙 0ecc2b46 通道，Owner 控制台地址 2026-09-14 接入"
-- module_path: schemas/categories/market_alt_sz_reservoir_rain_day.py
+- module_path: schemas/categories/market/market_alt_sz_reservoir_rain_day.py
   domain_id: D_DATA
   name_zh: "reservoir_rain_day表DDL"
   name_en: ""
   desc_zh: ""
   desc_en: ""
   plain_zh: "深圳开放数据批2表（c1_market.alt_sz_reservoir_rain_day）建表真源：新钥匙 0ecc2b46 通道，Owner 控制台地址 2026-09-14 接入"
-- module_path: schemas/categories/market_alt_sz_reservoir_rain_month.py
+- module_path: schemas/categories/market/market_alt_sz_reservoir_rain_month.py
   domain_id: D_DATA
   name_zh: "reservoir_rain_month表DDL"
   name_en: ""
@@ -49364,48 +49364,62 @@ entries:
   desc_zh: "研报 PDF 批量下载→三层提取→落表→批次报告（断点续传）"
   desc_en: ""
   plain_zh: "流水线工人：把几万份研报原文一批批下载下来，逐份读懂预测表存进数据库，干过的不重复干，随时中断随时接着干。"
-- module_path: schemas/categories/market_alt_sz_house_area.py
+- module_path: schemas/categories/market/market_alt_sz_house_area.py
   domain_id: D_DATA
   name_zh: "house_area表DDL"
   name_en: ""
   desc_zh: ""
   desc_en: ""
   plain_zh: "深圳开放数据批2表（c1_market.alt_sz_house_area）建表真源：新钥匙 0ecc2b46 通道，Owner 控制台地址 2026-09-14 接入"
-- module_path: schemas/categories/market_alt_sz_house_listing.py
+- module_path: schemas/categories/market/market_alt_sz_house_listing.py
   domain_id: D_DATA
   name_zh: "house_listing表DDL"
   name_en: ""
   desc_zh: ""
   desc_en: ""
   plain_zh: "深圳开放数据批2表（c1_market.alt_sz_house_listing）建表真源：新钥匙 0ecc2b46 通道，Owner 控制台地址 2026-09-14 接入"
-- module_path: schemas/categories/market_alt_sz_house_presale.py
+- module_path: schemas/categories/market/market_alt_sz_house_presale.py
   domain_id: D_DATA
   name_zh: "house_presale表DDL"
   name_en: ""
   desc_zh: ""
   desc_en: ""
   plain_zh: "深圳开放数据批2表（c1_market.alt_sz_house_presale）建表真源：新钥匙 0ecc2b46 通道，Owner 控制台地址 2026-09-14 接入"
-- module_path: schemas/categories/market_alt_sz_market_subject.py
+- module_path: schemas/categories/market/market_alt_sz_market_subject.py
   domain_id: D_DATA
   name_zh: "subject表DDL"
   name_en: ""
   desc_zh: ""
   desc_en: ""
   plain_zh: "深圳开放数据批2表（c1_market.alt_sz_subject）建表真源：新钥匙 0ecc2b46 通道，Owner 控制台地址 2026-09-14 接入"
-- module_path: schemas/categories/market_alt_sz_stat_analysis.py
+- module_path: schemas/categories/market/market_alt_sz_stat_analysis.py
   domain_id: D_DATA
   name_zh: "stat_analysis表DDL"
   name_en: ""
   desc_zh: ""
   desc_en: ""
   plain_zh: "深圳开放数据批2表（c1_market.alt_sz_stat_analysis）建表真源：新钥匙 0ecc2b46 通道，Owner 控制台地址 2026-09-14 接入"
-- module_path: schemas/categories/market_alt_sz_enterprise_year.py
+- module_path: schemas/categories/market/market_alt_sz_enterprise_year.py
   domain_id: D_DATA
   name_zh: "enterprise_year表DDL"
   name_en: ""
   desc_zh: ""
   desc_en: ""
   plain_zh: "深圳开放数据批2表（c1_market.alt_sz_enterprise_year）建表真源：新钥匙 0ecc2b46 通道，Owner 控制台地址 2026-09-14 接入"
+- module_path: scripts/data/backfill_sector880_history.py
+  domain_id: D_DATA
+  name_zh: "880板块历史回补器"
+  name_en: ""
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "把 880 概念板块的历史K线从采集源回补进 ClickHouse，先查已有日期防重，支持断点续跑，回补后自动核对换算比率"
+- module_path: scripts/data/backfill_lof_minute_history.py
+  domain_id: D_DATA
+  name_zh: "LOF 分钟线历史回补器"
+  name_en: ""
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "把 LOF 基金缺失的分钟K线按交易日补齐，自动对照交易日历找缺口，先备份快照再删除重拉，防范围外溢"
 
 battle_map_steps:
 - step_id: BM-BUY-05
