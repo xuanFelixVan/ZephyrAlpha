@@ -4,7 +4,7 @@
 manifest_version: 2.0.0
 generated_by: generate_manifest.py (auto-scan)
 generated_at: '2026-09-14'
-total_scripts: 914
+total_scripts: 920
 scripts:
 - name: __init__.py
   path: __init__.py
@@ -689,6 +689,14 @@ scripts:
 - name: backtest/lane_b_idea_generator.py
   path: backtest/lane_b_idea_generator.py
   description: 原理（讨论稿 §五）：车道 B 货最便宜也最杂，靠 E2 预审把关；本车道只负责按主题种子
+  domain: test
+  execution_plane: warm-path
+  status: registered
+  timeout_seconds: 60
+  dimensions: []
+- name: backtest/lane_c_formula_miner.py
+  path: backtest/lane_c_formula_miner.py
+  description: 增量 IC 基座=REG-IND-001/种群 1000×50/白名单审定制）。
   domain: test
   execution_plane: warm-path
   status: registered
@@ -1846,6 +1854,14 @@ scripts:
   status: registered
   timeout_seconds: 60
   dimensions: []
+- name: data/finish_p0_1.py
+  path: data/finish_p0_1.py
+  description: 与 repair_kline_tz_monthly.py 的差异（2026-09-14 二次修正）：
+  domain: data
+  execution_plane: warm-path
+  status: registered
+  timeout_seconds: 60
+  dimensions: []
 - name: data/import_bdpan_tick_zip.py
   path: data/import_bdpan_tick_zip.py
   description: tick_data_2026_jul_aug_qmt_range_gap 的可复用导入器；复刻 2026-06 回补配方并持久化）。
@@ -1857,6 +1873,22 @@ scripts:
 - name: data/miniqmt_midreport_backfill_20260630.py
   path: data/miniqmt_midreport_backfill_20260630.py
   description: 数据源：miniQMT xtdata（Owner 终端，带真公告日 m_anntime——小样已验证 600519=20260815）。
+  domain: data
+  execution_plane: warm-path
+  status: registered
+  timeout_seconds: 60
+  dimensions: []
+- name: data/p02_month_gapfill.py
+  path: data/p02_month_gapfill.py
+  description: 策略依据（2026-09-14 实测）：
+  domain: data
+  execution_plane: warm-path
+  status: registered
+  timeout_seconds: 60
+  dimensions: []
+- name: data/p0_tick_backfill.py
+  path: data/p0_tick_backfill.py
+  description: 背景：采集管线 09-09 起退化，tick_data 三天严重不全（09-11 全缺 / 09-10 仅 4 标的 /
   domain: data
   execution_plane: warm-path
   status: registered
@@ -1905,6 +1937,22 @@ scripts:
 - name: data/repair_kline_degraded_pull.py
   path: data/repair_kline_degraded_pull.py
   description: 背景（93 备忘 §14.10 同族）：miniQMT 接口对重拉请求【按请求灰度间歇性】返回劣化数据
+  domain: data
+  execution_plane: warm-path
+  status: registered
+  timeout_seconds: 60
+  dimensions: []
+- name: data/repair_kline_tz_monthly.py
+  path: data/repair_kline_tz_monthly.py
+  description: 背景（2026-09-14 实测结论）：
+  domain: data
+  execution_plane: warm-path
+  status: registered
+  timeout_seconds: 60
+  dimensions: []
+- name: data/wipe_tick3days.py
+  path: data/wipe_tick3days.py
+  description: import io
   domain: data
   execution_plane: warm-path
   status: registered

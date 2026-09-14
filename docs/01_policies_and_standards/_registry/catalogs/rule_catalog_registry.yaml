@@ -4,10 +4,10 @@ ttl: permanent
 doc_type: register
 title: 规则路径目录（唯一真源 SSoT）
 status: active
-generated_at: '2026-09-13T21:42:42Z'
+generated_at: '2026-09-14T01:24:03Z'
 generated_by: scripts/governance/d3_metadata/generate_rule_catalog.py
 maintenance: auto
-total_files: 249
+total_files: 250
 total_rules: 61
 tier_distribution:
   L0: 21
@@ -40,6 +40,21 @@ files:
   stability: ''
   layer: cross_layer
   superseded_by: null
+  severity: ''
+  tier: ''
+  aliases: []
+  section_count: 0
+- path: docs/01_policies_and_standards/policies/expectation_consumption_design_policy.md
+  module_id: ''
+  title: 研报/一致预期数据消费端设计 v1.0 与数据缺口档案（§8 预注册/§9 源快照语义定性）
+  doc_type: policy
+  status: ''
+  version: ''
+  rule_form: standard
+  scope: ''
+  stability: ''
+  layer: ''
+  superseded_by: ''
   severity: ''
   tier: ''
   aliases: []
@@ -2459,7 +2474,7 @@ files:
   title: ''
   doc_type: ''
   status: active
-  version: 2.15.0
+  version: 2.16.0
   rule_form: ''
   scope: ''
   stability: ''
