@@ -647,8 +647,9 @@ class InternalComputeProvider(IngestProviderBase):
             )
 
             # 确保指标模块已自动发现
-            if len(TechnicalIndicatorRegistry.list_all()) == 0:
-                autodiscover_technical_indicators()
+            # 无条件调用（幂等）：__init__ 显式 import 的模块不含后建文件（如 cycle.py），
+            # 仅空表才 discover 会漏注册（2026-09-14 批 6 后 daily 回填 cycle 族缺算实证）
+            autodiscover_technical_indicators()
             registered = TechnicalIndicatorRegistry.list_all()
 
             # 1. 确定标的列表

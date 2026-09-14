@@ -1108,10 +1108,13 @@ class BRAR(TechnicalIndicatorBase):
         n = params["period"]
         o, h, l = data["open"], data["high"], data["low"]
         cp = data["close"].shift(1)
-        ar = (h - o).rolling(window=n).sum() / (o - l).replace(0, np.nan).rolling(window=n).sum() * 100
+        # 分母逐日 0 不置 NaN（一字板 O=L 常见，逐日 NaN 会在 rolling 窗口传播 26 根）；
+        # 仅窗口和为 0（连续极端）时 AR/BR 无效
+        ar_den = (o - l).rolling(window=n).sum()
+        ar = (h - o).rolling(window=n).sum() / ar_den.where(ar_den != 0) * 100
         br_num = (h - cp).clip(lower=0).rolling(window=n).sum()
-        br_den = (cp - l).clip(lower=0).replace(0, np.nan).rolling(window=n).sum()
-        br = br_num / br_den * 100
+        br_den = (cp - l).clip(lower=0).rolling(window=n).sum()
+        br = br_num / br_den.where(br_den != 0) * 100
         return pd.DataFrame({"ar_26": ar, "br_26": br}, index=data.index)
 
 
@@ -1141,5 +1144,7 @@ class CR(TechnicalIndicatorBase):
         mid_prev = mid.shift(1)
         up = (h - mid_prev).clip(lower=0)
         dn = (mid_prev - l).clip(lower=0)
-        cr = up.rolling(window=n).sum() / dn.replace(0, np.nan).rolling(window=n).sum() * 100
+        up_sum = up.rolling(window=n).sum()
+        dn_sum = dn.rolling(window=n).sum()
+        cr = up_sum / dn_sum.where(dn_sum != 0) * 100
         return pd.DataFrame({f"cr_{n}": cr}, index=data.index)

@@ -51,8 +51,7 @@ def _valid_columns() -> set[str]:
     from zephyr.factor.technical_indicators import autodiscover_technical_indicators
     from zephyr.factor.technical_indicators.indicator_base import TechnicalIndicatorRegistry
 
-    if not TechnicalIndicatorRegistry.list_all():
-        autodiscover_technical_indicators()
+    autodiscover_technical_indicators()  # 幂等：补齐 __init__ 显式清单外的后建模块
     return set(TechnicalIndicatorRegistry.list_output_columns())
 
 
