@@ -108,8 +108,8 @@ def make_panel_operators(date_codes: np.ndarray, symbol_codes: np.ndarray,
     """
     from gplearn.functions import make_function
 
-    dc_full = np.asarray(date_codes)
-    sc_full = np.asarray(symbol_codes)
+    dc_full = np.atleast_1d(np.asarray(date_codes))
+    sc_full = np.atleast_1d(np.asarray(symbol_codes))
 
     def _s(x):
         return pd.Series(np.asarray(x, dtype=float))
