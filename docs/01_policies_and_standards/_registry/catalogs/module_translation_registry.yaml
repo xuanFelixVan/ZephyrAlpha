@@ -49462,6 +49462,27 @@ entries:
   desc_zh: "白名单DSL因子表达式→E4考卷件(c4_fact_*.py)机械翻译生成器，build逻辑统一承载"
   desc_en: ""
   plain_zh: "策略工厂的翻译桥：把矿机挖出的因子公式自动填进标准考卷模板（一份逻辑、全厂统一），让公式候选能直接进 E4 大考场。生成件自己不带脑子，逻辑全在桥上，防漂移。"
+- module_path: src/zephyr/strategy_pipeline/bh_fdr.py
+  domain_id: D_BACKTEST
+  name_zh: "假发现率门"
+  name_en: "bh_fdr"
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "一批新策略里挑真信号时，防止碰运气蒙对的混进来——按统计学标准把假货比例压到一成以内"
+- module_path: src/zephyr/strategy_pipeline/lifecycle_fsm.py
+  domain_id: D_BACKTEST
+  name_zh: "策略生命周期状态机"
+  name_en: "lifecycle_fsm"
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "管着每条策略从候选到模拟盘再到真钱的流程：到模拟盘机器按你批准的标准自动办，碰真钱必须你签字"
+- module_path: src/zephyr/strategy_pipeline/intake.py
+  domain_id: D_BACKTEST
+  name_zh: "自动入库编排器"
+  name_en: "intake"
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "新策略一落地就自动走完查假货、去重、登记、挂图、进模拟盘全套流程，全程留报告，不用人盯着"
 
 battle_map_steps:
 - step_id: BM-BUY-05
