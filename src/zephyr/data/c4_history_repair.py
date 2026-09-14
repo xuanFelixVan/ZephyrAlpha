@@ -261,8 +261,9 @@ def extract_report(report_id: str, symbol: str, publish_date: str) -> dict:
     pub_year = int(publish_date[:4])
     rows = []
     for f in found:
-        # 年份合理域守卫：预测目标年∈[发布年, 发布年+5]——超界=提取噪声（如"2030愿景"误抓）
-        if not (pub_year <= f["forecast_year"] <= pub_year + 5):
+        # 年份合理域守卫：预测目标年∈[发布年-1, 发布年+5]——下界含 -1：
+        # 年报 4/30 前的年初研报预测"上一年度"（2016E）合法；上界防"2030愿景"误抓
+        if not (pub_year - 1 <= f["forecast_year"] <= pub_year + 5):
             continue
         rows.append((report_id, symbol, publish_date, f["forecast_year"], f["eps"],
                      None, f["confidence"], f.get("method", "heuristic"), f["snippet"]))
