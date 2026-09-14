@@ -97,7 +97,7 @@ class TestEquivalence:
 
     def test_off_equals_default_engine(self, market_data, signals):
         """ConstShrinkageProvider(1.0) 与 DefaultBacktestEngine 指标一致。"""
-        cfg = BacktestConfig(initial_capital=__import__("decimal").Decimal("1000000"))
+        cfg = BacktestConfig(initial_capital=__import__("decimal").Decimal("1000000"), enable_pit_universe_filter=False)
         default_engine = DefaultBacktestEngine(config=cfg)
         shrink_engine = ShrinkageBacktestEngine(config=cfg, shrinkage_provider=ConstShrinkageProvider(1.0))
 
@@ -112,7 +112,7 @@ class TestEquivalence:
 
     def test_none_provider_defaults_to_full_deploy(self, market_data, signals):
         """shrinkage_provider=None 等价于满部署。"""
-        engine = ShrinkageBacktestEngine(config=BacktestConfig())  # provider=None
+        engine = ShrinkageBacktestEngine(config=BacktestConfig(enable_pit_universe_filter=False))  # provider=None
         result = engine.run(data=market_data, signals=signals)
         assert result.sharpe_ratio == result.sharpe_ratio  # 非 NaN
         # shrinkage_log 全部应为 1.0
@@ -128,7 +128,7 @@ class TestThrottling:
 
     def test_half_shrinkage_leaves_cash(self, market_data, signals):
         """shrinkage=0.5 → 持仓约为满部署一半，现金更多。"""
-        cfg = BacktestConfig()
+        cfg = BacktestConfig(enable_pit_universe_filter=False)
         full_engine = ShrinkageBacktestEngine(cfg, ConstShrinkageProvider(1.0))
         half_engine = ShrinkageBacktestEngine(cfg, ConstShrinkageProvider(0.5))
 
@@ -145,7 +145,7 @@ class TestThrottling:
 
     def test_zero_shrinkage_full_cash(self, market_data, signals):
         """shrinkage=0.0 → 全空仓（权重返回空 dict）。"""
-        engine = ShrinkageBacktestEngine(BacktestConfig(), ConstShrinkageProvider(0.0))
+        engine = ShrinkageBacktestEngine(BacktestConfig(enable_pit_universe_filter=False, allow_empty_trades=True), ConstShrinkageProvider(0.0))
         result = engine.run(data=market_data, signals=signals)
 
         # 无交易
@@ -157,7 +157,7 @@ class TestThrottling:
 
     def test_shrinkage_reduces_market_value_ratio(self, market_data, signals):
         """shrinkage=0.5 → 市值/NAV 比例约为满部署的一半。"""
-        cfg = BacktestConfig()
+        cfg = BacktestConfig(enable_pit_universe_filter=False)
         full = ShrinkageBacktestEngine(cfg, ConstShrinkageProvider(1.0))
         half = ShrinkageBacktestEngine(cfg, ConstShrinkageProvider(0.5))
         full.run(data=market_data, signals=signals)
@@ -192,7 +192,7 @@ class TestClamping:
             def get_shrinkage(self, date):  # noqa: ARG002
                 return 1.5
 
-        engine = ShrinkageBacktestEngine(BacktestConfig(), _OverProvider())
+        engine = ShrinkageBacktestEngine(BacktestConfig(enable_pit_universe_filter=False), _OverProvider())
         engine.run(data=market_data, signals=signals)
         assert all(v == 1.0 for _, v in engine.shrinkage_log)
 
@@ -203,7 +203,7 @@ class TestClamping:
             def get_shrinkage(self, date):  # noqa: ARG002
                 return -0.1
 
-        engine = ShrinkageBacktestEngine(BacktestConfig(), _NegProvider())
+        engine = ShrinkageBacktestEngine(BacktestConfig(enable_pit_universe_filter=False, allow_empty_trades=True), _NegProvider())
         result = engine.run(data=market_data, signals=signals)
         assert result.trades_count == 0
         assert all(v == 0.0 for _, v in engine.shrinkage_log)
@@ -216,7 +216,7 @@ class TestClamping:
             def get_shrinkage(self, date):  # noqa: ARG002
                 return math.nan
 
-        engine = ShrinkageBacktestEngine(BacktestConfig(), _NaNProvider())
+        engine = ShrinkageBacktestEngine(BacktestConfig(enable_pit_universe_filter=False), _NaNProvider())
         engine.run(data=market_data, signals=signals)
         assert all(v == 1.0 for _, v in engine.shrinkage_log)
 
@@ -234,7 +234,7 @@ class TestRobustness:
             def get_shrinkage(self, date):  # noqa: ARG002
                 raise RuntimeError("boom")
 
-        engine = ShrinkageBacktestEngine(BacktestConfig(), _BoomProvider())
+        engine = ShrinkageBacktestEngine(BacktestConfig(enable_pit_universe_filter=False), _BoomProvider())
         result = engine.run(data=market_data, signals=signals)
         # 不应抛异常，且全部降级为 1.0
         assert all(v == 1.0 for _, v in engine.shrinkage_log)
@@ -247,7 +247,7 @@ class TestRobustness:
         schedule = {mid: 0.5}  # mid 起切换到 0.5
         provider = ScheduleShrinkageProvider(schedule)
 
-        engine = ShrinkageBacktestEngine(BacktestConfig(), provider)
+        engine = ShrinkageBacktestEngine(BacktestConfig(enable_pit_universe_filter=False), provider)
         engine.run(data=market_data, signals=signals)
 
         log = engine.shrinkage_log
@@ -263,7 +263,7 @@ class TestRobustness:
         """无信号的日期不记录 shrinkage（与父类早返回语义一致）。"""
         # 全空信号
         empty_signals = _make_signals(market_data) * 0.0
-        engine = ShrinkageBacktestEngine(BacktestConfig(), ConstShrinkageProvider(0.5))
+        engine = ShrinkageBacktestEngine(BacktestConfig(enable_pit_universe_filter=False, allow_empty_trades=True), ConstShrinkageProvider(0.5))
         engine.run(data=market_data, signals=empty_signals)
         # 无信号 → 不进入缩放分支 → shrinkage_log 为空
         assert engine.shrinkage_log == []

@@ -44,6 +44,55 @@ class ArtifactNotFoundError(Exception):
             self.error_code = error_code
 
 
+class ArtifactQuarantinedError(Exception):
+    """回测产物被合理性护栏隔离（P0-4，2026-09-14 外部审查整改）。
+
+    失真产物（极端收益/零成交空跑）已写入 quarantine/ 子目录留证，
+    不进正库——"30x 收益自动隔离而非存盘"。确需落盘（复盘取证）用
+    save_artifact(..., allow_implausible=True)。
+    """
+
+    error_code = "ZA-BT-0042"
+
+    def __init__(self, *args, quarantine_path: str | None = None, error_code: str | None = None, **kwargs) -> None:
+        super().__init__(*args, **kwargs)
+        if error_code is not None:
+            self.error_code = error_code
+        self.quarantine_path = quarantine_path
+
+
+def _artifact_plausibility_violations(artifact: "BacktestRunArtifact") -> list[str]:
+    """产物级合理性检查（P0-4）：净值曲线倍数 + 零成交空跑。
+
+    与引擎层护栏（engine_base.enforce_result_plausibility）互补：引擎层在
+    结果产出时拦截，本函数在落盘时兜底——覆盖绕过引擎直写产物的管线
+    （如 tick 回放/历史管线），口径用净值曲线首尾倍数（对 fraction/multiple
+    两种 metrics 口径都稳健）。
+    """
+    violations: list[str] = []
+    curve = artifact.equity_curve or []
+    if len(curve) >= 2:
+        try:
+            first = float(curve[0].get("equity", 0.0))
+            last = float(curve[-1].get("equity", 0.0))
+        except (AttributeError, TypeError, ValueError):
+            first = last = 0.0
+        if first > 0 and last > 0:
+            multiple = last / first
+            if multiple > 11.0:  # +1000% 上限（30x 类失真必拦）
+                violations.append(
+                    f"equity {first:.0f}->{last:.0f} = {multiple:.1f}x（>+1000% 合理上限，失真嫌疑）"
+                )
+            elif multiple < 0.05:  # -95% 下限（无杠杆 long-only 不可能）
+                violations.append(
+                    f"equity {first:.0f}->{last:.0f} = {multiple:.3f}x（<-95% 合理下限）"
+                )
+    metrics = artifact.metrics or {}
+    if metrics.get("trades_count") == 0:
+        violations.append("metrics.trades_count=0 空跑")
+    return violations
+
+
 # ===== CTR-P1-017 BacktestRunArtifact 数据模型 =====
 
 
@@ -71,20 +120,28 @@ def _dict_to_artifact(d: dict[str, Any]) -> BacktestRunArtifact:
 def save_artifact(
     artifact: BacktestRunArtifact,
     storage_path: Path | None = None,
+    allow_implausible: bool = False,
 ) -> str:
     """持久化 BacktestRunArtifact, 返回 run_id。
 
     蓝图 §16.7: io/result_repository.py 详细规格
 
+    P0-4（2026-09-14 外部审查整改）：落盘前合理性护栏默认开启——极端收益
+    （净值首尾倍数 >11x 或 <0.05x）与零成交空跑产物自动隔离至
+    ``<storage>/quarantine/`` 留证并抛 ArtifactQuarantinedError，不进正库。
+    allow_implausible=True 显式放行（复盘取证用）。
+
     Args:
         artifact: CTR-P1-017 BacktestRunArtifact(含 BacktestSinkData + 元数据 + 时间戳)
         storage_path: 存储目录（默认 data/backtest_artifacts/）
+        allow_implausible: 显式放行失真产物落正库（默认 False=隔离）
 
     Returns:
         run_id(全局唯一, 用于后续检索)
 
     Raises:
         ArtifactNotFoundError: artifact 为 None 或 run_id 为空
+        ArtifactQuarantinedError: 产物未通过合理性护栏（已隔离至 quarantine/）
 
     副作用: 写入存储后端(文件系统 JSON)
     """
@@ -96,6 +153,22 @@ def save_artifact(
 
     storage = storage_path or _default_storage_path()
     storage.mkdir(parents=True, exist_ok=True)
+
+    # P0-4 合理性护栏（默认开）：失真产物隔离留证，不进正库
+    violations = _artifact_plausibility_violations(artifact)
+    if violations and not allow_implausible:
+        quarantine_dir = storage / "quarantine"
+        quarantine_dir.mkdir(parents=True, exist_ok=True)
+        quarantine_file = quarantine_dir / f"{artifact.run_id}.json"
+        payload = _artifact_to_dict(artifact)
+        payload["quarantine_reasons"] = violations
+        with open(quarantine_file, "w", encoding="utf-8") as f:
+            json.dump(payload, f, ensure_ascii=False, indent=2)
+        raise ArtifactQuarantinedError(
+            f"回测产物合理性护栏拦截 (run_id={artifact.run_id}): " + "; ".join(violations)
+            + f"——已隔离至 {quarantine_file}（确需落正库用 allow_implausible=True）",
+            quarantine_path=str(quarantine_file),
+        )
 
     # 填充 created_at（如果未设置）——用 now_utc_str()（空格分隔，SSoT 存储契约，AGENTS.md §11.1.1 / time_utils.now_utc_str）
     if not artifact.created_at:
@@ -261,6 +334,7 @@ def build_artifact_from_data(
 
 __all__ = [
     "ArtifactNotFoundError",
+    "ArtifactQuarantinedError",
     "BacktestRunArtifact",
     "save_artifact",
     "get_artifact",

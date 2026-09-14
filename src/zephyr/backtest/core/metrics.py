@@ -154,7 +154,8 @@ def calculate_metrics(
 
     Returns:
         dict: total_return, annual_return, sharpe_ratio, sortino_ratio,
-              max_drawdown, win_rate, trades_count
+              max_drawdown, win_rate(=日度正收益占比，非交易胜率——P1-3 口径澄清),
+              trades_count
 
     Raises:
         MetricsError: nav_series为空或无效
@@ -212,7 +213,10 @@ def calculate_metrics(
     # 最大回撤
     max_drawdown = _calculate_max_drawdown(nav)
 
-    # 胜率(正收益天数占比)
+    # 胜率(正收益天数占比)——口径澄清（P1-3，2026-09-14 外部审查整改）：
+    # 本字段 = 日度正收益率占比（day-level positive-return ratio），**非逐笔
+    # 交易胜率**。BacktestResult.win_rate / 产物 metrics.win_rate 均沿此口径，
+    # 与外部机构"胜率=盈利交易数/总交易数"惯例不同，消费侧勿直接对比。
     if n_samples > 0:
         win_rate = float((returns > 0).sum() / n_samples)
     else:

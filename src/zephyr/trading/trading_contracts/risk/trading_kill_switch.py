@@ -20,8 +20,18 @@
 #   as GovernanceKillSwitch alias from shared.
 #   Migrated from governance/ to rollback/ on 2026-05-14.
 #
+# P1-2 职责边界澄清（2026-09-14 外部审查整改）:
+#   本模块 = 交易风险熔断（五级 KillSwitch，交易资金安全侧），
+#   与 zephyr.security.access_control.kill_switch（AI Agent 行为风控、
+#   纯进程内存态）职责不同勿混用；盘中级联/VaR/回滚姿态真源另见
+#   zephyr.ex_core.risk_layer_orchestrator。
 """
 
+职责边界（P1-2，2026-09-14 外部审查整改）:
+  本模块 = 交易风险熔断器（五级 KillSwitch，交易资金安全侧），与
+  zephyr.security.access_control.kill_switch（AI Agent 行为风控、纯进程
+  内存态、进程崩即归零）职责不同，勿混用；盘中回撤级联/VaR/回滚姿态/
+  对账循环真源另见 zephyr.ex_core.risk_layer_orchestrator。
 
 # [ALGO_FLOW]
 # 层: 输入

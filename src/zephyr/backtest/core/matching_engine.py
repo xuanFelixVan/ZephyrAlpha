@@ -1,7 +1,7 @@
 # [BLUEPRINT] MOD-BT-001 | docs/03_modules/_domain_backtest/blueprint.md
 # [MODULE] zephyr.backtest.core.matching_engine
 # [DOMAIN] D_BACKTEST
-# [DEPENDENCIES] zephyr.backtest.core.portfolio; zephyr.backtest.core.matching_logic; zephyr.data.ch_reader（StkLimitProvider lazy import）; zephyr.data.implementations.akshare_provider（_limit_pct_of lazy import，涨跌幅切片单一真源）
+# [DEPENDENCIES] zephyr.backtest.core.portfolio; zephyr.backtest.core.matching_logic; zephyr.data.ch_reader（StkLimitProvider lazy import）; zephyr.data.implementations.akshare_provider（_limit_pct_of lazy import，涨跌幅切片单一真源）; zephyr.execution_simulation.almgren_chriss_impact_model（冲击成本 lazy import，P0-2）
 # [CONSUMERS] zephyr.backtest.implementations.vectorized_engine; zephyr.backtest.implementations.event_driven_engine
 # [STARTUP] imported
 # [MATURITY] production
@@ -69,7 +69,7 @@ from __future__ import annotations
 
 import datetime
 import logging
-from dataclasses import dataclass
+from dataclasses import dataclass, replace
 from decimal import ROUND_HALF_UP, Decimal
 from typing import Callable, Iterable, Optional
 
@@ -99,7 +99,28 @@ class MatchingError(Exception):
 
 
 # 兼容性 sentinel: 用于从单一价格构造的合成1档盘口的虚拟深度
+# （2026-09-14 P0-2 整改后仅作为"无成交量数据时的兜底深度"；data 含 volume 列时
+#  由 LiquidityGuardConfig 施加参与率上限+冲击成本，虚拟无限深度不再无条件生效）
 _SYNTHETIC_DEPTH = Decimal("99999999")
+
+
+@dataclass(frozen=True)
+class LiquidityGuardConfig:
+    """日频流动性约束配置（P0-2，2026-09-14 外部审查整改）。
+
+    仅回测撮合 orchestrator（MatchingEngine）消费——MatchingLogic 纯函数与
+    实盘 MiniQmtBroker 共享链路零改动（回测=实盘一致性不变，本配置只让回测
+    供给面更保守）。
+
+    Attributes:
+        max_participation_rate: 单标的单日成交量参与率上限（0.10=成交 ≤ 当日量 10%）。
+            买卖同限；买单向下取整手，卖单向下取整股（清仓允许零股）。
+        impact_enabled: 是否按 Almgren-Chriss 冲击模型调整成交价
+            （临时+永久冲击 bps，参与率越高越贵；复用 execution_simulation 真源）。
+    """
+
+    max_participation_rate: Decimal = Decimal("0.10")
+    impact_enabled: bool = True
 
 
 def _normalize_date(value: object) -> datetime.date | None:
@@ -263,6 +284,7 @@ class MatchingEngine:
         self,
         config: MatchingConfig | None = None,
         limit_provider: LimitProvider | None = None,
+        liquidity_config: LiquidityGuardConfig | None = None,
     ):
         """初始化撮合引擎
 
@@ -273,10 +295,14 @@ class MatchingEngine:
                 None=纯规则兜底（日期切片仅由 provider 内部兜底覆盖 ST，
                 无 provider 时主板 ST 历史约束按无 ST 口径处理——生产路径经
                 vectorized_engine 默认注入 StkLimitProvider）。
+            liquidity_config: 流动性约束（P0-2，可选）。None=不启用（单测/盘口路径
+                保持原行为）；启用后 generate_fills 的 volumes 参数驱动成交量上限
+                与 Almgren-Chriss 冲击成本，仅作用于日线合成盘口路径。
         """
         self._config = config or MatchingConfig()
         self._logic = MatchingLogic(self._config)
         self._limit_provider = limit_provider
+        self._liquidity_config = liquidity_config
 
     # ------------------------------------------------------------------
     # 批量撮合入口（回测主流程调用）
@@ -289,11 +315,16 @@ class MatchingEngine:
         portfolio: Portfolio,
         date: object,
         prev_close: dict[str, Decimal] | None = None,
+        volumes: dict[str, Decimal] | None = None,
     ) -> list[BacktestFill]:
         """根据目标权重生成成交记录（市价单，向后兼容接口）
 
         内部将单一价格构造成合成1档盘口，委托 MatchingLogic.match_market_order 撮合。
         撮合行为与原实现完全一致（BUY 按 price 成交，SELL 按 price 成交，应用滑点）。
+
+        P0-2（2026-09-14 整改）：liquidity_config 启用且传入 volumes 时，先按
+        max_participation_rate 收缩订单量（成交 ≤ 当日量上限），再按 Almgren-Chriss
+        冲击模型调整盘口价（参与率越高冲击越大）——日频"无限流动性"失真治理。
 
         Args:
             target_weights: {symbol: weight} 目标权重（0.0-1.0, sum<=1.0）
@@ -301,6 +332,8 @@ class MatchingEngine:
             portfolio: 当前持仓
             date: 当前日期
             prev_close: 前一日收盘价（可选，用于涨跌停检查）
+            volumes: {symbol: volume} 当日成交量（可选，P0-2 流动性约束输入；
+                None 或缺某标的时该标的不受限——无数据不虚构约束）
 
         Returns:
             BacktestFill 列表（先卖后买排序）
@@ -328,6 +361,7 @@ class MatchingEngine:
             date=date,
             prev_close=prev_close,
             tick_mode=False,
+            volumes=volumes,
         )
 
     def generate_fills_with_order_book(
@@ -500,6 +534,7 @@ class MatchingEngine:
         prev_close: dict[str, Decimal] | None = None,
         tick_mode: bool = False,
         ticks: dict[str, TickSnapshot] | None = None,
+        volumes: dict[str, Decimal] | None = None,
     ) -> list[BacktestFill]:
         """统一批量撮合流程（内部共享方法）
 
@@ -507,6 +542,7 @@ class MatchingEngine:
           1. 计算当前总 NAV
           2. 对每个 symbol 计算目标数量（100股整数倍）
           3. 计算差额（目标 - 当前持仓）
+          3.5 P0-2 流动性约束（启用时）：成交量参与率上限收缩 + 冲击成本调价
           4. 先卖后买排序
           5. 委托 MatchingLogic 撮合（市价/限价/Tick）
           6. MatchingFill -> BacktestFill
@@ -534,6 +570,18 @@ class MatchingEngine:
             trade_date,
             limit_map,
         )
+
+        # P0-2 流动性约束：成交量参与率上限收缩订单（先于冲击调价——参与率按
+        # 收缩后的实际订单量计），再按 Almgren-Chriss 冲击调整合成盘口价格。
+        # 仅日线合成盘口路径生效（tick_mode 的真实5档深度本身即是约束）。
+        liquidity_on = (
+            not tick_mode
+            and volumes
+            and self._liquidity_config is not None
+        )
+        if liquidity_on:
+            orders = self._cap_orders_by_volume(orders, volumes or {})
+            order_books = self._apply_impact_to_books(orders, order_books, volumes or {})
 
         # 先卖后买（避免现金不足）
         orders.sort(key=lambda o: 0 if o["side"] == "SELL" else 1)
@@ -608,6 +656,94 @@ class MatchingEngine:
             projected -= _buy_cost(qty)
             out.append(order)
         return out
+
+    def _cap_orders_by_volume(
+        self,
+        orders: list[dict],
+        volumes: dict[str, Decimal],
+    ) -> list[dict]:
+        """P0-2：按当日成交量参与率上限收缩订单量（买卖同限）。
+
+        上限 = floor(volume × max_participation_rate)；买单向下取整手（A股买入
+        整手约束），卖单向下取整股（清仓/卖出允许零股）。收缩后 ≤0 的订单丢弃；
+        volume 缺失/非正的标的不受限（无数据不虚构约束）。
+        """
+        cap_rate = self._liquidity_config.max_participation_rate
+        lot = Decimal(self._config.lot_size)
+        out: list[dict] = []
+        for order in orders:
+            vol = volumes.get(order["symbol"])
+            if vol is None or vol <= 0:
+                out.append(order)
+                continue
+            cap_qty = vol * cap_rate
+            if order["side"] == "BUY":
+                capped = (cap_qty / lot).to_integral_value(rounding="ROUND_FLOOR") * lot
+            else:
+                capped = cap_qty.to_integral_value(rounding="ROUND_FLOOR")
+            if capped <= 0:
+                _logger.debug(
+                    "P0-2 成交量上限: %s %s %s 股超当日参与率上限(%s%%×%s)，整单丢弃",
+                    order["side"], order["symbol"], order["quantity"],
+                    cap_rate, vol,
+                )
+                continue
+            if capped < order["quantity"]:
+                _logger.debug(
+                    "P0-2 成交量上限: %s %s %s -> %s 股（≤当日量 %s×%s）",
+                    order["side"], order["symbol"], order["quantity"], capped,
+                    vol, cap_rate,
+                )
+                order = dict(order, quantity=capped)
+            out.append(order)
+        return out
+
+    def _apply_impact_to_books(
+        self,
+        orders: list[dict],
+        order_books: dict[str, OrderBookSnapshot],
+        volumes: dict[str, Decimal],
+    ) -> dict[str, OrderBookSnapshot]:
+        """P0-2：按 Almgren-Chriss 冲击模型调整合成盘口成交价。
+
+        每标的每日至多一笔订单（差额单/清仓单），按该笔实际订单量计参与率，
+        冲击 bps（临时+永久，execution_simulation 真源）只加在同侧报价上：
+        BUY 抬 ask1、SELL 压 bid1（冲击恒为不利方向）；last_price 不动——
+        组合估值仍按市场价，冲击只影响成交。volume 缺失/非正的标的跳过。
+        """
+        if self._liquidity_config is None or not self._liquidity_config.impact_enabled:
+            return order_books
+        try:
+            from zephyr.execution_simulation.almgren_chriss_impact_model import (
+                AlmgrenChrissImpactModel,
+            )
+        except Exception as e:  # noqa: BLE001 — 冲击模型不可用时退化为仅成交量上限
+            _logger.warning("AlmgrenChrissImpactModel 导入失败，冲击成本旁路: %s", e)
+            return order_books
+        if getattr(self, "_impact_model", None) is None:
+            self._impact_model = AlmgrenChrissImpactModel()
+        model = self._impact_model
+
+        adjusted = dict(order_books)
+        for order in orders:
+            symbol = order["symbol"]
+            vol = volumes.get(symbol)
+            ob = adjusted.get(symbol)
+            if vol is None or vol <= 0 or ob is None or order["quantity"] <= 0:
+                continue
+            try:
+                quote = model.quote(float(order["quantity"]), float(vol))
+            except Exception as e:  # noqa: BLE001 — 单标的冲击报价失败不炸整日撮合
+                _logger.warning("冲击报价失败（%s），该标的按无冲击成交: %s", symbol, e)
+                continue
+            shock = Decimal("1") + Decimal(str(quote.cost_bps)) / Decimal("10000")
+            if order["side"] == "BUY":
+                ask = (ob.ask_price[0] * shock,) + tuple(ob.ask_price[1:])
+                adjusted[symbol] = replace(ob, ask_price=ask)
+            else:
+                bid = (ob.bid_price[0] / shock,) + tuple(ob.bid_price[1:])
+                adjusted[symbol] = replace(ob, bid_price=bid)
+        return adjusted
 
     @staticmethod
     def _side_base_price(ob: OrderBookSnapshot | None, side: str) -> Decimal:
@@ -1001,4 +1137,5 @@ __all__ = [
     "LimitInfo",
     "LimitProvider",
     "StkLimitProvider",
+    "LiquidityGuardConfig",
 ]

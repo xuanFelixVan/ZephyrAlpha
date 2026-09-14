@@ -58,9 +58,12 @@ from __future__ import annotations
 
 import datetime
 import logging
+import subprocess
+import sys
 
 from zephyr.data import ch_reader
 from zephyr.data.backfill_checker import _discover_backfill_tables
+from zephyr.shared.io.paths import REPO_ROOT
 
 discover_backfill_tables = _discover_backfill_tables  # public alias（Stage 4 公共化）
 
@@ -69,6 +72,14 @@ log = logging.getLogger(__name__)
 
 # SQL 模板（NO-BARE-SQL gate 豁免：_SQL_* 前缀）
 _SQL_COUNT_TODAY = "SELECT count() FROM {table} WHERE {date_col}=toDate('{d_str}')"
+
+#: P1-1 接线（2026-09-14 外部审查整改）：tick 真重复检查脚本正门路径。
+#: 单一真源=脚本本体（RULE-DATA-OPS/TRAE-063 DATA-OPS-INV-002 配套），
+#: 本模块经 subprocess 调用其 CLI，不在 src 侧复刻 14 字段真重复口径。
+_TICK_DUP_SCRIPT = (
+    REPO_ROOT / "scripts" / "governance" / "data_quality" / "check_tick_duplication.py"
+)
+_TICK_DUP_TIMEOUT_S = 300
 
 # 周末/月初才跑的 schedule——工作日对账时不应期待它们当天运行
 _NON_DAILY_SCHEDULES = frozenset(
@@ -214,6 +225,55 @@ def _check_table_today(info: dict, today: datetime.date) -> dict | None:
     }
 
 
+def run_tick_duplication_check(month: str | None = None, timeout_s: int = _TICK_DUP_TIMEOUT_S) -> dict:
+    """月度 tick 真重复检查（P1-1 接线：RULE-DATA-OPS 工具入主巡检链路）。
+
+    经 subprocess 调用正门脚本 check_tick_duplication.py（14 字段全同=真重复
+    的唯一口径真源），只读检测、禁止删除。脚本退出码语义：
+      0=无真重复（healthy）/ 1=发现真重复（duplicates，需排查数据源，
+      禁止直接删）/ 2=检查失败（CH 不可达等，degraded 不阻断巡检）。
+
+    Args:
+        month: 检查月份（YYYYMM，默认当月）
+        timeout_s: subprocess 超时秒数
+
+    Returns:
+        {"status": "healthy"|"duplicates"|"degraded", "exit_code": int,
+         "month": str, "detail": str(截断)}
+    """
+    month = month or datetime.date.today().strftime("%Y%m")
+    result: dict = {"status": "degraded", "exit_code": -1, "month": month, "detail": ""}
+    if not _TICK_DUP_SCRIPT.exists():
+        result["detail"] = f"脚本不存在: {_TICK_DUP_SCRIPT}"
+        log.warning("tick 判重脚本缺失，巡检降级: %s", result["detail"])
+        return result
+    try:
+        proc = subprocess.run(
+            [sys.executable, str(_TICK_DUP_SCRIPT), "--month", month, "--json"],
+            capture_output=True,
+            text=True,
+            timeout=timeout_s,
+            cwd=str(REPO_ROOT),
+        )
+    except (subprocess.TimeoutExpired, OSError) as e:
+        result["detail"] = f"subprocess 失败: {e}"
+        log.warning("tick 判重检查执行失败（巡检降级不阻断）: %s", e)
+        return result
+    result["exit_code"] = proc.returncode
+    detail = (proc.stdout or "").strip()
+    if proc.returncode == 0:
+        result["status"] = "healthy"
+        result["detail"] = detail[-500:] if detail else "无真重复"
+    elif proc.returncode == 1:
+        result["status"] = "duplicates"
+        result["detail"] = detail[-2000:] if detail else "发现真重复（详见脚本输出）"
+        log.error("tick_data %s 发现真重复（禁止直接删除，须排查数据源）:\n%s", month, result["detail"])
+    else:
+        result["detail"] = ((proc.stderr or "") + detail)[-500:]
+        log.warning("tick 判重检查失败 exit=%s（巡检降级不阻断）: %s", proc.returncode, result["detail"])
+    return result
+
+
 def run_daily_check(scheduler=None) -> dict:
     """每天盘后数据完整性巡检主入口。
 
@@ -248,6 +308,10 @@ def run_daily_check(scheduler=None) -> dict:
     recon = _reconcile_task_runs(scheduler, today)
     task_gaps = recon["missing"] + recon["failed"]
 
+    # P1-1 tick 真重复检查（RULE-DATA-OPS 接线）：degraded 不阻断巡检，
+    # 发现真重复走 ERROR 告警（只检测，禁止删除——判读权在人）。
+    tick_dup = run_tick_duplication_check()
+
     # 告警
     if scheduler is not None:
         try:
@@ -272,6 +336,15 @@ def run_daily_check(scheduler=None) -> dict:
                         recon["missing"],
                         recon["failed"],
                     ),
+                    level="ERROR",
+                    source="integrity_check",
+                )
+            # P1-1 tick 真重复告警
+            if tick_dup["status"] == "duplicates":
+                alerter.notify(
+                    "integrity_check_tick_duplication",
+                    f"tick_data {tick_dup['month']} 发现真重复（只检测禁止删除，"
+                    f"check_tick_duplication.py 详见输出）",
                     level="ERROR",
                     source="integrity_check",
                 )
@@ -304,6 +377,8 @@ def run_daily_check(scheduler=None) -> dict:
         "task_succeeded": recon["succeeded"],
         "task_missing": recon["missing"],
         "task_failed": recon["failed"],
+        # P1-1 tick 真重复检查结果（healthy/duplicates/degraded）
+        "tick_duplication": tick_dup,
         "success": len(unhealthy) == 0 and not task_gaps,
     }
 

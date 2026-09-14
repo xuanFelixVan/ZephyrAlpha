@@ -92,7 +92,12 @@ from typing import Any, Callable, Optional
 import pandas as pd
 
 from zephyr.backtest.core.decision_gate import DecisionGate, DecisionGateConfig, DecisionGateResult
-from zephyr.backtest.core.engine_base import BacktestEngineBase, BacktestResult, current_map_snapshot
+from zephyr.backtest.core.engine_base import (
+    BacktestEngineBase,
+    BacktestResult,
+    current_map_snapshot,
+    enforce_result_plausibility,
+)
 from zephyr.backtest.core.matching_engine import MatchingConfig, MatchingEngine
 from zephyr.backtest.core.metrics import DEFAULT_RISK_FREE_RATE, calculate_full_metrics
 from zephyr.backtest.core.overfitting_detector import OverfittingDetector, OverfittingGateError
@@ -371,6 +376,19 @@ class EventDrivenEngine(BacktestEngineBase):
             result.trades_count,
             ticks_processed,
         )
+
+        # P0-4 合理性护栏（2026-09-14 外部审查整改；共享真源 engine_base）：
+        # 极端收益/trades=0 空跑 fail-closed。config 为 duck-typed（可能无该字段），
+        # 默认按开启处理（getattr 兜底与 BacktestConfig 默认值一致）。
+        if getattr(self._config, "sanity_guard", True):
+            enforce_result_plausibility(
+                total_return=result.total_return,
+                trades_count=result.trades_count,
+                max_plausible_total_return=getattr(self._config, "max_plausible_total_return", 10.0),
+                min_plausible_total_return=getattr(self._config, "min_plausible_total_return", -0.95),
+                allow_empty_trades=getattr(self._config, "allow_empty_trades", False),
+                result_id=result_id,
+            )
 
         # SIM-56 上线前自动门禁: 严格模式下检测到过拟合则阻断上线
         if getattr(self._config, "strict_overfitting_gate", False) and result.overfitting_flag:

@@ -155,4 +155,87 @@ class BacktestEngineBase(abc.ABC):
         ...
 
 
-__all__ = ["BacktestEngineBase", "BacktestResult", "FactorDiscovery", "current_map_snapshot"]
+class LookaheadExecutionError(Exception):
+    """前视执行防护异常（P0-1，2026-09-14 外部审查整改）。
+
+    日频引擎默认强制 signal(T) → fill(T+1) 次根成交：
+      - ``execution_lag_days < 1`` 且未显式 ``allow_same_bar_execution=True``
+        时构造/运行即抛本异常（硬断言，无直觉例外）。
+    同 bar 成交（当日信号按当日收盘价成交）是回测收益虚高的头号根因；
+    确需同 bar 对照实验必须显式 allow_same_bar_execution=True，前视风险自担。
+    """
+
+    error_code = "ZA-BT-0040"
+
+
+class ImplausibleBacktestError(Exception):
+    """回测合理性护栏异常（P0-4，2026-09-14 外部审查整改）。
+
+    触发条件（引擎默认全开，BacktestConfig.sanity_guard=False 可显式关闭）：
+      - 极端收益：total_return 超出合理带（默认 -95% ~ +1000%，30x 类失真必拦）；
+      - 空跑：trades_count == 0 且未显式 allow_empty_trades=True。
+    产物层配套：io.result_repository.save_artifact 对失真产物自动隔离至
+    quarantine/ 目录，不进正库（ArtifactQuarantinedError）。
+    """
+
+    error_code = "ZA-BT-0041"
+
+
+def enforce_result_plausibility(
+    *,
+    total_return: float,
+    trades_count: int,
+    max_plausible_total_return: float = 10.0,
+    min_plausible_total_return: float = -0.95,
+    allow_empty_trades: bool = False,
+    result_id: str = "",
+) -> list[str]:
+    """回测结果合理性护栏（P0-4 共享真源，vectorized/event_driven 两引擎共同消费）。
+
+    Args:
+        total_return: 总收益率（小数口径，0.10=10%）
+        trades_count: 成交笔数
+        max_plausible_total_return: 收益合理上限（小数；默认 10.0=+1000%）
+        min_plausible_total_return: 收益合理下限（默认 -0.95=-95%，
+            无杠杆 long-only 不可能亏穿）
+        allow_empty_trades: 显式放行 trades=0 空跑（对照实验用）
+        result_id: 结果 id（仅用于报错信息定位）
+
+    Returns:
+        违规清单（空 list=通过）
+
+    Raises:
+        ImplausibleBacktestError: 存在违规（fail-closed，失真结果不产出）
+    """
+    violations: list[str] = []
+    tr = float(total_return)
+    if tr > float(max_plausible_total_return):
+        violations.append(
+            f"total_return={tr:.4f} 超过合理上限 +{float(max_plausible_total_return) * 100:.0f}%"
+            "（前视/无限流动性失真嫌疑）"
+        )
+    if tr < float(min_plausible_total_return):
+        violations.append(
+            f"total_return={tr:.4f} 低于合理下限 {float(min_plausible_total_return) * 100:.0f}%"
+            "（无杠杆 long-only 不可能）"
+        )
+    if int(trades_count) == 0 and not allow_empty_trades:
+        violations.append(
+            "trades_count=0 空跑（信号/撮合/配置失真嫌疑；确需空跑对照请 allow_empty_trades=True）"
+        )
+    if violations:
+        raise ImplausibleBacktestError(
+            f"回测合理性护栏拦截 (result_id={result_id or '-'}): " + "; ".join(violations)
+        )
+    return violations
+
+
+__all__ = [
+    "BacktestEngineBase",
+    "BacktestResult",
+    "FactorDiscovery",
+    "current_map_snapshot",
+    "LookaheadExecutionError",
+    "ImplausibleBacktestError",
+    "enforce_result_plausibility",
+]

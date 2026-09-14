@@ -389,15 +389,24 @@ class C1ShrinkageComparator:
 
     @staticmethod
     def _ensure_gate_off(cfg: BacktestConfig) -> BacktestConfig:
-        """强制 strict_overfitting_gate=False，避免过拟合门控中断 C1 对比。
+        """强制 strict_overfitting_gate=False + enable_pit_universe_filter=False。
 
-        C1 焦点是 Shrinkage 节流效果对比，过拟合检测另有 A2/E1 验证项负责。
+        C1 焦点是 Shrinkage 节流效果的 A/B 对比（变量隔离）：
+          - 过拟合门控：中断对比流程，另有 A2/E1 验证项负责（原语义）；
+          - PIT 标的池过滤（P0-3 新增默认项）：对两组同权生效本不污染差值，
+            但 C1 常跑合成/mock 数据与历史窗口，注册表覆盖波动会引入非
+            Shrinkage 因子的噪声剔除——统一关闭保证对比只反映 Shrinkage 差异。
         """
-        if getattr(cfg, "strict_overfitting_gate", False):
-            # frozen dataclass → 用 dataclasses.replace 生成新实例
-            from dataclasses import replace
+        from dataclasses import replace
 
-            return replace(cfg, strict_overfitting_gate=False)
+        changed = {}
+        if getattr(cfg, "strict_overfitting_gate", False):
+            changed["strict_overfitting_gate"] = False
+        if getattr(cfg, "enable_pit_universe_filter", True):
+            changed["enable_pit_universe_filter"] = False
+        if changed:
+            # frozen dataclass → 用 dataclasses.replace 生成新实例
+            return replace(cfg, **changed)
         return cfg
 
     @staticmethod

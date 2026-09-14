@@ -269,6 +269,21 @@ error_codes:
   module: zephyr.backtest.core.decision_gate
   file: src/zephyr/backtest/core/decision_gate.py
   introduced: '2026-08-30: CAND-BT-002 Phase5 收缩稳定性缺失输入（0028 与 e3_param_sensitivity 重码，顺延 0039）'
+- code: ZA-BT-0040
+  class: LookaheadExecutionError
+  module: zephyr.backtest.core.engine_base
+  file: src/zephyr/backtest/core/engine_base.py
+  introduced: '2026-09-14: P0-1 前视执行防护——execution_lag_days<1 未显式放行硬断言（外审整改，0040 起顺延取号避让 0015-0017 重码）'
+- code: ZA-BT-0041
+  class: ImplausibleBacktestError
+  module: zephyr.backtest.core.engine_base
+  file: src/zephyr/backtest/core/engine_base.py
+  introduced: '2026-09-14: P0-4 合理性护栏——极端收益/trades=0 空跑 fail-closed（外审整改）'
+- code: ZA-BT-0042
+  class: ArtifactQuarantinedError
+  module: zephyr.backtest.io.result_repository
+  file: src/zephyr/backtest/io/result_repository.py
+  introduced: '2026-09-14: P0-4 产物隔离——失真产物 quarantine 留证不进正库（外审整改）'
 - code: ZA-CMP-0001
   class: ChecklistCheckerError
   module: zephyr.compliance.discipline_must_do_checker

@@ -264,7 +264,7 @@ class TestPriceLimitBoardInference:
         data = pd.DataFrame(rows).set_index(["symbol", "date"])
         # day1 无信号（NaN → 不动作）；day2/day3 满仓信号
         sig = pd.DataFrame({"600000": [float("nan"), 1.0, 1.0]}, index=dates)
-        engine = DefaultBacktestEngine(config=BacktestConfig(), enable_stk_limit_provider=False)
+        engine = DefaultBacktestEngine(config=BacktestConfig(enable_pit_universe_filter=False), enable_stk_limit_provider=False)
         engine.run(data=data, signals=sig, strategy_name="toy-limit")
         pf = engine.last_portfolio
         trades = pf.trades_log
@@ -469,7 +469,7 @@ class TestEngineLevelToyReconciliation:
             },
             index=dates,
         )
-        engine = DefaultBacktestEngine(config=BacktestConfig(), enable_stk_limit_provider=False)
+        engine = DefaultBacktestEngine(config=BacktestConfig(enable_pit_universe_filter=False), enable_stk_limit_provider=False)
         result = engine.run(data=data, signals=sig, strategy_name="toy-5d")
         pf = engine.last_portfolio
 
@@ -478,7 +478,7 @@ class TestEngineLevelToyReconciliation:
         #    price=10.001, gross=666,066.60, 费用=56.88208764佣金+6.660666过户=63.54275364, cost=666,130.14275364
         # B: target=333,333.33 → qty=floor(333333.33/1000/100)×100=300
         #    price=1000.10, gross=300,030, 费用=25.622562+3.0003=28.622862, cost=300,058.622862
-        trades_d1 = [t for t in pf.trades_log if t["date"].startswith("2026-08-03")]
+        trades_d1 = [t for t in pf.trades_log if t["date"].startswith("2026-08-04")]
         assert len(trades_d1) == 2
         buy_a = next(t for t in trades_d1 if t["symbol"] == "600000")
         buy_b1 = next(t for t in trades_d1 if t["symbol"] == "600519")
@@ -497,7 +497,7 @@ class TestEngineLevelToyReconciliation:
         #   gross=732,526.74, 费用=62.557783596佣金+366.26337印花+7.3252674过户=436.146420996, 回款=732,090.593579004
         # B 补仓: target=NAV → qty=1,000, diff=700 @ 1000.10
         #   gross=700,070, 费用=59.785978+7.0007=66.786678, cost=700,136.786678
-        trades_d4 = [t for t in pf.trades_log if t["date"].startswith("2026-08-06")]
+        trades_d4 = [t for t in pf.trades_log if t["date"].startswith("2026-08-07")]
         assert len(trades_d4) == 2
         sell_a = next(t for t in trades_d4 if t["symbol"] == "600000")
         buy_b = next(t for t in trades_d4 if t["symbol"] == "600519")
@@ -525,14 +525,16 @@ class TestEngineLevelToyReconciliation:
         # ── 逐日 NAV 手算 ──
         nav = pf.nav_series
         assert float(nav.iloc[0]) == 1_000_000.0  # 初始
-        # 价序: d1..d3 A=10/B=1000 → NAV = 33,811.23438436+666,000+300,000 = 999,811.23438436
+        # P0-1 滞后一天：d1 无成交（信号 d2 才执行）→ 当日 NAV=初始资金
+        assert float(nav.iloc[1]) == pytest.approx(1_000_000.0, abs=1e-6)
+        # 价序: d2..d3 A=10/B=1000（d2 执行买入）→ NAV = 33,811.23438436+666,000+300,000 = 999,811.23438436
         d_low_nav = 999_811.23438436
-        assert float(nav.iloc[1]) == pytest.approx(d_low_nav, abs=1e-6)
         assert float(nav.iloc[2]) == pytest.approx(d_low_nav, abs=1e-6)
         assert float(nav.iloc[3]) == pytest.approx(d_low_nav, abs=1e-6)
-        d4_nav = 65_765.041285364 + 1000 * 1000.0  # 1,065,765.041285364
-        assert float(nav.iloc[4]) == pytest.approx(d4_nav, abs=1e-6)
-        assert float(nav.iloc[5]) == pytest.approx(d4_nav, abs=1e-6)
+        # d4：A 升 11（持仓未动）→ NAV = 33,811.23438436 + 66,600×11 + 300×1000
+        assert float(nav.iloc[4]) == pytest.approx(1_066_411.23438436, abs=1e-6)
+        d5_nav = 65_765.041285364 + 1000 * 1000.0  # 1,065,765.041285364
+        assert float(nav.iloc[5]) == pytest.approx(d5_nav, abs=1e-6)
 
         # ── BacktestResult 与手算终值一致 ──
         assert result.total_return == pytest.approx(65_765.041285364 / 1_000_000, rel=1e-9)
@@ -673,7 +675,7 @@ class TestRotationLiquidation:
             },
             index=dates,
         )
-        engine = DefaultBacktestEngine(config=BacktestConfig(), enable_stk_limit_provider=False)
+        engine = DefaultBacktestEngine(config=BacktestConfig(enable_pit_universe_filter=False), enable_stk_limit_provider=False)
         engine.run(data=data, signals=sig, strategy_name="toy-rotate")
         pf = engine.last_portfolio
         # d3 起 A 必须零持仓
@@ -684,7 +686,7 @@ class TestRotationLiquidation:
         sells_a = [
             t
             for t in pf.trades_log
-            if t["symbol"] == "600000" and t["side"] == "SELL" and t["date"].startswith("2026-08-05")
+            if t["symbol"] == "600000" and t["side"] == "SELL" and t["date"].startswith("2026-08-06")
         ]
         assert len(sells_a) == 1 and sells_a[0]["quantity"] == 59900.0
 
@@ -711,7 +713,7 @@ class TestFullWeightCostFrictionFill:
         rows = [{"symbol": "600000", "date": d, "close": 10.0} for d in dates]
         data = pd.DataFrame(rows).set_index(["symbol", "date"])
         sig = pd.DataFrame({"600000": [1.0, 1.0]}, index=dates)  # 归一化后仍为 1.0 满仓
-        engine = DefaultBacktestEngine(config=BacktestConfig(), enable_stk_limit_provider=False)
+        engine = DefaultBacktestEngine(config=BacktestConfig(enable_pit_universe_filter=False), enable_stk_limit_provider=False)
         with caplog.at_level(logging.WARNING, logger="zephyr.backtest.implementations.vectorized_engine"):
             result = engine.run(data=data, signals=sig, strategy_name="toy-fullweight")
         pf = engine.last_portfolio
