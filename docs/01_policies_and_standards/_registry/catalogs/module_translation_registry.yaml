@@ -49455,6 +49455,13 @@ entries:
   desc_zh: ""
   desc_en: ""
   plain_zh: "管形态生老病死的台账员：一个形态连续20天成绩不达标就盖'退役'章并记下死亡时的样子，之后它的每一分新数据都偷偷记着账——哪天死后新证据足够好(通过比初赛更严的复活考试)就自动把章揭掉让它重新上岗；反复抢救两次还不行就冻结封存，只有老板亲自才能解冻"
+- module_path: scripts/backtest/factor_strategy_template.py
+  domain_id: D_BACKTEST
+  name_zh: "公式轨考卷桥"
+  name_en: ""
+  desc_zh: "白名单DSL因子表达式→E4考卷件(c4_fact_*.py)机械翻译生成器，build逻辑统一承载"
+  desc_en: ""
+  plain_zh: "策略工厂的翻译桥：把矿机挖出的因子公式自动填进标准考卷模板（一份逻辑、全厂统一），让公式候选能直接进 E4 大考场。生成件自己不带脑子，逻辑全在桥上，防漂移。"
 
 battle_map_steps:
 - step_id: BM-BUY-05

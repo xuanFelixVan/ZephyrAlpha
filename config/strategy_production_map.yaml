@@ -218,6 +218,8 @@ nodes:
     data_refs: [data/strategy_intake/normalized/]
     module_ref: MOD-BT-041..075
     build_status: partial
+    algo_note_extra: 公式轨桥=MOD-BT-159 factor_strategy_template（DSL 表达式→E4 考卷件
+      机械翻译，生成件零逻辑统一承载；已通 c4_fact_e831084c 实跑验证）
     design_refs:
       - QuantCode-Bench arxiv.org/html/2604.15151（NL→可执行策略可靠性基准）
     store_refs:

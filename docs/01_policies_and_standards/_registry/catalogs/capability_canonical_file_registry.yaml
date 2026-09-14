@@ -12684,6 +12684,14 @@ creation_tokens:
   token: factory-backend-lane-c2-agentic-miner-20260914
   created_by: st-facbe-20260914
   capability: factory_backend
+- file: scripts/backtest/factor_strategy_template.py
+  token: factory-backend-factor-strategy-template-20260914
+  created_by: st-facbe-20260914
+  capability: factory_backend
+- file: scripts/backtest/translated/c4_fact_e831084c.py
+  token: factory-backend-c4-fact-e831084c-20260914
+  created_by: st-facbe-20260914
+  capability: factory_backend
 - file: scripts/backtest/translated/c4_21af8c66c15e_small_cap.py
   token: c4-21af8c66c15e-small-cap-20260914
   created_by: st-zcode-c4-20260912
@@ -12872,4 +12880,8 @@ creation_tokens:
   token: "kline1min-valuation-coverage-investigation-20260915"
   created_by: "st-k1handoff-0915"
   capability: "data_coverage_investigation"
+- file: docs/_working/board_synthesis/2026-09-15-phase1-calibration-report.md
+  token: board-synthesis-phase1-calibration-20260915
+  created_by: st-880fill-20260911
+  capability: board_index_synthesis
 di_seam_exemptions: []
