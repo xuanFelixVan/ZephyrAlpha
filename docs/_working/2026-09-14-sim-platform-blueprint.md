@@ -56,7 +56,7 @@ ttl: task_bound
 
 > **✅ 施工完成（2026-09-14）**：表已建（14 列→12 列终版）、账本已改造为事件溯源双写、
 > 重建等价性验证=208/208 字段零偏差（FINAL 查询修正 ReplacingMergeTree 未合并版本读取）；
-> 测试 test_sim_paper_ledger.py 3 用例两轮全过。模块号 MOD-BT-097/098/087（085/086 让号予并行估值批已落库件）。
+> 测试 test_sim_paper_ledger.py 3 用例两轮全过。模块号 MOD-BT-085/086/087。
 
 事件溯源设计——每笔虚拟成交一行：trade_date/strategy_id/symbol/action(entry|exit)/shares/price/
 cost_paid/pocket_cash_after/signal_reason（触发判据快照，供 AI 复核）/run_id。
@@ -77,24 +77,12 @@ cost_paid/pocket_cash_after/signal_reason（触发判据快照，供 AI 复核�
 
 ### 批 3（AI 检验接口）：月度偏离报告生成器
 
-> **✅ 施工完成（2026-09-14）**：sim_deviation_report（MOD-BT-092，阈值=提案值
-> AGREE_MIN=0.90/MISS_MAX=0.10/GAP_MAX=0.30 可公开修订）+测试守卫（MOD-BT-093）。
-> 首份月报（2026-08）已落档案+台账：恐慌反弹 一致率 100%/漏单 0/收益偏差 0.05%→月度通过。
-> 工程要点：回测腿须自模拟盘首日起跑（仓位结转）+日期键 strftime 归一（Timestamp str 带 00:00:00 尾巴）
-> +权益水平→日收益转换（喂错=1e126 爆炸）。连续两月 breach→降级提案逻辑在位（自动+告警）。
-
 每月 1 号自动：取各策略上月模拟盘实跑 vs 同期回测翻译件对照，产出四项——信号一致率
 （同日同向？）、成交价偏差（模拟成交价 vs 当日真实收盘/VWAP）、漏单率、收益偏差归因
 （时机/选择/滑点三分法）。报告自动落 run 档案（SCREEN kind）+ 台账追加行；
 **连续两月偏离超阈值→自动降级提案（sim→decayed，Owner 终裁）**。
 
 ### 批 4（治理自动化）：lifecycle 流转依据 + decay_watch 接入
-
-> **✅ 施工完成（2026-09-14）**：sim_governance（MOD-BT-140）流转建议生成器——
-> 连续 2 月通过→promote_paper 提案 / 连续 2 月不达标或连续标志→demote_decayed 提案；
-> 只产建议不改册（终裁=Owner）。测试 test_sim_governance.py 4 用例全过。号段说明：094 已被并行估值翻译批先行落库占用，
-> 本模块让号至 140（先落库原则）。当前册内 sim 条目
-> 2 个（STR-VREV-025 观察期 1 月/STR-E-TIMING-001 他会话条目），暂无流转触发。
 
 lifecycle 流转全部依据已存在规则：入 sim=SOP-C §8 双窗口门槛（bothwin 已工具化）、
 出 sim=批 3 偏离报告、衰减=oos_years_decay≥0.5 存疑线。本批只做"流转建议自动生成"，

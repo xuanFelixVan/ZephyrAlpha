@@ -140,3 +140,20 @@ Owner 发现 7、8 月行情缺数据。三轮修复：①（09-13/14 凌晨）t
   dedup 键 `(market_type, symbol, trade_date, timestamp, price)` 幂等。
 - 管线：`tmp/tick_subscriber_guard.log`（守护心跳 15s）+ `tmp/tick_subscriber_run.log`
   （统计 received/written/errors）+ `E:\qmt_bridge_sim\ticks3.csv` mtime。
+
+## 七、晚间复检补记（20:0x）
+
+- **当日 tick 量级偏稀**：09-14 全天 tick=1,000,913 行/8,305 标的（对照回填日 ~2,900 万）。
+  根因=生产链当前跑在**桥模式**（沙箱快照 dump，~2 分钟/轮粒度），而高密度车道是
+  **xtdata 直订**（TICK_SOURCE=xtdata，09-08 的 1,543 万行/天即此车道）。
+  切换属生产模式决策（93 号备忘：桥=miniqmt 退役后备源），留 Owner/A22 定夺，
+  本会话未擅改 TICK_SOURCE。另：实时车道不过滤 price=0（今日 163,056 行盘前快照），
+  与回填口径不同，属存量行为。
+- **当日日线仍处降级值**：kline_daily 09-14 = 5,207 标的（健康值 ~5,554，09-09~11 历史
+  已由 tushare 补齐但今日新增数据仍走降级通道）。盘后 QMT 终端已关闭且晚间拉起失败
+  （需登录态），**明日补救配方**：终端登录后重跑 kline_daily_incremental，或按前会话
+  tushare 补数配方补 09-14 一天。
+- **期货 tick 09-09**：实测真实缺口仅此一天（09-10/11 已由 A22 车道自行恢复 5.5 万行/天）。
+  晚间 QMT 客户端无法拉起（登录态），补数配方已备好（4 主力合约×一天，~5.6 万行），
+  明早终端登录后即可补。注意期货口径 direction='none'（A22 用 miniqmt_provider 旧约定），
+  非 stocks 的'中性盘'。

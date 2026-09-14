@@ -52,30 +52,3 @@ ttl: task_bound
 ## 5. 建议
 
 候选池 30+，按 SOP 停挖转施工。建议施工顺序=立卡 1/2/3 一批（合计约 15-17 列，1 班量），长尾 M-L1/L2/L3 一批收尾，M-L4 视消费端需要再启。
-
-## 6. 挖矿增补·批 5（2026-09-14，Owner"继续挖矿"指令）
-
-### 日志表
-
-| 轮 | 矿脉 | 方向 | 判定 | 关键产出 |
-|---|------|------|------|---------|
-| R6 | 学术 range-based 波动率估计器（M-L6 欠账清偿） | ③机制 | **signal（强）** | Parkinson(1980)/Garman-Klass(1980)/Rogers-Satchell(1991)/Yang-Zhang(2000) 四件套；[MIT OCW 2024 讲义](https://ocw.mit.edu/courses/18-642-topics-in-mathematics-with-applications-in-finance-fall-2024/mit18_642_f24_lec17_2.pdf)、[Korkusuz 2023 HAR-RV-X（ScienceDirect）](https://www.sciencedirect.com/science/article/pii/S1544612323003641)、[Portfolio Optimizer 综述](https://portfoliooptimizer.io/blog/range-based-volatility-estimators-overview-and-examples-of-usage/)（GK 效率≈7.4× close-to-close）；YZ 处理隔夜跳空=A 股高开低开常态适配 |
-| R7 | 多平台内置指标对照 | ③机制 | **signal** | [TradingView 官方 charting-library 指标清单](https://www.tradingview.com/charting-library-docs/latest/ui_elements/indicators/Indicators-List/)确认 Aroon/Chande Kroll Stop/Guppy 为平台标配；[GMMA 参数](https://chartschool.stockcharts.com/table-of-contents/trading-strategies-and-models/trading-strategies/moving-average-trading-strategies/guppy-multiple-moving-average-an-ma-ribbon-designed-to-tip-the-markets-hand)（3-15/30-60 双组 EMA）；无三平台单一对比页（如实记） |
-| R8 | 下游消费端内部反查 | ②下游 | **signal（内部发现）** | grep 回测/因子/策略代码对技术指标列的消费≈**0**——116 列尚无实际消费方；"指标→因子/策略输入"接线是下一瓶颈（回填完成后应立接线批） |
-| R9 | 同花顺生态特色指标 | ⑥字段 | **signal（含边界）** | BBI 多空指数缺失（通达信/同花顺标配，(MA3+MA6+MA12+MA24)/4 纯 OHLCV）；同花顺特色 DDE-Ⅲ（大单净量/散户数/大单金额）、CYQ 筹码、主力资金全部依赖 Level-2 逐单数据=**登记不做边界**（D_DATA tick 域职权） |
-
-### 批 5 新增候选（过四闸）
-
-| 候选 | 来源/引文 | 闸检 |
-|------|---------|------|
-| **RV 波动率族 4 件**：parkinson_20/garman_klass_20/rogers_satchell_20/yang_zhang_20 | R6 四引文 | A 股适配✓（YZ 恰好处理高开低开）；可回测✓；建议先于其他长尾施工（学术级+差异化最高） |
-| **BBI 多空指数** | R5 同花顺/通达信标配 | 纯 OHLCV ✓；实现=4 条 MA 均值，工时忽略不计 |
-| CKSP/Guppy 优先级上调 | R7 TradingView 官方内置确认 | 并入立卡 2 动量清偿批一并施工 |
-
-### 内部发现（非指标候选，转待办）
-
-- **指标消费端接线批**：指标表 116 列下游消费≈0，回填完成后需立"指标→因子/策略输入"接线批（grep 实证：src/zephyr/backtest、factor 域无技术指标列引用）
-
-### 终止状态
-
-批 5 五轮全 signal（含 1 内部），候选池进一步膨胀→**维持停挖转施工裁定**。下一批挖矿在立卡 1/2/3+RV 族+BBI 施工完毕后再开（届时长尾 M-L4/M-L5 深挖）。
