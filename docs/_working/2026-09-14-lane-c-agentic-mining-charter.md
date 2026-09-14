@@ -91,3 +91,97 @@ E2 假说预审=经济逻辑正则、init_depth+parsimony=简洁性正则。**�
 - 后续论文追踪：Cognitive Alpha Mining via LLM-Driven Code-Based（arXiv 2511.18850，
   已引用 AlphaAgent 为基准——三代目候选，P0 一并精读）；
 - 对照笔记载体：P0 产出 `docs/_working/2026-09-1X-agentic-mining-p0-notes.md`（下一班）。
+
+---
+
+# 附三：P0 试驾对照笔记（§七.3 执行件，2026-09-15）
+
+> 2026-09-15 策略工厂后端施工班（st-facbe-20260914）。立项书全批后的 P0 交付物：
+> 两篇论文精读 + 官方仓侦察 + 六向寻路 + P1 设计输入。**裁定：不引入外部代码，借方法。**
+
+## 一、AlphaAgent 精读（KDD 2025，arXiv 2502.16789v2）
+
+### 1.1 三智能体闭环（论文机制骨架）
+
+- **Idea Agent**：生成结构化市场假设 h（observations/knowledge/justification/specification
+  四件套——specification 含数值与时间窗参数约束）；首轮种子假设后基于历史演化轨迹迭代；
+- **Factor Agent**：每假设生成多候选（自然语言描述 d + 算子库表达式 f），按复杂度与
+  对齐度过滤；维护**成败案例知识库**（失败按模式分类入库）；
+- **Eval Agent**：回测+相似因子检索+三类指标（预测力/收益/风控）→ 反馈回 Idea Agent 闭环。
+
+### 1.2 三正则公式（可直接抄进我们 prompt/验收的部分）
+
+| 正则 | 论文实现 | 我们的对价 |
+|---|---|---|
+| 原创性 | **AST 最大同构公共子树相似度** S(f)=max s(f,φ)，对 alpha zoo（Alpha101）取最大值作惩罚项（公式5/6） | E5 是收益相关聚类（MOD-BT-086）——**AST 结构去重是互补新件**：表达式结构撞车在收益数据出现前就能拦 |
+| 经济逻辑 | 假设-因子对齐 C(h,d,f)=0.5·c₁(h↔d)+0.5·c₂(d↔f)，LLM 打分 0-1（例：声称流动性因子但表达式无成交量项→c₂ 低分）（公式7） | **=E2 预审的内环版**。我们 E2 是管线闸（后置），他们是挖矿内环（前置）；P1 把对齐评分写进生成 prompt（事前）+E2 保留终审（事后），双层 |
+| 简洁性 | R_g=α₁·符号长度 SL+α₂·自由参数个数 PC+α₃·ER；ER=β₁·AST相似+β₂·对齐分+β₃·log(1+特征使用量)（公式4/8） | init_depth+parsimony+length 已有等价物（MOD-BT-155 constraints） |
+
+**注意**：论文摘要层面流传的"counterfactual reasoning"经全文核验**不存在**——机制是
+交替优化预测性能 L 与正则 R_g 到局部最优。以全文为准，讹传止于本笔记。
+
+### 1.3 CSI 500 实测（2021-01~2024-12 含交易费，Qlib+LightGBM 组合，top50 剔除 bottom5）
+
+| 方法 | IC | ICIR | 年化超额 | IR | MDD |
+|---|---|---|---|---|---|
+| **AlphaAgent** | **0.0212** | **0.1938** | **11.00%** | **1.488** | -9.36% |
+| AlphaForge | 0.0146 | 0.1299 | 3.45% | 0.327 | -17.67% |
+| RD-Agent | 0.0113 | 0.0872 | 0.78% | 0.074 | -20.85% |
+
+- **基础 LLM=GPT-3.5-turbo**（便宜模型成立！）；消融 DeepSeek-R1 版本最优（AR 9.19%，
+  注意其测试窗不同）——**我们 Ollama 本地就有 deepseek-r1:8b，零成本对齐论文最优配置**；
+- 消融：正则使命中率 0.29 vs 0.16（+81%）、开发成功率 0.83 vs 0.75、token 效率 +23%
+  ——**正则不只保质量还省钱**，直接支撑"三正则写进生成 prompt"的 P1 设计；
+- 数据：仅 OHLCV（Baostock CSI500）；组合=4 基础 alpha+新因子拼接喂 LightGBM。
+  **与我们 c1_market 面板+特征表完全同构**。
+
+## 二、AlphaMuse 精读（arXiv 2505.11122，AAAI 2026）
+
+- 机制：**MCTS 组织探索树，LLM 扮演生成/变异算子**，金融回测的量化反馈引导树搜索；
+- 核心创新：**frequency subtree avoidance（频繁子树规避）**——防止公式同质化，与我们的
+  E5/AST 原创性同族，但作用于搜索过程（事前）而非验收（事后）；
+- 全文深读与开源状态：摘要页未列官方代码（查无即记无）；对我们 P1 的增量=MCTS 组织方式
+  （v3 可选，P1 不需要——gplearn 轨已是成熟的搜索组织器，MCTS 是未来第三轨选项）。
+
+## 三、官方仓侦察（RndmVariableQ/AlphaAgent，WebFetch 通道）
+
+> 本机 git 直连 GitHub 失败（代理 10808 未开+直连重置），改走 WebFetch 通道侦察；
+> 下班前代理恢复可补 `git clone --depth 1` 实跑（P0 剩余半件事，不阻塞 P1 设计）。
+
+- **仓库已高度工程化（演化版，超出论文）**：`alphaagent/` 核心包+`scripts/` CLI
+  （fetch_market/build_panel/init_factorlib/ingest_factors/eval_factor/factor_mining_agentscope）+
+  `artifacts/factorzoo/*/expressions/*.dsl`（因子以 DSL 表达式文件入库，git 同步团队共享）；
+- 数据栈：**Tushare+parquet 面板**（panel_1d.parquet，label_1d/10d_close_to_close），
+  universe=中证 1000（2015~2026，约 2757 只）——与我们的 CH+面板加载器完全不同栈；
+- LLM：AgentScope 框架，README 只写 OpenAI 风格 key（Ollama 支持未文档化，需读源码）；
+- **试驾裁定：不引入代码**。理由：数据栈（Tushare/parquet/Qlib）与我们（CH/面板加载器/
+  factor_registry）异构，搬代码的适配成本 > 借方法的复刻成本；其增量价值=三正则公式+
+  三智能体循环结构，已全部提取（§1）。
+
+## 四、矿机自身六向寻路（挖矿 SOP，矿脉全闭合于现有件）
+
+| 向 | 结论 |
+|---|---|
+| ①上游 | 面板加载器已有（MOD-BT-155 fetch_panel：7 特征+y_fwd5+118 列基座）；**种子假设=现成**：E2 台账 10 条 pass_mechanism_clear 假说反哺为挖矿种子（E2 通过→变矿种，闭环） |
+| ②下游 | lane_c2 台账→E2 预审（MOD-BT-091）→E4 考试→E5 去重→factor_registry，**全现成零建设** |
+| ③算法 | 生成=LLM 按白名单算子产 DSL 表达式（gplearn 轨同款算子约束）；三正则：对齐/原创写进 prompt 事前引导+验收事后把关；AST 结构去重=唯一候选新件 |
+| ④后端 | scripts/backtest/lane_c2_agentic_miner.py（号段 MOD-BT-156，施工时按 MODULE-ID-CONSISTENCY 复核）+E0 问闸+出生证（照抄 MOD-BT-155 模式） |
+| ⑤前端 | 无新页（工厂页已有车道 C 位），登记不施工 |
+| ⑥数据字段 | 现有面板字段即够（论文亦仅 OHLCV）；label 口径沿用 y_fwd5 |
+
+## 五、P1 施工清单（按 §七.3 双 SOP：先挖后建，本文=挖矿件；施工闭环下一班）
+
+1. depgraph 设计态登记（MOD-BT-156）+ capability_lookup 反查留审；
+2. `lane_c2_agentic_miner.py`：OllamaChat（本地 8B；消融档 deepseek-r1:8b）产 DSL→
+   白名单算子校验→AST 相似度 vs REG-IND-001+gplearn 存货→增量 IC 验收→出生证→
+   lane_c2_candidates.csv；
+3. 三正则入生成 prompt：对齐评分要求（hypothesis↔description↔expression 三段自述）、
+   AST 原创约束声明、长度/参数上限；
+4. E2 消费 lane_c2 台账（管线现成，--source 换路径即用）；
+5. 测试同批（纯函数：DSL 校验/AST 相似度/prompt 构造/出生证）。
+
+## 六、开放项（不阻塞 P1）
+
+- 本机代理恢复后补 `git clone --depth 1` 实跑（结构级试驾已完成，实跑=锦上添花）；
+- AST 相似度实现选型：自研树编辑距离 vs 现成库（P1 施工时定，纯函数可测）；
+- deepseek-r1:8b 消融档是否首班就上（本地已有，零成本，建议 P1 直接双模型对比）。
