@@ -285,7 +285,19 @@ def _load_pg_config_from_url(database_url: str) -> dict[str, str]:
     格式：postgres://user:pass@host:port/db 或 postgresql://...（user/pass 支持 URL 编码）。
     角色凭证（POSTGRES_READER_*/POSTGRES_WRITER_*）URL 无法表达，仍走
     get_secret_from_file（os.environ > config/.env.postgres 若存在），缺失不报错。
+
+    09-14 GATE-PANORAMA 检测器失效定案（2026-09-15 排查）：瞬态进程环境的
+    DATABASE_URL 凭证段含 GBK 字节 → psycopg2 C 层按 UTF-8 解 dsn 报
+    UnicodeDecodeError(0xd6@61)，栈深处难定位。入口 UTF-8 严格校验 fail-fast，
+    报错直接指向环境变量（文件链路 .env.postgres 走 SecretProvider UTF-8 严格读取，不受影响）。
     """
+    try:
+        database_url.encode("utf-8")
+    except UnicodeEncodeError as e:
+        raise ValueError(
+            "DATABASE_URL 含非 UTF-8 字节（疑似 GBK 编码凭证经环境变量注入）——"
+            "请修正注入源（shell 配置/调度器 env），或清除该环境变量回退 config/.env.postgres 文件链路"
+        ) from e
     parsed = urlparse(database_url)
     if parsed.scheme not in ("postgres", "postgresql"):
         raise ValueError(f"DATABASE_URL scheme 非法: {parsed.scheme!r}（要求 postgres:// 或 postgresql://）")
