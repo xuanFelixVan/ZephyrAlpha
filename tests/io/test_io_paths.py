@@ -112,6 +112,56 @@ class TestSessionWorktreeAnchor:
         assert anchor_main_root(nested) == nested
 
 
+class TestGitWorktreeLinkAnchor:
+    """B5①(2026-09-14)：serializer worktree（.runtime/commit_queue/worktree）
+    不满足 .worktrees/.aidrafts 父目录结构，落盘门禁链审计写进 worktree 副本
+    governance.db（主库 59072 行 vs 副本 3702 行分裂实证）。anchor_main_root
+    扩展识别 git worktree 链接（.git 为 gitdir: 文件），git 元数据即主仓关系真源。
+    """
+
+    @staticmethod
+    def _make_git_repo_with_worktree(tmp_path: Path) -> tuple[Path, Path]:
+        """构造真 git 仓 + git worktree add 的 worktree，返回 (主仓根, worktree 根)。"""
+        import subprocess
+
+        repo = tmp_path / "repo"
+        repo.mkdir()
+        wt = tmp_path / "elsewhere" / "wt"
+        wt.parent.mkdir(parents=True)
+        env = {"GIT_AUTHOR_NAME": "t", "GIT_AUTHOR_EMAIL": "t@e.c", "GIT_COMMITTER_NAME": "t", "GIT_COMMITTER_EMAIL": "t@e.c"}
+        subprocess.run(["git", "init", "-q", "-b", "main"], cwd=str(repo), check=True, capture_output=True, env=env)
+        (repo / "f.txt").write_text("x\n", encoding="utf-8")
+        subprocess.run(["git", "add", "."], cwd=str(repo), check=True, capture_output=True, env=env)
+        subprocess.run(["git", "commit", "-qm", "init"], cwd=str(repo), check=True, capture_output=True, env=env)
+        subprocess.run(["git", "worktree", "add", str(wt), "-b", "wtb"], cwd=str(repo), check=True, capture_output=True, env=env)
+        return repo, wt
+
+    def test_git_worktree_link_anchors_main(self, tmp_path):
+        repo, wt = self._make_git_repo_with_worktree(tmp_path)
+        assert not is_session_worktree_root(wt)  # 父目录不在 .worktrees/.aidrafts
+        assert anchor_main_root(wt) == repo
+
+    def test_plain_repo_root_unchanged(self, tmp_path):
+        """普通仓根（.git 为目录）不误判——原样返回。"""
+        repo, _ = self._make_git_repo_with_worktree(tmp_path)
+        assert (repo / ".git").is_dir()
+        assert anchor_main_root(repo) == repo
+
+    def test_nested_tmp_repo_inside_worktree_unchanged(self, tmp_path):
+        """worktree 内嵌套 pytest tmp 仓测试隔离保持（不误判到宿主主仓）。"""
+        repo, wt = self._make_git_repo_with_worktree(tmp_path)
+        nested = wt / ".runtime" / "tmp" / "pytest_1" / "tmp_repo"
+        nested.mkdir(parents=True)
+        assert anchor_main_root(nested) == nested
+
+    def test_malformed_git_link_fail_open(self, tmp_path):
+        """畸形 .git 链接文件（非 gitdir: 形态/越界目标）→ fail-open 原样返回。"""
+        weird = tmp_path / "weird"
+        weird.mkdir()
+        (weird / ".git").write_text("not-a-gitdir-link", encoding="utf-8")
+        assert anchor_main_root(weird) == weird
+
+
 class TestGatesDir:
     def test_is_under_root(self):
         # 断言对齐 paths.py 现状定义（真源 gov_enforcement/rule_enforcement）。

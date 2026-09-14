@@ -88,6 +88,11 @@ from __future__ import annotations
 import logging
 import os
 
+from zephyr.gov_enforcement.commit_gates._diff_helpers import (
+    _audit_foreign_staged,
+    _build_own_scope,
+    _norm_rel,
+)
 from zephyr.gov_enforcement.rule_bridge.commit_gate_registry import (
     GateSpec,
     is_test_exempt,
@@ -130,6 +135,31 @@ def _collect_staged_trigger_files(gateway) -> list[str]:
         return []
 
     return [f for f in staged if f.endswith(_TRIGGER_EXTENSIONS) and not is_test_exempt(f)]
+
+
+def _collect_own_trigger_files(gateway, files: list[str] | None, session_id: str | None) -> tuple[list[str], list[str], list[str] | None]:
+    """构建本次 commit 的触发文件范围（own-scope，接续 #ARCH-GATE-OWN-SCOPE-001 推广批；B5①連坐治本）。
+
+    优先级：files 清单非空 → 直接用（gateway.check_all 传入的本次 commit 文件，
+    权威范围，不依赖暂存区状态）；files 为空（历史直调/无清单场景）→ 退回全
+    staged 旧行为（保守面不改宽，fail-open）。
+
+    Returns:
+        (own_trigger_files, foreign_staged_trigger_files, own_scope)
+        own_scope=None 表示退回旧行为（不拆分 own/foreign）。
+    """
+    if files:
+        own = [f for f in files if f.endswith(_TRIGGER_EXTENSIONS) and not is_test_exempt(f)]
+        return own, [], None
+    staged_triggers = _collect_staged_trigger_files(gateway)
+    if not staged_triggers:
+        return [], [], None
+    scope = _build_own_scope(gateway, files, session_id)
+    if scope is None:
+        return staged_triggers, [], None  # 归属信息全空：保持旧行为
+    own = [f for f in staged_triggers if _norm_rel(gateway, f) in scope]
+    foreign = [f for f in staged_triggers if _norm_rel(gateway, f) not in scope]
+    return own, foreign, scope
 
 
 def _count_flat_files(dir_path: str) -> int:
@@ -190,18 +220,29 @@ def _scan_violations(gateway, trigger_files: list[str]) -> list[str]:
 
 
 def make_folder_capacity_hard_limit_gate() -> GateSpec:
-    """构造文件夹容量硬上限 GateSpec（硬阻断型）。
+    """构造文件夹容量硬上限 GateSpec（硬阻断型，own-scope 化）。
 
     Returns:
         GateSpec(gate_id="FOLDER-CAPACITY-HARD-LIMIT", priority=112)。
     """
 
     def _check(gateway, files: list[str], **kwargs) -> tuple[bool, str]:
-        trigger_files = _collect_staged_trigger_files(gateway)
-        if not trigger_files:
+        # own-scope（宪法 §3.3：全暂存区扫描型 gate 必须 own-scope 或登记理由；
+        # 接续 #ARCH-GATE-OWN-SCOPE-001 推广批）：只对本次 commit files（无清单时
+        # 退回全 staged ∩ 本 session 范围）执法。
+        # 他会话 staged 文件不再连坐阻断本次提交（st-closeout-20260914 实证：
+        # src/+tests/ 提交被 docs/_working/ 123 文件连坐拦死）；外来文件降级
+        # warn+审计（owner 责任制，宪法 §3.4）。
+        session_id = str(kwargs.get("session_id") or "")
+        own_files, foreign_files, scope = _collect_own_trigger_files(gateway, files, session_id)
+        if not own_files:
+            if foreign_files:
+                _audit_foreign_staged(gateway, session_id, foreign_files, gate_name="FOLDER-CAPACITY-HARD-LIMIT")
             return True, ""
 
-        violations = _scan_violations(gateway, trigger_files)
+        violations = _scan_violations(gateway, own_files)
+        if foreign_files:
+            _audit_foreign_staged(gateway, session_id, foreign_files, gate_name="FOLDER-CAPACITY-HARD-LIMIT")
 
         if violations:
             detail = (

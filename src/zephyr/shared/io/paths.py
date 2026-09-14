@@ -131,13 +131,59 @@ def is_session_worktree_root(root: Path) -> bool:
     return root.parent.name in (".worktrees", ".aidrafts")
 
 
-def anchor_main_root(root: Path) -> Path:
-    """session worktree 根 → 主仓根；其他路径原样返回（is_session_worktree_root 配套）。
+def _git_worktree_main_root(root: Path) -> Path | None:
+    """git worktree 链接识别：root/.git 为文件（gitdir: 链接）时返回主仓根，否则 None。
 
-    与 strip_session_worktree 的区别：本函数只做单级父目录结构判定，对
-    嵌套 tmp 测试库路径安全（不段匹配）；strip_session_worktree 是深路径段
-    剥离（用于任意深度路径）。仓级状态锚定调用方应根据入参形态选择。
+    git 自身是 worktree→主仓关系的唯一真源：git worktree add 会在 root/.git
+    写入单行文本 ``gitdir: <主仓根>/.git/worktrees/<name>``——worktrees 段
+    的爷爷目录即主仓 .git，再上一级即主仓根。
+
+    B5①(2026-09-14) 治本：serializer 专用 worktree 落在
+    ``.runtime/commit_queue/worktree``——不满足 .worktrees/.aidrafts 父目录结构，
+    anchor_main_root 原判定不识别 → 落盘门禁链（project_root=worktree）的
+    reconcile_execution_log 审计写进 worktree 副本 governance.db（主库 59072 行
+    vs 副本 3702 行分裂实证），drain 结束后副本成孤儿，审计不可查询。
+
+    安全性：.git 是目录（普通仓/pytest tmp 仓）→ 返回 None 原样返回；
+    链接文本畸形/目标越界 → 返回 None（fail-open 退回调用方原判定，不阻断）。
     """
+    dot_git = root / ".git"
+    if not dot_git.is_file():
+        return None  # 目录=普通仓根或非仓路径；文件=git worktree 链接
+    try:
+        text = dot_git.read_text(encoding="utf-8", errors="replace").strip()
+    except OSError:
+        return None
+    if not text.lower().startswith("gitdir:"):
+        return None
+    gitdir = text.split(":", 1)[1].strip()
+    gd = Path(gitdir)
+    if not gd.is_absolute():
+        gd = root / gd
+    try:
+        gd = gd.resolve()
+    except OSError:
+        return None
+    # 期望形态 <主仓根>/.git/worktrees/<name>：gd=…/.git/worktrees/<name>，
+    # parent=worktrees 段、爷爷=.git，主仓根=.git 的 parent
+    if gd.parent.name == "worktrees" and gd.parent.parent.name == ".git":
+        return gd.parent.parent.parent
+    return None
+
+
+def anchor_main_root(root: Path) -> Path:
+    """worktree 根 → 主仓根；其他路径原样返回（is_session_worktree_root 配套）。
+
+    判定序（B5① 2026-09-14 扩展）：
+    1. git worktree 链接（root/.git 为 gitdir: 文件）→ git 元数据解析主仓根——
+       git 自身是 worktree→主仓关系真源，覆盖一切布局
+       （.worktrees/.aidrafts/.runtime/commit_queue/worktree/嵌套沙箱）。
+    2. .worktrees/<sid>/.aidrafts/<sess> 父目录结构判定（历史机制，行为不变）。
+    3. 其他路径原样返回——嵌套 pytest tmp 测试库根不受影响（测试隔离保持）。
+    """
+    main = _git_worktree_main_root(root)
+    if main is not None:
+        return main
     if is_session_worktree_root(root):
         return root.parent.parent
     return root
@@ -196,15 +242,24 @@ AUDIT_DATA_DIR: Final[Path] = REPO_ROOT / "data" / "audit_trail"
 DEPGRAPH_DIRTY_FLAG: Final[Path] = REPO_ROOT / "data" / "databases" / "depgraph_dirty.flag"
 
 
+def _ensure_dir_under_root(subdir: str) -> Path:
+    """返回 REPO_ROOT/<subdir> 并确保目录存在（get_tmp/data/config_dir 三胞胎合并原语）。
+
+    CLONEGUARD 治本（B5① 提交窗实证）：三函数仅目录名不同，100% structural 克隆，
+    收敛到单一原语消除 extract 级克隆；公共 API 签名不变（外部消费者零感知）。
+    """
+    d = REPO_ROOT / subdir
+    d.mkdir(parents=True, exist_ok=True)
+    return d
+
+
 def get_tmp_dir() -> Path:
     """返回运行时临时目录 REPO_ROOT / '.runtime' / 'tmp'，并确保目录存在。
 
     Returns:
         Path: 临时目录的绝对路径（已确保存在）。
     """
-    tmp_dir = REPO_ROOT / ".runtime" / "tmp"
-    tmp_dir.mkdir(parents=True, exist_ok=True)
-    return tmp_dir
+    return _ensure_dir_under_root(".runtime/tmp")
 
 
 def get_data_dir() -> Path:
@@ -213,9 +268,7 @@ def get_data_dir() -> Path:
     Returns:
         Path: 数据目录的绝对路径（已确保存在）。
     """
-    data_dir = REPO_ROOT / "data"
-    data_dir.mkdir(parents=True, exist_ok=True)
-    return data_dir
+    return _ensure_dir_under_root("data")
 
 
 def get_config_dir() -> Path:
@@ -224,9 +277,7 @@ def get_config_dir() -> Path:
     Returns:
         Path: 配置目录的绝对路径（已确保存在）。
     """
-    config_dir = REPO_ROOT / "config"
-    config_dir.mkdir(parents=True, exist_ok=True)
-    return config_dir
+    return _ensure_dir_under_root("config")
 
 
 __all__ = [
