@@ -5,7 +5,7 @@
 # [CONSUMERS] zephyr.gov_enforcement.rule_bridge.git_commit_gateway.GitCommitGateway.__init__（经 in_process_gate_registry.yaml auto_registrar 注册）；zephyr.gov_enforcement.rule_bridge.session_worktree.session_worktree_commit（worktree 通道 check_all 全量 gate）
 # [STARTUP] imported
 # [MATURITY] production
-# [INVARIANTS] 硬阻断——本 commit 提交清单（files 参数，网关 gate 链跑在 add 之前，files 才是真实入库内容源）中的 .py 文件 ast.parse 抛 SyntaxError 即阻断 commit（含文件名+行号+错误信息）；fail-closed 病根治本：全仓 6+ 个 AST 类 gate（create_guard/manual_only_permanent/bare_getenv/ch_final 等）对 SyntaxError 一律 fail-open 跳过（注释均写"语法错误由其他 gate 检测"——责任真空，实际无任何 gate 硬拦，红蓝 v3 S1.4 实弹：def broken(: 经主网关零拦截入库 2c6d1719d6）；本 gate 是语法错误唯一硬拦截真源；检测范围含 tests/（红蓝实证坏文件恰从 tests/ 进来），豁免只认 noqa 标记不认目录；AST 解析非 SyntaxError 异常（ValueError/UnicodeDecodeError 等）fail-open 放行（环境异常非违规，对标既有 gate 契约）；文件读取失败 fail-open；空 files 放行；noqa 豁免标记格式=# noqa: syntax-fixture + 2空格 + reason>=10字符（对标 m11-perm-manual-legitimate 模式，供测试夹具故意含语法坏文件时审计放行）；扫描源语义（probe 2i 实弹复验发现）：网关 gate 链跑在 git add 之前，暂存区只有上次手动 add 的残留，扫描暂存区会漏拦未暂存坏文件——扫描 files 参数才是真实入库内容
+# [INVARIANTS] 硬阻断——本 commit 提交清单（files 参数，网关 gate 链跑在 add 之前，files 才是真实入库内容源）中的 .py 文件 ast.parse 抛 SyntaxError 即阻断 commit（含文件名+行号+错误信息）；fail-closed 病根治本：全仓 6+ 个 AST 类 gate（create_guard/manual_only_permanent/bare_getenv/ch_final 等）对 SyntaxError 一律 fail-open 跳过（注释均写"语法错误由其他 gate 检测"——责任真空，实际无任何 gate 硬拦，红蓝 v3 S1.4 实弹：def broken(: 经主网关零拦截入库 2c6d1719d6）；本 gate 是语法错误唯一硬拦截真源；检测范围含 tests/（红蓝实证坏文件恰从 tests/ 进来），豁免只认 noqa 标记不认目录；AST 解析非 SyntaxError 异常（ValueError/UnicodeDecodeError 等）fail-open 放行（环境异常非违规，对标既有 gate 契约）；文件读取失败 fail-open；空 files 放行；noqa 豁免标记格式=# noqa: syntax-fixture + 2空格 + reason>=10字符（对标 m11-perm-manual-legitimate 模式，供测试夹具故意含语法坏文件时审计放行）；扫描源语义（probe 2i 实弹复验发现）：网关 gate 链跑在 git add 之前，暂存区只有上次手动 add 的残留，扫描暂存区会漏拦未暂存坏文件——扫描 files 参数才是真实入库内容；worktree 通道回退（红蓝 v4 F1 击穿治本 2026-09-14）：session_worktree 链把 files 解析为主区绝对路径，坏文件可能只在 worktree 内（主区无副本，sync 对不存在的主区文件不做任何事），此时回退扫 wt_root 下的主根相对路径副本
 # [MODIFY-GUARD] gate_id="SYNTAX-VALIDATION"；check 闭包签名 (gateway, files, **kwargs) -> tuple[bool, str]
 # [STABILITY] evolving
 # [SAFETY] L
@@ -155,17 +155,49 @@ def _scan_py_file_syntax(rel_path: str, wt_root: str, gateway=None) -> str:
     fail-open 契约：文件读取失败/非 SyntaxError 解析异常降级为放行（logger.warning）。
     staged delete 场景（文件已从 index 撤出、提交语义=出库）跳过扫描——
     删除提交的内容语法无关紧要，且工作区残留文件不代表入库内容。
-    """
-    abs_path = rel_path if os.path.isabs(rel_path) else os.path.join(wt_root, rel_path.replace("/", os.sep))
-    if not os.path.isfile(abs_path):
-        return ""  # delete/幻影场景：跳过
 
-    # staged delete 判定：index 无此文件但 HEAD 有（提交语义=删除/出库）
+    worktree 通道（红蓝 v4 F1 击穿治本 2026-09-14）：session_worktree 提交链把 files
+    解析为【主区绝对路径】，但坏文件可能只存在于 worktree 内（主区无副本，sync
+    对不存在的主区文件不做任何事）——此时主区 isfile=False 会漏拦。回退顺序：
+    ① 主区/给定路径存在 → 扫它；② 不存在 → 用主根相对路径映射到 wt_root 找
+    worktree 副本扫它（这才是真正要入库的内容）；③ 都不存在 → 跳过。
+    """
+    candidates: list[str] = []
+    main_root = str(getattr(gateway, "project_root", wt_root)) if gateway is not None else wt_root
+    if os.path.isabs(rel_path):
+        candidates.append(rel_path)
+        try:
+            rel_to_main = os.path.relpath(rel_path, main_root)
+            if not rel_to_main.startswith(".."):
+                candidates.append(os.path.join(wt_root, rel_to_main.replace("\\", os.sep)))
+        except ValueError:
+            pass  # 跨盘/无法映射：只试给定路径
+    else:
+        rel_norm = rel_path.replace("/", os.sep)
+        candidates.append(os.path.join(wt_root, rel_norm))
+        candidates.append(os.path.join(main_root, rel_norm))
+
+    seen: set[str] = set()
+    abs_path = ""
+    for cand in candidates:
+        key = os.path.normcase(os.path.abspath(cand))
+        if key in seen:
+            continue
+        seen.add(key)
+        if os.path.isfile(cand):
+            abs_path = cand
+            break
+    if not abs_path:
+        return ""  # delete/幻影场景：跳过（主区与 worktree 均无此文件）
+
+    # staged delete 判定：index 无此文件但 HEAD 有（提交语义=删除/出库）。
+    # rel_norm 统一用【主根相对路径】（ls-files/HEAD: 语义均以主仓为基准）
     if gateway is not None:
         try:
-            rel_norm = rel_path.replace("\\", "/")
             if os.path.isabs(rel_path):
-                rel_norm = os.path.relpath(rel_path, wt_root).replace("\\", "/")
+                rel_norm = os.path.relpath(rel_path, main_root).replace("\\", "/")
+            else:
+                rel_norm = rel_path.replace("\\", "/")
             tracked = gateway.is_git_tracked(rel_norm)
             in_head = gateway._is_staged_delete(rel_norm)
             if not tracked and in_head:

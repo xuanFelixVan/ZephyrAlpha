@@ -5,7 +5,7 @@
 # [CONSUMERS] zephyr.gov_enforcement.rule_bridge.git_commit_gateway.GitCommitGateway.__init__
 # [STARTUP] imported
 # [MATURITY] production
-# [INVARIANTS] allow_overlap=True 时直接放行（逃生通道）；other_held_files 读取异常安全降级为空集（不阻断 commit，registry 故障不应卡死工作流）；目标文件用 Path.resolve() 归一化与 other_held 比较（与 _normalize_file_path 对齐）
+# [INVARIANTS] allow_overlap=True 时直接放行（逃生通道）；other_held_files 读取异常安全降级为空集（不阻断 commit，registry 故障不应卡死工作流）；目标文件用 Path.resolve() 归一化与 other_held 比较（与 _normalize_file_path 对齐）；.ailocks 双轨检查（红蓝 v4 F2 治本 2026-09-14）：held_files 与 .ailocks 双轨脱节（失败提交释放 held_files 但 .ailocks 存活 30min TTL），目标文件存在其他会话的活跃 .ailocks 锁同样阻断，锁系统异常降级空集对齐既有契约
 # [MODIFY-GUARD] gate_id="HELD-OVERLAP"；check 闭包签名 (gateway, files, **kwargs) -> tuple[bool, str]
 # [STABILITY] evolving
 # [SAFETY] L
@@ -72,11 +72,94 @@ Usage::
 
 from __future__ import annotations
 
+import os
 from pathlib import Path
 
 from zephyr.gov_enforcement.rule_bridge.commit_gate_registry import GateSpec
 
 __all__ = ["make_held_overlap_gate"]
+
+
+def _ailocks_other_holders(gateway, files: list[str], session_id: str) -> tuple[list[str], list[str]]:
+    """检查目标文件的 .ailocks 文件锁是否被其他会话持有（红蓝 v4 F2 治本）。
+
+    背景：SessionRegistry.held_files 与 .ailocks（scripts/lock_files.py 的磁盘锁，
+    TTL 30 分钟 / PID 死亡即 stale）是双轨制——失败提交会释放 held_files 但
+    .ailocks 依然存活，搭便车会话在窗口期打包他 session 未提交改动可绕过
+    HELD-OVERLAP（v4 F2 实弹击穿）。本函数补齐第二轨。
+
+    算法：与 lock_files._sanitize_path/_lock_dir 同款——目标文件路径直接算出锁
+    目录，读 owner.json（owner_id/pid/expires_at）判定持有者。
+
+    与 lock_files._is_stale 的有意分歧（设计裁定 2026-09-14）：本检查不做 PID
+    僵尸判定，仅看 TTL/expiry——lock_files 锁由瞬时 CLI 进程领取，进程退出后
+    PID 必死，按 PID 判废会让防护永不命中（v4.5 实弹复验发现）。gate 职责是
+    搭便车防护：近期锁=最近持有权证据，30min TTL 内有效；误拦风险由
+    --allow-overlap 逃生口 + TTL 上界双保险，对齐锁工具声明的语义
+    （超时未释放视为死锁）。
+
+    fail-open：锁目录结构缺失/读取异常降级为空清单（锁系统故障不卡死工作流，
+    对齐 held_files 的降级契约）。
+    """
+    holders: list[str] = []
+    hits: list[str] = []
+    try:
+        import json as _json
+        import time
+
+        lock_root = Path(str(gateway.project_root)) / ".ailocks"
+        if not lock_root.is_dir():
+            return holders, hits
+        now = time.time()
+        for f in files:
+            try:
+                lock_dir = _ailocks_lock_dir_for(f, lock_root)
+                if not lock_dir.is_dir():
+                    continue
+                owner_file = lock_dir / "owner.json"
+                if not owner_file.is_file():
+                    continue
+                owner = _json.loads(owner_file.read_text(encoding="utf-8"))
+            except Exception:  # noqa: BLE001 — 单文件锁读取异常跳过
+                continue
+            holder = str(owner.get("owner_id", ""))
+            if not holder or holder == session_id:
+                continue
+            # TTL-only 判定（不做 PID 僵尸判定——有意分歧，见 docstring）
+            expires_at = owner.get("expires_at")
+            if expires_at is not None:
+                if now > float(expires_at):
+                    continue
+            else:
+                ts = float(owner.get("timestamp", 0.0) or 0.0)
+                if now - ts > 1800.0:
+                    continue
+            if holder not in holders:
+                holders.append(holder)
+            if f not in hits:
+                hits.append(f)
+    except Exception:  # noqa: BLE001 — 锁系统故障降级（不阻断工作流）
+        return [], []
+    return holders, hits
+
+
+def _ailocks_lock_dir_for(file_path: str, lock_root: Path) -> Path:
+    """与 scripts/lock_files.py _sanitize_path/_lock_dir 同款算法（双轨一致性真源）。"""
+    rel = Path(file_path)
+    repo_root = Path(str(gateway_project_root_safe(lock_root)))
+    if rel.is_absolute():
+        try:
+            rel = rel.relative_to(repo_root)
+        except ValueError:
+            pass
+    sanitized = str(rel).replace("\\", ".").replace("/", ".").replace("..", "_dotdot_")
+    sanitized = "".join(c for c in sanitized if c.isalnum() or c in "._-")
+    return lock_root / (sanitized.lower()[:120] + ".lock")
+
+
+def gateway_project_root_safe(lock_root: Path) -> str:
+    """从 lock_root（<root>/.ailocks）反推项目根。"""
+    return str(lock_root.parent)
 
 
 def make_held_overlap_gate() -> GateSpec:
@@ -105,18 +188,31 @@ def make_held_overlap_gate() -> GateSpec:
         # 归一化目标文件（与 _normalize_file_path 的 Path.resolve() 对齐）
         target_abs = {str(Path(f).resolve()) for f in files}
         overlap = target_abs & other_held
-        if overlap:
-            overlap_rel = sorted(
-                # 显示相对路径更易读（调试用）
-                str(Path(f).relative_to(gateway.project_root))
-                if Path(f).resolve().is_relative_to(gateway.project_root)
-                else f
-                for f in files
-                if str(Path(f).resolve()) in overlap
-            )
+
+        # .ailocks 第二轨检查（红蓝 v4 F2 治本 2026-09-14）：held_files 与 .ailocks
+        # 双轨脱节——失败提交释放 held_files 但 .ailocks 存活，搭便车窗口期可打包
+        # 他 session 未提交改动入库。目标文件存在他 session 的活跃锁 → 阻断。
+        ailocks_holders, ailocks_hits = _ailocks_other_holders(gateway, files, session_id)
+
+        if overlap or ailocks_holders:
+            if overlap:
+                overlap_rel = sorted(
+                    # 显示相对路径更易读（调试用）
+                    str(Path(f).relative_to(gateway.project_root))
+                    if Path(f).resolve().is_relative_to(gateway.project_root)
+                    else f
+                    for f in files
+                    if str(Path(f).resolve()) in overlap
+                )
+                holders_txt = "其他活跃 session"
+            else:
+                overlap_rel = sorted(ailocks_hits)
+                holders_txt = "/".join(sorted(set(ailocks_holders)))
+            track = "" if overlap else "（.ailocks 双轨命中）"
             return False, (
-                f"目标文件被其他活跃 session 持有（搭便车防护 HELD_OVERLAP_VIOLATION）: "
-                f"{overlap_rel}. 如确认需提交，用 commit(allow_overlap=True) 或 "
+                f"目标文件被其他活跃 session 持有（搭便车防护 HELD_OVERLAP_VIOLATION{track}）: "
+                f"{overlap_rel}. 持有者={holders_txt}。"
+                f" 如确认需提交，等锁释放或用 commit(allow_overlap=True) / "
                 f"CLI --allow-overlap 逃生通道。"
             )
         return True, ""

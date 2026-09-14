@@ -62,14 +62,24 @@ EXEMPT_SHORT_REASON_PY = (
 
 
 class _FakeGateway:
-    """最小网关桩：只提供 project_root（wt_root 探测用）。
+    """最小网关桩：project_root + 可选 worktree_root（模拟 worktree 通道）。
 
     扫描源=files 参数，不读暂存区——无 run_git 依赖（fail-open 探测由
-    wt_root 为空的分支自然覆盖）。
+    wt_root 为空的分支自然覆盖）。提供 wt_root 时 _resolve_wt_root 经
+    run_git(rev-parse) 返回它，复刻 worktree 通道的 monkeypatch 语义。
     """
 
-    def __init__(self, project_root: str):
+    def __init__(self, project_root: str, worktree_root: str | None = None):
         self.project_root = project_root
+        self._worktree_root = worktree_root
+
+    def run_git(self, cmd: list[str]):
+        if "rev-parse" in cmd and "--show-toplevel" in cmd:
+            import types
+
+            top = self._worktree_root or self.project_root
+            return types.SimpleNamespace(returncode=0, stdout=top + "\n", stderr="")
+        raise AssertionError(f"unexpected git cmd: {cmd}")
 
 
 def _run(gateway, files=None):
@@ -85,6 +95,53 @@ def _write(tmp_path, rel: str, content: str) -> str:
     target.parent.mkdir(parents=True, exist_ok=True)
     target.write_text(content, encoding="utf-8")
     return rel
+
+
+# ── worktree 通道回退（红蓝 v4 F1 击穿治本）──────────────
+
+
+def test_worktree_only_file_blocks(tmp_path):
+    """F1 复刻：files 指向主区绝对路径但文件只在 worktree 内（主区无副本）。"""
+    import os
+
+    main_root = tmp_path / "main"
+    wt_root = tmp_path / "wt"
+    main_root.mkdir()
+    wt_root.mkdir()
+    rel = "tests/gov/xt_probe.py"
+    wt_target = wt_root / rel.replace("/", os.sep)
+    wt_target.parent.mkdir(parents=True, exist_ok=True)
+    wt_target.write_text(BAD_PY, encoding="utf-8")
+    main_abs = str((main_root / rel.replace("/", os.sep)).resolve())
+    ok, msg = _run(_FakeGateway(str(main_root), worktree_root=str(wt_root)), [main_abs])
+    assert not ok, "worktree 副本的坏语法必须拦截"
+    assert "xt_probe.py" in msg
+
+
+def test_worktree_copy_preferred_over_missing_main(tmp_path):
+    """worktree 副本存在且合法、主区缺文件 → 放行（回退解析命中 wt 副本）。"""
+    import os
+
+    main_root = tmp_path / "main"
+    wt_root = tmp_path / "wt"
+    main_root.mkdir()
+    wt_root.mkdir()
+    rel = "src/good_wt.py"
+    wt_target = wt_root / rel.replace("/", os.sep)
+    wt_target.parent.mkdir(parents=True, exist_ok=True)
+    wt_target.write_text(GOOD_PY, encoding="utf-8")
+    main_abs = str((main_root / rel.replace("/", os.sep)).resolve())
+    ok, msg = _run(_FakeGateway(str(main_root), worktree_root=str(wt_root)), [main_abs])
+    assert ok, msg
+
+
+def test_both_missing_skipped(tmp_path):
+    """主区与 worktree 均无此文件 → 幻影跳过（不阻断）。"""
+    main_root = tmp_path / "main"
+    main_root.mkdir()
+    main_abs = str((main_root / "src/gone.py").resolve())
+    ok, msg = _run(_FakeGateway(str(main_root)), [main_abs])
+    assert ok, msg
 
 
 # ── 放行路径 ──────────────────────────────────────────────────

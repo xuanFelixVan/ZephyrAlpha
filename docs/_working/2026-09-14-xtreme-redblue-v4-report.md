@@ -60,3 +60,44 @@ ttl: task_bound
 **不通过**——修复面复测发现 1 项 P0 候选（worktree 语法门禁失效）+ 1 项并发缺口（搭便车）
 + 1 项连坐复发（容量门）。主通道修复项（P1-1 标记三连之①③、P0-1 主通道）全部验证有效；
 v4 价值=把修复面从"单通道正确"逼到"多通道+并发正确"，P0-1 的修复完整性被证伪了一半。
+
+## 修复批附录（2026-09-14 21:0x，Owner 授权 solo_agent 执行全部修复）
+
+### F1 修复（P0 候选）✅ 已修复+实弹复测通过
+
+- 根因（源码实锤）：`session_worktree._run_pre_commit_gates_once` 把 files 解析为
+  【主区绝对路径】传给 gate 链，而 `_sync_files_to_worktree` 对主区不存在的文件不做任何事——
+  worktree 内直写的坏文件是唯一真身，SYNTAX-VALIDATION 扫 files 时 isfile=False 跳过。
+- 修复：syntax_validation_gate._scan_py_file_syntax 增加回退解析——主区路径不存在时，
+  用主根相对路径映射到 wt_root（monkeypatched rev-parse 的真源）扫 worktree 副本；
+  双份均无才跳过。头标 INVARIANTS 同步。
+- 验证：新增 3 单测（worktree-only 坏文件拦截/合法副本放行/双份均无跳过），17/17 绿；
+  实弹复测=与击穿时同款攻击路径，返回 GATE_VIOLATION+SYNTAX-VALIDATION 精准归因，
+  堵点本 source=worktree_commit 13:17:43 落账。
+
+### F2 修复 ⚠️ gate 侧完成，上游锁存活语义待裁定
+
+- 根因：held_files（SessionRegistry）与 .ailocks（lock_files 磁盘锁）双轨脱节——
+  失败提交释放 held_files 但 .ailocks 存活，搭便车窗口期可打包他 session 未提交改动。
+- gate 侧修复：HELD-OVERLAP 补 .ailocks 第二轨检查（_ailocks_other_holders，
+  lock_files._sanitize_path 同款哈希直算锁目录；TTL-only 判定与 _is_stale 的 PID 僵尸
+  语义有意分歧——lock 锁由瞬时 CLI 进程领取、PID 必死，按 PID 判废会让防护永不命中，
+  实弹复验实证；误拦风险由 --allow-overlap 逃生口+TTL 上界双保险）。新增 8 单测全绿。
+- 实弹复验两个结论：①内存复现 gate 链归因精准（持有者+文件精确）；②端到端仍放行——
+  lock_files acquire 由瞬时 CLI 进程领取，进程退出 PID 死亡，下一次 lock_files 调用
+  触发僵尸锁自清理把锁删掉（诊断：acquire 后立即 check 即 FREE）。**这是 lock_files
+  "AI 对话级锁"设计与瞬时进程 PID 的语义冲突**，属 lock_files 侧缺陷：修法=acquire
+  记录当前会话常驻进程 PID 或 gate 改用 claim_snapshots 存活信号——需 Owner 裁定后另批。
+- 残余风险：无 .ailocks 锁时搭便车仍可行（写审计集成才是根治，量级较大另批）。
+
+### F9 不重复施工
+
+他会话 29c751b5d7（st-patmine）已按本报告建议完成容量门 own-scope 化
+（优先 files 清单、外来 staged 降级 warn+审计），验证修复内容与建议一致。
+
+### 修复批验证与登记
+
+- 全量回归 2494 passed（含新增 F1 3 测 + F2 8 测）。
+- 攻击文件清库：deletion 提交撞 pre-commit 钩子链挂起（180s 超时，直发 git commit 同样挂起）——
+  记录为 pre-commit 钩子链问题（与 GATE-PRO 截断输出同源），随修复批一并走网关重试。
+- 提交清单：syntax_validation_gate.py（F1）+ held_overlap_gate.py（F2）+ 2 测试文件 + 本附录。
