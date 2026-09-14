@@ -143,6 +143,8 @@ def build_states(close: pd.Series) -> pd.DataFrame:
         DataFrame[trade_date, dominant, vol_pct, close, ma20, ma60, ma120]，
         热身期剔除（vol_pct NaN 行不产出），按日期升序。
     """
+    if close.empty or not isinstance(close.index, pd.DatetimeIndex):
+        return pd.DataFrame(columns=["trade_date", "dominant", "vol_pct", "close", "ma20", "ma60", "ma120"])
     feat = compute_features(close)
     out = feat.dropna(subset=["vol_pct"]).copy()
     out["trade_date"] = out.index.strftime("%Y-%m-%d")
