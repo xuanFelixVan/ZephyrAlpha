@@ -17,7 +17,7 @@
 """expectations — 分析师一致预期因子族（消费端 C2 预备，2026-09-12）。
 
 数据源：c3_fundamental.consensus_daily（DS-229，每股每日×预测目标日历年的一致预期矩阵，
-PIT 正确）+ 行情收盘价。六个因子对应设计文档 §M2（docs/_working/2026-09-12-expectation-consumption-design.md），
+PIT 正确）+ 行情收盘价。六个因子对应设计文档 §M2（docs/01_policies_and_standards/policies/expectation_consumption_design_policy.md），
 公式出处=华泰金工系列（单因子测试之九/AI54/基本面量化之二）+ 经典文献，逐函数 docstring 注明。
 
 设计约定：

@@ -12058,7 +12058,7 @@ creation_tokens:
   token: fund-consensus-daily-consensus-daily-compute-20260913
   created_by: st-expectation-20260914
   capability: fund_consensus_daily
-- file: docs/_working/2026-09-12-expectation-consumption-design.md
+- file: docs/01_policies_and_standards/policies/expectation_consumption_design_policy.md
   token: auto-adopt-expectation-design-20260912
   created_by: schemas-split-20260912 (adopt 研报消费端批在途件, 内容零改动)
   capability: expectation_consumption_design
@@ -12524,4 +12524,20 @@ creation_tokens:
   token: pattern-event-job-strategy-matrix-3d-20260913
   created_by: st-patwire-20260914
   capability: pattern_event_job
+- file: docs/_working/2026-09-14-market-repair-scripts/finish_p0_1.py
+  token: market-data-repair-finish-p0-1-20260913
+  created_by: st-mktfix-20260914
+  capability: market_data_repair
+- file: docs/_working/2026-09-14-market-repair-scripts/p0_tick_backfill.py
+  token: market-data-repair-p0-tick-backfill-20260913
+  created_by: st-mktfix-20260914
+  capability: market_data_repair
+- file: docs/_working/2026-09-14-market-repair-scripts/wipe_tick3days.py
+  token: market-data-repair-wipe-tick3days-20260913
+  created_by: st-mktfix-20260914
+  capability: market_data_repair
+- file: docs/_working/2026-09-14-market-data-gap-report.md
+  token: market-data-repair-2026-09-14-market-data-gap-report-20260913
+  created_by: st-mktfix-20260914
+  capability: market_data_repair
 di_seam_exemptions: []

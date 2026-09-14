@@ -111,7 +111,7 @@ entry_counts: {sources: 18, datasets: 241, jobs: 105}  # 2026-09-14 v1.9.3：+DS
 #   快照：(symbol,trade_date,forecast_year) 粒度，eps 均值/中位/分歧度+评级统计，PIT 铁律=只聚合
 #   publish_date<=trade_date 零 embargo，无覆盖不成行禁前向填充；构建器=scripts/ch/build_consensus_daily.py
 #   纯函数核 7 单测）+JOB-091 build.consensus_daily（manual，夜间调度接线=C1.5 待办）——华泰一致
-#   预期因子族（EXP-01~06）标准输入；设计=docs/_working/2026-09-12-expectation-consumption-design.md。
+#   预期因子族（EXP-01~06）标准输入；设计=docs/01_policies_and_standards/policies/expectation_consumption_design_policy.md。
 
 # v1.7.0 changelog(2026-09-12): 研报数据侧施工——+DS-228 c3_fundamental.research_report（券商研报
 #   明细全字段：机构/东财评级/预测期0-2 EPS+PE/PDF直链，report_id=infoCode；14.7 万行历史 backfill
@@ -9701,19 +9701,25 @@ datasets:
     research_report_detail_incremental｜时段 research_nightly 20:30 工作日）；CH 实况 146,633
     行（覆盖 4,695 只，2026-09-12 探针实测）；历史回补 scripts/ch/backfill_research_report_full.py
     2026-09-12 完成（exit 0）；每行=一份研报（机构/东财评级/行业/发布日期/预测期0-2 EPS+PE/PDF直链，
-    report_id=infoCode 自 PDF 链接提取）；一致预期自聚合原料（按 publish_date 聚合=PIT 正确，
-    对标朝阳永续原理免付费）；DDL 真源=schemas/categories/fundamental/fundamental_research_report.py
+    report_id=infoCode 自 PDF 链接提取）；一致预期自聚合原料（按 publish_date 聚合锚=PIT 正确；
+    原表述"对标朝阳永续"不成立，见下条限制）；DDL 真源=schemas/categories/fundamental/fundamental_research_report.py
     （ReplacingMergeTree(ingest_ts)，ORDER BY (symbol,publish_date,report_id)；apply=
-    scripts/ch/apply_research_report_ddl.py）；施工方案=docs/_working/2026-09-12-research-report-data-plan.md
+    scripts/ch/apply_research_report_ddl.py）；施工方案=docs/_working/2026-09-12-research-report-data-plan.md｜
+    ⚠PIT 价值限制（Owner 裁 A 2026-09-14，档案=expectation-consumption-design.md §9）：
+    fy0/fy1/fy2 预测槽位=源站页面当前快照语义（infoCode AP201807161166783168 2018 年报告携带
+    2026 槽位+当前值 69.83；2020 前 47,610 份中 40,176 份槽位年=2026，uniq(eps_fy0)=487）——
+    **2026-09 前入库行的 EPS/PE 预测值禁用于历史回测**；publish_date/机构/评级/覆盖计数真实
+    （关注度/覆盖类消费不受影响）；前向增量不重抓旧报告→新行值≈发布时值；修复候选=C4 PDF
+    原文提取+analyst_forecast 双源
   valid_since: "2017-01-02"
   module_id: MOD-L00-004
   design_maturity: production
   name: c3_fundamental.research_report
   name_zh: 券商研报明细（全字段含盈利预测）
   status: active
-  version: 1.0.0
+  version: 1.1.0
   created_at: "2026-09-12"
-  updated_at: "2026-09-12"
+  updated_at: "2026-09-14"
   owner: MOD-L00-004
   produced_by_source: SRC-AKSHARE-001
   survivorship_free: true
@@ -9780,16 +9786,20 @@ datasets:
     last_report_date + window_days（默认 90 自然日）｜PIT 铁律=只聚合 publish_date<=trade_date
     （零 embargo），无覆盖不成行禁前向填充｜聚合源=DS-228 研报明细（14.7 万行）｜用途=华泰一致
     预期因子族（EXP-01~06）标准输入｜DDL 真源=schemas/categories/fundamental/consensus_daily.py；
-    设计=docs/_working/2026-09-12-expectation-consumption-design.md §M1
+    设计=docs/01_policies_and_standards/policies/expectation_consumption_design_policy.md §M1｜
+    ⚠PIT 价值限制（Owner 裁 A 2026-09-14，档案=同文档 §9）：聚合锚结构正确，但源值（DS-228
+    预测槽位）=源站当前快照——**2026-09 前历史快照行=今天的预期回放，禁回测消费**
+    （EXP-FACTOR-EVAL-001 已判 data-gap）；EXP-04 关注度/覆盖计数不受影响；2026-09 起前向
+    积累 PIT 干净+analyst_forecast 同花顺快照（2026-07 起）双源过渡，干净回测窗预估 2027-07
   valid_since: "2017-01-02"
   module_id: MOD-L00-004
   design_maturity: production
   name: c3_fundamental.consensus_daily
   name_zh: 一致预期每日快照（预期因子族地基）
   status: active
-  version: 1.0.0
+  version: 1.1.0
   created_at: "2026-09-12"
-  updated_at: "2026-09-12"
+  updated_at: "2026-09-14"
   owner: MOD-L00-004
   produced_by_source: SRC-INTERNAL-001
   survivorship_free: true
@@ -9805,7 +9815,7 @@ datasets:
   algorithm_status: "not_applicable"
   evidence: "2026-09-12 构建器纯函数核 7 单测全绿（PIT 窗口/日历年展开/评级映射/多机构聚合）；
     --check 模式=SQL 现算 vs 表内值交叉验证（茅台逐年 eps/n_reports 比对）；全量构建实况见 evidence 回填"
-  code_symbol: "scripts/ch/build_consensus_daily.py::build_consensus_rows"
+  code_symbol: "src/zephyr/data/implementations/consensus_daily_compute.py::build_consensus_rows"
   code_fingerprint:
 
 # 2026-09-12 另类数据第 1 批免注册直连（alt-data-handoff §8-1）：千股千评快照 + 航运运价长表
@@ -12894,7 +12904,7 @@ jobs:
   algorithm_status: "not_applicable"
   evidence: "2026-09-12 建表+构建同日闭环：DDL apply --verify exit 0；纯函数核 7 单测全绿
     （pytest tests/scripts/test_build_consensus_daily.py）；全量构建+--check 交叉验证实况见 DS-229 evidence"
-  code_symbol: "scripts/ch/build_consensus_daily.py::build_consensus_rows"
+  code_symbol: "src/zephyr/data/implementations/consensus_daily_compute.py::build_consensus_rows"
   code_fingerprint:
 
 # 2026-09-12 另类数据第 1 批免注册直连：千股千评快照 + 航运运价增量/全量（alt-data-handoff §8-1）

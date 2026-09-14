@@ -189,10 +189,12 @@ _SQL_LATEST = (
     "ORDER BY {period_col} DESC, {anchor_col} DESC LIMIT 1"
 )
 _SQL_SURVIVORSHIP = (
-    "SELECT symbol FROM {tbl}{final} "
+    "SELECT {columns} FROM {tbl}{final} "
     "WHERE (valid_from IS NULL OR valid_from <= toDate('{qt}')) "
     "AND (valid_to IS NULL OR valid_to = toDate('1900-01-01') OR valid_to > toDate('{qt}'))"
 )
+# 全窗口注册表（无时点 WHERE，P0-3 listing_registry 专用）：证据制判定在调用方内存做
+_SQL_LISTING_REGISTRY = "SELECT symbol, valid_from, valid_to FROM {tbl}"
 
 # 财务报表 PIT 表注册表：logical_name -> (category_id, period_col)
 # period_col=None 表示该表无报告期列（如 repurchase 每次 announce 即独立事件，不做版本去重）
@@ -208,6 +210,9 @@ _FINANCIAL_PIT_TABLES: dict[str, tuple[str, str | None]] = {
     "repurchase": ("fund_repurchase", None),
     # 研报明细（2026-09-12 消费端 C1 扩表）：事件流表（每次发布即独立事件，无报告期版本去重，
     # 照 repurchase 模式 period_col=None）；时间锚=publish_date（见 _PIT_ANCHOR_COL_OVERRIDES）
+    # ⚠PIT 价值限制（Owner 裁 A 2026-09-14，档案=docs/01_policies_and_standards/policies/expectation_consumption_design_policy.md §9）：
+    #   fy0/fy1/fy2 预测值槽位（eps_fy*/pe_fy*）=东财源站当前快照语义，历史行值≠发布时点值——
+    #   禁止对本表预测值列做 as-of 历史消费；publish_date/机构/评级/计数列真实可用
     "research_report": ("fund_research_report", None),
     # 财报派生层（F1-M1/DS-230 2026-09-13）：statement 粒度宽表（单季/TTM/比率），
     # 行公告日=对齐事件时点（三方公告日并集），sort key 含 announce_date 与源表同构
@@ -381,6 +386,17 @@ def tsv_to_dataframe(tsv: str, columns: list[str] | None = None):
     return pd.DataFrame(records)
 
 
+def _parse_ch_date(v: str | None) -> date | None:
+    """CH 日期单元格 → date（''/'\\N'/'0000-00-00'/非法 → None）。"""
+    s = str(v or "").strip()
+    if not s or s == "\\N" or s.startswith("0000"):
+        return None
+    try:
+        return date.fromisoformat(s[:10])
+    except ValueError:
+        return None
+
+
 class FinancialPITQuery:
     """财报 Point-In-Time 查询器（#ARCH-CH-021 P0-5）。
 
@@ -543,11 +559,39 @@ class FinancialPITQuery:
             标的代码列表
         """
         qt = _fmt_query_time(query_time)
-        sql = _SQL_SURVIVORSHIP.format(tbl=_TBL_STOCK_LIST, final="", qt=qt)
+        sql = _SQL_SURVIVORSHIP.format(tbl=_TBL_STOCK_LIST, final="", qt=qt, columns="symbol")
         tsv = ch_reader.query(sql)
         if not tsv or not tsv.strip():
             return []
         return [line.strip() for line in tsv.strip().split("\n") if line.strip()]
+
+    def listing_registry(self) -> dict[str, list[dict]]:
+        """stock_list 全量上市/退市窗口注册表（P0-3 引擎接入腿，2026-09-14）。
+
+        与 survivorship_universe 同表同字段语义，但不做时点 WHERE——返回每个
+        标的的的全部 SCD-2 窗口（valid_from/valid_to），由调用方（回测侧
+        PitUniverseProvider）按回测日内存判定。证据制语义：注册表查一次、
+        多窗口在市判定、"无行=无证据不裁决"，抗注册表历史部分覆盖。
+
+        Returns:
+            {symbol: [{"valid_from": date|None, "valid_to": date|None}, ...]}
+            （valid_to='1900-01-01' 哨兵已归一为 None=未退市）
+
+        Raises:
+            PITQueryError: 不抛（ch_reader 失败返回空串 → 空表，调用方降级）
+        """
+        sql = _SQL_LISTING_REGISTRY.format(tbl=_TBL_STOCK_LIST)
+        tsv = ch_reader.query(sql)
+        out: dict[str, list[dict]] = {}
+        for rec in tsv_to_records(tsv, ["symbol", "valid_from", "valid_to"]):
+            vt = _parse_ch_date(rec.get("valid_to"))
+            out.setdefault(str(rec.get("symbol", "")), []).append(
+                {
+                    "valid_from": _parse_ch_date(rec.get("valid_from")),
+                    "valid_to": None if (vt is None or vt == date(1900, 1, 1)) else vt,
+                }
+            )
+        return out
 
     # ------------------------------------------------------------------
     # SQL 构建（纯函数，便于单测）

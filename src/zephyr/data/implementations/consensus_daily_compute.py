@@ -23,7 +23,7 @@
 
 把 c3_fundamental.research_report（研报事件流）聚合为 c3_fundamental.consensus_daily
 （每股每日×预测目标日历年的一致预期矩阵）——华泰金工一致预期因子族（EXP-01~06）的标准输入。
-设计真源：docs/_working/2026-09-12-expectation-consumption-design.md §M1。
+设计真源：docs/01_policies_and_standards/policies/expectation_consumption_design_policy.md §M1。
 
 PIT 语义（本模块的灵魂）：
     只聚合 publish_date <= trade_date 的研报（publish_date 即可得=零 embargo），

@@ -12393,7 +12393,7 @@ factors:
   neutralization: "none"
   pit_policy: "publish_date(研报发布即得零embargo，consensus_daily 只聚合 publish_date<=trade_date)"
   module_id: "MOD-L02-001"
-  doc_ref: "docs/_working/2026-09-12-expectation-consumption-design.md §M2+§8预注册"
+  doc_ref: "docs/01_policies_and_standards/policies/expectation_consumption_design_policy.md §M2+§8预注册"
   code_path: "src/zephyr/factor/expectations.py"
   belongs_to_strategies: []
   variant_of: null
@@ -12432,7 +12432,7 @@ factors:
   neutralization: "none"
   pit_policy: "publish_date（t 与 t-20td 两个快照日均只含各自时点可见研报，consensus_daily 结构性保证）"
   module_id: "MOD-L02-001"
-  doc_ref: "docs/_working/2026-09-12-expectation-consumption-design.md §M2+§8预注册"
+  doc_ref: "docs/01_policies_and_standards/policies/expectation_consumption_design_policy.md §M2+§8预注册"
   code_path: "src/zephyr/factor/expectations.py"
   belongs_to_strategies: []
   variant_of: null
@@ -12471,7 +12471,7 @@ factors:
   neutralization: "none"
   pit_policy: "publish_date（窗口右端=trade_date 严格截断）"
   module_id: "MOD-L02-001"
-  doc_ref: "docs/_working/2026-09-12-expectation-consumption-design.md §M2+§8预注册"
+  doc_ref: "docs/01_policies_and_standards/policies/expectation_consumption_design_policy.md §M2+§8预注册"
   code_path: "src/zephyr/factor/expectations.py"
   belongs_to_strategies: []
   variant_of: null
@@ -12510,7 +12510,7 @@ factors:
   neutralization: "residual(市值+动量+换手回归)"
   pit_policy: "publish_date"
   module_id: "MOD-L02-001"
-  doc_ref: "docs/_working/2026-09-12-expectation-consumption-design.md §M2+§8预注册"
+  doc_ref: "docs/01_policies_and_standards/policies/expectation_consumption_design_policy.md §M2+§8预注册"
   code_path: "src/zephyr/factor/expectations.py"
   belongs_to_strategies: []
   variant_of: null
@@ -12549,7 +12549,7 @@ factors:
   neutralization: "none"
   pit_policy: "publish_date"
   module_id: "MOD-L02-001"
-  doc_ref: "docs/_working/2026-09-12-expectation-consumption-design.md §M2+§8预注册"
+  doc_ref: "docs/01_policies_and_standards/policies/expectation_consumption_design_policy.md §M2+§8预注册"
   code_path: "src/zephyr/factor/expectations.py"
   belongs_to_strategies: []
   variant_of: null
@@ -12588,7 +12588,7 @@ factors:
   neutralization: "none"
   pit_policy: "publish_date"
   module_id: "MOD-L02-001"
-  doc_ref: "docs/_working/2026-09-12-expectation-consumption-design.md §M2+§8预注册"
+  doc_ref: "docs/01_policies_and_standards/policies/expectation_consumption_design_policy.md §M2+§8预注册"
   code_path: "src/zephyr/factor/expectations.py"
   belongs_to_strategies: []
   variant_of: null

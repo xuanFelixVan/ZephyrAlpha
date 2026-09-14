@@ -24,7 +24,7 @@
 c3_fundamental.consensus_daily（每股每日×预测目标日历年的一致预期矩阵）——
 华泰金工一致预期因子族（EXP-01~06）的标准输入。
 计算核真源=zephyr.data.implementations.consensus_daily_compute（本壳仅 CLI 转发）。
-设计真源：docs/_working/2026-09-12-expectation-consumption-design.md §M1。
+设计真源：docs/01_policies_and_standards/policies/expectation_consumption_design_policy.md §M1。
 
 用法::
 

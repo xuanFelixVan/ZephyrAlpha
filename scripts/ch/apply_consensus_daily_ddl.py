@@ -17,7 +17,7 @@
 """consensus_daily 建表 DDL 部署 + 验证脚本（消费端 C1，2026-09-12）。
 
 DDL 真源：schemas/categories/fundamental/consensus_daily.py（DDL-as-Code）。
-设计真源：docs/_working/2026-09-12-expectation-consumption-design.md §M1。
+设计真源：docs/01_policies_and_standards/policies/expectation_consumption_design_policy.md §M1。
 裁定沿用：DDL 用 base 账号执行（writer 无 CREATE 权限，#ARCH-CH-027）。
 
 用法::
@@ -44,13 +44,9 @@ from zephyr.data import ch_reader  # noqa: E402
 def apply() -> int:
     """DDL 用 base 账号执行（writer 账号无 CREATE 权限，#ARCH-CH-027 RBAC 三账号体系）。"""
     try:
-        from clickhouse_driver import Client
+        from zephyr.infrastructure.database_service import get_db_service
 
-        from zephyr.data.ch_config import load_ch_config
-
-        cfg = load_ch_config()
-        c = Client(host=cfg["host"], port=int(cfg.get("port", 9000)), user=cfg["user"],
-                   password=cfg.get("password", ""), connect_timeout=5)
+        c = get_db_service().get_clickhouse_conn(role="admin")
         c.execute(CONSENSUS_DAILY_DDL)
         print(f"OK: {TABLE_NAME} DDL executed (IF NOT EXISTS, 幂等)")
     except Exception as exc:  # noqa: BLE001

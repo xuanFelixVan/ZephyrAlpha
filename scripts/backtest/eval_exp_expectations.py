@@ -9,10 +9,11 @@
 # [INVARIANTS] PIT as-of：因子输入=consensus_daily（publish_date<=trade_date 结构性保证，DS-229）；
 #              前向收益=close t→t+20 交易日（标签，检验允许）；IC=月末截面 Spearman；
 #              晋级门槛（预注册禁挪，registry 头 2026-09-12 成文）：IS 2019-2023 |IC|>=0.02 且 t p<0.05 且覆盖>=60%；
-#              ⑥ 准入线=IS 超额 Sharpe>=0.5 且 OOS/IS>=0.7（FQ 同款）；滑点压力=cfg(1bp)+{20,40,80}bp（§8.1 协议，
+#              ⑥ 准入线=IS 超额 Sharpe>=0.5 且 OOS/IS>=0.7（FQ 同款）；滑点压力=cfg+{20,40,80}bp（§8.1 协议，
 #              仅 cfg 档达标→cost-fragile 降级）；can_deploy 与 P0-003 解耦（裁定 2026-09-14）；
 #              参数网格预注册（§8.2：k_td∈{20,60}×fy1）禁越界；动量相关性对照>=0.85 → variant_of/否决；
-#              稠密日历重索引后逐标的调用 expectations 函数（k 期=交易日语义，非观测行数）
+#              稠密日历重索引后逐标的调用 expectations 函数（k 期=交易日语义，非观测行数）；
+#              SQL 集中化=模块级常量区（NO-BARE-SQL），查询语义与预注册判据一并固化
 # [MODIFY-GUARD] none
 # [STABILITY] evolving
 # [SAFETY] L
@@ -29,7 +30,8 @@
 ⑤ 五分位单调+分状态条件 IC（regime_state_anchored，上游 valid）+动量相关性对照；
 ⑥ Top50 等权月频多头（成本五项读 MatchingConfig #233 零硬编码，超额对 000300）
 +滑点压力四档（cfg/20/40/80bp）。
-预注册真源=docs/_working/2026-09-12-expectation-consumption-design.md §8（跑前冻结禁挪）。
+预注册真源=docs/01_policies_and_standards/policies/expectation_consumption_design_policy.md
+（§8 预注册/§9 数据缺口档案，跑前冻结禁挪）。
 
 用法::
 
@@ -62,6 +64,26 @@ _MIN_NAMES = 100
 _PANEL_START = "2018-06-01"     # k=60 回看缓冲
 _AUM = 1_000_000.0              # 组合名义额（最小佣金分摊基数；FQ 同款量级）
 
+# —— SQL 常量区（NO-BARE-SQL 集中化；查询口径与 §8 预注册判据一并固化）——
+_SQL_CONSENSUS_MONTH = (
+    "SELECT symbol, trade_date, forecast_year, eps_consensus, eps_std "
+    "FROM c3_fundamental.consensus_daily FINAL "
+    "WHERE trade_date >= toDate('{y}-{m:02d}-01') "
+    "AND trade_date <= toDate('{y}-{m:02d}-{last_day:02d}') FORMAT TSV")
+_SQL_CALENDAR = (
+    "SELECT DISTINCT cal_date FROM c1_market.trade_calendar FINAL "
+    "WHERE exchange='SSE' AND is_open=1 AND cal_date >= toDate('2018-06-01') "
+    "ORDER BY cal_date FORMAT TSV")
+_SQL_PRICES_DATES = (
+    "SELECT trade_date, symbol, toFloat64(close) AS close FROM c1_market.kline_daily "
+    "WHERE trade_date IN ({quoted}) FORMAT TSV")
+_SQL_BENCH = (
+    "SELECT trade_date, toFloat64(close) AS close FROM c1_market.kline_index "
+    "WHERE symbol='000300' AND trade_date >= toDate('" + _PANEL_START + "') "
+    "ORDER BY trade_date FORMAT TSV")
+_SQL_REGIME = (
+    "SELECT trade_date, dominant FROM c1_backtest.regime_state_anchored FINAL FORMAT TSV")
+
 
 def load_consensus_fy1() -> pd.DataFrame:
     """consensus_daily → fy1 快照长表（每股每日一行：>=当年最小预测年）。
@@ -78,10 +100,7 @@ def load_consensus_fy1() -> pd.DataFrame:
         y, m = ym
         last_day = [31, 29 if y % 4 == 0 and (y % 100 != 0 or y % 400 == 0) else 28,
                     31, 30, 31, 30, 31, 31, 30, 31, 30, 31][m - 1]
-        q = ("SELECT symbol, trade_date, forecast_year, eps_consensus, eps_std "
-             "FROM c3_fundamental.consensus_daily FINAL "
-             f"WHERE trade_date >= toDate('{y}-{m:02d}-01') "
-             f"AND trade_date <= toDate('{y}-{m:02d}-{last_day:02d}') FORMAT TSV")
+        q = _SQL_CONSENSUS_MONTH.format(y=y, m=m, last_day=last_day)
         tsv = ch_reader.query(q, timeout=300)
         if tsv and tsv.strip():
             rows = [ln.split("\t") for ln in tsv.strip().split("\n")]
@@ -104,23 +123,18 @@ def load_calendar() -> list[str]:
     """交易日历（SSE，>=2018-06-01）。"""
     from zephyr.data import ch_reader
 
-    return [ln.strip()[:10] for ln in ch_reader.query(
-        "SELECT DISTINCT cal_date FROM c1_market.trade_calendar FINAL "
-        "WHERE exchange='SSE' AND is_open=1 AND cal_date >= toDate('2018-06-01') "
-        "ORDER BY cal_date FORMAT TSV").strip().split("\n")]
+    return [ln.strip()[:10] for ln in ch_reader.query(_SQL_CALENDAR).strip().split("\n")]
 
 
 def load_prices(needed_dates: list[str]) -> pd.DataFrame:
-    """需要日期的全A收盘（FQ 同款日期白名单配方，避开 CH 结果集限额；日期分块防 URL 超长）。"""
+    """需要日期的全A收盘（FQ 同款日期白名单配方，避开结果集限额；日期分块防 URL 超长）。"""
     from zephyr.data import ch_reader
 
     frames = []
     for i in range(0, len(needed_dates), 50):
         chunk = needed_dates[i:i + 50]
         quoted = ",".join(f"'{d}'" for d in chunk)
-        tsv = ch_reader.query(
-            "SELECT trade_date, symbol, toFloat64(close) AS close FROM c1_market.kline_daily "
-            f"WHERE trade_date IN ({quoted}) FORMAT TSV", timeout=300)
+        tsv = ch_reader.query(_SQL_PRICES_DATES.format(quoted=quoted), timeout=300)
         if tsv and tsv.strip():
             rows = [ln.split("\t") for ln in tsv.strip().split("\n")]
             frames.append(pd.DataFrame(rows, columns=["td", "symbol", "close"]))
@@ -136,10 +150,7 @@ def load_bench() -> pd.Series:
     """000300 收盘（超额基准）。"""
     from zephyr.data import ch_reader
 
-    bench_tsv = ch_reader.query(
-        "SELECT trade_date, toFloat64(close) AS close FROM c1_market.kline_index "
-        "WHERE symbol='000300' AND trade_date >= toDate('" + _PANEL_START + "') "
-        "ORDER BY trade_date FORMAT TSV")
+    bench_tsv = ch_reader.query(_SQL_BENCH)
     b = [ln.split("\t") for ln in bench_tsv.strip().split("\n")]
     return pd.Series({pd.Timestamp(r[0]): float(r[1]) for r in b}).sort_index()
 
@@ -208,8 +219,7 @@ def _prune_material(fac_wide: pd.DataFrame, px_close: pd.DataFrame,
     from zephyr.data import ch_reader
 
     try:
-        reg = ch_reader.query(
-            "SELECT trade_date, dominant FROM c1_backtest.regime_state_anchored FINAL FORMAT TSV")
+        reg = ch_reader.query(_SQL_REGIME)
         reg_map = {ln.split("\t")[0][:10]: ln.split("\t")[1]
                    for ln in reg.strip().split("\n") if ln.strip()}
     except Exception:  # noqa: BLE001 — 上游态缺失不阻断主线 IC 出证
@@ -287,8 +297,7 @@ def _narrow(fac_wide: pd.DataFrame, px_close: pd.DataFrame, bench: pd.Series,
             cost = (n_sell / max(len(cur), 1) * (comm_ratio + sell_extra + one_side)
                     + n_buy / max(len(cur), 1) * (comm_ratio + one_side))
             prev = cur
-            net = gross - cost
-            rets[t] = net - bench_ret.get(t, 0.0)
+            rets[t] = gross - cost - bench_ret.get(t, 0.0)
 
         s = pd.Series(rets).sort_index()
 
