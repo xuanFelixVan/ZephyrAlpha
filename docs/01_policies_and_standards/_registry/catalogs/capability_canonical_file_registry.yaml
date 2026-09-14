@@ -12816,8 +12816,20 @@ creation_tokens:
   token: btfix-p1p2-btfix-p1p2-report-20260914
   created_by: st-btfix-p14-20260914
   capability: btfix_p1p2
-- file: docs/_working/sim_bridge_checklist.md
+- file: docs/_working/reports/sim_bridge_checklist.md
   token: btfix-p1p2-sim-bridge-checklist-20260914
+  created_by: st-btfix-p14-20260914
+  capability: btfix_p1p2
+- file: docs/03_modules/_domain_backtest/algo_flow/event_driven_engine.yaml
+  token: btfix-p1p2-event-driven-engine-20260914
+  created_by: st-btfix-p14-20260914
+  capability: btfix_p1p2
+- file: scripts/governance/d7_code/compare_pytest_configs.py
+  token: btfix-p1p2-compare-pytest-configs-20260914
+  created_by: st-btfix-p14-20260914
+  capability: btfix_p1p2
+- file: docs/_working/reports/btfix_followup_p1p2_report.md
+  token: btfix-p1p2-btfix-followup-p1p2-report-20260914
   created_by: st-btfix-p14-20260914
   capability: btfix_p1p2
 - file: "docs/_working/2026-09-14-full-chain-factory-blueprint.md"

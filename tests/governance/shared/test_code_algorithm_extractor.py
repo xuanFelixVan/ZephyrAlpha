@@ -365,4 +365,85 @@ def test_build_blueprint_index_cached(tmp_path, monkeypatch):
     idx2 = build_blueprint_index()  # 不传 root，用缓存
     assert "MOD-CACHE-2" not in idx2, "缓存应未感知新增 blueprint"
 
+
+# ── ALGO_FLOW 外部真源（2026-09-15 外审遗留①：P2-1 出仓实施）─────────────────
+
+
+def test_external_algo_flow_anchor_loaded(tmp_path, monkeypatch):
+    """docstring 一行 external 锚 → extractor 从 yaml 加载块，parse_algo_flow 同管线出图。"""
+    import _shared.code_algorithm_extractor as ext
+
+    monkeypatch.setattr(ext, "REPO_ROOT", tmp_path)
+    yaml_rel = "docs/03_modules/_domain_test/algo_flow/test_mod.yaml"
+    ydir = tmp_path / "docs" / "03_modules" / "_domain_test" / "algo_flow"
+    ydir.mkdir(parents=True)
+    block = """# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: 输入参数
+# 层: 算法
+# - id: A1
+#   name_zh: 处理器
+#   name_en: Processor
+# 层: 输出
+# - id: O1
+#   name_zh: 返回值
+#
+# 边:
+# I1 --> A1
+# A1 --> O1
+# [/ALGO_FLOW]
+"""
+    (ydir / "test_mod.yaml").write_text(
+        "algo_flow: |\n"
+        + "\n".join(("    " + ln) if ln.strip() else "" for ln in block.rstrip("\n").splitlines())
+        + "\n",
+        encoding="utf-8",
+    )
+
+    mod = tmp_path / "test_mod.py"
+    mod_src = '"""TestExtMod — 外部锚行测试模块。\n\n概述：验证 external 锚行加载。\n\n# [ALGO_FLOW] external: ' + yaml_rel + '\n"""\n\nX = 1\n'
+    mod.write_text(mod_src, encoding="utf-8")
+    s = ext.extract_algorithm_from_code(mod, module_id="MOD-TEST-EXT", truncate=False)
+    assert s.source_type == "code"
+    assert s.algo_flow is not None, "外部块应被加载并解析出推导图"
+    node_ids = [n.id for n in s.algo_flow.nodes]
+    assert "I1" in node_ids and "A1" in node_ids and "O1" in node_ids
+    assert [(e.src, e.dst) for e in s.algo_flow.edges] == [("I1", "A1"), ("A1", "O1")]
+    # 锚行不泄漏进文字字段
+    assert "ALGO_FLOW" not in (s.summary or "") and "ALGO_FLOW" not in (s.algo_steps or "")
+
+
+def test_external_algo_flow_missing_yaml_degrades(tmp_path, monkeypatch):
+    """锚行指向的 yaml 不存在 → 降级 algo_flow=None（回退文字卡片），不抛异常。"""
+    import _shared.code_algorithm_extractor as ext
+
+    monkeypatch.setattr(ext, "REPO_ROOT", tmp_path)
+    mod = tmp_path / "test_mod_missing.py"
+    mod.write_text(
+        '"""TestExtMissing — 外部锚行缺失测试。\n\n概述：yaml 缺失时降级。\n\n# [ALGO_FLOW] external: docs/03_modules/_domain_test/algo_flow/ghost.yaml\n"""\n\nX = 1\n',
+        encoding="utf-8",
+    )
+    s = ext.extract_algorithm_from_code(mod, module_id="MOD-TEST-EXT2", truncate=False)
+    assert s.source_type == "code"
+    assert s.algo_flow is None
+
+
+def test_external_algo_flow_path_escape_rejected(tmp_path, monkeypatch):
+    """安全护栏：锚路径非 docs/ 前缀或非 .yaml → 拒绝加载（路径逃逸防护）。"""
+    import _shared.code_algorithm_extractor as ext
+
+    monkeypatch.setattr(ext, "REPO_ROOT", tmp_path)
+    # 非法前缀：src/（即使文件存在也不得加载）
+    evil_dir = tmp_path / "src"
+    evil_dir.mkdir()
+    (evil_dir / "evil.yaml").write_text("algo_flow: |\n    # [ALGO_FLOW]\n    # 层: 输入\n    # - id: I1\n", encoding="utf-8")
+    mod = tmp_path / "test_evil.py"
+    mod.write_text(
+        '"""TestEvil — 路径逃逸测试。\n\n# [ALGO_FLOW] external: src/evil.yaml\n"""\n\nX = 1\n',
+        encoding="utf-8",
+    )
+    s = ext.extract_algorithm_from_code(mod, module_id="MOD-TEST-EVIL", truncate=False)
+    assert s.algo_flow is None, "非 docs/ 前缀的外部块必须拒绝"
+
     clear_blueprint_cache()

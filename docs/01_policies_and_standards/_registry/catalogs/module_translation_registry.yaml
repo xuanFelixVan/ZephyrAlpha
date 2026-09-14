@@ -49441,6 +49441,20 @@ entries:
   desc_zh: "E2过审假说做种子，本地LLM产DSL表达式，DSL校验+AST原创+增量IC三道验收后卸台账"
   desc_en: ""
   plain_zh: "策略工厂的二号矿机（智能体轨）：拿守门员放过的好假说当种子，让本地大模型按'积木清单'写因子公式；每条公式过三道安检（结构合法、不跟已有公式撞车、对现有118个指标有真增量）才入账。大模型写的机制说不清就一票否决。零 API 成本。"
+- module_path: scripts/governance/d7_code/compare_pytest_configs.py
+  domain_id: D_GOV_SCRIPTS
+  name_zh: "pytest双配置漂移看守"
+  name_en: "compare_pytest_configs"
+  desc_zh: "比较 pyproject.toml 与 .runtime/tmp/pytest_min.ini 两套 pytest 配置的语义漂移：markers 注册集合相等、timeout 继承、ini 禁 cache_dir（-p no:cacheprovider 组合会 INTERNALERROR）。pre-commit 挂点 gate-pytest-config-drift。"
+  desc_en: ""
+  plain_zh: "项目里同一批测试有两套 pytest 配置（全量版和精简版），改了其中一个忘了另一个，就会出现'换个跑法结果不一样'的假故障。这个小工具在提交时自动对比两份配置的三处关键项：测试标记注册是否一致、超时兜底是否同步、精简版里是否误写了会炸的缓存参数，发现不对齐就拦下提醒同步。"
+- module_path: src/zephyr/signal_ashare/strategy_signal/pattern_lifecycle.py
+  domain_id: D_ASHARE_SIGNAL
+  name_zh: "形态生命周期复活观察"
+  name_en: ""
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "管形态生老病死的台账员：一个形态连续20天成绩不达标就盖'退役'章并记下死亡时的样子，之后它的每一分新数据都偷偷记着账——哪天死后新证据足够好(通过比初赛更严的复活考试)就自动把章揭掉让它重新上岗；反复抢救两次还不行就冻结封存，只有老板亲自才能解冻"
 
 battle_map_steps:
 - step_id: BM-BUY-05

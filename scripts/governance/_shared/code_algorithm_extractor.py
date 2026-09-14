@@ -60,6 +60,17 @@ from frontmatter import parse_frontmatter_from_file, parse_py_header_from_file  
 # 仓库根：含 scripts/ 和 src/ 的目录
 REPO_ROOT = next(p for p in _THIS_FILE.parents if (p / "scripts").is_dir() and (p / "src").is_dir())
 
+# ── ALGO_FLOW 外部真源（2026-09-15 外审遗留①：P2-1 契约头减负实施）───────────
+# docstring 内驻留的 # [ALGO_FLOW] 机器块（均值 ~60 行/模块，AST 可再生）迁移到
+# docs/03_modules/<domain>/algo_flow/<module>.yaml，docstring 只留一行锚：
+#   # [ALGO_FLOW] external: docs/03_modules/.../algo_flow/<module>.yaml
+# 本函数解析锚行 → 加载外部 yaml 的 algo_flow 块原文 → 走同一 parse_algo_flow 管线，
+# 解析器/生成器/渲染零改动。安全护栏：锚路径必须在 docs/ 下 + .yaml 后缀（防路径逃逸）；
+# 加载失败降级返回 None（生成器回退文字卡片，不抛异常）。
+_ALGO_FLOW_EXTERNAL_RE = re.compile(
+    r"^#\s*\[ALGO_FLOW\]\s+external:\s*(\S+)\s*$", re.MULTILINE
+)
+
 # 截断上限（防止纵览爆炸；域文档可放宽）
 MAX_SUMMARY = 300
 MAX_ALGO_STEPS = 500
@@ -286,6 +297,60 @@ def _summary_from_docstring(docstring: str) -> str:
     return " ".join(first_para) if first_para else ""
 
 
+def _load_external_algo_flow(docstring: str) -> str | None:
+    """解析 docstring 中的 ``# [ALGO_FLOW] external: <path>`` 锚行，加载外部块原文。
+
+    返回值语义与内联块兼容：返回带 ``# [ALGO_FLOW]``...``# [/ALGO_FLOW]`` 的完整
+    块文本（含边段），可直接喂 parse_algo_flow；无锚/加载失败返回 None。
+
+    外部 yaml 格式（S4 同款派生真源）：
+        algo_flow: |
+          # [ALGO_FLOW]
+          # 层: 输入
+          # ...
+          # [/ALGO_FLOW]
+          #
+          # 边:
+          # I1 --> A1
+
+    安全护栏：锚路径必须 docs/ 前缀 + .yaml 后缀；路径逃逸/读取异常/键缺失 → None
+    （降级不抛，与 extract_algorithm_from_code 的降级契约一致）。
+    """
+    m = _ALGO_FLOW_EXTERNAL_RE.search(docstring or "")
+    if not m:
+        return None
+    rel = m.group(1).replace("\\", "/")
+    if not rel.startswith("docs/") or not rel.endswith(".yaml"):
+        return None
+    p = REPO_ROOT / rel
+    try:
+        if not p.is_file():
+            return None
+        import yaml  # noqa: PLC0415
+
+        data = yaml.safe_load(p.read_text(encoding="utf-8"))
+    except Exception:  # noqa: BLE001 — 外部真源加载失败降级，不抛
+        return None
+    if not isinstance(data, dict):
+        return None
+    block = data.get("algo_flow")
+    if not isinstance(block, str) or _ALGO_FLOW_START not in block:
+        return None
+    return block
+
+
+def _has_inline_algo_flow(docstring: str) -> bool:
+    """判定 docstring 是否含真内联 ALGO_FLOW 块（external 锚行不算——锚行本身
+    含 ``# [ALGO_FLOW]`` 字面量，直接字符串包含会误判，2026-09-15 实测）。"""
+    for line in (docstring or "").splitlines():
+        s = line.strip()
+        if "[ALGO_FLOW]" in s and s.startswith("#"):
+            if _ALGO_FLOW_EXTERNAL_RE.match(line) or _ALGO_FLOW_EXTERNAL_RE.match(s):
+                continue
+            return True
+    return False
+
+
 def _strip_algo_flow_block(docstring: str) -> str:
     """剥离 docstring 里的 ALGO_FLOW 标记块，返回剩余人类可读文字。
 
@@ -297,13 +362,16 @@ def _strip_algo_flow_block(docstring: str) -> str:
     概述/算法步骤等文字字段不应含——整块剥离在截断之前，不会留下 ``# 边…``
     这种截断残行（残行在 Markdown blockquote 里会被渲染成 H1 大字）。
     """
-    if not docstring or _ALGO_FLOW_START not in docstring:
+    if not docstring or (_ALGO_FLOW_START not in docstring and _ALGO_FLOW_EXTERNAL_RE.search(docstring) is None):
         return docstring
     out: list[str] = []
     in_block = False
     block_done = False  # [/ALGO_FLOW] 已过，正处于其后的边定义段
     for line in docstring.splitlines():
         stripped = line.strip()
+        # external 锚行同样剥离（机器标记，不进概述文字）
+        if _ALGO_FLOW_EXTERNAL_RE.match(stripped) or _ALGO_FLOW_EXTERNAL_RE.match(line):
+            continue
         if in_block:
             if _ALGO_FLOW_END in stripped:
                 in_block = False
@@ -360,7 +428,11 @@ def extract_algorithm_from_code(
         # 推导图承载），概述/算法步骤/不变量等文字字段先整块剥离——否则标记行会泄漏进
         # 概述（整段 YAML 挤一行）或截断残留「# 边…」半行（blockquote 里渲染成 H1 大字）。
         text_doc = _strip_algo_flow_block(docstring)
-        had_algo_flow = text_doc != docstring
+        # 内联块与外部锚行二选一：内联优先（向后兼容存量 416 模块）；无内联时尝试外部锚
+        # （2026-09-15 P2-1 出仓：块驻留 docs/03_modules/<domain>/algo_flow/<module>.yaml）。
+        inline_block = _has_inline_algo_flow(docstring)
+        algo_flow_source = docstring if inline_block else (_load_external_algo_flow(docstring) or "")
+        had_algo_flow = text_doc != docstring or (not inline_block and _ALGO_FLOW_EXTERNAL_RE.search(docstring) is not None)
 
         # header [INVARIANTS] / [BLUEPRINT] / [MODULE]
         header = parse_py_header_from_file(actual_path) or {}
@@ -382,8 +454,9 @@ def extract_algorithm_from_code(
         rel_path = str(actual_path.relative_to(REPO_ROOT)).replace("\\", "/")
         line_range = f"L{start_line}-L{end_line}" if start_line else ""
 
-        # ALGO_FLOW 结构化推导流程（§4.16，运营态代码有标记时解析；无标记返回 None）
-        algo_flow_data = parse_algo_flow(docstring)
+        # ALGO_FLOW 结构化推导流程（§4.16，运营态代码有标记时解析；无标记返回 None）。
+        # 2026-09-15：来源可为 docstring 内联块或 external 锚行指向的 yaml 真源（同一解析管线）。
+        algo_flow_data = parse_algo_flow(algo_flow_source) if algo_flow_source else None
 
         # 有 ALGO_FLOW 推导图的模块算法信息完整（由图承载），不因文字字段为空误报 ⚠
         quality = "✅ 完整" if ((summary and algo_steps) or algo_flow_data is not None) else "⚠ docstring 结构不完整"

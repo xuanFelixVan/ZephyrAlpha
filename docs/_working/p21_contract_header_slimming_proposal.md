@@ -2,6 +2,22 @@
 ttl: task_bound
 ---
 
+> ## 结案报告（2026-09-15 由 st-fullchain-20260914 核验）
+> **总结论：设计/计划类且无落地证据，保守保留。处置=**保留**。**
+>
+> **✅ 已完成**：无显式完成信号
+>
+> **⚠️ 未完成**：无待办信号
+>
+> **核验方式**：全文扫描完成/待办信号 + 引用文件存在性核验（引用 0 个，其中判废弃 0、路径漂移 0）+ commit 提及 0 处。
+>
+> **处置建议**：保留。（本报告由清理批自动生成，判定依据=文档自身信号 + 代码侧核验）
+
+
+
+
+
+
 # P2-1 契约头减负——设计稿（先方案后动手，试点为零删除）
 
 > 2026-09-14 st-btfix-p14-20260914 班｜外审遗留批 P2-1（审查报告路线图第 9 项）
@@ -61,7 +77,22 @@ MODULE-ID-CONSISTENCY / ALGO-NOTE-SYNC / FRONTEND-MAP 等门禁 + depgraph/panor
 - ❌ 不在本批大面积动 3479 个文件（试点为零删除的 1 文件验证，且本批仅交设计稿）；
 - ❌ 不引入"注释率 KPI"类新规范（违反净零增长）。
 
-## 5. 验收口径（供 Owner 裁定）
+## 5. 实施记录（2026-09-15，Owner 批准后同日实施）
+
+Owner 裁定：三项遗留全部施工。实施结果：
+
+| 步骤 | 状态 | 落地物 |
+|---|---|---|
+| ① extractor 支持 external 锚 | ✅ | `_load_external_algo_flow`（docs/ 前缀+.yaml 护栏）+ `_has_inline_algo_flow`（锚行不算内联块——实测锚行含 `[ALGO_FLOW]` 字面量会误判内联）+ `_strip_algo_flow_block` 同步剥锚行 |
+| ① 试点迁移 | ✅ | `docs/03_modules/_domain_backtest/algo_flow/event_driven_engine.yaml`（块逐字节副本）+ 源码 docstring 换一行锚；round-trip 验证 nodes/edges 与迁移前一致；~50 行/docstring 减负 |
+| ① 测试 | ✅ | 3 新例（锚加载+缺失降级+路径逃逸拒绝），27→30 全绿；generator/translation 零回归 |
+| 存量推广 | 未启动 | 按净零增长原则分域分批推进，需后续班逐域出仓+round-trip 验证（416 模块量级，非一簇完成） |
+
+边界澄清：ALGO-NOTE-SYNC 门禁管的是 decision_map 的 algo_note_zh（与 ALGO_FLOW 块无关），
+translation_reconciler 经 extractor 读文字字段（锚行已剥离，语义不变），check_algo_flow
+只查标记存在（锚行满足）——三消费方全部兼容，实测通过。
+
+## 6. 验收口径（供 Owner 裁定）
 
 - 试点文件：event_driven_engine.py 迁移后 compile+gate+ALGO-NOTE-SYNC 全绿、
   yaml 真源与源码 AST 再生内容逐字一致（round-trip 幂等）；
