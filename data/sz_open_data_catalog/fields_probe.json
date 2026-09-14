@@ -1,0 +1,406 @@
+{
+ "29200/00900329": {
+  "name": "预报预警_灾害性天气预警",
+  "group": "A",
+  "api": "https://opendata.sz.gov.cn/api/589826359/1/service.xhtml",
+  "fields": [
+   "AUTOSENTCOUNT",
+   "UNDERWRITER",
+   "SYNC_ROWNUM",
+   "CRTTIME",
+   "RECID",
+   "TNUMBER",
+   "ISSUECONTENT",
+   "SIGNALTYPE",
+   "TRACOUNT",
+   "ISSUETIME",
+   "DISTRICT",
+   "ISSUESTATE",
+   "AUTOSENTFLAG",
+   "TRACEFLAG",
+   "KEYID",
+   "SIGNALLEVEL"
+  ],
+  "sample": {
+   "AUTOSENTCOUNT": 0,
+   "UNDERWRITER": "",
+   "SYNC_ROWNUM": "AAAMxxAAQAACfHFAAN",
+   "CRTTIME": "2012-12-23 03:49:51",
+   "RECID": 19148,
+   "TNUMBER": 577,
+   "ISSUECONTENT": "【深圳市大风蓝色预警】受冷空气影响，预计未来6小时内我市将出现大风天气，平均风6级以上，沿海阵风8级以上，深圳市气象台于23日03时50分在东部和西部沿海发布大风蓝色预警，请注意安置室外物品。",
+   "SIGNALTYPE": "大风",
+   "TRACOUNT": 0,
+   "ISSUETIME": "2012-12-23 03:50:00",
+   "DISTRICT": "南山区、盐田区、大鹏新区、福永、西乡、沙井、新安",
+   "ISSUESTATE": "发布",
+   "AUTOSENTFLAG": 1,
+   "TRACEFLAG": 0,
+   "KEYID": 1921,
+   "SIGNALLEVEL": "蓝色"
+  }
+ },
+ "29200/00900289": {
+  "name": "预报预警_海洋气象",
+  "group": "A",
+  "api": "https://opendata.sz.gov.cn/api/1464350655/1/service.xhtml",
+  "fields": [
+   "WINDDIRECT",
+   "WINDSPEED",
+   "DDATETIME",
+   "MINRAIN",
+   "QIYA",
+   "MINIVISI",
+   "LIUSU",
+   "MINTEMPERATURE",
+   "ISNEXTDAY",
+   "MAXTEMPERATURE",
+   "WRITETIME",
+   "WAVELEVEL",
+   "VISI",
+   "HUMIDITY",
+   "FORECASTTIME",
+   "WEATHERSTATUS",
+   "RECID",
+   "EYERANGE",
+   "WINDGUST",
+   "RAIN",
+   "MAXHUMIDITY",
+   "WAVEHEIGHT",
+   "WINDGUSTDIRECT",
+   "WEATHERPIC",
+   "AREANAME",
+   "ZWX",
+   "YUJING"
+  ],
+  "sample": {
+   "WINDDIRECT": "南",
+   "WINDSPEED": "3",
+   "DDATETIME": "2015-07-01 00:00:00",
+   "MINRAIN": 0,
+   "QIYA": 0,
+   "MINIVISI": 15.0,
+   "LIUSU": 0,
+   "MINTEMPERATURE": 28.0,
+   "ISNEXTDAY": 0,
+   "MAXTEMPERATURE": 32.0,
+   "WRITETIME": "2015-07-01 18:20:23",
+   "WAVELEVEL": "",
+   "VISI": 20.0,
+   "HUMIDITY": 60.0,
+   "FORECASTTIME": "2015-07-02 00:00:00",
+   "WEATHERSTATUS": "天晴酷热，局部有短时阵雨",
+   "RECID": 15991,
+   "EYERANGE": 0,
+   "WINDGUST": "4",
+   "RAIN": 0,
+   "MAXHUMIDITY": 85.0,
+   "WAVEHEIGHT": 0,
+   "WINDGUSTDIRECT": "南",
+   "WEATHERPIC": "02.png",
+   "AREANAME": "深圳湾",
+   "ZWX": 10.0,
+   "YUJING": "wuyj.png"
+  }
+ },
+ "29200/00903514": {
+  "name": "历史上登陆我国的气旋",
+  "group": "A",
+  "api": "https://opendata.sz.gov.cn/api/29200_00903514/1/service.xhtml",
+  "fields": [
+   "TCENAME",
+   "YEAR",
+   "LANDNO",
+   "TCNO",
+   "LANDPROV",
+   "CYCLONENUM",
+   "ID",
+   "TCCNAME",
+   "LANDLEV",
+   "MEMO",
+   "LANDSUM"
+  ],
+  "sample": {
+   "TCENAME": "Gloria",
+   "YEAR": "1949",
+   "LANDNO": 1,
+   "TCNO": 6,
+   "LANDPROV": "浙江",
+   "CYCLONENUM": "",
+   "ID": 1,
+   "TCCNAME": "",
+   "LANDLEV": "TY",
+   "MEMO": "",
+   "LANDSUM": 3
+  }
+ },
+ "29200/00903513": {
+  "name": "历年台风中英文对照表",
+  "group": "A",
+  "api": "https://opendata.sz.gov.cn/api/29200_00903513/1/service.xhtml",
+  "fields": [
+   "NAMECHN",
+   "STARTTIME",
+   "COUNTRY",
+   "ENDTIME",
+   "NAMEMEANINGS",
+   "KEYID",
+   "NAME"
+  ],
+  "sample": {
+   "NAMECHN": "艾利",
+   "STARTTIME": "2006-01-01",
+   "COUNTRY": "美国",
+   "ENDTIME": "2007-01-01",
+   "NAMEMEANINGS": "NULL",
+   "KEYID": 731,
+   "NAME": "Aere"
+  }
+ },
+ "29200/03302370": {
+  "name": "统计月报-国民经济核算",
+  "group": "B",
+  "api": "https://opendata.sz.gov.cn/api/29200_03302370/1/service.xhtml",
+  "fields": [
+   "XH",
+   "DW",
+   "BNBJD",
+   "ZBMC",
+   "NY",
+   "BNBJDZLJ",
+   "LJTB"
+  ],
+  "sample": {
+   "XH": "1",
+   "DW": "亿元",
+   "BNBJD": 6399.89,
+   "ZBMC": "地区生产总值",
+   "NY": "201907",
+   "BNBJDZLJ": 12133.92,
+   "LJTB": 7.4
+  }
+ },
+ "29200/03302383": {
+  "name": "统计月报-物价",
+  "group": "B",
+  "api": "https://opendata.sz.gov.cn/api/29200_03302383/1/service.xhtml",
+  "fields": [
+   "XH",
+   "ZBMC",
+   "BYZLJPJ",
+   "NY",
+   "BENYUE"
+  ],
+  "sample": {
+   "XH": 1,
+   "ZBMC": "居民消费价格总指数\n（以上年同期为100）",
+   "BYZLJPJ": 102.9,
+   "NY": "201907",
+   "BENYUE": 103.4
+  }
+ },
+ "29200/03302382": {
+  "name": "统计月报-财政金融",
+  "group": "B",
+  "api": "https://opendata.sz.gov.cn/api/29200_03302382/1/service.xhtml",
+  "fields": [
+   "XH",
+   "DW",
+   "CZBYZLJ_JRSNTYYE",
+   "ZBMC",
+   "CZLJTB_JRTBZC",
+   "NY",
+   "BENYUE"
+  ],
+  "sample": {
+   "XH": 1,
+   "DW": "亿元",
+   "CZBYZLJ_JRSNTYYE": 2520.41,
+   "ZBMC": "一般公共预算收入",
+   "CZLJTB_JRTBZC": 5.5,
+   "NY": "201907",
+   "BENYUE": 388.27
+  }
+ },
+ "29200/03302377": {
+  "name": "统计月报-运输",
+  "group": "B",
+  "api": "https://opendata.sz.gov.cn/api/29200_03302377/1/service.xhtml",
+  "fields": [
+   "XH",
+   "DW",
+   "ZBMC",
+   "BYZLJ",
+   "NY",
+   "BENYUE",
+   "LJTB"
+  ],
+  "sample": {
+   "XH": 1,
+   "DW": "万吨",
+   "ZBMC": "货运量",
+   "BYZLJ": 19642.43,
+   "NY": "201907",
+   "BENYUE": 2855.13,
+   "LJTB": 3.7
+  }
+ },
+ "29200/03302379": {
+  "name": "统计月报-对外贸易",
+  "group": "B",
+  "api": "https://opendata.sz.gov.cn/api/29200_03302379/1/service.xhtml",
+  "fields": [
+   "XH",
+   "DW",
+   "ZBMC",
+   "BYZLJ",
+   "NY",
+   "BENYUE",
+   "LJTB"
+  ],
+  "sample": {
+   "XH": 1,
+   "DW": "亿元",
+   "ZBMC": "货物进出口总额",
+   "BYZLJ": 15787.53,
+   "NY": "201907",
+   "BENYUE": 2418.32,
+   "LJTB": -1.7
+  }
+ },
+ "29200/51400003": {
+  "name": "海港口岸集装箱吞吐量",
+  "group": "B",
+  "api": "https://opendata.sz.gov.cn/api/29200_51400003/1/service.xhtml",
+  "fields": [
+   "MONTH",
+   "TEU",
+   "RELEASE_TIME"
+  ],
+  "sample": {
+   "MONTH": "2018年1月",
+   "TEU": 237,
+   "RELEASE_TIME": "2018/1/1"
+  }
+ },
+ "29200/51400004": {
+  "name": "口岸进出口货物量",
+  "group": "B",
+  "api": "https://opendata.sz.gov.cn/api/29200_51400004/1/service.xhtml",
+  "fields": [
+   "MONTH",
+   "GOODS_QUANTITY",
+   "RELEASE_TIME"
+  ],
+  "sample": {
+   "MONTH": "2018年1月",
+   "GOODS_QUANTITY": 1771,
+   "RELEASE_TIME": "2018/1/1"
+  }
+ },
+ "29200/51400006": {
+  "name": "机场口岸空运货物量",
+  "group": "B",
+  "api": "https://opendata.sz.gov.cn/api/29200_51400006/1/service.xhtml",
+  "fields": [
+   "MONTH",
+   "RELEASE_TIME",
+   "AIR_GOODS_QUANTITY"
+  ],
+  "sample": {
+   "MONTH": "2018年1月",
+   "RELEASE_TIME": "2018/1/1",
+   "AIR_GOODS_QUANTITY": 2
+  }
+ },
+ "29200/03302369": {
+  "name": "统计快报",
+  "group": "B",
+  "api": "https://opendata.sz.gov.cn/api/29200_03302369/1/service.xhtml",
+  "fields": [
+   "XH",
+   "DW",
+   "ZBMC",
+   "BY",
+   "BYZLJ",
+   "NY",
+   "LJTB"
+  ],
+  "sample": {
+   "XH": 1,
+   "DW": "亿元",
+   "ZBMC": "1.规模以上工业增加值",
+   "BY": "",
+   "BYZLJ": "",
+   "NY": "201902",
+   "LJTB": 4.0
+  }
+ },
+ "29200/01903510": {
+  "name": "一手商品房成交(按日)",
+  "group": "C",
+  "api": "https://opendata.sz.gov.cn/api/29200_01903510/1/service.xhtml",
+  "fields": [
+   "REPORTCATALOG",
+   "CJ_AREA",
+   "KS_NUM",
+   "ZONE",
+   "ID",
+   "TJ_DATE",
+   "KS_AREA",
+   "CJ_NUM"
+  ],
+  "sample": {
+   "REPORTCATALOG": "其他",
+   "CJ_AREA": 0,
+   "KS_NUM": 4369,
+   "ZONE": "宝安",
+   "ID": "3946",
+   "TJ_DATE": "2018-01-01",
+   "KS_AREA": 292398.27,
+   "CJ_NUM": 0
+  }
+ },
+ "29200/01903513": {
+  "name": "二手房成交(按日)",
+  "group": "C",
+  "api": "https://opendata.sz.gov.cn/api/29200_01903513/1/service.xhtml",
+  "fields": [
+   "CJ_AREA",
+   "ZONE",
+   "HOUSE_USAGE2",
+   "ID",
+   "TJ_DATE",
+   "CJ_NUM"
+  ],
+  "sample": {
+   "CJ_AREA": 198.41,
+   "ZONE": "光明",
+   "HOUSE_USAGE2": "全部",
+   "ID": "92745",
+   "TJ_DATE": "2018-02-06",
+   "CJ_NUM": 2
+  }
+ },
+ "29200/03302375": {
+  "name": "统计月报-固定资产投资",
+  "group": "C",
+  "api": "https://opendata.sz.gov.cn/api/29200_03302375/1/service.xhtml",
+  "fields": [
+   "XH",
+   "DW",
+   "ZBMC",
+   "BYZLJ",
+   "NY",
+   "LJTB"
+  ],
+  "sample": {
+   "XH": 1,
+   "DW": "亿元",
+   "ZBMC": "固定资产投资额  ",
+   "BYZLJ": "",
+   "NY": "201907",
+   "LJTB": 16.2
+  }
+ }
+}

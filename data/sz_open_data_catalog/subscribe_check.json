@@ -1,0 +1,138 @@
+[
+ [
+  "A",
+  "热带气旋数据",
+  "29200/00901034",
+  "OK",
+  "api/1049994100/1/service.xhtml | 3行/22字段",
+  "https://opendata.sz.gov.cn/api/1049994100/1/service.xhtml"
+ ],
+ [
+  "A",
+  "预报预警_灾害性天气预警",
+  "29200/00900329",
+  "OK",
+  "api/589826359/1/service.xhtml | 3行/16字段",
+  "https://opendata.sz.gov.cn/api/589826359/1/service.xhtml"
+ ],
+ [
+  "A",
+  "预报预警_海洋气象",
+  "29200/00900289",
+  "OK",
+  "api/1464350655/1/service.xhtml | 3行/27字段",
+  "https://opendata.sz.gov.cn/api/1464350655/1/service.xhtml"
+ ],
+ [
+  "A",
+  "历史上登陆我国的气旋",
+  "29200/00903514",
+  "OK",
+  "api/29200_00903514/1/service.xhtml | 3行/11字段",
+  "https://opendata.sz.gov.cn/api/29200_00903514/1/service.xhtml"
+ ],
+ [
+  "A",
+  "历年台风中英文对照表",
+  "29200/00903513",
+  "OK",
+  "api/29200_00903513/1/service.xhtml | 3行/7字段",
+  "https://opendata.sz.gov.cn/api/29200_00903513/1/service.xhtml"
+ ],
+ [
+  "B",
+  "统计月报-国民经济核算",
+  "29200/03302370",
+  "OK",
+  "api/29200_03302370/1/service.xhtml | 3行/7字段",
+  "https://opendata.sz.gov.cn/api/29200_03302370/1/service.xhtml"
+ ],
+ [
+  "B",
+  "统计月报-物价",
+  "29200/03302383",
+  "OK",
+  "api/29200_03302383/1/service.xhtml | 3行/5字段",
+  "https://opendata.sz.gov.cn/api/29200_03302383/1/service.xhtml"
+ ],
+ [
+  "B",
+  "统计月报-财政金融",
+  "29200/03302382",
+  "OK",
+  "api/29200_03302382/1/service.xhtml | 3行/7字段",
+  "https://opendata.sz.gov.cn/api/29200_03302382/1/service.xhtml"
+ ],
+ [
+  "B",
+  "统计月报-运输",
+  "29200/03302377",
+  "OK",
+  "api/29200_03302377/1/service.xhtml | 3行/7字段",
+  "https://opendata.sz.gov.cn/api/29200_03302377/1/service.xhtml"
+ ],
+ [
+  "B",
+  "统计月报-对外贸易",
+  "29200/03302379",
+  "OK",
+  "api/29200_03302379/1/service.xhtml | 3行/7字段",
+  "https://opendata.sz.gov.cn/api/29200_03302379/1/service.xhtml"
+ ],
+ [
+  "B",
+  "海港口岸集装箱吞吐量",
+  "29200/51400003",
+  "OK",
+  "api/29200_51400003/1/service.xhtml | 3行/3字段",
+  "https://opendata.sz.gov.cn/api/29200_51400003/1/service.xhtml"
+ ],
+ [
+  "B",
+  "口岸进出口货物量",
+  "29200/51400004",
+  "OK",
+  "api/29200_51400004/1/service.xhtml | 3行/3字段",
+  "https://opendata.sz.gov.cn/api/29200_51400004/1/service.xhtml"
+ ],
+ [
+  "B",
+  "机场口岸空运货物量",
+  "29200/51400006",
+  "OK",
+  "api/29200_51400006/1/service.xhtml | 3行/3字段",
+  "https://opendata.sz.gov.cn/api/29200_51400006/1/service.xhtml"
+ ],
+ [
+  "B",
+  "统计快报",
+  "29200/03302369",
+  "OK",
+  "api/29200_03302369/1/service.xhtml | 3行/7字段",
+  "https://opendata.sz.gov.cn/api/29200_03302369/1/service.xhtml"
+ ],
+ [
+  "C",
+  "一手商品房成交(按日)",
+  "29200/01903510",
+  "OK",
+  "api/29200_01903510/1/service.xhtml | 3行/8字段",
+  "https://opendata.sz.gov.cn/api/29200_01903510/1/service.xhtml"
+ ],
+ [
+  "C",
+  "二手房成交(按日)",
+  "29200/01903513",
+  "OK",
+  "api/29200_01903513/1/service.xhtml | 3行/6字段",
+  "https://opendata.sz.gov.cn/api/29200_01903513/1/service.xhtml"
+ ],
+ [
+  "C",
+  "统计月报-固定资产投资",
+  "29200/03302375",
+  "OK",
+  "api/29200_03302375/1/service.xhtml | 3行/6字段",
+  "https://opendata.sz.gov.cn/api/29200_03302375/1/service.xhtml"
+ ]
+]

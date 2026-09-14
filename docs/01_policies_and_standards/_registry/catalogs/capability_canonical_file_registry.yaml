@@ -5003,39 +5003,39 @@ capabilities:
     提交→全景对齐→清理 全流程步骤与失败处置；适用 07 域（regime/选股/仓位/风控/买卖/执行/对账/治理）施工，RULE-CAPABILITY-LOOKUP
     检索"施工"应命中本条
 creation_tokens:
-- file: docs/_working/sz_open_data_tools/subscribe_status.json
+- file: data/sz_open_data_catalog/subscribe_status.json
   token: szopen-tools-subscribe_status-json-20260915
   created_by: st-altdata-20260914
   capability: alt_data_batch1_free_sources
-- file: docs/_working/sz_open_data_tools/subscribe_check.json
+- file: data/sz_open_data_catalog/subscribe_check.json
   token: szopen-tools-subscribe_check-json-20260915
   created_by: st-altdata-20260914
   capability: alt_data_batch1_free_sources
-- file: docs/_working/sz_open_data_tools/status_all.py
+- file: scripts/data/sz_open_data/status_all.py
   token: szopen-tools-status_all-py-20260915
   created_by: st-altdata-20260914
   capability: alt_data_batch1_free_sources
-- file: docs/_working/sz_open_data_tools/probe_all_new.py
+- file: scripts/data/sz_open_data/probe_all_new.py
   token: szopen-tools-probe_all_new-py-20260915
   created_by: st-altdata-20260914
   capability: alt_data_batch1_free_sources
-- file: docs/_working/sz_open_data_tools/mining_round2.json
+- file: data/sz_open_data_catalog/mining_round2.json
   token: szopen-tools-mining_round2-json-20260915
   created_by: st-altdata-20260914
   capability: alt_data_batch1_free_sources
-- file: docs/_working/sz_open_data_tools/fields_round2.json
+- file: data/sz_open_data_catalog/fields_round2.json
   token: szopen-tools-fields_round2-json-20260915
   created_by: st-altdata-20260914
   capability: alt_data_batch1_free_sources
-- file: docs/_working/sz_open_data_tools/fields_probe.json
+- file: data/sz_open_data_catalog/fields_probe.json
   token: szopen-tools-fields_probe-json-20260915
   created_by: st-altdata-20260914
   capability: alt_data_batch1_free_sources
-- file: docs/_working/sz_open_data_tools/dataset_delta.json
+- file: data/sz_open_data_catalog/dataset_delta.json
   token: szopen-tools-dataset_delta-json-20260915
   created_by: st-altdata-20260914
   capability: alt_data_batch1_free_sources
-- file: docs/_working/sz_open_data_tools/catalog_full.csv
+- file: data/sz_open_data_catalog/catalog_full.csv
   token: szopen-tools-catalog_full-csv-20260915
   created_by: st-altdata-20260914
   capability: alt_data_batch1_free_sources

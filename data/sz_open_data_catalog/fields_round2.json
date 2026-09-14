@@ -1,0 +1,170 @@
+{
+ "29200/00900227": {
+  "name": "气候资料_历史数据",
+  "api": "api/1287807159/1/service.xhtml",
+  "error": "10001"
+ },
+ "29200/00900273": {
+  "name": "地面观测实况",
+  "api": "api/120238293/1/service.xhtml",
+  "error": "10001"
+ },
+ "29200/00900291": {
+  "name": "环境气象预报",
+  "api": "api/675294854/1/service.xhtml",
+  "error": "10001"
+ },
+ "29200/01403151": {
+  "name": "水库站点日降雨量",
+  "api": "api/29200_01403151/1/service.xhtml",
+  "error": "10001"
+ },
+ "29200/01000198": {
+  "name": "空气质量日报",
+  "api": "api/1920606096/1/service.xhtml",
+  "error": "10001"
+ },
+ "29200/01003608": {
+  "name": "深圳市和区域空气质量数据",
+  "api": "api/29200_01003608/1/service.xhtml",
+  "error": "10001"
+ },
+ "29200/01903509": {
+  "name": "二手房源信息",
+  "api": "api/29200_01903509/1/service.xhtml",
+  "error": "10001"
+ },
+ "29200/01903508": {
+  "name": "商品房批准预售信息",
+  "api": "api/29200_01903508/1/service.xhtml",
+  "error": "10001"
+ },
+ "29200/01903511": {
+  "name": "一手商品房按面积统计成交",
+  "api": "api/29200_01903511/1/service.xhtml",
+  "error": "10001"
+ },
+ "29200/01300964": {
+  "name": "市场主体发展统计数据",
+  "api": "api/1485642496/1/service.xhtml",
+  "error": "10001"
+ },
+ "29200/03302396": {
+  "name": "统计年报-企业登记发展情况",
+  "api": "api/29200_03302396/1/service.xhtml",
+  "error": "10001"
+ },
+ "29200/51400001": {
+  "name": "深圳口岸出入境人员",
+  "api": "api/29200_51400001/1/service.xhtml",
+  "error": "10001"
+ },
+ "29200/51400002": {
+  "name": "深圳口岸出入境车辆",
+  "api": "api/29200_51400002/1/service.xhtml",
+  "error": "10001"
+ },
+ "29200/00902986": {
+  "name": "能见度探测数据",
+  "api": "api/1580458478/1/service.xhtml",
+  "fields": [
+   "MINV",
+   "DDATETIME",
+   "OBTID",
+   "V",
+   "OBTNAME",
+   "MINVTIME",
+   "V10M"
+  ],
+  "sample": {
+   "MINV": 67790,
+   "DDATETIME": "2018-04-10 15:07:00",
+   "OBTID": "G3525",
+   "V": 67790,
+   "OBTNAME": "龙岐",
+   "MINVTIME": 7,
+   "V10M": 67790
+  },
+  "n_fields": 7
+ },
+ "29200/01400986": {
+  "name": "水库水位表",
+  "api": "api/1952552493/1/service.xhtml",
+  "error": "10001"
+ },
+ "29200/01403149": {
+  "name": "水库站点月降雨量",
+  "api": "api/29200_01403149/1/service.xhtml",
+  "error": "10001"
+ },
+ "29200/51400005": {
+  "name": "机场口岸出入境旅客",
+  "api": "api/29200_51400005/1/service.xhtml",
+  "error": "10001"
+ },
+ "29200/51400020": {
+  "name": "客船进出港",
+  "api": "api/29200_51400020/1/service.xhtml",
+  "error": "10001"
+ },
+ "29200/03302384": {
+  "name": "stat_private[STAT]",
+  "api": "api/29200_03302384/1/service.xhtml",
+  "error": "10001"
+ },
+ "29200/03302373": {
+  "name": "stat_industry[STAT]",
+  "api": "api/29200_03302373/1/service.xhtml",
+  "error": "10001"
+ },
+ "29200/03302374": {
+  "name": "stat_industry_eff[STAT]",
+  "api": "api/29200_03302374/1/service.xhtml",
+  "error": "10001"
+ },
+ "29200/03302386": {
+  "name": "stat_emerging[STAT]",
+  "api": "api/29200_03302386/1/service.xhtml",
+  "error": "10001"
+ },
+ "29200/03302380": {
+  "name": "stat_fdi[STAT]",
+  "api": "api/29200_03302380/1/service.xhtml",
+  "error": "10001"
+ },
+ "29200/03302381": {
+  "name": "stat_tourism[STAT]",
+  "api": "api/29200_03302381/1/service.xhtml",
+  "error": "10001"
+ },
+ "29200/03302378": {
+  "name": "stat_domestic_trade[STAT]",
+  "api": "api/29200_03302378/1/service.xhtml",
+  "error": "10001"
+ },
+ "29200/03302376": {
+  "name": "stat_construction[STAT]",
+  "api": "api/29200_03302376/1/service.xhtml",
+  "error": "10001"
+ },
+ "29200/03302385": {
+  "name": "stat_district[STAT]",
+  "api": "api/29200_03302385/1/service.xhtml",
+  "error": "10001"
+ },
+ "29200/03302387": {
+  "name": "stat_annual_main[STAT]",
+  "api": "api/29200_03302387/1/service.xhtml",
+  "error": "10001"
+ },
+ "29200/03302388": {
+  "name": "stat_district_gdp[STAT]",
+  "api": "api/29200_03302388/1/service.xhtml",
+  "error": "10001"
+ },
+ "29200/03302372": {
+  "name": "stat_analysis[STAT]",
+  "api": "api/29200_03302372/1/service.xhtml",
+  "error": "10001"
+ }
+}
