@@ -7,8 +7,8 @@ title: 交易决策域施工流程标准作业规程（SOP）——端到端 15 
 owner: ZephyrAlpha-Owner
 language: zh
 status: active
-version: "1.6.0"
-date: 2026-09-14
+version: "1.7.0"
+date: 2026-09-15
 topic: construction_workflow_sop
 scope: global
 depends_on:
@@ -87,7 +87,7 @@ related_modules:
 | Step 1 前置·地图逐层讨论闸（涉地图任务） | trading_decision_map_layering_sop | 不重复，引用（四道前置检查：已有资产盘点/四路调研/上层完整性/枝干分级） |
 | Step 1.5 创建前搜索 | trae_056 phase_1 / trae_002 | 不重复，引用 |
 | Step 1.8 架构评审门控 | trae_036 gov_arch_002 | 不重复，引用 |
-| Step 1.9 方案挖矿 | mining_sop_policy | 不重复，引用（六向寻路/双噪音封矿/防噪音四闸/时间盒） |
+| Step 1.9 方案挖矿 | mining_sop_policy | 不重复，引用（六向寻路/双噪音封矿/防噪音四闸/时间盒/挖后自审闸） |
 | Step 2 全景图登记 | trae_080 / trae_056 phase_2 / trae_032 | 不重复，引用 |
 | Step 3 五图对齐 | trae_080 panorama_alignment | 不重复，引用 |
 | Step 4 施工编码 | trae_056 phase_4-9 / trae_047 / trae_053 / trae_064 | 不重复，引用 |
@@ -246,7 +246,7 @@ python scripts/lock_files.py status
 
 **何时触发**：任务涉及“建策略/建方案/建设计文档/调研选型”等**内容产出**时（[mining_sop_policy.md](../mining_sop/mining_sop_policy.md) §1 触发表）——施工编码（Step 4）前 MUST 有已挖干的方案背书；纯代码修改、已有 active 方案且方案含挖矿日志的任务可跳过本步
 **前置条件**：Step 1 文档审查完成（方案缺失或仍是 draft → 先回本步产出/补齐方案，禁止边施工边写方案）
-**操作摘要**：方案动笔前先按六向寻路挖矿（每向=内部反查+全网搜索双动作）→ 防噪音四闸过滤 → 连续两轮 noise 封矿（挖干）→ 挖矿日志写进方案 → 方案定稿后才进 Step 2 设计态登记
+**操作摘要**：方案动笔前先按六向寻路挖矿（每向=内部反查+全网搜索双动作）→ 防噪音四闸过滤 → 连续两轮 noise 封矿（挖干）→ 挖矿日志写进方案 → 挖后自审闸（mining_sop §6：可行≠值得，过度工程三问）→ 方案定稿后才进 Step 2 设计态登记
 **引用真源**：[mining_sop_policy.md](../mining_sop/mining_sop_policy.md)（通用研究方法论真源，不重复内容）；TDM 地图域专用实例=[trading_decision_map_pathfinding_policy.md](../mining_sop/trading_decision_map_pathfinding_policy.md)（方法论冲突时地图域以 TDM 版为准，其余域以本真源为准）
 **执行要点**：
 1. **先方案后施工**：Step 4 施工编码前 MUST 存在定稿方案（design_memo/施工图），禁止无方案直接施工
@@ -255,9 +255,10 @@ python scripts/lock_files.py status
 4. **日志纪律**：挖矿日志表（轮次/矿脉/判定/关键产出）MUST 写进方案的“挖矿增补”章节——无日志=没挖过，Step 6 长清单审查按无方案回炉
 5. **防噪音四闸**：来源可溯（URL+发布方+年份，禁模型记忆 fallback 假引文）/交叉验证（关键结论 ≥2 独立来源）/A 股适配（T+1/涨跌停改造检验）/可回测+数据可得，逐条过闸后才算发现
 6. **防以挖代建**：新候选 >20 个必须停挖转施工（节点数不是判据）；明确“不做”的也要留痕防重复挖
-**通过判据**：方案已定稿 + 挖矿日志齐全 + 双噪音封矿或封批长尾已登记
+7. **挖后自审闸**：方案成稿、施工立项前 MUST 过 mining_sop §6 过度工程三问（收益实算/已有产物覆盖/成本实算），三态裁定=施工/降级/方案封矿，裁定留痕进方案——“不做”是合法产出，防后人按旧清单施工
+**通过判据**：方案已定稿 + 挖矿日志齐全 + 双噪音封矿或封批长尾已登记 + 挖后自审闸三态裁定已出并留痕（施工/降级/方案封矿）
 **不通过处置**：方案缺失/无挖矿日志 → 回本步补挖，禁止进 Step 2；搜索受阻（429）→ 60-130 秒间隔单发重试（禁连发硬砸），受阻记档不算查无
-**产出物**：含“挖矿增补”章节的定稿方案
+**产出物**：含“挖矿增补”章节与“挖后自审”三态裁定的定稿方案
 **与相邻步骤的边界**：Step 1.5 创建前搜索=代码/模块复用反查（RULE-CAPABILITY-LOOKUP 管辖，写代码前）；本步=内容方法论挖掘（写方案前）——写代码之前不挖、写内容之前必挖（mining_sop §1 明示）
 
 
@@ -792,7 +793,7 @@ python scripts/session_worktree.py cleanup <sid>
 | 13 | **Step 3.5 后端盘点与拆件判定完成（前端任务必做）**：每条数据需求有唯一后端真源且前端已接线；有重复真源先治后端；缺端点先建后端；拆件判定结论已留痕（有得拆→拆件 SOP 8 步闭环施工，没得拆→直接施工）；演示回退（若有）已标"断线·演示"（TRAE-086 §truth_source_wiring + §split_judgment + FRONTEND-TRUTH-SOURCE gate） | ☐ |
 | 14 | **新建注册表/全景图已挂轴（D38 全图全库对齐铁律）**：本次施工若新建了业务资产库（catalogs/*.yaml）→ 已在 `src/zephyr/trading/decision_map.py` `_XREF_SPECS` 加交叉轴（两行）+ 真源挂载；若新建治理类库 → 已在 `tests/trading/test_decision_map.py::TestNewRegistryGate._GOVERNANCE_EXEMPT` 登记豁免；若新建全景图 → 已以 module_id 为对齐 key 挂入七图体系并在 alignment_checklist.md §3 登记（`tests/trading/test_decision_map.py` 门禁测试强制二选一，漏做必红） | ☐ |
 | 15 | **派生残留已收口（2026-09-07 triage 根治）**：会话收尾时跑 `python scripts/governance/commit_derived_sync.py`（先 `--dry-run` 目检）——blueprint 统计区/注册表索引/金标哈希/手册统计块等跨域派生文件一条命令收口；纯信息类（手册 AUTO 块/README 快照）已由 workspace_hygiene_reconciler post-commit 自动还原自愈，无需人工；若 dry-run 显示非派生脏文件，属于未闭环任务须回表处理，禁止搭便车 | ☐ |
-| 16 | **Step 1.9 方案挖矿完成（方案/策略/设计文档类任务必做）**：施工前已有定稿方案；方案动笔前已按 mining_sop 六向寻路挖矿；挖干判据=连续两轮 noise 封矿（时间盒封批≠挖干，长尾已登记）；挖矿日志已写进方案“挖矿增补”章节（无日志=没挖过）；新候选>20 已停挖转施工 | ☐ |
+| 16 | **Step 1.9 方案挖矿完成（方案/策略/设计文档类任务必做）**：施工前已有定稿方案；方案动笔前已按 mining_sop 六向寻路挖矿；挖干判据=连续两轮 noise 封矿（时间盒封批≠挖干，长尾已登记）；挖矿日志已写进方案“挖矿增补”章节（无日志=没挖过）；新候选>20 已停挖转施工；挖后自审闸已过（过度工程三问，三态裁定留痕进方案） | ☐ |
 
 ## 5. 边界与不做
 
@@ -839,6 +840,7 @@ python scripts/session_worktree.py cleanup <sid>
 | 2026-09-05 | 1.5.5 | Step 1 新增"交易决策地图逐层讨论任务加读"+Step 0 必读清单/§2.3 关系矩阵同步挂接（三挂接点） | Owner 指令（情绪六段撞车事故后）：地图血肉填充每层讨论 MUST 先过 trading_decision_map_layering_sop.md 四道前置检查（已有资产盘点/四路调研/上层完整性/枝干分级），检查通过回归本 SOP 标准闭环——两 SOP 上下游衔接（讨论层闸→施工层闭环） |
 | 2026-09-05 | 1.5.5 | **"全图全库对齐"简称裁定（#ARCH-ALIGN-NAMING-001）+ Step 3 七图化**：计数无关命名（五图→六图→七图三次改名腐化史）；Step 3 定义表新增图 7 trading_decision_map（TDM-node_id 轴+DECISION-MAP gate 138）；配合 alignment_checklist v1.3.0 | Owner 2026-09-05 裁定；七图对齐 exit 0 实证 |
 | 2026-09-14 | 1.6.0 | **新增 Step 1.9 方案挖矿**（施工前先做方案：方案先挖矿，把矿挖干再施工）+ Checklist 第 16 项 + §2.3 关系矩阵/Step 2 前置条件/Step 0 必读清单/frontmatter depends_on 四处同步挂接；mining_sop_policy.md 加施工闭环回链 | Owner 指令：挖矿 SOP（2026-09-14 立）接进施工闭环——方案阶段先挖矿、双噪音挖干再施工，堵“无方案/拍脑袋方案直接施工”缺口 |
+| 2026-09-15 | 1.7.0 | Step 1.9 挂接 mining_sop v1.1.0 新增“挖后自审闸”：操作摘要/执行要点 7/通过判据/产出物/关系矩阵/Checklist 16 六处同步——方案成稿后 MUST 过过度工程三问，三态=施工/降级/方案封矿（成例=dead/ 自动清理方案封矿 9bbc01472f） | Owner 指令“挖完自己审一遍是否过度工程，写进挖矿 SOP” |
 
 ## 附录 A：长清单审查全文（用户提供的 12 节审查清单）
 
