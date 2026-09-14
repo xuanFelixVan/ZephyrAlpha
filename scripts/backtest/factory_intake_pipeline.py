@@ -53,7 +53,18 @@ _LANE_SPECS = [
      "intake": "data/strategy_intake/lane_b_candidates.csv"},
     {"lane": None, "name": "e1c_formula_mine", "compute_class": "local_gpu",
      "intake": "待 E1C 施工（设计稿 docs/_working/2026-09-14-fac-e1c-formula-mining-design.md）"},
+    # F-06 组合层网格（2.4 接线，2026-09-15）：intake=最新 grid 批次 manifest（执行器 MOD-BT-196 落盘）。
+    # recipe 行非因子假说——E2 消费器需按 recipe_id/values_json 解析（跨线协作项，E2 侧适配器待挂）。
+    {"lane": "F", "name": "f06_grid_recipes", "compute_class": "local",
+     "intake": "data/strategy_intake/grid_latest_manifest.csv"},
 ]
+
+
+def latest_grid_manifest() -> Path | None:
+    """F 车道 intake 解析：返回最新 grid_<ts>/manifest.csv（无批次时 None，诚实缺）。"""
+    base = _ROOT / "data" / "strategy_intake"
+    runs = sorted(base.glob("grid_*/manifest.csv"))
+    return runs[-1] if runs else None
 
 
 def preflight_compute_gate(lane_specs: list[dict] | None = None) -> list[dict]:

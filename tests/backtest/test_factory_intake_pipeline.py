@@ -30,8 +30,14 @@ from scripts.backtest.compute_window_gate import (
 class TestPreflightGate:
     def test_light_lanes_pass_gate(self):
         results = fip.preflight_compute_gate()
-        assert [r["lane"] for r in results] == ["D", "B"]  # 未施工的 E1C 跳过
+        lanes = [r["lane"] for r in results]
+        assert {"D", "B"} <= set(lanes)  # 基础两车道必在（F 车道=并行会话新增网格配方）
         assert all(r["allowed"] for r in results)
+
+    def test_lane_specs_dynamic(self):
+        # 车道清单随共享文件演进（并行会话可加车道），测试只锁契约不锁清单
+        lanes = {s["lane"] for s in fip._LANE_SPECS if s["lane"]}
+        assert {"D", "B"} <= lanes
 
     def test_unbuilt_lane_excluded(self):
         results = fip.preflight_compute_gate()

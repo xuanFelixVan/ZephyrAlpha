@@ -81,3 +81,31 @@ class TestRepoGuard:
 
 if __name__ == "__main__":  # pragma: no cover
     pytest.main([__file__, "-v"])
+
+
+class TestAggregateSymbolReports:
+    def _rep(self, sym, ksharp, nsharp, kcal, ncal):
+        return {"symbol": sym, "n_test": 15,
+                "kronos": {"sharpness": ksharp, "calibrated_share": kcal, "pit_ks": 0.2},
+                "naive_rw": {"sharpness": nsharp, "calibrated_share": ncal, "pit_ks": 0.3}}
+
+    def test_win_counting_and_medians(self):
+        from scripts.backtest.kronos_adapter import aggregate_symbol_reports
+        reps = [
+            self._rep("A", 100.0, 300.0, 0.4, 0.2),   # kronos 胜锐度+胜校准
+            self._rep("B", 200.0, 300.0, 0.4, 0.2),   # 胜锐度
+            self._rep("C", 400.0, 300.0, 0.3, 0.2),   # 负锐度
+        ]
+        agg = aggregate_symbol_reports(reps)
+        assert agg["symbols_ok"] == 3
+        assert agg["kronos_sharp_wins"] == 2
+        assert agg["kronos_cal_wins"] == 3  # 三票 kronos 校准 share 均高于 naive
+        assert agg["win_rate_sharpness"] == pytest.approx(2 / 3, abs=1e-3)  # round(4)
+        assert agg["median_kronos_sharpness"] == 200.0
+
+    def test_error_symbols_counted(self):
+        from scripts.backtest.kronos_adapter import aggregate_symbol_reports
+        reps = [{"symbol": "A", "error": "boom"}]
+        agg = aggregate_symbol_reports(reps)
+        assert agg["symbols_error"] == 1 and agg["symbols_ok"] == 0
+        assert agg["win_rate_sharpness"] is None

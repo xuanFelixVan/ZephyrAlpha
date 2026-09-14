@@ -214,32 +214,116 @@ def walk_forward_eval(predictor, kdf: pd.DataFrame, n_test: int = 20,
     }
 
 
+def eval_multi(symbols: list[str], n_test: int, sample_count: int,
+               days: int, model_size: str = "small") -> dict:
+    """多票 walk-forward 评估（模型单次加载跨票复用）。"""
+    predictor, device = load_predictor(model_size=model_size)
+    per_symbol = []
+    for sym in symbols:
+        try:
+            kdf = fetch_kline(sym, days)
+            result = walk_forward_eval(predictor, kdf, n_test=n_test,
+                                       sample_count=sample_count)
+            from scripts.backtest.distribution_forecast_eval import (
+                evaluate_distribution_forecast,
+            )
+
+            krono = evaluate_distribution_forecast(result["kronos"], result["realized"])
+            naive = evaluate_distribution_forecast(result["naive"], result["realized"])
+            per_symbol.append({
+                "symbol": sym, "n_test": result["n_test"],
+                "kronos": krono, "naive_rw": naive,
+                "kronos_beats_naive_sharpness":
+                    krono["sharpness"] < naive["sharpness"],
+            })
+            print(f"[{sym}] kronos sharp={krono['sharpness']:.2f} "
+                  f"cal={krono['calibrated_share']:.2f} | naive "
+                  f"sharp={naive['sharpness']:.2f} cal={naive['calibrated_share']:.2f}")
+        except Exception as exc:  # noqa: BLE001 — 单票失败不拖全局
+            per_symbol.append({"symbol": sym, "error": str(exc)[:120]})
+            print(f"[{sym}] FAIL: {exc}")
+    return {"device": device, "per_symbol": per_symbol,
+            "aggregate": aggregate_symbol_reports(per_symbol)}
+
+
+def aggregate_symbol_reports(per_symbol: list[dict]) -> dict:
+    """多票聚合计分板（纯函数）：中位数对比+胜场统计（锐度更紧=胜）。"""
+    valid = [r for r in per_symbol if "error" not in r]
+    wins = sum(1 for r in valid
+               if r["kronos"]["sharpness"] < r["naive_rw"]["sharpness"])
+    cal_wins = sum(1 for r in valid
+                   if r["kronos"]["calibrated_share"] >= r["naive_rw"]["calibrated_share"])
+
+    def _med(key_path: str) -> float:
+        vals = []
+        for r in valid:
+            v = r
+            for k in key_path.split("."):
+                v = v[k]
+            if v is not None:
+                vals.append(float(v))
+        return round(float(np.median(vals)), 4) if vals else float("nan")
+
+    return {
+        "symbols_total": len(per_symbol), "symbols_ok": len(valid),
+        "symbols_error": len(per_symbol) - len(valid),
+        "kronos_sharp_wins": wins, "kronos_cal_wins": cal_wins,
+        "win_rate_sharpness": round(wins / len(valid), 4) if valid else None,
+        "median_kronos_calibrated_share": _med("kronos.calibrated_share"),
+        "median_naive_calibrated_share": _med("naive_rw.calibrated_share"),
+        "median_kronos_sharpness": _med("kronos.sharpness"),
+        "median_naive_sharpness": _med("naive_rw.sharpness"),
+        "median_kronos_pit_ks": _med("kronos.pit_ks"),
+        "median_naive_pit_ks": _med("naive_rw.pit_ks"),
+    }
+
+
 def main() -> int:
     ap = argparse.ArgumentParser(description="FAC-E1E Kronos 基线适配器（walk-forward 双标准评分）")
-    ap.add_argument("--symbol", default="600519.SH")
-    ap.add_argument("--n-test", type=int, default=20)
-    ap.add_argument("--sample-count", type=int, default=16)
+    ap.add_argument("--symbol", default=None, help="单标的模式")
+    ap.add_argument("--symbols", default=None, help="逗号分隔多标的（多票聚合模式）")
+    ap.add_argument("--top-n", type=int, default=None, help="成交额 top N 自动选票")
+    ap.add_argument("--n-test", type=int, default=15)
+    ap.add_argument("--sample-count", type=int, default=6)
     ap.add_argument("--days", type=int, default=250)
     ap.add_argument("--model-size", default="small")
     args = ap.parse_args()
     try:
-        predictor, device = load_predictor(model_size=args.model_size)
-        kdf = fetch_kline(args.symbol, args.days)
-        result = walk_forward_eval(predictor, kdf, n_test=args.n_test,
-                                   sample_count=args.sample_count)
-        from scripts.backtest.distribution_forecast_eval import evaluate_distribution_forecast
-        krono_rep = evaluate_distribution_forecast(result["kronos"], result["realized"])
-        naive_rep = evaluate_distribution_forecast(result["naive"], result["realized"])
-        krono_rep["verdict"] = {
-            "calibrated": krono_rep["calibrated_share"] >= 0.6,
-            "beats_naive_sharpness": (
-                krono_rep["sharpness"] < naive_rep["sharpness"]
-                if krono_rep["sharpness"] and naive_rep["sharpness"] else False),
-        }
-        naive_rep["verdict"] = {"calibrated": naive_rep["calibrated_share"] >= 0.6}
-        print(json.dumps({"symbol": args.symbol, "device": device,
-                          "kronos": krono_rep, "naive_rw": naive_rep},
-                         ensure_ascii=False, indent=1, default=str))
+        if args.symbols or args.top_n:
+            if args.symbols:
+                symbols = [s.strip() for s in args.symbols.split(",") if s.strip()]
+            else:
+                from scripts.backtest.lane_c_formula_miner import SQL_UNIVERSE
+                from scripts.backtest.kronos_adapter import _make_cli
+                import datetime as _dt
+
+                start = (date.today() - timedelta(days=int(args.days * 1.7))).isoformat()
+                cli = _make_cli()
+                from zephyr.data.table_registry import get_registry as _gr
+
+                symbols = [r[0] for r in cli.execute(
+                    SQL_UNIVERSE.format(t=_gr().table("market_kline_daily_hfq")),
+                    {"start": start, "n": args.top_n})]
+            rep = eval_multi(symbols, args.n_test, args.sample_count,
+                             args.days, args.model_size)
+        else:
+            predictor, device = load_predictor(model_size=args.model_size)
+            kdf = fetch_kline(args.symbol, args.days)
+            result = walk_forward_eval(predictor, kdf, n_test=args.n_test,
+                                       sample_count=args.sample_count)
+            from scripts.backtest.distribution_forecast_eval import evaluate_distribution_forecast
+            krono_rep = evaluate_distribution_forecast(result["kronos"], result["realized"])
+            naive_rep = evaluate_distribution_forecast(result["naive"], result["realized"])
+            krono_rep["verdict"] = {
+                "calibrated": krono_rep["calibrated_share"] >= 0.6,
+                "beats_naive_sharpness": (
+                    krono_rep["sharpness"] < naive_rep["sharpness"]
+                    if krono_rep["sharpness"] and naive_rep["sharpness"] else False),
+            }
+            naive_rep["verdict"] = {"calibrated": naive_rep["calibrated_share"] >= 0.6}
+            rep = {"symbol": args.symbol, "device": device,
+                   "kronos": krono_rep, "naive_rw": naive_rep}
+        print(json.dumps(rep, ensure_ascii=False, indent=1, default=str))
     except (RuntimeError, ValueError) as exc:
         print(f"FAIL: {exc}", file=sys.stderr)
         return 1
