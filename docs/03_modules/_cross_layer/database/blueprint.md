@@ -4,7 +4,7 @@ submodule_path: src/zephyr/governance/persistence
 title: "Database 集成蓝图 — 2库职责划分(SQLite治理+PG架构) + 三层冷热架构定位"
 doc_type: blueprint
 status: Active
-version: "4.3.9"
+version: "4.3.10"
 layer: L1_foundation
 blueprint_level: domain
 owner: ZephyrAlpha-Owner
@@ -260,7 +260,7 @@ v3.0: 脚本执行器 ──→ get_depgraph_pg_connection() ──→ depgraph 
 
 | 图 | 位置 | 状态 | 链接 |
 |----|------|------|------|
-| 依赖图 (depgraph) | `blueprint_id=SH-DB-001` 的 11 个 file 节点 | production | `extract_depgraph.py --modules SH-DB-001` |
+| 依赖图 (depgraph) | `blueprint_id=SH-DB-001` 的 12 个 file 节点 | production | `extract_depgraph.py --modules SH-DB-001` |
 | 数据流图 (dataflow) | 0 个 Dataset / 1 个 Job | active | `apply_dataflowgraph.py --list-datasets` |
 | 决策架构图 (decision) | 0 个决策节点 / 1 个决策层 | N/A | `generate_decision_diagram.py` |
 | 蓝图 (blueprint) | 本文件 | Active | — |
@@ -272,7 +272,7 @@ v3.0: 脚本执行器 ──→ get_depgraph_pg_connection() ──→ depgraph 
 | module_id | SH-DB-001 | SH-DB-001 | ✅ |
 | domain_id | N/A | N/A | ✅ |
 | build_status | generated | generated | ✅ |
-| file_count | 11 文件 | 27 文件（§0.1） | ❌ |
+| file_count | 12 文件 | 27 文件（§0.1） | ❌ |
 
 > 冲突时以 depgraph 为准（ARCH-056 + ARCH-MM-001 声明 vs 验证框架）。
 
@@ -398,6 +398,12 @@ v3.0: 脚本执行器 ──→ get_depgraph_pg_connection() ──→ depgraph 
 | `src/zephyr/governance/persistence/dataflowgraph_schema.py` | ✅ 已实现 | |
 | `src/zephyr/shared/database/__init__.py` | ⚠️ 骨架 | |
 | `src/zephyr/shared/database/database_crud_mixin.py` | ✅ 已实现 | |
+
+### 1.2 测试文件
+
+| 文件路径 | 实现状态 | 说明 |
+|---------|:---:|------|
+| `tests/governance/test_pg_dsn_utf8_guard.py` | ✅ 已实现 | |
 
 ### 1.5 路径索引使用指南
 

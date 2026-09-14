@@ -4,7 +4,7 @@ submodule_path: src/zephyr/risk
 title: "Risk Management Core 蓝图+施工图 — 风险管理引擎"
 doc_type: blueprint
 status: Active
-version: "2.2.33"
+version: "2.2.35"
 layer: L2_domain
 layer_name: risk_management
 functional_domain: risk
@@ -59,7 +59,7 @@ build_status: generated
 > 本蓝图仅做审查、回填、压缩、对齐，不触发任何代码变更。
 
 > actual_disk_path: src/zephyr/risk/ (10 .py files)
-> module_id: MOD-L04-001 | version: 2.2.33 | status: Active | layer: L2_domain
+> module_id: MOD-L04-001 | version: 2.2.35 | status: Active | layer: L2_domain
 > generation: 2 | construction_progress: partially_implemented
 
 # Risk Management Core 蓝图+施工图 — 风险管理引擎
@@ -143,7 +143,7 @@ build_status: generated
 
 | 图 | 位置 | 状态 | 链接 |
 |----|------|------|------|
-| 依赖图 (depgraph) | `blueprint_id=MOD-L04-001` 的 195 个 file 节点 | production | `extract_depgraph.py --modules MOD-L04-001` |
+| 依赖图 (depgraph) | `blueprint_id=MOD-L04-001` 的 202 个 file 节点 | production | `extract_depgraph.py --modules MOD-L04-001` |
 | 数据流图 (dataflow) | 1 个 Dataset / 2 个 Job | active | `apply_dataflowgraph.py --list-datasets` |
 | 决策架构图 (decision) | 76 个决策节点 / 2 个决策层 | design | `generate_decision_diagram.py` |
 | 蓝图 (blueprint) | 本文件 | Active | — |
@@ -155,7 +155,7 @@ build_status: generated
 | module_id | MOD-L04-001 | MOD-L04-001 | ✅ |
 | domain_id | N/A | N/A | ✅ |
 | build_status | generated | generated | ✅ |
-| file_count | 195 文件 | 14 文件（§0.1） | ❌ |
+| file_count | 202 文件 | 14 文件（§0.1） | ❌ |
 
 > 冲突时以 depgraph 为准（ARCH-056 + ARCH-MM-001 声明 vs 验证框架）。
 
@@ -926,7 +926,8 @@ class ViolationDetail(BaseModel):
 | 文件路径 | 实现状态 | 说明 |
 |---------|:---:|------|
 | `schemas/categories/__init__.py` | ✅ 已实现 | |
-| `schemas/categories/backtest_regime_state_anchored.py` | ✅ 已实现 | |
+| `schemas/categories/backtest/__init__.py` | ⚠️ 骨架 | |
+| `schemas/categories/backtest/backtest_regime_state_anchored.py` | ✅ 已实现 | |
 | `schemas/categories/cross_validation_log.py` | ✅ 已实现 | |
 | `schemas/categories/crypto/__init__.py` | ⚠️ 骨架 | |
 | `schemas/categories/crypto/crypto_kline_daily.py` | ✅ 已实现 | |
@@ -990,97 +991,103 @@ class ViolationDetail(BaseModel):
 | `schemas/categories/kline/market_kline_us_daily.py` | ✅ 已实现 | |
 | `schemas/categories/kline/market_kline_weekly.py` | ✅ 已实现 | |
 | `schemas/categories/kline/market_kline_weekly_hfq.py` | ✅ 已实现 | |
-| `schemas/categories/macro_edb_data.py` | ✅ 已实现 | |
-| `schemas/categories/macro_macro_data.py` | ✅ 已实现 | |
-| `schemas/categories/market_a50_futures_daily.py` | ✅ 已实现 | |
-| `schemas/categories/market_account_nav_daily.py` | ✅ 已实现 | |
-| `schemas/categories/market_adj_factor.py` | ✅ 已实现 | |
-| `schemas/categories/market_alt_regime_signal.py` | ✅ 已实现 | |
-| `schemas/categories/market_alt_shipping_index.py` | ✅ 已实现 | |
-| `schemas/categories/market_alt_stock_comment.py` | ✅ 已实现 | |
-| `schemas/categories/market_alt_sz_air_quality_daily.py` | ✅ 已实现 | |
-| `schemas/categories/market_alt_sz_air_quality_region.py` | ✅ 已实现 | |
-| `schemas/categories/market_alt_sz_enterprise_year.py` | ✅ 已实现 | |
-| `schemas/categories/market_alt_sz_house_area.py` | ✅ 已实现 | |
-| `schemas/categories/market_alt_sz_house_daily.py` | ✅ 已实现 | |
-| `schemas/categories/market_alt_sz_house_listing.py` | ✅ 已实现 | |
-| `schemas/categories/market_alt_sz_house_presale.py` | ✅ 已实现 | |
-| `schemas/categories/market_alt_sz_marine_forecast.py` | ✅ 已实现 | |
-| `schemas/categories/market_alt_sz_market_subject.py` | ✅ 已实现 | |
-| `schemas/categories/market_alt_sz_port_monthly.py` | ✅ 已实现 | |
-| `schemas/categories/market_alt_sz_reservoir_rain_day.py` | ✅ 已实现 | |
-| `schemas/categories/market_alt_sz_reservoir_rain_month.py` | ✅ 已实现 | |
-| `schemas/categories/market_alt_sz_reservoir_station.py` | ✅ 已实现 | |
-| `schemas/categories/market_alt_sz_stat_analysis.py` | ✅ 已实现 | |
-| `schemas/categories/market_alt_sz_stat_monthly.py` | ✅ 已实现 | |
-| `schemas/categories/market_alt_sz_visibility.py` | ✅ 已实现 | |
-| `schemas/categories/market_alt_sz_weather_warning.py` | ✅ 已实现 | |
-| `schemas/categories/market_alt_typhoon_track.py` | ✅ 已实现 | |
-| `schemas/categories/market_breadth_snapshot.py` | ✅ 已实现 | |
-| `schemas/categories/market_calendar_event.py` | ✅ 已实现 | |
-| `schemas/categories/market_cb_iv.py` | ✅ 已实现 | |
-| `schemas/categories/market_concept_board.py` | ✅ 已实现 | |
-| `schemas/categories/market_concept_board_constituent.py` | ✅ 已实现 | |
-| `schemas/categories/market_concept_sector.py` | ✅ 已实现 | |
-| `schemas/categories/market_convertible_bond_list.py` | ✅ 已实现 | |
-| `schemas/categories/market_daban_board_event.py` | ✅ 已实现 | |
-| `schemas/categories/market_daily_valuation.py` | ✅ 已实现 | |
-| `schemas/categories/market_dividend_tax_node.py` | ✅ 已实现 | |
-| `schemas/categories/market_dragon_tiger.py` | ✅ 已实现 | |
-| `schemas/categories/market_dragon_tiger_seat.py` | ✅ 已实现 | |
-| `schemas/categories/market_etf_benchmark.py` | ✅ 已实现 | |
-| `schemas/categories/market_etf_list.py` | ✅ 已实现 | |
-| `schemas/categories/market_etf_nav.py` | ✅ 已实现 | |
-| `schemas/categories/market_ex_dividend_event.py` | ✅ 已实现 | |
-| `schemas/categories/market_futures_kline_qmt.py` | ✅ 已实现 | |
-| `schemas/categories/market_futures_position.py` | ✅ 已实现 | |
-| `schemas/categories/market_futures_term.py` | ✅ 已实现 | |
-| `schemas/categories/market_hk_connect_flow.py` | ✅ 已实现 | |
-| `schemas/categories/market_hk_kline.py` | ✅ 已实现 | |
-| `schemas/categories/market_hk_stock_list.py` | ✅ 已实现 | |
-| `schemas/categories/market_hk_trade_calendar.py` | ✅ 已实现 | |
-| `schemas/categories/market_hog_futures_core.py` | ✅ 已实现 | |
-| `schemas/categories/market_hog_province_spot.py` | ✅ 已实现 | |
-| `schemas/categories/market_hog_spot_index.py` | ✅ 已实现 | |
-| `schemas/categories/market_index.py` | ✅ 已实现 | |
-| `schemas/categories/market_index_adjustment.py` | ✅ 已实现 | |
-| `schemas/categories/market_index_constituent.py` | ✅ 已实现 | |
-| `schemas/categories/market_index_list.py` | ✅ 已实现 | |
-| `schemas/categories/market_index_meta.py` | ✅ 已实现 | |
-| `schemas/categories/market_index_valuation_daily.py` | ✅ 已实现 | |
-| `schemas/categories/market_index_weight.py` | ✅ 已实现 | |
-| `schemas/categories/market_ipo_calendar.py` | ✅ 已实现 | |
-| `schemas/categories/market_ipo_schedule.py` | ✅ 已实现 | |
-| `schemas/categories/market_limit_up_down.py` | ✅ 已实现 | |
-| `schemas/categories/market_limit_up_pool.py` | ✅ 已实现 | |
-| `schemas/categories/market_lof_list.py` | ✅ 已实现 | |
-| `schemas/categories/market_margin_target_adjustment.py` | ✅ 已实现 | |
-| `schemas/categories/market_margin_trading.py` | ✅ 已实现 | |
-| `schemas/categories/market_msci_adjustment.py` | ✅ 已实现 | |
-| `schemas/categories/market_news_sentiment_window.py` | ✅ 已实现 | |
-| `schemas/categories/market_northbound_hold_snapshot.py` | ✅ 已实现 | |
-| `schemas/categories/market_option_greeks.py` | ✅ 已实现 | |
-| `schemas/categories/market_option_iv.py` | ✅ 已实现 | |
-| `schemas/categories/market_option_kline.py` | ✅ 已实现 | |
-| `schemas/categories/market_reconciliation_differences.py` | ✅ 已实现 | |
-| `schemas/categories/market_sector_constituent.py` | ✅ 已实现 | |
-| `schemas/categories/market_sector_fund_flow.py` | ✅ 已实现 | |
-| `schemas/categories/market_sector_list.py` | ✅ 已实现 | |
-| `schemas/categories/market_sector_meta.py` | ✅ 已实现 | |
-| `schemas/categories/market_sector_snapshot.py` | ✅ 已实现 | |
-| `schemas/categories/market_sentiment_panel.py` | ✅ 已实现 | |
-| `schemas/categories/market_st_stock_list.py` | ✅ 已实现 | |
-| `schemas/categories/market_stk_limit.py` | ✅ 已实现 | |
-| `schemas/categories/market_stock_indicator.py` | ✅ 已实现 | |
-| `schemas/categories/market_stock_list.py` | ✅ 已实现 | |
-| `schemas/categories/market_stock_valuation.py` | ✅ 已实现 | |
-| `schemas/categories/market_suspend.py` | ✅ 已实现 | |
-| `schemas/categories/market_technical_indicator.py` | ✅ 已实现 | |
-| `schemas/categories/market_trade_calendar.py` | ✅ 已实现 | |
-| `schemas/categories/market_typhoon_landfall_history.py` | ✅ 已实现 | |
-| `schemas/categories/market_typhoon_names.py` | ✅ 已实现 | |
-| `schemas/categories/market_us_futures_intraday.py` | ✅ 已实现 | |
-| `schemas/categories/market_us_index.py` | ✅ 已实现 | |
+| `schemas/categories/macro/__init__.py` | ⚠️ 骨架 | |
+| `schemas/categories/macro/macro_edb_data.py` | ✅ 已实现 | |
+| `schemas/categories/macro/macro_macro_data.py` | ✅ 已实现 | |
+| `schemas/categories/market/__init__.py` | ⚠️ 骨架 | |
+| `schemas/categories/market/market_a50_futures_daily.py` | ✅ 已实现 | |
+| `schemas/categories/market/market_account_nav_daily.py` | ✅ 已实现 | |
+| `schemas/categories/market/market_adj_factor.py` | ✅ 已实现 | |
+| `schemas/categories/market/market_alt_regime_signal.py` | ✅ 已实现 | |
+| `schemas/categories/market/market_alt_shipping_index.py` | ✅ 已实现 | |
+| `schemas/categories/market/market_alt_stock_comment.py` | ✅ 已实现 | |
+| `schemas/categories/market/market_alt_sz_air_quality_daily.py` | ✅ 已实现 | |
+| `schemas/categories/market/market_alt_sz_air_quality_region.py` | ✅ 已实现 | |
+| `schemas/categories/market/market_alt_sz_climate_hist.py` | ✅ 已实现 | |
+| `schemas/categories/market/market_alt_sz_enterprise_year.py` | ✅ 已实现 | |
+| `schemas/categories/market/market_alt_sz_env_meteor.py` | ✅ 已实现 | |
+| `schemas/categories/market/market_alt_sz_ground_obs.py` | ✅ 已实现 | |
+| `schemas/categories/market/market_alt_sz_house_area.py` | ✅ 已实现 | |
+| `schemas/categories/market/market_alt_sz_house_daily.py` | ✅ 已实现 | |
+| `schemas/categories/market/market_alt_sz_house_listing.py` | ✅ 已实现 | |
+| `schemas/categories/market/market_alt_sz_house_presale.py` | ✅ 已实现 | |
+| `schemas/categories/market/market_alt_sz_marine_forecast.py` | ✅ 已实现 | |
+| `schemas/categories/market/market_alt_sz_market_subject.py` | ✅ 已实现 | |
+| `schemas/categories/market/market_alt_sz_port_monthly.py` | ✅ 已实现 | |
+| `schemas/categories/market/market_alt_sz_reservoir_level.py` | ✅ 已实现 | |
+| `schemas/categories/market/market_alt_sz_reservoir_rain_day.py` | ✅ 已实现 | |
+| `schemas/categories/market/market_alt_sz_reservoir_rain_month.py` | ✅ 已实现 | |
+| `schemas/categories/market/market_alt_sz_reservoir_station.py` | ✅ 已实现 | |
+| `schemas/categories/market/market_alt_sz_stat_analysis.py` | ✅ 已实现 | |
+| `schemas/categories/market/market_alt_sz_stat_monthly.py` | ✅ 已实现 | |
+| `schemas/categories/market/market_alt_sz_visibility.py` | ✅ 已实现 | |
+| `schemas/categories/market/market_alt_sz_weather_warning.py` | ✅ 已实现 | |
+| `schemas/categories/market/market_alt_typhoon_track.py` | ✅ 已实现 | |
+| `schemas/categories/market/market_breadth_snapshot.py` | ✅ 已实现 | |
+| `schemas/categories/market/market_calendar_event.py` | ✅ 已实现 | |
+| `schemas/categories/market/market_cb_iv.py` | ✅ 已实现 | |
+| `schemas/categories/market/market_concept_board.py` | ✅ 已实现 | |
+| `schemas/categories/market/market_concept_board_constituent.py` | ✅ 已实现 | |
+| `schemas/categories/market/market_concept_sector.py` | ✅ 已实现 | |
+| `schemas/categories/market/market_convertible_bond_list.py` | ✅ 已实现 | |
+| `schemas/categories/market/market_daban_board_event.py` | ✅ 已实现 | |
+| `schemas/categories/market/market_daily_valuation.py` | ✅ 已实现 | |
+| `schemas/categories/market/market_dividend_tax_node.py` | ✅ 已实现 | |
+| `schemas/categories/market/market_dragon_tiger.py` | ✅ 已实现 | |
+| `schemas/categories/market/market_dragon_tiger_seat.py` | ✅ 已实现 | |
+| `schemas/categories/market/market_etf_benchmark.py` | ✅ 已实现 | |
+| `schemas/categories/market/market_etf_list.py` | ✅ 已实现 | |
+| `schemas/categories/market/market_etf_nav.py` | ✅ 已实现 | |
+| `schemas/categories/market/market_ex_dividend_event.py` | ✅ 已实现 | |
+| `schemas/categories/market/market_futures_kline_qmt.py` | ✅ 已实现 | |
+| `schemas/categories/market/market_futures_position.py` | ✅ 已实现 | |
+| `schemas/categories/market/market_futures_term.py` | ✅ 已实现 | |
+| `schemas/categories/market/market_hk_connect_flow.py` | ✅ 已实现 | |
+| `schemas/categories/market/market_hk_kline.py` | ✅ 已实现 | |
+| `schemas/categories/market/market_hk_stock_list.py` | ✅ 已实现 | |
+| `schemas/categories/market/market_hk_trade_calendar.py` | ✅ 已实现 | |
+| `schemas/categories/market/market_hog_futures_core.py` | ✅ 已实现 | |
+| `schemas/categories/market/market_hog_province_spot.py` | ✅ 已实现 | |
+| `schemas/categories/market/market_hog_spot_index.py` | ✅ 已实现 | |
+| `schemas/categories/market/market_index.py` | ✅ 已实现 | |
+| `schemas/categories/market/market_index_adjustment.py` | ✅ 已实现 | |
+| `schemas/categories/market/market_index_constituent.py` | ✅ 已实现 | |
+| `schemas/categories/market/market_index_list.py` | ✅ 已实现 | |
+| `schemas/categories/market/market_index_meta.py` | ✅ 已实现 | |
+| `schemas/categories/market/market_index_valuation_daily.py` | ✅ 已实现 | |
+| `schemas/categories/market/market_index_weight.py` | ✅ 已实现 | |
+| `schemas/categories/market/market_ipo_calendar.py` | ✅ 已实现 | |
+| `schemas/categories/market/market_ipo_schedule.py` | ✅ 已实现 | |
+| `schemas/categories/market/market_limit_up_down.py` | ✅ 已实现 | |
+| `schemas/categories/market/market_limit_up_pool.py` | ✅ 已实现 | |
+| `schemas/categories/market/market_lof_list.py` | ✅ 已实现 | |
+| `schemas/categories/market/market_margin_target_adjustment.py` | ✅ 已实现 | |
+| `schemas/categories/market/market_margin_trading.py` | ✅ 已实现 | |
+| `schemas/categories/market/market_msci_adjustment.py` | ✅ 已实现 | |
+| `schemas/categories/market/market_news_sentiment_window.py` | ✅ 已实现 | |
+| `schemas/categories/market/market_northbound_hold_snapshot.py` | ✅ 已实现 | |
+| `schemas/categories/market/market_option_greeks.py` | ✅ 已实现 | |
+| `schemas/categories/market/market_option_iv.py` | ✅ 已实现 | |
+| `schemas/categories/market/market_option_kline.py` | ✅ 已实现 | |
+| `schemas/categories/market/market_reconciliation_differences.py` | ✅ 已实现 | |
+| `schemas/categories/market/market_sector_constituent.py` | ✅ 已实现 | |
+| `schemas/categories/market/market_sector_fund_flow.py` | ✅ 已实现 | |
+| `schemas/categories/market/market_sector_list.py` | ✅ 已实现 | |
+| `schemas/categories/market/market_sector_meta.py` | ✅ 已实现 | |
+| `schemas/categories/market/market_sector_snapshot.py` | ✅ 已实现 | |
+| `schemas/categories/market/market_sentiment_panel.py` | ✅ 已实现 | |
+| `schemas/categories/market/market_st_stock_list.py` | ✅ 已实现 | |
+| `schemas/categories/market/market_stk_limit.py` | ✅ 已实现 | |
+| `schemas/categories/market/market_stock_indicator.py` | ✅ 已实现 | |
+| `schemas/categories/market/market_stock_list.py` | ✅ 已实现 | |
+| `schemas/categories/market/market_stock_valuation.py` | ✅ 已实现 | |
+| `schemas/categories/market/market_suspend.py` | ✅ 已实现 | |
+| `schemas/categories/market/market_technical_indicator.py` | ✅ 已实现 | |
+| `schemas/categories/market/market_trade_calendar.py` | ✅ 已实现 | |
+| `schemas/categories/market/market_typhoon_landfall_history.py` | ✅ 已实现 | |
+| `schemas/categories/market/market_typhoon_names.py` | ✅ 已实现 | |
+| `schemas/categories/market/market_us_futures_intraday.py` | ✅ 已实现 | |
+| `schemas/categories/market/market_us_index.py` | ✅ 已实现 | |
 | `schemas/categories/meta/meta_stock_profile_ths.py` | ✅ 已实现 | |
 | `schemas/categories/meta_stock_basic.py` | ✅ 已实现 | |
 | `schemas/categories/meta_stock_profile_ths.py` | ✅ 已实现 | |

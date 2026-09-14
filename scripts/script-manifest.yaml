@@ -3,8 +3,8 @@
 #
 manifest_version: 2.0.0
 generated_by: generate_manifest.py (auto-scan)
-generated_at: '2026-09-14'
-total_scripts: 927
+generated_at: '2026-09-15'
+total_scripts: 976
 scripts:
 - name: __init__.py
   path: __init__.py
@@ -25,6 +25,14 @@ scripts:
 - name: audit_news_publish_time.py
   path: audit_news_publish_time.py
   description: '----'
+  domain: audit
+  execution_plane: warm-path
+  status: registered
+  timeout_seconds: 60
+  dimensions: []
+- name: battle_map_coverage_audit.py
+  path: battle_map_coverage_audit.py
+  description: 口径：业务资产库（REGISTRY_SPECS 21 段）全部条目的 module_id 宇宙，对
   domain: audit
   execution_plane: warm-path
   status: registered
@@ -574,6 +582,14 @@ scripts:
   status: registered
   timeout_seconds: 60
   dimensions: []
+- name: backtest/auto_mount.py
+  path: backtest/auto_mount.py
+  description: 五步管线（立项真源 docs/_working/2026-09-14-auto-mount-research.md §4，验收五条同 §4）：
+  domain: test
+  execution_plane: warm-path
+  status: registered
+  timeout_seconds: 60
+  dimensions: []
 - name: backtest/backfill_stock_indicator_daily_basic.py
   path: backtest/backfill_stock_indicator_daily_basic.py
   description: 设计真源：docs/_working/2026-09-13-c5-cluster-differentiation-report.md 附三。
@@ -603,6 +619,14 @@ scripts:
   description: 原理（图9 FAC-E0 algo_note + 讨论稿 v4/v5）：回测量是算力成本大头，自研薄调度层
   domain: test
   execution_plane: hot-path
+  status: registered
+  timeout_seconds: 60
+  dimensions: []
+- name: backtest/distribution_forecast_eval.py
+  path: backtest/distribution_forecast_eval.py
+  description: 任何产出分位预测的模型（车道 E 分位数回归/Kronos/未来 PDF 模型）都交本考尺评分：
+  domain: test
+  execution_plane: warm-path
   status: registered
   timeout_seconds: 60
   dimensions: []
@@ -646,6 +670,30 @@ scripts:
   status: registered
   timeout_seconds: 60
   dimensions: []
+- name: backtest/factor_strategy_template.py
+  path: backtest/factor_strategy_template.py
+  description: 背景：E2 幸存的公式候选与 E4 考卷（c4_batch_screen 只收 translated/c4_*.py 的
+  domain: test
+  execution_plane: warm-path
+  status: registered
+  timeout_seconds: 60
+  dimensions: []
+- name: backtest/factory_grid_anova.py
+  path: backtest/factory_grid_anova.py
+  description: 输入 = 批次 A manifest（配方矩阵, 绩效 sharpe）。全因子网格下主效应/交互效应
+  domain: test
+  execution_plane: warm-path
+  status: registered
+  timeout_seconds: 60
+  dimensions: []
+- name: backtest/factory_grid_executor.py
+  path: backtest/factory_grid_executor.py
+  description: 编译（MOD-POS-029 GridCompiler）→ signal 侧分层抽样 → recipe→weights 求值 →
+  domain: test
+  execution_plane: warm-path
+  status: registered
+  timeout_seconds: 60
+  dimensions: []
 - name: backtest/factory_intake_pipeline.py
   path: backtest/factory_intake_pipeline.py
   description: 原理（图9 FAC-E1 节点 + 讨论稿 §二）：五车道并发进货，所有货统一卸到进货台账并带
@@ -662,9 +710,25 @@ scripts:
   status: registered
   timeout_seconds: 60
   dimensions: []
+- name: backtest/graph_enrich_staging.py
+  path: backtest/graph_enrich_staging.py
+  description: 原理（立项书 §七 + 裁定记录附二：图谱增补管线 P0 切片）：news_data 含供应链关键词的
+  domain: test
+  execution_plane: warm-path
+  status: registered
+  timeout_seconds: 60
+  dimensions: []
 - name: backtest/hypothesis_precheck.py
   path: backtest/hypothesis_precheck.py
   description: 原理（讨论稿 v4/v5：FaVOR 回测前机制验证同构；Owner 原则"主观经验是先验过滤器，
+  domain: test
+  execution_plane: warm-path
+  status: registered
+  timeout_seconds: 60
+  dimensions: []
+- name: backtest/hypothesis_translator.py
+  path: backtest/hypothesis_translator.py
+  description: 边界（第一性原理：100% AI 开发必须防幻觉，宁窄勿错）：
   domain: test
   execution_plane: warm-path
   status: registered
@@ -686,9 +750,25 @@ scripts:
   status: registered
   timeout_seconds: 60
   dimensions: []
+- name: backtest/kronos_adapter.py
+  path: backtest/kronos_adapter.py
+  description: Kronos（AAAI 2026，shiyu-coder/Kronos）：K 线 token 化+自回归Transformer，逐样本生成
+  domain: test
+  execution_plane: warm-path
+  status: registered
+  timeout_seconds: 60
+  dimensions: []
 - name: backtest/lane_b_idea_generator.py
   path: backtest/lane_b_idea_generator.py
   description: 原理（讨论稿 §五）：车道 B 货最便宜也最杂，靠 E2 预审把关；本车道只负责按主题种子
+  domain: test
+  execution_plane: warm-path
+  status: registered
+  timeout_seconds: 60
+  dimensions: []
+- name: backtest/lane_c2_agentic_miner.py
+  path: backtest/lane_c2_agentic_miner.py
+  description: 流程：E0 问闸（local 轻档）→ 白名单加载 → 面板（复用 MOD-BT-155 fetch_panel，日期主序
   domain: test
   execution_plane: warm-path
   status: registered
@@ -782,9 +862,25 @@ scripts:
   status: registered
   timeout_seconds: 60
   dimensions: []
+- name: backtest/sim_promotion_memo.py
+  path: backtest/sim_promotion_memo.py
+  description: 月度档由 pipeline_events（MOD-BT-190）事件唤醒点评估到期后调用（sim_memo_monthly），
+  domain: test
+  execution_plane: warm-path
+  status: registered
+  timeout_seconds: 60
+  dimensions: []
 - name: backtest/strategy_intake_inventory.py
   path: backtest/strategy_intake_inventory.py
   description: 规范真源：docs/01_policies_and_standards/sop/backtest_system_sop/sop_c_strategy_library_intake.md §1。
+  domain: test
+  execution_plane: warm-path
+  status: registered
+  timeout_seconds: 60
+  dimensions: []
+- name: backtest/strategy_lifecycle_advisor.py
+  path: backtest/strategy_lifecycle_advisor.py
+  description: 对每个既有 IS（translated_c4）又有 OOS（oos_tested）成绩的策略计算样本外衰减，
   domain: test
   execution_plane: warm-path
   status: registered
@@ -1134,6 +1230,134 @@ scripts:
   status: registered
   timeout_seconds: 60
   dimensions: []
+- name: backtest/translated/c4_backlog2_mktcap5.py
+  path: backtest/translated/c4_backlog2_mktcap5.py
+  description: 原文口径：全 A → ST/涨停/停牌过滤 → 流通市值降序取前 5（g.buy_stock_count=5）、
+  domain: test
+  execution_plane: hot-path
+  status: registered
+  timeout_seconds: 60
+  dimensions: []
+- name: backtest/translated/c4_backlog2_wiz_largecap.py
+  path: backtest/translated/c4_backlog2_wiz_largecap.py
+  description: 原文口径：聚宽向导生成器产物（约 400 行框架空壳），真实逻辑=利润增速>20 门过滤
+  domain: test
+  execution_plane: hot-path
+  status: registered
+  timeout_seconds: 60
+  dimensions: []
+- name: backtest/translated/c4_backlog3_div_roe5.py
+  path: backtest/translated/c4_backlog3_div_roe5.py
+  description: 原文=股息率前 25%+PEG<0+PB<3 门+ROE/PB 排序+小市值前 5。本件=股息/PB/ROE 三门+ROE 降序近似。
+  domain: test
+  execution_plane: warm-path
+  status: registered
+  timeout_seconds: 60
+  dimensions: []
+- name: backtest/translated/c4_backlog3_growth_peg4.py
+  path: backtest/translated/c4_backlog3_growth_peg4.py
+  description: 原文=归母净利增速前 50%+PEG(PE/增速)>0.08 最小前 10%→等权前 4。本件=增速门+PE 升序近似。
+  domain: test
+  execution_plane: warm-path
+  status: registered
+  timeout_seconds: 60
+  dimensions: []
+- name: backtest/translated/c4_backlog3_mclean_rev_accel.py
+  path: backtest/translated/c4_backlog3_mclean_rev_accel.py
+  description: 原文=多季营收增速逐季加速复合门。本件=单季营收增速>0 门+市值降序近似（加速语义无轴，重声明）。
+  domain: test
+  execution_plane: warm-path
+  status: registered
+  timeout_seconds: 60
+  dimensions: []
+- name: backtest/translated/c4_backlog3_mclean_screen.py
+  path: backtest/translated/c4_backlog3_mclean_screen.py
+  description: 原文=市值≥均值+流动比率≥均值+ROE≥均值+五年FCF>0+营收增速(6,30)+盈余增速(8,50) 门→流通市值升序。本件=增速区间+ROE/现金流正门近似。
+  domain: test
+  execution_plane: warm-path
+  status: registered
+  timeout_seconds: 60
+  dimensions: []
+- name: backtest/translated/c4_backlog3_novice_value5.py
+  path: backtest/translated/c4_backlog3_novice_value5.py
+  description: 原文=营收增速>15+PB(0,2)+PE<40+净利增速>10+ROA>4 五门、市值百分位权重全持+止损线。本件=五门+市值降序近似。
+  domain: test
+  execution_plane: warm-path
+  status: registered
+  timeout_seconds: 60
+  dimensions: []
+- name: backtest/translated/c4_backlog3_pb_range_lowdebt.py
+  path: backtest/translated/c4_backlog3_pb_range_lowdebt.py
+  description: 原文=PB(0,2)+流动比率>1.2+资产负债率高于中位数过滤+TRIX/RSI 择时。本件=PB 区间+负债率门近似，择时腿剔除。
+  domain: test
+  execution_plane: warm-path
+  status: registered
+  timeout_seconds: 60
+  dimensions: []
+- name: backtest/translated/c4_backlog3_peg_ebit_tiny.py
+  path: backtest/translated/c4_backlog3_peg_ebit_tiny.py
+  description: 原文=净利 TTM 增速>10%+EBIT yield 前 25%+换手波动<0.5 门→流通市值升序前 5。本件=增速+EBIT>0 门+市值升序近似。
+  domain: test
+  execution_plane: warm-path
+  status: registered
+  timeout_seconds: 60
+  dimensions: []
+- name: backtest/translated/c4_backlog3_peg_ebit_tiny2.py
+  path: backtest/translated/c4_backlog3_peg_ebit_tiny2.py
+  description: 原文=PEG 最低 10%+EBIT yield 前 25% 门→流通市值升序前 5。本件=增速+EBIT 门+市值升序近似。
+  domain: test
+  execution_plane: warm-path
+  status: registered
+  timeout_seconds: 60
+  dimensions: []
+- name: backtest/translated/c4_backlog3_peg_growth_tiny.py
+  path: backtest/translated/c4_backlog3_peg_growth_tiny.py
+  description: 原文=PEG<0.5 门+成长池→流通市值升序前 4+RSRS 择时。本件=增速门+市值升序近似，RSRS 剔除。
+  domain: test
+  execution_plane: warm-path
+  status: registered
+  timeout_seconds: 60
+  dimensions: []
+- name: backtest/translated/c4_backlog3_roe_up_pb_low.py
+  path: backtest/translated/c4_backlog3_roe_up_pb_low.py
+  description: 原文=PB 后 1/4 分位+ROE 五季改善前 10%→PB 升序前 10。本件=ROE>0 门+PB 升序排序近似。
+  domain: test
+  execution_plane: warm-path
+  status: registered
+  timeout_seconds: 60
+  dimensions: []
+- name: backtest/translated/c4_backlog3_value_roa5.py
+  path: backtest/translated/c4_backlog3_value_roa5.py
+  description: 原文=PB<1+经营现金流>1e6+调整利润>1e6+ROA>15%+增速>0 门→ROA 降序前 5 月频。
+  domain: test
+  execution_plane: warm-path
+  status: registered
+  timeout_seconds: 60
+  dimensions: []
+- name: backtest/translated/c4_backlog3_value_roa5_v2.py
+  path: backtest/translated/c4_backlog3_value_roa5_v2.py
+  description: 原文=2024/16 同族优化克隆（同五门+ROA 降序前 5），科创板/北交过滤声明剔除。
+  domain: test
+  execution_plane: warm-path
+  status: registered
+  timeout_seconds: 60
+  dimensions: []
+- name: backtest/translated/c4_backlog3_wiz61_growth_quality.py
+  path: backtest/translated/c4_backlog3_wiz61_growth_quality.py
+  description: 原文=净利增速>20+营收增速>30+PE<30+ROE>5 四门、空排序全持等权。本件=四门+市值降序近似。
+  domain: test
+  execution_plane: warm-path
+  status: registered
+  timeout_seconds: 60
+  dimensions: []
+- name: backtest/translated/c4_backlog3_wiz63_growth_pb2.py
+  path: backtest/translated/c4_backlog3_wiz63_growth_pb2.py
+  description: 原文=营收/净利/营业利润率三门>10+PB>2 过滤、空排序全持等权。本件=四门+市值降序近似。
+  domain: test
+  execution_plane: warm-path
+  status: registered
+  timeout_seconds: 60
+  dimensions: []
 - name: backtest/translated/c4_bd42540f86e4_pe_pb.py
   path: backtest/translated/c4_bd42540f86e4_pe_pb.py
   description: '原文: 沪深300 池；PB∈(3,10) 且 PE(LYR)∈(10,20)；max_hold=5；日频调仓。'
@@ -1254,6 +1478,46 @@ scripts:
   status: registered
   timeout_seconds: 60
   dimensions: []
+- name: backtest/translated/c4_fact_4228020a.py
+  path: backtest/translated/c4_fact_4228020a.py
+  description: 生成=factor_strategy_template（MOD-BT-159 机械翻译桥）；出生候选=CAND-e8fc95fe5b98；
+  domain: test
+  execution_plane: warm-path
+  status: registered
+  timeout_seconds: 60
+  dimensions: []
+- name: backtest/translated/c4_fact_4b200528.py
+  path: backtest/translated/c4_fact_4b200528.py
+  description: 生成=factor_strategy_template（MOD-BT-159 机械翻译桥）；出生候选=CAND-32e5c7444cc0；
+  domain: test
+  execution_plane: warm-path
+  status: registered
+  timeout_seconds: 60
+  dimensions: []
+- name: backtest/translated/c4_fact_4db4c41e.py
+  path: backtest/translated/c4_fact_4db4c41e.py
+  description: 生成=factor_strategy_template（MOD-BT-159 机械翻译桥）；出生候选=CAND-ceea86f5ca9c；
+  domain: test
+  execution_plane: warm-path
+  status: registered
+  timeout_seconds: 60
+  dimensions: []
+- name: backtest/translated/c4_fact_4f749668.py
+  path: backtest/translated/c4_fact_4f749668.py
+  description: 生成=factor_strategy_template（MOD-BT-159 机械翻译桥）；出生候选=CAND-e611b7cda691；
+  domain: test
+  execution_plane: warm-path
+  status: registered
+  timeout_seconds: 60
+  dimensions: []
+- name: backtest/translated/c4_fact_e831084c.py
+  path: backtest/translated/c4_fact_e831084c.py
+  description: 生成=factor_strategy_template（MOD-BT-159 机械翻译桥）；出生候选=CAND-22a96c4c7758；
+  domain: test
+  execution_plane: warm-path
+  status: registered
+  timeout_seconds: 60
+  dimensions: []
 - name: backtest/translated/c4_fd47fa0e6401_macd_resonance.py
   path: backtest/translated/c4_fd47fa0e6401_macd_resonance.py
   description: '原文逻辑: 全 A 剔停/退/ST/科创/上市<60 天；周线 MACD 金叉（第二金叉过滤）→ 周池；'
@@ -1305,6 +1569,54 @@ scripts:
 - name: backtest/translated/c4_valuation_pe_zz500.py
   path: backtest/translated/c4_valuation_pe_zz500.py
   description: '[KNOWLEDGE_EFFECTIVE_FROM] 2026-09-14 | 源=策略原文公开发布日 | 生成=AI 会话（取晚者）'
+  domain: test
+  execution_plane: warm-path
+  status: registered
+  timeout_seconds: 60
+  dimensions: []
+- name: backtest/translated/c4_valuation_v2_div_nopeg.py
+  path: backtest/translated/c4_valuation_v2_div_nopeg.py
+  description: 原文口径：高股息率+低 PEG+低股价三门复合排序取前 20（g.stock_num=20），多条件过滤池。
+  domain: test
+  execution_plane: warm-path
+  status: registered
+  timeout_seconds: 60
+  dimensions: []
+- name: backtest/translated/c4_valuation_v2_div_steady5.py
+  path: backtest/translated/c4_valuation_v2_div_steady5.py
+  description: 原文口径：自分红送配明细自算股息率（gxl/gxl2/gxl3 三个口径），三轮分级排序逐级收窄
+  domain: test
+  execution_plane: warm-path
+  status: registered
+  timeout_seconds: 60
+  dimensions: []
+- name: backtest/translated/c4_valuation_v2_pb_lowturn.py
+  path: backtest/translated/c4_valuation_v2_pb_lowturn.py
+  description: 原文口径：月频，双池合并——①PB 升序前 70→换手率升序前 35；②市值升序前 70→换手率升序前 35，
+  domain: test
+  execution_plane: warm-path
+  status: registered
+  timeout_seconds: 60
+  dimensions: []
+- name: backtest/translated/c4_valuation_v2_pretty50_div.py
+  path: backtest/translated/c4_valuation_v2_pretty50_div.py
+  description: 原文口径：全 A → 剔除流通市值最小 25% → 行业内股息率前 2/3 修饰 → 股息率降序取前 10，
+  domain: test
+  execution_plane: warm-path
+  status: registered
+  timeout_seconds: 60
+  dimensions: []
+- name: backtest/translated/c4_valuation_v2_wiz_citics.py
+  path: backtest/translated/c4_valuation_v2_wiz_citics.py
+  description: 原文口径：聚宽向导生成器产物，真实选股=market_cap>0（恒真占位）+PB<1.5 两门过滤、
+  domain: test
+  execution_plane: warm-path
+  status: registered
+  timeout_seconds: 60
+  dimensions: []
+- name: backtest/translated/c4_valuation_v2_wiz_value1.py
+  path: backtest/translated/c4_valuation_v2_wiz_value1.py
+  description: 原文口径：聚宽向导生成器产物（约 400 行框架空壳），真实选股=PE 区间 (5.5,11.5)+ROE>5+
   domain: test
   execution_plane: warm-path
   status: registered
@@ -1457,6 +1769,14 @@ scripts:
 - name: ch/apply_market_tables_ddl.py
   path: ch/apply_market_tables_ddl.py
   description: DDL-as-Code 模式：
+  domain: ch
+  execution_plane: warm-path
+  status: registered
+  timeout_seconds: 60
+  dimensions: []
+- name: ch/apply_pattern_certification_ddl.py
+  path: ch/apply_pattern_certification_ddl.py
+  description: DDL 真源：schemas/categories/market/market_pattern_certification.py（DDL-as-Code）。
   domain: ch
   execution_plane: warm-path
   status: registered
@@ -1838,9 +2158,25 @@ scripts:
   status: registered
   timeout_seconds: 60
   dimensions: []
+- name: data/backfill_bse_minute_history.py
+  path: data/backfill_bse_minute_history.py
+  description: 背景（2026-09-15 排查报告 docs/_working/archive/2026-09/2026-09-15-kline1min-valuation-coverage-investigation.md）：
+  domain: data
+  execution_plane: warm-path
+  status: registered
+  timeout_seconds: 60
+  dimensions: []
 - name: data/backfill_lof_minute_history.py
   path: data/backfill_lof_minute_history.py
   description: 注：9/17 后随 miniQMT 退役本工具自然失效，保留供审计。
+  domain: data
+  execution_plane: warm-path
+  status: registered
+  timeout_seconds: 60
+  dimensions: []
+- name: data/backfill_reservoir_level_full.py
+  path: data/backfill_reservoir_level_full.py
+  description: 大表纪律（DDL BLUEPRINT 预注册）：首刷限近窗，全史报批后专项执行——本次即该专项。
   domain: data
   execution_plane: warm-path
   status: registered
@@ -1977,6 +2313,38 @@ scripts:
 - name: data/repair_kline_tz_monthly.py
   path: data/repair_kline_tz_monthly.py
   description: 背景（2026-09-14 实测结论）：
+  domain: data
+  execution_plane: warm-path
+  status: registered
+  timeout_seconds: 60
+  dimensions: []
+- name: data/run_nightly_sentiment.py
+  path: data/run_nightly_sentiment.py
+  description: 用法（在仓库根，Python 3.12）：
+  domain: data
+  execution_plane: warm-path
+  status: registered
+  timeout_seconds: 60
+  dimensions: []
+- name: data/run_sector_snapshot.py
+  path: data/run_sector_snapshot.py
+  description: 用法：python scripts/data/run_sector_snapshot.py
+  domain: data
+  execution_plane: warm-path
+  status: registered
+  timeout_seconds: 60
+  dimensions: []
+- name: data/synth_board_index.py
+  path: data/synth_board_index.py
+  description: 方案真源：docs/_working/board_synthesis/2026-09-15-board-index-synthesis-plan.md §1/§4。
+  domain: data
+  execution_plane: warm-path
+  status: registered
+  timeout_seconds: 60
+  dimensions: []
+- name: data/synth_board_minute.py
+  path: data/synth_board_minute.py
+  description: 逐板块分批处理：每板块独立查 1min→等权→合成→写库，避免全市场一次性拉取超内存。
   domain: data
   execution_plane: warm-path
   status: registered
@@ -3102,6 +3470,14 @@ scripts:
   status: registered
   timeout_seconds: 60
   dimensions: []
+- name: governance/d3_metadata/pattern_code_fingerprint.py
+  path: governance/d3_metadata/pattern_code_fingerprint.py
+  description: schema v2.1 裁定：code_symbol 代码符号锚点 / code_fingerprint 实现指纹——库↔代码
+  domain: governance
+  execution_plane: warm-path
+  status: registered
+  timeout_seconds: 60
+  dimensions: []
 - name: governance/d3_metadata/validate_architecture.py
   path: governance/d3_metadata/validate_architecture.py
   description: validate_architecture.py - Validate rule files against architecture_contract.yaml
@@ -3617,6 +3993,14 @@ scripts:
 - name: governance/d5_architecture/generators/domain_name_mapping.py
   path: governance/d5_architecture/generators/domain_name_mapping.py
   description: 功能域中文名称映射表 / Functional Domain Chinese Name Mapping
+  domain: governance
+  execution_plane: warm-path
+  status: registered
+  timeout_seconds: 60
+  dimensions: []
+- name: governance/d5_architecture/generators/externalize_algo_flow.py
+  path: governance/d5_architecture/generators/externalize_algo_flow.py
+  description: 把 src 模块 docstring 内驻留的 ``# [ALGO_FLOW]`` 机器块（AST 可再生，均值 ~47 行/模块）
   domain: governance
   execution_plane: warm-path
   status: registered
@@ -4457,6 +4841,14 @@ scripts:
 - name: governance/d7_code/check_yaml_anchor_consistency.py
   path: governance/d7_code/check_yaml_anchor_consistency.py
   description: 检测 config/ 与 architecture_model/ 下所有 YAML 文件的 B_yaml 治理锚定块一致性，
+  domain: governance
+  execution_plane: warm-path
+  status: registered
+  timeout_seconds: 60
+  dimensions: []
+- name: governance/d7_code/compare_pytest_configs.py
+  path: governance/d7_code/compare_pytest_configs.py
+  description: 病根：同一测试域存在两套 pytest 配置——pyproject.toml（全量跑法）与
   domain: governance
   execution_plane: warm-path
   status: registered
