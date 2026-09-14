@@ -13088,4 +13088,8 @@ creation_tokens:
   token: algo-flow-externalize-trading-compliance-detector-20260914
   created_by: st-btfix-p14-20260914
   capability: algo_flow_externalize
+- file: scripts/data/run_nightly_sentiment.py
+  token: nightly-sentiment-automation-20260915
+  created_by: st-880fill-20260911
+  capability: nightly_sentiment
 di_seam_exemptions: []
