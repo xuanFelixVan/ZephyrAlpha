@@ -69,9 +69,13 @@ def empirical_coverage(quantile_preds: dict[float, np.ndarray],
             cov = np.nan
         else:
             cov = float(np.mean(r[fin] <= pred[fin]))
+        # 容差样本感知：二项噪声半宽 max(基础容差, 1.96*sqrt(q(1-q)/n))
+        n_fin = int(np.isfinite(r).sum())
+        tol = max(CALIBRATION_TOL, 1.96 * float(np.sqrt(q * (1 - q) / max(n_fin, 1))))
         rows.append({"quantile": q, "nominal": q, "empirical": cov,
+                     "tolerance": round(tol, 4),
                      "deviation": None if np.isnan(cov) else cov - q,
-                     "calibrated": bool(abs((cov or np.nan) - q) <= CALIBRATION_TOL)
+                     "calibrated": bool(abs((cov or np.nan) - q) <= tol)
                      if not np.isnan(cov) else False})
     return pd.DataFrame(rows)
 
