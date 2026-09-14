@@ -89,3 +89,10 @@ CH 在线 ✅ / 并发压测全绿 ✅ / 4 缺陷修复+测试过 ✅ / 当日�
 2. **文件消失事件**：p0_tick_backfill.py / repair_kline_tz_monthly.py 在施工期间遭外部清理（非本会话删除），已从 docs/_working 原件 + .runtime/tmp/p0scripts 快照重建（连接统一补丁重放），建议行情修复班（st-mktfix）下次 diff 校准。
 3. **落库清单终版**：白班 921cfe13+fe9cdc93+13d8b473（3 件经他会话提交吸收，内容无损）；晚间 e3e414ec（4 缺陷修复）；全部为 HEAD 祖先，merge-base 复核通过。
 4. **仍在盘上待治理**：7 件工具（统一连接版）、_needs_manual_mapping/news_data 3 行、test_sim_paper_ledger 硬编码行数断言。
+
+## 八、常态化执行终版
+
+**常态化结论**：新增代码侧——两道门禁已常年 hard-block，零额外动作。
+
+**存量清偿**：7 件编外工具已入库（df915569+983a1c6b）；sector880/lof 2 件改进在盘上（gitignore 区暂留）；剩余 82 处 noqa 挂 SQL 治理批分期清偿。
+**打法模板**：scripts/data/p02_month_gapfill.py（_SQL_* 常量+.format+get_registry 派生——最完整参考）。
