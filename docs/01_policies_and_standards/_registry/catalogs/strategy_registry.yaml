@@ -12597,6 +12597,16 @@ strategies:
     tags: ["BIAS", "乖离率", "超卖回归", "指数择时"]
     algorithm_status: "quantized"
     evidence: "双窗及格（§8）：IS 2020-2023 Sharpe=0.160(DSR=0.031)/OOS 2024-2026 Sharpe=0.526(DSR=0.071)；簇首（bluechip_ma ρ=0.713/crash_dodge ρ=0.679 标 redundant 留档）。run=SCR-C4-20260913-002056/SCR-C4-20260913-013339/SCR-C4-20260914-051809。"
+    family_redundancy:
+      role: "cluster_head"
+      absorbed:
+      - candidate_id: "CAND-9ce75aa27ce5"
+        name: "bluechip_ma"
+        correlation: 0.713
+      - candidate_id: "CAND-29eb91dbaf60"
+        name: "crash_dodge"
+        correlation: 0.679
+      ruling_ref: "docs/_working/2026-09-13-c5-cluster-differentiation-report.md §转正名单裁定"
     code_symbol: "scripts/backtest/translated/c4_c72318f2da1c_bias_ql.py::build"
     code_fingerprint: null
   - strategy_id: "STR-DABAN-023"

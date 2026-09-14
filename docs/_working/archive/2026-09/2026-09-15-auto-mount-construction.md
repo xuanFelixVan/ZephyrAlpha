@@ -70,3 +70,20 @@ ttl: task_bound
 - 报告标题长清单收敛（>8 条缩略+对象清单独立行）。
 - 三个钩子边界备注：audit 的 decay 字段=dry_run 只读不写台账（写路径仍归 run_validation 尾随事件，
    责任唯一）；报告不进 git（docs/_working 任务文档区，由 auto_archive 治理）。
+
+## 用法速记（固化版，给下一班）
+
+```powershell
+python scripts/backtest/auto_mount.py --plan                                    # 预演（重放已挂集合零 diff = 幂等自检）
+python scripts/backtest/auto_mount.py --apply --strategy STR-X --report        # 实挂+报告（挂谁=C6 决策，必须显式）
+python scripts/backtest/auto_mount.py --replay --report                        # 月度幂等自检+报告
+python scripts/backtest/auto_mount.py --audit --scan-frequency monthly         # 月度审计（可 quarterly/semiannual）
+```
+
+## 下一批策略转正侦察（2026-09-15 02:50 实测）
+
+- bothwin 台账：48 行中及格 8 条 → 5 条已转正入库（上班）+ 恐慌反弹已有 STR-VREV-025 +
+  **bluechip_ma(0.09)/crash_dodge(-0.10) 两簇员标 redundant_of=STR-VREV-026 留档不转正**（簇首替身证据在账）。
+- 结论：**C6 管线下一批真实输入=零**——这批及格蓝海已捞干，等 C1→C4 新海选批次产出新 CAND-*。
+- 本班补登记：STR-VREV-026 条目新增 `family_redundancy` 结构化块（cluster_head+absorbed 两簇员+ρ+裁定指针）——
+  聚类裁定从散文 evidence 升级为可消费字段，下游审计/转正管线可直接读。
