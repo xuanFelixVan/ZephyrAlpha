@@ -63,6 +63,21 @@ def _write_map(tmp_path: Path, payload: dict) -> Path:
     return p
 
 
+def _assert_no_unexpected_errors(issues: list) -> None:
+    """全绿锚断言（ok ≡ errors 为空，带侦查明细）。
+
+    合成场景跑 R1-R25 全量校验，真源（_REGISTRY_DIR/depgraph）被并行会话写入中间态时
+    会读瞬态 error——本断言失败时输出完整明细供一眼归因：code 与本测试目标规则无关且
+    重跑即绿=环境噪声；重跑仍红=真源真漂移，按明细处置。
+    """
+    errors = [i for i in issues if i.level == "error"]
+    assert not errors, (
+        "合成场景意外触发 error（ok=False 全绿锚）。明细="
+        + str([f"{i.code}:{i.detail}" for i in errors])
+        + "；与本测试目标规则无关→疑似并行会话写 registry 真源中间态，重跑鉴别"
+    )
+
+
 def _minimal_payload() -> dict:
     return {
         "schema_version": "1.0",
@@ -115,9 +130,7 @@ class TestValidate:
     def test_clean_minimal_ok(self, tmp_path: Path) -> None:
         dm = load_decision_map(_write_map(tmp_path, _minimal_payload()))
         ok, issues = validate_decision_map(dm, _REGISTRY_DIR, _KNOWN_STRATEGIES)
-        errors = [i for i in issues if i.level == "error"]
-        assert ok is True
-        assert errors == []
+        _assert_no_unexpected_errors(issues)
         # module_ref=null → warning（缺口占位）
         assert any(i.level == "warning" and i.code == "R1" for i in issues)
 
@@ -157,7 +170,7 @@ class TestValidate:
         dm = load_decision_map(_write_map(tmp_path, payload))
         ok, issues = validate_decision_map(dm, _REGISTRY_DIR, _KNOWN_STRATEGIES)
         assert not any(i.code == "R6" for i in issues)
-        assert ok is True
+        _assert_no_unexpected_errors(issues)
 
     def test_r2_dangling_edge(self, tmp_path: Path) -> None:
         payload = _minimal_payload()
@@ -195,7 +208,7 @@ class TestValidate:
         dm = load_decision_map(_write_map(tmp_path, payload))
         ok, issues = validate_decision_map(dm, _REGISTRY_DIR, _KNOWN_STRATEGIES)
         assert not any(i.code == "R8" for i in issues)
-        assert ok is True
+        _assert_no_unexpected_errors(issues)
 
     def test_r7_matrix_cell_dangling_node(self, tmp_path: Path) -> None:
         payload = _minimal_payload()
@@ -345,7 +358,7 @@ class TestXrefAxes:
         payload["nodes"][0]["activation"] = "intraday"
         dm = load_decision_map(_write_map(tmp_path, payload))
         ok, issues = validate_decision_map(dm, _REGISTRY_DIR, _KNOWN_STRATEGIES)
-        assert ok is True  # warning 级不阻断
+        _assert_no_unexpected_errors(issues)  # warning 级不阻断
         assert any(i.code == "R39" for i in issues)
         payload["nodes"][0]["latency_budget"] = "秒级（盘中扫描窗口内出结论）"
         dm = load_decision_map(_write_map(tmp_path, payload))
@@ -379,7 +392,7 @@ class TestXrefAxes:
         ]
         dm = load_decision_map(_write_map(tmp_path, payload))
         ok, issues = validate_decision_map(dm, _REGISTRY_DIR, _KNOWN_STRATEGIES)
-        assert ok is True
+        _assert_no_unexpected_errors(issues)
         assert not any(i.code == "R2" and "payload_zh" in i.detail for i in issues)
 
     def test_dal_code_ref_drift_warning(self, tmp_path: Path) -> None:
@@ -433,7 +446,7 @@ class TestXrefAxes:
         )
         dm = load_decision_map(_write_map(tmp_path, payload))
         ok, issues = validate_decision_map(dm, _REGISTRY_DIR, _KNOWN_STRATEGIES)
-        assert ok is True
+        _assert_no_unexpected_errors(issues)
         assert not any(
             i.code in {f"R{n}" for n in range(26, 37)} for i in issues
         )
@@ -508,7 +521,7 @@ class TestGovernanceGates:
         dm = load_decision_map(_write_map(tmp_path, payload))
         ok, issues = validate_decision_map(dm, _REGISTRY_DIR, _KNOWN_STRATEGIES)
         assert not any(i.code == "R15" for i in issues)
-        assert ok is True
+        _assert_no_unexpected_errors(issues)
 
     def test_r16_parent_dangling(self, tmp_path: Path) -> None:
         payload = _minimal_payload()
@@ -563,7 +576,7 @@ class TestGovernanceGates:
             )
         dm = load_decision_map(_write_map(tmp_path, payload))
         ok, issues = validate_decision_map(dm, _REGISTRY_DIR, _KNOWN_STRATEGIES)
-        assert ok is True  # warning 不阻断
+        _assert_no_unexpected_errors(issues)  # warning 不阻断
         assert any(i.code == "R16" and i.level == "warning" and "树宽过大" in i.detail for i in issues)
 
     def test_r17_question_too_long(self, tmp_path: Path) -> None:
@@ -781,7 +794,7 @@ class TestRepoTruthSource:
         ok, issues = validate_decision_map(dm, _REGISTRY_DIR, _KNOWN_STRATEGIES)
         errors = [i for i in issues if i.level == "error"]
         assert errors == [], f"真源存在 error 级缺口: {errors}"
-        assert ok is True
+        _assert_no_unexpected_errors(issues)
 
     def test_repo_map_mounts_all_eight_strategies(self) -> None:
         """8 个实盘策略必须全部挂载在地图上（D2 验收：策略归位完整）。

@@ -47,6 +47,17 @@ _TRANSLATED_DIR = _ROOT / "scripts" / "backtest" / "translated"
 _DEFERRAL_CSV = _ROOT / "data" / "strategy_intake" / "c4_deferrals.csv"
 _TABLE = "c1_backtest.strategy_screen"
 _BATCH = "C4-translated-20260912"
+
+
+def _translated_dedup_key(batch: str, result: dict, verdict: str) -> tuple:
+    """translated 行幂等键：同 sid 多版本翻译件按 source_file 区分各留一行（族取舍归 C5）。"""
+    return (batch, result["strategy_id"], verdict, f"scripts/backtest/translated/{result['module']}")
+
+
+def _deferred_dedup_key(batch: str, sid: str, orig_name: str) -> tuple:
+    return (batch, sid, "deferred_c4", orig_name)
+
+
 _INSERT_COLUMNS = (
     "(run_id, screen_batch, strategy_id, source_file, translated, is_sharpe, deflated_sharpe,"
     " max_drawdown, turnover, oos_years_decay, cluster_id, verdict, verdict_reason, screened_at, notes)"
@@ -218,17 +229,14 @@ def main() -> None:
         finalize_run(run_id, verdict_ref={"table": _TABLE, "run_id": run_id})
 
     # 落库（幂等：同 (batch, strategy_id) 跳过）
-    from zephyr.data.ch_config import ensure_ch_env_loaded, load_ch_reader_config
+    from zephyr.data.ch_writer import get_client_strict
 
-    ensure_ch_env_loaded()
-    cfg = load_ch_reader_config()
-    from clickhouse_driver import Client
-
-    c = Client(host=cfg["host"], port=int(cfg.get("port", 9000)), user=cfg.get("user", "default"),
-               password=cfg.get("password", ""), connect_timeout=5)
+    c = get_client_strict()
     # 幂等按 (batch, strategy_id, verdict) 判重：同 sid 的 deferred 行不挡 translated 行（2026-09-14 估值批教训）
+    # 幂等按 (batch, strategy_id, verdict, source_file) 四键判重：deferred 行不挡 translated 行；
+    # 同 sid 多版本翻译件（族变体重构）各留一行可溯，族内取舍归 C5 聚类去重（2026-09-14 裁定）
     existing = {tuple(r) for r in c.execute(
-        f"SELECT screen_batch, strategy_id, verdict FROM {_TABLE} WHERE screen_batch = '{args.batch}'")}
+        f"SELECT screen_batch, strategy_id, verdict, source_file FROM {_TABLE} WHERE screen_batch = '{args.batch}'")}
     ts = now.strftime("%Y-%m-%d %H:%M:%S")
     rows: list[list[Any]] = []
     is_sharpe_map: dict[str, Any] = {}
@@ -239,7 +247,7 @@ def main() -> None:
         ):
             is_sharpe_map[sid] = isv
     for r in results:
-        if (args.batch, r["strategy_id"], args.verdict) in existing:
+        if _translated_dedup_key(args.batch, r, args.verdict) in existing:
             continue
         decay = None
         if oos_mode:
@@ -259,7 +267,7 @@ def main() -> None:
         ])
     for d in deferrals:
         sid = f"CAND-{d['md5_12']}"
-        if (args.batch, sid, "deferred_c4") in existing:
+        if _deferred_dedup_key(args.batch, sid, d.get("orig_name", "")) in existing:
             continue
         rows.append([
             run_id, args.batch, sid, d.get("orig_name", ""), 0, None, None, None, None, None, "",

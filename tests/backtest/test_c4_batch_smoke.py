@@ -185,3 +185,27 @@ class TestWindowAndContract:
         text = runner.read_text(encoding="utf-8")
         assert "C4-translated-20260912" in text
         assert "run_deflated_sharpe_batch" not in text  # 委托经引擎，runner 不直连官方件
+
+    def test_dedup_key_four_tuple(self):
+        """回归：幂等键=四元组 (batch, sid, verdict, source_file)——同 sid 多版本翻译件
+        （族变体重构）不得被跨批判重挡掉，各留一行可溯（2026-09-14 Slater 族实测教训：
+        三键判重把 slater_value/value55 原版挡在台账外，文件与成绩失联）。"""
+        sys.path.insert(0, str(_REPO / "scripts" / "backtest"))
+        import c4_batch_screen as runner
+
+        batch, verdict = "C4-translated-20260912", "translated_c4"
+        k_zulu = runner._translated_dedup_key(
+            batch, {"strategy_id": "CAND-311220235636", "module": "c4_311220235636_zulu_value.py"}, verdict)
+        k_slater = runner._translated_dedup_key(
+            batch, {"strategy_id": "CAND-311220235636", "module": "c4_311220235636_slater_value.py"}, verdict)
+        assert k_zulu != k_slater, "同 sid 不同文件必须产出不同幂等键（四键语义）"
+        assert k_zulu == runner._translated_dedup_key(
+            batch, {"strategy_id": "CAND-311220235636", "module": "c4_311220235636_zulu_value.py"},
+            verdict), "同批同文件重跑必须同键（幂等保留）"
+        assert runner._translated_dedup_key(
+            batch, {"strategy_id": "CAND-40ca0da1a3ca", "module": "c4_40ca0da1a3ca_value55.py"},
+            "oos_tested") != runner._translated_dedup_key(
+            batch, {"strategy_id": "CAND-40ca0da1a3ca", "module": "c4_40ca0da1a3ca_value55.py"},
+            "translated_c4"), "不同 verdict 不同键（deferred 不挡 translated）"
+        assert runner._deferred_dedup_key(batch, "CAND-x", "orig.csv") == (
+            batch, "CAND-x", "deferred_c4", "orig.csv")
