@@ -138,3 +138,49 @@ pattern_event_store→胜率物化→机生 evidence 回填，与 JFQA regime �
   st-chinfra-20260914 / st-mktfix-20260914 两条 append-only token，随本 commit
   连坐吸收（归属交底，append-only 无互斥风险）。
 - 提交：git_commit.py 正门，commit 后 git log -1 --name-only 核实归属。
+
+## 九、第二批挖矿增补（2026-09-14 续班，Owner"开下一批挖矿"指令）
+
+按 §五 长尾清单+上批交代的③支脉盲区续挖。登记 12 条（275→287，v2.17.0），
+驳回清账 2 件，长尾矿脉大面积清偿。
+
+### 挖矿日志表（批二）
+
+| 轮 | 矿脉 | 判定 | 关键产出 |
+|---|------|------|---------|
+| R1 | ③支脉A 吸收 | **signal** | 订单级定义成立（被动限价单承接主动攻击+价格停滞→反向），OrderFlowLabs/NinjaTrader/TraderDale/ATAS 5 源；与 VSA 停止量分层=bar 代理 vs 订单直测，五档数据可得 → STRUCT-044 |
+| R2 | ③支脉B Delta 背离 | **signal** | CVD 背离定义完备（价新高+CVD 次高=顶背离），Bookmap/LuxAlgo/ZitaPlus 4 源；=OFI(035) 的累计化+摆动级语义 → STRUCT-045 |
+| R3 | ④凹口淘金 | **signal** | 书源《伏击涨停》清华社 2014+知乎量学第14讲+口诀"凹口去淘金报四三涨停"；凹口线+凹底倍量(伸缩)+回踩不破可量化 → STRUCT-046；倍量伸缩并入其注记不单列 |
+| R4 | 长尾·小形态绩效榜 | **signal** | SmallPatterns.html 全榜拉平（2024-10 口径，7% 止盈止损）；Top-10 去重（已册 NR4/NR7/WRB/关键反转/内包日+ OutsideDays 并 072 注记）后登记 5 条；Bulkowski 自结论"小形态均利微薄+做空全亏"如实入档 |
+| R5 | 长尾·Busted 族 | **signal** | BustedPatterns.html 全文：bust=突破≤10% 失败+反向穿出；busted 双顶反超非 busted 双底（52/51/54% vs 43/42/50%）；与 SR-001 合并论证完成=互补分工（瞬时失败事件 vs 摆动级反向穿越），登记族锚 1 条 → CHART-078 |
+| R6 | 长尾·长岛反转 | **驳回（清账）** | longisland.html 全文：**Bulkowski 本人 2020-09-11 宣布"不再视为有效形态"**（非对齐缺口界定，续延型 rank 43/56）——发现者自撤，登记即逆权威 |
+| R7 | 长尾·扩展V+倒扇贝 | **signal** | vtopbot.html See-also 证实 Extended V 独立章；aiscallop/idscallops 双页核实（伞形右半，牛熊双市均佳）→ CHART-079/080/081，扇贝族 4 型收官 |
+| R8 | 长尾·回马枪书源 | **noise→维持挂账** | 民间战法无明确书籍出处/单一作者（雪球/凤凰/新浪/知乎多源一致），来源可溯闸不过；操作条件虽清晰，纪律优先；找到书源再立卡 |
+
+批二 8 轮：signal 6、noise 1、驳回清账 1。**长尾清单 §五 清偿状态**：小形态族
+（Top-5 已采，其余 15 条低价值挂起）、Busted 族（已采）、岛形族（Long Island
+驳回终态）、扇贝族（收官）、扩展V（已采）；仍然挂起：量廓形状（判据未定）、
+Elliott 细化、缠论中枢生长（实现细化清单）、游资新词（无书源族）。
+
+### 批二登记清单（12 条）
+
+| 新 ID | 形态 | 来源要点 | variant_of |
+|-------|------|---------|-----------|
+| PAT-STRUCT-044 | 订单流吸收 | OrderFlowLabs Glossary 等 5 源；五档+方向分类可测 | STRUCT-023 |
+| PAT-STRUCT-045 | 累计量 Delta 背离 | Bookmap/LuxAlgo/ZitaPlus/TradingView 4 源 | STRUCT-035 |
+| PAT-STRUCT-046 | 凹口淘金（量学） | 《伏击涨停》2014+知乎第14讲+口诀 | null（043 姊妹） |
+| PAT-CHART-078 | 失效形态族（bust） | BustedPatterns.html+《GSiCP》2e p.225（18 种细目） | PAT-SR-001 |
+| PAT-CHART-079 | 扩展V形（顶/底） | vtopbot See-also+EOC3 章 | CHART-023 |
+| PAT-CHART-080 | 倒置上升扇贝 | aiscallop.html（伞形右半，双市均佳） | CHART-041 |
+| PAT-CHART-081 | 倒置下降扇贝 | idscallops.html | CHART-042 |
+| PAT-CANDLE-079 | 周线反转（上/下向） | WeeklyRevsDownside/Upside+绩效榜（第1/8名） | null |
+| PAT-CANDLE-080 | 开收反转（升/降势） | OCRU.html 全量 ID 核对（25% 区间规则，第2/5名） | null |
+| PAT-CANDLE-081 | 钩形反转（升/降势） | HRD/HRU+绩效榜（第9/13名） | null |
+| PAT-CANDLE-082 | 枢轴点反转（升/降势） | PPRU/PPRD+绩效榜（第15/17名） | CANDLE-072 |
+| PAT-CANDLE-083 | 鲨鱼 32 | Shark32.html（Chesler 原创）+绩效榜（第18名） | null |
+
+净零声明：12 条中 8 条显式 variant_of/并入注记归属；1 条驳回（长岛）+1 维持挂账
+（回马枪）+2 注记并入（OutsideDays→072、倍量伸缩→046）——目录 287 条，扩张速率
+较批一收敛（+4.4% vs +7.4%）。实现交接：批二 P1 追加=小形态 5 条（纯 bar 比较，
+最低成本）+凹口淘金/黄金柱同批（量学规则族）；P2 追加=Busted 族检测器+吸收/CVD
+（依赖 tick 主动方向分类，与 tick_depth_5 管道对齐）。

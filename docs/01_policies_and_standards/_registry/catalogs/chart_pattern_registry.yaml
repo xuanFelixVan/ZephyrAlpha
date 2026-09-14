@@ -38,6 +38,7 @@ description: >-
   扩散生成式/Chart-RVR GRPO/多尺度VLM基准/AC-Seq2Net/ElliottAgents/wave-alpha/GAF-CNN）。
   business_registry_construction_plan §6.2.4。
   v2.16.0（2026-09-14 病菌寻路挖矿批，st-patmine-20260914）：Bulkowski 差额 15 条（量度涨跌×2/直角扩散×2/扩散楔形×2/亚当夏娃双底顶四变体×2/丑陋双底/反死猫跳/财报旗形/屋顶×2——任务书候选 Gutters 经 thepatternsite 核对实名=Inverted Roof）+ 2B 假突破（Sperandeo 三源）+ O'Neil 平台基底 + 蜡烛小形态内包日+ 谐波 Nen Star 补齐（12 型集完备）+ 市场轮廓结构族（Dalton 拍卖理论）+ 量学黄金柱（张得一 2009，A 股原生）；共 19 条 candidate，evidence 留空待 pattern_evidence_backfill 回填；Straight-Line Run 驳回（非独立形态=旗杆属性/统计条件）；Three Drives 已在册 PAT-FIB-016 去重不重复登记；挖矿日志=docs/_working/2026-09-14-chart-pattern-mining-report.md
+  v2.17.0（2026-09-14 挖矿批二，同日续班）：长尾收获 12 条——③支脉订单流吸收+CVD 背离（Bookmap/OrderFlowLabs 等 5 源）+量学凹口淘金（《伏击涨停》2014）+Bulkowski 小形态绩效榜 Top-5（周线反转/开收反转/钩形反转/枢轴点反转/鲨鱼32，$132/60% 榜首）+Busted 失效形态族（18 种 busted 细目书源 p.225，与 SR-001 分工=瞬时失败事件 vs 摆动级反向穿越）+扩展V+倒扇贝×2（扇贝族 4 型收官）；驳回清账：Long Island（发现者 2020-09-11 自撤：不再视为有效形态）、涨停回马枪（民间战法无书源，来源闸不过维持挂账）、Outside Days/One-day reversal（并入 CANDLE-072 注记）、倍量伸缩（并入 STRUCT-046 注记）
 # ============================================================
 # SOTA 算法演进说明（2026-08-14 全网调研，三轮检索结论）
 # ============================================================
@@ -171,13 +172,13 @@ algorithm_variant_sota_ladder:
 owner: MOD-GOVERNANCE
 tier: tier_2_data_runtime
 status: active
-version: 2.16.0
+version: 2.17.0
 created: '2026-08-13'
 last_updated: '2026-09-14'
 related_arch: '#ARCH-BREG-001'
 unique_key:
 - pattern_id
-entry_count: 275
+entry_count: 287
 
 entry_schema:
   pattern_id: str                # PAT-{CLASS}-{NNN}，如 PAT-CANDLE-001
@@ -3431,13 +3432,218 @@ chart_patterns:
     evidence: ""
     code_symbol: null
     code_fingerprint: null
+    applicable_series: ["time_bars"]
 
+  - pattern_id: "PAT-CANDLE-079"
+    name: "Weekly Reversals"
+    name_zh: "周线反转（上/下向）"
+    aliases: ["weekly_reversal_upside", "weekly_reversal_downside", "周线反转"]
+    pattern_class: "candlestick_pattern"
+    pattern_subtype: "小形态（周线反转 bar）"
+    recognition_algorithm: "rule_based"
+    algorithm_variant: "规则法(周线级反转 bar: 上行周创近数周新高后收跌=下向周反转；下行周创新低后收涨=上向周反转；Bulkowski 小形态绩效榜: 下向周反转=向上突破榜第 1 名($132 平均利/60% 胜率)，上向周反转第 8 名；周线级确认天然过滤日线噪声)"
+    dl_model_ref: null
+    dl_training_dataset: null
+    params: {lookback_weeks: 12, new_extreme_required: true}
+    inputs: ["OHLCV"]
+    outputs: {present: bool, side: str, breakout_weeks: int}
+    subjectivity: "low"
+    timeframe: "weekly"
+    module_id: "MOD-SIG-024"
+    doc_ref: "Bulkowski thepatternsite.com/WeeklyRevsDownside.html+WeeklyRevsUpside.html + SmallPatterns.html 绩效榜（2024-10 口径）（2026-09-14 挖矿批二核对）"
+    code_path: ""
+    used_by_factors: []
+    variant_of: null
+    status: "candidate"
+    version: "1.0.0"
+    created_at: "2026-09-14"
+    updated_at: "2026-09-14"
+    owner: "MOD-GOVERNANCE"
+    hit_rate: null
+    false_positive_rate: null
+    last_evaluated_at: null
+    primary_timeframe: "weekly"
+    applicable_timeframes: ["weekly"]
+    regime_valid: []
+    regime_invalid: []
+    direction: "both"
+    entry_role: "trigger"
+    applies_to: ["stock"]
+    tags: ["反转", "周期", "形态"]
+    algorithm_status: "pending_backtest"
+    evidence: ""
+    code_symbol: null
+    code_fingerprint: null
+    applicable_series: ["time_bars"]
+  - pattern_id: "PAT-CANDLE-080"
+    name: "Open-Close Reversal"
+    name_zh: "开收反转（升/降势）"
+    aliases: ["open_close_reversal", "ocr_uptrend", "ocr_downtrend"]
+    pattern_class: "candlestick_pattern"
+    pattern_subtype: "小形态（两 bar 反转）"
+    recognition_algorithm: "rule_based"
+    algorithm_variant: "规则法(两 bar 形态: 上升趋势中，本 bar 开盘距日内高点≤25%全距区间、收盘距日内低点≤25%全距区间、且收盘高于昨收=升势开收反转(高位异动：冲高开盘收在低位但仍高于昨收)；降势镜像；绩效榜第 2/5 名($118.67/59%)；注意=突破方向随机(仅 50% 起反转作用)，趋势语境加权)"
+    dl_model_ref: null
+    dl_training_dataset: null
+    params: {open_near_high_pct: 0.25, close_near_low_pct: 0.25, above_prior_close: true}
+    inputs: ["OHLCV"]
+    outputs: {present: bool, side: str}
+    subjectivity: "low"
+    timeframe: "daily"
+    module_id: "MOD-SIG-024"
+    doc_ref: "Bulkowski thepatternsite.com/OCRU.html（ID 全量核对：两 bar/25% 区间/排名 2-23）+OCRD.html（2026-09-14 挖矿批二核对）"
+    code_path: ""
+    used_by_factors: []
+    variant_of: null
+    status: "candidate"
+    version: "1.0.0"
+    created_at: "2026-09-14"
+    updated_at: "2026-09-14"
+    owner: "MOD-GOVERNANCE"
+    hit_rate: null
+    false_positive_rate: null
+    last_evaluated_at: null
+    primary_timeframe: "daily"
+    applicable_timeframes: ["daily"]
+    regime_valid: []
+    regime_invalid: []
+    direction: "both"
+    entry_role: "trigger"
+    applies_to: ["stock"]
+    tags: ["反转", "k线", "形态"]
+    algorithm_status: "pending_backtest"
+    evidence: ""
+    code_symbol: null
+    code_fingerprint: null
+    applicable_series: ["time_bars"]
+  - pattern_id: "PAT-CANDLE-081"
+    name: "Hook Reversal"
+    name_zh: "钩形反转（升/降势）"
+    aliases: ["hook_reversal", "hook_reversal_downtrend", "钩子反转"]
+    pattern_class: "candlestick_pattern"
+    pattern_subtype: "小形态（两 bar 反转）"
+    recognition_algorithm: "rule_based"
+    algorithm_variant: "规则法(两 bar 形态: 下降趋势中本 bar 开盘高于昨 bar 高点附近、收盘回落进昨 bar 区间内=下向钩形反转(高开诱多回落)；升势镜像=低开诱空回补；绩效榜第 9/13 名)"
+    dl_model_ref: null
+    dl_training_dataset: null
+    params: {open_vs_prior_high: 1.0, close_back_inside: true}
+    inputs: ["OHLCV"]
+    outputs: {present: bool, side: str}
+    subjectivity: "low"
+    timeframe: "daily"
+    module_id: "MOD-SIG-024"
+    doc_ref: "Bulkowski thepatternsite.com/HRD.html+HRU.html + SmallPatterns.html 绩效榜（2026-09-14 挖矿批二核对）"
+    code_path: ""
+    used_by_factors: []
+    variant_of: null
+    status: "candidate"
+    version: "1.0.0"
+    created_at: "2026-09-14"
+    updated_at: "2026-09-14"
+    owner: "MOD-GOVERNANCE"
+    hit_rate: null
+    false_positive_rate: null
+    last_evaluated_at: null
+    primary_timeframe: "daily"
+    applicable_timeframes: ["daily"]
+    regime_valid: []
+    regime_invalid: []
+    direction: "both"
+    entry_role: "trigger"
+    applies_to: ["stock"]
+    tags: ["反转", "k线", "形态"]
+    algorithm_status: "pending_backtest"
+    evidence: ""
+    code_symbol: null
+    code_fingerprint: null
+    applicable_series: ["time_bars"]
+  - pattern_id: "PAT-CANDLE-082"
+    name: "Pivot Point Reversal"
+    name_zh: "枢轴点反转（升/降势）"
+    aliases: ["pivot_point_reversal", "ppr_uptrend", "枢轴反转"]
+    pattern_class: "candlestick_pattern"
+    pattern_subtype: "小形态（两 bar 枢轴反转）"
+    recognition_algorithm: "rule_based"
+    algorithm_variant: "规则法(两 bar 形态: 升势中本 bar 创新高后收盘回落至昨 bar 区间之下=升势枢轴点反转(创新高当日即转弱)；降势镜像；绩效榜第 15/17 名；与关键反转日(072)区分=不要求外包全区间，仅要求创新极值+收盘穿越昨区间)"
+    dl_model_ref: null
+    dl_training_dataset: null
+    params: {new_extreme_required: true, close_through_prior_range: true}
+    inputs: ["OHLCV"]
+    outputs: {present: bool, side: str}
+    subjectivity: "low"
+    timeframe: "daily"
+    module_id: "MOD-SIG-024"
+    doc_ref: "Bulkowski thepatternsite.com/PPRU.html+PPRD.html + SmallPatterns.html 绩效榜（2026-09-14 挖矿批二核对）"
+    code_path: ""
+    used_by_factors: []
+    variant_of: "PAT-CANDLE-072"
+    status: "candidate"
+    version: "1.0.0"
+    created_at: "2026-09-14"
+    updated_at: "2026-09-14"
+    owner: "MOD-GOVERNANCE"
+    hit_rate: null
+    false_positive_rate: null
+    last_evaluated_at: null
+    primary_timeframe: "daily"
+    applicable_timeframes: ["daily"]
+    regime_valid: []
+    regime_invalid: []
+    direction: "both"
+    entry_role: "trigger"
+    applies_to: ["stock"]
+    tags: ["反转", "k线", "形态"]
+    algorithm_status: "pending_backtest"
+    evidence: ""
+    code_symbol: null
+    code_fingerprint: null
+    applicable_series: ["time_bars"]
+  - pattern_id: "PAT-CANDLE-083"
+    name: "Shark-32"
+    name_zh: "鲨鱼 32"
+    aliases: ["shark_32", "chesler_shark"]
+    pattern_class: "candlestick_pattern"
+    pattern_subtype: "小形态（三段反折）"
+    recognition_algorithm: "rule_based"
+    algorithm_variant: "规则法(Chesler 三段结构: 下跌中连续 3 根 bar 低点逐降且收盘贴近日内低点(卖压持续)→第 4 根 bar 向上突破前 bar 高点=鲨鱼 32 买入(衰竭反折)；升势镜像做空；绩效榜第 18 名)"
+    dl_model_ref: null
+    dl_training_dataset: null
+    params: {decline_bars: 3, close_near_low_pct: 0.25, trigger: "break_prior_high"}
+    inputs: ["OHLCV"]
+    outputs: {present: bool, side: str, trigger_price: float}
+    subjectivity: "low"
+    timeframe: "daily"
+    module_id: "MOD-SIG-024"
+    doc_ref: "Bulkowski thepatternsite.com/Shark32.html（Chesler 原创形态收录）+ SmallPatterns.html 绩效榜（2026-09-14 挖矿批二核对）"
+    code_path: ""
+    used_by_factors: []
+    variant_of: null
+    status: "candidate"
+    version: "1.0.0"
+    created_at: "2026-09-14"
+    updated_at: "2026-09-14"
+    owner: "MOD-GOVERNANCE"
+    hit_rate: null
+    false_positive_rate: null
+    last_evaluated_at: null
+    primary_timeframe: "daily"
+    applicable_timeframes: ["daily"]
+    regime_valid: []
+    regime_invalid: []
+    direction: "both"
+    entry_role: "trigger"
+    applies_to: ["stock"]
+    tags: ["反转", "k线", "形态"]
+    algorithm_status: "pending_backtest"
+    evidence: ""
+    code_symbol: null
+    code_fingerprint: null
+    applicable_series: ["time_bars"]
   # ============================================================
   # CHART_PATTERN（经典图表形态类）— 4条
   # 来源：sell_signal_collector.py 8类卖出信号第②类"技术面卖出"
   # 代码状态：信号类型已登记，独立检测算法待施工
   # ============================================================
-    applicable_series: ["time_bars"]
   - pattern_id: "PAT-CHART-001"
     name: "Double Top"
     name_zh: "双头"
@@ -6612,6 +6818,170 @@ chart_patterns:
     entry_role: "trigger"
     applies_to: ["stock"]
     tags: ["持续", "形态", "震荡"]
+    algorithm_status: "pending_backtest"
+    evidence: ""
+    code_symbol: null
+    code_fingerprint: null
+    applicable_series: ["time_bars", "renko", "pnf", "kagi"]
+  - pattern_id: "PAT-CHART-078"
+    name: "Busted Pattern"
+    name_zh: "失效形态（bust 反向穿越）"
+    aliases: ["busted_pattern", "失效反转", "假突破反杀"]
+    pattern_class: "chart_pattern"
+    pattern_subtype: "反转（失效形态统计族）"
+    recognition_algorithm: "rule_based"
+    algorithm_variant: "规则法(形态向预期方向突破后运行≤10%(可调阈值)即失败反折，随后反向突破形态另一侧边界=一次 bust；Bulkowski 统计=busted 双顶族平均涨幅反超非 busted双底(52%/51%/54% vs 43%/42%/50%)，busted 三角 51-54% vs 34-43%；交易偏好上向 bust(下行突破被打穿后向上，上方无顶)；与 SR-001 分工=SR-001 检测突破失败事件本身(瞬时)，本条=失败后反向穿越确认的摆动级形态；书源含 18 种 busted 细目(双顶底/三重/三角/头肩等)逐形态统计，实现宜做参数化族检测器)"
+    dl_model_ref: null
+    dl_training_dataset: null
+    params: {bust_move_max: 0.10, opposite_breakout: true}
+    inputs: ["OHLCV"]
+    outputs: {present: bool, parent_pattern: str, bust_level: int, direction: str}
+    subjectivity: "medium"
+    timeframe: "daily"
+    module_id: "MOD-SIG-024"
+    doc_ref: "Bulkowski thepatternsite.com/BustedPatterns.html + 《Getting Started in Chart Patterns》2nd ed p.225 18 种 busted 形态章（2026-09-14 挖矿批二核对）"
+    code_path: ""
+    used_by_factors: []
+    variant_of: "PAT-SR-001"
+    status: "candidate"
+    version: "1.0.0"
+    created_at: "2026-09-14"
+    updated_at: "2026-09-14"
+    owner: "MOD-GOVERNANCE"
+    hit_rate: null
+    false_positive_rate: null
+    last_evaluated_at: null
+    primary_timeframe: "daily"
+    applicable_timeframes: ["daily"]
+    regime_valid: []
+    regime_invalid: []
+    direction: "both"
+    entry_role: "trigger"
+    applies_to: ["stock"]
+    tags: ["反转", "突破", "形态"]
+    algorithm_status: "pending_backtest"
+    evidence: ""
+    code_symbol: null
+    code_fingerprint: null
+    applicable_series: ["time_bars", "renko", "pnf", "kagi"]
+  - pattern_id: "PAT-CHART-079"
+    name: "Extended V-Tops/Bottoms"
+    name_zh: "扩展V形（顶/底）"
+    aliases: ["extended_v_top", "extended_v_bottom", "扩展V顶", "扩展V底"]
+    pattern_class: "chart_pattern"
+    pattern_subtype: "反转（V 形扩展变体）"
+    recognition_algorithm: "rule_based"
+    algorithm_variant: "规则法(V 形顶/底(CHART-023/024)反转后不立即延续，而是横向延伸整理数周再顺反转方向运行；延伸相=多空换手确认平台；A股适配=妖股急涨急跌后的中继横盘语境)"
+    dl_model_ref: null
+    dl_training_dataset: null
+    params: {extension_weeks: [2, 6], v_leg_min: 0.15}
+    inputs: ["OHLCV"]
+    outputs: {present: bool, side: str, extension_weeks: int}
+    subjectivity: "medium"
+    timeframe: "daily"
+    module_id: "MOD-SIG-024"
+    doc_ref: "Bulkowski thepatternsite.com/vtopbot.html See-also Extended V Tops/Bottoms 专页 + EOC3 Extended V-tops/V-bottoms 章（Pattern Index J-L/V 段）（2026-09-14 挖矿批二核对）"
+    code_path: ""
+    used_by_factors: []
+    variant_of: "PAT-CHART-023"
+    status: "candidate"
+    version: "1.0.0"
+    created_at: "2026-09-14"
+    updated_at: "2026-09-14"
+    owner: "MOD-GOVERNANCE"
+    hit_rate: null
+    false_positive_rate: null
+    last_evaluated_at: null
+    primary_timeframe: "daily"
+    applicable_timeframes: ["daily"]
+    regime_valid: []
+    regime_invalid: []
+    direction: "both"
+    entry_role: "trigger"
+    applies_to: ["stock"]
+    tags: ["反转", "形态", "震荡"]
+    algorithm_status: "pending_backtest"
+    evidence: ""
+    code_symbol: null
+    code_fingerprint: null
+    applicable_series: ["time_bars", "renko", "pnf", "kagi"]
+  - pattern_id: "PAT-CHART-080"
+    name: "Ascending and Inverted Scallop"
+    name_zh: "倒置上升扇贝"
+    aliases: ["ascending_inverted_scallop", "伞形右半"]
+    pattern_class: "chart_pattern"
+    pattern_subtype: "持续（扇贝族变体）"
+    recognition_algorithm: "rule_based"
+    algorithm_variant: "规则法(形似伞的右半：短柄下落后圆弧隆起再落，=上升扇贝(041)的倒置形态；Bulkowski: 牛熊双市表现均佳；扇贝族 4 型中的第 3 型，与 041/042/081 成套)"
+    dl_model_ref: null
+    dl_training_dataset: null
+    params: {arc_curvature: "concave_up", handle_bars: [3, 8]}
+    inputs: ["OHLCV"]
+    outputs: {present: bool, arc_depth: float, breakout_dir: str}
+    subjectivity: "medium"
+    timeframe: "daily"
+    module_id: "MOD-SIG-024"
+    doc_ref: "Bulkowski thepatternsite.com/aiscallop.html + EOC3 Scallops, Ascending and Inverted 章（2026-09-14 挖矿批二核对）"
+    code_path: ""
+    used_by_factors: []
+    variant_of: "PAT-CHART-041"
+    status: "candidate"
+    version: "1.0.0"
+    created_at: "2026-09-14"
+    updated_at: "2026-09-14"
+    owner: "MOD-GOVERNANCE"
+    hit_rate: null
+    false_positive_rate: null
+    last_evaluated_at: null
+    primary_timeframe: "daily"
+    applicable_timeframes: ["daily"]
+    regime_valid: []
+    regime_invalid: []
+    direction: "long"
+    entry_role: "trigger"
+    applies_to: ["stock"]
+    tags: ["持续", "形态"]
+    algorithm_status: "pending_backtest"
+    evidence: ""
+    code_symbol: null
+    code_fingerprint: null
+    applicable_series: ["time_bars", "renko", "pnf", "kagi"]
+  - pattern_id: "PAT-CHART-081"
+    name: "Inverted and Descending Scallop"
+    name_zh: "倒置下降扇贝"
+    aliases: ["inverted_descending_scallop"]
+    pattern_class: "chart_pattern"
+    pattern_subtype: "持续（扇贝族变体）"
+    recognition_algorithm: "rule_based"
+    algorithm_variant: "规则法(倒置下降扇贝：圆弧凹底后短柄上扬，=下降扇贝(042)的倒置形态，镜像于 CHART-080；扇贝族第 4 型收官)"
+    dl_model_ref: null
+    dl_training_dataset: null
+    params: {arc_curvature: "concave_down", handle_bars: [3, 8]}
+    inputs: ["OHLCV"]
+    outputs: {present: bool, arc_depth: float, breakout_dir: str}
+    subjectivity: "medium"
+    timeframe: "daily"
+    module_id: "MOD-SIG-024"
+    doc_ref: "Bulkowski thepatternsite.com/idscallops.html + EOC3 Scallops, Inverted and Descending 章（2026-09-14 挖矿批二核对）"
+    code_path: ""
+    used_by_factors: []
+    variant_of: "PAT-CHART-042"
+    status: "candidate"
+    version: "1.0.0"
+    created_at: "2026-09-14"
+    updated_at: "2026-09-14"
+    owner: "MOD-GOVERNANCE"
+    hit_rate: null
+    false_positive_rate: null
+    last_evaluated_at: null
+    primary_timeframe: "daily"
+    applicable_timeframes: ["daily"]
+    regime_valid: []
+    regime_invalid: []
+    direction: "short"
+    entry_role: "trigger"
+    applies_to: ["stock"]
+    tags: ["持续", "形态"]
     algorithm_status: "pending_backtest"
     evidence: ""
     code_symbol: null
@@ -11370,6 +11740,126 @@ chart_patterns:
     code_symbol: null
     code_fingerprint: null
 
+  - pattern_id: "PAT-STRUCT-044"
+    name: "Order Flow Absorption"
+    name_zh: "订单流吸收"
+    aliases: ["absorption", "order_flow_absorption", "大单吸收"]
+    pattern_class: "structure"
+    pattern_subtype: "订单流（衰竭反转）"
+    recognition_algorithm: "rule_based"
+    algorithm_variant: "订单级规则法(关键价位处主动成交通放量而价格停滞=被动限价单承接主动攻击，价格随后反向运行=吸收确认(衰竭)；与 VSA 停止量(STRUCT-023)分工=bar 级代理vs 订单级直测；A股适配=tick 五档+主动买卖方向分类可测'巨量成交+价格停滞'，盘口语境=大单垫单吸收抛压)"
+    dl_model_ref: null
+    dl_training_dataset: null
+    params: {volume_spize_z: 2.0, price_stall_band: 0.002, reversal_confirm_bars: 3}
+    inputs: ["OHLCV"]
+    outputs: {present: bool, absorbed_volume: float, side: str, level: float}
+    subjectivity: "medium"
+    timeframe: "intraday"
+    module_id: "MOD-SIG-024"
+    doc_ref: "OrderFlowLabs Glossary + NinjaTrader/Trader Dale/ATAS 订单流教程 5 源交叉（2026-09-14 挖矿批二核对）"
+    code_path: ""
+    used_by_factors: []
+    variant_of: "PAT-STRUCT-023"
+    status: "candidate"
+    version: "1.0.0"
+    created_at: "2026-09-14"
+    updated_at: "2026-09-14"
+    owner: "MOD-GOVERNANCE"
+    hit_rate: null
+    false_positive_rate: null
+    last_evaluated_at: null
+    primary_timeframe: null
+    applicable_timeframes: []
+    regime_valid: []
+    regime_invalid: []
+    direction: "both"
+    entry_role: "trigger"
+    applies_to: ["stock"]
+    tags: ["订单", "盘口", "反转"]
+    algorithm_status: "pending_backtest"
+    evidence: ""
+    code_symbol: null
+    code_fingerprint: null
+  - pattern_id: "PAT-STRUCT-045"
+    name: "Cumulative Volume Delta Divergence"
+    name_zh: "累计量 Delta 背离"
+    aliases: ["cvd_divergence", "delta_divergence", "量差背离"]
+    pattern_class: "structure"
+    pattern_subtype: "订单流（背离）"
+    recognition_algorithm: "rule_based"
+    algorithm_variant: "规则法(累计主动买卖差 CVD 与价格摆动结构背离: 价格新高+CVD 次高=顶背离(买入被吸收/主动买衰竭)，价格新低+CVD 抬高底=底背离(卖压衰竭)；=STRUCT-035 OFI/TFI 的逐 bar 不平衡做累计化+摆动级背离判读；A股适配=tick 主动方向分类即可构建，无需全档 L2)"
+    dl_model_ref: null
+    dl_training_dataset: null
+    params: {swing_window: 20, delta_ma: 20, divergence_tolerance: 0.0}
+    inputs: ["OHLCV"]
+    outputs: {present: bool, side: str, price_swing: float, cvd_swing: float}
+    subjectivity: "medium"
+    timeframe: "intraday"
+    module_id: "MOD-SIG-024"
+    doc_ref: "Bookmap/LuxAlgo/ZitaPlus CVD 专文 + TradingView TradingFinder CVD 背离指标 4 源交叉（2026-09-14 挖矿批二核对）"
+    code_path: ""
+    used_by_factors: []
+    variant_of: "PAT-STRUCT-035"
+    status: "candidate"
+    version: "1.0.0"
+    created_at: "2026-09-14"
+    updated_at: "2026-09-14"
+    owner: "MOD-GOVERNANCE"
+    hit_rate: null
+    false_positive_rate: null
+    last_evaluated_at: null
+    primary_timeframe: null
+    applicable_timeframes: []
+    regime_valid: []
+    regime_invalid: []
+    direction: "both"
+    entry_role: "trigger"
+    applies_to: ["stock"]
+    tags: ["订单", "背离", "市场结构"]
+    algorithm_status: "pending_backtest"
+    evidence: ""
+    code_symbol: null
+    code_fingerprint: null
+  - pattern_id: "PAT-STRUCT-046"
+    name: "Concave Mouth Gold Panning"
+    name_zh: "凹口淘金（量学）"
+    aliases: ["aokou_taojin", "concave_mouth", "凹口平衡线"]
+    pattern_class: "structure"
+    pattern_subtype: "量价形态（量学战法）"
+    recognition_algorithm: "rule_based"
+    algorithm_variant: "量价规则法(上升途中回调形成凹口→过凹口顶画水平平衡线(凹口线)→凹底出现倍量柱/倍量伸缩(伸倍量+缩倍量)异动=主力回补信号→回踩攻防线(凹口线)不破介入博二次拉升；量学口诀'凹口去淘金，报四三涨停'；张得一量学 18 战法之一，与黄金柱(STRUCT-043)同门姊妹战法，倍量伸缩为其凹底强化子形态)"
+    dl_model_ref: null
+    dl_training_dataset: null
+    params: {doubling_ratio: 1.9, shrink_ratio: 0.55, hold_line: "aokou_balance"}
+    inputs: ["OHLCV"]
+    outputs: {present: bool, aokou_line: float, base_doubling: bool, entry_price: float}
+    subjectivity: "medium"
+    timeframe: "daily"
+    module_id: "MOD-SIG-024"
+    doc_ref: "张得一（黑马王子）《伏击涨停》清华大学出版社 2014 + 知乎量学战法系列第14讲（https://zhuanlan.zhihu.com/p/144397617）+ 理想论坛量学口诀交叉（2026-09-14 挖矿批二核对）"
+    code_path: ""
+    used_by_factors: []
+    variant_of: null
+    status: "candidate"
+    version: "1.0.0"
+    created_at: "2026-09-14"
+    updated_at: "2026-09-14"
+    owner: "MOD-GOVERNANCE"
+    hit_rate: null
+    false_positive_rate: null
+    last_evaluated_at: null
+    primary_timeframe: "daily"
+    applicable_timeframes: ["daily"]
+    regime_valid: []
+    regime_invalid: []
+    direction: "long"
+    entry_role: "trigger"
+    applies_to: ["stock"]
+    tags: ["量价", "吸筹", "资金", "形态"]
+    algorithm_status: "pending_backtest"
+    evidence: ""
+    code_symbol: null
+    code_fingerprint: null
   - pattern_id: "PAT-DL-008"
     name: "Chart-RVR GRPO Chart Reasoner"
     name_zh: "Chart-RVR 强化学习图表推理套件"
