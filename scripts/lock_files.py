@@ -174,20 +174,27 @@ def _is_stale(lock_dir: Path) -> bool:
 
             if str(_SRC_ROOT) not in _sys.path:
                 _sys.path.insert(0, str(_SRC_ROOT))
-            from zephyr.security.access_control.session_concurrency import SessionRegistry
+            from zephyr.security.access_control.session_concurrency import (
+                SessionRegistry,
+                _is_session_alive,
+            )
 
             registry = SessionRegistry(REPO_ROOT)
             info = registry.get_session(str(session_id))
             if info is not None:
                 import time as _time
 
-                if not _is_session_alive(info, _time.time()):
-                    return True  # 会话已死（心跳超时/PID 亡/TTL 超）→ 锁 stale
-                # 会话存活 → 锁继续有效（TTL 兕底判定仍执行：防永久占用）
+                if _is_session_alive(info, _time.time()):
+                    # 会话存活 → 锁有效，直接判非 stale（裁定#252 语义：锁的生死=会话的
+                    # 生死；PID 判定/TTL 判定均不再适用——瞬时 PID 必死会误杀活锁，
+                    # TTL 由 expires_at 保留在 gate 侧兑底，且会话自身有 90s/3600s 生命周期）
+                    return False
+                return True  # 会话已死（心跳超时/PID 亡/TTL 超）→ 锁 stale
+            # info is None（registry 无此会话条目）：退化旧语义继续判定
         except Exception:
             pass  # registry 不可达时退回 PID+TTL 语义（fail-open，不误清活锁）
     # PID 已死 → 立即判 stale（零窗口期，治本 2026-06-30：AGENTS.md §8 L273 is_pid_alive 真源唯一）
-    # 仅对无 session_id 的旧格式锁生效；裁定#252 新锁的判活已上移到会话层
+    # 仅对无 session_id 的旧格式锁生效（裁定#252：带 session_id 的锁在上方已提前返回）
     pid = owner.get("pid", 0)
     if pid and not is_pid_alive(pid):
         return True
@@ -446,7 +453,7 @@ def cmd_acquire(
             print(f"DENIED — {normalized} 已被 {existing_owner} 锁定")
             return 1
 
-    if not _add_to_registry(file_path, owner_id, task, ttl_s):
+    if not _add_to_registry(file_path, owner_id, opts.task, ttl_s):
         # §7.28 Mutex 超时——回滚锁目录，避免 owner.json 存在但 registry 漏登记的半锁状态
         shutil.rmtree(lock_dir, ignore_errors=True)
         print(f"DENIED — {normalized} registry 互斥锁超时（5s），请重试")

@@ -65,7 +65,7 @@ def _owner(lock_root: Path, file_path: str) -> dict:
 # ── 1. 默认 TTL（真源 1800s）──
 def test_acquire_default_ttl_writes_expires_at(isolated_lock_root: Path) -> None:
     before = time.time()
-    rc, out = _run(lock_files.cmd_acquire, "docs/a.md", "sess-1", skip_naming_check=True)
+    rc, out = _run(lock_files.cmd_acquire, "docs/a.md", "sess-1", options=lock_files.AcquireOptions(skip_naming_check=True))
     after = time.time()
     assert rc == 0, out
     assert "ACQUIRED" in out
@@ -82,7 +82,7 @@ def test_acquire_default_ttl_writes_expires_at(isolated_lock_root: Path) -> None
 # ── 2. 自定义 --ttl（分钟）──
 def test_acquire_custom_ttl(isolated_lock_root: Path) -> None:
     before = time.time()
-    rc, out = _run(lock_files.cmd_acquire, "docs/b.md", "sess-1", skip_naming_check=True, ttl_minutes=60.0)
+    rc, out = _run(lock_files.cmd_acquire, "docs/b.md", "sess-1", options=lock_files.AcquireOptions(skip_naming_check=True, ttl_minutes=60.0))
     after = time.time()
     assert rc == 0, out
     assert "TTL: 60 分钟" in out
@@ -94,7 +94,7 @@ def test_acquire_custom_ttl(isolated_lock_root: Path) -> None:
 
 # ── 3. TTL 到期 check 自动清理（§8.4 验收行）──
 def test_expired_lock_auto_cleaned_on_check(isolated_lock_root: Path) -> None:
-    rc, _ = _run(lock_files.cmd_acquire, "docs/c.md", "sess-1", skip_naming_check=True, ttl_minutes=0.01)  # 0.6s
+    rc, _ = _run(lock_files.cmd_acquire, "docs/c.md", "sess-1", options=lock_files.AcquireOptions(skip_naming_check=True, ttl_minutes=0.01))  # 0.6s
     assert rc == 0
     time.sleep(0.8)
 
@@ -107,24 +107,24 @@ def test_expired_lock_auto_cleaned_on_check(isolated_lock_root: Path) -> None:
 
 # ── 4. 过期锁可被他人 acquire ──
 def test_expired_lock_reacquired_by_other(isolated_lock_root: Path) -> None:
-    rc, _ = _run(lock_files.cmd_acquire, "docs/d.md", "sess-1", skip_naming_check=True, ttl_minutes=0.01)
+    rc, _ = _run(lock_files.cmd_acquire, "docs/d.md", "sess-1", options=lock_files.AcquireOptions(skip_naming_check=True, ttl_minutes=0.01))
     assert rc == 0
     time.sleep(0.8)
 
-    rc, out = _run(lock_files.cmd_acquire, "docs/d.md", "sess-2", skip_naming_check=True)
+    rc, out = _run(lock_files.cmd_acquire, "docs/d.md", "sess-2", options=lock_files.AcquireOptions(skip_naming_check=True))
     assert rc == 0, out
     assert _owner(isolated_lock_root, "docs/d.md")["owner_id"] == "sess-2"
 
 
 # ── 5. 未过期锁拒绝他人 / 同人重入 ──
 def test_fresh_lock_denies_other_and_allows_reentry(isolated_lock_root: Path) -> None:
-    rc, _ = _run(lock_files.cmd_acquire, "docs/e.md", "sess-1", skip_naming_check=True, ttl_minutes=30)
+    rc, _ = _run(lock_files.cmd_acquire, "docs/e.md", "sess-1", options=lock_files.AcquireOptions(skip_naming_check=True, ttl_minutes=30))
     assert rc == 0
 
-    rc, out = _run(lock_files.cmd_acquire, "docs/e.md", "sess-2", skip_naming_check=True)
+    rc, out = _run(lock_files.cmd_acquire, "docs/e.md", "sess-2", options=lock_files.AcquireOptions(skip_naming_check=True))
     assert rc == 1 and "DENIED" in out and "sess-1" in out
 
-    rc, out = _run(lock_files.cmd_acquire, "docs/e.md", "sess-1", skip_naming_check=True)
+    rc, out = _run(lock_files.cmd_acquire, "docs/e.md", "sess-1", options=lock_files.AcquireOptions(skip_naming_check=True))
     assert rc == 0 and "重入" in out
 
 
@@ -148,9 +148,9 @@ def test_legacy_lock_without_expires_at_fallback(isolated_lock_root: Path) -> No
 
 # ── 7. list --session 过滤（§11.2.2 五命令）──
 def test_list_session_filter(isolated_lock_root: Path) -> None:
-    _run(lock_files.cmd_acquire, "docs/f1.md", "sess-1", skip_naming_check=True)
-    _run(lock_files.cmd_acquire, "docs/f2.md", "sess-1", skip_naming_check=True)
-    _run(lock_files.cmd_acquire, "docs/f3.md", "sess-2", skip_naming_check=True)
+    _run(lock_files.cmd_acquire, "docs/f1.md", "sess-1", options=lock_files.AcquireOptions(skip_naming_check=True))
+    _run(lock_files.cmd_acquire, "docs/f2.md", "sess-1", options=lock_files.AcquireOptions(skip_naming_check=True))
+    _run(lock_files.cmd_acquire, "docs/f3.md", "sess-2", options=lock_files.AcquireOptions(skip_naming_check=True))
 
     rc, out = _run(lock_files.cmd_list)
     assert rc == 0 and "3 个文件锁" in out and "剩余" in out
@@ -170,7 +170,9 @@ def test_registry_concurrent_no_lost_locks(isolated_lock_root: Path) -> None:
     with ThreadPoolExecutor(max_workers=26) as pool:
         results = list(
             pool.map(
-                lambda i: _run(lock_files.cmd_acquire, files[i], sessions[i], skip_naming_check=True)[0],
+                lambda i: _run(
+                    lock_files.cmd_acquire, files[i], sessions[i], options=lock_files.AcquireOptions(skip_naming_check=True)
+                )[0],
                 range(26),
             )
         )
@@ -200,7 +202,7 @@ def test_mutex_timeout_denies_and_rolls_back(isolated_lock_root: Path, monkeypat
         yield False  # 模拟 5s 超时未获得
 
     monkeypatch.setattr(lock_files, "_registry_mutex", _fake_mutex)
-    rc, out = _run(lock_files.cmd_acquire, "docs/g.md", "sess-1", skip_naming_check=True)
+    rc, out = _run(lock_files.cmd_acquire, "docs/g.md", "sess-1", options=lock_files.AcquireOptions(skip_naming_check=True))
     assert rc == 1 and "互斥锁超时" in out
     # 锁目录已回滚，不留 owner.json 存在但 registry 漏登记的半锁
     assert not lock_files._lock_dir("docs/g.md").exists()
