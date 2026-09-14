@@ -1,0 +1,66 @@
+<section class="page" id="p-pattern">
+    <h2 class="page-title">图形库 <span class="badge b-pass">287 形态在册</span></h2>
+    <div class="page-sub">证据面板：胜率四窗×regime 切片（双格式=百分比+样本数并列）· 逐标的形态事件 · 机生证据徽章 ｜ 30s 自动刷新（仅本页可见时取数）｜ 弱证据（n&lt;30）灰标——信号侧纪律：真实低胜率自动降权不亮绿灯</div>
+
+    <!-- 胜率切片面板 -->
+    <div class="card" style="margin-bottom:10px">
+      <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-bottom:8px">
+        <span class="dim" style="font-size:12px;font-weight:600">胜率切片</span>
+        <select id="pat-wr-dir" onchange="patternLoadWinrate()" style="background:#0d1117;border:1px solid #263042;border-radius:6px;color:var(--text);padding:3px 8px;font-size:12px">
+          <option value="">全部方向</option><option value="向上">向上</option><option value="向下">向下</option>
+        </select>
+        <select id="pat-wr-win" onchange="patternLoadWinrate()" style="background:#0d1117;border:1px solid #263042;border-radius:6px;color:var(--text);padding:3px 8px;font-size:12px">
+          <option value="5">窗口 5 日</option><option value="10" selected>窗口 10 日</option><option value="20">窗口 20 日</option><option value="1">窗口 1 日</option>
+        </select>
+        <select id="pat-wr-regime" onchange="patternLoadWinrate()" style="background:#0d1117;border:1px solid #263042;border-radius:6px;color:var(--text);padding:3px 8px;font-size:12px">
+          <option value="">全 regime</option><option value="r1">r1</option><option value="r2">r2</option><option value="r3">r3</option><option value="r4">r4</option><option value="r10">r10</option>
+        </select>
+        <span class="dim" style="font-size:11px">默认 n≥30（low_sample 纪律线）｜ 排序=命中率降序 ｜ <span id="pat-wr-meta">加载中…</span></span>
+      </div>
+      <div style="max-height:340px;overflow:auto">
+        <table style="width:100%;border-collapse:collapse;font-size:12px" id="pat-wr-table">
+          <thead><tr style="color:#8a94a6;text-align:left">
+            <th style="padding:4px 8px">形态</th><th style="padding:4px 8px">方向</th><th style="padding:4px 8px">命中率</th>
+            <th style="padding:4px 8px">样本</th><th style="padding:4px 8px">regime</th><th style="padding:4px 8px">窗口</th><th style="padding:4px 8px">样本门</th>
+          </tr></thead>
+          <tbody id="pat-wr-body"><tr><td colspan="7" style="padding:8px;color:#8a94a6">加载中…</td></tr></tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- 逐标的形态事件 -->
+    <div class="card" style="margin-bottom:10px">
+      <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-bottom:8px">
+        <span class="dim" style="font-size:12px;font-weight:600">形态事件</span>
+        <input id="pat-ev-symbol" placeholder="代码（如 600519）…" value="600519"
+               style="background:#0d1117;border:1px solid #263042;border-radius:6px;color:var(--text);padding:3px 10px;font-size:12px;width:140px"
+               onkeydown="if(event.key==='Enter')patternQueryEvents()">
+        <select id="pat-ev-days" onchange="patternQueryEvents()" style="background:#0d1117;border:1px solid #263042;border-radius:6px;color:var(--text);padding:3px 8px;font-size:12px">
+          <option value="30" selected>近 30 日</option><option value="90">近 90 日</option><option value="365">近 1 年</option>
+        </select>
+        <span onclick="patternQueryEvents()" style="cursor:pointer;background:#12315a;border:1px solid #1e5a8f;border-radius:6px;color:#cfe4ff;padding:3px 14px;font-size:12px">查询</span>
+        <span class="dim" style="font-size:11px">确认时刻=收盘完成（PIT）｜ <span id="pat-ev-meta"></span></span>
+      </div>
+      <div style="max-height:260px;overflow:auto">
+        <table style="width:100%;border-collapse:collapse;font-size:12px">
+          <thead><tr style="color:#8a94a6;text-align:left">
+            <th style="padding:4px 8px">确认时刻</th><th style="padding:4px 8px">形态</th><th style="padding:4px 8px">方向</th>
+            <th style="padding:4px 8px">置信度</th><th style="padding:4px 8px">周期</th><th style="padding:4px 8px">锚定日</th><th style="padding:4px 8px">regime</th>
+          </tr></thead>
+          <tbody id="pat-ev-body"><tr><td colspan="7" style="padding:8px;color:#8a94a6">输入代码后查询</td></tr></tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- 机生证据 -->
+    <div class="card">
+      <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-bottom:8px">
+        <span class="dim" style="font-size:12px;font-weight:600">机生证据</span>
+        <span class="dim" style="font-size:11px">回扫→胜率物化→自动回填（evidence 禁手填）｜ <span id="pat-evd-meta">加载中…</span></span>
+        <span onclick="patternLoadEvidence()" style="margin-left:auto;cursor:pointer;background:#0d1117;border:1px solid #263042;border-radius:6px;color:var(--text);padding:3px 10px;font-size:12px">↻ 刷新</span>
+      </div>
+      <div id="pat-evd-body" style="display:flex;flex-direction:column;gap:6px;max-height:300px;overflow:auto;font-size:12px">
+        <span class="dim">加载中…</span>
+      </div>
+    </div>
+</section>

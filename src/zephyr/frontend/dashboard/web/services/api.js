@@ -137,6 +137,21 @@ ZK.api = (function(){
     },
     /* 通用 SWR（stale-while-revalidate）：先渲染缓存（isCache=true 供调用方标注）→ 后台拉新落缓存并覆盖。
      * 各数据页统一接法：ZK.api.swr('key', fetcher, renderFn)；fetcher 失败/空数据不落缓存。 */
+    fetchPatternEvents: function(symbol, opts){   /* 图形库页（消费班 W-C4）：形态事件流（2300 万行 symbol 非前导列，首查冷扫描可到秒级十位——超时放宽） */
+      opts = opts || {};
+      var q = '/api/pattern-events?symbol=' + encodeURIComponent(symbol) + '&days_back=' + (opts.daysBack || 30) + '&limit=' + (opts.limit || 200);
+      return fetchJson(q, opts.timeout || 20000);
+    },
+    fetchPatternWinrate: function(opts){   /* 胜率切片（四窗×regime；min_n 默认 30=low_sample 纪律线） */
+      opts = opts || {};
+      var q = 'timeframe=' + encodeURIComponent(opts.timeframe || 'day') + '&fwd_window=' + (opts.fwdWindow || 10) + '&min_n=' + (opts.minN == null ? 30 : opts.minN) + '&limit=' + (opts.limit || 500);
+      if(opts.direction) q += '&direction=' + encodeURIComponent(opts.direction);
+      if(opts.regimeTag) q += '&regime_tag=' + encodeURIComponent(opts.regimeTag);
+      return fetchJson('/api/pattern-winrate?' + q);
+    },
+    fetchPatternEvidence: function(){   /* 机生证据（REG-PAT-001 evidence 直读） */
+      return fetchJson('/api/pattern-evidence');
+    },
     swr: function(key, fetcher, renderFn){
       try{
         var c = JSON.parse(localStorage.getItem(key) || 'null');

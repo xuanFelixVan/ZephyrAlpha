@@ -4,8 +4,8 @@
 # 生成源：features/manifest.yaml + 手工维护 + scan_frontend_pages.py 半自动补登（auto_scanned=true 待逐页人工复核转正）
 # D38 模块总线（2026-09-07）：有后端模块承载的功能点必须挂 module:MOD-*（与 depgraph frontend_ref 双向闭合，
 #   经 MOD 总线与交易决策地图/五图互通——全图全库对齐铁律）；纯前端逻辑用 none: 声明事由
-version: 2.3.1
-updated: '2026-09-12'
+version: 2.3.2
+updated: '2026-09-14'
 features:
 - id: F-STOCKQ-COSTLINE
   name: 持仓成本线
@@ -2740,4 +2740,25 @@ features:
   module_id: hm-engine
   file: features/home/hm-engine.js
   backend_ref: none:布局引擎+结论墙+AI 对话框（页面组合层）
+  status: active
+- id: F-PAT-WINRATE
+  name: 胜率切片面板
+  page: pattern
+  module_id: pat-engine
+  file: features/pattern/pattern.js
+  backend_ref: [api:/api/pattern-winrate, module:MOD-SIG-145, module:MOD-SIG-147]
+  status: active
+- id: F-PAT-EVENTS
+  name: 逐标的形态事件查询
+  page: pattern
+  module_id: pat-engine
+  file: features/pattern/pattern.js
+  backend_ref: [api:/api/pattern-events, module:MOD-SIG-145, module:MOD-SIG-147]
+  status: active
+- id: F-PAT-EVIDENCE
+  name: 机生证据徽章
+  page: pattern
+  module_id: pat-engine
+  file: features/pattern/pattern.js
+  backend_ref: [api:/api/pattern-evidence, module:MOD-SIG-145, module:MOD-SIG-147]
   status: active
