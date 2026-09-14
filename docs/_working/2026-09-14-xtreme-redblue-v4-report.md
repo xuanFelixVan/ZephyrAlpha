@@ -101,3 +101,15 @@ v4 价值=把修复面从"单通道正确"逼到"多通道+并发正确"，P0-1 
 - 攻击文件清库：deletion 提交撞 pre-commit 钩子链挂起（180s 超时，直发 git commit 同样挂起）——
   记录为 pre-commit 钩子链问题（与 GATE-PRO 截断输出同源），随修复批一并走网关重试。
 - 提交清单：syntax_validation_gate.py（F1）+ held_overlap_gate.py（F2）+ 2 测试文件 + 本附录。
+
+### 裁定#252 落地附录（2026-09-14 晚批）
+
+- F2 上游裁定（Owner 委托，方案二「锁存活=会话存活」）已登记 ruling_registry
+  （entries 70 条）并与首版实现 a2870992 同批原子入库（RULE-RULING）。
+- 终验排障三处修复后端到端 PASS：领锁瞬时进程死亡，check 仍 LOCKED——会话判活
+  全链路生效（修复：会话存活分支缺提前返回、_is_session_alive 导入缺失、
+  cmd_acquire 参数包化残留 NameError）。
+- 配套：NO-LONG-PARAM-LIST 治理（AcquireOptions 参数包）+ ttl_mutex 测试迁移
+  （19/19）+ queue 落地 cae966007e；gate 侧双格式判活已同步（a2870992）。
+- xt4tmp 攻击样本 4 个 staged deletion 已被他会话 tests/ 域提交吸收出库；
+  r252_verify_target.py 终验探针由 Owner tmp 清理处理。
