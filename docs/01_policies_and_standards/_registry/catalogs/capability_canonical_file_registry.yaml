@@ -5003,6 +5003,10 @@ capabilities:
     提交→全景对齐→清理 全流程步骤与失败处置；适用 07 域（regime/选股/仓位/风控/买卖/执行/对账/治理）施工，RULE-CAPABILITY-LOOKUP
     检索"施工"应命中本条
 creation_tokens:
+- file: "docs/_working/2026-09-14-pattern-consumer-plan.md"
+  token: "patmine-consumer-plan-20260914"
+  created_by: "st-patmine-20260914"
+  capability: "pattern_consumer_plan"
 - file: "docs/_working/2026-09-14-ch-redblue-adversarial-report.md"
   token: "ch-redblue-20260914"
   created_by: "st-chinfra-20260914"
@@ -12646,6 +12650,14 @@ creation_tokens:
   capability: consensus_crosscheck
 - file: scripts/ch/c4_pdf_survey.py
   token: c4-pdf-history-repair-c4-pdf-survey-20260914
+  created_by: st-expectation-20260914
+  capability: c4_pdf_history_repair
+- file: src/zephyr/data/c4_history_repair.py
+  token: c4-pdf-history-repair-c4-history-repair-20260914
+  created_by: st-expectation-20260914
+  capability: c4_pdf_history_repair
+- file: scripts/ch/apply_pdf_forecast_extracted_ddl.py
+  token: c4-pdf-history-repair-apply-pdf-forecast-extracted-ddl-20260914
   created_by: st-expectation-20260914
   capability: c4_pdf_history_repair
 di_seam_exemptions: []
