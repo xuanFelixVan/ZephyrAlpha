@@ -258,6 +258,13 @@ Start-VM -Name zephyr-ch
    2026-08-03 陈旧 .git 副本）——上一会话发起删除被 Owner 打断，删除前需再确认一次。
 4. **明日观察项（2026-09-15 06:00 备份后）**：看 working_vault 第一个跨天快照的
    linked/copied 数，校准每日真实变化量，评估 retention_days=14 是否需要调小。
+5. **.git.backup.20260803 已删 + git bundle 替代（2026-09-14 19:4x）**：Owner 两轮确认后删除
+   F:\code_backup\.git.backup.20260803（6.32 GB，17285 文件，2026-08-03 陈旧 .git 副本，
+   其全部历史当前 .git 均包含，恢复价值趋近于零）。替代品=当前全历史一致性快照
+   `git bundle create F:\working_vault\git_bundles\zephyralpha_full_20260914.bundle --all`
+   （**0.40 GB**，git bundle verify 通过；恢复=git clone bundle 即得全仓库）。此举同时关闭
+   「B1 版本化快照不含 .git」的边界缺口——git 历史灾备从目录副本升级为单文件 bundle，
+   后续可定期（如随月度维护）重打新 bundle、删旧 bundle，体积小无轮转压力。
 
 ### §0.6 五图对齐视图
 
