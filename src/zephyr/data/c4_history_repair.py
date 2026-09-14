@@ -244,6 +244,92 @@ def extract_via_llm(text: str, symbol: str) -> list[dict]:
         return []
 
 
+
+def _page_word_rows(pg) -> list[list[tuple[float, float, str]]]:
+    """页 → 坐标行重建：词按 y 聚类（4px）、行内按 x 排序、再按大间隙切栏段。
+
+    双栏页面教训（立讯精密 002475 实证）：左右栏同高度的词会被 y 聚类拼成一行，
+    年份来自左栏、数值来自右栏→跨栏错配。切栏段后表头/EPS 必须同段。
+    返回 [(x_center, y, word)]（已切栏，段与段独立）。
+    """
+    words = pg.get_text("words")   # (x0, y0, x1, y1, word, ...)
+    rows: dict[int, list] = {}
+    for w in words:
+        key = round(w[1] / 4)
+        rows.setdefault(key, []).append(w)
+    out = []
+    for key in sorted(rows):
+        ws = sorted(rows[key], key=lambda w: w[0])
+        segs = [[ws[0]]]
+        for w in ws[1:]:
+            gap = w[0] - segs[-1][-1][0]   # 与段内末词的 x0 间距
+            if gap > 80:                   # 大间隙=栏边界
+                segs.append([w])
+            else:
+                segs[-1].append(w)
+        for seg in segs:
+            out.append([((w[0] + w[2]) / 2, w[1], w[4]) for w in seg])
+    return out
+
+
+def extract_forecasts_via_words(path: Path) -> list[dict]:
+    """启发式 3a'（坐标几何版）：无边框表/隔列漂移的治本——词坐标 y 聚类成行，
+    年份表头行与 EPS 行按 x 几何对齐（最近邻 ±半列宽）。有框无框通吃。
+    置信度=high（几何对齐可信，且要求行内含>=2 个数值词）。
+    仅在含"盈利预测"且"每股收益"的页上运行（叙事段落不误抓）。
+    """
+    import fitz
+
+    results: dict[int, dict] = {}
+    doc = fitz.open(str(path))
+    for pg in doc:
+        t = pg.get_text()
+        if "每股收益" not in t or ("盈利预测" not in t and "投资建议" not in t):
+            continue
+        rows = _page_word_rows(pg)
+        # 表头行=含 >=2 个年份词（同/异行相邻也算）
+        year_cols: list[tuple[float, int]] = []
+        for row in rows:
+            yts = []
+            for x, y, w in row:
+                m = _TABLE_YEAR_RE.search(w)
+                if m:
+                    y = int(m.group(1))
+                    if 2005 <= y <= 2035:
+                        yts.append((x, y))
+            if len(yts) >= 2:
+                year_cols = yts
+        if len(year_cols) < 2:
+            continue
+        # EPS 行=含每股收益/EPS 词的坐标行；值=同行最近年份 x 的数值词
+        for row in rows:
+            label_x = None
+            for x, y, w in row:
+                if _LABEL_RE.search(w):
+                    label_x = x
+                    break
+            if label_x is None:
+                continue
+            nums = [(x, w) for x, y, w in row if re.fullmatch(r"-?\d+\.\d{1,2}", w)]
+            got: dict[int, float] = {}
+            for x_year, y_year in year_cols:
+                cand = min(nums, key=lambda nw: abs(nw[0] - x_year), default=None)
+                if cand is not None and abs(cand[0] - x_year) <= 30:
+                    v = float(cand[1])
+                    if 0 < v < 5000:
+                        got[y_year] = v
+            if len(got) < 2:
+                continue
+            label = next(w for x, y, w in row if _LABEL_RE.search(w))[:24]
+            for y_year, v in got.items():
+                if y_year not in results or results[y_year]["confidence"] != "high":
+                    results[y_year] = {"forecast_year": y_year, "eps": v,
+                                       "confidence": "high", "method": "heuristic",
+                                       "snippet": f"{label}|页{pg.number}|坐标对齐{sorted(got)}"}
+    doc.close()
+    return list(results.values())
+
+
 def extract_report(report_id: str, symbol: str, publish_date: str) -> dict:
     """单份端到端：下载→表格提取（兜底文本）→落表。返回摘要（不抛异常）。"""
     year = publish_date[:4]
@@ -251,6 +337,8 @@ def extract_report(report_id: str, symbol: str, publish_date: str) -> dict:
     if path is None:
         return {"report_id": report_id, "outcome": outcome, "rows": 0}
     found = extract_forecasts_from_pdf(path)
+    if not found:
+        found = extract_forecasts_via_words(path)
     if not found:
         text, quality = pdf_text(path)
         if quality != "ok":
