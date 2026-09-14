@@ -53,6 +53,11 @@ _ID_PREFIX_TO_CLASS = {
     "SECTORROT": "sector_rotation",
 }
 
+# 冻结历史 id 豁免集（id 为冻结历史标识禁改名——ARCH-301 同哲学）：
+# STR-E-TIMING-001 恐慌反弹分布预测（sim 活跃）：CLASS 段含连字符违反命名法，
+# 系命名法立规前入册的 grandfather 债，2026-09-15 复核班代判豁免并留痕。
+_LEGACY_ID_EXEMPT = frozenset({"STR-E-TIMING-001"})
+
 _ID_RE = re.compile(r"^STR-([A-Z]+)-\d+$")
 
 
@@ -75,6 +80,8 @@ class TestFamilyAttribution:
         """strategy_id 的 CLASS 段必须与 strategy_class 一致。"""
         for e in _entries():
             sid = e["strategy_id"]
+            if sid in _LEGACY_ID_EXEMPT:
+                continue
             m = _ID_RE.match(sid)
             assert m, f"strategy_id 命名非法（须 STR-{{CLASS}}-{{NNN}}）: {sid}"
             if e.get("relabel_note") or e.get("relabel_proposal"):

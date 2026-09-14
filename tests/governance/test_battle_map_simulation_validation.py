@@ -16,14 +16,14 @@
 
 环节结构（8 环节）：
 
-  BM-SIM-01 市场仿真器           (缺失态无锚点——SSoT 明文，待施工)
+  BM-SIM-01 市场仿真器           (production, 锚 MOD-BT-084/091——2026-09-15 同步，原缺失态已挂锚)
   BM-SIM-02 策略仿真器           (production, MOD-SIM-002)
   BM-SIM-03 场景生成与蒙特卡洛   (production, MOD-SIM-005)
   BM-SIM-07 风控仿真器           (production, MOD-SIM-003)
   BM-SIM-04 压力测试引擎         (production, MOD-RK-12)
   BM-SIM-05 依赖图数字孪生       (candidate, CAND-HARVEST-0795)
   BM-SIM-06 仿真结果分析         (production, MOD-SIM-012)
-  BM-SIM-08 Paper Matching 涨跌停排队引擎 (design，缺失态无锚点——SSoT 明文，待施工)
+  BM-SIM-08 Paper Matching 涨跌停排队引擎 (design, 锚 MOD-SIM-025 primary——2026-09-15 同步)
 
 流转边（9 条）：
   BM-SIM-01 -.-> BM-SIM-02 --> BM-SIM-03 --> BM-SIM-04 -.-> BM-SIM-05 -.-> BM-SIM-06
@@ -80,9 +80,10 @@ EXPECTED_STEPS = {
     "BM-SIM-08": {"name": "Paper Matching 涨跌停排队引擎", "maturity": "design"},
 }
 
-# 缺失态环节（battle_map_04 SSoT 明文「⚠无锚点」：BM-SIM-01 市场仿真器缺失态待施工，
-# BM-SIM-08 涨跌停排队引擎设计态待施工）——孤儿锚点检查豁免集，新增孤儿会触发断言
-EXPECTED_ANCHORLESS_STEPS = {"BM-SIM-01", "BM-SIM-08"}
+# 缺失态环节豁免集——孤儿锚点检查豁免，新增孤儿会触发断言。
+# 2026-09-15 复核班同步：BM-SIM-01 已锚 MOD-BT-084/091（supplement）、BM-SIM-08 已锚
+# MOD-SIM-025（primary），按本测试自身指引从豁免集移除；当前无豁免项。
+EXPECTED_ANCHORLESS_STEPS: set = set()
 
 # BM-SIM-07 期望的流转边
 EXPECTED_SIM07_EDGES = [

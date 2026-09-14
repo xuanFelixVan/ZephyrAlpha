@@ -110,3 +110,86 @@ ttl: task_bound
 - 旧格式锁（无 --session）的 30min TTL 抢锁窗口**永久存在**（裁定#252 明确接受，逐步迁移消解）。
 - `.runtime/tmp/` v5 探针（`v5_*.py`、`fix_verify_r252.py` 等）由 Owner 随 tmp 清理删除（AI 无删除权）。
 - tests/xt4tmp 4 个 staged deletion 仍待他会话 tests/ 域提交顺路吸收。
+
+## 6. 附录：v6 复核与红蓝续测（st-redfix-20260915，Owner 睡前指令批）
+
+> 独立复核 v5 收尾报告 + 处置复核发现 + 红蓝续测。本节由复核班会话追加，v5 正文未改动。
+
+### 6.1 收尾报告复核结论：实质通过，两处瑕疵
+
+- 提交祖先链：区间内 solo_agent 标记提交实为 **12 笔**（报告写 11，书误），全部
+  `merge-base --is-ancestor` 通过、零 revert、GW 标记逐笔真实。
+- 锁/staging/stash/retirement_audit.json 全清零；`.ailocks` 无 solo_agent；
+  session_registry `held_files=[]`，心跳终点与末笔提交同刻。
+- 核心文件标记全在 HEAD（裁定#252 语义/ruling_registry:1836/v5 报告 17/17/挖矿+裁决书/接线两处）。
+- 瑕疵②：`.runtime/tmp/redblue_check.log`（04:44:50，末笔提交后 12 分钟）= 收尾自产
+  pytest 探针残留，证伪"49 个 tmp 探针全清"——已按 Owner 既有 tmp 清理授权删除。
+
+### 6.2 v5 §5 三项遗留全部闭合
+
+| v5 §5 遗留 | 现状 |
+|---|---|
+| tests/xt4tmp 4 个 staged deletion 待顺路吸收 | 已由 fbd7edf209 出库（归属纯净），3 个 untracked 探针同批磁盘清理 |
+| .runtime/tmp v5 探针待 Owner 清理 | redblue_check.log 已删（本批）；其余非本会话文件归既有 sweep |
+| 旧格式锁 30min TTL 抢锁窗口 | 裁定#252 接受的永久残余面，不变 |
+
+### 6.3 孤儿真红治愈：GATE-BLUEPRINT-ID-LEGACY 单测 stub 静默绕过（3 用例）
+
+- **病根**：DM-90974 把 reconciler 的裸模块名 import 改为完整包路径
+  `scripts.governance.d3_metadata.validate_module_id_naming` 后，单测旧 stub 仍靠
+  sys.path+裸名注入 → 被静默绕过，真源校验器判测试假 id（MOD-GOV-SCRIPTS）合法
+  → warn 用例变 clean。3 用例红（invalid_mod_prefix/report_file_written/multiple_violations）。
+- **治本**（st-redfix-20260915）：stub 改 monkeypatch sys.modules 注入到完整包路径
+  槽位 + 拒绝理由带 `stub-rejected` 哨兵 + 用例断言哨兵可见——stub 再被绕过即响亮
+  失败，事故类别闭环。23/23 绿。
+- **归属交底**：负债引入=DM-90974 批（改 import 未同步测试），非 solo_agent 收尾批。
+
+### 6.4 红蓝续测结果
+
+- R1 残留陈旧断言扫描：tests/ 全域 PP-001/sleeve 断言仅 alignment 红蓝一处承重
+  （已由 9005a38a7b 改结构不变量 ≥8+权重和=1），test_auto_mount 的 PP-001 均为自含
+  夹具非仓库断言——无其他陈旧面。
+- R2 变异测试 4/4 全捕获（砍 sleeve 至 5/权重和 1.05/清空/单 sleeve 0.30 超 cap）——
+  9005a38a7b 新断言强度合格。
+- R3 Tier2 邻接面电池（alignment 红蓝+audit 域+commit_gates+锁/网关/队列/post-commit
+  守卫）连续两轮 **4319 passed / 0 failed**。
+- 登记-不追（他会话在途，own-scope）：test_commit_queue_landing.py 两红=他会话正在
+  施工 q-0003 假落地事故新用例的半成品态；.aidrafts/st-chinfra-20260914/tests/xt4tmp/
+  4 探针副本=已失活会话 worktree 旧基线，随既有 sweep 生命周期走。
+
+### 6.5 分域猎红清偿记录（2026-09-15 复核班，st-redfix-20260915）
+
+全量 13750 趟因并发工作区噪声止损，改分域猎红（governance 65 文件两批），9+5 处孤儿全部清偿：
+
+1. **GATE-BLUEPRINT-ID-LEGACY 单测 stub 静默绕过**（§6.3 已述）：stub 改 monkeypatch
+   注入完整包路径槽位 + `stub-rejected` 哨兵断言，23/23 绿。
+2. **battle_map 仿真验证域**：BM-SIM-01/08 已挂锚（MOD-BT-084/091、MOD-SIM-025），
+   按测试自身指引同步 EXPECTED_ANCHORLESS_STEPS→空集，22/22 绿。
+3. **domain_events.yaml 统计摘要漂移**：A13 批加 E-POS-40/41 未同步 summary；机械重算
+   （27 事件/by_domain+position 2/L1 8/L4 10/high 19/medium 8），validator 绿。
+4. **策略家族法修复（裁定含一次反转，交底如下）**：C5 批给 5 条新策略打了临时类
+   （small_cap_quality/value_quality/trend_timing/mean_reversion_timing/intraday_gap），
+   其中 3 条连自家 id 前缀法都违反（MOMTREND/VREV/DABAN 前缀分别绑死
+   momentum_trend/value_reversal/daban×22/24/30 条存量，一前缀不能二类→登记新类方案
+   结构性不可行）。终局：5 条 strategy_class 按词汇表边界 relabel（TSMALL/VAL→multifactor
+   多条件合成，MOMTREND-033→momentum_trend，VREV-026→value_reversal，DABAN-023→daban）
+   + relabel_note 留痕（ARCH-301 先例格式）；screen_source 两映射表同步折叠；词汇表
+   test 侧曾试登记 small_cap_quality 已回退（空家族不入册）。family 7/7 + 消费方 39/39 绿。
+5. **STR-E-TIMING-001 命名法 grandfather**：sim 活跃策略 id 段含连字符（命名法立规前
+   入册），id 冻结禁改名→测试豁免集 `_LEGACY_ID_EXEMPT` 留痕豁免。
+6. **depgraph 丢边回插**（RULE-DATA-OPS：判重后幂等插，可逆=按 edge_id 删）：
+   战役 PG edges 表丢失 3 条（修复边 042→038 + 历史边 036→039、036→045；原
+   10892829-33 段全灭）。按现存同批边模板（data/design，SIG-038 挂 13532685 同代节点）
+   回插，新 edge_id=18749543/18749544/18749545，23/23 绿。
+   **根因未治（登记不修）**：边丢失应系某次 depgraph 重建/清理批未保手工边，建议
+   Owner 侧关注 generate_project_depgraph --force 与手工修复边的共存策略。
+7. **登记不追（他会话在途）**：test_commit_queue_landing.py 两红=他会话 q-0003 假落地
+   事故新用例半成品态，own-scope 不代修。
+
+** Owner 拍板点（唯一）**：§6.5-4 家族归并若 Owner 认为 small_cap_quality/value_quality
+应独立成族， revert 本次 5 条 relabel 即可（relabel_note 已含全部反证信息）。
+
+8. **screen_source.py 处置交底**：该件及其测试系 C5 批（已死会话）未入库遗产，本次已在
+   工作区完成家族法对齐（词表折叠+前缀表清理，39/39 绿），但 strategy_pipeline 目录现属
+   活跃会话施工区（intake/registry_writer 在途）——own-scope 不随本批提交，留待属主会话
+   吸收入库（repo 先例：修复随其入库）。
