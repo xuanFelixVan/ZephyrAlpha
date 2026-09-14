@@ -131,7 +131,7 @@ SQL_DEFAULT_POOL = (
 def _query_rows(sql: str) -> list[tuple]:
     """通过 ch_reader 只读路径执行 SELECT，返回行元组列表。
 
-    治本（2026-08-17 AI-04 审计）：原实现裸 clickhouse_driver.Client 直连
+    治本（2026-08-17 AI-04 审计）：原实现裸 Client 直连 CH
     硬编码 IP（172.24.30.100）、无凭据、无 readonly=1，违反裁定 #ARCH-CH-017
     （禁硬编码 IP）与 read_only 安全约束（业务查询 MUST 只读连接）。
     ch_reader 自动注入 FINAL（ReplacingMergeTree 去重），reader 账号 SELECT-only。

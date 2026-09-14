@@ -565,6 +565,7 @@ nodes:
   materiality: normal
   decay_scan_frequency: semiannual
 - node_id: TDM-E-L2-01-2
+  note_confirmed: 2026-09-14
   name_zh: 动量活跃度排名
   market: cn_a
   flow: entry_flow
@@ -2989,6 +2990,7 @@ nodes:
 
   # ── 风控横切（非第四条流，任何环节可触发）────────────────────────────────
 - node_id: TDM-X-R1
+  note_confirmed: 2026-09-14  # P1-2 职责边界 docstring 澄清，算法口径未变（外审整改 st-btfix-20260914）
   name_zh: 应急保命
   market: cn_a
   flow: exit_flow
