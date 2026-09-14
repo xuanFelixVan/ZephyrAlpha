@@ -49518,6 +49518,20 @@ entries:
   desc_zh: ""
   desc_en: ""
   plain_zh: "把仓位策略的每一个可选维度(比如选多少只股、怎么分配资金、多久调一次仓)写成一张清单，按当前条件自动算出一共有多少种组合、并生成每一种组合的身份证。现在只有一个策略时，'多策略合并'这类暂时用不上的维度会自动收起来不参与计算，等将来第二个策略出现时自动展开，不用改代码。"
+- module_path: scripts/backtest/distribution_forecast_eval.py
+  domain_id: D_BACKTEST
+  name_zh: "分布预测双标准考尺"
+  name_en: ""
+  desc_zh: "PIT校准+锐度+pinball三合一评估器，任何分位预测模型通用（E4考尺）"
+  desc_en: ""
+  plain_zh: "给'预测未来价格区间'的模型打分的尺子：①量得准不准（说覆盖90%是不是真覆盖90%）②量得细不细（区间越窄信息越多）。两把尺一起用防作弊，纯打分不碰数据。"
+- module_path: scripts/backtest/graph_enrich_staging.py
+  domain_id: D_BACKTEST
+  name_zh: "图谱增补暂存器"
+  name_en: ""
+  desc_zh: "新闻→LLM抽取供应链关系→暂存台账（绝不写ig_fact正图，入图需Owner审核另批）"
+  desc_en: ""
+  plain_zh: "给产业链地图自动找新关系的 scout：翻新闻让大模型找'A给B供货'这类关系，带原文证据和置信度落到暂存清单；地图正本一动不动，等老板审完清单才准入图。防幻觉三道锁：主体必须原文出现、必须给原文摘录、置信度不够就扔。"
 
 battle_map_steps:
 - step_id: BM-BUY-05

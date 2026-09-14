@@ -12756,6 +12756,22 @@ creation_tokens:
   token: factory-backend-hypothesis-translator-20260914
   created_by: st-facbe-20260914
   capability: factory_backend
+- file: scripts/backtest/distribution_forecast_eval.py
+  token: factory-backend-distribution-forecast-eval-20260914
+  created_by: st-facbe-20260914
+  capability: factory_backend
+- file: scripts/backtest/graph_enrich_staging.py
+  token: factory-backend-graph-enrich-staging-20260914
+  created_by: st-facbe-20260914
+  capability: factory_backend
+- file: scripts/run_c4_exam.ps1
+  token: factory-backend-run-c4-exam-20260914
+  created_by: st-facbe-20260914
+  capability: factory_backend
+- file: scripts/register_c4_exam_task.ps1
+  token: factory-backend-register-c4-exam-task-20260914
+  created_by: st-facbe-20260914
+  capability: factory_backend
 - file: scripts/backtest/translated/c4_21af8c66c15e_small_cap.py
   token: c4-21af8c66c15e-small-cap-20260914
   created_by: st-zcode-c4-20260912

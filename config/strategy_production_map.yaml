@@ -222,8 +222,13 @@ nodes:
       机械翻译，生成件零逻辑统一承载；已通 c4_fact_e831084c 实跑验证）；
       假说轨 C3 翻译 MVP=MOD-BT-190 hypothesis_translator（E2 过审假说→本地 LLM 结构化
       翻译为因子表达式，公式化子集+阴性如实入档+表达式去重+纠错重试，translated_manifest
-      台账）；E2→E3 排产流转=factory_intake_pipeline construct 子命令（过审公式候选自动
-      生成考卷件+constructed_manifest）；四车道 E2 预审常态化=run 已扩全台账消费
+      台账；两段式机制门已入 C2 挖矿=MOD-BT-158 build_mechanism_prompt）；E2→E3 排产流转
+      =factory_intake_pipeline construct 子命令（过审公式候选自动生成考卷件
+      +constructed_manifest）；四车道 E2 预审常态化=run 已扩全台账消费；
+      E4 分布预测双标准考尺=MOD-BT-194 distribution_forecast_eval（PIT+锐度+pinball，
+      车道 E/Kronos 通用）；图谱增补 P0=MOD-BT-193 graph_enrich_staging（新闻→LLM 抽取
+      供应链关系→暂存台账，绝不写 ig_fact 正图，入图需 Owner 审核另批）；
+      Kronos 接入=MOD-BT-195 登记跳过（GitHub/HF 双通道不可达，网络恢复后激活）
     design_refs:
       - QuantCode-Bench arxiv.org/html/2604.15151（NL→可执行策略可靠性基准）
     store_refs:

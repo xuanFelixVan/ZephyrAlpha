@@ -38,6 +38,7 @@ import argparse
 import ast
 import hashlib
 import json
+import re
 import sys
 from collections import Counter
 from datetime import datetime
@@ -94,6 +95,35 @@ def build_eval_ops(date_codes: np.ndarray, symbol_codes: np.ndarray) -> dict:
 OP_ARITY = {"add": 2, "sub": 2, "mul": 2, "div": 2, "max": 2, "min": 2,
             "sqrt": 1, "log": 1, "abs": 1, "neg": 1,
             "rank_cs": 1, "ts_delta_5": 1, "ts_zscore_20": 1, "ts_corr_20": 2}
+
+
+THIN_PHRASES = ("利用风险溢价", "统计显著", "均值回归效应", "价值回归")
+
+
+def build_mechanism_prompt(hypothesis: str) -> str:
+    """两段式·一段：机制三问逼问（先逼出合格机制，表达式二段再写）。"""
+    return (
+        f"市场假设：{hypothesis}\n\n"
+        "回答交易对手三问（这是给量化因子写机制说明书）：\n"
+        "①谁在卖给你/谁在亏（具体到行为：追涨杀跌？被迫平仓？流动性 withdrawal？）\n"
+        "②他们为什么愿意亏（哪种行为偏差或约束，说人话）\n"
+        "③什么成本或摩擦可能吃掉你的边际\n"
+        "禁止空话（'利用风险溢价''统计显著'=反面教材，必被拒）\n\n"
+        '输出单个 JSON 对象：{"counterparty": "①...", "why_lose": "②...", '
+        '"cost_risk": "③..."}'
+    )
+
+
+def mechanism_is_thin(m: dict) -> tuple[bool, str]:
+    """机制三问答卷完整性检查（空字段/套话=薄，拒绝进入二段）。"""
+    for field in ("counterparty", "why_lose", "cost_risk"):
+        v = str(m.get(field, "")).strip()
+        for phrase in THIN_PHRASES:
+            if phrase in v:
+                return True, f"{field} 含套话: {phrase}"
+        if len(v) < 8:
+            return True, f"{field} 过短或缺失"
+    return False, ""
 
 
 def validate_expr(expr: str, features: list[str], op_names: set[str]) -> tuple[bool, str]:
@@ -340,7 +370,22 @@ def run_agentic_mine(model: str, seeds_limit: int, per_seed: int, universe_n: in
             rejected_samples[reason].append(expr[:120])
 
     for h in seeds:
-        prompt = build_generation_prompt(h, features, sorted(op_set), pool_exprs, per_seed)
+        # 两段式·一段：机制三问逼问（薄机制=整种子拒绝，省表达式段算力）
+        mech_prompt = build_mechanism_prompt(h)
+        try:
+            mech_raw = chat.ask(mech_prompt, temperature=0.2)
+            mech_m = re.search(r"\{.*\}", mech_raw, re.DOTALL)
+            mech = json.loads(mech_m.group(0)) if mech_m else {}
+        except Exception as exc:  # noqa: BLE001 — LSG/连接类失败记因继续
+            _rej(f"llm_error:{type(exc).__name__}", str(exc)[:120])
+            continue
+        thin, thin_why = mechanism_is_thin(mech if isinstance(mech, dict) else {})
+        if thin:
+            _rej(f"thin_mechanism:{thin_why[:32]}", h[:80])
+            continue
+        prompt = build_generation_prompt(
+            h + "（已批准机制：" + json.dumps(mech, ensure_ascii=False) + "）",
+            features, sorted(op_set), pool_exprs, per_seed)
         try:
             raw = chat.ask(prompt, temperature=0.3)
         except Exception as exc:  # noqa: BLE001 — LSG/连接类失败记因继续

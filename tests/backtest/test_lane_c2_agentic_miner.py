@@ -63,9 +63,13 @@ class TestValidateExpr:
         ok, why = validate_expr("add(close_ma20, ret_1d)", ["ret_1d"], {"add"})
         assert not ok and "close_ma20" in why
 
-    def test_binop_style_rejected(self):
+    def test_binop_arithmetic_accepted_mapped(self):
         ok, why = validate_expr("ret_1d + ret_5d", FEATURES, {"add"})
-        assert not ok  # 只准函数调用形式（prompt 已约束）
+        assert ok, why  # 算术中缀映射到白名单算子
+
+    def test_compare_rejected(self):
+        ok, why = validate_expr("ret_1d > ret_5d", FEATURES, {"add"})
+        assert not ok and "筛选" in why  # 比较条件≠因子表达式
 
     def test_constant_allowed(self):
         ok, _ = validate_expr("mul(ret_1d, 2)", FEATURES, {"mul"})
@@ -232,3 +236,25 @@ class TestLedgerAndBirth:
 
 if __name__ == "__main__":  # pragma: no cover
     pytest.main([__file__, "-v"])
+
+
+class TestTwoStageMechanism:
+    def test_mechanism_prompt_deterministic_and_interrogating(self):
+        from scripts.backtest.lane_c2_agentic_miner import build_mechanism_prompt
+        p1 = build_mechanism_prompt("动量假说")
+        p2 = build_mechanism_prompt("动量假说")
+        assert p1 == p2
+        for token in ("谁在卖给你", "为什么愿意亏", "成本或摩擦"):
+            assert token in p1
+
+    def test_thin_mechanism_detection(self):
+        from scripts.backtest.lane_c2_agentic_miner import mechanism_is_thin
+        thin = {"counterparty": "利用风险溢价", "why_lose": "x", "cost_risk": "y"}
+        ok, why = mechanism_is_thin(thin)
+        assert ok and "套话" in why
+        empty = {"counterparty": "", "why_lose": "", "cost_risk": ""}
+        assert mechanism_is_thin(empty)[0]
+        good = {"counterparty": "追涨杀跌的散户在顶部买入", "why_lose": "情绪反转后被迫割肉",
+                "cost_risk": "双边换手加冲击成本可能吃掉薄边际"}
+        ok, why = mechanism_is_thin(good)
+        assert not ok, why
