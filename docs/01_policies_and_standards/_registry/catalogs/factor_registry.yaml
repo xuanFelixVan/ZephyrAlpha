@@ -12071,7 +12071,7 @@ factors:
   factor_class: "quality"
   formula: "-(net_profit_ttm-ocf_ttm)/total_assets"
   params: {}
-  inputs: ["c3_fundamental.financial_derived(DS-230) 对应列"]
+  inputs: []
   outputs: ["截面因子值（方向=值大预期收益高）"]
   alpha_source: "Sloan 1996 The Accounting Review 应计异象；A股公告期28%年超额实证"
   frequency: "quarterly"
@@ -12110,7 +12110,7 @@ factors:
   factor_class: "quality"
   formula: "mean(ocf_ttm/|np_ttm|,8q)-std((np_ttm-ocf_ttm)/total_assets,8q)"
   params: {}
-  inputs: ["c3_fundamental.financial_derived(DS-230) 对应列"]
+  inputs: []
   outputs: ["截面因子值（方向=值大预期收益高）"]
   alpha_source: "券商量化专题 2026-04 改进应计（转化效率+残差波动率，RankIC 2.61%→2.93%）"
   frequency: "quarterly"
@@ -12149,7 +12149,7 @@ factors:
   factor_class: "quality"
   formula: "(revenue_ttm-cost_ttm)/total_assets"
   params: {}
-  inputs: ["c3_fundamental.financial_derived(DS-230) 对应列"]
+  inputs: []
   outputs: ["截面因子值（方向=值大预期收益高）"]
   alpha_source: "Novy-Marx 2013 JFE The Other Side of Value"
   frequency: "quarterly"
@@ -12188,7 +12188,7 @@ factors:
   factor_class: "quality"
   formula: "4*np_q/equity_incl_minority - 上年同期值"
   params: {domain_conditional: true, domain: {axis: market_cap_tercile, buckets: [cap_lo, cap_mid]}}
-  inputs: ["c3_fundamental.financial_derived(DS-230) 对应列"]
+  inputs: []
   outputs: ["截面因子值（方向=值大预期收益高）"]
   alpha_source: "雪球 V4.x 单季拆解框架（roe_q 同比差）"
   frequency: "quarterly"
@@ -12227,7 +12227,7 @@ factors:
   factor_class: "momentum"
   formula: "(rev_q_t-rev_q_base)/|rev_q_base|（DS-230 rev_q_yoy 列）"
   params: {domain_conditional: true, domain: {axis: market_cap_tercile, buckets: [cap_lo]}}
-  inputs: ["c3_fundamental.financial_derived(DS-230) 对应列"]
+  inputs: []
   outputs: ["截面因子值（方向=值大预期收益高）"]
   alpha_source: "RevSUE 口径（营收难操纵，雪球 V4.x）"
   frequency: "quarterly"
@@ -12266,7 +12266,7 @@ factors:
   factor_class: "momentum"
   formula: "np_q 环比变化率（DS-230 np_q_qoq 列）"
   params: {}
-  inputs: ["c3_fundamental.financial_derived(DS-230) 对应列"]
+  inputs: []
   outputs: ["截面因子值（方向=值大预期收益高）"]
   alpha_source: "雪球 QoQ_Acc 盈利二阶导"
   frequency: "quarterly"
@@ -12305,7 +12305,7 @@ factors:
   factor_class: "quality"
   formula: "-|z(应收/营收TTM,12q)| - std(eff_tax_rate_ttm,12q)"
   params: {}
-  inputs: ["c3_fundamental.financial_derived(DS-230) 对应列"]
+  inputs: []
   outputs: ["截面因子值（方向=值大预期收益高）"]
   alpha_source: "国盛多因子 14 刻画财报信息质量（可得子集：应收异常+税率波动）"
   frequency: "quarterly"
@@ -12344,7 +12344,7 @@ factors:
   factor_class: "quality"
   formula: "9 项 0/1 计数（ROA>0/CFO>0/ROA升/应计<0/杠杆降/流动比升/无增发/毛利率升/周转率升）"
   params: {}
-  inputs: ["c3_fundamental.financial_derived(DS-230) 对应列"]
+  inputs: []
   outputs: ["截面因子值（方向=值大预期收益高）"]
   alpha_source: "Piotroski 2000 JAR F-Score"
   frequency: "quarterly"
