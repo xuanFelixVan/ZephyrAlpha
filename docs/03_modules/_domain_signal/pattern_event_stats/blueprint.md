@@ -38,7 +38,7 @@ owner: ZephyrAlpha-Owner
 ## 1. 数据契约（拟，W1 已落地）
 
 - `c1_market.market_pattern_event`（CH 表，DatabaseService/ch_writer 正门，
-  pit_policy=strict；DDL 真源 schemas/categories/market_pattern_event.py，
+  pit_policy=strict；DDL 真源 schemas/categories/market/market_pattern_event.py，
   apply 脚本 scripts/ch/apply_pattern_event_ddl.py）：
   event_id / pattern_id / pattern_class / direction / confidence / timeframe /
   symbol / anchor_trade_date / confirmed_at / name / key_points(json) /
@@ -74,6 +74,12 @@ owner: ZephyrAlpha-Owner
 - W1：表 DDL（admin 通道）+ store 读写 + 单测（tmp_path 隔离，禁写生产路径）。
 - W2：回填扫描器（批量 / 断点续扫 / scan_run_id 幂等）+ 全量历史回填。
 - W3：胜率统计物化任务 + win_rate_provider 接线 MOD-SIG-115。
+- W-C3 钩子落位（2026-09-15 消费班续）：tasks.yaml 新增 pattern_weight_sync
+  任务块（daily_kline 档，DAG 依赖 pattern_win_rate_materialize——统计落库才同步，
+  事件触发禁 cron）+internal_compute_provider 注册 pattern_weight_sync capability
+  （同表分流按 payload.extra.capability）+pattern_event_job.run_weight_sync 薄适配
+  （147 CLI 子进程隔离，--state-path 钉仓库根）。实弹首跑 62 信号调权成功。
+  已知口径：当前仅 direction=向上 切片（list/get_detail 同口径），向下切片待扩。
 - W-C2 增补（2026-09-14 消费班，方案 v1.0 挖矿 M1 裁定）：provider 新增
   get_conservative()=Wilson 95% 下界口径（小样本保守估计，n<=0→0.0；与 get()
   同门禁 low_sample/NULL→None）、get_detail()=全行返回（审计快照用）、

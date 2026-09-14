@@ -132,6 +132,7 @@ _INTERNAL_COMPUTE_CAPABILITIES = frozenset(
         "fund_consensus_daily",  # 一致预期矩阵（C1.5）——声明后补（同上）
         "pattern_event",  # 图形事件增量（MOD-SIG-145/JOB-108）
         "pattern_win_rate_materialize",  # 胜率统计重物化（MOD-SIG-145/JOB-108）
+        "pattern_weight_sync",  # 调权同步（消费班 W-C3：物化完成→131 限幅调权）
     }
 )
 
@@ -267,7 +268,7 @@ def _dedupe_and_sort_events(rows: list[tuple]) -> list[tuple]:
 # CSV 台账放 data/manual/（data/ 兜底规则允许 .csv，git 跟踪，运行时数据区）。
 _MANUAL_EVENT_CSV: Final = Path(__file__).resolve().parents[4] / "data" / "manual" / "calendar_event_manual.csv"
 
-# manual event_type 白名单（与 schemas/categories/market_calendar_event.py DDL 注释 12 类对齐：
+# manual event_type 白名单（与 schemas/categories/market/market_calendar_event.py DDL 注释 12 类对齐：
 # 派生类 9 类由规则计算，manual 类仅此 3 类——白名单防台账误写派生类造成双源冲突）
 _MANUAL_EVENT_TYPES: Final = frozenset({"fomc_meeting", "major_meeting", "stamp_duty_change"})
 
@@ -409,15 +410,17 @@ class InternalComputeProvider(IngestProviderBase):
             CapabilityContract("pattern_event", supports_symbols_null=True),
             # 胜率统计全量重物化（MOD-SIG-145/JOB-108 2026-09-14）：事件表×日K重算，symbols=null=全表
             CapabilityContract("pattern_win_rate_materialize", supports_symbols_null=True),
+            # 调权同步（消费班 W-C3 2026-09-15）：物化完成→Wilson 口径录样本→131 限幅调权，symbols=null=全表
+            CapabilityContract("pattern_weight_sync", supports_symbols_null=True),
         ],
         known_issues=[],
     )
 
-    # 技术指标表列名顺序（与 schemas/categories/market_technical_indicator.py INSERT_COLUMNS 对齐）
+    # 技术指标表列名顺序（与 schemas/categories/market/market_technical_indicator.py INSERT_COLUMNS 对齐）
     # 格式：(trade_date, trade_time, symbol, period, 55个指标列, data_source)
     _INDICATOR_COLUMNS: list[str] | None = None  # lazy init from schema
 
-    # 日历事件表列名顺序（与 schemas/categories/market_calendar_event.py INSERT_COLUMNS 对齐）
+    # 日历事件表列名顺序（与 schemas/categories/market/market_calendar_event.py INSERT_COLUMNS 对齐）
     # 格式：(event_date, event_type, description, data_source)
     _CALENDAR_EVENT_COLUMNS: list[str] | None = None  # lazy init from schema
 
@@ -486,6 +489,9 @@ class InternalComputeProvider(IngestProviderBase):
             yield from self._fetch_pattern_event(payload)
             return
         if payload.table == "c1_market.market_pattern_win_rate":
+            if isinstance(payload.extra, dict) and payload.extra.get("capability") == "pattern_weight_sync":
+                yield from self._fetch_pattern_weight_sync(payload)
+                return
             yield from self._fetch_pattern_win_rate_materialize(payload)
             return
         yield from self._fetch_technical_indicator(payload)
@@ -557,6 +563,20 @@ class InternalComputeProvider(IngestProviderBase):
         )
 
         yield from run_win_rate_materialize()
+
+    def _fetch_pattern_weight_sync(self, payload: FetchPayload) -> Iterator[FetchResult]:
+        """调权同步路由分支（pattern_weight_sync capability 命名约定实现，消费班 W-C3）。
+
+        委托 pattern_event_job.run_weight_sync（物化完成后拉统计表→Wilson
+        口径录样本→MOD-SIG-131 限幅调权→权重状态 JSON 持久化；权重无 CH
+        表，FetchResult 仅记账）。挂重物化下游（tasks.yaml pattern_weight_sync，
+        DAG 依赖 pattern_win_rate_materialize——统计落库才同步，禁 cron 自轮询）。
+        """
+        from zephyr.signal_ashare.strategy_signal.pattern_event_job import (
+            run_weight_sync,
+        )
+
+        yield from run_weight_sync()
 
     def _fetch_kline_index_calc(self, payload: FetchPayload, policy) -> Iterator[FetchResult]:
         """自算指数路由分支（kline_index_calc capability 的命名约定实现）。
@@ -1029,7 +1049,7 @@ class InternalComputeProvider(IngestProviderBase):
         if cls._CALENDAR_EVENT_COLUMNS is not None:
             return cls._CALENDAR_EVENT_COLUMNS
         try:
-            from schemas.categories.market_calendar_event import INSERT_COLUMNS
+            from schemas.categories.market.market_calendar_event import INSERT_COLUMNS
 
             cols_str = INSERT_COLUMNS.strip("()")
             cls._CALENDAR_EVENT_COLUMNS = [c.strip() for c in cols_str.split(",")]
@@ -1043,7 +1063,7 @@ class InternalComputeProvider(IngestProviderBase):
     def _get_indicator_columns(cls) -> list[str]:
         """获取 technical_indicator 表的列名顺序（lazy init from schema）。
 
-        从 schemas.categories.market_technical_indicator.INSERT_COLUMNS 加载。
+        从 schemas.categories.market.market_technical_indicator.INSERT_COLUMNS 加载。
         若直接导入失败（如工作目录不在项目根），自动补项目根到 sys.path 重试。
         最终失败时抛 RuntimeError 而非静默 fallback——静默 fallback 到 5 列会
         导致所有指标值被丢弃，是比崩溃更危险的静默错误。
@@ -1053,7 +1073,7 @@ class InternalComputeProvider(IngestProviderBase):
 
         try:
             try:
-                from schemas.categories.market_technical_indicator import INSERT_COLUMNS
+                from schemas.categories.market.market_technical_indicator import INSERT_COLUMNS
             except ImportError:
                 # 补项目根到 sys.path（provider 在 src/zephyr/data/implementations/，
                 # 项目根 = parents[4]）
@@ -1063,7 +1083,7 @@ class InternalComputeProvider(IngestProviderBase):
                 project_root = str(pathlib.Path(__file__).resolve().parents[4])
                 if project_root not in sys.path:
                     sys.path.insert(0, project_root)
-                from schemas.categories.market_technical_indicator import INSERT_COLUMNS
+                from schemas.categories.market.market_technical_indicator import INSERT_COLUMNS
 
             # INSERT_COLUMNS 格式: "(col1, col2, ...)" → 去括号+空格 split
             cols_str = INSERT_COLUMNS.strip("()")

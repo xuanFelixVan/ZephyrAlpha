@@ -132,3 +132,38 @@ class TestFetchResultAccounting:
             elapsed_sec=0.0, rows_fetched=99,
         )
         assert r.rows_fetched == 99, "post_init 不得覆盖显式记账值"
+
+
+# ── 消费班 W-C3：run_weight_sync（物化完成→调权钩子） ────────────────────────
+
+
+def test_run_weight_sync_ok(monkeypatch):
+    """退出码 0：解析尾行 JSON summary 的 adjusted 记账，error=None。"""
+    monkeypatch.setattr(
+        pej.subprocess, "run",
+        _fake_run(0, '{"patterns": 5, "adjusted": 3, "weights": {"双顶": 0.8}}'),
+    )
+    results = list(pej.run_weight_sync())
+    assert len(results) == 1
+    r = results[0]
+    assert r.error is None
+    assert r.rows_fetched == 3
+    assert r.table == pej._WIN_RATE_TABLE
+
+
+def test_run_weight_sync_failure_passthrough(monkeypatch):
+    """退出码非 0：error 透传（scheduler 记 FAILED），rows_fetched=0。"""
+    monkeypatch.setattr(pej.subprocess, "run", _fake_run(2, ""))
+    results = list(pej.run_weight_sync())
+    assert len(results) == 1
+    r = results[0]
+    assert r.error is not None and "退出码 2" in r.error
+    assert r.rows_fetched == 0
+
+
+def test_run_weight_sync_parse_degrade(monkeypatch):
+    """stdout 无 JSON summary：记账降级 0 不炸（结果以状态文件为准）。"""
+    monkeypatch.setattr(pej.subprocess, "run", _fake_run(0, "no-json-here"))
+    results = list(pej.run_weight_sync())
+    assert results[0].rows_fetched == 0
+    assert results[0].error is None

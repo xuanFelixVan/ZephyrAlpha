@@ -2691,6 +2691,58 @@ tasks:
   extra:
     description: "深圳企业登记发展年报（1979 起 130 行年度分类；新钥匙通道；NF 年份幂等）"
 
+- task_id: alt_sz_reservoir_level_incremental
+  table: c1_market.alt_sz_reservoir_level
+  source: akshare_alt
+  schedule: daily_event
+  incremental: true
+  date_col: tdate
+  dependencies: []
+  capability: alt_sz_reservoir_level
+  symbols:
+  fallback_sources: []    # 天然无副源：深圳开放数据平台单源（主钥匙）
+  extra:
+    description: "深圳水库水位分钟级序列（7630 万行，无过滤参数=二分定位增量同能见度；ID 幂等；首刷限近窗，全史报批）"
+    start_days_back: 30
+
+- task_id: alt_sz_env_meteor_refresh
+  table: c1_market.alt_sz_env_meteor
+  source: akshare_alt
+  schedule: daily_event
+  incremental: false
+  dependencies: []
+  capability: alt_sz_env_meteor
+  symbols:
+  fallback_sources: []
+  extra:
+    description: "深圳环境气象预报（气象等级/污染扩散条件评价，2.8 万行；主钥匙通道；ID 幂等）"
+
+- task_id: alt_sz_climate_hist_refresh
+  table: c1_market.alt_sz_climate_hist
+  source: akshare_alt
+  schedule: daily_event
+  incremental: false
+  dependencies: []
+  capability: alt_sz_climate_hist
+  symbols:
+  fallback_sources: []
+  extra:
+    description: "深圳基本站气候历史（1953 起逐时观测 48.9 万行；主钥匙通道；DDATETIME 幂等；全量重拉）"
+
+- task_id: alt_sz_ground_obs_incremental
+  table: c1_market.alt_sz_ground_obs
+  source: akshare_alt
+  schedule: daily_event
+  incremental: true
+  date_col: crt_date
+  dependencies: []
+  capability: alt_sz_ground_obs
+  symbols:
+  fallback_sources: []
+  extra:
+    description: "深圳地面观测实况（2017 起逐时 64.8 万行；主钥匙通道；DDATETIME 幂等；startDate 增量）"
+    start_days_back: 90
+
 - task_id: alt_typhoon_names_refresh
   table: c1_market.alt_typhoon_names
   source: akshare_alt
@@ -2886,7 +2938,7 @@ tasks:
 
   # ============== 外盘日K（GAP-F-23 / designmemos 清单 #6，2026-08-30 CTR 落地）==============
   # 落库裁定：kline_index 实证纯沪深 1097 只（ES/NQ 先例=专用外表 us_futures_intraday），
-  # 外盘日K独立成表 c1_market.kline_global（DDL 真源 schemas/categories/market_kline_global.py，
+  # 外盘日K独立成表 c1_market.kline_global（DDL 真源 schemas/categories/kline/market_kline_global.py，
   # 列序与 a50_futures_daily 同构）。
   # DXY/美债10Y 不单独登记任务：由既有 macro_fred_incremental 承载（DTWEXBGS/DGS10 在 fred_provider
   # 22 序列 _FRED_SERIES 内，落 macro_data.FRED_DXY / FRED_DGS10_US），2026-08-30 已一次性刷新留证。
@@ -3001,3 +3053,16 @@ tasks:
   fallback_sources: []    # internal 派生源天然无副源
   extra:
     description: "胜率统计全量重物化（MOD-SIG-145/JOB-108：market_pattern_event × kline_daily 前视窗口命中率，(pattern_id,timeframe,regime,direction,fwd_window) 粒度+baseline 对照；ReplacingMergeTree(updated_at) 全量重放幂等；喂 pattern_win_rate_provider/MOD-SIG-115）"
+
+- task_id: pattern_weight_sync
+  table: c1_market.market_pattern_win_rate
+  source: internal  # 本地计算（读物化统计→131 限幅调权→权重状态 JSON，非外部API）
+  schedule: daily_kline
+  incremental: true
+  date_col: updated_at
+  dependencies: ["pattern_win_rate_materialize"]   # DAG: 统计落库才同步（消费班 W-C3 钩子，禁 cron 自轮询）
+  capability: pattern_weight_sync
+  symbols:
+  fallback_sources: []    # internal 派生源天然无副源
+  extra:
+    description: "调权同步（消费班方案 v1.0 C3：物化完成后拉统计全行→low_sample/查无跳过→win_rate=Wilson 95% LB+ic=命中率相对基准代理→MOD-SIG-131 限幅调权→权重状态持久化 data/runtime/pattern_signal_weights.json；喂 MOD-SIG-147 runtime weight_version）"
