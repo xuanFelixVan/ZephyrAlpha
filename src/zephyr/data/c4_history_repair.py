@@ -103,10 +103,12 @@ def _parse_header_years(row: list) -> list[int]:
 
 
 def extract_forecasts_from_pdf(path: Path) -> list[dict]:
-    """启发式 3a（表格视觉结构版）：fitz.find_tables → 表头年份 × EPS 行配对。
+    """启发式 3a（表格网格版）：fitz.find_tables → 表头年份列号 × EPS 行同列值配对。
 
-    返回 [{'forecast_year': int, 'eps': float, 'confidence': str, 'snippet': str}]。
-    表路径置信度=high（值来自真实单元格网格）；零命中由调用方决定是否走文本兜底。
+    关键事实（茅台 2017 研报调试实证）：find_tables 会把左右并排的两张表合成
+    一张带空隔列的大网格——EPS 标签可能在行中部，值必须按**列号**回对表头年份，
+    不能假设"标签在前值在后"。
+    表路径置信度=high（值来自真实单元格网格）。
     """
     import fitz
 
@@ -121,34 +123,44 @@ def extract_forecasts_from_pdf(path: Path) -> list[dict]:
             data = t.extract()
             if not data or len(data) < 2:
                 continue
-            header_years: list[int] | None = None
-            header_idx = -1
-            for i, row in enumerate(data[:6]):
-                yrs = _parse_header_years([c for c in row if c])
-                if len(yrs) >= 2:
-                    header_years = yrs
-                    header_idx = i
-                    break
-            if not header_years:
-                continue
-            for row in data[header_idx + 1:]:
-                cells = [str(c) if c is not None else "" for c in row]
-                label = "".join(cells[:2])
-                if not _LABEL_RE.search(label):
-                    continue
-                vals: list[float] = []
-                for c in cells[1:]:
-                    m = _FLOAT_RE.search(c)
+            # 表头行=年份单元格最多的前 6 行之一；收集 列号→年份
+            best_cols: dict[int, int] = {}
+            for row in data[:6]:
+                cols: dict[int, int] = {}
+                for ci, c in enumerate(row):
+                    m = _TABLE_YEAR_RE.search(str(c))
                     if m:
-                        v = float(m.group())
-                        if 0 < v < 5000:
-                            vals.append(v)
-                pairs = (list(zip(header_years, vals)) if len(vals) == len(header_years)
-                         else list(zip(header_years[:len(vals)], vals)))
-                for y, v in pairs:
-                    if v > 0 and (y not in results or results[y]["confidence"] != "high"):
+                        y = int(m.group(1))
+                        if 2005 <= y <= 2035:
+                            cols[ci] = y
+                if len(cols) > len(best_cols):
+                    best_cols = cols
+            if len(best_cols) < 2:
+                continue
+            # 数据行：任一单元格含 EPS 标签 → 按列号取同列值
+            for row in data[1:]:
+                label_at = -1
+                for ci, c in enumerate(row):
+                    if _LABEL_RE.search(str(c)):
+                        label_at = ci
+                        break
+                if label_at < 0:
+                    continue
+                got: dict[int, float] = {}
+                for year_ci, y in best_cols.items():
+                    if year_ci < len(row):
+                        m = _FLOAT_RE.search(str(row[year_ci]))
+                        if m:
+                            v = float(m.group())
+                            if 0 < v < 5000:
+                                got[y] = v
+                if not got:
+                    continue
+                label = str(row[label_at])[:30]
+                for y, v in got.items():
+                    if y not in results or results[y]["confidence"] != "high":
                         results[y] = {"forecast_year": y, "eps": v, "confidence": "high",
-                                      "snippet": f"{label[:30]}|页{pg.number}|表头{header_years}"}
+                                      "snippet": f"{label}|页{pg.number}|列{sorted(best_cols.values())}"}
     doc.close()
     return list(results.values())
 
@@ -182,6 +194,56 @@ def extract_forecasts(text: str) -> list[dict]:
     return list(best.values())
 
 
+def extract_via_llm(text: str, symbol: str) -> list[dict]:
+    """3b LLM 兜底（表格路径零命中时）：盈利预测段 → 结构化 (year, eps)。
+
+    走 LLMGateway（内建 LSG 输入/输出双向扫描=法定通道）；输出一律 mid 置信
+    （LLM 提取未经人工核对前不标 high——置信度语义见 schemas 真源）。
+    调用失败/解析失败 → 空列表非错误（残差留给人工抽核）。
+    """
+    if not text or len(text) < 50:
+        return []
+    win = text[:4000]
+    try:
+        from zephyr.infrastructure.pipeline.llm_gateway import LLMGateway
+
+        resp = LLMGateway.call(
+            messages=[
+                {"role": "system", "content": "你是财报数据提取器。只输出 JSON 数组，不要任何解释或代码块标记。"},
+                {"role": "user", "content": (
+                    "从下面的券商研报片段中提取盈利预测：找出'每股收益/EPS'按预测年份的数值。"
+                    "只提取明确写成预测表的数值，不要从正文叙述里猜。"
+                    '输出格式：[{"year": 2017, "eps": 17.10}]，年份为整数、eps 为数字。'
+                    f"若片段中没有每股收益预测，输出 []。\n\n研报片段（{symbol}）：\n{win}")},
+            ],
+            provider="deepseek", temperature=0.0, max_tokens=4096,
+        )
+        if resp.simulated or not resp.content:
+            log.warning("LLM 兜底未产出（%s）", resp.error)
+            return []
+        m = re.search(r"\[.*\]", resp.content, re.S)
+        if not m:
+            return []
+        import json as _json
+
+        items = _json.loads(m.group())
+        out = []
+        for it in items:
+            try:
+                y = int(it["year"])
+                v = float(it["eps"])
+                if 2005 <= y <= 2035 and 0 < v < 5000:
+                    out.append({"forecast_year": y, "eps": v, "confidence": "mid",
+                                "method": "llm",
+                                "snippet": f"LLM提取|{symbol}"})
+            except (KeyError, ValueError, TypeError):
+                continue
+        return out
+    except Exception as exc:  # noqa: BLE001 — LLM 通道故障不阻断批处理
+        log.warning("extract_via_llm 异常: %s", repr(exc)[:120])
+        return []
+
+
 def extract_report(report_id: str, symbol: str, publish_date: str) -> dict:
     """单份端到端：下载→表格提取（兜底文本）→落表。返回摘要（不抛异常）。"""
     year = publish_date[:4]
@@ -194,10 +256,16 @@ def extract_report(report_id: str, symbol: str, publish_date: str) -> dict:
         if quality != "ok":
             return {"report_id": report_id, "outcome": outcome, "rows": 0, "quality": quality}
         found = [f for f in extract_forecasts(text) if f["confidence"] == "mid"]
+        if not found:
+            found = extract_via_llm(text, symbol)   # 3b LLM 兜底（残差）
+    pub_year = int(publish_date[:4])
     rows = []
     for f in found:
+        # 年份合理域守卫：预测目标年∈[发布年, 发布年+5]——超界=提取噪声（如"2030愿景"误抓）
+        if not (pub_year <= f["forecast_year"] <= pub_year + 5):
+            continue
         rows.append((report_id, symbol, publish_date, f["forecast_year"], f["eps"],
-                     None, f["confidence"], "heuristic", f["snippet"]))
+                     None, f["confidence"], f.get("method", "heuristic"), f["snippet"]))
     if rows:
         _persist(rows)
     return {"report_id": report_id, "outcome": outcome, "rows": len(rows),

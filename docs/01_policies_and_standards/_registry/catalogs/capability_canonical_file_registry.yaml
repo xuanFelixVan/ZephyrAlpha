@@ -5147,6 +5147,50 @@ creation_tokens:
   token: szopen-alt_sz_visibility-20260914
   created_by: st-altdata-20260914
   capability: alt_data_batch1_free_sources
+- file: schemas/categories/market_alt_sz_air_quality_daily.py
+  token: szopen-alt_sz_air_quality_daily-20260914
+  created_by: st-altdata-20260914
+  capability: alt_data_batch2_newkey
+- file: schemas/categories/market_alt_sz_air_quality_region.py
+  token: szopen-alt_sz_air_quality_region-20260914
+  created_by: st-altdata-20260914
+  capability: alt_data_batch2_newkey
+- file: schemas/categories/market_alt_sz_reservoir_station.py
+  token: szopen-alt_sz_reservoir_station-20260914
+  created_by: st-altdata-20260914
+  capability: alt_data_batch2_newkey
+- file: schemas/categories/market_alt_sz_reservoir_rain_day.py
+  token: szopen-alt_sz_reservoir_rain_day-20260914
+  created_by: st-altdata-20260914
+  capability: alt_data_batch2_newkey
+- file: schemas/categories/market_alt_sz_reservoir_rain_month.py
+  token: szopen-alt_sz_reservoir_rain_month-20260914
+  created_by: st-altdata-20260914
+  capability: alt_data_batch2_newkey
+- file: schemas/categories/market_alt_sz_house_area.py
+  token: szopen-alt_sz_house_area-20260914
+  created_by: st-altdata-20260914
+  capability: alt_data_batch2_newkey
+- file: schemas/categories/market_alt_sz_house_listing.py
+  token: szopen-alt_sz_house_listing-20260914
+  created_by: st-altdata-20260914
+  capability: alt_data_batch2_newkey
+- file: schemas/categories/market_alt_sz_house_presale.py
+  token: szopen-alt_sz_house_presale-20260914
+  created_by: st-altdata-20260914
+  capability: alt_data_batch2_newkey
+- file: schemas/categories/market_alt_sz_market_subject.py
+  token: szopen-alt_sz_subject-20260914
+  created_by: st-altdata-20260914
+  capability: alt_data_batch2_newkey
+- file: schemas/categories/market_alt_sz_stat_analysis.py
+  token: szopen-alt_sz_stat_analysis-20260914
+  created_by: st-altdata-20260914
+  capability: alt_data_batch2_newkey
+- file: schemas/categories/market_alt_sz_enterprise_year.py
+  token: szopen-alt_sz_enterprise_year-20260914
+  created_by: st-altdata-20260914
+  capability: alt_data_batch2_newkey
 - file: schemas/categories/market_alt_typhoon_track.py
   token: altdata-typhoon-ddl-20260914
   created_by: st-altdata-20260913
@@ -12666,6 +12710,10 @@ creation_tokens:
   capability: c4_pdf_history_repair
 - file: scripts/ch/apply_pdf_forecast_extracted_ddl.py
   token: c4-pdf-history-repair-apply-pdf-forecast-extracted-ddl-20260914
+  created_by: st-expectation-20260914
+  capability: c4_pdf_history_repair
+- file: scripts/ch/c4_extract_batch.py
+  token: c4-pdf-history-repair-c4-extract-batch-20260914
   created_by: st-expectation-20260914
   capability: c4_pdf_history_repair
 - file: docs/_working/xt_lab3/bulk/g1.md

@@ -49322,6 +49322,90 @@ entries:
   desc_zh: ""
   desc_en: ""
   plain_zh: "把图形库的零件(识别引擎+胜率查询+信号映射器+校验器)拼成一台能开机的机器：喂它K线或图形事件，它吐出带方向、强度、止损位的合规信号；零件全是现成的，本模块只负责接线组装，不含任何业务算法"
+- module_path: schemas/categories/market_alt_sz_air_quality_daily.py
+  domain_id: D_DATA
+  name_zh: "air_quality_daily表DDL"
+  name_en: ""
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "深圳开放数据批2表（c1_market.alt_sz_air_quality_daily）建表真源：新钥匙 0ecc2b46 通道，Owner 控制台地址 2026-09-14 接入"
+- module_path: schemas/categories/market_alt_sz_air_quality_region.py
+  domain_id: D_DATA
+  name_zh: "air_quality_region表DDL"
+  name_en: ""
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "深圳开放数据批2表（c1_market.alt_sz_air_quality_region）建表真源：新钥匙 0ecc2b46 通道，Owner 控制台地址 2026-09-14 接入"
+- module_path: schemas/categories/market_alt_sz_reservoir_station.py
+  domain_id: D_DATA
+  name_zh: "reservoir_station表DDL"
+  name_en: ""
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "深圳开放数据批2表（c1_market.alt_sz_reservoir_station）建表真源：新钥匙 0ecc2b46 通道，Owner 控制台地址 2026-09-14 接入"
+- module_path: schemas/categories/market_alt_sz_reservoir_rain_day.py
+  domain_id: D_DATA
+  name_zh: "reservoir_rain_day表DDL"
+  name_en: ""
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "深圳开放数据批2表（c1_market.alt_sz_reservoir_rain_day）建表真源：新钥匙 0ecc2b46 通道，Owner 控制台地址 2026-09-14 接入"
+- module_path: schemas/categories/market_alt_sz_reservoir_rain_month.py
+  domain_id: D_DATA
+  name_zh: "reservoir_rain_month表DDL"
+  name_en: ""
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "深圳开放数据批2表（c1_market.alt_sz_reservoir_rain_month）建表真源：新钥匙 0ecc2b46 通道，Owner 控制台地址 2026-09-14 接入"
+- module_path: scripts/ch/c4_extract_batch.py
+  domain_id: D_DATA
+  name_zh: "C4 历史修复批处理"
+  name_en: "c4_extract_batch"
+  desc_zh: "研报 PDF 批量下载→三层提取→落表→批次报告（断点续传）"
+  desc_en: ""
+  plain_zh: "流水线工人：把几万份研报原文一批批下载下来，逐份读懂预测表存进数据库，干过的不重复干，随时中断随时接着干。"
+- module_path: schemas/categories/market_alt_sz_house_area.py
+  domain_id: D_DATA
+  name_zh: "house_area表DDL"
+  name_en: ""
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "深圳开放数据批2表（c1_market.alt_sz_house_area）建表真源：新钥匙 0ecc2b46 通道，Owner 控制台地址 2026-09-14 接入"
+- module_path: schemas/categories/market_alt_sz_house_listing.py
+  domain_id: D_DATA
+  name_zh: "house_listing表DDL"
+  name_en: ""
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "深圳开放数据批2表（c1_market.alt_sz_house_listing）建表真源：新钥匙 0ecc2b46 通道，Owner 控制台地址 2026-09-14 接入"
+- module_path: schemas/categories/market_alt_sz_house_presale.py
+  domain_id: D_DATA
+  name_zh: "house_presale表DDL"
+  name_en: ""
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "深圳开放数据批2表（c1_market.alt_sz_house_presale）建表真源：新钥匙 0ecc2b46 通道，Owner 控制台地址 2026-09-14 接入"
+- module_path: schemas/categories/market_alt_sz_market_subject.py
+  domain_id: D_DATA
+  name_zh: "subject表DDL"
+  name_en: ""
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "深圳开放数据批2表（c1_market.alt_sz_subject）建表真源：新钥匙 0ecc2b46 通道，Owner 控制台地址 2026-09-14 接入"
+- module_path: schemas/categories/market_alt_sz_stat_analysis.py
+  domain_id: D_DATA
+  name_zh: "stat_analysis表DDL"
+  name_en: ""
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "深圳开放数据批2表（c1_market.alt_sz_stat_analysis）建表真源：新钥匙 0ecc2b46 通道，Owner 控制台地址 2026-09-14 接入"
+- module_path: schemas/categories/market_alt_sz_enterprise_year.py
+  domain_id: D_DATA
+  name_zh: "enterprise_year表DDL"
+  name_en: ""
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "深圳开放数据批2表（c1_market.alt_sz_enterprise_year）建表真源：新钥匙 0ecc2b46 通道，Owner 控制台地址 2026-09-14 接入"
 
 battle_map_steps:
 - step_id: BM-BUY-05
