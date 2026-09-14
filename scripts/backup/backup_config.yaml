@@ -7,13 +7,20 @@
 # ttl: permanent
 # --- 治理锚定结束 ---
 
-# 灾备备份系统配置 v2.0.0 (robocopy + CH incremental, 2026-07-28)
+# 灾备备份系统配置 v2.1.0 (versioned vault + robocopy + CH incremental, 2026-09-14)
 # 消费者映射：
-#   code_backup.*  -> backup.ps1 robocopy 代码备份
+#   code_backup.*  -> backup.ps1 robocopy 兼容字段（source/excludes 生效；target 保留供回滚参考）
+#   working_vault.* -> backup.ps1 STAGE 3 版本化代码快照（v2.1 新增）
 #   db_dumps.*     -> backup.ps1 robocopy DB dumps
 #   ch_backup.*    -> backup.ps1 CH 增量备份决策
 #   dump_dir       -> backup.ps1 DB dump 目录
 #   trigger.*      -> backup_reconciler.py trigger() + get_state_file()
+#
+# v2.1.0 变更（2026-09-14，#B1 删除事故防线）：
+#   - 代码备份从 robocopy /MIR 单镜像改为按日期目录版本化快照
+#     （/MIR 会传播删除：2026-09-14 docs/_working 误删事故实证 /MIR 摧毁最后恢复源）
+#   - 硬链接去重：未变更文件与前一日快照共享磁盘块（同卷 F:），空间 ≈1×+每日变更量
+#   - 当日内删除不传播进当日快照；保留 14 天自动轮转
 #
 # v2.0.0 变更（2026-07-28）：
 #   - restic 替换为 robocopy /MIR（增量覆盖，不累积版本）
@@ -25,6 +32,11 @@ code_backup:
   target: "F:\\code_backup"
   exclude_dirs: [".git", "node_modules", "__pycache__", ".pytest_cache", ".mypy_cache", ".ruff_cache", ".runtime", ".aidrafts", "tmp", ".venv"]
   exclude_files: ["*.pyc", "*.db-wal", "*.db-shm"]
+
+# 版本化代码快照（v2.1）：base\<yyyyMMdd>\，retention 天轮转
+working_vault:
+  base: "F:\\working_vault"
+  retention_days: 14
 
 db_dumps:
   source: "D:\\tmp_db_dumps"

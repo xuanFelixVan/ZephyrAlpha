@@ -1,14 +1,20 @@
 <#
 .SYNOPSIS
-    Disaster backup system main script (v2.0 -- robocopy + CH incremental)
+    Disaster backup system main script (v2.1 -- robocopy + CH incremental + versioned code vault)
 .DESCRIPTION
     [BLUEPRINT] MOD-INF-043 | Section 3.2
-    Stages: Pre-check -> DB dump (+PG/CH config sync) -> CH backup (incremental) -> Code backup (robocopy /MIR) -> Report
+    Stages: Pre-check -> DB dump (+PG/CH config sync) -> CH backup (incremental) -> Code backup (versioned) -> Report
 
-    Overwrite policy (no version accumulation):
-    - Code: robocopy /MIR -- only copies changed files, overwrites in place
+    Overwrite policy:
+    - Code: VERSIONED daily snapshots (v2.1, 2026-09-14). Target <vault>\<yyyyMMdd>\,
+      hardlink-deduped from the latest previous snapshot (unchanged files share disk
+      blocks; only changed/new files are physically copied). Intra-day deletions are
+      NOT propagated into the day's snapshot. Retention: <retention_days> days.
+      Rationale: the old robocopy /MIR single mirror propagated deletions (2026-09-14
+      docs/_working deletion incident proved /MIR destroyed the last recovery copy).
     - PG/SQLite: full dump, overwrite (small files, trivial)
     - CH: incremental backup (base + daily inc overwrite) -- only writes changed parts
+    - DB dumps: robocopy /MIR (overwrite by design; each dump replaces the old one)
 
     Triggers: daily Task Scheduler (6AM) + post-commit reconciler (8h)
     Lock file (.runtime/backup.lock) prevents concurrent runs.
@@ -71,6 +77,12 @@ if ($yamlContent -match 'dump_dir:\s*"([^"]+)"') { $DumpDir = $matches[1] -repla
 if ($yamlContent -match 'base_file:\s*"([^"]+)"') { $ChBaseFile = $matches[1].Trim() }
 if ($yamlContent -match 'inc_file:\s*"([^"]+)"') { $ChIncFile = $matches[1].Trim() }
 if ($yamlContent -match 'rebase_threshold:\s*([\d.]+)') { $RebaseThreshold = [double]$matches[1] }
+
+# Working vault (versioned code snapshots, v2.1): base + retention days
+$VaultBase = "F:\working_vault"
+$VaultRetentionDays = 14
+if ($yamlContent -match 'working_vault:[\s\S]*?base:\s*"([^"]+)"') { $VaultBase = $matches[1] -replace '\\\\','\' }
+if ($yamlContent -match 'working_vault:[\s\S]*?retention_days:\s*(\d+)') { $VaultRetentionDays = [int]$matches[1] }
 
 # Parse exclude lists (inline YAML format: [item1, item2, ...])
 $ExcludeDirs = @(".git","node_modules","__pycache__",".pytest_cache",".mypy_cache",".ruff_cache",".runtime",".aidrafts","tmp",".venv")
@@ -356,28 +368,172 @@ if ($Mode -eq "code") {
     }
 }
 
-# ==================== STAGE 3: Code backup (robocopy /MIR) ====================
+# ==================== STAGE 3: Code backup (versioned daily vault, v2.1) ====================
+# Hardlink-deduped daily snapshots: <VaultBase>\<yyyyMMdd>\
+# - Unchanged files (same rel path + size + mtimeUtc as prev snapshot) -> hardlink
+#   from the previous day's file (same NTFS volume, ~1x total space).
+# - Changed/new files -> fresh physical copy (never overwrite a link in place:
+#   both robocopy and CopyFile overwrite hardlinked destinations in place and
+#   would corrupt the previous snapshot -- self-tested 2026-09-14).
+# - Files deleted from source -> not propagated into the day's snapshot (they
+#   remain recoverable from previous days). Old /MIR propagated deletions.
+# - Rotation: dated dirs older than $VaultRetentionDays are removed.
 if ($Mode -eq "ch") {
     Write-Stage "Mode=ch, skipping code backup (Stage 3)"
     $codeResult = @{status="skipped"}
 } else {
-    Write-Stage "Stage 3: Code backup (robocopy /MIR)"
-    # 3a. Code: D:\ZephyrAlpha -> F:\code_backup
-    # /XJ excludes junction points (e.g. metadata/system -> ../store/, avoids ERROR 1920)
-    $rcArgs = @($CodeSource, $CodeTarget, "/MIR", "/XJ", "/R:2", "/W:5", "/MT:8", "/NFL", "/NDL", "/NP")
-    if ($ExcludeDirs)  { $rcArgs += "/XD"; $rcArgs += $ExcludeDirs }
-    if ($ExcludeFiles) { $rcArgs += "/XF"; $rcArgs += $ExcludeFiles }
-    & robocopy @rcArgs 2>&1 | Out-Null
-    $rcCode = $LASTEXITCODE
-    if ($rcCode -ge 8) { Write-Err "robocopy code failed (exit $rcCode)" } else { Write-OK "Code robocopy done (exit $rcCode, <8=ok)" }
+    Write-Stage "Stage 3: Code backup (versioned vault, hardlink dedup, retention ${VaultRetentionDays}d)"
 
-    # 3b. DB dumps: D:\tmp_db_dumps -> F:\db_dumps
+    function Get-SourceFileIndex([string]$Root, [string[]]$ExclDirs, [string[]]$ExclFiles) {
+        # Walk source tree (skip excluded dir names at any depth, skip reparse
+        # points/junctions to avoid loops, skip excluded file-name patterns).
+        # Returns hashtable: relpath(lowercase) -> @(fullPath, size, mtimeUtc)
+        $idx = @{}
+        $exclLower = @(); foreach ($d in $ExclDirs) { $exclLower += $d.ToLower() }
+        $stack = [System.Collections.Stack]::new()
+        $stack.Push($Root)
+        while ($stack.Count -gt 0) {
+            $dir = $stack.Pop()
+            $entries = [System.IO.Directory]::EnumerateFileSystemEntries($dir)
+            foreach ($e in $entries) {
+                $name = [System.IO.Path]::GetFileName($e)
+                try { $attr = [System.IO.File]::GetAttributes($e) } catch { continue }
+                if (($attr -band [System.IO.FileAttributes]::Directory) -ne 0) {
+                    if ($exclLower -contains $name.ToLower()) { continue }
+                    if (($attr -band [System.IO.FileAttributes]::ReparsePoint) -ne 0) { continue }
+                    $stack.Push($e)
+                } else {
+                    $skip = $false
+                    foreach ($p in $ExclFiles) { if ($name -like $p) { $skip = $true; break } }
+                    if ($skip) { continue }
+                    $fi = [System.IO.FileInfo]::new($e)
+                    $rel = $e.Substring($Root.Length).TrimStart('\').ToLower()
+                    $idx[$rel] = @($e, $fi.Length, $fi.LastWriteTimeUtc)
+                }
+            }
+        }
+        return $idx
+    }
+
+    $today = (Get-Date).ToString("yyyyMMdd")
+    $dayTarget = Join-Path $VaultBase $today
+    New-Item -ItemType Directory -Path $dayTarget -Force | Out-Null
+
+    # Mode A (first run of the day): seed from the latest older snapshot.
+    # Mode B (same-day re-run): diff against today's own dir -- changed files
+    # are replaced (their old dir entry is removed first; if it was a hardlink
+    # into an older day, that day keeps its own entry and stays intact), and
+    # files deleted from source are intentionally KEPT (no intra-day deletion
+    # propagation; the file remains recoverable from this day's snapshot).
+    $dayHasContent = [bool](Get-ChildItem -LiteralPath $dayTarget -Recurse -File -Force -ErrorAction SilentlyContinue | Select-Object -First 1)
+    $prevDay = $null
+    if ($dayHasContent) {
+        $prevDay = $dayTarget
+        Write-Stage "Same-day snapshot exists -> incremental refresh (Mode B)"
+    } else {
+        $prevDirs = Get-ChildItem -LiteralPath $VaultBase -Directory -ErrorAction SilentlyContinue |
+            Where-Object { $_.Name -match '^\d{8}$' -and $_.Name -lt $today } |
+            Sort-Object Name
+        if ($prevDirs) { $prevDay = $prevDirs[-1].FullName }
+    }
+
+    $linked = 0; $copied = 0; $linkFail = 0; $replaced = 0; $errors3 = @()
+    $rcCode = 0
+
+    if (-not $prevDay) {
+        # Very first run: no previous snapshot -> plain full copy via robocopy /E
+        # (empty destination: no hardlinks exist, in-place overwrite is impossible)
+        Write-Stage "No previous snapshot -> full copy (robocopy /E)"
+        $rcArgs = @($CodeSource, $dayTarget, "/E", "/XJ", "/R:2", "/W:5", "/MT:8", "/NFL", "/NDL", "/NP")
+        if ($ExcludeDirs)  { $rcArgs += "/XD"; $rcArgs += $ExcludeDirs }
+        if ($ExcludeFiles) { $rcArgs += "/XF"; $rcArgs += $ExcludeFiles }
+        & robocopy @rcArgs 2>&1 | Out-Null
+        $rcCode = $LASTEXITCODE
+        if ($rcCode -ge 8) { Write-Err "robocopy full copy failed (exit $rcCode)" } else { Write-OK "Full copy done (exit $rcCode, <8=ok)" }
+    } else {
+        # Seed/refresh the day's snapshot: link unchanged + copy changed/new
+        Write-Stage ("Diff source vs snapshot: {0}" -f $prevDay)
+        $srcIndex = Get-SourceFileIndex -Root $CodeSource -ExclDirs $ExcludeDirs -ExclFiles $ExcludeFiles
+        $prevIndex = Get-SourceFileIndex -Root $prevDay  -ExclDirs $ExcludeDirs -ExclFiles $ExcludeFiles
+        Write-OK ("Source files: {0}, snapshot files: {1}" -f $srcIndex.Count, $prevIndex.Count)
+
+        foreach ($rel in $srcIndex.Keys) {
+            $e = $srcIndex[$rel]
+            $srcFull = $e[0]; $srcSize = $e[1]; $srcMtime = $e[2]
+            $dstFull = Join-Path $dayTarget $rel
+            $dstDir = Split-Path $dstFull -Parent
+            $isUnchanged = $false
+            $prevFull = $null
+            if ($prevIndex.ContainsKey($rel)) {
+                $p = $prevIndex[$rel]
+                $prevFull = $p[0]
+                if ($p[1] -eq $srcSize -and $p[2] -eq $srcMtime) { $isUnchanged = $true }
+            }
+            $dstExists = Test-Path -LiteralPath $dstFull
+            if ($dstExists -and $isUnchanged) { continue }  # already in the day's snapshot
+
+            try {
+                if (-not (Test-Path -LiteralPath $dstDir)) {
+                    New-Item -ItemType Directory -Path $dstDir -Force | Out-Null
+                }
+                if ($dstExists) {
+                    # Changed file: break the old day entry first (never overwrite
+                    # a hardlink in place -- it would corrupt the older snapshot)
+                    Remove-Item -LiteralPath $dstFull -Force -ErrorAction Stop
+                    $replaced++
+                }
+                if ($isUnchanged -and $prevFull -and (Split-Path $prevFull -Qualifier) -eq (Split-Path $dayTarget -Qualifier)) {
+                    # Same NTFS volume as prev snapshot -> hardlink (shares blocks)
+                    New-Item -ItemType HardLink -Path $dstFull -Value $prevFull -ErrorAction Stop | Out-Null
+                    $linked++
+                } else {
+                    [System.IO.File]::Copy($srcFull, $dstFull, $false)
+                    # Guarantee mtime parity with source (diff consistency)
+                    (Get-Item -LiteralPath $dstFull -Force).LastWriteTimeUtc = $srcMtime
+                    $copied++
+                }
+            } catch {
+                # Link/replace failed -> fall back to a fresh physical copy
+                try {
+                    if (Test-Path -LiteralPath $dstFull) { Remove-Item -LiteralPath $dstFull -Force -ErrorAction SilentlyContinue }
+                    if (-not (Test-Path -LiteralPath $dstDir)) { New-Item -ItemType Directory -Path $dstDir -Force | Out-Null }
+                    [System.IO.File]::Copy($srcFull, $dstFull, $true)
+                    (Get-Item -LiteralPath $dstFull -Force).LastWriteTimeUtc = $srcMtime
+                    $copied++
+                } catch {
+                    $linkFail++
+                    $errors3 += "$rel : $($_.Exception.Message)"
+                }
+            }
+        }
+        Write-OK ("Snapshot: linked={0}, copied={1}, replaced={2}, failures={3}" -f $linked, $copied, $replaced, $linkFail)
+        if ($errors3.Count -gt 0) {
+            foreach ($msg in ($errors3 | Select-Object -First 10)) { Write-Warn "Snapshot failure: $msg" }
+        }
+    }
+
+    # Rotation: remove dated dirs older than retention window
+    $rotated = @()
+    $cutoff = (Get-Date).AddDays(-$VaultRetentionDays).ToString("yyyyMMdd")
+    foreach ($d in (Get-ChildItem -LiteralPath $VaultBase -Directory -ErrorAction SilentlyContinue | Where-Object { $_.Name -match '^\d{8}$' -and $_.Name -lt $cutoff } | Sort-Object Name)) {
+        Remove-Item -LiteralPath $d.FullName -Recurse -Force -ErrorAction SilentlyContinue
+        if (-not (Test-Path -LiteralPath $d.FullName)) { $rotated += $d.Name }
+    }
+    if ($rotated.Count -gt 0) { Write-OK ("Rotation: removed {0} old snapshot(s): {1}" -f $rotated.Count, ($rotated -join ',')) }
+
+    # DB dumps: D:\tmp_db_dumps -> F:\db_dumps (unchanged /MIR, overwrite by design)
     if (Test-Path $DumpDir) {
         & robocopy $DumpDir $DumpsTarget "/MIR" "/R:2" "/W:5" "/MT:8" "/NFL" "/NDL" "/NP" 2>&1 | Out-Null
         $rcDumps = $LASTEXITCODE
         if ($rcDumps -ge 8) { Write-Warn "robocopy dumps failed (exit $rcDumps)" } else { Write-OK "DB dumps robocopy done (exit $rcDumps)" }
     }
-    $codeResult = @{status=$(if($rcCode -lt 8){"ok"}else{"failed"}); robocopy_exit=$rcCode}
+    $vaultOk = ($rcCode -lt 8) -and ($linkFail -eq 0)
+    $codeResult = @{
+        status=$(if($vaultOk){"ok"}else{"failed"}); mode="versioned"
+        vault_base=$VaultBase; day_target=$dayTarget; prev_snapshot=$prevDay
+        retention_days=$VaultRetentionDays; hardlinked=$linked; copied=$copied; failures=$linkFail
+        robocopy_exit=$rcCode; rotated=$rotated
+    }
 }
 
 # ==================== STAGE 3c: Off-repo critical assets mirror ====================
