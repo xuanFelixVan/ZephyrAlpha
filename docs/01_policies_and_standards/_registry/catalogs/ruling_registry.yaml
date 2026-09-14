@@ -1779,3 +1779,57 @@ entries:
     market_technical_indicator INSERT_COLUMNS 停产 candle_pattern（列物理保留一季度
     后 ALTER DROP）、IND-REV-001 标 deprecated（注册表净删留季删缓冲）。
   evidence: pattern_session_governance_report_2026_09_14.md §五；清查记录 st-pattern-20260914
+
+- ruling_id: '裁定#234'
+  title: docs/_working 生命周期三段式（源头减量+TTL 软归档+容量断路器）——顶格连坐阻断治本
+  date: '2026-09-14'
+  category: 治理架构
+  status: active
+  summary: >-
+    Owner 授权自裁（客观架构师立场+两路外部实践调研 17 条证据，URL 均已核实原文）。
+    现象：2026-09-14 docs/_working tracked 平铺文件顶格 120，FOLDER-CAPACITY-HARD-LIMIT
+    阻断一切 .py/.yaml/.md 提交（xt4-red 台账 §5 补记被 GOV-DOC-018 协议拦截实录）；
+    归档释量依赖人工/他会话偶发 housekeeping，全天多次卡提交。
+    第一性原理分析：①容量 gate 的职能=防「线性增长无封顶型目录」的结构卫生，120 数字本身
+    无治理语义——顶格即全员阻断把结构约束变成了提交可用性约束，约束穿透到无关提交人是
+    最坏失败模式（B5 系列已 own-scope 化治了「外来 staged 连坐」，未治「目录顶格全员阻断」）；
+    ②docs/_working 本质=跨会话短期记忆，git tracked 的意义=防删除潮丢失（#ARCH-311 实证），
+    二者合成的正确形态是「低频写入、必须流动」的耐久化暂存，而不是只进不出的沉淀池；
+    ③病根=钟摆效应：GATE-WORKING-DOCS 自动归档误杀 tracker/裁定书
+    （#ARCH-RECONCILER-AUTO-DELETE-GOV-001，2026-08-14）后，补丁走向另一极端
+    （641c343632：git tracked 文件永不观察/归档），数学上必然顶格。
+    外部实践对照：开源界无「数字上限顶格阻断」先例（Chromium/LLVM/AOSP 均未检索到），
+    主流=actions/stale 式 TTL 两阶段（60 天标记+7 天处置+豁免标签重置）、OpenHands .pr/
+    事件驱动清理（PR 批准即自动清除临时区）；AI 生态共识=过程产物默认不入库（Claude Code
+    自动 git exclude、Aider 历史留本地、OpenHands .agent_tmp 整体忽略、OpenClaw 工作区与
+    项目仓分离），入库合法通道仅两种——策展晋升或事件绑定清理；量化/科研侧=qlib 实验记录
+    走 MLflow 仓库外存储+显式删除 API、MLflow 逻辑删除+gc 两阶段可逆清理、NIH ELN 按引用
+    价值分级保留（Active→Inactive→处置）；vibe 社区=curl「价值>审查成本」黄金法则、
+    dev.to 文档宪法（入库门槛测试：无真实决策不配入库）、Obsidian Simple Archiver 规则
+    引擎（年龄+名称 regex→镜像归档路径）、Scala3 LLM_POLICY 披露制（源头元数据让 TTL
+    判定自动化）。跨社区最大公约数=三段式：源头减量→到期软归档→宽限后处置，两阶段均可逆。
+    裁定：①docs/_working 引入 TTL 软归档基线——task_bound 交接文档按未修改天数计龄，默认
+    30 天到期移入 docs/_working/archive/YYYY-MM/（区内镜像，沿既有惯例），修正 641c343632
+    的「tracked 永不归档」为「tracked 到期可归档」：只移动不删除、git 历史天然保留、
+    ops_guard 回收站通道兜底，彻底继承 #ARCH-RECONCILER-AUTO-DELETE-GOV-001 的防误杀设计。
+    ②豁免集=permanent frontmatter ∪ protected_subdirs 禁区 ∪ 7 天内活跃 WIP（与
+    actions/stale exempt-labels 同构），豁免判断先于 TTL 判断。
+    ③容量语义重定义：120 保留为「结构告警线+断路器」双角色——≥110 预警提示 housekeeping；
+    硬阻断收窄为「顶格目录的新增类 staged 文件」，存量 modified/deleted 提交不再被顶格连坐
+    （与 B5-1 own-scope 化互补：own-scope 管他人 staged，本条管目录顶格时的自有修改），
+    施工细节按 fail-open 原则实现，登记 #234.1。
+    ④源头减量（长期）：过程性产物默认落 .runtime/sessions/<sid>/staging/（24h TTL 已有），
+    docs/_working 只收需跨会话/跨天存活的交接件；日期前缀命名法已保证年龄可自动判定，
+    不新增元数据负担。⑤执行序：本裁定先登记语义，TTL 归档执行器（doc_lifecycle tracked-mode
+    扩展）与 gate 缓冲带改造均登记后续债 #234.1/#234.2（下一 housekeeping 会话承接），
+    遵循裁定先行、施工分离。
+  evidence: docs/_working/archive/2026-09/2026-09-14-ruling234-evidence-oss-doc-lifecycle.md
+    （开源/AI 生态 9 条）+ 同目录 2026-09-14-ruling234-evidence-quant-vibecoding.md
+    （量化/vibe 8 条）；证据档案按裁定④策展晋升原则随裁定归档，关键来源 URL 已内联 summary（actions/stale、OpenHands AGENTS.md、qlib recorder、
+    MLflow、NIH ELN policy、open-source-ai-contribution-policies、scala3 LLM_POLICY、
+    Obsidian Simple Archiver、dev.to 文档宪法）；内部史实=GATE-WORKING-DOCS 误杀案卷
+    （2026-08-14_coord_reconciler_auto_delete_governance_review.md）+ 641c343632 +
+    GOV-DOC-018（trae_028）+ directory_contract.yaml 保护条款
+  related_arch: ['#ARCH-RECONCILER-AUTO-DELETE-GOV-001', '#ARCH-043', '#ARCH-311']
+  related_rulings: ['裁定#232', '裁定#233']
+  superseded_by: null
