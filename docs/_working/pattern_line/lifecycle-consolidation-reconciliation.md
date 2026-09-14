@@ -71,6 +71,8 @@ automount FSM（Owner 门），两侧经台账衔接不互写状态。
 1. ~~FDR 单源裁定~~（本报告 §二，已裁定）；bhy_fdr 收敛待办挂 148 蓝图（下批）；
 2. FSM 词汇映射表（§三）交 automount 线与策略域会话各执一份；
 3. 150 台账 stage 字段语义裁定生效（本报告 §四）；
-4. C6 intake 验收⑥（Owner 复核）通过后，automount 侧 bh_filter 收敛 bhy_fdr
-   （与 148 收敛同批）；
+4. ~~C6 intake 验收⑥（Owner 复核）通过后，automount 侧 bh_filter 收敛 bhy_fdr~~
+   → **已完成（Owner 通过，2026-09-15）**：bh_filter 决策核委托 bhy_fdr
+   （arbitrary_dependence=False 保持预注册 BH 口径逐位一致；q≥1 退化态短路保留
+   intake 契约；automount 全件 55 测试绿）；
 5. 双 advisor 并行运行一个季度后复盘是否物理合并（当前互补>合并收益）。
