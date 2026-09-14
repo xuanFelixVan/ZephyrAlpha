@@ -5003,6 +5003,10 @@ capabilities:
     提交→全景对齐→清理 全流程步骤与失败处置；适用 07 域（regime/选股/仓位/风控/买卖/执行/对账/治理）施工，RULE-CAPABILITY-LOOKUP
     检索"施工"应命中本条
 creation_tokens:
+- file: "docs/_working/pattern_line/lifecycle-protocol-v2.md"
+  token: "patmine-lifecycle-v2-20260915"
+  created_by: "st-patmine-20260914"
+  capability: "pattern_resurrection_wr"
 - file: "src/zephyr/signal_ashare/strategy_signal/pattern_lifecycle.py"
   token: "patmine-wr-lifecycle-20260915"
   created_by: "st-patmine-20260914"
