@@ -133,6 +133,7 @@ _INTERNAL_COMPUTE_CAPABILITIES = frozenset(
         "pattern_event",  # 图形事件增量（MOD-SIG-145/JOB-108）
         "pattern_win_rate_materialize",  # 胜率统计重物化（MOD-SIG-145/JOB-108）
         "pattern_weight_sync",  # 调权同步（消费班 W-C3：物化完成→131 限幅调权）
+        "pattern_evidence_certify",  # 四闸自动认证（消费班 W-CB：MOD-SIG-148）
     }
 )
 
@@ -412,6 +413,8 @@ class InternalComputeProvider(IngestProviderBase):
             CapabilityContract("pattern_win_rate_materialize", supports_symbols_null=True),
             # 调权同步（消费班 W-C3 2026-09-15）：物化完成→Wilson 口径录样本→131 限幅调权，symbols=null=全表
             CapabilityContract("pattern_weight_sync", supports_symbols_null=True),
+            # 四闸自动认证（消费班 W-CB 2026-09-15）：FDR/n_eff/分regime/收缩→认证表，symbols=null=全表
+            CapabilityContract("pattern_evidence_certify", supports_symbols_null=True),
         ],
         known_issues=[],
     )
@@ -493,6 +496,9 @@ class InternalComputeProvider(IngestProviderBase):
                 yield from self._fetch_pattern_weight_sync(payload)
                 return
             yield from self._fetch_pattern_win_rate_materialize(payload)
+            return
+        if payload.table == "c1_market.market_pattern_certification":
+            yield from self._fetch_pattern_evidence_certify(payload)
             return
         yield from self._fetch_technical_indicator(payload)
 
@@ -577,6 +583,19 @@ class InternalComputeProvider(IngestProviderBase):
         )
 
         yield from run_weight_sync()
+
+    def _fetch_pattern_evidence_certify(self, payload: FetchPayload) -> Iterator[FetchResult]:
+        """四闸自动认证路由分支（pattern_evidence_certify 命名约定实现，消费班 W-CB）。
+
+        委托 pattern_event_job.run_evidence_certify（读物化统计→MOD-SIG-148
+        四闸→认证表全量重放）。挂重物化下游、调权上游（tasks.yaml
+        pattern_evidence_certify——统计落库才认证，认证落表才调权）。
+        """
+        from zephyr.signal_ashare.strategy_signal.pattern_event_job import (
+            run_evidence_certify,
+        )
+
+        yield from run_evidence_certify()
 
     def _fetch_kline_index_calc(self, payload: FetchPayload, policy) -> Iterator[FetchResult]:
         """自算指数路由分支（kline_index_calc capability 的命名约定实现）。

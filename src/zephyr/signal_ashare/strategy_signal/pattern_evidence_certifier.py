@@ -339,9 +339,9 @@ def run_certify(client=None, *, timeframe: str = "day", direction: str = "向上
         pooled, regime_by_pattern, base_pooled, base_by_regime,
         fwd_window=fwd_window, timeframe=timeframe, direction=direction,
     )
-    from datetime import datetime as _dt
+    from datetime import datetime as _dt, timezone as _tz
 
-    written = persist_certifications(client, records, certified_at=_dt.utcnow())
+    written = persist_certifications(client, records, certified_at=_dt.now(_tz.utc))
     counts: dict[str, int] = {}
     for r in records:
         counts[r.state] = counts.get(r.state, 0) + 1

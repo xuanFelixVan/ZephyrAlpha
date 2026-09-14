@@ -5003,6 +5003,14 @@ capabilities:
     提交→全景对齐→清理 全流程步骤与失败处置；适用 07 域（regime/选股/仓位/风控/买卖/执行/对账/治理）施工，RULE-CAPABILITY-LOOKUP
     检索"施工"应命中本条
 creation_tokens:
+- file: "schemas/categories/market/market_pattern_certification.py"
+  token: "patmine-wcb-schema-20260915"
+  created_by: "st-patmine-20260914"
+  capability: "pattern_certification_wcb"
+- file: "scripts/ch/apply_pattern_certification_ddl.py"
+  token: "patmine-wcb-apply-20260915"
+  created_by: "st-patmine-20260914"
+  capability: "pattern_certification_wcb"
 - file: "src/zephyr/signal_ashare/strategy_signal/pattern_evidence_certifier.py"
   token: "patmine-wca-certifier-20260915"
   created_by: "st-patmine-20260914"
@@ -12796,4 +12804,8 @@ creation_tokens:
   token: "combo-layer-charter-20260914"
   created_by: "st-fullchain-20260914"
   capability: "backtest_system_sop"
+- file: docs/_working/2026-09-15-board-index-synthesis-plan.md
+  token: board-index-synthesis-plan-20260915
+  created_by: st-880fill-20260911
+  capability: board_index_synthesis
 di_seam_exemptions: []

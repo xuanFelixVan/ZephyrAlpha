@@ -167,3 +167,26 @@ def test_run_weight_sync_parse_degrade(monkeypatch):
     results = list(pej.run_weight_sync())
     assert results[0].rows_fetched == 0
     assert results[0].error is None
+
+
+# ── 消费班 W-CB：run_evidence_certify（物化→认证钩子） ───────────────────────
+
+
+def test_run_evidence_certify_ok(monkeypatch):
+    """退出码 0：解析尾行 JSON summary 的 total 记账，error=None。"""
+    monkeypatch.setattr(
+        pej.subprocess, "run",
+        _fake_run(0, '{"family": "day/向上/10d", "total": 400, "written": 400, "counts": {"certified": 12}}'),
+    )
+    results = list(pej.run_evidence_certify())
+    assert len(results) == 1
+    r = results[0]
+    assert r.error is None
+    assert r.rows_fetched == 400
+    assert r.table == pej._CERT_TABLE
+
+
+def test_run_evidence_certify_failure_passthrough(monkeypatch):
+    monkeypatch.setattr(pej.subprocess, "run", _fake_run(3, ""))
+    results = list(pej.run_evidence_certify())
+    assert results[0].error is not None and "退出码 3" in results[0].error

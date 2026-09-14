@@ -3054,13 +3054,26 @@ tasks:
   extra:
     description: "胜率统计全量重物化（MOD-SIG-145/JOB-108：market_pattern_event × kline_daily 前视窗口命中率，(pattern_id,timeframe,regime,direction,fwd_window) 粒度+baseline 对照；ReplacingMergeTree(updated_at) 全量重放幂等；喂 pattern_win_rate_provider/MOD-SIG-115）"
 
+- task_id: pattern_evidence_certify
+  table: c1_market.market_pattern_certification
+  source: internal  # 本地计算（读物化统计→四闸判定→认证表，非外部API）
+  schedule: daily_kline
+  incremental: true
+  date_col: certified_at
+  dependencies: ["pattern_win_rate_materialize"]   # DAG: 统计落库才认证（反过拟合方案 v1.0，禁 cron 自轮询）
+  capability: pattern_evidence_certify
+  symbols:
+  fallback_sources: []    # internal 派生源天然无副源
+  extra:
+    description: "四闸自动认证（MOD-SIG-148/方案 v1.0：闸A BH-FDR q<0.05+闸B n_eff=n/fwd_window≥30+闸C 分 regime 对照+闸D 贝叶斯收缩→状态机 certified/probation/failed 落认证表；喂 weight_sync shrunk 口径+前端认证列）"
+
 - task_id: pattern_weight_sync
   table: c1_market.market_pattern_win_rate
   source: internal  # 本地计算（读物化统计→131 限幅调权→权重状态 JSON，非外部API）
   schedule: daily_kline
   incremental: true
   date_col: updated_at
-  dependencies: ["pattern_win_rate_materialize"]   # DAG: 统计落库才同步（消费班 W-C3 钩子，禁 cron 自轮询）
+  dependencies: ["pattern_evidence_certify"]   # DAG: 认证落表才调权（消费班 W-CC：sync 消费 shrunk/certified 口径）
   capability: pattern_weight_sync
   symbols:
   fallback_sources: []    # internal 派生源天然无副源

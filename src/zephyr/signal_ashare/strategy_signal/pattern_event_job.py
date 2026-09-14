@@ -1,8 +1,8 @@
 # [BLUEPRINT] MOD-SIG-145 | docs/03_modules/_domain_signal/pattern_event_stats/blueprint.md
 # [MODULE] zephyr.signal_ashare.strategy_signal.pattern_event_job
 # [DOMAIN] D_SIGNAL
-# [DEPENDENCIES] scripts.data.pattern_event_backfill(扫描器正身,subprocess); scripts.data.pattern_win_rate_materialize(物化正身,subprocess); zephyr.signal_ashare.strategy_signal.pattern_signal_runtime(调权正身,subprocess -m,消费班 W-C3)
-# [CONSUMERS] zephyr.data.implementations.internal_compute_provider(pattern_event/pattern_win_rate_materialize/pattern_weight_sync capability 分支,JOB-108+消费班 W-C3)
+# [DEPENDENCIES] scripts.data.pattern_event_backfill(扫描器正身,subprocess); scripts.data.pattern_win_rate_materialize(物化正身,subprocess); zephyr.signal_ashare.strategy_signal.pattern_signal_runtime(调权正身,subprocess -m,消费班 W-C3); zephyr.signal_ashare.strategy_signal.pattern_evidence_certifier(认证正身,subprocess -m,消费班 W-CB)
+# [CONSUMERS] zephyr.data.implementations.internal_compute_provider(pattern_event/pattern_win_rate_materialize/pattern_weight_sync/pattern_evidence_certify capability 分支,JOB-108+消费班)
 # [STARTUP] imported(经调度器 daily_kline 档事件触发;禁 cron 自轮询)
 # [MATURITY] design
 # [INVARIANTS] 薄适配零业务逻辑(窗口组装+退出码透传+记账,扫描/物化真源在 scripts/data 正身); 扫描器自行经 pattern_event_store 落库(本模块不碰 CH); 子进程 stdout 按 UTF-8 解码(Windows GBK 默认会炸中文 JSON); FetchResult 空 rows 仅记账(rows_fetched=子进程实产行数,推进游标+避免 0 行 WARN 误报); 失败经 FetchResult.error 传播(scheduler 判 FAILED)
@@ -55,6 +55,8 @@ _REPO_ROOT = Path(__file__).resolve().parents[4]
 _BACKFILL_SCRIPT = _REPO_ROOT / "scripts" / "data" / "pattern_event_backfill.py"
 _MATERIALIZE_SCRIPT = _REPO_ROOT / "scripts" / "data" / "pattern_win_rate_materialize.py"
 _SYNC_MODULE = "zephyr.signal_ashare.strategy_signal.pattern_signal_runtime"
+_CERT_MODULE = "zephyr.signal_ashare.strategy_signal.pattern_evidence_certifier"
+_CERT_TABLE = "c1_market.market_pattern_certification"
 _SYNC_STATE = _REPO_ROOT / "data" / "runtime" / "pattern_signal_weights.json"
 
 _DEFAULT_LOOKBACK_DAYS = 15
@@ -219,16 +221,53 @@ def run_weight_sync() -> Iterator[FetchResult]:
     )
 
 
-def _parse_sync_adjusted(stdout: str) -> int:
+def run_evidence_certify() -> Iterator[FetchResult]:
+    """四闸自动认证（消费班 W-CB 钩子）：调 148 CLI --certify（子进程隔离）。
+
+    挂 pattern_win_rate_materialize 下游、pattern_weight_sync 上游
+    （tasks.yaml pattern_evidence_certify——统计落库才认证，认证落表才调权，
+    事件触发禁 cron）。记账 rows_fetched=本次认证切片数（stdout 尾行 JSON）。
+    """
+    logger.info("pattern_evidence_certify 四闸认证启动")
+    cmd = [
+        sys.executable, "-m", _CERT_MODULE,
+        "--certify", "--timeframe", "day",
+        "--direction", "向上", "--fwd-window", "10",
+    ]
+    proc = subprocess.run(  # noqa: S603
+        cmd,
+        capture_output=False,
+        stdout=subprocess.PIPE,
+        encoding="utf-8",
+        errors="replace",
+        check=False,
+    )
+    end = datetime.now(_TZ).strftime("%Y-%m-%d")
+    if proc.returncode != 0:
+        yield FetchResult(
+            table=_CERT_TABLE, columns=[], rows=[], last_key=end,
+            elapsed_sec=0.0,
+            error=f"pattern_evidence_certify 退出码 {proc.returncode}（认证失败，透传）",
+        )
+        return
+    certified = _parse_sync_adjusted(proc.stdout or "", key="total")
+    logger.info("pattern_evidence_certify 完成: %d 切片", certified)
+    yield FetchResult(
+        table=_CERT_TABLE, columns=[], rows=[], last_key=end,
+        elapsed_sec=0.0, rows_fetched=certified,
+    )
+
+
+def _parse_sync_adjusted(stdout: str, *, key: str = "adjusted") -> int:
     """从 CLI 尾行 JSON summary 提取 adjusted；解析失败降级 0（结果以状态文件为准）。"""
     import json as _json
 
     for line in reversed(stdout.strip().splitlines()):
         line = line.strip()
-        if line.startswith("{") and "adjusted" in line:
+        if line.startswith("{") and key in line:
             try:
-                return int(_json.loads(line).get("adjusted") or 0)
+                return int(_json.loads(line).get(key) or 0)
             except (ValueError, TypeError):
                 break
-    logger.warning("sync CLI stdout 未解析出 adjusted，记账降级 rows_fetched=0")
+    logger.warning("CLI stdout 未解析出 %s，记账降级 rows_fetched=0", key)
     return 0
