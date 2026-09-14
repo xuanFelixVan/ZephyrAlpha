@@ -2990,7 +2990,7 @@ nodes:
 
   # ── 风控横切（非第四条流，任何环节可触发）────────────────────────────────
 - node_id: TDM-X-R1
-  note_confirmed: 2026-09-14  # P1-2 职责边界 docstring 澄清，算法口径未变（外审整改 st-btfix-20260914）
+  note_confirmed: 2026-09-14  # P1-2 职责边界 docstring 澄清，算法口径未变（外审整改 st-btfix-20260914；标记先行随 st-chinfra fe9cdc931e 落库，本批补 kill_switch.py 代码件）
   name_zh: 应急保命
   market: cn_a
   flow: exit_flow

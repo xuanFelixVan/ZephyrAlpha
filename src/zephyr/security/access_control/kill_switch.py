@@ -24,6 +24,14 @@ KillSwitch — 熔断器.
 - 触发后进入 TRIPPED 状态，需要手动重置
 - 支持单Agent阻断和全局熔断
 
+职责边界澄清（P1-2，2026-09-14 外部审查整改——勿误用作交易熔断）:
+  本模块是 **AI Agent 行为风控熔断器**（rapid_file_deletion/agent_spawn_storm/
+  audit_log_tamper 等 9 触发器，服务自治/安全域），与交易资金安全无关。
+  交易侧熔断真源 = zephyr.trading.trading_contracts.risk.trading_kill_switch
+  （五级交易熔断）+ zephyr.ex_core.risk_layer_orchestrator（盘中回撤级联/VaR/
+  回滚姿态/对账循环）。另注意：本单例为**纯进程内存态**，进程崩溃即归零——
+  禁作为任何交易资金安全场景的依赖（交易侧熔断有独立级联与持久化覆盖）。
+
 # [ALGO_FLOW]
 # 层: 输入
 # - id: I1
