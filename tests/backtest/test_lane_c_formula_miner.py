@@ -25,26 +25,35 @@ from scripts.backtest.lane_c_formula_miner import (
     BASELINE_TAG,
     build_function_set,
     build_hypothesis,
+    gloss_for_expr,
     load_whitelist,
     make_candidate_id,
     make_incremental_ic_fitness,
+    make_panel_operators,
     rank_ic,
     residualize,
 )
 
 
 class TestWhitelist:
-    def test_load_real_yaml_and_approved_ops(self):
+    def test_load_real_yaml_and_function_set_mixed(self):
         wl = load_whitelist()
-        ops = build_function_set(wl)
-        assert {"add", "sub", "mul", "div", "sqrt", "log"} <= set(ops)
+        fs = build_function_set(wl, n_symbols=5)
+        names = {getattr(f, "name", f) for f in fs}
+        assert {"add", "sub", "mul", "div", "sqrt", "log"} <= names
+        assert {"rank_cs", "ts_delta_5", "ts_zscore_20", "ts_corr_20"} <= names
         # 禁用项绝不混入引擎算子集
         forbidden = {f["op"] for f in wl["forbidden"]}
-        assert not (set(ops) & forbidden)
+        assert not (names & forbidden)
+
+    def test_custom_ops_require_panel_width(self):
+        with pytest.raises(RuntimeError, match="n_symbols"):
+            build_function_set(load_whitelist())
 
     def test_function_set_excludes_trig_and_inv(self):
-        ops = build_function_set(load_whitelist())
-        assert not ({"sin", "cos", "tan", "inv"} & set(ops))
+        fs = build_function_set(load_whitelist(), n_symbols=5)
+        names = {getattr(f, "name", f) for f in fs}
+        assert not ({"sin", "cos", "tan", "inv"} & names)
 
     def test_owner_decisions_recorded(self):
         wl = load_whitelist()
@@ -127,13 +136,58 @@ class TestIncrementalICFitness:
         assert np.isfinite(v)
 
 
+class TestPanelOperators:
+    """日期主序面板（每日 N=2 标的）合成数据上的分组语义验证。"""
+
+    def _ops(self):
+        return {f.name: f for f in make_panel_operators(
+            2, ["rank_cs", "ts_delta_5", "ts_zscore_20", "ts_corr_20"])}
+
+    def _panel(self):
+        # 8 个交易日 × 2 标的，日期主序：A=1..8，B=2,4,..,16 → 展平 [1,2,3,4,...]
+        a = np.arange(1.0, 9.0)
+        b = np.arange(2.0, 17.0, 2.0)
+        return np.stack([a, b], axis=1).ravel()
+
+    def test_rank_cs_per_date(self):
+        out = self._ops()["rank_cs"](self._panel())
+        assert len(out) == 16
+        assert np.allclose(out[0::2], 0.5)  # A 每日都小 → 秩 0.5
+        assert np.allclose(out[1::2], 1.0)  # B 每日都大 → 秩 1.0
+
+    def test_ts_delta_5_symbolwise(self):
+        out = self._ops()["ts_delta_5"](self._panel()).reshape(-1, 2)
+        assert np.allclose(out[:5], 0.0)  # 段首无历史=0
+        assert out[5, 0] == 5.0 and out[5, 1] == 10.0  # A:6-1=5; B:12-2=10（跨标的零污染）
+
+    def test_ts_zscore_20_finite_and_head_zero(self):
+        out = self._ops()["ts_zscore_20"](self._panel()).reshape(-1, 2)
+        assert np.isfinite(out).all()
+        assert np.allclose(out[:4], 0.0)  # min_periods=5 → 前 4 日无历史=0
+        assert out[4, 0] > 0  # 第 5 日起可算（上斜序列 z 为正）
+
+    def test_ts_corr_self_finite(self):
+        x = self._panel()
+        out = self._ops()["ts_corr_20"](x, x).reshape(-1, 2)
+        assert np.isfinite(out).all()
+        assert np.allclose(out[:7], 0.0)  # min_periods=8 → 前 7 日=0
+        assert np.allclose(out[7], 1.0)  # 第 8 日起自相关=1
+
+
 class TestHypothesisAndId:
     def test_hypothesis_deterministic_and_descriptive(self):
         h1 = build_hypothesis("add(ret_1d, div(vol_20d, turnover))", 0.0321, 12345)
         h2 = build_hypothesis("add(ret_1d, div(vol_20d, turnover))", 0.0321, 12345)
         assert h1 == h2
         assert "add(ret_1d" in h1 and BASELINE_TAG in h1 and "0.0321" in h1
-        assert "机制待审" in h1  # 评分权不在本车道
+        assert "机制自述要求" in h1  # 评分权不在本车道
+
+    def test_hypothesis_v2_gloss_injection(self):
+        wl = load_whitelist()
+        expr = "log(abs(ts_delta_5(ret_5d)))"
+        h = build_hypothesis(expr, 0.05, 999, gloss=gloss_for_expr(expr, wl))
+        assert "log=保护对数" in h and "ts_delta_5=5日差分" in h
+        assert "reject_tautology" in h  # 给 E2 可判的理由码框架
 
     def test_candidate_id_content_addressed(self):
         assert make_candidate_id("a*b") == make_candidate_id("a*b")

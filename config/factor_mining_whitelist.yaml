@@ -26,6 +26,13 @@ approved:
   order_stat:
     - {op: max, zh: 逐点最大, meaning: 双信号取强}
     - {op: min, zh: 逐点最小, meaning: 双信号取弱/保守侧}
+  # —— v2 自定义算子 2026-09-14 转正（Owner"全部开工/该施工的施工"授权；
+  #     模块内 make_function 实现，面板日期主序+完整面板过滤保证分组语义）——
+  ts_cs:
+    - {op: rank_cs, zh: 横截面排名, meaning: 同日截面相对强弱（日频因子标准口径）}
+    - {op: ts_delta_5, zh: 5日差分, meaning: 变化率/动量增量}
+    - {op: ts_zscore_20, zh: 20日标准化, meaning: 均值回复结构（偏离自身常态的倍数）}
+    - {op: ts_corr_20, zh: 20日滚动相关, meaning: 量价/双信号背离}
 
 forbidden:
   - {op: sin, reason: 周期函数对日频收益无经济含义，纯过拟合放大器}
@@ -33,12 +40,7 @@ forbidden:
   - {op: tan, reason: 同上+值域爆炸}
   - {op: inv, reason: 1/x 可由保护除法表达，剔除以收缩搜索空间}
 
-v2_pending_owner_review:
-  # gplearn 内置缺失、需 make_function 自定义的时间序列/横截面算子（车道 C 二批）：
-  - {op: rank_cs, zh: 横截面排名, meaning: 截面相对强弱（日频因子标准口径），需自定义}
-  - {op: ts_delta_5, zh: 5日差分, meaning: 动量/变化率，需自定义}
-  - {op: ts_zscore_20, zh: 20日标准化, meaning: 均值回复结构，需自定义}
-  - {op: ts_corr_20, zh: 20日滚动相关, meaning: 量价背离，需自定义}
+v2_pending_owner_review: []  # 原 4 枚已全部转正至 approved.ts_cs（2026-09-14）
 
 constraints:
   population_size: 1000        # Owner 批 2026-09-14

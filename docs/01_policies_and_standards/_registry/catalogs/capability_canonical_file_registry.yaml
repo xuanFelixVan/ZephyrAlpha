@@ -5095,7 +5095,7 @@ creation_tokens:
   token: ch-conn-unify-20260914
   created_by: st-chinfra-20260914
   capability: ch_connection_unify
-- file: schemas/categories/backtest_regime_state_anchored.py
+- file: schemas/categories/backtest/backtest_regime_state_anchored.py
   token: anchored-state-ddl-20260914
   created_by: st-altdata-20260914
   capability: alt_data_batch1_free_sources
@@ -5115,83 +5115,83 @@ creation_tokens:
   token: typhoon-bdi-mining-20260914
   created_by: st-altdata-20260914
   capability: alt_data_batch1_free_sources
-- file: schemas/categories/market_typhoon_names.py
+- file: schemas/categories/market/market_typhoon_names.py
   token: szopen-typhoon_names-20260914
   created_by: st-altdata-20260914
   capability: alt_data_batch1_free_sources
-- file: schemas/categories/market_typhoon_landfall_history.py
+- file: schemas/categories/market/market_typhoon_landfall_history.py
   token: szopen-typhoon_landfall_history-20260914
   created_by: st-altdata-20260914
   capability: alt_data_batch1_free_sources
-- file: schemas/categories/market_alt_sz_marine_forecast.py
+- file: schemas/categories/market/market_alt_sz_marine_forecast.py
   token: szopen-alt_sz_marine_forecast-20260914
   created_by: st-altdata-20260914
   capability: alt_data_batch1_free_sources
-- file: schemas/categories/market_alt_sz_weather_warning.py
+- file: schemas/categories/market/market_alt_sz_weather_warning.py
   token: szopen-alt_sz_weather_warning-20260914
   created_by: st-altdata-20260914
   capability: alt_data_batch1_free_sources
-- file: schemas/categories/market_alt_sz_house_daily.py
+- file: schemas/categories/market/market_alt_sz_house_daily.py
   token: szopen-alt_sz_house_daily-20260914
   created_by: st-altdata-20260914
   capability: alt_data_batch1_free_sources
-- file: schemas/categories/market_alt_sz_port_monthly.py
+- file: schemas/categories/market/market_alt_sz_port_monthly.py
   token: szopen-alt_sz_port_monthly-20260914
   created_by: st-altdata-20260914
   capability: alt_data_batch1_free_sources
-- file: schemas/categories/market_alt_sz_stat_monthly.py
+- file: schemas/categories/market/market_alt_sz_stat_monthly.py
   token: szopen-alt_sz_stat_monthly-20260914
   created_by: st-altdata-20260914
   capability: alt_data_batch1_free_sources
-- file: schemas/categories/market_alt_sz_visibility.py
+- file: schemas/categories/market/market_alt_sz_visibility.py
   token: szopen-alt_sz_visibility-20260914
   created_by: st-altdata-20260914
   capability: alt_data_batch1_free_sources
-- file: schemas/categories/market_alt_sz_air_quality_daily.py
+- file: schemas/categories/market/market_alt_sz_air_quality_daily.py
   token: szopen-alt_sz_air_quality_daily-20260914
   created_by: st-altdata-20260914
   capability: alt_data_batch2_newkey
-- file: schemas/categories/market_alt_sz_air_quality_region.py
+- file: schemas/categories/market/market_alt_sz_air_quality_region.py
   token: szopen-alt_sz_air_quality_region-20260914
   created_by: st-altdata-20260914
   capability: alt_data_batch2_newkey
-- file: schemas/categories/market_alt_sz_reservoir_station.py
+- file: schemas/categories/market/market_alt_sz_reservoir_station.py
   token: szopen-alt_sz_reservoir_station-20260914
   created_by: st-altdata-20260914
   capability: alt_data_batch2_newkey
-- file: schemas/categories/market_alt_sz_reservoir_rain_day.py
+- file: schemas/categories/market/market_alt_sz_reservoir_rain_day.py
   token: szopen-alt_sz_reservoir_rain_day-20260914
   created_by: st-altdata-20260914
   capability: alt_data_batch2_newkey
-- file: schemas/categories/market_alt_sz_reservoir_rain_month.py
+- file: schemas/categories/market/market_alt_sz_reservoir_rain_month.py
   token: szopen-alt_sz_reservoir_rain_month-20260914
   created_by: st-altdata-20260914
   capability: alt_data_batch2_newkey
-- file: schemas/categories/market_alt_sz_house_area.py
+- file: schemas/categories/market/market_alt_sz_house_area.py
   token: szopen-alt_sz_house_area-20260914
   created_by: st-altdata-20260914
   capability: alt_data_batch2_newkey
-- file: schemas/categories/market_alt_sz_house_listing.py
+- file: schemas/categories/market/market_alt_sz_house_listing.py
   token: szopen-alt_sz_house_listing-20260914
   created_by: st-altdata-20260914
   capability: alt_data_batch2_newkey
-- file: schemas/categories/market_alt_sz_house_presale.py
+- file: schemas/categories/market/market_alt_sz_house_presale.py
   token: szopen-alt_sz_house_presale-20260914
   created_by: st-altdata-20260914
   capability: alt_data_batch2_newkey
-- file: schemas/categories/market_alt_sz_market_subject.py
+- file: schemas/categories/market/market_alt_sz_market_subject.py
   token: szopen-alt_sz_subject-20260914
   created_by: st-altdata-20260914
   capability: alt_data_batch2_newkey
-- file: schemas/categories/market_alt_sz_stat_analysis.py
+- file: schemas/categories/market/market_alt_sz_stat_analysis.py
   token: szopen-alt_sz_stat_analysis-20260914
   created_by: st-altdata-20260914
   capability: alt_data_batch2_newkey
-- file: schemas/categories/market_alt_sz_enterprise_year.py
+- file: schemas/categories/market/market_alt_sz_enterprise_year.py
   token: szopen-alt_sz_enterprise_year-20260914
   created_by: st-altdata-20260914
   capability: alt_data_batch2_newkey
-- file: schemas/categories/market_alt_typhoon_track.py
+- file: schemas/categories/market/market_alt_typhoon_track.py
   token: altdata-typhoon-ddl-20260914
   created_by: st-altdata-20260913
   capability: alt_data_batch1_free_sources
@@ -5211,11 +5211,11 @@ creation_tokens:
   token: altdata-bootstrap-20260912
   created_by: st-altdata-20260912
   capability: alt_data_batch1_free_sources
-- file: schemas/categories/market_alt_stock_comment.py
+- file: schemas/categories/market/market_alt_stock_comment.py
   token: altdata-comment-ddl-20260912
   created_by: st-altdata-20260912
   capability: alt_data_batch1_free_sources
-- file: schemas/categories/market_alt_shipping_index.py
+- file: schemas/categories/market/market_alt_shipping_index.py
   token: altdata-shipping-ddl-20260912
   created_by: st-altdata-20260912
   capability: alt_data_batch1_free_sources
@@ -7013,19 +7013,19 @@ creation_tokens:
   token: auto-test-alert-channel-20260723
   created_by: session-sess-27772-20260723192606
   capability: alert_channel_dispatch
-- file: schemas/categories/market_stock_list.py
+- file: schemas/categories/market/market_stock_list.py
   token: auto-schema-stock-list-20260723
   created_by: session-sess-27772-20260723192606
   capability: data_source_provider_abstraction
-- file: schemas/categories/market_index_weight.py
+- file: schemas/categories/market/market_index_weight.py
   token: auto-schema-index-weight-20260723
   created_by: session-sess-phase3b-20260723
   capability: data_source_provider_abstraction
-- file: schemas/categories/market_sector_meta.py
+- file: schemas/categories/market/market_sector_meta.py
   token: auto-schema-sector-meta-20260723
   created_by: session-sess-phase3b-20260723
   capability: data_source_provider_abstraction
-- file: schemas/categories/market_sector_list.py
+- file: schemas/categories/market/market_sector_list.py
   token: auto-schema-sector-list-20260723
   created_by: session-sess-phase3b-20260723
   capability: data_source_provider_abstraction
@@ -7041,59 +7041,59 @@ creation_tokens:
   token: auto-schema-fundamental-cashflow-20260723
   created_by: session-sess-44880-20260723192247
   capability: data_source_provider_abstraction
-- file: schemas/categories/market_concept_board.py
+- file: schemas/categories/market/market_concept_board.py
   token: auto-schema-concept-board-20260725
   created_by: session-sess-74840-20260725004710
   capability: data_source_provider_abstraction
-- file: schemas/categories/market_concept_board_constituent.py
+- file: schemas/categories/market/market_concept_board_constituent.py
   token: auto-schema-concept-board-constituent-20260725
   created_by: session-sess-74840-20260725004710
   capability: data_source_provider_abstraction
-- file: schemas/categories/market_concept_sector.py
+- file: schemas/categories/market/market_concept_sector.py
   token: auto-schema-concept-sector-20260725
   created_by: session-sess-74840-20260725004710
   capability: data_source_provider_abstraction
-- file: schemas/categories/market_convertible_bond_list.py
+- file: schemas/categories/market/market_convertible_bond_list.py
   token: auto-schema-convertible-bond-list-20260725
   created_by: session-sess-74840-20260725004710
   capability: data_source_provider_abstraction
-- file: schemas/categories/market_etf_benchmark.py
+- file: schemas/categories/market/market_etf_benchmark.py
   token: auto-schema-etf-benchmark-20260725
   created_by: session-sess-74840-20260725004710
   capability: data_source_provider_abstraction
-- file: schemas/categories/market_etf_list.py
+- file: schemas/categories/market/market_etf_list.py
   token: auto-schema-etf-list-20260725
   created_by: session-sess-74840-20260725004710
   capability: data_source_provider_abstraction
-- file: schemas/categories/market_hk_stock_list.py
+- file: schemas/categories/market/market_hk_stock_list.py
   token: auto-schema-hk-stock-list-20260725
   created_by: session-sess-74840-20260725004710
   capability: data_source_provider_abstraction
-- file: schemas/categories/market_hk_trade_calendar.py
+- file: schemas/categories/market/market_hk_trade_calendar.py
   token: auto-schema-hk-trade-calendar-20260725
   created_by: session-sess-74840-20260725004710
   capability: data_source_provider_abstraction
-- file: schemas/categories/market_index_constituent.py
+- file: schemas/categories/market/market_index_constituent.py
   token: auto-schema-index-constituent-20260725
   created_by: session-sess-74840-20260725004710
   capability: data_source_provider_abstraction
-- file: schemas/categories/market_index_list.py
+- file: schemas/categories/market/market_index_list.py
   token: auto-schema-index-list-20260725
   created_by: session-sess-74840-20260725004710
   capability: data_source_provider_abstraction
-- file: schemas/categories/market_lof_list.py
+- file: schemas/categories/market/market_lof_list.py
   token: auto-schema-lof-list-20260725
   created_by: session-sess-74840-20260725004710
   capability: data_source_provider_abstraction
-- file: schemas/categories/market_sector_constituent.py
+- file: schemas/categories/market/market_sector_constituent.py
   token: auto-schema-sector-constituent-20260725
   created_by: session-sess-74840-20260725004710
   capability: data_source_provider_abstraction
-- file: schemas/categories/market_st_stock_list.py
+- file: schemas/categories/market/market_st_stock_list.py
   token: auto-schema-st-stock-list-20260725
   created_by: session-sess-74840-20260725004710
   capability: data_source_provider_abstraction
-- file: schemas/categories/market_trade_calendar.py
+- file: schemas/categories/market/market_trade_calendar.py
   token: auto-schema-trade-calendar-20260725
   created_by: session-sess-74840-20260725004710
   capability: data_source_provider_abstraction
@@ -7121,11 +7121,11 @@ creation_tokens:
   token: auto-schema-stock-basic-20260815
   created_by: session-AI-JOB077-001-20260815134400
   capability: data_source_provider_abstraction
-- file: schemas/categories/market_stk_limit.py
+- file: schemas/categories/market/market_stk_limit.py
   token: auto-schema-stk-limit-20260815
   created_by: session-AI-JOB077-001-20260815134400
   capability: data_source_provider_abstraction
-- file: schemas/categories/market_suspend.py
+- file: schemas/categories/market/market_suspend.py
   token: auto-schema-suspend-20260815
   created_by: session-AI-JOB077-001-20260815134400
   capability: data_source_provider_abstraction
@@ -8410,7 +8410,7 @@ creation_tokens:
   token: auto-ti-catalog-20260810
   created_by: session-ti-skeleton
   capability: technical_indicator
-- file: schemas/categories/market_technical_indicator.py
+- file: schemas/categories/market/market_technical_indicator.py
   token: auto-ti-schema-20260810
   created_by: session-ti-skeleton
   capability: technical_indicator
@@ -8618,7 +8618,7 @@ creation_tokens:
   token: auto-northbound-hold-fetcher-20260815
   created_by: AI-NORTH-001
   capability: northbound_hold_snapshot
-- file: schemas/categories/market_northbound_hold_snapshot.py
+- file: schemas/categories/market/market_northbound_hold_snapshot.py
   token: auto-ddl-truth-c1-northbound-hold-20260815
   created_by: AI-NORTH-001
   capability: ddl_truth_source_c1
@@ -8711,7 +8711,7 @@ creation_tokens:
   token: auto-68-code-algorithm-review-pipeline-20260817
   created_by: COORD-68-001
   capability: code_algorithm_review_pipeline
-- file: schemas/categories/market_ipo_calendar.py
+- file: schemas/categories/market/market_ipo_calendar.py
   token: ipo001-market-ipo-calendar-20260817
   created_by: AI-IPO-001
   capability: data_source_provider_abstraction
@@ -8969,7 +8969,7 @@ creation_tokens:
   token: auto-registry-of-logs-20260822
   created_by: AI-P2-W4I
   capability: registry_of_logs
-- file: schemas/categories/market_us_futures_intraday.py
+- file: schemas/categories/market/market_us_futures_intraday.py
   token: auto-market-us-futures-intraday-20260822
   created_by: AI-P2-W4A
   capability: us_futures_intraday
@@ -8985,7 +8985,7 @@ creation_tokens:
   token: auto-test-similar-day-inference-20260822
   created_by: AI-P2-W5A
   capability: similar_day_inference
-- file: schemas/categories/market_breadth_snapshot.py
+- file: schemas/categories/market/market_breadth_snapshot.py
   token: auto-market-breadth-snapshot-20260822
   created_by: AI-P2-W5B
   capability: market_breadth_snapshot
@@ -9021,7 +9021,7 @@ creation_tokens:
   token: auto-nightly-sentiment-window-20260822
   created_by: AI-P2-W5D
   capability: nightly_sentiment_window
-- file: schemas/categories/market_news_sentiment_window.py
+- file: schemas/categories/market/market_news_sentiment_window.py
   token: auto-market-news-sentiment-window-20260822
   created_by: AI-P2-W5D
   capability: nightly_sentiment_window
@@ -11649,11 +11649,11 @@ creation_tokens:
   token: auto-test-manipulation-realtime-monitor-20260828
   created_by: AI-WAVE3C-001
   capability: intraday_manipulation_realtime_detection
-- file: schemas/categories/market_index_valuation_daily.py
+- file: schemas/categories/market/market_index_valuation_daily.py
   token: auto-market-index-valuation-daily-20260829
   created_by: AI-WAVE4-001（S2 治本方案 §5.1 路A 指数级估值表 DDL-as-Code）
   capability: index_valuation_daily
-- file: schemas/categories/market_a50_futures_daily.py
+- file: schemas/categories/market/market_a50_futures_daily.py
   token: auto-market-a50-futures-daily-20260829
   created_by: AI-WAVE4-001（A22：A50 日频历史表，44号 §9.6 通道1）
   capability: a50_futures_daily
@@ -11869,7 +11869,7 @@ creation_tokens:
   token: auto-chainmap-names-override-20260909
   created_by: sess-chainmap-a2-20260909
   capability: chainmap_l1_name_override
-- file: schemas/categories/backtest_node_verdict.py
+- file: schemas/categories/backtest/backtest_node_verdict.py
   token: auto-backtest-node-verdict-ddl-20260909
   created_by: st-nodebt-night-20260909
   capability: backtest_node_verdict_ddl
@@ -12428,7 +12428,7 @@ creation_tokens:
   token: auto-scaffold-ch_apply_pattern_event_ddl-20260914
   created_by: scaffold.py
   capability: ch_apply_pattern_event_ddl
-- file: schemas/categories/market_pattern_event.py
+- file: schemas/categories/market/market_pattern_event.py
   token: pattern-event-ddl-truth-market-pattern-event-20260913
   created_by: st-pattern-20260914
   capability: pattern-event-ddl-truth
@@ -12476,7 +12476,7 @@ creation_tokens:
   token: test-sim-paper-ledger-20260914-b1
   created_by: st-zcode-c4-20260912
   capability: sim_paper_ledger_c
-- file: schemas/categories/market_pattern_win_rate.py
+- file: schemas/categories/market/market_pattern_win_rate.py
   token: pattern-win-rate-ddl-truth-market-pattern-win-rate-20260913
   created_by: st-pattern-20260914
   capability: pattern-win-rate-ddl-truth
@@ -12580,7 +12580,7 @@ creation_tokens:
   token: factory-backend-hypothesis-precheck-20260913
   created_by: st-facbe-20260914
   capability: factory_backend
-- file: schemas/categories/backtest_hypothesis_precheck.py
+- file: schemas/categories/backtest/backtest_hypothesis_precheck.py
   token: factory-backend-backtest-hypothesis-precheck-20260913
   created_by: st-facbe-20260914
   capability: factory_backend
@@ -12610,6 +12610,10 @@ creation_tokens:
   capability: factory_backend
 - file: scripts/register_factory_lane_c_task.ps1
   token: factory-backend-register-factory-lane-c-task-20260913
+  created_by: st-facbe-20260914
+  capability: factory_backend
+- file: scripts/register_ollama_serve_task.ps1
+  token: factory-backend-register-ollama-serve-task-20260914
   created_by: st-facbe-20260914
   capability: factory_backend
 - file: scripts/backtest/translated/c4_21af8c66c15e_small_cap.py
@@ -12740,4 +12744,16 @@ creation_tokens:
   token: xt-lab3-restore-f-unreg-20260914
   created_by: st-docrestore-20260914
   capability: xt_lab3_restore
+- file: schemas/categories/market/__init__.py
+  token: schemas-categories-market---init---20260914
+  created_by: st-datagov-fin-20260914
+  capability: schemas_categories_market
+- file: schemas/categories/backtest/__init__.py
+  token: schemas-categories-backtest---init---20260914
+  created_by: st-datagov-fin-20260914
+  capability: schemas_categories_backtest
+- file: schemas/categories/macro/__init__.py
+  token: schemas-categories-macro---init---20260914
+  created_by: st-datagov-fin-20260914
+  capability: schemas_categories_macro
 di_seam_exemptions: []

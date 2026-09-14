@@ -95,16 +95,72 @@ def load_whitelist(path: Path | None = None) -> dict:
     return data
 
 
-def build_function_set(whitelist: dict) -> list[str]:
-    """白名单 approved → gplearn function_set（交集，双向 fail-closed）。"""
+CUSTOM_OPS = ("rank_cs", "ts_delta_5", "ts_zscore_20", "ts_corr_20")
+
+
+def make_panel_operators(n_symbols: int, requested: list[str]) -> list:
+    """自定义算子工厂（v2 批，Owner 2026-09-14 转正）。
+
+    分组语义契约：面板行序=日期主序、每日恰好 n_symbols 行（fetch_panel 完整面板过滤
+    保证），reshape(-1, n_symbols) 后 axis=1 为截面、axis=0 为单标的时序。
+    段首无历史处填 0（"无意见"中性值，避免 NaN 进入 GP 搜索）；输出保证有限。
+    """
+    from gplearn.functions import make_function
+
+    n = int(n_symbols)
+
+    def _mat(x):
+        x = np.asarray(x, dtype=float)
+        if x.size < n or x.size % n != 0:
+            # gplearn make_function 的 10 样本探针（或残缺输入）：单列旁路，仅保形状校验通过
+            return pd.DataFrame(x.reshape(-1, 1))
+        return pd.DataFrame(x.reshape(-1, n))
+
+    funcs: list = []
+    for op in requested:
+        if op == "rank_cs":
+            def _f(x):
+                return _mat(x).rank(axis=1, pct=True).fillna(0.5).to_numpy().ravel()
+        elif op == "ts_delta_5":
+            def _f(x):
+                return _mat(x).diff(5).fillna(0.0).to_numpy().ravel()
+        elif op == "ts_zscore_20":
+            def _f(x):
+                m = _mat(x)
+                z = (m - m.rolling(20, min_periods=5).mean()) / (m.rolling(20, min_periods=5).std() + 1e-9)
+                return z.clip(-10, 10).fillna(0.0).to_numpy().ravel()
+        elif op == "ts_corr_20":
+            def _f(x1, x2):
+                a, b = _mat(x1), _mat(x2)
+                c = a.rolling(20, min_periods=8).corr(b)
+                return c.clip(-1, 1).fillna(0.0).to_numpy().ravel()
+        else:
+            raise RuntimeError(f"未知自定义算子: {op}")
+        funcs.append(make_function(function=_f, name=op,
+                                   arity=2 if op == "ts_corr_20" else 1))
+    return funcs
+
+
+def build_function_set(whitelist: dict, n_symbols: int | None = None) -> list:
+    """白名单 approved → gplearn function_set（内置算子名 + 自定义算子对象，双向 fail-closed）。"""
     from gplearn.functions import _function_map
 
     approved = [op for group in whitelist["approved"].values() for op in group]
     approved = [op["op"] if isinstance(op, dict) else op for op in approved]
-    missing = [op for op in approved if op not in _function_map]
-    if missing:
-        raise RuntimeError(f"白名单算子引擎不支持（版本漂移）: {missing}")
-    return sorted(approved)
+    funcs: list = []
+    customs: list[str] = []
+    for op in approved:
+        if op in _function_map:
+            funcs.append(op)
+        elif op in CUSTOM_OPS:
+            customs.append(op)
+        else:
+            raise RuntimeError(f"白名单算子引擎不支持（版本漂移）: {op}")
+    if customs:
+        if not n_symbols:
+            raise RuntimeError(f"自定义算子 {customs} 需要面板宽度 n_symbols")
+        funcs.extend(make_panel_operators(n_symbols, customs))
+    return funcs
 
 
 def residualize(x: np.ndarray, baseline: np.ndarray) -> np.ndarray:
@@ -138,13 +194,33 @@ def make_incremental_ic_fitness(baseline: np.ndarray, fwd: np.ndarray):
     return _fitness
 
 
-def build_hypothesis(expr: str, ic: float, n_samples: int) -> str:
-    """确定性假说文本（公式+描述性证据；机制判断留给 E2，评分权留给 E4）。"""
-    return (
-        f"做多[公式因子]：{expr}——在 REG-IND-001 基座上增量 rank IC={ic:.4f}"
-        f"（样本 {n_samples}，混同池口径 v1）。机制待审：该公式的每一项在行为/风险上"
-        f"是什么意思？是否存在同义反复或换手陷阱？"
-    )
+def build_hypothesis(expr: str, ic: float, n_samples: int,
+                     gloss: list[tuple] | None = None) -> str:
+    """确定性假说文本 v2：公式+描述性证据+算子经济释义+机制自述要求（治 reject_tautology 误杀）。
+
+    gloss=(op, zh, meaning) 三元组列表——本公式实际用到的算子释义（白名单真源）。
+    机制判断仍留给 E2，评分权留给 E4；本文本只提供"让 E2 有东西可审"的证据与问题框架。
+    """
+    text = (f"做多[公式因子]：{expr}——在 REG-IND-001 基座上增量 rank IC={ic:.4f}"
+            f"（样本 {n_samples}，混同池口径 v1）。")
+    if gloss:
+        text += "算子释义——" + "；".join(f"{op}={zh}（{mean}）" for op, zh, mean in gloss) + "。"
+    text += ("机制自述要求：逐项说明本公式赚谁的钱（行为偏差/风险溢价/结构性摩擦）；"
+             "任一算子讲不出机制即 reject_no_mechanism，纯数学变形无独立信息即 reject_tautology，"
+             "换手成本吞掉边际即 reject_cost_prohibitive。")
+    return text
+
+
+def gloss_for_expr(expr: str, whitelist: dict) -> list[tuple]:
+    """按白名单顺序提取 expr 实际用到的算子释义（确定性）。"""
+    import re
+
+    out: list[tuple] = []
+    for group in whitelist["approved"].values():
+        for item in group:
+            if isinstance(item, dict) and re.search(rf"\b{item['op']}\b", expr):
+                out.append((item["op"], item["zh"], item["meaning"]))
+    return out
 
 
 def make_candidate_id(expr: str) -> str:
@@ -197,6 +273,10 @@ def fetch_panel(universe_n: int, days: int) -> dict:
     feats["y_fwd5"] = g["close"].transform(lambda s: s.shift(-FWD_DAYS) / s - 1)
     feats["date"], feats["s"] = k["date"].values, k["s"].values
     feats = feats.dropna(subset=list(FEATURES) + ["y_fwd5"])
+    # 完整面板过滤（每日恰好 n_symbols 行）+ 日期主序——自定义算子 reshape 分组语义的契约
+    n_sym = len(syms)
+    cnt = feats.groupby("date")["s"].transform("count")
+    feats = feats[cnt == n_sym].sort_values(["date", "s"]).reset_index(drop=True)
 
     ti_cols = _ti_columns(cli)
     ti = pd.DataFrame(cli.execute(
@@ -212,16 +292,20 @@ def fetch_panel(universe_n: int, days: int) -> dict:
     ti_num = ti_num.merge(feats[["date", "s"]], on=["date", "s"], how="inner")
     ti_num = ti_num.dropna(axis=1, thresh=int(len(ti_num) * 0.7))
     base_cols = [c for c in ti_num.columns if c not in ("date", "s")]
-    ti_num = ti_num.sort_values(["s", "date"]).reset_index(drop=True)
+    # 与 feats 同序对齐（日期主序、同键集）——baseline 行必须与 X 行一一对应
+    ti_num = ti_num.sort_values(["date", "s"]).reset_index(drop=True)
+    feats = feats.merge(ti_num[["date", "s"]], on=["date", "s"], how="inner")
+    ti_num = ti_num[ti_num.set_index(["date", "s"]).index.isin(
+        pd.MultiIndex.from_arrays([feats["date"], feats["s"]]))].reset_index(drop=True)
 
-    feats = feats.merge(ti_num[["date", "s"]].assign(_keep=True), on=["date", "s"], how="inner")
     X = feats[list(FEATURES)].to_numpy(dtype=float)
     y = feats["y_fwd5"].to_numpy(dtype=float)
-    baseline = ti_num.loc[feats.index.values, base_cols].to_numpy(dtype=float)
-    if len(X) < 500:
-        raise RuntimeError(f"面板样本不足: {len(X)}")
+    baseline = ti_num[base_cols].to_numpy(dtype=float)
+    if len(X) < 500 or len(X) != len(baseline):
+        raise RuntimeError(f"面板样本不足或基座错位: X={len(X)} baseline={len(baseline)}")
     return {"X": X, "y": y, "baseline": baseline, "baseline_cols": base_cols,
-            "n": len(X), "features": list(FEATURES), "universe": syms}
+            "n": len(X), "features": list(FEATURES), "universe": syms,
+            "n_symbols": n_sym}
 
 
 def render_expr(expr: str, features: list[str]) -> str:
@@ -248,10 +332,10 @@ def run_mine(population_size: int, generations: int, universe_n: int, days: int,
     status = whitelist.get("status")
     if status != "active" and not smoke:
         return {"gate": gate, "message": f"白名单 status={status}：正式量产须 Owner 审定后改 active"}
-    func_set = build_function_set(whitelist)
-    cons = whitelist["constraints"]
 
     panel = fetch_panel(universe_n, days)
+    func_set = build_function_set(whitelist, n_symbols=panel["n_symbols"])
+    cons = whitelist["constraints"]
 
     from gplearn.genetic import SymbolicTransformer
 
@@ -277,7 +361,8 @@ def run_mine(population_size: int, generations: int, universe_n: int, days: int,
             continue  # 验收目标=增量 IC>0 才入围
         rows.append({"formula": expr, "incr_ic": round(float(ic), 6),
                      "length": prog.length_,
-                     "hypothesis_zh": build_hypothesis(expr, float(ic), panel["n"]),
+                     "hypothesis_zh": build_hypothesis(expr, float(ic), panel["n"],
+                                                       gloss=gloss_for_expr(expr, whitelist)),
                      "candidate_id": make_candidate_id(expr)})
     rows = sorted({r["candidate_id"]: r for r in rows}.values(),
                   key=lambda r: -r["incr_ic"])[:top_candidates]
