@@ -7,7 +7,7 @@ title: 挖矿 SOP——全网调研+内部反查的全面挖掘方法论（六�
 owner: ZephyrAlpha-Owner
 language: zh
 status: active
-version: "1.0.0"
+version: "1.0.1"
 date: 2026-09-14
 topic: mining_sop
 ---
@@ -18,6 +18,7 @@ topic: mining_sop
 > **诞生**：2026-09-14，Owner 裁定"继续挖，把矿挖干为止"——另类数据消费端方案三批 20 轮挖矿（R1-R20，signal 15/noise 4）的完整流程沉淀升 permanent。
 > **实战范例（方法论唯一完整实例）**：[docs/_working/alt_data_consumption_plan.md](../../../_working/alt_data_consumption_plan.md) §5-§7（三批挖矿日志+因子位 F1-F27 演化）。
 > **亲缘**：[trading_decision_map_pathfinding_policy.md](trading_decision_map_pathfinding_policy.md) = 本 SOP 在 TDM 地图增长域的专用实例（六向协议源头）；本文件 = 通用研究方法论真源。方法论冲突时，地图域以 TDM 版为准，其余域以本版为准。
+> **施工闭环挂接**：[construction_workflow_policy.md](../construction_sop/construction_workflow_policy.md) Step 1.9（2026-09-14）——施工前先做方案，方案先挖矿，把矿挖干再施工；本 SOP 的双噪音封矿=施工准入闸。
 
 ---
 
@@ -87,3 +88,4 @@ topic: mining_sop
 | 日期 | 版本 | 变更 | 批准 |
 |------|------|------|------|
 | 2026-09-14 | 1.0.0 | 初稿：三批 20 轮实战流程沉淀（六向/双噪音/四闸/时间盒/失败模式） | Owner"继续挖，把矿挖干为止"指令与全程实战 |
+| 2026-09-14 | 1.0.1 | 施工闭环挂接：接入 construction_workflow_policy.md Step 1.9（方案先挖矿，挖干再施工，双噪音封矿=施工准入闸） | Owner 指令 |
