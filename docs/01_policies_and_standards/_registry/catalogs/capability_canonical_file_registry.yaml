@@ -5099,6 +5099,10 @@ creation_tokens:
   token: szopen-alt_sz_stat_monthly-20260914
   created_by: st-altdata-20260914
   capability: alt_data_batch1_free_sources
+- file: schemas/categories/market_alt_sz_visibility.py
+  token: szopen-alt_sz_visibility-20260914
+  created_by: st-altdata-20260914
+  capability: alt_data_batch1_free_sources
 - file: schemas/categories/market_alt_typhoon_track.py
   token: altdata-typhoon-ddl-20260914
   created_by: st-altdata-20260913

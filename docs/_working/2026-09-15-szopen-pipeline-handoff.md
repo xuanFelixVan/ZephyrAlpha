@@ -76,6 +76,20 @@ python .runtime/tmp/szcatalog/../../scripts/data/sz_open_data/status_all.py 的�
 13. **actor registry**：DS/JOB 的 code_symbol 用 `Class.method` 点号格式（裸方法名过不了 Anchor↔Code 门禁）
 14. **TTL-METADATA**：docs/_working 的 md 要 `ttl: task_bound` frontmatter；带 module_id 的登记 YAML 要 `ttl: permanent`
 
+## 五·五、进度留痕（2026-09-14 晚，能见度批落地）
+
+- 任务 0 复测：getApiDocument 通道 18/47 + 能见度工作 ID 实调通过 = 真实 19/47 生效，未生效 28 与预期吻合
+- **坑位③归属修正**：1464350655 实为海洋气象预警（已接入 alt_sz_marine_forecast 147,716 行互证），
+  非环境气象预报；环境气象预报（00900291）真实工作服务地址未知 → 归入任务 1 向 Owner 收集
+- 任务 2 能见度批已落地（commit 3c90156077）：新表 alt_sz_visibility（(obtid,ddatetime) 幂等）
+  + provider 二分定位增量（服务无过滤参数实测）+ 回补 24,167 行（09-02~09-14，7 站）
+  + registry v1.9.4（DS-245/JOB-109 active/JOB-110 全史回补 candidate 留痕未授权）
+- 大表纪律入码：全量模式 400 页天花板超限即拒（fail-visible），全史 2,456 万行须 Owner 报批专项
+- 提交链实录：COMMIT_SCOPE→multi-domain、FOLDER-CAPACITY（122>120，15 个 8 月 md 归档
+  archive/2026-08）、WORKTREE-REQUIRED→non-worktree、队列 0024 死（rename 文件缺 claim）→
+  重 claim 24/24 → 0025 落地；他会话 st-chinfra 同窗口抢锁 4 次留痕
+- 下一步：任务 1 收集 28 接口工作服务地址 → 任务 3 批量接入（统计月报 12 系列走 _SZ_STAT_SERIES）
+
 ## 六、完成定义（DoD）
 
 47 接口全部可调且入管线（或明确豁免留痕）；全部回补并 FINAL 核数；registry/.categories/tasks/applier/测试五处同步；git_commit.py 落库且 `git log -1 --name-only` 归属核实；零临时文件残留于项目根；向 Owner 报告（大白话+判定依据）。

@@ -49245,6 +49245,13 @@ entries:
   desc_zh: "按年分层抽样实测东财研报 PDF 直链存活率（C4 历史修复第一步侦察）"
   desc_en: ""
   plain_zh: "开工前先探路：随机抽一千份八年间的研报原文，看看还有多少份能正常打开，摸清哪些年份的资料是完好的，再决定修复工程怎么排兵。"
+- module_path: schemas/categories/market_alt_sz_visibility.py
+  domain_id: D_DATA
+  name_zh: "能见度探测表DDL"
+  name_en: ""
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "深圳能见度探测分钟级站点流（c1_market.alt_sz_visibility）建表真源：7 观测站每 10-15 分钟的能见度三口径（瞬时/10分钟均值/最小值），港口作业窗口与航线能见度参考"
 
 battle_map_steps:
 - step_id: BM-BUY-05
