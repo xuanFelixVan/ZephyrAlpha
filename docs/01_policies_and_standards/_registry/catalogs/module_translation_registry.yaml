@@ -49301,6 +49301,20 @@ entries:
   desc_zh: ""
   desc_en: ""
   plain_zh: "采集退化期写入的三天坏 tick 数据清场工具：先整表备份到备份表再删除，删完必须复验零残留，以备份表内容为准"
+- module_path: scripts/ch/apply_pdf_forecast_extracted_ddl.py
+  domain_id: D_DATA
+  name_zh: "C4 提取表 DDL 部署"
+  name_en: "apply_pdf_forecast_extracted_ddl"
+  desc_zh: "pdf_forecast_extracted 表 DDL 部署+验证"
+  desc_en: ""
+  plain_zh: "在数据库里建一张新表的工具，建一次以后重复点也没事。"
+- module_path: src/zephyr/data/c4_history_repair.py
+  domain_id: D_DATA
+  name_zh: "C4 历史修复核心"
+  name_en: "c4_history_repair"
+  desc_zh: "研报 PDF 下载/文本/表格三级提取真历史预测值（源污染修复）"
+  desc_en: ""
+  plain_zh: "把八年前的研究报告原文下载下来，用程序看懂里面'当时预测每股赚多少钱'的表格，把真正属于那个年代的预测值挖出来存好——用来修复之前存错时间的数据。"
 
 battle_map_steps:
 - step_id: BM-BUY-05
