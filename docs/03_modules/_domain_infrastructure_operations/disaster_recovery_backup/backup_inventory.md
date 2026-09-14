@@ -254,8 +254,12 @@ Start-VM -Name zephyr-ch
    全程 transcript=logs/vhdx_maintenance_20260914_191758.log。验证：VM Running、CH
    version=26.6.1.1193 在线、system.backups 无进行中任务、F 盘 free 194.4→793.5 GB。
    §0.5 预测 ~290 GB 与实测 313.4 GB 的差额属 unmap 粒度/压缩实际效果，无需跟进。
-3. **挂账待 Owner 拍板**：F:\code_backup\.git.backup.20260803（6.32 GB，17285 文件，
-   2026-08-03 陈旧 .git 副本）——上一会话发起删除被 Owner 打断，删除前需再确认一次。
+3. ~~挂账待 Owner 拍板~~ → **已结项（2026-09-15 01:05，接续会话）**：F: 副本删除见第 5 条；
+   同批补删 D 盘源头 `D:\ZephyrAlpha\.git.backup.20260803`（6.4 GB，Owner 授权自裁
+   "你定"）。关键动机=**关闭 06:00 /MIR 重镜像回填风险**——backup_config exclude 表无此
+   目录，源头不删则 F: 删除今晨即被原样复制回来。删除前验证五道（live .git 健康/零代码引
+   用/bundle verify 通过/内容定性/Owner 留痕），删除走回收站通道（可恢复，清空回收站后
+   D 盘才真正回收 6.4 GB）。
 4. **明日观察项（2026-09-15 06:00 备份后）**：看 working_vault 第一个跨天快照的
    linked/copied 数，校准每日真实变化量，评估 retention_days=14 是否需要调小。
 5. **.git.backup.20260803 已删 + git bundle 替代（2026-09-14 19:4x）**：Owner 两轮确认后删除
@@ -265,6 +269,12 @@ Start-VM -Name zephyr-ch
    （**0.40 GB**，git bundle verify 通过；恢复=git clone bundle 即得全仓库）。此举同时关闭
    「B1 版本化快照不含 .git」的边界缺口——git 历史灾备从目录副本升级为单文件 bundle，
    后续可定期（如随月度维护）重打新 bundle、删旧 bundle，体积小无轮转压力。
+
+6. **今晨 06:00 预计自动触发基线重建（预告，非事故）**：9-14 07:27 备份后 inc.zip 已达
+   111.0 GB=基线 53.6%（≥50% 阈值；当日决策用的是上轮 93 GB=44.9% 故仍走增量）——下次
+   运行将删 market.zip+inc.zip 重建新基线（预计 ~250-320 GB，CH BACKUP 轮询上限 3h 内可
+   完成）。VHDX 容器压缩后内部余量 660 GB、F 盘 free 795 GB，无压力。上午若见 inc.zip
+   消失+新 market.zip 即为此机制。
 
 ### §0.6 五图对齐视图
 
