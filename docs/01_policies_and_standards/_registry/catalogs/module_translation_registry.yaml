@@ -49238,6 +49238,13 @@ entries:
   desc_zh: "自建聚合与同花顺快照每日独立真源互查（对账/新鲜度/结构/PIT 探针），异常告警"
   desc_en: ""
   plain_zh: "每天晚上给两套独立算出来的'全市场预期'对一次答案：像两个会计各自记账再核账，对得上就 quietly 记一笔，对不上立刻拉警报，防止再出现'拿今天的数当历史数'那种事故。"
+- module_path: scripts/ch/c4_pdf_survey.py
+  domain_id: D_DATA
+  name_zh: "C4 PDF 存活率普查器"
+  name_en: "c4_pdf_survey"
+  desc_zh: "按年分层抽样实测东财研报 PDF 直链存活率（C4 历史修复第一步侦察）"
+  desc_en: ""
+  plain_zh: "开工前先探路：随机抽一千份八年间的研报原文，看看还有多少份能正常打开，摸清哪些年份的资料是完好的，再决定修复工程怎么排兵。"
 
 battle_map_steps:
 - step_id: BM-BUY-05

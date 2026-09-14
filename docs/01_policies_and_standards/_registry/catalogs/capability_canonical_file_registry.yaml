@@ -12608,4 +12608,8 @@ creation_tokens:
   token: consensus-crosscheck-consensus-crosscheck-20260914
   created_by: st-expectation-20260914
   capability: consensus_crosscheck
+- file: scripts/ch/c4_pdf_survey.py
+  token: c4-pdf-history-repair-c4-pdf-survey-20260914
+  created_by: st-expectation-20260914
+  capability: c4_pdf_history_repair
 di_seam_exemptions: []
