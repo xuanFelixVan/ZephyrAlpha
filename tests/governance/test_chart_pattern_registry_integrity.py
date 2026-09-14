@@ -1,4 +1,4 @@
-# [BLUEPRINT] REG-PAT-001 | docs/01_policies_and_standards/_registry/catalogs/chart_pattern_registry.yaml | §schema v2.2
+# [BLUEPRINT] MOD-INF-005 | docs/03_modules/_cross_layer/gate_engine/blueprint.md | §REG-PAT-001 完整性守卫
 # [MODULE] tests.governance.test_chart_pattern_registry_integrity
 # [DOMAIN] D_GOV_SCRIPTS
 # [DEPENDENCIES] pytest; yaml
@@ -12,7 +12,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] AssertionError
 # [TESTS] self
-# [A_module] module_id=REG-PAT-001 | layer=test | stability=evolving | safety=L | ai_autonomy=ai_modifiable
+# [A_module] module_id=MOD-INF-005 | layer=test | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 """chart_pattern_registry（REG-PAT-001）结构完整性常设守卫。
 
@@ -83,3 +83,44 @@ def test_refinements_item_shape(entries):
             if missing:
                 problems.append(f"{e['pattern_id']}: refinement {r.get('name', '?')} 缺字段 {missing}")
     assert not problems, "refinements 形状违规:\n" + "\n".join(f"  - {p}" for p in problems)
+
+
+# ---------------------------------------------------------------------------
+# 2026-09-15 件10：code_fingerprint 门禁A（存在性）/门禁B（漂移对账）常设执法
+# ---------------------------------------------------------------------------
+
+
+def test_code_symbol_existence_and_fingerprint_no_drift(entries):
+    """#ARCH-BREG-002 门禁A/B 蓝测：code_symbol 锚定的文件与符号必须存在，
+    code_fingerprint 必须与实现模块整源 sha256 一致。
+
+    语义：实现模块（candlestick_scanner 等）任何改动都会改变指纹——本测试红=
+    代码已演进而注册表指纹未回写，正门处置=重跑
+    ``python scripts/governance/d3_metadata/pattern_code_fingerprint.py --apply``
+    （段内锚定+CAS+写后校验回滚，83 条幂等秒级）。
+    """
+    from scripts.governance.d3_metadata import pattern_code_fingerprint as pcf
+
+    problems: list[str] = []
+    for e in entries:
+        sym = e.get("code_symbol")
+        if not sym:
+            continue
+        pid = e["pattern_id"]
+        try:
+            py_path, symbol = pcf.parse_code_symbol(sym)
+        except ValueError as exc:
+            problems.append(f"{pid}: {exc}")
+            continue
+        if not py_path.exists():
+            problems.append(f"{pid}: 实现文件不存在 {py_path.name}（门禁A）")
+            continue
+        if not pcf.symbol_exists(py_path, symbol):
+            problems.append(f"{pid}: 符号 {symbol} 不存在（门禁A）")
+            continue
+        fp = pcf.module_fingerprint(py_path)
+        if e.get("code_fingerprint") != fp:
+            problems.append(
+                f"{pid}: 指纹漂移（门禁B）注册表={e.get('code_fingerprint')} 实际={fp}——重跑 --apply"
+            )
+    assert not problems, "code_fingerprint 对账失败:\n" + "\n".join(f"  - {p}" for p in problems)

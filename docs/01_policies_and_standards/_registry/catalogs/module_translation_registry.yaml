@@ -49588,6 +49588,13 @@ entries:
   desc_zh: "REG-PAT-001 code_fingerprint 扫描器（#ARCH-BREG-002 门禁A存在性/门禁B漂移对账）"
   desc_en: ""
   plain_zh: "检查图形注册表里登记的代码位置是否真的存在，并给实现代码算一个'指纹'存进注册表。以后谁改了图形识别代码但没更新注册表，测试就会红着提醒你去刷新，防止'登记的和实际跑的不是一个版本'"
+- module_path: scripts/ch/apply_strategy_screen_num_trials_ddl.py
+  domain_id: D_BACKTEST
+  name_zh: "策略台账num_trials加列器"
+  name_en: "apply_strategy_screen_num_trials_ddl"
+  desc_zh: "strategy_screen 加列 num_trials 的 DDL 部署脚本（S03-N1）"
+  desc_en: ""
+  plain_zh: "这个脚本给策略快筛成绩台账补一个新格子，用来记每一批考试里一共有多少个考生（做多重比较校正时要用这个数）。它只加格子不挪老数据，重复跑也不会出错，跑完会自己检查格子是不是真加上了。"
 
 battle_map_steps:
 - step_id: BM-BUY-05

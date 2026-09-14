@@ -12796,6 +12796,10 @@ creation_tokens:
   token: factory-backend-kronos-adapter-20260914
   created_by: st-facbe-20260914
   capability: factory_backend
+- file: docs/_working/2026-09-15-kronos-baseline-eval-report.md
+  token: factory-backend-2026-09-15-kronos-baseline-eval-report-20260914
+  created_by: st-facbe-20260914
+  capability: factory_backend
 - file: scripts/backtest/translated/c4_21af8c66c15e_small_cap.py
   token: c4-21af8c66c15e-small-cap-20260914
   created_by: st-zcode-c4-20260912
@@ -13128,6 +13132,10 @@ creation_tokens:
   token: pipeline-research-pending-owner-rulings-20260914
   created_by: st-autopipeline-20260915
   capability: pipeline_research
+- file: docs/_working/pipeline-research/replay-evidence.yaml
+  token: pipeline-research-replay-evidence-20260914
+  created_by: st-autopipeline-20260915
+  capability: pipeline_research
 - file: src/zephyr/strategy_pipeline/__init__.py
   token: strategy-pipeline---init---20260914
   created_by: st-autopipeline-20260915
@@ -13154,6 +13162,14 @@ creation_tokens:
   capability: strategy_pipeline
 - file: src/zephyr/strategy_pipeline/screen_source.py
   token: strategy-pipeline-screen-source-20260914
+  created_by: st-autopipeline-20260915
+  capability: strategy_pipeline
+- file: docs/01_policies_and_standards/policies/strategy_intake_acceptance6_evidence.md
+  token: strategy-pipeline-strategy-intake-acceptance6-evidence-20260914
+  created_by: st-autopipeline-20260915
+  capability: strategy_pipeline
+- file: docs/01_policies_and_standards/policies/c3_translation_pipeline_ruling.md
+  token: strategy-pipeline-c3-translation-pipeline-ruling-20260914
   created_by: st-autopipeline-20260915
   capability: strategy_pipeline
 - file: scripts/backtest/sim_promotion_memo.py
