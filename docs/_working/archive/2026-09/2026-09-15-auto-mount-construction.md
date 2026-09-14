@@ -51,3 +51,22 @@ ttl: task_bound
 - Owner 对话内批复"通过"→验收五条全绿闭环。
 - 首批 commit=`43f84d01d5`（4 文件，git log -1 --name-only 归属核实干净）；本补录+转正随第二批队列提交。
 - MOD-BT-171 depgraph design_maturity→production 转正（`--transition-design-maturity`）+ align_all 七图对齐后随批落地。
+
+## 三钩子收官（2026-09-15 02:17 Owner 令"继续施工"，02:35 完成）
+
+1. **钩子① C6 转正实挂通道**：实战演练 `--plan`（ops=0 = 当前注册表内无带 build 契约的未挂条目，
+   9 条非 C4 翻译件 code_path 正确列入 SKIPPED；STR-E-TIMING-001 等待补契约）——管线就绪，下批转正即用。
+2. **钩子② 月度挂图审计**：新增 `mount_audit()`（`--audit --scan-frequency monthly/quarterly/semiannual`）
+   只读三件套：38 规则回执+格子↔节点挂载一致性漂移盘点（drift 必报）+decay_watch 同口径分档衰减巡检
+   （run_decay_check(dry_run) 复用，档位对齐 decay_scan_frequency；失败降级不阻断）。实战：audit ok，
+   28 条挂载零漂移，monthly 档 43 行 0 衰减。挂接语义=对齐 decay_watch 事件驱动裁定，不新建调度器。
+3. **钩子③ 报告落盘**：`write_report()`（`--report` 可叠加 plan/apply/replay）——三节式 Markdown
+   （挂了哪=diff/为什么=逐条判定+段证据/证据指针=窗口+状态真源+代码真源+38 规则回执+权重方案），
+   落盘 `docs/_working/auto-mount-reports/auto-mount-report-YYYYMMDD-HHMM.md`（专属子目录不占根目录
+   120 硬上限）。实战产出首份报告（28 条重放全量）。
+
+- 测试 20→24（audit 漂移必报/clean 形状+报告三节/零 diff 形状）连续 2 轮全绿；文件 413 行
+  （GOV-010 分层裁量 301-500 档：五步管线单抽象族高内聚豁免依据已写入文件头 [INVARIANTS]）。
+- 报告标题长清单收敛（>8 条缩略+对象清单独立行）。
+- 三个钩子边界备注：audit 的 decay 字段=dry_run 只读不写台账（写路径仍归 run_validation 尾随事件，
+   责任唯一）；报告不进 git（docs/_working 任务文档区，由 auto_archive 治理）。

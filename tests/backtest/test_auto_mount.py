@@ -35,8 +35,10 @@ from backtest.auto_mount import (  # noqa: E402
     insert_cell,
     insert_node_mount,
     insert_sleeve,
+    mount_audit,
     only_add_assert,
     sleeve_plan,
+    write_report,
 )
 
 # ---------- fixtures：最小地图片段（真实格式的等价样本） ----------
@@ -183,6 +185,77 @@ class TestSleevePlan:
         plan = sleeve_plan(["STR-Z"], old)
         assert plan["a"] > plan["b"]  # 等比缩水保序
         assert abs(plan["a"] - round(0.2 * (0.95 / 0.3), 6)) < 1e-9  # 与实现同口径 6 位舍入
+
+
+# ---------- ⑥ 钩子②③：月度审计+报告落盘 ----------
+class TestMountAudit:
+    def test_audit_detects_cell_drift(self, tmp_path, monkeypatch):
+        """格子 mounted 里的 STR-* 不在节点挂载区 = 漂移必报（审计核心职责）。"""
+        import backtest.auto_mount as am
+        map_drift = """nodes:
+- node_id: TDM-E-L1
+  name_zh: 大盘总闸
+  strategy_mounts:
+  - {strategy_ref: STR-VREV-025, confidence: verified, evidence: 'run=x'}
+state_matrix:
+  cells:
+  - {node_id: TDM-E-L1, state: capitulation, mounted: [STR-GHOST-999], confidence: proposed}
+portfolio_plan:
+  plan_id: PP-001
+  sleeves:
+  - {strategy_ref: default-equity, weight: 1.0, activation_state: null}
+"""
+        fake_map = tmp_path / "map.yaml"
+        fake_map.write_text(map_drift, encoding="utf-8")
+        monkeypatch.setattr(am, "MAP_YAML", fake_map)
+        monkeypatch.setattr(am, "validate_map", lambda: [])
+        out = am.mount_audit(scan_frequency=None)
+        assert out["audit"] == "fails"
+        assert out["drift"] and "STR-GHOST-999" in out["drift"][0]
+
+    def test_audit_shape_clean(self, tmp_path, monkeypatch):
+        """无漂移+无 fails 时 audit=ok；decay 档失败降级为 error 字段不阻断。"""
+        import backtest.auto_mount as am
+        map_clean = """nodes:
+- node_id: TDM-E-L1
+  name_zh: 大盘总闸
+  strategy_mounts:
+  - {strategy_ref: STR-VREV-025, confidence: verified, evidence: 'run=x'}
+state_matrix:
+  cells:
+  - {node_id: TDM-E-L1, state: capitulation, mounted: [STR-VREV-025], confidence: proposed}
+portfolio_plan:
+  plan_id: PP-001
+  sleeves:
+  - {strategy_ref: default-equity, weight: 1.0, activation_state: null}
+"""
+        fake_map = tmp_path / "map.yaml"
+        fake_map.write_text(map_clean, encoding="utf-8")
+        monkeypatch.setattr(am, "MAP_YAML", fake_map)
+        monkeypatch.setattr(am, "validate_map", lambda: [])
+        out = mount_audit(scan_frequency=None)
+        assert out["audit"] == "ok" and out["drift"] == [] and out["mounted_count"] == 1
+
+
+class TestWriteReport:
+    def test_report_written_with_three_sections(self, tmp_path):
+        payload = {
+            "diff": "+++ map.after\n+mount line",
+            "judgements": [{"sid": "STR-X-001", "cls": "value_reversal", "node": "TDM-E-L1",
+                             "activated": ["capitulation"],
+                             "segments": {"capitulation": (73, 3.72)}}],
+            "fails": [],
+            "weights": "{\"STR-X-001\": 0.05}",
+        }
+        rp = write_report(payload, "STR-X-001", out_dir=tmp_path)
+        text = rp.read_text(encoding="utf-8")
+        assert "## 挂了哪" in text and "## 为什么" in text and "## 证据指针" in text
+        assert "STR-X-001" in text and "+3.72(73d)" in text and "TDM-E-L1" in text
+
+    def test_report_replay_zero_diff_shape(self, tmp_path):
+        payload = {"diff": None, "judgements": [], "fails": [], "weights": "{}"}
+        rp = write_report(payload, "", out_dir=tmp_path)
+        assert "零 diff" in rp.read_text(encoding="utf-8")
 
 
 # ---------- ⑤ 常量契约 ----------

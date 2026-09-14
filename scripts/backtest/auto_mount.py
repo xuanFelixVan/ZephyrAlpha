@@ -6,7 +6,9 @@
 # [STARTUP] manual
 # [MATURITY] experimental
 # [INVARIANTS] 全自动 only-add（diff 净删行=拒）；宁漏勿误（段<=0 或样本<30 天不激活）；
-#   地图写入=文本级手术（node_id 分块+块内唯一锚+count==1）；写后 38 规则校验；挂载必 verified+evidence（R6）
+#   地图写入=文本级手术（node_id 分块+块内唯一锚+count==1）；写后 38 规则校验；挂载必 verified+evidence（R6）；
+#   行数豁免（GOV-010 分层裁量 301-500 档）：本文件=五步管线单抽象族高内聚（映射/归因/配比/手术/报告
+#   共享同一组常量与手术原语，拆分=跨文件耦合+常量漂移风险），变更隔离面=管线五步同批演化
 # [MODIFY-GUARD] tests/backtest/test_auto_mount.py
 # [STABILITY] experimental
 # [SAFETY] L
@@ -43,6 +45,7 @@ import importlib.util
 import json
 import re
 import sys
+from datetime import datetime
 from pathlib import Path
 from typing import Any
 
@@ -331,13 +334,96 @@ def apply_ops(ops: list[dict[str, Any]], before: str) -> str:
     return text
 
 
+def mount_audit(scan_frequency: str | None = "monthly") -> dict[str, Any]:
+    """月度挂图审计（钩子②）：只读三件套——地图 38 规则回执+衰减巡检同口径分档结果+挂载一致性盘点。
+
+    挂接语义（对齐 decay_watch §调度挂载裁定）：审计函数无 IO 副作用，既可手动触发，
+    也可被 decay_watch 同节奏调用方复用；不新建调度器（禁 cron/Timer，宪法 §9.3）。
+    挂载一致性=格子 mounted 里的 STR-* 必须也在节点挂载区（防两边漂移）。
+    """
+    import yaml
+    text = MAP_YAML.read_text(encoding="utf-8")
+    data = yaml.safe_load(text)
+    fails = validate_map()
+    cells = data.get("state_matrix", {}).get("cells") or []
+    node_mounted = {n["node_id"]: {m["strategy_ref"] for m in (n.get("strategy_mounts") or [])}
+                    for n in data.get("nodes", [])}
+    drift: list[str] = []
+    for c in cells:
+        nid = c.get("node_id", "")
+        for sid in (c.get("mounted") or []):
+            if str(sid).startswith("STR-") and sid not in node_mounted.get(nid, set()):
+                drift.append(f"{nid}:{c.get('state')}:{sid} 格子挂载不在节点挂载区")
+    mounted = sorted(mounted_sids(text))
+    out: dict[str, Any] = {
+        "audit": "ok" if not fails and not drift else "fails",
+        "fails": fails,
+        "mounted_count": len(mounted),
+        "mounted": mounted,
+        "drift": drift,
+    }
+    if scan_frequency:
+        try:
+            from zephyr.trading.validation.decay_watch import run_decay_check
+            out["decay"] = run_decay_check(dry_run=True, scan_frequency=scan_frequency)
+        except Exception as exc:  # noqa: BLE001 衰减档巡检是增强项，失败不阻断审计
+            out["decay"] = {"error": str(exc)[:120]}
+    return out
+
+
+def write_report(payload: dict[str, Any], sid_label: str, out_dir: Path | None = None) -> Path:
+    """报告落盘（钩子③，格式 Owner 已定稿）：Markdown 一页，专属子目录 docs/_working/auto-mount-reports/
+    （平铺容量治理：不占 _working 根 120 硬上限；文件名带时间戳，标题内含对象清单）。
+    内容=挂了哪/为什么（判定依据）/证据指针（run+code+段表）三节。"""
+    stamp = datetime.now()
+    out_dir = out_dir or (REPORT_DIR / "auto-mount-reports")
+    out_dir.mkdir(parents=True, exist_ok=True)
+    path = out_dir / f"auto-mount-report-{stamp.strftime('%Y%m%d-%H%M')}.md"
+    ids = [x for x in sid_label.split(",") if x.strip()]
+    if len(ids) > 8:
+        shown = ", ".join(ids[:8]) + f" …等 {len(ids)} 条"
+    else:
+        shown = sid_label or "（重放）"
+    lines = [
+        f"# auto_mount 挂图报告——{shown}",
+        "",
+        f"> {stamp.strftime('%Y-%m-%d %H:%M')}｜管线=MOD-BT-171｜治理边界=only-add（本次 diff 无删改）",
+        "",
+        f"**对象清单**：{sid_label or '（重放：全部已挂 STR-* 幂等验证）'}",
+        "",
+        "## 挂了哪",
+        "",
+        "```yaml",
+        payload.get("diff") or "（零 diff——幂等重放，地图无变化）",
+        "```",
+        "",
+        "## 为什么",
+        "",
+    ]
+    for j in payload.get("judgements", []):
+        segs = "; ".join(f"{s}={sr:+.2f}({n}d)" for s, (n, sr) in sorted(j["segments"].items())) or "（选股类无状态格）"
+        lines.append(f"- **{j['sid']}**（{j.get('cls', '')}）→ `{j.get('node') or '选股链'}`："
+                     f"激活态={j['activated']}；分段证据 {segs}")
+    lines += ["", "## 证据指针", "",
+              f"- 判定窗口：IS {IS_WIN[0]}..{IS_WIN[1]}（C4 冻结口径）",
+              f"- 状态真源：c1_backtest.regime_snapshot_history（dominant 列）",
+              f"- 代码真源：注册表 code_path→翻译件 build()（见各条目）",
+              f"- 地图回执：38 规则校验 {'通过' if not payload.get('fails') else payload.get('fails')}；"
+              f"权重方案：{payload.get('weights', '{}')}", ""]
+    path.write_text("\n".join(lines), encoding="utf-8", newline="\n")
+    return path
+
+
 def main() -> None:
     ap = argparse.ArgumentParser(description="auto_mount 自动挂图器（only-add）")
     ap.add_argument("--plan", action="store_true", help="预演：只算不写")
     ap.add_argument("--apply", action="store_true", help="写入地图（需显式 --strategy；先 claim+safe_write）")
     ap.add_argument("--replay", action="store_true", help="幂等验收：已挂集合重放断言零 diff")
-    ap.add_argument("--audit", action="store_true", help="月度挂图审计（只读）")
+    ap.add_argument("--audit", action="store_true", help="月度挂图审计（只读，含 decay 同口径分档）")
     ap.add_argument("--strategy", default=None, help="逗号分隔 strategy_id 列表")
+    ap.add_argument("--report", action="store_true", help="报告落盘 docs/_working/（--plan/--apply/--replay 均可带）")
+    ap.add_argument("--scan-frequency", default="monthly", choices=["monthly", "quarterly", "semiannual"],
+                    help="审计档位（默认 monthly，对齐 decay_watch 分档）")
     args = ap.parse_args()
     only = {x.strip() for x in args.strategy.split(",") if x.strip()} if args.strategy else None
     entries = load_registry_entries()
@@ -347,22 +433,37 @@ def main() -> None:
         only = mounted_sids(text0)  # 重放范围=地图上已挂的 STR-*（幂等验收）
         assert only, "地图上无已挂 STR-* 可重放"
     ops, before, weights, skipped = _plan_inserts(entries, dom, only)
+    report_payload: dict[str, Any] = {"judgements": [], "diff": None, "fails": None, "weights": weights}
     if args.audit:
-        fails = validate_map()
-        print(json.dumps({"audit": "ok" if not fails else "fails", "fails": fails}, ensure_ascii=False, indent=1))
+        print(json.dumps(mount_audit(args.scan_frequency), ensure_ascii=False, indent=1))
         return
+    # 判定摘要（报告/重放共用）：逐条判定依据+段证据
+    for e in [x for x in entries if "/translated/c4_" in x["code_path"].replace("\\", "/")
+              and (only is None or x["sid"] in only)]:
+        j = _cached_judge(e, dom)
+        report_payload["judgements"].append({"sid": e["sid"], "cls": e["cls"],
+                                             "node": CLASS_NODE_MAP.get(e["cls"]),
+                                             "activated": j["activated"], "segments": j["segments"]})
     if args.replay:
         assert not ops, f"重放非幂等：仍有 {len(ops)} 个待插操作 {ops[:3]}"
-        print(f"REPLAY OK: 已挂 {len(only)} 条零 diff（幂等）")
+        report_payload["fails"] = validate_map()
+        print(f"REPLAY OK: 已挂 {len(only)} 条零 diff（幂等）；38 规则 fails={len(report_payload['fails'])}")
+        if args.report:
+            rp = write_report(report_payload, ",".join(sorted(only))[:60])
+            print(f"[REPORT] {rp}")
         return
     after = apply_ops(ops, before)
     only_add_assert(before, after)
     diff = "\n".join(difflib.unified_diff(before.splitlines(), after.splitlines(), "map.before", "map.after", lineterm="", n=1))
+    report_payload["diff"] = diff
     print(diff or "(零 diff)")
     if skipped:
         print("[SKIPPED] " + "; ".join(skipped))
     if not args.apply:
         print(f"\n[PLAN] ops={len(ops)} weights={weights}")
+        if args.report:
+            rp = write_report(report_payload, args.strategy or "plan")
+            print(f"[REPORT] {rp}")
         return
     assert only, "--apply 必须显式给 --strategy（挂谁=C6 线决策，工具只管怎么挂）"
     from zephyr.shared.io.file_utils import safe_write_text
@@ -372,7 +473,11 @@ def main() -> None:
         raise RuntimeError("safe_write_text 未确认写入")
     fails = validate_map()
     assert not fails, f"38 规则校验未过: {fails[:5]}"
+    report_payload["fails"] = fails
     print(f"\n[APPLIED] ops={len(ops)} 校验全绿 written={getattr(r, 'written', True)}")
+    if args.report:
+        rp = write_report(report_payload, args.strategy)
+        print(f"[REPORT] {rp}")
 
 
 if __name__ == "__main__":
