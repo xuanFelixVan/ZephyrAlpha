@@ -1,0 +1,165 @@
+{
+ "updated": "2026-09-14T22:00+08:00",
+ "ledger": {
+  "1049994100": {
+   "name": "alt_typhoon_track",
+   "status": "ok",
+   "info": "127930"
+  },
+  "589826359": {
+   "name": "alt_sz_weather_warning",
+   "status": "ok",
+   "info": "9350"
+  },
+  "1464350655": {
+   "name": "alt_sz_marine_forecast",
+   "status": "ok",
+   "info": "147751"
+  },
+  "1580458478": {
+   "name": "alt_sz_visibility",
+   "status": "ok",
+   "info": "24564167"
+  },
+  "29200_00903514": {
+   "name": "历史登陆气旋(资源00903514)",
+   "status": "ok",
+   "info": "845"
+  },
+  "29200_00903513": {
+   "name": "台风中英文名(资源00903513)",
+   "status": "ok",
+   "info": "1260"
+  },
+  "29200_03302370": {
+   "name": "stat_gdp(03302370)",
+   "status": "ok",
+   "info": "941"
+  },
+  "29200_03302383": {
+   "name": "stat_price(03302383)",
+   "status": "ok",
+   "info": "4210"
+  },
+  "29200_03302382": {
+   "name": "stat_fiscal(03302382)",
+   "status": "ok",
+   "info": "1089"
+  },
+  "29200_03302377": {
+   "name": "stat_transport(03302377)",
+   "status": "ok",
+   "info": "1188"
+  },
+  "29200_03302379": {
+   "name": "stat_trade(03302379)",
+   "status": "ok",
+   "info": "1906"
+  },
+  "29200_03302369": {
+   "name": "stat_quick(03302369)",
+   "status": "ok",
+   "info": "995"
+  },
+  "29200_03302375": {
+   "name": "stat_fixinv(03302375)",
+   "status": "ok",
+   "info": "912"
+  },
+  "29200_51400003": {
+   "name": "深圳海港口岸集装箱吞吐量",
+   "status": "ok",
+   "info": "91",
+   "src": "console_crawl_r2"
+  },
+  "29200_51400004": {
+   "name": "深圳口岸进出口货物量",
+   "status": "ok",
+   "info": "91",
+   "src": "console_crawl_r2"
+  },
+  "29200_51400006": {
+   "name": "port_air(51400006)",
+   "status": "ok",
+   "info": "91"
+  },
+  "29200_01903510": {
+   "name": "house_new(01903510)",
+   "status": "ok",
+   "info": "125368"
+  },
+  "29200_01903513": {
+   "name": "house_second(01903513)",
+   "status": "ok",
+   "info": "95859"
+  },
+  "29200_00003514": {
+   "name": "历史登陆我国气旋",
+   "status": "misread_discarded",
+   "info": "请检查地址是否正确",
+   "src": "console_crawl_r2"
+  },
+  "29200_00003515": {
+   "name": "历年台风的中英文对照表",
+   "status": "misread_discarded",
+   "info": "请检查地址是否正确",
+   "src": "console_crawl_r2"
+  },
+  "29200_01903517": {
+   "name": "二手房成交信息（按日统计）",
+   "status": "misread_discarded",
+   "info": "未经许可的证书，请先订阅接口",
+   "src": "console_crawl_r2"
+  },
+  "29200_03023707": {
+   "name": "统计月报-国民经济核算",
+   "status": "misread_discarded",
+   "info": "请检查地址是否正确",
+   "src": "console_crawl_r2"
+  },
+  "29200_03023757": {
+   "name": "统计月报-固定资产投资",
+   "status": "misread_discarded",
+   "info": "请检查地址是否正确",
+   "src": "console_crawl_r2"
+  },
+  "29200_03023771": {
+   "name": "统计月报-运输",
+   "status": "misread_discarded",
+   "info": "请检查地址是否正确",
+   "src": "console_crawl_r2"
+  },
+  "29200_03023797": {
+   "name": "统计月报-对外贸易",
+   "status": "misread_discarded",
+   "info": "请检查地址是否正确",
+   "src": "console_crawl_r2"
+  },
+  "29200_03023837": {
+   "name": "统计月报-物价",
+   "status": "misread_discarded",
+   "info": "请检查地址是否正确",
+   "src": "console_crawl_r2"
+  },
+  "29200_51400005": {
+   "name": "深圳机场口岸空运货物量",
+   "status": "misread_discarded",
+   "info": "未经许可的证书，请先订阅接口",
+   "src": "console_crawl_r2"
+  },
+  "29200_03023811": {
+   "name": "?",
+   "status": "misread_discarded",
+   "info": "请检查地址是否正确",
+   "src": "console_crawl_r2_pending"
+  },
+  "29200_03023836": {
+   "name": "?",
+   "status": "misread_discarded",
+   "info": "请检查地址是否正确",
+   "src": "console_crawl_r2_pending"
+  }
+ },
+ "ok_count": 18,
+ "note": "round2 爬取 ID 多为截图误读（直调10001已剔除）；ok=18 全部为已知通道；29 目标接口的真实数字服务 ID 仍待第三轮定点采集"
+}

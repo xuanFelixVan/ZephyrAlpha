@@ -90,6 +90,35 @@ python .runtime/tmp/szcatalog/../../scripts/data/sz_open_data/status_all.py 的�
   重 claim 24/24 → 0025 落地；他会话 st-chinfra 同窗口抢锁 4 次留痕
 - 下一步：任务 1 收集 28 接口工作服务地址 → 任务 3 批量接入（统计月报 12 系列走 _SZ_STAT_SERIES）
 
+## 五·六、服务地址侦察终局（2026-09-14 深夜，纯 HTTP+浏览器四轮+视觉 OCR 全路线实弹）
+
+**结论：剩余 29 接口无法由 AI 单方面激活，需要 Owner 在平台页面做两类各一次的操作。**
+
+三条路线实测全部到顶：
+1. getApiDocument 全元素枚举（0/29 命中）：文档只给一个 ctx；6 个资源有真 ctx 但 10001
+   （环境气象 675294854/气候资料 1287807159/地面观测 120238293/空气质量日报 1920606096/
+   市场主体 1485642496/水库水位 1952552493）；23 个资源无任何 ctx；
+2. 浏览器自动爬取四轮：登录态有效、键盘法（ArrowDown+Enter）能切下拉，但 agent 从截图
+   转录 URL 误读率高（直调全 10001 已剔除防污染）+ 第三轮同选项循环卡死 + 第四轮
+   AutoGLM 云端 Server error；截图视觉转录（glm-4.5v）4 帧成功但 ID 与 agent 记录互相
+   矛盾且直调 10001，判定控制台"请求地址"命名空间与 appKey 生产通道不同源，弃用；
+3. 资源同构 ctx（29200_xxx）全报 10002 地址不正确——非生产通道。
+
+**Owner 动作清单（按序，合计约 10 分钟）：**
+- A 组（6 个接口页补订阅，各一次点击）：打开 toApiDetails 链接逐个点"订阅"：
+  环境气象预报 https://opendata.sz.gov.cn/data/api/toApiDetails/29200_00900291
+  气候资料历史 https://opendata.sz.gov.cn/data/api/toApiDetails/29200_00900227
+  地面观测实况 https://opendata.sz.gov.cn/data/api/toApiDetails/29200_00900273
+  空气质量日报 https://opendata.sz.gov.cn/data/api/toApiDetails/29200_01000198
+  市场主体发展 https://opendata.sz.gov.cn/data/api/toApiDetails/29200_01300964
+  水库水位表   https://opendata.sz.gov.cn/data/api/toApiDetails/29200_01400986
+  （订阅生效后我方直调验证 ctx 即通，无需服务地址抄送）
+- B 组（23 个无 ctx 资源）：接口测试控制台逐个接口复制请求地址发我（或整页 HTML 存档）；
+  若控制台列表不足 29 项，差额=该资源未发布 API 服务，如实豁免留痕。
+
+资产落档：data/sz_open_data_catalog/service_endpoints.json（18 通道直调 OK 含 total 行数）、
+crawl_round1/2_20260914.md（浏览器爬取全步截图档案）。
+
 ## 六、完成定义（DoD）
 
 47 接口全部可调且入管线（或明确豁免留痕）；全部回补并 FINAL 核数；registry/.categories/tasks/applier/测试五处同步；git_commit.py 落库且 `git log -1 --name-only` 归属核实；零临时文件残留于项目根；向 Owner 报告（大白话+判定依据）。
