@@ -312,7 +312,12 @@ ttl: task_bound
 3. ~~**DSR 两版本口径**~~ → **已核销，升级为 A.5 核销记录第 1 条**（两套实现量纲不一致 + `metrics.py` 路径量纲 bug 实锤，优先级最高已兑现）；
 4. **FDR vs DSR 组合**：**说明**：DSR 只能判"最好的那条"，FDR 控制"这批及格的有几个是假的" —— 仓库只有 DSR，缺 FDR 预算案；
 5. **执行算法工厂 F-07**：TWAP/VWAP/IS 的参数与选择空间 —— 六向未做；
-6. **F-09 回灌件复用调研**：`feedback_loop/evolution/auto_reward.py`、`prompt_self_optimization_loop.py`、`verifiers/sim2real_calibration.py` 可否直接复用，避免重造。
+6. ~~**F-09 回灌件复用调研**~~ → **已核销（2026-09-15 夜班 5.8，st-f06combo）**：实读 `feedback_loop/evolution/` 20 件——`auto_reward.compute(pre,post)` 为 prompt/LLM 域标量前后差 reward、零外部消费方（设计件非运行件）；`prompt_self_optimization_loop` 同域专用。F-09 回灌（E4 考试通过率/增量 IC → 生成器参数与 prior）在**信号结构与反馈时序**上均不同——**复用价值低，F-09 需自建回灌总线**，仅接口形态（事件订阅+delta 计算）可参照。缓建裁定（排 L2 末，等影子盘真实反馈数据）维持并加强。
+
+### A.6 验证核销（2026-09-15 夜班 5.10，st-f06combo）
+
+- **Burger 2020 移动机器人化学家**：**多源确认**——Nature 583:237-241 原文（PubMed 32641813）+C&EN/Chemistry World/Phys.org 独立报道交叉一致：8 天 688 实验、10 变量空间、批式贝叶斯搜索、产氢催化活性 6 倍提升。从"单一二手来源待验证"核销升级。
+- **"275 组合→有效 10"实证锚**：**一手来源确认**——Bailey & López de Prado 2014 官方 PDF（davidhbailey.com）Exhibit 4 即"平均相关性→隐含独立试验数"表，ρ≈0.65 下大试验数塌缩至个位数与该锚量级一致；原论文可公开核查。stkt.co 转述锚降权保留，结论由一手背书。
 
 ### A.4 失败模式自查（对照 SOP §7）
 
@@ -339,3 +344,12 @@ ttl: task_bound
 **2. fanova license——已核实，不引入**（详见 C2 卡修订：非商业许可 + SWIG/pyrfr 依赖负担 + 替代方案=经典 ANOVA 自研，方法引论文不引代码）。
 
 **3. 文档勘误**：DSR 评估文档的引用路径 `scripts/backtest/c4_deflated_sharpe_runner.py` 实为 `src/zephyr/backtest/regime_validation/c4_deflated_sharpe_runner.py`（:117 是 num_trials 字段注释，非计算点）；4.90/2.69σ 数字错误已在本附录 §A.1 与立项稿 §11.1 更正，并已在该文档头部补勘误块。
+
+### A.7 挖矿第二批日志（2026-09-15 夜班 5.9，st-f06combo）
+
+| 轮 | 矿脉 | 内部反查 | 全网 | 判定 | 关键产出 |
+|---|---|---|---|---|---|
+| R1 | **FDR vs DSR 组合预算案** | 仓库只有 DSR（长尾 #4 原记录） | BH 1995 原文（JRSSB）+Harvey & Liu "Backtesting"（JPM，multiple-testing haircut）+SSRN 6450418 新文：FDR 无法从 in-sample 统计单独识别 | **signal** | 三层互补定型：BH-FDR 控族内假发现比例、Harvey-Liu haircut 折减 sharpe、DSR 概率化最优者；关键警示=搜索-选择场景 FDR 识别失败→必须配合全批记账（印证 N 账本路线）；BH 对相关统计量失效（Wharton 警告）→A 股高相关场景用 Harvey-Liu 依赖校正变体 |
+| R2 | **路径依赖 harness（K 维建仓节奏）** | algo_flow/event_driven_engine 件在库 | IBKR/QuantStart/QuantStrategy/r.algotrading 多源一致：pyramiding/分批建仓=本质序列状态依赖，向量化引擎表达不了 | **signal** | K 维展开时 MUST 用事件驱动引擎（库内已有件），vectorized 执行器只跑无路径依赖维——印证 §九-2 K 维 harness 划 E8 边界的裁定 |
+
+本批 2/2 signal 均过防噪音四闸，无封批触发。长尾 #4/#1 从"待挖"转"方法定型待施工"，排 F-09/N 账本后下一批。
