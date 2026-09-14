@@ -29,7 +29,7 @@ ttl: task_bound
 | ② | 分状态判定与人工一致率 ≥5/6 | ✅ 5/6 校准（VREV-025/026/MOMTREND/TSMALL/VAL 命中；DABAN-023 expansion 漏挂=宁漏勿误方向，其人工依据为 OOS+做T 实操非 IS 分段——已知边界，月度审计兜底） |
 | ③ | only-add 断言红蓝测试 | ✅ 语义级门+6 红队姿势全拒（真实地图多行折行格子事故已由门禁拦截并修复） |
 | ④ | 38 规则校验全绿 | ✅ 端到端沙箱演练 fails=0（warns=117 与生产基线一致）；生产地图 audit ok |
-| ⑤ | Owner 视觉复核 | ⏳ 待 Owner 看本报告+报告样例 |
+| ⑤ | Owner 视觉复核 | ✅ Owner 2026-09-15 02:03 批复"通过"（对话内留痕）；MOD-BT-171 随本批转 production |
 
 ## 端到端沙箱演练（tmp 隔离）
 
@@ -45,3 +45,9 @@ ttl: task_bound
 ## 提交
 
 队列提交：session=st-automount-20260914；files=scripts/backtest/auto_mount.py, tests/backtest/test_auto_mount.py, docs/01_policies_and_standards/_registry/catalogs/module_translation_registry.yaml, 本文档；commit 后 `git log -1 --name-only` 核实归属。
+
+## 验收⑤收官补录（2026-09-15 02:03）
+
+- Owner 对话内批复"通过"→验收五条全绿闭环。
+- 首批 commit=`43f84d01d5`（4 文件，git log -1 --name-only 归属核实干净）；本补录+转正随第二批队列提交。
+- MOD-BT-171 depgraph design_maturity→production 转正（`--transition-design-maturity`）+ align_all 七图对齐后随批落地。
