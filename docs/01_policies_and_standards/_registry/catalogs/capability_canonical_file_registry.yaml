@@ -5003,6 +5003,18 @@ capabilities:
     提交→全景对齐→清理 全流程步骤与失败处置；适用 07 域（regime/选股/仓位/风控/买卖/执行/对账/治理）施工，RULE-CAPABILITY-LOOKUP
     检索"施工"应命中本条
 creation_tokens:
+- file: "docs/_working/2026-09-15-pattern-certification-plan.md"
+  token: "patmine-cert-plan-20260915"
+  created_by: "st-patmine-20260914"
+  capability: "pattern_certification_plan"
+- file: "scripts/data/backfill_sector880_history.py"
+  token: "sector880-backfill-promote-20260914"
+  created_by: "st-chinfra-20260914"
+  capability: "ch_connection_unify"
+- file: "scripts/data/backfill_lof_minute_history.py"
+  token: "lof-backfill-promote-20260914"
+  created_by: "st-chinfra-20260914"
+  capability: "ch_connection_unify"
 - file: "src/zephyr/signal_ashare/strategy_signal/pattern_signal_runtime.py"
   token: "patmine-wc1-runtime-20260914"
   created_by: "st-patmine-20260914"
@@ -12720,6 +12732,10 @@ creation_tokens:
   token: c4-pdf-history-repair-c4-extract-batch-20260914
   created_by: st-expectation-20260914
   capability: c4_pdf_history_repair
+- file: docs/_working/2026-09-15-c4-acceptance-interim.md
+  token: c4-pdf-history-repair-2026-09-15-c4-acceptance-interim-20260914
+  created_by: st-expectation-20260914
+  capability: c4_pdf_history_repair
 - file: docs/_working/xt_lab3/bulk/g1.md
   token: xt-lab3-restore-g1-20260914
   created_by: st-docrestore-20260914
@@ -12756,4 +12772,20 @@ creation_tokens:
   token: schemas-categories-macro---init---20260914
   created_by: st-datagov-fin-20260914
   capability: schemas_categories_macro
+- file: docs/_working/p21_contract_header_slimming_proposal.md
+  token: btfix-p1p2-p21-contract-header-slimming-proposal-20260914
+  created_by: st-btfix-p14-20260914
+  capability: btfix_p1p2
+- file: docs/_working/btfix_p1p2_report.md
+  token: btfix-p1p2-btfix-p1p2-report-20260914
+  created_by: st-btfix-p14-20260914
+  capability: btfix_p1p2
+- file: "docs/_working/2026-09-14-full-chain-factory-blueprint.md"
+  token: "fullchain-factory-blueprint-20260914"
+  created_by: "st-fullchain-20260914"
+  capability: "backtest_system_sop"
+- file: "docs/_working/2026-09-14-combination-layer-exhaustive-charter.md"
+  token: "combo-layer-charter-20260914"
+  created_by: "st-fullchain-20260914"
+  capability: "backtest_system_sop"
 di_seam_exemptions: []

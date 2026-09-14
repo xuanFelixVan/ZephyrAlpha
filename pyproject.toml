@@ -151,6 +151,12 @@ addopts = [
     # 确保所有测试有机会执行。100% AI 场景下不能容忍测试静默丢失。
     "--max-worker-restart=5",
 ]
+# P1-4 复验留痕（2026-09-14 外审遗留批）：tests/backtest -n4 连续两轮全绿
+#（1171 passed / exit 0；第 1 轮走 pytest_min.ini 精简配置，第 2 轮走本文件默认配置），
+# 审查报告观测的并行 2 失败未再复现，与 #ARCH-XDIST-WORKER-CRASH-001 四层治本
+#（PID-unique basetemp / 退出自清理 basetemp / 空目录回收 / --max-worker-restart=5）
+# 已在库的结论一致。附：用 `-p no:cacheprovider` 跑本文件配置的项目会因 cache_dir
+# 未知配置项报 INTERNALERROR——禁 cacheprovider 时必须同步 -c 精简 ini 或去掉本项。
 # 注意（#ARCH-108）：--max-worker-restart 由 xdist 插件注册——用 `-p no:xdist` 禁插件跑串行
 # 会报 "unrecognized arguments"(exit 4)。串行跑法用 `-n 0`（xdist 保持加载、0 worker=进程内串行）。
 # 全量套件（~2500 文件）串行耗时长且在共享机上易被环境性 kill，建议 xdist 并行（-n 4）

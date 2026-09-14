@@ -163,6 +163,9 @@ _STATE_DIR = ".runtime/drift_watchdog"
 _AUDIT_DIR = ".runtime/audit"
 _QUARANTINE_DIR = ".runtime/quarantine"
 _QUARANTINE_RETENTION_DAYS = 30  # 快照保留天数（#ARCH-264 O4：watchdog 自管 retention）
+# P2-2（2026-09-14 外审遗留批）：空壳 drift_* 目录宽限期（秒）——目录刚建可能在写入，
+# 未过宽限不删（防误删在飞快照）。
+_QUARANTINE_EMPTY_GRACE_SECONDS = 60
 _DESIGN_MEMO_PREFIX = "docs/02_enterprise_architecture/07_trading_decision_architecture/design_memos/"
 _KNOWN_QUARANTINE_CAP = 500  # known_quarantine 登记上限（防状态文件膨胀）
 _DELETION_MASS_THRESHOLD = 10  # 单轮扫描未暂存消失 ≥N 件=批量删除事故，追加汇总升级
@@ -474,14 +477,21 @@ def _audit(root: Path, record: dict) -> None:
 
 
 def _snapshot(root: Path, rel: str, work_hash: str) -> str:
-    """快照存证：漂移内容复制到 .runtime/quarantine/drift_<ts>/<rel>（先存证后告警）。"""
+    """快照存证：漂移内容复制到 .runtime/quarantine/drift_<ts>/<rel>（先存证后告警）。
+
+    P2-2（2026-09-14 外审遗留批）：先验证源文件存在再建目录——旧序 mkdir 先行，
+    源文件在存证竞态窗内被会话正常落地（scan 判 dirty → 拷贝前消失）时留下纯
+    目录空壳（实测 11843 目录中 10571 空壳）。源已消失 → 无内容可存证，不建
+    目录返回空串（告警侧 snap 为空已是既有分支，不影响告警主流程）。
+    """
     ts = datetime.now(timezone.utc).strftime("%Y%m%dT%H%M%S")
     dest = root / _QUARANTINE_DIR / f"drift_{ts}" / rel
     try:
-        dest.parent.mkdir(parents=True, exist_ok=True)
         src = root / rel
-        if src.is_file():
-            dest.write_bytes(src.read_bytes())
+        if not src.is_file():
+            return ""
+        dest.parent.mkdir(parents=True, exist_ok=True)
+        dest.write_bytes(src.read_bytes())
         return str(dest.relative_to(root))
     except OSError as e:
         logger.warning("drift snapshot failed: %s (%s)", e, rel)
@@ -521,16 +531,37 @@ def _write_audit_suspects(root: Path, rel: str) -> str:
         return ""
 
 
+def _dir_has_files(d: Path) -> bool:
+    """目录树下是否存在任何文件（OSError 按非空处理——保守不删）。"""
+    try:
+        for p in d.rglob("*"):
+            if p.is_file():
+                return True
+    except OSError:
+        return True
+    return False
+
+
 def _sweep_quarantine(root: Path, retention_days: int = _QUARANTINE_RETENTION_DAYS) -> dict:
     """quarantine retention 自管（#ARCH-264 O4）：超期 drift_* 目录清理+逐条审计。
 
     只清理本家产物（drift_<ts> 命名规范目录）；非标准命名（人工存证等）不碰。
+    P2-2（2026-09-14 外审遗留批）扩展两类清理：
+      ① 超期目录（既有行为）：时间戳超 retention_days；
+      ② 空壳目录：drift_* 下无任何文件（snapshot 竞态残迹——源文件在内容复制
+         前消失），过 _QUARANTINE_EMPTY_GRACE_SECONDS 宽限即清理；宽限防误删在飞快照。
+    返回 removed_names（相对项目根的目录路径，posix 斜杠），供 _maybe_sweep_quarantine
+    对账 known_quarantine，防自清扫被下一轮 tamper 检查误判带外删除。
     """
-    result = {"removed": 0, "kept": 0}
+    result: dict = {"removed": 0, "kept": 0, "removed_names": []}
     qdir = root / _QUARANTINE_DIR
     if not qdir.is_dir():
         return result
-    cutoff = datetime.now(timezone.utc) - timedelta(days=retention_days)
+    now = datetime.now(timezone.utc)
+    cutoff = now - timedelta(days=retention_days)
+    empty_cutoff = now.timestamp() - _QUARANTINE_EMPTY_GRACE_SECONDS
+    from zephyr.shared.io.file_utils import safe_rmtree  # noqa: PLC0415
+
     for d in sorted(qdir.iterdir()):
         if not d.is_dir() or not d.name.startswith("drift_"):
             continue
@@ -539,29 +570,39 @@ def _sweep_quarantine(root: Path, retention_days: int = _QUARANTINE_RETENTION_DA
         except ValueError:
             result["kept"] += 1  # 命名不符不碰（人工存证目录豁免）
             continue
-        if ts < cutoff:
-            # 授权通道唯一化（O4②）：quarantine 已入 ops_guard 保护区，本家清扫
-            # 走 safe_rmtree 硬断言授权通道（reparse 检测+前缀白名单+留痕），
-            # 断言拒绝=不删（安全语义），下轮再试。
-            from zephyr.shared.io.file_utils import safe_rmtree  # noqa: PLC0415
-
-            try:
-                safe_rmtree(d, allowed_prefix=root / _QUARANTINE_DIR, ignore_errors=True)
-            except Exception:  # noqa: BLE001 — 授权通道异常不拖垮清扫循环
-                result["kept"] += 1
-                continue
-            _audit(
-                root,
-                {
-                    "ts": _now_iso(),
-                    "verdict": "quarantine_retention_sweep",
-                    "file": d.name,
-                    "retention_days": retention_days,
-                },
-            )
-            result["removed"] += 1
+        try:
+            is_empty = not _dir_has_files(d)
+            mtime = d.stat().st_mtime
+        except OSError:
+            result["kept"] += 1  # 不可判定按保守不删
+            continue
+        if is_empty and mtime < empty_cutoff:
+            kind = "empty_shell"
+        elif ts < cutoff:
+            kind = "expired"
         else:
             result["kept"] += 1
+            continue
+        # 授权通道唯一化（O4②）：quarantine 已入 ops_guard 保护区，本家清扫
+        # 走 safe_rmtree 硬断言授权通道（reparse 检测+前缀白名单+留痕），
+        # 断言拒绝=不删（安全语义），下轮再试。
+        try:
+            safe_rmtree(d, allowed_prefix=qdir, ignore_errors=True)
+        except Exception:  # noqa: BLE001 — 授权通道异常不拖垮清扫循环
+            result["kept"] += 1
+            continue
+        _audit(
+            root,
+            {
+                "ts": _now_iso(),
+                "verdict": "quarantine_retention_sweep",
+                "kind": kind,
+                "file": d.name,
+                "retention_days": retention_days,
+            },
+        )
+        result["removed"] += 1
+        result["removed_names"].append(d.relative_to(root).as_posix())
     return result
 
 
@@ -573,6 +614,14 @@ def _maybe_sweep_quarantine(root: Path) -> None:
         return
     swept = _sweep_quarantine(root)
     state["quarantine_last_sweep"] = today
+    # P2-2（2026-09-14）：对账 known_quarantine——自清扫移除的目录对应登记条目
+    # 同步摘除，防下一轮 tamper 检查把自家清扫误判为带外删除（quarantine_tamper）。
+    removed = swept.get("removed_names") or []
+    if removed and isinstance(state.get("known_quarantine"), list):
+        prefixes = tuple(p.replace("\\", "/") + "/" for p in removed)
+        state["known_quarantine"] = [
+            e for e in state["known_quarantine"] if not str(e).replace("\\", "/").startswith(prefixes)
+        ]
     _save_state(root, state)
     if swept["removed"]:
         _lifecycle_log(root, "quarantine_swept", swept)

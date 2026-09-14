@@ -347,6 +347,76 @@ def test_quarantine_tamper_detected(git_repo: Path) -> None:
     assert any(r.get("verdict") == "quarantine_tamper" for r in audit)
 
 
+# ── P2-2（2026-09-14 外审遗留批）：快照空壳竞态治本 + 空壳/对账清扫 ──────────
+
+
+def test_snapshot_source_vanished_no_dir(git_repo: Path) -> None:
+    """_snapshot 源文件消失（存证竞态）→ 不建目录、返回空串，不留空壳。"""
+    snap = wd._snapshot(git_repo, "ghost/neutered_file.txt", "abc123")
+    assert snap == ""
+    qdir = git_repo / ".runtime" / "quarantine"
+    if qdir.is_dir():
+        assert not list(qdir.glob("drift_*")), "源不存在时不得创建快照目录"
+
+
+def test_sweep_removes_empty_shells_after_grace(git_repo: Path) -> None:
+    """空壳 drift_* 目录过宽限期被清理，含内容目录不受影响；审计带 kind=empty_shell。"""
+    import os
+    import time
+
+    q = git_repo / ".runtime" / "quarantine"
+    shell = q / "drift_20200101T000000"
+    shell.mkdir(parents=True)
+    (shell / "sub").mkdir()
+    old_ts = time.time() - 3600
+    os.utime(shell, (old_ts, old_ts))  # 超过 60s 宽限期
+    rich = q / "drift_29990101T000001"
+    rich.mkdir(parents=True)
+    (rich / "a.txt").write_text("data\n", encoding="utf-8")
+    os.utime(rich, (old_ts, old_ts))  # mtime 超宽限期，但目录非空且未超期 → 不删
+
+    swept = wd._sweep_quarantine(git_repo, retention_days=30)
+    assert swept["removed"] == 1 and swept["kept"] == 1, swept
+    assert not shell.exists() and rich.exists()
+    audit = _read_audit(git_repo)
+    shell_sweeps = [r for r in audit if r.get("verdict") == "quarantine_retention_sweep" and r.get("kind") == "empty_shell"]
+    assert shell_sweeps and shell_sweeps[0]["file"] == shell.name
+
+
+def test_sweep_keeps_fresh_empty_shell_inflight(git_repo: Path) -> None:
+    """刚建的空壳目录在宽限期内不删（防误删在飞快照）。"""
+    q = git_repo / ".runtime" / "quarantine"
+    fresh = q / "drift_29990101T000000"
+    fresh.mkdir(parents=True)
+
+    swept = wd._sweep_quarantine(git_repo, retention_days=30)
+    assert swept["removed"] == 0 and swept["kept"] == 1, swept
+    assert fresh.exists()
+
+
+def test_maybe_sweep_reconciles_known_quarantine(git_repo: Path) -> None:
+    """自清扫移除的目录同步摘除 known_quarantine 登记，防下轮 tamper 误报。"""
+    import os
+    import time
+
+    # 伪造 daemon 状态：登记一个即将被空壳清扫命中目录下的快照文件路径
+    # （known_quarantine 登记的是 _snapshot 返回的文件路径，非裸目录）
+    target_rel = ".runtime/quarantine/drift_20200101T000000/hot.txt"
+    state_path = git_repo / ".runtime" / "drift_watchdog" / "state.json"
+    state_path.parent.mkdir(parents=True, exist_ok=True)
+    state_path.write_text(json.dumps({"files": {}, "alerted": {}, "known_quarantine": [target_rel]}), encoding="utf-8")
+
+    shell = git_repo / target_rel
+    shell.mkdir(parents=True)
+    old_ts = time.time() - 3600
+    os.utime(shell, (old_ts, old_ts))
+
+    wd._maybe_sweep_quarantine(git_repo)
+    assert not shell.exists()
+    st = json.loads(state_path.read_text(encoding="utf-8"))
+    assert target_rel not in st.get("known_quarantine", []), st
+
+
 # ── #ARCH-304 裁定落地（2026-08-31）：单活跃会话 auto-claim 替代告警处置 ──────
 
 

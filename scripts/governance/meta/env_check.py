@@ -19,11 +19,12 @@
 对标：12-Factor App §Dependencies（显式声明 + 隔离验证）
 
 功能：
-1. 检查 Python 版本（>= 3.10）
-2. 解析 requirements.txt，检查每个依赖是否可 import
-3. 列出缺失项（清晰、可操作）
-4. --install：自动 pip install 缺失依赖
-5. --json：结构化输出供 CI 消费
+1. 检查 Python 版本（>= 3.12，SSoT=pyproject.toml requires-python，对齐 AGENTS.md RULE-ENV）
+2. PATH 影子运行时检测：首位 python 非项目 Python（Python312）时告警——advisory 不阻断 CI，JSON 带 path 字段供消费
+3. 解析 requirements.txt，检查每个依赖是否可 import
+4. 列出缺失项（清晰、可操作）
+5. --install：自动 pip install 缺失依赖
+6. --json：结构化输出供 CI 消费
 
 集成：
 - 被 smoke_test.py 调用（冒烟测试前自动跑）
@@ -64,7 +65,11 @@ ensure_utf8_stdout()
 import argparse
 
 REQUIREMENTS_FILE = REPO_ROOT / "requirements.txt"
-MIN_PYTHON = (3, 10)
+# P2-3（2026-09-14 外审遗留批）：SSoT=pyproject.toml requires-python>=3.12；旧值 3.10 会放行
+# 3.11 环境（系统 PATH 实存 3.11/3.12 并存，AGENTS.md RULE-ENV 明示 3.10 注入会崩 datetime.UTC）。
+MIN_PYTHON = (3, 12)
+# 项目 Python 安装前缀（AGENTS.md RULE-ENV 惯例路径）。PATH 首位非此前缀 → 告警（advisory）。
+_PROJECT_PYTHON_PREFIX = "programs\\python\\python312"
 _PACKAGE_IMPORT_MAP: dict[str, str] = {
     "pydantic": "pydantic",
     "pyyaml": "yaml",
@@ -86,6 +91,9 @@ class DependencyStatus:
 class EnvReport:
     python_ok: bool = False
     python_version: str = ""
+    python_path_ok: bool = True
+    python_path_first: str = ""
+    python_path_warning: str = ""
     dependencies: list[DependencyStatus] = field(default_factory=list)
     all_ok: bool = False
 
@@ -126,6 +134,33 @@ def _check_python() -> tuple[bool, str]:
     return (current >= MIN_PYTHON, version_str)
 
 
+def _check_python_path() -> tuple[bool, str, str]:
+    """P2-3（2026-09-14）：PATH 影子运行时检测（advisory，不阻断）。
+
+    规则：shutil.which("python") 首位非项目 Python（Python312 用户安装）→ 不合格；
+    未检出 python → 放行（非 Windows 布局或极端环境，advisory 层不误报）。
+    3.11/3.10 残留 PATH 的风险同样落在“首位是否项目 Python”上：首位正确时，
+    3.11 在后不会被实际解析到（won't shadow）。
+
+    Returns:
+        (path_ok, first_python_abs_path, warning_text)
+    """
+    import shutil as _shutil
+
+    first = _shutil.which("python") or ""
+    if not first:
+        return (True, "", "")
+    norm = first.replace("/", "\\").lower()
+    if _PROJECT_PYTHON_PREFIX in norm:
+        return (True, first, "")
+    warning = (
+        f"PATH 首位 python 非项目 Python：{first}\n"
+        f"  项目约定（AGENTS.md RULE-ENV）：会话内先执行\n"
+        f"  $env:PATH = \"$env:LOCALAPPDATA\\Programs\\Python\\Python312;$env:LOCALAPPDATA\\Programs\\Python\\Python312\\Scripts;\" + $env:PATH"
+    )
+    return (False, first, warning)
+
+
 def _check_package(pip_name: str, import_name: str) -> tuple[bool, str | None]:
     """_check_package implementation."""
     try:
@@ -142,6 +177,10 @@ def run_check() -> EnvReport:
     py_ok, py_ver = _check_python()
     report.python_ok = py_ok
     report.python_version = py_ver
+    path_ok, path_first, path_warn = _check_python_path()
+    report.python_path_ok = path_ok
+    report.python_path_first = path_first
+    report.python_path_warning = path_warn
     entries = _parse_requirements()
     for pip_name, version_spec in entries:
         import_name = _PACKAGE_IMPORT_MAP.get(pip_name, pip_name)
@@ -177,7 +216,10 @@ def _install_missing(missing: list[DependencyStatus]) -> bool:
 
 def _print_report(report: EnvReport) -> None:
     """_print_report implementation."""
-    print(f"\nPython:  {report.python_version} {('✅' if report.python_ok else '❌（需要 >=3.10）')}", file=sys.stderr)
+    py_label = "✅" if report.python_ok else f"❌（需要 >={MIN_PYTHON[0]}.{MIN_PYTHON[1]}，SSoT=pyproject requires-python）"
+    print(f"\nPython:  {report.python_version} {py_label}", file=sys.stderr)
+    if report.python_path_warning:
+        print(f"⚠️  PATH 影子运行时告警：{report.python_path_warning}", file=sys.stderr)
     print(f"依赖包:  {len(report.ok)}/{len(report.dependencies)} 就绪\n", file=sys.stderr)
     if report.missing:
         print("缺失依赖:", file=sys.stderr)
@@ -199,6 +241,8 @@ def _print_json(report: EnvReport) -> None:
             "ok": report.python_ok,
             "version": report.python_version,
             "required": f">={MIN_PYTHON[0]}.{MIN_PYTHON[1]}",
+            "path_ok": report.python_path_ok,
+            "path_first": report.python_path_first,
         },
         "dependencies": {
             "total": len(report.dependencies),

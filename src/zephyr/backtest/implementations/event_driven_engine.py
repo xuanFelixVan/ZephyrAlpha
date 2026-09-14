@@ -42,6 +42,10 @@ v1.1.0 与 DefaultBacktestEngine 的区别:
 
 约束:
   - PIT 铁律：仅使用当前 Tick 数据，不预读未来
+  - 同 tick 成交（设计语义，非前视）：策略信号在当前 tick 的 5 档盘口上即时撮合
+    （决策延迟≈0），是对真实盘口即时性的刻意建模；signal(T)→fill(T+1) 的日频
+    滞后断言仅适用于日频向量化引擎（vectorized_engine 已强制 T+1），审计时勿将
+    本引擎的同 tick 成交误报为前视偏差
   - T+1 锁定：portfolio.apply_fill(allow_t_plus_1=False)
   - 回测=实盘一致性：MatchingLogic 被 matching_engine 和 miniqmt_broker 共用
 
