@@ -97,3 +97,23 @@ class TestLaneSpecs:
 
 if __name__ == "__main__":  # pragma: no cover
     pytest.main([__file__, "-v"])
+
+
+class TestRaceScoreboard:
+    def test_per_lane_funnel(self):
+        rows = [
+            {"birth_channel": "D", "verdict": "precheck_passed"},
+            {"birth_channel": "D", "verdict": "precheck_rejected"},
+            {"birth_channel": "C2", "verdict": "precheck_passed"},
+            {"birth_channel": "X", "verdict": "precheck_deferred"},  # 未登记车道忽略
+        ]
+        board = fip.race_scoreboard(rows, {"D": 20, "C2": 5})
+        assert board["D"]["prechecked"] == 2 and board["D"]["passed"] == 1
+        assert board["D"]["ledger_candidates"] == 20
+        assert board["D"]["pass_rate"] == 0.5
+        assert board["C2"]["pass_rate"] == 1.0
+        assert "X" not in board
+
+    def test_empty_lane_pass_rate_none(self):
+        board = fip.race_scoreboard([], {"C": 0})
+        assert board["C"]["prechecked"] == 0 and board["C"]["pass_rate"] is None

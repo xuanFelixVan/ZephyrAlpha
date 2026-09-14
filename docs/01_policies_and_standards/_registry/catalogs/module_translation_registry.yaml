@@ -49434,6 +49434,13 @@ entries:
   desc_zh: ""
   desc_en: ""
   plain_zh: "策略转正后自动挂上决策地图：按类别定挂哪、按分状态回测定什么时候用、按等权起步档给配比，写入地图前有删改就拒，最后给一份挂了哪为什么证据是什么的报告"
+- module_path: scripts/backtest/lane_c2_agentic_miner.py
+  domain_id: D_BACKTEST
+  name_zh: "智能体挖矿二轨"
+  name_en: ""
+  desc_zh: "E2过审假说做种子，本地LLM产DSL表达式，DSL校验+AST原创+增量IC三道验收后卸台账"
+  desc_en: ""
+  plain_zh: "策略工厂的二号矿机（智能体轨）：拿守门员放过的好假说当种子，让本地大模型按'积木清单'写因子公式；每条公式过三道安检（结构合法、不跟已有公式撞车、对现有118个指标有真增量）才入账。大模型写的机制说不清就一票否决。零 API 成本。"
 
 battle_map_steps:
 - step_id: BM-BUY-05

@@ -115,6 +115,59 @@ def run_pipeline(top_sectors: int = 20, with_lane_b: bool = False,
     return report
 
 
+def race_scoreboard(ledger_rows: list[dict], ledger_counts: dict[str, int]) -> dict:
+    """P2 赛马计分板（纯函数）：按出生车道聚合预审漏斗。
+
+    两轨同卷同及格线（宪法铁律：运动员不兼任裁判）——本计分板只汇总 E2 层漏斗；
+    E4 层赛马待首批候选进入考试后自动可比（同一判定权）。
+    """
+    out: dict = {}
+    for lane, total in ledger_counts.items():
+        rows = [r for r in ledger_rows if r.get("birth_channel") == lane]
+        passed = sum(1 for r in rows if r.get("verdict") == "precheck_passed")
+        rejected = sum(1 for r in rows if r.get("verdict") == "precheck_rejected")
+        deferred = sum(1 for r in rows if r.get("verdict") == "precheck_deferred")
+        out[lane] = {
+            "ledger_candidates": total, "prechecked": len(rows),
+            "passed": passed, "rejected": rejected, "deferred": deferred,
+            "pass_rate": round(passed / len(rows), 4) if rows else None,
+        }
+    return out
+
+
+def cmd_race() -> int:
+    """赛马计分板 CLI：各车道台账存量 + E2 预审漏斗按 birth_channel 聚合。"""
+    import pandas as pd
+
+    from scripts.backtest import hypothesis_precheck
+
+    intakes = {
+        "D": _ROOT / "data" / "strategy_intake" / "three_high_candidates.csv",
+        "B": _ROOT / "data" / "strategy_intake" / "lane_b_candidates.csv",
+        "C": _ROOT / "data" / "strategy_intake" / "lane_c_candidates.csv",
+        "C2": _ROOT / "data" / "strategy_intake" / "lane_c2_candidates.csv",
+    }
+    counts = {lane: (len(pd.read_csv(p, encoding="utf-8-sig")) if p.exists() else 0)
+              for lane, p in intakes.items()}
+    try:
+        from zephyr.data.ch_config import ensure_ch_env_loaded, load_ch_reader_config
+        from clickhouse_driver import Client
+
+        ensure_ch_env_loaded()
+        cfg = load_ch_reader_config()
+        cli = Client(host=cfg["host"], port=int(cfg.get("port", 9000)),
+                     user=cfg.get("user", "default"), password=cfg.get("password", ""),
+                     connect_timeout=5)
+        rows = [{"birth_channel": r[0], "verdict": r[1]} for r in cli.execute(
+            f"SELECT birth_channel, verdict FROM {hypothesis_precheck._table()}")]
+    except Exception as exc:  # noqa: BLE001 — 台账不可达时降级为纯台账计数
+        rows = []
+        print(f"WARN: E2 台账不可达（{exc}），仅台账计数", file=sys.stderr)
+    print(json.dumps({"race": race_scoreboard(rows, counts)}, ensure_ascii=False,
+                     indent=1))
+    return 0
+
+
 def main() -> int:
     ap = argparse.ArgumentParser(description="FAC-E1 进货编排（车道→卸货→E2 预审一条命令）")
     sub = ap.add_subparsers(dest="cmd", required=True)
@@ -124,7 +177,10 @@ def main() -> int:
     r.add_argument("--n-per-theme", type=int, default=2, help="E1B 每主题生成条数")
     r.add_argument("--limit-precheck", type=int, default=10, help="E2 本批最多预审条数")
     r.add_argument("--dry-run", action="store_true", help="全链只看不写")
+    sub.add_parser("race", help="P2 赛马计分板（各车道×E2 预审漏斗）")
     args = ap.parse_args()
+    if args.cmd == "race":
+        return cmd_race()
     try:
         report = run_pipeline(args.top_sectors, args.with_lane_b, args.n_per_theme,
                               args.limit_precheck, args.dry_run)

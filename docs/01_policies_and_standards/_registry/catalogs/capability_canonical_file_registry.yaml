@@ -12660,6 +12660,10 @@ creation_tokens:
   token: factory-backend-register-ollama-serve-task-20260914
   created_by: st-facbe-20260914
   capability: factory_backend
+- file: scripts/backtest/lane_c2_agentic_miner.py
+  token: factory-backend-lane-c2-agentic-miner-20260914
+  created_by: st-facbe-20260914
+  capability: factory_backend
 - file: scripts/backtest/translated/c4_21af8c66c15e_small_cap.py
   token: c4-21af8c66c15e-small-cap-20260914
   created_by: st-zcode-c4-20260912
