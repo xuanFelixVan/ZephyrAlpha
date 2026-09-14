@@ -2,7 +2,7 @@
 # [MODULE] scripts.run_post_settlement
 # [DOMAIN] D_TRADING
 # [DEPENDENCIES] stdlib；zephyr.trading.post_settlement_pipeline（流水线真源）；zephyr.trading.settlement_reconciliation（SettlementReconciler）；zephyr.trading.broker_settlement_adapter（fetch_broker_settlement_records 券商侧适配）；zephyr.ex_core.fill_handler（query_fills_by_date 读取口径）；zephyr.risk.core.daily_auditor（DailyAuditor.audit）；zephyr.data.trading_calendar（is_trading_day 交易日回推）；zephyr.ex_core.adapters.miniqmt_broker（QMT 模拟盘连接，延迟 import 可降级）
-# [CONSUMERS] 57 号文 §3 收盘结算管线人工触发入口（挂调度=Owner 窗口后续批准，本脚本不挂任何调度）
+# [CONSUMERS] 57 号文 §3 收盘结算管线触发入口（人工 CLI 保留；挂调度已获 Owner 2026-09-15 全自动指令批准——计划任务 ZephyrAlpha_PostSettlement 工作日 15:30 经 scripts/register_post_settlement_task.ps1 注册，幂等只读不变）
 # [STARTUP] manual
 # [MATURITY] testing
 # [INVARIANTS] 只读对账+审计不写业务 DB（reconciliation_differences 落库由 recon_runner 负责，本脚本不重复写）；QMT 不在线降级为仅系统侧+显式标注（不伪造"券商侧为空"的假比对）；对账不一致必打印 C 类异常清单+exit 3（不静默）；步骤异常 exit 1；幂等（同 trade_date 重跑无副作用）
@@ -14,7 +14,7 @@
 # [TESTS] tests/scripts/test_run_post_settlement.py
 # [A_module] module_id=MOD-SCRIPT-run_post_settlement | layer=script | stability=evolving | safety=M | ai_autonomy=ai_modifiable
 # [TTL] permanent
-# noqa: m11-perm-manual-legitimate  M11豁免: 本文件是 57 号文 §3 人工触发的盘后结算 CLI（手动按需运行，无常驻进程无定时轮询），与 commit_queue.py 同类
+# noqa: m11-perm-manual-legitimate  M11豁免: 本文件是 57 号文 §3 盘后结算 CLI（无常驻进程无自轮询循环；工作日 15:30 计划任务经外部 Task Scheduler 单发触发本幂等 CLI，2026-09-15 Owner 全自动指令批准），与 commit_queue.py 同类
 # @高风险动作: 只读对账+审计，不写业务 DB（唯一写副作用=FillHandler 初始化时 mkdir data/fills 目录兜底；券商侧仅 query 查询不下单）
 """run_post_settlement.py — 盘后结算对账+日终审计 CLI（57 号文 GAP-3，Owner 2026-08-21 批准施工）
 

@@ -65,18 +65,18 @@ ttl: task_bound
 
 ## 阶段 B：回测=实盘对账闭环（依赖 QMT + Owner 窗口）
 
-### B1. QMT 常开保活（Owner 人工，每个交易日）
-- [ ] 开盘前人工启动 QMT + 手动输密码登录（无法自动登录，P0-1 已裁定）
-- [ ] 日循环 SOP 开盘前检查项确认"QMT 在线"
+### B1. QMT 常开保活（2026-09-15 半自动化：拉起=自动，登录=偶发人工）
+- [x] 开盘前自动拉起 — ✅ 计划任务 ZephyrAlpha_QMTWatchdog 每日 08:45/12:55 探活+缺席自动启动（scripts/qmt_watchdog.ps1，2026-09-15 实弹验证 OK；登录点击=会话过期时偶发人工，密码自动填充按安全裁定不做）
+- [ ] 日循环 SOP 开盘前检查项确认"QMT 在线"（由看门狗日志 data/runtime/qmt_watchdog.log 承担）
 - 验收：C1 探活过（同 tracker #243 口径）
 
 ### B2. reconciliation_differences 表 DDL 执行（Owner 窗口，tracker #234）
-- [ ] Owner 批准后执行 DDL
+- [x] Owner 批准后执行 DDL — ✅ 已核销（2026-09-15 实证：c1_market.reconciliation_differences 已在 CH system.tables，DDL 已落地，本项自愈）
 - 验收：对账 diff 可落库；不执行则对账跑了不落库
 
-### B3. audit_fn 接真源（前置：B2）
-- [ ] DailyAuditor.audit 持仓/净值/限额真源接线（现为空快照）
-- [ ] SettlementReconciler.reconcile 注入 post_settlement 管线
+### B3. audit_fn 接真源（前置：B2 ✅）
+- [ ] DailyAuditor.audit 持仓/净值/限额真源接线（现为空快照）——📌 2026-09-15 夜班裁定：接线正确形态=QMT 在线时取券商侧持仓/净值，深夜无法实证，**待 QMT 在线窗口施工**（无实证不施工纪律）
+- [ ] SettlementReconciler.reconcile 注入 post_settlement 管线（同上窗口联调）
 - 验收：结算管线跑真实件而非空快照五件套
 
 ### B4. LiveStrategyAdapter 真信号源施工（前置：A4，GAP-2 残余）
@@ -85,7 +85,7 @@ ttl: task_bound
 - 验收：模拟盘产生可对账的真实信号成交
 
 ### B5. post_settlement 挂调度（Owner 窗口，GAP-3 残余）
-- [ ] cron 30 15 * * * 规格已备好，Owner 批准后接线
+- [x] cron 30 15 * * * 规格已备好，Owner 批准后接线 — ✅ 2026-09-15 完成（Owner 全自动指令=窗口放行；计划任务 ZephyrAlpha_PostSettlement 工作日 15:30 StartWhenAvailable+IgnoreNew，scripts/register_post_settlement_task.ps1 注册，CLI 头部授权记录同步）
 - 验收：15:30 收盘结算自动化，不再手动 dry-run
 
 ### B6. 首次对账跑通（前置：A5 + B1-B4）
