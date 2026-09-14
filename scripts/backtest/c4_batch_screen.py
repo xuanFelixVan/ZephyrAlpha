@@ -248,6 +248,13 @@ def main() -> None:
             f"WHERE screen_batch = '{_BATCH}' AND verdict = 'translated_c4'"
         ):
             is_sharpe_map[sid] = isv
+        # 子集补测批（--only/--subset-batch 产物）的 IS 参照不在冻结批——回退取该 sid
+        # 最新 translated_c4 行（冻结批命中优先，setdefault 不覆盖；notes 的 is_sharpe_ref 留痕出处）
+        for sid, isv in c.execute(
+            f"SELECT strategy_id, argMax(is_sharpe, screened_at) FROM {_TABLE} "
+            f"WHERE verdict = 'translated_c4' AND is_sharpe IS NOT NULL GROUP BY strategy_id"
+        ):
+            is_sharpe_map.setdefault(sid, isv)
     for r in results:
         if _translated_dedup_key(args.batch, r, args.verdict) in existing:
             continue
