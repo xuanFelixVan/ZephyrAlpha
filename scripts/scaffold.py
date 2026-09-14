@@ -1181,6 +1181,12 @@ def _register_creation_token(file_path: str, capability: str, dry_run: bool) -> 
     scaffold 是唯一创建入口（RULE-TWO），通过自动登记 token 实现"走 scaffold → 放行，
     绕 scaffold → 阻断"的闭环。AI 绕过 scaffold 直接 Write .py → 无 token → commit 阻断。
 
+    2026-09-15 治本（图形库会话治理上报件1，同病三连：EOF 盲插/整文件重写悬挂块炸全仓
+    parse——12250/12112 行两次事故）：旧实现整文件 yaml.safe_load→yaml.dump 全文重写，
+    既毁源文件排版，又在读改写窗口被他会话并发写交割，且无写后校验。现收口到
+    batch_creation_tokens 同一硬化通道：creation_tokens 段内锚定纯插入（fail-closed）
+    + safe_write_text CAS + 写后 parse/语义落位双自检，失败即回滚写前字节。
+
     失败不阻塞 scaffold —— token 登记失败时打印警告（commit 时 create_guard 会兜底阻断，
     AI 需手动补登记或用 --amend 重跑 scaffold）。
     """
@@ -1195,10 +1201,8 @@ def _register_creation_token(file_path: str, capability: str, dry_run: bool) -> 
     except ValueError:
         return
 
-    import yaml as _yaml
-
     try:
-        data = _yaml.safe_load(CAPABILITY_REGISTRY.read_text(encoding="utf-8"))
+        data = yaml.safe_load(CAPABILITY_REGISTRY.read_text(encoding="utf-8"))
     except Exception as exc:
         print(f"  WARNING: capability registry 解析失败，跳过 creation_token 登记: {exc}")
         return
@@ -1216,23 +1220,24 @@ def _register_creation_token(file_path: str, capability: str, dry_run: bool) -> 
             return  # 已登记，跳过
 
     token_value = f"auto-scaffold-{capability}-{datetime.now().strftime('%Y%m%d')}"
-    new_entry = {
-        "file": rel_path,
-        "token": token_value,
-        "created_by": "scaffold.py",
-        "capability": capability,
-    }
-    tokens.append(new_entry)
-    data["creation_tokens"] = tokens
+    block = f"- file: {rel_path}\n  token: {token_value}\n  created_by: scaffold.py\n  capability: {capability}\n"
 
     try:
-        _atomic_write(
-            CAPABILITY_REGISTRY,
-            _yaml.dump(data, allow_unicode=True, default_flow_style=False, sort_keys=False),
-            False,
-            [],
+        from scripts.governance.d3_metadata.batch_creation_tokens import (
+            TokenInsertError,
+            _creation_tokens_section,
+            insert_block,
+            resolve_anchor,
         )
+
+        text = CAPABILITY_REGISTRY.read_text(encoding="utf-8")
+        sec_start, sec_end = _creation_tokens_section(text)
+        anchor = resolve_anchor(text[sec_start : sec_end], capability)
+        insert_block(block, anchor, expect_files=[rel_path])
         print(f"  REGISTERED  creation_token for {rel_path} (token={token_value})")
+    except TokenInsertError as exc:
+        print(f"  WARNING: creation_token 登记失败: {exc}")
+        print(f"  → commit 时 create_guard 会阻断，需手动在 {CAPABILITY_REGISTRY} 补登记")
     except Exception as exc:
         print(f"  WARNING: creation_token 登记失败: {exc}")
         print(f"  → commit 时 create_guard 会阻断，需手动在 {CAPABILITY_REGISTRY} 补登记")

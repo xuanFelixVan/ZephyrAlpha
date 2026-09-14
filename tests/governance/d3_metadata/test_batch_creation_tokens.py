@@ -92,10 +92,10 @@ def test_idempotent_skip_registered(lab):
 
 
 def test_anchor_missing_fail_closed(lab, capsys):
-    with pytest.raises(SystemExit) as ei:
+    with pytest.raises(bct.TokenInsertError) as ei:
         bct.insert_block("- file: x\n  token: y\n  created_by: z\n  capability: c\n", "no_such_anchor")
-    assert ei.value.code == 1
-    assert "fail-closed" in capsys.readouterr().err
+    assert "fail-closed" in str(ei.value)
+    assert "no_such_anchor" in str(ei.value)
 
 
 def test_cli_dry_run_zero_write(lab, monkeypatch, capsys):
@@ -139,6 +139,78 @@ def test_anchor_never_lands_in_trailing_dead_zone(lab):
     dse = [e for e in data["di_seam_exemptions"] if e.get("capability") == "lab_cap"]
     assert dse == [], "条目不得落入 di_seam_exemptions 死区"
     # 死区锚点显式拒写（fail-closed——stray_cap_zone 只存在于死区）
-    with pytest.raises(SystemExit) as ei:
+    with pytest.raises(bct.TokenInsertError) as ei:
         bct.insert_block("- file: x\n  token: y\n  created_by: z\n  capability: c\n", "stray_cap_zone")
-    assert ei.value.code == 1
+    assert "fail-closed" in str(ei.value)
+
+
+# ---------------------------------------------------------------------------
+# 2026-09-15 治理上报件1 收口：写后 parse/语义双自检 + 失败回滚（scaffold 同通道复用）
+# ---------------------------------------------------------------------------
+
+
+def test_resolve_anchor_prefers_exact_then_last(lab):
+    reg, _ = lab
+    text = reg.read_text(encoding="utf-8")
+    sec_start, sec_end = bct._creation_tokens_section(text)
+    section = text[sec_start:sec_end]
+    assert bct.resolve_anchor(section, "anchor_cap") == "anchor_cap"  # 段内同名命中
+    assert bct.resolve_anchor(section, "no_such") == "anchor_cap"  # 回退段内最后一条
+    with pytest.raises(bct.TokenInsertError):
+        bct.resolve_anchor("", "anything")  # 段内无锚点 → fail-closed
+
+
+def test_section_missing_raises_token_insert_error(tmp_path, monkeypatch):
+    reg = tmp_path / "reg.yaml"
+    reg.write_text("di_seam_exemptions: []\n", encoding="utf-8")
+    monkeypatch.setattr(bct, "_REGISTRY", reg)
+    with pytest.raises(bct.TokenInsertError) as ei:
+        bct._creation_tokens_section(reg.read_text(encoding="utf-8"))
+    assert "fail-closed" in str(ei.value)
+
+
+def test_post_write_issues_detects_broken_yaml_and_missing_landing(lab):
+    reg, _ = lab
+    reg.write_text("creation_tokens:\n  - [broken\n", encoding="utf-8")
+    issues = bct._post_write_issues(None)
+    assert issues and "解析失败" in issues[0]
+    reg.write_text("creation_tokens:\n- file: a.md\n  token: t\n", encoding="utf-8")
+    issues = bct._post_write_issues(["ghost.md"])
+    assert issues and "未落位" in issues[0]
+    assert bct._post_write_issues(["a.md"]) == []
+
+
+def test_insert_block_rollback_on_verify_failure(lab, monkeypatch):
+    """写后自检失败 → 回滚写前字节（scaffold 件1 收口的核心保证）。"""
+    reg, _ = lab
+    pre = reg.read_bytes()
+    monkeypatch.setattr(bct, "_post_write_issues", lambda files: ["boom"])
+    with pytest.raises(bct.TokenInsertError) as ei:
+        bct.insert_block("- file: x.md\n  token: t-1\n  created_by: s\n  capability: anchor_cap\n", "anchor_cap")
+    assert "回滚" in str(ei.value)
+    assert reg.read_bytes() == pre, "自检失败必须回滚到写前字节"
+
+
+def test_insert_block_semantic_missing_triggers_rollback(lab):
+    """端到端（零打桩）：块插入的 file 与 expect_files 不符 = 语义落位失败 → 回滚。"""
+    reg, _ = lab
+    pre = reg.read_bytes()
+    with pytest.raises(bct.TokenInsertError) as ei:
+        bct.insert_block(
+            "- file: docs/real.md\n  token: real-1\n  created_by: s\n  capability: anchor_cap\n",
+            "anchor_cap",
+            expect_files=["docs/ghost.md"],
+        )
+    assert "未落位" in str(ei.value)
+    assert reg.read_bytes() == pre, "语义落位失败必须回滚到写前字节"
+    # 回滚后 registry 仍 parse 合法且无残留
+    data = yaml.safe_load(reg.read_text(encoding="utf-8"))
+    assert all(e["file"] != "docs/real.md" for e in data["creation_tokens"])
+
+
+def test_insert_block_with_expect_files_happy_path(lab):
+    reg, files = lab
+    block = bct.build_block(files, "sess-A", "lab_cap", "20260913")
+    bct.insert_block(block, "anchor_cap", expect_files=files)  # 全部落位 → 通过
+    data = yaml.safe_load(reg.read_text(encoding="utf-8"))
+    assert len([e for e in data["creation_tokens"] if e["capability"] == "lab_cap"]) == 3

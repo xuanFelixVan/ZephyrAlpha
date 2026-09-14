@@ -6,12 +6,14 @@
 # [STARTUP] manual
 # [MATURITY] testing
 # [INVARIANTS] 纯插入（只追加 creation_tokens 条目，绝不修改/删除既有条目）；幂等（已登记文件跳过）；
-#   token 格式 {capability}-{stem}-{YYYYMMDD} 全局唯一；--dry-run 零写入
+#   token 格式 {capability}-{stem}-{YYYYMMDD} 全局唯一；--dry-run 零写入；
+#   写后 yaml.safe_load+语义落位双自检，失败即回滚写前字节（2026-09-15 治理上报件1 收口）
 # [MODIFY-GUARD] 插入锚点=creation_tokens 段内 capability 锚行（找不到时 fail-closed 拒写）
 # [STABILITY] evolving
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
-# [ERROR_CONTRACT] 锚点缺失/registry 不可读 → exit 1（fail-closed，绝不盲插）
+# [ERROR_CONTRACT] 库层=TokenInsertError（锚点缺失 fail-closed/CAS 耗尽/写后自检失败已回滚）；
+#   CLI 层捕获转 exit 1，绝不盲插
 # [TESTS] tests/governance/d3_metadata/test_batch_creation_tokens.py
 # [A_module] module_id=MOD-INF-005 | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
@@ -45,6 +47,13 @@ import yaml
 _REPO = Path(__file__).resolve().parents[3]
 _REGISTRY = _REPO / "docs/01_policies_and_standards/_registry/catalogs/capability_canonical_file_registry.yaml"
 _TOKEN_RE = re.compile(r"^[a-z0-9][a-z0-9-]*[a-z0-9]$")
+
+
+class TokenInsertError(RuntimeError):
+    """creation_token 插入失败（锚点缺失 fail-closed / CAS 耗尽 / 写后校验失败已回滚）。
+
+    库层语义=异常（scaffold 等进程内调用方捕获降级）；CLI 层捕获后转 exit 1。
+    """
 
 
 def _git_output(*args: str) -> list[str]:
@@ -94,23 +103,77 @@ def _creation_tokens_section(text: str) -> tuple[int, int]:
     错位 token 条目（含 `capability:` 行）——全文件 rfind/findall 锚点会命中死区，
     插入条目落进 di_seam_exemptions 语义死区（CREATE-GUARD 读不到=登记丢失）。
     治本：一切锚点搜索 MUST 限定本段边界内。
+
+    Raises:
+        TokenInsertError: 段头不存在（fail-closed 拒写）。
     """
     m_head = re.compile(r"(?:^|\n)creation_tokens:\n").search(text)
     if not m_head:
-        print("FAIL: registry 无 creation_tokens 段，拒写（fail-closed）", file=sys.stderr)
-        sys.exit(1)
+        raise TokenInsertError("registry 无 creation_tokens 段，拒写（fail-closed）")
     start = m_head.end()
     m = re.compile(r"\n[a-z_]+:\n").search(text, start)
     end = m.start() + 1 if m else len(text)
     return start, end
 
 
-def insert_block(block: str, anchor_capability: str) -> None:
+def resolve_anchor(section: str, wanted: str) -> str:
+    """锚点回退：capability 同名行优先，缺省回退段内最后一条 capability。
+
+    （段外死区命中=锚点 bug 根因，故回退候选只从段内取。）
+
+    Raises:
+        TokenInsertError: 段内无任何 capability 锚点。
+    """
+    if f"  capability: {wanted}\n" in section:
+        return wanted
+    m = re.findall(r"  capability: (\S+)\n", section)
+    if not m:
+        raise TokenInsertError("creation_tokens 段内无任何 capability 锚点")
+    return m[-1]
+
+
+def _post_write_issues(expect_files: list[str] | None) -> list[str]:
+    """写后自检：①yaml parse 完整性 ②语义落位（expect_files 必须解析进 creation_tokens 段）。
+
+    返回问题清单（空=通过）。②是实弹教训的判别式——插进 di_seam_exemptions 死区时
+    YAML 仍合法但登记丢失，纯 parse 检查抓不住。
+    """
+    try:
+        data = yaml.safe_load(_REGISTRY.read_text(encoding="utf-8"))
+    except Exception as exc:  # noqa: BLE001 — 解析失败=问题本体
+        return [f"yaml.safe_load 解析失败: {str(exc)[:160]}"]
+    if not isinstance(data, dict):
+        return [f"顶层不是 mapping（实际 {type(data).__name__}）"]
+    if expect_files:
+        landed = {
+            str(e.get("file", "")).replace("\\", "/")
+            for e in (data.get("creation_tokens") or [])
+            if isinstance(e, dict)
+        }
+        missing = [f for f in expect_files if f not in landed]
+        if missing:
+            return [f"{len(missing)} 条未落位 creation_tokens 段: {missing[:3]}"]
+    return []
+
+
+def _rollback(pre_bytes: bytes) -> None:
+    """回滚到写前字节（atomic_write 原子替换；不用 CAS——磁盘当前是新内容，base 必不符）。"""
+    from zephyr.shared.io.file_utils import atomic_write
+
+    atomic_write(_REGISTRY, pre_bytes.decode("utf-8"), newline="")
+
+
+def insert_block(block: str, anchor_capability: str, expect_files: list[str] | None = None) -> None:
     """纯插入：锚定 creation_tokens **段内**最后一条 capability: <anchor> 行之后。
 
     锚点行找不到（段内）→ fail-closed 拒绝写入（防盲插/防落段外死区）。
     写入走 safe_write_text（CAS+原子写）+ 重试——2026-09-14 四连炸实证：裸 write_text
     全文重写在读改写窗口被他会话并发写交割，文件头/尾部结构反复炸裂。
+    写后 _post_write_issues 双自检（2026-09-15 治理上报件1 统一收口），失败即回滚
+    写前字节并抛 TokenInsertError——不重试（重试=二次插入重复条目）。
+
+    Raises:
+        TokenInsertError: 锚点缺失 / CAS 5 次耗尽 / 写后自检失败（已回滚）。
     """
     import hashlib
     import time
@@ -125,22 +188,24 @@ def insert_block(block: str, anchor_capability: str) -> None:
         section = text[sec_start:sec_end]
         rel = section.rfind(f"  capability: {anchor_capability}\n")
         if rel < 0:
-            print(
-                f"FAIL: 锚点 capability: {anchor_capability} 不在 creation_tokens 段内，拒写（fail-closed）",
-                file=sys.stderr,
+            raise TokenInsertError(
+                f"锚点 capability: {anchor_capability} 不在 creation_tokens 段内，拒写（fail-closed）"
             )
-            sys.exit(1)
         line_end = sec_start + section.find("\n", rel)
         new_text = text[: line_end + 1] + block + text[line_end + 1 :]
         try:
             res = safe_write_text(_REGISTRY, new_text, expected_base_sha256=base_sha, newline="")
             print(f"落盘: {res.written} (CAS attempt {attempt + 1})")
-            return
         except Exception as exc:  # noqa: BLE001 — CAS 冲突重读基线重放
             print(f"WARN: 写入冲突 ({type(exc).__name__})，重读基线重放 (attempt {attempt + 1})")
             time.sleep(3)
-    print("FAIL: 5 次 CAS 重试仍冲突——有会话高频写此文件，稍后再试", file=sys.stderr)
-    sys.exit(1)
+            continue
+        issues = _post_write_issues(expect_files)
+        if issues:
+            _rollback(raw)
+            raise TokenInsertError("写后自检不过，已回滚写前字节: " + "; ".join(issues))
+        return
+    raise TokenInsertError("5 次 CAS 重试仍冲突——有会话高频写此文件，稍后再试")
 
 
 def main() -> int:
@@ -174,24 +239,13 @@ def main() -> int:
         return 0
 
     # 锚点回退：仅限 creation_tokens 段内最后一条 capability（段外死区命中=锚点 bug 根因）
-    text = _REGISTRY.read_text(encoding="utf-8")
-    sec_start, sec_end = _creation_tokens_section(text)
-    section = text[sec_start:sec_end]
-    anchor = args.anchor_capability or args.capability
-    if f"  capability: {anchor}\n" not in section:
-        m = re.findall(r"  capability: (\S+)\n", section)
-        if not m:
-            print("FAIL: creation_tokens 段内无任何 capability 锚点", file=sys.stderr)
-            return 1
-        anchor = m[-1]
-    insert_block(block, anchor)
-    # 落盘后双自检：①YAML 完整性 ②语义落位（新文件必须解析进 creation_tokens 段——
-    # 实弹教训：插进 di_seam_exemptions 死区时 YAML 仍合法但登记丢失）
-    data = yaml.safe_load(_REGISTRY.read_text(encoding="utf-8"))
-    registered_now = {str(e.get("file", "")) for e in (data.get("creation_tokens") or [])}
-    missing = [f for f in files if f not in registered_now]
-    if missing:
-        print(f"FAIL: 语义自检不过——{len(missing)} 条未落位 creation_tokens 段: {missing[:3]}", file=sys.stderr)
+    try:
+        text = _REGISTRY.read_text(encoding="utf-8")
+        sec_start, sec_end = _creation_tokens_section(text)
+        anchor = resolve_anchor(text[sec_start:sec_end], args.anchor_capability or args.capability)
+        insert_block(block, anchor, expect_files=files)
+    except TokenInsertError as exc:
+        print(f"FAIL: {exc}", file=sys.stderr)
         return 1
     print(f"OK: 已插入 {len(files)} 条（锚点 capability: {anchor}）")
     return 0
