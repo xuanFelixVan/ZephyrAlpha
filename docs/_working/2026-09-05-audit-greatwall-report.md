@@ -2,10 +2,36 @@
 ttl: task_bound
 ---
 
-> **任务**：ZephyrAlpha 全项目审计治本长城任务 · 总控执行（AI-00）
-> **签发**：Owner 与总控强模型联合签发，2026-09-05；Owner 离线（约 8h），全程自主裁定授权
-> **基本法**：d:\ZephyrAlpha\docs\audit_prompts_20_ai.md（6135 行，受保护只读）+ 本指令无人值守增强层
-> **状态**：**已完成（2026-09-05，最终判定：通过）**。本文件为全程唯一真源。
+> ## 结案报告（2026-09-15 由 st-fullchain-20260914 核验）
+> **总结论：未结案（仍有待办）。处置=**保留**。**
+>
+> **✅ 已完成（3 条，摘录）**
+> - L12: - **总问题数 / 已修复数**：主波次发现 1548 → 修复 893 + 618 登记台账（跨域/内容建设类君子协定债）+ 37 跨域移交；复审轮再发现 22 → 全部修复/登记；作废重派 0
+> - L233: - →AI-06（复审轮）：broker_interface.py（trading_contracts）[DEPENDENCIES] 声明 trading_contracts.execution.* 实际 import zephyr.shared.contracts.*（AI-05 波次2 移交，A
+> - L337: ## A 类·代码级损坏——已修复完毕（总管只需复核 commit）
+>
+> **⚠️ 未完成（23 条，逐条摘录）**
+> - L15: - **最终判定：通过**（遗留=0 强阻断；待 Owner 裁定 15 项均为机制级/内容工程级，附完整分析）
+> - L43: - 遗留 1：D:\ZephyrAlpha\_diag\（22 文件）待 Owner 裁定。总控抽验：HEAD 无两死脚本/panorama 死条目 grep=0——**相符**。
+> - L49: - 自主裁定：sqlite3.connect 自有单文件库判非违规；auction_data_manager/三采集器实证非僵尸；5 文件表头修而非 15+ 全改（装配批去留待 Owner）；拒绝 [no-lookup:]/BYPASS/FORCE_DELETE 冒用，走真实 capability_
+> - L58: - 共享收口上交：①broker_interface.py [DEPENDENCIES] 漂移（trading 域，转 AI-06 复审轮）②trading_session threading.Timer 周期调仓（3.2 禁）涉 start_paper_session+测试锁定，待 Owner③G
+> - L73: - 自主裁定：[DEPENDENCIES] 真源约定=「直接 import+注入式/文档化上游」超集（26 处注解式保留防新漂移）；17 处静默异常定性合规；ZA-MLT-0003 三文件共用非重号；EXP-WALKFWD-001 running 合规；MATURITY=design 语义冲突 22
+> - L81: - 自主裁定：HC-10 PIT 警告误报；FCT-CRYPTO 四段式合规；IND-COMP-001 设计态合规；占位错误码双侧一致声明合规；零消费方三模块退役候选留 Owner；9 周期规范代码级合规。
+> - L91: - 遗留：强遗留 0（G1/G2 待 Owner）；抽验：error_code 属性 5 处/risk shim 映射实测——**相符**。
+> - L99: - 遗留 2（待 Owner）：10 个 sell_decision [BLUEPRINT] 悬空锚定；position_reconciler 表头语义双关（Phase 5 规划位）。抽验：L147 已登记留痕/0042 修正注记实测——**相符**。
+> - L113: - 自主裁定：shim 方向（git 取证双份同生+符号面超集+真实消费方）；kebab 目录保留（有意命名）；orchestrator.py 不删（架构级裁定待 Owner）；worktree 激活态验证纪律（未激活轮结果作废重跑）。
+> - L115: - 遗留 1（待 Owner）：governance/semantic_audit/orchestrator.py 组合根零消费方（接线 or 退役）。抽验：cold_start 不存在/L96 幽灵路径修复实测——**相符**。避让：worktree 17 个他域/后台派生写未纳入未回退。
+> - （另有 13 条，见正文）
+>
+> **核验方式**：全文扫描完成/待办信号 + 引用文件存在性核验（引用 12 个，其中判废弃 1、路径漂移 2）+ commit 提及 52 处。
+> **路径漂移（非缺失，勿误判）**：`scripts/governance/check_vocab_hardcode.py` 路径漂移→scripts/governance/d3_metadata/check_vocab_hardcode.py；`src/zephyr/trading/trading_session.py` 路径漂移→src/zephyr/ex_core/trading_session.py
+> **判废弃引用（C-1）**：`tests/test_g_trae_NNN.py`
+>
+> **处置建议**：保留。（本报告由清理批自动生成，判定依据=文档自身信号 + 代码侧核验）
+
+
+
+
 
 ---
 

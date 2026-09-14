@@ -2,6 +2,33 @@
 ttl: task_bound
 ---
 
+> ## 结案报告（2026-09-15 由 st-fullchain-20260914 核验）
+> **总结论：未结案（仍有待办）。处置=**保留**。**
+>
+> **✅ 已完成（2 条，摘录）**
+> - L39: **过程事故两起（已修复）**：
+> - L170: 8. **A 项域测试执行偏差（已补课）**：driver 逐前缀仅跑六断言+语法校验，未按指令 4 跑域相关测试；Owner 复查后补跑 227 测试文件 4991 passed 零回归（commit 见 §一）。
+>
+> **⚠️ 未完成（8 条，逐条摘录）**
+> - L70: - ZA-INT-0003/0004：intent_llm_router Stage 3 未施工（rg 证实不存在）+server 无 domain 校验错误条件——deferred
+> - L73: - ZA-TSK-0004：**未按指令加真检查**——create_task 工具 input_schema 无 files 字段（v1.2.0 起），">20 files/session 预算"无落点；强加=造假 schema。登记⑤遗留待 Owner。
+> - L163: 1. **C 类 ZA-TSK-0004 未强加真检查**：create_task 工具 input_schema 无 files 字段（v1.2.0 起），">20 files/session 预算"无落点；强加=造假 schema。待 Owner 裁定：补 files schema 或关闭该契约
+> - L164: 2. **F 项授权范围外漂移 5 表**：REG-SCRIPT-001（483→实测 755）/REG-SCRIPT-002（416→417）/REG-DOC-001（229→230）/REG-ARCH-ISSUE-001（745→746）/REG-BLUEPRINT-001（60）——实测真值已
+> - L165: 3. **G 项派生面**：asset_inventory 其余派生物（dashboard.json/classified-assets.json/reconciliation-report.md）仍由 reconciler 维护，与宽口径 unified-asset-index 的 schema 
+> - L168: 6. **ROOR 生成器欠账**：entry_count/counting_rule 仍为手工维护，owner-book §七建议的"生成器自动回填"未落地（D1 预算待批类）。
+> - L224: - **遗留建议**（未施工，登记待排期）：治理类动作审计单独 append-only 落盘（防轮转挤出）。
+> - L236: - 兄弟派生物 raw-asset-scan.json（同管线、停在 08-16）：本批保留（白名单仍在、无自动写者），登记待 Owner 后续裁定是否同族退役。
+>
+> **核验方式**：全文扫描完成/待办信号 + 引用文件存在性核验（引用 17 个，其中判废弃 0、路径漂移 3）+ commit 提及 1 处。
+> **路径漂移（非缺失，勿误判）**：`tests/infrastructure/test_blueprint_search_mcp.py` 路径漂移→tests/infrastructure/mcp/test_blueprint_search_mcp.py；`tests/infrastructure/test_mcp_gateway_version_ratelimit.py` 路径漂移→tests/infrastructure/mcp/test_mcp_gateway_version_ratelimit.py；`tests/infrastructure/test_mcp_red_team.py` 路径漂移→tests/infrastructure/mcp/test_mcp_red_team.py
+>
+> **处置建议**：保留。（本报告由清理批自动生成，判定依据=文档自身信号 + 代码侧核验）
+
+
+
+
+
+
 # ZephyrAlpha Owner 裁定执行批二 · Flash 施工报告（2026-09-06）
 
 > **授权**：Owner 2026-09-06 语音裁定（"可以交给 flash 的任务都可以交给他，节约钱；真源重复的就合并，拿不准的设门槛备注"）

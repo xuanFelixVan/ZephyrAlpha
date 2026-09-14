@@ -2,12 +2,25 @@
 ttl: task_bound
 ---
 
-> **doc_type**: 施工台账（miniQMT→文件桥全面替换）
-> **created**: 2026-09-08 | **owner**: Owner 授权 AI 施工
-> **真源**: 93 号备忘 v1.8.6（`docs/02_enterprise_architecture/07_trading_decision_architecture/design_memos/93_qmt_file_bridge_playbook.md`）
-> **摸排基线**: 2026-09-08 全量扫描（tasks.yaml 66 处 source 引用 + 代码 grep + CH 实测数据量）
-> **退役日**: 2026-09-18（券商关停 miniQMT 通道）
-> **使用规则**: 做完一项勾一项（`- [ ]`→`- [x]`），勾选时在行尾补 `（✅MM-DD commit哈希）`；本台账 = 本迁移工程唯一进度真源，禁止删档（同 frontend-backend-gap-ledger 规则）；全部勾完且退役日验证过 → 归档 _archive
+> ## 结案报告（2026-09-15 由 st-fullchain-20260914 核验）
+> **总结论：未结案（仍有待办）。处置=**保留**。**
+>
+> **✅ 已完成（2 条，摘录）**
+> - L16: - [x] tick 主链路：tick_subscriber bridge 模式（TICK_SOURCE 环境变量，9/7 已闭环，93 §14.7）（✅09-08 复核加固：TICK_SOURCE=bridge 已持久化 User 级 + guard 子进程实测读 ticks3.csv 入 CH；
+> - L274: **教训**：①幂等 DELETE 前必须证明"窗口内全部行都是自己（或无主）的"，表没有来源列时默认拒绝；②验证类 SQL 一律先 SELECT count 看窗口现有行再动手；③SDK 下载语义要实证（单日 day,day 不落盘，必须区间参数）——93 §11.5a 已补记。
+>
+> **⚠️ 未完成（3 条，逐条摘录）**
+> - L106: - [x] margin_trading_qmt_placeholder（表不存在）→ 已加"退役冻结 2026-09-18：miniQMT 独有源，表从未产出，待 Owner 裁定替代源后重建"注释（disabled 原有，source 值不切——红线 1）（✅09-09 8981a53f29）
+> - L173: ## §8 2026-09-08 增量待办（桥切换过渡期，按优先级）
+> - L241: **大QMT 沙箱同等权限验证步骤（待 Owner 开终端执行，9/18 前完成）**：
+>
+> **核验方式**：全文扫描完成/待办信号 + 引用文件存在性核验（引用 5 个，其中判废弃 0、路径漂移 0）+ commit 提及 29 处。
+>
+> **处置建议**：保留。（本报告由清理批自动生成，判定依据=文档自身信号 + 代码侧核验）
+
+
+
+
 
 # miniQMT → QMT 文件桥 替换施工台账
 

@@ -2,6 +2,31 @@
 ttl: task_bound
 ---
 
+> ## 结案报告（2026-09-15 由 st-fullchain-20260914 核验）
+> **总结论：未结案（仍有待办）。处置=**保留**。**
+>
+> **✅ 已完成（1 条，摘录）**
+> - L25: | W2 | commit_queue 改道 flag 翻开（`config/flags.yaml:82`，默认 `enabled:false=ALWAYS_OFF`） | 08 号文；66 号 §7 | 改道设施（MOD-GOV-047 `reroute_auto_commit_to_queue`
+>
+> **⚠️ 未完成（6 条，逐条摘录）**
+> - L5: # AI 架构层待施工清单（2026-08-24，T3 审查产出）
+> - L8: > 范围纪律：仅列「未施工 / 部分落地」项；GP0（全局 Phase 0）已于 2026-08-22 全量落地并 M0 终审（E0-1~E0-8 全绿），本清单主体 = 各文档 Phase 1+ 设计内排期项。**不建议重造任何已落地件**。
+> - L162: - **验收标准（源文档摘录）**：§3.2「未验证技能不得进生产库（回测验证门）」；§4.4 P2 段（技能草稿→沙箱→回测→人工门→入库全链路）；匹配延迟「任务分派匹配 <100ms；新技能注册全量扫描+冲突检测 <1s」。
+> - L194: | 3.7 | 14 号文 Phase 1 四类入口半自动形态 | 14 号文 §4 Phase 1 | 依赖自我进化层件 production（W1 之后）；Agent Card/冷启动 6 步/退役指纹库形式化落地范围待复核 | `autonomy_core/agents/` 演进；MOD-EX
+> - L201: | 3.14 | 01/02 号文快照刷新（维护项） | 01 §1/02 §2.1 | GP0 后「未施工」状态描述部分过期 | 文档维护，随下轮 AI-FILL 口径刷新 | —（非代码项） |
+> - L211: - **总口径**：本清单与 17 号路线图「全局 Phase 0→1」位置一致；全部 P1/P2 项的 depgraph L1 铁律（先登记 planned、验收后转 production）与各源文档 §4 既定纪律一致，施工时按 18 号清单 E2 裁定「新模块 testing 封顶，produ
+>
+> **核验方式**：全文扫描完成/待办信号 + 引用文件存在性核验（引用 19 个，其中判废弃 1、路径漂移 2）+ commit 提及 2 处。
+> **路径漂移（非缺失，勿误判）**：`src/zephyr/governance/phase_check_registry.py` 路径漂移→src/zephyr/governance/ops_governance/phase_check_registry.py；`src/zephyr/research/module_factory/knowledge_classifier.py` 路径漂移→src/zephyr/autonomy_core/module_factory/knowledge_classifier.py
+> **判废弃引用（C-1）**：`src/zephyr/autonomy_core/ars_settlement.py`
+>
+> **处置建议**：保留。（本报告由清理批自动生成，判定依据=文档自身信号 + 代码侧核验）
+
+
+
+
+
+
 # AI 架构层待施工清单（2026-08-24，T3 审查产出）
 
 > 来源：`docs/02_enterprise_architecture/09_ai_architecture/` 21 份文档全量审查（结案报告 `.runtime/construction_20260823/reports/T3_aiarch_review.md`）。

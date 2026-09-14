@@ -3,6 +3,26 @@ ttl: task_bound
 date: 2026-09-11
 ---
 
+> ## 结案报告（2026-09-15 由 st-fullchain-20260914 核验）
+> **总结论：未结案（仍有待办）。处置=**保留**。**
+>
+> **✅ 已完成（2 条，摘录）**
+> - L16: | 每个回测点有单独日志？ | `c1_backtest.node_verdict` 台账（ClickHouse MergeTree，只追加不删改），**每行=某节点某次验证的成绩单** | ✅ 已施工（PB-02） |
+> - L22: | 五类验证方法学？ | validation_method_registry.yaml：sensor_monotonicity / agg_discrimination / exec_quality / exit_counterfactual / portfolio_attribution；run
+>
+> **⚠️ 未完成（2 条，逐条摘录）**
+> - L8: > **日期**：2026-09-11 ｜ **状态**：讨论稿（待 Owner 逐条裁定）
+> - L18: | 前端节点详情右侧栏打通？ | tdm.js 抽屉「验证档案（回测台账）」区已上线（PB-04）：验证态徽章（valid/噪音/pending/未验证/衰减中）+ 历次验证记录列表，只读端点 `/api/tdm/validation?node_id=`，失败降级不阻断地图 | ✅ 已施工 |
+>
+> **核验方式**：全文扫描完成/待办信号 + 引用文件存在性核验（引用 1 个，其中判废弃 0、路径漂移 0）+ commit 提及 0 处。
+>
+> **处置建议**：保留。（本报告由清理批自动生成，判定依据=文档自身信号 + 代码侧核验）
+
+
+
+
+
+
 # 回测证据链与验证档案——现状盘点 + 增量设计 + 规范总清单（讨论稿）
 
 > **日期**：2026-09-11 ｜ **状态**：讨论稿（待 Owner 逐条裁定）

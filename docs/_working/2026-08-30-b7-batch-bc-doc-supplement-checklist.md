@@ -2,7 +2,22 @@
 ttl: task_bound
 ---
 
-> **文档元信息**（_working 临时区豁免规范，EXEMPT-ZONE-FM）：doc_type=design_memo_working · owner=ZephyrAlpha-Owner · language=zh · status=active · version=1.0.0 · date=2026-08-30 · topic=data_utilization_batch_bc_doc_supplement · scope=07_trading_decision_architecture · completes_when=批次 B/C 17 张表六字段消费级文档落位三目标文档且 ARCH-300 三空表前置闭环后归档。
+> ## 结案报告（2026-09-15 由 st-fullchain-20260914 核验）
+> **总结论：未结案（仍有待办）。处置=**保留**。**
+>
+> **✅ 已完成（1 条，摘录）**
+> - L16: - **已落地部分**：26/22/15 号三目标文档附录"数据资产消费登记（63 号审查批次 B+C，2026-08-20 登记）"已在位（未消费登记口径，3-5 字段汇总行）；**剩余 = 升级为 §7.0.1 六字段消费级正文小节**。跨批次拓扑序（§7.0.3）：被依赖表先补最小文档（如 s
+>
+> **⚠️ 未完成（1 条，逐条摘录）**
+> - L17: - **不在本批**：62 号注册表路径 5 张（index_list/market_index/etf_list/lof_list/index_weight，D-7 裁定归 62 号施工线）；auction_book（D-6 随 24 号挂起）。
+>
+> **核验方式**：全文扫描完成/待办信号 + 引用文件存在性核验（引用 0 个，其中判废弃 0、路径漂移 0）+ commit 提及 0 处。
+>
+> **处置建议**：保留。（本报告由清理批自动生成，判定依据=文档自身信号 + 代码侧核验）
+
+
+
+
 
 # B7：63号文 批次 B/C 补文档——评估结论 + 补文档清单与要点
 

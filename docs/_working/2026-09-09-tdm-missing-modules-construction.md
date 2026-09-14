@@ -2,6 +2,33 @@
 ttl: task_bound
 ---
 
+> ## 结案报告（2026-09-15 由 st-fullchain-20260914 核验）
+> **总结论：未结案（仍有待办）。处置=**保留**。**
+>
+> **✅ 已完成（12 条，摘录）**
+> - L50: **已施工设施盘点基线**（Step 7 用）：地图真源 129 节点/180 边（TDM-E-L0 节点组 7c44295fcf 已入库）；门禁 R1-R37 全生效（R37=大白话算法说明必填）；登记表 DAL-*/五类方法学/param_origin 三档已建。
+> - L75: | C2 | TDM-L1-S1 大盘指数传感器聚合 | src/zephyr/regime/features/index_sensor.py | D_REGIME | 均线排列+位置打分（-2~+2）；攻防板块特征入层（D109：券商/银行 5 日超额） | index_sensor/指数趋势 |
+> - L78: | C5 | TDM-L2-06-3 强度加权传导 | src/zephyr/signal_ashare/sector_conduction.py | D_ASHARE_SIGNAL | 板块强度加权传导到个股池（含 L2-10 同源补涨比价输入） | conduction/传导 | ✅已提交 06
+> - L79: | C6 | TDM-L2-03-1 扩散指标进度追踪 | adjustment_cycle_tracker.py 扩展（先反查） | D_ASHARE_SIGNAL | 调整周期扩散指标进度（40/60/80% 阈值） | diffusion/扩散 | ✅已提交 065a2615（tracker 
+> - L81: | C8 | TDM-P1-03 买入逻辑存活判定 | src/zephyr/plan_engine/thesis_survival.py（或扩展 plan_deviation_monitor） | D_PLAN | 买入理由还成立吗（题材退坡/逻辑证伪→触发 X 流信号） | thesis/sur
+> - L82: | C9 | TDM-P3-01 加仓资格门 | src/zephyr/position/core/pyramiding_rules.py | D_POSITION | 加仓资格判定（浮盈保护/环境允许/计划内加仓点） | pyramiding/加仓资格 | ✅已提交 4105b58e（MOD-PO
+> - （另有 6 条完成信号，见正文）
+>
+> **⚠️ 未完成（3 条，逐条摘录）**
+> - L119: ## 七、待 Owner 拍板的两个结构项（拍板后并入对应波次）
+> - L168: - **结构位终判留档（不动）**：L2-01/L2-04（聚合公式需 Owner 权重裁定，禁拍脑袋）/L2-05（sentiment_cycle 待 G07 闸 4，晨审挂起证据采信）/L3-03/07/11/12、F-C2/C3（子节点全锚承载，独立编排件不存在=晨审结构位定性复核一致）/L3
+> - L260: - S24 处置裁定（登记）：647 条 deprecated 链保留档案不物理删除（只增不删红线+数据资产+可逆性）；特斯拉链（CH-2ca173ff809d）随僵尸标准一并下架，复活开关留 Owner（一条 UPDATE，审计在案）
+>
+> **核验方式**：全文扫描完成/待办信号 + 引用文件存在性核验（引用 17 个，其中判废弃 0、路径漂移 3）+ commit 提及 9 处。
+> **路径漂移（非缺失，勿误判）**：`src/zephyr/intelligence/news_chain_node_linker.py/chain_impact_resolver.py` 路径漂移→src/zephyr/intelligence/chain_impact_resolver.py；`src/zephyr/signal_ashare/daily_condition_sensor.py` 路径漂移→src/zephyr/signal_ashare/core/daily_condition_sensor.py；`src/zephyr/signal_ashare/sector_conduction.py` 路径漂移→src/zephyr/signal_ashare/core/sector_conduction.py
+>
+> **处置建议**：保留。（本报告由清理批自动生成，判定依据=文档自身信号 + 代码侧核验）
+
+
+
+
+
+
 # TDM 缺失模块全面施工总纲（2026-09-09 夜班 23:00 开工临时文档）
 
 > **目的**：Owner 裁定 2026-09-09 23:00 起全面施工交易决策地图全部缺失模块。本文档是施工总清单+前置准备+SOP 速查的唯一工作底稿。

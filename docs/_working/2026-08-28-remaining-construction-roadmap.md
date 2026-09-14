@@ -2,9 +2,25 @@
 ttl: task_bound
 ---
 
-> **⚠ 保留依据（防删声明，任何清理会话必读）**：**建议【保留，且已入 git 追踪】**。①本文档是"剩余未施工项"唯一总账与施工波次派单真源（A 类 22 项/B 类 21 项/C 类 10 项/GP1+ 13 项逐项含出处锚点+代码实证），删除即丢失后续施工排期依据；②对齐前端缺口总账同规（2026-08-22-frontend-backend-gap-ledger.md 防删先例）；③根本保护=git 追踪（建成即提交，_working 已有 62+ 份 md 在 git，本账不在 ignore 名单）。
+> ## 结案报告（2026-09-15 由 st-fullchain-20260914 核验）
+> **总结论：未结案（仍有待办）。处置=**保留**。**
 >
-> **文档元信息**（_working 临时区豁免规范，EXEMPT-ZONE-FM）：doc_type=register · owner=ZephyrAlpha-Owner · language=zh · status=active · version=1.0.0 · date=2026-08-28 · topic=remaining_construction_roadmap · scope=07_trading_decision_architecture + 09_ai_architecture · completes_when=全部 A/B 类项施工闭环或转裁定后归档（归档不删除，保留审计链）。
+> **✅ 已完成（2 条，摘录）**
+> - L96: | G4 | inject 生产空段/llm_summary 压缩档/InProcessContextEngine | [07号(09)](../02_enterprise_architecture/09_ai_architecture/implementation_plans/07_context
+> - L143: GP1 批（09 域 G1-G13，~~GP0 终审 M0 后单独开排期批；Q1/Q3 先走 Owner 窗口=B17/B18~~ **2026-08-29 已裁定开门**：B17/B18 已闭环（#ARCH-284/285/286），I1-1~I1-3 全达成；第一波=10号 L2/L3 统一入口
+>
+> **⚠️ 未完成（2 条，逐条摘录）**
+> - L7: > **用途**：2026-08-28 全量审查批（85 篇设计文档 × 代码实证，4 路核查）发现的全部"未施工/施工一部分"项的统一登记、施工必要性裁定与施工顺序派单真源。
+> - L177: | 2026-08-28 | 1.1.0 | 波 0 五项全闭环（A17-A21，A19 实证已闭环零改动/A20 结论按需回灌）；波 2a/2b 闭环（A2 三符号落码 44 新用例/A3 查重命中零新增源码）；波 1 重验未通过（0/3）→A1 转校准专项（§四 注记新立项） | 波 0-2 施
+>
+> **核验方式**：全文扫描完成/待办信号 + 引用文件存在性核验（引用 1 个，其中判废弃 0、路径漂移 1）+ commit 提及 12 处。
+> **路径漂移（非缺失，勿误判）**：`docs/_working/reports/2026-08-28-backfill-evaluation.md` 路径漂移→docs/_archive/2026-08-28-backfill-evaluation.md
+>
+> **处置建议**：保留。（本报告由清理批自动生成，判定依据=文档自身信号 + 代码侧核验）
+
+
+
+
 
 # 剩余施工项全量清单与施工顺序路线图
 

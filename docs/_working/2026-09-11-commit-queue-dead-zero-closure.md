@@ -1,6 +1,26 @@
 ---
 ttl: task_bound
 ---
+
+> ## 结案报告（2026-09-15 由 st-fullchain-20260914 核验）
+> **总结论：未结案（仍有待办）。处置=**保留**。**
+>
+> **✅ 已完成（2 条，摘录）**
+> - L49: 1. **PURGE 183 项**（明细 `.runtime/tmp/dead_disposition_v2.json`）：全部 auto 再生产物或门禁合法拦截，内容零丢失（已落地/在工作区/可再生）。批准确认后执行物理清理（dead/ 永不自动清理不变量不破——本项为 Owner gated 
+> - L265: 3. index.html 导航文案纠偏——产业地图入口描述"产业链传导（待建设）"为陈旧文案（页面已建成），改"产业链传导：星系→链层→公司（族全景）"。
+>
+> **⚠️ 未完成（1 条，逐条摘录）**
+> - L59: - P1⑤ A1 memoization + A2 checker 合并、P1⑥ 队列运营收尾（含交接新增观察：reconciler 子进程 `import scripts.governance` ModuleNotFoundError → 队列改道降级直提，gateway L2606 与本报告 §
+>
+> **核验方式**：全文扫描完成/待办信号 + 引用文件存在性核验（引用 3 个，其中判废弃 0、路径漂移 1）+ commit 提及 49 处。
+> **路径漂移（非缺失，勿误判）**：`src/zephyr/infrastructure/hooks/__init__.py` 路径漂移→src/zephyr/__init__.py
+>
+> **处置建议**：保留。（本报告由清理批自动生成，判定依据=文档自身信号 + 代码侧核验）
+
+
+
+
+
 # commit_queue 死信清零收尾 + 死信率告警最小落地（st-perf-plan-20260910，2026-09-11）
 
 续 [2026-09-10-commit-pipeline-perf-plan.md](2026-09-10-commit-pipeline-perf-plan.md) §2.4-4a（死信处置+可观测性）。
