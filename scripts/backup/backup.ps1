@@ -83,6 +83,8 @@ $VaultBase = "F:\working_vault"
 $VaultRetentionDays = 14
 if ($yamlContent -match 'working_vault:[\s\S]*?base:\s*"([^"]+)"') { $VaultBase = $matches[1] -replace '\\\\','\' }
 if ($yamlContent -match 'working_vault:[\s\S]*?retention_days:\s*(\d+)') { $VaultRetentionDays = [int]$matches[1] }
+if ($yamlContent -match 'working_vault:[\s\S]*?free_floor_gb:\s*([\d.]+)') { $VaultFreeFloorGB = [double]$matches[1] }
+if ($yamlContent -match 'working_vault:[\s\S]*?min_keep_days:\s*(\d+)') { $VaultMinKeepDays = [int]$matches[1] }
 
 # Parse exclude lists (inline YAML format: [item1, item2, ...])
 $ExcludeDirs = @(".git","node_modules","__pycache__",".pytest_cache",".mypy_cache",".ruff_cache",".runtime",".aidrafts","tmp",".venv")
@@ -383,6 +385,35 @@ if ($Mode -eq "ch") {
     $codeResult = @{status="skipped"}
 } else {
     Write-Stage "Stage 3: Code backup (versioned vault, hardlink dedup, retention ${VaultRetentionDays}d)"
+
+    # Space guard (v2.1.1): while free space below floor, evict OLDEST snapshots
+    # first, but never keep fewer than $VaultMinKeepDays pre-today snapshots.
+    # Steady-state size depends on daily churn (unknowable in advance) -- this
+    # makes the vault self-limiting: retention_days=14 is the ceiling, actual
+    # retention shrinks under pressure, and persistent shortfall fails LOUD
+    # (throw -> nonzero exit -> scheduler report) instead of filling the drive.
+    $spaceEvicted = @()
+    $floorBytes = $VaultFreeFloorGB * 1GB
+    $vaultDrive = $VaultBase.Substring(0, 1)
+    $freeBytes = (Get-PSDrive -Name $vaultDrive).Free
+    if ($freeBytes -lt $floorBytes) {
+        Write-Stage ("Space guard: {0:N1} GB free < floor {1:N1} GB -- evicting oldest snapshots (min keep {2})" -f ($freeBytes / 1GB), $VaultFreeFloorGB, $VaultMinKeepDays)
+        $datedDirs = @(Get-ChildItem -LiteralPath $VaultBase -Directory -ErrorAction SilentlyContinue |
+            Where-Object { $_.Name -match '^\d{8}$' -and $_.Name -lt (Get-Date).ToString("yyyyMMdd") } |
+            Sort-Object Name)
+        $evictCount = [Math]::Max(0, $datedDirs.Count - $VaultMinKeepDays)
+        foreach ($d in ($datedDirs | Select-Object -First $evictCount)) {
+            if ((Get-PSDrive -Name $vaultDrive).Free -ge $floorBytes) { break }
+            Remove-Item -LiteralPath $d.FullName -Recurse -Force -ErrorAction SilentlyContinue
+            if (-not (Test-Path -LiteralPath $d.FullName)) { $spaceEvicted += $d.Name }
+        }
+        $freeBytes = (Get-PSDrive -Name $vaultDrive).Free
+        if ($freeBytes -lt $floorBytes) {
+            $dbStatus.code_space_guard = @{status="failed"; free_gb=[math]::Round($freeBytes/1GB,2)}
+            throw ("VaultFreeSpaceBelowFloor: {0:N1} GB free < floor {1:N1} GB even at min keep {2} -- code snapshot aborted to avoid filling the drive" -f ($freeBytes / 1GB), $VaultFreeFloorGB, $VaultMinKeepDays)
+        }
+        Write-OK ("Space guard: {0:N1} GB free after evicting {1} snapshot(s)" -f ($freeBytes / 1GB), $spaceEvicted.Count)
+    }
 
     function Get-SourceFileIndex([string]$Root, [string[]]$ExclDirs, [string[]]$ExclFiles) {
         # Walk source tree (skip excluded dir names at any depth, skip reparse

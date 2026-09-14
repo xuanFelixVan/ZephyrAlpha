@@ -34,9 +34,13 @@ code_backup:
   exclude_files: ["*.pyc", "*.db-wal", "*.db-shm"]
 
 # 版本化代码快照（v2.1）：base\<yyyyMMdd>\，retention 天轮转
+# 空间保险（v2.1.1）：盘剩余 < free_floor_gb 时从最老快照逐出（最少保留 min_keep_days 天），
+# 仍不足则 fail loud 中止代码快照——retention_days=14 是上限，实际保留随空间自适应收缩
 working_vault:
   base: "F:\\working_vault"
   retention_days: 14
+  free_floor_gb: 60
+  min_keep_days: 3
 
 db_dumps:
   source: "D:\\tmp_db_dumps"
