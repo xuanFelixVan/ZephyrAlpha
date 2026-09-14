@@ -605,9 +605,20 @@ class TestGateEquivalence:
         gw_main.claim_snapshots["sess-equiv"] = {os.path.abspath(f_main): ""}
         gw_wt.claim_snapshots["sess-equiv"] = {os.path.abspath(f_wt): ""}
         self._assert_equiv(spec, gw_main, gw_wt, f_main, f_wt, True, "FOREIGN-CHANGE(pass)")
-        # 非空基线（claim 时已有外来变更）→ 双侧 BLOCK
+
+        # trust-hold（a0e262e260, 2026-09-13 Owner 裁定）：非空基线但独占持有
+        # （无他会话痕迹）→ 双侧自动信任 PASS。旧语义断言（非空基线→BLOCK）
+        # 未随裁定更新，成为存量失败——本用例即该回归钉住。
         gw_main.claim_snapshots["sess-equiv"] = {os.path.abspath(f_main): "diff --git a/docs/fc.txt ..."}
         gw_wt.claim_snapshots["sess-equiv"] = {os.path.abspath(f_wt): "diff --git a/docs/fc.txt ..."}
+        self._assert_equiv(spec, gw_main, gw_wt, f_main, f_wt, True, "FOREIGN-CHANGE(trust-hold pass)")
+
+        # 非空基线 + 活跃他会话痕迹（另一活跃 session 的 claim 快照含该文件）
+        # → 双侧 BLOCK（trust-hold 不适用于他会话在场场景）
+        reg = SessionRegistry(repo)
+        reg.register("sess-rival")
+        gw_main.claim_snapshots["sess-rival"] = {os.path.abspath(f_main): ""}
+        gw_wt.claim_snapshots["sess-rival"] = {os.path.abspath(f_wt): ""}
         self._assert_equiv(spec, gw_main, gw_wt, f_main, f_wt, False, "FOREIGN-CHANGE(fail)")
 
 
