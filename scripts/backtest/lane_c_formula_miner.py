@@ -98,42 +98,58 @@ def load_whitelist(path: Path | None = None) -> dict:
 CUSTOM_OPS = ("rank_cs", "ts_delta_5", "ts_zscore_20", "ts_corr_20")
 
 
-def make_panel_operators(n_symbols: int, requested: list[str]) -> list:
-    """自定义算子工厂（v2 批，Owner 2026-09-14 转正）。
+def make_panel_operators(date_codes: np.ndarray, symbol_codes: np.ndarray,
+                         requested: list[str]) -> list:
+    """自定义算子工厂（v2.1：groupby 分组语义，天然支持参差面板/停牌缺失）。
 
-    分组语义契约：面板行序=日期主序、每日恰好 n_symbols 行（fetch_panel 完整面板过滤
-    保证），reshape(-1, n_symbols) 后 axis=1 为截面、axis=0 为单标的时序。
-    段首无历史处填 0（"无意见"中性值，避免 NaN 进入 GP 搜索）；输出保证有限。
+    date_codes/symbol_codes=逐行分组码（与面板行等长）。探针旁路：gplearn
+    make_function 会用 10 样本试跑，长度不匹配时按单组处理保形状校验通过。
+    段首无历史填 0（"无意见"中性值）；输出保证有限。
     """
     from gplearn.functions import make_function
 
-    n = int(n_symbols)
+    dc_full = np.asarray(date_codes)
+    sc_full = np.asarray(symbol_codes)
 
-    def _mat(x):
-        x = np.asarray(x, dtype=float)
-        if x.size < n or x.size % n != 0:
-            # gplearn make_function 的 10 样本探针（或残缺输入）：单列旁路，仅保形状校验通过
-            return pd.DataFrame(x.reshape(-1, 1))
-        return pd.DataFrame(x.reshape(-1, n))
+    def _s(x):
+        return pd.Series(np.asarray(x, dtype=float))
+
+    def _dc(x):
+        x = np.asarray(x)
+        return dc_full if len(dc_full) == len(x) else np.zeros(len(x), dtype=int)
+
+    def _sc(x):
+        x = np.asarray(x)
+        return sc_full if len(sc_full) == len(x) else np.zeros(len(x), dtype=int)
 
     funcs: list = []
     for op in requested:
         if op == "rank_cs":
             def _f(x):
-                return _mat(x).rank(axis=1, pct=True).fillna(0.5).to_numpy().ravel()
+                return _s(x).groupby(_dc(x)).rank(pct=True).fillna(0.5).to_numpy()
         elif op == "ts_delta_5":
             def _f(x):
-                return _mat(x).diff(5).fillna(0.0).to_numpy().ravel()
+                return _s(x).groupby(_sc(x)).diff(5).fillna(0.0).to_numpy()
         elif op == "ts_zscore_20":
             def _f(x):
-                m = _mat(x)
-                z = (m - m.rolling(20, min_periods=5).mean()) / (m.rolling(20, min_periods=5).std() + 1e-9)
-                return z.clip(-10, 10).fillna(0.0).to_numpy().ravel()
+                s = _s(x)
+                g = s.groupby(_sc(x))
+                m = g.transform(lambda v: v.rolling(20, min_periods=5).mean())
+                sd = g.transform(lambda v: v.rolling(20, min_periods=5).std())
+                z = (s - m) / (sd + 1e-9)
+                return z.clip(-10, 10).fillna(0.0).to_numpy()
         elif op == "ts_corr_20":
             def _f(x1, x2):
-                a, b = _mat(x1), _mat(x2)
-                c = a.rolling(20, min_periods=8).corr(b)
-                return c.clip(-1, 1).fillna(0.0).to_numpy().ravel()
+                a = np.asarray(x1, dtype=float)
+                b = np.asarray(x2, dtype=float)
+                g = _sc(x1)
+                out = np.zeros(len(a))
+                for grp in np.unique(g):
+                    m = g == grp
+                    c = _s(a[m]).rolling(20, min_periods=8).corr(_s(b[m]))
+                    out[np.where(m)[0]] = np.nan_to_num(
+                        c.clip(-1, 1).to_numpy(), nan=0.0)
+                return out
         else:
             raise RuntimeError(f"未知自定义算子: {op}")
         funcs.append(make_function(function=_f, name=op,
@@ -141,7 +157,7 @@ def make_panel_operators(n_symbols: int, requested: list[str]) -> list:
     return funcs
 
 
-def build_function_set(whitelist: dict, n_symbols: int | None = None) -> list:
+def build_function_set(whitelist: dict, date_codes=None, symbol_codes=None) -> list:
     """白名单 approved → gplearn function_set（内置算子名 + 自定义算子对象，双向 fail-closed）。"""
     from gplearn.functions import _function_map
 
@@ -157,9 +173,9 @@ def build_function_set(whitelist: dict, n_symbols: int | None = None) -> list:
         else:
             raise RuntimeError(f"白名单算子引擎不支持（版本漂移）: {op}")
     if customs:
-        if not n_symbols:
-            raise RuntimeError(f"自定义算子 {customs} 需要面板宽度 n_symbols")
-        funcs.extend(make_panel_operators(n_symbols, customs))
+        if date_codes is None or symbol_codes is None:
+            raise RuntimeError(f"自定义算子 {customs} 需要面板分组码 date/symbol_codes")
+        funcs.extend(make_panel_operators(date_codes, symbol_codes, customs))
     return funcs
 
 
@@ -273,10 +289,9 @@ def fetch_panel(universe_n: int, days: int) -> dict:
     feats["y_fwd5"] = g["close"].transform(lambda s: s.shift(-FWD_DAYS) / s - 1)
     feats["date"], feats["s"] = k["date"].values, k["s"].values
     feats = feats.dropna(subset=list(FEATURES) + ["y_fwd5"])
-    # 完整面板过滤（每日恰好 n_symbols 行）+ 日期主序——自定义算子 reshape 分组语义的契约
-    n_sym = len(syms)
-    cnt = feats.groupby("date")["s"].transform("count")
-    feats = feats[cnt == n_sym].sort_values(["date", "s"]).reset_index(drop=True)
+    feats = feats.drop_duplicates(["date", "s"], keep="last")  # 重复键会炸 inner merge
+    # 日期主序（确定性）；自定义算子走 groupby 分组语义，参差面板（停牌/缺失）天然支持
+    feats = feats.sort_values(["date", "s"]).reset_index(drop=True)
 
     ti_cols = _ti_columns(cli)
     ti = pd.DataFrame(cli.execute(
@@ -289,23 +304,26 @@ def fetch_panel(universe_n: int, days: int) -> dict:
     ti_num = ti_num.rename(columns={"trade_date": "date", "symbol_canonical": "s"})
     for c in base_cols:
         ti_num[c] = pd.to_numeric(ti_num[c], errors="coerce")
+    ti_num = ti_num.drop_duplicates(["date", "s"], keep="first")
     ti_num = ti_num.merge(feats[["date", "s"]], on=["date", "s"], how="inner")
     ti_num = ti_num.dropna(axis=1, thresh=int(len(ti_num) * 0.7))
     base_cols = [c for c in ti_num.columns if c not in ("date", "s")]
-    # 与 feats 同序对齐（日期主序、同键集）——baseline 行必须与 X 行一一对应
-    ti_num = ti_num.sort_values(["date", "s"]).reset_index(drop=True)
+    # 与 feats 同键集同序对齐（baseline 行与 X 行一一对应）
     feats = feats.merge(ti_num[["date", "s"]], on=["date", "s"], how="inner")
-    ti_num = ti_num[ti_num.set_index(["date", "s"]).index.isin(
-        pd.MultiIndex.from_arrays([feats["date"], feats["s"]]))].reset_index(drop=True)
+    ti_num = ti_num.merge(feats[["date", "s"]], on=["date", "s"], how="inner")
+    ti_num = ti_num.sort_values(["date", "s"]).reset_index(drop=True)
+    feats = feats.sort_values(["date", "s"]).reset_index(drop=True)
 
     X = feats[list(FEATURES)].to_numpy(dtype=float)
     y = feats["y_fwd5"].to_numpy(dtype=float)
     baseline = ti_num[base_cols].to_numpy(dtype=float)
     if len(X) < 500 or len(X) != len(baseline):
         raise RuntimeError(f"面板样本不足或基座错位: X={len(X)} baseline={len(baseline)}")
+    date_codes = pd.factorize(feats["date"])[0]
+    symbol_codes = pd.factorize(feats["s"])[0]
     return {"X": X, "y": y, "baseline": baseline, "baseline_cols": base_cols,
             "n": len(X), "features": list(FEATURES), "universe": syms,
-            "n_symbols": n_sym}
+            "date_codes": date_codes, "symbol_codes": symbol_codes}
 
 
 def render_expr(expr: str, features: list[str]) -> str:
@@ -334,7 +352,8 @@ def run_mine(population_size: int, generations: int, universe_n: int, days: int,
         return {"gate": gate, "message": f"白名单 status={status}：正式量产须 Owner 审定后改 active"}
 
     panel = fetch_panel(universe_n, days)
-    func_set = build_function_set(whitelist, n_symbols=panel["n_symbols"])
+    func_set = build_function_set(whitelist, date_codes=panel["date_codes"],
+                                  symbol_codes=panel["symbol_codes"])
     cons = whitelist["constraints"]
 
     from gplearn.genetic import SymbolicTransformer

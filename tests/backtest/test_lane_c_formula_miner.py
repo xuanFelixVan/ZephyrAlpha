@@ -38,7 +38,8 @@ from scripts.backtest.lane_c_formula_miner import (
 class TestWhitelist:
     def test_load_real_yaml_and_function_set_mixed(self):
         wl = load_whitelist()
-        fs = build_function_set(wl, n_symbols=5)
+        fs = build_function_set(wl, date_codes=np.zeros(10, dtype=int),
+                                symbol_codes=np.tile([0, 1], 5))
         names = {getattr(f, "name", f) for f in fs}
         assert {"add", "sub", "mul", "div", "sqrt", "log"} <= names
         assert {"rank_cs", "ts_delta_5", "ts_zscore_20", "ts_corr_20"} <= names
@@ -46,12 +47,13 @@ class TestWhitelist:
         forbidden = {f["op"] for f in wl["forbidden"]}
         assert not (names & forbidden)
 
-    def test_custom_ops_require_panel_width(self):
-        with pytest.raises(RuntimeError, match="n_symbols"):
+    def test_custom_ops_require_group_codes(self):
+        with pytest.raises(RuntimeError, match="分组码"):
             build_function_set(load_whitelist())
 
     def test_function_set_excludes_trig_and_inv(self):
-        fs = build_function_set(load_whitelist(), n_symbols=5)
+        fs = build_function_set(load_whitelist(), date_codes=np.zeros(10, dtype=int),
+                                symbol_codes=np.tile([0, 1], 5))
         names = {getattr(f, "name", f) for f in fs}
         assert not ({"sin", "cos", "tan", "inv"} & names)
 
@@ -140,8 +142,10 @@ class TestPanelOperators:
     """日期主序面板（每日 N=2 标的）合成数据上的分组语义验证。"""
 
     def _ops(self):
+        # 分组码：8 交易日 × 2 标的（日期主序交替行）
         return {f.name: f for f in make_panel_operators(
-            2, ["rank_cs", "ts_delta_5", "ts_zscore_20", "ts_corr_20"])}
+            np.repeat(np.arange(8), 2), np.tile([0, 1], 8),
+            ["rank_cs", "ts_delta_5", "ts_zscore_20", "ts_corr_20"])}
 
     def _panel(self):
         # 8 个交易日 × 2 标的，日期主序：A=1..8，B=2,4,..,16 → 展平 [1,2,3,4,...]

@@ -64,11 +64,12 @@ SQL_PASSED_SEEDS = (
 )
 
 
-def build_eval_ops(n_symbols: int) -> dict:
-    """白名单算子求值表（面板日期主序契约；保护性实现，输出有限值优先）。"""
+def build_eval_ops(date_codes: np.ndarray, symbol_codes: np.ndarray) -> dict:
+    """白名单算子求值表（groupby 分组语义，与 MOD-BT-155 自定义算子同源）。"""
     from scripts.backtest.lane_c_formula_miner import CUSTOM_OPS, make_panel_operators
 
-    customs = {f.name: f for f in make_panel_operators(n_symbols, list(CUSTOM_OPS))}
+    customs = {f.name: f for f in make_panel_operators(
+        date_codes, symbol_codes, list(CUSTOM_OPS))}
 
     def _div(a, b):
         return np.asarray(a, float) / np.where(np.abs(np.asarray(b, float)) < 1e-12, 1e-12, b)
@@ -90,8 +91,13 @@ def build_eval_ops(n_symbols: int) -> dict:
     }
 
 
+OP_ARITY = {"add": 2, "sub": 2, "mul": 2, "div": 2, "max": 2, "min": 2,
+            "sqrt": 1, "log": 1, "abs": 1, "neg": 1,
+            "rank_cs": 1, "ts_delta_5": 1, "ts_zscore_20": 1, "ts_corr_20": 2}
+
+
 def validate_expr(expr: str, features: list[str], op_names: set[str]) -> tuple[bool, str]:
-    """DSL AST 校验（fail-closed）：只准 Call(白名单算子)/Name(已知特征)/Constant(数值)。"""
+    """DSL AST 校验（fail-closed）：只准 Call(白名单算子+参数个数正确)/Name(已知特征)/数值。"""
     try:
         tree = ast.parse(expr.strip(), mode="eval")
     except SyntaxError as exc:
@@ -111,6 +117,9 @@ def validate_expr(expr: str, features: list[str], op_names: set[str]) -> tuple[b
         if isinstance(node, ast.Call):
             if not isinstance(node.func, ast.Name) or node.func.id not in op_names:
                 return False, f"非白名单算子: {getattr(node.func, 'id', '?')}"
+            arity = OP_ARITY.get(node.func.id)
+            if arity is not None and len(node.args) != arity:
+                return False, f"{node.func.id} 参数数 {len(node.args)}!={arity}"
             for arg in node.args:
                 ok, why = _walk(arg)
                 if not ok:
@@ -175,19 +184,27 @@ def originality_max(expr: str, pool: list[str], features: list[str]) -> float:
 
 def build_generation_prompt(hypothesis: str, features: list[str], op_names: list[str],
                             existing: list[str], k: int) -> str:
-    """确定性生成 prompt（三正则写进事前约束：对齐自述/原创声明/简洁上限）。"""
+    """确定性生成 prompt v2（三正则事前约束 + 交易对手三问逼问，治机制自述套话）。
+
+    v2 升级（E2 三杀根因=机制自述套话）：mechanism 必须回答交易对手三问——
+    ①谁在卖给你 ②他们为什么愿意亏 ③什么成本/摩擦可能吃掉边际；
+    答不出具体对手（如只说"利用风险溢价"）=机制不清晰，预审必拒。
+    """
     return (
         f"市场假设：{hypothesis}\n\n"
         f"生成 {k} 条量化因子表达式，规则：\n"
         f"1 只准用这些算子（嵌套函数调用形式）：{', '.join(op_names)}\n"
         f"2 只准用这些输入变量：{', '.join(features)}\n"
-        f"3 每条必须附 description（它在算什么）与 mechanism（赚谁的钱：行为偏差/风险溢价/"
-        f"结构性摩擦，说不清就别生成）；description 必须是假设的有效实现，表达式必须忠实"
-        f"于 description\n"
+        f"3 每条必须附 description（它在算什么）与 mechanism。mechanism 必须回答"
+        f"交易对手三问：①谁在卖给你/谁在亏（具体到行为：追涨杀跌？被迫平仓？流动性"
+        f" withdrawal？）②他们为什么愿意亏（哪种行为偏差或约束，说人话）③什么成本或"
+        f"摩擦可能吃掉你的边际。禁止空话（如只写'利用风险溢价''统计显著'=机制不清晰，"
+        f"必被拒）；\n"
         f"4 简洁：整个表达式不超过 {MAX_NODES} 个节点，禁无用嵌套\n"
         f"5 原创禁重复，以下既有公式禁止同义变形：{'; '.join(existing[:5]) or '（空）'}\n\n"
         "输出 JSON 数组恰好 " + str(k) + " 条："
-        '[{"expression": "op(x, y)", "description": "...", "mechanism": "..."}]'
+        '[{"expression": "op(x, y)", "description": "...", "mechanism": '
+        '"①对手=...②为何亏=...③成本=..."}]'
     )
 
 
@@ -286,7 +303,7 @@ def run_agentic_mine(model: str, seeds_limit: int, per_seed: int, universe_n: in
         raise RuntimeError("E2 台账无已过审假说可作种子（先跑 hypothesis_precheck）")
     panel = fetch_panel(universe_n, days)
     features = panel["features"]
-    ops = build_eval_ops(panel["n_symbols"])
+    ops = build_eval_ops(panel["date_codes"], panel["symbol_codes"])
     op_set = set(ops)
     fitness = make_incremental_ic_fitness(panel["baseline"], panel["y"])
     existing = load_existing_ids(_INTAKE_CSV)
@@ -299,38 +316,46 @@ def run_agentic_mine(model: str, seeds_limit: int, per_seed: int, universe_n: in
     batch_id = now.strftime("E1C2-%Y%m%d-%H%M%S")
     rows: list[dict] = []
     rejected = Counter()
+    rejected_samples: dict[str, list[str]] = {}
+
+    def _rej(reason: str, expr: str) -> None:
+        rejected[reason] += 1
+        rejected_samples.setdefault(reason, [])
+        if len(rejected_samples[reason]) < 3:
+            rejected_samples[reason].append(expr[:120])
+
     for h in seeds:
         prompt = build_generation_prompt(h, features, sorted(op_set), pool_exprs, per_seed)
         try:
             raw = chat.ask(prompt, temperature=0.3)
         except Exception as exc:  # noqa: BLE001 — LSG/连接类失败记因继续
-            rejected[f"llm_error:{type(exc).__name__}"] += 1
+            _rej(f"llm_error:{type(exc).__name__}", str(exc)[:120])
             continue
         for cand in parse_candidates(raw):
             expr = str(cand["expression"]).strip()
             ok, why = validate_expr(expr, features, op_set)
             if not ok:
-                rejected[f"dsl_{why[:24]}"] += 1
+                _rej(f"dsl_{why[:24]}", expr)
                 continue
             try:
                 vals = evaluate_expr(expr, features, ops, panel["X"])
             except Exception as exc:  # noqa: BLE001 — 求值异常按形状类拒绝
-                rejected[f"eval_{type(exc).__name__}"] += 1
+                _rej(f"eval_{type(exc).__name__}", expr)
                 continue
             if not np.isfinite(vals).any() or float(np.nanstd(vals)) == 0:
-                rejected["degenerate_constant"] += 1
+                _rej("degenerate_constant", expr)
                 continue
             sim = originality_max(expr, pool_exprs, features)
             if sim >= ORIGINALITY_MAX_SIM:
-                rejected["originality_duplicate"] += 1
+                _rej("originality_duplicate", expr)
                 continue
             ic = float(fitness(panel["y"], vals, np.ones(panel["n"])))
             if ic <= MIN_INCR_IC:
-                rejected["incr_ic_nonpositive"] += 1
+                _rej("incr_ic_nonpositive", f"{expr} (ic={ic:.4f})")
                 continue
             cid = make_candidate_id(expr)
             if cid in existing:
-                rejected["dup_known"] += 1
+                _rej("dup_known", expr)
                 continue
             existing.add(cid)
             pool_exprs.append(expr)
@@ -351,6 +376,7 @@ def run_agentic_mine(model: str, seeds_limit: int, per_seed: int, universe_n: in
     record = {
         "batch": batch_id, "gate": gate, "model": model,
         "seeds": len(seeds), "mined": len(rows), "rejected": dict(rejected),
+        "rejected_samples": rejected_samples,
         "items": [{k: r[k] for k in ("candidate_id", "incr_ic", "ast_sim_max",
                                      "expression")} for r in rows],
     }
