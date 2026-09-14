@@ -155,36 +155,38 @@ def cmd_bothwin(_args: argparse.Namespace) -> int:
 
     及格=IS Sharpe>0 且每段样本 Sharpe>0 且年衰减率<0.5（DDL 存疑线）。
     一字段一语义：本判定只读不落库（升 sim/paper 的 lifecycle 变更属规则册治理动作）。
+    文件粒度（幂等四键配套）：键=(strategy_id, source_file)——同 sid 多版本翻译件
+    （族变体重构）各判各的，防弱版本行污染强版本的及格判定（PB-POE dual_ma 连坐案）。
     """
     is_rows = _q(
-        f"SELECT strategy_id, is_sharpe FROM {_TABLE} "
+        f"SELECT strategy_id, is_sharpe, source_file FROM {_TABLE} "
         f"WHERE screen_batch = 'C4-translated-20260912' AND verdict = 'translated_c4'"
     )
     oos_rows = _q(
-        f"SELECT strategy_id, screen_batch, is_sharpe, oos_years_decay FROM {_TABLE} "
+        f"SELECT strategy_id, source_file, screen_batch, is_sharpe, oos_years_decay FROM {_TABLE} "
         f"WHERE verdict = 'oos_tested' AND is_sharpe IS NOT NULL ORDER BY screen_batch"
     )
-    oos_map: dict[str, list[dict[str, Any]]] = {}
-    for sid, batch, sharpe, decay in oos_rows:
-        oos_map.setdefault(sid, []).append(
+    oos_map: dict[tuple[str, str], list[dict[str, Any]]] = {}
+    for sid, source_file, batch, sharpe, decay in oos_rows:
+        oos_map.setdefault((sid, source_file), []).append(
             {"batch": batch, "sharpe": sharpe, "decay": decay})
     items = []
-    for sid, is_sharpe in sorted(is_rows, key=lambda kv: -(kv[1] or 0)):
-        segments = oos_map.get(sid, [])
+    for sid, is_sharpe, source_file in sorted(is_rows, key=lambda kv: -(kv[1] or 0)):
+        segments = oos_map.get((sid, source_file), [])
         if not segments:
             continue
         windows_ok = (is_sharpe or 0) > 0 and all(
             (s["sharpe"] or 0) > 0 and (s["decay"] is None or s["decay"] < DECAY_SUSPECT)
             for s in segments)
         items.append({
-            "strategy_id": sid, "is_sharpe": is_sharpe,
+            "strategy_id": sid, "source_file": source_file, "is_sharpe": is_sharpe,
             "segments": segments, "gate_bothwin_pass": windows_ok,
         })
     passed = [i for i in items if i["gate_bothwin_pass"]]
     print(json.dumps({
-        "gate": "IS>0 且每段样本>0 且年衰减率<0.5",
+        "gate": "IS>0 且每段样本>0 且年衰减率<0.5（键=strategy_id+source_file）",
         "tested": len(items), "passed": len(passed),
-        "passed_ids": [i["strategy_id"] for i in passed],
+        "passed_ids": [f"{i['strategy_id']}@{i['source_file'].rsplit('/', 1)[-1]}" for i in passed],
         "items": items,
     }, ensure_ascii=False, indent=1, default=str))
     return 0

@@ -72,7 +72,9 @@ def test_bothwin_gate():
     out = json.loads(_run(mod.cmd_bothwin, argparse_ns()))
     assert out["tested"] >= 35
     assert 0 < out["passed"] < out["tested"]
-    assert "CAND-e3da6fa71af1" in out["passed_ids"]  # 恐慌反弹：唯一三窗全绿已知
+    # 文件粒度键（幂等四键配套）：passed_ids 形如 "CAND-xxx@c4_file.py"，同 sid 多版本各判各的
+    assert any(p.startswith("CAND-e3da6fa71af1@") for p in out["passed_ids"])  # 恐慌反弹：唯一三窗全绿已知
+    assert any(i.get("source_file") for i in out["items"])  # 文件粒度字段必须透出
     for i in out["items"]:
         if i["gate_bothwin_pass"]:
             assert i["is_sharpe"] > 0
