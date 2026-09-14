@@ -209,3 +209,37 @@ class TestWindowAndContract:
             "translated_c4"), "不同 verdict 不同键（deferred 不挡 translated）"
         assert runner._deferred_dedup_key(batch, "CAND-x", "orig.csv") == (
             batch, "CAND-x", "deferred_c4", "orig.csv")
+
+
+class TestPitDailyFrame:
+    """基本面门 PIT 语义（MOD-BT-096 2026-09-15 扩展）：值自 announce_date 起生效。"""
+
+    def test_announce_date_effective_and_ffill(self):
+        from _valuation_engine import pit_daily_frame
+
+        ann = pd.DataFrame({
+            "announce_date": pd.to_datetime(["2020-01-10", "2020-04-15"]),
+            "symbol": ["000001", "000001"],
+            "val": [5.0, 8.0],
+        })
+        idx = pd.date_range("2020-01-01", periods=120, freq="D")
+        out = pit_daily_frame(ann, idx)
+        assert pd.isna(out.loc["2020-01-09", "000001"]), "公告日前不得有值（防前视）"
+        assert out.loc["2020-01-10", "000001"] == 5.0, "公告日当日生效"
+        assert out.loc["2020-04-14", "000001"] == 5.0, "持续至下一公告前"
+        assert out.loc["2020-04-15", "000001"] == 8.0, "新公告日切换"
+
+    def test_multi_symbol_and_empty(self):
+        from _valuation_engine import pit_daily_frame
+
+        idx = pd.date_range("2020-01-01", periods=5, freq="D")
+        empty = pit_daily_frame(pd.DataFrame(columns=["announce_date", "symbol", "val"]), idx)
+        assert empty.shape == (5, 0), "空公告=零列全 NaN"
+        ann = pd.DataFrame({
+            "announce_date": pd.to_datetime(["2020-01-02", "2020-01-03"]),
+            "symbol": ["000001", "000002"],
+            "val": [1.0, 2.0],
+        })
+        out = pit_daily_frame(ann, idx)
+        assert out.loc["2020-01-01"].isna().all(), "首日无任何公告=全 NaN"
+        assert out.loc["2020-01-04", "000001"] == 1.0 and out.loc["2020-01-04", "000002"] == 2.0
