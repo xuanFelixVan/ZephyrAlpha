@@ -4,7 +4,7 @@ title: Parallel Session Coordination Policy / 并行 Session 协作策略
 doc_type: policy
 ttl: permanent
 status: Active
-version: 1.0.0
+version: 1.1.0
 layer: cross_layer
 owner: ZephyrAlpha-Owner
 classification: confidential
@@ -23,7 +23,7 @@ tags:
   - handoff
   - conflict-detection
 summary: 定义 ZephyrAlpha 多 AI session 并发协作契约。session 注册/注销、held_files 协议、handoff 交接包格式、冲突升级路径、close-door 多 session 协调。是并行 session 漂移治理的战略层契约（病根第三层）。
-date: '2026-06-26'
+date: '2026-09-15'
 ---
 
 # Parallel Session Coordination Policy
@@ -273,3 +273,32 @@ ced73113 / B2 看门狗 auto-stage 护盾 0314d205 / 看门狗删除硬化 68d64
 4. 发现有序恢复路径：新删除 → 先查 Windows 回收站（$I 元文件含原始路径，见
    .runtime/tmp/recycle_restore_report.json 的解析配方）→ 再查 B1 vault 昨日快照 →
    最后 git index/历史。
+
+
+## 10. worktree 申请制（Owner 2026-09-15 采纳施工班建议，宪法 AGENTS.md §RULE-WORKTREE 同步修正）
+
+背景：2026-09-14 单日四起同类事故（跨会话在途改写他人已提交文件 / docs 文件并发删除 /
+热文件注册表四连环坏 / 在途 schema 重组批制造 63 条幻影悬空引用假警报）——全部属于
+"共享工作树无隔离直改"事故类。业界共识（多智能体编码实践 2026）=每会话 worktree 物理隔离
+为标准配置。宪法默认本就是隔离施工，本条把"降级直改"从自由裁量升级为**显式申请制**。
+
+### 申请制三件
+
+1. **登记原因（降级时必做）**：降级直改主区的会话，必须在当批 commit message 或任务
+   登记中写明降级原因（如"worktree 合并冲突躲避/纯文档批/临时探针"）。现有 GitCommitGateway
+   的 `[GW:<sid>:non-worktree]` 标记即自动留痕通道，无需新基建。
+2. **自动计数（现有机制，一行命令）**：
+   ```
+   git log --format=%B | grep -c "non-worktree"
+   ```
+   按周执行（建议周六与 ZephyrAlpha_FactoryLaneC 同窗），按会话细查加
+   `grep "GW:.*non-worktree"` 后按 sid 分组。计数=治理可见性指标，不设硬阈值。
+3. **周审计**：计数结果纳入晨审/周六窗口巡检。连续两周环比上升 → 查明降级原因分布，
+   属合并冲突躲避类的回炉 worktree 正门；属机制缺陷类的另立治理条目。
+
+### 与既有条款的关系
+
+- §9.1（主工作区施工纪律）由"建议级"升级为申请制（本条）；
+- 宪法 AGENTS.md §0 冷启动 RULE-WORKTREE 与 §1 硬规则表第 3 条已同步修正（等长替换，
+  总行数 139 不变）；
+- 降级不是违规，未登记原因的降级才是；门禁对 non-worktree 提交的既有拦截面不变。

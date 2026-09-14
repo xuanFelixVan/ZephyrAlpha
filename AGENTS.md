@@ -14,8 +14,9 @@
    验证 `python --version` = 3.12.x（TRAE 注入 3.10 会崩 `datetime.UTC`）。
 2. **RULE-GUARDIAN**：`python scripts/lock_files.py cleanup && python -m zephyr.trading.process_reaper --status`。
    计划任务不存在 = 禁止任何写操作。长批任务先登记 `data/runtime/process_reaper_keep.txt` 防误杀(每行一个 cmdline 子串)。
-3. **RULE-WORKTREE**：`session_worktree_start`（或按既定裁定降级走 `scripts/git_commit.py` 正门）。
-   提交必经 GitCommitGateway / git_commit.py，禁止裸 `git commit`。改前 claim：`lock_files.py acquire <file> <sid>`；
+3. **RULE-WORKTREE**：`session_worktree_start` 为默认；降级直改主区=显式申请制（登记原因，GW
+   标记自动计数+周审计，见并行协调政策 §10）。提交必经 GitCommitGateway / git_commit.py，
+   禁止裸 `git commit`。改前 claim：`lock_files.py acquire <file> <sid>`；
    reconciler 链路验证走 `--reconciler-verify`（专用豁免通道，三前置：主区 clean/无活跃会话/claim 全成）。
 4. **RULE-CAPABILITY-LOOKUP**：写第一行业务代码前调
    `capability_lookup.find(<kw>, session_id=<sid>)` 或 MCP `rule_discovery`（写审计）；施工/新模块另必读 `sop/construction_sop/construction_workflow_policy.md`（07 域 15 步闭环编排真源）。
@@ -30,7 +31,7 @@
 |---|------|---------|------|
 | 1 | RULE-ENV | Python 3.12 PATH 修正在任何 python 调用之前 | AGENTS.md §RULE-ENV（切换后=本文） |
 | 2 | RULE-GUARDIAN | reaper 计划任务存活是写操作前提 | scripts/register_process_reaper_task.ps1 |
-| 3 | RULE-WORKTREE | 隔离施工/正门提交，HELD-OVERLAP 不硬闯 | docs/.../policies/parallel_session_coordination_policy.md |
+| 3 | RULE-WORKTREE | 隔离施工=默认；降级直改=显式申请制（登记原因+GW 计数+周审计），HELD-OVERLAP 不硬闯 | docs/.../policies/parallel_session_coordination_policy.md §10 |
 | 4 | RULE-DEPGRAPH | 先登记后施工；HIGH drift pre-merge 阻断 | trae_080_panorama_alignment.yaml |
 | 5 | RULE-REGISTRY | 注册表发现唯一真源是 ROOR；数量勿写死 | docs/registry_of_registries.yaml |
 | 6 | RULE-SSOT | 规则=YAML、架构=DB，机械判定禁止凭记忆 | trae_062_ssot_classification.yaml |
