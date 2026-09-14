@@ -14,7 +14,7 @@
 - trigger：commit_queue 文件命中 / 本模块命中 / 无关文件不命中
 - 三分类：content_landed（blob_sha256==HEAD）/ landed_elsewhere（dead_at 后有提交）/
   superseded_or_dropped（HEAD 无该文件）
-- 报告：retirement_audit.json 落盘（字段化计数 + owner_cleanable 清单）
+- 报告：retirement_audit.yaml 落盘（字段化计数 + owner_cleanable 清单）
 - 空队列 → clean
 - 损坏 JSON 单条 → 不拖垮整体
 - git 不可达 → fail-open warn（reconciler 永不抛异常）
@@ -82,7 +82,7 @@ def test_content_landed_when_head_matches(repo):
     res = spec.reconcile([".runtime/commit_queue/dead/q-1.json"], "solo_agent")
     assert res.action == "warn"
     assert "content_landed=1" in res.detail, res.detail
-    report = json.loads((repo / "docs/_working/dead_queue/retirement_audit.json").read_text(encoding="utf-8"))
+    report = json.loads((repo / "docs/_working/dead_queue/retirement_audit.yaml").read_text(encoding="utf-8"))
     assert report["counts"]["content_landed"] == 1
     assert "q-1" in report["owner_cleanable_qids"]
 
@@ -101,7 +101,7 @@ def test_superseded_when_gone_at_head(repo):
     spec = make_dead_queue_retirement_reconciler(_FakeGateway(str(repo)))
     res = spec.reconcile([".runtime/commit_queue/dead/q-3.json"], "solo_agent")
     assert "superseded_or_dropped=1" in res.detail
-    report = json.loads((repo / "docs/_working/dead_queue/retirement_audit.json").read_text(encoding="utf-8"))
+    report = json.loads((repo / "docs/_working/dead_queue/retirement_audit.yaml").read_text(encoding="utf-8"))
     assert "q-3" in report["keep_evidence_qids"]
 
 
@@ -118,7 +118,7 @@ def test_report_fresh_skip(repo):
     _write_dead_item(repo, "q-fresh", [{"path": "docs/a.md", "blob_sha256": "3" * 64}])
     audit_dir = repo / "docs" / "_working" / "dead_queue"
     audit_dir.mkdir(parents=True, exist_ok=True)
-    report_path = audit_dir / "retirement_audit.json"
+    report_path = audit_dir / "retirement_audit.yaml"
     report_path.write_text(json.dumps({"counts": {}}), encoding="utf-8")
     fresh_ts = time.time() - 60
     import os
@@ -139,18 +139,18 @@ def test_incremental_cursor_advances(repo):
     audit_dir = repo / "docs" / "_working" / "dead_queue"
     audit_dir.mkdir(parents=True, exist_ok=True)
     old_ts = _t.time() - 26 * 3600  # 报告过期（>24h）→ 不触发 fresh skip
-    (audit_dir / "retirement_audit.json").write_text(
+    (audit_dir / "retirement_audit.yaml").write_text(
         json.dumps({"generated_at": "2026-09-15T01:00:00+00:00", "last_cursor_qid": "q-prev-0002", "counts": {}}),
         encoding="utf-8",
     )
-    os.utime(audit_dir / "retirement_audit.json", (old_ts, old_ts))
+    os.utime(audit_dir / "retirement_audit.yaml", (old_ts, old_ts))
     # 游标前的旧项（上轮已扫）+ 游标后的待扫项
     _write_dead_item(repo, "q-prev-0001", [{"path": "docs/a.md", "blob_sha256": "4" * 64}])
     _write_dead_item(repo, "q-prev-0002", [{"path": "docs/a.md", "blob_sha256": "5" * 64}])
     _write_dead_item(repo, "q-zzz-0003", [{"path": "docs/a.md", "blob_sha256": "6" * 64}])
     spec = make_dead_queue_retirement_reconciler(_FakeGateway(str(repo)))
     res = spec.reconcile([".runtime/commit_queue/dead/q-zzz-0003.json"], "solo_agent")
-    report = json.loads((audit_dir / "retirement_audit.json").read_text(encoding="utf-8"))
+    report = json.loads((audit_dir / "retirement_audit.yaml").read_text(encoding="utf-8"))
     assert report["last_cursor_qid"] == "q-zzz-0003"
     # 只扫了游标后的 1 条（total_items=1，不含 q-prev-0001/0002）
     assert report["total_items"] == 1, f"cursor advance failed: {report['total_items']}"
