@@ -134,6 +134,7 @@ _INTERNAL_COMPUTE_CAPABILITIES = frozenset(
         "pattern_win_rate_materialize",  # 胜率统计重物化（MOD-SIG-145/JOB-108）
         "pattern_weight_sync",  # 调权同步（消费班 W-C3：物化完成→131 限幅调权）
         "pattern_evidence_certify",  # 四闸自动认证（消费班 W-CB：MOD-SIG-148）
+        "trading_lifecycle_weekly",  # 三域生命周期周扫（协议 v2.0：因子/策略/指标衰减认证）
     }
 )
 
@@ -415,6 +416,8 @@ class InternalComputeProvider(IngestProviderBase):
             CapabilityContract("pattern_weight_sync", supports_symbols_null=True),
             # 四闸自动认证（消费班 W-CB 2026-09-15）：FDR/n_eff/分regime/收缩→认证表，symbols=null=全表
             CapabilityContract("pattern_evidence_certify", supports_symbols_null=True),
+            # 三域生命周期周扫（协议 v2.0 2026-09-15）：因子 decay_state 回写/策略衰减台账/指标消费活性，symbols=null=全表
+            CapabilityContract("trading_lifecycle_weekly", supports_symbols_null=True),
         ],
         known_issues=[],
     )
@@ -499,6 +502,9 @@ class InternalComputeProvider(IngestProviderBase):
             return
         if payload.table == "c1_market.market_pattern_certification":
             yield from self._fetch_pattern_evidence_certify(payload)
+            return
+        if payload.extra.get("capability") == "trading_lifecycle_weekly":
+            yield from self._fetch_trading_lifecycle_weekly(payload)
             return
         yield from self._fetch_technical_indicator(payload)
 
@@ -596,6 +602,43 @@ class InternalComputeProvider(IngestProviderBase):
         )
 
         yield from run_evidence_certify()
+
+    def _fetch_trading_lifecycle_weekly(self, payload: FetchPayload) -> Iterator[FetchResult]:
+        """三域生命周期周扫路由分支（trading_lifecycle_weekly 命名约定，协议 v2.0）。
+
+        三个域 runner 隔离运行（per-runner try/except，单域失败不拖全链）：
+        因子 decay_state 回写 / 策略衰减台账 / 指标消费活性台账。
+        分析型任务无 CH 落表，FetchResult 仅记账。周末校准档事件触发。
+        """
+        from zephyr.governance.indicator_usage_audit import run_indicator_usage_audit
+        from zephyr.factor.analysis.factor_lifecycle_runner import run_factor_lifecycle
+        from zephyr.signal_ashare.strategy_signal.strategy_decay_certifier import (
+            run_strategy_decay_certify,
+        )
+
+        merged: dict[str, Any] = {"factor": None, "strategy": None, "indicator": None}
+        errors = []
+        try:
+            merged["factor"] = run_factor_lifecycle(today=str(payload.end))
+        except Exception as exc:  # noqa: BLE001 —— 单域失败隔离
+            errors.append(f"factor: {exc}")
+        try:
+            merged["strategy"] = run_strategy_decay_certify(today=str(payload.end))
+        except Exception as exc:  # noqa: BLE001
+            errors.append(f"strategy: {exc}")
+        try:
+            merged["indicator"] = run_indicator_usage_audit(today=str(payload.end))
+        except Exception as exc:  # noqa: BLE001
+            errors.append(f"indicator: {exc}")
+        merged["errors"] = errors
+        end = payload.end.isoformat() if payload.end else ""
+        yield FetchResult(
+            table="lifecycle_weekly", columns=[], rows=[], last_key=end,
+            elapsed_sec=0.0, rows_fetched=sum(
+                (m or {}).get("total", 0) for m in merged.values() if isinstance(m, dict)
+            ),
+            error="; ".join(errors) if errors else None,
+        )
 
     def _fetch_kline_index_calc(self, payload: FetchPayload, policy) -> Iterator[FetchResult]:
         """自算指数路由分支（kline_index_calc capability 的命名约定实现）。

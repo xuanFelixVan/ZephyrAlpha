@@ -3067,6 +3067,18 @@ tasks:
   extra:
     description: "四闸自动认证（MOD-SIG-148/方案 v1.0：闸A BH-FDR q<0.05+闸B n_eff=n/fwd_window≥30+闸C 分 regime 对照+闸D 贝叶斯收缩→状态机 certified/probation/failed 落认证表；喂 weight_sync shrunk 口径+前端认证列）"
 
+- task_id: trading_lifecycle_weekly
+  table:               # null=分析型任务无 CH 落表（因子 decay_state 回写 registry/策略衰减台账 JSON/指标消费活性台账 JSON）
+  source: internal     # 内部计算源（三域生命周期 runner：因子 decay_state 回写+策略衰减判定+指标消费活性，非外部采集）
+  schedule: weekend_calibration
+  incremental: false
+  dependencies: []
+  capability: trading_lifecycle_weekly
+  symbols:
+  fallback_sources: []
+  extra:
+    description: "三域生命周期周扫（生命周期协议 v2.0：因子 decay_state 回写 registry+策略衰减建议台账+指标消费活性台账；覆盖 factor_decay_monitor_weekly 任务块的 runner 缺口——该块保持 disabled 由本任务替代其职能）"
+
 - task_id: pattern_weight_sync
   table: c1_market.market_pattern_win_rate
   source: internal  # 本地计算（读物化统计→131 限幅调权→权重状态 JSON，非外部API）
