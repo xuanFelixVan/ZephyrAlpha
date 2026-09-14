@@ -355,6 +355,29 @@ def _run_special_schedule(
             except Exception:  # noqa: BLE001 — 告警通道自身故障不再上抛
                 pass
         return {"nightly_sentiment": bool(result.get("ok", False))}
+    # 一致预期管线每日双向验证（2026-09-14 源污染事件治本）：自建聚合 vs 同花顺快照
+    # 独立真源互查（秩相关/新鲜度/结构/PIT 零修正率），结果落 cross_validation_log；
+    # data/runtime/consensus_crosscheck.disabled 存在=停用（服务总闸惯例，即时生效）
+    if schedule_name == "consensus_crosscheck":
+        _flag = Path(__file__).resolve().parents[3] / "data" / "runtime" / "consensus_crosscheck.disabled"
+        if _flag.exists():
+            return {"consensus_crosscheck": False}
+        try:
+            from zephyr.data.consensus_crosscheck import run_consensus_crosscheck
+
+            result = run_consensus_crosscheck(scheduler)
+        except Exception as exc:  # noqa: BLE001 — 接线故障降级告警
+            try:
+                scheduler._alerter.notify(
+                    "consensus_crosscheck",
+                    f"交叉验证批跑异常: {str(exc)[:200]}",
+                    level="ERROR",
+                    source="consensus_crosscheck",
+                )
+            except Exception:  # noqa: BLE001 — 告警通道自身故障不再上抛
+                pass
+            return {"consensus_crosscheck": False}
+        return {"consensus_crosscheck": bool(result.get("success", False))}
     return None
 
 

@@ -95,6 +95,16 @@ schedules:
     max_instances: 1
     description: "研报明细层——research_report_detail_incremental（东财研报中心全字段含预测期EPS/PE；历史已回补 14.7 万行，日度仅补增量窗口）"
 
+  # L6.9 一致预期管线双向验证层：23:30 周一至周五（跑在 19:00 同花顺快照 + 20:30 研报增量 +
+  # consensus_daily_build 重建全部完成后）。独立真源互查：自建聚合 vs 同花顺快照——秩相关/
+  # 新鲜度/结构断言/PIT 零修正率，结果落 c1_market.cross_validation_log，异常经 Alerter 告警。
+  # 2026-09-14 源污染事件治本配套（设计档案=policies/expectation_consumption_design_policy.md §9/§10）。
+  consensus_crosscheck:
+    cron: "30 23 * * 0-4"
+    executor: default
+    max_instances: 1
+    description: "一致预期管线双向验证——自建聚合 vs 同花顺快照每日对答案（独立真源互查，非数据下载层）"
+
   # L7 夜间财务层：22:00 周一至周五（融资融券T+1此时已发布）
   nightly_financial:
     cron: "00 22 * * 0-4"

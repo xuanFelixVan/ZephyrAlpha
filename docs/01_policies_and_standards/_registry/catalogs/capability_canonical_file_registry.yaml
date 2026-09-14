@@ -5003,14 +5003,54 @@ capabilities:
     提交→全景对齐→清理 全流程步骤与失败处置；适用 07 域（regime/选股/仓位/风控/买卖/执行/对账/治理）施工，RULE-CAPABILITY-LOOKUP
     检索"施工"应命中本条
 creation_tokens:
-- file: "docs/_working/2026-09-14-chart-pattern-mining-report.md"
-  token: "patmine-report-20260914"
-  created_by: "st-patmine-20260914"
-  capability: "chart_pattern_mining"
-- file: "docs/_working/2026-09-14-ch-connection-unify-report.md"
-  token: "ch-conn-unify-20260914"
-  created_by: "st-chinfra-20260914"
-  capability: "ch_connection_unify"
+- file: docs/_working/sz_open_data_tools/subscribe_status.json
+  token: szopen-tools-subscribe_status-json-20260915
+  created_by: st-altdata-20260914
+  capability: alt_data_batch1_free_sources
+- file: docs/_working/sz_open_data_tools/subscribe_check.json
+  token: szopen-tools-subscribe_check-json-20260915
+  created_by: st-altdata-20260914
+  capability: alt_data_batch1_free_sources
+- file: docs/_working/sz_open_data_tools/status_all.py
+  token: szopen-tools-status_all-py-20260915
+  created_by: st-altdata-20260914
+  capability: alt_data_batch1_free_sources
+- file: docs/_working/sz_open_data_tools/probe_all_new.py
+  token: szopen-tools-probe_all_new-py-20260915
+  created_by: st-altdata-20260914
+  capability: alt_data_batch1_free_sources
+- file: docs/_working/sz_open_data_tools/mining_round2.json
+  token: szopen-tools-mining_round2-json-20260915
+  created_by: st-altdata-20260914
+  capability: alt_data_batch1_free_sources
+- file: docs/_working/sz_open_data_tools/fields_round2.json
+  token: szopen-tools-fields_round2-json-20260915
+  created_by: st-altdata-20260914
+  capability: alt_data_batch1_free_sources
+- file: docs/_working/sz_open_data_tools/fields_probe.json
+  token: szopen-tools-fields_probe-json-20260915
+  created_by: st-altdata-20260914
+  capability: alt_data_batch1_free_sources
+- file: docs/_working/sz_open_data_tools/dataset_delta.json
+  token: szopen-tools-dataset_delta-json-20260915
+  created_by: st-altdata-20260914
+  capability: alt_data_batch1_free_sources
+- file: docs/_working/sz_open_data_tools/catalog_full.csv
+  token: szopen-tools-catalog_full-csv-20260915
+  created_by: st-altdata-20260914
+  capability: alt_data_batch1_free_sources
+- file: docs/_working/2026-09-15-szopen-pipeline-handoff.md
+  token: szopen-handoff-20260915
+  created_by: st-altdata-20260914
+  capability: alt_data_batch1_free_sources
+- file: docs/_working/2026-09-14-chart-pattern-mining-report.md
+  token: patmine-report-20260914
+  created_by: st-patmine-20260914
+  capability: chart_pattern_mining
+- file: docs/_working/2026-09-14-ch-connection-unify-report.md
+  token: ch-conn-unify-20260914
+  created_by: st-chinfra-20260914
+  capability: ch_connection_unify
 - file: schemas/categories/backtest_regime_state_anchored.py
   token: anchored-state-ddl-20260914
   created_by: st-altdata-20260914
@@ -12552,4 +12592,20 @@ creation_tokens:
   token: market-data-repair-2026-09-14-handoff-market-data-repair-20260914
   created_by: st-mktfix-20260914
   capability: market_data_repair
+- file: src/zephyr/gov_enforcement/commit_gates/syntax_validation_gate.py
+  token: syntax-gate-20260914
+  created_by: solo_agent
+  capability: commit_governance_syntax_gate
+- file: tests/governance/commit_gates/test_syntax_validation_gate.py
+  token: syntax-gate-test-20260914
+  created_by: solo_agent
+  capability: commit_governance_syntax_gate
+- file: docs/_working/2026-09-14-p0-syntax-gate.md
+  token: p0-syntax-gate-log-20260914
+  created_by: solo_agent
+  capability: redblue_v3_p0_syntax_gate
+- file: src/zephyr/data/consensus_crosscheck.py
+  token: consensus-crosscheck-consensus-crosscheck-20260914
+  created_by: st-expectation-20260914
+  capability: consensus_crosscheck
 di_seam_exemptions: []

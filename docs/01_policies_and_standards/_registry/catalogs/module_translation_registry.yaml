@@ -49142,11 +49142,11 @@ entries:
   plain_zh: "估值因子族策略或引擎翻译件，使用参数化估值引擎从 stock_indicator 表读取 PE/PB/股息率截面排序选股，按 pilot_002 模板输出权重矩阵供 C4 快筛批测，IS 窗口 2020-2023 冻结成本实测"
 - module_path: scripts/backtest/translated/c4_valuation_pe_low.py
   domain_id: D_BACKTEST
-  name_zh: "c4_valuation_pe_low"
+  name_zh: "低PE月频前20等权（HS300）"
   name_en: ""
   desc_zh: ""
   desc_en: ""
-  plain_zh: "估值因子族策略或引擎翻译件，使用参数化估值引擎从 stock_indicator 表读取 PE/PB/股息率截面排序选股，按 pilot_002 模板输出权重矩阵供 C4 快筛批测，IS 窗口 2020-2023 冻结成本实测"
+  plain_zh: "从stock_indicator表读取沪深300成分股最新PE(TTM)截面，按PE从小到大排序取前20只等权持有月频调仓；当月仅首个交易日执行调仓，后续日沿用已有权重；IS2020-2023实测Sharpe=-0.31（PE价值因子在成长占优期跑输）"
 - module_path: scripts/backtest/translated/c4_valuation_pb_low.py
   domain_id: D_BACKTEST
   name_zh: "低PB月频前20等权"
@@ -49224,6 +49224,20 @@ entries:
   desc_zh: "白名单算子遗传规划挖因子公式，验收=对REG-IND-001基座的增量IC，带出生证卸进货台账"
   desc_en: ""
   plain_zh: "策略工厂的公式挖掘机（第一台便宜的）：用'积木清单'里的运算符让公式自己进化繁衍，挖出来的公式先考试——扣掉现有118个指标已经能解释的部分，还有真预测力才算数；每条公式带出生证落到进货台账等守门员审。白天不许开机（问电力闸），正式量产等老板审定积木清单。"
+- module_path: src/zephyr/gov_enforcement/commit_gates/syntax_validation_gate.py
+  domain_id: D_GOV_CODE_QUALITY
+  name_zh: "语法校验门禁"
+  name_en: ""
+  desc_zh: "staged .py 文件 ast.parse 语法错误硬阻断门禁（红蓝 v3 P0-1 批 2 治本）"
+  desc_en: ""
+  plain_zh: "提交前把暂存的每个 Python 文件用 ast.parse 过一遍，有语法错误就拦下并指出文件名和行号；填全仓 AST 类门禁集体跳过语法错误留下的责任真空，坏代码再也进不了仓库"
+- module_path: src/zephyr/data/consensus_crosscheck.py
+  domain_id: D_DATA
+  name_zh: "一致预期管线双向验证器"
+  name_en: "consensus_crosscheck"
+  desc_zh: "自建聚合与同花顺快照每日独立真源互查（对账/新鲜度/结构/PIT 探针），异常告警"
+  desc_en: ""
+  plain_zh: "每天晚上给两套独立算出来的'全市场预期'对一次答案：像两个会计各自记账再核账，对得上就 quietly 记一笔，对不上立刻拉警报，防止再出现'拿今天的数当历史数'那种事故。"
 
 battle_map_steps:
 - step_id: BM-BUY-05
