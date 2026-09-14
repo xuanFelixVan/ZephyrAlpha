@@ -1331,6 +1331,13 @@ class GitCommitGateway:
         self._reconciliation_registry.register(
             make_worktree_drift_watchdog_reconciler(self)
         )  # #ARCH-WORKTREE-WRITE-INTEGRITY-001 P0-1/P0-2 工作区 tracked 漂移看门狗（priority=845，ensure-daemon+即时一扫，陈旧覆写发现靠机制）
+        from zephyr.governance.audit.dead_queue_retirement_reconciler import (  # noqa: PLC0415
+            make_dead_queue_retirement_reconciler,
+        )
+
+        self._reconciliation_registry.register(
+            make_dead_queue_retirement_reconciler(self)
+        )  # C 项 Owner 批准 2026-09-15——dead/ 队列季度退役审计（priority=795，post-commit 事件触发，机械三分类，报告落 docs/_working/dead_queue/）
         # 注册备份reconciler（MOD-INF-027，post-commit事件触发，8h间隔保护）
         try:
             import sys as _sys

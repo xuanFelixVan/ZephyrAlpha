@@ -111,6 +111,25 @@ def test_empty_queue_clean(repo):
     assert res.action == "clean"
 
 
+def test_report_fresh_skip(repo):
+    """报告 24h 内已生成 → skip（季庭审计节流护栏，防 post-commit 链被全量扫描堵塞）。"""
+    import time
+
+    _write_dead_item(repo, "q-fresh", [{"path": "docs/a.md", "blob_sha256": "3" * 64}])
+    audit_dir = repo / "docs" / "_working" / "dead_queue"
+    audit_dir.mkdir(parents=True, exist_ok=True)
+    report_path = audit_dir / "retirement_audit.json"
+    report_path.write_text(json.dumps({"counts": {}}), encoding="utf-8")
+    fresh_ts = time.time() - 60
+    import os
+
+    os.utime(report_path, (fresh_ts, fresh_ts))
+    spec = make_dead_queue_retirement_reconciler(_FakeGateway(str(repo)))
+    res = spec.reconcile([".runtime/commit_queue/dead/q-fresh.json"], "solo_agent")
+    assert res.action == "skip"
+    assert "fresh" in res.detail.lower()
+
+
 def test_corrupt_item_does_not_crash(repo):
     d = repo / ".runtime" / "commit_queue" / "dead"
     d.mkdir(parents=True, exist_ok=True)

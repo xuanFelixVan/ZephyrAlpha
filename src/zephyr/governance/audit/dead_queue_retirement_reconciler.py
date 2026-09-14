@@ -30,6 +30,7 @@ import hashlib
 import json
 import logging
 import subprocess
+import time
 from dataclasses import dataclass
 from datetime import datetime, timezone
 from pathlib import Path
@@ -44,6 +45,8 @@ _MAX_DETAIL_ITEMS = 6
 _AUDIT_DIR = "docs/_working/dead_queue"
 _AUDIT_FILE = "retirement_audit.json"
 _TRIGGER_PREFIXES = (".runtime/commit_queue/", "src/zephyr/governance/audit/dead_queue_retirement_reconciler.py")
+_REPORT_FRESH_SECONDS = 24 * 3600.0  # 报告新鲜期：24h 内不重跑（季庭审计语义+性能护栏）
+_MAX_ITEMS_PER_RUN = 200  # 单次最多审计条数（超限留待下一窗口，防单次 post-commit 长时阻塞）
 _DED_CLASSIFIED = ("content_landed", "landed_elsewhere", "superseded_or_dropped")
 
 
@@ -150,12 +153,33 @@ def _classify_item(project_root: Path, item: dict) -> list[_FileVerdict]:
     return verdicts
 
 
+def _report_fresh(project_root: Path, max_age_s: float) -> bool:
+    """审计报告在 max_age_s 内生成过 → 本次 skip（季庭审计语义：非每次 commit 都全量跑）。
+
+    护栏理由：956 条 dead 项全量扫描 ≈ O(条目×文件数) 个 git 子进程（v5 施工抽样实测
+    40 条 353s，全量推算 2.3h）——无节流会堵塞 post-commit 链。报告 24h 内新鲜即跳过。
+    """
+    p = project_root / _AUDIT_DIR / _AUDIT_FILE
+    if not p.is_file():
+        return False
+    try:
+        age = time.time() - p.stat().st_mtime
+        return age < max_age_s
+    except OSError:
+        return False
+
+
 def _run_audit(project_root: Path) -> dict:
     """全量扫 dead/*.json → 三分类 → 写 retirement_audit.json（safe_write_text CAS）。"""
     dead_dir = project_root / ".runtime" / "commit_queue" / "dead"
     items: list[dict] = []
+    truncated = False
     if dead_dir.is_dir():
-        for p in sorted(dead_dir.glob("*.json")):
+        all_paths = sorted(dead_dir.glob("*.json"))
+        if len(all_paths) > _MAX_ITEMS_PER_RUN:
+            all_paths = all_paths[:_MAX_ITEMS_PER_RUN]
+            truncated = True
+        for p in all_paths:
             try:
                 items.append(json.loads(p.read_text(encoding="utf-8")))
             except Exception:  # noqa: BLE001 — 单条损坏不拖垮整体
@@ -185,6 +209,7 @@ def _run_audit(project_root: Path) -> dict:
     report = {
         "generated_at": datetime.now(timezone.utc).isoformat(timespec="seconds"),
         "total_items": len(items),
+        "truncated_to_limit": truncated,
         "counts": counts,
         "owner_cleanable_qids": classified_qids["content_landed"] + classified_qids["landed_elsewhere"],
         "keep_evidence_qids": classified_qids["superseded_or_dropped"],
@@ -222,6 +247,12 @@ def make_dead_queue_retirement_reconciler(gateway: "object") -> ReconcilerSpec:
 
     def _reconcile(committed_files: list[str], session_id: str) -> ReconcileResult:
         try:
+            if _report_fresh(project_root, _REPORT_FRESH_SECONDS):
+                return ReconcileResult(
+                    action="skip",
+                    detail=f"retirement audit report fresh (<{_REPORT_FRESH_SECONDS / 3600:.0f}h)，跳过本轮（季庭审计节流）",
+                    gate_id=_GATE_ID,
+                )
             report = _run_audit(project_root)
             counts = report.get("counts", {})
             cleanable = len(report.get("owner_cleanable_qids", []))
