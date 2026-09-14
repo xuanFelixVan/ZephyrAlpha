@@ -74,7 +74,7 @@ description: >-
 owner: MOD-GOVERNANCE
 tier: tier_2_data_runtime
 status: active
-version: 1.9.4
+version: 1.9.5
 created: '2026-08-13'
 last_updated: '2026-09-14'
 related_arch: '#ARCH-BREG-001'
@@ -10237,6 +10237,281 @@ datasets:
   produced_by_source: SRC-INTERNAL-001
   blueprint: "docs/03_modules/_domain_signal/pattern_event_stats/blueprint.md"
   tags: ["数据", "信号", "图形", "统计"]
+- dataset_id: DS-256
+  entity_name: c1_market.alt_sz_air_quality_daily
+  entity_type: dataset
+  scope: production
+  physical_type: clickhouse_table
+  produced_by_job: alt_sz_air_quality_daily_incremental
+  domain_id: D_MARKET
+  pit_policy: strict
+  format_summary: 深圳空气质量日报（监测点 AQI/等级/首要污染物；54,094 行 2015-02 起；新钥匙 0ecc2b46 通道；XH UUID 幂等）
+  valid_since: "2026-09-14"
+  module_id: MOD-L00-004
+  design_maturity: production
+  name: c1_market.alt_sz_air_quality_daily
+  name_zh: 深圳空气质量日报表
+  status: active
+  created_at: "2026-09-14"
+  updated_at: "2026-09-14"
+  owner: MOD-L00-004
+  produced_by_source: SRC-SZOPENDATA-001
+  survivorship_free: true
+  entry_role: "state"
+  applies_to: ["market"]
+  tags: ["另类数据", "数据", "深圳", "批2"]
+  evidence: "DDL schemas/categories/market_alt_sz_air_quality_daily.py；FINAL 实测回补（见任务书 §五·七）"
+  code_symbol: "src/zephyr/data/implementations/akshare_alt_provider.py::AkshareAltProvider._fetch_sz_open_data"
+- dataset_id: DS-257
+  entity_name: c1_market.alt_sz_air_quality_region
+  entity_type: dataset
+  scope: production
+  physical_type: clickhouse_table
+  produced_by_job: alt_sz_air_quality_region_incremental
+  domain_id: D_MARKET
+  pit_policy: strict
+  format_summary: 深圳分区域空气质量（区×六污染物×日；50,594 行 2015-10 起；新钥匙通道；ID 幂等）
+  valid_since: "2026-09-14"
+  module_id: MOD-L00-004
+  design_maturity: production
+  name: c1_market.alt_sz_air_quality_region
+  name_zh: 深圳分区域空气质量表
+  status: active
+  created_at: "2026-09-14"
+  updated_at: "2026-09-14"
+  owner: MOD-L00-004
+  produced_by_source: SRC-SZOPENDATA-001
+  survivorship_free: true
+  entry_role: "state"
+  applies_to: ["market"]
+  tags: ["另类数据", "数据", "深圳", "批2"]
+  evidence: "DDL schemas/categories/market_alt_sz_air_quality_region.py；FINAL 实测回补（见任务书 §五·七）"
+  code_symbol: "src/zephyr/data/implementations/akshare_alt_provider.py::AkshareAltProvider._fetch_sz_open_data"
+- dataset_id: DS-258
+  entity_name: c1_market.alt_sz_reservoir_station
+  entity_type: dataset
+  scope: production
+  physical_type: clickhouse_table
+  produced_by_job: alt_sz_reservoir_station_refresh
+  domain_id: D_MARKET
+  pit_policy: strict
+  format_summary: 深圳水库测站字典（485 站静态档案；新钥匙通道；STCD 幂等）
+  valid_since: "2026-09-14"
+  module_id: MOD-L00-004
+  design_maturity: production
+  name: c1_market.alt_sz_reservoir_station
+  name_zh: 深圳水库测站字典表
+  status: active
+  created_at: "2026-09-14"
+  updated_at: "2026-09-14"
+  owner: MOD-L00-004
+  produced_by_source: SRC-SZOPENDATA-001
+  survivorship_free: true
+  entry_role: "state"
+  applies_to: ["market"]
+  tags: ["另类数据", "数据", "深圳", "批2"]
+  evidence: "DDL schemas/categories/market_alt_sz_reservoir_station.py；FINAL 实测回补（见任务书 §五·七）"
+  code_symbol: "src/zephyr/data/implementations/akshare_alt_provider.py::AkshareAltProvider._fetch_sz_open_data"
+- dataset_id: DS-259
+  entity_name: c1_market.alt_sz_reservoir_rain_day
+  entity_type: dataset
+  scope: production
+  physical_type: clickhouse_table
+  produced_by_job: alt_sz_reservoir_rain_day_refresh
+  domain_id: D_MARKET
+  pit_policy: strict
+  format_summary: 深圳水库站点日降雨量（287,400 行 2019 起；新钥匙通道；SJID 幂等）
+  valid_since: "2026-09-14"
+  module_id: MOD-L00-004
+  design_maturity: production
+  name: c1_market.alt_sz_reservoir_rain_day
+  name_zh: 深圳水库站点日降雨量表
+  status: active
+  created_at: "2026-09-14"
+  updated_at: "2026-09-14"
+  owner: MOD-L00-004
+  produced_by_source: SRC-SZOPENDATA-001
+  survivorship_free: true
+  entry_role: "state"
+  applies_to: ["market"]
+  tags: ["另类数据", "数据", "深圳", "批2"]
+  evidence: "DDL schemas/categories/market_alt_sz_reservoir_rain_day.py；FINAL 实测回补（见任务书 §五·七）"
+  code_symbol: "src/zephyr/data/implementations/akshare_alt_provider.py::AkshareAltProvider._fetch_sz_open_data"
+- dataset_id: DS-260
+  entity_name: c1_market.alt_sz_reservoir_rain_month
+  entity_type: dataset
+  scope: production
+  physical_type: clickhouse_table
+  produced_by_job: alt_sz_reservoir_rain_month_refresh
+  domain_id: D_MARKET
+  pit_policy: strict
+  format_summary: 深圳水库站点月降雨量（13,741 行；新钥匙通道；SJID 幂等）
+  valid_since: "2026-09-14"
+  module_id: MOD-L00-004
+  design_maturity: production
+  name: c1_market.alt_sz_reservoir_rain_month
+  name_zh: 深圳水库站点月降雨量表
+  status: active
+  created_at: "2026-09-14"
+  updated_at: "2026-09-14"
+  owner: MOD-L00-004
+  produced_by_source: SRC-SZOPENDATA-001
+  survivorship_free: true
+  entry_role: "state"
+  applies_to: ["market"]
+  tags: ["另类数据", "数据", "深圳", "批2"]
+  evidence: "DDL schemas/categories/market_alt_sz_reservoir_rain_month.py；FINAL 实测回补（见任务书 §五·七）"
+  code_symbol: "src/zephyr/data/implementations/akshare_alt_provider.py::AkshareAltProvider._fetch_sz_open_data"
+- dataset_id: DS-261
+  entity_name: c1_market.alt_sz_house_area
+  entity_type: dataset
+  scope: production
+  physical_type: clickhouse_table
+  produced_by_job: alt_sz_house_area_incremental
+  domain_id: D_MARKET
+  pit_policy: strict
+  format_summary: 深圳一手商品房按面积段成交（区×面积段×日；59,027 行 2018 起；新钥匙通道；ID 幂等）
+  valid_since: "2026-09-14"
+  module_id: MOD-L00-004
+  design_maturity: production
+  name: c1_market.alt_sz_house_area
+  name_zh: 深圳一手房按面积成交表
+  status: active
+  created_at: "2026-09-14"
+  updated_at: "2026-09-14"
+  owner: MOD-L00-004
+  produced_by_source: SRC-SZOPENDATA-001
+  survivorship_free: true
+  entry_role: "state"
+  applies_to: ["market"]
+  tags: ["另类数据", "数据", "深圳", "批2"]
+  evidence: "DDL schemas/categories/market_alt_sz_house_area.py；FINAL 实测回补（见任务书 §五·七）"
+  code_symbol: "src/zephyr/data/implementations/akshare_alt_provider.py::AkshareAltProvider._fetch_sz_open_data"
+- dataset_id: DS-262
+  entity_name: c1_market.alt_sz_house_listing
+  entity_type: dataset
+  scope: production
+  physical_type: clickhouse_table
+  produced_by_job: alt_sz_house_listing_refresh
+  domain_id: D_MARKET
+  pit_policy: strict
+  format_summary: 深圳二手房源挂牌明细（40 万行入表，源 79.4 万行分页全量；新钥匙通道；XH 幂等）
+  valid_since: "2026-09-14"
+  module_id: MOD-L00-004
+  design_maturity: production
+  name: c1_market.alt_sz_house_listing
+  name_zh: 深圳二手房源信息表
+  status: active
+  created_at: "2026-09-14"
+  updated_at: "2026-09-14"
+  owner: MOD-L00-004
+  produced_by_source: SRC-SZOPENDATA-001
+  survivorship_free: true
+  entry_role: "state"
+  applies_to: ["market"]
+  tags: ["另类数据", "数据", "深圳", "批2"]
+  evidence: "DDL schemas/categories/market_alt_sz_house_listing.py；FINAL 实测回补（见任务书 §五·七）"
+  code_symbol: "src/zephyr/data/implementations/akshare_alt_provider.py::AkshareAltProvider._fetch_sz_open_data"
+- dataset_id: DS-263
+  entity_name: c1_market.alt_sz_house_presale
+  entity_type: dataset
+  scope: production
+  physical_type: clickhouse_table
+  produced_by_job: alt_sz_house_presale_refresh
+  domain_id: D_MARKET
+  pit_policy: strict
+  format_summary: 深圳商品房批准预售（预售证×项目 2,155 条；新钥匙通道；XH 幂等）
+  valid_since: "2026-09-14"
+  module_id: MOD-L00-004
+  design_maturity: production
+  name: c1_market.alt_sz_house_presale
+  name_zh: 深圳商品房批准预售表
+  status: active
+  created_at: "2026-09-14"
+  updated_at: "2026-09-14"
+  owner: MOD-L00-004
+  produced_by_source: SRC-SZOPENDATA-001
+  survivorship_free: true
+  entry_role: "state"
+  applies_to: ["market"]
+  tags: ["另类数据", "数据", "深圳", "批2"]
+  evidence: "DDL schemas/categories/market_alt_sz_house_presale.py；FINAL 实测回补（见任务书 §五·七）"
+  code_symbol: "src/zephyr/data/implementations/akshare_alt_provider.py::AkshareAltProvider._fetch_sz_open_data"
+- dataset_id: DS-264
+  entity_name: c1_market.alt_sz_market_subject
+  entity_type: dataset
+  scope: production
+  physical_type: clickhouse_table
+  produced_by_job: alt_sz_market_subject_refresh
+  domain_id: D_MARKET
+  pit_policy: strict
+  format_summary: 深圳市场主体发展统计（年度企业结构；新钥匙通道；ND 年份幂等）
+  valid_since: "2026-09-14"
+  module_id: MOD-L00-004
+  design_maturity: production
+  name: c1_market.alt_sz_market_subject
+  name_zh: 深圳市场主体发展统计表
+  status: active
+  created_at: "2026-09-14"
+  updated_at: "2026-09-14"
+  owner: MOD-L00-004
+  produced_by_source: SRC-SZOPENDATA-001
+  survivorship_free: true
+  entry_role: "state"
+  applies_to: ["market"]
+  tags: ["另类数据", "数据", "深圳", "批2"]
+  evidence: "DDL schemas/categories/market_alt_sz_market_subject.py；FINAL 实测回补（见任务书 §五·七）"
+  code_symbol: "src/zephyr/data/implementations/akshare_alt_provider.py::AkshareAltProvider._fetch_sz_open_data"
+- dataset_id: DS-265
+  entity_name: c1_market.alt_sz_stat_analysis
+  entity_type: dataset
+  scope: production
+  physical_type: clickhouse_table
+  produced_by_job: alt_sz_stat_analysis_refresh
+  domain_id: D_MARKET
+  pit_policy: strict
+  format_summary: 深圳统计分析文章流（统计局月度分析全文；新钥匙通道；XH 幂等；平台 data 混 null 行已防御）
+  valid_since: "2026-09-14"
+  module_id: MOD-L00-004
+  design_maturity: production
+  name: c1_market.alt_sz_stat_analysis
+  name_zh: 深圳统计分析文章流表
+  status: active
+  created_at: "2026-09-14"
+  updated_at: "2026-09-14"
+  owner: MOD-L00-004
+  produced_by_source: SRC-SZOPENDATA-001
+  survivorship_free: true
+  entry_role: "state"
+  applies_to: ["market"]
+  tags: ["另类数据", "数据", "深圳", "批2"]
+  evidence: "DDL schemas/categories/market_alt_sz_stat_analysis.py；FINAL 实测回补（见任务书 §五·七）"
+  code_symbol: "src/zephyr/data/implementations/akshare_alt_provider.py::AkshareAltProvider._fetch_sz_open_data"
+- dataset_id: DS-266
+  entity_name: c1_market.alt_sz_enterprise_year
+  entity_type: dataset
+  scope: production
+  physical_type: clickhouse_table
+  produced_by_job: alt_sz_enterprise_year_refresh
+  domain_id: D_MARKET
+  pit_policy: strict
+  format_summary: 深圳企业登记发展年报（1979 起年度分类 130 行；新钥匙通道；NF 年份幂等）
+  valid_since: "2026-09-14"
+  module_id: MOD-L00-004
+  design_maturity: production
+  name: c1_market.alt_sz_enterprise_year
+  name_zh: 深圳企业登记发展年报表
+  status: active
+  created_at: "2026-09-14"
+  updated_at: "2026-09-14"
+  owner: MOD-L00-004
+  produced_by_source: SRC-SZOPENDATA-001
+  survivorship_free: true
+  entry_role: "state"
+  applies_to: ["market"]
+  tags: ["另类数据", "数据", "深圳", "批2"]
+  evidence: "DDL schemas/categories/market_alt_sz_enterprise_year.py；FINAL 实测回补（见任务书 §五·七）"
+  code_symbol: "src/zephyr/data/implementations/akshare_alt_provider.py::AkshareAltProvider._fetch_sz_open_data"
 - dataset_id: DS-245
   entity_name: c1_market.alt_sz_visibility
   entity_type: dataset
@@ -13424,5 +13699,313 @@ jobs:
   tags: ["另类数据", "数据", "气象", "回补"]
   algorithm_status: "not_applicable"
   evidence: "未执行留痕：provider 全量超限 fail-visible 已入码+测试覆盖"
+  code_symbol: "src/zephyr/data/implementations/akshare_alt_provider.py::AkshareAltProvider._fetch_sz_open_data"
+  code_fingerprint:
+- job_id: JOB-111
+  job_name: ingest.alt_sz_air_quality_daily_incremental
+  entity_type: job
+  scope: production
+  source_code_ref: src/zephyr/data/implementations/akshare_alt_provider.py
+  trigger_type: scheduled
+  run_context: production
+  inputs: []
+  outputs:
+  - DS-256
+  pit_relevance: strict
+  description: alt_sz_air_quality_daily_incremental（深圳开放数据平台批2；新钥匙 0ecc2b46 通道）
+  module_id: MOD-L00-004
+  design_maturity: production
+  name: ingest.alt_sz_air_quality_daily_incremental
+  name_zh: 深圳空气质量日报表采集
+  status: active
+  version: 1.0.0
+  created_at: "2026-09-14"
+  updated_at: "2026-09-14"
+  owner: MOD-L00-004
+  entry_role: "state"
+  applies_to: ["market"]
+  tags: ["另类数据", "数据", "深圳", "批2"]
+  algorithm_status: "not_applicable"
+  evidence: "回补实测（backfill_r2 日志）；测试 24/24"
+  code_symbol: "src/zephyr/data/implementations/akshare_alt_provider.py::AkshareAltProvider._fetch_sz_open_data"
+  code_fingerprint:
+- job_id: JOB-112
+  job_name: ingest.alt_sz_air_quality_region_incremental
+  entity_type: job
+  scope: production
+  source_code_ref: src/zephyr/data/implementations/akshare_alt_provider.py
+  trigger_type: scheduled
+  run_context: production
+  inputs: []
+  outputs:
+  - DS-257
+  pit_relevance: strict
+  description: alt_sz_air_quality_region_incremental（深圳开放数据平台批2；新钥匙 0ecc2b46 通道）
+  module_id: MOD-L00-004
+  design_maturity: production
+  name: ingest.alt_sz_air_quality_region_incremental
+  name_zh: 深圳分区域空气质量表采集
+  status: active
+  version: 1.0.0
+  created_at: "2026-09-14"
+  updated_at: "2026-09-14"
+  owner: MOD-L00-004
+  entry_role: "state"
+  applies_to: ["market"]
+  tags: ["另类数据", "数据", "深圳", "批2"]
+  algorithm_status: "not_applicable"
+  evidence: "回补实测（backfill_r2 日志）；测试 24/24"
+  code_symbol: "src/zephyr/data/implementations/akshare_alt_provider.py::AkshareAltProvider._fetch_sz_open_data"
+  code_fingerprint:
+- job_id: JOB-113
+  job_name: ingest.alt_sz_reservoir_station_refresh
+  entity_type: job
+  scope: production
+  source_code_ref: src/zephyr/data/implementations/akshare_alt_provider.py
+  trigger_type: scheduled
+  run_context: production
+  inputs: []
+  outputs:
+  - DS-258
+  pit_relevance: strict
+  description: alt_sz_reservoir_station_refresh（深圳开放数据平台批2；新钥匙 0ecc2b46 通道）
+  module_id: MOD-L00-004
+  design_maturity: production
+  name: ingest.alt_sz_reservoir_station_refresh
+  name_zh: 深圳水库测站字典表采集
+  status: active
+  version: 1.0.0
+  created_at: "2026-09-14"
+  updated_at: "2026-09-14"
+  owner: MOD-L00-004
+  entry_role: "state"
+  applies_to: ["market"]
+  tags: ["另类数据", "数据", "深圳", "批2"]
+  algorithm_status: "not_applicable"
+  evidence: "回补实测（backfill_r2 日志）；测试 24/24"
+  code_symbol: "src/zephyr/data/implementations/akshare_alt_provider.py::AkshareAltProvider._fetch_sz_open_data"
+  code_fingerprint:
+- job_id: JOB-114
+  job_name: ingest.alt_sz_reservoir_rain_day_refresh
+  entity_type: job
+  scope: production
+  source_code_ref: src/zephyr/data/implementations/akshare_alt_provider.py
+  trigger_type: scheduled
+  run_context: production
+  inputs: []
+  outputs:
+  - DS-259
+  pit_relevance: strict
+  description: alt_sz_reservoir_rain_day_refresh（深圳开放数据平台批2；新钥匙 0ecc2b46 通道）
+  module_id: MOD-L00-004
+  design_maturity: production
+  name: ingest.alt_sz_reservoir_rain_day_refresh
+  name_zh: 深圳水库站点日降雨量表采集
+  status: active
+  version: 1.0.0
+  created_at: "2026-09-14"
+  updated_at: "2026-09-14"
+  owner: MOD-L00-004
+  entry_role: "state"
+  applies_to: ["market"]
+  tags: ["另类数据", "数据", "深圳", "批2"]
+  algorithm_status: "not_applicable"
+  evidence: "回补实测（backfill_r2 日志）；测试 24/24"
+  code_symbol: "src/zephyr/data/implementations/akshare_alt_provider.py::AkshareAltProvider._fetch_sz_open_data"
+  code_fingerprint:
+- job_id: JOB-115
+  job_name: ingest.alt_sz_reservoir_rain_month_refresh
+  entity_type: job
+  scope: production
+  source_code_ref: src/zephyr/data/implementations/akshare_alt_provider.py
+  trigger_type: scheduled
+  run_context: production
+  inputs: []
+  outputs:
+  - DS-260
+  pit_relevance: strict
+  description: alt_sz_reservoir_rain_month_refresh（深圳开放数据平台批2；新钥匙 0ecc2b46 通道）
+  module_id: MOD-L00-004
+  design_maturity: production
+  name: ingest.alt_sz_reservoir_rain_month_refresh
+  name_zh: 深圳水库站点月降雨量表采集
+  status: active
+  version: 1.0.0
+  created_at: "2026-09-14"
+  updated_at: "2026-09-14"
+  owner: MOD-L00-004
+  entry_role: "state"
+  applies_to: ["market"]
+  tags: ["另类数据", "数据", "深圳", "批2"]
+  algorithm_status: "not_applicable"
+  evidence: "回补实测（backfill_r2 日志）；测试 24/24"
+  code_symbol: "src/zephyr/data/implementations/akshare_alt_provider.py::AkshareAltProvider._fetch_sz_open_data"
+  code_fingerprint:
+- job_id: JOB-116
+  job_name: ingest.alt_sz_house_area_incremental
+  entity_type: job
+  scope: production
+  source_code_ref: src/zephyr/data/implementations/akshare_alt_provider.py
+  trigger_type: scheduled
+  run_context: production
+  inputs: []
+  outputs:
+  - DS-261
+  pit_relevance: strict
+  description: alt_sz_house_area_incremental（深圳开放数据平台批2；新钥匙 0ecc2b46 通道）
+  module_id: MOD-L00-004
+  design_maturity: production
+  name: ingest.alt_sz_house_area_incremental
+  name_zh: 深圳一手房按面积成交表采集
+  status: active
+  version: 1.0.0
+  created_at: "2026-09-14"
+  updated_at: "2026-09-14"
+  owner: MOD-L00-004
+  entry_role: "state"
+  applies_to: ["market"]
+  tags: ["另类数据", "数据", "深圳", "批2"]
+  algorithm_status: "not_applicable"
+  evidence: "回补实测（backfill_r2 日志）；测试 24/24"
+  code_symbol: "src/zephyr/data/implementations/akshare_alt_provider.py::AkshareAltProvider._fetch_sz_open_data"
+  code_fingerprint:
+- job_id: JOB-117
+  job_name: ingest.alt_sz_house_listing_refresh
+  entity_type: job
+  scope: production
+  source_code_ref: src/zephyr/data/implementations/akshare_alt_provider.py
+  trigger_type: scheduled
+  run_context: production
+  inputs: []
+  outputs:
+  - DS-262
+  pit_relevance: strict
+  description: alt_sz_house_listing_refresh（深圳开放数据平台批2；新钥匙 0ecc2b46 通道）
+  module_id: MOD-L00-004
+  design_maturity: production
+  name: ingest.alt_sz_house_listing_refresh
+  name_zh: 深圳二手房源信息表采集
+  status: active
+  version: 1.0.0
+  created_at: "2026-09-14"
+  updated_at: "2026-09-14"
+  owner: MOD-L00-004
+  entry_role: "state"
+  applies_to: ["market"]
+  tags: ["另类数据", "数据", "深圳", "批2"]
+  algorithm_status: "not_applicable"
+  evidence: "回补实测（backfill_r2 日志）；测试 24/24"
+  code_symbol: "src/zephyr/data/implementations/akshare_alt_provider.py::AkshareAltProvider._fetch_sz_open_data"
+  code_fingerprint:
+- job_id: JOB-118
+  job_name: ingest.alt_sz_house_presale_refresh
+  entity_type: job
+  scope: production
+  source_code_ref: src/zephyr/data/implementations/akshare_alt_provider.py
+  trigger_type: scheduled
+  run_context: production
+  inputs: []
+  outputs:
+  - DS-263
+  pit_relevance: strict
+  description: alt_sz_house_presale_refresh（深圳开放数据平台批2；新钥匙 0ecc2b46 通道）
+  module_id: MOD-L00-004
+  design_maturity: production
+  name: ingest.alt_sz_house_presale_refresh
+  name_zh: 深圳商品房批准预售表采集
+  status: active
+  version: 1.0.0
+  created_at: "2026-09-14"
+  updated_at: "2026-09-14"
+  owner: MOD-L00-004
+  entry_role: "state"
+  applies_to: ["market"]
+  tags: ["另类数据", "数据", "深圳", "批2"]
+  algorithm_status: "not_applicable"
+  evidence: "回补实测（backfill_r2 日志）；测试 24/24"
+  code_symbol: "src/zephyr/data/implementations/akshare_alt_provider.py::AkshareAltProvider._fetch_sz_open_data"
+  code_fingerprint:
+- job_id: JOB-119
+  job_name: ingest.alt_sz_market_subject_refresh
+  entity_type: job
+  scope: production
+  source_code_ref: src/zephyr/data/implementations/akshare_alt_provider.py
+  trigger_type: scheduled
+  run_context: production
+  inputs: []
+  outputs:
+  - DS-264
+  pit_relevance: strict
+  description: alt_sz_market_subject_refresh（深圳开放数据平台批2；新钥匙 0ecc2b46 通道）
+  module_id: MOD-L00-004
+  design_maturity: production
+  name: ingest.alt_sz_market_subject_refresh
+  name_zh: 深圳市场主体发展统计表采集
+  status: active
+  version: 1.0.0
+  created_at: "2026-09-14"
+  updated_at: "2026-09-14"
+  owner: MOD-L00-004
+  entry_role: "state"
+  applies_to: ["market"]
+  tags: ["另类数据", "数据", "深圳", "批2"]
+  algorithm_status: "not_applicable"
+  evidence: "回补实测（backfill_r2 日志）；测试 24/24"
+  code_symbol: "src/zephyr/data/implementations/akshare_alt_provider.py::AkshareAltProvider._fetch_sz_open_data"
+  code_fingerprint:
+- job_id: JOB-120
+  job_name: ingest.alt_sz_stat_analysis_refresh
+  entity_type: job
+  scope: production
+  source_code_ref: src/zephyr/data/implementations/akshare_alt_provider.py
+  trigger_type: scheduled
+  run_context: production
+  inputs: []
+  outputs:
+  - DS-265
+  pit_relevance: strict
+  description: alt_sz_stat_analysis_refresh（深圳开放数据平台批2；新钥匙 0ecc2b46 通道）
+  module_id: MOD-L00-004
+  design_maturity: production
+  name: ingest.alt_sz_stat_analysis_refresh
+  name_zh: 深圳统计分析文章流表采集
+  status: active
+  version: 1.0.0
+  created_at: "2026-09-14"
+  updated_at: "2026-09-14"
+  owner: MOD-L00-004
+  entry_role: "state"
+  applies_to: ["market"]
+  tags: ["另类数据", "数据", "深圳", "批2"]
+  algorithm_status: "not_applicable"
+  evidence: "回补实测（backfill_r2 日志）；测试 24/24"
+  code_symbol: "src/zephyr/data/implementations/akshare_alt_provider.py::AkshareAltProvider._fetch_sz_open_data"
+  code_fingerprint:
+- job_id: JOB-121
+  job_name: ingest.alt_sz_enterprise_year_refresh
+  entity_type: job
+  scope: production
+  source_code_ref: src/zephyr/data/implementations/akshare_alt_provider.py
+  trigger_type: scheduled
+  run_context: production
+  inputs: []
+  outputs:
+  - DS-266
+  pit_relevance: strict
+  description: alt_sz_enterprise_year_refresh（深圳开放数据平台批2；新钥匙 0ecc2b46 通道）
+  module_id: MOD-L00-004
+  design_maturity: production
+  name: ingest.alt_sz_enterprise_year_refresh
+  name_zh: 深圳企业登记发展年报表采集
+  status: active
+  version: 1.0.0
+  created_at: "2026-09-14"
+  updated_at: "2026-09-14"
+  owner: MOD-L00-004
+  entry_role: "state"
+  applies_to: ["market"]
+  tags: ["另类数据", "数据", "深圳", "批2"]
+  algorithm_status: "not_applicable"
+  evidence: "回补实测（backfill_r2 日志）；测试 24/24"
   code_symbol: "src/zephyr/data/implementations/akshare_alt_provider.py::AkshareAltProvider._fetch_sz_open_data"
   code_fingerprint:

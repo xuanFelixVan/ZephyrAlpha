@@ -375,6 +375,18 @@ from schemas.categories.market_alt_sz_weather_warning import MARKET_ALT_SZ_WEATH
 from schemas.categories.market_alt_sz_marine_forecast import MARKET_ALT_SZ_MARINE_FORECAST_DDL
 # 深圳能见度探测分钟级站点流（2026-09-14，任务 2：服务 1580458478）
 from schemas.categories.market_alt_sz_visibility import MARKET_ALT_SZ_VISIBILITY_DDL
+# 批 2 十一表（2026-09-14 深夜，新钥匙通道 0ecc2b46：环境/水库/楼市/口岸/统计扩展）
+from schemas.categories.market_alt_sz_air_quality_daily import MARKET_ALT_SZ_AIR_QUALITY_DAILY_DDL
+from schemas.categories.market_alt_sz_air_quality_region import MARKET_ALT_SZ_AIR_QUALITY_REGION_DDL
+from schemas.categories.market_alt_sz_reservoir_station import MARKET_ALT_SZ_RESERVOIR_STATION_DDL
+from schemas.categories.market_alt_sz_reservoir_rain_day import MARKET_ALT_SZ_RESERVOIR_RAIN_DAY_DDL
+from schemas.categories.market_alt_sz_reservoir_rain_month import MARKET_ALT_SZ_RESERVOIR_RAIN_MONTH_DDL
+from schemas.categories.market_alt_sz_house_area import MARKET_ALT_SZ_HOUSE_AREA_DDL
+from schemas.categories.market_alt_sz_house_listing import MARKET_ALT_SZ_HOUSE_LISTING_DDL
+from schemas.categories.market_alt_sz_house_presale import MARKET_ALT_SZ_HOUSE_PRESALE_DDL
+from schemas.categories.market_alt_sz_market_subject import MARKET_ALT_SZ_MARKET_SUBJECT_DDL
+from schemas.categories.market_alt_sz_stat_analysis import MARKET_ALT_SZ_STAT_ANALYSIS_DDL
+from schemas.categories.market_alt_sz_enterprise_year import MARKET_ALT_SZ_ENTERPRISE_YEAR_DDL
 from schemas.categories.market_typhoon_landfall_history import MARKET_TYPHOON_LANDFALL_HISTORY_DDL
 from schemas.categories.market_typhoon_names import MARKET_TYPHOON_NAMES_DDL
 from schemas.categories.market_breadth_snapshot import MARKET_BREADTH_SNAPSHOT_DDL
@@ -422,6 +434,18 @@ _ALL_DDL: list[tuple[str, str]] = [
     ("c1_market.alt_sz_weather_warning", MARKET_ALT_SZ_WEATHER_WARNING_DDL),
     ("c1_market.alt_sz_marine_forecast", MARKET_ALT_SZ_MARINE_FORECAST_DDL),
     ("c1_market.alt_sz_visibility", MARKET_ALT_SZ_VISIBILITY_DDL),
+    # 批 2 十一表（2026-09-14 深夜）
+    ("c1_market.alt_sz_air_quality_daily", MARKET_ALT_SZ_AIR_QUALITY_DAILY_DDL),
+    ("c1_market.alt_sz_air_quality_region", MARKET_ALT_SZ_AIR_QUALITY_REGION_DDL),
+    ("c1_market.alt_sz_reservoir_station", MARKET_ALT_SZ_RESERVOIR_STATION_DDL),
+    ("c1_market.alt_sz_reservoir_rain_day", MARKET_ALT_SZ_RESERVOIR_RAIN_DAY_DDL),
+    ("c1_market.alt_sz_reservoir_rain_month", MARKET_ALT_SZ_RESERVOIR_RAIN_MONTH_DDL),
+    ("c1_market.alt_sz_house_area", MARKET_ALT_SZ_HOUSE_AREA_DDL),
+    ("c1_market.alt_sz_house_listing", MARKET_ALT_SZ_HOUSE_LISTING_DDL),
+    ("c1_market.alt_sz_house_presale", MARKET_ALT_SZ_HOUSE_PRESALE_DDL),
+    ("c1_market.alt_sz_market_subject", MARKET_ALT_SZ_MARKET_SUBJECT_DDL),
+    ("c1_market.alt_sz_stat_analysis", MARKET_ALT_SZ_STAT_ANALYSIS_DDL),
+    ("c1_market.alt_sz_enterprise_year", MARKET_ALT_SZ_ENTERPRISE_YEAR_DDL),
     ("c1_market.alt_typhoon_landfall_history", MARKET_TYPHOON_LANDFALL_HISTORY_DDL),
     ("c1_market.alt_typhoon_names", MARKET_TYPHOON_NAMES_DDL),
     # JOB-077 市场元数据与约束接入（DS-081~083，2026-08-15）
@@ -830,6 +854,17 @@ _EXPECTED_ENGINES: dict[str, str] = {
     "alt_sz_weather_warning": "ReplacingMergeTree",
     "alt_sz_marine_forecast": "ReplacingMergeTree",
     "alt_sz_visibility": "ReplacingMergeTree",
+    "alt_sz_air_quality_daily": "ReplacingMergeTree",
+    "alt_sz_air_quality_region": "ReplacingMergeTree",
+    "alt_sz_reservoir_station": "ReplacingMergeTree",
+    "alt_sz_reservoir_rain_day": "ReplacingMergeTree",
+    "alt_sz_reservoir_rain_month": "ReplacingMergeTree",
+    "alt_sz_house_area": "ReplacingMergeTree",
+    "alt_sz_house_listing": "ReplacingMergeTree",
+    "alt_sz_house_presale": "ReplacingMergeTree",
+    "alt_sz_market_subject": "ReplacingMergeTree",
+    "alt_sz_stat_analysis": "ReplacingMergeTree",
+    "alt_sz_enterprise_year": "ReplacingMergeTree",
     "alt_typhoon_landfall_history": "ReplacingMergeTree",
     "alt_typhoon_names": "ReplacingMergeTree",
     # JOB-077（DS-081~083，2026-08-15）

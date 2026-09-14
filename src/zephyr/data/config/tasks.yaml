@@ -2479,7 +2479,7 @@ tasks:
   capability: alt_sz_stat_monthly
   symbols:
   extra:
-    description: "深圳统计月报长表（7 系列并拉：GDP/物价/财政金融/运输/外贸/快报/固投；全量幂等重拉，月度数据日度跟新）"
+    description: "深圳统计月报长表（18 系列并拉：GDP/物价/财政金融/运输/外贸/快报/固投+批2 工业/工业效益/商品房建设/国内贸易/外商投资/旅游/民营经济/分区指标/战新产业/年度指标/年度分区GDP；批2 系列走 SZ_OPEN_DATA_APPKEY_NEW 钥匙；全量幂等重拉，月度数据日度跟新）"
 
 - task_id: alt_sz_port_monthly_refresh
   table: c1_market.alt_sz_port_monthly
@@ -2552,6 +2552,144 @@ tasks:
   extra:
     description: "深圳能见度探测分钟级站点流（8 站×10-15 分钟：V/V10M/MINV 三口径；服务 1580458478 无过滤参数，provider 二分定位起始页增量；(obtid,ddatetime) 幂等；大表纪律=首刷限近窗，全史 2456 万行单独报批）"
     start_days_back: 90    # 首刷窗口=近 90 天（约 72 万行）；last_key 推进后自然收敛为日增量
+
+- task_id: alt_sz_air_quality_daily_incremental
+  table: c1_market.alt_sz_air_quality_daily
+  source: akshare_alt
+  schedule: daily_event
+  incremental: true
+  date_col: monitor_time
+  dependencies: []
+  capability: alt_sz_air_quality_daily
+  symbols:
+  fallback_sources: []    # 天然无副源：深圳开放数据平台单源（新钥匙通道）
+  extra:
+    description: "深圳空气质量日报（各监测点 AQI/等级/首要污染物，5.4 万行；新钥匙 0ecc2b46 通道；XH UUID 幂等）"
+    start_days_back: 90
+
+- task_id: alt_sz_air_quality_region_incremental
+  table: c1_market.alt_sz_air_quality_region
+  source: akshare_alt
+  schedule: daily_event
+  incremental: true
+  date_col: monitor_time
+  dependencies: []
+  capability: alt_sz_air_quality_region
+  symbols:
+  fallback_sources: []
+  extra:
+    description: "深圳分区域空气质量（六区 AQI/六污染物浓度，5.1 万行；新钥匙通道；ID 幂等）"
+    start_days_back: 90
+
+- task_id: alt_sz_reservoir_station_refresh
+  table: c1_market.alt_sz_reservoir_station
+  source: akshare_alt
+  schedule: weekend_calibration
+  incremental: false
+  dependencies: []
+  capability: alt_sz_reservoir_station
+  symbols:
+  fallback_sources: []
+  extra:
+    description: "深圳水库测站字典（485 站静态档案；新钥匙通道；STCD 幂等）"
+
+- task_id: alt_sz_reservoir_rain_day_refresh
+  table: c1_market.alt_sz_reservoir_rain_day
+  source: akshare_alt
+  schedule: daily_event
+  incremental: false
+  dependencies: []
+  capability: alt_sz_reservoir_rain_day
+  symbols:
+  fallback_sources: []
+  extra:
+    description: "深圳水库站点日降雨量（28.7 万行 2019 起；新钥匙通道；SJID 幂等；全量重拉）"
+
+- task_id: alt_sz_reservoir_rain_month_refresh
+  table: c1_market.alt_sz_reservoir_rain_month
+  source: akshare_alt
+  schedule: weekend_calibration
+  incremental: false
+  dependencies: []
+  capability: alt_sz_reservoir_rain_month
+  symbols:
+  fallback_sources: []
+  extra:
+    description: "深圳水库站点月降雨量（1.4 万行；新钥匙通道；SJID 幂等）"
+
+- task_id: alt_sz_house_area_incremental
+  table: c1_market.alt_sz_house_area
+  source: akshare_alt
+  schedule: daily_event
+  incremental: true
+  date_col: stat_date
+  dependencies: []
+  capability: alt_sz_house_area
+  symbols:
+  fallback_sources: []
+  extra:
+    description: "深圳一手房按面积段成交（区×面积段×日，5.9 万行；新钥匙通道；ID 幂等）"
+    start_days_back: 90
+
+- task_id: alt_sz_house_listing_refresh
+  table: c1_market.alt_sz_house_listing
+  source: akshare_alt
+  schedule: daily_event
+  incremental: false
+  dependencies: []
+  capability: alt_sz_house_listing
+  symbols:
+  fallback_sources: []
+  extra:
+    description: "深圳二手房源挂牌明细（79.4 万行；新钥匙通道；XH 幂等；全量重拉）"
+
+- task_id: alt_sz_house_presale_refresh
+  table: c1_market.alt_sz_house_presale
+  source: akshare_alt
+  schedule: weekend_calibration
+  incremental: false
+  dependencies: []
+  capability: alt_sz_house_presale
+  symbols:
+  fallback_sources: []
+  extra:
+    description: "深圳商品房批准预售（预售证×项目，2155 条；新钥匙通道；XH 幂等）"
+
+- task_id: alt_sz_market_subject_refresh
+  table: c1_market.alt_sz_market_subject
+  source: akshare_alt
+  schedule: weekend_calibration
+  incremental: false
+  dependencies: []
+  capability: alt_sz_market_subject
+  symbols:
+  fallback_sources: []
+  extra:
+    description: "深圳市场主体发展统计（年度企业结构 21 行；新钥匙通道；ND 年份幂等）"
+
+- task_id: alt_sz_stat_analysis_refresh
+  table: c1_market.alt_sz_stat_analysis
+  source: akshare_alt
+  schedule: daily_event
+  incremental: false
+  dependencies: []
+  capability: alt_sz_stat_analysis
+  symbols:
+  fallback_sources: []
+  extra:
+    description: "深圳统计分析文章流（统计局月度分析全文 109 篇；新钥匙通道；XH 幂等）"
+
+- task_id: alt_sz_enterprise_year_refresh
+  table: c1_market.alt_sz_enterprise_year
+  source: akshare_alt
+  schedule: weekend_calibration
+  incremental: false
+  dependencies: []
+  capability: alt_sz_enterprise_year
+  symbols:
+  fallback_sources: []
+  extra:
+    description: "深圳企业登记发展年报（1979 起 130 行年度分类；新钥匙通道；NF 年份幂等）"
 
 - task_id: alt_typhoon_names_refresh
   table: c1_market.alt_typhoon_names

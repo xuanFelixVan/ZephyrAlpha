@@ -58,10 +58,16 @@ def test_provider_meta_capabilities():
     required = {"alt_stock_comment", "alt_shipping_index", "cb_premium_median",
                 "alt_typhoon_track", "alt_typhoon_landfall_history", "alt_typhoon_names",
                 "alt_sz_stat_monthly", "alt_sz_port_monthly", "alt_sz_house_daily",
-                "alt_sz_weather_warning", "alt_sz_marine_forecast", "alt_sz_visibility"}
+                "alt_sz_weather_warning", "alt_sz_marine_forecast", "alt_sz_visibility",
+                "alt_sz_air_quality_daily", "alt_sz_air_quality_region",
+                "alt_sz_reservoir_station", "alt_sz_reservoir_rain_day",
+                "alt_sz_reservoir_rain_month", "alt_sz_house_area",
+                "alt_sz_house_listing", "alt_sz_house_presale",
+                "alt_sz_market_subject", "alt_sz_stat_analysis", "alt_sz_enterprise_year"}
     assert required <= caps  # 子集断言：他会话扩容不碎我方测试
     assert "cb_premium_median" in _AKSHARE_ALT_CAPABILITIES
     assert "alt_sz_visibility" in _AKSHARE_ALT_CAPABILITIES
+    assert "alt_sz_stat_analysis" in _AKSHARE_ALT_CAPABILITIES
     assert _AKSHARE_ALT_CAPABILITIES == caps
 
 
@@ -380,9 +386,9 @@ def test_sz_stat_monthly_fetch(monkeypatch):
     r = list(p.fetch(_make_payload("alt_sz_stat_monthly", table="c1_market.alt_sz_stat_monthly",
                                    incremental=False), SourcePolicy()))[0]
     assert r.error is None
-    assert len(r.rows) == 7  # 7 系列各 1 行
+    assert len(r.rows) == 18  # 18 系列各 1 行（7 首批 + 11 批2，批2 走新钥匙）
     series_set = {row[0] for row in r.rows}
-    assert series_set == {s for s, _ in mod._SZ_STAT_SERIES}
+    assert series_set == {s for s, _ in mod._SZ_STAT_SERIES_ALL}
     row = [x for x in r.rows if x[0] == "stat_gdp"][0]
     assert row[1] == "201907"
     assert row[3] == "地区生产总值"
