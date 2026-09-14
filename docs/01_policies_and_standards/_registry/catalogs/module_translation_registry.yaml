@@ -49539,6 +49539,55 @@ entries:
   desc_zh: "K线基础模型Kronos接入：CH数据→模型→样本路径分位数，walk-forward无前视回放+194双标准评分"
   desc_en: ""
   plain_zh: "给工厂请了个'读过亿根K线的外援大脑'（Kronos，AAAI 2026 开源）：把咱们仓库的K线数据喂给它，它每次吐出多条未来走势路径，我们抽成分位数区间，再用双标准考尺打分（跟随机游走基准对比——跑不赢它就不配上岗）。只当基线对台，不当交易信号。实测茅台：区间锐度 109 vs 基准 314，明显更紧。"
+- module_path: src/zephyr/strategy_pipeline/pipeline_events.py
+  domain_id: D_BACKTEST
+  name_zh: "管线事件持久化与消费编排"
+  name_en: ""
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "策略入库全自动化后，各环节靠事件串起来：批测落账、挂图审计、粗筛积压这些都变成一条条事件先记在小账本里，做完才划掉。中途断电、急停（KillSwitch）都不会弄丢任务，恢复后接着干；同一件事反复通知也只会干一次。"
+- module_path: src/zephyr/strategy_pipeline/screen_source.py
+  domain_id: D_BACKTEST
+  name_zh: "台账数据源（及格集/p 值/相关矩阵）"
+  name_en: ""
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "从批测成绩单里把合格策略挑出来给入库管线用：按双窗口门槛判断及格不及格，算出每条的统计显著性分数，再两两算收益相关度看谁和谁是一家人。只查不写，是入库决策的数据底座。"
+- module_path: src/zephyr/strategy_pipeline/registry_writer.py
+  domain_id: D_BACKTEST
+  name_zh: "策略注册表条目追加写入器"
+  name_en: ""
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "给策略总台账添新条目的机械手：照固定模板把新策略条目写到文件末尾，写之前核对人手上的版本号没被人动过，写完再读回来逐条检查老的条目一条没少一字没改。任何对不上就整个放弃，绝不冒险硬写。"
+- module_path: scripts/backtest/sim_promotion_memo.py
+  domain_id: D_BACKTEST
+  name_zh: "sim 转正建议书生成器"
+  name_en: ""
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "每月自动把模拟盘里各策略的成绩单整理成一页报告：谁的实盘表现、哪些还在观察期、下一步值不值得老板签字转正。只备料不做主，签字权永远在 Owner 手里。"
+- module_path: scripts/backtest/factory_grid_executor.py
+  domain_id: D_BACKTEST
+  name_zh: "网格批次A执行器"
+  name_en: ""
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "自动把几千种仓位配置方案抽样后逐一跑回测打分，每一条都记录完整身份信息，跑不通的也会记下死在哪一步和死因，最后把成绩单存进文件供后续分析。"
+- module_path: scripts/backtest/factory_grid_anova.py
+  domain_id: D_BACKTEST
+  name_zh: "网格结构知识方差分解"
+  name_en: ""
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "读回测成绩单，用统计方法算出哪几个配置选项对收益影响最大、哪些选项之间会互相影响、哪些选项压根没用可以删掉，输出一份三件套分析报告。"
+- module_path: scripts/governance/d3_metadata/pattern_code_fingerprint.py
+  domain_id: D_GOV_SCRIPTS
+  name_zh: "图形指纹扫描器"
+  name_en: "pattern_code_fingerprint"
+  desc_zh: "REG-PAT-001 code_fingerprint 扫描器（#ARCH-BREG-002 门禁A存在性/门禁B漂移对账）"
+  desc_en: ""
+  plain_zh: "检查图形注册表里登记的代码位置是否真的存在，并给实现代码算一个'指纹'存进注册表。以后谁改了图形识别代码但没更新注册表，测试就会红着提醒你去刷新，防止'登记的和实际跑的不是一个版本'"
 
 battle_map_steps:
 - step_id: BM-BUY-05
@@ -54872,8 +54921,7 @@ algo_submodules:
   node_id: A1
   name_zh: ① capability 路由分发
   name_en: FredProvider.fetch
-  plain_zh: 按 payload.extra["capability"] 分发到 FRED 或世界银行拉取，未连接/未知capability yield
-    error
+  plain_zh: 按 payload.extra["capability"] 分发到 FRED 或世界银行拉取，未连接/未知capability yield error
 - module_path: src/zephyr/data/implementations/fred_provider.py
   module_id: MOD-DAT-fred_ingest
   node_id: A2
@@ -54964,36 +55012,12 @@ algo_submodules:
   name_zh: ③ 笼子边界计算与夹边校验
   name_en: check_price_cage
   plain_zh: 买入上限max(base×1.02, base+0.1)向下取整tick，卖出下限min(base×0.98, base-0.1)向上取整tick，超限夹到边界不废单
-- module_path: src/zephyr/regime/core/regime_detector.py
+- module_path: src/zephyr/regime/__init__.py
   module_id: MOD-REGIME-001
   node_id: A1
-  name_zh: ① HMM隐马尔可夫 4态模型
-  name_en: HMM 4-state
-  plain_zh: 用4种市场状态概率分布判断大盘所处阶段
-- module_path: src/zephyr/regime/core/regime_detector.py
-  module_id: MOD-REGIME-001
-  node_id: A2
-  name_zh: ② 覆盖层规则 D-SIGNAL-68
-  name_en: Overlay
-  plain_zh: 在HMM上叠加危机/复苏/突破3种特殊状态规则
-- module_path: src/zephyr/regime/core/regime_detector.py
-  module_id: MOD-REGIME-001
-  node_id: A3
-  name_zh: ③ 置信度信号
-  name_en: ConfidenceSignal
-  plain_zh: 根据HMM最大概率映射4档置信度，稀有态打折扣
-- module_path: src/zephyr/regime/core/regime_detector.py
-  module_id: MOD-REGIME-001
-  node_id: A4
-  name_zh: ④ 风险信号 13参数
-  name_en: RiskSignal
-  plain_zh: 13个风险维度聚合算风险系数，越低越危险
-- module_path: src/zephyr/regime/core/regime_detector.py
-  module_id: MOD-REGIME-001
-  node_id: A5
-  name_zh: ⑤ 风险节流因子
-  name_en: Shrinkage
-  plain_zh: 置信度×风险=资金收缩比例，只减不增
+  name_zh: ① 包公共面再导出
+  name_en: __init__ re-export
+  plain_zh: 再导出 RegimeCycleAnalyzer, VolatilityRegimeAlerter, VolatilitySqueezeBreakout, In…
 - module_path: src/zephyr/ex_sor/core/market_context_provider.py
   module_id: MOD-XS-006
   node_id: A1
@@ -55792,12 +55816,24 @@ algo_submodules:
   name_zh: ④ 读取与导出
   name_en: read_file/list_all/export_json
   plain_zh: 读单个文件全文、列各文件大小、导出全部内容为字典
-- module_path: src/zephyr/backtest/io/__init__.py
+- module_path: src/zephyr/backtest/io/backtest_result_sink.py
   module_id: MOD-BT-001
   node_id: A1
-  name_zh: ① 包级聚合再导出
-  name_en: zephyr.backtest.io.__init__
-  plain_zh: Auto-generated contracts package — io
+  name_zh: ① 入参校验
+  name_en: sink_backtest_result（校验段）
+  plain_zh: result 为空或关键字段缺失就抛错，不让脏数据落地
+- module_path: src/zephyr/backtest/io/backtest_result_sink.py
+  module_id: MOD-BT-001
+  node_id: A2
+  name_zh: ② 时序点转换
+  name_en: sink_backtest_result（时序段）
+  plain_zh: 把四条时序的字典列表转成 frozen dataclass 元组
+- module_path: src/zephyr/backtest/io/backtest_result_sink.py
+  module_id: MOD-BT-001
+  node_id: A3
+  name_zh: ③ 汇总字段映射组装
+  name_en: sink_backtest_result（组装段）
+  plain_zh: 把回测结果 15 字段一对一搬进可视化模型
 - module_path: src/zephyr/clone_guard/__init__.py
   module_id: MOD-CLONE_GUARD
   node_id: A1
@@ -56470,24 +56506,6 @@ algo_submodules:
   name_zh: ① 信号域符号懒加载聚合
   name_en: __getattr__ + _lazy 映射
   plain_zh: 按需加载信号生成/合成/资本配置/管线的基类与默认实现
-- module_path: schemas/categories/intraday/market_l2_tick.py
-  module_id: MOD-L04-002
-  node_id: A1
-  name_zh: ① l2_tick 表DDL定义
-  name_en: L2_TICK_DDL
-  plain_zh: 用DDL-as-Code定义ClickHouse逐笔表结构，是唯一真源
-- module_path: schemas/categories/intraday/market_l2_tick.py
-  module_id: MOD-L04-002
-  node_id: A2
-  name_zh: ② 交易所码派生
-  name_en: exchange MATERIALIZED 列
-  plain_zh: 按证券代码前缀自动推导交易所
-- module_path: schemas/categories/intraday/market_l2_tick.py
-  module_id: MOD-L04-002
-  node_id: A3
-  name_zh: ③ canonical身份键派生
-  name_en: symbol_canonical MATERIALIZED 列
-  plain_zh: 给无点符号拼上交易所后缀，供跨表JOIN
 - module_path: src/zephyr/autonomy_core/__init__.py
   module_id: MOD-AUTONOMY_CORE
   node_id: A1
@@ -56710,18 +56728,42 @@ algo_submodules:
   name_zh: ④ 结果聚合摘要
   name_en: get_summary+_build_summary
   plain_zh: 按策略聚出最优最差参数和平均Sharpe收益
-- module_path: src/zephyr/backtest/services/__init__.py
+- module_path: src/zephyr/backtest/services/anomaly_diagnoser.py
   module_id: __unmanaged__src/zephyr/backtest/services/__init__.py
   node_id: A1
-  name_zh: ① 包命名空间声明
-  name_en: zephyr.backtest.services __init__
-  plain_zh: 仅声明 backtest.services 包命名空间，空 __all__ 不re-export子模块，无计算逻辑
-- module_path: src/zephyr/compliance/audit_trail/__init__.py
+  name_zh: ① 性能异常检测
+  name_en: diagnose(性能段)
+  plain_zh: 高Sharpe高胜率疑过拟合，深回撤直接ERROR，负收益WARN
+- module_path: src/zephyr/backtest/services/anomaly_diagnoser.py
+  module_id: __unmanaged__src/zephyr/backtest/services/__init__.py
+  node_id: A2
+  name_zh: ② 统计异常检测
+  name_en: diagnose(统计段)+_calc_backtest_days
+  plain_zh: 交易次数太少或回测周期太短则统计上不显著
+- module_path: src/zephyr/backtest/services/anomaly_diagnoser.py
+  module_id: __unmanaged__src/zephyr/backtest/services/__init__.py
+  node_id: A3
+  name_zh: ③ 一致性异常检测
+  name_en: diagnose(一致性段)
+  plain_zh: 高收益却低Sharpe的矛盾组合告警，缺基准给提示
+- module_path: src/zephyr/backtest/services/anomaly_diagnoser.py
+  module_id: __unmanaged__src/zephyr/backtest/services/__init__.py
+  node_id: A4
+  name_zh: ④ 诊断报告聚合
+  name_en: diagnose(聚合段)
+  plain_zh: 汇总全部异常，无ERROR级则诊断通过
+- module_path: src/zephyr/compliance/audit_trail/bridges/__init__.py
   module_id: __unmanaged__src/zephyr/compliance/audit_trail/__init__.py
   node_id: A1
-  name_zh: ① 包级聚合再导出
-  name_en: zephyr.compliance.audit_trail.__init__
-  plain_zh: 'Re-export wrapper: audit-trail has migrated to zephyr.gov_au'
+  name_zh: ① 审计桥接符号包级再导出聚合
+  name_en: __init__（模块级 import + __all__）
+  plain_zh: 把7个桥接实现里的9个类汇成 audit_trail.bridges 统一入口
+- module_path: src/zephyr/compliance/audit_trail/bridges/__init__.py
+  module_id: __unmanaged__src/zephyr/compliance/audit_trail/__init__.py
+  node_id: A2
+  name_zh: ② 子模块 PEP 562 惰性加载
+  name_en: __getattr__
+  plain_zh: 访问子模块名时才 import 对应 gov_audit.bridges.* 模块并缓存
 - module_path: src/zephyr/data/news_collector.py
   module_id: __unmanaged__src/zephyr/data/news_collector.py
   node_id: A1
@@ -56812,12 +56854,12 @@ algo_submodules:
   name_zh: ④ 移除表注册
   name_en: remove
   plain_zh: 按表名删除注册返回是否成功
-- module_path: src/zephyr/execution_simulation/_extensions/__init__.py
+- module_path: src/zephyr/execution_simulation/__init__.py
   module_id: MOD-EXEC_SIM
   node_id: A1
-  name_zh: ① 包命名空间占位/聚合导出
-  name_en: __init__（模块级 __all__）
-  plain_zh: 声明 zephyr.execution_simulation._extensions 包命名空间，按 __all__ 声明导出
+  name_zh: ① 包公共面再导出
+  name_en: __init__ re-export
+  plain_zh: 再导出 AlmgrenChrissError, AlmgrenChrissImpactModel, ImpactParams, ImpactQuote, Im…
 - module_path: src/zephyr/ex_core/aggregate_root_manager.py
   module_id: MOD-EX-049
   node_id: A1
@@ -57101,55 +57143,55 @@ algo_submodules:
   name_en: BrokerAdapterManager.submit_order
   plain_zh: 把订单交给券商适配器管理器提交, 熔断自动切备选券商
 - module_path: src/zephyr/ex_sor/services/execution_quality_scorer.py
-  module_id: MOD-XS-018
+  module_id: MOD-EX_SOR_EXT-002
   node_id: A1
   name_zh: ① 单维度归一评分
   name_en: ExecutionQualityScorer._score_dimension
   plain_zh: 每个维度按离最差阈值的比例折算成0~1分, 越小越好
 - module_path: src/zephyr/ex_sor/services/execution_quality_scorer.py
-  module_id: MOD-XS-018
+  module_id: MOD-EX_SOR_EXT-002
   node_id: A2
   name_zh: ② 四维加权汇总评定
   name_en: ExecutionQualityScorer._calc_overall+_verdict
   plain_zh: 四维分按权重加权平均得总分, 再定good/acceptable/poor三档
 - module_path: src/zephyr/ex_sor/services/transaction_cost_optimizer.py
-  module_id: MOD-XS-019
+  module_id: MOD-EX_SOR_EXT-003
   node_id: A1
   name_zh: ① 显性成本计算
   name_en: TransactionCostOptimizer._calc_explicit
   plain_zh: 佣金+印花税+过户费+监管费四项法定费用逐项算金额
 - module_path: src/zephyr/ex_sor/services/transaction_cost_optimizer.py
-  module_id: MOD-XS-019
+  module_id: MOD-EX_SOR_EXT-003
   node_id: A2
   name_zh: ② 隐性成本计算
   name_en: TransactionCostOptimizer._calc_implicit
   plain_zh: 冲击成本看成交价相对决策价的偏离, 没成交部分再算机会成本
 - module_path: src/zephyr/ex_sor/services/transaction_cost_optimizer.py
-  module_id: MOD-XS-019
+  module_id: MOD-EX_SOR_EXT-003
   node_id: A3
   name_zh: ③ 总成本汇总
   name_en: TransactionCostOptimizer.calculate
   plain_zh: 显性加隐性得总成本, 再折算成相对成交金额的基点
 - module_path: src/zephyr/ex_sor/services/transaction_cost_optimizer.py
-  module_id: MOD-XS-019
+  module_id: MOD-EX_SOR_EXT-003
   node_id: A4
   name_zh: ④ 成本优化建议
   name_en: TransactionCostOptimizer.advise
   plain_zh: 找金额最大的成本项, 给出对应的降本建议和预估节省
 - module_path: src/zephyr/ex_sor/services/slippage_analyzer.py
-  module_id: MOD-XS-017
+  module_id: MOD-EX_SOR_EXT-001
   node_id: A1
   name_zh: ① 多基准滑点计算
   name_en: SlippageAnalyzer._calc_slippage_bps
   plain_zh: 平均成交价相对每个基准算出滑点基点, 正值都是成本
 - module_path: src/zephyr/ex_sor/services/slippage_analyzer.py
-  module_id: MOD-XS-017
+  module_id: MOD-EX_SOR_EXT-001
   node_id: A2
   name_zh: ② 三因子滑点归因
   name_en: SlippageAnalyzer._attribute
   plain_zh: 把总滑点拆成市场冲击+时机+价差三块, 剩下的进残差
 - module_path: src/zephyr/ex_sor/services/slippage_analyzer.py
-  module_id: MOD-XS-017
+  module_id: MOD-EX_SOR_EXT-001
   node_id: A3
   name_zh: ③ 平方根冲击滑点预测
   name_en: SquareRootImpactPredictor.predict
@@ -57356,8 +57398,7 @@ algo_submodules:
   module_id: MOD-GOV_COMMIT_GATEWAY_ABUSE_MONITOR
   node_id: A2
   name_zh: ② 六维滥用计数采集
-  name_en: read_json_reports + count_emergency_commits + count_allow_overlap_usage
-    + count_force_merge_usage
+  name_en: read_json_reports + count_emergency_commits + count_allow_overlap_usage + count_force_merge_usage
   plain_zh: 从报告/git log/审计 JSONL 三处采集 24h 与 7d 窗口的真实滥用计数
 - module_path: src/zephyr/governance/audit/commit_gateway_abuse_monitor_reconciler.py
   module_id: MOD-GOV_COMMIT_GATEWAY_ABUSE_MONITOR
@@ -57538,8 +57579,7 @@ algo_submodules:
   node_id: A5
   name_zh: ⑤ 告警自愈 clean 回写
   name_en: _write_boot_success_clean / _write_stale_healed_clean
-  plain_zh: worker 成功 boot / 超阈值后到达终态时，向 BOOT/STALE gate_id 写 clean 让历史 critical_warn
-    自动消解
+  plain_zh: worker 成功 boot / 超阈值后到达终态时，向 BOOT/STALE gate_id 写 clean 让历史 critical_warn 自动消解
 - module_path: src/zephyr/governance/audit/remediation_progress_reconciler.py
   module_id: MOD-REMEDIATION_PROGRESS
   node_id: A1
@@ -57695,8 +57735,7 @@ algo_submodules:
   node_id: A1
   name_zh: ① 模块命名空间声明
   name_en: zephyr.governance.observability_governance.__init__
-  plain_zh: __unmanaged__src/zephyr/governance/observability_governance/__init__.py
-    包入口
+  plain_zh: __unmanaged__src/zephyr/governance/observability_governance/__init__.py 包入口
 - module_path: src/zephyr/governance/persistence/battlemap_schema.py
   module_id: SH-DB-003
   node_id: A1
@@ -57900,8 +57939,7 @@ algo_submodules:
   node_id: A2
   name_zh: ② 活性判定与退出
   name_en: _session_in_registry / _worktree_anchor_alive / _session_idle_seconds
-  plain_zh: session 被注销、worktree 锚点丢失（退役/删除）或闲置超 1800 秒就退出，防僵尸 daemon 永久保活死 session
-    与孤儿 daemon 假活性
+  plain_zh: session 被注销、worktree 锚点丢失（退役/删除）或闲置超 1800 秒就退出，防僵尸 daemon 永久保活死 session 与孤儿 daemon 假活性
 - module_path: src/zephyr/gov_enforcement/rule_bridge/heartbeat_daemon.py
   module_id: MOD-GOV_HEARTBEAT_DAEMON
   node_id: A3
@@ -57961,8 +57999,7 @@ algo_submodules:
   node_id: A3
   name_zh: ③ 文件同步与 worktree 内提交
   name_en: session_worktree_commit
-  plain_zh: 把项目根的改动拷进 worktree，跑完 HELD-OVERLAP/DCR/pre-commit 三道检测后在 worktree 独立 index
-    里直接 commit
+  plain_zh: 把项目根的改动拷进 worktree，跑完 HELD-OVERLAP/DCR/pre-commit 三道检测后在 worktree 独立 index 里直接 commit
 - module_path: src/zephyr/gov_enforcement/rule_bridge/session_worktree.py
   module_id: MOD-GOV_SESSION_WORKTREE
   node_id: A4
@@ -58317,24 +58354,12 @@ algo_submodules:
   name_zh: ① 模块命名空间声明
   name_en: zephyr.nlp.__init__
   plain_zh: zephyr.nlp — NLP 情感分析管道（P1-E3）。
-- module_path: src/zephyr/ml_train/core/model_version_registry.py
+- module_path: src/zephyr/ml_train/core/__init__.py
   module_id: __unmanaged__src/zephyr/ml_train/core/__init__.py
   node_id: A1
-  name_zh: ① 阶段机推进（Fail-Closed）
-  name_en: _transition
-  plain_zh: 合法迁移表校验；DEPRECATED 终态拒绝一切再迁移
-- module_path: src/zephyr/ml_train/core/model_version_registry.py
-  module_id: __unmanaged__src/zephyr/ml_train/core/__init__.py
-  node_id: A2
-  name_zh: ② INV-011 门禁
-  name_en: activate
-  plain_zh: 仅 SHADOW_VERIFIED→ACTIVATED；同模型已有 ACTIVATED 版本拒绝并存
-- module_path: src/zephyr/ml_train/core/model_version_registry.py
-  module_id: __unmanaged__src/zephyr/ml_train/core/__init__.py
-  node_id: A3
-  name_zh: ③ 事件外发
-  name_en: _emit
-  plain_zh: ModelTrained/ModelValidated 事件经 event_sink 回调
+  name_zh: ① 包公共面再导出
+  name_en: __init__ re-export
+  plain_zh: 再导出 ModelVersionRegistry（共 1 符号）
 - module_path: src/zephyr/pf_core/core/performance_attribution_engine.py
   module_id: MOD-PF-007
   node_id: A1
@@ -59140,13 +59165,13 @@ algo_submodules:
   name_en: risk.core.__init__
   plain_zh: 从4个子模块导入9个公开符号并用__all__固定对外API面
 - module_path: src/zephyr/risk/core/liquidity_monitor.py
-  module_id: MOD-RK-048
+  module_id: MOD-RK-08
   node_id: A1
   name_zh: ① 流动性综合评估
   name_en: LiquidityMonitor.assess
   plain_zh: Amihud超阈值或成交量萎缩即判非流动性恶化
 - module_path: src/zephyr/risk/core/liquidity_monitor.py
-  module_id: MOD-RK-048
+  module_id: MOD-RK-08
   node_id: A2
   name_zh: ② 风控检查结果转换
   name_en: to_risk_check_result
@@ -59472,19 +59497,19 @@ algo_submodules:
 - module_path: src/zephyr/shared/maintenance/handbook.py
   module_id: SH-MAIN-001
   node_id: A1
-  name_zh: ① Agent上手上下文生成
+  name_zh: 维护手册
   name_en: Handbook.generate_onboarding_context
   plain_zh: 把核心约束、关键目录、任务状态机、关键工具拼成一段固定markdown给新Agent看
 - module_path: src/zephyr/shared/maintenance/handbook.py
   module_id: SH-MAIN-001
   node_id: A2
-  name_zh: ② 任务卡模板提供
+  name_zh: 维护手册
   name_en: Handbook.get_task_card_template
   plain_zh: 返回一张固定的任务卡markdown表格模板，照填即可
 - module_path: src/zephyr/shared/maintenance/handbook.py
   module_id: SH-MAIN-001
   node_id: A3
-  name_zh: ③ 目录地图提供
+  name_zh: 维护手册
   name_en: Handbook.get_directory_map
   plain_zh: 返回核心源码/蓝图/任务系统目录到中文说明的映射字典
 - module_path: src/zephyr/shared/io/sqlite_factory.py
@@ -59509,8 +59534,7 @@ algo_submodules:
   module_id: MOD-SHR_IO_YAML
   node_id: A2
   name_zh: ② 合法值与条目收集
-  name_en: load_vocabulary_values / load_vocabulary_entries / load_all_vocabulary_values
-    / load_vocabulary_section_list
+  name_en: load_vocabulary_values / load_vocabulary_entries / load_all_vocabulary_values / load_vocabulary_section_list
   plain_zh: 从values列表抠出合法值集合或值+定义列表，也能批量扫全部词表或读顶层列表段
 - module_path: src/zephyr/shared/io/yaml_utils.py
   module_id: MOD-SHR_IO_YAML
@@ -59530,6 +59554,12 @@ algo_submodules:
   name_zh: ⑤ TTL决策树判定
   name_en: evaluate_ttl / _eval_criterion
   plain_zh: 拿文件路径和frontmatter沿判定树走，走到叶子得出permanent还是task_bound
+- module_path: src/zephyr/signal_ashare/__init__.py
+  module_id: MOD-INF-038
+  node_id: A1
+  name_zh: ① 包公共面再导出
+  name_en: __init__ re-export
+  plain_zh: 再导出 AuctionMicrostructureAnalyzer, BottomConfirmationEntry, CapitalBehaviorOrch…
 - module_path: src/zephyr/shared/protocols/__init__.py
   module_id: MOD-SHARED-001
   node_id: A1
@@ -59566,54 +59596,6 @@ algo_submodules:
   name_zh: ① 空包初始化
   name_en: __init__
   plain_zh: shared_util 占位包初始化，仅声明空的公共符号表
-- module_path: src/zephyr/signal_ashare/strategy_signal/dual_engine_fusion_decision_engine.py
-  module_id: MOD-SIG-035
-  node_id: A1
-  name_zh: ① 情绪周期自适应权重
-  name_en: determine_adaptive_weights
-  plain_zh: 按情绪周期查表定双引擎权重 冰点信量化 主升信游资
-- module_path: src/zephyr/signal_ashare/strategy_signal/dual_engine_fusion_decision_engine.py
-  module_id: MOD-SIG-035
-  node_id: A2
-  name_zh: ② 加权融合评分
-  name_en: analyze Step2 fused score
-  plain_zh: 两个引擎分数按自适应权重加权合成一个融合分
-- module_path: src/zephyr/signal_ashare/strategy_signal/dual_engine_fusion_decision_engine.py
-  module_id: MOD-SIG-035
-  node_id: A3
-  name_zh: ③ 6类决策分类
-  name_en: classify_decision
-  plain_zh: 按优先级把股票归入主升龙头/二进三/复苏/伪强/跟风/地天反包/中性
-- module_path: src/zephyr/signal_ashare/strategy_signal/dual_engine_fusion_decision_engine.py
-  module_id: MOD-SIG-035
-  node_id: A4
-  name_zh: ④ PDF分布信号提取
-  name_en: extract_pdf_signal
-  plain_zh: 从融合分提取方向/置信度/尾部风险/相对价值4维信号
-- module_path: src/zephyr/signal_ashare/intraday_t0/intraday_buy_sell_point_analyzer.py
-  module_id: MOD-SIG-024
-  node_id: A1
-  name_zh: ① 6种买入模式检测
-  name_en: detect_buy_points
-  plain_zh: 扫描突破/回调/逆向资金/竞价弱转强/分时突破/回封打板6类买点
-- module_path: src/zephyr/signal_ashare/intraday_t0/intraday_buy_sell_point_analyzer.py
-  module_id: MOD-SIG-024
-  node_id: A2
-  name_zh: ② 6种卖出模式检测
-  name_en: detect_sell_points
-  plain_zh: 扫描目标价/趋势破位/利好兑现/封单减少/龙头丧失/强分歧6类卖点
-- module_path: src/zephyr/signal_ashare/intraday_t0/intraday_buy_sell_point_analyzer.py
-  module_id: MOD-SIG-024
-  node_id: A3
-  name_zh: ③ 3重确认
-  name_en: check_confirmations
-  plain_zh: 大盘环境/板块强度/资金流向3道闸门 全过才放行买入
-- module_path: src/zephyr/signal_ashare/intraday_t0/intraday_buy_sell_point_analyzer.py
-  module_id: MOD-SIG-024
-  node_id: A4
-  name_zh: ④ 综合建议
-  name_en: _make_recommendation
-  plain_zh: 卖出信号优先 买入需确认全过 否则等待或观望
 - module_path: src/zephyr/signal_ashare/institutional_behavior_analyzer.py
   module_id: MOD-SIG-021
   node_id: A1
@@ -59660,8 +59642,7 @@ algo_submodules:
   module_id: MOD-SIG-022
   node_id: A2
   name_zh: ② 五类资金线形态识别
-  name_en: identify_pattern / _score_bloom / _score_solo / _score_divergence / _score_weak_rebound
-    / _score_retreat
+  name_en: identify_pattern / _score_bloom / _score_solo / _score_divergence / _score_weak_rebound / _score_retreat
   plain_zh: 给四线开花/机构独强/机构主力背离/弱势反弹/全线溃退各打个分，谁分高算谁
 - module_path: src/zephyr/signal_ashare/capital_flow_pattern_analyzer.py
   module_id: MOD-SIG-022
@@ -59687,48 +59668,6 @@ algo_submodules:
   name_zh: ⑥ 综合评分
   name_en: _compute_overall_score
   plain_zh: 形态置信、散户狂热、机构分歧、共振按权重揉成0-100总分
-- module_path: src/zephyr/signal_ashare/sector/sector_analyzer.py
-  module_id: MOD-SIG-026
-  node_id: A1
-  name_zh: ① 板块强度评估
-  name_en: evaluate_strength
-  plain_zh: 涨停数量+梯队完整性+板块指数趋势三项加评估板块强不强
-- module_path: src/zephyr/signal_ashare/sector/sector_analyzer.py
-  module_id: MOD-SIG-026
-  node_id: A2
-  name_zh: ② 板块延续性判断
-  name_en: judge_continuity
-  plain_zh: 按连涨天数和资金深度区分短期题材还是趋势题材
-- module_path: src/zephyr/signal_ashare/sector/sector_analyzer.py
-  module_id: MOD-SIG-026
-  node_id: A3
-  name_zh: ③ 板块轮动预警
-  name_en: warn_rotation
-  plain_zh: 连续大涨+放量+龙头滞涨三信号叠加 预警资金要切换板块
-- module_path: src/zephyr/signal_ashare/sector/sector_analyzer.py
-  module_id: MOD-SIG-026
-  node_id: A4
-  name_zh: ④ 板块启动条件评估
-  name_en: evaluate_launch_conditions
-  plain_zh: 技术突破+政策支持为必须条件 全满足才算启动就绪
-- module_path: src/zephyr/signal_ashare/sector/sector_analyzer.py
-  module_id: MOD-SIG-026
-  node_id: A5
-  name_zh: ⑤ 大盘成交额风格适配
-  name_en: adapt_market_style
-  plain_zh: 成交额大做趋势票 成交额小出妖股
-- module_path: src/zephyr/signal_ashare/sector/sector_analyzer.py
-  module_id: MOD-SIG-026
-  node_id: A6
-  name_zh: ⑥ 抱团瓦解信号检测
-  name_en: detect_breakdown
-  plain_zh: 龙头大跌伴随放量 或板块指数大跌 判定抱团瓦解
-- module_path: src/zephyr/signal_ashare/sector/sector_analyzer.py
-  module_id: MOD-SIG-026
-  node_id: A7
-  name_zh: ⑦ 综合评分与板块状态判定
-  name_en: analyze + _determine_status
-  plain_zh: 6维分数加权成综合分 再按优先级定位6种板块状态
 - module_path: src/zephyr/signal_ashare/quant_short_term_strength_engine.py
   module_id: MOD-SIG-034
   node_id: A1
@@ -59747,102 +59686,12 @@ algo_submodules:
   name_zh: ③ 6类输出分类
   name_en: classify_category
   plain_zh: 结合量化总分+游资情绪+连板+主线 把股票分进6+1类
-- module_path: src/zephyr/signal_ashare/sentiment/market_sentiment_analyzer.py
-  module_id: MOD-SIG-025
-  node_id: A1
-  name_zh: ① 涨跌家数分析
-  name_en: analyze_breadth
-  plain_zh: 检测二八分化/普涨/普跌/均衡并打分
-- module_path: src/zephyr/signal_ashare/sentiment/market_sentiment_analyzer.py
-  module_id: MOD-SIG-025
-  node_id: A2
-  name_zh: ② 涨跌停热情分析
-  name_en: analyze_limit_activity
-  plain_zh: 看涨停跌停数量判断做多热情还是恐慌蔓延
-- module_path: src/zephyr/signal_ashare/sentiment/market_sentiment_analyzer.py
-  module_id: MOD-SIG-025
-  node_id: A3
-  name_zh: ③ 赚钱效应与市场士气评估
-  name_en: evaluate_profit_effect + evaluate_morale
-  plain_zh: 用上涨占比分别评估赚钱强不强和散户跟随士气
-- module_path: src/zephyr/signal_ashare/sentiment/market_sentiment_analyzer.py
-  module_id: MOD-SIG-025
-  node_id: A4
-  name_zh: ④ 次日回调风险预警
-  name_en: warn_next_day_risk
-  plain_zh: 指数涨但个股跌占比高→预警次日回调
-- module_path: src/zephyr/signal_ashare/sentiment/market_sentiment_analyzer.py
-  module_id: MOD-SIG-025
-  node_id: A5
-  name_zh: ⑤ 封板率分档与昨日涨停追踪
-  name_en: analyze_seal_rate + track_yesterday_limit_up
-  plain_zh: 封板率分好中差 昨日涨停股今日均收益>3%好 <-2%差
-- module_path: src/zephyr/signal_ashare/sentiment/market_sentiment_analyzer.py
-  module_id: MOD-SIG-025
-  node_id: A6
-  name_zh: ⑥ 综合评分与情绪阶段定位
-  name_en: analyze + _determine_phase
-  plain_zh: 6维分数加权成综合情绪分 再定位5档情绪阶段
-- module_path: src/zephyr/signal_ashare/limit_up/youzi_relay_emotion_engine.py
-  module_id: MOD-SIG-033
-  node_id: A1
-  name_zh: ① 6因子评分求和
-  name_en: YouziRelayEmotionEngine.analyze（评分段）
-  plain_zh: 6个因子得分加总封顶100，得综合情绪评分
-- module_path: src/zephyr/signal_ashare/limit_up/youzi_relay_emotion_engine.py
-  module_id: MOD-SIG-033
-  node_id: A2
-  name_zh: ② 情绪周期4+1阶段定位
-  name_en: determine_emotion_phase
-  plain_zh: 按评分分段定情绪阶段，再用市场广度/断板检测退潮
-- module_path: src/zephyr/signal_ashare/limit_up/youzi_relay_emotion_engine.py
-  module_id: MOD-SIG-033
-  node_id: A3
-  name_zh: ③ 阶段策略映射
-  name_en: map_strategy
-  plain_zh: 每个情绪阶段对应一条操作建议
-- module_path: src/zephyr/signal_ashare/limit_up/youzi_relay_emotion_engine.py
-  module_id: MOD-SIG-033
-  node_id: A4
-  name_zh: ④ 输入校验与降级路径
-  name_en: _validate_input / _degraded_result
-  plain_zh: 输入出现负值就返回全零降级结果并记日志
 - module_path: src/zephyr/signal_ashare/api/__init__.py
   module_id: MOD-SIGNAL_ASHARE
   node_id: A1
   name_zh: ① 空API占位包契约
   name_en: __all__ empty list
   plain_zh: A股信号域对外API层的占位包 当前不导出任何符号
-- module_path: src/zephyr/signal_ashare/screening/short_term_stock_selector.py
-  module_id: MOD-SIG-023
-  node_id: A1
-  name_zh: ① 机构选股评分器
-  name_en: score_institutional
-  plain_zh: 目标价空间40%+基本面30%+技术趋势20%+流动性10%加权出机构评分
-- module_path: src/zephyr/signal_ashare/screening/short_term_stock_selector.py
-  module_id: MOD-SIG-023
-  node_id: A2
-  name_zh: ② 强庄股识别器
-  name_en: identify_strong_stock
-  plain_zh: 走势独立+换手率异常+盘口神秘大单三条件累积分判强庄股
-- module_path: src/zephyr/signal_ashare/screening/short_term_stock_selector.py
-  module_id: MOD-SIG-023
-  node_id: A3
-  name_zh: ③ 连板潜力评分卡
-  name_en: score_limitup_potential
-  plain_zh: 7维100分评分卡衡量连板接力潜力
-- module_path: src/zephyr/signal_ashare/screening/short_term_stock_selector.py
-  module_id: MOD-SIG-023
-  node_id: A4
-  name_zh: ④ 连板分歧程度评估器
-  name_en: evaluate_divergence
-  plain_zh: 按开板次数判断分歧度，分歧越高走势越不确定
-- module_path: src/zephyr/signal_ashare/screening/short_term_stock_selector.py
-  module_id: MOD-SIG-023
-  node_id: A5
-  name_zh: ⑤ 综合评分与推荐
-  name_en: _compute_overall_score + _make_recommendation
-  plain_zh: 机构40%+强庄30%+连板30%合成总分并给出操作建议
 - module_path: src/zephyr/signal_fundamental/audit/__init__.py
   module_id: MOD-SIG-006
   node_id: A1
@@ -60311,6 +60160,12 @@ algo_submodules:
   name_zh: ① 包命名空间声明
   name_en: zephyr.backtest._extensions __init__
   plain_zh: 仅声明 backtest._extensions 私有扩展包命名空间，空 __all__ 不导出符号，无计算逻辑
+- module_path: src/zephyr/compliance/api/__init__.py
+  module_id: __unmanaged__src/zephyr/compliance/api/__init__.py
+  node_id: A1
+  name_zh: ① 包公共面再导出
+  name_en: __init__ re-export
+  plain_zh: 再导出 annotations, ComplianceLogger, ComplianceLogRecord, ComplianceReportRegistr…
 - module_path: src/zephyr/compliance/core/__init__.py
   module_id: __unmanaged__src/zephyr/compliance/core/__init__.py
   node_id: A1
@@ -60424,20 +60279,19 @@ algo_submodules:
   node_id: A1
   name_zh: ① 惰性外观（PEP 562 __getattr__ 按需 import 子模块）
   name_en: zephyr.governance.intelligence_governance.__init__
-  plain_zh: __unmanaged__src/zephyr/governance/intelligence_governance/__init__.py
-    包入口
+  plain_zh: __unmanaged__src/zephyr/governance/intelligence_governance/__init__.py 包入口
 - module_path: src/zephyr/gov_rule/constitutional_update/__init__.py
   module_id: __unmanaged__src/zephyr/gov_rule/constitutional_update/__init__.py
   node_id: A1
   name_zh: ① 导入再导出
   name_en: __init__ re-export
   plain_zh: 把实现文件里的三个类提到包级命名空间，外面 import 更短
-- module_path: src/zephyr/infrastructure/_extensions/__init__.py
+- module_path: src/zephyr/infrastructure/__init__.py
   module_id: MOD-INFRA_RUNTIME
   node_id: A1
-  name_zh: ① 基础设施扩展命名空间占位
-  name_en: __init__（模块级 __all__）
-  plain_zh: 预留 infrastructure 扩展子包命名空间，当前尚无任何实现
+  name_zh: ① 包公共面再导出
+  name_en: __init__ re-export
+  plain_zh: 再导出 auto_diagnostics, blueprint_code_sync, config_validator, contract_tester, c…
 - module_path: src/zephyr/infrastructure/api/__init__.py
   module_id: __unmanaged__src/zephyr/infrastructure/api/__init__.py
   node_id: A1
@@ -60546,48 +60400,12 @@ algo_submodules:
   name_zh: ① 命名空间包声明
   name_en: __all__
   plain_zh: 仅声明 pf_core.api 包命名空间，导出列表为空
-- module_path: src/zephyr/pf_core/core/constraint_solver.py
+- module_path: src/zephyr/pf_core/core/__init__.py
   module_id: __unmanaged__src/zephyr/pf_core/core/__init__.py
   node_id: A1
-  name_zh: ① 7 约束链迭代投影主循环
-  name_en: ConstraintSolver.solve
-  plain_zh: 迭代投影法：逐约束裁剪 → 归一化 → 收敛判定，最多 max_iter 次
-- module_path: src/zephyr/pf_core/core/constraint_solver.py
-  module_id: __unmanaged__src/zephyr/pf_core/core/__init__.py
-  node_id: A2
-  name_zh: ② 单标的仓位投影 C7
-  name_en: _project_single_position
-  plain_zh: 每个标的权重裁剪到 [min_pos, 个票override或max_pos] 区间
-- module_path: src/zephyr/pf_core/core/constraint_solver.py
-  module_id: __unmanaged__src/zephyr/pf_core/core/__init__.py
-  node_id: A3
-  name_zh: ③ 行业集中度投影 C1/C2
-  name_en: _project_sector_absolute / _project_sector_relative
-  plain_zh: 行业聚合权重超上限等比缩放；相对基准偏移超 ±10% 裁到边界
-- module_path: src/zephyr/pf_core/core/constraint_solver.py
-  module_id: __unmanaged__src/zephyr/pf_core/core/__init__.py
-  node_id: A4
-  name_zh: ④ 暴露约束投影 C3/C6
-  name_en: _project_market_cap / _project_style
-  plain_zh: 组合加权市值/风格暴露超 0.3σ 时，同向标的按比例压缩
-- module_path: src/zephyr/pf_core/core/constraint_solver.py
-  module_id: __unmanaged__src/zephyr/pf_core/core/__init__.py
-  node_id: A5
-  name_zh: ⑤ 相关性裁剪 C5
-  name_en: _project_correlation
-  plain_zh: 标的相关性 |ρ|>0.7 时降权权重较大者
-- module_path: src/zephyr/pf_core/core/constraint_solver.py
-  module_id: __unmanaged__src/zephyr/pf_core/core/__init__.py
-  node_id: A6
-  name_zh: ⑥ 拥挤检测
-  name_en: _apply_crowding
-  plain_zh: ρ>0.9 仅保留权重较大者（另一清零）；ρ>0.8 双方权重减半
-- module_path: src/zephyr/pf_core/core/constraint_solver.py
-  module_id: __unmanaged__src/zephyr/pf_core/core/__init__.py
-  node_id: A7
-  name_zh: ⑦ 杠杆投影与归一化
-  name_en: _project_leverage / _normalize
-  plain_zh: 总权重超杠杆上限时整体缩放到 max_gross_leverage
+  name_zh: ① 模块占位（无公共定义）
+  name_en: placeholder
+  plain_zh: __init__.py 无顶层公共函数/类/再导出（AST 事实）
 - module_path: src/zephyr/pf_core/infrastructure/__init__.py
   module_id: __unmanaged__src/zephyr/pf_core/infrastructure/__init__.py
   node_id: A1
@@ -60906,6 +60724,18 @@ algo_submodules:
   name_zh: ① 模块命名空间声明
   name_en: __init__
   plain_zh: 声明 MOD-ALT_DATA 另类数据域包入口并初始化空导出列表
+- module_path: src/zephyr/data_eng/__init__.py
+  module_id: MOD-DATA_ENG
+  node_id: A1
+  name_zh: ① 包公共面再导出
+  name_en: __init__ re-export
+  plain_zh: 再导出 CleaningAnomalyEngine, DataAnomalyAlerter, ExpectationGovernance（共 3 符号）
+- module_path: src/zephyr/data_security/__init__.py
+  module_id: MOD-DATA_SEC
+  node_id: A1
+  name_zh: ① 模块占位（无公共定义）
+  name_en: placeholder
+  plain_zh: __init__.py 无顶层公共函数/类/再导出（AST 事实）
 - module_path: src/zephyr/data_governance/__init__.py
   module_id: MOD-DATA_GOV
   node_id: A1

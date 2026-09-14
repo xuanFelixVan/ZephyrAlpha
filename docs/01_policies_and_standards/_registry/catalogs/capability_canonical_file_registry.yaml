@@ -5003,6 +5003,26 @@ capabilities:
     提交→全景对齐→清理 全流程步骤与失败处置；适用 07 域（regime/选股/仓位/风控/买卖/执行/对账/治理）施工，RULE-CAPABILITY-LOOKUP
     检索"施工"应命中本条
 creation_tokens:
+- file: "scripts/backtest/factory_grid_executor.py"
+  token: "f06-grid-executor-20260915"
+  created_by: "st-f06combo-20260915"
+  capability: "f06_batch_a_construction"
+- file: "scripts/backtest/factory_grid_anova.py"
+  token: "f06-grid-anova-20260915"
+  created_by: "st-f06combo-20260915"
+  capability: "f06_batch_a_construction"
+- file: "tests/backtest/test_factory_grid_executor.py"
+  token: "f06-grid-executor-test-20260915"
+  created_by: "st-f06combo-20260915"
+  capability: "f06_batch_a_construction"
+- file: "tests/backtest/test_factory_grid_anova.py"
+  token: "f06-grid-anova-test-20260915"
+  created_by: "st-f06combo-20260915"
+  capability: "f06_batch_a_construction"
+- file: "docs/_working/2026-09-15-neff-estimator-preregistration.md"
+  token: "f06-neff-prereg-20260915"
+  created_by: "st-f06combo-20260915"
+  capability: "f06_batch_a_construction"
 - file: "docs/_working/pattern_line/lifecycle-consolidation-reconciliation.md"
   token: "patmine-reconcile-20260915"
   created_by: "st-patmine-20260914"
@@ -13092,4 +13112,56 @@ creation_tokens:
   token: nightly-sentiment-automation-20260915
   created_by: st-880fill-20260911
   capability: nightly_sentiment
+- file: docs/_working/pipeline-research/acceptance6-replay.md
+  token: pipeline-research-acceptance6-replay-20260914
+  created_by: st-autopipeline-20260915
+  capability: pipeline_research
+- file: docs/_working/pipeline-research/c3-translation-automation-ruling.md
+  token: pipeline-research-c3-translation-automation-ruling-20260914
+  created_by: st-autopipeline-20260915
+  capability: pipeline_research
+- file: docs/_working/pipeline-research/owner-experience-runbook.md
+  token: pipeline-research-owner-experience-runbook-20260914
+  created_by: st-autopipeline-20260915
+  capability: pipeline_research
+- file: docs/_working/pipeline-research/pending-owner-rulings.md
+  token: pipeline-research-pending-owner-rulings-20260914
+  created_by: st-autopipeline-20260915
+  capability: pipeline_research
+- file: src/zephyr/strategy_pipeline/__init__.py
+  token: strategy-pipeline---init---20260914
+  created_by: st-autopipeline-20260915
+  capability: strategy_pipeline
+- file: src/zephyr/strategy_pipeline/bh_fdr.py
+  token: strategy-pipeline-bh-fdr-20260914
+  created_by: st-autopipeline-20260915
+  capability: strategy_pipeline
+- file: src/zephyr/strategy_pipeline/intake.py
+  token: strategy-pipeline-intake-20260914
+  created_by: st-autopipeline-20260915
+  capability: strategy_pipeline
+- file: src/zephyr/strategy_pipeline/lifecycle_fsm.py
+  token: strategy-pipeline-lifecycle-fsm-20260914
+  created_by: st-autopipeline-20260915
+  capability: strategy_pipeline
+- file: src/zephyr/strategy_pipeline/pipeline_events.py
+  token: strategy-pipeline-pipeline-events-20260914
+  created_by: st-autopipeline-20260915
+  capability: strategy_pipeline
+- file: src/zephyr/strategy_pipeline/registry_writer.py
+  token: strategy-pipeline-registry-writer-20260914
+  created_by: st-autopipeline-20260915
+  capability: strategy_pipeline
+- file: src/zephyr/strategy_pipeline/screen_source.py
+  token: strategy-pipeline-screen-source-20260914
+  created_by: st-autopipeline-20260915
+  capability: strategy_pipeline
+- file: scripts/backtest/sim_promotion_memo.py
+  token: backtest-scripts-sim-promotion-memo-20260914
+  created_by: st-autopipeline-20260915
+  capability: backtest_scripts
+- file: scripts/governance/d3_metadata/pattern_code_fingerprint.py
+  token: pattern-fingerprint-pattern-code-fingerprint-20260914
+  created_by: st-patgov-20260914
+  capability: pattern_fingerprint
 di_seam_exemptions: []

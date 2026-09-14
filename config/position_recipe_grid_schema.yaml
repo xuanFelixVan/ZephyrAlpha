@@ -76,3 +76,15 @@ context_keys:
   - strategy_pool           # list，len()>1 时 F 展开
   - phase                   # int，>=2 时 J 展开
   - capital_ramp_enabled    # bool，true 时 K 展开
+
+# ── 2.1 行业分类标准真源（2026-09-15 夜班锁定，立项稿 §八风险-1）──────────
+# 词表真源: io_sector_sws_map.yaml（target_vocabulary: sws2021_l1，申万 2021 一级 31 个）
+# 个股归属: c1_market.industry_class 列 industry_sw（industry_level='L1'，PIT: valid_from/valid_to）
+# A1 的 industry_neutral / industsize_neutral 取值求值时 MUST 用本锚点，禁硬编码行业清单
+industry_anchor:
+  vocabulary: sws2021_l1
+  vocabulary_source: docs/01_policies_and_standards/_registry/catalogs/io_sector_sws_map.yaml
+  membership_table: c1_market.industry_class
+  membership_column: industry_sw
+  membership_level: L1
+  known_issue: "2026-09-15 观察项：industry_class 表聚合查询（DISTINCT/GROUP BY）触发 CH server 崩溃（count/DESCRIBE 正常）——数据健康属数据线职责；行业中性求值在烟测实证前降级并标记 degraded"
