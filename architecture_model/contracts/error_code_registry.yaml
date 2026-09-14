@@ -2879,6 +2879,11 @@ error_codes:
   module: zephyr.position.core.budget_change_handler
   file: src/zephyr/position/core/budget_change_handler.py
   introduced: '2026-08-30: A13 TierState 跨日持久化落码补登（33号文 blueprint §6 段位 0040~0044 早已声明，本次快照损坏/schema 不符 fail-closed 落码，session-20260830-A13）'
+- code: ZA-POS-0045
+  class: InvalidGridSchemaError
+  module: zephyr.position.core.position_recipe_compiler
+  file: src/zephyr/position/core/position_recipe_compiler.py
+  introduced: '2026-09-15: F-06 仓位配方编译器雏形落码（MOD-POS-029，schema 非法/谓词 fail-closed，st-f06combo-20260915）'
 - code: ZA-RE-0032
   class: SellNewsStudyError
   module: zephyr.research.sell_news_event_study

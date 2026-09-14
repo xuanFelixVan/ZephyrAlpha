@@ -106,3 +106,22 @@ __all__ = __all__ + [
     "get_default_config",
     "plan_pyramid_addition",
 ]
+
+# MOD-POS-029 仓位配方编译器（st-f06combo-20260915：F-06 网格工厂雏形，包门面再导出）
+from zephyr.position.core.position_recipe_compiler import (  # noqa: F401
+    COST_TIERS,
+    DimensionSpec,
+    GridCompiler,
+    GridExpansion,
+    InvalidGridSchemaError,
+    PositionRecipe,
+)
+
+__all__ = __all__ + [
+    "COST_TIERS",
+    "DimensionSpec",
+    "GridCompiler",
+    "GridExpansion",
+    "InvalidGridSchemaError",
+    "PositionRecipe",
+]

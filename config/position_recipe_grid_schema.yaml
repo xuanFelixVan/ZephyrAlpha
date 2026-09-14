@@ -1,0 +1,78 @@
+# F-06 组合层穷尽网格 · 维度 Schema v2（一次定型真源雏形）
+# 真源: docs/_working/2026-09-14-combination-layer-exhaustive-charter.md §十（2026-09-15 裁定批准）
+# 机制: 条件参数空间（SMAC/TPE/Add-Tree）——维度存在性由终局设计空间决定，
+#       维度是否展开由 compile(context) 的 active_if 求值决定（MOD-POS-029）。
+# 默认 context: {strategy_pool: ["primary"], phase: 1, capital_ramp_enabled: false}
+#   → F/J/K 折叠，名义 N_raw = 6×8×5×7×4×2×3×3×3 = 362,880
+#   全激活 N_raw = ×4×2×4 = 11,612,160
+# 消费: GridCompiler.from_yaml(config/position_recipe_grid_schema.yaml).compile(context)
+schema_id: position_recipe_grid_v2
+revisions:
+  - "2026-09-15 v2 定型（立项稿 §十；F/J/K 休眠、G/H 新增，裁定记录见立项稿）"
+dimensions:
+  - id: A1_factor_normalize
+    desc: 因子标准化
+    values: [raw, rank, zscore, industry_neutral, size_neutral, industsize_neutral]
+    baseline: zscore
+    cost_tier: signal_side
+  - id: A2_combine_weight
+    desc: 多因子合成权重
+    values: [equal, ic_mean, ic_ir, halflife20, halflife60, orth_equal, lasso, pc1]
+    baseline: equal
+    cost_tier: signal_side
+  - id: B_top_n
+    desc: 选股截面 Top-N
+    values: ["top10", "top20", "top30", "top50", "top100"]
+    baseline: top50
+    cost_tier: signal_side
+  - id: C_sizing
+    desc: 仓位定尺寸
+    values: [equal_weight, mkt_cap, inv_vol, risk_parity, kelly_025, kelly_050, signal_strength]
+    baseline: inv_vol
+  - id: D1_rebalance_freq
+    desc: 调仓频率
+    values: [daily, weekly, biweekly, monthly]
+    baseline: weekly
+  - id: D2_rebalance_trigger
+    desc: 调仓触发
+    values: [periodic, drift_band]
+    baseline: periodic
+  - id: E_single_cap
+    desc: 单票上限
+    values: [cap5, cap10, cap20]
+    baseline: cap10
+  - id: F_merge_policy
+    desc: 多策略合并
+    values: [single, equal_capital, equal_risk, signal_additive]
+    baseline: single
+    active_if: "len(strategy_pool) > 1"
+    depends_on: []
+  - id: G_universe
+    desc: 标的池
+    values: [hs300, zz500, all_a_ex_st]
+    baseline: hs300
+    cost_tier: signal_side
+  - id: H_turnover_lambda
+    desc: 换手惩罚 λ
+    values: [lambda_0, lambda_5bp, lambda_15bp]
+    baseline: lambda_5bp
+  - id: I_cost_tier
+    desc: 成本假设档（鲁棒性重跑层——不进乘法网格，恒折叠；执行器对幸存者单独重跑）
+    values: [frozen_l0, frozen_l1, stress_l2]
+    baseline: frozen_l0
+    active_if: "False"
+  - id: J_regime_switch
+    desc: regime 开关（Owner 已同意二期）
+    values: [off, on]
+    baseline: off
+    active_if: "phase >= 2"
+  - id: K_capital_ramp
+    desc: 建仓节奏/资金爬坡（需 harness 支持路径依赖，蓝图 §九-2）
+    values: [lump, linear_20d, linear_60d, pyramid]
+    baseline: lump
+    active_if: "capital_ramp_enabled"
+# context 键声明（谓词可引用的外部输入；编译器 fail-closed 校验）
+context_keys:
+  - strategy_pool           # list，len()>1 时 F 展开
+  - phase                   # int，>=2 时 J 展开
+  - capital_ramp_enabled    # bool，true 时 K 展开
