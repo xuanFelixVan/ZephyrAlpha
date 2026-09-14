@@ -1,0 +1,353 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<!-- 结案报告（2026-09-15 st-fullchain-20260914）
+     总结论：备份交接收官报告，事件已闭环
+     核验：全文无待办信号；有 .md 孪生件者以 .md 为真源。
+     -->
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>备份专项交接收尾报告 · 2026-09-14</title>
+<style>
+  :root {
+    --bg: #0f0f0f;
+    --ink: #f0f0f0;
+    --ink-2: #b8b8b8;
+    --ink-3: #7d7d7d;
+    --hairline: rgba(255,255,255,.10);
+    --hairline-strong: rgba(255,255,255,.18);
+    --accent: #56a894;
+    --accent-dim: rgba(86,168,148,.16);
+    --mono: "Cascadia Mono", "Consolas", "SFMono-Regular", monospace;
+    --sans: "Source Han Sans SC", "Noto Sans SC", "Microsoft YaHei", "PingFang SC", sans-serif;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    background: var(--bg);
+    color: var(--ink);
+    font-family: var(--sans);
+    font-size: 15px;
+    line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
+  }
+  .canvas { max-width: 1080px; margin: 0 auto; padding: 64px 40px 80px; }
+  .kicker {
+    font-family: var(--mono);
+    font-size: 11px;
+    letter-spacing: .14em;
+    color: var(--ink-3);
+    text-transform: uppercase;
+  }
+  h1 {
+    font-size: 34px;
+    font-weight: 600;
+    letter-spacing: -.01em;
+    line-height: 1.15;
+    margin: 14px 0 10px;
+  }
+  .meta-row {
+    font-family: var(--mono);
+    font-size: 12px;
+    color: var(--ink-2);
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px 28px;
+    padding-bottom: 24px;
+    border-bottom: 1px solid var(--hairline-strong);
+  }
+  .meta-row span b { color: var(--ink); font-weight: 500; }
+  .lede {
+    font-size: 16.5px;
+    color: var(--ink-2);
+    max-width: 72ch;
+    margin: 28px 0 8px;
+  }
+  .lede strong { color: var(--ink); font-weight: 550; }
+  section { margin-top: 52px; }
+  .sec-head {
+    display: flex;
+    align-items: baseline;
+    gap: 14px;
+    margin-bottom: 22px;
+  }
+  .sec-num {
+    font-family: var(--mono);
+    font-size: 12px;
+    color: var(--accent);
+  }
+  h2 { font-size: 19px; font-weight: 600; letter-spacing: .01em; }
+  .metrics {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    border-top: 1px solid var(--hairline-strong);
+    border-bottom: 1px solid var(--hairline-strong);
+  }
+  .metric {
+    padding: 18px 18px 16px;
+    border-left: 1px solid var(--hairline);
+  }
+  .metric:first-child { border-left: none; }
+  .metric .k {
+    font-size: 12px;
+    color: var(--ink-3);
+    margin-bottom: 8px;
+  }
+  .metric .v {
+    font-family: var(--mono);
+    font-size: 24px;
+    font-weight: 500;
+    letter-spacing: -.01em;
+  }
+  .metric .v small { font-size: 13px; color: var(--ink-3); font-weight: 400; }
+  .metric .s { font-size: 12px; color: var(--ink-3); margin-top: 6px; }
+  .metric .v.acc { color: var(--accent); }
+  table { width: 100%; border-collapse: collapse; }
+  th {
+    font-size: 12px;
+    font-weight: 500;
+    color: var(--ink-3);
+    text-align: left;
+    letter-spacing: .06em;
+    padding: 8px 14px 10px 0;
+    border-bottom: 1px solid var(--hairline-strong);
+  }
+  td {
+    font-size: 14px;
+    padding: 13px 14px 13px 0;
+    border-bottom: 1px solid var(--hairline);
+    vertical-align: top;
+    color: var(--ink-2);
+  }
+  td:first-child { color: var(--ink); white-space: nowrap; }
+  td .mono, .mono { font-family: var(--mono); font-size: 12.5px; }
+  .ok-tag { color: var(--accent); }
+  .wait-tag { color: #d9a441; }
+  .steps { border-left: 1px solid var(--hairline-strong); margin-left: 6px; }
+  .step { position: relative; padding: 0 0 26px 26px; }
+  .step:last-child { padding-bottom: 4px; }
+  .step::before {
+    content: "";
+    position: absolute;
+    left: -4.5px;
+    top: 6px;
+    width: 8px; height: 8px;
+    background: var(--bg);
+    border: 1px solid var(--hairline-strong);
+  }
+  .step.done::before { background: var(--accent); border-color: var(--accent); }
+  .step.fail::before { border-color: #c96f5e; }
+  .step .t {
+    font-family: var(--mono);
+    font-size: 12px;
+    color: var(--ink-3);
+    letter-spacing: .04em;
+  }
+  .step .h { font-size: 15px; color: var(--ink); margin: 3px 0 4px; font-weight: 550; }
+  .step .d { font-size: 13.5px; color: var(--ink-2); max-width: 70ch; }
+  .bars { margin-top: 6px; }
+  .bar-row { display: grid; grid-template-columns: 150px 1fr 110px; gap: 16px; align-items: center; margin-bottom: 12px; }
+  .bar-row .lbl { font-size: 13px; color: var(--ink-2); text-align: right; }
+  .bar-row .val { font-family: var(--mono); font-size: 12.5px; color: var(--ink-2); }
+  .bar-track { height: 18px; position: relative; }
+  .bar-fill {
+    position: absolute; left: 0; top: 0; bottom: 0;
+    border: 1px solid var(--hairline-strong);
+    background: rgba(255,255,255,.07);
+  }
+  .bar-fill.acc { background: var(--accent-dim); border-color: var(--accent); }
+  .note {
+    margin-top: 20px;
+    padding: 14px 18px;
+    border: 1px solid var(--hairline);
+    font-size: 13.5px;
+    color: var(--ink-2);
+    max-width: 78ch;
+  }
+  .note b { color: var(--ink); font-weight: 550; }
+  a { color: var(--accent); text-decoration: none; border-bottom: 1px solid rgba(86,168,148,.35); }
+  .colophon {
+    margin-top: 64px;
+    padding-top: 20px;
+    border-top: 1px solid var(--hairline-strong);
+    font-family: var(--mono);
+    font-size: 12px;
+    color: var(--ink-3);
+    line-height: 2;
+  }
+  .colophon b { color: var(--ink-2); font-weight: 500; }
+  @media (max-width: 860px) {
+    .metrics { grid-template-columns: repeat(2, 1fr); }
+    .metric:nth-child(3) { border-left: none; }
+    .bar-row { grid-template-columns: 100px 1fr 90px; }
+  }
+</style>
+</head>
+<body>
+<div class="canvas">
+
+  <div class="kicker">ZephyrAlpha · Backup Track · Handoff Closure</div>
+  <h1>备份专项交接收尾报告</h1>
+  <div class="meta-row">
+    <span>日期 <b>2026-09-14</b></span>
+    <span>执行 <b>接手会话 defdc42d</b></span>
+    <span>依据 <b>备份专项交接文档 + AGENTS.md L0</b></span>
+  </div>
+
+  <p class="lede">
+    交接清单 5 项全部核销。<strong>VHDX 缩容第 2 次尝试成功</strong>：912.5 GB → 313.4 GB，
+    F 盘可用空间从 194.4 GB 回升至 793.5 GB；CH 虚拟机自动拉起并在线验证通过。
+    data_download 不备份裁定此前已由前任会话落地（c573b1ef7f），本会话核实无遗漏；
+    台账 §10.2 已补记并提交（e535e9ea）；reaper 白名单临时条目已清理。
+    仅剩一项待 Owner 一句话拍板：<strong>F:\code_backup\.git.backup.20260803（6.32 GB）删不删</strong>。
+  </p>
+
+  <section>
+    <div class="sec-head"><span class="sec-num">01</span><h2>结果一览</h2></div>
+    <div class="metrics">
+      <div class="metric">
+        <div class="k">VHDX 回收空间</div>
+        <div class="v acc">−599.1<small> GB</small></div>
+        <div class="s">912.5 → 313.4 GB</div>
+      </div>
+      <div class="metric">
+        <div class="k">F 盘可用空间</div>
+        <div class="v">793.5<small> GB</small></div>
+        <div class="s">194.4 → 793.5 GB</div>
+      </div>
+      <div class="metric">
+        <div class="k">CH 服务状态</div>
+        <div class="v">26.6.1<small>.1193</small></div>
+        <div class="s">VM Running · 无进行中备份</div>
+      </div>
+      <div class="metric">
+        <div class="k">本专项提交</div>
+        <div class="v">2<small> 个</small></div>
+        <div class="s">c573b1ef7f · e535e9ea</div>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <div class="sec-head"><span class="sec-num">02</span><h2>VHDX 缩容全过程</h2></div>
+    <div class="steps">
+      <div class="step fail">
+        <div class="t">19:15:03 · 第 1 次尝试 — 中断</div>
+        <div class="h">Optimize-VHD 报「进度监视对象不再存在」</div>
+        <div class="d">VHDX 未缩（仍 912.5 GB）。脚本兜底逻辑自动拉起 VM，未伤盘。事后定位：进度条渲染问题，修法为 $ProgressPreference=SilentlyContinue。</div>
+      </div>
+      <div class="step done">
+        <div class="t">19:17:58 · 第 2 次尝试 — 提权重启</div>
+        <div class="h">优雅关机 zephyr-ch → Optimize-VHD -Mode Full</div>
+        <div class="d">脚本含中止保护（关机超时不动作）与出错自动拉起；全程 transcript 落盘。日志一度停在 STEP 2 属 transcript 惰性刷新，非卡死——进程与 VHDX LastWriteTime 均证实活跃写盘中。</div>
+      </div>
+      <div class="step done">
+        <div class="t">19:37:04 · 完成</div>
+        <div class="h">VHDX 912.5 → 313.4 GB，回收 599.1 GB</div>
+        <div class="d">VM 自动拉起。接手会话补做验证：version()=26.6.1.1193、system.backups 无进行中任务、F 盘 free=793.5 GB，与 194.4+599.1 精确吻合。</div>
+      </div>
+    </div>
+    <div class="bars">
+      <div class="bar-row">
+        <div class="lbl">缩容前（912.5 GB）</div>
+        <div class="bar-track"><div class="bar-fill" style="width:100%"></div></div>
+        <div class="val">912.5 GB</div>
+      </div>
+      <div class="bar-row">
+        <div class="lbl">缩容后（实测）</div>
+        <div class="bar-track"><div class="bar-fill acc" style="width:34.3%"></div></div>
+        <div class="val">313.4 GB</div>
+      </div>
+    </div>
+    <div class="note">
+      <b>预测偏差说明</b>：交接文档预测 ~290 GB，实测 313.4 GB，差额约 23 GB 属 unmap 粒度与压缩实际效果，
+      已在台账记录为「无需跟进」。近 1 TB 上限的迫近风险解除：inc.zip（93 GB）已达基线 48%，
+      基线重建随时可能触发——按 §0.5 机制，重建后 guest 内删除产生的空洞现在有充足宿主空间承接。
+    </div>
+  </section>
+
+  <section>
+    <div class="sec-head"><span class="sec-num">03</span><h2>收尾清单核销</h2></div>
+    <table>
+      <thead>
+        <tr><th style="width:34%">交接清单项</th><th style="width:12%">状态</th><th>结果与证据</th></tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>1 · 查 VHDX 缩容结果</td>
+          <td class="ok-tag">✓ 成功</td>
+          <td>第 2 次尝试 19:37 完成，回收 599.1 GB；VM/CH/盘空间四项验证全过（见 02 节）。</td>
+        </tr>
+        <tr>
+          <td>2 · 提交两个待 commit 配置</td>
+          <td class="ok-tag">✓ 已落地</td>
+          <td>核实发现前任会话已在 19:27:27 提交 <span class="mono">c573b1ef7f</span>，提交信息与交接要求逐点吻合（Owner 裁定 / 52.66→118.38 GB 膨胀 / +66 GB 镜像压力 / 118.4 GB 回收）；两文件 vs HEAD diff 为空，无需重复提交。</td>
+        </tr>
+        <tr>
+          <td>3 · 台账追加 §10.2 并 commit</td>
+          <td class="ok-tag">✓ 已提交</td>
+          <td>backup_inventory.md 追加 §10.2（裁定+缩容复盘+挂账+观察项）、§0.5 实测值回填；commit <span class="mono">e535e9ea</span>，post-commit 核实仅含台账 1 个文件，他会话 staged 文件未被带走。</td>
+        </tr>
+        <tr>
+          <td>4 · 向 Owner 汇报待决项</td>
+          <td class="wait-tag">● 待拍板</td>
+          <td>.git.backup.20260803 删不删等 Owner 一句话（见 04 节）；跨天快照观察项已挂定时任务（见 05 节）。</td>
+        </tr>
+        <tr>
+          <td>5 · 清理 reaper 白名单临时条目</td>
+          <td class="ok-tag">✓ 已清理</td>
+          <td><span class="mono">process_reaper_keep.txt</span> 13→11 行，移除 Optimize-VHD / vhdx_maintenance 两行，进程外复核通过。</td>
+        </tr>
+      </tbody>
+    </table>
+    <div class="note">
+      <b>归属说明</b>：台账文件上存在他会话（xt4-red）留下的未暂存 dataflow 对齐行改动，
+      因同文件被本次提交一并吸收，已在提交信息中注明 same-file absorb；其 staged 的
+      boot_autostart_architecture.md 与 rules_integrity_db.json 未动、不代修，按 Owner 责任制留给原会话。
+    </div>
+  </section>
+
+  <section>
+    <div class="sec-head"><span class="sec-num">04</span><h2>待 Owner 拍板（唯一挂账）</h2></div>
+    <table>
+      <thead>
+        <tr><th style="width:34%">对象</th><th style="width:14%">体量</th><th>背景与选项</th></tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>F:\code_backup\.git.backup.20260803</td>
+          <td class="mono">6.32 GB<br>17285 文件</td>
+          <td>2026-08-03 的陈旧 .git 副本。上一会话曾发起删除、被 Owner 打断，按纪律删除前需再确认。<b>回复「删」或「留」即可</b>；若保留，建议另行压缩归档以让出 F 盘。</td>
+        </tr>
+      </tbody>
+    </table>
+  </section>
+
+  <section>
+    <div class="sec-head"><span class="sec-num">05</span><h2>明日观察项（已自动化）</h2></div>
+    <p style="color:var(--ink-2); max-width:74ch; margin-bottom:18px;">
+      2026-09-15 06:00 日常备份跑完后，需看 working_vault 第一个跨天快照的 linked/copied 数，
+      校准每日真实变化量、评估 retention_days=14 是否调小。此项已挂定时任务
+      <span class="mono">working_vault_crossday_snapshot_check</span>：明日 06:45 自动触发本会话执行检查并汇报，跑完自删，无需人工记。
+    </p>
+    <table>
+      <thead>
+        <tr><th style="width:34%">时间线</th><th>事项</th></tr>
+      </thead>
+      <tbody>
+        <tr><td class="mono">09-15 06:00</td><td>ZephyrAlpha_DailyBackup 计划任务运行（STAGE 3 版本化快照）</td></tr>
+        <tr><td class="mono">09-15 06:45</td><td>定时检查触发：读 backup_report 与快照目录，产出每日变化量结论与保留天数建议</td></tr>
+      </tbody>
+    </table>
+  </section>
+
+  <div class="colophon">
+    <b>提交</b>　c573b1ef7f（data_download 裁定，前任会话 19:27）· e535e9ea（台账 §10.2，本会话）<br>
+    <b>日志</b>　logs\vhdx_maintenance_20260914_191758.log（成功）· logs\vhdx_maintenance_20260914_191027.log（第 1 次中断）<br>
+    <b>台账</b>　docs\03_modules\_domain_infrastructure_operations\disaster_recovery_backup\backup_inventory.md §10.2<br>
+    <b>背景</b>　docs\_working 删除事故三层防线（#ARCH-311，reconciliation=742c9d9f）之空间与版本化收尾
+  </div>
+
+</div>
+</body>
+</html>

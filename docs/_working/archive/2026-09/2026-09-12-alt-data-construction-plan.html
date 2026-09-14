@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<!-- 结案报告（2026-09-15 st-fullchain-20260914）
+     总结论：与同名 .md 孪生（.md 为真源），HTML 为渲染副本
+     核验：全文无待办信号；有 .md 孪生件者以 .md 为真源。
+     -->
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>另类数据施工图 v2 · 可持续性审计与政府/国际宏观接入</title>
+<style>
+  :root{
+    --bg:#fafafa; --ink:#141414; --ink-2:#4a4a4a; --ink-3:#8a8a8a;
+    --hair:#e2e2e0; --hair-2:#cfcfcc;
+    --accent:#0e6e5c; --accent-ink:#0a5a4b;
+    --warn:#8a4b12; --stop:#7a3030; --ok:#0e6e5c;
+    --mono:"Cascadia Mono","SF Mono",Consolas,"Courier New",monospace;
+    --sans:"Segoe UI","PingFang SC","Microsoft YaHei","Source Han Sans SC",sans-serif;
+  }
+  *{margin:0;padding:0;box-sizing:border-box;}
+  body{background:var(--bg);color:var(--ink);font-family:var(--sans);font-size:15px;line-height:1.65;}
+  .wrap{max-width:1080px;margin:0 auto;padding:48px 40px 80px;}
+  .kicker{font-family:var(--mono);font-size:11.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--accent);margin-bottom:14px;}
+  h1{font-size:32px;font-weight:600;line-height:1.22;letter-spacing:-0.01em;margin-bottom:10px;max-width:22em;}
+  .lede{font-size:15.5px;color:var(--ink-2);max-width:46em;margin-bottom:24px;}
+  .meta-row{display:flex;gap:26px;flex-wrap:wrap;border-top:1px solid var(--hair);border-bottom:1px solid var(--hair);padding:11px 0;margin-bottom:40px;font-family:var(--mono);font-size:12px;color:var(--ink-3);}
+  .meta-row b{color:var(--ink);font-weight:600;}
+  h2{font-size:20px;font-weight:600;margin:50px 0 6px;padding-top:18px;border-top:1px solid var(--hair-2);}
+  h2 .no{font-family:var(--mono);font-size:12px;color:var(--accent);font-weight:400;margin-right:10px;letter-spacing:.08em;}
+  .sub{color:var(--ink-3);font-size:13px;margin-bottom:16px;}
+  p{margin:10px 0;max-width:47em;}
+  table{width:100%;border-collapse:collapse;margin:16px 0 8px;font-size:13px;}
+  th{text-align:left;font-weight:560;font-size:11.5px;letter-spacing:.05em;color:var(--ink-3);border-bottom:1.5px solid var(--ink);padding:7px 10px 7px 0;}
+  td{border-bottom:1px solid var(--hair);padding:8px 10px 8px 0;vertical-align:top;color:var(--ink-2);}
+  td:first-child{color:var(--ink);font-weight:520;}
+  .ok{color:var(--ok);font-family:var(--mono);font-size:12px;white-space:nowrap;}
+  .no2{color:var(--stop);font-family:var(--mono);font-size:12px;white-space:nowrap;}
+  .concl{border:1px solid var(--hair-2);border-left:3px solid var(--accent);padding:18px 22px;margin:20px 0;}
+  .concl ol{margin-left:1.3em;}
+  .concl li{margin:8px 0;max-width:47em;}
+  .batches{margin:18px 0;}
+  .batch{display:flex;gap:16px;padding:13px 0;border-bottom:1px solid var(--hair);}
+  .batch .bn{font-family:var(--mono);font-size:12px;color:var(--accent);white-space:nowrap;padding-top:2px;}
+  .batch b{font-weight:560;}
+  .batch span{color:var(--ink-2);display:block;font-size:13.5px;max-width:54em;}
+  .urlbox{border:1px solid var(--hair-2);padding:16px 20px;margin:16px 0;}
+  .urlbox table td{font-size:12.5px;}
+  a{color:var(--accent-ink);text-decoration:none;border-bottom:1px solid var(--hair-2);}
+  code{font-family:var(--mono);font-size:.92em;background:#f0f0ee;padding:0 4px;border:1px solid var(--hair);}
+  .foot{margin-top:56px;border-top:1px solid var(--hair-2);padding-top:14px;font-family:var(--mono);font-size:11.5px;color:var(--ink-3);line-height:1.9;}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<div class="kicker">ZephyrAlpha · L3 Alternative Data · Construction Plan v2</div>
+<h1>另类数据施工图 v2：可持续性审计 · 裁定复核 · 政府/国际宏观接入</h1>
+<p class="lede">回答 Owner 四问：① 五条另类管线能否持续更新；② 电商爬虫不碰的裁定原因；③ "web 注意度 / 社媒情绪 / 监管文件衍生"三块怎么落地；④ 政府数据与国际宏观要不要花钱。结论全部给出代码或来源实证。</p>
+<div class="meta-row">
+  <span>日期 <b>2026-09-12</b></span>
+  <span>性质 <b>施工图（取代 v1 清单的执行层）</b></span>
+  <span>管线审计 <b>5 条 / 7 组任务</b></span>
+  <span>注册清单 <b>15 项</b></span>
+</div>
+
+<h2><span class="no">§0</span>一页结论</h2>
+<div class="concl">
+  <ol>
+    <li><b>五条管线全部有持续调度任务，不是一次性导数。</b>生猪三表在 tasks.yaml 是 daily_event 日度任务（akshare 增量/幂等拉取），其余四条各有专属 task。残余风险是 akshare 上游网页改版——用 alt_source_health_manager + known_data_gaps 兜底（先例：北向三接口断供 → tushare 替代）。</li>
+    <li><b>电商爬虫不碰的四条理由</b>：反爬工程量＞收益；平台条款合规深水区；有免费合法替代品（海关进出口月度、统计局社零）；同等消费景气信号已被已接宏观数据覆盖。</li>
+    <li><b>三块可做全部有施工路径</b>：web 注意度（百度指数+概念映射）、社媒情绪（股吧/千股千评/雪球）、监管文件衍生（互动易问答 + SEC EFTS 全文），见 §2。</li>
+    <li><b>政府数据不需要采购。</b>统计局/部委/采购公告全免费；243+ 省市开放平台免费（部分数据集需注册实名账号下载）。唯一可选小额支出：textdata.cn 互动问答历史集（一次性买断，非订阅）。</li>
+    <li><b>国际宏观免费的已接一半</b>：FRED（22 序列 event_driven）+ 世界银行（免 key）+ EIA 已在跑；本轮新增 IMF、GDELT（免注册 15 分钟全球新闻事件）、SEC EDGAR EFTS（免注册全文检索）。</li>
+    <li><b>施工分 4 批</b>：免注册直连 → 注册类（§4 URL 清单）→ 爬虫试点 → 海外源。</li>
+  </ol>
+</div>
+
+<h2><span class="no">§1</span>五条管线可持续性审计（tasks.yaml 实证）</h2>
+<p class="sub">审计口径：调度任务存在性 + 增量/幂等模式 + 源可访问性。文件：src/zephyr/data/config/tasks.yaml</p>
+<table>
+  <tr><th>管线</th><th>task_id</th><th>schedule</th><th>模式</th><th>源</th><th>判定</th></tr>
+  <tr><td>生猪期货</td><td><code>hog_futures_core_refresh</code></td><td><b>daily_event</b></td><td>增量</td><td>akshare futures_hog_core（东财期货源）</td><td class="ok">✅ 可持续</td></tr>
+  <tr><td>生猪分省现货</td><td><code>hog_province_spot_refresh</code></td><td><b>daily_event</b></td><td>全量快照幂等</td><td>akshare spot_hog_soozhu（搜猪 28 省价差）</td><td class="ok">✅ 可持续</td></tr>
+  <tr><td>生猪现货指数</td><td><code>hog_spot_index_refresh</code></td><td><b>daily_event</b></td><td>周度数据日度拉取幂等去重</td><td>akshare index_hog_spot_price</td><td class="ok">✅ 可持续</td></tr>
+  <tr><td>天气</td><td><code>qweather_now/forecast_incremental</code></td><td>日度</td><td>增量</td><td>和风天气免费 API</td><td class="ok">✅ 可持续</td></tr>
+  <tr><td>社交热度</td><td><code>stock_hot_rank_incremental</code></td><td><b>daily_capital</b></td><td>增量</td><td>akshare 东财人气榜</td><td class="ok">✅ 可持续</td></tr>
+  <tr><td>币圈影子</td><td><code>crypto_kline_daily_incremental</code> + 恐贪</td><td>日度</td><td>增量</td><td>OKX + alternative.me 免费免 key</td><td class="ok">✅ 可持续</td></tr>
+  <tr><td>新闻情绪</td><td><code>news_cls_incremental</code> / eastmoney / tushare</td><td>持续</td><td>增量</td><td>财联社电报 / 东财 7x24 / tushare</td><td class="ok">✅ 可持续</td></tr>
+</table>
+<p><b>残余风险与对策</b>：akshare 上游网页改版（先例：北向三接口 2026-08 断裂 → tushare hk_hold 替代，全程缺口登记）→ alt_source_health_manager 健康探针 + 断供换源不弃线。和风免费版无历史 → 每日积累，任务保持常开。</p>
+
+<h2><span class="no">§1.5</span>裁定复核（补"为什么"）</h2>
+<table>
+  <tr><th>裁定</th><th>原因</th><th>免费合法替代品</th></tr>
+  <tr><td class="no2">卫星遥感 / 停车窥屏：不碰</td><td>黑石系私募实测"合规+成本 vs 阿尔法不成正比"放弃（体检报告 §1.3 同文案例）</td><td>无需替代</td></tr>
+  <tr><td class="no2">电商价格爬虫：不碰</td><td>① 反爬重：登录态/验证码/代理池+改版维护，工程量远超个人预算；② 平台条款与数据权属灰色；③ RQData 把电商数据做成标准目录项恰说明这是授权商用生意</td><td>海关进出口月度、统计局社零、商务部行业月报（均免费）</td></tr>
+  <tr><td class="no2">付费另类平台：不买</td><td>订阅成本与个人阿尔法不成比例；iFind 已 2026-08-14 退归先例</td><td>唯一例外：分析师一致预期历史（P1-C，财报对话范围）</td></tr>
+</table>
+
+<h2><span class="no">§2</span>三块可做的施工图</h2>
+<p><b>① Web 注意度</b> —— 百度指数（免费，登录 cookie）→ 概念关键词池（≈200 词起步）→ 每日拉取落 <code>search_attention</code> 表 → 唤醒 concept_factor_mapper 概念→个股映射。风险：cookie 过期 → health manager 告警。PIT 安全（指数即所得）。</p>
+<p><b>② 社媒情绪</b> —— 股吧发帖量/阅读热度（akshare）+ 千股千评日频关注评分（东财数据中心）+ 雪球关注/讨论（非官方 API）→ 唤醒 social_sentiment_collector → 统一 (metric, trade_date, value, source) 行格式 → 落 stock_hot_rank 邻位表族 → 消费端与 news_sentiment_window 合成。证据：华创《机构情绪与个人情绪》、雪球情绪指数长回测。</p>
+<p><b>③ 监管文件衍生</b> —— 境内：互动易+e互动问答（tushare irm_qa）+ 巨潮公告文本（akshare 部分覆盖），历史回补 textdata.cn 536 万条；海外：SEC EFTS 全文检索（免注册 JSON）。唤醒 filing_nlp_engine → 文本入 news_data 同款管线 → 结构化（提问量/回复情感/含糊度/主题）→ 与研报链共享 intelligence 域。PIT：发布时间即所得，embargo 走三公理。</p>
+
+<h2><span class="no">§3</span>政府数据与国际宏观</h2>
+<p class="sub">政府数据：免费，不采购；国际宏观：免费源已在跑一半</p>
+<table>
+  <tr><th>层</th><th>源</th><th>获取</th><th>注册</th><th>用途</th></tr>
+  <tr><td>全国</td><td>国家统计局 data.stats.gov.cn</td><td>免费（akshare 已包装，macro_data 291K 行在跑）</td><td>免注册</td><td>CPI/PPI/PMI/GDP/社零</td></tr>
+  <tr><td>全国</td><td>部委公示原文（发改委/工信部/商务部/农业农村部）</td><td>gov.cn 免费</td><td>免注册</td><td>policy_* 喂料、政策主题传导</td></tr>
+  <tr><td>全国</td><td>中国政府采购网 ccgp.gov.cn 中标公告</td><td>免费公开</td><td>免注册</td><td>爬虫试点：中标额→订单前瞻</td></tr>
+  <tr><td>全国</td><td>国家数据局 nda.gov.cn / 国家公共数据资源登记平台</td><td>免费目录检索</td><td>免注册</td><td>全国开放数据集发现入口</td></tr>
+  <tr><td>地方</td><td>上海 / 北京 / 深圳 / 浙江 等 243+ 平台</td><td>免费开放</td><td>部分数据集需实名注册</td><td>区域经济面板（与 weather 40 城同构）</td></tr>
+  <tr><td>国际宏观</td><td>FRED（22 序列）· 世界银行 · EIA</td><td><b>已在跑</b>（fred_provider / macro_worldbank / eia_provider）</td><td>FRED 免费 key</td><td>美 GDP/CPI/收益率/美元/WTI/黄金/VIX</td></tr>
+  <tr><td>国际宏观</td><td>IMF · OECD</td><td>免费数据门户 / SDMX</td><td>免注册</td><td>本轮新增：IMF 精选序列落 macro_data 共表</td></tr>
+  <tr><td>海外文本</td><td>GDELT（15 分钟全球新闻事件）· SEC EFTS（2001 至今全文）</td><td>100% 免费免注册</td><td>免注册（EFTS 需 User-Agent）</td><td>英文情绪窗口 / 美股申报 NLP</td></tr>
+</table>
+<p><b>关键澄清</b>：政府数据的问题不是"贵"是"散"——243 个平台各一套目录。只按需接 2-3 个（上海+浙江+采购网试点），不做全域扫描。<b>VPN</b>：FRED/WorldBank/EIA 既有代码已读 HTTPS_PROXY，GDELT/EFTS 接入直接复用同一代理模式。</p>
+
+<h2><span class="no">§4</span>施工批次 + Owner 注册清单</h2>
+<div class="batches">
+  <div class="batch"><div class="bn">第1批</div><div><b>免注册直连</b><span>股吧 / 千股千评 / 票房 / 运价（akshare 直连，照抄 hog_* 模板落 alt_* 表族）。每源 ≤1 天。</span></div></div>
+  <div class="batch"><div class="bn">第2批</div><div><b>注册类</b><span>雪球、百度指数（账号+cookie）、互动易（核对 irm_qa 积分）、上海/浙江开放平台账号。每源 0.5-1 天。</span></div></div>
+  <div class="batch"><div class="bn">第3批</div><div><b>爬虫试点</b><span>政府采购网中标公告（唤醒 web_scraper_engine + compliance_reviewer）；textdata.cn 历史问答集（可选小额买断）。2-3 天。</span></div></div>
+  <div class="batch"><div class="bn">第4批</div><div><b>海外源</b><span>GDELT 15 分钟事件流 → 英文情绪窗口；SEC EFTS 美股申报文本；IMF 序列。2-3 天，VPN 常态在线。</span></div></div>
+</div>
+
+<div class="urlbox">
+<p style="margin:0 0 8px;"><b>需 Owner 注册/访问的免费源（全部核实可访问）</b></p>
+<table>
+  <tr><th>#</th><th>平台</th><th>网址</th><th>注册类型</th><th>用途</th></tr>
+  <tr><td>1</td><td>百度指数</td><td><a href="https://index.baidu.com">index.baidu.com</a></td><td>百度账号+cookie</td><td>Web 注意度</td></tr>
+  <tr><td>2</td><td>FRED API</td><td><a href="https://fred.stlouisfed.org/docs/api/api_key.html">fred.stlouisfed.org/docs/api/api_key.html</a></td><td>免费 key（已在用，确认在位）</td><td>国际宏观</td></tr>
+  <tr><td>3</td><td>和风天气</td><td><a href="https://dev.qweather.com">dev.qweather.com</a></td><td>免费 key（已在用）</td><td>天气管线续命</td></tr>
+  <tr><td>4</td><td>tushare</td><td><a href="https://tushare.pro">tushare.pro</a></td><td>已有 token，核对 irm_qa 积分</td><td>互动易问答</td></tr>
+  <tr><td>5</td><td>上海市公共数据开放平台</td><td><a href="https://data.sh.gov.cn">data.sh.gov.cn</a></td><td>实名账号（部分数据集）</td><td>区域面板</td></tr>
+  <tr><td>6</td><td>北京市公共数据开放平台</td><td><a href="https://data.beijing.gov.cn">data.beijing.gov.cn</a></td><td>实名账号（部分数据集）</td><td>区域面板</td></tr>
+  <tr><td>7</td><td>深圳市政府数据开放平台</td><td><a href="https://opendata.sz.gov.cn">opendata.sz.gov.cn</a></td><td>实名账号（部分数据集）</td><td>区域面板</td></tr>
+  <tr><td>8</td><td>浙江·数据开放</td><td><a href="https://data.zjzwfw.gov.cn">data.zjzwfw.gov.cn</a></td><td>实名账号（部分数据集）</td><td>区域面板</td></tr>
+  <tr><td>9</td><td>国家数据局（全国入口）</td><td><a href="https://www.nda.gov.cn">nda.gov.cn</a></td><td>目录免注册</td><td>开放数据集发现</td></tr>
+  <tr><td>10</td><td>国家统计局</td><td><a href="https://data.stats.gov.cn">data.stats.gov.cn</a></td><td>免注册（akshare 已包装）</td><td>宏观</td></tr>
+  <tr><td>11</td><td>GDELT</td><td><a href="https://www.gdeltproject.org">gdeltproject.org</a></td><td>免注册</td><td>全球新闻事件流</td></tr>
+  <tr><td>12</td><td>SEC EDGAR 全文检索</td><td><a href="https://www.sec.gov/edgar/search">sec.gov/edgar/search</a>（API：<a href="https://efts.sec.gov">efts.sec.gov</a>）</td><td>免注册（需 User-Agent）</td><td>美股申报文本</td></tr>
+  <tr><td>13</td><td>IMF Data</td><td><a href="https://data.imf.org">data.imf.org</a></td><td>免注册</td><td>国际宏观补充</td></tr>
+  <tr><td>14</td><td>Alpha Vantage / EODHD（P2 备选）</td><td><a href="https://www.alphavantage.co">alphavantage.co</a> · <a href="https://eodhd.com">eodhd.com</a></td><td>免费 key / 免费层</td><td>美股深度补缺</td></tr>
+  <tr><td>15</td><td>textdata.cn 问答历史集</td><td><a href="https://textdata.cn">textdata.cn</a></td><td>数据集商品（可选买断）</td><td>互动易历史回补</td></tr>
+</table>
+</div>
+
+<h2><span class="no">§5</span>治理闭环</h2>
+<p>与 v1 报告一致：新源全过 alt_data_catalog登记 → alt_data_compliance_reviewer（license_type / latency_profile）→ alt_source_health_manager 探针 → known_data_gaps.yaml 断供登记。PIT 三公理（as_of / embargo / survivorship）不变。</p>
+
+<h2><span class="no">§6</span>证据清单</h2>
+<table>
+  <tr><th>证据</th><th>要点</th></tr>
+  <tr><td>tasks.yaml（项目内）</td><td>hog_* 三任务 daily_event 原文；qweather/stock_hot_rank/crypto/news_cls/macro_fred/macro_worldbank 任务行——可持续性判定直接来源</td></tr>
+  <tr><td>FRED API key 页</td><td>免费注册 32 位 key，含完整历史批量下载 <span style="font-family:var(--mono);font-size:11px;">fred.stlouisfed.org/docs/api/api_key.html</span></td></tr>
+  <tr><td>世界银行公开数据</td><td>"免费并公开获取世界各国发展数据"，V2 Indicators API <span style="font-family:var(--mono);font-size:11px;">data.worldbank.org</span></td></tr>
+  <tr><td>GDELT Project</td><td>"100% free and open"，15 分钟更新，Event/GKG 双库 <span style="font-family:var(--mono);font-size:11px;">gdeltproject.org</span></td></tr>
+  <tr><td>SEC EDGAR</td><td>EFTS 全文检索 2001 至今免费，API 端点 efts.sec.gov <span style="font-family:var(--mono);font-size:11px;">sec.gov/edgar/search</span></td></tr>
+  <tr><td>开放林指数报告</td><td>337 城 60.53% 已上线公共数据开放平台，2012 沪京率先 <span style="font-family:var(--mono);font-size:11px;">ifopendata.cn</span></td></tr>
+  <tr><td>国家数据局 / NDRC</td><td>公共数据资源三文件、开放量年增 31.71% <span style="font-family:var(--mono);font-size:11px;">nda.gov.cn · ndrc.gov.cn</span></td></tr>
+  <tr><td>地方平台实址</td><td>data.sh.gov.cn（沪府令21号）· data.beijing.gov.cn · opendata.sz.gov.cn · data.zjzwfw.gov.cn 均实测可访问</td></tr>
+  <tr><td>免费层行情 API 对比</td><td>免费层普遍限 1 年历史（stackademic/eodhd scorecard 2026）——美股深度补缺预期管理</td></tr>
+</table>
+
+<div class="foot">
+  ZephyrAlpha · 另类因子对话 · 2026-09-12 · 施工图 v2（前序：2026-09-12-alt-data-supplement-scan）<br>
+  姊妹篇：2026-09-12-data-layer-gap-analysis.md（数据分层体检）· 财报 P1-A / 研报 P1-B 并行对话负责
+</div>
+
+</div>
+</body>
+</html>

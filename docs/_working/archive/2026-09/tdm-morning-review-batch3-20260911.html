@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<!-- 结案报告（2026-09-15 st-fullchain-20260914）
+     总结论：2026-09-11 TDM 晨会审阅报告（批 3），当日既成记录
+     核验：全文无待办信号；有 .md 孪生件者以 .md 为真源。
+     -->
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>TDM 晨审报告 · 2026-09-11 · 批3增量 · st-tdm-review-20260911</title>
+<style>
+  :root{
+    --bg:#f6f7f8; --paper:#fbfcfc; --ink:#181b1e; --ink-2:#3d444b; --ink-3:#6b7480;
+    --hair:#d9dee2; --hair-2:#e7ebee;
+    --accent:#0e7490; --accent-ink:#0c5f75;
+    --ok:#1a7f4e; --hold:#a16207; --keep:#5b6470; --rej:#8f3b2f;
+    --mono:"Cascadia Code",Consolas,"Courier New",monospace;
+    --sans:"Segoe UI","PingFang SC","Microsoft YaHei",sans-serif;
+  }
+  *{margin:0;padding:0;box-sizing:border-box}
+  html{scroll-behavior:smooth}
+  body{background:var(--bg);color:var(--ink);font-family:var(--sans);font-size:15px;line-height:1.6;-webkit-font-smoothing:antialiased}
+  .frame{max-width:1180px;margin:0 auto;padding:0 32px 96px}
+  header.masthead{padding:56px 0 28px;border-bottom:2px solid var(--ink)}
+  .kicker{font-family:var(--mono);font-size:11px;letter-spacing:.14em;color:var(--accent-ink);text-transform:uppercase;margin-bottom:18px}
+  .kicker .sep{color:var(--ink-3);margin:0 8px}
+  h1{font-size:40px;font-weight:600;letter-spacing:-.02em;line-height:1.1;margin-bottom:14px}
+  .lede{font-size:16px;color:var(--ink-2);max-width:64ch;line-height:1.65}
+  .lede strong{color:var(--ink);font-weight:590}
+  .mast-meta{display:flex;flex-wrap:wrap;gap:28px;margin-top:26px;font-family:var(--mono);font-size:12px;color:var(--ink-3)}
+  .mast-meta b{color:var(--ink-2);font-weight:500}
+  .metrics{display:grid;grid-template-columns:repeat(5,1fr);border-bottom:1px solid var(--hair)}
+  .metric{padding:20px 18px 16px;border-right:1px solid var(--hair-2)}
+  .metric:last-child{border-right:none}
+  .metric .v{font-family:var(--mono);font-size:25px;font-weight:500;letter-spacing:-.01em}
+  .metric .v em{font-style:normal;font-size:14px;color:var(--ink-3);font-weight:400}
+  .metric .k{font-size:11px;letter-spacing:.08em;color:var(--ink-3);margin-top:4px}
+  .metric.hl .v{color:var(--accent-ink)}
+  .cols{display:grid;grid-template-columns:190px 1fr;gap:48px;padding-top:8px}
+  nav.toc{position:sticky;top:0;align-self:start;padding:28px 0 40px;font-size:13px}
+  nav.toc .toc-title{font-family:var(--mono);font-size:10px;letter-spacing:.14em;color:var(--ink-3);text-transform:uppercase;margin-bottom:12px}
+  nav.toc a{display:block;color:var(--ink-2);text-decoration:none;padding:5px 0 5px 12px;border-left:1px solid var(--hair)}
+  nav.toc a:hover{color:var(--accent-ink);border-left-color:var(--accent)}
+  main{min-width:0;padding-top:28px}
+  section{margin-bottom:56px}
+  .sec-head{display:flex;align-items:baseline;gap:14px;border-bottom:1px solid var(--ink);padding-bottom:8px;margin-bottom:20px}
+  .sec-no{font-family:var(--mono);font-size:12px;color:var(--accent-ink);letter-spacing:.08em}
+  h2{font-size:22px;font-weight:600;letter-spacing:-.01em}
+  .sec-head .tag{margin-left:auto;font-family:var(--mono);font-size:11px;color:var(--ink-3)}
+  h3{font-size:15px;font-weight:590;margin:26px 0 10px;letter-spacing:.01em}
+  p{margin-bottom:12px;max-width:80ch}
+  table{width:100%;border-collapse:collapse;font-size:13px;margin:14px 0 20px}
+  th{font-family:var(--mono);font-size:10.5px;letter-spacing:.09em;text-transform:uppercase;color:var(--ink-3);text-align:left;font-weight:500;padding:8px 10px;border-bottom:1px solid var(--ink)}
+  td{padding:8px 10px;border-bottom:1px solid var(--hair-2);vertical-align:top;color:var(--ink-2)}
+  td:first-child{color:var(--ink)}
+  tr:hover td{background:rgba(14,116,144,.035)}
+  .mono{font-family:var(--mono);font-size:12px}
+  .chip{display:inline-block;font-family:var(--mono);font-size:11px;letter-spacing:.05em;padding:1px 8px;border:1px solid;white-space:nowrap}
+  .chip.approve{color:var(--ok);border-color:var(--ok)}
+  .chip.hold{color:var(--hold);border-color:var(--hold)}
+  .chip.keep{color:var(--keep);border-color:var(--keep)}
+  .chip.rej{color:var(--rej);border-color:var(--rej)}
+  .chip.pass{color:var(--accent-ink);border-color:var(--accent-ink)}
+  .callout{border:1px solid var(--hair);padding:16px 18px;margin:16px 0;font-size:13.5px;color:var(--ink-2)}
+  .callout .ct{font-family:var(--mono);font-size:10.5px;letter-spacing:.12em;text-transform:uppercase;color:var(--accent-ink);margin-bottom:6px}
+  .callout p:last-child{margin-bottom:0}
+  ul.plain{margin:0 0 14px 18px;max-width:80ch}
+  ul.plain li{margin-bottom:6px;color:var(--ink-2)}
+  ul.plain li b{color:var(--ink);font-weight:590}
+  .foot{border-top:2px solid var(--ink);margin-top:24px;padding-top:16px;font-family:var(--mono);font-size:11px;color:var(--ink-3);display:flex;justify-content:space-between;flex-wrap:wrap;gap:8px}
+  @media (max-width:960px){
+    .cols{grid-template-columns:1fr}
+    nav.toc{position:static;display:flex;flex-wrap:wrap;gap:2px 16px;padding-bottom:16px}
+    nav.toc a{border-left:none;padding:2px 0}
+    .metrics{grid-template-columns:repeat(2,1fr)}
+    h1{font-size:30px}
+  }
+</style>
+</head>
+<body>
+<div class="frame">
+
+<header class="masthead">
+  <div class="kicker">ZephyrAlpha<span class="sep">/</span>Trading Decision Map<span class="sep">/</span>Morning Review · Batch 3 Addendum</div>
+  <h1>批 3 增量验收：八锚裁定与币圈解锁条件</h1>
+  <p class="lede">夜班批 3（commit <strong>2dfff1866a</strong>，仅蓝图台账 32 行、地图零写入、138/194 冻结维持）并入晨审后的增量裁定：<strong>八锚提案逐件裁定（采纳 3 / 采纳另指 1 / 部分采纳 1 / 驳回另指 1 / 驳回维持 1 / 确认缺口 2）；CAND-CRYPTO-010 张力定论=两层口径并存非矛盾（24 测试复跑 green）；G3 币圈解锁条件已明确。</strong></p>
+  <div class="mast-meta">
+    <span>SESSION <b>st-tdm-review-20260911</b></span>
+    <span>DATE <b>2026-09-11 02:35</b></span>
+    <span>BATCH3 <b>2dfff1866a（零地图写入）</b></span>
+    <span>PRIOR <b>454c10ad（晨审主体）</b></span>
+  </div>
+</header>
+
+<div class="metrics">
+  <div class="metric hl"><div class="v">8<em> 锚</em></div><div class="k">全部裁定 · 零悬置</div></div>
+  <div class="metric"><div class="v">11</div><div class="k">候选实件逐一在盘核验</div></div>
+  <div class="metric hl"><div class="v">2</div><div class="k">夜班提案被驳回（附实证）</div></div>
+  <div class="metric"><div class="v">24<em> passed</em></div><div class="k">sentiment_panel_provider 复跑</div></div>
+  <div class="metric"><div class="v">138<em>/194</em></div><div class="k">地图冻结维持</div></div>
+</div>
+
+<div class="cols">
+<nav class="toc">
+  <div class="toc-title">Contents</div>
+  <a href="#b1">批3 范围与台账</a>
+  <a href="#b2">八锚逐件裁定</a>
+  <a href="#b3">CAND-CRYPTO-010 定论</a>
+  <a href="#b4">移交点核销</a>
+</nav>
+
+<main>
+
+<section id="b1">
+  <div class="sec-head"><span class="sec-no">§7.0</span><h2>批 3 范围与台账核实</h2><span class="tag">零地图写入确认</span></div>
+  <table>
+    <tr><th style="width:210px">核实项</th><th>结论</th></tr>
+    <tr><td>commit 2dfff1866a 范围</td><td class="mono">仅 docs/_working/2026-09-09-tdm-growth-blueprint.md，32 行插入——地图真源零写入确认</td></tr>
+    <tr><td>地图基线</td><td>138 节点/194 边冻结维持（84ac62dc 终态可直接用）</td></tr>
+    <tr><td>§7 台账新增章</td><td>§7 批3 台账 + §7.1 八锚提案表 + §7.2 结论——已全文实读</td></tr>
+    <tr><td>G1 三零件</td><td>夜班已复核（MOD-SIG-037/MOD-PLAN-016/MOD-PLAN-010 无退化）——按告知跳过重查</td></tr>
+    <tr><td>G2 / L2-05 挂起证据</td><td>夜班已刷新（无接线轨活跃 / sentiment_cycle 仍待 G07）——认同采信不重查</td></tr>
+  </table>
+</section>
+
+<section id="b2">
+  <div class="sec-head"><span class="sec-no">§7.1</span><h2>八个树枝锚定红节点逐件裁定</h2><span class="tag">独立验证 · 非代裁</span></div>
+  <p>晨审对夜班提案做独立验证：11 个候选实件逐一在盘核对头部（BLUEPRINT/MATURITY 实读），重点节点做语义对位细核。夜班提案仅供参考，以下为晨审裁定。</p>
+  <table>
+    <tr><th style="width:150px">红节点</th><th style="width:80px">裁定</th><th>理由（实件证据）</th></tr>
+    <tr><td>L3-07-1 打板选股链</td><td><span class="chip approve">采纳</span></td><td>daban_sleeve_strategy（MOD-L05-001，testing）——打板 sleeve 专用策略件，与"打板 5 步漏斗"语义对位</td></tr>
+    <tr><td>L3-07-3 其余 sleeve 链</td><td><span class="chip approve">采纳·组合锚</span></td><td>event_driven + multifactor sleeve（testing）+ topn_momentum（production）——节点三问与三实件一一对应</td></tr>
+    <tr><td>L4-02 买入时序</td><td><span class="chip approve">采纳+另指补强</span></td><td>closing_session_decision（MOD-PLAN-003，production）=决策侧锚；另指 batched_position_builder=执行侧锚（14:50-14:57 尾盘集中窗口），建议双锚并挂</td></tr>
+    <tr><td>L4-08 突破失败降级</td><td><span class="chip rej">驳回提案→另指</span></td><td>batch_boundary_runner 仅 2 处 breakout_confirm 字段透传（testing）、scenario_planner 无突破失败判定——<b>语义不对位</b>；正锚=sell_decision/breakout_failure_detector（MOD-SELL-003，<b>production</b>，K≥3 强制清仓 INVARIANTS 实读）+ pf_alloc detect_breakout_failure</td></tr>
+    <tr><td>L3-10 可交易性预检</td><td><span class="chip hold">部分采纳</span></td><td>instrument_master（testing）承载停牌/昨收/最小申报单位三查；价格笼子/科创板权限/资金一手三查无专件——维持缺口登记，专用件挂下批评估</td></tr>
+    <tr><td>L3-08 候选池输出</td><td><span class="chip rej">驳回·维持结构位</span></td><td>constraint_solver（production）=组合权重求解、exposure_manager（design）=敞口管理——均为候选池定稿<b>之后</b>的组合层，不承载"双池合流+顺位+否决清单汇总"语义；节点维持 aggregation 结构位预期红</td></tr>
+    <tr><td>L3-06 环境开关</td><td><span class="chip keep">确认缺口</span></td><td>晨审复核认同查无：STRATEGY_DEPLOYMENT_MATRIX 仅部分承载且待 G07；"成交&lt;8000 亿首板链停"无专件——立 C 类候选缺口，是否立项归 Owner</td></tr>
+    <tr><td>L3-09 股票池分层</td><td><span class="chip keep">确认缺口</span></td><td>Tier 升降级（2 日升/5 日降/10 日剔除）无现成模块；universe 域候选——立 C 类候选缺口</td></tr>
+  </table>
+  <div class="callout">
+    <div class="ct">Count</div>
+    <p>采纳 3（含 1 组合锚）+ 采纳但另指补强 1 + 部分采纳 1 + 驳回另指 1 + 驳回维持结构位 1 + 确认缺口 2。<b>全部八件有终态，零悬置。</b>驳回两件均附在盘实证，夜班"需语义核对"的自标（L4-08）经核属实。</p>
+  </div>
+</section>
+
+<section id="b3">
+  <div class="sec-head"><span class="sec-no">§7.2</span><h2>CAND-CRYPTO-010 张力定论</h2><span class="tag">两层口径 · 非矛盾</span></div>
+  <table>
+    <tr><th style="width:230px">层</th><th>口径</th><th>实态证据</th></tr>
+    <tr><td>candidate_module_registry</td><td><span class="chip pass">status: promoted</span>&nbsp; CAND 候选<b>生命周期</b>态</td><td>证据链完整：2026-08-28 骨架落地 + promoted_to=src/zephyr/data/implementations/sentiment_panel_provider.py + 24 测试 green（<b>晨审本轮复跑实证 24 passed</b>）</td></tr>
+    <tr><td>代码头</td><td><span class="chip keep">MATURITY: skeleton</span>&nbsp; 模块<b>成熟度</b>态</td><td>恐贪指数 alternative.me 实采 + BTC 占比 CMC 实采；ETF/USDT 溢价=显式 error 骨架不进决策硬链（INVARIANTS 明文）</td></tr>
+  </table>
+  <p><b>定论</b>：95 号蓝图"翻 promoted"指生命周期事件（candidate→真实文件），与代码 skeleton 成熟度并存不冲突。<b>留痕归档，不改代码不改注册表，无需勘误。</b></p>
+</section>
+
+<section id="b4">
+  <div class="sec-head"><span class="sec-no">§7.3</span><h2>其余移交点核销</h2><span class="tag">全部闭环</span></div>
+  <table>
+    <tr><th style="width:230px">移交点</th><th>晨审处理</th></tr>
+    <tr><td>G1 三零件复核</td><td>按告知跳过重查（夜班已复核无退化）；A.10 在晨审主体 §一 已完成</td></tr>
+    <tr><td>G2 / L2-05 证据刷新</td><td>认同采信，不重查</td></tr>
+    <tr><td>G3 币圈六向</td><td><b>解锁条件已明确：Owner 立项 95 号 Phase 2 数据层施工</b>（付费 key + 表建设 + DS/字段登记），子骨架设计稿备妥；外证双源过闸（Grobys 2020 FRL + 山寨季标准双源）</td></tr>
+    <tr><td>§7 X-R1 行"晨审未跑"</td><td><b>事实已过期</b>——晨审主体已于 02:00-02:30 完成（454c10ad，六裁定全落笔），蓝图 §7 该行状态列由本轮回写修正</td></tr>
+    <tr><td>R21 未解前 module_ref-only warn</td><td>认同，与 D1 裁定一致（有先例）</td></tr>
+  </table>
+  <div class="callout">
+    <div class="ct">Mission</div>
+    <p><b>批 3 增量并入完成：八锚全裁定、CAND 张力定论、移交点全核销。地图 138/194 冻结维持，链路全通结论不变。</b></p>
+  </div>
+  <div class="foot">
+    <span>ZephyrAlpha · TDM Morning Review · Batch 3 Addendum</span>
+    <span>st-tdm-review-20260911 · 2dfff1866a + 454c10ad</span>
+  </div>
+</section>
+
+</main>
+</div>
+</div>
+</body>
+</html>

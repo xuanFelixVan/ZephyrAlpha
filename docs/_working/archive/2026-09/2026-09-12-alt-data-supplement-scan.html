@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<!-- 结案报告（2026-09-15 st-fullchain-20260914）
+     总结论：与同名 .md 孪生（.md 为真源），HTML 为渲染副本
+     核验：全文无待办信号；有 .md 孪生件者以 .md 为真源。
+     -->
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>另类因子：免费数据源补充扫描 · ZephyrAlpha L3 层</title>
+<style>
+  :root{
+    --bg:#fafafa; --ink:#141414; --ink-2:#4a4a4a; --ink-3:#8a8a8a;
+    --hair:#e2e2e0; --hair-2:#cfcfcc;
+    --accent:#0e6e5c; --accent-ink:#0a5a4b;
+    --warn:#8a4b12; --stop:#7a3030;
+    --mono:"Cascadia Mono","SF Mono",Consolas,"Courier New",monospace;
+    --sans:"Segoe UI","PingFang SC","Microsoft YaHei","Source Han Sans SC",sans-serif;
+  }
+  *{margin:0;padding:0;box-sizing:border-box;}
+  body{background:var(--bg);color:var(--ink);font-family:var(--sans);font-size:15px;line-height:1.65;}
+  .wrap{max-width:1080px;margin:0 auto;padding:48px 40px 80px;}
+  .kicker{font-family:var(--mono);font-size:11.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--accent);margin-bottom:14px;}
+  h1{font-size:34px;font-weight:600;line-height:1.2;letter-spacing:-0.01em;margin-bottom:10px;max-width:20em;}
+  .lede{font-size:16px;color:var(--ink-2);max-width:44em;margin-bottom:26px;}
+  .meta-row{display:flex;gap:28px;flex-wrap:wrap;border-top:1px solid var(--hair);border-bottom:1px solid var(--hair);padding:12px 0;margin-bottom:44px;font-family:var(--mono);font-size:12px;color:var(--ink-3);}
+  .meta-row b{color:var(--ink);font-weight:600;}
+  h2{font-size:21px;font-weight:600;margin:52px 0 6px;padding-top:18px;border-top:1px solid var(--hair-2);}
+  h2 .no{font-family:var(--mono);font-size:12px;color:var(--accent);font-weight:400;margin-right:10px;letter-spacing:.08em;}
+  .sub{color:var(--ink-3);font-size:13px;margin-bottom:18px;}
+  p{margin:10px 0;max-width:46em;}
+  table{width:100%;border-collapse:collapse;margin:16px 0 8px;font-size:13.5px;}
+  th{text-align:left;font-weight:560;font-size:12px;letter-spacing:.05em;color:var(--ink-3);border-bottom:1.5px solid var(--ink);padding:7px 10px 7px 0;}
+  td{border-bottom:1px solid var(--hair);padding:9px 10px 9px 0;vertical-align:top;color:var(--ink-2);}
+  td:first-child{color:var(--ink);font-weight:520;white-space:nowrap;}
+  .src{font-family:var(--mono);font-size:11px;color:var(--ink-3);white-space:nowrap;}
+  .tag{display:inline-block;font-family:var(--mono);font-size:11px;padding:1px 7px;border:1px solid var(--hair-2);color:var(--ink-2);margin-right:4px;}
+  .tag.go{border-color:var(--accent);color:var(--accent-ink);}
+  .tag.hold{border-color:#c9a26a;color:var(--warn);}
+  .tag.no{border-color:#c99a9a;color:var(--stop);}
+  .concl{border:1px solid var(--hair-2);border-left:3px solid var(--accent);padding:20px 24px;margin:20px 0;}
+  .concl ol{margin-left:1.3em;}
+  .concl li{margin:9px 0;max-width:46em;}
+  .steps{counter-reset:st;margin:16px 0;}
+  .step{display:flex;gap:16px;padding:13px 0;border-bottom:1px solid var(--hair);}
+  .step::before{counter-increment:st;content:counter(st,decimal-leading-zero);font-family:var(--mono);font-size:13px;color:var(--accent);padding-top:2px;}
+  .step b{font-weight:560;}
+  .step span{color:var(--ink-2);display:block;font-size:13.5px;max-width:52em;}
+  .pill-row{display:flex;gap:10px;flex-wrap:wrap;margin:14px 0 4px;}
+  .foot{margin-top:60px;border-top:1px solid var(--hair-2);padding-top:14px;font-family:var(--mono);font-size:11.5px;color:var(--ink-3);line-height:1.9;}
+  .foot a{color:var(--ink-2);}
+  code{font-family:var(--mono);font-size:.92em;background:#f0f0ee;padding:0 4px;border:1px solid var(--hair);}
+  a{color:var(--accent-ink);text-decoration:none;border-bottom:1px solid var(--hair-2);}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<div class="kicker">ZephyrAlpha · L3 Alternative Data · Supplement Scan</div>
+<h1>另类因子：免费数据源补充扫描</h1>
+<p class="lede">承接《数据分层体检报告》§2.3（L3 另类层 ≈15%）与 P2-B 建议。本轮任务：盘点与相近因子（社热 / 情绪 / 产业垂直 / 币圈影子）对位的可补充数据，全网核对机构实践与量化社区的免费另类数据源。与财报对话（P1-A）、研报对话（P1-B）不重叠。</p>
+<div class="meta-row">
+  <span>日期 <b>2026-09-12</b></span>
+  <span>范围 <b>L3 另类层 + 免费源全网扫描</b></span>
+  <span>候选源 <b>12 源 / 6 组</b></span>
+  <span>在跑另类管线 <b>5 条</b></span>
+  <span>DORMANT 模块 <b>15 个</b></span>
+</div>
+
+<h2><span class="no">§0</span>一页结论</h2>
+<div class="concl">
+  <ol>
+    <li><b>不缺"另类"的空架子，缺的是往 5 条在跑管线里塞同类邻居。</b>项目已落地天气 / 生猪 / 人气榜 / 币圈影子 / 新闻情绪五条边缘另类管线；alt_data 包 15 个模块 DORMANT 但治理件齐全。补充策略 = <b>唤醒 + 复制模板</b>，不新造轮子。</li>
+    <li><b>机构与社区验证最充分、工程成本最低的免费源</b>：股吧 / 千股千评 / 雪球（散户情绪面）、百度指数（搜索关注度）、互动易 / e互动问答（IR 文本）、电影票房 / 航运运价（产业垂直高频）。全部有免费接口路径，大多可经 akshare / tushare 直连——两者均已在项目 provider 体系内。</li>
+    <li><b>机构实践印证</b>：Robeco 把另类获取归纳为"平台代理（Neudata / Eagle Alpha）+ 自采"两条路；paperswithbacktest 把行业另类分 6 子类，其中个人项目可免费做的只有 web 注意度、社媒情绪、监管文件衍生三块——与体检报告"低成本 web 衍生试点"的裁断一致。</li>
+    <li><b>边界沿用同文案例</b>：黑石系私募试过卫星停车窥屏后因"合规 + 成本 vs 阿尔法不成正比"放弃。卫星遥感、电商爬虫、付费另类平台三块<b>明确不做</b>。</li>
+    <li><b>优先级</b>：P1 = 社热扩展三源 + 票房 / 运价两个产业垂直（每源 ≤1 天，照抄 hog_* 模板）；P1.5 = 互动易问答；P2 = 百度指数、采购 / 政策爬虫试点、百度迁徙、Google Trends。</li>
+  </ol>
+</div>
+
+<h2><span class="no">§1</span>现状基线：谁是"相近因子"</h2>
+<p class="sub">已在跑的 5 条边缘另类管线（未挂 alt_data 名下，落在 c1_market / intelligence 域）</p>
+<table>
+  <tr><th>管线</th><th>数据表 / 入口</th><th>形态</th></tr>
+  <tr><td>天气</td><td>qweather_provider → weather_data（40 城，免费版无历史、每日积累）</td><td>区域面板</td></tr>
+  <tr><td>生猪产业链</td><td>hog_futures_core / hog_province_spot / hog_spot_index（akshare）</td><td>行业垂直</td></tr>
+  <tr><td>社交热度</td><td>stock_hot_rank（东财人气榜）</td><td>个股情绪</td></tr>
+  <tr><td>币圈影子</td><td>crypto_kline_daily + crypto_shadow_gate + 恐贪指数（alternative.me 免费 API）+ onchain_provider</td><td>跨市场影子</td></tr>
+  <tr><td>新闻情绪</td><td>RSS 财联社 / 东财 7x24 / tushare 新闻 → news_data → news_sentiment_window（夜间窗、规则法 PIT、market 级）</td><td>文本情绪</td></tr>
+</table>
+<p>alt_data 包内 <b>15 个模块 DORMANT 占位</b>：social_sentiment_collector、web_scraper_engine、filing_nlp_engine、policy_expectation_analyzer、policy_theme_mapper、concept_factor_mapper、geopolitical_risk_analyzer、research_report_collector，加治理五件（catalog / connector / compliance_reviewer / privacy_protector / source_health_manager）与 signal_extractor。<b>唤醒即用，不用新写。</b></p>
+<p>known_data_gaps.yaml 存量缺口全部是 L1 / 行情侧问题（tick、港股、美股、北向、审计意见等），<b>另类侧无已登记缺口</b>——本轮推荐项不与存量补数计划重复。</p>
+
+<h2><span class="no">§2</span>免费另类数据源候选清单（6 组 12 源）</h2>
+
+<p style="margin-top:18px;"><b>A 组 · 散户情绪 / 关注度扩展</b> —— 对位 stock_hot_rank 与 news_sentiment_window，补齐"情绪面"的三条免费旁路。</p>
+<table>
+  <tr><th>源</th><th>内容</th><th>免费获取路径</th><th>因子逻辑</th><th>证据</th></tr>
+  <tr><td>A1 东方财富股吧</td><td>个股吧发帖量 / 阅读热度</td><td>网页接口 / akshare data center 系</td><td>股吧热度激增 → 散户涌入 → 短期动量 / 反转</td><td class="src">华创证券《机构情绪与个人情绪》2023</td></tr>
+  <tr><td>A2 千股千评</td><td>综合关注度 / 评分，日频</td><td>东财数据中心免费接口</td><td>关注度分位变化因子</td><td class="src">同上研报系</td></tr>
+  <tr><td>A3 雪球</td><td>关注人数 / 讨论量</td><td>非官方 API（免费）</td><td>社区情绪面，与股吧互补</td><td class="src">雪球情绪指数回测文（知乎 2023-01）</td></tr>
+</table>
+<p><span class="tag go">P1</span>工程量小：唤醒 social_sentiment_collector，表族挂 stock_hot_rank 邻位；接口漂移风险用 alt_source_health_manager 监控（akshare 北向三接口 2026-08 失效有先例）。</p>
+
+<p style="margin-top:22px;"><b>B 组 · 搜索关注度</b> —— 全网实践最久的免费另类，关键词池治理是主要成本。</p>
+<table>
+  <tr><th>源</th><th>内容</th><th>免费获取路径</th><th>因子逻辑</th><th>证据</th></tr>
+  <tr><td>B4 百度指数</td><td>关键词搜索指数（PC+移动）</td><td>免费，需登录 cookie；akshare 有移动版接口</td><td>搜索爆发 → 关注度 → 短期量价反应；概念关键词池映射个股池</td><td class="src">index.baidu.com；2019 起学术文献多篇</td></tr>
+  <tr><td>B5 Google Trends</td><td>英文关键词热度</td><td>pytrends（免费，已归档仍可用、脆弱）</td><td>美股 / 加密辅助信号</td><td class="src">社区常用工具</td></tr>
+</table>
+<p><span class="tag hold">P2</span>唤醒 concept_factor_mapper 做概念 → 个股映射；指数即所得、无前视，PIT 安全。</p>
+
+<p style="margin-top:22px;"><b>C 组 · 互动平台文本（IR 问答）</b> —— 提问侧是关注度前兆，回复侧是信披质量信号。</p>
+<table>
+  <tr><th>源</th><th>内容</th><th>免费获取路径</th><th>因子逻辑</th><th>证据</th></tr>
+  <tr><td>C6 互动易 + 上证e互动</td><td>投资者问答原文、公司回复</td><td>tushare irm_qa 接口（项目已有 token）；历史回补：textdata.cn 536 万条问答集（2011–2024.12，一次性低成本）</td><td>提问量激增 = 关注度前兆；回复含糊度 / 情感 = 信披质量；主题聚类 = 政策概念传导</td><td class="src">tushare.pro；textdata.cn；学术应用多篇</td></tr>
+</table>
+<p><span class="tag go">P1.5</span>文本入库复用 news_data 同款管线 + 唤醒 filing_nlp_engine；NLP 消费端与研报链（P1-B）共享 intelligence 域基建。</p>
+
+<p style="margin-top:22px;"><b>D 组 · 产业垂直高频价格</b> —— 照抄 hog_* 模式（fetch → BufferedWriter → alt_* 表族），akshare 直连。</p>
+<table>
+  <tr><th>源</th><th>内容</th><th>免费获取路径</th><th>因子逻辑</th><th>证据</th></tr>
+  <tr><td>D7 电影票房</td><td>日票房 / 影片 / 影院</td><td>akshare 艺恩系接口</td><td>传媒 / 影视 / 院线基本面高频前瞻</td><td class="src">akshare 官方另类数据专区</td></tr>
+  <tr><td>D8 航运运价</td><td>BDI / CBFI / SCFI 等运价指数</td><td>akshare 航运系 / 新浪源</td><td>出口链 / 航运板块景气前瞻</td><td class="src">akshare；与 ig_* 产业链传导打通</td></tr>
+  <tr><td>D9 水泥 / 钢材现货价</td><td>建材高频价格</td><td>生意社 / 数字水泥网源（akshare 部分覆盖）</td><td>地产链景气高频代理</td><td class="src">与 hog_* 同构</td></tr>
+</table>
+<p><span class="tag go">P1</span>（D7/D8）<span class="tag hold">P2</span>（D9）每源 ≤1 天；落 c1_market.alt_* 表族并登记 data_asset_registry。</p>
+
+<p style="margin-top:22px;"><b>E 组 · 政策 / 监管 / 公共采购文本</b> —— 唤醒 policy_* 与 web_scraper_engine 的对口喂料。</p>
+<table>
+  <tr><th>源</th><th>内容</th><th>免费获取路径</th><th>因子逻辑</th><th>证据</th></tr>
+  <tr><td>E10 政府采购 / 招投标公告</td><td>中标金额 / 采购人</td><td>中国政府采购网公开（需爬虫）</td><td>中标额 → 企业订单前瞻；体检报告 P2-B 点名项</td><td class="src">体检报告 P2-B</td></tr>
+  <tr><td>E11 部委政策文件</td><td>发改委 / 工信部 / 央行等公示原文</td><td>gov.cn 免费</td><td>policy_expectation_analyzer 喂料；政策主题 → 板块传导</td><td class="src">政策事件日历已有 12 类（REG-EVT-001）</td></tr>
+</table>
+<p><span class="tag hold">P2</span>爬虫 + 解析 + 合规审查走 alt_data_compliance_reviewer。</p>
+
+<p style="margin-top:22px;"><b>F 组 · 迁徙 / 区域活动</b></p>
+<table>
+  <tr><th>源</th><th>内容</th><th>免费获取路径</th><th>因子逻辑</th><th>证据</th></tr>
+  <tr><td>F12 百度迁徙</td><td>城市迁入迁出规模指数</td><td>akshare 百度地图慧眼接口（免费）</td><td>出行 / 消费 / 区域主题传导</td><td class="src">akshare 事件数据-人口迁徙</td></tr>
+</table>
+<p><span class="tag hold">P2</span>工程量小，但到个股的映射链长，试点定位。</p>
+
+<h2><span class="no">§3</span>优先级矩阵</h2>
+<div class="pill-row">
+  <span class="tag go">P1 · 立即</span><span class="tag go">P1.5 · 次优</span><span class="tag hold">P2 · 试点</span><span class="tag no">不做 · 明确排除</span>
+</div>
+<table>
+  <tr><th>级别</th><th>项</th><th>理由</th></tr>
+  <tr><td>P1</td><td>A1 / A2 / A3 社热扩展 + D7 / D8 票房 / 运价</td><td>免费、接口成熟、hog_* 模板现成、与在跑管线同构</td></tr>
+  <tr><td>P1.5</td><td>C6 互动易 / e互动</td><td>tushare 直连成本低；复用 news 文本管线；历史回补一次性投入</td></tr>
+  <tr><td>P2</td><td>B4 百度指数、E10 / E11 爬虫试点、F12 迁徙、B5 Trends、D9 建材</td><td>有 cookie / 爬虫 / 治理成本，或映射链长；试点定位</td></tr>
+  <tr><td>不做</td><td>卫星遥感 / 停车窥屏、电商价格爬虫、付费另类平台（Neudata / Eagle Alpha）</td><td>黑石同文案例（合规 + 成本 vs 阿尔法）；反爬重 + 合规深水区；定位不符</td></tr>
+</table>
+
+<h2><span class="no">§4</span>落地路线（4 步）</h2>
+<div class="steps">
+  <div class="step"><div><b>复制模板</b><span>以 hog_* provider 为模板，新增票房 / 运价 / 股吧热度三个 fetcher → c1_market.alt_* 表族 → data_asset_registry v1.6.x 登记（source_type=alt）。每源 ≤1 天。</span></div></div>
+  <div class="step"><div><b>唤醒模块</b><span>social_sentiment_collector（股吧 / 雪球）+ filing_nlp_engine（互动易问答）并入 news_data 管线，PIT 打点走既有 as_of / embargo / survivorship 三公理。</span></div></div>
+  <div class="step"><div><b>关键词池试点</b><span>百度指数概念关键词池 → concept_factor_mapper 概念 → 个股映射；cookie 健康监控接 alt_source_health_manager。</span></div></div>
+  <div class="step"><div><b>治理闭环</b><span>新源全部过 alt_data_catalog 登记（source_id / 类型 / 质量分 / 配额 / FTS）+ alt_data_compliance_reviewer 审查（license_type / latency_profile），与体检报告 §2.4 数据治理轴对齐。</span></div></div>
+</div>
+
+<h2><span class="no">§5</span>与另两条对话的协作边界</h2>
+<p>财报对话（P1-A 消费端）与研报对话（P1-B 链路）范围不变。本清单 B / C 组（互动易文本、百度指数）可作研报观点的<b>交叉验证源</b>；D 组产业垂直与产业链 ig_* 事件传导（chain_impact_stream）天然打通——中标 / 票房 / 运价异动均可作为 chain event 的增量事件类型。</p>
+
+<h2><span class="no">§6</span>证据清单</h2>
+<table>
+  <tr><th>来源</th><th>要点</th></tr>
+  <tr><td>AKShare 另类数据文档</td><td>影院票房 / 百度迁徙等接口清单 <span class="src">akshare.akfamily.xyz</span></td></tr>
+  <tr><td>百度指数平台</td><td>关键词搜索趋势官方入口 <span class="src">index.baidu.com</span></td></tr>
+  <tr><td>tushare 深证互动易接口</td><td>irm_qa 免费路径 <span class="src">tushare.pro</span></td></tr>
+  <tr><td>textdata.cn 问答数据集</td><td>e互动 / 互动易 536 万条（2011–2024.12）历史回补 <span class="src">textdata.cn</span></td></tr>
+  <tr><td>QuantsPlaybook</td><td>券商金工研报复现库 100+ 策略（光大 / 华泰 / 招商 / 国信 / 开源 / 东吴）<span class="src">github.com/hugo2046/QuantsPlaybook</span></td></tr>
+  <tr><td>华创证券《机构情绪与个人情绪》</td><td>股吧 / 雪球 / 百度指数情绪因子系 <span class="src">fxbaogao.com 2023-09</span></td></tr>
+  <tr><td>雪球情绪指数回测</td><td>社区单因子情绪模型长回测 <span class="src">知乎 2023-01</span></td></tr>
+  <tr><td>Robeco 另类数据科普</td><td>平台代理（Neudata / Eagle Alpha）+ 自采两路 <span class="src">robeco.com 2022-10</span></td></tr>
+  <tr><td>paperswithbacktest</td><td>另类 6 子类分类与接入工作流 <span class="src">paperswithbacktest.com</span></td></tr>
+  <tr><td>黑石系私募卫星数据弃用案例</td><td>合规 + 成本 vs 阿尔法裁断 <span class="src">见体检报告 §1.3</span></td></tr>
+</table>
+
+<div class="foot">
+  ZephyrAlpha · 另类因子对话 · 2026-09-12 · 本报告为 docs/_working 工作稿<br>
+  姊妹篇：<a href="2026-09-12-data-layer-gap-analysis.md">2026-09-12-data-layer-gap-analysis.md</a>（数据分层体检）· 财报 P1-A / 研报 P1-B 由并行对话负责
+</div>
+
+</div>
+</body>
+</html>
