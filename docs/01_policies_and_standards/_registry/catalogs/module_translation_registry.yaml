@@ -49420,6 +49420,13 @@ entries:
   desc_zh: ""
   desc_en: ""
   plain_zh: "把 LOF 基金缺失的分钟K线按交易日补齐，自动对照交易日历找缺口，先备份快照再删除重拉，防范围外溢"
+- module_path: src/zephyr/signal_ashare/strategy_signal/pattern_evidence_certifier.py
+  domain_id: D_ASHARE_SIGNAL
+  name_zh: "形态证据认证器"
+  name_en: ""
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "给图形库里每个形态的胜率成绩单盖真伪章的机器：它用四道纯数学关卡(多重检验校正/有效样本折扣/分市场状态对照/小样本收缩)自动判定哪些形态的成绩是真本事、哪些只是运气，全程不需要人来翻表判断，判不过关的自动降权"
 
 battle_map_steps:
 - step_id: BM-BUY-05

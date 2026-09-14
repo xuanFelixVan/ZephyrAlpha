@@ -5003,6 +5003,14 @@ capabilities:
     提交→全景对齐→清理 全流程步骤与失败处置；适用 07 域（regime/选股/仓位/风控/买卖/执行/对账/治理）施工，RULE-CAPABILITY-LOOKUP
     检索"施工"应命中本条
 creation_tokens:
+- file: "src/zephyr/signal_ashare/strategy_signal/pattern_evidence_certifier.py"
+  token: "patmine-wca-certifier-20260915"
+  created_by: "st-patmine-20260914"
+  capability: "pattern_certification_wca"
+- file: "docs/03_modules/_domain_signal/pattern_evidence_certifier/blueprint.md"
+  token: "patmine-wca-blueprint-20260915"
+  created_by: "st-patmine-20260914"
+  capability: "pattern_certification_wca"
 - file: "docs/_working/pattern_line/2026-09-15-pattern-certification-plan.md"
   token: "patmine-cert-plan-20260915"
   created_by: "st-patmine-20260914"
