@@ -29,6 +29,7 @@ import pandas as pd
 import pytest
 
 from zephyr.factor.fundamentals import (
+    accrual_negative_screen,
     fq01_accrual,
     fq02_cash_conversion,
     fq03_gpoa,
@@ -157,3 +158,14 @@ def test_fq06_deteriorating_company_low_score():
         df["np_ttm"], df["ocf_ttm"], df["total_assets"], df["total_liabilities"],
         df["tca"], df["tcl"], df["shares"], df["rev_ttm"], df["gm_q"])
     assert score.iloc[-1] <= 1.0
+
+
+def test_accrual_negative_screen():
+    """剔除器：应计>阈值→True（建议剔除）；NaN→False（无证据不剔除）。"""
+    idx = _panel(3)
+    s = pd.Series([0.05, -0.02, np.nan], index=idx)
+    out = accrual_negative_screen(s)
+    assert out.iloc[0] is True or out.iloc[0] == True  # noqa: E712 — 高应计剔除
+    assert out.iloc[1] == False  # noqa: E712 — 低应计保留
+    assert out.iloc[2] == False  # noqa: E712 — NaN 不剔除
+    assert accrual_negative_screen(s, threshold=0.1).iloc[0] == False  # noqa: E712

@@ -134,7 +134,7 @@ def fq02_cash_conversion(
 # 依据：Novy-Marx 2013 JFE《The Other Side of Value》——毛利率/总资产，
 #       "价值另一面"，不受杠杆与税务扭曲
 # ----------------------------------------------------------------------------
-def fq03_gpoa(gpoa_ttm: pd.Series) -> pd.Series:
+def fq03_gpoa(gpoa_ttm: pd.Series) -> pd.Series:  # noqa: clone-guard — 因子注册表 convention 每因子独立入口
     """GPOA = (营收−成本)/总资产（TTM，DS-230 gpoa_ttm 列），方向原样（值大=好）。"""
     return gpoa_ttm
 
@@ -153,7 +153,7 @@ def fq04_delta_roe_q(np_q: pd.Series, equity_incl_minority: pd.Series) -> pd.Ser
 # GR-01 单季营收成长（momentum——基本面动量；注册表无 growth 类，就近登记+条目注记）
 # 依据：RevSUE 口径（营收比净利难操纵，雪球 V4.x）；DS-230 rev_q_yoy 列原样
 # ----------------------------------------------------------------------------
-def gr01_rev_q_yoy(rev_q_yoy: pd.Series) -> pd.Series:
+def gr01_rev_q_yoy(rev_q_yoy: pd.Series) -> pd.Series:  # noqa: clone-guard — 同上
     """单季营收同比（(cur-base)/|base| 已在派生层完成）；小基数长尾由评估层胜异。"""
     return rev_q_yoy
 
@@ -162,7 +162,7 @@ def gr01_rev_q_yoy(rev_q_yoy: pd.Series) -> pd.Series:
 # GR-02 盈利加速度（momentum）
 # 依据：雪球 QoQ_Acc——单季净利环比变化率，盈利二阶导（DS-230 np_q_qoq 列原样）
 # ----------------------------------------------------------------------------
-def gr02_np_q_qoq(np_q_qoq: pd.Series) -> pd.Series:
+def gr02_np_q_qoq(np_q_qoq: pd.Series) -> pd.Series:  # noqa: clone-guard — 同上
     """单季净利环比（盈利加速度）。"""
     return np_q_qoq
 
@@ -235,3 +235,19 @@ def fq06_fscore(
     frame = pd.concat(items, axis=1)
     # 九项齐才出分（严格语义：缺项≠0 分）；输出 0~9 浮点
     return frame.sum(axis=1).where(frame.notna().all(axis=1))
+
+
+# ----------------------------------------------------------------------------
+# FQ-01 衍生：应计负向剔除器（M5 negative_veto 弹药；生产接线待 SOP-C C5 解冻）
+# 依据：⑥ 窄回测实证——应计 LS 价差 alpha 在空头腿（A股个人不可做空），
+#       多头买入不可部署（IS 超额 Sharpe -0.179）；转为"剔除高应计"用法
+# ----------------------------------------------------------------------------
+def accrual_negative_screen(accrual_ttm: pd.Series, threshold: float = 0.0) -> pd.Series:
+    """应计负向剔除器：应计(TTM) > threshold → True=建议剔除该标的。
+
+    经典口径 threshold=0（应计为正=利润含非现金成分，Sloan 盈余质量差）；
+    截面分位版（剔最高 20% 等）由消费方组合层实现（需截面上下文）。
+    方向：True=剔除。accrual NaN → False（无证据不剔除，宁缺毋错）。
+    """
+    screen = (accrual_ttm > threshold).astype("float")
+    return (screen == 1.0).where(accrual_ttm.notna(), other=False)

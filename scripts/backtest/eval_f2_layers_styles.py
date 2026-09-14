@@ -113,7 +113,10 @@ def build_result(layers: dict, style_ic: dict, state_counts: dict) -> dict:
         }
     for f in _ALL_FACTORS:
         result["style_ic_by_cap"][f] = {
-            b: {"mean": round(_mean(v), 4) if v else None, "n": len(v)}
+            b: {"mean": round(_mean(v), 4) if v else None, "n": len(v),
+                "t_p": round(_t(v), 5) if v else None,
+                "pass_002": bool(v and abs(_mean(v)) >= 0.02 and _t(v) is not None and _t(v) < 0.05
+                                 and len(v) >= 30)}
             for b, v in style_ic[f].items()
         }
     return result
