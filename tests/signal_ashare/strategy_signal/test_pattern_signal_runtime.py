@@ -420,3 +420,47 @@ def test_sync_no_cert_row_falls_back_to_provider(tmp_path):
     )
     records = sync.sync_from_provider()
     assert len(records) == 1  # 回落旧口径不炸
+
+
+# ── W-CC 影子评估器（权重接油门的前置判定件） ────────────────────────────────
+
+
+def test_shadow_evaluator_edge_computation(tmp_path):
+    """加权命中率 vs 基线边际：数据驱动接通判定的核心量。"""
+    from zephyr.signal_ashare.strategy_signal.pattern_signal_runtime import (
+        PatternWeightStore,
+        PatternWeightSync,
+    )
+
+    provider = _SyncStubProvider(rows={
+        "双顶": {"n_events": 5000, "hit_rate": 0.72, "low_sample": 0},
+        "双底": {"n_events": 3000, "hit_rate": 0.55, "low_sample": 0},
+    })
+    sync = PatternWeightSync(
+        provider=provider, patterns=["双顶", "双底"],
+        store=PatternWeightStore(tmp_path / "s.json"), clock=_clock,
+    )
+    sync.sync_from_provider()
+    report = sync.evaluate_weight_connection(window_days=28)
+    assert report["patterns_evaluated"] == 2
+    assert report["pooled_baseline"] == pytest.approx(0.52)  # _SyncStubProvider.get_baseline
+    assert report["edge"] is not None
+    assert report["edge_positive"] == (report["edge"] > 0)
+    # 权重高的因子（双顶 hit 高→adjust 加分→权重高）拉高加权命中率
+    assert report["weighted_hit_rate"] > report["pooled_baseline"]
+
+
+def test_shadow_evaluator_empty_patterns(tmp_path):
+    from zephyr.signal_ashare.strategy_signal.pattern_signal_runtime import (
+        PatternWeightStore,
+        PatternWeightSync,
+    )
+
+    provider = _SyncStubProvider(rows={}, ids=[])
+    sync = PatternWeightSync(
+        provider=provider, patterns=[],
+        store=PatternWeightStore(tmp_path / "s.json"), clock=_clock,
+    )
+    report = sync.evaluate_weight_connection()
+    assert report["weighted_hit_rate"] is None
+    assert report["edge_positive"] is False

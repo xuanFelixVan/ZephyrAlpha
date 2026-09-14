@@ -451,6 +451,53 @@ class PatternWeightSync:
         }
         self._store.save(state, updated_at=self._clock())
 
+    def evaluate_weight_connection(self, *, window_days: int = 28) -> dict[str, Any]:
+        """影子评估器（W-CC 权重接油门的前置判定件，Owner 授权自裁定）。
+
+        读物化表当前口径：对 certified/probation 因子计算"权重加权命中率 vs 池化
+        基线"边际。接通判定规则（预注册）：连续 ≥4 个周窗 edge>0 且覆盖样本
+        ≥基线事件数 → 数据驱动接通（mapper 强度乘权重的翻转点）。
+        本函数只产出判定数据，不做接通动作（接通=human_gated 115 域裁定，
+        以本函数连续输出为证据）。
+        """
+        baseline = self._provider.get_baseline(
+            timeframe=self._timeframe,
+            direction="向上",
+            fwd_window=self._fwd_window,
+            regime_tag=self._regime_tag,
+        )
+        base = float(baseline) if baseline is not None else 0.5
+        per_pattern: list[dict[str, Any]] = []
+        total_w = 0.0
+        total_wr = 0.0
+        for pid in self._patterns:
+            detail = self._provider.get_detail(
+                pid,
+                timeframe=self._timeframe,
+                direction="向上",
+                fwd_window=self._fwd_window,
+                regime_tag=self._regime_tag,
+            )
+            if not detail or detail.get("low_sample") or detail.get("hit_rate") is None:
+                continue
+            n = int(detail.get("n_events") or 0)
+            w = self._adjuster.current_weight(pid)
+            rate = float(detail["hit_rate"])
+            total_w += w
+            total_wr += w * rate
+            per_pattern.append({"pattern_id": pid, "weight": round(w, 6),
+                                "hit_rate": rate, "n_events": n})
+        weighted_rate = (total_wr / total_w) if total_w > 0 else None
+        edge = (weighted_rate - base) if weighted_rate is not None else None
+        return {
+            "patterns_evaluated": len(per_pattern),
+            "weighted_hit_rate": weighted_rate,
+            "pooled_baseline": base,
+            "edge": edge,
+            "edge_positive": bool(edge is not None and edge > 0),
+            "per_pattern": per_pattern,
+        }
+
 
 def main(argv: list[str] | None = None) -> int:
     """物化完成钩子 CLI（事件触发式挂载正身）：--sync-weights。
