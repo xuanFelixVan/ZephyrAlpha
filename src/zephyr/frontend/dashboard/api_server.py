@@ -19,6 +19,9 @@
 端点：
   GET /api/health                     健康检查
   GET /api/kline?symbol=600519&period=1d&limit=300   K 线（period: 1m/5m/15m/30m/60m/1d/1w/1M）
+  GET /api/pattern-events?symbol=600519           形态事件（消费班 W-C4，MOD-SIG-147 线）
+  GET /api/pattern-winrate?direction=向下&fwd_window=10  形态胜率切片（按 hit_rate 降序）
+  GET /api/pattern-evidence                       形态机生证据（REG-PAT-001 evidence 直读）
 返回：{"ok": true, "bars": [{timestamp(ms), open, high, low, close, volume, amount}]}
 异常一律 ok:false——前端据此回退演示数据（演示诚实纪律：前端标"演示"角标）。
 """
@@ -4014,6 +4017,149 @@ def chain_impact_stream_endpoint(
         for it in payload["items"]:
             it["targets"] = [t for t in it["targets"] if t["confidence"] >= min_confidence]
     return payload
+
+
+# ── 图形库消费端三端点（消费班方案 v1.0 C4/W-C4，MOD-SIG-147 线，只读） ─────────
+
+
+@app.get("/api/pattern-events")
+def pattern_events(
+    symbol: str = Query(..., min_length=1),
+    days_back: int = Query(90, ge=0, le=3650),
+    limit: int = Query(200, ge=1, le=2000),
+    pattern_class: str = Query("", min_length=0, max_length=16),
+) -> dict[str, Any]:
+    """形态事件查询（c1_market.market_pattern_event，按 symbol 倒序）。
+
+    symbol=纯数字代码（与 kline_daily 同口径）；只读；异常 ok:false。
+    """
+    sym = symbol.split(".")[0].strip()
+    if not sym.isalnum():
+        return {"ok": False, "error": "bad symbol", "data": []}
+    try:
+        sql = (
+            "SELECT pattern_id, name, pattern_class, direction, confidence, "
+            "timeframe, anchor_trade_date, confirmed_at, regime_tag "
+            "FROM c1_market.market_pattern_event "
+            "WHERE symbol = %(s)s AND confirmed_at >= now() - INTERVAL %(d)s DAY"
+        )
+        params: dict = {"s": sym, "d": int(days_back)}
+        if pattern_class:
+            sql += " AND pattern_class = %(pc)s"
+            params["pc"] = pattern_class
+        sql += " ORDER BY confirmed_at DESC LIMIT %(l)d"
+        params["l"] = int(limit)
+        rows = _ch_exec(sql, params)
+        data = [
+            {
+                "pattern_id": r[0],
+                "name": r[1],
+                "pattern_class": r[2],
+                "direction": r[3],
+                "confidence": r[4],
+                "timeframe": r[5],
+                "anchor_trade_date": r[6].isoformat() if r[6] is not None else None,
+                "confirmed_at": r[7].isoformat() if r[7] is not None else None,
+                "regime_tag": r[8],
+            }
+            for r in rows
+        ]
+        return {"ok": True, "count": len(data), "symbol": sym, "data": data}
+    except Exception as exc:
+        return {"ok": False, "error": str(exc)[:200], "data": []}
+
+
+@app.get("/api/pattern-winrate")
+def pattern_winrate(
+    timeframe: str = Query("day", min_length=1, max_length=8),
+    direction: str = Query("", min_length=0, max_length=8),
+    fwd_window: int = Query(10, ge=1, le=120),
+    regime_tag: str = Query("", min_length=0, max_length=16),
+    min_n: int = Query(30, ge=0, le=100000000),
+    limit: int = Query(500, ge=1, le=5000),
+) -> dict[str, Any]:
+    """形态胜率查询（c1_market.market_pattern_win_rate，四窗×regime 切片）。
+
+    min_n=样本数下限（默认 30=low_sample 纪律线，0=全量）；按 Wilson 下界
+    降序返回（前端双格式展示：hit_rate%+n_events 并列）。
+    """
+    try:
+        sql = (
+            "SELECT pattern_id, timeframe, direction, fwd_window, regime_tag, "
+            "hit_rate, n_events, low_sample FROM c1_market.market_pattern_win_rate "
+            "FINAL WHERE timeframe = %(tf)s AND fwd_window = %(w)d "
+            "AND n_events >= %(mn)d"
+        )
+        params: dict = {"tf": timeframe, "w": int(fwd_window), "mn": int(min_n)}
+        if direction:
+            sql += " AND direction = %(d)s"
+            params["d"] = direction
+        if regime_tag:
+            sql += " AND regime_tag = %(rt)s"
+            params["rt"] = regime_tag
+        sql += " ORDER BY hit_rate DESC LIMIT %(l)d"
+        params["l"] = int(limit)
+        rows = _ch_exec(sql, params)
+        data = [
+            {
+                "pattern_id": r[0],
+                "timeframe": r[1],
+                "direction": r[2],
+                "fwd_window": r[3],
+                "regime_tag": r[4],
+                "hit_rate": r[5],
+                "n_events": r[6],
+                "low_sample": bool(r[7]),
+            }
+            for r in rows
+        ]
+        return {"ok": True, "count": len(data), "data": data}
+    except Exception as exc:
+        return {"ok": False, "error": str(exc)[:200], "data": []}
+
+
+@app.get("/api/pattern-evidence")
+def pattern_evidence(
+    pattern_id: str = Query("", min_length=0, max_length=32),
+) -> dict[str, Any]:
+    """形态证据查询（REG-PAT-001 evidence 字段直读，只读）。
+
+    返回有机生证据的条目（evidence 非空）；pattern_id 精确过滤可选。
+    """
+    from pathlib import Path
+
+    import yaml
+
+    try:
+        repo_root = Path(__file__).resolve().parents[4]
+        reg_path = (
+            repo_root
+            / "docs/01_policies_and_standards/_registry/catalogs/chart_pattern_registry.yaml"
+        )
+        if not reg_path.exists():
+            return {"ok": False, "error": "registry missing", "data": []}
+        reg = yaml.safe_load(reg_path.read_text(encoding="utf-8"))
+        out: list[dict[str, Any]] = []
+        total = 0
+        for p in reg.get("chart_patterns", []) or []:
+            ev = p.get("evidence") or ""
+            if not ev:
+                continue
+            total += 1
+            if pattern_id and p.get("pattern_id") != pattern_id:
+                continue
+            out.append(
+                {
+                    "pattern_id": p.get("pattern_id"),
+                    "name_zh": p.get("name_zh"),
+                    "status": p.get("status"),
+                    "evidence": ev,
+                    "code_symbol": p.get("code_symbol"),
+                }
+            )
+        return {"ok": True, "count": len(out), "evidence_total": total, "data": out}
+    except Exception as exc:
+        return {"ok": False, "error": str(exc)[:200], "data": []}
 
 
 def main() -> None:
