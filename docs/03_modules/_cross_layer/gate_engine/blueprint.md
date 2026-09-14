@@ -5,7 +5,7 @@ title: "Gate Engine 蓝图 — G0-G7任务门禁 + G1-G5 KMS决策门 + 门禁�
 doc_type: blueprint
 template_for: blueprint
 status: Draft
-version: "0.8.34"
+version: "0.8.35"
 layer: L1_foundation
 owner: ZephyrAlpha-Owner
 classification: confidential
@@ -297,8 +297,8 @@ build_status: stable
 
 | 图 | 位置 | 状态 | 链接 |
 |----|------|------|------|
-| 依赖图 (depgraph) | `blueprint_id=MOD-GATE_ENGINE` 的 332 个 file 节点 | production | `extract_depgraph.py --modules MOD-GATE_ENGINE` |
-| 数据流图 (dataflow) | （无节点） | N/A | `apply_dataflowgraph.py --list-datasets` |
+| 依赖图 (depgraph) | `blueprint_id=MOD-GATE_ENGINE` 的 334 个 file 节点 | production | `extract_depgraph.py --modules MOD-GATE_ENGINE` |
+| 数据流图 (dataflow) | 0 个 Dataset / 1 个 Job | active | `apply_dataflowgraph.py --list-datasets` |
 | 决策架构图 (decision) | 0 个决策节点 / 1 个决策层 | N/A | `generate_decision_diagram.py` |
 | 蓝图 (blueprint) | 本文件 | Draft | — |
 
@@ -309,7 +309,7 @@ build_status: stable
 | module_id | MOD-GATE_ENGINE | MOD-GATE_ENGINE | ✅ |
 | domain_id | N/A | N/A | ✅ |
 | build_status | stable | stable | ✅ |
-| file_count | 332 文件 | 28 文件（§0.1） | ❌ |
+| file_count | 334 文件 | 28 文件（§0.1） | ❌ |
 
 > 冲突时以 depgraph 为准（ARCH-056 + ARCH-MM-001 声明 vs 验证框架）。
 
@@ -1493,6 +1493,7 @@ STEP 3: 拆分后验证
 | `src/zephyr/gov_enforcement/commit_gates/split_coordination_gate.py` | ✅ 已实现 | |
 | `src/zephyr/gov_enforcement/commit_gates/stash_accumulation_gate.py` | ✅ 已实现 | |
 | `src/zephyr/gov_enforcement/commit_gates/strategy_factory_map_gate.py` | ✅ 已实现 | |
+| `src/zephyr/gov_enforcement/commit_gates/syntax_validation_gate.py` | ✅ 已实现 | |
 | `src/zephyr/gov_enforcement/registry_alignment.py` | ✅ 已实现 | |
 | `src/zephyr/gov_enforcement/rule_enforcement/admission/__init__.py` | ⚠️ 骨架 | |
 | `src/zephyr/gov_enforcement/rule_enforcement/drift_detector.py` | ✅ 已实现 | |
@@ -1578,6 +1579,7 @@ STEP 3: 拆分后验证
 | `tests/governance/commit_gates/test_secret_registry_consistency_gate.py` | ✅ 已实现 | |
 | `tests/governance/commit_gates/test_split_coordination_gate.py` | ✅ 已实现 | |
 | `tests/governance/commit_gates/test_strategy_factory_map_gate.py` | ✅ 已实现 | |
+| `tests/governance/commit_gates/test_syntax_validation_gate.py` | ✅ 已实现 | |
 | `tests/governance/commit_gates/test_test_residue_ssot_gate.py` | ✅ 已实现 | |
 | `tests/governance/commit_gates/test_tests_coverage_gate.py` | ✅ 已实现 | |
 | `tests/governance/commit_gates/test_translation_coverage_gate.py` | ✅ 已实现 | |
