@@ -120,16 +120,18 @@ _SZ_HOUSE_SERIES: tuple[tuple[str, str], ...] = (
 _SZ_SINGLE_APIS: dict[str, str] = {
     "alt_sz_weather_warning": "589826359/1/service.xhtml",
     "alt_sz_marine_forecast": "1464350655/1/service.xhtml",
+    "alt_sz_visibility": "1580458478/1/service.xhtml",
     "alt_typhoon_landfall_history": "29200_00903514/1/service.xhtml",
     "alt_typhoon_names": "29200_00903513/1/service.xhtml",
 }
 _SZ_OPEN_BASE = "https://opendata.sz.gov.cn/api/"
 _SZ_OPEN_PAGE_SIZE = 10000
+_SZ_VISIBILITY_FULL_PAGE_LIMIT = 400  # 能见度全量模式页数天花板（400 万行）；超限=报批专项
 
 # 能力 -> 通用拉取器路由（方法名仍按 _fetch_{cap} 约定在类尾 setattr 生成）
 _SZ_OPEN_CAPS = frozenset({
     "alt_sz_stat_monthly", "alt_sz_port_monthly", "alt_sz_house_daily",
-    "alt_sz_weather_warning", "alt_sz_marine_forecast",
+    "alt_sz_weather_warning", "alt_sz_marine_forecast", "alt_sz_visibility",
     "alt_typhoon_landfall_history", "alt_typhoon_names",
 })
 
@@ -137,6 +139,7 @@ _ALT_SZ_STAT_COLUMNS = ["series_code", "report_ym", "report_date", "zbmc", "dw",
 _ALT_SZ_PORT_COLUMNS = ["series_code", "month_str", "month", "value", "release_time"]
 _ALT_SZ_HOUSE_COLUMNS = ["series_code", "src_id", "tj_date", "zone", "report_catalog", "house_usage", "ks_num", "ks_area", "cj_num", "cj_area"]
 _ALT_SZ_WARNING_COLUMNS = ["recid", "keyid", "tnumber", "signal_type", "signal_level", "issue_state", "district", "issue_content", "issue_ts", "crt_time", "crt_date", "underwriter", "autosent_flag", "autosent_count", "trace_flag", "trace_count", "sync_rownum"]
+_ALT_SZ_VISIBILITY_COLUMNS = ["obtid", "obtname", "ddatetime", "ddate", "v", "v10m", "minv", "minvtime"]
 _ALT_SZ_MARINE_COLUMNS = ["recid", "area_name", "ddatetime", "forecast_time", "is_next_day", "weather_status", "weather_pic", "wind_direct", "wind_speed", "wind_gust", "wind_gust_direct", "temp_max", "temp_min", "humidity", "humidity_max", "rain", "rain_min", "visibility", "visibility_min", "wave_level", "wave_height", "liusu", "qiya", "zwx", "yujing", "write_time"]
 _ALT_LANDFALL_COLUMNS = ["id", "year", "tcno", "tc_en_name", "tc_cn_name", "land_no", "land_lev", "land_prov", "cyclone_num", "land_sum", "memo"]
 _ALT_TYNAMES_COLUMNS = ["keyid", "name", "name_chn", "country", "start_time", "end_time", "name_meanings"]
@@ -145,6 +148,7 @@ _TBL_ALT_SZ_PORT = get_registry().table("market_alt_sz_port_monthly")
 _TBL_ALT_SZ_HOUSE = get_registry().table("market_alt_sz_house_daily")
 _TBL_ALT_SZ_WARNING = get_registry().table("market_alt_sz_weather_warning")
 _TBL_ALT_SZ_MARINE = get_registry().table("market_alt_sz_marine_forecast")
+_TBL_ALT_SZ_VISIBILITY = get_registry().table("market_alt_sz_visibility")
 _TBL_ALT_LANDFALL = get_registry().table("market_typhoon_landfall_history")
 _TBL_ALT_TYNAMES = get_registry().table("market_typhoon_names")
 
@@ -170,7 +174,7 @@ _CB_PANEL_COLUMNS = ("metric", "trade_date", "value", "value_classification", "s
 _AKSHARE_ALT_CAPABILITIES = frozenset({
     "alt_stock_comment", "alt_shipping_index", "alt_typhoon_track",
     "alt_sz_stat_monthly", "alt_sz_port_monthly", "alt_sz_house_daily",
-    "alt_sz_weather_warning", "alt_sz_marine_forecast",
+    "alt_sz_weather_warning", "alt_sz_marine_forecast", "alt_sz_visibility",
     "alt_typhoon_landfall_history", "alt_typhoon_names", "cb_premium_median"})
 
 
@@ -248,6 +252,8 @@ class AkshareAltProvider(IngestProviderBase):
             CapabilityContract("alt_sz_house_daily", supports_symbols_null=True, requires_date_range=True),
             CapabilityContract("alt_sz_weather_warning", supports_symbols_null=True, requires_date_range=True),
             CapabilityContract("alt_sz_marine_forecast", supports_symbols_null=True, requires_date_range=True),
+            # 能见度探测：服务 1580458478 无过滤参数，provider 内二分定位起始页做增量
+            CapabilityContract("alt_sz_visibility", supports_symbols_null=True, requires_date_range=True),
             CapabilityContract("alt_typhoon_landfall_history", supports_symbols_null=True,
                                supports_incremental=False, requires_date_range=False),
             CapabilityContract("alt_typhoon_names", supports_symbols_null=True,
@@ -660,6 +666,112 @@ class AkshareAltProvider(IngestProviderBase):
             time.sleep(0.4)
         return all_rows
 
+    def _sz_get_total(self, policy: SourcePolicy, api_ctx: str) -> int | None:
+        """首页小页探测取平台 total（失败返回 None，上层退化为全量翻页）。"""
+        app_key = get_secret_or_default("SZ_OPEN_DATA_APPKEY")
+        if not app_key:
+            return None
+        if "/service.xhtml" not in api_ctx:
+            api_ctx = api_ctx + "/1/service.xhtml"
+        url = _SZ_OPEN_BASE + api_ctx
+        try:
+            resp = self._call_with_policy(self._sz_api_get, policy, url,
+                                          {"appKey": app_key, "page": 1, "rows": 1})
+            if isinstance(resp, dict) and not resp.get("errorCode"):
+                return _to_int(resp.get("total"))
+        except Exception:  # noqa: BLE001 — 探测失败不致命
+            pass
+        return None
+
+    def _sz_open_fetch_rows_from(self, policy: SourcePolicy, api_ctx: str, start_page: int = 1,
+                                 last_page_cap: int | None = None,
+                                 extra: dict | None = None) -> list[dict]:
+        """从指定起始页翻到尾的变体（无过滤大表专用；忽略分页防御同主通道）。
+
+        last_page_cap=None：翻到批次不足页即止（增量定位后场景，尾部是终点）；
+        last_page_cap=N：最多翻到 N 页（全量模式末页封顶，防历史偶发扩表翻车）。
+        """
+        app_key = get_secret_or_default("SZ_OPEN_DATA_APPKEY")
+        if not app_key:
+            raise ValueError("SZ_OPEN_DATA_APPKEY 为空（.env 缺失或未配置）")
+        if "/service.xhtml" not in api_ctx:
+            api_ctx = api_ctx + "/1/service.xhtml"
+        url = _SZ_OPEN_BASE + api_ctx
+        base = {"appKey": app_key, "rows": _SZ_OPEN_PAGE_SIZE}
+        if extra:
+            base.update(extra)
+        all_rows: list[dict] = []
+        seen_first_dd = None
+        page = max(1, start_page)
+        while page <= (last_page_cap if last_page_cap else page + 1):
+            resp = self._call_with_policy(self._sz_api_get, policy, url, {**base, "page": page})
+            if isinstance(resp, dict) and resp.get("errorCode"):
+                raise ValueError(f"平台错误 {resp.get('errorCode')}: {resp.get('message')}")
+            batch = self._unwrap_sz_api(resp)
+            if not batch:
+                break
+            all_rows.extend(batch)
+            first_dd = str(batch[0].get("DDATETIME") or "") if isinstance(batch[0], dict) else ""
+            if page > start_page and first_dd and first_dd == seen_first_dd:
+                break  # 服务端忽略分页防御：跨页首行重复即止
+            seen_first_dd = first_dd
+            if len(batch) < _SZ_OPEN_PAGE_SIZE:
+                break  # 不满页 = 已到尾（升序全序的尾部终点）
+            time.sleep(0.4)
+            page += 1
+        return all_rows
+
+    def _sz_find_start_page(self, policy: SourcePolicy, api_ctx: str, total: int,
+                            target_date: str) -> int | None:
+        """无过滤参数大表的增量起始页二分定位（升序 DDATETIME 全序）。
+
+        返回首个 DDATETIME >= target_date 的页号；全表早于目标日返回 None
+        （上层从尾页开始拉，靠幂等去重）；异常返回 None（退化为全量翻页）。
+        """
+        app_key = get_secret_or_default("SZ_OPEN_DATA_APPKEY")
+        if not app_key:
+            return None
+        if "/service.xhtml" not in api_ctx:
+            api_ctx = api_ctx + "/1/service.xhtml"
+        url = _SZ_OPEN_BASE + api_ctx
+        last_page = max(1, (total + _SZ_OPEN_PAGE_SIZE - 1) // _SZ_OPEN_PAGE_SIZE)
+
+        def page_first_ddatetime(page: int) -> str | None:
+            try:
+                resp = self._call_with_policy(self._sz_api_get, policy, url,
+                                              {"appKey": app_key, "page": page, "rows": _SZ_OPEN_PAGE_SIZE})
+                if isinstance(resp, dict) and resp.get("errorCode"):
+                    return None
+                batch = self._unwrap_sz_api(resp)
+                if not batch or not isinstance(batch[0], dict):
+                    return None
+                return str(batch[0].get("DDATETIME") or "")
+            except Exception:  # noqa: BLE001 — 探测失败退化为全量
+                return None
+
+        lo, hi = 1, last_page
+        # 边界快速退出：首页已 >= 目标（全量翻页）；尾页 < 目标（无新数据）
+        first = page_first_ddatetime(1)
+        if first is None:
+            return None
+        if first >= target_date:
+            return 1
+        last = page_first_ddatetime(last_page)
+        if last is not None and last < target_date:
+            return last_page  # 无新数据：从尾页起拉（0 行新增，幂等去重兜底）
+        # 二分：找最小页使首行 DDATETIME >= target_date
+        while lo < hi:
+            mid = (lo + hi) // 2
+            v = page_first_ddatetime(mid)
+            if v is None:
+                return None
+            if v >= target_date:
+                hi = mid
+            else:
+                lo = mid + 1
+            time.sleep(0.3)
+        return lo
+
     @staticmethod
     def _stat_row(series: str, raw: dict) -> tuple | None:
         """统计月报行 -> 长表元组；ZBMC 缺失跳过。"""
@@ -730,6 +842,17 @@ class AkshareAltProvider(IngestProviderBase):
                 _to_int(raw.get("TRACOUNT")) or 0, str(raw.get("SYNC_ROWNUM") or ""))
 
     @staticmethod
+    def _visibility_row(raw: dict) -> tuple | None:
+        """能见度行 -> 列序元组；缺 OBTID/DDATETIME 跳过。ddate 派生日期分区键。"""
+        obtid = str(raw.get("OBTID") or "")
+        ddatetime = str(raw.get("DDATETIME") or "")
+        if not obtid or not ddatetime:
+            return None
+        return (obtid, str(raw.get("OBTNAME") or ""), ddatetime, ddatetime[:10] or "1970-01-01",
+                _to_float(raw.get("V")), _to_float(raw.get("V10M")),
+                _to_float(raw.get("MINV")), _to_int(raw.get("MINVTIME")))
+
+    @staticmethod
     def _marine_row(raw: dict) -> tuple | None:
         recid = _to_int(raw.get("RECID"))
         if recid is None:
@@ -777,6 +900,7 @@ class AkshareAltProvider(IngestProviderBase):
             "alt_sz_house_daily": (_TBL_ALT_SZ_HOUSE, _ALT_SZ_HOUSE_COLUMNS),
             "alt_sz_weather_warning": (_TBL_ALT_SZ_WARNING, _ALT_SZ_WARNING_COLUMNS),
             "alt_sz_marine_forecast": (_TBL_ALT_SZ_MARINE, _ALT_SZ_MARINE_COLUMNS),
+            "alt_sz_visibility": (_TBL_ALT_SZ_VISIBILITY, _ALT_SZ_VISIBILITY_COLUMNS),
             "alt_typhoon_landfall_history": (_TBL_ALT_LANDFALL, _ALT_LANDFALL_COLUMNS),
             "alt_typhoon_names": (_TBL_ALT_TYNAMES, _ALT_TYNAMES_COLUMNS),
         }
@@ -805,6 +929,38 @@ class AkshareAltProvider(IngestProviderBase):
                         t = self._house_row(series, r)
                         if t:
                             rows_out.append(t)
+            elif cap == "alt_sz_visibility":
+                # 服务 1580458478 无任何过滤参数（startDate/endDate 被忽略，实测 total 恒定）：
+                # 全表升序分页 2457 页。增量 = 二分定位首个 ddate >= start 的页后翻到尾；
+                # 探测失败 fail-visible（拒绝盲扫 400 万行）；定位页边界越窗行按日期剔除。
+                # 全量模式：总行数超限即拒绝（回补纪律入码，全史报批后专项执行）。
+                vis_ctx = _SZ_SINGLE_APIS[cap]
+                if payload.incremental and payload.start:
+                    total = self._sz_get_total(policy, vis_ctx)
+                    if not total:
+                        raise ValueError("能见度增量探测失败：total 不可得（平台退化），拒绝盲扫")
+                    sp = self._sz_find_start_page(policy, vis_ctx, total, payload.start.strftime("%Y-%m-%d"))
+                    if sp is None:
+                        raise ValueError("能见度增量二分定位失败（平台退化），拒绝盲扫")
+                    start_iso = payload.start.strftime("%Y-%m-%d")
+                    batch_raw = self._sz_open_fetch_rows_from(policy, vis_ctx, sp, last_page_cap=None)
+                    for r in batch_raw:
+                        t = self._visibility_row(r)
+                        if t and t[3] >= start_iso:
+                            rows_out.append(t)
+                else:
+                    total = self._sz_get_total(policy, vis_ctx)
+                    if total and total > _SZ_VISIBILITY_FULL_PAGE_LIMIT * _SZ_OPEN_PAGE_SIZE:
+                        raise ValueError(
+                            f"能见度全量回补 {total} 行超限（首刷纪律：近窗增量/全史单独报批）；"
+                            "增量窗口走 incremental 任务，全史回补需 Owner 报批后专项执行")
+                    batch_raw = self._sz_open_fetch_rows_from(
+                        policy, vis_ctx, 1,
+                        last_page_cap=_SZ_VISIBILITY_FULL_PAGE_LIMIT if total else None)
+                    for r in batch_raw:
+                        t = self._visibility_row(r)
+                        if t:
+                            rows_out.append(t)
             else:
                 parser = {"alt_sz_weather_warning": self._warning_row,
                           "alt_sz_marine_forecast": self._marine_row,
@@ -825,6 +981,9 @@ class AkshareAltProvider(IngestProviderBase):
                 elif cap == "alt_sz_marine_forecast":
                     wt = [t[25][:10] for t in rows_out if t[25]]
                     last_key = max(wt) if wt else ""
+                elif cap == "alt_sz_visibility":
+                    dts = [t[2][:10] for t in rows_out if t[2]]
+                    last_key = max(dts) if dts else ""
             yield FetchResult(table=table, columns=columns, rows=rows_out,
                               last_key=last_key, elapsed_sec=time.monotonic() - t0)
         except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch

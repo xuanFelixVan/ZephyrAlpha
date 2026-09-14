@@ -74,7 +74,7 @@ description: >-
 owner: MOD-GOVERNANCE
 tier: tier_2_data_runtime
 status: active
-version: 1.9.3
+version: 1.9.4
 created: '2026-08-13'
 last_updated: '2026-09-14'
 related_arch: '#ARCH-BREG-001'
@@ -10237,6 +10237,34 @@ datasets:
   produced_by_source: SRC-INTERNAL-001
   blueprint: "docs/03_modules/_domain_signal/pattern_event_stats/blueprint.md"
   tags: ["数据", "信号", "图形", "统计"]
+- dataset_id: DS-245
+  entity_name: c1_market.alt_sz_visibility
+  entity_type: dataset
+  scope: production
+  physical_type: clickhouse_table
+  produced_by_job: alt_sz_visibility_incremental
+  domain_id: D_MARKET
+  pit_policy: strict
+  format_summary: 深圳能见度探测分钟级站点流（7 站×10-15 分钟：V/V10M/MINV 三口径，米；
+    服务 1580458478 无过滤参数，二分定位增量；24,167 行 2026-09-02 起，首刷限近窗
+    ~72 万行/90 天上限，全史 2,456 万行单独报批）
+  valid_since: "2026-09-14"
+  module_id: MOD-L00-004
+  design_maturity: production
+  name: c1_market.alt_sz_visibility
+  name_zh: 深圳能见度探测分钟级站点流
+  status: active
+  created_at: "2026-09-14"
+  updated_at: "2026-09-14"
+  owner: MOD-L00-004
+  produced_by_source: SRC-SZOPENDATA-001
+  survivorship_free: true
+  entry_role: "state"
+  applies_to: ["market"]
+  tags: ["另类数据", "数据", "气象", "能见度"]
+  evidence: "DDL schemas/categories/market_alt_sz_visibility.py；实测 24,167 行
+    （2026-09-02~09-14）；7 站=深汕/松岗/大浪/南澳/邮轮中心/铁岗水库/市民中心"
+  code_symbol: "src/zephyr/data/implementations/akshare_alt_provider.py::AkshareAltProvider._fetch_sz_open_data"
 jobs:
 - job_id: JOB-001
   job_name: ingest.minqmt_kline
@@ -13339,4 +13367,62 @@ jobs:
   algorithm_status: "not_applicable"
   evidence: "实弹五信号出值；测试 8/8（tests/zephyr/alt_data/test_alt_regime_signals.py）"
   code_symbol: "src/zephyr/alt_data/alt_regime_signals.py::AltRegimeSignalProvider.fetch"
+  code_fingerprint:
+- job_id: JOB-109
+  job_name: ingest.sz_visibility
+  entity_type: job
+  scope: production
+  source_code_ref: src/zephyr/data/implementations/akshare_alt_provider.py
+  trigger_type: scheduled
+  run_context: production
+  inputs: []
+  outputs:
+  - DS-245
+  pit_relevance: strict
+  description: 能见度探测分钟级站点流增量（服务 1580458478 无过滤参数，二分定位
+    起始页后翻至尾；(obtid,ddatetime) 幂等；首刷限近窗，全史报批专项）
+  module_id: MOD-L00-004
+  design_maturity: production
+  name: ingest.sz_visibility
+  name_zh: 深圳能见度探测采集
+  status: active
+  version: 1.0.0
+  created_at: "2026-09-14"
+  updated_at: "2026-09-14"
+  owner: MOD-L00-004
+  entry_role: "state"
+  applies_to: ["market"]
+  tags: ["另类数据", "数据", "气象", "能见度"]
+  algorithm_status: "not_applicable"
+  evidence: "实测 24,167 行首刷落库；测试 24/24（tests/zephyr/data/test_alt_sources.py）"
+  code_symbol: "src/zephyr/data/implementations/akshare_alt_provider.py::AkshareAltProvider._fetch_sz_open_data"
+  code_fingerprint:
+- job_id: JOB-110
+  job_name: ingest.sz_visibility_full_history
+  entity_type: job
+  scope: candidate
+  source_code_ref: src/zephyr/data/implementations/akshare_alt_provider.py
+  trigger_type: manual
+  run_context: production
+  inputs: []
+  outputs:
+  - DS-245
+  pit_relevance: strict
+  description: 能见度全史回补（2,456 万行 2018-04 起，~72 页×万行；磁盘预估 8-15GB；
+    未授权前 provider 全量通道页数天花板拒绝执行；Owner 报批后手动触发）
+  module_id: MOD-L00-004
+  design_maturity: candidate
+  name: ingest.sz_visibility_full_history
+  name_zh: 深圳能见度全史回补（待报批）
+  status: candidate
+  version: 1.0.0
+  created_at: "2026-09-14"
+  updated_at: "2026-09-14"
+  owner: MOD-L00-004
+  entry_role: "reference"
+  applies_to: ["market"]
+  tags: ["另类数据", "数据", "气象", "回补"]
+  algorithm_status: "not_applicable"
+  evidence: "未执行留痕：provider 全量超限 fail-visible 已入码+测试覆盖"
+  code_symbol: "src/zephyr/data/implementations/akshare_alt_provider.py::AkshareAltProvider._fetch_sz_open_data"
   code_fingerprint:

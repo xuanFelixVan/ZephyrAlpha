@@ -2539,6 +2539,20 @@ tasks:
   extra:
     description: "历史登陆我国气旋全表（1949 年起静态档案；周末全量刷新，ID 幂等）"
 
+- task_id: alt_sz_visibility_incremental
+  table: c1_market.alt_sz_visibility
+  source: akshare_alt
+  schedule: daily_event
+  incremental: true
+  date_col: ddate
+  dependencies: []
+  capability: alt_sz_visibility
+  symbols:
+  fallback_sources: []    # 天然无副源：深圳开放数据平台单源（appKey 订阅制）
+  extra:
+    description: "深圳能见度探测分钟级站点流（8 站×10-15 分钟：V/V10M/MINV 三口径；服务 1580458478 无过滤参数，provider 二分定位起始页增量；(obtid,ddatetime) 幂等；大表纪律=首刷限近窗，全史 2456 万行单独报批）"
+    start_days_back: 90    # 首刷窗口=近 90 天（约 72 万行）；last_key 推进后自然收敛为日增量
+
 - task_id: alt_typhoon_names_refresh
   table: c1_market.alt_typhoon_names
   source: akshare_alt

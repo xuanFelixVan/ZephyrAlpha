@@ -373,6 +373,8 @@ from schemas.categories.market_alt_sz_port_monthly import MARKET_ALT_SZ_PORT_MON
 from schemas.categories.market_alt_sz_house_daily import MARKET_ALT_SZ_HOUSE_DAILY_DDL
 from schemas.categories.market_alt_sz_weather_warning import MARKET_ALT_SZ_WEATHER_WARNING_DDL
 from schemas.categories.market_alt_sz_marine_forecast import MARKET_ALT_SZ_MARINE_FORECAST_DDL
+# 深圳能见度探测分钟级站点流（2026-09-14，任务 2：服务 1580458478）
+from schemas.categories.market_alt_sz_visibility import MARKET_ALT_SZ_VISIBILITY_DDL
 from schemas.categories.market_typhoon_landfall_history import MARKET_TYPHOON_LANDFALL_HISTORY_DDL
 from schemas.categories.market_typhoon_names import MARKET_TYPHOON_NAMES_DDL
 from schemas.categories.market_breadth_snapshot import MARKET_BREADTH_SNAPSHOT_DDL
@@ -419,6 +421,7 @@ _ALL_DDL: list[tuple[str, str]] = [
     ("c1_market.alt_sz_house_daily", MARKET_ALT_SZ_HOUSE_DAILY_DDL),
     ("c1_market.alt_sz_weather_warning", MARKET_ALT_SZ_WEATHER_WARNING_DDL),
     ("c1_market.alt_sz_marine_forecast", MARKET_ALT_SZ_MARINE_FORECAST_DDL),
+    ("c1_market.alt_sz_visibility", MARKET_ALT_SZ_VISIBILITY_DDL),
     ("c1_market.alt_typhoon_landfall_history", MARKET_TYPHOON_LANDFALL_HISTORY_DDL),
     ("c1_market.alt_typhoon_names", MARKET_TYPHOON_NAMES_DDL),
     # JOB-077 市场元数据与约束接入（DS-081~083，2026-08-15）
@@ -826,6 +829,7 @@ _EXPECTED_ENGINES: dict[str, str] = {
     "alt_sz_house_daily": "ReplacingMergeTree",
     "alt_sz_weather_warning": "ReplacingMergeTree",
     "alt_sz_marine_forecast": "ReplacingMergeTree",
+    "alt_sz_visibility": "ReplacingMergeTree",
     "alt_typhoon_landfall_history": "ReplacingMergeTree",
     "alt_typhoon_names": "ReplacingMergeTree",
     # JOB-077（DS-081~083，2026-08-15）

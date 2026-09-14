@@ -55,10 +55,13 @@ def test_to_int_variants():
 
 def test_provider_meta_capabilities():
     caps = {c.capability_id for c in AkshareAltProvider.meta.capabilities}
-    assert caps == {"alt_stock_comment", "alt_shipping_index", "alt_typhoon_track",
-                    "alt_sz_stat_monthly", "alt_sz_port_monthly", "alt_sz_house_daily",
-                    "alt_sz_weather_warning", "alt_sz_marine_forecast",
-                    "alt_typhoon_landfall_history", "alt_typhoon_names"}
+    required = {"alt_stock_comment", "alt_shipping_index", "cb_premium_median",
+                "alt_typhoon_track", "alt_typhoon_landfall_history", "alt_typhoon_names",
+                "alt_sz_stat_monthly", "alt_sz_port_monthly", "alt_sz_house_daily",
+                "alt_sz_weather_warning", "alt_sz_marine_forecast", "alt_sz_visibility"}
+    assert required <= caps  # 子集断言：他会话扩容不碎我方测试
+    assert "cb_premium_median" in _AKSHARE_ALT_CAPABILITIES
+    assert "alt_sz_visibility" in _AKSHARE_ALT_CAPABILITIES
     assert _AKSHARE_ALT_CAPABILITIES == caps
 
 
@@ -147,7 +150,7 @@ def test_alt_shipping_merge_and_dedupe(stub_akshare):
             "截止日期": ["2026-09-11", "2026-09-10"],
             "波罗的海好望角型船运价指数BCI": [2801.0, 2850.0],
             "灵便型船综合运价指数BHMI": [None, 900.0],  # None 值行跳过
-            "波罗的海超级大灵便型BSI指数": [1500.0, 1510.0],
+            "波罗的海超级大灵便型船BSI指数": [1500.0, 1510.0],
             "波罗的海综合运价指数BDI": [9999.0, 9999.0],  # 双源重叠列弃用
             "HRCI国际集装箱租船指数": [1200.5, 1201.5],
             "油轮运价指数成品油运价指数BCTI": [1100.0, 1105.0],
@@ -425,3 +428,73 @@ def test_sz_error_passthrough(monkeypatch):
     r = list(p.fetch(_make_payload("alt_sz_marine_forecast", table="c1_market.alt_sz_marine_forecast",
                                    incremental=False), SourcePolicy()))[0]
     assert r.error and "10001" in r.error
+
+
+# ---------- 能见度探测（服务 1580458478，无过滤参数大表） ----------
+
+def _visibility_stub(i: int) -> dict:
+    """能见度行构造器：i 递增对应时间递增（分钟级）。"""
+    day = 10 + i // 1440
+    minute = i % 1440
+    return {"OBTID": f"G{i % 8:04d}", "OBTNAME": f"站{i % 8}",
+            "DDATETIME": f"2026-09-{day:02d} {minute // 60:02d}:{minute % 60:02d}:00",
+            "V": 20000.0 + i, "V10M": 19000.0 + i, "MINV": 18000.0 + i, "MINVTIME": minute % 60}
+
+
+def test_visibility_row_parse():
+    row = AkshareAltProvider._visibility_row(_visibility_stub(0))
+    assert row[0] == "G0000"          # obtid
+    assert row[3] == "2026-09-10"     # ddate 派生
+    assert row[4] == pytest.approx(20000.0)
+    assert row[7] == 0                # minvtime int
+    assert AkshareAltProvider._visibility_row({"FOO": 1}) is None  # 缺 OBTID/DDATETIME 跳过
+
+
+def test_visibility_incremental_binary_search(monkeypatch):
+    """无过滤大表增量：二分定位起始页→从定位页翻到尾→越窗边界剔除。"""
+    from zephyr.data.implementations import akshare_alt_provider as mod
+
+    total = 25000  # 3 页（页大小 10000）
+    pages = {
+        1: [_visibility_stub(i) for i in range(0, 10000)],
+        2: [_visibility_stub(i) for i in range(10000, 20000)],
+        3: [_visibility_stub(i) for i in range(20000, 25000)],
+    }
+    calls = []
+
+    def fake_get(self, url, params):
+        calls.append(dict(params))
+        if "page" in params and params.get("rows") == 1:
+            # _sz_get_total 探测页
+            return {"total": total, "data": [_visibility_stub(0)]}
+        return {"data": pages[params["page"]]}
+
+    monkeypatch.setattr(mod, "get_secret_or_default", lambda *a, **k: "stub-key")
+    monkeypatch.setattr(mod.AkshareAltProvider, "_sz_api_get", fake_get)
+    # 二分只探首页/尾页即退出：首页首行 2026-09-10 < 目标 09-11，尾页首行 09-24 >= 目标
+    monkeypatch.setattr(mod.AkshareAltProvider, "_sz_find_start_page",
+                        lambda self, policy, ctx, tot, target: 2)
+    p = mod.AkshareAltProvider()
+    r = list(p.fetch(_make_payload("alt_sz_visibility", table="c1_market.alt_sz_visibility",
+                                   start=datetime.date(2026, 9, 11)), SourcePolicy()))[0]
+    assert r.error is None
+    assert r.last_key == "2026-09-27"          # 显式取日期列最大值
+    ddates = [row[3] for row in r.rows]
+    assert all(d >= "2026-09-11" for d in ddates)  # 越窗边界剔除
+    assert len(r.rows) == 15000               # 页 2 全部 + 页 3 全部（桩日期均 ≥ 09-11）
+
+
+def test_visibility_full_refresh_over_limit(monkeypatch):
+    """全量模式超页数天花板：fail-visible 拒绝盲扫（回补纪律入码）。"""
+    from zephyr.data.implementations import akshare_alt_provider as mod
+
+    monkeypatch.setattr(mod, "get_secret_or_default", lambda *a, **k: "stub-key")
+    monkeypatch.setattr(
+        mod.AkshareAltProvider, "_sz_api_get",
+        lambda self, url, params: {"total": mod._SZ_VISIBILITY_FULL_PAGE_LIMIT * mod._SZ_OPEN_PAGE_SIZE + 1,
+                                   "data": [_visibility_stub(0)]},
+    )
+    p = mod.AkshareAltProvider()
+    r = list(p.fetch(_make_payload("alt_sz_visibility", table="c1_market.alt_sz_visibility",
+                                   incremental=False), SourcePolicy()))[0]
+    assert r.error and "报批" in r.error

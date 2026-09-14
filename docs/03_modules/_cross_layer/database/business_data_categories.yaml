@@ -2528,6 +2528,22 @@
   data_source: [akshare_alt]
   blueprint: null
 
+- category_id: market_alt_sz_visibility
+  name: "深圳能见度探测分钟级站点流"
+  engine: clickhouse
+  database: c1_market
+  table: alt_sz_visibility
+  schema_file: schemas/categories/market_alt_sz_visibility.py
+  data_type: 原料
+  lifecycle: permanent
+  sla_level: L2
+  enabled: true
+  hard_constraint: null
+  calc_mode: preload
+  frequency: 日频
+  data_source: [akshare_alt]
+  blueprint: null
+
 - category_id: market_typhoon_landfall_history
   name: "台风历史登陆档案"
   engine: clickhouse
