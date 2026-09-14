@@ -97,11 +97,11 @@ C1 market_clickhouse 是业务数据库仓库层的**行情仓库**，存储 L1 
 | 1 | schemas/categories/intraday/market_tick.py | §4.1 | tick_data 表 DDL-as-Code | 已建 |
 | 2 | schemas/categories/kline/market_kline_daily.py | §4.2 | kline_daily 表 DDL-as-Code | 已建 |
 | 3 | schemas/categories/intraday/market_auction.py | §4.3 | auction_snapshot 表 DDL-as-Code | 已建 |
-| 4 | schemas/categories/market_index.py | §4.4 | index_quote 表 DDL-as-Code | 已建 |
-| 5 | schemas/categories/market_option_iv.py | §4.5 | option_iv_surface 表 DDL-as-Code | 已建 |
-| 6 | schemas/categories/market_futures_position.py | §4.6 | futures_position 表 DDL-as-Code | 已建 |
-| 7 | schemas/categories/market_futures_term.py | §4.7 | futures_term_structure 表 DDL-as-Code | 已建 |
-| 8 | schemas/categories/market_cb_iv.py | §4.8 | convertible_bond_iv 表 DDL-as-Code | 已建 |
+| 4 | schemas/categories/market/market_index.py | §4.4 | index_quote 表 DDL-as-Code | 已建 |
+| 5 | schemas/categories/market/market_option_iv.py | §4.5 | option_iv_surface 表 DDL-as-Code | 已建 |
+| 6 | schemas/categories/market/market_futures_position.py | §4.6 | futures_position 表 DDL-as-Code | 已建 |
+| 7 | schemas/categories/market/market_futures_term.py | §4.7 | futures_term_structure 表 DDL-as-Code | 已建 |
+| 8 | schemas/categories/market/market_cb_iv.py | §4.8 | convertible_bond_iv 表 DDL-as-Code | 已建 |
 | 9 | c1_market_writer.py | §4.9 | C1 行情仓库写入接口 | 待建 |
 | 10 | c1_market_reader.py | §4.10 | C1 行情仓库查询接口 | 待建 |
 | 11 | c1_backtest_loader.py | §4.11 | C1 回测数据加载器 | 待建 |
@@ -453,7 +453,7 @@ COMMENT '集合竞价快照(原料,preload)'
 ### §4.4 index_quote（指数行情 — replay模式）
 
 ```python
-# schemas/categories/market_index.py
+# schemas/categories/market/market_index.py
 # category_id: market_index_quote
 # calc_mode: replay
 
@@ -493,7 +493,7 @@ COMMENT '指数行情(原料,replay)'
 ### §4.5 option_iv_surface（期权IV曲面 — preload模式）
 
 ```python
-# schemas/categories/market_option_iv.py
+# schemas/categories/market/market_option_iv.py
 # category_id: market_option_iv
 # calc_mode: preload
 
@@ -537,7 +537,7 @@ COMMENT '期权IV曲面(原料衍生,preload)'
 ### §4.6 futures_position（期货持仓 — preload模式）
 
 ```python
-# schemas/categories/market_futures_position.py
+# schemas/categories/market/market_futures_position.py
 # category_id: market_futures_position
 # calc_mode: preload
 
@@ -577,7 +577,7 @@ COMMENT '期货持仓(原料衍生,preload)'
 ### §4.7 futures_term_structure（期货期限结构 — preload模式）
 
 ```python
-# schemas/categories/market_futures_term.py
+# schemas/categories/market/market_futures_term.py
 # category_id: market_futures_term
 # calc_mode: preload
 
@@ -617,7 +617,7 @@ COMMENT '期货期限结构(原料衍生,preload)'
 ### §4.8 convertible_bond_iv（可转债隐含波动率 — preload模式）
 
 ```python
-# schemas/categories/market_cb_iv.py
+# schemas/categories/market/market_cb_iv.py
 # category_id: market_cb_iv
 # calc_mode: preload
 
