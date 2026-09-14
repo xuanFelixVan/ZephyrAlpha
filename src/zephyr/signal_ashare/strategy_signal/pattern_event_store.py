@@ -1,7 +1,7 @@
 # [BLUEPRINT] MOD-SIG-145 | docs/03_modules/_domain_signal/pattern_event_stats/blueprint.md
 # [MODULE] zephyr.signal_ashare.strategy_signal.pattern_event_store
 # [DOMAIN] D_SIGNAL
-# [DEPENDENCIES] schemas.categories.market_pattern_event(DDL/INSERT_COLUMNS 真源); zephyr.data.ch_writer(client,延迟加载)
+# [DEPENDENCIES] schemas.categories.market.market_pattern_event(DDL/INSERT_COLUMNS 真源); zephyr.data.ch_writer(client,延迟加载)
 # [CONSUMERS] scripts/data/pattern_event_backfill.py(W2); pattern_win_rate 统计物化(W3); pattern_event_incremental(W4); unified_pattern_engine 扫描结果落库口
 # [STARTUP] imported
 # [MATURITY] design
@@ -24,7 +24,7 @@
 
 设计对齐（signal_history_writer 同构裁定）：
   - 输入为行 dict 列表（引擎 PatternEvent.to_dict() 产物 + symbol/confirmed_at
-    等落库列）；列序以 schemas/categories/market_pattern_event.py 的
+    等落库列）；列序以 schemas/categories/market/market_pattern_event.py 的
     INSERT_COLUMNS 为唯一真源。
   - event_id 确定性派生（blake2b-64）：同一形态事件（模式/周期/代码/锚日/确认
     时刻/形态名相同）跨 scan_run 重扫产生同 ID → ReplacingMergeTree 去重，
@@ -67,14 +67,14 @@ _REQUIRED_FIELDS = (
 def _insert_columns() -> str:
     """列序真源导入（schemas 包居仓根，非 src/——调用方 sys.path 不含仓根时自适应）。"""
     try:
-        from schemas.categories.market_pattern_event import INSERT_COLUMNS
+        from schemas.categories.market.market_pattern_event import INSERT_COLUMNS
 
         return INSERT_COLUMNS
     except ImportError:
         repo_root = Path(__file__).resolve().parents[4]
         if str(repo_root) not in sys.path:
             sys.path.insert(0, str(repo_root))
-        from schemas.categories.market_pattern_event import INSERT_COLUMNS
+        from schemas.categories.market.market_pattern_event import INSERT_COLUMNS
 
         return INSERT_COLUMNS
 

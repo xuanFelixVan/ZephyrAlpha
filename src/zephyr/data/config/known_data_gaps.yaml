@@ -404,7 +404,7 @@ gaps:
       新增 index_list capability（pro.index_basic 全市场），tasks.yaml 复启用 source=tushare，
       首次运行落库 8000 行真实指数（含上证指数 base 1990-12-19/list 1991-07-15），list_date
       全真值非零，在市 8000（valid_to=NULL）；1700 行旧垃圾保持 PIT 关死墓碑（禁物理 DELETE）。
-      顺带修复 schemas/categories/market_index_list.py INSERT_COLUMNS 双逗号笔误。"
+      顺带修复 schemas/categories/market/market_index_list.py INSERT_COLUMNS 双逗号笔误。"
     primary_alternative: "无（已治本，无需备选）"
     created: "2026-09-10"
     last_updated: "2026-09-10"
@@ -571,3 +571,61 @@ gaps:
     primary_alternative: "无直接替代；传媒/院线景气短期用既有 L2/L1 量价+新闻情绪代理"
     created: "2026-09-12"
     last_updated: "2026-09-12"
+
+  # === 2026-09-15: daily_valuation 2026-09-10 整日缺失（+09-09 部分写入）===
+  # 发现路径：数据总览 v2 会话板块指数合成对拍测试 → 本排查会话（方案 J 前置）
+  - id: "daily_valuation_2026_09_10_missing"
+    table: "c1_market.daily_valuation"
+    gap_type: "date_range"
+    start_date: "2026-09-09"
+    end_date: "2026-09-10"
+    date_column: "trade_date"
+    detection_threshold: 5500  # 日均 < 5500 行 = 缺口（区间正常 5550-5562）
+    expected_daily_avg: 5558   # 09-07/09-08 基准
+    actual_daily_avg: 2438     # (4875+0)/2（09-09 部分写入 4875、09-10 整日 0）
+    status: "open"  # 09-10 至今（09-15）未补；09-11 已由 09-12 akshare 增量补回 5562
+    root_cause: "①09-09：daily_valuation_full_refresh（akshare）耗时 39564s(11h) 仅写 44687 行（约 8 日量），刷到 09-09 时只落 4875/5558 即结束=部分写入；②09-10：全天 fetch_perf 仅两条 source=mock rows=0 的 daily_valuation_incremental，无任何 akshare 实跑=整日 0 行；③09-12 15:39 akshare 增量(rows=5562, 36023s)补的是 09-11 而非 09-10，09-13/09-14/09-15 无补写记录（09-14 06:44 又一条 mock rows=0）。非源退化——09-11 已恢复 5562 且高于断点前。"
+    impact: "一切消费 daily_valuation 的场景（流通市值/PE-PB 权重、估值因子、板块指数合成权重）。09-09 另缺 687 只（前缀 0=85/3=2/6=498/9=102，散落非连续块=抓取中断随机丢包，非分页截断）。"
+    resolution_plan: "①补跑 daily_valuation 2026-09-10（akshare 全量，实测约 10h/次，D 日数据 D+1 落库属常态）；②视补跑结果决定是否重刷 09-09；③治理侧：daily_valuation_incremental 多次以 source=mock rows=0 空转通过却不告警——需给'增量任务 0 行成功'加告警（同族问题已在 news_sentiment_window 登记过）。"
+    primary_alternative: "对拍/回测窗口可暂时用 09-08 与 09-11 权重插值，或按 symbol 复用最近有效日市值（需在消费侧显式标记口径）。"
+    evidence: ".runtime/fetch_perf/fetch_perf_20260909.jsonl / _20260910.jsonl / _20260912.jsonl / _20260913.jsonl / _20260914.jsonl"
+    created: "2026-09-15"
+    last_updated: "2026-09-15"
+
+  # === 2026-09-15: 分钟K线族全族无北交所（宇宙口径缺口，非日期缺口）===
+  - id: "kline_minute_no_bse_universe"
+    table: "c1_market.kline_1min"   # 五表族：1/5/15/30/60min 同缺口（09-10 实测均 5206 只）
+    gap_type: "upstream_data_corruption"
+    start_date: "2026-09-15"
+    end_date: ""   # 长期口径缺口，非日期范围；miniQMT 2026-09-18 退役后若不治本即为永久
+    date_column: "trade_time"
+    detection_threshold: 342   # 9 开头 symbol 计数 = 0 即为缺口（日线同日有 342 只）
+    expected_daily_avg: 5549   # kline_daily 2026-09-11 口径（0=1491/3=1405/6=2311/9=342）
+    actual_daily_avg: 5207     # kline_1min 2026-09-14 口径（0/3/6 only，9 开头=0）
+    status: "open"  # 高：9/18 miniQMT 退役前是最后补数窗口
+    root_cause: "miniqmt_provider._KLINE_CAPABILITIES（L213-219）已声明 kline_1min/5min/15min 取 ('沪深A股','京市A股') 双板块，但实测'京市A股'仅在日线侧生效——kline_daily 09-11=5549 含 342 只 9 开头，而 kline_1min 09-14=5207 前缀仅 0/3/6、9 开头=0。同族 kline_5min/15min/30min/60min 09-10 均 5206 只=全族同缺口，属管道级宇宙口径而非单表写入故障。"
+    impact: "①全市场 342 只北交所（6.2%）分钟数据永久缺失；②板块指数合成（方案 J）：含北交所成分的 880/881 板块合成指数系统性偏离真值（880825.SH 实测 4/260=1.5% 成分受影响，需按板块逐一评估）；③9/18 后新管线（桥 tick 合成 ch_tick_kline）若照抄分钟线宇宙口径，会原样复制该 342 只缺口=同口径复发。"
+    resolution_plan: "①P1：排查同一 capability 日线生效/分钟线不生效的原因（板块取数路径差异 or 分钟周期下京市A股返回空）；②P2：9/17 前用 miniQMT 回补五表族北交所历史（342 只×五表），过期后 bdpan 无分钟归档=永久缺口；③消费侧：合成器加'成分覆盖率'自检闸门（<98% 标记当日不可用，禁静默产出偏差指数）。"
+    primary_alternative: "无（北交所分钟数据无免费替代源）；短期消费侧显式标记覆盖缺口并降级使用。"
+    evidence: "kline_1min 09-14 前缀分布 0=1490/3=1405/6=2311；kline_daily 09-11 前缀 0=1491/3=1405/6=2311/9=342；五表族 09-10 均 5206 只"
+    created: "2026-09-15"
+    last_updated: "2026-09-15"
+
+  # === 2026-09-15: kline_sector_intraday 断供（tdx/mootdx 通道死亡）===
+  - id: "kline_sector_intraday_tdx_dead"
+    table: "c1_market.kline_sector_intraday"
+    gap_type: "source_discontinued"
+    start_date: "2026-09-11"
+    end_date: ""   # 通道死亡，起期未知
+    date_column: "trade_date"
+    detection_threshold: 200000  # 日均 < 20 万行 = 缺口（正常 ~30 万行/727 板块）
+    expected_daily_avg: 308000   # 09-02~09-09 基准（727 板块/日）
+    actual_daily_avg: 0          # 09-11 起零供给
+    status: "accepted"  # 已定性：mootdx 通道整体死亡；日线兄弟表 kline_sector 已换源 tqcenter 闭环
+    root_cause: "mootdx/tdx 板块盘中分钟通道 2026-09-11 起整体断供（data_source 记为 'tdx'）。最后一波 09-10 本身已是残缺半日：727→563 个 code、295983→37857 行，880825.SH 仅 144 根（正常 240）。日线兄弟表 kline_sector 已完成 tqcenter 换源（commit f908147aae），本分钟表不在换源范围。"
+    impact: "方案 J（板块指数合成器）的校准真值来源只剩到 2026-09-10，且 09-10 为半日残缺日 → 对拍窗口建议避开 09-10 或只用该日上午完整段。"
+    resolution_plan: "不施工（本条仅登记留痕）。若后续方案 J 需要更长真值窗口，再评估 kline_sector_intraday 是否随 kline_sector 一并换源 tqcenter——属独立立项范围。"
+    primary_alternative: "kline_sector（日线，tqcenter 源，2020-03 起六年半零缺日）可作低频校准真值；分钟级真值暂无替代。"
+    evidence: "kline_sector_intraday 近 12 日序列：09-07=727/315799、09-08=727/304228、09-09=727/295983、09-10=563/37857、09-11 起无；max(trade_date)=2026-09-10"
+    created: "2026-09-15"
+    last_updated: "2026-09-15"

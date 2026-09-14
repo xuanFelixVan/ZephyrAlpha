@@ -1280,7 +1280,7 @@ def _check_p4_dead_data_blueprint(text: str, filename: str = "<string>") -> list
             ]
         ):
             continue
-        # 豁免：schema 文件清单行（如 "| schemas/categories/market_hk_connect_flow.py | ✅ 已实现 |"）
+        # 豁免：schema 文件清单行（如 "| schemas/categories/market/market_hk_connect_flow.py | ✅ 已实现 |"）
         if "schemas/categories" in line and "已实现" in line:
             continue
         for dead in DEAD_DATA_SOURCES:

@@ -5,7 +5,7 @@
 # [CONSUMERS] scripts.data.backfill_tick_depth5
 # [STARTUP] imported
 # [MATURITY] stable
-# [INVARIANTS] 五档历史回填唯一计算层；行 tuple 与 schemas/categories/market_tick_depth_5.py 的 INSERT_COLUMNS 严格同序(30 列)；只写 c1_market.tick_depth_5（并行旁路表，禁止触碰 tick_data 链路——红线 2）；xtquant 缺失时 fail-fast 由调用方降级；data_source 固定取值 miniqmt(历史回填) 或 qmt_bridge(桥存量补五档)
+# [INVARIANTS] 五档历史回填唯一计算层；行 tuple 与 schemas/categories/intraday/market_tick_depth_5.py 的 INSERT_COLUMNS 严格同序(30 列)；只写 c1_market.tick_depth_5（并行旁路表，禁止触碰 tick_data 链路——红线 2）；xtquant 缺失时 fail-fast 由调用方降级；data_source 固定取值 miniqmt(历史回填) 或 qmt_bridge(桥存量补五档)
 # [MODIFY-GUARD] schema-change
 # [STABILITY] stable
 # [SAFETY] L

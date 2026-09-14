@@ -38,7 +38,7 @@ build_status: production
   落账委托/回放供数），为其上游供数。MOD-PLAN-015 auction_hit_recorder=盘中命中判定
   持久化；本模块"命中率回放"=回放供数面，不做命中判定。
 - **不重复存量**：miniqmt_provider._fetch_auction_snapshot/_fetch_auction_book=原始
-  采集函数（已建，本模块 fetcher 注入挂接点）；schemas/categories/market_auction(.book)
+  采集函数（已建，本模块 fetcher 注入挂接点）；schemas/categories/intraday/market_auction(.book)
   =DDL 真源（本模块 quality_flag 口径对齐）；scenario_planner=auction_book 消费（不碰）。
 
 ## 1. 定位
@@ -104,7 +104,7 @@ loader 异常 → notes 留痕不抛。
 
 - `zephyr.shared.foundation.errors`（ZephyrBaseError）。
 - 设计面依赖（depgraph design 边）：miniqmt_provider（采集通道挂接）、
-  schemas/categories/market_auction（落表口径）、auction_microstructure_analyzer
+  schemas/categories/intraday/market_auction（落表口径）、auction_microstructure_analyzer
   （供数分工）、auction_hit_recorder（回放供数分工）。
 
 ## 7. 测试

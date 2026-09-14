@@ -1,11 +1,11 @@
 # [BLUEPRINT] MOD-SIG-145
 # [MODULE] scripts.ch.apply_pattern_win_rate_ddl
 # [DOMAIN] D_SIGNAL
-# [DEPENDENCIES] zephyr.data.ch_writer; schemas.categories.market_pattern_win_rate
+# [DEPENDENCIES] zephyr.data.ch_writer; schemas.categories.market.market_pattern_win_rate
 # [CONSUMERS] scripts/data/pattern_win_rate_materialize.py; pattern_win_rate_provider
 # [STARTUP] manual
 # [MATURITY] design
-# [INVARIANTS] DDL-as-Code: market_pattern_win_rate DDL 真源为 schemas/categories/market_pattern_win_rate.py；本脚本只执行 IF NOT EXISTS 幂等建表，禁止改列/删数据
+# [INVARIANTS] DDL-as-Code: market_pattern_win_rate DDL 真源为 schemas/categories/market/market_pattern_win_rate.py；本脚本只执行 IF NOT EXISTS 幂等建表，禁止改列/删数据
 # [MODIFY-GUARD] none
 # [STABILITY] evolving
 # [SAFETY] L
@@ -15,7 +15,7 @@
 # [TTL] permanent
 """market_pattern_win_rate 建表 DDL 部署 + 验证脚本（MOD-SIG-145 W3）。
 
-DDL 真源：schemas/categories/market_pattern_win_rate.py（DDL-as-Code）。
+DDL 真源：schemas/categories/market/market_pattern_win_rate.py（DDL-as-Code）。
 
 用法::
 
@@ -31,7 +31,7 @@ import sys
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", "..", "src"))
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", ".."))
 
-from schemas.categories.market_pattern_win_rate import (  # noqa: E402
+from schemas.categories.market.market_pattern_win_rate import (  # noqa: E402
     MARKET_PATTERN_WIN_RATE_DDL,
     TABLE_NAME,
 )

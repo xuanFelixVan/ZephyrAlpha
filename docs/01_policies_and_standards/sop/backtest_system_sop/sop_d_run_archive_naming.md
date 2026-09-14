@@ -34,7 +34,7 @@ related_issues:
 | 引擎回测产物（净值/交易流水等） | `data/backtest_artifacts/bt-<variant>-<hash8>.json`（平铺，既有惯例） | ❌（2026-09-02 已裁定 gitignore，可重跑再生产物） | 引擎自动写，零迁移 |
 | **run 过程档案（本规范主体）** | `data/backtest_artifacts/runs/<run_id>/` | ❌（同上区） | SOP-B 七步产物+判定书 |
 | 回测对象注册表（验收阈值预注册） | `docs/01_policies_and_standards/_registry/catalogs/backtest_backlog.yaml` | ✅ **必须入库** | 预注册=可审计真源，放登记表区（与 validation_method_registry.yaml 同区），禁放 data/ |
-| 节点验证台账（结论行） | ClickHouse `c1_backtest.node_verdict` | ❌（DB，已有备份体系） | DDL 真源 schemas/categories/backtest_node_verdict.py |
+| 节点验证台账（结论行） | ClickHouse `c1_backtest.node_verdict` | ❌（DB，已有备份体系） | DDL 真源 schemas/categories/backtest/backtest_node_verdict.py |
 | 策略快筛台账 | ClickHouse `c1_backtest.strategy_screen`（待建，R3） | ❌（同上） | DDL-as-Code 同模式 |
 | 策略级回测证据 | PG decisiongraph `decision_nodes` L5（evidence_hash） | ❌（DB） | MOD-BT-001 既有 |
 | 数据本体（行情/财报等） | 各 DS 条目登记的落点（data_asset_registry） | — | **run 目录内禁存数据本体**（§9.1） |

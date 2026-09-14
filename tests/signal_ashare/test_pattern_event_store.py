@@ -56,7 +56,7 @@ class _FakeClient:
 
 
 def _schema_columns() -> list[str]:
-    from schemas.categories.market_pattern_event import INSERT_COLUMNS
+    from schemas.categories.market.market_pattern_event import INSERT_COLUMNS
 
     body = INSERT_COLUMNS.strip().strip("()")
     return [c.strip() for c in body.split(",")]
@@ -143,7 +143,7 @@ def test_store_insert_uses_schema_columns_and_chunks():
     assert n == 7
     assert [len(c[1]) for c in fake.calls] == [3, 3, 1]  # 分块
     sql = fake.calls[0][0]
-    from schemas.categories.market_pattern_event import INSERT_COLUMNS
+    from schemas.categories.market.market_pattern_event import INSERT_COLUMNS
 
     assert sql == f"INSERT INTO c1_market.market_pattern_event {INSERT_COLUMNS} VALUES"
 

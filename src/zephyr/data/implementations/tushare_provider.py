@@ -889,7 +889,7 @@ class TushareProvider(IngestProviderBase):
 
     # ---- 北交所日K线（2026-08-25 BJDAILY 生产上线，kline_daily_bj 能力主源） ----
 
-    # kline_daily 16 列（对齐 schemas/categories/market_kline_daily.py INSERT_COLUMNS 列序）
+    # kline_daily 16 列（对齐 schemas/categories/kline/market_kline_daily.py INSERT_COLUMNS 列序）
     _KLINE_DAILY_BJ_COLUMNS = [
         "trade_date",
         "symbol",

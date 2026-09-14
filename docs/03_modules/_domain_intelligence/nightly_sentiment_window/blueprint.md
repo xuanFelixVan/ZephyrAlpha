@@ -41,7 +41,7 @@ def compute_nightly_sentiment(
 `NightlySentimentResult`（frozen dataclass，JSON 可序列化）：date（交易日=窗口归属日）/window_start/window_end + sentiment_index（夜间窗口综合情绪指数 [-1,1]=窗口平均极性，与 SentimentAggregator 口径一致）+ avg_polarity + positive/negative/neutral_count + total_count（news_id 去重后窗口新闻条数）+ top_events + linked_symbol_count/ambiguous_count/market_count（#139 关联覆盖统计）+ degraded（无新闻/读取异常；sentiment_index 按 0.0 中性处理）+ persisted/reasons 留痕。
 
 - `to_dict()` 含 **plan004_input 对接预留字段**（news_sentiment/news_total/degraded）——MOD-PLAN-004 overnight_boundary_reviser 当前无 news_sentiment 入参（实证 compute(trade_date, bs005_triggered=False)），消费接线由统筹后续波次裁定，**本模块不改 MOD-PLAN-004**
-- 落库：ReplacingMergeTree 同键（scope, symbol, window_type, window_ts）替换→重跑幂等；写表列序=DDL-as-Code 真源 schemas/categories/market_news_sentiment_window.py INSERT_COLUMNS
+- 落库：ReplacingMergeTree 同键（scope, symbol, window_type, window_ts）替换→重跑幂等；写表列序=DDL-as-Code 真源 schemas/categories/market/market_news_sentiment_window.py INSERT_COLUMNS
 - news_data 为 SCD 多版本表按 news_id 去重（keep first=最早版本 PIT 语义）
 
 ## 3. 不变量（头注 INVARIANTS 原文）

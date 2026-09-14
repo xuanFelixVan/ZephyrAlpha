@@ -156,7 +156,7 @@ class TestAggregateMarketTicks:
         assert mapped["data_source"] == "miniqmt" and mapped["degraded"] == 1
         # 与 schemas INSERT_COLUMNS 真源列序对账（防漂移）
         sys.path.insert(0, str(_REPO_ROOT))
-        from schemas.categories.market_breadth_snapshot import INSERT_COLUMNS
+        from schemas.categories.market.market_breadth_snapshot import INSERT_COLUMNS
 
         schema_cols = [c.strip() for c in INSERT_COLUMNS.strip().strip("()").split(",")]
         assert list(INSERT_COLUMN_NAMES) == schema_cols
@@ -323,7 +323,7 @@ class TestRegistration:
 
     def test_ddl_columns_match_schema(self):
         sys.path.insert(0, str(_REPO_ROOT))
-        from schemas.categories.market_breadth_snapshot import (
+        from schemas.categories.market.market_breadth_snapshot import (
             DATABASE,
             MARKET_BREADTH_SNAPSHOT_DDL,
             TABLE_NAME,

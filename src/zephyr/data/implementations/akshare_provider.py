@@ -594,7 +594,7 @@ _US_FUTURES_SINA_HEADERS: Final[dict[str, str]] = {
 _US_FUTURES_MAX_ATTEMPTS: Final[int] = 3
 _US_FUTURES_TIMEOUT_SEC: Final[int] = 12
 _US_FUTURES_RETRY_WAIT_SEC: Final[float] = 2.0
-# us_futures_intraday 表列序（与 schemas/categories/market_us_futures_intraday.py
+# us_futures_intraday 表列序（与 schemas/categories/market/market_us_futures_intraday.py
 # INSERT_COLUMNS 一致；MATERIALIZED 列 exchange/symbol_canonical 由 CH 派生不写入）
 _US_FUTURES_COLUMNS: Final[tuple[str, ...]] = (
     "trade_date",
@@ -625,7 +625,7 @@ _US_FUTURES_COLUMNS: Final[tuple[str, ...]] = (
 _INDEX_VALUATION_DEFAULT_SYMBOLS: Final[tuple[str, ...]] = ("000300", "000905", "399006")
 # 全量回填起点（S2 裁定：2010-01-01 起，覆盖 1250 交易日≈5年 CAPE 窗口所需历史深度）
 _INDEX_VALUATION_BACKFILL_START: Final[str] = "20100101"
-# index_valuation_daily 表列序（与 schemas/categories/market_index_valuation_daily.py
+# index_valuation_daily 表列序（与 schemas/categories/market/market_index_valuation_daily.py
 # INSERT_COLUMNS 一致；pb_mrq/pb_pct/broken_net_ratio/buffett_ratio 一期暂缺恒 None）
 _INDEX_VALUATION_COLUMNS: Final[tuple[str, ...]] = (
     "trade_date",
@@ -644,7 +644,7 @@ _INDEX_VALUATION_COLUMNS: Final[tuple[str, ...]] = (
     "data_source",
 )
 _A50_FUTURES_DEFAULT_SYMBOLS: Final[tuple[str, ...]] = ("CHA50CFD",)
-# a50_futures_daily 表列序（与 schemas/categories/market_a50_futures_daily.py
+# a50_futures_daily 表列序（与 schemas/categories/market/market_a50_futures_daily.py
 # INSERT_COLUMNS 一致；MATERIALIZED 列 exchange/symbol_canonical 由 CH 派生不写入；
 # 源无成交额字段，本表无 amount 列属有意为之）
 _A50_FUTURES_COLUMNS: Final[tuple[str, ...]] = (
@@ -7715,7 +7715,7 @@ class AkshareIngestProvider(IngestProviderBase):
 
     # ---- 北交所日K线（2026-08-25 BJDAILY 生产上线，kline_daily_bj 能力 akshare 备源） ----
 
-    # kline_daily 16 列（对齐 schemas/categories/market_kline_daily.py INSERT_COLUMNS 列序）
+    # kline_daily 16 列（对齐 schemas/categories/kline/market_kline_daily.py INSERT_COLUMNS 列序）
     _KLINE_DAILY_BJ_COLUMNS = [
         "trade_date",
         "symbol",

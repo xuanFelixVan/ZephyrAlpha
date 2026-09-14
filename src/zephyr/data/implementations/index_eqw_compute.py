@@ -119,7 +119,7 @@ class IndexEqwComputeProvider(IngestProviderBase):
 
     source_name = "internal"
 
-    # 输出行列顺序（与 schemas/categories/market_kline_index_calc.py INSERT_COLUMNS 对齐）
+    # 输出行列顺序（与 schemas/categories/kline/market_kline_index_calc.py INSERT_COLUMNS 对齐）
     _COLUMNS: Final = [
         "trade_date",
         "symbol",

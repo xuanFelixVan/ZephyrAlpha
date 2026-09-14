@@ -130,7 +130,7 @@ PIT_PUBLISH_LAG_DAYS = 20
 # 北向交易所（HK=南向，本备忘不采集）
 _NORTHBOUND_EXCHANGES = ("SH", "SZ")
 
-# 落表列顺序（与 schemas/categories/market_northbound_hold_snapshot.py INSERT_COLUMNS 一致；
+# 落表列顺序（与 schemas/categories/market/market_northbound_hold_snapshot.py INSERT_COLUMNS 一致；
 # ingested_at 由 CH DEFAULT now() 填充，不在写入列内）
 COLUMNS: Final = ["trade_date", "ts_code", "name", "hold_share", "hold_ratio", "exchange", "data_source"]
 

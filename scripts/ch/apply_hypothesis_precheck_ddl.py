@@ -1,7 +1,7 @@
 # [BLUEPRINT] MOD-BT-153 | docs/03_modules/_domain_backtest/blueprint.md
 # [MODULE] scripts.ch.apply_hypothesis_precheck_ddl
 # [DOMAIN] D_BACKTEST
-# [DEPENDENCIES] zephyr.infrastructure.database_service; schemas.categories.backtest_hypothesis_precheck
+# [DEPENDENCIES] zephyr.infrastructure.database_service; schemas.categories.backtest.backtest_hypothesis_precheck
 # [CONSUMERS] c1_backtest.hypothesis_precheck（表部署+逐列探针验证）
 # [STARTUP] manual
 # [MATURITY] experimental
@@ -25,7 +25,7 @@ import sys
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", "..", "src"))
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", ".."))
 
-from schemas.categories.backtest_hypothesis_precheck import (  # noqa: E402
+from schemas.categories.backtest.backtest_hypothesis_precheck import (  # noqa: E402
     BACKTEST_HYPOTHESIS_PRECHECK_DDL,
     DATABASE,
     TABLE_NAME,

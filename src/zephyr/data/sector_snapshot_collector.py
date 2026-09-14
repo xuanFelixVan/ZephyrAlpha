@@ -137,12 +137,12 @@ PUSH_POOL_LIMIT = 99
 BATCH_SIZE = 500
 
 # SQL 集中化（NO-BARE-SQL gate 豁免 SQL_ 前缀）
-# DDL 真源为 schemas/categories/market_sector_snapshot.py（裁定 #ARCH-SSOT-REFERENCE-INTEGRITY-001 Phase F 治本）
+# DDL 真源为 schemas/categories/market/market_sector_snapshot.py（裁定 #ARCH-SSOT-REFERENCE-INTEGRITY-001 Phase F 治本）
 # 消除内联 DDL 双真源：本文件与 apply_market_tables_ddl.py 都从同一 schema 文件导入。
 # 引擎从 MergeTree 迁移到 ReplacingMergeTree：高频写入（30秒轮询+99只推送）按 (sector_code,timestamp) 去重，
 # 直接 INSERT + 后台合并，符合 ch_writer.py §7.3 幂等性策略首选（MergeTree 写前 DELETE 留 mutations 累积）。
 try:
-    from schemas.categories.market_sector_snapshot import SECTOR_SNAPSHOT_DDL as SQL_CREATE_TABLE
+    from schemas.categories.market.market_sector_snapshot import SECTOR_SNAPSHOT_DDL as SQL_CREATE_TABLE
 except ImportError:
     # fallback: 内联定义（与 schema 文件保持一致，仅在 schemas/ 目录不在 sys.path 时使用）
     SQL_CREATE_TABLE = f"""

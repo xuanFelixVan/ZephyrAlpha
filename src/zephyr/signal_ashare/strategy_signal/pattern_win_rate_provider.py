@@ -1,7 +1,7 @@
 # [BLUEPRINT] MOD-SIG-145 | docs/03_modules/_domain_signal/pattern_event_stats/blueprint.md
 # [MODULE] zephyr.signal_ashare.strategy_signal.pattern_win_rate_provider
 # [DOMAIN] D_SIGNAL
-# [DEPENDENCIES] schemas.categories.market_pattern_win_rate(INSERT_COLUMNS 真源); zephyr.data.ch_writer(client,延迟加载)
+# [DEPENDENCIES] schemas.categories.market.market_pattern_win_rate(INSERT_COLUMNS 真源); zephyr.data.ch_writer(client,延迟加载)
 # [CONSUMERS] MOD-SIG-115 pattern_to_signal_mapper（historical_win_rate 注入契约）; unified_pattern_engine win_rate_provider 参数（W4 接线）; REG-PAT-001 evidence 回填（W4）
 # [STARTUP] imported
 # [MATURITY] design

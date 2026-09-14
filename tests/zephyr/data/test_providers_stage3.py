@@ -409,7 +409,7 @@ class TestTickFlowProvider:
             assert all(r.error is None for r in results)
             # tracker #247 回归：产出列必须与 us_index DDL INSERT_COLUMNS 真源一致
             # （symbol 填指数代码；原 index_code/etf_code 列与 DDL 不匹配导致 symbol 落空串）
-            from schemas.categories.market_us_index import INSERT_COLUMNS
+            from schemas.categories.market.market_us_index import INSERT_COLUMNS
 
             ddl_cols = [c.strip() for c in INSERT_COLUMNS.strip("()").split(",")]
             symbols_seen = set()

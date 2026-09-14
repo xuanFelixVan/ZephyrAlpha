@@ -1,11 +1,11 @@
 # [BLUEPRINT] MOD-SIG-145
 # [MODULE] scripts.ch.apply_pattern_event_ddl
 # [DOMAIN] D_SIGNAL
-# [DEPENDENCIES] zephyr.data.ch_writer; schemas.categories.market_pattern_event
+# [DEPENDENCIES] zephyr.data.ch_writer; schemas.categories.market.market_pattern_event
 # [CONSUMERS] src/zephyr/signal_ashare/strategy_signal/pattern_event_store.py（写入口）；W2 回填/W4 增量任务前置
 # [STARTUP] manual
 # [MATURITY] design
-# [INVARIANTS] DDL-as-Code: market_pattern_event DDL 真源为 schemas/categories/market_pattern_event.py；本脚本只执行 IF NOT EXISTS 幂等建表，禁止改列/删数据
+# [INVARIANTS] DDL-as-Code: market_pattern_event DDL 真源为 schemas/categories/market/market_pattern_event.py；本脚本只执行 IF NOT EXISTS 幂等建表，禁止改列/删数据
 # [MODIFY-GUARD] none
 # [STABILITY] evolving
 # [SAFETY] L
@@ -15,7 +15,7 @@
 # [TTL] permanent
 """market_pattern_event 建表 DDL 部署 + 验证脚本（MOD-SIG-145 W1）。
 
-DDL 真源：schemas/categories/market_pattern_event.py（DDL-as-Code）。
+DDL 真源：schemas/categories/market/market_pattern_event.py（DDL-as-Code）。
 蓝图：docs/03_modules/_domain_signal/pattern_event_stats/blueprint.md
 （2026-09-14 图形库全链批立项）。
 
@@ -33,7 +33,7 @@ import sys
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", "..", "src"))
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", ".."))
 
-from schemas.categories.market_pattern_event import (  # noqa: E402
+from schemas.categories.market.market_pattern_event import (  # noqa: E402
     MARKET_PATTERN_EVENT_DDL,
     TABLE_NAME,
 )

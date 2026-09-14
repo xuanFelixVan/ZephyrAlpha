@@ -5,7 +5,7 @@ title: TDM 节点验证 runner（validation）
 owner: ZephyrAlpha-Owner
 language: zh
 status: active
-version: "1.1.2"
+version: "1.1.3"
 date: 2026-09-10
 topic: tdm_validation_runner
 scope: module
@@ -34,7 +34,7 @@ config/trading_decision_map.yaml（L4 节点清单 / flow==exit_flow X 流 18 �
 data/backtest_artifacts/bt-*.json（成交流水 trade_log；T1 起含 decision_price/order_type）
 src/zephyr/trading/validation/ablation.py（T2 信号消融对照器，exit_counterfactual 对照数据源——回放受 §12 约束）
 docs/01_policies_and_standards/_registry/catalogs/validation_method_registry.yaml（方法推导+土规参数）
-  → runner.run() → c1_backtest.node_verdict（schemas/categories/backtest_node_verdict.py DDL 真源）
+  → runner.run() → c1_backtest.node_verdict（schemas/categories/backtest/backtest_node_verdict.py DDL 真源）
   → /api/tdm/validation（只读端点）→ tdm 抽屉「验证档案」区
 ```
 
@@ -100,8 +100,8 @@ report = run_validation()               # 写台账
 
 | 文件路径 | 实现状态 | 说明 |
 |---------|:---:|------|
-| `schemas/categories/backtest_node_verdict.py` | ✅ 已实现 | |
-| `schemas/categories/backtest_strategy_screen.py` | ✅ 已实现 | |
+| `schemas/categories/backtest/backtest_node_verdict.py` | ✅ 已实现 | |
+| `schemas/categories/backtest/backtest_strategy_screen.py` | ✅ 已实现 | |
 | `src/zephyr/trading/validation/__init__.py` | ⚠️ 骨架 | |
 | `src/zephyr/trading/validation/ablation.py` | ✅ 已实现 | |
 | `src/zephyr/trading/validation/decay_watch.py` | ✅ 已实现 | |

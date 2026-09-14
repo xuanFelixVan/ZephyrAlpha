@@ -5,7 +5,7 @@
 # [CONSUMERS] zephyr.data.tick_subscriber; zephyr.data.implementations.tick_depth_backfill
 # [STARTUP] imported
 # [MATURITY] stable
-# [INVARIANTS] 五档 30 列行装配唯一真源（实时 tick dict 路径 depth_row_from_tick / xtquant DataFrame 路径共用 build 语义）；列序与 schemas/categories/market_tick_depth_5.py INSERT_COLUMNS 严格一致；只产出 tuple 不做 IO；纯码 symbol（与 tick_data 同构）；quality_flag=1 需 price 且 bid1/ask1 齐
+# [INVARIANTS] 五档 30 列行装配唯一真源（实时 tick dict 路径 depth_row_from_tick / xtquant DataFrame 路径共用 build 语义）；列序与 schemas/categories/intraday/market_tick_depth_5.py INSERT_COLUMNS 严格一致；只产出 tuple 不做 IO；纯码 symbol（与 tick_data 同构）；quality_flag=1 需 price 且 bid1/ask1 齐
 # [MODIFY-GUARD] schema-change
 # [STABILITY] stable
 # [SAFETY] L

@@ -20,7 +20,7 @@
     节点清单   config/trading_decision_map.yaml（layer==L4，排除币圈镜像 TDM-C-*）
     成交流水   data/backtest_artifacts/bt-*.json 的 trade_log（run 级回测产物）
     方法学     docs/.../catalogs/validation_method_registry.yaml（五类方法+土规+holdout 参数）
-    台账       c1_backtest.node_verdict（DDL 真源 schemas/categories/backtest_node_verdict.py）
+    台账       c1_backtest.node_verdict（DDL 真源 schemas/categories/backtest/backtest_node_verdict.py）
 
 铁律落地（Owner 2026-09-09 裁定 §7.3）:
     1. holdout 窗口排除最近 12 个月——窗口内流水不参与任何指标计算与结论。

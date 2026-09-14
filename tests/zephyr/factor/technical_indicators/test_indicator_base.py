@@ -257,9 +257,9 @@ class TestAutodiscover:
 def _parse_ddl_indicator_columns() -> set[str]:
     """从 schemas DDL 解析所有 Nullable(Float64) 指标列名。
 
-    真源：schemas/categories/market_technical_indicator.py MARKET_TECHNICAL_INDICATOR_DDL
+    真源：schemas/categories/market/market_technical_indicator.py MARKET_TECHNICAL_INDICATOR_DDL
     """
-    from schemas.categories.market_technical_indicator import (
+    from schemas.categories.market.market_technical_indicator import (
         MARKET_TECHNICAL_INDICATOR_DDL,
     )
 

@@ -11,6 +11,9 @@
   crypto/       crypto_*（币圈，战略扩面域，预铺增长路径）
   intraday/     盘中微结构簇（tick/l2/竞价/大宗/成交回报/资金流/实时快照，10+ 文件）
   meta/         参考元数据（meta_stock_profile_ths）
+  market/       market_*（行情与另类数据，92+ 文件，2026-09-14 第二批；不含 kline/ 与 intraday/ 已持有前缀）
+  backtest/     backtest_*（回测域，4 文件，2026-09-14 第二批，对齐 D_BACKTEST）
+  macro/        macro_*（宏观，2 文件，2026-09-14 第二批）
   （根）        杂项参考数据区——异质本体（指数/板块/融资融券/日历/ST/龙虎榜/
                 港美股/可转债/期权期货等），非债，封顶型
 
@@ -23,6 +26,9 @@
      crypto_*                 -> crypto/
      盘中微结构（tick/l2/auction/block/execution/trade_report/money_flow/realtime）
                               -> intraday/
+     market_*（非 kline/非盘中微结构） -> market/
+     backtest_*               -> backtest/
+     macro_*                  -> macro/
      其余杂项参考数据          -> 根（根目录为封顶型，T_soft=120 资格依据本约定）
   3. 本目录为 ClickHouse DDL-as-Code SSoT（每文件恰一个 *_DDL 常量）；
      PostgreSQL 侧 ig_* 表 DDL 走 scripts/industry_graph/apply_industry_graph_ddl.py
@@ -31,16 +37,9 @@
 对账链：verify_schema_truth.py / lint_symbol_convention.py 按 rglob 递归枚举本目录。
 """
 
-# 【GOV-DOC-018 命名约定（T_soft=120 资格声明，2026-09-13 DEDUP/平铺债批）】
-# 本目录 76 个 .py 按文件名前缀簇管理命名规则（模块地图如下）。
-# 前缀簇（top12）：
-#   - market_* (68 件)
-#   - macro_* (2 件)
-#   - backnode_* (1 件)
-#   - backstrategy_* (1 件)
-#   - cross_* (1 件)
-#   - factor_* (1 件)
-#   - meta_* (1 件)
-#   - regime_* (1 件)
+# 【GOV-DOC-018 命名约定（T_soft=120 资格声明，2026-09-14 第二批拆分后更新）】
+# 根目录 8 个业务 .py（+1 __init__.py）为封顶型杂项参考数据区，按文件名前缀簇管理命名规则（模块地图如下）。
+# 前缀簇（现存）：cross_* (1)、factor_* (1)、meta_* (2)、regime_* (1)、sim_* (3)
 # 约定：新增文件必须延续所属簇前缀；新簇须先在本约定登记再落文件；
+# market_*/backtest_*/macro_* 一律不入根（2026-09-14 起分属 market/ backtest/ macro/ 子目录）；
 # 单簇超过 20 件时应拆子目录（参照 tests/signal_ashare 拆分先例）。

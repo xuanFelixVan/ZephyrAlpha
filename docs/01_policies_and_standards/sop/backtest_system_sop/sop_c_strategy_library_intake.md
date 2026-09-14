@@ -97,7 +97,7 @@ related_issues:
 **门槛定义**：外部策略进入 sim/paper（模拟盘/纸面）候选前，必须同时满足：
 1. IS 窗口（冻结 2020-2023）Sharpe > 0；
 2. 每一段样本外复测窗口（OOS 2024-2026、2016-2019、及未来新增段）Sharpe > 0；
-3. 年衰减率 oos_years_decay < 0.5（>=0.5 判存疑，土规真源=schemas/categories/backtest_strategy_screen.py DDL 注释）。
+3. 年衰减率 oos_years_decay < 0.5（>=0.5 判存疑，土规真源=schemas/categories/backtest/backtest_strategy_screen.py DDL 注释）。
 
 **净零声明**：本条非新增规范对象——是 backtest_strategy_screen DDL `oos_years_decay` 存疑土规（>=0.5）
 与 BT-P0-002 decay_watch 框架在策略入库线的显式化合并；执行工具=strategy_screen_query.py bothwin

@@ -114,7 +114,7 @@ ALT_SOURCES: tuple[AltSourceSpec, ...] = (
         privacy_impact="none（聚合评价指标，无个人信息）",
         review_evidence={
             "license_cleared": (True, "东财公开展示数据+个人研究用途（SRC-AKSHARE-ALT-001 compliance 字段）"),
-            "attribution_recorded": (True, "data_asset_registry DS-230/JOB-092；DDL schemas/categories/market_alt_stock_comment.py"),
+            "attribution_recorded": (True, "data_asset_registry DS-230/JOB-092；DDL schemas/categories/market/market_alt_stock_comment.py"),
             "no_personal_data": (True, "全表为股票级聚合评价指标（关注指数/得分/排名），无任何个人信息字段"),
             "rate_limit_declared": (True, "provider meta.rate_limit_default=60 RPM，_call_with_policy 统一限频重试"),
             "no_redistribution": (True, "SRC-AKSHARE-ALT-001 license_scope=public_reference_data 承诺不转售不分发"),
@@ -138,7 +138,7 @@ ALT_SOURCES: tuple[AltSourceSpec, ...] = (
         privacy_impact="none（市场指数，无个人信息）",
         review_evidence={
             "license_cleared": (True, "公开运价指数（波罗的海交易所/金十公开页），无获取许可壁垒"),
-            "attribution_recorded": (True, "data_asset_registry DS-231/JOB-093/094；DDL schemas/categories/market_alt_shipping_index.py"),
+            "attribution_recorded": (True, "data_asset_registry DS-231/JOB-093/094；DDL schemas/categories/market/market_alt_shipping_index.py"),
             "no_personal_data": (True, "市场指数值，无个人信息"),
             "rate_limit_declared": (True, "provider meta.rate_limit_default=60 RPM，_call_with_policy 统一限频重试"),
             "no_redistribution": (True, "SRC-AKSHARE-ALT-001 license_scope=public_reference_data 承诺不转售不分发"),

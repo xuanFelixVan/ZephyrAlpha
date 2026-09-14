@@ -140,7 +140,7 @@ NIGHT_WINDOW_END_HOUR: Final = 8  # 交易日 08:00 止（不含，左闭右开�
 WINDOW_TYPE_NIGHT: Final = "night"
 SCOPE_MARKET: Final = "market"
 
-# 目标表（DDL-as-Code 真源 schemas/categories/market_news_sentiment_window.py；
+# 目标表（DDL-as-Code 真源 schemas/categories/market/market_news_sentiment_window.py；
 # 本模块为写入器，列序必须与真源 INSERT_COLUMNS 一致——business_data_categories.yaml
 # 品类补登为统筹后续项，暂用常量表名，与 overnight_boundary_reviser fallback 同约定）
 _TARGET_TABLE: Final = "c1_market.news_sentiment_window"

@@ -1,11 +1,11 @@
 # [BLUEPRINT] MOD-L03-001
 # [MODULE] scripts.ch.apply_signal_history_ddl
 # [DOMAIN] D_SIGNAL
-# [DEPENDENCIES] zephyr.data.ch_writer; schemas.categories.market_signal_history
+# [DEPENDENCIES] zephyr.data.ch_writer; schemas.categories.market.market_signal_history
 # [CONSUMERS]
 # [STARTUP] manual
 # [MATURITY] production
-# [INVARIANTS] DDL-as-Code: market_signal_history DDL 真源为 schemas/categories/market_signal_history.py
+# [INVARIANTS] DDL-as-Code: market_signal_history DDL 真源为 schemas/categories/market/market_signal_history.py
 # [MODIFY-GUARD] none
 # [STABILITY] evolving
 # [SAFETY] L
@@ -15,7 +15,7 @@
 # [TTL] permanent
 """market_signal_history 建表 DDL 部署 + 验证脚本（#BT-PIPELINE-001 阶段三）。
 
-DDL 真源：schemas/categories/market_signal_history.py（DDL-as-Code）。
+DDL 真源：schemas/categories/market/market_signal_history.py（DDL-as-Code）。
 Owner 批准：2026-09-01 会话（选型 C=一张窄表两管道调研报告裁定）。
 
 用法::
@@ -32,7 +32,7 @@ import sys
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", "..", "src"))
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", ".."))
 
-from schemas.categories.market_signal_history import (  # noqa: E402
+from schemas.categories.market.market_signal_history import (  # noqa: E402
     MARKET_SIGNAL_HISTORY_DDL,
     TABLE_NAME,
 )

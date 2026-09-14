@@ -137,7 +137,7 @@ SQL_CURRENT_ST_CODES: Final = (
 
 _PRICE_TICK: Final = Decimal("0.01")
 
-# INSERT 列名清单（与 schemas/categories/market_breadth_snapshot.py INSERT_COLUMNS 列序一一对应；
+# INSERT 列名清单（与 schemas/categories/market/market_breadth_snapshot.py INSERT_COLUMNS 列序一一对应；
 # 本模块为采集侧列序真源——schemas 目录不在 provider 运行 sys.path 时不可导入，
 # 列序漂移由 tests/zephyr/data/test_market_breadth_snapshot.py 对账断言兜底）
 INSERT_COLUMN_NAMES: Final = [
@@ -306,7 +306,7 @@ def build_insert_row(
         degraded: 降级标记（0=正常，1=ST 集缺失按非 ST 幅度近似）。
 
     Returns:
-        tuple，列序对齐 schemas/categories/market_breadth_snapshot.py INSERT_COLUMNS。
+        tuple，列序对齐 schemas/categories/market/market_breadth_snapshot.py INSERT_COLUMNS。
     """
     return (
         trade_date,

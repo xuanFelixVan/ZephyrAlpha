@@ -8,7 +8,7 @@
   to_dict JSON 可序列化 + plan004_input 对接预留字段
 - 标的关联统计：注入 linker 后 linked/ambiguous/market 级计数
 - 写表幂等：persist=True mock writer，两次调用同键（scope/symbol/window_type/window_ts 一致），
-  列序与 schemas/categories/market_news_sentiment_window.py INSERT_COLUMNS 真源一致
+  列序与 schemas/categories/market/market_news_sentiment_window.py INSERT_COLUMNS 真源一致
 - 降级路径：collect_news 异常 / 窗口空 → degraded 不抛；非法 trade_date → ValueError
 - analyzer 持久化钩子：persist_windows 行结构 / 默认关 / 异常降级 False
 全部 mock（collect_news / writer），不触网不触库。
@@ -37,7 +37,7 @@ from zephyr.intelligence.nightly_sentiment_window import (
 _ROOT = pathlib.Path(__file__).resolve().parents[2]
 if str(_ROOT) not in sys.path:
     sys.path.insert(0, str(_ROOT))
-from schemas.categories.market_news_sentiment_window import INSERT_COLUMNS  # noqa: E402
+from schemas.categories.market.market_news_sentiment_window import INSERT_COLUMNS  # noqa: E402
 
 TRADE_DATE = "2026-08-19"  # 周三；窗口=[2026-08-18 18:00, 2026-08-19 08:00)
 

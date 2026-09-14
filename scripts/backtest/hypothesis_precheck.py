@@ -1,7 +1,7 @@
 # [BLUEPRINT] MOD-BT-091 | docs/03_modules/_domain_backtest/blueprint.md
 # [MODULE] scripts.backtest.hypothesis_precheck
 # [DOMAIN] D_BACKTEST
-# [DEPENDENCIES] pandas; zephyr.integration.local_model.ollama_chat; zephyr.data.ch_config; schemas.categories.backtest_hypothesis_precheck
+# [DEPENDENCIES] pandas; zephyr.integration.local_model.ollama_chat; zephyr.data.ch_config; schemas.categories.backtest.backtest_hypothesis_precheck
 # [CONSUMERS] 策略生产全景图 FAC-E2 假说预审逻辑门；E3 构造排产（只消费 precheck_passed）；
 #   c1_backtest.hypothesis_precheck（判定记录台账）
 # [STARTUP] manual
@@ -72,7 +72,7 @@ SQL_ALREADY = "SELECT DISTINCT candidate_id FROM {table}"
 
 def _table() -> str:
     """台账全限定表名（SSOT=DDL-as-Code schema 常量，学 strategy_screen_query 先例）。"""
-    from schemas.categories.backtest_hypothesis_precheck import DATABASE, TABLE_NAME
+    from schemas.categories.backtest.backtest_hypothesis_precheck import DATABASE, TABLE_NAME
 
     return f"{DATABASE}.{TABLE_NAME}"
 
@@ -195,7 +195,7 @@ def insert_verdicts(rows: list[dict]) -> int:
     """判定行写台账（writer 通道；返回写入行数）。"""
     if not rows:
         return 0
-    from schemas.categories.backtest_hypothesis_precheck import INSERT_COLUMNS
+    from schemas.categories.backtest.backtest_hypothesis_precheck import INSERT_COLUMNS
     from zephyr.data.ch_writer import get_client_strict
 
     cli = get_client_strict()

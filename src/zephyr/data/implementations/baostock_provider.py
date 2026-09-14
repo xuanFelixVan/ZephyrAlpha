@@ -339,7 +339,7 @@ class BaostockProvider(IngestProviderBase):
         """
         bs = self._tls.bs
         table = payload.table or _TBL_KLINE_DAILY
-        # #219 列名对齐 kline_daily schema（真源 schemas/categories/market_kline_daily.py）：
+        # #219 列名对齐 kline_daily schema（真源 schemas/categories/kline/market_kline_daily.py）：
         # 此前透传 baostock 原始列名 date/code——写层 write_result 按列名交集过滤后
         # 仅剩 6 价格列，date/code 被丢弃 → CH 侧键列落 DEFAULT 产 symbol=''/
         # trade_date=1970-01-01 垃圾键行。映射 date→trade_date、code→symbol；

@@ -120,7 +120,7 @@ class IndexValuationComputeProvider(IngestProviderBase):
         known_issues=[],
     )
 
-    # 输出行列顺序（与 schemas/categories/market_index_valuation_daily.py INSERT_COLUMNS 对齐）
+    # 输出行列顺序（与 schemas/categories/market/market_index_valuation_daily.py INSERT_COLUMNS 对齐）
     _COLUMNS: Final = [
         "trade_date",
         "symbol",

@@ -1,7 +1,7 @@
 # [BLUEPRINT] MOD-L03-001 | docs/03_modules/_domain_signal/blueprint.md
 # [MODULE] zephyr.signal_ashare.signal_history_writer
 # [DOMAIN] D_SIGNAL
-# [DEPENDENCIES] schemas.categories.market_signal_history(DDL/INSERT_COLUMNS 真源); zephyr.data.ch_writer(client,延迟加载)
+# [DEPENDENCIES] schemas.categories.market.market_signal_history(DDL/INSERT_COLUMNS 真源); zephyr.data.ch_writer(client,延迟加载)
 # [CONSUMERS] scripts/run_backtest.py(管道A strategy_weight); scripts/compute_signals.py(管道B factor_synth)
 # [STARTUP] imported
 # [MATURITY] production
@@ -54,14 +54,14 @@ _VALID_DIRECTIONS = ("buy", "sell", "hold", "neutral")
 def _insert_columns() -> str:
     """列序真源导入（schemas 包居仓根，非 src/——调用方 sys.path 不含仓根时自适应）。"""
     try:
-        from schemas.categories.market_signal_history import INSERT_COLUMNS
+        from schemas.categories.market.market_signal_history import INSERT_COLUMNS
 
         return INSERT_COLUMNS
     except ImportError:
         repo_root = Path(__file__).resolve().parents[3]
         if str(repo_root) not in sys.path:
             sys.path.insert(0, str(repo_root))
-        from schemas.categories.market_signal_history import INSERT_COLUMNS
+        from schemas.categories.market.market_signal_history import INSERT_COLUMNS
 
         return INSERT_COLUMNS
 
