@@ -1464,7 +1464,7 @@ scripts:
   dimensions: []
 - name: ch/apply_pattern_event_ddl.py
   path: ch/apply_pattern_event_ddl.py
-  description: DDL 真源：schemas/categories/market_pattern_event.py（DDL-as-Code）。
+  description: DDL 真源：schemas/categories/market/market_pattern_event.py（DDL-as-Code）。
   domain: ch
   execution_plane: warm-path
   status: registered
@@ -1472,7 +1472,7 @@ scripts:
   dimensions: []
 - name: ch/apply_pattern_win_rate_ddl.py
   path: ch/apply_pattern_win_rate_ddl.py
-  description: DDL 真源：schemas/categories/market_pattern_win_rate.py（DDL-as-Code）。
+  description: DDL 真源：schemas/categories/market/market_pattern_win_rate.py（DDL-as-Code）。
   domain: ch
   execution_plane: warm-path
   status: registered
@@ -1512,7 +1512,7 @@ scripts:
   dimensions: []
 - name: ch/apply_signal_history_ddl.py
   path: ch/apply_signal_history_ddl.py
-  description: DDL 真源：schemas/categories/market_signal_history.py（DDL-as-Code）。
+  description: DDL 真源：schemas/categories/market/market_signal_history.py（DDL-as-Code）。
   domain: ch
   execution_plane: warm-path
   status: registered
