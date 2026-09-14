@@ -76,4 +76,19 @@ ttl: task_bound
 - 冷启动五件套全跑（env 3.12.8/reaper 活/lookup 审计 st-chinfra-20260914/claim 30 文件/逐文件 ast.parse）
 - 热文件 ch_writer.py 走 safe_write_text CAS（LF 归一 base hash），其余逐文件写后进程外核验
 - 会话级 `git add` 两次误吸他会话文件（eval_exp_expectations/eval_f2_layers_styles/lane_e_enhanced/build_consensus_daily）当即 `git restore --staged` 剔除，最终暂存区=本批 52 文件
-- 提交走 git_commit.py 正门；commit 后 `git log -1 --name-only` 复核真实归属
+- 提交经 git_commit.py 正门落地（队列 8 次尝试因 serializer worktree 快照不 staging 的 ALGO-NOTE 误判全灭，已改走正门；见 §七）；commit 后 `git log -1 --name-only` 复核真实归属
+
+## 七、落库回执（终版）
+
+| 批次 | hash | 内容 |
+|---|---|---|
+| 主批 | `921cfe13ac` | 48 文件（核心层+backtest+ch+misc+测试+报告） |
+| 收尾批 | `fe9cdc93` | 地图 note_confirmed + sector_ranking_engine 注释（ALGO-NOTE-SYNC 显式确认通道） |
+
+**搭车归属交底**（暂存区传送带，内容全部在 HEAD，零丢失）：
+- `scripts/backtest/c4_batch_screen.py` 改动随 st-c4tail 的 297fd8b900 入库
+- `scripts/ch/apply_consensus_daily_ddl.py` 改动随 st-expectation 的 56e9183b73 入库
+- capability_canonical_file_registry 的 creation_token 行随 st-patwire 的 19f569352e 入库
+- 收尾批吸收 st-mktfix 在途的 TDM-X-R1 note_confirmed 一行（其外审整改件，叠加型两行都留）
+
+**队列死因备忘（移交基建专班）**：serializer worktree 落地时序=写快照→跑门禁→（staging 在后），凡批次含"地图 YAML+module_ref 代码"组合必被 ALGO-NOTE-SYNC 误杀（staged diff 恒空）；0004 次落地又因 governance.db-journal 文件锁 git clean 失败留下脏 worktree。建议：landing 先 `git add` 全清单再跑门禁。
