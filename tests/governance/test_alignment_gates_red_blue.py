@@ -197,7 +197,12 @@ class TestRedBusinessRegistry:
 
 
 class TestRedBattleMap:
-    """红队：作战地图 report 注入 → 硬判定三连阻断。"""
+    """红队：作战地图 report 注入 → 硬判定阻断。
+
+    2026-09-15 件5 分级调整：ghost_anchors 硬→软（PG 状态非 git 状态，提交人无
+    agency——写入端 apply_battle_map.op_add_anchor 已强制存在性校验防复发，
+    anchor 674 连坐事故实证）；孤儿环节/缺失叙事保持硬（修复面在 git 文件）。
+    """
 
     @staticmethod
     def _report(**overrides) -> SimpleNamespace:
@@ -213,9 +218,12 @@ class TestRedBattleMap:
         base.update(overrides)
         return SimpleNamespace(**base)
 
-    def test_r7_ghost_anchor_blocked(self) -> None:
-        hard, _ = evaluate_battle_map_report(self._report(ghost_anchors=[{"anchor_id": 1}]))
-        assert any("BM-INV-002" in h for h in hard)
+    def test_r7_ghost_anchor_now_soft(self) -> None:
+        """幽灵锚点降级回归：warn 不阻断，且 soft 消息必须指向清理命令。"""
+        hard, soft = evaluate_battle_map_report(self._report(ghost_anchors=[{"anchor_id": 1}]))
+        assert hard == []
+        assert any("BM-INV-002" in s for s in soft)
+        assert any("remove-anchor" in s for s in soft)
 
     def test_r7_orphan_step_blocked(self) -> None:
         hard, _ = evaluate_battle_map_report(self._report(orphan_steps=[{"step_id": "BM-GHOST-99"}]))
@@ -390,9 +398,11 @@ class TestV11PortfolioFlow:
 
         dm = load_decision_map(_REPO / "config" / "trading_decision_map.yaml")
         # 2026-09-12 对齐权威现状（任务 A 四批落地后 TDM 演进：schema 1.2，portfolio_flow 13 节点）
+        # 2026-09-15 sleeve 数 8→14（币圈扩容批追加 6 sleeve 后未同步本测试；断言改结构不变量：
+        # 基数 8 为 founding 计划下限，扩容只增不减；权重和=1 与 confidence 才是承重断言）
         assert dm.schema_version == "1.2"
         assert dm.portfolio_plan is not None
-        assert len(dm.portfolio_plan.sleeves) == 8
+        assert len(dm.portfolio_plan.sleeves) >= 8
         assert abs(sum(s.weight for s in dm.portfolio_plan.sleeves) - 1.0) < 1e-9
         assert dm.portfolio_plan.confidence == "proposed"
         c_nodes = [n for n in dm.nodes if n.flow == "portfolio_flow"]

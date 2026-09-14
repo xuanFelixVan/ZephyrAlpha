@@ -5,7 +5,7 @@
 # [CONSUMERS] zephyr.gov_enforcement.rule_bridge.git_commit_gateway.GitCommitGateway.__init__（经 in_process_gate_registry.yaml 自动注册）
 # [STARTUP] imported
 # [MATURITY] testing
-# [INVARIANTS] 硬阻断（文件触发）——staged 触及作战地图相关路径（module_translation_registry/battle_map_domain_policy/align_battle_map/apply_battle_map/src battle_map 代码）时跑七类对齐：ghost_anchors(BM-INV-002)>0 / orphan_steps 违规(BM-INV-001，acknowledged 已排除)>0 / missing_narratives(BM-INV-003)>0 → 阻断；domain_drifts/dangling_edges/parent_child/orphan_modules 保持 warn（孤儿模块 457=血肉阶段清淤campaign，G4）；基线 0 已实证（2026-09-05 G3 驱零后）；PG 异常=fail-open（对标 panorama gate 惯例）
+# [INVARIANTS] 混合分级（文件触发）——staged 触及作战地图相关路径（module_translation_registry/battle_map_domain_policy/align_battle_map/apply_battle_map/src battle_map 代码）时跑七类对齐：违规孤儿环节(BM-INV-001，acknowledged 已排除)>0 / missing_narratives(BM-INV-003)>0 → 阻断（git 可见状态，提交人 touch 触发路径即有 agency 修复）；ghost_anchors(BM-INV-002) 2026-09-15 硬→软降级（PG 状态非 git 状态，提交人无 agency——写入端 apply_battle_map.op_add_anchor 已强制存在性校验防复发，治理上报件5；anchor 674 连坐事故实证）；domain_drifts/dangling_edges/parent_child/orphan_modules 保持 warn（孤儿模块 457=血肉阶段清淤campaign，G4）；基线 0 已实证（2026-09-05 G3 驱零后）；PG 异常=fail-open（对标 panorama gate 惯例）
 # [MODIFY-GUARD] gate_id="GATE-BATTLE-MAP-ALIGNMENT"；触发路径清单变更须同步 trae_080
 # [STABILITY] evolving
 # [SAFETY] L
@@ -112,13 +112,23 @@ _TRIGGER_DIR_PARTS = ("battle_map",)
 def evaluate_battle_map_report(report: Any) -> tuple[list[str], list[str]]:
     """纯判定：report → (hard_list, soft_list)。
 
-    硬=ghost_anchors / 违规孤儿环节 / 缺失叙事（确定性、基线 0，G3 升硬）。
-    软=域漂移/悬空边/父子嵌套/孤儿模块（warn，G4 清淤 campaign 承载）。
+    硬=违规孤儿环节 / 缺失叙事（git 可见状态——修复面在 module_translation_registry.yaml /
+    battle_map_domain_policy.yaml，提交人 touch 触发路径即有 agency 修复，基线 0）。
+    软=幽灵锚点（2026-09-15 降级，治理上报件5）+域漂移/悬空边/父子嵌套/孤儿模块。
+
+    幽灵锚点降级裁定（第一性原理）：ghost 是 PG 状态而非 git 状态——提交时点它已存在
+    于 DB，触发路径提交人既没造成也无 agency 修复（宪法 §3 own-diff 原则：外来违规
+    warn+审计不阻断无辜提交人；2026-09-14 anchor 674 连坐事故实证）。防复发正解已
+    前移到写入时（apply_battle_map.op_add_anchor 强制 target 存在性校验，2026-09-15
+    同批落地），提交时检测降为 warn+指向清理命令，存量复测归 align_battle_map.py。
     """
     hard: list[str] = []
     soft: list[str] = []
     if report.ghost_anchors:
-        hard.append(f"幽灵锚点（BM-INV-002）={len(report.ghost_anchors)}: {report.ghost_anchors[:5]}")
+        soft.append(
+            f"幽灵锚点（BM-INV-002）={len(report.ghost_anchors)}: {report.ghost_anchors[:5]}"
+            "（PG 状态非本提交产物——写入端已强制存在性校验；清理=apply_battle_map.py --remove-anchor --anchor-id <id>）"
+        )
     if report.orphan_steps:
         hard.append(
             f"违规孤儿环节（BM-INV-001，acknowledged 已排除）={len(report.orphan_steps)}: "

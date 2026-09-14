@@ -36,7 +36,8 @@ apply_battle_map.py — 作战地图写入入口（对标 apply_decisiongraph.py
 
 四条承重墙不变量（BM-INV-001~004）在写入时校验：
   - BM-INV-001: 环节无锚点=悬空决策（君子协定，align_battle_map.py 告警，写入时不阻断）
-  - BM-INV-002: 锚点 target_id 必须能在 target_graph 找到（add_anchor 时可选校验，--strict-target-check）
+  - BM-INV-002: 锚点 target_id 必须能在 target_graph 找到（add_anchor 时强制校验，2026-09-15
+    幽灵锚点防复发治本；与 align_battle_map._GRAPH_COLLECTORS 共用存在性真源；源不可用 fail-open）
 
 pg_advisory_lock key：
   depgraph       = 424242
@@ -323,7 +324,12 @@ def op_add_anchor(
     """添加锚点（环节↔模块/候选/蓝图双向关联）。
 
     BM-INV-001: 环节无锚点=悬空决策（君子协定，align_battle_map.py 告警）。
-    BM-INV-002: target_id 存在性校验由 align_battle_map.py 批量做（跨图校验，apply 不阻断）。
+    BM-INV-002: target_id 存在性校验**写入时强制**（2026-09-15 幽灵锚点防复发治本，
+    治理上报件5）——复用 align_battle_map._GRAPH_COLLECTORS 同一存在性真源，
+    ghost 在源头结构性不可能产生。历史教训：anchor 674（2026-09-14 02:07 批量创建，
+    target_id_not_found）因写入零校验入库，GATE-BATTLE-MAP-ALIGNMENT 全仓连坐阻断
+    无辜提交人。检测真源不可用时 fail-open 放行（与 align 批量检测同惯例），
+    存量复测仍归 align_battle_map.py。
     """
     if target_graph not in _VALID_TARGET_GRAPHS:
         raise ValueError(f"target_graph '{target_graph}' 不合法，合法值: {sorted(_VALID_TARGET_GRAPHS)}")
@@ -331,6 +337,19 @@ def op_add_anchor(
         raise ValueError(f"target_role '{target_role}' 不合法，合法值: {sorted(_VALID_TARGET_ROLES)}")
     if not target_id:
         raise ValueError("target_id 必填")
+
+    # BM-INV-002 写入时存在性校验（与 align 批量检测共用 _GRAPH_COLLECTORS 真源，永不漂移）
+    from align_battle_map import _GRAPH_COLLECTORS
+
+    collector = _GRAPH_COLLECTORS.get(target_graph)
+    if collector is not None:
+        valid_ids, available = collector()
+        if available and target_id not in valid_ids:
+            raise ValueError(
+                f"target_id '{target_id}' 在 target_graph '{target_graph}' 中不存在"
+                f"（BM-INV-002 幽灵锚点写入拦截；先创建目标/核对 id 再挂锚，"
+                f"存量清理=apply_battle_map.py --remove-anchor）"
+            )
 
     with conn.cursor(cursor_factory=RealDictCursor) as cur:
         # 校验 step_id 存在
