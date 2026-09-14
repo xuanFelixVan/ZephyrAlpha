@@ -167,6 +167,16 @@ _DESIGN_MEMO_PREFIX = "docs/02_enterprise_architecture/07_trading_decision_archi
 _KNOWN_QUARANTINE_CAP = 500  # known_quarantine 登记上限（防状态文件膨胀）
 _DELETION_MASS_THRESHOLD = 10  # 单轮扫描未暂存消失 ≥N 件=批量删除事故，追加汇总升级
 
+# ── B2 auto-stage 护盾（2026-09-14 docs/_working 删除事故三层防线②）──────────
+# docs/_working 新增 untracked 文件由 daemon 每轮自动 git add 进 index：
+# index 有 blob → 删除后 `git checkout -- <path>` 一条命令拉回（st-mktfix 实证
+# staged 文件在删除潮中零损失）。跳过：被活跃会话 claim 的（其提交流自管）、
+# 近 N 秒内仍在写的（防半截文件入 index）、超大小上限的（防 index 膨胀）。
+_AUTO_STAGE_DIR = "docs/_working"
+_AUTO_STAGE_MAX_BYTES = 10 * 1024 * 1024  # >10MB 跳过（Owner 裁定建议值）
+_AUTO_STAGE_MIN_AGE_SECONDS = 120  # 落盘后不足 N 秒不动（防半截文件）
+_AUTO_STAGE_STATE_CAP = 2000  # state.auto_staged 登记上限（防状态文件膨胀）
+
 # ── #ARCH-308 工作区孤儿 WIP 治本（2026-09-03 Owner 当案授权"全套 A+B+C"）──────
 _TRACKED_WRITE_ALLOWLIST_REL = (
     "docs/01_policies_and_standards/_registry/catalogs/gate_tracked_write_allowlist.yaml"
@@ -204,6 +214,75 @@ def _head_sha(root: Path) -> str:
     return out.strip() if rc == 0 else ""
 
 
+def _auto_stage_candidates(root: Path, claimed: dict[str, str]) -> list[str]:
+    """收集 docs/_working 下可入护盾的 untracked 文件（过滤 claim/过新/超限）。"""
+    rc, out = _git(root, ["ls-files", "--others", "--exclude-standard", "-z", "--", _AUTO_STAGE_DIR])
+    if rc != 0 or not out:
+        return []
+    now = now_utc().timestamp()
+    to_add: list[str] = []
+    for raw in out.split("\0"):
+        rel = raw.strip().replace("\\", "/")
+        if not rel or rel in claimed:
+            continue  # 活跃会话 claim 持有：其提交流自管，护盾不插手
+        p = root / rel
+        try:
+            st = p.stat()
+        except OSError:
+            continue
+        if st.st_size > _AUTO_STAGE_MAX_BYTES:
+            continue  # 大文件不进 index（防膨胀）
+        if now - st.st_mtime < _AUTO_STAGE_MIN_AGE_SECONDS:
+            continue  # 近期仍在写：防半截文件入 index
+        to_add.append(rel)
+    return to_add
+
+
+def _auto_stage_working_docs(
+    root: Path,
+    summary: dict,
+    sessions: list[str],
+    claimed: dict[str, str],
+    state: dict,
+) -> None:
+    """B2 auto-stage 护盾：docs/_working 新增 untracked 文件自动 git add（daemon 专属）。
+
+    目的：index 持有内容 blob → 误删后 `git checkout -- <path>` 一条命令拉回。
+    只动 index 不动工作区内容；跳过被 claim / 过新 / 超限文件；merge 期由调用方豁免。
+    审计 verdict=auto_staged（逐文件），summary["auto_staged"] 计数。
+    """
+    to_add = _auto_stage_candidates(root, claimed)
+    if not to_add:
+        return
+    # 分块 add（防命令行超长；失败逐块降级不整体放弃）
+    added: list[str] = []
+    for i in range(0, len(to_add), 50):
+        chunk = to_add[i : i + 50]
+        rc_add, _ = _git(root, ["add", "--", *chunk])
+        if rc_add == 0:
+            added.extend(chunk)
+    if not added:
+        return
+    st_reg = state.setdefault("auto_staged", {})
+    for rel in added:
+        st_reg[rel] = _now_iso()
+        _audit(
+            root,
+            {
+                "ts": _now_iso(),
+                "file": rel,
+                "verdict": "auto_staged",
+                "note": "B2 shield: staged to index for one-command checkout recovery",
+                "active_sessions": sessions,
+            },
+        )
+    if len(st_reg) > _AUTO_STAGE_STATE_CAP:  # 容量封顶：淘汰最旧登记（防状态文件膨胀）
+        excess = len(st_reg) - _AUTO_STAGE_STATE_CAP
+        for k in list(st_reg.keys())[:excess]:
+            st_reg.pop(k, None)
+    summary["auto_staged"] = len(added)
+
+
 def _dirty_tracked(root: Path) -> list[str]:
     """tracked 修改清单（porcelain 双列 M/A/D/R；untracked ?? 不关心）。"""
     rc, out = _git(root, ["status", "--porcelain=v1", "--untracked-files=no"])
@@ -225,6 +304,15 @@ def _real_drift(root: Path, rel: str) -> bool:
     rc1, _ = _git(root, ["diff", "--quiet", "--", rel])
     rc2, _ = _git(root, ["diff", "--cached", "--quiet", "--", rel])
     return rc1 != 0 or rc2 != 0
+
+
+def _work_matches_index(root: Path, rel: str) -> bool:
+    """B2 护盾判据：工作区内容与 index 一致（git diff --quiet，不查 --cached）。
+
+    仅对 staged 新增（hb=="" 且工作区存在）调用有意义；调用方已保证前置条件。
+    """
+    rc, _ = _git(root, ["diff", "--quiet", "--", rel])
+    return rc == 0
 
 
 def _is_hot_rel(rel: str) -> bool:
@@ -953,6 +1041,8 @@ def scan_once(
         "merge_suppressed": 0,
         "deletion_observed": 0,
         "deletion_alerted": 0,
+        "auto_staged": 0,
+        "shielded": 0,
     }
     head_sha = _head_sha(root)
     if not head_sha:
@@ -988,6 +1078,13 @@ def scan_once(
     in_grace = (now_utc().timestamp() - max(anchors)) < grace_seconds
 
     sessions, claimed = _active_sessions_and_claims(root)
+
+    # B2 auto-stage 护盾（仅 daemon；观察员模式不动 index；merge 期豁免——
+    # 与删除型漂移的 merge 豁免同源，merge 暂置区语义由 git 自管）。
+    if alert_enabled and not merge_in_progress:
+        _auto_stage_working_docs(root, summary, sessions, claimed, state)
+        # 本轮 dirty 清单须在 auto-stage 之后取：新 staged 文件立即进入护盾监视
+        # （若延后取，取 dirty 前的空档不受保护）。
 
     # O4（#ARCH-264）：known_quarantine 登记快照目录被带外删除 → tamper 审计。
     # 仅 daemon（alert_enabled）执行——观察员模式不落状态变更。
@@ -1043,6 +1140,12 @@ def scan_once(
         if deletion_drift:
             rc_staged, _ = _git(root, ["diff", "--cached", "--quiet", "--", rel])
             deletion_drift = rc_staged == 0  # index 仍有=未暂存删除；staged 删除不在此列
+        elif wh == "" and hb == "" and not (root / rel).exists():
+            # B2：staged 新增（仅 index 有、HEAD 无）从工作区消失 → 同属删除型漂移。
+            # 恢复=`git checkout -- <path>`（从 index 拉回）——这正是 auto-stage 护盾
+            # 的价值：无护盾时此形态连删除检测都进不了（hb 空）。
+            rc_in_idx, _ = _git(root, ["ls-files", "--error-unmatch", "--", rel])
+            deletion_drift = rc_in_idx == 0
 
         if deletion_drift and merge_in_progress:
             # B5：merge 存续期豁免对删除同样适用（merge 引入的暂置删除是 git 机制设计）
@@ -1086,6 +1189,14 @@ def scan_once(
         elif prev.get("work_hash") == wh:
             summary["dedup_skipped"] += 1  # 同签名漂移持续，不重复告警
             continue
+        elif hb == "" and wh != "" and _work_matches_index(root, rel):
+            # ── B2 护盾分流：staged 新增（HEAD 无此文件）且工作区==index → 内容已
+            # 入 index 受保护，非未授权漂移：只审计不告警、不 auto_claim。
+            # 治安边界：stage 后工作区又被改（work≠index）→ 不进此分支，走原
+            # 分流照常告警（stage 后的再编辑不受保护）。重复扫描由上方 dedup 拦截，
+            # 此分支每文件只在首见/签名变化时审计一次。
+            _audit(root, {**base, "verdict": "shielded_add"})
+            summary["shielded"] += 1
         elif rel in claimed:
             summary["claimed"] += 1
             _audit(root, {**base, "verdict": "claimed"})

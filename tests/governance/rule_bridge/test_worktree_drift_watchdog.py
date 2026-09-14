@@ -831,3 +831,110 @@ def test_mass_deletion_escalation_summary(git_repo: Path) -> None:
     assert s3["deletion_alerted"] == 0, s3
     rows3 = _read_log_actions(git_repo)
     assert sum(1 for r in rows3 if r[1] == "critical_warn" and "批量删除型漂移" in r[2]) == 1
+
+
+# ── B2 auto-stage 护盾（2026-09-14 docs/_working 删除事故三层防线②）──────────────
+
+
+def _backdate(path: Path, seconds: int = 300) -> None:
+    """把 mtime 拨旧（绕过 auto-stage 的 120s 新鲜度护栏）。"""
+    import os
+    import time
+
+    t = time.time() - seconds
+    os.utime(path, (t, t))
+
+
+def test_auto_stage_shields_new_working_doc(git_repo: Path) -> None:
+    """docs/_working 新增 untracked → daemon 自动 git add；staged 新增不告警只审计。"""
+    d = git_repo / "docs" / "_working"
+    d.mkdir(parents=True)
+    f = d / "shielded_note.md"
+    f.write_text("WIP content\n", encoding="utf-8")
+    _backdate(f)  # 绕过 120s 新鲜度护栏
+
+    s1 = wd.scan_once(git_repo, grace_seconds=0)
+    assert s1["auto_staged"] == 1, s1
+    assert s1["shielded"] == 1, s1
+    assert s1["alerted"] == 0, s1  # 护盾内文件绝不能触发 critical_warn
+
+    status = subprocess.run(
+        ["git", "status", "--porcelain=v1", "--", "docs/_working/shielded_note.md"],
+        cwd=str(git_repo), capture_output=True, text=True, check=True,
+    ).stdout
+    assert status.startswith("A "), status
+
+    audit = _read_audit(git_repo)
+    assert any(r.get("verdict") == "auto_staged" for r in audit)
+    assert any(r.get("verdict") == "shielded_add" for r in audit)
+
+    s2 = wd.scan_once(git_repo, grace_seconds=0)
+    assert s2["auto_staged"] == 0, s2  # 已登记不重复 add
+    assert s2["shielded"] == 0, s2
+    assert s2["dedup_skipped"] >= 1, s2  # 同签名漂移由 dedup 拦截，不刷审计
+
+
+def test_auto_stage_skips_fresh_big(git_repo: Path) -> None:
+    """过新（<120s）与超限（>10MB）文件不入 index。"""
+    d = git_repo / "docs" / "_working"
+    d.mkdir(parents=True)
+    fresh = d / "fresh.md"
+    fresh.write_text("just written\n", encoding="utf-8")  # mtime=now → 过新跳过
+    big = d / "big.bin"
+    big.write_bytes(b"x" * (10 * 1024 * 1024 + 1))  # >10MB 跳过
+    _backdate(big)
+
+    s = wd.scan_once(git_repo, grace_seconds=0)
+    assert s["auto_staged"] == 0, s
+    out = subprocess.run(
+        ["git", "ls-files", "--", "docs/_working/fresh.md", "docs/_working/big.bin"],
+        cwd=str(git_repo), capture_output=True, text=True,
+    ).stdout.strip()
+    assert out == "", out
+
+
+def test_auto_stage_skips_claimed(git_repo: Path, monkeypatch: pytest.MonkeyPatch) -> None:
+    """活跃会话 claim 持有的文件不插手（其提交流自管）。"""
+    d = git_repo / "docs" / "_working"
+    d.mkdir(parents=True)
+    f = d / "claimed.md"
+    f.write_text("session WIP\n", encoding="utf-8")
+    _backdate(f)
+    monkeypatch.setattr(
+        wd, "_active_sessions_and_claims",
+        lambda root: (["sess-x"], {"docs/_working/claimed.md": "sess-x"}),
+    )
+
+    s = wd.scan_once(git_repo, grace_seconds=0)
+    assert s["auto_staged"] == 0, s
+    out = subprocess.run(
+        ["git", "ls-files", "--", "docs/_working/claimed.md"],
+        cwd=str(git_repo), capture_output=True, text=True,
+    ).stdout.strip()
+    assert out == "", out
+
+
+def test_shielded_add_vanish_escalates_and_recovers(git_repo: Path) -> None:
+    """staged 新增被删 → 删除型漂移升级 critical_warn；checkout 一条拉回（护盾兑现）。"""
+    d = git_repo / "docs" / "_working"
+    d.mkdir(parents=True)
+    f = d / "vanish.md"
+    f.write_text("to be deleted\n", encoding="utf-8")
+    _backdate(f)
+    s0 = wd.scan_once(git_repo, grace_seconds=0)
+    assert s0["auto_staged"] == 1, s0
+
+    f.unlink()  # 未暂存删除（index 仍有）
+    s1 = wd.scan_once(git_repo, grace_seconds=0)
+    assert s1["deletion_observed"] == 1, s1  # 首见容忍一轮
+    s2 = wd.scan_once(git_repo, grace_seconds=0)
+    assert s2["deletion_alerted"] == 1, s2  # 持续缺位升级
+    rows = _read_log_actions(git_repo)
+    assert any(r[1] == "critical_warn" and "vanish.md" in r[2] for r in rows), rows
+
+    # 护盾兑现：index blob 一条 checkout 拉回
+    subprocess.run(
+        ["git", "checkout", "--", "docs/_working/vanish.md"],
+        cwd=str(git_repo), check=True, capture_output=True, text=True,
+    )
+    assert f.exists() and f.read_text(encoding="utf-8") == "to be deleted\n"

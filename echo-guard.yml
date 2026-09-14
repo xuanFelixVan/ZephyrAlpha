@@ -886,3 +886,5 @@ acknowledged:
   verdict: dismissed
   stable_key: "src/zephyr/gov_enforcement/rule_bridge/session_worktree.py:_get_manager||src/zephyr/gov_enforcement/rule_bridge/session_worktree.py:_get_registry"
   note: "2026-09-13：单例构造器模板撞车语义各异（WorktreeManager vs SessionRegistry，worktree 主进程两类资源），合并=过早抽象；存量雷同非真重复"
+- stable_key: "src/zephyr/gov_enforcement/rule_bridge/worktree_drift_watchdog.py:_sweep_dead_sessions||src/zephyr/gov_enforcement/rule_bridge/worktree_drift_watchdog.py:_auto_commit_derived"
+  note: "2026-09-14 st-deletion-defense-20260914（B2 auto-stage 护盾批）：A1/A2 进程内互斥入口包装 4 行模板（SWEEP_LOCK 包裹 impl 调用）结构同构但语义各殊（死会话残留清扫 vs B 类派生缓存自动提交，红队 R1.1/R1.2 治本各自的互斥入口），合并=无谓间接层；存量雷同（函数已在 HEAD），本次因触碰 worktree_drift_watchdog.py 进入 CloneGuard 扫描视野浮现，非本批引入"

@@ -70,3 +70,9 @@ entries:
   class: C
   writer: "architecture_health auto-sync（post-commit 还原对象）"
   note: 运行时遥测写 tracked 数据文件（judged auto-sync 产物，勿动清单成员）
+- pattern: docs/_working/**
+  class: B
+  writer: worktree_drift_watchdog daemon（B2 auto-stage 护盾，2026-09-14 #B1 删除事故三层防线）
+  note: 只写 index（git add docs/_working untracked 新文件）不改工作区内容；gate 窗口内
+    触发会使 staged 指纹变化（diff-index --cached），归因此处。被活跃会话 claim 的文件
+    跳过；恢复通道=git checkout -- <path>（index 拉回）。
