@@ -122,6 +122,14 @@ ALLOWED_PREFIXES: tuple[str, ...] = (
     # runtime_auto 一致归类），锁自清/僵尸锁清理属 gateway 自有运行时状态管理，
     # 非业务删除——白名单豁免（两代锁目录路径约定漂移的收口）。
     ".ailocks",
+    # .ailocks 同型复发（2026-09-15 st-f06combo 实证）：commit_queue 自家
+    # serializer 租约 .runtime/commit_queue/serializer.lease 在 worktree 内
+    # 解析为 .worktrees/<sid>/.runtime/commit_queue/serializer.lease 命中
+    # .worktrees 保护区，拦死 SerializerLease 僵尸租约自清 os.remove →
+    # worktree 内队列 drain 每轮死锁、队列结构性不可用。只豁免 lease 文件
+    # 本身（段级匹配：主区前缀+worktree 中段/尾段双形态命中）；队列数据
+    # （pending/blobs/dead）不入白名单，误删仍受保护区拦截。
+    ".runtime/commit_queue/serializer.lease",
 )
 
 # 会话 ID 环境变量（与 git_guard.py 对齐）

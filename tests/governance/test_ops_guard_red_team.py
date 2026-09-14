@@ -510,3 +510,36 @@ class TestAuthzNarrowing279:
         with patch.dict(os.environ, {"ZEPHYR_COMMIT_GATEWAY": "1"}):
             env = sanitized_spawn_env()
         assert "ZEPHYR_COMMIT_GATEWAY" not in env
+
+
+class TestWorktreeQueueLeaseWhitelist:
+    """.ailocks 同型收口（2026-09-15 st-f06combo 实证）：
+    worktree 内 commit_queue serializer 租约自清被 .worktrees 保护区拦死
+    → 队列 drain 结构性死锁。lease 文件白名单豁免，队列数据仍受保护。"""
+
+    def test_lease_whitelisted_worktree_form(self) -> None:
+        """worktree 形态（.worktrees/<sid>/.runtime/commit_queue/serializer.lease）放行。"""
+        from scripts.ops_guard import _is_whitelisted
+
+        rel = ".worktrees/st-f06combo-20260915/.runtime/commit_queue/serializer.lease"
+        assert _is_whitelisted(rel), "worktree lease 未命中白名单（僵尸租约清理仍会被拦）"
+
+    def test_lease_whitelisted_main_repo_form(self) -> None:
+        """主区形态（.runtime/commit_queue/serializer.lease）放行。"""
+        from scripts.ops_guard import _is_whitelisted
+
+        assert _is_whitelisted(".runtime/commit_queue/serializer.lease")
+
+    def test_lease_remove_command_allowed(self) -> None:
+        """端到端：Remove-Item 删 worktree lease 的判定=放行。"""
+        verdict = analyze_delete_command(
+            r"Remove-Item .worktrees\st-x\.runtime\commit_queue\serializer.lease"
+        )
+        assert verdict.allowed, f"lease 自清被误拦: {verdict.reason}"
+
+    def test_queue_data_still_protected_in_worktree(self) -> None:
+        """队列数据（pending/dead 项）不入白名单——worktree 内递归删仍拦。"""
+        verdict = analyze_delete_command(
+            r"Remove-Item -Recurse .worktrees\st-x\.runtime\commit_queue\pending"
+        )
+        assert not verdict.allowed, "队列数据目录被误豁免（提交项丢失风险）"
