@@ -141,19 +141,33 @@ Owner 发现 7、8 月行情缺数据。三轮修复：①（09-13/14 凌晨）t
 - 管线：`tmp/tick_subscriber_guard.log`（守护心跳 15s）+ `tmp/tick_subscriber_run.log`
   （统计 received/written/errors）+ `E:\qmt_bridge_sim\ticks3.csv` mtime。
 
-## 七、晚间复检补记（20:0x）
+## 七、晚间复检补记（20:0x 起，Owner 授权夜间执行批）
 
-- **当日 tick 量级偏稀**：09-14 全天 tick=1,000,913 行/8,305 标的（对照回填日 ~2,900 万）。
-  根因=生产链当前跑在**桥模式**（沙箱快照 dump，~2 分钟/轮粒度），而高密度车道是
-  **xtdata 直订**（TICK_SOURCE=xtdata，09-08 的 1,543 万行/天即此车道）。
-  切换属生产模式决策（93 号备忘：桥=miniqmt 退役后备源），留 Owner/A22 定夺，
-  本会话未擅改 TICK_SOURCE。另：实时车道不过滤 price=0（今日 163,056 行盘前快照），
-  与回填口径不同，属存量行为。
-- **当日日线仍处降级值**：kline_daily 09-14 = 5,207 标的（健康值 ~5,554，09-09~11 历史
-  已由 tushare 补齐但今日新增数据仍走降级通道）。盘后 QMT 终端已关闭且晚间拉起失败
-  （需登录态），**明日补救配方**：终端登录后重跑 kline_daily_incremental，或按前会话
-  tushare 补数配方补 09-14 一天。
-- **期货 tick 09-09**：实测真实缺口仅此一天（09-10/11 已由 A22 车道自行恢复 5.5 万行/天）。
-  晚间 QMT 客户端无法拉起（登录态），补数配方已备好（4 主力合约×一天，~5.6 万行），
-  明早终端登录后即可补。注意期货口径 direction='none'（A22 用 miniqmt_provider 旧约定），
-  非 stocks 的'中性盘'。
+1. **期货 tick 09-09 已补齐**（22:3x）：IF/IC/IM/IH 四主力合约 105,737 行，窗口 09:29~15:27
+   对齐 A22 存量口径（direction='none'）。09-10/11 已由 A22 车道自行恢复。三天期货缺口全闭。
+2. **高密度直订模式已启用**（22:44）：TICK_SOURCE=bridge→xtdata（User 环境变量持久化），
+   guard/订阅器已重启并确认 xtdata 模式上线（订阅快照爆发已正常入 CH）。明早 09:15 起
+   验证当日 tick 应回到千万级/天。桥沙箱（ticks3.csv）保留作后备。
+3. **local_replay 死信根治**：
+   - 三张原噪音表（hk_trade_calendar/crypto_kline_daily/sim_trade_log）死信已被并发会话清零；
+   - cross_validation_log 2 件：threshold 列建表误用 Decimal(18,6) 而写入方语义=条件文本，
+     已 ALTER → String（1,333 行存量数值自动转字符串），回放成功；
+   - news_data 1 件：manifest 登记旧十列清单 vs 实际新版 NEWS_DATA_COLUMNS 布局错配，
+     修 manifest 子句后回放成功。**根因=常驻 scheduler 进程的 ch_writer 表列缓存
+     （table_cols_cache）在表结构改版后不失效**，TCP 路径用新清单成功、HTTP TSV 路径用
+     旧缓存失败进 fallback——已重启 DataScheduler 清缓存（治本）；
+   - alt_sz 另类数据 6+3 张表 CH 里不存在（C-1 批部署数据先行、DDL 未应用）：已从
+     schemas/categories/*.py 真源 DDL 逐张补建（其中 air_quality 两张的
+     parseDateTimeBestEffortOrNull 可空分区键违反 Code 44，已改 OrZero 修 schema 源文件），
+     死信已随 scheduler 周期回放清零；仅剩 alt_sz_subject 2 件=writer 与 DDL 命名错位
+     （writer 写 alt_sz_subject，registry/DDL=alt_sz_market_subject），属在线 C-1 会话
+     在途 bug，按"他会话在途不代修"留给其自行收口。
+4. **当日日线降级已修复**（23:1x）：缺失画像=348 只中 342 只为北交所新段 920xxx
+   （miniqmt 日线车道标的清单未覆盖 920 段），已按 tushare 口径补齐（A_share/tushare/
+   adj_factor 真值）；今日终态 **5,549 标的**（与 09-10/11 持平）。另 6 只
+   （301390/600301/601238/603159/605303/688496）=今日真实未交易（tushare 当日成交清单
+   5,550 无它们，停牌起始各异），合法缺席。
+5. **防复发清单**（待立项）：① minmqmt 日线车道补 920 段覆盖+每日标的数 vs 预期宇宙
+   偏差>1% 告警；② ch_writer 表列缓存加失效机制（insert 失败时强制刷新 DESCRIBE）；
+   ③ 新表 DDL 前置校验（数据先行=部署倒置，alt_sz 六表案例）；④ TICK_SOURCE 已切
+   xtdata，观察明日量级后由 Owner/A22 确认桥模式降级为纯后备。
