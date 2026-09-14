@@ -11,10 +11,11 @@
 # v2.0 标签词表（本库在用，防同义词漂移——同一含义统一用词：翻转→反转、破位/跌破→突破、阻力→压力、派发→出货、横盘/盘整→震荡、超买超卖→均值回归族；同义新词须先归并再入库）：
 #   k线、事件、信号、出货、分时、压力、反转、吸筹、周期、回撤、因子、均线、基准、威科夫、尾盘、市场结构、形态、情绪、成交、打板、执行、持续、指标、支撑、斐波那契、早盘、机器学习、止损、江恩、波动、波浪、流动性、盘口、突破、组合、绩效、缠论、缩量、缺口、股票池、背离、规则、订单、谐波、质量、资金、超跌、趋势、通胀、量价、量化、震荡
 # schema v2.1（2026-08-15，#ARCH-BREG-002 分域真源裁定）：新增 code_symbol 代码符号锚点 / code_fingerprint 实现指纹——库↔代码双向索引与漂移对账。实现域真源移交规则：代码未落地=库（设计态），代码落地锚定后=代码；业务语义域/治理评估域永属库。既有条目一律 null 占位，回填随条目重填与指纹扫描器施工（门禁A存在性校验/门禁B指纹对账立项#ARCH-BREG-002）。
+# schema v2.2（2026-09-14，挖矿批二 Owner 咨询后裁定）：条目级新增 refinements 细化分支字段——已立卡分支 registered_as 与子条目 variant_of 双向闭环（未来生成器校验），未立卡细化 null+来源（实现批照单施工）；缠论中枢生长方式/Elliott 锯齿平台三角细目等先期散文挂账项随本批结构化归位
 # ============================================================================
 # module_id: MOD-GOVERNANCE
 ttl: permanent
-schema_version: '2.1'
+schema_version: '2.2'
 registry_id: REG-PAT-001
 name: Chart Pattern Registry
 name_zh: 图形形态注册表
@@ -39,6 +40,7 @@ description: >-
   business_registry_construction_plan §6.2.4。
   v2.16.0（2026-09-14 病菌寻路挖矿批，st-patmine-20260914）：Bulkowski 差额 15 条（量度涨跌×2/直角扩散×2/扩散楔形×2/亚当夏娃双底顶四变体×2/丑陋双底/反死猫跳/财报旗形/屋顶×2——任务书候选 Gutters 经 thepatternsite 核对实名=Inverted Roof）+ 2B 假突破（Sperandeo 三源）+ O'Neil 平台基底 + 蜡烛小形态内包日+ 谐波 Nen Star 补齐（12 型集完备）+ 市场轮廓结构族（Dalton 拍卖理论）+ 量学黄金柱（张得一 2009，A 股原生）；共 19 条 candidate，evidence 留空待 pattern_evidence_backfill 回填；Straight-Line Run 驳回（非独立形态=旗杆属性/统计条件）；Three Drives 已在册 PAT-FIB-016 去重不重复登记；挖矿日志=docs/_working/2026-09-14-chart-pattern-mining-report.md
   v2.17.0（2026-09-14 挖矿批二，同日续班）：长尾收获 12 条——③支脉订单流吸收+CVD 背离（Bookmap/OrderFlowLabs 等 5 源）+量学凹口淘金（《伏击涨停》2014）+Bulkowski 小形态绩效榜 Top-5（周线反转/开收反转/钩形反转/枢轴点反转/鲨鱼32，$132/60% 榜首）+Busted 失效形态族（18 种 busted 细目书源 p.225，与 SR-001 分工=瞬时失败事件 vs 摆动级反向穿越）+扩展V+倒扇贝×2（扇贝族 4 型收官）；驳回清账：Long Island（发现者 2020-09-11 自撤：不再视为有效形态）、涨停回马枪（民间战法无书源，来源闸不过维持挂账）、Outside Days/One-day reversal（并入 CANDLE-072 注记）、倍量伸缩（并入 STRUCT-046 注记）
+  v2.18.0（2026-09-14 schema v2.2，批二续）：entry_schema 新增 refinements 细化分支字段（registered_as 与 variant_of 父子双向闭环+未立卡细化 null+来源），17 个父条目首批回填：双顶底/旗形/矩形/扩散/V顶/死猫跳/扇贝/SR-001/072/023/035 的已册子分支归位+缠论中枢四种生长（新生/延伸/扩张/扩展，chanlun-pro+知乎源）+Elliott 五条细化（truncation/双重三重锯齿/平台三型/三角四变体/三重三，F&P 1978）——先期散文挂账项全部结构化归位
 # ============================================================
 # SOTA 算法演进说明（2026-08-14 全网调研，三轮检索结论）
 # ============================================================
@@ -172,7 +174,7 @@ algorithm_variant_sota_ladder:
 owner: MOD-GOVERNANCE
 tier: tier_2_data_runtime
 status: active
-version: 2.17.0
+version: 2.18.0
 created: '2026-08-13'
 last_updated: '2026-09-14'
 related_arch: '#ARCH-BREG-001'
@@ -201,6 +203,7 @@ entry_schema:
   code_path: str
   used_by_factors: list[str]     # 反向关联 factor_id（forward-ref，factor_registry 施工后回填）
   variant_of: str                # 可选：形态变体（单向引用）
+  refinements: list[obj]|null         # 细化分支 Refinements — 已知子分支/形态学变体（v2.2 新增 2026-09-14 挖矿批，替代报告散文挂账）：每项 {name, name_zh, registered_as, source}；已立卡分支 registered_as=子条目 pattern_id（与子条目 variant_of 构成父子双向闭环，一致性由生成器校验——pattern_catalog_sync 待扩展项）；未立卡细化 registered_as=null（实现批照单施工，禁凭空新编）；null=无已知细化
   status: str                    # candidate/experimental/active/deprecated/retired
   version: str
   created_at: date
@@ -3187,6 +3190,11 @@ chart_patterns:
     code_symbol: "src/zephyr/signal_ashare/strategy_signal/candlestick_scanner.py::scan_candles"
     code_fingerprint: null
     applicable_series: ["time_bars"]
+    refinements:
+    - name: "pivot_point_reversal"
+      name_zh: "枢轴点反转（不要求外包）"
+      registered_as: "PAT-CANDLE-082"
+      source: "thepatternsite PPRU/PPRD+绩效榜（2026-09-14 挖矿批二）"
   - pattern_id: "PAT-CANDLE-073"
     name: "Wide Range Bar (WRB)"
     name_zh: "宽幅推进K线"
@@ -3685,6 +3693,11 @@ chart_patterns:
     code_symbol: null
     code_fingerprint: null
     applicable_series: ["time_bars", "renko", "pnf", "kagi"]
+    refinements:
+    - name: "adam_eve_variants"
+      name_zh: "亚当夏娃双顶四变体族"
+      registered_as: "PAT-CHART-070"
+      source: "thepatternsite aadt/aedt/eedt 8页族（2026-09-14 挖矿批一）"
   - pattern_id: "PAT-CHART-002"
     name: "Head and Shoulders Top"
     name_zh: "头肩顶"
@@ -3807,6 +3820,15 @@ chart_patterns:
     evidence: "[机生 evidence src=market_pattern_win_rate 物化=2026-09-14] w10: 多 hit=59.7% avg=+2.58% n=567392 | w20: 多 hit=55.0% avg=+2.93% n=561596 | regime: r1(多) hit=59.4% n=196777 / r3(多) hit=56.4% n=156840 / r2(多) hit=60.9% n=87662 / r10(多) hit=67.7% n=70429 / r4(多) hit=56.5% n=53344"
     code_symbol: null
     code_fingerprint: null
+    refinements:
+    - name: "adam_eve_variants"
+      name_zh: "亚当夏娃双底四变体族"
+      registered_as: "PAT-CHART-069"
+      source: "thepatternsite aadb/aedb/eedb 8页族（2026-09-14 挖矿批一）"
+    - name: "ugly_double_bottom"
+      name_zh: "丑陋双底（不等谷）"
+      registered_as: "PAT-CHART-071"
+      source: "thepatternsite udb.html（2026-09-14 挖矿批一）"
 
   # ============================================================
   # CHART_PATTERN 扩充（2026-08-14，Edwards&Magee + Bulkowski 经典全集）
@@ -4059,6 +4081,15 @@ chart_patterns:
     code_symbol: null
     code_fingerprint: null
     applicable_series: ["time_bars", "renko", "pnf", "kagi"]
+    refinements:
+    - name: "earnings_flag"
+      name_zh: "财报旗形（事件形态）"
+      registered_as: "PAT-CHART-073"
+      source: "thepatternsite earnflag.html（2026-09-14 挖矿批一）"
+    - name: "high_tight_flag"
+      name_zh: "高紧旗（O'Neil）"
+      registered_as: "PAT-CHART-061"
+      source: "既册（2026-08-14 SOTA 轮）"
   - pattern_id: "PAT-CHART-011"
     name: "Bear Flag"
     name_zh: "空头旗形"
@@ -4264,6 +4295,11 @@ chart_patterns:
     code_symbol: null
     code_fingerprint: null
     applicable_series: ["time_bars", "renko", "pnf", "kagi"]
+    refinements:
+    - name: "flat_base"
+      name_zh: "平台基底（O'Neil 高位浅基底）"
+      registered_as: "PAT-CHART-077"
+      source: "O'Neil《HTMMIS》+thepatternsite FlatBase.html（2026-09-14 挖矿批一）"
   - pattern_id: "PAT-CHART-016"
     name: "Head and Shoulders Bottom"
     name_zh: "头肩底"
@@ -4510,6 +4546,23 @@ chart_patterns:
     code_symbol: null
     code_fingerprint: null
     applicable_series: ["time_bars", "renko", "pnf", "kagi"]
+    refinements:
+    - name: "right_angled_ascending"
+      name_zh: "直角上升扩散（平底熊反）"
+      registered_as: "PAT-CHART-065"
+      source: "thepatternsite rabfa.html（2026-09-14 挖矿批一）"
+    - name: "right_angled_descending"
+      name_zh: "直角下降扩散（平顶牛反）"
+      registered_as: "PAT-CHART-066"
+      source: "thepatternsite rabfd.html（2026-09-14 挖矿批一）"
+    - name: "broadening_wedge_ascending"
+      name_zh: "上升扩散楔形"
+      registered_as: "PAT-CHART-067"
+      source: "thepatternsite abw.html（2026-09-14 挖矿批一）"
+    - name: "broadening_wedge_descending"
+      name_zh: "下降扩散楔形"
+      registered_as: "PAT-CHART-068"
+      source: "thepatternsite dbw.html（2026-09-14 挖矿批一）"
   - pattern_id: "PAT-CHART-022"
     name: "Diamond"
     name_zh: "钻石形"
@@ -4592,6 +4645,11 @@ chart_patterns:
     code_symbol: null
     code_fingerprint: null
     applicable_series: ["time_bars", "renko", "pnf", "kagi"]
+    refinements:
+    - name: "extended_v_top"
+      name_zh: "扩展V顶（反转后横向延伸）"
+      registered_as: "PAT-CHART-079"
+      source: "thepatternsite vtopbot.html See-also+EOC3（2026-09-14 挖矿批二）"
   - pattern_id: "PAT-CHART-024"
     name: "V-Bottom"
     name_zh: "V形底"
@@ -4714,6 +4772,11 @@ chart_patterns:
     evidence: ""
     code_symbol: null
     code_fingerprint: null
+    refinements:
+    - name: "inverted_dcb"
+      name_zh: "反死猫跳（暴涨回落镜像）"
+      registered_as: "PAT-CHART-072"
+      source: "thepatternsite idcb.html（2026-09-14 挖矿批一）"
 
   # ============================================================
   # CHART_PATTERN A股游资/情绪周期复合形态（2026-08-14 二轮补登）
@@ -5342,6 +5405,11 @@ chart_patterns:
     code_symbol: null
     code_fingerprint: null
     applicable_series: ["time_bars", "renko", "pnf", "kagi"]
+    refinements:
+    - name: "ascending_inverted"
+      name_zh: "倒置上升扇贝（伞形右半）"
+      registered_as: "PAT-CHART-080"
+      source: "thepatternsite aiscallop.html（2026-09-14 挖矿批二）"
   - pattern_id: "PAT-CHART-042"
     name: "Descending Scallop"
     name_zh: "下降扇贝"
@@ -5383,6 +5451,11 @@ chart_patterns:
     code_symbol: null
     code_fingerprint: null
     applicable_series: ["time_bars", "renko", "pnf", "kagi"]
+    refinements:
+    - name: "descending_inverted"
+      name_zh: "倒置下降扇贝"
+      registered_as: "PAT-CHART-081"
+      source: "thepatternsite idscallops.html（2026-09-14 挖矿批二）"
   - pattern_id: "PAT-CHART-043"
     name: "Horn Top"
     name_zh: "牛角顶"
@@ -7575,6 +7648,15 @@ chart_patterns:
     code_symbol: null
     code_fingerprint: null
     applicable_series: ["time_bars", "renko", "pnf", "kagi"]
+    refinements:
+    - name: "2b_false_breakout"
+      name_zh: "2B 假突破反转（摆动级）"
+      registered_as: "PAT-CHART-076"
+      source: "Sperandeo《Trader Vic》1991 p.91（2026-09-14 挖矿批一）"
+    - name: "busted_pattern"
+      name_zh: "失效形态族（bust 反向穿越）"
+      registered_as: "PAT-CHART-078"
+      source: "thepatternsite BustedPatterns.html+《GSiCP》2e p.225（2026-09-14 挖矿批二）"
   - pattern_id: "PAT-SR-002"
     name: "Intraday Breakout/Breakdown"
     name_zh: "分时突破/破位"
@@ -8996,6 +9078,23 @@ chart_patterns:
     evidence: ""
     code_symbol: null
     code_fingerprint: null
+    refinements:
+    - name: "zs_birth"
+      name_zh: "中枢新生（新级别中枢独立生成）"
+      registered_as: null
+      source: "chanlun-pro 配置文档+知乎《缠论中枢的四种生长方式》zhuanlan.zhihu.com/p/2020902954589267754"
+    - name: "zs_extend"
+      name_zh: "中枢延伸（区间内笔数递增不升级）"
+      registered_as: null
+      source: "chanlun-pro 配置文档+知乎中枢四种生长"
+    - name: "zs_expand"
+      name_zh: "中枢扩张（两中枢波动区间重叠未触 ZG/ZD）"
+      registered_as: null
+      source: "chanlun-pro 配置文档+知乎中枢四种生长"
+    - name: "zs_spread"
+      name_zh: "中枢扩展（两中枢同级别连接震荡）"
+      registered_as: null
+      source: "chanlun-pro 配置文档+知乎中枢四种生长"
 
   - pattern_id: "PAT-CLL-007"
     name: "Chanlun First Buy Point"
@@ -9411,6 +9510,15 @@ chart_patterns:
     evidence: ""
     code_symbol: null
     code_fingerprint: null
+    refinements:
+    - name: "truncation"
+      name_zh: "失败五浪（五浪不过三浪极值）"
+      registered_as: null
+      source: "Frost & Prechter《Elliott Wave Principle》1978"
+    - name: "extension"
+      name_zh: "延长浪（某浪逐级细分等长扩展）"
+      registered_as: "PAT-ELW-006"
+      source: "Frost & Prechter《Elliott Wave Principle》1978"
 
   - pattern_id: "PAT-ELW-002"
     name: "Zigzag Correction"
@@ -9452,6 +9560,15 @@ chart_patterns:
     evidence: ""
     code_symbol: null
     code_fingerprint: null
+    refinements:
+    - name: "double_zigzag"
+      name_zh: "双重锯齿（W-X-Y）"
+      registered_as: null
+      source: "Frost & Prechter《Elliott Wave Principle》1978"
+    - name: "triple_zigzag"
+      name_zh: "三重锯齿（W-X-Y-X-Z）"
+      registered_as: null
+      source: "Frost & Prechter《Elliott Wave Principle》1978"
 
   - pattern_id: "PAT-ELW-003"
     name: "Flat Correction"
@@ -9493,6 +9610,19 @@ chart_patterns:
     evidence: ""
     code_symbol: null
     code_fingerprint: null
+    refinements:
+    - name: "regular_flat"
+      name_zh: "常规平台（3-3-5 等长）"
+      registered_as: null
+      source: "Frost & Prechter《Elliott Wave Principle》1978"
+    - name: "expanded_flat"
+      name_zh: "扩张平台（B 过 A 起点且 C 过 B 终点）"
+      registered_as: null
+      source: "Frost & Prechter《Elliott Wave Principle》1978"
+    - name: "running_flat"
+      name_zh: "顺势平台（B 强势超越且 C 未回撤到位）"
+      registered_as: null
+      source: "Frost & Prechter《Elliott Wave Principle》1978"
 
   - pattern_id: "PAT-ELW-004"
     name: "Triangle Correction"
@@ -9534,6 +9664,11 @@ chart_patterns:
     evidence: ""
     code_symbol: null
     code_fingerprint: null
+    refinements:
+    - name: "triangle_variants"
+      name_zh: "上升/下降/屏障/扩散三角（3-3-3-3-3 收敛族）"
+      registered_as: null
+      source: "Frost & Prechter《Elliott Wave Principle》1978"
 
   - pattern_id: "PAT-ELW-005"
     name: "Double Three Combination"
@@ -9575,6 +9710,11 @@ chart_patterns:
     evidence: ""
     code_symbol: null
     code_fingerprint: null
+    refinements:
+    - name: "triple_three"
+      name_zh: "三重三（W-X-Y-X-Z 横盘组合）"
+      registered_as: null
+      source: "Frost & Prechter《Elliott Wave Principle》1978"
 
   - pattern_id: "PAT-ELW-006"
     name: "Wave Extension"
@@ -10867,6 +11007,11 @@ chart_patterns:
     evidence: ""
     code_symbol: null
     code_fingerprint: null
+    refinements:
+    - name: "order_flow_absorption"
+      name_zh: "订单流吸收（订单级直测）"
+      registered_as: "PAT-STRUCT-044"
+      source: "OrderFlowLabs Glossary 等 5 源（2026-09-14 挖矿批二）"
 
   - pattern_id: "PAT-STRUCT-024"
     name: "VSA Test Bar"
@@ -11413,6 +11558,11 @@ chart_patterns:
     evidence: ""
     code_symbol: null
     code_fingerprint: null
+    refinements:
+    - name: "cvd_divergence"
+      name_zh: "累计量 Delta 背离（摆动级）"
+      registered_as: "PAT-STRUCT-045"
+      source: "Bookmap/LuxAlgo/ZitaPlus 4 源（2026-09-14 挖矿批二）"
 
   - pattern_id: "PAT-STRUCT-036"
     name: "Footprint Point of Control (POC)"
