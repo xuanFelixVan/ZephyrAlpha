@@ -8075,7 +8075,7 @@ chart_patterns:
     evidence: ""
     code_symbol: null
     code_fingerprint: null
-
+    applicable_series: ["time_bars", "renko", "pnf", "kagi"]
   - pattern_id: "PAT-FIB-002"
     name: "Fibonacci Extension"
     name_zh: "斐波那契扩展"
@@ -8116,7 +8116,7 @@ chart_patterns:
     evidence: ""
     code_symbol: null
     code_fingerprint: null
-
+    applicable_series: ["time_bars", "renko", "pnf", "kagi"]
   - pattern_id: "PAT-FIB-003"
     name: "Fibonacci Fan"
     name_zh: "斐波那契扇形线"
@@ -8157,7 +8157,7 @@ chart_patterns:
     evidence: ""
     code_symbol: null
     code_fingerprint: null
-
+    applicable_series: ["time_bars"]
   - pattern_id: "PAT-FIB-004"
     name: "Fibonacci Arc"
     name_zh: "斐波那契弧形线"
@@ -8198,7 +8198,7 @@ chart_patterns:
     evidence: ""
     code_symbol: null
     code_fingerprint: null
-
+    applicable_series: ["time_bars"]
   - pattern_id: "PAT-FIB-005"
     name: "Fibonacci Time Zone"
     name_zh: "斐波那契时间区间"
@@ -8239,7 +8239,7 @@ chart_patterns:
     evidence: ""
     code_symbol: null
     code_fingerprint: null
-
+    applicable_series: ["time_bars"]
   - pattern_id: "PAT-FIB-006"
     name: "Fibonacci Cluster"
     name_zh: "斐波那契共振簇"
@@ -8287,7 +8287,7 @@ chart_patterns:
   # 对齐开源实现：djoffrey/HarmonicPatterns（2026-06 仍活跃维护，9形态）
   #              bosskuh6666/harmonic-scanner-ai（2026-06，6形态+PRZ+RSI confluence）
   # ============================================================
-
+    applicable_series: ["time_bars", "renko", "pnf", "kagi"]
   - pattern_id: "PAT-FIB-007"
     name: "ABCD Harmonic"
     name_zh: "ABCD 谐波形态"
@@ -8328,7 +8328,7 @@ chart_patterns:
     evidence: ""
     code_symbol: null
     code_fingerprint: null
-
+    applicable_series: ["time_bars", "renko", "pnf", "kagi"]
   - pattern_id: "PAT-FIB-008"
     name: "Gartley"
     name_zh: "加特利形态"
@@ -8369,7 +8369,7 @@ chart_patterns:
     evidence: ""
     code_symbol: null
     code_fingerprint: null
-
+    applicable_series: ["time_bars", "renko", "pnf", "kagi"]
   - pattern_id: "PAT-FIB-009"
     name: "Bat"
     name_zh: "蝙蝠形态"
@@ -8410,7 +8410,7 @@ chart_patterns:
     evidence: ""
     code_symbol: null
     code_fingerprint: null
-
+    applicable_series: ["time_bars", "renko", "pnf", "kagi"]
   - pattern_id: "PAT-FIB-010"
     name: "Alternate Bat"
     name_zh: "变体蝙蝠形态"
@@ -8451,7 +8451,7 @@ chart_patterns:
     evidence: ""
     code_symbol: null
     code_fingerprint: null
-
+    applicable_series: ["time_bars", "renko", "pnf", "kagi"]
   - pattern_id: "PAT-FIB-011"
     name: "Butterfly"
     name_zh: "蝴蝶形态"
@@ -8492,7 +8492,7 @@ chart_patterns:
     evidence: ""
     code_symbol: null
     code_fingerprint: null
-
+    applicable_series: ["time_bars", "renko", "pnf", "kagi"]
   - pattern_id: "PAT-FIB-012"
     name: "Crab"
     name_zh: "螃蟹形态"
@@ -8533,7 +8533,7 @@ chart_patterns:
     evidence: ""
     code_symbol: null
     code_fingerprint: null
-
+    applicable_series: ["time_bars", "renko", "pnf", "kagi"]
   - pattern_id: "PAT-FIB-013"
     name: "Deep Crab"
     name_zh: "深螃蟹形态"
@@ -8574,7 +8574,7 @@ chart_patterns:
     evidence: ""
     code_symbol: null
     code_fingerprint: null
-
+    applicable_series: ["time_bars", "renko", "pnf", "kagi"]
   - pattern_id: "PAT-FIB-014"
     name: "Shark"
     name_zh: "鲨鱼形态"
@@ -8615,7 +8615,7 @@ chart_patterns:
     evidence: ""
     code_symbol: null
     code_fingerprint: null
-
+    applicable_series: ["time_bars", "renko", "pnf", "kagi"]
   - pattern_id: "PAT-FIB-015"
     name: "Cypher"
     name_zh: "赛弗形态"
@@ -8656,7 +8656,7 @@ chart_patterns:
     evidence: ""
     code_symbol: null
     code_fingerprint: null
-
+    applicable_series: ["time_bars", "renko", "pnf", "kagi"]
   - pattern_id: "PAT-FIB-016"
     name: "Three Drives"
     name_zh: "三推形态"
@@ -8697,7 +8697,7 @@ chart_patterns:
     evidence: ""
     code_symbol: null
     code_fingerprint: null
-
+    applicable_series: ["time_bars", "renko", "pnf", "kagi"]
   - pattern_id: "PAT-FIB-017"
     name: "Harmonic 5-0"
     name_zh: "谐波 5-0 形态"
@@ -8738,6 +8738,7 @@ chart_patterns:
     evidence: ""
     code_symbol: null
     code_fingerprint: null
+    applicable_series: ["time_bars", "renko", "pnf", "kagi"]
   - pattern_id: "PAT-FIB-018"
     name: "Nen Star"
     name_zh: "奈恩星"
@@ -8783,7 +8784,7 @@ chart_patterns:
   # STRUCTURE（价格结构类）— 1条
   # 代码已施工：overlay_features.py s2_spring_flag（Wyckoff Spring）
   # ============================================================
-
+    applicable_series: ["time_bars", "renko", "pnf", "kagi"]
   - pattern_id: "PAT-STRUCT-001"
     name: "Wyckoff Spring"
     name_zh: "威科夫弹簧"
@@ -8832,7 +8833,7 @@ chart_patterns:
   # 施工依赖链：分型(001/002) → 笔(003/004) → 线段(005) → 中枢(006)
   #            → 买卖点(007-012) + 背驰(013/014) + 区间套(015)
   # ============================================================
-
+    applicable_series: ["time_bars"]
   - pattern_id: "PAT-CLL-001"
     name: "Chanlun Top Fractal"
     name_zh: "缠论顶分型"
@@ -8873,7 +8874,7 @@ chart_patterns:
     evidence: ""
     code_symbol: null
     code_fingerprint: null
-
+    applicable_series: ["time_bars"]
   - pattern_id: "PAT-CLL-002"
     name: "Chanlun Bottom Fractal"
     name_zh: "缠论底分型"
@@ -8914,7 +8915,7 @@ chart_patterns:
     evidence: ""
     code_symbol: null
     code_fingerprint: null
-
+    applicable_series: ["time_bars"]
   - pattern_id: "PAT-CLL-003"
     name: "Chanlun Upward Bi"
     name_zh: "缠论上升笔"
@@ -8955,7 +8956,7 @@ chart_patterns:
     evidence: ""
     code_symbol: null
     code_fingerprint: null
-
+    applicable_series: ["time_bars"]
   - pattern_id: "PAT-CLL-004"
     name: "Chanlun Downward Bi"
     name_zh: "缠论下降笔"
@@ -8996,7 +8997,7 @@ chart_patterns:
     evidence: ""
     code_symbol: null
     code_fingerprint: null
-
+    applicable_series: ["time_bars"]
   - pattern_id: "PAT-CLL-005"
     name: "Chanlun Line Segment"
     name_zh: "缠论线段"
@@ -9037,7 +9038,7 @@ chart_patterns:
     evidence: ""
     code_symbol: null
     code_fingerprint: null
-
+    applicable_series: ["time_bars"]
   - pattern_id: "PAT-CLL-006"
     name: "Chanlun Zhongshu (Central Hub)"
     name_zh: "缠论中枢"
@@ -9095,7 +9096,7 @@ chart_patterns:
       name_zh: "中枢扩展（两中枢同级别连接震荡）"
       registered_as: null
       source: "chanlun-pro 配置文档+知乎中枢四种生长"
-
+    applicable_series: ["time_bars"]
   - pattern_id: "PAT-CLL-007"
     name: "Chanlun First Buy Point"
     name_zh: "缠论一类买点"
@@ -9136,7 +9137,7 @@ chart_patterns:
     evidence: ""
     code_symbol: null
     code_fingerprint: null
-
+    applicable_series: ["time_bars"]
   - pattern_id: "PAT-CLL-008"
     name: "Chanlun Second Buy Point"
     name_zh: "缠论二类买点"
@@ -9177,7 +9178,7 @@ chart_patterns:
     evidence: ""
     code_symbol: null
     code_fingerprint: null
-
+    applicable_series: ["time_bars"]
   - pattern_id: "PAT-CLL-009"
     name: "Chanlun Third Buy Point"
     name_zh: "缠论三类买点"
@@ -9218,7 +9219,7 @@ chart_patterns:
     evidence: ""
     code_symbol: null
     code_fingerprint: null
-
+    applicable_series: ["time_bars"]
   - pattern_id: "PAT-CLL-010"
     name: "Chanlun First Sell Point"
     name_zh: "缠论一类卖点"
@@ -9259,7 +9260,7 @@ chart_patterns:
     evidence: ""
     code_symbol: null
     code_fingerprint: null
-
+    applicable_series: ["time_bars"]
   - pattern_id: "PAT-CLL-011"
     name: "Chanlun Second Sell Point"
     name_zh: "缠论二类卖点"
@@ -9300,7 +9301,7 @@ chart_patterns:
     evidence: ""
     code_symbol: null
     code_fingerprint: null
-
+    applicable_series: ["time_bars"]
   - pattern_id: "PAT-CLL-012"
     name: "Chanlun Third Sell Point"
     name_zh: "缠论三类卖点"
@@ -9341,7 +9342,7 @@ chart_patterns:
     evidence: ""
     code_symbol: null
     code_fingerprint: null
-
+    applicable_series: ["time_bars"]
   - pattern_id: "PAT-CLL-013"
     name: "Chanlun Trend Divergence"
     name_zh: "缠论趋势背驰"
@@ -9382,7 +9383,7 @@ chart_patterns:
     evidence: ""
     code_symbol: null
     code_fingerprint: null
-
+    applicable_series: ["time_bars"]
   - pattern_id: "PAT-CLL-014"
     name: "Chanlun Consolidation Divergence"
     name_zh: "缠论盘整背驰"
@@ -9423,7 +9424,7 @@ chart_patterns:
     evidence: ""
     code_symbol: null
     code_fingerprint: null
-
+    applicable_series: ["time_bars"]
   - pattern_id: "PAT-CLL-015"
     name: "Chanlun Nested Interval (Qujian Tao)"
     name_zh: "缠论区间套"
@@ -9469,7 +9470,7 @@ chart_patterns:
   # ELLIOTT_WAVE（艾略特波浪类）— 8条（2026-08-14 新建）
   # 算法：规则法(浪型规则) / 分形法(Fractal 波浪分解) / dl_yolo 预留
   # ============================================================
-
+    applicable_series: ["time_bars"]
   - pattern_id: "PAT-ELW-001"
     name: "Impulse Wave"
     name_zh: "推动浪"
@@ -9519,7 +9520,7 @@ chart_patterns:
       name_zh: "延长浪（某浪逐级细分等长扩展）"
       registered_as: "PAT-ELW-006"
       source: "Frost & Prechter《Elliott Wave Principle》1978"
-
+    applicable_series: ["time_bars"]
   - pattern_id: "PAT-ELW-002"
     name: "Zigzag Correction"
     name_zh: "锯齿形调整浪"
@@ -9569,7 +9570,7 @@ chart_patterns:
       name_zh: "三重锯齿（W-X-Y-X-Z）"
       registered_as: null
       source: "Frost & Prechter《Elliott Wave Principle》1978"
-
+    applicable_series: ["time_bars"]
   - pattern_id: "PAT-ELW-003"
     name: "Flat Correction"
     name_zh: "平台形调整浪"
@@ -9623,7 +9624,7 @@ chart_patterns:
       name_zh: "顺势平台（B 强势超越且 C 未回撤到位）"
       registered_as: null
       source: "Frost & Prechter《Elliott Wave Principle》1978"
-
+    applicable_series: ["time_bars"]
   - pattern_id: "PAT-ELW-004"
     name: "Triangle Correction"
     name_zh: "三角形调整浪"
@@ -9669,7 +9670,7 @@ chart_patterns:
       name_zh: "上升/下降/屏障/扩散三角（3-3-3-3-3 收敛族）"
       registered_as: null
       source: "Frost & Prechter《Elliott Wave Principle》1978"
-
+    applicable_series: ["time_bars"]
   - pattern_id: "PAT-ELW-005"
     name: "Double Three Combination"
     name_zh: "双重三组合调整"
@@ -9715,7 +9716,7 @@ chart_patterns:
       name_zh: "三重三（W-X-Y-X-Z 横盘组合）"
       registered_as: null
       source: "Frost & Prechter《Elliott Wave Principle》1978"
-
+    applicable_series: ["time_bars"]
   - pattern_id: "PAT-ELW-006"
     name: "Wave Extension"
     name_zh: "浪延长"
@@ -9756,7 +9757,7 @@ chart_patterns:
     evidence: ""
     code_symbol: null
     code_fingerprint: null
-
+    applicable_series: ["time_bars"]
   - pattern_id: "PAT-ELW-007"
     name: "Leading Diagonal"
     name_zh: "引导楔形"
@@ -9797,7 +9798,7 @@ chart_patterns:
     evidence: ""
     code_symbol: null
     code_fingerprint: null
-
+    applicable_series: ["time_bars"]
   - pattern_id: "PAT-ELW-008"
     name: "Ending Diagonal"
     name_zh: "终结楔形"
@@ -9844,7 +9845,7 @@ chart_patterns:
   # Matrix Profile 无监督挖掘（STUMPY/L-MAP，AAAI-26 SOTA）
   # SMC 对齐实现：joshyattridge/smart-money-concepts（Python 包，MIT）
   # ============================================================
-
+    applicable_series: ["time_bars"]
   - pattern_id: "PAT-STRUCT-002"
     name: "Wyckoff Accumulation"
     name_zh: "威科夫吸筹区间"
@@ -9885,7 +9886,7 @@ chart_patterns:
     evidence: ""
     code_symbol: null
     code_fingerprint: null
-
+    applicable_series: ["time_bars"]
   - pattern_id: "PAT-STRUCT-003"
     name: "Wyckoff Distribution"
     name_zh: "威科夫派发区间"
@@ -9926,7 +9927,7 @@ chart_patterns:
     evidence: ""
     code_symbol: null
     code_fingerprint: null
-
+    applicable_series: ["time_bars"]
   - pattern_id: "PAT-STRUCT-004"
     name: "Wyckoff Upthrust"
     name_zh: "威科夫上冲"
@@ -9967,7 +9968,7 @@ chart_patterns:
     evidence: ""
     code_symbol: null
     code_fingerprint: null
-
+    applicable_series: ["time_bars"]
   - pattern_id: "PAT-STRUCT-005"
     name: "Wyckoff Sign of Strength (SOS)"
     name_zh: "威科夫强势信号"
@@ -10008,7 +10009,7 @@ chart_patterns:
     evidence: ""
     code_symbol: null
     code_fingerprint: null
-
+    applicable_series: ["time_bars"]
   - pattern_id: "PAT-STRUCT-006"
     name: "Wyckoff Sign of Weakness (SOW)"
     name_zh: "威科夫弱势信号"
@@ -10049,7 +10050,7 @@ chart_patterns:
     evidence: ""
     code_symbol: null
     code_fingerprint: null
-
+    applicable_series: ["time_bars"]
   - pattern_id: "PAT-STRUCT-007"
     name: "Wyckoff Last Point of Support (LPS)"
     name_zh: "威科夫最后支撑点"
@@ -10090,7 +10091,7 @@ chart_patterns:
     evidence: ""
     code_symbol: null
     code_fingerprint: null
-
+    applicable_series: ["time_bars"]
   - pattern_id: "PAT-STRUCT-008"
     name: "Wyckoff Last Point of Supply (LPSY)"
     name_zh: "威科夫最后供给点"
@@ -10131,7 +10132,7 @@ chart_patterns:
     evidence: ""
     code_symbol: null
     code_fingerprint: null
-
+    applicable_series: ["time_bars"]
   - pattern_id: "PAT-STRUCT-009"
     name: "SMC Break of Structure (BOS)"
     name_zh: "结构突破"
@@ -10172,7 +10173,7 @@ chart_patterns:
     evidence: ""
     code_symbol: null
     code_fingerprint: null
-
+    applicable_series: ["time_bars"]
   - pattern_id: "PAT-STRUCT-010"
     name: "SMC Change of Character (CHoCH)"
     name_zh: "性格转变"
@@ -10213,7 +10214,7 @@ chart_patterns:
     evidence: ""
     code_symbol: null
     code_fingerprint: null
-
+    applicable_series: ["time_bars"]
   - pattern_id: "PAT-STRUCT-011"
     name: "SMC Fair Value Gap (FVG)"
     name_zh: "公允价值缺口"
@@ -10254,7 +10255,7 @@ chart_patterns:
     evidence: ""
     code_symbol: null
     code_fingerprint: null
-
+    applicable_series: ["time_bars"]
   - pattern_id: "PAT-STRUCT-012"
     name: "SMC Order Block (OB)"
     name_zh: "订单块"
@@ -10295,7 +10296,7 @@ chart_patterns:
     evidence: ""
     code_symbol: null
     code_fingerprint: null
-
+    applicable_series: ["time_bars"]
   - pattern_id: "PAT-STRUCT-013"
     name: "SMC Liquidity Grab"
     name_zh: "流动性扫荡"
@@ -10336,7 +10337,7 @@ chart_patterns:
     evidence: ""
     code_symbol: null
     code_fingerprint: null
-
+    applicable_series: ["time_bars"]
   - pattern_id: "PAT-STRUCT-014"
     name: "SMC Equal Highs (EQH)"
     name_zh: "等高流动性池"
@@ -10377,7 +10378,7 @@ chart_patterns:
     evidence: ""
     code_symbol: null
     code_fingerprint: null
-
+    applicable_series: ["time_bars"]
   - pattern_id: "PAT-STRUCT-015"
     name: "SMC Equal Lows (EQL)"
     name_zh: "等低流动性池"
@@ -10418,7 +10419,7 @@ chart_patterns:
     evidence: ""
     code_symbol: null
     code_fingerprint: null
-
+    applicable_series: ["time_bars"]
   - pattern_id: "PAT-STRUCT-016"
     name: "SMC Premium/Discount Zone"
     name_zh: "溢价折价区"
@@ -10459,7 +10460,7 @@ chart_patterns:
     evidence: ""
     code_symbol: null
     code_fingerprint: null
-
+    applicable_series: ["time_bars"]
   - pattern_id: "PAT-STRUCT-017"
     name: "Time Series Motif Discovery"
     name_zh: "时序模体发现"
@@ -10500,7 +10501,7 @@ chart_patterns:
     evidence: ""
     code_symbol: null
     code_fingerprint: null
-
+    applicable_series: ["time_bars"]
   - pattern_id: "PAT-STRUCT-018"
     name: "Semantic Segmentation (FLUSS)"
     name_zh: "语义分段"
@@ -10548,7 +10549,7 @@ chart_patterns:
   # dl_model_ref 已指向推荐实现；训练数据用参数化合成+真实标注双轨。
   # 施工触发条件：experiment_registry 出现规则法 vs DL 的对比实验需求时启动。
   # ============================================================
-
+    applicable_series: ["time_bars"]
   - pattern_id: "PAT-DL-001"
     name: "YOLOv8 Chart Pattern Detector"
     name_zh: "YOLOv8 图表形态检测套件"
@@ -10589,7 +10590,7 @@ chart_patterns:
     evidence: ""
     code_symbol: null
     code_fingerprint: null
-
+    applicable_series: ["time_bars"]
   - pattern_id: "PAT-DL-002"
     name: "Swin Transformer TADA-AW Classifier"
     name_zh: "Swin Transformer 时间感知分类套件"
@@ -10630,7 +10631,7 @@ chart_patterns:
     evidence: ""
     code_symbol: null
     code_fingerprint: null
-
+    applicable_series: ["time_bars"]
   - pattern_id: "PAT-DL-003"
     name: "ViT-Tiny + MAE Self-supervised Pattern Learner"
     name_zh: "ViT 自监督形态学习套件"
@@ -10671,7 +10672,7 @@ chart_patterns:
     evidence: ""
     code_symbol: null
     code_fingerprint: null
-
+    applicable_series: ["time_bars"]
   - pattern_id: "PAT-DL-004"
     name: "Multimodal LLM Pattern Analyst"
     name_zh: "多模态大模型形态判读套件"
@@ -10712,7 +10713,7 @@ chart_patterns:
     evidence: ""
     code_symbol: null
     code_fingerprint: null
-
+    applicable_series: ["time_bars"]
   - pattern_id: "PAT-DL-005"
     name: "Kronos K-line Foundation Model"
     name_zh: "Kronos K线基础模型套件"
@@ -10753,7 +10754,7 @@ chart_patterns:
     evidence: ""
     code_symbol: null
     code_fingerprint: null
-
+    applicable_series: ["time_bars"]
   - pattern_id: "PAT-DL-006"
     name: "Mamba State-Space Sequence Model"
     name_zh: "Mamba 状态空间序列套件"
@@ -10802,7 +10803,7 @@ chart_patterns:
   # SOTA 量化实现：百分位 Effort-vs-Result 引擎（rolling 100 窗口十分位对比，
   # 差>=3 触发信号；ProRealCode VSA-IQ 2026-07 检索证据）
   # ============================================================
-
+    applicable_series: ["time_bars"]
   - pattern_id: "PAT-STRUCT-019"
     name: "VSA Selling Climax"
     name_zh: "VSA 抛售高潮"
@@ -10843,7 +10844,7 @@ chart_patterns:
     evidence: ""
     code_symbol: null
     code_fingerprint: null
-
+    applicable_series: ["time_bars"]
   - pattern_id: "PAT-STRUCT-020"
     name: "VSA Buying Climax"
     name_zh: "VSA 买入高潮"
@@ -10884,7 +10885,7 @@ chart_patterns:
     evidence: ""
     code_symbol: null
     code_fingerprint: null
-
+    applicable_series: ["time_bars"]
   - pattern_id: "PAT-STRUCT-021"
     name: "VSA No Supply"
     name_zh: "VSA 无供给"
@@ -10925,7 +10926,7 @@ chart_patterns:
     evidence: ""
     code_symbol: null
     code_fingerprint: null
-
+    applicable_series: ["time_bars"]
   - pattern_id: "PAT-STRUCT-022"
     name: "VSA No Demand"
     name_zh: "VSA 无需求"
@@ -10966,7 +10967,7 @@ chart_patterns:
     evidence: ""
     code_symbol: null
     code_fingerprint: null
-
+    applicable_series: ["time_bars"]
   - pattern_id: "PAT-STRUCT-023"
     name: "VSA Stopping Volume"
     name_zh: "VSA 停止量"
@@ -11012,7 +11013,7 @@ chart_patterns:
       name_zh: "订单流吸收（订单级直测）"
       registered_as: "PAT-STRUCT-044"
       source: "OrderFlowLabs Glossary 等 5 源（2026-09-14 挖矿批二）"
-
+    applicable_series: ["time_bars"]
   - pattern_id: "PAT-STRUCT-024"
     name: "VSA Test Bar"
     name_zh: "VSA 测试bar"
@@ -11053,7 +11054,7 @@ chart_patterns:
     evidence: ""
     code_symbol: null
     code_fingerprint: null
-
+    applicable_series: ["time_bars"]
   - pattern_id: "PAT-STRUCT-025"
     name: "VSA Pseudo Upthrust"
     name_zh: "VSA 伪上冲"
@@ -11094,7 +11095,7 @@ chart_patterns:
     evidence: ""
     code_symbol: null
     code_fingerprint: null
-
+    applicable_series: ["time_bars"]
   - pattern_id: "PAT-DL-007"
     name: "Diffusion Generative Chart Forecaster"
     name_zh: "扩散模型生成式图表预测套件"
@@ -11141,7 +11142,7 @@ chart_patterns:
   # 来源：分时四种拉升形态（东方财富 2026-06）+ 分时承接四形态（2026-08）+
   #       隔日涨停六条件（淘股吧 2026-08）+ 分时托而不举/举而不断博弈（今日头条）
   # ============================================================
-
+    applicable_series: ["time_bars"]
   - pattern_id: "PAT-STRUCT-026"
     name: "Intraday Ladder Push"
     name_zh: "分时阶梯式推升"
@@ -11182,7 +11183,7 @@ chart_patterns:
     evidence: ""
     code_symbol: null
     code_fingerprint: null
-
+    applicable_series: ["time_bars"]
   - pattern_id: "PAT-STRUCT-027"
     name: "Intraday Box Shrinking Consolidation"
     name_zh: "分时横盘缩量"
@@ -11223,7 +11224,7 @@ chart_patterns:
     evidence: ""
     code_symbol: null
     code_fingerprint: null
-
+    applicable_series: ["time_bars"]
   - pattern_id: "PAT-STRUCT-028"
     name: "Intraday Double Bottom"
     name_zh: "分时双底"
@@ -11264,7 +11265,7 @@ chart_patterns:
     evidence: ""
     code_symbol: null
     code_fingerprint: null
-
+    applicable_series: ["time_bars"]
   - pattern_id: "PAT-STRUCT-029"
     name: "Intraday VWAP Hold"
     name_zh: "分时均价线防守"
@@ -11305,7 +11306,7 @@ chart_patterns:
     evidence: ""
     code_symbol: null
     code_fingerprint: null
-
+    applicable_series: ["time_bars"]
   - pattern_id: "PAT-STRUCT-030"
     name: "Intraday Pulse Probe"
     name_zh: "分时脉冲试盘"
@@ -11346,7 +11347,7 @@ chart_patterns:
     evidence: ""
     code_symbol: null
     code_fingerprint: null
-
+    applicable_series: ["time_bars"]
   - pattern_id: "PAT-STRUCT-031"
     name: "Intraday Sawtooth Narrow"
     name_zh: "分时窄幅锯齿"
@@ -11387,7 +11388,7 @@ chart_patterns:
     evidence: ""
     code_symbol: null
     code_fingerprint: null
-
+    applicable_series: ["time_bars"]
   - pattern_id: "PAT-STRUCT-032"
     name: "Intraday Sell Order Freeze"
     name_zh: "分时卖单压盘"
@@ -11428,7 +11429,7 @@ chart_patterns:
     evidence: ""
     code_symbol: null
     code_fingerprint: null
-
+    applicable_series: ["time_bars"]
   - pattern_id: "PAT-STRUCT-033"
     name: "Intraday Trap Pull"
     name_zh: "分时托而不举"
@@ -11469,7 +11470,7 @@ chart_patterns:
     evidence: ""
     code_symbol: null
     code_fingerprint: null
-
+    applicable_series: ["time_bars"]
   - pattern_id: "PAT-STRUCT-034"
     name: "Intraday Wash Lift"
     name_zh: "分时举而不断"
@@ -11517,7 +11518,7 @@ chart_patterns:
   # 来源：NinjaTrader AI Order Flow 指南（2026-05）+ Incrypted Order Flow（2026-05）
   # 与分时盘口族（STRUCT-026~034）正交：本族看成交明细/挂单簿，彼族看分时价量
   # ============================================================
-
+    applicable_series: ["time_bars"]
   - pattern_id: "PAT-STRUCT-035"
     name: "Order Flow Imbalance (OFI/TFI)"
     name_zh: "订单流不平衡"
@@ -11563,7 +11564,7 @@ chart_patterns:
       name_zh: "累计量 Delta 背离（摆动级）"
       registered_as: "PAT-STRUCT-045"
       source: "Bookmap/LuxAlgo/ZitaPlus 4 源（2026-09-14 挖矿批二）"
-
+    applicable_series: ["time_bars"]
   - pattern_id: "PAT-STRUCT-036"
     name: "Footprint Point of Control (POC)"
     name_zh: "足迹图控制点"
@@ -11604,7 +11605,7 @@ chart_patterns:
     evidence: ""
     code_symbol: null
     code_fingerprint: null
-
+    applicable_series: ["time_bars"]
   - pattern_id: "PAT-STRUCT-037"
     name: "Opening Range Breakout"
     name_zh: "开盘区间突破"
@@ -11645,7 +11646,7 @@ chart_patterns:
     evidence: ""
     code_symbol: null
     code_fingerprint: null
-
+    applicable_series: ["time_bars"]
   - pattern_id: "PAT-STRUCT-038"
     name: "Supply/Demand Zone (Seiden)"
     name_zh: "供需区（塞登学派）"
@@ -11686,7 +11687,7 @@ chart_patterns:
     evidence: ""
     code_symbol: null
     code_fingerprint: null
-
+    applicable_series: ["time_bars"]
   - pattern_id: "PAT-STRUCT-039"
     name: "ICT Power of Three (AMD)"
     name_zh: "ICT 力量三（积累-操纵-派发）"
@@ -11727,7 +11728,7 @@ chart_patterns:
     evidence: ""
     code_symbol: null
     code_fingerprint: null
-
+    applicable_series: ["time_bars"]
   - pattern_id: "PAT-STRUCT-040"
     name: "Iceberg Order Detection"
     name_zh: "冰山单识别"
@@ -11768,7 +11769,7 @@ chart_patterns:
     evidence: ""
     code_symbol: null
     code_fingerprint: null
-
+    applicable_series: ["time_bars"]
   - pattern_id: "PAT-STRUCT-041"
     name: "Spoofing/Layering Detection"
     name_zh: "幌骗/层叠挂单识别"
@@ -11809,6 +11810,7 @@ chart_patterns:
     evidence: ""
     code_symbol: null
     code_fingerprint: null
+    applicable_series: ["time_bars"]
   - pattern_id: "PAT-STRUCT-043"
     name: "Golden Volume Pillar"
     name_zh: "黄金柱（量学）"
@@ -11849,6 +11851,7 @@ chart_patterns:
     evidence: ""
     code_symbol: null
     code_fingerprint: null
+    applicable_series: ["time_bars"]
   - pattern_id: "PAT-STRUCT-042"
     name: "Market Profile Structure"
     name_zh: "市场轮廓结构（未完成拍卖）"
@@ -11889,7 +11892,7 @@ chart_patterns:
     evidence: ""
     code_symbol: null
     code_fingerprint: null
-
+    applicable_series: ["time_bars"]
   - pattern_id: "PAT-STRUCT-044"
     name: "Order Flow Absorption"
     name_zh: "订单流吸收"
@@ -11930,6 +11933,7 @@ chart_patterns:
     evidence: ""
     code_symbol: null
     code_fingerprint: null
+    applicable_series: ["time_bars"]
   - pattern_id: "PAT-STRUCT-045"
     name: "Cumulative Volume Delta Divergence"
     name_zh: "累计量 Delta 背离"
@@ -11970,6 +11974,7 @@ chart_patterns:
     evidence: ""
     code_symbol: null
     code_fingerprint: null
+    applicable_series: ["time_bars"]
   - pattern_id: "PAT-STRUCT-046"
     name: "Concave Mouth Gold Panning"
     name_zh: "凹口淘金（量学）"
@@ -12010,6 +12015,7 @@ chart_patterns:
     evidence: ""
     code_symbol: null
     code_fingerprint: null
+    applicable_series: ["time_bars"]
   - pattern_id: "PAT-DL-008"
     name: "Chart-RVR GRPO Chart Reasoner"
     name_zh: "Chart-RVR 强化学习图表推理套件"
@@ -12050,7 +12056,7 @@ chart_patterns:
     evidence: ""
     code_symbol: null
     code_fingerprint: null
-
+    applicable_series: ["time_bars"]
   - pattern_id: "PAT-DL-009"
     name: "Multi-Scale VLM Candlestick Benchmark"
     name_zh: "多尺度 VLM K线基准套件"
@@ -12091,7 +12097,7 @@ chart_patterns:
     evidence: ""
     code_symbol: null
     code_fingerprint: null
-
+    applicable_series: ["time_bars"]
   - pattern_id: "PAT-DL-010"
     name: "AC-Seq2Net Math-Guided Geometric DL"
     name_zh: "AC-Seq2Net 几何先验混合DL套件"
@@ -12132,7 +12138,7 @@ chart_patterns:
     evidence: ""
     code_symbol: null
     code_fingerprint: null
-
+    applicable_series: ["time_bars"]
   - pattern_id: "PAT-DL-011"
     name: "ElliottAgents Multi-Agent Wave Counter"
     name_zh: "ElliottAgents 多智能体数浪套件"
@@ -12173,7 +12179,7 @@ chart_patterns:
     evidence: ""
     code_symbol: null
     code_fingerprint: null
-
+    applicable_series: ["time_bars"]
   - pattern_id: "PAT-DL-012"
     name: "wave-alpha Deterministic Wave Engine"
     name_zh: "wave-alpha 确定性数浪引擎锚点"
@@ -12214,7 +12220,7 @@ chart_patterns:
     evidence: ""
     code_symbol: null
     code_fingerprint: null
-
+    applicable_series: ["time_bars"]
   - pattern_id: "PAT-DL-013"
     name: "GAF-CNN Visual Encoding Pipeline"
     name_zh: "GAF-CNN 视觉编码派套件"
@@ -12286,3 +12292,4 @@ chart_patterns:
   # ELW-001~008/FIB-001~016，含谐波 10 种）。后续新形态按 pattern_class 归类
   # 追加，并同步更新文件头 entry_count 与 registry_of_registries.yaml。
   # ============================================================
+    applicable_series: ["time_bars"]
