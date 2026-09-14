@@ -211,12 +211,14 @@ def _is_connection_error(exc: BaseException) -> bool:
 
 
 _KLINE_CAPABILITIES = {
-    "kline_daily": ("1d", "沪深A股"),
-    "kline_1min": ("1m", "沪深A股"),
-    "kline_5min": ("5m", "沪深A股"),
-    "kline_15min": ("15m", "沪深A股"),
-    "kline_30min": ("30m", "沪深A股"),
-    "kline_60min": ("1h", "沪深A股"),
+    # sector 支持元组多板块并集（2026-09-14 治本：北交所新段 920xxx 只在京市A股板块，
+    # 仅沪深A股导致日线标的数静默降级 5,554→5,207 四天无人发现，缺口报告 v2 §七）
+    "kline_daily": ("1d", ("沪深A股", "京市A股")),
+    "kline_1min": ("1m", ("沪深A股", "京市A股")),
+    "kline_5min": ("5m", ("沪深A股", "京市A股")),
+    "kline_15min": ("15m", ("沪深A股", "京市A股")),
+    "kline_30min": ("30m", ("沪深A股", "京市A股")),
+    "kline_60min": ("1h", ("沪深A股", "京市A股")),
     "kline_etf_1min": ("1m", "沪深ETF"),
     "kline_etf_5min": ("5m", "沪深ETF"),
     "kline_etf_15min": ("15m", "沪深ETF"),
@@ -727,12 +729,40 @@ class MiniQmtIngestProvider(IngestProviderBase):
             error=f"未知 capability: {capability}",
         )
 
+    def _collect_sector_symbols(
+        self,
+        policy: SourcePolicy,
+        sector: str | tuple[str, ...] | list[str],
+    ) -> list[str]:
+        """按板块（单板块或多板块并集、保序去重）拉取标的清单。
+
+        Args:
+            policy: 调用策略
+            sector: 板块名或板块元组/列表（如 ("沪深A股", "京市A股")）
+
+        Returns:
+            去重后的 QMT 全码列表（如 ["000001.SZ", ..., "920001.BJ", ...]）
+        """
+        from xtquant import xtdata
+
+        sectors = sector if isinstance(sector, (list, tuple)) else (sector,)
+        seen: set[str] = set()
+        merged: list[str] = []
+        for sec in sectors:
+            for code in self._call_with_policy(
+                xtdata.get_stock_list_in_sector, policy, sec
+            ):
+                if code and code not in seen:
+                    seen.add(code)
+                    merged.append(code)
+        return merged
+
     def _route_kline_capability(
         self,
         payload: FetchPayload,
         policy: SourcePolicy,
         period: str,
-        sector: str | None,
+        sector: str | tuple[str, ...] | list[str] | None,
     ) -> Iterator[FetchResult]:
         """Kline 路由：处理 LOF 特殊情况（sector=None → 从 c1_market.lof_list 表加载标的）。"""
         if sector is None:
@@ -792,12 +822,13 @@ class MiniQmtIngestProvider(IngestProviderBase):
         policy: SourcePolicy,
         period: str,
         dividend_type: str = "none",
-        sector: str = "沪深A股",
+        sector: str | tuple[str, ...] | list[str] = "沪深A股",
     ) -> Iterator[FetchResult]:
         """抓取K线数据（日K/分钟K通用，支持A股/ETF/LOF）。
 
         步骤：
-        1. 若 symbols 为 None，取指定板块全部标的（沪深A股/ETF/LOF）
+        1. 若 symbols 为 None，取指定板块全部标的（沪深A股/ETF/LOF；sector 可传
+           板块元组做多板块并集，如 ("沪深A股", "京市A股") 覆盖北交所 920 新段）
         2. 对每个 stock_code：download_history_data 下载 -> get_market_data_ex 读取
         3. DataFrame 转 tuple 列表，每个股票作为一批 yield
 
@@ -809,7 +840,8 @@ class MiniQmtIngestProvider(IngestProviderBase):
             policy: 调用策略
             period: K线周期（"1d"/"1m"/"5m"/"15m"/"30m"/"60m"）
             dividend_type: 复权类型（"none"=不复权/"back"=后复权），默认 "none"
-            sector: 板块名称（"沪深A股"/"ETF"/"LOF"），默认 "沪深A股"
+            sector: 板块名称或板块元组（"沪深A股"/"ETF"/"LOF"/("沪深A股","京市A股")），
+                默认 "沪深A股"
 
         Yields:
             FetchResult: 每个股票一批
@@ -837,11 +869,11 @@ class MiniQmtIngestProvider(IngestProviderBase):
             )
             return
 
-        # 1. 获取标的清单
+        # 1. 获取标的清单（sector 支持多板块元组并集，2026-09-14 北交所 920 治本）
         try:
             symbols = payload.symbols
             if not symbols:
-                symbols = self._call_with_policy(xtdata.get_stock_list_in_sector, policy, sector)
+                symbols = self._collect_sector_symbols(policy, sector)
         except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
             yield FetchResult(
                 table=table,
