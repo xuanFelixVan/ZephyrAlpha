@@ -12864,7 +12864,7 @@ creation_tokens:
   token: board-index-synthesis-plan-20260915
   created_by: st-880fill-20260911
   capability: board_index_synthesis
-- file: "docs/_working/2026-09-15-kline1min-valuation-handoff.md"
+- file: "docs/_working/archive/2026-09/2026-09-15-kline1min-valuation-handoff.md"
   token: "kline1min-valuation-handoff-20260915"
   created_by: "st-k1handoff-0915"
   capability: "data_coverage_investigation"
