@@ -1,0 +1,47 @@
+# ALGO_FLOW 外部真源——compliance_tech_enabler（_domain_compliance 域，真源 src/zephyr/compliance/compliance_tech_enabler.py）
+# 2026-09-15 P2-1 契约头减负批量出仓：docstring 内联块逐字节副本，extractor 经
+# external 锚加载走同一 parse_algo_flow 管线；算法公共面变化时同步更新本块。
+doc_type: architecture_view
+ttl: permanent
+module: src.zephyr.compliance.compliance_tech_enabler
+source_of_truth: src/zephyr/compliance/compliance_tech_enabler.py
+algo_flow: |
+    # [ALGO_FLOW]
+    # 层: 输入
+    # - id: I1
+    #   name: definitions 参数
+    #   fields: 参数 definitions，类型注解 Iterable[Mapping[str, Any]]
+    #   code: compliance_tech_enabler.py 顶层公共函数形参（AST 提取）
+    # - id: I2
+    #   name: now 参数
+    #   fields: 参数 now（无注解）
+    #   code: compliance_tech_enabler.py 顶层公共函数形参（AST 提取）
+    # 层: 算法
+    # - id: A1
+    #   name_zh: ① materialize_compliance_rules
+    #   name_en: materialize_compliance_rules
+    #   intro: 声明式规则定义 → ComplianceRule 生效集（纯函数）。
+    #   desc: 声明式规则定义 → ComplianceRule 生效集（纯函数）。 拒绝路径（Fail-Closed，全部留痕不静默）： - 非 Mapping 条目 / 必填字段缺失 / 空…；源码 L164-L212
+    #   inputs: definitions now
+    #   outputs: RuleEnablementResult
+    # - id: A2
+    #   name_zh: ② ComplianceTechEnabler
+    #   name_en: ComplianceTechEnabler
+    #   intro: 合规技术使能器（薄封装：定义源持有 + 活跃规则装载 + 最近结果留痕）。
+    #   desc: 合规技术使能器（薄封装：定义源持有 + 活跃规则装载 + 最近结果留痕）。；公共方法（定义序）: load_active_rules, last_result；源码 L219-L252
+    #   inputs: definition_source
+    #   outputs: 返回值
+    #   （注：A2 之后另有 3 个公共定义未列入（含 3 个数据契约/异常/枚举声明类），见源码）
+    # 层: 输出
+    # - id: O1
+    #   name_zh: RuleEnablementResult
+    #   name_en: RuleEnablementResult
+    #   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+    #   downstream: MOD-L10-001(ComplianceEngine 规则装载) ; MOD-CMP-004(合规持续运营 规则新鲜度核查)
+    # [/ALGO_FLOW]
+    #
+    # 边:
+    # I1 --> A1
+    # I2 --> A1
+    # A1 --> A2
+    # A2 --> O1

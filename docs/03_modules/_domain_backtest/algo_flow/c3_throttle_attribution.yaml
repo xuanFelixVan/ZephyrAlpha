@@ -1,0 +1,49 @@
+# ALGO_FLOW 外部真源——c3_throttle_attribution（_domain_backtest 域，真源 src/zephyr/backtest/regime_validation/c3_throttle_attribution.py）
+# 2026-09-15 P2-1 契约头减负批量出仓：docstring 内联块逐字节副本，extractor 经
+# external 锚加载走同一 parse_algo_flow 管线；算法公共面变化时同步更新本块。
+doc_type: architecture_view
+ttl: permanent
+module: src.zephyr.backtest.regime_validation.c3_throttle_attribution
+source_of_truth: src/zephyr/backtest/regime_validation/c3_throttle_attribution.py
+algo_flow: |
+    # [ALGO_FLOW]
+    # 层: 输入
+    # - id: I1
+    #   name: records 参数
+    #   fields: 参数 records，类型注解 pd.DataFrame
+    #   code: c3_throttle_attribution.py 顶层公共函数形参（AST 提取）
+    # - id: I2
+    #   name: defensive_states 参数
+    #   fields: 参数 defensive_states，类型注解 Sequence[Hashable]
+    #   code: c3_throttle_attribution.py 顶层公共函数形参（AST 提取）
+    # - id: I3
+    #   name: bull_state 参数
+    #   fields: 参数 bull_state，类型注解 Hashable
+    #   code: c3_throttle_attribution.py 顶层公共函数形参（AST 提取）
+    # - id: I4
+    #   name: defensive_share_min 参数
+    #   fields: 参数 defensive_share_min，类型注解 float
+    #   code: c3_throttle_attribution.py 顶层公共函数形参（AST 提取）
+    # 层: 算法
+    # - id: A1
+    #   name_zh: ① attribute_throttle
+    #   name_en: attribute_throttle
+    #   intro: C3 主入口：各态 Shrinkage 贡献归因。
+    #   desc: C3 主入口：各态 Shrinkage 贡献归因。 Args: records: 逐日 DataFrame，列 = state / shrinkage / ret_baselin…；源码 L134-L216
+    #   inputs: records defensive_states bull_state defensive_share_min bull_shrink_m…
+    #   outputs: C3AttributionReport
+    #   （注：A1 之后另有 3 个公共定义未列入（含 3 个数据契约/异常/枚举声明类），见源码）
+    # 层: 输出
+    # - id: O1
+    #   name_zh: C3AttributionReport
+    #   name_en: C3AttributionReport
+    #   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+    #   downstream: 人工审查; 11_regime_backtest_validation_plan C3 节流归因
+    # [/ALGO_FLOW]
+    #
+    # 边:
+    # I1 --> A1
+    # I2 --> A1
+    # I3 --> A1
+    # I4 --> A1
+    # A1 --> O1
