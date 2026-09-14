@@ -84,7 +84,8 @@ offrepo_backup:
       source: "E:\\qmt_bridge"
     - id: stash_archive
       source: "D:\\ZephyrAlpha-stash-archive"
-    - id: data_download
-      source: "E:\\数据下载"
     - id: cold_archive
       source: "E:\\zephyr_cold_archive"
+  # 2026-09-14 Owner 裁定：data_download（E:\数据下载）不备份，已从目标移除——
+  # 源数据当日 52.66→118.38GB 持续膨胀，/MIR 镜像同量吃掉 F 盘空间（当日 +66GB，
+  # 是 F 盘告急头号推手）；F:\offrepo_backup\data_download 旧副本已删（源在 E 盘可随时重镜像）
