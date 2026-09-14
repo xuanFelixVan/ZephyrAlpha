@@ -49315,6 +49315,13 @@ entries:
   desc_zh: "研报 PDF 下载/文本/表格三级提取真历史预测值（源污染修复）"
   desc_en: ""
   plain_zh: "把八年前的研究报告原文下载下来，用程序看懂里面'当时预测每股赚多少钱'的表格，把真正属于那个年代的预测值挖出来存好——用来修复之前存错时间的数据。"
+- module_path: src/zephyr/signal_ashare/strategy_signal/pattern_signal_runtime.py
+  domain_id: D_ASHARE_SIGNAL
+  name_zh: "图形信号运行时装配根"
+  name_en: ""
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "把图形库的零件(识别引擎+胜率查询+信号映射器+校验器)拼成一台能开机的机器：喂它K线或图形事件，它吐出带方向、强度、止损位的合规信号；零件全是现成的，本模块只负责接线组装，不含任何业务算法"
 
 battle_map_steps:
 - step_id: BM-BUY-05
