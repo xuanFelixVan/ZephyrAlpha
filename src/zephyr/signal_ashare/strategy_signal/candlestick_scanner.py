@@ -14,14 +14,16 @@
 # [TESTS] tests/signal_ashare/test_candlestick_scanner.py
 # [A_module] module_id=MOD-SIG-145 | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
-"""蜡烛形态扫描器（MOD-SIG-145 P2-a——77 条目录的实现主体）。
+"""蜡烛形态扫描器（MOD-SIG-145 P2-a——83 条蜡烛目录的实现主体）。
 
 三层来源：
     1. TA-Lib CDL 61 函数（行业标准语义，ta-lib>=0.6 自带二进制）——
        pattern_id=CDL 函数名（如 CDLHAMMER，基础名粒度天然成立）。
     2. A股特色 7 + Nison 镊子 2 + Crabel NR7 + 关键反转日/WRB/Oops +
-       短线 + 三空 + 塔形 2 = 16 条手写规则（_EXTRA_RULES）。
-    3. 对应 REG-PAT-001 PAT-CANDLE-001..077，种子映射见
+       短线 + 三空 + 塔形 2 = 16 条手写规则（_EXTRA_RULES）；
+       2026-09-15 增补 Bulkowski 小形态绩效榜 6 条（内包日/周线反转/开收反转/
+       钩形反转/枢轴点反转/鲨鱼32，PAT-CANDLE-078..083）。
+    3. 对应 REG-PAT-001 PAT-CANDLE-001..083，种子映射见
        _CDL_PAT_SEED / _EXTRA_PAT_SEED（evidence 回填与 code_path 同步用）。
 
 事件口径（与统一形态引擎对齐）：
@@ -224,6 +226,89 @@ def _r_tower_bottom(o, h, l, c, pc):  # 077 塔形底（MVP 近似：低位长�
     return (m,), (), ()
 
 
+def _rolling_extreme(arr: np.ndarray, n: int, mode: str) -> np.ndarray:
+    """滚动 n 窗极值（含当前 bar），前 n-1 位 NaN。"""
+    out = np.full(len(arr), np.nan)
+    if len(arr) >= n:
+        win = np.lib.stride_tricks.sliding_window_view(arr, n)
+        out[n - 1 :] = win.max(axis=1) if mode == "max" else win.min(axis=1)
+    return out
+
+
+def _r_inside_days(o, h, l, c, pc):  # 078 内包日（高低点皆包络前一日，中性 setup）
+    ph = np.roll(h, 1)
+    pl = np.roll(l, 1)
+    inside = (h < ph) & (l > pl)
+    inside[0] = False
+    return (), (), (inside,)
+
+
+def _r_weekly_reversal(o, h, l, c, pc):  # 079 周线反转（创 12 窗新极端但反向收盘）
+    hh = _rolling_extreme(h, 12, "max")
+    ll = _rolling_extreme(l, 12, "min")
+    with np.errstate(invalid="ignore"):
+        new_high = h >= hh
+        new_low = l <= ll
+    bear = new_high & (c < o)  # 创新高收阴=顶反转
+    bull = new_low & (c > o)  # 创新低收阳=底反转
+    bear &= ~np.isnan(hh)
+    bull &= ~np.isnan(ll)
+    return (bull,), (bear,), ()
+
+
+def _r_open_close_reversal(o, h, l, c, pc):  # 080 开收反转（两 bar：首 bar 单边推进、次 bar 反向且收穿首 bar 收盘）
+    n = len(o)
+    rng = h - l
+    valid = (rng > 0) & ~np.isnan(c)
+    open_near_high = (h - o) <= 0.25 * rng
+    open_near_low = (o - l) <= 0.25 * rng
+    close_near_low = (c - l) <= 0.25 * rng
+    close_near_high = (h - c) <= 0.25 * rng
+    b1_black = (open_near_high & close_near_low & (c < o)) & valid  # 长阴（开近高收近低）
+    b2_white = (open_near_low & close_near_high & (c > o)) & valid  # 长阳（开近低收近高）
+    b1_white = (open_near_low & close_near_high & (c > o)) & valid
+    b2_black = (open_near_high & close_near_low & (c < o)) & valid
+    bull = np.zeros(n, dtype=bool)
+    bear = np.zeros(n, dtype=bool)
+    bull[1:] = b1_black[:-1] & b2_white[1:] & (c[1:] > c[:-1])  # OCRU
+    bear[1:] = b1_white[:-1] & b2_black[1:] & (c[1:] < c[:-1])  # OCRD
+    return (bull,), (bear,), ()
+
+
+def _r_hook_reversal(o, h, l, c, pc):  # 081 钩形反转（开破前日极值、收穿前日收盘=钩回）
+    ph = np.roll(h, 1)
+    pl = np.roll(l, 1)
+    pcc = np.roll(c, 1)
+    bear = (o > ph) & (c < pcc)  # HRD：跳空开在昨高之上、收在昨收之下
+    bull = (o < pl) & (c > pcc)  # HRU：跳空开在昨低之下、收在昨收之上
+    bear[0] = False
+    bull[0] = False
+    return (bull,), (bear,), ()
+
+
+def _r_pivot_point_reversal(o, h, l, c, pc):  # 082 枢轴点反转（创昨高新高但收穿昨低/镜像，不要求外包）
+    ph = np.roll(h, 1)
+    pl = np.roll(l, 1)
+    bear = (h > ph) & (c < pl)  # PPRD
+    bull = (l < pl) & (c > ph)  # PPRU
+    bear[0] = False
+    bull[0] = False
+    return (bull,), (bear,), ()
+
+
+def _r_shark32(o, h, l, c, pc):  # 083 鲨鱼32（三连跌+Setup bar 开收近低；次日收盘破 Setup 高=触发向上）
+    n = len(o)
+    rng = h - l
+    valid = rng > 0
+    near_low = (((o - l) <= 0.25 * rng) & ((c - l) <= 0.25 * rng)) & valid
+    bull = np.zeros(n, dtype=bool)
+    s = np.arange(3, n - 1)  # setup bar 下标
+    if len(s):
+        dec3 = (c[s - 3] > c[s - 2]) & (c[s - 2] > c[s - 1])  # 前三根连跌
+        bull[s + 1] = dec3 & near_low[s] & (c[s + 1] > h[s])  # 触发：收盘破 Setup 高
+    return (bull,), (), ()
+
+
 _EXTRA_RULES: dict[str, tuple[Callable, str]] = {
     "短线": (_r_short_line, "PAT-CANDLE-062"),
     "一字涨停板": (_r_limit_up_flat, "PAT-CANDLE-063"),
@@ -241,6 +326,12 @@ _EXTRA_RULES: dict[str, tuple[Callable, str]] = {
     "三空": (_r_sanku, "PAT-CANDLE-075"),
     "塔形顶": (_r_tower_top, "PAT-CANDLE-076"),
     "塔形底": (_r_tower_bottom, "PAT-CANDLE-077"),
+    "内包日": (_r_inside_days, "PAT-CANDLE-078"),
+    "周线反转": (_r_weekly_reversal, "PAT-CANDLE-079"),
+    "开收反转": (_r_open_close_reversal, "PAT-CANDLE-080"),
+    "钩形反转": (_r_hook_reversal, "PAT-CANDLE-081"),
+    "枢轴点反转": (_r_pivot_point_reversal, "PAT-CANDLE-082"),
+    "鲨鱼32": (_r_shark32, "PAT-CANDLE-083"),
 }
 
 
@@ -309,7 +400,7 @@ def scan_candles(
             direction = "向上" if out[idx] > 0 else "向下"
             _emit(fname, fname, int(idx), direction)
 
-    # 2) 手写 extras 16
+    # 2) 手写 extras 22（062..077 原有 16 + 078..083 Bulkowski 小形态 6）
     for name, (fn, _pat_id) in _EXTRA_RULES.items():
         bull_groups, bear_groups, neutral_groups = fn(o, h, l, c, prev_c)
         for m, direction in (

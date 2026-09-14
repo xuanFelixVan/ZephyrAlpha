@@ -3417,13 +3417,13 @@ chart_patterns:
     timeframe: "daily"
     module_id: "MOD-SIG-024"
     doc_ref: "Bulkowski thepatternsite.com/InsideDays.html（2026-09-14 病菌寻路挖矿批核对）"
-    code_path: ""
+    code_path: "src/zephyr/signal_ashare/strategy_signal/candlestick_scanner.py"
     used_by_factors: []
     variant_of: null
     status: "candidate"
     version: "1.0.0"
     created_at: "2026-09-14"
-    updated_at: "2026-09-14"
+    updated_at: "2026-09-15"
     owner: "MOD-GOVERNANCE"
     hit_rate: null
     false_positive_rate: null
@@ -3436,9 +3436,9 @@ chart_patterns:
     entry_role: "trigger"
     applies_to: ["stock"]
     tags: ["形态", "波动", "突破"]
-    algorithm_status: "pending_backtest"
+    algorithm_status: "quantized"
     evidence: ""
-    code_symbol: null
+    code_symbol: "src/zephyr/signal_ashare/strategy_signal/candlestick_scanner.py::scan_candles"
     code_fingerprint: null
     applicable_series: ["time_bars"]
 
@@ -3459,13 +3459,13 @@ chart_patterns:
     timeframe: "weekly"
     module_id: "MOD-SIG-024"
     doc_ref: "Bulkowski thepatternsite.com/WeeklyRevsDownside.html+WeeklyRevsUpside.html + SmallPatterns.html 绩效榜（2024-10 口径）（2026-09-14 挖矿批二核对）"
-    code_path: ""
+    code_path: "src/zephyr/signal_ashare/strategy_signal/candlestick_scanner.py"
     used_by_factors: []
     variant_of: null
     status: "candidate"
     version: "1.0.0"
     created_at: "2026-09-14"
-    updated_at: "2026-09-14"
+    updated_at: "2026-09-15"
     owner: "MOD-GOVERNANCE"
     hit_rate: null
     false_positive_rate: null
@@ -3478,9 +3478,9 @@ chart_patterns:
     entry_role: "trigger"
     applies_to: ["stock"]
     tags: ["反转", "周期", "形态"]
-    algorithm_status: "pending_backtest"
+    algorithm_status: "quantized"
     evidence: ""
-    code_symbol: null
+    code_symbol: "src/zephyr/signal_ashare/strategy_signal/candlestick_scanner.py::scan_candles"
     code_fingerprint: null
     applicable_series: ["time_bars"]
   - pattern_id: "PAT-CANDLE-080"
@@ -3500,13 +3500,13 @@ chart_patterns:
     timeframe: "daily"
     module_id: "MOD-SIG-024"
     doc_ref: "Bulkowski thepatternsite.com/OCRU.html（ID 全量核对：两 bar/25% 区间/排名 2-23）+OCRD.html（2026-09-14 挖矿批二核对）"
-    code_path: ""
+    code_path: "src/zephyr/signal_ashare/strategy_signal/candlestick_scanner.py"
     used_by_factors: []
     variant_of: null
     status: "candidate"
     version: "1.0.0"
     created_at: "2026-09-14"
-    updated_at: "2026-09-14"
+    updated_at: "2026-09-15"
     owner: "MOD-GOVERNANCE"
     hit_rate: null
     false_positive_rate: null
@@ -3519,9 +3519,9 @@ chart_patterns:
     entry_role: "trigger"
     applies_to: ["stock"]
     tags: ["反转", "k线", "形态"]
-    algorithm_status: "pending_backtest"
+    algorithm_status: "quantized"
     evidence: ""
-    code_symbol: null
+    code_symbol: "src/zephyr/signal_ashare/strategy_signal/candlestick_scanner.py::scan_candles"
     code_fingerprint: null
     applicable_series: ["time_bars"]
   - pattern_id: "PAT-CANDLE-081"
@@ -3541,13 +3541,13 @@ chart_patterns:
     timeframe: "daily"
     module_id: "MOD-SIG-024"
     doc_ref: "Bulkowski thepatternsite.com/HRD.html+HRU.html + SmallPatterns.html 绩效榜（2026-09-14 挖矿批二核对）"
-    code_path: ""
+    code_path: "src/zephyr/signal_ashare/strategy_signal/candlestick_scanner.py"
     used_by_factors: []
     variant_of: null
     status: "candidate"
     version: "1.0.0"
     created_at: "2026-09-14"
-    updated_at: "2026-09-14"
+    updated_at: "2026-09-15"
     owner: "MOD-GOVERNANCE"
     hit_rate: null
     false_positive_rate: null
@@ -3560,9 +3560,9 @@ chart_patterns:
     entry_role: "trigger"
     applies_to: ["stock"]
     tags: ["反转", "k线", "形态"]
-    algorithm_status: "pending_backtest"
+    algorithm_status: "quantized"
     evidence: ""
-    code_symbol: null
+    code_symbol: "src/zephyr/signal_ashare/strategy_signal/candlestick_scanner.py::scan_candles"
     code_fingerprint: null
     applicable_series: ["time_bars"]
   - pattern_id: "PAT-CANDLE-082"
@@ -3582,13 +3582,13 @@ chart_patterns:
     timeframe: "daily"
     module_id: "MOD-SIG-024"
     doc_ref: "Bulkowski thepatternsite.com/PPRU.html+PPRD.html + SmallPatterns.html 绩效榜（2026-09-14 挖矿批二核对）"
-    code_path: ""
+    code_path: "src/zephyr/signal_ashare/strategy_signal/candlestick_scanner.py"
     used_by_factors: []
     variant_of: "PAT-CANDLE-072"
     status: "candidate"
     version: "1.0.0"
     created_at: "2026-09-14"
-    updated_at: "2026-09-14"
+    updated_at: "2026-09-15"
     owner: "MOD-GOVERNANCE"
     hit_rate: null
     false_positive_rate: null
@@ -3601,9 +3601,9 @@ chart_patterns:
     entry_role: "trigger"
     applies_to: ["stock"]
     tags: ["反转", "k线", "形态"]
-    algorithm_status: "pending_backtest"
+    algorithm_status: "quantized"
     evidence: ""
-    code_symbol: null
+    code_symbol: "src/zephyr/signal_ashare/strategy_signal/candlestick_scanner.py::scan_candles"
     code_fingerprint: null
     applicable_series: ["time_bars"]
   - pattern_id: "PAT-CANDLE-083"
@@ -3623,13 +3623,13 @@ chart_patterns:
     timeframe: "daily"
     module_id: "MOD-SIG-024"
     doc_ref: "Bulkowski thepatternsite.com/Shark32.html（Chesler 原创形态收录）+ SmallPatterns.html 绩效榜（2026-09-14 挖矿批二核对）"
-    code_path: ""
+    code_path: "src/zephyr/signal_ashare/strategy_signal/candlestick_scanner.py"
     used_by_factors: []
     variant_of: null
     status: "candidate"
     version: "1.0.0"
     created_at: "2026-09-14"
-    updated_at: "2026-09-14"
+    updated_at: "2026-09-15"
     owner: "MOD-GOVERNANCE"
     hit_rate: null
     false_positive_rate: null
@@ -3642,9 +3642,9 @@ chart_patterns:
     entry_role: "trigger"
     applies_to: ["stock"]
     tags: ["反转", "k线", "形态"]
-    algorithm_status: "pending_backtest"
+    algorithm_status: "quantized"
     evidence: ""
-    code_symbol: null
+    code_symbol: "src/zephyr/signal_ashare/strategy_signal/candlestick_scanner.py::scan_candles"
     code_fingerprint: null
     applicable_series: ["time_bars"]
   # ============================================================
