@@ -50,7 +50,8 @@ def load_manifest(manifest_csv: str | Path) -> pd.DataFrame:
     df = pd.read_csv(manifest_csv)
     if "degraded_dimensions" not in df.columns or "sharpe" not in df.columns:
         raise ValueError("manifest 缺少 degraded_dimensions/sharpe 列")
-    clean = df[df["degraded_dimensions"].isna() | (df["degraded_dimensions"].astype(str) == "[]")].copy()
+    deg = df["degraded_dimensions"].astype(str).str.strip()
+    clean = df[df["degraded_dimensions"].isna() | deg.isin(["()", "[]", "", "nan"])].copy()
     if len(clean) < 50:
         raise ValueError(f"非降级格点不足 50（当前 {len(clean)}）——批次 A 规模不足以支撑结构知识")
     clean["perf_bin"] = pd.qcut(clean["sharpe"], q=PERF_QUANTILES, labels=False, duplicates="drop")
@@ -146,6 +147,40 @@ def run_anova(manifest_csv: str | Path, out_dir: str | Path | None = None) -> di
             json.dumps(report, ensure_ascii=False, indent=2), encoding="utf-8"
         )
     return report
+
+
+def render_report_md(report: dict) -> str:
+    """结构知识三件套 → MD 报告（立项稿 §十三 验收格式）。"""
+    lines = [
+        "# F-06 批次 A 结构知识报告（维度重要性 / 显著交互 / 可砍维度）",
+        "",
+        f"- 数据源: `{report['manifest']}`",
+        f"- 非降级格点: **{report['n_recipes_used']}** 条（降级格点已剔除，防污染）",
+        f"- 阈值: 显著交互 ≥ {report['thresholds']['interaction']}；可砍 < {report['thresholds']['prune']}",
+        "",
+        "## 1. 维度重要性表（主效应方差占比，降序）",
+        "",
+        "| 维度 | 主效应占比 |",
+        "|---|---|",
+    ]
+    for r in report["importance"]:
+        lines.append(f"| {r['dimension']} | {r['main_effect_ratio']:.4f} |")
+    lines += ["", "## 2. 显著交互（增量占比 ≥ 阈值）", ""]
+    if report["significant_interactions"]:
+        lines += ["| 维度对 | 交互增量 |", "|---|---|"]
+        for r in report["significant_interactions"]:
+            lines.append(f"| {r['dim_1']} × {r['dim_2']} | {r['interaction_ratio']:.4f} |")
+    else:
+        lines.append("（无 ≥ 阈值的显著交互）")
+    lines += ["", "## 3. 可砍维度清单", ""]
+    if report["prunable_dims"]:
+        lines += ["| 维度 | 主效应 | 交互合计 | 合计 |", "|---|---|---|---|"]
+        for r in report["prunable_dims"]:
+            lines.append(f"| {r['dimension']} | {r['main_ratio']} | {r['interaction_sum']} | {r['total_ratio']} |")
+    else:
+        lines.append("（无——全部维度均有信息贡献）")
+    lines += ["", "> 合规声明: 研究方法产出，不构成投资建议。"]
+    return "\n".join(lines)
 
 
 def main() -> int:
