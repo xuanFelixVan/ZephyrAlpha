@@ -1,0 +1,3218 @@
+{
+ "generated_at": "2026-09-14T19:31:49+00:00",
+ "total_items": 200,
+ "truncated_to_limit": true,
+ "last_cursor_qid": "q-20260906-auto-derived-sync-0122",
+ "counts": {
+  "content_landed": 1,
+  "landed_elsewhere": 199,
+  "superseded_or_dropped": 0,
+  "empty_items": 0
+ },
+ "owner_cleanable_qids": [
+  "q-20260905-auto-derived-sync-0064",
+  "q-20260903-session-20260903-arch308-0001",
+  "q-20260903-session-20260903-arch308-0002",
+  "q-20260903-session-20260903-arch308-0004",
+  "q-20260903-session-20260903-arch308-0005",
+  "q-20260903-session-20260903-arch308-0006",
+  "q-20260903-solo-20260902-services-gate-0007",
+  "q-20260903-solo-20260902-services-gate-0008",
+  "q-20260903-solo-20260902-services-gate-0009",
+  "q-20260903-solo-20260902-services-gate-0010",
+  "q-20260904-AI-DSREG-112-0002",
+  "q-20260904-AI-DSREG-112-0004",
+  "q-20260904-auto-derived-sync-0007",
+  "q-20260904-auto-derived-sync-0008",
+  "q-20260904-auto-derived-sync-0009",
+  "q-20260904-auto-derived-sync-0010",
+  "q-20260904-auto-derived-sync-0011",
+  "q-20260904-auto-derived-sync-0012",
+  "q-20260904-auto-derived-sync-0013",
+  "q-20260904-auto-derived-sync-0014",
+  "q-20260904-auto-derived-sync-0015",
+  "q-20260904-auto-derived-sync-0016",
+  "q-20260904-auto-derived-sync-0017",
+  "q-20260904-auto-derived-sync-0018",
+  "q-20260904-auto-derived-sync-0019",
+  "q-20260904-auto-derived-sync-0020",
+  "q-20260904-auto-derived-sync-0021",
+  "q-20260904-auto-derived-sync-0022",
+  "q-20260904-auto-derived-sync-0023",
+  "q-20260904-auto-derived-sync-0024",
+  "q-20260904-auto-derived-sync-0025",
+  "q-20260904-auto-derived-sync-0026",
+  "q-20260904-auto-derived-sync-0027",
+  "q-20260904-auto-derived-sync-0028",
+  "q-20260904-auto-derived-sync-0029",
+  "q-20260904-auto-derived-sync-0030",
+  "q-20260904-auto-derived-sync-0031",
+  "q-20260904-auto-derived-sync-0032",
+  "q-20260904-auto-derived-sync-0033",
+  "q-20260904-auto-derived-sync-0034",
+  "q-20260904-auto-derived-sync-0035",
+  "q-20260904-auto-derived-sync-0036",
+  "q-20260904-auto-derived-sync-0037",
+  "q-20260904-auto-derived-sync-0038",
+  "q-20260904-auto-derived-sync-0039",
+  "q-20260904-auto-derived-sync-0040",
+  "q-20260904-auto-derived-sync-0041",
+  "q-20260904-auto-derived-sync-0042",
+  "q-20260904-auto-derived-sync-0043",
+  "q-20260904-auto-derived-sync-0044",
+  "q-20260904-auto-derived-sync-0045",
+  "q-20260904-auto-derived-sync-0046",
+  "q-20260904-data-backfill-0903-0004",
+  "q-20260904-perf-swr-allpages-20260903-0002",
+  "q-20260904-solo-20260902-services-gate-0012",
+  "q-20260904-solo-20260902-services-gate-0014",
+  "q-20260904-solo-20260902-services-gate-0016",
+  "q-20260904-solo-20260902-services-gate-0018",
+  "q-20260904-solo-20260902-services-gate-0020",
+  "q-20260904-solo-20260902-services-gate-0022",
+  "q-20260904-solo-20260902-services-gate-0024",
+  "q-20260904-solo-20260903-twopane-0002",
+  "q-20260904-solo-20260903-twopane-0004",
+  "q-20260904-solo-20260903-twopane-0006",
+  "q-20260904-solo-20260903-twopane-0008",
+  "q-20260904-solo-20260903-twopane-0010",
+  "q-20260904-solo-20260903-twopane-0012",
+  "q-20260904-solo-20260904-eqw-alla-0002",
+  "q-20260904-solo-20260904-governance-fixes-0002",
+  "q-20260904-solo-20260904-truth-source-0002",
+  "q-20260904-solo-20260904-truth-source-0004",
+  "q-20260904-solo-20260904-truth-source-0006",
+  "q-20260904-solo-20260904-truth-source-0008",
+  "q-20260904-solo-20260904-truth-source-0010",
+  "q-20260904-solo-20260904-truth-source-0012",
+  "q-20260904-solo-20260904-truth-source-0014",
+  "q-20260904-solo-20260904-truth-source-0016",
+  "q-20260904-solo-20260904-truth-source-0018",
+  "q-20260905-AI-00-AUDIT-20260905-0001",
+  "q-20260905-AI-00-AUDIT-20260905-0002",
+  "q-20260905-AI-00-AUDIT-20260905-0003",
+  "q-20260905-AI-00-AUDIT-20260905-0004",
+  "q-20260905-AI-00-AUDIT-20260905-0005",
+  "q-20260905-AI-00-AUDIT-20260905-0006",
+  "q-20260905-AI-00-AUDIT-20260905-0007",
+  "q-20260905-AI-00-AUDIT-20260905-0008",
+  "q-20260905-AI-00-AUDIT-20260905-0010",
+  "q-20260905-AI-00-AUDIT-20260905-0011",
+  "q-20260905-AI-00-AUDIT-20260905-0012",
+  "q-20260905-AI-00-AUDIT-20260905-0013",
+  "q-20260905-AI-00-AUDIT-20260905-0014",
+  "q-20260905-AI-00-AUDIT-20260905-0015",
+  "q-20260905-AI-00-AUDIT-20260905-0016",
+  "q-20260905-AI-00-AUDIT-20260905-0017",
+  "q-20260905-AI-00-AUDIT-20260905-0018",
+  "q-20260905-AI-00-AUDIT-20260905-0019",
+  "q-20260905-AI-00-AUDIT-20260905-0020",
+  "q-20260905-AI-00-AUDIT-20260905-0021",
+  "q-20260905-AI-00-AUDIT-20260905-0022",
+  "q-20260905-AI-00-AUDIT-20260905-0023",
+  "q-20260905-AI-00-AUDIT-20260905-0024",
+  "q-20260905-AI-00-AUDIT-20260905-0025",
+  "q-20260905-AI-00-AUDIT-20260905-0026",
+  "q-20260905-AI-00-AUDIT-20260905-0027",
+  "q-20260905-AI-00-AUDIT-20260905-0029",
+  "q-20260905-AI-00-AUDIT-20260905-0030",
+  "q-20260905-auto-derived-sync-0047",
+  "q-20260905-auto-derived-sync-0048",
+  "q-20260905-auto-derived-sync-0049",
+  "q-20260905-auto-derived-sync-0050",
+  "q-20260905-auto-derived-sync-0051",
+  "q-20260905-auto-derived-sync-0052",
+  "q-20260905-auto-derived-sync-0053",
+  "q-20260905-auto-derived-sync-0054",
+  "q-20260905-auto-derived-sync-0055",
+  "q-20260905-auto-derived-sync-0056",
+  "q-20260905-auto-derived-sync-0057",
+  "q-20260905-auto-derived-sync-0058",
+  "q-20260905-auto-derived-sync-0059",
+  "q-20260905-auto-derived-sync-0060",
+  "q-20260905-auto-derived-sync-0061",
+  "q-20260905-auto-derived-sync-0062",
+  "q-20260905-auto-derived-sync-0063",
+  "q-20260905-auto-derived-sync-0065",
+  "q-20260905-auto-derived-sync-0066",
+  "q-20260905-auto-derived-sync-0067",
+  "q-20260905-auto-derived-sync-0068",
+  "q-20260905-auto-derived-sync-0069",
+  "q-20260905-auto-derived-sync-0070",
+  "q-20260905-auto-derived-sync-0071",
+  "q-20260905-auto-derived-sync-0072",
+  "q-20260905-auto-derived-sync-0073",
+  "q-20260905-auto-derived-sync-0074",
+  "q-20260905-auto-derived-sync-0075",
+  "q-20260905-auto-derived-sync-0076",
+  "q-20260905-auto-derived-sync-0077",
+  "q-20260905-auto-derived-sync-0078",
+  "q-20260905-auto-derived-sync-0079",
+  "q-20260905-auto-derived-sync-0080",
+  "q-20260905-auto-derived-sync-0081",
+  "q-20260905-auto-derived-sync-0082",
+  "q-20260905-auto-derived-sync-0083",
+  "q-20260905-auto-derived-sync-0084",
+  "q-20260905-auto-derived-sync-0085",
+  "q-20260905-auto-derived-sync-0086",
+  "q-20260905-auto-derived-sync-0088",
+  "q-20260905-auto-derived-sync-0089",
+  "q-20260905-auto-derived-sync-0090",
+  "q-20260905-auto-derived-sync-0091",
+  "q-20260905-auto-derived-sync-0092",
+  "q-20260905-auto-derived-sync-0093",
+  "q-20260905-auto-derived-sync-0094",
+  "q-20260905-auto-derived-sync-0095",
+  "q-20260905-auto-derived-sync-0096",
+  "q-20260905-auto-derived-sync-0097",
+  "q-20260905-auto-derived-sync-0098",
+  "q-20260905-session-20260905-sync-0001",
+  "q-20260905-session-20260905-sync-0002",
+  "q-20260905-solo-20260904-decision-map-r7-0002",
+  "q-20260905-solo-20260904-decision-map-r7-0004",
+  "q-20260905-solo-20260905-alignment-hardening-0001",
+  "q-20260905-solo-20260905-alignment-hardening-0002",
+  "q-20260905-solo-20260905-alignment-hardening-r2-0001",
+  "q-20260905-solo-20260905-decision-map-v12-0001",
+  "q-20260905-solo-20260905-decision-map-v12-0002",
+  "q-20260905-solo-20260905-decision-map-v121-0001",
+  "q-20260905-solo-20260905-decision-map-v121-0002",
+  "q-20260905-solo-20260905-decision-map-v122-0001",
+  "q-20260905-solo-20260905-decision-map-v122-0002",
+  "q-20260905-solo-20260905-decision-map-v122-0003",
+  "q-20260905-solo-20260905-decision-map-v122-0004",
+  "q-20260905-STEWARD-20260905-001-0001",
+  "q-20260905-STEWARD-20260905-001-0002",
+  "q-20260905-STEWARD-20260905-001-0003",
+  "q-20260905-STEWARD-20260905-001-0004",
+  "q-20260905-STEWARD-20260905-001-0005",
+  "q-20260905-STEWARD-20260905-001-0006",
+  "q-20260905-STEWARD-20260905-001-0007",
+  "q-20260906-auto-derived-sync-0101",
+  "q-20260906-auto-derived-sync-0102",
+  "q-20260906-auto-derived-sync-0103",
+  "q-20260906-auto-derived-sync-0104",
+  "q-20260906-auto-derived-sync-0105",
+  "q-20260906-auto-derived-sync-0106",
+  "q-20260906-auto-derived-sync-0107",
+  "q-20260906-auto-derived-sync-0108",
+  "q-20260906-auto-derived-sync-0109",
+  "q-20260906-auto-derived-sync-0110",
+  "q-20260906-auto-derived-sync-0111",
+  "q-20260906-auto-derived-sync-0112",
+  "q-20260906-auto-derived-sync-0113",
+  "q-20260906-auto-derived-sync-0114",
+  "q-20260906-auto-derived-sync-0115",
+  "q-20260906-auto-derived-sync-0116",
+  "q-20260906-auto-derived-sync-0117",
+  "q-20260906-auto-derived-sync-0118",
+  "q-20260906-auto-derived-sync-0119",
+  "q-20260906-auto-derived-sync-0120",
+  "q-20260906-auto-derived-sync-0121",
+  "q-20260906-auto-derived-sync-0122"
+ ],
+ "keep_evidence_qids": [],
+ "file_verdicts": [
+  {
+   "qid": "q-20260903-session-20260903-arch308-0001",
+   "path": "scripts/governance/script_manifest.yaml",
+   "verdict": "landed_elsewhere",
+   "detail": "path committed after dead_at"
+  },
+  {
+   "qid": "q-20260903-session-20260903-arch308-0001",
+   "path": "docs/01_policies_and_standards/_registry/catalogs/rule_catalog_registry.yaml",
+   "verdict": "landed_elsewhere",
+   "detail": "path committed after dead_at"
+  },
+  {
+   "qid": "q-20260903-session-20260903-arch308-0001",
+   "path": "docs/01_policies_and_standards/_registry/catalogs/rule_ai_perception_index.yaml",
+   "verdict": "landed_elsewhere",
+   "detail": "path committed after dead_at"
+  },
+  {
+   "qid": "q-20260903-session-20260903-arch308-0002",
+   "path": "scripts/governance/meta/rules_integrity_db.json",
+   "verdict": "landed_elsewhere",
+   "detail": "path committed after dead_at"
+  },
+  {
+   "qid": "q-20260903-session-20260903-arch308-0004",
+   "path": "scripts/governance/meta/rules_integrity_db.json",
+   "verdict": "landed_elsewhere",
+   "detail": "path committed after dead_at"
+  },
+  {
+   "qid": "q-20260903-session-20260903-arch308-0005",
+   "path": "scripts/governance/script_manifest.yaml",
+   "verdict": "landed_elsewhere",
+   "detail": "path committed after dead_at"
+  },
+  {
+   "qid": "q-20260903-session-20260903-arch308-0005",
+   "path": "docs/01_policies_and_standards/_registry/catalogs/rule_catalog_registry.yaml",
+   "verdict": "landed_elsewhere",
+   "detail": "path committed after dead_at"
+  },
+  {
+   "qid": "q-20260903-session-20260903-arch308-0005",
+   "path": "docs/01_policies_and_standards/_registry/catalogs/rule_ai_perception_index.yaml",
+   "verdict": "landed_elsewhere",
+   "detail": "path committed after dead_at"
+  },
+  {
+   "qid": "q-20260903-session-20260903-arch308-0006",
+   "path": "scripts/governance/meta/rules_integrity_db.json",
+   "verdict": "landed_elsewhere",
+   "detail": "path committed after dead_at"
+  },
+  {
+   "qid": "q-20260903-solo-20260902-services-gate-0007",
+   "path": "scripts/governance/script_manifest.yaml",
+   "verdict": "landed_elsewhere",
+   "detail": "path committed after dead_at"
+  },
+  {
+   "qid": "q-20260903-solo-20260902-services-gate-0008",
+   "path": "scripts/governance/meta/rules_integrity_db.json",
+   "verdict": "landed_elsewhere",
+   "detail": "path committed after dead_at"
+  },
+  {
+   "qid": "q-20260903-solo-20260902-services-gate-0009",
+   "path": "docs/03_modules/_domain_data/catchup_guard/blueprint.md",
+   "verdict": "landed_elsewhere",
+   "detail": "path committed after dead_at"
+  },
+  {
+   "qid": "q-20260903-solo-20260902-services-gate-0009",
+   "path": "data/asset_index/unified-asset-index.yaml",
+   "verdict": "landed_elsewhere",
+   "detail": "path committed after dead_at"
+  },
+  {
+   "qid": "q-20260903-solo-20260902-services-gate-0009",
+   "path": "docs/01_policies_and_standards/_registry/catalogs/registry_master_index.yaml",
+   "verdict": "landed_elsewhere",
+   "detail": "path committed after dead_at"
+  },
+  {
+   "qid": "q-20260903-solo-20260902-services-gate-0009",
+   "path": "scripts/governance/script_manifest.yaml",
+   "verdict": "landed_elsewhere",
+   "detail": "path committed after dead_at"
+  },
+  {
+   "qid": "q-20260903-solo-20260902-services-gate-0009",
+   "path": "docs/01_policies_and_standards/_registry/catalogs/rule_catalog_registry.yaml",
+   "verdict": "landed_elsewhere",
+   "detail": "path committed after dead_at"
+  },
+  {
+   "qid": "q-20260903-solo-20260902-services-gate-0009",
+   "path": "docs/01_policies_and_standards/_registry/catalogs/rule_ai_perception_index.yaml",
+   "verdict": "landed_elsewhere",
+   "detail": "path committed after dead_at"
+  },
+  {
+   "qid": "q-20260903-solo-20260902-services-gate-0010",
+   "path": "scripts/governance/meta/rules_integrity_db.json",
+   "verdict": "landed_elsewhere",
+   "detail": "path committed after dead_at"
+  },
+  {
+   "qid": "q-20260904-AI-DSREG-112-0002",
+   "path": "scripts/governance/meta/rules_integrity_db.json",
+   "verdict": "landed_elsewhere",
+   "detail": "path committed after dead_at"
+  },
+  {
+   "qid": "q-20260904-AI-DSREG-112-0004",
+   "path": "scripts/governance/meta/rules_integrity_db.json",
+   "verdict": "landed_elsewhere",
+   "detail": "path committed after dead_at"
+  },
+  {
+   "qid": "q-20260904-auto-derived-sync-0007",
+   "path": "docs/01_policies_and_standards/_registry/catalogs/rule_ai_perception_index.yaml",
+   "verdict": "landed_elsewhere",
+   "detail": "path committed after dead_at"
+  },
+  {
+   "qid": "q-20260904-auto-derived-sync-0007",
+   "path": "docs/01_policies_and_standards/_registry/catalogs/rule_catalog_registry.yaml",
+   "verdict": "landed_elsewhere",
+   "detail": "path committed after dead_at"
+  },
+  {
+   "qid": "q-20260904-auto-derived-sync-0007",
+   "path": "docs/02_enterprise_architecture/04_architecture_principles_decisions/README.md",
+   "verdict": "landed_elsewhere",
+   "detail": "path committed after dead_at"
+  },
+  {
+   "qid": "q-20260904-auto-derived-sync-0007",
+   "path": "docs/02_enterprise_architecture/04_architecture_principles_decisions/project_handbook/01_overview.md",
+   "verdict": "landed_elsewhere",
+   "detail": "path committed after dead_at"
+  },
+  {
+   "qid": "q-20260904-auto-derived-sync-0007",
+   "path": "docs/02_enterprise_architecture/04_architecture_principles_decisions/project_handbook/02_repository_and_modules.md",
+   "verdict": "landed_elsewhere",
+   "detail": "path committed after dead_at"
+  },
+  {
+   "qid": "q-20260904-auto-derived-sync-0007",
+   "path": "docs/02_enterprise_architecture/04_architecture_principles_decisions/project_handbook/03_data_layer.md",
+   "verdict": "landed_elsewhere",
+   "detail": "path committed after dead_at"
+  },
+  {
+   "qid": "q-20260904-auto-derived-sync-0007",
+   "path": "docs/02_enterprise_architecture/04_architecture_principles_decisions/project_handbook/05_trading_domains.md",
+   "verdict": "landed_elsewhere",
+   "detail": "path committed after dead_at"
+  },
+  {
+   "qid": "q-20260904-auto-derived-sync-0007",
+   "path": "docs/02_enterprise_architecture/04_architecture_principles_decisions/project_handbook/07_dependencies.md",
+   "verdict": "landed_elsewhere",
+   "detail": "path committed after dead_at"
+  },
+  {
+   "qid": "q-20260904-auto-derived-sync-0007",
+   "path": "docs/03_modules/_domain_data/boot_autostart_architecture.md",
+   "verdict": "landed_elsewhere",
+   "detail": "path committed after dead_at"
+  },
+  {
+   "qid": "q-20260904-auto-derived-sync-0007",
+   "path": "docs/03_modules/_domain_data/catchup_guard/blueprint.md",
+   "verdict": "landed_elsewhere",
+   "detail": "path committed after dead_at"
+  },
+  {
+   "qid": "q-20260904-auto-derived-sync-0007",
+   "path": "docs/03_modules/_domain_risk/blueprint.md",
+   "verdict": "landed_elsewhere",
+   "detail": "path committed after dead_at"
+  },
+  {
+   "qid": "q-20260904-auto-derived-sync-0007",
+   "path": "docs/03_modules/path_ownership_map.yaml",
+   "verdict": "landed_elsewhere",
+   "detail": "path committed after dead_at"
+  },
+  {
+   "qid": "q-20260904-auto-derived-sync-0007",
+   "path": "scripts/governance/script_manifest.yaml",
+   "verdict": "landed_elsewhere",
+   "detail": "path committed after dead_at"
+  },
+  {
+   "qid": "q-20260904-auto-derived-sync-0008",
+   "path": "docs/01_policies_and_standards/_registry/catalogs/rule_ai_perception_index.yaml",
+   "verdict": "landed_elsewhere",
+   "detail": "path committed after dead_at"
+  },
+  {
+   "qid": "q-20260904-auto-derived-sync-0008",
+   "path": "docs/01_policies_and_standards/_registry/catalogs/rule_catalog_registry.yaml",
+   "verdict": "landed_elsewhere",
+   "detail": "path committed after dead_at"
+  },
+  {
+   "qid": "q-20260904-auto-derived-sync-0008",
+   "path": "scripts/governance/script_manifest.yaml",
+   "verdict": "landed_elsewhere",
+   "detail": "path committed after dead_at"
+  },
+  {
+   "qid": "q-20260904-auto-derived-sync-0009",
+   "path": "data/asset_index/unified-asset-index.yaml",
+   "verdict": "landed_elsewhere",
+   "detail": "path committed after dead_at"
+  },
+  {
+   "qid": "q-20260904-auto-derived-sync-0009",
+   "path": "docs/01_policies_and_standards/_registry/catalogs/rule_ai_perception_index.yaml",
+   "verdict": "landed_elsewhere",
+   "detail": "path committed after dead_at"
+  },
+  {
+   "qid": "q-20260904-auto-derived-sync-0009",
+   "path": "docs/01_policies_and_standards/_registry/catalogs/rule_catalog_registry.yaml",
+   "verdict": "landed_elsewhere",
+   "detail": "path committed after dead_at"
+  },
+  {
+   "qid": "q-20260904-auto-derived-sync-0009",
+   "path": "docs/02_enterprise_architecture/04_architecture_principles_decisions/README.md",
+   "verdict": "landed_elsewhere",
+   "detail": "path committed after dead_at"
+  },
+  {
+   "qid": "q-20260904-auto-derived-sync-0009",
+   "path": "docs/02_enterprise_architecture/04_architecture_principles_decisions/project_handbook/01_overview.md",
+   "verdict": "landed_elsewhere",
+   "detail": "path committed after dead_at"
+  },
+  {
+   "qid": "q-20260904-auto-derived-sync-0009",
+   "path": "docs/02_enterprise_architecture/04_architecture_principles_decisions/project_handbook/05_trading_domains.md",
+   "verdict": "landed_elsewhere",
+   "detail": "path committed after dead_at"
+  },
+  {
+   "qid": "q-20260904-auto-derived-sync-0009",
+   "path": "docs/02_enterprise_architecture/04_architecture_principles_decisions/project_handbook/07_dependencies.md",
+   "verdict": "landed_elsewhere",
+   "detail": "path committed after dead_at"
+  },
+  {
+   "qid": "q-20260904-auto-derived-sync-0009",
+   "path": "docs/03_modules/_cross_layer/_b_track_interfaces/vector_memory_service_interface.md",
+   "verdict": "content_landed",
+   "detail": "blob_sha256 == worktree bytes"
+  },
+  {
+   "qid": "q-20260904-auto-derived-sync-0009",
+   "path": "docs/03_modules/_cross_layer/agent_orchestrator/blueprint.md",
+   "verdict": "landed_elsewhere",
+   "detail": "path committed after dead_at"
+  },
+  {
+   "qid": "q-20260904-auto-derived-sync-0009",
+   "path": "docs/03_modules/_cross_layer/audit_orchestrator/blueprint.md",
+   "verdict": "landed_elsewhere",
+   "detail": "path committed after dead_at"
+  },
+  {
+   "qid": "q-20260904-auto-derived-sync-0009",
+   "path": "docs/03_modules/_cross_layer/auto_fix_engine/blueprint.md",
+   "verdict": "content_landed",
+   "detail": "blob_sha256 == worktree bytes"
+  },
+  {
+   "qid": "q-20260904-auto-derived-sync-0009",
+   "path": "docs/03_modules/_cross_layer/cd_pipeline/blueprint.md",
+   "verdict": "content_landed",
+   "detail": "blob_sha256 == worktree bytes"
+  },
+  {
+   "qid": "q-20260904-auto-derived-sync-0009",
+   "path": "docs/03_modules/_cross_layer/clone_guard/blueprint.md",
+   "verdict": "content_landed",
+   "detail": "blob_sha256 == worktree bytes"
+  },
+  {
+   "qid": "q-20260904-auto-derived-sync-0009",
+   "path": "docs/03_modules/_cross_layer/database/blueprint.md",
+   "verdict": "landed_elsewhere",
+   "detail": "path committed after dead_at"
+  },
+  {
+   "qid": "q-20260904-auto-derived-sync-0009",
+   "path": "docs/03_modules/_cross_layer/feedback_loop/blueprint.md",
+   "verdict": "landed_elsewhere",
+   "detail": "path committed after dead_at"
+  },
+  {
+   "qid": "q-20260904-auto-derived-sync-0009",
+   "path": "docs/03_modules/_cross_layer/gate_engine/blueprint.md",
+   "verdict": "landed_elsewhere",
+   "detail": "path committed after dead_at"
+  },
+  {
+   "qid": "q-20260904-auto-derived-sync-0009",
+   "path": "docs/03_modules/_cross_layer/large_language_model_security/blueprint.md",
+   "verdict": "content_landed",
+   "detail": "blob_sha256 == worktree bytes"
+  },
+  {
+   "qid": "q-20260904-auto-derived-sync-0009",
+   "path": "docs/03_modules/_cross_layer/model_capability_exam/blueprint.md",
+   "verdict": "content_landed",
+   "detail": "blob_sha256 == worktree bytes"
+  },
+  {
+   "qid": "q-20260904-auto-derived-sync-0009",
+   "path": "docs/03_modules/_cross_layer/model_context_protocol_servers/blueprint.md",
+   "verdict": "landed_elsewhere",
+   "detail": "path committed after dead_at"
+  },
+  {
+   "qid": "q-20260904-auto-derived-sync-0009",
+   "path": "docs/03_modules/_cross_layer/model_profiler/blueprint.md",
+   "verdict": "content_landed",
+   "detail": "blob_sha256 == worktree bytes"
+  },
+  {
+   "qid": "q-20260904-auto-derived-sync-0009",
+   "path": "docs/03_modules/_cross_layer/orphan_judge/blueprint.md",
+   "verdict": "landed_elsewhere",
+   "detail": "path committed after dead_at"
+  },
+  {
+   "qid": "q-20260904-auto-derived-sync-0009",
+   "path": "docs/03_modules/_cross_layer/pipeline/blueprint.md",
+   "verdict": "landed_elsewhere",
+   "detail": "path committed after dead_at"
+  },
+  {
+   "qid": "q-20260904-auto-derived-sync-0009",
+   "path": "docs/03_modules/_cross_layer/semantic_auditor/blueprint.md",
+   "verdict": "landed_elsewhere",
+   "detail": "path committed after dead_at"
+  },
+  {
+   "qid": "q-20260904-auto-derived-sync-0009",
+   "path": "docs/03_modules/_cross_layer/shared_core/blueprint.md",
+   "verdict": "landed_elsewhere",
+   "detail": "path committed after dead_at"
+  },
+  {
+   "qid": "q-20260904-auto-derived-sync-0009",
+   "path": "docs/03_modules/_cross_layer/shared_core/dashboard_blueprint.md",
+   "verdict": "content_landed",
+   "detail": "blob_sha256 == worktree bytes"
+  },
+  {
+   "qid": "q-20260904-auto-derived-sync-0009",
+   "path": "docs/03_modules/_domain_autonomy_core/agent_role_based_access_control/blueprint.md",
+   "verdict": "landed_elsewhere",
+   "detail": "path committed after dead_at"
+  },
+  {
+   "qid": "q-20260904-auto-derived-sync-0009",
+   "path": "docs/03_modules/_domain_autonomy_core/rollback_system/blueprint.md",
+   "verdict": "landed_elsewhere",
+   "detail": "path committed after dead_at"
+  },
+  {
+   "qid": "q-20260904-auto-derived-sync-0009",
+   "path": "docs/03_modules/_domain_autonomy_perm/budget_enforcer/blueprint.md",
+   "verdict": "landed_elsewhere",
+   "detail": "path committed after dead_at"
+  },
+  {
+   "qid": "q-20260904-auto-derived-sync-0009",
+   "path": "docs/03_modules/_domain_autonomy_perm/escalation_protocol/blueprint.md",
+   "verdict": "landed_elsewhere",
+   "detail": "path committed after dead_at"
+  },
+  {
+   "qid": "q-20260904-auto-derived-sync-0009",
+   "path": "docs/03_modules/_domain_backtest/anomaly_diagnoser/blueprint.md",
+   "verdict": "content_landed",
+   "detail": "blob_sha256 == worktree bytes"
+  },
+  {
+   "qid": "q-20260904-auto-derived-sync-0009",
+   "path": "docs/03_modules/_domain_backtest/blueprint.md",
+   "verdict": "landed_elsewhere",
+   "detail": "path committed after dead_at"
+  },
+  {
+   "qid": "q-20260904-auto-derived-sync-0009",
+   "path": "docs/03_modules/_domain_backtest/cache_manager/blueprint.md",
+   "verdict": "content_landed",
+   "detail": "blob_sha256 == worktree bytes"
+  },
+  {
+   "qid": "q-20260904-auto-derived-sync-0009",
+   "path": "docs/03_modules/_domain_backtest/data_quality_checker/blueprint.md",
+   "verdict": "content_landed",
+   "detail": "blob_sha256 == worktree bytes"
+  },
+  {
+   "qid": "q-20260904-auto-derived-sync-0009",
+   "path": "docs/03_modules/_domain_backtest/decay_monitor/blueprint.md",
+   "verdict": "landed_elsewhere",
+   "detail": "path committed after dead_at"
+  },
+  {
+   "qid": "q-20260904-auto-derived-sync-0009",
+   "path": "docs/03_modules/_domain_backtest/nan_processor/blueprint.md",
+   "verdict": "landed_elsewhere",
+   "detail": "path committed after dead_at"
+  },
+  {
+   "qid": "q-20260904-auto-derived-sync-0009",
+   "path": "docs/03_modules/_domain_backtest/param_analyzer/blueprint.md",
+   "verdict": "content_landed",
+   "detail": "blob_sha256 == worktree bytes"
+  },
+  {
+   "qid": "q-20260904-auto-derived-sync-0009",
+   "path": "docs/03_modules/_domain_backtest/report_generator/blueprint.md",
+   "verdict": "content_landed",
+   "detail": "blob_sha256 == worktree bytes"
+  },
+  {
+   "qid": "q-20260904-auto-derived-sync-0009",
+   "path": "docs/03_modules/_domain_backtest/result_comparator/blueprint.md",
+   "verdict": "content_landed",
+   "detail": "blob_sha256 == worktree bytes"
+  },
+  {
+   "qid": "q-20260904-auto-derived-sync-0009",
+   "path": "docs/03_modules/_domain_compliance/blueprint.md",
+   "verdict": "landed_elsewhere",
+   "detail": "path committed after dead_at"
+  },
+  {
+   "qid": "q-20260904-auto-derived-sync-0009",
+   "path": "docs/03_modules/_domain_compliance/compliance_log/blueprint.md",
+   "verdict": "content_landed",
+   "detail": "blob_sha256 == worktree bytes"
+  },
+  {
+   "qid": "q-20260904-auto-derived-sync-0009",
+   "path": "docs/03_modules/_domain_compliance/compliance_report_registry/blueprint.md",
+   "verdict": "content_landed",
+   "detail": "blob_sha256 == worktree bytes"
+  },
+  {
+   "qid": "q-20260904-auto-derived-sync-0009",
+   "path": "docs/03_modules/_domain_compliance/discipline_must_do_checker/blueprint.md",
+   "verdict": "content_landed",
+   "detail": "blob_sha256 == worktree bytes"
+  },
+  {
+   "qid": "q-20260904-auto-derived-sync-0009",
+   "path": "docs/03_modules/_domain_compliance/discipline_prohibition_checker/blueprint.md",
+   "verdict": "content_landed",
+   "detail": "blob_sha256 == worktree bytes"
+  },
+  {
+   "qid": "q-20260904-auto-derived-sync-0009",
+   "path": "docs/03_modules/_domain_compliance/hard_boundary_adjudicator/blueprint.md",
+   "verdict": "content_landed",
+   "detail": "blob_sha256 == worktree bytes"
+  },
+  {
+   "qid": "q-20260904-auto-derived-sync-0009",
+   "path": "docs/03_modules/_domain_compliance/license_usage_auditor/blueprint.md",
+   "verdict": "content_landed",
+   "detail": "blob_sha256 == worktree bytes"
+  },
+  {
+   "qid": "q-20260904-auto-derived-sync-0009",
+   "path": "docs/03_modules/_domain_compliance/trading_compliance_detector/blueprint.md",
+   "verdict": "content_landed",
+   "detail": "blob_sha256 == worktree bytes"
+  },
+  {
+   "qid": "q-20260904-auto-derived-sync-0009",
+   "path": "docs/03_modules/_domain_contracts/ctr002_consumer_adapter/blueprint.md",
+   "verdict": "content_landed",
+   "detail": "blob_sha256 == worktree bytes"
+  },
+  {
+   "qid": "q-20260904-auto-derived-sync-0009",
+   "path": "docs/03_modules/_domain_contracts/ctr002_producer_validator/blueprint.md",
+   "verdict": "content_landed",
+   "detail": "blob_sha256 == worktree bytes"
+  },
+  {
+   "qid": "q-20260904-auto-derived-sync-0009",
+   "path": "docs/03_modules/_domain_data/blueprint.md",
+   "verdict": "landed_elsewhere",
+   "detail": "path committed after dead_at"
+  },
+  {
+   "qid": "q-20260904-auto-derived-sync-0009",
+   "path": "docs/03_modules/_domain_data/redundant_source_blueprint.md",
+   "verdict": "content_landed",
+   "detail": "blob_sha256 == worktree bytes"
+  },
+  {
+   "qid": "q-20260904-auto-derived-sync-0009",
+   "path": "docs/03_modules/_domain_data/wal_codec_blueprint.md",
+   "verdict": "content_landed",
+   "detail": "blob_sha256 == worktree bytes"
+  },
+  {
+   "qid": "q-20260904-auto-derived-sync-0009",
+   "path": "docs/03_modules/_domain_ex_sor/execution_quality_scorer/blueprint.md",
+   "verdict": "landed_elsewhere",
+   "detail": "path committed after dead_at"
+  },
+  {
+   "qid": "q-20260904-auto-derived-sync-0009",
+   "path": "docs/03_modules/_domain_ex_sor/rl_execution_training_env/blueprint.md",
+   "verdict": "content_landed",
+   "detail": "blob_sha256 == worktree bytes"
+  },
+  {
+   "qid": "q-20260904-auto-derived-sync-0009",
+   "path": "docs/03_modules/_domain_ex_sor/slippage_analyzer/blueprint.md",
+   "verdict": "landed_elsewhere",
+   "detail": "path committed after dead_at"
+  },
+  {
+   "qid": "q-20260904-auto-derived-sync-0009",
+   "path": "docs/03_modules/_domain_ex_sor/transaction_cost_optimizer/blueprint.md",
+   "verdict": "landed_elsewhere",
+   "detail": "path committed after dead_at"
+  },
+  {
+   "qid": "q-20260904-auto-derived-sync-0009",
+   "path": "docs/03_modules/_domain_execution_core/aggregate_root_manager/blueprint.md",
+   "verdict": "content_landed",
+   "detail": "blob_sha256 == worktree bytes"
+  },
+  {
+   "qid": "q-20260904-auto-derived-sync-0009",
+   "path": "docs/03_modules/_domain_execution_core/audit_journal/blueprint.md",
+   "verdict": "content_landed",
+   "detail": "blob_sha256 == worktree bytes"
+  },
+  {
+   "qid": "q-20260904-auto-derived-sync-0009",
+   "path": "docs/03_modules/_domain_execution_core/blueprint.md",
+   "verdict": "content_landed",
+   "detail": "blob_sha256 == worktree bytes"
+  },
+  {
+   "qid": "q-20260904-auto-derived-sync-0009",
+   "path": "docs/03_modules/_domain_execution_core/fill_handler/blueprint.md",
+   "verdict": "content_landed",
+   "detail": "blob_sha256 == worktree bytes"
+  },
+  {
+   "qid": "q-20260904-auto-derived-sync-0009",
+   "path": "docs/03_modules/_domain_execution_core/multi_contract_adapter/blueprint.md",
+   "verdict": "content_landed",
+   "detail": "blob_sha256 == worktree bytes"
+  },
+  {
+   "qid": "q-20260904-auto-derived-sync-0009",
+   "path": "docs/03_modules/_domain_execution_core/order_execution_saga/blueprint.md",
+   "verdict": "content_landed",
+   "detail": "blob_sha256 == worktree bytes"
+  },
+  {
+   "qid": "q-20260904-auto-derived-sync-0009",
+   "path": "docs/03_modules/_domain_execution_core/position_reconciler/blueprint.md",
+   "verdict": "content_landed",
+   "detail": "blob_sha256 == worktree bytes"
+  },
+  {
+   "qid": "q-20260904-auto-derived-sync-0009",
+   "path": "docs/03_modules/_domain_execution_core/position_tracker/blueprint.md",
+   "verdict": "content_landed",
+   "detail": "blob_sha256 == worktree bytes"
+  },
+  {
+   "qid": "q-20260904-auto-derived-sync-0009",
+   "path": "docs/03_modules/_domain_execution_core/premarket_checker/blueprint.md",
+   "verdict": "content_landed",
+   "detail": "blob_sha256 == worktree bytes"
+  },
+  {
+   "qid": "q-20260904-auto-derived-sync-0009",
+   "path": "docs/03_modules/_domain_execution_core/repository_interface/blueprint.md",
+   "verdict": "content_landed",
+   "detail": "blob_sha256 == worktree bytes"
+  },
+  {
+   "qid": "q-20260904-auto-derived-sync-0009",
+   "path": "docs/03_modules/_domain_factor/casebook/blueprint.md",
+   "verdict": "content_landed",
+   "detail": "blob_sha256 == worktree bytes"
+  },
+  {
+   "qid": "q-20260904-auto-derived-sync-0009",
+   "path": "docs/03_modules/_domain_frontend/blueprint.md",
+   "verdict": "landed_elsewhere",
+   "detail": "path committed after dead_at"
+  },
+  {
+   "qid": "q-20260904-auto-derived-sync-0009",
+   "path": "docs/03_modules/_domain_gov_enforcement/threshold_split_detector/blueprint.md",
+   "verdict": "content_landed",
+   "detail": "blob_sha256 == worktree bytes"
+  },
+  {
+   "qid": "q-20260904-auto-derived-sync-0009",
+   "path": "docs/03_modules/_domain_governance/audit_trail/blueprint.md",
+   "verdict": "landed_elsewhere",
+   "detail": "path committed after dead_at"
+  },
+  {
+   "qid": "q-20260904-auto-derived-sync-0009",
+   "path": "docs/03_modules/_domain_governance/blueprint.md",
+   "verdict": "content_landed",
+   "detail": "blob_sha256 == worktree bytes"
+  },
+  {
+   "qid": "q-20260904-auto-derived-sync-0009",
+   "path": "docs/03_modules/_domain_governance/code_dedup_engine/blueprint.md",
+   "verdict": "landed_elsewhere",
+   "detail": "path committed after dead_at"
+  },
+  {
+   "qid": "q-20260904-auto-derived-sync-0009",
+   "path": "docs/03_modules/_domain_governance/drift_detector/blueprint.md",
+   "verdict": "landed_elsewhere",
+   "detail": "path committed after dead_at"
+  },
+  {
+   "qid": "q-20260904-auto-derived-sync-0009",
+   "path": "docs/03_modules/_domain_governance/governance_automation/blueprint.md",
+   "verdict": "landed_elsewhere",
+   "detail": "path committed after dead_at"
+  },
+  {
+   "qid": "q-20260904-auto-derived-sync-0009",
+   "path": "docs/03_modules/_domain_governance/panorama_alignment_engine/align_all_blueprint.md",
+   "verdict": "content_landed",
+   "detail": "blob_sha256 == worktree bytes"
+  },
+  {
+   "qid": "q-20260904-auto-derived-sync-0009",
+   "path": "docs/03_modules/_domain_governance/panorama_alignment_engine/blueprint.md",
+   "verdict": "content_landed",
+   "detail": "blob_sha256 == worktree bytes"
+  },
+  {
+   "qid": "q-20260904-auto-derived-sync-0009",
+   "path": "docs/03_modules/_domain_governance/registry_governance/blueprint.md",
+   "verdict": "landed_elsewhere",
+   "detail": "path committed after dead_at"
+  },
+  {
+   "qid": "q-20260904-auto-derived-sync-0009",
+   "path": "docs/03_modules/_domain_governance/rollback_state_machine/blueprint.md",
+   "verdict": "content_landed",
+   "detail": "blob_sha256 == worktree bytes"
+  },
+  {
+   "qid": "q-20260904-auto-derived-sync-0009",
+   "path": "docs/03_modules/_domain_infrastructure_operations/agent_to_agent_protocol/blueprint.md",
+   "verdict": "landed_elsewhere",
+   "detail": "path committed after dead_at"
+  },
+  {
+   "qid": "q-20260904-auto-derived-sync-0009",
+   "path": "docs/03_modules/_domain_infrastructure_operations/asset_inventory/blueprint.md",
+   "verdict": "landed_elsewhere",
+   "detail": "path committed after dead_at"
+  },
+  {
+   "qid": "q-20260904-auto-derived-sync-0009",
+   "path": "docs/03_modules/_domain_infrastructure_operations/blueprint_experiment_tracking.md",
+   "verdict": "content_landed",
+   "detail": "blob_sha256 == worktree bytes"
+  },
+  {
+   "qid": "q-20260904-auto-derived-sync-0009",
+   "path": "docs/03_modules/_domain_infrastructure_operations/capacity_assurance/blueprint.md",
+   "verdict": "content_landed",
+   "detail": "blob_sha256 == worktree bytes"
+  },
+  {
+   "qid": "q-20260904-auto-derived-sync-0009",
+   "path": "docs/03_modules/_domain_infrastructure_operations/disaster_recovery_backup/backup_inventory.md",
+   "verdict": "landed_elsewhere",
+   "detail": "path committed after dead_at"
+  },
+  {
+   "qid": "q-20260904-auto-derived-sync-0009",
+   "path": "docs/03_modules/_domain_infrastructure_operations/gpu_hot_swap_model/blueprint.md",
+   "verdict": "content_landed",
+   "detail": "blob_sha256 == worktree bytes"
+  },
+  {
+   "qid": "q-20260904-auto-derived-sync-0009",
+   "path": "docs/03_modules/_domain_infrastructure_operations/model_downloader/blueprint.md",
+   "verdict": "content_landed",
+   "detail": "blob_sha256 == worktree bytes"
+  },
+  {
+   "qid": "q-20260904-auto-derived-sync-0009",
+   "path": "docs/03_modules/_domain_infrastructure_operations/system_telemetry/blueprint.md",
+   "verdict": "landed_elsewhere",
+   "detail": "path committed after dead_at"
+  },
+  {
+   "qid": "q-20260904-auto-derived-sync-0009",
+   "path": "docs/03_modules/_domain_infrastructure_runtime/hot_plane/blueprint.md",
+   "verdict": "content_landed",
+   "detail": "blob_sha256 == worktree bytes"
+  },
+  {
+   "qid": "q-20260904-auto-derived-sync-0009",
+   "path": "docs/03_modules/_domain_infrastructure_runtime/process_supervisor/blueprint.md",
+   "verdict": "landed_elsewhere",
+   "detail": "path committed after dead_at"
+  },
+  {
+   "qid": "q-20260904-auto-derived-sync-0009",
+   "path": "docs/03_modules/_domain_infrastructure_runtime/redis_state_layer_ssot/blueprint.md",
+   "verdict": "content_landed",
+   "detail": "blob_sha256 == worktree bytes"
+  },
+  {
+   "qid": "q-20260904-auto-derived-sync-0009",
+   "path": "docs/03_modules/_domain_infrastructure_runtime/runtime_integration/blueprint.md",
+   "verdict": "landed_elsewhere",
+   "detail": "path committed after dead_at"
+  },
+  {
+   "qid": "q-20260904-auto-derived-sync-0009",
+   "path": "docs/03_modules/_domain_infrastructure_runtime/state_machine_engine/blueprint.md",
+   "verdict": "landed_elsewhere",
+   "detail": "path committed after dead_at"
+  },
+  {
+   "qid": "q-20260904-auto-derived-sync-0009",
+   "path": "docs/03_modules/_domain_infrastructure_runtime/task_system/blueprint.md",
+   "verdict": "landed_elsewhere",
+   "detail": "path committed after dead_at"
+  },
+  {
+   "qid": "q-20260904-auto-derived-sync-0009",
+   "path": "docs/03_modules/_domain_infrastructure_runtime/trading_core_process/blueprint.md",
+   "verdict": "content_landed",
+   "detail": "blob_sha256 == worktree bytes"
+  },
+  {
+   "qid": "q-20260904-auto-derived-sync-0009",
+   "path": "docs/03_modules/_domain_integration/blueprint.md",
+   "verdict": "landed_elsewhere",
+   "detail": "path committed after dead_at"
+  },
+  {
+   "qid": "q-20260904-auto-derived-sync-0009",
+   "path": "docs/03_modules/_domain_intelligence/news_sentiment_analyzer/blueprint.md",
+   "verdict": "content_landed",
+   "detail": "blob_sha256 == worktree bytes"
+  },
+  {
+   "qid": "q-20260904-auto-derived-sync-0009",
+   "path": "docs/03_modules/_domain_machine_learning_train/blueprint.md",
+   "verdict": "content_landed",
+   "detail": "blob_sha256 == worktree bytes"
+  },
+  {
+   "qid": "q-20260904-auto-derived-sync-0009",
+   "path": "docs/03_modules/_domain_mkt_data/auction_data_manager/blueprint.md",
+   "verdict": "landed_elsewhere",
+   "detail": "path committed after dead_at"
+  },
+  {
+   "qid": "q-20260904-auto-derived-sync-0009",
+   "path": "docs/03_modules/_domain_mkt_data/autoload/blueprint.md",
+   "verdict": "content_landed",
+   "detail": "blob_sha256 == worktree bytes"
+  },
+  {
+   "qid": "q-20260904-auto-derived-sync-0009",
+   "path": "docs/03_modules/_domain_mkt_data/connectors/blueprint.md",
+   "verdict": "content_landed",
+   "detail": "blob_sha256 == worktree bytes"
+  },
+  {
+   "qid": "q-20260904-auto-derived-sync-0009",
+   "path": "docs/03_modules/_domain_mkt_data/failover/blueprint.md",
+   "verdict": "content_landed",
+   "detail": "blob_sha256 == worktree bytes"
+  },
+  {
+   "qid": "q-20260904-auto-derived-sync-0009",
+   "path": "docs/03_modules/_domain_mkt_data/raw_data_cache/blueprint.md",
+   "verdict": "content_landed",
+   "detail": "blob_sha256 == worktree bytes"
+  },
+  {
+   "qid": "q-20260904-auto-derived-sync-0009",
+   "path": "docs/03_modules/_domain_mkt_data/vendor_base/blueprint.md",
+   "verdict": "content_landed",
+   "detail": "blob_sha256 == worktree bytes"
+  },
+  {
+   "qid": "q-20260904-auto-derived-sync-0009",
+   "path": "docs/03_modules/_domain_mkt_data/vendor_registry/blueprint.md",
+   "verdict": "content_landed",
+   "detail": "blob_sha256 == worktree bytes"
+  },
+  {
+   "qid": "q-20260904-auto-derived-sync-0009",
+   "path": "docs/03_modules/_domain_pf_alloc/batched_position_builder/blueprint.md",
+   "verdict": "content_landed",
+   "detail": "blob_sha256 == worktree bytes"
+  },
+  {
+   "qid": "q-20260904-auto-derived-sync-0009",
+   "path": "docs/03_modules/_domain_plan_engine/closing_session_decision/blueprint.md",
+   "verdict": "content_landed",
+   "detail": "blob_sha256 == worktree bytes"
+  },
+  {
+   "qid": "q-20260904-auto-derived-sync-0009",
+   "path": "docs/03_modules/_domain_plan_engine/premarket_constraint_loader/blueprint.md",
+   "verdict": "content_landed",
+   "detail": "blob_sha256 == worktree bytes"
+  },
+  {
+   "qid": "q-20260904-auto-derived-sync-0009",
+   "path": "docs/03_modules/_domain_plan_engine/tomorrow_boundary_planner/blueprint.md",
+   "verdict": "landed_elsewhere",
+   "detail": "path committed after dead_at"
+  },
+  {
+   "qid": "q-20260904-auto-derived-sync-0009",
+   "path": "docs/03_modules/_domain_portfolio_alloc/maxdd_limit_allocator/blueprint.md",
+   "verdict": "landed_elsewhere",
+   "detail": "path committed after dead_at"
+  },
+  {
+   "qid": "q-20260904-auto-derived-sync-0009",
+   "path": "docs/03_modules/_domain_portfolio_alloc/regime_meta_allocator/blueprint.md",
+   "verdict": "landed_elsewhere",
+   "detail": "path committed after dead_at"
+  },
+  {
+   "qid": "q-20260904-auto-derived-sync-0009",
+   "path": "docs/03_modules/_domain_portfolio_core/blueprint.md",
+   "verdict": "content_landed",
+   "detail": "blob_sha256 == worktree bytes"
+  },
+  {
+   "qid": "q-20260904-auto-derived-sync-0009",
+   "path": "docs/03_modules/_domain_portfolio_core/constraint_solver/blueprint.md",
+   "verdict": "content_landed",
+   "detail": "blob_sha256 == worktree bytes"
+  },
+  {
+   "qid": "q-20260904-auto-derived-sync-0009",
+   "path": "docs/03_modules/_domain_portfolio_core/msprt_champion_challenger/blueprint.md",
+   "verdict": "content_landed",
+   "detail": "blob_sha256 == worktree bytes"
+  },
+  {
+   "qid": "q-20260904-auto-derived-sync-0009",
+   "path": "docs/03_modules/_domain_portfolio_core/performance_attribution_engine/blueprint.md",
+   "verdict": "content_landed",
+   "detail": "blob_sha256 == worktree bytes"
+  },
+  {
+   "qid": "q-20260904-auto-derived-sync-0009",
+   "path": "docs/03_modules/_domain_portfolio_core/portfolio_optimizer/blueprint.md",
+   "verdict": "landed_elsewhere",
+   "detail": "path committed after dead_at"
+  },
+  {
+   "qid": "q-20260904-auto-derived-sync-0009",
+   "path": "docs/03_modules/_domain_portfolio_core/rebalance_scheduler/blueprint.md",
+   "verdict": "landed_elsewhere",
+   "detail": "path committed after dead_at"
+  },
+  {
+   "qid": "q-20260904-auto-derived-sync-0009",
+   "path": "docs/03_modules/_domain_portfolio_core/strategy_engine/blueprint.md",
+   "verdict": "landed_elsewhere",
+   "detail": "path committed after dead_at"
+  },
+  {
+   "qid": "q-20260904-auto-derived-sync-0009",
+   "path": "docs/03_modules/_domain_position/budget_change_handler/blueprint.md",
+   "verdict": "landed_elsewhere",
+   "detail": "path committed after dead_at"
+  },
+  {
+   "qid": "q-20260904-auto-derived-sync-0009",
+   "path": "docs/03_modules/_domain_position/calendar_position_constraint/blueprint.md",
+   "verdict": "content_landed",
+   "detail": "blob_sha256 == worktree bytes"
+  },
+  {
+   "qid": "q-20260904-auto-derived-sync-0009",
+   "path": "docs/03_modules/_domain_position/capital_curve_manager/blueprint.md",
+   "verdict": "content_landed",
+   "detail": "blob_sha256 == worktree bytes"
+  },
+  {
+   "qid": "q-20260904-auto-derived-sync-0009",
+   "path": "docs/03_modules/_domain_position/cash_manager/blueprint.md",
+   "verdict": "content_landed",
+   "detail": "blob_sha256 == worktree bytes"
+  },
+  {
+   "qid": "q-20260904-auto-derived-sync-0009",
+   "path": "docs/03_modules/_domain_position/drawdown_controller/blueprint.md",
+   "verdict": "content_landed",
+   "detail": "blob_sha256 == worktree bytes"
+  },
+  {
+   "qid": "q-20260904-auto-derived-sync-0009",
+   "path": "docs/03_modules/_domain_position/firm_risk_aggregator/blueprint.md",
+   "verdict": "landed_elsewhere",
+   "detail": "path committed after dead_at"
+  },
+  {
+   "qid": "q-20260904-auto-derived-sync-0009",
+   "path": "docs/03_modules/_domain_position/position_audit_logger/blueprint.md",
+   "verdict": "content_landed",
+   "detail": "blob_sha256 == worktree bytes"
+  },
+  {
+   "qid": "q-20260904-auto-derived-sync-0009",
+   "path": "docs/03_modules/_domain_position/position_drift_monitor/blueprint.md",
+   "verdict": "content_landed",
+   "detail": "blob_sha256 == worktree bytes"
+  },
+  {
+   "qid": "q-20260904-auto-derived-sync-0009",
+   "path": "docs/03_modules/_domain_position/position_limit_enforcer/blueprint.md",
+   "verdict": "content_landed",
+   "detail": "blob_sha256 == worktree bytes"
+  },
+  {
+   "qid": "q-20260904-auto-derived-sync-0009",
+   "path": "docs/03_modules/_domain_position/position_sizing_engine/blueprint.md",
+   "verdict": "content_landed",
+   "detail": "blob_sha256 == worktree bytes"
+  },
+  {
+   "qid": "q-20260904-auto-derived-sync-0009",
+   "path": "docs/03_modules/_domain_position/position_state_machine/blueprint.md",
+   "verdict": "content_landed",
+   "detail": "blob_sha256 == worktree bytes"
+  },
+  {
+   "qid": "q-20260904-auto-derived-sync-0009",
+   "path": "docs/03_modules/_domain_position/rebalance_engine/blueprint.md",
+   "verdict": "content_landed",
+   "detail": "blob_sha256 == worktree bytes"
+  },
+  {
+   "qid": "q-20260904-auto-derived-sync-0009",
+   "path": "docs/03_modules/_domain_position/sell_position_link/blueprint.md",
+   "verdict": "content_landed",
+   "detail": "blob_sha256 == worktree bytes"
+  },
+  {
+   "qid": "q-20260904-auto-derived-sync-0009",
+   "path": "docs/03_modules/_domain_position/strategy_book/blueprint.md",
+   "verdict": "landed_elsewhere",
+   "detail": "path committed after dead_at"
+  },
+  {
+   "qid": "q-20260904-auto-derived-sync-0009",
+   "path": "docs/03_modules/_domain_regime/chip_distribution_engine/blueprint.md",
+   "verdict": "landed_elsewhere",
+   "detail": "path committed after dead_at"
+  },
+  {
+   "qid": "q-20260904-auto-derived-sync-0009",
+   "path": "docs/03_modules/_domain_regime/regime_cycle_analyzer/blueprint.md",
+   "verdict": "content_landed",
+   "detail": "blob_sha256 == worktree bytes"
+  },
+  {
+   "qid": "q-20260904-auto-derived-sync-0009",
+   "path": "docs/03_modules/_domain_regime/regime_detector/blueprint.md",
+   "verdict": "landed_elsewhere",
+   "detail": "path committed after dead_at"
+  },
+  {
+   "qid": "q-20260904-auto-derived-sync-0009",
+   "path": "docs/03_modules/_domain_regime/regime_feature_builder/blueprint.md",
+   "verdict": "content_landed",
+   "detail": "blob_sha256 == worktree bytes"
+  },
+  {
+   "qid": "q-20260904-auto-derived-sync-0009",
+   "path": "docs/03_modules/_domain_regime/volatility_regime_alerter/blueprint.md",
+   "verdict": "content_landed",
+   "detail": "blob_sha256 == worktree bytes"
+  },
+  {
+   "qid": "q-20260904-auto-derived-sync-0009",
+   "path": "docs/03_modules/_domain_reporting/ashare_performance_audit/blueprint.md",
+   "verdict": "content_landed",
+   "detail": "blob_sha256 == worktree bytes"
+  },
+  {
+   "qid": "q-20260904-auto-derived-sync-0009",
+   "path": "docs/03_modules/_domain_reporting/ashare_trade_record_template/blueprint.md",
+   "verdict": "content_landed",
+   "detail": "blob_sha256 == worktree bytes"
+  },
+  {
+   "qid": "q-20260904-auto-derived-sync-0009",
+   "path": "docs/03_modules/_domain_reporting/blueprint.md",
+   "verdict": "content_landed",
+   "detail": "blob_sha256 == worktree bytes"
+  },
+  {
+   "qid": "q-20260904-auto-derived-sync-0009",
+   "path": "docs/03_modules/_domain_reporting/realtime_pnl_dashboard/blueprint.md",
+   "verdict": "content_landed",
+   "detail": "blob_sha256 == worktree bytes"
+  },
+  {
+   "qid": "q-20260904-auto-derived-sync-0009",
+   "path": "docs/03_modules/_domain_reporting/regulatory_report_generator/blueprint.md",
+   "verdict": "content_landed",
+   "detail": "blob_sha256 == worktree bytes"
+  },
+  {
+   "qid": "q-20260904-auto-derived-sync-0009",
+   "path": "docs/03_modules/_domain_reporting/report_publisher/blueprint.md",
+   "verdict": "content_landed",
+   "detail": "blob_sha256 == worktree bytes"
+  },
+  {
+   "qid": "q-20260904-auto-derived-sync-0009",
+   "path": "docs/03_modules/_domain_reporting/report_version_manager/blueprint.md",
+   "verdict": "content_landed",
+   "detail": "blob_sha256 == worktree bytes"
+  },
+  {
+   "qid": "q-20260904-auto-derived-sync-0009",
+   "path": "docs/03_modules/_domain_reporting/report_watermark_tracker/blueprint.md",
+   "verdict": "content_landed",
+   "detail": "blob_sha256 == worktree bytes"
+  },
+  {
+   "qid": "q-20260904-auto-derived-sync-0009",
+   "path": "docs/03_modules/_domain_reporting/review_orchestrator/blueprint.md",
+   "verdict": "content_landed",
+   "detail": "blob_sha256 == worktree bytes"
+  },
+  {
+   "qid": "q-20260904-auto-derived-sync-0009",
+   "path": "docs/03_modules/_domain_reporting/risk_report_engine/blueprint.md",
+   "verdict": "content_landed",
+   "detail": "blob_sha256 == worktree bytes"
+  },
+  {
+   "qid": "q-20260904-auto-derived-sync-0009",
+   "path": "docs/03_modules/_domain_research/blueprint.md",
+   "verdict": "landed_elsewhere",
+   "detail": "path committed after dead_at"
+  },
+  {
+   "qid": "q-20260904-auto-derived-sync-0009",
+   "path": "docs/03_modules/_domain_risk/adaptive_risk_coordinator/blueprint.md",
+   "verdict": "content_landed",
+   "detail": "blob_sha256 == worktree bytes"
+  },
+  {
+   "qid": "q-20260904-auto-derived-sync-0009",
+   "path": "docs/03_modules/_domain_risk/adaptive_risk_forecast/blueprint.md",
+   "verdict": "landed_elsewhere",
+   "detail": "path committed after dead_at"
+  },
+  {
+   "qid": "q-20260904-auto-derived-sync-0009",
+   "path": "docs/03_modules/_domain_risk/adaptive_risk_monitor/blueprint.md",
+   "verdict": "landed_elsewhere",
+   "detail": "path committed after dead_at"
+  },
+  {
+   "qid": "q-20260904-auto-derived-sync-0009",
+   "path": "docs/03_modules/_domain_risk/ai_agent_monitor/blueprint.md",
+   "verdict": "content_landed",
+   "detail": "blob_sha256 == worktree bytes"
+  },
+  {
+   "qid": "q-20260904-auto-derived-sync-0009",
+   "path": "docs/03_modules/_domain_risk/alert_generator/blueprint.md",
+   "verdict": "content_landed",
+   "detail": "blob_sha256 == worktree bytes"
+  },
+  {
+   "qid": "q-20260904-auto-derived-sync-0009",
+   "path": "docs/03_modules/_domain_risk/ashare_stop_loss_engine/blueprint.md",
+   "verdict": "landed_elsewhere",
+   "detail": "path committed after dead_at"
+  },
+  {
+   "qid": "q-20260904-auto-derived-sync-0009",
+   "path": "docs/03_modules/_domain_risk/ashare_systemic_risk_detector/blueprint.md",
+   "verdict": "content_landed",
+   "detail": "blob_sha256 == worktree bytes"
+  },
+  {
+   "qid": "q-20260904-auto-derived-sync-0009",
+   "path": "docs/03_modules/_domain_risk/atr_stop_engine/blueprint.md",
+   "verdict": "content_landed",
+   "detail": "blob_sha256 == worktree bytes"
+  },
+  {
+   "qid": "q-20260904-auto-derived-sync-0009",
+   "path": "docs/03_modules/_domain_risk/black_swan_pattern_library/blueprint.md",
+   "verdict": "content_landed",
+   "detail": "blob_sha256 == worktree bytes"
+  },
+  {
+   "qid": "q-20260904-auto-derived-sync-0009",
+   "path": "docs/03_modules/_domain_risk/blueprint.md",
+   "verdict": "landed_elsewhere",
+   "detail": "path committed after dead_at"
+  },
+  {
+   "qid": "q-20260904-auto-derived-sync-0009",
+   "path": "docs/03_modules/_domain_risk/concentration_monitor/blueprint.md",
+   "verdict": "content_landed",
+   "detail": "blob_sha256 == worktree bytes"
+  },
+  {
+   "qid": "q-20260904-auto-derived-sync-0009",
+   "path": "docs/03_modules/_domain_risk/copula_garch_joint/blueprint.md",
+   "verdict": "content_landed",
+   "detail": "blob_sha256 == worktree bytes"
+  },
+  {
+   "qid": "q-20260904-auto-derived-sync-0009",
+   "path": "docs/03_modules/_domain_risk/crowding_monitor/blueprint.md",
+   "verdict": "content_landed",
+   "detail": "blob_sha256 == worktree bytes"
+  },
+  {
+   "qid": "q-20260904-auto-derived-sync-0009",
+   "path": "docs/03_modules/_domain_risk/crowding_response_engine/blueprint.md",
+   "verdict": "content_landed",
+   "detail": "blob_sha256 == worktree bytes"
+  },
+  {
+   "qid": "q-20260904-auto-derived-sync-0009",
+   "path": "docs/03_modules/_domain_risk/daily_auditor/blueprint.md",
+   "verdict": "content_landed",
+   "detail": "blob_sha256 == worktree bytes"
+  },
+  {
+   "qid": "q-20260904-auto-derived-sync-0009",
+   "path": "docs/03_modules/_domain_risk/drawdown_tracker/blueprint.md",
+   "verdict": "content_landed",
+   "detail": "blob_sha256 == worktree bytes"
+  },
+  {
+   "qid": "q-20260904-auto-derived-sync-0009",
+   "path": "docs/03_modules/_domain_risk/emergency_stop_confirmation/blueprint.md",
+   "verdict": "content_landed",
+   "detail": "blob_sha256 == worktree bytes"
+  },
+  {
+   "qid": "q-20260904-auto-derived-sync-0009",
+   "path": "docs/03_modules/_domain_risk/factor_exposure_manager/blueprint.md",
+   "verdict": "content_landed",
+   "detail": "blob_sha256 == worktree bytes"
+  },
+  {
+   "qid": "q-20260904-auto-derived-sync-0009",
+   "path": "docs/03_modules/_domain_risk/fhs_engine/blueprint.md",
+   "verdict": "content_landed",
+   "detail": "blob_sha256 == worktree bytes"
+  },
+  {
+   "qid": "q-20260904-auto-derived-sync-0009",
+   "path": "docs/03_modules/_domain_risk/liquidity_crisis_manager/blueprint.md",
+   "verdict": "content_landed",
+   "detail": "blob_sha256 == worktree bytes"
+  },
+  {
+   "qid": "q-20260904-auto-derived-sync-0009",
+   "path": "docs/03_modules/_domain_risk/liquidity_monitor/blueprint.md",
+   "verdict": "landed_elsewhere",
+   "detail": "path committed after dead_at"
+  },
+  {
+   "qid": "q-20260904-auto-derived-sync-0009",
+   "path": "docs/03_modules/_domain_risk/manipulation_avoidance_detector/blueprint.md",
+   "verdict": "content_landed",
+   "detail": "blob_sha256 == worktree bytes"
+  },
+  {
+   "qid": "q-20260904-auto-derived-sync-0009",
+   "path": "docs/03_modules/_domain_risk/model_risk_audit/blueprint.md",
+   "verdict": "content_landed",
+   "detail": "blob_sha256 == worktree bytes"
+  },
+  {
+   "qid": "q-20260904-auto-derived-sync-0009",
+   "path": "docs/03_modules/_domain_risk/operational_risk_monitor/blueprint.md",
+   "verdict": "content_landed",
+   "detail": "blob_sha256 == worktree bytes"
+  },
+  {
+   "qid": "q-20260904-auto-derived-sync-0009",
+   "path": "docs/03_modules/_domain_risk/performance_attribution_degradation/blueprint.md",
+   "verdict": "content_landed",
+   "detail": "blob_sha256 == worktree bytes"
+  },
+  {
+   "qid": "q-20260904-auto-derived-sync-0009",
+   "path": "docs/03_modules/_domain_risk/post_entry_instant_validator/blueprint.md",
+   "verdict": "content_landed",
+   "detail": "blob_sha256 == worktree bytes"
+  },
+  {
+   "qid": "q-20260904-auto-derived-sync-0009",
+   "path": "docs/03_modules/_domain_risk/risk_decomposition/blueprint.md",
+   "verdict": "content_landed",
+   "detail": "blob_sha256 == worktree bytes"
+  },
+  {
+   "qid": "q-20260904-auto-derived-sync-0009",
+   "path": "docs/03_modules/_domain_risk/strategy_deviation_monitor/blueprint.md",
+   "verdict": "content_landed",
+   "detail": "blob_sha256 == worktree bytes"
+  },
+  {
+   "qid": "q-20260904-auto-derived-sync-0009",
+   "path": "docs/03_modules/_domain_risk/stress_test_engine/blueprint.md",
+   "verdict": "content_landed",
+   "detail": "blob_sha256 == worktree bytes"
+  },
+  {
+   "qid": "q-20260904-auto-derived-sync-0009",
+   "path": "docs/03_modules/_domain_risk/systemic_risk_alert_state_machine/blueprint.md",
+   "verdict": "content_landed",
+   "detail": "blob_sha256 == worktree bytes"
+  },
+  {
+   "qid": "q-20260904-auto-derived-sync-0009",
+   "path": "docs/03_modules/_domain_risk/tail_risk_monitor/blueprint.md",
+   "verdict": "content_landed",
+   "detail": "blob_sha256 == worktree bytes"
+  },
+  {
+   "qid": "q-20260904-auto-derived-sync-0009",
+   "path": "docs/03_modules/_domain_risk/var_calculator/blueprint.md",
+   "verdict": "content_landed",
+   "detail": "blob_sha256 == worktree bytes"
+  },
+  {
+   "qid": "q-20260904-auto-derived-sync-0009",
+   "path": "docs/03_modules/_domain_sell_decision/breakout_failure_detector/blueprint.md",
+   "verdict": "content_landed",
+   "detail": "blob_sha256 == worktree bytes"
+  },
+  {
+   "qid": "q-20260904-auto-derived-sync-0009",
+   "path": "docs/03_modules/_domain_sell_decision/position_triage/blueprint.md",
+   "verdict": "content_landed",
+   "detail": "blob_sha256 == worktree bytes"
+  },
+  {
+   "qid": "q-20260904-auto-derived-sync-0009",
+   "path": "docs/03_modules/_domain_sell_decision/replacement_rebalance_seller/blueprint.md",
+   "verdict": "content_landed",
+   "detail": "blob_sha256 == worktree bytes"
+  },
+  {
+   "qid": "q-20260904-auto-derived-sync-0009",
+   "path": "docs/03_modules/_domain_sell_decision/sell_execution_planner/blueprint.md",
+   "verdict": "content_landed",
+   "detail": "blob_sha256 == worktree bytes"
+  },
+  {
+   "qid": "q-20260904-auto-derived-sync-0009",
+   "path": "docs/03_modules/_domain_sell_decision/sell_signal_collector/blueprint.md",
+   "verdict": "content_landed",
+   "detail": "blob_sha256 == worktree bytes"
+  },
+  {
+   "qid": "q-20260904-auto-derived-sync-0009",
+   "path": "docs/03_modules/_domain_sell_decision/sell_signal_fusion_engine/blueprint.md",
+   "verdict": "content_landed",
+   "detail": "blob_sha256 == worktree bytes"
+  },
+  {
+   "qid": "q-20260904-auto-derived-sync-0009",
+   "path": "docs/03_modules/_domain_sell_decision/sell_urgency_scorer/blueprint.md",
+   "verdict": "content_landed",
+   "detail": "blob_sha256 == worktree bytes"
+  },
+  {
+   "qid": "q-20260904-auto-derived-sync-0009",
+   "path": "docs/03_modules/_domain_sell_decision/stop_hunting_protector/blueprint.md",
+   "verdict": "content_landed",
+   "detail": "blob_sha256 == worktree bytes"
+  },
+  {
+   "qid": "q-20260904-auto-derived-sync-0009",
+   "path": "docs/03_modules/_domain_sell_decision/stop_loss_strategy/blueprint.md",
+   "verdict": "content_landed",
+   "detail": "blob_sha256 == worktree bytes"
+  },
+  {
+   "qid": "q-20260904-auto-derived-sync-0009",
+   "path": "docs/03_modules/_domain_sell_decision/take_profit_strategy/blueprint.md",
+   "verdict": "content_landed",
+   "detail": "blob_sha256 == worktree bytes"
+  },
+  {
+   "qid": "q-20260904-auto-derived-sync-0009",
+   "path": "docs/03_modules/_domain_signal/blueprint.md",
+   "verdict": "landed_elsewhere",
+   "detail": "path committed after dead_at"
+  },
+  {
+   "qid": "q-20260904-auto-derived-sync-0009",
+   "path": "docs/03_modules/_domain_signal/seat_pattern_analyzer/blueprint.md",
+   "verdict": "landed_elsewhere",
+   "detail": "path committed after dead_at"
+  },
+  {
+   "qid": "q-20260904-auto-derived-sync-0009",
+   "path": "docs/03_modules/_domain_simulation/blueprint.md",
+   "verdict": "landed_elsewhere",
+   "detail": "path committed after dead_at"
+  },
+  {
+   "qid": "q-20260904-auto-derived-sync-0009",
+   "path": "docs/03_modules/_domain_simulation/deflated_sharpe_calculator/blueprint.md",
+   "verdict": "content_landed",
+   "detail": "blob_sha256 == worktree bytes"
+  },
+  {
+   "qid": "q-20260904-auto-derived-sync-0009",
+   "path": "docs/03_modules/_domain_simulation/look_ahead_bias_detector/blueprint.md",
+   "verdict": "content_landed",
+   "detail": "blob_sha256 == worktree bytes"
+  },
+  {
+   "qid": "q-20260904-auto-derived-sync-0009",
+   "path": "docs/03_modules/_domain_simulation/parameter_robustness_tester/blueprint.md",
+   "verdict": "content_landed",
+   "detail": "blob_sha256 == worktree bytes"
+  },
+  {
+   "qid": "q-20260904-auto-derived-sync-0009",
+   "path": "docs/03_modules/_domain_simulation/result_analyzer/blueprint.md",
+   "verdict": "content_landed",
+   "detail": "blob_sha256 == worktree bytes"
+  },
+  {
+   "qid": "q-20260904-auto-derived-sync-0009",
+   "path": "docs/03_modules/_domain_simulation/risk_simulator/blueprint.md",
+   "verdict": "content_landed",
+   "detail": "blob_sha256 == worktree bytes"
+  },
+  {
+   "qid": "q-20260904-auto-derived-sync-0009",
+   "path": "docs/03_modules/_domain_simulation/scenario_generator/blueprint.md",
+   "verdict": "content_landed",
+   "detail": "blob_sha256 == worktree bytes"
+  },
+  {
+   "qid": "q-20260904-auto-derived-sync-0009",
+   "path": "docs/03_modules/_domain_simulation/sharpe_calculator_fixer/blueprint.md",
+   "verdict": "content_landed",
+   "detail": "blob_sha256 == worktree bytes"
+  },
+  {
+   "qid": "q-20260904-auto-derived-sync-0009",
+   "path": "docs/03_modules/_domain_simulation/strategy_simulator/blueprint.md",
+   "verdict": "content_landed",
+   "detail": "blob_sha256 == worktree bytes"
+  },
+  {
+   "qid": "q-20260904-auto-derived-sync-0009",
+   "path": "docs/03_modules/_domain_trading/corporate_action_processor/blueprint.md",
+   "verdict": "content_landed",
+   "detail": "blob_sha256 == worktree bytes"
+  },
+  {
+   "qid": "q-20260904-auto-derived-sync-0009",
+   "path": "docs/03_modules/_domain_trading/eod_processor/blueprint.md",
+   "verdict": "content_landed",
+   "detail": "blob_sha256 == worktree bytes"
+  },
+  {
+   "qid": "q-20260904-auto-derived-sync-0009",
+   "path": "docs/03_modules/_domain_trading/manual_instruction_channel/blueprint.md",
+   "verdict": "content_landed",
+   "detail": "blob_sha256 == worktree bytes"
+  },
+  {
+   "qid": "q-20260904-auto-derived-sync-0009",
+   "path": "docs/03_modules/_domain_trading/pnl_calculator/blueprint.md",
+   "verdict": "content_landed",
+   "detail": "blob_sha256 == worktree bytes"
+  },
+  {
+   "qid": "q-20260904-auto-derived-sync-0009",
+   "path": "docs/03_modules/_domain_trading/settlement_reconciliation/blueprint.md",
+   "verdict": "content_landed",
+   "detail": "blob_sha256 == worktree bytes"
+  },
+  {
+   "qid": "q-20260904-auto-derived-sync-0009",
+   "path": "docs/03_modules/_domain_trading/strategy_abnormal_exit/blueprint.md",
+   "verdict": "content_landed",
+   "detail": "blob_sha256 == worktree bytes"
+  },
+  {
+   "qid": "q-20260904-auto-derived-sync-0009",
+   "path": "docs/03_modules/_domain_trading/trigger_registry/blueprint.md",
+   "verdict": "content_landed",
+   "detail": "blob_sha256 == worktree bytes"
+  },
+  {
+   "qid": "q-20260904-auto-derived-sync-0009",
+   "path": "scripts/governance/script_manifest.yaml",
+   "verdict": "landed_elsewhere",
+   "detail": "path committed after dead_at"
+  },
+  {
+   "qid": "q-20260904-auto-derived-sync-0010",
+   "path": "data/asset_index/unified-asset-index.yaml",
+   "verdict": "landed_elsewhere",
+   "detail": "path committed after dead_at"
+  },
+  {
+   "qid": "q-20260904-auto-derived-sync-0010",
+   "path": "docs/01_policies_and_standards/_registry/catalogs/rule_ai_perception_index.yaml",
+   "verdict": "landed_elsewhere",
+   "detail": "path committed after dead_at"
+  },
+  {
+   "qid": "q-20260904-auto-derived-sync-0010",
+   "path": "docs/01_policies_and_standards/_registry/catalogs/rule_catalog_registry.yaml",
+   "verdict": "landed_elsewhere",
+   "detail": "path committed after dead_at"
+  },
+  {
+   "qid": "q-20260904-auto-derived-sync-0010",
+   "path": "docs/02_enterprise_architecture/04_architecture_principles_decisions/README.md",
+   "verdict": "landed_elsewhere",
+   "detail": "path committed after dead_at"
+  },
+  {
+   "qid": "q-20260904-auto-derived-sync-0010",
+   "path": "docs/02_enterprise_architecture/04_architecture_principles_decisions/project_handbook/01_overview.md",
+   "verdict": "landed_elsewhere",
+   "detail": "path committed after dead_at"
+  },
+  {
+   "qid": "q-20260904-auto-derived-sync-0010",
+   "path": "docs/02_enterprise_architecture/04_architecture_principles_decisions/project_handbook/02_repository_and_modules.md",
+   "verdict": "landed_elsewhere",
+   "detail": "path committed after dead_at"
+  },
+  {
+   "qid": "q-20260904-auto-derived-sync-0010",
+   "path": "docs/02_enterprise_architecture/04_architecture_principles_decisions/project_handbook/03_data_layer.md",
+   "verdict": "landed_elsewhere",
+   "detail": "path committed after dead_at"
+  },
+  {
+   "qid": "q-20260904-auto-derived-sync-0010",
+   "path": "docs/02_enterprise_architecture/04_architecture_principles_decisions/project_handbook/05_trading_domains.md",
+   "verdict": "landed_elsewhere",
+   "detail": "path committed after dead_at"
+  },
+  {
+   "qid": "q-20260904-auto-derived-sync-0010",
+   "path": "docs/02_enterprise_architecture/04_architecture_principles_decisions/project_handbook/07_dependencies.md",
+   "verdict": "landed_elsewhere",
+   "detail": "path committed after dead_at"
+  },
+  {
+   "qid": "q-20260904-auto-derived-sync-0010",
+   "path": "docs/03_modules/_cross_layer/_b_track_interfaces/vector_memory_service_interface.md",
+   "verdict": "content_landed",
+   "detail": "blob_sha256 == worktree bytes"
+  },
+  {
+   "qid": "q-20260904-auto-derived-sync-0010",
+   "path": "docs/03_modules/_cross_layer/agent_orchestrator/blueprint.md",
+   "verdict": "landed_elsewhere",
+   "detail": "path committed after dead_at"
+  },
+  {
+   "qid": "q-20260904-auto-derived-sync-0010",
+   "path": "docs/03_modules/_cross_layer/audit_orchestrator/blueprint.md",
+   "verdict": "landed_elsewhere",
+   "detail": "path committed after dead_at"
+  },
+  {
+   "qid": "q-20260904-auto-derived-sync-0010",
+   "path": "docs/03_modules/_cross_layer/auto_fix_engine/blueprint.md",
+   "verdict": "content_landed",
+   "detail": "blob_sha256 == worktree bytes"
+  },
+  {
+   "qid": "q-20260904-auto-derived-sync-0010",
+   "path": "docs/03_modules/_cross_layer/cd_pipeline/blueprint.md",
+   "verdict": "content_landed",
+   "detail": "blob_sha256 == worktree bytes"
+  },
+  {
+   "qid": "q-20260904-auto-derived-sync-0010",
+   "path": "docs/03_modules/_cross_layer/clone_guard/blueprint.md",
+   "verdict": "content_landed",
+   "detail": "blob_sha256 == worktree bytes"
+  },
+  {
+   "qid": "q-20260904-auto-derived-sync-0010",
+   "path": "docs/03_modules/_cross_layer/database/blueprint.md",
+   "verdict": "landed_elsewhere",
+   "detail": "path committed after dead_at"
+  },
+  {
+   "qid": "q-20260904-auto-derived-sync-0010",
+   "path": "docs/03_modules/_cross_layer/feedback_loop/blueprint.md",
+   "verdict": "landed_elsewhere",
+   "detail": "path committed after dead_at"
+  },
+  {
+   "qid": "q-20260904-auto-derived-sync-0010",
+   "path": "docs/03_modules/_cross_layer/gate_engine/blueprint.md",
+   "verdict": "landed_elsewhere",
+   "detail": "path committed after dead_at"
+  },
+  {
+   "qid": "q-20260904-auto-derived-sync-0010",
+   "path": "docs/03_modules/_cross_layer/large_language_model_security/blueprint.md",
+   "verdict": "content_landed",
+   "detail": "blob_sha256 == worktree bytes"
+  },
+  {
+   "qid": "q-20260904-auto-derived-sync-0010",
+   "path": "docs/03_modules/_cross_layer/model_capability_exam/blueprint.md",
+   "verdict": "content_landed",
+   "detail": "blob_sha256 == worktree bytes"
+  },
+  {
+   "qid": "q-20260904-auto-derived-sync-0010",
+   "path": "docs/03_modules/_cross_layer/model_context_protocol_servers/blueprint.md",
+   "verdict": "landed_elsewhere",
+   "detail": "path committed after dead_at"
+  },
+  {
+   "qid": "q-20260904-auto-derived-sync-0010",
+   "path": "docs/03_modules/_cross_layer/model_profiler/blueprint.md",
+   "verdict": "content_landed",
+   "detail": "blob_sha256 == worktree bytes"
+  },
+  {
+   "qid": "q-20260904-auto-derived-sync-0010",
+   "path": "docs/03_modules/_cross_layer/orphan_judge/blueprint.md",
+   "verdict": "landed_elsewhere",
+   "detail": "path committed after dead_at"
+  },
+  {
+   "qid": "q-20260904-auto-derived-sync-0010",
+   "path": "docs/03_modules/_cross_layer/pipeline/blueprint.md",
+   "verdict": "landed_elsewhere",
+   "detail": "path committed after dead_at"
+  },
+  {
+   "qid": "q-20260904-auto-derived-sync-0010",
+   "path": "docs/03_modules/_cross_layer/semantic_auditor/blueprint.md",
+   "verdict": "landed_elsewhere",
+   "detail": "path committed after dead_at"
+  },
+  {
+   "qid": "q-20260904-auto-derived-sync-0010",
+   "path": "docs/03_modules/_cross_layer/shared_core/blueprint.md",
+   "verdict": "landed_elsewhere",
+   "detail": "path committed after dead_at"
+  },
+  {
+   "qid": "q-20260904-auto-derived-sync-0010",
+   "path": "docs/03_modules/_cross_layer/shared_core/dashboard_blueprint.md",
+   "verdict": "content_landed",
+   "detail": "blob_sha256 == worktree bytes"
+  },
+  {
+   "qid": "q-20260904-auto-derived-sync-0010",
+   "path": "docs/03_modules/_domain_autonomy_core/agent_role_based_access_control/blueprint.md",
+   "verdict": "landed_elsewhere",
+   "detail": "path committed after dead_at"
+  },
+  {
+   "qid": "q-20260904-auto-derived-sync-0010",
+   "path": "docs/03_modules/_domain_autonomy_core/rollback_system/blueprint.md",
+   "verdict": "landed_elsewhere",
+   "detail": "path committed after dead_at"
+  },
+  {
+   "qid": "q-20260904-auto-derived-sync-0010",
+   "path": "docs/03_modules/_domain_autonomy_perm/budget_enforcer/blueprint.md",
+   "verdict": "landed_elsewhere",
+   "detail": "path committed after dead_at"
+  },
+  {
+   "qid": "q-20260904-auto-derived-sync-0010",
+   "path": "docs/03_modules/_domain_autonomy_perm/escalation_protocol/blueprint.md",
+   "verdict": "landed_elsewhere",
+   "detail": "path committed after dead_at"
+  },
+  {
+   "qid": "q-20260904-auto-derived-sync-0010",
+   "path": "docs/03_modules/_domain_backtest/anomaly_diagnoser/blueprint.md",
+   "verdict": "content_landed",
+   "detail": "blob_sha256 == worktree bytes"
+  },
+  {
+   "qid": "q-20260904-auto-derived-sync-0010",
+   "path": "docs/03_modules/_domain_backtest/blueprint.md",
+   "verdict": "landed_elsewhere",
+   "detail": "path committed after dead_at"
+  },
+  {
+   "qid": "q-20260904-auto-derived-sync-0010",
+   "path": "docs/03_modules/_domain_backtest/cache_manager/blueprint.md",
+   "verdict": "content_landed",
+   "detail": "blob_sha256 == worktree bytes"
+  },
+  {
+   "qid": "q-20260904-auto-derived-sync-0010",
+   "path": "docs/03_modules/_domain_backtest/data_quality_checker/blueprint.md",
+   "verdict": "content_landed",
+   "detail": "blob_sha256 == worktree bytes"
+  },
+  {
+   "qid": "q-20260904-auto-derived-sync-0010",
+   "path": "docs/03_modules/_domain_backtest/decay_monitor/blueprint.md",
+   "verdict": "landed_elsewhere",
+   "detail": "path committed after dead_at"
+  },
+  {
+   "qid": "q-20260904-auto-derived-sync-0010",
+   "path": "docs/03_modules/_domain_backtest/nan_processor/blueprint.md",
+   "verdict": "landed_elsewhere",
+   "detail": "path committed after dead_at"
+  },
+  {
+   "qid": "q-20260904-auto-derived-sync-0010",
+   "path": "docs/03_modules/_domain_backtest/param_analyzer/blueprint.md",
+   "verdict": "content_landed",
+   "detail": "blob_sha256 == worktree bytes"
+  },
+  {
+   "qid": "q-20260904-auto-derived-sync-0010",
+   "path": "docs/03_modules/_domain_backtest/report_generator/blueprint.md",
+   "verdict": "content_landed",
+   "detail": "blob_sha256 == worktree bytes"
+  },
+  {
+   "qid": "q-20260904-auto-derived-sync-0010",
+   "path": "docs/03_modules/_domain_backtest/result_comparator/blueprint.md",
+   "verdict": "content_landed",
+   "detail": "blob_sha256 == worktree bytes"
+  },
+  {
+   "qid": "q-20260904-auto-derived-sync-0010",
+   "path": "docs/03_modules/_domain_compliance/blueprint.md",
+   "verdict": "landed_elsewhere",
+   "detail": "path committed after dead_at"
+  },
+  {
+   "qid": "q-20260904-auto-derived-sync-0010",
+   "path": "docs/03_modules/_domain_compliance/compliance_log/blueprint.md",
+   "verdict": "content_landed",
+   "detail": "blob_sha256 == worktree bytes"
+  },
+  {
+   "qid": "q-20260904-auto-derived-sync-0010",
+   "path": "docs/03_modules/_domain_compliance/compliance_report_registry/blueprint.md",
+   "verdict": "content_landed",
+   "detail": "blob_sha256 == worktree bytes"
+  },
+  {
+   "qid": "q-20260904-auto-derived-sync-0010",
+   "path": "docs/03_modules/_domain_compliance/discipline_must_do_checker/blueprint.md",
+   "verdict": "content_landed",
+   "detail": "blob_sha256 == worktree bytes"
+  },
+  {
+   "qid": "q-20260904-auto-derived-sync-0010",
+   "path": "docs/03_modules/_domain_compliance/discipline_prohibition_checker/blueprint.md",
+   "verdict": "content_landed",
+   "detail": "blob_sha256 == worktree bytes"
+  },
+  {
+   "qid": "q-20260904-auto-derived-sync-0010",
+   "path": "docs/03_modules/_domain_compliance/hard_boundary_adjudicator/blueprint.md",
+   "verdict": "content_landed",
+   "detail": "blob_sha256 == worktree bytes"
+  },
+  {
+   "qid": "q-20260904-auto-derived-sync-0010",
+   "path": "docs/03_modules/_domain_compliance/license_usage_auditor/blueprint.md",
+   "verdict": "content_landed",
+   "detail": "blob_sha256 == worktree bytes"
+  },
+  {
+   "qid": "q-20260904-auto-derived-sync-0010",
+   "path": "docs/03_modules/_domain_compliance/trading_compliance_detector/blueprint.md",
+   "verdict": "content_landed",
+   "detail": "blob_sha256 == worktree bytes"
+  },
+  {
+   "qid": "q-20260904-auto-derived-sync-0010",
+   "path": "docs/03_modules/_domain_contracts/ctr002_consumer_adapter/blueprint.md",
+   "verdict": "content_landed",
+   "detail": "blob_sha256 == worktree bytes"
+  },
+  {
+   "qid": "q-20260904-auto-derived-sync-0010",
+   "path": "docs/03_modules/_domain_contracts/ctr002_producer_validator/blueprint.md",
+   "verdict": "content_landed",
+   "detail": "blob_sha256 == worktree bytes"
+  },
+  {
+   "qid": "q-20260904-auto-derived-sync-0010",
+   "path": "docs/03_modules/_domain_data/blueprint.md",
+   "verdict": "landed_elsewhere",
+   "detail": "path committed after dead_at"
+  },
+  {
+   "qid": "q-20260904-auto-derived-sync-0010",
+   "path": "docs/03_modules/_domain_data/boot_autostart_architecture.md",
+   "verdict": "landed_elsewhere",
+   "detail": "path committed after dead_at"
+  },
+  {
+   "qid": "q-20260904-auto-derived-sync-0010",
+   "path": "docs/03_modules/_domain_data/redundant_source_blueprint.md",
+   "verdict": "content_landed",
+   "detail": "blob_sha256 == worktree bytes"
+  },
+  {
+   "qid": "q-20260904-auto-derived-sync-0010",
+   "path": "docs/03_modules/_domain_data/wal_codec_blueprint.md",
+   "verdict": "content_landed",
+   "detail": "blob_sha256 == worktree bytes"
+  },
+  {
+   "qid": "q-20260904-auto-derived-sync-0010",
+   "path": "docs/03_modules/_domain_ex_sor/execution_quality_scorer/blueprint.md",
+   "verdict": "landed_elsewhere",
+   "detail": "path committed after dead_at"
+  },
+  {
+   "qid": "q-20260904-auto-derived-sync-0010",
+   "path": "docs/03_modules/_domain_ex_sor/rl_execution_training_env/blueprint.md",
+   "verdict": "content_landed",
+   "detail": "blob_sha256 == worktree bytes"
+  },
+  {
+   "qid": "q-20260904-auto-derived-sync-0010",
+   "path": "docs/03_modules/_domain_ex_sor/slippage_analyzer/blueprint.md",
+   "verdict": "landed_elsewhere",
+   "detail": "path committed after dead_at"
+  },
+  {
+   "qid": "q-20260904-auto-derived-sync-0010",
+   "path": "docs/03_modules/_domain_ex_sor/transaction_cost_optimizer/blueprint.md",
+   "verdict": "landed_elsewhere",
+   "detail": "path committed after dead_at"
+  },
+  {
+   "qid": "q-20260904-auto-derived-sync-0010",
+   "path": "docs/03_modules/_domain_execution_core/aggregate_root_manager/blueprint.md",
+   "verdict": "content_landed",
+   "detail": "blob_sha256 == worktree bytes"
+  },
+  {
+   "qid": "q-20260904-auto-derived-sync-0010",
+   "path": "docs/03_modules/_domain_execution_core/audit_journal/blueprint.md",
+   "verdict": "content_landed",
+   "detail": "blob_sha256 == worktree bytes"
+  },
+  {
+   "qid": "q-20260904-auto-derived-sync-0010",
+   "path": "docs/03_modules/_domain_execution_core/blueprint.md",
+   "verdict": "content_landed",
+   "detail": "blob_sha256 == worktree bytes"
+  },
+  {
+   "qid": "q-20260904-auto-derived-sync-0010",
+   "path": "docs/03_modules/_domain_execution_core/fill_handler/blueprint.md",
+   "verdict": "content_landed",
+   "detail": "blob_sha256 == worktree bytes"
+  },
+  {
+   "qid": "q-20260904-auto-derived-sync-0010",
+   "path": "docs/03_modules/_domain_execution_core/multi_contract_adapter/blueprint.md",
+   "verdict": "content_landed",
+   "detail": "blob_sha256 == worktree bytes"
+  },
+  {
+   "qid": "q-20260904-auto-derived-sync-0010",
+   "path": "docs/03_modules/_domain_execution_core/order_execution_saga/blueprint.md",
+   "verdict": "content_landed",
+   "detail": "blob_sha256 == worktree bytes"
+  },
+  {
+   "qid": "q-20260904-auto-derived-sync-0010",
+   "path": "docs/03_modules/_domain_execution_core/position_reconciler/blueprint.md",
+   "verdict": "content_landed",
+   "detail": "blob_sha256 == worktree bytes"
+  },
+  {
+   "qid": "q-20260904-auto-derived-sync-0010",
+   "path": "docs/03_modules/_domain_execution_core/position_tracker/blueprint.md",
+   "verdict": "content_landed",
+   "detail": "blob_sha256 == worktree bytes"
+  },
+  {
+   "qid": "q-20260904-auto-derived-sync-0010",
+   "path": "docs/03_modules/_domain_execution_core/premarket_checker/blueprint.md",
+   "verdict": "content_landed",
+   "detail": "blob_sha256 == worktree bytes"
+  },
+  {
+   "qid": "q-20260904-auto-derived-sync-0010",
+   "path": "docs/03_modules/_domain_execution_core/repository_interface/blueprint.md",
+   "verdict": "content_landed",
+   "detail": "blob_sha256 == worktree bytes"
+  },
+  {
+   "qid": "q-20260904-auto-derived-sync-0010",
+   "path": "docs/03_modules/_domain_factor/casebook/blueprint.md",
+   "verdict": "content_landed",
+   "detail": "blob_sha256 == worktree bytes"
+  },
+  {
+   "qid": "q-20260904-auto-derived-sync-0010",
+   "path": "docs/03_modules/_domain_frontend/blueprint.md",
+   "verdict": "landed_elsewhere",
+   "detail": "path committed after dead_at"
+  },
+  {
+   "qid": "q-20260904-auto-derived-sync-0010",
+   "path": "docs/03_modules/_domain_gov_enforcement/threshold_split_detector/blueprint.md",
+   "verdict": "content_landed",
+   "detail": "blob_sha256 == worktree bytes"
+  },
+  {
+   "qid": "q-20260904-auto-derived-sync-0010",
+   "path": "docs/03_modules/_domain_governance/audit_trail/blueprint.md",
+   "verdict": "landed_elsewhere",
+   "detail": "path committed after dead_at"
+  },
+  {
+   "qid": "q-20260904-auto-derived-sync-0010",
+   "path": "docs/03_modules/_domain_governance/blueprint.md",
+   "verdict": "content_landed",
+   "detail": "blob_sha256 == worktree bytes"
+  },
+  {
+   "qid": "q-20260904-auto-derived-sync-0010",
+   "path": "docs/03_modules/_domain_governance/code_dedup_engine/blueprint.md",
+   "verdict": "landed_elsewhere",
+   "detail": "path committed after dead_at"
+  },
+  {
+   "qid": "q-20260904-auto-derived-sync-0010",
+   "path": "docs/03_modules/_domain_governance/drift_detector/blueprint.md",
+   "verdict": "landed_elsewhere",
+   "detail": "path committed after dead_at"
+  },
+  {
+   "qid": "q-20260904-auto-derived-sync-0010",
+   "path": "docs/03_modules/_domain_governance/governance_automation/blueprint.md",
+   "verdict": "landed_elsewhere",
+   "detail": "path committed after dead_at"
+  },
+  {
+   "qid": "q-20260904-auto-derived-sync-0010",
+   "path": "docs/03_modules/_domain_governance/panorama_alignment_engine/align_all_blueprint.md",
+   "verdict": "content_landed",
+   "detail": "blob_sha256 == worktree bytes"
+  },
+  {
+   "qid": "q-20260904-auto-derived-sync-0010",
+   "path": "docs/03_modules/_domain_governance/panorama_alignment_engine/blueprint.md",
+   "verdict": "content_landed",
+   "detail": "blob_sha256 == worktree bytes"
+  },
+  {
+   "qid": "q-20260904-auto-derived-sync-0010",
+   "path": "docs/03_modules/_domain_governance/registry_governance/blueprint.md",
+   "verdict": "landed_elsewhere",
+   "detail": "path committed after dead_at"
+  },
+  {
+   "qid": "q-20260904-auto-derived-sync-0010",
+   "path": "docs/03_modules/_domain_governance/rollback_state_machine/blueprint.md",
+   "verdict": "content_landed",
+   "detail": "blob_sha256 == worktree bytes"
+  },
+  {
+   "qid": "q-20260904-auto-derived-sync-0010",
+   "path": "docs/03_modules/_domain_infrastructure_operations/agent_to_agent_protocol/blueprint.md",
+   "verdict": "landed_elsewhere",
+   "detail": "path committed after dead_at"
+  },
+  {
+   "qid": "q-20260904-auto-derived-sync-0010",
+   "path": "docs/03_modules/_domain_infrastructure_operations/asset_inventory/blueprint.md",
+   "verdict": "landed_elsewhere",
+   "detail": "path committed after dead_at"
+  },
+  {
+   "qid": "q-20260904-auto-derived-sync-0010",
+   "path": "docs/03_modules/_domain_infrastructure_operations/blueprint_experiment_tracking.md",
+   "verdict": "content_landed",
+   "detail": "blob_sha256 == worktree bytes"
+  },
+  {
+   "qid": "q-20260904-auto-derived-sync-0010",
+   "path": "docs/03_modules/_domain_infrastructure_operations/capacity_assurance/blueprint.md",
+   "verdict": "content_landed",
+   "detail": "blob_sha256 == worktree bytes"
+  },
+  {
+   "qid": "q-20260904-auto-derived-sync-0010",
+   "path": "docs/03_modules/_domain_infrastructure_operations/disaster_recovery_backup/backup_inventory.md",
+   "verdict": "landed_elsewhere",
+   "detail": "path committed after dead_at"
+  },
+  {
+   "qid": "q-20260904-auto-derived-sync-0010",
+   "path": "docs/03_modules/_domain_infrastructure_operations/gpu_hot_swap_model/blueprint.md",
+   "verdict": "content_landed",
+   "detail": "blob_sha256 == worktree bytes"
+  },
+  {
+   "qid": "q-20260904-auto-derived-sync-0010",
+   "path": "docs/03_modules/_domain_infrastructure_operations/model_downloader/blueprint.md",
+   "verdict": "content_landed",
+   "detail": "blob_sha256 == worktree bytes"
+  },
+  {
+   "qid": "q-20260904-auto-derived-sync-0010",
+   "path": "docs/03_modules/_domain_infrastructure_operations/system_telemetry/blueprint.md",
+   "verdict": "landed_elsewhere",
+   "detail": "path committed after dead_at"
+  },
+  {
+   "qid": "q-20260904-auto-derived-sync-0010",
+   "path": "docs/03_modules/_domain_infrastructure_runtime/hot_plane/blueprint.md",
+   "verdict": "content_landed",
+   "detail": "blob_sha256 == worktree bytes"
+  },
+  {
+   "qid": "q-20260904-auto-derived-sync-0010",
+   "path": "docs/03_modules/_domain_infrastructure_runtime/process_supervisor/blueprint.md",
+   "verdict": "landed_elsewhere",
+   "detail": "path committed after dead_at"
+  },
+  {
+   "qid": "q-20260904-auto-derived-sync-0010",
+   "path": "docs/03_modules/_domain_infrastructure_runtime/redis_state_layer_ssot/blueprint.md",
+   "verdict": "content_landed",
+   "detail": "blob_sha256 == worktree bytes"
+  },
+  {
+   "qid": "q-20260904-auto-derived-sync-0010",
+   "path": "docs/03_modules/_domain_infrastructure_runtime/runtime_integration/blueprint.md",
+   "verdict": "landed_elsewhere",
+   "detail": "path committed after dead_at"
+  },
+  {
+   "qid": "q-20260904-auto-derived-sync-0010",
+   "path": "docs/03_modules/_domain_infrastructure_runtime/state_machine_engine/blueprint.md",
+   "verdict": "landed_elsewhere",
+   "detail": "path committed after dead_at"
+  },
+  {
+   "qid": "q-20260904-auto-derived-sync-0010",
+   "path": "docs/03_modules/_domain_infrastructure_runtime/task_system/blueprint.md",
+   "verdict": "landed_elsewhere",
+   "detail": "path committed after dead_at"
+  },
+  {
+   "qid": "q-20260904-auto-derived-sync-0010",
+   "path": "docs/03_modules/_domain_infrastructure_runtime/trading_core_process/blueprint.md",
+   "verdict": "content_landed",
+   "detail": "blob_sha256 == worktree bytes"
+  },
+  {
+   "qid": "q-20260904-auto-derived-sync-0010",
+   "path": "docs/03_modules/_domain_integration/blueprint.md",
+   "verdict": "landed_elsewhere",
+   "detail": "path committed after dead_at"
+  },
+  {
+   "qid": "q-20260904-auto-derived-sync-0010",
+   "path": "docs/03_modules/_domain_intelligence/news_sentiment_analyzer/blueprint.md",
+   "verdict": "content_landed",
+   "detail": "blob_sha256 == worktree bytes"
+  },
+  {
+   "qid": "q-20260904-auto-derived-sync-0010",
+   "path": "docs/03_modules/_domain_machine_learning_train/blueprint.md",
+   "verdict": "content_landed",
+   "detail": "blob_sha256 == worktree bytes"
+  },
+  {
+   "qid": "q-20260904-auto-derived-sync-0010",
+   "path": "docs/03_modules/_domain_mkt_data/auction_data_manager/blueprint.md",
+   "verdict": "landed_elsewhere",
+   "detail": "path committed after dead_at"
+  },
+  {
+   "qid": "q-20260904-auto-derived-sync-0010",
+   "path": "docs/03_modules/_domain_mkt_data/autoload/blueprint.md",
+   "verdict": "content_landed",
+   "detail": "blob_sha256 == worktree bytes"
+  },
+  {
+   "qid": "q-20260904-auto-derived-sync-0010",
+   "path": "docs/03_modules/_domain_mkt_data/connectors/blueprint.md",
+   "verdict": "content_landed",
+   "detail": "blob_sha256 == worktree bytes"
+  },
+  {
+   "qid": "q-20260904-auto-derived-sync-0010",
+   "path": "docs/03_modules/_domain_mkt_data/failover/blueprint.md",
+   "verdict": "content_landed",
+   "detail": "blob_sha256 == worktree bytes"
+  },
+  {
+   "qid": "q-20260904-auto-derived-sync-0010",
+   "path": "docs/03_modules/_domain_mkt_data/raw_data_cache/blueprint.md",
+   "verdict": "content_landed",
+   "detail": "blob_sha256 == worktree bytes"
+  },
+  {
+   "qid": "q-20260904-auto-derived-sync-0010",
+   "path": "docs/03_modules/_domain_mkt_data/vendor_base/blueprint.md",
+   "verdict": "content_landed",
+   "detail": "blob_sha256 == worktree bytes"
+  },
+  {
+   "qid": "q-20260904-auto-derived-sync-0010",
+   "path": "docs/03_modules/_domain_mkt_data/vendor_registry/blueprint.md",
+   "verdict": "content_landed",
+   "detail": "blob_sha256 == worktree bytes"
+  },
+  {
+   "qid": "q-20260904-auto-derived-sync-0010",
+   "path": "docs/03_modules/_domain_pf_alloc/batched_position_builder/blueprint.md",
+   "verdict": "content_landed",
+   "detail": "blob_sha256 == worktree bytes"
+  },
+  {
+   "qid": "q-20260904-auto-derived-sync-0010",
+   "path": "docs/03_modules/_domain_plan_engine/closing_session_decision/blueprint.md",
+   "verdict": "content_landed",
+   "detail": "blob_sha256 == worktree bytes"
+  },
+  {
+   "qid": "q-20260904-auto-derived-sync-0010",
+   "path": "docs/03_modules/_domain_risk/blueprint.md",
+   "verdict": "landed_elsewhere",
+   "detail": "path committed after dead_at"
+  },
+  {
+   "qid": "q-20260904-auto-derived-sync-0010",
+   "path": "docs/03_modules/path_ownership_map.yaml",
+   "verdict": "landed_elsewhere",
+   "detail": "path committed after dead_at"
+  },
+  {
+   "qid": "q-20260904-auto-derived-sync-0010",
+   "path": "scripts/governance/script_manifest.yaml",
+   "verdict": "landed_elsewhere",
+   "detail": "path committed after dead_at"
+  },
+  {
+   "qid": "q-20260904-auto-derived-sync-0011",
+   "path": "data/asset_index/unified-asset-index.yaml",
+   "verdict": "landed_elsewhere",
+   "detail": "path committed after dead_at"
+  },
+  {
+   "qid": "q-20260904-auto-derived-sync-0011",
+   "path": "docs/01_policies_and_standards/_registry/catalogs/rule_ai_perception_index.yaml",
+   "verdict": "landed_elsewhere",
+   "detail": "path committed after dead_at"
+  },
+  {
+   "qid": "q-20260904-auto-derived-sync-0011",
+   "path": "docs/01_policies_and_standards/_registry/catalogs/rule_catalog_registry.yaml",
+   "verdict": "landed_elsewhere",
+   "detail": "path committed after dead_at"
+  },
+  {
+   "qid": "q-20260904-auto-derived-sync-0011",
+   "path": "docs/02_enterprise_architecture/04_architecture_principles_decisions/README.md",
+   "verdict": "landed_elsewhere",
+   "detail": "path committed after dead_at"
+  },
+  {
+   "qid": "q-20260904-auto-derived-sync-0011",
+   "path": "docs/02_enterprise_architecture/04_architecture_principles_decisions/project_handbook/01_overview.md",
+   "verdict": "landed_elsewhere",
+   "detail": "path committed after dead_at"
+  },
+  {
+   "qid": "q-20260904-auto-derived-sync-0011",
+   "path": "docs/02_enterprise_architecture/04_architecture_principles_decisions/project_handbook/02_repository_and_modules.md",
+   "verdict": "landed_elsewhere",
+   "detail": "path committed after dead_at"
+  },
+  {
+   "qid": "q-20260904-auto-derived-sync-0011",
+   "path": "docs/02_enterprise_architecture/04_architecture_principles_decisions/project_handbook/03_data_layer.md",
+   "verdict": "landed_elsewhere",
+   "detail": "path committed after dead_at"
+  },
+  {
+   "qid": "q-20260904-auto-derived-sync-0011",
+   "path": "docs/02_enterprise_architecture/04_architecture_principles_decisions/project_handbook/05_trading_domains.md",
+   "verdict": "landed_elsewhere",
+   "detail": "path committed after dead_at"
+  },
+  {
+   "qid": "q-20260904-auto-derived-sync-0011",
+   "path": "docs/02_enterprise_architecture/04_architecture_principles_decisions/project_handbook/07_dependencies.md",
+   "verdict": "landed_elsewhere",
+   "detail": "path committed after dead_at"
+  },
+  {
+   "qid": "q-20260904-auto-derived-sync-0011",
+   "path": "docs/03_modules/_cross_layer/_b_track_interfaces/vector_memory_service_interface.md",
+   "verdict": "content_landed",
+   "detail": "blob_sha256 == worktree bytes"
+  },
+  {
+   "qid": "q-20260904-auto-derived-sync-0011",
+   "path": "docs/03_modules/_domain_plan_engine/premarket_constraint_loader/blueprint.md",
+   "verdict": "content_landed",
+   "detail": "blob_sha256 == worktree bytes"
+  },
+  {
+   "qid": "q-20260904-auto-derived-sync-0011",
+   "path": "docs/03_modules/_domain_plan_engine/tomorrow_boundary_planner/blueprint.md",
+   "verdict": "landed_elsewhere",
+   "detail": "path committed after dead_at"
+  },
+  {
+   "qid": "q-20260904-auto-derived-sync-0011",
+   "path": "docs/03_modules/_domain_portfolio_alloc/maxdd_limit_allocator/blueprint.md",
+   "verdict": "landed_elsewhere",
+   "detail": "path committed after dead_at"
+  },
+  {
+   "qid": "q-20260904-auto-derived-sync-0011",
+   "path": "docs/03_modules/_domain_portfolio_alloc/regime_meta_allocator/blueprint.md",
+   "verdict": "landed_elsewhere",
+   "detail": "path committed after dead_at"
+  },
+  {
+   "qid": "q-20260904-auto-derived-sync-0011",
+   "path": "docs/03_modules/_domain_portfolio_core/blueprint.md",
+   "verdict": "content_landed",
+   "detail": "blob_sha256 == worktree bytes"
+  },
+  {
+   "qid": "q-20260904-auto-derived-sync-0011",
+   "path": "docs/03_modules/_domain_portfolio_core/constraint_solver/blueprint.md",
+   "verdict": "content_landed",
+   "detail": "blob_sha256 == worktree bytes"
+  },
+  {
+   "qid": "q-20260904-auto-derived-sync-0011",
+   "path": "docs/03_modules/_domain_portfolio_core/msprt_champion_challenger/blueprint.md",
+   "verdict": "content_landed",
+   "detail": "blob_sha256 == worktree bytes"
+  },
+  {
+   "qid": "q-20260904-auto-derived-sync-0011",
+   "path": "docs/03_modules/_domain_portfolio_core/performance_attribution_engine/blueprint.md",
+   "verdict": "content_landed",
+   "detail": "blob_sha256 == worktree bytes"
+  },
+  {
+   "qid": "q-20260904-auto-derived-sync-0011",
+   "path": "docs/03_modules/_domain_portfolio_core/portfolio_optimizer/blueprint.md",
+   "verdict": "landed_elsewhere",
+   "detail": "path committed after dead_at"
+  },
+  {
+   "qid": "q-20260904-auto-derived-sync-0011",
+   "path": "docs/03_modules/_domain_portfolio_core/rebalance_scheduler/blueprint.md",
+   "verdict": "landed_elsewhere",
+   "detail": "path committed after dead_at"
+  },
+  {
+   "qid": "q-20260904-auto-derived-sync-0011",
+   "path": "docs/03_modules/_domain_portfolio_core/strategy_engine/blueprint.md",
+   "verdict": "landed_elsewhere",
+   "detail": "path committed after dead_at"
+  },
+  {
+   "qid": "q-20260904-auto-derived-sync-0011",
+   "path": "docs/03_modules/_domain_position/budget_change_handler/blueprint.md",
+   "verdict": "landed_elsewhere",
+   "detail": "path committed after dead_at"
+  },
+  {
+   "qid": "q-20260904-auto-derived-sync-0011",
+   "path": "docs/03_modules/_domain_position/calendar_position_constraint/blueprint.md",
+   "verdict": "content_landed",
+   "detail": "blob_sha256 == worktree bytes"
+  },
+  {
+   "qid": "q-20260904-auto-derived-sync-0011",
+   "path": "docs/03_modules/_domain_position/capital_curve_manager/blueprint.md",
+   "verdict": "content_landed",
+   "detail": "blob_sha256 == worktree bytes"
+  },
+  {
+   "qid": "q-20260904-auto-derived-sync-0011",
+   "path": "docs/03_modules/_domain_position/cash_manager/blueprint.md",
+   "verdict": "content_landed",
+   "detail": "blob_sha256 == worktree bytes"
+  },
+  {
+   "qid": "q-20260904-auto-derived-sync-0011",
+   "path": "docs/03_modules/_domain_position/drawdown_controller/blueprint.md",
+   "verdict": "content_landed",
+   "detail": "blob_sha256 == worktree bytes"
+  },
+  {
+   "qid": "q-20260904-auto-derived-sync-0011",
+   "path": "docs/03_modules/_domain_position/firm_risk_aggregator/blueprint.md",
+   "verdict": "landed_elsewhere",
+   "detail": "path committed after dead_at"
+  },
+  {
+   "qid": "q-20260904-auto-derived-sync-0011",
+   "path": "docs/03_modules/_domain_position/position_audit_logger/blueprint.md",
+   "verdict": "content_landed",
+   "detail": "blob_sha256 == worktree bytes"
+  },
+  {
+   "qid": "q-20260904-auto-derived-sync-0011",
+   "path": "docs/03_modules/_domain_position/position_drift_monitor/blueprint.md",
+   "verdict": "content_landed",
+   "detail": "blob_sha256 == worktree bytes"
+  },
+  {
+   "qid": "q-20260904-auto-derived-sync-0011",
+   "path": "docs/03_modules/_domain_position/position_limit_enforcer/blueprint.md",
+   "verdict": "content_landed",
+   "detail": "blob_sha256 == worktree bytes"
+  },
+  {
+   "qid": "q-20260904-auto-derived-sync-0011",
+   "path": "docs/03_modules/_domain_position/position_sizing_engine/blueprint.md",
+   "verdict": "content_landed",
+   "detail": "blob_sha256 == worktree bytes"
+  },
+  {
+   "qid": "q-20260904-auto-derived-sync-0011",
+   "path": "docs/03_modules/_domain_position/position_state_machine/blueprint.md",
+   "verdict": "content_landed",
+   "detail": "blob_sha256 == worktree bytes"
+  },
+  {
+   "qid": "q-20260904-auto-derived-sync-0011",
+   "path": "docs/03_modules/_domain_position/rebalance_engine/blueprint.md",
+   "verdict": "content_landed",
+   "detail": "blob_sha256 == worktree bytes"
+  },
+  {
+   "qid": "q-20260904-auto-derived-sync-0011",
+   "path": "docs/03_modules/_domain_position/sell_position_link/blueprint.md",
+   "verdict": "content_landed",
+   "detail": "blob_sha256 == worktree bytes"
+  },
+  {
+   "qid": "q-20260904-auto-derived-sync-0011",
+   "path": "docs/03_modules/_domain_position/strategy_book/blueprint.md",
+   "verdict": "landed_elsewhere",
+   "detail": "path committed after dead_at"
+  },
+  {
+   "qid": "q-20260904-auto-derived-sync-0011",
+   "path": "docs/03_modules/_domain_regime/chip_distribution_engine/blueprint.md",
+   "verdict": "landed_elsewhere",
+   "detail": "path committed after dead_at"
+  },
+  {
+   "qid": "q-20260904-auto-derived-sync-0011",
+   "path": "docs/03_modules/_domain_regime/regime_cycle_analyzer/blueprint.md",
+   "verdict": "content_landed",
+   "detail": "blob_sha256 == worktree bytes"
+  },
+  {
+   "qid": "q-20260904-auto-derived-sync-0011",
+   "path": "docs/03_modules/_domain_regime/regime_detector/blueprint.md",
+   "verdict": "landed_elsewhere",
+   "detail": "path committed after dead_at"
+  },
+  {
+   "qid": "q-20260904-auto-derived-sync-0011",
+   "path": "docs/03_modules/_domain_regime/regime_feature_builder/blueprint.md",
+   "verdict": "content_landed",
+   "detail": "blob_sha256 == worktree bytes"
+  },
+  {
+   "qid": "q-20260904-auto-derived-sync-0011",
+   "path": "docs/03_modules/_domain_regime/volatility_regime_alerter/blueprint.md",
+   "verdict": "content_landed",
+   "detail": "blob_sha256 == worktree bytes"
+  },
+  {
+   "qid": "q-20260904-auto-derived-sync-0011",
+   "path": "docs/03_modules/_domain_reporting/ashare_performance_audit/blueprint.md",
+   "verdict": "content_landed",
+   "detail": "blob_sha256 == worktree bytes"
+  },
+  {
+   "qid": "q-20260904-auto-derived-sync-0011",
+   "path": "docs/03_modules/_domain_reporting/ashare_trade_record_template/blueprint.md",
+   "verdict": "content_landed",
+   "detail": "blob_sha256 == worktree bytes"
+  },
+  {
+   "qid": "q-20260904-auto-derived-sync-0011",
+   "path": "docs/03_modules/_domain_reporting/blueprint.md",
+   "verdict": "content_landed",
+   "detail": "blob_sha256 == worktree bytes"
+  },
+  {
+   "qid": "q-20260904-auto-derived-sync-0011",
+   "path": "docs/03_modules/_domain_reporting/realtime_pnl_dashboard/blueprint.md",
+   "verdict": "content_landed",
+   "detail": "blob_sha256 == worktree bytes"
+  },
+  {
+   "qid": "q-20260904-auto-derived-sync-0011",
+   "path": "docs/03_modules/_domain_reporting/regulatory_report_generator/blueprint.md",
+   "verdict": "content_landed",
+   "detail": "blob_sha256 == worktree bytes"
+  },
+  {
+   "qid": "q-20260904-auto-derived-sync-0011",
+   "path": "docs/03_modules/_domain_reporting/report_publisher/blueprint.md",
+   "verdict": "content_landed",
+   "detail": "blob_sha256 == worktree bytes"
+  },
+  {
+   "qid": "q-20260904-auto-derived-sync-0011",
+   "path": "docs/03_modules/_domain_reporting/report_version_manager/blueprint.md",
+   "verdict": "content_landed",
+   "detail": "blob_sha256 == worktree bytes"
+  },
+  {
+   "qid": "q-20260904-auto-derived-sync-0011",
+   "path": "docs/03_modules/_domain_reporting/report_watermark_tracker/blueprint.md",
+   "verdict": "content_landed",
+   "detail": "blob_sha256 == worktree bytes"
+  },
+  {
+   "qid": "q-20260904-auto-derived-sync-0011",
+   "path": "docs/03_modules/_domain_reporting/review_orchestrator/blueprint.md",
+   "verdict": "content_landed",
+   "detail": "blob_sha256 == worktree bytes"
+  },
+  {
+   "qid": "q-20260904-auto-derived-sync-0011",
+   "path": "docs/03_modules/_domain_reporting/risk_report_engine/blueprint.md",
+   "verdict": "content_landed",
+   "detail": "blob_sha256 == worktree bytes"
+  },
+  {
+   "qid": "q-20260904-auto-derived-sync-0011",
+   "path": "docs/03_modules/_domain_research/blueprint.md",
+   "verdict": "landed_elsewhere",
+   "detail": "path committed after dead_at"
+  },
+  {
+   "qid": "q-20260904-auto-derived-sync-0011",
+   "path": "docs/03_modules/_domain_risk/adaptive_risk_coordinator/blueprint.md",
+   "verdict": "content_landed",
+   "detail": "blob_sha256 == worktree bytes"
+  },
+  {
+   "qid": "q-20260904-auto-derived-sync-0011",
+   "path": "docs/03_modules/_domain_risk/adaptive_risk_forecast/blueprint.md",
+   "verdict": "landed_elsewhere",
+   "detail": "path committed after dead_at"
+  },
+  {
+   "qid": "q-20260904-auto-derived-sync-0011",
+   "path": "docs/03_modules/_domain_risk/adaptive_risk_monitor/blueprint.md",
+   "verdict": "landed_elsewhere",
+   "detail": "path committed after dead_at"
+  },
+  {
+   "qid": "q-20260904-auto-derived-sync-0011",
+   "path": "docs/03_modules/_domain_risk/ai_agent_monitor/blueprint.md",
+   "verdict": "content_landed",
+   "detail": "blob_sha256 == worktree bytes"
+  },
+  {
+   "qid": "q-20260904-auto-derived-sync-0011",
+   "path": "docs/03_modules/_domain_risk/alert_generator/blueprint.md",
+   "verdict": "content_landed",
+   "detail": "blob_sha256 == worktree bytes"
+  },
+  {
+   "qid": "q-20260904-auto-derived-sync-0011",
+   "path": "docs/03_modules/_domain_risk/ashare_stop_loss_engine/blueprint.md",
+   "verdict": "landed_elsewhere",
+   "detail": "path committed after dead_at"
+  },
+  {
+   "qid": "q-20260904-auto-derived-sync-0011",
+   "path": "docs/03_modules/_domain_risk/ashare_systemic_risk_detector/blueprint.md",
+   "verdict": "content_landed",
+   "detail": "blob_sha256 == worktree bytes"
+  },
+  {
+   "qid": "q-20260904-auto-derived-sync-0011",
+   "path": "docs/03_modules/_domain_risk/atr_stop_engine/blueprint.md",
+   "verdict": "content_landed",
+   "detail": "blob_sha256 == worktree bytes"
+  },
+  {
+   "qid": "q-20260904-auto-derived-sync-0011",
+   "path": "docs/03_modules/_domain_risk/black_swan_pattern_library/blueprint.md",
+   "verdict": "content_landed",
+   "detail": "blob_sha256 == worktree bytes"
+  },
+  {
+   "qid": "q-20260904-auto-derived-sync-0011",
+   "path": "docs/03_modules/_domain_risk/concentration_monitor/blueprint.md",
+   "verdict": "content_landed",
+   "detail": "blob_sha256 == worktree bytes"
+  },
+  {
+   "qid": "q-20260904-auto-derived-sync-0011",
+   "path": "docs/03_modules/_domain_risk/copula_garch_joint/blueprint.md",
+   "verdict": "content_landed",
+   "detail": "blob_sha256 == worktree bytes"
+  },
+  {
+   "qid": "q-20260904-auto-derived-sync-0011",
+   "path": "docs/03_modules/_domain_risk/crowding_monitor/blueprint.md",
+   "verdict": "content_landed",
+   "detail": "blob_sha256 == worktree bytes"
+  },
+  {
+   "qid": "q-20260904-auto-derived-sync-0011",
+   "path": "docs/03_modules/_domain_risk/crowding_response_engine/blueprint.md",
+   "verdict": "content_landed",
+   "detail": "blob_sha256 == worktree bytes"
+  },
+  {
+   "qid": "q-20260904-auto-derived-sync-0011",
+   "path": "docs/03_modules/_domain_risk/daily_auditor/blueprint.md",
+   "verdict": "content_landed",
+   "detail": "blob_sha256 == worktree bytes"
+  },
+  {
+   "qid": "q-20260904-auto-derived-sync-0011",
+   "path": "docs/03_modules/_domain_risk/drawdown_tracker/blueprint.md",
+   "verdict": "content_landed",
+   "detail": "blob_sha256 == worktree bytes"
+  },
+  {
+   "qid": "q-20260904-auto-derived-sync-0011",
+   "path": "docs/03_modules/_domain_risk/emergency_stop_confirmation/blueprint.md",
+   "verdict": "content_landed",
+   "detail": "blob_sha256 == worktree bytes"
+  },
+  {
+   "qid": "q-20260904-auto-derived-sync-0011",
+   "path": "docs/03_modules/_domain_risk/factor_exposure_manager/blueprint.md",
+   "verdict": "content_landed",
+   "detail": "blob_sha256 == worktree bytes"
+  },
+  {
+   "qid": "q-20260904-auto-derived-sync-0011",
+   "path": "docs/03_modules/_domain_risk/fhs_engine/blueprint.md",
+   "verdict": "content_landed",
+   "detail": "blob_sha256 == worktree bytes"
+  },
+  {
+   "qid": "q-20260904-auto-derived-sync-0011",
+   "path": "docs/03_modules/_domain_risk/liquidity_crisis_manager/blueprint.md",
+   "verdict": "content_landed",
+   "detail": "blob_sha256 == worktree bytes"
+  },
+  {
+   "qid": "q-20260904-auto-derived-sync-0011",
+   "path": "docs/03_modules/_domain_risk/liquidity_monitor/blueprint.md",
+   "verdict": "landed_elsewhere",
+   "detail": "path committed after dead_at"
+  },
+  {
+   "qid": "q-20260904-auto-derived-sync-0011",
+   "path": "docs/03_modules/_domain_risk/manipulation_avoidance_detector/blueprint.md",
+   "verdict": "content_landed",
+   "detail": "blob_sha256 == worktree bytes"
+  },
+  {
+   "qid": "q-20260904-auto-derived-sync-0011",
+   "path": "docs/03_modules/_domain_risk/model_risk_audit/blueprint.md",
+   "verdict": "content_landed",
+   "detail": "blob_sha256 == worktree bytes"
+  },
+  {
+   "qid": "q-20260904-auto-derived-sync-0011",
+   "path": "docs/03_modules/_domain_risk/operational_risk_monitor/blueprint.md",
+   "verdict": "content_landed",
+   "detail": "blob_sha256 == worktree bytes"
+  },
+  {
+   "qid": "q-20260904-auto-derived-sync-0011",
+   "path": "docs/03_modules/_domain_risk/performance_attribution_degradation/blueprint.md",
+   "verdict": "content_landed",
+   "detail": "blob_sha256 == worktree bytes"
+  },
+  {
+   "qid": "q-20260904-auto-derived-sync-0011",
+   "path": "docs/03_modules/_domain_risk/post_entry_instant_validator/blueprint.md",
+   "verdict": "content_landed",
+   "detail": "blob_sha256 == worktree bytes"
+  },
+  {
+   "qid": "q-20260904-auto-derived-sync-0011",
+   "path": "docs/03_modules/_domain_risk/risk_decomposition/blueprint.md",
+   "verdict": "content_landed",
+   "detail": "blob_sha256 == worktree bytes"
+  },
+  {
+   "qid": "q-20260904-auto-derived-sync-0011",
+   "path": "docs/03_modules/_domain_risk/strategy_deviation_monitor/blueprint.md",
+   "verdict": "content_landed",
+   "detail": "blob_sha256 == worktree bytes"
+  },
+  {
+   "qid": "q-20260904-auto-derived-sync-0011",
+   "path": "docs/03_modules/_domain_risk/stress_test_engine/blueprint.md",
+   "verdict": "content_landed",
+   "detail": "blob_sha256 == worktree bytes"
+  },
+  {
+   "qid": "q-20260904-auto-derived-sync-0011",
+   "path": "docs/03_modules/_domain_risk/systemic_risk_alert_state_machine/blueprint.md",
+   "verdict": "content_landed",
+   "detail": "blob_sha256 == worktree bytes"
+  },
+  {
+   "qid": "q-20260904-auto-derived-sync-0011",
+   "path": "docs/03_modules/_domain_risk/tail_risk_monitor/blueprint.md",
+   "verdict": "content_landed",
+   "detail": "blob_sha256 == worktree bytes"
+  },
+  {
+   "qid": "q-20260904-auto-derived-sync-0011",
+   "path": "docs/03_modules/_domain_risk/var_calculator/blueprint.md",
+   "verdict": "content_landed",
+   "detail": "blob_sha256 == worktree bytes"
+  },
+  {
+   "qid": "q-20260904-auto-derived-sync-0011",
+   "path": "docs/03_modules/_domain_sell_decision/breakout_failure_detector/blueprint.md",
+   "verdict": "content_landed",
+   "detail": "blob_sha256 == worktree bytes"
+  },
+  {
+   "qid": "q-20260904-auto-derived-sync-0011",
+   "path": "docs/03_modules/_domain_sell_decision/position_triage/blueprint.md",
+   "verdict": "content_landed",
+   "detail": "blob_sha256 == worktree bytes"
+  },
+  {
+   "qid": "q-20260904-auto-derived-sync-0011",
+   "path": "docs/03_modules/_domain_sell_decision/replacement_rebalance_seller/blueprint.md",
+   "verdict": "content_landed",
+   "detail": "blob_sha256 == worktree bytes"
+  },
+  {
+   "qid": "q-20260904-auto-derived-sync-0011",
+   "path": "docs/03_modules/_domain_sell_decision/sell_execution_planner/blueprint.md",
+   "verdict": "content_landed",
+   "detail": "blob_sha256 == worktree bytes"
+  },
+  {
+   "qid": "q-20260904-auto-derived-sync-0011",
+   "path": "docs/03_modules/_domain_sell_decision/sell_signal_collector/blueprint.md",
+   "verdict": "content_landed",
+   "detail": "blob_sha256 == worktree bytes"
+  },
+  {
+   "qid": "q-20260904-auto-derived-sync-0011",
+   "path": "docs/03_modules/_domain_sell_decision/sell_signal_fusion_engine/blueprint.md",
+   "verdict": "content_landed",
+   "detail": "blob_sha256 == worktree bytes"
+  },
+  {
+   "qid": "q-20260904-auto-derived-sync-0011",
+   "path": "docs/03_modules/_domain_sell_decision/sell_urgency_scorer/blueprint.md",
+   "verdict": "content_landed",
+   "detail": "blob_sha256 == worktree bytes"
+  },
+  {
+   "qid": "q-20260904-auto-derived-sync-0011",
+   "path": "docs/03_modules/_domain_sell_decision/stop_hunting_protector/blueprint.md",
+   "verdict": "content_landed",
+   "detail": "blob_sha256 == worktree bytes"
+  },
+  {
+   "qid": "q-20260904-auto-derived-sync-0011",
+   "path": "docs/03_modules/_domain_sell_decision/stop_loss_strategy/blueprint.md",
+   "verdict": "content_landed",
+   "detail": "blob_sha256 == worktree bytes"
+  },
+  {
+   "qid": "q-20260904-auto-derived-sync-0011",
+   "path": "docs/03_modules/_domain_sell_decision/take_profit_strategy/blueprint.md",
+   "verdict": "content_landed",
+   "detail": "blob_sha256 == worktree bytes"
+  },
+  {
+   "qid": "q-20260904-auto-derived-sync-0011",
+   "path": "docs/03_modules/_domain_signal/blueprint.md",
+   "verdict": "landed_elsewhere",
+   "detail": "path committed after dead_at"
+  },
+  {
+   "qid": "q-20260904-auto-derived-sync-0011",
+   "path": "docs/03_modules/_domain_signal/seat_pattern_analyzer/blueprint.md",
+   "verdict": "landed_elsewhere",
+   "detail": "path committed after dead_at"
+  },
+  {
+   "qid": "q-20260904-auto-derived-sync-0011",
+   "path": "docs/03_modules/_domain_simulation/blueprint.md",
+   "verdict": "landed_elsewhere",
+   "detail": "path committed after dead_at"
+  },
+  {
+   "qid": "q-20260904-auto-derived-sync-0011",
+   "path": "docs/03_modules/_domain_simulation/deflated_sharpe_calculator/blueprint.md",
+   "verdict": "content_landed",
+   "detail": "blob_sha256 == worktree bytes"
+  },
+  {
+   "qid": "q-20260904-auto-derived-sync-0011",
+   "path": "docs/03_modules/_domain_simulation/look_ahead_bias_detector/blueprint.md",
+   "verdict": "content_landed",
+   "detail": "blob_sha256 == worktree bytes"
+  },
+  {
+   "qid": "q-20260904-auto-derived-sync-0011",
+   "path": "docs/03_modules/_domain_simulation/parameter_robustness_tester/blueprint.md",
+   "verdict": "content_landed",
+   "detail": "blob_sha256 == worktree bytes"
+  },
+  {
+   "qid": "q-20260904-auto-derived-sync-0011",
+   "path": "docs/03_modules/_domain_simulation/result_analyzer/blueprint.md",
+   "verdict": "content_landed",
+   "detail": "blob_sha256 == worktree bytes"
+  },
+  {
+   "qid": "q-20260904-auto-derived-sync-0011",
+   "path": "docs/03_modules/_domain_simulation/risk_simulator/blueprint.md",
+   "verdict": "content_landed",
+   "detail": "blob_sha256 == worktree bytes"
+  },
+  {
+   "qid": "q-20260904-auto-derived-sync-0011",
+   "path": "docs/03_modules/_domain_simulation/scenario_generator/blueprint.md",
+   "verdict": "content_landed",
+   "detail": "blob_sha256 == worktree bytes"
+  },
+  {
+   "qid": "q-20260904-auto-derived-sync-0011",
+   "path": "docs/03_modules/_domain_simulation/sharpe_calculator_fixer/blueprint.md",
+   "verdict": "content_landed",
+   "detail": "blob_sha256 == worktree bytes"
+  },
+  {
+   "qid": "q-20260904-auto-derived-sync-0011",
+   "path": "docs/03_modules/_domain_simulation/strategy_simulator/blueprint.md",
+   "verdict": "content_landed",
+   "detail": "blob_sha256 == worktree bytes"
+  },
+  {
+   "qid": "q-20260904-auto-derived-sync-0011",
+   "path": "docs/03_modules/_domain_trading/corporate_action_processor/blueprint.md",
+   "verdict": "content_landed",
+   "detail": "blob_sha256 == worktree bytes"
+  },
+  {
+   "qid": "q-20260904-auto-derived-sync-0011",
+   "path": "docs/03_modules/_domain_trading/eod_processor/blueprint.md",
+   "verdict": "content_landed",
+   "detail": "blob_sha256 == worktree bytes"
+  },
+  {
+   "qid": "q-20260904-auto-derived-sync-0011",
+   "path": "docs/03_modules/_domain_trading/manual_instruction_channel/blueprint.md",
+   "verdict": "content_landed",
+   "detail": "blob_sha256 == worktree bytes"
+  },
+  {
+   "qid": "q-20260904-auto-derived-sync-0011",
+   "path": "docs/03_modules/_domain_trading/pnl_calculator/blueprint.md",
+   "verdict": "content_landed",
+   "detail": "blob_sha256 == worktree bytes"
+  },
+  {
+   "qid": "q-20260904-auto-derived-sync-0011",
+   "path": "docs/03_modules/_domain_trading/settlement_reconciliation/blueprint.md",
+   "verdict": "content_landed",
+   "detail": "blob_sha256 == worktree bytes"
+  },
+  {
+   "qid": "q-20260904-auto-derived-sync-0011",
+   "path": "docs/03_modules/_domain_trading/strategy_abnormal_exit/blueprint.md",
+   "verdict": "content_landed",
+   "detail": "blob_sha256 == worktree bytes"
+  },
+  {
+   "qid": "q-20260904-auto-derived-sync-0011",
+   "path": "docs/03_modules/_domain_trading/trigger_registry/blueprint.md",
+   "verdict": "content_landed",
+   "detail": "blob_sha256 == worktree bytes"
+  },
+  {
+   "qid": "q-20260904-auto-derived-sync-0012",
+   "path": "data/asset_index/unified-asset-index.yaml",
+   "verdict": "landed_elsewhere",
+   "detail": "path committed after dead_at"
+  },
+  {
+   "qid": "q-20260904-auto-derived-sync-0012",
+   "path": "docs/01_policies_and_standards/_registry/catalogs/rule_ai_perception_index.yaml",
+   "verdict": "landed_elsewhere",
+   "detail": "path committed after dead_at"
+  },
+  {
+   "qid": "q-20260904-auto-derived-sync-0012",
+   "path": "docs/01_policies_and_standards/_registry/catalogs/rule_catalog_registry.yaml",
+   "verdict": "landed_elsewhere",
+   "detail": "path committed after dead_at"
+  },
+  {
+   "qid": "q-20260904-auto-derived-sync-0012",
+   "path": "docs/02_enterprise_architecture/04_architecture_principles_decisions/README.md",
+   "verdict": "landed_elsewhere",
+   "detail": "path committed after dead_at"
+  },
+  {
+   "qid": "q-20260904-auto-derived-sync-0012",
+   "path": "docs/02_enterprise_architecture/04_architecture_principles_decisions/project_handbook/01_overview.md",
+   "verdict": "landed_elsewhere",
+   "detail": "path committed after dead_at"
+  },
+  {
+   "qid": "q-20260904-auto-derived-sync-0012",
+   "path": "docs/02_enterprise_architecture/04_architecture_principles_decisions/project_handbook/02_repository_and_modules.md",
+   "verdict": "landed_elsewhere",
+   "detail": "path committed after dead_at"
+  },
+  {
+   "qid": "q-20260904-auto-derived-sync-0012",
+   "path": "docs/02_enterprise_architecture/04_architecture_principles_decisions/project_handbook/03_data_layer.md",
+   "verdict": "landed_elsewhere",
+   "detail": "path committed after dead_at"
+  },
+  {
+   "qid": "q-20260904-auto-derived-sync-0012",
+   "path": "docs/02_enterprise_architecture/04_architecture_principles_decisions/project_handbook/05_trading_domains.md",
+   "verdict": "landed_elsewhere",
+   "detail": "path committed after dead_at"
+  },
+  {
+   "qid": "q-20260904-auto-derived-sync-0012",
+   "path": "docs/02_enterprise_architecture/04_architecture_principles_decisions/project_handbook/07_dependencies.md",
+   "verdict": "landed_elsewhere",
+   "detail": "path committed after dead_at"
+  },
+  {
+   "qid": "q-20260904-auto-derived-sync-0012",
+   "path": "docs/03_modules/_cross_layer/_b_track_interfaces/vector_memory_service_interface.md",
+   "verdict": "content_landed",
+   "detail": "blob_sha256 == worktree bytes"
+  },
+  {
+   "qid": "q-20260904-auto-derived-sync-0012",
+   "path": "docs/03_modules/_cross_layer/agent_orchestrator/blueprint.md",
+   "verdict": "landed_elsewhere",
+   "detail": "path committed after dead_at"
+  },
+  {
+   "qid": "q-20260904-auto-derived-sync-0012",
+   "path": "docs/03_modules/_cross_layer/audit_orchestrator/blueprint.md",
+   "verdict": "landed_elsewhere",
+   "detail": "path committed after dead_at"
+  },
+  {
+   "qid": "q-20260904-auto-derived-sync-0012",
+   "path": "docs/03_modules/_cross_layer/auto_fix_engine/blueprint.md",
+   "verdict": "content_landed",
+   "detail": "blob_sha256 == worktree bytes"
+  },
+  {
+   "qid": "q-20260904-auto-derived-sync-0012",
+   "path": "docs/03_modules/_cross_layer/cd_pipeline/blueprint.md",
+   "verdict": "content_landed",
+   "detail": "blob_sha256 == worktree bytes"
+  },
+  {
+   "qid": "q-20260904-auto-derived-sync-0012",
+   "path": "docs/03_modules/_cross_layer/clone_guard/blueprint.md",
+   "verdict": "content_landed",
+   "detail": "blob_sha256 == worktree bytes"
+  },
+  {
+   "qid": "q-20260904-auto-derived-sync-0012",
+   "path": "docs/03_modules/_cross_layer/database/blueprint.md",
+   "verdict": "landed_elsewhere",
+   "detail": "path committed after dead_at"
+  },
+  {
+   "qid": "q-20260904-auto-derived-sync-0012",
+   "path": "docs/03_modules/_cross_layer/feedback_loop/blueprint.md",
+   "verdict": "landed_elsewhere",
+   "detail": "path committed after dead_at"
+  },
+  {
+   "qid": "q-20260904-auto-derived-sync-0012",
+   "path": "docs/03_modules/_cross_layer/gate_engine/blueprint.md",
+   "verdict": "landed_elsewhere",
+   "detail": "path committed after dead_at"
+  },
+  {
+   "qid": "q-20260904-auto-derived-sync-0012",
+   "path": "docs/03_modules/_cross_layer/large_language_model_security/blueprint.md",
+   "verdict": "content_landed",
+   "detail": "blob_sha256 == worktree bytes"
+  },
+  {
+   "qid": "q-20260904-auto-derived-sync-0012",
+   "path": "docs/03_modules/_cross_layer/model_capability_exam/blueprint.md",
+   "verdict": "content_landed",
+   "detail": "blob_sha256 == worktree bytes"
+  },
+  {
+   "qid": "q-20260904-auto-derived-sync-0012",
+   "path": "docs/03_modules/_cross_layer/model_context_protocol_servers/blueprint.md",
+   "verdict": "landed_elsewhere",
+   "detail": "path committed after dead_at"
+  },
+  {
+   "qid": "q-20260904-auto-derived-sync-0012",
+   "path": "docs/03_modules/_cross_layer/model_profiler/blueprint.md",
+   "verdict": "content_landed",
+   "detail": "blob_sha256 == worktree bytes"
+  },
+  {
+   "qid": "q-20260904-auto-derived-sync-0012",
+   "path": "docs/03_modules/_cross_layer/orphan_judge/blueprint.md",
+   "verdict": "landed_elsewhere",
+   "detail": "path committed after dead_at"
+  },
+  {
+   "qid": "q-20260904-auto-derived-sync-0012",
+   "path": "docs/03_modules/_cross_layer/pipeline/blueprint.md",
+   "verdict": "landed_elsewhere",
+   "detail": "path committed after dead_at"
+  },
+  {
+   "qid": "q-20260904-auto-derived-sync-0012",
+   "path": "docs/03_modules/_cross_layer/semantic_auditor/blueprint.md",
+   "verdict": "landed_elsewhere",
+   "detail": "path committed after dead_at"
+  },
+  {
+   "qid": "q-20260904-auto-derived-sync-0012",
+   "path": "docs/03_modules/_cross_layer/shared_core/blueprint.md",
+   "verdict": "landed_elsewhere",
+   "detail": "path committed after dead_at"
+  },
+  {
+   "qid": "q-20260904-auto-derived-sync-0012",
+   "path": "docs/03_modules/_cross_layer/shared_core/dashboard_blueprint.md",
+   "verdict": "content_landed",
+   "detail": "blob_sha256 == worktree bytes"
+  },
+  {
+   "qid": "q-20260904-auto-derived-sync-0012",
+   "path": "docs/03_modules/_domain_autonomy_core/agent_role_based_access_control/blueprint.md",
+   "verdict": "landed_elsewhere",
+   "detail": "path committed after dead_at"
+  },
+  {
+   "qid": "q-20260904-auto-derived-sync-0012",
+   "path": "docs/03_modules/_domain_autonomy_core/rollback_system/blueprint.md",
+   "verdict": "landed_elsewhere",
+   "detail": "path committed after dead_at"
+  },
+  {
+   "qid": "q-20260904-auto-derived-sync-0012",
+   "path": "docs/03_modules/_domain_autonomy_perm/budget_enforcer/blueprint.md",
+   "verdict": "landed_elsewhere",
+   "detail": "path committed after dead_at"
+  },
+  {
+   "qid": "q-20260904-auto-derived-sync-0012",
+   "path": "docs/03_modules/_domain_autonomy_perm/escalation_protocol/blueprint.md",
+   "verdict": "landed_elsewhere",
+   "detail": "path committed after dead_at"
+  },
+  {
+   "qid": "q-20260904-auto-derived-sync-0012",
+   "path": "docs/03_modules/_domain_backtest/anomaly_diagnoser/blueprint.md",
+   "verdict": "content_landed",
+   "detail": "blob_sha256 == worktree bytes"
+  },
+  {
+   "qid": "q-20260904-auto-derived-sync-0012",
+   "path": "docs/03_modules/_domain_backtest/blueprint.md",
+   "verdict": "landed_elsewhere",
+   "detail": "path committed after dead_at"
+  },
+  {
+   "qid": "q-20260904-auto-derived-sync-0012",
+   "path": "docs/03_modules/_domain_backtest/cache_manager/blueprint.md",
+   "verdict": "content_landed",
+   "detail": "blob_sha256 == worktree bytes"
+  },
+  {
+   "qid": "q-20260904-auto-derived-sync-0012",
+   "path": "docs/03_modules/_domain_backtest/data_quality_checker/blueprint.md",
+   "verdict": "content_landed",
+   "detail": "blob_sha256 == worktree bytes"
+  },
+  {
+   "qid": "q-20260904-auto-derived-sync-0012",
+   "path": "docs/03_modules/_domain_backtest/decay_monitor/blueprint.md",
+   "verdict": "landed_elsewhere",
+   "detail": "path committed after dead_at"
+  },
+  {
+   "qid": "q-20260904-auto-derived-sync-0012",
+   "path": "docs/03_modules/_domain_backtest/nan_processor/blueprint.md",
+   "verdict": "landed_elsewhere",
+   "detail": "path committed after dead_at"
+  },
+  {
+   "qid": "q-20260904-auto-derived-sync-0012",
+   "path": "docs/03_modules/_domain_backtest/param_analyzer/blueprint.md",
+   "verdict": "content_landed",
+   "detail": "blob_sha256 == worktree bytes"
+  }
+ ],
+ "note": "物理清理移交 Owner（AI 删除权受限）；本报告为季度退役审计输入"
+}
