@@ -65,7 +65,7 @@ from zephyr.data.table_registry import get_registry as _get_table_registry
 # category_id=meta_stock_basic（business_data_categories.yaml 真源），TableRegistry 解析全限定表名
 _SQL_ALL_A = (
     "SELECT DISTINCT symbol FROM " + _get_table_registry().table("meta_stock_basic") +
-    " WHERE valid_to IS NULL AND board NOT LIKE '%ST%'"
+    " WHERE valid_to IS NULL AND name NOT LIKE '%ST%' AND name NOT LIKE '%退%'"
 )
 # v1 因子集（F-02 接线后扩展；全部从 close 现算，零额外依赖）
 V1_FACTORS = ("f_mom20", "f_lowvol20", "f_ma_gap")
