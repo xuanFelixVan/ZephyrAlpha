@@ -58,3 +58,40 @@ register_*_task.ps1/审计基建，无需新系统。
 - 因子挖掘：arxiv.org/abs/2502.16789（AlphaAgent, KDD）；ojs.aaai.org/index.php/AAAI/article/view/37069（AlphaMuse）；arxiv.org/abs/2505.11122；arxiv.org/abs/2508.06312（Chain-of-Alpha）；arxiv.org/abs/2406.18394（AlphaForge）；openreview.net/pdf?id=d97Q8r7ZKZ（FAFM）；github.com/Sasha-Cui/Awesome-Applied-Agents-for-Investment；github.com/nshen7/alpha-gfn
 - 多智能体治理：augmentcode.com/guides/how-to-run-a-multi-agent-coding-workspace；code.visualstudio.com/blogs/2026/02/05/multi-agent-development；simonwillison.net/2025/Oct/5/parallel-coding-agents/；Vibe Kanban（vibekanban.com）
 - Ollama 部署：github.com/ollama/ollama/issues/10713；docs.ollama.com/windows；coretechnologies.com/products/AlwaysUp/Apps/OllamaWindowsService.html；dev.to/coderberry（Task Scheduler 方案）
+
+
+---
+
+# 复盘调查（2026-09-15 补）：FRONTEND-MAP/SCHEMA-FILE-EXISTS 回归指控全链取证
+
+> 触发：Owner 驳回"自愈"结论，令补全调查与修复。结论：**两案均无主干损害、零代码修复**，
+> 但调查揪出真根因（在途重组批制造的幻影违规）+ 我前轮取证方法的一处错误（诚实更正）。
+
+## 取证链（全部机械验证）
+
+1. **FRONTEND-MAP 4 fail**：`check_frontend_map.py` 当前 fail=0；depgraph 里 MOD-SIG-145
+   已登（design/planned）、MOD-SIG-147 已 production/stable。定性=**depgraph 注册滞后窗口期
+   的瞬时违规**，归属会话（图形/前端班）已在 PG 侧自愈，无 git 侧动作需要。
+2. **SCHEMA-FILE-EXISTS 63 悬空（真正的根因在这）**：
+   - 暂存区/HEAD 版 business_data_categories.yaml 指向平铺路径
+     （schemas/categories/market_cb_iv.py 等 63 条）；
+   - 工作区磁盘上这些平铺文件**已被移走**（未提交的 D：chinfra/datagov 在途重组批
+     ——schema 文件按域搬子目录 market/、backtest/ 等，注册表改路径同批未提交）；
+   - 因此任何"拿提交版注册表对**脏工作区磁盘**验存在"的扫描都会看见 63 条幻影悬空；
+     纯 HEAD 检出下 63 条全部解析成功（HEAD 同时有旧注册表+旧平铺文件，自洽）。
+   - 实锤：平铺路径磁盘不存在 + market/market_cb_iv.py 存在 + 新子目录整批在位。
+3. **我前轮的取证错误（诚实更正）**：昨日"已自愈"结论用了工作区扫描（177 品类 0 悬空）
+   ——扫对了结果、扫错了原因：那 0 悬空是重组批**改了注册表路径**的半成品状态，不是修复。
+   教训固化：**registry-vs-disk 类核查必须指明基准（HEAD/index/工作区）并三态分开判**。
+
+## 裁定（维持并升级）
+
+1. **零代码修复**——HEAD 上没有任何东西坏；修"幻影"=破坏在途重组批（抢笔）。
+2. **流程规则（本次真正落地的修复）**：registry-vs-disk 类回归/门禁核查必须跑在
+   干净 HEAD 检出（或 worktree）上，禁用共享脏工作区作存在性基准；报告方复核顺序=
+   当前 HEAD 复核 → 基准三态判定 → 再升级。
+3. **移交 chinfra/重组批的一条交接注意**：schema 文件搬家后必须同批更新全部消费端
+   import（已知消费端：MOD-BT-091 hypothesis_precheck / MOD-BT-095 apply_ddl 按
+   `schemas.categories.backtest_hypothesis_precheck` 导入——搬家后须改
+   `schemas.categories.backtest.backtest_hypothesis_precheck`，否则落地瞬间打断
+   E2 预审管线；按 trae_052 跨蓝图变更通知义务执行）。
