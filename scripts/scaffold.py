@@ -792,7 +792,7 @@ def _register_to_init(
     统一 package.replace('/', '.') 后再拼；生成内容写入前 ast.parse 预检 +
     写后回读复核；__all__ 注册幂等集合语义（查重后才追加，杜绝重复尾追）。
     """
-    dotted = package.replace("/", ".")
+    dotted = package.strip("/").replace("/", ".")  # 红蓝加固：尾斜杠归一在本层自立（直连调用也无双点）
 
     if not init_py.exists():
         content = (
