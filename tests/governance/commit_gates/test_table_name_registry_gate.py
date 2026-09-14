@@ -425,3 +425,57 @@ class TestCheckClosure:
         )
         assert passed is False  # block
         assert "nonexistent" in detail
+
+
+# ============================================================================
+# own-scope 回归（B5④，接续 #ARCH-GATE-OWN-SCOPE-001 推广批 + 宪法 §3.3）
+# ============================================================================
+
+
+class TestOwnScope:
+    """own-scope 化：本次 commit files 清单优先，他会话 staged 文件不连坐。
+
+    实证背景：堵点榜 TABLE-NAME-REGISTRY ×20（P50 113s），staged 集里他会话
+    WIP 的 .py 被扫描，命中即拦死无关提交。
+    """
+
+    @patch("zephyr.gov_enforcement.commit_gates.table_name_registry_gate.get_registry")
+    def test_foreign_staged_py_not_ride_along(self, mock_get_registry):
+        """他会话 staged 的违规 .py 不连坐：本次 files 只含干净文件 → 放行。"""
+        mock_get_registry.return_value = _make_test_registry()
+        gw = _make_mock_gateway(
+            {
+                "src/zephyr/data/foo.py": 'TABLE = "c1_market.kline_daily"\n',  # 他会话 WIP（staged，违规）
+                "docs/clean.md": "text\n",
+            }
+        )
+        gate = make_table_name_registry_gate()
+        passed, detail = gate.check(gw, ["docs/clean.md"])
+        assert passed is True
+        assert detail == ""
+
+    @patch("zephyr.gov_enforcement.commit_gates.table_name_registry_gate.get_registry")
+    def test_own_file_absolute_path_checked(self, mock_get_registry):
+        """绝对路径 files 归一为仓库相对路径后仍被检查（gateway abspath 传入场景）。"""
+        mock_get_registry.return_value = _make_test_registry()
+        content = 'TABLE = "c1_market.kline_daily"\n'
+        gw = _make_mock_gateway({"src/zephyr/data/foo.py": content})
+        # mock gateway 的 project_root 与相对路径拼出绝对路径
+        import posixpath
+
+        gw.project_root = "/test"
+        abs_path = posixpath.join("/test", "src/zephyr/data/foo.py")
+        gate = make_table_name_registry_gate()
+        passed, detail = gate.check(gw, [abs_path])
+        assert passed is False  # block：own 文件违规照拦
+        assert "c1_market.kline_daily" in detail
+
+    @patch("zephyr.gov_enforcement.commit_gates.table_name_registry_gate.get_registry")
+    def test_empty_files_falls_back_to_staged(self, mock_get_registry):
+        """files 为空（历史直调场景）→ 退回全 staged 旧行为（保守面不改宽）。"""
+        mock_get_registry.return_value = _make_test_registry()
+        gw = _make_mock_gateway({"src/zephyr/data/foo.py": 'TABLE = "c1_market.kline_daily"\n'})
+        gate = make_table_name_registry_gate()
+        passed, detail = gate.check(gw, [])
+        assert passed is False  # 旧行为保持：staged 违规照拦
+        assert "c1_market.kline_daily" in detail

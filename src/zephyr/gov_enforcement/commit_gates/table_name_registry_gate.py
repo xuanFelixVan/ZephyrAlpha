@@ -5,7 +5,7 @@
 # [CONSUMERS] zephyr.gov_enforcement.rule_bridge.git_commit_gateway.GitCommitGateway.__init__
 # [STARTUP] imported
 # [MATURITY] production
-# [INVARIANTS] block——检测 staged .py added 行中的硬编码表名字符串（绕过 TableRegistry 真源）+ tasks.yaml 表名校验；命中返回 passed=False + detail（阻断 commit）；tests/豁免；docstring 行豁免；table_registry.py 自身豁免；fail-open（TableRegistry 空/不可用/git diff 不可达不阻断）；Phase 5 已升级为 block
+# [INVARIANTS] block——检测 .py added 行中的硬编码表名字符串（绕过 TableRegistry 真源）+ tasks.yaml 表名校验；命中返回 passed=False + detail（阻断 commit）；tests/豁免；docstring 行豁免；table_registry.py 自身豁免；fail-open（TableRegistry 空/不可用/git diff 不可达不阻断）；Phase 5 已升级为 block；own-scope（宪法 §3.3）：优先本次 commit files 清单，无清单退回全 staged（他会话 staged 文件不连坐）
 # [MODIFY-GUARD] gate_id="TABLE-NAME-REGISTRY"; check 闭包签名 (gateway, files, **kwargs) -> tuple[bool, str]
 # [STABILITY] evolving
 # [SAFETY] L
@@ -282,6 +282,27 @@ def check_tasks_yaml_tables(
     return registry.validate_tasks_yaml(tasks)
 
 
+def _to_rel_posix(gateway, path: str) -> str:
+    """任意路径 → 仓库根相对 posix 路径（保留大小写，供 git show :path 用）。
+
+    与 _diff_helpers._norm_rel 的区别：不做 normcase 小写化——git index 路径
+    大小写敏感，normcase 后的路径会让 git show :path 误查失败致 gate 静默空转。
+    """
+    p = str(path).replace("\\", "/")
+    try:
+        root = str(getattr(gateway, "project_root", "") or "")
+        if root and not p.startswith(root.replace("\\", "/") + "/"):
+            import os
+
+            if os.path.isabs(str(path)):
+                p = os.path.relpath(str(path), root).replace("\\", "/")
+        elif root and p.startswith(root.replace("\\", "/") + "/"):
+            p = p[len(root.replace("\\", "/")) + 1 :]
+    except Exception:  # noqa: BLE001 — 归一化失败退回原值（fail-open）
+        p = str(path).replace("\\", "/")
+    return p
+
+
 def make_table_name_registry_gate() -> GateSpec:
     """构造 TABLE-NAME-REGISTRY pre-commit block 门禁（priority=120）。
 
@@ -312,13 +333,25 @@ def make_table_name_registry_gate() -> GateSpec:
         table_name_pattern = _build_table_name_pattern(registered_tables)
         warnings: list[str] = []
 
-        # Detection 1: 防蔓延——staged .py added 行硬编码表名
-        py_files = [
-            f
-            for f in _get_staged_py_files(gateway, "TABLE-NAME-REGISTRY")
-            if not is_test_exempt(f) and not f.endswith(_EXEMPT_SUFFIXES) and not _is_ddl_schema_exempt(f)
-        ]
-        for py_file in py_files:
+        # Detection 1: 防蔓延——.py added 行硬编码表名（own-scope 接续
+        # #ARCH-GATE-OWN-SCOPE-001 推广批 + 宪法 §3.3：优先本次 commit files 清单，
+        # 无清单退回全 staged 旧行为——他会话 staged 文件不再连坐阻断本次提交）
+        if files:
+            py_candidates = []
+            for f in files:
+                rel = _to_rel_posix(gateway, f)
+                if not rel.endswith(".py"):
+                    continue
+                if is_test_exempt(rel) or rel.endswith(_EXEMPT_SUFFIXES) or _is_ddl_schema_exempt(rel):
+                    continue
+                py_candidates.append(rel)
+        else:
+            py_candidates = [
+                f
+                for f in _get_staged_py_files(gateway, "TABLE-NAME-REGISTRY")
+                if not is_test_exempt(f) and not f.endswith(_EXEMPT_SUFFIXES) and not _is_ddl_schema_exempt(f)
+            ]
+        for py_file in py_candidates:
             warnings.extend(check_hardcoded_tables_in_file(gateway, py_file, registered_tables, table_name_pattern))
 
         # Detection 2: tasks.yaml 表名校验
