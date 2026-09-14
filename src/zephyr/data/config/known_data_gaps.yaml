@@ -578,17 +578,36 @@ gaps:
     table: "c1_market.daily_valuation"
     gap_type: "date_range"
     start_date: "2026-09-09"
-    end_date: "2026-09-10"
+    end_date: "2026-09-14"   # 09-15 凌晨复核发现 09-14（周一交易日）同样 0 行——09-12 后无 akshare 实跑
     date_column: "trade_date"
     detection_threshold: 5500  # 日均 < 5500 行 = 缺口（区间正常 5550-5562）
     expected_daily_avg: 5558   # 09-07/09-08 基准
     actual_daily_avg: 2438     # (4875+0)/2（09-09 部分写入 4875、09-10 整日 0）
-    status: "open"  # 09-10 至今（09-15）未补；09-11 已由 09-12 akshare 增量补回 5562
+    status: "open"  # 补数已发射：09-15 02:29 daily_valuation_full_refresh 脱离式全月窗重刷（09-01→09-15 一次覆盖 09-09 残行/09-10/09-14 三洞，ReplacingMergeTree 幂等），实测 10-11h 预计 13:00 前后落库，完成后复核本条可关
+    remediation_log: "2026-09-15 st-bsefix-20260915：①治理侧 0 行告警已落库 fa7caabeca（交易日 gate+WARN 进告警流）；②全月窗重刷发射（.runtime/tmp/valuation_full_refresh_20260915.log）；③09-14 缺口为本条 end_date 扩展原因（原登记只到 09-10）"
     root_cause: "①09-09：daily_valuation_full_refresh（akshare）耗时 39564s(11h) 仅写 44687 行（约 8 日量），刷到 09-09 时只落 4875/5558 即结束=部分写入；②09-10：全天 fetch_perf 仅两条 source=mock rows=0 的 daily_valuation_incremental，无任何 akshare 实跑=整日 0 行；③09-12 15:39 akshare 增量(rows=5562, 36023s)补的是 09-11 而非 09-10，09-13/09-14/09-15 无补写记录（09-14 06:44 又一条 mock rows=0）。非源退化——09-11 已恢复 5562 且高于断点前。"
     impact: "一切消费 daily_valuation 的场景（流通市值/PE-PB 权重、估值因子、板块指数合成权重）。09-09 另缺 687 只（前缀 0=85/3=2/6=498/9=102，散落非连续块=抓取中断随机丢包，非分页截断）。"
     resolution_plan: "①补跑 daily_valuation 2026-09-10（akshare 全量，实测约 10h/次，D 日数据 D+1 落库属常态）；②视补跑结果决定是否重刷 09-09；③治理侧：daily_valuation_incremental 多次以 source=mock rows=0 空转通过却不告警——需给'增量任务 0 行成功'加告警（同族问题已在 news_sentiment_window 登记过）。"
     primary_alternative: "对拍/回测窗口可暂时用 09-08 与 09-11 权重插值，或按 symbol 复用最近有效日市值（需在消费侧显式标记口径）。"
     evidence: ".runtime/fetch_perf/fetch_perf_20260909.jsonl / _20260910.jsonl / _20260912.jsonl / _20260913.jsonl / _20260914.jsonl"
+    created: "2026-09-15"
+    last_updated: "2026-09-15"
+  # === 2026-09-15: stock_basic 基准宇宙无北交所（st-bsefix 会话回补批附带发现）===
+  - id: "stock_basic_no_bse_universe"
+    table: "c1_market.stock_basic"
+    gap_type: "upstream_data_corruption"
+    start_date: ""   # 首次系统性发现于 2026-09-15，实际起始未知
+    end_date: ""
+    date_column: "trade_date"
+    detection_threshold: 1    # 9 开头 symbol 计数 = 0 即为缺口（A股基准宇宙应含约 342 只北交所）
+    expected_daily_avg: 5561  # kline_daily 09-11 口径 5549 + 预期北交所（0/3/6=5219 现状 + 342）
+    actual_daily_avg: 5219    # 最新快照 2026-09-14：0/3/6 前缀 5219 只，9 开头=0
+    status: "open"  # 低severity：daily_valuation（akshare 直连宇宙，实测 343 只 9 开头）与 kline_daily（tushare 补喂）均不受牵连；但"基准全市场标的"名义下缺 342 只=消费方以 stock_basic 为宇宙过滤时会静默丢北交所
+    root_cause: "stock_basic 快照（tushare 源）标的清单未含北交所段（920xxx）：最新 2026-09-14 快照 5219 只全部 0/3/6 前缀。2026-09-15 交接排查批误记'stock_basic 约 5549 含 342 北交所'实为 kline_daily 口径，本条即更正登记。"
+    impact: "以 stock_basic 为标的宇宙/过滤器的消费方（方案 J 合成器、覆盖率闸门、全市场扫描类任务）会静默排除 342 只北交所。估值/日线/分钟线数据本体不受影响。"
+    resolution_plan: "stock_basic 的 tushare 拉数端补北交所段（exchange='BJ'）或换用含北交所的全市场清单接口；独立小批施工，无死线。"
+    primary_alternative: "消费方过渡期宇宙=kline_daily 全表 symbol 集或 akshare 直连清单（勿用 stock_basic）。"
+    evidence: "2026-09-15 探针：stock_basic FINAL 最新快照 first-char 分布 0=1494/3=1407/6=2318 合计 5219；daily_valuation 9 开头=343（对照在）"
     created: "2026-09-15"
     last_updated: "2026-09-15"
 
@@ -602,7 +621,7 @@ gaps:
     detection_threshold: 342   # 9 开头 symbol 计数 = 0 即为缺口（日线同日有 342 只）
     expected_daily_avg: 5549   # kline_daily 2026-09-11 口径（0=1491/3=1405/6=2311/9=342）
     actual_daily_avg: 5207     # kline_1min 2026-09-14 口径（0/3/6 only，9 开头=0）
-    status: "open"  # 高：9/18 miniQMT 退役前是最后补数窗口
+    status: "resolved"  # 2026-09-15 st-bsefix-20260915 全链闭环：①治本提交 bb4e2f9328（板块元组并集，真因=修复工作区未提交+DataScheduler 22:58 启动早于修复落盘 23:34 旧代码驻留，非 QMT 通道问题——xtdata 实测京市A股 1m 全可得）；②调度器 02:58/03:18 两度重启加载新码；③五表历史回补完成（scripts/data/backfill_bse_minute_history.py，QMT 留存上限 2025-09-12→2026-09-14 全捞：1min=344 只/1770 万行、五表合计约 2330 万行，残格 38/表=0.1% 停牌合法缺格）；验收指标 uniqExact(9 开头)=344>0 达成；09-15 盘中增量由新码调度器承担
     root_cause: "miniqmt_provider._KLINE_CAPABILITIES（L213-219）已声明 kline_1min/5min/15min 取 ('沪深A股','京市A股') 双板块，但实测'京市A股'仅在日线侧生效——kline_daily 09-11=5549 含 342 只 9 开头，而 kline_1min 09-14=5207 前缀仅 0/3/6、9 开头=0。同族 kline_5min/15min/30min/60min 09-10 均 5206 只=全族同缺口，属管道级宇宙口径而非单表写入故障。"
     impact: "①全市场 342 只北交所（6.2%）分钟数据永久缺失；②板块指数合成（方案 J）：含北交所成分的 880/881 板块合成指数系统性偏离真值（880825.SH 实测 4/260=1.5% 成分受影响，需按板块逐一评估）；③9/18 后新管线（桥 tick 合成 ch_tick_kline）若照抄分钟线宇宙口径，会原样复制该 342 只缺口=同口径复发。"
     resolution_plan: "①P1：排查同一 capability 日线生效/分钟线不生效的原因（板块取数路径差异 or 分钟周期下京市A股返回空）；②P2：9/17 前用 miniQMT 回补五表族北交所历史（342 只×五表），过期后 bdpan 无分钟归档=永久缺口；③消费侧：合成器加'成分覆盖率'自检闸门（<98% 标记当日不可用，禁静默产出偏差指数）。"
