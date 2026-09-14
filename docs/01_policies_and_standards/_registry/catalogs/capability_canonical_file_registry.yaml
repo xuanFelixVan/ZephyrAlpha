@@ -5003,6 +5003,14 @@ capabilities:
     提交→全景对齐→清理 全流程步骤与失败处置；适用 07 域（regime/选股/仓位/风控/买卖/执行/对账/治理）施工，RULE-CAPABILITY-LOOKUP
     检索"施工"应命中本条
 creation_tokens:
+- file: "docs/_working/2026-09-14-chart-pattern-mining-report.md"
+  token: "patmine-report-20260914"
+  created_by: "st-patmine-20260914"
+  capability: "chart_pattern_mining"
+- file: "docs/_working/2026-09-14-ch-connection-unify-report.md"
+  token: "ch-conn-unify-20260914"
+  created_by: "st-chinfra-20260914"
+  capability: "ch_connection_unify"
 - file: schemas/categories/backtest_regime_state_anchored.py
   token: anchored-state-ddl-20260914
   created_by: st-altdata-20260914
@@ -12538,6 +12546,10 @@ creation_tokens:
   capability: market_data_repair
 - file: docs/_working/2026-09-14-market-data-gap-report.md
   token: market-data-repair-2026-09-14-market-data-gap-report-20260913
+  created_by: st-mktfix-20260914
+  capability: market_data_repair
+- file: docs/_working/2026-09-14-handoff-market-data-repair.md
+  token: market-data-repair-2026-09-14-handoff-market-data-repair-20260914
   created_by: st-mktfix-20260914
   capability: market_data_repair
 di_seam_exemptions: []
