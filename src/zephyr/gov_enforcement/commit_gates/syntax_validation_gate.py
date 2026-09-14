@@ -149,14 +149,29 @@ def _resolve_wt_root(gateway) -> str:
         return str(getattr(gateway, "project_root", "."))
 
 
-def _scan_py_file_syntax(rel_path: str, wt_root: str) -> str:
+def _scan_py_file_syntax(rel_path: str, wt_root: str, gateway=None) -> str:
     """对单个 .py 文件 ast.parse，返回违规描述（空串=合规或跳过）。
 
     fail-open 契约：文件读取失败/非 SyntaxError 解析异常降级为放行（logger.warning）。
+    staged delete 场景（文件已从 index 撤出、提交语义=出库）跳过扫描——
+    删除提交的内容语法无关紧要，且工作区残留文件不代表入库内容。
     """
     abs_path = rel_path if os.path.isabs(rel_path) else os.path.join(wt_root, rel_path.replace("/", os.sep))
     if not os.path.isfile(abs_path):
         return ""  # delete/幻影场景：跳过
+
+    # staged delete 判定：index 无此文件但 HEAD 有（提交语义=删除/出库）
+    if gateway is not None:
+        try:
+            rel_norm = rel_path.replace("\\", "/")
+            if os.path.isabs(rel_path):
+                rel_norm = os.path.relpath(rel_path, wt_root).replace("\\", "/")
+            tracked = gateway.is_git_tracked(rel_norm)
+            in_head = gateway._is_staged_delete(rel_norm)
+            if not tracked and in_head:
+                return ""  # staged delete：入库内容不含此文件，跳过
+        except Exception:  # noqa: BLE001 — 判定失败不阻断（fail-open，后续 parse 仍执行）
+            pass
 
     try:
         with open(abs_path, encoding="utf-8", errors="replace") as f:
@@ -226,7 +241,7 @@ def make_syntax_validation_gate() -> GateSpec:
                 return True, ""
 
         # 2. 逐文件 ast.parse，收集 SyntaxError 违规（单文件逻辑见 _scan_py_file_syntax）
-        violations = [v for v in (_scan_py_file_syntax(rel, wt_root) for rel in py_files) if v]
+        violations = [v for v in (_scan_py_file_syntax(rel, wt_root, gateway) for rel in py_files) if v]
 
         if violations:
             shown = "; ".join(violations[:_MAX_VIOLATIONS_IN_DETAIL])
