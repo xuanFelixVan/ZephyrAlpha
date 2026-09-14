@@ -212,10 +212,8 @@ def _run_apply(a, cli, w, T, BAK, col_list, sel_cols, ya, ma, yb, mb) -> int:  #
         if shifted == 0:
             print(f"  {y}-{m:02d} 无偏移，跳过")
             continue
-        mixed = cli.execute(
-            f"SELECT count() FROM {T} WHERE {MPRED} AND toDate(trade_time) IN "  # noqa: bare-sql  存量搬运非新增 SQL，集中化治理挂下批（retire: SQL 治理批）
-            f"(SELECT DISTINCT toDate(trade_time) FROM {T} WHERE {SPRED}) "  # noqa: bare-sql  存量搬运非新增 SQL，集中化治理挂下批（retire: SQL 治理批）
-            f"AND NOT ({SHIFTED_PRED})")[0][0]
+        mixed = cli.execute(_SQL_COUNT_MIXED.format(
+            t=T, pred=MPRED, spred=SPRED, shifted=SHIFTED_PRED))[0][0]
         if not mixed and not a.by_day:
             # 整月唯一副本：一个月桶一次搞定
             process_bucket(w, cli, T, BAK, col_list, sel_cols, MPRED, SPRED,

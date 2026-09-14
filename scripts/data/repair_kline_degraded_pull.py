@@ -71,6 +71,11 @@ _ALLOWED_TABLES = frozenset({
 })
 
 _SV = "(open=high AND high=low AND low=close)"  # 劣化签名 I：OHLC 全等
+
+_SQL_COUNT_DAY_SHIFTED = "SELECT count(), countIf({sv}) FROM {tbl} WHERE trade_date='{d}'"
+_SQL_COUNT_DAY_SHIFTED_FINAL = "SELECT count(), countIf({sv}) FROM {tbl} FINAL WHERE trade_date='{d}'"
+_SQL_COUNT_PRED = "SELECT count() FROM {tbl} WHERE {pred}"
+_SQL_COUNT_DAY_FINAL_HL = "SELECT count() FROM {tbl} FINAL WHERE trade_date='{d}' AND high < low"
 _SV_BARE = "open=high AND high=low AND low=close"
 _UTC_FMT = "%Y-%m-%d %H:%M:%S"
 
@@ -93,9 +98,8 @@ def analyze(cli: Client, args: argparse.Namespace) -> int:
     tbl = f"c1_market.{args.table}"
     pred = _bucket_pred(args)
     print(f"== {tbl} trade_date={args.trade_date} 定损分析 ==")
-    raw = cli.execute(f"SELECT count(), countIf({_SV}) FROM {tbl} WHERE trade_date='{args.trade_date}'")[0]  # noqa: bare-sql  存量搬运非新增 SQL，集中化治理挂下批（retire: SQL 治理批）
-    fin = cli.execute(
-        f"SELECT count(), countIf({_SV}) FROM {tbl} FINAL WHERE trade_date='{args.trade_date}'")[0]  # noqa: bare-sql  存量搬运非新增 SQL，集中化治理挂下批（retire: SQL 治理批）
+    raw = cli.execute(_SQL_COUNT_DAY_SHIFTED.format(sv=_SV, tbl=tbl, d=args.trade_date))[0]
+    fin = cli.execute(_SQL_COUNT_DAY_SHIFTED_FINAL.format(sv=_SV, tbl=tbl, d=args.trade_date))[0]
     print(f"  RAW:   rows={raw[0]} 单值={raw[1]} ({raw[1] / max(raw[0], 1) * 100:.2f}%)")
     print(f"  FINAL: rows={fin[0]} 单值={fin[1]} ({fin[1] / max(fin[0], 1) * 100:.2f}%)")
     print("  ingest 分桶（RAW）:")
@@ -104,7 +108,7 @@ def analyze(cli: Client, args: argparse.Namespace) -> int:
         f"FROM {tbl} WHERE trade_date='{args.trade_date}' GROUP BY 1 ORDER BY 1"
     ):
         print(f"    {r[0]}  rows={r[1]}  单值={r[2]}  symbols={r[3]}")
-    n_bucket = cli.execute(f"SELECT count() FROM {tbl} WHERE {pred}")[0][0]  # noqa: bare-sql  存量搬运非新增 SQL，集中化治理挂下批（retire: SQL 治理批）
+    n_bucket = cli.execute(_SQL_COUNT_PRED.format(tbl=tbl, pred=pred))[0][0]
     covered = cli.execute(f"""
         SELECT count(), countIf(healthy_later > 0) FROM (
           SELECT symbol, trade_time,
@@ -152,9 +156,8 @@ def execute_repair(cli: Client, args: argparse.Namespace) -> int:
     """修复执行：预点数→快照→ALTER DELETE(mutations_sync=2)→FINAL 复验。"""
     tbl = f"c1_market.{args.table}"
     pred = _bucket_pred(args)
-    fin_before = cli.execute(
-        f"SELECT count(), countIf({_SV}) FROM {tbl} FINAL WHERE trade_date='{args.trade_date}'")[0]  # noqa: bare-sql  存量搬运非新增 SQL，集中化治理挂下批（retire: SQL 治理批）
-    n = cli.execute(f"SELECT count() FROM {tbl} WHERE {pred}")[0][0]  # noqa: bare-sql  存量搬运非新增 SQL，集中化治理挂下批（retire: SQL 治理批）
+    fin_before = cli.execute(_SQL_COUNT_DAY_SHIFTED_FINAL.format(sv=_SV, tbl=tbl, d=args.trade_date))[0]
+    n = cli.execute(_SQL_COUNT_PRED.format(tbl=tbl, pred=pred))[0][0]
     if n == 0:
         print(f"  谓词命中 0 行（可能已修复），拒绝执行。exit 3")
         return 3
@@ -162,9 +165,8 @@ def execute_repair(cli: Client, args: argparse.Namespace) -> int:
     _snapshot(cli, args)
     cli.execute(
         f"ALTER TABLE {tbl} DELETE WHERE {pred} AND {_SV} SETTINGS mutations_sync = 2")
-    resid = cli.execute(f"SELECT count() FROM {tbl} WHERE {pred}")[0][0]  # noqa: bare-sql  存量搬运非新增 SQL，集中化治理挂下批（retire: SQL 治理批）
-    fin_after = cli.execute(
-        f"SELECT count(), countIf({_SV}) FROM {tbl} FINAL WHERE trade_date='{args.trade_date}'")[0]  # noqa: bare-sql  存量搬运非新增 SQL，集中化治理挂下批（retire: SQL 治理批）
+    resid = cli.execute(_SQL_COUNT_PRED.format(tbl=tbl, pred=pred))[0][0]
+    fin_after = cli.execute(_SQL_COUNT_DAY_SHIFTED_FINAL.format(sv=_SV, tbl=tbl, d=args.trade_date))[0]
     print(f"  删后桶残留={resid}；FINAL 删后 rows={fin_after[0]} 单值={fin_after[1]}")
     if resid != 0:
         print("  !! 桶残留非零，复验失败。exit 2")
@@ -179,12 +181,10 @@ def execute_repair(cli: Client, args: argparse.Namespace) -> int:
 def check_final(cli: Client, args: argparse.Namespace) -> int:
     """重拉后验收：FINAL 视角单值率 + 健康 bar 三条件抽验（只读）。"""
     tbl = f"c1_market.{args.table}"
-    fin = cli.execute(
-        f"SELECT count(), countIf({_SV}) FROM {tbl} FINAL WHERE trade_date='{args.trade_date}'")[0]  # noqa: bare-sql  存量搬运非新增 SQL，集中化治理挂下批（retire: SQL 治理批）
+    fin = cli.execute(_SQL_COUNT_DAY_SHIFTED_FINAL.format(sv=_SV, tbl=tbl, d=args.trade_date))[0]
     print(f"  FINAL rows={fin[0]} 单值={fin[1]} ({fin[1] / max(fin[1], 1) * 100:.2f}%)"
           f"——与同品种上一交易日基线对读（单值基线因品种而异，一字板/无成交豁免人工确认）")
-    bad_hl = cli.execute(
-        f"SELECT count() FROM {tbl} FINAL WHERE trade_date='{args.trade_date}' AND high < low")[0][0]  # noqa: bare-sql  存量搬运非新增 SQL，集中化治理挂下批（retire: SQL 治理批）
+    bad_hl = cli.execute(_SQL_COUNT_DAY_FINAL_HL.format(tbl=tbl, d=args.trade_date))[0][0]
     print(f"  high<low 违例={bad_hl}（健康三条件③，应为 0）")
     return 0 if bad_hl == 0 else 2
 

@@ -40,6 +40,10 @@ sys.path.insert(0, r"D:/ZephyrAlpha/src")
 import zephyr.data.ch_writer as chw  # noqa: E402
 from zephyr.infrastructure.database_service import get_db_service  # noqa: E402
 
+_SQL_COUNTIF_SHIFTED_PRED = "SELECT countIf({shifted}) FROM {t} WHERE {pred}"
+_SQL_COUNT_T_PRED = "SELECT count() FROM {t} WHERE {pred}"
+_SQL_COUNTIF_SHIFTED_DB = "SELECT countIf({shifted}) FROM {db}.{table} WHERE {pred}"
+
 SHIFTED = ("trade_time < toDateTime64(toString(toDate(trade_time)) || ' 09:00:00', "
            "3, 'Asia/Shanghai')")
 
@@ -186,11 +190,10 @@ def main() -> int:
             backup_chunked(w, cli, T, BAK, col_list, days, shifted)
             w.execute(f"ALTER TABLE {T} DELETE WHERE {dpred(mlo, mhi)} AND {SHIFTED} "
                       "SETTINGS mutations_sync=2")
-            left = cli.execute(
-                f"SELECT countIf({SHIFTED}) FROM {T} WHERE {dpred(mlo, mhi)}")[0][0]  # noqa: bare-sql  存量搬运非新增 SQL，集中化治理挂下批（retire: SQL 治理批）
+            left = cli.execute(_SQL_COUNTIF_SHIFTED_PRED.format(shifted=SHIFTED, t=T, pred=dpred(mlo, mhi)))[0][0]
             if left:
                 raise SystemExit(f"  ✗ 删除后残余 {left:,}，终止")
-            tdel = cli.execute(f"SELECT count() FROM {T} WHERE {dpred(mlo, mhi)}")[0][0]  # noqa: bare-sql  存量搬运非新增 SQL，集中化治理挂下批（retire: SQL 治理批）
+            tdel = cli.execute(_SQL_COUNT_T_PRED.format(t=T, pred=dpred(mlo, mhi)))[0][0]
             gap_flow(w, cli, T, BAK, col_list, sel_cols, days, int(tdel))
             w.execute(f"ALTER TABLE {BAK} DELETE WHERE 1 SETTINGS mutations_sync=1")
             print(f"     ✓ 月 {y}-{m:02d} 完成 {time.time()-t0:.0f}s")
@@ -199,9 +202,9 @@ def main() -> int:
 
     print("\n== 全表终验 2021-09-01 ~ 2026-06-01 残余偏移 ==")
     for table, _ in TABLES:
-        n = cli.execute(
-            f"SELECT countIf({SHIFTED}) FROM c1_market.{table} WHERE "  # noqa: bare-sql  存量搬运非新增 SQL，集中化治理挂下批（retire: SQL 治理批）
-            + dpred("2021-09-01", "2026-06-01"))[0][0]
+        n = cli.execute(_SQL_COUNTIF_SHIFTED_DB.format(
+            shifted=SHIFTED, db="c1_market", table=table,
+            pred=dpred("2021-09-01", "2026-06-01")))[0][0]
         print(f"  {table}: shifted={n:,} {'✓' if n == 0 else '✗'}")
     print("[P0-2 全部完成]")
     return 0

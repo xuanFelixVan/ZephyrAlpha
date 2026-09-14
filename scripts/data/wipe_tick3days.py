@@ -29,19 +29,20 @@ from zephyr.infrastructure.database_service import get_db_service
 
 _TICK = get_registry().table("market_tick")  # c1_market.tick_data
 _BAK = _TICK + "_tzbak_20260914"
+_SQL_COUNT_BAK = "SELECT count() FROM {bak}"
+_SQL_COUNT_TICK_DATES = "SELECT count() FROM {tick} WHERE trade_date IN ({cond})"
 
 cli = get_db_service().get_clickhouse_conn(
     role="reader", extra_kwargs={"settings": {"max_execution_time": 600}})
 w = chw.get_client()
 
 cond = "'2026-09-09','2026-09-10','2026-09-11'"
-bak_n = cli.execute(f"SELECT count() FROM {_BAK}")[0][0]  # noqa: bare-sql  存量搬运非新增 SQL，集中化治理挂下批
-main_n = cli.execute(    f"SELECT count() FROM {_TICK} WHERE trade_date IN ({cond})")[0][0]  # noqa: bare-sql  存量搬运非新增 SQL，集中化治理挂下批
+bak_n = cli.execute(_SQL_COUNT_BAK.format(bak=_BAK))[0][0]
+main_n = cli.execute(_SQL_COUNT_TICK_DATES.format(tick=_TICK, cond=cond))[0][0]
 print(f"BAK={bak_n:,} main三天={main_n:,}（raw 计数随合并漂移属正常）")
 w.execute(f"ALTER TABLE {_TICK} DELETE WHERE trade_date IN ({cond}) "
           "SETTINGS mutations_sync=2")
-left = cli.execute(
-    f"SELECT count() FROM {_TICK} WHERE trade_date IN ({cond})")[0][0]  # noqa: bare-sql  存量搬运非新增 SQL，集中化治理挂下批
+left = cli.execute(_SQL_COUNT_TICK_DATES.format(tick=_TICK, cond=cond))[0][0]
 if left:
     raise SystemExit(f"✗ 删除后残余 {left:,}")
 print(f"✓ 三天残留已清空（备份表 tick_data_tzbak_20260914 = {bak_n:,} 行可回滚）")

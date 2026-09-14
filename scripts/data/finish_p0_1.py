@@ -104,6 +104,9 @@ _SQL_GAP_COUNT = (
     "WHERE {bpred2} "
     "AND j.symbol = ''"
 )
+_SQL_VERIFY_SHIFTED = "SELECT countIf({shifted}) FROM {db}.{table} WHERE {pred}"
+_SQL_VERIFY_ROWS = "SELECT count() FROM {db}.{table} WHERE {pred}"
+
 _SQL_GAP_INSERT = (
     "INSERT INTO {t} ({col_list}) SELECT {sel_cols} "
     "FROM (SELECT * FROM {bak} WHERE {bpred}) b "
@@ -201,12 +204,11 @@ def main() -> int:
 
     print("\n== 全表终验 2026-06-01 ~ 2026-08-01 残余偏移 ==")
     for table in ("kline_5min", "kline_15min", "kline_30min", "kline_60min"):
-        r = cli.execute(
-            f"SELECT countIf({SHIFTED}) FROM c1_market.{table} WHERE "  # noqa: bare-sql  存量搬运非新增 SQL，集中化治理挂下批（retire: SQL 治理批）
-            + day_pred("2026-06-01", "2026-08-01"))[0][0]
-        n = cli.execute(
-            f"SELECT count() FROM c1_market.{table} WHERE "  # noqa: bare-sql  存量搬运非新增 SQL，集中化治理挂下批（retire: SQL 治理批）
-            + day_pred("2026-06-01", "2026-08-01"))[0][0]
+        r = cli.execute(_SQL_VERIFY_SHIFTED.format(
+            shifted=SHIFTED, db="c1_market", table=table,
+            pred=day_pred("2026-06-01", "2026-08-01")))[0][0]
+        n = cli.execute(_SQL_VERIFY_ROWS.format(
+            db="c1_market", table=table, pred=day_pred("2026-06-01", "2026-08-01")))[0][0]
         print(f"  {table}: rows={n:,} shifted={r:,} {'✓' if r == 0 else '✗'}")
     print("[P0-1 收官完成]")
     return 0

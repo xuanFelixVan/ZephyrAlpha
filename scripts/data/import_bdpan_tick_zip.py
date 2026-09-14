@@ -53,6 +53,12 @@ from zephyr.data.table_registry import get_registry
 from zephyr.infrastructure.database_service import get_db_service
 
 _TABLE = get_registry().table("market_tick")
+_SQL_PRECHECK_DAY = "SELECT count() FROM {table} WHERE trade_date='{d_iso}' AND data_source='bdpan'"
+_SQL_INSERT_CHUNK = "INSERT INTO {table} ({col_list}) VALUES"
+_SQL_POSTVERIFY_DAY = (
+    "SELECT count(), uniqExact(symbol) FROM {table} "
+    "WHERE trade_date='{d_iso}' AND data_source='bdpan'"
+)
 _COLUMNS = ["trade_date", "timestamp", "symbol", "market_type", "price",
             "volume", "amount", "direction", "data_source", "bid_price",
             "ask_price", "bid_volume", "ask_volume", "quality_flag"]
@@ -96,8 +102,7 @@ def _parse_rec(rec: list, code: str, trade_date: str):
 def import_day(cli: Client, zip_paths: list[Path], trade_date: str, chunk: int) -> dict:
     """导入单个交易日：预检→分块流式写→复验。返回统计 dict。"""
     d_iso = f"{trade_date[:4]}-{trade_date[4:6]}-{trade_date[6:]}"
-    pre = cli.execute(
-        f"SELECT count() FROM {_TABLE} WHERE trade_date='{d_iso}' AND data_source='bdpan'")[0][0]  # noqa: bare-sql  存量搬运非新增 SQL，集中化治理挂下批（retire: SQL 治理批）
+    pre = cli.execute(_SQL_PRECHECK_DAY.format(table=_TABLE, d_iso=d_iso))[0][0]
     if pre:
         return {"day": trade_date, "status": "skip", "detail": f"已有 {pre} 行 bdpan 数据"}
     total = 0
@@ -125,15 +130,13 @@ def import_day(cli: Client, zip_paths: list[Path], trade_date: str, chunk: int) 
                         continue
                     buf.append(row)
                     if len(buf) >= chunk:
-                        cli.execute(f'INSERT INTO {_TABLE} ({", ".join(_COLUMNS)}) VALUES', buf)  # noqa: bare-sql  存量搬运非新增 SQL，集中化治理挂下批（retire: SQL 治理批）
+                        cli.execute(_SQL_INSERT_CHUNK.format(table=_TABLE, col_list=", ".join(_COLUMNS)), buf)
                         total += len(buf)
                         buf.clear()
     if buf:
-        cli.execute(f'INSERT INTO {_TABLE} ({", ".join(_COLUMNS)}) VALUES', buf)  # noqa: bare-sql  存量搬运非新增 SQL，集中化治理挂下批（retire: SQL 治理批）
+        cli.execute(_SQL_INSERT_CHUNK.format(table=_TABLE, col_list=", ".join(_COLUMNS)), buf)
         total += len(buf)
-    post = cli.execute(
-        f"SELECT count(), uniqExact(symbol) FROM {_TABLE} "  # noqa: bare-sql  存量搬运非新增 SQL，集中化治理挂下批（retire: SQL 治理批）
-        f"WHERE trade_date='{d_iso}' AND data_source='bdpan'")[0]
+    post = cli.execute(_SQL_POSTVERIFY_DAY.format(table=_TABLE, d_iso=d_iso))[0]
     return {"day": trade_date, "status": "ok", "parsed": total, "bad": bad,
             "ch_rows": post[0], "symbols": post[1]}
 
