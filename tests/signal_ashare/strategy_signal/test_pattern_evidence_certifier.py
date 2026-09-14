@@ -21,8 +21,8 @@ import math
 
 import pytest
 
+from zephyr.factor.analysis.bhy_fdr import bh_qvalues as bh_adjust  # 收敛：canonical 单源
 from zephyr.signal_ashare.strategy_signal.pattern_evidence_certifier import (
-    bh_adjust,
     binomial_ge_pvalue,
     certify_family,
     effective_n,

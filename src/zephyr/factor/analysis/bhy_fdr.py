@@ -90,6 +90,27 @@ class BHYFDRResult:
     m: int
 
 
+def bh_qvalues(p_values: list[float]) -> list[float]:
+    """BH step-up 调整 q 值（纯 BH，c(m)=1；输入序保持，截断 [0,1]）。
+
+    q_(i) = min_{j≥i} ( p_(j) · m / j )——逐切片数值型 FDR 校正读数
+    （消费方按 q<阈值 逐条判定；族级拒绝判定用 bhy_fdr）。
+    生命周期协议 v2.0 单源裁定（28a7403e86）：图形域 MOD-SIG-148 的
+    bh_adjust 收敛至此，本函数为全项目唯一 BH q 值实现。
+    """
+    m = len(p_values)
+    if m == 0:
+        return []
+    order = sorted(range(m), key=lambda i: p_values[i])
+    q_sorted = [0.0] * m
+    running = 1.0
+    for rank in range(m, 0, -1):
+        idx = order[rank - 1]
+        running = min(running, p_values[idx] * m / rank)
+        q_sorted[idx] = min(1.0, running)
+    return q_sorted
+
+
 def bhy_fdr(
     p_values: list[float] | np.ndarray,
     q: float = DEFAULT_Q,

@@ -64,7 +64,6 @@ _Z95 = 1.959963984540054
 
 __all__ = [
     "binomial_ge_pvalue",
-    "bh_adjust",
     "effective_n",
     "shrunk_rate",
     "within_regime_edge",
@@ -104,21 +103,6 @@ def binomial_ge_pvalue(hits: float, n: float, p0: float) -> float:
         if total >= 1.0:
             return 1.0
     return min(1.0, total)
-
-
-def bh_adjust(pvalues: Sequence[float]) -> list[float]:
-    """Benjamini-Hochberg step-up 调整（返回与输入同序的 q 值，截断 [0,1]）。"""
-    m = len(pvalues)
-    if m == 0:
-        return []
-    order = sorted(range(m), key=lambda i: pvalues[i])
-    q_sorted = [0.0] * m
-    running = 1.0
-    for rank in range(m, 0, -1):
-        idx = order[rank - 1]
-        running = min(running, pvalues[idx] * m / rank)
-        q_sorted[idx] = min(1.0, running)
-    return q_sorted
 
 
 def effective_n(n_events: float, fwd_window: int) -> float:
@@ -237,7 +221,9 @@ def certify_family(
             "pattern_id": pid, "n_events": int(n), "n_eff": n_eff,
             "hit_rate": float(rate), "p_value": p,
         })
-    q_values = bh_adjust([c["p_value"] for c in candidates])
+    from zephyr.factor.analysis.bhy_fdr import bh_qvalues
+
+    q_values = bh_qvalues([c["p_value"] for c in candidates])
     out: list[CertificationRecord] = []
     for c, q in zip(candidates, q_values):
         shr = shrunk_rate(c["hit_rate"], c["n_eff"], baseline_pooled, k=k)
