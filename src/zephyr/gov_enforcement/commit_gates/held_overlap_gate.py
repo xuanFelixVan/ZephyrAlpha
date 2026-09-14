@@ -89,14 +89,12 @@ def _ailocks_other_holders(gateway, files: list[str], session_id: str) -> tuple[
     HELD-OVERLAP（v4 F2 实弹击穿）。本函数补齐第二轨。
 
     算法：与 lock_files._sanitize_path/_lock_dir 同款——目标文件路径直接算出锁
-    目录，读 owner.json（owner_id/pid/expires_at）判定持有者。
-
-    与 lock_files._is_stale 的有意分歧（设计裁定 2026-09-14）：本检查不做 PID
-    僵尸判定，仅看 TTL/expiry——lock_files 锁由瞬时 CLI 进程领取，进程退出后
-    PID 必死，按 PID 判废会让防护永不命中（v4.5 实弹复验发现）。gate 职责是
-    搭便车防护：近期锁=最近持有权证据，30min TTL 内有效；误拦风险由
-    --allow-overlap 逃生口 + TTL 上界双保险，对齐锁工具声明的语义
-    （超时未释放视为死锁）。
+    目录，读 owner.json 判定持有者。判活双格式（裁定#252，2026-09-14）：
+    ① owner.json 含 session_id → 锁存活=会话存活（复用 SessionRegistry
+    _is_session_alive 判活真源：pid>0 双判活 / pid=0 心跳 90s）；
+    ② 无 session_id 的旧格式锁 → TTL-only（与 lock_files._is_stale 的 PID 僵尸
+    语义有意分歧：lock 锁由瞬时 CLI 进程领取、PID 必死，按 PID 判废会让防护永不
+    命中——v4/v4.5 实弹复验实证；误拦风险由 --allow-overlap 逃生口+TTL 上界双保险）。
 
     fail-open：锁目录结构缺失/读取异常降级为空清单（锁系统故障不卡死工作流，
     对齐 held_files 的降级契约）。
@@ -125,7 +123,21 @@ def _ailocks_other_holders(gateway, files: list[str], session_id: str) -> tuple[
             holder = str(owner.get("owner_id", ""))
             if not holder or holder == session_id:
                 continue
-            # TTL-only 判定（不做 PID 僵尸判定——有意分歧，见 docstring）
+            # 判活双格式（裁定#252）：带 session_id → 会话存活优先；旧格式 → TTL-only
+            bound_session = str(owner.get("session_id", "") or "")
+            if bound_session:
+                try:
+                    from zephyr.security.access_control.session_concurrency import (
+                        SessionRegistry,
+                        _is_session_alive,
+                    )
+
+                    info = SessionRegistry(str(gateway.project_root)).get_session(bound_session)
+                    if info is None or not _is_session_alive(info, now):
+                        continue  # 绑定会话已死 → 锁 stale（跳过，不阻断）
+                    # 会话存活 → 锁有效（仍受 expires_at 兑底，见下）
+                except Exception:  # noqa: BLE001 — registry 不可达退 TTL 兑底
+                    pass
             expires_at = owner.get("expires_at")
             if expires_at is not None:
                 if now > float(expires_at):

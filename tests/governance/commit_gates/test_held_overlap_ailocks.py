@@ -49,30 +49,35 @@ class _FakeGateway:
         self._registry = _FakeRegistry(other_held)
 
 
-def _write_lock(root: Path, rel: str, owner: str, *, ts_offset: float = 0.0, ttl_s: float = 1800.0, pid: int = 999999) -> None:
-    """模拟 lock_files 的磁盘锁（_sanitize_path 同款目录名 + owner.json v2 格式）。"""
-    import sys
+def _write_lock(
+    root: Path,
+    rel: str,
+    owner: str,
+    *,
+    ts_offset: float = 0.0,
+    ttl_s: float = 1800.0,
+    pid: int = 999999,
+    session_id: str = "",
+) -> None:
+    """模拟 lock_files 的磁盘锁（_sanitize_path 同款目录名 + owner.json 格式）。
 
-    sys.path.insert(0, "src")
-    from scripts.lock_files import _lock_dir  # noqa: PLC0415 — 测试内复用真源算法
-
+    裁定#252：session_id 非空时写入 owner.json（锁存活=会话存活语义）。
+    """
     normalized = str(Path(root) / rel)
-    lock_dir = _lock_dir(normalized) if str(Path(root).resolve()) == str(Path.cwd().resolve()) else _fake_lock_dir(normalized, Path(root))
+    lock_dir = _fake_lock_dir(normalized, root)
     lock_dir.mkdir(parents=True, exist_ok=True)
     owner_file = lock_dir / "owner.json"
     now = time.time()
-    owner_file.write_text(
-        json.dumps(
-            {
-                "owner_id": owner,
-                "pid": pid,
-                "timestamp": now - ts_offset,
-                "ttl_s": ttl_s,
-                "expires_at": now - ts_offset + ttl_s,
-            }
-        ),
-        encoding="utf-8",
-    )
+    payload = {
+        "owner_id": owner,
+        "pid": pid,
+        "timestamp": now - ts_offset,
+        "ttl_s": ttl_s,
+        "expires_at": now - ts_offset + ttl_s,
+    }
+    if session_id:
+        payload["session_id"] = session_id
+    owner_file.write_text(json.dumps(payload), encoding="utf-8")
 
 
 def _fake_lock_dir(normalized: str, root: Path) -> Path:
@@ -156,3 +161,46 @@ def test_helper_returns_holders_and_hits(tmp_path):
     holders, hits = _ailocks_other_holders(_FakeGateway(str(tmp_path)), [FILE_A], "xt4-attacker")
     assert holders == ["xt4-victim"]
     assert len(hits) == 1
+
+
+# ── 裁定#252 语义：锁存活=会话存活 ───────────────────────
+
+
+def test_session_bound_lock_alive_session_blocks(tmp_path, monkeypatch):
+    """锁绑会话+会话存活（pid=0 心跳新鲜）→ 即使领取进程 PID 已死仍阻断（本 bug 回归测试）。"""
+    import sys
+
+    _write_lock(tmp_path, FILE_A, "xt4-victim", pid=111111, session_id="xt4-victim-sess")
+
+    alive_info = SimpleNamespace(pid=0, last_heartbeat=time.time())
+
+    class _FakeSessReg:
+        def __init__(self, root):
+            pass
+
+        def get_session(self, sid):
+            return alive_info if sid == "xt4-victim-sess" else None
+
+    import zephyr.security.access_control.session_concurrency as sc_mod
+
+    monkeypatch.setattr(sc_mod.SessionRegistry, "get_session", lambda self, sid: _FakeSessReg(str(tmp_path)).get_session(sid))
+    holders, hits = _ailocks_other_holders(_FakeGateway(str(tmp_path)), [FILE_A], "xt4-attacker")
+    assert holders == ["xt4-victim"], "瞬时 PID 死亡但会话存活 → 锁必须仍有效（裁定#252 核心）"
+    assert len(hits) == 1
+
+
+def test_session_bound_lock_dead_session_passes(tmp_path, monkeypatch):
+    """锁绑会话+会话已死（心跳过期 90s+）→ 锁废，放行。"""
+    _write_lock(tmp_path, FILE_A, "xt4-victim", pid=111111, session_id="xt4-dead-sess")
+
+    dead_info = SimpleNamespace(pid=0, last_heartbeat=time.time() - 300)
+
+    import zephyr.security.access_control.session_concurrency as sc_mod
+
+    monkeypatch.setattr(sc_mod.SessionRegistry, "get_session", lambda self, sid: dead_info if sid == "xt4-dead-sess" else None)
+    holders, hits = _ailocks_other_holders(_FakeGateway(str(tmp_path)), [FILE_A], "xt4-attacker")
+    assert holders == [], "会话已死 → 锁必须作废"
+
+
+# 裁定#252：_is_session_alive 判活真源——pid>0 双判活 / pid=0 心跳 90s
+_is_session_alive = None

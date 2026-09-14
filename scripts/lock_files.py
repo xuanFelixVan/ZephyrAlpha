@@ -161,8 +161,33 @@ def _is_stale(lock_dir: Path) -> bool:
         # owner.json 不存在 — 锁可能正在创建中（makedirs 成功但 _write_owner 还没执行）
         # 不判定为 stale，避免误清理正在创建的锁（race condition 修复）
         return False
+    # 裁定#252（2026-09-14，F2 上游治本）：锁存活=会话存活——owner.json 含 session_id
+    # 时，活体探针从「领取锁的瞬时 CLI 进程 PID」切换为「SessionRegistry 会话判活」
+    # （_is_session_alive：pid>0 双判活 / pid=0 心跳 90s）。瞬时进程退出不再触发僵尸
+    # 清理（红蓝 v4 F2/v4.5 实弹：acquire 后锁即被自清理，防线永不命中）。无
+    # session_id 的旧格式锁维持原 PID+TTL 语义（向后兼容零破坏）。会话已死则 TTL
+    # 兜底仍适用（防会话僵而不沂的锁永久占用）。
+    session_id = owner.get("session_id")
+    if session_id:
+        try:
+            import sys as _sys
+
+            if str(_SRC_ROOT) not in _sys.path:
+                _sys.path.insert(0, str(_SRC_ROOT))
+            from zephyr.security.access_control.session_concurrency import SessionRegistry
+
+            registry = SessionRegistry(REPO_ROOT)
+            info = registry.get_session(str(session_id))
+            if info is not None:
+                import time as _time
+
+                if not _is_session_alive(info, _time.time()):
+                    return True  # 会话已死（心跳超时/PID 亡/TTL 超）→ 锁 stale
+                # 会话存活 → 锁继续有效（TTL 兕底判定仍执行：防永久占用）
+        except Exception:
+            pass  # registry 不可达时退回 PID+TTL 语义（fail-open，不误清活锁）
     # PID 已死 → 立即判 stale（零窗口期，治本 2026-06-30：AGENTS.md §8 L273 is_pid_alive 真源唯一）
-    # 不靠 TTL 30min 过期——进程崩溃时锁文件残留，PID 已死立即清理
+    # 仅对无 session_id 的旧格式锁生效；裁定#252 新锁的判活已上移到会话层
     pid = owner.get("pid", 0)
     if pid and not is_pid_alive(pid):
         return True
@@ -186,25 +211,28 @@ def _read_owner(lock_dir: Path) -> dict[str, Any] | None:
         return None
 
 
-def _write_owner(lock_dir: Path, owner_id: str, task: str = "", ttl_s: float = DEFAULT_TTL_S) -> None:
+def _write_owner(
+    lock_dir: Path,
+    owner_id: str,
+    task: str = "",
+    ttl_s: float = DEFAULT_TTL_S,
+    session_id: str = "",
+) -> None:
     lock_dir.mkdir(parents=True, exist_ok=True)
     now = time.time()
-    _owner_file(lock_dir).write_text(
-        json.dumps(
-            {
-                "owner_id": owner_id,
-                "pid": os.getpid(),
-                "timestamp": now,
-                "ttl_s": ttl_s,
-                "expires_at": now + ttl_s,
-                "task": task,
-                "hostname": os.environ.get("COMPUTERNAME", "unknown"),
-            },
-            ensure_ascii=False,
-            indent=2,
-        ),
-        encoding="utf-8",
-    )
+    payload: dict[str, Any] = {
+        "owner_id": owner_id,
+        "pid": os.getpid(),
+        "timestamp": now,
+        "ttl_s": ttl_s,
+        "expires_at": now + ttl_s,
+        "task": task,
+        "hostname": os.environ.get("COMPUTERNAME", "unknown"),
+    }
+    if session_id:
+        # 裁定#252：锁存活=会话存活（owner.json 带 session_id 时 _is_stale 走会话判活）
+        payload["session_id"] = session_id
+    _owner_file(lock_dir).write_text(json.dumps(payload, ensure_ascii=False, indent=2), encoding="utf-8")
 
 
 def _cleanup_stale(lock_dir: Path) -> bool:
@@ -333,24 +361,46 @@ def cmd_check(file_path: str) -> int:
     return 1
 
 
+class AcquireOptions:
+    """cmd_acquire 参数包（裁定#252 同批重构，治 NO-LONG-PARAM-LIST）。
+
+    Attributes:
+        task: 锁任务描述（审计可见）
+        skip_naming_check: 命名规范门禁逃生口（历史命名文件）
+        ttl_minutes: 锁 TTL（分钟；None=默认 30）
+        session_id: 会话绑定（裁定#252：非空时锁存活=会话存活）
+    """
+
+    def __init__(
+        self,
+        task: str = "",
+        skip_naming_check: bool = False,
+        ttl_minutes: float | None = None,
+        session_id: str = "",
+    ) -> None:
+        self.task = task
+        self.skip_naming_check = skip_naming_check
+        self.ttl_minutes = ttl_minutes
+        self.session_id = session_id
+
+
 def cmd_acquire(
     file_path: str,
     owner_id: str,
-    task: str = "",
-    skip_naming_check: bool = False,
-    ttl_minutes: float | None = None,
+    options: AcquireOptions | None = None,
 ) -> int:
+    opts = options or AcquireOptions()
     _ensure_lock_root()
     normalized = _normalize_path(file_path)
     lock_dir = _lock_dir(file_path)
-    ttl_s = (ttl_minutes * 60.0) if ttl_minutes is not None else DEFAULT_TTL_S
+    ttl_s = (opts.ttl_minutes * 60.0) if opts.ttl_minutes is not None else DEFAULT_TTL_S
 
     # 命名规范门禁：写入前校验文件名合规性（可跳过，用于历史命名文件）
     # B5③(2026-09-14)：存量已跟踪文件跳过——文件名在创建/提交时已裁决，提交侧
     # 对修改文件本有历史豁免，锁侧重跑全量检查只会误拒存量合法文件
     # （N-11/N-13 误拒实证）。未跟踪新文件仍全量检查（早期反馈，无冤案）。
     # skip_naming_check 保留（显式逃生口，测试与特殊场景已在使用）。
-    if not skip_naming_check and not _is_git_tracked(normalized):
+    if not opts.skip_naming_check and not _is_git_tracked(normalized):
         naming_violations = _check_naming(
             normalized, Path(REPO_ROOT / normalized) if (REPO_ROOT / normalized).exists() else None, REPO_ROOT
         )
@@ -378,13 +428,13 @@ def cmd_acquire(
 
     try:
         os.makedirs(lock_dir, exist_ok=False)
-        _write_owner(lock_dir, owner_id, task, ttl_s)
+        _write_owner(lock_dir, owner_id, opts.task, ttl_s, opts.session_id)
     except FileExistsError:
         if _is_stale(lock_dir):
             _cleanup_stale(lock_dir)
             try:
                 os.makedirs(lock_dir, exist_ok=False)
-                _write_owner(lock_dir, owner_id, task, ttl_s)
+                _write_owner(lock_dir, owner_id, opts.task, ttl_s, opts.session_id)
             except FileExistsError:
                 owner = _read_owner(lock_dir)
                 existing_owner = owner.get("owner_id", "unknown") if owner else "unknown"
@@ -403,9 +453,11 @@ def cmd_acquire(
         return 1
     print(f"ACQUIRED — {normalized} 已锁定")
     print(f"  持有者: {owner_id}")
+    if opts.session_id:
+        print(f"  会话绑定: {opts.session_id}（裁定#252：锁存活=会话存活）")
     print(f"  TTL: {ttl_s / 60.0:g} 分钟（到期自动过期）")
-    if task:
-        print(f"  任务: {task}")
+    if opts.task:
+        print(f"  任务: {opts.task}")
     return 0
 
 
@@ -626,7 +678,7 @@ def pre_write_guard(file_path: str, session_id: str, task: str = "") -> None:
         finally:
             cmd_release("src/main.py", "session-20260611-001")
     """
-    rc = cmd_acquire(file_path, session_id, task)
+    rc = cmd_acquire(file_path, session_id, AcquireOptions(task=task))
     if rc != 0:
         lock_dir = _lock_dir(file_path)
         owner = _read_owner(lock_dir)
@@ -685,7 +737,7 @@ def cmd_guard_write(file_path: str, session_id: str, task: str = "") -> int:
             print(f"  已锁定: {age_str}")
             return 1
 
-    rc = cmd_acquire(file_path, session_id, task)
+    rc = cmd_acquire(file_path, session_id, AcquireOptions(task=task))
     if rc == 0:
         print(f"GUARD-OK — {normalized} 写前门禁通过，锁已获取")
         print(f"  写完后请执行: python scripts/lock_files.py release {normalized} {session_id}")
@@ -755,10 +807,13 @@ def main() -> int:
             except ValueError:
                 print(f"ERROR — --ttl 必须为正数（分钟），收到: {ttl_raw}")
                 return 1
+        # 裁定#252：--session 绑定锁存活=会话存活（owner.json 写 session_id，
+        # _is_stale 走 SessionRegistry 会话判活；缺省退化旧 PID+TTL 语义）
+        bind_session = _parse_opt(args, "--session") or ""
         f = _validate_file_arg(args[1])
         if f is None:
             return 1
-        return cmd_acquire(f, args[2], task, skip_naming, ttl_minutes)
+        return cmd_acquire(f, args[2], AcquireOptions(task=task, skip_naming_check=skip_naming, ttl_minutes=ttl_minutes, session_id=bind_session))
 
     if cmd == "release" and len(args) >= 3:
         f = _validate_file_arg(args[1])
