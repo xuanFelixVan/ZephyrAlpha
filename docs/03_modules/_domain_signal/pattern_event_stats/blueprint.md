@@ -74,6 +74,10 @@ owner: ZephyrAlpha-Owner
 - W1：表 DDL（admin 通道）+ store 读写 + 单测（tmp_path 隔离，禁写生产路径）。
 - W2：回填扫描器（批量 / 断点续扫 / scan_run_id 幂等）+ 全量历史回填。
 - W3：胜率统计物化任务 + win_rate_provider 接线 MOD-SIG-115。
+- W-C2 增补（2026-09-14 消费班，方案 v1.0 挖矿 M1 裁定）：provider 新增
+  get_conservative()=Wilson 95% 下界口径（小样本保守估计，n<=0→0.0；与 get()
+  同门禁 low_sample/NULL→None）、get_detail()=全行返回（审计快照用）、
+  _wilson_lower_bound() 纯函数。raw 口径 get() 不变，MOD-SIG-115 mapper 契约不动。
 - W4：REG-PAT-001 evidence 回填 + 增量任务上线。
   - W4b 增量接线已落地（JOB-108，st-patwire-20260914）：pattern_event_incremental
     + pattern_win_rate_materialize 两任务块入 tasks.yaml daily_kline 档（DAG 依赖

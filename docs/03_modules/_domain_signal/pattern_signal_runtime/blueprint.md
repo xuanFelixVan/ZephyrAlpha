@@ -69,10 +69,17 @@ UnifiedPatternEngine，mapper（MOD-SIG-115）/adjuster（MOD-SIG-131）建成�
 
 下游（W-C2 接入）：signal_factory 档投票总线；W-C3：MOD-SIG-131 adjuster。
 
-## 4. 边界（明确不做）
+## 4. 边界与 W-C2 落位记录（2026-09-14）
 
-不做 regime 元门与审计快照（W-C2 于本模块扩展 or 总线侧，施工时定）；不做权重持久化
-（W-C3/131 职责）；不做执行层（方案 C6）。
+W-C2 已落位：①regime 门=runtime 构造参数 regime_filter（symbol,regime_tag）→bool，
+拒准出空载荷（准入路由，不造检测器，复用胜率表 regime_tag 切片口径）；
+②审计快照=metadata 增 win_rate_snapshot（逐事件 win_rate）+regime_tag+weight_version
+（信号可溯源"当时为什么发"，VCP 思路个人化裁剪）；③总线接入=factory 参数
+（SignalFactory 鸭子型），逐方向取最强分量注册 SignalDraft（signal_id=幂等键:方向，
+NEUTRAL 跳过，重复幂等跳过留痕 notes）。
+
+仍不做：权重持久化与调权决策（W-C3/MOD-SIG-131 职责）；前端呈现（W-C4）；
+执行层（方案 C6）。
 
 ## 5. 测试
 

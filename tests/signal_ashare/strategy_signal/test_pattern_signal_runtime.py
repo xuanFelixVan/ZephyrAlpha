@@ -167,3 +167,75 @@ def test_validator_fail_closed_on_garbage() -> None:
     p["as_of"] = "not-a-timestamp"
     assert v(p) is False
     assert v(None) is False
+
+
+# ── W-C2：meta 门 + 审计快照 + 工厂注册 ────────────────────────────────────
+
+
+def test_regime_gate_denies() -> None:
+    """regime_filter 拒准→空载荷（准入路由，无信号出网）。"""
+    rt = _make_runtime(regime_filter=lambda s, t: False)
+    assert rt.on_events("000001", [_head_shoulder_event()], as_of=_FROZEN_NOW) == {}
+
+
+def test_regime_gate_admits_with_tag() -> None:
+    rt = _make_runtime(
+        regime_filter=lambda s, t: t == "r1",
+        regime_tag="r1",
+        weight_version="w7",
+    )
+    payload = rt.on_events("000001", [_head_shoulder_event()], as_of=_FROZEN_NOW)
+    md = payload["metadata"]
+    assert md["regime_tag"] == "r1"
+    assert md["weight_version"] == "w7"
+    assert md["win_rate_snapshot"]["PAT-CHART-002"] == {"win_rate": 0.6}
+
+
+def test_factory_registers_per_direction() -> None:
+    """逐方向注册最强分量：DOWN 事件→一条 SHORT 草稿入册。"""
+    from zephyr.signal_ashare.strategy_signal.signal_factory import SignalFactory
+
+    factory = SignalFactory()
+    rt = _make_runtime(factory=factory, source="patmine:test")
+    payload = rt.on_events("000001", [_head_shoulder_event()], as_of=_FROZEN_NOW)
+    ids = payload["metadata"]["signal_ids"]
+    assert len(ids) == 1
+    rec = factory.get(ids[0])
+    assert rec.direction == "SHORT"
+    assert rec.strength == pytest.approx(0.48)
+    assert rec.source == "patmine:test:PAT-CHART-002"
+    assert rec.symbol == "000001"
+
+
+def test_factory_neutral_skips_registration() -> None:
+    """纯中性事件：无方向信号，不注册草稿。"""
+    from zephyr.signal_ashare.strategy_signal.signal_factory import SignalFactory
+
+    ev = PatternEvent(
+        pattern_id="PAT-TREND-013",
+        pattern_class=PatternClass.TREND,
+        name="均线排列",
+        direction=PatternDirection.NEUTRAL,
+        confidence=0.5,
+        key_points=(),
+        historical_win_rate=None,
+        timeframe="day",
+        anchor_idx=0,
+    )
+    factory = SignalFactory()
+    rt = _make_runtime(factory=factory, win_rate_query=lambda p: None)
+    payload = rt.on_events("000001", [ev], as_of=_FROZEN_NOW)
+    assert payload["metadata"]["signal_ids"] == []
+
+
+def test_factory_duplicate_skips_with_note() -> None:
+    """同载荷二次注册：幂等跳过留痕 notes，不抛错。"""
+    from zephyr.signal_ashare.strategy_signal.signal_factory import SignalFactory
+
+    factory = SignalFactory()
+    rt = _make_runtime(factory=factory)
+    ev = _head_shoulder_event()
+    first = rt.on_events("000001", [ev], as_of=_FROZEN_NOW)
+    second = rt.on_events("000001", [ev], as_of=_FROZEN_NOW)
+    assert first["metadata"]["signal_ids"] == second["metadata"]["signal_ids"]
+    assert "factory_duplicate_skipped" in second.get("notes", [])

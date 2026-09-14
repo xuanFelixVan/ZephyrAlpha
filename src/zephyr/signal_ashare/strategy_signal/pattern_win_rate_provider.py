@@ -36,6 +36,23 @@ log = logging.getLogger(__name__)
 
 _FULL_TABLE = "c1_market.market_pattern_win_rate"
 _BASELINE_ID = "__baseline__"
+_Z95 = 1.959963984540054
+
+
+def _wilson_lower_bound(rate: float, n: int, *, z: float = _Z95) -> float:
+    """Wilson 得分区间下界（二项比例小样本保守估计）。
+
+    n<=0 → 0.0（无样本=零信任）；LB 恒 ≤ rate，n 越大越贴近 rate。
+    消费班方案 v1.0 挖矿 M1 裁定：加权输入用 LB 口径（TradingView
+    winrate 脚本实照同法），raw 口径仍经 get()/get_detail() 可得。
+    """
+    if n <= 0:
+        return 0.0
+    p = float(rate)
+    denom = 1.0 + z * z / n
+    centre = p + z * z / (2.0 * n)
+    margin = z * ((p * (1.0 - p) + z * z / (4.0 * n)) / n) ** 0.5
+    return max(0.0, (centre - margin) / denom)
 
 
 class PatternWinRateProvider:
@@ -94,6 +111,56 @@ class PatternWinRateProvider:
             regime_tag=regime_tag,
         )
         return self._to_rate(row)
+
+    def get_detail(
+        self,
+        pattern_id: str,
+        *,
+        timeframe: str = "day",
+        direction: str = "向上",
+        fwd_window: int = 10,
+        regime_tag: str = "",
+    ) -> dict[str, Any] | None:
+        """查全行（hit_rate/n_events/low_sample）——审计快照与小样本判读用。
+
+        查无→None；行内字段原样返回（不做 None/low_sample 归并，由消费方判读）。
+        """
+        return self._fetch_one(
+            pattern_id=pattern_id,
+            timeframe=timeframe,
+            direction=direction,
+            fwd_window=fwd_window,
+            regime_tag=regime_tag,
+        )
+
+    def get_conservative(
+        self,
+        pattern_id: str,
+        *,
+        timeframe: str = "day",
+        direction: str = "向上",
+        fwd_window: int = 10,
+        regime_tag: str = "",
+        z: float = _Z95,
+    ) -> float | None:
+        """Wilson 95% 下界口径的历史胜率（消费班方案 v1.0 挖矿 M1）。
+
+        与 get() 同门禁（查无/low_sample/NULL→None），有统计时返回
+        wilson_lower_bound(hit_rate, n_events)——小样本保守估计，防
+        n 小时的过信加权（20 笔 55% 真胜率的观测噪声带 40%~70%）。
+        """
+        row = self._fetch_one(
+            pattern_id=pattern_id,
+            timeframe=timeframe,
+            direction=direction,
+            fwd_window=fwd_window,
+            regime_tag=regime_tag,
+        )
+        rate = self._to_rate(row)
+        if rate is None or row is None:
+            return None
+        n = int(row.get("n_events") or 0)
+        return _wilson_lower_bound(rate, n, z=z)
 
     def _fetch_one(
         self,
