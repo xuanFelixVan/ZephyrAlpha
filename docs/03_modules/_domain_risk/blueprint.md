@@ -4,7 +4,7 @@ submodule_path: src/zephyr/risk
 title: "Risk Management Core 蓝图+施工图 — 风险管理引擎"
 doc_type: blueprint
 status: Active
-version: "2.2.32"
+version: "2.2.33"
 layer: L2_domain
 layer_name: risk_management
 functional_domain: risk
@@ -59,7 +59,7 @@ build_status: generated
 > 本蓝图仅做审查、回填、压缩、对齐，不触发任何代码变更。
 
 > actual_disk_path: src/zephyr/risk/ (10 .py files)
-> module_id: MOD-L04-001 | version: 2.2.32 | status: Active | layer: L2_domain
+> module_id: MOD-L04-001 | version: 2.2.33 | status: Active | layer: L2_domain
 > generation: 2 | construction_progress: partially_implemented
 
 # Risk Management Core 蓝图+施工图 — 风险管理引擎
@@ -143,7 +143,7 @@ build_status: generated
 
 | 图 | 位置 | 状态 | 链接 |
 |----|------|------|------|
-| 依赖图 (depgraph) | `blueprint_id=MOD-L04-001` 的 182 个 file 节点 | production | `extract_depgraph.py --modules MOD-L04-001` |
+| 依赖图 (depgraph) | `blueprint_id=MOD-L04-001` 的 195 个 file 节点 | production | `extract_depgraph.py --modules MOD-L04-001` |
 | 数据流图 (dataflow) | 1 个 Dataset / 2 个 Job | active | `apply_dataflowgraph.py --list-datasets` |
 | 决策架构图 (decision) | 76 个决策节点 / 2 个决策层 | design | `generate_decision_diagram.py` |
 | 蓝图 (blueprint) | 本文件 | Active | — |
@@ -155,7 +155,7 @@ build_status: generated
 | module_id | MOD-L04-001 | MOD-L04-001 | ✅ |
 | domain_id | N/A | N/A | ✅ |
 | build_status | generated | generated | ✅ |
-| file_count | 182 文件 | 14 文件（§0.1） | ❌ |
+| file_count | 195 文件 | 14 文件（§0.1） | ❌ |
 
 > 冲突时以 depgraph 为准（ARCH-056 + ARCH-MM-001 声明 vs 验证框架）。
 
@@ -946,6 +946,7 @@ class ViolationDetail(BaseModel):
 | `schemas/categories/fundamental/fundamental_rights_issue.py` | ✅ 已实现 | |
 | `schemas/categories/fundamental/fundamental_share_change.py` | ✅ 已实现 | |
 | `schemas/categories/fundamental/fundamental_share_unlock.py` | ✅ 已实现 | |
+| `schemas/categories/fundamental/pdf_forecast_extracted.py` | ✅ 已实现 | |
 | `schemas/categories/intraday/__init__.py` | ⚠️ 骨架 | |
 | `schemas/categories/intraday/market_auction.py` | ✅ 已实现 | |
 | `schemas/categories/intraday/market_auction_book.py` | ✅ 已实现 | |
@@ -997,9 +998,20 @@ class ViolationDetail(BaseModel):
 | `schemas/categories/market_alt_regime_signal.py` | ✅ 已实现 | |
 | `schemas/categories/market_alt_shipping_index.py` | ✅ 已实现 | |
 | `schemas/categories/market_alt_stock_comment.py` | ✅ 已实现 | |
+| `schemas/categories/market_alt_sz_air_quality_daily.py` | ✅ 已实现 | |
+| `schemas/categories/market_alt_sz_air_quality_region.py` | ✅ 已实现 | |
+| `schemas/categories/market_alt_sz_enterprise_year.py` | ✅ 已实现 | |
+| `schemas/categories/market_alt_sz_house_area.py` | ✅ 已实现 | |
 | `schemas/categories/market_alt_sz_house_daily.py` | ✅ 已实现 | |
+| `schemas/categories/market_alt_sz_house_listing.py` | ✅ 已实现 | |
+| `schemas/categories/market_alt_sz_house_presale.py` | ✅ 已实现 | |
 | `schemas/categories/market_alt_sz_marine_forecast.py` | ✅ 已实现 | |
+| `schemas/categories/market_alt_sz_market_subject.py` | ✅ 已实现 | |
 | `schemas/categories/market_alt_sz_port_monthly.py` | ✅ 已实现 | |
+| `schemas/categories/market_alt_sz_reservoir_rain_day.py` | ✅ 已实现 | |
+| `schemas/categories/market_alt_sz_reservoir_rain_month.py` | ✅ 已实现 | |
+| `schemas/categories/market_alt_sz_reservoir_station.py` | ✅ 已实现 | |
+| `schemas/categories/market_alt_sz_stat_analysis.py` | ✅ 已实现 | |
 | `schemas/categories/market_alt_sz_stat_monthly.py` | ✅ 已实现 | |
 | `schemas/categories/market_alt_sz_visibility.py` | ✅ 已实现 | |
 | `schemas/categories/market_alt_sz_weather_warning.py` | ✅ 已实现 | |
