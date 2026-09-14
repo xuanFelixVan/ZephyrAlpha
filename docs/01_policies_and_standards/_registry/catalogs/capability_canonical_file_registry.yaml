@@ -5003,6 +5003,30 @@ capabilities:
     提交→全景对齐→清理 全流程步骤与失败处置；适用 07 域（regime/选股/仓位/风控/买卖/执行/对账/治理）施工，RULE-CAPABILITY-LOOKUP
     检索"施工"应命中本条
 creation_tokens:
+- file: "src/zephyr/factor/analysis/factor_lifecycle_runner.py"
+  token: "patmine-wcb-factor-runner-20260915"
+  created_by: "st-patmine-20260914"
+  capability: "lifecycle_rollout_wcb"
+- file: "src/zephyr/signal_ashare/strategy_signal/strategy_decay_certifier.py"
+  token: "patmine-wcb-strategy-cert-20260915"
+  created_by: "st-patmine-20260914"
+  capability: "lifecycle_rollout_wcb"
+- file: "src/zephyr/governance/indicator_usage_audit.py"
+  token: "patmine-wcb-indicator-audit-20260915"
+  created_by: "st-patmine-20260914"
+  capability: "lifecycle_rollout_wcb"
+- file: "docs/03_modules/_domain_factor/factor_lifecycle_runner/blueprint.md"
+  token: "patmine-wcb-fbp-20260915"
+  created_by: "st-patmine-20260914"
+  capability: "lifecycle_rollout_wcb"
+- file: "docs/03_modules/_domain_signal/strategy_decay_certifier/blueprint.md"
+  token: "patmine-wcb-sbp-20260915"
+  created_by: "st-patmine-20260914"
+  capability: "lifecycle_rollout_wcb"
+- file: "docs/03_modules/_domain_governance/indicator_usage_audit/blueprint.md"
+  token: "patmine-wcb-ibp-20260915"
+  created_by: "st-patmine-20260914"
+  capability: "lifecycle_rollout_wcb"
 - file: "docs/_working/pattern_line/lifecycle-protocol-v2.md"
   token: "patmine-lifecycle-v2-20260915"
   created_by: "st-patmine-20260914"
@@ -12690,6 +12714,26 @@ creation_tokens:
   capability: factory_backend
 - file: scripts/backtest/translated/c4_fact_e831084c.py
   token: factory-backend-c4-fact-e831084c-20260914
+  created_by: st-facbe-20260914
+  capability: factory_backend
+- file: scripts/backtest/translated/c4_fact_4b200528.py
+  token: factory-backend-c4-fact-4b200528-20260914
+  created_by: st-facbe-20260914
+  capability: factory_backend
+- file: scripts/backtest/translated/c4_fact_4228020a.py
+  token: factory-backend-c4-fact-4228020a-20260914
+  created_by: st-facbe-20260914
+  capability: factory_backend
+- file: scripts/backtest/translated/c4_fact_4db4c41e.py
+  token: factory-backend-c4-fact-4db4c41e-20260914
+  created_by: st-facbe-20260914
+  capability: factory_backend
+- file: scripts/backtest/translated/c4_fact_4f749668.py
+  token: factory-backend-c4-fact-4f749668-20260914
+  created_by: st-facbe-20260914
+  capability: factory_backend
+- file: scripts/backtest/hypothesis_translator.py
+  token: factory-backend-hypothesis-translator-20260914
   created_by: st-facbe-20260914
   capability: factory_backend
 - file: scripts/backtest/translated/c4_21af8c66c15e_small_cap.py

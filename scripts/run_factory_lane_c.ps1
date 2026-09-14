@@ -27,5 +27,19 @@ $log = Join-Path $logDir "factory_lane_c.log"
 # Production defaults live in config/factor_mining_whitelist.yaml (pop 1000 x 50, seed 42).
 python scripts\backtest\lane_c_formula_miner.py mine --top 10 2>&1 |
   Out-File -FilePath $log -Append -Encoding utf8
+
+# Full supply chain (Owner 2026-09-15 full-automation mandate): intake all lanes ->
+# E2 precheck all four -> E2->E3 auto-construct -> C3 translation (formula subset).
+python scripts\backtest\factory_intake_pipeline.py run --with-lane-b --limit-precheck 15 2>&1 |
+  Out-File -FilePath $log -Append -Encoding utf8
+python scripts\backtest\factory_intake_pipeline.py construct 2>&1 |
+  Out-File -FilePath $log -Append -Encoding utf8
+python scripts\backtest\hypothesis_translator.py translate --seeds 5 2>&1 |
+  Out-File -FilePath $log -Append -Encoding utf8
+
+# Worktree application-system weekly audit (policy parallel_session_coordination v1.1.0 s10).
+$count = (git log --format=%B --since="7 days ago" | Select-String "non-worktree").Count
+"==== worktree audit: non-worktree commits last 7d = $count ====" | Out-File -FilePath $log -Append -Encoding utf8
+
 "==== exit code $LASTEXITCODE ====" | Out-File -FilePath $log -Append -Encoding utf8
 exit $LASTEXITCODE

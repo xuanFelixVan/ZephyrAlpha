@@ -257,6 +257,25 @@ def attach_birth_certificate(rows: list[dict], batch_id: str, cfg: dict) -> list
     return out
 
 
+def compute_features(k: pd.DataFrame) -> pd.DataFrame:
+    """价量特征（全部 ≤T 可得）：输入 K 线长表（需含 date/s/close/turnover/amount，按 s,date 排序）。
+
+    特征名单真源=FEATURES；本函数是特征工程唯一实现（挖矿面板与考卷策略件共用）。
+    """
+    g = k.groupby("s", group_keys=False)
+    feats = pd.DataFrame({
+        "ret_1d": g["close"].pct_change(),
+        "ret_5d": g["close"].pct_change(5),
+        "ret_20d": g["close"].pct_change(20),
+        "vol_20d": g["close"].pct_change().rolling(20).std(),
+        "turnover": np.log1p(k["turnover"].clip(lower=0)),
+        "amt_z20": g["amount"].transform(lambda s: (s - s.rolling(20).mean()) / (s.rolling(20).std() + 1e-9)),
+        "close_ma20": g["close"].transform(lambda s: s / (s.rolling(20).mean() + 1e-9) - 1),
+    })
+    feats["date"], feats["s"] = k["date"].values, k["s"].values
+    return feats
+
+
 def fetch_panel(universe_n: int, days: int) -> dict:
     """面板加载：universe=窗内成交额 top N；特征 ≤T；y=前向 5 日收益；基座=TI 日频。"""
     from zephyr.data.ch_writer import get_client_strict
@@ -276,16 +295,8 @@ def fetch_panel(universe_n: int, days: int) -> dict:
     for c in ("close", "turnover", "amount"):
         k[c] = pd.to_numeric(k[c], errors="coerce")  # CH Decimal → float
     k = k.sort_values(["s", "date"])
+    feats = compute_features(k)
     g = k.groupby("s", group_keys=False)
-    feats = pd.DataFrame({
-        "ret_1d": g["close"].pct_change(),
-        "ret_5d": g["close"].pct_change(5),
-        "ret_20d": g["close"].pct_change(20),
-        "vol_20d": g["close"].pct_change().rolling(20).std(),
-        "turnover": np.log1p(k["turnover"].clip(lower=0)),
-        "amt_z20": g["amount"].transform(lambda s: (s - s.rolling(20).mean()) / (s.rolling(20).std() + 1e-9)),
-        "close_ma20": g["close"].transform(lambda s: s / (s.rolling(20).mean() + 1e-9) - 1),
-    })
     feats["y_fwd5"] = g["close"].transform(lambda s: s.shift(-FWD_DAYS) / s - 1)
     feats["date"], feats["s"] = k["date"].values, k["s"].values
     feats = feats.dropna(subset=list(FEATURES) + ["y_fwd5"])

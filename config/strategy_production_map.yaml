@@ -219,7 +219,11 @@ nodes:
     module_ref: MOD-BT-041..075
     build_status: partial
     algo_note_extra: 公式轨桥=MOD-BT-159 factor_strategy_template（DSL 表达式→E4 考卷件
-      机械翻译，生成件零逻辑统一承载；已通 c4_fact_e831084c 实跑验证）
+      机械翻译，生成件零逻辑统一承载；已通 c4_fact_e831084c 实跑验证）；
+      假说轨 C3 翻译 MVP=MOD-BT-190 hypothesis_translator（E2 过审假说→本地 LLM 结构化
+      翻译为因子表达式，公式化子集+阴性如实入档+表达式去重+纠错重试，translated_manifest
+      台账）；E2→E3 排产流转=factory_intake_pipeline construct 子命令（过审公式候选自动
+      生成考卷件+constructed_manifest）；四车道 E2 预审常态化=run 已扩全台账消费
     design_refs:
       - QuantCode-Bench arxiv.org/html/2604.15151（NL→可执行策略可靠性基准）
     store_refs:

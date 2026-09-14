@@ -125,6 +125,17 @@ def validate_expr(expr: str, features: list[str], op_names: set[str]) -> tuple[b
                 if not ok:
                     return False, why
             return True, ""
+        if isinstance(node, ast.BinOp):
+            op_map = {ast.Add: "add", ast.Sub: "sub", ast.Mult: "mul", ast.Div: "div"}
+            name = op_map.get(type(node.op))
+            if name is None or name not in op_names:
+                return False, f"非白名单运算符: {type(node.op).__name__}"
+            ok, why = _walk(node.left)
+            if not ok:
+                return False, why
+            return _walk(node.right)
+        if isinstance(node, ast.Compare):
+            return False, "比较/筛选条件不属因子表达式（模板为 top-k 排序）"
         return False, f"非法节点: {type(node).__name__}"
 
     return _walk(tree)
@@ -143,6 +154,10 @@ def evaluate_expr(expr: str, features: list[str], ops: dict, panel_x: np.ndarray
         if isinstance(node, ast.Call):
             args = [_ev(a) for a in node.args]
             return np.asarray(ops[node.func.id](*args), dtype=float)
+        if isinstance(node, ast.BinOp):
+            op_map = {ast.Add: "add", ast.Sub: "sub", ast.Mult: "mul", ast.Div: "div"}
+            return np.asarray(
+                ops[op_map[type(node.op)]](_ev(node.left), _ev(node.right)), dtype=float)
         raise ValueError(f"非法节点 {type(node).__name__}")
 
     return _ev(tree.body)

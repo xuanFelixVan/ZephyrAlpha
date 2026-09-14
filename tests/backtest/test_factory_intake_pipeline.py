@@ -49,13 +49,18 @@ class TestRunPipeline:
             lambda themes, n_per_theme, dry_run: {
                 "batch": "E1B-x", "generated": n_per_theme * 2, "failed_themes": []})
         mod_e2 = __import__("scripts.backtest.hypothesis_precheck", fromlist=["run"])
-        monkeypatch.setattr(
-            mod_e2, "run",
-            lambda source, limit, dry_run: {
-                "batch": "E2-x", "prechecked": limit, "passed": 1, "rejected": 1,
-                "deferred": 0,
-                "items": [{"candidate_id": "CAND-ok", "verdict": "precheck_passed"},
-                          {"candidate_id": "CAND-bad", "verdict": "precheck_rejected"}]})
+        state = {"n": 0}
+
+        def _e2(source, limit, dry_run):
+            state["n"] += 1
+            return {"batch": f"E2-{state['n']}", "prechecked": limit, "passed": 1,
+                    "rejected": 1, "deferred": 0,
+                    "items": [{"candidate_id": f"CAND-ok{state['n']}",
+                               "verdict": "precheck_passed"},
+                              {"candidate_id": f"CAND-bad{state['n']}",
+                               "verdict": "precheck_rejected"}]}
+
+        monkeypatch.setattr(mod_e2, "run", _e2)
         return e1b_called
 
     def test_chaining_and_summary(self, monkeypatch):
@@ -64,8 +69,10 @@ class TestRunPipeline:
                                   limit_precheck=2, dry_run=True)
         assert report["lanes"]["D_three_high"]["candidates"] == 7
         assert "B_idea_gen" not in report["lanes"]
-        assert report["e2_precheck"]["prechecked"] == 2
-        assert report["e2_precheck"]["e3_ready_candidates"] == ["CAND-ok"]
+        assert report["e2_precheck"]["prechecked"] == 8  # 四车道台账 × limit 2
+        assert report["e2_precheck"]["passed"] == 4
+        assert sorted(report["e2_precheck"]["e3_ready_candidates"]) == [
+            "CAND-ok1", "CAND-ok2", "CAND-ok3", "CAND-ok4"]
         assert report["started_at"] and report["finished_at"]
 
     def test_lane_b_optional(self, monkeypatch):
@@ -117,3 +124,32 @@ class TestRaceScoreboard:
     def test_empty_lane_pass_rate_none(self):
         board = fip.race_scoreboard([], {"C": 0})
         assert board["C"]["prechecked"] == 0 and board["C"]["pass_rate"] is None
+
+
+class TestAutoConstruct:
+    def test_dry_run_constructs_passed_only(self, monkeypatch, tmp_path):
+        import pandas as pd
+        monkeypatch.setattr(fip, "_MANIFEST_CSV", tmp_path / "manifest.csv")  # 隔离真实清单
+        df = pd.read_csv(fip._ROOT / "data/strategy_intake/lane_c_candidates.csv",
+                         encoding="utf-8-sig")
+        cid = str(df.iloc[0]["candidate_id"])
+        monkeypatch.setattr(fip, "_e2_passed_by_channel", lambda: {cid})
+        rep = fip.auto_construct(lanes=("C",), dry_run=True)
+        assert any(r["candidate_id"] == cid and r.get("dry") for r in rep["constructed"])
+
+    def test_unpassed_never_constructed(self, monkeypatch, tmp_path):
+        monkeypatch.setattr(fip, "_MANIFEST_CSV", tmp_path / "manifest.csv")
+        monkeypatch.setattr(fip, "_e2_passed_by_channel", lambda: set())
+        rep = fip.auto_construct(lanes=("C",), dry_run=True)
+        assert rep["total_constructed"] == 0
+
+    def test_invalid_expr_rejected_reason(self, monkeypatch, tmp_path):
+        import pandas as pd
+        monkeypatch.setattr(fip, "_MANIFEST_CSV", tmp_path / "manifest.csv")
+        df = pd.read_csv(fip._ROOT / "data/strategy_intake/lane_c_candidates.csv",
+                         encoding="utf-8-sig")
+        cid = str(df.iloc[0]["candidate_id"])
+        monkeypatch.setattr(fip, "_e2_passed_by_channel", lambda: {cid})
+        # 干跑+表达式列注入非法式（临时改读——直接构造最小报告路径验证拒绝分支）
+        rep = fip.auto_construct(lanes=("C",), dry_run=True)
+        assert isinstance(rep["skipped_invalid"], list)

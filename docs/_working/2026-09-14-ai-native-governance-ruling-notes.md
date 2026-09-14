@@ -127,3 +127,35 @@ worktree 宪法级建议 **Owner 已采纳**：AGENTS.md §RULE-WORKTREE 两处�
 降级=显式申请制）+ parallel_session_coordination_policy.md v1.1.0 新增 §10 申请制三件
 （登记原因/GW 标记自动计数/周审计）。智能体挖矿轨立项书全批（P2 全启用——成本核为零 token 后 Owner 撤销开关），
 方法论强制=施工SOP+挖矿SOP 双走（矿机自身先被挖矿挖透）。详见立项书附二。
+
+
+---
+
+# 附二：全清单自动化施工记录（2026-09-15 夜班，Owner"全部一口气施工+全自动化"令）
+
+## 已施工
+
+1. **四车道预审常态化**：factory_intake_pipeline run 的 E2 预审从"仅三高"扩为全四车道
+   台账幂等消费（D/B/C/C2），漏斗汇总入 e2_precheck；
+2. **E2→E3 排产自动流转**：construct 子命令——E2 过审公式候选自动经 159 桥生成考卷件，
+   manifest（constructed_manifest.csv）幂等登记，token 自动登记；
+3. **worktree 计数自动化**：FactoryLaneC 周窗新增 worktree audit 步（7 天 non-worktree
+   提交计数入日志），政策 §10 的"每周一行命令"从此自动执行；
+4. **全链自动化**：FactoryLaneC 周窗扩容为完整供应链——worktree 审计→gplearn 挖矿→
+   四车道进货+预审→E2→E3 自动构造→C3 翻译（公式化子集）。C4 全量批测保持独立夜批
+   （算力小时级，由 E0 闸+手动点火/周六窗承接）；
+5. **C3 翻译专项第一期 MVP**（MOD-BT-190 hypothesis_translator）：E2 过审 D/B 假说→
+   本地 LLM 结构化翻译（公式化子集），不可公式化如实记阴性（防幻觉边界写进 prompt），
+   过 DSL 校验+非退化 sanity→159 桥生成考卷件→translated_manifest.csv 台账。
+
+## 号段规矩（成文，Owner 令"号段竞速持续"治理）
+
+**落码前必查**：`grep -rlE "MOD-BT-<N>" scripts src schemas tests --include="*.py"`
+=0 才可取号；本班实证 150-178 已被多班快速消耗（translated 批速度≈每班 10 号），
+**新模块建议直接跳 190+ 段**；本班占用 190（translator），预留 191-197 给策略工厂后续件。
+
+## 登记跳过（大件，事件门控/立项级——留 Owner 排产）
+
+Kronos 接入、LLM 图谱增补管线、E7 前哨（事件门控：首个 E4 及格者）、E8 sleeve 深化、
+E9 影子组合+决策时间戳 FIELD-GAP、MCTS 第三轨——均为多班大件，一轮夜班强建=劣质交付，
+按 FDR 哲学登记不硬建。

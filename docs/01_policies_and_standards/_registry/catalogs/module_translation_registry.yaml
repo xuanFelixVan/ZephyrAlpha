@@ -49483,6 +49483,34 @@ entries:
   desc_zh: ""
   desc_en: ""
   plain_zh: "新策略一落地就自动走完查假货、去重、登记、挂图、进模拟盘全套流程，全程留报告，不用人盯着"
+- module_path: src/zephyr/factor/analysis/factor_lifecycle_runner.py
+  domain_id: D_FACTOR
+  name_zh: "因子生命周期周扫"
+  name_en: ""
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "每周给因子库里一百多个因子按最近表现打分排位：表现好的盖认证章，连续不达标的自动盖退役章退出候选池，之后如果它业绩回升还能自动复活重返池子，全程机器自动不需要人盯"
+- module_path: src/zephyr/signal_ashare/strategy_signal/strategy_decay_certifier.py
+  domain_id: D_ASHARE_SIGNAL
+  name_zh: "策略衰减认证器"
+  name_en: ""
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "定期检查已上线策略的成绩单：折减夏普还达标就继续留用，跌到警戒线以下就先观察，连续不达标就出退役建议单交给策略域管线执行，退役后成绩回升还能自动撤销退役建议"
+- module_path: src/zephyr/governance/indicator_usage_audit.py
+  domain_id: D_GOV
+  name_zh: "指标消费活性审计"
+  name_en: ""
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "盘点指标库九十二个指标各自被多少代码引用：有人用的继续活着，零引用的进入退役观察名单建议指标域核实后清理，防止死指标占着注册表位子没人管"
+- module_path: scripts/backtest/hypothesis_translator.py
+  domain_id: D_BACKTEST
+  name_zh: "假说轨翻译器C3-MVP"
+  name_en: ""
+  desc_zh: "E2过审假说→本地LLM结构化翻译为因子表达式（公式化子集），阴性如实入档，过桥生成考卷件"
+  desc_en: ""
+  plain_zh: "策略工厂的翻译官（第一期只会翻'因子类'假说）：拿守门员放过审的文字假说，让本地大模型翻成积木公式；翻不出来的（事件类/多腿类）如实记'翻不了'绝不硬翻；翻出来的过结构安检后自动生成考卷件进考场。同一公式不重复出卷。"
 
 battle_map_steps:
 - step_id: BM-BUY-05
