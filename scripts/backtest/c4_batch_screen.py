@@ -161,6 +161,8 @@ def main() -> None:
     parser.add_argument("--batch", default=_BATCH, help="落库批次标签（默认=冻结 IS 批）")
     parser.add_argument("--verdict", default="translated_c4", help="落库判定（OOS 批用 oos_tested）")
     parser.add_argument("--only", default=None, help="模块名子串过滤（逗号分隔，如 rsrs,panic）")
+    parser.add_argument("--subset-batch", action="store_true",
+                        help="子集补测批：跳过挂起行登记与 pilot 特载（二者已被冻结 IS 批承载，避免新批次重复登记）")
     args = parser.parse_args()
     oos_mode = bool(args.start and args.end)
     if oos_mode:
@@ -180,7 +182,7 @@ def main() -> None:
           + ("（声明制放行，详情见 run 档案 summary）" if s3_drift["verdict"] == "drift" else ""))
 
     results, failures = run_batch(args.limit, window=(args.start, args.end) if oos_mode else None,
-                                  include_pilots=not oos_mode, only=args.only)
+                                  include_pilots=not (oos_mode or args.subset_batch), only=args.only)
     if not results:
         raise RuntimeError("批测零结果（模块发现/加载全失败）")
 
@@ -189,8 +191,8 @@ def main() -> None:
     sr_dist = [r["stats"]["sharpe"] for r in results]
     summary = {
         "s3_knowledge_drift": s3_drift,
-        "total_modules": len(results) - len(_PILOTS),
-        "pilots": len(_PILOTS),
+        "total_modules": len(results) - sum(1 for r in results if r.get("pilot")),
+        "pilots": sum(1 for r in results if r.get("pilot")),
         "failures": failures,
         "sharpe": {"min": min(sr_dist), "max": max(sr_dist),
                    "mean": round(sum(sr_dist) / len(sr_dist), 3)},
@@ -200,8 +202,8 @@ def main() -> None:
             key=lambda x: -x["sharpe"])[:5],
     }
 
-    # 挂起行
-    deferrals = [] if oos_mode else load_deferrals()
+    # 挂起行（子集补测批跳过：挂起清单已在冻结 IS 批全量登记，见 --subset-batch）
+    deferrals = [] if (oos_mode or args.subset_batch) else load_deferrals()
     if not args.dry_run:
         from zephyr.backtest.run_archive import create_run, finalize_run, write_step
 
