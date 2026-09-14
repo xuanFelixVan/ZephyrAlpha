@@ -93,6 +93,7 @@ flag OFF 灰度期已知过渡语义（如实记录，非缺陷）：队列落�
 
 from __future__ import annotations
 
+import hashlib
 import json
 import logging
 import os
@@ -443,6 +444,54 @@ class WorktreeLanding:
     # ------------------------------------------------------------------
     # dev CAS 推进（66 号 §6.3 修正 4：带上期望旧值，单写者免费保险）
     # ------------------------------------------------------------------
+    def _prestage_snapshot(self, item: dict, commit_files: list[str]) -> None:
+        """快照预暂存：把快照文件 add/rm 进 index（gate 链 staged-diff 完整性前置）。
+
+        delete 项用 git rm --cached --ignore-unmatch（幂等，对齐
+        GitCommitGateway._add_and_remove_normal_files 语义）；existing 用
+        git add --pathspec-from-file（Windows 长路径安全）。失败抛 RuntimeError
+        → 落地器转 COMMIT_FAILED 死信（不静默放行，gate 依赖 staged diff）。
+        """
+        dels: list[str] = []
+        adds: list[str] = []
+        for entry in item.get("files") or []:
+            rel = entry.get("path", "")
+            if not rel:
+                continue
+            if entry.get("action") == "delete":
+                dels.append(rel)
+            else:
+                adds.append(rel)
+        if adds:
+            pathspec = self.worktree_path / ".git_prestage_add_paths.txt"
+            pathspec.write_text("\n".join(adds) + "\n", encoding="utf-8")
+            try:
+                res = self._git_wt("add", f"--pathspec-from-file={pathspec}")
+                if res.returncode != 0:
+                    raise RuntimeError(f"prestage git add failed: {res.stderr.strip()[:200]}")
+            finally:
+                try:
+                    pathspec.unlink()
+                except OSError:
+                    pass
+        if dels:
+            pathspec = self.worktree_path / ".git_prestage_rm_paths.txt"
+            pathspec.write_text("\n".join(dels) + "\n", encoding="utf-8")
+            try:
+                res = self._git_wt("rm", "--cached", "--ignore-unmatch", f"--pathspec-from-file={pathspec}")
+                if res.returncode != 0:
+                    raise RuntimeError(f"prestage git rm failed: {res.stderr.strip()[:200]}")
+            finally:
+                try:
+                    pathspec.unlink()
+                except OSError:
+                    pass
+        logger.info(
+            "[landing] 快照预暂存完成 adds=%d dels=%d（staged-diff 依赖型 gate 前置）",
+            len(adds),
+            len(dels),
+        )
+
     def _advance_dev(self, old_sha: str, new_sha: str) -> None:
         """`git update-ref refs/heads/<dev> <new> <old>` CAS；失败抛 CasConflict。
 
@@ -687,6 +736,12 @@ class WorktreeLanding:
             claimed = gateway.claim_files(session_id, wt_files) if wt_files else []
             try:
                 commit_files = self._apply_snapshot(item, queue_root)
+                # 快照预暂存（ALGO-NOTE-SYNC 等暂存依赖型 gate 前置）：gate 设计前提
+                # =「必须在暂存集冻结后运行」（diff=git diff --cached），而 gateway.commit
+                # 的 gate 链跑在自身 add 之前——快照只写工作区不进 index 时 gate 读到
+                # 空/陈旧 diff，把内容合规的落地误判为未同步（q-0013/0014 死信实证）。
+                # 预暂存后 gate 读到完整 staged diff；gateway.commit 内 add 幂等无副作用。
+                self._prestage_snapshot(item, commit_files)
                 if not commit_files:
                     return cq.LandingResult(ok=False, reason="空快照项（无文件可落）")
                 full_message = f"{item.get('message', '')}\n\n{marker}"
@@ -729,6 +784,38 @@ class WorktreeLanding:
                 # 门禁阻断/git 失败 → 死信（不卡队，66 号 §4 裁定 4）；NOTHING_TO_COMMIT
                 # 语义=快照与 HEAD 已一致（幂等空转）→ 视为落盘成功但无新 commit
                 if result.status is CommitStatus.NOTHING_TO_COMMIT:
+                    # 假落地防线（2026-09-15 q-20260915-0003 事故）：NOTHING_TO_COMMIT
+                    # 只有当 item 全部 blob 与 old_dev 同路径内容一致时才是真幂等重放；
+                    # 任一 blob 缺失/内容不符 = 快照应用被静默丢失，必须死信可见化，
+                    # 禁止伪装 ok（该事故把真实变更落地失败记成了 landed_id=旧 HEAD）。
+                    mismatched: list[str] = []
+                    for entry in item.get("files") or []:
+                        rel = entry.get("path", "")
+                        want_sha = entry.get("blob_sha256")
+                        if entry.get("action") == "delete":
+                            if self._tree_has_path(old_dev, rel):
+                                mismatched.append(rel)
+                            continue
+                        if not want_sha or not self._tree_has_path(old_dev, rel):
+                            mismatched.append(rel)
+                            continue
+                        try:
+                            have = self._read_blob_bytes(old_dev, rel)
+                        except Exception:  # noqa: BLE001 — 读不到按缺失计
+                            mismatched.append(rel)
+                            continue
+                        if hashlib.sha256(have).hexdigest() != want_sha:
+                            mismatched.append(rel)
+                    if mismatched:
+                        return cq.LandingResult(
+                            ok=False,
+                            reason=(
+                                "NOTHING_TO_COMMIT 但快照未真应用 "
+                                f"(blob 与 old_dev 不符: {sorted(mismatched)[:5]})——"
+                                "应用静默丢失，死信回退重新入队"
+                                "（2026-09-15 q-0003 假落地事故防线）"
+                            ),
+                        )
                     return cq.LandingResult(ok=True, landed_id=old_dev)
                 return cq.LandingResult(
                     ok=False,
