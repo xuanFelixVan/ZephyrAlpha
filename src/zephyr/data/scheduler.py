@@ -144,7 +144,7 @@ from socketserver import ThreadingMixIn
 from typing import Any, Callable
 
 from zephyr.data import local_replay
-from zephyr.data.alerter import LEVEL_CRITICAL, LEVEL_ERROR, Alerter
+from zephyr.data.alerter import LEVEL_CRITICAL, LEVEL_ERROR, LEVEL_WARN, Alerter
 from zephyr.data.buffered_writer import BufferedWriter
 from zephyr.data.calendar import MarketCalendar, get_market_calendar
 from zephyr.data.ch_parts_monitor import check_and_alert
@@ -518,6 +518,19 @@ def _run_schedule_dag(
         log.warning("CH parts 告警探测异常", exc_info=True)
 
     return results
+
+
+# DDL 前置校验告警去重（2026-09-14 alt_sz 九表数据先行事故防线）：
+# 同表告警 4 小时内不重复，避免每轮调度刷屏
+_MISSING_TABLE_ALERT_TS: dict[str, datetime] = {}
+_MISSING_TABLE_ALERT_DEDUP = datetime.timedelta(hours=4)
+
+SQL_TABLE_EXISTS = "SELECT count() FROM system.tables WHERE {cond}"
+SQL_DAILY_COVERAGE = (
+    "SELECT toString(toDate(trade_date)) d, uniqExact(symbol) c "
+    "FROM {table} WHERE trade_date >= today() - {lookback_days} "
+    "GROUP BY d ORDER BY d"
+)
 
 
 class IntegratorScheduler:
@@ -1345,6 +1358,104 @@ class IntegratorScheduler:
 
     # ============== 任务执行 ==============
 
+    def _warn_if_table_missing(self, table_full: str) -> None:
+        """DDL 前置校验：目标表缺失→告警（4h 去重）。
+
+        非阻断——任务照常执行，写入失败仍会走 local_fallback 保数据
+        （2026-09-14 alt_sz 九表"数据先行"事故防线，缺口报告 v2 §七）。
+
+        Args:
+            table_full: 完整表名（如 c1_market.kline_daily）
+        """
+        from zephyr.data.ch_writer import query as ch_query
+        from zephyr.shared.utils.time_utils import now_utc
+
+        now = now_utc()
+        last = _MISSING_TABLE_ALERT_TS.get(table_full)
+        if last is not None and now - last < _MISSING_TABLE_ALERT_DEDUP:
+            return
+        parts = table_full.split(".")
+        if len(parts) == 2:
+            cond = f"database='{parts[0]}' AND name='{parts[1]}'"
+        else:
+            cond = f"name='{table_full}'"
+        out = ch_query(SQL_TABLE_EXISTS.format(cond=cond), timeout=30)
+        exists = out.strip().splitlines()[-1].strip() if out.strip() else "0"
+        if exists == "0":
+            _MISSING_TABLE_ALERT_TS[table_full] = now
+            log.error("DDL 前置校验: 目标表不存在 %s（任务继续，写入将进 local_fallback）", table_full)
+            try:
+                self._alerter.notify(
+                    "ddl_preflight",
+                    f"目标表不存在: {table_full}（DDL 未应用？）——"
+                    "任务继续执行，写入将进 local_fallback 待表创建后回灌",
+                    level="ERROR",
+                    source="ddl_preflight",
+                )
+            except Exception:  # noqa: BLE001 — 告警通道自身故障不上抛
+                pass
+        else:
+            _MISSING_TABLE_ALERT_TS.pop(table_full, None)
+
+    def verify_daily_kline_coverage(
+        self,
+        table: str = "c1_market.kline_daily",
+        lookback_days: int = 20,
+        baseline_days: int = 5,
+        tolerance: float = 0.01,
+    ) -> dict:
+        """日线标的数看门铃：当日标的数 vs 近 N 个有数交易日中位数，偏差超阈告警。
+
+        防线背景：2026-09-10~14 北交所 920 新段缺失导致日线标的数
+        5,554→5,207 静默降级 4 天无人发现（缺口报告 v2 §七）。
+        自基线设计（不依赖主数据表），偏差>tolerance 即 ERROR 告警。
+
+        Returns:
+            {ok, date, count, baseline_median, deviation} 或 {ok, skipped=...}
+        """
+        from zephyr.data.ch_writer import query as ch_query
+
+        out = ch_query(
+            SQL_DAILY_COVERAGE.format(table=table, lookback_days=lookback_days),
+            timeout=60,
+        )
+        points: list[tuple[str, int]] = []
+        for line in out.strip().splitlines():
+            parts = line.split("\t")
+            if len(parts) == 2 and parts[1].strip().isdigit():
+                points.append((parts[0], int(parts[1])))
+        if len(points) < 2:
+            return {"ok": True, "skipped": f"样本不足 samples={len(points)}"}
+        today_d, today_n = points[-1]
+        base_pts = sorted(c for _, c in points[-1 - baseline_days:-1])
+        m = len(base_pts)
+        median = (
+            base_pts[m // 2] if m % 2 else (base_pts[m // 2 - 1] + base_pts[m // 2]) / 2
+        )
+        if not median:
+            return {"ok": True, "skipped": "baseline=0"}
+        deviation = (today_n - median) / median
+        result = {
+            "ok": abs(deviation) <= tolerance,
+            "date": today_d,
+            "count": today_n,
+            "baseline_median": median,
+            "deviation": round(deviation, 4),
+        }
+        if not result["ok"]:
+            log.error("日线标的数看门铃触发: %s", result)
+            try:
+                self._alerter.notify(
+                    "daily_kline_coverage",
+                    f"日线标的数偏差超阈: {today_d}={today_n:,} vs 近{m}日中位 "
+                    f"{median:,}（{deviation:+.1%}）——疑似标的宇宙缺口/批量停牌",
+                    level="ERROR",
+                    source="daily_kline_coverage",
+                )
+            except Exception:  # noqa: BLE001 — 告警通道自身故障不上抛
+                pass
+        return result
+
     def run_task(self, task_id: str, task_queue: TaskQueue | None = None) -> bool:
         """执行单个任务（含数据源 fallback 机制）。
 
@@ -1377,6 +1488,14 @@ class IntegratorScheduler:
         if task is None:
             log.error("未知任务: %s", task_id)
             return False
+
+        # DDL 前置校验（非阻断，2026-09-14 alt_sz 九表数据先行事故防线）：
+        # 目标表缺失→ERROR 告警（4h 去重），任务继续执行走 fallback 保数据
+        if task.get("table"):
+            try:
+                self._warn_if_table_missing(task["table"])
+            except Exception:  # noqa: BLE001 — 前置校验自身故障不阻断任务
+                log.debug("表存在性前置校验失败 table=%s", task.get("table"), exc_info=True)
 
         # 构造数据源尝试列表：主源 + 副源
         sources_to_try: list[tuple[str, str | None]] = [(task["source"], task.get("capability"))]
@@ -1639,6 +1758,17 @@ class IntegratorScheduler:
                         today,
                         latest_key,
                     )
+                    # daily_valuation 09-10 整日洞事故（2026-09-15 gaps 治理侧）：0行 WARN 日志
+                    # 上线后仍漏观 5 天——日志无人盯，告警才可见。交易日 gate 挡掉节假日合法
+                    # 空转洪泛；无新数据类任务（分红等）交易日仍会 WARN，噪声明显再加 opt-out。
+                    if incremental and self._calendar.is_trading_day(today):
+                        self._alerter.notify(
+                            task_id,
+                            f"增量任务 0 行成功（交易日静默空转）: source={source} "
+                            f"table={table} start={start} end={today} last_key={latest_key}",
+                            level=LEVEL_WARN,
+                            source=source,
+                        )
                 else:
                     log.info("任务 %s 完成: rows=%d last_key=%s", task_id, total_rows, latest_key)
                 self._metrics.record_task(task_id, source, "SUCCESS", task_elapsed, writer.total_flushed)
@@ -1948,7 +2078,17 @@ class IntegratorScheduler:
         log.info("时段 %s 开始: %d 个任务", schedule_name, len(schedule_tasks))
 
         # 加载到 TaskQueue + DAG 并行执行 + 汇总与失败率检查
-        return _run_schedule_dag(self, schedule_name, schedule_tasks)
+        result = _run_schedule_dag(self, schedule_name, schedule_tasks)
+
+        # 日线标的数看门铃（2026-09-14 920 段静默降级 4 天事故防线）：
+        # daily_kline 批次跑完后校验当日标的数 vs 近 5 日中位数
+        if schedule_name == "daily_kline":
+            try:
+                coverage = self.verify_daily_kline_coverage()
+                log.info("日线标的数看门铃: %s", coverage)
+            except Exception:  # noqa: BLE001 — 看门铃自身故障不阻断调度
+                log.warning("日线看门铃执行失败", exc_info=True)
+        return result
 
     # ============== APScheduler 生命周期 ==============
 

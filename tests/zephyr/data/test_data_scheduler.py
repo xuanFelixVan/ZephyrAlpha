@@ -564,3 +564,56 @@ class TestMainSingleInstanceWiring:
             assert sched_mod.main() is None
         m_lock.assert_called_once()
         m_sched.assert_not_called()
+
+
+class TestZeroRowSuccessAlert:
+    """增量任务 0 行成功告警（daily_valuation 09-10 整日洞事故治理侧，2026-09-15）。
+
+    0 行 + 增量 + 交易日 → alerter WARN（进告警流）；节假日 gate 挡合法空转；
+    有行成功永不告警。
+    """
+
+    def _run_zero_row(self, scheduler, is_trading_day, rows):
+        scheduler.load_config()
+        mock_provider = _MockProvider()
+        mock_provider.connect()
+        scheduler.providers["mock"] = mock_provider
+        scheduler._alerter = MagicMock()
+        scheduler._calendar = MagicMock()
+        scheduler._calendar.is_trading_day.return_value = is_trading_day
+        empty = FetchResult(
+            table="c1_market.kline_daily",
+            columns=["code", "date", "close"],
+            rows=rows,
+            last_key="2026-07-05",
+            elapsed_sec=0.1,
+        )
+        with (
+            patch.object(mock_provider, "fetch", return_value=iter([empty])),
+            patch("src.zephyr.data.scheduler.BufferedWriter.add", return_value=True),
+            patch("src.zephyr.data.scheduler.BufferedWriter.flush", return_value=True),
+        ):
+            ok = scheduler.run_task("kline_daily_incremental")
+        return ok, scheduler._alerter
+
+    def test_zero_row_trading_day_alerts_warn(self, scheduler):
+        """交易日 0 行成功 → alerter WARN 一次。"""
+        ok, alerter = self._run_zero_row(scheduler, True, [])
+        assert ok is True
+        alerter.notify.assert_called_once()
+        args, kwargs = alerter.notify.call_args
+        assert kwargs.get("level") == "WARN"
+
+    def test_zero_row_holiday_no_alert(self, scheduler):
+        """节假日 0 行成功 = 合法空转，不告警。"""
+        ok, alerter = self._run_zero_row(scheduler, False, [])
+        assert ok is True
+        alerter.notify.assert_not_called()
+
+    def test_nonzero_row_never_alerts(self, scheduler):
+        """有行成功不触发 0 行告警。"""
+        ok, alerter = self._run_zero_row(
+            scheduler, True, [("000001", "2026-07-05", 10.5)]
+        )
+        assert ok is True
+        alerter.notify.assert_not_called()
