@@ -153,6 +153,25 @@ def _classify_item(project_root: Path, item: dict) -> list[_FileVerdict]:
     return verdicts
 
 
+def _parse_iso(s: str) -> float:
+    """ISO 时间串 → epoch 秒（解析失败返回 0=不纳入 mtime 兑底）。"""
+    try:
+        return datetime.fromisoformat(s.replace("Z", "+00:00")).timestamp()
+    except Exception:  # noqa: BLE001
+        return 0.0
+
+
+def _load_prev_report(project_root: Path) -> dict | None:
+    """读上轮审计报告（增量游标真源）；损坏/缺失返回 None（首轮全量语义）。"""
+    p = project_root / _AUDIT_DIR / _AUDIT_FILE
+    if not p.is_file():
+        return None
+    try:
+        return json.loads(p.read_text(encoding="utf-8"))
+    except Exception:  # noqa: BLE001
+        return None
+
+
 def _report_fresh(project_root: Path, max_age_s: float) -> bool:
     """审计报告在 max_age_s 内生成过 → 本次 skip（季庭审计语义：非每次 commit 都全量跑）。
 
@@ -176,10 +195,27 @@ def _run_audit(project_root: Path) -> dict:
     truncated = False
     if dead_dir.is_dir():
         all_paths = sorted(dead_dir.glob("*.json"))
-        if len(all_paths) > _MAX_ITEMS_PER_RUN:
-            all_paths = all_paths[:_MAX_ITEMS_PER_RUN]
-            truncated = True
+        # 增量窗口推进：上一轮已审计且未新死的项跳过（否则永远重复扫前 _MAX_ITEMS_PER_RUN 条，
+        # 存量 956 条永远扫不完）。游标=报告里 last_cursor_qid（排序末位 qid）。
+        last_cursor = ""
+        prev = _load_prev_report(project_root)
+        if prev:
+            last_cursor = str(prev.get("last_cursor_qid") or "")
+        # dead/ 目录按 qid 排序后，游标之后的才是本轮待扫；新死项 qid 含日期天然排后，
+        # 但游标之前的新死项（同日前缀）也需纳入——用 mtime> 上轮 generated_at 兑底纳入。
+        prev_generated = str(prev.get("generated_at") or "") if prev else ""
+        pending: list[Path] = []
         for p in all_paths:
+            if last_cursor and p.stem > last_cursor:
+                pending.append(p)
+            elif prev_generated and p.stat().st_mtime >= _parse_iso(prev_generated):
+                pending.append(p)  # 游标之前但上轮之后新死的项
+            elif not prev:
+                pending.append(p)  # 首轮全量
+        if len(pending) > _MAX_ITEMS_PER_RUN:
+            pending = pending[:_MAX_ITEMS_PER_RUN]
+            truncated = True
+        for p in pending:
             try:
                 items.append(json.loads(p.read_text(encoding="utf-8")))
             except Exception:  # noqa: BLE001 — 单条损坏不拖垮整体
@@ -206,10 +242,14 @@ def _run_audit(project_root: Path) -> dict:
         for v in vlist:
             file_verdicts.append({"qid": qid, "path": v.path, "verdict": v.verdict, "detail": v.detail})
 
+    # 增量游标：本轮扫到的排序末位 qid（下轮从它之后继续；实现真源=报告字段，非散文）
+    scanned_qids = [str(i.get("qid", "")) for i in items]
+    cursor_qid = max(scanned_qids) if scanned_qids else ""
     report = {
         "generated_at": datetime.now(timezone.utc).isoformat(timespec="seconds"),
         "total_items": len(items),
         "truncated_to_limit": truncated,
+        "last_cursor_qid": cursor_qid,
         "counts": counts,
         "owner_cleanable_qids": classified_qids["content_landed"] + classified_qids["landed_elsewhere"],
         "keep_evidence_qids": classified_qids["superseded_or_dropped"],
