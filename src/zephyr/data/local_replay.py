@@ -257,16 +257,123 @@ def read_manifest() -> list[dict]:
     return _read_manifest()
 
 
-def _write_manifest(entries: list[dict]) -> None:
-    """重写 manifest（只保留未回灌的条目，线程安全）。"""
-    with _manifest_lock:
-        if entries:
-            with open(_MANIFEST_PATH, "w", encoding="utf-8") as f:
-                for entry in entries:
-                    f.write(json.dumps(entry, ensure_ascii=False) + "\n")
-        else:
-            _MANIFEST_PATH.unlink(missing_ok=True)
+def _manifest_fs_lock(timeout: float = 10.0):
+    """跨进程 manifest 互斥锁（O_EXCL 锁文件 + 自旋，30s 陈锁强破）。
 
+    背景（2026-09-14 红蓝对抗实证）：scheduler 守护进程的 replay_batch 与
+    外部进程的 save_fallback 追加/收编之间存在丢更新竞态——守护进程
+    "读 manifest → 回灌 → 整文件重写"窗口内，他进程追加的条目会被重写
+    吞掉，文件变孤儿永不被回灌（当日 28 个孤儿文件的成因）。线程锁
+    _manifest_lock 只护本进程，跨进程必须文件锁。
+    """
+    import threading
+
+    lock_path = _FALLBACK_DIR / "_manifest.lock"
+    deadline = time.time() + timeout  # noqa: m46-time  墙钟 deadline 对比文件 st_mtime，须同源
+    for _ in range(int(timeout / 0.05) + 1):  # 有界自旋，非定时触发
+        try:
+            lock_path.parent.mkdir(parents=True, exist_ok=True)
+            fd = os.open(str(lock_path), os.O_CREAT | os.O_EXCL | os.O_WRONLY)  # noqa: r144-open  锁文件生命周期由显式 unlock 管理
+            os.write(fd, str(os.getpid()).encode())
+            os.close(fd)
+            return lock_path
+        except FileExistsError:
+            if lock_path.exists() and time.time() - lock_path.stat().st_mtime > 30:  # noqa: m46-time  墙钟与文件 st_mtime 对比，须同源时钟
+                lock_path.unlink(missing_ok=True)  # 陈锁（持有者死亡）强破
+                continue
+            if time.time() > deadline:  # noqa: m46-time  墙钟 deadline 对比，须同源时钟
+                log.warning("local_replay: manifest 锁等待超时（%.0fs），合并写兜底继续", timeout)
+                return None
+            threading.Event().wait(0.05)
+
+
+def _manifest_fs_unlock(lock_path) -> None:
+    if lock_path is not None:
+        try:
+            Path(lock_path).unlink(missing_ok=True)
+        except Exception:  # noqa: BLE001 — 解锁失败不阻断（陈锁由超时强破兜底）
+            pass
+
+
+def _write_manifest(entries: list[dict], exclude_files: frozenset = frozenset()) -> None:
+    """重写 manifest（线程安全 + 跨进程合并写，防丢更新）。
+
+    2026-09-14 红蓝对抗加固：写前在文件锁内重读现文件并 union——他进程在
+    本进程"读→算→写"窗口内追加/收编的条目不再被整文件重写吞掉。
+    键=file 相对路径；传入 entries 优先（回灌结果权威），现文件独有条目保留。
+    写入=.tmp 原子替换。
+    """
+    lock_path = _manifest_fs_lock()
+    try:
+        with _manifest_lock:
+            merged: dict[str, dict] = {}
+            if _MANIFEST_PATH.exists():
+                for line in _MANIFEST_PATH.read_text(encoding="utf-8").splitlines():
+                    line = line.strip()
+                    if not line:
+                        continue
+                    try:
+                        e = json.loads(line)
+                        merged[str(e.get("file", ""))] = e
+                    except json.JSONDecodeError:
+                        continue
+            for e in entries:
+                merged[str(e.get("file", ""))] = e
+            for k in exclude_files:
+                merged.pop(str(k).replace("\\", "/"), None)
+            if not merged:
+                _MANIFEST_PATH.unlink(missing_ok=True)
+                return
+            tmp_path = _MANIFEST_PATH.with_suffix(".jsonl.tmp")
+            with open(tmp_path, "w", encoding="utf-8") as f:
+                for e in merged.values():
+                    f.write(json.dumps(e, ensure_ascii=False) + "\n")
+            os.replace(str(tmp_path), str(_MANIFEST_PATH))
+    finally:
+        _manifest_fs_unlock(lock_path)
+
+
+def _adopt_orphans() -> int:
+    """收编巡检：磁盘有 .tsv 但 manifest 无条目的孤儿文件，补登记进 manifest。
+
+    背景（2026-09-14 红蓝对抗实证）：manifest 一旦因事故被重置/截断，磁盘兜底
+    文件即成"永久孤儿"——数据躺在盘上却永不被回灌（当日 28 个）。本巡检让
+    兜底队列自愈：孤儿按目录名反推表名（__ 还原为 .）收编，cols_clause=None
+    让回灌时重新查表列。
+    """
+    if not _FALLBACK_DIR.exists():
+        return 0
+    known = {str(e.get("file", "")).replace("\\", "/") for e in _read_manifest()}
+    adopted: list[dict] = []
+    for p in sorted(_FALLBACK_DIR.rglob("*.tsv")):
+        rel = str(p.relative_to(_FALLBACK_DIR)).replace("\\", "/")
+        if rel in known:
+            continue
+        parts = rel.split("/")
+        if len(parts) != 2 or "__" not in parts[0]:
+            continue  # 不符合 <table_dir>/<file>.tsv 布局的文件不收编（留人工判断）
+        table = parts[0].replace("__", ".", 1)
+        adopted.append({
+            "table": table,
+            "cols_clause": None,
+            "file": rel,
+            "rows": sum(1 for _ in open(p, "rb")),  # noqa: r144-open  单行只读计数行内表达式，无法 with 包装，句柄即用即弃
+            "ts": time.strftime("%Y%m%d_%H%M%S") + "_adopted",
+        })
+    if adopted:
+        log.warning(
+            "local_fallback: 收编 %d 个孤儿兜底文件进 manifest（manifest 曾丢失/重置，数据找回）",
+            len(adopted),
+        )
+        lock_path = _manifest_fs_lock()
+        try:
+            with _manifest_lock:
+                with open(_MANIFEST_PATH, "a", encoding="utf-8") as f:
+                    for e in adopted:
+                        f.write(json.dumps(entry, ensure_ascii=False) + "\n")
+        finally:
+            _manifest_fs_unlock(lock_path)
+    return len(adopted)
 
 def _replay_one_file(entry: dict, ch_writer_mod) -> str:
     """回灌单个文件。返回 'replayed' / 'failed' / 'skipped'。"""
@@ -343,6 +450,7 @@ def replay_batch(max_files: int = 100) -> dict[str, int]:
 
     result = {"replayed": 0, "failed": 0, "remaining": 0}
 
+    _adopt_orphans()  # 红蓝对抗加固 2026-09-14：先收编孤儿（manifest 丢失自愈），再回灌
     entries = _read_manifest()
     if not entries:
         return result
@@ -405,7 +513,7 @@ def replay_batch(max_files: int = 100) -> dict[str, int]:
             remaining_entries.append(entry)
             existing_files.add(f)
     result["remaining"] = len(remaining_entries)
-    _write_manifest(remaining_entries)
+    _write_manifest(remaining_entries, exclude_files=replayed_files)
 
     if result["replayed"] > 0:
         log.info(

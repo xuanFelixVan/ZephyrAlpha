@@ -49252,6 +49252,55 @@ entries:
   desc_zh: ""
   desc_en: ""
   plain_zh: "深圳能见度探测分钟级站点流（c1_market.alt_sz_visibility）建表真源：7 观测站每 10-15 分钟的能见度三口径（瞬时/10分钟均值/最小值），港口作业窗口与航线能见度参考"
+- module_path: scripts/data/p0_tick_backfill.py
+  domain_id: D_DATA
+  name_zh: "P0 tick 缺口回补器"
+  name_en: ""
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "从 QMT 本地数据目录把缺的 tick 分笔数据补进 ClickHouse，自带断点防重灌和删数据前的备份检查，是 15.6 亿行行情修复工程的执行工具"
+- module_path: scripts/data/repair_kline_tz_monthly.py
+  domain_id: D_DATA
+  name_zh: "K线时区漂移月度修复器"
+  name_en: ""
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "检查并修复月K/分钟K里时间戳差 8 小时的时区漂移坏数据，先备份再删除再回插再校验，任何一步校验不过就立即终止"
+- module_path: scripts/data/finish_p0_1.py
+  domain_id: D_DATA
+  name_zh: "P0-1 收官恢复器"
+  name_en: ""
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "把上次中断的分钟K时区修复做完：从备份表恢复中断桶、按缺口合并回插缺失数据、全表三重校验，任何一步对不上就立即停止"
+- module_path: scripts/data/import_bdpan_tick_zip.py
+  domain_id: D_DATA
+  name_zh: "百度网盘 tick 包导入器"
+  name_en: ""
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "从百度网盘下载的历史 tick 压缩包里把分笔数据导入 ClickHouse，只认明确指定的目录和日期命名，是 tick 数据缺口回填的常备通道"
+- module_path: scripts/data/p02_month_gapfill.py
+  domain_id: D_DATA
+  name_zh: "P0-2 月度缺口补齐器"
+  name_en: ""
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "按月核查 tick 数据缺口并从 QMT 逐标的补齐，先备份后删除再补插，全程计数核验防止数据丢失"
+- module_path: scripts/data/repair_kline_degraded_pull.py
+  domain_id: D_DATA
+  name_zh: "K线退化拉取修复器"
+  name_en: ""
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "针对采集退化期写坏的K线数据，先快照再按精确日期区间删除重拉，不在白名单里的表直接拒绝，防止修复范围外溢"
+- module_path: scripts/data/wipe_tick3days.py
+  domain_id: D_DATA
+  name_zh: "tick 三天清残器"
+  name_en: ""
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "采集退化期写入的三天坏 tick 数据清场工具：先整表备份到备份表再删除，删完必须复验零残留，以备份表内容为准"
 
 battle_map_steps:
 - step_id: BM-BUY-05

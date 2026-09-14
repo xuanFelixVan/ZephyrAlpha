@@ -5003,6 +5003,38 @@ capabilities:
     提交→全景对齐→清理 全流程步骤与失败处置；适用 07 域（regime/选股/仓位/风控/买卖/执行/对账/治理）施工，RULE-CAPABILITY-LOOKUP
     检索"施工"应命中本条
 creation_tokens:
+- file: "docs/_working/2026-09-14-ch-redblue-adversarial-report.md"
+  token: "ch-redblue-20260914"
+  created_by: "st-chinfra-20260914"
+  capability: "ch_connection_unify"
+- file: "scripts/data/finish_p0_1.py"
+  token: "finish-p01-promote-20260914"
+  created_by: "st-chinfra-20260914"
+  capability: "ch_connection_unify"
+- file: "scripts/data/wipe_tick3days.py"
+  token: "wipe-tick3days-promote-20260914"
+  created_by: "st-chinfra-20260914"
+  capability: "ch_connection_unify"
+- file: "scripts/data/p02_month_gapfill.py"
+  token: "p02-gapfill-promote-20260914"
+  created_by: "st-chinfra-20260914"
+  capability: "ch_connection_unify"
+- file: "scripts/data/import_bdpan_tick_zip.py"
+  token: "bdpan-import-promote-20260914"
+  created_by: "st-chinfra-20260914"
+  capability: "ch_connection_unify"
+- file: "scripts/data/repair_kline_degraded_pull.py"
+  token: "kline-degraded-promote-20260914"
+  created_by: "st-chinfra-20260914"
+  capability: "ch_connection_unify"
+- file: "scripts/data/p0_tick_backfill.py"
+  token: "p0-tick-backfill-promote-20260914"
+  created_by: "st-chinfra-20260914"
+  capability: "ch_connection_unify"
+- file: "scripts/data/repair_kline_tz_monthly.py"
+  token: "kline-tz-monthly-promote-20260914"
+  created_by: "st-chinfra-20260914"
+  capability: "ch_connection_unify"
 - file: data/sz_open_data_catalog/subscribe_status.json
   token: szopen-tools-subscribe_status-json-20260915
   created_by: st-altdata-20260914

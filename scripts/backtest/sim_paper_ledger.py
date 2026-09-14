@@ -158,7 +158,27 @@ def main() -> None:
         start, end = args.start or "2026-07-01", args.end or date.today().strftime("%Y-%m-%d")
     else:
         start = end = args.start or date.today().strftime("%Y-%m-%d")
-    if args.rebuild:
+    if args.mode == "sim_daily" and not args.rebuild:
+        # 红蓝对抗加固 2026-09-14：19:30 档撞 CH 维护窗口（VHDX/备份类优雅停机
+        # 10-25 分钟）时读数阶段直接失败，当日钱包快照丢失（9/14 实证）。
+        # 有界重试覆盖 ~20 分钟窗口；replay_demo（交互式）不重试。
+        import threading
+
+        max_attempts, gap = 10, 120
+        for attempt in range(1, max_attempts + 1):
+            try:
+                res = run(args.mode, start, end,
+                          run_id=f"sim-{args.mode}-{datetime.now(timezone.utc).strftime('%Y%m%d%H%M%S')}")
+                break
+            except Exception as e:  # noqa: BLE001 — CH 不可达/断连类失败均重试
+                if attempt == max_attempts:
+                    raise
+                print(f"[sim_daily] CH 不可达（{type(e).__name__}: {str(e)[:80]}），"
+                      f"{gap}s 后第 {attempt}/{max_attempts} 次重试", flush=True)
+                threading.Event().wait(gap)  # 有界退避（非定时触发）
+        else:
+            return
+    elif args.rebuild:
         rows = rebuild(STRATEGY_ID, args.mode, start, end)
         from zephyr.data import ch_writer
 
@@ -172,7 +192,8 @@ def main() -> None:
             raise RuntimeError("重建落库未确认——fail-closed")
         print(json.dumps({"rebuild": True, "rows": len(rows)}, ensure_ascii=False))
         return
-    res = run(args.mode, start, end, run_id=f"sim-{args.mode}-{datetime.now(timezone.utc).strftime('%Y%m%d%H%M%S')}")
+    if args.mode != "sim_daily" or args.rebuild:
+        res = run(args.mode, start, end, run_id=f"sim-{args.mode}-{datetime.now(timezone.utc).strftime('%Y%m%d%H%M%S')}")
     from zephyr.data import ch_writer
 
     def cell(v):

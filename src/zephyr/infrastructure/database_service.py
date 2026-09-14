@@ -220,7 +220,11 @@ class DatabaseService(DatabaseCRUDMixin):
             else:
                 raise ValueError(f"未知 ClickHouse 角色: {role!r}（可选 reader/writer/admin）")
             if extra_kwargs:
-                extra.update(extra_kwargs)
+                for k, v in extra_kwargs.items():
+                    if k == "settings" and isinstance(v, dict) and isinstance(extra.get("settings"), dict):
+                        extra["settings"] = {**extra["settings"], **v}  # settings 合并（readonly 与长超时共存）
+                    else:
+                        extra[k] = v
             conn = Client(
                 host=cfg["host"],
                 port=int(cfg["port"]),
