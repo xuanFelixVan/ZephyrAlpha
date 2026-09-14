@@ -5,7 +5,7 @@
 # [CONSUMERS] zephyr.strategy_pipeline.intake（sim 流转预授权门）; C6 管线及格判定扩展
 # [STARTUP] imported
 # [MATURITY] experimental
-# [INVARIANTS] 决策核单源委托 canonical bhy_fdr（本模块只保留 dict 接口+步进报告，零自有统计实现）；BH 语义保持（arbitrary_dependence=False=预注册口径不变，升 BHY True=收紧裁定待策略域拍板）；零假设族=同一批次内全部待检策略（含已过 §8 门者——选择偏差必须全员入族）；空族/q 越界前置校验；同输入必同输出
+# [INVARIANTS] 决策核单源委托 canonical bhy_fdr（本模块只保留 dict 接口+步进报告，零自有统计实现）；BHY 依赖稳健已启用（c(m)=Σ1/i 保守校正，对账④ Owner 通过 2026-09-15）；零假设族=同一批次内全部待检策略（含已过 §8 门者——选择偏差必须全员入族）；空族/q 越界前置校验；同输入必同输出
 # [MODIFY-GUARD] tests/strategy_pipeline/test_bh_fdr.py
 # [STABILITY] experimental
 # [SAFETY] L
@@ -18,8 +18,8 @@
 """BH-FDR 门——全自动入库管线的假发现率控制（对账 28a7403e86 §二：决策核已单源收敛）。
 
 决策核委托 canonical `zephyr.factor.analysis.bhy_fdr`（MOD-L02-BHY）——本模块
-只保留 intake 契约（dict 接口+步进报告）与预注册语义（arbitrary_dependence=False
-=BH 口径，与收敛前逐位一致；升 BHY 只需调用方传 True，属策略域收紧裁定）。
+只保留 intake 契约（dict 接口+步进报告）。**BHY 依赖稳健已启用**（Owner 通过
+对账④裁定 2026-09-15：c(m)=Σ1/i 保守校正生效，策略批内常相关语境门槛收紧）。
 
 为什么需要：全自动管线没有"这结果看着不对"的人工直觉兜底；§8 双窗土规是逐条判定，
 不校正当批多重检验的选择偏差。BH 程序把"批内挑最"的假发现率压到 q 上界以内
@@ -40,7 +40,7 @@ from zephyr.factor.analysis.bhy_fdr import bhy_fdr
 
 
 def bh_filter(
-    p_values: dict[str, float], q: float = 0.10, *, arbitrary_dependence: bool = False
+    p_values: dict[str, float], q: float = 0.10, *, arbitrary_dependence: bool = True
 ) -> tuple[set[str], dict[str, dict[str, Any]]]:
     """Benjamini-Hochberg FDR 过滤：返回（通过集，逐条报告）。
 
