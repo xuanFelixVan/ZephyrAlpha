@@ -4,10 +4,10 @@ ttl: permanent
 doc_type: register
 title: 规则路径目录（唯一真源 SSoT）
 status: active
-generated_at: '2026-09-14T20:52:17Z'
+generated_at: '2026-09-14T22:21:01Z'
 generated_by: scripts/governance/d3_metadata/generate_rule_catalog.py
 maintenance: auto
-total_files: 250
+total_files: 252
 total_rules: 61
 tier_distribution:
   L0: 21
@@ -40,6 +40,21 @@ files:
   stability: ''
   layer: cross_layer
   superseded_by: null
+  severity: ''
+  tier: ''
+  aliases: []
+  section_count: 0
+- path: docs/01_policies_and_standards/policies/c3_translation_pipeline_ruling.md
+  module_id: ''
+  title: C3 翻译管道化裁定——不宜全自动，保持 AI 会话逐件翻译
+  doc_type: policy
+  status: ''
+  version: ''
+  rule_form: standard
+  scope: ''
+  stability: ''
+  layer: ''
+  superseded_by: ''
   severity: ''
   tier: ''
   aliases: []
@@ -85,6 +100,21 @@ files:
   stability: ''
   layer: cross_layer
   superseded_by: null
+  severity: ''
+  tier: ''
+  aliases: []
+  section_count: 0
+- path: docs/01_policies_and_standards/policies/strategy_intake_acceptance6_evidence.md
+  module_id: ''
+  title: C6 全自动入库管线验收⑥回放证据与写入路径授权书（策略入库自动化）
+  doc_type: policy
+  status: ''
+  version: ''
+  rule_form: standard
+  scope: ''
+  stability: ''
+  layer: ''
+  superseded_by: ''
   severity: ''
   tier: ''
   aliases: []
