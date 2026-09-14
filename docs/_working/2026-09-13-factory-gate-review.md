@@ -2,6 +2,35 @@
 ttl: task_bound
 ---
 
+> ## 结案报告（2026-09-15 由 st-fullchain-20260914 核验）
+> **总结论：未结案（仍有待办）。处置=**保留**。**
+>
+> **✅ 已完成（8 条，摘录）**
+> - L24: - **件1 structure validate**：已建 `scripts/governance/d5_architecture/validators/validate_strategy_production_map.py`
+> - L27: - **件2 对抗测试**：已建 `tests/backtest/test_strategy_production_map_adversarial.py`
+> - L28: （MOD-BT-081，15 用例：好图通过+14 种坏图全拦），实战战果=上线即抓到 FAC-E1A built 无锚真问题
+> - L31: 修复落地后执行"**——前置 f3f6ecb86f（conftest 自愈）已落地，第二批施工条件已满足
+> - L67: | 1 structure validate | 已建（批1），不重复 | — |
+> - L68: | 2 对抗测试 | 已建（批1），gate 层补红蓝用例 | — |
+> - （另有 2 条完成信号，见正文）
+>
+> **⚠️ 未完成（5 条，逐条摘录）**
+> - L20: ### 1.1 重大发现：五件套 3/5 已落地，指令按"未建"规划
+> - L34: "第二批两件施工"；工厂图头注释"四关验收件未建"为过时陈述（批1 落地时未回写），本批顺带修正。
+> - L72: | field_dictionary 登记（批1 message 承诺"随第二批"） | **裁剪缓办**（留痕待 Owner 追认） | REG-FLD-001 管数据层字段（16 域 FLD-* 条目），地图节点字段不入（TDM 先例：TDM 节点字段同样不在 REG-FLD-001）；工厂 s
+> - L106: 上一班引号化 workaround=治标实证）——可先行但与本批无交集，**不施**（留 Owner 拍板）
+> - L130: 4. **field_dictionary 缓办+18 空 __init__.py 留置**：登记待 Owner 追认/下会话处置
+>
+> **核验方式**：全文扫描完成/待办信号 + 引用文件存在性核验（引用 9 个，其中判废弃 0、路径漂移 2）+ commit 提及 9 处。
+> **路径漂移（非缺失，勿误判）**：`docs/01_policies_and_standards/sop/alignment_checklist.md` 路径漂移→docs/01_policies_and_standards/sop/governance_sop/alignment_checklist.md；`docs/_working/2026-09-13-concurrency-commit-perf-study.md` 路径漂移→docs/_working/archive/2026-09/2026-09-13-concurrency-commit-perf-study.md
+>
+> **处置建议**：保留。（本报告由清理批自动生成，判定依据=文档自身信号 + 代码侧核验）
+
+
+
+
+
+
 # 策略工厂门禁任务审查报告（交接指令 v2 第零段）
 
 > 2026-09-13 夜班交接（night-sweep-20260913 撰写指令）→ 接手会话 factory-gate-b2-20260913 审查。

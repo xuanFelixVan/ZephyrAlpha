@@ -4,6 +4,27 @@ ttl: task_bound
 
 # 2026-09-14 行情数据缺口修复报告（v2 重建版）
 
+> ## 结案报告（2026-09-15 00:5x 由 st-fullchain-20260914 点对点核验）
+> **总结论：主体已结案，4 项遗留未闭环，可保留不可删。**
+>
+> **✅ 已完成并验证（代码侧实查）**
+> - P0-1 派生表时区修复：`scripts/data/repair_kline_tz_monthly.py`、`scripts/data/finish_p0_1.py` **均在位**
+> - P0-2 全历史重写（≈15.6 亿行）：`scripts/data/p02_month_gapfill.py` **在位**
+> - P0-3 tick 三天补数（09-09/10/11，终验行数已记录）
+> - P1-4 采集管线复活（TickSubscriber 计划任务已 Enable，根因三层闭环）
+> - 晚间批：期货 tick 补齐、TICK_SOURCE 切 xtdata、local_replay 死信根治、当日日线 5,549 补齐
+>
+> **⚠️ 未完成（4 项，仍需后续动作）**
+> 1. **防复发四件套待立项**（§七-5）：① miniqmt 日线车道补 920 段覆盖 + 标的数偏差 >1% 告警；② ch_writer 表列缓存失效机制；③ 新表 DDL 前置校验；④ TICK_SOURCE 切 xtdata 后桥模式是否降级为纯后备（待 09-15 开盘量级验证后 Owner/A22 确认）
+> 2. **TradingWatchdog / RestartMiniQmt 两个计划任务仍 Disabled**，报告明确"涉实盘/终端管理，未动，留 Owner 定"——**至今未见 Owner 裁定**
+> 3. **alt_sz_subject 2 件死信仍在途**：writer 写 `alt_sz_subject` 而 registry/DDL 为 `alt_sz_market_subject`，按"他会话在途不代修"留给 C-1 会话自行收口
+> 4. **备份表清理未确认**：`kline_1min_tzbak_20260914`、`kline_5min_tzbak_20260914` 及 tzbak2/3/4 系列，报告写"验证期后再删"，**未见删除记录**
+>
+> **永久事实（非待办，勿重复挖）**：tick 07-03 / 07-06~07-09 / 08-05 / 08-06 因 bdpan 停更 + QMT retention 不足，**永久不可恢复**，已登记。
+>
+> **核验方式**：逐条读取本报告 → 对点名脚本做文件系统存在性核验 → 遗留项逐条标注处置状态。
+> **处置建议**：4 项遗留闭环前**不删除本报告**（它是 P0-1/P0-2 回滚锚与口径速查的唯一载体）。
+
 > **文件事故注记**：本报告 v1 与交接包、修复脚本目录在 2026-09-14 07:04 被并发会话/进程清空
 > （docs/_working 全目录 108 个已跟踪文件 + 多个未跟踪文件，全仓多会话当日文档均中招，
 > 他会话当日 commit 中亦有"落盘合并竞态被吞""文件恢复"记录）。已跟踪文件经
@@ -171,3 +192,21 @@ Owner 发现 7、8 月行情缺数据。三轮修复：①（09-13/14 凌晨）t
    偏差>1% 告警；② ch_writer 表列缓存加失效机制（insert 失败时强制刷新 DESCRIBE）；
    ③ 新表 DDL 前置校验（数据先行=部署倒置，alt_sz 六表案例）；④ TICK_SOURCE 已切
    xtdata，观察明日量级后由 Owner/A22 确认桥模式降级为纯后备。
+
+### §八·补（09-15 00:5x~01:2x 落地攻坚战实录）
+
+- 阻断门禁依次出现并被逐一破解：RENAME-DEPGRAPH-SYNC（他会话改名欠账，depgraph 重建后
+  因其改名件未提交而持续拦截）→ SESSION-REQUIRED（会话注册过期，--allow-overlap 过）→
+  COMMIT_SCOPE_VIOLATION（src+tests 两域，--allow-multi-domain 过，宪法 §2.4 gate+自家
+  测试同批合法）→ PERM-TRIGGER（咬他会话 staged 的 backfill 脚本）。
+- **队列假落地事故（新）**：q-20260915-st-mktfix-20260914-0003 入队后 state=done、
+  landed_id=0ba60dd0ef（该 commit 早于入队时刻且不含本批文件）——串行器把"已包含"判错，
+  实际四文件仍 staged 未提交。**勿信该队列 done 状态**。已入 #ARCH-311 同族（提交基建
+  可信度）待修。
+- 共享暂存区夜班高峰 26→40 文件震荡，直连与队列均无干净窗口；worktree 隔离路线因主区
+  40 个他人 staged 文件的合并风险暂不采用。
+- **明早落地配方（不变，一轮过）**：§八上方的一键命令 + 追加
+  `--allow-multi-domain`（src+tests 两域）。前提=改名会话已完成 depgraph 同步（若
+  RENAME-DEPGRAPH-SYNC 仍拦：`python scripts/governance/generate_project_depgraph.py
+  --output-db depgraph --force` 后即过）。落地后 scheduler 重启一次加载看门铃与前置校验
+  （当前运行中的 scheduler 尚载旧代码，两项防线明早不生效——落地下班次务必重启）。

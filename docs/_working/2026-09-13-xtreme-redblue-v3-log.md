@@ -1,6 +1,27 @@
 ---
 ttl: task_bound
 ---
+
+> ## 结案报告（2026-09-15 由 st-fullchain-20260914 核验）
+> **总结论：未结案（仍有待办）。处置=**保留**。**
+>
+> **✅ 已完成（2 条，摘录）**
+> - L161: # 偏航2: 新建 f_lock.md 提交被 CREATE-GUARD 拦（新 .md 要 creation_token，而登记处 _registry/ 是方案禁区）→ 换已入库的 f_stage.md 当争夺目标
+> - L395: - lab 已入库 8 文件删除：docs 侧 4 个（f_stage/f_unreg/f_forge/f_scope）被 **reconciler 自动批提交 a8cc267636 吸收**（暂存区传送带现象再现——删除已入库但归属 reconciler，照实记录）；tests 侧 4 个走本人网
+>
+> **⚠️ 未完成（2 条，逐条摘录）**
+> - L226: - 判定：**记录（未完成——被他会话半成品注册表引发的【全仓提交双通道 blackout】吞没：主网关 fail-closed + worktree fail-closed，全程无逃生提示）**。S2.5 本体（SPLIT 门验证）待注册表恢复后补测。此 blackout 本身是本轮最重要的可用性
+> - L381: 4. **怪文件名批**（中文/空格/$/.md.md 四件）：连续撞**第二次 registry blackout**（CREATE-GUARD fail-closed，line 12149，`MM` 双重脏=某会话 staged 后继续改）——4 连败后停，未覆盖。文件已造好留在 lab 待清理
+>
+> **核验方式**：全文扫描完成/待办信号 + 引用文件存在性核验（引用 9 个，其中判废弃 1、路径漂移 0）+ commit 提及 19 处。
+> **判废弃引用（C-1）**：`docs/_working/xt_lab3/f_bypass.md`
+>
+> **处置建议**：保留。（本报告由清理批自动生成，判定依据=文档自身信号 + 代码侧核验）
+
+
+
+
+
 # 极限红蓝对抗 v3 执行日志
 执行者：GLM 5.3 Flash；开始时间：23:10；基线 HEAD：7a4efc8113
 环境注：执行 shell 是 Git Bash（非方案假设的 PowerShell），命令按 bash 语法等价改写，改写过程如实记录。`&&`/heredoc 均可用。

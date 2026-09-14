@@ -2,6 +2,28 @@
 ttl: task_bound
 ---
 
+> ## 结案报告（2026-09-15 由 st-fullchain-20260914 核验）
+> **总结论：未结案（仍有待办）。处置=**保留**。**
+>
+> **✅ 已完成（3 条，摘录）**
+> - L17: - 财报**数据不缺**：c3_fundamental 25 张表（三大报表/财务指标/业绩预告/快报/审计意见/股东结构全家桶/主营构成）都在，且 PIT 查询层已建（pit_query.py，9 表白名单+as_of/embargo/survivorship 三公理）。
+> - L94: - **已落地的边缘另类（未挂 alt_data 名下）**：weather_data（和风）、hog_futures_core/hog_province_spot/hog_spot_index（生猪产业链垂直数据）、stock_hot_rank（社交热度类）、crypto_kline_daily 
+> - L129: - 另类占位：src/zephyr/alt_data/（6 模块 DORMANT，satellite 空壳）；已落地另类：weather_data/hog_*/stock_hot_rank/crypto_*（c1_market）
+>
+> **⚠️ 未完成（2 条，逐条摘录）**
+> - L95: - **alt_data 包整体 DORMANT**：6 个模块仅 __init__ 占位，satellite_collector 空壳，唯一非空壳 research_report_collector 未接线。另类数据集登记 0。
+> - L116: **一句话回答你的三个猜测**：财报模块——**数据不缺、查询不缺，缺因子消费端**；表格数据源——**通道不缺，付费广度缺（iFind 已退役，是取舍不是遗漏）**；研报——**真缺，但有三处未接线雏形，缺文本库+结构化+因子化**。
+>
+> **核验方式**：全文扫描完成/待办信号 + 引用文件存在性核验（引用 10 个，其中判废弃 0、路径漂移 1）+ commit 提及 0 处。
+> **路径漂移（非缺失，勿误判）**：`src/zephyr/backtest/pit_manager.py` 路径漂移→src/zephyr/backtest/core/pit_manager.py
+>
+> **处置建议**：保留。（本报告由清理批自动生成，判定依据=文档自身信号 + 代码侧核验）
+
+
+
+
+
+
 # ZephyrAlpha 数据分层体检报告（2026-09-12）
 
 > 任务：①调研专业机构/量化社区的数据分层方法，对照 Owner 的 L1/L2/L3 三层分法；②逐层盘点项目数据家底，回答"财报研究模块/表格数据源/研报还缺不缺"。

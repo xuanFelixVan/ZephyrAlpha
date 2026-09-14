@@ -2,6 +2,24 @@
 ttl: task_bound
 ---
 
+> ## 结案报告（2026-09-15 由 st-fullchain-20260914 核验）
+> **总结论：未结案（仍有待办）。处置=**保留**。**
+>
+> **✅ 已完成**：无显式完成信号
+>
+> **⚠️ 未完成（1 条，逐条摘录）**
+> - L85: | `data/strategy_intake/c4_deferrals.csv` | 321 条挂起登记（理由码） |
+>
+> **核验方式**：全文扫描完成/待办信号 + 引用文件存在性核验（引用 16 个，其中判废弃 0、路径漂移 2）+ commit 提及 0 处。
+> **路径漂移（非缺失，勿误判）**：`docs/_working/2026-09-14-sim-platform-blueprint.md` 路径漂移→docs/_working/archive/2026-09/2026-09-14-sim-platform-blueprint.md；`scripts/data/backfill_stock_indicator_daily_basic.py` 路径漂移→scripts/backtest/backfill_stock_indicator_daily_basic.py
+>
+> **处置建议**：保留。（本报告由清理批自动生成，判定依据=文档自身信号 + 代码侧核验）
+
+
+
+
+
+
 # CH 连接统一治本——交接文档（2026-09-14）
 
 > 移交方：st-zcode-c4-20260912（模拟盘平台+估值翻译批）
