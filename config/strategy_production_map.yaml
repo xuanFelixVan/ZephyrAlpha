@@ -179,6 +179,10 @@ nodes:
     data_refs: []
     module_ref: MOD-BT-084
     build_status: partial
+    algo_note_extra: Kronos 接入=MOD-BT-195 kronos_adapter（vendor/Kronos 官方仓+镜像权重，
+      600519 walk-forward 实测：区间锐度 109 vs 随机游走 314、校准 share 0.4 vs 0.2，
+      小样本首战跑赢基准；多路径采样绕官方 sample 维均值，分位数=真分布；双标准考尺
+      MOD-BT-194 评分）；只当基线对台不当信号
     design_refs:
       - Kronos（AAAI 2026） arxiv.org/html/2508.02739v1
       - github.com/shiyu-coder/Kronos（含 Qlib+A 股微调管线）

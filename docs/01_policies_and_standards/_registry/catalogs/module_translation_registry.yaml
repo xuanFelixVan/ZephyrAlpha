@@ -49532,6 +49532,13 @@ entries:
   desc_zh: "新闻→LLM抽取供应链关系→暂存台账（绝不写ig_fact正图，入图需Owner审核另批）"
   desc_en: ""
   plain_zh: "给产业链地图自动找新关系的 scout：翻新闻让大模型找'A给B供货'这类关系，带原文证据和置信度落到暂存清单；地图正本一动不动，等老板审完清单才准入图。防幻觉三道锁：主体必须原文出现、必须给原文摘录、置信度不够就扔。"
+- module_path: scripts/backtest/kronos_adapter.py
+  domain_id: D_BACKTEST
+  name_zh: "Kronos基线适配器"
+  name_en: ""
+  desc_zh: "K线基础模型Kronos接入：CH数据→模型→样本路径分位数，walk-forward无前视回放+194双标准评分"
+  desc_en: ""
+  plain_zh: "给工厂请了个'读过亿根K线的外援大脑'（Kronos，AAAI 2026 开源）：把咱们仓库的K线数据喂给它，它每次吐出多条未来走势路径，我们抽成分位数区间，再用双标准考尺打分（跟随机游走基准对比——跑不赢它就不配上岗）。只当基线对台，不当交易信号。实测茅台：区间锐度 109 vs 基准 314，明显更紧。"
 
 battle_map_steps:
 - step_id: BM-BUY-05

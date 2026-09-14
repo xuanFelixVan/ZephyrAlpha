@@ -12772,6 +12772,10 @@ creation_tokens:
   token: factory-backend-register-c4-exam-task-20260914
   created_by: st-facbe-20260914
   capability: factory_backend
+- file: scripts/backtest/kronos_adapter.py
+  token: factory-backend-kronos-adapter-20260914
+  created_by: st-facbe-20260914
+  capability: factory_backend
 - file: scripts/backtest/translated/c4_21af8c66c15e_small_cap.py
   token: c4-21af8c66c15e-small-cap-20260914
   created_by: st-zcode-c4-20260912
