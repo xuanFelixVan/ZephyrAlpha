@@ -49,7 +49,6 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parent.parent.parent
 sys.path.insert(0, str(ROOT / "src"))
 
-from zephyr.data.ch_config import load_ch_config  # noqa: E402
 
 logging.basicConfig(level=logging.INFO, format="%(asctime)s [%(levelname)s] %(message)s")
 log = logging.getLogger(__name__)
@@ -179,16 +178,10 @@ def sql_final_verify() -> str:
 
 def get_client():
     """clickhouse-driver TCP 客户端（admin 档：RENAME/CREATE 需高授权，purge 实证 writer 不足）。"""
-    import clickhouse_driver  # noqa: PLC0415 — lazy
+    from zephyr.infrastructure.database_service import get_db_service
 
-    cfg = load_ch_config()
-    return clickhouse_driver.Client(
-        host=cfg["host"],
-        port=cfg.get("port", 9000),
-        user=cfg.get("user", "default"),
-        password=cfg.get("password", ""),
-        send_receive_timeout=_MUTATION_TIMEOUT_S,
-    )
+    return get_db_service().get_clickhouse_conn(
+        role="admin", extra_kwargs={"send_receive_timeout": _MUTATION_TIMEOUT_S})
 
 
 def _recent_backup_ok() -> tuple[bool, str]:

@@ -42,26 +42,13 @@ _RUNS = _ROOT / "data" / "backtest_artifacts" / "runs"
 _TABLE = "c1_backtest.strategy_screen"
 
 
-_client: Any = None
 
 
 def _q(sql: str) -> list[tuple]:
     """只读查询（进程内单客户端缓存，退出时关闭——禁 socket 泄漏）。"""
-    global _client
-    if _client is None:
-        from zephyr.data.ch_config import ensure_ch_env_loaded, load_ch_reader_config
+    from zephyr.data.ch_writer import get_client_strict
 
-        ensure_ch_env_loaded()
-        cfg = load_ch_reader_config()
-        from clickhouse_driver import Client
-
-        _client = Client(host=cfg["host"], port=int(cfg.get("port", 9000)),
-                         user=cfg.get("user", "default"), password=cfg.get("password", ""),
-                         connect_timeout=5)
-        import atexit
-
-        atexit.register(_client.disconnect)
-    return _client.execute(sql)
+    return get_client_strict().execute(sql)
 
 
 def cmd_summary(_args: argparse.Namespace) -> int:

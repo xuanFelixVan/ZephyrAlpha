@@ -126,7 +126,7 @@ except SecretsError:
 _BEIJING_TZ = timezone(timedelta(hours=8))
 
 # 表名真源：business_data_categories.yaml via table_registry（裁定 #ARCH-CH-024，
-# 2026-08-17 AI-04 审计治本：消除硬编码库表名 + 裸 clickhouse_driver.Client）
+# 2026-08-17 AI-04 审计治本：消除硬编码库表名 + 裸 Client 直连）
 from zephyr.data.table_registry import get_registry as _get_table_registry
 
 _CH_TABLE = _get_table_registry().table("market_sector_snapshot_880")
@@ -314,7 +314,7 @@ def parse_snapshot(
 #   读 → ch_reader.query（reader 账号 + FINAL 去重，只读安全约束）
 #   写 → ch_writer.write_result（writer 账号 RBAC + 本地落盘兜底，#ARCH-CH-027）
 #   DDL → ch_writer.query（幂等 CREATE IF NOT EXISTS）
-# 禁止裸 clickhouse_driver.Client（绕过配置真源/账号分层/降级链）。
+# 禁止裸 Client 直连（绕过配置真源/账号分层/降级链）。
 
 
 def _create_table() -> None:

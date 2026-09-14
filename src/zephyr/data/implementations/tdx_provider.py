@@ -297,7 +297,7 @@ class TDXProvider(IngestProviderBase):
 
         与 sector_snapshot_collector._get_all_sector_codes 同模式。
         治本（2026-08-17 AI-04 审计）：纯 SELECT 改走 ch_reader 只读路径
-        （reader 账号 + FINAL 去重），原裸 clickhouse_driver.Client 违反
+        （reader 账号 + FINAL 去重），原裸 Client 直连违反
         DatabaseService 访问协议与 read_only 安全约束。
         """
         from .. import ch_reader

@@ -79,14 +79,9 @@ def main() -> None:
     ap.add_argument("--refetch", action="store_true", help="忽略已回补集合全量重拉（ReplacingMergeTree 去重）")
     args = ap.parse_args()
 
-    from zephyr.data.ch_config import ensure_ch_env_loaded, load_ch_reader_config
+    from zephyr.data.ch_writer import get_client_strict
 
-    ensure_ch_env_loaded()
-    cfg = load_ch_reader_config()
-    from clickhouse_driver import Client
-
-    client = Client(host=cfg["host"], port=int(cfg.get("port", 9000)),
-                    user=cfg.get("user", "default"), password=cfg.get("password", ""), connect_timeout=5)
+    client = get_client_strict()
     days = _trade_days(args.start, args.end, client)
     done = _existing_dates(client)
     todo = list(days) if args.refetch else [d for d in days if d not in done]

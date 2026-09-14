@@ -292,20 +292,14 @@ def get_client():
         # 锁内二次检查冷却期
         if _tcp_fail_ts and (_time.time() - _tcp_fail_ts) < _TCP_COOLDOWN_SEC:
             return None
-        # 治本修复#ARCH-CH-FALLBACK-001（2026-07-24）：import 移入 try 块，
-        # 缺 clickhouse_driver 时降级到 HTTP 而非抛 ImportError（原 bug：import 在 try 外）
+        # 连接统一治本（2026-09-14，docs/_working/2026-09-14-ch-connection-handoff.md）：
+        # Client 构造上收 DatabaseService.get_clickhouse_conn(role="writer")，
+        # 本模块只保留 探针/冷却/失效自愈/HTTP 降级 编排；连接参数
+        # （connect_timeout=3/tcp_keepalive/sync_request_timeout=10）由 writer 角色原样承接。
         try:
-            from clickhouse_driver import Client
+            from zephyr.infrastructure.database_service import get_db_service
 
-            c = Client(
-                host=_CH_HOST,
-                port=_CH_TCP_PORT,
-                user=_CH_USER,
-                password=_CH_PASSWORD,
-                connect_timeout=3,
-                tcp_keepalive=True,
-                sync_request_timeout=10,
-            )
+            c = get_db_service().get_clickhouse_conn(role="writer")
             c.execute("SELECT 1")
             ch_client = c
             _get_metrics_registry().set_gauge("zephyr_ch_tcp_cooldown_active", 0)
@@ -313,6 +307,13 @@ def get_client():
             return ch_client
         except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
             log.warning("clickhouse-driver TCP 连接失败 (%s:%s): %s", _CH_HOST, _CH_TCP_PORT, e)
+            # 构造/探针失败：同步弃掉 DatabaseService 缓存槽，防半开连接复用
+            try:
+                from zephyr.infrastructure.database_service import get_db_service
+
+                get_db_service().invalidate_clickhouse_conn(role="writer")
+            except Exception:  # noqa: BLE001 — 自愈路径不二次抛
+                pass
         _tcp_fail_ts = _time.time()
         _get_metrics_registry().set_gauge("zephyr_ch_tcp_cooldown_active", 1)
         return None
@@ -321,6 +322,18 @@ def get_client():
 def _get_client():
     """向后兼容 thin wrapper（R5 公共化）。"""
     return get_client()
+
+
+def get_client_strict():
+    """get_client() 严格版：TCP 不可达（冷却期内）直接抛 RuntimeError。
+
+    连接统一治本（2026-09-14）为脚本层提供的领取入口：调用方无需自行判 None，
+    连接失败即 fail-visible（原裸 Client 构造失败也是异常路径，语义等价）。
+    """
+    c = get_client()
+    if c is None:
+        raise RuntimeError("CH TCP 客户端不可用（连接失败冷却期内）——稍后重试或跑 ch_writer.health_check() 诊断")
+    return c
 
 
 # HTTP 主机缓存 + 冷却期
@@ -399,9 +412,17 @@ def _invalidate_tcp_client(reason: str = "") -> None:
             except Exception:  # noqa: BLE001 — 5.135治标: broad exception catch
                 pass
             ch_client = None
-            _tcp_fail_ts = _time.time()
-            _get_metrics_registry().set_gauge("zephyr_ch_tcp_cooldown_active", 1)
-            log.info("TCP 连接已失效（%s），%ds 冷却后重试", reason, _TCP_COOLDOWN_SEC)
+        # 连接统一治本：连接本体在 DatabaseService 缓存里，必须同步弃槽——
+        # 只清本模块引用的话，下次 get_client 会从 DatabaseService 拿回坏连接
+        try:
+            from zephyr.infrastructure.database_service import get_db_service
+
+            get_db_service().invalidate_clickhouse_conn(role="writer")
+        except Exception:  # noqa: BLE001 — 自愈路径不二次抛
+            pass
+        _tcp_fail_ts = _time.time()
+        _get_metrics_registry().set_gauge("zephyr_ch_tcp_cooldown_active", 1)
+        log.info("TCP 连接已失效（%s），%ds 冷却后重试", reason, _TCP_COOLDOWN_SEC)
 
 
 def _invalidate_http_host(reason: str = "") -> None:

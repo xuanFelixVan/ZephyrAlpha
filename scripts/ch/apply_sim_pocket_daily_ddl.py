@@ -1,7 +1,7 @@
 # [BLUEPRINT] MOD-BT-083 | docs/03_modules/_domain_backtest/blueprint.md
 # [MODULE] scripts.ch.apply_sim_pocket_daily_ddl
 # [DOMAIN] D_DATA
-# [DEPENDENCIES] clickhouse_driver; schemas.categories.sim_pocket_daily
+# [DEPENDENCIES] zephyr.infrastructure.database_service; schemas.categories.sim_pocket_daily
 # [CONSUMERS] c1_backtest.sim_pocket_daily（表部署+验证）
 # [STARTUP] manual
 # [MATURITY] experimental
@@ -27,14 +27,9 @@ from schemas.categories.sim_pocket_daily import DDL, TABLE_NAME  # noqa: E402
 
 
 def apply() -> int:
-    from clickhouse_driver import Client
+    from zephyr.infrastructure.database_service import get_db_service
 
-    from zephyr.data.ch_config import load_ch_config
-
-    cfg = load_ch_config()
-    c = Client(host=cfg["host"], port=int(cfg.get("port", 9000)),
-               user=cfg.get("user", "default"), password=cfg.get("password", ""),
-               connect_timeout=5)
+    c = get_db_service().get_clickhouse_conn(role="admin")
     c.execute(DDL)
     cols = c.execute(
         "SELECT name FROM system.columns WHERE database='c1_backtest' AND table='sim_pocket_daily'")

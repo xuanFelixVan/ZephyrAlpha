@@ -167,15 +167,10 @@ def attach_birth_certificate(rows: list[dict], batch_id: str, cfg: dict) -> list
 
 def fetch_panel(universe_n: int, days: int) -> dict:
     """面板加载：universe=窗内成交额 top N；特征 ≤T；y=前向 5 日收益；基座=TI 日频。"""
-    from zephyr.data.ch_config import ensure_ch_env_loaded, load_ch_reader_config
+    from zephyr.data.ch_writer import get_client_strict
     from zephyr.data.table_registry import get_registry
-    from clickhouse_driver import Client
 
-    ensure_ch_env_loaded()
-    cfg = load_ch_reader_config()
-    cli = Client(host=cfg["host"], port=int(cfg.get("port", 9000)),
-                 user=cfg.get("user", "default"), password=cfg.get("password", ""),
-                 connect_timeout=5)
+    cli = get_client_strict()
     start = (date.today() - timedelta(days=int(days * 1.7))).isoformat()
     syms = [r[0] for r in cli.execute(
         SQL_UNIVERSE.format(kline=get_registry().table("market_kline_daily_hfq")),

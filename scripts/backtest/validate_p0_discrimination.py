@@ -46,7 +46,6 @@ import numpy as np
 import pandas as pd
 
 from zephyr.backtest.run_archive import create_run, finalize_run, write_step
-from zephyr.data.ch_config import ensure_ch_env_loaded, load_ch_reader_config
 
 logger = logging.getLogger(__name__)
 
@@ -98,12 +97,9 @@ def load_data(prob_table: str = _PROB_TABLE) -> tuple[pd.DataFrame, pd.DataFrame
     阈值/分段/链假设全部冻结不变，仅换状态输入源；替代表无 shrinkage 列时置 NaN
     （BT-P0-001 需 shrinkage，替代表场景用 --only BT-P0-002）。
     """
-    ensure_ch_env_loaded()
-    cfg = load_ch_reader_config()
-    from clickhouse_driver import Client
+    from zephyr.data.ch_writer import get_client_strict
 
-    c = Client(host=cfg["host"], port=int(cfg.get("port", 9000)), user=cfg.get("user", "default"),
-               password=cfg.get("password", ""), connect_timeout=5)
+    c = get_client_strict()
     if prob_table == _PROB_TABLE:
         probs = pd.DataFrame(c.execute(
             f"SELECT trade_date, dominant, shrinkage FROM {prob_table} ORDER BY trade_date"

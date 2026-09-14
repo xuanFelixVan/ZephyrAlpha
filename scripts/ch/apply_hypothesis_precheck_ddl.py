@@ -1,7 +1,7 @@
 # [BLUEPRINT] MOD-BT-153 | docs/03_modules/_domain_backtest/blueprint.md
 # [MODULE] scripts.ch.apply_hypothesis_precheck_ddl
 # [DOMAIN] D_BACKTEST
-# [DEPENDENCIES] clickhouse_driver; schemas.categories.backtest_hypothesis_precheck
+# [DEPENDENCIES] zephyr.infrastructure.database_service; schemas.categories.backtest_hypothesis_precheck
 # [CONSUMERS] c1_backtest.hypothesis_precheck（表部署+逐列探针验证）
 # [STARTUP] manual
 # [MATURITY] experimental
@@ -39,14 +39,9 @@ REQUIRED_COLUMNS = {
 
 
 def apply() -> int:
-    from clickhouse_driver import Client
+    from zephyr.infrastructure.database_service import get_db_service
 
-    from zephyr.data.ch_config import load_ch_config
-
-    cfg = load_ch_config()
-    c = Client(host=cfg["host"], port=int(cfg.get("port", 9000)),
-               user=cfg.get("user", "default"), password=cfg.get("password", ""),
-               connect_timeout=5)
+    c = get_db_service().get_clickhouse_conn(role="admin")
     c.execute(BACKTEST_HYPOTHESIS_PRECHECK_DDL)
     cols = c.execute(
         f"SELECT name FROM system.columns WHERE database='{DATABASE}' AND table='{TABLE_NAME}'")

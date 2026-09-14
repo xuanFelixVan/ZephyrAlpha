@@ -36,7 +36,6 @@ from pathlib import Path
 from typing import Any
 
 from zephyr.backtest.run_archive import create_run, finalize_run, write_step
-from zephyr.data.ch_config import ensure_ch_env_loaded, load_ch_reader_config
 
 logger = logging.getLogger(__name__)
 
@@ -124,12 +123,9 @@ def main() -> None:
     finalize_run(run_id, verdict_ref={"table": _TABLE, "run_id": run_id})
 
     # 落库（幂等：查重已有 (batch, strategy_id)）
-    ensure_ch_env_loaded()
-    cfg = load_ch_reader_config()
-    from clickhouse_driver import Client
+    from zephyr.data.ch_writer import get_client_strict
 
-    c = Client(host=cfg["host"], port=int(cfg.get("port", 9000)), user=cfg.get("user", "default"),
-               password=cfg.get("password", ""), connect_timeout=5)
+    c = get_client_strict()
     existing = {tuple(r) for r in c.execute(
         f"SELECT screen_batch, strategy_id FROM {_TABLE} WHERE screen_batch = '{_BATCH}'"
     )}

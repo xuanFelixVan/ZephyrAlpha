@@ -1,7 +1,7 @@
 # [BLUEPRINT] MOD-L04-001 | docs/03_modules/_cross_layer/database/sub_blueprints/c1_market_clickhouse.md
 # [MODULE] scripts.ch.apply_rbac
 # [DOMAIN] D_DATA
-# [DEPENDENCIES] zephyr.data.ch_config; clickhouse-driver(pip)
+# [DEPENDENCIES] zephyr.data.ch_config; zephyr.infrastructure.database_service
 # [CONSUMERS]
 # [STARTUP] manual
 # [MATURITY] production
@@ -45,8 +45,6 @@ import sys
 
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", "..", "src"))
 
-from clickhouse_driver import Client
-
 from zephyr.data.ch_config import load_ch_config, load_ch_reader_config, load_ch_writer_config
 
 # ========== RBAC 定义 ==========
@@ -86,39 +84,25 @@ _READER_GRANTS = [
 ]
 
 
-def _connect_admin() -> Client:
-    """用 default(admin) 账号连接 CH。"""
-    return Client(
-        host=_ADMIN_CONFIG["host"],
-        port=int(_ADMIN_CONFIG["port"]),
-        user="default",
-        password="",
-        connect_timeout=5,
-    )
+def _connect_admin():
+    """用 base(admin) 账号连接 CH（统一入口 admin 角色=历史 default/空密码同账号）。"""
+    from zephyr.infrastructure.database_service import get_db_service
+
+    return get_db_service().get_clickhouse_conn(role="admin")
 
 
-def _connect_reader() -> Client:
+def _connect_reader():
     """用 zephyr_reader 账号连接 CH（验证只读权限）。"""
-    cfg = load_ch_reader_config()
-    return Client(
-        host=cfg["host"],
-        port=int(cfg["port"]),
-        user=cfg["user"],
-        password=cfg["password"],
-        connect_timeout=5,
-    )
+    from zephyr.infrastructure.database_service import get_db_service
+
+    return get_db_service().get_clickhouse_conn(role="reader")
 
 
-def _connect_writer() -> Client:
+def _connect_writer():
     """用 zephyr_writer 账号连接 CH（验证写入权限）。"""
-    cfg = load_ch_writer_config()
-    return Client(
-        host=cfg["host"],
-        port=int(cfg["port"]),
-        user=cfg["user"],
-        password=cfg["password"],
-        connect_timeout=5,
-    )
+    from zephyr.infrastructure.database_service import get_db_service
+
+    return get_db_service().get_clickhouse_conn(role="writer")
 
 
 def apply() -> bool:

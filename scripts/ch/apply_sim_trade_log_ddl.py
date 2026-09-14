@@ -1,7 +1,7 @@
 # [BLUEPRINT] MOD-BT-086 | docs/03_modules/_domain_backtest/blueprint.md
 # [MODULE] scripts.ch.apply_sim_trade_log_ddl
 # [DOMAIN] D_DATA
-# [DEPENDENCIES] clickhouse_driver; schemas.categories.sim_trade_log
+# [DEPENDENCIES] zephyr.infrastructure.database_service; schemas.categories.sim_trade_log
 # [CONSUMERS] c1_backtest.sim_trade_log（表部署+验证）
 # [STARTUP] manual
 # [MATURITY] experimental
@@ -11,7 +11,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] SystemExit(1)(DDL 失败)
 # [TESTS] tests/backtest/test_sim_paper_ledger.py
-# [A_module] module_id=MOD-BT-098 | layer=module | stability=experimental | safety=L | ai_autonomy=ai_modifiable
+# [A_module] module_id=MOD-BT-132 | layer=module | stability=experimental | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 """sim_trade_log 建表 DDL 部署+验证（平台蓝图批 1：成交事件流水）。"""
 
@@ -27,14 +27,9 @@ from schemas.categories.sim_trade_log import DDL, TABLE_NAME  # noqa: E402
 
 
 def apply() -> int:
-    from clickhouse_driver import Client
+    from zephyr.infrastructure.database_service import get_db_service
 
-    from zephyr.data.ch_config import load_ch_config
-
-    cfg = load_ch_config()
-    c = Client(host=cfg["host"], port=int(cfg.get("port", 9000)),
-               user=cfg.get("user", "default"), password=cfg.get("password", ""),
-               connect_timeout=5)
+    c = get_db_service().get_clickhouse_conn(role="admin")
     c.execute(DDL)
     cols = c.execute(
         "SELECT name FROM system.columns WHERE database='c1_backtest' AND table='sim_trade_log'")

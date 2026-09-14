@@ -63,6 +63,7 @@ Redis H1 热缓存（INFRA-DB-007）已于 2026-08-02 部署——Redis 7.0.15 @
 # A1 --> O1
 """
 
+import atexit
 import logging
 import sqlite3
 import threading
@@ -83,7 +84,9 @@ logger = logging.getLogger(__name__)
 # ClickHouse 连接配置：委托给 zephyr.data.ch_config（裁定 #ARCH-CH-017 / #ARCH-CH-019）
 # 消除本模块的默认值 "localhost" 与 ch_writer 默认值 "172.24.30.100" 分裂，
 # 统一由 ch_config.load_ch_config() 提供，真源为 config/.env.clickhouse。
+from zephyr.data.ch_config import load_ch_config
 from zephyr.data.ch_config import load_ch_reader_config as _load_ch_reader_config_from_ch_config
+from zephyr.data.ch_config import load_ch_writer_config
 
 
 def _load_clickhouse_config() -> dict[str, str]:
@@ -124,7 +127,7 @@ class DatabaseService(DatabaseCRUDMixin):
         self._pg_tls = threading.local()
         self._live_pg_conns: list[psycopg2.extensions.connection] = []
         self._live_pg_lock = threading.Lock()
-        self._clickhouse_conn: Any | None = None  # clickhouse_driver.Client (C1行情仓库)
+        self._clickhouse_conns: dict[tuple[str, str], Any] = {}  # (role, slot) -> clickhouse_driver.Client
         self._redis_conn: Any | None = None  # redis.Redis (H1热缓存, INFRA-DB-007)
         self._lock = threading.Lock()  # Phase 2 P2 修复（并发安全 HIGH）：lazy init 线程安全
 
@@ -179,27 +182,70 @@ class DatabaseService(DatabaseCRUDMixin):
                 self._live_pg_conns.append(conn)
         return conn
 
-    def get_clickhouse_conn(self):
-        """获取 ClickHouse 连接（C1 行情仓库 c1_market）
+    def get_clickhouse_conn(self, role: str = "reader", slot: str = "default", extra_kwargs: dict[str, Any] | None = None):
+        """获取 ClickHouse 连接（C1 行情仓库 c1_market）——全仓唯一 Client 构造点。
 
-        P1-7 修复：配置改为从 config/.env.clickhouse 加载（os.environ > 文件 > 默认值）。
-        安全约束：settings={'readonly': 1} 确保只读（业务数据库连接必须显式指定 read_only）。
+        连接统一治本（2026-09-14，docs/_working/2026-09-14-ch-connection-handoff.md）：
+        禁止任何模块自行构造 clickhouse_driver.Client，一律经本方法按角色领取
+        进程级缓存连接——同 (role, slot) 全进程仅一条，根治多会话并发 Code: 181 断连。
+
+        :param role: "reader"=zephyr_reader + readonly=1（默认；应用层只读，原行为不变）；
+                     "writer"=zephyr_writer（ch_writer TCP 写入路径，RBAC #ARCH-CH-027）；
+                     "admin"=base 账号（DDL 部署脚本专用，跨库 CREATE 需 admin 权限）。
+        :param slot: 连接槽位名（默认 "default"）。同角色需要第二条并行连接的场景用
+                     不同 slot（如 api_server 资产审计专用连接，不与查询锁争用）。
+        :param extra_kwargs: 仅首次构造时合并的 Client 参数（如 send_receive_timeout
+                             槽位级超时）；缓存命中时忽略。
         """
-        if self._clickhouse_conn is None:
-            with self._lock:
-                if self._clickhouse_conn is None:
-                    from clickhouse_driver import Client
+        key = (role, slot)
+        conn = self._clickhouse_conns.get(key)
+        if conn is not None:
+            return conn
+        with self._lock:
+            conn = self._clickhouse_conns.get(key)
+            if conn is not None:
+                return conn
+            from clickhouse_driver import Client
 
-                    cfg = _load_clickhouse_config()
-                    self._clickhouse_conn = Client(
-                        host=cfg["host"],
-                        port=int(cfg["port"]),
-                        user=cfg["user"],
-                        password=cfg["password"],
-                        database=cfg["database"],
-                        settings={"readonly": 1},
-                    )
-        return self._clickhouse_conn
+            if role == "reader":
+                cfg = _load_clickhouse_config()
+                extra: dict[str, Any] = {"settings": {"readonly": 1}}
+            elif role == "writer":
+                cfg = load_ch_writer_config()
+                # 参数原样承接 ch_writer 历史语义（自愈探针+keepalive，2026-07-16 起）
+                extra = {"connect_timeout": 3, "tcp_keepalive": True, "sync_request_timeout": 10}
+            elif role == "admin":
+                cfg = load_ch_config()
+                extra = {"connect_timeout": 5}
+            else:
+                raise ValueError(f"未知 ClickHouse 角色: {role!r}（可选 reader/writer/admin）")
+            if extra_kwargs:
+                extra.update(extra_kwargs)
+            conn = Client(
+                host=cfg["host"],
+                port=int(cfg["port"]),
+                user=cfg["user"],
+                password=cfg["password"],
+                database=cfg["database"],
+                **extra,
+            )
+            self._clickhouse_conns[key] = conn
+            logger.info("ClickHouse 连接已建立: role=%s slot=%s host=%s", role, slot, cfg["host"])
+        return conn
+
+    def invalidate_clickhouse_conn(self, role: str = "reader", slot: str = "default") -> None:
+        """弃连自愈（裁定 #ARCH-CH-014 同源思想）：断开并丢弃 (role, slot) 缓存连接。
+
+        execute 失败（断连/超时/半开）时由消费方调用，下次 get_clickhouse_conn 重建新连接。
+        """
+        with self._lock:
+            conn = self._clickhouse_conns.pop((role, slot), None)
+        if conn is None:
+            return
+        try:
+            conn.disconnect()
+        except Exception:  # noqa: BLE001 — 自愈路径：断不开也要丢弃引用
+            logger.warning("invalidate_clickhouse_conn(%s/%s): disconnect 失败（已丢弃引用）", role, slot, exc_info=True)
 
     def get_redis_conn(self):
         """获取 Redis 连接（业务数据库 H1 热缓存，INFRA-DB-007）
@@ -307,12 +353,14 @@ class DatabaseService(DatabaseCRUDMixin):
 
         # clickhouse_driver.Client: 显式 disconnect() 关闭底层 socket，
         # 避免 ResourceWarning（GC 关闭会导致 pytest PytestUnraisableExceptionWarning）
-        if self._clickhouse_conn is not None:
+        with self._lock:
+            ch_conns = list(self._clickhouse_conns.values())
+            self._clickhouse_conns.clear()
+        for conn in ch_conns:
             try:
-                self._clickhouse_conn.disconnect()
+                conn.disconnect()
             except Exception:  # noqa: BLE001 — 5.64.5：异常隔离
                 logger.warning("close_all: failed to disconnect ClickHouse", exc_info=True)
-        self._clickhouse_conn = None
 
         # redis.Redis: close() 关闭连接池（线程安全，幂等）
         if self._redis_conn is not None:
@@ -328,6 +376,26 @@ class DatabaseService(DatabaseCRUDMixin):
     #   get_node / get_nodes_by_domain / get_nodes_by_type
     #   get_rule_bindings_by_function / get_edges_from_node
     # 通过 class DatabaseService(DatabaseCRUDMixin) 自动继承，无需在此重复定义。
+
+
+_db_service: DatabaseService | None = None
+_db_service_lock = threading.Lock()
+
+
+def get_db_service() -> DatabaseService:
+    """进程级 DatabaseService 单例（连接统一治本 2026-09-14）。
+
+    所有 ClickHouse 消费方（ch_writer / api_server / 脚本层）经此领取连接，
+    确保同进程内同 (role, slot) 只有一条连接——多会话并发间歇性 Code: 181 断连的治本。
+    首次创建时注册 atexit close_all，进程退出统一断连（防 socket 泄漏）。
+    """
+    global _db_service
+    if _db_service is None:
+        with _db_service_lock:
+            if _db_service is None:
+                _db_service = DatabaseService()
+                atexit.register(_db_service.close_all)
+    return _db_service
 
 
 if __name__ == "__main__":

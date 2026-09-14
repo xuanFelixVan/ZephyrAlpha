@@ -1,7 +1,7 @@
 # [BLUEPRINT] MOD-BT-090 | docs/03_modules/_domain_backtest/blueprint.md
 # [MODULE] scripts.backtest.three_high_screen
 # [DOMAIN] D_BACKTEST
-# [DEPENDENCIES] numpy; pandas; zephyr.governance.depgraph_schema; zephyr.data.ch_config; clickhouse_driver
+# [DEPENDENCIES] numpy; pandas; zephyr.governance.depgraph_schema; zephyr.data.ch_config; zephyr.data.ch_writer
 # [CONSUMERS] 策略生产全景图 FAC-E1D 车道D（产业链三高）；FAC-E2 假说预审（候选想法供给方）；
 #   data/strategy_intake/three_high_candidates.csv（进货台账）
 # [STARTUP] manual
@@ -165,15 +165,9 @@ def _latest_per_symbol(df: pd.DataFrame, key: str, value_cols: list[str]) -> pd.
 
 def fetch_ch_financial_stats() -> pd.DataFrame:
     """CH c3_fundamental.financial_indicator：每股最新 announce 行的增长/利润四列。"""
-    from zephyr.data.ch_config import ensure_ch_env_loaded, load_ch_reader_config
+    from zephyr.data.ch_writer import get_client_strict
 
-    ensure_ch_env_loaded()
-    cfg = load_ch_reader_config()
-    from clickhouse_driver import Client
-
-    cli = Client(host=cfg["host"], port=int(cfg.get("port", 9000)),
-                 user=cfg.get("user", "default"), password=cfg.get("password", ""),
-                 connect_timeout=5)
+    cli = get_client_strict()
     rows = cli.execute(_fin_sql())
     df = pd.DataFrame(rows, columns=["symbol", "announce_date", "rev_yoy", "profit_yoy",
                                      "gross_margin", "net_margin"])

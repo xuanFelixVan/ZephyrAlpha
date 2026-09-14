@@ -47,26 +47,12 @@ _COLS = ("(trade_date, strategy_id, initial_capital, cash, position_symbol, shar
          " equity, daily_pnl, signal, mode, run_id, note)")
 
 
-_client = None
-
 
 def _q(sql: str):
     """只读查询（进程内单客户端缓存+退出关闭，禁 socket 泄漏）。"""
-    global _client
-    if _client is None:
-        import atexit
+    from zephyr.data.ch_writer import get_client_strict
 
-        from zephyr.data.ch_config import ensure_ch_env_loaded, load_ch_reader_config
-
-        ensure_ch_env_loaded()
-        cfg = load_ch_reader_config()
-        from clickhouse_driver import Client
-
-        _client = Client(host=cfg["host"], port=int(cfg.get("port", 9000)),
-                         user=cfg.get("user", "default"), password=cfg.get("password", ""),
-                         connect_timeout=5)
-        atexit.register(_client.disconnect)
-    return _client.execute(sql)
+    return get_client_strict().execute(sql)
 
 
 def run(mode: str, start: str, end: str, run_id: str | None = None) -> dict:

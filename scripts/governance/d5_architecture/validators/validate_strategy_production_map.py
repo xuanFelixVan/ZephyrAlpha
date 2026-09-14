@@ -152,14 +152,9 @@ def check_stores(data: dict, root: Path | None = None) -> tuple[list[str], list[
                         continue
                     if part.startswith("c1_") and "." in part:
                         try:
-                            from zephyr.data.ch_config import ensure_ch_env_loaded, load_ch_reader_config
-                            ensure_ch_env_loaded()
-                            cfg = load_ch_reader_config()
-                            from clickhouse_driver import Client
+                            from zephyr.infrastructure.database_service import get_db_service
                             db, tbl = part.split(".", 1)
-                            cli = Client(host=cfg["host"], port=int(cfg.get("port", 9000)),
-                                         user=cfg.get("user", "default"),
-                                         password=cfg.get("password", ""), connect_timeout=5)
+                            cli = get_db_service().get_clickhouse_conn(role="reader")
                             if not cli.execute(f"EXISTS TABLE {db}.{tbl}")[0][0]:
                                 errors.append(f"CH 表不存在: {part}")
                         except Exception as exc:  # noqa: BLE001

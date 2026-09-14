@@ -107,14 +107,9 @@ SQL_CAL_DAY = (
 def fetch_is_trading_day(d: date) -> bool | None:
     """CH 日历单日查询（SSE 口径；日历未覆盖/通道故障返回 None → 上层 fail-closed）。"""
     try:
-        from zephyr.data.ch_config import ensure_ch_env_loaded, load_ch_reader_config
-        from clickhouse_driver import Client
+        from zephyr.data.ch_writer import get_client_strict
 
-        ensure_ch_env_loaded()
-        cfg = load_ch_reader_config()
-        cli = Client(host=cfg["host"], port=int(cfg.get("port", 9000)),
-                     user=cfg.get("user", "default"), password=cfg.get("password", ""),
-                     connect_timeout=5)
+        cli = get_client_strict()
         rows = cli.execute(SQL_CAL_DAY, {"d": d})
         if not rows:
             return None

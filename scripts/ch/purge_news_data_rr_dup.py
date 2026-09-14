@@ -43,8 +43,6 @@ from datetime import datetime, timedelta
 ROOT = __import__("pathlib").Path(__file__).resolve().parent.parent.parent
 sys.path.insert(0, str(ROOT / "src"))
 
-from zephyr.data.ch_config import ensure_ch_env_loaded  # noqa: E402
-from zephyr.shared.security.secrets import get_secret_or_default  # noqa: E402
 
 logging.basicConfig(level=logging.INFO, format="%(asctime)s [%(levelname)s] %(message)s")
 log = logging.getLogger(__name__)
@@ -199,17 +197,10 @@ def _load_backup_state() -> dict:
 
 def get_client():
     """clickhouse-driver TCP 客户端（配置真源 config/.env.clickhouse）。"""
-    import clickhouse_driver  # noqa: PLC0415 — lazy
+    from zephyr.infrastructure.database_service import get_db_service
 
-    ensure_ch_env_loaded()
-    return clickhouse_driver.Client(
-        host=get_secret_or_default("CLICKHOUSE_HOST", ""),
-        port=int(get_secret_or_default("CLICKHOUSE_PORT", "9000")),
-        user=get_secret_or_default("CLICKHOUSE_WRITER_USER") or get_secret_or_default("CLICKHOUSE_USER", "default"),
-        password=get_secret_or_default("CLICKHOUSE_WRITER_PASSWORD")
-        or get_secret_or_default("CLICKHOUSE_PASSWORD", ""),
-        send_receive_timeout=_MUTATION_TIMEOUT_S,
-    )
+    return get_db_service().get_clickhouse_conn(
+        role="writer", extra_kwargs={"send_receive_timeout": _MUTATION_TIMEOUT_S})
 
 
 def report_counts(client) -> dict[str, int]:

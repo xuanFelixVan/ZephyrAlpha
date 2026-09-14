@@ -35,24 +35,10 @@ QUOTA_WARNING = 1_100_000.0  # 钱包越界预警线（额度 100 万+10% 容差
 
 
 def _q(sql: str):
-    global _client
-    if _client is None:
-        import atexit
+    from zephyr.data.ch_writer import get_client_strict
 
-        from zephyr.data.ch_config import ensure_ch_env_loaded, load_ch_reader_config
+    return get_client_strict().execute(sql)
 
-        ensure_ch_env_loaded()
-        cfg = load_ch_reader_config()
-        from clickhouse_driver import Client
-
-        _client = Client(host=cfg["host"], port=int(cfg.get("port", 9000)),
-                         user=cfg.get("user", "default"), password=cfg.get("password", ""),
-                         connect_timeout=5)
-        atexit.register(_client.disconnect)
-    return _client.execute(sql)
-
-
-_client = None
 
 
 def generate(day: str) -> dict:

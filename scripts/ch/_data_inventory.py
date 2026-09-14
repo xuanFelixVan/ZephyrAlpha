@@ -27,12 +27,9 @@ from datetime import datetime
 
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", "..", "src"))
 
-from clickhouse_driver import Client
+from zephyr.infrastructure.database_service import get_db_service
 
-from zephyr.data.ch_config import load_ch_config
-
-_cfg = load_ch_config()
-c = Client(host=_cfg["host"], port=9000, user=_cfg["user"], password=_cfg["password"], connect_timeout=15)
+c = get_db_service().get_clickhouse_conn(role="admin", extra_kwargs={"connect_timeout": 15})
 
 
 def main() -> None:

@@ -59,14 +59,9 @@ _WARMUP_DAYS = 250     # SVR 训练预热
 
 def _load_data(start: str, end: str) -> tuple[pd.DataFrame, pd.DataFrame, pd.DataFrame]:
     """健康表数据：行情（kline_daily_hfq）+ 估值（stock_indicator）+ 行业（industry_class 快照）。"""
-    from zephyr.data.ch_config import ensure_ch_env_loaded, load_ch_reader_config
+    from zephyr.data.ch_writer import get_client_strict
 
-    ensure_ch_env_loaded()
-    cfg = load_ch_reader_config()
-    from clickhouse_driver import Client
-
-    c = Client(host=cfg["host"], port=int(cfg.get("port", 9000)), user=cfg.get("user", "default"),
-               password=cfg.get("password", ""), connect_timeout=5)
+    c = get_client_strict()
     px = pd.DataFrame(c.execute(
         f"SELECT trade_date, symbol, toFloat64(close) AS close, toFloat64(amount) AS amount "
         f"FROM c1_market.kline_daily_hfq WHERE trade_date >= '{start}' AND trade_date <= '{end}' AND amount > 0"

@@ -49,25 +49,11 @@ C4_END = "2023-12-31"
 ETF_START = "2021-04-01"  # kline_etf_daily 覆盖起点 2021-03-08，留缓冲
 
 
-_client_cache: dict[str, Any] = {}
-
-
 def get_client():
-    """ClickHouse 只读客户端（进程内缓存）。"""
-    from zephyr.data.ch_config import ensure_ch_env_loaded, load_ch_reader_config
+    """ClickHouse 客户端（连接统一治本 2026-09-14：构造委派 ch_writer 统一入口）。"""
+    from zephyr.data.ch_writer import get_client_strict
 
-    key = "ch"
-    if key not in _client_cache:
-        ensure_ch_env_loaded()
-        cfg = load_ch_reader_config()
-        from clickhouse_driver import Client
-
-        _client_cache[key] = Client(
-            host=cfg["host"], port=int(cfg.get("port", 9000)),
-            user=cfg.get("user", "default"), password=cfg.get("password", ""),
-            connect_timeout=5,
-        )
-    return _client_cache[key]
+    return get_client_strict()
 
 
 def _q(sql: str) -> list[tuple]:

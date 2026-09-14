@@ -29,12 +29,9 @@ from pathlib import Path
 
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", "..", "src"))
 
-from clickhouse_driver import Client
+from zephyr.infrastructure.database_service import get_db_service
 
-from zephyr.data.ch_config import load_ch_config
-
-_cfg = load_ch_config()
-c = Client(host=_cfg["host"], port=9000, user=_cfg["user"], password=_cfg["password"])
+c = get_db_service().get_clickhouse_conn(role="admin")
 
 # 从 .env.ch_backup 读 S3 凭证
 _env_path = Path(r"D:\ZephyrAlpha\config\.env.ch_backup")

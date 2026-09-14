@@ -183,14 +183,9 @@ def load_candidates(source: str, limit: int | None = None) -> pd.DataFrame:
 def fetch_prechecked_ids() -> set[str]:
     """台账已预审 id 集（幂等跳过；CH 不可达返回空集不阻断）。"""
     try:
-        from zephyr.data.ch_config import ensure_ch_env_loaded, load_ch_reader_config
-        from clickhouse_driver import Client
+        from zephyr.data.ch_writer import get_client_strict
 
-        ensure_ch_env_loaded()
-        cfg = load_ch_reader_config()
-        cli = Client(host=cfg["host"], port=int(cfg.get("port", 9000)),
-                     user=cfg.get("user", "default"), password=cfg.get("password", ""),
-                     connect_timeout=5)
+        cli = get_client_strict()
         return {r[0] for r in cli.execute(SQL_ALREADY.format(table=_table()))}
     except Exception:  # noqa: BLE001 — 幂等查询失败降级为全量重审（deferred 可重跑语义）
         return set()
@@ -200,16 +195,10 @@ def insert_verdicts(rows: list[dict]) -> int:
     """判定行写台账（writer 通道；返回写入行数）。"""
     if not rows:
         return 0
-    from zephyr.data.ch_config import ensure_ch_env_loaded, load_ch_writer_config
     from schemas.categories.backtest_hypothesis_precheck import INSERT_COLUMNS
+    from zephyr.data.ch_writer import get_client_strict
 
-    ensure_ch_env_loaded()
-    cfg = load_ch_writer_config()
-    from clickhouse_driver import Client
-
-    cli = Client(host=cfg["host"], port=int(cfg.get("port", 9000)),
-                 user=cfg.get("user", "default"), password=cfg.get("password", ""),
-                 connect_timeout=5)
+    cli = get_client_strict()
     table = _table()
     now = datetime.now(ZoneInfo("Asia/Shanghai"))
     tuples = [(
@@ -267,14 +256,9 @@ def run(source: str, limit: int | None = None, dry_run: bool = False) -> dict:
 
 def cmd_status() -> int:
     """台账判定×理由码分布（只读）。"""
-    from zephyr.data.ch_config import ensure_ch_env_loaded, load_ch_reader_config
-    from clickhouse_driver import Client
+    from zephyr.data.ch_writer import get_client_strict
 
-    ensure_ch_env_loaded()
-    cfg = load_ch_reader_config()
-    cli = Client(host=cfg["host"], port=int(cfg.get("port", 9000)),
-                 user=cfg.get("user", "default"), password=cfg.get("password", ""),
-                 connect_timeout=5)
+    cli = get_client_strict()
     table = _table()
     total = cli.execute(f"SELECT count() FROM {table}")[0][0]
     dist = cli.execute(

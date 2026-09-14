@@ -44,7 +44,6 @@ sys.path.insert(0, str(REPO / "src"))
 import numpy as np
 import pandas as pd
 
-from zephyr.data.ch_config import ensure_ch_env_loaded, load_ch_reader_config
 from zephyr.signal_ashare.sentiment.sentiment_cycle import (
     SentimentLocatorInput,
     SentimentPhase,
@@ -60,12 +59,9 @@ PREHEAT_DAYS = 21  # 动量 20 日/成交额 MA20 预热期，窗口头部不产
 
 def fetch_daily(start: str, end: str) -> pd.DataFrame:
     """全市场 A 股日线（复权因子 coalesce=1，Decimal cast Float64 降传输开销）。"""
-    ensure_ch_env_loaded()
-    cfg = load_ch_reader_config()
-    from clickhouse_driver import Client
+    from zephyr.infrastructure.database_service import get_db_service
 
-    c = Client(host=cfg["host"], port=int(cfg.get("port", 9000)), user=cfg.get("user", "default"),
-               password=cfg.get("password", ""), connect_timeout=5)
+    c = get_db_service().get_clickhouse_conn(role="reader")
     rows = c.execute(
         f"""
         SELECT trade_date, symbol,

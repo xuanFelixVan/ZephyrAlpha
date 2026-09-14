@@ -77,14 +77,10 @@ def load_gap_rows() -> list[tuple[str, str]]:
 
 def load_hk_names() -> dict[str, list[str]]:
     """hk_stock_list 只读快照 → {NFKC 归一名: [code, ...]}（同名多 code 保留全列表防误配）。"""
-    from clickhouse_driver import Client
-    from zephyr.data.ch_config import load_ch_config
+    from zephyr.infrastructure.database_service import get_db_service
 
-    cfg = load_ch_config()
-    ch = Client(host=cfg["host"], port=int(cfg.get("port", 9000)),
-                user=cfg.get("reader_user") or cfg.get("user", "default"),
-                password=cfg.get("reader_password") or cfg.get("password", ""),
-                database=cfg.get("database", "c1_market"), connect_timeout=3, send_receive_timeout=15)
+    ch = get_db_service().get_clickhouse_conn(
+        role="admin", extra_kwargs={"connect_timeout": 3, "send_receive_timeout": 15})
     rows = ch.execute("SELECT code, name FROM hk_stock_list WHERE valid_to IS NULL")
     out: dict[str, list[str]] = {}
     for code, name in rows:

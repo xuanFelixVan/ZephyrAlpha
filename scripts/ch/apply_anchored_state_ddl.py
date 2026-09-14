@@ -58,13 +58,9 @@ SETTINGS index_granularity = 8192
 
 def apply() -> int:
     try:
-        from clickhouse_driver import Client
+        from zephyr.infrastructure.database_service import get_db_service
 
-        from zephyr.data.ch_config import load_ch_config
-
-        cfg = load_ch_config()
-        c = Client(host=cfg["host"], port=int(cfg.get("port", 9000)), user=cfg["user"],
-                   password=cfg.get("password", ""), connect_timeout=5)
+        c = get_db_service().get_clickhouse_conn(role="admin")
         c.execute(ANCHORED_STATE_DDL)
         print(f"OK: {TABLE_NAME} DDL executed (IF NOT EXISTS, 幂等)")
     except Exception as exc:  # noqa: BLE001

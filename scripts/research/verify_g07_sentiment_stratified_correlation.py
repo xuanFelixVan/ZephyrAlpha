@@ -58,7 +58,6 @@ import pandas as pd
 _SCRIPT_REPO_ROOT = Path(__file__).resolve().parents[2]  # sys.path 注入用（canonical REPO_ROOT 在 paths.py，勿重定义）
 sys.path.insert(0, str(_SCRIPT_REPO_ROOT / "src"))
 
-from zephyr.data.ch_config import ensure_ch_env_loaded, load_ch_reader_config  # noqa: E402
 from zephyr.data.table_registry import get_registry  # noqa: E402
 
 STRATEGIES = ("daban", "multifactor", "event_driven")  # noqa: gate-vocab  业务数据 schema（策略键名），非 knowledge_taxonomy 词表校验
@@ -71,19 +70,10 @@ RHO_FAIL = 0.6
 
 
 def get_ch():
-    """按 ch_config 惯例建立 ClickHouse 只读连接（RBAC reader 账号）。"""
-    ensure_ch_env_loaded()
-    cfg = load_ch_reader_config()
-    from clickhouse_driver import Client
+    """ClickHouse 只读连接（RBAC reader 账号；连接统一治本 2026-09-14）。"""
+    from zephyr.infrastructure.database_service import get_db_service
 
-    return Client(
-        host=cfg["host"],
-        port=int(cfg.get("port", 9000)),
-        user=cfg.get("user", "default"),
-        password=cfg.get("password", ""),
-        connect_timeout=5,
-        sync_request_timeout=300,
-    )
+    return get_db_service().get_clickhouse_conn(role="reader")
 
 
 def load_kline(ch, start: str, end: str) -> pd.DataFrame:

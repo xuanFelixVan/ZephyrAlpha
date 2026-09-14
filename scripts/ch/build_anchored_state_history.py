@@ -74,13 +74,9 @@ def run_build() -> int:
     # 幂等重建后合并历史版本（ReplacingMergeTree 后台 merge 时机不定，判定器查询
     # 无 FINAL 会读到新旧两版态——主动收敛；base 账号直连同 apply 脚本先例）
     try:
-        from clickhouse_driver import Client
+        from zephyr.infrastructure.database_service import get_db_service
 
-        from zephyr.data.ch_config import load_ch_config
-
-        cfg = load_ch_config()
-        c = Client(host=cfg["host"], port=int(cfg.get("port", 9000)), user=cfg["user"],
-                   password=cfg.get("password", ""), connect_timeout=5)
+        c = get_db_service().get_clickhouse_conn(role="admin")
         c.execute("OPTIMIZE TABLE c1_backtest.regime_state_anchored FINAL")
         log.info("OPTIMIZE FINAL 完成（历史版本收敛）")
     except Exception as exc:  # noqa: BLE001 — 合并失败不阻断（consumer 侧 FINAL 兜底）

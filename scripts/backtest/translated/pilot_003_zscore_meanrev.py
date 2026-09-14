@@ -55,14 +55,9 @@ _SYMBOL = "601238"
 
 
 def _load_single(symbol: str, start: str, end: str) -> pd.DataFrame:
-    from zephyr.data.ch_config import ensure_ch_env_loaded, load_ch_reader_config
+    from zephyr.data.ch_writer import get_client_strict
 
-    ensure_ch_env_loaded()
-    cfg = load_ch_reader_config()
-    from clickhouse_driver import Client
-
-    c = Client(host=cfg["host"], port=int(cfg.get("port", 9000)), user=cfg.get("user", "default"),
-               password=cfg.get("password", ""), connect_timeout=5)
+    c = get_client_strict()
     df = pd.DataFrame(c.execute(
         f"SELECT trade_date, toFloat64(close) AS close FROM c1_market.kline_daily_hfq "
         f"WHERE symbol = '{symbol}' AND trade_date >= '{start}' AND trade_date <= '{end}' AND close > 0"

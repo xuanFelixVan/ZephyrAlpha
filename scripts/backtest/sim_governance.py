@@ -37,24 +37,10 @@ _REG = Path(__file__).resolve().parents[2] / "docs" / "01_policies_and_standards
 
 
 def _q(sql: str):
-    global _client
-    if _client is None:
-        import atexit
+    from zephyr.data.ch_writer import get_client_strict
 
-        from zephyr.data.ch_config import ensure_ch_env_loaded, load_ch_reader_config
+    return get_client_strict().execute(sql)
 
-        ensure_ch_env_loaded()
-        cfg = load_ch_reader_config()
-        from clickhouse_driver import Client
-
-        _client = Client(host=cfg["host"], port=int(cfg.get("port", 9000)),
-                         user=cfg.get("user", "default"), password=cfg.get("password", ""),
-                         connect_timeout=5)
-        atexit.register(_client.disconnect)
-    return _client.execute(sql)
-
-
-_client = None
 
 
 def sim_lifecycle_entries() -> list[dict]:

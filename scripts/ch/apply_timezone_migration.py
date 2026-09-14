@@ -60,23 +60,14 @@ from dataclasses import dataclass
 
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", "..", "src"))
 
-from clickhouse_driver import Client
+from zephyr.infrastructure.database_service import get_db_service
 
-from zephyr.data.ch_config import load_ch_config
 
 # ========== 连接 ==========
 
-_admin_config = load_ch_config()
 
-
-def _client() -> Client:
-    return Client(
-        host=_admin_config["host"],
-        port=_admin_config.get("port", 9000),
-        user=_admin_config.get("user", "default"),
-        password=_admin_config.get("password", ""),
-        connect_timeout=5,
-    )
+def _client():
+    return get_db_service().get_clickhouse_conn(role="admin")
 
 
 # ========== 分类真源（SSoT）==========

@@ -1,7 +1,7 @@
 # [BLUEPRINT] MOD-L00-004 | docs/03_modules/_domain_data/data_source_integrator_blueprint.md | §kline_resample
 # [MODULE] zephyr.data.kline_resampler
 # [DOMAIN] D_DATA
-# [DEPENDENCIES] clickhouse_driver; zephyr.data.ch_config; zephyr.data.table_registry
+# [DEPENDENCIES] zephyr.data.ch_writer; zephyr.data.table_registry
 # [CONSUMERS]
 # [STARTUP] manual
 # [MATURITY] production
@@ -140,28 +140,15 @@ def _build_synth_sql(source: str, target: str, minutes: int, start: str, end: st
 
 
 def _get_ch_client():
-    """从 ch_config 真源加载【写入账号】配置创建 ClickHouse 客户端。
+    """从统一入口领取【写入角色】ClickHouse 客户端（连接统一治本 2026-09-14）。
 
     本模块执行 DELETE+INSERT 写操作，RBAC（audit 9.4 #ARCH-CH-027）要求使用
     zephyr_writer 账号（DB 级 INSERT/ALTER 权限），禁止用 base/reader 账号。
-    （2026-08-17 AI-04 审计治本：load_ch_config → load_ch_writer_config）
+    ch_writer 统一入口即 writer 角色进程级单例（探针+冷却自愈内置）。
     """
-    from clickhouse_driver import Client
+    from zephyr.data.ch_writer import get_client_strict
 
-    from zephyr.data.ch_config import load_ch_writer_config
-
-    cfg = load_ch_writer_config()
-    c = Client(
-        host=cfg["host"],
-        port=int(cfg["port"]),
-        user=cfg["user"],
-        password=cfg["password"],
-        database=cfg["database"],
-        connect_timeout=10,
-        send_receive_timeout=120,
-    )
-    c.execute("SELECT 1")
-    return c
+    return get_client_strict()
 
 
 def _synth_period(client, target: str, start: str, end: str) -> int:

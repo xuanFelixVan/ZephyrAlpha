@@ -45,9 +45,6 @@ _REPO = Path(__file__).resolve().parents[4]
 if str(_REPO / "src") not in sys.path:
     sys.path.insert(0, str(_REPO / "src"))
 
-from clickhouse_driver import Client  # noqa: E402
-
-from zephyr.data.ch_config import load_ch_config  # noqa: E402
 
 app = FastAPI(title="ZephyrAlpha Dashboard API (read-only + backtest-run)")
 app.add_middleware(CORSMiddleware, allow_origins=["*"], allow_methods=["GET", "POST"], allow_headers=["*"])
@@ -63,24 +60,21 @@ _PERIOD_TABLE: dict[str, str] = {
     "1M": "kline_monthly",
 }
 
-_client: Client | None = None
+_client = None  # CH 连接（连接统一治本 2026-09-14：经 DatabaseService 槽位领取，writer/账号语义见 _ch 注释）
 _col_cache: dict[str, dict[str, str]] = {}
 _ch_lock = threading.Lock()  # clickhouse_driver 单连接非线程安全：FastAPI 线程池并发请求必须串行化
 
 
-def _ch() -> Client:
+def _ch():
     global _client
     if _client is None:
-        cfg = load_ch_config()
-        _client = Client(
-            host=cfg["host"],
-            port=int(cfg.get("port", 9000)),
-            user=cfg.get("reader_user") or cfg.get("user", "default"),
-            password=cfg.get("reader_password") or cfg.get("password", ""),
-            database=cfg.get("database", "c1_market"),
-            connect_timeout=3,        # 2026-09-03 实证：无超时 Client 在半开连接上永久挂死
-            send_receive_timeout=15,  # 单查询上限，超时异常触发 _ch_exec 弃连自愈
-        )
+        # 连接统一治本（2026-09-14）：构造上收 DatabaseService（slot=dashboard 独立槽位）。
+        # 账号语义保留历史行为（base 账号）；双道超时防线原样承接（#T6 + 2026-09-03 实证）。
+        from zephyr.infrastructure.database_service import get_db_service
+
+        _client = get_db_service().get_clickhouse_conn(
+            role="admin", slot="dashboard",
+            extra_kwargs={"connect_timeout": 3, "send_receive_timeout": 15})
     return _client
 
 
@@ -101,6 +95,9 @@ def _ch_exec(sql: str, params: dict | None = None) -> list:
         return _ch().execute(sql, params or {}, settings={"max_execution_time": _CH_MAX_EXEC_SECONDS})
     except Exception:
         _client = None   # 连接疑似坏态：弃置，下一位调用者重建自愈
+        from zephyr.infrastructure.database_service import get_db_service
+
+        get_db_service().invalidate_clickhouse_conn(role="admin", slot="dashboard")
         raise
     finally:
         _ch_lock.release()
@@ -1787,16 +1784,13 @@ _asset_lock = threading.Lock()
 _asset_thread: threading.Thread | None = None
 
 
-def _asset_audit_client() -> Client:
-    """审计专用 Client（独立连接，不与 _ch_exec 全局锁争用——审计查询秒级~分钟级，不能饿死 30s 轮询端点）。"""
-    cfg = load_ch_config()
-    return Client(
-        host=cfg["host"], port=int(cfg.get("port", 9000)),
-        user=cfg.get("reader_user") or cfg.get("user", "default"),
-        password=cfg.get("reader_password") or cfg.get("password", ""),
-        database=cfg.get("database", "c1_market"),
-        connect_timeout=3, send_receive_timeout=180,
-    )
+def _asset_audit_client():
+    """审计专用连接（slot=asset_audit 独立槽位，不与 _ch_exec 全局锁争用——审计查询秒级~分钟级，不能饿死 30s 轮询端点）。"""
+    from zephyr.infrastructure.database_service import get_db_service
+
+    return get_db_service().get_clickhouse_conn(
+        role="admin", slot="asset_audit",
+        extra_kwargs={"connect_timeout": 3, "send_receive_timeout": 180})
 
 
 def _asset_run_audit() -> None:
