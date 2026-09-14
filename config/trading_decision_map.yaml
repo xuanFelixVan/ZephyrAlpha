@@ -274,7 +274,10 @@ nodes:
   data_refs: [DS-150]
   module_ref: src/zephyr/regime/core/regime_detector.py
   module_id: MOD-REGIME-001
-  strategy_mounts: []
+  strategy_mounts:
+  - {strategy_ref: STR-VREV-025, confidence: verified, evidence: '三窗全绿 IS 1.15/OOS 0.83/S3 0.98, run=SCR-C4-20260913-002056+C4-2016-2019-sample3'}
+  - {strategy_ref: STR-VREV-026, confidence: verified, evidence: '双窗及格 IS 0.160/OOS 0.526, run=SCR-C4-20260913-002056+SCR-C4-20260914-051809'}
+  - {strategy_ref: STR-MOMTREND-033, confidence: verified, evidence: '双窗及格 IS 0.204/OOS 0.552, run=SCR-C4-20260913-002056+SCR-C4-20260914-051809'}
   materiality: critical
   decay_scan_frequency: monthly
 
@@ -1694,7 +1697,9 @@ nodes:
   invalidation:
   ai_autonomy: auto
   fallback:
-  strategy_mounts: []
+  strategy_mounts:
+  - {strategy_ref: STR-TSMALL-001, confidence: verified, evidence: '双窗及格 IS 1.066(DSR 0.888)/OOS 0.694, run=SCR-C4-20260914-045225+051809'}
+  - {strategy_ref: STR-VAL-001, confidence: verified, evidence: '双窗及格 IS 0.563/OOS 1.173, run=SCR-C4-20260914-034927+051809'}
   materiality: normal
   decay_scan_frequency: semiannual
 
@@ -2457,6 +2462,7 @@ nodes:
   - {strategy_ref: intraday-surge-fall, confidence: proposed, evidence: null}
   - {strategy_ref: orderbook-imbalance, confidence: proposed, evidence: null}
   - {strategy_ref: vwap-reversion, confidence: proposed, evidence: null}
+  - {strategy_ref: STR-DABAN-023, confidence: verified, evidence: '双窗及格 IS 0.070/OOS 0.795, run=SCR-C4-20260913-002056+SCR-C4-20260914-051809'}
 
   materiality: normal
   decay_scan_frequency: semiannual
@@ -4264,10 +4270,10 @@ state_matrix:
       distribution]
   cells:
     # L1 总闸：六段各输出预算/姿态细则（格子内容待填，proposed）
-  - {node_id: TDM-E-L1, state: capitulation, mounted: [], confidence: proposed}
-  - {node_id: TDM-E-L1, state: accumulation, mounted: [], confidence: proposed}
+  - {node_id: TDM-E-L1, state: capitulation, mounted: [STR-VREV-025], confidence: proposed}
+  - {node_id: TDM-E-L1, state: accumulation, mounted: [STR-VREV-026], confidence: proposed}
   - {node_id: TDM-E-L1, state: ignition, mounted: [], confidence: proposed}
-  - {node_id: TDM-E-L1, state: expansion, mounted: [], confidence: proposed}
+  - {node_id: TDM-E-L1, state: expansion, mounted: [STR-MOMTREND-033], confidence: proposed}
   - {node_id: TDM-E-L1, state: euphoria, mounted: [], confidence: proposed}
   - {node_id: TDM-E-L1, state: distribution, mounted: [], confidence: proposed}
     # L4 买卖点：打板只进点火确认后的三档（发酵=1进2主战场，高潮=警惕高开不追，退潮/冰点/修复不进）
@@ -4282,9 +4288,9 @@ state_matrix:
   - {node_id: TDM-E-L4, state: distribution, mounted: [], confidence: proposed}
     # P2 做T：修复期（震荡筹码交换）为主战场 + 发酵期次之；高潮/退潮/冰点不做
   - {node_id: TDM-P-P2, state: accumulation, mounted: [intraday-surge-fall, 
-        orderbook-imbalance, vwap-reversion], confidence: proposed}
+        orderbook-imbalance, vwap-reversion, STR-DABAN-023], confidence: proposed}
   - {node_id: TDM-P-P2, state: expansion, mounted: [intraday-surge-fall, 
-        orderbook-imbalance, vwap-reversion], confidence: proposed}
+        orderbook-imbalance, vwap-reversion, STR-DABAN-023], confidence: proposed}
   - {node_id: TDM-P-P2, state: capitulation, mounted: [], confidence: proposed}
   - {node_id: TDM-P-P2, state: ignition, mounted: [], confidence: proposed}
   - {node_id: TDM-P-P2, state: euphoria, mounted: [], confidence: proposed}
@@ -4304,18 +4310,26 @@ portfolio_plan:
   name_zh: 整装仿真组合 V0
   confidence: proposed              # 整个方案的权重分配=主观假设，待拼装回测归因后逐 sleeve 升级
   sleeves:
-  - {strategy_ref: default-equity, weight: 0.20, activation_state: null}         # 默认多头=底仓
-  - {strategy_ref: multifactor-sleeve, weight: 0.20, activation_state: null}
-  - {strategy_ref: daban-sleeve, weight: 0.15, activation_state: [ignition, 
+  - {strategy_ref: default-equity, weight: 0.14, activation_state: null}         # 默认多头=底仓
+  - {strategy_ref: multifactor-sleeve, weight: 0.14, activation_state: null}
+  - {strategy_ref: daban-sleeve, weight: 0.105, activation_state: [ignition, 
         expansion, euphoria]}                                                                               # 打板=点火确认后三档
-  - {strategy_ref: eventdriven-sleeve, weight: 0.10, activation_state: null}
-  - {strategy_ref: topn-momentum, weight: 0.10, activation_state: null}
-  - {strategy_ref: intraday-surge-fall, weight: 0.10, activation_state: [
+  - {strategy_ref: eventdriven-sleeve, weight: 0.07, activation_state: null}
+  - {strategy_ref: topn-momentum, weight: 0.07, activation_state: null}
+  - {strategy_ref: intraday-surge-fall, weight: 0.07, activation_state: [
         accumulation, expansion]}                                                                     # 做T=修复期主战场+发酵期
-  - {strategy_ref: orderbook-imbalance, weight: 0.075, activation_state: [
+  - {strategy_ref: orderbook-imbalance, weight: 0.0525, activation_state: [
         accumulation, expansion]}
-  - {strategy_ref: vwap-reversion, weight: 0.075, activation_state: [
+  - {strategy_ref: vwap-reversion, weight: 0.0525, activation_state: [
         accumulation, expansion]}
+  - {strategy_ref: STR-VREV-025, weight: 0.05, activation_state: [capitulation]}
+  - {strategy_ref: STR-VREV-026, weight: 0.05, activation_state: [accumulation]}
+  - {strategy_ref: STR-MOMTREND-033, weight: 0.05, activation_state: [expansion]}
+  - {strategy_ref: STR-DABAN-023, weight: 0.05, activation_state: [accumulation, expansion]}
+  - {strategy_ref: STR-TSMALL-001, weight: 0.05, activation_state: null}
+  - {strategy_ref: STR-VAL-001, weight: 0.05, activation_state: null}
+  # C5 转正批等权起步档（2026-09-14）：新 6 sleeve 各 0.05，老 8 等比 ×0.70；权重=proposed 先验，
+  # 待拼装回测归因逐 sleeve 替换（备忘 69 权重管线第一档，禁拍脑袋绝对收益配比）
   # 外审修复注记（2026-09-07）：①correlation_cap=0.7 处置语义复用 F-C2-03 两档（ρ>0.70 减半/>0.85 禁新仓，m-15）；②max_total_position=1.0=工程天花板永不触发（D92）；总仓位=min(预算带, 60% 硬顶 RLM-CONCENTRATION-002)；预备金不固定比例、以波动率预算输出为准，闲置资金自动 GC001 收益化（D107 修订 D88）；尾部弹药=D110 信号触发+回测验证后动用；合成净值含现金 sleeve（GC001）收益（D84⑤，m-50）；③sleeves.activation_state=null=全段激活，预算带 0% 段（distribution）=禁新开仓、存量由 X 流信号驱动离场（D98 确认）；④max_single_sleeve=0.25=常态唯一上限；主线确认+滚动评分双达标放宽至 0.60，禁 1.0；一致性约束=单策略日盈亏贡献>组合 70% 自动降权（D93）
   aggregator:                        # 组合聚合规则（C2，proposed 占位）
     max_total_position: 1.0
