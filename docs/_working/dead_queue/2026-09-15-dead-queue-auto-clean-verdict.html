@@ -1,0 +1,194 @@
+---
+ttl: task_bound
+---
+
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>dead/ 死信自动清理 — 方案裁决书</title>
+<style>
+  :root {
+    --bg: #fafafa;
+    --ink: #111111;
+    --muted: #6b6b6b;
+    --hairline: #d9d9d9;
+    --accent: #0f5c4a;
+    --accent-soft: #e8f0ed;
+    --warn: #8a4b08;
+    --warn-soft: #f7efe2;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    background: var(--bg);
+    color: var(--ink);
+    font-family: "Source Han Serif SC", "Noto Serif SC", "SimSun", serif;
+    font-size: 16px;
+    line-height: 1.6;
+    padding: 48px 24px 80px;
+  }
+  .page { max-width: 760px; margin: 0 auto; }
+  .kicker {
+    font-family: "SF Mono", Consolas, monospace;
+    font-size: 12px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 12px;
+  }
+  h1 {
+    font-size: 34px;
+    font-weight: 600;
+    letter-spacing: -0.02em;
+    line-height: 1.15;
+    margin-bottom: 8px;
+  }
+  .lede {
+    font-size: 17px;
+    color: var(--muted);
+    margin-bottom: 32px;
+    padding-bottom: 24px;
+    border-bottom: 1px solid var(--hairline);
+  }
+  h2 {
+    font-size: 20px;
+    font-weight: 600;
+    margin: 40px 0 16px;
+    padding-top: 20px;
+    border-top: 1px solid var(--hairline);
+  }
+  h2 .no {
+    font-family: Consolas, monospace;
+    font-size: 13px;
+    color: var(--accent);
+    margin-right: 10px;
+    vertical-align: 2px;
+  }
+  p { margin-bottom: 14px; }
+  .verdict {
+    background: var(--accent-soft);
+    border-left: 3px solid var(--accent);
+    padding: 14px 18px;
+    margin: 18px 0;
+    font-size: 15.5px;
+  }
+  .verdict strong { color: var(--accent); }
+  .caution {
+    background: var(--warn-soft);
+    border-left: 3px solid var(--warn);
+    padding: 14px 18px;
+    margin: 18px 0;
+    font-size: 15.5px;
+  }
+  .caution strong { color: var(--warn); }
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 18px 0;
+    font-size: 14.5px;
+  }
+  th {
+    text-align: left;
+    font-weight: 600;
+    font-size: 13px;
+    letter-spacing: 0.04em;
+    color: var(--muted);
+    border-bottom: 1.5px solid var(--ink);
+    padding: 8px 10px;
+  }
+  td {
+    border-bottom: 1px solid var(--hairline);
+    padding: 9px 10px;
+    vertical-align: top;
+  }
+  td.mono { font-family: Consolas, monospace; font-size: 13px; }
+  .yes { color: var(--accent); font-weight: 600; }
+  .no2 { color: var(--warn); font-weight: 600; }
+  .timeline { margin: 20px 0; }
+  .step {
+    display: flex;
+    gap: 16px;
+    padding: 12px 0;
+    border-bottom: 1px solid var(--hairline);
+  }
+  .step:last-child { border-bottom: none; }
+  .step-marker {
+    flex: 0 0 28px;
+    height: 28px;
+    border: 1px solid var(--accent);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: Consolas, monospace;
+    font-size: 13px;
+    color: var(--accent);
+  }
+  .step-body b { display: block; font-weight: 600; margin-bottom: 2px; }
+  .step-body span { font-size: 14.5px; color: var(--ink); }
+  .meta {
+    margin-top: 48px;
+    padding-top: 16px;
+    border-top: 1px solid var(--hairline);
+    font-family: Consolas, monospace;
+    font-size: 12px;
+    color: var(--muted);
+    display: flex;
+    justify-content: space-between;
+    letter-spacing: 0.02em;
+  }
+  code {
+    font-family: Consolas, monospace;
+    font-size: 13.5px;
+    background: #efefef;
+    padding: 1px 5px;
+  }
+</style>
+</head>
+<body>
+<div class="page">
+
+  <div class="kicker">Dead Queue Auto-Clean · 方案裁决书 · 2026-09-15</div>
+  <h1>dead/ 死信能否自动清理</h1>
+  <p class="lede">三个问题：能不能自动清理？能不能识别该清不该清？要不要走挖矿 SOP？——挖矿已完成，结论：能自动化，但必须先修一道 Owner 既有裁定，且唯一合规通道是回收站，不是删除。</p>
+
+  <h2><span class="no">Q1</span>能不能自动清理？——能，但通道唯一</h2>
+  <div class="verdict"><strong>结论：能。</strong>现有 <code>cleanup_done</code> 通道动不得（"dead/ 永不清理"是代码不变量 + 钉死测试 + Owner 裁定三层钉死）；唯一合规路径 = 独立 reconciler 调 <code>ops_guard.guard_recycle</code>——move 进统一回收站（30 天可恢复），<em>永不物理删除</em>。</div>
+  <p>这与既有定案语义兼容的前提是把不变量从"dead/ 永不自动清理"细化为两层：<strong>①字节永不物理删除</strong>（不动，回收站仍可恢复）<strong>②归档进回收站属治理动作非清理</strong>（需要改钉死测试表述 + Owner 追加裁定）。</p>
+
+  <h2><span class="no">Q2</span>能不能识别该清不该清？——能，但必须保守白名单</h2>
+  <p>现有三分类是<strong>概率性证据</strong>（mtime / 时钟 / 工作区漂移都可能翻案），不是死信语义终判。仓库内已有前科：stash_lifecycle_reconciler 的自动清理曾因 <code>_is_ai_generated</code> 同形虚设 bug 误删（architecture_issue_registry L6428）。识别规则按保守侧设计：</p>
+  <table>
+    <tr><th>判定</th><th>条件（全部满足才可清）</th><th>依据</th></tr>
+    <tr><td class="yes">该清</td><td>连续 <b>两轮</b> 审计（间隔 ≥24h）均判 <code>content_landed</code> 或 <code>landed_elsewhere</code>；且无 <code>requeued</code> 标注；且 blob 未被他项共享</td><td>证据稳定 = 收敛事实</td></tr>
+    <tr><td class="no2">不该清</td><td><code>superseded_or_dropped</code> / 有 requeued 标注 / 单轮判定 / blobs 共享引用不明</td><td>证据可翻案 = 保留为历史证据</td></tr>
+  </table>
+  <p>关键安全边界：自动清理<strong>只 move dead/*.json</strong>（含其 blob_ref 指向的 blobs 文件一并 move），绝不触碰 pending/processing/done，绝不物理删除任何字节——回收站 30 天窗内一条命令可整体还原。</p>
+
+  <h2><span class="no">Q3</span>要不要走挖矿 SOP？——已经走完，且 SOP 拦住了一个坑</h2>
+  <p>本任务触发挖矿 SOP 的"建方案"场景，六向寻路已完成（挖矿日志见交付物）。SOP 的真实价值在这次不是流程仪式——它挖出了三个拍脑袋设计必然踩的坑：</p>
+  <div class="timeline">
+    <div class="step"><span class="step-marker">1</span><div class="step-body"><b>不变量钉死</b><span>直接写自动清理 = 破坏 test_dead_never_cleaned_invariant + 66 号设计文档 §8——施工前必须先改裁定，否则 gate 体系自己会拦</span></div></div>
+    <div class="step"><span class="step-marker">2</span><div class="step-body"><b>删除通道纪律</b><span>ARCH-311 后 §9 纪律 3：任何删除一律 guard_recycle——"识别到就删文件"的直觉设计直接违纪</span></div></div>
+    <div class="step"><span class="step-marker">3</span><div class="step-body"><b>清理器前科</b><span>stash 清理误删事故在案——概率性证据不配终判权，白名单必须加"连续两轮收敛"冷静期</span></div></div>
+  </div>
+
+  <h2><span class="no">§</span>施工清单（Owner 批准后执行）</h2>
+  <table>
+    <tr><th>#</th><th>动作</th><th>涉及</th></tr>
+    <tr><td>1</td><td>Owner 追加裁定：dead/ 永不清理 → "字节永不物理删除；两轮收敛项 guard_recycle 归档"</td><td>ruling_registry（与实现原子）</td></tr>
+    <tr><td>2</td><td>改钉死测试表述 + 新增 recycle 通道专测</td><td>test_commit_queue.py</td></tr>
+    <tr><td>3</td><td>reconciler 增补：两轮收敛白名单 + guard_recycle 调用 + 报告记 archived_qids</td><td>dead_queue_retirement_reconciler.py</td></tr>
+    <tr><td>4</td><td>首轮真实归档跑一轮 + Owner 抽查回收站可还原性</td><td>.runtime/recycle_bin/</td></tr>
+  </table>
+
+  <div class="caution"><strong>前置依赖</strong>：需 Owner 明确批准"修订 dead/ 永不清理裁定"这一条——这是决策不是挖矿能替的。批了就施工，约半天量级。</div>
+
+  <div class="meta">
+    <span>MINING-LOG · SIX-WAY · 2-NOISE-CLOSED</span>
+    <span>solo_agent · 2026-09-15</span>
+  </div>
+</div>
+</body>
+</html>
