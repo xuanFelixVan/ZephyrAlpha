@@ -231,14 +231,33 @@ guest unmap 可让宿主内部复用空间，但**文件外观大小不回缩，
    TABLES/SEQUENCES + ALTER DEFAULT PRIVILEGES FOR ROLE postgres（防复发），实测 pg_dump
    恢复（80.9 MB，2026-09-14 02:04）。今后 DDL 若用超级用户身份建表，需沿用 default privileges。
 
-**待 Owner 维护窗执行（需管理员 PowerShell + 停 CH 虚拟机约 10-30 分钟，避开 06:00 备份窗与交易时段）**：
+**已执行（2026-09-14 19:37 第 2 次尝试成功）：VHDX 913 GB → 实测 313.4 GB（回收 599.1 GB），F 盘剩余实测 793.5 GB；过程与复盘见 §10.2**：
 
 ```powershell
 Stop-VM -Name zephyr-ch
 Optimize-VHD -Path F:\ch_backup_disk.vhdx -Mode Full
 Start-VM -Name zephyr-ch
 ```
-执行后 VHDX 预计 913 GB → 约 290 GB（F 盘剩余 162 GB → 约 790 GB）；完成后更新本节实测值。
+实测结果：VHDX 913 GB → 313.4 GB（预计 ~290 GB，实测略高，属 unmap 粒度与压缩实际效果）；F 盘 free 194.4 → 793.5 GB。
+
+### §10.2 data_download 备份裁定 + VHDX 缩容完成（2026-09-14）
+
+1. **Owner 裁定 E:\数据下载（OFFREPO-DATA-DOWNLOAD）不备份**：当日源 52.66→118.38 GB 膨胀，
+   STAGE 3c /MIR 镜像同量吃 F 盘（当日 +66 GB，F 盘告急头号推手）。配置落地=backup_config.yaml
+   offrepo_backup.targets 移除 data_download + asset_inventory.yaml 该条 backup: mirror→none
+   （commit c573b1ef7f，19:27）。F:\offrepo_backup\data_download 副本已删（118.4 GB 回收，
+   F 盘 free 71.4→194.4 GB；E 盘源未动，需要时可随时重镜像）。
+2. **VHDX 缩容完成（第 2 次尝试，19:37）**：第 1 次 19:15 因 Hyper-V 进度监视对象丢失中断
+   （「有关该任务的信息不再可用」，VHDX 未缩，脚本按兜底逻辑自动拉起 VM）；第 2 次 19:17:58
+   提权重启，加 $ProgressPreference=SilentlyContinue 修掉进度条渲染问题，19:37:04 完成：
+   **912.5 GB → 313.4 GB，回收 599.1 GB**；VM 优雅关机 → Optimize-VHD -Mode Full → 自动拉起，
+   全程 transcript=logs/vhdx_maintenance_20260914_191758.log。验证：VM Running、CH
+   version=26.6.1.1193 在线、system.backups 无进行中任务、F 盘 free 194.4→793.5 GB。
+   §0.5 预测 ~290 GB 与实测 313.4 GB 的差额属 unmap 粒度/压缩实际效果，无需跟进。
+3. **挂账待 Owner 拍板**：F:\code_backup\.git.backup.20260803（6.32 GB，17285 文件，
+   2026-08-03 陈旧 .git 副本）——上一会话发起删除被 Owner 打断，删除前需再确认一次。
+4. **明日观察项（2026-09-15 06:00 备份后）**：看 working_vault 第一个跨天快照的
+   linked/copied 数，校准每日真实变化量，评估 retention_days=14 是否需要调小。
 
 ### §0.6 五图对齐视图
 
@@ -252,7 +271,7 @@ Start-VM -Name zephyr-ch
 | 图 | 位置 | 状态 | 链接 |
 |----|------|------|------|
 | 依赖图 (depgraph) | `blueprint_id=MOD-INF-043` 的 9 个 file 节点 | production | `extract_depgraph.py --modules MOD-INF-043` |
-| 数据流图 (dataflow) | （无节点） | N/A | `apply_dataflowgraph.py --list-datasets` |
+| 数据流图 (dataflow) | 0 个 Dataset / 1 个 Job | active | `apply_dataflowgraph.py --list-datasets` |
 | 决策架构图 (decision) | 0 个决策节点 / 1 个决策层 | N/A | `generate_decision_diagram.py` |
 | 蓝图 (blueprint) | 本文件 | Active | — |
 
