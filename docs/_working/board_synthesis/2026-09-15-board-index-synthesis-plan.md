@@ -91,7 +91,8 @@ I_b(t) = I_b(t-1) × (1 + r_b(t))
 
 - [ ] **Phase 0**：两疑云排查结论回收（另一会话进行中）——1min 覆盖真相决定 Phase 3 可行性
 - [ ] **Phase 1**：日K 合成器 MVP（t-1 权重链式，全 594 板块）+ §4 验收矩阵校准报告
-- [ ] **Phase 2**：sector_constituent_snapshot 快照表 + 生命周期管理（新股/调仓/退市除数）
+- [x] **Phase 2 快照表**：sector_constituent_snapshot 建表+首灌 95124 行（✅09-15 CH DDL 直接建表，ReplacingMergeTree 幂等）；生命周期管理（新股/调仓/退市除数）待下一批
+- [x] **P2-3 尾部核查**：尾部 8 板块根因=成分数过少（3~18 只，等权对个体波动极敏感）或成分数过多但映射精度不足（880805=600 只/880207=1458 只）；日K可用=0 系排查脚本用了周六日期（非交易日），修正后可复测
 - [ ] **Phase 3**：分钟级合成 + 逆势榜接线（counter_trend_board 数据注入位切换，含降级留痕兼容）
 - [ ] **Phase 4**：任务自动化（挂 daily_kline/intraday_minute 族）+ 长期对拍巡检
 
