@@ -773,3 +773,70 @@ class TestSingleWriterAssertion:
         _git(tmp_repo, "branch", "-f", "dev", "HEAD")
         violations = cql.assert_single_writer_dev_history(tmp_repo, since=base)
         assert len(violations) == 1 and "rogue" in violations[0]["subject"], "违例 commit 被点名"
+
+
+# ---------------------------------------------------------------------------
+# clean -fd 瞬态竞态容错（2026-09-14 死信饥饿治本）
+# ---------------------------------------------------------------------------
+
+
+class TestCleanResilience:
+    """worktree journal 瞬态（落盘门禁链写副本库 governance.db 的 *.db-journal
+    毫秒级出现/消失/被锁）使 clean -fd 可能 rc=128/1——12+ 条死信实证（入队即死，
+    队列饥饿）。落盘 commit 是 pathspec 限定（仅本项文件），clean 失败不应死信
+    队列项；reset --hard 失败仍致命（真异常）。"""
+
+    @staticmethod
+    def _fake_git(fail_commands: set[str], fail_once: bool = False):
+        """包装 cql._run_git：命中 fail_commands 且仍在失败窗口时按 _run_git 契约
+        抛 RuntimeError（check=True），其余调用透传真身。"""
+        real_run_git = cql._run_git
+        state = {"n": 0}
+
+        def _fake(cwd, args, *, check=True):
+            if args and args[0] in fail_commands:
+                hit = (not fail_once) or state["n"] < 1
+                state["n"] += 1
+                if hit:
+                    if check:
+                        raise RuntimeError(
+                            "git " + " ".join(args) +
+                            " -> rc=1: warning: failed to remove "
+                            "data/databases/governance.db-journal: Invalid argument"
+                        )
+                    return subprocess.CompletedProcess(["git", *args], 1, "", "")
+            return real_run_git(cwd, args, check=check)
+
+        return _fake
+
+    def test_clean_failure_tolerated(self, tmp_repo: Path, queue_root: Path, monkeypatch) -> None:
+        """clean 两次全败 → 降级 warning 不抛（项不死信）。"""
+        landing = cql.WorktreeLanding(repo_root=tmp_repo, queue_root=queue_root)
+        landing.ensure_worktree()
+        monkeypatch.setattr(cql, "_run_git", self._fake_git({"clean"}))
+        landing._sync_worktree()  # 不抛即过
+
+    def test_clean_transient_retry_succeeds(self, tmp_repo: Path, queue_root: Path, monkeypatch) -> None:
+        """首次 clean 失败（journal 瞬态）→ 0.5s 重试一次成功。"""
+        landing = cql.WorktreeLanding(repo_root=tmp_repo, queue_root=queue_root)
+        landing.ensure_worktree()
+        real_run_git = cql._run_git
+        fake = self._fake_git({"clean"}, fail_once=True)
+        calls = {"n": 0}
+
+        def counting(cwd, args, *, check=True):
+            if args and args[0] == "clean":
+                calls["n"] += 1
+            return fake(cwd, args, check=check)
+
+        monkeypatch.setattr(cql, "_run_git", counting)
+        landing._sync_worktree()
+        assert calls["n"] == 2
+
+    def test_reset_failure_still_fatal(self, tmp_repo: Path, queue_root: Path, monkeypatch) -> None:
+        """reset --hard 失败=真异常，必须照旧抛 RuntimeError（防降级扩面）。"""
+        landing = cql.WorktreeLanding(repo_root=tmp_repo, queue_root=queue_root)
+        landing.ensure_worktree()
+        monkeypatch.setattr(cql, "_run_git", self._fake_git({"reset"}))
+        with pytest.raises(RuntimeError):
+            landing._sync_worktree()

@@ -335,9 +335,29 @@ class WorktreeLanding:
 
         66 号 §11 #6 不变量（每项处理前 worktree HEAD == dev HEAD 且 clean）的机械实现；
         同时自愈 POST-COMMIT-GUARD reset / 上次崩溃孤儿 commit 等分支漂移。
+
+        clean 容错（2026-09-14 死信饥饿治本，12+ 条死信实证）：worktree 里的
+        data/databases/governance.db 是落盘门禁链的写副本（project_root=worktree），
+        其 SQLite journal 是毫秒级瞬态（曾因 *.db-journal 未入 .gitignore SQLite 段
+        成为 clean 目标——同批已补）：clean 遍历到它时可能刚消失（rc=128 Cannot
+        lstat）或正被锁（rc=1 failed to remove）。处置：失败重试一次（让瞬态过去），
+        仍失败降级 warning 继续——落盘 commit 是 pathspec 限定（仅本项文件），worktree
+        残留 untracked 不可能混入提交，§11 #6 的防陈旧内容泄漏目的由 reset --hard +
+        pathspec 双保险保持。reset --hard 失败仍然致命（真异常，照旧走死信/环境分类）。
         """
         self._git_wt("reset", "--hard", f"refs/heads/{self.target_branch}")
-        self._git_wt("clean", "-fd")
+        try:
+            self._git_wt("clean", "-fd")
+        except RuntimeError as exc:
+            logger.warning("[landing] clean -fd 首次失败（worktree journal 瞬态竞态）: %s —— 0.5s 后重试", exc)
+            time.sleep(0.5)
+            try:
+                self._git_wt("clean", "-fd")
+            except RuntimeError as exc2:
+                logger.warning(
+                    "[landing] clean -fd 重试仍失败，降级继续（pathspec 限定提交不受 worktree 残留影响）: %s",
+                    exc2,
+                )
 
     # ------------------------------------------------------------------
     # 幂等判定（66 号 §8：is-ancestor / done 记录 + 标记 grep 三重）
