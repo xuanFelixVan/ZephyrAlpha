@@ -6,7 +6,7 @@
 # [STARTUP] manual / post-commit reconciler ensure-daemon
 # [MATURITY] production
 # [INVARIANTS] 锚主仓工作区（anchor_main_root）；只告警不阻断（fail-open 不干扰主流程）；快照先于告警；审计写 .runtime/（永不回 tracked 区）；同签名告警去重；漂移消解自动写 clean 自愈消音；#ARCH-264：critical_warn 唯一写者=daemon（网关即时扫 observe-only）；热文件 10s 快扫+interval 全量双频节拍；quarantine 30 天 retention 自管+带外删除 tamper 审计；#ARCH-304：恰好 1 个活跃注册会话→auto-claim 替代告警（归属无歧义），0/>1 会话或 claim 失败→维持原处置（fail-closed 不放松）；#ARCH-308 A1：死会话清扫只卸 staged/删 claim 快照/释放锁（工作树内容永不销毁——git reset HEAD 仅动 index；注册表 reap 不越权，_adopted.jsonl 审计证据永不删；PID 存活会话即使心跳超时判死也不清扫——保守双检防误判在飞会话；index.lock 在飞本轮缩手）；#ARCH-308 A2：派生自动收敛仅限零在场会话（list_active ∪ raw PID 存活双检）+B类白名单+连续2周期稳定+非保护路径+index.lock 空闲，走 _commit_auto（无递归）
-# [MODIFY-GUARD] scan_once 判定逻辑（claimed/grace/dedup/auto_claim/alert 分流 + observe-only 观察员模式 + hot_only 快扫过滤）；快照目录格式 .runtime/quarantine/drift_<ts>/；_sweep_quarantine 只清理 drift_<ts> 规范命名目录
+# [MODIFY-GUARD] scan_once 判定逻辑（claimed/grace/dedup/auto_claim/alert 分流 + deletion 未暂存删除硬化（首见审计/次轮升级） + observe-only 观察员模式 + hot_only 快扫过滤）；快照目录格式 .runtime/quarantine/drift_<ts>/；_sweep_quarantine 只清理 drift_<ts> 规范命名目录
 # [STABILITY] evolving
 # [SAFETY] M
 # [AI_AUTONOMY] ai_modifiable
@@ -37,6 +37,10 @@ commit 层有网关+串行锁+审计，工作区写层曾是三不管地带（�
 - claimed：文件在活跃 session 的 claim 快照中 → 合法 WIP，不告警只记录
 - grace：最近一次 commit 后 GRACE_SECONDS 内 → post-commit reconciler 合法派生写窗口，不告警只记录
 - dedup：漂移内容相对上一周期未变 → 同签名不重复告警
+- deletion：未暂存删除硬化（2026-09-14 docs/_working 批量误删复盘）——claim 授权"改"
+  不授权"删"、grace 宽限窗保护的是派生回写、dedup 更会把"持续缺位"永久静默（事故
+  链：首见落 grace 窗被抑制→状态记 ""→次轮起 dedup 吞掉→看门狗在场也哑火）；故
+  删除首见只审计（容忍 git 瞬态），下一扫描周期仍缺位→无条件升级 critical_warn
 - auto_claim（#ARCH-304）：全项目恰好 1 个活跃注册会话 → 漂移写入归属无歧义，
   走既有 claim_files(adopt_prior_work=True) 自动认领 + 审计留痕，替代告警处置
   （2026-08-31 实证：AI 会话直改 tracked 文件未先 claim 被处置致工作丢失——
@@ -161,6 +165,7 @@ _QUARANTINE_DIR = ".runtime/quarantine"
 _QUARANTINE_RETENTION_DAYS = 30  # 快照保留天数（#ARCH-264 O4：watchdog 自管 retention）
 _DESIGN_MEMO_PREFIX = "docs/02_enterprise_architecture/07_trading_decision_architecture/design_memos/"
 _KNOWN_QUARANTINE_CAP = 500  # known_quarantine 登记上限（防状态文件膨胀）
+_DELETION_MASS_THRESHOLD = 10  # 单轮扫描未暂存消失 ≥N 件=批量删除事故，追加汇总升级
 
 # ── #ARCH-308 工作区孤儿 WIP 治本（2026-09-03 Owner 当案授权"全套 A+B+C"）──────
 _TRACKED_WRITE_ALLOWLIST_REL = (
@@ -930,7 +935,7 @@ def scan_once(
             DEFAULT_HOT_FILES ∪ design_memos/（daemon 10s 快扫周期用）。
 
     Returns:
-        摘要 dict：{scanned, drifted, alerted, observed, claimed, auto_claimed, grace_suppressed, dedup_skipped, healed}。
+        摘要 dict：{scanned, drifted, alerted, observed, claimed, auto_claimed, grace_suppressed, dedup_skipped, healed, deletion_observed, deletion_alerted}。
     """
     from zephyr.shared.io.paths import anchor_main_root  # noqa: PLC0415
 
@@ -946,6 +951,8 @@ def scan_once(
         "dedup_skipped": 0,
         "healed": 0,
         "merge_suppressed": 0,
+        "deletion_observed": 0,
+        "deletion_alerted": 0,
     }
     head_sha = _head_sha(root)
     if not head_sha:
@@ -1005,6 +1012,7 @@ def scan_once(
         dirty = [rel for rel in dirty if _is_hot_rel(rel)]
     summary["scanned"] = len(dirty)
     seen_drift: set[str] = set()
+    deletion_alerts: list[str] = []  # 本轮升级的删除型漂移（批量删除汇总用）
 
     for rel in dirty:
         if not _real_drift(root, rel):
@@ -1024,10 +1032,61 @@ def scan_once(
             "active_sessions": sessions,
             "claimed_by": claimed.get(rel, ""),
         }
-        if prev.get("work_hash") == wh:
+        # ── 删除型漂移硬化（2026-09-14 docs/_working 批量误删事故复盘）──────────
+        # 未暂存删除（工作区文件消失、HEAD/index 仍在）与内容漂移性质不同：claim
+        # 授权的是"改"不是"删"，grace 宽限窗保护的是"派生回写"，而 dedup 按签名去重
+        # 会让"持续缺位"永久静默。处置：staged 删除（git rm，提交流合法动作）走原
+        # 分流；未暂存删除首见只审计（容忍 git checkout/merge 瞬态与活跃会话重建中），
+        # 下一扫描周期仍缺位→无条件升级 critical_warn（不参与 auto_claim——认领缺失
+        # 等于把删除洗成合法 WIP）；单事故只升级一轮（alerted 去重 + healed 自愈复用）。
+        deletion_drift = wh == "" and hb != "" and not (root / rel).exists()
+        if deletion_drift:
+            rc_staged, _ = _git(root, ["diff", "--cached", "--quiet", "--", rel])
+            deletion_drift = rc_staged == 0  # index 仍有=未暂存删除；staged 删除不在此列
+
+        if deletion_drift and merge_in_progress:
+            # B5：merge 存续期豁免对删除同样适用（merge 引入的暂置删除是 git 机制设计）
+            summary["merge_suppressed"] += 1
+            _audit(root, {**base, "verdict": "merge_suppressed"})
+        elif deletion_drift and rel in alerted and alerted[rel] == hb:
+            # 升级后的持续缺位：单事故只告警一轮，healed 自愈负责消音
+            summary["dedup_skipped"] += 1
+        elif deletion_drift and prev.get("work_hash") == "":
+            # 持续缺位（首见后下轮仍不在）→ 升级告警，claimed/grace 均不可豁免
+            who = claimed.get(rel, "")
+            detail = (
+                f"删除型漂移升级: tracked 文件已从工作区消失且非暂存删除: {rel} "
+                f"(HEAD blob {hb[:8]}, 活跃会话 {','.join(sessions) or '无'}"
+                + (f"，claim 持有 {who}（claim 授权改不授权删）" if who else "")
+                + "，首见已审计留痕、本周期持续缺位仍缺位）"
+            )
+            if alert_enabled:
+                _log_results(root, "critical_warn", detail)
+                _audit(root, {**base, "verdict": "deletion_alerted", "head_blob": hb})
+                alerted[rel] = hb  # 签名=HEAD blob（消失前应有内容的锚）
+                summary["alerted"] += 1
+                summary["deletion_alerted"] += 1
+                deletion_alerts.append(rel)
+            else:
+                # O6 observe-only：daemon 是唯一 critical_warn 写者——观察员只存证，
+                # 不推进告警状态（下轮 daemon 仍按全状态处置，防吞）
+                _audit(root, {**base, "verdict": "observed", "note": "deletion_pending"})
+                summary["observed"] += 1
+                continue  # 不更新 files_state/alerted
+        elif deletion_drift:
+            # 首见：一轮容忍（git 瞬态/活跃会话删除后重建中），审计留痕不告警
+            if rel in claimed:
+                verdict = "claimed_delete"
+            elif in_grace:
+                verdict = "grace_delete"
+            else:
+                verdict = "deletion_observed"
+            _audit(root, {**base, "verdict": verdict})
+            summary["deletion_observed"] += 1
+        elif prev.get("work_hash") == wh:
             summary["dedup_skipped"] += 1  # 同签名漂移持续，不重复告警
             continue
-        if rel in claimed:
+        elif rel in claimed:
             summary["claimed"] += 1
             _audit(root, {**base, "verdict": "claimed"})
         elif merge_in_progress:
@@ -1082,6 +1141,18 @@ def scan_once(
                     del known_q[:-_KNOWN_QUARANTINE_CAP]
                 summary["alerted"] += 1
         files_state[rel] = {"work_hash": wh, "head_blob": hb, "last_seen": _now_iso()}
+
+    # 批量删除升级（2026-09-14 docs/_working 批量误删事故形态）：单轮 ≥N 件未暂存消失
+    # =清扫器级事故，逐条 critical_warn 易被信息流淹没，追加一条汇总便于值守一眼识别。
+    # 仅统计本轮新升级件（alerted 去重后），事故持续期间不会逐轮刷屏。
+    if alert_enabled and len(deletion_alerts) >= _DELETION_MASS_THRESHOLD:
+        preview = ", ".join(deletion_alerts[:10])
+        _log_results(
+            root,
+            "critical_warn",
+            f"批量删除型漂移: 单轮扫描 {len(deletion_alerts)} 件 tracked 文件未暂存消失"
+            f"（阈值 {_DELETION_MASS_THRESHOLD}），样本: {preview}",
+        )
 
     # 自愈：曾告警文件本轮已干净（diff 消失=恢复/HEAD 推进=已提交吸收）
     if alert_enabled:

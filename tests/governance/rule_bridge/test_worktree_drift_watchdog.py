@@ -728,3 +728,106 @@ def test_auto_commit_derived_skips_when_index_locked(git_repo: Path, monkeypatch
         assert s["committed"] == 0 and s["stable"] == 0, s
     finally:
         lock.unlink()
+
+
+# ── 删除型漂移硬化（2026-09-14 docs/_working 批量误删事故复盘）──────────────────
+
+
+def test_unstaged_deletion_grace_first_silent_then_alert(git_repo: Path) -> None:
+    """未暂存删除首见落 grace 窗只审计，次轮仍缺位→无条件升级（事故链回归）。"""
+    (git_repo / "hot.txt").unlink()
+    s1 = wd.scan_once(git_repo, grace_seconds=99999)  # 强制在宽限窗内
+    assert s1["alerted"] == 0 and s1["deletion_observed"] == 1, s1
+    audit = _read_audit(git_repo)
+    assert any(r.get("verdict") == "grace_delete" for r in audit)
+
+    s2 = wd.scan_once(git_repo, grace_seconds=99999)  # 仍缺位→升级，grace 不可豁免
+    assert s2["deletion_alerted"] == 1 and s2["alerted"] == 1, s2
+    rows = _read_log_actions(git_repo)
+    assert any(r[1] == "critical_warn" and "删除型漂移升级" in r[2] for r in rows)
+
+    s3 = wd.scan_once(git_repo, grace_seconds=99999)  # 单事故只告警一轮
+    assert s3["deletion_alerted"] == 0 and s3["dedup_skipped"] == 1, s3
+
+
+def test_unstaged_deletion_escapes_claim(git_repo: Path, monkeypatch) -> None:
+    """claim 授权"改"不授权"删"：claimed 文件持续缺位仍升级。"""
+    monkeypatch.setattr(
+        wd,
+        "_active_sessions_and_claims",
+        lambda root: (["sess-x"], {"hot.txt": "sess-x"}),
+    )
+    (git_repo / "hot.txt").unlink()
+    s1 = wd.scan_once(git_repo, grace_seconds=0)
+    assert s1["alerted"] == 0, s1
+    audit = _read_audit(git_repo)
+    assert any(r.get("verdict") == "claimed_delete" for r in audit)
+
+    s2 = wd.scan_once(git_repo, grace_seconds=0)
+    assert s2["deletion_alerted"] == 1, s2
+    rows = _read_log_actions(git_repo)
+    assert any("claim 授权改不授权删" in r[2] for r in rows)
+
+
+def test_staged_deletion_stays_normal_flow(git_repo: Path, monkeypatch) -> None:
+    """staged 删除（git rm）= 提交流合法动作，仍走原 claimed 豁免分流。"""
+    monkeypatch.setattr(
+        wd,
+        "_active_sessions_and_claims",
+        lambda root: (["sess-x"], {"hot.txt": "sess-x"}),
+    )
+    _git(git_repo, "rm", "-q", "hot.txt")
+    s1 = wd.scan_once(git_repo, grace_seconds=0)
+    s2 = wd.scan_once(git_repo, grace_seconds=0)
+    assert s1["alerted"] == 0 and s2["alerted"] == 0, (s1, s2)
+    assert s1["claimed"] == 1 and s2["dedup_skipped"] == 1, (s1, s2)
+    assert s1["deletion_alerted"] == 0 and s2["deletion_alerted"] == 0, (s1, s2)
+
+
+def test_deletion_heal_on_restore_and_rearm(git_repo: Path) -> None:
+    """删除升级后文件恢复→healed 消音；再次删除→新事故重新升级。"""
+    (git_repo / "hot.txt").unlink()
+    wd.scan_once(git_repo, grace_seconds=0)
+    s2 = wd.scan_once(git_repo, grace_seconds=0)
+    assert s2["deletion_alerted"] == 1, s2
+
+    (git_repo / "hot.txt").write_text("v1\n", encoding="utf-8")  # 恢复 HEAD 内容
+    s3 = wd.scan_once(git_repo, grace_seconds=0)
+    assert s3["healed"] == 1, s3
+
+    (git_repo / "hot.txt").unlink()  # 新事故：重新走 首见→升级
+    s4 = wd.scan_once(git_repo, grace_seconds=0)
+    assert s4["deletion_observed"] == 1 and s4["deletion_alerted"] == 0, s4
+    s5 = wd.scan_once(git_repo, grace_seconds=0)
+    assert s5["deletion_alerted"] == 1, s5
+
+
+def test_mass_deletion_escalation_summary(git_repo: Path) -> None:
+    """单轮 ≥阈值件未暂存消失→逐条升级之外追加一条批量删除汇总 critical_warn。"""
+    names = [f"bulk_{i:02d}.txt" for i in range(wd._DELETION_MASS_THRESHOLD + 2)]
+    for name in names:
+        (git_repo / name).write_text(f"x-{name}\n", encoding="utf-8")
+    _git(git_repo, "add", *names)
+    _git(
+        git_repo,
+        "-c", "user.email=t@t",
+        "-c", "user.name=t",
+        "-c", "core.autocrlf=false",
+        "commit", "-q", "-m", "add bulk",
+    )
+    for name in names:
+        (git_repo / name).unlink()
+    s1 = wd.scan_once(git_repo, grace_seconds=0)
+    assert s1["deletion_observed"] == len(names) and s1["deletion_alerted"] == 0, s1
+
+    s2 = wd.scan_once(git_repo, grace_seconds=0)
+    assert s2["deletion_alerted"] == len(names), s2
+    rows = _read_log_actions(git_repo)
+    mass = [r for r in rows if r[1] == "critical_warn" and "批量删除型漂移" in r[2]]
+    assert len(mass) == 1, mass
+    assert str(len(names)) in mass[0][2]
+
+    s3 = wd.scan_once(git_repo, grace_seconds=0)  # 持续缺位不重复汇总
+    assert s3["deletion_alerted"] == 0, s3
+    rows3 = _read_log_actions(git_repo)
+    assert sum(1 for r in rows3 if r[1] == "critical_warn" and "批量删除型漂移" in r[2]) == 1
