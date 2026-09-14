@@ -12383,7 +12383,7 @@ factors:
   factor_class: "expectations"
   formula: "eps_consensus_fy1 / close"
   params: {"forecast_year": "fy1(>=当年最小预测年)"}
-  inputs: ["c3_fundamental.consensus_daily(DS-229)", "c1_market.kline_daily close"]
+  inputs: []
   outputs: ["截面因子值（方向=值大预期收益高）"]
   alpha_source: "华泰单因子测试之九(2018) 一致预期EP 沪深300 RankIC 6.32% 长期稳定；Ball-Brown 1968 预期锚"
   frequency: "daily"
@@ -12422,7 +12422,7 @@ factors:
   factor_class: "expectations"
   formula: "(eps_consensus_t - eps_consensus_{t-20td})/|eps_consensus_{t-20td}| / max(eps_std_t/|eps_mean_t|, 1e-6)"
   params: {"k_td": 20, "disp_floor": 1e-06, "forecast_year": "fy1"}
-  inputs: ["c3_fundamental.consensus_daily(DS-229) eps_consensus/eps_std/eps_mean"]
+  inputs: []
   outputs: ["截面因子值（方向=值大=上修=预期收益高）"]
   alpha_source: "华泰 AI54 一致预期变化率 ts_return=最高频构件+DEGREE 分歧度归一改进；Gleason & Lee 2003 修正后价格漂移（高创新性修正更强）"
   frequency: "daily"
@@ -12461,7 +12461,7 @@ factors:
   factor_class: "expectations"
   formula: "窗口90d内 fy1 上调研报数 / 上调+下调研报数（fy1/fy2 双期）"
   params: {"window_d": 90}
-  inputs: ["c3_fundamental.research_report(DS-228) 逐报 eps_fy0/fy1/fy2 槽位"]
+  inputs: []
   outputs: ["截面因子值（方向=值大=广度上修）"]
   alpha_source: "华泰基本面量化之二(2024-12) 盈利修正=修正幅度+上调占比；Gleason & Lee 2003"
   frequency: "daily"
@@ -12500,7 +12500,7 @@ factors:
   factor_class: "expectations"
   formula: "n_reports/n_orgs 对 log市值+20d动量+20d换手 横截面回归取残差"
   params: {"window_d": 90}
-  inputs: ["c3_fundamental.consensus_daily(DS-229) n_reports/n_orgs", "c1_market.kline_daily 市值/动量/换手代理"]
+  inputs: []
   outputs: ["截面因子值（方向=残差大=关注度异常高）"]
   alpha_source: "Lee & So 2017 异常覆盖度预测收益；华泰基本面量化之二(2024-12) RankIC 2.34%（报告数+机构数双代理，作者数维度缺）"
   frequency: "daily"
@@ -12517,17 +12517,17 @@ factors:
   status: "candidate"
   version: "1.0.0"
   created_at: "2026-09-14"
-  updated_at: "2026-09-14"
+  updated_at: "2026-09-15"
   owner: "MOD-GOVERNANCE"
-  ic: null
+  ic: 0.0043
   ir: null
   decay_halflife: null
   decay_detection_method: null
   last_decay_scan_at: null
   turnover: null
   capacity: null
-  last_evaluated_at: null
-  evidence: null
+  last_evaluated_at: '2026-09-15'
+  evidence: "EXP-FACTOR-EVAL-002（2026-09-15，裁定#253 放行首跑，run=logs/experiment_tracking_fallback/exp04_eval_run1_20260915.json）：数据实证=600519 IS 窗 n_reports 48 值/n_orgs 20 值时变（计数类不受 EPS 槽位污染，裁定#253）；coverage IS 1,161 只/月充分。④ IS RankIC=+0.0043（p=0.72，57/60 月有效）不达门槛，OOS 符号翻转 -0.0183（p=0.14）；⑤ 五分位单调秩相关 -0.079 无结构；⑥ 窄测四档全负（cfg -0.262→80bp -0.871）；mom_ic≈-0.005=残差化已剥净动量共线。出证=noise（数据干净、因子弱）：与华泰 2.34% 的差距或系作者数维度缺+特征集少机构持仓项。维持 candidate 不晋级，改进旋钮留 C4 历史修复后统一复评。注：turnover_20 为推导值（volume(手)×100÷(circ_mv(万元)×1e4÷close)，600519 三时点校准，历史换手真源缺位）。"
   code_symbol: "src/zephyr/factor/expectations.py::exp04_anomaly_coverage"
   code_fingerprint: null
   entry_role: "ranking"
@@ -12539,7 +12539,7 @@ factors:
   factor_class: "expectations"
   formula: "eps_std / |eps_mean|"
   params: {"forecast_year": "fy1"}
-  inputs: ["c3_fundamental.consensus_daily(DS-229)"]
+  inputs: []
   outputs: ["截面因子值（方向=值小=低分歧=预期收益高，负向因子）"]
   alpha_source: "Diether Malloy Scherbina 2002 高分歧未来收益偏低；兼作 EXP-02 分母（DEGREE 改进法）"
   frequency: "daily"
@@ -12578,7 +12578,7 @@ factors:
   factor_class: "expectations"
   formula: "rating_score_mean 的 60td 变化 + 窗口内上调事件计数（7/5/3/2/1 评分制）"
   params: {"k_td": 60, "score_map": "买入7/增持5/中性持有3/减持卖出1-2/回避2"}
-  inputs: ["c3_fundamental.consensus_daily(DS-229) rating_score_mean/n_buy/n_add/n_neutral"]
+  inputs: []
   outputs: ["截面因子值（方向=值大=评级上调动量）"]
   alpha_source: "华泰基本面量化之二(2024-12) 改进评级 7/5/3/2/1/0 评分 RankIC 2.26%；Jegadeesh et al. 2002 买入评级组合超额"
   frequency: "daily"
@@ -12595,17 +12595,17 @@ factors:
   status: "candidate"
   version: "1.0.0"
   created_at: "2026-09-14"
-  updated_at: "2026-09-14"
+  updated_at: "2026-09-15"
   owner: "MOD-GOVERNANCE"
-  ic: null
+  ic: -0.0035
   ir: null
   decay_halflife: null
   decay_detection_method: null
   last_decay_scan_at: null
   turnover: null
   capacity: null
-  last_evaluated_at: null
-  evidence: null
+  last_evaluated_at: '2026-09-15'
+  evidence: "EXP-FACTOR-EVAL-003（2026-09-15，裁定#253 放行首跑，run=logs/experiment_tracking_fallback/exp06_eval_run1_20260915.json）：数据实证=600519 IS 窗 rating_score_mean 104 值时变、年度非空覆盖 92-98%（计数/评级类不受 EPS 槽位污染，裁定#253）。④ IS RankIC=-0.0035（t_p=0.53，覆盖 723 只/月）/OOS +0.0127（p=0.16）→ 不达 |IC|>=0.02 门槛；⑤ 五分位单调秩相关 -0.008 无结构，分状态 IC 全噪声区，动量对照 mom_ic=0.032（无 variant_of 问题）；⑥ 窄测 cfg 档 IS 超额 Sharpe 0.105<0.5 且 20bp 转负、80bp=-0.695=cost-fragile。出证=noise（真实数据上不达标，非 data-gap）：60td 评级动量或被快速定价/卖方评级粘性稀释，华泰 2.26% 出自评级水平而非动量。维持 candidate 不晋级，留档作文献对照。"
   code_symbol: "src/zephyr/factor/expectations.py::exp06_rating_momentum"
   code_fingerprint: null
   entry_role: "ranking"

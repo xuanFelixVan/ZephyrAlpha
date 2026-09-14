@@ -1867,3 +1867,34 @@ entries:
   related_arch: ['#ARCH-HEARTBEAT-001', '#ARCH-GATE-OWN-SCOPE-001']
   related_rulings: ['裁定#234']
   superseded_by: null
+- ruling_id: '裁定#253'
+  title: EXP 计数/评级类因子（EXP-04/06）提前放行评估——EPS 槽位污染不传染计数与评级语义，值类继续守 §9.3 双源
+  date: '2026-09-15'
+  category: 数据治理
+  status: active
+  summary: >-
+    Owner 夜班自裁授权协议下的裁定（先查实际数据后裁，全天候先例=设计档案 §8 前言
+    2026-09-14）。待裁定项：EXP-04（异常覆盖）/EXP-06（评级动量）是否不等 2027-07 干净
+    积累窗即先行评估。第一性原理：§9.1 源污染的传染面=预测槽位（eps_fy0/fy1/fy2）的
+    「源站当前快照」语义；计数类（n_reports/n_orgs）由 publish_date 窗口聚合派生——
+    publish_date 本身真实（§9.2 成文）；评级为研报本体固有字段（报告当日说什么级别即
+    什么级别，不随时间漂移，日度增量不重抓旧报告）。三路实证：①600519 IS 窗
+    （2019-2023，3,642 交易日）n_reports 48 个不同值/n_orgs 20 值/rating_score_mean
+    104 值时变真实，同窗 eps_consensus 仅 3 值（退化对照）；②rating_score_mean 年度
+    非空覆盖 92-98%（2019-2026），覆盖股数 1,186→2,356；③EXP-04 特征列可用性=
+    stock_indicator.circ_mv 全窗覆盖（④回补 768 万行）+kline_daily close/volume+
+    research_report org_name/publish_date。换手率历史真源缺位（daily_valuation 系
+    2026-09 起新表、kline_daily_hfq.turnover 死列全 0 实测），EXP-04 第三特征按
+    volume(手)×100÷(circ_mv(万元)×1e4÷close) 推导，600519 三时点实测校准（2021-12-31
+    0.236% 与真实口径吻合，流通股本反推 12.56 亿股精确）。裁定：放行 EXP-04/06 按
+    §8 预注册判据（IS 2019-2023 |IC|>=0.02 等，禁挪）先行评估；值类（EXP-01/03/05 及
+    EXP-02 复核）不受益于本裁定，继续守 §9.3 前向积累+analyst_forecast 双源策略
+    （或 C4 PDF 历史修复批产出达验收门禁后重估历史区间）。施工：eval_exp_expectations.py
+    扩 --factor exp04/exp06（覆盖计数走 research_report 重算不走 consensus_daily 冗余列、
+    评级走 consensus_daily.rating_score_mean、fwd/IC/窄测机械复用）同 commit 原子。
+    残余风险：EXP-04 换手为推导值非原始口径（实测校准留痕可复测）；覆盖度类 2019 年
+    截面约 1.2k 只偏薄（§8.1 已知约束，由覆盖门槛把关）。
+  evidence: logs/experiment_tracking_fallback/exp06_eval_run1_20260915.json + exp04_eval_run1_20260915.json（实弹出证）+ 600519 探针 SQL（裁定文内含口径可复测）+ 设计档案 §9.2
+  related_arch: []
+  related_rulings: []
+  superseded_by: null

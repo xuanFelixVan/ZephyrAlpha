@@ -642,6 +642,102 @@ experiments:
     code_path: scripts/backtest/eval_exp_expectations.py
     created_at: '2026-09-14'
     completed_at: '2026-09-14'
+  - experiment_id: EXP-FACTOR-EVAL-002
+    name: EXP-04 Anomaly Coverage First Evaluation (SOP-B IV, Ruling 253)
+    name_zh: EXP-04 异常覆盖首跑评估（SOP-B ④宽测，裁定#253 放行）
+    experiment_type: factor_eval
+    target_type: factor
+    target_id: FCT-EXP-004
+    params_summary:
+      window_d: 90               # 预注册 params（90 自然日滚动，research_report 重算）
+      proxies: [n_reports, n_orgs]  # 双代理残差截面 z-score 等权合成（华泰口径）
+      chars: [log_mv, mom_63, turnover_20]  # turnover 为推导值（volume/circ_mv/close，600519 三时点校准）
+      fwd_td: 20
+      rebalance: monthly_month_end
+      narrow: {top_n: 50, slip_stress_bps: [cfg1, 20, 40, 80]}
+      windows: {is: 2019-01-01~2023-12-31, oos: 2024-01-01~2026-09-11}
+    data_period: "2019-01-01~2026-09-11"
+    universe: UNI-RULE-001           # 覆盖 IS 均值 1,161 只/月、OOS 1,487 只/月（§8.1 门槛内充分）
+    benchmark_id: BMK-INDEX-000300
+    cost_model_ref: CST-ASTOCK-001
+    result_summary:
+      sharpe: -0.262                 # ⑥ 窄测 IS 超额 Sharpe（cfg 档，负值）
+      max_dd: null
+      ic: 0.0043                     # IS RankIC 均值（t_p=0.72 不显著）
+    conclusion: >-
+      出证=noise（真实数据上不达标，非 data-gap）。④ IS RankIC=+0.0043（p=0.72，
+      57/60 月有效）远低于 |IC|>=0.02 门槛，OOS 符号翻转 -0.0183（p=0.14）；⑤ 五分位
+      单调秩相关 -0.079 无结构，分状态 IC 混杂无方向；⑥ 窄测四档全负（IS cfg -0.262 →
+      80bp -0.871）。mom_ic≈0 证明残差化已剥净动量共线。与华泰 2.34% 差异解释：作者数
+      维度缺失（双代理）+特征集少机构持仓项+90d 窗内覆盖高度集中热门股。裁定#253 放行
+      价值=以干净计数数据关闭该问号（数据侧无可疑，因子侧本身弱）；改进旋钮（窗宽/特征/
+      合成法）留 C4 历史修复完成后统一复评，不预设能救活。
+    is_overfit: null
+    pbo_value: null
+    dsr_value: null
+    psr_value: null
+    n_trials: 5
+    pre_registered: true             # §8 预注册（2026-09-14 冻结）+ 裁定#253 放行
+    backtest_bias_checks:
+      survivorship: unknown
+      lookahead: passed              # 计数/评级类输入经裁定#253 实证无槽位污染
+      stop_exit: unknown
+    log_location: logs/experiment_tracking_fallback/exp04_eval_run1_20260915.json
+    artifact_path: logs/experiment_tracking_fallback/
+    fallback_ref: null
+    mace_env_ref: null
+    status: completed
+    module_id: MOD-BT-033
+    doc_ref: docs/01_policies_and_standards/policies/expectation_consumption_design_policy.md §8+§9.3
+    code_path: scripts/backtest/eval_exp_expectations.py
+    created_at: '2026-09-15'
+    completed_at: '2026-09-15'
+  - experiment_id: EXP-FACTOR-EVAL-003
+    name: EXP-06 Rating Momentum First Evaluation (SOP-B IV, Ruling 253)
+    name_zh: EXP-06 评级动量首跑评估（SOP-B ④宽测，裁定#253 放行）
+    experiment_type: factor_eval
+    target_type: factor
+    target_id: FCT-EXP-006
+    params_summary:
+      k_td: 60                   # 预注册 params（§8.2 无网格=单配置）
+      fwd_td: 20
+      rebalance: monthly_month_end
+      narrow: {top_n: 50, slip_stress_bps: [cfg1, 20, 40, 80]}
+      windows: {is: 2019-01-01~2023-12-31, oos: 2024-01-01~2026-09-11}
+    data_period: "2019-01-01~2026-09-11"
+    universe: UNI-RULE-001           # 覆盖 IS 均值 723 只/月、OOS 978 只/月（评级列非空覆盖 92-98%）
+    benchmark_id: BMK-INDEX-000300
+    cost_model_ref: CST-ASTOCK-001
+    result_summary:
+      sharpe: 0.105                  # ⑥ 窄测 IS 超额 Sharpe（cfg 档）<0.5 准入线
+      max_dd: null
+      ic: -0.0035                    # IS RankIC 均值（t_p=0.53 不显著）
+    conclusion: >-
+      出证=noise（真实数据上不达标）。④ IS RankIC=-0.0035（p=0.53，60 月全有效）/
+      OOS +0.0127（p=0.16）；⑤ 五分位单调 -0.008 无结构，分状态 IC 全噪声区；⑥ cfg 档
+      IS 0.105<0.5 且 20bp 起转负（80bp=-0.695）=cost-fragile。mom_ic=0.032 无 variant_of
+      问题。华泰改进评级 2.26% 出自评级水平而非 60td 动量——动量版或被快速定价/卖方
+      评级粘性稀释。维持 candidate 不晋级，留档作文献对照（裁定#253 放行首跑）。
+    is_overfit: null
+    pbo_value: null
+    dsr_value: null
+    psr_value: null
+    n_trials: 5
+    pre_registered: true             # §8 预注册（2026-09-14 冻结）+ 裁定#253 放行
+    backtest_bias_checks:
+      survivorship: unknown
+      lookahead: passed              # 计数/评级类输入经裁定#253 实证无槽位污染
+      stop_exit: unknown
+    log_location: logs/experiment_tracking_fallback/exp06_eval_run1_20260915.json
+    artifact_path: logs/experiment_tracking_fallback/
+    fallback_ref: null
+    mace_env_ref: null
+    status: completed
+    module_id: MOD-BT-033
+    doc_ref: docs/01_policies_and_standards/policies/expectation_consumption_design_policy.md §8+§9.3
+    code_path: scripts/backtest/eval_exp_expectations.py
+    created_at: '2026-09-15'
+    completed_at: '2026-09-15'
 
 # ── Step 4 交叉引用校验记录（dangling FK 登记，62 号 §4.6 弱 FK 规则）──
 pending_fk:
