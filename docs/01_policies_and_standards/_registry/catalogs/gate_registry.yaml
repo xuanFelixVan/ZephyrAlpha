@@ -3,11 +3,11 @@ doc_type: register
 ttl: permanent
 title: GATE 门禁登记表
 status: active
-generated_at: '2026-09-13T19:13:59Z'
+generated_at: '2026-09-14T13:00:07Z'
 generated_by: scripts/governance/generators/generate_gate_registry.py
 maintenance: auto
 source: .pre-commit-config.yaml + commit_gates/*.py + MANUAL_GATES
-total_gates: 164
+total_gates: 166
 gates:
 - gate_id: GATE-PROTECTED-PATHS
   name: 'GATE-PROTECTED-PATHS: 受保护路径写入检测（#ARCH-MODEL-LIFECYCLE-001 P1 Layer 2）'
@@ -983,7 +983,7 @@ gates:
   category: commit_gate
   status: active
   source: commit-gate
-  own_scope: false
+  own_scope: true
 - gate_id: FOREIGN-CHANGE-DETECTION
   name: 'FOREIGN-CHANGE-DETECTION: FOREIGN-CHANGE-DETECTION（CommitGate, priority=45）'
   entry: in-process (GitCommitGateway)
@@ -1378,6 +1378,16 @@ gates:
   status: active
   source: commit-gate
   own_scope: true
+- gate_id: REGISTRY-YAML-PARSE
+  name: 'REGISTRY-YAML-PARSE: capability 注册表结构硬化门禁（防尾追悬挂第四道保险）（CommitGate, priority=54）'
+  entry: in-process (GitCommitGateway)
+  description: capability 注册表结构硬化门禁（防尾追悬挂第四道保险）
+  files_trigger: ''
+  always_run: false
+  category: commit_gate
+  status: active
+  source: commit-gate
+  own_scope: true
 - gate_id: RELATIVE-PATH-LITERAL
   name: 'RELATIVE-PATH-LITERAL: RELATIVE-PATH-LITERAL（CommitGate, priority=115）'
   entry: in-process (GitCommitGateway)
@@ -1539,6 +1549,16 @@ gates:
   status: active
   source: commit-gate
   own_scope: false
+- gate_id: SYNTAX-VALIDATION
+  name: 'SYNTAX-VALIDATION: SYNTAX-VALIDATION（CommitGate, priority=49）'
+  entry: in-process (GitCommitGateway)
+  description: SYNTAX-VALIDATION
+  files_trigger: ''
+  always_run: false
+  category: commit_gate
+  status: active
+  source: commit-gate
+  own_scope: true
 - gate_id: TABLE-NAME-REGISTRY
   name: 'TABLE-NAME-REGISTRY: TABLE-NAME-REGISTRY（CommitGate, priority=120）'
   entry: in-process (GitCommitGateway)
