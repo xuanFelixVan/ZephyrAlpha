@@ -748,8 +748,6 @@ sources:
   code_symbol:
   code_fingerprint:
 
-# 2026-09-11 币圈免费影子 MVP：crypto 日线采集 job（backfill/incremental 双模式，手动触发）
-datasets:
 
 # 2026-09-11 币圈免费影子 MVP：crypto 日线采集 job（backfill/incremental 双模式，手动触发）
 datasets:

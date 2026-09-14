@@ -9,13 +9,14 @@
 # [TESTS] —
 # [A_module] module_id=MOD-GATE_ENGINE | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] task_bound
-"""test_registry_yaml_parse_gate — capability 注册表结构硬化门禁单测
+"""test_registry_yaml_parse_gate — 注册表结构硬化门禁单测
 
 覆盖：
 - 合法注册表（exemptions 末位+creation_tokens list）放行
 - 尾追悬挂（exemptions 后跟条目）解析炸 → 阻断
-- di_seam_exemptions 缺失 → 阻断
-- di_seam_exemptions 非末位 → 阻断
+- di_seam_exemptions 缺失 / 非末位 → 阻断
+- 顶层根键重复（双 datasets 事故族，2026-09-15 件3 扩面）→ 阻断
+- data_asset_registry watch 档（parse+根键唯一，无 exemptions 断言）
 - 触发范围外 YAML → 放行（不误伤）
 - staged 读取失败 → fail-open 放行
 """
@@ -25,6 +26,7 @@ from __future__ import annotations
 from types import SimpleNamespace
 
 from zephyr.gov_enforcement.commit_gates.registry_yaml_parse_gate import (
+    _WATCH_FILES,
     _WATCH_FILE,
     make_registry_yaml_parse_gate,
 )
@@ -111,3 +113,71 @@ def test_unrelated_yaml_passes():
 def test_read_failure_fail_open():
     ok, msg = _run([_WATCH_FILE], None)
     assert ok, msg
+
+
+# ---------------------------------------------------------------------------
+# 2026-09-15 件3 扩面：根键唯一断言 + data_asset_registry watch 档
+# ---------------------------------------------------------------------------
+
+_DATA_ASSET_FILE = "docs/01_policies_and_standards/_registry/catalogs/data_asset_registry.yaml"
+
+_VALID_DATA_ASSET_YAML = """schema_version: '2.0'
+registry_id: REG-DATA-001
+datasets:
+- dataset_id: DS-001
+  entity_name: market_data.tick
+jobs:
+- job_id: JOB-001
+"""
+
+_DOUBLE_ROOT_YAML = """schema_version: '2.0'
+registry_id: REG-DATA-001
+datasets:
+jobs:
+- job_id: JOB-000
+datasets:
+- dataset_id: DS-001
+  entity_name: market_data.tick
+"""
+
+
+def test_watch_table_contains_data_asset_registry():
+    assert _DATA_ASSET_FILE in _WATCH_FILES
+    assert _WATCH_FILES[_DATA_ASSET_FILE] == "data_asset_registry"
+    assert _WATCH_FILES[_WATCH_FILE] == "capability_registry"
+
+
+def test_duplicate_root_key_blocks_capability_registry():
+    """双 creation_tokens 根键 → 阻断（PyYAML 静默取后者，节点树判重才抓得住）。"""
+    dup = VALID_YAML + "creation_tokens:\n- file: z.md\n  token: tok-z\n"
+    ok, msg = _run([_WATCH_FILE], dup)
+    assert not ok
+    assert "顶层根键重复" in msg
+    assert "creation_tokens" in msg
+
+
+def test_duplicate_root_key_blocks_data_asset_registry():
+    """双 datasets 根键（L752/755 事故原样复现）→ 阻断。"""
+    ok, msg = _run([_DATA_ASSET_FILE], _DOUBLE_ROOT_YAML)
+    assert not ok
+    assert "顶层根键重复" in msg
+    assert "datasets" in msg
+
+
+def test_valid_data_asset_registry_passes():
+    ok, msg = _run([_DATA_ASSET_FILE], _VALID_DATA_ASSET_YAML)
+    assert ok, msg  # 无 exemptions/creation_tokens 结构要求——该档只查 parse+根键唯一
+
+
+def test_broken_data_asset_registry_blocks():
+    ok, msg = _run([_DATA_ASSET_FILE], "datasets:\n  - [broken\n")
+    assert not ok
+    assert "解析失败" in msg
+
+
+def test_both_watched_files_checked_in_one_pass():
+    """同批 staged 两个 watch 文件各有问题 → 逐文件问题全列出（不短路）。"""
+    ok, msg = _run([_WATCH_FILE, _DATA_ASSET_FILE], _DOUBLE_ROOT_YAML)
+    assert not ok
+    # _FakeGateway 单内容桩：两个文件读同一 staged 内容 → 双双命中根键重复
+    assert msg.count("顶层根键重复") == 2
