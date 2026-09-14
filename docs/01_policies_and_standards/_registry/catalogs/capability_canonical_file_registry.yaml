@@ -5219,6 +5219,22 @@ creation_tokens:
   token: szopen-alt_sz_enterprise_year-20260914
   created_by: st-altdata-20260914
   capability: alt_data_batch2_newkey
+- file: schemas/categories/market/market_alt_sz_climate_hist.py
+  token: szopen-alt_sz_climate_hist-b3-20260914
+  created_by: st-altdata-20260914
+  capability: alt_data_batch3
+- file: schemas/categories/market/market_alt_sz_env_meteor.py
+  token: szopen-alt_sz_env_meteor-b3-20260914
+  created_by: st-altdata-20260914
+  capability: alt_data_batch3
+- file: schemas/categories/market/market_alt_sz_ground_obs.py
+  token: szopen-alt_sz_ground_obs-b3-20260914
+  created_by: st-altdata-20260914
+  capability: alt_data_batch3
+- file: schemas/categories/market/market_alt_sz_reservoir_level.py
+  token: szopen-alt_sz_reservoir_level-b3-20260914
+  created_by: st-altdata-20260914
+  capability: alt_data_batch3
 - file: schemas/categories/market/market_alt_typhoon_track.py
   token: altdata-typhoon-ddl-20260914
   created_by: st-altdata-20260913
@@ -12796,6 +12812,10 @@ creation_tokens:
   token: btfix-p1p2-btfix-p1p2-report-20260914
   created_by: st-btfix-p14-20260914
   capability: btfix_p1p2
+- file: docs/_working/sim_bridge_checklist.md
+  token: btfix-p1p2-sim-bridge-checklist-20260914
+  created_by: st-btfix-p14-20260914
+  capability: btfix_p1p2
 - file: "docs/_working/2026-09-14-full-chain-factory-blueprint.md"
   token: "fullchain-factory-blueprint-20260914"
   created_by: "st-fullchain-20260914"
@@ -12804,7 +12824,7 @@ creation_tokens:
   token: "combo-layer-charter-20260914"
   created_by: "st-fullchain-20260914"
   capability: "backtest_system_sop"
-- file: docs/_working/2026-09-15-board-index-synthesis-plan.md
+- file: docs/_working/board_synthesis/2026-09-15-board-index-synthesis-plan.md
   token: board-index-synthesis-plan-20260915
   created_by: st-880fill-20260911
   capability: board_index_synthesis
