@@ -40,15 +40,43 @@ from zephyr.governance.capability_lookup import CapabilityLookup, HeaderInfo, SS
 # 辅助 fixture
 # ---------------------------------------------------------------------------
 
+_ABSENT = object()
+
+
+def _poison_sys_modules(*names: str):
+    """显式毒化 sys.modules 并返回还原函数（#ARCH-107 哨兵兼容）。
+
+    pytest 8.4.2 实证：monkeypatch.setitem(sys.modules, k, None) 在哨兵
+    fixture teardown 前不会被还原，首见毒化的用例必报 pollution 误报。
+    改用显式 save/restore——fixture 自身 teardown 先于哨兵 teardown 执行，
+    哨兵观测到干净态；毒化语义（import 失败→维度跳过）不变。
+    """
+    saved = {n: sys.modules.get(n, _ABSENT) for n in names}
+    for n in names:
+        sys.modules[n] = None
+
+    def _restore():
+        for n, old in saved.items():
+            if old is _ABSENT:
+                sys.modules.pop(n, None)
+            else:
+                sys.modules[n] = old
+
+    return _restore
+
 
 @pytest.fixture
-def skip_dim1_dim2(monkeypatch):
+def skip_dim1_dim2():
     """跳过维度1/2（功能域注册表 + 蓝图关键词匹配），隔离维度3测试。
 
     通过让依赖模块 import 失败来跳过维度1/2，不影响维度3的 capability_lookup。
     """
-    monkeypatch.setitem(sys.modules, "zephyr.infrastructure.registry_governance", None)
-    monkeypatch.setitem(sys.modules, "zephyr.integration.mcp", None)
+    _restore = _poison_sys_modules(
+        "zephyr.infrastructure.registry_governance",
+        "zephyr.integration.mcp",
+    )
+    yield
+    _restore()
 
 
 # ---------------------------------------------------------------------------
@@ -858,9 +886,11 @@ class _StubRegistry:
 
 
 @pytest.fixture
-def skip_dim2(monkeypatch):
+def skip_dim2():
     # 仅跳过维度2（蓝图关键词匹配），保留维度1/维度3 真实逻辑
-    monkeypatch.setitem(sys.modules, "zephyr.integration.mcp", None)
+    _restore = _poison_sys_modules("zephyr.integration.mcp")
+    yield
+    _restore()
 
 
 class TestDim1AliasForceOverride:
