@@ -21648,3 +21648,12 @@ entries:
   related_adjudication: '裁定#231'
   created: '2026-09-14'
   last_updated: '2026-09-14'
+- issue_id: "#ARCH-311"
+  title: commit 队列 serializer 落地时 git clean -fd 作用于主工作区——未跟踪文件周期性清空（2026-09-14 docs/_working 三波损失实证）
+  severity: P1高
+  adjudication: 2026-09-14 Owner 裁定"登记议题交修复批"。st-mktfix-20260914 会话实证：docs/_working 当日 07:04/07:25/08:2x 三波文件消失（108 个已跟踪文件+多会话未跟踪文档；他会话当日 commit 亦有"落盘合并竞态被吞/文件恢复"记录）。根因定位=队列死信原文「landing 异常（git clean -fd rc=1，failed to remove data/databases/governance.db-journal Invalid argument）」——该路径仅在主仓库存在，证明 serializer landing 的 git clean -fd 作用于主工作区；每轮 drain 清掉主区未跟踪文件，与三波损失时刻吻合。影响=所有会话未跟踪 WIP（docs 草稿/工具脚本/断点文件）随时被无声销毁。
+  fix_phase: 待修复批施工。证据=.runtime 临时输出已清，死信原文誊录于缺口报告 v2 §文件事故；候选方案=clean 作用域收窄到 landing 快照目录/protected-untracked 排除清单/改 stash 隔离通道；短期避险纪律=工作区产物每轮 git add（本轮实证有效）
+  status: decided
+  related_adjudication: ""
+  created: "2026-09-14"
+  last_updated: "2026-09-14"
