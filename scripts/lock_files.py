@@ -67,6 +67,7 @@ import ctypes
 import json
 import os
 import shutil
+import subprocess
 import sys
 import time
 from pathlib import Path
@@ -84,6 +85,9 @@ from check_naming_convention import check_file as _check_naming  # noqa: E402
 
 from zephyr.shared.infra.process_pool import (
     is_pid_alive,  # noqa: E402  僵尸锁检测真源唯一（AGENTS.md §8 is_pid_alive 真源声明，禁止本地重复定义）
+)
+from zephyr.shared.infra.process_pool import (  # noqa: E402
+    run_subprocess_hidden,  # trae_067 铁律2 统一无窗口 subprocess 入口（B5③ _is_git_tracked 用）
 )
 from zephyr.shared.io.paths import REPO_ROOT  # noqa: E402
 
@@ -249,6 +253,30 @@ def _normalize_path(file_path: str) -> str:
     return str(p).replace("\\", "/")
 
 
+def _is_git_tracked(file_path: str) -> bool:
+    """判断文件是否已被 git 跟踪（存量文件判定，B5③ 2026-09-14）。
+
+    锁侧命名门禁只应拦"新引入的文件名违规"：存量已跟踪文件的文件名在
+    创建/提交时已被提交侧裁决（check_new_files_full 对修改文件做 HEAD/工作区
+    差集的历史豁免），锁侧重跑全量命名检查只会误拒存量合法文件
+    （N-11/N-13 误拒实证：gate_tracked_write_allowlist.yaml 被 acquire 拒绝）。
+
+    fail-open=False：git 不可用/异常时返回 False（视为未跟踪）→ 仍走全量命名
+    检查。锁侧早期反馈成本低，宁可误拒存量也不放过新文件命名违规——与提交侧
+    fail-open（不阻断 commit）方向相反是有意设计。
+    """
+    rel = _normalize_path(file_path)
+    try:
+        result = run_subprocess_hidden(
+            ["git", "ls-files", "--error-unmatch", rel],
+            cwd=str(REPO_ROOT),
+            timeout=10,
+        )
+        return result.returncode == 0
+    except (OSError, subprocess.SubprocessError):
+        return False
+
+
 def cmd_status() -> int:
     _ensure_lock_root()
     registry = _load_registry()
@@ -318,7 +346,11 @@ def cmd_acquire(
     ttl_s = (ttl_minutes * 60.0) if ttl_minutes is not None else DEFAULT_TTL_S
 
     # 命名规范门禁：写入前校验文件名合规性（可跳过，用于历史命名文件）
-    if not skip_naming_check:
+    # B5③(2026-09-14)：存量已跟踪文件跳过——文件名在创建/提交时已裁决，提交侧
+    # 对修改文件本有历史豁免，锁侧重跑全量检查只会误拒存量合法文件
+    # （N-11/N-13 误拒实证）。未跟踪新文件仍全量检查（早期反馈，无冤案）。
+    # skip_naming_check 保留（显式逃生口，测试与特殊场景已在使用）。
+    if not skip_naming_check and not _is_git_tracked(normalized):
         naming_violations = _check_naming(
             normalized, Path(REPO_ROOT / normalized) if (REPO_ROOT / normalized).exists() else None, REPO_ROOT
         )

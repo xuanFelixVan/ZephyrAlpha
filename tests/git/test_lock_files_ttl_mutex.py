@@ -248,3 +248,67 @@ class TestCliFileArgGuard:
         assert rc == 0
         monkeypatch.setattr(sys, "argv", ["lock_files.py", "release", "src/probe_govb120.py", "AI-PROBE-001"])
         assert lock_files.main() == 0
+
+
+# ---------------------------------------------------------------------------
+# TestTrackedFileNamingSkip — B5③(2026-09-14) 回归：存量已跟踪文件跳过命名门禁
+# ---------------------------------------------------------------------------
+
+
+class TestTrackedFileNamingSkip:
+    """B5③：lock_files acquire 对存量已跟踪文件误拒（N-11/N-13 假阳性）。
+
+    病灶：acquire 对任何文件重跑全量命名门禁，存量已跟踪文件的文件名在
+    创建/提交时已被提交侧裁决（提交侧对修改文件有历史豁免），锁侧更严只会误拒
+    ——实证：gate_tracked_write_allowlist.yaml（N-11）与
+    data_download_config.yaml（N-13）被 acquire 拒绝。
+    修法：_is_git_tracked(git ls-files --error-unmatch) 判定存量，跟踪文件
+    跳过命名检查；未跟踪新文件仍全量检查（早期反馈，无冤案）；
+    git 不可用 fail-closed（返回 False → 仍检查）。
+    """
+
+    def test_tracked_file_skips_naming_gate(self, isolated_lock_root, monkeypatch):
+        """存量已跟踪文件：命名违规也不拒（提交侧已裁决，锁侧不重复执法）。"""
+        monkeypatch.setattr(lock_files, "_is_git_tracked", lambda p: True)
+        rc, out = _run(lock_files.cmd_acquire, "docs/bad-name-BadName.yaml", "sess-b53")
+        assert rc == 0, out
+        assert "ACQUIRED" in out
+
+    def test_untracked_file_still_checked(self, isolated_lock_root, monkeypatch):
+        """未跟踪新文件：命名门禁仍生效（早期反馈）。"""
+        monkeypatch.setattr(lock_files, "_is_git_tracked", lambda p: False)
+        rc, out = _run(lock_files.cmd_acquire, "docs/bad-name-BadName.yaml", "sess-b53")
+        assert rc == 1
+        assert "NAMING VIOLATION" in out
+
+    def test_untracked_clean_file_passes(self, isolated_lock_root, monkeypatch):
+        """未跟踪新文件：命名合规正常放行。"""
+        monkeypatch.setattr(lock_files, "_is_git_tracked", lambda p: False)
+        rc, out = _run(lock_files.cmd_acquire, "docs/good_name.yaml", "sess-b53")
+        assert rc == 0, out
+        assert "ACQUIRED" in out
+
+    def test_git_unavailable_fail_closed(self, isolated_lock_root, monkeypatch):
+        """git 不可用：fail-closed 仍走命名检查（不因环境故障放行新文件）。"""
+        import subprocess as _sp
+
+        def _boom(*a, **k):
+            raise _sp.SubprocessError("git gone")
+
+        monkeypatch.setattr(_sp, "run", _boom)
+        assert lock_files._is_git_tracked("docs/anything.yaml") is False
+
+    def test_reject_before_fix_now_passes(self, isolated_lock_root, monkeypatch):
+        """事故原件复验：真实 repo 环境下 gate_tracked_write_allowlist.yaml 可 acquire。
+
+        该文件是 git 跟踪的存量文件且文件名含 kebab 片段，修复前被 N-11 误拒
+        （doc_type=register 期望 _registry 后缀）。不 mock _is_git_tracked，
+        走真实 git ls-files 判定。
+        """
+        rc, out = _run(
+            lock_files.cmd_acquire,
+            "docs/01_policies_and_standards/_registry/catalogs/gate_tracked_write_allowlist.yaml",
+            "sess-b53",
+        )
+        assert rc == 0, out
+        assert "ACQUIRED" in out
