@@ -124,6 +124,24 @@ testpaths = ["tests"]
 python_files = ["test_*.py"]
 python_classes = ["Test*"]
 python_functions = ["test_*"]
+# 治本 #ARCH-COLLECTION-HYGIENE-001（2026-09-14 外审整改收尾）：norecursedirs 会整体
+# 替换 pytest 默认值，故重含全部默认项（.* 已覆盖 .runtime，再显式列 .runtime 自文档化）。
+# 历史上 .runtime/tmp 残留的会话级测试拷贝曾被收集造成假红（test_bothwin_gate 假红实证）。
+# 注意：不得加入 data/tmp 等宽泛名——tests/data、tests/zephyr/data 是真实测试目录，
+# 会造成静默漏测（施工中实测抓到并回退，守卫测试钉扎全列表防回归）。显式指名的文件
+# 参数不受 norecursedirs 影响（scratch 单文件跑法不受限）。
+norecursedirs = [
+    "*.egg",
+    ".*",
+    ".runtime",
+    "_darcs",
+    "build",
+    "CVS",
+    "dist",
+    "node_modules",
+    "venv",
+    "{arch}",
+]
 addopts = [
     "-v",
     "--tb=short",
