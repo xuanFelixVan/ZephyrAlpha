@@ -251,3 +251,25 @@ close-door 流程（`project_rules.md` Session 开关门）已新增 STEP 0：
 | SessionConflictDetector | ✅ 已落地（P2-SES）| P4-T1 用 claim_file 取代（更简洁，session 隔离 stash 内联实现） |
 | close-door STEP 0 | ✅ 已落地（P1-T1）| project_rules.md（P4-T1 落地后 registry 有数据，检查真正有效） |
 | 本策略文档 | ✅ 已落地（P1-T1）| 本文件 |
+
+---
+
+## 9. 主工作区施工纪律（#ARCH-311 删除事故教训，2026-09-15 增补）
+
+背景：2026-09-14 docs/_working 多波删除事故（#ARCH-311）——并行会话的 safe-delete 沙箱
+（CodeBuddy 内核 rm 包装 → Windows 回收站）被清理任务触发，单文件 git rm 意图被 vendor
+级缺陷放大为脏文件集批量删除，未提交工作现场遭殃。三层防线已落地（B1 版本化 vault
+ced73113 / B2 看门狗 auto-stage 护盾 0314d205 / 看门狗删除硬化 68d64742e3）。
+
+纪律（对全体 AI 会话）：
+1. **新建/重构 src/tests 代码 → 会话 worktree 正门**（session_worktree_start，物理隔离）。
+   主工作区直改代码=把未提交工作暴露给一切共享区风险（本条为建议级；worktree 内 commit
+   天然跳过搭便车三 gate，见 tracker #92）。
+2. **docs/_working 文档可主区**——已有 B1 vault（每日 14 天版本快照）+ B2 护盾（untracked
+   自动入 index）+ watchdog 删除硬化（两轮扫描内告警）三网兜底；产物每轮 git add 仍为
+   铁律（staged 文件在本案删除潮中零损失）。
+3. **任何"删除"一律走 ops_guard.guard_recycle**（统一回收站，永不物理删除）；未接
+   guard 的删除工具/脚本禁止对 tracked 或他人未跟踪工作文件使用。
+4. 发现有序恢复路径：新删除 → 先查 Windows 回收站（$I 元文件含原始路径，见
+   .runtime/tmp/recycle_restore_report.json 的解析配方）→ 再查 B1 vault 昨日快照 →
+   最后 git index/历史。
