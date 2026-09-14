@@ -122,6 +122,9 @@ from zephyr.gov_enforcement.commit_gates.secret_registry_consistency_gate import
 from zephyr.gov_enforcement.commit_gates.test_residue_ssot_gate import (  # noqa: F401
     make_test_residue_ssot_gate as _make_test_residue_ssot_gate,
 )
+from zephyr.gov_enforcement.commit_gates.syntax_validation_gate import (  # noqa: F401  # SYNTAX-VALIDATION staged .py 语法错误硬阻断门禁（红蓝 v3 P0-1 批 2 治本，priority=49）
+    make_syntax_validation_gate as _make_syntax_validation_gate,
+)
 
 __all__: list[str] = []  # 子模块各自导出 make_*_gate()，包级不 re-export
 
