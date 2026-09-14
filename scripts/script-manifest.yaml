@@ -4,7 +4,7 @@
 manifest_version: 2.0.0
 generated_by: generate_manifest.py (auto-scan)
 generated_at: '2026-09-14'
-total_scripts: 920
+total_scripts: 923
 scripts:
 - name: __init__.py
   path: __init__.py
@@ -1590,6 +1590,14 @@ scripts:
   status: registered
   timeout_seconds: 60
   dimensions: []
+- name: ch/c4_pdf_survey.py
+  path: ch/c4_pdf_survey.py
+  description: 按年分层随机抽样（默认每年 100 份），并发实测东财 PDF 直链存活率。
+  domain: ch
+  execution_plane: warm-path
+  status: registered
+  timeout_seconds: 60
+  dimensions: []
 - name: ch/import_ths_profile.py
   path: ch/import_ths_profile.py
   description: 数据源：docs/_working/同花顺资料/个股1 (1).xlsx / 个股1 (2).xlsx
@@ -1953,6 +1961,22 @@ scripts:
 - name: data/wipe_tick3days.py
   path: data/wipe_tick3days.py
   description: import io
+  domain: data
+  execution_plane: warm-path
+  status: registered
+  timeout_seconds: 60
+  dimensions: []
+- name: data/sz_open_data/probe_all_new.py
+  path: data/sz_open_data/probe_all_new.py
+  description: import json
+  domain: data
+  execution_plane: warm-path
+  status: registered
+  timeout_seconds: 60
+  dimensions: []
+- name: data/sz_open_data/status_all.py
+  path: data/sz_open_data/status_all.py
+  description: import json
   domain: data
   execution_plane: warm-path
   status: registered
