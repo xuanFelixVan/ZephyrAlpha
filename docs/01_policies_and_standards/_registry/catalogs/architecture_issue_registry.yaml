@@ -21649,7 +21649,7 @@ entries:
   created: '2026-09-14'
   last_updated: '2026-09-14'
 - issue_id: "#ARCH-311"
-  title: commit 队列 serializer 落地时 git clean -fd 作用于主工作区——未跟踪文件周期性清空（2026-09-14 docs/_working 三波损失实证）
+  title: 2026-09-14 docs/_working 多波删除事故——归因终版=WorkBuddy safe-delete 回收站通道（clean-fd 定罪推翻，07:02 回收站 $I 实证）
   severity: P1高
   adjudication: 2026-09-14 Owner 裁定"登记议题交修复批"。st-mktfix-20260914 会话实证：docs/_working 当日 07:04/07:25/08:2x 三波文件消失（108 个已跟踪文件+多会话未跟踪文档；他会话当日 commit 亦有"落盘合并竞态被吞/文件恢复"记录）。根因定位=队列死信原文「landing 异常（git clean -fd rc=1，failed to remove data/databases/governance.db-journal Invalid argument）」——该路径仅在主仓库存在，证明 serializer landing 的 git clean -fd 作用于主工作区；每轮 drain 清掉主区未跟踪文件，与三波损失时刻吻合。影响=所有会话未跟踪 WIP（docs 草稿/工具脚本/断点文件）随时被无声销毁。
   fix_phase: 待修复批施工。证据=.runtime 临时输出已清，死信原文誊录于缺口报告 v2 §文件事故；候选方案=clean 作用域收窄到 landing 快照目录/protected-untracked 排除清单/改 stash 隔离通道；短期避险纪律=工作区产物每轮 git add（本轮实证有效）
@@ -21657,3 +21657,4 @@ entries:
   related_adjudication: ""
   created: "2026-09-14"
   last_updated: "2026-09-14"
+  reconciliation: "2026-09-14 18:4x st-deletion-defense-20260914 归因终版（四轮调查+回收站 $I/$R 全量 14,998 条解析）：①定罪推翻——clean-fd 不进回收站且 _git_wt 有 toplevel 守卫（主仓收敛审计 907 条 0 deleted），队列死信是 journal 锁坏死并发症状非删除者；'队列坏死期删除绝迹'反向论证不成立（07:02-07:10 文档波持续发生于队列坏死期间）。②通道实锤=WorkBuddy(CodeBuddy 内核)safe-delete 沙箱：BASH_ENV 把会话子进程 rm/unlink/rmdir 换成 safe-bin 包装，Windows 走 PowerShell COM Microsoft.VisualBasic SendToRecycleBin（fail-closed）进回收站；全机唯一回收站删除实现（仓库代码零 send2trash/SendToRecycleBin）。③事故波归因=会话 7c445643（研报/交接包清理，05:45-07:13 唯一全程活跃）上下文：07:02:08 回收站首件=其 git rm 目标 2026-09-12-research-report-handoff.md（乱序=单独先删）；其文件监视备份 modify_backup 的 a/d 标记与被删文件一一对应（07:02:22-25 patch1789340542-21820+31 docs 文件名）；受害者集合=各会话当日改动文件并集（docs/_working+03_modules+02_enterprise_architecture+src+zephyr data config）；删→恢复→再删拉锯（07:02:08 删228→07:02:29 恢复119→07:03:00 再删126→07:06 st-mktfix checkout→07:10 再删91）与 Trae renderer.log 响应性缓存事件（07:02:18 删166/07:02:29 增119/07:03:08 删78）互相印证。④vendor 代码级触发点（单文件 git rm 意图如何放大为脏文件集批量删除）挂账待 vendor 确认；不影响防线建设。⑤修复批落地=B1 DailyBackup 版本化（commit ced73113，F:/working_vault/<yyyymmdd> 硬链接去重 14 天轮转，robocopy /MIR 传播删除缺陷治本）+B2 看门狗 auto-stage 护盾（commit 0314d205，docs/_working untracked 自动入 index，删除一条 checkout 拉回）+既有 68d64742e3/37afcef2 硬化。历史波定性修正：09-10 晚 ~2500 件与 09-12 ~8000 件=同一 safe-delete 通道的合法清理（WorkBuddy 2026-07-15 已安装，09-10 为更新）。"
