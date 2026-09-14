@@ -328,6 +328,20 @@ def persist_certifications(client, records: Iterable[CertificationRecord], *, ce
     return len(rows)
 
 
+def load_certification(client, pattern_id: str, *, timeframe: str = "day",
+                       direction: str = "向上", fwd_window: int = 10) -> dict | None:
+    """读单形态认证行（W-CC 消费口：state/shrunk_rate；查无=None）。"""
+    rows = client.execute(
+        "SELECT state, shrunk_rate FROM c1_market.market_pattern_certification FINAL "
+        "WHERE pattern_id = %(p)s AND timeframe = %(tf)s AND direction = %(d)s "
+        "AND fwd_window = %(w)d LIMIT 1",
+        {"p": pattern_id, "tf": timeframe, "d": direction, "w": int(fwd_window)},
+    )
+    if not rows:
+        return None
+    return {"state": rows[0][0], "shrunk_rate": float(rows[0][1])}
+
+
 def run_certify(client=None, *, timeframe: str = "day", direction: str = "向上",
                 fwd_window: int = 10) -> dict:
     """单家族认证入口（CLI/任务块共用）：读统计→四闸→写认证表→返回摘要。"""

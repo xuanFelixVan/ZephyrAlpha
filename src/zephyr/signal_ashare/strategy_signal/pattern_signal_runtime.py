@@ -354,6 +354,8 @@ class PatternWeightSync:
         ic_scale: float = 2.0,
         store: PatternWeightStore | None = None,
         clock: Callable[[], datetime.datetime] | None = None,
+        cert_reader: Callable[[str], dict | None] | None = None,
+        baseline_reader: Callable[[], float | None] | None = None,
     ) -> None:
         self._clock = clock or datetime.datetime.now
         self._adjuster = adjuster or SignalWeightAdjuster(clock=self._clock)
@@ -364,6 +366,8 @@ class PatternWeightSync:
         self._initial_weight = initial_weight
         self._ic_scale = float(ic_scale)
         self._store = store
+        self._cert_reader = cert_reader
+        self._baseline_reader = baseline_reader
         self._patterns = list(patterns) if patterns else self._discover()
         state = self._store.load() if self._store is not None else {}
         for pid in self._patterns:
@@ -394,15 +398,29 @@ class PatternWeightSync:
 
     def sync_from_provider(self, *, reason: str = "materialize_done") -> list:
         """拉物化胜率→录滚动样本→限幅调权；返回变更审计记录。"""
-        baseline = self._provider.get_baseline(
-            timeframe=self._timeframe,
-            direction="向上",
-            fwd_window=self._fwd_window,
-            regime_tag=self._regime_tag,
-        )
-        base = float(baseline) if baseline is not None else 0.5
+        if self._baseline_reader is not None:
+            base = self._baseline_reader()
+            base = float(base) if base is not None else 0.5
+        else:
+            baseline = self._provider.get_baseline(
+                timeframe=self._timeframe,
+                direction="向上",
+                fwd_window=self._fwd_window,
+                regime_tag=self._regime_tag,
+            )
+            base = float(baseline) if baseline is not None else 0.5
         records = []
         for pid in self._patterns:
+            # W-CC 认证口径优先：148 认证行存在→shrunk_rate 录样本+failed 不调权
+            cert = self._cert_reader(pid) if self._cert_reader is not None else None
+            if cert is not None:
+                if cert.get("state") == "failed":
+                    continue  # 认证 Fail-Closed：failed 不调权
+                win_rate = float(cert["shrunk_rate"])
+                ic = max(-1.0, min(1.0, self._ic_scale * (win_rate - base)))
+                self._adjuster.record_metrics(pid, ic=ic, win_rate=win_rate, drawdown=0.0)
+                records.append(self._adjuster.adjust(pid, reason=reason))
+                continue
             detail = self._provider.get_detail(
                 pid,
                 timeframe=self._timeframe,
@@ -453,8 +471,18 @@ def main(argv: list[str] | None = None) -> int:
     if not args.sync_weights:
         parser.print_help()
         return 2
+    from zephyr.signal_ashare.strategy_signal.pattern_evidence_certifier import (
+        load_certification,
+    )
+
+    _client = PatternWinRateProvider()._ensure_client()  # noqa: SLF001（CLI 正身共享连接）
+
+    def _cert_reader(pid: str) -> dict | None:
+        return load_certification(_client, pid, timeframe=args.timeframe, fwd_window=args.fwd_window)
+
     sync = PatternWeightSync(
         provider=PatternWinRateProvider(),
+        cert_reader=_cert_reader,
         timeframe=args.timeframe,
         fwd_window=args.fwd_window,
         regime_tag=args.regime_tag,

@@ -4100,6 +4100,16 @@ def pattern_winrate(
         sql += " ORDER BY hit_rate DESC LIMIT %(l)d"
         params["l"] = int(limit)
         rows = _ch_exec(sql, params)
+        # 认证列（两次查询 Python 合并——CH 老版 JOIN 子查询受限，MOD-SIG-148 表池化键）
+        try:
+            cert_rows = _ch_exec(
+                "SELECT pattern_id, state, shrunk_rate FROM c1_market.market_pattern_certification "
+                "FINAL WHERE timeframe = %(tf)s AND direction = %(d)s AND fwd_window = %(w)d",
+                {"tf": timeframe, "d": direction or "向上", "w": int(fwd_window)},
+            )
+            cert_map = {r[0]: (r[1], r[2]) for r in cert_rows}
+        except Exception:  # noqa: BLE001 —— 认证列降级为空（主数据不受影响）
+            cert_map = {}
         data = [
             {
                 "pattern_id": r[0],
@@ -4110,6 +4120,8 @@ def pattern_winrate(
                 "hit_rate": r[5],
                 "n_events": r[6],
                 "low_sample": bool(r[7]),
+                "cert_state": cert_map.get(r[0], (None, None))[0],
+                "shrunk_rate": cert_map.get(r[0], (None, None))[1],
             }
             for r in rows
         ]

@@ -343,6 +343,12 @@ def test_cli_sync_weights(tmp_path, capsys, monkeypatch):
                 rows={"双顶": {"n_events": 500, "hit_rate": 0.72, "low_sample": 0}}
             )
 
+        def _ensure_client(self):
+            return self
+
+        def execute(self, sql, params=None):
+            return []  # 认证表查无→回落 provider 路径
+
         def get_detail(self, pid, **kw):
             return self._inner.get_detail(pid, **kw)
 
@@ -362,3 +368,55 @@ def test_cli_sync_weights(tmp_path, capsys, monkeypatch):
     assert summary["patterns"] == 1
     assert summary["adjusted"] == 1
     assert state_path.exists()
+
+
+# ── W-CC：认证口径消费（shrunk + failed 跳过） ───────────────────────────────
+
+
+def test_sync_shrunk_certified_path(tmp_path):
+    """认证行存在：win_rate 样本=shrunk_rate（非 raw Wilson）。"""
+    from zephyr.signal_ashare.strategy_signal.pattern_signal_runtime import (
+        PatternWeightSync,
+    )
+
+    cert = {"双顶": {"state": "certified", "shrunk_rate": 0.58}}
+    provider = _SyncStubProvider(rows={"双顶": {"n_events": 5000, "hit_rate": 0.60, "low_sample": 0}})
+    sync = PatternWeightSync(
+        provider=provider, patterns=["双顶"], cert_reader=lambda p: cert.get(p),
+        clock=_clock,
+    )
+    records = sync.sync_from_provider()
+    assert len(records) == 1
+    # ic = 2×(shrunk 0.58 − 基线 0.52) = 0.12；win_rate 样本=0.58
+    assert records[0].new_weight <= 1.0
+
+
+def test_sync_failed_skipped(tmp_path):
+    """认证 failed：不录样本不调权（Fail-Closed）。"""
+    from zephyr.signal_ashare.strategy_signal.pattern_signal_runtime import (
+        PatternWeightSync,
+    )
+
+    cert = {"双顶": {"state": "failed", "shrunk_rate": 0.51}}
+    provider = _SyncStubProvider(rows={"双顶": {"n_events": 5000, "hit_rate": 0.60, "low_sample": 0}})
+    sync = PatternWeightSync(
+        provider=provider, patterns=["双顶"], cert_reader=lambda p: cert.get(p),
+        clock=_clock,
+    )
+    assert sync.sync_from_provider() == []
+    assert sync.weight_of("双顶") == pytest.approx(1.0)
+
+
+def test_sync_no_cert_row_falls_back_to_provider(tmp_path):
+    """无认证行（认证未跑）：回落 provider Wilson 路径（向后兼容）。"""
+    from zephyr.signal_ashare.strategy_signal.pattern_signal_runtime import (
+        PatternWeightSync,
+    )
+
+    provider = _SyncStubProvider(rows={"双顶": {"n_events": 5000, "hit_rate": 0.60, "low_sample": 0}})
+    sync = PatternWeightSync(
+        provider=provider, patterns=["双顶"], cert_reader=lambda p: None,
+        clock=_clock,
+    )
+    records = sync.sync_from_provider()
+    assert len(records) == 1  # 回落旧口径不炸
