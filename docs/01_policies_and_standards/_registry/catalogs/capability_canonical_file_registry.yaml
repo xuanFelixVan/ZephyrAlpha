@@ -5003,6 +5003,22 @@ capabilities:
     提交→全景对齐→清理 全流程步骤与失败处置；适用 07 域（regime/选股/仓位/风控/买卖/执行/对账/治理）施工，RULE-CAPABILITY-LOOKUP
     检索"施工"应命中本条
 creation_tokens:
+- file: "src/zephyr/signal_ashare/strategy_signal/pattern_lifecycle.py"
+  token: "patmine-wr-lifecycle-20260915"
+  created_by: "st-patmine-20260914"
+  capability: "pattern_resurrection_wr"
+- file: "docs/_working/pattern_line/resurrection-watch-plan.md"
+  token: "patmine-wr-plan-20260915"
+  created_by: "st-patmine-20260914"
+  capability: "pattern_resurrection_wr"
+- file: "docs/_working/pattern_line/resurrection-protocol.md"
+  token: "patmine-wr-protocol-20260915"
+  created_by: "st-patmine-20260914"
+  capability: "pattern_resurrection_wr"
+- file: "docs/03_modules/_domain_signal/pattern_lifecycle/blueprint.md"
+  token: "patmine-wr-blueprint-20260915"
+  created_by: "st-patmine-20260914"
+  capability: "pattern_resurrection_wr"
 - file: "schemas/categories/market/market_pattern_certification.py"
   token: "patmine-wcb-schema-20260915"
   created_by: "st-patmine-20260914"
@@ -12844,4 +12860,12 @@ creation_tokens:
   token: board-index-synthesis-plan-20260915
   created_by: st-880fill-20260911
   capability: board_index_synthesis
+- file: "docs/_working/2026-09-15-kline1min-valuation-handoff.md"
+  token: "kline1min-valuation-handoff-20260915"
+  created_by: "st-k1handoff-0915"
+  capability: "data_coverage_investigation"
+- file: "docs/_working/archive/2026-09/2026-09-15-kline1min-valuation-coverage-investigation.md"
+  token: "kline1min-valuation-coverage-investigation-20260915"
+  created_by: "st-k1handoff-0915"
+  capability: "data_coverage_investigation"
 di_seam_exemptions: []

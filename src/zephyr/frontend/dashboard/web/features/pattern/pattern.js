@@ -48,16 +48,26 @@
       meta.textContent = '在册 ' + (r.count || 0) + ' 切片 · 展示 ' + rows.length + '（弱证据 ' + weak + ' 隐藏）';
       if(!rows.length){ body.innerHTML = '<tr><td colspan="7" style="padding:8px;color:#8a94a6">该切片无 ≥30 样本的形态</td></tr>'; return; }
       body.innerHTML = rows.map(function(d){
+        var badge = '';
+        if(d.cert_state === 'certified' || d.cert_state === 'resurrected') badge = '<span style="background:#0e2612;border:1px solid #2e7d32;border-radius:4px;padding:0 6px;color:#7dc48f;font-size:11px">' + (d.cert_state === 'resurrected' ? '复活' : '认证') + '</span>';
+        else if(d.cert_state === 'probation') badge = '<span style="background:#2a1c0e;border:1px solid #8a4a12;border-radius:4px;padding:0 6px;color:#d9a441;font-size:11px">观察</span>';
+        else if(d.cert_state === 'retired') badge = '<span style="background:#141a24;border:1px solid #33405c;border-radius:4px;padding:0 6px;color:#6b7890;font-size:11px">退役</span>';
+        else if(d.cert_state === 'frozen') badge = '<span style="background:#1c1010;border:1px solid #5a2e2e;border-radius:4px;padding:0 6px;color:#a06a6a;font-size:11px">冻结</span>';
+        else if(d.cert_state === 'failed') badge = '<span style="background:#1c1010;border:1px solid #5a2e2e;border-radius:4px;padding:0 6px;color:#a06a6a;font-size:11px">未过</span>';
+        else badge = '<span style="color:#5a6478">—</span>';
         var weakBadge = d.low_sample ? '<span style="color:#8a94a6">弱样本</span>' : '';
+        var shr = d.shrunk_rate == null ? '—' : (d.shrunk_rate * 100).toFixed(1) + '%';
+        var shrColor = d.shrunk_rate == null ? '#8a94a6' : heatColor(d.shrunk_rate);
         return '<tr style="border-top:1px solid #1c2333">'
           + '<td style="padding:4px 8px">' + esc(d.pattern_id) + '</td>'
           + '<td style="padding:4px 8px">' + esc(d.direction) + '</td>'
           + '<td style="padding:4px 8px;color:' + heatColor(d.hit_rate) + ';font-weight:600">' + pct(d.hit_rate)
           + ' <span style="color:#8a94a6;font-weight:400">/ ' + (d.n_events == null ? '—' : d.n_events) + '</span></td>'
+          + '<td style="padding:4px 8px;color:' + shrColor + '">' + shr + '</td>'
           + '<td style="padding:4px 8px">' + (d.n_events == null ? '—' : d.n_events) + '</td>'
           + '<td style="padding:4px 8px">' + esc(d.regime_tag || '全') + '</td>'
           + '<td style="padding:4px 8px">' + esc(d.fwd_window) + 'd</td>'
-          + '<td style="padding:4px 8px">' + weakBadge + '</td>'
+          + '<td style="padding:4px 8px">' + badge + weakBadge + '</td>'
           + '</tr>';
       }).join('');
     }).catch(function(){

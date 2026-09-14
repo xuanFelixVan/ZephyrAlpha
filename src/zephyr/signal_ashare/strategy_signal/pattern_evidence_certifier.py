@@ -345,6 +345,8 @@ def load_certification(client, pattern_id: str, *, timeframe: str = "day",
 def run_certify(client=None, *, timeframe: str = "day", direction: str = "向上",
                 fwd_window: int = 10) -> dict:
     """单家族认证入口（CLI/任务块共用）：读统计→四闸→写认证表→返回摘要。"""
+    from datetime import datetime as _dt, timezone as _tz
+
     client = _ensure_client(client)
     pooled, regime_by_pattern, base_pooled, base_by_regime = load_family_rows(
         client, timeframe=timeframe, direction=direction, fwd_window=fwd_window
@@ -353,7 +355,42 @@ def run_certify(client=None, *, timeframe: str = "day", direction: str = "向上
         pooled, regime_by_pattern, base_pooled, base_by_regime,
         fwd_window=fwd_window, timeframe=timeframe, direction=direction,
     )
-    from datetime import datetime as _dt, timezone as _tz
+    # 生命周期覆盖层（单写手：retired/resurrected/frozen 覆盖当日三态；方案 v1.0 W-R）
+    try:
+        from zephyr.signal_ashare.strategy_signal.pattern_lifecycle import (
+            LifecycleStore,
+            _key,
+            update_lifecycle,
+        )
+
+        rate_by_id = {r["pattern_id"]: r["hit_rate"] for r in pooled}
+        lc_records = [
+            {"key": _key(r.pattern_id, r.timeframe, r.direction, r.fwd_window),
+             "state": r.state,
+             "hit_rate": rate_by_id.get(r.pattern_id, 0.0),
+             "n_events": r.n_events}
+            for r in records
+        ]
+        lc_store = LifecycleStore()
+        update_lifecycle(
+            lc_records, lc_store,
+            baseline_by_key={
+                _key(r.pattern_id, r.timeframe, r.direction, r.fwd_window): base_pooled
+                for r in records
+            },
+            today=_dt.now(_tz.utc).date().isoformat(),
+        )
+        state_by_key = {r["key"]: r["state"] for r in lc_records}
+        import dataclasses as _dc
+
+        records = [
+            _dc.replace(r, state=state_by_key.get(
+                _key(r.pattern_id, r.timeframe, r.direction, r.fwd_window), r.state
+            ))
+            for r in records
+        ]
+    except ImportError:
+        pass  # 生命周期层缺失不阻断认证主链（降级为三态）
 
     written = persist_certifications(client, records, certified_at=_dt.now(_tz.utc))
     counts: dict[str, int] = {}
