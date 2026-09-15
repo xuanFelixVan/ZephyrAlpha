@@ -847,7 +847,7 @@ tasks:
   schedule: daily_kline    # 板块指数日K线应每日盘后更新，原weekend_calibration导致周一-周五无当日板块K线
   incremental: true
   date_col: trade_date
-  dependencies: ["industry_class_refresh"]
+  dependencies: ["industry_class_refresh", "kline_sector_880_incremental"]  # 2026-09-15 追加串行错峰：与 880 任务并发（16:30:39/16:30:43 几乎同时启动）竞争 tqcenter SDK 单例，实证 09-14 缺 50/09-15 缺 100 板块（8807/8808 段批次拉空）；单独跑时全量成功（09-12 02:27 补跑 594 板块全量实证）
   capability: kline_sector
   symbols:         # null=tqcenter 从 sector_constituent 取全量板块代码（880+881 全族 594 只）
   extra:
