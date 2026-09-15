@@ -4,14 +4,14 @@ title: "dr_runbook — 灾难恢复操作手册"
 doc_type: register
 ttl: permanent
 status: Active
-version: "1.0.0"
+version: "1.1.0"
 layer: L0_infrastructure
 owner: ZephyrAlpha-Owner
 classification: confidential
 language: zh
 created_by: human_plus_agent
 date: "2026-07-28"
-last_updated: "2026-07-28"
+last_updated: "2026-09-15"
 summary: "从 F 盘备份逐步重建完整 ZephyrAlpha 环境的 AI 可执行灾难恢复操作清单，覆盖虚拟机/CH/PG/SQLite/代码全链路恢复步骤与验证命令"
 tags: [disaster-recovery, runbook, backup, restore, MOD-INF-043]
 responsibility_domain: 
@@ -22,7 +22,7 @@ design_maturity: production
 
 > **读者**：执行从 F 盘备份进行灾难恢复的 AI 代理（或人类）。
 > **目标**：从备份逐步重建完整可用的 ZephyrAlpha 环境。
-> **最后更新**：2026-07-28 | 模块：MOD-INF-043
+> **最后更新**：2026-09-15 | 模块：MOD-INF-043
 > **配套文档**：[backup_inventory.md](./backup_inventory.md) — 备份了什么内容以及存在哪里。
 
 ---
@@ -192,16 +192,31 @@ psql -h localhost -U zephyr -d depgraph -c "SELECT count(*) FROM depgraph.nodes;
 
 将 `governance_backup.db` → `governance.db`、`session_backup.db` → `session_continuity.db`。
 
-### 步骤 3.7 — 恢复代码
+### 步骤 3.7 — 恢复代码（v2.1 版本化快照库）
 
-**内容**：从 `F:\code_backup\` → `D:\ZephyrAlpha\` 执行 robocopy /MIR（原地覆盖）。
+**内容**：从 `F:\working_vault\<最新日期>\` 硬链接快照 → `D:\ZephyrAlpha\` 执行 robocopy /MIR（原地覆盖）。
+`restore.ps1 code` 自动解析**最新日期快照**，无需手选。
 
 ```powershell
 .\restore.ps1 code
 ```
 
-**执行操作**：镜像代码 + 配置（包括备份时同步的
+**执行操作**：镜像最新快照 + 配置（包括备份时同步的
 `config\system_configs\pg\` 和 `config\system_configs\ch\`）。排除 .git、缓存、.venv。
+从硬链接快照恢复是安全的（链接按普通文件读取）。
+
+### 步骤 3.7b — 恢复 git 历史（bundle）
+
+快照**不含 .git**，git 全历史靠 bundle 单文件恢复（`F:\working_vault\git_bundles\`）：
+
+```powershell
+git clone F:\working_vault\git_bundles\<最新>.bundle D:\ZephyrAlpha
+# 或对已恢复的目录补挂历史：
+cd D:\ZephyrAlpha && git init && git fetch F:\working_vault\git_bundles\<最新>.bundle && git reset --hard FETCH_HEAD
+```
+
+注意：`git clone bundle` 会得到完整历史，但工作区=快照日期的 HEAD；之后用步骤 3.7 的快照
+robocopy 覆盖工作区即可对齐到最新快照状态。
 
 ### 步骤 3.8 — 恢复 PostgreSQL 配置文件
 

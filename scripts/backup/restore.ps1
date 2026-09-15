@@ -1,10 +1,13 @@
 <#
 .SYNOPSIS
-    Disaster recovery script -- inventory / verify / restore (v2.0 -- robocopy + CH incremental)
+    Disaster recovery script -- inventory / verify / restore (v2.2 -- versioned code vault + CH incremental)
 .DESCRIPTION
     [BLUEPRINT] MOD-INF-043 | Section 3.5
-    v2.0 (2026-07-28): restic removed. Backup inventory now lives on F: drive:
-      F:\code_backup\          <- code + config + PG config + CH config (robocopy /MIR)
+    v2.2 (2026-09-15): code restore switched to the v2.1 versioned vault
+    (F:\code_backup was frozen on 2026-09-14 when backup.ps1 v2.1 replaced
+    the /MIR mirror with hardlink-deduped daily snapshots).
+      F:\working_vault\<yyyyMMdd>\ <- code + config daily snapshots (hardlink-deduped)
+      F:\working_vault\git_bundles\ <- git history bundle (.git not in snapshots)
       F:\db_dumps\             <- PG dump + SQLite dump + pg_globals.sql
       F:\ch_backup_disk.vhdx   <- CH data backup (VHDX, base + inc)
       F:\ch_vm_backup\         <- CH VM (boot.vhdx + data.vhdx + config)
@@ -55,7 +58,7 @@ param(
 $ErrorActionPreference = "Continue"
 $ProjectRoot = "D:\ZephyrAlpha"
 $FDrive = "F:"
-$CodeBackup = "F:\code_backup"
+$VaultBase = "F:\working_vault"
 $DbDumps = "F:\db_dumps"
 $ChVmBackup = "F:\ch_vm_backup"
 $ChSshHelper = "$ProjectRoot\scripts\backup\ch_vm_ssh.py"
@@ -115,6 +118,23 @@ function Test-ChAlive {
     } catch { return $false }
 }
 
+function Get-LatestSnapshot {
+    <# Newest dated snapshot dir under the vault, or $null. #>
+    $d = Get-ChildItem -LiteralPath $VaultBase -Directory -ErrorAction SilentlyContinue |
+         Where-Object { $_.Name -match '^\d{8}$' } |
+         Sort-Object Name -Descending |
+         Select-Object -First 1
+    if ($d) { return $d.FullName }
+    return $null
+}
+
+function Get-LatestGitBundle {
+    <# Newest .bundle under <vault>\git_bundles, or $null. #>
+    return (Get-ChildItem "$VaultBase\git_bundles\*.bundle" -File -ErrorAction SilentlyContinue |
+            Sort-Object LastWriteTime -Descending |
+            Select-Object -First 1)
+}
+
 # ==================== inventory ====================
 function Do-Inventory {
     Write-Host "=== ZephyrAlpha Backup Inventory (F: drive) ===" -ForegroundColor Cyan
@@ -129,21 +149,26 @@ function Do-Inventory {
     } else { Write-Warn "F: drive not online" }
     Write-Host ""
 
-    # Code backup
-    Write-Host "[Code backup]" -ForegroundColor Cyan
-    if (Test-Path $CodeBackup) {
-        $codeGB = Get-DirSizeGB $CodeBackup
-        $lastWrite = (Get-Item $CodeBackup).LastWriteTime
-        Write-Host "  Path:    $CodeBackup"
-        Write-Host "  Size:    ${codeGB} GB"
-        Write-Host "  Updated: $lastWrite"
-        # Key files present?
-        foreach ($f in @("AGENTS.md","pyproject.toml","config\.env.postgres","config\.env.ch_backup")) {
-            $p = Join-Path $CodeBackup $f
-            if (Test-Path $p) { Write-Host "  [OK] $f" -ForegroundColor Green }
-            else { Write-Host "  [MISSING] $f" -ForegroundColor Red }
-        }
-    } else { Write-Warn "  $CodeBackup not found" }
+    # Code snapshot vault (v2.1)
+    Write-Host "[Code snapshot vault (v2.1)]" -ForegroundColor Cyan
+    if (Test-Path $VaultBase) {
+        $latest = Get-LatestSnapshot
+        if ($latest) {
+            $codeGB = Get-DirSizeGB $latest
+            Write-Host "  Vault:   $VaultBase"
+            Write-Host "  Latest:  $(Split-Path -Leaf $latest) (apparent ${codeGB} GB, hardlink-deduped)"
+            foreach ($f in @("AGENTS.md","pyproject.toml","config\.env.postgres","config\.env.ch_backup")) {
+                $p = Join-Path $latest $f
+                if (Test-Path $p) { Write-Host "  [OK] $f" -ForegroundColor Green }
+                else { Write-Host "  [MISSING] $f" -ForegroundColor Red }
+            }
+        } else { Write-Warn "  no dated snapshots under $VaultBase" }
+        $bundle = Get-LatestGitBundle
+        if ($bundle) {
+            $mb = [math]::Round($bundle.Length / 1MB)
+            Write-Host ("  [OK] git bundle: {0} ({1} MB, {2})" -f $bundle.Name, $mb, $bundle.LastWriteTime) -ForegroundColor Green
+        } else { Write-Host "  [MISSING] git bundle (git history NOT recoverable without it)" -ForegroundColor Red }
+    } else { Write-Warn "  $VaultBase not found" }
     Write-Host ""
 
     # DB dumps
@@ -209,11 +234,29 @@ function Do-Verify {
     Write-Host "=== Backup Integrity Verification (read-only) ===" -ForegroundColor Cyan
     $issues = @()
 
-    # 1. Code backup key files
-    foreach ($f in @("AGENTS.md","pyproject.toml","config\.env.postgres","config\.env.ch_backup","config\.env.clickhouse")) {
-        $p = Join-Path $CodeBackup $f
-        if (Test-Path $p) { Write-OK "code: $f" }
-        else { Write-Err "code: $f MISSING"; $issues += "code:$f" }
+    # 1. Code snapshot vault (v2.1): latest snapshot key files + git bundle
+    $latest = Get-LatestSnapshot
+    if ($latest) {
+        foreach ($f in @("AGENTS.md","pyproject.toml","config\.env.postgres","config\.env.ch_backup","config\.env.clickhouse")) {
+            $p = Join-Path $latest $f
+            if (Test-Path $p) { Write-OK "code: $f (snapshot $(Split-Path -Leaf $latest))" }
+            else { Write-Err "code: $f MISSING in latest snapshot"; $issues += "code:$f" }
+        }
+    } else {
+        Write-Err "no dated snapshots under $VaultBase"
+        $issues += "code:vault-empty"
+    }
+    $bundle = Get-LatestGitBundle
+    if ($bundle) {
+        $mb = [math]::Round($bundle.Length / 1MB)
+        $bundleAgeDays = [math]::Round(((Get-Date) - $bundle.LastWriteTime).TotalDays, 1)
+        Write-OK ("code: git bundle {0} ({1} MB, age {2}d)" -f $bundle.Name, $mb, $bundleAgeDays)
+        if ($bundleAgeDays -gt 7) {
+            Write-Warn "git bundle is $bundleAgeDays days old (re-create periodically per policy)"
+        }
+    } else {
+        Write-Err "git bundle missing -- git history NOT recoverable from snapshots"
+        $issues += "code:git-bundle"
     }
 
     # 2. PG/SQLite dumps
@@ -270,16 +313,18 @@ function Do-Verify {
 # ==================== code ====================
 function Do-Code {
     $restoreTarget = if ($Target) { $Target } else { $ProjectRoot }
-    Write-Stage "Restoring code: $CodeBackup -> $restoreTarget"
-    if (-not (Test-Path $CodeBackup)) { Write-Err "Source not found: $CodeBackup"; exit 1 }
-    if (-not (Confirm-Action "robocopy /MIR will overwrite $restoreTarget?")) { Write-Host "Aborted."; exit 0 }
+    $latest = Get-LatestSnapshot
+    if (-not $latest) { Write-Err "No dated snapshot found in $VaultBase"; exit 1 }
+    $snapName = Split-Path -Leaf $latest
+    Write-Stage "Restoring code: $latest -> $restoreTarget"
+    if (-not (Confirm-Action "robocopy /MIR will overwrite $restoreTarget from snapshot $snapName?")) { Write-Host "Aborted."; exit 0 }
 
-    # robocopy /MIR mirrors source to target (deletes target extras, copies changed files only)
-    # /XJ excludes junction points (same as backup.ps1, avoids ERROR 1920 on metadata/system)
-    # Same exclude rules as backup.ps1 to keep restore symmetric
+    # robocopy /MIR mirrors the snapshot to target (deletes target extras, copies
+    # changed files only). Restoring FROM a hardlink snapshot is safe: links read
+    # as regular files. /XJ excludes junction points; exclude rules mirror backup.ps1.
     $ExcludeDirs = @(".git","node_modules","__pycache__",".pytest_cache",".mypy_cache",".ruff_cache",".runtime",".aidrafts","tmp",".venv")
     $ExcludeFiles = @("*.pyc","*.db-wal","*.db-shm")
-    $rcArgs = @($CodeBackup, $restoreTarget, "/MIR", "/XJ", "/R:2", "/W:5", "/MT:8", "/NFL", "/NDL", "/NP")
+    $rcArgs = @($latest, $restoreTarget, "/MIR", "/XJ", "/R:2", "/W:5", "/MT:8", "/NFL", "/NDL", "/NP")
     $rcArgs += "/XD"; $rcArgs += $ExcludeDirs
     $rcArgs += "/XF"; $rcArgs += $ExcludeFiles
     & robocopy @rcArgs 2>&1 | Out-Null
