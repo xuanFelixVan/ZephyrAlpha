@@ -698,7 +698,7 @@ gaps:
     detection_threshold: 1000
     expected_daily_avg: 2000
     actual_daily_avg: 0
-    status: "mitigated"  # 2026-09-15 17:5x st-circmv-synthcw-20260915 采集上线：①采集器 scripts/data/collect_sector_fund_flow.py（akshare stock_fund_flow_industry(symbol='即时')，THS 90 个一级行业，字段与 DDL 一一对应，net_amount=当日累计亿元）——注意 symbol 传参必须用 '即时'，传旧文档签名'同花顺行业资金流'会走 8 列旧映射崩溃；②调度=计划任务 ZephyrAlpha_IntradayFundFlow 交易日 10:05/11:05/13:35/14:35/15:05 五时点快照（段差分要求下跌段内至少一张快照，单张 EOD 快照按设计不出段内口径）；③首两张快照已落库（09-15 17:27/17:56 各 90 行）；④卡2 注入法管道验证通过（差分 69 板块→重钥 4 个 880 码→degraded=False 出榜，880491 半导体 62.93 亿）。残余：①历史快照不可回补（THS 仅'即时'口径），09-11/09-14 卡2 保持降级，前向恢复；②THS 行业名→TDX 880 重钥率 4/69（两套行业体系交集小），映射扩充待办。
+    status: "mitigated"  # 2026-09-15 17:5x st-circmv-synthcw-20260915 采集上线：①采集器 scripts/data/collect_sector_fund_flow.py（akshare stock_fund_flow_industry(symbol='即时')，THS 90 个一级行业，字段与 DDL 一一对应，net_amount=当日累计亿元）——注意 symbol 传参必须用 '即时'，传旧文档签名'同花顺行业资金流'会走 8 列旧映射崩溃；②调度=计划任务 ZephyrAlpha_IntradayFundFlow 交易日 10:05/11:05/13:35/14:35/15:05 五时点快照（段差分要求下跌段内至少一张快照，单张 EOD 快照按设计不出段内口径）；③首两张快照已落库（09-15 17:27/17:56 各 90 行）；④卡2 注入法管道验证通过（差分 69 板块→重钥 4 个 880 码→degraded=False 出榜，880491 半导体 62.93 亿）。残余：①历史快照不可回补（THS 仅'即时'口径），09-11/09-14 卡2 保持降级，前向恢复；②勘误（2026-09-15 18:45）：先前'重钥率 4/69'系误读——三名单比对实证 THS 90 名与 SECTOR_881_TO_880 name_881 交集 90/90=100%（69 个差分板块全部成功重钥到 880 码），'4'实为当日净流入为正的板块数（大跌日 65 行业净流出被卡2 正流入口径筛掉=正确行为），无需扩充映射。
     root_cause: "THS 板块资金流采集链路从未灌入或已清空；与 mootdx 死亡同族但表内无任何历史行，疑采集任务从未上线。"
     impact: "逆势榜卡2 永久降级（设计内 fail-closed 不出伪榜）。"
     resolution_plan: "资金流采集独立立项（THS/东财板块资金流源评估）；接入后卡2 自动恢复（注入位已留）。"
@@ -723,5 +723,24 @@ gaps:
     resolution_plan: "TDX 行业成分源独立挖矿（tdx 客户端本地文件/tdxzs.cfg 关联成分文件/mootdx 死亡后的替代源）；接入后合成覆盖 727/727。"
     primary_alternative: "881 行业体系（128 板块）已达标可替代行业维度消费。"
     evidence: "sector_constituent 号段统计：8803%=0、8804%=0；kline_sector_intraday 09-08 tdx 真值 727 板块中 8803=61/8804=71（无后缀）；8811-8814 校准 corr 0.9954-0.9990"
+    created: "2026-09-15"
+    last_updated: "2026-09-15"
+
+  # === 2026-09-15: kline_sector 概念板块日K 逐日递减（tqcenter 宇宙缩水）===
+  - id: "kline_sector_concept_shrinking"
+    table: "c1_market.kline_sector"
+    gap_type: "universe_shrinking"
+    start_date: "2026-09-12"
+    end_date: ""
+    date_column: "trade_date"
+    detection_threshold: 590
+    expected_daily_avg: 594
+    actual_daily_avg: 494
+    status: "open"  # 逐日实测：09-10=594 → 09-11=594 → 09-14=544(-50) → 09-15=494(再-50)，缺口全集中在 8807 段(20)+8808 段(80)=概念板块，tqcenter 换源通道（commit f908147aae，他会话域）采集宇宙在缩水。方案 J 分钟合成前日收盘取自此表，09-15 已有 51 板块因无前日收盘被跳过（合成覆盖 531/586）——不遏制则合成覆盖每天 -50。
+    root_cause: "tqcenter 源（他会话维护）8807/8808 号段概念板块日K 逐日停更；疑似源侧板块清单变化或采集任务宇宙过滤，根因需 tqcenter 会话排查。"
+    impact: "①方案 J 分钟合成逐日缩水（前日收盘缺失板块无法合成）；②regime 板块特征等日K 消费方同步受损。"
+    resolution_plan: "转交 tqcenter/kline_sector 维护会话排查 8807/8808 停更根因并回补 09-14/09-15 缺口；方案 J 侧无需改动（合成器对缺失板块 skip 留痕）。"
+    primary_alternative: "mootdx 日K 死亡无替代源；kline_sector_intraday tdx 真值仅存量到 09-10。"
+    evidence: "kline_sector 按日 uniq(code)：09-10=594/09-11=594/09-14=544/09-15=494；缺失号段 8807=20、8808=80（vs 09-11）；合成器 09-15 skip_data=55"
     created: "2026-09-15"
     last_updated: "2026-09-15"
