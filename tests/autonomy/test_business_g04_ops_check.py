@@ -99,10 +99,10 @@ class TestG04RealRegistry:
 
         daban = report["strategies"]["daban"]
         assert daban["registry"]["status"] == "ok"
-        assert daban["registry"]["entry_count"] == 22  # 真源：daban 类 22 条
+        assert daban["registry"]["entry_count"] == 23  # 真源：daban 类 23 条（STR-DABAN-023 ba0c6cab0d 合法新增）
         assert "STR-DABAN-001" in daban["registry"]["entry_ids"]
-        # 真源：multifactor 类 67 条（ARCH-301 真值修正 + ARCH-305 STR-MULTIFACTOR-031 deprecated 迁移后）
-        assert report["strategies"]["multifactor"]["registry"]["entry_count"] == 67
+        # 真源：multifactor 类 73 条（C5 批 relabel+新增后）
+        assert report["strategies"]["multifactor"]["registry"]["entry_count"] == 73
 
         # 事件驱动真源已登记 STR-EVENT-001（CAND-SIG-012 晋升）
         event = report["strategies"]["event_driven"]
