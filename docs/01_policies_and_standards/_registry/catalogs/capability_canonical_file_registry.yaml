@@ -13396,6 +13396,10 @@ creation_tokens:
   token: btfix-p1p2-trading-halt-resolver-20260915
   created_by: st-btfix-p15-20260915
   capability: btfix_p1p2
+- file: docs/_working/reports/p21_algo_flow_batch4_excore_report.md
+  token: btfix-p1p2-p21-algo-flow-batch4-excore-report-20260915
+  created_by: st-btfix-p15-20260915
+  capability: btfix_p1p2
 - file: "docs/_working/2026-09-14-full-chain-factory-blueprint.md"
   token: "fullchain-factory-blueprint-20260914"
   created_by: "st-fullchain-20260914"
@@ -13918,10 +13922,6 @@ creation_tokens:
   capability: board_index_synthesis
 - file: docs/_working/dsr-recalc/2026-09-15-dsr-recalc-report.md
   token: f06-dsr-recalc-2026-09-15-dsr-recalc-report-20260915
-  created_by: st-f06dsr-shift2-20260915
-  capability: f06_dsr_recalc
-- file: docs/_working/dsr-recalc/2026-09-15-dsr-recalc-rows.yaml
-  token: f06-dsr-recalc-2026-09-15-dsr-recalc-rows-20260915
   created_by: st-f06dsr-shift2-20260915
   capability: f06_dsr_recalc
 di_seam_exemptions: []
