@@ -299,8 +299,8 @@ class ProcessIncubator:
                 records = self._read()
                 records.append(record)
                 self._write(records)
-        except OSError:
-            # 登记失败不回滚 spawn（进程已出）——告警留痕，reaper 侧 cmdline 兜底仍在
+        except Exception:  # noqa: BLE001 — INVARIANTS：登记失败不阻断孵化本体（StaleWriteRefused
+            # 是 RuntimeError 非 OSError，并发 CAS 拒写必须同被吞掉——红蓝对抗 2026-09-16）
             logger.exception("incubator ledger write failed for pid=%s", record.child_pid)
         logger.info(
             "incubated pid=%s name=%s lifetime=%ss owner=%s ledger=%s",
@@ -338,7 +338,11 @@ class ProcessIncubator:
                     except psutil.Error:
                         continue
             if n:
-                self._write(records)
+                try:
+                    self._write(records)
+                except Exception:  # noqa: BLE001 — 并发 CAS 拒写降级（红蓝 2026-09-16）
+                    logger.warning("sweep ledger write refused (concurrent writer)")
+                    n = 0
             return n
 
     def list_active(self) -> list[IncubationRecord]:
@@ -352,7 +356,10 @@ class ProcessIncubator:
             for r in records:
                 if r.record_id == record_id:
                     r.reaped = True
-                    self._write(records)
+                    try:
+                        self._write(records)
+                    except Exception:  # noqa: BLE001 — 并发 CAS 拒写降级（红蓝 2026-09-16）
+                        logger.warning("mark_reaped ledger write refused (concurrent writer)")
                     return True
             return False
 

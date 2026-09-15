@@ -1,3 +1,5 @@
+# [BLUEPRINT] MOD-INF-016 | (auto-injected by S4 reconciler) | §
+# [TTL] permanent
 # [TTL] permanent
 # [MODULE] tests.shared.test_process_incubator
 # [DOMAIN] D_SHARED
@@ -227,3 +229,57 @@ def test_singleton_returns_same_instance(monkeypatch: pytest.MonkeyPatch, tmp_pa
     a = mod.get_incubator()
     b = mod.get_incubator()
     assert a is b
+
+
+# ── 红蓝对抗（2026-09-16 收尾批）────────────────────────────────────────────
+
+
+def test_water_gate_exact_boundaries():
+    """边界值钉死：85.0 恰在 queue 线→排队；90.0 恰在 reject 线→拒绝（>=语义）。"""
+    gate_reject = SpawnWaterGate(queue_at_percent=85.0, reject_at_percent=90.0, probe=lambda: 90.0)
+    with pytest.raises(WaterLevelRejected, match="reject"):
+        gate_reject.check_or_wait()
+    gate_queue = SpawnWaterGate(
+        queue_at_percent=85.0, reject_at_percent=90.0, wait_s=0.2, retry_interval_s=0.05,
+        probe=lambda: 85.0,
+    )
+    with pytest.raises(WaterLevelRejected, match="timeout"):
+        gate_queue.check_or_wait()
+    gate_below = SpawnWaterGate(queue_at_percent=85.0, reject_at_percent=90.0, probe=lambda: 84.999)
+    assert gate_below.check_or_wait() == 84.999
+
+
+def test_concurrent_cas_refusal_does_not_kill_spawn(tmp_path: Path, monkeypatch: pytest.MonkeyPatch):
+    """红蓝：并发写 CAS 拒写（StaleWriteRefused=RuntimeError）不得击穿孵化本体。"""
+    import subprocess as _sp
+
+    inc_a = ProcessIncubator(ledger=tmp_path / "ld", water_gate=SpawnWaterGate(probe=lambda: 0.0))
+    inc_b = ProcessIncubator(ledger=tmp_path / "ld", water_gate=SpawnWaterGate(probe=lambda: 0.0))
+    # A 先写一条，B 的缓冲区即陈旧
+    proc_a = inc_a.spawn([sys.executable, "-c", "pass"], name="a", expected_lifetime_s=60.0)
+    try:
+        # B 无视 A 的写入（模拟并发窗口读旧），直接 spawn → CAS 拒写 → 必须吞掉并返回进程
+        proc_b = inc_b.spawn([sys.executable, "-c", "pass"], name="b", expected_lifetime_s=60.0)
+        try:
+            assert proc_b.pid > 0  # 孵化本体不受登记失败影响（INVARIANTS）
+        finally:
+            proc_b.terminate()
+            proc_b.wait(timeout=10)
+    finally:
+        proc_a.terminate()
+        proc_a.wait(timeout=10)
+    # A 基线新鲜→再写成功（登记通道自愈）
+    proc_c = inc_a.spawn([sys.executable, "-c", "pass"], name="c", expected_lifetime_s=60.0)
+    try:
+        assert len([r for r in inc_a.list_active() if r.name == "c"]) == 1
+    finally:
+        proc_c.terminate()
+        proc_c.wait(timeout=10)
+
+
+def test_rollback_path_spawn_failure_propagates(inc: ProcessIncubator):
+    """回滚路径：spawn 本体失败（非法命令）原样抛 FileNotFoundError——消费方既有
+    except FileNotFoundError 分支语义不变（迁移零行为漂移），且不落登记。"""
+    with pytest.raises(FileNotFoundError):
+        inc.spawn(["Z-NOT-EXIST-BINARY-XYZ", "serve"], name="bad", expected_lifetime_s=60.0)
+    assert inc.list_active() == []

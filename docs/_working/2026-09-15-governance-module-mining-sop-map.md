@@ -8,7 +8,7 @@ completes_when: >-
 
 # 治理守护模块挖矿 SOP 方案地图（2026-09-15 立项）
 
-> 创建：2026-09-15 ｜ 会话：qoder-gov-patch-20260915 ｜ 状态：**减法批+全景图前端页已落地，加法/乘法待逐项施工**
+> 创建：2026-09-15 ｜ 会话：qoder-gov-patch-20260915 ｜ 状态：**全战役收官（2026-09-16 分包三 st-govops-20260916）：减法/加法/乘法/除 四表全部终态，存废自裁 2 项裁定登记（#255/#256）**
 >
 > 落地凭据（2026-09-16 回填）：减法批=1ddcd089（25 文件：8 死模块+11 vms_ri 归档脚本+6 死测试
 > +ZA-IF-0010 deprecated）；GOMAP disconnected 更新=b1334ae3ff（GOMAP 生成器会话同批带入）；
@@ -110,6 +110,13 @@ completes_when: >-
    startup_shutdown×2、api_lifecycle×2(gov_audit vs lifecycle_governance)。
 5. **空白**：ops_sop 无"进程失控/内存耗尽"应急处置 SOP（本次靠人肉诊断）。
 
+## 4.5 存废自裁收口（2026-09-16，预裁定授权项）
+
+- security_event_bus/telemetry（33a1282c，裁定#255）：总线本体保留（LSG/incident_pipeline
+  真消费）；FeishuAlertChannel+LsgFeishuAlerter 确认纯死（secret 零注册+通道裁禁+零生产
+  实例化+retry_pending 零消费）列退役清单，动刀属 LSG 安全域车道移交后续门位。
+- decisiongraph 存废：按总包预裁定不重议（全景图战役已裁"B 步季度观察"，另行登记），跳过。
+
 ## 5. 加减乘除行动清单（每项处置后回填 commit hash）
 
 ### 减（清理，全部需先复核装配机制）
@@ -132,8 +139,8 @@ completes_when: >-
 ### 加（接线）
 | # | 对象 | 动作 | 前置/验证 | 终态 |
 |---|------|------|-----------|------|
-| A1 | `nssm_p1_p5_service_definitions.yaml` DRAFT | 收口落地或裁定废弃 | Owner 窗口(蓝图自述) | |
-| A2 | `config/alert_rules.yaml` OOM>8GB critical | 接通知通道实测一轮 | ~~飞书 webhook 真实告警一次~~ → 2026-09-15 Owner 裁定：飞书/SMTP 通道彻底删除，通知=前端 promotion 页 | A2 改口径=OOM critical 事件落到 promotion 页通知，待施工 |
+| A1 | `nssm_p1_p5_service_definitions.yaml` DRAFT | 收口落地或裁定废弃 | Owner 窗口(蓝图自述) | ✅ 裁定废弃软归档（8a8d0654+裁定#256）：NSSM 机制与 schtasks 唯一自启真源冲突（nssm 二进制不存在+Owner 窗口 08-25 起未执行），git mv→docs/_working/archive/2026-09/；拓扑真源留 MOD-INF-066 蓝图 |
+| A2 | `config/alert_rules.yaml` OOM>8GB critical | 接通知通道实测一轮 | ~~飞书 webhook 真实告警一次~~ → 2026-09-15 Owner 裁定：飞书/SMTP 通道彻底删除，通知=前端 promotion 页 | ✅ 已接线实测（a6cf1aad）：新模块 MOD-INF-OPS-ALERT-FEED（探针 30s→规则评估→通知板 JSONL→/api/ops-notifications→promotion 页横幅）；playwright E2E 注入假 OOM critical 断言横幅可见 15 例全绿；alert_rules 全规则 fle 通道清除 |
 | A3 | `kill_switch_orchestrator` 五域编排 | 挂 boot_hooks 或裁定废弃 | RBAC 测试+boot 冒烟 | ✅ 已接线（裁定#254 Owner 放行；1d6a206b 登记+49dde8fd 施工）：boot_hooks 启动链 _init_kill_switch_orchestrator 注册五域开关（system+skills/trading/rollback/capacity），get_orchestrator 进程级单例，注册失败仅告警不阻断启动；降级顾虑由 fail-open+测试兜底（tests/autonomy/test_kill_switch_orchestrator.py TestBootWiring） |
 | A4 | `last_resort_watchdog` | 接 escalation_protocol 或废弃 | 蓝图声明 vs 现状对齐 | ✅ 已接线（裁定#254 Owner 放行；49dde8fd）：escalation_engine.escalate 升至 L4_EMERGENCY 且重试耗尽时 activate() 点亮旗标，emergency_shutdown 不得自动调用（watchdog 不得自触发）；单例 get_last_resort_watchdog；3 回归测试（tests/escalation/test_escalation_core.py TestLastResortWiring）93 全绿 |
 | A5 | `agent_health_monitor`、`heartbeat_server`、`task_heartbeat`、`degrade_cascade` | 逐个接线或删除 | wiring 复核 | 核验修订：全为 TEST-ONLY；✅ 四件全删（Owner 裁定）：heartbeat_server/task_heartbeat/degrade_cascade=零生产引用+头注虚标 CONSUMERS+活替代已存在（reaper/boot_hooks 任务事件/fault_tolerance 真熔断），随减法批删除（9deb35e709）；agent_health_monitor=概念留档（三态+5 SLO+硬软双阈值，git 可溯），第三层 AI 自治期按届时需求重建（幻觉率 SLO 届时与 feedback_loop auto_evolution hallucination_interception 合一真源）；zombie_cleaner 从本单剔除（auto_fix_engine/engine.py:247 动态注册=活，挖矿误判）；ghost_scan 已删（与 reaper scan_ghost_windows 重复） |
@@ -141,10 +148,10 @@ completes_when: >-
 ### 乘（升级/打通）
 | # | 对象 | 动作 | 前置/验证 | 终态 |
 |---|------|------|-----------|------|
-| M1 | process_pool × ProcessLifecycleGateway 双轨 | 合并为统一孵化入口，孵化即登记(父 PID/预期寿命/树) | 60+ 消费方渐进迁移，CI 门已有 | |
-| M2 | 水位门禁 | 重任务 spawn 前查 commit 水位，>85% 排队/拒绝 | 挂 process_pool 统一入口后自然落位；阈值复用 resource_optimization.yaml | |
-| M3 | 孵化-收割闭环 | process_pool 登记表落盘 → reaper 消费(替代 cmdline 特征猜测) | 与 M1 同战役 | |
-| M4 | llama-server 崩溃稳定性 | 事件日志 0xc0000005×3 溯源(Ollama 版本/模型/VRAM) | 对照 `gguf_vram_budget.yaml` | |
+| M1 | process_pool × ProcessLifecycleGateway 双轨 | 合并为统一孵化入口，孵化即登记(父 PID/预期寿命/树) | 60+ 消费方渐进迁移，CI 门已有 | ✅ 统一入口落地（6044c47f）：MOD-INF-PROC-INCUBATOR（孵化即登记 ledger.jsonl）+首批 5 消费方迁移（auto_runtime_core ollama serve 事故源行/services_registry/reconcile_runner/write_audit_daemon/worktree_drift_watchdog）+迁移指南 docs/_working/guides/process_incubator_migration_guide.md；长尾清单见指南 §5 |
+| M2 | 水位门禁 | 重任务 spawn 前查 commit 水位，>85% 排队/拒绝 | 挂 process_pool 统一入口后自然落位；阈值复用 resource_optimization.yaml | ✅ 随 M1 落地（6044c47f）：SpawnWaterGate（Windows=commit charge 口径）≥85% 有界等待 30s、≥reject 线（引用 resource_optimization.yaml emergency=90，勿收编）拒孵；边界值/fail-open 红蓝钉死 |
+| M3 | 孵化-收割闭环 | process_pool 登记表落盘 → reaper 消费(替代 cmdline 特征猜测) | 与 M1 同战役 | ✅ 已闭环（6044c47f）：reaper 新增 _reap_incubated_expired（零 zephyr import，stdlib 读 ledger）——超寿且存活→树杀+回写 reaped；白名单兜底；双端路径契约测试钉住 |
+| M4 | llama-server 崩溃稳定性 | 事件日志 0xc0000005×3 溯源(Ollama 版本/模型/VRAM) | 对照 `gguf_vram_budget.yaml` | ✅ 已溯源+防护（a164befb）：8 例崩溃 3 签名族（AV-LLAMA 4 例同偏移=确定性缺陷/FF-UCRT 3/CPP-EXC 1），Ollama 0.32.1+VRAM 超订归因；ensure_running VRAM 预算门（>21.6GB 拒孵）；报告 docs/_working/forensics/llama_server_crash_forensics_202609.md；版本升级列 Owner 待裁 |
 
 ### 除（终止/防复发，已完成 ✅）
 - ✅ terminate_proc 树杀（8aaede05cb）

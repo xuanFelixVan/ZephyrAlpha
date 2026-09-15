@@ -313,23 +313,31 @@ class OpsAlertFeed:
             logger.debug("ops alert feed probe failed: %s", exc)
             return {"ok": False, "reason": f"probe failed: {exc}", "ts": ts}
 
-        triggered = self.evaluate_memory_rules(float(value))
+        try:
+            triggered = self.evaluate_memory_rules(float(value))
+        except Exception as exc:  # noqa: BLE001 — 规则评估异常降级（红蓝 2026-09-16）
+            logger.debug("ops alert feed evaluate failed: %s", exc)
+            return {"ok": False, "reason": f"evaluate failed: {exc}", "ts": ts}
         ops: list[dict] = []
         for rule in triggered:
             if str(rule.get("severity", "")).lower() != "critical":
                 continue
             silence = self._parse_silence(rule.get("silence_window", "5m"))
-            ops.append(
-                self.publish(
-                    key=str(rule.get("id", "ALERT-UNKNOWN")),
-                    severity="critical",
-                    title=str(rule.get("name", "oom_risk")),
-                    message=str(rule.get("description", "")) + f"（实测 {value} 字节）",
-                    labels={"metric": rule.get("metric"), "value": value},
-                    silence_window_s=silence,
-                    now=ts,
+            try:
+                ops.append(
+                    self.publish(
+                        key=str(rule.get("id", "ALERT-UNKNOWN")),
+                        severity="critical",
+                        title=str(rule.get("name", "oom_risk")),
+                        message=str(rule.get("description", "")) + f"（实测 {value} 字节）",
+                        labels={"metric": rule.get("metric"), "value": value},
+                        silence_window_s=silence,
+                        now=ts,
+                    )
                 )
-            )
+            except Exception as exc:  # noqa: BLE001 — 板 CAS 拒写降级不炸 tick（红蓝 2026-09-16）
+                logger.warning("ops alert feed publish failed: %s", exc)
+                ops.append({"op": "failed", "key": rule.get("id"), "reason": str(exc)[:120]})
         # 无 critical 触发 → 按滞回解除既有 OOM 项
         if not any(str(r.get("severity")).lower() == "critical" for r in triggered):
             for rule in self._load_rules():
