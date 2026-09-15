@@ -49595,6 +49595,48 @@ entries:
   desc_zh: "strategy_screen 加列 num_trials 的 DDL 部署脚本（S03-N1）"
   desc_en: ""
   plain_zh: "这个脚本给策略快筛成绩台账补一个新格子，用来记每一批考试里一共有多少个考生（做多重比较校正时要用这个数）。它只加格子不挪老数据，重复跑也不会出错，跑完会自己检查格子是不是真加上了。"
+- module_path: src/zephyr/pf_core/strategy_engine/translated_strategy_adapter.py
+  domain_id: D_PF_CORE
+  name_zh: "STR翻译件面板适配器"
+  name_en: "translated_strategy_adapter"
+  desc_zh: "把 translated/c4_*.py 的 build(start,end) 契约包装成 framework_composer 成员权重面板接口（STR- 前缀路由）"
+  desc_en: ""
+  plain_zh: "新挂图的策略是一段段翻译过来的小程序，它们算权重的方式和老策略完全不同，整装回测器读不懂。本模块就是翻译官：把每个新策略算出的持仓权重表原样搬进整装回测的世界，谁也不改动谁的算法，搬不动就明说跳过。"
+- module_path: scripts/backtest/generate_framework_plan_from_tdm.py
+  domain_id: D_BACKTEST
+  name_zh: "TDM方案表生成器"
+  name_en: "generate_framework_plan_from_tdm"
+  desc_zh: "读 TDM portfolio_plan.sleeves 生成/更新 framework_plans.yaml 的 fw-tdm-current 方案块（safe_write CAS+幂等+写后自校验）"
+  desc_en: ""
+  plain_zh: "挂图完成后，策略和它的资金比例记在决策地图里，但整装回测只认另一份方案清单，两边一直对不上号。这个生成器就是自动抄写员：每次都从决策地图把最新的成员和比例工整抄到回测用的清单上，抄过一遍后发现没有变化就不再动手，抄完还要自己检查一遍。"
+- module_path: src/zephyr/strategy_pipeline/fw_backtest.py
+  domain_id: D_BACKTEST
+  name_zh: "整装回测自动触发件"
+  name_en: "fw_backtest"
+  desc_zh: "fw_backtest_due 事件处理体（契约 run_fw_backtest_due）：重跑方案表生成器→run_framework_backtest→证据包落 data/backtest_artifacts/fw-auto/；含 regime 日序供给函数"
+  desc_en: ""
+  plain_zh: "以前新策略挂上图之后，组合级别的整体回测得有人在页面上手动点。这个模块把这件事变成全自动：一收到挂图完成的通知，它就刷新方案清单、跑一遍整装组合回测、把成绩单和验收结论存档；同样的方案重复通知就不再重跑，跑坏了会自动报警。"
+- module_path: src/zephyr/frontend/dashboard/web/features/promotion/promotion.js
+  domain_id: D_FRONTEND
+  name_zh: "策略转正审批页"
+  name_en: "promotion-approval-page"
+  desc_zh: "转正建议卡列表渲染+Owner拍板两段式确认+决策回执展示"
+  desc_en: ""
+  plain_zh: "这个页面把流水线认为可以转正的策略摆出来给Owner看：每条建议卡上写着策略是谁、现在处于哪个阶段、模拟盘熬了几个月、整装回测跑出的四项成绩，下面两个按钮批准或驳回，点下去先弹确认框再真正提交，拍板完的卡片变成只读回执留档。"
+- module_path: tests/frontend/test_promotion_advisory_api.py
+  domain_id: D_FRONTEND
+  name_zh: "转正审批API单测"
+  name_en: "promotion-advisory-api-tests"
+  desc_zh: "转正建议清单与拍板两端点的TestClient验收单测"
+  desc_en: ""
+  plain_zh: "这组测试假装自己是前端浏览器，去敲转正审批的两个后端接口：看清单接口在没数据、有数据、后端引擎没准备好时都给前端体面的答复，看拍板接口在正常批准、被拒绝、乱填参数、后端引擎缺失、引擎崩掉这几种情况下分别返回对的状态码，全程用假引擎不碰真实策略数据。"
+- module_path: src/zephyr/strategy_pipeline/promotion_advisory.py
+  domain_id: D_BACKTEST
+  name_zh: "转正建议包"
+  name_en: "promotion_advisory"
+  desc_zh: "三路证据合流生成转正建议包并经真通道推送，Owner 拍板执行器"
+  desc_en: ""
+  plain_zh: "这个模块像一位尽职的助理：它把模拟盘的月度体检结果、治理器的意见和整装回测成绩单汇总成一份转正建议书存进档案柜，有值得转正的就发消息通知老板；老板点一下批准，它就把策略档案从模拟盘一栏改到实盘一栏，全程只留签字指纹、不留密码原文。"
 
 battle_map_steps:
 - step_id: BM-BUY-05
