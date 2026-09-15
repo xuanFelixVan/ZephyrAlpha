@@ -1,17 +1,17 @@
-# 自动生成于 2026-09-14T22:20:31Z
+# 自动生成于 2026-09-15T16:35:55Z
 # 来源: scripts/governance/**/*.py __manifest__ 块
 # 手工编辑无效——修改请通过各 .py 文件的 __manifest__ 块
 
-generated_at: '2026-09-14T22:20:31Z'
+generated_at: '2026-09-15T16:35:55Z'
 generated_by: scripts/governance/generators/generate_script_manifest.py
 source: scripts/governance/**/*.py → __manifest__ 块
-total_scripts: 430
+total_scripts: 431
 with_manifest: 407
-missing_manifest: 23
+missing_manifest: 24
 categories:
   governance:_sync: 4
   governance:_tasks: 3
-  governance: 54
+  governance: 55
   governance:d10_performance: 1
   governance:d11_compliance: 24
   governance:d12_ai_hallucination: 4
@@ -1999,7 +1999,7 @@ scripts:
   timeout_seconds: 60
   args: []
   warn_only: false
-  description: 'G-align-all: 五图对齐执行入口（ARCH-ALIGN-UNIFIED-001）'
+  description: 'G-align-all: 全图全库对齐执行入口（ARCH-ALIGN-UNIFIED-001）'
   tags:
   - Critical
 - name: d5_architecture/generators/align_panoramas.py
@@ -3995,6 +3995,16 @@ scripts:
   tags:
   - Disruptive
   - Quick
+- name: generate_governance_map.py
+  owner: governance
+  dimensions: []
+  priority: P2
+  timeout_seconds: 60
+  args: []
+  warn_only: false
+  description: ⚠ __manifest__ 缺失——请添加元数据块
+  tags: []
+  _manifest_missing: true
 - name: generate_project_depgraph.py
   owner: governance
   dimensions:
