@@ -4,7 +4,7 @@
 manifest_version: 2.0.0
 generated_by: generate_manifest.py (auto-scan)
 generated_at: '2026-09-15'
-total_scripts: 979
+total_scripts: 980
 scripts:
 - name: __init__.py
   path: __init__.py
@@ -625,6 +625,14 @@ scripts:
 - name: backtest/distribution_forecast_eval.py
   path: backtest/distribution_forecast_eval.py
   description: 任何产出分位预测的模型（车道 E 分位数回归/Kronos/未来 PDF 模型）都交本考尺评分：
+  domain: test
+  execution_plane: warm-path
+  status: registered
+  timeout_seconds: 60
+  dimensions: []
+- name: backtest/dsr_recalc_backfill.py
+  path: backtest/dsr_recalc_backfill.py
+  description: A2 台账 N 回填：num_trials 历史批 NULL → 按 run_id 考证值回填（考证口径=
   domain: test
   execution_plane: warm-path
   status: registered
@@ -2368,7 +2376,7 @@ scripts:
   dimensions: []
 - name: data/synth_board_minute.py
   path: data/synth_board_minute.py
-  description: 逐板块分批处理：每板块独立查 1min→等权→合成→写库，避免全市场一次性拉取超内存。
+  description: 合成口径（方案 J §1 + TDX 停牌口径）：
   domain: data
   execution_plane: warm-path
   status: registered
