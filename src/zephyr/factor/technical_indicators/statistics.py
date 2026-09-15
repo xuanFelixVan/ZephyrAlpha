@@ -28,62 +28,7 @@
 
 设计文档：16_technical_indicator_catalog.md §2.6
 
-# [ALGO_FLOW]
-# 层: 输入
-# - id: I1
-#   name: 行情OHLCV数据 DataFrame
-#   fields: close/volume 列（各指标按 meta.input_columns 取用）
-#   code: compute(data: pd.DataFrame)
-# 层: 指标
-# - id: CORREL
-#   name_zh: 滚动相关系数CORREL 30
-#   name_en: CORREL
-#   intro: close×volume 滚动 Pearson 相关，量价背离/共振的统计基线
-#   formula: r=Σ(x-x̄)(y-ȳ)/√(Σ(x-x̄)²Σ(y-ȳ)²)，滚动 30 窗
-#   code: statistics.py CORREL 类
-#   registry: 指标表: 有correl_30列 但代码未读表（本模块即指标计算实现）
-#   is_break: true
-# - id: LINEARREG
-#   name_zh: 线性回归线LINEARREG/TSF 14
-#   name_en: LINEARREG/TSF
-#   intro: 滚动一元线性回归的当前拟合值与一步外推预测，趋势斜率视角的平滑线
-#   formula: b=(NΣxy−ΣxΣy)/(NΣx²−(Σx)²)，a=(Σy−bΣx)/N；LINEARREG=a+b(N−1)；TSF=a+bN
-#   code: statistics.py LINEARREG 类
-#   registry: 指标表: 有linearreg_14/tsf_14列 但代码未读表（本模块即指标计算实现）
-#   is_break: true
-# 层: 算法
-# - id: A1
-#   name_zh: ① 校验+参数合并+空表短路 compute统一契约
-#   name_en: TechnicalIndicatorBase.compute
-#   intro: 每个指标入口先校验列、空表直接返回空 DataFrame、再合并默认参数
-#   desc: validate(data) 缺列抛 ValueError → data.empty 返回空表 → get_params(**kwargs) 合并默认参数
-#   inputs: I1
-#   outputs: 校验通过的 data 与 params
-#   invariant: 空 DataFrame 输入→空 DataFrame 输出不抛异常
-# - id: A2
-#   name_zh: ② 滚动回归矩法向量化
-#   name_en: _rolling_linefit
-#   intro: 用 Σxy=Σ(j·y)−(t−N+1)·Σy 恒等式把逐窗拟合拆成滚动和，避免 rolling.apply 慢路径
-#   desc: s0=y.rolling(N).sum()；s1=(j·y).rolling(N).sum() → slope/intercept 闭式解
-#   inputs: I1
-#   outputs: (slope, intercept) 二元组
-# 层: 输出
-# - id: O1
-#   name_zh: 统计族指标 DataFrame（5指标多列）
-#   name_en: statistics indicators DataFrame
-#   intro: CORREL/BETA/LINEARREG/TSF/VAR 共5个统计指标的多列输出，index 与输入对齐
-#   invariant: 输出列严格等于各 meta.output_columns（correl_30、beta_30、linearreg_14、tsf_14、var_20）
-#   downstream: zephyr.data.implementations.internal_compute_provider（批量计算写入 c1_market.technical_indicator）
-# [/ALGO_FLOW]
-#
-# 边:
-# I1 --> A1
-# I1 --> A2
-# A1 -.->|断点| CORREL
-# A1 -.->|断点| LINEARREG
-# A2 -.->|断点| LINEARREG
-# CORREL --> O1
-# LINEARREG --> O1
+# [ALGO_FLOW] external: docs/03_modules/_domain_factor/algo_flow/statistics.yaml
 """
 
 from __future__ import annotations

@@ -40,47 +40,7 @@ C-027 因子工厂（CAND-FAC-008 / B1-00143）。
 
 依据: §功能域模块·D-FACTOR；construction_backlog_dig.tsv B1-00143。
 
-# [ALGO_FLOW]
-# 层: 输入
-# - id: I1
-#   name: registry 参数
-#   fields: 参数 registry（无注解）
-#   code: factor_factory.py 顶层公共函数形参（AST 提取）
-# - id: I2
-#   name: ic_validator 参数
-#   fields: 参数 ic_validator（无注解）
-#   code: factor_factory.py 顶层公共函数形参（AST 提取）
-# - id: I3
-#   name: causal_validator 参数
-#   fields: 参数 causal_validator（无注解）
-#   code: factor_factory.py 顶层公共函数形参（AST 提取）
-# - id: I4
-#   name: backtest_gate 参数
-#   fields: 参数 backtest_gate（无注解）
-#   code: factor_factory.py 顶层公共函数形参（AST 提取）
-# 层: 算法
-# - id: A1
-#   name_zh: ① FactorFactory
-#   name_en: FactorFactory
-#   intro: 因子工厂：9 阶段全生命周期编排。
-#   desc: 因子工厂：9 阶段全生命周期编排。 Args: registry: 因子注册表（注入式，register_factor 协议）。 ic_validator: IC 验证委托 ``…；公共方法（定义序）: stage_o…
-#   inputs: registry ic_validator causal_validator backtest_gate mining_hook audi…
-#   outputs: 返回值
-#   （注：A1 之后另有 4 个公共定义未列入（含 4 个数据契约/异常/枚举声明类），见源码）
-# 层: 输出
-# - id: O1
-#   name_zh: 模块公共 API 面（5 定义）
-#   name_en: public defs
-#   intro: FactorFactory
-#   downstream: 因子挖掘/治理编排调用方（运行时装配批接线）
-# [/ALGO_FLOW]
-#
-# 边:
-# I1 --> A1
-# I2 --> A1
-# I3 --> A1
-# I4 --> A1
-# A1 --> O1
+# [ALGO_FLOW] external: docs/03_modules/_domain_factor/algo_flow/factor_factory.yaml
 """
 
 from __future__ import annotations

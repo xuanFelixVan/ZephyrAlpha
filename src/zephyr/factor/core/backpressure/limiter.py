@@ -27,32 +27,7 @@ D_FACTOR core backpressure.limiter——进程内在途并发限流器。
 - BackpressureLimiter 是在途并发限流（max_inflight，Semaphore）
 - 两者正交，解决不同问题
 
-# [ALGO_FLOW]
-# 层: 输入
-# - id: I1
-#   name: config 参数
-#   fields: 参数 config（无注解）
-#   code: limiter.py 顶层公共函数形参（AST 提取）
-# 层: 算法
-# - id: A1
-#   name_zh: ① BackpressureLimiter
-#   name_en: BackpressureLimiter
-#   intro: 进程内在途并发限流器。
-#   desc: 进程内在途并发限流器。 Usage:: limiter = BackpressureLimiter(BackpressureConfig(max_inflight=4)) if…；公共方法（定义序）: acquire,…
-#   inputs: config
-#   outputs: 返回值
-#   （注：A1 之后另有 3 个公共定义未列入（含 3 个数据契约/异常/枚举声明类），见源码）
-# 层: 输出
-# - id: O1
-#   name_zh: 模块公共 API 面（4 定义）
-#   name_en: public defs
-#   intro: BackpressureLimiter
-#   downstream: zephyr.factor.core.dag_manager; zephyr.factor.core.dist_feature_eng
-# [/ALGO_FLOW]
-#
-# 边:
-# I1 --> A1
-# A1 --> O1
+# [ALGO_FLOW] external: docs/03_modules/_domain_factor/algo_flow/limiter.yaml
 """
 
 from __future__ import annotations

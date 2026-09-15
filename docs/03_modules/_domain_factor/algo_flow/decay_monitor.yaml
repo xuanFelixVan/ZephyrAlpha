@@ -1,0 +1,44 @@
+# ALGO_FLOW 外部真源——decay_monitor（_domain_factor 域，真源 src/zephyr/factor/analysis/decay_monitor.py）
+# 2026-09-15 P2-1 契约头减负批量出仓：docstring 内联块逐字节副本，extractor 经
+# external 锚加载走同一 parse_algo_flow 管线；算法公共面变化时同步更新本块。
+doc_type: architecture_view
+ttl: permanent
+module: src.zephyr.factor.analysis.decay_monitor
+source_of_truth: src/zephyr/factor/analysis/decay_monitor.py
+algo_flow: |
+    # [ALGO_FLOW]
+    # 层: 输入
+    # - id: I1
+    #   name: 因子ID与预计算IC衰减序列
+    #   fields: factor_id + ic_decay_series（可选，index=lag values=IC均值）
+    #   code: monitor_decay 函数参数
+    # - id: I2
+    #   name: 评估参数组
+    #   fields: symbols 标的池 + start/end 回测区间（无预计算序列时用于现算）
+    #   code: symbols/start/end 函数参数
+    # - id: I3
+    #   name: 最小半衰期阈值配置 float
+    #   fields: decay_monitor.min_half_life，默认 10（lag数）
+    #   code: _config.yaml L12-13
+    # 层: 算法
+    # - id: A1
+    #   name_zh: ① 因子衰减状态判定
+    #   name_en: monitor_decay
+    #   intro: 算IC半衰期并与阈值比较，低于阈值标记衰减过快
+    #   desc: 无序列则调 ic_decay.compute_ic_decay 现算 → compute_half_life 得半衰期 → half_life<min_hl 判 is_decaying 并生成趋势描述（L70-81）
+    #   inputs: I1 I2 I3
+    #   outputs: DecayStatus(factor_id, half_life, is_decaying, trend)
+    #   invariant: INV-004 PIT铁律——基于已实现IC衰减曲线；数据不足→half_life=0且is_decaying=True
+    # 层: 输出
+    # - id: O1
+    #   name_zh: 因子衰减状态 DecayStatus
+    #   name_en: DecayStatus
+    #   intro: 冻结dataclass：因子ID/半衰期/是否衰减中/趋势描述
+    #   downstream: 无下游/内部使用
+    # [/ALGO_FLOW]
+    #
+    # 边:
+    # I1 --> A1
+    # I2 --> A1
+    # I3 --> A1
+    # A1 --> O1

@@ -37,59 +37,7 @@
 
 依据: 15_data_feature_layer_spec v1.0.3 §3.4
 
-# [ALGO_FLOW]
-# 层: 输入
-# - id: I1
-#   name: values 参数
-#   fields: 参数 values，类型注解 pd.DataFrame
-#   code: feature_store_writer.py 顶层公共函数形参（AST 提取）
-# - id: I2
-#   name: factor_version 参数
-#   fields: 参数 factor_version，类型注解 str
-#   code: feature_store_writer.py 顶层公共函数形参（AST 提取）
-# - id: I3
-#   name: data_source 参数
-#   fields: 参数 data_source，类型注解 str
-#   code: feature_store_writer.py 顶层公共函数形参（AST 提取）
-# - id: I4
-#   name: client 参数
-#   fields: 参数 client（无注解）
-#   code: feature_store_writer.py 顶层公共函数形参（AST 提取）
-# 层: 算法
-# - id: A1
-#   name_zh: ① build_feature_value_rows
-#   name_en: build_feature_value_rows
-#   intro: 长表特征值 → INSERT 行 tuple 列表（列序对齐 INSERT_COLUMNS）。
-#   desc: 长表特征值 → INSERT 行 tuple 列表（列序对齐 INSERT_COLUMNS）。 Args: values: 长表 DataFrame，必需列 trade_date…；源码 L134-L172
-#   inputs: values factor_version data_source
-#   outputs: list[tuple]
-# - id: A2
-#   name_zh: ② write_feature_values
-#   name_en: write_feature_values
-#   intro: 特征值写入 c1_market.factor_feature_value（分块 INSERT）。
-#   desc: 特征值写入 c1_market.factor_feature_value（分块 INSERT）。 **不执行声明**：本函数仅供特征仓库管道调用；DDL 未 apply（Owne…；源码 L175-L211
-#   inputs: values client factor_version data_source chunk_size
-#   outputs: int
-# 层: 输出
-# - id: O1
-#   name_zh: list[tuple]
-#   name_en: list[tuple]
-#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
-#   downstream: FactorDAG 批量计算产物落库（管道代码就位，未挂调度不执行）
-# - id: O2
-#   name_zh: int
-#   name_en: int
-#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
-#   downstream: FactorDAG 批量计算产物落库（管道代码就位，未挂调度不执行）
-# [/ALGO_FLOW]
-#
-# 边:
-# I1 --> A1
-# I2 --> A1
-# I3 --> A1
-# I4 --> A1
-# A1 --> A2
-# A2 --> O1
+# [ALGO_FLOW] external: docs/03_modules/_domain_factor/algo_flow/feature_store_writer.yaml
 """
 
 from __future__ import annotations

@@ -1,0 +1,33 @@
+# ALGO_FLOW 外部真源——__init__（_domain_factor 域，真源 src/zephyr/factor/analysis/__init__.py）
+# 2026-09-15 P2-1 契约头减负批量出仓：docstring 内联块逐字节副本，extractor 经
+# external 锚加载走同一 parse_algo_flow 管线；算法公共面变化时同步更新本块。
+doc_type: architecture_view
+ttl: permanent
+module: src.zephyr.factor.analysis.__init__
+source_of_truth: src/zephyr/factor/analysis/__init__.py
+algo_flow: |
+    # [ALGO_FLOW]
+    # 层: 输入
+    # - id: I1
+    #   name: analysis策略参数配置文件 _config.yaml
+    #   fields: layered_backtest/three_level_judgment/decay_monitor/factor_attribution/multifactor_synthesis/factor_optimization 六组参数
+    #   code: src/zephyr/factor/analysis/_config.yaml
+    # 层: 算法
+    # - id: A1
+    #   name_zh: ① 分析配置加载
+    #   name_en: load_analysis_config
+    #   intro: 读包内_config.yaml成字典，策略参数集中配置不硬编码
+    #   desc: open(_CONFIG_PATH) + yaml.safe_load，空文件返回 {}（L25-28）
+    #   inputs: I1
+    #   outputs: 配置字典 dict
+    # 层: 输出
+    # - id: O1
+    #   name_zh: 分析模块配置字典 dict
+    #   name_en: analysis config dict
+    #   intro: 供包内各分析模块读取阈值/频率/默认方法等策略参数
+    #   downstream: three_level_judgment MOD-L02-008；decay_monitor MOD-L02-009；factor_attribution MOD-L02-010；factor_optimization MOD-L02-012；layered_backtest（包内）
+    # [/ALGO_FLOW]
+    #
+    # 边:
+    # I1 --> A1
+    # A1 --> O1

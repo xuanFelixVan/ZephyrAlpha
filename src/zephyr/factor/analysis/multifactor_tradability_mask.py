@@ -27,59 +27,7 @@ IC 虚高。消融实证（arXiv:2507.07107）：mask 合约是单一最大贡�
 
 因子工坊 IC 计算前置门控：仅在可交易池中计算 IC。
 
-# [ALGO_FLOW]
-# 层: 输入
-# - id: I1
-#   name: is_suspended 参数
-#   fields: 参数 is_suspended，类型注解 pd.DataFrame
-#   code: multifactor_tradability_mask.py 顶层公共函数形参（AST 提取）
-# - id: I2
-#   name: is_limit_up 参数
-#   fields: 参数 is_limit_up，类型注解 pd.DataFrame
-#   code: multifactor_tradability_mask.py 顶层公共函数形参（AST 提取）
-# - id: I3
-#   name: is_limit_down 参数
-#   fields: 参数 is_limit_down，类型注解 pd.DataFrame
-#   code: multifactor_tradability_mask.py 顶层公共函数形参（AST 提取）
-# - id: I4
-#   name: daily_amount 参数
-#   fields: 参数 daily_amount，类型注解 pd.DataFrame | None
-#   code: multifactor_tradability_mask.py 顶层公共函数形参（AST 提取）
-# 层: 算法
-# - id: A1
-#   name_zh: ① build_tradability_mask
-#   name_en: build_tradability_mask
-#   intro: 构造可交易性掩码——可交易 = 未停牌 ∧ 未涨停 ∧ 未跌停 ∧ 成交额≥阈值。
-#   desc: 构造可交易性掩码——可交易 = 未停牌 ∧ 未涨停 ∧ 未跌停 ∧ 成交额≥阈值。 Args: is_suspended/is_limit_up/is_limit_down: b…；源码 L101-L121
-#   inputs: is_suspended is_limit_up is_limit_down daily_amount min_amount
-#   outputs: pd.DataFrame
-# - id: A2
-#   name_zh: ② masked_rank_ic
-#   name_en: masked_rank_ic
-#   intro: 仅在可交易截面内计算 rank IC（spearman）。
-#   desc: 仅在可交易截面内计算 rank IC（spearman）。 Args: factor_values: 单日期截面因子值（index=标的） forward_returns: 同截…；源码 L124-L150
-#   inputs: factor_values forward_returns mask min_names
-#   outputs: float
-# 层: 输出
-# - id: O1
-#   name_zh: pd.DataFrame
-#   name_en: pd.DataFrame
-#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
-#   downstream: ic_ir_calc/multifactor_synthesis(IC计算前置门控)
-# - id: O2
-#   name_zh: float
-#   name_en: float
-#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
-#   downstream: ic_ir_calc/multifactor_synthesis(IC计算前置门控)
-# [/ALGO_FLOW]
-#
-# 边:
-# I1 --> A1
-# I2 --> A1
-# I3 --> A1
-# I4 --> A1
-# A1 --> A2
-# A2 --> O1
+# [ALGO_FLOW] external: docs/03_modules/_domain_factor/algo_flow/multifactor_tradability_mask.yaml
 """
 
 from __future__ import annotations

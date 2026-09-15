@@ -1,0 +1,41 @@
+# ALGO_FLOW 外部真源——loader（_domain_factor 域，真源 src/zephyr/factor/core/config_manager/loader.py）
+# 2026-09-15 P2-1 契约头减负批量出仓：docstring 内联块逐字节副本，extractor 经
+# external 锚加载走同一 parse_algo_flow 管线；算法公共面变化时同步更新本块。
+doc_type: architecture_view
+ttl: permanent
+module: src.zephyr.factor.core.config_manager.loader
+source_of_truth: src/zephyr/factor/core/config_manager/loader.py
+algo_flow: |
+    # [ALGO_FLOW]
+    # 层: 输入
+    # - id: I1
+    #   name: name 参数
+    #   fields: 参数 name，类型注解 str
+    #   code: loader.py 顶层公共函数形参（AST 提取）
+    # 层: 算法
+    # - id: A1
+    #   name_zh: ① load_core_config
+    #   name_en: load_core_config
+    #   intro: 加载 core/_config.yaml 完整配置。
+    #   desc: 加载 core/_config.yaml 完整配置。 Returns: 配置 dict。文件不存在或为空时返回 {}（开发友好，不抛异常）。；源码 L72-L82
+    #   inputs: 无参数
+    #   outputs: dict[str, Any]
+    # - id: A2
+    #   name_zh: ② get_section
+    #   name_en: get_section
+    #   intro: 取配置子节。
+    #   desc: 取配置子节。 Args: name: 子节名（如 "backpressure" / "batch_output" / "dag_manager" / "dist_feature_…；源码 L85-L98
+    #   inputs: name
+    #   outputs: dict[str, Any]
+    # 层: 输出
+    # - id: O1
+    #   name_zh: dict[str, Any]
+    #   name_en: dict[str, Any]
+    #   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+    #   downstream: zephyr.factor.core.dag_manager; zephyr.factor.core.dist_feature_eng; zephyr.fac…
+    # [/ALGO_FLOW]
+    #
+    # 边:
+    # I1 --> A1
+    # A1 --> A2
+    # A2 --> O1

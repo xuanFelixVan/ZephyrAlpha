@@ -27,46 +27,7 @@ CTR-002 FactorSignal 生产者——信号适配层。
 - 幂等键生成 → idempotency_key
 - 不做任何因子计算——纯信号适配
 
-# [ALGO_FLOW]
-# 层: 输入
-# - id: I1
-#   name: values 参数
-#   fields: 参数 values，类型注解 pd.Series | None
-#   code: converter.py 顶层公共函数形参（AST 提取）
-# - id: I2
-#   name: factor_id 参数
-#   fields: 参数 factor_id，类型注解 str
-#   code: converter.py 顶层公共函数形参（AST 提取）
-# - id: I3
-#   name: as_of_date 参数
-#   fields: 参数 as_of_date，类型注解 datetime
-#   code: converter.py 顶层公共函数形参（AST 提取）
-# - id: I4
-#   name: factor_version 参数
-#   fields: 参数 factor_version，类型注解 str
-#   code: converter.py 顶层公共函数形参（AST 提取）
-# 层: 算法
-# - id: A1
-#   name_zh: ① to_signals
-#   name_en: to_signals
-#   intro: 将因子计算结果 pd.Series 转为 CTR-002 FactorSignal 列表。
-#   desc: 将因子计算结果 pd.Series 转为 CTR-002 FactorSignal 列表。 Args: values: 因子截面得分，index 为 symbol，values…；源码 L130-L168
-#   inputs: values factor_id as_of_date factor_version idempotency_key_prefix
-#   outputs: list[FactorSignal]
-# 层: 输出
-# - id: O1
-#   name_zh: list[FactorSignal]
-#   name_en: list[FactorSignal]
-#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
-#   downstream: zephyr.signal_fundamental.pipeline
-# [/ALGO_FLOW]
-#
-# 边:
-# I1 --> A1
-# I2 --> A1
-# I3 --> A1
-# I4 --> A1
-# A1 --> O1
+# [ALGO_FLOW] external: docs/03_modules/_domain_factor/algo_flow/ctr002_producer__converter.yaml
 """
 
 from __future__ import annotations

@@ -36,39 +36,7 @@
     输入 DataFrame 由 IntradayFactorLoop.read_ticks_to_dataframe 构造，
     index=symbol，columns 至少含 close/volume/amount（见 _TICK_FIELD_MAP）。
 
-# [ALGO_FLOW]
-# 层: 输入
-# - id: I1
-#   name: 模块内部数据
-#   fields: 无公共形参/无再导出（AST 事实）
-#   code: intraday_snapshot_factors.py
-# 层: 算法
-# - id: A1
-#   name_zh: ① IntradayClose
-#   name_en: IntradayClose
-#   intro: 盘中最新成交价（横截面）。
-#   desc: 盘中最新成交价（横截面）。；公共方法（定义序）: compute；源码 L86-L99
-#   inputs: 无参数
-#   outputs: 返回值
-# - id: A2
-#   name_zh: ② IntradayVwap
-#   name_en: IntradayVwap
-#   intro: 盘中累计成交均价（amount/volume 横截面）。
-#   desc: 盘中累计成交均价（amount/volume 横截面）。；公共方法（定义序）: compute；源码 L103-L126
-#   inputs: 无参数
-#   outputs: 返回值
-# 层: 输出
-# - id: O1
-#   name_zh: 模块公共 API 面（2 定义）
-#   name_en: public defs
-#   intro: IntradayClose, IntradayVwap
-#   downstream: zephyr.factor.core.intraday_factor_loop; zephyr.runtime.intraday_main
-# [/ALGO_FLOW]
-#
-# 边:
-# I1 --> A1
-# A1 --> A2
-# A2 --> O1
+# [ALGO_FLOW] external: docs/03_modules/_domain_factor/algo_flow/intraday_snapshot_factors.yaml
 """
 
 from __future__ import annotations

@@ -1,0 +1,51 @@
+# ALGO_FLOW 外部真源——converter（_domain_factor 域，真源 src/zephyr/factor/core/ctr001_consumer/converter.py）
+# 2026-09-15 P2-1 契约头减负批量出仓：docstring 内联块逐字节副本，extractor 经
+# external 锚加载走同一 parse_algo_flow 管线；算法公共面变化时同步更新本块。
+doc_type: architecture_view
+ttl: permanent
+module: src.zephyr.factor.core.ctr001_consumer.converter
+source_of_truth: src/zephyr/factor/core/ctr001_consumer/converter.py
+algo_flow: |
+    # [ALGO_FLOW]
+    # 层: 输入
+    # - id: I1
+    #   name: records 参数
+    #   fields: 参数 records，类型注解 Sequence[NormalizedMarketData] | None
+    #   code: converter.py 顶层公共函数形参（AST 提取）
+    # - id: I2
+    #   name: df 参数
+    #   fields: 参数 df，类型注解 pd.DataFrame
+    #   code: converter.py 顶层公共函数形参（AST 提取）
+    # - id: I3
+    #   name: min_score 参数
+    #   fields: 参数 min_score，类型注解 float
+    #   code: converter.py 顶层公共函数形参（AST 提取）
+    # 层: 算法
+    # - id: A1
+    #   name_zh: ① to_dataframe
+    #   name_en: to_dataframe
+    #   intro: 将 CTR-001 NormalizedMarketData 列表转为因子计算用 DataFrame。
+    #   desc: 将 CTR-001 NormalizedMarketData 列表转为因子计算用 DataFrame。 Args: records: NormalizedMarketData 列…；源码 L101-L116
+    #   inputs: records
+    #   outputs: pd.DataFrame
+    # - id: A2
+    #   name_zh: ② filter_quality
+    #   name_en: filter_quality
+    #   intro: 过滤低质量数据：剔除 is_suspended=True 和 quality_score < min_score。
+    #   desc: 过滤低质量数据：剔除 is_suspended=True 和 quality_score < min_score。 Args: df: to_dataframe 的输出 min_…；源码 L119-L132
+    #   inputs: df min_score
+    #   outputs: pd.DataFrame
+    # 层: 输出
+    # - id: O1
+    #   name_zh: pd.DataFrame
+    #   name_en: pd.DataFrame
+    #   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+    #   downstream: zephyr.factor.factor_base
+    # [/ALGO_FLOW]
+    #
+    # 边:
+    # I1 --> A1
+    # I2 --> A1
+    # I3 --> A1
+    # A1 --> A2
+    # A2 --> O1

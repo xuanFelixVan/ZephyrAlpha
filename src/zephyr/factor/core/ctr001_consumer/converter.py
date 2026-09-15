@@ -25,49 +25,7 @@ CTR-001 NormalizedMarketData 消费者——数据适配层。
 - 质量过滤（可选：is_suspended / quality_score）
 - 不做任何因子计算——纯数据适配
 
-# [ALGO_FLOW]
-# 层: 输入
-# - id: I1
-#   name: records 参数
-#   fields: 参数 records，类型注解 Sequence[NormalizedMarketData] | None
-#   code: converter.py 顶层公共函数形参（AST 提取）
-# - id: I2
-#   name: df 参数
-#   fields: 参数 df，类型注解 pd.DataFrame
-#   code: converter.py 顶层公共函数形参（AST 提取）
-# - id: I3
-#   name: min_score 参数
-#   fields: 参数 min_score，类型注解 float
-#   code: converter.py 顶层公共函数形参（AST 提取）
-# 层: 算法
-# - id: A1
-#   name_zh: ① to_dataframe
-#   name_en: to_dataframe
-#   intro: 将 CTR-001 NormalizedMarketData 列表转为因子计算用 DataFrame。
-#   desc: 将 CTR-001 NormalizedMarketData 列表转为因子计算用 DataFrame。 Args: records: NormalizedMarketData 列…；源码 L101-L116
-#   inputs: records
-#   outputs: pd.DataFrame
-# - id: A2
-#   name_zh: ② filter_quality
-#   name_en: filter_quality
-#   intro: 过滤低质量数据：剔除 is_suspended=True 和 quality_score < min_score。
-#   desc: 过滤低质量数据：剔除 is_suspended=True 和 quality_score < min_score。 Args: df: to_dataframe 的输出 min_…；源码 L119-L132
-#   inputs: df min_score
-#   outputs: pd.DataFrame
-# 层: 输出
-# - id: O1
-#   name_zh: pd.DataFrame
-#   name_en: pd.DataFrame
-#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
-#   downstream: zephyr.factor.factor_base
-# [/ALGO_FLOW]
-#
-# 边:
-# I1 --> A1
-# I2 --> A1
-# I3 --> A1
-# A1 --> A2
-# A2 --> O1
+# [ALGO_FLOW] external: docs/03_modules/_domain_factor/algo_flow/converter.yaml
 """
 
 from __future__ import annotations

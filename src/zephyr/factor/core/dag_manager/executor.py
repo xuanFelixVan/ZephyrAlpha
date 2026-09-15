@@ -32,40 +32,7 @@ D_FACTOR core dag_manager.executor——DAG 调度执行器。
 
 适用场景：IO 密集或轻量计算（GIL 下 ThreadPool 够用）。CPU 密集场景用 dist_feature_eng。
 
-# [ALGO_FLOW]
-# 层: 输入
-# - id: I1
-#   name: now 参数
-#   fields: 参数 now，类型注解 datetime | None
-#   code: executor.py 顶层公共函数形参（AST 提取）
-# 层: 算法
-# - id: A1
-#   name_zh: ① determine_mode
-#   name_en: determine_mode
-#   intro: 根据当前时间判断 Pipeline 运行模式。
-#   desc: 根据当前时间判断 Pipeline 运行模式。 03:00-09:15 → batch（盘前全量） 09:30-15:00 → incremental（盘中增量） 其他时段 →…；源码 L101-L120
-#   inputs: now
-#   outputs: str
-# - id: A2
-#   name_zh: ② DagExecutor
-#   name_en: DagExecutor
-#   intro: DAG 调度执行器——分层并行执行因子计算。
-#   desc: DAG 调度执行器——分层并行执行因子计算。 Usage:: dag = build_dag_from_registry(["a", "b", "c"]) executor =…；公共方法（定义序）: execute；…
-#   inputs: config backpressure
-#   outputs: 返回值
-#   （注：A2 之后另有 3 个公共定义未列入（含 3 个数据契约/异常/枚举声明类），见源码）
-# 层: 输出
-# - id: O1
-#   name_zh: str
-#   name_en: str
-#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
-#   downstream: 见模块头 [CONSUMERS]
-# [/ALGO_FLOW]
-#
-# 边:
-# I1 --> A1
-# A1 --> A2
-# A2 --> O1
+# [ALGO_FLOW] external: docs/03_modules/_domain_factor/algo_flow/executor.yaml
 """
 
 from __future__ import annotations

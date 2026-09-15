@@ -29,32 +29,7 @@
 
 设计文档：16_technical_indicator_catalog.md §2.8
 
-# [ALGO_FLOW]
-# 层: 输入
-# - id: I1
-#   name: 行情OHLCV数据 DataFrame
-#   fields: close 列
-#   code: compute(data: pd.DataFrame)
-# 层: 算法
-# - id: A1
-#   name_zh: ① Ehlers相位累积核
-#   name_en: _ht_core
-#   intro: WMA 平滑+EMA 降噪→4-tap Hilbert 取正交分量→逐根相位差 unwrap→瞬时周期与累积相位
-#   desc: Δφ=atan2(Q,I) 差分 unwrap（负角+2π）；瞬时周期=2π/Δφ EMA 平滑；相位累积 mod 360
-#   inputs: I1
-#   outputs: (dcperiod, dcphase, ip, qp, sine, leadsine, trendmode)
-# 层: 输出
-# - id: O1
-#   name_zh: 循环族指标 DataFrame（5指标7列）
-#   name_en: cycle indicators DataFrame
-#   intro: HT_DCPERIOD/HT_DCPHASE/HT_PHASOR/HT_SINE/HT_TRENDMODE 的多列输出，index 与输入对齐
-#   invariant: 输出列严格等于各 meta.output_columns（ht_dcperiod、ht_dcphase、ht_ip、ht_qp、ht_sine、ht_leadsine、ht_trendmode）
-#   downstream: zephyr.data.implementations.internal_compute_provider（批量计算写入 c1_market.technical_indicator）
-# [/ALGO_FLOW]
-#
-# 边:
-# I1 --> A1
-# A1 --> O1
+# [ALGO_FLOW] external: docs/03_modules/_domain_factor/algo_flow/cycle.yaml
 """
 
 from __future__ import annotations

@@ -1664,6 +1664,7 @@ nodes:
   materiality: normal
   decay_scan_frequency: semiannual
 - node_id: TDM-E-L3-07-2
+  note_confirmed: 2026-09-15
   name_zh: 多因子打分链
   market: cn_a
   flow: entry_flow
@@ -1674,6 +1675,7 @@ nodes:
   algo_note_zh: >-
     全池多因子打分：IC 加权（近 60 日 IC 衰减加权）合成因子分，前 20 只+行业中性化约束（单行业≤4 只）进多因子候选。
     因子权重月度校准（C3-04）。
+    （2026-09-15 ALGO_FLOW 块出仓至 docs/03_modules/_domain_factor/algo_flow/multifactor_synthesis.yaml：算法推导图外迁，算法口径不变）
   parent_node: TDM-E-L3-07
   factor_refs: []
   data_refs: [DS-150, DS-181]
@@ -3832,6 +3834,7 @@ nodes:
   decay_scan_frequency: semiannual
 
 - node_id: TDM-F-C3-02
+  note_confirmed: 2026-09-15
   name_zh: 升降级管线与退役评审
   market: cn_a
   flow: portfolio_flow
@@ -3844,6 +3847,7 @@ nodes:
     数据依据：composite score（60+120 日双窗口）+THD-RETIRE 三线（滚动 20 日跑输基准 5%/60 日 Sharpe<0/回撤漂移
     1.5×）。
     单 sleeve 回撤 5% 自动减半、7.5% 冻结——这条自动执行不等评审。
+    （2026-09-15 ALGO_FLOW 块出仓至 docs/03_modules/_domain_factor/algo_flow/lifecycle_state_machine.yaml：算法推导图外迁，算法口径不变）
   parent_node: TDM-F-C3
     # D115 M-22 收口：5% 减半/7.5% 冻结=收盘核算触发（净值结算后统一评估，避免盘中假摔误杀）；
     # 盘中例外=触及 7.5% 冻结线即时禁新开仓（可逆保护动作，不砍存量）；恢复=修复 50% 回撤后逐级加回（对齐 X-R1-02 恢复规则）

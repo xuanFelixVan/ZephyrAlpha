@@ -44,48 +44,7 @@
             ...
             return pd.DataFrame({"kdj_k": k, "kdj_d": d, "kdj_j": j}, index=data.index)
 
-# [ALGO_FLOW]
-# 层: 输入
-# - id: I1
-#   name: package_path 参数
-#   fields: 参数 package_path，类型注解 str | None
-#   code: indicator_base.py 顶层公共函数形参（AST 提取）
-# 层: 算法
-# - id: A1
-#   name_zh: ① TechnicalIndicatorBase
-#   name_en: TechnicalIndicatorBase
-#   intro: 所有技术指标的抽象基类。
-#   desc: 所有技术指标的抽象基类。 核心区别于 FactorBase： - FactorBase.compute() → pd.Series（单列） - TechnicalIndicato…；公共方法（定义序）: compute…
-#   inputs: 无参数
-#   outputs: 返回值
-# - id: A2
-#   name_zh: ② TechnicalIndicatorRegistry
-#   name_en: TechnicalIndicatorRegistry
-#   intro: 技术指标全局注册表（单例）。
-#   desc: 技术指标全局注册表（单例）。 注册表提供： - @TechnicalIndicatorRegistry.register 装饰器自动注册 - get(indicator_id)…；公共方法（定义序）: register…
-#   inputs: 无参数
-#   outputs: 返回值
-# - id: A3
-#   name_zh: ③ autodiscover_technical_indicators
-#   name_en: autodiscover_technical_indicators
-#   intro: 扫描 technical_indicators/ 目录，自动 import 所有指标模块。
-#   desc: 扫描 technical_indicators/ 目录，自动 import 所有指标模块。 每个模块只要包含 @TechnicalIndicatorRegistry.regist…；源码 L295-L329
-#   inputs: package_path
-#   outputs: 返回值
-#   （注：A3 之后另有 1 个公共定义未列入（含 1 个数据契约/异常/枚举声明类），见源码）
-# 层: 输出
-# - id: O1
-#   name_zh: 模块公共 API 面（4 定义）
-#   name_en: public defs
-#   intro: TechnicalIndicatorBase, TechnicalIndicatorRegistry, autodiscover_technical_indi…
-#   downstream: zephyr.factor.technical_indicators.{trend,momentum,volatility,volume,reversal};…
-# [/ALGO_FLOW]
-#
-# 边:
-# I1 --> A1
-# A1 --> A2
-# A2 --> A3
-# A3 --> O1
+# [ALGO_FLOW] external: docs/03_modules/_domain_factor/algo_flow/indicator_base.yaml
 """
 
 from __future__ import annotations

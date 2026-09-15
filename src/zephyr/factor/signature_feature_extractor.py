@@ -25,40 +25,7 @@ B10-01834（AUD-DRAFT-001-DIGEST P2 波 P2-W07，CAND-FAC-018，A1 §29.8）：�
 **代数不变量**数值特征（ rough path 理论截断签名，无形态库、无检索），二者
 零交集。
 
-# [ALGO_FLOW]
-# 层: 输入
-# - id: I1
-#   name: order 参数
-#   fields: 参数 order（无注解）
-#   code: signature_feature_extractor.py 顶层公共函数形参（AST 提取）
-# 层: 算法
-# - id: A1
-#   name_zh: ① SignatureFeatures
-#   name_en: SignatureFeatures
-#   intro: 截断 log-signature 特征向量（frozen；names 与 values 等长对齐）。
-#   desc: 截断 log-signature 特征向量（frozen；names 与 values 等长对齐）。；公共方法（定义序）: as_dict；源码 L95-L105
-#   inputs: 无参数
-#   outputs: 返回值
-# - id: A2
-#   name_zh: ② SignatureFeatureExtractor
-#   name_en: SignatureFeatureExtractor
-#   intro: 截断 log-signature 提取器（2-4 阶护栏，纯内存确定性）。
-#   desc: 截断 log-signature 提取器（2-4 阶护栏，纯内存确定性）。 Args: order: 截断阶数（∈ [2,4]，越界 Fail-Closed）。；公共方法（定义序）: order, feature_na…
-#   inputs: order
-#   outputs: 返回值
-#   （注：A2 之后另有 1 个公共定义未列入（含 1 个数据契约/异常/枚举声明类），见源码）
-# 层: 输出
-# - id: O1
-#   name_zh: 模块公共 API 面（3 定义）
-#   name_en: public defs
-#   intro: SignatureFeatures, SignatureFeatureExtractor
-#   downstream: 运行时装配批（路径签名特征批量提取 / 因子库草稿治理串行合并）
-# [/ALGO_FLOW]
-#
-# 边:
-# I1 --> A1
-# A1 --> A2
-# A2 --> O1
+# [ALGO_FLOW] external: docs/03_modules/_domain_factor/algo_flow/signature_feature_extractor.yaml
 """
 
 from __future__ import annotations

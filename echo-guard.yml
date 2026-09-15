@@ -1,6 +1,30 @@
 # CloneGuard acknowledged 白名单（intentional=保留两副本；变更后重新浮现再评估）
 # 消费方：CloneGuardOrchestrator._suppress_acknowledged（引擎无关对账层，stable_key 无序对）
 acknowledged:
+  - id: cg-factor-default-config-20260915
+    verdict: intentional
+    stable_key: "src/zephyr/factor/core/dag_manager/executor.py:_default_config||src/zephyr/factor/core/dist_feature_eng/engine.py:_default_config"
+    note: 默认配置构造样板双实例（DAG 执行器/分布式特征工程各自依赖），出仓批7同时触碰两侧暴露既有克隆，非本批引入（st-btfix-p15-20260915）
+  - id: cg-factor-load-config-20260915
+    verdict: intentional
+    stable_key: "src/zephyr/factor/analysis/__init__.py:load_analysis_config||src/zephyr/factor/governance/__init__.py:load_governance_config"
+    note: 子域配置加载器样板同构（分析/治理各自配置源），出仓批7同时触碰两侧暴露既有克隆，非本批引入（st-btfix-p15-20260915）
+  - id: cg-factor-min-half-life-20260915
+    verdict: intentional
+    stable_key: "src/zephyr/factor/analysis/decay_monitor.py:_get_min_half_life||src/zephyr/factor/analysis/factor_attribution.py:_get_time_freq"
+    note: 时间频率参数解析样板同构（衰减监控/因子归因），出仓批7同时触碰两侧暴露既有克隆，非本批引入（st-btfix-p15-20260915）
+  - id: cg-factor-default-objective-20260915
+    verdict: intentional
+    stable_key: "src/zephyr/factor/analysis/factor_optimization.py:_get_default_objective||src/zephyr/factor/analysis/multifactor_synthesis.py:_get_default_method"
+    note: 默认目标/方法选择器样板同构（因子优化/多因子合成），出仓批7同时触碰两侧暴露既有克隆，非本批引入（st-btfix-p15-20260915）
+  - id: cg-factor-validate-20260915
+    verdict: intentional
+    stable_key: "src/zephyr/factor/momentum_factor.py:validate||src/zephyr/factor/value_factor.py:validate"
+    note: 因子校验契约同构（动量/价值因子各持实现），出仓批7同时触碰两侧暴露既有克隆，非本批引入（st-btfix-p15-20260915）
+  - id: cg-factor-clear-20260915
+    verdict: intentional
+    stable_key: "src/zephyr/factor/factor_base.py:clear||src/zephyr/factor/technical_indicators/indicator_base.py:clear"
+    note: 状态清空接口同构（因子基类/技术指标基类），出仓批7同时触碰两侧暴露既有克隆，非本批引入（st-btfix-p15-20260915）
   - id: cg-risk-require-finite-20260915
     verdict: intentional
     stable_key: "src/zephyr/risk/core/factor_exposure_manager.py:_require_finite||src/zephyr/risk/core/systemic_risk_alert_state_machine.py:_require_finite"

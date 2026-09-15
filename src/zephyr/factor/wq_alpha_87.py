@@ -38,40 +38,7 @@ register_hook 委托（FactorRegistry/feature_store 接线留装配批）。
 
 依据: §1.2 子模块；construction_backlog_dig.tsv B1-00847；GATE-92-01。
 
-# [ALGO_FLOW]
-# 层: 输入
-# - id: I1
-#   name: 模块内部数据
-#   fields: 无公共形参/无再导出（AST 事实）
-#   code: wq_alpha_87.py
-# 层: 算法
-# - id: A1
-#   name_zh: ① ops
-#   name_en: ops
-#   intro: WorldQuant 101 时序/截面算子集（全部 rolling/shift 实现，天然 PIT）。
-#   desc: WorldQuant 101 时序/截面算子集（全部 rolling/shift 实现，天然 PIT）。；公共方法（定义序）: rank, delay, delta, ts_sum, ts_mean, ts_min…
-#   inputs: 无参数
-#   outputs: 返回值
-# - id: A2
-#   name_zh: ② WqAlpha87
-#   name_en: WqAlpha87
-#   intro: WorldQuant 101 精选 87 Alpha 公式库门面。
-#   desc: WorldQuant 101 精选 87 Alpha 公式库门面。 用法:: lib = WqAlpha87() values = lib.compute(101, {"open…；公共方法（定义序）: list_al…
-#   inputs: 无参数
-#   outputs: 返回值
-#   （注：A2 之后另有 1 个公共定义未列入（含 1 个数据契约/异常/枚举声明类），见源码）
-# 层: 输出
-# - id: O1
-#   name_zh: 模块公共 API 面（3 定义）
-#   name_en: public defs
-#   intro: ops, WqAlpha87
-#   downstream: 因子注册表/feature_store（register_all/validate_ic 委托注入点）
-# [/ALGO_FLOW]
-#
-# 边:
-# I1 --> A1
-# A1 --> A2
-# A2 --> O1
+# [ALGO_FLOW] external: docs/03_modules/_domain_factor/algo_flow/wq_alpha_87.yaml
 """
 
 from __future__ import annotations

@@ -1,0 +1,70 @@
+# ALGO_FLOW 外部真源——casebook（_domain_factor 域，真源 src/zephyr/factor/casebook/casebook.py）
+# 2026-09-15 P2-1 契约头减负批量出仓：docstring 内联块逐字节副本，extractor 经
+# external 锚加载走同一 parse_algo_flow 管线；算法公共面变化时同步更新本块。
+doc_type: architecture_view
+ttl: permanent
+module: src.zephyr.factor.casebook.casebook
+source_of_truth: src/zephyr/factor/casebook/casebook.py
+algo_flow: |
+    # [ALGO_FLOW]
+    # 层: 输入
+    # - id: I1
+    #   name: hypothesis 参数
+    #   fields: 参数 hypothesis，类型注解 str
+    #   code: casebook.py 顶层公共函数形参（AST 提取）
+    # - id: I2
+    #   name: verdict 参数
+    #   fields: 参数 verdict（无注解）
+    #   code: casebook.py 顶层公共函数形参（AST 提取）
+    # - id: I3
+    #   name: factor_expr 参数
+    #   fields: 参数 factor_expr（无注解）
+    #   code: casebook.py 顶层公共函数形参（AST 提取）
+    # - id: I4
+    #   name: factor_json 参数
+    #   fields: 参数 factor_json（无注解）
+    #   code: casebook.py 顶层公共函数形参（AST 提取）
+    # 层: 算法
+    # - id: A1
+    #   name_zh: ① record_case
+    #   name_en: record_case
+    #   intro: 写入一条因子研究案例，返回自增 case id。
+    #   desc: 写入一条因子研究案例，返回自增 case id。 Args: hypothesis: 研究假设（必填，空串/纯空白拒绝）。 verdict: 结论词表值：success / fa…；源码 L207-L266
+    #   inputs: hypothesis verdict factor_expr factor_json ic icir turnover failure_d…
+    #   outputs: int
+    # - id: A2
+    #   name_zh: ② query_similar
+    #   name_en: query_similar
+    #   intro: 按因子族标签/结论检索案例（向量检索后置，本版只做标签+词表过滤）。
+    #   desc: 按因子族标签/结论检索案例（向量检索后置，本版只做标签+词表过滤）。 Args: family_tag: 因子族标签，按 tags 元素精确匹配；None 不按标签过滤。 ver…；源码 L269-L329
+    #   inputs: family_tag verdict limit db_path
+    #   outputs: list[dict]
+    # - id: A3
+    #   name_zh: ③ get_case
+    #   name_en: get_case
+    #   intro: 按 id 取单条案例；不存在返回 None（不抛异常）。
+    #   desc: 按 id 取单条案例；不存在返回 None（不抛异常）。；源码 L332-L350
+    #   inputs: case_id db_path
+    #   outputs: dict | None
+    #   （注：A3 之后另有 1 个公共定义未列入（含 1 个数据契约/异常/枚举声明类），见源码）
+    # 层: 输出
+    # - id: O1
+    #   name_zh: int
+    #   name_en: int
+    #   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+    #   downstream: (暂无；数据期 LLM 挖因子流程为首个计划消费者)
+    # - id: O2
+    #   name_zh: list[dict]
+    #   name_en: list[dict]
+    #   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+    #   downstream: (暂无；数据期 LLM 挖因子流程为首个计划消费者)
+    # [/ALGO_FLOW]
+    #
+    # 边:
+    # I1 --> A1
+    # I2 --> A1
+    # I3 --> A1
+    # I4 --> A1
+    # A1 --> A2
+    # A2 --> A3
+    # A3 --> O1
