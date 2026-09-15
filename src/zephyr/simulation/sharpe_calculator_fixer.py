@@ -125,6 +125,7 @@ from enum import Enum
 from zephyr.shared.foundation.errors import ZephyrBaseError
 from zephyr.simulation.deflated_sharpe_calculator import (
     DeflatedSharpeCalculator,
+    DSR_SIGNIFICANCE_THRESHOLD,
     DSRConfig,
     _kurtosis,
     _mean,
@@ -165,7 +166,7 @@ class SharpeConfig:
     periods_per_year: int = 252
     risk_free_rate: float = 0.025 / 252  # 中国10年期国债~2.5%年化
     jb_critical: float = 5.99
-    dsr_threshold: float = 0.95
+    dsr_threshold: float = DSR_SIGNIFICANCE_THRESHOLD
 
 
 @dataclass(frozen=True)

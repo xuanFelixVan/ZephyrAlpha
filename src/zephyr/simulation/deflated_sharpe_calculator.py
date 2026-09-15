@@ -141,7 +141,7 @@ class SimulationError(ZephyrBaseError):
 
 # #14 裁定（2026-08-20）：DSR 阈值常量唯一真源（SSoT）——分级语义对齐社区惯例：
 # 显著性放行线 0.95（类比 p<0.05）；运气中值否决线 0.5（低于此=无超出运气的证据）。
-# 消费方：本模块 DSRConfig 默认值 / backtest.core.metrics.calculate_dsr is_overfitting。
+# 消费方：本模块 DSRConfig 默认值 / backtest.core.metrics.calculate_full_metrics is_overfitting。
 DSR_SIGNIFICANCE_THRESHOLD = 0.95
 DSR_OVERFITTING_FLOOR = 0.5
 

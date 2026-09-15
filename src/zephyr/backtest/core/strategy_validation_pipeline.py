@@ -85,7 +85,7 @@ class StrategyValidationRequest:
         params_locked: OOS 阶段参数是否已锁定(默认 True)
         perturbed_results: 参数微调±10% 结果列表(过拟合维度2), None=跳过
         period_results: 跨时段/跨标的结果列表(过拟合维度3), None=跳过
-        dsr: 调用方预计算的 DSR 值(metrics.calculate_dsr 产出), None=不注入;
+        dsr: 调用方预计算的 DSR 值(官方件 MOD-SIM-024 或 metrics.calculate_full_metrics 产出), None=不注入;
             仅当 DecisionGateConfig.dsr_threshold 显式配置时参与 OOS 判定
     """
 

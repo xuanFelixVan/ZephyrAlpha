@@ -28,6 +28,7 @@ from zephyr.backtest.core.decision_gate import (
     DecisionGateConfig,
     DecisionGateError,
 )
+from zephyr.simulation.deflated_sharpe_calculator import DSR_SIGNIFICANCE_THRESHOLD
 
 # ============== 辅助构造 ==============
 
@@ -272,6 +273,21 @@ class TestDSROptionalJudge:
         r = gate.check_oos_stage(1.0, 0.9, params_locked=True, dsr=0.49)
         assert r.passed is False
         assert any("DSR判定未通过" in x for x in r.reasons)
+
+    def test_enabled_middle_band_uncertain_fail_closed(self):
+        """A5 三线: 0.5<=dsr<dsr_threshold 中间带=存疑, fail-closed判不通过。"""
+        gate = DecisionGate(DecisionGateConfig(dsr_threshold=0.95))
+        r = gate.check_oos_stage(1.0, 0.9, params_locked=True, dsr=0.7)
+        assert r.passed is False
+        assert any("DSR存疑(中间带)" in x for x in r.reasons)
+        assert r.dsr == pytest.approx(0.7)
+
+    def test_enabled_significance_line_pass(self):
+        """A5 三线: dsr>=0.95(SSOT 放行线)通过。"""
+        gate = DecisionGate(DecisionGateConfig(dsr_threshold=DSR_SIGNIFICANCE_THRESHOLD))
+        r = gate.check_oos_stage(1.0, 0.9, params_locked=True, dsr=0.96)
+        assert r.passed is True
+        assert any("DSR判定通过" in x for x in r.reasons)
 
     def test_enabled_no_injection_fail_closed(self):
         gate = DecisionGate(DecisionGateConfig(dsr_threshold=0.5))

@@ -34,26 +34,14 @@ SSoT: docs/03_modules/_domain_backtest/blueprint.md §4.2
 
 from __future__ import annotations
 
-import math
-from typing import Optional
-
 import numpy as np
 import pandas as pd
 
-from zephyr.simulation.deflated_sharpe_calculator import DSR_OVERFITTING_FLOOR
-
-# 标准正态分布CDF(累积分布函数,Cumulative Distribution Function)
-# 优先使用scipy.stats.norm.cdf;scipy不可用时用math.erf近似
-try:
-    from scipy.stats import norm
-
-    def _norm_cdf(x):
-        return float(norm.cdf(x))
-except ImportError:
-
-    def _norm_cdf(x):
-        return 0.5 * (1.0 + math.erf(x / math.sqrt(2.0)))
-
+from zephyr.simulation.deflated_sharpe_calculator import (
+    DSR_OVERFITTING_FLOOR,
+    DSRConfig,
+    DeflatedSharpeCalculator,
+)
 
 # 中国10年期国债无风险利率(年化),来源:D-SIMULATION-23
 DEFAULT_RISK_FREE_RATE = 0.025
@@ -245,95 +233,6 @@ def calculate_ic_ir(
 DEFAULT_N_TRIALS = 10
 
 
-def calculate_dsr(
-    sharpe_ratio: float,
-    n_trials: int = DEFAULT_N_TRIALS,
-    n_samples: int = 0,
-    skewness: float = 0.0,
-    kurtosis: float = 3.0,
-    risk_free_rate: float = DEFAULT_RISK_FREE_RATE,
-) -> dict:
-    """计算Deflated Sharpe Ratio(修正夏普比率,多重测试偏差修正)
-
-    基于Bailey & López de Prado (2014)公式,对原始Sharpe进行两层修正:
-      1. 非正态分布修正(考虑偏度skewness与峰度kurtosis)
-      2. 多重测试偏差修正(扣除N次试错中最高Sharpe的期望)
-
-    Args:
-        sharpe_ratio: 原始Sharpe比率(已年化)
-        n_trials: 试错次数(用于多重测试偏差修正)
-        n_samples: 样本量(收益率观测数)
-        skewness: 收益率偏度(skewness,正态=0)
-        kurtosis: 收益率峰度(kurtosis,Pearson定义,正态=3)
-        risk_free_rate: 年化无风险利率(保留参数,与基础指标API一致;
-            Sharpe已为超额收益,此参数当前不参与DSR计算)
-
-    Returns:
-        dict: dsr, adjusted_sharpe, expected_max_sharpe, is_overfitting
-
-    Note:
-        - DSR < 0.5 -> is_overfitting=True(来源:D-SIMULATION-24)
-        - n_samples < 60 -> 样本不足,返回dsr=0.0, is_overfitting=True
-    """
-    # 样本量不足,统计不显著(与MIN_SAMPLES_FOR_SHARPE一致)
-    if n_samples < MIN_SAMPLES_FOR_SHARPE:
-        return {
-            "dsr": 0.0,
-            "adjusted_sharpe": float(sharpe_ratio),
-            "expected_max_sharpe": 0.0,
-            "is_overfitting": True,
-        }
-
-    sr = float(sharpe_ratio)
-    skew = float(skewness)
-    kurt = float(kurtosis)
-
-    # #14 裁定（2026-08-20）：公式统编到 MOD-SIM-024 论文口径（Bailey & López de Prado 2014），
-    # 弃 Cornish-Fisher SR_adj 预调整（非论文步骤且年化 Sharpe 配 n_samples 量纲不严格）。
-    # adjusted_sharpe 键保留向后兼容，现=原始 sr（不再做非正态预调整）。
-    adjusted_sharpe = sr
-
-    # 1) Sharpe 估计量方差（Mertens/Bailey-LdP 论文口径）：
-    #    V[SR] = (1 - skew·SR + (kurt-1)/4·SR²) / (n-1)
-    var_term = 1.0 - skew * sr + (kurt - 1.0) * sr * sr / 4.0
-    if n_samples > 1 and var_term > 0:
-        sigma_sr = float(np.sqrt(var_term / (n_samples - 1)))
-    else:
-        sigma_sr = 0.0
-
-    # 2) 多重测试偏差：E[max(Z_N)] Euler-Maclaurin 近似（与 MOD-SIM-024 同款）：
-    #    ≈ sqrt(2·lnN) - (ln(π)+ln(lnN)) / (2·sqrt(2·lnN))
-    #    E[max SR] = sigma_sr * E[max(Z_N)]
-    if n_trials > 1 and sigma_sr > 0:
-        ln_n = float(np.log(n_trials))
-        sqrt_2lnn = float(np.sqrt(2.0 * ln_n))
-        if sqrt_2lnn > 0 and ln_n > 0:
-            e_max_z = sqrt_2lnn - (float(np.log(np.pi)) + float(np.log(ln_n))) / (2.0 * sqrt_2lnn)
-            expected_max_sharpe = sigma_sr * e_max_z
-        else:
-            expected_max_sharpe = 0.0
-    else:
-        expected_max_sharpe = 0.0
-
-    # 3) DSR = Φ(SR/σ_sr - E[max(Z_N)]) = Φ((SR - E[max SR]) / σ_sr)
-    if sigma_sr > 0:
-        z = (sr - expected_max_sharpe) / sigma_sr
-        dsr = _norm_cdf(z)
-    else:
-        dsr = 0.0
-
-    # #14 裁定：is_overfitting 语义=运气中值否决线（dsr < DSR_OVERFITTING_FLOOR=0.5，
-    # 低于此=无超出运气的证据）；显著性放行线 0.95 归 MOD-SIM-024 is_significant。
-    is_overfitting = bool(dsr < DSR_OVERFITTING_FLOOR)
-
-    return {
-        "dsr": float(dsr),
-        "adjusted_sharpe": float(adjusted_sharpe),
-        "expected_max_sharpe": float(expected_max_sharpe),
-        "is_overfitting": is_overfitting,
-    }
-
-
 def calculate_full_metrics(
     nav_series: pd.Series,
     trades_count: int = 0,
@@ -344,8 +243,12 @@ def calculate_full_metrics(
     """计算完整绩效指标(基础指标 + Deflated Sharpe Ratio)
 
     在calculate_metrics基础上,额外计算:
-      - 收益率偏度(skewness)与峰度(kurtosis)
-      - Deflated Sharpe Ratio(DSR,多重测试偏差修正后的Sharpe)
+      - Deflated Sharpe Ratio(DSR,多重测试偏差修正后的Sharpe概率)
+
+    DSR 实现（2026-09-15 A4 裁定）:全量委托官方件 MOD-SIM-024
+    ``zephyr.simulation.deflated_sharpe_calculator.DeflatedSharpeCalculator``
+    （日频收益序列直入,量纲自洽）。原 ``calculate_dsr`` 坏路径已退役——
+    该实现把年化 Sharpe 配日频样本数,σ_SR 系统性偏小、DSR 系统性偏向 1。
 
     Args:
         nav_series: 净值序列(按日期排序,首值为初始资金)
@@ -358,6 +261,9 @@ def calculate_full_metrics(
         dict: 基础指标(total_return/annual_return/sharpe_ratio/sortino_ratio/
               max_drawdown/win_rate/trades_count) +
               dsr/adjusted_sharpe/expected_max_sharpe/is_overfitting
+              (dsr∈(0,1)概率; adjusted_sharpe=年化Sharpe;
+               expected_max_sharpe=E[max(Z_N)] 多重测试期望;
+               is_overfitting=dsr<0.5 运气中值否决线,放行线0.95归 is_significant)
     """
     # 基础指标(复用现有calculate_metrics)
     base_metrics = calculate_metrics(
@@ -367,37 +273,36 @@ def calculate_full_metrics(
         periods_per_year=periods_per_year,
     )
 
-    # 收益率序列(用于高阶矩估计,higher-order moments)
+    # 收益率序列(日频,直接喂官方件——量纲自洽)
     nav = nav_series.dropna()
     returns = nav.pct_change().dropna()
     n_samples = len(returns)
 
-    # 偏度(skewness)与峰度(kurtosis)
-    # 注意:pandas.Series.kurtosis()返回超额峰度(excess kurtosis,正态=0);
-    # DSR公式中(kurtosis-3)使用Pearson峰度(正态=3),故需+3还原
-    if n_samples > 0:
-        skewness = float(returns.skew())
-        raw_kurtosis = float(returns.kurtosis()) + 3.0
-    else:
-        skewness = 0.0
-        raw_kurtosis = 3.0
+    # 样本量不足,统计不显著(与MIN_SAMPLES_FOR_SHARPE口径一致;官方件<3会抛错,此处先行拦截)
+    if n_samples < MIN_SAMPLES_FOR_SHARPE:
+        result = dict(base_metrics)
+        result["dsr"] = 0.0
+        result["adjusted_sharpe"] = float(base_metrics["sharpe_ratio"])
+        result["expected_max_sharpe"] = 0.0
+        result["is_overfitting"] = True
+        return result
 
-    # 计算DSR(Deflated Sharpe Ratio)
-    dsr_result = calculate_dsr(
-        sharpe_ratio=base_metrics["sharpe_ratio"],
-        n_trials=n_trials,
-        n_samples=n_samples,
-        skewness=skewness,
-        kurtosis=raw_kurtosis,
-        risk_free_rate=risk_free_rate,
+    dsr_result = DeflatedSharpeCalculator(
+        DSRConfig(periods_per_year=periods_per_year)
+    ).calculate(
+        [float(r) for r in returns],
+        num_trials=int(n_trials),
+        risk_free_rate=risk_free_rate / periods_per_year,
     )
 
-    # 合并返回:基础指标 + DSR相关字段
+    # 合并返回:基础指标 + DSR相关字段(键名向后兼容)
     result = dict(base_metrics)
-    result["dsr"] = dsr_result["dsr"]
-    result["adjusted_sharpe"] = dsr_result["adjusted_sharpe"]
-    result["expected_max_sharpe"] = dsr_result["expected_max_sharpe"]
-    result["is_overfitting"] = dsr_result["is_overfitting"]
+    result["dsr"] = float(dsr_result.dsr)
+    result["adjusted_sharpe"] = float(base_metrics["sharpe_ratio"])
+    result["expected_max_sharpe"] = float(dsr_result.expected_max)
+    # is_overfitting 语义=运气中值否决线(dsr < DSR_OVERFITTING_FLOOR=0.5);
+    # 显著性放行线 0.95 归 MOD-SIM-024 is_significant。
+    result["is_overfitting"] = bool(dsr_result.dsr < DSR_OVERFITTING_FLOOR)
     return result
 
 
@@ -408,7 +313,6 @@ __all__ = [
     "DEFAULT_RISK_FREE_RATE",
     "TRADING_DAYS_PER_YEAR",
     "MIN_SAMPLES_FOR_SHARPE",
-    "calculate_dsr",
     "calculate_full_metrics",
     "DEFAULT_N_TRIALS",
 ]

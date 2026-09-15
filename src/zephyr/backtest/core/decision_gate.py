@@ -48,6 +48,7 @@ from zephyr.backtest.core.overfitting_detector import (
     DEFAULT_OOS_SHARPE_THRESHOLD_RATIO,
 )
 from zephyr.shared.alerts.threshold_loader import load_alert_thresholds
+from zephyr.simulation.deflated_sharpe_calculator import DSR_OVERFITTING_FLOOR
 
 
 class DecisionGateError(Exception):
@@ -257,8 +258,10 @@ class DecisionGateConfig:
         backtest_live_deviation_warn: 回测-实盘偏差告警阈值(默认0.30,真源=alert_threshold_registry THD-DEVIATION-001)
         backtest_live_deviation_retire: 回测-实盘偏差退役阈值(默认0.50,真源=alert_threshold_registry THD-DEVIATION-002)
         dsr_threshold: OOS段DSR可选判定器阈值(默认None=关闭,不破坏既有行为;
-            52号§7③待决策项的可选注入——配置后OOS段追加第四条件dsr>=dsr_threshold,
-            调用方须用metrics.calculate_dsr预计算并注入dsr,未注入按不通过处理(fail-closed))
+            52号§7③可选注入——三线语义(2026-09-15 A5,SSOT=MOD-SIM-024常量):
+            dsr>=阈值(建议DSR_SIGNIFICANCE_THRESHOLD=0.95)通过; dsr<DSR_OVERFITTING_FLOOR(0.5)判不通过;
+            中间带存疑fail-closed判不通过。调用方须预计算并注入dsr(官方件 MOD-SIM-024 或
+            metrics.calculate_full_metrics 产出),未注入按不通过处理(fail-closed))
         regime_suitability_checker: Phase5 regime适配判定器(默认None=跳过不阻断;
             11号文⑨ BM-BT-07可选注入,签名(strategy_type, current_regime)->RegimeSuitabilityVerdict;
             默认实现见 default_regime_suitability_checker,适配矩阵可用其 matrix 参数覆盖)
@@ -576,7 +579,7 @@ class DecisionGate:
             is_sharpe: 样本内Sharpe比率
             oos_sharpe: 样本外Sharpe比率
             params_locked: 参数是否已锁定
-            dsr: 调用方预计算的DSR值(metrics.calculate_dsr产出),可选判定器注入
+            dsr: 调用方预计算的DSR值(官方件 MOD-SIM-024 或 metrics.calculate_full_metrics 产出),可选判定器注入
 
         Returns:
             OOSStageResult: OOS阶段判定结果
@@ -613,7 +616,11 @@ class DecisionGate:
                     f"OOS/IS Sharpe比率未通过: {oos_is_ratio:.4f} < {self.config.oos_sharpe_ratio_threshold}"
                 )
 
-        # DSR可选判定器(52号§7③): 默认关闭(dsr_threshold=None时不参与判定)
+        # DSR可选判定器(52号§7③): 默认关闭(dsr_threshold=None时不参与判定)。
+        # 三线语义（2026-09-15 A5 裁定，SSOT=MOD-SIM-024 常量）:
+        #   dsr >= dsr_threshold(默认0.95)        -> 通过
+        #   dsr < DSR_OVERFITTING_FLOOR(=0.5)     -> 判不通过(低于运气中值,无超出运气的证据)
+        #   中间带 [0.5, dsr_threshold)           -> 存疑: fail-closed判不通过(需补样本/人工复核)
         dsr_f: float | None = None
         dsr_passed = True
         if self.config.dsr_threshold is not None:
@@ -625,11 +632,20 @@ class DecisionGate:
                     dsr_f = float(dsr)
                 except (TypeError, ValueError) as exc:
                     raise DecisionGateError(f"dsr必须是数值: {dsr!r}") from exc
-                dsr_passed = dsr_f >= self.config.dsr_threshold
-                if dsr_passed:
+                if dsr_f >= self.config.dsr_threshold:
+                    dsr_passed = True
                     reasons.append(f"DSR判定通过: {dsr_f:.4f} >= {self.config.dsr_threshold}")
+                elif dsr_f < DSR_OVERFITTING_FLOOR:
+                    dsr_passed = False
+                    reasons.append(
+                        f"DSR判定未通过(低于运气中值否决线): {dsr_f:.4f} < {DSR_OVERFITTING_FLOOR}"
+                    )
                 else:
-                    reasons.append(f"DSR判定未通过: {dsr_f:.4f} < {self.config.dsr_threshold}")
+                    dsr_passed = False
+                    reasons.append(
+                        f"DSR存疑(中间带): {DSR_OVERFITTING_FLOOR:.2f} <= {dsr_f:.4f} < "
+                        f"{self.config.dsr_threshold}, fail-closed判不通过(需补样本或人工复核)"
+                    )
 
         passed = bool(params_locked) and ratio_passed and dsr_passed
         if passed:

@@ -169,12 +169,11 @@ def main() -> int:
     parser.add_argument("--out", default=None)
     args = parser.parse_args()
 
-    from scipy.stats import skew, kurtosis
-    from zephyr.backtest.core.metrics import calculate_dsr
     from zephyr.backtest.core.strategy_validation_pipeline import (
         StrategyValidationRequest,
         run_strategy_validation,
     )
+    from zephyr.simulation.deflated_sharpe_calculator import DeflatedSharpeCalculator
 
     panel = load_factor_panel()
     panel_sorted = panel.sort_values("announce_date")
@@ -207,9 +206,14 @@ def main() -> int:
             param_sensitivity["top_n"].append((n, sharpe(_excess(s, bench_ret)[
                 (_IS[0] <= s.index) & (s.index <= _IS[1])])))
         oos_sharpe = sharpe(oos_x)
-        dsr = calculate_dsr(
-            sharpe_ratio=oos_sharpe, n_trials=_N_TRIALS, n_samples=len(oos_x),
-            skewness=float(skew(oos_x)), kurtosis=float(kurtosis(oos_x, fisher=False)))
+        # DSR 走官方件 MOD-SIM-024（月频超额收益序列直入，量纲自洽；A4 退役 metrics.calculate_dsr）
+        dsr = (
+            DeflatedSharpeCalculator().calculate(
+                [float(v) for v in oos_x.values], num_trials=_N_TRIALS, risk_free_rate=0.0
+            ).dsr
+            if len(oos_x) >= 3
+            else None
+        )
         request = StrategyValidationRequest(
             strategy_id=f"{factor}-topN{_DEFAULT_TOP_N}-monthly",
             is_sharpe=sharpe(is_x),
@@ -223,7 +227,7 @@ def main() -> int:
             period_results=[{"period": y,
                              "sharpe": sharpe(exc[(exc.index >= f"{y}-01-01") & (exc.index <= f"{y}-12-31")])}
                             for y in sorted({i[:4] for i in exc.index})],
-            dsr=float(dsr["dsr"]) if isinstance(dsr, dict) and dsr.get("dsr") is not None else None,
+            dsr=float(dsr) if dsr is not None else None,
         )
         verdict = run_strategy_validation(request)
         results[factor] = {
@@ -231,7 +235,7 @@ def main() -> int:
             "wfa_folds": [{k: (round(v, 3) if isinstance(v, float) else v) for k, v in w.items()}
                           for w in wfa_folds],
             "oos_sharpe_excess": round(oos_sharpe, 3),
-            "dsr_oos": round(float(dsr["dsr"]), 4) if isinstance(dsr, dict) and dsr.get("dsr") is not None else None,
+            "dsr_oos": round(float(dsr), 4) if dsr is not None else None,
             "can_deploy": verdict.can_deploy,
             "gate_passed": bool(getattr(verdict.gate, "overall_passed", False)),
             "is_overfitting": verdict.overfitting.get("is_overfitting"),
