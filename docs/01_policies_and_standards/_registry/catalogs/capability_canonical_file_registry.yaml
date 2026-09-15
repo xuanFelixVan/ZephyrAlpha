@@ -16958,4 +16958,8 @@ creation_tokens:
   token: commit-belt-daemon-commit-belt-daemon-20260915
   created_by: st-commitspeed-20260916
   capability: commit_belt_daemon
+- file: scripts/backtest/alg01_ab_redo.py
+  token: alg01-ab-redo-alg01-ab-redo-20260915
+  created_by: st-qalpha-20260916
+  capability: alg01_ab_redo
 di_seam_exemptions: []

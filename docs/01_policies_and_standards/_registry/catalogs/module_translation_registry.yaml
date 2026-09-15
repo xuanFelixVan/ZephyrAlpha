@@ -49720,6 +49720,13 @@ entries:
   desc_zh: "事件驱动的提交队列常驻消费端"
   desc_en: "Event-driven resident consumer of the commit queue"
   plain_zh: "提交传送带的传送工：AI 把改动放上传送带就不用管了，这个常驻小工一有新货就自动搬去排队落地，死了的信件自动记到堵点本上等维修班来修"
+- module_path: scripts/backtest/alg01_ab_redo.py
+  domain_id: D_REGIME
+  name_zh: "ALG-01 横截面特征 A/B 重做脚本"
+  name_en: ""
+  desc_zh: "双臂生产配置 walk-forward 对照+事件检出力对照+NAV 诊断的 A/B 报告生成器"
+  desc_en: ""
+  plain_zh: "这个脚本用来给新的横截面特征做公平考试：两套几乎一样的环境各跑一遍，唯一区别是用不用新特征，然后看新特征在两次股灾里能不能更早看见危险，最后写成报告。"
 
 battle_map_steps:
 - step_id: BM-BUY-05
@@ -51342,6 +51349,17 @@ battle_map_steps:
     0模块，候选池承载）；⑥降级：特征存储不可用→回退原始数据直算(无PIT保证，仅探索用)。
 
     📌 概念覆盖清单（草稿H3逐字登记）：能力血缘关系图；§29.2 特征存储 (Feature Store)；§11.3.2 PIT正确性详解
+
+    '
+- step_id: BM-RES-01-E
+  flow_stage: research_incubation
+  name_zh: 数据质量与健康监控
+  name_en: Data Quality & Health Monitoring
+  plain_zh: 给数据管线配的体检医生——盯每个数据源是否按时按量到货（SLA）、数据有没有异常（告警）、源头活不活（健康）、敏感信息脱没脱干净（脱敏），发现问题自动补漏回填。
+  mechanism_zh: 'L0 横切数据保障族（2026-09-16 数据质量与健康子环节归位批，裁定#261）：SLA 面=source_sla_tracker 逐源到货跟踪+quality_sla_breach_predictor 质量违约预测；告警面=data_anomaly_alerter 数据异常检测告警；健康面=alt_source_health_manager 另类源健康管理+catchup_guard 数据追赶守卫；脱敏面=data_masking_engine/ai_masking_pipeline 敏感字段脱敏+data_access_auditor 访问审计；补全面=auto_backfiller 缺口自动回填。原散挂 BM-SEL-01/BM-RES-01 supplement 锚的 10 模块语义归位于此。
+
+    '
+  indicators_zh: '①触发：数据源到货超窗/SLA 阈值越限/异常打分超限/健康探测失败/脱敏字段命中；②消费：各数据源到货流水+quality_gate 质量门禁结果+源探测心跳；③参数：SLA 到货窗/异常告警阈值/健康探测间隔/脱敏字段清单/回填批次（均以各模块代码实际值为准）；④降级：单源持续不健康→备用源切换（source_switcher）+告警升级。
 
     '
 - step_id: BM-RES-02

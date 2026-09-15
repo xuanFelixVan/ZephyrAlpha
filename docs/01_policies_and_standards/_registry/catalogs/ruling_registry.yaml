@@ -2106,3 +2106,35 @@ entries:
   related_arch: ['#ARCH-312', '#ARCH-GOV-BUDGET-001']
   related_rulings: ['裁定#258', '裁定#259']
   superseded_by: null
+
+- ruling_id: '裁定#261'
+  title: T3 数据质量与健康子环节落图——新增 BM-RES-01-E 环节+10 个 SLA/健康/告警/脱敏模块从 BM-SEL-01/BM-RES-01 supplement 锚语义归位（apply_battle_map 正门）
+  date: '2026-09-16'
+  category: 治理架构
+  status: active
+  summary: >-
+    通宵总包分包五⑫数据质量与健康子环节（GW6 st-pano-20260916 执行，Owner 2026-09-16
+    睡前对话内全权授权）。锚点普查：BM-SEL-01/BM-RES-01 两环节挂锚 60 个，其中语义属
+    "SLA/健康/告警/脱敏/补全/访问审计"横切数据保障族的 supplement 锚 10 个（任务书预估
+    约 20 个，以实际普查为准——其余 supplement 锚属行情接入/另类采集/NLP 叙事等本环节
+    语义，不动）。处置：①battle_map_steps 新增子环节 BM-RES-01-E 数据质量与健康监控
+    （parent=BM-RES-01，research_incubation，L0，depth=1，sort_order=15，design_maturity=
+    production，全部承载模块 production/stable 实在）；②10 锚 remove+add 语义归位——
+    primary=MOD-DATA-066（源 SLA 跟踪）/MOD-L00-021（追赶守卫）/MOD-DAT-AUTO-BACKFILLER
+    （自动回填）/MOD-DATENG-001（异常告警）/MOD-DATENG-003（质量违约预测）/MOD-ALT-011
+    （源健康管理）/MOD-DATSEC-003（脱敏引擎），supplement=MOD-DATSEC-001（AI 脱敏管线）/
+    MOD-DATSEC-002（访问审计）/MOD-ALT-012（隐私保护）；③叙事真源 module_translation_
+    registry.yaml §battle_map_steps 补 BM-RES-01-E 条目（BM-INV-003 合规，生成器零硬编码）；
+    ④域规则真源 battle_map_domain_policy.yaml 1.1.0→1.2.0：research_incubation allowed
+    补 D_ALT_DATA（MOD-ALT-011 primary 域检查所需；supplement 本豁免域检查，此举使
+    primary 严查可通过）；⑤写入走 apply_battle_map.py --batch 唯一正门（pg_advisory_lock
+    424245+事务原子），写入后 align_battle_map 复测：孤儿环节=0/幽灵锚点=0/缺失叙事=0/
+    父子嵌套=0（域漂移 1 与孤儿模块 428 为存量君子协定项，与本批无关）。归位后 BM-SEL-01
+    余锚 41/BM-RES-01 余锚 9，均远高于 BM-INV-001 底线。
+  evidence: >-
+    .runtime/tmp/st-pano-20260916/bm_t3_batch.json（21 op 批）+ apply_battle_map 落库回执
+    （anchor 786-795）+ align_battle_map 2026-09-16 报告（五项 0 违规）+ 锚点普查 SQL
+    （step_id/target_id/target_role/anchor_id 逐条在案）
+  related_arch: ['#ARCH-BATTLE-MAP-HARD-001']
+  related_rulings: ['裁定#259']
+  superseded_by: null
