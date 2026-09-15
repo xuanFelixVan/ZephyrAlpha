@@ -4,7 +4,7 @@
 manifest_version: 2.0.0
 generated_by: generate_manifest.py (auto-scan)
 generated_at: '2026-09-15'
-total_scripts: 978
+total_scripts: 979
 scripts:
 - name: __init__.py
   path: __init__.py
@@ -2217,6 +2217,14 @@ scripts:
 - name: data/backfill_tick_depth5.py
   path: data/backfill_tick_depth5.py
   description: 用法（在仓库根，Python 3.12 + PYTHONPATH=src）：
+  domain: data
+  execution_plane: warm-path
+  status: registered
+  timeout_seconds: 60
+  dimensions: []
+- name: data/board_index_realtime.py
+  path: data/board_index_realtime.py
+  description: import sys, os, time, argparse
   domain: data
   execution_plane: warm-path
   status: registered
