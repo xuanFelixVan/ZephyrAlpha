@@ -43,44 +43,7 @@ Provider 声明-实现符号一致性双向 AST gate（17 号 §5.5 施工项 4�
 依据: 17_special_trading_days_data_assets §5.5/§5.8（#ARCH-DATA-002 施工项 4）
 Version: 0.2.0（按真实 provider 路由形态校准反向豁免规则，消除参数化路由表误报）
 
-# [ALGO_FLOW]
-# 层: 输入
-# - id: I1
-#   name: content 参数
-#   fields: 参数 content，类型注解 str
-#   code: capability_symbol_gate.py 顶层公共函数形参（AST 提取）
-# - id: I2
-#   name: file_path 参数
-#   fields: 参数 file_path，类型注解 Path
-#   code: capability_symbol_gate.py 顶层公共函数形参（AST 提取）
-# 层: 算法
-# - id: A1
-#   name_zh: ① check_declaration_impl_consistency_content
-#   name_en: check_declaration_impl_consistency_content
-#   intro: 校验 provider 文件内容（字符串）的声明-实现符号一致性（17 号 §5.8 项 4）。
-#   desc: 校验 provider 文件内容（字符串）的声明-实现符号一致性（17 号 §5.8 项 4）。 Returns: 违规描述列表（空=一致；语法错误 fail-open 返回空）…；源码 L241-L295
-#   inputs: content
-#   outputs: list[str]
-# - id: A2
-#   name_zh: ② check_declaration_impl_consistency
-#   name_en: check_declaration_impl_consistency
-#   intro: 校验 provider 文件的声明-实现符号一致性（文件读取后委托 content 版，真源唯一）。
-#   desc: 校验 provider 文件的声明-实现符号一致性（文件读取后委托 content 版，真源唯一）。；源码 L298-L304
-#   inputs: file_path
-#   outputs: list[str]
-# 层: 输出
-# - id: O1
-#   name_zh: list[str]
-#   name_en: list[str]
-#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
-#   downstream: commit gate（gov_enforcement commit_gates，装配批接入）; 调用方（provider 声明-实现一致性校验）
-# [/ALGO_FLOW]
-#
-# 边:
-# I1 --> A1
-# I2 --> A1
-# A1 --> A2
-# A2 --> O1
+# [ALGO_FLOW] external: docs/03_modules/_domain_data/algo_flow/capability_symbol_gate.yaml
 """
 
 from __future__ import annotations
@@ -134,6 +97,35 @@ def _collect_self_fetch_calls(tree: ast.Module) -> set[str]:
         ):
             called.add(func.attr)
     return called
+
+
+def _has_setattr_fetch_generation(tree: ast.Module) -> bool:
+    """检测模块级 ``for <var> in <...>: setattr(<Cls>, f"_fetch_{...}", <mk>(...))`` 动态方法生成形态。
+
+    akshare_alt 形态（2026-09-16 实证误报）：类尾 setattr 循环批量生成 ``_fetch_<cap>``，
+    方法在 AST 类体内不存在但运行期真实存在——命名约定契约成立（同 getattr 动态分发口径：
+    实现契约=f-string 前缀本身）。迭代源变量名不做路由正则门槛（``_SZ_OPEN_CAPS`` 等
+    CAPS 缩尾名不匹配 _ROUTE_VAR_PATTERN，按名匹配会漏）——形态命中即整体豁免，fail-open。
+    """
+    for node in tree.body:
+        if not isinstance(node, ast.For):
+            continue
+        for stmt in node.body:
+            if not (isinstance(stmt, ast.Expr) and isinstance(stmt.value, ast.Call)):
+                continue
+            call = stmt.value
+            if not (isinstance(call.func, ast.Name) and call.func.id == "setattr"):
+                continue
+            for arg in call.args[1:]:
+                if isinstance(arg, ast.JoinedStr):
+                    for v in arg.values:
+                        if (
+                            isinstance(v, ast.Constant)
+                            and isinstance(v.value, str)
+                            and _FETCH_PREFIX in v.value
+                        ):
+                            return True
+    return False
 
 
 def _has_dynamic_fetch_dispatch(tree: ast.Module) -> bool:
@@ -252,6 +244,7 @@ def check_declaration_impl_consistency_content(content: str) -> list[str]:
         return []  # 解析失败，fail-open
     method_defs = _collect_method_defs(tree)
     dynamic_dispatch = _has_dynamic_fetch_dispatch(tree)
+    setattr_generation = _has_setattr_fetch_generation(tree)
     literal_caps, compared_vars = _collect_route_evidence(tree)
     set_vars, dict_vars = _collect_route_vars(tree)
     violations: list[str] = []
@@ -283,6 +276,8 @@ def check_declaration_impl_consistency_content(content: str) -> list[str]:
             continue  # 命名约定实现（akshare/直接路由形态）
         if cap in literal_caps:
             continue  # elif 字面量路由证据
+        if setattr_generation:
+            continue  # setattr 循环动态生成形态（akshare_alt）：运行期为迭代源全量生成，契约=命名约定
         if not dynamic_dispatch and any(var in compared_vars and cap in caps for var, caps in set_vars.items()):
             continue  # 共享方法路由（capability in <set var>，miniqmt 形态）
         if cap in dict_routed_caps and any(

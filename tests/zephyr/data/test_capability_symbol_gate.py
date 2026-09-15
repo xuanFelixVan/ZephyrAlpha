@@ -323,3 +323,29 @@ class P:
                 continue
             violations = _check_provider_content(path.read_text(encoding="utf-8"), path.name)
             assert violations == [], f"{name} provider 经 commit gate 检出违规: {violations}"
+
+
+def test_setattr_generation_form_not_flagged():
+    """setattr 循环动态生成形态（akshare_alt）：运行期为迭代源全量生成 _fetch_<cap>，
+    命名约定契约成立——声明不算残留（2026-09-16 实证误报治本）。"""
+    src = (
+        "_MY_CAPABILITIES = frozenset({'alt_sz_alpha', 'alt_sz_beta'})\n"
+        "class FooProvider:\n"
+        "    def fetch(self, payload, policy):\n"
+        "        yield from getattr(self, f\"_fetch_alpha\")(payload, policy)\n"
+        "for _cap in _MY_CAPS:\n"
+        "    setattr(FooProvider, f\"_fetch_{_cap}\", _make_fetcher(_cap))\n"
+    )
+    assert check_declaration_impl_consistency_content(src) == []
+
+
+def test_setattr_generation_absent_still_flagged():
+    """无 setattr 循环的同形态声明仍照常报残留（豁免不扩大化）。"""
+    src = (
+        "_MY_CAPABILITIES = frozenset({'alt_sz_alpha',})\n"
+        "class FooProvider:\n"
+        "    def fetch(self, payload, policy):\n"
+        "        yield from getattr(self, f\"_fetch_alpha\")(payload, policy)\n"
+    )
+    v = check_declaration_impl_consistency_content(src)
+    assert v and "alt_sz_alpha" in v[0]
