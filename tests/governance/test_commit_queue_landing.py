@@ -432,7 +432,7 @@ class TestCommitAutoFlagGating:
         opts = call["kwargs"].get("options")
         assert isinstance(opts, cq.EnqueueOptions), "可选参数束走 EnqueueOptions（A 段签名收口）"
         assert opts.base_head == _git_text(tmp_repo, "rev-parse", "refs/heads/dev"), "base_head 落袋"
-        assert opts.meta_extra == {"rerouted_from": "_commit_auto"}, "改道来源审计标记落袋"
+        assert opts.meta_extra == {"rerouted_from": "_commit_auto", "lane": "machine"}, "改道来源审计标记+P1-D 车道标记落袋"
         assert bootstrap_calls, "入队后触发自举排空尝试（66 号 §8；mock 不真实落盘）"
 
     def test_flag_on_enqueue_exception_falls_back_to_direct_commit(
