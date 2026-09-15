@@ -271,7 +271,23 @@ class TestBlueTruthSources:
         assert report.orphan_steps == []
         assert report.missing_narratives == []
         assert report.ghost_anchors == []
-        assert len(report.acknowledged_orphan_steps) >= 15
+        # 2026-09-16 复核班：原 >=15 数量地板是收缩型总体的逆水位炸弹（治理清偿孤儿→
+        # 计数下降→断言红，sleeves 同型第二例），改守律不守数：豁免真源=battle_map_domain_policy
+        # §acknowledged_orphans.steps，豁免集非空且逐条在册（防"未登记即豁免"）。
+        assert len(report.acknowledged_orphan_steps) >= 1, "豁免集空=豁免机制失效或数据被清"
+        import yaml as _yaml
+        policy_path = Path(__file__).resolve().parents[2] / (
+            "docs/01_policies_and_standards/_registry/catalogs/battle_map_domain_policy.yaml")
+        policy = _yaml.safe_load(policy_path.read_text(encoding="utf-8"))
+        pol_ids = set()
+        for item in (policy.get("acknowledged_orphans") or {}).get("steps") or []:
+            if isinstance(item, dict):
+                pol_ids.update(item.get("step_ids") or [])
+            else:
+                pol_ids.add(item)
+        ack_ids = {s["step_id"] for s in report.acknowledged_orphan_steps}
+        unregistered = ack_ids - pol_ids
+        assert not unregistered, f"豁免集存在政策册外条目: {sorted(unregistered)}"
 
 
 class TestBlueFailOpenAndTrigger:
