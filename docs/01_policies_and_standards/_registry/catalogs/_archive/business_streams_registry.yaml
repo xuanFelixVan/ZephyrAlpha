@@ -1,4 +1,10 @@
 # [A_config] module_id=CFG-business-streams | layer=config | stability=stable | safety=L | ai_autonomy=human_gated
+# ============================================================================
+# [ARCHIVED 2026-09-16] 本登记表已退役归档——裁定#259（Owner 2026-09-16 睡前对话内全权授权）
+# 归档原因: 业务流定义真源已由 battle_map（11 flow_stage 作战阶段）与 dataflowgraph 承载；本表 2026-06-18 后未维护
+# 真源去向: 业务流真源=PostgreSQL battle_map_steps（阶段轴）+dataflow_*（数据流轴）
+# 原路径: docs/01_policies_and_standards/_registry/catalogs/business_streams_registry.yaml
+# ============================================================================
 # 治理锚定
 # blueprint: MOD-GOVERNANCE | docs/03_modules/_domain-governance/blueprint.md | §
 # module_id: CFG-business-streams
@@ -11,7 +17,7 @@ module_id: CFG-business-streams
 schema_version: "1.0.0"
 doc_type: register
 title: 业务流定义登记表
-status: active
+status: archived
 owner: ZephyrAlpha-Owner
 created: "2026-06-18"
 last_updated: "2026-06-18"

@@ -53,7 +53,7 @@ ttl: permanent
 | `06_decision_architecture/` | 决策架构（决策轨/L2A/L3 分层） | [index.md](06_decision_architecture/index.md) | 人类视图 | 混合：index 手写，编号 md 派生 |
 | `07_trading_decision_architecture/` | 交易决策架构（design_memos + battle_map 作战地图） | [00_index_trading_decision.md](07_trading_decision_architecture/design_memos/00_index_trading_decision.md) | 人类视图 | 混合：memos 手写·入git，battle_map 派生·不入git |
 | `08_algorithm_overview/` | 算法全景图（按作战环节拆分·三档 code>blueprint>empty·零漂移·离库派生） | [README.md](08_algorithm_overview/README.md) | 人类视图 | 派生·不入git（整目录） |
-| `target_architecture/` | 目标架构视图（应用流/治理视图） | [application_flows.md](target_architecture/application_flows.md) | 人类视图 | 手写·入git |
+| `_archive/` | 归档区（手绘 Mermaid 历史快照） | [_archive/](./_archive/application_flows.md) | 历史快照 | 归档·不再维护（2026-09-16 裁定#260：手绘时序/治理视图由机生全景图取代） |
 
 > **派生目录不入 git**：标注"派生"的 .md 均由生成器从 depgraph/YAML 真源重建（生成器见 `scripts/governance/d5_architecture/generators/`），按派生禁入 git 裁定经 .gitignore 排除（移除批 commit `326952a276`）。查看 = 主仓跑生成器本地重建；worktree 上下文禁写权威，生成器会 REFUSED。worktree 中看不到这些目录 = 正常。
 

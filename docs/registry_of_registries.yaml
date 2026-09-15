@@ -274,23 +274,23 @@ tiers:
         description: 9 个基础设施组件登记
 
       - registry_id: REG-INTF-001
-        name: 接口契约注册表
-        physical_path: docs/01_policies_and_standards/_registry/catalogs/interface_contract_registry.yaml
+        name: 接口契约注册表（已归档）
+        physical_path: docs/01_policies_and_standards/_registry/catalogs/_archive/interface_contract_registry.yaml
         format: yaml
-        maintenance: manual
+        maintenance: frozen
         entry_count: 5
-        status: active
-        description: 5 个核心模块的 API 接口契约（接口集级粒度，对标 Backstage API kind）。与 cross_module_dependency_registry 互补：本表回答"怎么依赖"，后者回答"是否依赖"
+        status: archived
+        description: 5 个核心模块的 API 接口契约（接口集级粒度，对标 Backstage API kind）。2026-09-16 裁定#259 退役归档——函数级接口契约唯一真源=代码本体（签名+docstring+ALGO_FLOW 外部真源），本表无独立消费者
 
       - registry_id: REG-KB-001
-        name: 知识文章注册表
-        physical_path: docs/01_policies_and_standards/_registry/catalogs/knowledge_article_registry.yaml
+        name: 知识文章注册表（已归档）
+        physical_path: docs/01_policies_and_standards/_registry/catalogs/_archive/knowledge_article_registry.yaml
         format: yaml
-        maintenance: manual
+        maintenance: frozen
         entry_count: 0
         counting_rule: knowledge_entries 数组条目数（模板就位内容待填充）
-        status: active
-        description: 知识库文章索引（当前为空——模板就位，内容待填充）
+        status: archived
+        description: 知识库文章索引。2026-09-16 裁定#258 退役归档——entries=0 空表未启用，知识条目承载=设计备忘录+业务库 candidate 态（13号文 §3.6 既有口径）
 
       - registry_id: REG-TASK-META-001
         name: Task Card 元注册表

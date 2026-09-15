@@ -2009,3 +2009,100 @@ entries:
   related_arch: ['#ARCH-140']
   related_rulings: ['裁定#253']
   superseded_by: null
+
+- ruling_id: '裁定#258'
+  title: 僵尸处置批 R1 三库退役归档——ai_session_registry/knowledge_article_registry/frontier_llm_benchmark_ranking 五个月零使用或过期未接线，git mv 至 catalogs/_archive/
+  date: '2026-09-16'
+  category: 治理运维
+  status: active
+  summary: >-
+    通宵总包 GW6（st-pano-20260916）按预打包裁定 R1 自裁执行（审批依据=Owner 2026-09-16
+    睡前对话内全权授权，通宵总包作战全景图体系战役收口批）。三库退役取证：①ai_session_
+    registry.yaml（2026-05-02 建）sessions=[] 五个月零登记——AI 问责链实际由 SessionRegistry
+    （.runtime/sessions/<sid>/ 心跳/PID 判活）+GitCommitGateway 审计日志承载，YAML 台账
+    从未成为真源；②knowledge_article_registry.yaml knowledge_entries=[] 空表未启用——
+    13号文 KMS 知识管线（50 KO→30 KE→10 KB）仍为 draft 计划，知识条目实际承载=设计备忘录
+    +业务库 candidate 态（13号文 §3.6 既有口径）；③frontier_llm_benchmark_ranking.yaml
+    排名数据 2026-05-02 停更（过期约 4.5 月）且全仓 grep 零代码消费（未接线）。三库均为
+    CFG-/GOV- 登记对象（主索引/规则目录机生条目随再生产自动收敛），ROOR 仅 knowledge_
+    article（REG-KB-001）在册→已标 archived；ai_session/frontier_llm 无 ROOR 条目（查证
+    零命中）无需同步。处置：git mv 至 docs/01_policies_and_standards/_registry/catalogs/
+    _archive/（区内镜像、git 历史天然可溯、可逆），文件头加归档横幅（原因+真源去向+
+    原路径），registry_consistency_contract REG-011/REG-015 同步标 archived，主索引由
+    generate_registry_master_index.py 再生产自动摘除，tests/trading/test_decision_map.py
+    _GOVERNANCE_EXEMPT 同 commit 剪除（_stale_exemptions 卫生检查的设计流程）。残余引用：
+    13号文（历史计划文档）/docs/01_policies_and_standards/index.md L184（知识库索引行）/
+    src/zephyr/autonomy_core/module_factory/module_mapper.py _OTHER_ROUTING 字符串常量
+    （routing 目标名，非文件读取）留待各车道下次再生自然收敛，已在本裁定留痕。
+  evidence: >-
+    catalogs/_archive/ 六文件归档横幅+status: archived（本 commit）+ grep 全仓
+    ai_session_registry/frontier_llm_benchmark_ranking 零代码消费命中（仅注释与历史记载）+
+    module_mapper.py L88/L739（routing 字符串常量，不读文件）+ registry_adapter.py
+    （_known 表按磁盘发现驱动，文件不在即不扫，无报错路径）
+  related_arch: ['#ARCH-GOV-BUDGET-001']
+  related_rulings: ['裁定#256']
+  superseded_by: null
+- ruling_id: '裁定#259'
+  title: 僵尸处置批 R3 三库归档+hard_boundaries 保留补节律+decisiongraph B 步登记——business_streams/declarative_contract_tracker/interface_contract 使命完成或真源已移位
+  date: '2026-09-16'
+  category: 治理运维
+  status: active
+  summary: >-
+    通宵总包 GW6（st-pano-20260916）按预打包裁定 R3 自裁执行（审批依据=Owner 2026-09-16
+    睡前对话内全权授权）。三库归档取证：①business_streams_registry.yaml（2026-06-18 建）
+    业务流定义真源已移位——作战阶段轴真源=PostgreSQL battle_map_steps（11 flow_stage），
+    数据流轴=dataflow_* 表，本表 7 条 streams 半年未维护无消费者（sync_yaml_to_depgraph
+    存在性守卫 fail-open）；②declarative_contract_tracker_registry.yaml 11 条契约全部
+    resolved/resolved_as_not_supported，"YAML 承诺→代码兑现"跟踪使命完成，承诺兑现核对
+    由规则四边闭环（RULE-FOUR-WAY-ALIGN gate 76）机制化承接；③interface_contract_registry
+    5 条接口集级摘录无独立消费者——函数级接口契约唯一真源=代码本体（签名+docstring+
+    ALGO_FLOW 外部真源 YAML），本表与代码必然漂移（违反 SSoT 单真源）。ROOR 在册两库
+    （REG-INTF-001/REG-KB-001）同步标 archived；capability_canonical_file_registry 的
+    interface_contract creation token 条目路径同步改指 _archive；registry_consistency_
+    contract REG-012 同步。④hard_boundaries_registry.yaml 复核后保留——HB-001~008 与
+    宪章/规则体系仍一致，补季度复核节律说明（随宪法 §4 季度退役审计同批，下次窗口
+    2026-12）；⑤decisiongraph B 步：decision_* 表组纳入季度退役审计观察名单（宪法 §4.2
+    节律，按 reconcile_execution_log 触发率判定降级/退役）——本条仅登记，既有裁定不翻案、
+    PG 表零改动。
+  evidence: >-
+    catalogs/_archive/ 三文件归档横幅+sessions/contracts/streams 实测（ai_session
+    sessions:[]/declarative 11×resolved/interface_contract interfaces 5 条）+
+    sync_yaml_to_depgraph.py L860/L1214/L1829（三处 load_yaml 均存在性守卫 fail-open，
+    文件缺失仅打警告跳过）+ battle_map_positioning.md §17.3.4（flow_stage 阶段轴真源）+
+    align_battle_map.py（作战阶段域校验在产）
+  related_arch: ['#ARCH-BREG-001']
+  related_rulings: ['裁定#258']
+  superseded_by: null
+
+- ruling_id: '裁定#260'
+  title: 僵尸处置批 R4 PAN-BUILT 死对象处置——17 死指针补登记/03 手绘 Mermaid 归档/07 循环报告并入 align_all 口径修正/19 核实为活跃产物不归档
+  date: '2026-09-16'
+  category: 治理架构
+  status: active
+  summary: >-
+    通宵总包 GW6（st-pano-20260916）按预打包裁定 R4 自裁执行（审批依据=Owner 2026-09-16
+    睡前对话内全权授权），generate_panorama_registry.py BUILT_PANORAMAS 四项逐一核实后处置：
+    ①PAN-BUILT-17 死指针修复——dependency_path_panorama.md 已随 04_architecture_principles_
+    decisions 与 code_wiki 文档夹合并删除（dbd56b82a2），磁盘实存性核查 MISSING，条目补
+    status=retired+删除登记（先例=PAN-BUILT-15 注释式退役），职能由 panorama_registry.md
+    +能力定位书族承接；②PAN-BUILT-03 手绘 Mermaid 归档——application_flows.md/governance_
+    views.md git mv 至 02_enterprise_architecture/_archive/ 加归档横幅（手绘时序/治理视图
+    由机生 integration_topology.md/dataflow_index.md/图 10 治理运行地图取代，v3.4.0/v3.5.0
+    既定方向收尾），docs/02_enterprise_architecture/index.md 导航行同步；③PAN-BUILT-07
+    停独立产物口径修正——align_all.py 已以 run_alignment(write_report=False) 复用检测逻辑
+    合并进 panorama_alignment_overview.md（代码侧前序会话已落地），本批仅修正 BUILT_
+    PANORAMAS 条目：旧 generated/panorama_alignment_report.md 指针废止（目录已空实查），
+    artifact_path 改指 03_governance_reports/panorama_alignment_overview.md；④PAN-BUILT-19
+    decision_index.md 核实为活跃产物不归档——它是活跃图 3（decisiongraph）人类视图索引，
+    20+ 叶子视图导航指向它，且已随 #ARCH-GOV-BUDGET-001 untrack 批移出 git 跟踪（check-
+    ignore 命中）属派生缓存，仅补条目注记（"派生缓存不归档"），不做物理移动。
+  evidence: >-
+    find 全仓 decision_index.md 唯一命中 06_decision_architecture/（活跃索引，生成器
+    generate_decision_diagram.py _write_md("decision_index.md") 在产）+ git check-ignore -v
+    （decision_index.md 命中 .gitignore:560；panorama_alignment_report.md 命中 :549）+
+    ls 02_enterprise_architecture/generated/（空目录）+ align_all.py L8 头注释
+    （run_alignment(write_report=False)）+ 本 commit generate_panorama_registry.py 四条目
+    diff+归档文件横幅
+  related_arch: ['#ARCH-312', '#ARCH-GOV-BUDGET-001']
+  related_rulings: ['裁定#258', '裁定#259']
+  superseded_by: null

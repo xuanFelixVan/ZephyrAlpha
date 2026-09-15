@@ -242,18 +242,22 @@ BUILT_PANORAMAS: list[dict] = [
     },
     # --- 04_architecture_principles_decisions/ ---
     # PAN-BUILT-15 (dimension_audit_matrix.md) 已废弃删除，不再登记
+    # PAN-BUILT-17 死指针修复（2026-09-16 僵尸处置批 裁定#260）：dependency_path_panorama.md
+    # 已随 04_architecture_principles_decisions 与 code_wiki 文档夹合并删除（dbd56b82a2），
+    # 定位书职能由 panorama_registry.md 本文件 + battle_map_positioning.md 等能力定位书族承接
     {
         "panorama_id": "PAN-BUILT-17",
-        "name": "依赖与路径全景图能力定位书",
+        "name": "依赖与路径全景图能力定位书（已删除）",
         "category": "治理健康度",
         "category_id": "governance",
         "family": "技术图族",  # 三族归类（2026-09-15 #ARCH-312）：业务图族/技术图族/治理图族
         "data_source": "手工",
         "source_architecture": "手工",
-        "generator": "(手工维护)",
-        "output_path": "04_architecture_principles_decisions/",
-        "artifact_path": "04_architecture_principles_decisions/dependency_path_panorama.md",
-        "description": "依赖与路径全景图能力定位书（双态模型 + SSoT 分层 + 生命周期 + 生成器覆盖矩阵）",
+        "generator": "(已删除，不再维护)",
+        "output_path": "(已删除) 04_architecture_principles_decisions/",
+        "artifact_path": "(已删除) 04_architecture_principles_decisions/dependency_path_panorama.md",
+        "description": "已删除（dbd56b82a2 文档夹合并，2026-09-16 裁定#260 补死指针登记）：依赖与路径全景图能力定位书（双态模型 + SSoT 分层 + 生命周期 + 生成器覆盖矩阵）。职能由 panorama_registry.md + 各图能力定位书（battle_map_positioning.md 等）承接，git 历史可查",
+        "status": "retired",
     },
     # --- 05_dataflow_architecture/ ---
     {
@@ -281,7 +285,7 @@ BUILT_PANORAMAS: list[dict] = [
         "generator": "generate_decision_diagram.py",
         "output_path": "06_decision_architecture/",
         "artifact_path": "06_decision_architecture/decision_index.md",
-        "description": "决策流图 decisiongraph（L0-L6 四轨），三图正交第三维度",
+        "description": "决策流图 decisiongraph（L0-L6 四轨），三图正交第三维度。产物为派生缓存（#ARCH-GOV-BUDGET-001 untrack 批已移出 git 跟踪，git 态=ignored，磁盘随生成器再生刷新）——2026-09-16 僵尸处置批裁定#260 核实为活跃产物不归档",
     },
     # --- 07_trading_decision_architecture/（decisiongraph 业务流程视图，已退役 2026-08-02） ---
     {
@@ -329,16 +333,16 @@ BUILT_PANORAMAS: list[dict] = [
     # --- generated/ ---
     {
         "panorama_id": "PAN-BUILT-07",
-        "name": "循环依赖检测（Tarjan SCC）",
+        "name": "循环依赖检测（Tarjan SCC，并入 align_all 输出）",
         "category": "依赖关系",
         "category_id": "dependency",
         "family": "技术图族",  # 三族归类（2026-09-15 #ARCH-312）：业务图族/技术图族/治理图族
         "data_source": DB_DISPLAY_NAME,
         "source_architecture": "depgraph",
         "generator": "内置在生成器（Tarjan SCC）",
-        "output_path": "generated/",
-        "artifact_path": "generated/panorama_alignment_report.md",
-        "description": "内置 Tarjan SCC 算法检测循环依赖，输出循环报告",
+        "output_path": "03_governance_reports/",
+        "artifact_path": "03_governance_reports/panorama_alignment_overview.md",
+        "description": "循环依赖检测并入统一对齐入口（2026-09-16 裁定#260 口径修正）：align_all.py 以 run_alignment(write_report=False) 复用检测逻辑，结果合并进 panorama_alignment_overview.md；旧 generated/ 独立产物废止（目录已空）。align_panoramas.py 单独 CLI 运行时仍写 panorama_alignment_report.md（诊断用途）",
     },
     # --- target_architecture/ ---
     {
@@ -354,18 +358,22 @@ BUILT_PANORAMAS: list[dict] = [
         "artifact_path": "architecture_model/",
         "description": "架构方法论 SSoT：TOGAF/C4/功能域裁定/三棵树 + 4条安全红线 + 核心架构决策。已从原则 md 迁移为 architecture_model/ 下 YAML 真源集合（2026-07-30，原 principles/architecture_principles.md 已删，git 历史可查）",
     },
+    # PAN-BUILT-03 手绘 Mermaid 已归档（2026-09-16 僵尸处置批 裁定#260）：application_flows.md /
+    # governance_views.md git mv 至 _archive/——手绘时序/治理视图由机生全景图取代
+    # （integration_topology.md / dataflow_index.md / 图 10 治理运行地图），归档仅为历史快照
     {
         "panorama_id": "PAN-BUILT-03",
-        "name": "手绘 Mermaid 图（时序/治理）",
+        "name": "手绘 Mermaid 图（时序/治理，已归档）",
         "category": "架构视图",
         "category_id": "target_architecture",
         "family": "业务图族",  # 三族归类（2026-09-15 #ARCH-312）：业务图族/技术图族/治理图族
         "data_source": "手工",
         "source_architecture": "手工",
-        "generator": "(手工维护)",
-        "output_path": "target_architecture/",
-        "artifact_path": "target_architecture/application_flows.md",
-        "description": "端到端时序图（application_flows）+ 治理 d2b 闭环（governance_views）。拓扑/数据流已由生成视图 integration_topology.md / dataflow_index.md 取代（v3.4.0 删除 topology_views.md / dataflow_views.md）；C4-L3 域组件图已删除（v3.5.0 删除 c4_component_views.md，有效组件模式已登记 depgraph 设计态）",
+        "generator": "(已归档，不再维护)",
+        "output_path": "_archive/",
+        "artifact_path": "_archive/application_flows.md",
+        "description": "已归档（2026-09-16 裁定#260）：端到端时序图（application_flows）+ 治理 d2b 闭环（governance_views）手绘 Mermaid 移入 _archive/ 历史快照。拓扑/数据流已由生成视图 integration_topology.md / dataflow_index.md 取代（v3.4.0 删除 topology_views.md / dataflow_views.md）；C4-L3 域组件图已删除（v3.5.0 删除 c4_component_views.md，有效组件模式已登记 depgraph 设计态）；治理运行视图由图 10 治理运行地图（#ARCH-312）取代",
+        "status": "retired",
     },
     # --- 02_enterprise_architecture/ 根目录（排在最后） ---
     {

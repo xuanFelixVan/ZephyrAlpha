@@ -1,4 +1,10 @@
 # [A_config] module_id=CFG-interface-contract-registry | layer=config | stability=stable | safety=L | ai_autonomy=human_gated
+# ============================================================================
+# [ARCHIVED 2026-09-16] 本登记表已退役归档——裁定#259（Owner 2026-09-16 睡前对话内全权授权）
+# 归档原因: 5 条接口集级摘录无独立消费者；函数级接口契约唯一真源=代码本体（签名+docstring）
+# 真源去向: 接口契约真源=src/ 代码签名+ALGO_FLOW 外部真源 YAML（docs/03_modules/_domain_data/algo_flow/）
+# 原路径: docs/01_policies_and_standards/_registry/catalogs/interface_contract_registry.yaml
+# ============================================================================
 # --- 治理锚定 ---
 # blueprint: MOD-GOVERNANCE | docs/03_modules/_domain_governance/blueprint.md
 # module_id: MOD-GOVERNANCE
@@ -39,7 +45,7 @@ schema_version: "1.0.0"
 doc_type: register
 title: "接口契约注册表"
 version: "1.0.0"
-status: active
+status: archived
 created: "2026-07-06"
 last_updated: "2026-07-06"
 ai_autonomy: human_gated

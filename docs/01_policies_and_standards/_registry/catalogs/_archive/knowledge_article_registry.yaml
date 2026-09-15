@@ -1,4 +1,10 @@
 # [A_config] module_id=CFG-knowledge-article-registry | layer=config | stability=stable | safety=L | ai_autonomy=human_gated
+# ============================================================================
+# [ARCHIVED 2026-09-16] 本登记表已退役归档——裁定#258（Owner 2026-09-16 睡前对话内全权授权）
+# 归档原因: entries=0 空表未启用（13号文 KMS 知识管线 draft 计划未落地）
+# 真源去向: 知识条目承载=29号文式设计备忘录+factor/strategy registry candidate 态（13号文 §3.6 既有口径）
+# 原路径: docs/01_policies_and_standards/_registry/catalogs/knowledge_article_registry.yaml
+# ============================================================================
 # --- 治理锚定 ---
 # blueprint: MOD-GOVERNANCE | docs/03_modules/_domain-governance/blueprint.md | §
 # module_id: MOD-GOVERNANCE

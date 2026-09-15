@@ -654,22 +654,23 @@ class TestGovernanceGates:
 _GOVERNANCE_EXEMPT = frozenset(
     {
         "_index.yaml",
+        # 2026-09-16 僵尸处置批（裁定#258/#259）：六库退役归档至 catalogs/_archive/，豁免清单同步剪除
+        # （ai_session_registry/knowledge_article_registry/frontier_llm_benchmark_ranking/business_streams_registry/
+        # declarative_contract_tracker_registry/interface_contract_registry）——归档目录不在 glob("*.yaml") 扫描面，
+        # 剪除即恢复清单与磁盘一致（本测试 _stale_exemptions 卫生检查的设计流程）。
         "ai_autonomy_authority_registry.yaml",
         "ai_risk_register.yaml",
-        "ai_session_registry.yaml",
         "architecture_issue_registry.yaml",
         # backtest_backlog.yaml 已于 2026-09-12 登记豁免（R1-R5 证据链批同步）——
         # 回测治理类（SOP-A A0 预注册表）：不挂 TDM 决策索引；强制=SOP-B 护栏③预注册纪律
         # （threshold_status=draft 禁跑，冻结只许批次决策点公开修订）+ run_archive 台账回执链
         "backtest_backlog.yaml",
         "battle_map_domain_policy.yaml",
-        "business_streams_registry.yaml",
         "candidate_module_registry.yaml",
         "capability_canonical_file_registry.yaml",
         "compliance_report_registry.yaml",
         "cross_module_dependency_registry.yaml",
         "dataflow_graph_registry.yaml",
-        "declarative_contract_tracker_registry.yaml",
         "depgraph_scan_exclusions.yaml",
         "derived_identifier_registry.yaml",
         "directory_registry.yaml",
@@ -690,7 +691,6 @@ _GOVERNANCE_EXEMPT = frozenset(
         # risk_tier_registry.yaml 已于 2026-09-12 登记豁免（A5 同步）——治理类（域风险分级与人机门位，
         # R5 human-gate 治理改革交付物），不入 TDM 决策索引
         "risk_tier_registry.yaml",
-        "frontier_llm_benchmark_ranking.yaml",
         "frontmatter_field_registry.yaml",
         "functional_domain_registry.yaml",
         "gate_registry.yaml",
@@ -700,8 +700,6 @@ _GOVERNANCE_EXEMPT = frozenset(
         "hard_boundaries_registry.yaml",
         "in_process_gate_registry.yaml",
         "infrastructure_registry.yaml",
-        "interface_contract_registry.yaml",
-        "knowledge_article_registry.yaml",
         "migration_registry.yaml",
         # model_registry.yaml 已于 2026-09-09 挂 R38 model_refs 轴（D38 补挂，Owner 批准）——挪出豁免名单
         "module_translation_registry.yaml",
@@ -717,6 +715,10 @@ _GOVERNANCE_EXEMPT = frozenset(
         "ruling_registry.yaml",
         "scripts_registry.yaml",
         "task_card_meta_registry.yaml",
+        # trial_ledger_registry.yaml 已于 2026-09-16 补登记豁免（僵尸处置批顺带修复先于本批的红：
+        # 2026-09-15 e58d28df99 回测批新增 N 账本库未走登记）——回测治理类（MOD-BT-200 全局累计
+        # 试验数账本，SOP-A 预注册纪律同 backtest_backlog 先例）：不入 TDM 决策索引
+        "trial_ledger_registry.yaml",
         "terminology_glossary.yaml",
         "test_suite_registry.yaml",
         "trust_boundary_surface_registry.yaml",

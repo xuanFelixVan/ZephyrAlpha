@@ -1,4 +1,10 @@
 # [A_config] module_id=CFG-declarative-contract-tracker-registry | layer=config | stability=stable | safety=L | ai_autonomy=human_gated
+# ============================================================================
+# [ARCHIVED 2026-09-16] 本登记表已退役归档——裁定#259（Owner 2026-09-16 睡前对话内全权授权）
+# 归档原因: 11 条声明式契约全部 resolved/resolved_as_not_supported，跟踪使命完成（2026-05-03 建，无在途条目）
+# 真源去向: config/ YAML 承诺兑现核对由 sync_yaml_to_depgraph.py+规则四边闭环（RULE-FOUR-WAY-ALIGN）承接
+# 原路径: docs/01_policies_and_standards/_registry/catalogs/declarative_contract_tracker_registry.yaml
+# ============================================================================
 # --- 治理锚定 ---
 # blueprint: MOD-GOVERNANCE | docs/03_modules/_domain-governance/blueprint.md | §
 # module_id: MOD-GOVERNANCE
@@ -12,11 +18,11 @@ schema_version: 1.0.0
 doc_type: register
 module_id: PS-REG-019
 title: 声明式契约跟踪登记表
-status: active
+status: archived
 owner: system
 date: '2026-05-03'
 ttl: permanent
-description: "跟踪所有 config/ 目录下 YAML 文件中声明但尚未被代码兑现的承诺。 每一条契约都有一个明确的实现状态 + 目标 Phase，让 AI 新 session 来了一看就知道\"哪些 YAML 是说的比做的多\"。\n对标: ITIL SACM CMDB（所有 CI 的承诺与实现状态集中登记）\n      AGENTS.md §6.2 原子事务模式（YAML 承诺变更\
+description: "跟踪所有 config/ 目录下 YAML 文件中声明但尚未被代码兑现的承诺。 每一条契约都有一个明确的实现状态 + 目标 Phase，让 AI 新 session 来了一看就知道\"哪些 YAML 是说的比做的多\"。\n对标: ITIL SACM CMDB（所有 CI 的承诺与实现状态集中登记）\n      AGENTS.md 原子事务模式（YAML 承诺变更\
   \ → 本登记表同步更新）\n      YAML canonical SSoT（契约状态以本 YAML 为准）\n"
 discovery_rule: '任何修改 config/ 下 YAML 的 implementation_status 字段时，必须在同一 atomic batch 内同步更新本登记表对应条目的 status / gap / last_reviewed。
 

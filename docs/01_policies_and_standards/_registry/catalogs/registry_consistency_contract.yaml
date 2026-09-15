@@ -206,10 +206,11 @@ registries:
 
   - id: "REG-011"
     name: "ai-session-registry"
-    title: "AI 会话登记表"
-    path: "docs/01_policies_and_standards/_registry/catalogs/ai_session_registry.yaml"
+    title: "AI 会话登记表（已归档）"
+    path: "docs/01_policies_and_standards/_registry/catalogs/_archive/ai_session_registry.yaml"
     version: "1.0.0"
-    description: "AI 会话生命周期登记"
+    status: "archived"
+    description: "AI 会话生命周期登记。2026-09-16 裁定#258 退役归档——5 个月 sessions=0，问责链真源=SessionRegistry+提交网关审计"
     ssoT_for:
       - "session_id"
       - "model"
@@ -217,10 +218,11 @@ registries:
 
   - id: "REG-012"
     name: "declarative-contract-tracker"
-    title: "声明式契约跟踪登记表"
-    path: "docs/01_policies_and_standards/_registry/catalogs/declarative_contract_tracker_registry.yaml"
+    title: "声明式契约跟踪登记表（已归档）"
+    path: "docs/01_policies_and_standards/_registry/catalogs/_archive/declarative_contract_tracker_registry.yaml"
     version: "1.5.0"
-    description: "11 条声明式契约的跟踪（YAML 承诺→代码兑现）"
+    status: "archived"
+    description: "11 条声明式契约的跟踪（YAML 承诺→代码兑现）。2026-09-16 裁定#259 归档——11 条全部 resolved，使命完成"
     ssoT_for:
       - "contract_id"
       - "source"
@@ -239,10 +241,11 @@ registries:
 
   - id: "REG-015"
     name: "knowledge-article-registry"
-    title: "知识文章登记表"
-    path: "docs/01_policies_and_standards/_registry/catalogs/knowledge_article_registry.yaml"
+    title: "知识文章登记表（已归档）"
+    path: "docs/01_policies_and_standards/_registry/catalogs/_archive/knowledge_article_registry.yaml"
     version: "1.0.0"
-    description: "知识库文章登记"
+    status: "archived"
+    description: "知识库文章登记。2026-09-16 裁定#258 退役归档——空表未启用"
     ssoT_for:
       - "article_id"
       - "title"

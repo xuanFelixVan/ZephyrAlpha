@@ -19,6 +19,11 @@ ai_autonomy: immutable_core
 ttl: permanent
 description: "架构核心硬边界——不可违反的约束。对标 K8s Hard Limits。"
 
+# [复核节律 2026-09-16] 本表保留（裁定#259，Owner 2026-09-16 睡前对话内全权授权）——同批三库
+# （business_streams/declarative_contract_tracker/interface_contract）归档后经复核本表仍为活跃真源：
+# HB-001~008 与宪章/规则体系一致，无退役条目。复核节律=每季度随宪法 §4 退役审计同批执行
+# （reconcile_execution_log 触发率+条目与 system_charter 一致性），下次复核窗口 2026-12。
+
 boundaries:
   - id: HB-001
     category: architectural

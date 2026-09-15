@@ -2,7 +2,7 @@
 module_id: VIEW-TA-GOV
 title: 治理架构图
 doc_type: architecture_view
-status: Active
+status: Archived
 version: 0.1.0
 owner: ZephyrAlpha-Owner
 valid_from: 2026-07-22
@@ -10,6 +10,8 @@ ttl: permanent
 tags:
 - architecture-view
 ---
+
+> **[ARCHIVED 2026-09-16]** 治理 d2b 闭环手绘 Mermaid 视图——治理运行视图由治理运行地图 config/governance_operations_map.yaml（图 10，#ARCH-312）取代（PAN-BUILT-03 归档，裁定#260）；仅作历史快照保留，内容不再维护。
 
 # 治理架构图
 

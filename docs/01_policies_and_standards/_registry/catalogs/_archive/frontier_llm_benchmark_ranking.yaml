@@ -1,7 +1,13 @@
+# ============================================================================
+# [ARCHIVED 2026-09-16] 本登记表已退役归档——裁定#258（Owner 2026-09-16 睡前对话内全权授权）
+# 归档原因: 排名数据 2026-05-02 后停更（过期约 4.5 月）且全仓零代码消费（未接线）
+# 真源去向: 无接替真源；模型选型时点快照可查 git 历史
+# 原路径: docs/01_policies_and_standards/_registry/catalogs/frontier_llm_benchmark_ranking.yaml
+# ============================================================================
 module_id: GOV-001
 title: 前沿大模型综合能力排名登记表
 doc_type: register
-status: active
+status: archived
 version: 1.0.0
 schema_version: 1.1.0
 layer: cross_layer

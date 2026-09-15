@@ -2,7 +2,7 @@
 module_id: VIEW-04PRINC-APPFLOWS
 title: 应用流程时序图 / Application Flow Sequence Diagrams
 doc_type: architecture_view
-status: Active
+status: Archived
 version: 0.1.0
 layer: cross_layer
 owner: ZephyrAlpha-Owner
@@ -22,6 +22,8 @@ summary: 5 张应用流程端到端时序图（订单提交 / 成交回报 / 风
 date: '2026-07-22'
 ttl: permanent
 ---
+
+> **[ARCHIVED 2026-09-16]** 端到端时序手绘 Mermaid 视图——拓扑/数据流已由机生视图 integration_topology.md（depgraph）与 dataflow_index.md（dataflowgraph）取代（PAN-BUILT-03 归档，裁定#260）；仅作历史快照保留，内容不再维护。
 
 # 应用流程时序图
 # Application Flow Sequence Diagrams
