@@ -116,7 +116,7 @@ CONFIRMED/DRIFT/SKIPPED、风险重估 OK/ERROR/SKIPPED、alert/audit 委托、�
 | 图 | 位置 | 状态 | 链接 |
 |----|------|------|------|
 | 依赖图 (depgraph) | `blueprint_id=MOD-TRADING-012` 的 2 个 file 节点 | production | `extract_depgraph.py --modules MOD-TRADING-012` |
-| 数据流图 (dataflow) | 0 个 Dataset / 1 个 Job | active | `apply_dataflowgraph.py --list-datasets` |
+| 数据流图 (dataflow) | （无节点） | N/A | `apply_dataflowgraph.py --list-datasets` |
 | 决策架构图 (decision) | 0 个决策节点 / 1 个决策层 | N/A | `generate_decision_diagram.py` |
 | 蓝图 (blueprint) | 本文件 | Active | — |
 
