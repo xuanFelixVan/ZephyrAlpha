@@ -45,6 +45,5 @@ __all__: Final = [
     "alert_manager",
     "alert_precision_tracker",
     "dual_channel_alert",
-    "heartbeat_server",
     "threshold_loader",
 ]

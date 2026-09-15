@@ -38,7 +38,6 @@ __all__: list[str] = [
     "canary_manager",
     "chaos_engine",
     "chaos_hooks",
-    "degrade_cascade",
     "disk_guard",
     "fault_types",
     "network_partition",

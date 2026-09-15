@@ -603,7 +603,6 @@ class TestA11_OrphanChainIntegrity:
         "dual_channel_alert",
         "error_budget_tracker",
         "fault_isolator",
-        "heartbeat_server",
         "longevity_monitor",
         "model_capacity_probe",
         "module_birth_registry",
@@ -611,7 +610,6 @@ class TestA11_OrphanChainIntegrity:
         "reasoning_spans",
         "sandbox_executor",
         "slo_review_assistant",
-        "task_heartbeat",
         "ttl_cleanup_engine",
         "vibe_experiment_tracker",
         "zephyr_logger",
@@ -643,7 +641,6 @@ class TestA11_OrphanChainIntegrity:
         "dual_channel_alert": "zephyr.shared.alerts.dual_channel_alert",
         "error_budget_tracker": "zephyr.shared.resilience.error_budget_tracker",
         "fault_isolator": "zephyr.shared.resilience.fault_isolator",
-        "heartbeat_server": "zephyr.shared.alerts.heartbeat_server",
         "longevity_monitor": "zephyr.shared.lifecycle.longevity_monitor",
         "model_capacity_probe": "zephyr.shared.capacity_governance.model_capacity_probe",
         "module_birth_registry": "zephyr.shared.protocols.module_birth_registry",
@@ -651,7 +648,6 @@ class TestA11_OrphanChainIntegrity:
         "reasoning_spans": "zephyr.shared.observability.reasoning_spans",
         "sandbox_executor": "zephyr.shared.security.sandbox_executor",
         "slo_review_assistant": "zephyr.shared.maintenance.slo_review_assistant",
-        "task_heartbeat": "zephyr.shared.lifecycle.task_heartbeat",
         "ttl_cleanup_engine": "zephyr.shared.lifecycle.ttl_cleanup_engine",
         "vibe_experiment_tracker": "zephyr.shared.versioning.vibe_experiment_tracker",
         "zephyr_logger": "zephyr.shared.utils.zephyr_logger",
@@ -669,7 +665,7 @@ class TestA11_OrphanChainIntegrity:
 
     def test_orphan_count_matches_blueprint(self):
         """孤儿文件数量应与蓝图 §5.1b 一致"""
-        assert len(self.ORPHAN_FILES) == 35, f"Expected 35 orphan files, found {len(self.ORPHAN_FILES)}"
+        assert len(self.ORPHAN_FILES) == 33, f"Expected 33 orphan files, found {len(self.ORPHAN_FILES)}"
 
     def test_orphan_clusters_completeness(self, tmp_path):
         """验证 10 个集群均有代表文件可导入——防止集群退化"""
@@ -679,7 +675,7 @@ class TestA11_OrphanChainIntegrity:
             "cost_control": "cost_estimator",
             "security_audit": "ai_audit_guard",
             "resilience": "degradation_chain",
-            "infrastructure": "heartbeat_server",
+            "infrastructure": "longevity_monitor",
             "observability": "zephyr_logger",
             "quality_gate": "combinatorial_gate",
             "migration": "contract_tester",

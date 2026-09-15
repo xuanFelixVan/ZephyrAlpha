@@ -619,54 +619,6 @@ class TestEventBusUpgrade:
         assert upgrader.check_compatibility("test", 0) is False
 
 
-class TestHeartbeatServer:
-    def test_import(self):
-        pass
-
-    def test_register_and_check(self):
-        from zephyr.shared.alerts.heartbeat_server import HeartbeatServer
-
-        server = HeartbeatServer(timeout_seconds=30.0)
-        server.register("comp-1")
-        status = server.check("comp-1")
-        assert status.component_id == "comp-1"
-        assert status.is_alive is True
-
-    def test_check_all(self):
-        from zephyr.shared.alerts.heartbeat_server import HeartbeatServer
-
-        server = HeartbeatServer(timeout_seconds=30.0)
-        server.register("comp-1")
-        server.register("comp-2")
-        results = server.check_all()
-        assert len(results) == 2
-
-
-class TestTaskHeartbeat:
-    def test_import(self):
-        pass
-
-    def test_start_and_check(self):
-        from zephyr.shared.lifecycle.task_heartbeat import TaskHeartbeat
-
-        th = TaskHeartbeat(default_interval=60.0, timeout_factor=3.0)
-        th.start("task-1")
-        pulse = th.check("task-1")
-        assert pulse.task_id == "task-1"
-        assert pulse.is_alive is True
-
-    def test_detect_dead(self):
-        from zephyr.shared.lifecycle.task_heartbeat import TaskHeartbeat
-
-        th = TaskHeartbeat(default_interval=0.001, timeout_factor=2.0)
-        th.start("task-1")
-        import time
-
-        time.sleep(0.01)
-        dead = th.detect_dead()
-        assert "task-1" in dead
-
-
 class TestTtlCleanupEngine:
     def test_import(self):
         pass

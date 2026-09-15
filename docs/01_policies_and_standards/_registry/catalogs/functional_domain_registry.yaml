@@ -745,7 +745,6 @@ entries:
   - 隔舱管理(bulkhead_manager)
   - 金丝雀管理(canary_manager)
   - 混沌引擎(chaos_engine)
-  - 降级级联(degrade_cascade)
   - 滚动升级(rolling_upgrade)
   - 稳定性守卫(stability_guard)
   aliases:

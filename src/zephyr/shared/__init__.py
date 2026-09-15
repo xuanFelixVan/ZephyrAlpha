@@ -79,7 +79,6 @@ __all__ = [
     "EventType",
     "F",
     "FaultIsolator",
-    "HeartbeatServer",
     "InvalidTransitionError",
     "LongevityMonitor",
     "ModelCapacityProbe",
@@ -99,7 +98,6 @@ __all__ = [
     "StateMachineConfig",
     "StateMachineRegistry",
     "StateMachineRegistryError",
-    "TaskHeartbeat",
     "ToolCallRecord",
     "Transition",
     "TransitionGuard",
@@ -199,14 +197,12 @@ _SYMBOL_TO_SUBMODULE: dict[str, str] = {
     "get_state_machine_registry": "lifecycle.state_machine",
     # lifecycle.*（其他生命周期模块）
     "LongevityMonitor": "lifecycle.longevity_monitor",
-    "TaskHeartbeat": "lifecycle.task_heartbeat",
     "TtlCleanupEngine": "lifecycle.ttl_cleanup_engine",
     # alerts.*（告警体系）
     "AlertEscalation": "alerts.alert_escalation",
     "AlertManager": "alerts.alert_manager",
     "AlertPrecisionTracker": "alerts.alert_precision_tracker",
     "DualChannelAlert": "alerts.dual_channel_alert",
-    "HeartbeatServer": "alerts.heartbeat_server",
     # ai_guards.*（AI 守卫）
     "AiAuditGuard": "ai_guards.ai_audit_guard",
     "CombinatorialGate": "ai_guards.combinatorial_gate",
