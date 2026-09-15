@@ -1,3 +1,5 @@
+# [BLUEPRINT] MOD-DATA_ENG | (auto-injected by S4 reconciler) | §
+# [TTL] permanent
 # -*- coding: utf-8 -*-
 """2026-09-14 防复发三件套单测：920 宇宙并集 / ch_writer 列缓存失效 / DDL 前置校验+日线看门铃。
 
