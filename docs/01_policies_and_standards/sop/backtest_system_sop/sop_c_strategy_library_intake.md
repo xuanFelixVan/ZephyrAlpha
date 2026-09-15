@@ -64,11 +64,23 @@ related_issues:
 
 ## 5. Step C5 聚类去重 + 差异化论证（约束五硬门）
 
+> **退役标注（2026-09-15，净零声明兑现）**：本节人工流程已由 `zephyr.strategy_pipeline.intake`
+> （MOD-BT-189）机械化接管——ρ>0.6 聚类（簇首=证据最强者）、三轴字段级+指标信号指纹差异化论证、
+> family_redundancy 结构化块。机器判定与人工批一致率 8/8（回放证据=
+> `docs/_working/pipeline-research/acceptance6-replay.md`）。本节散文降级为**人工兜底通道**
+> （管线停用时按本节手工执行），语义真源不变。
+
 - 按三个轴聚类：信号源 / 持仓周期 / 市场状态适配；
 - 同簇只留校正后表现最优的 1-2 条；
 - 每条拟入库策略写《差异化论证》：与库内既有策略（含 8 个实盘 sleeve）逐轴对比，三轴全无差异 = 拒绝入库（少而精，禁堆砌相似策略制造多策略假象）。
 
 ## 6. Step C6 入库 → 挂图 → 配比
+
+> **退役标注（2026-09-15，净零声明兑现）**：本节①入库=`zephyr.strategy_pipeline.registry_writer`
+> （MOD-BT-192，safe_write CAS+only-add 断言+确定性 STR-* 编号）；②挂图=`scripts/backtest/auto_mount.py`
+> （MOD-BT-171，--apply 语义门+38 规则校验+报告落盘）；编排入口=intake.run_intake_auto（事件驱动，
+> 全程零人工至 candidate/sim）。本节散文降级为人工兜底通道；映射表（§6.2）真源已固化进 auto_mount
+> `CLASS_NODE_MAP`（SOP-C §6.2 五行规则表逐字承接）。**配比（③）与 sim→production 仍为 Owner 门。**
 
 1. **入库**：`strategy_registry.yaml` 新增 STR-* 条目（id / name / 信号源 / 持仓周期 / 状态适配 / 翻译来源溯源 / 校正后指标引用）；
 2. **挂图**：按类别挂到对应节点与 state_matrix 格子（`mounted` 数组），映射表：

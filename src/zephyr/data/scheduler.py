@@ -625,6 +625,14 @@ class IntegratorScheduler:
         self._stale_reap_max_age_hours = 6  # 运行中 reap 阈值：6 小时
         # 注册内部默认事件处理器（config_changed -> 策略热更新）
         self.subscribe("config_changed", self._on_config_changed)
+        # C6 策略管线唤醒钩子（MOD-BT-190 wire_data_scheduler：轻 kind drain+翻译件积压扫描；
+        # 懒加载防环，注册/运行故障均不反噬调度器——事件留管线 journal 恢复重放）
+        try:
+            from zephyr.strategy_pipeline.pipeline_events import wire_data_scheduler
+
+            wire_data_scheduler(self)
+        except Exception:  # noqa: BLE001 — 可选消费方注册失败不阻断数据调度
+            log.debug("strategy_pipeline 唤醒钩子注册失败（不影响调度器）", exc_info=True)
 
     # ── Stage 4 公共化（2026-07-28）：properties + 公共方法 ──
     # 消除 tests/zephyr/data/test_scheduler.py 中 63 处私有成员访问。

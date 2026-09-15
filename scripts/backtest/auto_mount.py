@@ -1,7 +1,7 @@
 # [BLUEPRINT] MOD-BT-171 | docs/03_modules/_domain_backtest/blueprint.md
 # [MODULE] scripts.backtest.auto_mount
 # [DOMAIN] D_BACKTEST
-# [DEPENDENCIES] scripts.backtest.translated._c4_engine(经翻译件注入); zephyr.data.ch_reader; zephyr.trading.decision_map; scripts.governance.d5_architecture.generators.check_decision_map; zephyr.shared.io.file_utils
+# [DEPENDENCIES] scripts.backtest.translated._c4_engine(经翻译件注入); zephyr.data.ch_reader; zephyr.trading.decision_map; scripts.governance.d5_architecture.generators.check_decision_map; zephyr.shared.io.file_utils; zephyr.strategy_pipeline.fw_backtest(挂图落地后 fw_backtest_due 事件)
 # [CONSUMERS] C6 入库线（strategy_registry 新条目→自动挂图）; decay_watch 月度挂图审计
 # [STARTUP] manual
 # [MATURITY] experimental
@@ -292,7 +292,7 @@ def _plan_inserts(entries: list[dict[str, Any]], dom, only: set[str] | None) -> 
         block = text[_split_blocks(text)[node][0]:_split_blocks(text)[node][1]] if node else ""
         if node and f"strategy_ref: {e['sid']}" not in block:
             seg_str = "; ".join(f"{s}={sr:+.2f}({n}d)" for s, (n, sr) in sorted(j["segments"].items()))
-            evidence = (f"auto_mount IS {IS_WIN[0]}..{IS_WIN[1]} states={'+'.join(j['activated'])}; "
+            evidence = (f"auto_mount IS {IS_WIN[0]}..{IS_WIN[1]} states={'+'.join(j['activated'] or [])}; "
                         f"{seg_str}; code={e['code_path']}").replace("'", "")  # YAML 单引号标量防注入
             ops.append({"kind": "node_mount", "node_id": node, "sid": e["sid"], "evidence": evidence[:150]})
         if j["activated"] and node:
@@ -475,6 +475,16 @@ def main() -> None:
     assert not fails, f"38 规则校验未过: {fails[:5]}"
     report_payload["fails"] = fails
     print(f"\n[APPLIED] ops={len(ops)} 校验全绿 written={getattr(r, 'written', True)}")
+    # S11/C3 断桥③: 挂图落地成功 → fw_backtest_due（TDM sleeves→整装回测自动跑+证据包）；
+    # 事件链任何故障不反噬挂图管线（journal 已留档，恢复=drain 重放）
+    try:
+        from zephyr.strategy_pipeline.fw_backtest import emit_fw_backtest_due
+
+        fw = emit_fw_backtest_due(trigger="auto_mount", sids=sorted(only))
+        tail = f" err={fw.get('error')}" if fw.get("error") else ""
+        print(f"[FW-BACKTEST-DUE] event={fw.get('event')} drained={fw.get('drained')}{tail}")
+    except Exception as exc:  # noqa: BLE001——事件链故障不回滚挂图
+        print(f"[FW-BACKTEST-DUE] emit 失败（不影响挂图结果）: {type(exc).__name__}: {exc}")
     if args.report:
         rp = write_report(report_payload, args.strategy)
         print(f"[REPORT] {rp}")

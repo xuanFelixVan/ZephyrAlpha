@@ -117,7 +117,10 @@ class TestEventSubscribe:
     def test_subscribe(self, scheduler):
         called = []
         scheduler.subscribe("task_completed", lambda **kw: called.append(kw))
-        assert len(scheduler.event_handlers["task_completed"]) == 1
+        # MOD-BT-190 起 __init__ 自带 C6 管线唤醒钩子（wire_data_scheduler 注册 _on_task_completed）
+        assert len(scheduler.event_handlers["task_completed"]) >= 1
+        assert any(getattr(h, "__name__", "") == "_on_task_completed"
+                   for h in scheduler.event_handlers["task_completed"])
 
     def test_emit_event(self, scheduler):
         called = []
