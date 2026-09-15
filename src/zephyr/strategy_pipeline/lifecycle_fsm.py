@@ -1,13 +1,16 @@
 # [BLUEPRINT] MOD-BT-188 | docs/03_modules/_domain_backtest/blueprint.md
 # [MODULE] zephyr.strategy_pipeline.lifecycle_fsm
 # [DOMAIN] D_BACKTEST
-# [DEPENDENCIES] zephyr.shared.lifecycle.state_machine
-# [CONSUMERS] zephyr.strategy_pipeline.intake（sim 流转）; C6 管线状态治理
+# [DEPENDENCIES] zephyr.shared.lifecycle.state_machine; zephyr.shared.security.secrets
+#   （OwnerTokenGuard 读 ZEPHYR_OWNER_APPROVAL_TOKEN）
+# [CONSUMERS] zephyr.strategy_pipeline.intake（sim 流转）; zephyr.strategy_pipeline.promotion_advisory
+#   （sim→production 拍板执行器）; C6 管线状态治理
 # [STARTUP] imported
 # [MATURITY] experimental
 # [INVARIANTS] 复用项目级 StateMachine 泛型基类；candidate→production 无直连边（A 方案治理边界：
-#   Owner 门=sim→production 转换的 guard 要求 owner_token，机器调用不带 token 必被拒）；
-#   非法转换抛 InvalidTransitionError（fail-closed）
+#   Owner 门=sim→production 转换的 guard 要求 owner_token 与 secrets 键 ZEPHYR_OWNER_APPROVAL_TOKEN
+#   sha256 常量时间比对（hmac.compare_digest），非空即真已废；键未配置=fail-closed 一律拒绝；
+#   机器调用不带 token 必被拒）；非法转换抛 InvalidTransitionError（fail-closed）
 # [MODIFY-GUARD] tests/strategy_pipeline/test_lifecycle_fsm.py
 # [STABILITY] experimental
 # [SAFETY] L
@@ -34,6 +37,9 @@ A 方案语义：candidate→sim 的 guard 三条件=Owner 已预授权的规则
 
 from __future__ import annotations
 
+import hashlib
+import hmac
+import logging
 from dataclasses import dataclass
 from typing import Any
 
@@ -44,6 +50,11 @@ from zephyr.shared.lifecycle.state_machine import (
     Transition,
     TransitionGuard,
 )
+from zephyr.shared.security.secrets import get_secret_or_default
+
+logger = logging.getLogger(__name__)
+
+OWNER_TOKEN_SECRET_KEY = "ZEPHYR_OWNER_APPROVAL_TOKEN"
 
 CANDIDATE = "candidate"
 SIM = "sim"
@@ -74,10 +85,28 @@ class SimPromotionGuard(TransitionGuard):
 
 
 class OwnerTokenGuard(TransitionGuard):
-    """Owner 门——A 方案保留的人类回路：sim→production/production→retired 必带 owner_token。"""
+    """Owner 门——A 方案保留的人类回路：sim→production/production→retired 必带合法 owner_token。
+
+    生产语义（S12 C4 升级，替代"非空即真"）：
+    - 配置了 secrets 键 ZEPHYR_OWNER_APPROVAL_TOKEN →
+      hmac.compare_digest(sha256(provided), sha256(secret)) 常量时间比对；
+    - 未配置 → fail-closed（log+拒绝，绝不降级放行）；
+    - 空串 token 与缺失同罪（机器流程不带 token 必拒）。
+    """
 
     def check(self, source: str, target: str, context: dict[str, Any] | None = None) -> bool:
-        return bool(context and context.get("owner_token"))
+        token = (context or {}).get("owner_token") or ""
+        if not token or not isinstance(token, str):
+            return False
+        secret = get_secret_or_default(OWNER_TOKEN_SECRET_KEY, "")
+        if not secret:
+            logger.warning("OwnerTokenGuard 拒绝 %s→%s：%s 未配置（fail-closed）",
+                           source, target, OWNER_TOKEN_SECRET_KEY)
+            return False
+        return hmac.compare_digest(
+            hashlib.sha256(token.encode("utf-8")).hexdigest(),
+            hashlib.sha256(secret.encode("utf-8")).hexdigest(),
+        )
 
 
 def build_strategy_fsm(sid: str) -> StateMachine:

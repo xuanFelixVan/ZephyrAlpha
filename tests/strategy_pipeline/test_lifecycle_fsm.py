@@ -64,15 +64,20 @@ class TestLifecycleFsm:
         with pytest.raises(InvalidTransitionError):
             fsm.transition(PRODUCTION, _ctx(owner="OWNER"))
 
-    def test_sim_to_production_requires_owner_token(self):
-        # A 方案核心：机器流程（无 owner_token）停门
+    def test_sim_to_production_requires_owner_token(self, monkeypatch):
+        # A 方案核心：机器流程（无 owner_token）停门；token 校验=secrets 绑定（C4 生产化），
+        # 未配置 ZEPHYR_OWNER_APPROVAL_TOKEN 时任何 token 都拒（fail-closed，旧"非空即真"已废）。
+        monkeypatch.delenv("ZEPHYR_OWNER_APPROVAL_TOKEN", raising=False)
         fsm = build_strategy_fsm("STR-X-004")
         fsm.transition(SIM, _ctx())
         with pytest.raises(TransitionGuardError):
             fsm.transition(PRODUCTION, _ctx())  # 机器调用：不带 token
         with pytest.raises(TransitionGuardError):
             fsm.transition(PRODUCTION, {"owner_token": ""})  # 空 token 也拒
-        fsm.transition(PRODUCTION, _ctx(owner="OWNER"))  # Owner 签字放行
+        with pytest.raises(TransitionGuardError):
+            fsm.transition(PRODUCTION, _ctx(owner="OWNER"))  # 键未配置：fail-closed
+        monkeypatch.setenv("ZEPHYR_OWNER_APPROVAL_TOKEN", "OWNER")  # 测试假值注入（禁读真实密钥）
+        fsm.transition(PRODUCTION, _ctx(owner="OWNER"))  # Owner 签字放行（比对通过）
         assert fsm.current_state == PRODUCTION
 
     def test_guard_triple_conditions(self):
@@ -91,12 +96,16 @@ class TestLifecycleFsm:
         with pytest.raises(TransitionGuardError):
             fsm.transition(SIM, None)
 
-    def test_production_retire_owner_gate(self):
+    def test_production_retire_owner_gate(self, monkeypatch):
+        # C4 生产化：门过=token 与 secrets 键比对一致（测试假值注入，禁读真实密钥）
+        monkeypatch.setenv("ZEPHYR_OWNER_APPROVAL_TOKEN", "OWNER")
         fsm = build_strategy_fsm("STR-X-008")
         fsm.transition(SIM, _ctx())
         fsm.transition(PRODUCTION, _ctx(owner="OWNER"))
         with pytest.raises(TransitionGuardError):
             fsm.transition(RETIRED, _ctx())
+        with pytest.raises(TransitionGuardError):
+            fsm.transition(RETIRED, _ctx(owner="WRONG"))
         fsm.transition(RETIRED, _ctx(owner="OWNER"))
         assert fsm.current_state == RETIRED
 
