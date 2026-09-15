@@ -3,11 +3,11 @@ doc_type: register
 ttl: permanent
 title: GATE 门禁登记表
 status: active
-generated_at: '2026-09-14T13:00:07Z'
+generated_at: '2026-09-15T19:29:32Z'
 generated_by: scripts/governance/generators/generate_gate_registry.py
 maintenance: auto
 source: .pre-commit-config.yaml + commit_gates/*.py + MANUAL_GATES
-total_gates: 166
+total_gates: 167
 gates:
 - gate_id: GATE-PROTECTED-PATHS
   name: 'GATE-PROTECTED-PATHS: 受保护路径写入检测（#ARCH-MODEL-LIFECYCLE-001 P1 Layer 2）'
@@ -35,6 +35,16 @@ gates:
   description: '检测 staged 的 src/zephyr/**/*.py module docstring 是否含 # [ALGO_FLOW]
     标记（算法全景图推导流程图真源），缺失则阻断'
   files_trigger: ''
+  always_run: false
+  category: unknown
+  status: active
+  source: pre-commit
+- gate_id: GATE-PYTEST-CONFIG-DRIFT
+  name: 'GATE-PYTEST-CONFIG-DRIFT: pyproject 与 pytest_min.ini 双配置语义对齐（2026-09-15 外审遗留②）'
+  entry: python scripts/governance/d7_code/compare_pytest_configs.py
+  description: 当 pyproject.toml 或 pytest_min.ini 变更时校验双配置 markers 集合相等/timeout 继承/ini
+    无 cache_dir——防同测试两配置判定漂移（P1-4 复验期 INTERNALERROR 实证）
+  files_trigger: ^(pyproject\.toml|\.runtime/tmp/pytest_min\.ini)$
   always_run: false
   category: unknown
   status: active
@@ -1379,9 +1389,9 @@ gates:
   source: commit-gate
   own_scope: true
 - gate_id: REGISTRY-YAML-PARSE
-  name: 'REGISTRY-YAML-PARSE: capability 注册表结构硬化门禁（防尾追悬挂第四道保险）（CommitGate, priority=54）'
+  name: 'REGISTRY-YAML-PARSE: 注册表结构硬化门禁（防尾追悬挂/防重复根键）（CommitGate, priority=54）'
   entry: in-process (GitCommitGateway)
-  description: capability 注册表结构硬化门禁（防尾追悬挂第四道保险）
+  description: 注册表结构硬化门禁（防尾追悬挂/防重复根键）
   files_trigger: ''
   always_run: false
   category: commit_gate
