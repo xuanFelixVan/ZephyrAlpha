@@ -16876,4 +16876,12 @@ creation_tokens:
   token: 881-name-pipeline-20260915
   created_by: st-880fill-20260911
   capability: refresh_881_names
+- file: src/zephyr/signal_ashare/tradability_preflight.py
+  token: tdm-l310-preflight-20260916
+  created_by: st-tdmbe-20260909
+  capability: trading_decision_map
+- file: docs/03_modules/_domain_signal/tradability_preflight/blueprint.md
+  token: tdm-l310-preflight-bp-20260916
+  created_by: st-tdmbe-20260909
+  capability: trading_decision_map
 di_seam_exemptions: []
