@@ -295,6 +295,16 @@ Start-VM -Name zephyr-ch
    备份 19 天连败同款静默病），已加固=锁 skip 时写 logs/backup_skipped_*.json 留痕
    （ASCII、PSParser 验证通过）。
 
+8. **主动基线重建完成（2026-09-15，Owner 指令"现在就重建"）**：10:22 以
+   `backup.ps1 -Mode ch -Force` 发射，13:14 BACKUP_CREATED，全程 2h51m（10287s，未触发
+   3h 轮询超时）。新基线 market.zip=266.6 GB（386.4 GB 未压缩/78.2 万文件/197 表，
+   size_match=true）。**保险措施**：删除旧文件前先在 VM 内拷贝 inc.zip 留底
+   （inc_prerebase_keep.zip 111 GB，字节级一致），成功后已删+fstrim 归还宿主（655 GiB
+   unmap）。宿主 VHDX 517.5 GB（内部实占 249 GB——下次维护窗可再 Optimize-VHD 回收
+   ~250 GB，不急）。**遗留怪癖**：重建后 state verified=false 系误报——体积比检查拿新
+   基线与上一次增量比（2.39>2.0 阈值），该启发式只适用增量对增量场景，建议备份会话
+   修为"rebase 时与上一基线比或直接跳过 ratio 检查"。
+
 ### §0.6 五图对齐视图
 
 <!-- AUTOGEN: source=depgraph+dataflow+decision, generator=generate_blueprint_panorama.py, reconciler=sync_panorama_module.py -->
