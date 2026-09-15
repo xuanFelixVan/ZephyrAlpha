@@ -1898,3 +1898,21 @@ entries:
   related_arch: []
   related_rulings: []
   superseded_by: null
+- ruling_id: '裁定#254'
+  title: 治理加法批 A3+A4 production 接线 Owner 门位放行——kill_switch_orchestrator 挂 boot_hooks+last_resort_watchdog 接 escalation 终极兜底
+  date: '2026-09-16'
+  category: 治理运维
+  status: active
+  summary: >-
+    Owner 问答门位放行（2026-09-16 晨，Qoder 会话 st-govmap-20260915 提请）。背景=治理挖矿地图
+    加法批核验结论：kill_switch_orchestrator（五域 system/skills/trading/rollback/capacity
+    编排层无人实例化）与 last_resort_watchdog（MOD-INF-022，TEST-ONLY）均为有实现无生产调用方
+    的半死模块。裁定：①A3=在 boot_hooks 启动链实例化 orchestrator+register_default_switches
+    （五域适配目标已核验 import 全可解析），使 kill switch 开机即注册生效；②A4=last_resort_
+    watchdog 接入 escalation 协议终极兜底位（emergency_shutdown 仅限升级协议末级触发，不得自
+    触发）。风险认知=误触发影响交易，施工须带 RBAC/单测+boot 冒烟证据，门位以本裁定为凭同
+    commit 原子落库。
+  evidence: docs/_working/2026-09-15-governance-module-mining-sop-map.md §5 加法表 A3/A4 行 + 调研接线规格（五域目标 import 核验清单）+ 测试证据 72+21+54 passed
+  related_arch: ['#ARCH-312']
+  related_rulings: ['裁定#253']
+  superseded_by: null
