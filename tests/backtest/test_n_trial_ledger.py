@@ -1,3 +1,5 @@
+# [BLUEPRINT] MOD-BT-018 | (auto-injected by S4 reconciler) | §
+# [TTL] permanent
 """N 试次账本（MOD-BT-200）单元测试——零 CH/零网络，假 conn + tmp_path 注入。
 
 覆盖面：
