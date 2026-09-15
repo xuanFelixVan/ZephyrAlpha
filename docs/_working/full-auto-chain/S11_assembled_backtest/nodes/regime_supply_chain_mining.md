@@ -51,9 +51,10 @@ parent: S11_assembled_backtest
 - **供给链实证**：print_regime_history.py:99-141 走 `build_shrinkage_schedule`，
   walk-forward（train_years/detect_window 参数）真实发生季度级重拟合；L151-185 落库
   dominant 列未见任何跨段标签对齐（label alignment/Viterbi 统计特征锚定）步骤——
-  **待验证**：RegimeFeatureBuilder 内部是否有对齐逻辑（本挖矿未读该文件，登记施工
-  前必查）。13_regime_phase3_engineering_plan §2.1.6.4"标签对齐协议"有规划位，
-  状态未核实。
+  **已核实（2026-09-15 本挖矿）**：regime_feature_builder.py 全文无标签对齐逻辑
+  （grep align/label/对齐 仅命中数据日期对齐 L585；INVARIANTS L8 只钉特征列序，
+  L39"季度内同一 HMM 推断"=跨季 refit 标签语义无保证；walk-forward QE 重拟合
+  L375-476 实锤）→ RSC-1 前半结论=**标签对齐缺失确认存在**。
 
 ### 1.4 核心发现 F2——回测/实盘双轨语义分叉（整装回测证据的系统性偏差）
 
