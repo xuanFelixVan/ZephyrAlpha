@@ -169,17 +169,19 @@ class PeriodicGovernanceInspector:
 
             from zephyr.gov_drift.drift_engine import scheduled_light
 
-            result = run_sync(scheduled_light())
+            # timeout 兜底（2026-09-15）：drift 扫描曾因检测器子进程管道排空挂死拖垮宿主；
+            # result.drifts→result.events 修正：ScanResult 无 drifts 字段，原代码 AttributeError 被吞=HIGH 漂移永不告警
+            result = run_sync(scheduled_light(), timeout=600)
             high_drifts = [
                 d
-                for d in result.drifts
+                for d in result.events
                 if getattr(d, "severity", "").value == "HIGH" or getattr(d, "severity", "") == "HIGH"
             ]
             if high_drifts:
                 logger.warning("FLE drift scan: %d HIGH drifts detected", len(high_drifts))
                 PeriodicGovernanceInspector.auto_fix_drifts(high_drifts)
             else:
-                logger.info("FLE drift scan: clean (%d total, 0 HIGH)", len(result.drifts))
+                logger.info("FLE drift scan: clean (%d total, 0 HIGH)", len(result.events))
         except Exception:  # noqa: BLE001 — 5.135治标: broad exception catch
             logger.debug("FLE drift scan failed", exc_info=True)
 

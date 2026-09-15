@@ -278,6 +278,7 @@ def launch_all() -> dict[str, bool]:
                 print(f"[FATAL] Layer {layer_idx + 1} server {sid!r} failed to start — aborting")
                 gateway.terminate_all()
                 gateway.shutdown()
+                _gateway = None  # 已关停，防 atexit _graceful_shutdown 二次 terminate
                 return results
 
         time.sleep(1.0)
@@ -288,6 +289,7 @@ def launch_all() -> dict[str, bool]:
                 print(f"[FATAL] Layer {layer_idx + 1} server {sid!r} died after start — aborting")
                 gateway.terminate_all()
                 gateway.shutdown()
+                _gateway = None  # 已关停，防 atexit _graceful_shutdown 二次 terminate
                 return results
 
     print(f"\n{'=' * 60}")

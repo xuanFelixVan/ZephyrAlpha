@@ -145,6 +145,7 @@ import json
 import os
 import signal
 import sqlite3
+import sys
 import uuid
 from datetime import UTC, datetime
 
@@ -509,7 +510,7 @@ async def _dispatch_detector(detector: Detector, sem: asyncio.Semaphore) -> dict
         proc = None
         try:
             proc = await asyncio.create_subprocess_exec(
-                "python",
+                sys.executable,
                 script_path,
                 *detector.script_args,
                 stdout=asyncio.subprocess.PIPE,
@@ -551,10 +552,17 @@ async def _dispatch_detector(detector: Detector, sem: asyncio.Semaphore) -> dict
         finally:
             # 5.112.1 修复：CancelledError/TimeoutError路径确保子进程被kill，防止孤儿进程
             # 5.68.2 修复：kill 后用 communicate() 排空管道并回收，wait() 不排空管道可能残留孤儿
+            # 挂起治本（2026-09-15）：孙进程继承管道句柄时 communicate() 等 EOF 永不返回
+            # （Windows 实测挂 48min）——排空加 5s 上界，超时强关 transport 兜底
             try:
                 if proc is not None and proc.returncode is None:
                     proc.kill()
-                    await proc.communicate()
+                    try:
+                        await asyncio.wait_for(proc.communicate(), timeout=5)
+                    except (TimeoutError, asyncio.TimeoutError):
+                        transport = getattr(proc, "_transport", None)
+                        if transport is not None:
+                            transport.close()
             except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
                 logger.debug("suppressed error in drift_engine", exc_info=True)
 
