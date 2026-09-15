@@ -7,7 +7,8 @@
 # [MATURITY] experimental
 # [MODIFY-GUARD] none
 # [INVARIANTS] 数据=CH 后复权日K线 OHLCV+amount（与推理同口径）；切分=时序 80/20（禁随机打乱）；
-#   格式=Kronos finetune_csv 规范（date,open,high,low,close,volume,amount）；
+#   格式=Kronos finetune_csv 规范（timestamps,open,high,low,close,volume,amount，
+#   列名以 vendor/Kronos/finetune_csv/README.md 官方要求为准）；
 #   输出=.runtime/tmp/kronos_finetune_data/（gitignore 区）；启动脚本=调用官方 finetune/
 #   目录下 finetune.py（Kronos 官方仓 vendor/Kronos/finetune/）
 # [STABILITY] experimental
@@ -21,8 +22,8 @@
 """FAC-E1E Kronos 微调数据管线——CH 数据→finetune CSV→启动脚本。
 
 官方微调脚本在 vendor/Kronos/finetune/finetune.py，输入=每标的一个 CSV
-（columns: date,open,high,low,close,volume,amount），按时间序 80/20 切分。
-本模块准备数据+生成启动命令（GPU 夜窗/周六窗手动执行）。
+（columns: timestamps,open,high,low,close,volume,amount，官方 README 规范），
+按时间序 80/20 切分。本模块准备数据+生成启动命令（GPU 夜窗/周六窗手动执行）。
 
 用法:
   python scripts/backtest/kronos_finetune_prep.py prep --top-n 10
@@ -71,7 +72,10 @@ def fetch_klines(symbols: list[str], days: int) -> dict[str, pd.DataFrame]:
     for c in ("open", "high", "low", "close", "volume", "amount"):
         df[c] = pd.to_numeric(df[c], errors="coerce")
     df = df.dropna().drop_duplicates(["date", "s"], keep="last")
-    return {s: g.reset_index(drop=True) for s, g in df.groupby("s")}
+    # 输出列=官方 finetune_csv 规范七列（date→timestamps，辅助列 s 不落盘）
+    cols = ["timestamps", "open", "high", "low", "close", "volume", "amount"]
+    return {s: g.rename(columns={"date": "timestamps"})[cols].reset_index(drop=True)
+            for s, g in df.groupby("s")}
 
 
 def run_prep(top_n: int = 10, days: int = 500) -> dict:
