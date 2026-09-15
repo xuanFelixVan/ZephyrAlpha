@@ -4,7 +4,7 @@ ttl: permanent
 doc_type: register
 title: 规则路径目录（唯一真源 SSoT）
 status: active
-generated_at: '2026-09-15T16:36:32Z'
+generated_at: '2026-09-15T18:58:36Z'
 generated_by: scripts/governance/d3_metadata/generate_rule_catalog.py
 maintenance: auto
 total_files: 256
@@ -1841,10 +1841,10 @@ files:
   section_count: 6
 - path: docs/01_policies_and_standards/sop/README.md
   module_id: SOP-INDEX-001
-  title: SOP 方法论真源地图（九族文件夹导航）
+  title: SOP 方法论真源地图（八族文件夹导航）
   doc_type: index
   status: active
-  version: 1.5.0
+  version: 1.4.0
   rule_form: ''
   scope: ''
   stability: ''
@@ -2069,7 +2069,7 @@ files:
   title: 挖矿 SOP——全网调研+内部反查的全面挖掘方法论（六向寻路/防噪音四闸/矿脉枯竭终止/挖后自审闸）
   doc_type: policy
   status: active
-  version: 1.4.0
+  version: 1.3.0
   rule_form: procedural
   scope: ''
   stability: ''
