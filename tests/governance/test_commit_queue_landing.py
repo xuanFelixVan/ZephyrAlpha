@@ -686,3 +686,36 @@ class TestWorktreeGitlinkGuard:
         # 重建后 _git_wt 恢复可用
         r = landing._git_wt("rev-parse", "--show-toplevel")
         assert Path(r.stdout.strip()).resolve() == wt2.resolve()
+
+
+class _NothingToCommitStub(_StubGateway):
+    """模拟快照应用静默丢失（2026-09-15 q-0003 假落地事故）：gateway 报
+    NOTHING_TO_COMMIT 且不产生任何 commit——guard 必须死信而非伪装 ok。"""
+
+    def commit(self, *args, **kwargs):  # noqa: ANN002, ANN003 — 桩签名放宽
+        self.events.append(("commit", {"message": "", "files": []}))
+        return CommitResult(
+            status=CommitStatus.NOTHING_TO_COMMIT, message="nothing staged", commit_hash=None
+        )
+
+
+def test_nothing_to_commit_with_unapplied_blobs_goes_dead(
+    tmp_repo: Path, queue_root: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    landing, _real = _make_landing(tmp_repo, queue_root)
+    nothing = _NothingToCommitStub(landing.worktree_path)
+    monkeypatch.setattr(landing, "_gateway", nothing)
+
+    item = cq.enqueue_item(
+        "sess-false-done",
+        "feat: 假落地回归测试",
+        [("docs/guard.txt", b"v2-line")],
+        queue_root=queue_root,
+    )
+    stats = cq.drain_queue(queue_root, landing=landing)
+
+    assert stats["dead"] == 1 and stats["done"] == 0, f"必须死信不得假 ok: {stats}"
+    dead = json.loads((queue_root / "dead" / f"{item['qid']}.json").read_text(encoding="utf-8"))
+    assert "快照未真应用" in dead.get("dead_reason", ""), dead.get("dead_reason", "")
+    # dev 未被推进（无假 landed_id）
+    assert _git_text(tmp_repo, "rev-parse", "refs/heads/dev") != (item.get("landed_id") or "unset")

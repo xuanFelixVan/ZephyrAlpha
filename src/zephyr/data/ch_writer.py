@@ -719,6 +719,18 @@ def _get_table_columns_set(table: str) -> set[str]:
 table_insertable_cols_cache: dict[str, set[str]] = {}
 
 
+def invalidate_table_schema_cache(table: str) -> None:
+    """清除指定表的列缓存（table_cols_cache + table_insertable_cols_cache）。
+
+    2026-09-14 news_data 死信事故治本：常驻进程（scheduler）在表结构改版后
+    缓存不失效，导致 TCP 路径（用 result.columns）成功而 HTTP TSV 路径
+    （用旧缓存列清单）持续失败进 local_fallback。插入失败时调用本函数
+    强制下次 DESCRIBE 重查。
+    """
+    table_cols_cache.pop(table, None)
+    table_insertable_cols_cache.pop(table, None)
+
+
 def get_insertable_columns_set(table: str) -> set[str]:
     """查询表的可插入列名集合（排除 MATERIALIZED/ALIAS，保留 DEFAULT 和普通列）。
 
@@ -852,6 +864,9 @@ def write_tsv_outcome(
     if http_insert(sql, tsv_bytes, timeout=timeout):
         _record_write_outcome(WriteDisposition.CH_COMMITTED, time.time() - _t0)
         return WriteOutcome(WriteDisposition.CH_COMMITTED, "http")
+    # 列错配防线（2026-09-14 news_data 死信事故）：插入失败可能是列缓存过期
+    # （表结构改版后常驻进程缓存不失效）——失效之，下次写入强制重查 DESCRIBE。
+    invalidate_table_schema_cache(table)
     if not create_fallback:
         log.warning("write_tsv(%s): HTTP API 失败，跳过本地落盘（replay 模式）", table)
         _record_write_outcome(WriteDisposition.NOT_DURABLE, time.time() - _t0)
