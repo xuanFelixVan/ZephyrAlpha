@@ -4,14 +4,14 @@ title: "backup_inventory — 备份内容与方法清单"
 doc_type: register
 ttl: permanent
 status: Active
-version: "1.1.0"
+version: "1.2.0"
 layer: L0_infrastructure
 owner: ZephyrAlpha-Owner
 classification: confidential
 language: zh
 created_by: human_plus_agent
 date: "2026-07-28"
-last_updated: "2026-09-14"
+last_updated: "2026-09-15"
 summary: "完整记录备份内容/位置/方法/频率的清单——代码/PG/SQLite/CH数据/CH配置/CH虚拟机全覆盖，AI无需猜测即可理解备份布局"
 tags: [backup, inventory, register, MOD-INF-043]
 responsibility_domain: 
@@ -33,7 +33,7 @@ design_maturity: production
 |------|------|
 | 驱动器 | F:（外接硬盘） |
 | 总容量 | 1863 GB |
-| 可用空间 | 2026-07-28: 1240 GB → 2026-09-14 审计: 162 GB（主因 VHDX 虚胖 ~626 GB，见 §10.1） |
+| 可用空间 | 2026-07-28: 1240 GB → 2026-09-14 审计: 162 GB（主因 VHDX 虚胖 ~626 GB，见 §10.1）→ 2026-09-15: 628 GB（删除 19 GB 陈旧 code_backup + working_vault 上线） |
 | 单点故障 | 是 — #ARCH-CH-032 用户已推翻（单用户回测期，已接受该风险） |
 
 ---
@@ -42,18 +42,11 @@ design_maturity: production
 
 ```
 F:\
-├── code_backup\              ← 代码 + 配置 + PG 配置 + CH 配置（robocopy /MIR 镜像）
-│   ├── src\                   （Python 源码）
-│   ├── config\
-│   │   ├── .env.postgres      （PG 凭证）
-│   │   ├── .env.clickhouse    （CH 端点 + RBAC 用户）
-│   │   ├── .env.ch_backup     （VM SSH 凭证）
-│   │   ├── system_configs\
-│   │   │   ├── pg\            （pg_hba.conf, postgresql.conf, pg_ident.conf）
-│   │   │   └── ch\            （config.xml, users.xml, backup_disk.xml, fstab）
-│   ├── docs\, scripts\, tests\
-│   ├── pyproject.toml         （Python 依赖清单）
-│   └── AGENTS.md, ...
+├── working_vault\             ← 代码快照 + git bundle（v2.1 硬链接去重，2026-09-15 起取代 code_backup）
+│   ├── <yyyyMMdd>\            （每日快照，保留 14 天；未变更文件与前日硬链接共享；
+│   │                            含 src\、config\.env.*、config\system_configs\、docs\、
+│   │                            scripts\、tests\、pyproject.toml、AGENTS.md 等全仓内容）
+│   └── git_bundles\           （git bundle 全历史备份，≥7 天自动刷新，保留最新 2 份）
 │
 ├── db_dumps\                  ← PG 转储 + SQLite 转储（robocopy /MIR 镜像）
 │   ├── depgraph.dump          （PG 自定义格式转储，约 81 MB——2026-09 起库含 ig_* 产业链数据，全库 944 MB）
@@ -78,18 +71,18 @@ F:\
 
 | # | 组件 | 来源 | 备份目标 | 方法 | 频率 | 覆盖策略 | 预估每日写入量 |
 |---|------|------|----------|------|------|----------|----------------|
-| 1 | 代码 + 配置 | `D:\ZephyrAlpha\` | `F:\code_backup\` | robocopy /MIR | 每日（06:00）+ 提交后 | 镜像（仅变更文件） | 约 10-100 MB |
+| 1 | 代码 + 配置 | `D:\ZephyrAlpha\` | `F:\working_vault\<yyyyMMdd>\` | 硬链接快照（backup.ps1 Stage 3，未变更文件与前日共享） | 每日（06:00）+ 提交后 | 滚动保留 14 天 | 约 10-100 MB（仅新变更） |
 | 2 | PG 数据 | PG `depgraph` 库 | `F:\db_dumps\depgraph.dump` | pg_dump -Fc | 每日 | 覆盖 | 约 81 MB（2026-09 实测） |
 | 3 | PG 角色 | PG `pg_roles` | `F:\db_dumps\pg_globals.sql` | psql 查询 | 每日 | 覆盖（密码已掩码） | <1 KB |
-| 4 | PG 配置 | `C:\Program Files\PostgreSQL\16\data\*.conf` | `config\system_configs\pg\`（→ code_backup） | Copy-Item | 每日 | 覆盖 | 约 100 KB |
+| 4 | PG 配置 | `C:\Program Files\PostgreSQL\16\data\*.conf` | `config\system_configs\pg\`（随 #1 快照进 vault） | Copy-Item | 每日 | 覆盖 | 约 100 KB |
 | 5 | SQLite（治理库） | `data\databases\governance.db` | `F:\db_dumps\governance_backup.db` | sqlite3 .backup / Python | 每日 | 覆盖 | 约几 MB |
 | 6 | SQLite（会话库） | `data\databases\session_continuity.db` | `F:\db_dumps\session_backup.db` | sqlite3 .backup / Python | 每日 | 覆盖 | 约几 MB |
 | 7 | CH 数据（基线） | CH c1_market + c3_fundamental | `F:\ch_backup_disk.vhdx` → market.zip | CH BACKUP TO Disk | 一次性 + 自动重建基线（增量 ≥50% 基线时） | 重建基线时覆盖 | 0（稳定不变） |
 | 8 | CH 数据（增量） | CH c1_market + c3_fundamental | `F:\ch_backup_disk.vhdx` → inc.zip | CH BACKUP ... SETTINGS base_backup | 每日 | 覆盖（单文件） | 约 1-5 GiB（2026-09-14 实测：inc.zip 已累积 93 GB/日覆盖重写，临近 50% 重建阈值） |
-| 9 | CH 配置 | 虚拟机 `/etc/clickhouse-server/*.xml` + `/etc/fstab` | `config\system_configs\ch\`（→ code_backup） | SSH cat（ch_vm_ssh.py --sync-config） | 每日 | 覆盖 | 约 110 KB |
+| 9 | CH 配置 | 虚拟机 `/etc/clickhouse-server/*.xml` + `/etc/fstab` | `config\system_configs\ch\`（随 #1 快照进 vault） | SSH cat（ch_vm_ssh.py --sync-config） | 每日 | 覆盖 | 约 110 KB |
 | 10 | CH 虚拟机（系统+程序） | `D:\HyperV\VMs\zephyr-ch\` | `F:\ch_vm_backup\` | Stop-VM → robocopy → Start-VM | 每周六 06:00 AutoCheck；仅在 CH 版本/配置变更时全量 | robocopy /MIR | 0（跳过）或约 555 GB（罕见） |
 | 11 | CH RBAC 用户 | CH `system.users` | （不备份 — 配置即代码） | `apply_rbac.py` 从 YAML 重建 | 恢复时 | 不适用 | 不适用 |
-| 12 | Python 依赖 | pyproject.toml | `F:\code_backup\pyproject.toml`（通过 #1） | robocopy | 每日 | 镜像 | <10 KB |
+| 12 | Python 依赖 | pyproject.toml | `F:\working_vault\<latest>\pyproject.toml`（通过 #1） | 随 #1 快照 | 每日 | 随 #1 | <10 KB |
 
 ---
 
@@ -213,7 +206,7 @@ Get-Content D:\ZephyrAlpha\data\databases\backup_state.json
 | 913 GB | ch_backup_disk.vhdx | 内部实仅 287 GB（market.zip 207 + inc.zip 93），**约 626 GB 为 VHDX 高水位虚胖** |
 | 592 GB | ch_vm_backup\data.vhdx | 2026-08-22 虚拟机全量备份（设计内，仅 CH 升级时刷新） |
 | 171 GB | offrepo_backup | 2026-09-08 新增仓外资产镜像（robocopy /MIR 增量，源为 cold_archive 等） |
-| 25 GB | code_backup | /MIR 镜像增量；内含 .git.backup.20260803 占 6.4 GB（清理候选，待 Owner 拍板） |
+| ~~25 GB~~ | ~~code_backup~~ | **已删除（2026-09-15，Owner 拍板）**——v2.1 起被 working_vault 硬链接快照取代；删除后 F 盘可用空间回升至 628 GB |
 | 1.3 GB | 个人文件 + db_dumps | 正常 |
 
 **结论：备份设计本身是增量（robocopy /MIR + CH base/inc），并非"每天全量复制"。盘满主因
