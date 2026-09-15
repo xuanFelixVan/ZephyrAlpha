@@ -77,6 +77,25 @@ gaps:
     created: "2026-07-24"
     last_updated: "2026-07-24"
 
+  # === 2026-09-15: kline_index 399106 涨跌家数断更（新浪/miniqmt 均不进料，结构性）===
+  - id: "kline_index_399106_breadth_stale"
+    table: "c1_market.kline_index"
+    gap_type: "source_stale"
+    start_date: "2026-07-03"
+    end_date: null  # 持续——消费侧 fallback 已接（regime_feature_builder._load_breadth → EQW_ALLA 补位）
+    date_column: "trade_date"
+    detection_threshold: 1
+    status: "accepted"
+    root_cause: "399106 advance_count/decline_count 自 2026-07-03 起 0 填充（akshare_provider
+      L7565 新浪源与 miniqmt_provider L1385 均不提供该两列，历史数据为旧进料，CH DEFAULT 兜底）；
+      下游四消费者连环失活：HMM F4 ad_ratio 恒 0 / RiskSignal #7 / T3 sentiment / S2 breadth_thrust"
+    resolution_plan: "消费侧补洞已落地（regime_feature_builder._load_breadth 无数据日回退
+      kline_index_calc EQW_ALLA 全 A 家数；ad_ratio=tanh(log(比值)) 比值自归一，两源混用
+      无量纲跳变）；provider 侧补进料口属治本待办（FPB-1）"
+    primary_alternative: "c1_market.kline_index_calc (EQW_ALLA, index_eqw_compute 从 kline_daily 派生，scheduler 日更)"
+    created: "2026-09-15"
+    last_updated: "2026-09-15"
+
   # === 2026-07-24: hk_connect_flow 数据源覆盖范围受限 ===
   # AKShare stock_hsgt_hist_em 返回完整历史，但港交所于 2024-08-16 停止公布
   # 沪深港通每日资金流向明细数据。任务为 incremental=false 全量刷新，
@@ -736,11 +755,11 @@ gaps:
     detection_threshold: 590
     expected_daily_avg: 594
     actual_daily_avg: 494
-    status: "open"  # 逐日实测：09-10=594 → 09-11=594 → 09-14=544(-50) → 09-15=494(再-50)，缺口全集中在 8807 段(20)+8808 段(80)=概念板块，tqcenter 换源通道（commit f908147aae，他会话域）采集宇宙在缩水。方案 J 分钟合成前日收盘取自此表，09-15 已有 51 板块因无前日收盘被跳过（合成覆盖 531/586）——不遏制则合成覆盖每天 -50。
-    root_cause: "tqcenter 源（他会话维护）8807/8808 号段概念板块日K 逐日停更；疑似源侧板块清单变化或采集任务宇宙过滤，根因需 tqcenter 会话排查。"
-    impact: "①方案 J 分钟合成逐日缩水（前日收盘缺失板块无法合成）；②regime 板块特征等日K 消费方同步受损。"
-    resolution_plan: "转交 tqcenter/kline_sector 维护会话排查 8807/8808 停更根因并回补 09-14/09-15 缺口；方案 J 侧无需改动（合成器对缺失板块 skip 留痕）。"
-    primary_alternative: "mootdx 日K 死亡无替代源；kline_sector_intraday tdx 真值仅存量到 09-10。"
-    evidence: "kline_sector 按日 uniq(code)：09-10=594/09-11=594/09-14=544/09-15=494；缺失号段 8807=20、8808=80（vs 09-11）；合成器 09-15 skip_data=55"
+    status: "mitigated"  # 2026-09-15 19:3x st-circmv-synthcw-20260915 根因闭环+修复：**根因非源端宇宙缩水，而是任务并发竞争**——kline_sector_880_incremental(16:30:39) 与 kline_sector_incremental(16:30:43) 几乎同时启动并发竞争 tqcenter SDK 单例（通达信插件非线程安全），后者部分批次 get_market_data 拉空（缺 8807/8808 段：09-14 缺 50、09-15 缺 100 递进=竞争位置漂移）；反证=09-12 02:27 单独补跑 kline_sector 全量 594 板块成功、同日 16:30 并发即缺。修复双管：①tasks.yaml kline_sector_incremental dependencies 追加 kline_sector_880_incremental 串行错峰（CAS 已落）；②09-14/09-15 缺口从 kline_sector_880 表（同源数据完好，459 板块×30 天）按尺度换算回补 154 行（volume÷100、amount×1e4，data_source='tqcenter_880fix'），回补后两日覆盖 596/596 板块（超 09-11 基线 594），合成覆盖恢复 580/586。残余：并发根因理论需后续单飞验证（下一交易日 16:30 串行后观察 uniq 是否回 594）。
+    root_cause: "kline_sector_880_incremental 与 kline_sector_incremental 两任务 daily_kline 调度同时触发，并发竞争 tqcenter SDK 单例（通达信插件，非线程安全），kline_sector 任务部分批次拉空；失败批次静默继续（provider ERROR_CONTRACT 单批失败 log+继续），日积月累呈'递减'假象。"
+    impact: "已回补消除。若未修复：方案 J 分钟合成前日收盘缺失板块逐日增加（09-15 skip 55），regime 日K 消费方同步受损。"
+    resolution_plan: "已完成（错峰+回补）。观察项：下一交易日 16:30 串行后 kline_sector uniq(code) 应回 594±2（sector_constituent 宇宙）；若仍缺再查 tqcenter 源端。"
+    primary_alternative: "kline_sector_880 表（880 段 459 板块）可作 880 系回补源（本次实证有效）；881 段无独立表，依赖 kline_sector 本身。"
+    evidence: "fetch_perf 时序：09-15 16:30:39(880任务 13935 行=459×30) 与 16:30:43(kline_sector 14883 行=494×30) 并发；09-12 02:27 单独跑 17901 行=594×30 全量；缺失名单 8807 段 20+8808 段 80 连续号段=批次边界；量纲对照 880805.SH 09-11 两表 close 一致/volume 100 倍/amount 1e-4 倍（换算系数实证）"
     created: "2026-09-15"
-    last_updated: "2026-09-15"
+last_updated: "2026-09-15"
