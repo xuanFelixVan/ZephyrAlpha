@@ -405,3 +405,98 @@ class TestReplayBatch:
         assert result["replayed"] == 2
         assert result["remaining"] == 1
         assert manifest_path.exists()  # 剩余1条
+
+
+class TestManifestKeyNormalization:
+    """manifest 合并键归一化回归（2026-09-16 tick 排水冻结实证）。
+
+    save_fallback 落盘条目 file 是反斜杠（str(relative_to)），_adopt_orphans
+    收编条目是正斜杠——_write_manifest 若排除键归一化而合并键不归一化，
+    已回灌/skipped 条目 pop 不中永生，吃光 replay_batch 的 max_files 预算，
+    真实积压永久冻结（当日 5510 文件 19h 零回灌）。
+    """
+
+    def test_skipped_backslash_entry_removed(self, tmp_path, monkeypatch):
+        """文件不存在的反斜杠条目（skipped）必须从 manifest 移除。"""
+        monkeypatch.setattr(local_replay, "_FALLBACK_DIR", tmp_path)
+        manifest_path = tmp_path / "_manifest.jsonl"
+
+        dead = {
+            "table": "c1_market.tick_data",
+            "file": "c1_market__tick_data\\20260915_101255_dead.tsv",
+            "rows": 3000,
+        }
+        manifest_path.write_text(json.dumps(dead) + "\n", encoding="utf-8")
+        monkeypatch.setattr(local_replay, "_MANIFEST_PATH", manifest_path)
+
+        with patch("src.zephyr.data.ch_writer.write_tsv", return_value=True):
+            result = replay_batch()
+
+        assert result["skipped"] == 1
+        assert result["remaining"] == 0
+        assert not manifest_path.exists()  # 死条目移除后 manifest 归零删除
+
+    def test_replayed_backslash_entry_removed(self, tmp_path, monkeypatch):
+        """成功回灌的反斜杠条目（replayed）必须从 manifest 移除。"""
+        monkeypatch.setattr(local_replay, "_FALLBACK_DIR", tmp_path)
+        manifest_path = tmp_path / "_manifest.jsonl"
+
+        table_dir = tmp_path / "c1_market__tick_data"
+        table_dir.mkdir()
+        tsv_path = table_dir / "20260915_102038_live.tsv"
+        tsv_path.write_bytes(b"v1\n")
+
+        entry = {
+            "table": "c1_market.tick_data",
+            "file": "c1_market__tick_data\\20260915_102038_live.tsv",
+            "rows": 1,
+        }
+        manifest_path.write_text(json.dumps(entry) + "\n", encoding="utf-8")
+        monkeypatch.setattr(local_replay, "_MANIFEST_PATH", manifest_path)
+
+        with patch("src.zephyr.data.ch_writer.write_tsv", return_value=True) as mock_w:
+            result = replay_batch()
+
+        assert result["replayed"] == 1
+        assert result["remaining"] == 0
+        assert not manifest_path.exists()
+        assert not tsv_path.exists()  # 回灌成功文件删除
+        mock_w.assert_called_once()
+
+    def test_mixed_separator_duplicate_dedup(self, tmp_path, monkeypatch):
+        """同文件反斜杠+正斜杠双条目（收编重复）：任一被排除即同键全消。"""
+        monkeypatch.setattr(local_replay, "_FALLBACK_DIR", tmp_path)
+        manifest_path = tmp_path / "_manifest.jsonl"
+
+        table_dir = tmp_path / "c1_market__tick_depth_5"
+        table_dir.mkdir()
+        tsv_path = table_dir / "20260915_171711_dup.tsv"
+        tsv_path.write_bytes(b"v1\n")
+
+        entries = [
+            {
+                "table": "c1_market.tick_depth_5",
+                "file": "c1_market__tick_depth_5\\20260915_171711_dup.tsv",
+                "rows": 1,
+            },
+            {
+                "table": "c1_market.tick_depth_5",
+                "cols_clause": None,
+                "file": "c1_market__tick_depth_5/20260915_171711_dup.tsv",
+                "rows": 1,
+                "ts": "20260915_171712_adopted",
+            },
+        ]
+        manifest_path.write_text(
+            "\n".join(json.dumps(e) for e in entries) + "\n", encoding="utf-8"
+        )
+        monkeypatch.setattr(local_replay, "_MANIFEST_PATH", manifest_path)
+
+        with patch("src.zephyr.data.ch_writer.write_tsv", return_value=True):
+            result = replay_batch()
+
+        # 首条回灌成功删文件，次条（收编形态）文件已失→skipped；同键两形态全清
+        assert result["replayed"] == 1
+        assert result["skipped"] == 1
+        assert result["remaining"] == 0
+        assert not manifest_path.exists()

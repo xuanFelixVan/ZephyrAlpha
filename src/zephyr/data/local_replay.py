@@ -295,12 +295,24 @@ def _manifest_fs_unlock(lock_path) -> None:
             pass
 
 
+def _file_key(value: object) -> str:
+    """manifest 条目 file 字段的合并键：统一 / 分隔。
+
+    Windows 落盘条目是反斜杠（str(relative_to)）、_adopt_orphans 收编条目是
+    正斜杠——键不归一化则同一文件两形态互不相等，exclude pop 打不中，
+    已回灌/skipped 条目永生并吃光 replay_batch 的 max_files 预算
+    （2026-09-16 实证：5510 文件冻结 19h，replayed 恒 0）。
+    """
+    return str(value).replace("\\", "/")
+
+
 def _write_manifest(entries: list[dict], exclude_files: frozenset = frozenset()) -> None:
     """重写 manifest（线程安全 + 跨进程合并写，防丢更新）。
 
     2026-09-14 红蓝对抗加固：写前在文件锁内重读现文件并 union——他进程在
     本进程"读→算→写"窗口内追加/收编的条目不再被整文件重写吞掉。
-    键=file 相对路径；传入 entries 优先（回灌结果权威），现文件独有条目保留。
+    键=file 相对路径（经 _file_key 归一化，反斜杠/正斜杠同键）；
+    传入 entries 优先（回灌结果权威），现文件独有条目保留。
     写入=.tmp 原子替换。
     """
     lock_path = _manifest_fs_lock()
@@ -314,13 +326,13 @@ def _write_manifest(entries: list[dict], exclude_files: frozenset = frozenset())
                         continue
                     try:
                         e = json.loads(line)
-                        merged[str(e.get("file", ""))] = e
+                        merged[_file_key(e.get("file", ""))] = e
                     except json.JSONDecodeError:
                         continue
             for e in entries:
-                merged[str(e.get("file", ""))] = e
+                merged[_file_key(e.get("file", ""))] = e
             for k in exclude_files:
-                merged.pop(str(k).replace("\\", "/"), None)
+                merged.pop(_file_key(k), None)
             if not merged:
                 _MANIFEST_PATH.unlink(missing_ok=True)
                 return
