@@ -1022,6 +1022,10 @@ def _build_member_panels(
 ) -> tuple[pd.DataFrame | None, dict[str, pd.DataFrame], list[tuple[str, str]]]:
     """逐成员构建日频权重面板（单成员失败跳过并披露，不拖垮整装回测）。
 
+    成员路由（S11/C3 断桥②）: `STR-` 前缀成员走翻译件适配器
+    （translated_strategy_adapter，c4_*.py build() 契约→面板）；其余成员走
+    StrategyRunner 原路（注册表策略×通用因子），两路互不影响。
+
     Returns:
         (data（首个非空成员的行情，None=全空）, panels, skipped)
     """
@@ -1032,19 +1036,30 @@ def _build_member_panels(
     data: pd.DataFrame | None = None
     skipped: list[tuple[str, str]] = []
     for w in plan.weights:
-        cfg = StrategyRunnerConfig(
-            strategy_id=w.strategy_id,
-            factor_ids=tuple(config.factor_ids),
-            rebalance_freq=config.rebalance_freq,
-            top_n=config.top_n,
-            max_single=config.max_single,
-            pit_shift=config.pit_shift,
-        )
-        try:
-            data_i, panel_i = runner.build_weight_panel(symbols, start, end, cfg)
-        except Exception as exc:  # noqa: BLE001 — 单成员失败跳过并披露（不拖垮整装回测）
-            skipped.append((w.strategy_id, f"panel build failed: {str(exc)[:120]}"))
-            continue
+        if w.strategy_id.startswith("STR-"):
+            from zephyr.pf_core.strategy_engine.translated_strategy_adapter import (
+                build_translated_weight_panel,
+            )
+
+            try:
+                data_i, panel_i = build_translated_weight_panel(w.strategy_id, symbols, start, end)
+            except Exception as exc:  # noqa: BLE001 — 单成员失败跳过并披露（不拖垮整装回测）
+                skipped.append((w.strategy_id, f"translated panel build failed: {str(exc)[:120]}"))
+                continue
+        else:
+            cfg = StrategyRunnerConfig(
+                strategy_id=w.strategy_id,
+                factor_ids=tuple(config.factor_ids),
+                rebalance_freq=config.rebalance_freq,
+                top_n=config.top_n,
+                max_single=config.max_single,
+                pit_shift=config.pit_shift,
+            )
+            try:
+                data_i, panel_i = runner.build_weight_panel(symbols, start, end, cfg)
+            except Exception as exc:  # noqa: BLE001 — 单成员失败跳过并披露（不拖垮整装回测）
+                skipped.append((w.strategy_id, f"panel build failed: {str(exc)[:120]}"))
+                continue
         if panel_i is None or panel_i.empty or data_i is None or data_i.empty:
             skipped.append((w.strategy_id, "panel/data empty"))
             continue

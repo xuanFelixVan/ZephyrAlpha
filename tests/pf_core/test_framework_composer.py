@@ -55,8 +55,11 @@ from zephyr.pf_core.strategy_engine.framework_composer import (
 
 
 def test_load_plans_default_three_plans_sum_one():
+    """三套人工预设钉死在前；fw-tdm-current=生成器产物（S11/C3，scripts/backtest/
+    generate_framework_plan_from_tdm.py 管养），允许追加但禁手工改权重。"""
     plans = load_framework_plans()
-    assert [p.plan_id for p in plans] == ["fw-defensive", "fw-balanced", "fw-aggressive"]
+    assert [p.plan_id for p in plans[:3]] == ["fw-defensive", "fw-balanced", "fw-aggressive"]
+    assert all(p.plan_id != "fw-tdm-current" for p in plans[:3])  # 生成块不抢预设位
     for p in plans:
         assert abs(p.total_weight - 1.0) < 1e-6
         assert all(w.weight > 0 for w in p.weights)
