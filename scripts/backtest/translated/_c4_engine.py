@@ -48,6 +48,49 @@ C4_START = "2020-01-01"
 C4_END = "2023-12-31"
 ETF_START = "2021-04-01"  # kline_etf_daily 覆盖起点 2021-03-08，留缓冲
 
+# 表名经 TableRegistry 真源（#ARCH-CH-024；TABLE-NAME-REGISTRY gate 合规）
+from zephyr.data.table_registry import get_registry  # noqa: E402 — 依赖区在 docstring 后
+
+_T_KLINE_DAILY_HFQ = get_registry().table("market_kline_daily_hfq")
+_T_KLINE_INDEX = get_registry().table("market_index_kline")
+_T_KLINE_ETF_DAILY = get_registry().table("market_kline_etf_daily")
+_T_STK_LIMIT = get_registry().table("market_stk_limit")
+_T_INDEX_CONSTITUENT = get_registry().table("market_index_constituent")
+
+# SQL 集中化常量（§5.160.2；Replacing 表读侧全 FINAL——09-15 批考双份行事故治本 2026-09-16）
+SQL_PX = (
+    "SELECT trade_date, symbol, {cols} FROM " + _T_KLINE_DAILY_HFQ + " FINAL "
+    "WHERE trade_date >= '{start}' AND trade_date <= '{end}' AND close > 0"
+)
+SQL_INDEX_KLINE = (
+    "SELECT trade_date, {cols} FROM " + _T_KLINE_INDEX + " FINAL "
+    "WHERE symbol = '{symbol}' AND trade_date >= '{start}' AND trade_date <= '{end}' "
+    "ORDER BY trade_date"
+)
+SQL_ETF_KLINE = (
+    "SELECT trade_date, symbol, toFloat64({field}) AS {field} FROM " + _T_KLINE_ETF_DAILY + " FINAL "
+    "WHERE symbol IN ({sym_list}) AND trade_date >= '{start}' AND trade_date <= '{end}'"
+)
+SQL_ST_FLAGS = (
+    "SELECT trade_date, symbol, toUInt8(st_flag) AS st_flag FROM " + _T_STK_LIMIT + " FINAL "
+    "WHERE trade_date >= '{start}' AND trade_date <= '{end}'"
+)
+SQL_HS300_VALID = (
+    "SELECT symbol_canonical FROM " + _T_INDEX_CONSTITUENT + " FINAL "
+    "WHERE index_code = '000300.SH' AND valid_to IS NULL"
+)
+SQL_HS300_LATEST_DATE = (
+    "SELECT max(trade_date) FROM " + _T_INDEX_CONSTITUENT + " WHERE index_code = '000300.SH'"
+)
+SQL_HS300_LATEST = (
+    "SELECT symbol FROM " + _T_INDEX_CONSTITUENT + " FINAL "
+    "WHERE index_code = '000300.SH' AND trade_date = '{latest}'"
+)
+SQL_INDEX_CONS_VALID = (
+    "SELECT symbol_canonical FROM " + _T_INDEX_CONSTITUENT + " FINAL "
+    "WHERE index_code = '{index_code}' AND valid_to IS NULL"
+)
+
 
 def get_client():
     """ClickHouse 客户端（连接统一治本 2026-09-14：构造委派 ch_writer 统一入口）。"""
@@ -72,10 +115,7 @@ def load_px(start: str, end: str, fields: tuple[str, ...] = ("close",)) -> pd.Da
     返回长表 (trade_date, symbol, *fields)，调用方自行 pivot。
     """
     cols = ", ".join(f"toFloat64({f}) AS {f}" for f in fields)
-    rows = _q(
-        f"SELECT trade_date, symbol, {cols} FROM c1_market.kline_daily_hfq "
-        f"WHERE trade_date >= '{start}' AND trade_date <= '{end}' AND close > 0"
-    )
+    rows = _q(SQL_PX.format(cols=cols, start=start, end=end))
     px = pd.DataFrame(rows, columns=["trade_date", "symbol", *fields])
     if px.empty:
         raise RuntimeError("kline_daily_hfq 数据缺失")
@@ -100,11 +140,7 @@ def wide(px: pd.DataFrame, field: str = "close") -> pd.DataFrame:
 def load_index(symbol: str, start: str, end: str, fields: tuple[str, ...] = ("close",)) -> pd.DataFrame:
     """指数日 K 宽序列（kline_index）。返回 DataFrame(index=trade_date, columns=fields)。"""
     cols = ", ".join(f"toFloat64({f}) AS {f}" for f in fields)
-    rows = _q(
-        f"SELECT trade_date, {cols} FROM c1_market.kline_index "
-        f"WHERE symbol = '{symbol}' AND trade_date >= '{start}' AND trade_date <= '{end}' "
-        f"ORDER BY trade_date"
-    )
+    rows = _q(SQL_INDEX_KLINE.format(cols=cols, symbol=symbol, start=start, end=end))
     df = pd.DataFrame(rows, columns=["trade_date", *fields]).set_index("trade_date")
     if df.empty:
         raise RuntimeError(f"kline_index {symbol} 数据缺失")
@@ -120,10 +156,7 @@ def load_breadth(start: str, end: str, symbol: str = "000002") -> pd.DataFrame:
 def load_etf(symbols: list[str], start: str, end: str, field: str = "close") -> pd.DataFrame:
     """ETF 日 K 宽表（kline_etf_daily）。symbols 为纯 6 位代码列表。"""
     sym_list = ", ".join(f"'{s}'" for s in symbols)
-    rows = _q(
-        f"SELECT trade_date, symbol, toFloat64({field}) AS {field} FROM c1_market.kline_etf_daily "
-        f"WHERE symbol IN ({sym_list}) AND trade_date >= '{start}' AND trade_date <= '{end}'"
-    )
+    rows = _q(SQL_ETF_KLINE.format(field=field, sym_list=sym_list, start=start, end=end))
     df = pd.DataFrame(rows, columns=["trade_date", "symbol", field])
     df["trade_date"] = pd.to_datetime(df["trade_date"])
     return wide(df, field)
@@ -199,17 +232,11 @@ def fin_history(as_of: str, metrics: tuple[str, ...]) -> pd.DataFrame:
 
 def load_hs300() -> set[str]:
     """沪深300 成分快照（纯 6 位代码）。失败时抛 RuntimeError（D1 不静默降级）。"""
-    rows = _q(
-        "SELECT symbol_canonical FROM c1_market.index_constituent "
-        "WHERE index_code = '000300.SH' AND valid_to IS NULL"
-    )
+    rows = _q(SQL_HS300_VALID)
     hs = {(r[0] or "")[:6] for r in rows if r[0]}
     if not hs:
-        latest = _q("SELECT max(trade_date) FROM c1_market.index_constituent WHERE index_code = '000300.SH'")[0][0]
-        rows = _q(
-            f"SELECT symbol FROM c1_market.index_constituent "
-            f"WHERE index_code = '000300.SH' AND trade_date = '{latest}'"
-        )
+        latest = _q(SQL_HS300_LATEST_DATE)[0][0]
+        rows = _q(SQL_HS300_LATEST.format(latest=latest))
         hs = {(r[0] or "")[:6] for r in rows if r[0]}
     if not hs:
         raise RuntimeError("index_constituent 沪深300 成分缺失")
@@ -218,19 +245,13 @@ def load_hs300() -> set[str]:
 
 def load_index_constituents(index_code: str) -> set[str]:
     """任意指数成分快照（如 000905.SH 中证500）。"""
-    rows = _q(
-        f"SELECT symbol_canonical FROM c1_market.index_constituent "
-        f"WHERE index_code = '{index_code}' AND valid_to IS NULL"
-    )
+    rows = _q(SQL_INDEX_CONS_VALID.format(index_code=index_code))
     return {(r[0] or "")[:6] for r in rows if r[0]}
 
 
 def load_st_flags(start: str, end: str) -> pd.DataFrame:
     """ST 标记长表 (trade_date, symbol, st_flag)，来自 stk_limit。"""
-    rows = _q(
-        f"SELECT trade_date, symbol, toUInt8(st_flag) AS st_flag FROM c1_market.stk_limit "
-        f"WHERE trade_date >= '{start}' AND trade_date <= '{end}'"
-    )
+    rows = _q(SQL_ST_FLAGS.format(start=start, end=end))
     df = pd.DataFrame(rows, columns=["trade_date", "symbol", "st_flag"])
     df["trade_date"] = pd.to_datetime(df["trade_date"])
     return df
