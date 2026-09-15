@@ -41,49 +41,7 @@ source_loaders 显式注入（DB 落库接线属数据层工程，未注入加�
 理论背书：北大 Jiang & Li 理性预期模型——打板 alpha 来自信息未完全纳入，
 回测必须严格 PIT 否则虚高（PIT 违规=虚高 alpha）。
 
-# [ALGO_FLOW]
-# 层: 输入
-# - id: I1
-#   name: symbol 参数
-#   fields: 参数 symbol，类型注解 str
-#   code: daban_pit_safety.py 顶层公共函数形参（AST 提取）
-# - id: I2
-#   name: as_of_date 参数
-#   fields: 参数 as_of_date，类型注解 date
-#   code: daban_pit_safety.py 顶层公共函数形参（AST 提取）
-# - id: I3
-#   name: db_session 参数
-#   fields: 参数 db_session（无注解）
-#   code: daban_pit_safety.py 顶层公共函数形参（AST 提取）
-# 层: 算法
-# - id: A1
-#   name_zh: ① get_dragon_tiger_pit
-#   name_en: get_dragon_tiger_pit
-#   intro: 龙虎榜PIT安全查询（v1.9.2 补，as_of_date 边界断言）。
-#   desc: 龙虎榜PIT安全查询（v1.9.2 补，as_of_date 边界断言）。 龙虎榜盘后17:00公布，T日盘中决策若用T日龙虎榜=未来函数=回测虚高+实盘失效， 只能用T-1日及…；源码 L107-L123
-#   inputs: symbol as_of_date db_session
-#   outputs: list[dict]
-# - id: A2
-#   name_zh: ② DabanPITBacktestFramework
-#   name_en: DabanPITBacktestFramework
-#   intro: 打板 PIT 安全回测框架（v1.9.3 补，全数据源 PIT 断言，扩展 §3.13#5 到全数据源）。
-#   desc: 打板 PIT 安全回测框架（v1.9.3 补，全数据源 PIT 断言，扩展 §3.13#5 到全数据源）。 PIT_RULES + assert_pit + run_backte…；公共方法（定义序）: from_db…
-#   inputs: 无参数
-#   outputs: 返回值
-# 层: 输出
-# - id: O1
-#   name_zh: list[dict]
-#   name_en: list[dict]
-#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
-#   downstream: （首批回测接线前暂无）
-# [/ALGO_FLOW]
-#
-# 边:
-# I1 --> A1
-# I2 --> A1
-# I3 --> A1
-# A1 --> A2
-# A2 --> O1
+# [ALGO_FLOW] external: docs/03_modules/_domain_execution_core/algo_flow/daban_pit_safety.yaml
 """
 
 from __future__ import annotations

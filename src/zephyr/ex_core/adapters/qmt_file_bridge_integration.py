@@ -25,46 +25,7 @@ QMT File Bridge Assembly——文件桥一键装配器
 
 SSoT: docs/03_modules/_domain_execution_core/blueprint_qmt_file_bridge.md
 
-# [ALGO_FLOW]
-# 层: 输入
-# - id: I1
-#   name: order_manager 参数
-#   fields: 参数 order_manager（无注解）
-#   code: qmt_file_bridge_integration.py 顶层公共函数形参（AST 提取）
-# - id: I2
-#   name: enable_real 参数
-#   fields: 参数 enable_real（无注解）
-#   code: qmt_file_bridge_integration.py 顶层公共函数形参（AST 提取）
-# - id: I3
-#   name: enable_sim 参数
-#   fields: 参数 enable_sim（无注解）
-#   code: qmt_file_bridge_integration.py 顶层公共函数形参（AST 提取）
-# - id: I4
-#   name: sync_interval 参数
-#   fields: 参数 sync_interval（无注解）
-#   code: qmt_file_bridge_integration.py 顶层公共函数形参（AST 提取）
-# 层: 算法
-# - id: A1
-#   name_zh: ① QmtFileBridgeAssembly
-#   name_en: QmtFileBridgeAssembly
-#   intro: QMT 文件桥装配器
-#   desc: QMT 文件桥装配器 Usage: order_manager = OrderManager() assembly = QmtFileBridgeAssembly( order_…；公共方法（定义序）: broker_…
-#   inputs: order_manager enable_real enable_sim sync_interval enable_algo_queue…
-#   outputs: 返回值
-# 层: 输出
-# - id: O1
-#   name_zh: 模块公共 API 面（1 定义）
-#   name_en: public defs
-#   intro: QmtFileBridgeAssembly
-#   downstream: zephyr.ex_core.qmt_trading_session; scripts.construction.test_qmt_file_bridge_e…
-# [/ALGO_FLOW]
-#
-# 边:
-# I1 --> A1
-# I2 --> A1
-# I3 --> A1
-# I4 --> A1
-# A1 --> O1
+# [ALGO_FLOW] external: docs/03_modules/_domain_execution_core/algo_flow/qmt_file_bridge_integration.yaml
 """
 
 from __future__ import annotations

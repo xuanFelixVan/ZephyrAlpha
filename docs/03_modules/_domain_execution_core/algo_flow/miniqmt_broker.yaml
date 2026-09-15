@@ -1,0 +1,77 @@
+# ALGO_FLOW 外部真源——miniqmt_broker（_domain_execution_core 域，真源 src/zephyr/ex_core/adapters/miniqmt_broker.py）
+# 2026-09-15 P2-1 契约头减负批量出仓：docstring 内联块逐字节副本，extractor 经
+# external 锚加载走同一 parse_algo_flow 管线；算法公共面变化时同步更新本块。
+doc_type: architecture_view
+ttl: permanent
+module: src.zephyr.ex_core.adapters.miniqmt_broker
+source_of_truth: src/zephyr/ex_core/adapters/miniqmt_broker.py
+algo_flow: |
+    # [ALGO_FLOW]
+    # 层: 输入
+    # - id: I1
+    #   name: 委托订单 Order
+    #   fields: symbol/side/quantity/order_type/limit_price/idempotency_key（INV-007 必带）
+    #   code: submit_order(order, order_book, prev_close) (miniqmt_broker.py)
+    # - id: I2
+    #   name: 5档盘口快照 order_book + 昨收 prev_close（可选）
+    #   fields: OrderBookSnapshot(ask/bid 5档+last_price)；prev_close 供涨跌停与笼子回退
+    #   code: OrderBookSnapshot (backtest.core.matching_logic)
+    # 层: 算法
+    # - id: A1
+    #   name_zh: ① 幂等拦截
+    #   name_en: idempotency check
+    #   intro: idempotency_key 命中 _idempotency_map 直接返回既有 broker_order_id
+    #   desc: 防重复下单（INV-007），全链路 _lock 串行化
+    #   inputs: I1
+    #   outputs: 既有 broker_order_id 或放行
+    #   invariant: 同一 idempotency_key 最多下一次单
+    # - id: A2
+    #   name_zh: ② A股约束校验
+    #   name_en: _validate_a_share_constraints
+    #   intro: 板块差异化整手(board_lot真源)+T+1可查持仓+涨跌停板块幅度，违规拒单
+    #   desc: get_board_lot_rule(symbol) 校验 min_unit/increment；SELL 查 can_sell_volume；prev_close 算板块涨跌停
+    #   inputs: I1 I2
+    #   outputs: 放行或 MiniQmtBrokerError(52/50/51/-2)
+    #   invariant: 非法申报本地拒单防废单
+    # - id: A3
+    #   name_zh: ③ 价格笼子夹边
+    #   name_en: _apply_price_cage_locked
+    #   intro: 连续竞价限价单超笼子夹到边界（不废单），无基准价跳过
+    #   desc: check_price_cage(side,limit,symbol,ask1,bid1,last,prev_close) → CLAMPED 则原地修正 limit_price
+    #   inputs: I1 I2
+    #   outputs: 夹边后 limit_price
+    #   invariant: 夹边后价格必在笼子内
+    # - id: A4
+    #   name_zh: ④ 回测=实盘一致性预校验
+    #   name_en: _pre_trade_simulate_locked
+    #   intro: 共用 MatchingLogic 模拟成交预估价量（B方案核心）
+    #   desc: order→MatchOrderInput → match_market/limit_order → MatchingFill 预估
+    #   inputs: I1 I2
+    #   outputs: MatchingFill 预估
+    #   invariant: 回测=实盘同一撮合实现
+    # - id: A5
+    #   name_zh: ⑤ xttrader 下单与断线重连
+    #   name_en: order_stock via _call_xttrader_with_reconnect
+    #   intro: StockAccount+方向23/24+price_type 映射下单，异常自动 _reconnect 重试一次
+    #   desc: order_stock(account,symbol,side,volume,price_type,price,strategy_name,order_remark=idem_key) → order_id>0 成功
+    #   inputs: I1
+    #   outputs: broker_order_id
+    #   invariant: xttrader 非线程安全，全调用 _lock 保护（含心跳重连）
+    # 层: 输出
+    # - id: O1
+    #   name_zh: 券商订单号 broker_order_id
+    #   name_en: broker_order_id
+    #   intro: xttrader 返回的正整数 order_id 转 str，写入 _order_cache/_idempotency_map
+    #   downstream: ex_core.order_manager / ex_core.trading_session
+    # [/ALGO_FLOW]
+    #
+    # 边:
+    # I1 --> A1
+    # I1 --> A2
+    # I2 --> A2
+    # I2 --> A3
+    # A1 --> A2
+    # A2 --> A3
+    # A3 --> A4
+    # A4 --> A5
+    # A5 --> O1

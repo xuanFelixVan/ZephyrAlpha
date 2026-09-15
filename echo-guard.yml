@@ -13,3 +13,19 @@ acknowledged:
     verdict: intentional
     stable_key: "src/zephyr/regime/overlay_signals_builder.py:_fb_call||src/zephyr/regime/risk_signal_builder.py:_fb_call"
     note: 同型防御性透传包装（getattr+缺失/异常降级 None，10 行惯用法），两 builder 类独立演进非算法克隆；ALGO_FLOW docstring 出仓后结构比对首次暴露（st-btfix-p15-20260915）
+  - id: cg-excore-repo-factories-20260915
+    verdict: intentional
+    stable_key: "src/zephyr/ex_core/repository_interface.py:create_order_repository||src/zephyr/ex_core/repository_interface.py:create_position_snapshot_repository"
+    note: 同文件仓储工厂姊妹方法（订单/持仓快照同构 CRUD 包装），仓储模式惯用同构非克隆；ALGO_FLOW 出仓后首次暴露（st-btfix-p15-20260915）
+  - id: cg-excore-mock-factories-20260915
+    verdict: intentional
+    stable_key: "src/zephyr/ex_core/signal_providers.py:make_mock_signal_provider||src/zephyr/ex_core/signal_providers.py:make_mock_price_provider"
+    note: 同文件 mock 工厂姊妹方法（信号/价格提供器同构桩），测试基建惯用同构非克隆；ALGO_FLOW 出仓后首次暴露（st-btfix-p15-20260915）
+  - id: cg-excore-str-dunder-20260915
+    verdict: intentional
+    stable_key: "src/zephyr/ex_core/execution_engine.py:__str__||src/zephyr/ex_core/order_manager.py:__str__"
+    note: 两类 __str__ 调试格式化惯例同构，非算法克隆；ALGO_FLOW 出仓后首次暴露（st-btfix-p15-20260915）
+  - id: cg-excore-settlement-cycle-20260915
+    verdict: intentional
+    stable_key: "src/zephyr/ex_core/rules/ashare.py:settlement_cycle||src/zephyr/ex_core/rules/crypto.py:settlement_cycle"
+    note: 按市场镜像的规则类族（ashare/crypto 同接口逐市场实现），结构性同构=设计意图非克隆；ALGO_FLOW 出仓后首次暴露（st-btfix-p15-20260915）

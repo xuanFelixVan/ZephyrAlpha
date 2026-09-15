@@ -1,0 +1,33 @@
+# ALGO_FLOW 外部真源——ashare（_domain_execution_core 域，真源 src/zephyr/ex_core/rules/ashare.py）
+# 2026-09-15 P2-1 契约头减负批量出仓：docstring 内联块逐字节副本，extractor 经
+# external 锚加载走同一 parse_algo_flow 管线；算法公共面变化时同步更新本块。
+doc_type: architecture_view
+ttl: permanent
+module: src.zephyr.ex_core.rules.ashare
+source_of_truth: src/zephyr/ex_core/rules/ashare.py
+algo_flow: |
+    # [ALGO_FLOW]
+    # 层: 输入
+    # - id: I1
+    #   name: 模块内部数据
+    #   fields: 无公共形参/无再导出（AST 事实）
+    #   code: ashare.py
+    # 层: 算法
+    # - id: A1
+    #   name_zh: ① AshareRulePack
+    #   name_en: AshareRulePack
+    #   intro: A股交易规则包（T+1、整手100股、涨跌停±10%/20%）。
+    #   desc: A股交易规则包（T+1、整手100股、涨跌停±10%/20%）。 无状态（全部委托真源），可安全共享单例。；公共方法（定义序）: lot_rule, price_cage_rule, settlement_cycle,…
+    #   inputs: 无参数
+    #   outputs: 返回值
+    # 层: 输出
+    # - id: O1
+    #   name_zh: 模块公共 API 面（1 定义）
+    #   name_en: public defs
+    #   intro: AshareRulePack
+    #   downstream: zephyr.ex_core.rules
+    # [/ALGO_FLOW]
+    #
+    # 边:
+    # I1 --> A1
+    # A1 --> O1

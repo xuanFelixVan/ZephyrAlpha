@@ -29,31 +29,7 @@ Kill Switch 是账户级日度熔断，本类是 sleeve 级盘中瞬时熔断。
 止损触发更多止损形成局部级联（88% 级联卖出 30 分钟内完成），需在级联
 扩散前瞬时卖出。
 
-# [ALGO_FLOW]
-# 层: 输入
-# - id: I1
-#   name: 模块内部数据
-#   fields: 无公共形参/无再导出（AST 事实）
-#   code: daban_instant_circuit_breaker.py
-# 层: 算法
-# - id: A1
-#   name_zh: ① DabanInstantCircuitBreaker
-#   name_en: DabanInstantCircuitBreaker
-#   intro: 打板专用瞬时风控（v1.9.2 补，三触发器→瞬时熔断卖出）。
-#   desc: 打板专用瞬时风控（v1.9.2 补，三触发器→瞬时熔断卖出）。；公共方法（定义序）: check_instant_break；源码 L69-L103
-#   inputs: 无参数
-#   outputs: 返回值
-# 层: 输出
-# - id: O1
-#   name_zh: 模块公共 API 面（1 定义）
-#   name_en: public defs
-#   intro: DabanInstantCircuitBreaker
-#   downstream: （首批实盘接线前暂无，与 Kill Switch 并列的 sleeve 级盘中瞬时熔断）
-# [/ALGO_FLOW]
-#
-# 边:
-# I1 --> A1
-# A1 --> O1
+# [ALGO_FLOW] external: docs/03_modules/_domain_execution_core/algo_flow/daban_instant_circuit_breaker.yaml
 """
 
 from __future__ import annotations

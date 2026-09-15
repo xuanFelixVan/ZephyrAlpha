@@ -1,0 +1,41 @@
+# ALGO_FLOW 外部真源——daban_monitors（_domain_execution_core 域，真源 src/zephyr/ex_core/daban_monitors.py）
+# 2026-09-15 P2-1 契约头减负批量出仓：docstring 内联块逐字节副本，extractor 经
+# external 锚加载走同一 parse_algo_flow 管线；算法公共面变化时同步更新本块。
+doc_type: architecture_view
+ttl: permanent
+module: src.zephyr.ex_core.daban_monitors
+source_of_truth: src/zephyr/ex_core/daban_monitors.py
+algo_flow: |
+    # [ALGO_FLOW]
+    # 层: 输入
+    # - id: I1
+    #   name: 模块内部数据
+    #   fields: 无公共形参/无再导出（AST 事实）
+    #   code: daban_monitors.py
+    # 层: 算法
+    # - id: A1
+    #   name_zh: ① HoldingPeriodMicrostructureMonitor
+    #   name_en: HoldingPeriodMicrostructureMonitor
+    #   intro: 持仓期间微结构监控（v1.9.3 补，封板后→收盘持续监控+渐进降仓）。
+    #   desc: 持仓期间微结构监控（v1.9.3 补，封板后→收盘持续监控+渐进降仓）。；公共方法（定义序）: monitor；源码 L98-L124
+    #   inputs: 无参数
+    #   outputs: 返回值
+    # - id: A2
+    #   name_zh: ② SignalDecayMonitor
+    #   name_en: SignalDecayMonitor
+    #   intro: 打板信号失效监控（v1.9.2 补 CUSUM+PSI，v1.9.3 升级 two-type+方差压缩）。
+    #   desc: 打板信号失效监控（v1.9.2 补 CUSUM+PSI，v1.9.3 升级 two-type+方差压缩）。分级响应：OK→REDUCE→STOP。；公共方法（定义序）: update；源码 L128-L183
+    #   inputs: 无参数
+    #   outputs: 返回值
+    # 层: 输出
+    # - id: O1
+    #   name_zh: 模块公共 API 面（2 定义）
+    #   name_en: public defs
+    #   intro: HoldingPeriodMicrostructureMonitor, SignalDecayMonitor
+    #   downstream: （首批实盘接线前暂无）
+    # [/ALGO_FLOW]
+    #
+    # 边:
+    # I1 --> A1
+    # A1 --> A2
+    # A2 --> O1

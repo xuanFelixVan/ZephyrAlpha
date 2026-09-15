@@ -37,37 +37,7 @@ SELL 负差为不利。
 驱动方调用本函数）；vwap_price 取 avg_fill_price（单券商 MVP，多券商汇聚
 口径随 GAP-L06-002 富途/IB 适配器重评）。
 
-# [ALGO_FLOW]
-# 层: 输入
-# - id: I1
-#   name: order 参数
-#   fields: 参数 order，类型注解 Order
-#   code: execution_report.py 顶层公共函数形参（AST 提取）
-# - id: I2
-#   name: run_record 参数
-#   fields: 参数 run_record，类型注解 ExecutionEngineRunRecord
-#   code: execution_report.py 顶层公共函数形参（AST 提取）
-# 层: 算法
-# - id: A1
-#   name_zh: ① build_execution_report
-#   name_en: build_execution_report
-#   intro: 组装 CTR-P1-007 ExecutionReport（GAP-L06-003 产出逻辑）。
-#   desc: 组装 CTR-P1-007 ExecutionReport（GAP-L06-003 产出逻辑）。 Args: order: 委托单（side/limit_price/quanti…；源码 L102-L160
-#   inputs: order run_record
-#   outputs: ExecutionReport
-#   （注：A1 之后另有 1 个公共定义未列入（含 1 个数据契约/异常/枚举声明类），见源码）
-# 层: 输出
-# - id: O1
-#   name_zh: ExecutionReport
-#   name_en: ExecutionReport
-#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
-#   downstream: D_REPORTING(TCA/归因数据流上游, BM-REC-02-B); 调用方(执行完成事件驱动产出)
-# [/ALGO_FLOW]
-#
-# 边:
-# I1 --> A1
-# I2 --> A1
-# A1 --> O1
+# [ALGO_FLOW] external: docs/03_modules/_domain_execution_core/algo_flow/execution_report.yaml
 """
 
 from __future__ import annotations

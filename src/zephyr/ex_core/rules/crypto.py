@@ -24,31 +24,7 @@ step_size/tick_size 按交易对各异（MVP 使用默认兜底，CAND-CRYPTO-00
 骨架纪律：MVP 阶段只提供默认兜底值，具体交易对元数据等 CAND-CRYPTO-002 落地后
 由装配层注入（get_trading_rule_pack(metadata=...)）。
 
-# [ALGO_FLOW]
-# 层: 输入
-# - id: I1
-#   name: 模块内部数据
-#   fields: 无公共形参/无再导出（AST 事实）
-#   code: crypto.py
-# 层: 算法
-# - id: A1
-#   name_zh: ① CryptoRulePack
-#   name_en: CryptoRulePack
-#   intro: 数字货币交易规则包（T+0、无涨跌停、step_size/tick_size 按交易对各异）。
-#   desc: 数字货币交易规则包（T+0、无涨跌停、step_size/tick_size 按交易对各异）。 MVP 骨架：提供默认兜底值（BTC/ETH 现货常见口径），具体交易对元数据 等…；公共方法（定义序）: lot_rul…
-#   inputs: 无参数
-#   outputs: 返回值
-# 层: 输出
-# - id: O1
-#   name_zh: 模块公共 API 面（1 定义）
-#   name_en: public defs
-#   intro: CryptoRulePack
-#   downstream: zephyr.ex_core.rules
-# [/ALGO_FLOW]
-#
-# 边:
-# I1 --> A1
-# A1 --> O1
+# [ALGO_FLOW] external: docs/03_modules/_domain_execution_core/algo_flow/crypto.yaml
 """
 
 from __future__ import annotations

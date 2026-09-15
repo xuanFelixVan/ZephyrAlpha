@@ -33,37 +33,7 @@ A 股合法性（真源 board_lot，40_execution_broker §决策⑰）：
   - 卖出：中间片按 increment 对齐且 ≥ min_unit；零股尾量并入末片
     一次性申报（A 股零股卖出唯一合法形态）。
 
-# [ALGO_FLOW]
-# 层: 输入
-# - id: I1
-#   name: request 参数
-#   fields: 参数 request，类型注解 SplitRequest
-#   code: order_splitter.py 顶层公共函数形参（AST 提取）
-# - id: I2
-#   name: algo 参数
-#   fields: 参数 algo，类型注解 SplitAlgo
-#   code: order_splitter.py 顶层公共函数形参（AST 提取）
-# 层: 算法
-# - id: A1
-#   name_zh: ① split_order
-#   name_en: split_order
-#   intro: 拆单（纯函数：同输入必同输出，可独立单测）。
-#   desc: 拆单（纯函数：同输入必同输出，可独立单测）。 Args: request: 拆单请求（symbol/side/总量/片数/VWAP 量能曲线）。 algo: TWAP=等量切片…；源码 L243-L327
-#   inputs: request algo
-#   outputs: SplitPlan
-#   （注：A1 之后另有 5 个公共定义未列入（含 5 个数据契约/异常/枚举声明类），见源码）
-# 层: 输出
-# - id: O1
-#   name_zh: SplitPlan
-#   name_en: SplitPlan
-#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
-#   downstream: MOD-EX-062(Execution Strategy Selector 选定算法后切片) ; MOD-EX-012(Execution TCA 计划轨迹…
-# [/ALGO_FLOW]
-#
-# 边:
-# I1 --> A1
-# I2 --> A1
-# A1 --> O1
+# [ALGO_FLOW] external: docs/03_modules/_domain_execution_core/algo_flow/order_splitter.yaml
 """
 
 from __future__ import annotations

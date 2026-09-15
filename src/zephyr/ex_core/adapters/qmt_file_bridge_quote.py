@@ -30,45 +30,7 @@ QMT File Bridge Quote Provider——反向文件桥行情适配器
 
 SSoT: docs/03_modules/_domain_execution_core/blueprint_qmt_file_bridge.md
 
-# [ALGO_FLOW]
-# 层: 输入
-# - id: I1
-#   name: env 参数
-#   fields: 参数 env（无注解）
-#   code: qmt_file_bridge_quote.py 顶层公共函数形参（AST 提取）
-# - id: I2
-#   name: stale_seconds 参数
-#   fields: 参数 stale_seconds（无注解）
-#   code: qmt_file_bridge_quote.py 顶层公共函数形参（AST 提取）
-# 层: 算法
-# - id: A1
-#   name_zh: ① QuoteSnapshot
-#   name_en: QuoteSnapshot
-#   intro: 单标的行情快照（5档）
-#   desc: 单标的行情快照（5档）；公共方法（定义序）: bid1, ask1；源码 L102-L126
-#   inputs: 无参数
-#   outputs: 返回值
-# - id: A2
-#   name_zh: ② QmtFileBridgeQuoteProvider
-#   name_en: QmtFileBridgeQuoteProvider
-#   intro: 反向文件桥行情 Provider
-#   desc: 反向文件桥行情 Provider Usage: provider = QmtFileBridgeQuoteProvider(env="sim") provider.connect…；公共方法（定义序）: provide…
-#   inputs: env stale_seconds
-#   outputs: 返回值
-#   （注：A2 之后另有 1 个公共定义未列入（含 1 个数据契约/异常/枚举声明类），见源码）
-# 层: 输出
-# - id: O1
-#   name_zh: 模块公共 API 面（3 定义）
-#   name_en: public defs
-#   intro: QuoteSnapshot, QmtFileBridgeQuoteProvider
-#   downstream: zephyr.ex_core.trading_session; scripts.start_paper_session
-# [/ALGO_FLOW]
-#
-# 边:
-# I1 --> A1
-# I2 --> A1
-# A1 --> A2
-# A2 --> O1
+# [ALGO_FLOW] external: docs/03_modules/_domain_execution_core/algo_flow/qmt_file_bridge_quote.yaml
 """
 
 from __future__ import annotations

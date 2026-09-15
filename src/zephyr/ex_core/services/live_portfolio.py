@@ -26,32 +26,7 @@ Fail-Closed：快照装配失败（持仓真源不可用/nav≤0 等）→ LiveP
 不出视图（防空仓错觉导致的错误下单决策）；缺价持仓 market_value=None
 透传 + degraded 标记，不静默补零。
 
-# [ALGO_FLOW]
-# 层: 输入
-# - id: I1
-#   name: snapshot_supplier 参数
-#   fields: 参数 snapshot_supplier（无注解）
-#   code: live_portfolio.py 顶层公共函数形参（AST 提取）
-# 层: 算法
-# - id: A1
-#   name_zh: ① LivePortfolioService
-#   name_en: LivePortfolioService
-#   intro: 实盘组合服务（持仓/可用/净值视图，数据走 RiskSnapshot 真源注入）。
-#   desc: 实盘组合服务（持仓/可用/净值视图，数据走 RiskSnapshot 真源注入）。 Args: snapshot_supplier: 风控快照供给器（生产接线 RiskDataP…；公共方法（定义序）: current…
-#   inputs: snapshot_supplier
-#   outputs: 返回值
-#   （注：A1 之后另有 3 个公共定义未列入（含 3 个数据契约/异常/枚举声明类），见源码）
-# 层: 输出
-# - id: O1
-#   name_zh: 模块公共 API 面（4 定义）
-#   name_en: public defs
-#   intro: LivePortfolioService
-#   downstream: MOD-L06-001(TradingSession 组合视图) ; 前端看板(持仓/可用/净值)
-# [/ALGO_FLOW]
-#
-# 边:
-# I1 --> A1
-# A1 --> O1
+# [ALGO_FLOW] external: docs/03_modules/_domain_execution_core/algo_flow/live_portfolio.yaml
 """
 
 from __future__ import annotations

@@ -52,48 +52,7 @@ boot_hooks 接线：经 `_subscribe_eventbus_consumers` 消费方注册模式接
 SSoT: docs/03_modules/_domain_execution_core/premarket_checker/blueprint.md
 Version: 0.1.0
 
-# [ALGO_FLOW]
-# 层: 输入
-# - id: I1
-#   name: checker 参数
-#   fields: 参数 checker，类型注解 PremarketChecker | None
-#   code: premarket_checker.py 顶层公共函数形参（AST 提取）
-# 层: 算法
-# - id: A1
-#   name_zh: ① PremarketChecker
-#   name_en: PremarketChecker
-#   intro: 盘前检查器（四道关编排，全部 Fail-Closed）。
-#   desc: 盘前检查器（四道关编排，全部 Fail-Closed）。 Args: risk_limits_probe: 限额基线探针（生产接线限额真源；返回当日 RiskLimits）。 c…；公共方法（定义序）: run；源码…
-#   inputs: risk_limits_probe compliance_probe data_quality_probe system_readines…
-#   outputs: 返回值
-# - id: A2
-#   name_zh: ② register_checker
-#   name_en: register_checker
-#   intro: 注册/注销盘前检查器实例（运行时装配批注入生产探针）。
-#   desc: 注册/注销盘前检查器实例（运行时装配批注入生产探针）。；源码 L281-L285
-#   inputs: checker
-#   outputs: 返回值
-# - id: A3
-#   name_zh: ③ subscribe_eventbus
-#   name_en: subscribe_eventbus
-#   intro: 订阅 premarket.check.requested（幂等；boot_hooks 统一调用）。
-#   desc: 订阅 premarket.check.requested（幂等；boot_hooks 统一调用）。；源码 L288-L325
-#   inputs: 无参数
-#   outputs: 返回值
-#   （注：A3 之后另有 2 个公共定义未列入（含 2 个数据契约/异常/枚举声明类），见源码）
-# 层: 输出
-# - id: O1
-#   name_zh: 模块公共 API 面（5 定义）
-#   name_en: public defs
-#   intro: PremarketChecker, register_checker, subscribe_eventbus
-#   downstream: boot_hooks(MOD-INF-035, _subscribe_eventbus_consumers 消费方注册)
-# [/ALGO_FLOW]
-#
-# 边:
-# I1 --> A1
-# A1 --> A2
-# A2 --> A3
-# A3 --> O1
+# [ALGO_FLOW] external: docs/03_modules/_domain_execution_core/algo_flow/premarket_checker.yaml
 """
 
 from __future__ import annotations

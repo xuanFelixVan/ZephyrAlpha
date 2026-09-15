@@ -43,39 +43,7 @@ spec 转写偏差登记（两处伪代码死锁/缺失补全，语义不变）�
   ③ CUSUM 公式逐字按 spec（x-mu-k·σ 累积，mu=0.55/σ=0.5）——对胜率上偏
      敏感，连败使 S 归零不触发（spec 原式语义锁定）。
 
-# [ALGO_FLOW]
-# 层: 输入
-# - id: I1
-#   name: 模块内部数据
-#   fields: 无公共形参/无再导出（AST 事实）
-#   code: daban_monitors.py
-# 层: 算法
-# - id: A1
-#   name_zh: ① HoldingPeriodMicrostructureMonitor
-#   name_en: HoldingPeriodMicrostructureMonitor
-#   intro: 持仓期间微结构监控（v1.9.3 补，封板后→收盘持续监控+渐进降仓）。
-#   desc: 持仓期间微结构监控（v1.9.3 补，封板后→收盘持续监控+渐进降仓）。；公共方法（定义序）: monitor；源码 L98-L124
-#   inputs: 无参数
-#   outputs: 返回值
-# - id: A2
-#   name_zh: ② SignalDecayMonitor
-#   name_en: SignalDecayMonitor
-#   intro: 打板信号失效监控（v1.9.2 补 CUSUM+PSI，v1.9.3 升级 two-type+方差压缩）。
-#   desc: 打板信号失效监控（v1.9.2 补 CUSUM+PSI，v1.9.3 升级 two-type+方差压缩）。分级响应：OK→REDUCE→STOP。；公共方法（定义序）: update；源码 L128-L183
-#   inputs: 无参数
-#   outputs: 返回值
-# 层: 输出
-# - id: O1
-#   name_zh: 模块公共 API 面（2 定义）
-#   name_en: public defs
-#   intro: HoldingPeriodMicrostructureMonitor, SignalDecayMonitor
-#   downstream: （首批实盘接线前暂无）
-# [/ALGO_FLOW]
-#
-# 边:
-# I1 --> A1
-# A1 --> A2
-# A2 --> O1
+# [ALGO_FLOW] external: docs/03_modules/_domain_execution_core/algo_flow/daban_monitors.yaml
 """
 
 from __future__ import annotations

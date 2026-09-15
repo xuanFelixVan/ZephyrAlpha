@@ -31,47 +31,7 @@ canonical 承接：CAND-EX-011（同为 C-026 执行运营自优化，B10/B1 两
 件=参数寻优与人工确认队列，零交集）；风控硬阈值由风控域自持（本件仅经白
 名单拦截，绝不越权改写）。
 
-# [ALGO_FLOW]
-# 层: 输入
-# - id: I1
-#   name: param_space 参数
-#   fields: 参数 param_space（无注解）
-#   code: execution_param_optimizer.py 顶层公共函数形参（AST 提取）
-# - id: I2
-#   name: whitelist 参数
-#   fields: 参数 whitelist（无注解）
-#   code: execution_param_optimizer.py 顶层公共函数形参（AST 提取）
-# - id: I3
-#   name: tca_reader 参数
-#   fields: 参数 tca_reader（无注解）
-#   code: execution_param_optimizer.py 顶层公共函数形参（AST 提取）
-# - id: I4
-#   name: study_runner 参数
-#   fields: 参数 study_runner（无注解）
-#   code: execution_param_optimizer.py 顶层公共函数形参（AST 提取）
-# 层: 算法
-# - id: A1
-#   name_zh: ① ExecutionParamOptimizer
-#   name_en: ExecutionParamOptimizer
-#   intro: 执行运营自优化器（TCA 周期读数 + 参数搜索 + 人工确认 + 白名单拦截）。
-#   desc: 执行运营自优化器（TCA 周期读数 + 参数搜索 + 人工确认 + 白名单拦截）。；公共方法（定义序）: run_cycle, confirm, reject, active_params, proposal_stat…
-#   inputs: param_space whitelist tca_reader study_runner objective_fn clock audi…
-#   outputs: 返回值
-#   （注：A1 之后另有 5 个公共定义未列入（含 5 个数据契约/异常/枚举声明类），见源码）
-# 层: 输出
-# - id: O1
-#   name_zh: 模块公共 API 面（6 定义）
-#   name_en: public defs
-#   intro: ExecutionParamOptimizer
-#   downstream: 运行时装配批（执行参数周期优化调度 / 人工确认通道接线 / 风控硬阈值白名单声明）
-# [/ALGO_FLOW]
-#
-# 边:
-# I1 --> A1
-# I2 --> A1
-# I3 --> A1
-# I4 --> A1
-# A1 --> O1
+# [ALGO_FLOW] external: docs/03_modules/_domain_execution_core/algo_flow/execution_param_optimizer.yaml
 """
 
 from __future__ import annotations

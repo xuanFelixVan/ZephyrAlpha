@@ -1,0 +1,33 @@
+# ALGO_FLOW 外部真源——daban_instant_circuit_breaker（_domain_execution_core 域，真源 src/zephyr/ex_core/daban_instant_circuit_breaker.py）
+# 2026-09-15 P2-1 契约头减负批量出仓：docstring 内联块逐字节副本，extractor 经
+# external 锚加载走同一 parse_algo_flow 管线；算法公共面变化时同步更新本块。
+doc_type: architecture_view
+ttl: permanent
+module: src.zephyr.ex_core.daban_instant_circuit_breaker
+source_of_truth: src/zephyr/ex_core/daban_instant_circuit_breaker.py
+algo_flow: |
+    # [ALGO_FLOW]
+    # 层: 输入
+    # - id: I1
+    #   name: 模块内部数据
+    #   fields: 无公共形参/无再导出（AST 事实）
+    #   code: daban_instant_circuit_breaker.py
+    # 层: 算法
+    # - id: A1
+    #   name_zh: ① DabanInstantCircuitBreaker
+    #   name_en: DabanInstantCircuitBreaker
+    #   intro: 打板专用瞬时风控（v1.9.2 补，三触发器→瞬时熔断卖出）。
+    #   desc: 打板专用瞬时风控（v1.9.2 补，三触发器→瞬时熔断卖出）。；公共方法（定义序）: check_instant_break；源码 L69-L103
+    #   inputs: 无参数
+    #   outputs: 返回值
+    # 层: 输出
+    # - id: O1
+    #   name_zh: 模块公共 API 面（1 定义）
+    #   name_en: public defs
+    #   intro: DabanInstantCircuitBreaker
+    #   downstream: （首批实盘接线前暂无，与 Kill Switch 并列的 sleeve 级盘中瞬时熔断）
+    # [/ALGO_FLOW]
+    #
+    # 边:
+    # I1 --> A1
+    # A1 --> O1

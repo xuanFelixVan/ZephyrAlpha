@@ -48,47 +48,7 @@ spec 转写登记（语义锁定不偏移）：
   ② AMBUSH 的 limit_price 为 spec 占位标记 "涨停价-0.01"（实际限价由 G22
      执行层按价格笼子规则解析，本类只产出时点/单型决策）。
 
-# [ALGO_FLOW]
-# 层: 输入
-# - id: I1
-#   name: 模块内部数据
-#   fields: 无公共形参/无再导出（AST 事实）
-#   code: daban_execution.py
-# 层: 算法
-# - id: A1
-#   name_zh: ① DabanExecutionAlgorithm
-#   name_en: DabanExecutionAlgorithm
-#   intro: 打板分笔建仓（v1.9.2 补，v1.9.3 升级 passive impact 理论背书）。
-#   desc: 打板分笔建仓（v1.9.2 补，v1.9.3 升级 passive impact 理论背书）。依赖 G22 执行层。；公共方法（定义序）: estimate_fill_probability, estimate_sar…
-#   inputs: 无参数
-#   outputs: 返回值
-# - id: A2
-#   name_zh: ② DabanTimingDecision
-#   name_en: DabanTimingDecision
-#   intro: 打板时点决策（v1.9.3 补，追板 vs 埋伏权衡）。
-#   desc: 打板时点决策（v1.9.3 补，追板 vs 埋伏权衡）。；公共方法（定义序）: decide_timing；源码 L170-L208
-#   inputs: 无参数
-#   outputs: 返回值
-# - id: A3
-#   name_zh: ③ DynamicCapacityCalculator
-#   name_en: DynamicCapacityCalculator
-#   intro: 打板容量动态测算（v1.9.3 补，实时流动性→可下仓量）。
-#   desc: 打板容量动态测算（v1.9.3 补，实时流动性→可下仓量）。与 §3.4 13 约束链（静态阈值）互补。；公共方法（定义序）: calculate；源码 L212-L245
-#   inputs: 无参数
-#   outputs: 返回值
-# 层: 输出
-# - id: O1
-#   name_zh: 模块公共 API 面（3 定义）
-#   name_en: public defs
-#   intro: DabanExecutionAlgorithm, DabanTimingDecision, DynamicCapacityCalculator
-#   downstream: （首批实盘接线前暂无；G22 执行层落线后由 sleeve 组装消费）
-# [/ALGO_FLOW]
-#
-# 边:
-# I1 --> A1
-# A1 --> A2
-# A2 --> A3
-# A3 --> O1
+# [ALGO_FLOW] external: docs/03_modules/_domain_execution_core/algo_flow/daban_execution.yaml
 """
 
 from __future__ import annotations

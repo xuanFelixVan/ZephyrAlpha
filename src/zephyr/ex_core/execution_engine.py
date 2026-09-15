@@ -38,49 +38,7 @@ CTR 契约：
 
 SSoT: cross_layer_contracts.yaml -> CTR-004 + CTR-005 + CTR-006 + CTR-P1-007
 
-# [ALGO_FLOW]
-# 层: 输入
-# - id: I1
-#   name: 委托订单 Order + 算法选择 algo + broker_id
-#   fields: order_id/symbol/side/quantity/limit_price + AlgoType(MARKET/TWAP/VWAP/ICEBERG)
-#   code: execute_order(order, algo, broker_id) (execution_engine.py)
-# 层: 算法
-# - id: A1
-#   name_zh: ① 盘前风控校验
-#   name_en: risk_validator.validate_order
-#   intro: HALT 级违规则拒单（ValueError），通过才进入执行分支
-#   desc: target_weight=qty/1e6 估算 → RiskValidationPort → HALT 即抛
-#   inputs: I1
-#   outputs: 放行或拒单
-#   invariant: 风控先于执行
-# - id: A2
-#   name_zh: ② 算法分发执行
-#   name_en: _execute_twap/_execute_vwap/_execute_iceberg/_execute_market
-#   intro: 按算法类型分发；G7 注入（algo_engine+market_ctx_provider）时走切片路径
-#   desc: _can_use_algo→_execute_sliced(generate_plan→逐片子订单create+submit)；未注入回退整笔提交（向后兼容）
-#   inputs: I1 A1
-#   outputs: 子订单/整单提交
-#   invariant: 切片委托 ex_sor AlgoTradingEngine（不重复实现算法）
-# - id: A3
-#   name_zh: ③ 执行记录
-#   name_en: _record_run
-#   intro: 聚合成交结果写 _reports（ExecutionEngineRunRecord 引擎内部快照）
-#   desc: 填充总量/成交/均价/状态/venue，供 get_engine_run_record 查询
-#   inputs: A2
-#   outputs: ExecutionEngineRunRecord
-# 层: 输出
-# - id: O1
-#   name_zh: 券商订单号 broker_order_id
-#   name_en: broker_order_id（切片路径=首个子订单）
-#   intro: 提交成功返回券商订单号；母子订单关联记 algo_orders 供审计
-#   downstream: OrderManager / BrokerInterface（miniqmt/simulation）
-# [/ALGO_FLOW]
-# 边:
-# I1 --> A1
-# A1 --> A2
-# A2 --> A3
-# A2 --> O1
-# A3 --> O1
+# [ALGO_FLOW] external: docs/03_modules/_domain_execution_core/algo_flow/execution_engine.yaml
 """
 
 from __future__ import annotations

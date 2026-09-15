@@ -1,0 +1,49 @@
+# ALGO_FLOW 外部真源——live_strategy_adapter（_domain_execution_core 域，真源 src/zephyr/ex_core/live_strategy_adapter.py）
+# 2026-09-15 P2-1 契约头减负批量出仓：docstring 内联块逐字节副本，extractor 经
+# external 锚加载走同一 parse_algo_flow 管线；算法公共面变化时同步更新本块。
+doc_type: architecture_view
+ttl: permanent
+module: src.zephyr.ex_core.live_strategy_adapter
+source_of_truth: src/zephyr/ex_core/live_strategy_adapter.py
+algo_flow: |
+    # [ALGO_FLOW]
+    # 层: 输入
+    # - id: I1
+    #   name: slots 参数
+    #   fields: 参数 slots（无注解）
+    #   code: live_strategy_adapter.py 顶层公共函数形参（AST 提取）
+    # - id: I2
+    #   name: heartbeat_path 参数
+    #   fields: 参数 heartbeat_path（无注解）
+    #   code: live_strategy_adapter.py 顶层公共函数形参（AST 提取）
+    # - id: I3
+    #   name: heartbeat_interval_seconds 参数
+    #   fields: 参数 heartbeat_interval_seconds（无注解）
+    #   code: live_strategy_adapter.py 顶层公共函数形参（AST 提取）
+    # - id: I4
+    #   name: max_restart_attempts 参数
+    #   fields: 参数 max_restart_attempts（无注解）
+    #   code: live_strategy_adapter.py 顶层公共函数形参（AST 提取）
+    # 层: 算法
+    # - id: A1
+    #   name_zh: ① LiveStrategyAdapter
+    #   name_en: LiveStrategyAdapter
+    #   intro: 模拟盘策略常驻服务——多 slot 承载 TradingSession 的生命周期管理器。
+    #   desc: 模拟盘策略常驻服务——多 slot 承载 TradingSession 的生命周期管理器。 用法（CLI/调度接线层）:: adapter = LiveStrategyAdapt…；公共方法（定义序）: is_runn…
+    #   inputs: slots heartbeat_path heartbeat_interval_seconds max_restart_attempts…
+    #   outputs: 返回值
+    #   （注：A1 之后另有 3 个公共定义未列入（含 3 个数据契约/异常/枚举声明类），见源码）
+    # 层: 输出
+    # - id: O1
+    #   name_zh: 模块公共 API 面（4 定义）
+    #   name_en: public defs
+    #   intro: LiveStrategyAdapter
+    #   downstream: 57 号文 GAP-2 常驻服务化——CLI 接线已落（scripts/start_paper_session.py --service：assemble_s…
+    # [/ALGO_FLOW]
+    #
+    # 边:
+    # I1 --> A1
+    # I2 --> A1
+    # I3 --> A1
+    # I4 --> A1
+    # A1 --> O1

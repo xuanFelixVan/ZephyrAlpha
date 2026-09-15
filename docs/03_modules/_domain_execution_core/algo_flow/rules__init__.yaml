@@ -1,0 +1,33 @@
+# ALGO_FLOW 外部真源——__init__（_domain_execution_core 域，真源 src/zephyr/ex_core/rules/__init__.py）
+# 2026-09-15 P2-1 契约头减负批量出仓：docstring 内联块逐字节副本，extractor 经
+# external 锚加载走同一 parse_algo_flow 管线；算法公共面变化时同步更新本块。
+doc_type: architecture_view
+ttl: permanent
+module: src.zephyr.ex_core.rules.__init__
+source_of_truth: src/zephyr/ex_core/rules/__init__.py
+algo_flow: |
+    # [ALGO_FLOW]
+    # 层: 输入
+    # - id: I1
+    #   name: market 参数
+    #   fields: 参数 market，类型注解 str
+    #   code: __init__.py 顶层公共函数形参（AST 提取）
+    # 层: 算法
+    # - id: A1
+    #   name_zh: ① get_trading_rule_pack
+    #   name_en: get_trading_rule_pack
+    #   intro: 装配层注入入口：按市场名取规则包单例（无状态共享）。
+    #   desc: 装配层注入入口：按市场名取规则包单例（无状态共享）。 Args: market: 市场名（"ashare"/"crypto"）。 Returns: 对应市场的 TradingRu…；源码 L74-L89
+    #   inputs: market
+    #   outputs: TradingRulePack
+    # 层: 输出
+    # - id: O1
+    #   name_zh: TradingRulePack
+    #   name_en: TradingRulePack
+    #   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+    #   downstream: 装配层（TradingSession/PreExecutionChecker/回测装配 按市场注入）
+    # [/ALGO_FLOW]
+    #
+    # 边:
+    # I1 --> A1
+    # A1 --> O1
