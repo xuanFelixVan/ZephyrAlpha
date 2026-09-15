@@ -235,6 +235,10 @@ def write_intake_report(receipt: dict[str, Any], path: Path | None = None) -> Pa
     REPORT_DIR.mkdir(parents=True, exist_ok=True)
     md = path or (REPORT_DIR / f"intake-{time.strftime('%Y%m%d-%H%M')}.md")
     lines = [
+        "---",
+        "ttl: task_bound",
+        "---",
+        "",
         f"# C6 auto_intake 批报告——{receipt.get('trigger_batch', '')}",
         "",
         f"> {time.strftime('%Y-%m-%d %H:%M')}｜MOD-BT-189｜dry_run={receipt.get('dry_run')}",
