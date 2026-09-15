@@ -84,37 +84,39 @@ class TestDiscoverAllRegistriesReadsROOR:
 
 
 class TestAgentsMdNoHardcodedCount:
-    """AGENTS.md RULE-REGISTRY 不应硬编码 stale 计数（曾硬编码"31"，实际 ROOR=52/master_index=32）。"""
+    """AGENTS.md 不应硬编码 stale 计数（曾硬编码"31 个 registry"/"54 个裁定条目"，增长后漂移）。
+
+    2026-09-12 宪法 L0 替换后 AGENTS.md 为表格形态（无 "## RULE-REGISTRY" 段落结构），
+    本类改为全文扫描（比旧段落解析更强）+ 真源指认检查，不变式语义不变。
+    """
 
     def test_no_stale_31_hardcode_in_rule_registry(self):
         text = _AGENTS.read_text(encoding="utf-8")
-        # RULE-REGISTRY 段落（## RULE-REGISTRY 到下一个 ## 之间）
-        m = re.search(r"## RULE-REGISTRY.*?(?=\n## )", text, re.DOTALL)
-        assert m, "未找到 RULE-REGISTRY 段落"
-        section = m.group(0)
-        # 禁止"31 个 registry"这类硬编码计数
-        assert not re.search(r"31\s*个\s*registry", section), "RULE-REGISTRY 仍含 stale 硬编码 31"
-        # 必须指向 ROOR 作为发现真源
-        assert "registry_of_registries.yaml" in section, "RULE-REGISTRY 未指向 ROOR 发现真源"
+        # 全文禁止"31 个 registry"这类硬编码计数
+        assert not re.search(r"31\s*个\s*registry", text), "AGENTS.md 仍含 stale 硬编码 31 个 registry"
+        # 必须指向 ROOR 作为发现真源（§0 冷启动或 §1 硬规则表）
+        assert "registry_of_registries.yaml" in text, "AGENTS.md 未指向 ROOR 发现真源"
 
     def test_rule_registry_clarifies_master_index_is_cache(self):
-        """RULE-REGISTRY 必须说明 master_index 是 catalogs 派生缓存（非 registry-of-registries）。"""
-        text = _AGENTS.read_text(encoding="utf-8")
-        m = re.search(r"## RULE-REGISTRY.*?(?=\n## )", text, re.DOTALL)
-        section = m.group(0)
-        assert "catalogs" in section and "缓存" in section, "未声明 master_index 为 catalogs 派生缓存"
+        """master_index 的"catalogs 派生缓存（生成器产出非手工维护）"角色声明，
+        L0 后真源落点=ROOR 条目自身（maintenance: auto + 生成器指针）。"""
+        roor = _ROOR.read_text(encoding="utf-8")
+        entry_match = re.search(
+            r"physical_path:\s*\S*registry_master_index\.yaml.*?(?=\n    - |'\n  |\n[a-z_]+:)", roor, re.DOTALL
+        )
+        assert entry_match, "ROOR 未登记 registry_master_index 条目"
+        entry = entry_match.group(0)
+        assert "auto" in entry, "master_index 条目未声明 maintenance: auto（派生缓存角色漂移）"
+        assert "generate_registry_master_index.py" in entry or "generate_registry_master_index.py" in roor, (
+            "master_index 缺生成器指针（非派生缓存声明）"
+        )
 
     def test_no_stale_ruling_count_hardcode(self):
-        """RULE-RULING 不应硬编码裁定条目计数（曾硬编码"54"，实际 ruling_registry=56）。
-        同类病根：AGENTS.md 硬编码 registry 计数，registry 增长后漂移。"""
+        """AGENTS.md 不应硬编码裁定条目计数；RULE-RULING 行仍在且指向 ruling_registry 真源。"""
         text = _AGENTS.read_text(encoding="utf-8")
-        m = re.search(r"## RULE-RULING.*?(?=\n## )", text, re.DOTALL)
-        assert m, "未找到 RULE-RULING 段落"
-        section = m.group(0)
-        # 禁止"\d+ 个裁定条目"这类硬编码计数
-        assert not re.search(r"\d+\s*个\s*裁定条目", section), "RULE-RULING 仍含硬编码裁定计数"
-        # 必须声明"勿写死"并指向 entries 真源
-        assert "勿在文档/AI 记忆中写死" in section or "勿写死" in section, "RULE-RULING 未声明计数勿写死"
+        assert not re.search(r"\d+\s*个\s*裁定条目", text), "AGENTS.md 仍含硬编码裁定计数"
+        assert "RULE-RULING" in text, "AGENTS.md 丢失 RULE-RULING 硬规则"
+        assert "ruling_registry" in text, "RULE-RULING 未指向 ruling_registry 真源"
 
 
 class TestSsotAlignment:
