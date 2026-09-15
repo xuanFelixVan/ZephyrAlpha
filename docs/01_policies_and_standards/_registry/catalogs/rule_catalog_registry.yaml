@@ -4,7 +4,7 @@ ttl: permanent
 doc_type: register
 title: 规则路径目录（唯一真源 SSoT）
 status: active
-generated_at: '2026-09-15T04:34:12Z'
+generated_at: '2026-09-15T10:50:45Z'
 generated_by: scripts/governance/d3_metadata/generate_rule_catalog.py
 maintenance: auto
 total_files: 253
@@ -1949,7 +1949,7 @@ files:
   title: 交易决策域施工流程标准作业规程（SOP）——端到端 15 步施工闭环
   doc_type: policy
   status: active
-  version: 1.7.1
+  version: 1.7.2
   rule_form: procedural
   scope: global
   stability: ''
@@ -2066,10 +2066,10 @@ files:
   section_count: 0
 - path: docs/01_policies_and_standards/sop/mining_sop/mining_sop_policy.md
   module_id: ''
-  title: 挖矿 SOP——全网调研+内部反查的全面挖掘方法论（六向寻路/防噪音四闸/双噪音终止/挖后自审闸）
+  title: 挖矿 SOP——全网调研+内部反查的全面挖掘方法论（六向寻路/防噪音四闸/矿脉枯竭终止/挖后自审闸）
   doc_type: policy
   status: active
-  version: 1.2.0
+  version: 1.3.0
   rule_form: procedural
   scope: ''
   stability: ''
@@ -2084,7 +2084,7 @@ files:
   title: 交易决策全景图病菌寻路增长 SOP——六向寻路+防噪音四闸（长期增长机制真源）
   doc_type: policy
   status: active
-  version: 1.0.0
+  version: 1.2.0
   rule_form: procedural
   scope: global
   stability: ''

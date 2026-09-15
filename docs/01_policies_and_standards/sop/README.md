@@ -19,7 +19,7 @@ language: zh
 |---|---|---|
 | `governance_sop/` | **宪法与对齐族**：现行宪法 L0 真源（agent_constitution_l0）+ v1 全文归档 + 全图全库对齐清单（alignment_checklist） | 每次会话冷启动；新建图/库/注册表前；对齐口径争执时 |
 | `construction_sop/` | **施工族**：15 步施工闭环真源（construction_workflow_policy）+ 前端拆件 8 步闭环（frontend_component_split_policy）+ 文档七轮审查法（document_review_and_optimization_policy） | 写第一行业务代码/新模块施工前（宪法 RULE-CAPABILITY-LOOKUP 强制）；前端拆组件前；重要文档定稿前 |
-| `mining_sop/` | **挖矿研究方法论族**：通用研究方法论真源（mining_sop_policy：六向寻路+防噪音四闸+双噪音终止+时间盒封批）+ TDM 消费场景寻路政策（trading_decision_map_pathfinding） | 全网调研/找方案/建策略/写方案类任务开工前（.trae PRE-OP 行强制） |
+| `mining_sop/` | **挖矿研究方法论族**：通用研究方法论真源（mining_sop_policy：六向寻路+防噪音四闸+矿脉枯竭终止+时间盒限流）+ TDM 消费场景寻路政策（trading_decision_map_pathfinding） | 全网调研/找方案/建策略/写方案类任务开工前（.trae PRE-OP 行强制） |
 | `backtest_system_sop/` | **回测体系族**：四卷——全图编排（sop_a）/节点循环（sop_b）/策略库入库（sop_c）/档案命名（sop_d） | 回测施工、策略入库、run 档案落地前（src/scripts 多处代码锚定此族路径） |
 | `data_ops_sop/` | **数据操作族**：回灌/修复/判重/PIT/探针全流程方法论（data_ops_policy：三步验证+幂等回补+FINAL 逐位验证+勿物理删+探针手法+实战范例索引） | 数据回灌/坏数据修复/表结构变更/判重/缺口处置开工前 |
 | `trading_decision_map_sop/` | **TDM 地图族**：逐层讨论六步法（trading_decision_map_layering_policy：四道前置检查防撞车）+消费场景规程（tdm_consumption_policy：S1-S9 九场合——什么场合必须打开地图、读什么、验证什么） | TDM 地图结构讨论、血肉填充、建蓝图锚/策略挂图/回测预检/改判据/引擎变更/退役/复盘/转级 前 |
