@@ -450,8 +450,10 @@ def _cleanup_message_file(args, exit_code: int | None = None) -> None:
         keep = args.keep_message_file
     if keep or not msg_file:
         return
-    # 成功（0）或未执行到 commit（None，参数错误等）才删除；gate 拦截等失败保留供重试
-    if exit_code not in (0, None):
+    # 仅成功（0）删除；None（未执行到 commit：preflight 拦截/参数错误）一律保留——
+    # 2026-09-16 实弹教训：preflight 拦截走 None 返回路径，message-file 却被删，
+    # 重试须重写全文（违反本函数"失败保留供重试"契约原文，今收口）。
+    if exit_code != 0:
         print(
             f"INFO: message-file 保留（commit 失败 exit={exit_code}），修正后可直接重跑同一命令: {msg_file}",
             file=sys.stderr,
@@ -491,6 +493,66 @@ def _git_tracked_subset(wt: Path, rel_files: list[str]) -> list[str]:
     return [f for f in rel_files if f.replace("\\", "/") in tracked]
 
 
+def _probe_commit_lock_busy(project_root: str) -> bool:
+    """P1-C 锁忙探针：读 .ailocks/git_commit_global.lock 持有者 PID 判活。
+
+    毫秒级只读；文件缺失/损坏/PID 死=不忙（锁类自身有僵尸清理，探针保守放行
+    走直连——拿不到锁 LOCK_TIMEOUT 自动改道兜底仍在）。
+    """
+    import json as _json
+
+    lock_file = Path(project_root) / ".ailocks" / "git_commit_global.lock"
+    try:
+        if not lock_file.exists():
+            return False
+        data = _json.loads(lock_file.read_text(encoding="utf-8"))
+        pid = data.get("pid")
+        if not isinstance(pid, int) or pid <= 0:
+            return False
+        import psutil  # noqa: PLC0415
+
+        return psutil.pid_exists(pid)
+    except Exception:  # noqa: BLE001 — 探针异常=不忙（直连路径权威）
+        return False
+
+
+def _preflight_skip_set(args) -> frozenset[str]:
+    """逃生旗→预检跳过 gate 映射（旗标放行的 gate 预检同跳，防假阳性快败）。"""
+    skip: set[str] = set()
+    if getattr(args, "allow_non_worktree", False):
+        skip.add("WORKTREE-REQUIRED")
+    if getattr(args, "allow_multi_domain", False):
+        skip.add("COMMIT-SCOPE")
+    if getattr(args, "allow_promote", False):
+        skip.add("FILE-PLACEMENT-TTL")
+    return frozenset(skip)
+
+
+def _run_preflight(gw, args, files: list[str], *, mode: str, extra_skip: frozenset[str] = frozenset()) -> int | None:
+    """P0-A 锁外预检：blocking 时打印一过式失败清单并返回 exit 8；否则 None 放行。"""
+    if getattr(args, "skip_preflight", False) or getattr(args, "merge_finalize", False) or getattr(args, "reconciler_verify", False):
+        return None
+    try:
+        from zephyr.gov_enforcement.rule_bridge.commit_preflight import run_preflight  # noqa: PLC0415
+
+        result = run_preflight(
+            gw,
+            files,
+            args.session,
+            _preflight_skip_set(args) | extra_skip,
+            audit_event=mode,
+        )
+    except Exception as exc:  # noqa: BLE001 — 预检自身异常=放行走锁内现行路径
+        logger.warning("preflight 异常降级放行（锁内兜底）: %s", exc)
+        return None
+    if result.blocking:
+        print(result.render_report(args.session), file=sys.stderr)
+        return 8
+    if result.degraded:
+        logger.info("preflight degraded（不阻断）: %s", result.degraded)
+    return None
+
+
 def _enqueue_mode(args, files: list[str], message: str) -> int:
     """P2⑨ --enqueue 模式：快照入袋即返回 qid（方案 §2.4-4b）。
 
@@ -511,6 +573,24 @@ def _enqueue_mode(args, files: list[str], message: str) -> int:
             file=sys.stderr,
         )
         return 2
+    # P0-A 入队预校验（方案 v2.1 §3.1）：注定死信的单子在入队前死——磁盘内容
+    # =快照内容，确定性违规此刻判与落地侧判等价；CLAIM-REQUIRED 跳过（landing
+    # 时按队列项 session claim，快照语义=入袋即完成）。
+    try:
+        _pf_gw = GitCommitGateway(project_root=args.project_root)
+    except Exception as e:  # noqa: BLE001 — 预检网关构造失败不阻断入队（落地侧权威）
+        logger.warning("preflight gateway 初始化失败，入队预校验跳过: %s", e)
+        _pf_gw = None
+    if _pf_gw is not None:
+        pf_exit = _run_preflight(
+            _pf_gw,
+            args,
+            files,
+            mode="enqueue",
+            extra_skip=frozenset({"CLAIM-REQUIRED"}),
+        )
+        if pf_exit is not None:
+            return pf_exit
     _ensure_scripts_package_importable(str(_PROJECT_ROOT))
     from scripts.commit_queue import EnqueueOptions, enqueue_item  # noqa: PLC0415
     from scripts.commit_queue import _read_files_from_worktree  # noqa: PLC0415
@@ -557,7 +637,7 @@ def _enqueue_mode(args, files: list[str], message: str) -> int:
         args.session,
         message,
         payload,
-        options=EnqueueOptions(deletes=deletes or None, meta_extra={"interactive": "true"}),
+        options=EnqueueOptions(deletes=deletes or None, meta_extra={"interactive": "true", "lane": "interactive"}),
     )
     # 入队自举排空尝试（best-effort，66 号 §8；失败等下次自举，入袋即安全）
     try:
@@ -612,8 +692,8 @@ def main() -> int:
             "示例:\n"
             '  python scripts/git_commit.py --session sess-001 --files src/a.py,src/b.py --message "feat: add"\n'
             "\n"
-            "对标 git_guard.py: git_guard 透传 git 子命令；本脚本强制走 GitCommitGateway。\n"
-            "exit codes: 0=成功, 1=失败/无变更, 2=锁超时/stash冲突, 3=永久区晋升阻断, 4=SSoT违规, 5=搭便车防护阻断, 6=claim_files前置检查阻断, 7=claim-only部分冲突"
+        "对标 git_guard.py: git_guard 透传 git 子命令；本脚本强制走 GitCommitGateway。\n"
+        "exit codes: 0=成功, 1=失败/无变更, 2=锁超时/stash冲突, 3=永久区晋升阻断, 4=SSoT违规, 5=搭便车防护阻断, 6=claim_files前置检查阻断, 7=claim-only部分冲突, 8=预检快败（P0-A 锁外一过式失败清单，--skip-preflight 可跳过）"
         ),
     )
     parser.add_argument(
@@ -796,6 +876,18 @@ def main() -> int:
     # commit 执行后失败（gate 拦截等，exit≠0）保留文件供重试——避免
     # "重建 message-file 再重跑"（sess-recovery-0813 踩坑）；early return
     # （参数/环境错误，未执行 commit，exit_code=None）仍删除，不残留。
+    # P0-A 预检前移（方案 v2.1 §3.1，st-commitspeed-20260916）：锁外对 files
+    # 清单试跑确定性 gate 白名单（commit_preflight.PREFLIGHT_GATES），一过式
+    # 失败清单快败（exit 8）——治 48h 527 次拦截×P50 79s 锁内白烧与最长 30 连败
+    # 重试环。--skip-preflight=诊断逃生；merge_finalize/reconciler_verify 语义
+    # 不兼容自动跳过；预检设施异常降级放行（锁内全套照跑=权威兜底）。
+    parser.add_argument(
+        "--skip-preflight",
+        action="store_true",
+        default=False,
+        help="跳过锁外预检（P0-A；诊断场景逃生。预检只快败确定性违规，"
+        "逃生旗对应的 gate 自动跳过，锁内门禁链语义零变化）。",
+    )
     args = None
     exit_code: int | None = None
     try:
@@ -838,6 +930,27 @@ def main() -> int:
         if pc_exit is not None:
             return pc_exit
 
+        # P1-C 竞争感知入队（方案 v2.1 §3.5，st-commitspeed-20260916）：锁被活进程
+        # 持有且未显式 --wait 时，跳过缺省 60s 空等直接入队（flag ON+未
+        # --no-auto-enqueue；显式 --wait=同步占锁意图，尊重不跳）。探针=读锁文件
+        # PID 判活（毫秒级）；探针竞态无害（锁刚释放→入队照常落地，只是路径选择）。
+        if (
+            args.wait is None
+            and not getattr(args, "no_auto_enqueue", False)
+            and not args.reconciler_verify
+            and not getattr(args, "merge_finalize", False)
+            and _probe_commit_lock_busy(args.project_root)
+        ):
+            from zephyr.gov_enforcement.rule_bridge.gate_cache_preflight import flag_enabled  # noqa: PLC0415
+
+            if flag_enabled("commit_queue_interactive"):
+                print(
+                    "PROBE-ENQUEUE: 全局提交锁忙（他进程持有）——跳过 60s 空等直接入队"
+                    "（显式 --wait 可保留同步等待语义）",
+                    file=sys.stderr,
+                )
+                return _enqueue_mode(args, files, message)
+
         # 标准路径：claim → commit → release（claim 前移协议下 Edit 前已 claim，此处幂等）
         claimed = gw.claim_files(args.session, files, adopt_prior_work=args.adopt_prior_work)
         # reconciler-verify 模式：claim_files 必须全部成功（无搭便车逃生通道）
@@ -850,6 +963,12 @@ def main() -> int:
                 file=sys.stderr,
             )
             return 1
+        # P0-A 锁外预检（claim 之后判 CLAIM-REQUIRED 与锁内同口径；失败清单
+        # 一次给全后释放 claim 再退——不留滞留持有）
+        pf_exit = _run_preflight(gw, args, files, mode="direct")
+        if pf_exit is not None:
+            gw.release_files(args.session, claimed)
+            return pf_exit
         try:
             result = gw.commit(
                 session_id=args.session,

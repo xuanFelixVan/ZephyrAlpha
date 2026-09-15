@@ -272,12 +272,23 @@ def resolve_queue_root(queue_root: str | os.PathLike | None = None) -> Path:
 
     默认锚 __file__ 派生的仓库根（scripts/ 上一级）——与 task_board 锚主仓同理，
     本队列是跨 worktree 协调设施，MUST 全会话共享同一目录。
+    P0-C 测试隔离治本（st-commitspeed-20260916，2026-09-16）：pytest 运行态下
+    禁止回退生产根——历史 735 条死信系测试无 queue_root 落生产队列所致
+    （dead_reason 含 .runtime/tmp/pytest_* 路径，已隔离转运 .runtime/quarantine/
+    dead_test_pollution_20260916/）。测试 MUST 显式传 queue_root 或设
+    ZEPHYR_COMMIT_QUEUE_DIR；确需测默认解析本体的用例 monkeypatch PYTEST_CURRENT_TEST。
     """
     if queue_root is not None:
         return Path(queue_root)
     env = os.environ.get(QUEUE_ENV_VAR)
     if env:
         return Path(env)
+    if os.environ.get("PYTEST_CURRENT_TEST"):
+        raise RuntimeError(
+            "P0-C 测试隔离：pytest 运行态禁止解析到生产队列根——"
+            "测试 MUST 显式传 queue_root=tmp_path/... 或 setenv "
+            f"{QUEUE_ENV_VAR}（历史 735 条测试污染死信治本）"
+        )
     return _REPO_ROOT / _QUEUE_DIR_DEFAULT
 
 
@@ -890,6 +901,58 @@ def _revalidate_stale_base(item: dict, head_reader) -> tuple[bool, list[str]]:
     return (not mismatched, mismatched)
 
 
+_MACHINE_LANE_STARVATION_SEC = 1800.0  # machine 单饿死上限 30min（P1-D 护栏）
+
+
+def _item_lane(item: dict | None) -> str:
+    """P1-D 车道判定（方案 v2.1 §3.6）：machine=reconciler 派生自动批；缺省 interactive。
+
+    判定真源=meta.lane 显式标记；兼容历史项：meta.interactive=="true"→interactive、
+    meta.rerouted_from=="_commit_auto"→machine、其余缺省 interactive（历史交互项）。
+    """
+    meta = (item or {}).get("meta") or {}
+    lane = meta.get("lane")
+    if lane in ("interactive", "machine"):
+        return lane
+    if meta.get("rerouted_from") == "_commit_auto":
+        return "machine"
+    return "interactive"
+
+
+def _pick_head(heads: list) -> tuple:
+    """P1-D 车道优先选队首：interactive 先落、machine 让路；30min 防饿死兜底。
+
+    返回 (path, lane)。interactive 项存在 → qid 序取首个 interactive；无
+    interactive → qid 序取首个 machine（队空时 machine 自然落地）。最老 machine
+    等待超 _MACHINE_LANE_STARVATION_SEC → 提前放行（防持续交互流量饿死）。
+    项读取失败按 interactive 保守处理（不降级跳过——FIFO 不跳项铁律）。
+    """
+    from datetime import datetime
+
+    oldest_machine_age = 0.0
+    now = datetime.now().astimezone()
+    first_interactive = None
+    first_machine = None
+    for h in heads[:64]:  # 有界扫描（pending 通常 <10，64=防御上界）
+        item = _read_item(h)
+        if _item_lane(item) == "machine":
+            if first_machine is None:
+                first_machine = h
+            if item and item.get("created_at"):
+                try:
+                    age = (now - datetime.fromisoformat(item["created_at"])).total_seconds()
+                    oldest_machine_age = max(oldest_machine_age, age)
+                except (ValueError, TypeError):
+                    pass
+        elif first_interactive is None:
+            first_interactive = h
+    if oldest_machine_age > _MACHINE_LANE_STARVATION_SEC and first_machine is not None:
+        return first_machine, "machine"
+    if first_interactive is not None:
+        return first_interactive, "interactive"
+    return first_machine, "machine"
+
+
 def drain_queue(
     queue_root: str | os.PathLike | None = None,
     *,
@@ -936,10 +999,19 @@ def drain_queue(
         # 非 while True 时间轮询（PERM-TRIGGER 口径：事件触发自举，无常驻）。
         while max_items is None or processed < max_items:
             pending_dir = root / "pending"
-            heads = sorted(pending_dir.glob("q-*.json"))  # qid 字典序 == FIFO 序（seq 零填充）
+            heads = sorted(pending_dir.glob("q-*.json"))  # qid 字典序 == 车道内 FIFO 序
             if not heads:
                 break  # 排空即退出（66 号 §6.3）
-            head = heads[0]
+            # P1-D 车道优先（方案 v2.1 §3.6，st-commitspeed-20260916）：interactive
+            # 先落（AI 交互提交延迟敏感）、machine 让路（reconciler 派生批延迟不
+            # 敏感）；车道内维持 qid 单调 FIFO；30min 防饿死兜底。纯 FIFO 不变量
+            # 修订=车道化 FIFO（裁定留档本 commit message）。
+            head, lane = _pick_head(heads)
+            if head is None:
+                break
+            if lane == "machine":
+                stats.setdefault("machine_lane_landed", 0)
+                stats["machine_lane_landed"] = stats.get("machine_lane_landed", 0) + 1
             processing_path = root / "processing" / head.name
             try:
                 # 原子取项：pending → processing；PermissionError=enqueue 写入窗口瞬态占用，
