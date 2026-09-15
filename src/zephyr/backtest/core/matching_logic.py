@@ -34,31 +34,7 @@
 SSoT: docs/03_modules/_domain_backtest/blueprint.md §16.7 matching_engine
       docs/03_modules/_domain_execution_core/blueprint.md §16.7.1 E 共享撮合逻辑抽取方案
 
-# [ALGO_FLOW]
-# 层: 输入
-# - id: I1
-#   name: 订单+盘口/Tick快照
-#   fields: MatchOrderInput / OrderBookSnapshot|TickSnapshot / MatchingConfig
-#   code: MatchingLogic.match_market_order (L242) / match_limit_order (L293) / match_tick_order (L356)
-# 层: 算法
-# - id: A1
-#   name_zh: 三模式撮合
-#   name_en: three_mode_matching
-#   intro: 市价按盘口最优价成交；限价价内成交否则不成交；Tick 逐档消化受流动性约束
-#   code: match_market_order / match_limit_order / match_tick_order
-# - id: A2
-#   name_zh: 滑点与费用计算
-#   name_en: slippage_commission_calc
-#   intro: 滑点按 bps 加减成交价；佣金=max(费率×成交额,最低佣金)，卖出加印花税
-#   code: _apply_slippage (L442) / _calc_commission (L463)
-# 层: 输出
-# - id: O1
-#   name_zh: 撮合成交结果
-#   name_en: matching_fill
-#   intro: MatchingFill（纯值对象，无副作用；未成交走 _unfilled）
-#   downstream: zephyr.backtest.core.matching_engine; zephyr.ex_core.adapters.miniqmt_broker
-# [/ALGO_FLOW]
-# 边: I1 --> A1 ; A1 --> A2 ; A2 --> O1
+# [ALGO_FLOW] external: docs/03_modules/_domain_backtest/algo_flow/matching_logic.yaml
 """
 
 from __future__ import annotations

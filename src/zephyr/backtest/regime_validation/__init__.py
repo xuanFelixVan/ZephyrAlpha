@@ -12,31 +12,7 @@ D_BACKTEST — Regime 回测验证包（11_regime_backtest_validation_plan 验�
 
 依赖方向: backtest → regime（消费 regime 的 ShrinkageResult），符合
 11_regime_backtest_validation_plan §2.1 "regime 验证复用现有 BM-BT 框架" 的对接约定。
-
-# [ALGO_FLOW]
-# 层: 输入
-# - id: I1
-#   name: 包内子模块公共符号
-#   fields: import 再导出符号: C1ComparisonResult, C1Config, C1MetricVerdict, C1ShrinkageComparator,…
-#   code: __init__.py import L43
-# 层: 算法
-# - id: A1
-#   name_zh: ① 包公共面再导出
-#   name_en: __init__ re-export
-#   intro: 再导出 ConstShrinkageProvider, ScheduleShrinkageProvider, MockShrinkageProvider, R…
-#   desc: __init__ import L43；__all__ 42 项（AST 事实）
-#   inputs: I1
-#   outputs: __all__ 公共符号表
-# 层: 输出
-# - id: O1
-#   name_zh: 公共 API 面（42 符号）
-#   name_en: __all__
-#   intro: ConstShrinkageProvider, ScheduleShrinkageProvider, MockShrinkageProvider, Regim…
-#   downstream: 见模块头 [CONSUMERS]
-# [/ALGO_FLOW]
-#
-# 边:
-# I1 --> A1
+# [ALGO_FLOW] external: docs/03_modules/_domain_backtest/algo_flow/regime_validation__init__.yaml
 # A1 --> O1
 """
 

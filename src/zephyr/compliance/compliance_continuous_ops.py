@@ -30,50 +30,7 @@ Compliance Continuous Ops — 合规持续运营 (MOD-CMP-004)
 数据全部经探针注入（生产接线: 审计存储/规则注册表/拦截队列），
 本模块只做纯函数评估 + 单次有界编排（无持续循环，调度由上层任务系统负责）。
 
-# [ALGO_FLOW]
-# 层: 输入
-# - id: I1
-#   name: ops_input 参数
-#   fields: 参数 ops_input，类型注解 ComplianceOpsInput
-#   code: compliance_continuous_ops.py 顶层公共函数形参（AST 提取）
-# - id: I2
-#   name: config 参数
-#   fields: 参数 config，类型注解 ComplianceOpsConfig
-#   code: compliance_continuous_ops.py 顶层公共函数形参（AST 提取）
-# - id: I3
-#   name: run_id 参数
-#   fields: 参数 run_id（无注解）
-#   code: compliance_continuous_ops.py 顶层公共函数形参（AST 提取）
-# 层: 算法
-# - id: A1
-#   name_zh: ① evaluate_continuous_ops
-#   name_en: evaluate_continuous_ops
-#   intro: 合规持续运营评估（纯函数：同输入必同输出，可单测）。
-#   desc: 合规持续运营评估（纯函数：同输入必同输出，可单测）。；源码 L157-L238
-#   inputs: ops_input config run_id
-#   outputs: ComplianceOpsReport
-# - id: A2
-#   name_zh: ② ComplianceContinuousOps
-#   name_en: ComplianceContinuousOps
-#   intro: 合规持续运营编排器（单次有界 run_once；探针失败 fail-closed 转 CRITICAL）。
-#   desc: 合规持续运营编排器（单次有界 run_once；探针失败 fail-closed 转 CRITICAL）。；公共方法（定义序）: run_once；源码 L241-L309
-#   inputs: retention_probe rule_update_probe queue_pending_probe config
-#   outputs: 返回值
-#   （注：A2 之后另有 5 个公共定义未列入（含 5 个数据契约/异常/枚举声明类），见源码）
-# 层: 输出
-# - id: O1
-#   name_zh: ComplianceOpsReport
-#   name_en: ComplianceOpsReport
-#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
-#   downstream: MOD-L10-001(合规域运营巡检) ; D_FRONTEND(合规健康面板)
-# [/ALGO_FLOW]
-#
-# 边:
-# I1 --> A1
-# I2 --> A1
-# I3 --> A1
-# A1 --> A2
-# A2 --> O1
+# [ALGO_FLOW] external: docs/03_modules/_domain_compliance/algo_flow/compliance_continuous_ops.yaml
 """
 
 from __future__ import annotations

@@ -32,37 +32,7 @@ apply_depgraph 登记设计态模块环节（§6.4，不新增独立审批流程
 
 Version: 1.0.0
 
-# [ALGO_FLOW]
-# 层: 输入
-# - id: I1
-#   name: registry_path 参数
-#   fields: 参数 registry_path（无注解）
-#   code: hard_boundary_adjudicator.py 顶层公共函数形参（AST 提取）
-# - id: I2
-#   name: logger 参数
-#   fields: 参数 logger（无注解）
-#   code: hard_boundary_adjudicator.py 顶层公共函数形参（AST 提取）
-# 层: 算法
-# - id: A1
-#   name_zh: ① FeatureGate
-#   name_en: FeatureGate
-#   intro: 新功能上线门禁。
-#   desc: 新功能上线门禁。 - 未登记 → PENDING 视同 BLOCK（裁定未决 → 暂缓上线，安全优先，§6.3） - FORBIDDEN → BLOCK 并提示重评条件 - 登记…；公共方法（定义序）: check…
-#   inputs: registry_path logger
-#   outputs: 返回值
-#   （注：A1 之后另有 5 个公共定义未列入（含 5 个数据契约/异常/枚举声明类），见源码）
-# 层: 输出
-# - id: O1
-#   name_zh: 模块公共 API 面（6 定义）
-#   name_en: public defs
-#   intro: FeatureGate
-#   downstream: apply_depgraph.py 设计态登记环节（新功能上线门禁校验，43 号 §6.3/§6.4）
-# [/ALGO_FLOW]
-#
-# 边:
-# I1 --> A1
-# I2 --> A1
-# A1 --> O1
+# [ALGO_FLOW] external: docs/03_modules/_domain_compliance/algo_flow/hard_boundary_adjudicator.yaml
 """
 
 from __future__ import annotations

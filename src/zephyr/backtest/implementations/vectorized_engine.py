@@ -32,31 +32,7 @@ CTR 契约:
 
 SSoT: cross_layer_contracts.yaml -> CTR-001 + CTR-P1-016
 
-# [ALGO_FLOW]
-# 层: 输入
-# - id: I1
-#   name: 行情+因子信号
-#   fields: data(OHLCV, CTR-001) / signals(目标权重, CTR-002) / BacktestConfig
-#   code: DefaultBacktestEngine.run (L106)
-# 层: 算法
-# - id: A1
-#   name_zh: 逐日回测主循环
-#   name_en: daily_bar_loop
-#   intro: 按交易日取价(PIT)→取滞后信号(P0-1 默认 T+1)→PIT 标的池过滤(P0-3)→MatchingEngine 撮合(含 P0-2 流动性约束)→Portfolio 记账→更新净值
-#   code: run (L106) / _get_day_prices (L239) / _get_day_signals (L267)
-# - id: A2
-#   name_zh: 指标与质量门禁
-#   name_en: metrics_quality_gates
-#   intro: calculate_full_metrics 绩效指标；Walk-Forward/过拟合检测/DecisionGate 评估
-#   code: run_walk_forward_analysis (L321) / detect_overfitting (L342) / evaluate_decision_gate (L375)
-# 层: 输出
-# - id: O1
-#   name_zh: 回测结果
-#   name_en: backtest_result
-#   intro: BacktestResult 全字段填充（CTR-P1-016）
-#   downstream: 实验（CTR-P1-016 消费者）
-# [/ALGO_FLOW]
-# 边: I1 --> A1 ; A1 --> A2 ; A2 --> O1
+# [ALGO_FLOW] external: docs/03_modules/_domain_backtest/algo_flow/vectorized_engine.yaml
 """
 
 from __future__ import annotations

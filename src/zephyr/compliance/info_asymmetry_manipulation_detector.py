@@ -34,37 +34,7 @@ B10-01426（AUD-DRAFT-001-DIGEST P2 波 P2-W10，CAND-CMP-005，A1 模块54）�
 intraday_manipulation_detector=盘中流式操纵检测（本件=信息披露空窗期视角 +
 三模式离线评分，零交集）。
 
-# [ALGO_FLOW]
-# 层: 输入
-# - id: I1
-#   name: clock 参数
-#   fields: 参数 clock（无注解）
-#   code: info_asymmetry_manipulation_detector.py 顶层公共函数形参（AST 提取）
-# - id: I2
-#   name: config 参数
-#   fields: 参数 config（无注解）
-#   code: info_asymmetry_manipulation_detector.py 顶层公共函数形参（AST 提取）
-# 层: 算法
-# - id: A1
-#   name_zh: ① InfoAsymmetryManipulationDetector
-#   name_en: InfoAsymmetryManipulationDetector
-#   intro: 信息不对称期与操纵检测器（空窗判定 + z 扫描 + 三模式评分 + 回避名单）。
-#   desc: 信息不对称期与操纵检测器（空窗判定 + z 扫描 + 三模式评分 + 回避名单）。 Args: clock: 时钟注入（报告/回避条目时戳确定性来源）。 config: 阈值配置…；公共方法（定义序）: registe…
-#   inputs: clock config
-#   outputs: 返回值
-#   （注：A1 之后另有 6 个公共定义未列入（含 6 个数据契约/异常/枚举声明类），见源码）
-# 层: 输出
-# - id: O1
-#   name_zh: 模块公共 API 面（7 定义）
-#   name_en: public defs
-#   intro: InfoAsymmetryManipulationDetector
-#   downstream: 运行时装配批（披露登记与行情特征统一注入 / 回避名单供漏斗排除）
-# [/ALGO_FLOW]
-#
-# 边:
-# I1 --> A1
-# I2 --> A1
-# A1 --> O1
+# [ALGO_FLOW] external: docs/03_modules/_domain_compliance/algo_flow/info_asymmetry_manipulation_detector.yaml
 """
 
 from __future__ import annotations

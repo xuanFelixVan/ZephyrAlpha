@@ -28,42 +28,7 @@ D_BACKTEST — E4 交易成本敏感性 0-50bps 分析（11 号 memo §4.5 E4）
 
 依据: 11_regime_backtest_validation_plan §4.5 E4 / §5
 Version: 0.1.0
-
-# [ALGO_FLOW]
-# 层: 输入
-# - id: I1
-#   name: points 参数
-#   fields: 参数 points，类型注解 list[E4CostPoint]
-#   code: e4_cost_sensitivity.py 顶层公共函数形参（AST 提取）
-# - id: I2
-#   name: cost_min 参数
-#   fields: 参数 cost_min，类型注解 float
-#   code: e4_cost_sensitivity.py 顶层公共函数形参（AST 提取）
-# - id: I3
-#   name: cost_max 参数
-#   fields: 参数 cost_max，类型注解 float
-#   code: e4_cost_sensitivity.py 顶层公共函数形参（AST 提取）
-# 层: 算法
-# - id: A1
-#   name_zh: ① analyze_cost_sensitivity
-#   name_en: analyze_cost_sensitivity
-#   intro: E4 主入口：0-50bps 成本网格下 Shrinkage 效果方向一致性判定。
-#   desc: E4 主入口：0-50bps 成本网格下 Shrinkage 效果方向一致性判定。 Args: points: 各成本点效果（≥2 点），effect>0 表示该成本下节流仍有正…；源码 L111-L163
-#   inputs: points cost_min cost_max
-#   outputs: E4CostReport
-#   （注：A1 之后另有 3 个公共定义未列入（含 3 个数据契约/异常/枚举声明类），见源码）
-# 层: 输出
-# - id: O1
-#   name_zh: E4CostReport
-#   name_en: E4CostReport
-#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
-#   downstream: 人工审查; 11_regime_backtest_validation_plan Phase 4 E4
-# [/ALGO_FLOW]
-#
-# 边:
-# I1 --> A1
-# I2 --> A1
-# I3 --> A1
+# [ALGO_FLOW] external: docs/03_modules/_domain_backtest/algo_flow/e4_cost_sensitivity.yaml
 # A1 --> O1
 """
 

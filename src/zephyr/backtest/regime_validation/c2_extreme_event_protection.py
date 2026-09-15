@@ -29,60 +29,7 @@ CRISIS 时段（memo §4.2 B4 案例库：2008-09/2015-08/2020-03/2024-07 等）
 
 依据: 11_regime_backtest_validation_plan §4.3 C2 / §5
 Version: 0.1.0
-
-# [ALGO_FLOW]
-# 层: 输入
-# - id: I1
-#   name: nav 参数
-#   fields: 参数 nav，类型注解 Sequence[float]
-#   code: c2_extreme_event_protection.py 顶层公共函数形参（AST 提取）
-# - id: I2
-#   name: nav_baseline 参数
-#   fields: 参数 nav_baseline，类型注解 pd.Series
-#   code: c2_extreme_event_protection.py 顶层公共函数形参（AST 提取）
-# - id: I3
-#   name: nav_experiment 参数
-#   fields: 参数 nav_experiment，类型注解 pd.Series
-#   code: c2_extreme_event_protection.py 顶层公共函数形参（AST 提取）
-# - id: I4
-#   name: crisis_windows 参数
-#   fields: 参数 crisis_windows，类型注解 Sequence[tuple[Hashable, Hashable, Hash…
-#   code: c2_extreme_event_protection.py 顶层公共函数形参（AST 提取）
-# 层: 算法
-# - id: A1
-#   name_zh: ① max_drawdown_of
-#   name_en: max_drawdown_of
-#   intro: 窗口净值 → MaxDD（负值；nav/cummax(nav)−1 最小值）。
-#   desc: 窗口净值 → MaxDD（负值；nav/cummax(nav)−1 最小值）。单调上涨=0。；源码 L135-L143
-#   inputs: nav
-#   outputs: float
-# - id: A2
-#   name_zh: ② evaluate_extreme_event_protection
-#   name_en: evaluate_extreme_event_protection
-#   intro: C2 主入口：CRISIS 时段开/关 MaxDD 改善判定。
-#   desc: C2 主入口：CRISIS 时段开/关 MaxDD 改善判定。 Args: nav_baseline / nav_experiment: C1 关/开两组净值序列（pd.Seri…；源码 L146-L212
-#   inputs: nav_baseline nav_experiment crisis_windows improvement_threshold
-#   outputs: C2ProtectionReport
-#   （注：A2 之后另有 3 个公共定义未列入（含 3 个数据契约/异常/枚举声明类），见源码）
-# 层: 输出
-# - id: O1
-#   name_zh: float
-#   name_en: float
-#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
-#   downstream: 人工审查; 11_regime_backtest_validation_plan C2 极端事件回撤保护
-# - id: O2
-#   name_zh: C2ProtectionReport
-#   name_en: C2ProtectionReport
-#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
-#   downstream: 人工审查; 11_regime_backtest_validation_plan C2 极端事件回撤保护
-# [/ALGO_FLOW]
-#
-# 边:
-# I1 --> A1
-# I2 --> A1
-# I3 --> A1
-# I4 --> A1
-# A1 --> A2
+# [ALGO_FLOW] external: docs/03_modules/_domain_backtest/algo_flow/c2_extreme_event_protection.yaml
 # A2 --> O1
 """
 

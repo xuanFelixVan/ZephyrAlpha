@@ -34,45 +34,7 @@ B14-04651（AUD-DRAFT-001-DIGEST P2 波 P2-W10，CAND-CMP-006，A9 D-COMPLIANCE-
 回放验证语义）；governance 合规门=治理裁决（零交集）。本件=策略即代码的
 声明、版本化与安全激活层。
 
-# [ALGO_FLOW]
-# 层: 输入
-# - id: I1
-#   name: condition 参数
-#   fields: 参数 condition，类型注解 str
-#   code: compliance_policy_engine.py 顶层公共函数形参（AST 提取）
-# - id: I2
-#   name: context 参数
-#   fields: 参数 context，类型注解 Mapping
-#   code: compliance_policy_engine.py 顶层公共函数形参（AST 提取）
-# 层: 算法
-# - id: A1
-#   name_zh: ① evaluate_condition
-#   name_en: evaluate_condition
-#   intro: 条件求值：or 分段 → and 分段 → 单子句（纯函数，确定性）。
-#   desc: 条件求值：or 分段 → and 分段 → 单子句（纯函数，确定性）。；源码 L244-L251
-#   inputs: condition context
-#   outputs: bool
-# - id: A2
-#   name_zh: ② CompliancePolicyEngine
-#   name_en: CompliancePolicyEngine
-#   intro: 合规策略即代码引擎（DSL + 版本管理 + 回放验证 + 审批队列 + 热加载门禁）。
-#   desc: 合规策略即代码引擎（DSL + 版本管理 + 回放验证 + 审批队列 + 热加载门禁）。 Args: clock: 时钟注入。 replayer: 回放器注入（old_rules…；公共方法（定义序）: submit_…
-#   inputs: clock replayer is_non_trading_time
-#   outputs: 返回值
-#   （注：A2 之后另有 8 个公共定义未列入（含 8 个数据契约/异常/枚举声明类），见源码）
-# 层: 输出
-# - id: O1
-#   name_zh: bool
-#   name_en: bool
-#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
-#   downstream: 运行时装配批（规则库版本装配 / 回放器与时段判定统一注入）
-# [/ALGO_FLOW]
-#
-# 边:
-# I1 --> A1
-# I2 --> A1
-# A1 --> A2
-# A2 --> O1
+# [ALGO_FLOW] external: docs/03_modules/_domain_compliance/algo_flow/compliance_policy_engine.yaml
 """
 
 from __future__ import annotations

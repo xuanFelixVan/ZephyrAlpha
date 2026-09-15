@@ -24,76 +24,7 @@ D_BACKTEST — Parameter Analyzer (参数优化结果分析器)
 属 A 类基础设施(纯统计分析+阈值判定), 纯基础层不涉及策略。
 
 设计真源: depgraph MOD-BT-021
-蓝图: docs/03_modules/_domain_backtest/param_analyzer/blueprint.md
-
-# [ALGO_FLOW]
-# 层: 输入
-# - id: I1
-#   name: 参数运行列表 list[ParamRun]
-#   fields: params dict + objective目标值 + in_sample + out_of_sample可选
-#   code: runs
-# - id: I2
-#   name: 分析配置 ParamAnalysisConfig frozen
-#   fields: sensitivity_threshold=0.5 + overfit_threshold=0.5 + stability_cv_threshold=0.1 + top_n=5
-#   code: ParamAnalysisConfig L124-148
-# 层: 算法
-# - id: A1
-#   name_zh: ① 最优参数选择
-#   name_en: analyze(选优段)
-#   intro: 默认按目标值取最大的那组参数当最优; 开关开时选稳定区代表点
-#   desc: 空runs直接raise → 默认 best_run=max(runs, key=objective)（A/B对照纪律: 默认行为零变化）; plateau_selection_enabled=True 时经 select_plateau_param 选 SR≥0.9·SR_opt 平台区中位代表点（与 B-009 过拟合防护互锁, 52/90号注记）
-#   inputs: I1
-#   outputs: best_run
-#   invariant: 空列表raise ParamAnalysisError
-# - id: A2
-#   name_zh: ② 参数敏感度分析
-#   name_en: _compute_sensitivities
-#   intro: 按参数值分组看目标均值极差占总体波动几成
-#   desc: 汇总参数名 → 按参数值分组求组均值 → sensitivity=(max组均值-min组均值)/总体std → >0.5判显著（L248-289）
-#   inputs: I1 I2
-#   outputs: ParamSensitivity列表
-#   invariant: 单条记录返回空敏感度
-# - id: A3
-#   name_zh: ③ 过拟合检测
-#   name_en: _check_overfitting
-#   intro: 样本内好看样本外拉胯就是过拟合
-#   desc: 取有IS/OOS的最优run → overfit_score=(IS-OOS)/|IS| → >0.5判过拟合 无OOS数据返回None（L294-320）
-#   inputs: I1 I2
-#   outputs: OverfittingCheck或None
-# - id: A4
-#   name_zh: ④ 稳定性评估
-#   name_en: _assess_stability
-#   intro: 前5名结果的变异系数越小参数越稳
-#   desc: objective降序取top_n → CV=std/|mean| → <0.1判稳定 均值≈0直接判稳定（L325-348）
-#   inputs: I1 I2
-#   outputs: StabilityAssessment或None
-# - id: A5
-#   name_zh: ⑤ 报告组装与缓存
-#   name_en: analyze+_cache_report
-#   intro: 拼frozen分析报告，可选顺手写进BT-020缓存
-#   desc: 组装ParamAnalysisReport → cache非空则compute_key+put缓存摘要 失败仅warning（L223-243, L353-373）
-#   inputs: A1 A2 A3 A4
-#   outputs: ParamAnalysisReport
-# 层: 输出
-# - id: O1
-#   name_zh: 参数分析报告 ParamAnalysisReport
-#   name_en: ParamAnalysisReport
-#   intro: 最优参数+敏感度+过拟合+稳定性四件套，供报告生成和人工审查
-#   invariant: Report frozen不可变; 不修改输入
-#   downstream: report_generator MOD-BT-019 ; 人工审查
-# [/ALGO_FLOW]
-#
-# 边:
-# I1 --> A1
-# I1 --> A2
-# I2 --> A2
-# I1 --> A3
-# I2 --> A3
-# I1 --> A4
-# I2 --> A4
-# A1 --> A5
-# A2 --> A5
-# A3 --> A5
+# [ALGO_FLOW] external: docs/03_modules/_domain_backtest/algo_flow/param_analyzer.yaml
 # A4 --> A5
 # A5 --> O1
 """

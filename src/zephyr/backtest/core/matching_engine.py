@@ -38,31 +38,7 @@ v1.1.0 重构要点:
 
 SSoT: docs/03_modules/_domain_backtest/blueprint.md §3.2 §5.1 §16.7
 
-# [ALGO_FLOW]
-# 层: 输入
-# - id: I1
-#   name: 目标权重+盘口快照
-#   fields: target_weights / order_books(OrderBookSnapshot|TickSnapshot) / portfolio / prev_close
-#   code: MatchingEngine.generate_fills (L181) / _build_target_orders (L73)
-# 层: 算法
-# - id: A1
-#   name_zh: 目标订单生成
-#   name_en: build_target_orders
-#   intro: 按权重×NAV换算目标股数(100股整数倍)，剔除停牌/涨跌停标的
-#   code: _build_target_orders (L73)
-# - id: A2
-#   name_zh: 委托撮合与成交转换
-#   name_en: delegate_match_convert
-#   intro: 委托 MatchingLogic 纯函数撮合，MatchingFill 加 date 转 BacktestFill
-#   code: _generate_fills_from_order_books (L390) / _to_backtest_fill (L488)
-# 层: 输出
-# - id: O1
-#   name_zh: 回测成交列表
-#   name_en: backtest_fills
-#   intro: list[BacktestFill]（含 date/price/commission/slippage_cost）
-#   downstream: zephyr.backtest.core.portfolio.Portfolio.apply_fill
-# [/ALGO_FLOW]
-# 边: I1 --> A1 ; A1 --> A2 ; A2 --> O1
+# [ALGO_FLOW] external: docs/03_modules/_domain_backtest/algo_flow/matching_engine.yaml
 """
 
 from __future__ import annotations

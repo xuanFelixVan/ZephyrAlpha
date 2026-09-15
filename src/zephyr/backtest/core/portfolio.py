@@ -30,31 +30,7 @@
 
 SSoT: docs/03_modules/_domain_backtest/blueprint.md §3.2
 
-# [ALGO_FLOW]
-# 层: 输入
-# - id: I1
-#   name: 成交记录+行情价格
-#   fields: BacktestFill(date/symbol/side/quantity/price/commission) / prices
-#   code: Portfolio.apply_fill (L151) / update_market_value (L242)
-# 层: 算法
-# - id: A1
-#   name_zh: 买卖记账
-#   name_en: fill_bookkeeping
-#   intro: 买入扣款加仓并摊薄成本；卖出回款结转已实现盈亏；T+1 买入日禁卖
-#   code: _apply_buy (L184) / _apply_sell (L211)
-# - id: A2
-#   name_zh: 市值与净值更新
-#   name_en: nav_update
-#   intro: 按当日价格重估持仓市值，累计生成净值曲线
-#   code: update_market_value (L242) / nav_series (L263)
-# 层: 输出
-# - id: O1
-#   name_zh: 持仓/现金/净值
-#   name_en: portfolio_state
-#   intro: positions 字典、非负现金、pd.Series 净值曲线
-#   downstream: zephyr.backtest.implementations.vectorized_engine
-# [/ALGO_FLOW]
-# 边: I1 --> A1 ; A1 --> A2 ; A2 --> O1
+# [ALGO_FLOW] external: docs/03_modules/_domain_backtest/algo_flow/portfolio.yaml
 """
 
 from __future__ import annotations

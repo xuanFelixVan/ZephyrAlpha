@@ -32,40 +32,7 @@
 
 Version: 1.0.0
 
-# [ALGO_FLOW]
-# 层: 输入
-# - id: I1
-#   name: registry_path 参数
-#   fields: 参数 registry_path（无注解）
-#   code: compliance_report_registry.py 顶层公共函数形参（AST 提取）
-# 层: 算法
-# - id: A1
-#   name_zh: ① ComplianceReportRegistry
-#   name_en: ComplianceReportRegistry
-#   intro: 报告登记表（只读加载 + 门禁校验）。
-#   desc: 报告登记表（只读加载 + 门禁校验）。；公共方法（定义序）: load_items, order_min_dwell_us；源码 L128-L163
-#   inputs: registry_path
-#   outputs: 返回值
-# - id: A2
-#   name_zh: ② ReportGate
-#   name_en: ReportGate
-#   intro: 报送门禁：任一必报项 broker_ack 缺失 → BLOCK（C-002 拒单）。
-#   desc: 报送门禁：任一必报项 broker_ack 缺失 → BLOCK（C-002 拒单）。；公共方法（定义序）: check；源码 L166-L214
-#   inputs: registry logger
-#   outputs: 返回值
-#   （注：A2 之后另有 4 个公共定义未列入（含 4 个数据契约/异常/枚举声明类），见源码）
-# 层: 输出
-# - id: O1
-#   name_zh: 模块公共 API 面（6 定义）
-#   name_en: public defs
-#   intro: ComplianceReportRegistry, ReportGate
-#   downstream: C-002 执行域（先报告后交易铁律：任一必报项 broker_ack 缺失 → 拒单，43 号 §7.4）
-# [/ALGO_FLOW]
-#
-# 边:
-# I1 --> A1
-# A1 --> A2
-# A2 --> O1
+# [ALGO_FLOW] external: docs/03_modules/_domain_compliance/algo_flow/compliance_report_registry.yaml
 """
 
 from __future__ import annotations

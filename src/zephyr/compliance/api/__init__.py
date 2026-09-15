@@ -15,31 +15,7 @@ D_COMPLIANCE 公共 API 面。
 - compliance_report_registry（§7.4/§7.5）：6 项报告义务登记 + ReportGate
 - compliance_log（§3.2）：compliance_log JSONL append-only 落库
 
-# [ALGO_FLOW]
-# 层: 输入
-# - id: I1
-#   name: 包内子模块公共符号
-#   fields: import 再导出符号: annotations, ComplianceLogger, ComplianceLogRecord, ComplianceReportR…
-#   code: __init__.py import L45
-# 层: 算法
-# - id: A1
-#   name_zh: ① 包公共面再导出
-#   name_en: __init__ re-export
-#   intro: 再导出 annotations, ComplianceLogger, ComplianceLogRecord, ComplianceReportRegistr…
-#   desc: __init__ import L45；__all__ 0 项（AST 事实）
-#   inputs: I1
-#   outputs: __all__ 公共符号表
-# 层: 输出
-# - id: O1
-#   name_zh: 公共 API 面（36 符号）
-#   name_en: __all__
-#   intro: annotations, ComplianceLogger, ComplianceLogRecord, ComplianceReportRegistry, R…
-#   downstream: 见模块头 [CONSUMERS]
-# [/ALGO_FLOW]
-#
-# 边:
-# I1 --> A1
-# A1 --> O1
+# [ALGO_FLOW] external: docs/03_modules/_domain_compliance/algo_flow/api__init__.yaml
 """
 
 from __future__ import annotations

@@ -278,6 +278,7 @@ nodes:
   - {strategy_ref: STR-VREV-025, confidence: verified, evidence: '三窗全绿 IS 1.15/OOS 0.83/S3 0.98, run=SCR-C4-20260913-002056+C4-2016-2019-sample3'}
   - {strategy_ref: STR-VREV-026, confidence: verified, evidence: '双窗及格 IS 0.160/OOS 0.526, run=SCR-C4-20260913-002056+SCR-C4-20260914-051809'}
   - {strategy_ref: STR-MOMTREND-033, confidence: verified, evidence: '双窗及格 IS 0.204/OOS 0.552, run=SCR-C4-20260913-002056+SCR-C4-20260914-051809'}
+  - {strategy_ref: STR-VREV-027, confidence: verified, evidence: 'auto_mount IS 2020-01-01..2023-12-31 states=accumulation+capitulation; accumulation=+2.89(159d); capitulation=+2.90(73d); code=scripts/backtest/transl'}
   materiality: critical
   decay_scan_frequency: monthly
 
@@ -453,7 +454,7 @@ nodes:
   data_refs: [DS-082, DS-059, DS-150]
   module_ref: src/zephyr/signal_ashare/core/daily_condition_sensor.py
   module_id: MOD-SIG-135
-  note_confirmed: "2026-09-10"
+  note_confirmed: "2026-09-14"
   strategy_mounts: []
   materiality: normal
   decay_scan_frequency: semiannual
@@ -1509,15 +1510,15 @@ nodes:
   point: 盘后
   decision_question: 候选池里谁被一票否决直接出池
   algo_note_zh: >-
-    一票否决清单：业绩暴雷（预告亏损）/立案调查/大股东减持公告/解禁>5% 流通盘/商誉减值风险/配股圈钱。
+    一票否决清单：业绩暴雷（预告亏损）/立案调查/大股东减持公告/解禁>5% 流通盘/商誉减值风险/配股圈钱/高应计（Sloan 盈余质量差，fundamentals.accrual_negative_screen 产出）。
     命中任一条直接出池，不管打分多高——负面清单优先级高于一切加分项。
-    （2026-09-15 ALGO_FLOW 块出仓至 docs/03_modules/_domain_signal/algo_flow/negative_veto.yaml：算法推导图外迁，算法口径不变）
+    （2026-09-15 ALGO_FLOW 块出仓至 docs/03_modules/_domain_signal/algo_flow/negative_veto.yaml：算法推导图外迁，算法口径不变；2026-09-14 第七检 high_accrual 增补，裁定#231）
   parent_node: TDM-E-L3
   factor_refs: [FCT-TECH-083, FCT-TECH-077]
   data_refs: [DS-150]
   module_ref: src/zephyr/signal_fundamental/negative_veto.py
   module_id: MOD-SIG-137
-  note_confirmed: "2026-09-10"
+  note_confirmed: "2026-09-14"
   algo_refs: []
   doc_ref: "docs/01_policies_and_standards/_registry/catalogs/strategy_registry.yaml#STR-MULTIFACTOR-034"
   activation: postmarket
@@ -3884,7 +3885,7 @@ nodes:
 
 - node_id: TDM-F-C3-04
   name_zh: 参数校准闭环
-  note_confirmed: 2026-09-15
+  note_confirmed: 2026-09-16
   market: cn_a
   flow: portfolio_flow
   layer: C3
@@ -3896,6 +3897,7 @@ nodes:
     walk-forward 效率 WFE>60% 才可用，<40% 禁上线。
     purge 窗=持仓半衰期，embargo≥5 日。
     （2026-09-15 ALGO_FLOW 块出仓至 docs/03_modules/_domain_backtest/algo_flow/walk_forward.yaml：算法推导图外迁，算法口径不变）
+    （2026-09-15 walk_forward 算法推导图外迁至 docs/03_modules/_domain_backtest/algo_flow/walk_forward.yaml，口径不变；同 commit 触碰源码故本块同日再确认）
   parent_node: TDM-F-C3
   factor_refs: []
   data_refs: []
@@ -4275,12 +4277,12 @@ state_matrix:
       distribution]
   cells:
     # L1 总闸：六段各输出预算/姿态细则（格子内容待填，proposed）
-  - {node_id: TDM-E-L1, state: capitulation, mounted: [STR-VREV-025], confidence: proposed}
-  - {node_id: TDM-E-L1, state: accumulation, mounted: [STR-VREV-026], confidence: proposed}
-  - {node_id: TDM-E-L1, state: ignition, mounted: [], confidence: proposed}
-  - {node_id: TDM-E-L1, state: expansion, mounted: [STR-MOMTREND-033], confidence: proposed}
-  - {node_id: TDM-E-L1, state: euphoria, mounted: [], confidence: proposed}
-  - {node_id: TDM-E-L1, state: distribution, mounted: [], confidence: proposed}
+  - {node_id: TDM-E-L1, state: capitulation, mounted: [STR-VREV-025, STR-VREV-027], confidence: proposed}
+  - {node_id: TDM-E-L1, state: accumulation, mounted: [STR-VREV-026, STR-VREV-027], confidence: proposed}
+  - {node_id: TDM-E-L1, state: ignition, mounted: [STR-VREV-027], confidence: proposed}
+  - {node_id: TDM-E-L1, state: expansion, mounted: [STR-MOMTREND-033, STR-VREV-027], confidence: proposed}
+  - {node_id: TDM-E-L1, state: euphoria, mounted: [STR-VREV-027], confidence: proposed}
+  - {node_id: TDM-E-L1, state: distribution, mounted: [STR-VREV-027], confidence: proposed}
     # L4 买卖点：打板只进点火确认后的三档（发酵=1进2主战场，高潮=警惕高开不追，退潮/冰点/修复不进）
   - {node_id: TDM-E-L4, state: ignition, mounted: [daban-sleeve], confidence: 
       proposed}
@@ -4315,24 +4317,26 @@ portfolio_plan:
   name_zh: 整装仿真组合 V0
   confidence: proposed              # 整个方案的权重分配=主观假设，待拼装回测归因后逐 sleeve 升级
   sleeves:
-  - {strategy_ref: default-equity, weight: 0.14, activation_state: null}         # 默认多头=底仓
-  - {strategy_ref: multifactor-sleeve, weight: 0.14, activation_state: null}
-  - {strategy_ref: daban-sleeve, weight: 0.105, activation_state: [ignition, 
+  - {strategy_ref: default-equity, weight: 0.126, activation_state: null}         # 默认多头=底仓
+  - {strategy_ref: multifactor-sleeve, weight: 0.126, activation_state: null}
+  - {strategy_ref: daban-sleeve, weight: 0.0945, activation_state: [ignition, 
         expansion, euphoria]}                                                                               # 打板=点火确认后三档
-  - {strategy_ref: eventdriven-sleeve, weight: 0.07, activation_state: null}
-  - {strategy_ref: topn-momentum, weight: 0.07, activation_state: null}
-  - {strategy_ref: intraday-surge-fall, weight: 0.07, activation_state: [
+  - {strategy_ref: eventdriven-sleeve, weight: 0.063, activation_state: null}
+  - {strategy_ref: topn-momentum, weight: 0.063, activation_state: null}
+  - {strategy_ref: intraday-surge-fall, weight: 0.063, activation_state: [
         accumulation, expansion]}                                                                     # 做T=修复期主战场+发酵期
-  - {strategy_ref: orderbook-imbalance, weight: 0.0525, activation_state: [
+  - {strategy_ref: orderbook-imbalance, weight: 0.04725, activation_state: [
         accumulation, expansion]}
-  - {strategy_ref: vwap-reversion, weight: 0.0525, activation_state: [
+  - {strategy_ref: vwap-reversion, weight: 0.04725, activation_state: [
         accumulation, expansion]}
-  - {strategy_ref: STR-VREV-025, weight: 0.05, activation_state: [capitulation]}
-  - {strategy_ref: STR-VREV-026, weight: 0.05, activation_state: [accumulation]}
-  - {strategy_ref: STR-MOMTREND-033, weight: 0.05, activation_state: [expansion]}
-  - {strategy_ref: STR-DABAN-023, weight: 0.05, activation_state: [accumulation, expansion]}
-  - {strategy_ref: STR-TSMALL-001, weight: 0.05, activation_state: null}
-  - {strategy_ref: STR-VAL-001, weight: 0.05, activation_state: null}
+  - {strategy_ref: STR-VREV-025, weight: 0.045, activation_state: [capitulation]}
+  - {strategy_ref: STR-VREV-026, weight: 0.045, activation_state: [accumulation]}
+  - {strategy_ref: STR-MOMTREND-033, weight: 0.045, activation_state: [expansion]}
+  - {strategy_ref: STR-DABAN-023, weight: 0.045, activation_state: [accumulation, expansion]}
+  - {strategy_ref: STR-TSMALL-001, weight: 0.045, activation_state: null}
+  - {strategy_ref: STR-VAL-001, weight: 0.045, activation_state: null}
+  - {strategy_ref: STR-MULTIFACTOR-097, weight: 0.05, activation_state: null}
+  - {strategy_ref: STR-VREV-027, weight: 0.05, activation_state: [accumulation, capitulation]}
   # C5 转正批等权起步档（2026-09-14）：新 6 sleeve 各 0.05，老 8 等比 ×0.70；权重=proposed 先验，
   # 待拼装回测归因逐 sleeve 替换（备忘 69 权重管线第一档，禁拍脑袋绝对收益配比）
   # 外审修复注记（2026-09-07）：①correlation_cap=0.7 处置语义复用 F-C2-03 两档（ρ>0.70 减半/>0.85 禁新仓，m-15）；②max_total_position=1.0=工程天花板永不触发（D92）；总仓位=min(预算带, 60% 硬顶 RLM-CONCENTRATION-002)；预备金不固定比例、以波动率预算输出为准，闲置资金自动 GC001 收益化（D107 修订 D88）；尾部弹药=D110 信号触发+回测验证后动用；合成净值含现金 sleeve（GC001）收益（D84⑤，m-50）；③sleeves.activation_state=null=全段激活，预算带 0% 段（distribution）=禁新开仓、存量由 X 流信号驱动离场（D98 确认）；④max_single_sleeve=0.25=常态唯一上限；主线确认+滚动评分双达标放宽至 0.60，禁 1.0；一致性约束=单策略日盈亏贡献>组合 70% 自动降权（D93）

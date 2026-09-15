@@ -33,37 +33,7 @@ prev_hash 链，复用 compliance_log 的 WORM 语义）+ **检索导出**（按
 查重分工：compliance_log=通用合规日志 JSONL 载体（无哈希链/无采集注册表）；
 audit_trail=审计轨迹族（无 prev_hash 链校验语义）。本件=证据链生成与校验层。
 
-# [ALGO_FLOW]
-# 层: 输入
-# - id: I1
-#   name: clock 参数
-#   fields: 参数 clock（无注解）
-#   code: evidence_chain_generator.py 顶层公共函数形参（AST 提取）
-# - id: I2
-#   name: root 参数
-#   fields: 参数 root（无注解）
-#   code: evidence_chain_generator.py 顶层公共函数形参（AST 提取）
-# 层: 算法
-# - id: A1
-#   name_zh: ① EvidenceChainGenerator
-#   name_en: EvidenceChainGenerator
-#   intro: 证据链生成器（采集注册表 + append-only 哈希链 + 检索导出）。
-#   desc: 证据链生成器（采集注册表 + append-only 哈希链 + 检索导出）。 Args: clock: 时钟注入（记录时戳确定性来源）。 root: 落盘根目录注入；None…；公共方法（定义序）: register…
-#   inputs: clock root
-#   outputs: 返回值
-#   （注：A1 之后另有 3 个公共定义未列入（含 3 个数据契约/异常/枚举声明类），见源码）
-# 层: 输出
-# - id: O1
-#   name_zh: 模块公共 API 面（4 定义）
-#   name_en: public defs
-#   intro: EvidenceChainGenerator
-#   downstream: 运行时装配批（采集器注册表统一注入点装配 / 检索导出供合规审计）
-# [/ALGO_FLOW]
-#
-# 边:
-# I1 --> A1
-# I2 --> A1
-# A1 --> O1
+# [ALGO_FLOW] external: docs/03_modules/_domain_compliance/algo_flow/evidence_chain_generator.yaml
 """
 
 from __future__ import annotations

@@ -36,47 +36,7 @@ llm：变更类型/生效日期/涉及条款**结构化校验**）+ **影响域�
 集/影响域映射/评审任务语义）；compliance_policy_engine=规则库版本与激活
 （本件只产出评审任务，确认后由装配批入规则库，不直连引擎）。
 
-# [ALGO_FLOW]
-# 层: 输入
-# - id: I1
-#   name: clock 参数
-#   fields: 参数 clock（无注解）
-#   code: regulatory_change_tracker.py 顶层公共函数形参（AST 提取）
-# - id: I2
-#   name: source 参数
-#   fields: 参数 source（无注解）
-#   code: regulatory_change_tracker.py 顶层公共函数形参（AST 提取）
-# - id: I3
-#   name: extractor 参数
-#   fields: 参数 extractor（无注解）
-#   code: regulatory_change_tracker.py 顶层公共函数形参（AST 提取）
-# - id: I4
-#   name: impact_table 参数
-#   fields: 参数 impact_table（无注解）
-#   code: regulatory_change_tracker.py 顶层公共函数形参（AST 提取）
-# 层: 算法
-# - id: A1
-#   name_zh: ① RegulatoryChangeTracker
-#   name_en: RegulatoryChangeTracker
-#   intro: 监管变更追踪器（采集 → 抽取校验 → 影响域映射 → 评审任务）。
-#   desc: 监管变更追踪器（采集 → 抽取校验 → 影响域映射 → 评审任务）。 Args: clock: 时钟注入。 source: 公告采集源注入（不真发请求）；None → Fail-…；公共方法（定义序）: collect…
-#   inputs: clock source extractor impact_table
-#   outputs: 返回值
-#   （注：A1 之后另有 6 个公共定义未列入（含 6 个数据契约/异常/枚举声明类），见源码）
-# 层: 输出
-# - id: O1
-#   name_zh: 模块公共 API 面（7 定义）
-#   name_en: public defs
-#   intro: RegulatoryChangeTracker
-#   downstream: 运行时装配批（公告源与LLM抽取统一注入 / 评审任务入人工确认队列）
-# [/ALGO_FLOW]
-#
-# 边:
-# I1 --> A1
-# I2 --> A1
-# I3 --> A1
-# I4 --> A1
-# A1 --> O1
+# [ALGO_FLOW] external: docs/03_modules/_domain_compliance/algo_flow/regulatory_change_tracker.yaml
 """
 
 from __future__ import annotations

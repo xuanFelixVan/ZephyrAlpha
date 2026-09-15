@@ -36,47 +36,7 @@ canonical 承接 CAND-CMP-004 归并语义）：合规规则声明与运行时�
 联动与整改任务语义）；配置中心 MOD-INF-091=基线供方（本件只消费注入基线，
 不重建配置中心）。
 
-# [ALGO_FLOW]
-# 层: 输入
-# - id: I1
-#   name: clock 参数
-#   fields: 参数 clock（无注解）
-#   code: compliance_drift_detector.py 顶层公共函数形参（AST 提取）
-# - id: I2
-#   name: alert_sink 参数
-#   fields: 参数 alert_sink（无注解）
-#   code: compliance_drift_detector.py 顶层公共函数形参（AST 提取）
-# - id: I3
-#   name: evidence_sink 参数
-#   fields: 参数 evidence_sink（无注解）
-#   code: compliance_drift_detector.py 顶层公共函数形参（AST 提取）
-# - id: I4
-#   name: is_non_trading_time 参数
-#   fields: 参数 is_non_trading_time（无注解）
-#   code: compliance_drift_detector.py 顶层公共函数形参（AST 提取）
-# 层: 算法
-# - id: A1
-#   name_zh: ① ComplianceDriftDetector
-#   name_en: ComplianceDriftDetector
-#   intro: 合规漂移检测器（基线 diff + AL-P3 告警 + 证据快照 + 整改任务）。
-#   desc: 合规漂移检测器（基线 diff + AL-P3 告警 + 证据快照 + 整改任务）。 Args: clock: 时钟注入。 alert_sink: AL-P3 告警汇注入；Non…；公共方法（定义序）: set_bas…
-#   inputs: clock alert_sink evidence_sink is_non_trading_time
-#   outputs: 返回值
-#   （注：A1 之后另有 7 个公共定义未列入（含 7 个数据契约/异常/枚举声明类），见源码）
-# 层: 输出
-# - id: O1
-#   name_zh: 模块公共 API 面（8 定义）
-#   name_en: public defs
-#   intro: ComplianceDriftDetector
-#   downstream: 运行时装配批（基线由配置中心装配 / AL-P3 告警接 alert 路由 / 整改任务入人工队列）
-# [/ALGO_FLOW]
-#
-# 边:
-# I1 --> A1
-# I2 --> A1
-# I3 --> A1
-# I4 --> A1
-# A1 --> O1
+# [ALGO_FLOW] external: docs/03_modules/_domain_compliance/algo_flow/compliance_drift_detector.yaml
 """
 
 from __future__ import annotations
