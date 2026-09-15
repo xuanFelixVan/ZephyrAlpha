@@ -62,11 +62,13 @@ NEW_SLEEVE_WEIGHT = 0.05
 CLASS_NODE_MAP = {  # ① SOP-C §6.2 映射表（规则真源）
     "value_reversal": "TDM-E-L1", "mean_reversion_timing": "TDM-E-L1", "trend_timing": "TDM-E-L1",
     "small_cap_quality": "TDM-E-L3-07-3", "value_quality": "TDM-E-L3-07-3", "intraday_gap": "TDM-P-P2",
+    "multifactor": "TDM-E-L3-07-2",  # S07-G2：derive_class 兜底类，不映射则挂图 skipped 永不落位
 }
 CLASS_CANDIDATE_STATES: dict[str, set[str] | None] = {  # 语义先行候选态（数据只在态内裁决）
     "value_reversal": {"capitulation", "accumulation"}, "mean_reversion_timing": {"accumulation", "expansion"},
     "trend_timing": {"expansion", "ignition"}, "intraday_gap": {"accumulation", "expansion"},
     "small_cap_quality": None, "value_quality": None,  # 选股链无状态格
+    "multifactor": None,  # 打分链（TDM-E-L3-07-2）同为选股类，无状态格
 }
 R2SIX = {"r10": "capitulation", "r4": "accumulation", "r11": "accumulation", "r3": "expansion", "r12": "ignition"}
 

@@ -36,6 +36,7 @@ from __future__ import annotations
 
 import argparse
 import json
+import os
 import sys
 from datetime import datetime
 from pathlib import Path
@@ -209,7 +210,7 @@ def auto_construct(lanes: tuple[str, ...] = _CONSTRUCT_LANES,
                                 str(_ROOT / "scripts" / "governance" / "d3_metadata"
                                     / "batch_creation_tokens.py"),
                                 "--prefix", str(out.relative_to(_ROOT)),
-                                "--created-by", "st-facbe-20260914",
+                                "--created-by", os.environ.get("ZEPHYR_SESSION_ID") or "factory_intake_pipeline(auto)",
                                 "--capability", "factory_backend"],
                                capture_output=True)
             rec = {"candidate_id": cid, "birth_channel": lane,

@@ -67,7 +67,7 @@ class TestMappingRules:
     def test_sop_six_classes_covered(self):
         assert set(CLASS_NODE_MAP) == {
             "value_reversal", "mean_reversion_timing", "trend_timing",
-            "small_cap_quality", "value_quality", "intraday_gap"}
+            "small_cap_quality", "value_quality", "intraday_gap", "multifactor"}
 
     def test_timing_classes_have_candidates(self):
         for cls, node in CLASS_NODE_MAP.items():
