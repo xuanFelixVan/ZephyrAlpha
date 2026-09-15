@@ -3,7 +3,7 @@
 window.ZK_BUILD='20260914-4';
 (function(){try{var el=document.querySelector('.tb-brand small');if(el&&(' '+el.textContent+' ').indexOf('b'+window.ZK_BUILD)<0)el.textContent+=' · b'+window.ZK_BUILD;}catch(e){}})();
 (function(){
-  var PAGES = ["home", "overview", "warroom", "live", "sector", "sentiment", "news", "policy", "overseas", "t0", "review", "index", "position", "backtest", "experiment", "task", "fitness", "govana", "modledger", "sysstatus", "services", "pano", "projmap", "macro", "chainmap", "strategy", "factor", "stock", "screener", "calendar", "reglib", "tdm", "factory", "pattern", "stockq", "cryptomarket", "cryptopos", "cryptostrat", "cryptobt", "cryptoinfo", "design", "modlib", "rating", "datasrc", "download", "bridge", "models", "aichat", "aitask"];
+  var PAGES = ["home", "overview", "warroom", "live", "sector", "sentiment", "news", "policy", "overseas", "t0", "review", "index", "position", "backtest", "experiment", "task", "fitness", "govana", "modledger", "sysstatus", "services", "pano", "projmap", "macro", "chainmap", "strategy", "factor", "stock", "screener", "calendar", "reglib", "tdm", "factory", "pattern", "stockq", "cryptomarket", "cryptopos", "cryptostrat", "cryptobt", "cryptoinfo", "design", "modlib", "rating", "datasrc", "download", "bridge", "models", "aichat", "aitask", "promotion"];
   var main = document.getElementById('main-root');
   function loadJs(src){
     return new Promise(function(res, rej){
@@ -177,6 +177,8 @@ window.ZK_BUILD='20260914-4';
     return loadJs('features/factory/factory.js');   /* 策略生产全景（横向流水线实时映射 /api/factory，交互照抄 tdm，Owner 2026-09-14 指定） */
   }).then(function(){
     return loadJs('features/pattern/pattern.js');   /* 图形库证据面板（胜率切片+事件查询+机生证据，消费班 W-C4 /api/pattern-*） */
+  }).then(function(){
+    return loadJs('features/promotion/promotion.js');   /* 策略转正审批页（建议卡+Owner 拍板两段确认，真源 /api/promotion-advisories + /api/promotion-decide；C5/S13，授权=Owner 2026-09-15 通宵指令） */
   }).then(function(){
     return loadJs('vendor/dockview/dockview.min.js');   /* Dockview 库先行（dockpilot 依赖） */
   }).then(function(){

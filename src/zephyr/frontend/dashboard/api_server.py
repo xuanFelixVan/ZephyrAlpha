@@ -5,7 +5,9 @@
 # [CONSUMERS] 前端 dashboard（web/services/api.js）
 # [STARTUP] manual（python -m zephyr.frontend.dashboard.api_server 或 uvicorn 直跑；面板服务控制台可一键重启）
 # [MATURITY] production
-# [INVARIANTS] 只读服务（禁任何写副作用）; 非法输入 fail-closed 返回 ok:false; Decimal/Date 一律转 JSON 可序列化
+# [INVARIANTS] 只读服务+四个获准写端点（backtest-run / framework-backtest-run / services-control /
+#   promotion-decide——写权限扩张均有授权留痕：前者回测产物、中者服务编排、末者 Owner 拍板门位数字化
+#   授权=Owner 2026-09-15 通宵自主执行指令+宪法 §5）; 非法输入 fail-closed 返回 ok:false; Decimal/Date 一律转 JSON 可序列化
 # [STABILITY] evolving
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
@@ -22,6 +24,8 @@
   GET /api/pattern-events?symbol=600519           形态事件（消费班 W-C4，MOD-SIG-147 线）
   GET /api/pattern-winrate?direction=向下&fwd_window=10  形态胜率切片（按 hit_rate 降序）
   GET /api/pattern-evidence                       形态机生证据（REG-PAT-001 evidence 直读）
+  GET /api/promotion-advisories                   策略转正建议清单（C5 审批页数据源，只读）
+  POST /api/promotion-decide                      Owner 拍板 approve/reject（第四获准写端点，见端点 docstring 授权依据）
 返回：{"ok": true, "bars": [{timestamp(ms), open, high, low, close, volume, amount}]}
 异常一律 ok:false——前端据此回退演示数据（演示诚实纪律：前端标"演示"角标）。
 """
@@ -39,7 +43,7 @@ from datetime import date, datetime
 from pathlib import Path
 from typing import Any, Final
 
-from fastapi import FastAPI, Query
+from fastapi import FastAPI, HTTPException, Query
 from fastapi.middleware.cors import CORSMiddleware
 
 logger = logging.getLogger("zk.api_server")
@@ -49,7 +53,7 @@ if str(_REPO / "src") not in sys.path:
     sys.path.insert(0, str(_REPO / "src"))
 
 
-app = FastAPI(title="ZephyrAlpha Dashboard API (read-only + backtest-run)")
+app = FastAPI(title="ZephyrAlpha Dashboard API (read-only + controlled writes)")
 app.add_middleware(CORSMiddleware, allow_origins=["*"], allow_methods=["GET", "POST"], allow_headers=["*"])
 
 _PERIOD_TABLE: dict[str, str] = {
@@ -4172,6 +4176,73 @@ def pattern_evidence(
         return {"ok": True, "count": len(out), "evidence_total": total, "data": out}
     except Exception as exc:
         return {"ok": False, "error": str(exc)[:200], "data": []}
+
+
+# ── 策略转正审批两端点（C5 / S13 前端转正汇报页配套，2026-09-15）──────────────
+# 执行器真源：zephyr.strategy_pipeline.promotion_advisory（Y1 并行施工，本端点只做 HTTP 投影，
+# FSM 流转/注册表写入/决策台账全在执行器侧——端点层零业务语义，禁在此自造判定）。
+# 授权：POST 端点=api_server 第四个获准写端点，头注 [INVARIANTS] 已同步修订；
+# 裁定登记（ruling_registry 同 commit 原子）由主会话收尾补登。
+
+
+@app.get("/api/promotion-advisories")
+def promotion_advisories() -> dict[str, Any]:
+    """策略转正建议清单（C5 转正审批页数据源，只读）。
+
+    真源：promotion_advisory.list_advisories()（元素含 advisory_id/strategy_id/lifecycle_now/
+    evidence{sim_pass_months,sim_breach_months,fw_backtest{run_id,sharpe,max_dd,total_return,
+    panel_ok}}/recommendation/generated_at/decision?）。
+    模块未就绪/异常 → 200 + ok:false + 空列表 + error（前端渲染空态，不 500 硬崩）。
+    """
+    try:
+        from zephyr.strategy_pipeline import promotion_advisory
+
+        items = promotion_advisory.list_advisories() or []
+        return {"ok": True, "count": len(items), "data": items}
+    except Exception as exc:  # noqa: BLE001 — 执行器缺位/异常一律降级空态（Y1 未落地属常态）
+        return {
+            "ok": False,
+            "error": f"promotion_advisory unavailable: {str(exc)[:200]}",
+            "count": 0,
+            "data": [],
+        }
+
+
+@app.post("/api/promotion-decide")
+def promotion_decide(body: dict[str, Any]) -> dict[str, Any]:
+    """Owner 拍板：approve（批准=进入整装组合，非单策略直进实盘）/ reject（驳回退回）。
+
+    授权依据：Owner 2026-09-15 通宵自主执行指令 + 宪法 §5 人机门位数字化
+    （production 流转属 high 域 Owner 门位，本端点=该门位的前端数字化承载；
+    token=None 服务端自取密钥，前端不带凭据——S12 无签发体系前的最小半径）。
+    body: {advisory_id, decision: approve|reject}
+    执行器：promotion_advisory.decide(advisory_id, decision, token=None, via="frontend")
+    → {ok, message, new_lifecycle?, receipt?}；业务拒绝=ok:false+原因（200 承载）。
+    异常映射：decision/advisory_id 非法→400；执行器缺位→503；其余意外→500。
+    """
+    advisory_id = str(body.get("advisory_id", "")).strip()
+    decision = str(body.get("decision", "")).strip()
+    if not advisory_id:
+        raise HTTPException(status_code=400, detail="advisory_id required")
+    if decision not in ("approve", "reject"):
+        raise HTTPException(status_code=400, detail="decision must be approve|reject")
+    try:
+        from zephyr.strategy_pipeline import promotion_advisory as _pa
+    except Exception as exc:  # noqa: BLE001 — 执行器缺位=服务端依赖未就绪（503 语义）
+        raise HTTPException(status_code=503, detail=f"promotion_advisory unavailable: {str(exc)[:200]}")
+    if not hasattr(_pa, "decide"):  # 模块在册但执行器未就位（半成品）——同 503，不误报 500
+        raise HTTPException(status_code=503, detail="promotion_advisory.decide unavailable (executor not ready)")
+    try:
+        result = _pa.decide(advisory_id, decision, token=None, via="frontend")
+    except HTTPException:
+        raise
+    except FileNotFoundError as exc:  # 不存在的 advisory=业务拒绝（非服务器故障）
+        return {"ok": False, "advisory_id": advisory_id, "reason": f"not_found: {str(exc)[:120]}"}
+    except Exception as exc:  # noqa: BLE001 — 意外异常不带业务语义，500 交由日志排查
+        raise HTTPException(status_code=500, detail=str(exc)[:300])
+    if not isinstance(result, dict):
+        return {"ok": False, "message": "executor returned non-dict result", "receipt": None}
+    return result
 
 
 def main() -> None:

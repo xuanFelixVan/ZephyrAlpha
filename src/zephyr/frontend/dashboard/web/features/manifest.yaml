@@ -2,7 +2,7 @@
 # 契约：每模块一个独立文件 features/<id>.js；init(chart,ctx)/render(d)/destroy()；样式自注入；模块间只经 ZK.bus 通信
 # 纪律：新功能一律模块制；禁止隐式跨模块摸对方 DOM/状态（depends 显式声明）
 version: "1.1.0"
-updated: 2026-09-12
+updated: 2026-09-15
 modules:
   - id: cost-line
     name: 持仓成本线
@@ -836,4 +836,17 @@ modules:
     styles: pages 全局样式（随页面片段）
     acceptance: ACC-F-HOME-ENGINE
     handbook: [FEH-PC-020]
+    status: active
+
+  - id: promotion-page
+    name: 策略转正审批页（建议卡列表+Owner 拍板两段确认+决策回执）
+    file: features/promotion/promotion.js
+    page: promotion
+    init: "registerFeature 登记+文件顶层自举（容器 #promo-body 就绪即首拉+30s 轮询；全局入口 promoRefresh/promoDecide 供 onclick，先例 bt-battle-stage）"
+    destroy: "destroy()（清 30s 轮询+自注入样式）"
+    depends: [ZK.api]   # GET /api/promotion-advisories + POST /api/promotion-decide（api_server 第四获准写端点；执行器=zephyr.strategy_pipeline.promotion_advisory，Y1 并行施工 2026-09-15）
+    toggle: none
+    styles: self-injected   # .promo-card/.promo-head/.promo-evi/.promo-act/.promo-receipt 随模块注入
+    acceptance: ACC-F-PROMO-PAGE   # S13 C5 验收锚=docs/_working/full-auto-chain/S13_frontend_approval/README.md §5
+    handbook: []
     status: active

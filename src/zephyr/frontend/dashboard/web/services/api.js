@@ -83,6 +83,12 @@ ZK.api = (function(){
     postServicesControl: function(id, action, confirm){   /* 服务启停（分级闸门在服务端，confirm=二次确认） */
       return fetchJson('/api/services-control', 10000, {method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({id:id, action:action, confirm:!!confirm})});
     },
+    fetchPromotionAdvisories: function(){   /* 策略转正建议清单（转正审批页真源；执行器缺位=ok:false+空列表，前端渲染空态） */
+      return fetchJson('/api/promotion-advisories', 10000);
+    },
+    postPromotionDecide: function(advisoryId, decision){   /* Owner 拍板 approve/reject（api_server 第四获准写端点；两段式确认在前端 window.confirm，token 服务端自取） */
+      return fetchJson('/api/promotion-decide', 15000, {method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({advisory_id:advisoryId, decision:decision})});
+    },
     fetchSourcesStatus: function(){   /* 数据源监管真源（健康探针日志解析+alerter 告警流水） */
       return fetchJson('/api/sources-status', 8000);
     },

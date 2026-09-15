@@ -5,7 +5,7 @@
 # D38 模块总线（2026-09-07）：有后端模块承载的功能点必须挂 module:MOD-*（与 depgraph frontend_ref 双向闭合，
 #   经 MOD 总线与交易决策地图/五图互通——全图全库对齐铁律）；纯前端逻辑用 none: 声明事由
 version: 2.3.2
-updated: '2026-09-14'
+updated: '2026-09-15'
 features:
 - id: F-STOCKQ-COSTLINE
   name: 持仓成本线
@@ -2761,4 +2761,18 @@ features:
   module_id: pat-engine
   file: features/pattern/pattern.js
   backend_ref: [api:/api/pattern-evidence, module:MOD-SIG-145, module:MOD-SIG-147]
+  status: active
+- id: F-PROMO-BOARD
+  name: 转正建议卡列表（策略/生命周期/建议三态+证据摘要+空态）
+  page: promotion
+  module_id: promotion-page
+  file: features/promotion/promotion.js
+  backend_ref: api:/api/promotion-advisories   # 执行器=zephyr.strategy_pipeline.promotion_advisory.list_advisories（Y1 并行施工，2026-09-15 接线）
+  status: active
+- id: F-PROMO-DECIDE
+  name: Owner 拍板（approve/reject 两段式确认+已决回执只读+局部刷新）
+  page: promotion
+  module_id: promotion-page
+  file: features/promotion/promotion.js
+  backend_ref: api:/api/promotion-decide   # api_server 第四获准写端点；授权=Owner 2026-09-15 通宵指令+宪法 §5 拍板门位数字化；执行器=promotion_advisory.decide(token=None, via="frontend")
   status: active
