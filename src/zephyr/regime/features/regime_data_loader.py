@@ -56,6 +56,25 @@ from zephyr.data.table_registry import get_registry
 
 _logger = logging.getLogger(__name__)
 
+# FPB-4 修复（裁定#257⑤ 2026-09-16）：涨跌停派生从 ±9.5% 平阈值改为 kline_daily×
+# stk_limit 按 close 对 limit_up/limit_down 精确 join——分板/ST 日期切片规则由真源承载
+_SQL_DERIVE_LIMIT_UP_DOWN = (
+    "SELECT k.trade_date, k.symbol, "
+    "multiIf(toFloat64(k.close) >= toFloat64(s.limit_up), '涨停', "
+    "toFloat64(k.close) <= toFloat64(s.limit_down), '跌停', '') AS limit_type, "
+    "toFloat64(k.pct_change) AS pct_change, "
+    "toFloat64(k.amount) AS amount "
+    "FROM {kline} AS k FINAL "
+    "INNER JOIN {stk} AS s FINAL "
+    "ON k.symbol = s.symbol AND k.trade_date = s.trade_date "
+    "WHERE k.market_type = 'A_share' AND k.quality_flag = 1 "
+    "AND (toFloat64(k.close) >= toFloat64(s.limit_up) "
+    "OR toFloat64(k.close) <= toFloat64(s.limit_down)) "
+    "AND k.trade_date >= toDate('{start}') "
+    "AND k.trade_date <= toDate('{end}') "
+    "ORDER BY k.trade_date, k.symbol"
+)
+
 # 多分时共振用的 ETF 代码（510300=沪深300ETF，作为 000300 指数分钟级代理）
 _MULTI_TF_ETF = "510300"
 # 合成 VIX 用的期权标的
@@ -400,29 +419,22 @@ class RegimeDataLoader:
         return df.set_index(["trade_date", "symbol"]).sort_index()
 
     def _derive_limit_up_down_from_kline(self) -> pd.DataFrame | None:
-        """从 kline_daily 派生涨跌停数据（limit_up_down 表数据不足时的 fallback）。
+        """从 kline_daily×stk_limit 精确 join 派生涨跌停（limit_up_down 表数据不足时的 fallback）。
 
-        规则：
-          - pct_change >= 9.5 → "涨停"（10% 板，含误差容限）
-          - pct_change <= -9.5 → "跌停"
-          - 仅 A_share, quality_flag=1
+        FPB-4 修复（裁定#257⑤，2026-09-16）：旧实现用 ±9.5% 平阈值，对 20%/30% 板
+        既漏又误（全窗混淆矩阵 fp=1099/fn=0，20/30% 板占误判 89.2%；stk_limit 本体
+        2015 起全历史无断档）。现按 close≥stk_limit.limit_up / close≤limit_down 精确
+        join——分板/ST/日期切片规则全部由 stk_limit 真源承载（主板 ST 5%→10%
+        2026-07-06 规则变更亦在其列），炸板行（标记涨停但收盘已破板）在派生口径
+        天然排除（close 判定）。
 
-        注意：ST(5%)、创业板/科创板(20%)、北交所(30%) 的涨跌停阈值不同，
-        此派生仅捕获 10% 板涨跌停，覆盖率约 70%（MVP 可接受）。
+        仅 A_share, quality_flag=1；stk_limit 无行的 symbol-day 跳过（无法判定，
+        不出伪事件）。
         """
         table = self._registry.table("market_kline_daily")
-        sql = (
-            f"SELECT trade_date, symbol, "
-            f"multiIf(toFloat64(pct_change) >= 9.5, '涨停', "
-            f"toFloat64(pct_change) <= -9.5, '跌停', '') AS limit_type, "
-            f"toFloat64(pct_change) AS pct_change, "
-            f"toFloat64(amount) AS amount "
-            f"FROM {table} FINAL "
-            f"WHERE market_type = 'A_share' AND quality_flag = 1 "
-            f"AND (toFloat64(pct_change) >= 9.5 OR toFloat64(pct_change) <= -9.5) "
-            f"AND trade_date >= toDate('{self.data_load_start}') "
-            f"AND trade_date <= toDate('{self.backtest_end}') "
-            f"ORDER BY trade_date, symbol"
+        stk = self._registry.table("market_stk_limit")
+        sql = _SQL_DERIVE_LIMIT_UP_DOWN.format(
+            kline=table, stk=stk, start=self.data_load_start, end=self.backtest_end
         )
         tsv = self._query(sql, "limit_up_down (derived from kline_daily)")
         rows = parse_tsv(tsv, ncols=5)

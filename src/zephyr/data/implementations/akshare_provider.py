@@ -61,65 +61,7 @@ AKShare 数据源 Provider 实现（MOD-L00-004 §4.3）。
 数据转换目标表 c1_market.macro_data：
     report_date, indicator_name, indicator_value, unit, frequency
 
-# [ALGO_FLOW]
-# 层: 输入
-# - id: I1
-#   name: v 参数
-#   fields: 参数 v（无注解）
-#   code: akshare_provider.py 顶层公共函数形参（AST 提取）
-# - id: I2
-#   name: text 参数
-#   fields: 参数 text，类型注解 str
-#   code: akshare_provider.py 顶层公共函数形参（AST 提取）
-# 层: 算法
-# - id: A1
-#   name_zh: ① safe_float
-#   name_en: safe_float
-#   intro: 安全转 float，失败返回 None。
-#   desc: 安全转 float，失败返回 None。；源码 L427-L432
-#   inputs: v
-#   outputs: float | None
-# - id: A2
-#   name_zh: ② safe_int
-#   name_en: safe_int
-#   intro: 安全转 int，失败返回 None。
-#   desc: 安全转 int，失败返回 None。兼容 float 字符串（如 '7987.0'）。；源码 L435-L443
-#   inputs: v
-#   outputs: int | None
-# - id: A3
-#   name_zh: ③ parse_sina_hf_futures_quotes
-#   name_en: parse_sina_hf_futures_quotes
-#   intro: 解析新浪 hf 外盘期货行情载荷（纯函数，可离线单测）。
-#   desc: 解析新浪 hf 外盘期货行情载荷（纯函数，可离线单测）。 载荷形如 ``var hq_str_hf_ES="7689.850,,7687.500,...,04:59:59,...…；源码 L649-L690
-#   inputs: text
-#   outputs: dict[str, dict]
-# - id: A4
-#   name_zh: ④ AkshareIngestProvider
-#   name_en: AkshareIngestProvider
-#   intro: AKShare 免费开源数据源 Provider。
-#   desc: AKShare 免费开源数据源 Provider。 匿名访问、无需登录；线程安全模型为 shared（多线程共享 akshare 模块）。 已知问题：须断开 VPN；东财接口反爬…；公共方法（定义序）: connect…
-#   inputs: 无参数
-#   outputs: 返回值
-# 层: 输出
-# - id: O1
-#   name_zh: float | None
-#   name_en: float | None
-#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
-#   downstream: zephyr.data.scheduler
-# - id: O2
-#   name_zh: int | None
-#   name_en: int | None
-#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
-#   downstream: zephyr.data.scheduler
-# [/ALGO_FLOW]
-#
-# 边:
-# I1 --> A1
-# I2 --> A1
-# A1 --> A2
-# A2 --> A3
-# A3 --> A4
-# A4 --> O1
+# [ALGO_FLOW] external: docs/03_modules/_domain_data/algo_flow/akshare_provider.yaml
 """
 
 from __future__ import annotations
@@ -230,6 +172,12 @@ _TBL_EQUITY_PLEDGE_SUMMARY = get_registry().table("fund_equity_pledge_summary")
 _TBL_ETF_BENCHMARK = get_registry().table("market_etf_benchmark")
 _TBL_ETF_LIST = get_registry().table("market_etf_list")
 _TBL_TRADE_CALENDAR = get_registry().table("market_trade_calendar")
+# LUE-2 周末幽灵行守卫（裁定#257⑤）：窗口内 A 股交易日集查询
+_SQL_TRADE_DAYS_WINDOW = (
+    "SELECT DISTINCT toString(cal_date) FROM {table} "
+    "WHERE is_open = 1 AND cal_date >= toDate('{start}') "
+    "AND cal_date <= toDate('{end}')"
+)
 _TBL_INDEX_CONSTITUENT = get_registry().table("market_index_constituent")
 # GAP-B3-03（2026-08-24）指数成分日快照 SCD-2 闭旧：index_member 日快照每日新开
 # 版本，旧版本 valid_to 恒 NULL 从不闭合（BTDATA §B3 实证 @2026-08-20 同键 5 版本
@@ -3238,6 +3186,28 @@ class AkshareIngestProvider(IngestProviderBase):
             )
         return rows
 
+    def _load_trade_days_for_window(
+        self, start: datetime.date, end: datetime.date
+    ) -> set[str] | None:
+        """窗口内 A 股交易日集合（is_open=1）；CH 不可达返回 None（调用方降级周末守卫）。
+
+        LUE-2 周末幽灵行守卫的日历查询位（裁定#257⑤）：返回 None 时调用方仍按
+        weekday()>=5 剔除周末，节假日守卫降级缺失（如实留痕于日志）。
+        """
+        try:
+            from zephyr.data import ch_reader as _chr
+
+            tsv = _chr.query(
+                _SQL_TRADE_DAYS_WINDOW.format(
+                    table=_TBL_TRADE_CALENDAR, start=start.isoformat(), end=end.isoformat()
+                )
+            )
+            days = {ln.strip() for ln in (tsv or "").splitlines() if ln.strip()}
+            return days or None
+        except Exception as e:  # noqa: BLE001 — 日历缺失降级（调用方仍有周末守卫）
+            self._log.warning("trade_calendar 交易日集加载失败，涨跌停采集降级周末守卫: %s", e)
+            return None
+
     def _fetch_limit_up_down(self, payload: FetchPayload, policy: SourcePolicy) -> Iterator[FetchResult]:
         """获取涨跌停数据，写入 c1_market.limit_up_down。
 
@@ -3261,7 +3231,17 @@ class AkshareIngestProvider(IngestProviderBase):
         batch_rows: list[tuple] = []
         t0 = time.monotonic()
 
+        # LUE-2 周末幽灵行守卫（裁定#257⑤）：akshare 涨停池接口非交易日回吐最近
+        # 交易日池，按日抓取会把周五池复制进周末分区（2026-09-15 挖矿实证 5 对
+        # 周末分区行数与前一交易日完全相等）。先取窗口内交易日集（日历不可达降级
+        # 为仅周末守卫），非交易日直接跳过采集。
+        trade_days = self._load_trade_days_for_window(payload.start, payload.end)
+
         for d in self._date_range(payload.start, payload.end):
+            if d.weekday() >= 5:
+                continue
+            if trade_days is not None and d.isoformat() not in trade_days:
+                continue
             date_str = d.strftime("%Y%m%d")
             iso_date = d.isoformat()
             batch_rows.extend(

@@ -33,31 +33,7 @@
 接入调度器：scheduler.create_provider() 的 `source == "internal"` 分支返回本类实例。
 tasks.yaml 中 source=internal 的任务（technical_indicator_incremental/full_refresh）使用本 Provider。
 
-# [ALGO_FLOW]
-# 层: 输入
-# - id: I1
-#   name: 模块内部数据
-#   fields: 无公共形参/无再导出（AST 事实）
-#   code: internal_compute_provider.py
-# 层: 算法
-# - id: A1
-#   name_zh: ① InternalComputeProvider
-#   name_en: InternalComputeProvider
-#   intro: 内部计算 Provider——读 CH K线→本地计算指标→返回 FetchResult。
-#   desc: 内部计算 Provider——读 CH K线→本地计算指标→返回 FetchResult。 用法（由 scheduler 自动调用）： provider = InternalCo…；公共方法（定义序）: connect…
-#   inputs: 无参数
-#   outputs: 返回值
-# 层: 输出
-# - id: O1
-#   name_zh: 模块公共 API 面（1 定义）
-#   name_en: public defs
-#   intro: InternalComputeProvider
-#   downstream: zephyr.data.scheduler (source=internal 分支)
-# [/ALGO_FLOW]
-#
-# 边:
-# I1 --> A1
-# A1 --> O1
+# [ALGO_FLOW] external: docs/03_modules/_domain_data/algo_flow/internal_compute_provider.yaml
 """
 
 from __future__ import annotations
@@ -68,7 +44,7 @@ import io
 import logging
 import time
 from pathlib import Path
-from typing import Final, Iterator
+from typing import Any, Final, Iterator
 
 import pandas as pd
 
@@ -80,6 +56,7 @@ from zephyr.data.provider_base import (
     IngestProviderBase,
     IngestProviderMeta,
 )
+from zephyr.data.table_registry import get_registry
 
 log = logging.getLogger("integrator.internal")
 
@@ -135,8 +112,14 @@ _INTERNAL_COMPUTE_CAPABILITIES = frozenset(
         "pattern_weight_sync",  # 调权同步（消费班 W-C3：物化完成→131 限幅调权）
         "pattern_evidence_certify",  # 四闸自动认证（消费班 W-CB：MOD-SIG-148）
         "trading_lifecycle_weekly",  # 三域生命周期周扫（协议 v2.0：因子/策略/指标衰减认证）
+        "limit_up_pool",  # 涨停池明细采集（GAP-F-13，裁定#257⑤ LUE-3 接线）
+        "daban_board_event",  # 打板日频事件派生（STR-DABAN-022，裁定#257⑤ LUE-3 接线）
     }
 )
+
+# 路由表名（TableRegistry 真源派生——#ARCH-CH-024 TABLE-NAME-REGISTRY 门合规）
+_TBL_LIMIT_UP_POOL = get_registry().table("market_limit_up_pool")
+_TBL_DABAN_BOARD_EVENT = get_registry().table("market_daban_board_event")
 
 # SQL 模板常量（NO-BARE-SQL gate 豁免：_SQL_* 前缀的常量定义行）
 _SQL_GET_SYMBOLS = "SELECT DISTINCT symbol FROM {table} WHERE {where} ORDER BY symbol"
@@ -418,6 +401,10 @@ class InternalComputeProvider(IngestProviderBase):
             CapabilityContract("pattern_evidence_certify", supports_symbols_null=True),
             # 三域生命周期周扫（协议 v2.0 2026-09-15）：因子 decay_state 回写/策略衰减台账/指标消费活性，symbols=null=全表
             CapabilityContract("trading_lifecycle_weekly", supports_symbols_null=True),
+            # 涨停池明细采集（GAP-F-13/裁定#257⑤ LUE-3 2026-09-16）：东财涨停股池全量字段，symbols=null=全市场
+            CapabilityContract("limit_up_pool", supports_symbols_null=True),
+            # 打板日频事件派生（STR-DABAN-022/裁定#257⑤ LUE-3 2026-09-16）：CH 只读推导三级涨停价解析链，symbols=null=全市场
+            CapabilityContract("daban_board_event", supports_symbols_null=True),
         ],
         known_issues=[],
     )
@@ -502,6 +489,12 @@ class InternalComputeProvider(IngestProviderBase):
             return
         if payload.table == "c1_market.market_pattern_certification":
             yield from self._fetch_pattern_evidence_certify(payload)
+            return
+        if payload.table == _TBL_LIMIT_UP_POOL:
+            yield from self._fetch_limit_up_pool(payload)
+            return
+        if payload.table == _TBL_DABAN_BOARD_EVENT:
+            yield from self._fetch_daban_board_event(payload)
             return
         if payload.extra.get("capability") == "trading_lifecycle_weekly":
             yield from self._fetch_trading_lifecycle_weekly(payload)
@@ -602,6 +595,92 @@ class InternalComputeProvider(IngestProviderBase):
         )
 
         yield from run_evidence_certify()
+
+    @staticmethod
+    def _trade_days_guarded(start: datetime.date, end: datetime.date) -> list[datetime.date]:
+        """窗口内交易日序列（LUE-2 周末幽灵行守卫：周末恒剔除；日历可用再剔非交易日）。
+
+        采集端实证（2026-09-15 挖矿）：akshare 涨停池接口非交易日回吐最近交易日池，
+        直接按日抓取会把周五池复制进周末分区。日历不可达时降级为仅周末守卫。
+        """
+        days: list[datetime.date] = []
+        cal: set[str] | None = None
+        try:
+            from zephyr.data import ch_reader as _ch_reader
+
+            sql = _SQL_READ_TRADING_DAYS.format(start=start.isoformat(), end=end.isoformat())
+            tsv = _ch_reader.query(sql)
+            cal = {ln.strip() for ln in (tsv or "").splitlines() if ln.strip()} or None
+        except Exception as exc:  # noqa: BLE001 — 日历缺失降级周末守卫
+            log.warning("trade_calendar 加载失败，涨跌停族采集降级周末守卫: %s", exc)
+        d = start
+        while d <= end:
+            if d.weekday() < 5 and (cal is None or d.isoformat() in cal):
+                days.append(d)
+            d += datetime.timedelta(days=1)
+        return days
+
+    def _fetch_limit_up_pool(self, payload: FetchPayload) -> Iterator[FetchResult]:
+        """涨停池明细采集路由分支（limit_up_pool capability，裁定#257⑤ LUE-3 接线）。
+
+        委托 limit_up_pool_collector.fetch_limit_up_pool（GAP-F-13，东财涨停股池全量
+        字段：封板资金/首末封板时间/炸板次数/连板数/行业）。逐日采集+周末幽灵行守卫；
+        ReplacingMergeTree 幂等重放。tasks.yaml limit_up_pool_incremental。
+        """
+        from zephyr.data.implementations.limit_up_pool_collector import (
+            INSERT_COLUMNS,
+            fetch_limit_up_pool,
+        )
+
+        t0 = time.monotonic()
+        rows: list[tuple] = []
+        last_key = (payload.end or payload.start).isoformat()
+        for d in self._trade_days_guarded(payload.start, payload.end):
+            for entry in fetch_limit_up_pool(d):
+                rows.append(tuple(getattr(entry, f) for f in INSERT_COLUMNS))
+        yield FetchResult(
+            table=payload.table,
+            columns=list(INSERT_COLUMNS),
+            rows=rows,
+            last_key=last_key,
+            elapsed_sec=time.monotonic() - t0,
+        )
+
+    def _fetch_daban_board_event(self, payload: FetchPayload) -> Iterator[FetchResult]:
+        """打板日频事件派生路由分支（daban_board_event capability，裁定#257⑤ LUE-3 接线）。
+
+        委托 daban_board_event_deriver.collect_derived_events（CH 只读推导：
+        触板/封住/一字/首触/开板次数/封单代理/连板，三级涨停价解析链）。
+        周末/节假日守卫 + 分钟/tick 富化开关经 payload.extra；ReplacingMergeTree
+        幂等重放。tasks.yaml daban_board_event_derive（weekend_calibration 档，
+        分钟级富化重，窗口重放成本高）。
+        """
+        from zephyr.data import ch_writer
+        from zephyr.data.implementations.daban_board_event_deriver import (
+            INSERT_COLUMNS,
+            collect_derived_events,
+        )
+
+        t0 = time.monotonic()
+        extra = payload.extra if isinstance(payload.extra, dict) else {}
+        client = ch_writer.get_client()
+        if client is None:
+            raise RuntimeError("CH 不可达，daban_board_event 派生 fail-closed（禁规则外落库）")
+        events = collect_derived_events(
+            payload.start,
+            payload.end,
+            client,
+            intraday=bool(extra.get("intraday", True)),
+            seal_ticks=bool(extra.get("seal_ticks", True)),
+        )
+        rows = [tuple(getattr(e, f) for f in INSERT_COLUMNS) for e in events]
+        yield FetchResult(
+            table=payload.table,
+            columns=list(INSERT_COLUMNS),
+            rows=rows,
+            last_key=payload.end.isoformat(),
+            elapsed_sec=time.monotonic() - t0,
+        )
 
     def _fetch_trading_lifecycle_weekly(self, payload: FetchPayload) -> Iterator[FetchResult]:
         """三域生命周期周扫路由分支（trading_lifecycle_weekly 命名约定，协议 v2.0）。

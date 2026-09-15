@@ -1536,6 +1536,33 @@ tasks:
     description: "每日涨跌停价格盘后重算（DS-082：盘前失败的自愈重试，昨收已确认）"
     trading_day_only: true
 
+- task_id: limit_up_pool_incremental
+  table: c1_market.limit_up_pool
+  source: internal
+  schedule: daily_capital    # 收盘后采集当日涨停池明细（封板资金/首末封板时间/炸板/连板/行业）
+  incremental: true
+  date_col: trade_date
+  dependencies: []
+  capability: limit_up_pool
+  symbols:
+  fallback_sources: []
+  extra:
+    description: "涨停股池明细采集（GAP-F-13，裁定#257⑤ LUE-3 接线：akshare stock_zt_pool_em 全量字段落 limit_up_pool；周末幽灵行守卫内置）"
+    trading_day_only: true
+
+- task_id: daban_board_event_derive
+  table: c1_market.daban_board_event
+  source: internal
+  schedule: weekend_calibration    # 分钟/tick 富化重（kline_1min walk+tick 封单代理），周窗重放幂等
+  incremental: false    # 周窗全量重放（ReplacingMergeTree 同键覆盖）
+  date_col: trade_date
+  dependencies: ["kline_daily_incremental", "stk_limit_postclose"]    # 日K收盘+涨停价真源落地后事件触发
+  capability: daban_board_event
+  symbols:         # null=全市场含北证
+  fallback_sources: []
+  extra:
+    description: "打板日频事件派生（STR-DABAN-022，裁定#257⑤ LUE-3 接线：触板/封住/一字/首触/开板次数/封单代理/连板，三级涨停价解析链 88445 样本 100% 验证）"
+
 - task_id: suspend_status_derive_weekend
   table: c1_market.suspend
   source: akshare

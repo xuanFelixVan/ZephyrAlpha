@@ -1376,6 +1376,38 @@
   data_source: [qmt]
   blueprint: null
 
+- category_id: market_limit_up_pool
+  name: "涨停股池明细（东财全量字段：封板资金/首末封板时间/炸板次数/连板数/行业，GAP-F-13）"
+  engine: clickhouse
+  database: c1_market
+  table: limit_up_pool
+  schema_file: null
+  data_type: 成品
+  lifecycle: permanent
+  sla_level: L2
+  enabled: true
+  hard_constraint: null
+  calc_mode: preload
+  frequency: 日频
+  data_source: [akshare]
+  blueprint: null
+
+- category_id: market_daban_board_event
+  name: "打板日频事件派生表（触板/封住/一字/首触/开板次数/封单代理/连板，三级涨停价解析链 88445 样本 100% 验证）"
+  engine: clickhouse
+  database: c1_market
+  table: daban_board_event
+  schema_file: null
+  data_type: 成品
+  lifecycle: permanent
+  sla_level: L2
+  enabled: true
+  hard_constraint: null
+  calc_mode: preload
+  frequency: 日频
+  data_source: [internal]
+  blueprint: "src/zephyr/data/implementations/daban_board_event_deriver.py（模块 docstring DDL 与口径真源）"
+
 - category_id: market_limit_up_down
   name: "涨跌停统计"
   engine: clickhouse
