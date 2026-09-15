@@ -1971,3 +1971,41 @@ entries:
   related_arch: ['#ARCH-225']
   related_rulings: ['裁定#255']
   superseded_by: null
+- ruling_id: '裁定#257'
+  title: 通宵总包量化 P0 七项矿脉裁定集中登记——T1A 立项/WYF-1 不重做/pf_alloc 挂触发/chip 回 trial 修量纲/ALG-01 重做/daban 地基 P0 应用层挂起/WYF-3 P2 搭车/北向停两任务留表（Kimi 挖矿战役关账执行批）
+  date: '2026-09-16'
+  category: 量化施工
+  status: active
+  summary: >-
+    2026-09-16 凌晨「Kimi 挖矿战役关账」就十大矿脉 P0 的七项自裁裁定的中央登记（关账裁定
+    原散于交接包 handoff_t1b_full_20260916.md 与十篇挖矿节点，本条补齐中央登记闭环，
+    GW4 执行会话 st-qalpha-20260916 按 RULING-REFERENCE 同 commit 原子落库）。七项范围：
+    ①T1A P0 立项=蓝图/工单登记级（T1A-1 死成员假组合静默再归一等按 four-big-items
+    蓝图通道立项，非全量施工）；②WYF-1 wyckoff 双 bug（SC close-vs-low 60 日滚动最低
+    错用 low+ar_vol_avg 稀疏 rolling 恒 NaN）已由 55903e7d4e 落地，不重做，真数据复验
+    口径=SC 触发 2→4 且 score>=60 天数仍为 0（修复后门槛可达性留 WYF-3 重校）；
+    ③pf_alloc（MOD-PA-007 五模块链零生产调用方）=不接线挂触发——维持"无生产调用方的
+    纯库"定性，登记触发条件挂起（G15→G14 编排件立项或 sim budget 溯源列需求成立时
+    再接线），仅修正 candidate_module_registry 将纸面链当"已覆盖"的登记失真面；
+    ④chip_engine（伪分布三重根因：kline_daily.volume 手/股量纲失真致 VWAP=100×价格、
+    84% 历史日网格外均匀注水、BA 恒 0.995 伪信号）=回 trial 态+P1 修量纲（含 warmup
+    语义与源头表口径确认），试点接线挂起；⑤ALG-01（top800 池与微盘踩踏检测目标错配
+    6×失真/不复权收益 494 条假收益含符号翻转/A-B 报告不可复现且 arm≠生产配置/一致性
+    指标≠检测力）=重做一次到位（池口径修复+hfq 收益 join c1_market.adj_factor+生成
+    脚本入库 arm 对齐生产+报告加事件检出力对照）；⑥daban/LUE=地基 P0（limit_up_down
+    真封板率 67.2% 与周末幽灵行的数据质量地基、FPB-4 平阈值换 stk_limit 真源精确 join
+    （fp=1099/fn=0 实证）、daban_board_event/limit_up_pool 双零表接通地基；四引擎应用层
+    批产挂起不建；主板 ST 5%→10%（2026-07-06 施行）系真实规则变更勿改）；⑦WYF-3=
+    P2 搭车（wyckoff AR 卡 high_breakout 腿阈值 walk-forward 重校），P0/P1 全绿且产能
+    富余才做；⑧北向退役执行=停两任务留表（hk_connect_flow_incremental/full 两任务
+    extra.disabled 停用，北向实时资金 2024-08-16 停发 CH 实锤，表与历史行保留，
+    northbound_hold_snapshot_refresh 季频替代源仍在产不动）。
+  evidence: >-
+    docs/_working/full-auto-chain/S11_assembled_backtest/nodes/ 十篇挖矿节点（施工明细
+    真源）+ .runtime/sessions/st-qoder-t1a-20260915/staging/handoff_t1b_full_20260916.md
+    （关账交接包）+ CH 只读探针（hk_connect_flow 尾日 2024-08-16 后零行实证；northbound_
+    hold_snapshot 最新 2026-06-30 4065 行在产实证）+ src/zephyr/data/config/tasks.yaml
+    disabled 既有机制（scheduler.py:411/2080 消费面）
+  related_arch: ['#ARCH-140']
+  related_rulings: ['裁定#253']
+  superseded_by: null

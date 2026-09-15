@@ -191,6 +191,8 @@ tasks:
   capability: hk_connect_flow
   symbols:
   extra:
+    disabled: true
+    disabled_reason: "北向退役执行（2026-09-16 通宵总包 GW4，裁定#257）：hk_connect_flow 表止于 2024-08-16（交易所停止披露北向实时资金，CH 实证 >2024-08-16 零行、全表 4052 行），本任务 daily_capital 每日空跑属僵尸负载；表与历史行保留（lifecycle=permanent），消费端 regime_feature_builder.get_hk_connect_flow 既有 NaN→fillna(0) 降级不变。如恢复披露或接入盘后口径（CLH 季度），移除本两行即可复跑。"
     description: "沪深港通资金历史（AKShare stock_hsgt_hist_em，有效范围 2014-11-17~2024-08-16 港交所停止公布前）"
 
 - task_id: kline_futures_incremental
@@ -1316,6 +1318,8 @@ tasks:
   capability: hk_connect_flow
   symbols:
   extra:
+    disabled: true
+    disabled_reason: "北向退役执行（2026-09-16 通宵总包 GW4，裁定#257）：同 hk_connect_flow_incremental——北向实时资金 2024-08-16 停发已实锤（CH 实证尾日 2024-08-16、之后零行），本任务持续空跑无产出；留表留历史，恢复披露后移除 disabled 两行复跑。"
     description: "AKShare沪深港通北向资金（ak.stock_hsgt_hist_em，沪股通+深股通历史净买额/余额/持股市值）"
 
 - task_id: kline_futures_full
