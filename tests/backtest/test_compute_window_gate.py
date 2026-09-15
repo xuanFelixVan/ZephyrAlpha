@@ -44,13 +44,22 @@ def _dt(h: int, m: int = 0, weekday: int = 2) -> datetime:
 
 
 class TestClassifyWindow:
-    def test_trading_day_morning_is_light_only(self):
+    def test_trading_day_intraday_band_is_light_only(self):
+        # 09:00-15:30 保守带（开盘前缓冲到收盘后缓冲）=light_only
         assert classify_window(_dt(10), True) == WINDOW_LIGHT_ONLY
         assert classify_window(_dt(15, 29), True) == WINDOW_LIGHT_ONLY
+        assert classify_window(_dt(9, 0), True) == WINDOW_LIGHT_ONLY
 
     def test_after_close_buffer_is_heavy_ok(self):
         assert classify_window(_dt(15, 30), True) == WINDOW_HEAVY_OK
         assert classify_window(_dt(23, 0), True) == WINDOW_HEAVY_OK
+
+    def test_premarket_dawn_is_heavy_ok(self):
+        # 2026-09-16 治本：交易日凌晨 00:00-09:00 为盘外黄金窗（重算力主窗口），
+        # 原实现误判 light_only（09-14 07:10/07:11 与 09-16 00:21 三次误拒实证）
+        for h in (0, 2, 6, 7, 8):
+            assert classify_window(_dt(h), True) == WINDOW_HEAVY_OK
+        assert classify_window(_dt(8, 59), True) == WINDOW_HEAVY_OK
 
     def test_non_trading_day_always_heavy_ok(self):
         for h in (9, 12, 15, 20):

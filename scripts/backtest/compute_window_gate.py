@@ -42,6 +42,8 @@ from zoneinfo import ZoneInfo
 
 _TZ = ZoneInfo("Asia/Shanghai")
 CLOSE_BUFFER = dtime(15, 30)  # 收盘缓冲：15:30 后视为盘后
+OPEN_BUFFER = dtime(9, 0)     # 开盘缓冲：09:00 前视为凌晨盘外（重算力黄金窗，
+                              # 与收盘 30 分钟缓冲对称的开盘前 30 分钟保守带）
 
 COMPUTE_LIGHT = "light"
 COMPUTE_HEAVY = "heavy"
@@ -65,12 +67,20 @@ def _require_aware(now: datetime) -> datetime:
 
 
 def classify_window(now: datetime, is_trading_day: bool) -> str:
-    """纯函数：当前时刻的算力窗档（盘中=light_only，盘后/休市=heavy_ok）。"""
+    """纯函数：当前时刻的算力窗档。
+
+    交易日 09:00-15:30（开盘前缓冲到收盘后缓冲的保守带）=light_only；
+    凌晨 00:00-09:00（盘外黄金窗）与 15:30 后、以及休市日=heavy_ok。
+    （2026-09-16 治本：原实现把交易日 00:00-09:30 全段误判盘中，凌晨重算力
+    被 gate_deny_trading_hours 拒——09-14 07:10/07:11 与 09-16 00:21 三次
+    误拒实证；盘外时段恰是无人值守重算力的主窗口。）
+    """
     _require_aware(now)
     local = now.astimezone(_TZ)
     if not is_trading_day:
         return WINDOW_HEAVY_OK
-    if local.time() >= CLOSE_BUFFER:
+    t = local.time()
+    if t >= CLOSE_BUFFER or t < OPEN_BUFFER:
         return WINDOW_HEAVY_OK
     return WINDOW_LIGHT_ONLY
 
