@@ -9,7 +9,7 @@
 # [ERROR_CONTRACT]
 # [TESTS] tests/infrastructure/process_lifecycle/test_process_supervisor.py
 # [A_config] module_id=MOD-INF-066 | layer=config | stability=volatile | safety=H | ai_autonomy=human_gated
-# [TTL] permanent
+# [TTL] task_bound（裁定#256 废弃归档件，2026-09-16 git mv 就绪件退役；NSSM 机制被 schtasks 唯一自启真源否决，拓扑知识真源=MOD-INF-066 蓝图）
 
 # ============================================================
 # DRAFT — ZephyrAlpha 五进程 NSSM 服务定义就绪件（MOD-INF-066）

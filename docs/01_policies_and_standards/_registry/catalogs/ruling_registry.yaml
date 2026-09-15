@@ -1941,3 +1941,33 @@ entries:
   related_arch: []
   related_rulings: ['裁定#254']
   superseded_by: null
+- ruling_id: '裁定#256'
+  title: 治理战役 A1 自裁——nssm_p1_p5_service_definitions.yaml 废弃软归档：NSSM 机制与 schtasks 唯一自启真源冲突，就绪件随机制退役（五进程拓扑知识真源留 MOD-INF-066 蓝图）
+  date: '2026-09-16'
+  category: 治理运维
+  status: active
+  summary: >-
+    通宵总包分包三按自裁框架（第一性原理/客观架构师/100% AI 开发/项目文档/量化社区实践/
+    开源先例）六维裁定，结论=废弃归档非落地收口。核心论据：①第一性原理——该 YAML 的目的
+    是进程保命面（断电自启/崩溃重启/启停编排），此目的已由 Windows 任务计划程序机制全覆盖
+    （boot_autostart_architecture.md 明文"任务计划程序为唯一自启真源"7 项第一性原理约束，
+    DataScheduler/TickSubscriber/RSSHub/reaper 等实跑任务在册）；收口落地=引入与既有真源
+    冲突的第二套自启机制，规范性错误；②客观证据——nssm.exe 二进制本机不存在（PATH/
+    System32 均无）、applied_by_ai=false 的 Owner 窗口自 2026-08-25 落地（#ARCH-225 W2b）
+    起从未执行、全仓零代码消费（仅历史登记与机生盘点引用）；③100% AI 开发现实——Owner
+    窗口是稀缺门位资源，不应花在为被否机制安装第三方工具；④文档矛盾纪律（宪法 §4.3）——
+    DRAFT 与 schtasks 唯一真源并存即矛盾态，归档即消除；⑤社区/开源实践——被否机制的
+    desired-state 清单应退役防误执行（nssm install 属系统级变更）。处置：git mv 至
+    docs/_working/archive/2026-09/（软归档 git 可溯），生成器 render_nssm_service_
+    definitions() 留 MOD-INF-066 生产代码不动（模块活性实测 5 服务渲染正常），五进程
+    优先级/心跳/崩溃重启拓扑知识真源=MOD-INF-066 蓝图本身。capability_canonical_file_
+    registry.yaml 无该文件条目（查证零命中）无需同步。残余引用（architecture_issue_
+    registry #ARCH-225 历史记载/机生盘点文档）留待各生成器下次再生自然收敛。
+  evidence: >-
+    docs/03_modules/_domain_data/boot_autostart_architecture.md（schtasks 唯一真源）+
+    docs/03_modules/_domain_infrastructure_runtime/process_supervisor/blueprint.md（拓扑真源）+
+    which nssm 空 + render_nssm_service_definitions() 实测 5 服务 + 见 #ARCH-225（Owner 窗口
+    2026-08-25 起 resolved 但未执行）+ docs/_working/2026-09-15-governance-module-mining-sop-map.md §5 A1
+  related_arch: ['#ARCH-225']
+  related_rulings: ['裁定#255']
+  superseded_by: null
