@@ -1,0 +1,55 @@
+# ALGO_FLOW 外部真源——var_breach_state_machine（_domain_risk 域，真源 src/zephyr/risk/core/var_breach_state_machine.py）
+# 2026-09-15 P2-1 契约头减负批量出仓：docstring 内联块逐字节副本，extractor 经
+# external 锚加载走同一 parse_algo_flow 管线；算法公共面变化时同步更新本块。
+doc_type: architecture_view
+ttl: permanent
+module: src.zephyr.risk.core.var_breach_state_machine
+source_of_truth: src/zephyr/risk/core/var_breach_state_machine.py
+algo_flow: |
+    # [ALGO_FLOW]
+    # 层: 输入
+    # - id: I1
+    #   name: config 参数
+    #   fields: 参数 config（无注解）
+    #   code: var_breach_state_machine.py 顶层公共函数形参（AST 提取）
+    # - id: I2
+    #   name: snapshot 参数
+    #   fields: 参数 snapshot（无注解）
+    #   code: var_breach_state_machine.py 顶层公共函数形参（AST 提取）
+    # 层: 算法
+    # - id: A1
+    #   name_zh: ① VarBreachConfig
+    #   name_en: VarBreachConfig
+    #   intro: VaR breach 状态机配置 (C 类可调参数, §3.15 参数表)。
+    #   desc: VaR breach 状态机配置 (C 类可调参数, §3.15 参数表)。 Attributes: breach_threshold: 进入 BREACHED 的 VaR 阈值…；公共方法（定义序）: recover…
+    #   inputs: 无参数
+    #   outputs: 返回值
+    # - id: A2
+    #   name_zh: ② VarBreachStateSnapshot
+    #   name_en: VarBreachStateSnapshot
+    #   intro: VaR breach 状态跨重启快照 (§3.15 D3)。
+    #   desc: VaR breach 状态跨重启快照 (§3.15 D3)。 Attributes: state: 当前状态 breach_date: 最近进入 BREACHED 的日期 (IS…；公共方法（定义序）: to_dict…
+    #   inputs: 无参数
+    #   outputs: 返回值
+    # - id: A3
+    #   name_zh: ③ VarBreachStateMachine
+    #   name_en: VarBreachStateMachine
+    #   intro: VaR breach 恢复/复位状态机 (36号 §3.15)。
+    #   desc: VaR breach 恢复/复位状态机 (36号 §3.15)。 用法:: machine = VarBreachStateMachine() # 冷启动 NORMAL mach…；公共方法（定义序）: config,…
+    #   inputs: config snapshot
+    #   outputs: 返回值
+    #   （注：A3 之后另有 2 个公共定义未列入（含 2 个数据契约/异常/枚举声明类），见源码）
+    # 层: 输出
+    # - id: O1
+    #   name_zh: 模块公共 API 面（5 定义）
+    #   name_en: public defs
+    #   intro: VarBreachConfig, VarBreachStateSnapshot, VarBreachStateMachine
+    #   downstream: MOD-POS-008(DrawdownController.evaluate var_breach_state 乘性折扣); RiskLayerOrches…
+    # [/ALGO_FLOW]
+    #
+    # 边:
+    # I1 --> A1
+    # I2 --> A1
+    # A1 --> A2
+    # A2 --> A3
+    # A3 --> O1

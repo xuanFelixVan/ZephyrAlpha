@@ -48,68 +48,7 @@ config/risk_params.yaml（INV-002/G10/G11/G12），单测锚定防漂移。
 SSoT: docs/03_modules/_domain_risk/adaptive_risk_coordinator/blueprint.md
 Version: 0.1.0
 
-# [ALGO_FLOW]
-# 层: 输入
-# - id: I1
-#   name: forecast 参数
-#   fields: 参数 forecast，类型注解 ForwardVarForecast
-#   code: adaptive_risk_coordinator.py 顶层公共函数形参（AST 提取）
-# - id: I2
-#   name: regime_state 参数
-#   fields: 参数 regime_state（无注解）
-#   code: adaptive_risk_coordinator.py 顶层公共函数形参（AST 提取）
-# - id: I3
-#   name: config 参数
-#   fields: 参数 config（无注解）
-#   code: adaptive_risk_coordinator.py 顶层公共函数形参（AST 提取）
-# - id: I4
-#   name: monitor 参数
-#   fields: 参数 monitor，类型注解 RiskWatchSnapshot
-#   code: adaptive_risk_coordinator.py 顶层公共函数形参（AST 提取）
-# 层: 算法
-# - id: A1
-#   name_zh: ① get_hard_boundaries
-#   name_en: get_hard_boundaries
-#   intro: 返回 B-001~B-006 硬边界注册表（只读映射）。
-#   desc: 返回 B-001~B-006 硬边界注册表（只读映射）。；源码 L177-L179
-#   inputs: 无参数
-#   outputs: Mapping[str, HardBoundary]
-# - id: A2
-#   name_zh: ② plan_premarket
-#   name_en: plan_premarket
-#   intro: 盘前计划：①预判层输出 × C-021 状态乘数 → sit_out/限额缩放下发。
-#   desc: 盘前计划：①预判层输出 × C-021 状态乘数 → sit_out/限额缩放下发。 Args: forecast: MOD-RK-28 前瞻预判结果 regime_state:…；源码 L249-L284
-#   inputs: forecast regime_state config
-#   outputs: PremarketRiskPlan
-# - id: A3
-#   name_zh: ③ decide_intraday
-#   name_en: decide_intraday
-#   intro: 盘中熔断分级：②监控层 + ①预判层 + C-038 升级标记 → 取最严裁决。
-#   desc: 盘中熔断分级：②监控层 + ①预判层 + C-038 升级标记 → 取最严裁决。 Args: monitor: MOD-RK-29 监控层快照 forecast: MOD-RK-…；源码 L287-L345
-#   inputs: monitor forecast black_swan_escalated config
-#   outputs: AdaptiveRiskDecision
-#   （注：A3 之后另有 6 个公共定义未列入（含 6 个数据契约/异常/枚举声明类），见源码）
-# 层: 输出
-# - id: O1
-#   name_zh: Mapping[str, HardBoundary]
-#   name_en: Mapping[str, HardBoundary]
-#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
-#   downstream: MOD-L06-001 RiskLayerOrchestrator(执行侧三层喂入, 设计契约); C-038 黑天鹅模式库(MOD-RK-31, 升级触发源)
-# - id: O2
-#   name_zh: PremarketRiskPlan
-#   name_en: PremarketRiskPlan
-#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
-#   downstream: MOD-L06-001 RiskLayerOrchestrator(执行侧三层喂入, 设计契约); C-038 黑天鹅模式库(MOD-RK-31, 升级触发源)
-# [/ALGO_FLOW]
-#
-# 边:
-# I1 --> A1
-# I2 --> A1
-# I3 --> A1
-# I4 --> A1
-# A1 --> A2
-# A2 --> A3
-# A3 --> O1
+# [ALGO_FLOW] external: docs/03_modules/_domain_risk/algo_flow/adaptive_risk_coordinator.yaml
 """
 
 from __future__ import annotations

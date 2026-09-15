@@ -35,49 +35,7 @@ MOD-INF-016）；与 scripts/deadman_switch.ps1 的联动演练留 Owner 窗口�
 依据: blueprint.md（MOD-RK-36）§3 核心规则；蓝图 MOD-INF-001 §30.1.5
 Version: 0.1.0
 
-# [ALGO_FLOW]
-# 层: 输入
-# - id: I1
-#   name: 紧急操作提案
-#   fields: action_type(白名单枚举) + operator(授权名册内) + reason(非空) + payload(操作参数,仅哈希入链)
-#   code: propose() 参数
-# - id: I2
-#   name: 确认动作
-#   fields: request_id + actor(授权名册内,与已锁人不同) + approve
-#   code: confirm() 参数
-# - id: I3
-#   name: 授权名册
-#   fields: authorized_operators(构造注入 frozenset, 空=Fail-Closed)
-#   code: EmergencyStopConfirmation.__init__
-# 层: 算法
-# - id: A1
-#   name_zh: ① 白名单+身份核验
-#   name_en: _check_operator
-#   intro: 非白名单动作/空operator/不在名册 → EmergencyStopConfirmationError
-# - id: A2
-#   name_zh: ② 双锁确认委托
-#   name_en: confirm
-#   intro: MOD-INF-049 propose/lock; 两不同actor approve→confirmed(released), 任一reject→rejected
-# - id: A3
-#   name_zh: ③ 留痕导出台账化
-#   name_en: audit_trail
-#   intro: 锚定记录展开为 action_type/operator/reason/payload_hash/lockers/decision 明文台账
-# 层: 输出
-# - id: O1
-#   name: EmergencyActionRequest
-#   fields: request_id/action_type/operator/reason/payload_hash
-# - id: O2
-#   name: ConfirmationVerdict
-#   fields: decision(pending/confirmed/rejected) + released(仅confirmed=True)
-# 边:
-# I1 --> A1
-# I3 --> A1
-# A1 --> A2
-# I2 --> A2
-# A2 --> O1
-# A2 --> O2
-# A2 --> A3
-# [/ALGO_FLOW]
+# [ALGO_FLOW] external: docs/03_modules/_domain_risk/algo_flow/emergency_stop_confirmation.yaml
 """
 
 from __future__ import annotations

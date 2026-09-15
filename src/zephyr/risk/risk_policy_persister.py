@@ -26,37 +26,7 @@ B13-04311（AUD-DRAFT-001-DIGEST P2 波 P2-W09，CAND-RSK-048，A3 D-RISK-49）�
 治理，不做限额计算）；var_calculator=VaR 计算（本件仅持久化限额键值）；运行
 时限额消费由运行时装配批注入同步校验，本件不直连组合优化器。
 
-# [ALGO_FLOW]
-# 层: 输入
-# - id: I1
-#   name: conn 参数
-#   fields: 参数 conn（无注解）
-#   code: risk_policy_persister.py 顶层公共函数形参（AST 提取）
-# - id: I2
-#   name: clock 参数
-#   fields: 参数 clock（无注解）
-#   code: risk_policy_persister.py 顶层公共函数形参（AST 提取）
-# 层: 算法
-# - id: A1
-#   name_zh: ① RiskPolicyPersister
-#   name_en: RiskPolicyPersister
-#   intro: 风控策略持久化器（三表 DDL + 版本不可变 + 原子热加载 + 同步校验）。
-#   desc: 风控策略持久化器（三表 DDL + 版本不可变 + 原子热加载 + 同步校验）。；公共方法（定义序）: save_policy, activate, active_policy, get_version, list_v…
-#   inputs: conn clock
-#   outputs: 返回值
-#   （注：A1 之后另有 4 个公共定义未列入（含 4 个数据契约/异常/枚举声明类），见源码）
-# 层: 输出
-# - id: O1
-#   name_zh: 模块公共 API 面（5 定义）
-#   name_en: public defs
-#   intro: RiskPolicyPersister
-#   downstream: 运行时装配批（风控策略持久化装配 / 与 risk_limits 运行时限额双向同步校验）
-# [/ALGO_FLOW]
-#
-# 边:
-# I1 --> A1
-# I2 --> A1
-# A1 --> O1
+# [ALGO_FLOW] external: docs/03_modules/_domain_risk/algo_flow/risk_policy_persister.yaml
 """
 
 from __future__ import annotations

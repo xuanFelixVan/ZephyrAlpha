@@ -42,31 +42,7 @@ CTR 契约：
 
 依赖方向：D_FACTOR + D_EXECUTION_CORE -> D_RISK -> D_PORTFOLIO_CORE
 
-# [ALGO_FLOW]
-# 层: 输入
-# - id: I1
-#   name: 模块内部数据
-#   fields: 无公共形参/无再导出（AST 事实）
-#   code: risk_limits.py
-# 层: 算法
-# - id: A1
-#   name_zh: ① RiskLimitsCalculator
-#   name_en: RiskLimitsCalculator
-#   intro: 风险限额计算器抽象基类（OCP 扩展点）
-#   desc: 风险限额计算器抽象基类（OCP 扩展点） 实现者要求： - calculate(): 输入当前持仓快照 + 因子信号，输出风险限额集合 - 单标的权重上限默认 10%，可通过 s…；公共方法（定义序）: calcula…
-#   inputs: 无参数
-#   outputs: 返回值
-# 层: 输出
-# - id: O1
-#   name_zh: 模块公共 API 面（1 定义）
-#   name_en: public defs
-#   intro: RiskLimitsCalculator
-#   downstream: 见模块头 [CONSUMERS]
-# [/ALGO_FLOW]
-#
-# 边:
-# I1 --> A1
-# A1 --> O1
+# [ALGO_FLOW] external: docs/03_modules/_domain_risk/algo_flow/risk_limits.yaml
 """
 
 from __future__ import annotations

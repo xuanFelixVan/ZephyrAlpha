@@ -34,45 +34,7 @@ MOD-RK-02/MOD-RK-03 等既有执行面，审计落账委托 D_GOV_AUDIT）。
 依据: blueprint.md（MOD-RK-38）§3 核心规则；Barra USE3/CNE5 风险模型口径
 Version: 0.1.0
 
-# [ALGO_FLOW]
-# 层: 输入
-# - id: I1
-#   name: 持仓权重
-#   fields: positions {symbol: weight}（long-only 非负，Σw>0 自动归一）
-#   code: compute_exposures() positions 参数
-# - id: I2
-#   name: 因子载荷
-#   fields: factor_loadings {symbol: {factor: loading}}（缺失→uncovered 披露按 0 计）
-#   code: compute_exposures() factor_loadings 参数
-# - id: I3
-#   name: 配置 FactorExposureConfig
-#   fields: limits {factor: 上限>0} + warn_ratio∈(0,1)（默认 0.8）
-#   code: FactorExposureConfig
-# 层: 算法
-# - id: A1
-#   name_zh: ① 校验与权重归一化
-#   name_en: _validate_and_normalize
-#   intro: 非空持仓/非负有限权重/有限载荷校验；w/=Σw
-# - id: A2
-#   name_zh: ② 敞口矩阵计算
-#   name_en: compute_exposures
-#   intro: exposure[f]=Σ w_s×loading[s][f]；因子全集=limits∪载荷键
-# - id: A3
-#   name_zh: ③ 超限分级
-#   name_en: _grade
-#   intro: |e|>limit→BREACH; |e|≥limit×warn_ratio→WARNING; 按|e/limit|降序
-# 层: 输出
-# - id: O1
-#   name: FactorExposureReport
-#   fields: exposures/breaches/uncovered_symbols/weight_sum（frozen）
-# 边:
-# I1 --> A1
-# I2 --> A1
-# I3 --> A3
-# A1 --> A2
-# A2 --> A3
-# A3 --> O1
-# [/ALGO_FLOW]
+# [ALGO_FLOW] external: docs/03_modules/_domain_risk/algo_flow/factor_exposure_manager.yaml
 """
 
 from __future__ import annotations

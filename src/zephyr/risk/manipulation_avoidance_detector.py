@@ -33,42 +33,7 @@ MOD-SIG-088 为主力画像/合力方向（信号域资金行为分析）。本�
 沪深交易所异常交易监控指标
 Version: 0.1.0
 
-# [ALGO_FLOW]
-# 层: 输入
-# - id: I1
-#   name: 统计特征 ManipulationFeatures
-#   fields: volume_spike_ratio(对倒放量) + tail_move_ratio(尾盘异动) + price_volume_corr(价量背离) + turnover_spike_ratio(换手异常) + chip_concentration(筹码集中)
-#   code: assess() features 参数
-# - id: I2
-#   name: 配置
-#   fields: weights(五类权重) + wash_ref=5/tail_ref=0.5/turnover_ref=3 + watch=0.4/avoid=0.6
-#   code: __init__ 参数
-# 层: 算法
-# - id: A1
-#   name_zh: ① 子分映射（线性截断）
-#   name_en: _sub_scores
-#   intro: wash=min(1,vol/5); tail=min(1,tail/0.5); divergence=max(0,-corr); turnover=min(1,to/3); chip=直传
-# - id: A2
-#   name_zh: ② 加权总分与三级判定
-#   name_en: assess
-#   intro: score=Σw·s/Σw; ≥avoid→AVOID; ≥watch→WATCH; 否则CLEAR
-# - id: A3
-#   name_zh: ③ 回避名单聚合
-#   name_en: assess_batch
-#   intro: AVOID→avoid_list; WATCH→watch_list; 各按 score 降序
-# 层: 输出
-# - id: O1
-#   name: ManipulationVerdict / AvoidanceReport
-#   fields: score/level/feature_scores + avoid_list/watch_list（frozen）
-# 边:
-# I1 --> A1
-# I2 --> A1
-# I2 --> A2
-# A1 --> A2
-# A2 --> A3
-# A2 --> O1
-# A3 --> O1
-# [/ALGO_FLOW]
+# [ALGO_FLOW] external: docs/03_modules/_domain_risk/algo_flow/manipulation_avoidance_detector.yaml
 """
 
 from __future__ import annotations

@@ -1,0 +1,62 @@
+# ALGO_FLOW 外部真源——copula_garch_joint（_domain_risk 域，真源 src/zephyr/risk/core/copula_garch_joint.py）
+# 2026-09-15 P2-1 契约头减负批量出仓：docstring 内联块逐字节副本，extractor 经
+# external 锚加载走同一 parse_algo_flow 管线；算法公共面变化时同步更新本块。
+doc_type: architecture_view
+ttl: permanent
+module: src.zephyr.risk.core.copula_garch_joint
+source_of_truth: src/zephyr/risk/core/copula_garch_joint.py
+algo_flow: |
+    # [ALGO_FLOW]
+    # 层: 输入
+    # - id: I1
+    #   name: 多标的收益率 {symbol: 序列}
+    #   fields: N∈[2,max_assets] 个标的等长 T≥min_history 日收益率, 全有限值, 无零方差
+    #   code: fit_portfolio_risk() returns 参数
+    # - id: I2
+    #   name: 组合权重 {symbol: w}
+    #   fields: 与收益率同标的集, 有限值, Σ|w|>0(内部归一)
+    #   code: fit_portfolio_risk() weights 参数
+    # - id: I3
+    #   name: 边缘一步预测(可选) {symbol: MarginalForecast}
+    #   fields: mu/sigma(>0), 缺省用 GARCH 一步预测(均值=样本均值, σ=√σ²_{T+1})
+    #   code: MarginalForecast
+    # - id: I4
+    #   name: 配置 CopulaGarchConfig
+    #   fields: max_assets=50/min_history=60/dcc_a=0.04/dcc_b=0.94/garch_α=0.06/garch_β=0.92/tail_q=0.05/confidence=(0.95,0.99)/n_sim=20000/seed
+    #   code: CopulaGarchConfig
+    # 层: 算法
+    # - id: A1
+    #   name_zh: ① GARCH(1,1) 边缘过滤
+    #   name_en: _garch_filter
+    #   intro: 方差定向 ω=(1-α-β)σ̄² 递推 σ²_t, 产标准化残差 z
+    # - id: A2
+    #   name_zh: ② DCC 动态相关
+    #   name_en: _dcc_forecast
+    #   intro: Q̄=MOD-POS-011收缩协方差标准化, Q_t=(1-a-b)Q̄+a·zz′+b·Q_{t-1}, 一步预测标准化为 R
+    # - id: A3
+    #   name_zh: ③ 经验PIT+下尾依赖
+    #   name_en: _tail_dependence
+    #   intro: u=rank/(T+1), λ_ij=P(u_i<q,u_j<q)/q, 对角=1
+    # - id: A4
+    #   name_zh: ④ Gaussian-Copula MC 联合VaR/ES
+    #   name_en: _simulate_joint_loss
+    #   intro: Cholesky(R)(奇异加抖动)相关正态→Φ→经验逆CDF×σ+μ→组合损失→VaR/ES
+    # 层: 输出
+    # - id: O1
+    #   name: JointRiskReport
+    #   fields: symbols/tail_dependence_matrix/dcc_correlation/joint_var/joint_es/n_assets/n_observations/simulations
+    # 边:
+    # I1 --> A1
+    # I2 --> A4
+    # I3 --> A4
+    # I4 --> A1
+    # I4 --> A2
+    # I4 --> A3
+    # I4 --> A4
+    # A1 --> A2
+    # A1 --> A3
+    # A1 --> A4
+    # A2 --> A4
+    # A3 --> O1
+    # A4 --> O1
+    # [/ALGO_FLOW]

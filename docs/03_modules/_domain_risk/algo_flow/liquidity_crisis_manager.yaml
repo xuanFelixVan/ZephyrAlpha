@@ -1,0 +1,128 @@
+# ALGO_FLOW 外部真源——liquidity_crisis_manager（_domain_risk 域，真源 src/zephyr/risk/core/liquidity_crisis_manager.py）
+# 2026-09-15 P2-1 契约头减负批量出仓：docstring 内联块逐字节副本，extractor 经
+# external 锚加载走同一 parse_algo_flow 管线；算法公共面变化时同步更新本块。
+doc_type: architecture_view
+ttl: permanent
+module: src.zephyr.risk.core.liquidity_crisis_manager
+source_of_truth: src/zephyr/risk/core/liquidity_crisis_manager.py
+algo_flow: |
+    # [ALGO_FLOW]
+    # 层: 输入
+    # - id: I1
+    #   name: 盘口快照 MarketLiquiditySnapshot
+    #   fields: last_price最新价 + bid_price/ask_price买一卖一(可None) + bid_volumes/ask_volumes五档量 + limit_up_price/limit_down_price涨跌停价
+    #   code: MarketLiquiditySnapshot L295
+    # - id: I2
+    #   name: 恢复状态 LiquidityRecoveryState
+    #   fields: in_crisis是否危机中 + level当前级别 + entered_at触发时刻
+    #   code: LiquidityRecoveryState L325
+    # - id: I3
+    #   name: 检测器配置 AshareSystemicRiskConfig
+    #   fields: sell_pressure_threshold=0.65 + bid_ask_spread_threshold=0.005（触发阈值唯一真源）
+    #   code: run_intraday_liquidity_check() 从 detector.config 读取 L857
+    # - id: I4
+    #   name: 恢复配置 LiquidityCrisisConfig
+    #   fields: spread_recovery=0.0025半阈值 + sell_pressure_recovery=0.50 + min_hold_minutes={1:10,2:15,3:30}
+    #   code: LiquidityCrisisConfig L230
+    # - id: I5
+    #   name: IPO事件列表 list[IPOEvent] + 市场日均成交额
+    #   fields: symbol + listing_date上市日 + raise_amount募资额(亿元); market_avg_volume_20d(亿元)
+    #   code: IPOEvent L374 / compute_ipo_liquidity_drain() L701
+    # 层: 特征
+    # - id: F1
+    #   name_zh: 卖盘压力（OBI反转）
+    #   name_en: sell_pressure
+    #   intro: 盘口卖方挂单占比，1=纯卖压，0.5=均衡
+    #   formula: sell_pressure = ΣVolAsk / (ΣVolBid + ΣVolAsk)（等价 (1-OBI)/2）；无盘口返回0.5中性
+    #   code: compute_sell_pressure() L441
+    #   registry: factor_registry: 无FCT条目
+    #   is_break: true
+    # - id: F2
+    #   name_zh: 买卖价差（Quoted Spread）
+    #   name_en: bid_ask_spread
+    #   intro: 盘口即时交易成本，零延迟领先于成交价恶化
+    #   formula: spread = (ask - bid) / mid, mid=(ask+bid)/2；盘口缺失返回None
+    #   code: compute_bid_ask_spread() L481
+    #   registry: factor_registry: 无FCT条目
+    #   is_break: true
+    # - id: F3
+    #   name_zh: 涨跌停状态
+    #   name_en: limit_status
+    #   intro: 涨跌停时盘口退化为单价位，spread监控失效须特殊处理
+    #   formula: 涨停=价达limit_up且无卖一; 跌停=价达limit_down且无买一; 距板<0.5%=near
+    #   code: detect_limit_status() L512
+    #   registry: factor_registry: 无FCT条目
+    #   is_break: true
+    # 层: 算法
+    # - id: A1
+    #   name_zh: ① 有效价差解析
+    #   name_en: resolve_effective_spread
+    #   intro: 跌停置1.0使AND可满足/涨停置None跳过（37号§3.5算法断裂修复）
+    #   desc: LIMIT_DOWN→1.0; LIMIT_UP→None(买压主导不触发危机); 其余→原始spread
+    #   inputs: F2 F3
+    #   outputs: effective_spread
+    #   invariant: 跌停时危机检测不被None短路; 涨停永不触发流动性危机
+    # - id: A2
+    #   name_zh: ② 危机检测（委托MOD-RK-10）
+    #   name_en: detector.check
+    #   intro: 双条件AND（卖压≥0.65且价差≥0.5%）由MOD-RK-10执行，本模块不重复判定
+    #   desc: alert=detector.check(sell_pressure, bid_ask_spread=effective_spread); 触发阈值从detector.config读
+    #   inputs: F1 A1 I3
+    #   outputs: SystemicRiskAlert
+    #   invariant: 检测真源唯一=MOD-RK-10
+    # - id: A3
+    #   name_zh: ③ 危机恢复判定
+    #   name_en: check_recovery
+    #   intro: hysteresis半阈值+最短持续时间门控防thrashing
+    #   desc: elapsed<min_hold→None; L1→0需双半阈值+0信号; L2→1需信号≤1+spread<半阈值×1.2; L3→2需信号≤2+冷却期满
+    #   inputs: F1 A1 I2 I4
+    #   outputs: target_level(0/1/2)或None
+    #   invariant: 恢复阈值<触发阈值（制造稳定缓冲带）; 返回0是有效结果须is not None判定
+    # - id: A4
+    #   name_zh: ④ 盘中单遍编排
+    #   name_en: run_intraday_liquidity_check
+    #   intro: 涨跌停→检测→响应→恢复四阶段单遍执行（37号§3.8）
+    #   desc: 由调用方30s tick驱动; 危机时enter_crisis+halt_new_orders; 非危机且危机中→试恢复exit_crisis
+    #   inputs: I1 I2 I3 I4 A1 A2 A3
+    #   outputs: LiquidityLoopResult
+    #   invariant: 危机中不检查恢复（防刚触发就恢复的thrashing）
+    # - id: A5
+    #   name_zh: ⑤ IPO流动性抽离预警
+    #   name_en: compute_ipo_liquidity_drain
+    #   intro: 前瞻性预警——IPO日历+募资规模上市日前已知（37号§3.2a）
+    #   desc: drain_ratio=未来5日募资总额/市场日均成交额; 四级→position_cap_adjustment(1.0/0.90/0.75/0.60)
+    #   inputs: I5
+    #   outputs: IPOLiquidityDrain
+    #   invariant: drain_ratio<0.01不调整; 与§3.2 Amihud事后检测正交（事前vs事后）
+    # 层: 输出
+    # - id: O1
+    #   name_zh: 盘中流动性循环结果
+    #   name_en: LiquidityLoopResult
+    #   intro: 涨跌停状态+卖压+有效价差+alert+halt_new_orders+position_cap+恢复迁移
+    #   downstream: 盘中风控循环调用方(消费alert/执行响应); MOD-RK-17(LEVEL_3逃生指令)
+    # - id: O2
+    #   name_zh: IPO流动性抽离预警
+    #   name_en: IPOLiquidityDrain
+    #   intro: drain_ratio+drain_level+position_cap_adjustment仓位上限调整系数
+    #   downstream: FirmRiskAggregator(仓位上限节流); 26号事件驱动sleeve(alpha方向联动)
+    # [/ALGO_FLOW]
+    #
+    # 边:
+    # I1 --> F3
+    # I1 --> F1
+    # I1 --> F2
+    # F2 --> A1
+    # F3 --> A1
+    # F1 --> A2
+    # A1 --> A2
+    # I3 --> A2
+    # F1 --> A3
+    # A1 --> A3
+    # I2 --> A3
+    # I4 --> A3
+    # A1 --> A4
+    # A2 --> A4
+    # A3 --> A4
+    # I5 --> A5
+    # A4 --> O1
+    # A5 --> O2

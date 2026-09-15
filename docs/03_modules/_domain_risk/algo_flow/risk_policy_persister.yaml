@@ -1,0 +1,39 @@
+# ALGO_FLOW 外部真源——risk_policy_persister（_domain_risk 域，真源 src/zephyr/risk/risk_policy_persister.py）
+# 2026-09-15 P2-1 契约头减负批量出仓：docstring 内联块逐字节副本，extractor 经
+# external 锚加载走同一 parse_algo_flow 管线；算法公共面变化时同步更新本块。
+doc_type: architecture_view
+ttl: permanent
+module: src.zephyr.risk.risk_policy_persister
+source_of_truth: src/zephyr/risk/risk_policy_persister.py
+algo_flow: |
+    # [ALGO_FLOW]
+    # 层: 输入
+    # - id: I1
+    #   name: conn 参数
+    #   fields: 参数 conn（无注解）
+    #   code: risk_policy_persister.py 顶层公共函数形参（AST 提取）
+    # - id: I2
+    #   name: clock 参数
+    #   fields: 参数 clock（无注解）
+    #   code: risk_policy_persister.py 顶层公共函数形参（AST 提取）
+    # 层: 算法
+    # - id: A1
+    #   name_zh: ① RiskPolicyPersister
+    #   name_en: RiskPolicyPersister
+    #   intro: 风控策略持久化器（三表 DDL + 版本不可变 + 原子热加载 + 同步校验）。
+    #   desc: 风控策略持久化器（三表 DDL + 版本不可变 + 原子热加载 + 同步校验）。；公共方法（定义序）: save_policy, activate, active_policy, get_version, list_v…
+    #   inputs: conn clock
+    #   outputs: 返回值
+    #   （注：A1 之后另有 4 个公共定义未列入（含 4 个数据契约/异常/枚举声明类），见源码）
+    # 层: 输出
+    # - id: O1
+    #   name_zh: 模块公共 API 面（5 定义）
+    #   name_en: public defs
+    #   intro: RiskPolicyPersister
+    #   downstream: 运行时装配批（风控策略持久化装配 / 与 risk_limits 运行时限额双向同步校验）
+    # [/ALGO_FLOW]
+    #
+    # 边:
+    # I1 --> A1
+    # I2 --> A1
+    # A1 --> O1

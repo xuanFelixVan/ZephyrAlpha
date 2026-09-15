@@ -1,0 +1,33 @@
+# ALGO_FLOW 外部真源——default_position_limit_checker（_domain_risk 域，真源 src/zephyr/risk/implementations/default_position_limit_checker.py）
+# 2026-09-15 P2-1 契约头减负批量出仓：docstring 内联块逐字节副本，extractor 经
+# external 锚加载走同一 parse_algo_flow 管线；算法公共面变化时同步更新本块。
+doc_type: architecture_view
+ttl: permanent
+module: src.zephyr.risk.implementations.default_position_limit_checker
+source_of_truth: src/zephyr/risk/implementations/default_position_limit_checker.py
+algo_flow: |
+    # [ALGO_FLOW]
+    # 层: 输入
+    # - id: I1
+    #   name: 模块内部数据
+    #   fields: 无公共形参/无再导出（AST 事实）
+    #   code: default_position_limit_checker.py
+    # 层: 算法
+    # - id: A1
+    #   name_zh: ① DefaultPositionLimitChecker
+    #   name_en: DefaultPositionLimitChecker
+    #   intro: 默认仓位限额检查器——单仓/行业/杠杆三项检查
+    #   desc: 默认仓位限额检查器——单仓/行业/杠杆三项检查；公共方法（定义序）: check_single_position, check_sector_concentration, check_gross_leverage；源码…
+    #   inputs: 无参数
+    #   outputs: 返回值
+    # 层: 输出
+    # - id: O1
+    #   name_zh: 模块公共 API 面（1 定义）
+    #   name_en: public defs
+    #   intro: DefaultPositionLimitChecker
+    #   downstream: 见模块头 [CONSUMERS]
+    # [/ALGO_FLOW]
+    #
+    # 边:
+    # I1 --> A1
+    # A1 --> O1

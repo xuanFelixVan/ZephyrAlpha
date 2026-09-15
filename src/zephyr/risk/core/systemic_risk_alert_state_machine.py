@@ -37,47 +37,7 @@
 依据: blueprint.md（MOD-RK-34）§3 核心规则（候选登记真源默认阈值）
 Version: 0.1.0
 
-# [ALGO_FLOW]
-# 层: 输入
-# - id: I1
-#   name: 组合风险标量
-#   fields: var95_pct(VaR95/NAV,正=损失) + cvar_pct(CVaR/NAV) + daily_pnl_pct + prev_day_pnl_pct + liquidity_crisis
-#   code: assess() 参数
-# - id: I2
-#   name: 配置 SystemicRiskAlertConfig
-#   fields: VaR三档边界(2%/4%/6%) + CVaR黑档(10%) + 单日亏橙/红(−2%/−4%) + 连续亏阈(−1%) + 指令参数(0.5/0.3/0.5/1.0)
-#   code: SystemicRiskAlertConfig
-# 层: 算法
-# - id: A1
-#   name_zh: ① 五路阈值检测不短路
-#   name_en: _collect_hits
-#   intro: CVaR黑/流动性黑 + VaR档 + 单日亏橙/红 + 连续2日亏黄, 命中全量记录理由
-# - id: A2
-#   name_zh: ② 取最严级定档
-#   name_en: _severity_max
-#   intro: BLACK>RED>ORANGE>YELLOW>GREEN 取最高命中级
-# - id: A3
-#   name_zh: ③ 级别→指令映射
-#   name_en: _directive_for
-#   intro: scale/reduce_pct/close_only/liquidate_all/trigger_kill_switch 纯数据输出
-# - id: A4
-#   name_zh: ④ 迁移历史只追加
-#   name_en: _record_transition
-#   intro: 级别变化才追加(seq,level,reasons), 同级不重复
-# 层: 输出
-# - id: O1
-#   name: SystemicRiskAssessment
-#   fields: level/directive(RiskDirective)/reasons tuple
-# 边:
-# I1 --> A1
-# I2 --> A1
-# I2 --> A3
-# A1 --> A2
-# A2 --> A3
-# A2 --> A4
-# A3 --> O1
-# A4 --> O1
-# [/ALGO_FLOW]
+# [ALGO_FLOW] external: docs/03_modules/_domain_risk/algo_flow/systemic_risk_alert_state_machine.yaml
 """
 
 from __future__ import annotations

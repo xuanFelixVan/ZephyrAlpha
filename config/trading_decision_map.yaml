@@ -277,10 +277,15 @@ nodes:
   module_ref: src/zephyr/regime/core/regime_detector.py
   module_id: MOD-REGIME-001
   strategy_mounts:
-  - {strategy_ref: STR-VREV-025, confidence: verified, evidence: '三窗全绿 IS 1.15/OOS 0.83/S3 0.98, run=SCR-C4-20260913-002056+C4-2016-2019-sample3'}
-  - {strategy_ref: STR-VREV-026, confidence: verified, evidence: '双窗及格 IS 0.160/OOS 0.526, run=SCR-C4-20260913-002056+SCR-C4-20260914-051809'}
-  - {strategy_ref: STR-MOMTREND-033, confidence: verified, evidence: '双窗及格 IS 0.204/OOS 0.552, run=SCR-C4-20260913-002056+SCR-C4-20260914-051809'}
-  - {strategy_ref: STR-VREV-027, confidence: verified, evidence: 'auto_mount IS 2020-01-01..2023-12-31 states=accumulation+capitulation; accumulation=+2.89(159d); capitulation=+2.90(73d); code=scripts/backtest/transl'}
+  - {strategy_ref: STR-VREV-025, confidence: verified, evidence: '三窗全绿 IS 1.15/OOS
+      0.83/S3 0.98, run=SCR-C4-20260913-002056+C4-2016-2019-sample3'}
+  - {strategy_ref: STR-VREV-026, confidence: verified, evidence: '双窗及格 IS 0.160/OOS
+      0.526, run=SCR-C4-20260913-002056+SCR-C4-20260914-051809'}
+  - {strategy_ref: STR-MOMTREND-033, confidence: verified, evidence: '双窗及格 IS 0.204/OOS
+      0.552, run=SCR-C4-20260913-002056+SCR-C4-20260914-051809'}
+  - {strategy_ref: STR-VREV-027, confidence: verified, evidence: 'auto_mount IS 2020-01-01..2023-12-31
+      states=accumulation+capitulation; accumulation=+2.89(159d); capitulation=+2.90(73d);
+      code=scripts/backtest/transl'}
   materiality: critical
   decay_scan_frequency: monthly
 
@@ -481,7 +486,8 @@ nodes:
   decision_question: "双轴合成：RegimeSnapshot 概率（宏观）×情绪六段分布（微观）；输出预算带+策略路由+冲突仲裁（熵高分裂市→降档+Owner
     接管）；日级水温受月/周档位封顶"
   algo_note_zh: "双轴相乘：宏观 RegimeSnapshot 概率（月级 7 态）×情绪六段分布（周级）。两轴指向一致=直接取结论；指向分裂（熵值超阈）=按'就低不就高'仲裁。输出三件套：预算带（给
-    C1）+六段状态（给全流）+策略路由（哪些 sleeve 今天开），一次判定 broadcast 全图。（2026-09-15 ALGO_FLOW 块出仓至 docs/03_modules/_domain_regime/algo_flow/regime_detector.yaml：算法推导图外迁，算法口径不变）"
+    C1）+六段状态（给全流）+策略路由（哪些 sleeve 今天开），一次判定 broadcast 全图。（2026-09-15 ALGO_FLOW 块出仓至
+    docs/03_modules/_domain_regime/algo_flow/regime_detector.yaml：算法推导图外迁，算法口径不变）"
   factor_refs: []
   data_refs: [DS-098]
   module_ref: src/zephyr/regime/core/regime_detector.py
@@ -1516,9 +1522,11 @@ nodes:
   point: 盘后
   decision_question: 候选池里谁被一票否决直接出池
   algo_note_zh: >-
-    一票否决清单：业绩暴雷（预告亏损）/立案调查/大股东减持公告/解禁>5% 流通盘/商誉减值风险/配股圈钱/高应计（Sloan 盈余质量差，fundamentals.accrual_negative_screen 产出）。
+    一票否决清单：业绩暴雷（预告亏损）/立案调查/大股东减持公告/解禁>5% 流通盘/商誉减值风险/配股圈钱/高应计（Sloan 盈余质量差，fundamentals.accrual_negative_screen
+    产出）。
     命中任一条直接出池，不管打分多高——负面清单优先级高于一切加分项。
-    （2026-09-15 ALGO_FLOW 块出仓至 docs/03_modules/_domain_signal/algo_flow/negative_veto.yaml：算法推导图外迁，算法口径不变；2026-09-14 第七检 high_accrual 增补，裁定#231）
+    （2026-09-15 ALGO_FLOW 块出仓至 docs/03_modules/_domain_signal/algo_flow/negative_veto.yaml：算法推导图外迁，算法口径不变；2026-09-14
+    第七检 high_accrual 增补，裁定#231）
   parent_node: TDM-E-L3
   factor_refs: [FCT-TECH-083, FCT-TECH-077]
   data_refs: [DS-150]
@@ -1708,8 +1716,10 @@ nodes:
   ai_autonomy: auto
   fallback:
   strategy_mounts:
-  - {strategy_ref: STR-TSMALL-001, confidence: verified, evidence: '双窗及格 IS 1.066(DSR 0.888)/OOS 0.694, run=SCR-C4-20260914-045225+051809'}
-  - {strategy_ref: STR-VAL-001, confidence: verified, evidence: '双窗及格 IS 0.563/OOS 1.173, run=SCR-C4-20260914-034927+051809'}
+  - {strategy_ref: STR-TSMALL-001, confidence: verified, evidence: '双窗及格 IS 1.066(DSR
+      0.888)/OOS 0.694, run=SCR-C4-20260914-045225+051809'}
+  - {strategy_ref: STR-VAL-001, confidence: verified, evidence: '双窗及格 IS 0.563/OOS
+      1.173, run=SCR-C4-20260914-034927+051809'}
   materiality: normal
   decay_scan_frequency: semiannual
 
@@ -2123,7 +2133,8 @@ nodes:
   decision_question: 限价还是市价（限价为主，市价仅应急）
   algo_note_zh: >-
     限价为主（成本可控），市价仅应急（跌停逃命/强平）。
-    限价锚：买=卖一价+1 tick 保证成交又不追高；突破买=突破价上方 0.5% 挂单等着成交。    （2026-09-15 ALGO_FLOW 块出仓至 docs/03_modules/_domain_execution_core/algo_flow/pricing_policy.yaml：算法推导图外迁，算法口径不变）
+    限价锚：买=卖一价+1 tick 保证成交又不追高；突破买=突破价上方 0.5% 挂单等着成交。    （2026-09-15 ALGO_FLOW 块出仓至
+    docs/03_modules/_domain_execution_core/algo_flow/pricing_policy.yaml：算法推导图外迁，算法口径不变）
   parent_node: TDM-E-L4
   factor_refs: []
   data_refs: []
@@ -2286,7 +2297,8 @@ nodes:
   point: 持续
   decision_question: 执行硬约束全过了吗（T+1/涨跌停/价格笼子/成本模型实时估算——佣金+印花税+滑点）
   algo_note_zh: >-
-    五道硬约束过一遍才发单：T+1（当日买入不可卖）、涨跌停价格笼子（申报价±2% 限制）、成本模型实时估（预期冲击+佣金是否吃掉预期收益 1/3）、资金可用、持仓限额。    （2026-09-15 ALGO_FLOW 块出仓至 docs/03_modules/_domain_execution_core/algo_flow/price_cage.yaml：算法推导图外迁，算法口径不变）
+    五道硬约束过一遍才发单：T+1（当日买入不可卖）、涨跌停价格笼子（申报价±2% 限制）、成本模型实时估（预期冲击+佣金是否吃掉预期收益 1/3）、资金可用、持仓限额。    （2026-09-15
+    ALGO_FLOW 块出仓至 docs/03_modules/_domain_execution_core/algo_flow/price_cage.yaml：算法推导图外迁，算法口径不变）
   parent_node: TDM-E-L4
   factor_refs: []
   cost_model_refs: [CST-ASTOCK-001]
@@ -2482,7 +2494,8 @@ nodes:
   - {strategy_ref: intraday-surge-fall, confidence: proposed, evidence: null}
   - {strategy_ref: orderbook-imbalance, confidence: proposed, evidence: null}
   - {strategy_ref: vwap-reversion, confidence: proposed, evidence: null}
-  - {strategy_ref: STR-DABAN-023, confidence: verified, evidence: '双窗及格 IS 0.070/OOS 0.795, run=SCR-C4-20260913-002056+SCR-C4-20260914-051809'}
+  - {strategy_ref: STR-DABAN-023, confidence: verified, evidence: '双窗及格 IS 0.070/OOS
+      0.795, run=SCR-C4-20260913-002056+SCR-C4-20260914-051809'}
 
   materiality: normal
   decay_scan_frequency: semiannual
@@ -2605,6 +2618,7 @@ nodes:
   decay_scan_frequency: semiannual
 
 - node_id: TDM-P-P1-04
+  note_confirmed: 2026-09-15
   name_zh: 风险否决体检
   market: cn_a
   flow: position_flow
@@ -2615,6 +2629,7 @@ nodes:
   algo_note_zh: >-
     四类否决线逐仓核对：生死线（-7% 破位）、时间止损（盈利仓 5 日不涨/亏损仓 3 日不回）、财报前 1 日解禁前 3 日（事件禁区）、板块退潮（板块进熄火段）。
     触发任一=标记转 X 流离场+冻结做T/加仓资格。
+    （2026-09-15 ALGO_FLOW 块出仓至 docs/03_modules/_domain_risk/algo_flow/ashare_stop_loss_engine.yaml：算法推导图外迁，算法口径不变）
   parent_node: TDM-P-P1
   factor_refs: []
   risk_limit_refs: [RLM-DRAWDOWN-005, RLM-DRAWDOWN-006]
@@ -3047,7 +3062,7 @@ nodes:
   # M-36 收口：熔断从模糊词变等级表（判定=R1-01 离散状态机，D108 设计原则）；梯度减仓=R1-02；
   # 护盘资产定向加仓窄门=R1-03（proposed 假说，回测验证前不生效）
 - node_id: TDM-X-R1-01
-  note_confirmed: 2026-09-11
+  note_confirmed: 2026-09-15
   name_zh: 熔断分级判定
   market: cn_a
   flow: exit_flow
@@ -3060,6 +3075,7 @@ nodes:
     L0 正常 / L1 警戒（日亏≥2%：禁加仓） / L2 禁开仓（日亏≥4%：停新开仓+白名单窄门开启） /
     L3 减仓（日亏≥6%：梯度减仓） / L4 保命（组合回撤≥25% 或生死线：清仓+Owner 人工接管）。
     迟滞解除：当日无新低+修复当日跌幅 50% 才降一级，禁 V 型直接回满。
+    （2026-09-15 ALGO_FLOW 块出仓至 docs/03_modules/_domain_risk/algo_flow/drawdown_state_machine.yaml：算法推导图外迁，算法口径不变）
   parent_node: TDM-X-R1
   factor_refs: []
   risk_limit_refs: [RLM-KILL-SWITCH-006, RLM-KILLSW-005, RLM-KILL-SWITCH-004, 
@@ -3081,7 +3097,7 @@ nodes:
   decay_scan_frequency: semiannual
 
 - node_id: TDM-X-R1-02
-  note_confirmed: 2026-09-11
+  note_confirmed: 2026-09-15
   name_zh: 熔断期减仓与持仓处置
   market: cn_a
   flow: exit_flow
@@ -3093,6 +3109,7 @@ nodes:
     L3 减仓顺序（梯度非一刀切）：重亏仓（浮亏最深优先砍）→高波动仓（ATR 大）→压舱石保留（浮盈护盘属性资产最后动）。
     减仓指令路由 P2-04 执行；恢复规则=组合回撤修复 50% 后逐级加回风险预算，禁 V 型回满。
     L4 全清仓走 S1-06 绕过通道（既有边不动）。
+    （2026-09-15 ALGO_FLOW 块出仓至 docs/03_modules/_domain_risk/algo_flow/drawdown_liquidation_guard.yaml：算法推导图外迁，算法口径不变）
   parent_node: TDM-X-R1
   factor_refs: []
   data_refs: []
@@ -3914,7 +3931,8 @@ nodes:
     walk-forward 效率 WFE>60% 才可用，<40% 禁上线。
     purge 窗=持仓半衰期，embargo≥5 日。
     （2026-09-15 ALGO_FLOW 块出仓至 docs/03_modules/_domain_backtest/algo_flow/walk_forward.yaml：算法推导图外迁，算法口径不变）
-    （2026-09-15 walk_forward 算法推导图外迁至 docs/03_modules/_domain_backtest/algo_flow/walk_forward.yaml，口径不变；同 commit 触碰源码故本块同日再确认）
+    （2026-09-15 walk_forward 算法推导图外迁至 docs/03_modules/_domain_backtest/algo_flow/walk_forward.yaml，口径不变；同
+    commit 触碰源码故本块同日再确认）
   parent_node: TDM-F-C3
   factor_refs: []
   data_refs: []
@@ -4294,12 +4312,18 @@ state_matrix:
       distribution]
   cells:
     # L1 总闸：六段各输出预算/姿态细则（格子内容待填，proposed）
-  - {node_id: TDM-E-L1, state: capitulation, mounted: [STR-VREV-025, STR-VREV-027], confidence: proposed}
-  - {node_id: TDM-E-L1, state: accumulation, mounted: [STR-VREV-026, STR-VREV-027], confidence: proposed}
-  - {node_id: TDM-E-L1, state: ignition, mounted: [STR-VREV-027], confidence: proposed}
-  - {node_id: TDM-E-L1, state: expansion, mounted: [STR-MOMTREND-033, STR-VREV-027], confidence: proposed}
-  - {node_id: TDM-E-L1, state: euphoria, mounted: [STR-VREV-027], confidence: proposed}
-  - {node_id: TDM-E-L1, state: distribution, mounted: [STR-VREV-027], confidence: proposed}
+  - {node_id: TDM-E-L1, state: capitulation, mounted: [STR-VREV-025, STR-VREV-027],
+    confidence: proposed}
+  - {node_id: TDM-E-L1, state: accumulation, mounted: [STR-VREV-026, 
+        STR-VREV-027], confidence: proposed}
+  - {node_id: TDM-E-L1, state: ignition, mounted: [STR-VREV-027], confidence: 
+      proposed}
+  - {node_id: TDM-E-L1, state: expansion, mounted: [STR-MOMTREND-033, 
+        STR-VREV-027], confidence: proposed}
+  - {node_id: TDM-E-L1, state: euphoria, mounted: [STR-VREV-027], confidence: 
+      proposed}
+  - {node_id: TDM-E-L1, state: distribution, mounted: [STR-VREV-027], confidence: 
+      proposed}
     # L4 买卖点：打板只进点火确认后的三档（发酵=1进2主战场，高潮=警惕高开不追，退潮/冰点/修复不进）
   - {node_id: TDM-E-L4, state: ignition, mounted: [daban-sleeve], confidence: 
       proposed}
@@ -4312,9 +4336,11 @@ state_matrix:
   - {node_id: TDM-E-L4, state: distribution, mounted: [], confidence: proposed}
     # P2 做T：修复期（震荡筹码交换）为主战场 + 发酵期次之；高潮/退潮/冰点不做
   - {node_id: TDM-P-P2, state: accumulation, mounted: [intraday-surge-fall, 
-        orderbook-imbalance, vwap-reversion, STR-DABAN-023], confidence: proposed}
+        orderbook-imbalance, vwap-reversion, STR-DABAN-023], confidence: 
+      proposed}
   - {node_id: TDM-P-P2, state: expansion, mounted: [intraday-surge-fall, 
-        orderbook-imbalance, vwap-reversion, STR-DABAN-023], confidence: proposed}
+        orderbook-imbalance, vwap-reversion, STR-DABAN-023], confidence: 
+      proposed}
   - {node_id: TDM-P-P2, state: capitulation, mounted: [], confidence: proposed}
   - {node_id: TDM-P-P2, state: ignition, mounted: [], confidence: proposed}
   - {node_id: TDM-P-P2, state: euphoria, mounted: [], confidence: proposed}
@@ -4349,11 +4375,13 @@ portfolio_plan:
   - {strategy_ref: STR-VREV-025, weight: 0.045, activation_state: [capitulation]}
   - {strategy_ref: STR-VREV-026, weight: 0.045, activation_state: [accumulation]}
   - {strategy_ref: STR-MOMTREND-033, weight: 0.045, activation_state: [expansion]}
-  - {strategy_ref: STR-DABAN-023, weight: 0.045, activation_state: [accumulation, expansion]}
+  - {strategy_ref: STR-DABAN-023, weight: 0.045, activation_state: [accumulation,
+      expansion]}
   - {strategy_ref: STR-TSMALL-001, weight: 0.045, activation_state: null}
   - {strategy_ref: STR-VAL-001, weight: 0.045, activation_state: null}
   - {strategy_ref: STR-MULTIFACTOR-097, weight: 0.05, activation_state: null}
-  - {strategy_ref: STR-VREV-027, weight: 0.05, activation_state: [accumulation, capitulation]}
+  - {strategy_ref: STR-VREV-027, weight: 0.05, activation_state: [accumulation, 
+        capitulation]}
   # C5 转正批等权起步档（2026-09-14）：新 6 sleeve 各 0.05，老 8 等比 ×0.70；权重=proposed 先验，
   # 待拼装回测归因逐 sleeve 替换（备忘 69 权重管线第一档，禁拍脑袋绝对收益配比）
   # 外审修复注记（2026-09-07）：①correlation_cap=0.7 处置语义复用 F-C2-03 两档（ρ>0.70 减半/>0.85 禁新仓，m-15）；②max_total_position=1.0=工程天花板永不触发（D92）；总仓位=min(预算带, 60% 硬顶 RLM-CONCENTRATION-002)；预备金不固定比例、以波动率预算输出为准，闲置资金自动 GC001 收益化（D107 修订 D88）；尾部弹药=D110 信号触发+回测验证后动用；合成净值含现金 sleeve（GC001）收益（D84⑤，m-50）；③sleeves.activation_state=null=全段激活，预算带 0% 段（distribution）=禁新开仓、存量由 X 流信号驱动离场（D98 确认）；④max_single_sleeve=0.25=常态唯一上限；主线确认+滚动评分双达标放宽至 0.60，禁 1.0；一致性约束=单策略日盈亏贡献>组合 70% 自动降权（D93）

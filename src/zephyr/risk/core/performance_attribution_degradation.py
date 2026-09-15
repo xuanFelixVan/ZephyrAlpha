@@ -36,50 +36,7 @@ weight_multiplier 只产出指令不直接改任何信号权重（三维解耦�
 AlphaGPT 退化检测实践（IC 衰减口径）
 Version: 0.1.0
 
-# [ALGO_FLOW]
-# 层: 输入
-# - id: I1
-#   name: 策略 IC 序列
-#   fields: strategy_id + ic_series(日IC, PIT已实现, ≥window个, 全有限)
-#   code: assess_strategy() 参数
-# - id: I2
-#   name: 拥挤度分数(可选)
-#   fields: crowding_score∈[0,1](MOD-RK-13口径)
-#   code: assess_strategy() 参数
-# - id: I3
-#   name: 配置 DegradationGuardConfig
-#   fields: ic_window=60/ic_decay_threshold=0.5/crowding_warn=0.6/crowding_multiplier=0.5
-#   code: DegradationGuardConfig
-# 层: 算法
-# - id: A1
-#   name_zh: ① IC 60日均线
-#   name_en: compute_ic_ma60
-#   intro: reference=首window均值, current=末window均值
-# - id: A2
-#   name_zh: ② 退化判定委托
-#   name_en: _delegate_degradation
-#   intro: MOD-PF-007 detect_degradation(baseline=reference, recent=current)>50%→degraded
-# - id: A3
-#   name_zh: ③ 拥挤联动+降权裁决
-#   name_en: _verdict
-#   intro: degraded→ZERO×0.0; crowding>warn→HALVE×0.5; else KEEP×1.0; reasons全量
-# - id: A4
-#   name_zh: ④ 统一归因入口
-#   name_en: brinson_attribute
-#   intro: 薄委托MOD-PF-007 Brinson三因子(守恒口径不重算)
-# 层: 输出
-# - id: O1
-#   name: StrategyDegradationVerdict
-#   fields: ic_ma60_reference/current/ic_decay_pct/degraded/crowding_penalty/weight_multiplier/action/reasons
-# 边:
-# I1 --> A1
-# I3 --> A1
-# A1 --> A2
-# I2 --> A3
-# A2 --> A3
-# I3 --> A3
-# A3 --> O1
-# [/ALGO_FLOW]
+# [ALGO_FLOW] external: docs/03_modules/_domain_risk/algo_flow/performance_attribution_degradation.yaml
 """
 
 from __future__ import annotations

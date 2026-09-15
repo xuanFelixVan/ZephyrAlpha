@@ -43,55 +43,7 @@ D_RISK — L2 平台层 broker 端硬止损（35 号 memo §6.11 施工，§3.5.
 
 SSoT: 35_drawdown_protocol_impl §3.5.1/§6.11
 
-# [ALGO_FLOW]
-# 层: 输入
-# - id: I1
-#   name: positions 参数
-#   fields: 参数 positions，类型注解 Mapping[str, Mapping[str, Any]]
-#   code: drawdown_broker_side_stop.py 顶层公共函数形参（AST 提取）
-# - id: I2
-#   name: broker_stop_orders 参数
-#   fields: 参数 broker_stop_orders，类型注解 Sequence[Mapping[str, Any]] | None
-#   code: drawdown_broker_side_stop.py 顶层公共函数形参（AST 提取）
-# - id: I3
-#   name: config 参数
-#   fields: 参数 config（无注解）
-#   code: drawdown_broker_side_stop.py 顶层公共函数形参（AST 提取）
-# 层: 算法
-# - id: A1
-#   name_zh: ① build_protective_stop_plan
-#   name_en: build_protective_stop_plan
-#   intro: 开仓时同步挂 broker 端止损——逐在持仓位产出保护性止损意图（§3.5.1 L2 触发点）。
-#   desc: 开仓时同步挂 broker 端止损——逐在持仓位产出保护性止损意图（§3.5.1 L2 触发点）。 Args: positions: {symbol: {"qty": int,…；源码 L176-L219
-#   inputs: positions
-#   outputs: list[ProtectiveStopIntent]
-# - id: A2
-#   name_zh: ② reconcile_broker_side_stops
-#   name_en: reconcile_broker_side_stops
-#   intro: L2 对账：计划在持仓位 vs broker 端已确认保护性止损单（每层捕获上层遗漏）。
-#   desc: L2 对账：计划在持仓位 vs broker 端已确认保护性止损单（每层捕获上层遗漏）。 匹配规则（按 symbol）：broker 存在该标的止损单 且 止损单 qty >=…；源码 L241-L297
-#   inputs: positions broker_stop_orders config
-#   outputs: BrokerSideStopReport
-#   （注：A2 之后另有 4 个公共定义未列入（含 4 个数据契约/异常/枚举声明类），见源码）
-# 层: 输出
-# - id: O1
-#   name_zh: list[ProtectiveStopIntent]
-#   name_en: list[ProtectiveStopIntent]
-#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
-#   downstream: 开仓执行链(开仓时同步挂 broker 端 stop) ; RiskOrchestrator(§6.5 接线位) ; drawdown_watchdog(L3…
-# - id: O2
-#   name_zh: BrokerSideStopReport
-#   name_en: BrokerSideStopReport
-#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
-#   downstream: 开仓执行链(开仓时同步挂 broker 端 stop) ; RiskOrchestrator(§6.5 接线位) ; drawdown_watchdog(L3…
-# [/ALGO_FLOW]
-#
-# 边:
-# I1 --> A1
-# I2 --> A1
-# I3 --> A1
-# A1 --> A2
-# A2 --> O1
+# [ALGO_FLOW] external: docs/03_modules/_domain_risk/algo_flow/drawdown_broker_side_stop.yaml
 """
 
 from __future__ import annotations

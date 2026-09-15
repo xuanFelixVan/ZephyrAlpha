@@ -32,76 +32,7 @@ Risk Veto Engine — 风险否决引擎 (MOD-RK-24)
 规则异常统一转 RULE_ERROR 否决（Fail-Closed：§6 可用性 vs 安全性→安全性优先）。
 扩展点：RiskVetoEngine(rules=[...]) 注入自定义 VetoRule（OCP）。
 
-# [ALGO_FLOW]
-# 层: 输入
-# - id: I1
-#   name: request 参数
-#   fields: 参数 request，类型注解 OrderRiskRequest
-#   code: risk_veto_engine.py 顶层公共函数形参（AST 提取）
-# - id: I2
-#   name: snapshot 参数
-#   fields: 参数 snapshot，类型注解 RiskSnapshot
-#   code: risk_veto_engine.py 顶层公共函数形参（AST 提取）
-# - id: I3
-#   name: rules 参数
-#   fields: 参数 rules，类型注解 tuple[VetoRule, ...] | None
-#   code: risk_veto_engine.py 顶层公共函数形参（AST 提取）
-# - id: I4
-#   name: evaluated_at 参数
-#   fields: 参数 evaluated_at（无注解）
-#   code: risk_veto_engine.py 顶层公共函数形参（AST 提取）
-# 层: 算法
-# - id: A1
-#   name_zh: ① VetoRule
-#   name_en: VetoRule
-#   intro: 否决规则协议（OCP 扩展点）。
-#   desc: 否决规则协议（OCP 扩展点）。 priority 数值越小越先评估（数据完整性 < 交易约束 < 限额）。 check 返回 None=通过，返回 VetoVerdict=否决。；公共方法（定义序）: check；源…
-#   inputs: 无参数
-#   outputs: 返回值
-# - id: A2
-#   name_zh: ② build_default_veto_rules
-#   name_en: build_default_veto_rules
-#   intro: 内置硬规则清单（priority 升序）。
-#   desc: 内置硬规则清单（priority 升序）。；源码 L389-L399
-#   inputs: 无参数
-#   outputs: tuple[VetoRule, ...]
-# - id: A3
-#   name_zh: ③ evaluate_vetoes
-#   name_en: evaluate_vetoes
-#   intro: 评估委托请求是否被风险否决（纯函数：同输入必同输出）。
-#   desc: 评估委托请求是否被风险否决（纯函数：同输入必同输出）。 全量评估所有规则（不短路），vetoes 按 priority 升序输出； 任一规则抛异常 → 转 RULE_ERROR…；源码 L420-L460
-#   inputs: request snapshot rules evaluated_at
-#   outputs: VetoDecision
-# - id: A4
-#   name_zh: ④ RiskVetoEngine
-#   name_en: RiskVetoEngine
-#   intro: 风险否决引擎（薄封装：规则集持有 + evaluate 入口 + 否决留痕日志）。
-#   desc: 风险否决引擎（薄封装：规则集持有 + evaluate 入口 + 否决留痕日志）。；公共方法（定义序）: rules, evaluate；源码 L463-L492
-#   inputs: rules
-#   outputs: 返回值
-#   （注：A4 之后另有 4 个公共定义未列入（含 4 个数据契约/异常/枚举声明类），见源码）
-# 层: 输出
-# - id: O1
-#   name_zh: tuple[VetoRule, ...]
-#   name_en: tuple[VetoRule, ...]
-#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
-#   downstream: MOD-EX-024(Pre-Execution Checker) ; MOD-L06-001(Execution Core 下单前硬拦)
-# - id: O2
-#   name_zh: VetoDecision
-#   name_en: VetoDecision
-#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
-#   downstream: MOD-EX-024(Pre-Execution Checker) ; MOD-L06-001(Execution Core 下单前硬拦)
-# [/ALGO_FLOW]
-#
-# 边:
-# I1 --> A1
-# I2 --> A1
-# I3 --> A1
-# I4 --> A1
-# A1 --> A2
-# A2 --> A3
-# A3 --> A4
-# A4 --> O1
+# [ALGO_FLOW] external: docs/03_modules/_domain_risk/algo_flow/risk_veto_engine.yaml
 """
 
 from __future__ import annotations

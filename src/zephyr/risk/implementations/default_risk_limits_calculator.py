@@ -40,46 +40,7 @@ CTR 契约：
 
 SSoT: cross_layer_contracts.yaml -> CTR-003
 
-# [ALGO_FLOW]
-# 层: 输入
-# - id: I1
-#   name: max_single_position 参数
-#   fields: 参数 max_single_position（无注解）
-#   code: default_risk_limits_calculator.py 顶层公共函数形参（AST 提取）
-# - id: I2
-#   name: max_gross_leverage 参数
-#   fields: 参数 max_gross_leverage（无注解）
-#   code: default_risk_limits_calculator.py 顶层公共函数形参（AST 提取）
-# - id: I3
-#   name: max_sector_concentration 参数
-#   fields: 参数 max_sector_concentration（无注解）
-#   code: default_risk_limits_calculator.py 顶层公共函数形参（AST 提取）
-# - id: I4
-#   name: max_drawdown_limit 参数
-#   fields: 参数 max_drawdown_limit（无注解）
-#   code: default_risk_limits_calculator.py 顶层公共函数形参（AST 提取）
-# 层: 算法
-# - id: A1
-#   name_zh: ① DefaultRiskLimitsCalculator
-#   name_en: DefaultRiskLimitsCalculator
-#   intro: 默认风险限额计算器
-#   desc: 默认风险限额计算器；公共方法（定义序）: calculate；源码 L96-L156
-#   inputs: max_single_position max_gross_leverage max_sector_concentration max_d…
-#   outputs: 返回值
-# 层: 输出
-# - id: O1
-#   name_zh: 模块公共 API 面（1 定义）
-#   name_en: public defs
-#   intro: DefaultRiskLimitsCalculator
-#   downstream: 见模块头 [CONSUMERS]
-# [/ALGO_FLOW]
-#
-# 边:
-# I1 --> A1
-# I2 --> A1
-# I3 --> A1
-# I4 --> A1
-# A1 --> O1
+# [ALGO_FLOW] external: docs/03_modules/_domain_risk/algo_flow/default_risk_limits_calculator.yaml
 """
 
 from __future__ import annotations

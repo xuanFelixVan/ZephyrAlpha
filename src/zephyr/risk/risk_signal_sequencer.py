@@ -33,41 +33,7 @@ A9 运维架构 §8.3.13（D-SIGNAL-72）落码：风控 veto/降级/解除事�
 依据: blueprint.md（MOD-RK-41）§1 全序规则；construction_backlog_dig.tsv B14-04732
 Version: 0.1.0
 
-# [ALGO_FLOW]
-# 层: 输入
-# - id: I1
-#   name: 风控事件 RiskEvent
-#   fields: event_id + kind(VETO/DOWNGRADE/CLEAR) + scope(GLOBAL/SYMBOL) + symbol + occurred_at + seq
-#   code: ingest_risk() 参数
-# - id: I2
-#   name: 信号事件 SignalEvent
-#   fields: signal_id + symbol + occurred_at + seq
-#   code: ingest_signal() 参数
-# 层: 算法
-# - id: A1
-#   name_zh: ① 全序判定：活跃阻断期内信号 SUPPRESSED
-#   name_en: _admit_or_suppress
-#   intro: 覆盖范围(GLOBAL 全覆盖/SYMBOL 同标的)存在未解除 VETO/DOWNGRADE(occurred_at≤信号)→SUPPRESSED 留痕，否则 ADMITTED
-# - id: A2
-#   name_zh: ② 乱序检测+仲裁：后到更早风控事件→已生效信号 REVOKED
-#   name_en: _revoke_violated
-#   intro: 风控事件到达时发现同范围已 ADMITTED 且 (occurred_at,seq) 晚于本事件的信号→ORDER_VIOLATION+REVOKE_SIGNAL+审计
-# - id: A3
-#   name_zh: ③ CLEAR 解除：同范围最新阻断被 CLEAR 关闭
-#   name_en: _apply_clear
-#   intro: CLEAR 关闭覆盖范围内活跃阻断；解除后新信号 ADMITTED
-# 层: 输出
-# - id: O1
-#   name: ArbitrationRecord
-#   fields: subject_id/action(ADMITTED/SUPPRESSED/REVOKED)/reason/violation/deduped/risk_event_id（frozen）
-# 边:
-# I1 --> A2
-# I1 --> A3
-# I2 --> A1
-# A1 --> O1
-# A2 --> O1
-# A3 --> O1
-# [/ALGO_FLOW]
+# [ALGO_FLOW] external: docs/03_modules/_domain_risk/algo_flow/risk_signal_sequencer.yaml
 """
 
 from __future__ import annotations

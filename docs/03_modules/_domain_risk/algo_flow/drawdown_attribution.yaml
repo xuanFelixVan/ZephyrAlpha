@@ -1,0 +1,70 @@
+# ALGO_FLOW 外部真源——drawdown_attribution（_domain_risk 域，真源 src/zephyr/risk/core/drawdown_attribution.py）
+# 2026-09-15 P2-1 契约头减负批量出仓：docstring 内联块逐字节副本，extractor 经
+# external 锚加载走同一 parse_algo_flow 管线；算法公共面变化时同步更新本块。
+doc_type: architecture_view
+ttl: permanent
+module: src.zephyr.risk.core.drawdown_attribution
+source_of_truth: src/zephyr/risk/core/drawdown_attribution.py
+algo_flow: |
+    # [ALGO_FLOW]
+    # 层: 输入
+    # - id: I1
+    #   name: signals_follow_rules 参数
+    #   fields: 参数 signals_follow_rules（无注解）
+    #   code: drawdown_attribution.py 顶层公共函数形参（AST 提取）
+    # - id: I2
+    #   name: avg_loss_r 参数
+    #   fields: 参数 avg_loss_r（无注解）
+    #   code: drawdown_attribution.py 顶层公共函数形参（AST 提取）
+    # - id: I3
+    #   name: position_sizing_consistent 参数
+    #   fields: 参数 position_sizing_consistent（无注解）
+    #   code: drawdown_attribution.py 顶层公共函数形参（AST 提取）
+    # - id: I4
+    #   name: trade_frequency_in_plan 参数
+    #   fields: 参数 trade_frequency_in_plan（无注解）
+    #   code: drawdown_attribution.py 顶层公共函数形参（AST 提取）
+    # 层: 算法
+    # - id: A1
+    #   name_zh: ① AttributionResult
+    #   name_en: AttributionResult
+    #   intro: 归因结果（§3.16 AttributionResult）。
+    #   desc: 归因结果（§3.16 AttributionResult）。 Attributes: systemic_pct: 系统性占比（1.0=全系统性 / 0.0=全策略特定 / 中间=…；公共方法（定义序）: to_dict…
+    #   inputs: 无参数
+    #   outputs: 返回值
+    # - id: A2
+    #   name_zh: ② diagnose_drawdown_type
+    #   name_en: diagnose_drawdown_type
+    #   intro: 回撤类型诊断（§3.12 五问矩阵）：任一行为性违例 → BEHAVIOURAL。
+    #   desc: 回撤类型诊断（§3.12 五问矩阵）：任一行为性违例 → BEHAVIOURAL。 Args: signals_follow_rules: 信号是否严格按策略规则生成（False…；源码 L217-L269
+    #   inputs: signals_follow_rules avg_loss_r position_sizing_consistent trade_freq…
+    #   outputs: DrawdownDiagnosis
+    # - id: A3
+    #   name_zh: ③ drawdown_attribution_flow
+    #   name_en: drawdown_attribution_flow
+    #   intro: 回撤归因端到端流程（§3.16）：前馈 VaR 恶化 → 门控 → 相关性 → 因子 → regime。
+    #   desc: 回撤归因端到端流程（§3.16）：前馈 VaR 恶化 → 门控 → 相关性 → 因子 → regime。 Args: drawdown_pct: 当前组合回撤（负号或绝对值均可，…；源码 L300-L431
+    #   inputs: drawdown_pct strategy_pnls entry_var current_var strategy_pnls_histor…
+    #   outputs: AttributionResult | None
+    #   （注：A3 之后另有 4 个公共定义未列入（含 4 个数据契约/异常/枚举声明类），见源码）
+    # 层: 输出
+    # - id: O1
+    #   name_zh: DrawdownDiagnosis
+    #   name_en: DrawdownDiagnosis
+    #   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+    #   downstream: RiskOrchestrator(§6.5 接线位); drawdown_session_persistence(归因持久化载荷)
+    # - id: O2
+    #   name_zh: AttributionResult | None
+    #   name_en: AttributionResult | None
+    #   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+    #   downstream: RiskOrchestrator(§6.5 接线位); drawdown_session_persistence(归因持久化载荷)
+    # [/ALGO_FLOW]
+    #
+    # 边:
+    # I1 --> A1
+    # I2 --> A1
+    # I3 --> A1
+    # I4 --> A1
+    # A1 --> A2
+    # A2 --> A3
+    # A3 --> O1

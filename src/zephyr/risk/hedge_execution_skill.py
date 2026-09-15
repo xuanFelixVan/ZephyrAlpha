@@ -28,47 +28,7 @@ hedge-execution）：对冲需求（敞口/比例）→ 标的映射（股指期
 仅生成对冲腿单）；portfolio_optimizer=权重优化（本件=确定性词表映射+数量取
 整，不做优化）。
 
-# [ALGO_FLOW]
-# 层: 输入
-# - id: I1
-#   name: instrument_vocab 参数
-#   fields: 参数 instrument_vocab（无注解）
-#   code: hedge_execution_skill.py 顶层公共函数形参（AST 提取）
-# - id: I2
-#   name: price_provider 参数
-#   fields: 参数 price_provider（无注解）
-#   code: hedge_execution_skill.py 顶层公共函数形参（AST 提取）
-# - id: I3
-#   name: basis_provider 参数
-#   fields: 参数 basis_provider（无注解）
-#   code: hedge_execution_skill.py 顶层公共函数形参（AST 提取）
-# - id: I4
-#   name: executor 参数
-#   fields: 参数 executor（无注解）
-#   code: hedge_execution_skill.py 顶层公共函数形参（AST 提取）
-# 层: 算法
-# - id: A1
-#   name_zh: ① HedgeExecutionSkill
-#   name_en: HedgeExecutionSkill
-#   intro: 对冲执行技能（标的映射 + 腿单生成 + 双确认执行 + 有效性回写）。
-#   desc: 对冲执行技能（标的映射 + 腿单生成 + 双确认执行 + 有效性回写）。；公共方法（定义序）: plan, execute, record_of, records；源码 L196-L373
-#   inputs: instrument_vocab price_provider basis_provider executor risk_confirme…
-#   outputs: 返回值
-#   （注：A1 之后另有 9 个公共定义未列入（含 9 个数据契约/异常/枚举声明类），见源码）
-# 层: 输出
-# - id: O1
-#   name_zh: 模块公共 API 面（10 定义）
-#   name_en: public defs
-#   intro: HedgeExecutionSkill
-#   downstream: 运行时装配批（对冲执行技能装配：执行层回调 / 风控Agent+人工双确认注入）
-# [/ALGO_FLOW]
-#
-# 边:
-# I1 --> A1
-# I2 --> A1
-# I3 --> A1
-# I4 --> A1
-# A1 --> O1
+# [ALGO_FLOW] external: docs/03_modules/_domain_risk/algo_flow/hedge_execution_skill.yaml
 """
 
 from __future__ import annotations

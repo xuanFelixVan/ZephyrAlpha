@@ -1,0 +1,47 @@
+# ALGO_FLOW 外部真源——drawdown_consecutive_loss（_domain_risk 域，真源 src/zephyr/risk/core/drawdown_consecutive_loss.py）
+# 2026-09-15 P2-1 契约头减负批量出仓：docstring 内联块逐字节副本，extractor 经
+# external 锚加载走同一 parse_algo_flow 管线；算法公共面变化时同步更新本块。
+doc_type: architecture_view
+ttl: permanent
+module: src.zephyr.risk.core.drawdown_consecutive_loss
+source_of_truth: src/zephyr/risk/core/drawdown_consecutive_loss.py
+algo_flow: |
+    # [ALGO_FLOW]
+    # 层: 输入
+    # - id: I1
+    #   name: daily_pnls 参数
+    #   fields: 参数 daily_pnls，类型注解 Sequence[float]
+    #   code: drawdown_consecutive_loss.py 顶层公共函数形参（AST 提取）
+    # - id: I2
+    #   name: config 参数
+    #   fields: 参数 config，类型注解 ConsecutiveLossConfig | None
+    #   code: drawdown_consecutive_loss.py 顶层公共函数形参（AST 提取）
+    # 层: 算法
+    # - id: A1
+    #   name_zh: ① check_consecutive_loss
+    #   name_en: check_consecutive_loss
+    #   intro: 连续亏损检测（纯函数）：序列末尾连续 pnl<0 天数 ≥ 阈值 → 降仓。
+    #   desc: 连续亏损检测（纯函数）：序列末尾连续 pnl<0 天数 ≥ 阈值 → 降仓。 Args: daily_pnls: 日 PnL 序列（旧→新；负=亏损；0=非亏损重置连亏） con…；源码 L149-L189
+    #   inputs: daily_pnls config
+    #   outputs: ConsecutiveLossAlert
+    # - id: A2
+    #   name_zh: ② ConsecutiveLossTracker
+    #   name_en: ConsecutiveLossTracker
+    #   intro: 连续亏损有状态追踪器（盘前日更版）。
+    #   desc: 连续亏损有状态追踪器（盘前日更版）。 用法: tracker = ConsecutiveLossTracker() alert = tracker.update(trade_da…；公共方法（定义序）: consecu…
+    #   inputs: config
+    #   outputs: 返回值
+    #   （注：A2 之后另有 3 个公共定义未列入（含 3 个数据契约/异常/枚举声明类），见源码）
+    # 层: 输出
+    # - id: O1
+    #   name_zh: ConsecutiveLossAlert
+    #   name_en: ConsecutiveLossAlert
+    #   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+    #   downstream: RiskOrchestrator(§6.5 接线位); position_sizing_engine(cap_multiplier消费)
+    # [/ALGO_FLOW]
+    #
+    # 边:
+    # I1 --> A1
+    # I2 --> A1
+    # A1 --> A2
+    # A2 --> O1

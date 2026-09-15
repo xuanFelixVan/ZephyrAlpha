@@ -27,47 +27,7 @@ singleflight 防击穿语义）。
 参数生成+结果缓存，键语义对齐但互不持有）；本件不持有任何连接，loader 全
 注入。
 
-# [ALGO_FLOW]
-# 层: 输入
-# - id: I1
-#   name: table 参数
-#   fields: 参数 table（无注解）
-#   code: var_query_builder.py 顶层公共函数形参（AST 提取）
-# - id: I2
-#   name: allowed_symbols 参数
-#   fields: 参数 allowed_symbols（无注解）
-#   code: var_query_builder.py 顶层公共函数形参（AST 提取）
-# - id: I3
-#   name: max_window 参数
-#   fields: 参数 max_window（无注解）
-#   code: var_query_builder.py 顶层公共函数形参（AST 提取）
-# - id: I4
-#   name: cache_capacity 参数
-#   fields: 参数 cache_capacity（无注解）
-#   code: var_query_builder.py 顶层公共函数形参（AST 提取）
-# 层: 算法
-# - id: A1
-#   name_zh: ① VarQueryBuilder
-#   name_en: VarQueryBuilder
-#   intro: 历史模拟查询构建器（白名单参数化 + 谓词下推 + 结果缓存）。
-#   desc: 历史模拟查询构建器（白名单参数化 + 谓词下推 + 结果缓存）。；公共方法（定义序）: build, cache_key, fetch, cache_stats, cache_clear；源码 L133-L287
-#   inputs: table allowed_symbols max_window cache_capacity
-#   outputs: 返回值
-#   （注：A1 之后另有 4 个公共定义未列入（含 4 个数据契约/异常/枚举声明类），见源码）
-# 层: 输出
-# - id: O1
-#   name_zh: 模块公共 API 面（5 定义）
-#   name_en: public defs
-#   intro: VarQueryBuilder
-#   downstream: 运行时装配批（VaR历史模拟查询装配 / 与预取器共用缓存键语义）
-# [/ALGO_FLOW]
-#
-# 边:
-# I1 --> A1
-# I2 --> A1
-# I3 --> A1
-# I4 --> A1
-# A1 --> O1
+# [ALGO_FLOW] external: docs/03_modules/_domain_risk/algo_flow/var_query_builder.yaml
 """
 
 from __future__ import annotations

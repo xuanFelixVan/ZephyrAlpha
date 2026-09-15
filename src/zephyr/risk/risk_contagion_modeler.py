@@ -27,55 +27,7 @@ B14-04692（AUD-DRAFT-001-DIGEST P2 波 P2-W09，CAND-RSK-050，A9 M15-S01）：
 件边权全注入，不估计相关性）；stress_test_engine=情景压测（本件=网络传导，
 不跑情景库）。
 
-# [ALGO_FLOW]
-# 层: 输入
-# - id: I1
-#   name: nodes 参数
-#   fields: 参数 nodes（无注解）
-#   code: risk_contagion_modeler.py 顶层公共函数形参（AST 提取）
-# - id: I2
-#   name: edges 参数
-#   fields: 参数 edges（无注解）
-#   code: risk_contagion_modeler.py 顶层公共函数形参（AST 提取）
-# - id: I3
-#   name: decay 参数
-#   fields: 参数 decay（无注解）
-#   code: risk_contagion_modeler.py 顶层公共函数形参（AST 提取）
-# - id: I4
-#   name: epsilon 参数
-#   fields: 参数 epsilon（无注解）
-#   code: risk_contagion_modeler.py 顶层公共函数形参（AST 提取）
-# 层: 算法
-# - id: A1
-#   name_zh: ① ContagionReport
-#   name_en: ContagionReport
-#   intro: 传播模拟报告（暴露度 + 归一传染评分，frozen）。
-#   desc: 传播模拟报告（暴露度 + 归一传染评分，frozen）。；公共方法（定义序）: impact_of, score_of；源码 L139-L153
-#   inputs: 无参数
-#   outputs: 返回值
-# - id: A2
-#   name_zh: ② RiskContagionModeler
-#   name_en: RiskContagionModeler
-#   intro: 风险传播建模器（建图 + 衰减传导模拟 + 传染评分，盘后语义）。
-#   desc: 风险传播建模器（建图 + 衰减传导模拟 + 传染评分，盘后语义）。；公共方法（定义序）: add_edge, graph_nodes, neighbors_of, simulate；源码 L156-L276
-#   inputs: nodes edges decay epsilon max_rounds session_provider score_sink clock
-#   outputs: 返回值
-#   （注：A2 之后另有 4 个公共定义未列入（含 4 个数据契约/异常/枚举声明类），见源码）
-# 层: 输出
-# - id: O1
-#   name_zh: 模块公共 API 面（6 定义）
-#   name_en: public defs
-#   intro: ContagionReport, RiskContagionModeler
-#   downstream: 运行时装配批（盘后风险传播建模装配：相关性+产业链边注入 / 评分入风控参考输出）
-# [/ALGO_FLOW]
-#
-# 边:
-# I1 --> A1
-# I2 --> A1
-# I3 --> A1
-# I4 --> A1
-# A1 --> A2
-# A2 --> O1
+# [ALGO_FLOW] external: docs/03_modules/_domain_risk/algo_flow/risk_contagion_modeler.yaml
 """
 
 from __future__ import annotations

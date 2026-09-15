@@ -1,0 +1,49 @@
+# ALGO_FLOW 外部真源——var_intraday_recalc（_domain_risk 域，真源 src/zephyr/risk/core/var_intraday_recalc.py）
+# 2026-09-15 P2-1 契约头减负批量出仓：docstring 内联块逐字节副本，extractor 经
+# external 锚加载走同一 parse_algo_flow 管线；算法公共面变化时同步更新本块。
+doc_type: architecture_view
+ttl: permanent
+module: src.zephyr.risk.core.var_intraday_recalc
+source_of_truth: src/zephyr/risk/core/var_intraday_recalc.py
+algo_flow: |
+    # [ALGO_FLOW]
+    # 层: 输入
+    # - id: I1
+    #   name: var_calculator 参数
+    #   fields: 参数 var_calculator（无注解）
+    #   code: var_intraday_recalc.py 顶层公共函数形参（AST 提取）
+    # - id: I2
+    #   name: tail_risk_monitor 参数
+    #   fields: 参数 tail_risk_monitor（无注解）
+    #   code: var_intraday_recalc.py 顶层公共函数形参（AST 提取）
+    # - id: I3
+    #   name: breach_machine 参数
+    #   fields: 参数 breach_machine（无注解）
+    #   code: var_intraday_recalc.py 顶层公共函数形参（AST 提取）
+    # - id: I4
+    #   name: config 参数
+    #   fields: 参数 config（无注解）
+    #   code: var_intraday_recalc.py 顶层公共函数形参（AST 提取）
+    # 层: 算法
+    # - id: A1
+    #   name_zh: ① IntradayVarRecalcController
+    #   name_en: IntradayVarRecalcController
+    #   intro: 盘中 VaR/ES 重算控制器 (36号 §3.12)。
+    #   desc: 盘中 VaR/ES 重算控制器 (36号 §3.12)。 用法:: ctl = IntradayVarRecalcController(var_calculator, tail_…；公共方法（定义序）: recalc_…
+    #   inputs: var_calculator tail_risk_monitor breach_machine config clock
+    #   outputs: 返回值
+    #   （注：A1 之后另有 5 个公共定义未列入（含 5 个数据契约/异常/枚举声明类），见源码）
+    # 层: 输出
+    # - id: O1
+    #   name_zh: 模块公共 API 面（6 定义）
+    #   name_en: public defs
+    #   intro: IntradayVarRecalcController
+    #   downstream: 35号 §3.13 intraday_risk_loop(盘中循环检测触发后调用,设计契约); RiskLayerOrchestrator(编排注入)
+    # [/ALGO_FLOW]
+    #
+    # 边:
+    # I1 --> A1
+    # I2 --> A1
+    # I3 --> A1
+    # I4 --> A1
+    # A1 --> O1

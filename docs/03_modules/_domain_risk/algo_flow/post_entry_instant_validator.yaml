@@ -1,0 +1,53 @@
+# ALGO_FLOW 外部真源——post_entry_instant_validator（_domain_risk 域，真源 src/zephyr/risk/post_entry_instant_validator.py）
+# 2026-09-15 P2-1 契约头减负批量出仓：docstring 内联块逐字节副本，extractor 经
+# external 锚加载走同一 parse_algo_flow 管线；算法公共面变化时同步更新本块。
+doc_type: architecture_view
+ttl: permanent
+module: src.zephyr.risk.post_entry_instant_validator
+source_of_truth: src/zephyr/risk/post_entry_instant_validator.py
+algo_flow: |
+    # [ALGO_FLOW]
+    # 层: 输入
+    # - id: I1
+    #   name: 持仓与档位
+    #   fields: symbol + entry_price(>0) + checkpoint(MIN_5/15/30) + current_price(>0)
+    #   code: validate() 参数
+    # - id: I2
+    #   name: 档位观测
+    #   fields: 5min→volume_ratio; 15min→vwap+session_low+atr14; 30min→atr14（档位必填）
+    #   code: validate() 参数
+    # - id: I3
+    #   name: 配置 PostEntryValidatorConfig
+    #   fields: drawdown_pct_5m=0.01/volume_ratio_min=1.5/rebound_atr_frac=0.5/adverse_atr_mult=2.0
+    #   code: PostEntryValidatorConfig
+    # 层: 算法
+    # - id: A1
+    #   name_zh: ① 5min档：跌>1%且放量→WATCH
+    #   name_en: _eval_5m
+    #   intro: (entry−current)/entry>1% 且 volume_ratio≥1.5 → WATCH 否则 PASS
+    # - id: A2
+    #   name_zh: ② 15min档：破均线反弹无力→REDUCE_HALF
+    #   name_en: _eval_15m
+    #   intro: current<vwap 且 current−session_low<0.5×ATR → REDUCE_HALF 否则 PASS
+    # - id: A3
+    #   name_zh: ③ 30min档：反向>2ATR→EXIT_ALL
+    #   name_en: _eval_30m
+    #   intro: entry−current>2×ATR → EXIT_ALL 否则 PASS
+    # 层: 输出
+    # - id: O1
+    #   name: PostEntryVerdict
+    #   fields: symbol/checkpoint/action/reason/metrics（frozen；非PASS→audit_sink）
+    # 边:
+    # I1 --> A1
+    # I1 --> A2
+    # I1 --> A3
+    # I2 --> A1
+    # I2 --> A2
+    # I2 --> A3
+    # I3 --> A1
+    # I3 --> A2
+    # I3 --> A3
+    # A1 --> O1
+    # A2 --> O1
+    # A3 --> O1
+    # [/ALGO_FLOW]

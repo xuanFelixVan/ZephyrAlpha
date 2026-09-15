@@ -28,55 +28,7 @@ Agent Risk Monitor — agent 交易行为风险监控器 (MOD-RK-22)
 判定核心为纯函数 evaluate_agent_risk（同输入必同输出，可单测）；
 AgentRiskMonitor 为薄封装（配置持有 + 最近一次报告留痕）。
 
-# [ALGO_FLOW]
-# 层: 输入
-# - id: I1
-#   name: activity 参数
-#   fields: 参数 activity，类型注解 AgentActivityWindow
-#   code: agent_risk_monitor.py 顶层公共函数形参（AST 提取）
-# - id: I2
-#   name: snapshot 参数
-#   fields: 参数 snapshot，类型注解 RiskSnapshot
-#   code: agent_risk_monitor.py 顶层公共函数形参（AST 提取）
-# - id: I3
-#   name: thresholds 参数
-#   fields: 参数 thresholds，类型注解 AgentRiskThresholds
-#   code: agent_risk_monitor.py 顶层公共函数形参（AST 提取）
-# - id: I4
-#   name: evaluated_at 参数
-#   fields: 参数 evaluated_at（无注解）
-#   code: agent_risk_monitor.py 顶层公共函数形参（AST 提取）
-# 层: 算法
-# - id: A1
-#   name_zh: ① evaluate_agent_risk
-#   name_en: evaluate_agent_risk
-#   intro: 评估 agent 交易活动风险（纯函数）。
-#   desc: 评估 agent 交易活动风险（纯函数）。 等级由触发指标唯一决定：任一 CRITICAL → CRITICAL；否则任一 WARNING → WARNING。 比率类指标仅在…；源码 L200-L314
-#   inputs: activity snapshot thresholds evaluated_at
-#   outputs: AgentRiskReport
-# - id: A2
-#   name_zh: ② AgentRiskMonitor
-#   name_en: AgentRiskMonitor
-#   intro: agent 风险监控器（薄封装：阈值持有 + 最近报告留痕）。
-#   desc: agent 风险监控器（薄封装：阈值持有 + 最近报告留痕）。；公共方法（定义序）: assess, last_report；源码 L317-L345
-#   inputs: thresholds
-#   outputs: 返回值
-#   （注：A2 之后另有 6 个公共定义未列入（含 6 个数据契约/异常/枚举声明类），见源码）
-# 层: 输出
-# - id: O1
-#   name_zh: AgentRiskReport
-#   name_en: AgentRiskReport
-#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
-#   downstream: MOD-RK-24(Risk Veto Engine,监控等级输入) ; MOD-L04-001(DefaultRiskManagerOrchestrator)
-# [/ALGO_FLOW]
-#
-# 边:
-# I1 --> A1
-# I2 --> A1
-# I3 --> A1
-# I4 --> A1
-# A1 --> A2
-# A2 --> O1
+# [ALGO_FLOW] external: docs/03_modules/_domain_risk/algo_flow/agent_risk_monitor.yaml
 """
 
 from __future__ import annotations

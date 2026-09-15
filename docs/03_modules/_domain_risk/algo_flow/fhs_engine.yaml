@@ -1,0 +1,88 @@
+# ALGO_FLOW 外部真源——fhs_engine（_domain_risk 域，真源 src/zephyr/risk/core/fhs_engine.py）
+# 2026-09-15 P2-1 契约头减负批量出仓：docstring 内联块逐字节副本，extractor 经
+# external 锚加载走同一 parse_algo_flow 管线；算法公共面变化时同步更新本块。
+doc_type: architecture_view
+ttl: permanent
+module: src.zephyr.risk.core.fhs_engine
+source_of_truth: src/zephyr/risk/core/fhs_engine.py
+algo_flow: |
+    # [ALGO_FLOW]
+    # 层: 输入
+    # - id: I1
+    #   name: 日收益序列 np.ndarray
+    #   fields: 1维日收益率数组, 非有限值(NaN/±Inf)过滤+计数nan_dropped(占比超阈值raise), 需>=min_history(30)有效样本
+    #   code: compute() returns 校验段
+    # - id: I2
+    #   name: 组合价值 标量
+    #   fields: portfolio_value 当前组合价值(NAV元), 必须为正
+    #   code: compute() portfolio_value 参数
+    # - id: I3
+    #   name: FHS配置 FHSConfig
+    #   fields: confidence_level置信水平 + holding_period_days持有期 + min_history + garch_min_history(60) + n_simulations + random_seed + fallback_to_historical + max_nonfinite_ratio
+    #   code: FHSConfig 配置段
+    # 层: 算法
+    # - id: A1
+    #   name_zh: ① GARCH(1,1) QMLE 拟合
+    #   name_en: _fit_garch_11
+    #   intro: 去均值后对准对数似然做L-BFGS-B优化估omega/alpha/beta
+    #   desc: eps=r-mu_hat; sigma_t^2=omega+alpha*eps_{t-1}^2+beta*sigma_{t-1}^2; 约束omega>0,alpha>=0,beta>=0,alpha+beta<1(二次罚项); L-BFGS-B双起点取较优; 不收敛返回None
+    #   inputs: I1 I3
+    #   outputs: GarchParams(omega/alpha/beta/mu/sigma_T/loglik) 或 None
+    #   invariant: alpha+beta<1(平稳性)
+    # - id: A2
+    #   name_zh: ② 标准化残差与波动率预测
+    #   name_en: _standardized_residuals
+    #   intro: 用拟合的条件波动率把残差标准化并预测下一日sigma
+    #   desc: z_t=eps_t/sigma_t; sigma_{T+1}^2=omega+alpha*eps_T^2+beta*sigma_T^2
+    #   inputs: A1 I1
+    #   outputs: z残差序列 + sigma_{T+1}
+    #   invariant: sigma_{T+1}>0且有限
+    # - id: A3
+    #   name_zh: ③ 残差重采样FHS模拟
+    #   name_en: _simulate_fhs
+    #   intro: 对z做有放回重采样逐日递归GARCH方程产出模拟收益分布
+    #   desc: z*~bootstrap(z); eps*_s=sigma*_s*z*_s; sigma*_{s+1}^2=omega+alpha*eps*_s^2+beta*sigma*_s^2; r*=prod(1+mu+eps*)-1; n_simulations条路径
+    #   inputs: A1 A2 I3
+    #   outputs: 模拟累积收益数组(B条路径)
+    #   invariant: 同日同种子结果可复现
+    # - id: A4
+    #   name_zh: ④ FHS VaR/ES分位取数
+    #   name_en: _var_es_from_simulation
+    #   intro: 从模拟分布取下侧分位数当VaR,尾部均值当ES
+    #   desc: q=quantile(r*,1-c,method='lower'); VaR=-q*V下限0; ES=-mean(r*[r*<=q])*V下限0
+    #   inputs: A3 I2 I3
+    #   outputs: fhs_var + fhs_es
+    #   invariant: VaR>=0; ES>=VaR(构造性)
+    # - id: A5
+    #   name_zh: ⑤ 历史模拟法对照与不收敛回退
+    #   name_en: _historical_benchmark
+    #   intro: 同窗口算历史模拟VaR/ES作对照,GARCH不收敛时回退它
+    #   desc: hs_var=-quantile(r,1-c)*V*sqrt(T); hs_es=-mean(r[r<=q_lower])*V*sqrt(T); 不收敛→method_used=HISTORICAL_FALLBACK+garch_converged=False+warning
+    #   inputs: I1 I2 I3
+    #   outputs: historical_var + historical_es (+回退时的最终值)
+    #   invariant: 回退时 var==historical_var 且 es==historical_es
+    # 层: 输出
+    # - id: O1
+    #   name_zh: FHS计算结果
+    #   name_en: FHSResult
+    #   intro: 含FHS VaR/ES/方法标记/GARCH参数/sigma预测/HS对照/样本数的frozen结果对象
+    #   invariant: VaR>=0且ES>=0;ES>=VaR
+    #   downstream: 无下游(设计契约消费者=RiskLayerOrchestrator RECALIBRATE 动作4,远期接线)
+    # [/ALGO_FLOW]
+    #
+    # 边:
+    # I1 --> A1
+    # I1 --> A2
+    # I1 --> A5
+    # I2 --> A4
+    # I2 --> A5
+    # I3 --> A1
+    # I3 --> A3
+    # I3 --> A4
+    # I3 --> A5
+    # A1 --> A2
+    # A1 --> A3
+    # A2 --> A3
+    # A3 --> A4
+    # A4 --> O1
+    # A5 --> O1

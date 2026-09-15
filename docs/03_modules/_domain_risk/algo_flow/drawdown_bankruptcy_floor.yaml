@@ -1,0 +1,44 @@
+# ALGO_FLOW 外部真源——drawdown_bankruptcy_floor（_domain_risk 域，真源 src/zephyr/risk/core/drawdown_bankruptcy_floor.py）
+# 2026-09-15 P2-1 契约头减负批量出仓：docstring 内联块逐字节副本，extractor 经
+# external 锚加载走同一 parse_algo_flow 管线；算法公共面变化时同步更新本块。
+doc_type: architecture_view
+ttl: permanent
+module: src.zephyr.risk.core.drawdown_bankruptcy_floor
+source_of_truth: src/zephyr/risk/core/drawdown_bankruptcy_floor.py
+algo_flow: |
+    # [ALGO_FLOW]
+    # 层: 输入
+    # - id: I1
+    #   name: current_nav 参数
+    #   fields: 参数 current_nav，类型注解 float
+    #   code: drawdown_bankruptcy_floor.py 顶层公共函数形参（AST 提取）
+    # - id: I2
+    #   name: initial_capital 参数
+    #   fields: 参数 initial_capital，类型注解 float
+    #   code: drawdown_bankruptcy_floor.py 顶层公共函数形参（AST 提取）
+    # - id: I3
+    #   name: config 参数
+    #   fields: 参数 config，类型注解 BankruptcyFloorConfig | None
+    #   code: drawdown_bankruptcy_floor.py 顶层公共函数形参（AST 提取）
+    # 层: 算法
+    # - id: A1
+    #   name_zh: ① check_bankruptcy_floor
+    #   name_en: check_bankruptcy_floor
+    #   intro: Static 破产底线检测：nav < 初始本金 × 0.85 → 击穿（Kill Switch 触发源）。
+    #   desc: Static 破产底线检测：nav < 初始本金 × 0.85 → 击穿（Kill Switch 触发源）。 Args: current_nav: 当前组合净值（须 >= 0；N…；源码 L137-L178
+    #   inputs: current_nav initial_capital config
+    #   outputs: BankruptcyFloorBreach | None
+    #   （注：A1 之后另有 3 个公共定义未列入（含 3 个数据契约/异常/枚举声明类），见源码）
+    # 层: 输出
+    # - id: O1
+    #   name_zh: BankruptcyFloorBreach | None
+    #   name_en: BankruptcyFloorBreach | None
+    #   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+    #   downstream: RiskOrchestrator(§6.5 接线位); §3.5 Kill Switch 触发条件表第5类触发源(取最严OR)
+    # [/ALGO_FLOW]
+    #
+    # 边:
+    # I1 --> A1
+    # I2 --> A1
+    # I3 --> A1
+    # A1 --> O1

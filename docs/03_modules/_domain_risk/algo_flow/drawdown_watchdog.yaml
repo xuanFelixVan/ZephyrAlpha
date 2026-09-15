@@ -1,0 +1,44 @@
+# ALGO_FLOW 外部真源——drawdown_watchdog（_domain_risk 域，真源 src/zephyr/risk/core/drawdown_watchdog.py）
+# 2026-09-15 P2-1 契约头减负批量出仓：docstring 内联块逐字节副本，extractor 经
+# external 锚加载走同一 parse_algo_flow 管线；算法公共面变化时同步更新本块。
+doc_type: architecture_view
+ttl: permanent
+module: src.zephyr.risk.core.drawdown_watchdog
+source_of_truth: src/zephyr/risk/core/drawdown_watchdog.py
+algo_flow: |
+    # [ALGO_FLOW]
+    # 层: 输入
+    # - id: I1
+    #   name: broker_holdings 参数
+    #   fields: 参数 broker_holdings，类型注解 Mapping[str, Mapping[str, Any]] | None
+    #   code: drawdown_watchdog.py 顶层公共函数形参（AST 提取）
+    # - id: I2
+    #   name: strategy_state 参数
+    #   fields: 参数 strategy_state，类型注解 Mapping[str, str] | None
+    #   code: drawdown_watchdog.py 顶层公共函数形参（AST 提取）
+    # - id: I3
+    #   name: kill_switch_state 参数
+    #   fields: 参数 kill_switch_state，类型注解 str
+    #   code: drawdown_watchdog.py 顶层公共函数形参（AST 提取）
+    # 层: 算法
+    # - id: A1
+    #   name_zh: ① poll_once
+    #   name_en: poll_once
+    #   intro: L3 单轮一致性裁决（外部独立进程定时调用，§3.5.1 看门狗层）。
+    #   desc: L3 单轮一致性裁决（外部独立进程定时调用，§3.5.1 看门狗层）。 Args: broker_holdings: 实盘真实持仓 {symbol: {"qty": ...}}；…；源码 L143-L209
+    #   inputs: broker_holdings strategy_state kill_switch_state
+    #   outputs: WatchdogVerdict
+    #   （注：A1 之后另有 2 个公共定义未列入（含 2 个数据契约/异常/枚举声明类），见源码）
+    # 层: 输出
+    # - id: O1
+    #   name_zh: WatchdogVerdict
+    #   name_en: WatchdogVerdict
+    #   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+    #   downstream: 独立看门狗进程(外部调度器驱动 poll_once) ; RiskOrchestrator(§6.5 接线位) ; stop_loss.execute_kil…
+    # [/ALGO_FLOW]
+    #
+    # 边:
+    # I1 --> A1
+    # I2 --> A1
+    # I3 --> A1
+    # A1 --> O1

@@ -1,0 +1,39 @@
+# ALGO_FLOW 外部真源——strategy_deviation_monitor（_domain_risk 域，真源 src/zephyr/risk/core/strategy_deviation_monitor.py）
+# 2026-09-15 P2-1 契约头减负批量出仓：docstring 内联块逐字节副本，extractor 经
+# external 锚加载走同一 parse_algo_flow 管线；算法公共面变化时同步更新本块。
+doc_type: architecture_view
+ttl: permanent
+module: src.zephyr.risk.core.strategy_deviation_monitor
+source_of_truth: src/zephyr/risk/core/strategy_deviation_monitor.py
+algo_flow: |
+    # [ALGO_FLOW]
+    # 层: 输入
+    # - id: I1
+    #   name: registry_path 参数
+    #   fields: 参数 registry_path（无注解）
+    #   code: strategy_deviation_monitor.py 顶层公共函数形参（AST 提取）
+    # - id: I2
+    #   name: min_samples 参数
+    #   fields: 参数 min_samples（无注解）
+    #   code: strategy_deviation_monitor.py 顶层公共函数形参（AST 提取）
+    # 层: 算法
+    # - id: A1
+    #   name_zh: ① StrategyDeviationMonitor
+    #   name_en: StrategyDeviationMonitor
+    #   intro: 策略偏离监控器（实盘 vs 回测，日频事后度量，55 号 §3.4）。
+    #   desc: 策略偏离监控器（实盘 vs 回测，日频事后度量，55 号 §3.4）。 用法：每日收盘后由调用方对每个上线策略调 evaluate()； 级别变化经 on_deviation_a…；公共方法（定义序）: thresho…
+    #   inputs: registry_path min_samples
+    #   outputs: 返回值
+    #   （注：A1 之后另有 5 个公共定义未列入（含 5 个数据契约/异常/枚举声明类），见源码）
+    # 层: 输出
+    # - id: O1
+    #   name_zh: 模块公共 API 面（6 定义）
+    #   name_en: public defs
+    #   intro: StrategyDeviationMonitor
+    #   downstream: MOD-RPT-009(ReviewOrchestrator,周复盘偏离段); 调用方(日终偏离评估)
+    # [/ALGO_FLOW]
+    #
+    # 边:
+    # I1 --> A1
+    # I2 --> A1
+    # A1 --> O1

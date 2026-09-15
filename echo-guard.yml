@@ -1,6 +1,42 @@
 # CloneGuard acknowledged 白名单（intentional=保留两副本；变更后重新浮现再评估）
 # 消费方：CloneGuardOrchestrator._suppress_acknowledged（引擎无关对账层，stable_key 无序对）
 acknowledged:
+  - id: cg-risk-require-finite-20260915
+    verdict: intentional
+    stable_key: "src/zephyr/risk/core/factor_exposure_manager.py:_require_finite||src/zephyr/risk/core/systemic_risk_alert_state_machine.py:_require_finite"
+    note: 数值有限性断言工具函数双实例（因子暴露/系统风险状态机各自依赖），出仓批6同时触碰两侧暴露既有克隆，非本批引入（st-btfix-p15-20260915）
+  - id: cg-risk-require-finite2-20260915
+    verdict: intentional
+    stable_key: "src/zephyr/risk/core/factor_exposure_manager.py:_require_finite||src/zephyr/risk/manipulation_avoidance_detector.py:_finite"
+    note: 数值有限性断言工具函数第三实例（规避操纵检测器），出仓批6同时触碰两侧暴露既有克隆，非本批引入（st-btfix-p15-20260915）
+  - id: cg-risk-alert-send-20260915
+    verdict: intentional
+    stable_key: "src/zephyr/risk/core/alert_generator.py:send||src/zephyr/risk/core/alert_generator.py:send"
+    note: 同文件内两类告警通道 send 同构（告警生成器多渠道路由样板），出仓批6触碰该文件暴露既有克隆，非本批引入（st-btfix-p15-20260915）
+  - id: cg-risk-dps-load-attr-20260915
+    verdict: intentional
+    stable_key: "src/zephyr/risk/core/drawdown_session_persistence.py:load_attribution_result||src/zephyr/risk/core/drawdown_session_persistence.py:load_strategy_state"
+    note: 同文件内 DuckDB 会话态读取样板同构（归因/策略状态两种载荷），出仓批6触碰该文件暴露既有克隆，非本批引入（st-btfix-p15-20260915）
+  - id: cg-risk-dps-load-peak-20260915
+    verdict: intentional
+    stable_key: "src/zephyr/risk/core/drawdown_session_persistence.py:load_peak_nav||src/zephyr/risk/core/drawdown_session_persistence.py:load_entry_var"
+    note: 同文件内 DuckDB 会话态读取样板同构（峰值净值/入场 VaR 两种载荷），出仓批6触碰该文件暴露既有克隆，非本批引入（st-btfix-p15-20260915）
+  - id: cg-risk-dps-save-attr-20260915
+    verdict: intentional
+    stable_key: "src/zephyr/risk/core/drawdown_session_persistence.py:save_attribution_result||src/zephyr/risk/core/drawdown_session_persistence.py:save_strategy_state"
+    note: 同文件内 DuckDB 会话态写入样板同构，出仓批6触碰该文件暴露既有克隆，非本批引入（st-btfix-p15-20260915）
+  - id: cg-risk-positive-finite-20260915
+    verdict: intentional
+    stable_key: "src/zephyr/risk/atr_stop_engine.py:_require_positive_finite||src/zephyr/risk/post_entry_instant_validator.py:_positive_finite"
+    note: 正有限数校验工具双实例（ATR 止损引擎/入场即时校验器），出仓批6同时触碰两侧暴露既有克隆，非本批引入（st-btfix-p15-20260915）
+  - id: cg-risk-hard-boundaries-20260915
+    verdict: intentional
+    stable_key: "src/zephyr/risk/core/adaptive_risk_coordinator.py:get_hard_boundaries||src/zephyr/risk/core/black_swan_pattern_library.py:get_pattern_templates"
+    note: 边界/模板清单 getter 结构同构（自适应风控协调器/黑天鹅模式库），出仓批6同时触碰两侧暴露既有克隆，非本批引入（st-btfix-p15-20260915）
+  - id: cg-risk-load-thresholds-20260915
+    verdict: intentional
+    stable_key: "src/zephyr/risk/core/daily_auditor.py:_load_audit_thresholds||src/zephyr/risk/core/operational_risk_monitor.py:_load_oprisk_thresholds"
+    note: 阈值加载样板同构（日审/操作风险监控各自阈值源），出仓批6同时触碰两侧暴露既有克隆，非本批引入（st-btfix-p15-20260915）
   - id: cg-mltrain-pinball-loss-20260915
     verdict: intentional
     stable_key: "src/zephyr/ml_train/implementations/density_quantile_trainer.py:_pinball_loss||src/zephyr/ml_train/implementations/qnn_two_stage.py:_pinball_loss"

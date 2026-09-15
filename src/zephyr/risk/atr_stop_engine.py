@@ -36,65 +36,7 @@ D_FACTOR volatility 指标产出、调用方注入（本模块不越域自取数
 依据: blueprint.md（MOD-RK-35）§3 核心规则；Wilder (1978)；LuxAlgo ATR trailing
 Version: 0.1.0
 
-# [ALGO_FLOW]
-# 层: 输入
-# - id: I1
-#   name: 入场与波动
-#   fields: entry_price(>0) + atr14(>0, D_FACTOR 注入)
-#   code: build_plan() 参数
-# - id: I2
-#   name: 体制判定
-#   fields: regime(TREND/MEAN_REVERSION/AUTO) + adx(AUTO 必填, >25→trend)
-#   code: build_plan() 参数
-# - id: I3
-#   name: 持仓状态
-#   fields: highest_price(持仓内最高) + current_price + holding_days
-#   code: update_trailing_stop()/check_time_stop() 参数
-# - id: I4
-#   name: 配置 AtrStopConfig
-#   fields: k_trend=3.5/k_mean_reversion=1.75/adx_threshold=25/time_stop_days=5/profit_fractions=(1/3,1/3,1/3)
-#   code: AtrStopConfig
-# 层: 算法
-# - id: A1
-#   name_zh: ① 体制自适应 k 解析
-#   name_en: _resolve_k
-#   intro: trend→k_trend, mean_reversion→k_mean_reversion, auto→ADX>25?trend:mr
-# - id: A2
-#   name_zh: ② 初始止损与R单位
-#   name_en: build_plan
-#   intro: 1R=k×ATR; initial=entry−1R; TP1/TP2=entry+1R/+2R(各减1/3)
-# - id: A3
-#   name_zh: ③ 追踪止损只上移
-#   name_en: update_trailing_stop
-#   intro: candidate=highest−1R; new=max(old,candidate) 不下移
-# - id: A4
-#   name_zh: ④ 时间止损
-#   name_en: check_time_stop
-#   intro: holding_days>N 且 current<entry+1R → due
-# - id: A5
-#   name_zh: ⑤ Bayesian k 优化
-#   name_en: bayesian_optimize_k
-#   intro: 网格初探→GP(RBF核)代理+EI采集序贯建议, 全评估点留痕
-# 层: 输出
-# - id: O1
-#   name: AtrStopPlan
-#   fields: initial_stop/r_unit/profit_target_1r/profit_target_2r/profit_target_fractions/current_trailing_stop
-# - id: O2
-#   name: BayesianOptimizationResult / GridSearchResult
-#   fields: best_k/best_value/evaluations(留痕)
-# 边:
-# I1 --> A2
-# I2 --> A1
-# I4 --> A1
-# I4 --> A4
-# I3 --> A3
-# I3 --> A4
-# A1 --> A2
-# A2 --> A3
-# A2 --> A4
-# A2 --> O1
-# A5 --> O2
-# [/ALGO_FLOW]
+# [ALGO_FLOW] external: docs/03_modules/_domain_risk/algo_flow/atr_stop_engine.yaml
 """
 
 from __future__ import annotations
