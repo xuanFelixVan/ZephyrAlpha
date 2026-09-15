@@ -39,55 +39,7 @@ per-source 自动熔断器（64号 Q17，P1，2026-08-20 AI-NIGHT-001 施工）�
 
 纯内存实现：进程重启即复位（重启后首轮任务本身即探针），不引入持久化复杂度。
 
-# [ALGO_FLOW]
-# 层: 输入
-# - id: I1
-#   name: source 参数
-#   fields: 参数 source（无注解）
-#   code: source_circuit_breaker.py 顶层公共函数形参（AST 提取）
-# - id: I2
-#   name: failure_threshold 参数
-#   fields: 参数 failure_threshold（无注解）
-#   code: source_circuit_breaker.py 顶层公共函数形参（AST 提取）
-# - id: I3
-#   name: cooldown_seconds 参数
-#   fields: 参数 cooldown_seconds（无注解）
-#   code: source_circuit_breaker.py 顶层公共函数形参（AST 提取）
-# - id: I4
-#   name: window_size 参数
-#   fields: 参数 window_size（无注解）
-#   code: source_circuit_breaker.py 顶层公共函数形参（AST 提取）
-# 层: 算法
-# - id: A1
-#   name_zh: ① SourceCircuitBreaker
-#   name_en: SourceCircuitBreaker
-#   intro: 单数据源熔断器（线程安全，时钟可注入便于测试）。
-#   desc: 单数据源熔断器（线程安全，时钟可注入便于测试）。；公共方法（定义序）: state, allow_request, record_success, record_failure；源码 L117-L214
-#   inputs: source failure_threshold cooldown_seconds window_size error_rate_thre…
-#   outputs: 返回值
-# - id: A2
-#   name_zh: ② CircuitBreakerRegistry
-#   name_en: CircuitBreakerRegistry
-#   intro: per-source 熔断器注册表（懒创建，线程安全）。
-#   desc: per-source 熔断器注册表（懒创建，线程安全）。；公共方法（定义序）: get, allow_request, record_success, record_failure, state, snapshot；源…
-#   inputs: failure_threshold cooldown_seconds window_size error_rate_threshold m…
-#   outputs: 返回值
-#   （注：A2 之后另有 1 个公共定义未列入（含 1 个数据契约/异常/枚举声明类），见源码）
-# 层: 输出
-# - id: O1
-#   name_zh: 模块公共 API 面（3 定义）
-#   name_en: public defs
-#   intro: SourceCircuitBreaker, CircuitBreakerRegistry
-#   downstream: zephyr.data.scheduler
-# [/ALGO_FLOW]
-#
-# 边:
-# I1 --> A1
-# I2 --> A1
-# I3 --> A1
-# I4 --> A1
-# A1 --> A2
-# A2 --> O1
+# [ALGO_FLOW] external: docs/03_modules/_domain_data/algo_flow/source_circuit_breaker.yaml
 """
 
 from __future__ import annotations

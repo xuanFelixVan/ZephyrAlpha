@@ -19,31 +19,7 @@
 主线路=HTTPS 直连，备用=Cloudflare Tunnel；控制面走 CF、数据面正常直连、
 异常自动降级 CF。
 
-# [ALGO_FLOW]
-# 层: 输入
-# - id: I1
-#   name: 包内子模块公共符号
-#   fields: import 再导出符号: annotations, Final, BucketStats, CloudflareTunnelSpec, CrossBorderDua…
-#   code: __init__.py import L49
-# 层: 算法
-# - id: A1
-#   name_zh: ① 包公共面再导出
-#   name_en: __init__ re-export
-#   intro: 再导出 annotations, Final, BucketStats, CloudflareTunnelSpec, CrossBorderDualTrans…
-#   desc: __init__ import L49；__all__ 0 项（AST 事实）
-#   inputs: I1
-#   outputs: __all__ 公共符号表
-# 层: 输出
-# - id: O1
-#   name_zh: 公共 API 面（9 符号）
-#   name_en: __all__
-#   intro: annotations, Final, BucketStats, CloudflareTunnelSpec, CrossBorderDualTransport…
-#   downstream: 装配层（crypto provider / 执行回传 注入）
-# [/ALGO_FLOW]
-#
-# 边:
-# I1 --> A1
-# A1 --> O1
+# [ALGO_FLOW] external: docs/03_modules/_domain_data/algo_flow/transport__init__.yaml
 """
 
 from __future__ import annotations

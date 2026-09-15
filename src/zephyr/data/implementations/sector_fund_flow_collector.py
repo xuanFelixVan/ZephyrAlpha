@@ -59,31 +59,7 @@ DDL 草稿（待统筹 CTR 评审后 apply_schema 执行）::
     PARTITION BY toYYYYMM(trade_date)
     ORDER BY (sector_type, sector_name, timestamp)
 
-# [ALGO_FLOW]
-# 层: 输入
-# - id: I1
-#   name: akshare stock_fund_flow_industry(symbol="即时") 同花顺行业资金流快照（90 行）
-#   fields: 行业/行业指数/行业-涨跌幅/流入资金/流出资金/净额/公司家数/领涨股/领涨股-涨跌幅/当前价
-# - id: I2
-#   name: akshare stock_fund_flow_concept(symbol="即时") 同花顺概念资金流快照（387 行，同构）
-# 层: 算法
-# - id: A1
-#   name_zh: 解析层（纯函数）
-#   desc: parse_ths_fund_flow_rows 行映射+宽松数值解析+空名/全空行跳过
-# - id: A2
-#   name_zh: 采集与落库/落盘
-#   desc: fetch（延迟 import akshare，单类型异常→该类型空）→ collect 参数化 INSERT（table 惰性经 table_registry 解析）/ to_csv 中间层
-# 层: 输出
-# - id: O1
-#   name_zh: SectorFundFlowEntry 行集 / INSERT 行数 / CSV 路径
-#   intro: 13 列 INSERT_COLUMNS 对齐 DDL 草稿列序；frozen dataclass asdict JSON 可序列化
-# [/ALGO_FLOW]
-#
-# 边:
-# I1 --> A1
-# I2 --> A1
-# A1 --> A2
-# A2 --> O1
+# [ALGO_FLOW] external: docs/03_modules/_domain_data/algo_flow/sector_fund_flow_collector.yaml
 """
 
 from __future__ import annotations

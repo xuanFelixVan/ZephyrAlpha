@@ -1,0 +1,28 @@
+# ALGO_FLOW 外部真源——index_eqw_compute（_domain_data 域，真源 src/zephyr/data/implementations/index_eqw_compute.py）
+# 2026-09-15 P2-1 契约头减负批量出仓：docstring 内联块逐字节副本，extractor 经
+# external 锚加载走同一 parse_algo_flow 管线；算法公共面变化时同步更新本块。
+doc_type: architecture_view
+ttl: permanent
+module: src.zephyr.data.implementations.index_eqw_compute
+source_of_truth: src/zephyr/data/implementations/index_eqw_compute.py
+algo_flow: |
+    # [ALGO_FLOW]
+    # 层: 输入
+    # - id: I1
+    #   name: kline_daily 全A日线
+    #   fields: trade_date, symbol, close, adj_factor
+    #   code: c1_market.kline_daily
+    # 层: 算法
+    # - id: A1
+    #   name_zh: CH 端聚合（lagIn 组内复权收益→日等权 mean/宽度计数）
+    #   name_en: SQL-side aggregation
+    #   desc: 单条 SQL 完成万行级重活，pandas 只收 ~5300 行日聚合结果
+    # - id: A2
+    #   name_zh: 基期锚定+链乘（pandas）
+    #   name_en: chained multiplication
+    # 层: 输出
+    # - id: O1
+    #   name: kline_index_calc 行元组序列
+    #   code: c1_market.kline_index_calc
+    # [/ALGO_FLOW]
+    # 边: I1 --> A1 --> A2 --> O1

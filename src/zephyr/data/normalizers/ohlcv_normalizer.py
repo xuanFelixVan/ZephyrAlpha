@@ -22,31 +22,7 @@ OHLCV 归一化器（MOD-L00-006 具体实现①）。
 high<low/日期不可解析）→ (symbol, trade_date) 排序 + 同键去重（keep-last，
 后到的修正记录覆盖先到的）。
 
-# [ALGO_FLOW]
-# 层: 输入
-# - id: I1
-#   name: 模块内部数据
-#   fields: 无公共形参/无再导出（AST 事实）
-#   code: ohlcv_normalizer.py
-# 层: 算法
-# - id: A1
-#   name_zh: ① OhlcvNormalizer
-#   name_en: OhlcvNormalizer
-#   intro: OHLCV 记录归一化器。
-#   desc: OHLCV 记录归一化器。；公共方法（定义序）: name, normalize；源码 L104-L154
-#   inputs: 无参数
-#   outputs: 返回值
-# 层: 输出
-# - id: O1
-#   name_zh: 模块公共 API 面（1 定义）
-#   name_en: public defs
-#   intro: OhlcvNormalizer
-#   downstream: zephyr.data.normalizers.__init__
-# [/ALGO_FLOW]
-#
-# 边:
-# I1 --> A1
-# A1 --> O1
+# [ALGO_FLOW] external: docs/03_modules/_domain_data/algo_flow/ohlcv_normalizer.yaml
 """
 
 from __future__ import annotations

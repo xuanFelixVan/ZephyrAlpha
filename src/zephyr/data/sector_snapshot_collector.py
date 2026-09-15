@@ -30,67 +30,7 @@
     python -m zephyr.data.sector_snapshot_collector
     python -m zephyr.data.sector_snapshot_collector --poll-interval 30 --push-limit 99
 
-# [ALGO_FLOW]
-# 层: 输入
-# - id: I1
-#   name: code 参数
-#   fields: 参数 code，类型注解 str
-#   code: sector_snapshot_collector.py 顶层公共函数形参（AST 提取）
-# - id: I2
-#   name: snap 参数
-#   fields: 参数 snap，类型注解 dict
-#   code: sector_snapshot_collector.py 顶层公共函数形参（AST 提取）
-# - id: I3
-#   name: sector_code 参数
-#   fields: 参数 sector_code，类型注解 str
-#   code: sector_snapshot_collector.py 顶层公共函数形参（AST 提取）
-# - id: I4
-#   name: market_type 参数
-#   fields: 参数 market_type，类型注解 str
-#   code: sector_snapshot_collector.py 顶层公共函数形参（AST 提取）
-# 层: 算法
-# - id: A1
-#   name_zh: ① classify_market_type
-#   name_en: classify_market_type
-#   intro: 880001-880009=mkt_index，8801XX+=sector。
-#   desc: 880001-880009=mkt_index，8801XX+=sector。；源码 L247-L252
-#   inputs: code
-#   outputs: str
-# - id: A2
-#   name_zh: ② parse_snapshot
-#   name_en: parse_snapshot
-#   intro: 把 tqcenter 快照 dict 解析为 sector_snapshot 表的行 tuple。
-#   desc: 把 tqcenter 快照 dict 解析为 sector_snapshot 表的行 tuple。 Args: snap: tqcenter get_market_snapsho…；源码 L255-L309
-#   inputs: snap sector_code market_type data_source now_bj
-#   outputs: tuple | None
-# - id: A3
-#   name_zh: ③ main
-#   name_en: main
-#   intro: 采集器主入口。
-#   desc: 采集器主入口。；源码 L508-L554
-#   inputs: 无参数
-#   outputs: int
-# 层: 输出
-# - id: O1
-#   name_zh: str
-#   name_en: str
-#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
-#   downstream: zephyr.data.sector_ranking_engine (reads sector_snapshot table)
-# - id: O2
-#   name_zh: tuple | None
-#   name_en: tuple | None
-#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
-#   downstream: zephyr.data.sector_ranking_engine (reads sector_snapshot table)
-# [/ALGO_FLOW]
-#
-# 边:
-# I1 --> A1
-# I2 --> A1
-# I3 --> A1
-# I4 --> A1
-# A1 --> A2
-# A2 --> A3
-# A3 --> O1
+# [ALGO_FLOW] external: docs/03_modules/_domain_data/algo_flow/sector_snapshot_collector.yaml
 """
 
 from __future__ import annotations

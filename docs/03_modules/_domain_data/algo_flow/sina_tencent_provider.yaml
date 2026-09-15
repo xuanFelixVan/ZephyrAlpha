@@ -1,0 +1,49 @@
+# ALGO_FLOW 外部真源——sina_tencent_provider（_domain_data 域，真源 src/zephyr/data/redundant_source/sina_tencent_provider.py）
+# 2026-09-15 P2-1 契约头减负批量出仓：docstring 内联块逐字节副本，extractor 经
+# external 锚加载走同一 parse_algo_flow 管线；算法公共面变化时同步更新本块。
+doc_type: architecture_view
+ttl: permanent
+module: src.zephyr.data.redundant_source.sina_tencent_provider
+source_of_truth: src/zephyr/data/redundant_source/sina_tencent_provider.py
+algo_flow: |
+    # [ALGO_FLOW]
+    # 层: 输入
+    # - id: I1
+    #   name: text 参数
+    #   fields: 参数 text，类型注解 str
+    #   code: sina_tencent_provider.py 顶层公共函数形参（AST 提取）
+    # 层: 算法
+    # - id: A1
+    #   name_zh: ① parse_sina_snapshot
+    #   name_en: parse_sina_snapshot
+    #   intro: 解析 hq.sinajs 报文 → CTR-001 字段映射 tick dict 列表。
+    #   desc: 解析 hq.sinajs 报文 → CTR-001 字段映射 tick dict 列表。 字段序：0 名称,1 今开,2 昨收,3 现价,4 最高,5 最低,6 买一,7 卖一,…；源码 L125-L158
+    #   inputs: text
+    #   outputs: list[dict]
+    # - id: A2
+    #   name_zh: ② parse_tencent_snapshot
+    #   name_en: parse_tencent_snapshot
+    #   intro: 解析 qt.gtimg 报文 → 与新浪同构的 tick dict 列表。
+    #   desc: 解析 qt.gtimg 报文 → 与新浪同构的 tick dict 列表。 字段序（~分隔）：1 名称,2 代码,3 现价,4 昨收,5 今开,30 时间, 33 最高,34 最…；源码 L161-L192
+    #   inputs: text
+    #   outputs: list[dict]
+    # - id: A3
+    #   name_zh: ③ SinaTencentProvider
+    #   name_en: SinaTencentProvider
+    #   intro: 新浪/腾讯免登快照第三级备源（SourceProvider 接口）。
+    #   desc: 新浪/腾讯免登快照第三级备源（SourceProvider 接口）。 start() 起轮询线程；poll_once() 单轮拉取（新浪优先、失败落腾讯）， 供单测与手动兜底直调。；公共方法（定义序）: name, s…
+    #   inputs: symbols on_tick_callback http_get poll_interval min_request_interval…
+    #   outputs: 返回值
+    # 层: 输出
+    # - id: O1
+    #   name_zh: list[dict]
+    #   name_en: list[dict]
+    #   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+    #   downstream: （P1 接线：SourceSwitcher 优先级末位第三级备源）
+    # [/ALGO_FLOW]
+    #
+    # 边:
+    # I1 --> A1
+    # A1 --> A2
+    # A2 --> A3
+    # A3 --> O1

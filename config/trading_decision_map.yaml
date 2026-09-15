@@ -318,7 +318,7 @@ nodes:
   decay_scan_frequency: semiannual
 
 - node_id: TDM-E-L1-S2
-  note_confirmed: 2026-09-15
+  note_confirmed: 2026-09-16
   name_zh: 市场内部结构传感器
   market: cn_a
   flow: entry_flow
@@ -341,7 +341,7 @@ nodes:
   decay_scan_frequency: semiannual
 
 - node_id: TDM-E-L1-S3
-  note_confirmed: 2026-09-15
+  note_confirmed: 2026-09-16
   name_zh: 赚钱效应传感器
   market: cn_a
   flow: entry_flow
@@ -555,7 +555,7 @@ nodes:
   decay_scan_frequency: semiannual
 
 - node_id: TDM-E-L2-01-1
-  note_confirmed: 2026-09-15
+  note_confirmed: 2026-09-16
 
   name_zh: 结构强度评估
   market: cn_a
@@ -585,7 +585,7 @@ nodes:
   materiality: normal
   decay_scan_frequency: semiannual
 - node_id: TDM-E-L2-01-2
-  note_confirmed: 2026-09-15
+  note_confirmed: 2026-09-16
   name_zh: 动量活跃度排名
   market: cn_a
   flow: entry_flow
@@ -613,7 +613,7 @@ nodes:
   decay_scan_frequency: semiannual
 
 - node_id: TDM-E-L2-01-3
-  note_confirmed: 2026-09-15
+  note_confirmed: 2026-09-16
 
   name_zh: 多周期动量加权
   market: cn_a
@@ -642,7 +642,7 @@ nodes:
   decay_scan_frequency: semiannual
 
 - node_id: TDM-E-L2-01-4
-  note_confirmed: 2026-09-15
+  note_confirmed: 2026-09-16
 
   name_zh: 板块资金流聚合
   market: cn_a
@@ -701,7 +701,7 @@ nodes:
 
   # ── 树枝02 轮动序列追踪（BM-SEL-08）────────────────────────
 - node_id: TDM-E-L2-02
-  note_confirmed: 2026-09-15
+  note_confirmed: 2026-09-16
   name_zh: 轮动序列追踪
   market: cn_a
   flow: entry_flow
@@ -731,7 +731,7 @@ nodes:
   decay_scan_frequency: semiannual
 
 - node_id: TDM-E-L2-02-1
-  note_confirmed: 2026-09-15
+  note_confirmed: 2026-09-16
 
   name_zh: RRG 轮动序列
   market: cn_a
@@ -760,7 +760,7 @@ nodes:
   decay_scan_frequency: semiannual
 
 - node_id: TDM-E-L2-02-2
-  note_confirmed: 2026-09-15
+  note_confirmed: 2026-09-16
 
   name_zh: 单板块轮动预警
   market: cn_a
@@ -790,7 +790,7 @@ nodes:
 
   # ── 树枝03 调整周期进度（BM-SEL-09）────────────────────────
 - node_id: TDM-E-L2-03
-  note_confirmed: 2026-09-15
+  note_confirmed: 2026-09-16
   name_zh: 调整周期进度
   market: cn_a
   flow: entry_flow
@@ -818,7 +818,7 @@ nodes:
   decay_scan_frequency: semiannual
 
 - node_id: TDM-E-L2-03-1
-  note_confirmed: 2026-09-15
+  note_confirmed: 2026-09-16
   name_zh: 扩散指标进度追踪
     # C6 施工（gw-tdm-20260909）：adjustment_cycle_tracker 扩展扩散指标段
   market: cn_a
@@ -879,7 +879,7 @@ nodes:
   decay_scan_frequency: semiannual
 
 - node_id: TDM-E-L2-04-1
-  note_confirmed: 2026-09-15
+  note_confirmed: 2026-09-16
 
   name_zh: 轮动状态五分类
   market: cn_a
@@ -907,7 +907,7 @@ nodes:
   decay_scan_frequency: semiannual
 
 - node_id: TDM-E-L2-04-2
-  note_confirmed: 2026-09-15
+  note_confirmed: 2026-09-16
 
   name_zh: 虹吸态识别
   market: cn_a
@@ -963,7 +963,7 @@ nodes:
   decay_scan_frequency: semiannual
 
 - node_id: TDM-E-L2-05-1
-  note_confirmed: 2026-09-15
+  note_confirmed: 2026-09-16
   name_zh: 水温档推导
   market: cn_a
   flow: entry_flow
@@ -992,7 +992,7 @@ nodes:
   decay_scan_frequency: semiannual
 
 - node_id: TDM-E-L2-05-2
-  note_confirmed: 2026-09-15
+  note_confirmed: 2026-09-16
 
   name_zh: 信号响应三件套
   market: cn_a
@@ -1050,7 +1050,7 @@ nodes:
   decay_scan_frequency: semiannual
 
 - node_id: TDM-E-L2-06-1
-  note_confirmed: 2026-09-15
+  note_confirmed: 2026-09-16
 
   name_zh: 三级放行门槛
   market: cn_a
@@ -1079,7 +1079,7 @@ nodes:
   decay_scan_frequency: semiannual
 
 - node_id: TDM-E-L2-06-2
-  note_confirmed: 2026-09-15
+  note_confirmed: 2026-09-16
   name_zh: 龙头识别定位
   market: cn_a
   flow: entry_flow
@@ -1139,7 +1139,7 @@ nodes:
 
   # ── 树枝07 回踩质量分级（BM-BUY-04 消费）───────────────────
 - node_id: TDM-E-L2-07
-  note_confirmed: 2026-09-15
+  note_confirmed: 2026-09-16
   name_zh: 回踩质量分级
   market: cn_a
   flow: entry_flow
@@ -1169,7 +1169,7 @@ nodes:
   decay_scan_frequency: semiannual
 
 - node_id: TDM-E-L2-07-1
-  note_confirmed: 2026-09-15
+  note_confirmed: 2026-09-16
 
   name_zh: 回踩ABC判定
   market: cn_a
@@ -1230,7 +1230,7 @@ nodes:
   materiality: normal
   decay_scan_frequency: semiannual
 - node_id: TDM-E-L2-09
-  note_confirmed: 2026-09-15
+  note_confirmed: 2026-09-16
   name_zh: 催化剂识别
   market: cn_a
   flow: entry_flow
@@ -1311,7 +1311,7 @@ nodes:
   materiality: normal
   decay_scan_frequency: semiannual
 - node_id: TDM-E-L2-10
-  note_confirmed: 2026-09-15
+  note_confirmed: 2026-09-16
   name_zh: 同源补涨比价
   market: cn_a
   flow: entry_flow
@@ -1365,7 +1365,7 @@ nodes:
   materiality: normal
   decay_scan_frequency: semiannual
 - node_id: TDM-E-L3-01
-  note_confirmed: 2026-09-15
+  note_confirmed: 2026-09-16
   name_zh: Universe构建与剔除
   market: cn_a
   flow: entry_flow
@@ -1451,7 +1451,7 @@ nodes:
   decay_scan_frequency: semiannual
 
 - node_id: TDM-E-L3-03-1
-  note_confirmed: 2026-09-15
+  note_confirmed: 2026-09-16
   name_zh: 短线池5分制
   market: cn_a
   flow: entry_flow
@@ -1480,7 +1480,7 @@ nodes:
   materiality: normal
   decay_scan_frequency: semiannual
 - node_id: TDM-E-L3-03-2
-  note_confirmed: 2026-09-15
+  note_confirmed: 2026-09-16
   name_zh: 波段池5分制
   market: cn_a
   flow: entry_flow
@@ -1816,7 +1816,7 @@ nodes:
   materiality: normal
   decay_scan_frequency: semiannual
 - node_id: TDM-E-L3-10
-  note_confirmed: 2026-09-15
+  note_confirmed: 2026-09-16
   name_zh: 可交易性预检
   market: cn_a
   flow: entry_flow
@@ -1955,7 +1955,7 @@ nodes:
   decay_scan_frequency: semiannual
 
 - node_id: TDM-E-L3-12-1
-  note_confirmed: 2026-09-15
+  note_confirmed: 2026-09-16
   name_zh: 个股资金面分析
   market: cn_a
   flow: entry_flow
@@ -1983,7 +1983,7 @@ nodes:
   decay_scan_frequency: semiannual
 
 - node_id: TDM-E-L3-12-2
-  note_confirmed: 2026-09-15
+  note_confirmed: 2026-09-16
   name_zh: 龙虎榜席位追踪
   market: cn_a
   flow: entry_flow

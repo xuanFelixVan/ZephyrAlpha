@@ -1,0 +1,42 @@
+# ALGO_FLOW 外部真源——cross_border_dual（_domain_data 域，真源 src/zephyr/data/transport/cross_border_dual.py）
+# 2026-09-15 P2-1 契约头减负批量出仓：docstring 内联块逐字节副本，extractor 经
+# external 锚加载走同一 parse_algo_flow 管线；算法公共面变化时同步更新本块。
+doc_type: architecture_view
+ttl: permanent
+module: src.zephyr.data.transport.cross_border_dual
+source_of_truth: src/zephyr/data/transport/cross_border_dual.py
+algo_flow: |
+    # [ALGO_FLOW]
+    # 层: 输入
+    # - id: I1
+    #   name: spec 参数
+    #   fields: 参数 spec，类型注解 CloudflareTunnelSpec
+    #   code: cross_border_dual.py 顶层公共函数形参（AST 提取）
+    # 层: 算法
+    # - id: A1
+    #   name_zh: ① render_cloudflared_config
+    #   name_en: render_cloudflared_config
+    #   intro: 生成 cloudflared tunnel 配置 YAML 文本。
+    #   desc: 生成 cloudflared tunnel 配置 YAML 文本。 Args: spec: 隧道配置输入。 Returns: cloudflared config.yml 内容（…；源码 L118-L137
+    #   inputs: spec
+    #   outputs: str
+    # - id: A2
+    #   name_zh: ② CrossBorderDualTransport
+    #   name_en: CrossBorderDualTransport
+    #   intro: 双线路热切换状态机（PRIMARY ⇄ BACKUP）。
+    #   desc: 双线路热切换状态机（PRIMARY ⇄ BACKUP）。 - record_bucket(): 主线路活跃期喂入 5 秒桶观测；三感知同时成立即切备。 - maybe_probe…；公共方法（定义序）: active_…
+    #   inputs: config probe clock
+    #   outputs: 返回值
+    #   （注：A2 之后另有 5 个公共定义未列入（含 5 个数据契约/异常/枚举声明类），见源码）
+    # 层: 输出
+    # - id: O1
+    #   name_zh: str
+    #   name_en: str
+    #   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+    #   downstream: 装配层（CAND-CRYPTO-002 行情 WS / CAND-CRYPTO-005 执行回传 注入）
+    # [/ALGO_FLOW]
+    #
+    # 边:
+    # I1 --> A1
+    # A1 --> A2
+    # A2 --> O1

@@ -34,26 +34,7 @@
 按 (symbol, trade_date) 去重——scheduler incremental:false 传月初 start 亦被忽略，
 无断点续传状态，增量/全量行为统一。
 
-# [ALGO_FLOW]
-# 层: 输入
-# - id: I1
-#   name: kline_daily 全A日线
-#   fields: trade_date, symbol, close, adj_factor
-#   code: c1_market.kline_daily
-# 层: 算法
-# - id: A1
-#   name_zh: CH 端聚合（lagIn 组内复权收益→日等权 mean/宽度计数）
-#   name_en: SQL-side aggregation
-#   desc: 单条 SQL 完成万行级重活，pandas 只收 ~5300 行日聚合结果
-# - id: A2
-#   name_zh: 基期锚定+链乘（pandas）
-#   name_en: chained multiplication
-# 层: 输出
-# - id: O1
-#   name: kline_index_calc 行元组序列
-#   code: c1_market.kline_index_calc
-# [/ALGO_FLOW]
-# 边: I1 --> A1 --> A2 --> O1
+# [ALGO_FLOW] external: docs/03_modules/_domain_data/algo_flow/index_eqw_compute.yaml
 """
 
 from __future__ import annotations

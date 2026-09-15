@@ -57,40 +57,7 @@ sector_report_YYYYMMDD.json，运行时产物不入 git）+ CLI 摘要。
     python -m zephyr.data.sector_report_builder --date 2026-08-20    # 指定交易日
     python -m zephyr.data.sector_report_builder --no-write           # 只打印不落盘
 
-# [ALGO_FLOW]
-# 层: 输入
-# - id: I1
-#   name: 板块日 K 窗（kline_sector_880）+ 个股日 K 窗（kline_daily）+ 成分映射（sector_constituent SCD-2）
-# - id: I2
-#   name: 个股资金流（money_flow 当日五层 + 窗口主力）+ 涨跌停（limit_up_down 窗 + stk_limit 当日）+ 板块快照（sector_snapshot 最新截面）
-# 层: 算法
-# - id: A1
-#   name_zh: 统一板块日序列（880 直取 / 881 成分等权合成）
-# - id: A2
-#   name_zh: Top10 榜聚合
-#   desc: 当日涨幅降序 Top10 + 五层资金流(元→亿) + momentum/ranking/涨停比/结构强度附挂
-# - id: A3
-#   name_zh: 涨停梯队
-#   desc: 涨停双源并集 → 连板高度 trailing 连续 → 一板/二板/三板+ 分档 × 成分归属
-# - id: A4
-#   name_zh: 虹吸态
-#   desc: SectorFlowSnapshot(板块成交额/净流入) + 历史三信号 → detect_siphon_state
-# - id: A5
-#   name_zh: 主线候选与 5 状态
-#   desc: compute_mainline_candidates（SEC-05）嵌入，rotation_state/watch_score 透传
-# 层: 输出
-# - id: O1
-#   name_zh: SectorReport
-#   intro: date/rotation_state/top_sectors/limit_ladder/siphon/mainline/availability/degraded/notes + report_to_dict + write_report(.runtime/reports)
-# [/ALGO_FLOW]
-#
-# 边:
-# I1 --> A1
-# I1,I2 --> A2
-# I1,I2 --> A3
-# I1,I2 --> A4
-# I1 --> A5
-# A2,A3,A4,A5 --> O1
+# [ALGO_FLOW] external: docs/03_modules/_domain_data/algo_flow/sector_report_builder.yaml
 """
 
 from __future__ import annotations

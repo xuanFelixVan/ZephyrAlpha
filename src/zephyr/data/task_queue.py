@@ -29,31 +29,7 @@ DAG 依赖示例（蓝图 §6.3）：
 
 线程安全：所有状态操作用 threading.Lock 保护。
 
-# [ALGO_FLOW]
-# 层: 输入
-# - id: I1
-#   name: 模块内部数据
-#   fields: 无公共形参/无再导出（AST 事实）
-#   code: task_queue.py
-# 层: 算法
-# - id: A1
-#   name_zh: ① TaskQueue
-#   name_en: TaskQueue
-#   intro: 任务依赖图 + 优先级队列。
-#   desc: 任务依赖图 + 优先级队列。 用法： q = TaskQueue() q.load_yaml("config/tasks.yaml") for task_id in q.get_…；公共方法（定义序）: load_ya…
-#   inputs: 无参数
-#   outputs: 返回值
-# 层: 输出
-# - id: O1
-#   name_zh: 模块公共 API 面（1 定义）
-#   name_en: public defs
-#   intro: TaskQueue
-#   downstream: zephyr.data.scheduler
-# [/ALGO_FLOW]
-#
-# 边:
-# I1 --> A1
-# A1 --> O1
+# [ALGO_FLOW] external: docs/03_modules/_domain_data/algo_flow/task_queue.yaml
 """
 
 from __future__ import annotations

@@ -43,31 +43,7 @@ QWeatherProvider 实现（MOD-L00-004 §4.3 数据源集成器）。
 - 国内服务，不需要 VPN
 - 每个城市实时天气 1 行 + 7 天预报 7 行 = 8 行/城市/天
 
-# [ALGO_FLOW]
-# 层: 输入
-# - id: I1
-#   name: 模块内部数据
-#   fields: 无公共形参/无再导出（AST 事实）
-#   code: qweather_provider.py
-# 层: 算法
-# - id: A1
-#   name_zh: ① QWeatherProvider
-#   name_en: QWeatherProvider
-#   intro: 和风天气 Provider。
-#   desc: 和风天气 Provider。 免费数据源，需注册 API key（https://dev.qweather.com）。 线程安全模型：shared（无状态 HTTP 调用）。 国…；公共方法（定义序）: connect…
-#   inputs: 无参数
-#   outputs: 返回值
-# 层: 输出
-# - id: O1
-#   name_zh: 模块公共 API 面（1 定义）
-#   name_en: public defs
-#   intro: QWeatherProvider
-#   downstream: zephyr.data.scheduler
-# [/ALGO_FLOW]
-#
-# 边:
-# I1 --> A1
-# A1 --> O1
+# [ALGO_FLOW] external: docs/03_modules/_domain_data/algo_flow/qweather_provider.yaml
 """
 
 from __future__ import annotations

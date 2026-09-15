@@ -42,67 +42,7 @@ memo 审定的 MVP 两项（单公式 Δ持股数量 × 当季 VWAP，pandas 数
 
 依据: 19_northbound_hold_snapshot v1.0.1 §6.3/§6.5
 
-# [ALGO_FLOW]
-# 层: 输入
-# - id: I1
-#   name: snapshot 参数
-#   fields: 参数 snapshot，类型注解 pd.DataFrame
-#   code: northbound_hold_analysis.py 顶层公共函数形参（AST 提取）
-# - id: I2
-#   name: prev_date 参数
-#   fields: 参数 prev_date（无注解）
-#   code: northbound_hold_analysis.py 顶层公共函数形参（AST 提取）
-# - id: I3
-#   name: curr_date 参数
-#   fields: 参数 curr_date（无注解）
-#   code: northbound_hold_analysis.py 顶层公共函数形参（AST 提取）
-# - id: I4
-#   name: vwap 参数
-#   fields: 参数 vwap，类型注解 pd.Series
-#   code: northbound_hold_analysis.py 顶层公共函数形参（AST 提取）
-# 层: 算法
-# - id: A1
-#   name_zh: ① compute_quarter_position_changes
-#   name_en: compute_quarter_position_changes
-#   intro: 两季度间个股主动增减仓金额（Δ持股 × 当季 VWAP）。
-#   desc: 两季度间个股主动增减仓金额（Δ持股 × 当季 VWAP）。 Args: snapshot: 持仓快照（列 trade_date/ts_code/hold_share）。 prev…；源码 L123-L167
-#   inputs: snapshot prev_date curr_date vwap
-#   outputs: pd.DataFrame
-# - id: A2
-#   name_zh: ② top_position_changes
-#   name_en: top_position_changes
-#   intro: top 加仓/减仓排名（§6.3 流量信号；零变动标的不入榜）。
-#   desc: top 加仓/减仓排名（§6.3 流量信号；零变动标的不入榜）。 Args: changes: compute_quarter_position_changes 输出。 top_…；源码 L170-L183
-#   inputs: changes top_n
-#   outputs: dict[str, pd.DataFrame]
-# - id: A3
-#   name_zh: ③ estimate_quarterly_net_inflow
-#   name_en: estimate_quarterly_net_inflow
-#   intro: 季度净流入估算（§6.5）：Σ Δ持股 × 当季 VWAP。
-#   desc: 季度净流入估算（§6.5）：Σ Δ持股 × 当季 VWAP。 季度颗粒度的"准北向净流入"——可与国信季度估算（如 2026Q2 ~2193 亿） 交叉验证误差范围。缺 VWAP…；源码 L186-L198
-#   inputs: snapshot prev_date curr_date vwap
-#   outputs: float
-# 层: 输出
-# - id: O1
-#   name_zh: pd.DataFrame
-#   name_en: pd.DataFrame
-#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
-#   downstream: 外资行为分析（季报复盘；因子立项后供 25 号多因子消费）
-# - id: O2
-#   name_zh: dict[str, pd.DataFrame]
-#   name_en: dict[str, pd.DataFrame]
-#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
-#   downstream: 外资行为分析（季报复盘；因子立项后供 25 号多因子消费）
-# [/ALGO_FLOW]
-#
-# 边:
-# I1 --> A1
-# I2 --> A1
-# I3 --> A1
-# I4 --> A1
-# A1 --> A2
-# A2 --> A3
-# A3 --> O1
+# [ALGO_FLOW] external: docs/03_modules/_domain_data/algo_flow/northbound_hold_analysis.yaml
 """
 
 from __future__ import annotations

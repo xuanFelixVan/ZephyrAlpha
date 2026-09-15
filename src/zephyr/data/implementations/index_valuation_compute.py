@@ -38,31 +38,7 @@ ERP 口径：
     全历史扩展窗分位（expanding percentile），非滚动窗口。
     与 s2_valuation_score_fundamental 消费端语义一致（危机期分位<25%→60 分）。
 
-# [ALGO_FLOW]
-# 层: 输入
-# - id: I1
-#   name: 模块内部数据
-#   fields: 无公共形参/无再导出（AST 事实）
-#   code: index_valuation_compute.py
-# 层: 算法
-# - id: A1
-#   name_zh: ① IndexValuationComputeProvider
-#   name_en: IndexValuationComputeProvider
-#   intro: 指数估值内部计算 Provider（CAPE/分位/ERP）。
-#   desc: 指数估值内部计算 Provider（CAPE/分位/ERP）。 用法（由 scheduler 自动调用，source=internal, capability=index_val…；公共方法（定义序）: connect…
-#   inputs: 无参数
-#   outputs: 返回值
-# 层: 输出
-# - id: O1
-#   name_zh: 模块公共 API 面（1 定义）
-#   name_en: public defs
-#   intro: IndexValuationComputeProvider
-#   downstream: zephyr.data.scheduler (source=internal 分支，capability=index_valuation_daily)
-# [/ALGO_FLOW]
-#
-# 边:
-# I1 --> A1
-# A1 --> O1
+# [ALGO_FLOW] external: docs/03_modules/_domain_data/algo_flow/index_valuation_compute.yaml
 """
 
 from __future__ import annotations

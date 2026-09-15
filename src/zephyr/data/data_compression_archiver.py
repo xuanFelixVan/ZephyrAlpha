@@ -27,47 +27,7 @@ DuckDB 直查冷层查询门面（注入 duckdb 连接）。
 与索引，不实现层内读写）；data_lifecycle=保留期与删除裁定（本件只做
 温→冷迁移，不做到期清理）。
 
-# [ALGO_FLOW]
-# 层: 输入
-# - id: I1
-#   name: clock 参数
-#   fields: 参数 clock（无注解）
-#   code: data_compression_archiver.py 顶层公共函数形参（AST 提取）
-# - id: I2
-#   name: archiver 参数
-#   fields: 参数 archiver（无注解）
-#   code: data_compression_archiver.py 顶层公共函数形参（AST 提取）
-# - id: I3
-#   name: sqlite_conn 参数
-#   fields: 参数 sqlite_conn（无注解）
-#   code: data_compression_archiver.py 顶层公共函数形参（AST 提取）
-# - id: I4
-#   name: duckdb_conn 参数
-#   fields: 参数 duckdb_conn（无注解）
-#   code: data_compression_archiver.py 顶层公共函数形参（AST 提取）
-# 层: 算法
-# - id: A1
-#   name_zh: ① DataCompressionArchiver
-#   name_en: DataCompressionArchiver
-#   intro: 行情三层归档编排器（plan → execute → index → 冷层查询门面）。
-#   desc: 行情三层归档编排器（plan → execute → index → 冷层查询门面）。；公共方法（定义序）: register_partition, tier_of, partitions, plan, execute…
-#   inputs: clock archiver sqlite_conn duckdb_conn compression
-#   outputs: 返回值
-#   （注：A1 之后另有 4 个公共定义未列入（含 4 个数据契约/异常/枚举声明类），见源码）
-# 层: 输出
-# - id: O1
-#   name_zh: 模块公共 API 面（5 定义）
-#   name_en: public defs
-#   intro: DataCompressionArchiver
-#   downstream: 运行时装配批（三层存储装配 / 归档计划任务 / 冷层 DuckDB 查询门面绑定）
-# [/ALGO_FLOW]
-#
-# 边:
-# I1 --> A1
-# I2 --> A1
-# I3 --> A1
-# I4 --> A1
-# A1 --> O1
+# [ALGO_FLOW] external: docs/03_modules/_domain_data/algo_flow/data_compression_archiver.yaml
 """
 
 from __future__ import annotations

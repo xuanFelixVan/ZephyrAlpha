@@ -58,37 +58,7 @@ DDL 草稿（待统筹 CTR 评审后 apply_schema 执行）::
     PARTITION BY toYYYYMM(trade_date)
     ORDER BY trade_date, symbol
 
-# [ALGO_FLOW]
-# 层: 输入
-# - id: I1
-#   name: akshare stock_zt_pool_em 东财涨停股池（单日全量）
-#   fields: 代码/名称/涨跌幅/最新价/成交额/流通市值/总市值/换手率/封板资金/首次封板时间/最后封板时间/炸板次数/涨停统计/连板数/所属行业
-# 层: 特征
-# - id: F1
-#   name_zh: 封单比派生
-#   formula: seal_ratio = 封板资金/流通市值（>0 才出，否则 None）
-# - id: F2
-#   name_zh: 封住时间派生
-#   formula: sealed_seconds = 15:00:00 − 最后封板时间（秒；脏时间 None）
-# 层: 算法
-# - id: A1
-#   name_zh: 解析层（纯函数）
-#   desc: parse_zt_pool_rows 行映射+时间规整+派生+非法代码跳过
-# - id: A2
-#   name_zh: 采集与落库
-#   desc: fetch（延迟 import akshare，异常→空列表）→ collect 参数化 INSERT（table 惰性经 table_registry 解析）
-# 层: 输出
-# - id: O1
-#   name_zh: LimitUpPoolEntry 行集 / INSERT 行数
-#   intro: 19 列 INSERT_COLUMNS 对齐 DDL 草稿列序；frozen dataclass asdict JSON 可序列化
-# [/ALGO_FLOW]
-#
-# 边:
-# I1 --> A1
-# A1 --> F1
-# A1 --> F2
-# A1,F1,F2 --> A2
-# A2 --> O1
+# [ALGO_FLOW] external: docs/03_modules/_domain_data/algo_flow/limit_up_pool_collector.yaml
 """
 
 from __future__ import annotations

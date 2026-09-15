@@ -31,40 +31,7 @@ Schema 驱动的多源格式转换器（CAND-DAT-010 / B1-00343 / D-INT-16 DataF
 本模块管"源格式→CTR-001 契约"的语义级转换；quality_gate 管质量判定，
 本模块仅向其供给隔离样本，不替代判定。
 
-# [ALGO_FLOW]
-# 层: 输入
-# - id: I1
-#   name: schema 参数
-#   fields: 参数 schema（无注解）
-#   code: format_transformer.py 顶层公共函数形参（AST 提取）
-# 层: 算法
-# - id: A1
-#   name_zh: ① TransformResult
-#   name_en: TransformResult
-#   intro: 转换输出：合格契约记录 + 隔离样本。
-#   desc: 转换输出：合格契约记录 + 隔离样本。；公共方法（定义序）: quarantine_report；源码 L205-L226
-#   inputs: 无参数
-#   outputs: 返回值
-# - id: A2
-#   name_zh: ② FormatTransformer
-#   name_en: FormatTransformer
-#   intro: Schema 驱动的源记录 → CTR-001 NormalizedMarketData 转换器。
-#   desc: Schema 驱动的源记录 → CTR-001 NormalizedMarketData 转换器。 Usage:: tf = FormatTransformer("ctr001_…；公共方法（定义序）: schema,…
-#   inputs: schema
-#   outputs: 返回值
-#   （注：A2 之后另有 4 个公共定义未列入（含 4 个数据契约/异常/枚举声明类），见源码）
-# 层: 输出
-# - id: O1
-#   name_zh: 模块公共 API 面（6 定义）
-#   name_en: public defs
-#   intro: TransformResult, FormatTransformer
-#   downstream: （P1 接线：scheduler/provider 落库前格式收口）
-# [/ALGO_FLOW]
-#
-# 边:
-# I1 --> A1
-# A1 --> A2
-# A2 --> O1
+# [ALGO_FLOW] external: docs/03_modules/_domain_data/algo_flow/format_transformer.yaml
 """
 
 from __future__ import annotations

@@ -37,47 +37,7 @@
     m.set_uptime(3600.0)
     m.flush()  # 写入 data/metrics.prom
 
-# [ALGO_FLOW]
-# 层: 输入
-# - id: I1
-#   name: output_file 参数
-#   fields: 参数 output_file，类型注解 str | Path | None
-#   code: metrics.py 顶层公共函数形参（AST 提取）
-# 层: 算法
-# - id: A1
-#   name_zh: ① IntegratorMetrics
-#   name_en: IntegratorMetrics
-#   intro: 数据源集成器可观测性指标采集器。
-#   desc: 数据源集成器可观测性指标采集器。 线程安全（用 Lock 保护计数器写入）。；公共方法（定义序）: record_task, record_rate_limit, record_retry, set_uptime, u…
-#   inputs: output_file
-#   outputs: 返回值
-# - id: A2
-#   name_zh: ② get_metrics
-#   name_en: get_metrics
-#   intro: 获取全局 IntegratorMetrics 单例。
-#   desc: 获取全局 IntegratorMetrics 单例。；源码 L281-L288
-#   inputs: output_file
-#   outputs: IntegratorMetrics
-# - id: A3
-#   name_zh: ③ reset_metrics
-#   name_en: reset_metrics
-#   intro: 重置全局单例（测试用）。
-#   desc: 重置全局单例（测试用）。；源码 L291-L295
-#   inputs: 无参数
-#   outputs: 返回值
-# 层: 输出
-# - id: O1
-#   name_zh: IntegratorMetrics
-#   name_en: IntegratorMetrics
-#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
-#   downstream: zephyr.data.scheduler
-# [/ALGO_FLOW]
-#
-# 边:
-# I1 --> A1
-# A1 --> A2
-# A2 --> A3
-# A3 --> O1
+# [ALGO_FLOW] external: docs/03_modules/_domain_data/algo_flow/metrics.yaml
 """
 
 from __future__ import annotations

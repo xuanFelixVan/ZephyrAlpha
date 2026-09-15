@@ -28,31 +28,7 @@ OKX 永续合约数据 Provider（CAND-CRYPTO-003，94号 §4.4 Phase 2 数据�
 
 instId 约定：永续合约为 BTC-USDT-SWAP 形式；现货指数价对应 BTC-USDT。
 
-# [ALGO_FLOW]
-# 层: 输入
-# - id: I1
-#   name: 模块内部数据
-#   fields: 无公共形参/无再导出（AST 事实）
-#   code: okx_swap_provider.py
-# 层: 算法
-# - id: A1
-#   name_zh: ① OkxSwapProvider
-#   name_en: OkxSwapProvider
-#   intro: OKX 永续合约数据 Provider（CAND-CRYPTO-003）。
-#   desc: OKX 永续合约数据 Provider（CAND-CRYPTO-003）。 公开 REST 端点（无需签名），shared 线程安全模型。 已知问题：OI/标记价格/基差为当前快…；公共方法（定义序）: connect…
-#   inputs: 无参数
-#   outputs: 返回值
-# 层: 输出
-# - id: O1
-#   name_zh: 模块公共 API 面（1 定义）
-#   name_en: public defs
-#   intro: OkxSwapProvider
-#   downstream: zephyr.data.scheduler
-# [/ALGO_FLOW]
-#
-# 边:
-# I1 --> A1
-# A1 --> O1
+# [ALGO_FLOW] external: docs/03_modules/_domain_data/algo_flow/okx_swap_provider.yaml
 """
 
 from __future__ import annotations

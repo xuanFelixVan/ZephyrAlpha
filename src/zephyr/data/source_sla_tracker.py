@@ -26,32 +26,7 @@ Prometheus SLI/SLO 思想。
 离线聚合与 SLO 裁定，不做探活）；data_source_reliability=源可靠性评分
 （本件=SLI 聚合与达标判定，不做综合评分模型）。
 
-# [ALGO_FLOW]
-# 层: 输入
-# - id: I1
-#   name: 模块内部数据
-#   fields: 无公共形参/无再导出（AST 事实）
-#   code: source_sla_tracker.py
-# 层: 算法
-# - id: A1
-#   name_zh: ① SourceSlaTracker
-#   name_en: SourceSlaTracker
-#   intro: 数据源 SLA 追踪器（SLI 聚合 + 日周报 + 达标判定 + 看板）。
-#   desc: 数据源 SLA 追踪器（SLI 聚合 + 日周报 + 达标判定 + 看板）。；公共方法（定义序）: register_target, target_of, ingest, aggregate, report_daily…
-#   inputs: 无参数
-#   outputs: 返回值
-#   （注：A1 之后另有 4 个公共定义未列入（含 4 个数据契约/异常/枚举声明类），见源码）
-# 层: 输出
-# - id: O1
-#   name_zh: 模块公共 API 面（5 定义）
-#   name_en: public defs
-#   intro: SourceSlaTracker
-#   downstream: 运行时装配批（探测记录接入 / SLA 目标注册 / 日周报计划任务 / 看板读侧）
-# [/ALGO_FLOW]
-#
-# 边:
-# I1 --> A1
-# A1 --> O1
+# [ALGO_FLOW] external: docs/03_modules/_domain_data/algo_flow/source_sla_tracker.yaml
 """
 
 from __future__ import annotations

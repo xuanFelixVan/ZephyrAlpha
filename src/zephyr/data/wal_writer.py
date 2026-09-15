@@ -42,46 +42,7 @@
     finally:
         writer.stop()  # flush 残留段 + 停止 drain 线程
 
-# [ALGO_FLOW]
-# 层: 输入
-# - id: I1
-#   name: table 参数
-#   fields: 参数 table（无注解）
-#   code: wal_writer.py 顶层公共函数形参（AST 提取）
-# - id: I2
-#   name: segment_max_rows 参数
-#   fields: 参数 segment_max_rows（无注解）
-#   code: wal_writer.py 顶层公共函数形参（AST 提取）
-# - id: I3
-#   name: segment_max_seconds 参数
-#   fields: 参数 segment_max_seconds（无注解）
-#   code: wal_writer.py 顶层公共函数形参（AST 提取）
-# - id: I4
-#   name: wal_dir_max_bytes 参数
-#   fields: 参数 wal_dir_max_bytes（无注解）
-#   code: wal_writer.py 顶层公共函数形参（AST 提取）
-# 层: 算法
-# - id: A1
-#   name_zh: ① WalWriter
-#   name_en: WalWriter
-#   intro: 主动 WAL 写入器——数据先落本地段文件，再异步排空到 ClickHouse。
-#   desc: 主动 WAL 写入器——数据先落本地段文件，再异步排空到 ClickHouse。；公共方法（定义序）: drain_thread, add, flush, start, stop, total_segmented, t…
-#   inputs: table segment_max_rows segment_max_seconds wal_dir_max_bytes
-#   outputs: 返回值
-# 层: 输出
-# - id: O1
-#   name_zh: 模块公共 API 面（1 定义）
-#   name_en: public defs
-#   intro: WalWriter
-#   downstream: zephyr.data.tick_subscriber
-# [/ALGO_FLOW]
-#
-# 边:
-# I1 --> A1
-# I2 --> A1
-# I3 --> A1
-# I4 --> A1
-# A1 --> O1
+# [ALGO_FLOW] external: docs/03_modules/_domain_data/algo_flow/wal_writer.yaml
 """
 
 from __future__ import annotations

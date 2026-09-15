@@ -31,40 +31,7 @@ SourcePolicy 定义在 policy_registry.py，本模块用 TYPE_CHECKING 前向引
 - fetch 返回 Iterator[FetchResult] 支持分批，每批一个 FetchResult
 - 策略作为参数传入 fetch，由基类辅助方法 _call_with_policy 应用
 
-# [ALGO_FLOW]
-# 层: 输入
-# - id: I1
-#   name: 模块内部数据
-#   fields: 无公共形参/无再导出（AST 事实）
-#   code: provider_base.py
-# 层: 算法
-# - id: A1
-#   name_zh: ① IngestProviderMeta
-#   name_en: IngestProviderMeta
-#   intro: 数据源元数据（静态描述）。
-#   desc: 数据源元数据（静态描述）。 Attributes: name: 数据源标识（"miniqmt"/"akshare"/"tushare"...） display_name: 中文显…；公共方法（定义序）: capabil…
-#   inputs: 无参数
-#   outputs: 返回值
-# - id: A2
-#   name_zh: ② IngestProviderBase
-#   name_en: IngestProviderBase
-#   intro: 数据源 Provider 抽象基类。
-#   desc: 数据源 Provider 抽象基类。 子类需实现： - connect(): 建立连接/登录（线程局部） - health_check(): 探活 - fetch(payload…；公共方法（定义序）: connect…
-#   inputs: 无参数
-#   outputs: 返回值
-#   （注：A2 之后另有 3 个公共定义未列入（含 3 个数据契约/异常/枚举声明类），见源码）
-# 层: 输出
-# - id: O1
-#   name_zh: 模块公共 API 面（5 定义）
-#   name_en: public defs
-#   intro: IngestProviderMeta, IngestProviderBase
-#   downstream: zephyr.data.scheduler, zephyr.data.implementations.*_provider
-# [/ALGO_FLOW]
-#
-# 边:
-# I1 --> A1
-# A1 --> A2
-# A2 --> O1
+# [ALGO_FLOW] external: docs/03_modules/_domain_data/algo_flow/provider_base.yaml
 """
 
 from __future__ import annotations

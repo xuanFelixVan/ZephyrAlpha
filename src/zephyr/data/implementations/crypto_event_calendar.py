@@ -37,31 +37,7 @@ event_calendar 币版实例——采集三类影响币价的中观/宏观事件�
 全部数据为公开静态快照，无网络依赖、无密钥需求；输出确定性（同输入恒同输出），
 测试与下游管道可重复。事件日历定位=风险节流输入（sit_out_list/regime），非 alpha 择时。
 
-# [ALGO_FLOW]
-# 层: 输入
-# - id: I1
-#   name: 模块内部数据
-#   fields: 无公共形参/无再导出（AST 事实）
-#   code: crypto_event_calendar.py
-# 层: 算法
-# - id: A1
-#   name_zh: ① CryptoEventCalendarProvider
-#   name_en: CryptoEventCalendarProvider
-#   intro: 币版事件日历 Provider（减半/大额解锁/宏观事件）。
-#   desc: 币版事件日历 Provider（减半/大额解锁/宏观事件）。 全部数据为公开静态快照，无需密钥、无网络依赖；输出确定性。 shared 线程安全模型（无状态）。；公共方法（定义序）: connect, health_c…
-#   inputs: 无参数
-#   outputs: 返回值
-# 层: 输出
-# - id: O1
-#   name_zh: 模块公共 API 面（1 定义）
-#   name_en: public defs
-#   intro: CryptoEventCalendarProvider
-#   downstream: zephyr.data.scheduler
-# [/ALGO_FLOW]
-#
-# 边:
-# I1 --> A1
-# A1 --> O1
+# [ALGO_FLOW] external: docs/03_modules/_domain_data/algo_flow/crypto_event_calendar.yaml
 """
 
 from __future__ import annotations

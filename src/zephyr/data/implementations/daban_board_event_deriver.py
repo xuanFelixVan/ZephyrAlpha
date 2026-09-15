@@ -79,42 +79,7 @@ DDL 草稿（待统筹 CTR 评审后 apply_schema 执行）::
     PARTITION BY toYYYYMM(trade_date)
     ORDER BY (trade_date, symbol)
 
-# [ALGO_FLOW]
-# 层: 输入
-# - id: I1
-#   name: c1_market.kline_daily 日 K（全史）+ stk_limit 涨停价（库内/tushare/规则三级解析）
-#   fields: trade_date/symbol/open/high/low/close；limit_up/limit_down/st_flag
-# - id: I2
-#   name: c1_market.kline_1min 分钟 K（2021-09 起；仅触板候选 symbol-day 拉取）
-# - id: I3
-#   name: c1_market.tick_data miniqmt 盘口（2026-07 起；仅封住候选 symbol-day 拉取）
-# 层: 算法
-# - id: A1
-#   name_zh: 日频事件推导（纯函数）
-#   desc: derive_daily_events 触板/封住/一字判定 + 连板链 + 昨收链
-# - id: A2
-#   name_zh: 分钟级富化（纯函数）
-#   desc: enrich_intraday 首触时刻 + 开板次数（封→开转换计数，下限口径）
-# - id: A3
-#   name_zh: 封单代理富化（纯函数）
-#   desc: enrich_seal_ticks 尾盘最后一笔达标买一档 → 封单手数/金额代理
-# - id: A4
-#   name_zh: 编排采集
-#   desc: collect_derived_events 窗口拉数（lookback 保连板链）→ 推导 → 富化 → CSV
-# 层: 输出
-# - id: O1
-#   name_zh: DabanBoardEvent 行集 / CSV 路径
-#   intro: 21 列 INSERT_COLUMNS 对齐 DDL 草稿列序；frozen dataclass asdict JSON 可序列化
-# [/ALGO_FLOW]
-#
-# 边:
-# I1 --> A1
-# I2 --> A2
-# I3 --> A3
-# A1 --> A2
-# A2 --> A3
-# A3 --> A4
-# A4 --> O1
+# [ALGO_FLOW] external: docs/03_modules/_domain_data/algo_flow/daban_board_event_deriver.yaml
 """
 
 from __future__ import annotations

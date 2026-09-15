@@ -51,42 +51,7 @@ sector_snapshot 30s 轮询字段（582 板块，amount/inside/outside/涨跌家�
 - inside/outside 对 880xxx 板块指数近恒 0-4（指数合成报价 tick 计数），
   资金腿主口径由此裁定为成交额增量代理（见上）。
 
-# [ALGO_FLOW]
-# 层: 输入
-# - id: I1
-#   name: 板块快照序列（sector_snapshot 30s 轮询/推送）
-#   fields: sector_code/timestamp/now_price/last_close/amount/up_home/down_home/inside/outside/zangsu/average_price/market_type
-# - id: I2
-#   name: 上一刷新周期榜（previous_board，M1-④ 回路持有）
-#   fields: inflow_top/speed_top 板块代码集合
-# 层: 特征
-# - id: F1
-#   name_zh: 单板块窗口聚合
-#   formula: pct_change=(now-last_close)/last_close; amount_delta=末值−首值(累计单调);
-#     amount_velocity=amount_delta/窗口分钟; net_active_buy=Σ(Δoutside−Δinside)×均价×100(复位守卫);
-#     up/down_home 末值与差量; zangsu 末值与差量
-# - id: F2
-#   name_zh: 全市场广度结构
-#   formula: total_up=Σup_home; total_down=Σdown_home; ratio=up/max(down,1); 板块涨跌平计数; 结构变化=末−首合计差
-# 层: 算法
-# - id: A1
-#   name_zh: 资金榜/涨速榜排名
-#   desc: inflow_top=amount_delta 降序(并列 sector_code 升序); speed_top=zangsu 降序(>min_speed 过滤)
-# - id: A2
-#   name_zh: 新开板对照
-#   desc: current=资金榜∪涨速榜代码集; new=current−previous_board 同口径集; 无基线→空集+notes
-# 层: 输出
-# - id: O1
-#   name_zh: SectorIntradayBoard
-#   intro: asof/n_sectors/inflow_top/speed_top/breadth/new_open_boards/rows/degraded/notes；frozen dataclass asdict JSON 可序列化
-# [/ALGO_FLOW]
-#
-# 边:
-# I1 --> F1
-# I1 --> F2
-# F1 --> A1
-# I2,A1 --> A2
-# A1,F2,A2 --> O1
+# [ALGO_FLOW] external: docs/03_modules/_domain_data/algo_flow/sector_intraday_aggregator.yaml
 """
 
 from __future__ import annotations

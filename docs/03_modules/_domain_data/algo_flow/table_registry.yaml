@@ -1,0 +1,49 @@
+# ALGO_FLOW 外部真源——table_registry（_domain_data 域，真源 src/zephyr/data/table_registry.py）
+# 2026-09-15 P2-1 契约头减负批量出仓：docstring 内联块逐字节副本，extractor 经
+# external 锚加载走同一 parse_algo_flow 管线；算法公共面变化时同步更新本块。
+doc_type: architecture_view
+ttl: permanent
+module: src.zephyr.data.table_registry
+source_of_truth: src/zephyr/data/table_registry.py
+algo_flow: |
+    # [ALGO_FLOW]
+    # 层: 输入
+    # - id: I1
+    #   name: categories 参数
+    #   fields: 参数 categories（无注解）
+    #   code: table_registry.py 顶层公共函数形参（AST 提取）
+    # 层: 算法
+    # - id: A1
+    #   name_zh: ① TableRegistry
+    #   name_en: TableRegistry
+    #   intro: 表名/品类注册表消费层。
+    #   desc: 表名/品类注册表消费层。 启动时加载 business_data_categories.yaml，构建： _by_category: category_id -> "{datab…；公共方法（定义序）: table…
+    #   inputs: categories
+    #   outputs: 返回值
+    # - id: A2
+    #   name_zh: ② get_registry
+    #   name_en: get_registry
+    #   intro: 返回 TableRegistry 单例（幂等加载，线程安全）。
+    #   desc: 返回 TableRegistry 单例（幂等加载，线程安全）。；源码 L238-L247
+    #   inputs: 无参数
+    #   outputs: TableRegistry
+    # - id: A3
+    #   name_zh: ③ reset_registry_singleton
+    #   name_en: reset_registry_singleton
+    #   intro: 重置单例（仅供测试使用，确保测试间隔离）。
+    #   desc: 重置单例（仅供测试使用，确保测试间隔离）。；源码 L250-L254
+    #   inputs: 无参数
+    #   outputs: 返回值
+    # 层: 输出
+    # - id: O1
+    #   name_zh: TableRegistry
+    #   name_en: TableRegistry
+    #   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+    #   downstream: zephyr.data.scheduler; zephyr.data.implementations.*_provider
+    # [/ALGO_FLOW]
+    #
+    # 边:
+    # I1 --> A1
+    # A1 --> A2
+    # A2 --> A3
+    # A3 --> O1

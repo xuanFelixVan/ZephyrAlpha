@@ -30,57 +30,7 @@
     python -m zephyr.data.sector_ranking_engine --top 99     # 指定Top N
     python -m zephyr.data.sector_ranking_engine --json       # JSON格式输出
 
-# [ALGO_FLOW]
-# 层: 输入
-# - id: I1
-#   name: rows 参数
-#   fields: 参数 rows，类型注解 list[tuple]
-#   code: sector_ranking_engine.py 顶层公共函数形参（AST 提取）
-# - id: I2
-#   name: top_n 参数
-#   fields: 参数 top_n，类型注解 int
-#   code: sector_ranking_engine.py 顶层公共函数形参（AST 提取）
-# 层: 算法
-# - id: A1
-#   name_zh: ① compute_ranking
-#   name_en: compute_ranking
-#   intro: 计算5因子复合排名。
-#   desc: 计算5因子复合排名。 Args: rows: ClickHouse 快照行列表。 Returns: [(sector_code, score), ...] 按分数降序排列。；源码 L218-L250
-#   inputs: rows
-#   outputs: list[tuple[str, float]]
-# - id: A2
-#   name_zh: ② get_push_pool
-#   name_en: get_push_pool
-#   intro: 获取推送池（动态排名 Top N 或默认回退）。
-#   desc: 获取推送池（动态排名 Top N 或默认回退）。 Args: top_n: 推送池上限（默认99）。 Returns: 推送池 sector_code 列表（9只mkt_inde…；源码 L253-L285
-#   inputs: top_n
-#   outputs: list[str]
-# - id: A3
-#   name_zh: ③ main
-#   name_en: main
-#   intro: 盘前重算推送池入口。
-#   desc: 盘前重算推送池入口。；源码 L302-L329
-#   inputs: 无参数
-#   outputs: int
-# 层: 输出
-# - id: O1
-#   name_zh: list[tuple[str, float]]
-#   name_en: list[tuple[str, float]]
-#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
-#   downstream: zephyr.data.sector_snapshot_collector (push_pool selection)
-# - id: O2
-#   name_zh: list[str]
-#   name_en: list[str]
-#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
-#   downstream: zephyr.data.sector_snapshot_collector (push_pool selection)
-# [/ALGO_FLOW]
-#
-# 边:
-# I1 --> A1
-# I2 --> A1
-# A1 --> A2
-# A2 --> A3
-# A3 --> O1
+# [ALGO_FLOW] external: docs/03_modules/_domain_data/algo_flow/sector_ranking_engine.yaml
 """
 
 from __future__ import annotations

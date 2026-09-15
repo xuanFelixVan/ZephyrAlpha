@@ -1,0 +1,54 @@
+# ALGO_FLOW 外部真源——error_classifier（_domain_data 域，真源 src/zephyr/data/error_classifier.py）
+# 2026-09-15 P2-1 契约头减负批量出仓：docstring 内联块逐字节副本，extractor 经
+# external 锚加载走同一 parse_algo_flow 管线；算法公共面变化时同步更新本块。
+doc_type: architecture_view
+ttl: permanent
+module: src.zephyr.data.error_classifier
+source_of_truth: src/zephyr/data/error_classifier.py
+algo_flow: |
+    # [ALGO_FLOW]
+    # 层: 输入
+    # - id: I1
+    #   name: error 参数
+    #   fields: 参数 error，类型注解 str | None
+    #   code: error_classifier.py 顶层公共函数形参（AST 提取）
+    # 层: 算法
+    # - id: A1
+    #   name_zh: ① classify_error
+    #   name_en: classify_error
+    #   intro: 分类错误类型。
+    #   desc: 分类错误类型。 Args: error: 错误字符串（FetchResult.error）。 Returns: "unrecoverable" | "recoverable" |…；源码 L144-L159
+    #   inputs: error
+    #   outputs: str
+    # - id: A2
+    #   name_zh: ② is_unrecoverable
+    #   name_en: is_unrecoverable
+    #   intro: 是否不可恢复错误（应立即 fallback）。
+    #   desc: 是否不可恢复错误（应立即 fallback）。；源码 L162-L164
+    #   inputs: error
+    #   outputs: bool
+    # - id: A3
+    #   name_zh: ③ is_recoverable
+    #   name_en: is_recoverable
+    #   intro: 是否可恢复错误（应重试）。
+    #   desc: 是否可恢复错误（应重试）。；源码 L167-L169
+    #   inputs: error
+    #   outputs: bool
+    # 层: 输出
+    # - id: O1
+    #   name_zh: str
+    #   name_en: str
+    #   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+    #   downstream: zephyr.data.scheduler
+    # - id: O2
+    #   name_zh: bool
+    #   name_en: bool
+    #   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+    #   downstream: zephyr.data.scheduler
+    # [/ALGO_FLOW]
+    #
+    # 边:
+    # I1 --> A1
+    # A1 --> A2
+    # A2 --> A3
+    # A3 --> O1

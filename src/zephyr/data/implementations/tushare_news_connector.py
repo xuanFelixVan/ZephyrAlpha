@@ -28,47 +28,7 @@ tushare 新闻权限开通后的接入面——API 调用全注入（不真发�
 去重指纹供给，不重建聚合管道）；source_health_check=源健康探活（本件只
 做接入契约，不做探活）。
 
-# [ALGO_FLOW]
-# 层: 输入
-# - id: I1
-#   name: api 参数
-#   fields: 参数 api（无注解）
-#   code: tushare_news_connector.py 顶层公共函数形参（AST 提取）
-# - id: I2
-#   name: clock 参数
-#   fields: 参数 clock（无注解）
-#   code: tushare_news_connector.py 顶层公共函数形参（AST 提取）
-# - id: I3
-#   name: gate 参数
-#   fields: 参数 gate（无注解）
-#   code: tushare_news_connector.py 顶层公共函数形参（AST 提取）
-# - id: I4
-#   name: dedup_window_seconds 参数
-#   fields: 参数 dedup_window_seconds（无注解）
-#   code: tushare_news_connector.py 顶层公共函数形参（AST 提取）
-# 层: 算法
-# - id: A1
-#   name_zh: ① TushareNewsConnector
-#   name_en: TushareNewsConnector
-#   intro: tushare 新闻源接入器（注入API + 去重指纹 + 回补校验 + 质量门控）。
-#   desc: tushare 新闻源接入器（注入API + 去重指纹 + 回补校验 + 质量门控）。；公共方法（定义序）: fingerprint, fetch_latest, backfill, seen_count…
-#   inputs: api clock gate dedup_window_seconds source
-#   outputs: 返回值
-#   （注：A1 之后另有 4 个公共定义未列入（含 4 个数据契约/异常/枚举声明类），见源码）
-# 层: 输出
-# - id: O1
-#   name_zh: 模块公共 API 面（5 定义）
-#   name_en: public defs
-#   intro: TushareNewsConnector
-#   downstream: 运行时装配批（tushare 权限开通后 API 适配器绑定 / news_collector 管道挂接 / 质量门控装配）
-# [/ALGO_FLOW]
-#
-# 边:
-# I1 --> A1
-# I2 --> A1
-# I3 --> A1
-# I4 --> A1
-# A1 --> O1
+# [ALGO_FLOW] external: docs/03_modules/_domain_data/algo_flow/tushare_news_connector.yaml
 """
 
 from __future__ import annotations

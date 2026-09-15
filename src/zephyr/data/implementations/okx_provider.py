@@ -26,31 +26,7 @@ OKX 交易所行情 Provider（CAND-CRYPTO-002，94号 Q1 裁定 2026-08-31 修�
 响应格式：{code: "0", data: [[ts_ms, open, high, low, close, vol, volCcy, volCcyQuote, confirm], ...]}
 时间倒序（最新在前），分页用 after/before 毫秒时间戳。
 
-# [ALGO_FLOW]
-# 层: 输入
-# - id: I1
-#   name: 模块内部数据
-#   fields: 无公共形参/无再导出（AST 事实）
-#   code: okx_provider.py
-# 层: 算法
-# - id: A1
-#   name_zh: ① OkxProvider
-#   name_en: OkxProvider
-#   intro: OKX 交易所行情 Provider。
-#   desc: OKX 交易所行情 Provider。 公开 REST 端点（无需签名），shared 线程安全模型。 已知问题：公开端点限频 20req/2s；历史 K 线仅主流币种。；公共方法（定义序）: connect, hea…
-#   inputs: 无参数
-#   outputs: 返回值
-# 层: 输出
-# - id: O1
-#   name_zh: 模块公共 API 面（1 定义）
-#   name_en: public defs
-#   intro: OkxProvider
-#   downstream: zephyr.data.scheduler
-# [/ALGO_FLOW]
-#
-# 边:
-# I1 --> A1
-# A1 --> O1
+# [ALGO_FLOW] external: docs/03_modules/_domain_data/algo_flow/okx_provider.yaml
 """
 
 from __future__ import annotations

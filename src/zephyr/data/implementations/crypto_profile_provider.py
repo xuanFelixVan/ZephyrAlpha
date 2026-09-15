@@ -38,39 +38,7 @@
 explorer 构造为 {平台浏览器}/token/{contract}（如 USDT→etherscan.io/token/0xdAC17...）；
 否则回退 links.blockchain_site 首个非空链接。
 
-# [ALGO_FLOW]
-# 层: 输入
-# - id: I1
-#   name: 模块内部数据
-#   fields: 无公共形参/无再导出（AST 事实）
-#   code: crypto_profile_provider.py
-# 层: 算法
-# - id: A1
-#   name_zh: ① CoinProfile
-#   name_en: CoinProfile
-#   intro: 币种档案（解析中间态；统一行格式经 to_row() 输出）。
-#   desc: 币种档案（解析中间态；统一行格式经 to_row() 输出）。 whitepaper/contract_address 属"支持采集"字段（白皮书、合约地址）， 不进入 7 列统…；公共方法（定义序）: to_row；…
-#   inputs: 无参数
-#   outputs: 返回值
-# - id: A2
-#   name_zh: ② CryptoProfileProvider
-#   name_en: CryptoProfileProvider
-#   intro: 币圈档案 Provider（CoinGecko 免费 API 默认源 / CoinMarketCap 免费 tier…
-#   desc: 币圈档案 Provider（CoinGecko 免费 API 默认源 / CoinMarketCap 免费 tier 备选源）。 shared 线程安全模型；CoinGecko…；公共方法（定义序）: connect,…
-#   inputs: 无参数
-#   outputs: 返回值
-# 层: 输出
-# - id: O1
-#   name_zh: 模块公共 API 面（2 定义）
-#   name_en: public defs
-#   intro: CoinProfile, CryptoProfileProvider
-#   downstream: zephyr.data.scheduler
-# [/ALGO_FLOW]
-#
-# 边:
-# I1 --> A1
-# A1 --> A2
-# A2 --> O1
+# [ALGO_FLOW] external: docs/03_modules/_domain_data/algo_flow/crypto_profile_provider.yaml
 """
 
 from __future__ import annotations

@@ -33,31 +33,7 @@
 - 失败汇总文件用 JSON 格式，便于 CLI 读取和重跑
 - 线程安全（threading.Lock 保护文件写入）
 
-# [ALGO_FLOW]
-# 层: 输入
-# - id: I1
-#   name: failures_dir 参数
-#   fields: 参数 failures_dir（无注解）
-#   code: alerter.py 顶层公共函数形参（AST 提取）
-# 层: 算法
-# - id: A1
-#   name_zh: ① Alerter
-#   name_en: Alerter
-#   intro: 告警管理器。
-#   desc: 告警管理器。 用法： alerter = Alerter() alerter.notify("kline_daily_incremental", "连接超时", level=LE…；公共方法（定义序）: notify…
-#   inputs: failures_dir
-#   outputs: 返回值
-# 层: 输出
-# - id: O1
-#   name_zh: 模块公共 API 面（1 定义）
-#   name_en: public defs
-#   intro: Alerter
-#   downstream: zephyr.data.scheduler
-# [/ALGO_FLOW]
-#
-# 边:
-# I1 --> A1
-# A1 --> O1
+# [ALGO_FLOW] external: docs/03_modules/_domain_data/algo_flow/alerter.yaml
 """
 
 from __future__ import annotations

@@ -20,31 +20,7 @@
 导出：MarketCalendar 抽象接口 + ASHare/Crypto 双实现 + get_market_calendar
 装配工厂。市场判断集中于工厂一处——业务代码只接收注入实例，禁止 if/else 判市场。
 
-# [ALGO_FLOW]
-# 层: 输入
-# - id: I1
-#   name: market 参数
-#   fields: 参数 market，类型注解 str
-#   code: __init__.py 顶层公共函数形参（AST 提取）
-# 层: 算法
-# - id: A1
-#   name_zh: ① get_market_calendar
-#   name_en: get_market_calendar
-#   intro: 装配层注入入口：按市场名取日历单例（无状态共享）。
-#   desc: 装配层注入入口：按市场名取日历单例（无状态共享）。 Args: market: 市场名（"ashare"/"crypto"）。 Returns: 对应市场的 MarketCale…；源码 L74-L89
-#   inputs: market
-#   outputs: MarketCalendar
-# 层: 输出
-# - id: O1
-#   name_zh: MarketCalendar
-#   name_en: MarketCalendar
-#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
-#   downstream: 装配层（scheduler/fusion/pit_query/回测装配 按市场注入）
-# [/ALGO_FLOW]
-#
-# 边:
-# I1 --> A1
-# A1 --> O1
+# [ALGO_FLOW] external: docs/03_modules/_domain_data/algo_flow/calendar__init__.yaml
 """
 
 from __future__ import annotations

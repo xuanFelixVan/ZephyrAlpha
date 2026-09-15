@@ -25,54 +25,7 @@
     python -m zephyr.data.sector_kline_downloader --period 1m --days 1
     python -m zephyr.data.sector_kline_downloader --period all      # 全周期
 
-# [ALGO_FLOW]
-# 层: 输入
-# - id: I1
-#   name: tq 参数
-#   fields: 参数 tq（无注解）
-#   code: sector_kline_downloader.py 顶层公共函数形参（AST 提取）
-# - id: I2
-#   name: sector_codes 参数
-#   fields: 参数 sector_codes，类型注解 list[str]
-#   code: sector_kline_downloader.py 顶层公共函数形参（AST 提取）
-# - id: I3
-#   name: period 参数
-#   fields: 参数 period，类型注解 str
-#   code: sector_kline_downloader.py 顶层公共函数形参（AST 提取）
-# - id: I4
-#   name: count 参数
-#   fields: 参数 count，类型注解 int
-#   code: sector_kline_downloader.py 顶层公共函数形参（AST 提取）
-# 层: 算法
-# - id: A1
-#   name_zh: ① download_period
-#   name_en: download_period
-#   intro: 下载指定周期的K线数据。
-#   desc: 下载指定周期的K线数据。；源码 L265-L290
-#   inputs: tq sector_codes period count
-#   outputs: int
-# - id: A2
-#   name_zh: ② main
-#   name_en: main
-#   intro: 盘后K线下载入口。
-#   desc: 盘后K线下载入口。；源码 L293-L317
-#   inputs: 无参数
-#   outputs: int
-# 层: 输出
-# - id: O1
-#   name_zh: int
-#   name_en: int
-#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
-#   downstream: 见模块头 [CONSUMERS]
-# [/ALGO_FLOW]
-#
-# 边:
-# I1 --> A1
-# I2 --> A1
-# I3 --> A1
-# I4 --> A1
-# A1 --> A2
-# A2 --> O1
+# [ALGO_FLOW] external: docs/03_modules/_domain_data/algo_flow/sector_kline_downloader.yaml
 """
 
 from __future__ import annotations

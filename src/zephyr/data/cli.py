@@ -32,49 +32,7 @@
 - pyproject.toml [project.scripts]: integrator = "zephyr.data.cli:main"
 - python -m zephyr.data -> __main__.py re-export cli.main
 
-# [ALGO_FLOW]
-# 层: 输入
-# - id: I1
-#   name: parser 参数
-#   fields: 参数 parser，类型注解 argparse.ArgumentParser
-#   code: cli.py 顶层公共函数形参（AST 提取）
-# - id: I2
-#   name: argv 参数
-#   fields: 参数 argv，类型注解 list[str] | None
-#   code: cli.py 顶层公共函数形参（AST 提取）
-# 层: 算法
-# - id: A1
-#   name_zh: ① get_subcommands
-#   name_en: get_subcommands
-#   intro: 返回 parser 注册的子命令集合（封装 argparse 私有访问，R5: 消除测试私有访问）。
-#   desc: 返回 parser 注册的子命令集合（封装 argparse 私有访问，R5: 消除测试私有访问）。 Args: parser: _build_parser() 返回的 Argu…；源码 L417-L429
-#   inputs: parser
-#   outputs: set[str]
-# - id: A2
-#   name_zh: ② main
-#   name_en: main
-#   intro: CLI 主入口。
-#   desc: CLI 主入口。 Args: argv: 命令行参数（None 表示从 sys.argv 读取） Returns: 退出码（0=成功，非零=失败）；源码 L432-L473
-#   inputs: argv
-#   outputs: int
-# 层: 输出
-# - id: O1
-#   name_zh: set[str]
-#   name_en: set[str]
-#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
-#   downstream: integrator(CLI入口); python -m zephyr.data
-# - id: O2
-#   name_zh: int
-#   name_en: int
-#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
-#   downstream: integrator(CLI入口); python -m zephyr.data
-# [/ALGO_FLOW]
-#
-# 边:
-# I1 --> A1
-# I2 --> A1
-# A1 --> A2
-# A2 --> O1
+# [ALGO_FLOW] external: docs/03_modules/_domain_data/algo_flow/cli.yaml
 """
 
 from __future__ import annotations

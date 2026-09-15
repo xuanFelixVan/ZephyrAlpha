@@ -1,0 +1,38 @@
+# ALGO_FLOW 外部真源——fetch_perf_recorder（_domain_data 域，真源 src/zephyr/data/fetch_perf_recorder.py）
+# 2026-09-15 P2-1 契约头减负批量出仓：docstring 内联块逐字节副本，extractor 经
+# external 锚加载走同一 parse_algo_flow 管线；算法公共面变化时同步更新本块。
+doc_type: architecture_view
+ttl: permanent
+module: src.zephyr.data.fetch_perf_recorder
+source_of_truth: src/zephyr/data/fetch_perf_recorder.py
+algo_flow: |
+    # [ALGO_FLOW]
+    # 层: 输入
+    # - id: I1
+    #   name: record 参数
+    #   fields: 参数 record，类型注解 Mapping
+    #   code: fetch_perf_recorder.py 顶层公共函数形参（AST 提取）
+    # - id: I2
+    #   name: base_dir 参数
+    #   fields: 参数 base_dir（无注解）
+    #   code: fetch_perf_recorder.py 顶层公共函数形参（AST 提取）
+    # 层: 算法
+    # - id: A1
+    #   name_zh: ① record_fetch_perf
+    #   name_en: record_fetch_perf
+    #   intro: 追加一条 fetch_perf 记录到当日 JSONL 文件。
+    #   desc: 追加一条 fetch_perf 记录到当日 JSONL 文件。 Args: record: 记录字段（task_id/source/capability/table/status…；源码 L89-L113
+    #   inputs: record base_dir
+    #   outputs: Path | None
+    # 层: 输出
+    # - id: O1
+    #   name_zh: Path | None
+    #   name_en: Path | None
+    #   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+    #   downstream: zephyr.data.scheduler
+    # [/ALGO_FLOW]
+    #
+    # 边:
+    # I1 --> A1
+    # I2 --> A1
+    # A1 --> O1

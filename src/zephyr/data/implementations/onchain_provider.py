@@ -27,31 +27,7 @@
 密钥未配置时使用确定性 mock 序列（is_mock=1）保证管道可跑通；
 密钥配置后自动切换真实 HTTP 端点（is_mock=0），无需改代码。
 
-# [ALGO_FLOW]
-# 层: 输入
-# - id: I1
-#   name: 模块内部数据
-#   fields: 无公共形参/无再导出（AST 事实）
-#   code: onchain_provider.py
-# 层: 算法
-# - id: A1
-#   name_zh: ① OnchainProvider
-#   name_en: OnchainProvider
-#   intro: 链上数据 Provider（Glassnode/CryptoQuant 免费端点骨架）。
-#   desc: 链上数据 Provider（Glassnode/CryptoQuant 免费端点骨架）。 无付费 key 时输出确定性 mock 序列（is_mock=1）， 配置 key 后切…；公共方法（定义序）: connect…
-#   inputs: 无参数
-#   outputs: 返回值
-# 层: 输出
-# - id: O1
-#   name_zh: 模块公共 API 面（1 定义）
-#   name_en: public defs
-#   intro: OnchainProvider
-#   downstream: zephyr.data.scheduler
-# [/ALGO_FLOW]
-#
-# 边:
-# I1 --> A1
-# A1 --> O1
+# [ALGO_FLOW] external: docs/03_modules/_domain_data/algo_flow/onchain_provider.yaml
 """
 
 from __future__ import annotations

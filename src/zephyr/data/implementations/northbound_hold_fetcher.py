@@ -50,59 +50,7 @@ tushare hk_hold 返回列：code/trade_date/ts_code/name/vol/ratio/exchange。
 ratio→hold_ratio, exchange→exchange, trade_date→trade_date；code（6 位原代码）
 可从 ts_code 派生，不落列（§5.2 表 schema 无 src_code 列，以表 schema 为准）。
 
-# [ALGO_FLOW]
-# 层: 输入
-# - id: I1
-#   name: today 参数
-#   fields: 参数 today，类型注解 datetime.date
-#   code: northbound_hold_fetcher.py 顶层公共函数形参（AST 提取）
-# - id: I2
-#   name: genesis 参数
-#   fields: 参数 genesis，类型注解 datetime.date
-#   code: northbound_hold_fetcher.py 顶层公共函数形参（AST 提取）
-# - id: I3
-#   name: pit_lag_days 参数
-#   fields: 参数 pit_lag_days，类型注解 int
-#   code: northbound_hold_fetcher.py 顶层公共函数形参（AST 提取）
-# - id: I4
-#   name: pro 参数
-#   fields: 参数 pro（无注解）
-#   code: northbound_hold_fetcher.py 顶层公共函数形参（AST 提取）
-# 层: 算法
-# - id: A1
-#   name_zh: ① published_quarter_ends
-#   name_en: published_quarter_ends
-#   intro: 枚举 genesis 起全部已发布季度末（PIT 守卫：季度末+lag 自然日 <= today）。
-#   desc: 枚举 genesis 起全部已发布季度末（PIT 守卫：季度末+lag 自然日 <= today）。 Args: today: 今日日期（注入便于测试）。 genesis: 回填…；源码 L156-L180
-#   inputs: today genesis pit_lag_days
-#   outputs: list[datetime.date]
-# - id: A2
-#   name_zh: ② fetch_northbound_hold_snapshot
-#   name_en: fetch_northbound_hold_snapshot
-#   intro: 拉取全部已发布季度北向持仓快照（每季度 SH/SZ 两次调用，全量覆盖）。
-#   desc: 拉取全部已发布季度北向持仓快照（每季度 SH/SZ 两次调用，全量覆盖）。 Args: pro: tushare pro_api 客户端（由 TushareProvider.co…；源码 L318-L389
-#   inputs: pro payload policy call_with_policy logger today
-#   outputs: Iterator[FetchResult]
-# 层: 输出
-# - id: O1
-#   name_zh: list[datetime.date]
-#   name_en: list[datetime.date]
-#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
-#   downstream: zephyr.data.implementations.tushare_provider（capability=northbound_hold_snapsho…
-# - id: O2
-#   name_zh: Iterator[FetchResult]
-#   name_en: Iterator[FetchResult]
-#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
-#   downstream: zephyr.data.implementations.tushare_provider（capability=northbound_hold_snapsho…
-# [/ALGO_FLOW]
-#
-# 边:
-# I1 --> A1
-# I2 --> A1
-# I3 --> A1
-# I4 --> A1
-# A1 --> A2
-# A2 --> O1
+# [ALGO_FLOW] external: docs/03_modules/_domain_data/algo_flow/northbound_hold_fetcher.yaml
 """
 
 from __future__ import annotations

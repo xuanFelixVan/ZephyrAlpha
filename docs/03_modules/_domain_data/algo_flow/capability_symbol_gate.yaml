@@ -1,0 +1,46 @@
+# ALGO_FLOW 外部真源——capability_symbol_gate（_domain_data 域，真源 src/zephyr/data/capability_symbol_gate.py）
+# 2026-09-15 P2-1 契约头减负批量出仓：docstring 内联块逐字节副本，extractor 经
+# external 锚加载走同一 parse_algo_flow 管线；算法公共面变化时同步更新本块。
+doc_type: architecture_view
+ttl: permanent
+module: src.zephyr.data.capability_symbol_gate
+source_of_truth: src/zephyr/data/capability_symbol_gate.py
+algo_flow: |
+    # [ALGO_FLOW]
+    # 层: 输入
+    # - id: I1
+    #   name: content 参数
+    #   fields: 参数 content，类型注解 str
+    #   code: capability_symbol_gate.py 顶层公共函数形参（AST 提取）
+    # - id: I2
+    #   name: file_path 参数
+    #   fields: 参数 file_path，类型注解 Path
+    #   code: capability_symbol_gate.py 顶层公共函数形参（AST 提取）
+    # 层: 算法
+    # - id: A1
+    #   name_zh: ① check_declaration_impl_consistency_content
+    #   name_en: check_declaration_impl_consistency_content
+    #   intro: 校验 provider 文件内容（字符串）的声明-实现符号一致性（17 号 §5.8 项 4）。
+    #   desc: 校验 provider 文件内容（字符串）的声明-实现符号一致性（17 号 §5.8 项 4）。 Returns: 违规描述列表（空=一致；语法错误 fail-open 返回空）…；源码 L241-L295
+    #   inputs: content
+    #   outputs: list[str]
+    # - id: A2
+    #   name_zh: ② check_declaration_impl_consistency
+    #   name_en: check_declaration_impl_consistency
+    #   intro: 校验 provider 文件的声明-实现符号一致性（文件读取后委托 content 版，真源唯一）。
+    #   desc: 校验 provider 文件的声明-实现符号一致性（文件读取后委托 content 版，真源唯一）。；源码 L298-L304
+    #   inputs: file_path
+    #   outputs: list[str]
+    # 层: 输出
+    # - id: O1
+    #   name_zh: list[str]
+    #   name_en: list[str]
+    #   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+    #   downstream: commit gate（gov_enforcement commit_gates，装配批接入）; 调用方（provider 声明-实现一致性校验）
+    # [/ALGO_FLOW]
+    #
+    # 边:
+    # I1 --> A1
+    # I2 --> A1
+    # A1 --> A2
+    # A2 --> O1

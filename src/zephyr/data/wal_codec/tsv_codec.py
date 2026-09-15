@@ -20,57 +20,7 @@ Usage::
     tsv_bytes = encode_tsv(rows)
     rows = decode_tsv(tsv_bytes)
 
-# [ALGO_FLOW]
-# 层: 输入
-# - id: I1
-#   name: rows 参数
-#   fields: 参数 rows，类型注解 list[tuple]
-#   code: tsv_codec.py 顶层公共函数形参（AST 提取）
-# - id: I2
-#   name: data 参数
-#   fields: 参数 data，类型注解 bytes
-#   code: tsv_codec.py 顶层公共函数形参（AST 提取）
-# 层: 算法
-# - id: A1
-#   name_zh: ① encode_tsv
-#   name_en: encode_tsv
-#   intro: 将行列表编码为 TSV 字节。
-#   desc: 将行列表编码为 TSV 字节。 与 wal_writer._serialize_tsv 输出完全一致（无尾部 \n）。 Args: rows: 行列表，每行是一个 tuple R…；源码 L111-L125
-#   inputs: rows
-#   outputs: bytes
-# - id: A2
-#   name_zh: ② decode_tsv
-#   name_en: decode_tsv
-#   intro: 将 TSV 字节解码为行列表。
-#   desc: 将 TSV 字节解码为行列表。 None 值还原为 None，其他值保持字符串形式（类型转换由调用方负责）。 Args: data: TSV 格式字节数据 Returns: 行列…；源码 L128-L149
-#   inputs: data
-#   outputs: list[tuple]
-# - id: A3
-#   name_zh: ③ TsvCodec
-#   name_en: TsvCodec
-#   intro: TSV 编解码器——实现 Codec 协议。
-#   desc: TSV 编解码器——实现 Codec 协议。 协议方法： - encode(rows) -> bytes - decode(data) -> list[tuple] - magi…；公共方法（定义序）: encode,…
-#   inputs: 无参数
-#   outputs: 返回值
-# 层: 输出
-# - id: O1
-#   name_zh: bytes
-#   name_en: bytes
-#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
-#   downstream: 见模块头 [CONSUMERS]
-# - id: O2
-#   name_zh: list[tuple]
-#   name_en: list[tuple]
-#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
-#   downstream: 见模块头 [CONSUMERS]
-# [/ALGO_FLOW]
-#
-# 边:
-# I1 --> A1
-# I2 --> A1
-# A1 --> A2
-# A2 --> A3
-# A3 --> O1
+# [ALGO_FLOW] external: docs/03_modules/_domain_data/algo_flow/tsv_codec.yaml
 """
 
 from __future__ import annotations

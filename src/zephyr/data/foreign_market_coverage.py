@@ -38,60 +38,7 @@ HSI/N225/KOSPI/CL/GC（首采 9,967 行）；DXY/美债10Y 由 macro_data FRED �
 承载（FRED_DXY/FRED_DGS10_US 已刷新）；USDCNH 免费日频源全失效登记跳过。
 FOREIGN_WATCHLIST 探针已挂接实绩表——本核查器 missing 口径随接线实时反映。
 
-# [ALGO_FLOW]
-# 层: 输入
-# - id: I1
-#   name: query_fn 参数
-#   fields: 参数 query_fn，类型注解 Callable[[str], str] | None
-#   code: foreign_market_coverage.py 顶层公共函数形参（AST 提取）
-# - id: I2
-#   name: check_date 参数
-#   fields: 参数 check_date，类型注解 str | date | datetime | None
-#   code: foreign_market_coverage.py 顶层公共函数形参（AST 提取）
-# - id: I3
-#   name: stale_calendar_days 参数
-#   fields: 参数 stale_calendar_days，类型注解 int
-#   code: foreign_market_coverage.py 顶层公共函数形参（AST 提取）
-# - id: I4
-#   name: watchlist 参数
-#   fields: 参数 watchlist，类型注解 tuple[ForeignTarget, ...] | list[Foreig…
-#   code: foreign_market_coverage.py 顶层公共函数形参（AST 提取）
-# 层: 算法
-# - id: A1
-#   name_zh: ① check_foreign_coverage
-#   name_en: check_foreign_coverage
-#   intro: 外盘 12 标的覆盖核查（只读；query_fn 注入位，测试全 mock）。
-#   desc: 外盘 12 标的覆盖核查（只读；query_fn 注入位，测试全 mock）。 Args: query_fn: SQL→TSV 查询函数（None=ch_reader 只读默认）…；源码 L337-L424
-#   inputs: query_fn check_date stale_calendar_days watchlist
-#   outputs: ForeignCoverageReport
-# - id: A2
-#   name_zh: ② gap_collector_slots
-#   name_en: gap_collector_slots
-#   intro: 缺口标的采集配置位：missing 标的 → FOREIGN_COLLECTOR_SLOTS 草案子集。
-#   desc: 缺口标的采集配置位：missing 标的 → FOREIGN_COLLECTOR_SLOTS 草案子集。；源码 L427-L437
-#   inputs: report
-#   outputs: dict[str, dict[str, str]]
-#   （注：A2 之后另有 5 个公共定义未列入（含 5 个数据契约/异常/枚举声明类），见源码）
-# 层: 输出
-# - id: O1
-#   name_zh: ForeignCoverageReport
-#   name_en: ForeignCoverageReport
-#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
-#   downstream: （候选：外盘 12 迷你卡数据健康条、GAP-F-24 对A股影响判定引擎前置）
-# - id: O2
-#   name_zh: dict[str, dict[str, str]]
-#   name_en: dict[str, dict[str, str]]
-#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
-#   downstream: （候选：外盘 12 迷你卡数据健康条、GAP-F-24 对A股影响判定引擎前置）
-# [/ALGO_FLOW]
-#
-# 边:
-# I1 --> A1
-# I2 --> A1
-# I3 --> A1
-# I4 --> A1
-# A1 --> A2
-# A2 --> O1
+# [ALGO_FLOW] external: docs/03_modules/_domain_data/algo_flow/foreign_market_coverage.yaml
 """
 
 from __future__ import annotations

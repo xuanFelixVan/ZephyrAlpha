@@ -27,32 +27,7 @@ B13-04249（AUD-DRAFT-001-DIGEST P1 波 W-P1-09，D-DATA-25，§17.1）：
 统一重采样接口（任意标的、1min~1d 全域、质量评分面向），不复制其 SQL
 合成路径。B1-00634 dig 已裁定重复并入本模块。
 
-# [ALGO_FLOW]
-# 层: 输入
-# - id: I1
-#   name: config 参数
-#   fields: 参数 config（无注解）
-#   code: multi_timeframe_fusion.py 顶层公共函数形参（AST 提取）
-# 层: 算法
-# - id: A1
-#   name_zh: ① MultiTimeframeFusion
-#   name_en: MultiTimeframeFusion
-#   intro: 多周期数据融合器（纯 pandas 内存计算，零 IO）。
-#   desc: 多周期数据融合器（纯 pandas 内存计算，零 IO）。；公共方法（定义序）: resample；源码 L124-L274
-#   inputs: config
-#   outputs: 返回值
-#   （注：A1 之后另有 3 个公共定义未列入（含 3 个数据契约/异常/枚举声明类），见源码）
-# 层: 输出
-# - id: O1
-#   name_zh: 模块公共 API 面（4 定义）
-#   name_en: public defs
-#   intro: MultiTimeframeFusion
-#   downstream: 运行时装配批（miniqmt_service/mkt_data 多周期消费接线 / 交易日历真源装配）
-# [/ALGO_FLOW]
-#
-# 边:
-# I1 --> A1
-# A1 --> O1
+# [ALGO_FLOW] external: docs/03_modules/_domain_data/algo_flow/multi_timeframe_fusion.yaml
 """
 
 from __future__ import annotations

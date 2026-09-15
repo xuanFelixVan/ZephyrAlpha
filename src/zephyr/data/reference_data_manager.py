@@ -26,32 +26,7 @@ B13-04240（AUD-DRAFT-001-DIGEST P1 波 W-P1-09，D-DATA-08，§17.1）：
 最小核，本模块复用其最小字段集为锚、不复制，只补行业分类/指数成分/多源
 映射/变更事件四项缺口。B13-04355（D-TRADING-14）dig 已裁定重复并入本模块。
 
-# [ALGO_FLOW]
-# 层: 输入
-# - id: I1
-#   name: event_publisher 参数
-#   fields: 参数 event_publisher（无注解）
-#   code: reference_data_manager.py 顶层公共函数形参（AST 提取）
-# 层: 算法
-# - id: A1
-#   name_zh: ① ReferenceDataManager
-#   name_en: ReferenceDataManager
-#   intro: 参考数据管理器（判定核心纯内存，事件外发注入式）。
-#   desc: 参考数据管理器（判定核心纯内存，事件外发注入式）。；公共方法（定义序）: change_events, upsert_industry, industry_of, set_index_constituent, remo…
-#   inputs: event_publisher
-#   outputs: 返回值
-#   （注：A1 之后另有 4 个公共定义未列入（含 4 个数据契约/异常/枚举声明类），见源码）
-# 层: 输出
-# - id: O1
-#   name_zh: 模块公共 API 面（5 定义）
-#   name_en: public defs
-#   intro: ReferenceDataManager
-#   downstream: 运行时装配批（SQLite 建表读写 / event_publisher 接 event_bus / akshare 行业与指数成分采集接线）
-# [/ALGO_FLOW]
-#
-# 边:
-# I1 --> A1
-# A1 --> O1
+# [ALGO_FLOW] external: docs/03_modules/_domain_data/algo_flow/reference_data_manager.yaml
 """
 
 from __future__ import annotations

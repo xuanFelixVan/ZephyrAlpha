@@ -33,39 +33,7 @@
   不保证并发安全；并发读未加锁会导致 SQLITE_MISUSE "bad parameter"）
 - 每次操作创建新 cursor，用完即关（连接复用）
 
-# [ALGO_FLOW]
-# 层: 输入
-# - id: I1
-#   name: db_path 参数
-#   fields: 参数 db_path，类型注解 str | Path | None
-#   code: progress_store.py 顶层公共函数形参（AST 提取）
-# 层: 算法
-# - id: A1
-#   name_zh: ① ProgressStore
-#   name_en: ProgressStore
-#   intro: 统一进度存储（SQLite）。
-#   desc: 统一进度存储（SQLite）。 线程安全：check_same_thread=False + threading.Lock 保护所有读写操作。 幂等：save_progress…；公共方法（定义序）: conn, db…
-#   inputs: db_path
-#   outputs: 返回值
-# - id: A2
-#   name_zh: ② get_store
-#   name_en: get_store
-#   intro: 获取模块级单例 ProgressStore。
-#   desc: 获取模块级单例 ProgressStore。 首次调用创建实例，后续调用返回同一实例。 测试时传 db_path 用临时库；生产用默认路径。；源码 L418-L429
-#   inputs: db_path
-#   outputs: ProgressStore
-# 层: 输出
-# - id: O1
-#   name_zh: ProgressStore
-#   name_en: ProgressStore
-#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
-#   downstream: zephyr.data.scheduler
-# [/ALGO_FLOW]
-#
-# 边:
-# I1 --> A1
-# A1 --> A2
-# A2 --> O1
+# [ALGO_FLOW] external: docs/03_modules/_domain_data/algo_flow/progress_store.yaml
 """
 
 from __future__ import annotations

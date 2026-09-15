@@ -29,31 +29,7 @@ D_DATA — 轻量 Instrument Master（90 号 Phase2 项，#18 资产覆盖轻量
 注意：本模块为 90 号 Phase2 交付物，MATURITY=testing；盘前 xtdata 同步接线
 挂起待 Owner（宪章 B-007 纪律）。
 
-# [ALGO_FLOW]
-# 层: 输入
-# - id: I1
-#   name: raw 参数
-#   fields: 参数 raw，类型注解 dict
-#   code: instrument_master.py 顶层公共函数形参（AST 提取）
-# 层: 算法
-# - id: A1
-#   name_zh: ① normalize_instrument_row
-#   name_en: normalize_instrument_row
-#   intro: 规范化一行 IM 记录（盘前同步写入前校验+默认值派生）。
-#   desc: 规范化一行 IM 记录（盘前同步写入前校验+默认值派生）。 Args: raw: 原始标的信息 dict（数据源字段已映射为 IM 字段名） Returns: 规范化后的 dic…；源码 L123-L149
-#   inputs: raw
-#   outputs: dict
-# 层: 输出
-# - id: O1
-#   name_zh: dict
-#   name_en: dict
-#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
-#   downstream: 盘前 xtdata 同步脚本（接线待排期，本批仅交付模块本体）；universe_registry eligibility 联动（#15）
-# [/ALGO_FLOW]
-#
-# 边:
-# I1 --> A1
-# A1 --> O1
+# [ALGO_FLOW] external: docs/03_modules/_domain_data/algo_flow/instrument_master.yaml
 """
 
 from __future__ import annotations

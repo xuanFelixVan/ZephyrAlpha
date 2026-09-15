@@ -42,31 +42,7 @@ exchange 码体系（TRAE-082）：
                     2 位 92/93/94 → BJ（北交所 920xxx，避免 '9'→SH 误判）
   与 CH MATERIALIZED multiIf 表达式严格对齐（单一真源，DRY）
 
-# [ALGO_FLOW]
-# 层: 输入
-# - id: I1
-#   name: 包内子模块公共符号
-#   fields: import 再导出符号: _INDEX_PREFIX3_TO_EXCHANGE, _PREFIX2_TO_EXCHANGE, _PREFIX3_TO_EXCHANG…
-#   code: __init__.py import L72
-# 层: 算法
-# - id: A1
-#   name_zh: ① 包公共面再导出
-#   name_en: __init__ re-export
-#   intro: 再导出 EXCHANGE_SH, EXCHANGE_SZ, EXCHANGE_BJ, EXCHANGE_HK, EXCHANGE_US, _PREFIX_TO…
-#   desc: __init__ import L72；__all__ 16 项（AST 事实）
-#   inputs: I1
-#   outputs: __all__ 公共符号表
-# 层: 输出
-# - id: O1
-#   name_zh: 公共 API 面（16 符号）
-#   name_en: __all__
-#   intro: EXCHANGE_SH, EXCHANGE_SZ, EXCHANGE_BJ, EXCHANGE_HK, EXCHANGE_US, _PREFIX_TO_EXC…
-#   downstream: zephyr.market_data.normalized_market_data_producer.producer; zephyr.data.c1_mar…
-# [/ALGO_FLOW]
-#
-# 边:
-# I1 --> A1
-# A1 --> O1
+# [ALGO_FLOW] external: docs/03_modules/_domain_data/algo_flow/symbol_normalizer__init__.yaml
 """
 
 from zephyr.data.symbol_normalizer.normalizer import (

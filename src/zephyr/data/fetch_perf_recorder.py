@@ -37,36 +37,7 @@ fetch_perf 被动记录通道（64号 Q16，P2，2026-08-20 AI-NIGHT-001 施工�
 本模块落 `.runtime/fetch_perf/fetch_perf_YYYYMMDD.jsonl`（JSONL，禁新 DDL 故不入 CH），
 为 Q11 调度优先级动态化 / Q17 自动熔断参数校准供数据基础。
 
-# [ALGO_FLOW]
-# 层: 输入
-# - id: I1
-#   name: record 参数
-#   fields: 参数 record，类型注解 Mapping
-#   code: fetch_perf_recorder.py 顶层公共函数形参（AST 提取）
-# - id: I2
-#   name: base_dir 参数
-#   fields: 参数 base_dir（无注解）
-#   code: fetch_perf_recorder.py 顶层公共函数形参（AST 提取）
-# 层: 算法
-# - id: A1
-#   name_zh: ① record_fetch_perf
-#   name_en: record_fetch_perf
-#   intro: 追加一条 fetch_perf 记录到当日 JSONL 文件。
-#   desc: 追加一条 fetch_perf 记录到当日 JSONL 文件。 Args: record: 记录字段（task_id/source/capability/table/status…；源码 L89-L113
-#   inputs: record base_dir
-#   outputs: Path | None
-# 层: 输出
-# - id: O1
-#   name_zh: Path | None
-#   name_en: Path | None
-#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
-#   downstream: zephyr.data.scheduler
-# [/ALGO_FLOW]
-#
-# 边:
-# I1 --> A1
-# I2 --> A1
-# A1 --> O1
+# [ALGO_FLOW] external: docs/03_modules/_domain_data/algo_flow/fetch_perf_recorder.yaml
 """
 
 from __future__ import annotations

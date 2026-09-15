@@ -28,31 +28,7 @@
 统一行格式：(metric, trade_date, value, value_classification, source, extra)。
 骨架能力（ETF/USDT 溢价）返回 error 标注"骨架"，失败降级可见、不进决策硬链。
 
-# [ALGO_FLOW]
-# 层: 输入
-# - id: I1
-#   name: 模块内部数据
-#   fields: 无公共形参/无再导出（AST 事实）
-#   code: sentiment_panel_provider.py
-# 层: 算法
-# - id: A1
-#   name_zh: ① SentimentPanelProvider
-#   name_en: SentimentPanelProvider
-#   intro: 币圈宏观情绪面板 Provider。
-#   desc: 币圈宏观情绪面板 Provider。 免费公开端点（alternative.me 无需 key；CMC 需免费 key），shared 线程安全模型。 已知问题：免费源稳定性（限…；公共方法（定义序）: connect…
-#   inputs: 无参数
-#   outputs: 返回值
-# 层: 输出
-# - id: O1
-#   name_zh: 模块公共 API 面（1 定义）
-#   name_en: public defs
-#   intro: SentimentPanelProvider
-#   downstream: zephyr.data.scheduler
-# [/ALGO_FLOW]
-#
-# 边:
-# I1 --> A1
-# A1 --> O1
+# [ALGO_FLOW] external: docs/03_modules/_domain_data/algo_flow/sentiment_panel_provider.yaml
 """
 
 from __future__ import annotations

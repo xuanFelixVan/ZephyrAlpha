@@ -31,32 +31,7 @@
 复用纪律：不直读 CH/不直采网络——K线行/资金流/成分映射全部注入，
 采集面复用 sector_kline_downloader / sector_fund_flow_collector 现有产出。
 
-# [ALGO_FLOW]
-# 层: 输入
-# - id: I1
-#   name: 模块内部数据
-#   fields: 无公共形参/无再导出（AST 事实）
-#   code: sector_factor_manager.py
-# 层: 算法
-# - id: A1
-#   name_zh: ① SectorFactorManager
-#   name_en: SectorFactorManager
-#   intro: 板块因子数据管理器——完整性校验/成分挂接/轮动因子/质量评分。
-#   desc: 板块因子数据管理器——完整性校验/成分挂接/轮动因子/质量评分。；公共方法（定义序）: check_coverage, attach_constituent_map, compute_rotation_factors…
-#   inputs: 无参数
-#   outputs: 返回值
-#   （注：A1 之后另有 6 个公共定义未列入（含 6 个数据契约/异常/枚举声明类），见源码）
-# 层: 输出
-# - id: O1
-#   name_zh: 模块公共 API 面（7 定义）
-#   name_en: public defs
-#   intro: SectorFactorManager
-#   downstream: （P1 接线：因子库写入方 + sector_report_builder）
-# [/ALGO_FLOW]
-#
-# 边:
-# I1 --> A1
-# A1 --> O1
+# [ALGO_FLOW] external: docs/03_modules/_domain_data/algo_flow/sector_factor_manager.yaml
 """
 
 from __future__ import annotations

@@ -1,0 +1,33 @@
+# ALGO_FLOW 外部真源——rss_provider（_domain_data 域，真源 src/zephyr/data/implementations/rss_provider.py）
+# 2026-09-15 P2-1 契约头减负批量出仓：docstring 内联块逐字节副本，extractor 经
+# external 锚加载走同一 parse_algo_flow 管线；算法公共面变化时同步更新本块。
+doc_type: architecture_view
+ttl: permanent
+module: src.zephyr.data.implementations.rss_provider
+source_of_truth: src/zephyr/data/implementations/rss_provider.py
+algo_flow: |
+    # [ALGO_FLOW]
+    # 层: 输入
+    # - id: I1
+    #   name: 模块内部数据
+    #   fields: 无公共形参/无再导出（AST 事实）
+    #   code: rss_provider.py
+    # 层: 算法
+    # - id: A1
+    #   name_zh: ① RSSProvider
+    #   name_en: RSSProvider
+    #   intro: RSS 财经新闻数据源 Provider。
+    #   desc: RSS 财经新闻数据源 Provider。 匿名访问、shared 线程安全模型。 已知问题：偶发 SSL 错误；须尊重 robots.txt。；公共方法（定义序）: is_allowed, connect, heal…
+    #   inputs: 无参数
+    #   outputs: 返回值
+    # 层: 输出
+    # - id: O1
+    #   name_zh: 模块公共 API 面（1 定义）
+    #   name_en: public defs
+    #   intro: RSSProvider
+    #   downstream: zephyr.data.scheduler
+    # [/ALGO_FLOW]
+    #
+    # 边:
+    # I1 --> A1
+    # A1 --> O1

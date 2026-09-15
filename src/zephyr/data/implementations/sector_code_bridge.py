@@ -54,31 +54,7 @@ extra.include_industry_boards=true，schedule=intraday_sector），写
 c1_market.kline_sector_intraday；逆势榜卡1/3/4 行业腿全覆盖（CH 实证 132/132 码，
 1m 全日 240 根/码零缺失）。
 
-# [ALGO_FLOW]
-# 层: 输入
-# - id: I1
-#   name: SectorFundFlowEntry 行集（sector_fund_flow_collector 产出，THS 行业名+净额）
-# - id: I2
-#   name: 映射表（SSoT=SECTOR_881_TO_880 90 行 / CSV 读回）
-# 层: 算法
-# - id: A1
-#   name_zh: 重钥（纯函数）
-#   desc: industry 行按 name→881→880 重钥，同目标 SUM；concept/空净额/未知名跳过留痕
-# - id: A2
-#   name_zh: CSV 中间层
-#   desc: dump_mapping_csv 落盘 / load_mapping 读回（880 目标引用完整性 fail-closed）
-# 层: 输出
-# - id: O1
-#   name_zh: RekeyResult{fund_flow: dict[880code, float], 留痕四件} / 132 条 880 中文名表
-#   intro: fund_flow 直插 build_counter_trend_board fund_flow 注入位
-# [/ALGO_FLOW]
-#
-# 边:
-# I1 --> A1
-# I2 --> A1
-# I2 --> A2
-# A1 --> O1
-# A2 --> O1
+# [ALGO_FLOW] external: docs/03_modules/_domain_data/algo_flow/sector_code_bridge.yaml
 """
 
 from __future__ import annotations

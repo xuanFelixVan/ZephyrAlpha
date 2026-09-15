@@ -1,0 +1,33 @@
+# ALGO_FLOW 外部真源——news_taxonomy（_domain_data 域，真源 src/zephyr/data/news_taxonomy.py）
+# 2026-09-15 P2-1 契约头减负批量出仓：docstring 内联块逐字节副本，extractor 经
+# external 锚加载走同一 parse_algo_flow 管线；算法公共面变化时同步更新本块。
+doc_type: architecture_view
+ttl: permanent
+module: src.zephyr.data.news_taxonomy
+source_of_truth: src/zephyr/data/news_taxonomy.py
+algo_flow: |
+    # [ALGO_FLOW]
+    # 层: 输入
+    # - id: I1
+    #   name: source 参数
+    #   fields: 参数 source，类型注解 str
+    #   code: news_taxonomy.py 顶层公共函数形参（AST 提取）
+    # 层: 算法
+    # - id: A1
+    #   name_zh: ① category_of
+    #   name_en: category_of
+    #   intro: 源标识 → category（未识别兜底 news；空串按 news 处理）。
+    #   desc: 源标识 → category（未识别兜底 news；空串按 news 处理）。；源码 L79-L88
+    #   inputs: source
+    #   outputs: str
+    # 层: 输出
+    # - id: O1
+    #   name_zh: str
+    #   name_en: str
+    #   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+    #   downstream: scripts.ch.tag_news_category; scripts.ml.run_sentiment_batch; zephyr.nlp.sentim…
+    # [/ALGO_FLOW]
+    #
+    # 边:
+    # I1 --> A1
+    # A1 --> O1

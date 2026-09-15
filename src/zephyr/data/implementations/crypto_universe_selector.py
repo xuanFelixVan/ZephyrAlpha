@@ -31,47 +31,7 @@
 （USDT/USDC/WBTC/stETH 等）默认排除——与 A股框架 filter_rules（剔 ST/退市）
 同构，宇宙是"可交易标的集"非"市值榜单"。
 
-# [ALGO_FLOW]
-# 层: 输入
-# - id: I1
-#   name: top_n 参数
-#   fields: 参数 top_n（无注解）
-#   code: crypto_universe_selector.py 顶层公共函数形参（AST 提取）
-# - id: I2
-#   name: api_key 参数
-#   fields: 参数 api_key（无注解）
-#   code: crypto_universe_selector.py 顶层公共函数形参（AST 提取）
-# - id: I3
-#   name: static_universe 参数
-#   fields: 参数 static_universe（无注解）
-#   code: crypto_universe_selector.py 顶层公共函数形参（AST 提取）
-# - id: I4
-#   name: exclude_symbols 参数
-#   fields: 参数 exclude_symbols（无注解）
-#   code: crypto_universe_selector.py 顶层公共函数形参（AST 提取）
-# 层: 算法
-# - id: A1
-#   name_zh: ① CryptoUniverseSelector
-#   name_en: CryptoUniverseSelector
-#   intro: 条件选币器（市值前 N 宇宙）。
-#   desc: 条件选币器（市值前 N 宇宙）。 主路径 CoinMarketCap 免费 API；无 key 或 CMC 异常时静态配置兜底。 http_get 可注入（测试 mock，不依赖…；公共方法（定义序）: select；…
-#   inputs: top_n api_key static_universe exclude_symbols http_get
-#   outputs: 返回值
-#   （注：A1 之后另有 2 个公共定义未列入（含 2 个数据契约/异常/枚举声明类），见源码）
-# 层: 输出
-# - id: O1
-#   name_zh: 模块公共 API 面（3 定义）
-#   name_en: public defs
-#   intro: CryptoUniverseSelector
-#   downstream: universe_registry UNI-CRYPTO-001 Phase 2 扩池（候选：币版回测/信号装配层）
-# [/ALGO_FLOW]
-#
-# 边:
-# I1 --> A1
-# I2 --> A1
-# I3 --> A1
-# I4 --> A1
-# A1 --> O1
+# [ALGO_FLOW] external: docs/03_modules/_domain_data/algo_flow/crypto_universe_selector.yaml
 """
 
 from __future__ import annotations

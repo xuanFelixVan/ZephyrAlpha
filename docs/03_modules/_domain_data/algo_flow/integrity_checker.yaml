@@ -1,0 +1,33 @@
+# ALGO_FLOW 外部真源——integrity_checker（_domain_data 域，真源 src/zephyr/data/integrity_checker.py）
+# 2026-09-15 P2-1 契约头减负批量出仓：docstring 内联块逐字节副本，extractor 经
+# external 锚加载走同一 parse_algo_flow 管线；算法公共面变化时同步更新本块。
+doc_type: architecture_view
+ttl: permanent
+module: src.zephyr.data.integrity_checker
+source_of_truth: src/zephyr/data/integrity_checker.py
+algo_flow: |
+    # [ALGO_FLOW]
+    # 层: 输入
+    # - id: I1
+    #   name: scheduler 参数
+    #   fields: 参数 scheduler（无注解）
+    #   code: integrity_checker.py 顶层公共函数形参（AST 提取）
+    # 层: 算法
+    # - id: A1
+    #   name_zh: ① run_daily_check
+    #   name_en: run_daily_check
+    #   intro: 每天盘后数据完整性巡检主入口。
+    #   desc: 每天盘后数据完整性巡检主入口。 动态发现 tasks.yaml 中所有表，逐表检查当天数据行数是否达标。 不达标的表通过 alerter 告警，结果记录到 progress_st…；源码 L217-L328
+    #   inputs: scheduler
+    #   outputs: dict
+    # 层: 输出
+    # - id: O1
+    #   name_zh: dict
+    #   name_en: dict
+    #   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+    #   downstream: zephyr.data.scheduler.run_schedule("integrity_check")
+    # [/ALGO_FLOW]
+    #
+    # 边:
+    # I1 --> A1
+    # A1 --> O1

@@ -1,0 +1,94 @@
+# ALGO_FLOW 外部真源——storage_tiering（_domain_data 域，真源 src/zephyr/data/storage_tiering.py）
+# 2026-09-15 P2-1 契约头减负批量出仓：docstring 内联块逐字节副本，extractor 经
+# external 锚加载走同一 parse_algo_flow 管线；算法公共面变化时同步更新本块。
+doc_type: architecture_view
+ttl: permanent
+module: src.zephyr.data.storage_tiering
+source_of_truth: src/zephyr/data/storage_tiering.py
+algo_flow: |
+    # [ALGO_FLOW]
+    # 层: 输入
+    # - id: I1
+    #   name: freq 参数
+    #   fields: 参数 freq，类型注解 str
+    #   code: storage_tiering.py 顶层公共函数形参（AST 提取）
+    # - id: I2
+    #   name: day 参数
+    #   fields: 参数 day，类型注解 date
+    #   code: storage_tiering.py 顶层公共函数形参（AST 提取）
+    # - id: I3
+    #   name: primary_root 参数
+    #   fields: 参数 primary_root，类型注解 Path
+    #   code: storage_tiering.py 顶层公共函数形参（AST 提取）
+    # - id: I4
+    #   name: replica_root 参数
+    #   fields: 参数 replica_root，类型注解 Path
+    #   code: storage_tiering.py 顶层公共函数形参（AST 提取）
+    # 层: 算法
+    # - id: A1
+    #   name_zh: ① partition_key
+    #   name_en: partition_key
+    #   intro: 返回 Hive 风格分区键：日线 year=YYYY，分钟 year=YYYY/month=MM。
+    #   desc: 返回 Hive 风格分区键：日线 year=YYYY，分钟 year=YYYY/month=MM。 Raises: ValueError: 未知频率（仅支持 daily/minu…；源码 L155-L165
+    #   inputs: freq day
+    #   outputs: str
+    # - id: A2
+    #   name_zh: ② StorageTiering
+    #   name_en: StorageTiering
+    #   intro: 冷热分层 TTL 自动迁移管理器（决策逻辑闭环，IO 后端注入）。
+    #   desc: 冷热分层 TTL 自动迁移管理器（决策逻辑闭环，IO 后端注入）。 Usage: st = StorageTiering(TierPolicy(hot_ttl_seconds=3…；公共方法（定义序）: classif…
+    #   inputs: policy
+    #   outputs: 返回值
+    # - id: A3
+    #   name_zh: ③ UFLFactLayer
+    #   name_en: UFLFactLayer
+    #   intro: 追加式事实层：只增不改，重复同值幂等，异值/改/删一律拒绝。
+    #   desc: 追加式事实层：只增不改，重复同值幂等，异值/改/删一律拒绝。；公共方法（定义序）: count, append, get, update, delete；源码 L334-L363
+    #   inputs: 无参数
+    #   outputs: 返回值
+    # - id: A4
+    #   name_zh: ④ ReplicaConsistencyReport
+    #   name_en: ReplicaConsistencyReport
+    #   intro: 双副本一致性报告。
+    #   desc: 双副本一致性报告。；公共方法（定义序）: consistent；源码 L372-L381
+    #   inputs: 无参数
+    #   outputs: 返回值
+    # - id: A5
+    #   name_zh: ⑤ check_replica_consistency
+    #   name_en: check_replica_consistency
+    #   intro: 比对主副本（D盘）与副副本（E盘）：文件集合 + sha256 逐一核对。
+    #   desc: 比对主副本（D盘）与副副本（E盘）：文件集合 + sha256 逐一核对。；源码 L396-L407
+    #   inputs: primary_root replica_root
+    #   outputs: ReplicaConsistencyReport
+    # - id: A6
+    #   name_zh: ⑥ main
+    #   name_en: main
+    #   intro: 入口——待实现。
+    #   desc: 入口——待实现。；源码 L445-L446
+    #   inputs: 无参数
+    #   outputs: 返回值
+    #   （注：A6 之后另有 7 个公共定义未列入（含 7 个数据契约/异常/枚举声明类），见源码）
+    # 层: 输出
+    # - id: O1
+    #   name_zh: str
+    #   name_en: str
+    #   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+    #   downstream: zephyr.data.scheduler
+    # - id: O2
+    #   name_zh: ReplicaConsistencyReport
+    #   name_en: ReplicaConsistencyReport
+    #   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+    #   downstream: zephyr.data.scheduler
+    # [/ALGO_FLOW]
+    #
+    # 边:
+    # I1 --> A1
+    # I2 --> A1
+    # I3 --> A1
+    # I4 --> A1
+    # A1 --> A2
+    # A2 --> A3
+    # A3 --> A4
+    # A4 --> A5
+    # A5 --> A6
+    # A6 --> O1

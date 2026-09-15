@@ -31,44 +31,7 @@
     report = validator.validate(time_window_minutes=5)
     print(report)
 
-# [ALGO_FLOW]
-# 层: 输入
-# - id: I1
-#   name: price_threshold 参数
-#   fields: 参数 price_threshold（无注解）
-#   code: cross_source_validator.py 顶层公共函数形参（AST 提取）
-# - id: I2
-#   name: volume_threshold 参数
-#   fields: 参数 volume_threshold（无注解）
-#   code: cross_source_validator.py 顶层公共函数形参（AST 提取）
-# 层: 算法
-# - id: A1
-#   name_zh: ① ValidationReport
-#   name_en: ValidationReport
-#   intro: 交叉校验报告。
-#   desc: 交叉校验报告。；公共方法（定义序）: is_healthy, summary；源码 L116-L139
-#   inputs: 无参数
-#   outputs: 返回值
-# - id: A2
-#   name_zh: ② CrossSourceValidator
-#   name_en: CrossSourceValidator
-#   intro: 多源交叉校验器——QMT 主源 vs TDX 备源 tick 数据比对。
-#   desc: 多源交叉校验器——QMT 主源 vs TDX 备源 tick 数据比对。 校验逻辑： 1. 查询最近 N 分钟 tick_data 表，按 symbol+data_source…；公共方法（定义序）: validate…
-#   inputs: price_threshold volume_threshold
-#   outputs: 返回值
-# 层: 输出
-# - id: O1
-#   name_zh: 模块公共 API 面（2 定义）
-#   name_en: public defs
-#   intro: ValidationReport, CrossSourceValidator
-#   downstream: zephyr.data.scheduler.run_schedule("cross_validation")
-# [/ALGO_FLOW]
-#
-# 边:
-# I1 --> A1
-# I2 --> A1
-# A1 --> A2
-# A2 --> O1
+# [ALGO_FLOW] external: docs/03_modules/_domain_data/algo_flow/cross_source_validator.yaml
 """
 
 from __future__ import annotations
