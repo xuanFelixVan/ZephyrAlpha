@@ -3,7 +3,7 @@ doc_type: register
 ttl: permanent
 title: GATE 门禁登记表
 status: active
-generated_at: '2026-09-15T19:29:32Z'
+generated_at: '2026-09-15T22:49:00Z'
 generated_by: scripts/governance/generators/generate_gate_registry.py
 maintenance: auto
 source: .pre-commit-config.yaml + commit_gates/*.py + MANUAL_GATES
@@ -1136,6 +1136,16 @@ gates:
   status: active
   source: commit-gate
   own_scope: true
+- gate_id: ALGO-FLOW-LINK
+  name: 'ALGO-FLOW-LINK: ALGO_FLOW external 锚链接校验（CommitGate, priority=108）'
+  entry: in-process (GitCommitGateway)
+  description: ALGO_FLOW external 锚指向 yaml 实存且可解析、yaml source_of_truth 实存（own-diff）
+  files_trigger: ''
+  always_run: false
+  category: commit_gate
+  status: active
+  source: commit-gate
+  own_scope: true
 - gate_id: INDUSTRY-CHAIN-MAP
   name: 'INDUSTRY-CHAIN-MAP: 产业链全景图 git 侧工件门禁（INDUSTRY-CHAIN-MAP，priority=141）（CommitGate,
     priority=141）'
@@ -1176,7 +1186,7 @@ gates:
   category: commit_gate
   status: active
   source: commit-gate
-  own_scope: false
+  own_scope: true
 - gate_id: MCP-VERSION-FIELD
   name: 'MCP-VERSION-FIELD: MCP-VERSION-FIELD（CommitGate, priority=126）'
   entry: in-process (GitCommitGateway)
@@ -1297,7 +1307,7 @@ gates:
   category: commit_gate
   status: active
   source: commit-gate
-  own_scope: false
+  own_scope: true
 - gate_id: GATE-PRECOMMIT-OFFLINE
   name: 'GATE-PRECOMMIT-OFFLINE: GATE-PRECOMMIT-OFFLINE（CommitGate, priority=111）'
   entry: in-process (GitCommitGateway)
@@ -1598,7 +1608,7 @@ gates:
   category: commit_gate
   status: active
   source: commit-gate
-  own_scope: false
+  own_scope: true
 - gate_id: META-TESTS-COVERAGE
   name: 'META-TESTS-COVERAGE: META-TESTS-COVERAGE（CommitGate, priority=99）'
   entry: in-process (GitCommitGateway)
