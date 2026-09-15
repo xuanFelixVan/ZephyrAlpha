@@ -267,12 +267,18 @@ class OverlaySignalsConstructor:
                 proxy_open = proxy["open"].astype(float)
             except Exception as exc:  # noqa: BLE001
                 _logger.warning("代理 open 缺失，capitulation/three_yang 降级: %s", exc)
-            # P1-E9d：广度指数涨跌家数（breadth_thrust 源，默认 399106 深证综指）
+            # P1-E9d：广度指数涨跌家数（breadth_thrust 源，默认 399106 深证综指）。
+            # 复用 feature_builder._load_breadth：399106 断更日由 EQW_ALLA 补位
+            # （补洞真源唯一；旧 mock 无该方法时回退直读路径，兼容不破坏）
             try:
-                breadth_sym = getattr(self._feature_builder, "breadth_index", "399106")
-                br = index_df.xs(breadth_sym, level="symbol")
-                proxy_adv = br["advance_count"].astype(float)
-                proxy_dec = br["decline_count"].astype(float)
+                loader = getattr(self._feature_builder, "_load_breadth", None)
+                if loader is not None:
+                    proxy_adv, proxy_dec = loader(index_df)
+                else:
+                    breadth_sym = getattr(self._feature_builder, "breadth_index", "399106")
+                    br = index_df.xs(breadth_sym, level="symbol")
+                    proxy_adv = br["advance_count"].astype(float)
+                    proxy_dec = br["decline_count"].astype(float)
             except Exception as exc:  # noqa: BLE001
                 _logger.warning("广度指数涨跌家数缺失，S2 breadth_thrust 降级 0.0: %s", exc)
 

@@ -574,9 +574,13 @@ class RegimeFeatureBuilder:
         return df.set_index(["symbol", "trade_date"]).sort_index()
 
     def _load_breadth(self, index_df: pd.DataFrame) -> tuple[pd.Series, pd.Series]:
-        """从 index_df 提取广度指数的涨跌家数（F4 源）。
+        """从 index_df 提取广度指数的涨跌家数（F4 源），399106 无数据日由 EQW_ALLA 补位。
 
-        399106 深证综指 advance_count/decline_count（2015-2026-07 有数据，近期断更处填 0）。
+        399106 深证综指 advance_count/decline_count 自 2026-07-03 结构性断更
+        （现役 akshare/miniqmt provider 均不进料，known_data_gaps.yaml 登记）。
+        无数据日回退 kline_index_calc 的 EQW_ALLA（index_eqw_compute 从
+        kline_daily 派生的全 A 家数，scheduler 日更）。ad_ratio=tanh(log(比值))
+        比值自归一，深市 vs 全 A 的规模差在比值中消去，两源按日混用无量纲跳变。
         """
         try:
             br = index_df.xs(self.breadth_index, level="symbol")
@@ -586,7 +590,48 @@ class RegimeFeatureBuilder:
         proxy_dates = index_df.xs(self.market_proxy, level="symbol").index
         adv = br["advance_count"].reindex(proxy_dates).fillna(0.0)
         dec = br["decline_count"].reindex(proxy_dates).fillna(0.0)
+        dead = (adv <= 0.0) & (dec <= 0.0)
+        if bool(dead.any()):
+            fb_adv, fb_dec = self._load_breadth_fallback(proxy_dates)
+            if fb_adv is not None and fb_dec is not None:
+                use_fb = dead & fb_adv.notna() & fb_dec.notna()
+                filled = int(use_fb.sum())
+                if filled:
+                    adv = adv.where(~use_fb, fb_adv)
+                    dec = dec.where(~use_fb, fb_dec)
+                    _logger.info("广度补洞: 399106 无数据 %d 日由 EQW_ALLA 补位", filled)
         return adv, dec
+
+    def _load_breadth_fallback(self, proxy_dates: pd.DatetimeIndex) -> tuple[pd.Series | None, pd.Series | None]:
+        """广度补洞源：kline_index_calc 的 EQW_ALLA 全 A 涨跌家数（失败降级 None=维持 0 填充旧行为）。"""
+        try:
+            table = self._registry.table("market_kline_index_calc")
+        except Exception as exc:  # noqa: BLE001 — 表未注册时降级，保持旧行为
+            _logger.warning("kline_index_calc 表未注册，广度补洞降级: %s", exc)
+            return None, None
+        sql = (
+            f"SELECT trade_date, advance_count, decline_count "
+            f"FROM {table} FINAL "
+            f"WHERE symbol = 'EQW_ALLA' "
+            f"AND trade_date >= toDate('{self.data_load_start}') "
+            f"AND trade_date <= toDate('{self.backtest_end}') "
+            f"ORDER BY trade_date"
+        )
+        try:
+            tsv = self._safe_query(sql, context="breadth_fallback (EQW_ALLA)")
+        except RegimeFeatureError as exc:
+            _logger.warning("广度补洞查询失败，维持 0 填充旧行为: %s", exc)
+            return None, None
+        rows = parse_tsv(tsv, ncols=3)
+        if not rows:
+            _logger.warning("EQW_ALLA 补洞数据为空，维持 0 填充旧行为")
+            return None, None
+        df = pd.DataFrame(rows, columns=["trade_date", "advance_count", "decline_count"])
+        df["trade_date"] = pd.to_datetime(df["trade_date"])
+        df["advance_count"] = pd.to_numeric(df["advance_count"], errors="coerce")
+        df["decline_count"] = pd.to_numeric(df["decline_count"], errors="coerce")
+        df = df.drop_duplicates(subset=["trade_date"], keep="last").set_index("trade_date").sort_index()
+        return df["advance_count"].reindex(proxy_dates), df["decline_count"].reindex(proxy_dates)
 
     def _unstack_close(self, index_df: pd.DataFrame, symbols: list[str]) -> pd.DataFrame:
         """把多指数 close 展开成 date × symbol DataFrame（F3 用）。"""
