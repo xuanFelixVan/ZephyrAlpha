@@ -81,6 +81,9 @@ def test_scratch_ini_mirrors_hygiene():
 
 def test_stray_copy_never_collected(tmp_path):
     """实证探针：.runtime/tmp 放杂散 test 文件，args 模式收集零污染。"""
+    scratch_ini = _REPO / ".runtime" / "tmp" / "pytest_min.ini"
+    if not scratch_ini.exists():
+        pytest.skip("scratch ini 未创建（本地工具件）——与 test_scratch_ini_mirrors_hygiene 同守卫")
     stray = _REPO / ".runtime" / "tmp" / "test_zz_collection_hygiene_probe.py"
     stray.parent.mkdir(parents=True, exist_ok=True)
     stray.write_text("def test_probe_should_never_be_collected():\n    assert True\n", encoding="utf-8")
