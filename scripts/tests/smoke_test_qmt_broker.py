@@ -188,9 +188,11 @@ def main() -> int:
         if prev_close is None:
             print("[FAIL] 无法获取 prev_close，跳过下单（市场可能未开盘/数据未下载）")
             return 1
-        # 跌停价 = prev_close * 0.9；取跌停价上方 1% 确保 valid 且不成交
-        limit_price = (prev_close * Decimal("0.91")).quantize(Decimal("0.01"))
-        print(f"[INFO] prev_close={prev_close}  limit_price={limit_price}（跌停板内，不成交）")
+        # 限价=跌停价（prev_close*0.90）：盘中主板价格笼子只豁免涨跌停价申报——
+        # 跌停价上方中间价（×1.01）盘中被拒 order_id=-1（2026-09-15 盘中实弹实证）；
+        # 跌停价买入必不成交且随时可撤，闭市时段同样合法
+        limit_price = (prev_close * Decimal("0.90")).quantize(Decimal("0.01"))
+        print(f"[INFO] prev_close={prev_close}  limit_price={limit_price}（跌停价申报，笼子豁免，不成交）")
         order = Order(
             idempotency_key=f"smoke-{int(__import__('time').time())}",
             order_id=f"smoke-{int(__import__('time').time())}",

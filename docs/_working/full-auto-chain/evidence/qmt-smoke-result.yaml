@@ -1,0 +1,20 @@
+ttl: task_bound
+smoke_passed: true
+finished_at: '2026-09-15T10:52:00+08:00'
+account: '8886156677 (sim)'
+symbol: 600000.SH
+quantity: 100
+limit_price: '8.46 (limit-down, cage-exempt)'
+order_id: '1082140563'
+sequence:
+  - connect OK
+  - positions OK cash=9991701.46
+  - submit OK
+  - query SUBMITTED
+  - cancel OK
+  - verify CANCELLED
+  - 冒烟测试全部通过
+bugs_found_and_fixed:
+  - 'miniqmt_broker._XT_PRICE_TYPE LIMIT 0→11（xtconstant.FIX_PRICE=11 真值；price_type=0 柜台同步拒单 order_id=-1，裸 xtquant 同参数对照实证）——#ARCH-XTQUANT-API-COMPAT-001 治本闭环'
+  - 'smoke 限价 跌停价×1.01→跌停价（盘中主板价格笼子只豁免涨跌停价申报）'
+dual_terminal_guard: 环境辨识过（实盘+模拟双终端在线，路径含模拟定向连接）

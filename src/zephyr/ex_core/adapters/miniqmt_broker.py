@@ -173,9 +173,12 @@ _XT_ORDER_SIDE = {
 }
 
 # xttrader 价格类型映射（price_type 区分限价/市价）
-# 0=限价指定价, 5=市价最新价（见 xtquant 帮助手册；#ARCH-XTQUANT-API-COMPAT-001）
+# 真值实证 2026-09-15 盘中模拟盘（#ARCH-XTQUANT-API-COMPAT-001 治本闭环）：
+# xtconstant.FIX_PRICE=11（限价）、LATEST_PRICE=5（市价最新价）——
+# 旧映射 LIMIT→0 系帮助手册误读，price_type=0 被柜台同步拒单 order_id=-1
+# （跌停价 8.46 合法价仍被拒；裸 xtquant FIX_PRICE=11 同参数实单成功对照）
 _XT_PRICE_TYPE = {
-    OrderType.LIMIT: 0,
+    OrderType.LIMIT: 11,
     OrderType.MARKET: 5,
 }
 
