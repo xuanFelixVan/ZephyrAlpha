@@ -719,3 +719,43 @@ def test_nothing_to_commit_with_unapplied_blobs_goes_dead(
     assert "快照未真应用" in dead.get("dead_reason", ""), dead.get("dead_reason", "")
     # dev 未被推进（无假 landed_id）
     assert _git_text(tmp_repo, "rev-parse", "refs/heads/dev") != (item.get("landed_id") or "unset")
+
+
+def test_nothing_to_commit_matching_blobs_records_noop_landed_id(
+    tmp_repo: Path, queue_root: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    """no-op 落地哨兵（2026-09-16 q-20260916-0004 错位事故）：快照与 HEAD 逐字节一致的
+    幂等空转项 done 时 landed_id 必须记 "noop@<old_dev>"，禁止裸记 old_dev——裸记会让
+    排查者误以为内容已随他会话提交落库（landed_id 错位归因）。"""
+    landing, _real = _make_landing(tmp_repo, queue_root)
+    nothing = _NothingToCommitStub(landing.worktree_path)
+    monkeypatch.setattr(landing, "_gateway", nothing)
+
+    item = cq.enqueue_item(
+        "sess-noop-done",
+        "feat: 幂等空转回归测试",
+        # 与 dev HEAD 逐字节一致 → 真幂等（读盘字节：fixture 文件在 Windows 盘上为 CRLF）
+        [("base.txt", (tmp_repo / "base.txt").read_bytes())],
+        queue_root=queue_root,
+    )
+    stats = cq.drain_queue(queue_root, landing=landing)
+
+    assert stats["done"] == 1 and stats["dead"] == 0, f"真幂等应 done: {stats}"
+    done = json.loads((queue_root / "done" / f"{item['qid']}.json").read_text(encoding="utf-8"))
+    dev_sha = _git_text(tmp_repo, "rev-parse", "refs/heads/dev")
+    assert done.get("landed_id", "").startswith(cql._NOOP_LANDED_PREFIX), done.get("landed_id")
+    assert done.get("landed_id") == f"{cql._NOOP_LANDED_PREFIX}{dev_sha}"
+
+
+def test_already_landed_strips_noop_prefix_for_ancestor_check(
+    tmp_repo: Path, queue_root: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    """noop 哨兵重放防循环：_already_landed 必须剥 "noop@" 前缀再做 is-ancestor，
+    否则重放项永远判未落盘 → 无限重入队。"""
+    landing, _real = _make_landing(tmp_repo, queue_root)
+    dev_sha = _git_text(tmp_repo, "rev-parse", "refs/heads/dev")
+    assert (
+        landing._already_landed({"landed_id": f"{cql._NOOP_LANDED_PREFIX}{dev_sha}"}) == dev_sha
+    )
+    # 真实不存在的前缀 sha 仍判未落盘
+    assert landing._already_landed({"landed_id": f"{cql._NOOP_LANDED_PREFIX}{'0' * 40}"}) is None

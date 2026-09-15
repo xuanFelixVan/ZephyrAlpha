@@ -115,6 +115,9 @@ logger = logging.getLogger(__name__)
 # ---------------------------------------------------------------------------
 _SERIALIZER_BRANCH = "serializer/commit-queue"  # 专用 worktree 检出的分支（随每项 reset 到 dev）
 _WORKTREE_DIR_NAME = "worktree"  # <queue_root>/worktree——任务口径专用目录（08 号文 §4.2 步骤 3）
+_NOOP_LANDED_PREFIX = "noop@"  # no-op 落地哨兵（2026-09-16）：快照与 HEAD 逐字节一致（幂等空转）
+# 时 landed_id 记为 "noop@<old_dev>"——裸记 old_dev 会错位成他会话提交（q-20260916-0004 实证：
+# done 指向 st-redfix 的 commit，排查者误以为内容已随其落库）。_already_landed 剥前缀后判 is-ancestor。
 _MAX_CAS_RETRIES = 3  # dev CAS 冲突重试上限（66 号 §8：重放产生同内容 commit，CAS 保护不分叉）
 _GIT_TIMEOUT_SECONDS = _get_threshold("git_operations.commit_queue_git_timeout_seconds", 120)  # 治本(AI-20 P0③): 从SSoT读取；与 worktree_pool.run_git 同款
 _MAIN_WS_SYNC_AUDIT_NAME = (
@@ -366,6 +369,10 @@ class WorktreeLanding:
     def _already_landed(self, item: dict) -> str | None:
         """返回已落盘 commit sha（未落盘返回 None）——重放不双落的核心。"""
         landed = item.get("landed_id") or ""
+        # noop 哨兵剥前缀：快照与该 HEAD 一致的幂等空转项按已落盘跳过（防重放循环），
+        # is-ancestor 用 @ 后真实 sha 判定。
+        if landed.startswith(_NOOP_LANDED_PREFIX):
+            landed = landed[len(_NOOP_LANDED_PREFIX):]
         if landed:
             r = self._git_repo("merge-base", "--is-ancestor", landed, f"refs/heads/{self.target_branch}", check=False)
             if r.returncode == 0:
@@ -816,7 +823,9 @@ class WorktreeLanding:
                                 "（2026-09-15 q-0003 假落地事故防线）"
                             ),
                         )
-                    return cq.LandingResult(ok=True, landed_id=old_dev)
+                    return cq.LandingResult(
+                        ok=True, landed_id=f"{_NOOP_LANDED_PREFIX}{old_dev}"
+                    )
                 return cq.LandingResult(
                     ok=False,
                     # P0-3（#ARCH-310，2026-09-12）：400→2000——门禁阻断详情（多文件

@@ -214,3 +214,39 @@ def test_insert_block_with_expect_files_happy_path(lab):
     bct.insert_block(block, "anchor_cap", expect_files=files)  # 全部落位 → 通过
     data = yaml.safe_load(reg.read_text(encoding="utf-8"))
     assert len([e for e in data["creation_tokens"] if e["capability"] == "lab_cap"]) == 3
+
+
+def test_insert_block_survives_concurrent_interleaved_write(lab, monkeypatch):
+    """战伤回归（2026-09-16 st-commitspeed 高频写覆写丢 token，f09d2bc81e 前科复发）：
+    insert_block 读基线后、CAS 落盘前，他会话抢先整段写入——CAS 拒写必须触发
+    重读基线重放，最终双方条目并存（后写不吞先写）。非库路径的全文覆写不在此测。"""
+    import zephyr.shared.io.file_utils as fu
+
+    reg, _files = lab
+    real_safe_write = fu.safe_write_text
+    state = {"interleaved": False}
+
+    def interleaved_writer(*args, **kwargs):
+        if not state["interleaved"]:
+            state["interleaved"] = True
+            cur = reg.read_text(encoding="utf-8")
+            idx = cur.index("di_seam_exemptions:")
+            other = (
+                "- file: docs/existing/raced.md\n"
+                "  token: raced-token-20260916\n"
+                "  created_by: sess-other\n"
+                "  capability: other_new_cap\n"
+            )
+            reg.write_text(cur[:idx] + other + cur[idx:], encoding="utf-8")
+        return real_safe_write(*args, **kwargs)
+
+    monkeypatch.setattr(fu, "safe_write_text", interleaved_writer)
+
+    block = bct.build_block(["docs/_working/lab/a/seg_001.md"], "sess-A", "race_cap", "20260916")
+    bct.insert_block(block, "anchor_cap")  # CAS 拒→重读→重放，不得抛 TokenInsertError
+
+    data = yaml.safe_load(reg.read_text(encoding="utf-8"))
+    caps = [e["capability"] for e in data["creation_tokens"]]
+    assert "race_cap" in caps, "我方条目必须存活"
+    assert "other_new_cap" in caps, "他会话条目必须存活（后写不吞先写）"
+    assert data["creation_tokens"][-1]["capability"] in {"race_cap", "other_new_cap", "anchor_cap", "stray_cap_zone"}
