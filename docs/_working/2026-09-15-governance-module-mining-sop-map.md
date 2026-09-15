@@ -134,8 +134,8 @@ completes_when: >-
 |---|------|------|-----------|------|
 | A1 | `nssm_p1_p5_service_definitions.yaml` DRAFT | 收口落地或裁定废弃 | Owner 窗口(蓝图自述) | |
 | A2 | `config/alert_rules.yaml` OOM>8GB critical | 接通知通道实测一轮 | ~~飞书 webhook 真实告警一次~~ → 2026-09-15 Owner 裁定：飞书/SMTP 通道彻底删除，通知=前端 promotion 页 | A2 改口径=OOM critical 事件落到 promotion 页通知，待施工 |
-| A3 | `kill_switch_orchestrator` 五域编排 | 挂 boot_hooks 或裁定废弃 | RBAC 测试+boot 冒烟 | ⚠️ 降级执行：核验发现其 4 个默认域适配目标本身多为死链/弱链——先接目标再挂 boot，否则新增一层死控制面 |
-| A4 | `last_resort_watchdog` | 接 escalation_protocol 或废弃 | 蓝图声明 vs 现状对齐 | TEST-ONLY 实证，维持待接线 |
+| A3 | `kill_switch_orchestrator` 五域编排 | 挂 boot_hooks 或裁定废弃 | RBAC 测试+boot 冒烟 | ✅ 已接线（裁定#254 Owner 放行；1d6a206b 登记+49dde8fd 施工）：boot_hooks 启动链 _init_kill_switch_orchestrator 注册五域开关（system+skills/trading/rollback/capacity），get_orchestrator 进程级单例，注册失败仅告警不阻断启动；降级顾虑由 fail-open+测试兜底（tests/autonomy/test_kill_switch_orchestrator.py TestBootWiring） |
+| A4 | `last_resort_watchdog` | 接 escalation_protocol 或废弃 | 蓝图声明 vs 现状对齐 | ✅ 已接线（裁定#254 Owner 放行；49dde8fd）：escalation_engine.escalate 升至 L4_EMERGENCY 且重试耗尽时 activate() 点亮旗标，emergency_shutdown 不得自动调用（watchdog 不得自触发）；单例 get_last_resort_watchdog；3 回归测试（tests/escalation/test_escalation_core.py TestLastResortWiring）93 全绿 |
 | A5 | `agent_health_monitor`、`heartbeat_server`、`task_heartbeat`、`degrade_cascade` | 逐个接线或删除 | wiring 复核 | 核验修订：全为 TEST-ONLY；zombie_cleaner 从本单剔除（auto_fix_engine/engine.py:247 动态注册=活，挖矿误判）；ghost_scan 已删（与 reaper scan_ghost_windows 重复） |
 
 ### 乘（升级/打通）
