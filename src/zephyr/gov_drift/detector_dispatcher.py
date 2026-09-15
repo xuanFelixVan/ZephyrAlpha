@@ -321,10 +321,18 @@ class DetectorDispatcher:
                 )
             finally:
                 # 5.112.1 修复：CancelledError/TimeoutError路径确保子进程被kill，防止孤儿进程
+                # 挂起族同口径（2026-09-16 存量债批7红蓝）：kill 后 wait() 不排空管道，
+                # 孙进程继承管道句柄时残留孤儿/transport 悬挂（drift_engine 批5 已修同族，
+                # Windows 实测挂 48min）——排空加 5s 上界，超时强关 transport 兜底
                 try:
                     if proc is not None and proc.returncode is None:
                         proc.kill()
-                        await proc.wait()
+                        try:
+                            await asyncio.wait_for(proc.communicate(), timeout=5)
+                        except (TimeoutError, asyncio.TimeoutError):
+                            transport = getattr(proc, "_transport", None)
+                            if transport is not None:
+                                transport.close()
                 except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
                     logger.debug("suppressed error in detector_dispatcher", exc_info=True)
 
