@@ -156,7 +156,7 @@ class TestWindowAndContract:
     def test_translated_modules_contract(self):
         files = sorted(_TRANSLATED.glob("c4_*.py"))
         assert len(files) >= 30, f"翻译件数量异常: {len(files)}"
-        pat = re.compile(r"^(CAND-[0-9a-f]{12}|VAL-[A-Z0-9-]+)$")
+        pat = re.compile(r"^(CAND-[0-9a-f]{12}|VAL-[A-Z0-9-]+|FACT-[0-9a-f]{8})$")
         for p in files:
             spec = importlib.util.spec_from_file_location(f"contract_{p.stem}", p)
             mod = importlib.util.module_from_spec(spec)

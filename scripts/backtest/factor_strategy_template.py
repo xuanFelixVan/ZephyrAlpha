@@ -38,6 +38,7 @@ import argparse
 import hashlib
 import json
 import sys
+from datetime import date
 from pathlib import Path
 
 import numpy as np
@@ -70,6 +71,7 @@ TEMPLATE = '''# [BLUEPRINT] MOD-BT-159 | docs/03_modules/_domain_backtest/bluepr
 
 生成=factor_strategy_template（MOD-BT-159 机械翻译桥）；出生候选={src_cand}；
 因子方向=多头正向（增量 IC>0 验收锁定）。
+[KNOWLEDGE_EFFECTIVE_FROM] {knowledge_date} | 源=公式轨生成件（表达式生成即生效日） | 生成=MOD-BT-159
 """
 from __future__ import annotations
 
@@ -155,6 +157,7 @@ def build_factor_weights(s, e, expr: str, top_n: int = 20,
     for c in ("close", "turnover", "amount"):
         k[c] = pd.to_numeric(k[c], errors="coerce")
     k = k.sort_values(["s", "date"])
+    k = _dedup_kline_rows(k)
     feats = compute_features(k)
     feats["close"] = k["close"].values  # 考卷件需要 close 透视（assemble_weights）
     feats = feats.dropna(subset=list(FEATURES))
@@ -168,6 +171,11 @@ def build_factor_weights(s, e, expr: str, top_n: int = 20,
 
     feats = feats.assign(factor=vals)
     return assemble_weights(feats, top_n)
+
+
+def _dedup_kline_rows(k: pd.DataFrame) -> pd.DataFrame:
+    """同 (symbol, trade_date) 重复行保留最后一条——上游双写防御（2026-09-11 实例 5206 对），pivot 前必去重。"""
+    return k.drop_duplicates(subset=["s", "date"], keep="last")
 
 
 def assemble_weights(feats: pd.DataFrame, top_n: int) -> tuple[pd.DataFrame, pd.DataFrame]:
@@ -202,12 +210,18 @@ def universe_syms(cli, start: str, n: int) -> tuple:
 
 
 def generate_strategy_file(expr: str, src_cand: str = "", top_n: int = 20,
-                           out_path: Path | None = None) -> Path:
-    """生成考卷件（模板填空；文件名 c4_fact_<md5_8>.py）。"""
+                           out_path: Path | None = None,
+                           knowledge_date: str = "") -> Path:
+    """生成考卷件（模板填空；文件名 c4_fact_<md5_8>.py）。
+
+    knowledge_date=知识生效日哨兵（S3 漂移预检依据；缺省=当日=表达式进仓日，
+    机器生成件无更早知识时点，如实声明）。
+    """
     sid = strategy_id_for(expr, src_cand)
     module_name = "c4_fact_" + sid.split("-", 1)[1].lower()
     content = TEMPLATE.format(module_name=module_name, strategy_id=sid, expr=expr,
-                              top_n=top_n, src_cand=src_cand or "未登记")
+                              top_n=top_n, src_cand=src_cand or "未登记",
+                              knowledge_date=knowledge_date or date.today().isoformat())
     compile(content, f"{module_name}.py", "exec")  # 生成即编译自检
     out = out_path or (_TRANSLATED_DIR / f"{module_name}.py")
     out.parent.mkdir(parents=True, exist_ok=True)

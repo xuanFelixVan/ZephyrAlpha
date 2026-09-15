@@ -19,6 +19,7 @@
 
 生成=factor_strategy_template（MOD-BT-159 机械翻译桥）；出生候选=CAND-e611b7cda691；
 因子方向=多头正向（增量 IC>0 验收锁定）。
+[KNOWLEDGE_EFFECTIVE_FROM] 2026-09-15 | 源=公式轨生成件（表达式生成即生效日） | 生成=MOD-BT-159
 """
 from __future__ import annotations
 

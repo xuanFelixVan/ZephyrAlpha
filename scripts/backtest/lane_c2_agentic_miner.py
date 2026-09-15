@@ -57,7 +57,7 @@ BIRTH_CHANNEL = "C2"
 MODEL_DEFAULT = "qwen3:8b"
 MODEL_ABLATION = "deepseek-r1:8b"
 ORIGINALITY_MAX_SIM = 0.8   # AST 节点多重集 Jaccard 对既有池最大相似度上限
-MIN_INCR_IC = 0.0           # 增量 IC 验收线（描述性证据，终审在 E2/E4）
+MIN_INCR_IC = 0.01          # 增量 IC 验收线（S02-N2 收紧：0.0→0.01，防弱信号灌入 E2 预审）
 MAX_NODES = 14              # 单表达式 AST 节点上限（简洁性）
 SQL_PASSED_SEEDS = (
     "SELECT candidate_id, hypothesis_zh FROM {table} "

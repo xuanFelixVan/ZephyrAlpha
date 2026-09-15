@@ -96,3 +96,20 @@ class TestSingleSourceAnchor:
 
 if __name__ == "__main__":  # pragma: no cover
     pytest.main([__file__, "-v"])
+
+
+def test_dedup_kline_rows_keeps_last_and_preserves_unique():
+    import pandas as pd
+
+    from scripts.backtest.factor_strategy_template import _dedup_kline_rows
+
+    k = pd.DataFrame({
+        "date": ["2026-09-10", "2026-09-11", "2026-09-11", "2026-09-12"],
+        "s": ["600000.SH", "600000.SH", "600000.SH", "000001.SZ"],
+        "close": [10.0, 11.0, 11.5, 9.0],
+    })
+    out = _dedup_kline_rows(k)
+    assert len(out) == 3
+    row = out[(out["date"] == "2026-09-11") & (out["s"] == "600000.SH")]
+    assert float(row["close"].iloc[0]) == 11.5
+    assert list(out["date"]) == ["2026-09-10", "2026-09-11", "2026-09-12"]
