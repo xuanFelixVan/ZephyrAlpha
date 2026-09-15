@@ -7,7 +7,16 @@ ttl: task_bound
 <!-- [STABILITY] static -->
 <!-- [SAFETY] L -->
 
-# 双沟 Gutters EOC3 核证通路全灭记录（st-patgov-20260914，2026-09-15 晨）
+# 双沟 Gutters EOC3 核证记录（st-patgov-20260914，2026-09-15 晨→终版）
+
+> **【终版结论 2026-09-15 §五】P3 双沟候选证伪除名。** Owner 切网后经本机代理
+> （127.0.0.1:10808 socks5h）取得 EOC3 全书（archive.org 三版 PDF，1315 页，版权页
+> 明写 THIRD EDITION Thomas Bulkowski），**76 章完整目录核验：G 段=34 Flags/35 Flags
+> High and Tight/36 Gaps/37,38 Gartley×2/39-42 Head-and-Shoulders×4——无 Gutters 章节**；
+> H-R 段亦无（Roof®/Inverted Roof® 在，53/54 章）。原书核对完成，结论=**候选前提
+> 证伪（P3 表看走眼），从清单除名，非待办**。P3 八候选终态：6 在册+2 除名（直线运行
+> 非独立形态/双沟 EOC3 无章），全案清零。前文 §一~§四 为通路探测过程留档（含过时
+> 结论，读史勿照办）。
 
 > 结论：**Gutters 章节存在性已证，章节内容在当前网络环境全通道不可达。登记维持冻结，
 > 唯一解锁=Owner 手头 EOC3 原书 G 段（Flags 之后、Head-and-Shoulders 之前）翻页取证。**
