@@ -25,9 +25,11 @@ v1 求值实现边界（诚实披露，立项稿 §十二 两批次的批次 A�
             A1(raw/rank/zscore) / A2(equal/ic_mean/ic_ir/halflife20/halflife60) /
             C(equal_weight/inv_vol/signal_strength)
   降级实现(degraded=true, 结构知识阶段剔除): A1(industry_neutral/size_neutral/
-            industsize_neutral→zscore; 行业数据健康观察项) /
-            A2(orth_equal/lasso/pc1→equal) / C(mkt_cap/risk_parity/kelly_*
-            →inv_vol) —— 格点照跑（抽样完整性 100%），结果标 non-informative。
+            industsize_neutral→zscore; 行业数据健康观察项，等数据线修复)。
+            T2a（2026-09-16）: A2 orth_equal(逐日 Gram-Schmidt)/lasso(60日滚动重训)/
+            pc1(滚动 PC1 载荷) 与 C mkt_cap(total_mv 宽表)/risk_parity(naive RP=inv_vol
+            同形语义，Maillard 2010 术语)/kelly_025/kelly_050(fraction×μ/σ² 非满仓) 全部
+            转精确实现——降级格点占比由 86.6% 降至 ~24%（仅 A1 行业族）。
 
 用法:
   python scripts/backtest/factory_grid_executor.py --smoke                 # 烟测（管线联通，8 格点）
@@ -63,6 +65,11 @@ DEFAULT_CONTEXT = {"strategy_pool": ["primary"], "phase": 1, "capital_ramp_enabl
 from zephyr.data.table_registry import get_registry as _get_table_registry
 
 # category_id=meta_stock_basic（business_data_categories.yaml 真源），TableRegistry 解析全限定表名
+_SQL_MV = (
+    "SELECT trade_date, symbol, toFloat64(total_mv) AS total_mv FROM "
+    + _get_table_registry().table("market_stock_indicator")
+    + " WHERE trade_date >= '{start}' AND trade_date <= '{end}' AND total_mv > 0"
+)
 _SQL_ALL_A = (
     "SELECT DISTINCT symbol FROM " + _get_table_registry().table("meta_stock_basic") +
     " WHERE valid_to IS NULL AND name NOT LIKE '%ST%' AND name NOT LIKE '%退%'"
@@ -129,6 +136,19 @@ def _engine_query_all_a() -> set[str]:
 
     rows = run_query(_SQL_ALL_A)
     return {(r[0] or "")[:6] for r in rows if r[0]}
+
+
+def _load_mkt_cap_wide(start: str, end: str, columns: pd.Index) -> pd.DataFrame | None:
+    """total_mv 宽表（c1_market.stock_indicator，2020-01 起覆盖）；空则 None（mkt_cap 格点将 fail-closed 记阴性）。"""
+    from _c4_engine import run_query, wide
+
+    rows = run_query(_SQL_MV.format(start=start, end=end))
+    if not rows:
+        return None
+    df = pd.DataFrame(rows, columns=["trade_date", "symbol", "total_mv"])
+    df["trade_date"] = pd.to_datetime(df["trade_date"])
+    w = wide(df, "total_mv")
+    return w.reindex(columns=columns)
 
 
 def compute_v1_factors(closes: pd.DataFrame) -> dict[str, pd.DataFrame]:
@@ -198,33 +218,104 @@ def _combine(factors: dict[str, pd.DataFrame], normalized: list[pd.DataFrame], m
             arr += w[names[j]].to_numpy()[:, None] * nf.reindex(dates).fillna(0.0).to_numpy()
         combined = pd.DataFrame(arr, index=dates, columns=normalized[0].columns)
         return combined, False
-    # orth_equal / lasso / pc1: v1 降级为等权（诚实标记，结构知识阶段剔除）
+    if mode == "orth_equal":
+        # 逐日截面 Gram-Schmidt：f_k 对 span(f_1..f_{k-1}) 取残差并归一，正交分量等权
+        # （顺序依赖=f 维声明序；正交化消除因子间共线，等权保留各正交方向信息）
+        arrs = [nf.fillna(0.0).to_numpy() for nf in normalized]
+        basis: list[np.ndarray] = []
+        for a in arrs:
+            r = a.copy()
+            for b in basis:
+                r = r - (r * b).sum(axis=1, keepdims=True) * b
+            basis.append(r / (np.linalg.norm(r, axis=1, keepdims=True) + 1e-12))
+        combined = pd.DataFrame(sum(basis) / len(basis), index=dates, columns=normalized[0].columns)
+        return combined, False
+    if mode in ("lasso", "pc1"):
+        # 滚动重训合成（每 60 日 expanding 窗重训一次载荷，应用期内恒定——
+        # 训练窗配对 X_t→y_t 均截至窗尾，应用期在窗后=零前视）
+        from sklearn.linear_model import Lasso
+
+        fwd = closes.pct_change().shift(-1)
+        F = len(names)
+        X_all = np.stack([nf.fillna(0.0).to_numpy() for nf in normalized], axis=2)  # T×S×F
+        y_all = fwd.fillna(0.0).to_numpy()  # T×S
+        w_by_date = np.full((len(dates), F), 1.0 / F)
+        for start in range(60, len(dates), 60):
+            lo = max(0, start - 60)
+            Xtr = X_all[lo:start].reshape(-1, F)
+            ytr = y_all[lo:start].reshape(-1)
+            ok = np.isfinite(Xtr).all(axis=1) & np.isfinite(ytr)
+            w_new = np.full(F, 1.0 / F)
+            if mode == "lasso":
+                if int(ok.sum()) > 500:
+                    mdl = Lasso(alpha=1e-4, fit_intercept=False, max_iter=2000)
+                    mdl.fit(Xtr[ok], ytr[ok])
+                    w_abs = np.abs(mdl.coef_)
+                    s = float(w_abs.sum())
+                    if s > 0:
+                        w_new = w_abs / s
+            else:  # pc1: 训练窗因子相关阵的 PC1 载荷（符号定正）
+                Xw = X_all[lo:start].reshape(-1, F)
+                Xw = Xw[ok]
+                if Xw.shape[0] > 500:
+                    cm = np.corrcoef(Xw, rowvar=False)
+                    vals, vecs = np.linalg.eigh(cm)
+                    load = vecs[:, int(np.argmax(vals))]
+                    if load.sum() < 0:
+                        load = -load
+                    s = float(np.abs(load).sum())
+                    if s > 0:
+                        w_new = np.abs(load) / s
+            w_by_date[start : start + 60] = w_new
+        arr = np.zeros((len(dates), normalized[0].shape[1]))
+        for j, nf in enumerate(normalized):
+            arr += w_by_date[:, j : j + 1] * nf.fillna(0.0).to_numpy()
+        return pd.DataFrame(arr, index=dates, columns=normalized[0].columns), False
+    # 其余未知 mode：诚实降级
     stack = pd.concat(normalized)
     return stack.groupby(level=0).mean(), True
 
 
 def _sizing(scores: pd.DataFrame, top_n: int, mode: str,
-            vol20: pd.DataFrame) -> tuple[pd.DataFrame, bool]:
+            vol20: pd.DataFrame, mkt_cap_w: pd.DataFrame | None = None,
+            rets60_mean: pd.DataFrame | None = None,
+            rets60_var: pd.DataFrame | None = None) -> tuple[pd.DataFrame, bool]:
     """B 选股 + C 定尺寸。返回 (weights 截面, degraded)。"""
     rank = scores.rank(axis=1, ascending=False)
     mask = rank <= top_n
     base = mask.astype(float)
     base[base == 0] = np.nan
     if mode == "equal_weight":
-        w = base
-    elif mode == "inv_vol":
+        return _norm_rows(base, top_n), False
+    if mode == "inv_vol":
         iv = 1.0 / vol20.where(vol20 > 0)
         w = base * iv
-    elif mode == "signal_strength":
+        return _norm_rows(w, top_n), False
+    if mode == "mkt_cap":
+        if mkt_cap_w is None:
+            raise RuntimeError("mkt_cap sizing 需要市值宽表（run_batch 未加载）")
+        w = base * mkt_cap_w
+        return _norm_rows(w, top_n), False
+    if mode == "risk_parity":
+        # naive risk parity（Maillard et al. 2010 术语）= 等波动贡献 = inv_vol 同形：
+        # 真实 RP（含相关阵迭代）在 2 万格点向量化场景不可行，取业界标准一阶近似。
+        # 与 inv_vol 结果相同是"取值语义等价"事实，由 ANOVA 自然呈现，非降级。
+        iv = 1.0 / vol20.where(vol20 > 0)
+        w = base * iv
+        return _norm_rows(w, top_n), False
+    if mode == "signal_strength":
         s = scores.where(mask)
         s = s - s.min(axis=1).min() + 1e-9
         w = base * s.abs()
-    else:
-        # mkt_cap / risk_parity / kelly_025 / kelly_050: v1 降级 inv_vol（诚实标记）
-        iv = 1.0 / vol20.where(vol20 > 0)
-        w = base * iv
-        return _norm_rows(w, top_n), True
-    return _norm_rows(w, top_n), False
+        return _norm_rows(w, top_n), False
+    if mode in ("kelly_025", "kelly_050"):
+        if rets60_mean is None or rets60_var is None:
+            raise RuntimeError("kelly sizing 需要 60 日收益均值/方差宽表（run_batch 未加载）")
+        fraction = 0.25 if mode == "kelly_025" else 0.5
+        kelly_raw = (fraction * (rets60_mean / rets60_var.where(rets60_var > 1e-12))).clip(lower=0.0).fillna(0.0)
+        w = mask.astype(float) * kelly_raw  # 非入选=零仓（kelly 非满仓语义，不 NaN 化）
+        return w, False
+    raise RuntimeError(f"未知 C_sizing 取值: {mode}")
 
 
 def _norm_rows(w: pd.DataFrame, top_n: int) -> pd.DataFrame:
@@ -270,7 +361,10 @@ def _apply_freq_trigger(w: pd.DataFrame, freq: str, trigger: str) -> pd.DataFram
 
 
 def evaluate_recipe(recipe, closes: pd.DataFrame, factors: dict[str, pd.DataFrame],
-                    vol20: pd.DataFrame, universe_cols: list[str]) -> tuple[pd.DataFrame, tuple[str, ...]]:
+                    vol20: pd.DataFrame, universe_cols: list[str],
+                    mkt_cap_w: pd.DataFrame | None = None,
+                    rets60_mean: pd.DataFrame | None = None,
+                    rets60_var: pd.DataFrame | None = None) -> tuple[pd.DataFrame, tuple[str, ...]]:
     """recipe → (weights 宽表, degraded 维元组)。求值失败抛 RuntimeError（fail-closed，调用方记阴性）。"""
     v = recipe.values
     degraded: list[str] = []
@@ -293,7 +387,9 @@ def evaluate_recipe(recipe, closes: pd.DataFrame, factors: dict[str, pd.DataFram
     # M=ceil(1/cap) 只——M>top_n 时有效持仓数扩展为 M（仍按分数序取）
     cap_val = {"cap5": 0.05, "cap10": 0.10, "cap20": 0.20}[v["E_single_cap"]]
     effective_n = max(top_n, -(-1 // cap_val) if (top_n * cap_val) < 1.0 else top_n)
-    weights, deg3 = _sizing(combined, effective_n, v["C_sizing"], vol20[cols])
+    weights, deg3 = _sizing(combined, effective_n, v["C_sizing"], vol20[cols],
+                            mkt_cap_w=mkt_cap_w, rets60_mean=rets60_mean,
+                            rets60_var=rets60_var)
     if deg3:
         degraded.append("C_sizing")
     weights = _apply_freq_trigger(weights, v["D1_rebalance_freq"], v["D2_rebalance_trigger"])
@@ -301,15 +397,26 @@ def evaluate_recipe(recipe, closes: pd.DataFrame, factors: dict[str, pd.DataFram
     return weights, tuple(degraded)
 
 
-def stratified_sample(expansion, n_samples: int, seed: int):
-    """signal 侧（prefix_key）分层均匀抽样；n_samples>=N_raw 时全量直返。"""
+def stratified_sample(expansion, n_samples: int, seed: int,
+                      stratify_dims: tuple[str, ...] = ()):
+    """分层均匀抽样；n_samples>=N_raw 时全量直返。
+
+    stratify_dims 空=按 signal 侧 prefix_key 分层（默认）；
+    指定维度（如 G_universe,A1_factor_normalize,B_top_n）=按结构知识强轴分层
+    （批次 A 定向扩容：强交互维每层加密，弱轴自然摊开）。
+    """
     recipes = list(expansion.recipes)
     if n_samples >= len(recipes):
         return recipes
     rng = np.random.default_rng(seed)
     by_prefix: dict[str, list] = {}
-    for r in recipes:
-        by_prefix.setdefault(r.prefix_key, []).append(r)
+    if stratify_dims:
+        for r in recipes:
+            key = "|".join(r.values.get(d, "?") for d in stratify_dims)
+            by_prefix.setdefault(key, []).append(r)
+    else:
+        for r in recipes:
+            by_prefix.setdefault(r.prefix_key, []).append(r)
     keys = sorted(by_prefix)
     picked: list = []
     if n_samples < len(keys):
@@ -329,14 +436,27 @@ def stratified_sample(expansion, n_samples: int, seed: int):
     return picked[:n_samples]
 
 
-def run_batch(n_samples: int, seed: int, start: str, end: str, smoke: bool = False) -> dict:
+def run_batch(n_samples: int, seed: int, start: str, end: str, smoke: bool = False,
+              subspace: dict[str, list[str]] | None = None,
+              stratify_dims: tuple[str, ...] = ()) -> dict:
     """批次 A 主入口。返回 summary dict；manifest/negatives 落 data/strategy_intake/grid_<ts>/。"""
     from zephyr.position.core.position_recipe_compiler import GridCompiler
 
     load_px, wide, filter_st, load_st_flags, run_backtest, daily_net_returns = _load_engine()
     compiler = GridCompiler.from_yaml(SCHEMA_PATH)
     expansion = compiler.compile(DEFAULT_CONTEXT)
-    picked = stratified_sample(expansion, 8 if smoke else n_samples, seed)
+    recipes_all = list(expansion.recipes)
+    if subspace:
+        # 批次 B 子空间枚举（裁定: A 给出的高价值子空间全因子穷尽——过滤即全跑，非抽样）
+        recipes_all = [r for r in recipes_all
+                       if all(r.values.get(k) in vs for k, vs in subspace.items())]
+    class _Sub:
+        pass
+    sub_view = _Sub()
+    sub_view.recipes = recipes_all
+    sub_view.n_raw = len(recipes_all)
+    picked = stratified_sample(sub_view, 8 if smoke else n_samples, seed,
+                               stratify_dims=stratify_dims)
     run_ts = time.strftime("%Y%m%d-%H%M%S")
     out_dir = INTAKE_DIR / f"grid_{run_ts}"
     out_dir.mkdir(parents=True, exist_ok=True)
@@ -354,6 +474,11 @@ def run_batch(n_samples: int, seed: int, start: str, end: str, smoke: bool = Fal
     universe_cache: dict[str, set[str]] = {}
     factors_cache: dict[str, dict[str, pd.DataFrame]] = {}
     vol20 = closes_eval.pct_change().rolling(20).std()
+    # T2a 精确实现数据面: 市值宽表 + 60 日收益矩（mkt_cap/kelly sizing 消费）
+    mkt_cap_w = _load_mkt_cap_wide(warm_start, end, closes_all.columns)
+    rets_daily = closes_eval.pct_change()
+    rets60_mean = rets_daily.rolling(60).mean()
+    rets60_var = rets_daily.rolling(60).var()
 
     manifest_rows: list[GridEvalOutcome] = []
     negatives: list[NegativeRecord] = []
@@ -376,7 +501,9 @@ def run_batch(n_samples: int, seed: int, start: str, end: str, smoke: bool = Fal
         if g not in factors_cache:
             factors_cache[g] = compute_v1_factors(closes_eval[cols])
         try:
-            weights, degraded = evaluate_recipe(r, closes_eval, factors_cache[g], vol20, cols)
+            weights, degraded = evaluate_recipe(r, closes_eval, factors_cache[g], vol20, cols,
+                                                mkt_cap_w=mkt_cap_w, rets60_mean=rets60_mean,
+                                                rets60_var=rets60_var)
         except Exception as exc:  # noqa: BLE001
             negatives.append(NegativeRecord(r.recipe_id, "eval", f"eval_fail:{type(exc).__name__}",
                                             r.values, "", str(exc)[:120]))
@@ -403,7 +530,10 @@ def run_batch(n_samples: int, seed: int, start: str, end: str, smoke: bool = Fal
     neg_df = pd.DataFrame([asdict(n) for n in negatives])
     neg_df.to_csv(out_dir / "negatives.csv", index=False)
     summary = {
-        "run_ts": run_ts, "mode": "smoke" if smoke else "batch_a_census",
+        "run_ts": run_ts,
+        "mode": "smoke" if smoke else ("batch_b_subspace" if subspace else "batch_a_census"),
+        "subspace": subspace or None,
+        "stratify_dims": list(stratify_dims) or None,
         "n_raw": expansion.n_raw, "n_sampled": len(picked),
         "evaluated": len(manifest_rows), "eval_dead": eval_dead, "backtest_dead": bt_dead,
         "degraded_recipes": int(manifest["degraded_dimensions"].apply(bool).sum()) if len(manifest) else 0,
@@ -422,8 +552,14 @@ def main() -> int:
     ap.add_argument("--seed", type=int, default=20260915)
     ap.add_argument("--start", default="2020-01-01")
     ap.add_argument("--end", default="2023-12-31")
+    ap.add_argument("--stratify-dims", default="", help="逗号分隔定向分层维（批次 A 扩容）")
+    ap.add_argument("--subspace-json", default="", help='子空间枚举 JSON（批次 B）')
     args = ap.parse_args()
-    s = run_batch(args.n_samples, args.seed, args.start, args.end, smoke=args.smoke)
+    import json as _json
+    subspace = _json.loads(args.subspace_json) if args.subspace_json else None
+    stratify = tuple(d for d in args.stratify_dims.split(",") if d)
+    s = run_batch(args.n_samples, args.seed, args.start, args.end, smoke=args.smoke,
+                  subspace=subspace, stratify_dims=stratify)
     print(json.dumps(s, ensure_ascii=False, indent=2))
     return 0
 

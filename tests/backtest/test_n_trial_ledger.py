@@ -18,7 +18,9 @@ import json
 import pytest
 import yaml
 
-from zephyr.backtest.core.n_trial_ledger import (
+from zephyr.backtest.core.n_trial_ledger import ( 
+    compute_effective_rank,
+
     LEDGER_REGISTRY_PATH,
     REGISTRY_SKELETON,
     TrialLedger,
@@ -169,3 +171,50 @@ def test_yaml_structure_valid(ledger):
     data = yaml.safe_load(ledger._path.read_text(encoding="utf-8"))  # noqa: SLF001
     for key in REGISTRY_SKELETON:
         assert key in data
+
+
+class TestEffectiveRank:
+    """T1（2026-09-16）：effective_rank 估计器（预注册 4.1 规格）+ 披露位写入。"""
+
+    def _ledger_tmp(self, tmp_path):
+        return TrialLedger(registry_path=tmp_path / "trial_ledger_registry.yaml")
+
+    def test_independent_series_n_eff_near_n(self) -> None:
+        import numpy as np
+
+        rng = np.random.default_rng(11)
+        data = {f"s{i}": rng.normal(0, 0.01, 250) for i in range(8)}
+        n_eff, meta = compute_effective_rank(data)
+        assert not meta["boundary"]
+        assert 5 <= n_eff <= 8  # 独立序列→熵广度接近 N
+
+    def test_identical_series_n_eff_one(self) -> None:
+        import numpy as np
+
+        base = np.random.default_rng(5).normal(0, 0.01, 200)
+        data = {f"s{i}": base + 1e-12 * i for i in range(6)}  # 完全相关
+        n_eff, _ = compute_effective_rank(data)
+        assert n_eff == 1  # 完全相关→有效试验数 1
+
+    def test_short_common_T_boundary_no_reduction(self) -> None:
+        import numpy as np
+
+        rng = np.random.default_rng(3)
+        data = {f"s{i}": rng.normal(0, 0.01, 30) for i in range(5)}  # < min_T=60
+        n_eff, meta = compute_effective_rank(data)
+        assert meta["boundary"] and n_eff == 5  # 数据不足→不折减（诚实边界）
+
+    def test_set_effective_roundtrip(self, tmp_path) -> None:
+        led = self._ledger_tmp(tmp_path)
+        led.load_registry(create_if_missing=True)
+        led.record_run("manual", "BATCH-T1", 100, note="t1")
+        r = led.set_effective_trials(7, note="batch:T1 spec=effective_rank")
+        assert r["snapshot_n_raw"] >= 100
+        snap = led.snapshot()
+        assert snap.n_trials_effective == 7
+        # 覆盖语义+previous 留痕
+        led.set_effective_trials(9, note="batch:T2")
+        snap2 = led.snapshot()
+        assert snap2.n_trials_effective == 9
+        d = led.load_registry()
+        assert d["n_trials_effective"]["previous"]["value"] == 7

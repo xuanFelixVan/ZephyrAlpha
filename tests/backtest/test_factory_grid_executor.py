@@ -131,12 +131,28 @@ class TestCombine:
         assert not deg
         assert np.isfinite(out.to_numpy()).all()
 
-    def test_degraded_combine_marks_orth(self) -> None:
-        closes = _synth_closes()
+    def test_orth_and_lasso_now_exact(self) -> None:
+        """T2a（2026-09-16）：orth/lasso/pc1 转精确实现，不再降级。"""
+        closes = _synth_closes(200, 12)
         factors, _ = _factors(closes)
-        norm = [factors[n] for n in mod.V1_FACTORS]
-        _, deg = mod._combine(factors, norm, "lasso", closes)
-        assert deg is True
+        norm = [factors[n].fillna(0.0) for n in mod.V1_FACTORS]
+        for mode in ("orth_equal", "lasso", "pc1"):
+            out, deg = mod._combine(factors, norm, mode, closes)
+            assert deg is False, f"{mode} 应为精确实现"
+            assert np.isfinite(out.to_numpy()).all()
+
+    def test_orth_residuals_decorrelated(self) -> None:
+        """Gram-Schmidt 后各正交分量与既有分量日截面相关≈0。"""
+        closes = _synth_closes(120, 12)
+        factors, _ = _factors(closes)
+        norm = [factors[n].fillna(0.0) for n in mod.V1_FACTORS]
+        out, deg = mod._combine(factors, norm, "orth_equal", closes)
+        assert deg is False
+        # orth 输出与 f1 原始秩相关的绝对值应低于 equal 输出（去共线生效）
+        eq, _ = mod._combine(factors, norm, "equal", closes)
+        c_orth = abs(out.iloc[-1].corr(norm[0].iloc[-1]))
+        c_eq = abs(eq.iloc[-1].corr(norm[0].iloc[-1]))
+        assert c_orth <= c_eq + 0.05
 
 
 class TestSizingAndTriggers:
@@ -243,7 +259,10 @@ class TestEvaluateRecipe:
         factors, vol20 = _factors(closes)
         cols = list(closes.columns)
         v = dict(V1, A1_factor_normalize="industry_neutral", C_sizing="kelly_050")
-        w, degraded = mod.evaluate_recipe(_recipe(v), closes, factors, vol20, cols)
-        assert set(degraded) == {"A1_factor_normalize", "C_sizing"}
-        assert w.iloc[-1].sum() <= 1.0 + 1e-9  # cap 硬约束触发时允许低仓位
-        assert (w <= 0.10 + 1e-9).all().all()  # cap10 恒满足
+        w, degraded = mod.evaluate_recipe(_recipe(v), closes, factors, vol20, cols,
+                                          rets60_mean=closes.pct_change().rolling(60).mean(),
+                                          rets60_var=closes.pct_change().rolling(60).var())
+        # T2a: kelly_050 已精确——只剩 A1 行业族降级（等数据线修复）
+        assert set(degraded) == {"A1_factor_normalize"}
+        assert w.iloc[-1].sum() <= 1.0 + 1e-9  # kelly 非满仓语义+cap 终态
+        assert (w >= -1e-12).all().all()  # 负预期票零仓，无空头

@@ -132,6 +132,47 @@ class TrialLedgerSnapshot:
     as_of: str = ""
 
 
+def compute_effective_rank(
+    net_returns_by_id: dict[str, Any],
+    min_T: int = 60,
+) -> tuple[int, dict[str, Any]]:
+    """effective_rank 估计器（N_eff 预注册 4.1 规格实现，锁定勿改）。
+
+    步骤（预注册原文）:
+      1. 批次内 N 条试验的日净收益序列按日期对齐，共同长度 < min_T → 不折减（返回 N，boundary）；
+      2. 两两 Pearson 相关矩阵；
+      3. 特征值分解，λ_k 负值截 0（数值半正定修正）；
+      4. p_k = λ_k / Σλ；N_eff = ceil(exp(-Σ p_k·ln p_k))（熵加权特征值广度），
+         clamp 到 [1, N]。
+
+    Returns:
+        (n_eff, meta)：meta 含 n_trials/boundary/共同长度，供双口径披露留痕。
+    """
+    import numpy as np
+    import pandas as pd
+
+    df = pd.DataFrame(dict(net_returns_by_id)).dropna(how="any")
+    n = df.shape[1]
+    meta: dict[str, Any] = {"n_trials": n, "common_T": int(len(df)), "boundary": False}
+    if n < 2:
+        meta["boundary"] = True
+        return max(n, 1), meta
+    if len(df) < min_T:
+        meta["boundary"] = True
+        return n, meta
+    corr = df.corr().fillna(0.0).to_numpy()
+    eig = np.clip(np.linalg.eigvalsh(corr), 0.0, None)
+    total = float(eig.sum())
+    if total <= 0.0:
+        return 1, meta
+    probs = eig[eig > 0] / total
+    # ceil 前按 1e-9 容差规整：完全相关时数值微噪会给出 1.0000000000000004，
+    # 裸 ceil 会虚增到 2（浮点噪声≠真实有效试验数）
+    entropy_breadth = round(float(np.exp(-(probs * np.log(probs)).sum())), 9)
+    n_eff = int(np.ceil(entropy_breadth))
+    return int(min(max(n_eff, 1), n)), meta
+
+
 class TrialLedger:
     """N 试次账本——全局累计试验数计数器（真源=YAML 注册表，本类=唯一机器写入口）。
 
@@ -191,7 +232,9 @@ class TrialLedger:
             manual_population=manual,
             known_floor=trials + manual,
             n_trials_raw=trials,
-            n_trials_effective=None,  # 预注册：effective_rank 随批次 B 落地
+            n_trials_effective=(data.get("n_trials_effective") or {}).get("value")
+            if isinstance(data.get("n_trials_effective"), dict)
+            else None,
             breakdown=breakdown,
             as_of=_now_iso(),
         )
@@ -233,6 +276,30 @@ class TrialLedger:
         raise TrialLedgerError(f"N 账本 CAS 写重试耗尽: {last_exc}") from last_exc
 
     # ---------- 显式登记 ----------
+
+    def set_effective_trials(self, n_eff: int, note: str = "") -> dict[str, Any]:
+        """写入 n_trials_effective 披露位（CAS；批次 B 双口径披露的账本侧落点）。
+
+        覆盖语义：披露位=最新批次的 N_eff（非累加），note 记录来源批次与 meta。
+        """
+
+        def _mutate(data: dict[str, Any]) -> str | None:
+            old = data.get("n_trials_effective")
+            new_rec = {
+                "value": int(n_eff),
+                "estimator": "effective_rank",
+                "note": note,
+                "updated_at": _now_iso(),
+                "previous": old if isinstance(old, dict) else None,
+            }
+            if isinstance(old, dict) and old.get("value") == new_rec["value"]:
+                return None  # 同值幂等：无需变更
+            data["n_trials_effective"] = new_rec
+            return f"n_trials_effective -> {n_eff}"
+
+        self._cas_update(_mutate)
+        snap = self.snapshot()
+        return {"n_eff": n_eff, "snapshot_n_raw": snap.n_trials_raw}
 
     def record_run(
         self,
