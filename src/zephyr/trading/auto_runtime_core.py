@@ -758,6 +758,27 @@ class _OllamaProcessManager:
         # %LOCALAPPDATA%\Programs\Ollama 仅入用户 PATH）——先在当前进程（有用户 PATH）
         # 经 shutil.which 解析绝对路径再传递；解析不到退化为裸命令名（原行为）。
         ollama_bin = shutil.which("ollama") or "ollama"
+        # M4 治理战役防护（2026-09-16）：VRAM 预算门——0xc0000005/0xc0000409 崩溃族
+        # （事件日志 8 例，见 docs/_working/forensics/llama_server_crash_forensics_202609.md）与
+        # VRAM 超订相关；显存已超 gguf_vram_budget 硬上限时不再孵化新 llama-server
+        # （防崩溃循环再孵），fail-safe：探测失败放行（不阻断有 ollama 健康检查兜底的链路）。
+        try:
+            import subprocess as _sp
+
+            _smi = _sp.run(
+                ["nvidia-smi", "--query-gpu=memory.used", "--format=csv,noheader,nounits"],
+                capture_output=True, text=True, timeout=8,
+            )
+            if _smi.returncode == 0 and _smi.stdout.strip():
+                _vram_used_gb = float(_smi.stdout.strip().splitlines()[0]) / 1024.0
+                if _vram_used_gb > 21.6:  # gguf_vram_budget.yaml hard_cap_gb（RTX 3090 24GB×90%）
+                    logger.error(
+                        "ensure_running: VRAM %.1fGB > hard_cap 21.6GB——拒绝孵化 ollama serve（防崩溃循环）",
+                        _vram_used_gb,
+                    )
+                    return False
+        except (OSError, ValueError, subprocess.SubprocessError):
+            pass  # nvidia-smi 缺席/超时=放行（fail-safe，存活判定由 ollama_alive 主导）
         try:
             # 5.49.1 修复：保存 Popen 引用，shutdown 时可 terminate
             # TRAE-067 铁律2 + M1 治理战役（2026-09-16）：统一孵化入口——孵化即登记
