@@ -583,7 +583,7 @@ gaps:
     detection_threshold: 5500  # 日均 < 5500 行 = 缺口（区间正常 5550-5562）
     expected_daily_avg: 5558   # 09-07/09-08 基准
     actual_daily_avg: 2438     # (4875+0)/2（09-09 部分写入 4875、09-10 整日 0）
-    status: "open"  # 补数已发射：09-15 02:29 daily_valuation_full_refresh 脱离式全月窗重刷（09-01→09-15 一次覆盖 09-09 残行/09-10/09-14 三洞，ReplacingMergeTree 幂等），实测 10-11h 预计 13:00 前后落库，完成后复核本条可关
+    status: "resolved"  # 2026-09-15 08:45 daily_valuation_full_refresh 执行成功收尾（rows=77815 耗时 6.3h），逐日复验：09-09=5560（原 4875 补齐）/09-10=5561（原 0）/09-14=5562（原 0），全序列回正常带 5556-5562，北交所 343 只在场
     remediation_log: "2026-09-15 st-bsefix-20260915：①治理侧 0 行告警已落库 fa7caabeca（交易日 gate+WARN 进告警流）；②全月窗重刷发射（.runtime/tmp/valuation_full_refresh_20260915.log）；③09-14 缺口为本条 end_date 扩展原因（原登记只到 09-10）"
     root_cause: "①09-09：daily_valuation_full_refresh（akshare）耗时 39564s(11h) 仅写 44687 行（约 8 日量），刷到 09-09 时只落 4875/5558 即结束=部分写入；②09-10：全天 fetch_perf 仅两条 source=mock rows=0 的 daily_valuation_incremental，无任何 akshare 实跑=整日 0 行；③09-12 15:39 akshare 增量(rows=5562, 36023s)补的是 09-11 而非 09-10，09-13/09-14/09-15 无补写记录（09-14 06:44 又一条 mock rows=0）。非源退化——09-11 已恢复 5562 且高于断点前。"
     impact: "一切消费 daily_valuation 的场景（流通市值/PE-PB 权重、估值因子、板块指数合成权重）。09-09 另缺 687 只（前缀 0=85/3=2/6=498/9=102，散落非连续块=抓取中断随机丢包，非分页截断）。"
