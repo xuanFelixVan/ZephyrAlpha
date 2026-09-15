@@ -43,6 +43,9 @@ import pytest
 
 @pytest.fixture
 def tmp_repo(tmp_path, monkeypatch):
+    # M1 迁移配套（2026-09-16）：reconcile_runner 经孵化器 spawn，登记表重定向 tmp
+    # （测试隔离红线——真实跑 launch 的用例曾写生产 .runtime/process_incubator/ledger.jsonl）
+    monkeypatch.setenv("ZEPHYR_INCUBATOR_LEDGER_DIR", str(tmp_path / "process_incubator"))
     """临时项目根目录 + 确保 .runtime/reconcile_reports/ 存在。"""
     repo = tmp_path / "fake_repo"
     repo.mkdir()
