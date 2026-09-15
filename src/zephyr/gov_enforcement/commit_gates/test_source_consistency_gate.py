@@ -288,15 +288,26 @@ def _check_import_node(node: ast.ImportFrom, test_file: str) -> list[str]:
         return []
 
     # 检查每个 import 的符号
+    pkg_dir = source_file.parent if source_file.name == "__init__.py" else None
     for alias in node.names:
         if alias.name == "*":
             continue
-        if alias.name not in source_symbols:
-            violations.append(
-                f"  {test_file}:{node.lineno}: "
-                f"from {module_path} import {alias.name} "
-                f"-> 符号不存在（源码 {source_file.name} 中未定义）"
-            )
+        if alias.name in source_symbols:
+            continue
+        # from pkg import submodule 走文件系统解析（Python 包语义），不需
+        # __init__ 显式定义——包目录下存在 <symbol>.py 或 <symbol>/__init__.py
+        # 即可 import 成功，不构成漂移（对标本模块 2026-07-19 __getattr__
+        # fail-open 先例：避免把可解析 import 误报为漂移而硬阻断 commit）。
+        if pkg_dir is not None and (
+            (pkg_dir / f"{alias.name}.py").is_file()
+            or (pkg_dir / alias.name / "__init__.py").is_file()
+        ):
+            continue
+        violations.append(
+            f"  {test_file}:{node.lineno}: "
+            f"from {module_path} import {alias.name} "
+            f"-> 符号不存在（源码 {source_file.name} 中未定义）"
+        )
     return violations
 
 

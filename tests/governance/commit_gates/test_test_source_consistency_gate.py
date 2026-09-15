@@ -488,6 +488,57 @@ class TestGatewayIntegration:
         assert passed is True
         assert msg == ""
 
+    def test_submodule_import_passes(self, tmp_path, monkeypatch):
+        """from pkg import submodule（__init__ 未定义）→ 放行。
+
+        Python 包语义：``from pkg import submodule`` 走文件系统解析，
+        包目录下存在 <submodule>.py 即可 import 成功，不构成漂移
+        （实弹案例：tests/zephyr/data/test_alt_sources.py import
+        zephyr.data.implementations.akshare_alt_provider 被误报硬阻断）。
+        """
+        monkeypatch.setattr(_gate_mod, "_SRC_ROOT", tmp_path)
+        src_dir = tmp_path / "zephyr" / "mod"
+        src_dir.mkdir(parents=True)
+        (src_dir / "__init__.py").write_text("PUBLIC = 1\n", encoding="utf-8")
+        (src_dir / "akshare_alt_provider.py").write_text(
+            "class AltProvider:\n    pass\n", encoding="utf-8"
+        )
+        test_file = "tests/test_foo.py"
+        test_content = "from zephyr.mod import akshare_alt_provider\n"
+        gw = _make_gateway(staged_files=[test_file], file_contents={test_file: test_content})
+        passed, msg = make_test_source_consistency_gate().check(gw, [])
+        assert passed is True
+        assert msg == ""
+
+    def test_subpackage_import_passes(self, tmp_path, monkeypatch):
+        """from pkg import subpkg（子包 __init__.py 存在）→ 放行。"""
+        monkeypatch.setattr(_gate_mod, "_SRC_ROOT", tmp_path)
+        src_dir = tmp_path / "zephyr" / "mod"
+        src_dir.mkdir(parents=True)
+        (src_dir / "__init__.py").write_text("PUBLIC = 1\n", encoding="utf-8")
+        sub = src_dir / "subpkg"
+        sub.mkdir()
+        (sub / "__init__.py").write_text("X = 1\n", encoding="utf-8")
+        test_file = "tests/test_foo.py"
+        test_content = "from zephyr.mod import subpkg\n"
+        gw = _make_gateway(staged_files=[test_file], file_contents={test_file: test_content})
+        passed, msg = make_test_source_consistency_gate().check(gw, [])
+        assert passed is True
+        assert msg == ""
+
+    def test_missing_symbol_still_blocks(self, tmp_path, monkeypatch):
+        """包目录下无同名子模块/子包 → 仍阻断（不放松真漂移）。"""
+        monkeypatch.setattr(_gate_mod, "_SRC_ROOT", tmp_path)
+        src_dir = tmp_path / "zephyr" / "mod"
+        src_dir.mkdir(parents=True)
+        (src_dir / "__init__.py").write_text("PUBLIC = 1\n", encoding="utf-8")
+        test_file = "tests/test_foo.py"
+        test_content = "from zephyr.mod import nonexistent_sym\n"
+        gw = _make_gateway(staged_files=[test_file], file_contents={test_file: test_content})
+        passed, msg = make_test_source_consistency_gate().check(gw, [])
+        assert passed is False
+        assert "nonexistent_sym" in msg
+
 
 # ---------------------------------------------------------------------------
 # TestAddedLinesFilter — added 行过滤（防误阻断现有漂移）
