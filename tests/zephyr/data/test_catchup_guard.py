@@ -82,7 +82,24 @@ def _iso(d: datetime.date) -> str:
 
 @pytest.fixture
 def patched(monkeypatch):
-    """patch 模块内延迟导入的 tasks.yaml / 日历；返回日历句柄供用例定制。"""
+    """patch 模块内延迟导入的 tasks.yaml / 日历；返回日历句柄供用例定制。
+
+    另将 cg.datetime 替换为固定日期 shim：catchup_guard 用 date.today() 取真实
+    系统日期，测试数据钉在 TODAY=2026-09-03，真实日期漂过 10 天窗口后 daily/intraday
+    桶全部失配（2026-09-15 实测 3 失败）——shim 后测试与真实日期解耦。
+    """
+    import types
+
+    class _FixedDate(datetime.date):
+        @classmethod
+        def today(cls) -> datetime.date:
+            return TODAY
+
+    monkeypatch.setattr(
+        cg,
+        "datetime",
+        types.SimpleNamespace(date=_FixedDate, timedelta=datetime.timedelta, datetime=datetime.datetime),
+    )
     cal = FakeCalendar(
         [TODAY - datetime.timedelta(days=d) for d in range(1, 9)] + [TODAY]
     )
