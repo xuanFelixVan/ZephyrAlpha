@@ -34,6 +34,12 @@
   C4 momentum_breadth    — 动量宽度：收盘价强于 MA20 的股票占比（%）。
                            宽度崩塌 = 指数靠少数权重股支撑的脆弱上涨。
 
+口径注记（2026-09-16 裁定#257④ ALG2-5 勘误）：本模块=纯函数，面板口径由调用方
+决定。生产面板（regime_feature_builder._load_stock_panel）=全市场 A_share
+quality_flag=1 + 后复权收盘 close_hfq（ALG2-1 池修复：旧 top800 池把 2024-02
+微盘踩踏截在池外，同日 C4 池口径 25.8% vs 全市场 4.3%；ALG2-2 复权修复：494 条
+假收益含符号翻转）——"全市场"描述自此为实。
+
 PIT 铁律（与 MOD-REGIME-002 blueprint §6.1 一致）：
   - T 日特征只用 ≤ T 数据（rolling 窗口全部 trailing，无 center/未来项）；
   - 滚动窗口 walk-forward 归一化（分位/std 均为 trailing 窗口内计算），

@@ -156,7 +156,7 @@ class RegimeFeatureBuilder:
         enable_phase2c: bool = False,
         enable_cross_sectional: bool = False,
         cross_sectional_panel: pd.DataFrame | None = None,
-        cross_sectional_top_n: int = 800,
+        cross_sectional_top_n: int | None = None,
         data_loader: Any = None,
     ) -> None:
         """初始化。
@@ -193,8 +193,9 @@ class RegimeFeatureBuilder:
             cross_sectional_panel: 预加载个股日 K 面板（长表 trade_date/symbol/
                 close/volume/amount，测试/离线注入用）。None 且开关开时经
                 _load_stock_panel 从 ClickHouse kline_daily 惰性加载。
-            cross_sectional_top_n: 面板加载的每日流动性 top N（默认 800，
-                控制 TSV 体积；横截面抽样在其内再分层抽 ~200）。
+            cross_sectional_top_n: 面板加载的每日流动性 top N（None=全市场，
+                裁定#257④ ALG2-1 池修复后的默认；横截面抽样在全市场内分层抽 ~200）。
+                传 int 保留 topN 旧口径（对照实验用）。
         """
         self.backtest_start = backtest_start
         self.backtest_end = backtest_end
@@ -641,53 +642,73 @@ class RegimeFeatureBuilder:
     # ── 私有：ALG-01 横截面结构特征（可选开关，默认关）────────────────────
 
     def _build_cross_sectional_features(self) -> pd.DataFrame:
-        """计算横截面 4 列特征（MOD-REGIME-007），index=trade_date，带缓存。"""
+        """计算横截面 4 列特征（MOD-REGIME-007），index=trade_date，带缓存。
+
+        ALG2-2 复权修复（裁定#257④）：面板含 close_hfq（后复权收盘）时特征全部
+        吃 hfq 口径；注入面板无 close_hfq 列时回退原 close（测试/离线路径不变）。
+        """
         if self._cs_features_cache is not None:
             return self._cs_features_cache
         panel = self._cs_panel if self._cs_panel is not None else self._load_stock_panel()
-        self._cs_features_cache = compute_cross_sectional_features(panel)
+        close_col = "close_hfq" if "close_hfq" in panel.columns else "close"
+        self._cs_features_cache = compute_cross_sectional_features(panel, close_col=close_col)
         return self._cs_features_cache
 
     def _load_stock_panel(self) -> pd.DataFrame:
-        """从 ClickHouse kline_daily 加载个股日 K 面板（ALG-01 开关开时调用）。
+        """从 ClickHouse 加载个股日 K 面板（ALG-01 开关开时调用）。
 
-        每日按成交额取 top N（cross_sectional_top_n，控制 TSV 体积；横截面
-        分层抽样在其内再抽 ~200 只），A_share + quality_flag=1。
+        ALG2-1 池修复（裁定#257④，2026-09-16）：面板=全市场 A_share quality_flag=1
+        （~5100 只；旧实现每日成交额 top800 把立项目标事件 2024-02 微盘踩踏截在池外，
+        同日 C4 池口径 25.8% vs 全市场 4.3% 六倍失真）。C2 分层抽样本为 O(N²) 而设，
+        全市场面板直接可算。
+
+        ALG2-2 复权修复：LEFT JOIN c1_market.adj_factor 出 close_hfq=close×adj_factor
+        （后复权口径），C1-C4 全部吃 hfq 收益——旧实现不复权 close 2023-12~2026-06
+        混入 494 条假收益（含 300857 2026-04-22 符号翻转）。factor 缺失日 close_hfq=NULL，
+        该 symbol-day 收益置 NaN 剔除出截面（宁缺毋假）。
 
         Returns:
-            长表 DataFrame：trade_date / symbol / close / volume / amount。
+            长表 DataFrame：trade_date / symbol / close / volume / amount / close_hfq。
         """
         table = self._registry.table("market_kline_daily")
-        sql = (
-            f"SELECT trade_date, symbol, close, volume, amount "
-            f"FROM {table} FINAL "
-            f"WHERE market_type = 'A_share' AND quality_flag = 1 "
-            f"AND trade_date >= toDate('{self.data_load_start}') "
-            f"AND trade_date <= toDate('{self.backtest_end}') "
+        adj = self._registry.table("market_adj_factor")
+        top_n_clause = (
             f"AND (trade_date, symbol) IN ("
             f"SELECT trade_date, symbol FROM {table} FINAL "
             f"WHERE market_type = 'A_share' AND quality_flag = 1 "
             f"AND trade_date >= toDate('{self.data_load_start}') "
             f"AND trade_date <= toDate('{self.backtest_end}') "
             f"ORDER BY amount DESC LIMIT {int(self._cs_top_n)} BY trade_date"
-            f") ORDER BY trade_date, symbol"
+            f")" if self._cs_top_n else ""
+        )
+        sql = (
+            f"SELECT k.trade_date, k.symbol, k.close, k.volume, k.amount, "
+            f"k.close * ifNull(a.adj_factor, nan) AS close_hfq "
+            f"FROM {table} AS k FINAL "
+            f"LEFT JOIN {adj} AS a FINAL "
+            f"ON k.symbol = a.symbol AND k.trade_date = a.trade_date "
+            f"WHERE k.market_type = 'A_share' AND k.quality_flag = 1 "
+            f"AND k.trade_date >= toDate('{self.data_load_start}') "
+            f"AND k.trade_date <= toDate('{self.backtest_end}') "
+            f"{top_n_clause} ORDER BY k.trade_date, k.symbol"
         )
         tsv = self._safe_query(sql, context="stock_panel (cross_sectional)")
-        rows = parse_tsv(tsv, ncols=5)
+        rows = parse_tsv(tsv, ncols=6)
         if not rows:
             raise RegimeFeatureError(
                 f"stock_panel 查询为空: [{self.data_load_start}, {self.backtest_end}] top_n={self._cs_top_n}"
             )
-        df = pd.DataFrame(rows, columns=["trade_date", "symbol", "close", "volume", "amount"])
+        df = pd.DataFrame(rows, columns=["trade_date", "symbol", "close", "volume", "amount", "close_hfq"])
         df["trade_date"] = pd.to_datetime(df["trade_date"])
-        for c in ["close", "volume", "amount"]:
+        for c in ["close", "volume", "amount", "close_hfq"]:
             df[c] = pd.to_numeric(df[c], errors="coerce")
         _logger.info(
-            "stock_panel 加载: %d 行, %d 只, %s~%s",
+            "stock_panel 加载: %d 行, %d 只, %s~%s (hfq 覆盖 %.1f%%)",
             len(df),
             df["symbol"].nunique(),
             df["trade_date"].min(),
             df["trade_date"].max(),
+            100.0 * df["close_hfq"].notna().mean(),
         )
         return df
 

@@ -46,11 +46,11 @@ regime 特征集的横截面结构补强：既有 6 特征全部由市场代理�
 
 ## 4. 接线
 
-`RegimeFeatureBuilder(enable_cross_sectional=False)` 默认关（输出与现状逐字节一致）；开时 4 列 pd.concat 尾部追加，`active_feature_names()` 6→10 列联动 X 矩阵。个股面板支持注入（测试/离线）或经 `_load_stock_panel()` 从 kline_daily 惰性加载（每日成交额 top800）。
+`RegimeFeatureBuilder(enable_cross_sectional=False)` 默认关（输出与现状逐字节一致）；开时 4 列 pd.concat 尾部追加，`active_feature_names()` 6→10 列联动 X 矩阵。个股面板支持注入（测试/离线）或经 `_load_stock_panel()` 从 kline_daily×adj_factor 惰性加载（2026-09-16 裁定#257④ 修复：池=全市场 A_share quality_flag=1 + 后复权 close_hfq；旧 top800 池截掉 2024-02 微盘踩踏目标信号、不复权收益混入 494 条假收益）。
 
-## 5. A/B 实证结论（2026-08-22）
+## 5. A/B 实证结论
 
-真实 kline_daily（2024-01~2026-06，601 交易日）两臂 walk-forward regime 判定高度一致（schedule Pearson 0.9999，|Δ|均值 0.0007）——边际影响小，开关维持默认关，仅作诊断维度观察。报告：docs/_archive/2026-08-22-alg01-cross-sectional-ab.md。
+**旧 A/B（2026-08-22）已作废**（裁定#257④ ALG2-3：生成脚本不存在不可复现、臂配置≠生产配置、只测一致性不测检出力，且其池/复权缺陷使结论无效——schedule Pearson 0.9999 属"两臂同盲"而非无增量）。重做报告：docs/_working/alg01/2026-09-16-alg01-ab-redo.md（生成代码=scripts/backtest/alg01_ab_redo.py，双臂=生产配置 full+overlay+phase2c，指标含 2024-02 微盘踩踏/2025-04 关税冲击事件检出力对照与 NAV 诊断）。
 
 ## 6. 边界
 

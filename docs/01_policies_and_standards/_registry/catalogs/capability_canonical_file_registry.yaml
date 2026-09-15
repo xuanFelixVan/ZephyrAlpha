@@ -7389,6 +7389,10 @@ creation_tokens:
   token: auto-interface-contract-registry-20260706
   created_by: session-sess-9032-20260706163221
   capability: interface_contract_registry
+- file: docs/01_policies_and_standards/_registry/catalogs/registry_master_index_exemptions.yaml
+  token: auto-registry-index-exempt-list-20260916
+  created_by: session-st-pano-20260916
+  capability: registry_index_exempt_list
 - file: scripts/governance/data_quality/check_tick_duplication.py
   token: auto-check-tick-duplication-20260716
   created_by: session-sess-7800-20260716235624
@@ -12077,6 +12081,10 @@ creation_tokens:
   token: algo-note-sync-gate-20260909
   created_by: st-tdmbe-20260909
   capability: algo_note_sync_gate
+- file: src/zephyr/gov_enforcement/commit_gates/algo_flow_link_gate.py
+  token: algo-flow-link-gate-20260916
+  created_by: st-btfix-p15-20260916
+  capability: algo-flow-link-gate
 - file: docs/_working/2026-09-09-tdm-field-upgrade-discussion.md
   token: tdm-field-upgrade-discussion-20260909
   created_by: st-tdmbe-20260909
@@ -16966,4 +16974,8 @@ creation_tokens:
   token: alg01-ab-redo-alg01-ab-redo-20260915
   created_by: st-qalpha-20260916
   capability: alg01_ab_redo
+- file: docs/_working/alg01/2026-09-16-alg01-ab-redo.md
+  token: alg01-ab-redo-report-2026-09-16-alg01-ab-redo-20260915
+  created_by: st-qalpha-20260916
+  capability: alg01_ab_redo_report
 di_seam_exemptions: []

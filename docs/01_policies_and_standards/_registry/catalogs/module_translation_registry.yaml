@@ -49727,6 +49727,13 @@ entries:
   desc_zh: "双臂生产配置 walk-forward 对照+事件检出力对照+NAV 诊断的 A/B 报告生成器"
   desc_en: ""
   plain_zh: "这个脚本用来给新的横截面特征做公平考试：两套几乎一样的环境各跑一遍，唯一区别是用不用新特征，然后看新特征在两次股灾里能不能更早看见危险，最后写成报告。"
+- module_path: src/zephyr/gov_enforcement/commit_gates/algo_flow_link_gate.py
+  domain_id: D_GOV_CODE_QUALITY
+  name_zh: "ALGO_FLOW 锚链接校验门禁"
+  name_en: "ALGO-FLOW-LINK Gate"
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "提交前检查 ALGO_FLOW external 锚与 yaml 卡片的链接完整性：源码里锚指向的 yaml 文件必须真实存在且算法图块可解析，yaml 卡片的 source_of_truth 必须指向真实存在的源文件。只扫描本次提交涉及的文件，不会碰其他会话的暂存内容；文件读不了等基础设施故障时放行不拦。"
 
 battle_map_steps:
 - step_id: BM-BUY-05
