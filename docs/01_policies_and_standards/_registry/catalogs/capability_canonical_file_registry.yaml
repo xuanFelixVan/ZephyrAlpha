@@ -16876,6 +16876,10 @@ creation_tokens:
   token: deep-review-subnode-mining-round1-20260915
   created_by: qoder-sop-review-20260915
   capability: deep_review
+- file: docs/_working/sop_review_nodes/subnode_mining_round1.md
+  token: deep-review-subnode-mining-round1-20260915
+  created_by: qoder-sop-review-20260915
+  capability: deep_review
 - file: docs/_working/2026-09-15-tilib-handoff.md
   token: tilib-handoff-20260915
   created_by: st-tilib-20260915
@@ -16906,4 +16910,8 @@ creation_tokens:
   token: commit-preflight-commit-preflight-20260915
   created_by: st-commitspeed-20260916
   capability: commit_preflight
+- file: docs/_working/resource_schedule/resource_schedule_panorama_plan_v1.md
+  token: resource-schedule-panorama-resource-schedule-panorama-plan-v1-20260915
+  created_by: st-schedmap-20260916
+  capability: resource_schedule_panorama
 di_seam_exemptions: []
