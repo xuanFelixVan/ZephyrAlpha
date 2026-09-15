@@ -8,7 +8,11 @@ completes_when: >-
 
 # 治理守护模块挖矿 SOP 方案地图（2026-09-15 立项）
 
-> 创建：2026-09-15 ｜ 会话：qoder-gov-patch-20260915 ｜ 状态：**地图 v1 落盘，加减乘除待逐项执行**
+> 创建：2026-09-15 ｜ 会话：qoder-gov-patch-20260915 ｜ 状态：**减法批+全景图前端页已落地，加法/乘法待逐项施工**
+>
+> 落地凭据（2026-09-16 回填）：减法批=1ddcd089（25 文件：8 死模块+11 vms_ri 归档脚本+6 死测试
+> +ZA-IF-0010 deprecated）；GOMAP disconnected 更新=b1334ae3ff（GOMAP 生成器会话同批带入）；
+> 治理全景图前端页=85e39614（govm.js/govm.html/api_server 路由/导航/冒烟测试 2 例）。
 >
 > 起因：2026-09-15 提交内存耗尽事故（9 个孤儿 llama-server ≈12GB，commit 71.2/79.9GB
 > 触顶 → 800705AF 弹窗 + 全系统卡死/黑屏）。Owner 指令：先把项目里已有治理模块全部
@@ -120,16 +124,16 @@ completes_when: >-
 
 | # | 对象 | 动作 | 前置/验证 | 终态 |
 |---|------|------|-----------|------|
-| R1 | `infrastructure/health_monitor/health_aggregator.py`(双胞胎) | 删 | grep 确认仅 __init__ 自导出；跑 system_telemetry 全测 | ✅ 删（二次核验 CONFIRMED-DEAD，零外部 import） |
-| R2 | `governance/ops_governance/startup_shutdown.py`+cli | 删或并入 infrastructure 版 | 查 governance/__init__ 导出链消费方 | ✅ 删双文件+governance/__init__:287 桥接行+__all__ 条目（消费方全走 infrastructure 版） |
-| R3 | `scripts/governance/_archive/vms_ri/` 重复套件 | 归档删除 | 无引用 | ✅ 删 11 脚本（全仓零引用） |
-| R4 | CircuitBreaker×9 / KillSwitch×5 收敛 | 长期战役，逐域向 SSoT 收 | 每次收敛独立裁定（涉及 F 域 human_gate？查 risk_tier_registry） | 部分执行：删 reliability/circuit_breaker+failover_coordinator+api_lifecycle×2+ghost_scan；**保留** source_circuit_breaker(data/scheduler:97 真引用,核验误判)/circuit_breaker_manager(pipeline_orchestrator 活引用,误判)/trading_kill_switch(MOD-INF-016+A3目标)/daban_instant(打板五件,24号§3.13)/trade_level(连续亏损熔断,42号§3.10 TDM 落码)/capacity_assurance+context_pipeline_auto 待裁；canonical=shared/resilience(通用)+access_control(系统级) |
+| R1 | `infrastructure/health_monitor/health_aggregator.py`(双胞胎) | 删 | grep 确认仅 __init__ 自导出；跑 system_telemetry 全测 | ✅ 已删（1ddcd089，二次核验 CONFIRMED-DEAD，零外部 import） |
+| R2 | `governance/ops_governance/startup_shutdown.py`+cli | 删或并入 infrastructure 版 | 查 governance/__init__ 导出链消费方 | ✅ 已删双文件+governance/__init__:287 桥接行+__all__ 条目（1ddcd089，消费方全走 infrastructure 版） |
+| R3 | `scripts/governance/_archive/vms_ri/` 重复套件 | 归档删除 | 无引用 | ✅ 已删 11 脚本（1ddcd089，全仓零引用） |
+| R4 | CircuitBreaker×9 / KillSwitch×5 收敛 | 长期战役，逐域向 SSoT 收 | 每次收敛独立裁定（涉及 F 域 human_gate？查 risk_tier_registry） | 部分执行（1ddcd089）：删 reliability/circuit_breaker+failover_coordinator+api_lifecycle×2+ghost_scan；**保留** source_circuit_breaker(data/scheduler:97 真引用,核验误判)/circuit_breaker_manager(pipeline_orchestrator 活引用,误判)/trading_kill_switch(MOD-INF-016+A3目标)/daban_instant(打板五件,24号§3.13)/trade_level(连续亏损熔断,42号§3.10 TDM 落码)/capacity_assurance+context_pipeline_auto 待裁；canonical=shared/resilience(通用)+access_control(系统级)；ZA-IF-0010 已标 deprecated（同批） |
 
 ### 加（接线）
 | # | 对象 | 动作 | 前置/验证 | 终态 |
 |---|------|------|-----------|------|
 | A1 | `nssm_p1_p5_service_definitions.yaml` DRAFT | 收口落地或裁定废弃 | Owner 窗口(蓝图自述) | |
-| A2 | `config/alert_rules.yaml` OOM>8GB critical | 接通知通道实测一轮 | 飞书 webhook 真实告警一次 | |
+| A2 | `config/alert_rules.yaml` OOM>8GB critical | 接通知通道实测一轮 | ~~飞书 webhook 真实告警一次~~ → 2026-09-15 Owner 裁定：飞书/SMTP 通道彻底删除，通知=前端 promotion 页 | A2 改口径=OOM critical 事件落到 promotion 页通知，待施工 |
 | A3 | `kill_switch_orchestrator` 五域编排 | 挂 boot_hooks 或裁定废弃 | RBAC 测试+boot 冒烟 | ⚠️ 降级执行：核验发现其 4 个默认域适配目标本身多为死链/弱链——先接目标再挂 boot，否则新增一层死控制面 |
 | A4 | `last_resort_watchdog` | 接 escalation_protocol 或废弃 | 蓝图声明 vs 现状对齐 | TEST-ONLY 实证，维持待接线 |
 | A5 | `agent_health_monitor`、`heartbeat_server`、`task_heartbeat`、`degrade_cascade` | 逐个接线或删除 | wiring 复核 | 核验修订：全为 TEST-ONLY；zombie_cleaner 从本单剔除（auto_fix_engine/engine.py:247 动态注册=活，挖矿误判）；ghost_scan 已删（与 reaper scan_ghost_windows 重复） |
