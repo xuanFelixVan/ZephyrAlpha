@@ -12820,12 +12820,16 @@ creation_tokens:
   token: factory-backend-kronos-adapter-20260914
   created_by: st-facbe-20260914
   capability: factory_backend
-- file: docs/_working/2026-09-15-kronos-baseline-eval-report.md
+- file: docs/_working/archive/2026-09/2026-09-15-kronos-baseline-eval-report.md
   token: factory-backend-2026-09-15-kronos-baseline-eval-report-20260914
   created_by: st-facbe-20260914
   capability: factory_backend
 - file: docs/_working/2026-09-15-four-big-items-blueprint.md
   token: factory-backend-2026-09-15-four-big-items-blueprint-20260915
+  created_by: st-facbe-20260914
+  capability: factory_backend
+- file: scripts/backtest/forward_post.py
+  token: factory-backend-forward-post-20260915
   created_by: st-facbe-20260914
   capability: factory_backend
 - file: scripts/backtest/translated/c4_21af8c66c15e_small_cap.py
@@ -16890,4 +16894,8 @@ creation_tokens:
 - file: scripts/data/backfill_lof_minute_history.py
   token: asset-v2-lof-minute-backfill-20260911
   capability: backfill_lof_minute_history
+- file: docs/_working/reports/commit_pipeline_upgrade_2026_09_16.md
+  token: commit-pipeline-upgrade-commit-pipeline-upgrade-2026-09-16-20260915
+  created_by: st-commitspeed-20260916
+  capability: commit_pipeline_upgrade
 di_seam_exemptions: []
