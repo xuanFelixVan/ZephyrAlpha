@@ -679,6 +679,7 @@ error_codes:
   class: CircuitBreakerOpenError
   module: zephyr.infrastructure.reliability.circuit_breaker
   file: src/zephyr/infrastructure/reliability/circuit_breaker.py
+  deprecated: '2026-09-15: 治理加减乘除减法批(5756905e64)删除 infrastructure/reliability/circuit_breaker.py 死模块（运行期零消费方，仅 resilience_governance 代理导出已同批清理）；本码无存活定义点'
 - code: ZA-IF-0011
   class: GovernanceError
   module: zephyr.infrastructure.a2a_protocol.governance.error_codes
