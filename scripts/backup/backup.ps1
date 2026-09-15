@@ -602,6 +602,60 @@ if ($Mode -eq "ch") {
     }
 }
 
+# ==================== STAGE 3b: Git bundle refresh (git history disaster backup) ====================
+# The v2.1 code vault excludes .git; git history is disaster-backed up as a single
+# bundle file (<vault>\git_bundles\). Re-create when the newest bundle is older
+# than 7 days, keep the newest 2. pack.windowMemory=256m: pack-objects is the only
+# memory-heavy native op in this window (died with default window on 2026-09-15).
+$bundleResult = @{status="skipped"; reason="Mode=ch"}
+if ($Mode -ne "ch") {
+    Write-Stage "Stage 3b: Git bundle refresh"
+    $bundleDir = Join-Path $VaultBase "git_bundles"
+    New-Item -ItemType Directory -Path $bundleDir -Force | Out-Null
+    $latestBundle = Get-ChildItem "$bundleDir\*.bundle" -File -ErrorAction SilentlyContinue |
+        Sort-Object LastWriteTime -Descending | Select-Object -First 1
+    $bundleAgeDays = if ($latestBundle) { [math]::Round(((Get-Date) - $latestBundle.LastWriteTime).TotalDays, 2) } else { 999 }
+    $bundleTarget = Join-Path $bundleDir ("zephyralpha_full_{0}.bundle" -f (Get-Date -Format 'yyyyMMdd'))
+
+    if ($bundleAgeDays -lt 7) {
+        Write-OK ("Bundle fresh ({0}d old), skipping" -f $bundleAgeDays)
+        $bundleResult = @{status="skipped"; reason="fresh"; latest=$latestBundle.Name; age_days=$bundleAgeDays}
+    } else {
+        # Today's file may exist from a partial/failed prior attempt -- verify or rebuild
+        if (Test-Path $bundleTarget) {
+            & git bundle verify $bundleTarget 2>&1 | Out-Null
+            if ($LASTEXITCODE -eq 0) {
+                Write-OK "Bundle for today already exists and verifies, skipping"
+                $bundleResult = @{status="ok"; action="existing"; bundle=$bundleTarget}
+            } else {
+                Write-Warn "Today's bundle exists but fails verify -- rebuilding"
+                Remove-Item $bundleTarget -Force -ErrorAction SilentlyContinue
+            }
+        }
+        if (-not (Test-Path $bundleTarget)) {
+            Write-Stage "Creating bundle (latest is $bundleAgeDays days old)"
+            & git -c pack.windowMemory=256m -c pack.threads=2 bundle create $bundleTarget --all 2>&1 | Out-Null
+            if ($LASTEXITCODE -eq 0 -and (Test-Path $bundleTarget)) {
+                & git bundle verify $bundleTarget 2>&1 | Out-Null
+                if ($LASTEXITCODE -eq 0) {
+                    $old = @(Get-ChildItem "$bundleDir\*.bundle" -File |
+                        Sort-Object LastWriteTime -Descending | Select-Object -Skip 2)
+                    foreach ($b in $old) { Remove-Item $b.FullName -Force -ErrorAction SilentlyContinue }
+                    Write-OK ("Bundle created + verified ({0:N0} MB, rotated {1} old)" -f ((Get-Item $bundleTarget).Length / 1MB), $old.Count)
+                    $bundleResult = @{status="ok"; action="created"; bundle=$bundleTarget; rotated=$old.Count}
+                } else {
+                    Write-Warn "Bundle verify failed -- removing suspect file, retry next run"
+                    Remove-Item $bundleTarget -Force -ErrorAction SilentlyContinue
+                    $bundleResult = @{status="failed"; reason="verify"}
+                }
+            } else {
+                Write-Warn "Bundle creation failed (exit $LASTEXITCODE) -- will retry next backup run"
+                $bundleResult = @{status="failed"; reason="create"; git_exit=$LASTEXITCODE}
+            }
+        }
+    }
+}
+
 # ==================== STAGE 3c: Off-repo critical assets mirror ====================
 # Added 2026-09-08 (Owner approved): mirror off-repo critical assets (C/E drive)
 # to F:\offrepo_backup\<id>\. Registry source: config/asset_inventory.yaml
@@ -664,6 +718,7 @@ $report = @{
     force_mode = $Force.IsPresent
     databases = $dbStatus
     code_backup = $codeResult
+    git_bundle = $bundleResult
     offrepo_backup = $offrepoResult
 }
 
