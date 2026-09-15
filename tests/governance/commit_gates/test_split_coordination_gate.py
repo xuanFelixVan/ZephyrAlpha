@@ -31,6 +31,7 @@ from __future__ import annotations
 import os
 import subprocess
 import sys
+from datetime import datetime, timezone
 from pathlib import Path
 
 import pytest
@@ -89,7 +90,11 @@ def _declare(gw: _FakeGW, mover: str = "mover-A", old_paths: list[str] | None = 
                         "mover_session": mover,
                         "old_paths": old_paths or ["lab/seg_001.md", "lab/seg_002.md"],
                         "new_root": "lab/a",
-                        "declared_at": "2026-09-13T10:00:00+00:00",
+                        # 声明须"新鲜"（<48h）才走拦截正门——相对时间防漂移：
+                        # 写死日期超阈值后被现行协议"弃单自愈降级 warn 放行"
+                        # （split_coordination.py §3），期待拦截的红/蓝用例被
+                        # 陈旧路径放走（2026-09-16 时间漂移回归实证）。
+                        "declared_at": datetime.now(timezone.utc).isoformat(),
                     }
                 ]
             },

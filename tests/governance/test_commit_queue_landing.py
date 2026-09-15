@@ -160,8 +160,18 @@ class _StubGateway:
                 },
             )
         )
+        # 对齐生产 GitCommitGateway._add_and_remove_normal_files 契约（桩曾用
+        # add -A 简化——对 delete action 破产：_apply_snapshot 已删盘 +
+        # _prestage_snapshot 已 rm --cached 后，文件盘上/index 双缺失，
+        # add -A 报 fatal: pathspec did not match，2026-09-16 delete 收敛两用例
+        # 死信实证）。existing 走 git add；盘上缺失走 git rm --cached
+        # --ignore-unmatch（幂等，prestage 后=无操作成功——与生产 gateway 同款）。
         for f in files:
-            _git(self._wt, "add", "-A", "--", f)  # -A 兼容 delete action（staging 删除）
+            target = Path(f) if Path(f).is_absolute() else self._wt / f
+            if target.is_file():
+                _git(self._wt, "add", "--", f)
+            else:
+                _git(self._wt, "rm", "--cached", "--ignore-unmatch", "--", f)
         _git(self._wt, "commit", "--no-verify", "-qm", message)
         sha = _git_text(self._wt, "rev-parse", "HEAD")
         return CommitResult(status=CommitStatus.OK, message="stub committed", commit_hash=sha)

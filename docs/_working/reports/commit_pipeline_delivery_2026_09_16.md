@@ -157,3 +157,33 @@ completes_when: >-
 - W6 三件：重实现+增强——process_pool priority_class+**WMI ReturnValue=21 纵深防御链**（重试×2→无 breakaway 降级→sync 兜底；直接消灭"async 恒失败走 sync"性能债）；reconcile worker=1+below_normal（经他会话晨间新落地的 process_incubator 统一入口透传——基建协同）。
 - W1 三修复：重建代理重实现（B1 撕裂读重试/B2 四维与门/B3 编码硬化）。
 - 传送带补全（Owner 晨间口述设计）：commit_belt_daemon 常驻消费端（watchdog 事件驱动 M10 合规/单例锁/死信自动登记堵点本）+入队话术改"无需轮询继续施工"+堵点本横幅改"专人专事协议"。
+
+## 11. 晚班收口批（2026-09-16 晚，Owner 睡眠授权全自主）
+
+### 11.1 挖矿日志（SOP 收口批——内域反查为主，外域 v2.0/v2.1 已挖干）
+| 轮 | 矿脉 | 发现 | 判定 |
+|----|------|------|------|
+| R3-1 | FILE-COPY 跨树自比较 | 排除集=绝对路径相等，serializer worktree 新文件 vs 主区孪生路径不同→没排除自己（-0016 死信实证） | signal→治本（仓锚后缀等价排除） |
+| R3-2 | 堵点本阈值 | Owner 留"定个数"待裁——按授权自裁 N=20 条或最老>24h（对齐 perf 报表既有阈值域） | signal→实施 |
+| R3-3 | 债1 自举循环 | LandingEnvironmentError→pending 回退→下轮重试=可能静默循环；历史 32 死信+僵尸锁在案 | signal→belt 侧连续失败计数≥3 升级 CRITICAL（核心不改） |
+| R3-4 | 两相邻 tracked-drift 项 | trading_decision_map（59 次未归因）/strategy_registry——机器写手与手工 SSOT 混管 | 自裁：**保持硬拦不豁免**（裁定登记见 11.2） |
+| R3-5 | 存量测试挂账 | split 7 挂=fixture 硬编码 2026-09-13 时间戳超 48h 陈旧窗；landing 2 挂=桩 gateway 用 add -A 未模拟生产 rm 分流契约 | signal→测试级修复（生产零改动） |
+noise 轮：无。矿脉枯竭：R3 五脉全见底，本域收口。
+
+### 11.2 自裁登记（Owner 授权"有用就做"口径）
+1. **trading_decision_map.yaml / strategy_registry.yaml 不入 tracked-drift 白名单**：两表为机器挂图（auto_mount/intake）与人工裁定混管的 SSOT——TOCTOU 硬拦对"门禁验旧/提交落新"竞态有真实保护价值；机器写手的正当通路=挂图后同批直提（先例在案），而非豁免。风险接受：59/76 次未归因 warn 继续积累（堵点本可见）。
+2. **堵点本阈值 N=20 条/最老>24h**：belt daemon 自动告警行+logger.error；"叫高级模型维护班"环节保持人工开班（会话级动作不可自动化），告警即开班信号。
+3. **split/landing 存量挂按测试级修复处置**：owner 会话 12h 无动静+协议真源自洽证据链，测试基建对齐生产契约（非为绿而绿）。
+
+### 11.3 收口批落地内容
+- FILE-COPY 治本：check_code_duplication 仓锚后缀等价排除（-0016 场景复刻验证 CLEAN+真克隆仍拦双钉）。
+- belt daemon 增强：堵点本积压自检（启动+每事件）+自举连续环境失败≥3 升级 CRITICAL；测试 8/8。
+- 存量挂清偿：split fixture 相对时间+landing 桩 add/rm 分流，41/41。
+- 回滚者取证与终局处置：见 §11.4（取证结论回填）。
+
+### 11.4 回滚者取证结论
+**结论：无攻击者。**三轮"回滚"是三个独立机制的叠加（证据链：watchdog healed 时间戳/write_audit 写入者捕获/reflog parent 链/reaper kill log 四源对表）：
+1. **W1/W3（17+2 文件回 HEAD）=网关 stash 隔离"push 成功、pop 未回放"**——共享主区下他会话提交流 stash push 扫走全部 tracked 修改（untracked 天然幸存=受害者画像吻合），reaper 误杀回放中的 worker（PID 8524/30272，runtime_dir_or orphan 判定）打断恢复；置信度高（stash_ref 残迹为唯一缺口）。
+2. **W2（翻译条目被剪）=generate_rule_catalog 再生成不保育手写条目**——写入者进程被 write_audit 直接捕获（置信度很高）；SSOT 红线视角=生成器与登记工具的管线顺序缺陷。
+3. **W4（孤魂提交 301a6ee82a）=直连 _GlobalCommitLock 与 Serializer lease 两把互斥锁互不排他**——61 秒 gate 窗口内 dev ref 竞态，reflog parent 链硬证据（置信度很高）。
+**当晚落地治本**：①孵化器 spawn 自动登记 reaper keep-list（误杀釜底抽薪，本轮 265/265 验证）；②stash 通告机制核实已在位（2026-08-01 R3 治本，缺口在跨会话可见性）。**移交维护班（证据齐全）**：A.双锁统一（直连与队列落地共用一把互斥）——孤魂类根治，核心手术需专班；B.generate_rule_catalog 保育非生成条目（W2 类根治）；C.write_audit watch 列表补 scripts/ 治理热文件盲区；D.结构解=多会话回归 worktree 隔离默认（宪法 RULE-WORKTREE 既有方向）。

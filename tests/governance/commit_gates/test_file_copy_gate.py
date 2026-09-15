@@ -275,3 +275,72 @@ class TestGatewayIntegration:
         passed, msg = make_file_copy_gate().check(gw, [])
         assert passed
         assert msg == ""
+
+
+class TestCrossTreeTwinExclusion:
+    """FILE-COPY 跨树自比较治本回归钉（st-commitspeed-20260916，-0016 死信实证）：
+    队列落地的新 .py 位于 serializer worktree，主区同名孪生（AI 施工原文）绝对
+    路径不同——排除集必须按仓锚后缀（src/zephyr|scripts 后相对段）等价，否则
+    新文件与自己 100% 相似误报。"""
+
+    def test_worktree_twin_not_flagged(self, tmp_path):
+        import subprocess
+        import sys as _sys
+
+        repo_root = Path(__file__).resolve().parents[3]
+        src_twin_target = repo_root / "src" / "zephyr" / "gov_enforcement" / "rule_bridge" / "commit_preflight.py"
+        if not src_twin_target.exists():
+            pytest.skip("主区原文不在（HEAD 漂移），跳过孪生复刻")
+        # 构造 worktree 孪生：同锚后缀不同绝对路径（复刻 serializer worktree 形态）
+        wt_file = tmp_path / "commit_queue" / "worktree" / "src" / "zephyr" / "gov_enforcement" / "rule_bridge" / "commit_preflight.py"
+        wt_file.parent.mkdir(parents=True)
+        wt_file.write_bytes(src_twin_target.read_bytes())
+        r = subprocess.run(
+            [
+                _sys.executable,
+                str(repo_root / "scripts" / "governance" / "d5_architecture" / "checkers" / "check_code_duplication.py"),
+                "--files",
+                str(wt_file),
+                "--ast",
+                "--threshold",
+                "0.7",
+            ],
+            capture_output=True,
+            text=True,
+            timeout=180,
+        )
+        assert r.returncode == 0, f"跨树孪生不得误报（rc={r.returncode}）: {r.stdout[-200:]}"
+
+    def test_real_copy_still_flagged(self, tmp_path):
+        """真克隆（不同路径名不同内容同构）仍须拦截——修复不放松检测语义。"""
+        import subprocess
+        import sys as _sys
+
+        repo_root = Path(__file__).resolve().parents[3]
+        # 用一个确有同形孪生的场景：直接把 belt daemon 测试外克隆为不同锚后缀同 basename 不同内容变体——
+        # 简化验证：拿两个内容 100% 相同但锚后缀不同的文件（tmp 伪造 repo 结构）
+        src_file = repo_root / "src" / "zephyr" / "gov_enforcement" / "rule_bridge" / "commit_preflight.py"
+        if not src_file.exists():
+            pytest.skip("主区原文不在，跳过")
+        fake_repo = tmp_path / "scripts"
+        fake_repo.mkdir()
+        # 同名不同目录（锚后缀不同）+内容全同 = 真克隆形态
+        fake_file = fake_repo / "commit_preflight.py"
+        fake_file.write_bytes(src_file.read_bytes())
+        # new 文件指向 fake（锚后缀=scripts/commit_preflight.py），existing=主区原文
+        # 两者锚后缀不同 → 不在排除集 → 相似度 100% → 须 rc=1
+        r = subprocess.run(
+            [
+                _sys.executable,
+                str(repo_root / "scripts" / "governance" / "d5_architecture" / "checkers" / "check_code_duplication.py"),
+                "--files",
+                str(fake_file),
+                "--ast",
+                "--threshold",
+                "0.7",
+            ],
+            capture_output=True,
+            text=True,
+            timeout=180,
+        )
+        assert r.returncode == 1, "真克隆（锚后缀不同的全同内容）仍须拦截"

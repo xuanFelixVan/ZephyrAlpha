@@ -53,6 +53,13 @@ _QUEUE_SUBDIRS = ("pending", "processing", "done", "dead")
 _DAEMON_LOCK = "belt_daemon.lock"
 _DEBOUNCE_S = 0.5
 _LEDGER = Path(".runtime/audit/bottleneck_ledger.jsonl")
+# 堵点本阈值（Owner 2026-09-16 晚授权自裁：有用就做）：≥20 条未清账或最老条目
+# >24h → 自动写告警行进堵点本+logger.error，供高模型维护班开班信号。
+_LEDGER_ALERT_THRESHOLD = 20
+_LEDGER_ALERT_AGE_S = 86400.0
+# 自举连续环境失败升级阈值（债1 serializer 自举循环的可见化）：连续 3 次
+# drain 环境异常 → 堵点本 CRITICAL 行（不静默循环）。
+_ENV_ABORT_ESCALATE = 3
 
 
 def _queue_root(project_root: Path) -> Path:
@@ -128,6 +135,79 @@ def _ledger_dead_letters(project_root: Path, seen: set[str]) -> int:
     return n
 
 
+def _check_ledger_backlog() -> None:
+    """堵点本积压自检（阈值告警）：≥_LEDGER_ALERT_THRESHOLD 条或最老 >24h → 告警行。"""
+    from datetime import datetime
+
+    if not _LEDGER.exists():
+        return
+    try:
+        lines = _LEDGER.read_text(encoding="utf-8").splitlines()
+        if not lines:
+            return
+        import json as _json
+
+        oldest_ts = None
+        n = 0
+        for line in lines:
+            try:
+                rec = _json.loads(line)
+            except Exception:  # noqa: BLE001
+                continue
+            if rec.get("kind") == "alert":
+                continue  # 告警行不计积压
+            n += 1
+            ts = rec.get("ts")
+            if ts:
+                try:
+                    dt = datetime.fromisoformat(ts)
+                    oldest_ts = dt if oldest_ts is None or dt < oldest_ts else oldest_ts
+                except (ValueError, TypeError):
+                    pass
+        age_s = (datetime.now().astimezone() - oldest_ts).total_seconds() if oldest_ts else 0.0
+        if n >= _LEDGER_ALERT_THRESHOLD or age_s > _LEDGER_ALERT_AGE_S:
+            from zephyr.shared.utils.time_utils import now_utc  # noqa: PLC0415
+
+            with _LEDGER.open("a", encoding="utf-8") as fh:
+                fh.write(_json.dumps({
+                    "ts": now_utc().isoformat(),
+                    "kind": "alert",
+                    "alert": "bottleneck_backlog_threshold",
+                    "pending_items": n,
+                    "oldest_age_s": round(age_s),
+                    "protocol": "维护班开班信号：积压超阈（≥20 条或最老>24h）——由高模型维护班清账",
+                }, ensure_ascii=False) + chr(10))
+            logger.error(
+                "belt_daemon: 堵点本积压超阈 items=%d oldest_age_h=%.1f——维护班开班信号已写入",
+                n, age_s / 3600,
+            )
+    except OSError:
+        pass
+
+
+def _escalate_env_aborts(counter: dict) -> None:
+    """债1 自举循环升级：连续环境失败计数达阈 → 堵点本 CRITICAL 行（禁静默循环）。"""
+    counter["env_aborts"] = counter.get("env_aborts", 0) + 1
+    if counter["env_aborts"] < _ENV_ABORT_ESCALATE:
+        return
+    from zephyr.shared.utils.time_utils import now_utc  # noqa: PLC0415
+
+    try:
+        _LEDGER.parent.mkdir(parents=True, exist_ok=True)
+        import json as _json
+        with _LEDGER.open("a", encoding="utf-8") as fh:
+            fh.write(_json.dumps({
+                "ts": now_utc().isoformat(),
+                "kind": "alert",
+                "alert": "serializer_env_abort_loop",
+                "consecutive": counter["env_aborts"],
+                "protocol": "债1：Serializer 落地环境连续异常（worktree 自举循环嫌疑）——维护班介入",
+            }, ensure_ascii=False) + chr(10))
+        logger.error("belt_daemon: Serializer 连续环境失败 %d 次——堵点本 CRITICAL 已登记", counter["env_aborts"])
+    except OSError:
+        pass
+
+
 def run_daemon(project_root: str | Path, *, max_events: int | None = None) -> int:
     """事件驱动主循环：watchdog 观察 pending/ → 防抖 → 自举排空。
 
@@ -140,7 +220,9 @@ def run_daemon(project_root: str | Path, *, max_events: int | None = None) -> in
         logger.warning("belt_daemon 已在运行（单例锁活体），本次启动退出")
         return 2
     seen_dead: set[str] = set()
+    _loop_state: dict = {"env_aborts": 0}
     _ledger_dead_letters(root, seen_dead)  # 启动即登记存量死信（首次全量）
+    _check_ledger_backlog()  # 启动即自检积压
     try:
         try:
             from watchdog.events import FileSystemEventHandler  # noqa: PLC0415
@@ -171,8 +253,13 @@ def run_daemon(project_root: str | Path, *, max_events: int | None = None) -> in
                     continue  # 30s 心跳窗（非轮询——无事件零动作）
                 poke.clear()
                 poke.clear()  # 双清防抖（无 sleep——PERM-TRIGGER 合规，事件风暴由单 Event 位自然合并）
-                _drain_once(root)
+                _st = _drain_once(root)
+                if isinstance(_st, dict) and _st.get("skipped") and "bootstrap_error" in str(_st.get("reason", "")):
+                    _escalate_env_aborts(_loop_state)
+                else:
+                    _loop_state["env_aborts"] = 0  # 成功即复位
                 _ledger_dead_letters(root, seen_dead)
+                _check_ledger_backlog()
                 events += 1
         finally:
             observer.stop()

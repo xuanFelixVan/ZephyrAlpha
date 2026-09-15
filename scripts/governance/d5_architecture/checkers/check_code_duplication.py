@@ -102,6 +102,21 @@ def main() -> int:
     if args.files:
         new_files = [Path(f) for f in args.files if f.endswith(".py")]
         new_resolved = {f.resolve() for f in new_files if f.exists()}
+
+        def _anchored_suffix(path: Path) -> tuple | None:
+            """仓锚后缀（FILE-COPY 跨树自比较治本，st-commitspeed-20260916）：
+            取路径中 src/zephyr 或 scripts 锚点之后的相对段——队列落地的新文件
+            位于 serializer worktree，其主区同名孪生（AI 施工原文）绝对路径不同，
+            仅靠 resolve() 排除失效（-0016 死信实证：新文件与自己 100% 相似）。
+            锚后缀等价=同一仓库文件。"""
+            parts = path.resolve().parts
+            for anchor in (("src", "zephyr"), ("scripts",)):
+                for i in range(len(parts) - len(anchor) + 1):
+                    if parts[i : i + len(anchor)] == anchor:
+                        return parts[i:]
+            return None
+
+        new_suffixes = {s for s in (_anchored_suffix(f) for f in new_files if f.exists()) if s}
         # 建立已有 .py 文件的 basename 索引（排除新文件自身 + 排除目录）
         existing_index: dict[str, list[Path]] = defaultdict(list)
         for scan_dir in [REPO_ROOT / "src" / "zephyr", REPO_ROOT / "scripts"]:
@@ -109,7 +124,9 @@ def main() -> int:
                 continue
             for py_file in scan_dir.rglob("*.py"):
                 if py_file.resolve() in new_resolved:
-                    continue  # 跳过新文件自身
+                    continue  # 跳过新文件自身（绝对路径等价）
+                if _anchored_suffix(py_file) in new_suffixes and _anchored_suffix(py_file) is not None:
+                    continue  # 跳过新文件自身（跨树孪生：serializer worktree 落地路径 vs 主区施工原文）
                 if any(excluded in py_file.parts for excluded in EXCLUDE_DIRS):
                     continue
                 existing_index[py_file.name].append(py_file)
