@@ -583,7 +583,7 @@ gaps:
     detection_threshold: 5500  # 日均 < 5500 行 = 缺口（区间正常 5550-5562）
     expected_daily_avg: 5558   # 09-07/09-08 基准
     actual_daily_avg: 2438     # (4875+0)/2（09-09 部分写入 4875、09-10 整日 0）
-    status: "resolved"  # 2026-09-15 08:45 daily_valuation_full_refresh 执行成功收尾（rows=77815 耗时 6.3h），逐日复验：09-09=5560（原 4875 补齐）/09-10=5561（原 0）/09-14=5562（原 0），全序列回正常带 5556-5562，北交所 343 只在场
+    status: "reopened"  # 2026-09-15 11:40 st-circmv-synthcw-20260915 复测推翻 closed 判定：行数确实恢复（FINAL 视角 09-04~09-14 每日 5556-5562），但数值列系统性全 0——FINAL 视角样本 000001/000002 等 close='0'/amount='0'/turnover='0'（data_source='local_valuation'），countIf(toFloat64(turnover)>0)=0/5562、countIf(toFloat64(amount)>0)=0/5562。full_refresh 的复验只查了行数未查数值=假性闭环。金融字段消费近期此表一律禁用；流通市值权重公式 amount/turnover 因此不可行，circ_mv 回填已改道股本反推法（见 stock_indicator_circ_mv_outage）
     remediation_log: "2026-09-15 st-bsefix-20260915：①治理侧 0 行告警已落库 fa7caabeca（交易日 gate+WARN 进告警流）；②全月窗重刷发射（.runtime/tmp/valuation_full_refresh_20260915.log）；③09-14 缺口为本条 end_date 扩展原因（原登记只到 09-10）"
     root_cause: "①09-09：daily_valuation_full_refresh（akshare）耗时 39564s(11h) 仅写 44687 行（约 8 日量），刷到 09-09 时只落 4875/5558 即结束=部分写入；②09-10：全天 fetch_perf 仅两条 source=mock rows=0 的 daily_valuation_incremental，无任何 akshare 实跑=整日 0 行；③09-12 15:39 akshare 增量(rows=5562, 36023s)补的是 09-11 而非 09-10，09-13/09-14/09-15 无补写记录（09-14 06:44 又一条 mock rows=0）。非源退化——09-11 已恢复 5562 且高于断点前。"
     impact: "一切消费 daily_valuation 的场景（流通市值/PE-PB 权重、估值因子、板块指数合成权重）。09-09 另缺 687 只（前缀 0=85/3=2/6=498/9=102，散落非连续块=抓取中断随机丢包，非分页截断）。"
@@ -644,7 +644,84 @@ gaps:
     root_cause: "mootdx/tdx 板块盘中分钟通道 2026-09-11 起整体断供（data_source 记为 'tdx'）。最后一波 09-10 本身已是残缺半日：727→563 个 code、295983→37857 行，880825.SH 仅 144 根（正常 240）。日线兄弟表 kline_sector 已完成 tqcenter 换源（commit f908147aae），本分钟表不在换源范围。"
     impact: "方案 J（板块指数合成器）的校准真值来源只剩到 2026-09-10，且 09-10 为半日残缺日 → 对拍窗口建议避开 09-10 或只用该日上午完整段。"
     resolution_plan: "不施工（本条仅登记留痕）。若后续方案 J 需要更长真值窗口，再评估 kline_sector_intraday 是否随 kline_sector 一并换源 tqcenter——属独立立项范围。"
+    resolution_actual: "2026-09-15 st-circmv-synthcw-20260915：断供日 09-11/09-14 已由方案 J Phase 3 合成器回填（data_source='synth_sh' 流通股本加权，580 板块×241 根=139,780 行/日，逐板块分批写入，写前精准 DELETE 旧 synth_eq/synth_cw 幂等）；校准对拍（09-08/09-09 mootdx 真值）：行业段 8811-8814 corr 中位 0.9954-0.9990、地区 8802x 0.9953-0.9980 达标，概念段 8805-8809 0.85-0.95（成分回溯误差，见 sector_constituent_8803_8804_missing）。原 mootdx 真值行未被触碰（真值保护跳过）。"
     primary_alternative: "kline_sector（日线，tqcenter 源，2020-03 起六年半零缺日）可作低频校准真值；分钟级真值暂无替代。"
     evidence: "kline_sector_intraday 近 12 日序列：09-07=727/315799、09-08=727/304228、09-09=727/295983、09-10=563/37857、09-11 起无；max(trade_date)=2026-09-10"
+    created: "2026-09-15"
+    last_updated: "2026-09-15"
+
+  # === 2026-09-15: stock_indicator.circ_mv/total_mv 断供（tushare_daily_basic 断链）→ 已回填 ===
+  - id: "stock_indicator_circ_mv_outage"
+    table: "c1_market.stock_indicator"
+    gap_type: "date_range"
+    start_date: "2026-07-01"   # 实测最后有值日 2026-06-30（交接文档称 09-04 起，探针口径有误，已修正）
+    end_date: "2026-09-14"
+    date_column: "trade_date"
+    detection_threshold: 5500  # circ_mv 非空行 < 5500/日 = 断供
+    expected_daily_avg: 5508   # 06-30 tushare_daily_basic 真实覆盖（11,016 行 FINAL 后 5,508 股）
+    actual_daily_avg: 0        # 07-01~09-14 circ_mv/total_mv 100% NULL（299,789 行）
+    status: "resolved"  # 2026-09-15 st-circmv-synthcw-20260915 回填 297,003 行：方案 J §1 口径 circ_mv=circ_shares×close——股本基线=06-30 真实 circ_mv/kline_daily 06-30 close 反推（万元量纲），乘以各日 kline_daily A_share close（argMax 防重）；INSERT 新版本行携带原行 pe/pb/ps/pcf/dividend_yield 防丢，data_source='synth_shares_close' 诚实标记；FINAL 视角逐日覆盖 99.89%→98.87%
+    root_cause: "tushare_daily_basic 源 07-01 起 circ_mv/total_mv 字段断供（最后有值 2026-06-30）；akshare 侧 stock_indicator 行照常写入（data_source='akshare'）但市值列 NULL。断供起点早于交接文档所述 09-04 达两个多月。"
+    impact: "①方案 J 市值/股本加权合成无权重源（本回填主因）；②所有用 circ_mv/total_mv 的估值/权重消费方 07-01 后空转。"
+    resolution_plan: "已完成（INSERT 股本反推回填）。长期：tushare_daily_basic 断链恢复或 daily_valuation 数值修复后，用真源重灌并保 data_source 可识别。"
+    primary_alternative: "本回填（synth_shares_close）即当前替代口径；送转除权自动相抵（股本↑价↓），残余误差=增发/回购/解禁（少数股，板块级影响微小）。"
+    evidence: "回填脚本 .runtime/tmp/backfill_circ_mv.py（DRY-RUN 297,003 行/5,508 股/54 日，连续性：06-30 真实 105.69 万亿→07-01 合成 106.10 万亿 +0.4%→09-14 96.83 万亿）；残余缺口：07 月后上市新股无 06-30 基线（约 60 只，1.1%，权重影响微小）"
+    created: "2026-09-15"
+    last_updated: "2026-09-15"
+
+  # === 2026-09-15: 逆势榜指数腿 index_quote 采集残缺（每日仅 ~12 快照） ===
+  - id: "index_quote_minute_sparse"
+    table: "c1_market.index_quote"
+    gap_type: "source_degraded"
+    start_date: ""   # 非近期新缺：常态性稀疏（09-08=7 行 / 09-11=12 行 / 09-14=13 行，全指数体系每 symbol 仅 ~12 快照/日）
+    end_date: ""
+    date_column: "trade_date"
+    detection_threshold: 4800   # 000001.SH 单 symbol 分钟数 < 4800（≈3 秒快照×4 小时）= 缺口
+    expected_daily_avg: 4800
+    actual_daily_avg: 12
+    status: "open"  # MOD-SIG-080 逆势榜指数腿（主下跌段峰谷识别）直接受害：峰谷时戳稀疏导致段内板块覆盖分钟数骤降（09-11 实测段 08:41→10:40 仅 2 个共同分钟）、峰时戳落在盘前（08:41）致卡4 全空。kline_1min 无指数 symbol（999/399 前缀 0 只），库内暂无健康指数分钟源。
+    root_cause: "index_quote 采集链路为巡检式零星快照（全指数 3994 symbol×~12 时点/日），非 3 秒连续采集；疑似 QMT 指数快照订阅未常驻。"
+    impact: "①逆势榜四卡段识别退化（卡1/卡3 出榜但覆盖失真、卡4 空榜）；②MOD-SIG-071 指数贡献拆解同源受害。"
+    resolution_plan: "指数分钟采集链路独立立项：QMT 桥订阅 000001.SH tick/1m 或 tqcenter get_index_quotes 常驻采集；或 kline_1min 扩展指数宇宙。未修复前逆势榜可注入健康指数序列（注入位 index_series）运行。"
+    primary_alternative: "注入位（测试/编排已支持）；880003.SH tdx 分钟真值仅存量到 09-10 不可增量。"
+    evidence: "index_quote 09-08/09-11/09-14 每 symbol 7/12/13 行；09-11 000001.SH 时间戳 08:41~15:00 共 12 点"
+    created: "2026-09-15"
+    last_updated: "2026-09-15"
+
+  # === 2026-09-15: 资金腿 sector_fund_flow 整表空 ===
+  - id: "sector_fund_flow_empty"
+    table: "c1_market.sector_fund_flow"
+    gap_type: "empty_table"
+    start_date: ""
+    end_date: ""
+    date_column: "trade_date"
+    detection_threshold: 1000
+    expected_daily_avg: 2000
+    actual_daily_avg: 0
+    status: "open"  # 整表 0 行（max(trade_date)=1970-01-01）。MOD-SIG-080 逆势榜卡2（下跌段资金流入）恒降级；sector_code_bridge.fund_flow_for_segment 无输入。
+    root_cause: "THS 板块资金流采集链路从未灌入或已清空；与 mootdx 死亡同族但表内无任何历史行，疑采集任务从未上线。"
+    impact: "逆势榜卡2 永久降级（设计内 fail-closed 不出伪榜）。"
+    resolution_plan: "资金流采集独立立项（THS/东财板块资金流源评估）；接入后卡2 自动恢复（注入位已留）。"
+    primary_alternative: "无（卡2 降级为设计内行为，不影响其余三卡）。"
+    evidence: "SELECT max(trade_date), countIf(trade_date='2026-09-11') FROM sector_fund_flow → 1970-01-01, 0"
+    created: "2026-09-15"
+    last_updated: "2026-09-15"
+
+  # === 2026-09-15: 8803/8804 行业板块无成分映射（合成覆盖 580/727） ===
+  - id: "sector_constituent_8803_8804_missing"
+    table: "c1_market.sector_constituent"
+    gap_type: "universe_missing"
+    start_date: ""
+    end_date: ""
+    date_column: "trade_date"
+    detection_threshold: 1    # 8803/8804 号段成分行 = 0 即缺口
+    expected_daily_avg: 132   # TDX 行业板 132 个（8803 段 61 + 8804 段 71，tdx 分钟真值实证）
+    actual_daily_avg: 0
+    status: "open"  # 方案 J 合成器覆盖 580/727 板块（82%）：成分表仅含 8800/8802/8805-8809 概念地区统计（467，带后缀）+881 行业（128，带后缀）；8803/8804（132，tdx 分钟真值里为无后缀裸码体系）无成分行，无法合成。
+    root_cause: "TDX 8803/8804 行业指数成分从未入库（sector_constituent 源无此号段）；名称侧 sector_code_bridge.TDX_INDUSTRY_BOARDS 已有 132 条主数据（tdxzs.cfg 派生），成分侧缺位。"
+    impact: "①方案 J 合成板块数 580/727（82%），8803/8804 行业细分分钟序列缺失（其日线 kline_sector 亦无此号段）；②逆势榜行业维度不受影响（881 体系已覆盖）。"
+    resolution_plan: "TDX 行业成分源独立挖矿（tdx 客户端本地文件/tdxzs.cfg 关联成分文件/mootdx 死亡后的替代源）；接入后合成覆盖 727/727。"
+    primary_alternative: "881 行业体系（128 板块）已达标可替代行业维度消费。"
+    evidence: "sector_constituent 号段统计：8803%=0、8804%=0；kline_sector_intraday 09-08 tdx 真值 727 板块中 8803=61/8804=71（无后缀）；8811-8814 校准 corr 0.9954-0.9990"
     created: "2026-09-15"
     last_updated: "2026-09-15"
