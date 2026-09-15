@@ -16930,4 +16930,20 @@ creation_tokens:
   token: ops-alert-feed-blueprint-blueprint-20260915
   created_by: st-govops-20260916
   capability: ops_alert_feed_blueprint
+- file: src/zephyr/shared/infra/process_incubator.py
+  token: auto-scaffold-process_incubator-20260916
+  created_by: scaffold.py
+  capability: process_incubator
+- file: docs/03_modules/_cross_layer/process_incubator/blueprint.md
+  token: process-incubator-blueprint-blueprint-20260915
+  created_by: st-govops-20260916
+  capability: process_incubator_blueprint
+- file: docs/_working/process_incubator_migration_guide.md
+  token: process-incubator-guide-process-incubator-migration-guide-20260915
+  created_by: st-govops-20260916
+  capability: process_incubator_guide
+- file: docs/_working/guides/process_incubator_migration_guide.md
+  token: process-incubator-guide-process-incubator-migration-guide-20260915
+  created_by: st-govops-20260916
+  capability: process_incubator_guide
 di_seam_exemptions: []

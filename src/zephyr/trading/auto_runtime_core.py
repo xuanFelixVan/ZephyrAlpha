@@ -36,7 +36,7 @@ import requests
 
 # 5.160.11 修复：TaskStatus字符串替换为Enum引用
 from zephyr.shared.foundation.constants import TaskStatus
-from zephyr.shared.infra.process_pool import spawn_python_hidden
+from zephyr.shared.infra.process_incubator import get_incubator  # M1 治理战役：孵化即登记+水位门禁
 from zephyr.shared.io.paths import REPO_ROOT  # 仓库根真源（SSoT：zephyr.shared.io.paths）
 
 if TYPE_CHECKING:
@@ -760,8 +760,14 @@ class _OllamaProcessManager:
         ollama_bin = shutil.which("ollama") or "ollama"
         try:
             # 5.49.1 修复：保存 Popen 引用，shutdown 时可 terminate
-            # TRAE-067 铁律2：复用 process_pool 统一无窗口 spawn 入口
-            core._ollama_proc = spawn_python_hidden([ollama_bin, "serve"])  # type: ignore[arg-type]
+            # TRAE-067 铁律2 + M1 治理战役（2026-09-16）：统一孵化入口——孵化即登记
+            # （父 PID/预期寿命/进程树落 ledger，reaper M3 超寿收割）+水位门禁（9-15 事故线）
+            core._ollama_proc = get_incubator().spawn(
+                [ollama_bin, "serve"],
+                name="ollama-serve",
+                expected_lifetime_s=86400.0,
+                owner="auto_runtime_core",
+            )
         except FileNotFoundError as e:
             logger.warning(
                 "_ensure_ollama_running: ollama binary not found (%s: %s)——请安装 Ollama 或将其加入 PATH",

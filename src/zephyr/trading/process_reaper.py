@@ -814,6 +814,124 @@ def _reap_derived_orphans(all_procs: dict[int, dict], dry_run: bool, report: Rea
 # ============== 主流程 ==============
 
 
+# ── M3 孵化-收割闭环（2026-09-16）：消费 process_incubator 登记表 ──
+# 路径与 src/zephyr/shared/infra/process_incubator.py 的 ledger_dir() 对齐；
+# 本模块零 zephyr import（轻导入隔离），故路径常量就地对齐、漂移由
+# tests/trading/test_process_reaper_incubation.py 双端契约测试钉住。
+_INCUBATOR_LEDGER_REL = Path(".runtime") / "process_incubator" / "ledger.jsonl"
+
+
+def _load_incubation_ledger() -> list[dict[str, Any]]:
+    """读孵化登记表（stdlib jsonl；缺席/损坏行降级跳过，fail-safe 不阻断主流程）。"""
+    path = REPO_ROOT / _INCUBATOR_LEDGER_REL
+    if not path.exists():
+        return []
+    out: list[dict[str, Any]] = []
+    try:
+        for line in path.read_text(encoding="utf-8").splitlines():
+            line = line.strip()
+            if not line:
+                continue
+            try:
+                obj = json.loads(line)
+                if isinstance(obj, dict) and obj.get("record_id") and obj.get("child_pid"):
+                    out.append(obj)
+            except ValueError:
+                logger.warning("incubation ledger: skip corrupt line in %s", path)
+    except OSError as e:
+        logger.warning("incubation ledger 读取失败（忽略）: %s", e)
+    return out
+
+
+def _mark_incubation_reaped(record_ids: list[str]) -> int:
+    """回写已收割标记（纯文本重写；OSError 降级不抛——收割本体已生效）。"""
+    if not record_ids:
+        return 0
+    path = REPO_ROOT / _INCUBATOR_LEDGER_REL
+    if not path.exists():
+        return 0
+    marked = 0
+    try:
+        lines = path.read_text(encoding="utf-8").splitlines()
+        out: list[str] = []
+        wanted = set(record_ids)
+        for line in lines:
+            if not line.strip():
+                continue
+            try:
+                obj = json.loads(line)
+            except ValueError:
+                out.append(line)
+                continue
+            if isinstance(obj, dict) and obj.get("record_id") in wanted and not obj.get("reaped"):
+                obj["reaped"] = True
+                obj["reaped_at"] = time.time()
+                marked += 1
+            out.append(json.dumps(obj, ensure_ascii=False))
+        tmp = path.with_suffix(".jsonl.tmp")
+        tmp.write_text("".join(l + "\n" for l in out), encoding="utf-8")
+        tmp.replace(path)
+    except OSError as e:
+        logger.warning("incubation ledger 回写失败（收割仍生效）: %s", e)
+    return marked
+
+
+def _reap_incubated_expired(
+    all_procs: dict[int, dict],
+    dry_run: bool,
+    report: ReapReport,
+    whitelist_res: list[re.Pattern] | None = None,
+    keep_subs: list[str] | None = None,
+) -> None:
+    """收割孵化登记表中超预期寿命且仍存活的进程（M3：登记替代 cmdline 猜测）。
+
+    判定：登记未退出未收割 + pid 仍活 + now > spawned_at + expected_lifetime_s。
+    兜底防线：whitelist/keep 命中永不杀（与孤儿矩阵同源 fail-safe）。
+    """
+    records = _load_incubation_ledger()
+    if not records:
+        return
+    live_pids = set(all_procs.keys())
+    now = time.time()
+    reaped_ids: list[str] = []
+    for rec in records:
+        if rec.get("reaped") or rec.get("exited_at"):
+            continue
+        pid = int(rec.get("child_pid", 0) or 0)
+        if pid <= 0 or pid not in live_pids:
+            continue
+        lifetime = float(rec.get("expected_lifetime_s", 0) or 0)
+        spawned = float(rec.get("spawned_at", 0) or 0)
+        if now <= spawned + lifetime:
+            continue
+        cmdline = str(rec.get("cmd", ""))
+        if whitelist_res is not None and keep_subs is not None and _is_whitelisted(cmdline, whitelist_res, keep_subs):
+            report.reported.append(
+                {"pid": pid, "reason": "incubation_expired_whitelisted", "cmdline": cmdline[:120]}
+            )
+            continue
+        reason = f"incubation_expired:lifetime={lifetime:.0f}s owner={rec.get('owner', '-')}"
+        killed = False
+        if dry_run:
+            _log_kill(pid, reason, dry_run=True)
+        else:
+            killed = _kill_pid_tree(pid)
+            _log_kill(pid, reason + ("" if killed else " [FAILED]"), dry_run=False)
+            reaped_ids.append(str(rec.get("record_id")))
+        report.killed.append(
+            {
+                "pid": pid,
+                "reason": reason,
+                "cmdline": cmdline[:120],
+                "age_h": round((now - spawned) / 3600, 2),
+                "killed": killed,
+            }
+        )
+        logger.warning("%s PID=%d reason=%s", "[dry-run] would kill" if dry_run else "killed", pid, reason)
+    if reaped_ids and not dry_run:
+        _mark_incubation_reaped(reaped_ids)
+
+
 def reap(dry_run: bool = False) -> ReapReport:
     """执行一轮清理。one-shot：scan→判定→kill→落盘→返回，调用方随即退出。"""
     report = ReapReport(timestamp=time.strftime("%Y-%m-%d %H:%M:%S"), dry_run=dry_run)
@@ -891,6 +1009,9 @@ def reap(dry_run: bool = False) -> ReapReport:
 
         # 1.5) 项目衍生孤儿（ollama/llama-server 族，2026-09-15 事故补丁）
         _reap_derived_orphans(all_procs, dry_run, report)
+
+        # 1.6) 孵化登记表超寿收割（M3 闭环，2026-09-16）——登记替代 cmdline 猜测
+        _reap_incubated_expired(all_procs, dry_run, report, whitelist_res, keep_subs)
 
     # 2) Trae 幽灵窗口
     report.ghosts = _reap_ghost_windows(dry_run)

@@ -174,7 +174,8 @@ import time
 from pathlib import Path
 from typing import Any, TypedDict
 
-from zephyr.shared.infra.process_pool import is_pid_alive, spawn_python_hidden
+from zephyr.shared.infra.process_incubator import get_incubator  # M1 治理战役：孵化即登记+水位门禁
+from zephyr.shared.infra.process_pool import is_pid_alive
 from zephyr.shared.io.paths import REPO_ROOT
 
 # #ARCH-RECONCILE-WORKER-HEARTBEAT-001 治本（2026-08-01）：
@@ -901,12 +902,17 @@ def _launch_worker_locked(
             worker_log = str(log_dir / f"reconcile_worker_{commit_sha}.log")
         except OSError:
             worker_log = None
-        proc = spawn_python_hidden(
+        # M1 治理战役（2026-09-16）：worker 孵化走统一入口——登记（父 PID/预期寿命/树）
+        # 供 reaper 超寿收割；worker 为中等算力任务，水位门禁保持开启
+        proc = get_incubator().spawn(
             cmd,
             cwd=str(root),
             env=env,
             stdout_path=worker_log,
             stderr_path=worker_log,
+            name="reconcile-worker",
+            expected_lifetime_s=1800.0,
+            owner="reconcile_runner",
         )
         # 治本：保持 proc 引用，避免 GC 触发 Popen.__del__ ResourceWarning
         _WORKER_PROCS[commit_sha] = proc

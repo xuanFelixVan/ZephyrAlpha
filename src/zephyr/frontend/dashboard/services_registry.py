@@ -385,13 +385,25 @@ def _do_start(item: dict[str, Any]) -> str:
             return "task run: " + task
         except Exception as e:  # noqa: BLE001 — /run 失败回退直接 spawn
             return f"task run failed ({e}); fallback spawn"
-    log = (_TMP / f"svc_{item['id']}.log").open("ab")
+    svc_log = str(_TMP / f"svc_{item['id']}.log")
     exe = cmd[0]
     if exe == "python":   # 用 api_server 同一解释器，防 PATH 漂移
         import sys
         cmd = [sys.executable, *cmd[1:]]
-    subprocess.Popen(cmd, cwd=str(_REPO), stdout=log, stderr=log,
-                     creationflags=subprocess.DETACHED_PROCESS | subprocess.CREATE_NEW_PROCESS_GROUP)  # noqa: S603 — 命令=目录内白名单
+    # M1 治理战役（2026-09-16）：服务孵化走统一孵化入口——孵化即登记（父 PID/预期寿命/
+    # 进程树，reaper M3 超寿可收割）+水位门禁；stdout 落盘改 path 形态（兼治句柄泄漏：
+    # 原实现 open("ab") 句柄随 Popen 传入后无人关闭）
+    from zephyr.shared.infra.process_incubator import get_incubator  # noqa: PLC0415
+
+    get_incubator().spawn(
+        cmd,
+        cwd=str(_REPO),
+        stdout_path=svc_log,
+        stderr_path=svc_log,
+        name=f"svc-{item['id']}",
+        expected_lifetime_s=86400.0,
+        owner="services_registry",
+    )  # noqa: S603 — 命令=目录内白名单
     return "spawned: " + " ".join(cmd[:4])
 
 

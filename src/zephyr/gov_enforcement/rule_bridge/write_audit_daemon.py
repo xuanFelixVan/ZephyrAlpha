@@ -523,10 +523,8 @@ def ensure_daemon(project_root: str | Path) -> bool:
     if os.environ.get("PYTEST_CURRENT_TEST"):
         logger.debug("write_audit ensure_daemon: pytest env, skip real daemon spawn")
         return True
-    from zephyr.shared.infra.process_pool import (  # noqa: PLC0415
-        is_pid_alive,
-        spawn_python_hidden,
-    )
+    from zephyr.shared.infra.process_incubator import get_incubator  # noqa: PLC0415  # M1 治理战役
+    from zephyr.shared.infra.process_pool import is_pid_alive  # noqa: PLC0415
     from zephyr.shared.io.paths import anchor_main_root  # noqa: PLC0415
 
     root = anchor_main_root(Path(str(project_root)).resolve())
@@ -540,7 +538,9 @@ def ensure_daemon(project_root: str | Path) -> bool:
         pass
     log_path = str(root / _STATE_DIR / "write_audit_stdout.log")
     (root / _STATE_DIR).mkdir(parents=True, exist_ok=True)
-    proc = spawn_python_hidden(
+    # M1 治理战役（2026-09-16）：孵化即登记（轻量常驻 watcher，门禁关闭防误延时，
+    # 预期寿命=1 天，超寿由 reaper 按登记收割，替代孤儿轮猜）
+    proc = get_incubator().spawn(
         [
             sys.executable,
             "-m",
@@ -551,6 +551,10 @@ def ensure_daemon(project_root: str | Path) -> bool:
         cwd=str(root),
         stdout_path=log_path,
         stderr_path=log_path,
+        name="write-audit-daemon",
+        expected_lifetime_s=86400.0,
+        owner="write_audit_daemon",
+        gate=False,
     )
     try:
         pid_file.write_text(str(proc.pid), encoding="utf-8")

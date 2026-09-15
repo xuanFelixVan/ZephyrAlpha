@@ -32,12 +32,14 @@
 from zephyr.shared.infra.process_lifecycle_gateway import ProcessLifecycleGateway
 
 from . import cache
+from zephyr.shared.infra.process_incubator import ProcessIncubator
 
 # [BLUEPRINT] MOD-INF-016 | docs/03_modules/_cross_layer/shared_core/blueprint.md
 # [TTL] permanent
 """shared.infra — auto-generated package init."""
 
 __all__ = [
+    "ProcessIncubator",
     "ProcessLifecycleGateway",
     "cache",
     "idempotency",
