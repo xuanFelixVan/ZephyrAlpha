@@ -14,7 +14,8 @@
 from __future__ import annotations
 
 import os
-from unittest.mock import patch
+from types import SimpleNamespace
+from unittest.mock import MagicMock, patch
 
 from zephyr.infrastructure.pipeline.llm_gateway import (
     _PROVIDERS,
@@ -252,3 +253,20 @@ class TestLLMGatewayCall:
                 fallback_chain=["deepseek", "glm"],
             )
             assert resp.simulated is True
+
+    def test_malformed_none_choices_fails_clean_into_chain(self):
+        """deepseek 实测坑（2026-09-15 C4 批）：补全对象 choices=None 时不得 TypeError 逃逸，
+        须转干净错误应答（simulated+error），兜底链照常消费。"""
+        with patch.dict(os.environ, {**os.environ, "DEEPSEEK_API_KEY": "sk-test"}):
+            fake_client = MagicMock()
+            fake_client.chat.completions.create.return_value = SimpleNamespace(
+                choices=None, usage=None
+            )
+            with patch("openai.OpenAI", return_value=fake_client):
+                resp = LLMGateway.call(
+                    [{"role": "user", "content": "test"}],
+                    provider="deepseek",
+                    fallback_chain=["deepseek"],
+                )
+        assert resp.simulated is True
+        assert resp.error is not None

@@ -269,7 +269,13 @@ def _call_openai_compatible(
         )
         latency_ms = int((time.monotonic() - start) * 1000)
 
-        content = response.choices[0].message.content or ""
+        # 畸形补全防御（2026-09-15 C4 批实测：deepseek 偶发返回 choices=None——
+        # 直接下标会 TypeError，转为显式错误走 except → 兜底链下一 provider）
+        choices = getattr(response, "choices", None) or []
+        if not choices:
+            raise ValueError(f"{provider} returned malformed completion (choices=None/empty)")
+
+        content = choices[0].message.content or ""
         tokens_input = getattr(response.usage, "prompt_tokens", 0) or 0
         tokens_output = getattr(response.usage, "completion_tokens", 0) or 0
         cost_usd = round(
