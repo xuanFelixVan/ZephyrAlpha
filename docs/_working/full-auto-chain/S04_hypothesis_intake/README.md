@@ -45,7 +45,7 @@ date: 2026-09-15
 | 3 | ②下游 | E2 台账 verdict 流向 | signal | `fetch_prechecked_ids` L188-190 DISTINCT 不分 verdict → **deferred 候选永久滞留**，无重审队列（注释自称"deferred 可重跑语义"只在幂等查询失败降级时才成立） |
 | 4 | ②下游 | E4 层赛马可比性 | noise | race 计分板只到 E2 漏斗；E4 层聚合无件（须先有 S06 首跑数据），本轮无可入图新发现 |
 | 5 | ③机制 | LLM 假说生成/预审业界（全网） | signal | FaVOR arxiv.org/html/2608.30192v1（arXiv，2026，回测前机制验证=本项目 E2 同构，蓝图已引）；AlphaAgent arxiv.org/html/2502.16789v1（KDD 2025，假说生成→因子→评估闭环+抗衰减正则，蓝图"借监不引码"）；RD-Agent(Q) arxiv.org/abs/2505.15155（Microsoft Research，2025，数据为中心因子/模型自动 R&D 闭环）；Alpha-R1 arxiv.org/html/2512.23515v2（2026，RL 对齐的免回测五维 AlphaEval 快筛——对应蓝图"E4a 免回测快筛"开放决策点 7）；FITEE LLM alpha mining 综述 jzus.zju.edu.cn/iparticle.php?doi=10.1631/FITEE.2500386（浙大学报，2026） |
-| 6 | ④后端 | E0 闸+计划任务实证 | signal | FactoryLaneC Ready（首次全链触发=2026-09-19 周六 10:00）；factory_lane_c.log 证实闸门拒盘中点火 exit 3；ps1 首命令 exit 3 时 `$ErrorActionPreference="Stop"`+`2>&1|` 在 PS5.1 有 stderr ErrorRecord 中断风险（后三命令未在旧日志出现，09-14 版本仅 mine 命令，待首跑核验） |
+| 6 | ④后端 | E0 闸+计划任务实证 | signal | FactoryLaneC Ready（首次全链触发=2026-09-15 15:35 OneShot0915 一次性点火，周六 10:00 例跑保留）；factory_lane_c.log 证实闸门拒盘中点火 exit 3（09-14 07:10/07:11 两拒+09-15 11:53 中午机制验证一拒，`gate_deny_trading_hours` 全数命中）；ps1 首命令 exit 3 时 `$ErrorActionPreference="Stop"`+`2>&1|` 在 PS5.1 有 stderr ErrorRecord 中断风险（后三命令未在旧日志出现，09-14 版本仅 mine 命令，待首跑核验） |
 | 7 | ⑤前端 | 进货漏斗可视化 | noise | 前端无 factory 进货/预审漏斗面板；报告仅 JSON stdout+日志。按纪律只登记不施工（S12/S13 告警推送施工时顺带） |
 | 8 | ⑥数据字段 | 台账字段完整性 | signal | CSV 进货台账列齐（candidate_id/hypothesis_zh/birth 三件套）；但 E2 判定在 CH、候选在 CSV——双存储无对账件；F 车道 recipe_id/values_json 字段无假说文本映射=GAP |
 
@@ -92,4 +92,4 @@ date: 2026-09-15
 
 - 本环节 G1-G3 施工项未接单，维持登记（deferred 重审队列/F 车道 E2 适配器/双台账对账均未动）。
 - 关联进展（兄弟班 23a4fa4b01）：run_c4_batch_due 加 `--defer-emit` 与 IS/OOS 双窗编排对齐——E2 下游消费时点改为 OOS 齐后统一触发，不改变本环节自身欠账。
-- FactoryLaneC 首次全自动全链触发=2026-09-19（周六）10:00，届时首验堵点 6（ps1 中断风险）与 `--limit-precheck 15` 消化速度。
+- FactoryLaneC 首次全自动全链触发=2026-09-15（今日）15:35 `FactoryLaneC_OneShot0915` 一次性点火（E0 算力闸纪律改排交易日收盘后；周六 10:00 例跑保留），届时首验堵点 6（ps1 中断风险）与 `--limit-precheck 15` 消化速度。

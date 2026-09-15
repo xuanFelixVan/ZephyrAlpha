@@ -101,4 +101,4 @@ status: active
 | C6 QMT 模拟桥 100 股实测 | ✅ 已收口 | 2026-09-15 10:52 全通过（connect→查仓→SUBMITTED→CANCELLED），双终端 TCP 配对辨识过，证据=evidence/qmt-smoke-result.yaml；实战治本 price_type LIMIT 0→11（#ARCH-XTQUANT-API-COMPAT-001）+限价改跌停价申报 |
 | C7 顺路小件 | 部分 | S02-N2 MIN_INCR_IC 0.0→0.01 ✅；S03-N1 strategy_screen num_trials 列 ✅（c4_batch_screen 落库+DDL 部署件）；S05-G1 --created-by 硬编码 ❌ 未修；S07-G2 CLASS_NODE_MAP multifactor 键 ❌ 未补 |
 
-链路现状一句话：S01→S14 事件链全部接通，**2026-09-19（周六）10:00/14:00 首次全自动双窗批考+入库是下一验收节点**；C7 两件未修项与飞书凭据提请下批处置。
+链路现状一句话：S01→S14 事件链全部接通，**首次全自动双窗批考+入库已改排 2026-09-15（今日）两发一次性点火：15:35 FactoryLaneC_OneShot0915（全链首跑）+ 17:30 C4Exam_OneShot0915（双窗批考+自动 OOS 补测+入库+开钱包）；周六 10:00/14:00 例跑原样保留**（排期依据=E0 算力闸纪律：交易日 15:30 前拒 heavy，收盘后点火为设计内通道；两任务已 Get-ScheduledTask 实测 State=Ready/NextRun=09-15 15:35 与 17:30/LastResult=267011 未运行）。C7 两件未修项与飞书凭据提请下批处置。

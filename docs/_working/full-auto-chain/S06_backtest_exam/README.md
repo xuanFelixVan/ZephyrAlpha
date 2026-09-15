@@ -8,7 +8,7 @@ date: 2026-09-15
 
 ## 1 现状盘点（自动化状态+file:line 证据）
 
-**结论先行：考卷执行与落库的机械化部分已全自动（周六 14:00 计划任务就绪、幂等落库 fail-closed、下游事件钩子已接）；但 E4 目前"只记录不裁决"——DSR 记录不判生死、overfitting_adjudicator 未接线、及格线实际在 S07 bothwin；且 OOS 复测批无任何自动化，这是全链 S06→S07 的第一断点。****【施工班 2026-09-15 回填：第一断点已解——C0 双窗编排落地（IS `--auto-only --defer-emit`+OOS `--auto-oos-pending`，双窗齐才 emit），S06-G1/G2 收口；首跑=2026-09-19 14:00。】**
+**结论先行：考卷执行与落库的机械化部分已全自动（周六 14:00 计划任务就绪、幂等落库 fail-closed、下游事件钩子已接）；但 E4 目前"只记录不裁决"——DSR 记录不判生死、overfitting_adjudicator 未接线、及格线实际在 S07 bothwin；且 OOS 复测批无任何自动化，这是全链 S06→S07 的第一断点。****【施工班 2026-09-15 回填：第一断点已解——C0 双窗编排落地（IS `--auto-only --defer-emit`+OOS `--auto-oos-pending`，双窗齐才 emit），S06-G1/G2 收口；首跑=2026-09-15 17:30 C4Exam_OneShot0915 一次性点火（周六 14:00 例跑保留）。】**
 
 ### 1.1 考试执行体（MOD-BT-076）
 - `scripts/backtest/c4_batch_screen.py`：`discover()` L88-89 全收 translated/c4_*.py（现 **84 件**）；契约校验（STRATEGY_ID/WINDOW_KIND/build）L75-85；**单件失败不阻断** L120-122（failures 列表进 summary）；IS 冻结窗 2020-01-01..2023-12-31（ETF 族 2021-04 起，`_c4_engine.window_for` L318-320）；OOS 模式=`--start/--end` 给出才启用（L199-202，verdict=oos_tested，自动带 IS 参照算 oos_years_decay L277-299）。
@@ -21,7 +21,7 @@ date: 2026-09-15
 
 ### 1.2 触发与首跑状态（实测）
 - 计划任务 `ZephyrAlpha_C4Exam`：**Ready，周六 14:00**（register_c4_exam_task.ps1:30），8h 时限、IgnoreNew、StartWhenAvailable。
-- **首跑从未发生**：Get-ScheduledTaskInfo 实测 LastRunTime=1999/11/30、LastTaskResult=267011（0x41303 未运行）、NextRunTime=**2026-09-19（周六）14:00**；`.runtime/logs/c4_exam.log` 不存在。
+- **首跑从未发生**：C4Exam 例跑实测 NextRunTime=2026-09-19（周六）14:00；【施工班 2026-09-15 排期更新】新增一次性点火任务 `ZephyrAlpha_C4Exam_OneShot0915`（Get-ScheduledTask 复核 State=Ready、NextRun=2026-09-15 17:30、LastResult=267011 未运行），首跑改排今日 17:30；`.runtime/logs/c4_exam.log` 仍不存在。
 - 历史批次均为手动：data/backtest_artifacts/runs/ 有 **22 个 SCR-C4-*** 档案（20260913-20260914），如 SCR-C4-20260914-051102 verdict.md"批测完成 4 行"。
 - `run_c4_exam.ps1:28` 只执行 `python scripts\backtest\c4_batch_screen.py`——**纯 IS 窗，无 OOS 批，未用 --auto-only（全量 84 件重跑）**。
 
@@ -79,7 +79,7 @@ date: 2026-09-15
 - **断点②（条件单点）**：intake 写路径双钥匙 fail-closed——KillSwitch 探针（intake.py:264-265，探针失败也停）+EVIDENCE 文件（intake.py:328-329，现存✅）——任一不满足连续 3 次→事件毒丸→停摆等人。
 - **断点③（自愈型，不算断）**：挂图失败只告警不回滚（intake.py:418-421，only-add 下批重放自愈）。
 - 附带：ps1 全量重跑 84 件在 8h 时限内属算力浪费（--auto-only 已备而未用）。
-- **一句话**：周六首跑后，成绩能入库、事件能发、intake 能被唤醒；但**新策略走不进 S07**——除非补上 OOS 复测自动化（S06-G1）。**【施工班 2026-09-15 回填】断点①已由 C0 解（双窗编排落地，fetch_bothwin 不再恒空）；断点②维持（KillSwitch/EVIDENCE 双钥匙+毒丸语义未变）；首跑=2026-09-19 14:00，届时"新策略走不进 S07"应反转。】**
+- **一句话**：周六首跑后，成绩能入库、事件能发、intake 能被唤醒；但**新策略走不进 S07**——除非补上 OOS 复测自动化（S06-G1）。**【施工班 2026-09-15 回填】断点①已由 C0 解（双窗编排落地，fetch_bothwin 不再恒空）；断点②维持（KillSwitch/EVIDENCE 双钥匙+毒丸语义未变）；首跑=2026-09-15 17:30（C4Exam_OneShot0915 一次性点火），届时"新策略走不进 S07"应反转。】**
 
 ## 5 施工项建议（具体到文件/函数/验收标准）
 
@@ -103,4 +103,4 @@ date: 2026-09-15
 
 - C0 落地（run_c4_exam.ps1 现文+兄弟班 23a4fa4b01）：S06-G1 OOS 复测自动化✅、S06-G2 IS 批 --auto-only✅；emit 时序=双窗齐才发 c4_batch_completed（IS 批 defer-emit，对齐 intake 双窗消费契约）。
 - G3（E4 出口裁决列）/G4（c4_batch_due drain 接线）/G5（毒丸告警升级）未动，登记维持；pending journal 的 c4_batch_due 重事件仍待显式 drain --all（stale 无害）。
-- 首跑验收节点：2026-09-19（周六）14:00——届时按 G1 验收标准核对 oos_tested 行与 oos_years_decay 非空。
+- 首跑验收节点：2026-09-15（今日）17:30 C4Exam_OneShot0915 一次性点火（错过则周六 14:00 例跑）——届时按 G1 验收标准核对 oos_tested 行与 oos_years_decay 非空。
