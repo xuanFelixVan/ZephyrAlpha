@@ -602,7 +602,7 @@ gaps:
     detection_threshold: 1    # 9 开头 symbol 计数 = 0 即为缺口（A股基准宇宙应含约 342 只北交所）
     expected_daily_avg: 5561  # kline_daily 09-11 口径 5549 + 预期北交所（0/3/6=5219 现状 + 342）
     actual_daily_avg: 5219    # 最新快照 2026-09-14：0/3/6 前缀 5219 只，9 开头=0
-    status: "open"  # 低severity：daily_valuation（akshare 直连宇宙，实测 343 只 9 开头）与 kline_daily（tushare 补喂）均不受牵连；但"基准全市场标的"名义下缺 342 只=消费方以 stock_basic 为宇宙过滤时会静默丢北交所
+    status: "resolved"  # 2026-09-15 当日闭环（440877e0c9）：akshare 已提供巨潮官网清单 stock_info_bj_name_code（DS-081 设计时缺失的接口两年间上线），新增 _collect_bj_basic_rows 收集器（仅收 43/83/87/88/920 防跨所混入，行业/上市日期清单自带）；今日快照实测 5,562 标的=沪主板 1701+科创板 617+深主板 1494+创业板 1407+北交所 343，样本行业/上市日期全齐，SH 行业留空仅 1 行（东财反爬期巨潮降级生效）
     root_cause: "stock_basic 快照（tushare 源）标的清单未含北交所段（920xxx）：最新 2026-09-14 快照 5219 只全部 0/3/6 前缀。2026-09-15 交接排查批误记'stock_basic 约 5549 含 342 北交所'实为 kline_daily 口径，本条即更正登记。"
     impact: "以 stock_basic 为标的宇宙/过滤器的消费方（方案 J 合成器、覆盖率闸门、全市场扫描类任务）会静默排除 342 只北交所。估值/日线/分钟线数据本体不受影响。"
     resolution_plan: "stock_basic 的 tushare 拉数端补北交所段（exchange='BJ'）或换用含北交所的全市场清单接口；独立小批施工，无死线。"
