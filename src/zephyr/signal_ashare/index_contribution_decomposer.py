@@ -77,18 +77,21 @@ __all__: Final = [
 # 常量（SQL 集中化 §5.160.2）
 # ------------------------------------------------------------------
 
-#: 指数 3 秒快照（index_quote，重采样分钟末价）
+#: 指数 3 秒快照（index_quote，重采样分钟末价；FINAL 防双版本交错读；盘中时段显式时区过滤防盘前坏点——
+#: 服务器时区与列时区可能错位，禁用 Date+INTERVAL 裸写法，2026-09-15 实证）
 SQL_INDEX_QUOTES: Final = """
 SELECT timestamp, price
-FROM c1_market.index_quote
+FROM c1_market.index_quote FINAL
 WHERE trade_date = %(trade_date)s AND symbol = %(symbol)s AND quality_flag = 1
+  AND timestamp >= toDateTime64(concat(toString(trade_date), ' 09:30:00'), 3, 'Asia/Shanghai')
+  AND timestamp <= toDateTime64(concat(toString(trade_date), ' 15:01:00'), 3, 'Asia/Shanghai')
 ORDER BY timestamp
 """
 
-#: 板块分钟 K 线（kline_sector_intraday，trade_date 为 DateTime）
+#: 板块分钟 K 线（kline_sector_intraday，trade_date 为 DateTime；FINAL 防合成回灌双版本交错读）
 SQL_SECTOR_MINUTE: Final = """
 SELECT trade_date, code, close
-FROM c1_market.kline_sector_intraday
+FROM c1_market.kline_sector_intraday FINAL
 WHERE toDate(trade_date) = %(trade_date)s AND period = %(period)s
 ORDER BY code, trade_date
 """

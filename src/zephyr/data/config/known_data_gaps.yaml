@@ -679,7 +679,7 @@ gaps:
     detection_threshold: 4800   # 000001.SH 单 symbol 分钟数 < 4800（≈3 秒快照×4 小时）= 缺口
     expected_daily_avg: 4800
     actual_daily_avg: 12
-    status: "open"  # MOD-SIG-080 逆势榜指数腿（主下跌段峰谷识别）直接受害：峰谷时戳稀疏导致段内板块覆盖分钟数骤降（09-11 实测段 08:41→10:40 仅 2 个共同分钟）、峰时戳落在盘前（08:41）致卡4 全空。kline_1min 无指数 symbol（999/399 前缀 0 只），库内暂无健康指数分钟源。
+    status: "mitigated"  # 2026-09-15 17:5x st-circmv-synthcw-20260915 修复闭环：①历史回补=tdx-connector MCP tdx_kline(period=7) 拉 000001.SH 1 分钟 K 2,800 根（08-31~09-15 逐日 240-242 分钟点）灌 index_quote(data_source='tdx_mcp_1m')，消费方 resample 语义兼容；②消费方 080/071 SQL_INDEX_QUOTES 加 FINAL(防双版本交错读)+盘中时段显式时区过滤(09:30-15:01, Asia/Shanghai——服务器时区与列时区错位，Date+INTERVAL 裸写法实证全空)；③增量=计划任务 ZephyrAlpha_IndexMinuteEOD 15:10 xtdata 盘后回补(scripts/data/collect_index_minute_eod.py, data_source='qmt_1m_eod')。残余风险：增量单通道单点故障（miniQMT 9/18 关停后需切 QMT 桥，93 playbook；xtquant 服务不在线时任务失败留痕 logs/index_minute_eod.log）。实测逆势榜 09-11 段内覆盖 2 分→73 分、卡4 从空榜恢复 10 条。
     root_cause: "index_quote 采集链路为巡检式零星快照（全指数 3994 symbol×~12 时点/日），非 3 秒连续采集；疑似 QMT 指数快照订阅未常驻。"
     impact: "①逆势榜四卡段识别退化（卡1/卡3 出榜但覆盖失真、卡4 空榜）；②MOD-SIG-071 指数贡献拆解同源受害。"
     resolution_plan: "指数分钟采集链路独立立项：QMT 桥订阅 000001.SH tick/1m 或 tqcenter get_index_quotes 常驻采集；或 kline_1min 扩展指数宇宙。未修复前逆势榜可注入健康指数序列（注入位 index_series）运行。"
@@ -698,7 +698,7 @@ gaps:
     detection_threshold: 1000
     expected_daily_avg: 2000
     actual_daily_avg: 0
-    status: "open"  # 整表 0 行（max(trade_date)=1970-01-01）。MOD-SIG-080 逆势榜卡2（下跌段资金流入）恒降级；sector_code_bridge.fund_flow_for_segment 无输入。
+    status: "mitigated"  # 2026-09-15 17:5x st-circmv-synthcw-20260915 采集上线：①采集器 scripts/data/collect_sector_fund_flow.py（akshare stock_fund_flow_industry(symbol='即时')，THS 90 个一级行业，字段与 DDL 一一对应，net_amount=当日累计亿元）——注意 symbol 传参必须用 '即时'，传旧文档签名'同花顺行业资金流'会走 8 列旧映射崩溃；②调度=计划任务 ZephyrAlpha_IntradayFundFlow 交易日 10:05/11:05/13:35/14:35/15:05 五时点快照（段差分要求下跌段内至少一张快照，单张 EOD 快照按设计不出段内口径）；③首两张快照已落库（09-15 17:27/17:56 各 90 行）；④卡2 注入法管道验证通过（差分 69 板块→重钥 4 个 880 码→degraded=False 出榜，880491 半导体 62.93 亿）。残余：①历史快照不可回补（THS 仅'即时'口径），09-11/09-14 卡2 保持降级，前向恢复；②THS 行业名→TDX 880 重钥率 4/69（两套行业体系交集小），映射扩充待办。
     root_cause: "THS 板块资金流采集链路从未灌入或已清空；与 mootdx 死亡同族但表内无任何历史行，疑采集任务从未上线。"
     impact: "逆势榜卡2 永久降级（设计内 fail-closed 不出伪榜）。"
     resolution_plan: "资金流采集独立立项（THS/东财板块资金流源评估）；接入后卡2 自动恢复（注入位已留）。"

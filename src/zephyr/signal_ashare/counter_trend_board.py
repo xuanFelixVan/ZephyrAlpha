@@ -81,14 +81,16 @@ __all__: Final = [
 
 SQL_INDEX_QUOTES: Final = """
 SELECT timestamp, price
-FROM c1_market.index_quote
-WHERE trade_date = %(trade_date)s AND symbol = %(symbol)s AND quality_flag = 1
+FROM c1_market.index_quote FINAL
+WHERE toDate(trade_date) = %(trade_date)s AND symbol = %(symbol)s AND quality_flag = 1
+  AND timestamp >= toDateTime64(concat(toString(trade_date), ' 09:30:00'), 3, 'Asia/Shanghai')
+  AND timestamp <= toDateTime64(concat(toString(trade_date), ' 15:01:00'), 3, 'Asia/Shanghai')
 ORDER BY timestamp
 """
 
 SQL_SECTOR_MINUTE: Final = """
 SELECT trade_date, code, close
-FROM c1_market.kline_sector_intraday
+FROM c1_market.kline_sector_intraday FINAL
 WHERE toDate(trade_date) = %(trade_date)s AND period = %(period)s
 ORDER BY code, trade_date
 """
