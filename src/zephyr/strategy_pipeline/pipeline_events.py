@@ -268,10 +268,15 @@ def run_mount_audit() -> dict[str, Any]:
 
 
 def run_c4_batch_due(payload: dict[str, Any]) -> dict[str, Any]:
-    """自动批测（交接清单⑦）：发现未批测翻译件 → c4_batch_screen --auto-only（子进程隔离+超时）。"""
+    """自动批测（交接清单⑦）：发现未批测翻译件 → c4_batch_screen --auto-only --defer-emit（子进程隔离+超时）。
+
+    --defer-emit 对齐兄弟班 C0 双窗编排契约：IS 落账不触发 intake，c4_batch_completed
+    由 OOS 步骤在双窗行齐后统一发（bothwin 依赖完整双窗行）。
+    """
     import subprocess
 
-    cmd = [sys.executable, str(ROOT / "scripts/backtest/c4_batch_screen.py"), "--auto-only"]
+    cmd = [sys.executable, str(ROOT / "scripts/backtest/c4_batch_screen.py"),
+           "--auto-only", "--defer-emit"]
     timeout_s = int(payload.get("timeout_s", 3600))
     proc = subprocess.run(cmd, capture_output=True, text=True, timeout=timeout_s, cwd=str(ROOT),
                           encoding="utf-8", errors="replace")

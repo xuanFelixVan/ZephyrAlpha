@@ -249,7 +249,8 @@ def write_intake_report(receipt: dict[str, Any], path: Path | None = None) -> Pa
         "",
     ]
     md.write_text("\n".join(lines), encoding="utf-8", newline="\n")
-    md.with_suffix(".json").write_text(
+    # .yaml 而非 .json：DIRECTORY-CONTRACT 禁 docs/_working 落 .json（JSON 是合法 YAML，内容零转换）
+    md.with_suffix(".yaml").write_text(
         json.dumps(receipt, ensure_ascii=False, indent=1, default=str), encoding="utf-8", newline="\n")
     return md
 
@@ -336,6 +337,20 @@ def run_intake(trigger_batch: str, passed_p: dict[str, float],
             e["doc_ref"] = str(report_path.relative_to(ROOT)).replace("\\", "/")
         reg_receipt = append_entries(created, REGISTRY, dry_run=False)
         mount = _auto_mount_sids(created_sids)
+        # 自愈补挂（历史批挂图失败/漏挂的已入库 C4 翻译件条目；单批上界 5 条防长尾放大）
+        try:
+            sys.path.insert(0, str(ROOT / "scripts/backtest"))
+            import auto_mount as _am
+            mounted = _am.mounted_sids(_am.MAP_YAML.read_text(encoding="utf-8"))
+            reg_now = _load_registry()
+            orphan = [e["strategy_id"] for e in reg_now.get("strategies", [])
+                      if "/translated/c4_" in (e.get("code_path") or "").replace("\\", "/")
+                      and e["strategy_id"] not in mounted]
+            orphan = [s for s in orphan if s not in created_sids][:5]
+            if orphan:
+                mount["self_heal"] = {"attempted": orphan, "result": _auto_mount_sids(orphan)}
+        except Exception as exc:  # noqa: BLE001——自愈是增强项，失败不阻断主入库流程
+            mount["self_heal"] = {"error": str(exc)[:160]}
         write_intake_report({
             "trigger_batch": trigger_batch, "passed": len(passed_p),
             "fdr_keep": sorted(keep), "cluster_heads": sorted(heads), "redundant": redundant,
