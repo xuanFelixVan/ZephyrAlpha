@@ -518,7 +518,7 @@ def test_t8():
     test_path.write_text("test", encoding="utf-8")
 
     # acquire 锁
-    rc1 = lf.cmd_acquire(test_file, "session-t8-dead", task="模拟死锁", skip_naming_check=True)
+    rc1 = lf.cmd_acquire(test_file, "session-t8-dead", lf.AcquireOptions(task="模拟死锁", skip_naming_check=True))
     print(f"  步骤1: acquire (owner=session-t8-dead): rc={rc1}")
 
     # 模拟进程崩溃：直接修改 owner.json 的 timestamp 为很久以前
@@ -534,7 +534,7 @@ def test_t8():
     print("  步骤2: 模拟死锁（timestamp改为1小时前，PID改为不存在的999999）")
 
     # 新 session 尝试 acquire
-    rc2 = lf.cmd_acquire(test_file, "session-t8-new", task="死锁后重新获取", skip_naming_check=True)
+    rc2 = lf.cmd_acquire(test_file, "session-t8-new", lf.AcquireOptions(task="死锁后重新获取", skip_naming_check=True))
     print(f"  步骤3: acquire (owner=session-t8-new): rc={rc2}（期望: 0=成功，死锁被清理）")
 
     # 清理
@@ -639,10 +639,10 @@ def test_t10():
     test_path.parent.mkdir(parents=True, exist_ok=True)
     test_path.write_text("test", encoding="utf-8")
 
-    rc1 = lf.cmd_acquire(test_file, "session-t10", task="第一次", skip_naming_check=True)
+    rc1 = lf.cmd_acquire(test_file, "session-t10", lf.AcquireOptions(task="第一次", skip_naming_check=True))
     print(f"  步骤1: 第一次 acquire: rc={rc1}（期望: 0）")
 
-    rc2 = lf.cmd_acquire(test_file, "session-t10", task="第二次重入", skip_naming_check=True)
+    rc2 = lf.cmd_acquire(test_file, "session-t10", lf.AcquireOptions(task="第二次重入", skip_naming_check=True))
     print(f"  步骤2: 第二次 acquire（重入）: rc={rc2}（期望: 0，允许重入）")
 
     lf.cmd_release(test_file, "session-t10")

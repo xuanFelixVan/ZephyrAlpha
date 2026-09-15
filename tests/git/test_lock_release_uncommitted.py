@@ -180,7 +180,7 @@ class TestCmdReleaseWarning:
 
         # 使用绝对路径（_warn_if_uncommitted 需要绝对路径才能定位 git 仓库）
         abs_path = str(modified_file)
-        rc = lock_files.cmd_acquire(abs_path, "test-session", "test task")
+        rc = lock_files.cmd_acquire(abs_path, "test-session", lock_files.AcquireOptions(task="test task"))
         assert rc == 0
 
         # 释放锁，捕获输出
@@ -201,7 +201,7 @@ class TestCmdReleaseWarning:
         lock_files.ensure_lock_root()
 
         abs_path = str(committed_file)
-        rc = lock_files.cmd_acquire(abs_path, "test-session", "test task")
+        rc = lock_files.cmd_acquire(abs_path, "test-session", lock_files.AcquireOptions(task="test task"))
         assert rc == 0
 
         buf = io.StringIO()
@@ -221,7 +221,7 @@ class TestCmdReleaseWarning:
         lock_files.ensure_lock_root()
 
         abs_path = str(modified_file)
-        lock_files.cmd_acquire(abs_path, "session-a", "task a")
+        lock_files.cmd_acquire(abs_path, "session-a", lock_files.AcquireOptions(task="task a"))
 
         buf = io.StringIO()
         with redirect_stdout(buf):
@@ -229,7 +229,7 @@ class TestCmdReleaseWarning:
         assert rc == 0
 
         # 验证锁已释放：另一个 session 可以获取
-        rc2 = lock_files.cmd_acquire(abs_path, "session-b", "task b")
+        rc2 = lock_files.cmd_acquire(abs_path, "session-b", lock_files.AcquireOptions(task="task b"))
         assert rc2 == 0, "WARNING 不应阻止释放，另一个 session 应能获取锁"
 
 
@@ -244,8 +244,8 @@ class TestCmdReleaseAllWarning:
         lock_files.ensure_lock_root()
 
         # 使用绝对路径
-        lock_files.cmd_acquire(str(modified_file), "test-session", "task")
-        lock_files.cmd_acquire(str(committed_file), "test-session", "task")
+        lock_files.cmd_acquire(str(modified_file), "test-session", lock_files.AcquireOptions(task="task"))
+        lock_files.cmd_acquire(str(committed_file), "test-session", lock_files.AcquireOptions(task="task"))
 
         buf = io.StringIO()
         with redirect_stdout(buf):
