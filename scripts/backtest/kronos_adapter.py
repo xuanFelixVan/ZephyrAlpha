@@ -52,11 +52,16 @@ QUANTILES = (0.05, 0.25, 0.5, 0.75, 0.95)
 
 
 def _load_kronos_classes():
-    """官方仓 model.kronos 导入（仓缺失 fail-closed 带指引）。"""
-    if not KRONOS_REPO.exists():
+    """官方仓 model.kronos 导入（代码缺失 fail-closed 带指引）。"""
+    # 检查真实模块文件而非仅目录（2026-09-16 事故：目录在但 .py 被批删，
+    # 目录存在性检查假绿→import 期 ModuleNotFoundError）
+    _kronos_mod = KRONOS_REPO / "model" / "kronos.py"
+    if not _kronos_mod.exists():
         raise RuntimeError(
-            f"Kronos 官方仓缺失: {KRONOS_REPO}（VPN 开启后 "
-            "git clone --depth 1 https://github.com/shiyu-coder/Kronos 到该目录）")
+            f"Kronos 官方代码缺失: {_kronos_mod}"
+            f"（恢复：git -C {KRONOS_REPO} checkout -- . ；"
+            "或 VPN 开启后 git clone --depth 1 "
+            "https://github.com/shiyu-coder/Kronos 到该目录）")
     return None
 
 

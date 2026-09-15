@@ -102,9 +102,12 @@ def run_prep(top_n: int = 10, days: int = 500) -> dict:
         g.to_csv(out, index=False, encoding="utf-8")
         written.append({"file": str(out), "rows": len(g)})
     record = {"data_dir": str(_DATA_DIR), "files": written, "top_n": top_n,
-              "train_val_split": "80/20 时序切分（finetune.py 内置）",
-              "launch_cmd": f"python vendor/Kronos/finetune/finetune.py "
-                            f"--data-dir {_DATA_DIR} --epochs 10 --device cuda"}
+              "train_val_split": "80/20 时序切分（finetune 管线内置）",
+              # 官方入口=torchrun 启动 train_predictor.py（config 驱动，两段式
+              # tokenizer→predictor）；数据路径经 vendor/Kronos/finetune/config.py 指向 data_dir
+              "launch_cmd": f"torchrun --standalone --nproc_per_node=1 "
+                            f"vendor/Kronos/finetune/train_predictor.py "
+                            f"（finetune/config.py 指向 {_DATA_DIR}）"}
     return record
 
 

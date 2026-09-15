@@ -75,7 +75,18 @@ class TestRepoGuard:
 
         monkeypatch.setattr("scripts.backtest.kronos_adapter.KRONOS_REPO",
                             tmp_path / "nope")
-        with pytest.raises(RuntimeError, match="官方仓缺失"):
+        with pytest.raises(RuntimeError, match="官方代码缺失"):
+            _load_kronos_classes()
+
+    def test_dir_without_code_fails_closed(self, monkeypatch, tmp_path):
+        # 2026-09-16 事故形态：目录存在但 model/kronos.py 被批删——
+        # 目录存在性检查假绿，必须检查真实模块文件
+        from scripts.backtest.kronos_adapter import _load_kronos_classes
+
+        (tmp_path / "empty_repo").mkdir()
+        monkeypatch.setattr("scripts.backtest.kronos_adapter.KRONOS_REPO",
+                            tmp_path / "empty_repo")
+        with pytest.raises(RuntimeError, match="官方代码缺失"):
             _load_kronos_classes()
 
 

@@ -98,9 +98,9 @@ class TestRunPrep:
 
     def test_launch_cmd_content(self, ch_env):
         rec = kfp.run_prep(top_n=2, days=500)
-        assert "finetune" in rec["launch_cmd"]
-        assert "--epochs 10" in rec["launch_cmd"]
-        assert "--device cuda" in rec["launch_cmd"]
+        # 官方真实入口=torchrun + train_predictor.py（config 驱动）
+        assert "torchrun" in rec["launch_cmd"]
+        assert "train_predictor.py" in rec["launch_cmd"]
         assert str(ch_env) in rec["launch_cmd"]
 
     def test_split_note_declares_temporal_80_20(self, ch_env):
