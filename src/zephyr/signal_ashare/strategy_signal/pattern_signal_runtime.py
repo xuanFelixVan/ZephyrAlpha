@@ -177,6 +177,7 @@ class PatternSignalRuntime:
         weight_version: str = "",
         factory: Any = None,
         source: str = _DEFAULT_SOURCE,
+        strength_weight_fn: Callable[[str], float | None] | None = None,
     ) -> None:
         if win_rate_query is not None and provider is not None:
             raise ValueError("provider 与 win_rate_query 二选一（装配歧义禁止）")
@@ -189,6 +190,7 @@ class PatternSignalRuntime:
         self._weight_version = weight_version
         self._factory = factory
         self._source = source
+        self._strength_weight_fn = strength_weight_fn
         if win_rate_query is not None:
             self._win_rate_fn: Callable[[str], float | None] = win_rate_query
         else:
@@ -249,10 +251,22 @@ class PatternSignalRuntime:
         mapped = self._mapper.map_batch(event_list)
         if not mapped:
             return {}
+        # W-R 接油门：接通后信号强度 × 生命周期权重乘数（Fail-Closed：fn 异常/None=直通）
+        if self._strength_weight_fn is not None:
+            import dataclasses as _dc
+
+            adjusted = []
+            for m in mapped:
+                w = self._strength_weight_fn(m.pattern_id)
+                m2 = _dc.replace(m, strength=max(0.0, min(1.0, m.strength * float(w)))) if (
+                    w is not None) else m
+                adjusted.append(m2)
+            mapped = tuple(adjusted)
         payload = self._mapper.emit_signal(symbol, mapped, as_of=as_of)
         metadata = payload.setdefault("metadata", {})
         metadata["regime_tag"] = self._regime_tag
         metadata["weight_version"] = self._weight_version
+        metadata["weights_applied"] = self._strength_weight_fn is not None
         metadata["win_rate_snapshot"] = {
             e.pattern_id: {"win_rate": e.historical_win_rate} for e in event_list
         }
@@ -305,6 +319,16 @@ class PatternWeightStore:
     def __init__(self, path: str | Path = _DEFAULT_STATE_PATH) -> None:
         self._path = Path(path)
 
+    def load_connection(self) -> dict[str, Any]:
+        """接通状态段（缺失=未接通默认态）。"""
+        if not self._path.exists():
+            return {"connected": False, "positive_streak": 0}
+        data = json.loads(self._path.read_text(encoding="utf-8"))
+        conn = data.get("connection")
+        if not isinstance(conn, dict):
+            return {"connected": False, "positive_streak": 0}
+        return conn
+
     def load(self) -> dict[str, dict[str, Any]]:
         if not self._path.exists():
             return {}
@@ -314,17 +338,24 @@ class PatternWeightStore:
             raise ValueError(f"调权状态结构非法: {self._path}")
         return patterns
 
-    def save(self, patterns: dict[str, dict[str, Any]], *, updated_at: datetime.datetime) -> None:
+    def save(
+        self,
+        patterns: dict[str, dict[str, Any]],
+        *,
+        updated_at: datetime.datetime,
+        connection: dict[str, Any] | None = None,
+    ) -> None:
         doc = {
             "schema": "pattern_signal_weights/1",
             "updated_at": updated_at.isoformat(),
             "patterns": patterns,
         }
+        if connection is not None:
+            doc["connection"] = connection
         self._path.parent.mkdir(parents=True, exist_ok=True)
         safe_write_text(
             str(self._path), json.dumps(doc, ensure_ascii=False, indent=1) + "\n", newline="\n"
         )
-
 
 class PatternWeightSync:
     """物化完成→调权同步（W-C3：MOD-SIG-131 纯消费装配，事件触发式）。
@@ -356,6 +387,7 @@ class PatternWeightSync:
         clock: Callable[[], datetime.datetime] | None = None,
         cert_reader: Callable[[str], dict | None] | None = None,
         baseline_reader: Callable[[], float | None] | None = None,
+        connect_windows: int = 20,
     ) -> None:
         self._clock = clock or datetime.datetime.now
         self._adjuster = adjuster or SignalWeightAdjuster(clock=self._clock)
@@ -368,6 +400,7 @@ class PatternWeightSync:
         self._store = store
         self._cert_reader = cert_reader
         self._baseline_reader = baseline_reader
+        self._connect_windows = max(1, int(connect_windows))
         self._patterns = list(patterns) if patterns else self._discover()
         state = self._store.load() if self._store is not None else {}
         for pid in self._patterns:
@@ -395,6 +428,31 @@ class PatternWeightSync:
 
     def version_of(self, pattern_id: str) -> int | None:
         return self._adjuster.version_of(pattern_id)
+
+    def connection_connected(self) -> bool:
+        """接油门是否已接通（台账 connection 段；store 缺席=未接通）。"""
+        if self._store is None:
+            return False
+        return bool(self._store.load_connection().get("connected"))
+
+    def connection_state(self) -> dict[str, Any]:
+        conn = self._store.load_connection() if self._store is not None else {}
+        return dict(conn)
+
+    def weight_multiplier_fn(self) -> Callable[[str], float | None]:
+        """接油门乘数函数：接通后返回逐形态权重乘数，未接通/缺权重返回 None。
+
+        供 PatternSignalRuntime（strength_weight_fn）注入——接通前信号强度
+        原样直通，接通后 strength × weight（油门开）。
+        """
+        def fn(pattern_id: str) -> float | None:
+            if not self.connection_connected():
+                return None
+            try:
+                return self.weight_of(pattern_id)
+            except Exception:  # noqa: BLE001——未知形态=不调权（Fail-Open 于乘数、Fail-Closed 于语义：宁直通不炸管线）
+                return None
+        return fn
 
     def sync_from_provider(self, *, reason: str = "materialize_done") -> list:
         """拉物化胜率→录滚动样本→限幅调权；返回变更审计记录。"""
@@ -436,10 +494,24 @@ class PatternWeightSync:
             ic = max(-1.0, min(1.0, self._ic_scale * (raw - base)))
             self._adjuster.record_metrics(pid, ic=ic, win_rate=win_rate, drawdown=0.0)
             records.append(self._adjuster.adjust(pid, reason=reason))
-        self._persist()
+        # W-R 接油门：连窗边际计数 → 预注册达标自动接通（connection 状态随台账持久化）
+        conn = self._store.load_connection() if self._store is not None else {
+            "connected": False, "positive_streak": 0,
+        }
+        weighted = self.evaluate_weight_connection()
+        edge = weighted.get("edge")
+        if not conn.get("connected"):
+            if edge is not None and edge > 0:
+                conn["positive_streak"] = conn.get("positive_streak", 0) + 1
+            else:
+                conn["positive_streak"] = 0
+            if conn["positive_streak"] >= self._connect_windows:
+                conn["connected"] = True
+                conn["connected_at"] = str(self._clock())
+        self._persist(connection=conn)
         return records
 
-    def _persist(self) -> None:
+    def _persist(self, connection: dict[str, Any] | None = None) -> None:
         if self._store is None:
             return
         state = {
@@ -449,7 +521,7 @@ class PatternWeightSync:
             }
             for pid in self._patterns
         }
-        self._store.save(state, updated_at=self._clock())
+        self._store.save(state, updated_at=self._clock(), connection=connection)
 
     def evaluate_weight_connection(self, *, window_days: int = 28) -> dict[str, Any]:
         """影子评估器（W-CC 权重接油门的前置判定件，Owner 授权自裁定）。

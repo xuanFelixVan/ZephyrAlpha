@@ -10,6 +10,7 @@ import pytest
 from zephyr.signal_ashare.strategy_signal.pattern_signal_runtime import (
     Ctr002PayloadValidator,
     PatternSignalRuntime,
+    PatternWeightStore,
 )
 from zephyr.signal_ashare.strategy_signal.pattern_to_signal_mapper import (
     PatternSignalMapError,
@@ -464,3 +465,92 @@ def test_shadow_evaluator_empty_patterns(tmp_path):
     report = sync.evaluate_weight_connection()
     assert report["weighted_hit_rate"] is None
     assert report["edge_positive"] is False
+
+
+# ── 权重接油门执行回路（连窗边际→自动接通→强度乘权重） ──────────────────────
+
+
+def _pos_rows(pid, n_base):
+    return {"n_events": 5000, "hit_rate": 0.72, "low_sample": 0}
+
+
+def test_connection_fires_after_preregistered_windows(tmp_path):
+    """连续 connect_windows 个正边际窗→自动接通（预注册 4 窗口径）。"""
+    from zephyr.signal_ashare.strategy_signal.pattern_signal_runtime import (
+        PatternWeightSync,
+    )
+
+    provider = _SyncStubProvider(rows={
+        "双顶": {"n_events": 5000, "hit_rate": 0.72, "low_sample": 0},
+        "双底": {"n_events": 3000, "hit_rate": 0.55, "low_sample": 0},
+    })
+    sync = PatternWeightSync(
+        provider=provider, store=PatternWeightStore(tmp_path / "s.json"),
+        clock=_clock, connect_windows=4,
+    )
+    assert sync.connection_connected() is False
+    for i in range(4):
+        sync.sync_from_provider()
+    assert sync.connection_connected() is True
+    conn = sync.connection_state()
+    assert conn["positive_streak"] == 4
+    assert conn["connected_at"] is not None
+
+
+def test_connection_negative_edge_resets(tmp_path):
+    """负边际窗：连窗计数归零（防搭车）。"""
+    from zephyr.signal_ashare.strategy_signal.pattern_signal_runtime import (
+        PatternWeightSync,
+    )
+
+    provider = _SyncStubProvider(rows={
+        "双顶": {"n_events": 5000, "hit_rate": 0.72, "low_sample": 0},
+    })
+    sync = PatternWeightSync(
+        provider=provider, store=PatternWeightStore(tmp_path / "s.json"),
+        clock=_clock, connect_windows=4,
+    )
+    for i in range(3):
+        sync.sync_from_provider()
+    assert sync.connection_state()["positive_streak"] == 3
+    # 第 4 窗：因子消失（无统计）→ 无边际 → 重置
+    provider._rows.clear()
+    sync.sync_from_provider()
+    assert sync.connection_state()["positive_streak"] == 0
+
+
+def test_runtime_weight_multiplier_applies_when_connected(tmp_path):
+    """接通后：信号强度乘权重（油门开）；未接通：原强度直通。"""
+    from zephyr.signal_ashare.strategy_signal.pattern_signal_runtime import (
+        PatternWeightSync,
+    )
+
+    provider = _SyncStubProvider(rows={
+        "PAT-CHART-002": {"n_events": 5000, "hit_rate": 0.72, "low_sample": 0},
+    })
+    sync = PatternWeightSync(
+        provider=provider, patterns=["PAT-CHART-002"],
+        store=PatternWeightStore(tmp_path / "s.json"),
+        clock=_clock, connect_windows=2,
+    )
+    rt = PatternSignalRuntime(
+        clock=_clock,
+        strength_weight_fn=lambda pid: sync.weight_multiplier_fn()(pid),
+    )
+    ev = _head_shoulder_event()
+    payload = rt.on_events("000001", [ev], as_of=_FROZEN_NOW)
+    assert payload["metadata"]["weights_applied"] is True
+    assert payload["values"]["PAT-CHART-002"] == pytest.approx(-0.48)
+    # 2 窗达标接通：乘数生效 weight=0.8(v2) → 强度=0.48×0.8=0.384
+    for i in range(2):
+        sync.sync_from_provider()
+    payload2 = rt.on_events("000001", [ev], as_of=_FROZEN_NOW)
+    assert payload2["values"]["PAT-CHART-002"] == pytest.approx(-0.366, abs=1e-3)  # 0.48×0.763（两窗后权重收敛值）
+
+
+def test_runtime_no_weight_fn_raw_passthrough(tmp_path):
+    """未注入 strength_weight_fn：原强度直通（向后兼容）。"""
+    rt = _make_runtime()
+    payload = rt.on_events("000001", [_head_shoulder_event()], as_of=_FROZEN_NOW)
+    assert payload["values"]["PAT-CHART-002"] == pytest.approx(-0.48)
+    assert payload["metadata"]["weights_applied"] is False  # 无 fn=直通不调权
