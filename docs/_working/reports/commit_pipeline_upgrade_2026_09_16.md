@@ -94,10 +94,11 @@ noise 轮：无（六向全部有产出）。矿脉长尾（本域明确不挖/�
 
 1. **CREATE-GUARD ParserError**：48h 31 次拦截详查=`capability registry 解析失败(ParserError)`——fail-closed 把**设施故障当违规拦**。治本：a) 排查撕裂读源（并发写窗口；写侧 safe_write CAS 已有，补读侧重试+解析失败告警落 audit）；b) 分级：解析类设施故障→warn+审计不阻断，真违规照拦。
 2. **commit_perf_report.py 判定公式**：竞态窗口 211 事件 vs 判绿阈值 ≤4/日仍输出"总体判定: 绿"——矛盾即事故（宪法 §4.3），修判定逻辑并挂晨审。
+3. **GATE-PANORAMA-ALIGNMENT reconciler 检测器失效**：自 09-14 17:57 起 UnicodeDecodeError（GBK 字节 0xd6 炸 utf-8 解码）瘫痪两天，critical_warn 横幅每笔提交挂名但检测为零——修解码容错+恢复检测。
 
 ### 3.3 P1-A own-scope 第三批推广（~30 候选池现成）
 
-- 靶子按 48h 白烧榜排序：TABLE-NAME-REGISTRY、NO-LONG-PARAM-LIST、GATE-ERRCODE-CONSISTENCY、NO-HIGH-COMPLEXITY、ALGO-NOTE-SYNC、REGISTRY-MASS-DELETION 等（v1 §2.6 ☆ 清单为准，逐 gate 语义等价准入）。
+- 靶子按 48h 白烧榜排序：TABLE-NAME-REGISTRY、NO-LONG-PARAM-LIST、GATE-ERRCODE-CONSISTENCY、NO-HIGH-COMPLEXITY、ALGO-NOTE-SYNC、REGISTRY-MASS-DELETION 等（v1 §2.6 ☆ 清单为准，逐 gate 语义等价准入）；**MANUAL-ONLY-PERMANENT 加急**——本会话实弹被其外来 .py 路障拦死（§6），与 DATETIME-NOW 同款"扫全暂存区无 own 过滤"病灶。
 - 收益：门禁耗时与并发会话数解耦（终结"替他人 WIP 付门禁费"）；CAPABILITY-OVERLAP 同款先例实测 32s→2.7s。
 
 ### 3.4 P1-B 缓存/预跑白名单扩面（10 → 内容扫描类全量）
@@ -152,7 +153,11 @@ noise 轮：无（六向全部有产出）。矿脉长尾（本域明确不挖/�
 ## 6. 本会话实测基线（实弹样本）
 
 - 2026-09-16 00:49 现场：3 个 git_commit 并发在飞、2 个 reconcile_worker 各跑 5-7 分钟、17 python 进程——多 AI 并发挤兑实锤。
-- 本文件的落库提交本身=一次实测样本（实测数据见下方追记，首次提交后由审计日志回填；对照 9/12 干净场景 22-49s 与本文件 §1.2 并发场景数据）。
+- **实弹样本（本文件自身落库实录，2026-09-16 01:17-01:19）**：
+  - 首次直连尝试**被拦白烧约 2 分钟**（成果为零），连中两枪：①FOLDER-CAPACITY-HARD-LIMIT 拦截 docs/_working 平铺 121>120（确定性违规，本可锁外 3 秒发现——P0-A 活标本）；②MANUAL-ONLY-PERMANENT 拿**他会话暂存的 3 个外来 .py** 拦本次纯 docs 提交（无 own-scope 门禁成全局路障——P1-A 活标本，同 09-12 事故形态再现）。
+  - 改走队列正门后：**入队操作 5.4s + 队列等待+落地 53.0s = 端到端 58.4s**，一次通过零外来归属（commit 917ed6bb6c，git log -1 --name-only 核实）。
+  - 同窗口另见 live 死信一单（autopipeline-0019，blob 与 old_dev 不符假落地防线触发）+ DEPGRAPH-FRESHNESS WARN（185min 未刷新）——队列健康观察样本。
+- **新发现基建故障（补入 P0-B 清单）**：GATE-PANORAMA-ALIGNMENT reconciler 自 09-14 17:57 起 UnicodeDecodeError 检测器失效（读 GBK 字节 0xd6 炸）——critical_warn 横幅每笔提交都在挂，检测却已瘫两天。
 
 ## 7. 证据文件清单
 
