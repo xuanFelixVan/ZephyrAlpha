@@ -45,6 +45,8 @@ process_reaper.py — 项目残留进程清理器（无状态 one-shot，Task Sc
 7. 非孤儿 + age>6h + CPU<0.5%      -> kill（长命但空转，zombie_scanner 阈值修正版）
 8. 非孤儿 + age>1h + CPU<0.1%      -> report
 9. 其余                            -> skip
+10. 项目衍生孤儿（ollama/llama-server 族，cmdline 命中 marker 且父死）
+    -> mem>=10GB 即杀 / age>2h 杀 / 30min<age<=2h report（同孤儿矩阵）
 
 同时兼任（从 ide_health_daemon 迁移的治理能力）：
 - Trae 幽灵进程清理（2026-08-28 三次误杀事故后终审重构，见下方「幽灵判据治本」）
@@ -176,6 +178,7 @@ import subprocess
 import sys
 import time
 from dataclasses import dataclass, field
+from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any
 
@@ -265,6 +268,16 @@ _DEFAULT_WHITELIST: tuple[str, ...] = (
 )
 _TRAE_PROCESS_NAME_PREFIX = "trae cn"  # psutil name 小写前缀比较（实际为 "Trae CN.exe"）
 _RUNTIME_PATH_MARKER = re.compile(r"\.runtime[\\/]", re.IGNORECASE)
+
+# 项目衍生孤儿收割族（2026-09-15 提交内存耗尽事故补丁）：boot 经 ollama serve detached
+# spawn 的模型 worker（llama-server.exe）与 serve 本体，cmdline 不含项目根路径且非
+# python——项目进程扫描天然覆盖不到；serve 父进程死（崩溃/内存耗尽）后子进程成巨内存
+# 孤儿（9 实例 ≈12GB 实证，孤儿永生直到重启）。收割走同款孤儿阈值；父活=受管
+# （boot 的 _ollama_proc 持有）或在用，永不判（fail-safe 偏向不杀）。
+_DERIVED_ORPHAN_MARKERS: tuple[re.Pattern[str], ...] = (
+    re.compile(r"llama-server\.exe", re.IGNORECASE),
+    re.compile(r"\\ollama\.exe\b.*\bserve\b", re.IGNORECASE),
+)
 
 
 @dataclass
@@ -811,6 +824,78 @@ def _write_status(report: ReapReport) -> None:
         logger.warning("状态落盘失败: %s", e)
 
 
+# ============== 项目衍生孤儿（ollama/llama-server 族） ==============
+
+
+def _reap_derived_orphans(all_procs: dict[int, dict], dry_run: bool, report: ReapReport) -> None:
+    """收割项目衍生孤儿（2026-09-15 提交内存耗尽事故补丁，判定矩阵第 10 条）。
+
+    判定：cmdline/name 命中 _DERIVED_ORPHAN_MARKERS 且父进程已死（孤儿）。
+    阈值沿用孤儿矩阵：mem>=10GB 即杀 / age>2h 杀 / 30min<age<=2h report。
+    父活 = 受管（boot 的 _ollama_proc 持有）或在用，永不判（fail-safe 偏向不杀）。
+    """
+    live_pids = set(all_procs.keys())
+    candidates: dict[int, dict] = {}
+    for pid, info in all_procs.items():
+        cmdline = info.get("cmdline", "")
+        name = info.get("name", "")
+        if not any(rx.search(cmdline) or rx.search(name) for rx in _DERIVED_ORPHAN_MARKERS):
+            continue
+        if info.get("ppid") in live_pids:
+            continue
+        candidates[pid] = dict(info)
+    if not candidates:
+        return
+    _collect_metrics(candidates)
+    # m46-time：本模块零 zephyr 包 import（轻导入隔离），now_utc 不可用，退 stdlib UTC
+    now = datetime.now(timezone.utc).timestamp()
+    for pid, info in candidates.items():
+        if info.get("dead"):
+            continue
+        report.scanned += 1
+        age_s = now - info.get("create_time", now)
+        mem_mb = info.get("mem_mb", 0.0)
+        reason = ""
+        if mem_mb >= _DANGEROUS_MEM_GB * 1024:
+            reason = f"derived_orphan_dangerous:mem={mem_mb:.0f}MB"
+        elif age_s > _ORPHAN_KILL_AGE_S:
+            reason = f"derived_orphan_aged:age={age_s / 3600:.1f}h"
+        elif age_s > _ORPHAN_REPORT_AGE_S:
+            report.reported.append(
+                {
+                    "pid": pid,
+                    "reason": "derived_orphan_watch",
+                    "cmdline": info.get("cmdline", "")[:120],
+                    "age_h": round(age_s / 3600, 2),
+                }
+            )
+            logger.info("watch PID=%d reason=derived_orphan_watch", pid)
+            continue
+        else:
+            continue
+        killed = False
+        if dry_run:
+            _log_kill(pid, reason, dry_run=True)
+        else:
+            killed = _kill_pid_tree(pid)
+            _log_kill(pid, reason + ("" if killed else " [FAILED]"), dry_run=False)
+        report.killed.append(
+            {
+                "pid": pid,
+                "reason": reason,
+                "cmdline": info.get("cmdline", "")[:120],
+                "age_h": round(age_s / 3600, 2),
+                "killed": killed,
+            }
+        )
+        logger.warning(
+            "%s PID=%d reason=%s",
+            "[dry-run] would kill" if dry_run else "killed",
+            pid,
+            reason,
+        )
+
+
 # ============== 主流程 ==============
 
 
@@ -888,6 +973,9 @@ def reap(dry_run: bool = False) -> ReapReport:
                     }
                 )
                 logger.info("watch PID=%d reason=%s", pid, verdict.reason)
+
+        # 1.5) 项目衍生孤儿（ollama/llama-server 族，2026-09-15 事故补丁）
+        _reap_derived_orphans(all_procs, dry_run, report)
 
     # 2) Trae 幽灵窗口
     report.ghosts = _reap_ghost_windows(dry_run)

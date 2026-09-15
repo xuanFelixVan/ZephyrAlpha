@@ -832,9 +832,34 @@ class _OllamaProcessManager:
 
     @staticmethod
     def terminate_proc(core: AutoRuntimeCore) -> None:
-        """终止 core._ollama_proc 引用的 ollama 子进程（5.49.1 孤儿进程防护）。"""
+        """终止 core._ollama_proc 引用的 ollama 子进程及其整个进程树。
+
+        5.49.1 孤儿防护 + 2026-09-15 事故补丁：Windows 上 terminate() 只杀
+        ollama.exe 父进程，其 llama-server 模型 worker 全部孤儿化（当日 9 实例
+        ≈12GB 撑爆提交内存实证）。先杀子树再杀父，与 process_reaper._kill_pid_tree 同序。
+        """
         if core._ollama_proc is None:
             return
+        try:
+            import psutil
+
+            try:
+                children = psutil.Process(core._ollama_proc.pid).children(recursive=True)
+            except psutil.Error:
+                children = []
+            for child in children:
+                try:
+                    child.terminate()
+                except psutil.Error:
+                    continue
+            _, alive = psutil.wait_procs(children, timeout=3)
+            for child in alive:
+                try:
+                    child.kill()
+                except psutil.Error:
+                    continue
+        except Exception:  # noqa: BLE001 — 5.135治标: broad exception catch
+            logger.exception("ollama child-tree terminate failed during shutdown", exc_info=True)
         try:
             core._ollama_proc.terminate()
             core._ollama_proc.wait(timeout=5)

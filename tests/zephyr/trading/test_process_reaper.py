@@ -11,6 +11,7 @@
 from __future__ import annotations
 
 import sys
+import time
 from pathlib import Path
 
 import pytest
@@ -21,9 +22,11 @@ if str(_SRC) not in sys.path:
     sys.path.insert(0, str(_SRC))
 
 from zephyr.trading.process_reaper import (  # noqa: E402
+    _DERIVED_ORPHAN_MARKERS,
     _GHOST_STRIKES_TO_KILL,
     _advance_ghost_state,
     _is_trae_child_cmdline,
+    _reap_derived_orphans,
     classify_process,
     classify_trae_process,
 )
@@ -324,6 +327,88 @@ class TestGhostStateMachine:
         state, kill_ready = _advance_ghost_state(state, self._current(300), _NOW)  # 200 恢复出列
         assert "200" not in state["suspects"]
         assert state["suspects"]["300"]["strikes"] == 2 and kill_ready == []
+
+
+class TestDerivedOrphans:
+    """判定矩阵第 10 条：项目衍生孤儿（ollama/llama-server 族，2026-09-15 事故补丁）。"""
+
+    @staticmethod
+    def _proc(ppid, age_h, cmd, name=""):
+        return {
+            "name": name,
+            "ppid": ppid,
+            "cmdline": cmd,
+            "create_time": time.time() - age_h * 3600,
+        }
+
+    def _run(self, procs, monkeypatch, dry_run=False):
+        import zephyr.trading.process_reaper as m
+
+        monkeypatch.setattr(m, "_collect_metrics", lambda d: None)
+        killed: list[int] = []
+        monkeypatch.setattr(m, "_kill_pid_tree", lambda pid: killed.append(pid) or True)
+        report = m.ReapReport()
+        m._reap_derived_orphans(procs, dry_run, report)
+        return report, killed
+
+    def test_aged_serve_orphan_killed(self, monkeypatch):
+        # serve 父进程(PPID=1)已死且超龄 -> 收割
+        procs = {10: self._proc(1, 3.0, r"C:\Programs\Ollama\ollama.exe serve")}
+        report, killed = self._run(procs, monkeypatch)
+        assert killed == [10]
+        assert report.killed[0]["reason"].startswith("derived_orphan_aged")
+
+    def test_aged_llama_server_orphan_killed(self, monkeypatch):
+        # llama-server 的父(10)已死=不在进程表内 -> 收割
+        procs = {11: self._proc(10, 3.0, r"C:\Programs\Ollama\llama-server.exe --model x", name="llama-server.exe")}
+        report, killed = self._run(procs, monkeypatch)
+        assert killed == [11]
+        assert report.killed[0]["reason"].startswith("derived_orphan_aged")
+
+    def test_parent_alive_never_judged(self, monkeypatch):
+        procs = {
+            9: self._proc(1, 3.0, r"bash.exe"),
+            10: self._proc(9, 3.0, r"C:\Programs\Ollama\ollama.exe serve"),
+            11: self._proc(10, 3.0, r"C:\Programs\Ollama\llama-server.exe --model x", name="llama-server.exe"),
+        }
+        report, killed = self._run(procs, monkeypatch)
+        assert killed == [] and report.reported == []
+
+    def test_young_derived_orphan_skipped(self, monkeypatch):
+        procs = {11: self._proc(10, 0.1, r"C:\Programs\Ollama\llama-server.exe --model x", name="llama-server.exe")}
+        report, killed = self._run(procs, monkeypatch)
+        assert killed == [] and report.reported == []
+
+    def test_watch_window_reported_not_killed(self, monkeypatch):
+        procs = {11: self._proc(10, 1.0, r"C:\Programs\Ollama\llama-server.exe --model x", name="llama-server.exe")}
+        report, killed = self._run(procs, monkeypatch)
+        assert killed == []
+        assert len(report.reported) == 1 and report.reported[0]["reason"] == "derived_orphan_watch"
+
+    def test_huge_memory_killed_regardless_of_age(self, monkeypatch):
+        import zephyr.trading.process_reaper as m
+
+        procs = {11: self._proc(10, 0.1, r"C:\Programs\Ollama\llama-server.exe --model x", name="llama-server.exe")}
+        monkeypatch.setattr(m, "_collect_metrics", lambda d: d.update({11: {**d[11], "mem_mb": 11.0 * 1024}}))
+        monkeypatch.setattr(m, "_kill_pid_tree", lambda pid: True)
+        report = m.ReapReport()
+        m._reap_derived_orphans(procs, False, report)
+        assert len(report.killed) == 1 and "derived_orphan_dangerous" in report.killed[0]["reason"]
+
+    def test_dry_run_no_kill(self, monkeypatch):
+        procs = {11: self._proc(10, 3.0, r"C:\Programs\Ollama\llama-server.exe --model x", name="llama-server.exe")}
+        report, killed = self._run(procs, monkeypatch, dry_run=True)
+        assert killed == [] and len(report.killed) == 1 and report.killed[0]["killed"] is False
+
+    def test_non_ollama_orphan_not_judged(self, monkeypatch):
+        procs = {11: self._proc(10, 3.0, r"msedge.exe --type=renderer")}
+        report, killed = self._run(procs, monkeypatch)
+        assert killed == [] and report.reported == []
+
+    def test_markers_cover_llama_server_and_ollama_serve(self):
+        joined = [rx.pattern for rx in _DERIVED_ORPHAN_MARKERS]
+        assert any("llama-server" in p for p in joined)
+        assert any("serve" in p for p in joined)
 
 
 if __name__ == "__main__":
