@@ -59,16 +59,16 @@ CACHE = ROOT / ".runtime/tmp/auto_mount_judge_cache.json"
 IS_WIN = ("2020-01-01", "2023-12-31")
 MIN_SEG_DAYS = 30
 NEW_SLEEVE_WEIGHT = 0.05
-CLASS_NODE_MAP = {  # ① SOP-C §6.2 映射表（规则真源）
-    "value_reversal": "TDM-E-L1", "mean_reversion_timing": "TDM-E-L1", "trend_timing": "TDM-E-L1",
-    "small_cap_quality": "TDM-E-L3-07-3", "value_quality": "TDM-E-L3-07-3", "intraday_gap": "TDM-P-P2",
-    "multifactor": "TDM-E-L3-07-2",  # S07-G2：derive_class 兜底类，不映射则挂图 skipped 永不落位
+FAMILY_DEFAULT_ROUTE = {  # 家族兜底路由（真源=注册表 mount_route 字段，本表仅接住无显式路由的自动入库件）
+    # S07-G2：derive_class 兜底类 multifactor 无显式路由时落打分链，不映射则挂图 skipped 永不落位。
+    # 其余家族不设兜底：同族路由异构（value_reversal 既有个股反转也有指数择时），强制显式 mount_route 防误挂。
+    "multifactor": "TDM-E-L3-07-2",
 }
-CLASS_CANDIDATE_STATES: dict[str, set[str] | None] = {  # 语义先行候选态（数据只在态内裁决）
-    "value_reversal": {"capitulation", "accumulation"}, "mean_reversion_timing": {"accumulation", "expansion"},
-    "trend_timing": {"expansion", "ignition"}, "intraday_gap": {"accumulation", "expansion"},
-    "small_cap_quality": None, "value_quality": None,  # 选股链无状态格
-    "multifactor": None,  # 打分链（TDM-E-L3-07-2）同为选股类，无状态格
+CLASS_CANDIDATE_STATES: dict[str, set[str] | None] = {  # 语义先行候选态，按分类家族键（数据只在态内裁决）
+    "value_reversal": {"capitulation", "accumulation"},
+    "momentum_trend": {"expansion", "ignition"},
+    "daban": {"accumulation", "expansion"},
+    "multifactor": None,  # 打分/选股链（TDM-E-L3-07-2/3）为选股类，无状态格
 }
 R2SIX = {"r10": "capitulation", "r4": "accumulation", "r11": "accumulation", "r3": "expansion", "r12": "ignition"}
 
@@ -77,7 +77,7 @@ def load_registry_entries() -> list[dict[str, Any]]:
     import yaml
     data = yaml.safe_load(REGISTRY.read_text(encoding="utf-8"))
     return [{"sid": e["strategy_id"], "cls": e["strategy_class"], "code_path": e["code_path"],
-             "lifecycle": e.get("lifecycle_status")} for e in data.get("strategies", [])
+             "lifecycle": e.get("lifecycle_status"), "route": e.get("mount_route")} for e in data.get("strategies", [])
             if e.get("code_path") and e.get("strategy_class")]
 
 
@@ -95,7 +95,7 @@ def _load_translated_module(rel: str):
 def _cached_judge(e: dict[str, Any], dom) -> dict[str, Any]:
     """② 分状态归因（带缓存：sid+code mtime+窗口+映射版本键控）。"""
     code = Path(e["code_path"]) if Path(e["code_path"]).is_absolute() else ROOT / e["code_path"]
-    key = f"{e['sid']}|{int(code.stat().st_mtime)}|{IS_WIN}|{sorted(R2SIX)}|v2"
+    key = f"{e['sid']}|{int(code.stat().st_mtime)}|{IS_WIN}|{sorted(R2SIX)}|v3"
     cache = json.loads(CACHE.read_text(encoding="utf-8")) if CACHE.exists() else {}
     if cache.get(key):
         return cache[key]
@@ -178,33 +178,35 @@ def insert_node_mount(text: str, node_id: str, sid: str, evidence: str) -> str:
     return _patch_block(text, node_id, "".join(lines))
 
 
-def insert_cell(text: str, node_id: str, sid: str) -> str:
-    """原位拼接：在该节点全部格子的 mounted [] 内追加 sid（多行折行格子安全）。"""
-    pat = rf"(?m)^  - \{{node_id: {re.escape(node_id)}, state: (\w+), mounted: \["
+def insert_cell(text: str, node_id: str, state: str, sid: str) -> str:
+    """原位拼接：仅在指定状态格的 mounted [] 内追加 sid（多行折行格子安全）。
+
+    2026-09-16 复核班治本：旧实现无 state 参数、向该节点全部格子扩散插入（docstring
+    自述"全部格子"），VREV-027 因此污染 ignition/euphoria/distribution 三格（其证据
+    states=accumulation+capitulation）。state-aware 化后一格一插，误插由守卫测试拦截。
+    """
+    pat = rf"(?m)^  - \{{node_id: {re.escape(node_id)}, state: {re.escape(state)}, mounted: \["
     hits = list(re.finditer(pat, text))
-    assert hits, f"state_matrix 无该节点格子: {node_id}"
-    out = text
-    for m in reversed(hits):
-        # 括号配对找真闭括号（防多行折行格子把 ] 落在下一行）
-        depth, i = 1, m.end()
-        while depth:
-            ch = out[i]
-            depth += (ch == "[") - (ch == "]")
-            i += 1
-        close = i - 1
-        inner = out[m.end():close]
-        if sid in [x.strip() for x in inner.split(",")]:
-            continue  # 幂等
-        if not inner.strip():
-            ins, pos = sid, close  # 空数组：] 前直插
-        else:
-            ins = f", {sid}"
-            j = close  # 回退到最后一个非空白字符之后插入
-            while j > m.end() and out[j - 1] in " \t\r\n":
-                j -= 1
-            pos = j
-        out = out[:pos] + ins + out[pos:]
-    return out
+    assert len(hits) == 1, f"state 格不唯一或缺失: {node_id}/{state} hits={len(hits)}"
+    m = hits[0]
+    # 括号配对找真闭括号（防多行折行格子把 ] 落在下一行）
+    depth, i = 1, m.end()
+    while depth:
+        ch = text[i]
+        depth += (ch == "[") - (ch == "]")
+        i += 1
+    close = i - 1
+    inner = text[m.end():close]
+    assert sid not in [x.strip() for x in inner.split(",")], f"格子已含 {sid}（op 应先查重）"
+    if not inner.strip():
+        ins, pos = sid, close  # 空数组：] 前直插
+    else:
+        ins = f", {sid}"
+        j = close  # 回退到最后一个非空白字符之后插入
+        while j > m.end() and text[j - 1] in " \t\r\n":
+            j -= 1
+        pos = j
+    return text[:pos] + ins + text[pos:]
 
 
 def insert_sleeve(text: str, sid: str, activation: list[str] | None) -> str:
@@ -290,7 +292,7 @@ def _plan_inserts(entries: list[dict[str, Any]], dom, only: set[str] | None) -> 
         pipeline = [e for e in pipeline if e["sid"] in only]
     for e in pipeline:
         j = _cached_judge(e, dom)
-        node = CLASS_NODE_MAP.get(e["cls"])
+        node = e.get("route") or FAMILY_DEFAULT_ROUTE.get(e["cls"])
         block = text[_split_blocks(text)[node][0]:_split_blocks(text)[node][1]] if node else ""
         if node and f"strategy_ref: {e['sid']}" not in block:
             seg_str = "; ".join(f"{s}={sr:+.2f}({n}d)" for s, (n, sr) in sorted(j["segments"].items()))
@@ -328,7 +330,7 @@ def apply_ops(ops: list[dict[str, Any]], before: str) -> str:
         if op["kind"] == "node_mount":
             text = insert_node_mount(text, op["node_id"], op["sid"], op["evidence"])
         elif op["kind"] == "cell":
-            text = insert_cell(text, op["node_id"], op["sid"])
+            text = insert_cell(text, op["node_id"], op["state"], op["sid"])
         elif op["kind"] == "sleeve":
             text = insert_sleeve(text, op["sid"], op["activation"])
         elif op["kind"] == "rescale":
@@ -444,7 +446,7 @@ def main() -> None:
               and (only is None or x["sid"] in only)]:
         j = _cached_judge(e, dom)
         report_payload["judgements"].append({"sid": e["sid"], "cls": e["cls"],
-                                             "node": CLASS_NODE_MAP.get(e["cls"]),
+                                             "node": e.get("route") or FAMILY_DEFAULT_ROUTE.get(e["cls"]),
                                              "activated": j["activated"], "segments": j["segments"]})
     if args.replay:
         assert not ops, f"重放非幂等：仍有 {len(ops)} 个待插操作 {ops[:3]}"

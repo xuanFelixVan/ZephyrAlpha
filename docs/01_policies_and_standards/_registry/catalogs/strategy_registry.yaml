@@ -12195,10 +12195,8 @@ strategies:
     code_fingerprint: "8ae95d92bb4eaabb"
 
   - strategy_id: "STR-VREV-025"
-    name: "恐慌反弹持有 19 日"
-    name_zh: "恐慌反弹持有 19 日"
-    aliases: ["panic-rebound-19d"]
-    strategy_class: "value_reversal"
+    strategy_class: "value_reversal"  # route 真源：挂图节点（SOP-C §6.2，2026-09-16 双层分离批）
+    mount_route: "TDM-E-L1"
     sleeve: "alpha"
     alpha_sources: []
     variant_of: null
@@ -12276,10 +12274,8 @@ strategies:
     code_symbol: "scripts/backtest/translated/c4_e3da6fa71af1_panic_rebound.py::build"
     code_fingerprint: null
   - strategy_id: "STR-TSMALL-001"
-    name: "微盘三正质量精选"
-    name_zh: "微盘三正质量精选"
-    aliases: ["tsmall100-quality"]
-    strategy_class: "multifactor"
+    strategy_class: "multifactor"  # route 真源：挂图节点（SOP-C §6.2，2026-09-16 双层分离批）
+    mount_route: "TDM-E-L3-07-3"
     relabel_note: "2026-09-15 复核班真值修正（AI 架构师代判，Owner 夜班指令批）：C5 批临时类 small_cap_quality 违反家族法（id 段 TSMALL 无对应家族），按词汇表边界并入 multifactor（多条件合成筛选）；挂图路由不受影响（fa53723fb2 已人工挂图）"
     sleeve: "alpha"
     alpha_sources: []
@@ -12358,10 +12354,8 @@ strategies:
     code_symbol: "scripts/backtest/translated/c4_dc5b80aa3614_tsmall100.py::build"
     code_fingerprint: null
   - strategy_id: "STR-VAL-001"
-    name: "PB-POE 价值质量精选"
-    name_zh: "PB-POE 价值质量精选"
-    aliases: ["pb-poe-quality"]
-    strategy_class: "multifactor"
+    strategy_class: "multifactor"  # route 真源：挂图节点（SOP-C §6.2，2026-09-16 双层分离批）
+    mount_route: "TDM-E-L3-07-3"
     relabel_note: "2026-09-15 复核班真值修正（AI 架构师代判，Owner 夜班指令批）：C5 批临时类 value_quality 违反家族法（id 段 VAL 无对应家族），按词汇表边界并入 multifactor（PB+质量多条件合成）；挂图路由不受影响（fa53723fb2 已人工挂图）"
     sleeve: "alpha"
     alpha_sources: []
@@ -12440,10 +12434,8 @@ strategies:
     code_symbol: "scripts/backtest/translated/c4_8d000bf3ccc3_pb_poe.py::build"
     code_fingerprint: null
   - strategy_id: "STR-MOMTREND-033"
-    name: "DMI 指数趋势择时"
-    name_zh: "DMI 指数趋势择时"
-    aliases: ["dmi-index-timing"]
-    strategy_class: "momentum_trend"
+    strategy_class: "momentum_trend"  # route 真源：挂图节点（SOP-C §6.2，2026-09-16 双层分离批）
+    mount_route: "TDM-E-L1"
     relabel_note: "2026-09-15 复核班真值修正（AI 架构师代判，Owner 夜班指令批）：C5 批临时类 trend_timing 修正回 id 段 MOMTREND 对应的 momentum_trend 家族（趋势择时属该族 boundary_in 趋势买卖点体系）"
     sleeve: "alpha"
     alpha_sources: []
@@ -12522,10 +12514,8 @@ strategies:
     code_symbol: "scripts/backtest/translated/c4_7f7e5f935dfc_dmi_timing.py::build"
     code_fingerprint: null
   - strategy_id: "STR-VREV-026"
-    name: "BIAS 乖离率超卖回归"
-    name_zh: "BIAS 乖离率超卖回归"
-    aliases: ["bias-overshoot-reversion"]
-    strategy_class: "value_reversal"
+    strategy_class: "value_reversal"  # route 真源：挂图节点（SOP-C §6.2，2026-09-16 双层分离批）
+    mount_route: "TDM-E-L1"
     relabel_note: "2026-09-15 复核班真值修正（AI 架构师代判，Owner 夜班指令批）：C5 批临时类 mean_reversion_timing 修正回 id 段 VREV 对应的 value_reversal 家族（BIAS 超卖回归属该族 boundary_in 均值回归决策链）"
     sleeve: "alpha"
     alpha_sources: []
@@ -12614,10 +12604,8 @@ strategies:
     code_symbol: "scripts/backtest/translated/c4_c72318f2da1c_bias_ql.py::build"
     code_fingerprint: null
   - strategy_id: "STR-DABAN-023"
-    name: "超短线高开缺口"
-    name_zh: "超短线高开缺口"
-    aliases: ["ultrashort-gap-open"]
-    strategy_class: "daban"
+    strategy_class: "daban"  # route 真源：挂图节点（SOP-C §6.2，2026-09-16 双层分离批）
+    mount_route: "TDM-P-P2"
     relabel_note: "2026-09-15 复核班真值修正（AI 架构师代判，Owner 夜班指令批）：C5 批临时类 intraday_gap 修正回 id 段 DABAN 对应的 daban 家族（超短高开缺口属短打战术族）"
     sleeve: "alpha"
     alpha_sources: []

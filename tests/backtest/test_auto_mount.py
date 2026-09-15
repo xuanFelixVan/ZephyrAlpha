@@ -27,7 +27,7 @@ sys.path.insert(0, str(Path(__file__).resolve().parents[2] / "scripts"))
 
 from backtest.auto_mount import (  # noqa: E402
     CLASS_CANDIDATE_STATES,
-    CLASS_NODE_MAP,
+    FAMILY_DEFAULT_ROUTE,
     IS_WIN,
     MIN_SEG_DAYS,
     NEW_SLEEVE_WEIGHT,
@@ -64,17 +64,27 @@ SLEEVES = """  sleeves:
 
 # ---------- ① 映射表规则 ----------
 class TestMappingRules:
-    def test_sop_six_classes_covered(self):
-        assert set(CLASS_NODE_MAP) == {
-            "value_reversal", "mean_reversion_timing", "trend_timing",
-            "small_cap_quality", "value_quality", "intraday_gap", "multifactor"}
+    def test_family_fallback_route_whitelisted(self):
+        # 2026-09-16 双层分离批：路由真源=注册表 mount_route 字段；代码兜底表只收无歧义家族。
+        # multifactor=打分链（S07-G2 derive_class 兜底）；其余家族同族路由异构（value_reversal
+        # 既有个股反转也有指数择时），设兜底必误挂——白名单外新增须先过架构评审。
+        assert set(FAMILY_DEFAULT_ROUTE) == {"multifactor"}
+        assert FAMILY_DEFAULT_ROUTE["multifactor"] == "TDM-E-L3-07-2"
 
-    def test_timing_classes_have_candidates(self):
-        for cls, node in CLASS_NODE_MAP.items():
-            if node in ("TDM-E-L1", "TDM-P-P2"):
-                assert CLASS_CANDIDATE_STATES[cls], f"{cls} 择时类必须有候选态"
-            else:
-                assert CLASS_CANDIDATE_STATES[cls] is None, f"{cls} 选股类必须无状态格"
+    def test_candidate_states_keyed_by_family(self):
+        # 候选态按分类家族键：择时类家族必须有候选态；选股/打分类 None 或缺省（缺省=不挂状态格）
+        assert CLASS_CANDIDATE_STATES["value_reversal"] == {"capitulation", "accumulation"}
+        assert CLASS_CANDIDATE_STATES["momentum_trend"] == {"expansion", "ignition"}
+        assert CLASS_CANDIDATE_STATES["daban"] == {"accumulation", "expansion"}
+        assert CLASS_CANDIDATE_STATES["multifactor"] is None
+        assert CLASS_CANDIDATE_STATES.get("sector_rotation", set()) == set()
+
+    def test_route_resolution_prefers_explicit(self):
+        # 显式 mount_route 优先于家族兜底（TSMALL/VAL 虽归 multifactor，路由仍走 L3-07-3 选股链）
+        e = {"route": "TDM-E-L3-07-3", "cls": "multifactor"}
+        assert (e.get("route") or FAMILY_DEFAULT_ROUTE.get(e["cls"])) == "TDM-E-L3-07-3"
+        e2 = {"route": None, "cls": "multifactor"}
+        assert (e2.get("route") or FAMILY_DEFAULT_ROUTE.get(e2["cls"])) == "TDM-E-L3-07-2"
 
     def test_r2six_states_are_six_phase(self):
         valid = {"capitulation", "accumulation", "ignition", "expansion", "euphoria", "distribution"}
@@ -95,13 +105,21 @@ class TestTextSurgery:
         with pytest.raises(AssertionError):
             insert_node_mount("- node_id: TDM-X\n  name_zh: 无挂载区\n", "TDM-X", "STR-A", "e")
 
-    def test_insert_cell_only_empty_or_new_states(self):
-        out = insert_cell(CELLS, "TDM-E-L1", "STR-TEST-001")
-        assert "state: capitulation, mounted: [STR-VREV-025, STR-TEST-001]" in out  # 已有格子原位追加
-        assert "state: accumulation, mounted: [STR-TEST-001]" in out  # 空格插入
-        assert out.count("confidence: proposed") == CELLS.count("confidence: proposed")  # 零扰动
-        again = insert_cell(out, "TDM-E-L1", "STR-TEST-001")  # 幂等
-        assert again == out
+    def test_insert_cell_state_aware(self):
+        # 2026-09-16 治本：一格一插，兄弟格子零扰动（旧实现向全部格子扩散，VREV-027 曾被污染四格）
+        out = insert_cell(CELLS, "TDM-E-L1", "capitulation", "STR-TEST-001")
+        assert "state: capitulation, mounted: [STR-VREV-025, STR-TEST-001]" in out
+        assert "state: accumulation, mounted: []" in out  # 兄弟格零扰动
+        assert out.count("confidence: proposed") == CELLS.count("confidence: proposed")
+        with pytest.raises(AssertionError):  # 幂等：已在该格再插必拒
+            insert_cell(out, "TDM-E-L1", "capitulation", "STR-TEST-001")
+        out2 = insert_cell(CELLS, "TDM-E-L1", "accumulation", "STR-TEST-002")
+        assert "state: accumulation, mounted: [STR-TEST-002]" in out2
+        assert "state: capitulation, mounted: [STR-VREV-025]" in out2
+
+    def test_insert_cell_unknown_state_rejected(self):
+        with pytest.raises(AssertionError):
+            insert_cell(CELLS, "TDM-E-L1", "nonexistent_state", "STR-TEST-001")
 
     def test_insert_sleeve_appends_after_last_str(self):
         out = insert_sleeve(SLEEVES, "STR-TEST-001", ["capitulation"])

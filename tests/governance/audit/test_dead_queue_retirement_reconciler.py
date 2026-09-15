@@ -134,13 +134,16 @@ def test_incremental_cursor_advances(repo):
     """游标推进：上轮扫过 cursor 之前的项不再重扫；游标后项+上轮后新死项纳入。"""
     import os
     import time as _t
+    from datetime import datetime, timedelta, timezone
 
-    # 上轮报告：游标 q-prev-0002，generated_at=刚才
+    # 上轮报告：游标 q-prev-0002，generated_at=2h 前（动态生成——2026-09-16 复核班治本：
+    # 原硬编码 "2026-09-15T01:00+00:00" 被真实墙钟跨越后，mtime 兜底纳入分支永久命中，
+    # 游标断言退化为时间炸弹）
     audit_dir = repo / "docs" / "_working" / "dead_queue"
     audit_dir.mkdir(parents=True, exist_ok=True)
     old_ts = _t.time() - 26 * 3600  # 报告过期（>24h）→ 不触发 fresh skip
     (audit_dir / "retirement_audit.yaml").write_text(
-        json.dumps({"generated_at": "2026-09-15T01:00:00+00:00", "last_cursor_qid": "q-prev-0002", "counts": {}}),
+        json.dumps({"generated_at": (datetime.now(timezone.utc) - timedelta(hours=2)).isoformat(), "last_cursor_qid": "q-prev-0002", "counts": {}}),
         encoding="utf-8",
     )
     os.utime(audit_dir / "retirement_audit.yaml", (old_ts, old_ts))
@@ -148,6 +151,12 @@ def test_incremental_cursor_advances(repo):
     _write_dead_item(repo, "q-prev-0001", [{"path": "docs/a.md", "blob_sha256": "4" * 64}])
     _write_dead_item(repo, "q-prev-0002", [{"path": "docs/a.md", "blob_sha256": "5" * 64}])
     _write_dead_item(repo, "q-zzz-0003", [{"path": "docs/a.md", "blob_sha256": "6" * 64}])
+    # 游标前两死项 mtime 回拨到 generated_at 之前（模拟"上轮前已死"）——否则 mtime 兜底
+    # 纳入分支（mtime>=generated_at）永远命中，游标推进语义测不到
+    item_ts = _t.time() - 5 * 3600
+    for q in ("q-prev-0001", "q-prev-0002"):
+        dp = repo / ".runtime" / "commit_queue" / "dead" / f"{q}.json"
+        os.utime(dp, (item_ts, item_ts))
     spec = make_dead_queue_retirement_reconciler(_FakeGateway(str(repo)))
     res = spec.reconcile([".runtime/commit_queue/dead/q-zzz-0003.json"], "solo_agent")
     report = json.loads((audit_dir / "retirement_audit.yaml").read_text(encoding="utf-8"))

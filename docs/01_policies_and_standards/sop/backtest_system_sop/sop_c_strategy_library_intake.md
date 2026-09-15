@@ -79,8 +79,10 @@ related_issues:
 > **退役标注（2026-09-15，净零声明兑现）**：本节①入库=`zephyr.strategy_pipeline.registry_writer`
 > （MOD-BT-192，safe_write CAS+only-add 断言+确定性 STR-* 编号）；②挂图=`scripts/backtest/auto_mount.py`
 > （MOD-BT-171，--apply 语义门+38 规则校验+报告落盘）；编排入口=intake.run_intake_auto（事件驱动，
-> 全程零人工至 candidate/sim）。本节散文降级为人工兜底通道；映射表（§6.2）真源已固化进 auto_mount
-> `CLASS_NODE_MAP`（SOP-C §6.2 五行规则表逐字承接）。**配比（③）与 sim→production 仍为 Owner 门。**
+> 全程零人工至 candidate/sim）。本节散文降级为人工兜底通道；**挂图路由真源=注册表
+> `mount_route` 字段**（2026-09-16 双层分离批：路由与分类家族解耦，显式路由优先，
+> 家族兜底仅 multifactor 打分链见 auto_mount.FAMILY_DEFAULT_ROUTE 白名单）。
+> **配比（③）与 sim→production 仍为 Owner 门。**
 
 1. **入库**：`strategy_registry.yaml` 新增 STR-* 条目（id / name / 信号源 / 持仓周期 / 状态适配 / 翻译来源溯源 / 校正后指标引用）；
 2. **挂图**：按类别挂到对应节点与 state_matrix 格子（`mounted` 数组），映射表：
