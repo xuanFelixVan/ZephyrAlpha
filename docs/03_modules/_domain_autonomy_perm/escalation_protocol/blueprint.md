@@ -4,7 +4,7 @@ submodule_path: src/zephyr/governance/escalation
 title: Escalation Protocol 蓝图
 doc_type: blueprint
 status: Active
-version: "2.1.9"
+version: "2.1.10"
 layer: L0_infrastructure
 owner: ZephyrAlpha-Owner
 classification: confidential
@@ -280,8 +280,8 @@ Escalation Protocol 是 ZephyrAlpha 安全升级与委托治理核心协议。�
 
 | 图 | 位置 | 状态 | 链接 |
 |----|------|------|------|
-| 依赖图 (depgraph) | `blueprint_id=MOD-INF-022` 的 191 个 file 节点 | production | `extract_depgraph.py --modules MOD-INF-022` |
-| 数据流图 (dataflow) | （无节点） | N/A | `apply_dataflowgraph.py --list-datasets` |
+| 依赖图 (depgraph) | `blueprint_id=MOD-INF-022` 的 189 个 file 节点 | production | `extract_depgraph.py --modules MOD-INF-022` |
+| 数据流图 (dataflow) | 0 个 Dataset / 1 个 Job | active | `apply_dataflowgraph.py --list-datasets` |
 | 决策架构图 (decision) | 0 个决策节点 / 1 个决策层 | N/A | `generate_decision_diagram.py` |
 | 蓝图 (blueprint) | 本文件 | Active | — |
 
@@ -292,7 +292,7 @@ Escalation Protocol 是 ZephyrAlpha 安全升级与委托治理核心协议。�
 | module_id | MOD-INF-022 | MOD-INF-022 | ✅ |
 | domain_id | N/A | N/A | ✅ |
 | build_status | production | production | ✅ |
-| file_count | 191 文件 | 112 文件（§0.1） | ❌ |
+| file_count | 189 文件 | 112 文件（§0.1） | ❌ |
 
 > 冲突时以 depgraph 为准（ARCH-056 + ARCH-MM-001 声明 vs 验证框架）。
 
@@ -1563,7 +1563,6 @@ STEP 3: 拆分后验证
 | `tests/e/test_e_flash_crash_guard.py` | ✅ 已实现 | |
 | `tests/e/test_e_forensic_package.py` | ✅ 已实现 | |
 | `tests/e/test_e_gap_analyzer.py` | ✅ 已实现 | |
-| `tests/e/test_e_ghost_scan.py` | ✅ 已实现 | |
 | `tests/e/test_e_gov_a2a_failure.py` | ✅ 已实现 | |
 | `tests/e/test_e_gov_approval.py` | ✅ 已实现 | |
 | `tests/e/test_e_gov_budget_handler.py` | ✅ 已实现 | |

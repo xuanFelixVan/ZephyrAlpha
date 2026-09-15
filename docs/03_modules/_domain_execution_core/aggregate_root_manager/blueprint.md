@@ -3,7 +3,7 @@ module_id: MOD-EX-049
 title: "执行域聚合根管理器蓝图 — Order/Position生命周期协调层"
 doc_type: blueprint
 status: Active
-version: "0.1.7"
+version: "0.1.9"
 design_maturity: production
 ttl: permanent
 responsibility_domain: 
@@ -124,7 +124,7 @@ class ExecutionAggregateManager:
 | 图 | 位置 | 状态 | 链接 |
 |----|------|------|------|
 | 依赖图 (depgraph) | `blueprint_id=MOD-EX-049` 的 11 个 file 节点 | production | `extract_depgraph.py --modules MOD-EX-049` |
-| 数据流图 (dataflow) | （无节点） | N/A | `apply_dataflowgraph.py --list-datasets` |
+| 数据流图 (dataflow) | 0 个 Dataset / 1 个 Job | active | `apply_dataflowgraph.py --list-datasets` |
 | 决策架构图 (decision) | 0 个决策节点 / 1 个决策层 | N/A | `generate_decision_diagram.py` |
 | 蓝图 (blueprint) | 本文件 | Active | — |
 

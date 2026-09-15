@@ -3,7 +3,7 @@ module_id: MOD-GOVERNANCE
 title: "Governance Domain 蓝图 — Agent治理八件套跨模块集成契约"
 doc_type: blueprint
 status: Active
-version: "0.13.15"
+version: "0.13.16"
 layer: L1_foundation
 layer_name: domain
 blueprint_level: domain
@@ -214,8 +214,8 @@ build_status: generated
 
 | 图 | 位置 | 状态 | 链接 |
 |----|------|------|------|
-| 依赖图 (depgraph) | `blueprint_id=MOD-GOVERNANCE` 的 96 个 file 节点 | production | `extract_depgraph.py --modules MOD-GOVERNANCE` |
-| 数据流图 (dataflow) | （无节点） | N/A | `apply_dataflowgraph.py --list-datasets` |
+| 依赖图 (depgraph) | `blueprint_id=MOD-GOVERNANCE` 的 93 个 file 节点 | production | `extract_depgraph.py --modules MOD-GOVERNANCE` |
+| 数据流图 (dataflow) | 0 个 Dataset / 1 个 Job | active | `apply_dataflowgraph.py --list-datasets` |
 | 决策架构图 (decision) | 0 个决策节点 / 1 个决策层 | N/A | `generate_decision_diagram.py` |
 | 蓝图 (blueprint) | 本文件 | Active | — |
 
@@ -226,7 +226,7 @@ build_status: generated
 | module_id | MOD-GOVERNANCE | MOD-GOVERNANCE | ✅ |
 | domain_id | N/A | N/A | ✅ |
 | build_status | generated | generated | ✅ |
-| file_count | 96 文件 | N/A | — |
+| file_count | 93 文件 | N/A | — |
 
 > 冲突时以 depgraph 为准（ARCH-056 + ARCH-MM-001 声明 vs 验证框架）。
 
@@ -2186,7 +2186,6 @@ STEP 3: 拆分后验证
 | `src/zephyr/governance/ops_governance/__init__.py` | ✅ 已实现 | |
 | `src/zephyr/governance/ops_governance/decision_fatigue.py` | ✅ 已实现 | |
 | `src/zephyr/governance/ops_governance/environment_manager.py` | ✅ 已实现 | |
-| `src/zephyr/governance/ops_governance/startup_shutdown.py` | ✅ 已实现 | |
 | `src/zephyr/governance/resilience_governance/bus_factor_defense.py` | ✅ 已实现 | |
 | `src/zephyr/governance/resilience_governance/offline_autonomy.py` | ✅ 已实现 | |
 | `src/zephyr/governance/resilience_governance/offline_resilience.py` | ✅ 已实现 | |

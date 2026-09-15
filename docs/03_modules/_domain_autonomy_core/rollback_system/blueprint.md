@@ -4,7 +4,7 @@ submodule_path: src/zephyr/infrastructure/rollback
 title: "Rollback System 蓝图 — Git-native回滚+自动触发+运维治理持续性"
 doc_type: blueprint
 status: Active
-version: 9.0.10
+version: 9.0.11
 layer: L0_infrastructure
 layer_name: infrastructure
 functional_domain: execution
@@ -236,8 +236,8 @@ build_status: production
 
 | 图 | 位置 | 状态 | 链接 |
 |----|------|------|------|
-| 依赖图 (depgraph) | `blueprint_id=MOD-INF-021` 的 193 个 file 节点 | production | `extract_depgraph.py --modules MOD-INF-021` |
-| 数据流图 (dataflow) | （无节点） | N/A | `apply_dataflowgraph.py --list-datasets` |
+| 依赖图 (depgraph) | `blueprint_id=MOD-INF-021` 的 191 个 file 节点 | production | `extract_depgraph.py --modules MOD-INF-021` |
+| 数据流图 (dataflow) | 0 个 Dataset / 1 个 Job | active | `apply_dataflowgraph.py --list-datasets` |
 | 决策架构图 (decision) | 0 个决策节点 / 1 个决策层 | N/A | `generate_decision_diagram.py` |
 | 蓝图 (blueprint) | 本文件 | Active | — |
 
@@ -248,7 +248,7 @@ build_status: production
 | module_id | MOD-INF-021 | MOD-INF-021 | ✅ |
 | domain_id | N/A | N/A | ✅ |
 | build_status | production | production | ✅ |
-| file_count | 193 文件 | 61 文件（§0.1） | ❌ |
+| file_count | 191 文件 | 61 文件（§0.1） | ❌ |
 
 > 冲突时以 depgraph 为准（ARCH-056 + ARCH-MM-001 声明 vs 验证框架）。
 
@@ -1731,7 +1731,6 @@ STEP 3: 拆分后验证
 | `tests/governance/data_layer/test_s3_snapshot_lifecycle.py` | ✅ 已实现 | |
 | `tests/governance/data_layer/test_sqlite_dumper.py` | ✅ 已实现 | |
 | `tests/governance/delegation/test_continuous_trust.py` | ✅ 已实现 | |
-| `tests/governance/drift/test_ghost_scan.py` | ✅ 已实现 | |
 | `tests/governance/drift/test_governance_drift_fix.py` | ✅ 已实现 | |
 | `tests/governance/escalation/test_alternative_path_blocker.py` | ✅ 已实现 | |
 | `tests/governance/escalation/test_result_types.py` | ✅ 已实现 | |
@@ -1746,7 +1745,6 @@ STEP 3: 拆分后验证
 | `tests/governance/lifecycle/test_maintenance_window_adapter.py` | ✅ 已实现 | |
 | `tests/governance/lifecycle/test_post_live_verification.py` | ✅ 已实现 | |
 | `tests/governance/lifecycle/test_startup_shutdown.py` | ✅ 已实现 | |
-| `tests/governance/lifecycle/test_startup_shutdown_cli.py` | ✅ 已实现 | |
 | `tests/governance/lifecycle/test_venv_sync.py` | ✅ 已实现 | |
 | `tests/governance/observability/test_confidence_estimator.py` | ✅ 已实现 | |
 | `tests/governance/observability/test_confidence_quantifier.py` | ✅ 已实现 | |

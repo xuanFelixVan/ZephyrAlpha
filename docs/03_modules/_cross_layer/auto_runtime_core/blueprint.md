@@ -5,7 +5,7 @@ title: "AutoRuntime Core 蓝图 — 系统大脑·三层运行时运营中心"
 doc_type: blueprint
 template_for: blueprint
 status: Active
-version: "6.0.11"
+version: "6.0.13"
 layer: L1_foundation
 owner: ZephyrAlpha-Owner
 classification: confidential
@@ -1026,8 +1026,7 @@ STEP 3: 拆分后验证
 | 文件路径 | 实现状态 | 说明 |
 |---------|:---:|------|
 | `src/zephyr/feedback_loop/core.py` | ✅ 已实现 | |
-| `src/zephyr/infrastructure/health_monitor/__init__.py` | ✅ 已实现 | |
-| `src/zephyr/infrastructure/health_monitor/health_aggregator.py` | ✅ 已实现 | |
+| `src/zephyr/infrastructure/health_monitor/__init__.py` | ⚠️ 骨架 | |
 | `src/zephyr/trading/__main__.py` | ✅ 已实现 | |
 | `src/zephyr/trading/action_dispatcher/_annotation_writer.py` | ✅ 已实现 | |
 | `src/zephyr/trading/action_dispatcher/_audit_log_writer.py` | ✅ 已实现 | |
@@ -1035,6 +1034,7 @@ STEP 3: 拆分后验证
 | `src/zephyr/trading/action_dispatcher/_search_replace_engine.py` | ✅ 已实现 | |
 | `src/zephyr/trading/orphan_detector.py` | ✅ 已实现 | |
 | `src/zephyr/trading/ports.py` | ✅ 已实现 | |
+| `src/zephyr/trading/runtime/__init__.py` | ⚠️ 骨架 | |
 | `src/zephyr/trading/shift_handover_checklist.py` | ✅ 已实现 | |
 | `src/zephyr/trading/windows_service.py` | ✅ 已实现 | |
 
