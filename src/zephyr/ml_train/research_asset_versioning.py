@@ -26,48 +26,7 @@ B13-04341（AUD-DRAFT-001-DIGEST P2 波 P2-W07，CAND-MLT-030，A3 D-RESEARCH-18
 分工：report_version_manager=报告件版本；本件=研究资产（因子/模型/策略）
 版本与复用协议面，纯内存登记簿。
 
-# [ALGO_FLOW]
-# 层: 输入
-# - id: I1
-#   name: version 参数
-#   fields: 参数 version，类型注解 str
-#   code: research_asset_versioning.py 顶层公共函数形参（AST 提取）
-# 层: 算法
-# - id: A1
-#   name_zh: ① parse_semver
-#   name_en: parse_semver
-#   intro: SemVer 解析（非法 Fail-Closed）。
-#   desc: SemVer 解析（非法 Fail-Closed）。；源码 L112-L119
-#   inputs: version
-#   outputs: tuple[int, int, int]
-# - id: A2
-#   name_zh: ② AssetVersion
-#   name_en: AssetVersion
-#   intro: 资产版本记录（frozen；写后不可改）。
-#   desc: 资产版本记录（frozen；写后不可改）。；公共方法（定义序）: semver；源码 L123-L137
-#   inputs: 无参数
-#   outputs: 返回值
-# - id: A3
-#   name_zh: ③ ResearchAssetVersioning
-#   name_en: ResearchAssetVersioning
-#   intro: 研究资产版本化管理器（登记 + 不可变记录 + 三维索引 + 复用登记）。
-#   desc: 研究资产版本化管理器（登记 + 不可变记录 + 三维索引 + 复用登记）。；公共方法（定义序）: register_version, get_version, versions_of, latest, list_ass…
-#   inputs: clock
-#   outputs: 返回值
-#   （注：A3 之后另有 3 个公共定义未列入（含 3 个数据契约/异常/枚举声明类），见源码）
-# 层: 输出
-# - id: O1
-#   name_zh: tuple[int, int, int]
-#   name_en: tuple[int, int, int]
-#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
-#   downstream: 运行时装配批（因子/模型/策略登记口绑定 / 跨项目复用登记路由装配）
-# [/ALGO_FLOW]
-#
-# 边:
-# I1 --> A1
-# A1 --> A2
-# A2 --> A3
-# A3 --> O1
+# [ALGO_FLOW] external: docs/03_modules/_domain_machine_learning_train/algo_flow/research_asset_versioning.yaml
 """
 
 from __future__ import annotations

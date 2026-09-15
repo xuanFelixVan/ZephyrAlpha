@@ -27,50 +27,7 @@ shap_explainer，未注入降级**特征重要性兜底**）+ **关键节点人�
 不回测）；ml_model_factory=模型生命周期编排（本件=决策架构本体，不管
 注册晋级）；qnn_two_stage=分位数密度模型（本件=决策符号分类，零交集）。
 
-# [ALGO_FLOW]
-# 层: 输入
-# - id: I1
-#   name: gbm_trainer 参数
-#   fields: 参数 gbm_trainer（无注解）
-#   code: decision_tree_decision_architecture.py 顶层公共函数形参（AST 提取）
-# - id: I2
-#   name: shap_explainer 参数
-#   fields: 参数 shap_explainer（无注解）
-#   code: decision_tree_decision_architecture.py 顶层公共函数形参（AST 提取）
-# - id: I3
-#   name: clock 参数
-#   fields: 参数 clock（无注解）
-#   code: decision_tree_decision_architecture.py 顶层公共函数形参（AST 提取）
-# 层: 算法
-# - id: A1
-#   name_zh: ① RuleStump
-#   name_en: RuleStump
-#   intro: 降级规则 stump（单特征中位阈值分裂，确定性，frozen）。
-#   desc: 降级规则 stump（单特征中位阈值分裂，确定性，frozen）。；公共方法（定义序）: predict_one；源码 L119-L136
-#   inputs: 无参数
-#   outputs: 返回值
-# - id: A2
-#   name_zh: ② DecisionTreeDecisionArchitecture
-#   name_en: DecisionTreeDecisionArchitecture
-#   intro: 决策树交易决策架构（GBM 注入 / 规则 stump 降级 + SHAP 注入 / 重要性兜底 + 人工干预钩子）。
-#   desc: 决策树交易决策架构（GBM 注入 / 规则 stump 降级 + SHAP 注入 / 重要性兜底 + 人工干预钩子）。；公共方法（定义序）: train, register_intervention_hook, pre…
-#   inputs: gbm_trainer shap_explainer clock
-#   outputs: 返回值
-#   （注：A2 之后另有 4 个公共定义未列入（含 4 个数据契约/异常/枚举声明类），见源码）
-# 层: 输出
-# - id: O1
-#   name_zh: 模块公共 API 面（6 定义）
-#   name_en: public defs
-#   intro: RuleStump, DecisionTreeDecisionArchitecture
-#   downstream: 运行时装配批（决策日志学习/决策解释/人工干预统一注入点装配）
-# [/ALGO_FLOW]
-#
-# 边:
-# I1 --> A1
-# I2 --> A1
-# I3 --> A1
-# A1 --> A2
-# A2 --> O1
+# [ALGO_FLOW] external: docs/03_modules/_domain_machine_learning_train/algo_flow/decision_tree_decision_architecture.yaml
 """
 
 from __future__ import annotations

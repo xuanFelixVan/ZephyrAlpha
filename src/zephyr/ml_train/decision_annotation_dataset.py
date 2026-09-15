@@ -27,37 +27,7 @@ B1-00631（AUD-DRAFT-001-DIGEST P2 波 P2-W07，CAND-MLT-018，C2 71）：
 决策标注库与导出，不管训练 batch）；sentiment_sft_trainer=SFT 训练执行
 （本件仅产出 SFT 样本载荷，不训练）。
 
-# [ALGO_FLOW]
-# 层: 输入
-# - id: I1
-#   name: connection 参数
-#   fields: 参数 connection（无注解）
-#   code: decision_annotation_dataset.py 顶层公共函数形参（AST 提取）
-# - id: I2
-#   name: clock 参数
-#   fields: 参数 clock（无注解）
-#   code: decision_annotation_dataset.py 顶层公共函数形参（AST 提取）
-# 层: 算法
-# - id: A1
-#   name_zh: ① DecisionAnnotationDataset
-#   name_en: DecisionAnnotationDataset
-#   intro: 交易决策标注数据集（SQLite 注入连接 + 版本管理）。
-#   desc: 交易决策标注数据集（SQLite 注入连接 + 版本管理）。；公共方法（定义序）: add_annotation, fill_outcome, export_sft_samples, export_review_dat…
-#   inputs: connection clock
-#   outputs: 返回值
-#   （注：A1 之后另有 5 个公共定义未列入（含 5 个数据契约/异常/枚举声明类），见源码）
-# 层: 输出
-# - id: O1
-#   name_zh: 模块公共 API 面（6 定义）
-#   name_en: public defs
-#   intro: DecisionAnnotationDataset
-#   downstream: 运行时装配批（SFT 样本导出/复盘数据集导出统一注入点装配）
-# [/ALGO_FLOW]
-#
-# 边:
-# I1 --> A1
-# I2 --> A1
-# A1 --> O1
+# [ALGO_FLOW] external: docs/03_modules/_domain_machine_learning_train/algo_flow/decision_annotation_dataset.yaml
 """
 
 from __future__ import annotations

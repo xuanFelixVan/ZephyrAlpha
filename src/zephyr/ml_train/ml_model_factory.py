@@ -28,47 +28,7 @@ B1-00253（AUD-DRAFT-001-DIGEST P2 波 P2-W07，CAND-MLT-017，C2 C-029）：
 （本件仅注入其编排语义回调，不实现影子逻辑）；adversarial_robustness_
 validator=鲁棒性评估实现（本件仅注入其判定回调）。
 
-# [ALGO_FLOW]
-# 层: 输入
-# - id: I1
-#   name: clock 参数
-#   fields: 参数 clock（无注解）
-#   code: ml_model_factory.py 顶层公共函数形参（AST 提取）
-# - id: I2
-#   name: robustness_validator 参数
-#   fields: 参数 robustness_validator（无注解）
-#   code: ml_model_factory.py 顶层公共函数形参（AST 提取）
-# - id: I3
-#   name: gray_orchestrator 参数
-#   fields: 参数 gray_orchestrator（无注解）
-#   code: ml_model_factory.py 顶层公共函数形参（AST 提取）
-# - id: I4
-#   name: gpu_scheduler 参数
-#   fields: 参数 gpu_scheduler（无注解）
-#   code: ml_model_factory.py 顶层公共函数形参（AST 提取）
-# 层: 算法
-# - id: A1
-#   name_zh: ① MlModelFactory
-#   name_en: MlModelFactory
-#   intro: ML 模型工厂（注册表 + 生命周期状态机 + 门禁/编排/队列注入）。
-#   desc: ML 模型工厂（注册表 + 生命周期状态机 + 门禁/编排/队列注入）。；公共方法（定义序）: register_model, submit_candidate, promote_to_staging, promote…
-#   inputs: clock robustness_validator gray_orchestrator gpu_scheduler
-#   outputs: 返回值
-#   （注：A1 之后另有 4 个公共定义未列入（含 4 个数据契约/异常/枚举声明类），见源码）
-# 层: 输出
-# - id: O1
-#   name_zh: 模块公共 API 面（5 定义）
-#   name_en: public defs
-#   intro: MlModelFactory
-#   downstream: 运行时装配批（模型注册/晋级编排/训练提交统一注入点装配）
-# [/ALGO_FLOW]
-#
-# 边:
-# I1 --> A1
-# I2 --> A1
-# I3 --> A1
-# I4 --> A1
-# A1 --> O1
+# [ALGO_FLOW] external: docs/03_modules/_domain_machine_learning_train/algo_flow/ml_model_factory.yaml
 """
 
 from __future__ import annotations

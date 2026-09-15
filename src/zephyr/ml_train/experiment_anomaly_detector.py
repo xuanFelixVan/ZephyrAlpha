@@ -38,37 +38,7 @@ CAND-RES-006 转正（2026-08-30 候选核销批桶B，P2）：ml_train 域实�
 严重度封闭集：warn / critical。报告按 (experiment_id, metric_name, ts,
 anomaly_type) 确定性排序输出。
 
-# [ALGO_FLOW]
-# 层: 输入
-# - id: I1
-#   name: points 参数
-#   fields: 参数 points，类型注解 Sequence[ExperimentMetricPoint]
-#   code: experiment_anomaly_detector.py 顶层公共函数形参（AST 提取）
-# - id: I2
-#   name: config 参数
-#   fields: 参数 config，类型注解 AnomalyDetectionConfig | None
-#   code: experiment_anomaly_detector.py 顶层公共函数形参（AST 提取）
-# 层: 算法
-# - id: A1
-#   name_zh: ① detect_experiment_anomalies
-#   name_en: detect_experiment_anomalies
-#   intro: 实验指标异常检测主入口（纯函数零 IO）。
-#   desc: 实验指标异常检测主入口（纯函数零 IO）。 Parameters ---------- points : 实验指标序列（experiment_id / metric_name /…；源码 L374-L405
-#   inputs: points config
-#   outputs: list[MetricAnomalyReport]
-#   （注：A1 之后另有 4 个公共定义未列入（含 4 个数据契约/异常/枚举声明类），见源码）
-# 层: 输出
-# - id: O1
-#   name_zh: list[MetricAnomalyReport]
-#   name_en: list[MetricAnomalyReport]
-#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
-#   downstream: ml_train 实验跟踪巡检/ai_operator（实验指标序列注入；异常报告供告警与 retrain 工单消费）
-# [/ALGO_FLOW]
-#
-# 边:
-# I1 --> A1
-# I2 --> A1
-# A1 --> O1
+# [ALGO_FLOW] external: docs/03_modules/_domain_machine_learning_train/algo_flow/experiment_anomaly_detector.yaml
 """
 
 from __future__ import annotations

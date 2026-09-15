@@ -27,31 +27,7 @@ model_registry 既有候选条目 ML-CLS-001（首板/连板次日涨停概率�
 - ``train()``：骨架态恒抛 ``CandidateTrainDisabledError``（ZA-MLT-0003）——
   禁真训练，待 B-007 人工闸门批准 + 数据源就绪后实现。
 
-# [ALGO_FLOW]
-# 层: 输入
-# - id: I1
-#   name: 模块内部数据
-#   fields: 无公共形参/无再导出（AST 事实）
-#   code: limit_up_classifier.py
-# 层: 算法
-# - id: A1
-#   name_zh: ① LimitUpClassifierSkeleton
-#   name_en: LimitUpClassifierSkeleton
-#   intro: 打板涨停概率分类器骨架（禁真训练）。
-#   desc: 打板涨停概率分类器骨架（禁真训练）。 数据接口：``features["X"]`` 为 dict[str, array-like]，键必须覆盖 ``LIMIT_UP_FEATUR…；公共方法（定义序）: check_f…
-#   inputs: 无参数
-#   outputs: 返回值
-# 层: 输出
-# - id: O1
-#   name_zh: 模块公共 API 面（1 定义）
-#   name_en: public defs
-#   intro: LimitUpClassifierSkeleton
-#   downstream: MOD-ML-001 training_pipeline（编排位预留）
-# [/ALGO_FLOW]
-#
-# 边:
-# I1 --> A1
-# A1 --> O1
+# [ALGO_FLOW] external: docs/03_modules/_domain_machine_learning_train/algo_flow/limit_up_classifier.yaml
 """
 
 from __future__ import annotations

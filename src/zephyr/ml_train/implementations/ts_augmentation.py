@@ -29,37 +29,7 @@ GAN/VAE 不建（蓝图 §0 明确排除）。
 增强，不生成宏观情景）；training_dataset_manager=样本集管理（本件仅产
 增强样本与混入裁决）。
 
-# [ALGO_FLOW]
-# 层: 输入
-# - id: I1
-#   name: rng 参数
-#   fields: 参数 rng（无注解）
-#   code: ts_augmentation.py 顶层公共函数形参（AST 提取）
-# - id: I2
-#   name: ks_tester 参数
-#   fields: 参数 ks_tester（无注解）
-#   code: ts_augmentation.py 顶层公共函数形参（AST 提取）
-# 层: 算法
-# - id: A1
-#   name_zh: ① TsAugmentor
-#   name_en: TsAugmentor
-#   intro: 金融时序轻量增强器（五法 + KS 质量门 + 混入硬约束）。
-#   desc: 金融时序轻量增强器（五法 + KS 质量门 + 混入硬约束）。；公共方法（定义序）: time_warp, amplitude_scale, slice_mix, jitter, permutation, mix_ba…
-#   inputs: rng ks_tester
-#   outputs: 返回值
-#   （注：A1 之后另有 2 个公共定义未列入（含 2 个数据契约/异常/枚举声明类），见源码）
-# 层: 输出
-# - id: O1
-#   name_zh: 模块公共 API 面（3 定义）
-#   name_en: public defs
-#   intro: TsAugmentor
-#   downstream: 运行时装配批（训练集增强混入统一注入点装配）
-# [/ALGO_FLOW]
-#
-# 边:
-# I1 --> A1
-# I2 --> A1
-# A1 --> O1
+# [ALGO_FLOW] external: docs/03_modules/_domain_machine_learning_train/algo_flow/ts_augmentation.yaml
 """
 
 from __future__ import annotations

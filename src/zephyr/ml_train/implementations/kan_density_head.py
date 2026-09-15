@@ -29,42 +29,7 @@ dict[quantile, (n,)]``，Stage1 为跨标的共性基座故无 symbol 入参）
 MLP 的 KAN 替换头，不动 Stage2 仿射缩放）；density_quantile_trainer=单
 标的 HGB 密度头（本件=样条激活新模型类，不同族）。
 
-# [ALGO_FLOW]
-# 层: 输入
-# - id: I1
-#   name: config 参数
-#   fields: 参数 config（无注解）
-#   code: kan_density_head.py 顶层公共函数形参（AST 提取）
-# - id: I2
-#   name: validation_report 参数
-#   fields: 参数 validation_report（无注解）
-#   code: kan_density_head.py 顶层公共函数形参（AST 提取）
-# - id: I3
-#   name: clock 参数
-#   fields: 参数 clock（无注解）
-#   code: kan_density_head.py 顶层公共函数形参（AST 提取）
-# 层: 算法
-# - id: A1
-#   name_zh: ① KanDensityHead
-#   name_en: KanDensityHead
-#   intro: KAN 密度预测头（可学习 B 样条激活 + 分位数前向，纯 numpy）。
-#   desc: KAN 密度预测头（可学习 B 样条激活 + 分位数前向，纯 numpy）。；公共方法（定义序）: fit, predict_quantiles；源码 L109-L250
-#   inputs: config validation_report clock
-#   outputs: 返回值
-#   （注：A1 之后另有 2 个公共定义未列入（含 2 个数据契约/异常/枚举声明类），见源码）
-# 层: 输出
-# - id: O1
-#   name_zh: 模块公共 API 面（3 定义）
-#   name_en: public defs
-#   intro: KanDensityHead
-#   downstream: 运行时装配批（QNN Stage1 替换语义统一注入点装配）
-# [/ALGO_FLOW]
-#
-# 边:
-# I1 --> A1
-# I2 --> A1
-# I3 --> A1
-# A1 --> O1
+# [ALGO_FLOW] external: docs/03_modules/_domain_machine_learning_train/algo_flow/kan_density_head.yaml
 """
 
 from __future__ import annotations

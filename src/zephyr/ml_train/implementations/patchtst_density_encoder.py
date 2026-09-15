@@ -70,32 +70,7 @@ torch 仅在可选 ml-train extra → numpy MVP (patchify+通道独立+SVD+注�
 SSoT: docs/03_modules/_domain_machine_learning_train/patchtst_density_encoder/blueprint.md
 Version: 0.1.0
 
-# [ALGO_FLOW]
-# 层: 输入
-# - id: I1
-#   name: config 参数
-#   fields: 参数 config（无注解）
-#   code: patchtst_density_encoder.py 顶层公共函数形参（AST 提取）
-# 层: 算法
-# - id: A1
-#   name_zh: ① PatchtstDensityEncoder
-#   name_en: PatchtstDensityEncoder
-#   intro: PatchTST 密度前置特征编码器。
-#   desc: PatchTST 密度前置特征编码器。 输入 (n, lookback, n_channels) 时序 → 输出密度预测前置特征。；公共方法（定义序）: fit, transform；源码 L154-L256
-#   inputs: config
-#   outputs: 返回值
-#   （注：A1 之后另有 3 个公共定义未列入（含 3 个数据契约/异常/枚举声明类），见源码）
-# 层: 输出
-# - id: O1
-#   name_zh: 模块公共 API 面（4 定义）
-#   name_en: public defs
-#   intro: PatchtstDensityEncoder
-#   downstream: MOD-ML-DENSITY(密度头消费) ; MOD-ML-010(QNN Stage1前置特征)
-# [/ALGO_FLOW]
-#
-# 边:
-# I1 --> A1
-# A1 --> O1
+# [ALGO_FLOW] external: docs/03_modules/_domain_machine_learning_train/algo_flow/patchtst_density_encoder.yaml
 """
 
 from __future__ import annotations

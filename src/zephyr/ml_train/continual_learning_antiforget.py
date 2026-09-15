@@ -26,47 +26,7 @@ B10-01881（AUD-DRAFT-001-DIGEST P2 波 P2-W07，CAND-MLT-025，A1 §29.35）：
 分工：本件只做抗遗忘协议面（正则/缓冲/门禁/回滚），不做真训练；
 Fisher 估计器为盘后批处理注入回调，本件不实现估计算法。
 
-# [ALGO_FLOW]
-# 层: 输入
-# - id: I1
-#   name: fisher_estimator 参数
-#   fields: 参数 fisher_estimator（无注解）
-#   code: continual_learning_antiforget.py 顶层公共函数形参（AST 提取）
-# - id: I2
-#   name: clock 参数
-#   fields: 参数 clock（无注解）
-#   code: continual_learning_antiforget.py 顶层公共函数形参（AST 提取）
-# - id: I3
-#   name: max_replay_per_regime 参数
-#   fields: 参数 max_replay_per_regime（无注解）
-#   code: continual_learning_antiforget.py 顶层公共函数形参（AST 提取）
-# - id: I4
-#   name: max_drop_ratio 参数
-#   fields: 参数 max_drop_ratio（无注解）
-#   code: continual_learning_antiforget.py 顶层公共函数形参（AST 提取）
-# 层: 算法
-# - id: A1
-#   name_zh: ① ContinualLearningAntiForget
-#   name_en: ContinualLearningAntiForget
-#   intro: 持续学习抗遗忘框架（EWC + 经验回放 + 旧状态验证 + 快照回滚）。
-#   desc: 持续学习抗遗忘框架（EWC + 经验回放 + 旧状态验证 + 快照回滚）。；公共方法（定义序）: compute_importance, importance_weights, ewc_penalty, add_rep…
-#   inputs: fisher_estimator clock max_replay_per_regime max_drop_ratio
-#   outputs: 返回值
-#   （注：A1 之后另有 5 个公共定义未列入（含 5 个数据契约/异常/枚举声明类），见源码）
-# 层: 输出
-# - id: O1
-#   name_zh: 模块公共 API 面（6 定义）
-#   name_en: public defs
-#   intro: ContinualLearningAntiForget
-#   downstream: 运行时装配批（Fisher 盘后批处理绑定 / regime 标注源绑定 / 微调流水线门禁装配）
-# [/ALGO_FLOW]
-#
-# 边:
-# I1 --> A1
-# I2 --> A1
-# I3 --> A1
-# I4 --> A1
-# A1 --> O1
+# [ALGO_FLOW] external: docs/03_modules/_domain_machine_learning_train/algo_flow/continual_learning_antiforget.yaml
 """
 
 from __future__ import annotations

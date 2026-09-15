@@ -33,41 +33,7 @@ event_sink 回调（落账委托装配批）。
 依据: blueprint.md（MOD-ML-012）§1 规则
 Version: 0.1.0
 
-# [ALGO_FLOW]
-# 层: 输入
-# - id: I1
-#   name: 模型标识 + 版本
-#   fields: model_id/version 非空字符串
-#   code: register_trained() 等公开方法参数
-# - id: I2
-#   name: 验证/影子/批准证据
-#   fields: validation_metrics 非空有限; shadow_proof 非空; approved_by 非空
-#   code: record_validated/record_shadow_verified/activate 参数
-# 层: 算法
-# - id: A1
-#   name_zh: ① 阶段机推进（Fail-Closed）
-#   name_en: _transition
-#   intro: 合法迁移表校验；DEPRECATED 终态拒绝一切再迁移
-# - id: A2
-#   name_zh: ② INV-011 门禁
-#   name_en: activate
-#   intro: 仅 SHADOW_VERIFIED→ACTIVATED；同模型已有 ACTIVATED 版本拒绝并存
-# - id: A3
-#   name_zh: ③ 事件外发
-#   name_en: _emit
-#   intro: ModelTrained/ModelValidated 事件经 event_sink 回调
-# 层: 输出
-# - id: O1
-#   name: ModelVersionRecord
-#   fields: 版本 frozen 快照（stage/metrics/时间戳/lineage）
-# 边:
-# I1 --> A1
-# I2 --> A1
-# A1 --> A2
-# A1 --> A3
-# A2 --> O1
-# A3 --> O1
-# [/ALGO_FLOW]
+# [ALGO_FLOW] external: docs/03_modules/_domain_machine_learning_train/algo_flow/model_version_registry.yaml
 """
 
 from __future__ import annotations

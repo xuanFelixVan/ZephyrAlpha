@@ -27,31 +27,7 @@ CTR 契约：
 
 SSoT: cross_layer_contracts.yaml -> CTR-P1-004 + CTR-P1-005
 
-# [ALGO_FLOW]
-# 层: 输入
-# - id: I1
-#   name: model_registry 参数
-#   fields: 参数 model_registry（无注解）
-#   code: default_inference_engine.py 顶层公共函数形参（AST 提取）
-# 层: 算法
-# - id: A1
-#   name_zh: ① DefaultInferenceEngine
-#   name_en: DefaultInferenceEngine
-#   intro: 默认推理引擎——模型加载 + 预测
-#   desc: 默认推理引擎——模型加载 + 预测；公共方法（定义序）: load_model, predict, get_model_metadata, list_models；源码 L79-L178
-#   inputs: model_registry
-#   outputs: 返回值
-# 层: 输出
-# - id: O1
-#   name_zh: 模块公共 API 面（1 定义）
-#   name_en: public defs
-#   intro: DefaultInferenceEngine
-#   downstream: 见模块头 [CONSUMERS]
-# [/ALGO_FLOW]
-#
-# 边:
-# I1 --> A1
-# A1 --> O1
+# [ALGO_FLOW] external: docs/03_modules/_domain_machine_learning_train/algo_flow/default_inference_engine.yaml
 """
 
 from __future__ import annotations

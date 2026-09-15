@@ -28,32 +28,7 @@ lightgbm 无结果、pyproject 无声明），按派单降级为 sklearn
 
 红线：全部产物 testing 封顶，任何参数/模型禁止生效实盘（B-009）。
 
-# [ALGO_FLOW]
-# 层: 输入
-# - id: I1
-#   name: config 参数
-#   fields: 参数 config（无注解）
-#   code: density_quantile_trainer.py 顶层公共函数形参（AST 提取）
-# 层: 算法
-# - id: A1
-#   name_zh: ① DensityQuantileTrainer
-#   name_en: DensityQuantileTrainer
-#   intro: 轻量密度头训练器（GAP-F-34 MVP）。
-#   desc: 轻量密度头训练器（GAP-F-34 MVP）。 继承 ``ModelTrainerBase``（OCP 扩展点 D_ML_TRAIN-TRN）： - ``train()``: 每…；公共方法（定义序）: train,…
-#   inputs: config
-#   outputs: 返回值
-#   （注：A1 之后另有 2 个公共定义未列入（含 2 个数据契约/异常/枚举声明类），见源码）
-# 层: 输出
-# - id: O1
-#   name_zh: 模块公共 API 面（3 定义）
-#   name_en: public defs
-#   intro: DensityQuantileTrainer
-#   downstream: GAP-F-01 情景概率分布模型（W2 矩阵概率输入）；MOD-ML-001 training_pipeline
-# [/ALGO_FLOW]
-#
-# 边:
-# I1 --> A1
-# A1 --> O1
+# [ALGO_FLOW] external: docs/03_modules/_domain_machine_learning_train/algo_flow/density_quantile_trainer.yaml
 """
 
 from __future__ import annotations

@@ -25,47 +25,7 @@ B13-04339（AUD-DRAFT-001-DIGEST P2 波 P2-W07，CAND-MLT-029，A3 D-RESEARCH-12
 canonical 承接 WFO-005 归并。本件不触真实文件系统：root 仅为逻辑命名空间，
 工作区/生产视图均为注入内存映射。
 
-# [ALGO_FLOW]
-# 层: 输入
-# - id: I1
-#   name: sandbox_root 参数
-#   fields: 参数 sandbox_root（无注解）
-#   code: research_data_sandbox.py 顶层公共函数形参（AST 提取）
-# - id: I2
-#   name: production_root 参数
-#   fields: 参数 production_root（无注解）
-#   code: research_data_sandbox.py 顶层公共函数形参（AST 提取）
-# - id: I3
-#   name: quota 参数
-#   fields: 参数 quota（无注解）
-#   code: research_data_sandbox.py 顶层公共函数形参（AST 提取）
-# - id: I4
-#   name: max_quota 参数
-#   fields: 参数 max_quota（无注解）
-#   code: research_data_sandbox.py 顶层公共函数形参（AST 提取）
-# 层: 算法
-# - id: A1
-#   name_zh: ① ResearchDataSandbox
-#   name_en: ResearchDataSandbox
-#   intro: 轻量研究沙箱（独立工作目录 + 生产只读 + 配额校验 + 回写评审）。
-#   desc: 轻量研究沙箱（独立工作目录 + 生产只读 + 配额校验 + 回写评审）。；公共方法（定义序）: read_production, list_production, write_production, write_wor…
-#   inputs: sandbox_root production_root quota max_quota production_files clock
-#   outputs: 返回值
-#   （注：A1 之后另有 5 个公共定义未列入（含 5 个数据契约/异常/枚举声明类），见源码）
-# 层: 输出
-# - id: O1
-#   name_zh: 模块公共 API 面（6 定义）
-#   name_en: public defs
-#   intro: ResearchDataSandbox
-#   downstream: 运行时装配批（沙箱 root 绑定 / 生产只读视图绑定 / 评审人路由装配）
-# [/ALGO_FLOW]
-#
-# 边:
-# I1 --> A1
-# I2 --> A1
-# I3 --> A1
-# I4 --> A1
-# A1 --> O1
+# [ALGO_FLOW] external: docs/03_modules/_domain_machine_learning_train/algo_flow/research_data_sandbox.yaml
 """
 
 from __future__ import annotations

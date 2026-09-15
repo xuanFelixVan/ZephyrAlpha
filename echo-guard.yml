@@ -1,6 +1,18 @@
 # CloneGuard acknowledged 白名单（intentional=保留两副本；变更后重新浮现再评估）
 # 消费方：CloneGuardOrchestrator._suppress_acknowledged（引擎无关对账层，stable_key 无序对）
 acknowledged:
+  - id: cg-mltrain-pinball-loss-20260915
+    verdict: intentional
+    stable_key: "src/zephyr/ml_train/implementations/density_quantile_trainer.py:_pinball_loss||src/zephyr/ml_train/implementations/qnn_two_stage.py:_pinball_loss"
+    note: 分位数损失函数在两训练器各自独立演进，出仓批5同时触碰两侧暴露既有克隆，非本批引入（st-btfix-p15-20260915）
+  - id: cg-mltrain-classifier-validate-20260915
+    verdict: intentional
+    stable_key: "src/zephyr/ml_train/implementations/limit_up_classifier.py:validate||src/zephyr/ml_train/implementations/seat_pattern_classifier.py:validate"
+    note: 特征校验契约同构（涨停/座席分类器各持实现），出仓批5同时触碰两侧暴露既有克隆，非本批引入（st-btfix-p15-20260915）
+  - id: cg-mltrain-default-hash-20260915
+    verdict: intentional
+    stable_key: "src/zephyr/ml_train/reproducibility_manager.py:_default_hash||src/zephyr/ml_train/research_data_manager.py:_default_hash"
+    note: Mapping 稳定哈希工具函数双实例（可复现管理/研究数据管理各自依赖），出仓批5同时触碰两侧暴露既有克隆，非本批引入（st-btfix-p15-20260915）
   - id: cg-compliance-getattr-lazy-20260915
     verdict: intentional
     stable_key: "src/zephyr/compliance/audit_trail/bridges/__init__.py:__getattr__||src/zephyr/compliance/behavioral_auditor/__init__.py:__getattr__"

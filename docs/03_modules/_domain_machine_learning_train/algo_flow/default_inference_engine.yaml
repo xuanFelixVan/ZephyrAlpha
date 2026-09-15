@@ -1,0 +1,33 @@
+# ALGO_FLOW 外部真源——default_inference_engine（_domain_machine_learning_train 域，真源 src/zephyr/ml_train/implementations/default_inference_engine.py）
+# 2026-09-15 P2-1 契约头减负批量出仓：docstring 内联块逐字节副本，extractor 经
+# external 锚加载走同一 parse_algo_flow 管线；算法公共面变化时同步更新本块。
+doc_type: architecture_view
+ttl: permanent
+module: src.zephyr.ml_train.implementations.default_inference_engine
+source_of_truth: src/zephyr/ml_train/implementations/default_inference_engine.py
+algo_flow: |
+    # [ALGO_FLOW]
+    # 层: 输入
+    # - id: I1
+    #   name: model_registry 参数
+    #   fields: 参数 model_registry（无注解）
+    #   code: default_inference_engine.py 顶层公共函数形参（AST 提取）
+    # 层: 算法
+    # - id: A1
+    #   name_zh: ① DefaultInferenceEngine
+    #   name_en: DefaultInferenceEngine
+    #   intro: 默认推理引擎——模型加载 + 预测
+    #   desc: 默认推理引擎——模型加载 + 预测；公共方法（定义序）: load_model, predict, get_model_metadata, list_models；源码 L79-L178
+    #   inputs: model_registry
+    #   outputs: 返回值
+    # 层: 输出
+    # - id: O1
+    #   name_zh: 模块公共 API 面（1 定义）
+    #   name_en: public defs
+    #   intro: DefaultInferenceEngine
+    #   downstream: 见模块头 [CONSUMERS]
+    # [/ALGO_FLOW]
+    #
+    # 边:
+    # I1 --> A1
+    # A1 --> O1

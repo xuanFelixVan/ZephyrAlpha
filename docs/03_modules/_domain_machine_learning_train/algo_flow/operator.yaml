@@ -1,0 +1,34 @@
+# ALGO_FLOW 外部真源——operator（_domain_machine_learning_train 域，真源 src/zephyr/ml_train/ai_operator/operator.py）
+# 2026-09-15 P2-1 契约头减负批量出仓：docstring 内联块逐字节副本，extractor 经
+# external 锚加载走同一 parse_algo_flow 管线；算法公共面变化时同步更新本块。
+doc_type: architecture_view
+ttl: permanent
+module: src.zephyr.ml_train.ai_operator.operator
+source_of_truth: src/zephyr/ml_train/ai_operator/operator.py
+algo_flow: |
+    # [ALGO_FLOW]
+    # 层: 输入
+    # - id: I1
+    #   name: 模块内部数据
+    #   fields: 无公共形参/无再导出（AST 事实）
+    #   code: operator.py
+    # 层: 算法
+    # - id: A1
+    #   name_zh: ① AIOperator
+    #   name_en: AIOperator
+    #   intro: AI 操作员（MOD-ML-002）。
+    #   desc: AI 操作员（MOD-ML-002）。；公共方法（定义序）: request_online, request_offline, inspect, audit_log；源码 L107-L186
+    #   inputs: 无参数
+    #   outputs: 返回值
+    #   （注：A1 之后另有 3 个公共定义未列入（含 3 个数据契约/异常/枚举声明类），见源码）
+    # 层: 输出
+    # - id: O1
+    #   name_zh: 模块公共 API 面（4 定义）
+    #   name_en: public defs
+    #   intro: AIOperator
+    #   downstream: MOD-ML-001 training_pipeline（运行记录巡检）；MOD-ML-004 gray_release_shadow_deployer（影子…
+    # [/ALGO_FLOW]
+    #
+    # 边:
+    # I1 --> A1
+    # A1 --> O1

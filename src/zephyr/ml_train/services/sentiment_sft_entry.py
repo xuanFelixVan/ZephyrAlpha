@@ -23,37 +23,7 @@ D_ML_TRAIN — GAP-F-35 舆情情感 SFT 训练入口桩（ML-SFT-001）。
 ``dry_run=False`` 真训练路径恒抛 ``CandidateTrainDisabledError``（ZA-MLT-0003）——
 大模型真训练属 B-007 人工闸门事项，AI 不可自行触发。
 
-# [ALGO_FLOW]
-# 层: 输入
-# - id: I1
-#   name: samples 参数
-#   fields: 参数 samples，类型注解 list[dict[str, Any]]
-#   code: sentiment_sft_entry.py 顶层公共函数形参（AST 提取）
-# - id: I2
-#   name: config 参数
-#   fields: 参数 config，类型注解 SFTEntryConfig | None
-#   code: sentiment_sft_entry.py 顶层公共函数形参（AST 提取）
-# 层: 算法
-# - id: A1
-#   name_zh: ① run_sentiment_sft_training_entry
-#   name_en: run_sentiment_sft_training_entry
-#   intro: 舆情 SFT 训练入口桩。
-#   desc: 舆情 SFT 训练入口桩。 Parameters ---------- samples : 每条含 title/content/sentiment/score。 config :…；源码 L95-L149
-#   inputs: samples config
-#   outputs: dict[str, Any]
-#   （注：A1 之后另有 2 个公共定义未列入（含 2 个数据契约/异常/枚举声明类），见源码）
-# 层: 输出
-# - id: O1
-#   name_zh: dict[str, Any]
-#   name_en: dict[str, Any]
-#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
-#   downstream: MOD-ML-001 training_pipeline（编排位预留）；scripts/ml/run_sft_train.py（未来接线）
-# [/ALGO_FLOW]
-#
-# 边:
-# I1 --> A1
-# I2 --> A1
-# A1 --> O1
+# [ALGO_FLOW] external: docs/03_modules/_domain_machine_learning_train/algo_flow/sentiment_sft_entry.yaml
 """
 
 from __future__ import annotations
