@@ -4,7 +4,7 @@ name_zh: 治理运行地图
 ttl: permanent
 effective_from: '2026-09-15'
 generator: scripts/governance/generate_governance_map.py
-generated_at: '2026-09-15T19:32:13.214429+00:00'
+generated_at: '2026-09-15T19:52:23.386909+00:00'
 ssot_note_zh: 骨架机生(宪法 §9.5):families 层由生成器全量重建,禁手工编辑;pipeline/out_of_scope_refs/effective_from 为人工语义层,生成器保留(effective_from
   首次落定 '2026-09-15',防重跑漂移)。模块明细以稳定标识符引用,禁复制条目内容(TDM INV-1 同款纪律)。
 counts:
@@ -57,8 +57,6 @@ pipeline:
     disconnected:
     - mod: zephyr.infrastructure.health_monitor.health_aggregator
       note_zh: 已删(2026-09-15 R1：CONFIRMED-DEAD 零外部 import，活聚合器=system_telemetry 版)
-    - mod: zephyr.orchestrator.agent_health_monitor
-      note_zh: 蓝图 CONSUMERS 为空(A5 接线/删除候选)
   - id: GOM-L2
     name_zh: 资源水位
     desc_zh: 内存/CPU/GPU/磁盘阈值与告警、预算

@@ -22,8 +22,7 @@ B1-00201（AUD-DRAFT-001-DIGEST P2 波 P2-W13，CAND-ORCH-002，C2）：只读�
 统一 StateSnapshot JSON（域词表闭合 + 采集失败降级标记）供面板与告警消费。
 
 查重分工（蓝图 §0）：status_dashboard=面板渲染消费方（本件=其上游只读数据
-源，不渲染）；agent_health_monitor=Agent 维度 SLO（本件=系统域采集目标之一，
-不重建监控）；state_synchronizer=运行时状态传播（写向，本件零写入纯只读）。
+源，不渲染）；state_synchronizer=运行时状态传播（写向，本件零写入纯只读）。
 
 # [ALGO_FLOW]
 # 层: 输入

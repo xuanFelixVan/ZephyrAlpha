@@ -153,7 +153,6 @@ LPC 双轨架构 B 轨（Bounded Context · 无 l<NN>_ 前缀）
 
 
 __all__ = [  # noqa: n114-final  n114-final豁免: __all__是Python导出约定且本文件运行时动态append，Final标注不适用
-    "agent_health_monitor",
     "agent_orchestrator",
     "deferred_queue",
     "file_task_mapper",
@@ -164,7 +163,6 @@ __all__ = [  # noqa: n114-final  n114-final豁免: __all__是Python导出约定�
 
 
 _SUBMODULES = [  # noqa: n114-final  n114-final豁免: 惰性加载子模块注册表，仅成员检测不修改，保持列表语义
-    "agent_health_monitor",
     "agent_orchestrator",
     "deferred_queue",
     "file_task_mapper",
