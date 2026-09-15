@@ -5,7 +5,7 @@
 # [CONSUMERS] zephyr.gov_enforcement.rule_bridge.git_commit_gateway.GitCommitGateway.__init__
 # [STARTUP] imported
 # [MATURITY] production
-# [INVARIANTS] 硬阻断——staged 新增 .py 文件含 [TTL] permanent 头标且使用 manual 触发模式（argparse.ArgumentParser / input() / __main__ + sys.argv 解析）但无事件订阅/自动触发注册时阻断 commit；tests/ 豁免；只检测新增文件（diff-filter=A）；in-process AST 分析无 subprocess；AST 解析失败/文件读取失败 fail-open；本 gate 自身文件豁免（含检测模式字符串）；与 PERM-TRIGGER 互补——PERM-TRIGGER 检测时间触发，本 gate 检测 manual 触发
+# [INVARIANTS] 硬阻断——staged 新增 .py 文件含 [TTL] permanent 头标且使用 manual 触发模式（argparse.ArgumentParser / input() / __main__ + sys.argv 解析）但无事件订阅/自动触发注册时阻断 commit；tests/ 豁免；只检测新增文件（diff-filter=A）；in-process AST 分析无 subprocess；AST 解析失败/文件读取失败 fail-open；本 gate 自身文件豁免（含检测模式字符串）；与 PERM-TRIGGER 互补——PERM-TRIGGER 检测时间触发，本 gate 检测 manual 触发；own-scope（宪法 §3.3，#ARCH-GATE-OWN-SCOPE-001 推广）：扫描集=staged∩本 session 范围（files∪held，_build_own_scope），外来 staged 剔除不阻断、降级 warn+_audit_foreign_staged 审计；own_scope=None 退化全量保守=旧行为
 # [MODIFY-GUARD] gate_id="MANUAL-ONLY-PERMANENT"；check 闭包签名 (gateway, files, **kwargs) -> tuple[bool, str]
 # [STABILITY] evolving
 # [SAFETY] L
@@ -82,6 +82,11 @@ import logging
 import os
 import re
 
+from zephyr.gov_enforcement.commit_gates._diff_helpers import (
+    _audit_foreign_staged,
+    _build_own_scope,
+    _norm_rel,
+)
 # 复用 perm_trigger_gate 的辅助函数（SSoT，避免 FUNCTION-DUP 重复定义）
 from zephyr.gov_enforcement.commit_gates.perm_trigger_gate import (
     _decorator_name,
@@ -412,6 +417,29 @@ def make_manual_only_permanent_gate() -> GateSpec:
         py_files, wt_root = _get_staged_py_files(gateway)
         if not py_files:
             return True, ""
+
+        # 1.5 own-scope（宪法 §3.3，接续 #ARCH-GATE-OWN-SCOPE-001 推广批；连坐治本）：
+        # 扫描集=全暂存区∩本 session 范围（files∪held_files，_build_own_scope）；
+        # 外来 staged 文件剔除——不检查不阻断（owner 责任制），降级 warn+审计；
+        # own_scope=None（files 与 session 归属均空，历史直调）→ 退化全量保守=旧行为。
+        # 2026-09-16 实证：他会话 3 个外来 .py 拦了纯 docs 提交（连坐路障）。
+        session_id = kwargs.get("session_id")
+        own_scope = _build_own_scope(gateway, files, session_id)
+        if own_scope is not None:
+            own_files = [f for f in py_files if _norm_rel(gateway, f) in own_scope]
+            foreign_staged = [f for f in py_files if _norm_rel(gateway, f) not in own_scope]
+            if foreign_staged:
+                _audit_foreign_staged(
+                    gateway, session_id, foreign_staged, gate_name="MANUAL-ONLY-PERMANENT"
+                )
+                logger.warning(
+                    "MANUAL-ONLY-PERMANENT: %d 个外来 session staged 文件未检查（warn+审计，不阻断）: %s",
+                    len(foreign_staged),
+                    ", ".join(foreign_staged[:5]) + ("..." if len(foreign_staged) > 5 else ""),
+                )
+            py_files = own_files
+            if not py_files:
+                return True, ""
 
         # 2. 获取新增文件集合（区分 A/M）
         added_set = _get_added_set(gateway)

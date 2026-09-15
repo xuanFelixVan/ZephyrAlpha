@@ -5,7 +5,7 @@
 # [CONSUMERS] zephyr.gov_enforcement.rule_bridge.git_commit_gateway.GitCommitGateway.__init__
 # [STARTUP] imported
 # [MATURITY] production
-# [INVARIANTS] 硬阻断——staged tests/ .py 文件 added 行中 from zephyr.* import 的符号在源码中不存在时阻断 commit（passed=False）；只检查 added 行（防误阻断现有漂移）；tests/ 专属 gate（只检测测试文件，不检测源码）；module-level pytest.skip/importorskip 豁免（已标记漂移的测试文件不重复检测）；检查所有顶层符号（class/def/assign/annassign），不依赖 __all__（Python 允许显式 import 任何顶层符号）；源码文件不存在/解析失败 fail-open（passed=True，其他 gate 处理）；git diff 不可达 fail-open（logger.warning）
+# [INVARIANTS] 硬阻断——staged tests/ .py 文件 added 行中 from zephyr.* import 的符号在源码中不存在时阻断 commit（passed=False）；只检查 added 行（防误阻断现有漂移）；tests/ 专属 gate（只检测测试文件，不检测源码）；module-level pytest.skip/importorskip 豁免（已标记漂移的测试文件不重复检测）；检查所有顶层符号（class/def/assign/annassign），不依赖 __all__（Python 允许显式 import 任何顶层符号）；源码文件不存在/解析失败 fail-open（passed=True，其他 gate 处理）；git diff 不可达 fail-open（logger.warning）；own-scope（宪法 §3.3，#ARCH-GATE-OWN-SCOPE-001 推广）：扫描集=staged tests∩本 session 范围（files∪held，_build_own_scope），外来 staged 剔除不阻断、降级 warn+_audit_foreign_staged 审计；own_scope=None 退化全量保守=旧行为
 # [MODIFY-GUARD] gate_id="TEST-SOURCE-CONSISTENCY"；check 闭包签名 (gateway, files, **kwargs) -> tuple[bool, str]
 # [STABILITY] stable
 # [SAFETY] L
@@ -85,8 +85,11 @@ import logging
 from pathlib import Path
 
 from zephyr.gov_enforcement.commit_gates._diff_helpers import (
+    _audit_foreign_staged,
+    _build_own_scope,
     _get_added_lines,
     _get_staged_py_files,
+    _norm_rel,
     _read_staged_file,
 )
 from zephyr.gov_enforcement.rule_bridge.commit_gate_registry import GateSpec, is_test_exempt
@@ -360,6 +363,28 @@ def make_test_source_consistency_gate() -> GateSpec:
         test_files = [f for f in staged if is_test_exempt(f)]
         if not test_files:
             return True, ""
+
+        # 2.5 own-scope（宪法 §3.3，接续 #ARCH-GATE-OWN-SCOPE-001 推广批；连坐治本）：
+        # 扫描集=staged tests/∩本 session 范围（files∪held_files，_build_own_scope）；
+        # 外来 staged 文件剔除——不检查不阻断（owner 责任制），降级 warn+审计；
+        # own_scope=None（files 与 session 归属均空，历史直调）→ 退化全量保守=旧行为。
+        session_id = kwargs.get("session_id")
+        own_scope = _build_own_scope(gateway, files, session_id)
+        if own_scope is not None:
+            own_test_files = [f for f in test_files if _norm_rel(gateway, f) in own_scope]
+            foreign_staged = [f for f in test_files if _norm_rel(gateway, f) not in own_scope]
+            if foreign_staged:
+                _audit_foreign_staged(
+                    gateway, session_id, foreign_staged, gate_name="TEST-SOURCE-CONSISTENCY"
+                )
+                logger.warning(
+                    "TEST-SOURCE-CONSISTENCY: %d 个外来 session staged 文件未检查（warn+审计，不阻断）: %s",
+                    len(foreign_staged),
+                    ", ".join(foreign_staged[:5]) + ("..." if len(foreign_staged) > 5 else ""),
+                )
+            test_files = own_test_files
+            if not test_files:
+                return True, ""
 
         # 3. 检测每个测试文件的 import 符号一致性（仅 added 行）
         violations: list[str] = []

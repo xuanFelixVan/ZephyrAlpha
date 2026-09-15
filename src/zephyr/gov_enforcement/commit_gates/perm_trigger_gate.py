@@ -5,7 +5,7 @@
 # [CONSUMERS] zephyr.gov_enforcement.rule_bridge.git_commit_gateway.GitCommitGateway.__init__
 # [STARTUP] imported
 # [MATURITY] production
-# [INVARIANTS] 硬阻断——staged 新增 .py 文件含 [TTL] permanent 头标且使用时间触发模式（while True / time.sleep / schedule. / APScheduler）但未注册事件订阅时阻断 commit；tests/ 豁免（真源：commit_gate_registry.is_test_exempt）；只检测新增文件（diff-filter=A）；in-process AST 分析无 subprocess；AST 解析失败/文件读取失败 fail-open（logger.warning）
+# [INVARIANTS] 硬阻断——staged 新增 .py 文件含 [TTL] permanent 头标且使用时间触发模式（while True / time.sleep / schedule. / APScheduler）但未注册事件订阅时阻断 commit；tests/ 豁免（真源：commit_gate_registry.is_test_exempt）；只检测新增文件（diff-filter=A）；in-process AST 分析无 subprocess；AST 解析失败/文件读取失败 fail-open（logger.warning）；own-scope（宪法 §3.3，#ARCH-GATE-OWN-SCOPE-001 推广）：扫描集=staged∩本 session 范围（files∪held，_build_own_scope），外来 staged 剔除不阻断、降级 warn+_audit_foreign_staged 审计；own_scope=None 退化全量保守=旧行为
 # [MODIFY-GUARD] gate_id="PERM-TRIGGER"；check 闭包签名 (gateway, files, **kwargs) -> tuple[bool, str]
 # [STABILITY] evolving
 # [SAFETY] L
@@ -90,6 +90,11 @@ import ast
 import logging
 import os
 
+from zephyr.gov_enforcement.commit_gates._diff_helpers import (
+    _audit_foreign_staged,
+    _build_own_scope,
+    _norm_rel,
+)
 from zephyr.gov_enforcement.rule_bridge.commit_gate_registry import GateSpec, is_test_exempt
 
 logger = logging.getLogger(__name__)
@@ -335,6 +340,26 @@ def make_perm_trigger_gate() -> GateSpec:
         py_files, wt_root = _get_staged_py_files(gateway)
         if not py_files:
             return True, ""
+
+        # 1.5 own-scope（宪法 §3.3，接续 #ARCH-GATE-OWN-SCOPE-001 推广批；连坐治本）：
+        # 扫描集=全暂存区∩本 session 范围（files∪held_files，_build_own_scope）；
+        # 外来 staged 文件剔除——不检查不阻断（owner 责任制），降级 warn+审计；
+        # own_scope=None（files 与 session 归属均空，历史直调）→ 退化全量保守=旧行为。
+        session_id = kwargs.get("session_id")
+        own_scope = _build_own_scope(gateway, files, session_id)
+        if own_scope is not None:
+            own_files = [f for f in py_files if _norm_rel(gateway, f) in own_scope]
+            foreign_staged = [f for f in py_files if _norm_rel(gateway, f) not in own_scope]
+            if foreign_staged:
+                _audit_foreign_staged(gateway, session_id, foreign_staged, gate_name="PERM-TRIGGER")
+                logger.warning(
+                    "PERM-TRIGGER: %d 个外来 session staged 文件未检查（warn+审计，不阻断）: %s",
+                    len(foreign_staged),
+                    ", ".join(foreign_staged[:5]) + ("..." if len(foreign_staged) > 5 else ""),
+                )
+            py_files = own_files
+            if not py_files:
+                return True, ""
 
         # 2. 获取新增文件集合（区分 A/M）
         added_set = _get_added_set(gateway)

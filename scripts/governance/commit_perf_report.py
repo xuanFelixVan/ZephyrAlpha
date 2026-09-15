@@ -12,8 +12,12 @@
 输出指标（docs/_working/2026-09-13-concurrency-commit-perf-study.md §2.5）：
 - 正式提交占比（健康阈值 ≥70%）
 - 机器伴生比（≤30%）
-- 竞态窗口事件数/日（≤5/日 为绿）
+- 竞态窗口事件数/日（≤4/日 为绿，>4 黄，>50 红）
 - watchdog 漂移条数
+
+判定（B2 2026-09-16）：judge_dimensions 四维度判级 + aggregate_verdict 与门聚合
+（任一红→红，任一黄→黄）。病根：旧公式只看正式占比/机器伴生比，竞态 211/日
+时总体判定仍输出"绿"。
 
 用法：python scripts/governance/commit_perf_report.py [--hours 24]
 """
@@ -56,12 +60,17 @@ def commit_mix(hours: int) -> tuple[Counter, int]:
     return mix, len(subjects)
 
 
-def drift_events(hours: int) -> int:
-    if not DRIFT_JSONL.exists():
+def drift_events(hours: int, path: Path | None = None) -> int:
+    """统计竞态窗口事件数（近 hours 小时）。
+
+    path=None 走生产真源 DRIFT_JSONL；显式传 path 供测试 tmp_path 隔离。
+    """
+    p = DRIFT_JSONL if path is None else path
+    if not p.exists():
         return 0
     cutoff = datetime.now(timezone.utc) - timedelta(hours=hours)
     n = 0
-    for line in DRIFT_JSONL.read_text(encoding="utf-8", errors="ignore").splitlines():
+    for line in p.read_text(encoding="utf-8", errors="ignore").splitlines():
         try:
             ev = json.loads(line)
             ts = datetime.fromisoformat(ev["timestamp"])
@@ -78,15 +87,17 @@ def watchdog_rows() -> int:
     return sum(1 for _ in WATCHDOG_JSONL.open(encoding="utf-8", errors="ignore"))
 
 
-def block_events(hours: int) -> list[dict]:
+def block_events(hours: int, path: Path | None = None) -> list[dict]:
     """堵点溯源事件（commit_block_events.jsonl——阈值化记录，仅异常才写）。
 
     溯源链路（2026-09-13 极限红蓝对抗 D5）：异常发生 → jsonl 留痕（session/门禁/
     文件数/耗时）→ 本报表聚合 → 按图索骥修复 → 红蓝验证。
     两类事件：commit_blocked（gate 链阻断，含 gate_chain_ms 白跑耗时）+
     commit_slow（成功但全程墙钟超 60s 阈值，含 total_ms——慢而未阻的堵点画像）。
+
+    path=None 走生产真源；显式传 path 供测试 tmp_path 隔离。
     """
-    p = _REPO / ".runtime" / "audit" / "commit_block_events.jsonl"
+    p = _REPO / ".runtime" / "audit" / "commit_block_events.jsonl" if path is None else path
     if not p.exists():
         return []
     cutoff = datetime.now(timezone.utc) - timedelta(hours=hours)
@@ -101,6 +112,54 @@ def block_events(hours: int) -> list[dict]:
     return rows
 
 
+def _per_day(n: int | float, hours: int) -> float:
+    """窗口计数折算为日均（<24h 按 1 日计，防小窗放大误判）。
+
+    B2 病根场景：48h 窗口 211 事件若直接对标 ≤4/日 阈值会漏判——必须先折算
+    105.5/日 再判级。
+    """
+    days = hours / 24 if hours >= 24 else 1.0
+    return n / days
+
+
+def judge_dimensions(
+    formal_ratio: float,
+    machine_ratio: float,
+    race_per_day: float,
+    blocks_per_day: float,
+) -> list[tuple[str, str, str]]:
+    """四维度判级，返回 [(维度名, 判级, 阈值说明)]。
+
+    - 正式占比 ≥70 绿（否则黄）
+    - 机器伴生 ≤30 绿（否则黄）
+    - 竞态 ≤4 绿 / >4 黄 / >50 红
+    - 堵点 ≤100 绿（否则黄）
+    """
+    rows: list[tuple[str, str, str]] = [
+        ("正式提交占比", "绿" if formal_ratio >= 70 else "黄", f"≥70% 绿（当前 {formal_ratio}%）"),
+        ("机器伴生比", "绿" if machine_ratio <= 30 else "黄", f"≤30% 绿（当前 {machine_ratio}%）"),
+    ]
+    if race_per_day > 50:
+        race_verdict = "红"
+    elif race_per_day > 4:
+        race_verdict = "黄"
+    else:
+        race_verdict = "绿"
+    rows.append(("竞态窗口", race_verdict, f"≤4/日 绿·>4 黄·>50 红（当前 {race_per_day}/日）"))
+    rows.append(("堵点事件", "绿" if blocks_per_day <= 100 else "黄", f"≤100/日 绿（当前 {blocks_per_day}/日）"))
+    return rows
+
+
+def aggregate_verdict(rows: list[tuple[str, str, str]]) -> str:
+    """与门聚合：任一红→红；任一黄→黄；全绿→绿。"""
+    values = [v for _, v, _ in rows]
+    if "红" in values:
+        return "红"
+    if "黄" in values:
+        return "黄"
+    return "绿"
+
+
 def main() -> int:
     parser = argparse.ArgumentParser(description="提交性能与并发健康报表")
     parser.add_argument("--hours", type=int, default=24, help="统计窗口（小时）")
@@ -113,6 +172,7 @@ def main() -> int:
     machine_ratio = machine * 100 // total if total else 0
     drift_n = drift_events(args.hours)
     wd = watchdog_rows()
+    race_per_day = _per_day(drift_n, args.hours)
 
     print(f"=== 提交性能与并发健康报表（近 {args.hours}h）===")
     print(f"总提交: {total}")
@@ -120,7 +180,7 @@ def main() -> int:
         print(f"  {k}: {v}")
     print(f"正式提交占比: {formal_ratio}%  (健康阈值 ≥70%)")
     print(f"机器伴生比:   {machine_ratio}%  (健康阈值 ≤30%)")
-    print(f"竞态窗口事件: {drift_n}  (≤{args.hours // 5 or 1}/日 为绿，当前口径按窗口折算)")
+    print(f"竞态窗口事件: {drift_n}（{race_per_day}/日，阈值 ≤4 绿·>4 黄·>50 红）")
     print(f"watchdog 漂移: {wd} 条（累计）")
 
     # 堵点溯源（D5）：阻断事件 TOP 门禁聚合
@@ -141,8 +201,16 @@ def main() -> int:
         for ev in slows[-5:]:  # 最近 5 笔
             print(f"  [{ev.get('timestamp','')[:19]}] {ev.get('session_id','?')} {ev.get('files_count',0)} 文件 {ev.get('total_ms',0)/1000:.0f}s")
 
-    ok = formal_ratio >= 70 and machine_ratio <= 30
-    print("总体判定:", "绿" if ok else "黄（竞速伴生偏高——优先排查高频小提交与生成器窗口并发）")
+    # B2 四维判级 + 与门聚合（病根：竞态 211/日时旧公式只看占比仍输出"绿"）
+    blocks_per_day = _per_day(len(blocks), args.hours)
+    rows = judge_dimensions(formal_ratio, machine_ratio, race_per_day, blocks_per_day)
+    print("判定（逐维度）:")
+    for _name, _v, _note in rows:
+        print(f"  {_name}: {_v}（{_note}）")
+    verdict = aggregate_verdict(rows)
+    print("总体判定:", verdict)
+    if verdict != "绿":
+        print("  （竞速伴生偏高——优先排查高频小提交与生成器窗口并发；竞态红=并发窗口治理优先级最高）")
     return 0
 
 

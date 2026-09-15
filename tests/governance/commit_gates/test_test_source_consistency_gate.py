@@ -47,6 +47,7 @@
 from __future__ import annotations
 
 import ast
+import json
 import sys
 from dataclasses import dataclass
 from pathlib import Path
@@ -584,3 +585,55 @@ class TestAddedLinesFilter:
         test_content = "from zephyr.deleted.module import OldSymbol\nfrom zephyr.valid.mod import Foo\n"
         violations = _check_test_file(test_content, "tests/test_foo.py", added_lines={2})
         assert violations == []
+
+
+# ---------------------------------------------------------------------------
+# TestOwnScope — own-scope 回归（宪法 §3.3，接续 #ARCH-GATE-OWN-SCOPE-001 推广批）
+# ---------------------------------------------------------------------------
+class TestOwnScope:
+    """own-scope 化：扫描集=staged tests/∩本 session 范围（files∪held）——外来 staged 不连坐。"""
+
+    def test_foreign_staged_violation_does_not_block_own_commit(self, tmp_path, monkeypatch):
+        """他会话 staged 的漂移测试文件（import 不存在符号）不阻断本会话干净测试
+        文件提交；外来文件降级 warn+审计（owner 责任制，不检查不阻断）。"""
+        monkeypatch.setattr(_gate_mod, "_SRC_ROOT", tmp_path)
+        src_dir = tmp_path / "zephyr" / "mod"
+        src_dir.mkdir(parents=True)
+        (src_dir / "foo.py").write_text("class Foo:\n    pass\n", encoding="utf-8")
+
+        own_test = "tests/test_own_clean.py"
+        foreign_test = "tests/test_foreign_drift.py"
+        gw = _make_gateway(
+            staged_files=[own_test, foreign_test],
+            file_contents={
+                own_test: "from zephyr.mod.foo import Foo\n",
+                foreign_test: "from zephyr.deleted.module import Missing\n",
+            },
+        )
+        gw.project_root = str(tmp_path)  # 审计写 tmp_path（测试隔离：禁写生产路径）
+        gw._registry = None  # own scope 仅由 files 决定（确定性）
+
+        passed, msg = make_test_source_consistency_gate().check(gw, [own_test], session_id="sess-A")
+        assert passed is True, f"外来 WIP 连坐阻断本会话: {msg[:200]}"
+        assert msg == ""
+
+        audit = tmp_path / ".runtime" / "gate_audit" / "test_source_consistency_foreign_staged.jsonl"
+        assert audit.exists(), "外来 staged 审计未落盘"
+        rec = json.loads(audit.read_text(encoding="utf-8").splitlines()[-1])
+        assert rec["session_id"] == "sess-A"
+        assert foreign_test in rec["foreign_files"]
+
+    def test_own_violation_still_blocks_with_session(self, tmp_path, monkeypatch):
+        """本 session 自身漂移（import 不存在符号）仍硬阻断（保护语义不放松）。"""
+        monkeypatch.setattr(_gate_mod, "_SRC_ROOT", tmp_path)
+        own_test = "tests/test_own_drift.py"
+        gw = _make_gateway(
+            staged_files=[own_test],
+            file_contents={own_test: "from zephyr.deleted.module import Missing\n"},
+        )
+        gw.project_root = str(tmp_path)
+        gw._registry = None
+
+        passed, msg = make_test_source_consistency_gate().check(gw, [own_test], session_id="sess-A")
+        assert passed is False, "自身漂移未被阻断（own-scope 不得放松保护语义）"
+        assert "Missing" in msg

@@ -30,6 +30,7 @@
 from __future__ import annotations
 
 import importlib.util
+import logging
 from pathlib import Path
 
 import pytest
@@ -61,6 +62,7 @@ try:
     _detect_domain_mismatches = _mod._detect_domain_mismatches
     _detect_design_only_in_one = _mod._detect_design_only_in_one
     _fetch_blueprint_nodes = _mod._fetch_blueprint_nodes
+    _load_exempt_list = _mod._load_exempt_list
 except Exception as e:  # noqa: BLE001
     pytest.skip(
         f"align_panoramas 模块加载失败（可能缺少 zephyr 依赖）: {e}",
@@ -569,3 +571,48 @@ class TestExemptList:
         ]
         orphans = _detect_orphans(nodes, exempt_list=set())
         assert len(orphans)
+
+
+# ---------------------------------------------------------------------------
+# B3 编码硬化（2026-09-16，st-commitspeed）：非 UTF-8 字节文件 fail-open 跳过
+# 病根：检测器读文件遇 GBK 孤立字节（0xd6）会抛 UnicodeDecodeError，被宽泛
+# except 静默吞掉或炸停扫描——豁免漏扫/蓝图漏采集均不可溯源。
+# 治本：读取降级（errors="replace"/前置捕获）+ warn 记路径 + 跳过该文件继续。
+# 测试隔离：全部 tmp_path 构造坏字节文件，caplog 断言 warn 含路径。
+# ---------------------------------------------------------------------------
+
+
+class TestBadEncodingFailOpen:
+    """坏编码（0xd6 孤立字节）→ 不抛异常 + warn 记路径 + 降级跳过。"""
+
+    def test_bad_encoding_blueprint_file_skipped_with_warn(self, tmp_path, caplog):
+        """含 0xd6 字节的蓝图文件 → 跳过不采集（好文件正常采集），warn 含路径。"""
+        bad = tmp_path / "MOD-BAD-ENC"
+        # 0xd6 是 GBK 双字节引导字节，孤立出现对 UTF-8 是非法序列
+        bad.write_bytes(b"---\nmodule_id: MOD-BAD-\xd6ENC\n---\n")
+        good = tmp_path / "MOD-GOOD-ENC"
+        good.write_text("---\nmodule_id: MOD-GOOD-ENC\n---\n", encoding="utf-8")
+
+        with caplog.at_level(logging.WARNING):
+            nodes = _fetch_blueprint_nodes(scan_root=tmp_path)
+
+        # 不抛异常；坏文件被跳过，好文件正常采集
+        assert [n.module_id for n in nodes] == ["MOD-GOOD-ENC"]
+        # warn 落路径（可溯源）
+        assert any(str(bad) in r.getMessage() for r in caplog.records), (
+            f"warn 应含坏文件路径: {[r.getMessage() for r in caplog.records]}"
+        )
+
+    def test_bad_encoding_exempt_list_returns_empty_with_warn(self, tmp_path, monkeypatch, caplog):
+        """exempt_list YAML 含 0xd6 字节 → 返回空集（fail-open），warn 含路径。"""
+        bad_yaml = tmp_path / "panorama_exempt_list.yaml"
+        bad_yaml.write_bytes(b"exempt_module_ids: [MOD-\xd6X]\n")
+        monkeypatch.setattr(_mod, "_EXEMPT_LIST_PATH", bad_yaml)
+
+        with caplog.at_level(logging.WARNING):
+            result = _load_exempt_list()
+
+        assert result == set()
+        assert any(str(bad_yaml) in r.getMessage() for r in caplog.records), (
+            f"warn 应含坏 YAML 路径: {[r.getMessage() for r in caplog.records]}"
+        )

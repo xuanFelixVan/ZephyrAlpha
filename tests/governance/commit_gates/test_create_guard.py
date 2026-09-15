@@ -735,3 +735,87 @@ class TestFieldHeaderIncomplete:
         passed, detail = gate.check(gw, [str(f)])
         assert passed is False, f"缺字段头应被阻断: {detail}"
         assert "字段头部" in detail or "ARCH-031" in detail
+
+
+# ===========================================================================
+# B1 撕裂读重试（2026-09-16，st-commitspeed）
+# 病根：并发会话写 capability registry 时存在瞬态撕裂读，单次 yaml.safe_load
+# 失败即 fail-closed 会把"设施瞬态故障"误报成"违规阻断"（假阳性阻断无辜提交人）。
+# 治本：读取单点 _read_registry_text + 3 次重试（0.3s 退避）；耗尽仍 fail-closed
+# （不变量不动），消息区分「设施故障（非违规）」+ 审计 jsonl 留痕。
+# 测试隔离：REGISTRY_YAML monkeypatch 到 tmp_path；审计落 gateway.project_root
+# （tmp git repo）下的 .runtime/audit/，不触碰生产 .runtime/。
+# ===========================================================================
+
+
+class TestRegistryTornReadRetry:
+    """B1：registry 撕裂读重试——先坏后好放行；恒坏阻断且落审计。"""
+
+    def test_transient_tear_retries_then_passes(self, tmp_path: Path, monkeypatch) -> None:
+        """第 1 次读撕裂（坏 YAML）、第 2 次读恢复 → 重试后放行，恰读 2 次。"""
+        import zephyr.gov_enforcement.commit_gates.create_guard as _cg
+
+        _init_git_repo(tmp_path)
+        rel = "docs/__test_torn_read_md_20260916__.md"
+        f = _stage_file(tmp_path, rel, "# readme\n")
+        registry_file = tmp_path / "torn_read_registry.yaml"
+        registry_file.write_text(
+            f"creation_tokens:\n"
+            f'  - file: "{rel}"\n'
+            f'    token: "auto-torn-read-20260916"\n'
+            f'    created_by: "test"\n'
+            f'    capability: "test"\n',
+            encoding="utf-8",
+        )
+        monkeypatch.setattr(
+            "zephyr.governance.capability_lookup.REGISTRY_YAML",
+            registry_file,
+        )
+        # monkeypatch 读取单点：第 1 次返回撕裂内容，第 2 次起返回真实文件内容
+        calls = {"n": 0}
+        _real_read = _cg._read_registry_text
+
+        def _flaky_read(path):
+            calls["n"] += 1
+            if calls["n"] == 1:
+                return "invalid: yaml: torn: content:"  # 撕裂窗口读到的半截写入
+            return _real_read(path)
+
+        monkeypatch.setattr(_cg, "_read_registry_text", _flaky_read)
+
+        gw = GitCommitGateway(project_root=tmp_path)
+        gate = make_create_guard()
+        passed, detail = gate.check(gw, [str(f)])
+        assert passed is True, f"瞬态撕裂读重试后应放行: {detail}"
+        assert calls["n"] == 2, f"应恰读 2 次（坏1次+好1次），实际 {calls['n']} 次"
+
+    def test_persistent_tear_blocks_with_infra_audit(self, tmp_path: Path, monkeypatch) -> None:
+        """恒坏（3 次重试全失败）→ fail-closed 阻断，消息含设施故障 + 审计落 tmp_path。"""
+        import json as _json
+
+        _init_git_repo(tmp_path)
+        f = _stage_file(
+            tmp_path,
+            "src/zephyr/gov_enforcement/commit_gates/__test_torn_read_bad_20260916__.py",
+        )
+        bad_registry = tmp_path / "bad_registry_torn.yaml"
+        bad_registry.write_text("invalid: yaml: content:", encoding="utf-8")
+        monkeypatch.setattr(
+            "zephyr.governance.capability_lookup.REGISTRY_YAML",
+            bad_registry,
+        )
+        gw = GitCommitGateway(project_root=tmp_path)
+        gate = make_create_guard()
+        passed, detail = gate.check(gw, [str(f)])
+        assert passed is False, f"恒坏 registry 应 fail-closed 阻断: {detail}"
+        assert "设施故障" in detail
+        assert "非违规" in detail
+        # 审计落 tmp_path（gateway.project_root = tmp git repo，不写生产 .runtime/）
+        audit_path = tmp_path / ".runtime" / "audit" / "create_guard_parse_fail.jsonl"
+        assert audit_path.exists(), f"审计文件应落 tmp_path: {audit_path}"
+        lines = audit_path.read_text(encoding="utf-8").strip().splitlines()
+        assert lines, "审计 jsonl 应有记录"
+        record = _json.loads(lines[-1])
+        assert record["event"] == "registry_parse_fail"
+        assert str(bad_registry) in record["path"]
+        assert record["reason"]  # 非空 reason（截前 200 字）

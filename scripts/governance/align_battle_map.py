@@ -151,6 +151,10 @@ WHERE domain_id = ANY(%s)
   --     MOD-INF-039 agent_orchestrator/blueprint.md（D_INFRA_RUNTIME）。
   AND NOT (path LIKE 'docs/03_modules/%%' AND path LIKE '%%.md')
 """
+SQL_SELECT_DATAFLOW_DATASET_IDS = "SELECT entity_name, module_id FROM dataflow_datasets"
+SQL_SELECT_DATAFLOW_JOB_IDS = "SELECT job_name, module_id FROM dataflow_jobs"
+SQL_SELECT_DECISION_NODE_IDS = "SELECT path, module_id FROM decision_nodes"
+SQL_SELECT_DECISION_LAYER_IDS = "SELECT layer_id, module_id FROM decision_layers"
 
 
 # ---------------------------------------------------------------------------
@@ -514,72 +518,63 @@ def _valid_ids_depgraph() -> tuple[set[str], bool]:
         return set(), False
 
 
-def _valid_ids_dataflowgraph() -> tuple[set[str], bool]:
-    """采集 dataflowgraph 合法 target_id（entity_name ∪ job_name ∪ module_id）。"""
-    try:
-        from zephyr.governance.persistence.dataflowgraph_schema import (
-            get_dataflowgraph_pg_connection,
-        )
+def _valid_ids_from_pg(conn_factory, queries: list[tuple[str, tuple[str, ...]]]) -> tuple[set[str], bool]:
+    """PG 采集共享体（CloneGuard 治本合并：dataflowgraph/decisiongraph 两加载器
+    结构 100% 同形——同连接语义不同 schema，抽共享体消除 extract 级克隆）。
 
+    queries: [(SQL, 取值列名元组), ...]——逐查询执行，把各列非空值并入集合。
+    """
+    try:
         valid: set[str] = set()
-        conn = get_dataflowgraph_pg_connection()
+        conn = conn_factory()
         try:
             with conn.cursor() as cur:
-                cur.execute("SELECT entity_name, module_id FROM dataflow_datasets")
-                cols = [d[0] for d in cur.description]
-                for row in cur.fetchall():
-                    r = dict(zip(cols, row, strict=False))
-                    for k in ("entity_name", "module_id"):
-                        v = r.get(k)
-                        if v:
-                            valid.add(str(v))
-                cur.execute("SELECT job_name, module_id FROM dataflow_jobs")
-                cols = [d[0] for d in cur.description]
-                for row in cur.fetchall():
-                    r = dict(zip(cols, row, strict=False))
-                    for k in ("job_name", "module_id"):
-                        v = r.get(k)
-                        if v:
-                            valid.add(str(v))
+                for sql, keys in queries:
+                    cur.execute(sql)
+                    cols = [d[0] for d in cur.description]
+                    for row in cur.fetchall():
+                        r = dict(zip(cols, row, strict=False))
+                        for k in keys:
+                            v = r.get(k)
+                            if v:
+                                valid.add(str(v))
         finally:
             conn.close()
         return valid, True
-    except Exception:  # noqa: BLE001
+    except Exception:  # noqa: BLE001 — DB 不可用降级空集（对齐两加载器原语义）
         return set(), False
+
+
+def _valid_ids_dataflowgraph() -> tuple[set[str], bool]:
+    """采集 dataflowgraph 合法 target_id（entity_name ∪ job_name ∪ module_id）。"""
+    from zephyr.governance.persistence.dataflowgraph_schema import (  # noqa: PLC0415
+
+        get_dataflowgraph_pg_connection,
+    )
+
+    return _valid_ids_from_pg(
+        get_dataflowgraph_pg_connection,
+        [
+            (SQL_SELECT_DATAFLOW_DATASET_IDS, ("entity_name", "module_id")),
+            (SQL_SELECT_DATAFLOW_JOB_IDS, ("job_name", "module_id")),
+        ],
+    )
 
 
 def _valid_ids_decisiongraph() -> tuple[set[str], bool]:
     """采集 decisiongraph 合法 target_id（path ∪ module_id ∪ layer_id）。"""
-    try:
-        from zephyr.governance.persistence.decisiongraph_schema import (
-            get_decisiongraph_pg_connection,
-        )
+    from zephyr.governance.persistence.decisiongraph_schema import (  # noqa: PLC0415
 
-        valid: set[str] = set()
-        conn = get_decisiongraph_pg_connection()
-        try:
-            with conn.cursor() as cur:
-                cur.execute("SELECT path, module_id FROM decision_nodes")
-                cols = [d[0] for d in cur.description]
-                for row in cur.fetchall():
-                    r = dict(zip(cols, row, strict=False))
-                    for k in ("path", "module_id"):
-                        v = r.get(k)
-                        if v:
-                            valid.add(str(v))
-                cur.execute("SELECT layer_id, module_id FROM decision_layers")
-                cols = [d[0] for d in cur.description]
-                for row in cur.fetchall():
-                    r = dict(zip(cols, row, strict=False))
-                    for k in ("layer_id", "module_id"):
-                        v = r.get(k)
-                        if v:
-                            valid.add(str(v))
-        finally:
-            conn.close()
-        return valid, True
-    except Exception:  # noqa: BLE001
-        return set(), False
+        get_decisiongraph_pg_connection,
+    )
+
+    return _valid_ids_from_pg(
+        get_decisiongraph_pg_connection,
+        [
+            (SQL_SELECT_DECISION_NODE_IDS, ("path", "module_id")),
+            (SQL_SELECT_DECISION_LAYER_IDS, ("layer_id", "module_id")),
+        ],
+    )
 
 
 def _valid_ids_candidate() -> tuple[set[str], bool]:
@@ -609,6 +604,14 @@ def _valid_ids_candidate() -> tuple[set[str], bool]:
                 if v:
                     valid.add(str(v))
         return valid, True
+    except UnicodeDecodeError as e:
+        # B3 编码硬化（2026-09-16）：非 UTF-8 字节降级跳过，warn 记路径可溯源
+        logger.warning(
+            "candidate 注册表解码失败（非 UTF-8 字节），降级为源不可用: path=%s err=%s",
+            _CANDIDATE_YAML,
+            e,
+        )
+        return set(), False
     except Exception:  # noqa: BLE001
         return set(), False
 
@@ -626,8 +629,13 @@ def _valid_ids_blueprint() -> tuple[set[str], bool]:
             if not fpath.is_file() or fpath.name in {"index.md"}:
                 continue
             try:
-                content = fpath.read_text(encoding="utf-8")
-            except (OSError, UnicodeDecodeError):
+                # B3 编码硬化（2026-09-16）：errors="replace" 防单个坏文件炸停整库扫描；
+                # 检出 U+FFFD → warn 记路径后跳过该文件
+                content = fpath.read_text(encoding="utf-8", errors="replace")
+            except OSError:
+                continue
+            if "\ufffd" in content:
+                logger.warning("blueprint 文件含非 UTF-8 字节（U+FFFD 替换检出），跳过: path=%s", fpath)
                 continue
             m = fm_re.match(content)
             if not m:
@@ -679,6 +687,14 @@ def _load_domain_policy() -> dict[str, set[str]] | None:
             if isinstance(allowed, list):
                 result[stage] = {str(d) for d in allowed}
         return result if result else None
+    except UnicodeDecodeError as e:
+        # B3 编码硬化（2026-09-16）：非 UTF-8 字节降级跳过（返回 None=跳过域漂移检查），warn 记路径
+        logger.warning(
+            "battle_map_domain_policy.yaml 解码失败（非 UTF-8 字节），跳过域漂移检查: path=%s err=%s",
+            _DOMAIN_POLICY_YAML,
+            e,
+        )
+        return None
     except Exception:  # noqa: BLE001
         return None
 
@@ -699,6 +715,14 @@ def _load_adjudication_principle() -> str:
         data = yaml.safe_load(_DOMAIN_POLICY_YAML.read_text(encoding="utf-8")) or {}
         ap = data.get("adjudication_principles") or {}
         return str(ap.get("core") or "").strip()
+    except UnicodeDecodeError as e:
+        # B3 编码硬化（2026-09-16）：非 UTF-8 字节降级返回空串（报告不输出裁定原则行），warn 记路径
+        logger.warning(
+            "battle_map_domain_policy.yaml 解码失败（非 UTF-8 字节），裁定原则降级为空: path=%s err=%s",
+            _DOMAIN_POLICY_YAML,
+            e,
+        )
+        return ""
     except Exception:  # noqa: BLE001
         return ""
 
@@ -727,6 +751,14 @@ def _load_domain_classification() -> tuple[set[str], set[str]]:
         business = {str(d) for d in dc.get("business_domains") or []}
         tools = {str(d) for d in dc.get("tool_domains") or []}
         return business, tools
+    except UnicodeDecodeError as e:
+        # B3 编码硬化（2026-09-16）：非 UTF-8 字节降级返回空分类（调用方回退并集逻辑），warn 记路径
+        logger.warning(
+            "battle_map_domain_policy.yaml 解码失败（非 UTF-8 字节），域分类降级为空: path=%s err=%s",
+            _DOMAIN_POLICY_YAML,
+            e,
+        )
+        return set(), set()
     except Exception:  # noqa: BLE001
         return set(), set()
 
@@ -759,6 +791,14 @@ def _load_acknowledged_orphans() -> tuple[set[str], set[str]]:
             for sid in grp.get("step_ids") or []:
                 step_ids.add(str(sid))
         return mod_ids, step_ids
+    except UnicodeDecodeError as e:
+        # B3 编码硬化（2026-09-16）：非 UTF-8 字节降级返回空集（无豁免，全部算违规），warn 记路径
+        logger.warning(
+            "battle_map_domain_policy.yaml 解码失败（非 UTF-8 字节），acknowledged 豁免集降级为空: path=%s err=%s",
+            _DOMAIN_POLICY_YAML,
+            e,
+        )
+        return set(), set()
     except Exception:  # noqa: BLE001
         return set(), set()
 
@@ -832,6 +872,14 @@ def _anchor_domain_map_candidate() -> tuple[dict[str, set[str]], bool]:
                     domain_map.setdefault(str(v), set()).add(str(domain))
                     break
         return domain_map, True
+    except UnicodeDecodeError as e:
+        # B3 编码硬化（2026-09-16）：非 UTF-8 字节降级为源不可用（跳过 candidate 域漂移校验），warn 记路径
+        logger.warning(
+            "candidate 注册表解码失败（非 UTF-8 字节），candidate domain map 降级为不可用: path=%s err=%s",
+            _CANDIDATE_YAML,
+            e,
+        )
+        return {}, False
     except Exception:  # noqa: BLE001
         return {}, False
 

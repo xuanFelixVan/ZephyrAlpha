@@ -30,6 +30,7 @@
 from __future__ import annotations
 
 import ast
+import json
 import os
 import sys
 from dataclasses import dataclass
@@ -288,3 +289,49 @@ class TestGatewayIntegration:
         passed, msg = make_perm_trigger_gate().check(gw, [])
         assert passed  # fail-open
         assert msg == ""
+
+
+# ---------------------------------------------------------------------------
+# TestOwnScope — own-scope 回归（宪法 §3.3，接续 #ARCH-GATE-OWN-SCOPE-001 推广批）
+# ---------------------------------------------------------------------------
+class TestOwnScope:
+    """own-scope 化：扫描集=staged∩本 session 范围（files∪held）——外来 staged 不连坐。"""
+
+    def test_foreign_staged_violation_does_not_block_own_commit(self, tmp_path):
+        """他会话 staged 的违规 .py（permanent+while True 无事件订阅）不阻断本会话
+        干净文件提交；外来文件降级 warn+审计（owner 责任制，不检查不阻断）。"""
+        own_py = "src/zephyr/own_clean_mod.py"
+        foreign_py = "scripts/foreign_wip_daemon.py"
+        _write_file(tmp_path, own_py, "X = 1\n")
+        _write_file(
+            tmp_path,
+            foreign_py,
+            "# [TTL] permanent\nimport time\nwhile True:\n    time.sleep(1)\n",
+        )
+
+        gw = _make_gateway(tmp_path, staged_files=[own_py, foreign_py])
+        gw._registry = None  # own scope 仅由 files 决定（确定性，不依赖 session registry）
+        passed, msg = make_perm_trigger_gate().check(gw, [own_py], session_id="sess-A")
+        assert passed is True, f"外来 WIP 连坐阻断本会话: {msg[:200]}"
+        assert msg == ""
+
+        audit = tmp_path / ".runtime" / "gate_audit" / "perm_trigger_foreign_staged.jsonl"
+        assert audit.exists(), "外来 staged 审计未落盘"
+        rec = json.loads(audit.read_text(encoding="utf-8").splitlines()[-1])
+        assert rec["session_id"] == "sess-A"
+        assert foreign_py in rec["foreign_files"]
+
+    def test_own_violation_still_blocks_with_session(self, tmp_path):
+        """本 session 自身违规（permanent+while True 无事件订阅）仍硬阻断（保护语义不放松）。"""
+        own_py = "src/zephyr/trading/own_bad_daemon.py"
+        _write_file(
+            tmp_path,
+            own_py,
+            "# [TTL] permanent\nimport time\nwhile True:\n    time.sleep(1)\n",
+        )
+
+        gw = _make_gateway(tmp_path, staged_files=[own_py])
+        gw._registry = None
+        passed, msg = make_perm_trigger_gate().check(gw, [own_py], session_id="sess-A")
+        assert passed is False, "自身违规未被阻断（own-scope 不得放松保护语义）"
+        assert own_py in msg

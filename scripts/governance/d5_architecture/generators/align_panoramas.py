@@ -58,11 +58,15 @@ warn_only: false
 
 
 import argparse
+import logging
 import re
 import sys
 from collections import Counter, defaultdict
 from dataclasses import dataclass, field
 from pathlib import Path
+
+# B3 编码硬化（2026-09-16）：非 UTF-8 字节文件 fail-open 跳过时记 warning（含路径）
+_LOG = logging.getLogger(__name__)
 
 # 添加项目根到 sys.path
 _REPO_ROOT = Path(__file__).resolve().parents[4]
@@ -504,7 +508,12 @@ _EXEMPT_LIST_PATH = (
 
 
 def _load_exempt_list() -> set[str]:
-    """加载 exempt_list 配置（历史归档豁免）。文件不存在时返回空集合。"""
+    """加载 exempt_list 配置（历史归档豁免）。文件不存在时返回空集合。
+
+    B3 编码硬化（2026-09-16）：非 UTF-8 字节（如 GBK 孤立 0xd6）不再被宽泛
+    except 静默吞掉——UnicodeDecodeError 前置捕获，warn 记路径后跳过（fail-open
+    返回空集），使豁免清单漏扫可溯源。
+    """
     if not _EXEMPT_LIST_PATH.exists():
         return set()
     try:
@@ -513,6 +522,13 @@ def _load_exempt_list() -> set[str]:
         data = yaml.safe_load(_EXEMPT_LIST_PATH.read_text(encoding="utf-8"))
         ids = data.get("exempt_module_ids", []) if data else []
         return {str(i) for i in ids if i}
+    except UnicodeDecodeError as e:
+        _LOG.warning(
+            "exempt_list 解码失败（非 UTF-8 字节），跳过加载（豁免清单漏扫，请修复编码）: path=%s err=%s",
+            _EXEMPT_LIST_PATH,
+            e,
+        )
+        return set()
     except Exception:  # noqa: BLE001
         return set()
 
@@ -562,8 +578,16 @@ def _fetch_blueprint_nodes(scan_root: Path | None = None) -> list[PanoramaNode]:
         if not fpath.is_file() or fpath.name in _BP_SKIP_NAMES:
             continue
         try:
-            content = fpath.read_text(encoding="utf-8")
-        except (OSError, UnicodeDecodeError):
+            # B3 编码硬化（2026-09-16）：errors="replace" 保证扫描不被单个坏文件炸停；
+            # 检出 U+FFFD 替换符 → warn 记路径后跳过该文件（坏编码蓝图不可信，不采集）
+            content = fpath.read_text(encoding="utf-8", errors="replace")
+        except OSError:
+            continue
+        if "\ufffd" in content:
+            _LOG.warning(
+                "blueprint 文件含非 UTF-8 字节（U+FFFD 替换检出），跳过该文件: path=%s",
+                fpath,
+            )
             continue
         fm = _parse_simple_frontmatter(content)
         mid = fm.get("module_id")

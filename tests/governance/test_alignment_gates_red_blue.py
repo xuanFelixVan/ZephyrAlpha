@@ -23,6 +23,7 @@
 
 from __future__ import annotations
 
+import logging
 import sys
 from pathlib import Path
 from types import SimpleNamespace
@@ -557,3 +558,51 @@ class TestR11DataExistence:
             tmp.unlink()
         assert fails == []
         assert any("疑似断更" in w for w in warns)
+
+
+# ═══════════════════════ B3 编码硬化（2026-09-16） ═══════════════════════
+
+
+class TestBadEncodingFailOpenBattleMap:
+    """坏编码（GBK 孤立 0xd6 字节）→ 不抛异常 + warn 记路径 + 降级跳过。
+
+    病根：align_battle_map 的 7 处 YAML/蓝图读取遇非 UTF-8 字节抛
+    UnicodeDecodeError 被宽泛 except 静默吞掉——候选池/域策略/豁免集漏扫不可溯源。
+    治本：前置捕获 UnicodeDecodeError（或 errors="replace"+U+FFFD 检出）→ warn
+    记路径 → 按既有降级语义返回（不可用/None/空集）。
+    测试隔离：tmp_path 构造坏字节文件，monkeypatch 模块级路径常量，不碰真源。
+    """
+
+    def test_bad_encoding_blueprint_scan_fail_open(self, tmp_path: Path, monkeypatch: pytest.MonkeyPatch, caplog) -> None:
+        """蓝图扫描含 0xd6 字节文件 → 跳过该文件（好文件正常采集），warn 记路径。"""
+        import align_battle_map as abm
+
+        (tmp_path / "bad.md").write_bytes(b"---\nmodule_id: MOD-BAD-\xd6ENC\n---\n")
+        (tmp_path / "good.md").write_text("---\nmodule_id: MOD-GOOD-ENC\n---\n", encoding="utf-8")
+        monkeypatch.setattr(abm, "_BP_SCAN_ROOT", tmp_path)
+
+        with caplog.at_level(logging.WARNING):
+            valid, available = abm._valid_ids_blueprint()
+
+        assert available is True
+        assert "MOD-GOOD-ENC" in valid
+        assert not any("MOD-BAD-" in v for v in valid), f"坏编码文件不应被采集: {valid}"
+        assert any("bad.md" in r.getMessage() for r in caplog.records), (
+            f"warn 应含坏文件路径: {[r.getMessage() for r in caplog.records]}"
+        )
+
+    def test_bad_encoding_domain_policy_degrades_to_none(self, tmp_path: Path, monkeypatch: pytest.MonkeyPatch, caplog) -> None:
+        """battle_map_domain_policy.yaml 含 0xd6 字节 → 返回 None（跳过域漂移检查），warn 记路径。"""
+        import align_battle_map as abm
+
+        bad = tmp_path / "battle_map_domain_policy.yaml"
+        bad.write_bytes(b"flow_stage_allowed_domains:\n  a:\n    allowed: [D_\xd6X]\n")
+        monkeypatch.setattr(abm, "_DOMAIN_POLICY_YAML", bad)
+
+        with caplog.at_level(logging.WARNING):
+            result = abm._load_domain_policy()
+
+        assert result is None
+        assert any(str(bad) in r.getMessage() for r in caplog.records), (
+            f"warn 应含坏 YAML 路径: {[r.getMessage() for r in caplog.records]}"
+        )
