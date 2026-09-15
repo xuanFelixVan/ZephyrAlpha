@@ -865,3 +865,105 @@ class BBI(TechnicalIndicatorBase):
             bbi = bbi + data["close"].rolling(window=n).mean()
         bbi = bbi / len(params["periods"])
         return pd.DataFrame({"bbi": bbi}, index=data.index)
+
+
+@TechnicalIndicatorRegistry.register
+class ALLIGATOR(TechnicalIndicatorBase):
+    """鳄鱼线（Bill Williams Alligator，13/8/5 均衡移动平均 SMMA+前移位移）。"""
+
+    meta = TechnicalIndicatorMeta(
+        indicator_id="alligator",
+        name="鳄鱼线",
+        category="trend",
+        output_columns=["alligator_jaw", "alligator_teeth", "alligator_lips"],
+        input_columns=["high", "low"],
+        params={"jaw": 13, "teeth": 8, "lips": 5, "jaw_shift": 8, "teeth_shift": 5, "lips_shift": 3},
+        version="1.0.0",
+        description="SMMA(中价 HL/2)：颚 13 前移 8 / 齿 8 前移 5 / 唇 5 前移 3；存储=显示位（值来自过去，PIT 无前视）",
+    )
+
+    def compute(self, data: pd.DataFrame, **kwargs) -> pd.DataFrame:
+        self.validate(data)
+        if data.empty:
+            return pd.DataFrame(columns=self.meta.output_columns)
+        params = self.get_params(**kwargs)
+        mid = (data["high"] + data["low"]) / 2
+
+        def smma(series: pd.Series, n: int) -> pd.Series:
+            return series.ewm(alpha=1 / n, adjust=False).mean()
+
+        jaw = smma(mid, params["jaw"]).shift(params["jaw_shift"])
+        teeth = smma(mid, params["teeth"]).shift(params["teeth_shift"])
+        lips = smma(mid, params["lips"]).shift(params["lips_shift"])
+        return pd.DataFrame(
+            {"alligator_jaw": jaw, "alligator_teeth": teeth, "alligator_lips": lips},
+            index=data.index,
+        )
+
+
+@TechnicalIndicatorRegistry.register
+class GMMA(TechnicalIndicatorBase):
+    """顾比复合均线（Guppy Multiple Moving Average，短期 3-15 + 长期 30-60 共 12 条 EMA）。"""
+
+    meta = TechnicalIndicatorMeta(
+        indicator_id="gmma",
+        name="顾比复合均线",
+        category="trend",
+        output_columns=[
+            "gmma_s3", "gmma_s5", "gmma_s8", "gmma_s10", "gmma_s12", "gmma_s15",
+            "gmma_l30", "gmma_l35", "gmma_l40", "gmma_l45", "gmma_l50", "gmma_l60",
+        ],
+        input_columns=["close"],
+        params={"short": [3, 5, 8, 10, 12, 15], "long": [30, 35, 40, 45, 50, 60]},
+        version="1.0.0",
+        description="短期组/长期组各 6 条 EMA：组收敛=趋势共识，发散=趋势运行（StockCharts ChartSchool 口径）",
+    )
+
+    def compute(self, data: pd.DataFrame, **kwargs) -> pd.DataFrame:
+        self.validate(data)
+        if data.empty:
+            return pd.DataFrame(columns=self.meta.output_columns)
+        params = self.get_params(**kwargs)
+        out = {}
+        for n in params["short"]:
+            out[f"gmma_s{n}"] = data["close"].ewm(span=n, adjust=False).mean()
+        for n in params["long"]:
+            out[f"gmma_l{n}"] = data["close"].ewm(span=n, adjust=False).mean()
+        return pd.DataFrame(out, index=data.index)
+
+
+@TechnicalIndicatorRegistry.register
+class GANN_HILO(TechnicalIndicatorBase):
+    """Gann HiLo Activator（10）。"""
+
+    meta = TechnicalIndicatorMeta(
+        indicator_id="gann_hilo",
+        name="Gann HiLo Activator",
+        category="trend",
+        output_columns=["gann_hilo", "gann_hilo_dir"],
+        input_columns=["high", "low", "close"],
+        params={"period": 10},
+        version="1.0.0",
+        description="HiLo=SMA(HL/2,10)；收盘在 HiLo 上方=多头(1)/下方=空头(-1)，逐 bar 翻转",
+    )
+
+    def compute(self, data: pd.DataFrame, **kwargs) -> pd.DataFrame:
+        self.validate(data)
+        if data.empty:
+            return pd.DataFrame(columns=self.meta.output_columns)
+        params = self.get_params(**kwargs)
+        n = params["period"]
+        mid = (data["high"] + data["low"]) / 2
+        hilo = mid.rolling(window=n).mean()
+        close = data["close"]
+        dir_col = pd.Series(np.nan, index=data.index)
+        trend = np.nan
+        for i in range(n - 1, len(close)):
+            if np.isnan(trend):
+                trend = 1.0 if close.iloc[i] >= hilo.iloc[i] else -1.0
+            elif close.iloc[i] > hilo.iloc[i]:
+                trend = 1.0
+            elif close.iloc[i] < hilo.iloc[i]:
+                trend = -1.0
+            dir_col.iloc[i] = trend
+        return pd.DataFrame({"gann_hilo": hilo, "gann_hilo_dir": dir_col}, index=data.index)

@@ -834,6 +834,146 @@ _MIGRATIONS: list[tuple[str, str]] = [
         "ALTER TABLE c1_market.technical_indicator "
         "ADD COLUMN IF NOT EXISTS cr_26 Nullable(Float64) COMMENT '能量指标CR(26)'",
     ),
+    (
+        "c1_market.technical_indicator",
+        "ALTER TABLE c1_market.technical_indicator "
+        "ADD COLUMN IF NOT EXISTS alligator_jaw Nullable(Float64) COMMENT '鳄鱼线颚(SMMA13,前移8)'",
+    ),
+    (
+        "c1_market.technical_indicator",
+        "ALTER TABLE c1_market.technical_indicator "
+        "ADD COLUMN IF NOT EXISTS alligator_teeth Nullable(Float64) COMMENT '鳄鱼线齿(SMMA8,前移5)'",
+    ),
+    (
+        "c1_market.technical_indicator",
+        "ALTER TABLE c1_market.technical_indicator "
+        "ADD COLUMN IF NOT EXISTS alligator_lips Nullable(Float64) COMMENT '鳄鱼线唇(SMMA5,前移3)'",
+    ),
+    (
+        "c1_market.technical_indicator",
+        "ALTER TABLE c1_market.technical_indicator "
+        "ADD COLUMN IF NOT EXISTS gmma_s3 Nullable(Float64) COMMENT '顾比短期EMA3'",
+    ),
+    (
+        "c1_market.technical_indicator",
+        "ALTER TABLE c1_market.technical_indicator "
+        "ADD COLUMN IF NOT EXISTS gmma_s5 Nullable(Float64) COMMENT '顾比短期EMA5'",
+    ),
+    (
+        "c1_market.technical_indicator",
+        "ALTER TABLE c1_market.technical_indicator "
+        "ADD COLUMN IF NOT EXISTS gmma_s8 Nullable(Float64) COMMENT '顾比短期EMA8'",
+    ),
+    (
+        "c1_market.technical_indicator",
+        "ALTER TABLE c1_market.technical_indicator "
+        "ADD COLUMN IF NOT EXISTS gmma_s10 Nullable(Float64) COMMENT '顾比短期EMA10'",
+    ),
+    (
+        "c1_market.technical_indicator",
+        "ALTER TABLE c1_market.technical_indicator "
+        "ADD COLUMN IF NOT EXISTS gmma_s12 Nullable(Float64) COMMENT '顾比短期EMA12'",
+    ),
+    (
+        "c1_market.technical_indicator",
+        "ALTER TABLE c1_market.technical_indicator "
+        "ADD COLUMN IF NOT EXISTS gmma_s15 Nullable(Float64) COMMENT '顾比短期EMA15'",
+    ),
+    (
+        "c1_market.technical_indicator",
+        "ALTER TABLE c1_market.technical_indicator "
+        "ADD COLUMN IF NOT EXISTS gmma_l30 Nullable(Float64) COMMENT '顾比长期EMA30'",
+    ),
+    (
+        "c1_market.technical_indicator",
+        "ALTER TABLE c1_market.technical_indicator "
+        "ADD COLUMN IF NOT EXISTS gmma_l35 Nullable(Float64) COMMENT '顾比长期EMA35'",
+    ),
+    (
+        "c1_market.technical_indicator",
+        "ALTER TABLE c1_market.technical_indicator "
+        "ADD COLUMN IF NOT EXISTS gmma_l40 Nullable(Float64) COMMENT '顾比长期EMA40'",
+    ),
+    (
+        "c1_market.technical_indicator",
+        "ALTER TABLE c1_market.technical_indicator "
+        "ADD COLUMN IF NOT EXISTS gmma_l45 Nullable(Float64) COMMENT '顾比长期EMA45'",
+    ),
+    (
+        "c1_market.technical_indicator",
+        "ALTER TABLE c1_market.technical_indicator "
+        "ADD COLUMN IF NOT EXISTS gmma_l50 Nullable(Float64) COMMENT '顾比长期EMA50'",
+    ),
+    (
+        "c1_market.technical_indicator",
+        "ALTER TABLE c1_market.technical_indicator "
+        "ADD COLUMN IF NOT EXISTS gmma_l60 Nullable(Float64) COMMENT '顾比长期EMA60'",
+    ),
+    (
+        "c1_market.technical_indicator",
+        "ALTER TABLE c1_market.technical_indicator "
+        "ADD COLUMN IF NOT EXISTS gann_hilo Nullable(Float64) COMMENT 'Gann HiLo(中价SMA10)'",
+    ),
+    (
+        "c1_market.technical_indicator",
+        "ALTER TABLE c1_market.technical_indicator "
+        "ADD COLUMN IF NOT EXISTS gann_hilo_dir Nullable(Float64) COMMENT 'Gann HiLo方向(1多-1空)'",
+    ),
+    (
+        "c1_market.technical_indicator",
+        "ALTER TABLE c1_market.technical_indicator "
+        "ADD COLUMN IF NOT EXISTS ac Nullable(Float64) COMMENT '加速振荡器AO−SMA5(AO)'",
+    ),
+    (
+        "c1_market.technical_indicator",
+        "ALTER TABLE c1_market.technical_indicator "
+        "ADD COLUMN IF NOT EXISTS fractal_high Nullable(Float64) COMMENT '威廉上分形价(5bar)'",
+    ),
+    (
+        "c1_market.technical_indicator",
+        "ALTER TABLE c1_market.technical_indicator "
+        "ADD COLUMN IF NOT EXISTS fractal_low Nullable(Float64) COMMENT '威廉下分形价(5bar)'",
+    ),
+    (
+        "c1_market.technical_indicator",
+        "ALTER TABLE c1_market.technical_indicator "
+        "ADD COLUMN IF NOT EXISTS bull_power_13 Nullable(Float64) COMMENT 'Elder牛力(H−EMA13)'",
+    ),
+    (
+        "c1_market.technical_indicator",
+        "ALTER TABLE c1_market.technical_indicator "
+        "ADD COLUMN IF NOT EXISTS bear_power_13 Nullable(Float64) COMMENT 'Elder熊力(L−EMA13)'",
+    ),
+    (
+        "c1_market.technical_indicator",
+        "ALTER TABLE c1_market.technical_indicator "
+        "ADD COLUMN IF NOT EXISTS coppock Nullable(Float64) COMMENT '考派尔曲线(WMA10[ROC14+ROC11])'",
+    ),
+    (
+        "c1_market.technical_indicator",
+        "ALTER TABLE c1_market.technical_indicator "
+        "ADD COLUMN IF NOT EXISTS squeeze_on Nullable(Float64) COMMENT '挤压开关(BB嵌入KC=1)'",
+    ),
+    (
+        "c1_market.technical_indicator",
+        "ALTER TABLE c1_market.technical_indicator "
+        "ADD COLUMN IF NOT EXISTS squeeze_mom Nullable(Float64) COMMENT '挤压动量(线性回归动量)'",
+    ),
+    (
+        "c1_market.technical_indicator",
+        "ALTER TABLE c1_market.technical_indicator "
+        "ADD COLUMN IF NOT EXISTS wt1 Nullable(Float64) COMMENT 'WaveTrend主线'",
+    ),
+    (
+        "c1_market.technical_indicator",
+        "ALTER TABLE c1_market.technical_indicator "
+        "ADD COLUMN IF NOT EXISTS wt2 Nullable(Float64) COMMENT 'WaveTrend信号线(SMA4)'",
+    ),
+    (
+        "c1_market.technical_indicator",
+        "ALTER TABLE c1_market.technical_indicator "
+        "ADD COLUMN IF NOT EXISTS fi_13 Nullable(Float64) COMMENT '强力指数EMA13(Elder)'",
+    ),
 ]
 
 # 引擎选型矩阵（用于验证）

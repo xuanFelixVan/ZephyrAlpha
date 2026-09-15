@@ -72,7 +72,7 @@ why 栈映射：多周期共振是 A 股技术分析的主流用法；指标全�
 
 ## 6. 指标清单（92 指标 / 135 输出列，已施工）
 
-> 注册表真源：`TechnicalIndicatorRegistry`（运行时装饰器注册）；YAML 注册表 REG-IND-001 已在位（条目真源）。测试 728 个用例锁定数值正确性 + Registry↔DDL 双向交叉校验。
+> 注册表真源：`TechnicalIndicatorRegistry`（运行时装饰器注册）；YAML 注册表 REG-IND-001 已在位（条目真源）。测试 762 个用例锁定数值正确性 + Registry↔DDL 双向交叉校验。
 > **48 指标 vs "MVP 只需 15-20 个"的裁定**：全部已施工且 470 测试已绿，**裁剪已完成的指标 = 删已绿代码 + 删表列，纯负收益**；指标是数据不是策略，多算一列的边际成本≈0（单表 Nullable 列），而策略侧"只用其中一部分"的选择自由始终在消费方。故维持全集（2026-09-14 扩至 92：标配+统计族+批 2a/2b+批 3+批 6 挖矿立卡全清偿）。
 
 ### 6.1 趋势类 trend.py（18 指标 / 29 列）
@@ -154,7 +154,7 @@ why 栈映射：多周期共振是 A 股技术分析的主流用法；指标全�
 | rogers_satchell | rogers_satchell_20 | 20 | 漂移无关估计（批6，RS 1991） |
 | yang_zhang | yang_zhang_20 | 20 | σ_o²+kσ_c²+(1−k)σ_rs²，处理隔夜跳空+漂移——A 股高开低开适配（批6，YZ 2000） |
 
-### 6.4 量能类 volume.py（13 指标 / 14 列）
+### 6.4 量能类 volume.py（14 指标 / 15 列）
 
 | indicator_id | 输出列 | 默认参数 | 公式要点 |
 |---|---|---|---|
@@ -234,6 +234,7 @@ IND-COMP-001 candidate→active；类别 composite，代码在 trend.py（regist
 | 2026-08-10 | 0.1.0 | 初稿骨架 | 技术指标目录文档。**注意**：本文件曾因未 git commit 丢失，后从代码引用和 architecture_issue_registry 描述重建骨架 |
 | 2026-08-12 | 1.0.0 | 骨架→active：§6 回填 40 指标/58 列全表（5 大类公式/参数/输出列）；修正 55→58 口径；§6 增"40 指标不裁剪"裁定；补 §6.6 与 factor_registry 正交边界；新增 §7 开放问题（调度未闭环/REG-IND-001 待施工/00_index 同步） | 回填已施工代码 why；口径以测试契约为准；缺口入开放问题不擅自施工 |
 | 2026-08-15 | 1.0.1 | 第二轮循环压缩：可压缩点收敛=0（AI-DC2-08） | 清单/公式/裁定无冗余，通读+自审零发现，不为压而压 |
+| 2026-09-15 | 1.6.0 | 批 8 M-L4 经典族（数据先行放量批，Owner"全部开工"指令）：+ALLIGATOR/GMMA/GANN_HILO（趋势 18→21）+AC/FRACTALS/ELDER/COPPOCK/SQUEEZE/WAVETREND（动量 31→37）+FORCE_INDEX（量能 13→14）；全表 91→101 指标/134→162 列（退役后口径）；candle_pattern 退役终态一并收录（§6.5 v1.5.2） | M-L4 矿脉施工；筹码族前置数据批 stock_daily_basic 另行立项 |
 | 2026-09-14 | 1.5.2 | 裁定#233 落地（图形会话执行）：candle_pattern 列退役停产，IND-REV-001 deprecated，测试/INSERT_COLUMNS 同批；指标域 91 指标/134 在产列+1 退役列 | Owner 倾向方案B；零下游消费清查通过 |
 | 2026-09-14 | 1.5.1 | IND-REV-001 薄视图化（裁定①方案A，Owner 拍板）：CandlestickPattern.compute 转调图形域 scan_candles，6 编码映射回旧 candle_pattern 列语义（覆盖序复刻），talib 缺失降级全 0 不炸生产批；自研 5 形态灶台停用 | 图形会话 CDL 新家落地（a1b5c7f5/ac52af8），两店做一道菜根治 |
 | 2026-09-14 | 1.5.0 | 批 6（挖矿立卡清偿）：+RV 波动率族 4（波动 11→15）+BBI（趋势 17→18）+STOCH 本体/AROON/AROONOSC/BOP/PPO/APO/DX/BRAR/CR（动量 22→31）；全表 78→92 指标/116→135 列；施工方案=docs/_working/2026-09-14-tilib-batch6-plan.md（方案级病菌寻路 5 轮）；§7 消费端接线批立项 | Owner"施工批 6"指令；批 4/5 挖矿立卡全清偿 |

@@ -511,3 +511,29 @@ class PVI(TechnicalIndicatorBase):
         factor = (1 + ret).where(data["volume"] > data["volume"].shift(1), 1.0).fillna(1.0)
         pvi = 100.0 * factor.cumprod()
         return pd.DataFrame({"pvi": pvi}, index=data.index)
+
+
+@TechnicalIndicatorRegistry.register
+class FORCE_INDEX(TechnicalIndicatorBase):
+    """强力指数（Alexander Elder Force Index，13）。"""
+
+    meta = TechnicalIndicatorMeta(
+        indicator_id="force_index",
+        name="强力指数",
+        category="volume",
+        output_columns=["fi_13"],
+        input_columns=["close", "volume"],
+        params={"period": 13},
+        version="1.0.0",
+        description="FI=EMA13[ΔC×V]，价格变动×成交量合成买卖力量（Alexander Elder）",
+    )
+
+    def compute(self, data: pd.DataFrame, **kwargs) -> pd.DataFrame:
+        self.validate(data)
+        if data.empty:
+            return pd.DataFrame(columns=self.meta.output_columns)
+        params = self.get_params(**kwargs)
+        n = params["period"]
+        raw = data["close"].diff() * data["volume"]
+        fi = raw.ewm(span=n, adjust=False).mean()
+        return pd.DataFrame({f"fi_{n}": fi}, index=data.index)

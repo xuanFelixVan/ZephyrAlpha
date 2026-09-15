@@ -54,6 +54,12 @@ APO = TechnicalIndicatorRegistry.get("apo")
 DX = TechnicalIndicatorRegistry.get("dx")
 BRAR = TechnicalIndicatorRegistry.get("brar")
 CR = TechnicalIndicatorRegistry.get("cr")
+AC = TechnicalIndicatorRegistry.get("ac")
+FRACTALS = TechnicalIndicatorRegistry.get("fractals")
+ELDER = TechnicalIndicatorRegistry.get("elder")
+COPPOCK = TechnicalIndicatorRegistry.get("coppock")
+SQUEEZE = TechnicalIndicatorRegistry.get("squeeze")
+WAVETREND = TechnicalIndicatorRegistry.get("wavetrend")
 
 # 期望契约（catalog §2.2）
 EXPECTED = {
@@ -88,6 +94,12 @@ EXPECTED = {
     "dx": ("动向指数", ["dx_14"]),
     "brar": ("人气意愿指标", ["ar_26", "br_26"]),
     "cr": ("能量指标", ["cr_26"]),
+    "ac": ("加速振荡器", ["ac"]),
+    "fractals": ("威廉分形", ["fractal_high", "fractal_low"]),
+    "elder": ("牛熊力", ["bull_power_13", "bear_power_13"]),
+    "coppock": ("考派尔曲线", ["coppock"]),
+    "squeeze": ("挤压指标", ["squeeze_on", "squeeze_mom"]),
+    "wavetrend": ("波浪趋势", ["wt1", "wt2"]),
 }
 
 IMPLEMENTED = set(EXPECTED)
@@ -116,7 +128,7 @@ class TestMomentumRegistered:
             assert iid in metas, f"动量指标 '{iid}' 未注册"
 
     def test_count(self):
-        assert len(TechnicalIndicatorRegistry.list_by_category("momentum")) == len(EXPECTED) == 31
+        assert len(TechnicalIndicatorRegistry.list_by_category("momentum")) == len(EXPECTED) == 37
 
 
 class TestMomentumMetaContract:
@@ -745,3 +757,57 @@ class TestBrarCrNumeric:
         df["low"] = 98.0
         result = BRAR().compute(df)
         np.testing.assert_allclose(result["ar_26"].dropna(), 100.0)
+
+
+class TestBatch8MomentumNumeric:
+    def test_ac_constant_price_zero(self):
+        df = _make_ohlcv(50)
+        df["high"] = df["low"] = df["close"] = 100.0
+        result = AC().compute(df)
+        assert (result["ac"].dropna() == 0.0).all()
+
+    def test_fractals_symmetric_plateau_no_false(self):
+        """恒定价无分形（严格大于判定）。"""
+        df = _make_ohlcv(30)
+        df["high"] = df["low"] = df["close"] = 100.0
+        result = FRACTALS().compute(df)
+        assert result["fractal_high"].dropna().empty
+
+    def test_fractal_high_detected(self):
+        n = 30
+        base = np.full(n, 100.0)
+        base[15] = 110.0  # 孤立高点：两侧各 2 根都低于它
+        df = pd.DataFrame({
+            "open": base, "high": base + 0.1, "low": base - 0.1,
+            "close": base, "volume": 1000.0,
+        })
+        result = FRACTALS().compute(df)
+        assert result["fractal_high"].iloc[15] == pytest.approx(110.1)
+        assert result["fractal_high"].dropna().size == 1
+
+    def test_elder_powers_mirror(self):
+        df = _make_ohlcv(40)
+        result = ELDER().compute(df)
+        tail = result.dropna().tail(1)
+        ema = df["close"].ewm(span=13, adjust=False).mean().iloc[-1]
+        assert tail["bull_power_13"].iloc[0] == pytest.approx(df["high"].iloc[-1] - ema, rel=1e-9)
+        assert tail["bear_power_13"].iloc[0] == pytest.approx(df["low"].iloc[-1] - ema, rel=1e-9)
+
+    def test_coppock_range_and_warmup(self):
+        df = _make_ohlcv(60)
+        result = COPPOCK().compute(df)
+        # warmup = max(roc1, roc2) + wma − 1 = 14+10−1 = 23
+        assert result["coppock"].iloc[:23].isna().all()
+        assert result["coppock"].iloc[23:].notna().all()
+
+    def test_squeeze_binary_and_momentum(self):
+        df = _make_ohlcv(60)
+        result = SQUEEZE().compute(df)
+        assert result["squeeze_on"].dropna().isin([0.0, 1.0]).all()
+        assert result["squeeze_mom"].dropna().shape[0] > 0
+
+    def test_wavetrend_finite(self):
+        df = _make_ohlcv(60)
+        result = WAVETREND().compute(df)
+        assert np.isfinite(result["wt1"].dropna()).all()
+        assert np.isfinite(result["wt2"].dropna()).all()

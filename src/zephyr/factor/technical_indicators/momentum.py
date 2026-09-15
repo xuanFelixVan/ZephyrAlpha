@@ -1148,3 +1148,203 @@ class CR(TechnicalIndicatorBase):
         dn_sum = dn.rolling(window=n).sum()
         cr = up_sum / dn_sum.where(dn_sum != 0) * 100
         return pd.DataFrame({f"cr_{n}": cr}, index=data.index)
+
+
+@TechnicalIndicatorRegistry.register
+class AC(TechnicalIndicatorBase):
+    """加速振荡器（Bill Williams Accelerator Oscillator，5/34）。"""
+
+    meta = TechnicalIndicatorMeta(
+        indicator_id="ac",
+        name="加速振荡器",
+        category="momentum",
+        output_columns=["ac"],
+        input_columns=["high", "low"],
+        params={"fast": 5, "slow": 34},
+        version="1.0.0",
+        description="AC=AO−SMA(AO,5)，AO=SMA(中价,5)−SMA(中价,34)；动量加速度（Bill Williams）",
+    )
+
+    def compute(self, data: pd.DataFrame, **kwargs) -> pd.DataFrame:
+        self.validate(data)
+        if data.empty:
+            return pd.DataFrame(columns=self.meta.output_columns)
+        params = self.get_params(**kwargs)
+        fast_n, slow_n = params["fast"], params["slow"]
+        mid = (data["high"] + data["low"]) / 2
+        ao = mid.rolling(window=fast_n).mean() - mid.rolling(window=slow_n).mean()
+        ac = ao - ao.rolling(window=fast_n).mean()
+        return pd.DataFrame({"ac": ac}, index=data.index)
+
+
+@TechnicalIndicatorRegistry.register
+class FRACTALS(TechnicalIndicatorBase):
+    """威廉分形（Bill Williams Fractals，5 bar 模式）。"""
+
+    meta = TechnicalIndicatorMeta(
+        indicator_id="fractals",
+        name="威廉分形",
+        category="momentum",
+        output_columns=["fractal_high", "fractal_low"],
+        input_columns=["high", "low"],
+        params={"period": 5},
+        version="1.0.0",
+        description="上分形=高价比左右各 2 根高都高（锚在该高 bar）；下分形对称；非分形 bar 记 NaN",
+    )
+
+    def compute(self, data: pd.DataFrame, **kwargs) -> pd.DataFrame:
+        self.validate(data)
+        if data.empty:
+            return pd.DataFrame(columns=self.meta.output_columns)
+        params = self.get_params(**kwargs)
+        n = params["period"]
+        half = n // 2  # 5 bar → 左右各 2
+        h = data["high"].to_numpy(dtype=float)
+        l = data["low"].to_numpy(dtype=float)
+        m = len(h)
+        fh = np.full(m, np.nan)
+        fl = np.full(m, np.nan)
+        for i in range(half, m - half):
+            seg_h = h[i - half : i + half + 1]
+            seg_l = l[i - half : i + half + 1]
+            if h[i] > max(seg_h[:half].max(), seg_h[half + 1 :].max()):
+                fh[i] = h[i]
+            if l[i] < min(seg_l[:half].min(), seg_l[half + 1 :].min()):
+                fl[i] = l[i]
+        return pd.DataFrame(
+            {"fractal_high": pd.Series(fh, index=data.index),
+             "fractal_low": pd.Series(fl, index=data.index)},
+            index=data.index,
+        )
+
+
+@TechnicalIndicatorRegistry.register
+class ELDER(TechnicalIndicatorBase):
+    """艾达理论牛熊力（Elder-Ray Bulls/Bears Power，13）。"""
+
+    meta = TechnicalIndicatorMeta(
+        indicator_id="elder",
+        name="牛熊力",
+        category="momentum",
+        output_columns=["bull_power_13", "bear_power_13"],
+        input_columns=["high", "low", "close"],
+        params={"period": 13},
+        version="1.0.0",
+        description="Bull Power=H−EMA13；Bear Power=L−EMA13（Alexander Elder Elder-Ray），配合 EMA 趋势方向使用",
+    )
+
+    def compute(self, data: pd.DataFrame, **kwargs) -> pd.DataFrame:
+        self.validate(data)
+        if data.empty:
+            return pd.DataFrame(columns=self.meta.output_columns)
+        params = self.get_params(**kwargs)
+        n = params["period"]
+        ema_n = data["close"].ewm(span=n, adjust=False).mean()
+        bull = data["high"] - ema_n
+        bear = data["low"] - ema_n
+        return pd.DataFrame(
+            {f"bull_power_{n}": bull, f"bear_power_{n}": bear}, index=data.index
+        )
+
+
+@TechnicalIndicatorRegistry.register
+class COPPOCK(TechnicalIndicatorBase):
+    """考派尔曲线（Coppock Curve，ROC14+ROC11 的 WMA10）。"""
+
+    meta = TechnicalIndicatorMeta(
+        indicator_id="coppock",
+        name="考派尔曲线",
+        category="momentum",
+        output_columns=["coppock"],
+        input_columns=["close"],
+        params={"roc1": 14, "roc2": 11, "wma": 10},
+        version="1.0.0",
+        description="WMA10[ROC14+ROC11]，长周期底部探测；零下方谷后拐头=经典买点（Coppock 1962）",
+    )
+
+    def compute(self, data: pd.DataFrame, **kwargs) -> pd.DataFrame:
+        self.validate(data)
+        if data.empty:
+            return pd.DataFrame(columns=self.meta.output_columns)
+        params = self.get_params(**kwargs)
+        r1, r2, w = params["roc1"], params["roc2"], params["wma"]
+        roc_sum = data["close"].pct_change(r1) * 100 + data["close"].pct_change(r2) * 100
+        coppock = roc_sum.rolling(window=w).mean()
+        return pd.DataFrame({"coppock": coppock}, index=data.index)
+
+
+@TechnicalIndicatorRegistry.register
+class SQUEEZE(TechnicalIndicatorBase):
+    """挤压指标（LazyBear Squeeze，BB(20,2) 嵌入 KC(20,1.5)）。"""
+
+    meta = TechnicalIndicatorMeta(
+        indicator_id="squeeze",
+        name="挤压指标",
+        category="momentum",
+        output_columns=["squeeze_on", "squeeze_mom"],
+        input_columns=["high", "low", "close"],
+        params={"period": 20, "bb_mult": 2.0, "kc_mult": 1.5},
+        version="1.0.0",
+        description="squeeze_on=1 表 BB 完全嵌入 KC（波动压缩，变盘前兆）；squeeze_mom=线性回归拟合动量（LazyBear 口径）",
+    )
+
+    def compute(self, data: pd.DataFrame, **kwargs) -> pd.DataFrame:
+        self.validate(data)
+        if data.empty:
+            return pd.DataFrame(columns=self.meta.output_columns)
+        params = self.get_params(**kwargs)
+        n, bb_m, kc_m = params["period"], params["bb_mult"], params["kc_mult"]
+        close = data["close"]
+        basis = close.rolling(window=n).mean()
+        dev = bb_m * close.rolling(window=n).std(ddof=0)
+        bb_upper, bb_lower = basis + dev, basis - dev
+        tr = data["high"] - data["low"]
+        kc_mid = close.ewm(span=n, adjust=False).mean()
+        rng_ma = tr.rolling(window=n).mean()
+        kc_upper, kc_lower = kc_mid + kc_m * rng_ma, kc_mid - kc_m * rng_ma
+        squeeze_on = ((bb_lower > kc_lower) & (bb_upper < kc_upper)).astype(float)
+        # 动量：线性回归拟合值 − 中价均值（LazyBear 简化口径：最近 n 根的一元回归外推值）
+        y = close.to_numpy(dtype=float)
+        m = len(y)
+        mom = np.full(m, np.nan)
+        x = np.arange(n, dtype=float)
+        x_mean = x.mean()
+        x_ss = ((x - x_mean) ** 2).sum()
+        for i in range(n - 1, m):
+            seg = y[i - n + 1 : i + 1]
+            if np.isnan(seg).any():
+                continue
+            b = ((x - x_mean) * (seg - seg.mean())).sum() / x_ss
+            mom[i] = seg.mean() + b * (x[-1] - x_mean)
+        squeeze_mom = pd.Series(mom, index=data.index) - kc_mid
+        return pd.DataFrame({"squeeze_on": squeeze_on, "squeeze_mom": squeeze_mom}, index=data.index)
+
+
+@TechnicalIndicatorRegistry.register
+class WAVETREND(TechnicalIndicatorBase):
+    """波浪趋势（LazyBear WaveTrend，10/21/4）。"""
+
+    meta = TechnicalIndicatorMeta(
+        indicator_id="wavetrend",
+        name="波浪趋势",
+        category="momentum",
+        output_columns=["wt1", "wt2"],
+        input_columns=["high", "low", "close"],
+        params={"channel": 10, "avg": 21, "signal": 4},
+        version="1.0.0",
+        description="HLC3→EMA10 通道→0.015×|偏差| 归一→EMA21=WT1；WT2=SMA(WT1,4)；交叉+极值区=信号（LazyBear 口径）",
+    )
+
+    def compute(self, data: pd.DataFrame, **kwargs) -> pd.DataFrame:
+        self.validate(data)
+        if data.empty:
+            return pd.DataFrame(columns=self.meta.output_columns)
+        params = self.get_params(**kwargs)
+        ch_n, avg_n, sig_n = params["channel"], params["avg"], params["signal"]
+        hlc3 = (data["high"] + data["low"] + data["close"]) / 3
+        esa = hlc3.ewm(span=ch_n, adjust=False).mean()
+        d = (hlc3 - esa).abs().ewm(span=ch_n, adjust=False).mean()
+        ci = (hlc3 - esa) / (0.015 * d)
+        wt1 = ci.ewm(span=avg_n, adjust=False).mean()
+        wt2 = wt1.rolling(window=sig_n).mean()
+        return pd.DataFrame({"wt1": wt1, "wt2": wt2}, index=data.index)

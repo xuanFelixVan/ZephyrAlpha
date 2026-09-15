@@ -42,6 +42,9 @@ VORTEX = TechnicalIndicatorRegistry.get("vortex")
 SUPERTREND = TechnicalIndicatorRegistry.get("supertrend")
 MCGINLEY = TechnicalIndicatorRegistry.get("mcginley")
 BBI = TechnicalIndicatorRegistry.get("bbi")
+ALLIGATOR = TechnicalIndicatorRegistry.get("alligator")
+GMMA = TechnicalIndicatorRegistry.get("gmma")
+GANN_HILO = TechnicalIndicatorRegistry.get("gann_hilo")
 
 # 期望契约（catalog §2.1）：indicator_id → (name, output_columns)
 EXPECTED = {
@@ -63,10 +66,14 @@ EXPECTED = {
     "supertrend": ("超级趋势", ["supertrend_10", "supertrend_dir"]),
     "mcginley": ("McGinley动态均线", ["md_14"]),
     "bbi": ("多空指数", ["bbi"]),
+    "alligator": ("鳄鱼线", ["alligator_jaw", "alligator_teeth", "alligator_lips"]),
+    "gmma": ("顾比复合均线", ["gmma_s3", "gmma_s5", "gmma_s8", "gmma_s10", "gmma_s12", "gmma_s15",
+        "gmma_l30", "gmma_l35", "gmma_l40", "gmma_l45", "gmma_l50", "gmma_l60"]),
+    "gann_hilo": ("Gann HiLo Activator", ["gann_hilo", "gann_hilo_dir"]),
 }
 
 # 已施工算法的指标（version >= 1.0.0）
-IMPLEMENTED = {"ma", "ema", "wma", "dema", "macd", "adx", "dmi", "cci", "sar", "trix", "dkx", "hma", "zlema", "kama", "vortex", "supertrend", "mcginley", "bbi"}
+IMPLEMENTED = {"ma", "ema", "wma", "dema", "macd", "adx", "dmi", "cci", "sar", "trix", "dkx", "hma", "zlema", "kama", "vortex", "supertrend", "mcginley", "bbi", "alligator", "gmma", "gann_hilo"}
 # 仍为骨架的指标（compute 抛 NotImplementedError）
 SKELETON = set(EXPECTED) - IMPLEMENTED
 
@@ -83,7 +90,7 @@ class TestTrendRegistered:
             assert iid in metas, f"趋势指标 '{iid}' 未注册"
 
     def test_count(self):
-        assert len(TechnicalIndicatorRegistry.list_by_category("trend")) == len(EXPECTED) == 18
+        assert len(TechnicalIndicatorRegistry.list_by_category("trend")) == len(EXPECTED) == 21
 
 
 class TestTrendMetaContract:
@@ -806,3 +813,34 @@ class TestBbiNumeric:
         result = BBI().compute(df)
         assert result["bbi"].iloc[:23].isna().all()
         assert result["bbi"].iloc[23:].notna().all()
+
+
+class TestBatch8TrendNumeric:
+    def test_alligator_uptrend_ordering(self):
+        """上升趋势：唇>齿>颚（快线在上方）。"""
+        df = _make_ohlcv(60)
+        rising = np.linspace(100, 160, 60)
+        df["high"] = rising + 0.5
+        df["low"] = rising - 0.5
+        result = ALLIGATOR().compute(df)
+        tail = result.dropna().tail(5)
+        assert (tail["alligator_lips"] > tail["alligator_teeth"]).all()
+        assert (tail["alligator_teeth"] > tail["alligator_jaw"]).all()
+
+    def test_gmma_all_columns_registered_and_ema_match(self):
+        df = _make_ohlcv(70)
+        result = GMMA().compute(df)
+        assert len(result.columns) == 12
+        expected_s3 = df["close"].ewm(span=3, adjust=False).mean()
+        np.testing.assert_allclose(result["gmma_s3"].dropna(), expected_s3.dropna(), rtol=1e-10)
+
+    def test_gann_hilo_direction_binary_and_range(self):
+        df = _make_ohlcv(60)
+        rising = np.linspace(100, 160, 60)
+        df["high"] = rising + 0.5
+        df["low"] = rising - 0.5
+        df["close"] = rising
+        result = GANN_HILO().compute(df)
+        valid = result["gann_hilo_dir"].dropna()
+        assert valid.isin([1.0, -1.0]).all()
+        assert (valid == 1.0).all()

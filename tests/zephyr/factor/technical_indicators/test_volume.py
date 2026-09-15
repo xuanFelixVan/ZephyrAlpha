@@ -37,6 +37,7 @@ EXPECTED = {
     "kvo": ("Klinger量震荡器", ["kvo", "kvo_signal"]),
     "nvi": ("负成交量指标", ["nvi"]),
     "pvi": ("正成交量指标", ["pvi"]),
+    "force_index": ("强力指数", ["fi_13"]),
 }
 
 IMPLEMENTED = set(EXPECTED)  # 全部 7 个已施工完成
@@ -60,7 +61,7 @@ class TestVolumeRegistered:
             assert iid in metas, f"成交量指标 '{iid}' 未注册"
 
     def test_count(self):
-        assert len(TechnicalIndicatorRegistry.list_by_category("volume")) == len(EXPECTED) == 13
+        assert len(TechnicalIndicatorRegistry.list_by_category("volume")) == len(EXPECTED) == 14
 
 
 class TestVolumeMetaContract:
@@ -286,6 +287,7 @@ EOM = TechnicalIndicatorRegistry.get("eom")
 KVO = TechnicalIndicatorRegistry.get("kvo")
 NVI = TechnicalIndicatorRegistry.get("nvi")
 PVI = TechnicalIndicatorRegistry.get("pvi")
+FORCE_INDEX = TechnicalIndicatorRegistry.get("force_index")
 
 
 class TestWVADCompute:
@@ -347,3 +349,19 @@ class TestBatch2bVolumeNumeric:
         df = _make_ohlcv(120)
         result = KVO().compute(df)
         assert result["kvo"].notna().sum() == result["kvo_signal"].notna().sum()  # EMA 无预热 NaN
+
+
+class TestForceIndexNumeric:
+    def test_constant_volume_price_flat_fi_zero(self):
+        df = _make_ohlcv(40)
+        df["close"] = 100.0
+        result = FORCE_INDEX().compute(df)
+        assert (result["fi_13"].dropna() == 0.0).all()
+
+    def test_fi_uses_volume(self):
+        df = _make_ohlcv(40)
+        fi1 = FORCE_INDEX().compute(df)["fi_13"].dropna().iloc[-1]
+        df2 = df.copy()
+        df2["volume"] = df2["volume"] * 2
+        fi2 = FORCE_INDEX().compute(df2)["fi_13"].dropna().iloc[-1]
+        assert fi2 == pytest.approx(fi1 * 2)
