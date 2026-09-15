@@ -45,7 +45,28 @@ ZephyrAlpha 是 A 股个人量化系统，100% AI 多会话并行开发。本线
 - `D:\ZephyrAlpha\src\zephyr\backtest\core\decision_gate.py` —— A5 另一半（DecisionGateConfig，tests 用 0.5）
 - 台账：CH 表 `c1_backtest.strategy_screen`（145 条有 DSR / 51 条 is-only；走 `DatabaseService().get_clickhouse_conn().execute()`）
 
-## 四、下一班任务：DSR 修口径（五件，总闸）
+## 四、DSR 修口径（五件，总闸）——✅ 已全部完成（2026-09-15 白班，st-f06dsr-shift2-20260915）
+
+> **⚠️ 状态更新（2026-09-16 00:45 复核，st-f06combo-20260915）：五件已全部交付并验收（2505 测试回归全绿），任何会话不得重复施工。**
+>
+> | 件 | 状态 | 凭据 |
+> |---|---|---|
+> | A1 N 账本 | ✅ | MOD-BT-200 `src/zephyr/backtest/core/n_trial_ledger.py`（commit f4d1ea4f），真源 `docs/01_policies_and_standards/_registry/catalogs/trial_ledger_registry.yaml`（CAS 唯一机器写入口），N_cum=4481（台账 269+批次 A 4212） |
+> | A2 台账 N 字段 | ✅ | `num_trials` 列已建，596 行回填（批级 N，23 个 run 可考证值） |
+> | A3 存量重算 | ✅ | 261 行重算（refold 199+approx 62）+8 行声明跳过；**0.9809→0.0517 翻案**（锚点断言 fail-closed）；报告=`docs/_working/dsr-recalc/2026-09-15-dsr-recalc-report.md`+逐行 rows.yaml；**145 条冻结已解除** |
+> | A4 metrics 退役 | ✅ | calculate_dsr 已退役（metrics.py:250 仅存注释），消费方迁官方件（commit 0cbf503a） |
+> | A5 阈值 SSOT | ✅ | 三线（0.95 放行/0.5 存疑下界/中间 fail-closed）统一引用 MOD-SIM-024 常量，decision_gate+fixer 归一 |
+> | 口径接线 | ✅ | `_c4_engine.batch_deflated_sharpe(num_trials=累计口径)`（commit 5548b45c）+ 落库即回填 N 账本（769e0f53 红蓝自攻修复） |
+>
+> **新分布实况**：n=261 重算行，max=0.1448，≥0.5 存活=0，≥0.95 存活=0——与影响评估"累计口径 0/133 存活"预测一致且更严。工厂主目标=增量 IC+阴性库（立场 c）再次被数据确认。
+>
+> **当前唯一后续（原批次 B 总闸已开）**：批次 B 子空间穷尽（立项稿 §十二）+ N_eff effective_rank 落地（账本已预留 n_trials_effective 披露位）。
+
+---
+
+## 四·原任务书（存档，勿再执行）
+
+### 下一班任务：DSR 修口径（五件，总闸）
 
 - **A1 N 账本累计计数器**：全局累计试验数，真源入注册表；计数边界=裁定锁定"只算可审计的机器回测次数（台账+run 档案）"，人工历史登记为已知下界。
 - **A2 台账 N 字段**：strategy_screen 加 `num_trials_used` 字段并回填可考证值。考证方法已验证（第 0 步）：单策略 run=1、多策略 run=批内净收益非空行数（`SCR-C4-20260913-232609`=1、`SCR-C4-20260913-232100`=4、translated 批≈33-48）。schema 变更走生成器禁手改。
