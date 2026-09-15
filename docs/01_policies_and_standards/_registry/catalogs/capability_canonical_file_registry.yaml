@@ -16296,6 +16296,10 @@ creation_tokens:
   token: "kline1min-valuation-coverage-investigation-20260915"
   created_by: "st-k1handoff-0915"
   capability: "data_coverage_investigation"
+- file: "docs/_working/reports/2026-09-16-c4-audit-batch2.md"
+  token: "c4-audit-batch2-20260916"
+  created_by: "st-expectation-20260915"
+  capability: "c4_history_repair"
 - file: docs/_working/board_synthesis/2026-09-15-phase1-calibration-report.md
   token: board-synthesis-phase1-calibration-20260915
   created_by: st-880fill-20260911

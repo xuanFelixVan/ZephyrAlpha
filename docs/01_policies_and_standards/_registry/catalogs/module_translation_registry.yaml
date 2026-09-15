@@ -49644,6 +49644,41 @@ entries:
   desc_zh: "A2 台账 N 考证回填 + A3 存量 DSR 按累计口径重折减回填，产出逐行报告"
   desc_en: ""
   plain_zh: "把台账里所有历史 DSR 成绩按今天的总试验数重新算一遍：以前每批只跟自己批内比， solo 跑的零折减虚高；现在统一用全厂累计考试次数打折，顺便把没算过 DSR 的缺口补上，算完解冻台账"
+- module_path: scripts/backtest/forward_post.py
+  domain_id: D_BACKTEST
+  name_zh: "E7 前哨对账器"
+  name_en: ""
+  desc_zh: "E4 及格策略→模拟盘每日对账：预测vs实际偏差、滑点实测、不达标退回 E6"
+  desc_en: ""
+  plain_zh: "策略工厂的模拟盘哨兵：考及格的策略先上模拟盘练兵，每天拿'当时说会怎样'和'实际走成怎样'对账，差距太大就打回重修。真金白银上场前最后一道实战检验。"
+- module_path: scripts/backtest/graph_enrich_ingest.py
+  domain_id: D_BACKTEST
+  name_zh: "图谱入图器"
+  name_en: ""
+  desc_zh: "暂存台账审核通过后批量写入 ig_fact 正图（Owner 审批门）"
+  desc_en: ""
+  plain_zh: "策略工厂的地图审图员：把暂存清单里老板审核过的供应链关系批量画到产业链大地图上。没有老板点头绝不画，防大模型幻觉污染独家资产。"
+- module_path: scripts/backtest/kronos_finetune_prep.py
+  domain_id: D_BACKTEST
+  name_zh: "Kronos 微调数据准备"
+  name_en: ""
+  desc_zh: "面板→Kronos 微调数据格式（GPU 夜窗批产前置件）"
+  desc_en: ""
+  plain_zh: "给 Kronos 大模型备课的教务：把咱们的行情数据整理成它能吃的教材格式，等 GPU 夜窗排到就开课。"
+- module_path: scripts/backtest/mcts_expression_search.py
+  domain_id: D_BACKTEST
+  name_zh: "MCTS 第三轨搜索"
+  name_en: ""
+  desc_zh: "蒙特卡洛树搜索组织公式探索（AlphaMuse 式频繁子树规避）"
+  desc_en: ""
+  plain_zh: "策略工厂的第三台矿机（实验档）：用树搜索帮大模型探路挖公式，防止老挖同款。前两台矿机产够了才启用。"
+- module_path: zephyr.gov_enforcement.rule_bridge.commit_preflight
+  domain_id: D_GOV_CODE_QUALITY
+  name_zh: "提交预检前移"
+  name_en: "Commit Preflight"
+  desc_zh: "锁外对提交文件清单试跑确定性门禁白名单，一过式失败清单快败（exit 8）"
+  desc_en: "Lock-free preflight of deterministic gates with one-pass failure list"
+  plain_zh: "提交前的快速体检站：排队拿锁之前先花几秒检查肯定过不了的毛病，一次列全，免得排队进门才被拦"
 
 battle_map_steps:
 - step_id: BM-BUY-05
