@@ -9,6 +9,7 @@ date: 2026-09-15
 
 > 骨架定位：S08 开完钱包后，**模拟盘四件套（账本日跑+平台日刊+盘中会话+月度评估入口）自动跑**。
 > 当前状态=❌ 断：全部 manual CLI，调度零接线。本环节=C2 施工主地基（与 S10 共用排班方案）。
+> **【施工班 2026-09-15 回填】C2 已落地：`sim_ledger_daily`→`sim_journal_daily` 挂 daily_kline 唤醒（SIM_DAILY_WAKE_TASKS 子串匹配），date-marker 日幂等；盘中会话仍 Disabled（Owner 门）不变。**
 
 ## 1 现状盘点（自动化状态+file:line 证据）
 
@@ -124,3 +125,9 @@ date: 2026-09-15
 - 矿脉层面：调度面/CLI 契约/盘中会话/外部惯例四向闭环，6 signal 零 noise，封批转 C2。
 - 方案层面：四件套自动跑直接消灭"每个交易日人肉跑四个 CLI"的人工位，终局必经件，**施工**
   裁定；盘中会话真信号化为 S14 依赖欠账，挂起排期（解锁条件=B4 真信号源施工）。
+
+## 7 施工班状态回填（2026-09-15）
+
+- C2 落地（pipeline_events.py）：`sim_ledger_daily`→`sim_journal_daily` 日件链挂 daily_kline/kline_daily/kline_index 唤醒（SIM_DAILY_WAKE_TASKS，task_id 子串匹配），FIFO 串行保证日刊看到当日钱包行；幂等双闸=当日 UTC date-marker（消费成功才落）∨ 非 poison 同 kind 在队；DAG 并行竞态由 journal 失败重试兜底（行情未齐→账本 RuntimeError→留队，下个数据任务完成唤醒重试）。
+- 月度档：`sim_deviation_monthly` 见 S10；`sim_memo_monthly` 从未轮转的病根修复（毒丸不算已入队，C2/X2）。
+- §4 堵点状态：1/2/5 已解（调度体=事件唤醒）；3/4 维持（盘中会话 Disabled=Owner 门、真信号源 B4 未施工）。

@@ -10,6 +10,7 @@ date: 2026-09-15
 > 拍板（S13）。当前=❌ 断（sim_governance 建议只 print）。本环节挖矿核心三问：①建议怎么
 > 自动生成并落档；②告警怎么真实送达 Owner（现有 AlertManager 是不是真通道）；③owner_token
 > 机制全貌（决定拍板合法性）。
+> **【施工班 2026-09-15 回填】C4 已落地：promotion_advisory 三路证据合流 builder（hold 不产包+safe_write 幂等）+decide 全链（token sha256 常量时间比对→FSM→注册表 CAS→台账只存指纹→alerter 回执，已决幂等拒）+OwnerTokenGuard 生产化（ZEPHYR_OWNER_APPROVAL_TOKEN+fail-closed）+decide 头部 KillSwitch 总闸（红蓝发现#1）。飞书/SMTP 凭据=Owner 侧唯一缺口。**
 
 ## 1 现状盘点（自动化状态+file:line 证据）
 
@@ -143,3 +144,11 @@ sim→production 无执行器（intake 只到 sim）。
 - 一句话结论：**告警的真通道是 data/alerter（飞书/SMTP）而非 AlertManager（纯内存假送达）；
   owner_token 目前只是"非空即真"的门闩，C4 必须把它升级为 secrets 绑定的一次性令牌校验，
   否则前端拍板（S13）无合法凭据可带。**
+
+## 7 施工班状态回填（2026-09-15）
+
+- 建议包 builder✅：三路证据合流（SCR-SIMGOV/SIM-DEV 偏离/bt-fw-auto 整装证据+sim_memo 指针），hold 不产包，safe_write 幂等。
+- 推送✅（真通道=data/alerter）：管线告警全量接 Alerter（7f57726331）；飞书 webhook/SMTP 双通道内建于 Alerter.notify_channels，**Owner 凭据未配=当前降级本地告警文件**（Alerter 原语义，不抛异常）。
+- owner_token✅：secrets 键 ZEPHYR_OWNER_APPROVAL_TOKEN（secret_registry 106→107，4cb9d58dd7；密钥本体仓根 .env，gitignore 覆盖已验）；校验=sha256 常量时间比对+未配置 fail-closed+非字符串 token isinstance 拒（红蓝加固）；decide 台账只存 token 指纹前 12 位。
+- 新增（挖矿未预列）：decide 头部 KillSwitch 总闸（红蓝发现#1——最敏感流转反无总闸，对齐 intake 同款 fail-closed 探针）。
+- §4 堵点状态：1/2/3/4 已解；5（FSM paper 态）维持挂起；6（NotificationRouter 装配）维持挂起；7（审批台账）已解（decision 台账在 decide 链内落档）。

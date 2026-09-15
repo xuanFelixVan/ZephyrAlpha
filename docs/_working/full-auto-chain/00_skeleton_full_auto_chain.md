@@ -27,13 +27,13 @@ status: active
 | S03 | 因子验证与认证 | 四闸/Wilson/FDR/DSR/ANOVA/阴性库 | 四闸+认证✅日链自动；DSR 链欠账 | 挖矿+核验对链路阻断性 |
 | S04 | 假说进货与预审 | 五车道进货+E2 预审 | ✅ 周窗自动 | 挖矿+核验 |
 | S05 | 策略构造与翻译 | E3 construct+C3 翻译成考卷件 | ✅ 自动（已实弹 1 件） | 挖矿+核验 |
-| S06 | 回测批考 | E4 C4 周六批考+过拟合闸 | ✅ 计划任务就绪（首跑未发生） | 挖矿+核验 |
+| S06 | 回测批考 | E4 C4 周六批考+过拟合闸 | ✅ 双窗编排就绪（C0 落地；首跑=09-19 周六） | 挖矿+核验 |
 | S07 | 入库升格 | C6 intake：FDR 门→candidate→预授权 sim→挂图 | ✅ 事件自动 | 挖矿+核验 |
 | S08 | 模拟盘开户 | 新 sim 策略自动开钱包 | ❌ 断（账本硬编码单策略） | **施工 C1** |
 | S09 | 模拟盘运行 | 账本日跑/健康日刊自动跑 | ❌ 断（全部 manual CLI） | **施工 C2** |
-| S10 | 模拟盘成绩评估 | 月度偏离/连续 pass-breach 判定自动跑 | ❌ 断（手动 CLI） | **施工 C2** |
+| S10 | 模拟盘成绩评估 | 月度偏离/连续 pass-breach 判定自动跑 | ✅ C2 已落地（月度档+治理告警+run 档案） | **施工 C2 已收口** |
 | S11 | 整装回测接线 | sim 毕业→TDM 全景图 sleeve→参与整装组合回测→出证据 | ❌ 断（挂图有、参与整装回测无自动接线） | **施工 C3** |
-| S12 | 转正建议生成与推送 | 证据包+告警推送 Owner | ❌ 断（建议只 print） | **施工 C4** |
+| S12 | 转正建议生成与推送 | 证据包+告警推送 Owner | ✅ C4 已落地（建议包+真通道推送+token 生产化） | **施工 C4 已收口** |
 | S13 | 前端转正汇报页+拍板 | 转正建议页+Owner 前端拍板按钮 | ❌ 未建（后端 OwnerTokenGuard 已有） | **施工 C5** |
 | S14 | 实盘流转与 QMT 桥 | 拍板后流转+QMT 模拟桥下单实测 | ❌ 未实测（100 股模拟单） | **施工 C6** |
 | S15 | 实盘后监控与衰减 | E6 判死/E9 归因/衰减回灌 | 部分（转正后闭环） | 挖矿+登记，边际施工 |
@@ -85,3 +85,20 @@ status: active
 | S13 | S13_frontend_approval/README.md |
 | S14 | S14_live_qmt_bridge/README.md |
 | S15 | S15_post_live_monitoring/README.md |
+
+## 6. 施工班收口状态（2026-09-15 回填）
+
+施工班（st-autopipeline-20260915 及兄弟班）当日落地，逐项对账（各环节细节见对应子文档文末"施工班状态回填"节）：
+
+| 项 | 状态 | 证据锚点 |
+|----|------|---------|
+| C0 OOS 复测自动化 | ✅ 已落地 | run_c4_exam.ps1 双窗编排：Stage1 IS `--auto-only --defer-emit`+Stage2 OOS `--auto-oos-pending`，双窗齐才 emit c4_batch_completed |
+| C1 模拟盘自动开户 | ✅ 已落地 | intake emit `sim_wallet_due`+pipeline_events handler（ensure_wallet 幂等）；sim_paper_ledger 参数化 `--strategy-id` |
+| C2 模拟盘四件套排班 | ✅ 已落地 | sim_ledger_daily→sim_journal_daily 挂 daily_kline 唤醒（date-marker 日幂等）；sim_deviation_monthly 月度档+串行治理建议器；sim_memo_monthly 毒丸病根修复（C2/X2）；sim_governance 补 Alerter 推送+run 档案 |
+| C3 整装回测接线 | ✅ 已落地（实弹） | translated_strategy_adapter+generate_framework_plan_from_tdm（fw-tdm-current 14 员 Σ=1.0）+run_fw_backtest_due 自动触发；实弹整装回测 ok=true（242 净值点、面板对账逐位过、36.8s）；已知边界=MOMTREND 指数腿无 hfq 行情不成交 |
+| C4 转正建议包+token 生产化 | ✅ 已落地 | promotion_advisory 三路合流 builder+decide 全链（sha256 常量时间比对→FSM→注册表 CAS→台账指纹留痕→alerter 回执）；OwnerTokenGuard 升级（ZEPHYR_OWNER_APPROVAL_TOKEN+fail-closed）；decide 头部 KillSwitch 总闸补齐。飞书/SMTP 凭据=Owner 侧唯一缺口 |
+| C5 前端转正页+拍板 | ✅ 已落地 | web/pages/promotion.html+features/promotion+GET /api/promotion-advisories+POST /api/promotion-decide+五登记；api_server [INVARIANTS] 头注扩容留痕（第四写端点） |
+| C6 QMT 模拟桥 100 股实测 | ✅ 已收口 | 2026-09-15 10:52 全通过（connect→查仓→SUBMITTED→CANCELLED），双终端 TCP 配对辨识过，证据=evidence/qmt-smoke-result.yaml；实战治本 price_type LIMIT 0→11（#ARCH-XTQUANT-API-COMPAT-001）+限价改跌停价申报 |
+| C7 顺路小件 | 部分 | S02-N2 MIN_INCR_IC 0.0→0.01 ✅；S03-N1 strategy_screen num_trials 列 ✅（c4_batch_screen 落库+DDL 部署件）；S05-G1 --created-by 硬编码 ❌ 未修；S07-G2 CLASS_NODE_MAP multifactor 键 ❌ 未补 |
+
+链路现状一句话：S01→S14 事件链全部接通，**2026-09-19（周六）10:00/14:00 首次全自动双窗批考+入库是下一验收节点**；C7 两件未修项与飞书凭据提请下批处置。

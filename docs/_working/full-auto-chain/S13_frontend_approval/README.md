@@ -10,6 +10,7 @@ date: 2026-09-15
 > 拍板后策略进入整装（不是单策略直进实盘）。当前=❌ 未建（后端 OwnerTokenGuard 已有但无
 > 执行器）。本环节挖矿核心：①页面怎么挂进前端（新版 web/ 的注册模式）；②页面↔API 契约
 > 惯例；③审批/确认类 UI 先例可抄哪件；④FSM 状态怎么透出。
+> **【施工班 2026-09-15 回填】C5 已上线：web/pages/promotion.html+features/promotion 引擎（建议卡三态配色 promote 绿·hold 灰·demote 红/need_confirm 两段式拍板/30s 轮询拍板在途暂停/空态诚实文案）+GET /api/promotion-advisories+POST /api/promotion-decide+五登记；api_server [INVARIANTS] 头注扩容留痕（第四写端点，授权=Owner 通宵指令+宪法 §5 拍板门位数字化）。**
 
 ## 1 现状盘点（自动化状态+file:line 证据）
 
@@ -147,3 +148,9 @@ date: 2026-09-15
 - 一句话结论：**新页照 chainmap/factory 先例五步挂进 web/（旧 Panel 已废禁用）；拍板按钮
   抄 sv-page 的 need_confirm 两段式；最大断点不是前端而是后端——lifecycle 无透出 API、
   拍板无写端点、token 无签发，三件后端补齐则前端两天可落。**
+
+## 7 施工班状态回填（2026-09-15）
+
+- C5 全量落地（6df0e6b898）：页面+引擎按 §5 方案执行；拍板交互=sv-page 同款 need_confirm 两段式；三态配色复用站点 badge 体系；五登记（loader.js PAGES/index.html nav-item/app1.js GRP_OF/manifest.yaml/frontend_map.yaml F-PROMO-BOARD·F-PROMO-DECIDE）+scan_frontend_pages 在册核验。
+- 端点健壮性：执行器缺位降级 200 ok:false（空态不 500）；400 非法输入/503 执行器缺位/500 意外；FileNotFoundError→业务拒绝 not_found（红蓝发现#2 修复）；TestClient 12 例+前端门禁 49 例全绿。
+- §4 堵点状态：1/2/3/4/6 已解（lifecycle 透出经 /api/promotion-advisories 合并注册表现值；拍板写端点已上；头注不变量扩张已留痕；token 签发体系已建；decision 台账=decide 链内落档）；5（词表分裂）维持挂起——页面按注册表现值显示；7（双登记）由生成器核验兜住。

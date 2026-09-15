@@ -75,8 +75,8 @@ date: 2026-09-15
 ## 5 施工项建议
 
 **本班施工：无阻断项**（§1.4 已证链路通）。若施工班有余力按序：
-- **N1（低风险，建议做）**：strategy_screen 台账 **N 字段落 schema**——c4_batch_screen.py 落库列追加 `num_trials`（批内实际行数，非 solo 口径），run 档案 summary 同步；验收=新批每行可查 N，历史行 NULL 留痕。这是 DSR 解冻三步（N 账本→存量重算→回填）的地基，今天不做、每多跑一批冻结债多一批。
-- **N2（文档修正）**：pattern_evidence_certifier.py 文件头 ALGO_FLOW S2 注释改为"消费 bhy_fdr.bh_qvalues"（一处注释，消除单源假象）。
+- **N1（低风险，建议做）**：strategy_screen 台账 **N 字段落 schema**——c4_batch_screen.py 落库列追加 `num_trials`（批内实际行数，非 solo 口径），run 档案 summary 同步；验收=新批每行可查 N，历史行 NULL 留痕。这是 DSR 解冻三步（N 账本→存量重算→回填）的地基，今天不做、每多跑一批冻结债多一批。**【已落地 2026-09-15：c4_batch_screen.py:67/288-294 落库列+scripts/ch/apply_strategy_screen_num_trials_ddl.py 部署件】**
+- **N2（文档修正）**：pattern_evidence_certifier.py 文件头 ALGO_FLOW S2 注释改为"消费 bhy_fdr.bh_qvalues"（一处注释，消除单源假象）。**【未修，登记维持】**
 
 **挂起排期（写明解锁条件）**：
 - H1 DSR 解冻三步（N 账本重建→存量按可考 N 重算回填→评估拨 dsr_threshold；解锁=N1 落地+重算工具就绪；真源=dsr-enable-impact-assessment.md §六）；

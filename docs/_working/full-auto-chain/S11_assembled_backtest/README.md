@@ -136,10 +136,10 @@ get_framework_plan(plan_id)                      ← config/framework_plans.yaml
 
 | # | 堵点 | 证据 | 后果 |
 |---|------|------|------|
-| 1 | **断桥①**：TDM PP-001 权重不进 runner | framework_plans.yaml 零 STR-；TDM sleeves 无回测消费方 | 挂图=纸面动作，整装回测永远跑"旧 8 员" |
-| 2 | **断桥②**：STR-* 翻译件无成员适配器 | build() 接口 vs StrategyRegistry.generate_target_weights 两套契约 | 即使把 STR-* 写进方案表，runner 也造不出其面板 |
-| 3 | **断桥③**：整装回测无自动触发 | 仅 API 人工触发；无 CLI/事件/计划任务 | "整装回测完毕才算成功"无人值守不可达 |
-| 4 | regime 日序无持久化生产 | regime_snapshot_history 写方 print_regime_history manual；动态模式要求显式注入 | 自动跑动态整装缺日序供给件 |
+| 1 | **断桥①**：TDM PP-001 权重不进 runner【已解 2026-09-15：generate_framework_plan_from_tdm 落地 fw-tdm-current】 | framework_plans.yaml 零 STR-；TDM sleeves 无回测消费方 | 挂图=纸面动作，整装回测永远跑"旧 8 员" |
+| 2 | **断桥②**：STR-* 翻译件无成员适配器【已解 2026-09-15：translated_strategy_adapter 落地（STR- 前缀路由，PIT 安全）】 | build() 接口 vs StrategyRegistry.generate_target_weights 两套契约 | 即使把 STR-* 写进方案表，runner 也造不出其面板 |
+| 3 | **断桥③**：整装回测无自动触发【已解 2026-09-15：run_fw_backtest_due 自动触发件落地（plan 指纹幂等闸+regime 新鲜度闸）】 | 仅 API 人工触发；无 CLI/事件/计划任务 | "整装回测完毕才算成功"无人值守不可达 |
+| 4 | regime 日序无持久化生产【部分：fw handler 直读 regime_snapshot_history+新鲜度闸；日更生产件未落地，登记维持】 | regime_snapshot_history 写方 print_regime_history manual；动态模式要求显式注入 | 自动跑动态整装缺日序供给件 |
 | 5 | 标的池无自动口径 | API body 必填 symbols，人工给 | 无人值守无法定参（UNI 注册表有 universe 资产，未接） |
 | 6 | 耗时/资源未实测 | 仅产物时间戳推断分钟级 | C3 排班与超时参数缺依据 |
 | 7 | walk-forward/CPCV/归因层未接线 | R6 库存盘点 | 整装证据包缺 OOS 稳健性与归因章（远期欠账，不阻 C3 最小路径） |
@@ -192,3 +192,9 @@ get_framework_plan(plan_id)                      ← config/framework_plans.yaml
 - 一句话结论：**整装回测 runner=framework_composer.run_framework_backtest，已被人工跑通；
   缺的是 TDM PP-001→方案表的生成桥、STR-* 翻译件面板适配器、事件式自动触发三件，
   三件齐则"挂图→整装回测→证据包"全自动可达。**
+
+## 7 施工班状态回填（2026-09-15）
+
+- C3 六件落地（91566ed7bc，auto_mount emit 挂钩由 81a3c6c050 同文件收口）：①translated_strategy_adapter（STR-* 前缀路由进 composer 成员契约，翻译件 weights 行 t=≤t 收盘信息目标权重、引擎 exec_lag=1 天然 PIT 安全，零 shift 零归一）；②generate_framework_plan_from_tdm（TDM PP-001 sleeves→fw-tdm-current，纯确定性渲染重跑零 diff+写后重读自校验）；③run_fw_backtest_due 自动触发（重生成方案→整装回测→证据包 fw-auto/，plan 指纹幂等闸+regime 新鲜度闸）。
+- 实弹对账：fw-tdm-current 14 员 Σ=1.0、整装回测 ok=true、242 净值点面板对账逐位过、36.8s、幂等复跑 skip 验证——§1.4"耗时未实测"欠账已回填。
+- 已知边界：MOMTREND 000300 指数腿无 hfq 行情不成交；kline_hfq 09-11 双写 5206 对已由 B3 模板去重解锁、数据域根修留 Owner/数据班；断桥④（regime 日更生产件）未落地维持登记。

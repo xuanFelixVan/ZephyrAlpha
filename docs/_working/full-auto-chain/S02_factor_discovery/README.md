@@ -69,7 +69,7 @@ date: 2026-09-15
 ## 5 施工项建议
 
 **本班施工（若施工班接单，按优先序）**：
-- **N1 图形态道自动化第一批**：新建 `scripts/factor/pattern_auto_quantifier.py`（消费 chart_pattern_registry.yaml 中 algorithm_status=pending_backtest 且识别规则可代码化的 candlestick 77 条先行——TA-Lib 61 函数有现成映射）；产出追加出生证 CSV（复用 lane_c 出生证 schema，birth_channel="P"）；验收=≥60 条 candlestick 完成量化+win_rate 表可查+零人工介入连跑 3 个交易日。
+- **N1 图形态道自动化第一批**：新建 `scripts/factor/pattern_auto_quantifier.py`（消费 chart_pattern_registry.yaml 中 algorithm_status=pending_backtest 且识别规则可代码化的 candlestick 77 条先行——TA-Lib 61 函数有现成映射）；产出追加出生证 CSV（复用 lane_c 出生证 schema，birth_channel="P"）；验收=≥60 条 candlestick 完成量化+win_rate 表可查+零人工介入连跑 3 个交易日。**【未接单，维持登记】**
 - **N2 lane C2 验收线收紧**：`lane_c2_agentic_miner.py` MIN_INCR_IC 由 0.0 提为 0.01（或 IC 显著性 t 检验 n≥1000）；验收=次名 0.0052 类候选不再入库，E2 预审积压下降。
 
 **挂起排期（写明解锁条件）**：
@@ -85,3 +85,8 @@ date: 2026-09-15
 - 内部 6 向+外部 4 轮全 signal，无 noise 轮——**矿脉未枯，时间盒封批**。
 - 长尾矿脉登记（未挖，非封矿）：①缠论/Elliott 类主观形态的量化可行性专项（registry 已有 v2.2 refinements 字段承载）；②LLM 挖矿的 prompt 进化策略（FITEE 综述分类学可作提纲）；③factors 赛马计分板的前端呈现（S13 边界）。
 - 方案封矿：无（本环节全部发现终局有位置）。
+
+## 7 施工班状态回填（2026-09-15）
+
+- N2 已落地：MIN_INCR_IC 0.0→0.01（lane_c2_agentic_miner.py:60，"S02-N2 收紧"注释留痕）。
+- N1 图形态道自动量化器未接单（chart_pattern_registry 待量化条目维持 pending_backtest），仍是全链最大人工残留；挂起项 H1-H6 状态全部不变。

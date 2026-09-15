@@ -8,7 +8,7 @@ date: 2026-09-15
 
 ## 1 现状盘点（自动化状态+file:line 证据）
 
-**结论先行：C6 自动入库是四段中治理设计最完整的——事件驱动+CAS 只增+FSM 预授权+Owner 门，机制层面已"全自动 only-add"；但一次生产性自动入库都没发生过（断点在上游 OOS 缺口），注册表 157 条里 147 条 candidate 积压待复检。**
+**结论先行：C6 自动入库是四段中治理设计最完整的——事件驱动+CAS 只增+FSM 预授权+Owner 门，机制层面已"全自动 only-add"；但一次生产性自动入库都没发生过（断点在上游 OOS 缺口），注册表 157 条里 147 条 candidate 积压待复检。****【施工班 2026-09-15 回填：上游 OOS 缺口已由 C0 解（双窗编排），首条生产性自动入库验收节点=2026-09-19 首跑；intake 侧另新增历史批漏挂自愈（23a4fa4b01）；S07-G2 multifactor 键仍未补。】**
 
 ### 1.1 编排本体（MOD-BT-189）
 - `src/zephyr/strategy_pipeline/intake.py`：`run_intake` L256-357 六步=①bothwin 及格→②BH-FDR（q=0.10，L57，门的是 sim 流转非候选登记）→③ρ>0.6 聚类簇首（L58，`cluster_heads` L84-122 并查集+strength 定簇首）→④注册表追加（deterministic STR-<家族>-<序号> L301-303，三轴差异化论证 `differentiation_ok` L126-151）→⑤auto_mount 挂图→⑥FSM 预授权流转→⑦报告落盘+回执。
@@ -58,7 +58,7 @@ date: 2026-09-15
 | 2 | **147 candidate 积压无复检机制**：未过 FDR/未及格者留观但无月度复检事件；FSM shelved 转换无自动触发方 | strategy_registry.yaml 157 条；pipeline_events 月度档仅 mount_audit/sim_memo | 中（注册表只进不出） |
 | 3 | **毒丸停摆单点**：intake 失败 3 次=事件毒丸等人（KillSwitch/CH 故障场景） | pipeline_events.py:196-199 | 中（低频高影响） |
 | 4 | 三轴启发式初值"语义字段待复核"=每条自动入库埋一个人工复核尾巴 | intake.py:207 | 低（可积累成债） |
-| 5 | multifactor 类挂图无节点映射，自动入库条目可能永不挂图（自愈循环空转） | auto_mount.py:62-66 vs screen_source.py:238 | 中（S11 前必须解） |
+| 5 | multifactor 类挂图无节点映射，自动入库条目可能永不挂图（自愈循环空转）【未修 2026-09-15 核验：auto_mount.py:62-65 仍无 multifactor 键】 | auto_mount.py:62-66 vs screen_source.py:238 | 中（S11 前必须解） |
 | 6 | IS 批标签 `C4-translated-20260912` 硬编码两处（screen_source.py:38、c4_batch_screen.py:49）：将来换 IS 窗口需同步改，无单一真源 | 两文件对照 | 低（技术债） |
 | 7 | sim→production 的 Owner 证据包（S12 建议书）只有 sim_memo_monthly 生成器，无推送——Owner 拍板位后端好、前端零 | pipeline_events.py:251-256 | 边界登记（S12/S13 施工域） |
 
@@ -78,3 +78,10 @@ date: 2026-09-15
 - **矿脉封矿**：7 轮 6 signal 后剩余方向（FSM shelved 自动降档规则、ρ 矩阵分块计算）属 S09-S11 施工域边界，按"越界不挖"登记后封批。
 - **方案封矿**：无。C6 自动入库+FSM 预授权+Owner 门正是终局全貌第④类 Owner 事项（转正审批）的机器侧对偶，核心有位。
 - **终局视角**：本环节机制层已是"终局形态"（事件驱动/only-add/预授权/人守出口），是全链中离无人值守最近的段；其激活条件完全系于上游 OOS 自动化（S06-G1）。G1-G4 打完+"首条自动入库"实证后，S04→S07 四段可宣告端到端无人值守（至 sim 为止；sim→实盘的 Owner 拍板位由 S12/S13 接管）。
+
+## 7 施工班状态回填（2026-09-15）
+
+- 上游断点（OOS 缺口）已由 S06/C0 解除；S07-G1 端到端首跑验证待 2026-09-19 首跑执行。
+- S07-G2 multifactor 映射未补（核验 auto_mount.py:62-65 仍 6 类）——首跑若产生 multifactor 类条目仍会挂图空转，**提请下批必做**。
+- 新增能力（兄弟班 23a4fa4b01）：intake 写入路径历史批漏挂自愈（已入库未挂图 C4 翻译件扫描+单批上界 5 条）——挂图 only-add 自愈的无人化补强。
+- G3（candidate 复检月度档）/G4（IS 批标签单一真源）/G5（毒丸自愈缓冲）未动，登记维持。

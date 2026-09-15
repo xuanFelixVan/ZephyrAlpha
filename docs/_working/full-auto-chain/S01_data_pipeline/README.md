@@ -50,7 +50,7 @@ tasks.yaml source 分布（grep 实测）：akshare 104 / miniqmt 66 / akshare_a
 
 ## 4 堵点与欠账清单
 
-1. **防复发四件套待立项**（2026-09-14-market-data-gap-report.md 遗留①）：①miniqmt 日线车道补 920 段覆盖+标的数偏差>1% 告警；②ch_writer 表列缓存失效机制；③新表 DDL 前置校验（已有部分）；④TICK_SOURCE 切 xtdata 后桥模式降级确认（待 Owner/A22）。
+1. **防复发四件套待立项**（2026-09-14-market-data-gap-report.md 遗留①）：①miniqmt 日线车道补 920 段覆盖+标的数偏差>1% 告警；②ch_writer 表列缓存失效机制；③新表 DDL 前置校验（已有部分）；④TICK_SOURCE 切 xtdata 后桥模式降级确认（待 Owner/A22）。**【施工班 2026-09-15 回填】①②③已落地**（commit 36784c8a62：miniqmt kline 宇宙补京市 A 股 920 段根因+ch_writer invalidate_table_schema_cache 列缓存失效防线+scheduler DDL 前置校验与日线标的数看门铃），④仍待 Owner。
 2. **TradingWatchdog / RestartMiniQmt 计划任务仍 Disabled**（遗留②）——涉实盘/终端管理，等 Owner 裁定，至今未见。
 3. **alt_sz_subject 2 件死信在途**（遗留③）：writer 写 `alt_sz_subject` 而 registry/DDL 为 `alt_sz_market_subject`，留 C-1 会话收口。
 4. **备份表清理未确认**（遗留④）：`kline_1min_tzbak_20260914` 等系列，验证期后删。
@@ -67,6 +67,11 @@ tasks.yaml source 分布（grep 实测）：akshare 104 / miniqmt 66 / akshare_a
 - G-03 alt_sz_subject 死信收口（解锁：C-1 会话）；
 - G-04 备份表清理（解锁：验证期结束）；
 - G-05 观测"distribution/semantic"两柱（解锁：出现分布漂移实际事故再立，防过度工程）。
+
+## 7 施工班状态回填（2026-09-15）
+
+- 防复发四件套之①②③已由 st-mktfix 班落地（36784c8a62），G-01 部分清偿；④桥模式降级确认仍待 Owner（G-02 维持）。
+- 其余欠账（G-03 死信收口/G-04 备份表清理/G-05 观测两柱）状态不变；本环节无新增施工，挖矿结论维持。
 
 ## 6 封矿结论
 

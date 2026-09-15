@@ -9,6 +9,7 @@ date: 2026-09-15
 > 骨架定位：前端拍板（S13）→ 实盘/整装流转 + **QMT 模拟桥 100 股端到端实测**（施工 C6）。
 > 当前=❌ 未实测（冒烟脚本与全套桥件已在，缺实弹记录）。本环节挖矿核心：①下单桥现状；
 > ②模拟户 vs 实盘户代码级区分；③100 股单最小调用路径+安全护栏。
+> **【施工班 2026-09-15 回填】C6 已收口：100 股端到端实测全通过（2026-09-15 10:52：connect→查仓 cash 9991701.46→600000.SH 100 股@8.46 跌停价 SUBMITTED→撤单 CANCELLED），双终端 TCP 配对辨识过，证据=evidence/qmt-smoke-result.yaml。实战抓两 bug 治本：price_type LIMIT 0→11（xtconstant.FIX_PRICE=11 真值，#ARCH-XTQUANT-API-COMPAT-001 闭环）+smoke 限价改跌停价申报（盘中主板价格笼子只豁免涨跌停价）。**
 
 ## 1 现状盘点（自动化状态+file:line 证据）
 
@@ -166,3 +167,11 @@ Order 契约=`zephyr.trading.trading_contracts.execution.order`（Order/OrderSid
   判 sim→connect→100 股远价 LIMIT 单→撤单验证 CANCELLED）；确保不打实盘的三重护栏=只读
   QMT_SIM_* 键+qmt_environments.yaml 辨识（双终端走 TCP 配对法）+live 账号本身未配置且
   blocks_live_trading=true。**
+
+## 7 施工班状态回填（2026-09-15）
+
+- 堵点 1（C6 实测未发生）：已解——冒烟全通过+证据归档 evidence/qmt-smoke-result.yaml（含 dual_terminal_guard 记录）。
+- 堵点 2（双终端辨识）：已解——实测走 TCP 配对法环境辨识过（实盘+模拟双终端在线场景）。
+- 实测对挖矿方案的两处更正：①限价申报=跌停价而非跌停价×1.01（盘中价格笼子实测拒中间价）；②price_type 契约漂移治本（LIMIT 0→11，裸 xtquant 同参数对照法取证）。
+- 堵点 3/5/6 维持：live 账号未配置（设计如此）；ZephyrAlpha_PaperSession 仍 Disabled 待 Owner 开闸；preflight 三层自检未建。
+- 堵点 4（流转执行器/订单翻译件）：两解锁条件（C6 通过✅+C5 拍板链上线✅）均已满足，**提请下批排期**。
