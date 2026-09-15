@@ -1916,3 +1916,28 @@ entries:
   related_arch: ['#ARCH-312']
   related_rulings: ['裁定#253']
   superseded_by: null
+- ruling_id: '裁定#255'
+  title: 存废自裁——security_event_bus/telemetry 遗留处置（治理战役 A2 收口后）：总线本体保留、飞书告警通道确认纯死列退役清单、动刀移交安全域车道
+  date: '2026-09-16'
+  category: 治理运维
+  status: active
+  summary: >-
+    通宵总包分包三（st-govops-20260916）按预裁定向自裁。取证结论：①zephyr.security.security_event_bus
+    总线本体（SecurityEvent schema/JSONL 落盘/四域 adapter）保留——incident_pipeline 与
+    l6_feishu_alert 真实 import 其类型面，非死遗留；②config/alert_rules.yaml 规则引擎+
+    AlertSubsystem+facade 保留——A2 供给线（MOD-INF-OPS-ALERT-FEED，a6cf1aad）即架于其上，
+    通知唯一出口=前端 promotion 页（2026-09-15 裁定）链路已实测贯通；③纯死遗留确认：
+    FeishuAlertChannel webhook 外发路径+LsgFeishuAlerter（l6_feishu_alert.py）——
+    secret_registry.yaml 无 ZEPHYR_FEISHU_WEBHOOK 注册（外发永不配置）+2026-09-15 已裁禁
+    飞书通道+SecurityEventBus 全仓零生产实例化+retry_pending 无任何调用方（alerts_pending
+    队列只进不出=僵尸堆积）；④退役不动手原因：动刀须改 l6_observability 回退实例化与
+    l6_feishu_alert 导入面（LSG 安全域=安全关键路径，且不在本分包车道清单），列退役清单
+    移交安全域车道/Owner 门位执行，本裁定仅登记事实与退役路径。
+  evidence: src/zephyr/security/security_event_bus.py（FeishuAlertChannel L417/L175-176）+
+    src/zephyr/security/llm_defense/llm_security/layers/l6_observability.py:353-365（回退实例化）+
+    src/zephyr/security/ops/incident_pipeline.py:147（schema 消费）+ config/secret_registry.yaml
+    （零 feishu 条目）+ .runtime/security_events/（无生产 events JSONL，仅 tnr_drill 演练件）+
+    grep 全仓 SecurityEventBus()/retry_pending 零生产命中
+  related_arch: []
+  related_rulings: ['裁定#254']
+  superseded_by: null
