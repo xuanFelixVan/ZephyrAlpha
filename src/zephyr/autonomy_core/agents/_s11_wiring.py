@@ -26,62 +26,7 @@ S1.1 接口接线件（14号文 §4-S1.1）：四入口消费 11/12/13号文正�
   （拒则 denied 留痕不反思），放行才走 run_three_role_flow/L1 反思，ReflectionRecord
   落 ReflectionStore（默认落 <runtime>/reflections/，闸门留痕落 <runtime>/reflctrl/）。
 
-# [ALGO_FLOW]
-# 层: 输入
-# - id: I1
-#   name: ticket 参数
-#   fields: 参数 ticket，类型注解 dict[str, Any]
-#   code: _s11_wiring.py 顶层公共函数形参（AST 提取）
-# - id: I2
-#   name: cascade_router 参数
-#   fields: 参数 cascade_router，类型注解 Any
-#   code: _s11_wiring.py 顶层公共函数形参（AST 提取）
-# - id: I3
-#   name: module_mapper 参数
-#   fields: 参数 module_mapper，类型注解 Any
-#   code: _s11_wiring.py 顶层公共函数形参（AST 提取）
-# - id: I4
-#   name: role 参数
-#   fields: 参数 role（无注解）
-#   code: _s11_wiring.py 顶层公共函数形参（AST 提取）
-# 层: 算法
-# - id: A1
-#   name_zh: ① route_experiment_model
-#   name_en: route_experiment_model
-#   intro: 实验工单 → cascade 模型选择裁决留痕（无候选不调路由，标 skipped）.
-#   desc: 实验工单 → cascade 模型选择裁决留痕（无候选不调路由，标 skipped）.；源码 L116-L144
-#   inputs: ticket cascade_router
-#   outputs: dict[str, Any]
-# - id: A2
-#   name_zh: ② map_module_generation
-#   name_en: map_module_generation
-#   intro: 新模块生成工单 → ModuleMapper 四选一裁决留痕（载荷非法 fail-closed 不抛）.
-#   desc: 新模块生成工单 → ModuleMapper 四选一裁决留痕（载荷非法 fail-closed 不抛）.；源码 L147-L186
-#   inputs: ticket module_mapper
-#   outputs: dict[str, Any]
-# - id: A3
-#   name_zh: ③ run_reflection_review
-#   name_en: run_reflection_review
-#   intro: reflection_review 工单：ReflCtrlGate 闸门 → 三角色/L1 反思 → Reflecti…
-#   desc: reflection_review 工单：ReflCtrlGate 闸门 → 三角色/L1 反思 → ReflectionStore. 注入缝：refl_gate（默认真 Ref…；源码 L217-L312
-#   inputs: ticket role runtime_dir repo_root refl_gate flow_runner reflection_st…
-#   outputs: dict[str, Any]
-# 层: 输出
-# - id: O1
-#   name_zh: dict[str, Any]
-#   name_en: dict[str, Any]
-#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
-#   downstream: zephyr.autonomy_core.agents.algorithm_agent_entry ; self_iteration_agent_entry（…
-# [/ALGO_FLOW]
-#
-# 边:
-# I1 --> A1
-# I2 --> A1
-# I3 --> A1
-# I4 --> A1
-# A1 --> A2
-# A2 --> A3
-# A3 --> O1
+# [ALGO_FLOW] external: docs/03_modules/_domain_autonomy_core/algo_flow/agents/_s11_wiring.yaml
 """
 
 from __future__ import annotations

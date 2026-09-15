@@ -29,31 +29,7 @@ XAI 可解释性引擎
   3. FactorIsolation: 隔离"Skill 本身"vs"LLM 能力"对结果的影响
   4. CounterfactualWhatIf: 如果选了其他 Skill 会怎样
 
-# [ALGO_FLOW]
-# 层: 输入
-# - id: I1
-#   name: 模块内部数据
-#   fields: 无公共形参/无再导出（AST 事实）
-#   code: skill_explain.py
-# 层: 算法
-# - id: A1
-#   name_zh: ① SkillExplain
-#   name_en: SkillExplain
-#   intro: Skill XAI 可解释性引擎
-#   desc: Skill XAI 可解释性引擎；公共方法（定义序）: build_reasoning_chain, explain_routing, isolate_factors；源码 L64-L252
-#   inputs: 无参数
-#   outputs: 返回值
-# 层: 输出
-# - id: O1
-#   name_zh: 模块公共 API 面（1 定义）
-#   name_en: public defs
-#   intro: SkillExplain
-#   downstream: 见模块头 [CONSUMERS]
-# [/ALGO_FLOW]
-#
-# 边:
-# I1 --> A1
-# A1 --> O1
+# [ALGO_FLOW] external: docs/03_modules/_domain_autonomy_core/algo_flow/skills/skill_explain.yaml
 """
 
 from __future__ import annotations

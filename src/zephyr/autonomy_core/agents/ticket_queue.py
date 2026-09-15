@@ -31,39 +31,7 @@ CLI：
   python -m zephyr.autonomy_core.agents.ticket_queue dead --ticket-id T --reason R [--session-id S]
   python -m zephyr.autonomy_core.agents.ticket_queue recover [--alive-sessions a,b] [--stale-minutes N]
 
-# [ALGO_FLOW]
-# 层: 输入
-# - id: I1
-#   name: argv 参数
-#   fields: 参数 argv，类型注解 list[str] | None
-#   code: ticket_queue.py 顶层公共函数形参（AST 提取）
-# 层: 算法
-# - id: A1
-#   name_zh: ① TicketQueue
-#   name_en: TicketQueue
-#   intro: 四态落盘工单队列（O_EXCL 原子认领 + 断点恢复重派）.
-#   desc: 四态落盘工单队列（O_EXCL 原子认领 + 断点恢复重派）.；公共方法（定义序）: enqueue, claim, done, mark_dead, recover, list_tickets；源码 L109-L337
-#   inputs: runtime_dir repo_root
-#   outputs: 返回值
-# - id: A2
-#   name_zh: ② main
-#   name_en: main
-#   intro: CLI：enqueue/list/claim/done/dead/recover（打印 JSON 结果行）.
-#   desc: CLI：enqueue/list/claim/done/dead/recover（打印 JSON 结果行）.；源码 L340-L386
-#   inputs: argv
-#   outputs: int
-# 层: 输出
-# - id: O1
-#   name_zh: int
-#   name_en: int
-#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
-#   downstream: tests/autonomy/test_agent_ticket_queue.py ; 四类 Agent 薄入口 CLI ; 人调度多会话（61号文 §3.6）
-# [/ALGO_FLOW]
-#
-# 边:
-# I1 --> A1
-# A1 --> A2
-# A2 --> O1
+# [ALGO_FLOW] external: docs/03_modules/_domain_autonomy_core/algo_flow/agents/ticket_queue.yaml
 """
 
 from __future__ import annotations

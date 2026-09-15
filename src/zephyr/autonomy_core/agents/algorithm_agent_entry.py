@@ -35,59 +35,7 @@ module_mapper→13号文四选一裁决留痕（module_mapping.spec.json）。
 
 手动触发：python -m zephyr.autonomy_core.agents.algorithm_agent_entry --ticket <path>
 
-# [ALGO_FLOW]
-# 层: 输入
-# - id: I1
-#   name: ticket 参数
-#   fields: 参数 ticket，类型注解 dict[str, Any]
-#   code: algorithm_agent_entry.py 顶层公共函数形参（AST 提取）
-# - id: I2
-#   name: runtime_dir 参数
-#   fields: 参数 runtime_dir（无注解）
-#   code: algorithm_agent_entry.py 顶层公共函数形参（AST 提取）
-# - id: I3
-#   name: repo_root 参数
-#   fields: 参数 repo_root（无注解）
-#   code: algorithm_agent_entry.py 顶层公共函数形参（AST 提取）
-# - id: I4
-#   name: gpu_stats_provider 参数
-#   fields: 参数 gpu_stats_provider（无注解）
-#   code: algorithm_agent_entry.py 顶层公共函数形参（AST 提取）
-# 层: 算法
-# - id: A1
-#   name_zh: ① run_algorithm_experiment_ticket
-#   name_en: run_algorithm_experiment_ticket
-#   intro: 执行一张算法实验工单（登记先于执行 + 显存守卫 + 只读评估，端到端落盘）.
-#   desc: 执行一张算法实验工单（登记先于执行 + 显存守卫 + 只读评估，端到端落盘）. Args: ticket: {"ticket_id", "experiment_type", "t…；源码 _algorithm_experiment.py（B16 拆出）
-#   inputs: ticket runtime_dir repo_root gpu_stats_provider tracking_config casca…
-#   outputs: dict[str, Any]
-# - id: A2
-#   name_zh: ② main
-#   name_en: main
-#   intro: CLI 手动触发入口：--ticket <工单 JSON 路径> [--runtime-dir DIR].
-#   desc: CLI 手动触发入口：--ticket <工单 JSON 路径> [--runtime-dir DIR].；源码 L126-L135
-#   inputs: argv
-#   outputs: int
-# 层: 输出
-# - id: O1
-#   name_zh: dict[str, Any]
-#   name_en: dict[str, Any]
-#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
-#   downstream: tests/autonomy/test_execution_layer_agent_entries.py ; tests/aut…
-# - id: O2
-#   name_zh: int
-#   name_en: int
-#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
-#   downstream: tests/autonomy/test_execution_layer_agent_entries.py ; tests/aut…
-# [/ALGO_FLOW]
-#
-# 边:
-# I1 --> A1
-# I2 --> A1
-# I3 --> A1
-# I4 --> A1
-# A1 --> A2
-# A2 --> O1
+# [ALGO_FLOW] external: docs/03_modules/_domain_autonomy_core/algo_flow/agents/algorithm_agent_entry.yaml
 """
 
 from __future__ import annotations

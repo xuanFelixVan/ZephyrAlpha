@@ -1,0 +1,47 @@
+# ALGO_FLOW 外部真源——autonomy_level_registry（_domain_autonomy_core 域，真源 src/zephyr/autonomy_core/autonomy_level_registry.py）
+# 2026-09-15 P2-1 契约头减负批量出仓：docstring 内联块逐字节副本，extractor 经
+# external 锚加载走同一 parse_algo_flow 管线；算法公共面变化时同步更新本块。
+doc_type: architecture_view
+ttl: permanent
+module: src.zephyr.autonomy_core.autonomy_level_registry
+source_of_truth: src/zephyr/autonomy_core/autonomy_level_registry.py
+algo_flow: |
+    # [ALGO_FLOW]
+    # 层: 输入
+    # - id: I1
+    #   name: declarations 参数
+    #   fields: 参数 declarations（无注解）
+    #   code: autonomy_level_registry.py 顶层公共函数形参（AST 提取）
+    # - id: I2
+    #   name: violation_hook 参数
+    #   fields: 参数 violation_hook（无注解）
+    #   code: autonomy_level_registry.py 顶层公共函数形参（AST 提取）
+    # 层: 算法
+    # - id: A1
+    #   name_zh: ① AutonomyCheckVerdict
+    #   name_en: AutonomyCheckVerdict
+    #   intro: 单次动作判定结果（不可变）。
+    #   desc: 单次动作判定结果（不可变）。；公共方法（定义序）: allowed, audit_record；源码 L151-L183
+    #   inputs: 无参数
+    #   outputs: 返回值
+    # - id: A2
+    #   name_zh: ② AutonomyLevelRegistry
+    #   name_en: AutonomyLevelRegistry
+    #   intro: 四级自治注册表（纯内存判定核心）。
+    #   desc: 四级自治注册表（纯内存判定核心）。 Args: declarations: 初始声明映射 {agent_role: AutonomyLevel}。 violation_hook:…；公共方法（定义序）: registe…
+    #   inputs: declarations violation_hook
+    #   outputs: 返回值
+    #   （注：A2 之后另有 5 个公共定义未列入（含 5 个数据契约/异常/枚举声明类），见源码）
+    # 层: 输出
+    # - id: O1
+    #   name_zh: 模块公共 API 面（7 定义）
+    #   name_en: public defs
+    #   intro: AutonomyCheckVerdict, AutonomyLevelRegistry
+    #   downstream: MOD-AU-001(autonomy_boundary_gate 运行时按级别拦截) ; MOD-AU-002(kill_switch_orchestrat…
+    # [/ALGO_FLOW]
+    #
+    # 边:
+    # I1 --> A1
+    # I2 --> A1
+    # A1 --> A2
+    # A2 --> O1

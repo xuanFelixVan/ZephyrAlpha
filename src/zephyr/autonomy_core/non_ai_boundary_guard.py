@@ -33,42 +33,7 @@ AI/非AI**决策权重占比计量器** + 超限（默认 >30%）阻断信号—
 本模块唯一缺口 = 决策流的 **AI/非AI 权重占比计量与超限阻断信号**。
 决策溯源落账委托 D_GOV_AUDIT（audit_sink 回调，不 import 不复制）。
 
-# [ALGO_FLOW]
-# 层: 输入
-# - id: I1
-#   name: thresholds 参数
-#   fields: 参数 thresholds（无注解）
-#   code: non_ai_boundary_guard.py 顶层公共函数形参（AST 提取）
-# - id: I2
-#   name: block_trigger 参数
-#   fields: 参数 block_trigger（无注解）
-#   code: non_ai_boundary_guard.py 顶层公共函数形参（AST 提取）
-# - id: I3
-#   name: audit_sink 参数
-#   fields: 参数 audit_sink（无注解）
-#   code: non_ai_boundary_guard.py 顶层公共函数形参（AST 提取）
-# 层: 算法
-# - id: A1
-#   name_zh: ① NonAIBoundaryGuard
-#   name_en: NonAIBoundaryGuard
-#   intro: AI/非AI 决策权重边界守卫（判定纯函数 + 信号回调委托）。
-#   desc: AI/非AI 决策权重边界守卫（判定纯函数 + 信号回调委托）。 Args: thresholds: 边界阈值（None 用默认：>30% 硬顶 / 窗口 200 / 最小样本…；公共方法（定义序）: threshol…
-#   inputs: thresholds block_trigger audit_sink
-#   outputs: 返回值
-#   （注：A1 之后另有 8 个公共定义未列入（含 8 个数据契约/异常/枚举声明类），见源码）
-# 层: 输出
-# - id: O1
-#   name_zh: 模块公共 API 面（9 定义）
-#   name_en: public defs
-#   intro: NonAIBoundaryGuard
-#   downstream: 运行时装配批（决策流接入 / 风控执行闸阻断执行体 / D_GOV_AUDIT 决策溯源落账）
-# [/ALGO_FLOW]
-#
-# 边:
-# I1 --> A1
-# I2 --> A1
-# I3 --> A1
-# A1 --> O1
+# [ALGO_FLOW] external: docs/03_modules/_domain_autonomy_core/algo_flow/non_ai_boundary_guard.yaml
 """
 
 from __future__ import annotations

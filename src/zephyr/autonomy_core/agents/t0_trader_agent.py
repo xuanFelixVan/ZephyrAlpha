@@ -28,47 +28,7 @@ EXECUTE/SKIP/REJECT 建议；建议**经风控校验后生效**
 查重分工：信号源归 MOD-SIG-068；做T 计划生成归 MOD-SELL-018；底仓/T+1
 可卖真源归 MOD-POS-018/t1_sellable；本角色只做即时裁决编排。
 
-# [ALGO_FLOW]
-# 层: 输入
-# - id: I1
-#   name: constraints 参数
-#   fields: 参数 constraints（无注解）
-#   code: t0_trader_agent.py 顶层公共函数形参（AST 提取）
-# - id: I2
-#   name: risk_check_trigger 参数
-#   fields: 参数 risk_check_trigger（无注解）
-#   code: t0_trader_agent.py 顶层公共函数形参（AST 提取）
-# - id: I3
-#   name: execution_sink 参数
-#   fields: 参数 execution_sink（无注解）
-#   code: t0_trader_agent.py 顶层公共函数形参（AST 提取）
-# - id: I4
-#   name: audit_sink 参数
-#   fields: 参数 audit_sink（无注解）
-#   code: t0_trader_agent.py 顶层公共函数形参（AST 提取）
-# 层: 算法
-# - id: A1
-#   name_zh: ① T0TraderAgent
-#   name_en: T0TraderAgent
-#   intro: 做T Agent：信号×底仓×可卖×限额 → 即时裁决（判定核心纯函数）。
-#   desc: 做T Agent：信号×底仓×可卖×限额 → 即时裁决（判定核心纯函数）。 Args: constraints: 做T 约束配置。 risk_check_trigger: 风控前…；公共方法（定义序）: decide,…
-#   inputs: constraints risk_check_trigger execution_sink audit_sink
-#   outputs: 返回值
-#   （注：A1 之后另有 7 个公共定义未列入（含 7 个数据契约/异常/枚举声明类），见源码）
-# 层: 输出
-# - id: O1
-#   name_zh: 模块公共 API 面（8 定义）
-#   name_en: public defs
-#   intro: T0TraderAgent
-#   downstream: 运行时装配批（做T 信号实时接入 / t1_sellable 可卖装配 / 风控校验链 / C-012 管线）
-# [/ALGO_FLOW]
-#
-# 边:
-# I1 --> A1
-# I2 --> A1
-# I3 --> A1
-# I4 --> A1
-# A1 --> O1
+# [ALGO_FLOW] external: docs/03_modules/_domain_autonomy_core/algo_flow/agents/t0_trader_agent.yaml
 """
 
 from __future__ import annotations

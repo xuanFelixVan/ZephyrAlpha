@@ -27,42 +27,7 @@ C-021 大盘状态 + C-014 大盘预测 + 做T 点位（MOD-SIG-068 口径）→
 查重分工：regime 判定归 MOD-REGIME-001；做T 点位归 MOD-SIG-068；执行策略
 选择本体归 MOD-EX-062；本角色只做融合裁决与风控前置信号。
 
-# [ALGO_FLOW]
-# 层: 输入
-# - id: I1
-#   name: thresholds 参数
-#   fields: 参数 thresholds（无注解）
-#   code: timing_analyst_agent.py 顶层公共函数形参（AST 提取）
-# - id: I2
-#   name: risk_check_trigger 参数
-#   fields: 参数 risk_check_trigger（无注解）
-#   code: timing_analyst_agent.py 顶层公共函数形参（AST 提取）
-# - id: I3
-#   name: audit_sink 参数
-#   fields: 参数 audit_sink（无注解）
-#   code: timing_analyst_agent.py 顶层公共函数形参（AST 提取）
-# 层: 算法
-# - id: A1
-#   name_zh: ① TimingAnalystAgent
-#   name_en: TimingAnalystAgent
-#   intro: 择时 Agent：状态×预测×做T 点 → 时机与执行策略建议（判定核心纯函数）。
-#   desc: 择时 Agent：状态×预测×做T 点 → 时机与执行策略建议（判定核心纯函数）。 Args: thresholds: 判定阈值配置。 risk_check_trigger: 风…；公共方法（定义序）: advise,…
-#   inputs: thresholds risk_check_trigger audit_sink
-#   outputs: 返回值
-#   （注：A1 之后另有 8 个公共定义未列入（含 8 个数据契约/异常/枚举声明类），见源码）
-# 层: 输出
-# - id: O1
-#   name_zh: 模块公共 API 面（9 定义）
-#   name_en: public defs
-#   intro: TimingAnalystAgent
-#   downstream: 运行时装配批（C-021/C-014 实时输入装配 / 风控校验链 / MOD-EX-062 执行策略选择）
-# [/ALGO_FLOW]
-#
-# 边:
-# I1 --> A1
-# I2 --> A1
-# I3 --> A1
-# A1 --> O1
+# [ALGO_FLOW] external: docs/03_modules/_domain_autonomy_core/algo_flow/agents/timing_analyst_agent.yaml
 """
 
 from __future__ import annotations

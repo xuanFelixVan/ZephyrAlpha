@@ -64,6 +64,35 @@ from zephyr.shared.io.file_utils import safe_write_text  # noqa: E402
 
 _ANCHOR_RE = re.compile(r"^#\s*\[ALGO_FLOW\]\s+external:\s*(\S+)\s*$", re.MULTILINE)
 
+# 既有 yaml 反查缓存：domain_dir → {source_of_truth: yaml_rel}（批9 幂等治本）
+_EXISTING_YAML_CACHE: dict[str, dict[str, str]] = {}
+
+
+def _existing_yaml_for(rel_py: str, domain_dir: str) -> str:
+    """已落盘 yaml 路径优先——按 yaml 头 ``source_of_truth`` 反查（重跑映射防改道）。
+
+    批9 实证（st-btfix-p15-20260916）：yaml 先落盘（含镜像子目录重排，b9a_remap.json）
+    而源码锚后补的场景下，_yaml_rel_for 的"盘存在=碰撞"检测会把映射整体改道到
+    ``parent__stem`` 新路径——重复 yaml+锚错位。真源判定以 yaml 头 source_of_truth
+    反查为准：盘上已有本文件专属 yaml 即复用原路径；无匹配才走 _yaml_rel_for 推导。
+    """
+    cache = _EXISTING_YAML_CACHE.get(domain_dir)
+    if cache is None:
+        cache = {}
+        root = REPO_ROOT / "docs" / "03_modules" / domain_dir / "algo_flow"
+        if root.is_dir():
+            for y in sorted(root.rglob("*.yaml")):
+                try:
+                    head = y.read_text(encoding="utf-8").splitlines()[:8]
+                except OSError:
+                    continue
+                for ln in head:
+                    if ln.startswith("source_of_truth:"):
+                        cache[ln.split(":", 1)[1].strip()] = y.relative_to(REPO_ROOT).as_posix()
+                        break
+        _EXISTING_YAML_CACHE[domain_dir] = cache
+    return cache.get(rel_py, "")
+
 # 真源域映射：src/zephyr/<pkg> → docs/03_modules/<domain>/（与 blueprint.md actual_disk_path 对齐）
 _DOMAIN_DIRS: dict[str, str] = {
     # 以 docs/03_modules/ 实存目录为准（54 目录普查，2026-09-15）
@@ -258,9 +287,9 @@ def externalize(py_path: Path, dry_run: bool) -> dict:
     ds_full = ast.get_docstring(tree2) or ""
     base = _docstring_line_base(src, ds_node.lineno, ds_full)
 
-    # 外部 yaml 路径
+    # 外部 yaml 路径：既有 yaml（source_of_truth 反查）优先，无则按推导命名
     domain_dir = _domain_of(rel)
-    yaml_rel = _yaml_rel_for(py_path, rel, domain_dir)
+    yaml_rel = _existing_yaml_for(rel, domain_dir) or _yaml_rel_for(py_path, rel, domain_dir)
     stem = py_path.stem
 
     # 锚行（块在 docstring 内的行号 → 源码行号 = 首行基址 + ds 内 idx）

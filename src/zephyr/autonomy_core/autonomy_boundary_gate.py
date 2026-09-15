@@ -39,71 +39,7 @@ S1.2 内联漂移挂接（15号文 §4.2，默认启用，drift_check_enabled=Fa
   auto_guard 档语义）；DRIFT_DETECTED → 原放行判定升级为 BLOCK（Hard-Gate），
   P0 告警由 AgenticDriftGuard 按 16号文统一事件 schema 落盘。
 
-# [ALGO_FLOW]
-# 层: 输入
-# - id: I1
-#   name: action_id 参数
-#   fields: 参数 action_id，类型注解 str
-#   code: autonomy_boundary_gate.py 顶层公共函数形参（AST 提取）
-# - id: I2
-#   name: target_path_or_resource 参数
-#   fields: 参数 target_path_or_resource，类型注解 str
-#   code: autonomy_boundary_gate.py 顶层公共函数形参（AST 提取）
-# - id: I3
-#   name: session_context 参数
-#   fields: 参数 session_context，类型注解 dict[str, Any] | None
-#   code: autonomy_boundary_gate.py 顶层公共函数形参（AST 提取）
-# 层: 算法
-# - id: A1
-#   name_zh: ① GateVerdict
-#   name_en: GateVerdict
-#   intro: 单次写操作判定结果（不可变）.
-#   desc: 单次写操作判定结果（不可变）. auto_guard / drift_level / drift_verdict_id 为 S1.2 漂移内联检查投影字段： 未启用或无 sess…；公共方法（定义序）: allowed…
-#   inputs: 无参数
-#   outputs: 返回值
-# - id: A2
-#   name_zh: ② AutonomyBoundaryGate
-#   name_en: AutonomyBoundaryGate
-#   intro: 运行时写操作三分类判定门.
-#   desc: 运行时写操作三分类判定门. 用法:: gate = AutonomyBoundaryGate() verdict = gate.check_write_permission("a…；公共方法（定义序）: check_w…
-#   inputs: registry_path runtime_dir repo_root drift_check_enabled drift_config…
-#   outputs: 返回值
-# - id: A3
-#   name_zh: ③ get_default_gate
-#   name_en: get_default_gate
-#   intro: 获取默认 gate 单例（默认注册表 + 仓根 .
-#   desc: 获取默认 gate 单例（默认注册表 + 仓根 .runtime/ 留痕）.；源码 L624-L629
-#   inputs: 无参数
-#   outputs: AutonomyBoundaryGate
-# - id: A4
-#   name_zh: ④ check_write_permission
-#   name_en: check_write_permission
-#   intro: 模块级便捷入口：默认 gate 的写操作三分类判定.
-#   desc: 模块级便捷入口：默认 gate 的写操作三分类判定.；源码 L632-L638
-#   inputs: action_id target_path_or_resource session_context
-#   outputs: GateVerdict
-#   （注：A4 之后另有 2 个公共定义未列入（含 2 个数据契约/异常/枚举声明类），见源码）
-# 层: 输出
-# - id: O1
-#   name_zh: AutonomyBoundaryGate
-#   name_en: AutonomyBoundaryGate
-#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
-#   downstream: tests/autonomy/test_autonomy_boundary_gate.py; tests/autonomy/test_autonomy_gat…
-# - id: O2
-#   name_zh: GateVerdict
-#   name_en: GateVerdict
-#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
-#   downstream: tests/autonomy/test_autonomy_boundary_gate.py; tests/autonomy/test_autonomy_gat…
-# [/ALGO_FLOW]
-#
-# 边:
-# I1 --> A1
-# I2 --> A1
-# I3 --> A1
-# A1 --> A2
-# A2 --> A3
-# A3 --> A4
-# A4 --> O1
+# [ALGO_FLOW] external: docs/03_modules/_domain_autonomy_core/algo_flow/autonomy_boundary_gate.yaml
 """
 
 from __future__ import annotations

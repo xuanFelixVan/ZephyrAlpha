@@ -21,31 +21,7 @@ AI 执行层四类 Agent 薄入口包（14号文 §3.0 role façade，§4 Phase 
 工单/产出落盘"，内部零新业务逻辑；物理上不新建进程、不建消息总线、
 不建调度器。产出 100% 落盘（.runtime/agent_runs/）且标 human_gated。
 
-# [ALGO_FLOW]
-# 层: 输入
-# - id: I1
-#   name: 包内子模块公共符号
-#   fields: import 再导出符号: annotations
-#   code: __init__.py import L51
-# 层: 算法
-# - id: A1
-#   name_zh: ① 包公共面再导出
-#   name_en: __init__ re-export
-#   intro: 再导出 algorithm_agent_entry, business_agent_entry, governance_agent_entry, resear…
-#   desc: __init__ import L51；__all__ 9 项（AST 事实）
-#   inputs: I1
-#   outputs: __all__ 公共符号表
-# 层: 输出
-# - id: O1
-#   name_zh: 公共 API 面（9 符号）
-#   name_en: __all__
-#   intro: algorithm_agent_entry, business_agent_entry, governance_agent_entry, researcher…
-#   downstream: tests/autonomy/test_execution_layer_agent_entries.py
-# [/ALGO_FLOW]
-#
-# 边:
-# I1 --> A1
-# A1 --> O1
+# [ALGO_FLOW] external: docs/03_modules/_domain_autonomy_core/algo_flow/agents/agents__init__.yaml
 """
 
 from __future__ import annotations

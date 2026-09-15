@@ -1,0 +1,57 @@
+# ALGO_FLOW 外部真源——killswitch_response_levels（_domain_autonomy_core 域，真源 src/zephyr/autonomy_core/killswitch_response_levels.py）
+# 2026-09-15 P2-1 契约头减负批量出仓：docstring 内联块逐字节副本，extractor 经
+# external 锚加载走同一 parse_algo_flow 管线；算法公共面变化时同步更新本块。
+doc_type: architecture_view
+ttl: permanent
+module: src.zephyr.autonomy_core.killswitch_response_levels
+source_of_truth: src/zephyr/autonomy_core/killswitch_response_levels.py
+algo_flow: |
+    # [ALGO_FLOW]
+    # 层: 输入
+    # - id: I1
+    #   name: orchestrator 参数
+    #   fields: 参数 orchestrator（无注解）
+    #   code: killswitch_response_levels.py 顶层公共函数形参（AST 提取）
+    # - id: I2
+    #   name: runtime_dir 参数
+    #   fields: 参数 runtime_dir（无注解）
+    #   code: killswitch_response_levels.py 顶层公共函数形参（AST 提取）
+    # - id: I3
+    #   name: system_switch 参数
+    #   fields: 参数 system_switch（无注解）
+    #   code: killswitch_response_levels.py 顶层公共函数形参（AST 提取）
+    # - id: I4
+    #   name: downgrader 参数
+    #   fields: 参数 downgrader（无注解）
+    #   code: killswitch_response_levels.py 顶层公共函数形参（AST 提取）
+    # 层: 算法
+    # - id: A1
+    #   name_zh: ① render_killswitch_md
+    #   name_en: render_killswitch_md
+    #   intro: 渲染 KILLSWITCH.
+    #   desc: 渲染 KILLSWITCH.md 全文（16号文 §3.13 开放标准 8 要素对标+三级定义+复位不变量）.；源码 L160-L162
+    #   inputs: 无参数
+    #   outputs: str
+    # - id: A2
+    #   name_zh: ② KillSwitchResponseLayer
+    #   name_en: KillSwitchResponseLayer
+    #   intro: KILLSWITCH 三级响应策略层.
+    #   desc: KILLSWITCH 三级响应策略层. 用法:: layer = KillSwitchResponseLayer( orchestrator=orch, runtime_dir=…；公共方法（定义序）: respond…
+    #   inputs: orchestrator runtime_dir system_switch downgrader
+    #   outputs: 返回值
+    #   （注：A2 之后另有 3 个公共定义未列入（含 3 个数据契约/异常/枚举声明类），见源码）
+    # 层: 输出
+    # - id: O1
+    #   name_zh: str
+    #   name_en: str
+    #   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+    #   downstream: tests/autonomy_core/test_killswitch_response_levels.py
+    # [/ALGO_FLOW]
+    #
+    # 边:
+    # I1 --> A1
+    # I2 --> A1
+    # I3 --> A1
+    # I4 --> A1
+    # A1 --> A2
+    # A2 --> O1

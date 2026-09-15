@@ -17,31 +17,7 @@
 """
 VibeCodingQualityGate — 代码质量门禁（stub, tests 待实装后补全实现）
 
-# [ALGO_FLOW]
-# 层: 输入
-# - id: I1
-#   name: 模块内部数据
-#   fields: 无公共形参/无再导出（AST 事实）
-#   code: vibe_coding_quality_gate.py
-# 层: 算法
-# - id: A1
-#   name_zh: ① VibeCodingQualityGate
-#   name_en: VibeCodingQualityGate
-#   intro: class VibeCodingQualityGate 源码 L51-L72
-#   desc: 公共方法（定义序）: validate；源码 L51-L72
-#   inputs: 无参数
-#   outputs: 返回值
-# 层: 输出
-# - id: O1
-#   name_zh: 模块公共 API 面（1 定义）
-#   name_en: public defs
-#   intro: VibeCodingQualityGate
-#   downstream: 见模块头 [CONSUMERS]
-# [/ALGO_FLOW]
-#
-# 边:
-# I1 --> A1
-# A1 --> O1
+# [ALGO_FLOW] external: docs/03_modules/_domain_autonomy_core/algo_flow/vibe_coding_quality_gate.yaml
 """
 
 import ast

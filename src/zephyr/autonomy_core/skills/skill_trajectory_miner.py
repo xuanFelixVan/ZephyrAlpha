@@ -38,56 +38,7 @@ SKILL.md 渐进披露三级格式（设计参数真源 11号文 §3.2）：
     指纹 JSON 落盘（默认 .runtime/skill_drafts/retired_fingerprints.json——
     MVP 落点，≥1 年保留期的正式落点待裁定后迁 data/ 持久区）。
 
-# [ALGO_FLOW]
-# 层: 输入
-# - id: I1
-#   name: 轨迹/假设记录序列（内存契约）或 supported 假设落盘
-#   fields: TrajectoryRecord(record_id/statement/status/tags/steps/regime/source)
-#   code: mine(records) / load_supported_hypotheses(store_dir)
-# - id: I2
-#   name: 退役指纹库 retired_fingerprints.json（构造时加载）
-#   fields: fingerprints[](fingerprint_id/name/text/bigrams/retired_at/reason)
-#   code: RetiredFingerprintStore._load（损坏 fail-fast ZA-AC-0008）
-# 层: 算法
-# - id: A1
-#   name_zh: ① 契约校验+适格过滤
-#   name_en: validate + filter
-#   desc: 空陈述/非法记录类型即 ZA-AC-0008；仅 ELIGIBLE_STATUSES 入矿，其余跳过
-#   inputs: I1
-#   outputs: 适格记录序列
-# - id: A2
-#   name_zh: ② 贪心聚类
-#   name_en: _cluster
-#   desc: 逐条与既有簇质心算 bigram Jaccard，≥0.25 入簇否则开新簇
-#   inputs: A1
-#   outputs: 簇列表
-# - id: A3
-#   name_zh: ③ 簇归纳草稿+指纹查重门
-#   name_en: _induce_draft + fingerprint gate
-#   desc: 公共标签→condition/triggers；steps 保序去重→action/instructions；首条陈述→effect/outputs；候选文本查退役指纹库，>0.90 拒生成记 rejected
-#   inputs: A2 + I2
-#   outputs: SkillDraft 或 rejection
-# - id: A4
-#   name_zh: ④ 原子落盘
-#   name_en: _write_draft + _write_manifest
-#   desc: 草稿 SKILL.md（三级格式+unverified_draft 标注）与 manifest.json 经 atomic_write 落 output_dir
-#   inputs: A3
-#   outputs: 落盘文件
-# 层: 输出
-# - id: O1
-#   name_zh: 挖掘结果视图
-#   name_en: mine 返回值
-#   downstream: tests/skill/test_skill_trajectory_miner.py；人工门（消费 .runtime/skill_drafts/manifest.json）
-# [/ALGO_FLOW]
-#
-# 边:
-# I1 --> A1
-# A1 --> A2
-# A2 --> A3
-# I2 --> A3
-# A3 --> A4
-# A4 --> O1
-
+# [ALGO_FLOW] external: docs/03_modules/_domain_autonomy_core/algo_flow/skills/skill_trajectory_miner.yaml
 依据: 11号文 §3.2/§4.4 P2-1 + aiarch 清单 2.7（MOD-INF-059）
 Version: 0.1.0
 """

@@ -21,41 +21,7 @@
 ticket.json（输入快照）+ 角色产出件 + run.json（运行记录），
 并追加一行审计到 .runtime/agent_runs/<role>/audit.jsonl。
 
-# [ALGO_FLOW]
-# 层: 输入
-# - id: I1
-#   name: role 参数
-#   fields: 参数 role（无注解）
-#   code: _run_store.py 顶层公共函数形参（AST 提取）
-# - id: I2
-#   name: runtime_dir 参数
-#   fields: 参数 runtime_dir（无注解）
-#   code: _run_store.py 顶层公共函数形参（AST 提取）
-# - id: I3
-#   name: repo_root 参数
-#   fields: 参数 repo_root（无注解）
-#   code: _run_store.py 顶层公共函数形参（AST 提取）
-# 层: 算法
-# - id: A1
-#   name_zh: ① AgentRunStore
-#   name_en: AgentRunStore
-#   intro: 单次手动触发运行的落盘器（.
-#   desc: 单次手动触发运行的落盘器（.runtime/agent_runs/<role>/<run_id>/）.；公共方法（定义序）: begin, write_output, finish；源码 L83-L148
-#   inputs: role runtime_dir repo_root
-#   outputs: 返回值
-# 层: 输出
-# - id: O1
-#   name_zh: 模块公共 API 面（1 定义）
-#   name_en: public defs
-#   intro: AgentRunStore
-#   downstream: zephyr.autonomy_core.agents.governance_agent_entry ; business_agent_entry ; alg…
-# [/ALGO_FLOW]
-#
-# 边:
-# I1 --> A1
-# I2 --> A1
-# I3 --> A1
-# A1 --> O1
+# [ALGO_FLOW] external: docs/03_modules/_domain_autonomy_core/algo_flow/agents/_run_store.yaml
 """
 
 from __future__ import annotations

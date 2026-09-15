@@ -1,0 +1,69 @@
+# ALGO_FLOW 外部真源——self_iteration_agent_entry（_domain_autonomy_core 域，真源 src/zephyr/autonomy_core/agents/self_iteration_agent_entry.py）
+# 2026-09-15 P2-1 契约头减负批量出仓：docstring 内联块逐字节副本，extractor 经
+# external 锚加载走同一 parse_algo_flow 管线；算法公共面变化时同步更新本块。
+doc_type: architecture_view
+ttl: permanent
+module: src.zephyr.autonomy_core.agents.self_iteration_agent_entry
+source_of_truth: src/zephyr/autonomy_core/agents/self_iteration_agent_entry.py
+algo_flow: |
+    # [ALGO_FLOW]
+    # 层: 输入
+    # - id: I1
+    #   name: ticket 参数
+    #   fields: 参数 ticket，类型注解 dict[str, Any]
+    #   code: self_iteration_agent_entry.py 顶层公共函数形参（AST 提取）
+    # - id: I2
+    #   name: runtime_dir 参数
+    #   fields: 参数 runtime_dir（无注解）
+    #   code: self_iteration_agent_entry.py 顶层公共函数形参（AST 提取）
+    # - id: I3
+    #   name: repo_root 参数
+    #   fields: 参数 repo_root（无注解）
+    #   code: self_iteration_agent_entry.py 顶层公共函数形参（AST 提取）
+    # - id: I4
+    #   name: argv 参数
+    #   fields: 参数 argv，类型注解 list[str] | None
+    #   code: self_iteration_agent_entry.py 顶层公共函数形参（AST 提取）
+    # 层: 算法
+    # - id: A1
+    #   name_zh: ① run_iteration_review
+    #   name_en: run_iteration_review
+    #   intro: 执行一张迭代评估工单（只读证据→human_gated 建议工单，端到端落盘）.
+    #   desc: 执行一张迭代评估工单（只读证据→human_gated 建议工单，端到端落盘）. ticket={"ticket_id", "evidence_paths": [仓内相对/绝对路…；源码 _self_iteration_review.py（B16 拆出）
+    #   inputs: ticket runtime_dir repo_root
+    #   outputs: dict[str, Any]
+    # - id: A2
+    #   name_zh: ② run_reflection_review
+    #   name_en: run_reflection_review
+    #   intro: S1.1 reflection_review 工单（12号文闸门+三角色反思；
+    #   desc: S1.1 reflection_review 工单（12号文闸门+三角色反思；实现薄委派 _s11_wiring）.；源码 L125-L129
+    #   inputs: ticket
+    #   outputs: dict[str, Any]
+    # - id: A3
+    #   name_zh: ③ main
+    #   name_en: main
+    #   intro: CLI 手动触发入口：--ticket <工单 JSON 路径> [--runtime-dir DIR].
+    #   desc: CLI 手动触发入口：--ticket <工单 JSON 路径> [--runtime-dir DIR].；源码 L132-L147
+    #   inputs: argv
+    #   outputs: int
+    # 层: 输出
+    # - id: O1
+    #   name_zh: dict[str, Any]
+    #   name_en: dict[str, Any]
+    #   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+    #   downstream: tests/autonomy/test_execution_layer_agent_entries.py ; tests/aut…
+    # - id: O2
+    #   name_zh: int
+    #   name_en: int
+    #   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+    #   downstream: tests/autonomy/test_execution_layer_agent_entries.py ; tests/aut…
+    # [/ALGO_FLOW]
+    #
+    # 边:
+    # I1 --> A1
+    # I2 --> A1
+    # I3 --> A1
+    # I4 --> A1
+    # A1 --> A2
+    # A2 --> A3
+    # A3 --> O1

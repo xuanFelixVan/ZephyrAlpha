@@ -19,32 +19,7 @@
 """
 mode_manager.py — 模式管理器 (DD102, TASK-019)
 
-# [ALGO_FLOW]
-# 层: 输入
-# - id: I1
-#   name: mode 参数
-#   fields: 参数 mode（无注解）
-#   code: mode_manager.py 顶层公共函数形参（AST 提取）
-# 层: 算法
-# - id: A1
-#   name_zh: ① ModeManager
-#   name_en: ModeManager
-#   intro: mode_transition_proof 因果验证 + per-mode budget 表 (DD102).
-#   desc: mode_transition_proof 因果验证 + per-mode budget 表 (DD102).；公共方法（定义序）: transition, current_mode；源码 L60-L72
-#   inputs: mode
-#   outputs: 返回值
-#   （注：A1 之后另有 1 个公共定义未列入（含 1 个数据契约/异常/枚举声明类），见源码）
-# 层: 输出
-# - id: O1
-#   name_zh: 模块公共 API 面（2 定义）
-#   name_en: public defs
-#   intro: ModeManager
-#   downstream: 见模块头 [CONSUMERS]
-# [/ALGO_FLOW]
-#
-# 边:
-# I1 --> A1
-# A1 --> O1
+# [ALGO_FLOW] external: docs/03_modules/_domain_autonomy_core/algo_flow/context/mode_manager.yaml
 """
 
 from enum import Enum

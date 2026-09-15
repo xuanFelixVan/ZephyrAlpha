@@ -27,75 +27,7 @@ kind=g04_strategy_ops_check（S1.3）：20号文首批三策略（打板/多因�
 true），不做自动交易决策/下单（交易决策属交易决策侧，§5-3）。
 手动触发：python -m zephyr.autonomy_core.agents.business_agent_entry --ticket <path>
 
-# [ALGO_FLOW]
-# 层: 输入
-# - id: I1
-#   name: ticket 参数
-#   fields: 参数 ticket，类型注解 dict[str, Any]
-#   code: business_agent_entry.py 顶层公共函数形参（AST 提取）
-# - id: I2
-#   name: runtime_dir 参数
-#   fields: 参数 runtime_dir（无注解）
-#   code: business_agent_entry.py 顶层公共函数形参（AST 提取）
-# - id: I3
-#   name: repo_root 参数
-#   fields: 参数 repo_root（无注解）
-#   code: business_agent_entry.py 顶层公共函数形参（AST 提取）
-# - id: I4
-#   name: argv 参数
-#   fields: 参数 argv，类型注解 list[str] | None
-#   code: business_agent_entry.py 顶层公共函数形参（AST 提取）
-# 层: 算法
-# - id: A1
-#   name_zh: ① query_registration_status
-#   name_en: query_registration_status
-#   intro: 样例①：注册状态查询（读 factor/strategy registry 状态汇总，端到端落盘）.
-#   desc: 样例①：注册状态查询（读 factor/strategy registry 状态汇总，端到端落盘）.；源码 _registration_status.py（B16 拆出）
-#   inputs: ticket runtime_dir repo_root
-#   outputs: dict[str, Any]
-# - id: A2
-#   name_zh: ② draft_factor_candidate_evaluation
-#   name_en: draft_factor_candidate_evaluation
-#   intro: 样例②：因子候选评估工单（读候选条目出评估建议文本，仅建议）.
-#   desc: 样例②：因子候选评估工单（读候选条目出评估建议文本，仅建议）.；源码 _registration_status.py（B16 拆出）
-#   inputs: ticket runtime_dir repo_root
-#   outputs: dict[str, Any]
-# - id: A3
-#   name_zh: ③ run_g04_strategy_ops_check
-#   name_en: run_g04_strategy_ops_check
-#   intro: S1.3 G04 三策略运营核对工单（20号文打板/多因子/事件驱动；
-#   desc: S1.3 G04 三策略运营核对工单（20号文打板/多因子/事件驱动；薄委派 _g04_ops_check）.；源码 L150-L154
-#   inputs: ticket
-#   outputs: dict[str, Any]
-# - id: A4
-#   name_zh: ④ main
-#   name_en: main
-#   intro: CLI 手动触发入口：--ticket <工单 JSON 路径> [--runtime-dir DIR].
-#   desc: CLI 手动触发入口：--ticket <工单 JSON 路径> [--runtime-dir DIR].；源码 L156-L173
-#   inputs: argv
-#   outputs: int
-# 层: 输出
-# - id: O1
-#   name_zh: dict[str, Any]
-#   name_en: dict[str, Any]
-#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
-#   downstream: tests/autonomy/test_execution_layer_agent_entries.py ; tests/autonomy/test_busi…
-# - id: O2
-#   name_zh: int
-#   name_en: int
-#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
-#   downstream: tests/autonomy/test_execution_layer_agent_entries.py ; tests/autonomy/test_busi…
-# [/ALGO_FLOW]
-#
-# 边:
-# I1 --> A1
-# I2 --> A1
-# I3 --> A1
-# I4 --> A1
-# A1 --> A2
-# A2 --> A3
-# A3 --> A4
-# A4 --> O1
+# [ALGO_FLOW] external: docs/03_modules/_domain_autonomy_core/algo_flow/agents/business_agent_entry.yaml
 """
 
 from __future__ import annotations

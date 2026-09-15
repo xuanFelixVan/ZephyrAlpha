@@ -32,49 +32,7 @@ EmbeddingRouterAdapter — S1.3 语义复核嵌入设施桥接 + 批量档手动
 
 sessions JSON 格式：[{"session_ref", "original_intent", "action_summary"}, ...]
 
-# [ALGO_FLOW]
-# 层: 输入
-# - id: I1
-#   name: argv 参数
-#   fields: 参数 argv，类型注解 list[str] | None
-#   code: embedding_provider_adapter.py 顶层公共函数形参（AST 提取）
-# - id: I2
-#   name: at 参数
-#   fields: 参数 at（无注解）
-#   code: embedding_provider_adapter.py 顶层公共函数形参（AST 提取）
-# - id: I3
-#   name: provider 参数
-#   fields: 参数 provider（无注解）
-#   code: embedding_provider_adapter.py 顶层公共函数形参（AST 提取）
-# 层: 算法
-# - id: A1
-#   name_zh: ① EmbeddingRouterAdapter
-#   name_en: EmbeddingRouterAdapter
-#   intro: EmbeddingProvider 协议适配器：把 EmbeddingRouter（MOD-INF-042）桥接给 S…
-#   desc: EmbeddingProvider 协议适配器：把 EmbeddingRouter（MOD-INF-042）桥接给 S1.3 复核核. 首次嵌入调用时按需 warmup 一次（a…；公共方法（定义序）: collect…
-#   inputs: router collection_name auto_warmup
-#   outputs: 返回值
-# - id: A2
-#   name_zh: ② main
-#   name_en: main
-#   intro: S1.3 批量档手动 CLI 入口。
-#   desc: S1.3 批量档手动 CLI 入口。返回码：0 成功；2 输入/配置非法；3 盘中时段拒绝执行. Args: argv: CLI 参数（None → sys.argv）。 at:…；源码 L183-L242
-#   inputs: argv at provider
-#   outputs: int
-# 层: 输出
-# - id: O1
-#   name_zh: int
-#   name_en: int
-#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
-#   downstream: tests/autonomy/test_embedding_provider_adapter.py；手动 CLI（python -m zephyr.auton…
-# [/ALGO_FLOW]
-#
-# 边:
-# I1 --> A1
-# I2 --> A1
-# I3 --> A1
-# A1 --> A2
-# A2 --> O1
+# [ALGO_FLOW] external: docs/03_modules/_domain_autonomy_core/algo_flow/embedding_provider_adapter.yaml
 """
 
 from __future__ import annotations

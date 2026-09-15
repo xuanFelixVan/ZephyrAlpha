@@ -25,59 +25,7 @@
 
 手动触发：python -m zephyr.autonomy_core.agents.governance_agent_entry --ticket <path>
 
-# [ALGO_FLOW]
-# 层: 输入
-# - id: I1
-#   name: ticket 参数
-#   fields: 参数 ticket，类型注解 dict[str, Any]
-#   code: governance_agent_entry.py 顶层公共函数形参（AST 提取）
-# - id: I2
-#   name: runtime_dir 参数
-#   fields: 参数 runtime_dir（无注解）
-#   code: governance_agent_entry.py 顶层公共函数形参（AST 提取）
-# - id: I3
-#   name: repo_root 参数
-#   fields: 参数 repo_root（无注解）
-#   code: governance_agent_entry.py 顶层公共函数形参（AST 提取）
-# - id: I4
-#   name: gate 参数
-#   fields: 参数 gate（无注解）
-#   code: governance_agent_entry.py 顶层公共函数形参（AST 提取）
-# 层: 算法
-# - id: A1
-#   name_zh: ① run_gate_check_ticket
-#   name_en: run_gate_check_ticket
-#   intro: 执行一张 gate 检查工单（端到端：输入工单→gate verdict→审计落盘）.
-#   desc: 执行一张 gate 检查工单（端到端：输入工单→gate verdict→审计落盘）. Args: ticket: {"ticket_id": str, "targets": […；源码 L119-L172
-#   inputs: ticket runtime_dir repo_root gate
-#   outputs: dict[str, Any]
-# - id: A2
-#   name_zh: ② main
-#   name_en: main
-#   intro: CLI 手动触发入口：--ticket <工单 JSON 路径> [--runtime-dir DIR].
-#   desc: CLI 手动触发入口：--ticket <工单 JSON 路径> [--runtime-dir DIR].；源码 L175-L184
-#   inputs: argv
-#   outputs: int
-# 层: 输出
-# - id: O1
-#   name_zh: dict[str, Any]
-#   name_en: dict[str, Any]
-#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
-#   downstream: tests/autonomy/test_execution_layer_agent_entries.py ; 人手动触发（CLI）
-# - id: O2
-#   name_zh: int
-#   name_en: int
-#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
-#   downstream: tests/autonomy/test_execution_layer_agent_entries.py ; 人手动触发（CLI）
-# [/ALGO_FLOW]
-#
-# 边:
-# I1 --> A1
-# I2 --> A1
-# I3 --> A1
-# I4 --> A1
-# A1 --> A2
-# A2 --> O1
+# [ALGO_FLOW] external: docs/03_modules/_domain_autonomy_core/algo_flow/agents/governance_agent_entry.yaml
 """
 
 from __future__ import annotations
