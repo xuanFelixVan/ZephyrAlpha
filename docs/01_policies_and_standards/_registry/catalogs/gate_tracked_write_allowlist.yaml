@@ -3,7 +3,7 @@ doc_type: register
 title: GATE-TRACKED-DRIFT 运行期 tracked 写入归因白名单（唯一真源 SSoT）
 status: active
 created: '2026-09-02'
-last_updated: '2026-09-03'
+last_updated: '2026-09-16'
 owner: freeze-gw（CAND-GATEMECH-004 冻结窗口专项）
 policy: >-
   gate 链执行窗口（GitCommitGateway._check_gates_with_drift_watch 指纹前后比对）内
@@ -36,7 +36,7 @@ entries:
   note: 派生缓存
 - path: docs/01_policies_and_standards/_registry/catalogs/registry_master_index.yaml
   class: B
-  writer: registry_master_index 生成器（派生漂移缓存，ROOR 为人工真源）
+  writer: "generate_registry_master_index.py（ROOR maintenance: auto；派生漂移缓存，ROOR 为人工真源）"
   note: 派生缓存
 - path: data/asset_index/unified-asset-index.yaml
   class: B
@@ -72,7 +72,17 @@ entries:
   note: 运行时遥测写 tracked 数据文件（judged auto-sync 产物，勿动清单成员）
 - pattern: docs/_working/**
   class: B
-  writer: worktree_drift_watchdog daemon（B2 auto-stage 护盾，2026-09-14 #B1 删除事故三层防线）
-  note: 只写 index（git add docs/_working untracked 新文件）不改工作区内容；gate 窗口内
-    触发会使 staged 指纹变化（diff-index --cached），归因此处。被活跃会话 claim 的文件
-    跳过；恢复通道=git checkout -- <path>（index 拉回）。
+  writer: "worktree_drift_watchdog daemon（B2 auto-stage 护盾，只写 index）+ 事件驱动管线内容写手：scripts/backtest/auto_mount.py write_report（钩子③）、src/zephyr/strategy_pipeline/intake.py write_intake_report（钩子⑦）"
+  note: watchdog 只 git add docs/_working untracked 新文件不改工作区内容（被 claim 文件跳过；
+    恢复通道=git checkout -- <path>）；2026-09-15 起管线内容写手高频落盘本树
+    （auto-mount-report-*.md 与 pipeline-research/reports/intake-*.{md,yaml}）——事件消费端
+    编排（无线程/无调度），在他会话 gate 窗口落盘属合法派生波次（#55 族写手归因批
+    2026-09-16 实证归因）。
+
+  # ── 判定留痕（2026-09-16 #55 族写手归因批，st-commitspeed-20260916）──
+  # ruling_registry.yaml 不入本表：全库写手反查（src/ scripts/ 无写入方、ROOR 无该表
+  # auto 维护项、git 历史全部=会话裁定登记原子提交，如 59f45690dd=#257 同commit）确认
+  # 其为会话手工 SSOT 而非机器派生。其 gate 窗口漂移语义：他会话 WIP → own-scope
+  # 降级 warn 不阻断；本提交清单内 → TOCTOU 硬阻断正确（RULE-RULING 原子性保护），
+  # 逃生通道 --allow-tracked-drift（st-bsefix-20260915 先例）。allowlist 化会静默放行
+  # 「门禁验旧内容、提交落新内容」竞态，故拒绝登记。

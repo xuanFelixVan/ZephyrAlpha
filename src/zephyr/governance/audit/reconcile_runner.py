@@ -204,7 +204,9 @@ _PENDING_DEAD_THRESHOLD_SECONDS: int = 120
 # 并发 worker 上限——防止每次 commit spawn 一个 worker 导致资源耗尽。
 # worker 注册为逻辑 session（worker-{sha8}-{pid}），launch_reconcile_async
 # 通过 SessionRegistry.list_active() 计数活跃 worker，超限则跳过 spawn（fail-open）。
-MAX_CONCURRENT_WORKERS: int = 2
+# P2-B（方案 v2.1 §3.7，st-commitspeed-20260916）：2→1——单 worker 串行，CPU 让给
+# 提交门禁链；超限 spawn 走既有 skipped 路径（事件驱动重跑，reconciler 幂等）。
+MAX_CONCURRENT_WORKERS: int = 1
 
 # Status / payload 文件目录
 _REPORTS_SUBDIR: str = ".runtime/reconcile_reports"
@@ -239,19 +241,23 @@ def _reports_dir(project_root: Path | str) -> Path:
     return d
 
 
-def _status_file_path(project_root: Path | str, commit_sha: str) -> Path:
-    """status file 路径（不创建）。"""
+def _reports_file(project_root: Path | str, commit_sha: str, prefix: str) -> Path:
+    """reconcile_reports 目录文件路径共享体（CloneGuard 治本合并：status/payload
+    两构造器结构 100% 同形——仅 prefix 不同，抽共享体消除 extract 级克隆）。"""
     root = Path(project_root) if not isinstance(project_root, Path) else project_root
     # commit_sha 可能是短 SHA（7-12 字符）或长 SHA（40 字符），统一原样使用
     safe_sha = commit_sha.replace("/", "_").replace("\\", "_").strip()
-    return root / _REPORTS_SUBDIR / f"reconcile_status_{safe_sha}.json"
+    return root / _REPORTS_SUBDIR / f"reconcile_{prefix}_{safe_sha}.json"
+
+
+def _status_file_path(project_root: Path | str, commit_sha: str) -> Path:
+    """status file 路径（不创建）。"""
+    return _reports_file(project_root, commit_sha, "status")
 
 
 def _payload_file_path(project_root: Path | str, commit_sha: str) -> Path:
     """payload file 路径（worker 读取后删除）。"""
-    root = Path(project_root) if not isinstance(project_root, Path) else project_root
-    safe_sha = commit_sha.replace("/", "_").replace("\\", "_").strip()
-    return root / _REPORTS_SUBDIR / f"reconcile_payload_{safe_sha}.json"
+    return _reports_file(project_root, commit_sha, "payload")
 
 
 def write_status_file(
@@ -659,7 +665,7 @@ def _acquire_launch_lock(root: Path):
                     fh.seek(0)
                     msvcrt.locking(fh.fileno(), msvcrt.LK_NBLCK, 1)
                 else:
-                    import fcntl
+                    import fcntl  # noqa: import-integrity  POSIX 平台分支保护(os.name!=nt 才执行)——Windows 静态扫描盲区豁免,双空格符合 _make_noqa_pattern 语法
 
                     fcntl.flock(fh.fileno(), fcntl.LOCK_EX | fcntl.LOCK_NB)
                 locked = True
@@ -679,7 +685,7 @@ def _acquire_launch_lock(root: Path):
                         fh.seek(0)
                         msvcrt.locking(fh.fileno(), msvcrt.LK_UNLCK, 1)
                     else:
-                        import fcntl
+                        import fcntl  # noqa: import-integrity  POSIX 平台分支保护(os.name!=nt 才执行)——Windows 静态扫描盲区豁免,双空格符合 _make_noqa_pattern 语法
 
                         fcntl.flock(fh.fileno(), fcntl.LOCK_UN)
                 except OSError:
@@ -913,6 +919,9 @@ def _launch_worker_locked(
             name="reconcile-worker",
             expected_lifetime_s=1800.0,
             owner="reconcile_runner",
+            # P2-B 降载（方案 v2.1 §3.7，st-commitspeed-20260916）：BELOW_NORMAL
+            # 让 CPU 给提交门禁链；经 incubator **spawn_kwargs 透传。
+            priority_class="below_normal",
         )
         # 治本：保持 proc 引用，避免 GC 触发 Popen.__del__ ResourceWarning
         _WORKER_PROCS[commit_sha] = proc

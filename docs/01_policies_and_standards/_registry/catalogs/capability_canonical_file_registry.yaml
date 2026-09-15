@@ -7385,7 +7385,7 @@ creation_tokens:
   token: auto-service-registry-20260706
   created_by: session-sess-44960-20260706204645
   capability: service_registry
-- file: docs/01_policies_and_standards/_registry/catalogs/interface_contract_registry.yaml
+- file: docs/01_policies_and_standards/_registry/catalogs/_archive/interface_contract_registry.yaml
   token: auto-interface-contract-registry-20260706
   created_by: session-sess-9032-20260706163221
   capability: interface_contract_registry

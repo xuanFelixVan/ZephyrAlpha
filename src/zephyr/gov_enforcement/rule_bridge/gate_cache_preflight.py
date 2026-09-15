@@ -52,6 +52,14 @@ CONTENT_SCAN_CACHE_WHITELIST: frozenset[str] = frozenset(
         "NO-LONG-PARAM-LIST",
         "NO-UPWARD-IMPORT",
         "UNSAFE-DICT-SPREAD",
+        # P1-B 扩面（方案 v2.1 §3.4，st-commitspeed-20260916）：own-scope 化的纯
+        # 内容/AST 扫描 gate——输入面=own files∪HEAD。读注册表类（TABLE-NAME/
+        # PERM-TRIGGER/MANUAL-ONLY-PERMANENT）按白名单准入判据排除（注册表输入
+        # 未纳入指纹）。
+        "DATETIME-NOW-FORBIDDEN",
+        "NO-HIGH-COMPLEXITY",
+        "UNDEFINED-NAME",
+        "NO-GOD-CLASS",
     }
 )
 

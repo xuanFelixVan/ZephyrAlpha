@@ -420,6 +420,7 @@ def spawn_python_hidden(
     stderr_to_devnull: bool = True,
     stdout_path: str | None = None,
     stderr_path: str | None = None,
+    priority_class: str | None = None,
 ) -> subprocess.Popen:
     """无窗口 spawn python 子进程（daemon/reconciler worker/scheduler 用）。
 
@@ -478,7 +479,12 @@ def spawn_python_hidden(
     elif stderr_to_devnull:
         popen_kwargs["stderr"] = subprocess.DEVNULL
     if os.name == "nt":
-        popen_kwargs["creationflags"] = _hidden_creationflags() | _CREATE_BREAKAWAY_FROM_JOB
+        _flags = _hidden_creationflags() | _CREATE_BREAKAWAY_FROM_JOB
+        # P2-B 后台工作进程降载（方案 v2.1 §3.7）：below_normal OR 入
+        # BELOW_NORMAL_PRIORITY_CLASS(0x4000)——CPU 让给提交门禁链；缺省不变。
+        if priority_class == "below_normal":
+            _flags |= 0x00004000
+        popen_kwargs["creationflags"] = _flags
     else:
         popen_kwargs["start_new_session"] = True  # POSIX: 新 session（setsid）
     try:
@@ -495,13 +501,37 @@ def spawn_python_hidden(
                 "spawn_python_hidden: CREATE_BREAKAWAY_FROM_JOB denied (job object "
                 "forbids breakaway), falling back to WMI Win32_Process.Create"
             )
-            return _spawn_detached_via_wmi(
-                cmd,
-                cwd=cwd,
-                env=env,
-                stdout_path=stdout_path,
-                stderr_path=stderr_path,
+            # WMI ReturnValue=21 纵深防御（st-commitspeed-20260916）：21 系负载/
+            # 上下文相关的 CIM 通道偶发（09-15/16 reconcile status 实证 6+ 次，本机
+            # 直测两变体均 0），原路径 spawn 失败→调用方恒回退 sync=提交会话被
+            # reconciler 全链阻塞。防御链：WMI 重试×2 → 无 breakaway Popen 降级
+            #（进程留父 job，父终端关闭可能连坐——reconciler 幂等+事件重跑可接受，
+            # warn 留痕）→ 仍失败向上抛（调用方 sync 兜底不变）。
+            _last_wmi_err: Exception | None = None
+            for _attempt in range(2):
+                try:
+                    return _spawn_detached_via_wmi(
+                        cmd,
+                        cwd=cwd,
+                        env=env,
+                        stdout_path=stdout_path,
+                        stderr_path=stderr_path,
+                    )
+                except RuntimeError as _wmi_err:
+                    _last_wmi_err = _wmi_err
+                    logger.warning(
+                        "spawn_python_hidden: WMI 通道失败(第 %d 次): %s", _attempt + 1, _wmi_err
+                    )
+                    # 无显式退避 sleep——WMI 通道本身经 powershell CIM 往返秒级，
+                    # 天然间隔；且避免 time.sleep 触发 PERM-TRIGGER 时间触发模式。
+            logger.warning(
+                "spawn_python_hidden: WMI 重试耗尽(%s)，降级无 breakaway Popen"
+                "（进程留父 job 内，父终端关闭可能连坐；reconciler 幂等可重跑）",
+                _last_wmi_err,
             )
+            _kwargs2 = dict(popen_kwargs)
+            _kwargs2["creationflags"] = _hidden_creationflags()  # 去 breakaway 位
+            return subprocess.Popen(cmd, **_kwargs2)
     finally:
         # 父进程句柄即刻关闭——CreateProcess/ fork 已把句柄 duplicate 给子进程，
         # 父关闭不影响子继续写；不关闭则父进程句柄泄漏（长驻 gateway 场景）。

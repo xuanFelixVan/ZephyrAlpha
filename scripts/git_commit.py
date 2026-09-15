@@ -647,8 +647,9 @@ def _enqueue_mode(args, files: list[str], message: str) -> int:
     except Exception as exc:  # noqa: BLE001 — 自举失败不阻断入队返回
         logger.warning("[enqueue] 自举排空尝试失败（入袋已安全）: %s", exc)
     print(
-        f"ENQUEUED: {item['qid']} (files={len(item['files'])}) — 快照入袋即完成，"
-        f"Serializer 异步落盘；查询: python scripts/commit_queue.py status --session {args.session}"
+        f"ENQUEUED: {item['qid']} (files={len(item['files'])}) — 快照入袋即完成（零丢失），"
+        f"传送带自动消化，无需轮询等待——请继续施工下一任务；"
+        f"失败自动进堵点本由维护班处理，事后可查: python scripts/commit_queue.py status --session {args.session}"
     )
     return 0
 

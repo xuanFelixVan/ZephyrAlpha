@@ -49713,6 +49713,13 @@ entries:
   desc_zh: "孵化即登记（父PID/预期寿命/进程树）+水位门禁"
   desc_en: ""
   plain_zh: "这个模块是项目里所有新开子进程的前门登记处：每次要启动一个子进程，先看看家里内存是不是快爆了（快爆就先等一等或者直接不让开），确认安全后才真正启动，并且立刻在小本本上记下这个新进程是谁家的孩子、预计活多久、一家人的编号都列清楚。这样以后进程变成孤儿时，管理员翻小本本就知道该不该收走，不用再靠猜。"
+- module_path: src/zephyr/gov_enforcement/rule_bridge/commit_belt_daemon.py
+  domain_id: D_GOV_CODE_QUALITY
+  name_zh: "提交传送带守护"
+  name_en: "Commit Belt Daemon"
+  desc_zh: "事件驱动的提交队列常驻消费端"
+  desc_en: "Event-driven resident consumer of the commit queue"
+  plain_zh: "提交传送带的传送工：AI 把改动放上传送带就不用管了，这个常驻小工一有新货就自动搬去排队落地，死了的信件自动记到堵点本上等维修班来修"
 
 battle_map_steps:
 - step_id: BM-BUY-05

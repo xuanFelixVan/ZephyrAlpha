@@ -1959,6 +1959,147 @@ class TestTrackedDriftReadonlyHardening:
 
 
 # ---------------------------------------------------------------------------
+# #55 族五类产物写手归因登记回归（2026-09-16，st-commitspeed-20260916）
+# ---------------------------------------------------------------------------
+class TestTrackedWriteAllowlist55Families:
+    """五族合法机器派生写手的白名单归因回归（真源=生产 allowlist 同形条目）。
+
+    族清单（写手已逐个取证，均事件驱动非 cron）：
+      ① auto-mount 报告 docs/_working/auto-mount-report-*.md 及 auto-mount-reports/ 子目录
+         —— scripts/backtest/auto_mount.py write_report（钩子③）；
+      ② pipeline intake 报告 docs/_working/pipeline-research/reports/intake-*.{md,yaml}
+         —— src/zephyr/strategy_pipeline/intake.py write_intake_report（钩子⑦，事件消费端）；
+      ③ scripts/governance/meta/rules_integrity_db.json —— integrity 后注册 reconciler；
+      ④ rule_catalog_registry.yaml / registry_master_index.yaml —— 注册表生成器
+         （generate_rule_catalog.py / generate_registry_master_index.py）。
+    ①② 由 pattern docs/_working/** 覆盖；③④ 为精确路径条目。
+    """
+
+    _ALLOWLIST_REL = "docs/01_policies_and_standards/_registry/catalogs/gate_tracked_write_allowlist.yaml"
+    _RULING_REL = "docs/01_policies_and_standards/_registry/catalogs/ruling_registry.yaml"
+    _TASKS_REL = "src/zephyr/data/config/tasks.yaml"
+    _REPO_ROOT = Path(__file__).resolve().parents[2]
+
+    # 生产 allowlist 同形条目（五族登记本体；若生产文件改形须同步此处）
+    _PROD_SHAPED_BODY = (
+        "entries:\n"
+        "- path: scripts/governance/meta/rules_integrity_db.json\n"
+        "  class: B\n"
+        "- path: docs/01_policies_and_standards/_registry/catalogs/rule_catalog_registry.yaml\n"
+        "  class: B\n"
+        "- path: docs/01_policies_and_standards/_registry/catalogs/registry_master_index.yaml\n"
+        "  class: B\n"
+        "- pattern: docs/_working/**\n"
+        "  class: B\n"
+    )
+
+    _FAMILY_FILES = [
+        "docs/_working/auto-mount-report-STR-DABAN-001_STR-DABAN-002.md",  # 旧版根级布局
+        "docs/_working/auto-mount-reports/auto-mount-report-20260916-0100.md",
+        "docs/_working/pipeline-research/reports/intake-20260916-0100.md",
+        "docs/_working/pipeline-research/reports/intake-20260916-0100.yaml",
+        "scripts/governance/meta/rules_integrity_db.json",
+        "docs/01_policies_and_standards/_registry/catalogs/rule_catalog_registry.yaml",
+        "docs/01_policies_and_standards/_registry/catalogs/registry_master_index.yaml",
+    ]
+
+    class _WritingRegistry:
+        """模拟事件驱动管线/reconciler 在 gate 窗口向 tracked 文件写入（多目标）。"""
+
+        def __init__(self, targets: list[str]) -> None:
+            self._targets = targets
+
+        def check_all(self, gateway, files, **kwargs):  # noqa: ARG002
+            for t in self._targets:
+                p = Path(str(gateway.project_root)) / t
+                p.parent.mkdir(parents=True, exist_ok=True)
+                with open(p, "a", encoding="utf-8") as f:
+                    f.write("# machine writer flush\n")
+            return []
+
+    def _prepare(self, tmp_path: Path, tracked_files: list[str], allowlist_body: str) -> GitCommitGateway:
+        _init_git_repo(tmp_path)
+        env = {
+            **os.environ,
+            "GIT_AUTHOR_NAME": "T",
+            "GIT_AUTHOR_EMAIL": "t@t.com",
+            "GIT_COMMITTER_NAME": "T",
+            "GIT_COMMITTER_EMAIL": "t@t.com",
+        }
+        for rel in tracked_files:
+            _write_file(tmp_path, rel, "")
+        subprocess.run(["git", "add", "-A"], cwd=str(tmp_path), capture_output=True, env=env)
+        subprocess.run(["git", "commit", "-m", "track", "--no-verify"], cwd=str(tmp_path), capture_output=True, env=env)
+        _write_file(tmp_path, self._ALLOWLIST_REL, allowlist_body)
+        return GitCommitGateway(project_root=tmp_path)
+
+    def _records(self, tmp_path: Path) -> list[dict]:
+        import json as _json
+
+        audit = tmp_path / ".runtime" / "audit" / "hook_tracked_drift.jsonl"
+        if not audit.exists():
+            return []
+        return [_json.loads(line) for line in audit.read_text(encoding="utf-8").splitlines() if line.strip()]
+
+    def test_family_writes_attributed_no_violation(self, tmp_path: Path) -> None:
+        """用例 a) 五族路径窗口写入+生产同形白名单 → 归因命中，不注入硬阻断，
+        审计记录不带未归因清单（unattributed_files 空）；并断言生产 allowlist
+        五族条目在册（防条目被误删——真源=docs/.../gate_tracked_write_allowlist.yaml）。"""
+        # 生产真源在册断言（exact：③④；pattern docs/_working/**：①②）
+        import yaml
+
+        prod = yaml.safe_load(
+            (self._REPO_ROOT / self._ALLOWLIST_REL).read_text(encoding="utf-8")
+        )
+        exact = {e.get("path") for e in (prod.get("entries") or [])}
+        patterns = [e.get("pattern") for e in (prod.get("entries") or []) if e.get("pattern")]
+        assert "scripts/governance/meta/rules_integrity_db.json" in exact
+        assert "docs/01_policies_and_standards/_registry/catalogs/rule_catalog_registry.yaml" in exact
+        assert "docs/01_policies_and_standards/_registry/catalogs/registry_master_index.yaml" in exact
+        assert "docs/_working/**" in patterns
+
+        gw = self._prepare(tmp_path, self._FAMILY_FILES, self._PROD_SHAPED_BODY)
+        gw._gate_registry = self._WritingRegistry(self._FAMILY_FILES)
+        results = gw._check_gates_with_drift_watch([], "sess-fam")
+        assert not [r for r in results if not r.passed], "五族已登记写入不应阻断"
+        rec = self._records(tmp_path)
+        assert rec, "warn+审计语义：归因命中仍须落审计"
+        assert rec[-1].get("unattributed_files") in (None, [], False)
+        assert set(self._FAMILY_FILES) <= set(rec[-1].get("changed_files") or [])
+
+    def test_ruling_registry_and_unregistered_still_flagged(self, tmp_path: Path) -> None:
+        """用例 b) 真未归因写入仍记：ruling_registry.yaml+tasks.yaml（镜像
+        2026-09-15T21:54 st-btfix 实录）写入本提交清单 → 硬阻断+unattributed 留痕。
+
+        ruling_registry.yaml 系**故意不登记**（判定留痕见生产 allowlist 尾注）：全库无
+        机器写手（会话裁定登记 SSOT，RULE-RULING 同 commit 原子），其 own-scope 窗口
+        写入=TOCTOU 硬阻断语义正确。本用例同时钉住生产文件不得悄然把它 allowlist 化。
+        """
+        import fnmatch
+        import yaml
+
+        prod = yaml.safe_load(
+            (self._REPO_ROOT / self._ALLOWLIST_REL).read_text(encoding="utf-8")
+        )
+        entries = prod.get("entries") or []
+        exact = {e.get("path") for e in entries}
+        patterns = [e.get("pattern") for e in entries if e.get("pattern")]
+        assert self._RULING_REL not in exact, "ruling_registry 为会话 SSOT，禁止 allowlist 化（见生产 allowlist 判定留痕）"
+        assert not any(fnmatch.fnmatch(self._RULING_REL, p) for p in patterns), "同上（模式命中亦禁止）"
+
+        targets = [self._RULING_REL, self._TASKS_REL]
+        gw = self._prepare(tmp_path, targets, self._PROD_SHAPED_BODY)
+        gw._gate_registry = self._WritingRegistry(targets)
+        results = gw._check_gates_with_drift_watch(
+            [str(tmp_path / self._RULING_REL), str(tmp_path / self._TASKS_REL)], "sess-ruling"
+        )
+        hard = [r for r in results if r.gate_id == "TRACKED-DRIFT-READONLY"]
+        assert hard and not hard[0].passed, "清单内未归因写入必须硬阻断（TOCTOU）"
+        rec = self._records(tmp_path)
+        assert rec and rec[-1].get("unattributed_files") == targets
+
+
+# ---------------------------------------------------------------------------
 # 堵点溯源审计（D5，2026-09-13 极限红蓝对抗 Owner 指令"堵点可查可修"）
 # ---------------------------------------------------------------------------
 class TestCommitAnomalyAudit:

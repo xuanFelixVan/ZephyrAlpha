@@ -491,7 +491,7 @@ def _print_bottleneck_banner(project_root: Path, context: str) -> None:
         print(
             f"\n!! 提交堵点提醒（近 24h 共 {total} 次，修复后本提醒自动消失）-- context: {context}\n"
             f"   TOP: {'；'.join(parts)}\n"
-            "   修复指引：python scripts/governance/commit_perf_report.py --hours 24"
+            "   堵点本协议（专人专事）：问题已自动登记，由高模型维护班集中清账——施工 AI 无需修复，继续施工；维护班入口：python scripts/governance/commit_perf_report.py --hours 24"
             "（堵点溯源：.runtime/audit/commit_block_events.jsonl）",
             flush=True,
         )
@@ -2115,6 +2115,21 @@ class GitCommitGateway:
         _total_ms = (time.monotonic() - _commit_t0) * 1000
         if result.status == CommitStatus.OK and _total_ms > _SLOW_COMMIT_THRESHOLD_S * 1000:
             self._audit_commit_slow_event(session_id, existing, _total_ms)
+        # GAP-1 成功提交观测采样（方案 v2.1 §3.7）：成功且 <60s 零留痕=分位盲区；
+        # sha 尾数十六进制 ≥0xE 即 2/16=12.5%≈10% 确定性采样。
+        if result.status == CommitStatus.OK:
+            _sha = str(getattr(result, "commit_hash", "") or "")
+            try:
+                if _sha and int(_sha[-1], 16) >= 14:
+                    self._append_commit_anomaly_jsonl({
+                        "session_id": session_id,
+                        "event": "commit_ok_sample",
+                        "gate_id": "-",
+                        "files_count": len(existing),
+                        "total_ms": round(_total_ms),
+                    })
+            except Exception:  # noqa: BLE001 — 采样永不阻断
+                pass
         self._snapshot_worktree_status(session_id, result)
         self._run_post_commit_reconcile(existing, session_id, result, commit_message=message)
         # D5 推模式堵点提醒：成功路径也打印近 24h 堵点横幅（AI 交付总结必见，Owner 裁定）

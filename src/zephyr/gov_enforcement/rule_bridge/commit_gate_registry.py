@@ -132,6 +132,52 @@ from typing import Any, Callable, Final
 logger = logging.getLogger(__name__)
 
 
+# ---------------------------------------------------------------------------
+# P1-E gate 执行计数器（方案 v2.1 §8.1 G10，st-commitspeed-20260916）
+# 宪法 §4.2 触发率退役审计的数据燃料：check_all 逐 gate 计时/成败/复用态，
+# 每次链执行 flush 一行紧凑 jsonl 到 .runtime/audit/gate_execution_stats.jsonl。
+# 写失败静默（观测设施绝不阻断提交主链路）。
+# ---------------------------------------------------------------------------
+_STAT_LOCK = __import__("threading").Lock()
+_STAT_ACC: dict[str, dict] = {}
+
+
+def _stat_ms(gate_id: str, ms: float, passed: bool, state: str) -> None:
+    """单 gate 执行记账（线程安全，fail-safe 静默）。"""
+    try:
+        with _STAT_LOCK:
+            _STAT_ACC[gate_id] = {"ms": round(ms, 1), "passed": bool(passed), "state": state}
+    except Exception:  # noqa: BLE001 — 观测记账永不阻断
+        pass
+
+
+def _stat_flush(gateway: object) -> None:
+    """check_all 结束落一行执行统计；落盘失败静默。"""
+    try:
+        root = Path(str(getattr(gateway, "project_root", ".")))
+        audit_dir = root / ".runtime" / "audit"
+        audit_dir.mkdir(parents=True, exist_ok=True)
+        with _STAT_LOCK:
+            acc = _STAT_ACC.copy()
+            _STAT_ACC.clear()
+        if not acc:
+            return
+        from zephyr.shared.utils.time_utils import now_utc  # noqa: PLC0415
+
+        rec = {
+            "timestamp": now_utc().isoformat(),
+            "n_specs": len(acc),
+            "failed": sorted(g for g, v in acc.items() if not v["passed"]),
+            "reused": {g: v["state"] for g, v in acc.items() if v["state"] != "ran"},
+            "ms": {g: v["ms"] for g, v in acc.items() if v["ms"] >= 1.0},
+            "total_ms": round(sum(v["ms"] for v in acc.values()), 1),
+        }
+        with (audit_dir / "gate_execution_stats.jsonl").open("a", encoding="utf-8") as f:
+            f.write(json.dumps(rec, ensure_ascii=False) + "\n")
+    except Exception:  # noqa: BLE001 — 观测落盘永不阻断
+        pass
+
+
 def _audit_allow_overlap_usage(gateway: object, files: list[str], kwargs: dict) -> None:
     """落审计：allow_overlap=True 逃生通道的真实使用（GATE-COMMIT-GW-ABUSE-MONITOR 维度3 真源）。
 
@@ -430,6 +476,7 @@ class CommitGateRegistry:
                         detail="skipped: worktree 物理隔离（无检测对象）",
                     )
                 )
+                _stat_ms(spec.gate_id, 0.0, True, "skipped")
                 continue
             _cachedable = cache_ctx is not None and spec.gate_id in _gcp.CONTENT_SCAN_CACHE_WHITELIST
             _own_scope = ""
@@ -442,6 +489,7 @@ class CommitGateRegistry:
                 hit = cache_ctx.lookup(spec.gate_id, _own_scope)
                 if hit is not None:
                     results.append(GateResult(gate_id=spec.gate_id, passed=True, detail=f"cache-hit: {hit}"))
+                    _stat_ms(spec.gate_id, 0.0, True, "cache_hit")
                     continue
             _preflight_hit = (
                 preflight_results.get(spec.gate_id) if preflight_results else None
@@ -449,7 +497,9 @@ class CommitGateRegistry:
             if _preflight_hit is not None:
                 passed, detail = _preflight_hit
                 results.append(GateResult(gate_id=spec.gate_id, passed=passed, detail=f"preflight: {detail}"))
+                _stat_ms(spec.gate_id, 0.0, passed, "preflight_reused")
                 continue
+            _t_gate = time.monotonic()
             try:
                 passed, detail = spec.check(gateway, files, **kwargs)
                 results.append(GateResult(gate_id=spec.gate_id, passed=passed, detail=detail))
@@ -462,9 +512,12 @@ class CommitGateRegistry:
                         detail=f"gate 异常（fail-closed）: {e}",
                     )
                 )
+                _stat_ms(spec.gate_id, (time.monotonic() - _t_gate) * 1000, False, "exception")
                 continue
+            _stat_ms(spec.gate_id, (time.monotonic() - _t_gate) * 1000, passed, "ran")
             if _cachedable and passed:
                 cache_ctx.store(spec.gate_id, _own_scope, detail)
+        _stat_flush(gateway)
         return results
 
     def get(self, gate_id: str) -> GateSpec | None:
