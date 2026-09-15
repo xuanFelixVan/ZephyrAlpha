@@ -50,6 +50,14 @@ ttl: task_bound
 >
 > **冻结维持，理由改写**：145 条（原 133+09-15 两批 VAL 各 6）DSR 冻结不再是因为"来源不明"（来源已定案=官方件一致口径），而是因为 **① N 未落账且批间不可比 ② 数据层漂移不可复现 ③ solo 条目零折减虚高**。解冻条件=N 账本（累计口径）重建 + 存量按可考证 N 重算回填（§六-1 不变，另加"N 字段落台账 schema"）。
 
+> ## 冻结解除（2026-09-15，st-f06dsr-shift2-20260915）
+> 解冻条件已全部满足：
+> 1. **N 账本建成**：MOD-BT-200 `TrialLedger` + `trial_ledger_registry.yaml`（commit f4d1ea4f），count=269（台账 is_sharpe 非空行）+ 4212（F-06 批次 A 网格 5 批 manifest 可复核）= **4481**；
+> 2. **num_trials 落台账 schema**：S03-N1 加列 + 本班 23 个 run 回填可考证值；
+> 3. **存量重算回填完成**：261 行（refold 199 + normal_approx 62）+ 8 行诚实跳过（failed_obsolete/sim_deviation 无窗口证据），报告=`dsr-recalc/2026-09-15-dsr-recalc-report.md`，逐行明细=`dsr-recalc/2026-09-15-dsr-recalc-rows.yaml`。锚点行 0.9809 **翻案为 0.0517**（N=1 solo 零折减原点→累计 N=4481），新分布 max=0.1448、≥0.5 行数=0——与本评估累计口径预测"0/133 存活"方向一致。
+> 4. **三步走第①步（先修口径）就此收口**；第②步（阈值三线 SSOT 统一）与第③步（开关只对新批次、未注入记 not_tested）由后续班次执行。
+> 注意：重算产出=当日口径新值，与历史值不可逐位比（N 口径变更+09-14 数据漂移双重原因），逐行声明见报告 §7。
+
 ## 一、先纠正一个根本性误解：DSR 是概率，不是夏普
 
 `src/zephyr/backtest/core/metrics.py:385`：`dsr = _norm_cdf(z)` —— **DSR ∈ [0, 1]，是"这个 Sharpe 超出运气成分的概率"**，不是调整后的夏普值。

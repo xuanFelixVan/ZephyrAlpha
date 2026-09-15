@@ -14,10 +14,10 @@ sources:
   screen_table: c1_backtest.strategy_screen
   batch_records: 显式登记的台账外可审计批量（batch_id 唯一，幂等）
 screen_runs:
-  total_trials: 1187
-  total_runs: 26
-  last_synced_at: '2026-09-15T04:17:56+00:00'
-  last_synced_by: st-f06dsr-20260915b
+  total_trials: 269
+  total_runs: 25
+  last_synced_at: '2026-09-15T05:43:43+00:00'
+  last_synced_by: st-f06dsr-shift2-20260915
 batch_records:
 - batch_id: grid_20260915-051517
   n_trials: 6
