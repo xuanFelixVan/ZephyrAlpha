@@ -172,30 +172,6 @@ def _docstring_span(src: str) -> tuple[int, int] | None:
     return None
 
 
-def _docstring_line_base(src: str, node_lineno: int, ds: str) -> int:
-    """docstring 首行文本在源码中的 0 基行号。
-
-    三态：引号同行内联（'''xxx）→ 首行=lineno-1；引号独立行且紧随非空 → lineno
-    （Python 剥掉引号后的首换行）；引号独立行且首行空 → lineno+空行数（剥一个换行后
-    余下空行仍是内容）。直接用文本搜索首行内容在 src 行序列中的首个匹配（从
-    lineno-1 起扫）最稳，宁扫不猜。
-    """
-    lines = src.splitlines()
-    ds_first = ds.splitlines()[0] if ds.splitlines() else ""
-    for i in range(node_lineno - 1, min(node_lineno + 30, len(lines))):
-        if lines[i].rstrip("\r") == ds_first.rstrip("\r") and (
-            i == node_lineno - 1 or ds_first != "" or lines[i] == ""
-        ):
-            if ds_first:
-                return i
-    # 空首行：找引号行后第一个空行
-    for i in range(node_lineno - 1, min(node_lineno + 30, len(lines))):
-        if lines[i].strip() in ("", '"""', "'''"):
-            continue
-        return i
-    return node_lineno - 1
-
-
 def _extract_inline_block(docstring: str) -> tuple[str, int, int] | None:
     """返回 (块原文含边段, 起行 idx, 止行 idx)（docstring 内 0 基）。无边段时止于 [/ALGO_FLOW]。"""
     lines = docstring.splitlines()
@@ -270,38 +246,56 @@ def externalize(py_path: Path, dry_run: bool) -> dict:
     extracted = _extract_inline_block(ds)
     if extracted is None:
         return {"file": rel, "status": "skipped", "reason": "block span not found"}
-    block, ds_s, ds_e = extracted
+    block = extracted[0]
 
     span = _docstring_span(src)
     if span is None:
         return {"file": rel, "status": "skipped", "reason": "no docstring span"}
     d_start, d_end = span
 
-    # 首行基址：文本级搜索（引号风格/空行剥离三态全兼容，见 _docstring_line_base）
+    # docstring 节点定位（窗口计算需 lineno/end_lineno）
     tree2 = ast.parse(src)
     ds_node = None
     for n in ast.walk(tree2):
         if isinstance(n, ast.Expr) and isinstance(n.value, ast.Constant) and isinstance(n.value.value, str):
             ds_node = n
             break
-    ds_full = ast.get_docstring(tree2) or ""
-    base = _docstring_line_base(src, ds_node.lineno, ds_full)
 
     # 外部 yaml 路径：既有 yaml（source_of_truth 反查）优先，无则按推导命名
     domain_dir = _domain_of(rel)
     yaml_rel = _existing_yaml_for(rel, domain_dir) or _yaml_rel_for(py_path, rel, domain_dir)
     stem = py_path.stem
 
-    # 锚行（块在 docstring 内的行号 → 源码行号 = 首行基址 + ds 内 idx）
+    # 锚行窗口：纯源码坐标实测。值↔源码行映射在含 ``\n`` 转义的 docstring 上不保真
+    # （memory_bank/skill_attention 实证：desc 行内 "\n" 转义在值中展开 +3 幻影行，
+    # 按值行数推窗会切穿闭合引号 → 裸 CJK 语法错误）——块首/收标记按文本定位，
+    # 边段（# 注释/空行）向后延伸但封顶 docstring 末行。
     anchor_line = f"# [ALGO_FLOW] external: {yaml_rel}"
     ds_lines = src.splitlines()
-    src_s = base + ds_s
-    src_e = base + ds_e
-    if src_e >= len(ds_lines) or _ALGO_FLOW_START not in "\n".join(ds_lines[src_s : src_e + 1]):
-        # 行映射失准（docstring 引号折行）——跳过该文件，宁漏勿错
-        return {"file": rel, "status": "skipped", "reason": f"line mapping mismatch (base {base}, block src {src_s}-{src_e})"}
+    doc_end = (ds_node.end_lineno or ds_node.lineno) - 1  # docstring 末行 0 基
+    ws = None
+    for i in range(ds_node.lineno - 1, doc_end + 1):
+        if ds_lines[i].strip() == _ALGO_FLOW_START and "external:" not in ds_lines[i]:
+            ws = i
+            break
+    if ws is None:
+        return {"file": rel, "status": "skipped", "reason": "block start marker not found in source"}
+    we = None
+    for i in range(ws + 1, doc_end + 1):
+        if ds_lines[i].strip() == _ALGO_FLOW_END:
+            we = i
+            break
+    if we is None:
+        return {"file": rel, "status": "skipped", "reason": "block end marker not found in source"}
+    while we + 1 <= doc_end and (
+        not ds_lines[we + 1].strip() or ds_lines[we + 1].lstrip().startswith("#")
+    ):
+        we += 1
+    if _ALGO_FLOW_START not in "\n".join(ds_lines[ws : we + 1]):
+        # 窗口失准（标记折行等）——跳过该文件，宁漏勿错
+        return {"file": rel, "status": "skipped", "reason": f"line mapping mismatch (window {ws}-{we})"}
 
-    new_src_lines = ds_lines[:src_s] + [anchor_line] + ds_lines[src_e + 1 :]
+    new_src_lines = ds_lines[:ws] + [anchor_line] + ds_lines[we + 1 :]
     new_src = "\n".join(new_src_lines)
     if ds.endswith("\n") or True:
         pass  # join 后补尾换行
@@ -309,7 +303,7 @@ def externalize(py_path: Path, dry_run: bool) -> dict:
         new_src += "\n"
 
     if dry_run:
-        return {"file": rel, "status": "dryrun", "yaml": yaml_rel, "block_lines": ds_e - ds_s + 1}
+        return {"file": rel, "status": "dryrun", "yaml": yaml_rel, "block_lines": len(block.splitlines())}
 
     # round-trip 预验证（内存）：新源码 docstring 解析结果必须与迁移前一致
     try:
