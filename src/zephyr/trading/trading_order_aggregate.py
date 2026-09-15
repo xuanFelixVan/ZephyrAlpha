@@ -42,32 +42,7 @@ RECONCILED；支路 REJECTED/CANCELLED 终态。幂等键保证同指令重复�
 设计真源：docs/03_modules/_domain_trading/trading_order_aggregate/blueprint.md
 （B6-08087 / CAND-TRD-009，AUD-DRAFT-001-DIGEST P1 波 W-P1-23）。
 
-# [ALGO_FLOW]
-# 层: 输入
-# - id: I1
-#   name: event_sink 参数
-#   fields: 参数 event_sink（无注解）
-#   code: trading_order_aggregate.py 顶层公共函数形参（AST 提取）
-# 层: 算法
-# - id: A1
-#   name_zh: ① TradingOrderBook
-#   name_en: TradingOrderBook
-#   intro: TradingOrder 聚合注册表（簿）——幂等注册 + 状态机迁移 + 事件发布。
-#   desc: TradingOrder 聚合注册表（簿）——幂等注册 + 状态机迁移 + 事件发布。 event_sink：注入式领域事件出口（装配批接事件总线）；缺失仅落聚合内 事件日志，s…；公共方法（定义序）: registe…
-#   inputs: event_sink
-#   outputs: 返回值
-#   （注：A1 之后另有 7 个公共定义未列入（含 7 个数据契约/异常/枚举声明类），见源码）
-# 层: 输出
-# - id: O1
-#   name_zh: 模块公共 API 面（8 定义）
-#   name_en: public defs
-#   intro: TradingOrderBook
-#   downstream: 交易运营编排层（运行时装配批）; MOD-TRADING-010 SettlementRecord 聚合（FILLED→SETTLING 联动）
-# [/ALGO_FLOW]
-#
-# 边:
-# I1 --> A1
-# A1 --> O1
+# [ALGO_FLOW] external: docs/03_modules/_domain_trading/algo_flow/trading_order_aggregate.yaml
 """
 
 from __future__ import annotations

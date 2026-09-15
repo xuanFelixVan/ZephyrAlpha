@@ -28,42 +28,7 @@ B14-04639（AUD-DRAFT-001-DIGEST P2 波 P2-W08，CAND-TRD-013，A9 D-TRADING-14�
 型（本件=主数据存储/版本/查询运行时，复用其代码语义不重建契约）；
 eod_processor=日终任务链（本件被其调度执行日终刷新，零交集）。
 
-# [ALGO_FLOW]
-# 层: 输入
-# - id: I1
-#   name: conn 参数
-#   fields: 参数 conn（无注解）
-#   code: reference_data_manager.py 顶层公共函数形参（AST 提取）
-# - id: I2
-#   name: clock 参数
-#   fields: 参数 clock（无注解）
-#   code: reference_data_manager.py 顶层公共函数形参（AST 提取）
-# - id: I3
-#   name: audit_sink 参数
-#   fields: 参数 audit_sink（无注解）
-#   code: reference_data_manager.py 顶层公共函数形参（AST 提取）
-# 层: 算法
-# - id: A1
-#   name_zh: ① ReferenceDataManager
-#   name_en: ReferenceDataManager
-#   intro: 证券主数据管理器（SSOT：sqlite 注入 + 日终刷新 + 版本递增 + 查询 API + 审计回调）。
-#   desc: 证券主数据管理器（SSOT：sqlite 注入 + 日终刷新 + 版本递增 + 查询 API + 审计回调）。；公共方法（定义序）: eod_refresh, version, get, exists, all_cod…
-#   inputs: conn clock audit_sink
-#   outputs: 返回值
-#   （注：A1 之后另有 4 个公共定义未列入（含 4 个数据契约/异常/枚举声明类），见源码）
-# 层: 输出
-# - id: O1
-#   name_zh: 模块公共 API 面（5 定义）
-#   name_en: public defs
-#   intro: ReferenceDataManager
-#   downstream: 运行时装配批（监控与风控经查询 API 统一引用 / 日终刷新任务链 / 审计路由接线）
-# [/ALGO_FLOW]
-#
-# 边:
-# I1 --> A1
-# I2 --> A1
-# I3 --> A1
-# A1 --> O1
+# [ALGO_FLOW] external: docs/03_modules/_domain_trading/algo_flow/reference_data_manager.yaml
 """
 
 from __future__ import annotations

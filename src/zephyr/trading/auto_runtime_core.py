@@ -21,46 +21,7 @@ AutoRuntimeCore — 三层运行时运营中心（系统大脑）
 蓝图: docs/03_modules/_cross_layer/auto_runtime_core/blueprint.md §3.1
 借鉴: Microsoft Magentic-One + K8s Controller Manager + Google A2A
 
-# [ALGO_FLOW]
-# 层: 输入
-# - id: I1
-#   name: config 参数
-#   fields: 参数 config（无注解）
-#   code: auto_runtime_core.py 顶层公共函数形参（AST 提取）
-# - id: I2
-#   name: system_config 参数
-#   fields: 参数 system_config（无注解）
-#   code: auto_runtime_core.py 顶层公共函数形参（AST 提取）
-# - id: I3
-#   name: embedding_router 参数
-#   fields: 参数 embedding_router（无注解）
-#   code: auto_runtime_core.py 顶层公共函数形参（AST 提取）
-# - id: I4
-#   name: ollama_chat 参数
-#   fields: 参数 ollama_chat（无注解）
-#   code: auto_runtime_core.py 顶层公共函数形参（AST 提取）
-# 层: 算法
-# - id: A1
-#   name_zh: ① AutoRuntimeCore
-#   name_en: AutoRuntimeCore
-#   intro: 三层运行时运营中心——ZephyrAlpha 系统大脑。
-#   desc: 三层运行时运营中心——ZephyrAlpha 系统大脑。 5.150.2 God Class 治本：4 个高内聚零耦合职责簇已提取为同文件协作者类 （置于本类之后，见文件末尾协作…；公共方法（定义序）: lifecyc…
-#   inputs: config system_config embedding_router ollama_chat local_scheduler vms…
-#   outputs: 返回值
-# 层: 输出
-# - id: O1
-#   name_zh: 模块公共 API 面（1 定义）
-#   name_en: public defs
-#   intro: AutoRuntimeCore
-#   downstream: 见模块头 [CONSUMERS]
-# [/ALGO_FLOW]
-#
-# 边:
-# I1 --> A1
-# I2 --> A1
-# I3 --> A1
-# I4 --> A1
-# A1 --> O1
+# [ALGO_FLOW] external: docs/03_modules/_domain_trading/algo_flow/auto_runtime_core.yaml
 """
 
 from __future__ import annotations

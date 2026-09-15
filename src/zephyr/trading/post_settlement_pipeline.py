@@ -34,60 +34,7 @@ APScheduler / work_dag / conductor 均无 settlement/reconciliation 任务）。
 
 设计真源：54_reconciliation_attribution §2.4 缺口 #2 / §3.3 三层对账 15:30 硬时点。
 
-# [ALGO_FLOW]
-# 层: 输入
-# - id: I1
-#   name: trade_date 参数
-#   fields: 参数 trade_date，类型注解 str
-#   code: post_settlement_pipeline.py 顶层公共函数形参（AST 提取）
-# - id: I2
-#   name: reconcile_fn 参数
-#   fields: 参数 reconcile_fn（无注解）
-#   code: post_settlement_pipeline.py 顶层公共函数形参（AST 提取）
-# - id: I3
-#   name: audit_fn 参数
-#   fields: 参数 audit_fn（无注解）
-#   code: post_settlement_pipeline.py 顶层公共函数形参（AST 提取）
-# - id: I4
-#   name: alert_sink 参数
-#   fields: 参数 alert_sink（无注解）
-#   code: post_settlement_pipeline.py 顶层公共函数形参（AST 提取）
-# 层: 算法
-# - id: A1
-#   name_zh: ① build_post_settlement_jobs
-#   name_en: build_post_settlement_jobs
-#   intro: 盘后 15:30 任务规格（调度注册函数级入口）。
-#   desc: 盘后 15:30 任务规格（调度注册函数级入口）。 返回结算对账 + 日终审计两个任务规格；调度层（data scheduler APScheduler / trading wo…；源码 L136-L158
-#   inputs: 无参数
-#   outputs: tuple[PostSettlementJobSpec, ...]
-# - id: A2
-#   name_zh: ② run_post_settlement_pipeline
-#   name_en: run_post_settlement_pipeline
-#   intro: 盘后 15:30 触发执行入口（对账 → 审计串联）。
-#   desc: 盘后 15:30 触发执行入口（对账 → 审计串联）。 Args: trade_date: 结算日（YYYY-MM-DD）。 reconcile_fn: 结算对账可调用（trad…；源码 L161-L230
-#   inputs: trade_date reconcile_fn audit_fn alert_sink
-#   outputs: PostSettlementRunResult
-#   （注：A2 之后另有 3 个公共定义未列入（含 3 个数据契约/异常/枚举声明类），见源码）
-# 层: 输出
-# - id: O1
-#   name_zh: tuple[PostSettlementJobSpec, ...]
-#   name_en: tuple[PostSettlementJobSpec, ...]
-#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
-#   downstream: 调度层(data scheduler APScheduler / trading work_dag, 54号§2.4缺口#2接线入口); Settlement…
-# - id: O2
-#   name_zh: PostSettlementRunResult
-#   name_en: PostSettlementRunResult
-#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
-#   downstream: 调度层(data scheduler APScheduler / trading work_dag, 54号§2.4缺口#2接线入口); Settlement…
-# [/ALGO_FLOW]
-#
-# 边:
-# I1 --> A1
-# I2 --> A1
-# I3 --> A1
-# I4 --> A1
-# A1 --> A2
-# A2 --> O1
+# [ALGO_FLOW] external: docs/03_modules/_domain_trading/algo_flow/post_settlement_pipeline.yaml
 """
 
 from __future__ import annotations

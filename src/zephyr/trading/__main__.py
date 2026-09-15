@@ -21,31 +21,7 @@
 python -m zephyr.trading — AutoRuntime Core 入口
 ===================================================
 
-# [ALGO_FLOW]
-# 层: 输入
-# - id: I1
-#   name: 模块内部数据
-#   fields: 无公共形参/无再导出（AST 事实）
-#   code: __main__.py
-# 层: 算法
-# - id: A1
-#   name_zh: ① main
-#   name_en: main
-#   intro: main() 源码 L80-L131
-#   desc: 源码 L80-L131
-#   inputs: 无参数
-#   outputs: 返回值
-# 层: 输出
-# - id: O1
-#   name_zh: 模块公共 API 面（1 定义）
-#   name_en: public defs
-#   intro: main
-#   downstream: 见模块头 [CONSUMERS]
-# [/ALGO_FLOW]
-#
-# 边:
-# I1 --> A1
-# A1 --> O1
+# [ALGO_FLOW] external: docs/03_modules/_domain_trading/algo_flow/__main__.yaml
 """
 
 import argparse
@@ -65,7 +41,7 @@ def _set_memory_limit() -> None:
     而非被 OOM-Killer 静默杀掉。Windows 平台不支持 `resource` 模块，跳过即可。
     """
     try:
-        import resource  # Unix-only；Windows 上无此模块
+        import resource  # noqa: import-integrity  — Unix-only；Windows 上无此模块
     except ImportError:
         return  # 平台不支持，静默跳过
     try:

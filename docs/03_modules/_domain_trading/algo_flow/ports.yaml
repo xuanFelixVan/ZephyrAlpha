@@ -1,0 +1,49 @@
+# ALGO_FLOW 外部真源——ports（_domain_trading 域，真源 src/zephyr/trading/ports.py）
+# 2026-09-15 P2-1 契约头减负批量出仓：docstring 内联块逐字节副本，extractor 经
+# external 锚加载走同一 parse_algo_flow 管线；算法公共面变化时同步更新本块。
+doc_type: architecture_view
+ttl: permanent
+module: src.zephyr.trading.ports
+source_of_truth: src/zephyr/trading/ports.py
+algo_flow: |
+    # [ALGO_FLOW]
+    # 层: 输入
+    # - id: I1
+    #   name: 模块内部数据
+    #   fields: 无公共形参/无再导出（AST 事实）
+    #   code: ports.py
+    # 层: 算法
+    # - id: A1
+    #   name_zh: ① PipelineDispatcherProtocol
+    #   name_en: PipelineDispatcherProtocol
+    #   intro: Structural interface for pipeline task dispatching.
+    #   desc: Structural interface for pipeline task dispatching. Runtime depends on this protocol inst…；公共方法（定义序）: dispatc…
+    #   inputs: 无参数
+    #   outputs: 返回值
+    # - id: A2
+    #   name_zh: ② PipelineStatusReporterProtocol
+    #   name_en: PipelineStatusReporterProtocol
+    #   intro: Structural interface for pipeline status reporting.
+    #   desc: Structural interface for pipeline status reporting. Runtime depends on this protocol inst…；公共方法（定义序）: get_sta…
+    #   inputs: 无参数
+    #   outputs: 返回值
+    # - id: A3
+    #   name_zh: ③ TaskDispatchProtocol
+    #   name_en: TaskDispatchProtocol
+    #   intro: Structural interface for task dispatch handler used by runt…
+    #   desc: Structural interface for task dispatch handler used by runtime task queue.；公共方法（定义序）: handle；源码 L105-L108
+    #   inputs: 无参数
+    #   outputs: 返回值
+    # 层: 输出
+    # - id: O1
+    #   name_zh: 模块公共 API 面（3 定义）
+    #   name_en: public defs
+    #   intro: PipelineDispatcherProtocol, PipelineStatusReporterProtocol, TaskDispatchProtocol
+    #   downstream: zephyr.trading.auto_runtime_core;zephyr.trading.work_orchestrator
+    # [/ALGO_FLOW]
+    #
+    # 边:
+    # I1 --> A1
+    # A1 --> A2
+    # A2 --> A3
+    # A3 --> O1

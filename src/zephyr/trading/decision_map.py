@@ -16,50 +16,7 @@
 # [TTL] permanent
 
 """
-# [ALGO_FLOW]
-# 层: 输入
-# - id: I1
-#   name: 地图真源 YAML（config/trading_decision_map.yaml）
-#   fields: nodes/edges/state_matrix/markets（schema v1.0）
-#   code: load_decision_map(path) 读入
-# - id: I2
-#   name: 三个引用注册表（catalogs 目录）
-#   fields: strategy_registry.yaml strategies[].strategy_id / factor_registry.yaml factors[].factor_id / data_asset_registry.yaml datasets[].dataset_id
-#   code: validate_decision_map(registry_dir) 只读加载
-# - id: I3
-#   name: known_strategy_ids（可选）
-#   fields: 代码 StrategyMeta 真源的 kebab-case 策略 id 集合
-#   code: validate_decision_map(known_strategy_ids=...) 注入
-# 层: 算法
-# - id: A1
-#   name_zh: ① 加载（load_decision_map）
-#   name_en: load_decision_map
-#   intro: YAML → frozen dataclass 图谱（节点/边/状态矩阵/市场），结构错误抛 DecisionMapSchemaError
-#   desc: 解析 schema_version/map_id/markets/nodes/edges/state_matrix 五段；必填与枚举在 load 阶段最小校验（字段存在性），语义校验留给 validate
-#   inputs: I1
-#   outputs: DecisionMap
-# - id: A2
-#   name_zh: ② 校验（validate_decision_map）
-#   name_en: validate_decision_map
-#   intro: 引用存在性+治理门禁 R1-R36 → (ok, GapReport)；缺口即地图红节点语义
-#   desc: R1 节点枚举; R2 边端点+类型+无环; R3 策略引用（STR-* 查 REG-STR-001，其余查 known_strategy_ids）; R4 因子引用 REG-FCT-001; R5 数据引用 REG-DATAFLOW-001 datasets; R6 置信度枚举+verified必带evidence; R7 矩阵格引用存在性; R8 sequence 边成环检测; R10 市场实例一致性; R12 整装方案; R13 算法引用（IND/EXA/DAL）; R14 doc_ref 存在+路径穿越拒绝; R15 治理字段枚举+新节点必填; R16 父子完整+树深≤4+树宽预警; R17 粒度（问题≤100字+禁模糊词）+容量（挂载≤8/因子≤12/数据≤8/算法≤8+各交叉轴上限）; R18 name_zh 唯一; R19 module_ref 存在; R20 node_id 骨架; R21 MOD-* 交叉锚（格式+depgraph 缓存对账+欠账 warning）; R22 矩阵覆盖 warning; R23 流预算 warning（>80）; R24 因子欠账 warning; R25 空转叶子 warning; R26-R38 12 库交叉轴（形态/席位/宏观/周期/宇宙/成本/事件/风险限额/组合模型/基准/告警阈值/ML模型，表驱动 _XREF_SPECS）; R98 空地图; R99 注册表真源缺失; module_ref=null 记 warning; R39 盘中/持续节点时效预算欠账 warning（v1.9 latency_budget）
-#   inputs: DecisionMap I2 I3
-#   outputs: (bool, list[GapReportItem])
-# 层: 输出
-# - id: O1
-#   name_zh: GapReport（缺口报告）
-#   name_en: GapReportItem list
-#   intro: level(error|warning)/code(R1-R8)/node_id/detail——下游 V1 API 消费渲染红节点
-#   downstream: V1 api_server 端点; tests/trading/test_decision_map.py
-# [/ALGO_FLOW]
-#
-# 边:
-# I1 --> A1
-# I1 --> A2
-# I2 --> A2
-# I3 --> A2
-# A1 --> A2
-# A2 --> O1
+# [ALGO_FLOW] external: docs/03_modules/_domain_trading/algo_flow/decision_map.yaml
 """
 
 from __future__ import annotations

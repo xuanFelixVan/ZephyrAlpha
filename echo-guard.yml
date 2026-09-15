@@ -101,3 +101,27 @@ acknowledged:
     verdict: intentional
     stable_key: "src/zephyr/ex_core/rules/ashare.py:settlement_cycle||src/zephyr/ex_core/rules/crypto.py:settlement_cycle"
     note: 按市场镜像的规则类族（ashare/crypto 同接口逐市场实现），结构性同构=设计意图非克隆；ALGO_FLOW 出仓后首次暴露（st-btfix-p15-20260915）
+  - id: cg-trading-hook-sisters-20260915
+    verdict: intentional
+    stable_key: "src/zephyr/trading/boot_hooks.py:_hook_escalation_check||src/zephyr/trading/boot_hooks.py:_hook_timeout_check"
+    note: 同文件事件钩子姊妹函数（升级检查/超时检查同构包装，仅降级动作不同），ALGO_FLOW 出仓后首次暴露（st-btfix-p15-20260915）
+  - id: cg-trading-alert-sisters-20260915
+    verdict: intentional
+    stable_key: "src/zephyr/trading/eod_processor.py:_alert||src/zephyr/trading/post_settlement_pipeline.py:_alert"
+    note: 两管线内部 _alert 告警样板同构（闭包式消息透传），ALGO_FLOW 出仓后首次暴露（st-btfix-p15-20260915）
+  - id: cg-trading-registry-props-autocap-capsync-20260915
+    verdict: intentional
+    stable_key: "src/zephyr/trading/auto_runtime_core.py:registry||src/zephyr/trading/capability_sync.py:registry"
+    note: registry property 惰性获取三文件同构族（与 status_dashboard 成三角），样板访问器非算法克隆；ALGO_FLOW 出仓后首次暴露（st-btfix-p15-20260915）
+  - id: cg-trading-registry-props-autocap-dash-20260915
+    verdict: intentional
+    stable_key: "src/zephyr/trading/auto_runtime_core.py:registry||src/zephyr/trading/status_dashboard.py:registry"
+    note: registry property 惰性获取三文件同构族（与 capability_sync 成三角），样板访问器非算法克隆；ALGO_FLOW 出仓后首次暴露（st-btfix-p15-20260915）
+  - id: cg-trading-registry-props-capsync-dash-20260915
+    verdict: intentional
+    stable_key: "src/zephyr/trading/capability_sync.py:registry||src/zephyr/trading/status_dashboard.py:registry"
+    note: registry property 惰性获取三文件同构族（与 auto_runtime_core 成三角），样板访问器非算法克隆；ALGO_FLOW 出仓后首次暴露（st-btfix-p15-20260915）
+  - id: cg-trading-killswitch-sisters-20260915
+    verdict: intentional
+    stable_key: "src/zephyr/trading/trading_contracts/risk/trading_kill_switch.py:trigger||src/zephyr/trading/trading_contracts/risk/trading_kill_switch.py:reset"
+    note: 同文件 KillSwitch 姊妹动作（触发/复位镜像逻辑），ALGO_FLOW 出仓后首次暴露（st-btfix-p15-20260915）

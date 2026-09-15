@@ -60,63 +60,7 @@ D_TRADING — 回测 vs 模拟盘日终对账编排器（56号文 §2 G7，testi
   trade/position/cash；L1 全量 drifts（含费用参考列）+ L2 持仓差 +
   L3 MISMATCH；append-only 仅 INSERT，参数化+SQL 常量（NO-BARE-SQL 门禁）。
 
-# [ALGO_FLOW]
-# 层: 输入
-# - id: I1
-#   name: trade_date 参数
-#   fields: 参数 trade_date，类型注解 str
-#   code: recon_runner.py 顶层公共函数形参（AST 提取）
-# - id: I2
-#   name: run_id 参数
-#   fields: 参数 run_id，类型注解 str
-#   code: recon_runner.py 顶层公共函数形参（AST 提取）
-# - id: I3
-#   name: broker 参数
-#   fields: 参数 broker，类型注解 ReconBrokerSource
-#   code: recon_runner.py 顶层公共函数形参（AST 提取）
-# - id: I4
-#   name: db_path 参数
-#   fields: 参数 db_path，类型注解 str | Path | None
-#   code: recon_runner.py 顶层公共函数形参（AST 提取）
-# 层: 算法
-# - id: A1
-#   name_zh: ① ReconBrokerSource
-#   name_en: ReconBrokerSource
-#   intro: 对账实盘侧数据源协议（鸭子类型，MiniQmtBroker 已满足；测试注入 mock）。
-#   desc: 对账实盘侧数据源协议（鸭子类型，MiniQmtBroker 已满足；测试注入 mock）。；公共方法（定义序）: query_trades_today, get_positions；源码 L181-L186
-#   inputs: 无参数
-#   outputs: 返回值
-# - id: A2
-#   name_zh: ② ReconDailyResult
-#   name_en: ReconDailyResult
-#   intro: 一次日终对账的结构化结果（不可变）。
-#   desc: 一次日终对账的结构化结果（不可变）。 c_class_items 为当日告警清单（56号文 §3：C 类当日即告警）； db_error 非 None 表示落库失败（对账结果本身…；公共方法（定义序）: to_dict…
-#   inputs: 无参数
-#   outputs: 返回值
-# - id: A3
-#   name_zh: ③ run_daily_reconciliation
-#   name_en: run_daily_reconciliation
-#   intro: 执行一次「回测 vs 模拟盘」日终对账（56号文 §5 15:30 步骤③④）。
-#   desc: 执行一次「回测 vs 模拟盘」日终对账（56号文 §5 15:30 步骤③④）。 流程：回测产物+实盘查询 → L1 交易级 diff → L2 持仓级 diff → L3 Pn…；源码 L448-L536
-#   inputs: trade_date run_id broker db_path storage_path
-#   outputs: ReconDailyResult
-#   （注：A3 之后另有 2 个公共定义未列入（含 2 个数据契约/异常/枚举声明类），见源码）
-# 层: 输出
-# - id: O1
-#   name_zh: ReconDailyResult
-#   name_en: ReconDailyResult
-#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
-#   downstream: 57号文日循环SOP（人工/后续调度触发）
-# [/ALGO_FLOW]
-#
-# 边:
-# I1 --> A1
-# I2 --> A1
-# I3 --> A1
-# I4 --> A1
-# A1 --> A2
-# A2 --> A3
-# A3 --> O1
+# [ALGO_FLOW] external: docs/03_modules/_domain_trading/algo_flow/recon_runner.yaml
 """
 
 from __future__ import annotations

@@ -41,32 +41,7 @@ C9 仅参考不升级工单）；非费用类差异按类别聚合成 Discrepanc
 设计真源：docs/03_modules/_domain_trading/settlement_record_aggregate/blueprint.md
 （B6-08088 / CAND-TRD-010，AUD-DRAFT-001-DIGEST P1 波 W-P1-23）。
 
-# [ALGO_FLOW]
-# 层: 输入
-# - id: I1
-#   name: event_sink 参数
-#   fields: 参数 event_sink（无注解）
-#   code: settlement_record_aggregate.py 顶层公共函数形参（AST 提取）
-# 层: 算法
-# - id: A1
-#   name_zh: ① SettlementRecordBook
-#   name_en: SettlementRecordBook
-#   intro: SettlementRecord 聚合注册表（簿）——幂等注册 + 状态机 + 差异工单事件。
-#   desc: SettlementRecord 聚合注册表（簿）——幂等注册 + 状态机 + 差异工单事件。 event_sink：注入式工单事件出口（装配批接事件总线）；缺失仅落聚合内 工单…；公共方法（定义序）: classif…
-#   inputs: event_sink
-#   outputs: 返回值
-#   （注：A1 之后另有 8 个公共定义未列入（含 8 个数据契约/异常/枚举声明类），见源码）
-# 层: 输出
-# - id: O1
-#   name_zh: 模块公共 API 面（9 定义）
-#   name_en: public defs
-#   intro: SettlementRecordBook
-#   downstream: 交易运营编排层（运行时装配批）; MOD-TRADING-009 TradingOrder 聚合（SETTLED 联动）; 差异工单消费方（装配批接事件总线）
-# [/ALGO_FLOW]
-#
-# 边:
-# I1 --> A1
-# A1 --> O1
+# [ALGO_FLOW] external: docs/03_modules/_domain_trading/algo_flow/settlement_record_aggregate.yaml
 """
 
 from __future__ import annotations

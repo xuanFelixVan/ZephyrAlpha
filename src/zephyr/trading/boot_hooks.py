@@ -18,36 +18,7 @@
 """
 
 
-# [ALGO_FLOW]
-# 层: 输入
-# - id: I1
-#   name: task_repo 参数
-#   fields: 参数 task_repo，类型注解 TaskRepositoryProtocol | None
-#   code: boot_hooks.py 顶层公共函数形参（AST 提取）
-# - id: I2
-#   name: budget_engine 参数
-#   fields: 参数 budget_engine，类型注解 BudgetEngineProtocol | None
-#   code: boot_hooks.py 顶层公共函数形参（AST 提取）
-# 层: 算法
-# - id: A1
-#   name_zh: ① register_boot_hooks
-#   name_en: register_boot_hooks
-#   intro: register_boot_hooks(task_repo, budget_engine) 源码 L611-L769
-#   desc: 源码 L611-L769
-#   inputs: task_repo budget_engine
-#   outputs: 返回值
-# 层: 输出
-# - id: O1
-#   name_zh: 模块公共 API 面（1 定义）
-#   name_en: public defs
-#   intro: register_boot_hooks
-#   downstream: zephyr.trading.auto_runtime_core
-# [/ALGO_FLOW]
-#
-# 边:
-# I1 --> A1
-# I2 --> A1
-# A1 --> O1
+# [ALGO_FLOW] external: docs/03_modules/_domain_trading/algo_flow/boot_hooks.yaml
 """
 
 from __future__ import annotations
@@ -286,7 +257,7 @@ def _subscribe_eventbus_consumers() -> None:
 def _register_rbac_hooks() -> None:
     """注册RBAC事件钩子 — 在任务状态转换时检查权限."""
     try:
-        from zephyr.governance.event_hook import (
+        from zephyr.governance.event_hook import (  # noqa: import-integrity  — sys.modules shim registered in governance/__init__.py
             hook_registry,  # noqa: import-integrity  sys.modules shim registered in governance/__init__.py
         )
 
@@ -614,7 +585,7 @@ def register_boot_hooks(
     budget_engine: BudgetEngineProtocol | None = None,
 ) -> None:
     try:
-        from zephyr.governance.event_hook import (
+        from zephyr.governance.event_hook import (  # noqa: import-integrity  — sys.modules shim registered in governance/__init__.py
             hook_registry,  # noqa: import-integrity  sys.modules shim registered in governance/__init__.py
         )
 

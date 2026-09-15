@@ -27,47 +27,7 @@ B13-04352（AUD-DRAFT-001-DIGEST P2 波 P2-W08，CAND-TRD-011，A3 D-TRADING-02�
 交易级对账（本件=交易/持仓/资金三方收口含费用逐笔与台账跟进，口径互补不重
 复）；eod_processor=日终任务链（本件被调度消费，零交集）。
 
-# [ALGO_FLOW]
-# 层: 输入
-# - id: I1
-#   name: qty_tolerance 参数
-#   fields: 参数 qty_tolerance（无注解）
-#   code: three_way_reconciliation.py 顶层公共函数形参（AST 提取）
-# - id: I2
-#   name: amount_tolerance 参数
-#   fields: 参数 amount_tolerance（无注解）
-#   code: three_way_reconciliation.py 顶层公共函数形参（AST 提取）
-# - id: I3
-#   name: fee_tolerance 参数
-#   fields: 参数 fee_tolerance（无注解）
-#   code: three_way_reconciliation.py 顶层公共函数形参（AST 提取）
-# - id: I4
-#   name: clock 参数
-#   fields: 参数 clock（无注解）
-#   code: three_way_reconciliation.py 顶层公共函数形参（AST 提取）
-# 层: 算法
-# - id: A1
-#   name_zh: ① ThreeWayReconEngine
-#   name_en: ThreeWayReconEngine
-#   intro: 三向对账引擎（交易/持仓/资金三方流水 + 未匹配台账跟进状态机）。
-#   desc: 三向对账引擎（交易/持仓/资金三方流水 + 未匹配台账跟进状态机）。；公共方法（定义序）: reconcile, update_follow_up, ledger, anomaly；源码 L213-L479
-#   inputs: qty_tolerance amount_tolerance fee_tolerance clock alert_sink
-#   outputs: 返回值
-#   （注：A1 之后另有 9 个公共定义未列入（含 9 个数据契约/异常/枚举声明类），见源码）
-# 层: 输出
-# - id: O1
-#   name_zh: 模块公共 API 面（10 定义）
-#   name_en: public defs
-#   intro: ThreeWayReconEngine
-#   downstream: 运行时装配批（盘后三向对账调度 / 告警路由接线 / 未匹配台账跟进工作台）
-# [/ALGO_FLOW]
-#
-# 边:
-# I1 --> A1
-# I2 --> A1
-# I3 --> A1
-# I4 --> A1
-# A1 --> O1
+# [ALGO_FLOW] external: docs/03_modules/_domain_trading/algo_flow/three_way_reconciliation.yaml
 """
 
 from __future__ import annotations

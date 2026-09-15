@@ -31,53 +31,7 @@ P3 交易核心进程规格 SSOT（MOD-INF-064）——trading_core 独立进程
 硬边界：核亲和（SetProcessAffinityMask）/ 禁 swap / 显存常驻等系统级设置
 属 Owner 窗口，本模块只产出配置声明，AI 不执行。
 
-# [ALGO_FLOW]
-# 层: 输入
-# - id: I1
-#   name: 模块内部数据
-#   fields: 无公共形参/无再导出（AST 事实）
-#   code: trading_core_process_spec.py
-# 层: 算法
-# - id: A1
-#   name_zh: ① heartbeat_key
-#   name_en: heartbeat_key
-#   intro: P3 心跳键：hb:trading_core（A9 §1.1.3）。
-#   desc: P3 心跳键：hb:trading_core（A9 §1.1.3）。；源码 L149-L151
-#   inputs: 无参数
-#   outputs: str
-# - id: A2
-#   name_zh: ② heartbeat_ttl_seconds
-#   name_en: heartbeat_ttl_seconds
-#   intro: P3 心跳 TTL = 超时阈值 + 30s 缓冲（规则复用 MOD-INF-063 hb dynamic_ttl，不…
-#   desc: P3 心跳 TTL = 超时阈值 + 30s 缓冲（规则复用 MOD-INF-063 hb dynamic_ttl，不重造）。；源码 L154-L158
-#   inputs: 无参数
-#   outputs: int
-# - id: A3
-#   name_zh: ③ render_process_spec_declaration
-#   name_en: render_process_spec_declaration
-#   intro: 产出 P3 进程配置就绪件声明 dict（YAML 可序列化；仅声明不执行）。
-#   desc: 产出 P3 进程配置就绪件声明 dict（YAML 可序列化；仅声明不执行）。 硬边界：核亲和/禁 swap/显存常驻等系统级应用属 Owner 窗口（applied_by_ai…；源码 L161-L191
-#   inputs: 无参数
-#   outputs: dict[str, object]
-#   （注：A3 之后另有 2 个公共定义未列入（含 2 个数据契约/异常/枚举声明类），见源码）
-# 层: 输出
-# - id: O1
-#   name_zh: str
-#   name_en: str
-#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
-#   downstream: 见模块头 [CONSUMERS]
-# - id: O2
-#   name_zh: int
-#   name_en: int
-#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
-#   downstream: 见模块头 [CONSUMERS]
-# [/ALGO_FLOW]
-#
-# 边:
-# I1 --> A1
-# A1 --> A2
-# A2 --> A3
-# A3 --> O1
+# [ALGO_FLOW] external: docs/03_modules/_domain_trading/algo_flow/trading_core_process_spec.yaml
 """
 
 from __future__ import annotations

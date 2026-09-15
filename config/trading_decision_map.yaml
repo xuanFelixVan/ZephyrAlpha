@@ -2402,6 +2402,7 @@ nodes:
   decay_scan_frequency: semiannual
 
 - node_id: TDM-E-L4-13
+  note_confirmed: 2026-09-15
   name_zh: 执行容灾对账
   market: cn_a
   flow: entry_flow
@@ -2412,6 +2413,7 @@ nodes:
   algo_note_zh: >-
     三方对账：本地订单簿 vs 券商委托回报 vs 实际成交。
     断线重连后先全量对账再恢复交易；孤儿单（券商有我无）=立即同步并评估处理；日终对不平=挂起次日竞价处理。
+    （2026-09-15 ALGO_FLOW 块出仓至 docs/03_modules/_domain_trading/algo_flow/three_way_reconciliation.yaml：算法推导图外迁，算法口径不变）
   parent_node: TDM-E-L4
   factor_refs: []
   data_refs: []
@@ -3325,6 +3327,7 @@ nodes:
   decay_scan_frequency: semiannual
 
 - node_id: TDM-X-S1-06
+  note_confirmed: 2026-09-15
   name_zh: 强制清仓绕过通道
   market: cn_a
   flow: exit_flow
@@ -3336,6 +3339,7 @@ nodes:
     四触发任一=绕过全部评分直接市价清仓：风控 KillSwitch（组合级）、黑天鹅（持仓突遭立案/暴雷）、K≥3 连续破位失败、主力弃庄（龙虎榜机构清仓式卖出）。
     资金安全>一切优化，紧迫度直接置 1.0。
     与 R1 分工：R1 管组合熔断，本节点管单仓强清。
+    （2026-09-15 ALGO_FLOW 块出仓至 docs/03_modules/_domain_trading/algo_flow/strategy_abnormal_exit_orchestrator.yaml：算法推导图外迁，算法口径不变）
   parent_node: TDM-X-S1
   factor_refs: []
   risk_limit_refs: [RLM-KILL-SWITCH-004, RLM-KILL-SWITCH-005]

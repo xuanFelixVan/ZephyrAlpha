@@ -33,31 +33,7 @@ CTR 契约：
 
 SSoT: cross_layer_contracts.yaml v3.0 -> OCP-003
 
-# [ALGO_FLOW]
-# 层: 输入
-# - id: I1
-#   name: 模块内部数据
-#   fields: 无公共形参/无再导出（AST 事实）
-#   code: broker_interface.py
-# 层: 算法
-# - id: A1
-#   name_zh: ① BrokerInterface
-#   name_en: BrokerInterface
-#   intro: 券商接口抽象基类（OCP-003 OCP 扩展点）
-#   desc: 券商接口抽象基类（OCP-003 OCP 扩展点） 所有券商适配器 MUST 实现此接口。 支持同时接入多家券商，通过 SOR 路由选择最优执行通道。；公共方法（定义序）: broker_id, connect, di…
-#   inputs: 无参数
-#   outputs: 返回值
-# 层: 输出
-# - id: O1
-#   name_zh: 模块公共 API 面（1 定义）
-#   name_en: public defs
-#   intro: BrokerInterface
-#   downstream: 见模块头 [CONSUMERS]
-# [/ALGO_FLOW]
-#
-# 边:
-# I1 --> A1
-# A1 --> O1
+# [ALGO_FLOW] external: docs/03_modules/_domain_trading/algo_flow/broker_interface.yaml
 """
 
 from __future__ import annotations
