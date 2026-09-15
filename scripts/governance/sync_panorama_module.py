@@ -297,7 +297,8 @@ def _sync_to_decision(conn, module: dict) -> str:
         return "changed"
 
 
-def sync_module_panorama(module_id: str, conns: dict | None = None) -> int:
+def sync_module_panorama(module_id: str, conns: dict | None = None,
+                         caches: dict | None = None) -> int:
     """同步单个模块的全景核心字段。
 
     Args:
@@ -305,6 +306,10 @@ def sync_module_panorama(module_id: str, conns: dict | None = None) -> int:
         conns: 2026-08-29 连接复用——批量入口（sync_all/sync_modules）传入
             _open_sync_conns() 的共享连接字典，循环内不再每模块开/关 3 条连接；
             None（默认）时维持原"每次自开自关"语义（单模块 CLI/调用方不变）。
+        caches: 2026-09-16 批量优化——批量入口传入共享字典（bp_rows/scan_index），
+            蓝图扫描索引与 depgraph 查询全程复用；None（默认）每调用独立原语义。
+            背景：模块数 616→1571 后全量 ~700s 超 GATE-BLUEPRINT-FRONTMATTER-SYNC
+            600s 超时上限（剖析 81% 耗时=每模块全树扫描，19%=每模块新建连接）。
 
     Returns: 0=成功, 3=模块不存在, 4=DB异常, 5=部分下游同步失败（dataflow/decision/blueprint）
     """
@@ -385,7 +390,10 @@ def sync_module_panorama(module_id: str, conns: dict | None = None) -> int:
             reconcile_blueprint_frontmatter,
         )
 
-        reconcile_blueprint_frontmatter(module_id)
+        # 仅批量模式复用 depgraph 连接（_own_conns 路径连接已在上方 finally 关闭）
+        reconcile_blueprint_frontmatter(
+            module_id, caches=caches,
+            depgraph_conn=None if _own_conns else depgraph_conn)
     except Exception as e:  # noqa: BLE001 - 三个下游相互独立，单点失败不阻断其他下游
         failed_count += 1
         print(f"[ERROR] 蓝图 frontmatter 对齐失败（module={module_id}）: {e}", file=sys.stderr)
@@ -423,9 +431,12 @@ def sync_all_panorama() -> int:
         return EXIT_PASS
     _conns = _open_sync_conns()
     _bfr.set_quiet_missing(True)
+    # 2026-09-16 批量优化：蓝图扫描索引+depgraph 查询全程复用（模块 1571 个时
+    # ~700s→~60s，治 GATE-BLUEPRINT-FRONTMATTER-SYNC 600s 超时）
+    _caches: dict = {"bp_rows": {}, "scan_index": {}}
     try:
         for mid in modules:
-            rc = sync_module_panorama(mid, conns=_conns)
+            rc = sync_module_panorama(mid, conns=_conns, caches=_caches)
             if rc == 5:
                 # P0-2: 部分下游失败——不重复打印（sync_module_panorama 已打印详情）
                 partial += 1
@@ -472,9 +483,10 @@ def sync_modules_panorama(module_ids: list[str]) -> int:
     # 2026-08-29 连接复用治本（同 sync_all_panorama）
     _conns = _open_sync_conns()
     _bfr.set_quiet_missing(True)
+    _caches: dict = {"bp_rows": {}, "scan_index": {}}
     try:
         for mid in module_ids:
-            rc = sync_module_panorama(mid, conns=_conns)
+            rc = sync_module_panorama(mid, conns=_conns, caches=_caches)
             if rc == 5:
                 partial += 1
             elif rc != 0:

@@ -160,7 +160,7 @@ class TestSyncAllPanorama:
 
         call_count = {"n": 0}
 
-        def fake_sync(mid, conns=None):  # 2026-08-29：批量入口改传共享连接，fake 签名对齐
+        def fake_sync(mid, conns=None, caches=None):  # 2026-09-16：批量入口加共享缓存，fake 签名对齐
             call_count["n"] += 1
             return 0
 

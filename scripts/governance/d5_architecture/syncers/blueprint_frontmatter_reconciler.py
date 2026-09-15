@@ -139,7 +139,7 @@ def _update_frontmatter(content: str, updates: dict) -> str:
     return f"---\n{fm_text}\n---\n" + content[match.end() :]
 
 
-def _query_module_bp(module_id: str) -> tuple[str, str, str, str] | None:
+def _query_module_bp(module_id: str, conn=None, cache: dict | None = None):
     """从 depgraph 查询模块的蓝图路径和核心字段（加权投票聚合）。
 
     depgraph.nodes 中同一 blueprint_id 可有多行（跨域模块的正常现象，如 MOD-INF-002
@@ -149,9 +149,17 @@ def _query_module_bp(module_id: str) -> tuple[str, str, str, str] | None:
     - build_status: 取第一个非空
     - blueprint_path: 取第一个非空（ORDER BY 保证非空优先）
 
+    conn（批量优化）：传入共享连接时不再自开自关（原每模块新建 PG 连接 ~83ms，
+    1571 模块 ≈ 130s，同为 GATE-BLUEPRINT-FRONTMATTER-SYNC 超时成因）。
+    cache（批量优化）：进程内 memoize——同步过程不修改 depgraph.nodes，结果稳定。
+
     Returns: (bp_path, domain_id, design_maturity, build_status) 或 None
     """
-    conn = get_depgraph_pg_connection()
+    if cache is not None and module_id in cache:
+        return cache[module_id]
+    own_conn = conn is None
+    if own_conn:
+        conn = get_depgraph_pg_connection()
     try:
         with conn.cursor() as cur:
             cur.execute(_SQL_QUERY_MODULE_BP, (module_id,))
@@ -185,9 +193,13 @@ def _query_module_bp(module_id: str) -> tuple[str, str, str, str] | None:
         domain_id = weighted_domain_vote(rows)
         # design_maturity: 取最 design（min rank，共享工具 panorama_common）
         design_maturity = _min_mat(maturities) if maturities else ""
-        return (bp_path or "", domain_id or "", design_maturity or "", build_status or "")
+        result = (bp_path or "", domain_id or "", design_maturity or "", build_status or "")
+        if cache is not None:
+            cache[module_id] = result
+        return result
     finally:
-        conn.close()
+        if own_conn:
+            conn.close()
 
 
 def _write_frontmatter_updates(bp_file: Path, module_id: str, domain_id: str, dm: str, bs: str) -> int:
@@ -224,16 +236,14 @@ _BP_SCAN_FRONTMATTER_RE = re.compile(r"^---\n(.*?)\n---\n", re.DOTALL)
 _BP_SCAN_SKIP_NAMES = {"index.md"}
 
 
-def _find_blueprint_by_scan(module_id: str) -> list[Path]:
-    """扫描 docs/03_modules/ 下所有文件，通过 frontmatter.module_id 匹配。
+def _build_blueprint_scan_index() -> dict[str, list[Path]]:
+    """一次性扫描 docs/03_modules/，建 module_id→[文件路径] 索引（纯只读）。
 
-    Fallback：depgraph 中 blueprint_path 为空或指向错误路径时使用。
-    与 align_panoramas._fetch_blueprint_nodes 扫描策略一致。
-    返回所有匹配的文件（一个 module_id 可能有多个 .md 文件声明它）。
+    匹配语义与历史逐模块扫描完全一致（同 rglob、同 skip、同 frontmatter 解析）。
     """
-    results: list[Path] = []
+    index: dict[str, list[Path]] = {}
     if not _BP_SCAN_ROOT.exists():
-        return results
+        return index
     for fpath in _BP_SCAN_ROOT.rglob("*"):
         if not fpath.is_file() or fpath.name in _BP_SCAN_SKIP_NAMES:
             continue
@@ -249,19 +259,47 @@ def _find_blueprint_by_scan(module_id: str) -> list[Path]:
                 key, _, val = line.partition(":")
                 if key.strip() == "module_id":
                     v = val.strip().strip('"').strip("'")
-                    if v == module_id:
-                        results.append(fpath)
+                    if v:
+                        index.setdefault(v, []).append(fpath)
                     break  # 找到 module_id 行，无论是否匹配都跳过此文件
-    return results
+    return index
 
 
-def reconcile_blueprint_frontmatter(module_id: str) -> int:
+def _find_blueprint_by_scan(module_id: str, index: dict | None = None) -> list[Path]:
+    """扫描 docs/03_modules/ 下所有文件，通过 frontmatter.module_id 匹配。
+
+    Fallback：depgraph 中 blueprint_path 为空或指向错误路径时使用。
+    与 align_panoramas._fetch_blueprint_nodes 扫描策略一致。
+    返回所有匹配的文件（一个 module_id 可能有多个 .md 文件声明它）。
+
+    index（2026-09-16 超时治本）：批量调用方传入共享索引字典时首次建索引后
+    全程复用；不传（单模块 CLI/测试）维持每次独立扫描原语义。背景：模块数
+    616→1571 后 --all 每模块全树 rglob+读文件（~0.42s × 1571 ≈ 700s）是
+    GATE-BLUEPRINT-FRONTMATTER-SYNC 600s 超时根因（剖析实测 81% 耗时在此）。
+    """
+    if index is not None:
+        if not index:
+            index.update(_build_blueprint_scan_index())
+        return list(index.get(module_id, []))
+    return _build_blueprint_scan_index().get(module_id, [])
+
+
+def reconcile_blueprint_frontmatter(module_id: str, *, caches: dict | None = None,
+                                    depgraph_conn=None) -> int:
     """对齐单个模块的蓝图 frontmatter。
+
+    caches（批量优化，2026-09-16）：调用方（sync_all_panorama）传入共享字典时，
+    蓝图扫描索引与 depgraph 查询结果全程复用（不传则维持每调用独立原语义，
+    单模块 CLI/测试不受影响）。depgraph_conn：复用调用方已开连接，免每模块
+    新建 PG 连接。
 
     Returns: 0=成功/跳过, 3=模块不在depgraph, 4=DB异常
     """
+    caches = caches if caches is not None else {}
+    bp_cache: dict | None = caches.get("bp_rows")
+    scan_index: dict | None = caches.get("scan_index")
     try:
-        result = _query_module_bp(module_id)
+        result = _query_module_bp(module_id, conn=depgraph_conn, cache=bp_cache)
     except Exception as exc:
         print(f"[ERROR] DB query failed for {module_id}: {exc}", file=sys.stderr)
         return 4
@@ -283,7 +321,7 @@ def reconcile_blueprint_frontmatter(module_id: str) -> int:
     if not bp_file.exists():
         # Fallback: depgraph 中 blueprint_path 为空或指向错误路径，
         # 扫描 docs/03_modules/ 通过 frontmatter.module_id 匹配
-        scanned = _find_blueprint_by_scan(module_id)
+        scanned = _find_blueprint_by_scan(module_id, index=scan_index)
         if scanned:
             # 更新所有匹配的文件（一个 module_id 可能有多个 .md 文件）
             for f in scanned:
