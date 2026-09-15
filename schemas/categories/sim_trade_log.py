@@ -12,7 +12,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] DDL 执行失败抛异常
 # [TESTS] tests/backtest/test_sim_paper_ledger.py
-# [A_module] module_id=MOD-BT-097 | layer=module | stability=experimental | safety=L | ai_autonomy=ai_modifiable
+# [A_module] module_id=MOD-BT-131 | layer=module | stability=experimental | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 """sim_trade_log 表 DDL——模拟盘成交事件流水（事件溯源唯一真源）。
 

@@ -1,12 +1,17 @@
 # [BLUEPRINT] MOD-BT-094 | docs/03_modules/_domain_backtest/blueprint.md
 # [MODULE] scripts.backtest.sim_governance
 # [DOMAIN] D_BACKTEST
-# [DEPENDENCIES] zephyr.data.ch_config; yaml
-# [CONSUMERS] 模拟盘治理（lifecycle 流转建议报告，Owner 终裁）；策略登记册治理批次
-# [STARTUP] manual
+# [DEPENDENCIES] zephyr.data.ch_config; zephyr.backtest.run_archive; zephyr.data.alerter; yaml
+# [CONSUMERS] 模拟盘治理（lifecycle 流转建议报告，Owner 终裁）；策略登记册治理批次；
+#   run 档案（SCR-SIMGOV-*）；pipeline_events sim_deviation_monthly 串行触发（判定史先落、建议后出）;
+#   promotion_advisory_due 事件（S12 C4：建议产出后 emit，建议包生成+真通道推送由
+#   zephyr.strategy_pipeline.promotion_advisory 承接）
+# [STARTUP] manual+event（CLI 手工；月度档经 sim_deviation_monthly handler 串行触发）
 # [MATURITY] experimental
 # [INVARIANTS] 只产建议不改册（lifecycle 变更终裁=Owner）；规则全部引用既存真源
-#   （SOP-C §8 双窗口门槛/偏离报告月度判定/oos_years_decay>=0.5 存疑线）
+#   （SOP-C §8 双窗口门槛/偏离报告月度判定/oos_years_decay>=0.5 存疑线）；
+#   建议产出经 Alerter 推送（level=ERROR——Alerter 仅 ERROR+ 落本地 failure 文件，webhook 未配置
+#   =降级本地告警文件；告警通道任何故障不抛不反噬建议产出）；run 档案随跑必落（--dry-run 豁免）
 # [STABILITY] evolving
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
@@ -20,8 +25,10 @@
 - 连续 2 月 sim_deviation 月度通过 → 建议 sim→paper（晋级观察）；
 - 连续 2 月 monthly_breach / 出现 monthly_breach_consecutive → 建议 sim→decayed（降级）；
 - oos_years_decay>=0.5 → 存疑标注（土规线）。
-输出=建议报告 JSON（只读），落 run 档案；册子变更由 Owner 裁定后另行执行。
-用法：python scripts/backtest/sim_governance.py
+输出=建议报告 JSON（只读，控制台）+ run 档案（SCR-SIMGOV-*，照 strategy_lifecycle_advisor
+先例）+ 有建议时经 Alerter 推送（webhook 未配置=降级本地告警文件，不抛异常）；
+册子变更由 Owner 裁定后另行执行。
+用法：python scripts/backtest/sim_governance.py [--json] [--dry-run]
 """
 
 from __future__ import annotations
@@ -77,10 +84,75 @@ def recommend(history: list[dict]) -> tuple[str | None, str]:
     return None, "观察期数据不足或表现中性"
 
 
+def alert_recommendations(recs: list[dict]) -> bool:
+    """有流转建议时经 Alerter 推送（webhook 未配置=降级本地告警文件；任何故障不抛）。
+
+    level=ERROR 裁定：Alerter 仅 ERROR+ 写本地 failure 文件（WARN 只进日志）——流转建议是
+    Owner 终裁输入，必须留本地痕（S10 §5.2②验收=有建议时告警落地）。
+    """
+    actionable = [r for r in recs if r.get("recommendation")]
+    if not actionable:
+        return False
+    msg = "; ".join(f"{r['strategy_id']}→{r['recommendation']}({r['why']})" for r in actionable)[:500]
+    try:
+        from zephyr.data.alerter import Alerter
+
+        Alerter().notify("sim_governance", msg, level="ERROR", source="sim_governance")
+    except Exception:  # noqa: BLE001——告警通道故障不反噬建议产出（建议已在控制台打印）
+        logger.warning("alerter 推送失败（本地告警文件未落，建议已打印）: %s", msg)
+        return False
+    return True
+
+
+def write_run_archive(entries: list[dict], recs: list[dict]) -> str:
+    """落 run 档案（SCREEN kind，照 strategy_lifecycle_advisor main 先例）——消除 docstring 漂移。"""
+    from datetime import datetime
+
+    from zephyr.backtest.run_archive import create_run, finalize_run, write_step
+
+    report = {"entries": len(entries), "recommendations": recs}
+    run_id = f"SCR-SIMGOV-{datetime.now().strftime('%Y%m%d-%H%M%S')}"
+    create_run(run_id=run_id, object_id="", kind="SCREEN", cost_mode="rough",
+               created_by="ai-session:sim-governance")
+    write_step(run_id, "03", (
+        "# 数据清单\n\n- name: sim 判定史扫描源\n"
+        "  source: c1_backtest.strategy_screen（verdict=sim_deviation，SIM-DEV-* 月度判定史）\n"
+        "  window_is: 全史（无窗口截断；建议规则=SOP-C §8 连续 2 月门槛）\n  proxy: false\n"
+    ))
+    write_step(run_id, "04", json.dumps(report, ensure_ascii=False, indent=1, default=str),
+               filename="sim_governance_advice.json")
+    write_step(run_id, "verdict", (
+        f"# 判定书：{run_id}\n\n对象：模拟盘 lifecycle 流转建议（只产建议不改册，终裁=Owner）｜ kind=SCREEN\n"
+        f"结论：{json.dumps({'entries': len(entries), 'actionable': sum(1 for r in recs if r['recommendation'])}, ensure_ascii=False)}\n"
+        "口径：连续 2 月 monthly_pass→promote_paper；连续 2 月 breach/consecutive 提案→demote_decayed\n"))
+    finalize_run(run_id, verdict_ref={"table": "c1_backtest.strategy_screen", "run_id": run_id})
+    logger.info("run 档案：%s", run_id)
+    return run_id
+
+
+def _emit_promotion_advisory_event(recs: list[dict]) -> None:
+    """S12 C4 事件接线：有流转建议时 emit promotion_advisory_due（c4/intake 写侧钩子同款：
+    pipeline_events.record+立即轻消费 drain）。任何故障不反噬治理主流程（建议已打印+run 档案已落）。
+    """
+    if not any(r.get("recommendation") for r in recs):
+        return
+    try:
+        from zephyr.strategy_pipeline.pipeline_events import drain, record
+
+        evt = record("promotion_advisory_due", {"source": "sim_governance",
+                                                "n": sum(1 for r in recs if r.get("recommendation"))})
+        drain(allow_heavy=False)
+        logger.info("promotion_advisory_due 已入队: %s", evt["id"])
+    except Exception:  # noqa: BLE001——事件层故障不反噬治理主流程（事件留 journal 由下个唤醒点重放）
+        logger.warning("promotion_advisory_due 入队失败（不反噬治理主流程）", exc_info=True)
+
+
 def main() -> None:
     logging.basicConfig(level=logging.INFO, format="%(levelname)s %(name)s: %(message)s")
     ap = argparse.ArgumentParser(description="模拟盘治理·流转建议生成器（只产建议不改册）")
     ap.add_argument("--json", action="store_true")
+    ap.add_argument("--dry-run", action="store_true",
+                    help="只打印不落 run 档案/不推送告警（测试与预演用）")
     args = ap.parse_args()
     entries = sim_lifecycle_entries()
     recs = []
@@ -96,6 +168,11 @@ def main() -> None:
             flag = f"→ {r['recommendation']}" if r["recommendation"] else ""
             print(f"{r['strategy_id']} [{r['lifecycle_status']}] {r['name_zh']} 月判 {r['months_evaluated']} 期 {flag}")
         print(f"共 {len(entries)} 个 sim/paper 条目，{n_action} 条有流转建议（终裁=Owner）")
+    if args.dry_run:
+        return
+    alert_recommendations(recs)
+    write_run_archive(entries, recs)
+    _emit_promotion_advisory_event(recs)
 
 
 if __name__ == "__main__":
