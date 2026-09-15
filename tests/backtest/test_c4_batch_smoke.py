@@ -102,6 +102,15 @@ class TestDeflatedSharpe:
         out = batch_deflated_sharpe({"flat": flat})
         assert out["flat"] is None
 
+    def test_cumulative_num_trials_lowers_dsr(self):
+        """N 口径裁定（2026-09-15）：累计 N 折减分母远大于变体数 → DSR 系统性下移。"""
+        rng = np.random.default_rng(5)
+        strong = pd.Series(rng.normal(0.0008, 0.01, 600), index=pd.bdate_range("2020-01-01", periods=600))
+        out_variant = batch_deflated_sharpe({"s": strong})
+        out_cum = batch_deflated_sharpe({"s": strong}, num_trials=4481 + 1)
+        assert out_variant["s"] is not None and out_cum["s"] is not None
+        assert out_cum["s"] < out_variant["s"]
+
 
 class TestKnowledgeEffectiveSentinel:
     """S3 知识生效日哨兵（备忘 96 批 3）：AI 产物携带生效日，回测预检查漂移。"""

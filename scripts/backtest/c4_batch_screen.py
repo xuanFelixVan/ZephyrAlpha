@@ -133,11 +133,23 @@ def run_batch(limit: int | None, window: tuple[str, str] | None = None,
             "net": None, "days": 0, "pilot": True,
         })
     # Deflated Sharpe——官方件批内折减（SSOT：zephyr.backtest.regime_validation.c4_deflated_sharpe_runner）
+    # N 口径（2026-09-15 裁定）：折减分母=全局累计可审计试验数（N 账本 MOD-BT-200 真源）
+    # + 本批变体数；账本缺失/读数失败 fail-closed（拒猜测，阻断批测而非静默按批内 N 折减）
     nets_main = {r["strategy_id"]: r["net"] for r in results
                  if r["net"] is not None and r["window_kind"] != "etf"}
-    dsr_map = batch_deflated_sharpe(nets_main)
+    if nets_main:
+        from zephyr.backtest.core.n_trial_ledger import TrialLedger
+
+        n_cum = TrialLedger().cumulative_trials()
+        n_used = n_cum + len(nets_main)
+        dsr_map = batch_deflated_sharpe(nets_main, num_trials=n_used)
+    else:
+        n_used = None
+        dsr_map = {}
     for r in results:
         r["deflated_sharpe"] = dsr_map.get(r["strategy_id"]) if r["net"] is not None else None
+        if n_used is not None:
+            r["dsr_num_trials"] = n_used
     return results, failures
 
 
@@ -285,8 +297,13 @@ def main() -> None:
     now = datetime.now()
     run_id = f"SCR-C4-{now.strftime('%Y%m%d-%H%M%S')}"
     sr_dist = [r["stats"]["sharpe"] for r in results]
-    # num_trials=本批实际参考策略数（批级属性，DSR 多重比较 N 口径；pilot 特载不计入）
+    # num_trials=本批实际参考策略数（批级属性；pilot 特载不计入）。
+    # 2026-09-15 N 口径裁定：DSR 折减分母=全局累计可审计 N（N 账本真源）+本批变体数，
+    # run_batch 已算出则台账记录同值（保证未来 refold 重算时 N 可考证自洽）。
     num_trials = len(results) - sum(1 for r in results if r.get("pilot"))
+    dsr_n = {r["dsr_num_trials"] for r in results if r.get("dsr_num_trials") is not None}
+    if len(dsr_n) == 1:
+        num_trials = dsr_n.pop()
     summary = {
         "s3_knowledge_drift": s3_drift,
         "total_modules": num_trials,

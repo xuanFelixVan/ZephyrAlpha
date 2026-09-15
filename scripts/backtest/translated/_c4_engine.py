@@ -283,11 +283,15 @@ def daily_net_returns(weights: pd.DataFrame, px_close: pd.DataFrame) -> pd.Serie
     return (gross - cost).fillna(0.0)
 
 
-def batch_deflated_sharpe(nets_by_id: dict[str, pd.Series]) -> dict[str, float | None]:
+def batch_deflated_sharpe(
+    nets_by_id: dict[str, pd.Series], num_trials: int | None = None
+) -> dict[str, float | None]:
     """批内 Deflated Sharpe 折减——全委托官方件（SSOT）。
 
-    zephyr.backtest.regime_validation.c4_deflated_sharpe_runner.run_deflated_sharpe_batch
-    （num_trials=变体数口径）。序列不可用（<3 点/含非有限值）的策略返回 None。
+    zephyr.backtest.regime_validation.c4_deflated_sharpe_runner.run_deflated_sharpe_batch。
+    num_trials（2026-09-15 N 口径裁定）：调用方传入全局累计可审计试验数+本批变体数
+    （累计口径，真源=N 账本 MOD-BT-200）；None=变体数（runner 旧缺省，仅供旧批兼容）。
+    序列不可用（<3 点/含非有限值）的策略返回 None。
     """
     clean: dict[str, list[float]] = {}
     for sid, net in nets_by_id.items():
@@ -302,7 +306,7 @@ def batch_deflated_sharpe(nets_by_id: dict[str, pd.Series]) -> dict[str, float |
     )
 
     try:
-        rep = run_deflated_sharpe_batch(clean)
+        rep = run_deflated_sharpe_batch(clean, num_trials=num_trials)
     except C4DeflatedSharpeError as exc:
         # 静默吞错=排查灾难（2026-09-13 OOS 批全 None 教训）：留日志可见
         import logging
