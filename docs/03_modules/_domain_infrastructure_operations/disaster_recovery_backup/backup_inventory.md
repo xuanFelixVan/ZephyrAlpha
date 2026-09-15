@@ -276,6 +276,15 @@ Start-VM -Name zephyr-ch
    完成）。VHDX 容器压缩后内部余量 660 GB、F 盘 free 795 GB，无压力。上午若见 inc.zip
    消失+新 market.zip 即为此机制。
 
+7. **今晨基线重建未发生（2026-09-15 09:50 复核）+ 静默空转治本**：昨日 CH 备份完成于
+   07:27（非 06:00），今晨 06:00 日任务执行零副作用（无报告/无 vault 快照/状态未动，
+   判定为锁退出静默 skip）；07:12 post-commit 运行又撞 24h 节奏门（23.8h<24h）被 skip。
+   双门叠加=基线重建顺延。数据安全无虞（基线 8-23+增量至 9-14 07:27，缺口为延迟非丢失，
+   下次成功备份自动补齐）；预计今日首个 >07:27 的触发或明日 06:00 必然重建（inc.zip
+   111GB=基线 53.6%≥50%）。**治本**：backup.ps1 锁退出路径原为 exit 0 零痕迹（与 PG
+   备份 19 天连败同款静默病），已加固=锁 skip 时写 logs/backup_skipped_*.json 留痕
+   （ASCII、PSParser 验证通过）。
+
 ### §0.6 五图对齐视图
 
 <!-- AUTOGEN: source=depgraph+dataflow+decision, generator=generate_blueprint_panorama.py, reconciler=sync_panorama_module.py -->
@@ -288,7 +297,7 @@ Start-VM -Name zephyr-ch
 | 图 | 位置 | 状态 | 链接 |
 |----|------|------|------|
 | 依赖图 (depgraph) | `blueprint_id=MOD-INF-043` 的 9 个 file 节点 | production | `extract_depgraph.py --modules MOD-INF-043` |
-| 数据流图 (dataflow) | 0 个 Dataset / 1 个 Job | active | `apply_dataflowgraph.py --list-datasets` |
+| 数据流图 (dataflow) | （无节点） | N/A | `apply_dataflowgraph.py --list-datasets` |
 | 决策架构图 (decision) | 0 个决策节点 / 1 个决策层 | N/A | `generate_decision_diagram.py` |
 | 蓝图 (blueprint) | 本文件 | Active | — |
 

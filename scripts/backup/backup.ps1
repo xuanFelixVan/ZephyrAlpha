@@ -99,7 +99,26 @@ if ($yamlContent -match 'exclude_files:\s*\[([^\]]+)\]') {
 $dbStatus = @{}
 
 # -- Acquire lock --
-if (Test-BackupLock) { exit 0 }
+if (Test-BackupLock) {
+    # Silent-exit hardening (2026-09-15): a lock-skip used to leave zero trace
+    # (no report, no state change), which masked a whole missed daily backup.
+    # Write a skip record so skipped runs are observable in logs/.
+    try {
+        $lockMtime = (Get-Item $LockFile).LastWriteTime
+        $lockAgeH = [math]::Round(((Get-Date) - $lockMtime).TotalHours, 2)
+        $skipLog = "$ProjectRoot\logs\backup_skipped_$(Get-Date -Format 'yyyyMMdd_HHmmss').json"
+        $skipObj = [ordered]@{
+            timestamp  = (Get-Date -Format 'o')
+            reason     = "lock_held"
+            mode       = $Mode
+            force      = [bool]$Force
+            lock_age_hours = $lockAgeH
+            lock_mtime = $lockMtime.ToString('o')
+        }
+        $skipObj | ConvertTo-Json | Out-File $skipLog -Encoding utf8
+    } catch { }
+    exit 0
+}
 Acquire-Lock
 $backupStartTime = Get-Date
 
