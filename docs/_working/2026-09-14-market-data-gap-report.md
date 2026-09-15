@@ -210,3 +210,20 @@ Owner 发现 7、8 月行情缺数据。三轮修复：①（09-13/14 凌晨）t
   RENAME-DEPGRAPH-SYNC 仍拦：`python scripts/governance/generate_project_depgraph.py
   --output-db depgraph --force` 后即过）。落地后 scheduler 重启一次加载看门铃与前置校验
   （当前运行中的 scheduler 尚载旧代码，两项防线明早不生效——落地下班次务必重启）。
+
+## 十、09-15 晨班修复闭环（09:48~10:30）+ 当日验证（23:5x 复核）
+
+- **开盘 tick 零进账两连根因全修**：①QMT 夜间被关（用户登录后桥/直订恢复）；②WalWriter drain
+  崩溃循环——`_adopt_orphans` 写 manifest 误引作用域外 `entry`（昨日红蓝批引入），孤儿段
+  一出现 drain 即 NameError 崩停。一行修复 + `_write_manifest` os.replace 加 10×0.2s 重试
+  （Windows 多进程句柄竞争健壮性），97cd90493f 落库（local_replay tests 25/25）。
+- **排水毒丸清仓**：反复失败死信 34 条隔离至 `local_fallback_quarantine/`（数据保留），
+  manifest 僵尸清 354 条——drain 10 段/循环 → 87 段/循环恢复。
+- **全部隔离死信已修复回放**（23:4x 终态）：climate_hist 320 万行（表 86 万，Replacing
+  去重）/ ground_obs 120 万（表 65 万）/ kline_sector 09-14 42 万（表 64 万含全日）/ 
+  alt_sz_subject 42 行（改挂 alt_sz_market_subject，11 列类型转换）——四表全验证，隔离 TSV
+  已清理（数据全在 CH）。hk_trade_calendar 数据已在库（后续夜任务自愈），文件弃置。
+- **09-15 当日数据三重保障终态**：直订实时（WAL）+ 当日补数（09:25-11:30 密集 1,020 万）
+  + 排水回放 → **全天 10,529,950 行 / 8,473 标的 / 至 15:27 收盘，零缺口**；
+  kline_daily 5,553 标的（920 宇宙修复实盘验证）；kline_1min 159.7 万行。
+- **TICK_SOURCE 终态**：xtdata（直订），桥沙箱降为后备。QMT 自动登录建议留 Owner。
