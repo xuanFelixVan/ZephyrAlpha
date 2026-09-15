@@ -328,7 +328,22 @@ def _write_manifest(entries: list[dict], exclude_files: frozenset = frozenset())
             with open(tmp_path, "w", encoding="utf-8") as f:
                 for e in merged.values():
                     f.write(json.dumps(e, ensure_ascii=False) + "\n")
-            os.replace(str(tmp_path), str(_MANIFEST_PATH))
+            # os.replace 重试（2026-09-15 治本）：Windows 多进程并发下目标文件被
+            # 他进程短暂持有 open 句柄时 replace 抛 PermissionError——曾致手动
+            # 排水循环崩溃并让 drain 长时间停摆。10 次 × 0.2s 有界重试。
+            import threading
+
+            last_err: OSError | None = None
+            for _ in range(10):
+                try:
+                    os.replace(str(tmp_path), str(_MANIFEST_PATH))
+                    last_err = None
+                    break
+                except PermissionError as exc:
+                    last_err = exc
+                    threading.Event().wait(0.2)
+            if last_err is not None:
+                raise last_err
     finally:
         _manifest_fs_unlock(lock_path)
 
@@ -370,7 +385,7 @@ def _adopt_orphans() -> int:
             with _manifest_lock:
                 with open(_MANIFEST_PATH, "a", encoding="utf-8") as f:
                     for e in adopted:
-                        f.write(json.dumps(entry, ensure_ascii=False) + "\n")
+                        f.write(json.dumps(e, ensure_ascii=False) + "\n")
         finally:
             _manifest_fs_unlock(lock_path)
     return len(adopted)
