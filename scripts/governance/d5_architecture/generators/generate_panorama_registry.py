@@ -23,8 +23,9 @@
   - 输出 panorama_registry.md 到 00_overview_entry/
 
 设计要点：
-  - 已建清单 BUILT_PANORAMAS：19 项，真源=数据库 + 实际产物扫描
-  - 待建清单 PENDING_PANORAMAS：16 项，真源=硬编码常量（用户裁定不建 panorama_registry.yaml）
+  - 已建清单 BUILT_PANORAMAS：真源=数据库 + 实际产物扫描；条目带 family 三族归类
+    （业务图族/技术图族/治理图族，2026-09-15 #ARCH-312 起归类，治理图族第 1 条=GOMAP）
+  - 待建清单 PENDING_PANORAMAS：真源=硬编码常量（用户裁定不建 panorama_registry.yaml）
   - 待建项逐个建设时，再裁定真源类型（DB/YAML），届时从 PENDING 移到 BUILT
 
 触发机制：
@@ -85,6 +86,7 @@ BUILT_PANORAMAS: list[dict] = [
         "name": "导航索引（navigation_index）",
         "category": "入口导航",
         "category_id": "overview",
+        "family": "技术图族",  # 三族归类（2026-09-15 #ARCH-312）：业务图族/技术图族/治理图族
         "data_source": "文件系统扫描",
         "source_architecture": "文件系统扫描",
         "generator": "generate_navigation_index.py",
@@ -97,6 +99,7 @@ BUILT_PANORAMAS: list[dict] = [
         "name": "全景图清单总表（本文件）",
         "category": "入口导航",
         "category_id": "overview",
+        "family": "技术图族",  # 三族归类（2026-09-15 #ARCH-312）：业务图族/技术图族/治理图族
         "data_source": DB_DISPLAY_NAME,
         "source_architecture": "depgraph + dataflowgraph + decisiongraph",
         "generator": "generate_panorama_registry.py",
@@ -110,6 +113,7 @@ BUILT_PANORAMAS: list[dict] = [
         "name": "跨域依赖矩阵",
         "category": "依赖关系",
         "category_id": "dependency",
+        "family": "技术图族",  # 三族归类（2026-09-15 #ARCH-312）：业务图族/技术图族/治理图族
         "data_source": DB_DISPLAY_NAME,
         "source_architecture": "depgraph",
         "generator": "generate_cross_domain_matrix.py",
@@ -122,6 +126,7 @@ BUILT_PANORAMAS: list[dict] = [
         "name": "集成拓扑图",
         "category": "依赖关系",
         "category_id": "dependency",
+        "family": "技术图族",  # 三族归类（2026-09-15 #ARCH-312）：业务图族/技术图族/治理图族
         "data_source": DB_DISPLAY_NAME,
         "source_architecture": "depgraph",
         "generator": "generate_integration_topology.py",
@@ -134,6 +139,7 @@ BUILT_PANORAMAS: list[dict] = [
         "name": "路径全景（全项目目录树）",
         "category": "路径全景",
         "category_id": "path",
+        "family": "技术图族",  # 三族归类（2026-09-15 #ARCH-312）：业务图族/技术图族/治理图族
         "data_source": "文件系统扫描",
         "source_architecture": "文件系统扫描",
         "generator": "generate_path_tree.py",
@@ -146,6 +152,7 @@ BUILT_PANORAMAS: list[dict] = [
         "name": "能力热力图（53域×10能力）",
         "category": "治理健康度",
         "category_id": "governance",
+        "family": "技术图族",  # 三族归类（2026-09-15 #ARCH-312）：业务图族/技术图族/治理图族
         "data_source": DB_DISPLAY_NAME,
         "source_architecture": "depgraph",
         "generator": "generate_capability_heatmap.py",
@@ -158,6 +165,7 @@ BUILT_PANORAMAS: list[dict] = [
         "name": "资产清单配置",
         "category": "资产",
         "category_id": "asset",
+        "family": "技术图族",  # 三族归类（2026-09-15 #ARCH-312）：业务图族/技术图族/治理图族
         "data_source": DB_DISPLAY_NAME,
         "source_architecture": "depgraph",
         "generator": "generate_asset_catalog.py",
@@ -170,6 +178,7 @@ BUILT_PANORAMAS: list[dict] = [
         "name": "契约目录配置",
         "category": "资产",
         "category_id": "asset",
+        "family": "技术图族",  # 三族归类（2026-09-15 #ARCH-312）：业务图族/技术图族/治理图族
         "data_source": DB_DISPLAY_NAME,
         "source_architecture": "depgraph",
         "generator": "generate_contract_catalog.py",
@@ -183,6 +192,7 @@ BUILT_PANORAMAS: list[dict] = [
         "name": "域架构文档（50 域 + domain_index）",
         "category": "域架构文档",
         "category_id": "domain_docs",
+        "family": "技术图族",  # 三族归类（2026-09-15 #ARCH-312）：业务图族/技术图族/治理图族
         "data_source": DB_DISPLAY_NAME,
         "source_architecture": "depgraph",
         "generator": "generate_domain_doc.py",
@@ -196,6 +206,7 @@ BUILT_PANORAMAS: list[dict] = [
         "name": "容量报告",
         "category": "治理健康度",
         "category_id": "governance",
+        "family": "技术图族",  # 三族归类（2026-09-15 #ARCH-312）：业务图族/技术图族/治理图族
         "data_source": DB_DISPLAY_NAME,
         "source_architecture": "depgraph",
         "generator": "generate_capacity_report.py",
@@ -208,6 +219,7 @@ BUILT_PANORAMAS: list[dict] = [
         "name": "约束违规报告",
         "category": "治理健康度",
         "category_id": "governance",
+        "family": "技术图族",  # 三族归类（2026-09-15 #ARCH-312）：业务图族/技术图族/治理图族
         "data_source": DB_DISPLAY_NAME,
         "source_architecture": "depgraph",
         "generator": "generate_constraint_violations.py",
@@ -220,6 +232,7 @@ BUILT_PANORAMAS: list[dict] = [
         "name": "设计态 vs 运营态",
         "category": "治理健康度",
         "category_id": "governance",
+        "family": "技术图族",  # 三族归类（2026-09-15 #ARCH-312）：业务图族/技术图族/治理图族
         "data_source": DB_DISPLAY_NAME,
         "source_architecture": "depgraph",
         "generator": "generate_design_vs_production.py",
@@ -234,6 +247,7 @@ BUILT_PANORAMAS: list[dict] = [
         "name": "依赖与路径全景图能力定位书",
         "category": "治理健康度",
         "category_id": "governance",
+        "family": "技术图族",  # 三族归类（2026-09-15 #ARCH-312）：业务图族/技术图族/治理图族
         "data_source": "手工",
         "source_architecture": "手工",
         "generator": "(手工维护)",
@@ -247,6 +261,7 @@ BUILT_PANORAMAS: list[dict] = [
         "name": "数据流图（dataflowgraph Dataset/Job/Edge）",
         "category": "数据流",
         "category_id": "dataflow",
+        "family": "技术图族",  # 三族归类（2026-09-15 #ARCH-312）：业务图族/技术图族/治理图族
         "data_source": DB_DISPLAY_NAME + " (dataflow_* 表)",
         "source_architecture": "dataflowgraph",
         "generator": "generate_dataflow_diagram.py",
@@ -260,6 +275,7 @@ BUILT_PANORAMAS: list[dict] = [
         "name": "决策流图（decisiongraph L0-L6 四轨）",
         "category": "决策流",
         "category_id": "decision",
+        "family": "技术图族",  # 三族归类（2026-09-15 #ARCH-312）：业务图族/技术图族/治理图族
         "data_source": DB_DISPLAY_NAME + " (decision_* 表)",
         "source_architecture": "decisiongraph",
         "generator": "generate_decision_diagram.py",
@@ -273,6 +289,7 @@ BUILT_PANORAMAS: list[dict] = [
         "name": "交易决策架构视图（已退役）",
         "category": "决策流",
         "category_id": "decision",
+        "family": "业务图族",  # 三族归类（2026-09-15 #ARCH-312）：业务图族/技术图族/治理图族
         "data_source": DB_DISPLAY_NAME,
         "source_architecture": "decisiongraph",
         "generator": "(已退役删除) generate_trading_flow_diagram.py",
@@ -287,6 +304,7 @@ BUILT_PANORAMAS: list[dict] = [
         "name": "交易决策作战地图（battle_map 第四全景图）",
         "category": "作战地图",
         "category_id": "battle_map",
+        "family": "业务图族",  # 三族归类（2026-09-15 #ARCH-312）：业务图族/技术图族/治理图族
         "data_source": DB_DISPLAY_NAME + " (battle_map_* 表)",
         "source_architecture": "battle_map",
         "generator": "generate_battle_map_diagram.py",
@@ -294,12 +312,27 @@ BUILT_PANORAMAS: list[dict] = [
         "artifact_path": "07_trading_decision_architecture/battle_map/battle_map_panorama.md",
         "description": "交易决策作战地图（第四全景图 battle_map），以决策环节为节点串联 depgraph/decisiongraph/候选池/蓝图，6件套标准 + 双向锚点查找；取代 PAN-BUILT-21 旧 trading_flow 视图（battle_map_panorama.md §四 取代声明）",
     },
+    # --- config/（治理运行地图 GOMAP 第十全景图，2026-09-15 十图升级 #ARCH-312 转正） ---
+    {
+        "panorama_id": "PAN-GOMAP-01",
+        "name": "治理运行地图（governance_operations_map 第十全景图）",
+        "family": "治理图族",  # 三族归类（2026-09-15 #ARCH-312）：业务图族/技术图族/治理图族
+        "category": "治理运行",
+        "category_id": "governance_ops",
+        "data_source": "YAML 真源（机生）+ 代码扫描",
+        "source_architecture": "generate_governance_map 扫描（机生骨架+人工语义层）",
+        "generator": "generate_governance_map.py",
+        "output_path": "config/",
+        "artifact_path": "config/governance_operations_map.yaml",
+        "description": "治理运行地图 GOMAP-001（第十全景图，2026-09-15 转正）：治理运行时流水线主轴（孵化→监控→水位→熔断→收割→自愈→审计）骨架机生（families 全量重建，单一真源=generate_governance_map.scan()），人工只填 pipeline/out_of_scope_refs/effective_from 语义层；对齐=align_all 第九节（机生层重建比对+人工层实存性）",
+    },
     # --- generated/ ---
     {
         "panorama_id": "PAN-BUILT-07",
         "name": "循环依赖检测（Tarjan SCC）",
         "category": "依赖关系",
         "category_id": "dependency",
+        "family": "技术图族",  # 三族归类（2026-09-15 #ARCH-312）：业务图族/技术图族/治理图族
         "data_source": DB_DISPLAY_NAME,
         "source_architecture": "depgraph",
         "generator": "内置在生成器（Tarjan SCC）",
@@ -313,6 +346,7 @@ BUILT_PANORAMAS: list[dict] = [
         "name": "架构方法论 + 核心决策（TOGAF/C4/功能域/三棵树/安全红线）",
         "category": "架构视图",
         "category_id": "architecture_principles",
+        "family": "技术图族",  # 三族归类（2026-09-15 #ARCH-312）：业务图族/技术图族/治理图族
         "data_source": "YAML (architecture_model/) + 手工",
         "source_architecture": "手工",
         "generator": "(手工维护)",
@@ -325,6 +359,7 @@ BUILT_PANORAMAS: list[dict] = [
         "name": "手绘 Mermaid 图（时序/治理）",
         "category": "架构视图",
         "category_id": "target_architecture",
+        "family": "业务图族",  # 三族归类（2026-09-15 #ARCH-312）：业务图族/技术图族/治理图族
         "data_source": "手工",
         "source_architecture": "手工",
         "generator": "(手工维护)",
@@ -338,6 +373,7 @@ BUILT_PANORAMAS: list[dict] = [
         "name": "架构债务注册表（已归档）",
         "category": "治理健康度",
         "category_id": "governance",
+        "family": "技术图族",  # 三族归类（2026-09-15 #ARCH-312）：业务图族/技术图族/治理图族
         "data_source": "手工",
         "source_architecture": "手工",
         "generator": "(手工维护)",
@@ -1005,7 +1041,7 @@ def _generate_built_section(built: list[dict]) -> list[str]:
 
     sorted_built = sorted(built, key=_built_sort_key)
 
-    lines.append("| ID | 名称 | 类别 | 来自架构图 | 真源 | 生成器 | 输出路径 | 产物状态 |")
+    lines.append("| ID | 名称 | 族 | 类别 | 来自架构图 | 真源 | 生成器 | 输出路径 | 产物状态 |")
     lines.append("|------|------|------|------|------|--------|----------|:---:|")
     for p in sorted_built:
         status, count = _check_artifact(p["artifact_path"])
@@ -1022,6 +1058,9 @@ def _generate_built_section(built: list[dict]) -> list[str]:
         if status == "✅存在" and count <= 1:
             # 单文件 → 可点击链接（相对路径，兼容 DOC-REF-BROKEN 门禁的相对路径解析）
             full_path = BASE_DIR / artifact_path
+            if not full_path.exists():
+                # 与 _check_artifact 同款回退：artifact_path 可能是仓库根相对路径（如 config/...）
+                full_path = REPO_ROOT / artifact_path
             link_text = output_path.rstrip("/") if output_path.endswith("/") else output_path
             rel_path = os.path.relpath(full_path, OUTPUT_DIR).replace("\\", "/")
             output_cell = f"[`{link_text}`]({rel_path})"
@@ -1030,7 +1069,7 @@ def _generate_built_section(built: list[dict]) -> list[str]:
             output_cell = f"`{output_path}`"
 
         lines.append(
-            f"| {p['panorama_id']} | {p['name']} | {p['category']} | {p.get('source_architecture', '—')} | "
+            f"| {p['panorama_id']} | {p['name']} | {p.get('family', '—')} | {p['category']} | {p.get('source_architecture', '—')} | "
             f"{p['data_source']} | `{p['generator']}` | {output_cell} | {status_str} |"
         )
     lines.append("")
@@ -1194,6 +1233,7 @@ def _generate_detail_section(built: list[dict], pending: list[dict]) -> list[str
         "11_risk_panorama": "11 风险全景（待建）",
         "12_quant_panorama": "12 量化全景（待建）",
         "13_visualization_architecture": "13 可视化前端架构（待建）",
+        "config": "config 运行时配置真源（治理运行地图 GOMAP）",
     }
 
     for key in group_order:
@@ -1207,8 +1247,18 @@ def _generate_detail_section(built: list[dict], pending: list[dict]) -> list[str
             if item["build_status"] == "✅已建":
                 # 已建项：真源列显示真源名 + 生成器跳转链接 + 产物跳转链接
                 gen_name = item["generator"]
-                # 生成器做成跳转链接（如果存在）
+                # 生成器做成跳转链接（如果存在）；候选目录含上级 governance/d5_architecture（域级生成器如
+                # generate_governance_map 不在 generators/ 内，RELATIVE-PATH-LITERAL 合规：用目录候选而非 "../" 字面量）
                 gen_path = GENERATORS_DIR / gen_name
+                if not gen_path.exists():
+                    gen_path = next(
+                        (
+                            c / gen_name
+                            for c in (GENERATORS_DIR.parent, GENERATORS_DIR.parent.parent)
+                            if (c / gen_name).exists()
+                        ),
+                        gen_path,
+                    )
                 if gen_path.exists():
                     gen_rel = os.path.relpath(gen_path, OUTPUT_DIR).replace("\\", "/")
                     gen_cell = f"[`{gen_name}`]({gen_rel})"
@@ -1217,6 +1267,9 @@ def _generate_detail_section(built: list[dict], pending: list[dict]) -> list[str
                 # 产物路径做成跳转链接（单文件跳转，目录不跳转）
                 art_path = item.get("artifact_path", "")
                 art_full = BASE_DIR / art_path
+                if not art_full.exists():
+                    # 与 _check_artifact 同款回退：artifact_path 可能是仓库根相对路径（如 config/...）
+                    art_full = REPO_ROOT / art_path
                 if art_full.exists() and art_full.is_file():
                     art_rel = os.path.relpath(art_full, OUTPUT_DIR).replace("\\", "/")
                     art_cell = f"[`{art_path}`]({art_rel})"
