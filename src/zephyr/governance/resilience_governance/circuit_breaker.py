@@ -61,6 +61,7 @@ import threading
 import time
 from dataclasses import dataclass
 from enum import Enum
+from typing import Final
 
 
 class CircuitState(Enum):
@@ -173,17 +174,4 @@ class CircuitBreaker:
         return max(0, self.config.error_budget_per_hour - self._error_budget_consumed)
 
 
-# 代理导出：CircuitBreakerOpenError 实际定义在 infrastructure.reliability.circuit_breaker
-# 使用延迟导入避免循环依赖
-
-
-def __getattr__(name):
-    """延迟导入 CircuitBreakerOpenError 避免循环依赖."""
-    if name == "CircuitBreakerOpenError":
-        from zephyr.infrastructure.reliability.circuit_breaker import CircuitBreakerOpenError
-
-        return CircuitBreakerOpenError
-    raise AttributeError(f"module {__name__!r} has no attribute {name!r}")
-
-
-__all__ = ["CircuitBreaker", "CircuitBreakerConfig", "CircuitBreakerOpenError", "CircuitState"]
+__all__: Final = ["CircuitBreaker", "CircuitBreakerConfig", "CircuitState"]

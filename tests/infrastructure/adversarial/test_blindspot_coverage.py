@@ -23,7 +23,7 @@ BLINDSPOT_TO_CODE = {
     # 2026-08-16 契约漂移对齐：zephyr.orchestrator.core 旧树退役，
     # 映射更新为现行 canonical 模块路径（类名探针实测定位）。
     "A1_execretion_error_handling": "zephyr.shared.reliability.retry_handler.RetryHandler",
-    "A2_dependency_timeout": "zephyr.infrastructure.reliability.circuit_breaker.CircuitBreaker",
+    "A2_dependency_timeout": "zephyr.shared.resilience.circuit_breaker.CircuitBreaker",
     "A3_task_card_validation": "zephyr.shared.foundation.models.TaskCard",
     "A4_decomposition_fidelity": "zephyr.shared.blueprint_tools.blueprint_decomposer.BlueprintDecomposer",
     "A5_context_overflow": "zephyr.shared.context.context_engine.ContextEngine",

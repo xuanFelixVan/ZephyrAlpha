@@ -76,8 +76,6 @@ __all__ = [
     "session_startup",
     "shutdown_ordered_phases",
     "startup_ordered_phases",
-    "startup_shutdown",
-    "startup_shutdown_cli",
     "switch_env",
     "triage",
     "verify_config",

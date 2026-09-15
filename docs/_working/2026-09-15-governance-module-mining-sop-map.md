@@ -109,21 +109,30 @@ completes_when: >-
 ## 5. 加减乘除行动清单（每项处置后回填 commit hash）
 
 ### 减（清理，全部需先复核装配机制）
+
+> **核验教训（2026-09-15 二次复核）**：子代理深度核验报告 3 处误判被动刀前 grep 复核拦下——
+> source_circuit_breaker（data/scheduler.py:97 真引用）、circuit_manager（经 pipeline_orchestrator
+> 被 auto_runtime_core.py:65 引用）、trading_kill_switch（kill_switch_orchestrator:331 惰性 import）。
+> 教训：TEST-ONLY 判定必须区分「docstring/CONSUMERS 头提及」vs「真 import 语句」，且业务域模块
+> （daban/trade_level 有域文档+TDM 落码背书）不适用治理死码标准。另 blueprint 对账发现 5 处头声明
+> 漂移（health_aggregator/health_aggregator(tel)/watchdog/zombie_cleaner/kill_switch_latency 探针
+> 指向不存在路径），后者已列入加法修复。
+
 | # | 对象 | 动作 | 前置/验证 | 终态 |
 |---|------|------|-----------|------|
-| R1 | `infrastructure/health_monitor/health_aggregator.py`(双胞胎) | 删 | grep 确认仅 __init__ 自导出；跑 system_telemetry 全测 | |
-| R2 | `governance/ops_governance/startup_shutdown.py`+cli | 删或并入 infrastructure 版 | 查 governance/__init__ 导出链消费方 | |
-| R3 | `scripts/governance/vms/_archive/vms_ri/` 重复套件 | 归档删除 | 无引用 | |
-| R4 | CircuitBreaker×8 / KillSwitch×5 收敛 | 长期战役，逐域向 SSoT 收 | 每次收敛独立裁定（涉及 F 域 human_gate？查 risk_tier_registry） | |
+| R1 | `infrastructure/health_monitor/health_aggregator.py`(双胞胎) | 删 | grep 确认仅 __init__ 自导出；跑 system_telemetry 全测 | ✅ 删（二次核验 CONFIRMED-DEAD，零外部 import） |
+| R2 | `governance/ops_governance/startup_shutdown.py`+cli | 删或并入 infrastructure 版 | 查 governance/__init__ 导出链消费方 | ✅ 删双文件+governance/__init__:287 桥接行+__all__ 条目（消费方全走 infrastructure 版） |
+| R3 | `scripts/governance/_archive/vms_ri/` 重复套件 | 归档删除 | 无引用 | ✅ 删 11 脚本（全仓零引用） |
+| R4 | CircuitBreaker×9 / KillSwitch×5 收敛 | 长期战役，逐域向 SSoT 收 | 每次收敛独立裁定（涉及 F 域 human_gate？查 risk_tier_registry） | 部分执行：删 reliability/circuit_breaker+failover_coordinator+api_lifecycle×2+ghost_scan；**保留** source_circuit_breaker(data/scheduler:97 真引用,核验误判)/circuit_breaker_manager(pipeline_orchestrator 活引用,误判)/trading_kill_switch(MOD-INF-016+A3目标)/daban_instant(打板五件,24号§3.13)/trade_level(连续亏损熔断,42号§3.10 TDM 落码)/capacity_assurance+context_pipeline_auto 待裁；canonical=shared/resilience(通用)+access_control(系统级) |
 
 ### 加（接线）
 | # | 对象 | 动作 | 前置/验证 | 终态 |
 |---|------|------|-----------|------|
 | A1 | `nssm_p1_p5_service_definitions.yaml` DRAFT | 收口落地或裁定废弃 | Owner 窗口(蓝图自述) | |
 | A2 | `config/alert_rules.yaml` OOM>8GB critical | 接通知通道实测一轮 | 飞书 webhook 真实告警一次 | |
-| A3 | `kill_switch_orchestrator` 五域编排 | 挂 boot_hooks 或裁定废弃 | RBAC 测试+boot 冒烟 | |
-| A4 | `last_resort_watchdog` | 接 escalation_protocol 或废弃 | 蓝图声明 vs 现状对齐 | |
-| A5 | `agent_health_monitor`、`heartbeat_server`、`task_heartbeat`、`degrade_cascade` | 逐个接线或删除 | wiring 复核 | |
+| A3 | `kill_switch_orchestrator` 五域编排 | 挂 boot_hooks 或裁定废弃 | RBAC 测试+boot 冒烟 | ⚠️ 降级执行：核验发现其 4 个默认域适配目标本身多为死链/弱链——先接目标再挂 boot，否则新增一层死控制面 |
+| A4 | `last_resort_watchdog` | 接 escalation_protocol 或废弃 | 蓝图声明 vs 现状对齐 | TEST-ONLY 实证，维持待接线 |
+| A5 | `agent_health_monitor`、`heartbeat_server`、`task_heartbeat`、`degrade_cascade` | 逐个接线或删除 | wiring 复核 | 核验修订：全为 TEST-ONLY；zombie_cleaner 从本单剔除（auto_fix_engine/engine.py:247 动态注册=活，挖矿误判）；ghost_scan 已删（与 reaper scan_ghost_windows 重复） |
 
 ### 乘（升级/打通）
 | # | 对象 | 动作 | 前置/验证 | 终态 |

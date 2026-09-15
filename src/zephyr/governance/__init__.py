@@ -284,7 +284,6 @@ try:
     import zephyr.governance.ops_governance.ops_foundation as ops_foundation
     import zephyr.governance.ops_governance.phase_check_registry as phase_check_registry
     import zephyr.governance.ops_governance.phase_manager as phase_manager
-    import zephyr.governance.ops_governance.startup_shutdown_cli as startup_shutdown_cli
     import zephyr.governance.resilience_governance.broker_resilience as broker_resilience
     import zephyr.governance.resilience_governance.bus_factor_defense as bus_factor_defense
     import zephyr.governance.resilience_governance.decision_fatigue as decision_fatigue
@@ -421,7 +420,6 @@ __all__ = [
     "rollback_mod",
     "spof_checker",
     "startup_shutdown",
-    "startup_shutdown_cli",
     "strategy_portfolio",
     "vibe_coding_enforcer",
     # ARCH-031 残留模块名（2026-07-17 清理：删除 7 个失效条目 base/broker_interface/

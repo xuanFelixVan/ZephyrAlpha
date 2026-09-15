@@ -34,9 +34,6 @@
 """
 
 __all__ = [
-    "APIEndpoint",
-    "APIState",
-    "DeprecationNotice",
     "MigrationPhase",
     "PLVCheck",
     "PLVSpec",
@@ -46,10 +43,8 @@ __all__ = [
     "STATE_NAMESPACE",
     "TransitionPhase",
     "TransitionState",
-    "api_lifecycle",
     "check_promotion_allowed",
     "create_transition_state",
-    "deprecate_api",
     "evaluate_rollback",
     "get_next_phase",
     "get_phase_def",
@@ -61,7 +56,6 @@ __all__ = [
     "persist_state",
     "post_live_verification",
     "recover",
-    "remove_api",
     "rollback_state_machine",
     "safe_read_state",
     "valid_transition",
@@ -77,12 +71,6 @@ __all__ = [
 # 消费方现存全量子模块路径 import 不受影响（零 import 时成本）。
 # ---------------------------------------------------------------------------
 _SYMBOL_TO_SUBMODULE: dict[str, str] = {
-    # api_lifecycle
-    "APIEndpoint": "api_lifecycle",
-    "APIState": "api_lifecycle",
-    "DeprecationNotice": "api_lifecycle",
-    "deprecate_api": "api_lifecycle",
-    "remove_api": "api_lifecycle",
     # migration_strategy
     "MigrationPhase": "migration_strategy",
     "PhaseDef": "migration_strategy",
@@ -119,10 +107,9 @@ def __getattr__(name: str):
 
         mod = importlib.import_module(f"{__name__}.{_SYMBOL_TO_SUBMODULE[name]}")
         return getattr(mod, name)
-    # 子模块名本身（api_lifecycle/migration_strategy/paper_live_transition/
+    # 子模块名本身（migration_strategy/paper_live_transition/
     # post_live_verification/rollback_state_machine/transition）按需 import
     if name in {
-        "api_lifecycle",
         "migration_strategy",
         "paper_live_transition",
         "post_live_verification",
