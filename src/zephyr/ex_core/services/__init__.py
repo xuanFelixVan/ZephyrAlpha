@@ -1,3 +1,5 @@
+# [BLUEPRINT] MOD-L06-001 | (auto-injected by S4 reconciler) | §
+# [TTL] permanent
 # [TTL] permanent
 # ex_core/services
 
