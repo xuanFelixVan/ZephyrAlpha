@@ -79,6 +79,7 @@ import asyncio
 import hashlib
 import json
 import os
+import sys
 import time
 from concurrent.futures import ThreadPoolExecutor, as_completed
 from dataclasses import dataclass, field
@@ -255,7 +256,7 @@ class DetectorDispatcher:
             proc = None
             try:
                 proc = await asyncio.create_subprocess_exec(
-                    "python",
+                    sys.executable,
                     script_path,
                     stdout=asyncio.subprocess.PIPE,
                     stderr=asyncio.subprocess.PIPE,

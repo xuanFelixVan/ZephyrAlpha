@@ -174,7 +174,7 @@ class IncrementalScanner:
 
             return files
 
-        except (subprocess.TimeoutExpired, FileNotFoundError):
+        except (subprocess.TimeoutExpired, OSError):
             return []
 
     def compute_impact(self, changed_files: list[str] | None = None) -> ChangeSet:
