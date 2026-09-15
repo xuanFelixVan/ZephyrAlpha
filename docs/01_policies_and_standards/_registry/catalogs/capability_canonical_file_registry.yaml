@@ -14852,15 +14852,15 @@ creation_tokens:
   token: btfix-p1p2---main---20260915
   created_by: st-btfix-p15-20260915
   capability: btfix_p1p2
-- file: docs/03_modules/_domain_autonomy_core/algo_flow/_g04_ops_check.yaml
+- file: docs/03_modules/_domain_autonomy_core/algo_flow/agents/_g04_ops_check.yaml
   token: btfix-p1p2--g04-ops-check-20260915
   created_by: st-btfix-p15-20260915
   capability: btfix_p1p2
-- file: docs/03_modules/_domain_autonomy_core/algo_flow/_run_store.yaml
+- file: docs/03_modules/_domain_autonomy_core/algo_flow/agents/_run_store.yaml
   token: btfix-p1p2--run-store-20260915
   created_by: st-btfix-p15-20260915
   capability: btfix_p1p2
-- file: docs/03_modules/_domain_autonomy_core/algo_flow/_s11_wiring.yaml
+- file: docs/03_modules/_domain_autonomy_core/algo_flow/agents/_s11_wiring.yaml
   token: btfix-p1p2--s11-wiring-20260915
   created_by: st-btfix-p15-20260915
   capability: btfix_p1p2
@@ -14872,7 +14872,7 @@ creation_tokens:
   token: btfix-p1p2-agentic-drift-guard-20260915
   created_by: st-btfix-p15-20260915
   capability: btfix_p1p2
-- file: docs/03_modules/_domain_autonomy_core/algo_flow/agents__init__.yaml
+- file: docs/03_modules/_domain_autonomy_core/algo_flow/agents/agents__init__.yaml
   token: btfix-p1p2-agents--init---20260915
   created_by: st-btfix-p15-20260915
   capability: btfix_p1p2
@@ -14880,7 +14880,7 @@ creation_tokens:
   token: btfix-p1p2-ai-ops-autonomy-card-20260915
   created_by: st-btfix-p15-20260915
   capability: btfix_p1p2
-- file: docs/03_modules/_domain_autonomy_core/algo_flow/algorithm_agent_entry.yaml
+- file: docs/03_modules/_domain_autonomy_core/algo_flow/agents/algorithm_agent_entry.yaml
   token: btfix-p1p2-algorithm-agent-entry-20260915
   created_by: st-btfix-p15-20260915
   capability: btfix_p1p2
@@ -14888,7 +14888,7 @@ creation_tokens:
   token: btfix-p1p2-all-skill-modules-20260915
   created_by: st-btfix-p15-20260915
   capability: btfix_p1p2
-- file: docs/03_modules/_domain_autonomy_core/algo_flow/atomic_injector.yaml
+- file: docs/03_modules/_domain_autonomy_core/algo_flow/context/atomic_injector.yaml
   token: btfix-p1p2-atomic-injector-20260915
   created_by: st-btfix-p15-20260915
   capability: btfix_p1p2
@@ -14904,119 +14904,119 @@ creation_tokens:
   token: btfix-p1p2-autonomy-level-registry-20260915
   created_by: st-btfix-p15-20260915
   capability: btfix_p1p2
-- file: docs/03_modules/_domain_autonomy_core/algo_flow/business_agent_entry.yaml
+- file: docs/03_modules/_domain_autonomy_core/algo_flow/agents/business_agent_entry.yaml
   token: btfix-p1p2-business-agent-entry-20260915
   created_by: st-btfix-p15-20260915
   capability: btfix_p1p2
-- file: docs/03_modules/_domain_autonomy_core/algo_flow/ce_bootstrap.yaml
+- file: docs/03_modules/_domain_autonomy_core/algo_flow/context/ce_bootstrap.yaml
   token: btfix-p1p2-ce-bootstrap-20260915
   created_by: st-btfix-p15-20260915
   capability: btfix_p1p2
-- file: docs/03_modules/_domain_autonomy_core/algo_flow/ce_explain_cli.yaml
+- file: docs/03_modules/_domain_autonomy_core/algo_flow/context/ce_explain_cli.yaml
   token: btfix-p1p2-ce-explain-cli-20260915
   created_by: st-btfix-p15-20260915
   capability: btfix_p1p2
-- file: docs/03_modules/_domain_autonomy_core/algo_flow/ce_file_lister.yaml
+- file: docs/03_modules/_domain_autonomy_core/algo_flow/context/ce_file_lister.yaml
   token: btfix-p1p2-ce-file-lister-20260915
   created_by: st-btfix-p15-20260915
   capability: btfix_p1p2
-- file: docs/03_modules/_domain_autonomy_core/algo_flow/ce_playground_v2.yaml
+- file: docs/03_modules/_domain_autonomy_core/algo_flow/context/ce_playground_v2.yaml
   token: btfix-p1p2-ce-playground-v2-20260915
   created_by: st-btfix-p15-20260915
   capability: btfix_p1p2
-- file: docs/03_modules/_domain_autonomy_core/algo_flow/ce_vibe_shortcuts.yaml
+- file: docs/03_modules/_domain_autonomy_core/algo_flow/context/ce_vibe_shortcuts.yaml
   token: btfix-p1p2-ce-vibe-shortcuts-20260915
   created_by: st-btfix-p15-20260915
   capability: btfix_p1p2
-- file: docs/03_modules/_domain_autonomy_core/algo_flow/checkpoint_manager.yaml
+- file: docs/03_modules/_domain_autonomy_core/algo_flow/context/checkpoint_manager.yaml
   token: btfix-p1p2-checkpoint-manager-20260915
   created_by: st-btfix-p15-20260915
   capability: btfix_p1p2
-- file: docs/03_modules/_domain_autonomy_core/algo_flow/cold_start_booster.yaml
+- file: docs/03_modules/_domain_autonomy_core/algo_flow/context/cold_start_booster.yaml
   token: btfix-p1p2-cold-start-booster-20260915
   created_by: st-btfix-p15-20260915
   capability: btfix_p1p2
-- file: docs/03_modules/_domain_autonomy_core/algo_flow/complexity_budget.yaml
+- file: docs/03_modules/_domain_autonomy_core/algo_flow/context/complexity_budget.yaml
   token: btfix-p1p2-complexity-budget-20260915
   created_by: st-btfix-p15-20260915
   capability: btfix_p1p2
-- file: docs/03_modules/_domain_autonomy_core/algo_flow/context__init__.yaml
+- file: docs/03_modules/_domain_autonomy_core/algo_flow/context/context__init__.yaml
   token: btfix-p1p2-context--init---20260915
   created_by: st-btfix-p15-20260915
   capability: btfix_p1p2
-- file: docs/03_modules/_domain_autonomy_core/algo_flow/context_budget.yaml
+- file: docs/03_modules/_domain_autonomy_core/algo_flow/context/context_budget.yaml
   token: btfix-p1p2-context-budget-20260915
   created_by: st-btfix-p15-20260915
   capability: btfix_p1p2
-- file: docs/03_modules/_domain_autonomy_core/algo_flow/context_budget_tracker.yaml
+- file: docs/03_modules/_domain_autonomy_core/algo_flow/context/context_budget_tracker.yaml
   token: btfix-p1p2-context-budget-tracker-20260915
   created_by: st-btfix-p15-20260915
   capability: btfix_p1p2
-- file: docs/03_modules/_domain_autonomy_core/algo_flow/context_debt_score.yaml
+- file: docs/03_modules/_domain_autonomy_core/algo_flow/context/context_debt_score.yaml
   token: btfix-p1p2-context-debt-score-20260915
   created_by: st-btfix-p15-20260915
   capability: btfix_p1p2
-- file: docs/03_modules/_domain_autonomy_core/algo_flow/context_evaluator.yaml
+- file: docs/03_modules/_domain_autonomy_core/algo_flow/context/context_evaluator.yaml
   token: btfix-p1p2-context-evaluator-20260915
   created_by: st-btfix-p15-20260915
   capability: btfix_p1p2
-- file: docs/03_modules/_domain_autonomy_core/algo_flow/context_evictor.yaml
+- file: docs/03_modules/_domain_autonomy_core/algo_flow/context/context_evictor.yaml
   token: btfix-p1p2-context-evictor-20260915
   created_by: st-btfix-p15-20260915
   capability: btfix_p1p2
-- file: docs/03_modules/_domain_autonomy_core/algo_flow/context_health_score.yaml
+- file: docs/03_modules/_domain_autonomy_core/algo_flow/context/context_health_score.yaml
   token: btfix-p1p2-context-health-score-20260915
   created_by: st-btfix-p15-20260915
   capability: btfix_p1p2
-- file: docs/03_modules/_domain_autonomy_core/algo_flow/context_injector.yaml
+- file: docs/03_modules/_domain_autonomy_core/algo_flow/context/context_injector.yaml
   token: btfix-p1p2-context-injector-20260915
   created_by: st-btfix-p15-20260915
   capability: btfix_p1p2
-- file: docs/03_modules/_domain_autonomy_core/algo_flow/context_model_strategy.yaml
+- file: docs/03_modules/_domain_autonomy_core/algo_flow/context/context_model_strategy.yaml
   token: btfix-p1p2-context-model-strategy-20260915
   created_by: st-btfix-p15-20260915
   capability: btfix_p1p2
-- file: docs/03_modules/_domain_autonomy_core/algo_flow/context_outcome_tracker.yaml
+- file: docs/03_modules/_domain_autonomy_core/algo_flow/context/context_outcome_tracker.yaml
   token: btfix-p1p2-context-outcome-tracker-20260915
   created_by: st-btfix-p15-20260915
   capability: btfix_p1p2
-- file: docs/03_modules/_domain_autonomy_core/algo_flow/context_pipeline_auto.yaml
+- file: docs/03_modules/_domain_autonomy_core/algo_flow/context/context_pipeline_auto.yaml
   token: btfix-p1p2-context-pipeline-auto-20260915
   created_by: st-btfix-p15-20260915
   capability: btfix_p1p2
-- file: docs/03_modules/_domain_autonomy_core/algo_flow/context_playground.yaml
+- file: docs/03_modules/_domain_autonomy_core/algo_flow/context/context_playground.yaml
   token: btfix-p1p2-context-playground-20260915
   created_by: st-btfix-p15-20260915
   capability: btfix_p1p2
-- file: docs/03_modules/_domain_autonomy_core/algo_flow/context_rot_model.yaml
+- file: docs/03_modules/_domain_autonomy_core/algo_flow/context/context_rot_model.yaml
   token: btfix-p1p2-context-rot-model-20260915
   created_by: st-btfix-p15-20260915
   capability: btfix_p1p2
-- file: docs/03_modules/_domain_autonomy_core/algo_flow/context_rule_registry.yaml
+- file: docs/03_modules/_domain_autonomy_core/algo_flow/context/context_rule_registry.yaml
   token: btfix-p1p2-context-rule-registry-20260915
   created_by: st-btfix-p15-20260915
   capability: btfix_p1p2
-- file: docs/03_modules/_domain_autonomy_core/algo_flow/context_value_attribution.yaml
+- file: docs/03_modules/_domain_autonomy_core/algo_flow/context/context_value_attribution.yaml
   token: btfix-p1p2-context-value-attribution-20260915
   created_by: st-btfix-p15-20260915
   capability: btfix_p1p2
-- file: docs/03_modules/_domain_autonomy_core/algo_flow/contextual_fetch_api.yaml
+- file: docs/03_modules/_domain_autonomy_core/algo_flow/context/contextual_fetch_api.yaml
   token: btfix-p1p2-contextual-fetch-api-20260915
   created_by: st-btfix-p15-20260915
   capability: btfix_p1p2
-- file: docs/03_modules/_domain_autonomy_core/algo_flow/curation_loop.yaml
+- file: docs/03_modules/_domain_autonomy_core/algo_flow/context/curation_loop.yaml
   token: btfix-p1p2-curation-loop-20260915
   created_by: st-btfix-p15-20260915
   capability: btfix_p1p2
-- file: docs/03_modules/_domain_autonomy_core/algo_flow/diff_injector.yaml
+- file: docs/03_modules/_domain_autonomy_core/algo_flow/context/diff_injector.yaml
   token: btfix-p1p2-diff-injector-20260915
   created_by: st-btfix-p15-20260915
   capability: btfix_p1p2
-- file: docs/03_modules/_domain_autonomy_core/algo_flow/diversity_constraint.yaml
+- file: docs/03_modules/_domain_autonomy_core/algo_flow/context/diversity_constraint.yaml
   token: btfix-p1p2-diversity-constraint-20260915
   created_by: st-btfix-p15-20260915
   capability: btfix_p1p2
-- file: docs/03_modules/_domain_autonomy_core/algo_flow/domain_decay_config.yaml
+- file: docs/03_modules/_domain_autonomy_core/algo_flow/context/domain_decay_config.yaml
   token: btfix-p1p2-domain-decay-config-20260915
   created_by: st-btfix-p15-20260915
   capability: btfix_p1p2
@@ -15028,7 +15028,7 @@ creation_tokens:
   token: btfix-p1p2-embedding-provider-adapter-20260915
   created_by: st-btfix-p15-20260915
   capability: btfix_p1p2
-- file: docs/03_modules/_domain_autonomy_core/algo_flow/fallback_staleness_gate.yaml
+- file: docs/03_modules/_domain_autonomy_core/algo_flow/context/fallback_staleness_gate.yaml
   token: btfix-p1p2-fallback-staleness-gate-20260915
   created_by: st-btfix-p15-20260915
   capability: btfix_p1p2
@@ -15036,7 +15036,7 @@ creation_tokens:
   token: btfix-p1p2-file-autoregister-20260915
   created_by: st-btfix-p15-20260915
   capability: btfix_p1p2
-- file: docs/03_modules/_domain_autonomy_core/algo_flow/governance_agent_entry.yaml
+- file: docs/03_modules/_domain_autonomy_core/algo_flow/agents/governance_agent_entry.yaml
   token: btfix-p1p2-governance-agent-entry-20260915
   created_by: st-btfix-p15-20260915
   capability: btfix_p1p2
@@ -15044,11 +15044,11 @@ creation_tokens:
   token: btfix-p1p2-ide-watcher-20260915
   created_by: st-btfix-p15-20260915
   capability: btfix_p1p2
-- file: docs/03_modules/_domain_autonomy_core/algo_flow/integration__init__.yaml
+- file: docs/03_modules/_domain_autonomy_core/algo_flow/integration/integration__init__.yaml
   token: btfix-p1p2-integration--init---20260915
   created_by: st-btfix-p15-20260915
   capability: btfix_p1p2
-- file: docs/03_modules/_domain_autonomy_core/algo_flow/integrity_check.yaml
+- file: docs/03_modules/_domain_autonomy_core/algo_flow/context/integrity_check.yaml
   token: btfix-p1p2-integrity-check-20260915
   created_by: st-btfix-p15-20260915
   capability: btfix_p1p2
@@ -15060,15 +15060,15 @@ creation_tokens:
   token: btfix-p1p2-killswitch-response-levels-20260915
   created_by: st-btfix-p15-20260915
   capability: btfix_p1p2
-- file: docs/03_modules/_domain_autonomy_core/algo_flow/local_llm_summarizer.yaml
+- file: docs/03_modules/_domain_autonomy_core/algo_flow/context/local_llm_summarizer.yaml
   token: btfix-p1p2-local-llm-summarizer-20260915
   created_by: st-btfix-p15-20260915
   capability: btfix_p1p2
-- file: docs/03_modules/_domain_autonomy_core/algo_flow/mode_manager.yaml
+- file: docs/03_modules/_domain_autonomy_core/algo_flow/context/mode_manager.yaml
   token: btfix-p1p2-mode-manager-20260915
   created_by: st-btfix-p15-20260915
   capability: btfix_p1p2
-- file: docs/03_modules/_domain_autonomy_core/algo_flow/module_factory__init__.yaml
+- file: docs/03_modules/_domain_autonomy_core/algo_flow/module_factory/module_factory__init__.yaml
   token: btfix-p1p2-module-factory--init---20260915
   created_by: st-btfix-p15-20260915
   capability: btfix_p1p2
@@ -15084,11 +15084,11 @@ creation_tokens:
   token: btfix-p1p2-phase-planner-20260915
   created_by: st-btfix-p15-20260915
   capability: btfix_p1p2
-- file: docs/03_modules/_domain_autonomy_core/algo_flow/pipeline_bridge.yaml
+- file: docs/03_modules/_domain_autonomy_core/algo_flow/integration/pipeline_bridge.yaml
   token: btfix-p1p2-pipeline-bridge-20260915
   created_by: st-btfix-p15-20260915
   capability: btfix_p1p2
-- file: docs/03_modules/_domain_autonomy_core/algo_flow/position_optimizer.yaml
+- file: docs/03_modules/_domain_autonomy_core/algo_flow/context/position_optimizer.yaml
   token: btfix-p1p2-position-optimizer-20260915
   created_by: st-btfix-p15-20260915
   capability: btfix_p1p2
@@ -15100,11 +15100,11 @@ creation_tokens:
   token: btfix-p1p2-prompt-registry-20260915
   created_by: st-btfix-p15-20260915
   capability: btfix_p1p2
-- file: docs/03_modules/_domain_autonomy_core/algo_flow/researcher_agent.yaml
+- file: docs/03_modules/_domain_autonomy_core/algo_flow/agents/researcher_agent.yaml
   token: btfix-p1p2-researcher-agent-20260915
   created_by: st-btfix-p15-20260915
   capability: btfix_p1p2
-- file: docs/03_modules/_domain_autonomy_core/algo_flow/risk_manager_agent.yaml
+- file: docs/03_modules/_domain_autonomy_core/algo_flow/agents/risk_manager_agent.yaml
   token: btfix-p1p2-risk-manager-agent-20260915
   created_by: st-btfix-p15-20260915
   capability: btfix_p1p2
@@ -15112,179 +15112,179 @@ creation_tokens:
   token: btfix-p1p2-self-evolution-fidelity-gate-20260915
   created_by: st-btfix-p15-20260915
   capability: btfix_p1p2
-- file: docs/03_modules/_domain_autonomy_core/algo_flow/self_iteration_agent_entry.yaml
+- file: docs/03_modules/_domain_autonomy_core/algo_flow/agents/self_iteration_agent_entry.yaml
   token: btfix-p1p2-self-iteration-agent-entry-20260915
   created_by: st-btfix-p15-20260915
   capability: btfix_p1p2
-- file: docs/03_modules/_domain_autonomy_core/algo_flow/shadow_canary.yaml
+- file: docs/03_modules/_domain_autonomy_core/algo_flow/context/shadow_canary.yaml
   token: btfix-p1p2-shadow-canary-20260915
   created_by: st-btfix-p15-20260915
   capability: btfix_p1p2
-- file: docs/03_modules/_domain_autonomy_core/algo_flow/signal_analyst_agent.yaml
+- file: docs/03_modules/_domain_autonomy_core/algo_flow/agents/signal_analyst_agent.yaml
   token: btfix-p1p2-signal-analyst-agent-20260915
   created_by: st-btfix-p15-20260915
   capability: btfix_p1p2
-- file: docs/03_modules/_domain_autonomy_core/algo_flow/skill_breakage_checker.yaml
+- file: docs/03_modules/_domain_autonomy_core/algo_flow/skills/skill_breakage_checker.yaml
   token: btfix-p1p2-skill-breakage-checker-20260915
   created_by: st-btfix-p15-20260915
   capability: btfix_p1p2
-- file: docs/03_modules/_domain_autonomy_core/algo_flow/skill_cache_provider.yaml
+- file: docs/03_modules/_domain_autonomy_core/algo_flow/skills/skill_cache_provider.yaml
   token: btfix-p1p2-skill-cache-provider-20260915
   created_by: st-btfix-p15-20260915
   capability: btfix_p1p2
-- file: docs/03_modules/_domain_autonomy_core/algo_flow/skill_calibration.yaml
+- file: docs/03_modules/_domain_autonomy_core/algo_flow/skills/skill_calibration.yaml
   token: btfix-p1p2-skill-calibration-20260915
   created_by: st-btfix-p15-20260915
   capability: btfix_p1p2
-- file: docs/03_modules/_domain_autonomy_core/algo_flow/skill_canary.yaml
+- file: docs/03_modules/_domain_autonomy_core/algo_flow/skills/skill_canary.yaml
   token: btfix-p1p2-skill-canary-20260915
   created_by: st-btfix-p15-20260915
   capability: btfix_p1p2
-- file: docs/03_modules/_domain_autonomy_core/algo_flow/skill_cognitive_preservation.yaml
+- file: docs/03_modules/_domain_autonomy_core/algo_flow/skills/skill_cognitive_preservation.yaml
   token: btfix-p1p2-skill-cognitive-preservation-20260915
   created_by: st-btfix-p15-20260915
   capability: btfix_p1p2
-- file: docs/03_modules/_domain_autonomy_core/algo_flow/skill_compliance.yaml
+- file: docs/03_modules/_domain_autonomy_core/algo_flow/skills/skill_compliance.yaml
   token: btfix-p1p2-skill-compliance-20260915
   created_by: st-btfix-p15-20260915
   capability: btfix_p1p2
-- file: docs/03_modules/_domain_autonomy_core/algo_flow/skill_consensus.yaml
+- file: docs/03_modules/_domain_autonomy_core/algo_flow/skills/skill_consensus.yaml
   token: btfix-p1p2-skill-consensus-20260915
   created_by: st-btfix-p15-20260915
   capability: btfix_p1p2
-- file: docs/03_modules/_domain_autonomy_core/algo_flow/skill_constructor.yaml
+- file: docs/03_modules/_domain_autonomy_core/algo_flow/skills/skill_constructor.yaml
   token: btfix-p1p2-skill-constructor-20260915
   created_by: st-btfix-p15-20260915
   capability: btfix_p1p2
-- file: docs/03_modules/_domain_autonomy_core/algo_flow/skill_context_isolation.yaml
+- file: docs/03_modules/_domain_autonomy_core/algo_flow/skills/skill_context_isolation.yaml
   token: btfix-p1p2-skill-context-isolation-20260915
   created_by: st-btfix-p15-20260915
   capability: btfix_p1p2
-- file: docs/03_modules/_domain_autonomy_core/algo_flow/skill_contract.yaml
+- file: docs/03_modules/_domain_autonomy_core/algo_flow/skills/skill_contract.yaml
   token: btfix-p1p2-skill-contract-20260915
   created_by: st-btfix-p15-20260915
   capability: btfix_p1p2
-- file: docs/03_modules/_domain_autonomy_core/algo_flow/skill_cross_model.yaml
+- file: docs/03_modules/_domain_autonomy_core/algo_flow/skills/skill_cross_model.yaml
   token: btfix-p1p2-skill-cross-model-20260915
   created_by: st-btfix-p15-20260915
   capability: btfix_p1p2
-- file: docs/03_modules/_domain_autonomy_core/algo_flow/skill_di.yaml
+- file: docs/03_modules/_domain_autonomy_core/algo_flow/skills/skill_di.yaml
   token: btfix-p1p2-skill-di-20260915
   created_by: st-btfix-p15-20260915
   capability: btfix_p1p2
-- file: docs/03_modules/_domain_autonomy_core/algo_flow/skill_discovery.yaml
+- file: docs/03_modules/_domain_autonomy_core/algo_flow/skills/skill_discovery.yaml
   token: btfix-p1p2-skill-discovery-20260915
   created_by: st-btfix-p15-20260915
   capability: btfix_p1p2
-- file: docs/03_modules/_domain_autonomy_core/algo_flow/skill_durable.yaml
+- file: docs/03_modules/_domain_autonomy_core/algo_flow/skills/skill_durable.yaml
   token: btfix-p1p2-skill-durable-20260915
   created_by: st-btfix-p15-20260915
   capability: btfix_p1p2
-- file: docs/03_modules/_domain_autonomy_core/algo_flow/skill_economics.yaml
+- file: docs/03_modules/_domain_autonomy_core/algo_flow/skills/skill_economics.yaml
   token: btfix-p1p2-skill-economics-20260915
   created_by: st-btfix-p15-20260915
   capability: btfix_p1p2
-- file: docs/03_modules/_domain_autonomy_core/algo_flow/skill_efficacy_calibrator.yaml
+- file: docs/03_modules/_domain_autonomy_core/algo_flow/skills/skill_efficacy_calibrator.yaml
   token: btfix-p1p2-skill-efficacy-calibrator-20260915
   created_by: st-btfix-p15-20260915
   capability: btfix_p1p2
-- file: docs/03_modules/_domain_autonomy_core/algo_flow/skill_evaluator.yaml
+- file: docs/03_modules/_domain_autonomy_core/algo_flow/skills/skill_evaluator.yaml
   token: btfix-p1p2-skill-evaluator-20260915
   created_by: st-btfix-p15-20260915
   capability: btfix_p1p2
-- file: docs/03_modules/_domain_autonomy_core/algo_flow/skill_executor.yaml
+- file: docs/03_modules/_domain_autonomy_core/algo_flow/skills/skill_executor.yaml
   token: btfix-p1p2-skill-executor-20260915
   created_by: st-btfix-p15-20260915
   capability: btfix_p1p2
-- file: docs/03_modules/_domain_autonomy_core/algo_flow/skill_explain.yaml
+- file: docs/03_modules/_domain_autonomy_core/algo_flow/skills/skill_explain.yaml
   token: btfix-p1p2-skill-explain-20260915
   created_by: st-btfix-p15-20260915
   capability: btfix_p1p2
-- file: docs/03_modules/_domain_autonomy_core/algo_flow/skill_factory.yaml
+- file: docs/03_modules/_domain_autonomy_core/algo_flow/skills/skill_factory.yaml
   token: btfix-p1p2-skill-factory-20260915
   created_by: st-btfix-p15-20260915
   capability: btfix_p1p2
-- file: docs/03_modules/_domain_autonomy_core/algo_flow/skill_feature_flags.yaml
+- file: docs/03_modules/_domain_autonomy_core/algo_flow/skills/skill_feature_flags.yaml
   token: btfix-p1p2-skill-feature-flags-20260915
   created_by: st-btfix-p15-20260915
   capability: btfix_p1p2
-- file: docs/03_modules/_domain_autonomy_core/algo_flow/skill_feedback.yaml
+- file: docs/03_modules/_domain_autonomy_core/algo_flow/skills/skill_feedback.yaml
   token: btfix-p1p2-skill-feedback-20260915
   created_by: st-btfix-p15-20260915
   capability: btfix_p1p2
-- file: docs/03_modules/_domain_autonomy_core/algo_flow/skill_freshness.yaml
+- file: docs/03_modules/_domain_autonomy_core/algo_flow/skills/skill_freshness.yaml
   token: btfix-p1p2-skill-freshness-20260915
   created_by: st-btfix-p15-20260915
   capability: btfix_p1p2
-- file: docs/03_modules/_domain_autonomy_core/algo_flow/skill_freshness_ext.yaml
+- file: docs/03_modules/_domain_autonomy_core/algo_flow/skills/skill_freshness_ext.yaml
   token: btfix-p1p2-skill-freshness-ext-20260915
   created_by: st-btfix-p15-20260915
   capability: btfix_p1p2
-- file: docs/03_modules/_domain_autonomy_core/algo_flow/skill_gitops.yaml
+- file: docs/03_modules/_domain_autonomy_core/algo_flow/skills/skill_gitops.yaml
   token: btfix-p1p2-skill-gitops-20260915
   created_by: st-btfix-p15-20260915
   capability: btfix_p1p2
-- file: docs/03_modules/_domain_autonomy_core/algo_flow/skill_guardrails.yaml
+- file: docs/03_modules/_domain_autonomy_core/algo_flow/skills/skill_guardrails.yaml
   token: btfix-p1p2-skill-guardrails-20260915
   created_by: st-btfix-p15-20260915
   capability: btfix_p1p2
-- file: docs/03_modules/_domain_autonomy_core/algo_flow/skill_idempotency.yaml
+- file: docs/03_modules/_domain_autonomy_core/algo_flow/skills/skill_idempotency.yaml
   token: btfix-p1p2-skill-idempotency-20260915
   created_by: st-btfix-p15-20260915
   capability: btfix_p1p2
-- file: docs/03_modules/_domain_autonomy_core/algo_flow/skill_kill_switch.yaml
+- file: docs/03_modules/_domain_autonomy_core/algo_flow/skills/skill_kill_switch.yaml
   token: btfix-p1p2-skill-kill-switch-20260915
   created_by: st-btfix-p15-20260915
   capability: btfix_p1p2
-- file: docs/03_modules/_domain_autonomy_core/algo_flow/skill_kya.yaml
+- file: docs/03_modules/_domain_autonomy_core/algo_flow/skills/skill_kya.yaml
   token: btfix-p1p2-skill-kya-20260915
   created_by: st-btfix-p15-20260915
   capability: btfix_p1p2
-- file: docs/03_modules/_domain_autonomy_core/algo_flow/skill_learning.yaml
+- file: docs/03_modules/_domain_autonomy_core/algo_flow/skills/skill_learning.yaml
   token: btfix-p1p2-skill-learning-20260915
   created_by: st-btfix-p15-20260915
   capability: btfix_p1p2
-- file: docs/03_modules/_domain_autonomy_core/algo_flow/skill_lifecycle.yaml
+- file: docs/03_modules/_domain_autonomy_core/algo_flow/skills/skill_lifecycle.yaml
   token: btfix-p1p2-skill-lifecycle-20260915
   created_by: st-btfix-p15-20260915
   capability: btfix_p1p2
-- file: docs/03_modules/_domain_autonomy_core/algo_flow/skill_lineage.yaml
+- file: docs/03_modules/_domain_autonomy_core/algo_flow/skills/skill_lineage.yaml
   token: btfix-p1p2-skill-lineage-20260915
   created_by: st-btfix-p15-20260915
   capability: btfix_p1p2
-- file: docs/03_modules/_domain_autonomy_core/algo_flow/skill_loader.yaml
+- file: docs/03_modules/_domain_autonomy_core/algo_flow/skills/skill_loader.yaml
   token: btfix-p1p2-skill-loader-20260915
   created_by: st-btfix-p15-20260915
   capability: btfix_p1p2
-- file: docs/03_modules/_domain_autonomy_core/algo_flow/skill_locking.yaml
+- file: docs/03_modules/_domain_autonomy_core/algo_flow/skills/skill_locking.yaml
   token: btfix-p1p2-skill-locking-20260915
   created_by: st-btfix-p15-20260915
   capability: btfix_p1p2
-- file: docs/03_modules/_domain_autonomy_core/algo_flow/skill_model.yaml
+- file: docs/03_modules/_domain_autonomy_core/algo_flow/skills/skill_model.yaml
   token: btfix-p1p2-skill-model-20260915
   created_by: st-btfix-p15-20260915
   capability: btfix_p1p2
-- file: docs/03_modules/_domain_autonomy_core/algo_flow/skill_model_evolution.yaml
+- file: docs/03_modules/_domain_autonomy_core/algo_flow/skills/skill_model_evolution.yaml
   token: btfix-p1p2-skill-model-evolution-20260915
   created_by: st-btfix-p15-20260915
   capability: btfix_p1p2
-- file: docs/03_modules/_domain_autonomy_core/algo_flow/skill_observability.yaml
+- file: docs/03_modules/_domain_autonomy_core/algo_flow/skills/skill_observability.yaml
   token: btfix-p1p2-skill-observability-20260915
   created_by: st-btfix-p15-20260915
   capability: btfix_p1p2
-- file: docs/03_modules/_domain_autonomy_core/algo_flow/skill_ontology.yaml
+- file: docs/03_modules/_domain_autonomy_core/algo_flow/skills/skill_ontology.yaml
   token: btfix-p1p2-skill-ontology-20260915
   created_by: st-btfix-p15-20260915
   capability: btfix_p1p2
-- file: docs/03_modules/_domain_autonomy_core/algo_flow/skill_postmortem.yaml
+- file: docs/03_modules/_domain_autonomy_core/algo_flow/skills/skill_postmortem.yaml
   token: btfix-p1p2-skill-postmortem-20260915
   created_by: st-btfix-p15-20260915
   capability: btfix_p1p2
-- file: docs/03_modules/_domain_autonomy_core/algo_flow/skill_prompt_cache.yaml
+- file: docs/03_modules/_domain_autonomy_core/algo_flow/skills/skill_prompt_cache.yaml
   token: btfix-p1p2-skill-prompt-cache-20260915
   created_by: st-btfix-p15-20260915
   capability: btfix_p1p2
-- file: docs/03_modules/_domain_autonomy_core/algo_flow/skill_prompt_opt.yaml
+- file: docs/03_modules/_domain_autonomy_core/algo_flow/skills/skill_prompt_opt.yaml
   token: btfix-p1p2-skill-prompt-opt-20260915
   created_by: st-btfix-p15-20260915
   capability: btfix_p1p2
@@ -15292,71 +15292,71 @@ creation_tokens:
   token: btfix-p1p2-skill-rbac-registry-20260915
   created_by: st-btfix-p15-20260915
   capability: btfix_p1p2
-- file: docs/03_modules/_domain_autonomy_core/algo_flow/skill_registry.yaml
+- file: docs/03_modules/_domain_autonomy_core/algo_flow/skills/skill_registry.yaml
   token: btfix-p1p2-skill-registry-20260915
   created_by: st-btfix-p15-20260915
   capability: btfix_p1p2
-- file: docs/03_modules/_domain_autonomy_core/algo_flow/skill_resilience.yaml
+- file: docs/03_modules/_domain_autonomy_core/algo_flow/skills/skill_resilience.yaml
   token: btfix-p1p2-skill-resilience-20260915
   created_by: st-btfix-p15-20260915
   capability: btfix_p1p2
-- file: docs/03_modules/_domain_autonomy_core/algo_flow/skill_risk_mitigator.yaml
+- file: docs/03_modules/_domain_autonomy_core/algo_flow/skills/skill_risk_mitigator.yaml
   token: btfix-p1p2-skill-risk-mitigator-20260915
   created_by: st-btfix-p15-20260915
   capability: btfix_p1p2
-- file: docs/03_modules/_domain_autonomy_core/algo_flow/skill_router.yaml
+- file: docs/03_modules/_domain_autonomy_core/algo_flow/skills/skill_router.yaml
   token: btfix-p1p2-skill-router-20260915
   created_by: st-btfix-p15-20260915
   capability: btfix_p1p2
-- file: docs/03_modules/_domain_autonomy_core/algo_flow/skill_sandbox.yaml
+- file: docs/03_modules/_domain_autonomy_core/algo_flow/skills/skill_sandbox.yaml
   token: btfix-p1p2-skill-sandbox-20260915
   created_by: st-btfix-p15-20260915
   capability: btfix_p1p2
-- file: docs/03_modules/_domain_autonomy_core/algo_flow/skill_schema_registry.yaml
+- file: docs/03_modules/_domain_autonomy_core/algo_flow/skills/skill_schema_registry.yaml
   token: btfix-p1p2-skill-schema-registry-20260915
   created_by: st-btfix-p15-20260915
   capability: btfix_p1p2
-- file: docs/03_modules/_domain_autonomy_core/algo_flow/skill_security.yaml
+- file: docs/03_modules/_domain_autonomy_core/algo_flow/skills/skill_security.yaml
   token: btfix-p1p2-skill-security-20260915
   created_by: st-btfix-p15-20260915
   capability: btfix_p1p2
-- file: docs/03_modules/_domain_autonomy_core/algo_flow/skill_shadow.yaml
+- file: docs/03_modules/_domain_autonomy_core/algo_flow/skills/skill_shadow.yaml
   token: btfix-p1p2-skill-shadow-20260915
   created_by: st-btfix-p15-20260915
   capability: btfix_p1p2
-- file: docs/03_modules/_domain_autonomy_core/algo_flow/skill_silent_failure.yaml
+- file: docs/03_modules/_domain_autonomy_core/algo_flow/skills/skill_silent_failure.yaml
   token: btfix-p1p2-skill-silent-failure-20260915
   created_by: st-btfix-p15-20260915
   capability: btfix_p1p2
-- file: docs/03_modules/_domain_autonomy_core/algo_flow/skill_team_optimizer.yaml
+- file: docs/03_modules/_domain_autonomy_core/algo_flow/skills/skill_team_optimizer.yaml
   token: btfix-p1p2-skill-team-optimizer-20260915
   created_by: st-btfix-p15-20260915
   capability: btfix_p1p2
-- file: docs/03_modules/_domain_autonomy_core/algo_flow/skill_telemetry.yaml
+- file: docs/03_modules/_domain_autonomy_core/algo_flow/skills/skill_telemetry.yaml
   token: btfix-p1p2-skill-telemetry-20260915
   created_by: st-btfix-p15-20260915
   capability: btfix_p1p2
-- file: docs/03_modules/_domain_autonomy_core/algo_flow/skill_temperature.yaml
+- file: docs/03_modules/_domain_autonomy_core/algo_flow/skills/skill_temperature.yaml
   token: btfix-p1p2-skill-temperature-20260915
   created_by: st-btfix-p15-20260915
   capability: btfix_p1p2
-- file: docs/03_modules/_domain_autonomy_core/algo_flow/skill_tokenomics.yaml
+- file: docs/03_modules/_domain_autonomy_core/algo_flow/skills/skill_tokenomics.yaml
   token: btfix-p1p2-skill-tokenomics-20260915
   created_by: st-btfix-p15-20260915
   capability: btfix_p1p2
-- file: docs/03_modules/_domain_autonomy_core/algo_flow/skill_trajectory_miner.yaml
+- file: docs/03_modules/_domain_autonomy_core/algo_flow/skills/skill_trajectory_miner.yaml
   token: btfix-p1p2-skill-trajectory-miner-20260915
   created_by: st-btfix-p15-20260915
   capability: btfix_p1p2
-- file: docs/03_modules/_domain_autonomy_core/algo_flow/skill_translator.yaml
+- file: docs/03_modules/_domain_autonomy_core/algo_flow/skills/skill_translator.yaml
   token: btfix-p1p2-skill-translator-20260915
   created_by: st-btfix-p15-20260915
   capability: btfix_p1p2
-- file: docs/03_modules/_domain_autonomy_core/algo_flow/skill_workflow.yaml
+- file: docs/03_modules/_domain_autonomy_core/algo_flow/skills/skill_workflow.yaml
   token: btfix-p1p2-skill-workflow-20260915
   created_by: st-btfix-p15-20260915
   capability: btfix_p1p2
-- file: docs/03_modules/_domain_autonomy_core/algo_flow/skills__init__.yaml
+- file: docs/03_modules/_domain_autonomy_core/algo_flow/skills/skills__init__.yaml
   token: btfix-p1p2-skills--init---20260915
   created_by: st-btfix-p15-20260915
   capability: btfix_p1p2
@@ -15364,19 +15364,19 @@ creation_tokens:
   token: btfix-p1p2-spec-engine-20260915
   created_by: st-btfix-p15-20260915
   capability: btfix_p1p2
-- file: docs/03_modules/_domain_autonomy_core/algo_flow/staleness_manager.yaml
+- file: docs/03_modules/_domain_autonomy_core/algo_flow/context/staleness_manager.yaml
   token: btfix-p1p2-staleness-manager-20260915
   created_by: st-btfix-p15-20260915
   capability: btfix_p1p2
-- file: docs/03_modules/_domain_autonomy_core/algo_flow/t0_trader_agent.yaml
+- file: docs/03_modules/_domain_autonomy_core/algo_flow/agents/t0_trader_agent.yaml
   token: btfix-p1p2-t0-trader-agent-20260915
   created_by: st-btfix-p15-20260915
   capability: btfix_p1p2
-- file: docs/03_modules/_domain_autonomy_core/algo_flow/ticket_queue.yaml
+- file: docs/03_modules/_domain_autonomy_core/algo_flow/agents/ticket_queue.yaml
   token: btfix-p1p2-ticket-queue-20260915
   created_by: st-btfix-p15-20260915
   capability: btfix_p1p2
-- file: docs/03_modules/_domain_autonomy_core/algo_flow/timing_analyst_agent.yaml
+- file: docs/03_modules/_domain_autonomy_core/algo_flow/agents/timing_analyst_agent.yaml
   token: btfix-p1p2-timing-analyst-agent-20260915
   created_by: st-btfix-p15-20260915
   capability: btfix_p1p2
@@ -15384,7 +15384,7 @@ creation_tokens:
   token: btfix-p1p2-trigger-router-20260915
   created_by: st-btfix-p15-20260915
   capability: btfix_p1p2
-- file: docs/03_modules/_domain_autonomy_core/algo_flow/vector_bridge.yaml
+- file: docs/03_modules/_domain_autonomy_core/algo_flow/context/vector_bridge.yaml
   token: btfix-p1p2-vector-bridge-20260915
   created_by: st-btfix-p15-20260915
   capability: btfix_p1p2
@@ -16852,4 +16852,16 @@ creation_tokens:
   token: deep-review-deep-review-policy-20260915
   created_by: qoder-sop-review-20260915
   capability: deep_review
+- file: docs/01_policies_and_standards/sop/review_sop/defect_pattern_checklist.md
+  token: deep-review-defect-pattern-checklist-20260915
+  created_by: qoder-sop-review-20260915
+  capability: deep_review
+- file: docs/01_policies_and_standards/sop/review_sop/nodes/subnode_mining_round1.md
+  token: deep-review-subnode-mining-round1-20260915
+  created_by: qoder-sop-review-20260915
+  capability: deep_review
+- file: docs/_working/2026-09-15-tilib-handoff.md
+  token: tilib-handoff-20260915
+  created_by: st-tilib-20260915
+  capability: technical_indicator
 di_seam_exemptions: []
