@@ -260,8 +260,25 @@ Start-VM -Name zephyr-ch
    目录，源头不删则 F: 删除今晨即被原样复制回来。删除前验证五道（live .git 健康/零代码引
    用/bundle verify 通过/内容定性/Owner 留痕），删除走回收站通道（可恢复，清空回收站后
    D 盘才真正回收 6.4 GB）。
-4. **明日观察项（2026-09-15 06:00 备份后）**：看 working_vault 第一个跨天快照的
-   linked/copied 数，校准每日真实变化量，评估 retention_days=14 是否需要调小。
+4. **明日观察项（2026-09-15 已闭环）**：跨天快照实测——20260915 相对 20260914：硬链接共享
+   24923 文件（st_nlink>1，占 56%）、当日新增/变更复制 19778 文件/名义 5.58 GB
+   （昨日 7.59 GB）；**结论：retention_days=14 维持不变**（每日真实增量≈6-8 GB，
+   14 天稳态≈100 GB，F 盘 free 629 GB 余量充裕；eviction 未触发属预期，快照仅 2 份）。
+   附注：06:00 计划任务 LastTaskResult=0 但未落 report/log（异常待查）；07:12
+   reconciler 触发跑正常（Mode B +4971 files）。
+5. **.git.backup.20260803 已删 + git bundle 替代（2026-09-14 19:4x）**：Owner 两轮确认后删除
+   F:\code_backup\.git.backup.20260803（6.32 GB，17285 文件，2026-08-03 陈旧 .git 副本，
+   其全部历史当前 .git 均包含，恢复价值趋近于零）。替代品=当前全历史一致性快照
+   `git bundle create F:\working_vault\git_bundles\zephyralpha_full_20260914.bundle --all`
+   （0.40 GB，git bundle verify 通过；恢复=git clone bundle 即得全仓库）。此举同时关闭
+   「B1 版本化快照不含 .git」的边界缺口——git 历史灾备从目录副本升级为单文件 bundle，
+   后续可定期（如随月度维护）重打新 bundle、删旧 bundle，体积小无轮转压力。
+6. **基线重建已按 §0.5 预测自动触发（2026-09-15 10:22）**：inc.zip 93 GB ≥ 基线 50% 门槛，
+   CH 自动 rebase——旧增量保全为 inc_prerebase_keep.zip（104 GB），新基线 market.zip
+   写入中（11:18 实测 63 GB→120.83 GiB 目标，CREATING_BACKUP 进行中）。VHDX 预期性回胀
+   313→474+ GB（新基线写新块+旧块未释，guest 内 df 仍有 793G 余量，备份无风险）；
+   **待重建完成后（含旧增量删除验证）需再安排一次 Optimize-VHD 维护窗**（优雅关机流程
+   同 §0.5/§10.2-2，预计可回缩至 ~170-200 GB；避开交易时段与 06:00 备份窗）。
 5. **.git.backup.20260803 已删 + git bundle 替代（2026-09-14 19:4x）**：Owner 两轮确认后删除
    F:\code_backup\.git.backup.20260803（6.32 GB，17285 文件，2026-08-03 陈旧 .git 副本，
    其全部历史当前 .git 均包含，恢复价值趋近于零）。替代品=当前全历史一致性快照
@@ -297,7 +314,7 @@ Start-VM -Name zephyr-ch
 | 图 | 位置 | 状态 | 链接 |
 |----|------|------|------|
 | 依赖图 (depgraph) | `blueprint_id=MOD-INF-043` 的 9 个 file 节点 | production | `extract_depgraph.py --modules MOD-INF-043` |
-| 数据流图 (dataflow) | 0 个 Dataset / 1 个 Job | active | `apply_dataflowgraph.py --list-datasets` |
+| 数据流图 (dataflow) | （无节点） | N/A | `apply_dataflowgraph.py --list-datasets` |
 | 决策架构图 (decision) | 0 个决策节点 / 1 个决策层 | N/A | `generate_decision_diagram.py` |
 | 蓝图 (blueprint) | 本文件 | Active | — |
 
