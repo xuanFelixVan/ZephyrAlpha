@@ -580,6 +580,22 @@ def _hook_triple_align_event(event: object) -> None:
         logger.debug("hook triple_align_event: %s", exc, exc_info=True)
 
 
+def _init_kill_switch_orchestrator() -> None:
+    """A3 接线（裁定#254）：kill switch 五域编排器开机注册生效。
+
+    编排器只编排不持态——注册失败的单套开关仅告警，不阻断启动；
+    后续运维入口经 get_orchestrator() 取同一单例发 trip/reset。
+    """
+    try:
+        from zephyr.autonomy_core.kill_switch_orchestrator import get_orchestrator
+
+        orch = get_orchestrator()
+        domains = sorted(orch._domains.keys()) if hasattr(orch, "_domains") else []
+        logger.info("KillSwitchOrchestrator booted: system=%s domains=%s", orch._system is not None, domains)
+    except Exception as exc:  # noqa: BLE001 — 启动链不因编排器故障失败
+        logger.warning("KillSwitchOrchestrator boot failed (kill switches remain independently usable): %s", exc, exc_info=True)
+
+
 def register_boot_hooks(
     task_repo: TaskRepositoryProtocol | None = None,
     budget_engine: BudgetEngineProtocol | None = None,
@@ -635,6 +651,7 @@ def register_boot_hooks(
     _subscribe_task_lifecycle_events(budget_engine=budget_engine)
     _register_rbac_hooks()
     _init_shared_monitoring_modules()
+    _init_kill_switch_orchestrator()
 
     # P0-2 修复：RollbackBootIntegration 启动钩子接线 — WAL/Verifier 自动初始化
     try:

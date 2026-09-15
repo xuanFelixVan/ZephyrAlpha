@@ -458,6 +458,27 @@ class EscalationEngine:
         event.level = new_level
         event.state = EscalationState.ESCALATED if escalated else event.state
         event.updated_at = datetime.now(UTC)
+        if (
+            escalated
+            and new_level is EscalationLevel.L4_EMERGENCY
+            and event.retry_count >= event.max_retries
+        ):
+            # A4 终极兜底（裁定#254）：升级到 L4 且重试耗尽 = 升级协议末端。
+            # 仅点亮 last_resort 旗标供 shutdown 链读取；emergency_shutdown
+            # 不在此自动调用（watchdog 不得自触发）。
+            try:
+                from zephyr.governance.resilience_governance.last_resort_watchdog import (
+                    get_last_resort_watchdog,
+                )
+
+                get_last_resort_watchdog().activate()
+                logger.error(
+                    "LAST RESORT activated: escalation exhausted at L4_EMERGENCY (category=%s, retries=%d)",
+                    event.category.name,
+                    event.retry_count,
+                )
+            except Exception:  # noqa: BLE001 — 兜底通道自身故障不阻断 escalate
+                logger.warning("last_resort_watchdog activation failed", exc_info=True)
         cost = self.CATEGORY_COST.get(event.category, 1.0)
         self._economic_guard.consume(cost)
         self._circuit_breaker.record_success()

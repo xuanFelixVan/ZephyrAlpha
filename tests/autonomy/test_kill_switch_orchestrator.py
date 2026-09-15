@@ -334,3 +334,35 @@ def _make_skill_adapter():
     from zephyr.autonomy_core.skills.skill_kill_switch import SkillKillSwitch
 
     return _SkillSwitchAdapter(SkillKillSwitch)
+
+
+class TestBootWiring:
+    """A3 接线（裁定#254）：单例访问器 + boot_hooks 开机注册。"""
+
+    def setup_method(self):
+        import zephyr.autonomy_core.kill_switch_orchestrator as mod
+
+        mod._orchestrator_instance = None
+
+    def teardown_method(self):
+        import zephyr.autonomy_core.kill_switch_orchestrator as mod
+
+        mod._orchestrator_instance = None
+
+    def test_get_orchestrator_singleton(self):
+        from zephyr.autonomy_core.kill_switch_orchestrator import get_orchestrator
+
+        a = get_orchestrator()
+        b = get_orchestrator()
+        assert a is b
+        assert a._system is not None
+        assert set(a._domains.keys()) == {"skills", "trading", "rollback", "capacity"}
+
+    def test_boot_hooks_init_registers_orchestrator(self):
+        from zephyr.trading import boot_hooks
+
+        boot_hooks._init_kill_switch_orchestrator()
+        from zephyr.autonomy_core.kill_switch_orchestrator import get_orchestrator
+
+        orch = get_orchestrator()
+        assert orch._system is not None

@@ -768,6 +768,18 @@ class KillSwitchOrchestrator:
             logger.warning("kill_switch_orchestrator 审计留痕写入失败（动作仍生效）: %r", exc)
 
 
+_orchestrator_instance: KillSwitchOrchestrator | None = None
+
+
+def get_orchestrator() -> KillSwitchOrchestrator:
+    """获取编排器进程级单例（A3 接线，裁定#254：boot_hooks 启动链首次实例化，
+    默认注册五域开关；注册失败项仅告警不阻断启动）。"""
+    global _orchestrator_instance
+    if _orchestrator_instance is None:
+        _orchestrator_instance = KillSwitchOrchestrator()
+    return _orchestrator_instance
+
+
 __all__ = [
     "SCHEMA_VERSION",
     "SOURCE_DOMAIN",

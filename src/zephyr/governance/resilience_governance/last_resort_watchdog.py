@@ -73,3 +73,15 @@ class LastResortWatchdog:
     def emergency_shutdown(self) -> dict:
         self._activated = True
         return {"action": "EMERGENCY_SHUTDOWN", "reason": "last_resort_activated", "safe_mode": True}
+
+
+_last_resort_instance: LastResortWatchdog | None = None
+
+
+def get_last_resort_watchdog() -> LastResortWatchdog:
+    """获取终极逃生舱单例（A4 接线，裁定#254：activate 仅点亮旗标，
+    emergency_shutdown 不得由升级协议自动调用）。"""
+    global _last_resort_instance
+    if _last_resort_instance is None:
+        _last_resort_instance = LastResortWatchdog()
+    return _last_resort_instance

@@ -503,3 +503,47 @@ class TestCircuitBreaker:
         assert cb.error_budget_remaining == 10
         cb.record_failure()
         assert cb.error_budget_remaining == 9
+
+
+class TestLastResortWiring:
+    """A4 接线（裁定#254）：升级协议末端点亮 last_resort 旗标。"""
+
+    @pytest.fixture(autouse=True)
+    def _reset_watchdog_singleton(self):
+        import zephyr.governance.resilience_governance.last_resort_watchdog as wd_mod
+
+        wd_mod._last_resort_instance = None
+        yield
+        wd_mod._last_resort_instance = None
+
+    def _exhausted_l4_event(self, engine):
+        event = engine.evaluate(RuleCategory.SECURITY_VIOLATION, description="exhausted")
+        event.level = EscalationLevel.L4_EMERGENCY
+        event.retry_count = event.max_retries
+        return event
+
+    def test_l4_exhaustion_activates_last_resort(self, engine):
+        from zephyr.governance.resilience_governance.last_resort_watchdog import (
+            get_last_resort_watchdog,
+        )
+
+        event = self._exhausted_l4_event(engine)
+        result = engine.escalate(event)
+        assert result.escalated is True
+        assert result.new_level is EscalationLevel.L4_EMERGENCY
+        assert get_last_resort_watchdog().active is True
+
+    def test_l4_exhaustion_does_not_auto_shutdown(self, engine):
+        """watchdog 不得自触发 emergency_shutdown——仅 activate 点旗标。"""
+        event = self._exhausted_l4_event(engine)
+        engine.escalate(event)
+        assert engine.name == "test"
+
+    def test_l1_escalation_does_not_activate(self, engine):
+        from zephyr.governance.resilience_governance.last_resort_watchdog import (
+            get_last_resort_watchdog,
+        )
+
+        event = engine.evaluate(RuleCategory.AUTO_GUARD_FAILURE, description="minor")
+        engine.escalate(event)
+        assert get_last_resort_watchdog().active is False
