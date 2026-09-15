@@ -15356,6 +15356,10 @@ creation_tokens:
   token: full-auto-chain-pf-alloc-consumer-mining-20260915
   created_by: st-qoder-t1a-20260915
   capability: full-auto-chain
+- file: docs/_working/full-auto-chain/S11_assembled_backtest/nodes/chip_engine_promotion_mining.md
+  token: full-auto-chain-chip-engine-promotion-mining-20260915
+  created_by: st-qoder-t1a-20260915
+  capability: full-auto-chain
 - file: src/zephyr/strategy_pipeline/fw_backtest.py
   token: auto-chain-c6-fw-backtest-2026-09-15
   created_by: st-fullauto-20260915
