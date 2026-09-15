@@ -14844,6 +14844,10 @@ creation_tokens:
   token: btfix-p1p2-blueprint-20260915
   created_by: st-btfix-p15-20260915
   capability: btfix_p1p2
+- file: docs/_working/reports/p21_algo_flow_batch8_trading_report.md
+  token: btfix-p1p2-p21-algo-flow-batch8-trading-report-20260915
+  created_by: st-btfix-p15-20260915
+  capability: btfix_p1p2
 - file: "docs/_working/2026-09-14-full-chain-factory-blueprint.md"
   token: "fullchain-factory-blueprint-20260914"
   created_by: "st-fullchain-20260914"
@@ -15348,6 +15352,10 @@ creation_tokens:
   token: full-auto-chain-wyckoff-vix-mining-20260915
   created_by: st-qoder-t1a-20260915
   capability: full-auto-chain
+- file: docs/_working/full-auto-chain/S11_assembled_backtest/nodes/pf_alloc_consumer_mining.md
+  token: full-auto-chain-pf-alloc-consumer-mining-20260915
+  created_by: st-qoder-t1a-20260915
+  capability: full-auto-chain
 - file: src/zephyr/strategy_pipeline/fw_backtest.py
   token: auto-chain-c6-fw-backtest-2026-09-15
   created_by: st-fullauto-20260915
@@ -15404,4 +15412,16 @@ creation_tokens:
   token: governance-mining-map-2026-09-15-governance-module-mining-sop-map-20260915
   created_by: qoder-gov-patch-20260915
   capability: governance_mining_map
+- file: scripts/governance/generate_governance_map.py
+  token: governance-map-generate-governance-map-20260915
+  created_by: qoder-gov-patch-20260915
+  capability: governance_map
+- file: config/governance_operations_map.yaml
+  token: governance-map-governance-operations-map-20260915
+  created_by: qoder-gov-patch-20260915
+  capability: governance_map
+- file: docs/01_policies_and_standards/sop/review_sop/deep_review_policy.md
+  token: deep-review-deep-review-policy-20260915
+  created_by: qoder-sop-review-20260915
+  capability: deep_review
 di_seam_exemptions: []
