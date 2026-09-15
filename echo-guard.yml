@@ -9,3 +9,7 @@ acknowledged:
     verdict: intentional
     stable_key: "src/zephyr/compliance/hard_boundary_adjudicator.py:__init__||src/zephyr/compliance/license_usage_auditor.py:__init__"
     note: 同类节点类 __init__ 赋值样板（注册表/字段初始化），非算法克隆；ALGO_FLOW 出仓后暴露（st-btfix-p14-20260914）
+  - id: cg-regime-fb-call-fallback-20260915
+    verdict: intentional
+    stable_key: "src/zephyr/regime/overlay_signals_builder.py:_fb_call||src/zephyr/regime/risk_signal_builder.py:_fb_call"
+    note: 同型防御性透传包装（getattr+缺失/异常降级 None，10 行惯用法），两 builder 类独立演进非算法克隆；ALGO_FLOW docstring 出仓后结构比对首次暴露（st-btfix-p15-20260915）

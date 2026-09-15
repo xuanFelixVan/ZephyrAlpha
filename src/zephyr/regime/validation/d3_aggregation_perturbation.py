@@ -35,60 +35,7 @@ aggregate_risk_signal 是 regime_detector._compute_risk_signal 的参数化镜�
 依据: 11_regime_backtest_validation_plan §0.5.7 D3 / §4.4; 10_regime_detector_spec §5.3.3
 Version: 0.1.0
 
-# [ALGO_FLOW]
-# 层: 输入
-# - id: I1
-#   name: params 参数
-#   fields: 参数 params，类型注解 dict[int, float]
-#   code: d3_aggregation_perturbation.py 顶层公共函数形参（AST 提取）
-# - id: I2
-#   name: opportunity 参数
-#   fields: 参数 opportunity，类型注解 dict[str, float] | None
-#   code: d3_aggregation_perturbation.py 顶层公共函数形参（AST 提取）
-# - id: I3
-#   name: resonance_step 参数
-#   fields: 参数 resonance_step，类型注解 float
-#   code: d3_aggregation_perturbation.py 顶层公共函数形参（AST 提取）
-# - id: I4
-#   name: resonance_floor 参数
-#   fields: 参数 resonance_floor，类型注解 float
-#   code: d3_aggregation_perturbation.py 顶层公共函数形参（AST 提取）
-# 层: 算法
-# - id: A1
-#   name_zh: ① aggregate_risk_signal
-#   name_en: aggregate_risk_signal
-#   intro: RiskSignal 聚合公式（regime_detector._compute_risk_signal 参数化镜像）。
-#   desc: RiskSignal 聚合公式（regime_detector._compute_risk_signal 参数化镜像）。 RiskSignal = clamp[lower, Ri…；源码 L147-L178
-#   inputs: params opportunity resonance_step resonance_floor recovery_cap lower…
-#   outputs: float
-# - id: A2
-#   name_zh: ② run_d3_perturbation
-#   name_en: run_d3_perturbation
-#   intro: D3 主入口：共振惩罚 0.05 / 机会恢复 0.25 两参数 ±20% 扰动分析。
-#   desc: D3 主入口：共振惩罚 0.05 / 机会恢复 0.25 两参数 ±20% 扰动分析。 Args: risk_inputs_series: 逐日 risk_signal_inpu…；源码 L181-L255
-#   inputs: risk_inputs_series pct tolerance
-#   outputs: D3PerturbationReport
-#   （注：A2 之后另有 3 个公共定义未列入（含 3 个数据契约/异常/枚举声明类），见源码）
-# 层: 输出
-# - id: O1
-#   name_zh: float
-#   name_en: float
-#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
-#   downstream: 人工审查; 11_regime_backtest_validation_plan Phase 3 D3
-# - id: O2
-#   name_zh: D3PerturbationReport
-#   name_en: D3PerturbationReport
-#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
-#   downstream: 人工审查; 11_regime_backtest_validation_plan Phase 3 D3
-# [/ALGO_FLOW]
-#
-# 边:
-# I1 --> A1
-# I2 --> A1
-# I3 --> A1
-# I4 --> A1
-# A1 --> A2
-# A2 --> O1
+# [ALGO_FLOW] external: docs/03_modules/_domain_regime/algo_flow/d3_aggregation_perturbation.yaml
 """
 
 from __future__ import annotations

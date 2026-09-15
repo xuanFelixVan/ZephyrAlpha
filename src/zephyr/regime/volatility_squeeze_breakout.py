@@ -36,40 +36,7 @@ rv_ratio<0.8 压缩**早标记**且其 docstring 明示"<0.5 强压缩归模块5
 降级哲学（对齐 MOD-REGIME-011）：样本不足/非有限数据 → 全维度=0 + degraded
 不抛错；仅配置非法/输入契约违反（量价长度不齐）Fail-Closed。
 
-# [ALGO_FLOW]
-# 层: 输入
-# - id: I1
-#   name: config 参数
-#   fields: 参数 config（无注解）
-#   code: volatility_squeeze_breakout.py 顶层公共函数形参（AST 提取）
-# 层: 算法
-# - id: A1
-#   name_zh: ① SqueezeBreakoutSignal
-#   name_en: SqueezeBreakoutSignal
-#   intro: 压缩突破信号（降级时全维度=0，对齐 overlay 契约哲学）。
-#   desc: 压缩突破信号（降级时全维度=0，对齐 overlay 契约哲学）。 Attributes: rv_ratio: RV_5d/RV_20d 年化波动比（长窗零波动为 inf） bb…；公共方法（定义序）: overlay…
-#   inputs: 无参数
-#   outputs: 返回值
-# - id: A2
-#   name_zh: ② VolatilitySqueezeBreakout
-#   name_en: VolatilitySqueezeBreakout
-#   intro: 模块51 波动率压缩与突破判定器（纯函数，降级不抛错）。
-#   desc: 模块51 波动率压缩与突破判定器（纯函数，降级不抛错）。；公共方法（定义序）: config, assess；源码 L205-L350
-#   inputs: config
-#   outputs: 返回值
-#   （注：A2 之后另有 2 个公共定义未列入（含 2 个数据契约/异常/枚举声明类），见源码）
-# 层: 输出
-# - id: O1
-#   name_zh: 模块公共 API 面（4 定义）
-#   name_en: public defs
-#   intro: SqueezeBreakoutSignal, VolatilitySqueezeBreakout
-#   downstream: 运行时装配批（regime 特征链 / overlay_signals_builder overlay_dims 契约供数）
-# [/ALGO_FLOW]
-#
-# 边:
-# I1 --> A1
-# A1 --> A2
-# A2 --> O1
+# [ALGO_FLOW] external: docs/03_modules/_domain_regime/algo_flow/volatility_squeeze_breakout.yaml
 """
 
 from __future__ import annotations

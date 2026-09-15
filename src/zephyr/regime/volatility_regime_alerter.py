@@ -33,40 +33,7 @@
 降级哲学（对齐 MOD-REGIME-002）：数据缺失/样本不足/GARCH 不收敛 → 维度=0 不抛错；
 仅配置非法 Fail-Closed（VolatilityAlerterConfigError）。
 
-# [ALGO_FLOW]
-# 层: 输入
-# - id: I1
-#   name: config 参数
-#   fields: 参数 config（无注解）
-#   code: volatility_regime_alerter.py 顶层公共函数形参（AST 提取）
-# 层: 算法
-# - id: A1
-#   name_zh: ① VolRegimeSignal
-#   name_en: VolRegimeSignal
-#   intro: 波动体制预警信号。
-#   desc: 波动体制预警信号。 Attributes: rv_ratio: RV_5d/RV_20d 年化波动比（压缩判定；长窗零波动时为 inf） compression_flag: 压缩…；公共方法（定义序）: overlay…
-#   inputs: 无参数
-#   outputs: 返回值
-# - id: A2
-#   name_zh: ② VolatilityRegimeAlerter
-#   name_en: VolatilityRegimeAlerter
-#   intro: 波动率体制转换与关键时点预警器（GARCH 自研复用+RV 压缩+突变告警）。
-#   desc: 波动率体制转换与关键时点预警器（GARCH 自研复用+RV 压缩+突变告警）。；公共方法（定义序）: config, assess；源码 L186-L256
-#   inputs: config
-#   outputs: 返回值
-#   （注：A2 之后另有 2 个公共定义未列入（含 2 个数据契约/异常/枚举声明类），见源码）
-# 层: 输出
-# - id: O1
-#   name_zh: 模块公共 API 面（4 定义）
-#   name_en: public defs
-#   intro: VolRegimeSignal, VolatilityRegimeAlerter
-#   downstream: MOD-REGIME-002(overlay_signals_builder 消费 overlay_dims 契约，运行时装配批接线)
-# [/ALGO_FLOW]
-#
-# 边:
-# I1 --> A1
-# A1 --> A2
-# A2 --> O1
+# [ALGO_FLOW] external: docs/03_modules/_domain_regime/algo_flow/volatility_regime_alerter.yaml
 """
 
 from __future__ import annotations

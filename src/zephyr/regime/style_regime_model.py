@@ -28,40 +28,7 @@ hmm_runner；hmmlearn 未装时不引依赖，降级**规则分档**：差值正
 （零交集）；本件风格态/SizeAxis 供 strategy_matrix_3d（MOD-SIG-130）作
 风格轴复用。
 
-# [ALGO_FLOW]
-# 层: 输入
-# - id: I1
-#   name: state 参数
-#   fields: 参数 state，类型注解 StyleState
-#   code: style_regime_model.py 顶层公共函数形参（AST 提取）
-# 层: 算法
-# - id: A1
-#   name_zh: ① size_axis_of
-#   name_en: size_axis_of
-#   intro: 风格态 → 大小盘 2 轴映射（确定性）。
-#   desc: 风格态 → 大小盘 2 轴映射（确定性）。；源码 L111-L117
-#   inputs: state
-#   outputs: SizeAxis
-# - id: A2
-#   name_zh: ② StyleRegimeModel
-#   name_en: StyleRegimeModel
-#   intro: 市场风格体制识别（HMM 注入 / 规则降级 + 防抖确认，纯内存确定性）。
-#   desc: 市场风格体制识别（HMM 注入 / 规则降级 + 防抖确认，纯内存确定性）。；公共方法（定义序）: build_spread_series, identify_raw, confirm, params_for, ana…
-#   inputs: param_map hmm_runner magnitude_threshold confirm_periods
-#   outputs: 返回值
-#   （注：A2 之后另有 5 个公共定义未列入（含 5 个数据契约/异常/枚举声明类），见源码）
-# 层: 输出
-# - id: O1
-#   name_zh: SizeAxis
-#   name_en: SizeAxis
-#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
-#   downstream: 运行时装配批（风格参数档查找 / MOD-SIG-130 三维矩阵风格轴复用）
-# [/ALGO_FLOW]
-#
-# 边:
-# I1 --> A1
-# A1 --> A2
-# A2 --> O1
+# [ALGO_FLOW] external: docs/03_modules/_domain_regime/algo_flow/style_regime_model.yaml
 """
 
 from __future__ import annotations

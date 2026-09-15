@@ -30,22 +30,7 @@ r"""MOD-REGIME-008 supplement — 四指数分市场分析组合卡（GAP-F-10�
   regime 面板 strength_ranking 承载。
 三腿独立降级；全腿缺位 → 面板级 degraded。
 
-# [ALGO_FLOW]
-# 层: 输入
-# - id: I1 IndexRegimePanel（regime 腿，可 None）
-# - id: I2 各指数日 K dict[code → bars]（预判腿，可 None）
-# - id: I3 市场情绪 label/score（共享注入，可 None）
-# 层: 算法
-# - id: A1 裸码匹配 regime 卡
-# - id: A2 每指数 8 态预判（MOD-SIG-037 引擎）
-# 层: 输出
-# - id: O1 IndexMarketBrief（4 张 IndexBriefCard + 强弱序 + 情绪）
-# [/ALGO_FLOW]
-#
-# 边:
-# I1 --> A1
-# I2 --> A2
-# A1,A2,I3 --> O1
+# [ALGO_FLOW] external: docs/03_modules/_domain_regime/algo_flow/index_market_brief.yaml
 """
 
 from __future__ import annotations

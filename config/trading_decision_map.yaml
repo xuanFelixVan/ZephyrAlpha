@@ -257,6 +257,7 @@ nodes:
   decay_scan_frequency: semiannual
 
 - node_id: TDM-E-L1
+  note_confirmed: 2026-09-15
   name_zh: 大盘总闸
   market: cn_a
   flow: entry_flow
@@ -270,6 +271,7 @@ nodes:
     已建成叠加波动率目标化仓位系数（凯利简版：滚动 σ 目标化）：
     src/zephyr/pf_alloc/core/vol_target_allocator.py（MOD-BT-082），
     蓝图=docs/_working/2026-09-13-tdm-upgrade-blueprint.md；Phase 2 完整凯利待车道 E 分布预测。
+    （2026-09-15 ALGO_FLOW 块出仓至 docs/03_modules/_domain_regime/algo_flow/regime_detector.yaml：算法推导图外迁，算法口径不变）
   factor_refs: []
   data_refs: [DS-150]
   module_ref: src/zephyr/regime/core/regime_detector.py
@@ -354,6 +356,7 @@ nodes:
   decay_scan_frequency: semiannual
 
 - node_id: TDM-E-L1-S4
+  note_confirmed: 2026-09-15
   name_zh: 波动率传感器
   market: cn_a
   flow: entry_flow
@@ -364,6 +367,7 @@ nodes:
   algo_note_zh: >-
     可选通道（中国 VIX 数据缺口，用 ATR 替代）：ATR/价格>3.5%=极端波动降仓，<1%=死水难做降仓，中间正常。
     波动两端的行情都不适合正常仓位。
+    （2026-09-15 ALGO_FLOW 块出仓至 docs/03_modules/_domain_regime/algo_flow/synthetic_vix.yaml：算法推导图外迁，算法口径不变）
   factor_refs: []
   data_refs: [DS-150]
   module_ref: src/zephyr/regime/features/synthetic_vix.py
@@ -460,6 +464,7 @@ nodes:
   decay_scan_frequency: semiannual
 
 - node_id: TDM-E-L1-AGG
+  note_confirmed: 2026-09-15
   name_zh: 市场状态判定
   market: cn_a
   flow: entry_flow
@@ -476,7 +481,7 @@ nodes:
   decision_question: "双轴合成：RegimeSnapshot 概率（宏观）×情绪六段分布（微观）；输出预算带+策略路由+冲突仲裁（熵高分裂市→降档+Owner
     接管）；日级水温受月/周档位封顶"
   algo_note_zh: "双轴相乘：宏观 RegimeSnapshot 概率（月级 7 态）×情绪六段分布（周级）。两轴指向一致=直接取结论；指向分裂（熵值超阈）=按'就低不就高'仲裁。输出三件套：预算带（给
-    C1）+六段状态（给全流）+策略路由（哪些 sleeve 今天开），一次判定 broadcast 全图。"
+    C1）+六段状态（给全流）+策略路由（哪些 sleeve 今天开），一次判定 broadcast 全图。（2026-09-15 ALGO_FLOW 块出仓至 docs/03_modules/_domain_regime/algo_flow/regime_detector.yaml：算法推导图外迁，算法口径不变）"
   factor_refs: []
   data_refs: [DS-098]
   module_ref: src/zephyr/regime/core/regime_detector.py
@@ -655,7 +660,7 @@ nodes:
   materiality: normal
   decay_scan_frequency: semiannual
 - node_id: TDM-E-L2-01-5
-  note_confirmed: 2026-09-13
+  note_confirmed: 2026-09-15
   name_zh: 市场级调节注入
   market: cn_a
   flow: entry_flow
@@ -666,6 +671,7 @@ nodes:
   algo_note_zh: >-
     市场级轮动状态（子4 的五分类）统一给全板块加/减分：主线态给头部板块+10%，派发态全体-15%。
     防止板块层只看自己不看大盘。
+    （2026-09-15 ALGO_FLOW 块出仓至 docs/03_modules/_domain_regime/algo_flow/market_forecast_fusion.yaml：算法推导图外迁，算法口径不变）
   parent_node: TDM-E-L2-01
   factor_refs: []
   data_refs: []
@@ -1969,6 +1975,7 @@ nodes:
   decay_scan_frequency: semiannual
 
 - node_id: TDM-E-L3-12-3
+  note_confirmed: 2026-09-15
   name_zh: 筹码分布分析
   market: cn_a
   flow: entry_flow
@@ -1979,6 +1986,7 @@ nodes:
   algo_note_zh: >-
     筹码分布：获利盘>90% 且集中（单峰密集）=拉升期无抛压；获利盘<30% 高位换手=派发嫌疑。
     筹码低位单峰密集是最干净的形态。
+    （2026-09-15 ALGO_FLOW 块出仓至 docs/03_modules/_domain_regime/algo_flow/chip_distribution_engine.yaml：算法推导图外迁，算法口径不变）
   parent_node: TDM-E-L3-12
   factor_refs: []
   data_refs: [DS-150]

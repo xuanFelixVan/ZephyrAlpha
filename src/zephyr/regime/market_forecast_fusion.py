@@ -31,50 +31,7 @@ C-014 大盘预测三层融合（MOD-REGIME-012）。
 不出点位、不出买卖信号**；预测日志经 log_sink 回调委托 MOD-RPT-028
 prediction_log_writer 落库（装配批接线），写库异常不阻断融合产出。
 
-# [ALGO_FLOW]
-# 层: 输入
-# - id: I1
-#   name: window 参数
-#   fields: 参数 window（无注解）
-#   code: market_forecast_fusion.py 顶层公共函数形参（AST 提取）
-# - id: I2
-#   name: prior_strength 参数
-#   fields: 参数 prior_strength（无注解）
-#   code: market_forecast_fusion.py 顶层公共函数形参（AST 提取）
-# - id: I3
-#   name: min_weight 参数
-#   fields: 参数 min_weight（无注解）
-#   code: market_forecast_fusion.py 顶层公共函数形参（AST 提取）
-# 层: 算法
-# - id: A1
-#   name_zh: ① RollingAccuracyTracker
-#   name_en: RollingAccuracyTracker
-#   intro: 滚动准确率动态加权器（层3）。
-#   desc: 滚动准确率动态加权器（层3）。 按源维护尾部 window 次众数态命中记录；accuracy 用 Beta 先验平滑 （p0=1/8 八态随机命中率，强度 α=prior_st…；公共方法（定义序）: window,…
-#   inputs: window prior_strength min_weight
-#   outputs: 返回值
-# - id: A2
-#   name_zh: ② MarketForecastFusion
-#   name_en: MarketForecastFusion
-#   intro: C-014 三层融合判定核心（纯函数 + 回调信号契约，执行体委托装配批）。
-#   desc: C-014 三层融合判定核心（纯函数 + 回调信号契约，执行体委托装配批）。；公共方法（定义序）: fuse, settle, build_log_payload；源码 L236-L353
-#   inputs: tracker log_sink
-#   outputs: 返回值
-#   （注：A2 之后另有 4 个公共定义未列入（含 4 个数据契约/异常/枚举声明类），见源码）
-# 层: 输出
-# - id: O1
-#   name_zh: 模块公共 API 面（6 定义）
-#   name_en: public defs
-#   intro: RollingAccuracyTracker, MarketForecastFusion
-#   downstream: 运行时装配批（外部主播信号注入 / log_sink 接 prediction_log_writer）
-# [/ALGO_FLOW]
-#
-# 边:
-# I1 --> A1
-# I2 --> A1
-# I3 --> A1
-# A1 --> A2
-# A2 --> O1
+# [ALGO_FLOW] external: docs/03_modules/_domain_regime/algo_flow/market_forecast_fusion.yaml
 """
 
 from __future__ import annotations

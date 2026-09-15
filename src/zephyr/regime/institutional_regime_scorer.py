@@ -32,42 +32,7 @@ MOD-REGIME-015 InstitutionalRegimeScorer — 三维机构级 regime 评分器。
   score ∈ [0, 100]，越高越危险/越极端（泡沫/恐慌方向）。
   0-33 低位安全区，34-66 中性区，67-100 高位极端区。
 
-# [ALGO_FLOW]
-# 层: 输入
-# - id: I1
-#   name: weight_cape 参数
-#   fields: 参数 weight_cape（无注解）
-#   code: institutional_regime_scorer.py 顶层公共函数形参（AST 提取）
-# - id: I2
-#   name: weight_iv 参数
-#   fields: 参数 weight_iv（无注解）
-#   code: institutional_regime_scorer.py 顶层公共函数形参（AST 提取）
-# - id: I3
-#   name: weight_margin 参数
-#   fields: 参数 weight_margin（无注解）
-#   code: institutional_regime_scorer.py 顶层公共函数形参（AST 提取）
-# 层: 算法
-# - id: A1
-#   name_zh: ① InstitutionalRegimeScorer
-#   name_en: InstitutionalRegimeScorer
-#   intro: 三维机构级 regime 评分器。
-#   desc: 三维机构级 regime 评分器。 消费 index_valuation_daily / option_iv_surface_incremental / margin_tradi…；公共方法（定义序）: score；源…
-#   inputs: weight_cape weight_iv weight_margin
-#   outputs: 返回值
-#   （注：A1 之后另有 4 个公共定义未列入（含 4 个数据契约/异常/枚举声明类），见源码）
-# 层: 输出
-# - id: O1
-#   name_zh: 模块公共 API 面（5 定义）
-#   name_en: public defs
-#   intro: InstitutionalRegimeScorer
-#   downstream: 运行时装配批（regime 层综合评分 / 机构级三维数据融合）
-# [/ALGO_FLOW]
-#
-# 边:
-# I1 --> A1
-# I2 --> A1
-# I3 --> A1
-# A1 --> O1
+# [ALGO_FLOW] external: docs/03_modules/_domain_regime/algo_flow/institutional_regime_scorer.yaml
 """
 
 from __future__ import annotations

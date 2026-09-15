@@ -29,7 +29,7 @@ import pytest
 
 from zephyr.regime.overlay_signals_builder import OverlaySignalsConstructor
 
-from tests.regime.test_overlay_signals_builder import _make_dates, _make_features, _make_index_df, _MockFeatureBuilder
+from test_overlay_signals_builder import _make_dates, _make_features, _make_index_df, _MockFeatureBuilder
 
 
 class TestS2ValuationPathA:

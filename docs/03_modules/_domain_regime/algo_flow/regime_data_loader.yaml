@@ -1,0 +1,64 @@
+# ALGO_FLOW 外部真源——regime_data_loader（_domain_regime 域，真源 src/zephyr/regime/features/regime_data_loader.py）
+# 2026-09-15 P2-1 契约头减负批量出仓：docstring 内联块逐字节副本，extractor 经
+# external 锚加载走同一 parse_algo_flow 管线；算法公共面变化时同步更新本块。
+doc_type: architecture_view
+ttl: permanent
+module: src.zephyr.regime.features.regime_data_loader
+source_of_truth: src/zephyr/regime/features/regime_data_loader.py
+algo_flow: |
+    # [ALGO_FLOW]
+    # 层: 输入
+    # - id: I1
+    #   name: tsv 参数
+    #   fields: 参数 tsv，类型注解 str
+    #   code: regime_data_loader.py 顶层公共函数形参（AST 提取）
+    # - id: I2
+    #   name: ncols 参数
+    #   fields: 参数 ncols，类型注解 int
+    #   code: regime_data_loader.py 顶层公共函数形参（AST 提取）
+    # - id: I3
+    #   name: v 参数
+    #   fields: 参数 v，类型注解 Any
+    #   code: regime_data_loader.py 顶层公共函数形参（AST 提取）
+    # 层: 算法
+    # - id: A1
+    #   name_zh: ① parse_tsv
+    #   name_en: parse_tsv
+    #   intro: 把 ch_reader.query 返回的 TSV 字符串解析成行列表。
+    #   desc: 把 ch_reader.query 返回的 TSV 字符串解析成行列表。 公共工具函数——regime 包内 ``regime_feature_builder`` 等模块统一 i…；源码 L196-L214
+    #   inputs: tsv ncols
+    #   outputs: list[list[str]]
+    # - id: A2
+    #   name_zh: ② safe_float
+    #   name_en: safe_float
+    #   intro: NaN/None 安全转 float（NaN→0.0，避免阈值比较误判）。
+    #   desc: NaN/None 安全转 float（NaN→0.0，避免阈值比较误判）。 公共工具函数——regime 包内 ``regime_feature_builder`` 等模块统一…；源码 L217-L229
+    #   inputs: v
+    #   outputs: float
+    # - id: A3
+    #   name_zh: ③ RegimeDataLoader
+    #   name_en: RegimeDataLoader
+    #   intro: Phase 2c 新数据源加载层。
+    #   desc: Phase 2c 新数据源加载层。 Usage（由 RegimeFeatureBuilder 注入，透传给构造器）:: loader = RegimeDataLoader( da…；公共方法（定义序）: load_mo…
+    #   inputs: data_load_start backtest_end registry
+    #   outputs: 返回值
+    # 层: 输出
+    # - id: O1
+    #   name_zh: list[list[str]]
+    #   name_en: list[list[str]]
+    #   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+    #   downstream: MOD-REGIME-002(RegimeFeatureBuilder透传→risk/overlay构造器消费)
+    # - id: O2
+    #   name_zh: float
+    #   name_en: float
+    #   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+    #   downstream: MOD-REGIME-002(RegimeFeatureBuilder透传→risk/overlay构造器消费)
+    # [/ALGO_FLOW]
+    #
+    # 边:
+    # I1 --> A1
+    # I2 --> A1
+    # I3 --> A1
+    # A1 --> A2
+    # A2 --> A3
+    # A3 --> O1

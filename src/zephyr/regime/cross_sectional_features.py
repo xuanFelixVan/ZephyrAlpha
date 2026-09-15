@@ -70,47 +70,7 @@ vol_dispersion, momentum_breadth]。
 依据: 2026-08 架构审查报告 P1（92号清单 §5.1）/ 工单 ALG-01
 Version: 0.1.0
 
-# [ALGO_FLOW]
-# 层: 输入
-# - id: I1
-#   name: panel 参数
-#   fields: 参数 panel，类型注解 pd.DataFrame
-#   code: cross_sectional_features.py 顶层公共函数形参（AST 提取）
-# - id: I2
-#   name: date_col 参数
-#   fields: 参数 date_col（无注解）
-#   code: cross_sectional_features.py 顶层公共函数形参（AST 提取）
-# - id: I3
-#   name: symbol_col 参数
-#   fields: 参数 symbol_col（无注解）
-#   code: cross_sectional_features.py 顶层公共函数形参（AST 提取）
-# - id: I4
-#   name: close_col 参数
-#   fields: 参数 close_col（无注解）
-#   code: cross_sectional_features.py 顶层公共函数形参（AST 提取）
-# 层: 算法
-# - id: A1
-#   name_zh: ① compute_cross_sectional_features
-#   name_en: compute_cross_sectional_features
-#   intro: 计算 4 个横截面结构特征（纯函数，PIT 安全）。
-#   desc: 计算 4 个横截面结构特征（纯函数，PIT 安全）。 Args: panel: 个股日 K 面板。长表（含 trade_date/symbol/close 列）或 MultiIn…；源码 L155-L273
-#   inputs: panel date_col symbol_col close_col volume_col liquidity_col dispersi…
-#   outputs: pd.DataFrame
-#   （注：A1 之后另有 1 个公共定义未列入（含 1 个数据契约/异常/枚举声明类），见源码）
-# 层: 输出
-# - id: O1
-#   name_zh: pd.DataFrame
-#   name_en: pd.DataFrame
-#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
-#   downstream: regime_feature_builder（可选开关，默认关）
-# [/ALGO_FLOW]
-#
-# 边:
-# I1 --> A1
-# I2 --> A1
-# I3 --> A1
-# I4 --> A1
-# A1 --> O1
+# [ALGO_FLOW] external: docs/03_modules/_domain_regime/algo_flow/cross_sectional_features.yaml
 """
 
 from __future__ import annotations

@@ -70,46 +70,7 @@ S2 confirm/trigger 全阶段解锁。8 转换全部可触发。
 依据: 10_regime_detector_spec v1.3.1 §4 / Phase 2 计划 §Phase2b
 Version: 0.1.0
 
-# [ALGO_FLOW]
-# 层: 输入
-# - id: I1
-#   name: backtest_start 参数
-#   fields: 参数 backtest_start（无注解）
-#   code: overlay_signals_builder.py 顶层公共函数形参（AST 提取）
-# - id: I2
-#   name: backtest_end 参数
-#   fields: 参数 backtest_end（无注解）
-#   code: overlay_signals_builder.py 顶层公共函数形参（AST 提取）
-# - id: I3
-#   name: data_load_start 参数
-#   fields: 参数 data_load_start（无注解）
-#   code: overlay_signals_builder.py 顶层公共函数形参（AST 提取）
-# - id: I4
-#   name: feature_builder 参数
-#   fields: 参数 feature_builder（无注解）
-#   code: overlay_signals_builder.py 顶层公共函数形参（AST 提取）
-# 层: 算法
-# - id: A1
-#   name_zh: ① OverlaySignalsConstructor
-#   name_en: OverlaySignalsConstructor
-#   intro: 8 转换 OverlaySignals 构造器（MOD-REGIME-002 Phase 2b）。
-#   desc: 8 转换 OverlaySignals 构造器（MOD-REGIME-002 Phase 2b）。 Usage（由 RegimeFeatureBuilder.build_shri…；公共方法（定义序）: build_f…
-#   inputs: backtest_start backtest_end data_load_start feature_builder risk_cons…
-#   outputs: 返回值
-# 层: 输出
-# - id: O1
-#   name_zh: 模块公共 API 面（1 定义）
-#   name_en: public defs
-#   intro: OverlaySignalsConstructor
-#   downstream: MOD-REGIME-002(RegimeFeatureBuilder.build_shrinkage_schedule消费→overlay_signals)
-# [/ALGO_FLOW]
-#
-# 边:
-# I1 --> A1
-# I2 --> A1
-# I3 --> A1
-# I4 --> A1
-# A1 --> O1
+# [ALGO_FLOW] external: docs/03_modules/_domain_regime/algo_flow/overlay_signals_builder.yaml
 """
 
 from __future__ import annotations

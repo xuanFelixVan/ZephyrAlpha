@@ -1,0 +1,49 @@
+# ALGO_FLOW 外部真源——lppl_detector（_domain_regime 域，真源 src/zephyr/regime/features/lppl_detector.py）
+# 2026-09-15 P2-1 契约头减负批量出仓：docstring 内联块逐字节副本，extractor 经
+# external 锚加载走同一 parse_algo_flow 管线；算法公共面变化时同步更新本块。
+doc_type: architecture_view
+ttl: permanent
+module: src.zephyr.regime.features.lppl_detector
+source_of_truth: src/zephyr/regime/features/lppl_detector.py
+algo_flow: |
+    # [ALGO_FLOW]
+    # 层: 输入
+    # - id: I1
+    #   name: close 参数
+    #   fields: 参数 close，类型注解 pd.Series
+    #   code: lppl_detector.py 顶层公共函数形参（AST 提取）
+    # - id: I2
+    #   name: windows 参数
+    #   fields: 参数 windows，类型注解 tuple[int, ...]
+    #   code: lppl_detector.py 顶层公共函数形参（AST 提取）
+    # - id: I3
+    #   name: m_range 参数
+    #   fields: 参数 m_range，类型注解 tuple[float, float]
+    #   code: lppl_detector.py 顶层公共函数形参（AST 提取）
+    # - id: I4
+    #   name: omega_range 参数
+    #   fields: 参数 omega_range，类型注解 tuple[float, float]
+    #   code: lppl_detector.py 顶层公共函数形参（AST 提取）
+    # 层: 算法
+    # - id: A1
+    #   name_zh: ① lppl_blowoff_score
+    #   name_en: lppl_blowoff_score
+    #   intro: LPPL 赶顶检测评分（10 号 §4.8.1 五维映射）。
+    #   desc: LPPL 赶顶检测评分（10 号 §4.8.1 五维映射）。 Args: close: 价格序列（index=日期；取末段各窗口拟合，须全为正价格）。 windows: 拟合窗口…；源码 L169-L232
+    #   inputs: close windows m_range omega_range tc_max_ahead tc_proximity_days tc_s…
+    #   outputs: LPPLResult
+    #   （注：A1 之后另有 1 个公共定义未列入（含 1 个数据契约/异常/枚举声明类），见源码）
+    # 层: 输出
+    # - id: O1
+    #   name_zh: LPPLResult
+    #   name_en: LPPLResult
+    #   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+    #   downstream: T4 疯狂期赶顶评估（独立函数，未接入 TRANSITION_CONFIG；T4 已有多维信号兜底）
+    # [/ALGO_FLOW]
+    #
+    # 边:
+    # I1 --> A1
+    # I2 --> A1
+    # I3 --> A1
+    # I4 --> A1
+    # A1 --> O1
