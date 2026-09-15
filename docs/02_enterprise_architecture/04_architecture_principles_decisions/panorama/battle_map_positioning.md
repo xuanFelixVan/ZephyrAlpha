@@ -2,13 +2,13 @@
 ttl: permanent
 doc_type: architecture_view
 status: draft
-version: "0.7.0"
-date: 2026-08-04
+version: "0.9.0"
+date: 2026-09-16
 ---
 
 # 交易决策作战地图能力定位书（第五全景图 / battle_map）
 
-> 版本：V0.7.0（BM-INV-007 孤儿模块反向检测）| 2026-08-04
+> 版本：V0.9.0（措辞升级：钱怎么赚→全生命周期装配挂载）| 2026-09-16
 > 读者：项目 Owner（主要）+ AI 开发 Agent（次要）
 > 写法：大白话为主，配表格和 ASCII 图。变更历史见文末。
 > **文档责任范围**：定义**交易决策作战地图**（`battle_map`）——项目第五全景图——的能力定位、数据模型、真源分工、双向对齐机制、迁移策略。它是 `07_trading_decision_architecture/` 人类视图背后的真源。
@@ -19,11 +19,11 @@ date: 2026-08-04
 
 ## 一、作战地图是什么？（一句话）
 
-**交易决策作战地图（battle_map）是项目的第五全景图——一张以"决策环节"为节点、以"钱怎么赚"为流程主线、把 decisiongraph / depgraph / 候选池 / 蓝图 / 数据流按业务流程串联起来的索引层真源图。**
+**交易决策作战地图（battle_map）是项目的第五全景图——一张以"决策环节"为节点、以"全生命周期装配挂载"为流程主线、把 decisiongraph / depgraph / 候选池 / 蓝图 / 数据流按业务流程串联起来的索引层真源图。**
 
 它回答的问题不是"决策怎么分层"（那是 decisiongraph 的事），也不是"模块依赖谁"（那是 depgraph 的事），而是：
 
-> **"我这个赚钱流程的每一个环节，到底落在哪些模块/候选/蓝图章节上？落地没有？谁来承载？"**
+> **"我这个全生命周期装配挂载流程的每一个环节，到底落在哪些模块/候选/蓝图章节上？落地没有？谁来承载？"**
 
 它存在 PostgreSQL（`battle_map_*` 三张表）里，由 `apply_battle_map.py` 写入，由 `generate_battle_map_diagram.py` 派生成 `07_trading_decision_architecture/battle_map/` 目录下的人类视图 MD（旧生成器 `generate_trading_flow_diagram.py` 已于 2026-08-02 退役删除）。
 
@@ -34,7 +34,7 @@ date: 2026-08-04
 | depgraph | 依赖 | 模块（.py 文件） | 模块依赖谁 |
 | dataflowgraph | 数据流 | 数据集/作业 | 数据怎么流 |
 | decisiongraph | 决策零件 | 决策节点（细） | 决策怎么分层 |
-| **battle_map（新）** | **作战环节** | **环节（粗，聚合多节点）** | **钱怎么赚、每环节落在哪** |
+| **battle_map（新）** | **作战环节** | **环节（粗，聚合多节点）** | **全生命周期装配挂载、每环节落在哪** |
 
 **和 07_ 视图的关系**：07_ MD 是 battle_map 的派生人类视图（只读）。battle_map 是真源，07_ 改了不算数，battle_map 改了重跑生成器更新 07_。
 
@@ -47,8 +47,8 @@ date: 2026-08-04
 | 毛病 | battle_map 怎么治 |
 |---|---|
 | **AI 写决策时不知道落在哪** — 人说"加个买入信号融合"，AI 不知道这个环节现有哪些模块承载、是 design 还是没建 | battle_map 每个环节挂载锚点（modules/candidates），AI 查环节就知道落地情况，不凭记忆推断（防幻觉） |
-| **零件和装配脱节** — decisiongraph 有 2758 个细粒度节点，没有"业务流程"的聚合视图 | battle_map 是装配图+故事线，把零件按"钱怎么赚"串起来；decisiongraph 是零件手册，两者互补 |
-| **模块和作战目的脱节** — 看着 depgraph 某个模块，不知道它服务于赚钱流程的哪个环节、哪个阶段 | battle_map 双向查找：从模块能反查它在作战地图的位置（第几阶段、第几环节），看模块时就知道它的作战使命 |
+| **零件和装配脱节** — decisiongraph 有 2758 个细粒度节点，没有"业务流程"的聚合视图 | battle_map 是装配图+故事线，把零件按"全生命周期装配挂载"串起来；decisiongraph 是零件手册，两者互补 |
+| **模块和作战目的脱节** — 看着 depgraph 某个模块，不知道它服务于全生命周期装配挂载流程的哪个环节、哪个阶段 | battle_map 双向查找：从模块能反查它在作战地图的位置（第几阶段、第几环节），看模块时就知道它的作战使命 |
 
 **本质**：给人类一张作战指挥图，给 AI 一个"写决策时先查落地"的防漂移锚点，给所有模块一个"为什么而建"的作战使命归属。
 
@@ -217,7 +217,7 @@ C-027 因子工厂 → C-028 信号工厂 → C-006 策略工厂
 
 ### 6.1 battle_map_steps（作战环节表）—— 真源核心
 
-每个环节一行。环节是"钱怎么赚"流程上的一个业务步骤（如"流动性过滤""四轨融合""风控审批"）。
+每个环节一行。环节是"全生命周期装配挂载"流程上的一个业务步骤（如"流动性过滤""四轨融合""风控审批"）。
 
 | 字段 | 类型 | 说明 |
 |---|---|---|
@@ -782,6 +782,7 @@ battle_map 是项目第五全景图。前三图（depgraph/dataflowgraph/decisio
 
 | 版本 | 日期 | 变更 |
 |---|---|---|
+| V0.9.0 | 2026-09-16 | 措辞升级、语义不变：①全文"钱怎么赚/赚钱流程"口径→"全生命周期装配挂载"（L22/L26/L37/L50/L51/L220 共 6 处，L51 为工单 5 处外同口径尾项；全景图战役收口批③）；②存量版本号漏改修正——V0.8.0 批次（2026-08-07 acquisition 徽标）仅加本表史条未改 frontmatter，本次 frontmatter 0.7.0→0.9.0（跳过 0.8.0 防版本号复用）；③不改 battle_map_coverage_ruling_20260915.md（历史裁定书，其 V0.7 引用为时点快照）。 |
 | V0.8.0 | 2026-08-07 | acquisition 徽标 + 五态展示修正：①§十 标题"四态"→"五态"（表格已列 5 态但标题漏改）；②§十一 "四类 classDef"→"五类 classDef" + 新增 acquisition 徽标条目（设计态环节节点卡成熟度行下方显示 `（🔴自建）`/`（🟢开源）`/`（🟡借鉴）`/`（⬜弃用）`，模板 §4.13）；③L207 "三态"→"五态"；④同步 `visualization_view_template.md` V1.6（§4.13 acquisition 徽标章节 + §7.5 数据真源 + §4.7 五态 classDef 扩展）；⑤acquisition 字段分层 SSoT：设计态 depgraph `nodes_metadata.acquisition_method/source`（DDL CHECK）+ 候选态 `candidate_module_registry.yaml`（草稿层），107 决策表全量导入。 |
 | V0.7.0 | 2026-08-04 | 新增 BM-INV-007 孤儿模块反向检测：①§8.4 不变量列表加 BM-INV-007（业务域 depgraph 模块无任何锚点指向=造出来没用上）；②`align_battle_map.py` 加 `_business_domain_whitelist()`（业务域白名单=所有 flow_stage 的 allowed 域并集，运行时从 YAML 取，零硬编码）+ `_business_modules_depgraph()`（采集业务域节点）+ 已锚定集合反查（target_graph=depgraph 的 target_id，blueprint_id/path 宽松匹配）；③报告加第 7 节孤儿模块 + 业务域模块统计行 + 处置建议顺移第 8 节；④§17.3.3 表加 BM-INV-007 行；⑤AGENTS.md/battlemap_schema.py 同步。这是 BM-INV-001 的对偶——001 查"功能没模块"，007 查"模块没功能"。君子协定 warn-only，不硬阻断。非业务域（D_GOVERNANCE/D_GOV_SCRIPTS/D_GOV_RULE/D_FRONTEND 等）天然排除。 |
 | V0.6.0 | 2026-08-03 | 四层嵌套上限放开：①§6.1 `depth` 字段上限从2→3（根→子→孙→曾孙）；②§8.4 BM-INV-006 `depth≤2`→`depth≤3`；③§6.1.1 新增 step_id 四层命名约定表（根-子字母-孙数字-曾孙小写字母）；④`align_battle_map.py` L763 depth上限 2→3 + 文案；⑤`apply_battle_map.py` op_add_step 加 depth≤3 写入校验（前置防线）；⑥生成器递归函数无需改（已支持任意深度）。全自动化：写入时设 parent_step_id+depth → 生成器自动渲染嵌套 subgraph。 |

@@ -111,7 +111,7 @@ CREATE-GUARD（新建 .py/.yaml/.md 等 7 格式须登记 creation_token，tests
 
 ## 8. 词汇与对齐
 
-- 八图对齐：`alignment_checklist.md`（对齐键=module_id/step_id；`align_all.py` 单入口）。
+- 全图全库对齐：`alignment_checklist.md`（对齐键=module_id/step_id；`align_all.py` 单入口）。
 - 业务资产库 16 表挂 TDM 交叉轴（`_XREF_SPECS` 表驱动）；新库/新图挂接义务见该表 §4。
 - 术语三层：terminology_glossary.yaml（术语）/ functional_domain_registry.yaml（域）/
   module_translation_registry.yaml（模块）——生成器输出经 loader，禁硬编码翻译。

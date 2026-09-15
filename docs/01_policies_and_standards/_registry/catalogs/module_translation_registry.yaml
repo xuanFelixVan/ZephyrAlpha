@@ -39142,12 +39142,11 @@ entries:
   plain_zh: 治理·生成器的对齐 panoramas：处理对齐 panoramas的具体事务，给治理·生成器这条线打下手，保证日常运转不出岔子。
 - module_path: scripts/governance/d5_architecture/generators/align_all.py
   domain_id: D_GOV_SCRIPTS
-  name_zh: 五图对齐执行入口
-  name_en: Align All Panoramas
-  desc_zh: 一站式五图对齐验证——调 align_panoramas 查图 1-4（module_id 轴）+ align_battle_map 查图 5（step_id
-    轴），产出总览报告，exit code 分层（硬问题→1，软问题→0+warn）。
-  desc_en: ''
-  plain_zh: 五图对齐执行入口，施工前对齐验证唯一命令
+  name_zh: "全图全库对齐执行入口"
+  name_en: "Align All Panoramas and Registries"
+  desc_zh: "一站式全图全库对齐验证——调 align_panoramas 查图族（module_id 轴）+ align_battle_map 查作战图（step_id 轴）+ 注册表层闭环与文档抽查，第八节策略生产图/第九节治理运行图（GOMAP）扩查，产出总览报告，exit code 分层（硬问题→1，软问题→0+warn）。"
+  desc_en: ""
+  plain_zh: "全图全库对齐执行入口：施工前把十张全景图和注册表全查一遍的唯一命令，硬问题当场拦截，软问题留告警不挡路。"
 - module_path: tests/safety/test_async_monitor.py
   domain_id: ''
   name_zh: 创建一个 check 方法被 mock 为 no-op 的 AsyncMonitor，避免文件系统副作用
@@ -49679,6 +49678,20 @@ entries:
   desc_zh: "锁外对提交文件清单试跑确定性门禁白名单，一过式失败清单快败（exit 8）"
   desc_en: "Lock-free preflight of deterministic gates with one-pass failure list"
   plain_zh: "提交前的快速体检站：排队拿锁之前先花几秒检查肯定过不了的毛病，一次列全，免得排队进门才被拦"
+- module_path: scripts/data/sz_open_data/status_all.py
+  domain_id: D_DATA
+  name_zh: "深圳开放数据订阅状态核验器"
+  name_en: ""
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "逐个检查深圳开放平台47个数据接口的订阅是否有效。平台订阅按应用隔离，本账号有两把钥匙（主钥匙和新钥匙），脚本会两把都试一遍，只有两把都没权限的接口才会上补订清单——避免只拿主钥匙检查时把新钥匙名下的接口误报成证书过期。"
+- module_path: scripts/data/sz_open_data/probe_all_new.py
+  domain_id: D_DATA
+  name_zh: "深圳开放数据字段探测器"
+  name_en: ""
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "拉取深圳开放平台30个数据接口的示例数据，摸清每个接口返回哪些字段供入库对表用。同样是两把钥匙轮着试，防止把订在新钥匙名下的接口误报成没有权限。"
 
 battle_map_steps:
 - step_id: BM-BUY-05
