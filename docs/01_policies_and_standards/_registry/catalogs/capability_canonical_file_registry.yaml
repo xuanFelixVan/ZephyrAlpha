@@ -16884,4 +16884,10 @@ creation_tokens:
   token: tdm-l310-preflight-bp-20260916
   created_by: st-tdmbe-20260909
   capability: trading_decision_map
+- file: scripts/data/backfill_sector880_history.py
+  token: asset-v2-sector880-history-backfill-20260911
+  capability: backfill_sector880_history
+- file: scripts/data/backfill_lof_minute_history.py
+  token: asset-v2-lof-minute-backfill-20260911
+  capability: backfill_lof_minute_history
 di_seam_exemptions: []
