@@ -2138,3 +2138,68 @@ entries:
   related_arch: ['#ARCH-BATTLE-MAP-HARD-001']
   related_rulings: ['裁定#259']
   superseded_by: null
+
+- ruling_id: '裁定#262'
+  title: T4 小欠账收口——transport 双节点 blueprint_id 登记受三轨制+唯一索引双重阻断登记后续路径；dataflow 三空表三步验证后登记保留
+  date: '2026-09-16'
+  category: 数据治理
+  status: active
+  summary: >-
+    通宵总包 GW6（st-pano-20260916）T4 处置（Owner 2026-09-16 睡前对话内全权授权）。
+    ①transport 双节点（src/zephyr/data/transport/__init__.py+cross_border_dual.py，depgraph
+    module 节点 blueprint_id 空）登记受阻实证：a) apply_depgraph.py --add-design-node 正门
+    以 PLACEHOLDER-CAND-CRYPTO-009（三轨制拒 CAND- 前缀后的合法前缀）提交，被
+    idx_nodes_path 唯一约束拦截（"重复键违反唯一约束"）——两文件已有 design_maturity=
+    production 的扫描节点占位；b) --update-module 修改 blueprint_id 被网关设计禁止（会绕过
+    传播+YAML扫描+SYNC HINT 三重保护）；c) 裸 SQL 修改违反 RULE-DATA-OPS；d) 治本路径
+    =源码头注释补 # module_id: MOD-xxx（depgraph 扫描器唯一认读格式），但 src/zephyr/**
+    不在本批车道（禁碰），且 CAND-CRYPTO-009 尚无 MOD 转正 id。登记后续路径：94号
+    crypto 施工批 CAND-CRYPTO-009 转正领 MOD 号时，同 commit 补源码头 module_id 注释+
+    generate_project_depgraph 再生，blueprint_id 随扫描自然落位（正门且防复发）。
+    ②dataflow 三空表（dataflow_datasets_metadata/jobs_metadata/dataflow_runs 实测 0 行）
+    RULE-DATA-OPS 三步验证后裁定保留不 DROP：必要性——前两表=裁定#209 Stage 2 字段角色
+    分离机制本体（sync_dataflow_registry UPSERT（DELETE 前）保存人工 curated 字段，INSERT
+    后回填恢复），DROP 即毁防漂移机制；dataflow_runs=Phase 2 运行时 Run 实例契约（DDL
+    CHECK run_type/Status 五值在位），运行时未启为空属预期；真实性——三表由
+    init_dataflow_db 幂等建表（dataflowgraph_schema.py 真源），消费者实证
+    sync_panorama_module/generate_panorama_registry/backup_runtime_state；可逆性——
+    DROP 后需 DDL 重跑且丢 curated 保护语义，保留零成本（空表）。三表保留。
+  evidence: >-
+    apply_depgraph 唯一约束报错全文（idx_nodes_path，键值 path=src/zephyr/data/transport/
+    cross_border_dual.py 已存在）+ nodes 实查（blueprint_id='' design_maturity=production）+
+    dataflowgraph_schema.py L53-56（curated 字段保存/恢复机制）+ L235-242（dataflow_runs
+    DDL）+ 三表 COUNT=0 实测 + generate_project_depgraph L379-393（DESIGN_STATE_FIELDS
+    含 blueprint_id 但仅对 design_maturity=design 行保留）
+  related_arch: ['#ARCH-BREG-001']
+  related_rulings: ['裁定#257']
+  superseded_by: null
+
+- ruling_id: '裁定#263'
+  title: R4 主索引对账机生口径统一——generate_registry_master_index id 优先级缺陷修正收回 10 张 ROOR 在册库+新建 CFG-registry-index-exempt-list 豁免清单承接 14 个非索引文件
+  date: '2026-09-16'
+  category: 治理架构
+  status: active
+  summary: >-
+    通宵总包 GW6（st-pano-20260916）R4 处置（Owner 2026-09-16 睡前对话内全权授权）。
+    对账实证：catalogs/*.yaml 69 文件 vs 主索引 50 张（归档批后 44），缺口 25。根因
+    三类：①机生口径缺陷（主因）——extract_registry_info 取 id 时 module_id 无条件压过
+    registry_id，而 9 张 ROOR 在册业务库 YAML 体带治理锚定 module_id=MOD-GOVERNANCE
+    （前缀不合法）致 registry_id=REG-* 被遮蔽（benchmark/cost_model/universe/data_asset/
+    dataflow_graph/execution_algo/experiment/field_dictionary/strategy）；②内部
+    collection 文件用 MOD-CFG_* 锚定 id 非登记表 id（rule_enforcement/rule_registry_
+    collection/scripts/test_suite）；③真非登记表类（域政策/扫描排除/词表/账本等 11）。
+    处置：①生成器手术修正——候选 id 按 module_id→registry_id（YAML 体）→注释/代码头
+    顺序收集取首个命中前缀者（前缀白名单 REG-/PS-REG-/PS-IDX-/DOM-/GOV-/CFG- 不变，
+    原 module_id 优先语义对合法 id 文件零变化）；②新建 registry_master_index_exemptions.yaml
+    （CFG-registry-index-exempt-list，14 文件逐一登记豁免理由+季度复审节律，对标
+    panorama_exempt_list 先例与 D38 二选一铁律）；③归档批 6 库随再生自动摘除。
+    终态：主索引 55 张（44+10 收回+1 豁免清单自索引）+14 豁免显式登记，缺口清零；
+    generate_registry_master_index.py 警告仅余 4 条 MOD-CFG 收集文件（已在豁免清单留痕）。
+    附：翻译真源 30 处重复+约 6% 死链按指示登记日常清理项（#ARCH-315）不专项。
+  evidence: >-
+    generate_registry_master_index.py diff（候选收集+前缀过滤注释含本裁定号）+ 修复前后
+    跑批输出（50→44→54→55 张）+ 缺口集合三态清单（indexed/gap/exempt 演算 SQL 式留痕
+    于会话日志）+ registry_master_index_exemptions.yaml 14 条
+  related_arch: ['#ARCH-BREG-001']
+  related_rulings: ['裁定#258', '裁定#259']
+  superseded_by: null

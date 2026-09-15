@@ -13,6 +13,32 @@ generated_at: '2026-09-12T06:56:48+08:00'
 generated_by: scripts/backtest/generate_backtest_backlog.py
 priority_legend: P0=生死线三件套 P1=主链 P2=树枝 P3=流级/结构/crypto另册
 objects:
+- object_id: BT-P1-029
+  node_ids:
+  - TDM-E-FLOW
+  node_type: aggregation
+  layer: L0节点
+  map_layer: LROOT
+  flow: entry_flow
+  market: cn_a
+  module_ref: null
+  testable: true
+  confidence: untested
+  plan: null
+  plan_note: 落地推进登记（通宵总包 R7，2026-09-16）：执行链 21 个 depgraph planned 节点批量 planned→production 的回测前置登记——晋升批次决策点须逐节点给出验收阈值（执行链按 exec_quality 土规线滑点 20/40bp 起议）并冻结后方可跑；21 节点清单以届时 depgraph planned 集合实查为准（本条为批次占位登记，禁跳过 SOP-B 护栏③）
+- object_id: BT-P2-054
+  node_ids:
+  - TDM-E-FLOW
+  node_type: model
+  layer: L0节点
+  map_layer: LROOT
+  flow: entry_flow
+  market: cn_a
+  module_ref: null
+  testable: true
+  confidence: untested
+  plan: null
+  plan_note: 落地推进登记（通宵总包 R7，2026-09-16）：model_registry 8 个 candidate 模型批量 candidate→serving 的回测前置登记——晋升批次决策点须逐模型给出 OOS 判据（对比基线/最小样本量按 validation_method_registry 判据推导）并冻结后方可跑；8 模型清单=model_registry candidate 态实查（本条为批次占位登记）
 - object_id: BT-P2-001
   node_ids:
   - TDM-E-FLOW

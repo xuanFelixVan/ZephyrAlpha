@@ -135,22 +135,18 @@ def extract_registry_info(yaml_path: Path) -> dict | None:
     except Exception:
         data = None
 
-    module_id = None
+    # R4 机生口径统一（2026-09-16 裁定#263）：候选 id 按 module_id→registry_id（YAML 体）
+    # →module_id→registry_id（注释/代码头）顺序收集，取首个命中登记表前缀者。
+    # 修因：9 张业务库 YAML 体带治理锚定 module_id=MOD-GOVERNANCE（前缀不合法）压过
+    # registry_id=REG-*，导致 ROOR 在册库从主索引缺口（benchmark/cost_model/universe/
+    # data_asset/dataflow_graph/execution_algo/experiment/field_dictionary/strategy）。
+    candidates: list[str] = []
     if isinstance(data, dict):
-        module_id = data.get("module_id") or data.get("registry_id")
-    if not module_id:
-        module_id = comment_meta.get("module_id") or comment_meta.get("registry_id")
-    if not module_id:
-        return None
-    mid = str(module_id)
-    if not (
-        mid.startswith("REG-")
-        or mid.startswith("PS-REG-")
-        or mid.startswith("PS-IDX-")
-        or mid.startswith("DOM-")
-        or mid.startswith("GOV-")
-        or mid.startswith("CFG-")
-    ):
+        candidates += [str(data[k]) for k in ("module_id", "registry_id") if data.get(k)]
+    candidates += [str(comment_meta[k]) for k in ("module_id", "registry_id") if comment_meta.get(k)]
+    _prefixes = ("REG-", "PS-REG-", "PS-IDX-", "DOM-", "GOV-", "CFG-")
+    mid = next((c for c in candidates if c.startswith(_prefixes)), "")
+    if not mid:
         return None
 
     fm = parse_frontmatter_from_file(yaml_path)
@@ -174,7 +170,7 @@ def extract_registry_info(yaml_path: Path) -> dict | None:
         entry_count = len(data)
 
     return {
-        "registry_id": str(module_id),
+        "registry_id": mid,
         "name": name,
         "category": category,
         "physical_path": str(yaml_path.relative_to(REPO_ROOT)).replace("\\", "/"),

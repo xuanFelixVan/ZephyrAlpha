@@ -21669,3 +21669,31 @@ entries:
   related_adjudication: ""
   created: "2026-09-15"
   last_updated: "2026-09-15"
+
+- issue_id: "#ARCH-313"
+  title: decisiongraph C 步——decision_* 表组季度退役审计观察的下季触发条件+到期动作登记（通宵总包 R5）
+  severity: P3低
+  adjudication: 2026-09-16 通宵总包 GW6（st-pano-20260916）按预打包授权登记（Owner 2026-09-16 睡前对话内全权授权）；B 步登记=裁定#259⑤。触发条件（下季退役审计窗口 2026-12 到期时，随宪法 §4 季度退役审计同批）：①decision_* 三表消费面审计——reconcile_execution_log 中 decisiongraph 派生链触发率、sync_panorama_module 对 decision_* 的 sync 调用计数、battle_map 对齐对 decisiongraph 合法 id 集合的依赖（BM-INV-002 collector）；②三路触发率持续近零（连续两季）→ 生成降级/退役提案（候选动作=停 decisiongraph 派生人类视图再生/表组只读冻结/退役），交 Owner 门位裁定（注册表净删级）。到期动作=产出退役审计报告（附触发率数据）+本议题状态更新+（若触发）提案件登记。本条仅登记观察契约，不动 decision_* PG 表、不翻既有裁定。
+  fix_phase: 等待下季审计窗口（2026-12）；到期动作如上，由届时 housekeeping 会话承接
+  status: 'decided'
+  related_adjudication: '裁定#259'
+  created: '2026-09-16'
+  last_updated: '2026-09-16'
+- issue_id: "#ARCH-314"
+  title: 数据工厂升级议题——dataflowgraph 业务阶段分层（挂 battle_map 11 flow_stage 轴）使数据流图可按作战阶段切片（通宵总包 R6）
+  severity: P2中
+  adjudication: 2026-09-16 通宵总包 GW6（st-pano-20260916）登记议题待 Owner 排期（Owner 2026-09-16 睡前对话内全权授权范围内之"登记"动作，升级施工另行立项）。背景：dataflowgraph 现为 Dataset/Job/Edge 技术轴（dataflow_datasets/jobs/edges 三表），无业务阶段维度——看数据流时无法回答"这条数据流服务于全生命周期装配挂载的哪个作战阶段"。升级方向：①dataflow_* 表组（或 metadata 扩展）增加 flow_stage 业务阶段分层字段（值域复用 battle_map_steps.flow_stage 11 阶段，禁止新造第二套阶段词表）；②dataflow_index/生成视图按阶段切片渲染；③对齐=经 battle_map_anchors（target_graph=dataflowgraph）两跳挂 MOD 总线，不搞 N² 直连（D38 同源）。约束：走 sync_panorama_module 单向派生铁律；新列属架构数据走 apply 正门；TDM 交叉轴不动。
+  fix_phase: proposed——待 Owner 排期立项（依赖 CAND-CRYPTO-009 等 dataflow 车道施工窗口）
+  status: 'proposed'
+  related_adjudication: ''
+  created: '2026-09-16'
+  last_updated: '2026-09-16'
+- issue_id: "#ARCH-315"
+  title: module_translation_registry 翻译真源日常清理项——约 30 处中英重复条目+约 6% capability 反查死链随巡检消化（通宵总包 R4 附带，不专项）
+  severity: P3低
+  adjudication: 2026-09-16 通宵总包 GW6（st-pano-20260916）按指示登记为日常清理项不专项（Owner 2026-09-16 睡前对话内全权授权）。范围：①翻译真源约 30 处重复条目（同 module_path 多条 name/desc 变体）；②capability 反查约 6% 死链（canonical file 指向已移动/退役路径）。处置纪律：不开专项批次——随既有 reconcile 巡检/各文件自然再生成批次顺带修复（每次顺手清一批并留痕），避免专项施工的规范预算膨胀；death-link 部分随归档批残余引用自然收敛同步消化。复核=季度退役审计同批抽查计数。
+  fix_phase: 日常巡检消化（无截止）；季度抽查
+  status: 'proposed'
+  related_adjudication: '裁定#263'
+  created: '2026-09-16'
+  last_updated: '2026-09-16'
