@@ -4308,6 +4308,57 @@ def promotion_decide(body: dict[str, Any]) -> dict[str, Any]:
     return result
 
 
+# ── 运营告警供给线（治理战役 A2，2026-09-16）────────────────────────────────
+# 真源：zephyr.infrastructure.system_telemetry.alerts.ops_alert_feed（MOD-INF-OPS-ALERT-FEED）。
+# 通知唯一出口=前端 promotion 页（2026-09-15 裁定：飞书/SMTP 裁撤）。本段只做两件事：
+# ① 30s daemon 探针线程跑 feed.tick()（OOM>8GB critical → 通知板 JSONL 落盘，fail-safe 不抛）；
+# ② 只读端点 GET /api/ops-notifications 投影通知板（前端 promotion 页横幅轮询数据源）。
+# 探针线程在模块导入即启动（同 bt-strategy-warm 先例）；板目录经环境变量
+# ZEPHYR_OPS_NOTIFICATION_DIR 重定向（测试隔离主通道），端点与线程共用同一解析。
+
+_OPS_FEED_LOCK = threading.Lock()
+
+
+@app.get("/api/ops-notifications")
+def ops_notifications() -> dict[str, Any]:
+    """运营告警通知清单（promotion 页横幅数据源，只读投影）。
+
+    真源：OpsAlertFeed.list_active()（未解除 + 1h 内已解除灰显项）。
+    板缺文件/异常 → 200 + ok:false + 空列表（前端横幅静默，不 500 硬崩）。
+    """
+    try:
+        from zephyr.infrastructure.system_telemetry.alerts.ops_alert_feed import OpsAlertFeed
+
+        with _OPS_FEED_LOCK:
+            items = OpsAlertFeed().list_active()
+        return {"ok": True, "count": len(items), "data": items}
+    except Exception as exc:  # noqa: BLE001 — 通知板异常降级空态（同 promotion-advisories 语义）
+        return {"ok": False, "error": f"ops_alert_feed unavailable: {str(exc)[:200]}", "count": 0, "data": []}
+
+
+def _ops_feed_loop() -> None:
+    """常驻探针线程体：5s 后每 30s 一 tick，异常只记不抛（字面量与 feed 模块常量同源同步）。"""
+    import time as _time
+
+    _time.sleep(5.0)  # FIRST_TICK_DELAY_S——避开 api_server 启动尖峰
+    while True:
+        try:
+            from zephyr.infrastructure.system_telemetry.alerts.ops_alert_feed import OpsAlertFeed
+
+            summary = OpsAlertFeed().tick()
+            if summary.get("ok") and summary.get("triggered"):
+                logger.warning("ops alert feed tick: %s", summary)
+        except Exception:  # noqa: BLE001 — 常驻线程绝不带崩 api_server
+            pass
+        _time.sleep(30.0)  # TICK_INTERVAL_S
+
+
+# pytest 守卫：测试进程禁启探针线程（测试隔离红线——防 tick 写生产通知板）；
+# 生产 uvicorn 无 pytest 模块，线程照常启动。
+if "pytest" not in sys.modules:
+    threading.Thread(target=_ops_feed_loop, daemon=True, name="ops-alert-feed").start()
+
+
 def main() -> None:
     import ctypes
 

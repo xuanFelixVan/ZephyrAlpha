@@ -16918,4 +16918,16 @@ creation_tokens:
   token: resource-schedule-panorama-resource-schedule-panorama-plan-v1-20260915
   created_by: st-schedmap-20260916
   capability: resource_schedule_panorama
+- file: src/zephyr/infrastructure/system_telemetry/alerts/ops_alert_feed.py
+  token: auto-scaffold-ops_alert_feed-20260916
+  created_by: scaffold.py
+  capability: ops_alert_feed
+- file: scripts/backtest/kronos_finetune_pkl_prep.py
+  token: kronos-finetune-kronos-finetune-pkl-prep-20260915
+  created_by: st-kronosft-20260916
+  capability: kronos_finetune
+- file: docs/03_modules/_domain_infrastructure_operations/ops_alert_feed/blueprint.md
+  token: ops-alert-feed-blueprint-blueprint-20260915
+  created_by: st-govops-20260916
+  capability: ops_alert_feed_blueprint
 di_seam_exemptions: []

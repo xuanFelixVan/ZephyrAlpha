@@ -86,6 +86,9 @@ ZK.api = (function(){
     fetchPromotionAdvisories: function(){   /* 策略转正建议清单（转正审批页真源；执行器缺位=ok:false+空列表，前端渲染空态） */
       return fetchJson('/api/promotion-advisories', 10000);
     },
+    fetchOpsNotifications: function(){   /* 运营告警通知板（治理战役 A2：OOM critical 等运营事件唯一前端出口，promotion 页横幅轮询） */
+      return fetchJson('/api/ops-notifications', 8000);
+    },
     postPromotionDecide: function(advisoryId, decision){   /* Owner 拍板 approve/reject（api_server 第四获准写端点；两段式确认在前端 window.confirm，token 服务端自取） */
       return fetchJson('/api/promotion-decide', 15000, {method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({advisory_id:advisoryId, decision:decision})});
     },

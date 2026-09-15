@@ -4,6 +4,8 @@
  *       全局入口 promoRefresh/promoDecide 供页面 onclick 直绑（先例 bt-battle-stage 的 window.btRenderStage）
  * 数据源：GET /api/promotion-advisories（建议清单真源=zephyr.strategy_pipeline.promotion_advisory.list_advisories 的 HTTP 投影）
  *         POST /api/promotion-decide（Owner 拍板 approve/reject；执行器=decide(token=None, via="frontend")）
+ *         GET /api/ops-notifications（运营告警通知板横幅，治理战役 A2：OOM critical 等运营事件唯一前端出口，
+ *                                     2026-09-15 裁定飞书/SMTP 裁撤后通知唯一出口=本页）
  * 拍板交互：两段式确认（先例 services/sv-page.js need_confirm→window.confirm→提交）；
  *           批准文案锚定整装语义「批准=进入整装组合，非单策略直进实盘」（S13 §5.5）
  * 三态配色：promote=绿 b-pass / hold=灰 b-na / demote=红 b-fail（全站 badge 六族惯例）
@@ -19,7 +21,13 @@
       '.promo-evi{display:flex;gap:14px;flex-wrap:wrap;margin-top:8px;font-size:11px;color:var(--dim)}',
       '.promo-evi b{color:var(--text)}',
       '.promo-act{display:flex;gap:8px;align-items:center;margin-top:10px;padding-top:8px;border-top:1px solid var(--hair);flex-wrap:wrap}',
-      '.promo-receipt{margin-top:8px;padding:8px 10px;background:var(--input);border:1px solid var(--hair);border-radius:5px;font-size:11px}'
+      '.promo-receipt{margin-top:8px;padding:8px 10px;background:var(--input);border:1px solid var(--hair);border-radius:5px;font-size:11px}',
+      /* 运营告警横幅（A2）：critical 红边醒目，已解除灰显折叠 */
+      '.promo-alert-banner{margin-bottom:14px}',
+      '.promo-alert-item{padding:10px 12px;border:1px solid var(--hair);border-left:3px solid var(--fail,#e5484d);border-radius:5px;background:var(--input);margin-bottom:8px;font-size:12px}',
+      '.promo-alert-item.promo-alert-resolved{border-left-color:var(--hair);opacity:.55}',
+      '.promo-alert-item b{font-size:12px}',
+      '.promo-alert-meta{margin-top:4px;font-size:10px;color:var(--dim);word-break:break-all}'
     ].join('');
     document.head.appendChild(st);
   }
@@ -139,6 +147,34 @@
   window.promoRefresh=function(){LIST=null;render();load();};
   window.promoDecide=decide;
 
+  /* ── 运营告警横幅（A2，2026-09-16）：/api/ops-notifications 轮询渲染 ──
+   * 通知唯一出口=本页（2026-09-15 裁定）。critical=红边醒目；已解除 1h 内灰显。
+   * 拉取失败静默（横幅是增强信息，不与建议卡抢错误位——promote 页自身错误语义不受影响）。 */
+  function alertItemHtml(n){
+    var resolved=!!n.resolved_at;
+    var first=n.first_seen?esc(String(n.first_seen)).slice(0,19).replace('T',' '):'—';
+    var cls='promo-alert-item'+(resolved?' promo-alert-resolved':'');
+    return '<div class="'+cls+'" data-key="'+esc(n.key||'')+'">'
+      +'<b>'+(resolved?'[已解除] ':'')+esc(n.title||n.key||'运营告警')+'</b> '
+      +'<span class="badge '+(resolved?'b-na':'b-fail')+'">'+esc(String(n.severity||'').toUpperCase()||'?')+'</span>'
+      +'<div>'+esc(n.message||'')+'</div>'
+      +'<div class="promo-alert-meta">首次 '+first+' · 第 '+esc(n.count||1)+' 次 · 来源 '+esc(n.source||n.module_id||'')+(resolved?' · 已解除':'')+'</div>'
+      +'</div>';
+  }
+  function renderAlerts(items){
+    var box=document.getElementById('promo-alert-banner');if(!box)return;
+    if(!items||!items.length){box.innerHTML='';box.style.display='none';return;}
+    box.style.display='';
+    box.innerHTML=items.map(alertItemHtml).join('');
+  }
+  function loadAlerts(){
+    if(!(window.ZK&&ZK.api&&ZK.api.fetchOpsNotifications))return;
+    ZK.api.fetchOpsNotifications().then(function(r){
+      renderAlerts((r&&r.ok!==false&&r.data)||[]);
+    }).catch(function(){renderAlerts([]);});   /* 静默：横幅失败不影响建议卡 */
+  }
+  window.promoRefreshAlerts=loadAlerts;   /* 全局入口（同 promoRefresh 惯例） */
+
   var mod={
     id:'promotion-page',
     chart:null,
@@ -152,9 +188,17 @@
   if(window.ZK&&ZK.registerFeature){ZK.registerFeature(mod);}
   else{window.ZK=window.ZK||{};ZK._pendingFeatures=ZK._pendingFeatures||[];ZK._pendingFeatures.push(mod);}
   injectStyles();   /* 加载即注入（registerFeature 只登记不初始化惯例） */
-  /* 自举：容器已注入即首拉+30s 轮询（拍板在途跳过，防 confirm 期间重绘） */
+  /* 自举：容器已注入即首拉+30s 轮询（拍板在途跳过，防 confirm 期间重绘）；
+   * 运营告警横幅容器同场注入（A2：promo-body 之前），与建议卡同拍轮询 */
   if(document.getElementById('promo-body')){
+    var banner=document.createElement('div');
+    banner.id='promo-alert-banner';banner.className='promo-alert-banner';banner.style.display='none';
+    document.getElementById('promo-body').parentNode.insertBefore(banner,document.getElementById('promo-body'));
     load();
-    PROMO_TIMER=setInterval(function(){if(!PROMO_BUSY&&document.getElementById('promo-body'))load();},30000);
+    loadAlerts();
+    PROMO_TIMER=setInterval(function(){
+      if(!PROMO_BUSY&&document.getElementById('promo-body'))load();
+      if(document.getElementById('promo-alert-banner'))loadAlerts();
+    },30000);
   }
 })();

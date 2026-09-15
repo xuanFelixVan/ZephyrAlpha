@@ -49692,6 +49692,20 @@ entries:
   desc_zh: ""
   desc_en: ""
   plain_zh: "拉取深圳开放平台30个数据接口的示例数据，摸清每个接口返回哪些字段供入库对表用。同样是两把钥匙轮着试，防止把订在新钥匙名下的接口误报成没有权限。"
+- module_path: src/zephyr/infrastructure/system_telemetry/alerts/ops_alert_feed.py
+  domain_id: D_INFRA_TELEMETRY
+  name_zh: "运营告警供给线"
+  name_en: "Ops Alert Feed"
+  desc_zh: "OOM critical 水位探针与通知板（promotion 页数据源）"
+  desc_en: ""
+  plain_zh: "这个模块像项目的血压计加留言板：每半分钟量一次项目占用的内存，一旦超过8GB危险线，就写一张告警纸条到固定文件里；页面上会自动来读这些纸条并亮红灯提醒，同一件事不会反复刷屏，问题解决后红灯自动变灰。"
+- module_path: scripts/backtest/kronos_finetune_pkl_prep.py
+  domain_id: D_BACKTEST
+  name_zh: "Kronos微调pkl适配层"
+  name_en: "Kronos finetune pkl adapter"
+  desc_zh: "官方规范CSV转QlibDataset契约pkl（时序80/20切分+最小行数过滤）"
+  desc_en: ""
+  plain_zh: "这个脚本是Kronos股票模型微调的数据搬运工：它把前面准备好的日线行情CSV文件，整理成官方训练代码能直接吃的训练包。它先把每只股票的数据按时间先后排好队、去掉重复日子，再把前八成留给模型学习、后两成留着考试用，行数太少的次新股直接淘汰不用，最后打包写出训练集和考试集两个文件供GPU夜窗训练读取。"
 
 battle_map_steps:
 - step_id: BM-BUY-05

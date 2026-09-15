@@ -24,9 +24,13 @@ rules:
     condition: "> 80"
     duration: "5m"
     description: "CPU使用率持续超过80%"
-    notify: ["fle", "dashboard"]
+    notify: ["dashboard"]
     silence_window: "10m"
 
+  # 供给线（治理战役 A2，2026-09-16）：zephyr.infrastructure.system_telemetry.alerts.ops_alert_feed
+  # 每 30s 以项目衍生进程 RSS 生产本指标；critical 触发 → 通知板（.runtime/ops_notifications/）
+  # → api_server GET /api/ops-notifications → 前端 promotion 页横幅（通知唯一出口，2026-09-15 裁定）。
+  # 旧 notify 目标 "fle"（飞书）已随 2026-09-15 裁撤批从全部规则移除。
   - id: ALERT-SYS-002
     name: "oom_risk"
     severity: critical
@@ -34,7 +38,7 @@ rules:
     condition: "> 8589934592"
     duration: "1m"
     description: "内存即将耗尽（>8GB RSS）"
-    notify: ["fle", "dashboard", "escalation"]
+    notify: ["dashboard"]
     silence_window: "5m"
 
   - id: ALERT-DB-001
@@ -111,5 +115,5 @@ rules:
     condition: "> 100"
     duration: "5m"
     description: "单表 active data parts 超过 100（防 2026-07-09 parts 爆炸致 CH merge 崩溃重演）"
-    notify: ["fle", "dashboard", "escalation"]
+    notify: ["dashboard", "escalation"]
     silence_window: "30m"
