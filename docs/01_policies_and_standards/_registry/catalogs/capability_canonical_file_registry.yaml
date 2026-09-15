@@ -13408,6 +13408,10 @@ creation_tokens:
   token: btfix-p1p2-p21-algo-flow-batch6-risk-report-20260915
   created_by: st-btfix-p15-20260915
   capability: btfix_p1p2
+- file: docs/_working/reports/p21_algo_flow_batch7_factor_report.md
+  token: btfix-p1p2-p21-algo-flow-batch7-factor-report-20260915
+  created_by: st-btfix-p15-20260915
+  capability: btfix_p1p2
 - file: docs/03_modules/_domain_machine_learning_train/algo_flow/_extensions__init__.yaml
   token: btfix-p1p2--extensions--init---20260915
   created_by: st-btfix-p15-20260915
