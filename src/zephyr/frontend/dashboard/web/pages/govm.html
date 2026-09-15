@@ -1,0 +1,82 @@
+<section class="page" id="p-govm">
+    <h2 class="page-title">治理操作全景 <span class="badge b-pass">实时映射</span></h2>
+    <div class="page-sub">系统组 · <b>治理运行地图（GOMAP-001，<span id="govm-count">—</span> 模块机生骨架）的原生实时视图——真源 YAML 一改这边自动变（30 秒轮询）</b>· 七层流水线 L0→L6：孵化→监控→资源→熔断→收割→自愈→审计 ｜ 模块路径点击复制 ｜ ⚠ 未接线候选=治理缺口直读</div>
+
+    <!-- 图例+meta 条（接线三态+未接线候选，色板沿 tdm/factory 既有语义不发明新色） -->
+    <div class="card" style="margin-bottom:10px;display:flex;gap:10px;align-items:center;flex-wrap:wrap">
+      <span class="dim" style="font-size:12px">图例</span>
+      <span style="font-size:12px"><span style="display:inline-block;width:10px;height:10px;background:#0f2740;border:1.5px solid #1e5a8f;border-radius:3px;vertical-align:middle"></span> 已接线（import 实锚）</span>
+      <span style="font-size:12px"><span style="display:inline-block;width:10px;height:10px;background:#0e2612;border:1.5px solid #2e7d32;border-radius:3px;vertical-align:middle"></span> 头声明接线（CONSUMERS 声明）</span>
+      <span style="font-size:12px"><span style="display:inline-block;width:10px;height:10px;background:#2a1c0e;border:1.5px dashed #8a4a12;border-radius:3px;vertical-align:middle"></span> 疑似孤儿（无消费方）</span>
+      <span style="font-size:12px"><span style="display:inline-block;width:10px;height:10px;background:#2a1c0e;border:1.5px dashed #8a4a12;border-radius:99px;vertical-align:middle"></span> ⚠ 层内未接线候选（流水线缺口）</span>
+      <span style="margin-left:auto;font-size:11px" class="dim" id="govm-meta">加载中…</span>
+    </div>
+
+    <!-- 真源统计条：counts 机生值+七族计数+接线三态分布（全部真源现算，禁硬编码计数） -->
+    <div class="card" id="govm-stats" style="margin-bottom:10px;display:flex;gap:14px;align-items:center;flex-wrap:wrap">
+      <span class="dim" style="font-size:12px">真源统计</span>
+      <span id="govm-stat-chips" style="display:flex;gap:6px;align-items:center;flex-wrap:wrap;font-size:12px;color:#8a94a6">加载中…</span>
+    </div>
+
+    <!-- 七层流水线（L0→L6 竖向贯通：左轨层徽+竖连线，层体=职责+挂载 chip 流+未接线候选卡；govm.js 真源渲染） -->
+    <div id="govm-pipeline"></div>
+
+    <!-- 图外引用（out_of_scope_refs：声明哪些治理体系不在本图——边界即语义） -->
+    <div class="card" id="govm-oos" style="margin-top:12px"></div>
+</section>
+<style>
+  /* 样式随页面片段（tdm/factory 画布页先例）；全部色类显式带 #govm-/#p-govm 前缀——
+   * 否则 ID 基础规则(1-1-0)压过类选择器，状态色全部失效（tdm b20260908-05 实测坑照抄规避） */
+  /* 左轨：层徽+名称+竖向连线（L0→L6 流向视觉锚） */
+  #govm-pipeline .gl { position:relative; display:flex; gap:14px; padding:0 0 18px 0; }
+  #govm-pipeline .gl:last-child { padding-bottom:0; }
+  #govm-pipeline .gl-rail { flex:none; width:130px; display:flex; flex-direction:column; align-items:center; }
+  #govm-pipeline .gl-badge { background:#10151d; border:1.5px solid #3d8bff; border-radius:8px; padding:4px 10px;
+    font-size:12px; font-weight:700; color:#7db4e8; white-space:nowrap; }
+  #govm-pipeline .gl-name { font-size:15px; font-weight:700; color:var(--text); margin-top:6px; text-align:center; white-space:nowrap; }
+  #govm-pipeline .gl-line { flex:1; width:2px; min-height:14px; background:#263042; margin-top:8px; border-radius:99px; }
+  /* 层体：职责行+分区标题+挂载 chip 流+未接线候选卡 */
+  #govm-pipeline .gl-body { flex:1; min-width:0; border:1.5px solid #263042; background:#0d1117; border-radius:10px; padding:10px 12px; }
+  #govm-pipeline .gl-role { font-size:12.5px; color:#b9c6da; line-height:1.6; }
+  #govm-pipeline .gl-h { display:flex; align-items:center; gap:8px; font-size:11px; font-weight:700; letter-spacing:.4px;
+    color:#3d8bff; margin:10px 0 5px; }
+  #govm-pipeline .gl-h::after { content:''; flex:1; height:1px; background:#1c2534; }
+  #govm-pipeline .gl-h .cnt { color:#7d8aa0; font-weight:400; }
+  /* 挂载模块 chip（点击复制路径——app:// 下 file:// 链接被拦，tdm 代码锚同款裁定） */
+  #govm-pipeline .chips { display:flex; flex-wrap:wrap; gap:5px; }
+  #govm-pipeline .chip { display:inline-flex; align-items:baseline; max-width:100%; font-size:11px; line-height:1.5;
+    background:#10151d; border:1px solid #263042; border-radius:6px; padding:2px 8px; cursor:pointer; }
+  #govm-pipeline .chip i { font-style:normal; color:#5b8fd6; word-break:break-all; }
+  #govm-pipeline .chip:hover { border-color:#3d8bff; }
+  /* 配置真源 chip：灰系（只读引用，不可点） */
+  #govm-pipeline .cr { display:inline-flex; font-size:11px; line-height:1.5; background:#10151d;
+    border:1px solid #263042; border-radius:6px; padding:2px 8px; color:#8a94a6; word-break:break-all; }
+  /* 未接线候选：橙虚框警示卡（与层体实锚视觉强对比——缺口一眼可辨） */
+  #govm-pipeline .dc { border:1.5px dashed #8a4a12; background:#2a1c0e; border-radius:8px; padding:6px 10px; margin:5px 0; }
+  #govm-pipeline .dc .dc-m { display:block; color:#d29a5b; font-weight:600; font-size:12px; word-break:break-all; }
+  #govm-pipeline .dc .dc-n { display:block; color:#9aa5b5; font-size:11.5px; line-height:1.6; margin-top:2px; }
+  #govm-pipeline .empty { font-size:12px; color:#525d70; line-height:1.6; }
+  /* 统计 chip（工厂 .fn 同款三态：蓝=机生 headline / 绿=已接线 / 橙虚=孤儿） */
+  #govm-stat-chips .gs { display:inline-flex; align-items:baseline; gap:5px; background:#10151d; border:1px solid #263042;
+    border-radius:6px; padding:2px 9px; font-size:12px; }
+  #govm-stat-chips .gs b { color:#c6cdd8; font-size:13px; }
+  #govm-stat-chips .gs i { font-style:normal; color:#7d8aa0; font-size:10.5px; }
+  #govm-stat-chips .gs.hot { border-color:#1e5a8f; background:#0f2740; }
+  #govm-stat-chips .gs.hot b { color:#7db4e8; }
+  #govm-stat-chips .gs.ok { border-color:#2e7d32; background:#0e2612; }
+  #govm-stat-chips .gs.ok b { color:#7fc98a; }
+  #govm-stat-chips .gs.warn { border-color:#8a4a12; border-style:dashed; background:#2a1c0e; }
+  #govm-stat-chips .gs.warn b { color:#d29a5b; }
+  /* 图外引用区（边界声明）：分区头+条目行（名称+真源路径+事由） */
+  #govm-oos .oos-h { display:flex; align-items:center; gap:8px; font-size:11px; font-weight:700; letter-spacing:.4px;
+    color:#3d8bff; margin-bottom:6px; }
+  #govm-oos .oos-h::after { content:''; flex:1; height:1px; background:#1c2534; }
+  #govm-oos .oos-h .cnt { color:#7d8aa0; font-weight:400; }
+  #govm-oos .oos-h .oos-tip { color:#525d70; font-weight:400; letter-spacing:0; }
+  #govm-oos .oos-it { display:flex; gap:10px; align-items:baseline; flex-wrap:wrap; padding:5px 0;
+    border-top:1px solid #161e2b; font-size:12px; }
+  #govm-oos .oos-it:first-of-type { border-top:none; }
+  #govm-oos .oos-n { color:#c6cdd8; font-weight:600; flex:none; }
+  #govm-oos .oos-r { color:#5b8fd6; font-size:11px; word-break:break-all; }
+  #govm-oos .oos-w { color:#8a94a6; font-size:11.5px; line-height:1.6; }
+</style>

@@ -221,3 +221,48 @@ def test_tdm_structure(page):
     assert "未登记喂给说明" in src, "tdm.js 缺「未登记喂给说明」空态站位"
     # 每算法大白话行（Owner 四轮反馈）：ref_descs 翻译层读取（api 聚合 DAL/ML/EXA/IND 既有字段）
     assert "ref_descs" in src, "tdm.js 缺 ref_descs 大白话翻译层读取"
+
+
+def test_govm_registration_static():
+    """治理操作全景静态登记断言（零 playwright 依赖）：manifest/loader PAGES/页面片段/真源 YAML 四件套。"""
+    import yaml
+
+    manifest = yaml.safe_load((WEB_DIR / "features" / "manifest.yaml").read_text(encoding="utf-8"))
+    assert "govm-map" in {m["id"] for m in manifest["modules"]}, "manifest.yaml 缺 govm-map 注册"
+    assert "govm" in _pages_from_loader(), "loader.js PAGES 缺 govm 页面片段"
+    assert (WEB_DIR / "pages" / "govm.html").exists(), "pages/govm.html 缺失"
+    assert (WEB_DIR / "features" / "govm.js").exists(), "features/govm.js 缺失"
+    src = (WEB_DIR / "features" / "govm.js").read_text(encoding="utf-8")
+    assert "/api/govm" in src, "govm.js 缺 /api/govm 真源 fetch"
+    # 真源 YAML 可解析且七层流水线齐全（GOMAP-001；只读校验不改动真源——真源归 generate_governance_map 会话所有）
+    cfg = yaml.safe_load(
+        (Path(__file__).resolve().parents[2] / "config" / "governance_operations_map.yaml").read_text(encoding="utf-8")
+    )
+    assert cfg["map_id"] == "GOMAP-001"
+    assert [l["id"] for l in cfg["pipeline"]["layers"]] == [f"GOM-L{i}" for i in range(7)]
+
+
+def test_govm_structure(page):
+    """治理操作全景页结构断言（ACC-F-GOVM-MAP 机断条款静态形态；API 断连也须过——验结构不验数据）。"""
+    page.wait_for_function("!!window.govmReady", timeout=20000)  # govm.js IIFE 自举完成标志（loader 加载链尾段）
+    page.evaluate("go('govm')")
+    page.wait_for_timeout(500)
+    checks = page.evaluate(
+        """({
+        stats: !!document.getElementById('govm-stats'),
+        stat_chips: !!document.getElementById('govm-stat-chips'),
+        pipeline: !!document.getElementById('govm-pipeline'),
+        oos: !!document.getElementById('govm-oos'),
+        meta: !!document.getElementById('govm-meta'),
+        legend_wired: document.querySelector('#p-govm').textContent.includes('已接线'),
+        legend_header: document.querySelector('#p-govm').textContent.includes('头声明接线'),
+        legend_orphan: document.querySelector('#p-govm').textContent.includes('疑似孤儿'),
+        legend_disc: document.querySelector('#p-govm').textContent.includes('未接线候选'),
+    })"""
+    )
+    fails = [k for k, v in checks.items() if not v]
+    assert not fails, f"govm 结构断言失败: {fails}"
+    # 模块脚本静态断言：未接线候选渲染 + 机生统计读取（防功能被静默摘除）
+    src = (WEB_DIR / "features" / "govm.js").read_text(encoding="utf-8")
+    assert "disconnected" in src, "govm.js 缺 disconnected 未接线候选渲染"
+    assert "counts" in src, "govm.js 缺 counts 机生统计读取"

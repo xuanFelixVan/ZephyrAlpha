@@ -2585,6 +2585,69 @@ def factory_ledger() -> dict[str, Any]:
     return _factory_ledger()
 
 
+_GOVM_CACHE: dict[str, Any] = {}   # /api/govm mtime 缓存（改 YAML 即失效重算，同 /api/tdm /api/factory 模式）
+
+
+@app.get("/api/govm")
+def governance_operations_map() -> dict[str, Any]:
+    """治理操作全景图全量（前端原生渲染真源）——真源=config/governance_operations_map.yaml（GOMAP-001）。
+
+    真源骨架由 scripts/governance/generate_governance_map.py 机生（families 层全量重建，
+    pipeline/out_of_scope_refs 为人工语义层）——本端点只做只读投影+族成员字段裁剪
+    （module/path/domain/maturity/wiring 五字段，前端只读渲染、计数现算零硬编码）。
+    每请求按 mtime 缓存（改 YAML 即自动生效，无需重启，同 /api/tdm /api/factory 模式）。
+    消费者=web/features/govm.js（治理操作全景页，交互范式学 tdm/factory 页）。
+    """
+    p = _REPO / "config" / "governance_operations_map.yaml"
+    if not p.exists():
+        return {"ok": False, "reason": f"真源缺失: {p.name}（先跑 scripts/governance/generate_governance_map.py）"}
+    mtime = p.stat().st_mtime
+    cached = _GOVM_CACHE.get("mtime")
+    if cached == mtime and _GOVM_CACHE.get("payload"):
+        return _GOVM_CACHE["payload"]
+
+    import yaml as _yaml
+
+    raw = _yaml.safe_load(p.read_text(encoding="utf-8"))
+    layers_out = []
+    for lay in (raw.get("pipeline") or {}).get("layers", []):
+        layers_out.append({
+            "id": lay.get("id", ""),
+            "name_zh": lay.get("name_zh", ""),
+            "desc_zh": lay.get("desc_zh", ""),
+            "mounts": lay.get("mounts", []),
+            "config_refs": lay.get("config_refs", []),
+            "disconnected": [
+                {"mod": x.get("mod", ""), "note_zh": x.get("note_zh", "")}
+                for x in (lay.get("disconnected") or []) if isinstance(x, dict)
+            ],
+        })
+    families_out: dict[str, list[dict[str, Any]]] = {}
+    for fam, members in (raw.get("families") or {}).items():
+        families_out[fam] = [
+            {"module": m.get("module", ""), "path": m.get("path", ""),
+             "domain": m.get("domain", ""), "maturity": m.get("maturity", ""),
+             "wiring": m.get("wiring", "")}
+            for m in members or [] if isinstance(m, dict)
+        ]
+    payload = {
+        "ok": True,
+        "map_id": raw.get("map_id"),
+        "name_zh": raw.get("name_zh"),
+        "schema_version": raw.get("schema_version"),
+        "effective_from": raw.get("effective_from"),
+        "generator": raw.get("generator"),
+        "counts": raw.get("counts", {}),
+        "layers": layers_out,
+        "families": families_out,
+        "out_of_scope_refs": raw.get("out_of_scope_refs", []),
+        "generated_at": now_utc().isoformat(" ", "seconds"),
+    }
+    _GOVM_CACHE["mtime"] = mtime
+    _GOVM_CACHE["payload"] = payload
+    return payload
+
+
 _THREEHIGH_CACHE: dict[str, Any] = {"mtime": None, "payload": None}
 _THREEHIGH_CSV = _REPO / "data" / "strategy_intake" / "three_high_candidates.csv"
 

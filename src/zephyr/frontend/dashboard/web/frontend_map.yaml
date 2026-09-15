@@ -486,6 +486,20 @@ features:
   file: features/factory/factory.js
   backend_ref: [module:MOD-L08-001, api:/api/factory/ledger]   # 真源=c1_backtest.strategy_screen（查询口径同 MOD-BT-078 bothwin）
   status: active
+- id: F-GOVM-MAP
+  name: 治理操作全景画布（七层流水线 L0→L6 实时映射，GOMAP-001）
+  page: govm
+  module_id: govm-map
+  file: features/govm.js
+  backend_ref: [module:MOD-L08-001, api:/api/govm]   # 真源=config/governance_operations_map.yaml（scripts/governance/generate_governance_map.py 机生骨架）经 /api/govm 只读投影
+  status: active
+- id: F-GOVM-STATS
+  name: 治理接线统计条（总模块/疑似孤儿机生值+七族计数+接线三态现算图例）
+  page: govm
+  module_id: govm-map
+  file: features/govm.js
+  backend_ref: [module:MOD-L08-001, api:/api/govm]   # counts/families 机生层直读，前端零硬编码计数（宪法 §9.5）
+  status: active
 - id: F-CRYPTOBT-AUTO-01
   name: 净值曲线（演示）
   page: cryptobt

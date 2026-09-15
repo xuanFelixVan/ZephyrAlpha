@@ -850,3 +850,15 @@ modules:
     acceptance: ACC-F-PROMO-PAGE   # S13 C5 验收锚=docs/_working/full-auto-chain/S13_frontend_approval/README.md §5
     handbook: []
     status: active
+  - id: govm-map
+    name: 治理操作全景（七层流水线实时映射 /api/govm）
+    file: features/govm.js
+    page: govm
+    init: "IIFE 自举（页面片段 innerHTML 注入 script 不执行，loader.js 显式加载；无 init/destroy 契约）"
+    destroy: none
+    depends: []   # 直接 fetch /api/govm（API_BASE=127.0.0.1:8890 与 services/api.js 同源，app:// 模式相对 fetch 必断——tdm/factory 同款坑）
+    toggle: none
+    styles: pages/govm.html <style>   # 画布页同 tdm/factory 先例：样式随页面片段
+    acceptance: ACC-F-GOVM-MAP
+    handbook: []
+    status: active
