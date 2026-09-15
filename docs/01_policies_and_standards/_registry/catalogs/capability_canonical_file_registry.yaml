@@ -14928,6 +14928,10 @@ creation_tokens:
   token: full-auto-chain-readme-20260914
   created_by: st-fullauto-20260915
   capability: full-auto-chain
+- file: docs/_working/full-auto-chain/S11_assembled_backtest/nodes/decision_kernel_mining.md
+  token: full-auto-chain-decision-kernel-mining-20260915
+  created_by: st-qoder-t1a-20260915
+  capability: full-auto-chain
 - file: src/zephyr/strategy_pipeline/fw_backtest.py
   token: auto-chain-c6-fw-backtest-2026-09-15
   created_by: st-fullauto-20260915
@@ -14980,4 +14984,8 @@ creation_tokens:
   token: kimi-deep-mining-kimi-deep-mining-charter-20260915
   created_by: st-miningsop-20260915
   capability: kimi_deep_mining
+- file: docs/_working/2026-09-15-governance-module-mining-sop-map.md
+  token: governance-mining-map-2026-09-15-governance-module-mining-sop-map-20260915
+  created_by: qoder-gov-patch-20260915
+  capability: governance_mining_map
 di_seam_exemptions: []
