@@ -11,7 +11,7 @@
 # [SAFETY] M
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] —
-# [TESTS] none  # 2026-09-05 AI-00：全仓无测试 import 本模块（原声明路径不存在）
+# [TESTS] tests/regime/test_wyckoff_engine.py  # 2026-09-15 WYF-2：6 阶段全链+双 bug 回归 9 用例
 # [A_module] module_id=MOD-REGIME-002 | layer=module | stability=evolving | safety=M | ai_autonomy=ai_modifiable
 # [TTL] permanent
 # [ARCH-REF] #10_regime_detector_spec §4.12 #MOD-REGIME-002 #Phase2c
@@ -43,6 +43,8 @@ Version: 0.1.0
 
 from __future__ import annotations
 
+from typing import Final
+
 import numpy as np
 import pandas as pd
 
@@ -50,7 +52,7 @@ __all__ = ["detect_wyckoff_events", "wyckoff_score"]
 
 
 # Wyckoff 6 阶段权重（10_regime_detector_spec §4.12.2）
-_STAGE_WEIGHTS: dict[str, float] = {
+_STAGE_WEIGHTS: Final[dict[str, float]] = {
     "ps": 10.0,
     "sc": 30.0,
     "ar": 15.0,
@@ -95,6 +97,8 @@ def detect_wyckoff_events(
 
     rolling_min = l.rolling(window).min()
     rolling_max = h.rolling(window).max()
+    # WYF-1 Bug1 修复：SC 判定必须用收盘价自身的滚动新低（c<=low 滚动低点数学上不可达）
+    close_rolling_min = c.rolling(window).min()
 
     # ── PS 初步支撑：下跌中放量但不再创新低 ──
     # vol_z>1（放量）& low>rolling_min.shift(1)（不再创新低）& pct<0（下跌趋势中）
@@ -103,7 +107,8 @@ def detect_wyckoff_events(
 
     # ── SC 抛售高潮：巨量暴跌收最低 ──
     # vol_z>2 & pct<-4% & close<=rolling_min（收在区间最低）
-    sc_condition = (z > 2.0) & (pct < -0.04) & (c <= rolling_min + 1e-8)
+    # WYF-1 Bug1 修复：SC 收在区间最低 = 收盘价创滚动新低（原 low 滚动低点数学不可达）
+    sc_condition = (z > 2.0) & (pct < -0.04) & (c <= close_rolling_min + 1e-8)
     events["sc"] = sc_condition.astype(float)
 
     # ── AR 自动反弹：SC 后 10 日内创新高 ──
@@ -115,7 +120,9 @@ def detect_wyckoff_events(
     # SC 低点 forward fill（只用已发生的 SC 事件的 low，PIT 安全）
     sc_low = l.where(events["sc"] > 0).ffill()
     # AR 后的均量（AR 事件日的 volume 滚动均值，缩量判定基准）
-    ar_vol_avg = v.where(events["ar"] > 0).rolling(10).mean()
+    # WYF-1 Bug2 修复：AR 事件稀疏，裸 rolling(10) 的 min_periods=10 导致恒 NaN；
+    # ffill 传播已发生事件 + min_periods=1（ffill 已保证 PIT 安全——只传播已发生阶段）
+    ar_vol_avg = v.where(events["ar"] > 0).ffill().rolling(10, min_periods=1).mean()
     # AR 高点 forward fill（只用已发生的 AR 事件的 high）
     ar_high = h.where(events["ar"] > 0).ffill()
 
