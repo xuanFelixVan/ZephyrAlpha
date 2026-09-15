@@ -145,14 +145,17 @@ Usage::
 from __future__ import annotations
 
 import ast
+import json
 import logging
 import os
 import re
+import time
 
 import yaml
 
 from zephyr.gov_enforcement.rule_bridge.commit_gate_registry import GateSpec, is_test_exempt
 from zephyr.governance.rule_patterns import RULE_NAME_RE
+from zephyr.shared.utils.time_utils import now_utc
 
 logger = logging.getLogger(__name__)
 
@@ -166,6 +169,45 @@ _RULES_DIR_PREFIX = "docs/01_policies_and_standards/rules/"
 _GOVERNANCE_ROOT_PREFIX = "src/zephyr/governance/"
 _ALIAS_MARKER = "class-name-alias"
 _OTHER_FORMAT_EXTENSIONS = (".md", ".sh", ".ps1", ".mmd", ".json")
+
+# === B1 registry 撕裂读重试（2026-09-16） ===
+# 病根：并发会话写 capability registry 时存在瞬态撕裂读（读半个写入窗口），
+# yaml.safe_load 单次失败即 fail-closed 会把"设施瞬态故障"误报成"违规阻断"。
+_REGISTRY_PARSE_RETRIES = 3
+_REGISTRY_RETRY_INTERVAL_S = 0.3
+# 解析失败审计路径（相对 project_root；.runtime/audit/ 是既有审计 jsonl 约定区）
+_PARSE_FAIL_AUDIT_REL = (".runtime", "audit", "create_guard_parse_fail.jsonl")
+
+
+def _read_registry_text(registry_path) -> str:
+    """读取 registry 文本（读取单点收敛——测试 monkeypatch 目标）。
+
+    独立成单点的目的：撕裂读重试计数与"先坏后好"模拟都只需 patch 本函数，
+    不触碰磁盘真源（测试隔离铁律）。
+    """
+    return registry_path.read_text(encoding="utf-8")
+
+
+def _audit_registry_parse_fail(project_root, registry_path, reason: str) -> None:
+    """registry 解析失败审计（jsonl append 到 .runtime/audit/create_guard_parse_fail.jsonl）。
+
+    - 时间戳用 now_utc（RULE-SCHEMA-TZ：禁 datetime.now()/time.time()）。
+    - reason 截前 200 字（防长 traceback 撑爆审计文件）。
+    - 写失败 fail-open：审计是观测件，故障不阻断主流程（只 warning）。
+    """
+    try:
+        audit_path = project_root.joinpath(*_PARSE_FAIL_AUDIT_REL)
+        audit_path.parent.mkdir(parents=True, exist_ok=True)
+        record = {
+            "timestamp": now_utc().isoformat(),
+            "event": "registry_parse_fail",
+            "path": str(registry_path),
+            "reason": str(reason)[:200],
+        }
+        with audit_path.open("a", encoding="utf-8") as _f:
+            _f.write(json.dumps(record, ensure_ascii=False) + "\n")
+    except Exception as _e:  # noqa: BLE001 — 审计写失败 fail-open
+        logger.warning("CREATE-GUARD: registry 解析失败审计写入失败: %s", _e, exc_info=True)
 
 
 def _compute_commit_files_rel(gateway, files: list[str]) -> set[str]:
@@ -494,7 +536,12 @@ def _check_class_uniqueness(gateway, new_py_files: list[str]) -> tuple[bool, str
 
 
 def _load_capability_registry(gateway) -> tuple[dict | None, str]:
-    """加载 capability registry（fail-closed）。返回 (data, error_detail)。"""
+    """加载 capability registry（fail-closed）。返回 (data, error_detail)。
+
+    B1 撕裂读重试（2026-09-16）：并发写窗口存在瞬态撕裂读，yaml.safe_load 包
+    3 次重试（0.3s 退避）。重试耗尽仍 fail-closed（不变量不动——防删 registry
+    绕过 token 检查），但消息区分「设施故障（非违规）」并落审计留痕。
+    """
     from zephyr.governance.capability_lookup import REGISTRY_YAML
 
     _registry_yaml = (
@@ -514,13 +561,30 @@ def _load_capability_registry(gateway) -> tuple[dict | None, str]:
             f"禁止放行——防删 registry 绕过 creation_token 检查。"
             f"修复：git checkout HEAD -- {_registry_yaml} 恢复 registry 后重试。"
         )
-    try:
-        data = yaml.safe_load(_registry_yaml.read_text(encoding="utf-8"))
-    except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
+
+    parsed = False
+    data = None
+    last_err: Exception | None = None
+    for _attempt in range(_REGISTRY_PARSE_RETRIES):
+        try:
+            data = yaml.safe_load(_read_registry_text(_registry_yaml))
+            parsed = True
+            break
+        except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
+            last_err = e
+            if _attempt < _REGISTRY_PARSE_RETRIES - 1:
+                time.sleep(_REGISTRY_RETRY_INTERVAL_S)  # noqa: m10-time-trigger — 注册表撕裂读失败重试的指数退避等待，错误恢复路径非周期轮询
+    if not parsed:
+        _audit_registry_parse_fail(
+            gateway.project_root, _registry_yaml, f"{type(last_err).__name__}: {last_err}"
+        )
         return None, (
             f"CREATE-GUARD fail-closed: capability registry 解析失败"
-            f"({type(e).__name__}: {e})。禁止放行——registry 是 creation_token 真源，"
-            f"语法错误=检测器失效。修复：修正 {_registry_yaml} 的 YAML 语法后重试。"
+            f"（{_REGISTRY_PARSE_RETRIES} 次重试后仍失败，{type(last_err).__name__}: {last_err}）。"
+            f"设施故障（注册表解析失败，非违规——请稍后重试或检查并发写）。"
+            f"禁止放行——registry 是 creation_token 真源，"
+            f"设施故障=检测器失效。修复：修正 {_registry_yaml} 的 YAML 语法，"
+            f"或等待并发写完成后重试。"
         )
 
     if not isinstance(data, dict):
