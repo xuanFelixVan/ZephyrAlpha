@@ -410,6 +410,11 @@ def main() -> None:
         if not ch_writer.write_tsv(_TABLE, _INSERT_COLUMNS, tsv.encode("utf-8")):
             raise RuntimeError(f"strategy_screen 落库未确认（run_id={run_id}）——fail-closed")
         inserted = len(rows)
+        # 红蓝自攻发现：只读账本不写回 → N 永不增长、后续批次 DSR 少折减。
+        # 落库即回填台账（幂等）；判重跳过的旧行不重复计数（sync 按 is_sharpe 非空行数对账）。
+        from zephyr.backtest.core.n_trial_ledger import TrialLedger
+
+        TrialLedger().sync_screen_counts(conn=c, synced_by="c4_batch_screen")
     print(json.dumps({
         "run_id": run_id, "results": len(results), "failures": len(failures),
         "deferral_rows": len(deferrals), "inserted": inserted,
