@@ -1,0 +1,51 @@
+schema_version: 1.0.0
+ttl: permanent
+doc_type: register
+title: 全局累计试验数账本（N 账本，MOD-BT-200）
+status: active
+version: 0.1.0
+date: '2026-09-15'
+owner: ZephyrAlpha-Owner
+counting_rule: 计数边界=可审计机器回测次数（2026-09-15 裁定）。count = screen_runs.total_trials + sum(batch_records.n_trials)。manual_population
+  只入 known_floor 披露，不入 count。
+manual_population: 0
+manual_note: 人工历史试错不可审计，仅 Owner 登记时累加；当前无登记=0（诚实缺省）
+sources:
+  screen_table: c1_backtest.strategy_screen
+  batch_records: 显式登记的台账外可审计批量（batch_id 唯一，幂等）
+screen_runs:
+  total_trials: 1187
+  total_runs: 26
+  last_synced_at: '2026-09-15T04:17:56+00:00'
+  last_synced_by: st-f06dsr-20260915b
+batch_records:
+- batch_id: grid_20260915-051517
+  n_trials: 6
+  kind: factory_grid_batch_a
+  note: 'auto: data/strategy_intake/grid_20260915-051517/summary.json'
+  recorded_at: '2026-09-15T04:17:56+00:00'
+  recorded_by: st-f06dsr-20260915b
+- batch_id: grid_20260915-051610
+  n_trials: 8
+  kind: factory_grid_batch_a
+  note: 'auto: data/strategy_intake/grid_20260915-051610/summary.json'
+  recorded_at: '2026-09-15T04:17:56+00:00'
+  recorded_by: st-f06dsr-20260915b
+- batch_id: grid_20260915-052012
+  n_trials: 200
+  kind: factory_grid_batch_a
+  note: 'auto: data/strategy_intake/grid_20260915-052012/summary.json'
+  recorded_at: '2026-09-15T04:17:56+00:00'
+  recorded_by: st-f06dsr-20260915b
+- batch_id: grid_20260915-052749
+  n_trials: 1999
+  kind: factory_grid_batch_a
+  note: 'auto: data/strategy_intake/grid_20260915-052749/summary.json'
+  recorded_at: '2026-09-15T04:17:56+00:00'
+  recorded_by: st-f06dsr-20260915b
+- batch_id: grid_20260915-060812
+  n_trials: 1999
+  kind: factory_grid_batch_a
+  note: 'auto: data/strategy_intake/grid_20260915-060812/summary.json'
+  recorded_at: '2026-09-15T04:17:56+00:00'
+  recorded_by: st-f06dsr-20260915b
