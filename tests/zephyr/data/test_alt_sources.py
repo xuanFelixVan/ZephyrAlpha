@@ -504,3 +504,64 @@ def test_visibility_full_refresh_over_limit(monkeypatch):
     r = list(p.fetch(_make_payload("alt_sz_visibility", table="c1_market.alt_sz_visibility",
                                    incremental=False), SourcePolicy()))[0]
     assert r.error and "报批" in r.error
+
+
+def _res_level_stub(i: int, page_base: int = 0) -> dict:
+    """水位行构造器：i 全局递增（TM 前缀按 i 演进，模拟源端尾部追加）。"""
+    n = page_base + i
+    day = 1 + n // 14400
+    hhmm = (n % 14400) // 10
+    return {"ID": f"RID{n:09d}", "STCD": f"ST{n % 5:03d}",
+            "TM": f"2026-08-{day:02d} {hhmm // 60:02d}:{hhmm % 60:02d}:00",
+            "RZ": 30.0 + (n % 100) / 10}
+
+
+def test_reservoir_level_incremental_tail_cursor(monkeypatch):
+    """水位尾部页游标增量（TM 非单调序，二分/startDate 均不适用）：
+    total 探尾页 → 从尾页-9 拉到真尾（短页止）→ 幂等全收。"""
+    from zephyr.data.implementations import akshare_alt_provider as mod
+
+    total = 205000  # 21 页：页 1-20 满页 + 页 21 短页 5000
+    pages = {pg: [_res_level_stub(i, page_base=(pg - 1) * 10000)
+                  for i in range(10000 if pg < 21 else 5000)]
+             for pg in range(12, 22)}
+    calls = []
+
+    def fake_get(self, url, params):
+        calls.append(dict(params))
+        if params.get("rows") == 1:
+            return {"total": total, "data": [_res_level_stub(0)]}
+        return {"data": pages[params["page"]]}
+
+    monkeypatch.setattr(mod, "get_secret_or_default", lambda *a, **k: "stub-key")
+    monkeypatch.setattr(mod.AkshareAltProvider, "_sz_api_get", fake_get)
+    p = mod.AkshareAltProvider()
+    r = list(p.fetch(_make_payload("alt_sz_reservoir_level",
+                                   table="c1_market.alt_sz_reservoir_level",
+                                   start=datetime.date(2026, 8, 1)), SourcePolicy()))[0]
+    assert r.error is None
+    # 尾部窗口：start_page = max(1, 21 - 10 + 1) = 12，拉页 12-21 共 95000 行
+    assert len(r.rows) == 95000
+    requested_pages = [c["page"] for c in calls if c.get("rows") == mod._SZ_OPEN_PAGE_SIZE]
+    assert min(requested_pages) == 12 and max(requested_pages) == 21
+    # 短页止真尾：页 22+ 从未被请求
+    assert 22 not in requested_pages
+    assert r.last_key == "2026-08-15"  # 最大日期：n=204999 → day=1+204999//14400=15
+    tms = [row[2] for row in r.rows]
+    assert tms == sorted(tms)  # rows_out.sort() 元组全序
+
+
+def test_reservoir_level_full_refresh_rejected(monkeypatch):
+    """水位全量模式 fail-visible 拒绝（7630 万全史已专项完成，防内存墙）。"""
+    from zephyr.data.implementations import akshare_alt_provider as mod
+
+    monkeypatch.setattr(mod, "get_secret_or_default", lambda *a, **k: "stub-key")
+    monkeypatch.setattr(
+        mod.AkshareAltProvider, "_sz_api_get",
+        lambda self, url, params: {"total": 76299520, "data": [_res_level_stub(0)]},
+    )
+    p = mod.AkshareAltProvider()
+    r = list(p.fetch(_make_payload("alt_sz_reservoir_level",
+                                   table="c1_market.alt_sz_reservoir_level",
+                                   incremental=False), SourcePolicy()))[0]
+    assert r.error and "专项" in r.error

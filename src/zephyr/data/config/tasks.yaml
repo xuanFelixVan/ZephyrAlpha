@@ -2702,7 +2702,7 @@ tasks:
   symbols:
   fallback_sources: []    # 天然无副源：深圳开放数据平台单源（主钥匙）
   extra:
-    description: "深圳水库水位分钟级序列（7630 万行，无过滤参数=二分定位增量同能见度；ID 幂等；首刷限近窗，全史报批）"
+    description: "深圳水库水位分钟级序列（7600 万行，无过滤参数且 TM 非全表单调序=尾部页游标增量：探 total 得尾页回拉 10 页窗，total 即游标无需持久态；stcd+id 幂等；全史已 2026-09-16 专项完成，增量模式拒绝全量防内存墙）"
     start_days_back: 30
 
 - task_id: alt_sz_env_meteor_refresh

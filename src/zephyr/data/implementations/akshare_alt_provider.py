@@ -182,6 +182,7 @@ _SZ_STAT_BATCH2_SIDS = {sid for _, sid in _SZ_STAT_SERIES_BATCH2}
 _SZ_OPEN_BASE = "https://opendata.sz.gov.cn/api/"
 _SZ_OPEN_PAGE_SIZE = 10000
 _SZ_VISIBILITY_FULL_PAGE_LIMIT = 400  # 能见度全量模式页数天花板（400 万行）；超限=报批专项
+_SZ_RES_LEVEL_TAIL_PAGES = 10  # 水位尾部页游标窗口（10 万行 ≈ 一周余量；日增实测 1-2 页）
 
 # 能力 -> 通用拉取器路由（方法名仍按 _fetch_{cap} 约定在类尾 setattr 生成）
 _SZ_OPEN_CAPS = frozenset({
@@ -243,6 +244,7 @@ _TBL_ALT_SZ_CLIMATE_HIST = get_registry().table("market_alt_sz_climate_hist")
 _TBL_ALT_SZ_GROUND_OBS = get_registry().table("market_alt_sz_ground_obs")
 _TBL_ALT_LANDFALL = get_registry().table("market_typhoon_landfall_history")
 _TBL_ALT_TYNAMES = get_registry().table("market_typhoon_names")
+_TBL_ALT_TYPHOON = get_registry().table("market_alt_typhoon_track")
 
 # 统计月报列名兼容映射（各系列列名不一，取首个非空）
 _STAT_MONTH_KEYS = ("BENYUE", "BNBJD", "BY")
@@ -1337,6 +1339,31 @@ class AkshareAltProvider(IngestProviderBase):
                         t = self._visibility_row(r)
                         if t:
                             rows_out.append(t)
+            elif cap == "alt_sz_reservoir_level":
+                # 服务 1952552493 无过滤参数且 TM 非全表单调序（按内部 ID 序存放，页内倒序/跨页乱段，
+                # 2026-09-16 全史回补实证）："startDate 过滤"与"升序二分定位"两假设均不成立。
+                # 增量改为尾部页游标：新行追加在页空间尾部（实测日增约 1-2 页），每次从尾页-N
+                # 拉到真尾；total 即游标，无需持久状态，ReplacingMergeTree(stcd,id) 幂等去重。
+                # 全量模式拒绝（7630 万行全史已由 2026-09-16 专项完成，回补器留盘 scripts/data/）。
+                lvl_ctx = _SZ_SINGLE_APIS[cap]
+                key_lvl = get_secret_or_default("SZ_OPEN_DATA_APPKEY_NEW") if cap in _SZ_NEW_KEY_CAPS else None
+                if cap in _SZ_NEW_KEY_CAPS and not key_lvl:
+                    raise ValueError(f"{cap} 需 SZ_OPEN_DATA_APPKEY_NEW（.env 未配置）")
+                if payload.incremental and payload.start:
+                    total = self._sz_get_total(policy, lvl_ctx)
+                    if not total:
+                        raise ValueError("水位增量探测失败：total 不可得（平台退化），拒绝盲扫")
+                    last_page = (total + _SZ_OPEN_PAGE_SIZE - 1) // _SZ_OPEN_PAGE_SIZE
+                    start_page = max(1, last_page - _SZ_RES_LEVEL_TAIL_PAGES + 1)
+                    batch_raw = self._sz_open_fetch_rows_from(policy, lvl_ctx, start_page)
+                    for r in batch_raw:
+                        t = self._res_level_row(r)
+                        if t:
+                            rows_out.append(t)
+                else:
+                    raise ValueError(
+                        "水位全量回补超限（首刷纪律：7630 万行全史已由 2026-09-16 专项完成，"
+                        "拒绝盲扫防内存墙）；增量走 daily_event 任务尾部页游标")
             else:
                 parser = {"alt_sz_weather_warning": self._warning_row,
                           "alt_sz_marine_forecast": self._marine_row,
@@ -1361,14 +1388,18 @@ class AkshareAltProvider(IngestProviderBase):
                 key = get_secret_or_default("SZ_OPEN_DATA_APPKEY_NEW") if cap in _SZ_NEW_KEY_CAPS else None
                 if cap in _SZ_NEW_KEY_CAPS and not key:
                     raise ValueError(f"{cap} 需 SZ_OPEN_DATA_APPKEY_NEW（.env 未配置）")
-                for r in self._sz_open_fetch_rows(policy, _SZ_SINGLE_APIS[cap], extra, app_key=key):
+                # 单资源通道页上限 100（100 万行）：ground_obs 等大单资源曾顶到 40 页上限被静默截尾
+                for r in self._sz_open_fetch_rows(policy, _SZ_SINGLE_APIS[cap], extra,
+                                                  max_pages=100, app_key=key):
                     t = parser(r)
                     if t:
                         rows_out.append(t)
-            rows_out.sort()
+            # 排序按首列幂等键（各解析器保证首列非 None）：全元组比较会在数值列
+            # None/float 混排时 TypeError（climate_hist 缺测行实证 2026-09-16）
+            rows_out.sort(key=lambda t: t[0])
             last_key = ""
             if rows_out:
-                # 排序按元组全序（幂等键优先），末行≠最大日期——last_key 必须显式取日期列最大值
+                # 末行≠最大日期——last_key 必须显式取日期列最大值
                 if cap == "alt_sz_weather_warning":
                     last_key = max(t[10] for t in rows_out)
                 elif cap == "alt_sz_house_daily":
