@@ -718,6 +718,33 @@ class ReconciliationRegistry:
 
         import inspect
 
+        # MOD-GOV-RECONCILE-IMPORTFIX（2026-09-15）：reconcile_for 入口 sys.path 保险
+        # + `scripts` 包毒缓存清洗——post_commit 直连 sync 回退与 post_commit_worktree
+        # merge 路径持续 `No module named 'scripts.ops_guard'` 治本（governance.db
+        # reconcile_execution_log 150 条，2026-08-14 起实发）。
+        # 病根两层：①入口脚本直跑（python scripts/git_commit.py 等）sys.path 无仓根；
+        # ②Python 安装目录下 win32/scripts 类命名空间子目录被裸 `import scripts` 解析
+        # 为命名空间包并缓存 sys.modules——#ARCH-104（6ae59b9b52）仅补 path 不清缓存，
+        # submodule 搜索仍走已缓存 __path__（gateway._ensure_scripts_package_importable
+        # L144 docstring 已文档化该机理，但其调用仅覆盖 --enqueue 模式，直连提交不经
+        # 过）。本入口是全部 reconcile_for 调用点（gateway sync/worker、
+        # session_worktree merge×2、batcher）的公共汇聚点，一处清洗全兜。
+        # 同族语义就地内联，不 import gateway 以免循环依赖。
+        import sys as _fix_sys
+
+        _fix_root = str(Path(__file__).resolve().parents[4])
+        if _fix_root not in _fix_sys.path:
+            _fix_sys.path.insert(0, _fix_root)
+        _fix_scripts_dir = str(Path(_fix_root) / "scripts")
+        _fix_pkg = _fix_sys.modules.get("scripts")
+        if (
+            _fix_pkg is not None
+            and Path(_fix_scripts_dir).is_dir()
+            and _fix_scripts_dir not in (getattr(_fix_pkg, "__path__", None) or ())
+        ):
+            for _n in [n for n in list(_fix_sys.modules) if n == "scripts" or n.startswith("scripts.")]:
+                del _fix_sys.modules[_n]
+
         # T1① lazy import（本模块顶层纯 stdlib 约束，函数内 import 为先例）：
         # DeleteBlockedError 用于映射 critical_warn；ops_guard 不可达时上下文
         # 注入降级为空操作（不阻断 reconciler 主流程，声明制失效风险由注册期

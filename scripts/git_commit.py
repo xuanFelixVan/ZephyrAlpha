@@ -588,6 +588,13 @@ def main() -> int:
     # 402 would_block 全测试噪音归因完毕），commit 入口 in-process 删除护栏转正硬拦。
     # 裸删除命中保护区即 DeleteBlockedError；授权通道（safe_rmtree/guard_*）直通。
     # 安装失败静默降级，不阻断 commit 主链路。
+    # MOD-GOV-RECONCILE-IMPORTFIX（2026-09-15）：scripts 包毒缓存清洗前置到一切
+    # `import scripts.*` 之前——原清洗仅覆盖 --enqueue 模式（_enqueue_mode 内
+    # _ensure_scripts_package_importable 调用），直连提交的 L593 ops_guard 安装与
+    # post-commit reconciler 均裸奔：win32/scripts 命名空间缓存一旦建立，事后补
+    # sys.path 无法翻转（gateway._ensure_scripts_package_importable docstring 已
+    # 文档化机理；governance.db reconcile_execution_log 150 条 post_commit 实发）。
+    _ensure_scripts_package_importable(str(_PROJECT_ROOT))
     try:
         try:
             from scripts.ops_guard import install_inprocess_enforcement

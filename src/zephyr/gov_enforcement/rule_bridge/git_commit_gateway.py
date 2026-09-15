@@ -1744,6 +1744,13 @@ class GitCommitGateway:
             _root_str = str(self.project_root)
             if _root_str not in _sys.path:
                 _sys.path.insert(0, _root_str)
+            # MOD-GOV-RECONCILE-IMPORTFIX（2026-09-15）：#ARCH-104 残余治本——上段仅补
+            # path 不清 win32/scripts 命名空间毒缓存（submodule 搜索走已缓存 __path__，
+            # 事后补 sys.path 无法翻转），WMI spawn 失败降级 sync 的直连提交仍实发
+            # GATE-TMP-CLEANUP 等 4 gate ImportError（governance.db 69 条 post_commit，
+            # 2026-08-26..09-15 持续）。升级为同文件 _ensure_scripts_package_importable
+            # （补根+毒缓存整族清除两步治本，与 reconcile_for 入口修复互为纵深）。
+            _ensure_scripts_package_importable(_root_str)
             # ARCH-GIT-CALL-BUDGET P2.3 (2026-07-19): batched auto-commit wrapper.
             with self._batcher as _batcher_ctx:
                 _batcher_ctx.enable(session_id)
