@@ -26,32 +26,7 @@
 SSoT: depgraph blueprint_id=MOD-SIG-109
 Version: 0.1.0
 
-# [ALGO_FLOW]
-# 层: 输入
-# - id: I1
-#   name: config 参数
-#   fields: 参数 config（无注解）
-#   code: strategy_cross_vote_funnel.py 顶层公共函数形参（AST 提取）
-# 层: 算法
-# - id: A1
-#   name_zh: ① StrategyCrossVoteFunnel
-#   name_en: StrategyCrossVoteFunnel
-#   intro: 多策略交叉投票漏斗（第五层在线信号层）。
-#   desc: 多策略交叉投票漏斗（第五层在线信号层）。；公共方法（定义序）: evaluate_symbol, run；源码 L145-L231
-#   inputs: config
-#   outputs: 返回值
-#   （注：A1 之后另有 5 个公共定义未列入（含 5 个数据契约/异常/枚举声明类），见源码）
-# 层: 输出
-# - id: O1
-#   name_zh: 模块公共 API 面（6 定义）
-#   name_en: public defs
-#   intro: StrategyCrossVoteFunnel
-#   downstream: （候选：第六层组合优化 B10-01505 W-P1-21）
-# [/ALGO_FLOW]
-#
-# 边:
-# I1 --> A1
-# A1 --> O1
+# [ALGO_FLOW] external: docs/03_modules/_domain_signal/algo_flow/strategy_cross_vote_funnel.yaml
 """
 
 from __future__ import annotations

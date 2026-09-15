@@ -33,22 +33,7 @@ r"""MOD-SIG-069 supplement — 趋势线/压力支撑自动识别（GAP-F-33，�
    （uptrend），两高点斜率<0 → 下降趋势线（downtrend）；输出锚点日期/
    斜率/当前值/现价距离 %（同向不足两个 → 该向不出线）。
 
-# [ALGO_FLOW]
-# 层: 输入
-# - id: I1 日 K 序列 list[SRBar]（date/high/low/close 升序）
-# 层: 算法
-# - id: A1 分形极值（±k 满窗）
-# - id: A2 价位聚类 → 支撑/压力
-# - id: A3 趋势线（最近两同向极值）
-# 层: 输出
-# - id: O1 TrendSRAnalysis（levels + support/resistance + trendlines）
-# [/ALGO_FLOW]
-#
-# 边:
-# I1 --> A1
-# A1 --> A2
-# A1 --> A3
-# A2,A3 --> O1
+# [ALGO_FLOW] external: docs/03_modules/_domain_signal/algo_flow/trendline_sr_detector.yaml
 """
 
 from __future__ import annotations

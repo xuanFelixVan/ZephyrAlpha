@@ -28,42 +28,7 @@ stock_id 字典序；三路关系聚合结果按 RelationKind 枚举序与自身
 浮点累加经 math.fsum，同输入必同输出。真 GNN 训练属人工闸门，本件仅为
 确定性前向聚合基类，禁止冒充训练后推理结果消费。
 
-# [ALGO_FLOW]
-# 层: 输入
-# - id: I1
-#   name: max_nodes 参数
-#   fields: 参数 max_nodes（无注解）
-#   code: stock_relation_gnn.py 顶层公共函数形参（AST 提取）
-# - id: I2
-#   name: max_edges 参数
-#   fields: 参数 max_edges（无注解）
-#   code: stock_relation_gnn.py 顶层公共函数形参（AST 提取）
-# - id: I3
-#   name: predictor 参数
-#   fields: 参数 predictor（无注解）
-#   code: stock_relation_gnn.py 顶层公共函数形参（AST 提取）
-# 层: 算法
-# - id: A1
-#   name_zh: ① StockRelationGNN
-#   name_en: StockRelationGNN
-#   intro: 股票关系 GNN 基类（3 邻接图 + GAT/GCN 聚合 + 密度预测注入 + 规模护栏）。
-#   desc: 股票关系 GNN 基类（3 邻接图 + GAT/GCN 聚合 + 密度预测注入 + 规模护栏）。；公共方法（定义序）: node_count, edge_count, feature_dim, add_node, ad…
-#   inputs: max_nodes max_edges predictor
-#   outputs: 返回值
-#   （注：A1 之后另有 5 个公共定义未列入（含 5 个数据契约/异常/枚举声明类），见源码）
-# 层: 输出
-# - id: O1
-#   name_zh: 模块公共 API 面（6 定义）
-#   name_en: public defs
-#   intro: StockRelationGNN
-#   downstream: 运行时装配批（邻居聚合特征接密度预测装配 / 关系图信号消费方）
-# [/ALGO_FLOW]
-#
-# 边:
-# I1 --> A1
-# I2 --> A1
-# I3 --> A1
-# A1 --> O1
+# [ALGO_FLOW] external: docs/03_modules/_domain_signal/algo_flow/stock_relation_gnn.yaml
 """
 
 from __future__ import annotations

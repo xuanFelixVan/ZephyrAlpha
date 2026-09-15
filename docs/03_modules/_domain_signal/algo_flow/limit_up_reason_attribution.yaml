@@ -1,0 +1,29 @@
+# ALGO_FLOW 外部真源——limit_up_reason_attribution（_domain_signal 域，真源 src/zephyr/signal_ashare/limit_up/limit_up_reason_attribution.py）
+# 2026-09-15 P2-1 契约头减负批量出仓：docstring 内联块逐字节副本，extractor 经
+# external 锚加载走同一 parse_algo_flow 管线；算法公共面变化时同步更新本块。
+doc_type: architecture_view
+ttl: permanent
+module: src.zephyr.signal_ashare.limit_up.limit_up_reason_attribution
+source_of_truth: src/zephyr/signal_ashare/limit_up/limit_up_reason_attribution.py
+algo_flow: |
+    # [ALGO_FLOW]
+    # 层: 输入
+    # - id: I1 涨停票池 list[LimitUpStockInput]（symbol/name/pct_change/limit_type）
+    # - id: I2 新闻窗 list[NewsItemInput]（news_id/title/content/publish_time）
+    # - id: I3 板块归属映射 dict[symbol → list[(sector_code, sector_name)]]（SCD-2 时点）
+    # 层: 特征
+    # - id: F1 个股直命中（股票名 ∈ 新闻 title+content）
+    # - id: F2 主题命中（主题别名组 ∩ 新闻文本）
+    # - id: F3 板块主题聚合（板块内直命中主题 ∪ 板块名点名主题，按新闻数排序）
+    # 层: 算法
+    # - id: A1 三级归因判定（直命中→个股新闻催化；板块双条件→板块联动；否则无明确归因）
+    # 层: 输出
+    # - id: O1 LimitUpAttributionResult（items 逐股归因 + sector_themes 板块主题榜 + stats 三桶计数）
+    # [/ALGO_FLOW]
+    #
+    # 边:
+    # I1,I2 --> F1
+    # I2 --> F2
+    # F1,F2,I3 --> F3
+    # F1,F3,I3 --> A1
+    # A1 --> O1

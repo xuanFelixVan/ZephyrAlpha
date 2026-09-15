@@ -35,23 +35,7 @@ r"""MOD-SIG-080 — 逆势榜 4 卡（GAP-F-16，板块页逆势榜后端）。
 - **卡4 最抗跌**：段内板块最大回撤（相对峰价最低价/峰价−1）降序
   （越接近 0 越抗跌；正=段内未破峰价）。
 
-# [ALGO_FLOW]
-# 层: 输入
-# - id: I1 指数分钟序列 [(ts, price)]
-# - id: I2 板块分钟序列 {code → [(ts, close)]}
-# - id: I3 板块资金流 {code → 净流入}（注入位，可 None）
-# 层: 算法
-# - id: A1 主下跌段识别（峰→谷）
-# - id: A2 四卡逐板块口径计算
-# 层: 输出
-# - id: O1 CounterTrendBoard（4 张 CounterTrendCard）
-# [/ALGO_FLOW]
-#
-# 边:
-# I1 --> A1
-# A1,I2 --> A2
-# I3 --> A2
-# A2 --> O1
+# [ALGO_FLOW] external: docs/03_modules/_domain_signal/algo_flow/counter_trend_board.yaml
 """
 
 from __future__ import annotations

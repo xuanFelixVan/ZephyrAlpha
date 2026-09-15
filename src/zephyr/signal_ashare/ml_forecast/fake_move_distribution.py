@@ -29,42 +29,7 @@ canonical 承接 TESTB-056 归并）：**假动作 6 模式规则库**（假拉�
 分，零交集）；trading_compliance_detector=合规检测（本件为信号域行为
 识别，不做合规判定）；识别结论仅作信号输入，不直接下单（advisory）。
 
-# [ALGO_FLOW]
-# 层: 输入
-# - id: I1
-#   name: clock 参数
-#   fields: 参数 clock（无注解）
-#   code: fake_move_distribution.py 顶层公共函数形参（AST 提取）
-# - id: I2
-#   name: warning_sink 参数
-#   fields: 参数 warning_sink（无注解）
-#   code: fake_move_distribution.py 顶层公共函数形参（AST 提取）
-# - id: I3
-#   name: config 参数
-#   fields: 参数 config（无注解）
-#   code: fake_move_distribution.py 顶层公共函数形参（AST 提取）
-# 层: 算法
-# - id: A1
-#   name_zh: ① FakeMoveDetector
-#   name_en: FakeMoveDetector
-#   intro: 主力假动作识别器（6 模式规则库 + 7 维打分 + >85% 暂停追涨）。
-#   desc: 主力假动作识别器（6 模式规则库 + 7 维打分 + >85% 暂停追涨）。；公共方法（定义序）: assess；源码 L320-L399
-#   inputs: clock warning_sink config
-#   outputs: 返回值
-#   （注：A1 之后另有 9 个公共定义未列入（含 9 个数据契约/异常/枚举声明类），见源码）
-# 层: 输出
-# - id: O1
-#   name_zh: 模块公共 API 面（10 定义）
-#   name_en: public defs
-#   intro: FakeMoveDetector
-#   downstream: 运行时装配批（追涨门禁 / 买入侧防伪告警接 alert 路由）
-# [/ALGO_FLOW]
-#
-# 边:
-# I1 --> A1
-# I2 --> A1
-# I3 --> A1
-# A1 --> O1
+# [ALGO_FLOW] external: docs/03_modules/_domain_signal/algo_flow/fake_move_distribution.yaml
 """
 
 from __future__ import annotations

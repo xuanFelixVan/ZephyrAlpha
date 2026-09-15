@@ -25,40 +25,7 @@ B10-01384（AUD-DRAFT-001-DIGEST P2 波 P2-W05，CAND-TESTB-039，A1 模块40）
 纯内存/DI 设计：历史分位序列/时钟/告警回调全注入；不触网、不触盘、
 无 subprocess。同输入必同输出。非法输入 Fail-Closed 抛 SectorCrowdingError。
 
-# [ALGO_FLOW]
-# 层: 输入
-# - id: I1
-#   name: confirm_days 参数
-#   fields: 参数 confirm_days（无注解）
-#   code: sector_crowding_launch.py 顶层公共函数形参（AST 提取）
-# 层: 算法
-# - id: A1
-#   name_zh: ① LaunchStateMachine
-#   name_en: LaunchStateMachine
-#   intro: 启动条件状态机：RS突破 + 资金转正 N 日确认。
-#   desc: 启动条件状态机：RS突破 + 资金转正 N 日确认。 迁移规则（确定性）： - rs_breakout=False → IDLE（streak 清零）； - 已 LAUNCHED…；公共方法（定义序）: phase,…
-#   inputs: confirm_days
-#   outputs: 返回值
-# - id: A2
-#   name_zh: ② SectorCrowdingLauncher
-#   name_en: SectorCrowdingLauncher
-#   intro: 板块拥挤度评估 + 过热预警 + 启动状态机门面。
-#   desc: 板块拥挤度评估 + 过热预警 + 启动状态机门面。；公共方法（定义序）: percentile_of, assess_crowding, step_launch, launch_phase；源码 L232-L327
-#   inputs: config clock alert_sink
-#   outputs: 返回值
-#   （注：A2 之后另有 7 个公共定义未列入（含 7 个数据契约/异常/枚举声明类），见源码）
-# 层: 输出
-# - id: O1
-#   name_zh: 模块公共 API 面（9 定义）
-#   name_en: public defs
-#   intro: LaunchStateMachine, SectorCrowdingLauncher
-#   downstream: 运行时装配批（统一注入点装配：板块拥挤度预警层 / 启动条件择时消费方）
-# [/ALGO_FLOW]
-#
-# 边:
-# I1 --> A1
-# A1 --> A2
-# A2 --> O1
+# [ALGO_FLOW] external: docs/03_modules/_domain_signal/algo_flow/sector_crowding_launch.yaml
 """
 
 from __future__ import annotations

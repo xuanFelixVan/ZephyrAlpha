@@ -37,68 +37,7 @@
 三属性鸭子类型摘要，见 density_summary()）；BM-SEL-14 共形预测消费 PDF 分位数。
 评估：CRPS 为核心指标（91 号原始内容），crps_empirical 提供经验分布闭式实现。
 
-# [ALGO_FLOW]
-# 层: 输入
-# - id: I1
-#   name: returns 参数
-#   fields: 参数 returns，类型注解 Iterable[float]
-#   code: conditional_density_predictor.py 顶层公共函数形参（AST 提取）
-# - id: I2
-#   name: conditions 参数
-#   fields: 参数 conditions，类型注解 Sequence[str] | None
-#   code: conditional_density_predictor.py 顶层公共函数形参（AST 提取）
-# - id: I3
-#   name: condition 参数
-#   fields: 参数 condition（无注解）
-#   code: conditional_density_predictor.py 顶层公共函数形参（AST 提取）
-# - id: I4
-#   name: config 参数
-#   fields: 参数 config（无注解）
-#   code: conditional_density_predictor.py 顶层公共函数形参（AST 提取）
-# 层: 算法
-# - id: A1
-#   name_zh: ① DensityForecast
-#   name_en: DensityForecast
-#   intro: 条件密度预测输出。
-#   desc: 条件密度预测输出。；公共方法（定义序）: density_summary；源码 L150-L170
-#   inputs: 无参数
-#   outputs: 返回值
-# - id: A2
-#   name_zh: ② conditional_density
-#   name_en: conditional_density
-#   intro: 条件密度预测主入口。
-#   desc: 条件密度预测主入口。 Args: returns: 历史收益率序列（trailing 截 window） conditions: 与 returns 平行的条件标签序列（如波动率…；源码 L209-L250
-#   inputs: returns conditions condition config
-#   outputs: DensityForecast
-# - id: A3
-#   name_zh: ③ crps_empirical
-#   name_en: crps_empirical
-#   intro: 经验分布 CRPS（连续分级概率评分，越小越好）。
-#   desc: 经验分布 CRPS（连续分级概率评分，越小越好）。 CRPS = E|X−y| − 0.5·E|X−X'|（经验分布闭式，X/X' 为样本独立抽样）。 样本均值绝对偏差项 O(n…；源码 L253-L267
-#   inputs: samples actual
-#   outputs: float
-#   （注：A3 之后另有 2 个公共定义未列入（含 2 个数据契约/异常/枚举声明类），见源码）
-# 层: 输出
-# - id: O1
-#   name_zh: DensityForecast
-#   name_en: DensityForecast
-#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
-#   downstream: zephyr.signal_ashare.fine_scoring_engine（密度要素摘要）; zephyr.signal_ashare.conforma…
-# - id: O2
-#   name_zh: float
-#   name_en: float
-#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
-#   downstream: zephyr.signal_ashare.fine_scoring_engine（密度要素摘要）; zephyr.signal_ashare.conforma…
-# [/ALGO_FLOW]
-#
-# 边:
-# I1 --> A1
-# I2 --> A1
-# I3 --> A1
-# I4 --> A1
-# A1 --> A2
-# A2 --> A3
-# A3 --> O1
+# [ALGO_FLOW] external: docs/03_modules/_domain_signal/algo_flow/conditional_density_predictor.yaml
 """
 
 from __future__ import annotations

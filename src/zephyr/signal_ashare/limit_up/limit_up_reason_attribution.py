@@ -32,27 +32,7 @@ MVP 口径（news_data × 涨停股 join，板块聚合+关键词匹配）：
 数据真源：c1_market.limit_up_down（涨停票池）、c3_fundamental.news_data（新闻）、
 c1_market.sector_constituent（SCD-2 时点板块归属）。全部只读；核函数纯函数可单测。
 
-# [ALGO_FLOW]
-# 层: 输入
-# - id: I1 涨停票池 list[LimitUpStockInput]（symbol/name/pct_change/limit_type）
-# - id: I2 新闻窗 list[NewsItemInput]（news_id/title/content/publish_time）
-# - id: I3 板块归属映射 dict[symbol → list[(sector_code, sector_name)]]（SCD-2 时点）
-# 层: 特征
-# - id: F1 个股直命中（股票名 ∈ 新闻 title+content）
-# - id: F2 主题命中（主题别名组 ∩ 新闻文本）
-# - id: F3 板块主题聚合（板块内直命中主题 ∪ 板块名点名主题，按新闻数排序）
-# 层: 算法
-# - id: A1 三级归因判定（直命中→个股新闻催化；板块双条件→板块联动；否则无明确归因）
-# 层: 输出
-# - id: O1 LimitUpAttributionResult（items 逐股归因 + sector_themes 板块主题榜 + stats 三桶计数）
-# [/ALGO_FLOW]
-#
-# 边:
-# I1,I2 --> F1
-# I2 --> F2
-# F1,F2,I3 --> F3
-# F1,F3,I3 --> A1
-# A1 --> O1
+# [ALGO_FLOW] external: docs/03_modules/_domain_signal/algo_flow/limit_up_reason_attribution.yaml
 """
 
 from __future__ import annotations

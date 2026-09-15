@@ -37,76 +37,7 @@ Calibrator 即该基线：trailing window 无加权残差分位数，不加 EWMA
 与 BM-SEL-13 密度预测的衔接（91 号区间层设计）：PDF 分位数（2.5%/97.5%）外裹
 conformal 安全缓冲 —— conformal_band_around_quantiles()。
 
-# [ALGO_FLOW]
-# 层: 输入
-# - id: I1
-#   name: lower_q 参数
-#   fields: 参数 lower_q，类型注解 float
-#   code: conformal_predictor.py 顶层公共函数形参（AST 提取）
-# - id: I2
-#   name: upper_q 参数
-#   fields: 参数 upper_q，类型注解 float
-#   code: conformal_predictor.py 顶层公共函数形参（AST 提取）
-# - id: I3
-#   name: margin 参数
-#   fields: 参数 margin，类型注解 float
-#   code: conformal_predictor.py 顶层公共函数形参（AST 提取）
-# - id: I4
-#   name: lowers 参数
-#   fields: 参数 lowers，类型注解 Iterable[float]
-#   code: conformal_predictor.py 顶层公共函数形参（AST 提取）
-# 层: 算法
-# - id: A1
-#   name_zh: ① SplitConformalPredictor
-#   name_en: SplitConformalPredictor
-#   intro: split-conformal 标准预测器（一次性校准集）。
-#   desc: split-conformal 标准预测器（一次性校准集）。；公共方法（定义序）: margin, fit, predict_interval；源码 L158-L194
-#   inputs: alpha
-#   outputs: 返回值
-# - id: A2
-#   name_zh: ② RollingConformalCalibrator
-#   name_en: RollingConformalCalibrator
-#   intro: slow unweighted rolling conformal（91 号 Phase 0 基线）。
-#   desc: slow unweighted rolling conformal（91 号 Phase 0 基线）。 trailing window 无加权残差分位数——不加任何时间/regi…；公共方法（定义序）: update,…
-#   inputs: window alpha min_samples
-#   outputs: 返回值
-# - id: A3
-#   name_zh: ③ conformal_band_around_quantiles
-#   name_en: conformal_band_around_quantiles
-#   intro: PDF 分位数外裹 conformal 安全缓冲（91 号区间层设计）。
-#   desc: PDF 分位数外裹 conformal 安全缓冲（91 号区间层设计）。 (lower_q − margin, upper_q + margin)。lower_q>upper_q…；源码 L248-L259
-#   inputs: lower_q upper_q margin
-#   outputs: tuple[float, float]
-# - id: A4
-#   name_zh: ④ empirical_coverage
-#   name_en: empirical_coverage
-#   intro: 区间集经验覆盖率（校准验证件：实测覆盖率 vs 名义 1−α）。
-#   desc: 区间集经验覆盖率（校准验证件：实测覆盖率 vs 名义 1−α）。空输入 → ValueError。；源码 L262-L275
-#   inputs: lowers uppers actuals
-#   outputs: float
-#   （注：A4 之后另有 1 个公共定义未列入（含 1 个数据契约/异常/枚举声明类），见源码）
-# 层: 输出
-# - id: O1
-#   name_zh: tuple[float, float]
-#   name_en: tuple[float, float]
-#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
-#   downstream: (待 BM-EXE-01 共形 VaR / 信号置信区间消费层)
-# - id: O2
-#   name_zh: float
-#   name_en: float
-#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
-#   downstream: (待 BM-EXE-01 共形 VaR / 信号置信区间消费层)
-# [/ALGO_FLOW]
-#
-# 边:
-# I1 --> A1
-# I2 --> A1
-# I3 --> A1
-# I4 --> A1
-# A1 --> A2
-# A2 --> A3
-# A3 --> A4
-# A4 --> O1
+# [ALGO_FLOW] external: docs/03_modules/_domain_signal/algo_flow/conformal_predictor.yaml
 """
 
 from __future__ import annotations

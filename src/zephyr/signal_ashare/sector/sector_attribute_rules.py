@@ -27,21 +27,7 @@ r"""MOD-SIG-077 — 板块属性标注规则库（GAP-F-18，板块 Top10「属�
 - **纯静态规则**（行业贝塔属性常识分类，初拍待实盘标定），非动态计算；
   观测层消费，不接交易。
 
-# [ALGO_FLOW]
-# 层: 输入
-# - id: I1 配置载荷 dict（yaml 解析结果或测试直注）
-# - id: I2 板块查询 (sector_name, sector_code) / 批量行
-# 层: 算法
-# - id: A1 载荷校验→规则表（fail-closed）
-# - id: A2 code 精确匹配 → keyword 子串匹配（首命中）
-# 层: 输出
-# - id: O1 SectorAttributeVerdict（attribute/label/rule_key/match_via）
-# [/ALGO_FLOW]
-#
-# 边:
-# I1 --> A1
-# A1,I2 --> A2
-# A2 --> O1
+# [ALGO_FLOW] external: docs/03_modules/_domain_signal/algo_flow/sector_attribute_rules.yaml
 """
 
 from __future__ import annotations

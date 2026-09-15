@@ -36,63 +36,7 @@ MOD-SIG-065 — 情绪周期定位器准确率评估器骨架（28号 §3.3 标�
 生产实现载体（sentiment_cycle 内为纯函数版，本模块增加分阶段召回/混淆矩阵
 与历史回测口径装配，供 G07 验证施工消费）。
 
-# [ALGO_FLOW]
-# 层: 输入
-# - id: I1
-#   name: predicted_phases 参数
-#   fields: 参数 predicted_phases，类型注解 list[SentimentPhase]
-#   code: sentiment_cycle_evaluator.py 顶层公共函数形参（AST 提取）
-# - id: I2
-#   name: actual_phases 参数
-#   fields: 参数 actual_phases，类型注解 list[SentimentPhase]
-#   code: sentiment_cycle_evaluator.py 顶层公共函数形参（AST 提取）
-# - id: I3
-#   name: records 参数
-#   fields: 参数 records，类型注解 list[PhasePredictionRecord]
-#   code: sentiment_cycle_evaluator.py 顶层公共函数形参（AST 提取）
-# 层: 算法
-# - id: A1
-#   name_zh: ① SentimentCycleEvalReport
-#   name_en: SentimentCycleEvalReport
-#   intro: 情绪周期定位器评估报告（JSON 可序列化）。
-#   desc: 情绪周期定位器评估报告（JSON 可序列化）。；公共方法（定义序）: to_dict；源码 L129-L148
-#   inputs: 无参数
-#   outputs: 返回值
-# - id: A2
-#   name_zh: ② evaluate_locator_accuracy
-#   name_en: evaluate_locator_accuracy
-#   intro: 标准签名⑥：评估定位器准确率（28号 §3.3 + §3.10）。
-#   desc: 标准签名⑥：评估定位器准确率（28号 §3.3 + §3.10）。 除精确率外计算"相邻阶段容错率"（错判代价不对称，相邻阶段语义接近）。 Args: predicted_pha…；源码 L161-L181
-#   inputs: predicted_phases actual_phases
-#   outputs: dict[str, float]
-# - id: A3
-#   name_zh: ③ evaluate_from_records
-#   name_en: evaluate_from_records
-#   intro: 从历史回测记录评估定位器准确率（扩展版：分阶段召回 + 混淆矩阵）。
-#   desc: 从历史回测记录评估定位器准确率（扩展版：分阶段召回 + 混淆矩阵）。 Args: records: 单日预测记录列表（自动按 trade_date 升序重排）。 Returns:…；源码 L184-L247
-#   inputs: records
-#   outputs: SentimentCycleEvalReport
-#   （注：A3 之后另有 1 个公共定义未列入（含 1 个数据契约/异常/枚举声明类），见源码）
-# 层: 输出
-# - id: O1
-#   name_zh: dict[str, float]
-#   name_en: dict[str, float]
-#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
-#   downstream: G07 验证施工（隐形驱动验证时同步评估定位器准确率）
-# - id: O2
-#   name_zh: SentimentCycleEvalReport
-#   name_en: SentimentCycleEvalReport
-#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
-#   downstream: G07 验证施工（隐形驱动验证时同步评估定位器准确率）
-# [/ALGO_FLOW]
-#
-# 边:
-# I1 --> A1
-# I2 --> A1
-# I3 --> A1
-# A1 --> A2
-# A2 --> A3
-# A3 --> O1
+# [ALGO_FLOW] external: docs/03_modules/_domain_signal/algo_flow/sentiment_cycle_evaluator.yaml
 """
 
 from __future__ import annotations

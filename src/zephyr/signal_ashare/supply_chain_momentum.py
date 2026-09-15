@@ -26,47 +26,7 @@ Cohen & Frazzini 供应链动量单机版。
 无 subprocess。同输入必同输出。非法输入 Fail-Closed 抛
 SupplyChainMomentumError。
 
-# [ALGO_FLOW]
-# 层: 输入
-# - id: I1
-#   name: links 参数
-#   fields: 参数 links（无注解）
-#   code: supply_chain_momentum.py 顶层公共函数形参（AST 提取）
-# - id: I2
-#   name: config 参数
-#   fields: 参数 config（无注解）
-#   code: supply_chain_momentum.py 顶层公共函数形参（AST 提取）
-# - id: I3
-#   name: regressor 参数
-#   fields: 参数 regressor（无注解）
-#   code: supply_chain_momentum.py 顶层公共函数形参（AST 提取）
-# - id: I4
-#   name: clock 参数
-#   fields: 参数 clock（无注解）
-#   code: supply_chain_momentum.py 顶层公共函数形参（AST 提取）
-# 层: 算法
-# - id: A1
-#   name_zh: ① SupplyChainMomentumModel
-#   name_en: SupplyChainMomentumModel
-#   intro: 产业链传导与供应链动量模型（邻接表 + 上游动量因子 + R²筛选 + 异常标记）。
-#   desc: 产业链传导与供应链动量模型（邻接表 + 上游动量因子 + R²筛选 + 异常标记）。；公共方法（定义序）: adjacency, upstream_momentum, screen_links, evaluate；源码…
-#   inputs: links config regressor clock
-#   outputs: 返回值
-#   （注：A1 之后另有 7 个公共定义未列入（含 7 个数据契约/异常/枚举声明类），见源码）
-# 层: 输出
-# - id: O1
-#   name_zh: 模块公共 API 面（8 定义）
-#   name_en: public defs
-#   intro: SupplyChainMomentumModel
-#   downstream: 运行时装配批（统一注入点装配：供应链动量因子层 / 传导异常预警消费方）
-# [/ALGO_FLOW]
-#
-# 边:
-# I1 --> A1
-# I2 --> A1
-# I3 --> A1
-# I4 --> A1
-# A1 --> O1
+# [ALGO_FLOW] external: docs/03_modules/_domain_signal/algo_flow/supply_chain_momentum.yaml
 """
 
 from __future__ import annotations

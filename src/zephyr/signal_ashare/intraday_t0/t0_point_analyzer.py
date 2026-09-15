@@ -33,30 +33,7 @@ r"""MOD-SIG-068 — 做T点位算法 + 信号回验管线（GAP-F-25 = 设计文
 （T卖取反向），≥hit_threshold 命中 / ≤−threshold 失手 / 其间半命中 /
 前向不足=样本不足不计率；按 pattern×window 聚合命中率。
 
-# [ALGO_FLOW]
-# 层: 输入
-# - id: I1 分钟bar序列 list[MinuteBar]（ts/open/high/low/close/volume，1分钟）
-# - id: I2 上下文 T0Context（symbol/prev_close/resistance/资金与情绪注入位）
-# 层: 特征
-# - id: F1 VWAP（典型价累计）
-# - id: F2 量比/偏离度/日内新高新低
-# 层: 算法
-# - id: A1 MOD-SIG-024 适配腿（点位检测映射）
-# - id: A2 做T专项三族检测
-# - id: A3 同方向冷却窗去重
-# - id: A4 +N 分钟命中回验+命中率聚合
-# 层: 输出
-# - id: O1 list[T0Signal] + T0VerifyReport（hits 逐信号回验 + stats pattern×window 命中率）
-# [/ALGO_FLOW]
-#
-# 边:
-# I1 --> F1
-# I1 --> F2
-# F1,F2,I2 --> A1
-# F1,F2 --> A2
-# A1,A2 --> A3
-# A3,I1 --> A4
-# A4 --> O1
+# [ALGO_FLOW] external: docs/03_modules/_domain_signal/algo_flow/t0_point_analyzer.yaml
 """
 
 from __future__ import annotations

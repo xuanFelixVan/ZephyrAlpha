@@ -1,0 +1,23 @@
+# ALGO_FLOW 外部真源——foreign_impact_judge（_domain_signal 域，真源 src/zephyr/signal_ashare/foreign_impact_judge.py）
+# 2026-09-15 P2-1 契约头减负批量出仓：docstring 内联块逐字节副本，extractor 经
+# external 锚加载走同一 parse_algo_flow 管线；算法公共面变化时同步更新本块。
+doc_type: architecture_view
+ttl: permanent
+module: src.zephyr.signal_ashare.foreign_impact_judge
+source_of_truth: src/zephyr/signal_ashare/foreign_impact_judge.py
+algo_flow: |
+    # [ALGO_FLOW]
+    # 层: 输入
+    # - id: I1 标的涨跌幅 {target_key: chg_pct}（注入/us_index 加载）
+    # - id: I2 覆盖键集 available_keys（覆盖门控）
+    # 层: 算法
+    # - id: A1 单标的方向约定×强度分档×通道映射
+    # - id: A2 加权聚合 → 综合判定
+    # 层: 输出
+    # - id: O1 ForeignImpactJudgement（verdicts + channel_scores + summary）
+    # [/ALGO_FLOW]
+    #
+    # 边:
+    # I1,I2 --> A1
+    # A1 --> A2
+    # A2 --> O1

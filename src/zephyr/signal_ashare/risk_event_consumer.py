@@ -39,47 +39,7 @@ D-SIGNAL-99 Risk Event E-RK-01 Consumer Handler（CAND-TESTB-028 / B14-04728）�
 
 依据: A9运维架构 §8.3.13；construction_backlog_dig.tsv B14-04728。
 
-# [ALGO_FLOW]
-# 层: 输入
-# - id: I1
-#   name: stream_client 参数
-#   fields: 参数 stream_client（无注解）
-#   code: risk_event_consumer.py 顶层公共函数形参（AST 提取）
-# - id: I2
-#   name: group 参数
-#   fields: 参数 group（无注解）
-#   code: risk_event_consumer.py 顶层公共函数形参（AST 提取）
-# - id: I3
-#   name: consumer_name 参数
-#   fields: 参数 consumer_name（无注解）
-#   code: risk_event_consumer.py 顶层公共函数形参（AST 提取）
-# - id: I4
-#   name: action_handler 参数
-#   fields: 参数 action_handler（无注解）
-#   code: risk_event_consumer.py 顶层公共函数形参（AST 提取）
-# 层: 算法
-# - id: A1
-#   name_zh: ① RiskEventConsumer
-#   name_en: RiskEventConsumer
-#   intro: E-RK-01 风险事件消费处理器。
-#   desc: E-RK-01 风险事件消费处理器。 Args: stream_client: 流读取 client（注入式，实现 read_group 协议）。 group: 消费组名。 co…；公共方法（定义序）: seen_co…
-#   inputs: stream_client group consumer_name action_handler dlq_sink ack_hook la…
-#   outputs: 返回值
-#   （注：A1 之后另有 4 个公共定义未列入（含 4 个数据契约/异常/枚举声明类），见源码）
-# 层: 输出
-# - id: O1
-#   name_zh: 模块公共 API 面（5 定义）
-#   name_en: public defs
-#   intro: RiskEventConsumer
-#   downstream: 信号域降级/撤销/权重调整执行体（action_handler 注入点）；告警路由（lag_exceeded 读取方）
-# [/ALGO_FLOW]
-#
-# 边:
-# I1 --> A1
-# I2 --> A1
-# I3 --> A1
-# I4 --> A1
-# A1 --> O1
+# [ALGO_FLOW] external: docs/03_modules/_domain_signal/algo_flow/risk_event_consumer.yaml
 """
 
 from __future__ import annotations

@@ -1,0 +1,67 @@
+# ALGO_FLOW 外部真源——option_sentiment（_domain_signal 域，真源 src/zephyr/signal_ashare/sentiment/option_sentiment.py）
+# 2026-09-15 P2-1 契约头减负批量出仓：docstring 内联块逐字节副本，extractor 经
+# external 锚加载走同一 parse_algo_flow 管线；算法公共面变化时同步更新本块。
+doc_type: architecture_view
+ttl: permanent
+module: src.zephyr.signal_ashare.sentiment.option_sentiment
+source_of_truth: src/zephyr/signal_ashare/sentiment/option_sentiment.py
+algo_flow: |
+    # [ALGO_FLOW]
+    # 层: 输入
+    # - id: I1
+    #   name: IV 表面历史窗（option_iv_surface 主标的，iv>0 且 option_type∈{call,put}）
+    #   fields: trade_date/symbol/strike/expiry/iv/option_type
+    # - id: I2
+    #   name: 期权日 K 成交量（option_kline 全窗）
+    #   fields: trade_date/symbol/volume
+    # - id: I3
+    #   name: 合约映射（iv_surface DISTINCT symbol→underlying/option_type）
+    #   fields: symbol/underlying/option_type
+    # - id: I4
+    #   name: Greeks 历史窗（option_greeks 主标的，delta≠0）
+    #   fields: trade_date/symbol/expiry/delta
+    # - id: I5
+    #   name: 期权到期日历（calendar_event index_option_expiry）
+    #   fields: event_date/event_type
+    # 层: 特征
+    # - id: F1
+    #   name_zh: 成交量 PCR
+    #   formula: Σvolume(put) / Σvolume(call)  # 当日主标的全合约；call=0 → None 降级
+    # - id: F2
+    #   name_zh: 平值 IV 与 IV Rank
+    #   formula: atm_iv=最近月 strike≈中位数 合约 IV 均值(call/put)；iv_rank=分位(序列≤当前)  # min_periods=60
+    # - id: F3
+    #   name_zh: 归一化尾部偏度
+    #   formula: skew=IV(25Δput)-IV(25Δcall)；skew_norm=skew/atm_iv  # greeks.delta 选约，min_periods=10
+    # 层: 算法
+    # - id: A1
+    #   name_zh: PCR 分位判读
+    #   desc: pcr_percentile<20%→过度乐观反向风险(-1)；>80%→恐慌过度底部区(+1)；窗不足→None
+    # - id: A2
+    #   name_zh: IV Rank 与跳升判读
+    #   desc: iv_rank>80%→高波恐慌(-1)；<20%→低波温和(+0.5)；ΔIV>+3σ→iv_jump_flag 避险急增
+    # - id: A3
+    #   name_zh: Skew 极端与背离警示
+    #   desc: skew_norm>90%分位→skew_extreme(-1)；pcr_percentile<20%×skew_extreme→divergence_warning
+    # - id: A4
+    #   name_zh: 到期日阈值缩放
+    #   desc: 当日∈index_option_expiry→m1_threshold_scale=0.8，否则 1.0（fail-open 留痕）
+    # - id: A5
+    #   name_zh: 维度⑨合成
+    #   desc: composite_score=可用子分均值∈[-1,1]（权重≤0.10 下游控制）+annotation 文本链
+    # 层: 输出
+    # - id: O1
+    #   name_zh: OptionSentimentResult
+    #   intro: date/pcr/pcr_basis/pcr_percentile/iv_rank/iv_jump_flag/skew_norm/skew_extreme/divergence_warning/composite_score/annotation/m1_threshold_scale/degraded/notes；frozen dataclass asdict JSON 可序列化
+    # [/ALGO_FLOW]
+    #
+    # 边:
+    # I2,I3 --> F1
+    # I1 --> F2
+    # I1,I4 --> F3
+    # F1 --> A1
+    # F2 --> A2
+    # F3 --> A3
+    # I5 --> A4
+    # A1,A2,A3 --> A5
+    # A4,A5 --> O1

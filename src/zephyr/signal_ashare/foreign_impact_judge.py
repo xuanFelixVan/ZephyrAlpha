@@ -37,21 +37,7 @@ r"""MOD-SIG-038 supplement — 外盘对 A 股影响判定引擎（GAP-F-24，�
   ≤bear_threshold 偏空 / 其间中性；影响强度=|score| 三档；summary 形如
   「偏空·弱影响」（L11 设计稿口径）。
 
-# [ALGO_FLOW]
-# 层: 输入
-# - id: I1 标的涨跌幅 {target_key: chg_pct}（注入/us_index 加载）
-# - id: I2 覆盖键集 available_keys（覆盖门控）
-# 层: 算法
-# - id: A1 单标的方向约定×强度分档×通道映射
-# - id: A2 加权聚合 → 综合判定
-# 层: 输出
-# - id: O1 ForeignImpactJudgement（verdicts + channel_scores + summary）
-# [/ALGO_FLOW]
-#
-# 边:
-# I1,I2 --> A1
-# A1 --> A2
-# A2 --> O1
+# [ALGO_FLOW] external: docs/03_modules/_domain_signal/algo_flow/foreign_impact_judge.yaml
 """
 
 from __future__ import annotations

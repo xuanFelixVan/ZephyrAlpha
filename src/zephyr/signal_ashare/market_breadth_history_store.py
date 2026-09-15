@@ -32,50 +32,7 @@ np.interp 线性插值到 30 个等距时点。列契约映射：
 
 零运行时调用（表空/CH 异常）→ 返回空列表，由 similar_day_inference 走兜底分支。
 
-# [ALGO_FLOW]
-# 层: 输入
-# - id: I1
-#   name: end_date 参数
-#   fields: 参数 end_date，类型注解 str | date | None
-#   code: market_breadth_history_store.py 顶层公共函数形参（AST 提取）
-# - id: I2
-#   name: lookback_days 参数
-#   fields: 参数 lookback_days（无注解）
-#   code: market_breadth_history_store.py 顶层公共函数形参（AST 提取）
-# - id: I3
-#   name: query_fn 参数
-#   fields: 参数 query_fn（无注解）
-#   code: market_breadth_history_store.py 顶层公共函数形参（AST 提取）
-# 层: 算法
-# - id: A1
-#   name_zh: ① HistoryRecord
-#   name_en: HistoryRecord
-#   intro: 单个历史交易日的重采样记录（similar_day_inference history_store 元素契约）。
-#   desc: 单个历史交易日的重采样记录（similar_day_inference history_store 元素契约）。；公共方法（定义序）: to_dataframe；源码 L191-L216
-#   inputs: 无参数
-#   outputs: 返回值
-# - id: A2
-#   name_zh: ② load_history_store
-#   name_en: load_history_store
-#   intro: 从 ClickHouse 加载历史宽度快照并装配为 history_store（fail-open）。
-#   desc: 从 ClickHouse 加载历史宽度快照并装配为 history_store（fail-open）。 Args: end_date: 窗口截止日（None=今日）；窗口 = […；源码 L401-L443
-#   inputs: end_date lookback_days query_fn
-#   outputs: MarketBreadthHistoryStore
-#   （注：A2 之后另有 1 个公共定义未列入（含 1 个数据契约/异常/枚举声明类），见源码）
-# 层: 输出
-# - id: O1
-#   name_zh: MarketBreadthHistoryStore
-#   name_en: MarketBreadthHistoryStore
-#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
-#   downstream: zephyr.signal_ashare.ml_forecast.similar_day_inference（history_store 生产注入）
-# [/ALGO_FLOW]
-#
-# 边:
-# I1 --> A1
-# I2 --> A1
-# I3 --> A1
-# A1 --> A2
-# A2 --> O1
+# [ALGO_FLOW] external: docs/03_modules/_domain_signal/algo_flow/market_breadth_history_store.yaml
 """
 
 from __future__ import annotations

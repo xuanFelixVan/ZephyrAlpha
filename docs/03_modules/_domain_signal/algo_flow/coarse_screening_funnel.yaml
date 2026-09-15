@@ -1,0 +1,44 @@
+# ALGO_FLOW 外部真源——coarse_screening_funnel（_domain_signal 域，真源 src/zephyr/signal_ashare/screening/coarse_screening_funnel.py）
+# 2026-09-15 P2-1 契约头减负批量出仓：docstring 内联块逐字节副本，extractor 经
+# external 锚加载走同一 parse_algo_flow 管线；算法公共面变化时同步更新本块。
+doc_type: architecture_view
+ttl: permanent
+module: src.zephyr.signal_ashare.screening.coarse_screening_funnel
+source_of_truth: src/zephyr/signal_ashare/screening/coarse_screening_funnel.py
+algo_flow: |
+    # [ALGO_FLOW]
+    # 层: 输入
+    # - id: I1
+    #   name: records 参数
+    #   fields: 参数 records，类型注解 list[CoarseScreenRecord]
+    #   code: coarse_screening_funnel.py 顶层公共函数形参（AST 提取）
+    # - id: I2
+    #   name: config 参数
+    #   fields: 参数 config（无注解）
+    #   code: coarse_screening_funnel.py 顶层公共函数形参（AST 提取）
+    # - id: I3
+    #   name: degraded 参数
+    #   fields: 参数 degraded（无注解）
+    #   code: coarse_screening_funnel.py 顶层公共函数形参（AST 提取）
+    # 层: 算法
+    # - id: A1
+    #   name_zh: ① screen_coarse
+    #   name_en: screen_coarse
+    #   intro: 五维初筛 + 容量收敛（~1200→~300）。
+    #   desc: 五维初筛 + 容量收敛（~1200→~300）。 五维顺序执行（先命中先排除）：技术 → 量比 → 换手率 → 板块排名 → 主力 → 状态。 通过数超过 capacity_ta…；源码 L125-L173
+    #   inputs: records config degraded
+    #   outputs: CoarseScreenResult
+    #   （注：A1 之后另有 3 个公共定义未列入（含 3 个数据契约/异常/枚举声明类），见源码）
+    # 层: 输出
+    # - id: O1
+    #   name_zh: CoarseScreenResult
+    #   name_en: CoarseScreenResult
+    #   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+    #   downstream: zephyr.signal_ashare.fine_scoring_engine
+    # [/ALGO_FLOW]
+    #
+    # 边:
+    # I1 --> A1
+    # I2 --> A1
+    # I3 --> A1
+    # A1 --> O1

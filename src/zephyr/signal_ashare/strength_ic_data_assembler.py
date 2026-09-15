@@ -31,55 +31,7 @@ MOD-SIG-064 — 选股 6 维权重 IC 校准 60 日窗口数据装配器（21号
 - NaN 剔除：任一维度的前瞻收益为 NaN 的索引从所有维度同步剔除（防错位）；
 - 维度缺列：记录中无该维度字段 → 该维空序列（calibrator 回退经验权重）。
 
-# [ALGO_FLOW]
-# 层: 输入
-# - id: I1
-#   name: dim_series 参数
-#   fields: 参数 dim_series，类型注解 dict[str, list[float]]
-#   code: strength_ic_data_assembler.py 顶层公共函数形参（AST 提取）
-# - id: I2
-#   name: forward_returns 参数
-#   fields: 参数 forward_returns，类型注解 list[float]
-#   code: strength_ic_data_assembler.py 顶层公共函数形参（AST 提取）
-# - id: I3
-#   name: window 参数
-#   fields: 参数 window（无注解）
-#   code: strength_ic_data_assembler.py 顶层公共函数形参（AST 提取）
-# - id: I4
-#   name: records 参数
-#   fields: 参数 records，类型注解 Iterable[DailyStrengthRecord]
-#   code: strength_ic_data_assembler.py 顶层公共函数形参（AST 提取）
-# 层: 算法
-# - id: A1
-#   name_zh: ① assemble_ic_window
-#   name_en: assemble_ic_window
-#   intro: 60 日滚动窗口切片（纯函数，与 calibrator 内部对齐）。
-#   desc: 60 日滚动窗口切片（纯函数，与 calibrator 内部对齐）。 Args: dim_series: 6 维子分数历史序列（任意长度，取末 window）。 forward_…；源码 L138-L173
-#   inputs: dim_series forward_returns window
-#   outputs: tuple[dict[str, list[float]], list[floa…
-# - id: A2
-#   name_zh: ② assemble_from_records
-#   name_en: assemble_from_records
-#   intro: 从日度记录装配 60 日窗口 IC 前置数据（纯函数主入口）。
-#   desc: 从日度记录装配 60 日窗口 IC 前置数据（纯函数主入口）。 Args: records: DailyStrengthRecord 可迭代（自动按 trade_date 升序重…；源码 L176-L224
-#   inputs: records window
-#   outputs: tuple[dict[str, list[float]], list[floa…
-#   （注：A2 之后另有 1 个公共定义未列入（含 1 个数据契约/异常/枚举声明类），见源码）
-# 层: 输出
-# - id: O1
-#   name_zh: tuple[dict[str, list[float]], list[floa…
-#   name_en: tuple[dict[str, list[float]], list[floa…
-#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
-#   downstream: strength_ic_weight_calibrator.compute_rolling_ic_weights（生产数据装配）
-# [/ALGO_FLOW]
-#
-# 边:
-# I1 --> A1
-# I2 --> A1
-# I3 --> A1
-# I4 --> A1
-# A1 --> A2
-# A2 --> O1
+# [ALGO_FLOW] external: docs/03_modules/_domain_signal/algo_flow/strength_ic_data_assembler.yaml
 """
 
 from __future__ import annotations

@@ -38,35 +38,7 @@ r"""WarPoolGenerator — 作战池生成器 (MOD-SIG-066)
 SSoT: depgraph MOD-SIG-066（待统筹登记）
 Version: 0.1.0
 
-# [ALGO_FLOW]
-# 层: 输入
-# - id: I1
-#   name: 主线板块清单（064 概率榜或 061 候选榜适配器产出）
-#   fields: (sector_code, sector_name, mainline_pct|None)
-# - id: I2
-#   name: 龙头分组（MOD-SIG-062 SectorRoleGroup）
-#   fields: sector_code/leader/backbones（StockRoleEntry: symbol/role/score/consec_limit）
-# - id: I3
-#   name: 个股催化剂（catalyst_provider 注入）
-#   fields: symbol/catalyst_type/strength/source/name
-# 层: 算法
-# - id: A1
-#   name_zh: 结构×催化交集
-#   desc: 主线板块龙头（可放中军）∩ 催化剂标的（strength≥min 门控）
-# - id: A2
-#   name_zh: 三维加权合成排序
-#   desc: pool_score=0.5×角色分+0.3×主线分(缺维中性50)+0.2×催化剂分；降序取 pool_target
-# 层: 输出
-# - id: O1
-#   name_zh: WarPoolResult
-#   intro: date/entries(symbol/sector/role/三维分/催化剂链/reasons)/no_pool_flag/degraded/annotations/notes
-# [/ALGO_FLOW]
-#
-# 边:
-# I1,I2 --> A1
-# I3 --> A1
-# A1,I1 --> A2
-# A2 --> O1
+# [ALGO_FLOW] external: docs/03_modules/_domain_signal/algo_flow/war_pool_generator.yaml
 """
 
 from __future__ import annotations

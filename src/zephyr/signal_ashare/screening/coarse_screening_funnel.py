@@ -30,42 +30,7 @@
 
 降级：初筛未就绪 → 全量放行进精筛（算力风险告警由调用方负责，degraded=True）。
 
-# [ALGO_FLOW]
-# 层: 输入
-# - id: I1
-#   name: records 参数
-#   fields: 参数 records，类型注解 list[CoarseScreenRecord]
-#   code: coarse_screening_funnel.py 顶层公共函数形参（AST 提取）
-# - id: I2
-#   name: config 参数
-#   fields: 参数 config（无注解）
-#   code: coarse_screening_funnel.py 顶层公共函数形参（AST 提取）
-# - id: I3
-#   name: degraded 参数
-#   fields: 参数 degraded（无注解）
-#   code: coarse_screening_funnel.py 顶层公共函数形参（AST 提取）
-# 层: 算法
-# - id: A1
-#   name_zh: ① screen_coarse
-#   name_en: screen_coarse
-#   intro: 五维初筛 + 容量收敛（~1200→~300）。
-#   desc: 五维初筛 + 容量收敛（~1200→~300）。 五维顺序执行（先命中先排除）：技术 → 量比 → 换手率 → 板块排名 → 主力 → 状态。 通过数超过 capacity_ta…；源码 L125-L173
-#   inputs: records config degraded
-#   outputs: CoarseScreenResult
-#   （注：A1 之后另有 3 个公共定义未列入（含 3 个数据契约/异常/枚举声明类），见源码）
-# 层: 输出
-# - id: O1
-#   name_zh: CoarseScreenResult
-#   name_en: CoarseScreenResult
-#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
-#   downstream: zephyr.signal_ashare.fine_scoring_engine
-# [/ALGO_FLOW]
-#
-# 边:
-# I1 --> A1
-# I2 --> A1
-# I3 --> A1
-# A1 --> O1
+# [ALGO_FLOW] external: docs/03_modules/_domain_signal/algo_flow/coarse_screening_funnel.yaml
 """
 
 from __future__ import annotations

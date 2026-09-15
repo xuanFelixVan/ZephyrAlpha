@@ -48,43 +48,7 @@ r"""MOD-SIG-062 — 板块龙头识别器（SEC-04，92号清单 §7.7；22号 s
 - 全宇宙 smoke（08-21）：5,203 股/593 板块，165 板块有龙头；08-21 为普跌日
   （sector_snapshot 广度合计涨跌比 0.43），红盘跟风稀少属数据画像非缺陷。
 
-# [ALGO_FLOW]
-# 层: 输入
-# - id: I1
-#   name: 个股日 K 窗（kline_daily；涨幅=相邻收盘推导，pct_change 列实证不可用）
-#   fields: symbol_canonical/trade_date/close/amount/turnover
-# - id: I2
-#   name: 涨跌停价窗（stk_limit，连板推导腿）
-#   fields: symbol_canonical/trade_date/limit_up
-# - id: I3
-#   name: 板块成分映射（sector_constituent，SCD-2 时点有效）
-#   fields: sector_code/stock_code
-# 层: 特征
-# - id: F1
-#   name_zh: 连板高度
-#   formula: 自 trade_date 向回连续收盘封板日数（close≥limit_up×(1−0.005)）
-# - id: F2
-#   name_zh: 三维辨识度分位
-#   formula: 情绪=0.6·midrank(连板)+0.4·midrank(pct_change); 地位=midrank(amount); 形态=0.5·midrank(ret_5d)+0.5·midrank(ret_20d)
-# 层: 算法
-# - id: A1
-#   name_zh: 评分合成
-#   desc: score=100×(0.30情绪+0.25地位+0.20形态)/可用权重和；筹码/基本面缺→不入归一
-# - id: A2
-#   name_zh: 四档划分
-#   desc: 龙头=最高连板且≥2(并列→成交额→涨幅→代码); 中位股=3-5板非龙头优先判; 中军=额Top3∧ret20>0∧非连板; 跟风=红盘其余; 余者 neutral
-# 层: 输出
-# - id: O1
-#   name_zh: SectorLeaderBoard
-#   intro: trade_date/sectors(per 板块 leader/backbones/followers/neutrals+注解)/n_stocks/degraded/notes；frozen dataclass asdict JSON 可序列化
-# [/ALGO_FLOW]
-#
-# 边:
-# I1,I2 --> F1
-# I1,I3 --> F2
-# F2 --> A1
-# F1,A1 --> A2
-# A1,A2 --> O1
+# [ALGO_FLOW] external: docs/03_modules/_domain_signal/algo_flow/sector_leader.yaml
 """
 
 from __future__ import annotations

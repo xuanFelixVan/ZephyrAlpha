@@ -25,31 +25,7 @@ xLSTM（扩展 LSTM 长程记忆架构）属远期增强候选。本模块只立
 占位记忆路径：fit_baseline 以 EMA 衰减积累长程记忆状态（level/trend），predict
 按 trend 阻尼外推 horizon 步——朴素可测，禁止冒充 xLSTM 真推理结果消费。
 
-# [ALGO_FLOW]
-# 层: 输入
-# - id: I1
-#   name: decay 参数
-#   fields: 参数 decay（无注解）
-#   code: xlstm_long_memory.py 顶层公共函数形参（AST 提取）
-# 层: 算法
-# - id: A1
-#   name_zh: ① XLstmLongMemory
-#   name_en: XLstmLongMemory
-#   intro: xLSTM 长记忆骨架（EMA level/trend 占位）。
-#   desc: xLSTM 长记忆骨架（EMA level/trend 占位）。；公共方法（定义序）: is_fitted, fit_baseline, predict, memory_summary；源码 L66-L121
-#   inputs: decay
-#   outputs: 返回值
-# 层: 输出
-# - id: O1
-#   name_zh: 模块公共 API 面（1 定义）
-#   name_en: public defs
-#   intro: XLstmLongMemory
-#   downstream: （远期：长记忆时序特征消费方）
-# [/ALGO_FLOW]
-#
-# 边:
-# I1 --> A1
-# A1 --> O1
+# [ALGO_FLOW] external: docs/03_modules/_domain_signal/algo_flow/xlstm_long_memory.yaml
 """
 
 from __future__ import annotations

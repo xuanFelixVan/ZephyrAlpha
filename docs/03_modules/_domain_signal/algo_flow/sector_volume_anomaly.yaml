@@ -1,0 +1,23 @@
+# ALGO_FLOW 外部真源——sector_volume_anomaly（_domain_signal 域，真源 src/zephyr/signal_ashare/sector/sector_volume_anomaly.py）
+# 2026-09-15 P2-1 契约头减负批量出仓：docstring 内联块逐字节副本，extractor 经
+# external 锚加载走同一 parse_algo_flow 管线；算法公共面变化时同步更新本块。
+doc_type: architecture_view
+ttl: permanent
+module: src.zephyr.signal_ashare.sector.sector_volume_anomaly
+source_of_truth: src/zephyr/signal_ashare/sector/sector_volume_anomaly.py
+algo_flow: |
+    # [ALGO_FLOW]
+    # 层: 输入
+    # - id: I1 板块成交额序列 dict[code → SectorAmountSeries]（(date, amount) 升序）
+    # - id: I2 trade_date（PIT 上限）
+    # 层: 算法
+    # - id: A1 当日量 vs 前 N 日均值偏离度 + z-score
+    # - id: A2 五档标签 + 偏离降序榜
+    # 层: 输出
+    # - id: O1 VolumeAnomalyReport（items + label_counts + notes）
+    # [/ALGO_FLOW]
+    #
+    # 边:
+    # I1,I2 --> A1
+    # A1 --> A2
+    # A2 --> O1

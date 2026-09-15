@@ -1,0 +1,67 @@
+# ALGO_FLOW 外部真源——futures_basis_monitor（_domain_signal 域，真源 src/zephyr/signal_ashare/futures_basis_monitor.py）
+# 2026-09-15 P2-1 契约头减负批量出仓：docstring 内联块逐字节副本，extractor 经
+# external 锚加载走同一 parse_algo_flow 管线；算法公共面变化时同步更新本块。
+doc_type: architecture_view
+ttl: permanent
+module: src.zephyr.signal_ashare.futures_basis_monitor
+source_of_truth: src/zephyr/signal_ashare/futures_basis_monitor.py
+algo_flow: |
+    # [ALGO_FLOW]
+    # 层: 输入
+    # - id: I1
+    #   name: 期货分钟腿当日快照（futures_kline_qmt）
+    #   fields: trade_date/symbol/close/volume（主力=成交量最大合约）
+    # - id: I2
+    #   name: 现货实时腿（index_quote）
+    #   fields: timestamp/price（≤ts 最新一笔）
+    # - id: I3
+    #   name: 期货日频历史（kline_futures period='1d'）
+    #   fields: trade_date/symbol/close/volume（主力按日成交量最大）
+    # - id: I4
+    #   name: 现货日频历史（kline_index）
+    #   fields: trade_date/close
+    # - id: I5
+    #   name: 持仓量（futures_position）
+    #   fields: trade_date/long_position/short_position（品种跨合约合计）
+    # - id: I6
+    #   name: 交割周日历（calendar_event futures_delivery）
+    #   fields: event_date
+    # 层: 特征
+    # - id: F1
+    #   name_zh: 基差率
+    #   formula: basis_rate = (F_主力 - S_现货) / S_现货
+    # - id: F2
+    #   name_zh: 贴水变化率（30 分钟口径，当前 d1_proxy）
+    #   formula: basis_vel_30m = basis_rate(t) - basis_rate(t-30min)  # 分钟腿未落地前=今日-前一交易日基差
+    # - id: F3
+    #   name_zh: 基差日变化 20 日 σ
+    #   formula: σ_20d = stdev(diff(daily_basis_series), 近20个差分)  # 样本<5 不定性
+    # - id: F4
+    #   name_zh: 持仓激增率
+    #   formula: pos_surge = (最新日总持仓 - 前5日均值) / 前5日均值  # >10% 激增
+    # 层: 算法
+    # - id: A1
+    #   name_zh: 贴水急扩告警
+    #   desc: F2 < -1.5×F3 → discount_alert=True（机构对冲避险急增，M2 降档触发输出之一）
+    # - id: A2
+    #   name_zh: 交割周降权
+    #   desc: ts 所在 ISO 周存在 futures_delivery 事件 → applied_weight=0.5；查询失败 fail-open 不降权+留痕
+    # - id: A3
+    #   name_zh: 持仓确认
+    #   desc: 告警且 F4>10% → confirm_flag=True（真对冲）；告警且持仓平稳 → confirm_flag=False，signal_weight×0.5（或为期指单边投机）；持仓数据不可用 → confirm_flag=None 不打折（fail-open）
+    # - id: A4
+    #   name_zh: 降级链
+    #   desc: 分钟腿缺→日频腿+degraded 标注；单腿缺→该品种跳过留痕；两腿皆无→snapshot degraded=True 空结果
+    # 层: 输出
+    # - id: O1
+    #   name_zh: FuturesBasisSnapshot
+    #   intro: ts/trade_date/per_symbol{basis_rate,basis_vel_30m,discount_alert,confirm_flag,...}/delivery_week/applied_weight/degraded/notes；frozen dataclass JSON 可序列化（prediction_log 预留）
+    # [/ALGO_FLOW]
+    #
+    # 边:
+    # I1,I2,I3,I4 --> F1,F2,F3
+    # F2,F3 --> A1
+    # I6 --> A2
+    # I5,F4,A1 --> A3
+    # I1,I2,I3,I4 --> A4
+    # A1,A2,A3,A4 --> O1

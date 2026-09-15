@@ -24,47 +24,7 @@ PatternToSignalMapper — 97形态→信号转化层（MOD-SIG-115，B1-00849，
 
 纯内存/DI设计；外部副作用全部经注入回调。
 
-# [ALGO_FLOW]
-# 层: 输入
-# - id: I1
-#   name: stop_buffer_pct 参数
-#   fields: 参数 stop_buffer_pct（无注解）
-#   code: pattern_to_signal_mapper.py 顶层公共函数形参（AST 提取）
-# - id: I2
-#   name: default_win_rate 参数
-#   fields: 参数 default_win_rate（无注解）
-#   code: pattern_to_signal_mapper.py 顶层公共函数形参（AST 提取）
-# - id: I3
-#   name: validator 参数
-#   fields: 参数 validator（无注解）
-#   code: pattern_to_signal_mapper.py 顶层公共函数形参（AST 提取）
-# - id: I4
-#   name: clock 参数
-#   fields: 参数 clock（无注解）
-#   code: pattern_to_signal_mapper.py 顶层公共函数形参（AST 提取）
-# 层: 算法
-# - id: A1
-#   name_zh: ① PatternToSignalMapper
-#   name_en: PatternToSignalMapper
-#   intro: 形态信号转化层（PatternEvent→方向/强度/止损→CTR-002 输出）。
-#   desc: 形态信号转化层（PatternEvent→方向/强度/止损→CTR-002 输出）。；公共方法（定义序）: map_event, map_batch, emit_signal；源码 L132-L254
-#   inputs: stop_buffer_pct default_win_rate validator clock
-#   outputs: 返回值
-#   （注：A1 之后另有 3 个公共定义未列入（含 3 个数据契约/异常/枚举声明类），见源码）
-# 层: 输出
-# - id: O1
-#   name_zh: 模块公共 API 面（4 定义）
-#   name_en: public defs
-#   intro: PatternToSignalMapper
-#   downstream: 运行时装配批（统一注入点装配）
-# [/ALGO_FLOW]
-#
-# 边:
-# I1 --> A1
-# I2 --> A1
-# I3 --> A1
-# I4 --> A1
-# A1 --> O1
+# [ALGO_FLOW] external: docs/03_modules/_domain_signal/algo_flow/pattern_to_signal_mapper.yaml
 """
 
 from __future__ import annotations

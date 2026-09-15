@@ -34,23 +34,7 @@ r"""MOD-SIG-069 — 指数级多指标共振综合评分（GAP-F-31 = 设计文�
 置信度启发式：买/卖 = 50 + 同向权重占比×45（封顶 95）；中性恒 50。
 **非校准概率**（"只画栏杆不算命"纪律：评分是状态描摹非点位预测）。
 
-# [ALGO_FLOW]
-# 层: 输入
-# - id: I1 指数日K序列 list[DailyBar]（date/open/high/low/close/volume 升序，kline_index）
-# 层: 特征
-# - id: F1~F7 七族指标末值（MACD/KDJ/RSI/量能/均线/BOLL/趋势）
-# 层: 算法
-# - id: A1 七族投票（族票 ∈ {+1,0,-1}，理由留痕）
-# - id: A2 加权合成 + 三态信号 + 共振计数 + 启发式置信度
-# 层: 输出
-# - id: O1 IndexResonanceResult（signal/confidence/resonance x/7/family_votes 明细）
-# [/ALGO_FLOW]
-#
-# 边:
-# I1 --> F1..F7
-# F1..F7 --> A1
-# A1 --> A2
-# A2 --> O1
+# [ALGO_FLOW] external: docs/03_modules/_domain_signal/algo_flow/index_resonance_scorer.yaml
 """
 
 from __future__ import annotations

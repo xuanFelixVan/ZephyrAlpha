@@ -31,25 +31,7 @@ r"""MOD-SIG-078 — 昨日涨停今表现 + 炸板率统计（GAP-F-19，情绪�
 symbol_canonical 取裸码）；今日缺数据的票跳过不计入统计+notes 留痕；
 超额=封板池均值 − 指数涨幅（注入位，None 不算）。
 
-# [ALGO_FLOW]
-# 层: 输入
-# - id: I1 昨封板池 list[PoolStock]（limit_up_down）
-# - id: I2 昨炸板池 list[PoolStock]（kline_daily×stk_limit 联算）
-# - id: I3 今日涨跌幅 dict[symbol → pct_change]（kline_daily）
-# - id: I4 市场宽度 (attempted, sealed)（market_breadth_snapshot 末快照）
-# 层: 算法
-# - id: A1 双池×今日表现 join（裸码键）→ 分组统计
-# - id: A2 市场炸板率 + 超额收益
-# 层: 输出
-# - id: O1 LimitUpFollowthroughReport（双池统计+市场炸板率+双端榜）
-# [/ALGO_FLOW]
-#
-# 边:
-# I1,I3 --> A1
-# I2,I3 --> A1
-# I4 --> A2
-# A1 --> A2
-# A2 --> O1
+# [ALGO_FLOW] external: docs/03_modules/_domain_signal/algo_flow/limit_up_followthrough.yaml
 """
 
 from __future__ import annotations

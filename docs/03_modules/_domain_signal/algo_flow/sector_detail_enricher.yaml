@@ -1,0 +1,24 @@
+# ALGO_FLOW 外部真源——sector_detail_enricher（_domain_signal 域，真源 src/zephyr/signal_ashare/sector/sector_detail_enricher.py）
+# 2026-09-15 P2-1 契约头减负批量出仓：docstring 内联块逐字节副本，extractor 经
+# external 锚加载走同一 parse_algo_flow 管线；算法公共面变化时同步更新本块。
+doc_type: architecture_view
+ttl: permanent
+module: src.zephyr.signal_ashare.sector.sector_detail_enricher
+source_of_truth: src/zephyr/signal_ashare/sector/sector_detail_enricher.py
+algo_flow: |
+    # [ALGO_FLOW]
+    # 层: 输入
+    # - id: I1 板块指标 SectorMetricsInput（涨幅/涨停数/量偏）
+    # - id: I2 新闻窗 list[NewsItemInput]
+    # - id: I3 业绩证据 EarningsEvidence（注入位，可 None）
+    # 层: 算法
+    # - id: A1 周期定位状态机（快照规则+prev 平滑）
+    # - id: A2 原因聚合（关键词命中计数+超窗守卫）
+    # 层: 输出
+    # - id: O1 SectorDetailEnrichment（cycle_phase + rally_reasons + window_notes）
+    # [/ALGO_FLOW]
+    #
+    # 边:
+    # I1 --> A1
+    # I1,I2,I3 --> A2
+    # A1,A2 --> O1

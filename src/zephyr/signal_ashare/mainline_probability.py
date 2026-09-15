@@ -34,50 +34,7 @@ probability_pct=None + notes 留痕（不出伪分）。
 评分宇宙 = MOD-SIG-061 主线候选榜（score≥2 入榜板块）；无主线混沌期候选榜空 →
 本模块空榜。观测层消费不接交易（与 MOD-SIG-061/062 同纪律）。
 
-# [ALGO_FLOW]
-# 层: 输入
-# - id: I1
-#   name: MOD-SIG-061 主线候选榜（复用产出，含 RRG 象限/市场 5 状态/无主线标记）
-#   fields: candidates(sector_code/sector_name/rrg_quadrant)/rotation_state/no_mainline_flag
-# - id: I2
-#   name: MOD-SIG-062 龙头识别榜（复用产出，含四档分组）
-#   fields: sectors(sector_code/leader.consec_limit/backbones/followers)/degraded
-# - id: I3
-#   name: 板块成分映射（sector_constituent，SCD-2 时点有效）
-#   fields: sector_code/stock_code
-# - id: I4
-#   name: 个股主力资金流窗（money_flow，资金持续性腿）
-#   fields: trade_date/symbol_canonical/main_net_inflow
-# 层: 特征
-# - id: F1
-#   name_zh: RRG 象限子分
-#   formula: LEADING 1.0/IMPROVING 0.7/WEAKENING 0.3/LAGGING 0.1；None 缺维
-# - id: F2
-#   name_zh: 接力阶段子分
-#   formula: 连板梯队映射(0.1/0.2/0.4/0.6/0.75/0.9)；市场见顶派发期 ×0.6
-# - id: F3
-#   name_zh: 资金持续性子分
-#   formula: 0.6×pos_ratio + 0.4×streak_ratio（板块日净流入序列，streak=尾部连正日数）
-# - id: F4
-#   name_zh: 梯队完整度子分
-#   formula: 龙头0.4 + 中军0.3 + min(跟风数/3,1)×0.3
-# 层: 算法
-# - id: A1
-#   name_zh: 四因子加权合成
-#   desc: pct=Σw·s/Σw(可用)×100；weight_overrides 动态接口位覆盖静态权重
-# 层: 输出
-# - id: O1
-#   name_zh: MainlineProbabilityResult
-#   intro: date/items(sector_code/probability_pct/四子分/reasons)/no_mainline_flag/degraded/notes/annotations；frozen dataclass asdict JSON 可序列化
-# [/ALGO_FLOW]
-#
-# 边:
-# I1 --> F1
-# I1,I2 --> F2
-# I3,I4 --> F3
-# I2 --> F4
-# F1,F2,F3,F4 --> A1
-# A1 --> O1
+# [ALGO_FLOW] external: docs/03_modules/_domain_signal/algo_flow/mainline_probability.yaml
 """
 
 from __future__ import annotations

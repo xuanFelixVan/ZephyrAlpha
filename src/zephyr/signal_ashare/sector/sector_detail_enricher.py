@@ -31,22 +31,7 @@ r"""MOD-SIG-081 — 板块详情补充维度（GAP-F-17，板块详情页两维�
    latest_date 距 as_of 超 earnings_stale_days（默认 35 天）即判超窗，
    不作有效原因，仅 window_notes 留痕（防陈旧业绩误导）。
 
-# [ALGO_FLOW]
-# 层: 输入
-# - id: I1 板块指标 SectorMetricsInput（涨幅/涨停数/量偏）
-# - id: I2 新闻窗 list[NewsItemInput]
-# - id: I3 业绩证据 EarningsEvidence（注入位，可 None）
-# 层: 算法
-# - id: A1 周期定位状态机（快照规则+prev 平滑）
-# - id: A2 原因聚合（关键词命中计数+超窗守卫）
-# 层: 输出
-# - id: O1 SectorDetailEnrichment（cycle_phase + rally_reasons + window_notes）
-# [/ALGO_FLOW]
-#
-# 边:
-# I1 --> A1
-# I1,I2,I3 --> A2
-# A1,A2 --> O1
+# [ALGO_FLOW] external: docs/03_modules/_domain_signal/algo_flow/sector_detail_enricher.yaml
 """
 
 from __future__ import annotations

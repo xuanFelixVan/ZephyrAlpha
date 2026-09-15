@@ -1,0 +1,24 @@
+# ALGO_FLOW 外部真源——trendline_sr_detector（_domain_signal 域，真源 src/zephyr/signal_ashare/trendline_sr_detector.py）
+# 2026-09-15 P2-1 契约头减负批量出仓：docstring 内联块逐字节副本，extractor 经
+# external 锚加载走同一 parse_algo_flow 管线；算法公共面变化时同步更新本块。
+doc_type: architecture_view
+ttl: permanent
+module: src.zephyr.signal_ashare.trendline_sr_detector
+source_of_truth: src/zephyr/signal_ashare/trendline_sr_detector.py
+algo_flow: |
+    # [ALGO_FLOW]
+    # 层: 输入
+    # - id: I1 日 K 序列 list[SRBar]（date/high/low/close 升序）
+    # 层: 算法
+    # - id: A1 分形极值（±k 满窗）
+    # - id: A2 价位聚类 → 支撑/压力
+    # - id: A3 趋势线（最近两同向极值）
+    # 层: 输出
+    # - id: O1 TrendSRAnalysis（levels + support/resistance + trendlines）
+    # [/ALGO_FLOW]
+    #
+    # 边:
+    # I1 --> A1
+    # A1 --> A2
+    # A1 --> A3
+    # A2,A3 --> O1

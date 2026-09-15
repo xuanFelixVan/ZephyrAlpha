@@ -29,42 +29,7 @@ NLP 分类回调**接入（文本→闭合事件词表，未注入 Fail-Closed �
 语义同构：桶样本不足回退全样本 degraded）；event_driven_screener=事件选
 股（本件不做选股，只产分布）；causal_inference_engine=因果推断（零交集）。
 
-# [ALGO_FLOW]
-# 层: 输入
-# - id: I1
-#   name: clock 参数
-#   fields: 参数 clock（无注解）
-#   code: event_conditional_density.py 顶层公共函数形参（AST 提取）
-# - id: I2
-#   name: event_classifier 参数
-#   fields: 参数 event_classifier（无注解）
-#   code: event_conditional_density.py 顶层公共函数形参（AST 提取）
-# - id: I3
-#   name: config 参数
-#   fields: 参数 config（无注解）
-#   code: event_conditional_density.py 顶层公共函数形参（AST 提取）
-# 层: 算法
-# - id: A1
-#   name_zh: ① EventConditionalDensity
-#   name_en: EventConditionalDensity
-#   intro: 事件驱动条件分布预测器（事件分桶 + 直方图/分位数 + 盘后批护栏）。
-#   desc: 事件驱动条件分布预测器（事件分桶 + 直方图/分位数 + 盘后批护栏）。；公共方法（定义序）: validate_conservation, classify_event, add_sample, add_sample…
-#   inputs: clock event_classifier config
-#   outputs: 返回值
-#   （注：A1 之后另有 6 个公共定义未列入（含 6 个数据契约/异常/枚举声明类），见源码）
-# 层: 输出
-# - id: O1
-#   name_zh: 模块公共 API 面（7 定义）
-#   name_en: public defs
-#   intro: EventConditionalDensity
-#   downstream: 运行时装配批（盘后事件条件分布批处理 / 信号-风控下游密度输入）
-# [/ALGO_FLOW]
-#
-# 边:
-# I1 --> A1
-# I2 --> A1
-# I3 --> A1
-# A1 --> O1
+# [ALGO_FLOW] external: docs/03_modules/_domain_signal/algo_flow/event_conditional_density.yaml
 """
 
 from __future__ import annotations

@@ -1,0 +1,25 @@
+# ALGO_FLOW 外部真源——counter_trend_board（_domain_signal 域，真源 src/zephyr/signal_ashare/counter_trend_board.py）
+# 2026-09-15 P2-1 契约头减负批量出仓：docstring 内联块逐字节副本，extractor 经
+# external 锚加载走同一 parse_algo_flow 管线；算法公共面变化时同步更新本块。
+doc_type: architecture_view
+ttl: permanent
+module: src.zephyr.signal_ashare.counter_trend_board
+source_of_truth: src/zephyr/signal_ashare/counter_trend_board.py
+algo_flow: |
+    # [ALGO_FLOW]
+    # 层: 输入
+    # - id: I1 指数分钟序列 [(ts, price)]
+    # - id: I2 板块分钟序列 {code → [(ts, close)]}
+    # - id: I3 板块资金流 {code → 净流入}（注入位，可 None）
+    # 层: 算法
+    # - id: A1 主下跌段识别（峰→谷）
+    # - id: A2 四卡逐板块口径计算
+    # 层: 输出
+    # - id: O1 CounterTrendBoard（4 张 CounterTrendCard）
+    # [/ALGO_FLOW]
+    #
+    # 边:
+    # I1 --> A1
+    # A1,I2 --> A2
+    # I3 --> A2
+    # A2 --> O1

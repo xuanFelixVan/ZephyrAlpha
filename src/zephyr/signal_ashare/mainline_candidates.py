@@ -45,47 +45,7 @@ MOD-SIG-061 — 主线候选榜（92号清单 §7.8，架构审查报告 §11.5 
 - 板块 K 线历史自 2026-06 起采（~52 交易日）：RRG 最小 62 日在数据积累期常态
   降级（该维度 rrg_quadrant=None + notes 留痕），属设计内行为，不炸整体。
 
-# [ALGO_FLOW]
-# 层: 输入
-# - id: I1
-#   name: 板块日 K 历史窗（kline_sector_880，period=1d）
-#   fields: sector_code/trade_date/close/amount
-# - id: I2
-#   name: 板块成分股映射（sector_constituent，SCD-2 时点有效）
-#   fields: sector_code/sector_name/stock_code
-# - id: I3
-#   name: 个股日 K（kline_daily，881xxx 行业合成腿）
-#   fields: symbol_canonical/trade_date/close/amount/pct_change
-# 层: 算法
-# - id: A1
-#   name_zh: 统一板块日序列
-#   desc: 880xxx 直取 K 线；881xxx 成分等权 pct_change 合成价格指数（cumprod）
-# - id: A2
-#   name_zh: 5 状态与连续领涨
-#   desc: up_ratio/hhi_top5/lead_streak/disp/fast_rotation → classify_rotation_state（sector_rotation_state 消费）
-# - id: A3
-#   name_zh: q3 动量前排
-#   desc: n_day_return(closes,3) → percentile_ranks 截面分位（sector_momentum 消费）
-# - id: A4
-#   name_zh: RRG 已确认象限
-#   desc: compute_rrg_series → confirm_quadrant_series → 最新已确认象限（sector_rrg 消费，62 日守卫）
-# - id: A5
-#   name_zh: 候选评分与空榜判定
-#   desc: 规则加分（3/2/1/1/1），score≥2 入榜 Top-k；lead_streak<2 → 无主线混沌空榜+注解
-# 层: 输出
-# - id: O1
-#   name_zh: MainlineCandidatesResult
-#   intro: date/rotation_state/watch_score/leader/lead_streak/no_mainline_flag/candidates(理由标签链)/annotations/degraded/notes
-# [/ALGO_FLOW]
-#
-# 边:
-# I1 --> A1
-# I2,I3 --> A1
-# A1 --> A2
-# A1 --> A3
-# A1 --> A4
-# A2,A3,A4 --> A5
-# A5 --> O1
+# [ALGO_FLOW] external: docs/03_modules/_domain_signal/algo_flow/mainline_candidates.yaml
 """
 
 from __future__ import annotations

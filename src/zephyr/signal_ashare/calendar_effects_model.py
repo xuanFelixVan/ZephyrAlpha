@@ -27,37 +27,7 @@ B10-01390（AUD-DRAFT-001-DIGEST P2 波 P2-W05，CAND-TESTB-042，A1 模块55）
 固定分组统计，零交集）；overnight_return_expectancy=隔夜收益预期（本件
 =日间收益日历效应，零交集）。
 
-# [ALGO_FLOW]
-# 层: 输入
-# - id: I1
-#   name: ttest_runner 参数
-#   fields: 参数 ttest_runner（无注解）
-#   code: calendar_effects_model.py 顶层公共函数形参（AST 提取）
-# - id: I2
-#   name: clock 参数
-#   fields: 参数 clock（无注解）
-#   code: calendar_effects_model.py 顶层公共函数形参（AST 提取）
-# 层: 算法
-# - id: A1
-#   name_zh: ① CalendarEffectsModel
-#   name_en: CalendarEffectsModel
-#   intro: 日历效应滚动统计件（纯内存；ttest_runner / clock 注入）。
-#   desc: 日历效应滚动统计件（纯内存；ttest_runner / clock 注入）。 Args: ttest_runner: 分组均值 t 检验回调 ``runner(group_a,…；公共方法（定义序）: monthly…
-#   inputs: ttest_runner clock
-#   outputs: 返回值
-#   （注：A1 之后另有 4 个公共定义未列入（含 4 个数据契约/异常/枚举声明类），见源码）
-# 层: 输出
-# - id: O1
-#   name_zh: 模块公共 API 面（5 定义）
-#   name_en: public defs
-#   intro: CalendarEffectsModel
-#   downstream: 运行时装配批（统一注入点装配：收益序列 / 日历映射 / 统计器注入）
-# [/ALGO_FLOW]
-#
-# 边:
-# I1 --> A1
-# I2 --> A1
-# A1 --> O1
+# [ALGO_FLOW] external: docs/03_modules/_domain_signal/algo_flow/calendar_effects_model.yaml
 """
 
 from __future__ import annotations

@@ -25,35 +25,7 @@ r"""MOD-SIG-065 — 持仓×板块语境关联查询（GAP-F-30，持仓监控�
 输出每票：板块语境清单（sector_code/名称/主线概率%/主线排名/板内角色/龙头连板数）
 + best_sector（主线概率最高归属板块）。多板块归属全部列出（一股多板属设计内）。
 
-# [ALGO_FLOW]
-# 层: 输入
-# - id: I1
-#   name: 持仓清单（调用方供给）
-#   fields: symbol/weight
-# - id: I2
-#   name: 板块成分映射（sector_constituent，SCD-2 时点有效）
-#   fields: sector_code/stock_code
-# - id: I3
-#   name: MOD-SIG-064 主线概率榜（复用产出）
-#   fields: items(sector_code/sector_name/probability_pct)/degraded
-# - id: I4
-#   name: MOD-SIG-062 龙头识别榜（复用产出）
-#   fields: sectors(sector_code/leader/backbones/followers/neutrals)
-# 层: 算法
-# - id: A1
-#   name_zh: 持仓×板块×角色关联
-#   desc: symbol 归一化 → 成分反查板块 → 概率/排名/角色三源挂接 → best_sector 选取
-# 层: 输出
-# - id: O1
-#   name_zh: PositionSectorContextResult
-#   intro: date/items(symbol/sectors[]/best_sector_code)/degraded/notes/annotations；frozen dataclass asdict JSON 可序列化
-# [/ALGO_FLOW]
-#
-# 边:
-# I1,I2 --> A1
-# I3 --> A1
-# I4 --> A1
-# A1 --> O1
+# [ALGO_FLOW] external: docs/03_modules/_domain_signal/algo_flow/position_sector_context.yaml
 """
 
 from __future__ import annotations

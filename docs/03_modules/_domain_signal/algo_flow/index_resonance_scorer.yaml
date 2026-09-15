@@ -1,0 +1,25 @@
+# ALGO_FLOW 外部真源——index_resonance_scorer（_domain_signal 域，真源 src/zephyr/signal_ashare/index_resonance_scorer.py）
+# 2026-09-15 P2-1 契约头减负批量出仓：docstring 内联块逐字节副本，extractor 经
+# external 锚加载走同一 parse_algo_flow 管线；算法公共面变化时同步更新本块。
+doc_type: architecture_view
+ttl: permanent
+module: src.zephyr.signal_ashare.index_resonance_scorer
+source_of_truth: src/zephyr/signal_ashare/index_resonance_scorer.py
+algo_flow: |
+    # [ALGO_FLOW]
+    # 层: 输入
+    # - id: I1 指数日K序列 list[DailyBar]（date/open/high/low/close/volume 升序，kline_index）
+    # 层: 特征
+    # - id: F1~F7 七族指标末值（MACD/KDJ/RSI/量能/均线/BOLL/趋势）
+    # 层: 算法
+    # - id: A1 七族投票（族票 ∈ {+1,0,-1}，理由留痕）
+    # - id: A2 加权合成 + 三态信号 + 共振计数 + 启发式置信度
+    # 层: 输出
+    # - id: O1 IndexResonanceResult（signal/confidence/resonance x/7/family_votes 明细）
+    # [/ALGO_FLOW]
+    #
+    # 边:
+    # I1 --> F1..F7
+    # F1..F7 --> A1
+    # A1 --> A2
+    # A2 --> O1

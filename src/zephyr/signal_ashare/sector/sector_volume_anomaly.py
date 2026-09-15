@@ -26,21 +26,7 @@ r"""MOD-SIG-079 — 板块量能异动检测（GAP-F-20，情绪页「量能异�
   其间正常 / ≤−30% 温和缩量 / ≤−50% 显著缩量。
 - **观测层消费**，不接交易；板块跳过原因全部 notes 留痕。
 
-# [ALGO_FLOW]
-# 层: 输入
-# - id: I1 板块成交额序列 dict[code → SectorAmountSeries]（(date, amount) 升序）
-# - id: I2 trade_date（PIT 上限）
-# 层: 算法
-# - id: A1 当日量 vs 前 N 日均值偏离度 + z-score
-# - id: A2 五档标签 + 偏离降序榜
-# 层: 输出
-# - id: O1 VolumeAnomalyReport（items + label_counts + notes）
-# [/ALGO_FLOW]
-#
-# 边:
-# I1,I2 --> A1
-# A1 --> A2
-# A2 --> O1
+# [ALGO_FLOW] external: docs/03_modules/_domain_signal/algo_flow/sector_volume_anomaly.yaml
 """
 
 from __future__ import annotations

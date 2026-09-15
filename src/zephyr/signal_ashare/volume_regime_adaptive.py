@@ -28,47 +28,7 @@ B10-01445（AUD-DRAFT-001-DIGEST P2 波 P2-W06，CAND-TESTB-045，A1 模块23）
 结构/订单流（本件=日频 vol/MA20 体制适配）；strategy_matrix_3d（MOD-SIG-
 130）=本件三态与体制轴的三维扩展消费方，轴枚举在此定义供其复用。
 
-# [ALGO_FLOW]
-# 层: 输入
-# - id: I1
-#   name: strategy_matrix 参数
-#   fields: 参数 strategy_matrix（无注解）
-#   code: volume_regime_adaptive.py 顶层公共函数形参（AST 提取）
-# - id: I2
-#   name: shrink_threshold 参数
-#   fields: 参数 shrink_threshold（无注解）
-#   code: volume_regime_adaptive.py 顶层公共函数形参（AST 提取）
-# - id: I3
-#   name: spike_threshold 参数
-#   fields: 参数 spike_threshold（无注解）
-#   code: volume_regime_adaptive.py 顶层公共函数形参（AST 提取）
-# - id: I4
-#   name: extreme_low_pct 参数
-#   fields: 参数 extreme_low_pct（无注解）
-#   code: volume_regime_adaptive.py 顶层公共函数形参（AST 提取）
-# 层: 算法
-# - id: A1
-#   name_zh: ① VolumeRegimeAdaptive
-#   name_en: VolumeRegimeAdaptive
-#   intro: 量能三态分类 + 量能×体制 3×3 策略矩阵查找（纯内存确定性）。
-#   desc: 量能三态分类 + 量能×体制 3×3 策略矩阵查找（纯内存确定性）。；公共方法（定义序）: classify, query, adapt；源码 L161-L294
-#   inputs: strategy_matrix shrink_threshold spike_threshold extreme_low_pct extr…
-#   outputs: 返回值
-#   （注：A1 之后另有 6 个公共定义未列入（含 6 个数据契约/异常/枚举声明类），见源码）
-# 层: 输出
-# - id: O1
-#   name_zh: 模块公共 API 面（7 定义）
-#   name_en: public defs
-#   intro: VolumeRegimeAdaptive
-#   downstream: 运行时装配批（量能×体制策略参数查找 / MOD-SIG-130 三维矩阵轴复用）
-# [/ALGO_FLOW]
-#
-# 边:
-# I1 --> A1
-# I2 --> A1
-# I3 --> A1
-# I4 --> A1
-# A1 --> O1
+# [ALGO_FLOW] external: docs/03_modules/_domain_signal/algo_flow/volume_regime_adaptive.yaml
 """
 
 from __future__ import annotations

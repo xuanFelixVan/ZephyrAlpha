@@ -24,37 +24,7 @@ BankerPatternSimulator — 庄家行为模式识别与模拟（MOD-SIG-113，B1-
 
 纯内存/DI设计；外部副作用全部经注入回调。
 
-# [ALGO_FLOW]
-# 层: 输入
-# - id: I1
-#   name: rules 参数
-#   fields: 参数 rules（无注解）
-#   code: banker_pattern_simulator.py 顶层公共函数形参（AST 提取）
-# - id: I2
-#   name: backtest_runner 参数
-#   fields: 参数 backtest_runner（无注解）
-#   code: banker_pattern_simulator.py 顶层公共函数形参（AST 提取）
-# 层: 算法
-# - id: A1
-#   name_zh: ① BankerPatternSimulator
-#   name_en: BankerPatternSimulator
-#   intro: 庄家行为模式识别与模拟器（规则库+阶段转移+沙盒）。
-#   desc: 庄家行为模式识别与模拟器（规则库+阶段转移+沙盒）。；公共方法（定义序）: match_phase, transition_allowed, next_phases, sandbox_simulate, analyze…
-#   inputs: rules backtest_runner
-#   outputs: 返回值
-#   （注：A1 之后另有 5 个公共定义未列入（含 5 个数据契约/异常/枚举声明类），见源码）
-# 层: 输出
-# - id: O1
-#   name_zh: 模块公共 API 面（6 定义）
-#   name_en: public defs
-#   intro: BankerPatternSimulator
-#   downstream: 运行时装配批（统一注入点装配）
-# [/ALGO_FLOW]
-#
-# 边:
-# I1 --> A1
-# I2 --> A1
-# A1 --> O1
+# [ALGO_FLOW] external: docs/03_modules/_domain_signal/algo_flow/banker_pattern_simulator.yaml
 """
 
 from __future__ import annotations

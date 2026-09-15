@@ -1,0 +1,70 @@
+# ALGO_FLOW 外部真源——seat_pattern_analyzer（_domain_signal 域，真源 src/zephyr/signal_ashare/limit_up/seat_pattern_analyzer.py）
+# 2026-09-15 P2-1 契约头减负批量出仓：docstring 内联块逐字节副本，extractor 经
+# external 锚加载走同一 parse_algo_flow 管线；算法公共面变化时同步更新本块。
+doc_type: architecture_view
+ttl: permanent
+module: src.zephyr.signal_ashare.limit_up.seat_pattern_analyzer
+source_of_truth: src/zephyr/signal_ashare/limit_up/seat_pattern_analyzer.py
+algo_flow: |
+    # [ALGO_FLOW]
+    # 层: 输入
+    # - id: I1
+    #   name: 龙虎榜席位明细行 列表
+    #   fields: symbol/trade_date/seat_name/buy_amount/sell_amount/net_amount/buy_rank/sell_rank/reason
+    #   code: SeatRecord L120
+    # - id: I2
+    #   name: seat_registry 席位档案
+    #   fields: seat_id/seat_name/seat_type/seat_style/aliases/max_holding_days
+    #   code: seat_registry.yaml seats:
+    # 层: 特征
+    # - id: F1
+    #   name_zh: 净买入占比
+    #   name_en: net_buy_ratio
+    #   intro: 席位净买入额占该票当日龙虎榜总成交额比例 >10%强势 <5%诱多
+    #   formula: net_amount / total_turnover
+    #   code: seat_pattern_analyzer.py SeatProfile.net_buy_ratio
+    #   registry: factor_registry: 无FCT条目（候选 seat_premium 因子前置特征）
+    #   is_break: true
+    # - id: F2
+    #   name_zh: 买一买二集中度
+    #   name_en: top2_concentration
+    #   intro: 买一+买二净买入占买方前五合计比例 40-60%最佳 >70%独食危险
+    #   formula: (net_rank1+net_rank2)/Σnet_buy_top5
+    #   code: seat_pattern_analyzer.py SeatLinkage.top2_concentration
+    #   registry: factor_registry: 无FCT条目
+    #   is_break: true
+    # 层: 算法
+    # - id: A1
+    #   name_zh: ① 席位身份识别
+    #   name_en: identify_seat
+    #   intro: seat_name/aliases 匹配 registry→命中取档案；未命中回退 provider 粗分类（institution/connect/broker）
+    #   desc: 精确匹配 seat_name → aliases 匹配 → provider seat_type 回退 → unknown
+    #   inputs: I1 I2
+    #   outputs: SeatProfile（含 matched_registry 标记）
+    # - id: A2
+    #   name_zh: ② 席位联动分析
+    #   name_en: analyze_linkage
+    #   intro: 同票同日多席位共现矩阵：机构+游资同买加分 量化+散户同买减分
+    #   desc: type_set 组合规则：{institution,youzi}=强势接力 {quant,retail}=绞肉机回避 {retail}独大=散户接盘
+    #   inputs: A1
+    #   outputs: SeatLinkage（type_set/top2_concentration/institution_net/youzi_net/quant_net/retail_net）
+    # - id: A3
+    #   name_zh: ③ 跟随信号合成
+    #   name_en: synthesize_follow_signal
+    #   intro: 基准50分+身份加减分+结构加减分+风格修正→0-100 分三档映射 direction
+    #   desc: institution 净买>0 +15 / 知名游资(龙头连板/首板)净买>0 +10 / quant 净买占比>30% -20 / retail 净买占比>30% -15 / top2>70% -10 / ≥60=long ≤40=avoid 其余 neutral
+    #   inputs: A1 A2 F1 F2
+    #   outputs: FollowSignal（follow_score/direction/reasons）
+    # 层: 输出
+    # - id: O1
+    #   name_zh: 席位形态分析结果
+    #   name_en: SeatPatternResult
+    #   intro: 三件套聚合：profiles+linkage+follow_signal+degraded 标记
+    #   downstream: strategy daban 类（候选）/ factor seat_premium（候选）
+    # [/ALGO_FLOW]
+    #
+    # 边:
+    # I1,I2 --> A1
+    # A1 --> A2
+    # A1,A2 --> A3
+    # A1,A2,A3 --> O1

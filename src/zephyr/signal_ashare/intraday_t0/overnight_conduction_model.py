@@ -25,42 +25,7 @@ B10-01375（AUD-DRAFT-001-DIGEST P2 波 P2-W05，CAND-TESTB-037，A1 模块21）
 纯内存/DI 设计：回归器/事件库/时钟全注入；不触网、不触盘、无 subprocess。
 同输入必同输出。非法输入 Fail-Closed 抛 OvernightConductionError。
 
-# [ALGO_FLOW]
-# 层: 输入
-# - id: I1
-#   name: config 参数
-#   fields: 参数 config（无注解）
-#   code: overnight_conduction_model.py 顶层公共函数形参（AST 提取）
-# - id: I2
-#   name: regressor 参数
-#   fields: 参数 regressor（无注解）
-#   code: overnight_conduction_model.py 顶层公共函数形参（AST 提取）
-# - id: I3
-#   name: clock 参数
-#   fields: 参数 clock（无注解）
-#   code: overnight_conduction_model.py 顶层公共函数形参（AST 提取）
-# 层: 算法
-# - id: A1
-#   name_zh: ① OvernightConductionModel
-#   name_en: OvernightConductionModel
-#   intro: 隔夜全球传导评估模型（β 回归 + 30分钟衰减 + 事件统计表 + 影响评分）。
-#   desc: 隔夜全球传导评估模型（β 回归 + 30分钟衰减 + 事件统计表 + 影响评分）。；公共方法（定义序）: event_impact_table, evaluate；源码 L273-L405
-#   inputs: config regressor clock
-#   outputs: 返回值
-#   （注：A1 之后另有 11 个公共定义未列入（含 11 个数据契约/异常/枚举声明类），见源码）
-# 层: 输出
-# - id: O1
-#   name_zh: 模块公共 API 面（12 定义）
-#   name_en: public defs
-#   intro: OvernightConductionModel
-#   downstream: 运行时装配批（统一注入点装配：隔夜传导评分层 / 开盘缺口预判消费方）
-# [/ALGO_FLOW]
-#
-# 边:
-# I1 --> A1
-# I2 --> A1
-# I3 --> A1
-# A1 --> O1
+# [ALGO_FLOW] external: docs/03_modules/_domain_signal/algo_flow/overnight_conduction_model.yaml
 """
 
 from __future__ import annotations

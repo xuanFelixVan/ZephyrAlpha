@@ -43,68 +43,7 @@
 定位红线：输出是相位/进度/置信度状态，非择时买卖信号。阈值（回撤门槛 5%、
 预期窗口 20 日、目标回撤 15%）为初拟，与 sector_adjustment 同源待 G05/G08 校准。
 
-# [ALGO_FLOW]
-# 层: 输入
-# - id: I1
-#   name: closes 参数
-#   fields: 参数 closes，类型注解 Sequence[float]
-#   code: adjustment_cycle_tracker.py 顶层公共函数形参（AST 提取）
-# - id: I2
-#   name: lookback 参数
-#   fields: 参数 lookback，类型注解 int
-#   code: adjustment_cycle_tracker.py 顶层公共函数形参（AST 提取）
-# - id: I3
-#   name: nh_ratios 参数
-#   fields: 参数 nh_ratios，类型注解 Sequence[float] | None
-#   code: adjustment_cycle_tracker.py 顶层公共函数形参（AST 提取）
-# - id: I4
-#   name: config 参数
-#   fields: 参数 config，类型注解 AdjustmentCycleConfig | None
-#   code: adjustment_cycle_tracker.py 顶层公共函数形参（AST 提取）
-# 层: 算法
-# - id: A1
-#   name_zh: ① find_cycle_peak
-#   name_en: find_cycle_peak
-#   intro: 周期峰下标：trailing lookback 窗口内最高收盘的位置（并列取最早）。
-#   desc: 周期峰下标：trailing lookback 窗口内最高收盘的位置（并列取最早）。；源码 L194-L202
-#   inputs: closes lookback
-#   outputs: int
-# - id: A2
-#   name_zh: ② track_adjustment_cycle
-#   name_en: track_adjustment_cycle
-#   intro: 核心纯函数：收盘序列（+可选新高占比序列）→ 调整周期快照。
-#   desc: 核心纯函数：收盘序列（+可选新高占比序列）→ 调整周期快照。 Args: closes: 指数收盘序列（升序），长度 ≥ config.min_history。 nh_ratio…；源码 L205-L299
-#   inputs: closes nh_ratios config
-#   outputs: AdjustmentCycleSnapshot
-# - id: A3
-#   name_zh: ③ AdjustmentCycleTracker
-#   name_en: AdjustmentCycleTracker
-#   intro: 调整周期追踪器（DB 加载层薄封装，计算全部委托纯函数）。
-#   desc: 调整周期追踪器（DB 加载层薄封装，计算全部委托纯函数）。 DB 依赖注入：query_fn 默认走项目既有 data 层 ch_reader.query（TSV）， regis…；公共方法（定义序）: load_in…
-#   inputs: registry query_fn config
-#   outputs: 返回值
-#   （注：A3 之后另有 4 个公共定义未列入（含 4 个数据契约/异常/枚举声明类），见源码）
-# 层: 输出
-# - id: O1
-#   name_zh: int
-#   name_en: int
-#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
-#   downstream: (待 BM-BUY-04 分批建仓市场级门控 / 下游风控节流层)
-# - id: O2
-#   name_zh: AdjustmentCycleSnapshot
-#   name_en: AdjustmentCycleSnapshot
-#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
-#   downstream: (待 BM-BUY-04 分批建仓市场级门控 / 下游风控节流层)
-# [/ALGO_FLOW]
-#
-# 边:
-# I1 --> A1
-# I2 --> A1
-# I3 --> A1
-# I4 --> A1
-# A1 --> A2
-# A2 --> A3
-# A3 --> O1
+# [ALGO_FLOW] external: docs/03_modules/_domain_signal/algo_flow/adjustment_cycle_tracker.yaml
 """
 
 from __future__ import annotations

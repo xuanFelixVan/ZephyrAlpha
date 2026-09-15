@@ -1,0 +1,37 @@
+# ALGO_FLOW 外部真源——position_sector_context（_domain_signal 域，真源 src/zephyr/signal_ashare/position_sector_context.py）
+# 2026-09-15 P2-1 契约头减负批量出仓：docstring 内联块逐字节副本，extractor 经
+# external 锚加载走同一 parse_algo_flow 管线；算法公共面变化时同步更新本块。
+doc_type: architecture_view
+ttl: permanent
+module: src.zephyr.signal_ashare.position_sector_context
+source_of_truth: src/zephyr/signal_ashare/position_sector_context.py
+algo_flow: |
+    # [ALGO_FLOW]
+    # 层: 输入
+    # - id: I1
+    #   name: 持仓清单（调用方供给）
+    #   fields: symbol/weight
+    # - id: I2
+    #   name: 板块成分映射（sector_constituent，SCD-2 时点有效）
+    #   fields: sector_code/stock_code
+    # - id: I3
+    #   name: MOD-SIG-064 主线概率榜（复用产出）
+    #   fields: items(sector_code/sector_name/probability_pct)/degraded
+    # - id: I4
+    #   name: MOD-SIG-062 龙头识别榜（复用产出）
+    #   fields: sectors(sector_code/leader/backbones/followers/neutrals)
+    # 层: 算法
+    # - id: A1
+    #   name_zh: 持仓×板块×角色关联
+    #   desc: symbol 归一化 → 成分反查板块 → 概率/排名/角色三源挂接 → best_sector 选取
+    # 层: 输出
+    # - id: O1
+    #   name_zh: PositionSectorContextResult
+    #   intro: date/items(symbol/sectors[]/best_sector_code)/degraded/notes/annotations；frozen dataclass asdict JSON 可序列化
+    # [/ALGO_FLOW]
+    #
+    # 边:
+    # I1,I2 --> A1
+    # I3 --> A1
+    # I4 --> A1
+    # A1 --> O1

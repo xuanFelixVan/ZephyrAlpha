@@ -1,0 +1,27 @@
+# ALGO_FLOW 外部真源——limit_up_followthrough（_domain_signal 域，真源 src/zephyr/signal_ashare/limit_up/limit_up_followthrough.py）
+# 2026-09-15 P2-1 契约头减负批量出仓：docstring 内联块逐字节副本，extractor 经
+# external 锚加载走同一 parse_algo_flow 管线；算法公共面变化时同步更新本块。
+doc_type: architecture_view
+ttl: permanent
+module: src.zephyr.signal_ashare.limit_up.limit_up_followthrough
+source_of_truth: src/zephyr/signal_ashare/limit_up/limit_up_followthrough.py
+algo_flow: |
+    # [ALGO_FLOW]
+    # 层: 输入
+    # - id: I1 昨封板池 list[PoolStock]（limit_up_down）
+    # - id: I2 昨炸板池 list[PoolStock]（kline_daily×stk_limit 联算）
+    # - id: I3 今日涨跌幅 dict[symbol → pct_change]（kline_daily）
+    # - id: I4 市场宽度 (attempted, sealed)（market_breadth_snapshot 末快照）
+    # 层: 算法
+    # - id: A1 双池×今日表现 join（裸码键）→ 分组统计
+    # - id: A2 市场炸板率 + 超额收益
+    # 层: 输出
+    # - id: O1 LimitUpFollowthroughReport（双池统计+市场炸板率+双端榜）
+    # [/ALGO_FLOW]
+    #
+    # 边:
+    # I1,I3 --> A1
+    # I2,I3 --> A1
+    # I4 --> A2
+    # A1 --> A2
+    # A2 --> O1

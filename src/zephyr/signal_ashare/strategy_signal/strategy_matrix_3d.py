@@ -28,37 +28,7 @@ backtest_runner，逐格调用产出格值）+ **格子查询接口**（三轴�
 style_regime_model（MOD-REGIME-014）=风格态识别（本件仅复用其 SizeAxis
 2 轴枚举）；signal_weight_adjuster=信号权重滚动调节（零交集）。
 
-# [ALGO_FLOW]
-# 层: 输入
-# - id: I1
-#   name: backtest_runner 参数
-#   fields: 参数 backtest_runner（无注解）
-#   code: strategy_matrix_3d.py 顶层公共函数形参（AST 提取）
-# - id: I2
-#   name: clock 参数
-#   fields: 参数 clock（无注解）
-#   code: strategy_matrix_3d.py 顶层公共函数形参（AST 提取）
-# 层: 算法
-# - id: A1
-#   name_zh: ① StrategyMatrix3D
-#   name_en: StrategyMatrix3D
-#   intro: 量能×体制×风格 18 格策略查找表（版本化，纯内存确定性）。
-#   desc: 量能×体制×风格 18 格策略查找表（版本化，纯内存确定性）。；公共方法（定义序）: all_keys, commit, fill_from_backtest, query, version_snapshot, lat…
-#   inputs: backtest_runner clock
-#   outputs: 返回值
-#   （注：A1 之后另有 3 个公共定义未列入（含 3 个数据契约/异常/枚举声明类），见源码）
-# 层: 输出
-# - id: O1
-#   name_zh: 模块公共 API 面（4 定义）
-#   name_en: public defs
-#   intro: StrategyMatrix3D
-#   downstream: 运行时装配批（量能×体制×风格三轴策略参数查询 / 参数版本审计）
-# [/ALGO_FLOW]
-#
-# 边:
-# I1 --> A1
-# I2 --> A1
-# A1 --> O1
+# [ALGO_FLOW] external: docs/03_modules/_domain_signal/algo_flow/strategy_matrix_3d.yaml
 """
 
 from __future__ import annotations

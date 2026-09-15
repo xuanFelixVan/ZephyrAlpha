@@ -25,31 +25,7 @@ fail-closed。**不引 torch/mamba_ssm 依赖**——真模型属 B-007 人工�
 占位增强路径：fit 学 z-score 统计（mean/std，std=0 列安全处理），enhance 输出
 标准化 + EMA 平滑序列，形状恒等于输入。
 
-# [ALGO_FLOW]
-# 层: 输入
-# - id: I1
-#   name: smoothing 参数
-#   fields: 参数 smoothing（无注解）
-#   code: mamba_ssm_temporal_enhancer.py 顶层公共函数形参（AST 提取）
-# 层: 算法
-# - id: A1
-#   name_zh: ① MambaSsmTemporalEnhancer
-#   name_en: MambaSsmTemporalEnhancer
-#   intro: Mamba-SSM 时序增强器骨架（z-score + EMA 占位）。
-#   desc: Mamba-SSM 时序增强器骨架（z-score + EMA 占位）。；公共方法（定义序）: is_fitted, fit, enhance；源码 L66-L113
-#   inputs: smoothing
-#   outputs: 返回值
-# 层: 输出
-# - id: O1
-#   name_zh: 模块公共 API 面（1 定义）
-#   name_en: public defs
-#   intro: MambaSsmTemporalEnhancer
-#   downstream: （远期：信号层时序特征增强消费方）
-# [/ALGO_FLOW]
-#
-# 边:
-# I1 --> A1
-# A1 --> O1
+# [ALGO_FLOW] external: docs/03_modules/_domain_signal/algo_flow/mamba_ssm_temporal_enhancer.yaml
 """
 
 from __future__ import annotations

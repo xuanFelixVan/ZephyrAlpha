@@ -35,47 +35,7 @@ StrategyVoteIntegrator — 多策略投票加权整合器（MOD-SIG-134，CAND-S
 SSoT: depgraph blueprint_id=MOD-SIG-134 | CAND-SIG-004
 Version: 0.1.0
 
-# [ALGO_FLOW]
-# 层: 输入
-# - id: I1
-#   name: symbol 参数
-#   fields: 参数 symbol，类型注解 str
-#   code: strategy_vote_integrator.py 顶层公共函数形参（AST 提取）
-# - id: I2
-#   name: signals 参数
-#   fields: 参数 signals，类型注解 list[StrategyVoteSignal] | tuple[Strate…
-#   code: strategy_vote_integrator.py 顶层公共函数形参（AST 提取）
-# - id: I3
-#   name: correlation_pairs 参数
-#   fields: 参数 correlation_pairs（无注解）
-#   code: strategy_vote_integrator.py 顶层公共函数形参（AST 提取）
-# - id: I4
-#   name: signal_age_days 参数
-#   fields: 参数 signal_age_days（无注解）
-#   code: strategy_vote_integrator.py 顶层公共函数形参（AST 提取）
-# 层: 算法
-# - id: A1
-#   name_zh: ① integrate_strategy_votes
-#   name_en: integrate_strategy_votes
-#   intro: 多策略投票加权整合——三零件输出 → 相关性惩罚 → ≥2/3 同向 → 统一决策信号。
-#   desc: 多策略投票加权整合——三零件输出 → 相关性惩罚 → ≥2/3 同向 → 统一决策信号。 调整序固定（乱序即算法断裂）： 1. 衰减自适应（信号龄期半衰降权） 2. 相关性惩罚（…；源码 L357-L409
-#   inputs: symbol signals correlation_pairs signal_age_days config
-#   outputs: IntegratedDecision
-#   （注：A1 之后另有 5 个公共定义未列入（含 5 个数据契约/异常/枚举声明类），见源码）
-# 层: 输出
-# - id: O1
-#   name_zh: IntegratedDecision
-#   name_en: IntegratedDecision
-#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
-#   downstream: 运行时装配批（统一注入点装配）；候选：第六层组合优化 B10-01505 W-P1-21
-# [/ALGO_FLOW]
-#
-# 边:
-# I1 --> A1
-# I2 --> A1
-# I3 --> A1
-# I4 --> A1
-# A1 --> O1
+# [ALGO_FLOW] external: docs/03_modules/_domain_signal/algo_flow/strategy_vote_integrator.yaml
 """
 
 from __future__ import annotations

@@ -28,47 +28,7 @@ signal-weight-adjust）：滚动 IC/胜率/回撤三指标加权得分→目标�
 
 纯内存/DI设计；外部副作用（OS调用/网络/进程控制）全部经注入回调。
 
-# [ALGO_FLOW]
-# 层: 输入
-# - id: I1
-#   name: config 参数
-#   fields: 参数 config（无注解）
-#   code: signal_weight_adjuster.py 顶层公共函数形参（AST 提取）
-# - id: I2
-#   name: clock 参数
-#   fields: 参数 clock（无注解）
-#   code: signal_weight_adjuster.py 顶层公共函数形参（AST 提取）
-# - id: I3
-#   name: audit_sink 参数
-#   fields: 参数 audit_sink（无注解）
-#   code: signal_weight_adjuster.py 顶层公共函数形参（AST 提取）
-# - id: I4
-#   name: alert_sink 参数
-#   fields: 参数 alert_sink（无注解）
-#   code: signal_weight_adjuster.py 顶层公共函数形参（AST 提取）
-# 层: 算法
-# - id: A1
-#   name_zh: ① SignalWeightAdjuster
-#   name_en: SignalWeightAdjuster
-#   intro: 信号权重调节器（三指标得分→目标权重+限幅+审计+回滚+漂移告警）。
-#   desc: 信号权重调节器（三指标得分→目标权重+限幅+审计+回滚+漂移告警）。；公共方法（定义序）: register_signal, record_metrics, rolling_metrics, score, target…
-#   inputs: config clock audit_sink alert_sink
-#   outputs: 返回值
-#   （注：A1 之后另有 6 个公共定义未列入（含 6 个数据契约/异常/枚举声明类），见源码）
-# 层: 输出
-# - id: O1
-#   name_zh: 模块公共 API 面（7 定义）
-#   name_en: public defs
-#   intro: SignalWeightAdjuster
-#   downstream: 运行时装配批（统一注入点装配）
-# [/ALGO_FLOW]
-#
-# 边:
-# I1 --> A1
-# I2 --> A1
-# I3 --> A1
-# I4 --> A1
-# A1 --> O1
+# [ALGO_FLOW] external: docs/03_modules/_domain_signal/algo_flow/signal_weight_adjuster.yaml
 """
 
 from __future__ import annotations

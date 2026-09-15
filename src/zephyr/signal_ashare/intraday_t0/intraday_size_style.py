@@ -27,32 +27,7 @@ Size 因子（大盘-小盘收益差序列）+ 风格持续性统计（同向 >5
 （本件取首/次半小时收益对做 Gao 式动量，零交集）；t0_point_analyzer=
 T0 买卖点（本件仅风格/动量统计信号，不产买卖点）。
 
-# [ALGO_FLOW]
-# 层: 输入
-# - id: I1
-#   name: clock 参数
-#   fields: 参数 clock（无注解）
-#   code: intraday_size_style.py 顶层公共函数形参（AST 提取）
-# 层: 算法
-# - id: A1
-#   name_zh: ① IntradaySizeStyle
-#   name_en: IntradaySizeStyle
-#   intro: 分时微结构与大小盘风格统计件（纯内存，时钟注入）。
-#   desc: 分时微结构与大小盘风格统计件（纯内存，时钟注入）。 Args: clock: 时钟注入（测试可控）；缺省系统时钟。；公共方法（定义序）: size_factor_series, style_persistence, i…
-#   inputs: clock
-#   outputs: 返回值
-#   （注：A1 之后另有 4 个公共定义未列入（含 4 个数据契约/异常/枚举声明类），见源码）
-# 层: 输出
-# - id: O1
-#   name_zh: 模块公共 API 面（5 定义）
-#   name_en: public defs
-#   intro: IntradaySizeStyle
-#   downstream: 运行时装配批（统一注入点装配：大小盘收益序列 / 分时价量接入）
-# [/ALGO_FLOW]
-#
-# 边:
-# I1 --> A1
-# A1 --> O1
+# [ALGO_FLOW] external: docs/03_modules/_domain_signal/algo_flow/intraday_size_style.yaml
 """
 
 from __future__ import annotations

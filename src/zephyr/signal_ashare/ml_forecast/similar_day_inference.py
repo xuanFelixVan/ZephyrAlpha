@@ -53,68 +53,7 @@ history_store 契约：可迭代对象，逐元素=一个历史交易日的全�
 （须覆盖 session_close 以计算标签；ts ≤ 当前时刻的部分参与同时刻切片匹配）。
 生产实现=market_breadth_snapshot 读取器（后续波次接）；当前零数据积累 → 恒走兜底分支。
 
-# [ALGO_FLOW]
-# 层: 输入
-# - id: I1
-#   name: predictions 参数
-#   fields: 参数 predictions，类型注解 list[SimilarDayInference]
-#   code: similar_day_inference.py 顶层公共函数形参（AST 提取）
-# - id: I2
-#   name: actual_tail_returns 参数
-#   fields: 参数 actual_tail_returns，类型注解 list[float]
-#   code: similar_day_inference.py 顶层公共函数形参（AST 提取）
-# - id: I3
-#   name: today_series 参数
-#   fields: 参数 today_series，类型注解 pd.DataFrame | None
-#   code: similar_day_inference.py 顶层公共函数形参（AST 提取）
-# - id: I4
-#   name: history_store 参数
-#   fields: 参数 history_store，类型注解 Iterable[pd.DataFrame] | None
-#   code: similar_day_inference.py 顶层公共函数形参（AST 提取）
-# 层: 算法
-# - id: A1
-#   name_zh: ① SimilarDayInference
-#   name_en: SimilarDayInference
-#   intro: 尾盘三档情景概率 + 五阶段转移概率输出（to_dict JSON 可序列化）。
-#   desc: 尾盘三档情景概率 + 五阶段转移概率输出（to_dict JSON 可序列化）。；公共方法（定义序）: to_dict；源码 L179-L200
-#   inputs: 无参数
-#   outputs: 返回值
-# - id: A2
-#   name_zh: ② update_hit_rate_stats
-#   name_en: update_hit_rate_stats
-#   intro: walk-forward 命中率统计 stub（数据期接 prediction_log 回放校准后回填实现）。
-#   desc: walk-forward 命中率统计 stub（数据期接 prediction_log 回放校准后回填实现）。 口径预留：命中率 = 预测 dominant_scenario 与…；源码 L206-L216
-#   inputs: predictions actual_tail_returns
-#   outputs: float
-# - id: A3
-#   name_zh: ③ infer_remaining_session
-#   name_en: infer_remaining_session
-#   intro: 相似日 KNN 尾盘三档情景概率推演（44号 §9.3 主入口）。
-#   desc: 相似日 KNN 尾盘三档情景概率推演（44号 §9.3 主入口）。 Args: today_series: 当日 09:30→当前时刻快照序列 DataFrame（列契约见模块…；源码 L347-L511
-#   inputs: today_series history_store config
-#   outputs: SimilarDayInference
-#   （注：A3 之后另有 1 个公共定义未列入（含 1 个数据契约/异常/枚举声明类），见源码）
-# 层: 输出
-# - id: O1
-#   name_zh: float
-#   name_en: float
-#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
-#   downstream: （数据期前无——候选消费方：尾盘决策 closing_session_decision、M2 边界修正引擎（44号 §9.5）、prediction_log…
-# - id: O2
-#   name_zh: SimilarDayInference
-#   name_en: SimilarDayInference
-#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
-#   downstream: （数据期前无——候选消费方：尾盘决策 closing_session_decision、M2 边界修正引擎（44号 §9.5）、prediction_log…
-# [/ALGO_FLOW]
-#
-# 边:
-# I1 --> A1
-# I2 --> A1
-# I3 --> A1
-# I4 --> A1
-# A1 --> A2
-# A2 --> A3
-# A3 --> O1
+# [ALGO_FLOW] external: docs/03_modules/_domain_signal/algo_flow/similar_day_inference.yaml
 """
 
 from __future__ import annotations

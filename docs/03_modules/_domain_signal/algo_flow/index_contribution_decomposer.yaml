@@ -1,0 +1,30 @@
+# ALGO_FLOW 外部真源——index_contribution_decomposer（_domain_signal 域，真源 src/zephyr/signal_ashare/index_contribution_decomposer.py）
+# 2026-09-15 P2-1 契约头减负批量出仓：docstring 内联块逐字节副本，extractor 经
+# external 锚加载走同一 parse_algo_flow 管线；算法公共面变化时同步更新本块。
+doc_type: architecture_view
+ttl: permanent
+module: src.zephyr.signal_ashare.index_contribution_decomposer
+source_of_truth: src/zephyr/signal_ashare/index_contribution_decomposer.py
+algo_flow: |
+    # [ALGO_FLOW]
+    # 层: 输入
+    # - id: I1 指数分钟序列 list[(ts, price)]（index_quote 重采样）
+    # - id: I2 板块分钟价 dict[sector_code → list[(ts, close)]]（kline_sector_intraday）
+    # - id: I3 板块权重 dict[sector_code → weight]（注入位；None=等权降级）
+    # 层: 特征
+    # - id: F1 分钟收益（指数/板块 对前一分钟收盘）
+    # - id: F2 权重归一（Σw=weight_sum_target）
+    # 层: 算法
+    # - id: A1 逐分钟贡献分摊+残差（恒等式）
+    # - id: A2 日聚合（分钟贡献线性求和）+ 双端榜
+    # 层: 输出
+    # - id: O1 IndexContributionResult（minutes 逐分钟拆解 + sector_board 日榜 + 残差）
+    # [/ALGO_FLOW]
+    #
+    # 边:
+    # I1 --> F1
+    # I2 --> F1
+    # I3 --> F2
+    # F1,F2 --> A1
+    # A1 --> A2
+    # A2 --> O1

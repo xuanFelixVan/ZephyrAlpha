@@ -36,60 +36,7 @@ registry seat_style="一日游"/max_holding_days≤1（静态）+ 隔日卖出�
 缺汇总行时回退席位行合计）——与 MOD-SIG-056 total_turnover / MOD-INT-EVENT-DT 净买率口径一致；
 非全市场个股日成交额（该列龙虎榜表未携带）。
 
-# [ALGO_FLOW]
-# 层: 输入
-# - id: I1
-#   name: 当日龙虎榜席位明细（dragon_tiger_seat）
-#   fields: symbol/seat_name/buy_amount/sell_amount/net_amount/buy_rank/sell_rank/seat_type/reason
-# - id: I2
-#   name: 当日龙虎榜汇总（dragon_tiger）
-#   fields: symbol/net_buy/buy_amount/sell_amount/reason
-# - id: I3
-#   name: 买方席位历史窗口（dragon_tiger_seat 近 45 自然日）
-#   fields: trade_date/symbol/seat_name/buy_amount/sell_amount
-# - id: I4
-#   name: seat_registry 席位档案（机构/一线游资/一日游标签）
-# 层: 特征
-# - id: F1
-#   name_zh: 净买率
-#   formula: net_buy / (buy_amount + sell_amount)  # 严格 >5% 触发
-# - id: F2
-#   name_zh: 强身份买方席位数
-#   formula: count(买方上榜席位 where institution or 一线游资)  # ≥2 触发
-# - id: F3
-#   name_zh: 单一席位买入占比
-#   formula: max(buy_amount) / Σ买方 buy_amount  # >60% 独食
-# - id: F4
-#   name_zh: 隔日卖出率
-#   formula: 近20交易日买入观测中次一交易日现卖出( sell>0 )占比  # >70% 一日游（样本<3 不定性）
-# - id: F5
-#   name_zh: 机构净卖出占比
-#   formula: |Σ institution net_amount（<0 时）| / 成交额  # >5% 低开
-# 层: 算法
-# - id: A1
-#   name_zh: 高开候选筛选
-#   desc: F1>5% 且 F2≥2 → high_open_candidates，基准溢价系数 1.0
-# - id: A2
-#   name_zh: 候选降权
-#   desc: F3>60%（独食）或 买方任一座位一日游（registry 静态 or F4 动态）→ 系数 ×0.3
-# - id: A3
-#   name_zh: 低开风险识别
-#   desc: F5>5% → low_open_risks
-# - id: A4
-#   name_zh: 反核观察
-#   desc: reason 含"跌停" 且 买一(buy_rank=1)为知名游资 → fanhe_watchlist
-# 层: 输出
-# - id: O1
-#   name_zh: LhbPremiumResult
-#   intro: date/三名单/各标的溢价系数+tags+reasons/degraded；dataclass asdict JSON 可序列化（prediction_log 预留）
-# [/ALGO_FLOW]
-#
-# 边:
-# I1,I2,I4 --> A1
-# I1,I3,I4 --> A2
-# I1,I4 --> A3
-# I1,I2,I4 --> A4
-# A1,A2,A3,A4 --> O1
+# [ALGO_FLOW] external: docs/03_modules/_domain_signal/algo_flow/lhb_premium_analyzer.yaml
 """
 
 from __future__ import annotations

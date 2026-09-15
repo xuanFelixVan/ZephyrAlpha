@@ -25,32 +25,7 @@ Kronos（K 线时序基础模型）属远期增强候选（44 号 memo §7：重
 占位推理路径为 last-value 朴素基线（fit_baseline 后可用），返回值显式标记
 ``is_baseline=True``，禁止冒充 TSFM 真推理结果消费。
 
-# [ALGO_FLOW]
-# 层: 输入
-# - id: I1
-#   name: config 参数
-#   fields: 参数 config（无注解）
-#   code: kronos_tsfm_predictor.py 顶层公共函数形参（AST 提取）
-# 层: 算法
-# - id: A1
-#   name_zh: ① KronosTsfmPredictor
-#   name_en: KronosTsfmPredictor
-#   intro: Kronos TSFM 预测器骨架（接口契约 + 朴素基线占位）。
-#   desc: Kronos TSFM 预测器骨架（接口契约 + 朴素基线占位）。；公共方法（定义序）: is_ready, load_checkpoint, fit_baseline, predict；源码 L97-L147
-#   inputs: config
-#   outputs: 返回值
-#   （注：A1 之后另有 2 个公共定义未列入（含 2 个数据契约/异常/枚举声明类），见源码）
-# 层: 输出
-# - id: O1
-#   name_zh: 模块公共 API 面（3 定义）
-#   name_en: public defs
-#   intro: KronosTsfmPredictor
-#   downstream: （远期：信号层时序预测消费方）
-# [/ALGO_FLOW]
-#
-# 边:
-# I1 --> A1
-# A1 --> O1
+# [ALGO_FLOW] external: docs/03_modules/_domain_signal/algo_flow/kronos_tsfm_predictor.yaml
 """
 
 from __future__ import annotations
