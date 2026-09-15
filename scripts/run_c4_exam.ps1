@@ -32,8 +32,12 @@ $log = Join-Path $logDir "c4_exam.log"
 "==== C4 exam fired at $(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') ====" | Out-File -FilePath $log -Append -Encoding utf8
 
 # ---- Stage 1: IS incremental batch (auto-only; emit deferred to Stage 2) ----
-python scripts\backtest\c4_batch_screen.py --auto-only --defer-emit 2>&1 |
-  Out-File -FilePath $log -Append -Encoding utf8
+# PS5.1 landmine fix (2026-09-15, MOD-SCRIPT-run_c4_exam): `$ErrorActionPreference
+# = "Stop"` + `python ... 2>&1 | Out-File` turns ANY stderr line from python into
+# an ErrorRecord that kills the script mid-flight (09-15 17:30 first run died right
+# after the fired line, LastResult=1). cmd shell redirection keeps stderr as a raw
+# byte stream into the log file - no ErrorRecord, EAP=Stop still guards cmdlets.
+cmd.exe /c "python scripts\backtest\c4_batch_screen.py --auto-only --defer-emit >> $log 2>&1"
 $isExit = $LASTEXITCODE
 "==== IS batch exit code $isExit ====" | Out-File -FilePath $log -Append -Encoding utf8
 if ($isExit -ne 0) {
@@ -42,8 +46,7 @@ if ($isExit -ne 0) {
 }
 
 # ---- Stage 2: auto OOS batch (pending = IS-landed minus oos_tested); emits the event ----
-python scripts\backtest\c4_batch_screen.py --auto-oos-pending 2>&1 |
-  Out-File -FilePath $log -Append -Encoding utf8
+cmd.exe /c "python scripts\backtest\c4_batch_screen.py --auto-oos-pending >> $log 2>&1"
 $oosExit = $LASTEXITCODE
 "==== OOS batch exit code $oosExit ====" | Out-File -FilePath $log -Append -Encoding utf8
 exit $oosExit
