@@ -10,7 +10,7 @@ ttl: task_bound
 
 | # | 事项 | 现状与降级运行方式 | 建议动作 |
 |---|---|---|---|
-| 1 | **告警推送渠道选型**（交接清单⑫遗留） | 管线告警现走 Alerter 落盘（data/failures/）+日志+报告文件；无实时推送 | 若需手机级实时告警，指定渠道（如企业微信/Telegram/邮件）；不指定则维持落盘+晨审看板 |
+| 1 | **告警推送凭据提供**（交接清单⑫唯一待 Owner 给料项） | 推送基础设施已内建：Alerter.notify_channels 双通道=飞书 webhook+SMTP 邮件（zephyr/data/alerter.py 现成，未配置静默跳过）；管线告警已全量走 Alerter | Owner 提供任一凭据即激活实时触达：飞书 webhook URL 或 SMTP 账号（secrets.py 通道登记）；不提供则维持落盘+晨审看板（现状可用） |
 | 2 | **LLM 生成策略入口**（方案 §1 长尾） | 登记不施工：等 BacktestBench 级本地评估能力 | 评估器达标（准确率≥95%）后复议；先决=裁定书 ../../../01_policies_and_standards/policies/c3_translation_pipeline_ruling.md 的复认条款 |
 | 3 | **wave-2 数据源**（方案长尾） | 登记不施工：等数据到位 | 数据落地后按管线既定事件自动进入现有链路，无需新施工 |
 | 4 | **模拟盘 A 阶段 2026-12-14 首评** | 明令勿提前施工；sim_memo_monthly（MOD-BT-193）已按月产出建议书备料 | 12 月首评时以建议书为底稿，Owner 签字即可 |
