@@ -1,127 +1,131 @@
 # CloneGuard acknowledged 白名单（intentional=保留两副本；变更后重新浮现再评估）
 # 消费方：CloneGuardOrchestrator._suppress_acknowledged（引擎无关对账层，stable_key 无序对）
 acknowledged:
-  - id: cg-factor-default-config-20260915
-    verdict: intentional
-    stable_key: "src/zephyr/factor/core/dag_manager/executor.py:_default_config||src/zephyr/factor/core/dist_feature_eng/engine.py:_default_config"
-    note: 默认配置构造样板双实例（DAG 执行器/分布式特征工程各自依赖），出仓批7同时触碰两侧暴露既有克隆，非本批引入（st-btfix-p15-20260915）
-  - id: cg-factor-load-config-20260915
-    verdict: intentional
-    stable_key: "src/zephyr/factor/analysis/__init__.py:load_analysis_config||src/zephyr/factor/governance/__init__.py:load_governance_config"
-    note: 子域配置加载器样板同构（分析/治理各自配置源），出仓批7同时触碰两侧暴露既有克隆，非本批引入（st-btfix-p15-20260915）
-  - id: cg-factor-min-half-life-20260915
-    verdict: intentional
-    stable_key: "src/zephyr/factor/analysis/decay_monitor.py:_get_min_half_life||src/zephyr/factor/analysis/factor_attribution.py:_get_time_freq"
-    note: 时间频率参数解析样板同构（衰减监控/因子归因），出仓批7同时触碰两侧暴露既有克隆，非本批引入（st-btfix-p15-20260915）
-  - id: cg-factor-default-objective-20260915
-    verdict: intentional
-    stable_key: "src/zephyr/factor/analysis/factor_optimization.py:_get_default_objective||src/zephyr/factor/analysis/multifactor_synthesis.py:_get_default_method"
-    note: 默认目标/方法选择器样板同构（因子优化/多因子合成），出仓批7同时触碰两侧暴露既有克隆，非本批引入（st-btfix-p15-20260915）
-  - id: cg-factor-validate-20260915
-    verdict: intentional
-    stable_key: "src/zephyr/factor/momentum_factor.py:validate||src/zephyr/factor/value_factor.py:validate"
-    note: 因子校验契约同构（动量/价值因子各持实现），出仓批7同时触碰两侧暴露既有克隆，非本批引入（st-btfix-p15-20260915）
-  - id: cg-factor-clear-20260915
-    verdict: intentional
-    stable_key: "src/zephyr/factor/factor_base.py:clear||src/zephyr/factor/technical_indicators/indicator_base.py:clear"
-    note: 状态清空接口同构（因子基类/技术指标基类），出仓批7同时触碰两侧暴露既有克隆，非本批引入（st-btfix-p15-20260915）
-  - id: cg-risk-require-finite-20260915
-    verdict: intentional
-    stable_key: "src/zephyr/risk/core/factor_exposure_manager.py:_require_finite||src/zephyr/risk/core/systemic_risk_alert_state_machine.py:_require_finite"
-    note: 数值有限性断言工具函数双实例（因子暴露/系统风险状态机各自依赖），出仓批6同时触碰两侧暴露既有克隆，非本批引入（st-btfix-p15-20260915）
-  - id: cg-risk-require-finite2-20260915
-    verdict: intentional
-    stable_key: "src/zephyr/risk/core/factor_exposure_manager.py:_require_finite||src/zephyr/risk/manipulation_avoidance_detector.py:_finite"
-    note: 数值有限性断言工具函数第三实例（规避操纵检测器），出仓批6同时触碰两侧暴露既有克隆，非本批引入（st-btfix-p15-20260915）
-  - id: cg-risk-alert-send-20260915
-    verdict: intentional
-    stable_key: "src/zephyr/risk/core/alert_generator.py:send||src/zephyr/risk/core/alert_generator.py:send"
-    note: 同文件内两类告警通道 send 同构（告警生成器多渠道路由样板），出仓批6触碰该文件暴露既有克隆，非本批引入（st-btfix-p15-20260915）
-  - id: cg-risk-dps-load-attr-20260915
-    verdict: intentional
-    stable_key: "src/zephyr/risk/core/drawdown_session_persistence.py:load_attribution_result||src/zephyr/risk/core/drawdown_session_persistence.py:load_strategy_state"
-    note: 同文件内 DuckDB 会话态读取样板同构（归因/策略状态两种载荷），出仓批6触碰该文件暴露既有克隆，非本批引入（st-btfix-p15-20260915）
-  - id: cg-risk-dps-load-peak-20260915
-    verdict: intentional
-    stable_key: "src/zephyr/risk/core/drawdown_session_persistence.py:load_peak_nav||src/zephyr/risk/core/drawdown_session_persistence.py:load_entry_var"
-    note: 同文件内 DuckDB 会话态读取样板同构（峰值净值/入场 VaR 两种载荷），出仓批6触碰该文件暴露既有克隆，非本批引入（st-btfix-p15-20260915）
-  - id: cg-risk-dps-save-attr-20260915
-    verdict: intentional
-    stable_key: "src/zephyr/risk/core/drawdown_session_persistence.py:save_attribution_result||src/zephyr/risk/core/drawdown_session_persistence.py:save_strategy_state"
-    note: 同文件内 DuckDB 会话态写入样板同构，出仓批6触碰该文件暴露既有克隆，非本批引入（st-btfix-p15-20260915）
-  - id: cg-risk-positive-finite-20260915
-    verdict: intentional
-    stable_key: "src/zephyr/risk/atr_stop_engine.py:_require_positive_finite||src/zephyr/risk/post_entry_instant_validator.py:_positive_finite"
-    note: 正有限数校验工具双实例（ATR 止损引擎/入场即时校验器），出仓批6同时触碰两侧暴露既有克隆，非本批引入（st-btfix-p15-20260915）
-  - id: cg-risk-hard-boundaries-20260915
-    verdict: intentional
-    stable_key: "src/zephyr/risk/core/adaptive_risk_coordinator.py:get_hard_boundaries||src/zephyr/risk/core/black_swan_pattern_library.py:get_pattern_templates"
-    note: 边界/模板清单 getter 结构同构（自适应风控协调器/黑天鹅模式库），出仓批6同时触碰两侧暴露既有克隆，非本批引入（st-btfix-p15-20260915）
-  - id: cg-risk-load-thresholds-20260915
-    verdict: intentional
-    stable_key: "src/zephyr/risk/core/daily_auditor.py:_load_audit_thresholds||src/zephyr/risk/core/operational_risk_monitor.py:_load_oprisk_thresholds"
-    note: 阈值加载样板同构（日审/操作风险监控各自阈值源），出仓批6同时触碰两侧暴露既有克隆，非本批引入（st-btfix-p15-20260915）
-  - id: cg-mltrain-pinball-loss-20260915
-    verdict: intentional
-    stable_key: "src/zephyr/ml_train/implementations/density_quantile_trainer.py:_pinball_loss||src/zephyr/ml_train/implementations/qnn_two_stage.py:_pinball_loss"
-    note: 分位数损失函数在两训练器各自独立演进，出仓批5同时触碰两侧暴露既有克隆，非本批引入（st-btfix-p15-20260915）
-  - id: cg-mltrain-classifier-validate-20260915
-    verdict: intentional
-    stable_key: "src/zephyr/ml_train/implementations/limit_up_classifier.py:validate||src/zephyr/ml_train/implementations/seat_pattern_classifier.py:validate"
-    note: 特征校验契约同构（涨停/座席分类器各持实现），出仓批5同时触碰两侧暴露既有克隆，非本批引入（st-btfix-p15-20260915）
-  - id: cg-mltrain-default-hash-20260915
-    verdict: intentional
-    stable_key: "src/zephyr/ml_train/reproducibility_manager.py:_default_hash||src/zephyr/ml_train/research_data_manager.py:_default_hash"
-    note: Mapping 稳定哈希工具函数双实例（可复现管理/研究数据管理各自依赖），出仓批5同时触碰两侧暴露既有克隆，非本批引入（st-btfix-p15-20260915）
-  - id: cg-compliance-getattr-lazy-20260915
-    verdict: intentional
-    stable_key: "src/zephyr/compliance/audit_trail/bridges/__init__.py:__getattr__||src/zephyr/compliance/behavioral_auditor/__init__.py:__getattr__"
-    note: PEP 562 包级惰性加载样板，非算法克隆；ALGO_FLOW docstring 出仓后结构比对首次暴露（st-btfix-p14-20260914）
-  - id: cg-compliance-init-boilerplate-20260915
-    verdict: intentional
-    stable_key: "src/zephyr/compliance/hard_boundary_adjudicator.py:__init__||src/zephyr/compliance/license_usage_auditor.py:__init__"
-    note: 同类节点类 __init__ 赋值样板（注册表/字段初始化），非算法克隆；ALGO_FLOW 出仓后暴露（st-btfix-p14-20260914）
-  - id: cg-regime-fb-call-fallback-20260915
-    verdict: intentional
-    stable_key: "src/zephyr/regime/overlay_signals_builder.py:_fb_call||src/zephyr/regime/risk_signal_builder.py:_fb_call"
-    note: 同型防御性透传包装（getattr+缺失/异常降级 None，10 行惯用法），两 builder 类独立演进非算法克隆；ALGO_FLOW docstring 出仓后结构比对首次暴露（st-btfix-p15-20260915）
-  - id: cg-excore-repo-factories-20260915
-    verdict: intentional
-    stable_key: "src/zephyr/ex_core/repository_interface.py:create_order_repository||src/zephyr/ex_core/repository_interface.py:create_position_snapshot_repository"
-    note: 同文件仓储工厂姊妹方法（订单/持仓快照同构 CRUD 包装），仓储模式惯用同构非克隆；ALGO_FLOW 出仓后首次暴露（st-btfix-p15-20260915）
-  - id: cg-excore-mock-factories-20260915
-    verdict: intentional
-    stable_key: "src/zephyr/ex_core/signal_providers.py:make_mock_signal_provider||src/zephyr/ex_core/signal_providers.py:make_mock_price_provider"
-    note: 同文件 mock 工厂姊妹方法（信号/价格提供器同构桩），测试基建惯用同构非克隆；ALGO_FLOW 出仓后首次暴露（st-btfix-p15-20260915）
-  - id: cg-excore-str-dunder-20260915
-    verdict: intentional
-    stable_key: "src/zephyr/ex_core/execution_engine.py:__str__||src/zephyr/ex_core/order_manager.py:__str__"
-    note: 两类 __str__ 调试格式化惯例同构，非算法克隆；ALGO_FLOW 出仓后首次暴露（st-btfix-p15-20260915）
-  - id: cg-excore-settlement-cycle-20260915
-    verdict: intentional
-    stable_key: "src/zephyr/ex_core/rules/ashare.py:settlement_cycle||src/zephyr/ex_core/rules/crypto.py:settlement_cycle"
-    note: 按市场镜像的规则类族（ashare/crypto 同接口逐市场实现），结构性同构=设计意图非克隆；ALGO_FLOW 出仓后首次暴露（st-btfix-p15-20260915）
-  - id: cg-trading-hook-sisters-20260915
-    verdict: intentional
-    stable_key: "src/zephyr/trading/boot_hooks.py:_hook_escalation_check||src/zephyr/trading/boot_hooks.py:_hook_timeout_check"
-    note: 同文件事件钩子姊妹函数（升级检查/超时检查同构包装，仅降级动作不同），ALGO_FLOW 出仓后首次暴露（st-btfix-p15-20260915）
-  - id: cg-trading-alert-sisters-20260915
-    verdict: intentional
-    stable_key: "src/zephyr/trading/eod_processor.py:_alert||src/zephyr/trading/post_settlement_pipeline.py:_alert"
-    note: 两管线内部 _alert 告警样板同构（闭包式消息透传），ALGO_FLOW 出仓后首次暴露（st-btfix-p15-20260915）
-  - id: cg-trading-registry-props-autocap-capsync-20260915
-    verdict: intentional
-    stable_key: "src/zephyr/trading/auto_runtime_core.py:registry||src/zephyr/trading/capability_sync.py:registry"
-    note: registry property 惰性获取三文件同构族（与 status_dashboard 成三角），样板访问器非算法克隆；ALGO_FLOW 出仓后首次暴露（st-btfix-p15-20260915）
-  - id: cg-trading-registry-props-autocap-dash-20260915
-    verdict: intentional
-    stable_key: "src/zephyr/trading/auto_runtime_core.py:registry||src/zephyr/trading/status_dashboard.py:registry"
-    note: registry property 惰性获取三文件同构族（与 capability_sync 成三角），样板访问器非算法克隆；ALGO_FLOW 出仓后首次暴露（st-btfix-p15-20260915）
-  - id: cg-trading-registry-props-capsync-dash-20260915
-    verdict: intentional
-    stable_key: "src/zephyr/trading/capability_sync.py:registry||src/zephyr/trading/status_dashboard.py:registry"
-    note: registry property 惰性获取三文件同构族（与 auto_runtime_core 成三角），样板访问器非算法克隆；ALGO_FLOW 出仓后首次暴露（st-btfix-p15-20260915）
-  - id: cg-trading-killswitch-sisters-20260915
-    verdict: intentional
-    stable_key: "src/zephyr/trading/trading_contracts/risk/trading_kill_switch.py:trigger||src/zephyr/trading/trading_contracts/risk/trading_kill_switch.py:reset"
-    note: 同文件 KillSwitch 姊妹动作（触发/复位镜像逻辑），ALGO_FLOW 出仓后首次暴露（st-btfix-p15-20260915）
+- id: cg-factor-default-config-20260915
+  verdict: intentional
+  stable_key: "src/zephyr/factor/core/dag_manager/executor.py:_default_config||src/zephyr/factor/core/dist_feature_eng/engine.py:_default_config"
+  note: 默认配置构造样板双实例（DAG 执行器/分布式特征工程各自依赖），出仓批7同时触碰两侧暴露既有克隆，非本批引入（st-btfix-p15-20260915）
+- id: cg-factor-load-config-20260915
+  verdict: intentional
+  stable_key: "src/zephyr/factor/analysis/__init__.py:load_analysis_config||src/zephyr/factor/governance/__init__.py:load_governance_config"
+  note: 子域配置加载器样板同构（分析/治理各自配置源），出仓批7同时触碰两侧暴露既有克隆，非本批引入（st-btfix-p15-20260915）
+- id: cg-factor-min-half-life-20260915
+  verdict: intentional
+  stable_key: "src/zephyr/factor/analysis/decay_monitor.py:_get_min_half_life||src/zephyr/factor/analysis/factor_attribution.py:_get_time_freq"
+  note: 时间频率参数解析样板同构（衰减监控/因子归因），出仓批7同时触碰两侧暴露既有克隆，非本批引入（st-btfix-p15-20260915）
+- id: cg-factor-default-objective-20260915
+  verdict: intentional
+  stable_key: "src/zephyr/factor/analysis/factor_optimization.py:_get_default_objective||src/zephyr/factor/analysis/multifactor_synthesis.py:_get_default_method"
+  note: 默认目标/方法选择器样板同构（因子优化/多因子合成），出仓批7同时触碰两侧暴露既有克隆，非本批引入（st-btfix-p15-20260915）
+- id: cg-factor-validate-20260915
+  verdict: intentional
+  stable_key: "src/zephyr/factor/momentum_factor.py:validate||src/zephyr/factor/value_factor.py:validate"
+  note: 因子校验契约同构（动量/价值因子各持实现），出仓批7同时触碰两侧暴露既有克隆，非本批引入（st-btfix-p15-20260915）
+- id: cg-factor-clear-20260915
+  verdict: intentional
+  stable_key: "src/zephyr/factor/factor_base.py:clear||src/zephyr/factor/technical_indicators/indicator_base.py:clear"
+  note: 状态清空接口同构（因子基类/技术指标基类），出仓批7同时触碰两侧暴露既有克隆，非本批引入（st-btfix-p15-20260915）
+- id: cg-risk-require-finite-20260915
+  verdict: intentional
+  stable_key: "src/zephyr/risk/core/factor_exposure_manager.py:_require_finite||src/zephyr/risk/core/systemic_risk_alert_state_machine.py:_require_finite"
+  note: 数值有限性断言工具函数双实例（因子暴露/系统风险状态机各自依赖），出仓批6同时触碰两侧暴露既有克隆，非本批引入（st-btfix-p15-20260915）
+- id: cg-risk-require-finite2-20260915
+  verdict: intentional
+  stable_key: "src/zephyr/risk/core/factor_exposure_manager.py:_require_finite||src/zephyr/risk/manipulation_avoidance_detector.py:_finite"
+  note: 数值有限性断言工具函数第三实例（规避操纵检测器），出仓批6同时触碰两侧暴露既有克隆，非本批引入（st-btfix-p15-20260915）
+- id: cg-risk-alert-send-20260915
+  verdict: intentional
+  stable_key: "src/zephyr/risk/core/alert_generator.py:send||src/zephyr/risk/core/alert_generator.py:send"
+  note: 同文件内两类告警通道 send 同构（告警生成器多渠道路由样板），出仓批6触碰该文件暴露既有克隆，非本批引入（st-btfix-p15-20260915）
+- id: cg-risk-dps-load-attr-20260915
+  verdict: intentional
+  stable_key: "src/zephyr/risk/core/drawdown_session_persistence.py:load_attribution_result||src/zephyr/risk/core/drawdown_session_persistence.py:load_strategy_state"
+  note: 同文件内 DuckDB 会话态读取样板同构（归因/策略状态两种载荷），出仓批6触碰该文件暴露既有克隆，非本批引入（st-btfix-p15-20260915）
+- id: cg-risk-dps-load-peak-20260915
+  verdict: intentional
+  stable_key: "src/zephyr/risk/core/drawdown_session_persistence.py:load_peak_nav||src/zephyr/risk/core/drawdown_session_persistence.py:load_entry_var"
+  note: 同文件内 DuckDB 会话态读取样板同构（峰值净值/入场 VaR 两种载荷），出仓批6触碰该文件暴露既有克隆，非本批引入（st-btfix-p15-20260915）
+- id: cg-risk-dps-save-attr-20260915
+  verdict: intentional
+  stable_key: "src/zephyr/risk/core/drawdown_session_persistence.py:save_attribution_result||src/zephyr/risk/core/drawdown_session_persistence.py:save_strategy_state"
+  note: 同文件内 DuckDB 会话态写入样板同构，出仓批6触碰该文件暴露既有克隆，非本批引入（st-btfix-p15-20260915）
+- id: cg-risk-positive-finite-20260915
+  verdict: intentional
+  stable_key: "src/zephyr/risk/atr_stop_engine.py:_require_positive_finite||src/zephyr/risk/post_entry_instant_validator.py:_positive_finite"
+  note: 正有限数校验工具双实例（ATR 止损引擎/入场即时校验器），出仓批6同时触碰两侧暴露既有克隆，非本批引入（st-btfix-p15-20260915）
+- id: cg-risk-hard-boundaries-20260915
+  verdict: intentional
+  stable_key: "src/zephyr/risk/core/adaptive_risk_coordinator.py:get_hard_boundaries||src/zephyr/risk/core/black_swan_pattern_library.py:get_pattern_templates"
+  note: 边界/模板清单 getter 结构同构（自适应风控协调器/黑天鹅模式库），出仓批6同时触碰两侧暴露既有克隆，非本批引入（st-btfix-p15-20260915）
+- id: cg-risk-load-thresholds-20260915
+  verdict: intentional
+  stable_key: "src/zephyr/risk/core/daily_auditor.py:_load_audit_thresholds||src/zephyr/risk/core/operational_risk_monitor.py:_load_oprisk_thresholds"
+  note: 阈值加载样板同构（日审/操作风险监控各自阈值源），出仓批6同时触碰两侧暴露既有克隆，非本批引入（st-btfix-p15-20260915）
+- id: cg-mltrain-pinball-loss-20260915
+  verdict: intentional
+  stable_key: "src/zephyr/ml_train/implementations/density_quantile_trainer.py:_pinball_loss||src/zephyr/ml_train/implementations/qnn_two_stage.py:_pinball_loss"
+  note: 分位数损失函数在两训练器各自独立演进，出仓批5同时触碰两侧暴露既有克隆，非本批引入（st-btfix-p15-20260915）
+- id: cg-mltrain-classifier-validate-20260915
+  verdict: intentional
+  stable_key: "src/zephyr/ml_train/implementations/limit_up_classifier.py:validate||src/zephyr/ml_train/implementations/seat_pattern_classifier.py:validate"
+  note: 特征校验契约同构（涨停/座席分类器各持实现），出仓批5同时触碰两侧暴露既有克隆，非本批引入（st-btfix-p15-20260915）
+- id: cg-mltrain-default-hash-20260915
+  verdict: intentional
+  stable_key: "src/zephyr/ml_train/reproducibility_manager.py:_default_hash||src/zephyr/ml_train/research_data_manager.py:_default_hash"
+  note: Mapping 稳定哈希工具函数双实例（可复现管理/研究数据管理各自依赖），出仓批5同时触碰两侧暴露既有克隆，非本批引入（st-btfix-p15-20260915）
+- id: cg-compliance-getattr-lazy-20260915
+  verdict: intentional
+  stable_key: "src/zephyr/compliance/audit_trail/bridges/__init__.py:__getattr__||src/zephyr/compliance/behavioral_auditor/__init__.py:__getattr__"
+  note: PEP 562 包级惰性加载样板，非算法克隆；ALGO_FLOW docstring 出仓后结构比对首次暴露（st-btfix-p14-20260914）
+- id: cg-compliance-init-boilerplate-20260915
+  verdict: intentional
+  stable_key: "src/zephyr/compliance/hard_boundary_adjudicator.py:__init__||src/zephyr/compliance/license_usage_auditor.py:__init__"
+  note: 同类节点类 __init__ 赋值样板（注册表/字段初始化），非算法克隆；ALGO_FLOW 出仓后暴露（st-btfix-p14-20260914）
+- id: cg-regime-fb-call-fallback-20260915
+  verdict: intentional
+  stable_key: "src/zephyr/regime/overlay_signals_builder.py:_fb_call||src/zephyr/regime/risk_signal_builder.py:_fb_call"
+  note: 同型防御性透传包装（getattr+缺失/异常降级 None，10 行惯用法），两 builder 类独立演进非算法克隆；ALGO_FLOW docstring 出仓后结构比对首次暴露（st-btfix-p15-20260915）
+- id: cg-excore-repo-factories-20260915
+  verdict: intentional
+  stable_key: "src/zephyr/ex_core/repository_interface.py:create_order_repository||src/zephyr/ex_core/repository_interface.py:create_position_snapshot_repository"
+  note: 同文件仓储工厂姊妹方法（订单/持仓快照同构 CRUD 包装），仓储模式惯用同构非克隆；ALGO_FLOW 出仓后首次暴露（st-btfix-p15-20260915）
+- id: cg-excore-mock-factories-20260915
+  verdict: intentional
+  stable_key: "src/zephyr/ex_core/signal_providers.py:make_mock_signal_provider||src/zephyr/ex_core/signal_providers.py:make_mock_price_provider"
+  note: 同文件 mock 工厂姊妹方法（信号/价格提供器同构桩），测试基建惯用同构非克隆；ALGO_FLOW 出仓后首次暴露（st-btfix-p15-20260915）
+- id: cg-excore-str-dunder-20260915
+  verdict: intentional
+  stable_key: "src/zephyr/ex_core/execution_engine.py:__str__||src/zephyr/ex_core/order_manager.py:__str__"
+  note: 两类 __str__ 调试格式化惯例同构，非算法克隆；ALGO_FLOW 出仓后首次暴露（st-btfix-p15-20260915）
+- id: cg-excore-settlement-cycle-20260915
+  verdict: intentional
+  stable_key: "src/zephyr/ex_core/rules/ashare.py:settlement_cycle||src/zephyr/ex_core/rules/crypto.py:settlement_cycle"
+  note: 按市场镜像的规则类族（ashare/crypto 同接口逐市场实现），结构性同构=设计意图非克隆；ALGO_FLOW 出仓后首次暴露（st-btfix-p15-20260915）
+- id: cg-trading-hook-sisters-20260915
+  verdict: intentional
+  stable_key: "src/zephyr/trading/boot_hooks.py:_hook_escalation_check||src/zephyr/trading/boot_hooks.py:_hook_timeout_check"
+  note: 同文件事件钩子姊妹函数（升级检查/超时检查同构包装，仅降级动作不同），ALGO_FLOW 出仓后首次暴露（st-btfix-p15-20260915）
+- id: cg-trading-alert-sisters-20260915
+  verdict: intentional
+  stable_key: "src/zephyr/trading/eod_processor.py:_alert||src/zephyr/trading/post_settlement_pipeline.py:_alert"
+  note: 两管线内部 _alert 告警样板同构（闭包式消息透传），ALGO_FLOW 出仓后首次暴露（st-btfix-p15-20260915）
+- id: cg-trading-registry-props-autocap-capsync-20260915
+  verdict: intentional
+  stable_key: "src/zephyr/trading/auto_runtime_core.py:registry||src/zephyr/trading/capability_sync.py:registry"
+  note: registry property 惰性获取三文件同构族（与 status_dashboard 成三角），样板访问器非算法克隆；ALGO_FLOW 出仓后首次暴露（st-btfix-p15-20260915）
+- id: cg-trading-registry-props-autocap-dash-20260915
+  verdict: intentional
+  stable_key: "src/zephyr/trading/auto_runtime_core.py:registry||src/zephyr/trading/status_dashboard.py:registry"
+  note: registry property 惰性获取三文件同构族（与 capability_sync 成三角），样板访问器非算法克隆；ALGO_FLOW 出仓后首次暴露（st-btfix-p15-20260915）
+- id: cg-trading-registry-props-capsync-dash-20260915
+  verdict: intentional
+  stable_key: "src/zephyr/trading/capability_sync.py:registry||src/zephyr/trading/status_dashboard.py:registry"
+  note: registry property 惰性获取三文件同构族（与 auto_runtime_core 成三角），样板访问器非算法克隆；ALGO_FLOW 出仓后首次暴露（st-btfix-p15-20260915）
+- id: cg-trading-killswitch-sisters-20260915
+  verdict: intentional
+  stable_key: "src/zephyr/trading/trading_contracts/risk/trading_kill_switch.py:trigger||src/zephyr/trading/trading_contracts/risk/trading_kill_switch.py:reset"
+  note: 同文件 KillSwitch 姊妹动作（触发/复位镜像逻辑），ALGO_FLOW 出仓后首次暴露（st-btfix-p15-20260915）
+- id: AGG-37f2cce1
+  verdict: intentional
+  stable_key: "scripts/industry_graph/graph_quality_check.py:_load_alive_stocks||scripts/industry_graph/websearch_ingest.py:_load_stock_basic"
+  note: 存量重复非本次引入——_load_alive_stocks 与 websearch_ingest._load_stock_basic 均为既有代码，本批仅改 _check_s21 连通分量判定，合并重构另立任务（st-f06dsr-shift2-20260915）

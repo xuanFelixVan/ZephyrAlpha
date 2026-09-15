@@ -93,7 +93,8 @@ def test_s21_tombstone_nodes_excluded():
 
 
 def test_s21_tombstone_repair_restores_check():
-    """墓碑被规范节点替代后恢复审查：实质节点≥3 且上游无法连通下游墓碑→仍判违规。"""
+    """墓碑被规范节点替代后恢复审查：实质节点≥3（2026-09-12 tier 退役口径）。
+    墓碑不计端点/节点数 → 存活拓扑（n-u,n-u2,n-m）单连通且端点齐全=合规。"""
     mod = _load_engine()
     chains = [("CH-1", "某链")]
     nodes = [
@@ -104,7 +105,7 @@ def test_s21_tombstone_repair_restores_check():
     ]
     edges = [("n-u", "n-m", "structure"), ("n-u2", "n-m", "structure")]
     r = mod._check_s21(_FakeCur(chains, nodes, edges))
-    assert len(r["violations"]) == 1 and r["checked_chains"] == 1
+    assert r["violations"] == [] and r["checked_chains"] == 1
 
 
 def test_s21_anchor_chain_skipped():

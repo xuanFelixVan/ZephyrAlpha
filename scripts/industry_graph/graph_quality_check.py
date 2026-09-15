@@ -410,9 +410,24 @@ def _check_s21(cur) -> dict:
         # 拓扑端点（2026-09-12 起）：入度0=源头起点集，出度0=终端目标集
         starts = [n for n in alive if indeg[n] == 0]
         targets = {n for n in alive if outdeg[n] == 0}
-        if not _s21_reachable(starts, targets, adj):
-            reason = '无拓扑端点(环/散点)' if not starts and not targets else (
-                '无源头端点(入度均>=1,疑环)' if not starts else '无终端端点(出度均>=1,疑环)')
+        # 孤立节点自配对恒可达=假阴性：实质节点须构成单连通分量才算一条完整链
+        comp = {alive[0]}
+        stack = [alive[0]]
+        while stack:
+            u = stack.pop()
+            for w in adj[u]:
+                if w not in comp:
+                    comp.add(w)
+                    stack.append(w)
+        if not starts or not targets or len(comp) < len(alive):
+            if not starts and not targets:
+                reason = '无拓扑端点(环/散点)'
+            elif not starts:
+                reason = '无源头端点(入度均>=1,疑环)'
+            elif not targets:
+                reason = '无终端端点(出度均>=1,疑环)'
+            else:
+                reason = '断链(实质节点非单连通分量,存在孤立环节/多股断流)'
             violations.append((cid, '%s nodes=%d structure=%d supply=%d 结构占比=%.2f %s' % (
                 cname, len(alive), n_st, n_sp, ratio, reason)))
     return {

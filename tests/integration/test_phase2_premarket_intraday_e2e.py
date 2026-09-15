@@ -994,7 +994,7 @@ def _minute_ticks(m: int) -> dict:
         ticks[f"600{i:03d}.SH"] = _tick(10.00, 10.00)  # 平
     for k in range(3):
         ticks[f"6001{k:02d}.SH"] = _tick(11.00, 10.00, ask_p=[0.0], ask_v=[0])  # 主板涨停且卖一无量=封住
-    ticks["600199.SH"] = _tick(10.50, 10.00, ask_p=[10.50], ask_v=[100])  # ST 5% 涨停但有卖单=未封
+    ticks["600199.SH"] = _tick(11.00, 10.00, ask_p=[11.00], ask_v=[100])  # ST 10% 涨停但有卖单=未封
     ticks["600200.SH"] = {"lastPrice": 0.0, "lastClose": 10.0}  # 无效（最新价≤0）
     ticks["600201.SH"] = {"lastPrice": 10.1}  # 无效（缺昨收）
     return ticks
