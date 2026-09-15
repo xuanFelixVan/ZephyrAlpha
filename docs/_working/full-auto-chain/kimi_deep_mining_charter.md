@@ -116,4 +116,4 @@ SOP 裁定。对投喂材料里发现的问题如实报告，不掩饰不确定�
 
 ## 8. 已知欠账（顺路批，不等 Kimi）
 
-C7 两件已收口（S05-G1 改读 ZEPHYR_SESSION_ID、S07-G2 补 multifactor→TDM-E-L3-07-2，commit 769e0f53a7）；剩飞书/SMTP 凭据（Owner 侧，S12/S13 通知链施工前办理即可）。
+C7 两件已收口（S05-G1 改读 ZEPHYR_SESSION_ID、S07-G2 补 multifactor→TDM-E-L3-07-2）；外推通道（飞书/SMTP）2026-09-15 Owner 裁定裁撤——通知以前端 promotion 页为准，链上无凭据缺口。

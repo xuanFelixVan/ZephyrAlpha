@@ -2640,13 +2640,6 @@ entries:
   desc_zh: DDL-as-Code 真源 vs ClickHouse 实际表结构 漂移校验器（治本工具）。
   desc_en: ''
   plain_zh: DDL-as-Code 真源 vs ClickHouse 实际表结构 漂移校验器（治本工具）。
-- module_path: scripts/ops/verify_alert_channels.py
-  domain_id: D_DATA
-  name_zh: 告警通道端到端验证（B2，#ARCH-CH-023，2026-07-25）。
-  name_en: verify_alert_channels
-  desc_zh: 告警通道端到端验证，#，2026-07-25）。
-  desc_en: ''
-  plain_zh: 告警通道端到端验证，#，2026-07-25）。
 - module_path: scripts/register_aux_tasks.ps1
   domain_id: D_DATA
   name_zh: 注册aux任务
@@ -49637,6 +49630,20 @@ entries:
   desc_zh: "三路证据合流生成转正建议包并经真通道推送，Owner 拍板执行器"
   desc_en: ""
   plain_zh: "这个模块像一位尽职的助理：它把模拟盘的月度体检结果、治理器的意见和整装回测成绩单汇总成一份转正建议书存进档案柜，有值得转正的就发消息通知老板；老板点一下批准，它就把策略档案从模拟盘一栏改到实盘一栏，全程只留签字指纹、不留密码原文。"
+- module_path: src/zephyr/backtest/core/n_trial_ledger.py
+  domain_id: D_BACKTEST
+  name_zh: "N 试次账本"
+  name_en: "N Trial Ledger"
+  desc_zh: "全局累计试验数计数器，DSR 多重测试修正的分母真源（可审计机器回测次数口径）"
+  desc_en: ""
+  plain_zh: "给全厂所有回测试验记一个总账本：每次机器回测都算一笔，算 DSR 折减时用它当分母，防止试了上千次挑最好那个的运气误差；人工瞎试的不算数，只做诚实披露的下界"
+- module_path: scripts/backtest/dsr_recalc_backfill.py
+  domain_id: D_BACKTEST
+  name_zh: "DSR 存量重算回填"
+  name_en: "DSR Recalc Backfill"
+  desc_zh: "A2 台账 N 考证回填 + A3 存量 DSR 按累计口径重折减回填，产出逐行报告"
+  desc_en: ""
+  plain_zh: "把台账里所有历史 DSR 成绩按今天的总试验数重新算一遍：以前每批只跟自己批内比， solo 跑的零折减虚高；现在统一用全厂累计考试次数打折，顺便把没算过 DSR 的缺口补上，算完解冻台账"
 
 battle_map_steps:
 - step_id: BM-BUY-05
@@ -55061,12 +55068,6 @@ algo_submodules:
   name_zh: ③ 笼子边界计算与夹边校验
   name_en: check_price_cage
   plain_zh: 买入上限max(base×1.02, base+0.1)向下取整tick，卖出下限min(base×0.98, base-0.1)向上取整tick，超限夹到边界不废单
-- module_path: src/zephyr/regime/__init__.py
-  module_id: MOD-REGIME-001
-  node_id: A1
-  name_zh: ① 包公共面再导出
-  name_en: __init__ re-export
-  plain_zh: 再导出 RegimeCycleAnalyzer, VolatilityRegimeAlerter, VolatilitySqueezeBreakout, In…
 - module_path: src/zephyr/ex_sor/core/market_context_provider.py
   module_id: MOD-XS-006
   node_id: A1
@@ -59546,19 +59547,19 @@ algo_submodules:
 - module_path: src/zephyr/shared/maintenance/handbook.py
   module_id: SH-MAIN-001
   node_id: A1
-  name_zh: 维护手册
+  name_zh: ① Agent上手上下文生成
   name_en: Handbook.generate_onboarding_context
   plain_zh: 把核心约束、关键目录、任务状态机、关键工具拼成一段固定markdown给新Agent看
 - module_path: src/zephyr/shared/maintenance/handbook.py
   module_id: SH-MAIN-001
   node_id: A2
-  name_zh: 维护手册
+  name_zh: ② 任务卡模板提供
   name_en: Handbook.get_task_card_template
   plain_zh: 返回一张固定的任务卡markdown表格模板，照填即可
 - module_path: src/zephyr/shared/maintenance/handbook.py
   module_id: SH-MAIN-001
   node_id: A3
-  name_zh: 维护手册
+  name_zh: ③ 目录地图提供
   name_en: Handbook.get_directory_map
   plain_zh: 返回核心源码/蓝图/任务系统目录到中文说明的映射字典
 - module_path: src/zephyr/shared/io/sqlite_factory.py
@@ -60251,12 +60252,12 @@ algo_submodules:
   name_zh: ① 空包初始化
   name_en: __init__ (empty package)
   plain_zh: 仅声明空 __all__，不导入任何子模块、不注册任何扩展
-- module_path: src/zephyr/ex_core/services/__init__.py
+- module_path: src/zephyr/ex_core/services/live_portfolio.py
   module_id: __unmanaged__src/zephyr/ex_core/services/__init__.py
   node_id: A1
-  name_zh: ① 空包命名空间占位
-  name_en: __init__（模块级 __all__）
-  plain_zh: 声明 ex_core.services 包存在，不导出任何符号
+  name_zh: ① LivePortfolioService
+  name_en: LivePortfolioService
+  plain_zh: 实盘组合服务（持仓/可用/净值视图，数据走 RiskSnapshot 真源注入）。
 - module_path: src/zephyr/factor/api/__init__.py
   module_id: __unmanaged__src/zephyr/factor/api/__init__.py
   node_id: A1
