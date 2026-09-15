@@ -849,3 +849,46 @@ class TestHkStockListFetch:
         from src.zephyr.data.implementations import akshare_provider as akp
 
         assert "hk_stock_list" in akp._AKSHARE_CAPABILITIES
+
+
+# ============== stock_basic 北交所收集器（2026-09-15 治本 stock_basic_no_bse_universe）==============
+
+class TestCollectBjBasicRows:
+    """北交所官网清单收集器：巨潮 stock_info_bj_name_code → stock_basic 行组。"""
+
+    def _rows(self, monkeypatch, df):
+        import sys as _sys
+        mock_ak = MagicMock()
+        if isinstance(df, Exception):
+            mock_ak.stock_info_bj_name_code.side_effect = df
+        else:
+            mock_ak.stock_info_bj_name_code.return_value = df
+        monkeypatch.setitem(_sys.modules, "akshare", mock_ak)
+        policy = MagicMock(rpm=0, max_retries=1)
+        return AkshareIngestProvider()._collect_bj_basic_rows(mock_ak, policy, "2026-09-15")
+
+    def test_normal_mapping_board_and_industry(self, monkeypatch):
+        df = pd.DataFrame([
+            {"证券代码": "920000", "证券简称": "安徽凤凰", "上市日期": "2020-12-23",
+             "所属行业": "汽车制造业"},
+            {"证券代码": "830001", "证券简称": "老段码", "上市日期": "2021-06-01",
+             "所属行业": "通用设备制造业"},
+        ])
+        rows = self._rows(monkeypatch, df)
+        assert len(rows) == 2
+        assert rows[0] == ("2026-09-15", "920000", "安徽凤凰", "", "汽车制造业",
+                           "北交所", "2020-12-23", "akshare")
+        assert rows[1][5] == "北交所"
+
+    def test_non_digit_or_unknown_board_skipped(self, monkeypatch):
+        df = pd.DataFrame([
+            {"证券代码": "abc", "证券简称": "脏码", "上市日期": "2020-01-01", "所属行业": "x"},
+            {"证券代码": "600000", "证券简称": "混入沪股", "上市日期": "2020-01-01", "所属行业": "x"},
+            {"证券代码": "920002", "证券简称": "正常", "上市日期": "2024-05-30", "所属行业": "y"},
+        ])
+        rows = self._rows(monkeypatch, df)
+        assert [r[1] for r in rows] == ["920002"]
+
+    def test_source_failure_yields_empty(self, monkeypatch):
+        rows = self._rows(monkeypatch, RuntimeError("巨潮接口挂了"))
+        assert rows == []

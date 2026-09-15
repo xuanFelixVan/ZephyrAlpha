@@ -360,6 +360,10 @@ _AKSHARE_CAPABILITIES = frozenset(
         "dragon_tiger",
         "dragon_tiger_seat",
         "money_flow",
+        # 2026-09-15 补回路由：港交所 2024-08 停供后 _fetch_hk_connect_flow 方法与
+        # meta 声明均在、唯 frozenset 缺席（疑 dispatch table 重构误丢），
+        # 致 hk_connect_flow_incremental 每日 unsupported 失败 + CAP-CONSISTENCY 死声明
+        "hk_connect_flow",
         "share_unlock",
         "audit_opinion",
         "equity_pledge",
@@ -6555,17 +6559,53 @@ class AkshareIngestProvider(IngestProviderBase):
             )
         return rows
 
+    def _collect_bj_basic_rows(self, ak, policy: SourcePolicy, iso_date: str) -> list[tuple]:
+        """北交所股票基本信息行（巨潮官网清单 stock_info_bj_name_code，自带所属行业）。
+
+        2026-09-15 补收：DS-081 设计时 akshare 无北交所清单接口故显式不覆盖（已知缺口），
+        现接口已提供（343 行，沪深同源巨潮官网），补齐后 stock_basic 才配称"基准全市场标的"
+        （known_data_gaps stock_basic_no_bse_universe 治本）。
+        """
+        rows: list[tuple] = []
+        try:
+            df_bj = self._call_with_policy(ak.stock_info_bj_name_code, policy)
+        except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
+            self._log.warning(f"stock_info_bj_name_code 失败: {e}")
+            return rows
+        if df_bj is None or len(df_bj) == 0:
+            return rows
+        for _, row in df_bj.iterrows():
+            code = str(row.get("证券代码") or "").strip().zfill(6)
+            # 仅收北交所板块（43/83/87/88/920 前缀），防上游接口混入跨所代码
+            if not code.isdigit() or self._board_of_a_share(code) != "北交所":
+                continue
+            rows.append(
+                (
+                    iso_date,
+                    code,
+                    str(row.get("证券简称") or "").strip(),
+                    "",  # BJ 清单无公司全称列（同 SZ 口径）
+                    str(row.get("所属行业") or "").strip(),
+                    self._board_of_a_share(code),
+                    self._norm_akshare_date(row.get("上市日期")) or None,
+                    "akshare",
+                )
+            )
+        return rows
+
     def _fetch_stock_basic(self, payload: FetchPayload, policy: SourcePolicy) -> Iterator[FetchResult]:
         """股票基本信息日快照（DS-081），写入 c1_market.stock_basic。
 
         源：交易所官网清单（stock_info_sh_name_code 主板A股+科创板 /
-        stock_info_sz_name_code A股列表），非东财接口，规避反爬。
-        行业：SZ 列表自带"所属行业"（交易所口径）；SH 清单无行业列，经东财行业
+        stock_info_sz_name_code A股列表 / stock_info_bj_name_code 北交所），
+        非东财接口，规避反爬。
+        行业：SZ/BJ 清单自带"所属行业"（交易所口径）；SH 清单无行业列，经东财行业
         板块成分反查 best-effort 补全；东财反爬封锁期降级巨潮个股资料
         （stock_profile_cninfo，口径=巨潮/证监会行业）；双源均失败留空，
         次日重试自然回补。
-        市场板块：代码前缀静态规则（_board_of_a_share）。北交所暂无官网清单接口
-        （stock_info_bj 未在 akshare 提供），本期不覆盖（已知缺口）。
+        市场板块：代码前缀静态规则（_board_of_a_share）。北交所 2026-09-15 起覆盖
+        （akshare 已提供 stock_info_bj_name_code，治本 known_data_gaps
+        stock_basic_no_bse_universe；接口失败留空不阻断沪深段）。
         """
         import akshare as ak
 
@@ -6585,6 +6625,7 @@ class AkshareIngestProvider(IngestProviderBase):
 
         rows = self._collect_sh_basic_rows(ak, policy, iso_date)
         rows.extend(self._collect_sz_basic_rows(ak, policy, iso_date))
+        rows.extend(self._collect_bj_basic_rows(ak, policy, iso_date))
 
         # SH 行业补全（东财行业板块反查 → 巨潮个股资料，二级降级 best-effort）
         sh_codes = {r[1] for r in rows if r[4] == "" and r[1].startswith(("60", "68"))}
