@@ -5,7 +5,7 @@ title: "Agent Orchestrator 蓝图 — Agent 全生命周期编排引擎"
 doc_type: blueprint
 template_for: blueprint
 status: Active
-version: "1.0.8"
+version: "1.0.10"
 layer: L1_foundation
 owner: ZephyrAlpha-Owner
 classification: confidential
@@ -172,7 +172,7 @@ build_status: production
 
 | 图 | 位置 | 状态 | 链接 |
 |----|------|------|------|
-| 依赖图 (depgraph) | `blueprint_id=MOD-INF-039` 的 120 个 file 节点 | production | `extract_depgraph.py --modules MOD-INF-039` |
+| 依赖图 (depgraph) | `blueprint_id=MOD-INF-039` 的 116 个 file 节点 | production | `extract_depgraph.py --modules MOD-INF-039` |
 | 数据流图 (dataflow) | （无节点） | N/A | `apply_dataflowgraph.py --list-datasets` |
 | 决策架构图 (decision) | 0 个决策节点 / 1 个决策层 | N/A | `generate_decision_diagram.py` |
 | 蓝图 (blueprint) | 本文件 | Active | — |
@@ -184,7 +184,7 @@ build_status: production
 | module_id | MOD-INF-039 | MOD-INF-039 | ✅ |
 | domain_id | N/A | N/A | ✅ |
 | build_status | production | production | ✅ |
-| file_count | 120 文件 | 71 文件（§0.1） | ❌ |
+| file_count | 116 文件 | 71 文件（§0.1） | ❌ |
 
 > 冲突时以 depgraph 为准（ARCH-056 + ARCH-MM-001 声明 vs 验证框架）。
 
@@ -625,7 +625,6 @@ class DetectionResult(BaseModel):
 
 | 文件路径 | 实现状态 | 说明 |
 |---------|:---:|------|
-| `tests/agent/test_agent_health_monitor_root.py` | ✅ 已实现 | |
 | `tests/agent/test_agent_orchestrator_root.py` | ✅ 已实现 | |
 | `tests/agent/test_agent_quality.py` | ✅ 已实现 | |
 | `tests/autonomy/test_autonomy_guard.py` | ✅ 已实现 | |
@@ -662,7 +661,6 @@ class DetectionResult(BaseModel):
 | `tests/trading/test_blind_spot_closure.py` | ✅ 已实现 | |
 | `tests/trading/test_bulkhead_manager.py` | ✅ 已实现 | |
 | `tests/trading/test_construction_guide.py` | ✅ 已实现 | |
-| `tests/trading/test_degrade_cascade.py` | ✅ 已实现 | |
 | `tests/trading/test_disk_guard.py` | ✅ 已实现 | |
 | `tests/trading/test_fault_types.py` | ✅ 已实现 | |
 | `tests/trading/test_finding_bridge.py` | ✅ 已实现 | |
