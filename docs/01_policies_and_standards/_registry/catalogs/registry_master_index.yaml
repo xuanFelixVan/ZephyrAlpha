@@ -1,8 +1,8 @@
-# 自动生成于 2026-09-14T22:58:59Z
+# 自动生成于 2026-09-14T15:34:29Z
 # 来源: _registry/catalogs/*.yaml frontmatter
 # 手工编辑无效——修改请通过各登记表的 frontmatter
 
-generated_at: '2026-09-14T22:58:59Z'
+generated_at: '2026-09-14T15:34:29Z'
 generated_by: scripts/governance/generators/generate_registry_master_index.py
 source: _registry/catalogs/*.yaml → frontmatter
 total_registries: 50
@@ -269,7 +269,7 @@ registries:
   physical_path: docs/01_policies_and_standards/_registry/catalogs/module_translation_registry.yaml
   format: yaml
   maintenance: manual
-  entry_count: 6983
+  entry_count: 6956
   status: active
 - registry_id: CFG-noqa-exempt-registry
   name: noqa_exempt_registry
@@ -349,7 +349,7 @@ registries:
   physical_path: docs/01_policies_and_standards/_registry/catalogs/rule_catalog_registry.yaml
   format: yaml
   maintenance: auto
-  entry_count: 252
+  entry_count: 250
   status: active
 - registry_id: REG-RULING-001
   name: 裁定中央登记表
@@ -357,7 +357,7 @@ registries:
   physical_path: docs/01_policies_and_standards/_registry/catalogs/ruling_registry.yaml
   format: yaml
   maintenance: manual
-  entry_count: 71
+  entry_count: 70
   status: active
 - registry_id: REG-SEAT-001
   name: Seat Registry
