@@ -6,3 +6,5 @@
 治理边界（Owner 2026-09-15 圈定 A）：sim 流转按预授权规则自动执行（本包 FSM+guard）；
 sim→production 仍 Owner 门；KillSwitch/月度审计/告警全程保留。
 """
+
+__all__: list[str] = ["bh_fdr", "intake", "lifecycle_fsm", "pipeline_events", "registry_writer", "screen_source"]
