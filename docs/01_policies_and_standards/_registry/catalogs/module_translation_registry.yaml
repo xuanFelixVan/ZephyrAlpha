@@ -49672,7 +49672,7 @@ entries:
   desc_zh: "蒙特卡洛树搜索组织公式探索（AlphaMuse 式频繁子树规避）"
   desc_en: ""
   plain_zh: "策略工厂的第三台矿机（实验档）：用树搜索帮大模型探路挖公式，防止老挖同款。前两台矿机产够了才启用。"
-- module_path: zephyr.gov_enforcement.rule_bridge.commit_preflight
+- module_path: src/zephyr/gov_enforcement/rule_bridge/commit_preflight.py
   domain_id: D_GOV_CODE_QUALITY
   name_zh: "提交预检前移"
   name_en: "Commit Preflight"

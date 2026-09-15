@@ -16902,4 +16902,8 @@ creation_tokens:
   token: commit-pipeline-upgrade-commit-pipeline-upgrade-2026-09-16-20260915
   created_by: st-commitspeed-20260916
   capability: commit_pipeline_upgrade
+- file: src/zephyr/gov_enforcement/rule_bridge/commit_preflight.py
+  token: commit-preflight-commit-preflight-20260915
+  created_by: st-commitspeed-20260916
+  capability: commit_preflight
 di_seam_exemptions: []

@@ -81,6 +81,11 @@ _REGISTRY_YAML = (
 # 模块级缓存：None=未加载，dict=已加载（module_path → {name_zh, name_en, desc_zh, desc_en}）
 # 加载失败回退空 dict（无硬编码 fallback——模块翻译无跨生成器共享类别）
 _PATH_CACHE: dict[str, dict[str, str]] | None = None
+# 缓存锚定的注册表 mtime——P0-B 治本（st-commitspeed-20260916，2026-09-16）：
+# Serializer drain 进程长存活，多队列项共用一个进程；首项落地后 _PATH_CACHE
+# 永不失效，后续项新增翻译条目被 TRANSLATION-COVERAGE 误判死信（-0011 实证：
+# worktree 注册表已含条目、gate 仍报缺）。mtime 变化即重载，IO 成本=一次 stat。
+_PATH_CACHE_MTIME: float | None = None
 
 
 def _load_from_yaml() -> dict[str, dict[str, str]]:
@@ -128,10 +133,15 @@ def _ensure_loaded() -> dict[str, dict[str, str]]:
     Returns:
         ``{module_path: {name_zh, name_en, desc_zh, desc_en}}``（可能为空 dict）
     """
-    global _PATH_CACHE
-    if _PATH_CACHE is not None:
+    global _PATH_CACHE, _PATH_CACHE_MTIME
+    try:
+        mtime = _REGISTRY_YAML.stat().st_mtime if _REGISTRY_YAML.exists() else None
+    except OSError:
+        mtime = None
+    if _PATH_CACHE is not None and mtime is not None and mtime == _PATH_CACHE_MTIME:
         return _PATH_CACHE
     _PATH_CACHE = _load_from_yaml()
+    _PATH_CACHE_MTIME = mtime
     return _PATH_CACHE
 
 
