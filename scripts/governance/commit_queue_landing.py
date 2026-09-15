@@ -987,7 +987,7 @@ def reroute_auto_commit_to_queue(gateway, session_id: str, files: list[str], mes
         options=cq.EnqueueOptions(
             base_head=base_head,
             deletes=deletes or None,
-            meta_extra={"rerouted_from": "_commit_auto"},  # 审计可追溯（改道来源标记）
+            meta_extra={"rerouted_from": "_commit_auto", "lane": "machine"},  # 审计可追溯（改道来源标记；P1-D 车道让路交互提交）
         ),
     )
     bootstrap_drain_with_landing(repo_root=gateway.project_root)
