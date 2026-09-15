@@ -205,7 +205,7 @@ class TestTasksYamlRegistrationA22:
     def test_ddl_schema_registered_in_apply_script(self):
         """新表 DDL 真源文件存在且已注册进 apply_market_tables_ddl 表清单。"""
         root = pathlib.Path(__file__).resolve().parents[3]
-        schema_file = root / "schemas" / "categories" / "market_a50_futures_daily.py"
+        schema_file = root / "schemas" / "categories" / "market" / "market_a50_futures_daily.py"
         assert schema_file.is_file()
         ns: dict = {}
         exec(schema_file.read_text(encoding="utf-8"), ns)  # noqa: S102 — 测试内读取 DDL 常量
