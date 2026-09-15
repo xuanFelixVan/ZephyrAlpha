@@ -11,7 +11,7 @@ completes_when: >-
 
 # 提交通道升级方案 v2——多 AI 并发时代的提交吞吐（2026-09-16 立项）
 
-> 创建：2026-09-16 ｜ 会话：st-commitspeed-20260916 ｜ 状态：**方案成稿待拍板**
+> 创建：2026-09-16 ｜ 会话：st-commitspeed-20260916 ｜ 状态：**v2.1（含 R2 彻底根治增补 §8）待拍板；R2 当场已修 echo_guard 回退**
 > Owner 原始指令：提交太慢（点一次等非常久），十多个 AI 并发排队排太久；全面检查→临时文档→挖矿 SOP→升级方案。
 > 前案：[2026-09-10-commit-pipeline-perf-plan.md](2026-09-10-commit-pipeline-perf-plan.md)（v1，P0/P1 全落地+P2 三 flag 已转正）。本文件=v2，只写增量，不重复 v1 已治项。
 
@@ -26,6 +26,8 @@ completes_when: >-
 3. **门禁面膨胀**：gate 总数 9/11 的 106 → **166（+56%）**，own-scope 只有 22 个，缓存/预跑白名单各只有 10 个。§2.6 分级清单里 ~30 个 own-scope 候选至今只做了 2 个。
 
 **方案表（详见 §5）**：P0=失败预检前移（锁外试跑+入队预校验+一过式失败清单）+ 基建故障治本（CREATE-GUARD ParserError 31 次误烧、perf 报带判绿矛盾）；P1=own-scope 第三批 + 缓存/预跑白名单扩面 + 竞争感知入队（不再空烧 60s 锁等待）+ 机器伴生车道隔离；P2=门禁并行车道（挂起排期）+ reconcile worker 降优先级 + 死信自动收敛。全落地预期：失败税释放 ~4h/日锁内算力、AI 单提交 P90 从 ~230s 压到 <60s。
+
+**R2 增补（§8，Owner"彻底根治"指令后第二轮挖矿）**：新根因 5 个——echo_guard 经"配置误删+危险默认值"复活（**当场已修**，省 30s/提交）、65% 死信=测试污染生产队列、落地侧门禁视野污染、重试环最长 30 连败、退役审计无燃料；全链实测 213.7s 中 TOP10 门禁占 82%（靶子高度集中）；彻底根治三范式 T1 阻断核+异步批判/T2 批量落地/T3 持续预验证（挂起排期，解锁条件写明）。
 
 ---
 
@@ -170,6 +172,80 @@ noise 轮：无（六向全部有产出）。矿脉长尾（本域明确不挖/�
 
 ---
 
+## 8. R2 第二轮挖矿——彻底根治（2026-09-16 01:20-01:45，Owner 指令"矿没挖干继续挖，这次彻底根治"）
+
+> 本轮按挖矿 SOP 矿脉枯竭结构判据深挖 11 条矿脉（V1-V11），全见底；挖出 **5 个新根因（含 1 个当场修复的回退）+ 3 个范式级根治方向**。§3 v2.0 方案表全部保留有效，本节增补项与其合并为 v2.1。
+
+### 8.1 R2 新根因（全部实测坐实）
+
+| # | 根因 | 证据 | 处置 |
+|---|------|------|------|
+| G6 | **echo_guard 复活回退**：clone_guard.yml 被工作区误删（未提交删除），config.py 缺省 `echo_guard_enabled=True` → 已退役引擎经危险默认值复活，每次带 .py 提交白烧 30s 超时 | R2 harness 实录 `EchoGuardAdapter degraded: 超时(30s)`；CAPABILITY-OVERLAP 32.8s | **当场已修**：git checkout 恢复 HEAD 配置（enabled:false），复测 24.9s（省 8s）；**新增 P0-B4：CONFIG-PRESENCE 检查**——被 loader 引用的配置文件缺失≠危险默认值，裁定禁用项缺配置时按禁用处理 |
+| G7 | **测试污染生产队列**：1175 死信中 **760（65%）= pytest 临时仓库的队列项漏进生产 dead 区**（`landing 异常: git rev-parse rc=128: not a git repository: .runtime/tmp/pytest_19944/...`） | 死信 dead_reason 全文解码；09-03 批次+09-11 requeue 再生 | **P0-C 新增**：①purge 这 760 垃圾死信；②治本=测试隔离（queue root 必须参数化到 tmp_path，违者=运维红线 §9.6 测试写生产路径） |
+| G8 | **落地侧门禁视野污染**：TTL-METADATA 等门禁在 serializer worktree 里扫到队列自身基建文件（`schemas/categories/__init__.py missing ttl`）——"全门禁零适配"在 worktree 环境的适配缺口 | 27 条 TTL-METADATA 死信 dead_reason 逐条核验 | 并入 P0-B（落地侧 gate 扫描面=快照文件，禁扫 worktree 树） |
+| G9 | **重试环灾难性放大**：240 条重试串覆盖 624 次拦截，平均 2.6 连败，**最长 30 连败**（每败烧一轮全链） | commit_block_events 按 session×10min 窗口聚类 | P0-A 的"一过式失败清单"正对此病灶；加码=同一 session 同一批文件的重复失败 3 次后强制走预检报告（禁盲重试） |
+| G10 | **退役审计无燃料**：gate 执行无计数器（.runtime/gate_audit/ 只有 own-scope 外来审计），宪法 §4.2"触发率退役审计"无从执行；gate 总量 166 vs in_process 注册表 111，数量漂移无人察觉 | 全仓反查无 execution counter 机制 | **P1-E 新增**：check_all 加每 gate 执行计数（日聚合落 audit），季度退役审计有数据；计数器顺带核实注册表漂移 |
+| G11 | **门禁成本高度集中**：R2 全链实测 213.7s，**TOP10 gate 占 ~175s（82%）**（REGISTRY-MASS-DELETION 39.8s / CAPABILITY-OVERLAP 32.8s / GATE-ERRCODE 29.4s / BATTLE-MAP 12.9s…），其余 100+ 道合计 <40s | v4 harness（.runtime/tmp/gate_timing_r4_20260916.json，配方同 9/11 st-encfix，只读） | 印证 §3 全部方案：预检前移/own-scope/缓存/并行的靶子就是这 10 道；**合并/删除门禁依然不做**（成本集中≠可删，每道对应事故治本） |
+
+### 8.2 彻底根治三范式（T 系，v2.1 增补）
+
+> 定位：§3 P0/P1 治"失败税+挤兑"的存量病灶；T 系回答"终局形态提交通道长什么样"。三范式互相正交，T1 是主轴。
+
+**T1 阻断核+异步批判+隔离治愈（范式级，Owner 门）**
+- 现状范式=提交时 166 道全拦截；终局范式=**提交时只拦安全核（预算 ≤15 道：密钥/危险 SQL/GW 伪造/会话与声明类），其余 ~150 道转为落地后异步批判**——批判器产出违规发现→自动开修复任务→严重者走 rollback 基建（infrastructure/rollback 已有 14K 行：agent_cooldown 隔离/warm_standby/审计）隔离该会话后续写入+revert 单笔 commit（队列落地项天然单 commit 单 qid，可精确 revert）。
+- 收益：提交墙钟从"全链时长"变"安全核时长"（实测外推 <8s）；批判阶段与提交解耦后可全量跑、慢慢跑、跑重活，**检测覆盖反而变大不再受提交预算约束**（9/11 echo_guard 裁定的第一性原理"预算不够的检测=不存在的检测"的终局解）。
+- 前置依赖：P0-A 预检（防低级违规进主干）、P1-E 计数器（批判覆盖度可观测）、reconciler 修复闭环（已有 batched_auto_committer 先例）。
+- 风险与护栏：违规短暂在主干窗口（批判发现→revert 的 MTTR 口径，预注册 ≤30min）；安全核清单须 Owner 裁定+红蓝；宪法 §5 medium/low 门位不放松（批判器仍是硬门禁，只是时点后移）。
+- **状态：挂起排期**——解锁条件=P0/P1 全落地且队列 P90<60s 后复测仍不达标，或 Owner 直接放行终局设计。
+- 业界印证：**受阻**（Tricorder/Sapling land-flow 检索两轮超时，按 SOP 记受阻不算查无；架构依据以仓内 rollback 基建+reconciler 闭环为准）。
+
+**T2 批量落地（队列吞吐 ×N）**
+- 现状 serializer 每项跑一遍全门禁；改=出队时把**同 base_head 连续项合成一个验证批**（合并 diff 跑一次批判集+逐项快验差异），按序逐项 commit。GitHub merge_group/Mergify batches 同构（引文见附）。
+- 收益：并发 10+ 会话时门禁成本从 O(N) → O(N/批大小)；配合 P1-D 车道，队列 P90 预估再减半。
+- 风险：批内单项违规需整批重验（bisect 拆批，GitHub 同款问题，社区讨论 #58523 在案）；归因复杂度上升。**挂起排期**——解锁=T1 安全核落地后（批判集变小，批处理收益/复杂度比反转）。
+
+**T3 事件驱动持续预验证（把门禁搬到提交之前）**
+- write_audit_daemon 已有 watchdog RDCW 事件层监视热目录——**文件写入事件即触发对应内容门禁预跑**，结果落 gate_cache（指纹=内容 sha）；提交时全部命中缓存，锁内链≈纯信号核。事件触发，合永久系统四要素，无常驻轮询。
+- 收益：提交时刻的门禁成本前移到"会话干活的同时"（CPU 峰谷错位）；与 gate_preflight/P1-B 同一架构的自然延伸，终局形态="提交时零现算"。
+- 风险：写风暴下的预跑积压（需合并去抖：同文件 10s 窗口）；缓存失效语义已有成熟真源。**挂起排期**——解锁=P0-A 预检落地后顺路施工（同一批 gate 准入审计）。
+
+### 8.3 v2.1 方案总表（§3 + 本节合并视图）
+
+| 优先级 | 项 | 状态 |
+|--------|-----|------|
+| P0-A | 确定性预检前移+一过式失败清单+入队预校验（+G9 加码：3 败强制预检） | **施工** |
+| P0-B | 基建故障四件：CREATE-GUARD ParserError / 报表判定公式 / PANORAMA 失效 / G6 配置缺失危险默认（+G8 落地侧视野污染） | **施工**（G6 已当场修复） |
+| P0-C | 测试污染队列治本：purge 760+测试隔离参数化（G7） | **施工** |
+| P1-A~D | own-scope 三批 / 白名单扩面 / 竞争感知入队 / 机器伴生车道 | **施工**（同 v2.0） |
+| P1-E | 门禁执行计数器（退役燃料+注册表漂移哨兵，G10） | **施工** |
+| T1/T2/T3 | 阻断核+异步批判 / 批量落地 / 持续预验证 | **挂起排期**（解锁条件各自写明） |
+
+### 8.4 R2 挖矿日志（SOP §7 强制）
+
+| 轮 | 矿脉 | 关键产出 | 判定 |
+|----|------|---------|------|
+| R2-1 | V1 落地耗时分解 | landing=预暂存+全门禁(仅跳4道)+异步reconcile；无阶段计时→记 GAP-2（落地分相计时） | signal |
+| R2-2 | V2 退役审计数据 | 门禁执行零计数器=宪法 §4.2 无从执行；GAP | signal→P1-E |
+| R2-3 | V3 计时证据重建 | 9/11 计时 json 已被 tmp 清扫删；重建 v4 harness 实测全链 213.7s/TOP10=82%；证据落 .runtime/tmp/gate_timing_r4_20260916.json | signal |
+| R2-4 | V4 rollback 基建 | infrastructure/rollback 14K 行（隔离/热备/审计）=T1 地基；Tricorder 外部印证**受阻**（搜索超时×2，如实记档非查无） | signal+受阻 |
+| R2-5 | V5 队列批量落地业界 | GitHub merge_group 机制+Mergify batches+社区"跑两遍"陷阱（#58523/#43988） | signal |
+| R2-6 | V6 事件驱动预验证 | write_audit_daemon watchdog 事件层=T3 挂钩点，事件触发合规 | signal |
+| R2-7 | V7 注册表机制 | in_process_gate_registry.yaml 111 项 YAML 驱动；总量 166 vs 111 漂移；净零退役未执行 | signal→P1-E |
+| R2-8 | V8 重试环 | 240 串/平均 2.6 连败/最长 30 连败 | signal→P0-A 加码 |
+| R2-9 | V10 死因全分类 | 65%=测试污染；~9%=落地 gate 误扫（G8）；真内容违规死信占比小 | signal→P0-C |
+| R2-10 | V11 worktree 跳过集 | 仅 4 道；落地链≈全链 | signal |
+| R2-11 | 意外矿：echo_guard 回退 | 误删配置+危险默认值；当场修复+复测验证 | **signal（已修）** |
+
+noise 轮：无。矿脉枯竭自判：V1-V11 全部见底（各向产出 signal 或记 GAP/受阻归因），本域再无未挖长尾——**挖矿终止判据达成**。
+
+### 8.5 R2 挖后自审闸增补
+
+- **反驳者三问（对 T1 大候选）**：①"异步批判=把违规放进主干"违反检测语义？→ 安全核（密钥/危险 SQL/GW 伪造）仍硬拦在提交时，放行的是格式/一致性类，且 MTTR 预注册+可精确 revert——检测时点后移≠检测消失。②批判器挂了怎么办？→ 批判器健康进 RECONCILER-HEALTH 同款探针；批判停摆=退化为现状范式（提交时全拦），fail-safe 方向正确。③为什么不等 P0/P1 效果？→ 正因如此 T1 挂起排期而非施工；挂起是时序裁定非价值否定。
+- 现状规模偏差自查：G7 的 760 死信"只是历史垃圾"——按终局量尺，测试隔离是 100% AI 自制的地基红线，施工。
+- 三态出口：P0-B4/P0-C/P1-E=施工；T1/T2/T3=挂起排期；无封矿；G6 已当场修复（既成事实交底）。
+
+---
+
 ## 附：挖矿 ③向外部引文（来源可溯闸，URL+发布方）
 
 - Mergify：GitHub Merge Queue Was Step One——队列是调度问题（mergify.com/blog/github-merge-queue-was-step-one-real-ci-orchestration-comes-next，2024）
@@ -178,3 +254,9 @@ noise 轮：无（六向全部有产出）。矿脉长尾（本域明确不挖/�
 - pre-commit.com 官方：hooks 默认只跑变更文件（pre-commit.com）
 - GitLab 官方 monorepo 性能指南：path filters/浅克隆/并发控制（docs.gitlab.com/user/project/repository/monorepos/）
 - dev.to：Monorepo CI 时间减半实录——lint 缓存+测试并行（dev.to/jimmyyeung/journey-of-systematically-cut-our-monorepo-ci-time-in-half-ec8）
+
+### R2 增补引文（T2 批量落地范式）
+
+- GitHub Docs：Managing a merge queue——merge_group 临时分支批量验证（docs.github.com/repositories/configuring-branches-and-merges-in-your-repository/configuring-pull-request-merges/managing-a-merge-queue）
+- Mergify Docs：Merge Queue Batches——多 PR 合一次 CI 验证（docs.mergify.com/merge-queue/batches/）
+- GitHub Community #58523/#43988——批量验证"CI 跑两遍"与拆批陷阱（github.com/orgs/community/discussions/58523）
