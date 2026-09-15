@@ -11,7 +11,9 @@ completes_when: >-
 
 # 提交通道 v2.1 全自主施工夜班·交付报告（2026-09-16）
 
-> 会话：st-commitspeed-20260916 ｜ 方案真源：[commit_pipeline_upgrade_2026_09_16.md](commit_pipeline_upgrade_2026_09_16.md) ｜ 状态：**全部施工完成，双轮验证+红蓝+并发模拟全绿**
+> **⚠️ 勘误（2026-09-16 晨，Owner 晨问触发复核）**：逐 commit `--stat` 复核发现 **7907290249 实际只落 1 个文件（perf 报表测试）、155c32e6 只落 5 个文件**——其余全部是"空 diff 提交"（快照/提交窗口内容被工作区外部回滚=与 HEAD 无差异）。即：**W1 修复本体、W4 own-scope 三门禁、W5 计数器/白名单/采样、W6 process_pool/reconcile_runner 昨夜均未真正入库**（当时交付报告的"全部落地"结论被回滚时机欺骗，测试双轮全绿也因此测的是旧代码+新测试文件的组合）。aa76232f/e9261980/75df9d0c 经直提+HEAD grep 双验为真实落地。晨班已完成全部重建（blob 恢复+重实现）并以"改后即 git add+同进程提交+HEAD 即验"纪律入库，重建细节见 §10。
+
+> 会话：st-commitspeed-20260916 ｜ 方案真源：[commit_pipeline_upgrade_2026_09_16.md](commit_pipeline_upgrade_2026_09_16.md) ｜ 状态：**v2.1 完成+晨班勘误重建完成（§10）**
 
 ## 0. Owner 醒来先看这里（一句话版）
 
@@ -141,3 +143,17 @@ completes_when: >-
 - ROUND2_RESULT_PLACEHOLDER → 已达成：修复 75df9d0c 后终局双连跑 **FINAL_A=3151 passed/0 failed（27:57）、FINAL_B=3151 passed/0 failed（26:21）**——连续两次全绿零问题（范围=本班全部受影响套件 9 组；--deselect 仅排除 2 个他会话已定性的存量测试基建挂+--ignore 其在途文件，见上分诊）。
 - 终提交（交付文档+红蓝套件入库存档） hash：见本文件最后一次 git 变更（`git log -1 -- <本文件>`）。
 
+
+## 10. 晨班勘误与重建（2026-09-16 晨，Owner 晨问+四债调查触发）
+
+### 10.1 假落地发现与根因
+- 触发：Owner 转来另一 AI 的四基建债清单，其中 WMI/PANORAMA 与本班交付重叠 → 逐 commit --stat 复核 → 发现空 diff 提交（详见头部勘误）。
+- 根因：工作区回滚者的攻击面=**已跟踪文件的修改**（新建未跟踪文件幸存）；时机=每 15-25 分钟一轮，恰好卡在我的"验证 grep→入队/提交"窗口之间；队列快照与直连提交都忠实吃进被回滚内容。
+- 教训固化：**改完即 git add（暂存=第一抢救层）+同进程原子提交+提交后立即 HEAD grep 三验**。
+
+### 10.2 重建内容（晨班）
+- W4 三门禁 own-scope：从 -0007 blob SHA 校验恢复（6 文件）。
+- W5 三件：重实现（计数器/白名单 14/成功采样）。
+- W6 三件：重实现+增强——process_pool priority_class+**WMI ReturnValue=21 纵深防御链**（重试×2→无 breakaway 降级→sync 兜底；直接消灭"async 恒失败走 sync"性能债）；reconcile worker=1+below_normal（经他会话晨间新落地的 process_incubator 统一入口透传——基建协同）。
+- W1 三修复：重建代理重实现（B1 撕裂读重试/B2 四维与门/B3 编码硬化）。
+- 传送带补全（Owner 晨间口述设计）：commit_belt_daemon 常驻消费端（watchdog 事件驱动 M10 合规/单例锁/死信自动登记堵点本）+入队话术改"无需轮询继续施工"+堵点本横幅改"专人专事协议"。
