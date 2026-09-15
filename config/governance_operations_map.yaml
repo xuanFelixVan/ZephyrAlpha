@@ -1,13 +1,14 @@
 schema_version: '0.1'
 map_id: GOMAP-001
 name_zh: 治理运行地图
+ttl: permanent
 effective_from: '2026-09-15'
 generator: scripts/governance/generate_governance_map.py
-generated_at: '2026-09-15T13:27:01.781227+00:00'
-ssot_note_zh: 骨架机生(宪法 §9.5):families 层由生成器全量重建,禁手工编辑;pipeline/out_of_scope_refs 为人工语义层,生成器保留。模块明细以稳定标识符引用,禁复制条目内容(TDM INV-1
-  同款纪律)。
+generated_at: '2026-09-15T14:39:27.482241+00:00'
+ssot_note_zh: 骨架机生(宪法 §9.5):families 层由生成器全量重建,禁手工编辑;pipeline/out_of_scope_refs/effective_from 为人工语义层,生成器保留(effective_from
+  首次落定 '2026-09-15',防重跑漂移)。模块明细以稳定标识符引用,禁复制条目内容(TDM INV-1 同款纪律)。
 counts:
-  total_modules: 421
+  total_modules: 413
   suspect_orphans: 3
 out_of_scope_refs:
 - name_zh: 提交门禁体系
@@ -55,7 +56,7 @@ pipeline:
     - zephyr.integration.vector_memory.index_health_monitor
     disconnected:
     - mod: zephyr.infrastructure.health_monitor.health_aggregator
-      note_zh: 双胞胎 HealthAggregator,仅自身导出(R1 删除候选)
+      note_zh: 已删(2026-09-15 R1：CONFIRMED-DEAD 零外部 import，活聚合器=system_telemetry 版)
     - mod: zephyr.orchestrator.agent_health_monitor
       note_zh: 蓝图 CONSUMERS 为空(A5 接线/删除候选)
     - mod: zephyr.shared.alerts.heartbeat_server
@@ -90,16 +91,16 @@ pipeline:
     - zephyr.trading.trading_contracts.risk.trading_kill_switch
     - zephyr.shared.resilience.circuit_breaker
     - zephyr.feedback_loop.resilience.deadman_switch
-    - zephyr.integration.failover_coordinator
     disconnected:
     - mod: zephyr.autonomy_core.kill_switch_orchestrator
-      note_zh: 五域编排层无人 import(A3 挂 boot 候选)
+      note_zh: 五域编排层无人 import(A3 降级执行：先接域目标再挂 boot)
     - mod: zephyr.governance.resilience_governance.last_resort_watchdog
-      note_zh: 蓝图声明 CONSUMERS=escalation 但无 import(A4)
+      note_zh: 蓝图声明 CONSUMERS=escalation 但无 import(A4 待接线)
     - mod: zephyr.orchestrator.fault_tolerance.degrade_cascade
-      note_zh: 未见 src import(A5)
-    - mod: KillSwitch×5/CircuitBreaker×8 重复族
-      note_zh: R4 长期收敛战役
+      note_zh: 未见 src import，TEST-ONLY 实证(A5 待裁定)
+    - mod: KillSwitch×5/CircuitBreaker×9 重复族
+      note_zh: R4 收敛战役——活链 KS=2(access_control/rollback)、CB=4(shared.resilience/resilience_governance/rule_enforcement/adversarial_validation)；死员已删(reliability
+        CB/failover_coordinator/api_lifecycle×2/ghost_scan)，daban_instant+trade_level 系业务特性保留
   - id: GOM-L4
     name_zh: 收割清理
     desc_zh: 孤儿/僵尸/幽灵进程收割,残留清理
@@ -108,10 +109,8 @@ pipeline:
     - zephyr.trading.orphan_detector
     - zephyr.gov_drift.orphan_scanner
     disconnected:
-    - mod: zephyr.infrastructure.auto_fix_engine.zombie_cleaner
-      note_zh: 疑经 fixer 注册表装配,处置前复核
     - mod: zephyr.governance.security_governance.ghost_scan
-      note_zh: 未见 import,处置前复核
+      note_zh: 已删(2026-09-15 R4：与 reaper scan_ghost_windows 重复，零活引用)
   - id: GOM-L5
     name_zh: 自愈对账
     desc_zh: self-heal/reconciler 事件驱动修复
@@ -477,12 +476,6 @@ families:
     path: src/zephyr/infrastructure/health_monitor/__init__.py
     domain: ''
     maturity: ''
-    family: L1_monitor
-    wiring: wired
-  - module: zephyr.infrastructure.health_monitor.health_aggregator
-    path: src/zephyr/infrastructure/health_monitor/health_aggregator.py
-    domain: D_INFRA_RUNTIME
-    maturity: production
     family: L1_monitor
     wiring: wired
   - module: zephyr.infrastructure.quality.quality_monitor
@@ -1002,21 +995,9 @@ families:
     maturity: production
     family: L3_fuse
     wiring: wired
-  - module: zephyr.infrastructure.reliability.circuit_breaker
-    path: src/zephyr/infrastructure/reliability/circuit_breaker.py
-    domain: D_INFRA_RUNTIME
-    maturity: production
-    family: L3_fuse
-    wiring: wired
   - module: zephyr.infrastructure.rollback.kill_switch
     path: src/zephyr/infrastructure/rollback/kill_switch.py
     domain: D_INFRA_RECOVERY
-    maturity: production
-    family: L3_fuse
-    wiring: wired
-  - module: zephyr.integration.failover_coordinator
-    path: src/zephyr/integration/failover_coordinator.py
-    domain: D_INTEGRATION
     maturity: production
     family: L3_fuse
     wiring: wired
@@ -1453,463 +1434,6 @@ families:
     maturity: production
     family: L2_resource
     wiring: wired
-  L0_lifecycle:
-  - module: scripts.governance.d5_architecture.validators.lifecycle.__init__
-    path: scripts/governance/d5_architecture/validators/lifecycle/__init__.py
-    domain: ''
-    maturity: ''
-    family: L0_lifecycle
-    wiring: wired
-  - module: scripts.governance.d5_architecture.validators.lifecycle.validate_lifecycle_refs
-    path: scripts/governance/d5_architecture/validators/lifecycle/validate_lifecycle_refs.py
-    domain: D_GOV_SCRIPTS
-    maturity: production
-    family: L0_lifecycle
-    wiring: wired
-  - module: scripts.governance.d5_architecture.validators.lifecycle.validate_module_lifecycle
-    path: scripts/governance/d5_architecture/validators/lifecycle/validate_module_lifecycle.py
-    domain: D_GOV_SCRIPTS
-    maturity: production
-    family: L0_lifecycle
-    wiring: wired
-  - module: scripts.governance.d8_doc_sync.validate_document_lifecycle
-    path: scripts/governance/d8_doc_sync/validate_document_lifecycle.py
-    domain: D_GOV_SCRIPTS
-    maturity: production
-    family: L0_lifecycle
-    wiring: wired
-  - module: scripts.governance.meta.session_startup_check
-    path: scripts/governance/meta/session_startup_check.py
-    domain: D_GOV_SCRIPTS
-    maturity: production
-    family: L0_lifecycle
-    wiring: wired
-  - module: scripts.governance.meta.trace_finding_lifecycle
-    path: scripts/governance/meta/trace_finding_lifecycle.py
-    domain: D_GOV_SCRIPTS
-    maturity: production
-    family: L0_lifecycle
-    wiring: wired
-  - module: zephyr.autonomy_core.skills.skill_lifecycle
-    path: src/zephyr/autonomy_core/skills/skill_lifecycle.py
-    domain: D_AUTONOMY_CORE
-    maturity: production
-    family: L0_lifecycle
-    wiring: wired
-  - module: zephyr.feedback_loop.actors.agent_lifecycle
-    path: src/zephyr/feedback_loop/actors/agent_lifecycle.py
-    domain: D_FEEDBACK_LOOP
-    maturity: production
-    family: L0_lifecycle
-    wiring: wired
-  - module: zephyr.feedback_loop.detectors.reliability.flag_lifecycle
-    path: src/zephyr/feedback_loop/detectors/reliability/flag_lifecycle.py
-    domain: D_FBL_DETECTORS
-    maturity: production
-    family: L0_lifecycle
-    wiring: wired
-  - module: zephyr.feedback_loop.gates.flag_lifecycle_manager
-    path: src/zephyr/feedback_loop/gates/flag_lifecycle_manager.py
-    domain: D_FBL_VERIFICATION
-    maturity: production
-    family: L0_lifecycle
-    wiring: wired
-  - module: zephyr.gov_audit.api_lifecycle
-    path: src/zephyr/gov_audit/api_lifecycle.py
-    domain: D_GOV_AUDIT
-    maturity: production
-    family: L0_lifecycle
-    wiring: wired
-  - module: zephyr.gov_code_quality.code_dedup.shared_lifecycle_manager
-    path: src/zephyr/gov_code_quality/code_dedup/shared_lifecycle_manager.py
-    domain: D_GOV_CODE_QUALITY
-    maturity: production
-    family: L0_lifecycle
-    wiring: wired
-  - module: zephyr.gov_enforcement.rule_bridge.checker_supervisor
-    path: src/zephyr/gov_enforcement/rule_bridge/checker_supervisor.py
-    domain: D_GOV_ENFORCEMENT
-    maturity: testing
-    family: L0_lifecycle
-    wiring: wired
-  - module: zephyr.gov_enforcement.rule_bridge.worktree_lifecycle
-    path: src/zephyr/gov_enforcement/rule_bridge/worktree_lifecycle.py
-    domain: D_GOVERNANCE
-    maturity: production
-    family: L0_lifecycle
-    wiring: wired
-  - module: zephyr.gov_enforcement.rule_enforcement.invariants.en_process_lifecycle_gateway
-    path: src/zephyr/gov_enforcement/rule_enforcement/invariants/en_process_lifecycle_gateway.py
-    domain: D_GOV_RULE
-    maturity: production
-    family: L0_lifecycle
-    wiring: wired
-  - module: zephyr.governance.audit.doc_lifecycle
-    path: src/zephyr/governance/audit/doc_lifecycle.py
-    domain: D_GOV_AUDIT
-    maturity: production
-    family: L0_lifecycle
-    wiring: wired
-  - module: zephyr.governance.context_governance.prompt_lifecycle
-    path: src/zephyr/governance/context_governance/prompt_lifecycle.py
-    domain: D_GOVERNANCE
-    maturity: production
-    family: L0_lifecycle
-    wiring: wired
-  - module: zephyr.governance.data_governance.data_lifecycle
-    path: src/zephyr/governance/data_governance/data_lifecycle.py
-    domain: D_GOVERNANCE
-    maturity: production
-    family: L0_lifecycle
-    wiring: wired
-  - module: zephyr.governance.lifecycle_governance.__init__
-    path: src/zephyr/governance/lifecycle_governance/__init__.py
-    domain: ''
-    maturity: ''
-    family: L0_lifecycle
-    wiring: wired
-  - module: zephyr.governance.lifecycle_governance.ai_behavior_baseline
-    path: src/zephyr/governance/lifecycle_governance/ai_behavior_baseline.py
-    domain: D_GOVERNANCE
-    maturity: production
-    family: L0_lifecycle
-    wiring: wired
-  - module: zephyr.governance.lifecycle_governance.api_lifecycle
-    path: src/zephyr/governance/lifecycle_governance/api_lifecycle.py
-    domain: D_GOVERNANCE
-    maturity: production
-    family: L0_lifecycle
-    wiring: wired
-  - module: zephyr.governance.lifecycle_governance.drift_observatory_orchestrator
-    path: src/zephyr/governance/lifecycle_governance/drift_observatory_orchestrator.py
-    domain: D_GOVERNANCE
-    maturity: production
-    family: L0_lifecycle
-    wiring: wired_by_header
-  - module: zephyr.governance.lifecycle_governance.factor_promotion_wiring
-    path: src/zephyr/governance/lifecycle_governance/factor_promotion_wiring.py
-    domain: D_GOVERNANCE
-    maturity: production
-    family: L0_lifecycle
-    wiring: wired
-  - module: zephyr.governance.lifecycle_governance.migration_strategy
-    path: src/zephyr/governance/lifecycle_governance/migration_strategy.py
-    domain: D_GOVERNANCE
-    maturity: production
-    family: L0_lifecycle
-    wiring: wired
-  - module: zephyr.governance.lifecycle_governance.msprt_promotion_channel
-    path: src/zephyr/governance/lifecycle_governance/msprt_promotion_channel.py
-    domain: D_GOVERNANCE
-    maturity: production
-    family: L0_lifecycle
-    wiring: wired
-  - module: zephyr.governance.lifecycle_governance.paper_live_transition
-    path: src/zephyr/governance/lifecycle_governance/paper_live_transition.py
-    domain: D_GOVERNANCE
-    maturity: production
-    family: L0_lifecycle
-    wiring: wired
-  - module: zephyr.governance.lifecycle_governance.post_live_verification
-    path: src/zephyr/governance/lifecycle_governance/post_live_verification.py
-    domain: D_GOVERNANCE
-    maturity: production
-    family: L0_lifecycle
-    wiring: wired
-  - module: zephyr.governance.lifecycle_governance.retirement_workflow
-    path: src/zephyr/governance/lifecycle_governance/retirement_workflow.py
-    domain: D_GOVERNANCE
-    maturity: production
-    family: L0_lifecycle
-    wiring: wired
-  - module: zephyr.governance.lifecycle_governance.rollback_state_machine
-    path: src/zephyr/governance/lifecycle_governance/rollback_state_machine.py
-    domain: D_GOVERNANCE
-    maturity: production
-    family: L0_lifecycle
-    wiring: wired
-  - module: zephyr.governance.lifecycle_governance.strategy_archive
-    path: src/zephyr/governance/lifecycle_governance/strategy_archive.py
-    domain: D_GOVERNANCE
-    maturity: production
-    family: L0_lifecycle
-    wiring: wired_by_header
-  - module: zephyr.governance.lifecycle_governance.strategy_retirement_evaluator
-    path: src/zephyr/governance/lifecycle_governance/strategy_retirement_evaluator.py
-    domain: D_GOVERNANCE
-    maturity: production
-    family: L0_lifecycle
-    wiring: wired
-  - module: zephyr.governance.lifecycle_governance.transition
-    path: src/zephyr/governance/lifecycle_governance/transition.py
-    domain: D_GOVERNANCE
-    maturity: production
-    family: L0_lifecycle
-    wiring: wired
-  - module: zephyr.governance.ops_governance.startup_shutdown
-    path: src/zephyr/governance/ops_governance/startup_shutdown.py
-    domain: D_GOV_OPS_RESILIENCE
-    maturity: production
-    family: L0_lifecycle
-    wiring: wired
-  - module: zephyr.governance.ops_governance.startup_shutdown_cli
-    path: src/zephyr/governance/ops_governance/startup_shutdown_cli.py
-    domain: D_GOV_OPS_RESILIENCE
-    maturity: production
-    family: L0_lifecycle
-    wiring: wired
-  - module: zephyr.governance.resilience_governance.f5_shutdown_manager
-    path: src/zephyr/governance/resilience_governance/f5_shutdown_manager.py
-    domain: D_GOV_OPS_RESILIENCE
-    maturity: production
-    family: L0_lifecycle
-    wiring: wired
-  - module: zephyr.infrastructure.a2a_protocol.layer3_coordination.supervisor
-    path: src/zephyr/infrastructure/a2a_protocol/layer3_coordination/supervisor.py
-    domain: D_INFRA_A2A
-    maturity: production
-    family: L0_lifecycle
-    wiring: wired
-  - module: zephyr.infrastructure.a2a_protocol.prompt_lifecycle
-    path: src/zephyr/infrastructure/a2a_protocol/prompt_lifecycle.py
-    domain: D_INFRA_A2A
-    maturity: production
-    family: L0_lifecycle
-    wiring: wired
-  - module: zephyr.infrastructure.asset_inventory.lifecycle
-    path: src/zephyr/infrastructure/asset_inventory/lifecycle.py
-    domain: D_INFRA_RUNTIME
-    maturity: production
-    family: L0_lifecycle
-    wiring: wired
-  - module: zephyr.infrastructure.lifecycle
-    path: src/zephyr/infrastructure/lifecycle/__init__.py
-    domain: ''
-    maturity: ''
-    family: L0_lifecycle
-    wiring: wired
-  - module: zephyr.infrastructure.lifecycle.scope_guard
-    path: src/zephyr/infrastructure/lifecycle/scope_guard.py
-    domain: D_INFRA_RUNTIME
-    maturity: production
-    family: L0_lifecycle
-    wiring: wired
-  - module: zephyr.infrastructure.lifecycle.task_lifecycle_manager
-    path: src/zephyr/infrastructure/lifecycle/task_lifecycle_manager.py
-    domain: D_INFRA_RUNTIME
-    maturity: production
-    family: L0_lifecycle
-    wiring: wired
-  - module: zephyr.infrastructure.process_supervisor
-    path: src/zephyr/infrastructure/process_supervisor.py
-    domain: D_INFRA_RUNTIME
-    maturity: production
-    family: L0_lifecycle
-    wiring: wired
-  - module: zephyr.infrastructure.rollback.s3_snapshot_lifecycle
-    path: src/zephyr/infrastructure/rollback/s3_snapshot_lifecycle.py
-    domain: D_INFRA_RECOVERY
-    maturity: production
-    family: L0_lifecycle
-    wiring: wired
-  - module: zephyr.infrastructure.runtime.startup_shutdown
-    path: src/zephyr/infrastructure/runtime/startup_shutdown.py
-    domain: D_INFRA_RUNTIME
-    maturity: production
-    family: L0_lifecycle
-    wiring: wired
-  - module: zephyr.orchestrator.execution.data_lifecycle
-    path: src/zephyr/orchestrator/execution/data_lifecycle.py
-    domain: D_ORCHESTRATOR
-    maturity: production
-    family: L0_lifecycle
-    wiring: wired
-  - module: zephyr.orchestrator.lifecycle
-    path: src/zephyr/orchestrator/lifecycle/__init__.py
-    domain: D_ORCHESTRATOR
-    maturity: ''
-    family: L0_lifecycle
-    wiring: wired
-  - module: zephyr.orchestrator.lifecycle.housekeeping
-    path: src/zephyr/orchestrator/lifecycle/housekeeping.py
-    domain: D_ORCHESTRATOR
-    maturity: production
-    family: L0_lifecycle
-    wiring: wired
-  - module: zephyr.orchestrator.lifecycle.incident_postmortem
-    path: src/zephyr/orchestrator/lifecycle/incident_postmortem.py
-    domain: D_ORCHESTRATOR
-    maturity: production
-    family: L0_lifecycle
-    wiring: wired
-  - module: zephyr.orchestrator.lifecycle.rolling_upgrade
-    path: src/zephyr/orchestrator/lifecycle/rolling_upgrade.py
-    domain: D_ORCHESTRATOR
-    maturity: production
-    family: L0_lifecycle
-    wiring: wired
-  - module: zephyr.orchestrator.lifecycle.session_conflict
-    path: src/zephyr/orchestrator/lifecycle/session_conflict.py
-    domain: D_ORCHESTRATOR
-    maturity: production
-    family: L0_lifecycle
-    wiring: wired
-  - module: zephyr.orchestrator.lifecycle.startup_sequencer
-    path: src/zephyr/orchestrator/lifecycle/startup_sequencer.py
-    domain: D_ORCHESTRATOR
-    maturity: production
-    family: L0_lifecycle
-    wiring: wired
-  - module: zephyr.orchestrator.lifecycle.state_propagation
-    path: src/zephyr/orchestrator/lifecycle/state_propagation.py
-    domain: D_ORCHESTRATOR
-    maturity: production
-    family: L0_lifecycle
-    wiring: wired
-  - module: zephyr.orchestrator.lifecycle.state_synchronizer
-    path: src/zephyr/orchestrator/lifecycle/state_synchronizer.py
-    domain: D_ORCHESTRATOR
-    maturity: production
-    family: L0_lifecycle
-    wiring: wired
-  - module: zephyr.orchestrator.lifecycle.system_transfer
-    path: src/zephyr/orchestrator/lifecycle/system_transfer.py
-    domain: D_ORCHESTRATOR
-    maturity: production
-    family: L0_lifecycle
-    wiring: wired
-  - module: zephyr.orchestrator.lifecycle.teardown_manager
-    path: src/zephyr/orchestrator/lifecycle/teardown_manager.py
-    domain: D_ORCHESTRATOR
-    maturity: production
-    family: L0_lifecycle
-    wiring: wired
-  - module: zephyr.pf_alloc.strategy_lifecycle_event
-    path: src/zephyr/pf_alloc/strategy_lifecycle_event.py
-    domain: D_PF_ALLOC
-    maturity: production
-    family: L0_lifecycle
-    wiring: wired
-  - module: zephyr.security.access_control.secrets_lifecycle
-    path: src/zephyr/security/access_control/secrets_lifecycle.py
-    domain: D_SECURITY
-    maturity: design
-    family: L0_lifecycle
-    wiring: wired
-  - module: zephyr.security.access_control.session_lifecycle
-    path: src/zephyr/security/access_control/session_lifecycle.py
-    domain: D_SECURITY
-    maturity: design
-    family: L0_lifecycle
-    wiring: wired
-  - module: zephyr.shared.contracts.strategy_lifecycle_event
-    path: src/zephyr/shared/contracts/strategy_lifecycle_event.py
-    domain: D_INFRASTRUCTURE
-    maturity: production
-    family: L0_lifecycle
-    wiring: wired
-  - module: zephyr.shared.infra.process_lifecycle_gateway
-    path: src/zephyr/shared/infra/process_lifecycle_gateway.py
-    domain: D_SHARED
-    maturity: production
-    family: L0_lifecycle
-    wiring: wired
-  - module: zephyr.shared.infra.process_pool
-    path: src/zephyr/shared/infra/process_pool.py
-    domain: D_SHARED
-    maturity: production
-    family: L0_lifecycle
-    wiring: wired
-  - module: zephyr.shared.lifecycle.__init__
-    path: src/zephyr/shared/lifecycle/__init__.py
-    domain: ''
-    maturity: ''
-    family: L0_lifecycle
-    wiring: wired
-  - module: zephyr.shared.lifecycle.daemon_registry
-    path: src/zephyr/shared/lifecycle/daemon_registry.py
-    domain: D_INFRA_RUNTIME
-    maturity: production
-    family: L0_lifecycle
-    wiring: wired
-  - module: zephyr.shared.lifecycle.hooks
-    path: src/zephyr/shared/lifecycle/hooks.py
-    domain: D_INFRA_RUNTIME
-    maturity: production
-    family: L0_lifecycle
-    wiring: wired
-  - module: zephyr.shared.lifecycle.lazy_loader
-    path: src/zephyr/shared/lifecycle/lazy_loader.py
-    domain: D_INFRA_RUNTIME
-    maturity: production
-    family: L0_lifecycle
-    wiring: wired
-  - module: zephyr.shared.lifecycle.state_machine
-    path: src/zephyr/shared/lifecycle/state_machine.py
-    domain: D_SHARED
-    maturity: production
-    family: L0_lifecycle
-    wiring: wired
-  - module: zephyr.shared.lifecycle.ttl_cleanup_engine
-    path: src/zephyr/shared/lifecycle/ttl_cleanup_engine.py
-    domain: D_SHARED
-    maturity: production
-    family: L0_lifecycle
-    wiring: wired
-  - module: zephyr.signal_ashare.market_lifecycle_phase
-    path: src/zephyr/signal_ashare/market_lifecycle_phase.py
-    domain: D_ASHARE_SIGNAL
-    maturity: production
-    family: L0_lifecycle
-    wiring: wired
-  - module: zephyr.signal_ashare.strategy_signal.pattern_lifecycle
-    path: src/zephyr/signal_ashare/strategy_signal/pattern_lifecycle.py
-    domain: D_ASHARE_SIGNAL
-    maturity: design
-    family: L0_lifecycle
-    wiring: wired
-  - module: zephyr.strategy_pipeline.lifecycle_fsm
-    path: src/zephyr/strategy_pipeline/lifecycle_fsm.py
-    domain: D_BACKTEST
-    maturity: experimental
-    family: L0_lifecycle
-    wiring: wired
-  - module: zephyr.trading.action_dispatcher._file_lifecycle_manager
-    path: src/zephyr/trading/action_dispatcher/_file_lifecycle_manager.py
-    domain: D_TRADING
-    maturity: production
-    family: L0_lifecycle
-    wiring: wired
-  - module: zephyr.trading.boot_hooks
-    path: src/zephyr/trading/boot_hooks.py
-    domain: D_INFRA_RUNTIME
-    maturity: production
-    family: L0_lifecycle
-    wiring: wired
-  - module: zephyr.trading.lifecycle_manager
-    path: src/zephyr/trading/lifecycle_manager.py
-    domain: D_INFRA_RUNTIME
-    maturity: production
-    family: L0_lifecycle
-    wiring: wired
-  - module: zephyr.trading.stop_gate
-    path: src/zephyr/trading/stop_gate.py
-    domain: D_INFRA_RUNTIME
-    maturity: production
-    family: L0_lifecycle
-    wiring: wired
-  - module: zephyr.trading.trading_contracts.portfolio.contracts.strategy_lifecycle_event
-    path: src/zephyr/trading/trading_contracts/portfolio/contracts/strategy_lifecycle_event.py
-    domain: D_TRADING
-    maturity: production
-    family: L0_lifecycle
-    wiring: wired
-  - module: zephyr.trading.windows_service
-    path: src/zephyr/trading/windows_service.py
-    domain: D_INFRA_RUNTIME
-    maturity: production
-    family: L0_lifecycle
-    wiring: wired
   L4_reap:
   - module: scripts.fix_orphan_all
     path: scripts/fix_orphan_all.py
@@ -1980,12 +1504,6 @@ families:
   - module: zephyr.gov_enforcement.commit_gates.orphan_module_gate
     path: src/zephyr/gov_enforcement/commit_gates/orphan_module_gate.py
     domain: D_GOV_CODE_QUALITY
-    maturity: production
-    family: L4_reap
-    wiring: wired_by_header
-  - module: zephyr.governance.security_governance.ghost_scan
-    path: src/zephyr/governance/security_governance/ghost_scan.py
-    domain: D_GOV_OPS_RESILIENCE
     maturity: production
     family: L4_reap
     wiring: wired_by_header
@@ -2638,6 +2156,439 @@ families:
     maturity: production
     family: L5_selfheal
     wiring: wired_by_header
+  L0_lifecycle:
+  - module: scripts.governance.d5_architecture.validators.lifecycle.__init__
+    path: scripts/governance/d5_architecture/validators/lifecycle/__init__.py
+    domain: ''
+    maturity: ''
+    family: L0_lifecycle
+    wiring: wired
+  - module: scripts.governance.d5_architecture.validators.lifecycle.validate_lifecycle_refs
+    path: scripts/governance/d5_architecture/validators/lifecycle/validate_lifecycle_refs.py
+    domain: D_GOV_SCRIPTS
+    maturity: production
+    family: L0_lifecycle
+    wiring: wired
+  - module: scripts.governance.d5_architecture.validators.lifecycle.validate_module_lifecycle
+    path: scripts/governance/d5_architecture/validators/lifecycle/validate_module_lifecycle.py
+    domain: D_GOV_SCRIPTS
+    maturity: production
+    family: L0_lifecycle
+    wiring: wired
+  - module: scripts.governance.d8_doc_sync.validate_document_lifecycle
+    path: scripts/governance/d8_doc_sync/validate_document_lifecycle.py
+    domain: D_GOV_SCRIPTS
+    maturity: production
+    family: L0_lifecycle
+    wiring: wired
+  - module: scripts.governance.meta.session_startup_check
+    path: scripts/governance/meta/session_startup_check.py
+    domain: D_GOV_SCRIPTS
+    maturity: production
+    family: L0_lifecycle
+    wiring: wired
+  - module: scripts.governance.meta.trace_finding_lifecycle
+    path: scripts/governance/meta/trace_finding_lifecycle.py
+    domain: D_GOV_SCRIPTS
+    maturity: production
+    family: L0_lifecycle
+    wiring: wired
+  - module: zephyr.autonomy_core.skills.skill_lifecycle
+    path: src/zephyr/autonomy_core/skills/skill_lifecycle.py
+    domain: D_AUTONOMY_CORE
+    maturity: production
+    family: L0_lifecycle
+    wiring: wired
+  - module: zephyr.feedback_loop.actors.agent_lifecycle
+    path: src/zephyr/feedback_loop/actors/agent_lifecycle.py
+    domain: D_FEEDBACK_LOOP
+    maturity: production
+    family: L0_lifecycle
+    wiring: wired
+  - module: zephyr.feedback_loop.detectors.reliability.flag_lifecycle
+    path: src/zephyr/feedback_loop/detectors/reliability/flag_lifecycle.py
+    domain: D_FBL_DETECTORS
+    maturity: production
+    family: L0_lifecycle
+    wiring: wired
+  - module: zephyr.feedback_loop.gates.flag_lifecycle_manager
+    path: src/zephyr/feedback_loop/gates/flag_lifecycle_manager.py
+    domain: D_FBL_VERIFICATION
+    maturity: production
+    family: L0_lifecycle
+    wiring: wired
+  - module: zephyr.gov_code_quality.code_dedup.shared_lifecycle_manager
+    path: src/zephyr/gov_code_quality/code_dedup/shared_lifecycle_manager.py
+    domain: D_GOV_CODE_QUALITY
+    maturity: production
+    family: L0_lifecycle
+    wiring: wired
+  - module: zephyr.gov_enforcement.rule_bridge.checker_supervisor
+    path: src/zephyr/gov_enforcement/rule_bridge/checker_supervisor.py
+    domain: D_GOV_ENFORCEMENT
+    maturity: testing
+    family: L0_lifecycle
+    wiring: wired
+  - module: zephyr.gov_enforcement.rule_bridge.worktree_lifecycle
+    path: src/zephyr/gov_enforcement/rule_bridge/worktree_lifecycle.py
+    domain: D_GOVERNANCE
+    maturity: production
+    family: L0_lifecycle
+    wiring: wired
+  - module: zephyr.gov_enforcement.rule_enforcement.invariants.en_process_lifecycle_gateway
+    path: src/zephyr/gov_enforcement/rule_enforcement/invariants/en_process_lifecycle_gateway.py
+    domain: D_GOV_RULE
+    maturity: production
+    family: L0_lifecycle
+    wiring: wired
+  - module: zephyr.governance.audit.doc_lifecycle
+    path: src/zephyr/governance/audit/doc_lifecycle.py
+    domain: D_GOV_AUDIT
+    maturity: production
+    family: L0_lifecycle
+    wiring: wired
+  - module: zephyr.governance.context_governance.prompt_lifecycle
+    path: src/zephyr/governance/context_governance/prompt_lifecycle.py
+    domain: D_GOVERNANCE
+    maturity: production
+    family: L0_lifecycle
+    wiring: wired
+  - module: zephyr.governance.data_governance.data_lifecycle
+    path: src/zephyr/governance/data_governance/data_lifecycle.py
+    domain: D_GOVERNANCE
+    maturity: production
+    family: L0_lifecycle
+    wiring: wired
+  - module: zephyr.governance.lifecycle_governance.__init__
+    path: src/zephyr/governance/lifecycle_governance/__init__.py
+    domain: ''
+    maturity: ''
+    family: L0_lifecycle
+    wiring: wired
+  - module: zephyr.governance.lifecycle_governance.ai_behavior_baseline
+    path: src/zephyr/governance/lifecycle_governance/ai_behavior_baseline.py
+    domain: D_GOVERNANCE
+    maturity: production
+    family: L0_lifecycle
+    wiring: wired
+  - module: zephyr.governance.lifecycle_governance.drift_observatory_orchestrator
+    path: src/zephyr/governance/lifecycle_governance/drift_observatory_orchestrator.py
+    domain: D_GOVERNANCE
+    maturity: production
+    family: L0_lifecycle
+    wiring: wired_by_header
+  - module: zephyr.governance.lifecycle_governance.factor_promotion_wiring
+    path: src/zephyr/governance/lifecycle_governance/factor_promotion_wiring.py
+    domain: D_GOVERNANCE
+    maturity: production
+    family: L0_lifecycle
+    wiring: wired
+  - module: zephyr.governance.lifecycle_governance.migration_strategy
+    path: src/zephyr/governance/lifecycle_governance/migration_strategy.py
+    domain: D_GOVERNANCE
+    maturity: production
+    family: L0_lifecycle
+    wiring: wired
+  - module: zephyr.governance.lifecycle_governance.msprt_promotion_channel
+    path: src/zephyr/governance/lifecycle_governance/msprt_promotion_channel.py
+    domain: D_GOVERNANCE
+    maturity: production
+    family: L0_lifecycle
+    wiring: wired
+  - module: zephyr.governance.lifecycle_governance.paper_live_transition
+    path: src/zephyr/governance/lifecycle_governance/paper_live_transition.py
+    domain: D_GOVERNANCE
+    maturity: production
+    family: L0_lifecycle
+    wiring: wired
+  - module: zephyr.governance.lifecycle_governance.post_live_verification
+    path: src/zephyr/governance/lifecycle_governance/post_live_verification.py
+    domain: D_GOVERNANCE
+    maturity: production
+    family: L0_lifecycle
+    wiring: wired
+  - module: zephyr.governance.lifecycle_governance.retirement_workflow
+    path: src/zephyr/governance/lifecycle_governance/retirement_workflow.py
+    domain: D_GOVERNANCE
+    maturity: production
+    family: L0_lifecycle
+    wiring: wired
+  - module: zephyr.governance.lifecycle_governance.rollback_state_machine
+    path: src/zephyr/governance/lifecycle_governance/rollback_state_machine.py
+    domain: D_GOVERNANCE
+    maturity: production
+    family: L0_lifecycle
+    wiring: wired
+  - module: zephyr.governance.lifecycle_governance.strategy_archive
+    path: src/zephyr/governance/lifecycle_governance/strategy_archive.py
+    domain: D_GOVERNANCE
+    maturity: production
+    family: L0_lifecycle
+    wiring: wired_by_header
+  - module: zephyr.governance.lifecycle_governance.strategy_retirement_evaluator
+    path: src/zephyr/governance/lifecycle_governance/strategy_retirement_evaluator.py
+    domain: D_GOVERNANCE
+    maturity: production
+    family: L0_lifecycle
+    wiring: wired
+  - module: zephyr.governance.lifecycle_governance.transition
+    path: src/zephyr/governance/lifecycle_governance/transition.py
+    domain: D_GOVERNANCE
+    maturity: production
+    family: L0_lifecycle
+    wiring: wired
+  - module: zephyr.governance.resilience_governance.f5_shutdown_manager
+    path: src/zephyr/governance/resilience_governance/f5_shutdown_manager.py
+    domain: D_GOV_OPS_RESILIENCE
+    maturity: production
+    family: L0_lifecycle
+    wiring: wired
+  - module: zephyr.infrastructure.a2a_protocol.layer3_coordination.supervisor
+    path: src/zephyr/infrastructure/a2a_protocol/layer3_coordination/supervisor.py
+    domain: D_INFRA_A2A
+    maturity: production
+    family: L0_lifecycle
+    wiring: wired
+  - module: zephyr.infrastructure.a2a_protocol.prompt_lifecycle
+    path: src/zephyr/infrastructure/a2a_protocol/prompt_lifecycle.py
+    domain: D_INFRA_A2A
+    maturity: production
+    family: L0_lifecycle
+    wiring: wired
+  - module: zephyr.infrastructure.asset_inventory.lifecycle
+    path: src/zephyr/infrastructure/asset_inventory/lifecycle.py
+    domain: D_INFRA_RUNTIME
+    maturity: production
+    family: L0_lifecycle
+    wiring: wired
+  - module: zephyr.infrastructure.lifecycle
+    path: src/zephyr/infrastructure/lifecycle/__init__.py
+    domain: ''
+    maturity: ''
+    family: L0_lifecycle
+    wiring: wired
+  - module: zephyr.infrastructure.lifecycle.scope_guard
+    path: src/zephyr/infrastructure/lifecycle/scope_guard.py
+    domain: D_INFRA_RUNTIME
+    maturity: production
+    family: L0_lifecycle
+    wiring: wired
+  - module: zephyr.infrastructure.lifecycle.task_lifecycle_manager
+    path: src/zephyr/infrastructure/lifecycle/task_lifecycle_manager.py
+    domain: D_INFRA_RUNTIME
+    maturity: production
+    family: L0_lifecycle
+    wiring: wired
+  - module: zephyr.infrastructure.process_supervisor
+    path: src/zephyr/infrastructure/process_supervisor.py
+    domain: D_INFRA_RUNTIME
+    maturity: production
+    family: L0_lifecycle
+    wiring: wired
+  - module: zephyr.infrastructure.rollback.s3_snapshot_lifecycle
+    path: src/zephyr/infrastructure/rollback/s3_snapshot_lifecycle.py
+    domain: D_INFRA_RECOVERY
+    maturity: production
+    family: L0_lifecycle
+    wiring: wired
+  - module: zephyr.infrastructure.runtime.startup_shutdown
+    path: src/zephyr/infrastructure/runtime/startup_shutdown.py
+    domain: D_INFRA_RUNTIME
+    maturity: production
+    family: L0_lifecycle
+    wiring: wired
+  - module: zephyr.orchestrator.execution.data_lifecycle
+    path: src/zephyr/orchestrator/execution/data_lifecycle.py
+    domain: D_ORCHESTRATOR
+    maturity: production
+    family: L0_lifecycle
+    wiring: wired
+  - module: zephyr.orchestrator.lifecycle
+    path: src/zephyr/orchestrator/lifecycle/__init__.py
+    domain: D_ORCHESTRATOR
+    maturity: ''
+    family: L0_lifecycle
+    wiring: wired
+  - module: zephyr.orchestrator.lifecycle.housekeeping
+    path: src/zephyr/orchestrator/lifecycle/housekeeping.py
+    domain: D_ORCHESTRATOR
+    maturity: production
+    family: L0_lifecycle
+    wiring: wired
+  - module: zephyr.orchestrator.lifecycle.incident_postmortem
+    path: src/zephyr/orchestrator/lifecycle/incident_postmortem.py
+    domain: D_ORCHESTRATOR
+    maturity: production
+    family: L0_lifecycle
+    wiring: wired
+  - module: zephyr.orchestrator.lifecycle.rolling_upgrade
+    path: src/zephyr/orchestrator/lifecycle/rolling_upgrade.py
+    domain: D_ORCHESTRATOR
+    maturity: production
+    family: L0_lifecycle
+    wiring: wired
+  - module: zephyr.orchestrator.lifecycle.session_conflict
+    path: src/zephyr/orchestrator/lifecycle/session_conflict.py
+    domain: D_ORCHESTRATOR
+    maturity: production
+    family: L0_lifecycle
+    wiring: wired
+  - module: zephyr.orchestrator.lifecycle.startup_sequencer
+    path: src/zephyr/orchestrator/lifecycle/startup_sequencer.py
+    domain: D_ORCHESTRATOR
+    maturity: production
+    family: L0_lifecycle
+    wiring: wired
+  - module: zephyr.orchestrator.lifecycle.state_propagation
+    path: src/zephyr/orchestrator/lifecycle/state_propagation.py
+    domain: D_ORCHESTRATOR
+    maturity: production
+    family: L0_lifecycle
+    wiring: wired
+  - module: zephyr.orchestrator.lifecycle.state_synchronizer
+    path: src/zephyr/orchestrator/lifecycle/state_synchronizer.py
+    domain: D_ORCHESTRATOR
+    maturity: production
+    family: L0_lifecycle
+    wiring: wired
+  - module: zephyr.orchestrator.lifecycle.system_transfer
+    path: src/zephyr/orchestrator/lifecycle/system_transfer.py
+    domain: D_ORCHESTRATOR
+    maturity: production
+    family: L0_lifecycle
+    wiring: wired
+  - module: zephyr.orchestrator.lifecycle.teardown_manager
+    path: src/zephyr/orchestrator/lifecycle/teardown_manager.py
+    domain: D_ORCHESTRATOR
+    maturity: production
+    family: L0_lifecycle
+    wiring: wired
+  - module: zephyr.pf_alloc.strategy_lifecycle_event
+    path: src/zephyr/pf_alloc/strategy_lifecycle_event.py
+    domain: D_PF_ALLOC
+    maturity: production
+    family: L0_lifecycle
+    wiring: wired
+  - module: zephyr.security.access_control.secrets_lifecycle
+    path: src/zephyr/security/access_control/secrets_lifecycle.py
+    domain: D_SECURITY
+    maturity: design
+    family: L0_lifecycle
+    wiring: wired
+  - module: zephyr.security.access_control.session_lifecycle
+    path: src/zephyr/security/access_control/session_lifecycle.py
+    domain: D_SECURITY
+    maturity: design
+    family: L0_lifecycle
+    wiring: wired
+  - module: zephyr.shared.contracts.strategy_lifecycle_event
+    path: src/zephyr/shared/contracts/strategy_lifecycle_event.py
+    domain: D_INFRASTRUCTURE
+    maturity: production
+    family: L0_lifecycle
+    wiring: wired
+  - module: zephyr.shared.infra.process_lifecycle_gateway
+    path: src/zephyr/shared/infra/process_lifecycle_gateway.py
+    domain: D_SHARED
+    maturity: production
+    family: L0_lifecycle
+    wiring: wired
+  - module: zephyr.shared.infra.process_pool
+    path: src/zephyr/shared/infra/process_pool.py
+    domain: D_SHARED
+    maturity: production
+    family: L0_lifecycle
+    wiring: wired
+  - module: zephyr.shared.lifecycle.__init__
+    path: src/zephyr/shared/lifecycle/__init__.py
+    domain: ''
+    maturity: ''
+    family: L0_lifecycle
+    wiring: wired
+  - module: zephyr.shared.lifecycle.daemon_registry
+    path: src/zephyr/shared/lifecycle/daemon_registry.py
+    domain: D_INFRA_RUNTIME
+    maturity: production
+    family: L0_lifecycle
+    wiring: wired
+  - module: zephyr.shared.lifecycle.hooks
+    path: src/zephyr/shared/lifecycle/hooks.py
+    domain: D_INFRA_RUNTIME
+    maturity: production
+    family: L0_lifecycle
+    wiring: wired
+  - module: zephyr.shared.lifecycle.lazy_loader
+    path: src/zephyr/shared/lifecycle/lazy_loader.py
+    domain: D_INFRA_RUNTIME
+    maturity: production
+    family: L0_lifecycle
+    wiring: wired
+  - module: zephyr.shared.lifecycle.state_machine
+    path: src/zephyr/shared/lifecycle/state_machine.py
+    domain: D_SHARED
+    maturity: production
+    family: L0_lifecycle
+    wiring: wired
+  - module: zephyr.shared.lifecycle.ttl_cleanup_engine
+    path: src/zephyr/shared/lifecycle/ttl_cleanup_engine.py
+    domain: D_SHARED
+    maturity: production
+    family: L0_lifecycle
+    wiring: wired
+  - module: zephyr.signal_ashare.market_lifecycle_phase
+    path: src/zephyr/signal_ashare/market_lifecycle_phase.py
+    domain: D_ASHARE_SIGNAL
+    maturity: production
+    family: L0_lifecycle
+    wiring: wired
+  - module: zephyr.signal_ashare.strategy_signal.pattern_lifecycle
+    path: src/zephyr/signal_ashare/strategy_signal/pattern_lifecycle.py
+    domain: D_ASHARE_SIGNAL
+    maturity: design
+    family: L0_lifecycle
+    wiring: wired
+  - module: zephyr.strategy_pipeline.lifecycle_fsm
+    path: src/zephyr/strategy_pipeline/lifecycle_fsm.py
+    domain: D_BACKTEST
+    maturity: experimental
+    family: L0_lifecycle
+    wiring: wired
+  - module: zephyr.trading.action_dispatcher._file_lifecycle_manager
+    path: src/zephyr/trading/action_dispatcher/_file_lifecycle_manager.py
+    domain: D_TRADING
+    maturity: production
+    family: L0_lifecycle
+    wiring: wired
+  - module: zephyr.trading.boot_hooks
+    path: src/zephyr/trading/boot_hooks.py
+    domain: D_INFRA_RUNTIME
+    maturity: production
+    family: L0_lifecycle
+    wiring: wired
+  - module: zephyr.trading.lifecycle_manager
+    path: src/zephyr/trading/lifecycle_manager.py
+    domain: D_INFRA_RUNTIME
+    maturity: production
+    family: L0_lifecycle
+    wiring: wired
+  - module: zephyr.trading.stop_gate
+    path: src/zephyr/trading/stop_gate.py
+    domain: D_INFRA_RUNTIME
+    maturity: production
+    family: L0_lifecycle
+    wiring: wired
+  - module: zephyr.trading.trading_contracts.portfolio.contracts.strategy_lifecycle_event
+    path: src/zephyr/trading/trading_contracts/portfolio/contracts/strategy_lifecycle_event.py
+    domain: D_TRADING
+    maturity: production
+    family: L0_lifecycle
+    wiring: wired
+  - module: zephyr.trading.windows_service
+    path: src/zephyr/trading/windows_service.py
+    domain: D_INFRA_RUNTIME
+    maturity: production
+    family: L0_lifecycle
+    wiring: wired
   L6_audit:
   - module: scripts.ops_guard
     path: scripts/ops_guard.py

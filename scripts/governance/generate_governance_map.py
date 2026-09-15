@@ -6,7 +6,7 @@
 # [CONSUMERS] config/governance_operations_map.yaml; 治理全景图前端页(规划中)
 # [STARTUP] manual
 # [MATURITY] prototype
-# [INVARIANTS] 机器层(families)全量重建; 人工层(pipeline/out_of_scope_refs)原样保留; 静态计数只进 counts 字段不进散文; --dry-run 零写入
+# [INVARIANTS] 机器层(families)全量重建; 人工层(pipeline/out_of_scope_refs/effective_from)原样保留; 静态计数只进 counts 字段不进散文; --dry-run 零写入
 # [MODIFY-GUARD] config/governance_operations_map.yaml
 # [STABILITY] evolving
 # [SAFETY] L
@@ -31,6 +31,8 @@
   - families        机器层:族→模块清单(每次全量重建)
   - pipeline        人工层:GOM-L0..L6 流水线挂载(生成器保留不动)
   - out_of_scope_refs 人工层:域外治理真源引用(生成器保留不动)
+  - effective_from  人工层:首次落定 '2026-09-15'(生成器保留,防重跑漂移)
+  - ttl             permanent(对齐 TDM 头部惯例)
 
 CLI:
     python scripts/governance/generate_governance_map.py            # 生成/刷新
@@ -212,19 +214,25 @@ def build_document(dry_run: bool) -> dict[str, Any]:
     if OUTPUT_PATH.exists():
         try:
             existing = yaml.safe_load(OUTPUT_PATH.read_text(encoding="utf-8")) or {}
-            human_keys = {k: existing[k] for k in ("pipeline", "out_of_scope_refs") if k in existing}
+            human_keys = {
+                k: existing[k]
+                for k in ("pipeline", "out_of_scope_refs", "effective_from")
+                if k in existing
+            }
         except (OSError, yaml.YAMLError):
             human_keys = {}
     doc: dict[str, Any] = {
         "schema_version": "0.1",
         "map_id": "GOMAP-001",
         "name_zh": "治理运行地图",
-        "effective_from": now_utc().date().isoformat(),
+        "ttl": "permanent",
+        "effective_from": human_keys.get("effective_from", "2026-09-15"),
         "generator": "scripts/governance/generate_governance_map.py",
         "generated_at": now_utc().isoformat(),
         "ssot_note_zh": (
             "骨架机生(宪法 §9.5):families 层由生成器全量重建,禁手工编辑;"
-            "pipeline/out_of_scope_refs 为人工语义层,生成器保留。"
+            "pipeline/out_of_scope_refs/effective_from 为人工语义层,生成器保留"
+            "(effective_from 首次落定 '2026-09-15',防重跑漂移)。"
             "模块明细以稳定标识符引用,禁复制条目内容(TDM INV-1 同款纪律)。"
         ),
         "counts": {
