@@ -3,7 +3,7 @@ map_id: GOMAP-001
 name_zh: 治理运行地图
 effective_from: '2026-09-15'
 generator: scripts/governance/generate_governance_map.py
-generated_at: '2026-09-15T13:16:50.670564+00:00'
+generated_at: '2026-09-15T13:27:01.781227+00:00'
 ssot_note_zh: 骨架机生(宪法 §9.5):families 层由生成器全量重建,禁手工编辑;pipeline/out_of_scope_refs 为人工语义层,生成器保留。模块明细以稳定标识符引用,禁复制条目内容(TDM INV-1
   同款纪律)。
 counts:
@@ -24,31 +24,111 @@ pipeline:
   - id: GOM-L0
     name_zh: 孵化
     desc_zh: 进程/服务出生:统一 spawn 入口、NSSM 永久服务、boot 编排
-    mounts: []
+    mounts:
+    - zephyr.shared.infra.process_pool
+    - zephyr.shared.infra.process_lifecycle_gateway
+    - zephyr.infrastructure.process_supervisor
+    - zephyr.trading.windows_service
+    - zephyr.shared.lifecycle.daemon_registry
+    - zephyr.trading.boot_hooks
+    - zephyr.infrastructure.runtime.startup_shutdown
+    - zephyr.trading.auto_runtime_core._OllamaProcessManager
+    disconnected:
+    - mod: 双轨并存
+      note_zh: process_pool 与 process_lifecycle_gateway 两套孵化入口(M1 合并候选,见挖矿地图 §5)
   - id: GOM-L1
     name_zh: 运行监控
     desc_zh: 心跳/健康探针/看门狗互检/遥测
-    mounts: []
+    mounts:
+    - zephyr.infrastructure.system_telemetry.watchdog
+    - zephyr.infrastructure.system_telemetry.health_probes
+    - zephyr.infrastructure.system_telemetry.health_aggregator
+    - zephyr.trading.health_monitor
+    - zephyr.shared.lifecycle.healthcheck_service
+    - zephyr.shared.lifecycle.health_discovery
+    - zephyr.shared.lifecycle.longevity_monitor
+    - zephyr.shared.maintenance.autonomy_monitor
+    - zephyr.gov_enforcement.rule_bridge.heartbeat_daemon
+    - zephyr.data.redundant_source.heartbeat_monitor
+    - zephyr.gov_enforcement.rule_bridge.worktree_drift_watchdog
+    - zephyr.risk.core.drawdown_watchdog
+    - zephyr.integration.vector_memory.index_health_monitor
+    disconnected:
+    - mod: zephyr.infrastructure.health_monitor.health_aggregator
+      note_zh: 双胞胎 HealthAggregator,仅自身导出(R1 删除候选)
+    - mod: zephyr.orchestrator.agent_health_monitor
+      note_zh: 蓝图 CONSUMERS 为空(A5 接线/删除候选)
+    - mod: zephyr.shared.alerts.heartbeat_server
+      note_zh: 仅 shared 导出(A5)
+    - mod: zephyr.shared.lifecycle.task_heartbeat
+      note_zh: 仅 shared 导出(A5)
   - id: GOM-L2
     name_zh: 资源水位
     desc_zh: 内存/CPU/GPU/磁盘阈值与告警、预算
-    mounts: []
+    mounts:
+    - zephyr.gov_drift.resource_guard
+    - zephyr.trading.resource_optimization
+    - zephyr.trading.gpu_monitor
+    - zephyr.data_eng.gpu_resource_manager
+    - zephyr.security.llm_defense.llm_security.layers.l5_resource_protection
+    config_refs:
+    - config/resource_optimization.yaml
+    - config/alert_rules.yaml
+    - config/gguf_vram_budget.yaml
+    disconnected:
+    - mod: zephyr.infrastructure.hot_plane_budget
+      note_zh: 未反查到消费方(A5)
+    - mod: 系统级看护空白
+      note_zh: 无人看护全系统提交内存水位(M2 门禁候选;resource_guard 只护 gov_drift,L5 只护 LLM 成本)
   - id: GOM-L3
     name_zh: 熔断降级
     desc_zh: kill_switch/熔断器/降级级联/死人开关
-    mounts: []
+    mounts:
+    - zephyr.security.access_control.kill_switch
+    - zephyr.infrastructure.rollback.kill_switch
+    - zephyr.infrastructure.capacity_assurance.kill_switch
+    - zephyr.trading.trading_contracts.risk.trading_kill_switch
+    - zephyr.shared.resilience.circuit_breaker
+    - zephyr.feedback_loop.resilience.deadman_switch
+    - zephyr.integration.failover_coordinator
+    disconnected:
+    - mod: zephyr.autonomy_core.kill_switch_orchestrator
+      note_zh: 五域编排层无人 import(A3 挂 boot 候选)
+    - mod: zephyr.governance.resilience_governance.last_resort_watchdog
+      note_zh: 蓝图声明 CONSUMERS=escalation 但无 import(A4)
+    - mod: zephyr.orchestrator.fault_tolerance.degrade_cascade
+      note_zh: 未见 src import(A5)
+    - mod: KillSwitch×5/CircuitBreaker×8 重复族
+      note_zh: R4 长期收敛战役
   - id: GOM-L4
     name_zh: 收割清理
     desc_zh: 孤儿/僵尸/幽灵进程收割,残留清理
-    mounts: []
+    mounts:
+    - zephyr.trading.process_reaper
+    - zephyr.trading.orphan_detector
+    - zephyr.gov_drift.orphan_scanner
+    disconnected:
+    - mod: zephyr.infrastructure.auto_fix_engine.zombie_cleaner
+      note_zh: 疑经 fixer 注册表装配,处置前复核
+    - mod: zephyr.governance.security_governance.ghost_scan
+      note_zh: 未见 import,处置前复核
   - id: GOM-L5
     name_zh: 自愈对账
     desc_zh: self-heal/reconciler 事件驱动修复
-    mounts: []
+    mounts:
+    - zephyr.infrastructure.auto_fix_engine.self_heal_agent
+    - zephyr.governance.semantic_audit.self_healer
+    - zephyr.governance.resilience_governance.f5_boot_integration
+    - zephyr.governance.audit.reconcile_worker
+    - zephyr.governance.audit.reconcile_runner
+    - zephyr.governance.audit.reconciliation_registry
   - id: GOM-L6
     name_zh: 复盘审计
     desc_zh: 审计日志/状态面板/治理复盘
-    mounts: []
+    mounts:
+    - zephyr.trading.status_dashboard
+    - zephyr.trading.ai_audit_logger
+    - scripts.ops_guard
 families:
   L1_monitor:
   - module: scripts.governance.architecture_health_dashboard
