@@ -54,6 +54,7 @@ domain_prefixes:
   SELL: D_SELL_DECISION
   SH: D_SHARED
   SIM: D_SIMULATION
+  STRADAPT: D_PF_CORE
   TR: D_TRADING
   TDMVAL: D_TRADING
   TRIG: D_TRADING
@@ -3931,6 +3932,11 @@ error_codes:
   module: zephyr.trading.validation.ablation
   file: src/zephyr/trading/validation/ablation.py
   introduced: '2026-09-10: X 流验证批 T2（Owner 指令+晨报裁定②）——信号消融对照器新增'
+- code: ZA-STRADAPT-0001
+  class: TranslatedAdapterError
+  module: zephyr.pf_core.strategy_engine.translated_strategy_adapter
+  file: src/zephyr/pf_core/strategy_engine/translated_strategy_adapter.py
+  introduced: '2026-09-15: st-fullauto C3 整装回测接线班——STR-* 翻译件适配器统一错误码（前缀路由/契约不符/注册表缺失）'
 
 known_duplicates: []
 # ============================================================
