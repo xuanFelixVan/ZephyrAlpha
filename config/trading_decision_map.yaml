@@ -3931,6 +3931,10 @@ nodes:
     月度调权公式：新权重=normalize(基准权重×PerfScore×Shrinkage)，下限 5% 上限 40%。
     防过拟合三纪律：单次调整幅度≤±10pp、调整后 5 交易日锁定、阈值未触发=不动（no-change 默认）。
     大调整（>10pp）分日线性过渡。
+    （2026-09-16 裁定#257② 交付状态标注：本节点编排未接线——module_ref MOD-PA-007 为
+    无生产调用方的纯库（PFA-1 实证），base_weights 无来源/月度调权无调度体/PerfScore 无
+    生产者三缺口在案，接线随 G15→G14 编排件立项触发（挂起条件见 regime_meta_allocator
+    blueprint §7.3.1）；本节点当前为名义配置，不产生实际调权）
   parent_node: TDM-F-C3
   factor_refs: []
   data_refs: []

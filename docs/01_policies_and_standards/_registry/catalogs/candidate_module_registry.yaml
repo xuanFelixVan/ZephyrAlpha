@@ -17750,7 +17750,7 @@ entries:
   source: 2026-08-23 场外草稿深挖批(AUD-DRAFT-001, .runtime/audit_20260823/construction_backlog_dig.tsv 裁定=做)
   created: '2026-08-23'
   last_updated: '2026-08-25'
-  review_note: "# REVIEW: 豁免不施工（2026-08-25，W3 裁定）——①29 态前身 9 态网格已被 BIC+A2 实证否决（OOS/IS 0.34<0.7），29 态属证伪方向加细；②仓位上限+策略激活已由 MOD-REGIME-001→MOD-PA-007→StrategyBook production 链覆盖，另建=双真源；③三轴无新信息源；④防抖已由 strong_confirm FSM 覆盖；⑤硬标签化恰是被证伪路线，overlay 扩展亦无信息增量"
+  review_note: "# REVIEW: 豁免不施工（2026-08-25，W3 裁定）——①29 态前身 9 态网格已被 BIC+A2 实证否决（OOS/IS 0.34<0.7），29 态属证伪方向加细；②仓位上限+策略激活的归属=MOD-REGIME-001→MOD-PA-007→StrategyBook 链（2026-09-16 裁定#257② 勘误：该链为纸面链从未装配——MOD-PA-007 零生产调用方（PFA-1 实证），本条豁免理由中『production 链已覆盖』表述不成立，豁免结论本身维持（不另建模块），接线随 G15→G14 编排件立项触发（挂起条件见 regime_meta_allocator blueprint §7.3.1）；③三轴无新信息源；④防抖已由 strong_confirm FSM 覆盖；⑤硬标签化恰是被证伪路线，overlay 扩展亦无信息增量"
   source_draft: 跨域(元文档)
   original_id: B1-00153
   source_section: §功能域模块·D-SIGNAL

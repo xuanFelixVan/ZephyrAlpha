@@ -289,7 +289,23 @@ allocation_i = allocation_i / Σ(clamped_allocation)         # 二次归一化
 ### 7.3 消费者
 - StrategyBook (MOD-POS-020)：消费 effective_budget_i
 - BudgetChangeHandler (MOD-POS-022)：消费 BudgetChanged 事件（触发三级升级）
-- Trader + 归因系统：消费 ShrinkageDetail（Shrinkage 归因）
+- Trader + 归因系统：消费 ShrinkageDetail（Shrinkage 彸因）
+
+### 7.3.1 接线挂起与触发条件（裁定#257②，2026-09-16）
+
+**现状**：本模块及下游四件（MOD-POS-020/021/022、MOD-PA-006）均为"无生产调用方的纯库"
+（pf_alloc_consumer_mining PFA-1 全量 grep+精读实证），实盘/模拟盘真实分配=一策略一钱包
+平权（sim_paper_ledger），与 本模块零交集。**裁定=不接线、挂触发**（设计内延期非烂尾，
+memo 33 留痕在案）。
+
+**接线触发条件（任一成立即立项 G15→G14 编排件，未成立前禁止把本链登记为既有能力）**：
+1. G15→G14 编排件立项：明确谁在哪个事件里调 `allocate` + `sync_from_allocator` +
+   Budget 落库（事件源选型=DataScheduler 唤醒 vs pipeline_events 新 kind，S09 先例可复用）；
+2. sim 账本 budget/allocation_source 溯源列需求成立（CH 表结构变更走数据通道）；
+3. 实盘 start_paper_session 链路启用且 Owner 要求组合层分配语义（floor5%/cap40%/Shrinkage）。
+
+**登记失真修正同批**：candidate_module_registry B1-00153 复核注记"已由 production 链覆盖"
+表述已修正为"纸面链未装配"；TDM-F-C3-03 algo_note 补"编排未接线"交付状态标注。
 
 ### 7.4 与 MOD-PA-003 的关系（待协调）
 
@@ -374,7 +390,7 @@ allocation_i = allocation_i / Σ(clamped_allocation)         # 二次归一化
 | 图 | 位置 | 状态 | 链接 |
 |----|------|------|------|
 | 依赖图 (depgraph) | `blueprint_id=MOD-PA-007` 的 5 个 file 节点 | production | `extract_depgraph.py --modules MOD-PA-007` |
-| 数据流图 (dataflow) | （无节点） | N/A | `apply_dataflowgraph.py --list-datasets` |
+| 数据流图 (dataflow) | 0 个 Dataset / 1 个 Job | active | `apply_dataflowgraph.py --list-datasets` |
 | 决策架构图 (decision) | 0 个决策节点 / 1 个决策层 | N/A | `generate_decision_diagram.py` |
 | 蓝图 (blueprint) | 本文件 | Active | — |
 
