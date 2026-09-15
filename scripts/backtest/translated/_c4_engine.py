@@ -84,7 +84,16 @@ def load_px(start: str, end: str, fields: tuple[str, ...] = ("close",)) -> pd.Da
 
 
 def wide(px: pd.DataFrame, field: str = "close") -> pd.DataFrame:
-    """长表 → 宽表（index=trade_date, columns=symbol）。"""
+    """长表 → 宽表（index=trade_date, columns=symbol）。
+
+    防御性去重（2026-09-15）：pandas pivot 遇重复 (trade_date, symbol) 抛
+    "Index contains duplicate entries, cannot reshape"（09-11 数据被 09-14 日更
+    任务全量重灌 5206 组双写，OOS 批考 6 策略全炸实证）。同键重复行取最后一条
+    （ingest 顺序，语义=最新落库值），让批考对写入侧幂等事故免疫。
+    """
+    key = ["trade_date", "symbol"]
+    if px.duplicated(subset=key).any():
+        px = px.drop_duplicates(subset=key, keep="last")
     return px.pivot(index="trade_date", columns="symbol", values=field).sort_index()
 
 
