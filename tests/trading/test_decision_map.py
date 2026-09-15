@@ -706,6 +706,9 @@ _GOVERNANCE_EXEMPT = frozenset(
         "noqa_exempt_registry.yaml",
         "panorama_exempt_list.yaml",
         "registry_consistency_contract.yaml",
+        # registry_master_index_exemptions.yaml 已于 2026-09-16 登记豁免（裁定#263 R4 批）——
+        # 索引豁免元登记（管主索引自身口径）：不入 TDM 决策索引
+        "registry_master_index_exemptions.yaml",
         "registry_master_index.yaml",
         "registry_of_logs.yaml",
         "rule_ai_perception_index.yaml",

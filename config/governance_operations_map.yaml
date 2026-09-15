@@ -4,7 +4,7 @@ name_zh: 治理运行地图
 ttl: permanent
 effective_from: '2026-09-15'
 generator: scripts/governance/generate_governance_map.py
-generated_at: '2026-09-15T19:52:23.386909+00:00'
+generated_at: '2026-09-15T23:39:44.682118+00:00'
 ssot_note_zh: 骨架机生(宪法 §9.5):families 层由生成器全量重建,禁手工编辑;pipeline/out_of_scope_refs/effective_from 为人工语义层,生成器保留(effective_from
   首次落定 '2026-09-15',防重跑漂移)。模块明细以稳定标识符引用,禁复制条目内容(TDM INV-1 同款纪律)。
 counts:
@@ -91,7 +91,7 @@ pipeline:
     - mod: zephyr.governance.resilience_governance.last_resort_watchdog
       note_zh: 蓝图声明 CONSUMERS=escalation 但无 import(A4 待接线)
     - mod: zephyr.orchestrator.fault_tolerance.degrade_cascade
-      note_zh: 未见 src import，TEST-ONLY 实证(A5 待裁定)
+      note_zh: 已删（2026-09-15 治理减法批 A5 收官 9deb35e709 确认死码删除，零生产引用；原 A5 待裁定项已结）
     - mod: KillSwitch×5/CircuitBreaker×9 重复族
       note_zh: R4 收敛战役——活链 KS=2(access_control/rollback)、CB=4(shared.resilience/resilience_governance/rule_enforcement/adversarial_validation)；死员已删(reliability
         CB/failover_coordinator/api_lifecycle×2/ghost_scan)，daban_instant+trade_level 系业务特性保留
@@ -520,6 +520,12 @@ families:
     maturity: ''
     family: L1_monitor
     wiring: wired
+  - module: zephyr.infrastructure.system_telemetry.alerts.ops_alert_feed
+    path: src/zephyr/infrastructure/system_telemetry/alerts/ops_alert_feed.py
+    domain: ''
+    maturity: ''
+    family: L1_monitor
+    wiring: wired
   - module: zephyr.infrastructure.system_telemetry.archive
     path: src/zephyr/infrastructure/system_telemetry/archive/__init__.py
     domain: ''
@@ -685,12 +691,6 @@ families:
   - module: zephyr.ml_serve.core.model_drift_monitor
     path: src/zephyr/ml_serve/core/model_drift_monitor.py
     domain: D_ML_SERVE
-    maturity: production
-    family: L1_monitor
-    wiring: wired
-  - module: zephyr.orchestrator.agent_health_monitor
-    path: src/zephyr/orchestrator/agent_health_monitor.py
-    domain: D_ORCHESTRATOR
     maturity: production
     family: L1_monitor
     wiring: wired

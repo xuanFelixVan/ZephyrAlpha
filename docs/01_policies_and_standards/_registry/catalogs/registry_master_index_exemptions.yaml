@@ -1,0 +1,49 @@
+# [A_config] module_id=CFG-registry-index-exempt-list | layer=config | stability=stable | safety=L | ai_autonomy=ai_modifiable
+module_id: CFG-registry-index-exempt-list
+registry_id: CFG-registry-index-exempt-list
+ttl: permanent
+doc_type: register
+title: 登记表总索引豁免清单（R4 机生口径统一配套）
+status: active
+version: "1.0.0"
+date: '2026-09-16'
+owner: ZephyrAlpha-Owner
+maintenance: manual
+description: >-
+  registry_master_index.yaml（generate_registry_master_index.py 机生）的显式豁免清单：
+  catalogs/ 下不纳入总索引的 yaml 文件逐一登记+豁免理由。对标 D38 新库必挂/豁免二选一
+  铁律与 panorama_exempt_list.yaml 先例。机生口径统一（裁定#263）：生成器已修
+  module_id/registry_id 优先级缺陷收回 10 张 ROOR 在册业务库；本清单承接剩余 14 个
+  非登记表类/内部 collection 类文件，消除"索引缺口"与"清单腐烂"两个病根。
+exemptions:
+- file: _index.yaml
+  reason: TRAE 规则高级别名表（PS-REG-001 注释头）——规则感知索引非登记表；真源=rule_catalog_registry.yaml
+- file: battle_map_domain_policy.yaml
+  reason: 作战地图域漂移规则真源（规则 YAML 非登记表）；消费者=align_battle_map.py BM-INV-004/007
+- file: depgraph_scan_exclusions.yaml
+  reason: depgraph 扫描排除配置——生成器配置文件非登记表
+- file: gate_tracked_write_allowlist.yaml
+  reason: 门禁 tracked 写白名单——gate 配置文件非登记表
+- file: generator_registry.yaml
+  reason: 生成器注册表（内部 id 无 REG/CFG 前缀）——reconcile_generators 编排消费；登记由 scripts/script-manifest.yaml 承载
+- file: industry_graph_field_dictionary.yaml
+  reason: 产业链域字段字典——字典类（同 field_dictionary 先例）；结构四边由 INDUSTRY-CHAIN-MAP gate(141) 强制
+- file: io_sector_sws_map.yaml
+  reason: IO→申万行业桥接词表——词表映射类；消费者=产业链图谱 ig_io_edge 桥接（D38 豁免登记 2026-09-14）
+- file: migration_registry.yaml
+  reason: 已冻结迁移登记表（ROOR REG-MIGRATION-001 status=deprecated）——功能由 depgraph edges 承接，存量 pending 清偿后退役
+- file: rule_enforcement_registry.yaml
+  reason: 门禁规则执行 collection（module_id=MOD-CFG_RULE_ENFORCEMENT 内部锚定 id）——GATE 体系运行时消费非发现入口
+- file: rule_registry_collection.yaml
+  reason: 规则注册 collection（module_id=MOD-CFG_RULE_REGISTRY 内部锚定 id）——规则目录真源=rule_catalog_registry.yaml
+- file: scripts_registry.yaml
+  reason: 脚本注册 collection（module_id=MOD-CFG_SCRIPTS 内部锚定 id）——脚本发现真源=scripts/script-manifest.yaml（REG-SCRIPT-001）
+- file: test_suite_registry.yaml
+  reason: 测试套件 collection（module_id=MOD-CFG_TEST_SUITE 内部锚定 id）——测试发现真源=pytest 收集+test_suite 机制
+- file: trial_ledger_registry.yaml
+  reason: 全局累计试验数 N 账本（MOD-BT-200）——回测治理账本（D38 豁免登记 2026-09-16），强制=SOP-B 预注册护栏非索引发现
+- file: wiring_registry.yaml
+  reason: 模块接线登记表——接线一致性由 wiring 检测器机制化强制，非人工发现入口
+review_frequency: quarterly
+last_reviewed: '2026-09-16'
+review_note: 裁定#263 首建（R4 主索引对账批）；季度随宪法 §4 退役审计同批复核——文件退役/增删时同步本清单
