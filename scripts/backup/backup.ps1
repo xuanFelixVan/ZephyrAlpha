@@ -495,7 +495,7 @@ if ($Mode -eq "ch") {
         if ($prevDirs) { $prevDay = $prevDirs[-1].FullName }
     }
 
-    $linked = 0; $copied = 0; $linkFail = 0; $replaced = 0; $errors3 = @()
+    $linked = 0; $copied = 0; $linkFail = 0; $replaced = 0; $vanished = 0; $errors3 = @()
     $rcCode = 0
 
     if (-not $prevDay) {
@@ -559,12 +559,20 @@ if ($Mode -eq "ch") {
                     (Get-Item -LiteralPath $dstFull -Force).LastWriteTimeUtc = $srcMtime
                     $copied++
                 } catch {
-                    $linkFail++
-                    $errors3 += "$rel : $($_.Exception.Message)"
+                    if (-not (Test-Path -LiteralPath $srcFull)) {
+                        # Source vanished mid-run (temp/lock files churn during the
+                        # snapshot window) -> transient, not an integrity failure.
+                        # Was: counted as failure and flipped status to failed (2026-09-15).
+                        $vanished++
+                        Write-Warn "Source vanished mid-run, skipped: $rel"
+                    } else {
+                        $linkFail++
+                        $errors3 += "$rel : $($_.Exception.Message)"
+                    }
                 }
             }
         }
-        Write-OK ("Snapshot: linked={0}, copied={1}, replaced={2}, failures={3}" -f $linked, $copied, $replaced, $linkFail)
+        Write-OK ("Snapshot: linked={0}, copied={1}, replaced={2}, failures={3}, vanished={4}" -f $linked, $copied, $replaced, $linkFail, $vanished)
         if ($errors3.Count -gt 0) {
             foreach ($msg in ($errors3 | Select-Object -First 10)) { Write-Warn "Snapshot failure: $msg" }
         }
@@ -589,7 +597,7 @@ if ($Mode -eq "ch") {
     $codeResult = @{
         status=$(if($vaultOk){"ok"}else{"failed"}); mode="versioned"
         vault_base=$VaultBase; day_target=$dayTarget; prev_snapshot=$prevDay
-        retention_days=$VaultRetentionDays; hardlinked=$linked; copied=$copied; failures=$linkFail
+        retention_days=$VaultRetentionDays; hardlinked=$linked; copied=$copied; failures=$linkFail; vanished=$vanished
         robocopy_exit=$rcCode; rotated=$rotated
     }
 }
