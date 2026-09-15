@@ -258,7 +258,7 @@ $chAlive = $false
 try { curl.exe -s --max-time 5 $chBaseUrl --data-binary "SELECT 1" | Out-Null; $chAlive = ($LASTEXITCODE -eq 0) } catch { $chAlive = $false }
 
 # CH 24h cadence gate: last_ch_backup_time only advances on SUCCESS. -Force bypasses.
-$chCadenceDue = $true; $chPrevBytes = 0
+$chCadenceDue = $true; $chPrevBytes = 0; $chPrevFullBytes = 0
 if (Test-Path $StateFile) {
     try {
         $prevState = Get-Content $StateFile -Raw -Encoding UTF8 | ConvertFrom-Json
@@ -267,6 +267,7 @@ if (Test-Path $StateFile) {
             if ($chElapsedH -lt 24) { $chCadenceDue = $false }
         }
         if ($prevState.last_ch_backup_bytes) { $chPrevBytes = [int64]$prevState.last_ch_backup_bytes }
+        if ($prevState.last_ch_backup_full_bytes) { $chPrevFullBytes = [int64]$prevState.last_ch_backup_full_bytes }
     } catch { }
 }
 
@@ -362,13 +363,20 @@ if ($Mode -eq "code") {
             if (-not $fileExists -or $fileBytes -lt 1MB) { throw "$chTarget missing or too small ($fileBytes bytes)" }
             $sizeVerified = $true; $sizeMatch = $true; $sizeRatio = 1.0
         } else {
-            # Full: check > 1GB, compression sanity, size ratio vs previous
+            # Full: check > 1GB, compression sanity, size ratio vs previous FULL
+            # (like-for-like; full-vs-incremental ratio false-alarmed on rebase, 2026-09-15)
             if (-not $fileExists -or $fileBytes -lt 1GB) { throw "$chTarget missing or too small ($fileBytes bytes)" }
             $sizeMatch = if ($chTotalSize -gt 0) { $fileBytes -le ($chTotalSize * 1.05) } else { $true }
-            $sizeRatio = if ($chPrevBytes -gt 0) { $fileBytes / $chPrevBytes } else { 1.0 }
-            $sizeVerified = ($sizeRatio -gt 0.5 -and $sizeRatio -lt 2.0)
-            if (-not $sizeVerified -and $chPrevBytes -gt 0) {
-                Write-Warn "Size ratio unusual: $([math]::Round($sizeRatio,3)) (current=$([math]::Round($fileBytes/1GB,2))GB prev=$([math]::Round($chPrevBytes/1GB,2))GB)"
+            if ($chPrevFullBytes -gt 0) {
+                $sizeRatio = $fileBytes / $chPrevFullBytes
+                $sizeVerified = ($sizeRatio -gt 0.5 -and $sizeRatio -lt 2.0)
+                if (-not $sizeVerified) {
+                    Write-Warn "Size ratio unusual: $([math]::Round($sizeRatio,3)) (current=$([math]::Round($fileBytes/1GB,2))GB prev_full=$([math]::Round($chPrevFullBytes/1GB,2))GB)"
+                }
+            } else {
+                # No previous full on record -> nothing comparable, skip ratio check
+                $sizeRatio = 1.0; $sizeVerified = $true
+                Write-OK "No previous full backup recorded - size ratio check skipped"
             }
             if (-not $sizeMatch) { Write-Warn "File size ($fileBytes) exceeds CH uncompressed total_size ($chTotalSize)" }
         }
@@ -379,7 +387,7 @@ if ($Mode -eq "code") {
             ch_total_size=$chTotalSize; ch_num_files=$chNumFiles
             size_match=$sizeMatch; verified=($fileExists -and $sizeVerified -and $sizeMatch)
             table_count=$chTableCount; manifest=$chManifest
-            prev_bytes=$chPrevBytes; size_ratio=[math]::Round($sizeRatio,4)
+            prev_bytes=$chPrevBytes; prev_full_bytes=$chPrevFullBytes; size_ratio=[math]::Round($sizeRatio,4)
             base_bytes=if($baseStat.exists){[int64]$baseStat.bytes}else{0}
         }
         Write-OK ("ClickHouse dump ($chMode): ok ({0:N1} GiB, {1} files, {2} tables, verified={3})" -f ($fileBytes/1GB), $chNumFiles, $chTableCount, ($fileExists -and $sizeVerified -and $sizeMatch))
@@ -673,6 +681,9 @@ if ($dbStatus.clickhouse) {
         $state | Add-Member -NotePropertyName last_ch_backup_file -NotePropertyValue ([string]$dbStatus.clickhouse.file) -Force
         $state | Add-Member -NotePropertyName last_ch_backup_bytes -NotePropertyValue ([int64]$dbStatus.clickhouse.bytes) -Force
         $state | Add-Member -NotePropertyName last_ch_backup_base_bytes -NotePropertyValue ([int64]$dbStatus.clickhouse.base_bytes) -Force
+        if ($dbStatus.clickhouse.mode -eq "full") {
+            $state | Add-Member -NotePropertyName last_ch_backup_full_bytes -NotePropertyValue ([int64]$dbStatus.clickhouse.bytes) -Force
+        }
         if ($state.PSObject.Properties['last_ch_backup_error']) { $state.PSObject.Properties.Remove('last_ch_backup_error') }
     } elseif ($chSt -eq "failed") {
         $state | Add-Member -NotePropertyName last_ch_backup_verified -NotePropertyValue $false -Force
