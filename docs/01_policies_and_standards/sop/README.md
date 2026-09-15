@@ -2,9 +2,9 @@
 module_id: SOP-INDEX-001
 doc_type: index
 ttl: permanent
-title: SOP 方法论真源地图（八族文件夹导航）
+title: SOP 方法论真源地图（九族文件夹导航）
 status: active
-version: 1.4.0
+version: 1.5.0
 owner: ZephyrAlpha-Owner
 language: zh
 ---
@@ -25,6 +25,7 @@ language: zh
 | `trading_decision_map_sop/` | **TDM 地图族**：逐层讨论六步法（trading_decision_map_layering_policy：四道前置检查防撞车）+消费场景规程（tdm_consumption_policy：S1-S9 九场合——什么场合必须打开地图、读什么、验证什么） | TDM 地图结构讨论、血肉填充、建蓝图锚/策略挂图/回测预检/改判据/引擎变更/退役/复盘/转级 前 |
 | `ops_sop/` | **运维协作与应急族**：冲突三分法（merge_conflict_resolution_policy：全项目冲突处理唯一真源）+ worktree 四证清理（worktree_cleanup_policy）+ 保命轨人工 Runbook（emergency_runbook，D-L1~D-L3） | 合并冲突时；清理 worktree 前（四证缺一不可）；系统应急时 |
 | `data_audit_sop/` | **数据审计族**：产业链数据审计修复循环（industry_chain_data_audit_policy，配套标准=policies/graph_quality_standard.md） | 图谱数据质量修复、数据审计班次开工前 |
+| `review_sop/` | **深度审查族**：代码与算法深度审查六轴法（deep_review_policy：数学正确性四问+上游/下游/旁系传导+红蓝对抗+SOTA 新鲜度+证据纪律+收口闭环；与 audit_prompts 广度撒网、document_review 文档七轮、mining_sop 机会挖矿四象限分工） | 强模型审查窗口开工前；新算法/管线转 production 验收前；系统性漏洞横向排查（T3）前 |
 | 根下 `audit_prompts_20_ai.md` | **21 域 AI 审计流水线提示词**（PROTECTED：skip-worktree + 只读属性，禁删禁挪禁改位置） | 发起多模型交叉审计前（design memo 68 的执行蓝本） |
 
 ## 使用纪律
