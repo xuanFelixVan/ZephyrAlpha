@@ -482,6 +482,7 @@ def run_batch(n_samples: int, seed: int, start: str, end: str, smoke: bool = Fal
 
     manifest_rows: list[GridEvalOutcome] = []
     negatives: list[NegativeRecord] = []
+    nets_for_neff: dict[str, list[float]] = {}
     eval_dead = bt_dead = 0
     for r in picked:
         g = r.values["G_universe"]
@@ -515,6 +516,7 @@ def run_batch(n_samples: int, seed: int, start: str, end: str, smoke: bool = Fal
             if len(net.dropna()) < 60 or float(net.std()) == 0:
                 raise RuntimeError(f"insufficient_net:{len(net)}")
             sharpe = stats["sharpe"]
+            nets_for_neff[r.recipe_id] = [float(v) for v in net.values]
         except Exception as exc:  # noqa: BLE001
             negatives.append(NegativeRecord(r.recipe_id, "backtest", f"backtest_fail:{type(exc).__name__}",
                                             r.values, ",".join(degraded), str(exc)[:120]))
@@ -524,6 +526,25 @@ def run_batch(n_samples: int, seed: int, start: str, end: str, smoke: bool = Fal
                                          sharpe=sharpe, ann_return=stats["ann_return"],
                                          max_drawdown=stats["max_drawdown"],
                                          avg_turnover=stats["avg_turnover_1side"], net_days=len(net)))
+
+    # N_eff（预注册 effective_rank）——批次级双口径披露+账本披露位（非 smoke 才写账本）
+    n_eff: int | None = None
+    n_eff_meta: dict = {}
+    try:
+        from zephyr.backtest.core.n_trial_ledger import compute_effective_rank
+
+        if len(nets_for_neff) >= 2:
+            n_eff, n_eff_meta = compute_effective_rank(nets_for_neff)
+            if not smoke:
+                from zephyr.backtest.core.n_trial_ledger import TrialLedger
+
+                TrialLedger().set_effective_trials(
+                    n_eff, note=f"batch:{run_ts} n={len(nets_for_neff)} meta={json.dumps(n_eff_meta)}"
+                )
+    except Exception as exc:  # noqa: BLE001 N_eff 失败不阻断批次产物（披露位留空诚实缺）
+        import logging as _lg
+
+        _lg.getLogger(__name__).warning("N_eff 计算失败（披露位留空）: %s", exc)
 
     manifest = pd.DataFrame([asdict(o) | {"values_json": json.dumps(o.values, sort_keys=True)} for o in manifest_rows])
     manifest.drop(columns=["values"]).to_csv(out_dir / "manifest.csv", index=False)
@@ -539,7 +560,8 @@ def run_batch(n_samples: int, seed: int, start: str, end: str, smoke: bool = Fal
         "degraded_recipes": int(manifest["degraded_dimensions"].apply(bool).sum()) if len(manifest) else 0,
         "window": [start, end], "seed": seed,
         "out_dir": str(out_dir),
-        "n_eff_preregistered": None,  # 4.1: effective_rank（预注册记录见文档）
+        "n_trials_effective": n_eff,
+        "n_eff_meta": n_eff_meta,
     }
     (out_dir / "summary.json").write_text(json.dumps(summary, ensure_ascii=False, indent=2), encoding="utf-8")
     return summary
