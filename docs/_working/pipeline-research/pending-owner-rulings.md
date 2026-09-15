@@ -15,7 +15,7 @@ ttl: task_bound
 | 3 | **wave-2 数据源**（方案长尾） | 登记不施工：等数据到位 | 数据落地后按管线既定事件自动进入现有链路，无需新施工 |
 | 4 | **模拟盘 A 阶段 2026-12-14 首评** | 明令勿提前施工；sim_memo_monthly（MOD-BT-193）已按月产出建议书备料 | 12 月首评时以建议书为底稿，Owner 签字即可 |
 | 5 | **C1 lane_b/lane_c 生成器自动执行** | 事件扫描+告警已接（scan_c1_c2_backlog）；生成执行留会话（LLM 成本+评估门） | 若 Owner 愿承担 LLM token 成本做无人值守挖矿，授权后按 wq-alpha-pipeline overnight 模式立项 |
-| 6 | **他会话在途欠账上报**（非本班范围，宪法 §3.4 不代修） | c4_fact_*.py 五件（MOD-BT-159 公式轨，commit 3b1e30f250）缺知识生效日哨兵 D120 与契约字段，tests/backtest/test_c4_batch_smoke.py 2 例红 | 由工厂线会话补哨兵声明+契约字段后自愈；auto_mount 对 c4_fact_* 无映射不受影响 |
+| 6 | ~~他会话在途欠账上报~~ **已清偿（2026-09-15 终验）** | c4_fact_*.py 五件缺 D120 哨兵/契约字段——兄弟班已回填（"FACT 知识哨兵回填 git 创建日口径"），test_c4_batch_smoke 终验全绿（183 passed 批次内含） | 无需动作；此行保留作登记闭环留痕 |
 
 ## 本班已自裁定的裁定索引（备查）
 
