@@ -3,9 +3,9 @@ module_id: MOD-REGIME-005
 title: "筹码分布引擎蓝图 — 华泰2026前沿VWAP三角分布+筹码龄分层+32相对网格（regime特征管道#12/#5/S2底部筹码数据源）"
 doc_type: blueprint
 status: Active
-version: "0.1.3"
-design_maturity: production
-build_status: production
+version: "0.1.5"
+design_maturity: design
+build_status: testing
 ttl: permanent
 layer: L2_domain
 layer_name: regime
@@ -13,7 +13,7 @@ functional_domain: regime
 owner: ZephyrAlpha-Owner
 created_by: agent
 date: "2026-08-06"
-last_updated: "2026-08-06"
+last_updated: "2026-09-16"
 priority: P1
 blueprint_level: module
 responsibility_domain: 
@@ -22,7 +22,12 @@ responsibility_domain:
 # MOD-REGIME-005 ChipDistributionEngine — 筹码分布引擎 蓝图
 
 > **module_id**: MOD-REGIME-005 | **域**: D_REGIME | **层**: L2 业务域
-> **优先级**: P1 | **成熟度**: design | **建设标记**: 🟡 待施工
+> **优先级**: P1 | **成熟度**: trial（build_status=testing）| **建设标记**: 🟡 已实现未转正
+> **降级记录**: 2026-09-16 裁定#257④ 转正审计——头文件虚标 production、零消费端（CHIP-2）、
+> 真实数据伪分布（kline_daily.volume 手/股量纲失真致 VWAP=100×价格、BA 恒 0.9950、
+> VWAP 界内率 0%，CH 只读实证）打回 trial；同日量纲自洽探测+warmup 窗对齐修复落地
+> （修复后 000300/600519 VWAP 界内率 100%、BA=0.1816/0.1710、跨起点漂移 0.00000），
+> 待 RegimeFeatureBuilder 指数级试点接线后再评估转正。
 > **SSoT**: depgraph MOD-REGIME-005 | **算法真源**: 华泰证券2026前沿筹码分布算法
 > **消费方**: [RegimeFeatureBuilder](../regime_feature_builder/blueprint.md) MOD-REGIME-002（#12筹码结构 / #5空间位置 / S2底部筹码堆积）
 
@@ -342,7 +347,7 @@ MOD-REGIME-005 → D_DATA (ClickHouse OHLCV + money_flow)
 
 | 图 | 位置 | 状态 | 链接 |
 |----|------|------|------|
-| 依赖图 (depgraph) | `blueprint_id=MOD-REGIME-005` 的 1 个 file 节点 | production | `extract_depgraph.py --modules MOD-REGIME-005` |
+| 依赖图 (depgraph) | `blueprint_id=MOD-REGIME-005` 的 1 个 file 节点 | design | `extract_depgraph.py --modules MOD-REGIME-005` |
 | 数据流图 (dataflow) | （无节点） | N/A | `apply_dataflowgraph.py --list-datasets` |
 | 决策架构图 (decision) | 0 个决策节点 / 1 个决策层 | N/A | `generate_decision_diagram.py` |
 | 蓝图 (blueprint) | 本文件 | Active | — |
@@ -353,7 +358,7 @@ MOD-REGIME-005 → D_DATA (ClickHouse OHLCV + money_flow)
 |------|-------------------|--------------------------|:-------:|
 | module_id | MOD-REGIME-005 | MOD-REGIME-005 | ✅ |
 | domain_id | N/A | N/A | ✅ |
-| build_status | production | production | ✅ |
+| build_status | testing | testing | ✅ |
 | file_count | 1 文件 | N/A | — |
 
 > 冲突时以 depgraph 为准（ARCH-056 + ARCH-MM-001 声明 vs 验证框架）。
@@ -371,7 +376,7 @@ MOD-REGIME-005 → D_DATA (ClickHouse OHLCV + money_flow)
 
 | 文件路径 | 实现状态 | 说明 |
 |---------|:---:|------|
-| — | — | 本模块尚无已实现代码 |
+| `src/zephyr/regime/features/chip_distribution_engine.py` | ✅ 已实现 | |
 
 ### 12.5 路径索引使用指南
 

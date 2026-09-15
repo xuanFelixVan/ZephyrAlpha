@@ -160,11 +160,11 @@ algorithms:
     status: production
   - dal_id: DAL-CHIP-DISTRIB
     name_zh: 筹码分布引擎
-    mechanism_zh: 获利盘>90% 且单峰密集=拉升期无抛压；获利盘<30% 高位换手=派发嫌疑；低位单峰密集=最干净形态
+    mechanism_zh: VWAP 中心三角分布换手递推自建筹码分布，输出 4 指标（长期筹码底部占比/上方套牢峰/底部堆积度/迁移方向）。2026-09-16 裁定#257④ 打回 trial：kline_daily.volume 实测为手（schema 注"股"失真，CH 实证 VWAP 界内率 0%、BA 恒 0.9950），量纲自洽探测+warmup 修复后待指数级试点接线再评估；TDM-E-L3-12 的获利盘占比/单峰密集度语义未实现（需流通股本数据工程）
     code_ref: src/zephyr/regime/features/chip_distribution_engine.py
     inputs: [历史成交分布]
-    outputs: [获利盘占比, 单峰密集度]
-    status: production
+    outputs: [long_term_bottom_ratio, upper_trap_peak, bottom_accumulation, distribution_migration]
+    status: trial
   - dal_id: DAL-CHANLUN
     name_zh: 缠论结构识别
     mechanism_zh: 缠论二买/三买位置+底部形态（W 底/头肩底颈线突破）+技术位（前高突破/平台整理）给买点定位；形态不单独构成买入理由

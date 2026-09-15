@@ -12683,3 +12683,175 @@ strategies:
     evidence: "双窗及格（§8）：IS 2020-2023 Sharpe=0.070(DSR=0.021)/OOS 2024-2026 Sharpe=0.795(DSR=0.158)；IS 基线弱但 OOS 全窗正，按 §8 门槛转正并声明 IS 偏低（换手 0.37 高频族）。run=SCR-C4-20260913-002056/SCR-C4-20260913-013339/SCR-C4-20260914-051809。"
     code_symbol: "scripts/backtest/translated/c4_4440d07f973f_ultrashort.py::build"
     code_fingerprint: null
+
+# ── 2026-09-16 通宵总包 GW4 补全批（intake-20260915-1136 注册半边治本，additive）──
+  - strategy_id: "STR-VREV-027"
+    strategy_class: "value_reversal"
+    mount_route: "TDM-E-L1"
+    sleeve: "alpha"
+    alpha_sources: []
+    variant_of: null
+    name: "蓝筹&均线多头持有（MA5>MA20 前 5）"
+    name_zh: "蓝筹&均线多头持有（MA5>MA20 前 5）"
+    entry_logic: "蓝筹池内 MA5>MA20 多头排列时持有前 5（原文 2020 年度精选策略/70 蓝筹&均线，C4 翻译 045）。"
+    exit_logic: "均线多头排列破坏即退出（翻译件 build() 信号口径）。"
+    position_sizing: ""
+    risk_rules: []
+    holding_period: "波段（信号驱动）"
+    benchmark_id: "BMK-ABSOLUTE-001"
+    universe_id: "UNI-RULE-001"
+    cost_model_id: "CST-ASTOCK-001"
+    module_id: "MOD-BT-041"
+    doc_ref: "docs/_working/pipeline-research/reports/intake-20260915-1136.yaml（created_sids）+ docs/_working/auto-mount-reports/auto-mount-report-20260915-1147.md"
+    code_path: "scripts/backtest/translated/c4_9ce75aa27ce5_bluechip_ma.py"
+    lifecycle_status: "candidate"
+    status: "active"
+    version: "1.0.0"
+    created_at: "2026-09-16"
+    updated_at: "2026-09-16"
+    go_live_date: null
+    retired_date: null
+    owner: "MOD-GOVERNANCE"
+    decay_detection_method: null
+    decay_threshold: null
+    last_decay_scan_at: null
+    mrp_baseline: null
+    adaptation_level: null
+    last_refit_at: null
+    baseline_sharpe: null
+    baseline_expectancy: null
+    baseline_win_rate: null
+    baseline_profit_factor: null
+    baseline_max_drawdown: null
+    combination_strategy: {}
+    meta_labeling_config: {}
+    origin: "llm_distilled"
+    distilled_to_code: true
+    capacity_aum_limit: null
+    participation_rate_limit: 0.05
+    market_impact_model: "square_root"
+    baseline_trade_frequency: null
+    decay_cause: "unknown"
+    decay_scan_frequency: "monthly"
+    sharpe: null
+    max_drawdown: null
+    annual_return: null
+    capacity: null
+    turnover: null
+    last_evaluated_at: null
+    code_commit: null
+    data_quality_policy:
+      null_rate: {threshold: 0.02, window: "1d"}
+      drift_method: "psi"
+      drift_threshold: 0.2
+      freshness: {staleness_sla: "2d"}
+      semantic_contract:
+        null_semantics: "null=未计算/未产生（非零值），禁止零填充"
+        default_fill_policy: "none"
+    null_rate: null
+    drift_psi: null
+    drift_ks_pvalue: null
+    last_quality_scan_at: null
+    entry_series: null
+    range_bounds: {}
+    primary_timeframe: "daily"
+    applicable_timeframes: ["1d"]
+    regime_valid: []
+    regime_invalid: []
+    direction: "long"
+    entry_role: "trigger"
+    applies_to: ["stock"]
+    tags: ["蓝筹", "均线", "多头排列", "动量"]
+    algorithm_status: "quantized"
+    evidence: "intake 批 C4-OOS-2024-2026 created_sids（intake-20260915-1136）+ auto_mount IS 2020-01-01..2023-12-31 states=accumulation+capitulation 分段证据 accumulation=+2.89(159d)/capitulation=+2.90(73d)（auto-mount-report-20260915-1147）；补全注册=2026-09-16 通宵总包 GW4（intake 注册半边未落地的治本补齐，additive）。"
+    family_redundancy:
+      role: "member"
+      absorbed:
+      ruling_ref: "docs/_working/pipeline-research/reports/intake-20260915-1136.md"
+    code_symbol: "scripts/backtest/translated/c4_9ce75aa27ce5_bluechip_ma.py::build"
+    code_fingerprint: null
+  - strategy_id: "STR-MULTIFACTOR-097"
+    strategy_class: "multifactor"
+    mount_route: null
+    sleeve: "alpha"
+    alpha_sources: []
+    variant_of: null
+    name: "C4 公式轨多因子合成（rank_cs 动量残差×换手/波动）"
+    name_zh: "C4 公式轨多因子合成（rank_cs 动量残差×换手/波动）"
+    entry_logic: "公式轨考卷件：rank_cs((ret_20d - ts_zscore_20(ret_20d)) * (turnover / vol_20d)) 打分选股（C4 翻译件原文公式）。"
+    exit_logic: "打分排名跌出持有集即退出（翻译件 build() 信号口径）。"
+    position_sizing: ""
+    risk_rules: []
+    holding_period: "波段（信号驱动）"
+    benchmark_id: "BMK-INDEX-001"
+    universe_id: "UNI-RULE-001"
+    cost_model_id: "CST-ASTOCK-001"
+    module_id: "MOD-L05-001"
+    doc_ref: "docs/_working/pipeline-research/reports/intake-20260915-1136.yaml（created_sids）"
+    code_path: "scripts/backtest/translated/c4_fact_4db4c41e.py"
+    lifecycle_status: "candidate"
+    status: "active"
+    version: "1.0.0"
+    created_at: "2026-09-16"
+    updated_at: "2026-09-16"
+    go_live_date: null
+    retired_date: null
+    owner: "MOD-GOVERNANCE"
+    decay_detection_method: null
+    decay_threshold: null
+    last_decay_scan_at: null
+    mrp_baseline: null
+    adaptation_level: null
+    last_refit_at: null
+    baseline_sharpe: null
+    baseline_expectancy: null
+    baseline_win_rate: null
+    baseline_profit_factor: null
+    baseline_max_drawdown: null
+    combination_strategy: {}
+    meta_labeling_config: {}
+    origin: "llm_distilled"
+    distilled_to_code: true
+    capacity_aum_limit: null
+    participation_rate_limit: 0.05
+    market_impact_model: "square_root"
+    baseline_trade_frequency: null
+    decay_cause: "unknown"
+    decay_scan_frequency: "monthly"
+    sharpe: null
+    max_drawdown: null
+    annual_return: null
+    capacity: null
+    turnover: null
+    last_evaluated_at: null
+    code_commit: null
+    data_quality_policy:
+      null_rate: {threshold: 0.02, window: "1d"}
+      drift_method: "psi"
+      drift_threshold: 0.2
+      freshness: {staleness_sla: "2d"}
+      semantic_contract:
+        null_semantics: "null=未计算/未产生（非零值），禁止零填充"
+        default_fill_policy: "none"
+    null_rate: null
+    drift_psi: null
+    drift_ks_pvalue: null
+    last_quality_scan_at: null
+    entry_series: null
+    range_bounds: {}
+    primary_timeframe: "daily"
+    applicable_timeframes: ["1d"]
+    regime_valid: []
+    regime_invalid: []
+    direction: "long"
+    entry_role: "trigger"
+    applies_to: ["stock"]
+    tags: ["多因子", "公式轨", "动量残差", "换手率"]
+    algorithm_status: "quantized"
+    evidence: "intake 批 C4-OOS-2024-2026 created_sids（intake-20260915-1136，FACT-4db4c41e 簇首）；补全注册=2026-09-16 通宵总包 GW4（intake 注册半边未落地的治本补齐，additive）。"
+    family_redundancy:
+      role: "cluster_head"
+      absorbed:
+      ruling_ref: "docs/_working/pipeline-research/reports/intake-20260915-1136.md"
+    code_symbol: "scripts/backtest/translated/c4_fact_4db4c41e.py::build"
+    code_fingerprint: null

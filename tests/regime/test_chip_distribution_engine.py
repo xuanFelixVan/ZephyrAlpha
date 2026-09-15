@@ -358,7 +358,118 @@ class TestDegradation:
 
 
 # ---------------------------------------------------------------------------
-# 7. 性能测试
+# 7. 量纲与 warmup（2026-09-16 CHIP-1/CHIP-3 修复，裁定#257④）
+# ---------------------------------------------------------------------------
+
+
+class TestVolumeCaliberAndWarmup:
+    """量纲自洽探测（手→股）+ warmup 窗对齐 + tau PIT。
+
+    真实口径：kline_daily.volume 实测为"手"（600519 全窗 amount/close/volume
+    中位 100.04、全市场 8 票抽查中位 97.8~101.9，CH 只读实证 2026-09-16），
+    旧实现裸 amount/volume=100×价格伪 VWAP；指数表 volume 无 vwap 语义
+    （000300 ratio 0.57~0.62 界外）。mock 自洽数据（amount=volume×价格）raw
+    直接命中不受影响。
+    """
+
+    @staticmethod
+    def _lots_ohlcv(n_days: int = 300) -> pd.DataFrame:
+        """volume 为"手"的 OHLCV（amount=volume×100×close，贴近 kline_daily 真实口径）。"""
+        dates = pd.date_range("2024-01-01", periods=n_days, freq="B")
+        rng = np.random.default_rng(7)
+        close = 100.0 + np.cumsum(rng.normal(0.02, 1.0, n_days))
+        high = close + rng.uniform(0.05, 0.8, n_days)
+        low = close - rng.uniform(0.05, 0.8, n_days)
+        open_ = close + rng.uniform(-0.3, 0.3, n_days)
+        volume_lots = rng.uniform(1e4, 5e4, n_days)
+        return pd.DataFrame(
+            {
+                "date": dates,
+                "open": open_,
+                "high": high,
+                "low": low,
+                "close": close,
+                "volume": volume_lots,
+                "amount": volume_lots * 100.0 * close,
+            }
+        )
+
+    def test_lots_volume_vwap_in_range(self):
+        """手口径数据：VWAP 落在当日 [low, high]（raw/100 命中）。"""
+        from zephyr.regime.features.chip_distribution_engine import compute_vwap
+
+        df = self._lots_ohlcv(30)
+        for _, row in df.iterrows():
+            v = compute_vwap(row)
+            assert float(row["low"]) <= v <= float(row["high"]), f"vwap {v} out of [{row['low']},{row['high']}]"
+
+    def test_self_consistent_volume_still_raw(self):
+        """自洽数据（amount=volume×close）：raw 直接命中，行为与修复前一致。"""
+        from zephyr.regime.features.chip_distribution_engine import compute_vwap
+
+        row = {"open": 9.8, "high": 10.6, "low": 9.6, "close": 10.2, "volume": 1e6, "amount": 1e6 * 10.2}
+        assert abs(compute_vwap(row) - 10.2) < 1e-9
+
+    def test_index_style_mismatch_falls_to_typical(self):
+        """量纲全界外（指数型）：降级典型价 (O+H+L+C)/4。"""
+        from zephyr.regime.features.chip_distribution_engine import compute_vwap
+
+        # 仿 000300 真实口径：amount/volume≈0.62×close，×100 后≈62×close 仍界外
+        row = {"open": 4400.0, "high": 4460.0, "low": 4390.0, "close": 4450.0,
+               "volume": 1.427e8, "amount": 0.62 * 4450.0 * 1.427e8}
+        v = compute_vwap(row)
+        expected = (4400.0 + 4460.0 + 4390.0 + 4450.0) / 4
+        assert abs(v - expected) < 1e-6
+
+    def test_nan_volume_no_crash_no_poison(self):
+        """volume/amount 为 NaN：降级典型价且不抛错（防 NaN 毒化下游）。"""
+        from zephyr.regime.features.chip_distribution_engine import compute_vwap
+
+        row = {"open": 10.0, "high": 11.0, "low": 9.0, "close": 10.5,
+               "volume": float("nan"), "amount": float("nan")}
+        expected = (10.0 + 11.0 + 9.0 + 10.5) / 4
+        assert abs(compute_vwap(row) - expected) < 1e-10
+
+    def test_engine_bottom_accumulation_not_stuck(self):
+        """手口径趋势数据端到端：BA 不再恒 0.995 级伪信号（真实口径验收）。"""
+        from zephyr.regime.features.chip_distribution_engine import ChipDistributionEngine
+
+        engine = ChipDistributionEngine()
+        result = engine.compute(self._lots_ohlcv(300), symbol="600519.SH")
+        ba = result["metrics"]["bottom_accumulation"]
+        assert ba < 0.9, f"BA={ba:.4f} 仍处伪信号区（旧实现恒 0.995）"
+        assert abs(sum(result["total_distribution"]) - 1.0) < 1e-9
+
+    def test_same_end_date_start_invariance(self):
+        """同末日跨数据起点：窗口对齐后输出确定（漂移=0，验收阈值 <0.05）。"""
+        from zephyr.regime.features.chip_distribution_engine import ChipDistributionEngine
+
+        engine = ChipDistributionEngine()
+        df = self._lots_ohlcv(600)
+        ref = engine.compute(df, symbol="X")
+        for cut in (100, 250, 300):  # 切后均 ≥ lookback=250 行（窗口本身不变）
+            sub = engine.compute(df.iloc[cut:].reset_index(drop=True), symbol="X")
+            assert sub["total_distribution"] == pytest.approx(
+                ref["total_distribution"], abs=1e-9
+            ), f"start cut={cut} 输出漂移"
+
+    def test_tau_expanding_no_future_leak(self):
+        """tau PIT：改变 t 之后的历史不影响 ≤t 的 tau。"""
+        from zephyr.regime.features.chip_distribution_engine import ChipDistributionEngine
+
+        engine = ChipDistributionEngine(lookback=250)
+        rng = np.random.default_rng(3)
+        vol = rng.uniform(1e4, 5e4, 100)
+        tampered = vol.copy()
+        tampered[60:] *= 10.0  # 只改尾部
+        tau_a = engine._estimate_tau(vol)
+        tau_b = engine._estimate_tau(tampered)
+        np.testing.assert_array_equal(tau_a[:60], tau_b[:60])
+        assert not np.array_equal(tau_a[60:], tau_b[60:])
+
+
+# ---------------------------------------------------------------------------
+# 8. 性能测试
 # ---------------------------------------------------------------------------
 
 

@@ -2,9 +2,10 @@
 # [MODULE] zephyr.regime.features.chip_distribution_engine
 # [DOMAIN] D_REGIME
 # [DEPENDENCIES] numpy; pandas
-# [CONSUMERS] MOD-REGIME-002(RegimeFeatureBuilder消费#12筹码结构/#5空间位置/S2底部筹码)
+# [CONSUMERS] MOD-REGIME-002(RegimeFeatureBuilder消费#12筹码结构/#5空间位置/S2底部筹码)——
+#             声明面：实际零 import（2026-09-15 转正审计 CHIP-2），stub 在 risk_signal_builder 常量
 # [STARTUP] imported
-# [MATURITY] production
+# [MATURITY] trial  # 2026-09-16 裁定#257④：production 系虚标（零消费端+真实数据伪分布），打回 trial；量纲修复后以指数级试点身份再评估转正
 # [INVARIANTS] total_distribution Σ=1.0; age_layers各层Σ=1.0; 32网格网格0=最低价网格31=最高价
 # [MODIFY-GUARD] blueprint=docs/03_modules/_domain_regime/chip_distribution_engine/blueprint.md
 # [STABILITY] evolving
@@ -28,6 +29,17 @@
 2. 换手递推 C_t = (1-τ)×C_{t-1} + τ×D_t
 3. 筹码龄分层（ultra_short/short/medium/long，衰减系数近似迁移）
 4. 32 相对网格映射（跨股比较）
+
+2026-09-16 量纲与 warmup 修复（裁定#257④，CHIP-1/CHIP-3）：
+- VWAP 量纲自洽探测：个股 kline_daily.volume 实测为"手"（600519 全窗
+  amount/close/volume 中位 100.04、全市场抽查 8 票中位 97.8~101.9，CH 只读实证；
+  schema 注释"成交量(股)"失真），裸 amount/volume=100×价格伪 VWAP。现依次尝试
+  raw、raw/100（手→股）、raw×100，取唯一落入当日 [low,high] 价格界者；全界外
+  （指数表 volume 无 vwap 语义）降级典型价。
+- 递推窗口与网格同窗：递推只跑末 lookback 日（与网格构建窗一致），消除
+  "84% 历史日网格外均匀注水"（000300 实测 3406/4057 日）；同末日跨数据起点
+  输出确定（窗口相同→逐字节一致）。
+- τ 帧内 PIT：avg_vol 改窗口内 expanding（只用 ≤t 正量），消除"τ 含帧内未来量"。
 
 # [ALGO_FLOW] external: docs/03_modules/_domain_regime/algo_flow/chip_distribution_engine.yaml
 """
@@ -55,6 +67,9 @@ __all__ = [
 # short(3-10天): avg 8天 → rate=0.125
 # medium(11-100天): avg 50天 → rate=0.02
 _MIGRATION_RATES = {"ultra_short": 0.5, "short": 0.125, "medium": 0.02}
+
+# VWAP 量纲探测候选因子（raw、raw/100=手→股、raw×100=反向失真）
+_VOLUME_UNIT_FACTORS = (1.0, 0.01, 100.0)
 
 
 # ---------------------------------------------------------------------------
@@ -94,15 +109,35 @@ def triangular_pdf(p: float, center: float, low: float, high: float) -> float:
 
 
 def compute_vwap(row: dict | pd.Series) -> float:
-    """计算 VWAP；成交量为 0 时用典型价格 (O+H+L+C)/4 降级。
+    """计算 VWAP（带量纲自洽探测）；无有效量额时用典型价格 (O+H+L+C)/4 降级。
 
-    蓝图 §8 ZA-REGIME-0051：amount/volume 为 0 或负值时降级。
+    蓝图 §8 ZA-REGIME-0051：amount/volume 为 0/负/NaN 时降级。
+
+    量纲探测（2026-09-16 CHIP-1 修复，裁定#257④）：依次尝试 raw、raw/100
+    （volume 为"手"——个股 kline_daily 实测口径）、raw×100（反向失真），取唯一
+    落入当日 [low, high] 价格界的候选；全部界外（如指数表 volume 无 vwap 语义）
+    降级典型价。自洽数据（amount=volume×价格，含单测 fixture）raw 直接命中，
+    行为不变。
     """
+    o = float(row["open"])
+    h = float(row["high"])
+    low = float(row["low"])
+    c = float(row["close"])
+    typical = (o + h + low + c) / 4.0
+
     volume = float(row["volume"])
     amount = float(row["amount"])
-    if volume > 0 and amount > 0:
-        return amount / volume
-    return (float(row["open"]) + float(row["high"]) + float(row["low"]) + float(row["close"])) / 4.0
+    if not (volume > 0 and amount > 0):
+        # NaN 参与比较恒 False，同走此路——防 NaN 伪 VWAP 下游毒化
+        return typical
+
+    lo, hi = (low, h) if low <= h else (h, low)
+    raw = amount / volume
+    for factor in _VOLUME_UNIT_FACTORS:
+        candidate = raw * factor
+        if lo <= candidate <= hi:
+            return candidate
+    return typical
 
 
 def compute_daily_distribution(vwap: float, low: float, high: float, prices: np.ndarray) -> np.ndarray:
@@ -265,7 +300,9 @@ class ChipDistributionEngine:
         Parameters
         ----------
         n_grids      : 网格数（默认32，跨股标准）
-        lookback     : 参考区间长度（默认250交易日）
+        lookback     : 参考区间长度（默认250交易日）；网格与递推均只使用末
+                       lookback 日——窗口起点均匀先验即 warmup 语义（2026-09-16
+                       CHIP-1.2/CHIP-3 修复，裁定#257④）
         avg_turnover : 平均换手率假设（默认2%，用于从volume估算tau）
         """
         self.n_grids = n_grids
@@ -304,12 +341,13 @@ class ChipDistributionEngine:
         grid_prices = build_grid_prices(price_min, price_max, self.n_grids)
 
         # 估算换手率 tau（无流通股本数据时，用平均换手率假设）
-        vol = df["volume"].values.astype(float)
-        avg_vol = float(np.mean(vol[vol > 0])) if np.any(vol > 0) else 1.0
-        circulating_shares = avg_vol / self.avg_turnover
-        tau = np.clip(vol / circulating_shares, 0.0, 1.0)
+        # CHIP-3 修复（2026-09-16）：avg_vol 只用窗口内 ≤t 的正量 expanding 均值，
+        # 消除"τ 依赖帧内未来量"（旧实现取整帧均值，历史日 τ 含未来量，中间态不可
+        # PIT 抽取）；窗口前 min_obs 日 tau=0（warmup 相位，只注入不换手）
+        vol = recent["volume"].values.astype(float)
+        tau_w = self._estimate_tau(vol)
 
-        # 初始化分布（均匀）
+        # 初始化分布（均匀）——窗口起点均匀先验 = warmup 语义
         uniform = np.ones(self.n_grids) / self.n_grids
         total_dist = uniform.copy()
         age_layers = {
@@ -319,12 +357,15 @@ class ChipDistributionEngine:
             "long": uniform.copy(),
         }
 
-        # 逐日递推
-        for t in range(n):
-            row = df.iloc[t]
+        # 逐日递推——与网格同窗（CHIP-1.2 修复：旧实现递推全史 n 日而网格只按末
+        # lookback 日构建，000300 实测 3406/4057 日（84.0%）当日高低区间完全在
+        # 网格外→fallback 均匀注水；现递推只跑末 lookback 日，同末日跨数据起点
+        # 输出确定）
+        for t in range(lookback):
+            row = recent.iloc[t]
             vwap = compute_vwap(row)
             daily_dist = compute_daily_distribution(vwap, float(row["low"]), float(row["high"]), grid_prices)
-            t_now = float(tau[t])
+            t_now = float(tau_w[t])
 
             # 总分布换手递推
             total_dist = turnover_recurse(total_dist, daily_dist, t_now)
@@ -343,8 +384,29 @@ class ChipDistributionEngine:
             "total_distribution": total_dist.tolist(),
             "age_layers": {k: v.tolist() for k, v in age_layers.items()},
             "metrics": metrics,
-            "schema_version": "1.0",
+            "schema_version": "1.1",
+            "window_days": int(lookback),
         }
+
+    # expanding 均值最小观测数：窗口前若干日正量样本不足时 tau=0（warmup 相位）
+    _TAU_MIN_OBS = 5
+
+    def _estimate_tau(self, vol: np.ndarray) -> np.ndarray:
+        """从成交量序列估算逐日 tau（窗口内 expanding 正量均值，PIT 清洁）。
+
+        tau_t = clip(vol_t / (avg_vol_t / avg_turnover), 0, 1)；avg_vol_t 只依赖
+        ≤t 的正量观测。volume<=0/NaN 日 tau=0（不换手，当日增量仍注入）。
+        """
+        vol = np.asarray(vol, dtype=float)
+        vol_pos = np.where(vol > 0, vol, np.nan)
+        avg_vol_t = (
+            pd.Series(vol_pos).expanding(min_periods=self._TAU_MIN_OBS).mean().to_numpy()
+        )
+        with np.errstate(invalid="ignore", divide="ignore", over="ignore"):
+            circ = avg_vol_t / self.avg_turnover
+            tau = np.where(avg_vol_t > 0, vol / circ, 0.0)
+        tau = np.nan_to_num(tau, nan=0.0, posinf=0.0, neginf=0.0)
+        return np.clip(tau, 0.0, 1.0)
 
     def _recurse_age_layers(
         self,

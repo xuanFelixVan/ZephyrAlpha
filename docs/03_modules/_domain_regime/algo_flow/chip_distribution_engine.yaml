@@ -53,9 +53,9 @@ algo_flow: |
     # - id: VWAP
     #   name_zh: 成交量加权均价
     #   name_en: vwap
-    #   intro: 当日成交额除以成交量，量额为0时用典型价降级
-    #   formula: vwap=amount/volume；volume或amount≤0→(O+H+L+C)/4
-    #   code: chip_distribution_engine.py L91 自实现
+    #   intro: 量纲自洽探测（2026-09-16 裁定#257④ 修复）：raw、raw/100（手→股）、raw×100 三候选取唯一落当日[low,high]界者，全界外（指数表 volume 无 vwap 语义）或量额为0/NaN→典型价降级
+    #   formula: vwap=first(raw, raw/100, raw*100 ∈ [low,high])；否则 (O+H+L+C)/4
+    #   code: chip_distribution_engine.py compute_vwap 自实现
     #   registry: 指标表: 有vwap列 但代码未读表
     #   is_break: true
     # 层: 算法
