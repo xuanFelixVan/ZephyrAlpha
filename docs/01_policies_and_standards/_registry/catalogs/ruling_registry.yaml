@@ -3273,3 +3273,48 @@ entries:
     - '裁定#277'
     - '裁定#257'
   superseded_by: ''
+- ruling_id: '裁定#290'
+  title: 'qwen3-coder:30b 保留核查移除执行——M4 转办项闭环（零自动消费方+超全部时段配额，可逆 re-pull）'
+  date: '2026-09-17'
+  category: '基础设施治理'
+  status: 'active'
+  summary: >-
+    裁定：本地 Ollama 模型 qwen3-coder:30b 移除（M4 溯源报告
+    docs/_working/forensics/llama_server_crash_forensics_202609.md 遗留转办项，Owner
+    开工令授权按客观专业架构师/第一性原理/100% AI 开发/项目文档/量化与社区实践框架
+    三选一执行）。普查（2026-09-17，GW-Q st-qwenchk-20260916）：全仓 15 文件引用逐一定性——
+    零生产链自动消费方（services_registry/tasks.yaml 零引用、src 零自动孵化、psutil 无
+    runner、data/audit_trail 零使用记录）；唯一实质互动=2026-06-25 五轴入职考试护照
+    （data/brain/passports/qwen3-coder_30b.json，总分 B 0.732 系 breadth 0.97 撑起，
+    depth 轴编码核心能力三项全 F：code_generate P=0.167/code_edit_precision P=0.346/
+    refactor P=0.0）；cost_router.py QWEN3_CODER 为同族云端 API 定价枚举非本地调用方；
+    tests 3 件均 mock fixture 不依赖真实在册。成本（对照 config/gguf_vram_budget.yaml
+    口径）：磁盘实测 17.28GB（/api/tags，qwen3moe 30.5B MoE Q4_K_M，激活小不减权重
+    驻留）；预算口径 vram_gb=19.0（size×1.1）超全部时段配额（盘前/盘中 10.0、
+    午休/盘后/夜间 4.0），加载即与任何推理模型互斥（19.0+5.4 最小 LLM=24.4>21.6
+    硬上限），系 9-15 超订事故形态极端单点；原登记注"夜间人工批准"实为配额外特批
+    （夜间配额 4GB 不可容），且该意图前提（编码胜任）已被 depth 考试实证否证。
+    可逆性：ollama pull qwen3-coder:30b 一条命令重拉（17.28GB），护照档案保留。
+    执行：ollama rm exit=0，/api/tags 复核 9→8（余 8 模型与裁定#269 §7 冒烟清单逐一
+    吻合）；config/gguf_vram_budget.yaml 同步删行+头部计数注记更新（safe_write_text
+    CAS，避免留行后 registered_but_not_pulled 对账差异报告持续噪音）；
+    tests/intelligence/test_gguf_model_manager.py::test_real_config_matches_live_inventory
+    9→8 同步并锁定不在册断言（原硬编码 9 系静态计数写死漂移实例）+相关 3 测试文件
+    两轮 125 passed 零失败。编排注记：核查时点 serve 不在（0.34.1 未随 AtLogOn 自起），
+    按裁定#269 同形态分离启动 ollama serve 后核查并保持运行，下次 AtLogOn
+    ZephyrAlpha_OllamaServe 幂等接管（端口冲突自退出）。
+  evidence: >-
+    M4 报告新增 §8 转办项核查节（消费方普查表+VRAM 成本数字+裁定+tags 前后对照）：
+    docs/_working/forensics/llama_server_crash_forensics_202609.md §8。/api/tags 后照
+    8 模型（GB）：qwen3:14b 8.38/BGE-M3 1.08/bge-small 0.03/Qwen3-Embedding 4.36/
+    qwen3:8b 4.87/deepseek-r1:8b 4.87/deepseek-r1:14b 8.37/qwen2.5-coder:14b 8.37。
+    重拉口令：ollama pull qwen3-coder:30b。
+  affected_files:
+    - config/gguf_vram_budget.yaml
+    - docs/_working/forensics/llama_server_crash_forensics_202609.md
+    - docs/01_policies_and_standards/_registry/catalogs/ruling_registry.yaml
+    - tests/intelligence/test_gguf_model_manager.py
+  related_arch: []
+  related_rulings:
+    - '裁定#269'
+  superseded_by: ''

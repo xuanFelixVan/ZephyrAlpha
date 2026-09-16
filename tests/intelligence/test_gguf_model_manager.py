@@ -174,9 +174,15 @@ class TestSyncWithDiscovery:
         assert report.registered == ("qwen3:8b",)
 
     def test_real_config_matches_live_inventory(self) -> None:
-        """真实预算表登记清单与 2026-08-30 Ollama /api/tags 实证清单一致（9 个）。"""
+        """真实预算表登记清单与 Ollama /api/tags 实证清单一致。
+
+        2026-09-17 裁定#290（M4 转办项 qwen3-coder:30b 保留核查）：
+        移除 qwen3-coder:30b（零自动消费方+超全部时段配额）后登记 8 个，
+        并锁定其不在册事实（防 re-pull 不登记回归）。
+        """
         mgr = load_budget_table(_REAL_TABLE)
-        assert len(mgr.registered_models) == 9
+        assert len(mgr.registered_models) == 8
+        assert "qwen3-coder:30b" not in mgr.registered_models
 
 
 class TestPoolBudgetsConsumption:

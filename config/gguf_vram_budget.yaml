@@ -48,7 +48,7 @@ period_quotas:
     inference_quota_gb: 4.0
     note: "跨日窗口；LLM 最小集与训练互斥时分共享"
 
-# Ollama 已拉模型登记（2026-08-30 /api/tags 实证 9 个）
+# Ollama 已拉模型登记（2026-08-30 /api/tags 实证 9 个；2026-09-17 裁定#290 移除 qwen3-coder:30b 后复核 8 个）
 models:
   - name: "qwen3:8b"
     role: primary
@@ -80,13 +80,6 @@ models:
     parameter_size: "14.8B"
     vram_gb: 9.2
     kind: llm
-  - name: "qwen3-coder:30b"
-    role: backup
-    quant: "Q4_K_M"
-    parameter_size: "30.5B"
-    vram_gb: 19.0
-    kind: llm
-    note: "低于 21.6GB 硬上限但超全部时段配额——仅允许夜间窗口人工批准后加载"
   - name: "BGE-M3:latest"
     role: embedding
     quant: "F16"

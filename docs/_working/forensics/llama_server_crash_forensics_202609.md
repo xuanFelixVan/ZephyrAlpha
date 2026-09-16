@@ -117,3 +117,55 @@ Get-WinEvent -FilterHashtable @{LogName='Application'; Id=1000} -MaxEvents 2000 
   无新增 0xc0000005/0xc0000409 llama 事件即正式闭环**，届时本报告按
   GATE-WORKING-DOCS 语义结案。登记：裁定#269（ruling_registry 同 commit）。
 - 遗留转办：`qwen3-coder:30b` 保留性核查仍待裁（Owner 门位，与本升级解耦）。
+
+## 8. 转办项核查：qwen3-coder:30b 保留性（2026-09-17，会话 st-qwenchk-20260916，裁定#290）
+
+§5/§7 遗留转办项闭环。核查时点 serve 不在（0.34.1 未随 AtLogOn 自起），按 §7 同形态
+分离启动 `ollama serve`（绑 127.0.0.1:11434）后完成核查并保持运行；下次 AtLogOn
+ZephyrAlpha_OllamaServe 按幂等设计接管（端口冲突自退出）。
+
+### 8.1 消费方普查（全仓 grep + 运行时实证）
+
+| # | 位置 | 性质 | 生产链自动消费 |
+|---|------|------|---------------|
+| 1 | config/gguf_vram_budget.yaml §models | 预算门登记（role=backup，vram_gb=19.0，note 夜间人工批准） | 否（管控登记非调用方） |
+| 2 | data/brain/passports/qwen3-coder_30b.json | 五轴入职考试护照（2026-06-25，B 级 0.732） | 否（资产档案） |
+| 3 | scripts/run_ollama_exam.py | 考试脚本支持列表（非 DEFAULT_MODELS，需 --model 显式） | 否（低频手动） |
+| 4 | src/zephyr/governance/ops_governance/cost_router.py:46 | QWEN3_CODER 云端 API 定价枚举（$0.35/$1.40 每千 token，131k ctx） | 否（同族云端 API 项，非本地调用方） |
+| 5 | src/zephyr/intelligence/model_profiling/capability_passport.py:372 | 注释（护照文件名编码 bug 历史说明） | 否（文档性） |
+| 6 | tests/ 3 件（gguf_model_manager/passport/cost_router） | fixture（mock 注入，不依赖真实在册） | 否（测试） |
+| 7 | docs 4 处（03_model_lifecycle_flow/construction_progress_tracker/automation_linkage_plan/本报告） | 登记/快照描述 | 否（文档） |
+
+运行时实证：services_registry/tasks.yaml 零引用；无任何代码路径自动孵化；psutil 无
+ollama/runner 进程；data/audit_trail 零使用记录（从未被实际加载）。护照 depth 轴实证
+编码核心能力不及格（code_generate P=0.167/F、code_edit_precision P=0.346/F、
+refactor P=0.0/F），总分 B 系 breadth 0.97 撑起；编码 backup 角色已由配额内合法的
+qwen2.5-coder:14b 承担。
+
+### 8.2 VRAM 成本核算（对照预算口径）
+
+- 实测磁盘 17.28GB（2026-09-17 /api/tags；qwen3moe 30.5B MoE，Q4_K_M——MoE 激活
+  3.3B 不减全部专家权重的 VRAM 驻留）。
+- 预算口径 vram_gb=19.0 = size×1.1（权重+KV cache 估算，与表头口径吻合）。
+- 对照配额：19.0 > 盘前/盘中 10.0 > 午休/盘后/夜间 4.0——超**全部**时段配额，
+  任何自动加载必被 check_load 拒绝；19.0 < hard_cap 21.6，唯一理论窗口=突破配额的
+  人工特批（原 note"夜间人工批准"实为配额外特批：夜间配额 4GB 亦不可容）。
+- 共存风险：19.0+5.4（最小 LLM qwen3:8b）=24.4 > 21.6 硬上限——加载即与任何推理
+  模型互斥，系 §4 所述 9-15 超订事故形态的极端单点。
+
+### 8.3 裁定与执行
+
+裁定：**移除**（零真实消费方+超全部配额+能力实证不及格；可逆=re-pull）。
+
+- 重拉口令（如需恢复）：`ollama pull qwen3-coder:30b`（17.28GB，Q4_K_M，30.5B，qwen3moe）。
+- `ollama rm qwen3-coder:30b` exit=0；/api/tags 前后对照 9→8，余 8 模型与 §7 升级
+  冒烟清单逐一吻合：qwen3:14b 8.38 / BGE-M3 1.08 / bge-small 0.03 / Qwen3-Embedding
+  4.36 / qwen3:8b 4.87 / deepseek-r1:8b 4.87 / deepseek-r1:14b 8.37 / qwen2.5-coder:14b 8.37（GB）。
+- config/gguf_vram_budget.yaml 同步删行（safe_write_text CAS）+头部计数注记更新——
+  避免留行后 registered_but_not_pulled（gguf_model_manager.py 对账差异报告）持续噪音。
+- tests/intelligence/test_gguf_model_manager.py::test_real_config_matches_live_inventory
+  9→8 同步并锁定"不在册"断言（防 re-pull 不登记回归；原硬编码 9 恰为静态计数写死
+  漂移实例）；相关 3 测试文件两轮 125 passed 零失败。
+- 护照 data/brain/passports/qwen3-coder_30b.json 留档不移除（历史考试实证资产）。
+
+登记：裁定#290（ruling_registry 同 commit）。
