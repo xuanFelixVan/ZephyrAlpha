@@ -200,3 +200,31 @@ noise 轮：无。矿脉枯竭：R3 五脉全见底，本域收口。
 - `78cf40fe7f`「probe preflight block reason」=§11 前期预检归因补记 17 行。
 - `35d792c098`「probe import full detail single file」=**create_guard.py B1 registry 撕裂读重试治本**（解析重试×3/0.3s+解析失败审计 jsonl+now_utc 时区合规+单点读取函数供测试 monkeypatch）——v2.1 W1 系正式加固，非探针代码。
 卫生教训（登记备查）：门禁调查类临时提交应带内容描述性 message 或事后追补归因注记（本节即追补通道）；裸 "probe" 前缀 message 使 git log 失去自解释性，历史不可重写故以附注归因收口。
+
+## 12. 维护班四项核心手术（2026-09-16 午后，Owner 开工令全量执行，e9381d33）
+
+### 12.1 双锁统一（W4 孤魂根治）
+- **队列 CAS 包全局锁**：`_advance_dev` 获取 `_GlobalCommitLock`（30s 短窗）→ 直连路径 [gate→stage→commit] 与队列 CAS 的 dev ref 竞态窗口消灭（W4 孤魂 301a6ee82a 的 61 秒窗口治本）；fail-open：锁不可得退化为裸 CAS（CAS 自身仍原子，全局锁是防线加固非正确性前提）。
+- **网关孤魂检测**：commit 成功后 `merge-base --is-ancestor` 验证 hash 在 HEAD 祖先链；不在→error 日志+审计事件（含 cherry-pick 恢复指引）——防线兜底，防"静默丢失等下次发现"。
+- **红蓝钉 4 用例**：CAS 锁获取/fail-open 降级/孤魂检测 mock/警告文本钉。
+
+### 12.2 rule_catalog 保育（W2 根治）
+- `_load_unmanaged_entries` 透传非管辖条目（原样保留不剪除/不去重/不排序）；`generate_catalog` 重构为管辖条目+保育条目确定性合并；计数从合并列表派生（无孤儿时与原行为逐字节一致=幂等跳过保留）。
+- **验证**：6/6 单测+生产 CLI 真实数据零漂移（256 entries unchanged）+E2E 孤儿存活注入实验。
+- **效果**：翻译/创建等工具经 YAML 侧合法通道登记的条目不再被 reconciler 周期再生成剪除。
+
+### 12.3 write_audit 盲区（W1/W3 根治）
+- `_WATCH_SPECS` 补 `scripts/`、`config/`（递归）——09-16 W1/W3 窗口 scripts 双文件回滚零归因的治本。
+- **三镜像同步**：collector `_HOT_PREFIXES`/ps1 `$hotDirs`/测试锁死对齐断言——镜像失同步正是本次事故的失效模式，测试钉死。
+- **28/28 全绿**（daemon 20+collector 8）。
+- **运维**：daemon 已重启生效（PID 29152）；SACL 精确归因层需 Owner 管理员重跑 `enable_write_audit_sacls.ps1`（一次性操作）。
+
+### 12.4 worktree 隔离（行为约束强化）
+- WORKTREE-REQUIRED 阻断消息补 09-16 取证级 stash 吞噬警告：明确告知"共享区 stash 可吞他会话 tracked 修改（W1 17 文件实证）+逃生后 WIP 仍在风险面——改完即提交不留窗"。
+- 结构解（worktree 隔离为默认路径）=行为/政策级变更，本批以警告文本+文档固化；宪法 RULE-WORKTREE 既有方向。
+
+### 12.5 终局验证
+- 双连跑 SURGERY_A/SURGERY_B（全域含新增手术测试）**exit 0×2** + 定版捕获轮 **exit 0**——连续三次零失败，连戒达成。
+- 新增手术测试：38/38（双锁 4+保育 6+write_audit 28）；全域套件累计含既往在库测试约 3487+ 全绿（较晚班 3449 再 +38）。
+- HEAD 哨兵硬验：_GlobalCommitLock=3/orphan_commit_detected=1/stash 吞=1/_load_unmanaged_entries=3/scripts.*True=1——四项全在。
+- 终提交：e9381d33（11 文件）。
