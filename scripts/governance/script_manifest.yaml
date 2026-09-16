@@ -1,8 +1,8 @@
-# 自动生成于 2026-09-16T01:40:04Z
+# 自动生成于 2026-09-16T05:35:01Z
 # 来源: scripts/governance/**/*.py __manifest__ 块
 # 手工编辑无效——修改请通过各 .py 文件的 __manifest__ 块
 
-generated_at: '2026-09-16T01:40:04Z'
+generated_at: '2026-09-16T05:35:01Z'
 generated_by: scripts/governance/generators/generate_script_manifest.py
 source: scripts/governance/**/*.py → __manifest__ 块
 total_scripts: 433
@@ -2470,8 +2470,8 @@ scripts:
   timeout_seconds: 60
   args: []
   warn_only: false
-  description: SYNC-BLUEPRINT-CODE — 蓝图§19已实现代码路径索引自动同步（AGENTS.md §6.1 — 为缺少路径索引的蓝图自动补齐+version
-    patch+1，--check模式仅检测漂移）
+  description: SYNC-BLUEPRINT-CODE — 蓝图「已实现代码完整路径索引」章节自动同步（锚：AGENTS.md RULE-DEPGRAPH
+    / RULE-PANORAMA — 为缺少路径索引的蓝图自动补齐+version patch+1，--check模式仅检测漂移）
   tags:
   - Critical
   - Quick
