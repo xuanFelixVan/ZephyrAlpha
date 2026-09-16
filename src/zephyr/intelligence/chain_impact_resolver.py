@@ -1,4 +1,4 @@
-# [BLUEPRINT] MOD-INT_CHAIN_IMPACT | 待统筹登记（蓝图未建，真源=docs/_working/2026-09-09-news-industry-wiring-directive.md W4 行 + §3 入图交接协议）
+# [BLUEPRINT] MOD-INT-CHAIN-IMPACT | 待统筹登记（蓝图未建，真源=docs/_working/2026-09-09-news-industry-wiring-directive.md W4 行 + §3 入图交接协议）
 # [MODULE] zephyr.intelligence.chain_impact_resolver
 # [DOMAIN] D_INTELLIGENCE
 # [DEPENDENCIES] zephyr.intelligence.news_chain_node_linker（ChainNodeHit 输入契约）; zephyr.governance.depgraph_schema（ig_edge/ig_node/ig_node_company 只读连接）; zephyr.shared.foundation.errors
@@ -12,12 +12,12 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] ChainImpactResolverError(ZA-IT-0030)——注入图数据畸形（边空端点/公司行空 symbol/max_hops<0/hop_decay∉(0,1]）时抛；PG 不可达由 from_pg 显式抛（W5 流层 catch 降级）；空图/空命中 fail-open 返回空
 # [TESTS] tests/intelligence/test_chain_impact_resolver.py
-# [A_module] module_id=MOD-INT_CHAIN_IMPACT | layer=module | stability=evolving | safety=M | ai_autonomy=ai_modifiable
+# [A_module] module_id=MOD-INT-CHAIN-IMPACT | layer=module | stability=evolving | safety=M | ai_autonomy=ai_modifiable
 # [TTL] permanent
 # [ARCH-REF] 接线指令 W4（冲击标的生成器；与 event_score 融合口径见 INVARIANTS 方向条款）
 
 """
-MOD-INT_CHAIN_IMPACT ChainImpactResolver — 图谱节点冲击→受影响标的清单生成器（接线 W4）。
+MOD-INT-CHAIN-IMPACT ChainImpactResolver — 图谱节点冲击→受影响标的清单生成器（接线 W4）。
 
 功能边界（MVP）：
 - 输入：W3 ChainNodeHit 集 + polarity（[-1,1] 有向情绪/事件方向）
@@ -26,12 +26,12 @@ MOD-INT_CHAIN_IMPACT ChainImpactResolver — 图谱节点冲击→受影响标�
 - 方向：全跳同向保留（置信度按 hop 衰减）——融合口径详见模块 INVARIANTS
 - 输出 ImpactTarget frozen dataclass 列表，按（hop, -confidence, symbol）排序
 
-不做什么：不读新闻（文本→节点属 MOD-INT_NEWS_CHAIN，新闻窗属 MOD-INT_IMPACT_STREAM）；
+不做什么：不读新闻（文本→节点属 MOD-INT-NEWS-CHAIN，新闻窗属 MOD-INT_IMPACT_STREAM）；
          不做事件类型细分（涨价/降价/断供/扩产的方向反号模型留后续迭代）；
          不写库不挂调度（清单由调用方消费）。
 
 依据: docs/_working/2026-09-09-news-industry-wiring-directive.md W4 行
-SSoT: depgraph MOD-INT_CHAIN_IMPACT（design 态 node 见 depgraph DB）
+SSoT: depgraph MOD-INT-CHAIN-IMPACT（design 态 node 见 depgraph DB）
 Version: 0.1.0
 
 # [ALGO_FLOW]

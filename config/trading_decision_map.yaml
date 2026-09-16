@@ -1279,6 +1279,7 @@ nodes:
   algo_refs: []
   module_ref: src/zephyr/intelligence/news_chain_node_linker.py
   module_id: MOD-INT-NEWS-CHAIN
+  note_confirmed: 2026-09-16
   strategy_mounts: []
   activation: continuous
   ai_autonomy: auto
@@ -1305,6 +1306,7 @@ nodes:
   algo_refs: []
   module_ref: src/zephyr/intelligence/chain_impact_resolver.py
   module_id: MOD-INT-CHAIN-IMPACT
+  note_confirmed: 2026-09-16
   strategy_mounts: []
   activation: continuous
   ai_autonomy: auto

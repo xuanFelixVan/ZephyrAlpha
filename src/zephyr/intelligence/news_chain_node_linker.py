@@ -1,4 +1,4 @@
-# [BLUEPRINT] MOD-INT_NEWS_CHAIN | 待统筹登记（蓝图未建，真源=docs/_working/2026-09-09-news-industry-wiring-directive.md W3 行 + §3 入图交接协议）
+# [BLUEPRINT] MOD-INT-NEWS-CHAIN | 待统筹登记（蓝图未建，真源=docs/_working/2026-09-09-news-industry-wiring-directive.md W3 行 + §3 入图交接协议）
 # [MODULE] zephyr.intelligence.news_chain_node_linker
 # [DOMAIN] D_INTELLIGENCE
 # [DEPENDENCIES] zephyr.intelligence.news_symbol_linker（normalize_text 归一化复用）; zephyr.governance.depgraph_schema（ig_* 图谱只读连接）; zephyr.shared.foundation.errors
@@ -12,12 +12,12 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] ChainNodeLinkerError(ZA-IT-0029)——注入词表条目畸形时抛；PG 不可达由 from_pg 显式抛（W5 流层 catch 降级），匹配层空词表 fail-open 不抛
 # [TESTS] tests/intelligence/test_news_chain_node_linker.py
-# [A_module] module_id=MOD-INT_NEWS_CHAIN | layer=module | stability=evolving | safety=M | ai_autonomy=ai_modifiable
+# [A_module] module_id=MOD-INT-NEWS-CHAIN | layer=module | stability=evolving | safety=M | ai_autonomy=ai_modifiable
 # [TTL] permanent
 # [ARCH-REF] 接线指令 W3（事件→产业链传导器，TDM 预留坑位 TDM-E-L2-09-1，module_ref 由增长轨落图时挂本模块）
 
 """
-MOD-INT_NEWS_CHAIN NewsChainNodeLinker — 新闻/事件文本→产业链图谱节点传导层（接线 W3）。
+MOD-INT-NEWS-CHAIN NewsChainNodeLinker — 新闻/事件文本→产业链图谱节点传导层（接线 W3）。
 
 功能边界（规则法 MVP，news_symbol_linker 链接手法从标的级升维到图谱节点级）：
 - 词表：ig_node 环节名（+aliases 列，当前全空但 schema 支持）——active 链、剔除
@@ -28,11 +28,11 @@ MOD-INT_NEWS_CHAIN NewsChainNodeLinker — 新闻/事件文本→产业链图谱
 - 输出 ChainNodeHit 只读 frozen dataclass，不写库不挂调度
 
 不做什么：不做 NER/语义模型抽取（规则法 MVP，与 news_symbol_linker 同代际）；
-         不做上下游扩散与方向判定（属 MOD-INT_CHAIN_IMPACT W4 施工面）；
+         不做上下游扩散与方向判定（属 MOD-INT-CHAIN-IMPACT W4 施工面）；
          不直接读新闻表（文本由调用方传入，新闻窗拉取属 MOD-INT_IMPACT_STREAM W5）。
 
 依据: docs/_working/2026-09-09-news-industry-wiring-directive.md W3 行
-SSoT: depgraph MOD-INT_NEWS_CHAIN（design 态 node 见 depgraph DB）
+SSoT: depgraph MOD-INT-NEWS-CHAIN（design 态 node 见 depgraph DB）
 Version: 0.1.0
 
 # [ALGO_FLOW]
