@@ -6,6 +6,9 @@
 # [STARTUP] imported
 # [MATURITY] production
 # [INVARIANTS] A股约束: T+1/涨跌停/停牌/100股整数倍; 委托MatchingLogic保证回测=实盘一致性; 涨跌停价三级解析链=stk_limit表PIT行→limit_pct_of切片规则（ST经st_stock_list最近可得快照）→板块前缀推断（无日期兜底），禁再造第四份口径（#ARCH-DATA-020）
+#              INV-UNIT-001(车道K 2026-09-16): volumes 入参口径=「股」且与 prices 同复权空间
+#              （由 load_history→market_units 出口一次性归一），本引擎禁再乘 100/禁再乘因子；
+#              参与率与冲击的分子分母必须同源同纲（订单股数 ÷ 当日成交股数）
 # [MODIFY-GUARD] none
 # [STABILITY] evolving
 # [SAFETY] L
@@ -35,6 +38,18 @@ v1.1.0 重构要点:
     stk_limit 表 PIT 行优先，缺行走 _limit_pct_of 日期切片规则，#ARCH-DATA-020）
   - 停牌: 无数据时跳过
   - T+1: 由 Portfolio 负责（matching_engine 只生成 fills）
+  - 成交量量纲（P0-1 车道K 2026-09-16，INV-UNIT-001）: `volumes` 入参口径**唯一**
+    为「股」，且与 `prices` 同处一个复权空间。源头 `c1_market.kline_daily.volume`
+    按 data_source **混存**两纲——`''` 主进料 94.6% 行为「手」(1手=100股)、
+    `tushare`/`Baostock` 5.4% 行为「股」（表 schema 注释「成交量(股)」只对 5.4%
+    成立）；归一在消费端边界 `zephyr.factor.core.evaluation.backtest.load_history`
+    经 `zephyr.shared.utils.market_units.normalize_market_panel` 逐行自洽探测一次
+    完成，本引擎**不再乘 100、不再乘复权因子**（散乘即双重缩放，参与率/冲击/换手
+    全错）。参与率 = 订单股数 ÷ 当日成交股数，与价格量纲无关（同纲缩放不变）。
+  - 绝对价语义（涨跌停）与价格缩放（P0-2 车道K）: 引擎价可以是"窗口末锚定复权价"
+    （逐标的乘子 k≈1，最大失真见 MarketPanelReport），此时 stk_limit 表内**原始
+    绝对价**与引擎价不同纲——_limit_bounds 按除权参考价自洽性检测后改走
+    收益空间等价式（prev_close×(1±pct)），保证缩放不改变封板判定（见其 docstring）。
 
 SSoT: docs/03_modules/_domain_backtest/blueprint.md §3.2 §5.1 §16.7
 
@@ -78,6 +93,13 @@ class MatchingError(Exception):
 # （2026-09-14 P0-2 整改后仅作为"无成交量数据时的兜底深度"；data 含 volume 列时
 #  由 LiquidityGuardConfig 施加参与率上限+冲击成本，虚拟无限深度不再无条件生效）
 _SYNTHETIC_DEPTH = Decimal("99999999")
+
+#: 判定"引擎价与 stk_limit 表绝对价同纲"的相对容差（车道 K P0-2，见 _limit_bounds）。
+#: 取值依据：交易所取整噪声 ≤ 半分（≤0.05% @10元 级别股价），而逐标的复权锚点在
+#: 一个回测窗内的漂移通常 ≥0.3%（一次最小量级的现金分红）；0.2% 落在两者之间。
+#: 判据"误为不同纲"无害——回退式 prev_close×(1±pct) 在同纲时与表价数值等价；
+#: 判据"误为同纲"仅当缩放漂移 <0.2% 时发生，其对封板判定的影响同量级（可忽略）。
+_LIMIT_REF_TOL = Decimal("0.002")
 
 
 @dataclass(frozen=True)
@@ -309,7 +331,11 @@ class MatchingEngine:
             date: 当前日期
             prev_close: 前一日收盘价（可选，用于涨跌停检查）
             volumes: {symbol: volume} 当日成交量（可选，P0-2 流动性约束输入；
-                None 或缺某标的时该标的不受限——无数据不虚构约束）
+                None 或缺某标的时该标的不受限——无数据不虚构约束）。
+                **口径契约（INV-UNIT-001）**：值必须是「股」，且与 `prices` 同处
+                一个复权空间（两者都由 load_history 出口一次性归一）。直传源表
+                `kline_daily.volume` 原始列会把参与率上限悄悄收紧 100 倍
+                （94.6% 行是「手」）——车道 K P0-1 的病灶，勿再犯。
 
         Returns:
             BacktestFill 列表（先卖后买排序）
@@ -643,6 +669,12 @@ class MatchingEngine:
         上限 = floor(volume × max_participation_rate)；买单向下取整手（A股买入
         整手约束），卖单向下取整股（清仓/卖出允许零股）。收缩后 ≤0 的订单丢弃；
         volume 缺失/非正的标的不受限（无数据不虚构约束）。
+
+        量纲纪律（车道 K P0-1）：本方法是**纯比值**，对"订单量与日量同纲缩放"不变，
+        因此它自身无法发现量纲错误——只有调用方守住 INV-UNIT-001（volume=股）
+        上限才真的是 10%。传入「手」口径（源表 94.6% 行的真实量纲）时，有效上限
+        会静默变成真实日量的 0.1%；探测与告警放在数据入口
+        （`market_units.probe_volume_unit`），不在此处散乘 100 打补丁。
         """
         cap_rate = self._liquidity_config.max_participation_rate
         lot = Decimal(self._config.lot_size)
@@ -686,6 +718,13 @@ class MatchingEngine:
         冲击 bps（临时+永久，execution_simulation 真源）只加在同侧报价上：
         BUY 抬 ask1、SELL 压 bid1（冲击恒为不利方向）；last_price 不动——
         组合估值仍按市场价，冲击只影响成交。volume 缺失/非正的标的跳过。
+
+        参与率 p = 订单股数 ÷ 当日成交股数（分子分母同纲，INV-UNIT-001）。
+        正常路径下 p ≤ max_participation_rate（上游 _cap_orders_by_volume 已收缩）；
+        p 越出 [0,1] 说明 A-C 模型会抛"参与率越界"而被本函数兜住 → 该标的按无冲击
+        成交（成本被系统性低估）。此时 MUST 告警点名"疑似量纲/参与率上限未生效"，
+        不得静默旁路（车道 K 复验确认：现网该旁路并非 P0-1 的主通路，
+        主通路是 100× 过严上限本身，但静默降级同样必须显式化）。
         """
         if self._liquidity_config is None or not self._liquidity_config.impact_enabled:
             return order_books
@@ -707,10 +746,23 @@ class MatchingEngine:
             ob = adjusted.get(symbol)
             if vol is None or vol <= 0 or ob is None or order["quantity"] <= 0:
                 continue
+            participation = float(order["quantity"]) / float(vol)
+            if not 0.0 <= participation <= 1.0:
+                _logger.warning(
+                    "冲击报价参与率越界 p=%.3f（%s 订单 %s 股 / 当日量 %s），A-C 模型必抛错"
+                    "→ 本标的按无冲击成交（成本低估）。疑似 INV-UNIT-001 违例："
+                    "volumes 非「股」口径或 max_participation_rate 未生效，请核查数据入口",
+                    participation,
+                    symbol,
+                    order["quantity"],
+                    vol,
+                )
             try:
                 quote = model.quote(float(order["quantity"]), float(vol))
             except Exception as e:  # noqa: BLE001 — 单标的冲击报价失败不炸整日撮合
-                _logger.warning("冲击报价失败（%s），该标的按无冲击成交: %s", symbol, e)
+                _logger.warning(
+                    "冲击报价失败（%s p=%.3f），该标的按无冲击成交: %s", symbol, participation, e
+                )
                 continue
             shock = Decimal("1") + Decimal(str(quote.cost_bps)) / Decimal("10000")
             if order["side"] == "BUY":
@@ -852,6 +904,12 @@ class MatchingEngine:
             return None
         return None if pct is None else Decimal(str(pct))
 
+    def _bounds_from_pct(self, prev_close: Decimal, pct: Decimal) -> tuple[Decimal, Decimal]:
+        """按幅度在上限空间重算涨跌停价（ROUND_HALF_UP 到分，与生成侧同口径）。"""
+        upper = (prev_close * (Decimal(1) + pct)).quantize(Decimal("0.01"), rounding=ROUND_HALF_UP)
+        lower = (prev_close * (Decimal(1) - pct)).quantize(Decimal("0.01"), rounding=ROUND_HALF_UP)
+        return (upper, lower)
+
     def _limit_bounds(
         self,
         symbol: str,
@@ -869,6 +927,22 @@ class MatchingEngine:
              引擎按 prev_close×(1±pct) ROUND_HALF_UP 到分（与生成侧同口径）；
           3. 板块前缀推断 _infer_limit_pct（未知前缀保守回退，无日期无 ST）。
         prev_close 缺失/非正 → None（无基准不封板，保持既有行为）。
+
+        缩放不变性（车道 K P0-2 配套修复，2026-09-16）：链路 1 的表内价是
+        **交易所原始绝对价**，只有当引擎价序列与它同纲时才可直比。数据出口已把价格
+        归一为"窗口末锚定复权价"（逐标的乘子 k，见 market_units），k≠1 时直比绝对价
+        会把高分红/送转股误判为永久封板（例：10送10 复权后 k≈0.5，引擎价≈表跌停的一半
+        → 所有卖单被拒）。判据用**除权参考价**自洽性：涨停=round(ref×(1+pct))、
+        跌停=round(ref×(1−pct)) → 二者中点即 ref（仅含 ±半分的取整噪声），
+        |prev_close/ref − 1| ≤ _LIMIT_REF_TOL 视为同纲、直用表价；否则改走链路 2 的
+        等价式（表行自带 limit_pct 优先，缺 pct 时按 prev_close/ref 缩放表价）。
+
+        等价性（为何缩放后走收益空间是**精确**的，不是近似）：复权价 P(t)=raw(t)×f(t)，
+        除权日 f 跳变满足 f(T)/f(T−1)=raw_close(T−1)/ref ⇒ 引擎的
+        prev_close=P(T−1)=ref×f(T)，于是 prev_close×(1±pct) 恰等于把交易所涨跌停价
+        平移到本标的复权空间的结果——除权日与非除权日同式，封板判定不随缩放改变。
+        唯一残余噪声是"复权价不再落在 0.01 网格上"带来的半分边界抖动
+        （相对 10% 板幅 ≈0.05%，且仅在收盘贴板一分内可能翻转）。
         """
         if prev_close is None or prev_close <= 0:
             return None
@@ -876,7 +950,23 @@ class MatchingEngine:
         if info is not None and info.from_table:
             if info.limit_up is None or info.limit_down is None:
                 return None  # 表行 limit_*=NULL：新股无涨跌幅限制期，不封板
-            return (info.limit_up, info.limit_down)
+            ref = (info.limit_up + info.limit_down) / Decimal(2)  # 除权参考价（交易所口径）
+            same_caliber = ref > 0 and abs(prev_close / ref - Decimal(1)) <= _LIMIT_REF_TOL
+            if same_caliber:
+                return (info.limit_up, info.limit_down)  # 链路 1：同纲，表内精确价直用
+            if info.limit_pct is not None:
+                return self._bounds_from_pct(prev_close, info.limit_pct)  # 等价收益空间式
+            if ref > 0:
+                scale = prev_close / ref
+                return (
+                    (info.limit_up * scale).quantize(Decimal("0.01"), rounding=ROUND_HALF_UP),
+                    (info.limit_down * scale).quantize(Decimal("0.01"), rounding=ROUND_HALF_UP),
+                )
+            _logger.warning(
+                "涨跌停表行不可用（%s %s limit_up=%s limit_down=%s 且无 limit_pct），按不封板处理",
+                symbol, trade_date, info.limit_up, info.limit_down,
+            )
+            return None
         st_flag = bool(info.st_flag) if info is not None else False
         pct: Decimal | None = None
         if info is not None and info.limit_pct is not None:
@@ -885,9 +975,7 @@ class MatchingEngine:
             pct = self._fallback_limit_pct(symbol, trade_date, st_flag)
         if pct is None:
             pct = self._infer_limit_pct(symbol)
-        upper = (prev_close * (1 + pct)).quantize(Decimal("0.01"), rounding=ROUND_HALF_UP)
-        lower = (prev_close * (1 - pct)).quantize(Decimal("0.01"), rounding=ROUND_HALF_UP)
-        return (upper, lower)
+        return self._bounds_from_pct(prev_close, pct)
 
     def _infer_limit_pct(self, symbol: str) -> Decimal:
         """按代码前缀推断板块涨跌停幅度（2026-08-19 AI-NIGHT-001 #211）。

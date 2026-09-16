@@ -68,6 +68,7 @@ except Exception:  # pragma: no cover
 
 if TYPE_CHECKING:
     from zephyr.backtest.core.engine_base import BacktestResult
+    from zephyr.backtest.implementations.vectorized_engine import PitUniverseProvider
 
 _logger = logging.getLogger(__name__)
 
@@ -143,6 +144,8 @@ class ShrinkageBacktestEngine(DefaultBacktestEngine):
         self,
         config: BacktestConfig | None = None,
         shrinkage_provider: ShrinkageProvider | None = None,
+        enable_stk_limit_provider: bool = True,
+        universe_provider: "PitUniverseProvider | None" = None,
     ) -> None:
         """初始化 Shrinkage 引擎。
 
@@ -150,8 +153,15 @@ class ShrinkageBacktestEngine(DefaultBacktestEngine):
             config: 回测配置（同 DefaultBacktestEngine）。
             shrinkage_provider: Shrinkage 因子供给方。None 等价于 ConstShrinkageProvider(1.0)
                 （满部署，退化为 DefaultBacktestEngine，便于 C1 基准组复用同一类）。
+            enable_stk_limit_provider: 透传父类涨跌停 provider 开关（RSC-2 裁定#270——
+                原构造丢弃该参数，调用方注入 False 的离线/测试路径会静默失效）。
+            universe_provider: 透传父类 PIT 标的池提供器（同上，透传不改语义）。
         """
-        super().__init__(config=config)
+        super().__init__(
+            config=config,
+            enable_stk_limit_provider=enable_stk_limit_provider,
+            universe_provider=universe_provider,
+        )
         if shrinkage_provider is None:
             shrinkage_provider = _ConstOneProvider()
         self._shrinkage_provider: ShrinkageProvider = shrinkage_provider

@@ -1,11 +1,13 @@
 # [BLUEPRINT] MOD-L02-001 | docs/03_modules/_domain_factor/blueprint.md | §D-FACTOR-03
 # [MODULE] zephyr.factor.core.evaluation.backtest
 # [DOMAIN] D_FACTOR
-# [DEPENDENCIES] zephyr.data.ch_reader; zephyr.data.table_registry; zephyr.factor.factor_base; zephyr.factor.core.evaluation.metrics
+# [DEPENDENCIES] zephyr.data.ch_reader; zephyr.data.table_registry; zephyr.factor.factor_base; zephyr.factor.core.evaluation.metrics; zephyr.shared.utils.market_units
 # [CONSUMERS]
 # [STARTUP] imported
 # [MATURITY] production
-# [INVARIANTS] INV-004: PIT铁律——ch_reader注入FINAL保证去重；前向收益shift(-horizon)仅用于回测评估不用于实盘信号；仅用trade_date做截面对齐禁止用ingested_at
+# [INVARIANTS] INV-004: PIT铁律——ch_reader注入FINAL保证去重；前向收益shift(-horizon)仅用于回测评估不用于实盘信号；仅用trade_date做截面对齐禁止用ingested_at；
+#              INV-UNIT-001(车道K 2026-09-16)：load_history 出口口径唯一真源=「volume 股 / 价格复权连续 / amount 元」，
+#              量纲与复权只在出口归一一次（market_units），消费端禁再乘 100 或再乘因子
 # [MODIFY-GUARD] none
 # [STABILITY] stable
 # [SAFETY] L
@@ -16,8 +18,10 @@
 # [TTL] permanent
 # [ALGO_FLOW]
 # I1: symbol 列表 + factor_id + 评估日期区间（evaluate_factor 入参）
-# I2: market_kline_daily 历史长表（ch_reader 注入 FINAL 保 PIT 去重，含 adj_factor 列）
+# I2: market_kline_daily 历史长表（ch_reader 注入 FINAL 保证去重）+ market_kline_daily_hfq 后复权真值
 # F1: _adjusted_close_panel 复权价面板（close×adj_factor，NULL/0/负回退 1.0，#197：除权日前向收益不再误判腰斩）
+# A0: normalize_market_panel 出口量纲/复权归一（车道K 两 P0：volume 手→股逐行自洽探测 +
+#     价格改读后复权真值并按窗口末锚定，除权不再进收益）
 # A1: 数据加载+面板组装（长表→宽表，trade_date 截面对齐禁 ingested_at）
 # A2: 逐标的 FactorBase.compute 因子值调度
 # A3: _compute_forward_returns 前向收益（复权价 shift(-horizon)，仅回测评估不实盘）
@@ -32,6 +36,10 @@ D-FACTOR-03 因子评估回测运行器——端到端因子评估。
 
 职责边界：
 - 数据加载（ch_reader.query，自动注入 FINAL 保证 PIT 去重）
+- **行情口径出口归一**（load_history 是全系统唯一的量纲/复权归一点——
+  见 zephyr.shared.utils.market_units：volume 混存量纲逐行探测归一到股、
+  价格改读后复权真值并按窗口末锚定；raw 价与原始 volume 保留在
+  close_raw/open_raw/... 与 volume_lots 列，真实价语义（涨跌停价等）取 *_raw）
 - 面板组装（长表 → 宽表面板）
 - 因子计算调度（逐标的调用 FactorBase.compute）
 - 评估指标汇总（调用 metrics.* 纯函数）
@@ -40,6 +48,7 @@ INV-004 PIT 铁律落实：
 - ch_reader 对 ReplacingMergeTree 自动注入 FINAL，去重后查询
 - 前向收益 shift(-horizon) 仅用于回测评估，不参与实盘信号生成
 - 不使用 ingested_at（可能引入未来函数），仅用 trade_date 做截面对齐
+- 复权锚点取**本窗已知**的末值（逐标的常数），不引入未来信息进入收益
 
 # [ALGO_FLOW] external: docs/03_modules/_domain_factor/algo_flow/backtest.yaml
 """
@@ -62,16 +71,32 @@ from zephyr.factor.core.evaluation.metrics import (
     compute_oos_positive_rate,
 )
 from zephyr.factor.factor_base import FactorRegistry
+from zephyr.shared.utils.market_units import (
+    MarketPanelReport,
+    format_report,
+    normalize_market_panel,
+)
 
 log = logging.getLogger(__name__)
 
 # 表名真源：business_data_categories.yaml via table_registry（裁定 #ARCH-CH-024）
 _TBL_KLINE_DAILY = get_registry().table("market_kline_daily")
+# 后复权真值表（源 miniqmt/bdpan_hfq，任务 kline_daily_hfq_incremental）——复权唯一可用源
+_TBL_KLINE_DAILY_HFQ = get_registry().table("market_kline_daily_hfq")
 
 # SQL 模板常量（NO-BARE-SQL gate 豁免：_SQL_* 前缀）
 # ch_reader.query() 自动注入 FINAL（ReplacingMergeTree 去重），故 final 占位留空
 _SQL_LOAD_HISTORY = (
     "SELECT trade_date, symbol, open, high, low, close, volume, amount, adj_factor "
+    "FROM {tbl}{final} "
+    "WHERE symbol IN ({symbols}) "
+    "AND trade_date >= toDate('{start}') AND trade_date <= toDate('{end}') "
+    "ORDER BY symbol, trade_date"
+)
+
+# 复权因子只需收盘价：adj_close/raw_close 给出逐日累计复权因子（同一标的比值即因子台阶）
+_SQL_LOAD_ADJUSTED_CLOSE = (
+    "SELECT trade_date, symbol, close "
     "FROM {tbl}{final} "
     "WHERE symbol IN ({symbols}) "
     "AND trade_date >= toDate('{start}') AND trade_date <= toDate('{end}') "
@@ -90,6 +115,7 @@ _HISTORY_COLUMNS = [
     "amount",
     "adj_factor",
 ]
+_ADJUSTED_COLUMNS = ("trade_date", "symbol", "close")
 
 
 @dataclass(frozen=True)
@@ -162,17 +188,124 @@ def _tsv_to_dataframe(tsv: str) -> pd.DataFrame:
     return df
 
 
-def load_history(symbols: Sequence[str], start: str, end: str) -> pd.DataFrame:
-    """从 ClickHouse 加载历史日 K 行情。
+def _parse_adjusted_close_tsv(tsv: str) -> pd.DataFrame:
+    """解析后复权收盘价 TSV 为 MultiIndex(symbol, trade_date) 的 `close` 表。
+
+    ch_reader 返回无表头 TSV，且调用方的 mock 可能把**其它列数**的行喂进来，
+    故逐行做严格字段数校验（先例：`StkLimitProvider._SQL_STK_LIMIT_DAY` 解析环）。
+    不匹配的行整行丢弃（宁可退化为"无复权源"——由调用方显式告警——也不把
+    错位数据当复权真值用）。close<=0 / 非数值 / \\N 同样丢弃（后复权价为 0 无意义）。
+
+    Returns:
+        DataFrame(index=(symbol, trade_date), columns=[close])，无有效行时为空表。
+    """
+    rows: list[tuple[str, pd.Timestamp, float]] = []
+    for line in (tsv or "").splitlines():
+        if not line.strip():
+            continue
+        parts = line.split("\t")
+        if len(parts) != len(_ADJUSTED_COLUMNS):
+            continue
+        date_s, sym, close_s = parts[0].strip(), parts[1].strip(), parts[2].strip()
+        if not sym or close_s in ("", "\\N", "NULL", "null"):
+            continue
+        try:
+            close_v = float(close_s)
+            date_v = pd.Timestamp(date_s)
+        except ValueError:
+            continue
+        if close_v <= 0:
+            continue
+        rows.append((sym, date_v, close_v))
+    if not rows:
+        return pd.DataFrame()
+    df = pd.DataFrame(rows, columns=["symbol", "trade_date", "close"])
+    df = df.drop_duplicates(subset=["symbol", "trade_date"], keep="last")
+    return df.set_index(["symbol", "trade_date"]).sort_index()
+
+
+def _load_adjusted_close(symbols: Sequence[str], start: str, end: str) -> pd.DataFrame | None:
+    """读后复权收盘价（复权因子真值源）。无可用数据/查询失败 → None（调用方必告警）。
+
+    为什么不用 `kline_daily.adj_factor`（tracker #197 原设计）：该列全史
+    10,069,078 行中 `!= 1` 的行数 = 0（车道 K CH 只读实证，探针
+    `.runtime/tmp/laneK_probe3.py`）——列从未回补，`close×adj_factor ≡ raw close`，
+    #197 修正件自出生即惰性。`c1_market.adj_factor` 专表亦不可用：窗口后半段日行数
+    由 ~7,000 塌到 9~21，且 2026-07 起多票因子被重定标（600036 6.4834→1.0274、
+    000651 230.39→1.0505），跨重定标日相乘会注入 −68%~−84% 新幻影（#209② 根源）。
+    """
+    sql = _SQL_LOAD_ADJUSTED_CLOSE.format(
+        tbl=_TBL_KLINE_DAILY_HFQ,
+        final="",
+        symbols=_format_symbols(symbols),
+        start=start,
+        end=end,
+    )
+    try:
+        tsv = ch_reader.query(sql)
+    except Exception as e:  # noqa: BLE001 — 复权源故障不得拖垮主链路，但必须显式告警
+        log.warning(
+            "后复权价查询失败（%s: %s），本窗退化为未复权价——除权日幻影缺口仍存在",
+            type(e).__name__,
+            e,
+        )
+        return None
+    adj = _parse_adjusted_close_tsv(tsv)
+    if adj.empty:
+        return None
+    return adj
+
+
+def _log_panel_report(report: MarketPanelReport, context: str) -> None:
+    """把归一披露件打成日志：任何口径风险必须**显式告警**，禁止静默算错。
+
+    告警触发条件（任一）：量纲探测 suspect（多数行不可判定 或 归一后
+    amount/(close×volume) 中位比越界 ±10%）、不可判定行需兜底、复权源缺失、
+    存在完全无因子的标的。
+    """
+    line = format_report(report, context)
+    v = report.volume
+    problems: list[str] = []
+    if v.suspect:
+        problems.append("量纲自洽探测不通过（suspect）")
+    if v.default_applied:
+        problems.append(f"{v.default_applied} 行量纲不可判定，已按表声明口径（股）兜底")
+    if not report.adjustment_enabled:
+        problems.append("后复权因子源不可用，价格为**未复权原始价**（除权幻影未修）")
+    elif report.unadjusted_symbols:
+        problems.append(
+            f"{report.unadjusted_symbols} 个标的（{report.unadjusted_rows} 行）无复权因子，"
+            "该标的整窗退不复权"
+        )
+    if problems:
+        log.warning("行情口径归一告警 %s：%s ｜ %s", context, "；".join(problems), line)
+    else:
+        log.info("行情口径归一 %s ｜ %s", context, line)
+
+
+def load_history(
+    symbols: Sequence[str],
+    start: str,
+    end: str,
+    *,
+    normalize_units: bool = True,
+) -> pd.DataFrame:
+    """从 ClickHouse 加载历史日 K 行情，并在**出口一次性**归一量纲与复权口径。
 
     Args:
         symbols: 标的代码列表（如 ['600519.SH', '000001.SZ']）
         start: 起始日期 'YYYY-MM-DD'
         end: 结束日期 'YYYY-MM-DD'
+        normalize_units: 默认 True——出口口径为「volume=股 / 价格=复权连续 /
+            amount=元」（INV-UNIT-001）。False 仅用于 A/B 复现修复前的 legacy
+            原始口径（volume 手/股混存 + 未复权价），生产链路禁传。
 
     Returns:
         DataFrame，index=(symbol, trade_date) MultiIndex，
-        columns=open/high/low/close/volume/amount/adj_factor。空结果返回空 DataFrame。
+        columns=open/high/low/close/volume/amount/adj_factor（归一口径）
+        + open_raw/high_raw/low_raw/close_raw（交易所原始价，真实价语义用）
+        + volume_lots（源表原始混存量）。空结果返回空 DataFrame。
+        `df.attrs[market_units.REPORT_ATTR]` 挂本次归一披露件。
     """
     if not symbols:
         return pd.DataFrame()
@@ -192,7 +325,14 @@ def load_history(symbols: Sequence[str], start: str, end: str) -> pd.DataFrame:
     # "cannot reindex on an axis with duplicate labels"。
     df = df.drop_duplicates(subset=["symbol", "trade_date"], keep="last")
     df = df.set_index(["symbol", "trade_date"])
-    return df.sort_index()
+    df = df.sort_index()
+    if not normalize_units:
+        log.warning("load_history(normalize_units=False)：绕过量纲/复权归一，仅用于 A/B 复验")
+        return df
+    adjusted = _load_adjusted_close(symbols, start, end)
+    out, report = normalize_market_panel(df, adjusted=adjusted)
+    _log_panel_report(report, f"load_history[{start}..{end}] {len(df)}行/{report.symbols}标的")
+    return out
 
 
 def _compute_factor_panel(factor_cls: type, history: pd.DataFrame) -> pd.DataFrame:
@@ -212,13 +352,17 @@ def _adjusted_close_panel(history: pd.DataFrame) -> pd.DataFrame:
     tracker #197：前向收益必须按复权价（adj_close = close × adj_factor）计算，
     否则除权日（如 10送10 价格腰斩）会被计为 -50% 真实亏损，系统性偏差 IC/IR。
 
-    口径纪律——同行自洽乘法：仅保证同一行 close 与 adj_factor 自洽相乘。
-    kline_daily.adj_factor 已知混存 QMT dr / 新浪 hfq 两口径（遗留 #209②，
-    登记为 P2 后续治理），本函数不做口径归一。
+    车道 K（2026-09-16）口径变更：`load_history` 出口已把价格归一为**窗口末锚定的
+    复权连续价**，`adj_factor` 重写为「本表 close 还原为后复权真值所需乘子」
+    （逐标的常数 = 该标的窗口末 hfq/raw 比值）。于是
+    `close × adj_factor ≡ kline_daily_hfq.close`（后复权真值），而逐标的常数在
+    `P(t+1)/P(t)` 里抵消 → 前向收益与后复权口径**逐位相同**，除权幻影归零。
+    当复权源不可用（退化为未复权路径）时，本函数的 `adj_factor` 就是源表原列直通
+    （#197 原语义，实际恒 1，见 `_load_adjusted_close` 的为何改读 hfq 说明）。
 
     防御：adj_factor 为 NULL（ClickHouse Nullable，TSV \\N）或 <= 0（无效因子，
-    裁定#ARCH-ADJFACTOR-NULL-001：0 视为 None）时回退 1.0，该行退化为不复权价
-    （对齐 baostock 主口径：不复权写入 adj_factor=1），避免 NaN 污染收益面板。
+    裁定#ARCH-ADJFACTOR-NULL-001：0 视为 None）时回退 1.0，该行退化为不复权价，
+    避免 NaN 污染收益面板。
     """
     adj = history["adj_factor"]
     # NaN > 0 为 False → NULL 与 0/负值一并被 where 替换为 1.0
