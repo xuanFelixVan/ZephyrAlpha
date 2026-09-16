@@ -27,40 +27,7 @@ audit-trail.merkle_hourly — MOD-INF-020 · 每小时 Merkle 聚合
   - 支持历史 Merkle Root 查询
   - 与主事件日志解耦，独立验证
 
-# [ALGO_FLOW]
-# 层: 输入
-# - id: I1
-#   name: data_dir 参数
-#   fields: 参数 data_dir（无注解）
-#   code: merkle_hourly.py 顶层公共函数形参（AST 提取）
-# 层: 算法
-# - id: A1
-#   name_zh: ① HourlyMerkleAggregator
-#   name_en: HourlyMerkleAggregator
-#   intro: class HourlyMerkleAggregator 源码 L111-L229
-#   desc: 公共方法（定义序）: aggregate, get_roots, verify_root；源码 L111-L229
-#   inputs: data_dir
-#   outputs: 返回值
-# - id: A2
-#   name_zh: ② MerkleHourlyBridge
-#   name_en: MerkleHourlyBridge
-#   intro: Merkle hourly 桥接器——封装 HourlyMerkleAggregator 的错误处理与可用性检查。
-#   desc: Merkle hourly 桥接器——封装 HourlyMerkleAggregator 的错误处理与可用性检查。 从 zephyr.governance.merkle_hour…；公共方法（定义序）: aggrega…
-#   inputs: 无参数
-#   outputs: 返回值
-#   （注：A2 之后另有 2 个公共定义未列入（含 2 个数据契约/异常/枚举声明类），见源码）
-# 层: 输出
-# - id: O1
-#   name_zh: 模块公共 API 面（4 定义）
-#   name_en: public defs
-#   intro: HourlyMerkleAggregator, MerkleHourlyBridge
-#   downstream: zephyr.governance.integrity ; zephyr.gov_audit.bridge ; zephyr.gov_audit.__init…
-# [/ALGO_FLOW]
-#
-# 边:
-# I1 --> A1
-# A1 --> A2
-# A2 --> O1
+# [ALGO_FLOW] external: docs/03_modules/_domain_gov_audit/algo_flow/merkle_hourly.yaml
 """
 
 from __future__ import annotations
