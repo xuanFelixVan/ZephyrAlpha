@@ -14,14 +14,6 @@
 # [TESTS] tests/position/test_position_adjudication_center.py
 # [A_module] module_id=MOD-POS-024 | layer=module | stability=evolving | safety=H | ai_autonomy=ai_modifiable
 # [TTL] permanent
-# [ALGO_FLOW]
-# I1: AdjudicationRequest(request_id/strategy_id/symbol/action/intended_weight/context)
-# I2: 四层callable(组合/策略/标的/动态,装配批接MOD-POS-013/020族/001+010/018)
-# A1: 请求校验+规范化指纹(sha256前16hex=adjudication_id)
-# A2: 四层依序裁决(任一层拒绝/异常→终审拒绝汇聚violations)
-# A3: 最保守收敛(全过→final_weight=min(adjusted_weight))+幂等注册
-# O1: AdjudicatedPositionPlan / verify_bypass(令牌缺失或不符=True)
-# [/ALGO_FLOW]
 """
 C-047 仓位管理唯一裁决中心（MOD-POS-024）。
 

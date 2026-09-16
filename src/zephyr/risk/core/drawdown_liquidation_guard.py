@@ -13,13 +13,6 @@
 # [ERROR_CONTRACT] InvalidLiquidationGuardInputError(ZA-RK-0066)
 # [TESTS] tests/risk/test_drawdown_liquidation_guard.py
 # [TTL] permanent
-# [ALGO_FLOW]
-# I1: 撤单计数对(cancelled_count+total_order_count) + 阈值对(warn12%/hard15%, A股2026新规)
-# I2: 全清计时对(started_monotonic+now_monotonic, 秒) + remaining_positions残余持仓 + timeout_seconds=30
-# F1: check_cancel_rate(撤单率三档: <12%正常 / 12-15%预警留buffer / ≥15% blocked+剩余额度)
-# F2: check_liquidation_timeout(elapsed>30s且残余非空→LiquidationTimeoutAlert人工介入; 否则None)
-# O1: CancelRatePrecheck(rate+warning+blocked+remaining_budget) / LiquidationTimeoutAlert|None
-# [/ALGO_FLOW]
 """
 D_RISK — Kill Switch 全清执行守卫（35 号 memo §6.14 施工，§3.5.1 A 股 2026 新规适配）。
 

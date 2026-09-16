@@ -13,15 +13,6 @@
 # [ERROR_CONTRACT] swing_high ≤ swing_low → ValueError; 时间窗 <2 或 >15 交易日 → None(不评级)
 # [TESTS] tests/signal_ashare/sector/test_sector_pullback.py
 # [TTL] permanent
-# [ALGO_FLOW]
-# I1: swing_high/swing_low/current_price(回踩形态, 复用 intraday_buy_sell_point_analyzer PULLBACK 买点输出)
-# I2: volume_ratios(最近 N 日成交量/50日均量 比率序列, 时间升序)
-# I3: sector_strength(§3.1① 板块强度 0-100) + pullback_days + rotation_warning(warn_rotation)
-# A1: fib_retrace_ratio = (high-current)/(high-low), Fib 回撤位
-# A2: classify_volume_pattern(缩量递减至 35-50%→SHRINKING / 放量→EXPANDING / 其余→MIXED)
-# A3: grade_pullback(Fib 档 × 量能档 × 强度档 三维取最弱档定级; 时间窗 <2/>15 不评级)
-# O1: grade A(优先建仓)/B(分批建仓)/C(观望或突破失败降级)/None + pullback_action 映射
-# [/ALGO_FLOW]
 """
 回踩质量 A/B/C 判定（22 号 spec §3.1②，BM-SEL-08 缺失态补施工）。
 

@@ -13,15 +13,6 @@
 # [ERROR_CONTRACT] 空板块列表 → is_siphon=False; 历史窗口样本 <2 或 σ=0 → z=0(降级不触发)
 # [TESTS] tests/signal_ashare/sector/test_sector_siphon.py
 # [TTL] permanent
-# [ALGO_FLOW]
-# I1: sectors(当日全市场板块 turnover+net_inflow, money_flow×sector_constituent 聚合)
-# I2: hhi/conc/outflow 三信号各自滚动窗口历史序列（z-score 标准化用）
-# A1: 信号① hhi_top_n = Σ(头部N板块成交额份额)², N=5
-# A2: 信号② inflow_concentration = 头部N净流入和 / 全市场|净流入|和
-# A3: 信号③ outflow_ratio = 其余板块净流出家数 / 其余板块家数
-# A4: rolling_zscore 三信号标准化 → siphon_score = 0.4×z_hhi + 0.35×z_conc + 0.25×z_outflow
-# O1: SiphonResult(is_siphon = score>1.5σ, siphon_score, siphon_sectors=头部N名单)
-# [/ALGO_FLOW]
 """
 虹吸态识别（22 号 spec §3.1⑤，BM-SEL-08 增强补施工）。
 

@@ -13,16 +13,6 @@
 # [ERROR_CONTRACT] 收盘价序列长度 < long×2+short 或基准价 ≤0 → ValueError
 # [TESTS] tests/signal_ashare/sector/test_sector_rrg.py
 # [TTL] permanent
-# [ALGO_FLOW]
-# I1: p_sector(板块指数收盘价日频序列, market_kline_sector_880) + p_bench(基准收盘价, 880001.SH)
-# A1: RS(t) = 100 × P_sector/P_bench（标准化到 100 基准）
-# A2: RS-Ratio(t) = EMA(RS,10)/EMA(RS,26)×100（JdK DualEma, >100 相对走强）
-# A3: RS-Momentum(t) = EMA(RS-Ratio,10)/EMA(RS-Ratio,26)×100（动量的动量, 引导转向）
-# A4: classify_quadrant(领先>100,>100 / 疲软>100,<100 / 滞后<100,<100 / 改善<100,>100)
-# A5: confirm_quadrant_series(whipsaw 连续 2 日确认, 单日跳变不采信; 容许强趋势半圆)
-# A6: rrg_zscore(Z=(RS-Ratio−63日均值)/63日标准差) + zscore_signal_adjust(领先 Z>+2 降级持有 / 改善 Z<−2 升级提前布局)
-# O1: RRGPoint(rs_ratio, rs_momentum, quadrant) 序列 + 已确认象限序列 + 信号/强度调整分
-# [/ALGO_FLOW]
 """
 RRG 相对旋转图（22 号 spec §3.1④，轮动序列主算法，BM-SEL-08 缺失态补施工）。
 

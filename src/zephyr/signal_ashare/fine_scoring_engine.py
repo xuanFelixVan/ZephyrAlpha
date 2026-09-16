@@ -14,13 +14,6 @@
 # [TESTS] tests/signal_ashare/test_fine_scoring_engine.py
 # [A_module] module_id=MOD-SIG-048 | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
-# [ALGO_FLOW]
-# I1: FineScoreRecord（四维基础分/状态偏移/主力分/拥挤度/密度摘要/8态分）
-# A1: 六要素合成——基础评分(价值40/动量30/质量20/情绪10)×(1+状态偏移±10%) + 主力×0.20 − 拥挤×0.10 − 密度×0.15（8态置0）
-# A2: 密度要素——density_penalty = 负偏度×10 + 超额峰度×5 + 前瞻VaR%（消费 BM-SEL-13 密度摘要）
-# A3: 横截面 Z-score 标准化 → 降序 Top-N（std≈0 时 Z 置 0 按 raw 兜底排名）
-# O1: FineScoreResult(top: ScoredEntry(symbol/raw_score/z_score/rank), degraded)
-# [/ALGO_FLOW]
 """
 选股漏斗第三层——精筛评分（BM-SEL-18，~300→~50）。
 

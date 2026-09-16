@@ -13,16 +13,6 @@
 # [ERROR_CONTRACT] 输入比率超界由调用方保证; hhi 辅助函数空列表 → 0.0
 # [TESTS] tests/signal_ashare/sector/test_sector_rotation_state.py
 # [TTL] permanent
-# [ALGO_FLOW]
-# I1: up_ratio(上涨板块数/全板块数) + hhi_top5(头部5板块成交额份额平方和)
-# I2: lead_streak(当前领涨板块连续领涨天数) + disp_signal(领涨板块放量滞涨 0/1)
-# I3: fast_rotation(轮转速度 >P90 标志, rotation_speed=0.5×Σ|今日占比−昨日占比|)
-# A1: 规则映射优先级: DISTRIBUTION_RISK(disp=1 且 hhi>0.25) → CONSENSUS_CLIMAX(hhi>0.30 且 up>0.70,
-#     快轮动放宽 0.35) → HEALTHY_MAINLINE(streak≥3 且 hhi<0.20) → DISAGREEMENT_PULLBACK(up<0.40
-#     且 hhi>0.20) → NEUTRAL_MIXED(默认)
-# A2: watch_score 映射(-0.10/-0.08/+0.03/+0.01/0.00 注入板块强度综合层统一加减)
-# O1: RotationState 5 选 1 + watch_score
-# [/ALGO_FLOW]
 """
 板块轮动状态 5 分类（22 号 spec §3.1⑨，每日盘后市场级快照）。
 

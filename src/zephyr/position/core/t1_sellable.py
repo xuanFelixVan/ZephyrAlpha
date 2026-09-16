@@ -13,12 +13,6 @@
 # [ERROR_CONTRACT] ValueError（权重为负/非有限值）
 # [TESTS] tests/position/test_t1_sellable.py
 # [TTL] permanent
-# [ALGO_FLOW]
-# I1: last_session_weights（T-1 收盘持仓权重 {symbol: weight}）
-# I2: today_sold_weights（今日已卖出权重 {symbol: weight}，可选）
-# A1: t1_sellable_weights（可卖_i = max(0, 昨仓_i − 今卖_i)；今买不在输入域——T+1 冻结）
-# O1: {symbol: 可卖权重}（供 FirmRiskAggregator §2.3 净额截断 current_holdings 口径）
-# [/ALGO_FLOW]
 """
 T+1 可卖持仓口径工具（31号 遗留 #30 / 32号 §6 T+1 口径行）。
 

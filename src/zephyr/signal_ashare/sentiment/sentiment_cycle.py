@@ -14,21 +14,6 @@
 # [TESTS] tests/signal_ashare/sentiment/test_sentiment_cycle.py
 # [TTL] permanent
 #
-# [ALGO_FLOW]
-# 层: 输入
-# - id: I1  SentimentLocatorInput 多维可观测指标（涨跌停/连板梯队/炸板/溢价/换手/量能/龙虎榜/北向/昨日先验）
-# 层: 算法
-# - id: A1  locate_sentiment_phase：多维评分→贝叶斯+转移平滑→兜底(<60%回退收缩态)→可交易性+仓位缩放
-# - id: A2  compute_sentiment_temperature：七维温度计→[0,100]
-# - id: A3  detect_phase_transition：底反转/顶背离 先行+确认双判定
-# - id: A4  PHASE_DISCIPLINE/apply_phase_discipline：五阶段买卖纪律硬约束
-# - id: A5  SENTIMENT_TO_REGIME_MAP/apply_sentiment_soft_influence：情绪软调 12 态概率（弱静态 Phase 1）
-# - id: A6  combine_sentiment_regime：alpha 缩放 × regime Shrinkage 乘法叠加
-# - id: A7  STRATEGY_DEPLOYMENT_MATRIX：3 策略×5 阶段部署矩阵
-# - id: A8  Hawkes 系 + analyze_sentiment_driven_correlation：η 分支比 + block-bootstrap 显著性
-# 层: 输出
-# - id: O1  5 维灰度概率/温度/转换信号/纪律/联合指令/部署策略/验证报告
-# [/ALGO_FLOW]
 """
 情绪周期×交易决策标准函数集（28 号 memo §3.2-§3.10，设计态准入落码）。
 

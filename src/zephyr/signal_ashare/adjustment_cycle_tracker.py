@@ -14,16 +14,6 @@
 # [TESTS] tests/signal_ashare/test_adjustment_cycle_tracker.py
 # [A_module] module_id=MOD-SIG-040 | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
-# [ALGO_FLOW]
-# I1: 指数日 K 收盘序列 closes（默认 000300，loader 走 market_index_kline 真源表）
-# I2: 可选新高占比序列 nh_ratios（板块扩散指标，调用方供给；None 时广度维降级）
-# A1: 周期峰检测: trailing 250 日窗口最高收盘为周期峰，elapsed = 距峰交易日数
-# A2: 调整判定: 当前回撤 ≥5% → 调整中; 创新高且窗内最大回撤 ≥5% → COMPLETE; 其余 → NO_ADJUSTMENT
-# A3: 进度引擎复用 sector_adjustment.compute_adjustment_progress（0.4 时间+0.3 回撤+0.3 扩散）;
-#     扩散数据缺失时剔除广度维、权重按 0.4:0.3 重归一
-# A4: 相位分带: progress <0.4 EARLY / [0.4,0.8) MID / ≥0.8 LATE; action 透传 sector_adjustment
-# O1: AdjustmentCycleSnapshot（相位 + 进度 + 动作 + 置信度，供下游风控节流消费）
-# [/ALGO_FLOW]
 """
 调整周期追踪器（市场级，22 号 spec §3.1③ 同源，MOD-SIG-040）。
 

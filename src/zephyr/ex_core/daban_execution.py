@@ -14,15 +14,6 @@
 # [ERROR_CONTRACT] 空订单簿→depth=0/concentration=0 兜底（SaR 放大→保守方向，Fail-Closed）; price<=0→nav 容量=0（拒绝下仓，Fail-Closed）
 # [TESTS] tests/ex_core/test_daban_execution.py
 # [TTL] permanent
-# [ALGO_FLOW]
-# I1: queue_position/seal_volume/order_volume/distance_to_mid（填充概率）; order_book(bid_levels)（SaR）
-# I2: near_limit/seal_strength/volume_surge/time_to_close_min（时点决策）
-# I3: nav/seal_volume/float_shares/order_book/price（动态容量）
-# F1: DabanExecutionAlgorithm——指数填充概率+SaR 前置检查→FIRST/REFLUSH/RESERVE 三段执行计划
-# F2: DabanTimingDecision——封板概率估算→CHASE(MARKET)/AMBUSH(LIMIT)/WAIT
-# F3: DynamicCapacityCalculator——sar/seal/float/nav 四约束取 min→max_qty+binding_constraint
-# O1: 执行计划 list[dict] / 时点决策 dict / 容量测算 dict
-# [/ALGO_FLOW]
 """
 打板执行族（24_daban_strategy_detail §3.13 缺失#4 + §3.14 缺失#11/#12 施工，Phase 3）。
 

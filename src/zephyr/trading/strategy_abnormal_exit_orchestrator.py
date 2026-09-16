@@ -15,16 +15,6 @@
 # [A_module] module_id=MOD-TRADING-008 | layer=module | stability=evolving | safety=H | ai_autonomy=ai_modifiable
 # [TTL] permanent
 
-# [ALGO_FLOW]
-# I1: AbnormalExitRequest(strategy_id/trigger/reason/open_orders/positions/idempotency_key)
-# I2: 注入端口(freezer/canceller/closer/verifier/recorder/alert/audit) + clock
-# A1: 校验+幂等命中检查
-# A2: 冻结新信号(失败→Fail-Closed: 继续清理但终态EXIT_FAILED+升级告警)
-# A3: 按优先级降序撤单→按优先级降序平仓(单腿异常隔离记录)
-# A4: 仓位清理核对(异常按不可宣称退出处理)
-# A5: 全净→StrategyLifecycleEvent(EXITED)置态; 否则EXIT_FAILED+升级告警
-# O1: AbnormalExitReport(frozen) + 幂等缓存
-# [/ALGO_FLOW]
 #
 # 边:
 # I1 --> A1

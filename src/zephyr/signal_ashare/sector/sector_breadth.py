@@ -13,15 +13,6 @@
 # [ERROR_CONTRACT] 成分股数为 0 → ratio=0.0; 成交额权重和为 0 → 退化为等权
 # [TESTS] tests/signal_ashare/sector/test_sector_breadth.py
 # [TTL] permanent
-# [ALGO_FLOW]
-# I1: limit_up_count(板块涨停数) + constituent_count(成分股数, sector_constituent SCD-2 当日有效清单)
-# I2: constituents(成分股代码) + nature_scores(个股资金性质因子值 dict) + turnovers(个股成交额 dict)
-# A1: sector_limit_up_ratio = 涨停数/成分股数(归一化宽度, 替换 evaluate_strength 涨停数维度, 40% 权重不变)
-# A2: classify_limit_up_breadth(>10% 极强 / >5% 强 / <2% 弱 / 其余中) + breadth_score(0-40 映射)
-# A3: aggregate_capital_nature_to_sector(成交额加权聚合个股资金性质→板块级得分+4 级标签)
-# A4: capital_nature_multiplier(主力流入×1.1 / 中性×1.0 / 对倒主导×0.8 / 主力流出×0.6, 输出层乘法修正)
-# O1: (ratio, breadth_label, breadth_score) + (capital_score, capital_label, multiplier)
-# [/ALGO_FLOW]
 """
 板块宽度归一化与资金性质板块级聚合（22 号 spec §3.1① v1.8.0 补全算法）。
 

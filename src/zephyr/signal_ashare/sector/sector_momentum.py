@@ -13,13 +13,6 @@
 # [ERROR_CONTRACT] 收盘价序列长度 < max(windows)+1 的板块跳过不出现在结果中
 # [TESTS] tests/signal_ashare/sector/test_sector_momentum.py
 # [TTL] permanent
-# [ALGO_FLOW]
-# I1: closes_by_sector(板块→日K收盘价序列 dict, market_kline_sector_880 盘后批量)
-# A1: ret_N(i,t) = close(t)/close(t-N) − 1（N 日累计涨跌幅）
-# A2: qN(i,t) = percentile_rank(ret_N(i,t), 全板块截面)（0~1 归一化消除量纲）
-# A3: strength_momentum = 0.4×q20 + 0.3×q5 + 0.3×q3（多时间框架动量加权）
-# O1: dict[板块代码, strength_momentum ∈ [0,1]]（板块强度综合层第三维输入）
-# [/ALGO_FLOW]
 """
 短周期动量 q3/q5/q20 多时间框架加权（22 号 spec §3.1⑧，BM-SEL-08 增强）。
 

@@ -13,15 +13,6 @@
 # [ERROR_CONTRACT] nh_ratio_peak ≤ nh_ratio_trough → 扩散恢复维退化取 0
 # [TESTS] tests/signal_ashare/sector/test_sector_adjustment.py
 # [TTL] permanent
-# [ALGO_FLOW]
-# I1: elapsed_days(调整已持续交易日) + drawdown_pct(板块指数当前回撤深度)
-# I2: nh_ratio_current/trough/peak(扩散指标=板块新高占比 当前/谷底/调整前峰值)
-# A1: time_prog = min(elapsed/expected_window, 1)（持续时间维）
-# A2: dd_prog = min(drawdown/target_drawdown, 1)（回撤深度维）
-# A3: breadth_recovery = (current-trough)/(peak-trough) clip[0,1]（扩散指标恢复维, 首轮主指标）
-# A4: progress = 0.4×time + 0.3×dd + 0.3×breadth（权重初拟待 G05/G08 校准）
-# O1: progress ∈ [0,1] + action(≥80% ACTIVATE_PARTIAL 分批 / <40% BLOCK_DIP 拦截低吸 / 其余 OBSERVE)
-# [/ALGO_FLOW]
 """
 调整周期进度追踪（22 号 spec §3.1③，MOD-SIG-040 planned→落码，BM-SEL-09）。
 

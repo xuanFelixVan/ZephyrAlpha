@@ -13,15 +13,6 @@
 # [ERROR_CONTRACT] 未知水温档位 → ValueError
 # [TESTS] tests/signal_ashare/sector/test_sector_gate.py
 # [TTL] permanent
-# [ALGO_FLOW]
-# I1: water_temp(水温 5 档, regime/情绪周期上游判定, 本模块只响应不判定)
-# I2: sector_code + score(个股强度 0-1, G05 多因子综合分) + top_sectors(当日 Top 热门板块集)
-# I3: rotation_state(§3.1⑨ 5 状态, RISK_ON 档 CONSENSUS_CLIMAX 双重抑制用)
-# A1: water_temp_response(5 档 → signal_weight/gate_thresholds/rrg_filter 三类输出)
-# A2: admission_gate(核心热门直通 CORE_HOT / 次优≥level2 SECONDARY / 超强≥level3 WILDCARD / 其余 BLOCKED)
-# A3: apply_rrg_filter(ALL / IMPROVING_ONLY / LEADING_ONLY / NONE 象限过滤)
-# O1: WaterTempResponse + (gate_pass, gate_level) + rrg 放行布尔
-# [/ALGO_FLOW]
 """
 三级放行门槛 + 水温→板块信号响应映射（22 号 spec §3.1⑩⑪）。
 

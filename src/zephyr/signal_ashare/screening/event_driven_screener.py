@@ -14,13 +14,6 @@
 # [TESTS] tests/signal_ashare/screening/test_event_driven_screener.py
 # [A_module] module_id=MOD-SIG-049 | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
-# [ALGO_FLOW]
-# I1: EventImpactRecord（事件有无/类别/方向/强度/置信度/年龄/事件日反应/传导链风险）
-# A1: 置信度门控（confidence<0.7 视为无事件）+ 利空剔除（direction<0）+ 极端反应剔除（|reaction|>3%，PEAD Inversion）
-# A2: 传导链风险剔除（conduction_risk>0.7，消费 BM-SEL-11 因果推演输出）
-# A3: 事件衰减权重 weight = 1 + direction×strength×2^(−age/半衰期)，按事件类半衰期表；容量截断 ~50→~30
-# O1: EventScreenResult(kept/excluded{symbol:reason}/weights/skipped/degraded)
-# [/ALGO_FLOW]
 """
 选股漏斗第四层——事件驱动分布筛选（BM-SEL-19，~50→~30）。
 
