@@ -7,11 +7,11 @@ doc_type: register
 ttl: permanent
 title: 资源画像注册表（resource profile registry）
 status: active
-generated_at: '2026-09-16T02:29:28Z'
+generated_at: '2026-09-16T05:09:25Z'
 generated_by: scripts/governance/generators/generate_resource_profile_registry.py
 maintenance: auto
 counting_rule: entities 数组条目数（生成器三源全量再生；条目禁手工增删）
-total_entities: 58
+total_entities: 60
 field_count: 18
 mem_ceiling_gb: 10.0
 mem_ceiling_source: src/zephyr/trading/process_reaper.py _DANGEROUS_MEM_GB（引用不收编）
@@ -609,10 +609,10 @@ entities:
   schedule_truth_source: docs/_working/resource_schedule/resource_schedule_panorama_plan_v1.md
   trading_sensitive: true
   measured:
-    peak_mem_gb: null
-    p90_duration_min: null
-    samples: 0
-    last_at: null
+    peak_mem_gb: 2.2116
+    p90_duration_min: 29
+    samples: 4
+    last_at: '2026-09-16T05:06:46+00:00'
   samples_uri: .runtime/logs/resource_samples/manual_factory_grid_executor.jsonl
   status: planned
   notes_zh: 工厂网格执行器（单批最大算力实体，2万配方）
@@ -651,10 +651,10 @@ entities:
   schedule_truth_source: docs/_working/resource_schedule/resource_schedule_panorama_plan_v1.md
   trading_sensitive: true
   measured:
-    peak_mem_gb: null
-    p90_duration_min: null
-    samples: 0
-    last_at: null
+    peak_mem_gb: 0.1616
+    p90_duration_min: 3
+    samples: 6
+    last_at: '2026-09-16T05:06:46+00:00'
   samples_uri: .runtime/logs/resource_samples/manual_kronos_adapter.jsonl
   status: planned
   notes_zh: Kronos 适配器（CUDA auto，GPU 与 Ollama/桌面抢显存）
@@ -1105,13 +1105,53 @@ entities:
   schedule_truth_source: scripts/register_process_reaper_task.ps1
   trading_sensitive: false
   measured:
+    peak_mem_gb: 0.0276
+    p90_duration_min: 7
+    samples: 2
+    last_at: '2026-09-16T05:06:46+00:00'
+  samples_uri: .runtime/logs/resource_samples/sch_process_reaper.jsonl
+  status: active
+  notes_zh: ProcessReaper
+- task_id: sch_resource_sampler_scan
+  module_id: null
+  map_node_id: null
+  resource_class: light
+  pool: light
+  peak_mem_gb: 0.5
+  est_duration_min: 1
+  exclusive_group: []
+  window_type: event
+  window_expr: null
+  schedule_truth_source: scripts/register_resource_sampler_scan_task.ps1
+  trading_sensitive: false
+  measured:
     peak_mem_gb: null
     p90_duration_min: null
     samples: 0
     last_at: null
-  samples_uri: .runtime/logs/resource_samples/sch_process_reaper.jsonl
+  samples_uri: .runtime/logs/resource_samples/sch_resource_sampler_scan.jsonl
   status: active
-  notes_zh: ProcessReaper
+  notes_zh: AtLogOn+PT10M one-shot 采样扫描（2026-09-16 生产接线：register_resource_sampler_scan_task.ps1）
+- task_id: sch_resource_sampler_writeback
+  module_id: null
+  map_node_id: null
+  resource_class: light
+  pool: light
+  peak_mem_gb: 0.5
+  est_duration_min: 15
+  exclusive_group: []
+  window_type: cron
+  window_expr: 40 5 * * *
+  schedule_truth_source: scripts/register_resource_sampler_writeback_task.ps1
+  trading_sensitive: false
+  measured:
+    peak_mem_gb: null
+    p90_duration_min: null
+    samples: 0
+    last_at: null
+  samples_uri: .runtime/logs/resource_samples/sch_resource_sampler_writeback.jsonl
+  status: active
+  notes_zh: 日 05:40 measured 回写（git 跟踪文件日更一次，derived-sync 例行吸收）
 - task_id: sch_rss_hub
   module_id: null
   map_node_id: null

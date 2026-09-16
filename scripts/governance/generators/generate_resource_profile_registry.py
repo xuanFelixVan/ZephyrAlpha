@@ -281,6 +281,10 @@ PS1_TASK_OVERRIDES: dict[str, dict] = {
     "TraeCacheCleanup": {"class": "light", "pool": "light", "mem": 0.3, "dmin": 5, "status": "active", "wt": "event"},
     "TradingWatchdog": {"class": "light", "pool": "light", "mem": 0.5, "dmin": 5, "status": "retired", "wt": "event",
                         "note": "注册为 DISABLED（裁定 INT-03：Owner 手动启用才生效）"},
+    "ResourceSamplerScan": {"class": "light", "pool": "light", "mem": 0.5, "dmin": 1, "status": "active", "wt": "event",
+                            "note": "AtLogOn+PT10M one-shot 采样扫描（2026-09-16 生产接线：register_resource_sampler_scan_task.ps1）"},
+    "ResourceSamplerWriteback": {"class": "light", "pool": "light", "mem": 0.5, "dmin": 1, "status": "active",
+                                 "note": "日 05:40 measured 回写（git 跟踪文件日更一次，derived-sync 例行吸收）"},
 }
 
 

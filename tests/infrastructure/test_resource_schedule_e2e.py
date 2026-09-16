@@ -91,21 +91,28 @@ def test_e2e_full_chain(sandbox, tmp_path):
     sandbox_samples = tmp_path / "samples"
 
     # ── ① 启动：轻量子进程模拟重活（marker cmdline；psutil 真进程表可见）──
+    # 寿命 45s：scan_once 逐进程读 cmdline，负载下扫描耗时可能超 6s——探针必须
+    # 活到扫描完成之后（竞态治本 2026-09-16：三轮复现过/挂/挂，病根=探针先退）
     proc = subprocess.Popen(
-        [sys.executable, "-c", f"import time; print('{MARKER}', flush=True); time.sleep(6)"],
+        [sys.executable, "-c", f"import time; print('{MARKER}', flush=True); time.sleep(45)"],
         stdout=subprocess.PIPE, text=True,
     )
     assert proc.stdout is not None and proc.stdout.readline().strip() == MARKER  # 进程已起、cmdline 已带 marker
     steps["01_spawn"] = {"ok": True, "pid": proc.pid, "cmdline_marker": MARKER}
 
     try:
-        # ── ② 采样器捕获（真实 psutil 扫描；观测正则=marker）──
+        # ── ② 采样器捕获（真实 psutil 扫描；观测正则=marker；带捕获重试）──
         sampler = ResourceSampler(
             registry_path=sandbox,
             samples_dir=sandbox_samples,
             patterns={PROBE_TASK: MARKER.replace(":", r"\:")},
         )
-        summary = sampler.scan_once()
+        summary = None
+        for _attempt in range(4):  # 进程表窗口竞态兜底：未捕获则短暂重试
+            summary = sampler.scan_once()
+            if summary["samples_written"].get(PROBE_TASK, 0) >= 1:
+                break
+            time.sleep(1.5)
         assert summary["samples_written"].get(PROBE_TASK, 0) >= 1, summary
         steps["02_sampler_capture"] = {"ok": True, "samples_written": summary["samples_written"],
                                        "scanned_processes": summary["scanned_processes"]}
@@ -119,6 +126,8 @@ def test_e2e_full_chain(sandbox, tmp_path):
         assert probe["measured"]["peak_mem_gb"] is not None
         steps["03_writeback"] = {"ok": True, "measured": probe["measured"]}
     finally:
+        if proc.poll() is None:
+            proc.kill()  # 探针寿命 45s，主动收割不等自然退出
         if proc.stdout is not None:
             proc.stdout.close()  # 管道句柄显式关闭，防 GC 随机点 ResourceWarning 被 filterwarnings=error 升级炸测试
         proc.wait(timeout=15)

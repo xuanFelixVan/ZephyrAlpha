@@ -459,11 +459,23 @@ class ResourceSampler:
         if updated:
             data["entities"] = entities
             new_text = yaml.safe_dump(data, allow_unicode=True, sort_keys=False, width=120)
+            old_text = p.read_text(encoding="utf-8") if p.exists() else ""
+            # 文件头注释块保全：YAML 重序列化会丢头部注释——writeback 只拥有 measured
+            # 四键，无权重写文件身份声明（GENERATED 头是生成器红线，2026-09-16 实证
+            # 剥离后治本：抓原文件首部连续 # 行，回写时原样前置）
+            header_lines: list[str] = []
+            for _ln in old_text.splitlines():
+                if _ln.startswith("#"):
+                    header_lines.append(_ln)
+                else:
+                    break
+            if header_lines:
+                new_text = "\n".join(header_lines) + "\n" + new_text
             expected = None
-            if p.exists():
+            if old_text:
                 from zephyr.shared.io.file_utils import content_sha256
 
-                expected = content_sha256(p.read_text(encoding="utf-8"))
+                expected = content_sha256(old_text)
             safe_write_text(p, new_text, expected_base_sha256=expected)
         return {"updated": updated, "registry": str(p)}
 

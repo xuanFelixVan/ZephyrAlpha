@@ -17230,6 +17230,18 @@ creation_tokens:
   token: resource-schedule-panorama-resource-schedule-panorama-plan-v1-20260915
   created_by: st-schedmap-20260916
   capability: resource_schedule_panorama
+- file: scripts/register_resource_sampler_scan_task.ps1
+  token: resource-schedule-panorama-register-resource-sampler-scan-task-20260916
+  created_by: st-resched-fix-20260916
+  capability: resource_schedule_panorama
+- file: scripts/register_resource_sampler_writeback_task.ps1
+  token: resource-schedule-panorama-register-resource-sampler-writeback-task-20260916
+  created_by: st-resched-fix-20260916
+  capability: resource_schedule_panorama
+- file: "scripts/data/audit_technical_indicator_coverage.py"
+  token: "ti-coverage-audit-20260916"
+  created_by: "st-tickdrain-20260916"
+  capability: "technical_indicator"
 - file: src/zephyr/infrastructure/system_telemetry/alerts/ops_alert_feed.py
   token: auto-scaffold-ops_alert_feed-20260916
   created_by: scaffold.py
@@ -17322,4 +17334,8 @@ creation_tokens:
   token: greatwall-integration-2026-09-16-eight-greatwall-e2e-integration-20260916
   created_by: st-overseer-20260916
   capability: greatwall_integration
+- file: "docs/_working/wyf3/wyf3_recalibration_report.md"
+  token: "auto-wyf3-recalibration-report-20260916"
+  created_by: "st-wyf3-20260916"
+  capability: "wyckoff_threshold_recalibration"
 di_seam_exemptions: []

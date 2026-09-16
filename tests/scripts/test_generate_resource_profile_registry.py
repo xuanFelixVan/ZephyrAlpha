@@ -31,14 +31,17 @@ NOW = datetime(2026, 9, 16, 4, 0, tzinfo=timezone.utc)  # 周三中午北京时�
 def test_parse_ps1_entities_covers_all_task_names():
     ents, warns = gen.parse_ps1_entities()
     tids = {e["task_id"] for e in ents}
-    # 全部 17 个 ZephyrAlpha_ 任务任务名（来自 11 个 ps1 真源）
+    # 全部 19 个 ZephyrAlpha_ 任务任务名（来自 13 个 ps1 真源；2026-09-16 采样器
+    # scan/writeback 两任务接线 +1 源 +2 实体）
     assert "sch_factory_lane_c" in tids
     assert "sch_c4_exam" in tids
     assert "sch_ollama_serve" in tids
     assert "sch_intraday_fund_flow" in tids
     assert "sch_data_scheduler" in tids
     assert "sch_trading_watchdog" in tids
-    assert len(ents) == 17
+    assert "sch_resource_sampler_scan" in tids
+    assert "sch_resource_sampler_writeback" in tids
+    assert len(ents) == 19
     # 杂音捕获杜绝：无变量名误捕实体
     assert not any("task_name" in t or t.endswith("_name") or t == "sch_svc" for t in tids)
 

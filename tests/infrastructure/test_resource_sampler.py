@@ -143,6 +143,23 @@ def test_writeback_skips_entities_without_samples(reg, tmp_path):
     assert out["updated"] == {}
 
 
+def test_writeback_preserves_file_header_comments(reg, tmp_path):
+    """回归（2026-09-16 生产实证）：writeback 重序列化曾把文件头 GENERATED 声明剥掉
+    ——头部注释块必须原样保全（writeback 只拥有 measured 四键，无权重写文件身份）。"""
+    reg.write_text(
+        "# [GENERATED] line one\n# line two\n" + reg.read_text(encoding="utf-8"),
+        encoding="utf-8",
+    )
+    s = _make_sampler(reg, tmp_path, [])
+    s._append_sample(Sample(sample_time_seconds=1.0, task_id="sch_heavy_a", pid=1,
+                            process_resident_bytes=2 * GB, process_cpu_ratio=0.5,
+                            process_elapsed_seconds=60.0))
+    out = s.writeback(task_ids=["sch_heavy_a"])
+    assert "sch_heavy_a" in out["updated"]
+    text = reg.read_text(encoding="utf-8")
+    assert text.startswith("# [GENERATED] line one\n# line two\n"), text[:80]
+
+
 def test_percentile_linear_interpolation():
     assert _percentile([], 90) == 0.0
     assert _percentile([5.0], 90) == 5.0

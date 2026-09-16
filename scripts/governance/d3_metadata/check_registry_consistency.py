@@ -302,6 +302,13 @@ ENTRY_SPECS: dict[str, tuple[str, str, str]] = {
     "REG-PIPE-001": ("yaml_list", "routes", "routes 数组条目数"),
     "REG-CAP-001": ("yaml_list", "decisions", "decisions 数组条目数"),
     "REG-EMBED-001": ("yaml_list", "models", "models 数组条目数"),
+    # 2026-09-16 补口径：昨夜五张新表登记 ROOR 时未挂 ENTRY_SPECS，CR-007 报
+    # UNSPECIFIED 阻断（"新表无口径静默漂移"强制闭环的正向触发）——结构核验后统一补齐
+    "REG-RESCHED-001": ("yaml_list", "entities", "entities 数组条目数（生成器机械产出）"),
+    "REG-VALM-001": ("yaml_list", "methods", "methods 数组条目数"),
+    "REG-DAL-001": ("yaml_list", "algorithms", "algorithms 数组条目数"),
+    "REG-RISK-TIER-001": ("yaml_list", "domain_tiers", "domain_tiers 数组条目数"),
+    "REG-BTB-001": ("yaml_list", "objects", "objects 数组条目数"),
     "REG-DRIFT-001": (
         "yaml_sum",
         "detectors.existing+detectors.new",
