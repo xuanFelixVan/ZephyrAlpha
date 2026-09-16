@@ -69,7 +69,7 @@ schedules:
   # L4 盘后日K线层：16:30 周一至周五
   daily_crypto:
     cron: "30 8 * * *"
-    executor: light
+    executor: default   # 2026-09-16 治本：原 light 在 scheduler.py 执行器字典中不存在（default/heavy/realtime/intraday_minute/intraday_sector），APScheduler 注册不校验、每日 08:30 触发时 Executor lookup failed 并移除 job——该任务自上线从未自动跑成过（水位全靠手动）。改挂通用池（08:30 空闲时段无争抢）。
     description: "币圈日线层——7×24 市场 UTC 日界，北京 08:30=UTC 00:30 拉上一完整 UTC 日（每日含周末）"
   daily_kline:
     cron: "30 16 * * 0-4"
