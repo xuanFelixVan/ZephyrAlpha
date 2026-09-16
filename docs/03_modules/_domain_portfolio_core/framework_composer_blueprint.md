@@ -28,8 +28,8 @@ date: 2026-09-10
 
 | 图 | 位置 | 状态 | 链接 |
 |----|------|------|------|
-| 依赖图 (depgraph) | `blueprint_id=MOD-FWCOMP-001` 的 2 个 file 节点 | production | `extract_depgraph.py --modules MOD-FWCOMP-001` |
-| 数据流图 (dataflow) | （无节点） | N/A | `apply_dataflowgraph.py --list-datasets` |
+| 依赖图 (depgraph) | `blueprint_id=MOD-FWCOMP-001` 的 4 个 file 节点 | production | `extract_depgraph.py --modules MOD-FWCOMP-001` |
+| 数据流图 (dataflow) | 0 个 Dataset / 1 个 Job | active | `apply_dataflowgraph.py --list-datasets` |
 | 决策架构图 (decision) | 0 个决策节点 / 1 个决策层 | N/A | `generate_decision_diagram.py` |
 | 蓝图 (blueprint) | 本文件 | active | — |
 
@@ -40,7 +40,7 @@ date: 2026-09-10
 | module_id | MOD-FWCOMP-001 | MOD-FWCOMP-001 | ✅ |
 | domain_id | N/A | N/A | ✅ |
 | build_status | stable | stable | ✅ |
-| file_count | 2 文件 | N/A | — |
+| file_count | 4 文件 | N/A | — |
 
 > 冲突时以 depgraph 为准（ARCH-056 + ARCH-MM-001 声明 vs 验证框架）。
 
@@ -100,6 +100,8 @@ system_charter.md §3 约束二「统一框架派：1 框架 × N 子策略 × r
 ## §7 测试
 
 `tests/pf_core/test_framework_composer.py`（30 用例）：配置校验 / 合成数学性质 / 联合索引对齐 / 再归一化披露 / 严格模式 / 净值对账 / 端到端（打桩面板+真引擎+tmp_path 产物隔离）/ 三期动态（真源配置 overrides 解析、两 regime α 切换、Σw=1 恒成立、回退=静态逐位一致、fail-closed 拒绝、组级 rescale 披露、动态端到端、静态向后兼容锚）。
+`tests/pf_core/test_framework_composer_dead_members.py`：T1A 死成员四分类判死、载荷路由与契约披露、activation 闸真实生效、合成与独立复算同判据。
+`tests/pf_core/test_framework_composer_shrinkage.py`：§RSC-2 节流口径（方向与回撤数学、日序非法入口即拒、None/空=满仓逐位零漂移、节流前后 Σw=1 不变）。
 
 ## §8 已知边界（如实披露）
 
@@ -108,3 +110,39 @@ system_charter.md §3 约束二「统一框架派：1 框架 × N 子策略 × r
 - 约束事件（涨跌停拒单/T+1）下组合净值与手工加权存在路径二阶差异——对账工具如实报告超容差日期，不粉饰。
 - （三期实测 2026-09-10，**#275 定案**）组合净值 vs 成员净值混合（Σα_i·r_i）在活跃窗口存在恒定比率级偏差（同引擎 solo 成员路径复现，静态同样存在；归因=整手取整（高股价 100 股粒度）/成本/约束事件在组合与成员两组合间的非共享二阶效应）——面板级 α_i(t) 数学已单测逐位验证。**定案口径①（Owner 授权最专业方案自裁）**：面板级对账 `verify_weight_panel_identity` 逐位硬验收（1e-9，run_framework_backtest 每次运行自动执行并落产物 metrics）；NAV 层残差归因披露不设容差；方案② look-through 留待多账户/模拟赛马阶段自然成立（单一账户硬做不消除取整残差）。
 - （三期）regime 日序为显式注入（无逐日持久化真源表）；内置检测器 walk-forward 自动回放另批立项。
+## §9 死成员与载荷契约路由（T1A-1/2/3）
+
+病根（矿脉 decision_kernel_mining §4 实测）：16 员方案里 **44.1% 权重质量**由"面板存在但恒零"的
+死成员与 tick 跳过员构成，经显式再归一**静默**摊给幸存成员——名义上是 16 员组合，实际是 9 员组合
+加了别人预算。
+
+三条治本（口径唯一真源在 `_partition_members` / `MEMBER_PAYLOAD_ROUTES`，静/动/对账三处共用）：
+
+1. **判死四分类**（旧版只查 `DataFrame.empty`，查不出"非空但全零"这一整类）：
+   面板缺失/空 → `panel missing/empty`；面板非空但全格为零 → `all-zero weight rows`；
+   成员腿取数面板为空 → `panel/data empty`；α=0 → `explicit zero weight (α=0)`。
+   三类一律进 skipped 并落 `metrics.dead_weight_disclosed`（含各员 α/占方案份额/原因），
+   禁只靠行归一 notes 暗示。
+2. **载荷契约路由**：`StrategyRunner` 只会喂扁平标量 `{sym: float}`，而 eventdriven 要
+   `{sym: {"event": …}}`、multifactor 要 `{sym: {factor_id: val}}`——契约不匹配即恒返回 `{}`
+   的"假死成员"。现按成员路由接载荷（eventdriven 复用 `event_sentiment_adapter
+   .build_event_weight_panel`；multifactor 用惰性绑父类的 `MultifactorPayloadRunner`），
+   只覆写契约落点一处，面板装配全复用父类。契约与降级披露是配置的纯函数，
+   由 `_member_signal_contracts` 产出，落 `metrics.member_signal_contracts`。
+3. **权重合法域含 0**：`[0,1]`，`weight: 0` = 显式剔除成员（区别于"缺数据被动为零"）。
+   daban-sleeve 的四引擎负载批产源已落地（`ex_core.daban_load_producer` →
+   `c1_market.daban_engine_load`，实盘消费方=`daban_sleeve_strategy` 的 PIT 真读），
+   但**本 compose 面板路尚未接入该持久源**——本班不造数据，如实按未接线披露。
+
+## §RSC-2 Shrinkage 引擎边界节流口径
+
+承 裁定#270：Shrinkage 是**风险预算的减法**，不是权重的再分配，故口径定为——
+
+- 位置：`run_framework_backtest` 经 `ShrinkageBacktestEngine` 在**归一化之后**乘当日
+  Shrinkage；compose 面板保持 Σ=1 纪律不变（面板语义=子策略相对权重，与绝对下注规模解耦）。
+- 剩余质量一律落现金，**禁再归一化回填**（回填=把风险预算重新花掉，与 Shrinkage 语义相反）。
+- `shrinkage_by_date=None`/空 = 满仓，逐位零漂移（向后兼容锚）。
+- 日序非法（非单调/越界/非数值）在**入口即拒**，先于取数与引擎，不做中途降级。
+- 节流方向与回撤数学由 `test_direction_and_drawdown_math` 锁：Shrinkage 作用于**日收益**，
+  不是净值水位——乘水位只会整体缩放，永不抬升或压低回撤，用它验方向会得到反向结论。
+
