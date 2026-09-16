@@ -276,3 +276,27 @@ def test_row_to_event_from_tsv_view():
     assert e.consec_limit == 3
     assert e.seal_amount_proxy == pytest.approx(2.5e8)
     assert e.pre_close == pytest.approx(200.0)
+
+
+@pytest.mark.parametrize("sentinel", ["1970-01-01", "0000-00-00", "\\N", "", "bogus"])
+def test_pit_source_empty_table_sentinel_is_no_partition(monkeypatch, sentinel):
+    """空表 max(trade_date) 的 CH 哨兵回值不得被读成"远古分区"——必须 None（无分区）。
+
+    病根：ClickHouse 对空 Date 列 max() 回 1970-01-01（与 0000-00-00 随版本而异），
+    只挡 0000-00-00 时 1970 会被当作合法事件日去查分区，把"今日无数据"伪装成
+    "回退到 1970 分区"。下限哨兵真源=P.MIN_EVENT_DATE，消费侧共用同一真源。
+    """
+    from zephyr.data import ch_reader
+
+    monkeypatch.setattr(ch_reader, "query", lambda sql, **kw: sentinel)
+    src = P.ClickHouseDabanEngineLoadSource()
+    assert src.resolve_event_date(dt.date(2026, 9, 16)) is None
+    assert src.fetch_load(dt.date(2026, 9, 16)) == []
+
+
+def test_pit_source_real_event_date_passes(monkeypatch):
+    from zephyr.data import ch_reader
+
+    monkeypatch.setattr(ch_reader, "query", lambda sql, **kw: "2026-09-15")
+    src = P.ClickHouseDabanEngineLoadSource()
+    assert src.resolve_event_date(dt.date(2026, 9, 16)) == dt.date(2026, 9, 15)

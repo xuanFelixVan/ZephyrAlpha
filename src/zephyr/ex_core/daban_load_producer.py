@@ -161,6 +161,11 @@ _EVENT_TABLE: Final = "c1_market.daban_board_event"
 LOAD_VERSION: Final = "v1"
 _DATA_SOURCE: Final = "daban_board_event_derived"
 
+#: 事件日下限哨兵（沪深交易所开市日）。CH 对空 Date 列取 max() 回 1970-01-01
+#: （或 0000-00-00，取决于版本），早于此一律判"无分区"，不得被误读成陈旧回退分区。
+#: 消费侧（daban_sleeve_strategy）共用本常量，禁各自另写日期字面量。
+MIN_EVENT_DATE: Final = datetime.date(1990, 12, 19)
+
 #: INSERT 列序——与 DDL INSERT_COLUMNS 严格同序 21 列（不含 MATERIALIZED exchange/
 #: symbol_canonical 与 DEFAULT ingest_ts；ch_writer.write_result 自动过滤 MATERIALIZED）。
 LOAD_INSERT_COLUMNS: Final = (
@@ -611,9 +616,13 @@ class ClickHouseDabanEngineLoadSource:
         if not token or token in ("0000-00-00", "\\N"):
             return None
         try:
-            return datetime.date.fromisoformat(token[:10])
+            resolved = datetime.date.fromisoformat(token[:10])
         except ValueError:
             return None
+        # CH 对空 Date 列 max() 回 1970-01-01：判"无分区"而非"远古分区"
+        if resolved < MIN_EVENT_DATE:
+            return None
+        return resolved
 
     def fetch_load(self, as_of_date: datetime.date) -> list[dict[str, Any]]:
         event_date = self.resolve_event_date(as_of_date)
