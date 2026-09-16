@@ -2,10 +2,14 @@
 # [MODULE] zephyr.backtest.core.portfolio
 # [DOMAIN] D_BACKTEST
 # [DEPENDENCIES]
-# [CONSUMERS] zephyr.backtest.implementations.vectorized_engine
+# [CONSUMERS] zephyr.backtest.implementations.vectorized_engine;
+#   zephyr.pf_core.strategy_engine.framework_composer（cash_history/reconcile_cash_ledger——
+#   整装回测现金腿 Σ 闭合对账 H4-A/H4-B）
 # [STARTUP] imported
 # [MATURITY] production
-# [INVARIANTS] A股T+1锁定; 持仓非负; 现金非负
+# [INVARIANTS] A股T+1锁定; 持仓非负; 现金非负; 现金账本闭合——逐日现金快照可由成交流水独立
+#   重算（Δcash == Σ买入(q·p+费) − Σ卖出(q·p−费)），残差 >CASH_LEDGER_TOLERANCE 即账本破
+#   （reconcile_cash_ledger 是绊线，双计手续费/漏记成交都会在这里爆，不在日志里爆）
 # [MODIFY-GUARD] none
 # [STABILITY] evolving
 # [SAFETY] L
@@ -19,6 +23,7 @@
 职责:
   - 持仓管理(买入/卖出/更新市值)
   - 现金管理(扣款/回款/手续费)
+  - 逐日现金快照(cash_history) + 现金账本 Σ 闭合对账(reconcile_cash_ledger, H4-A)
   - PnL计算(已实现+未实现)
   - 净值曲线生成
   - A股T+1锁定(买入当天不能卖)
@@ -35,11 +40,23 @@ SSoT: docs/03_modules/_domain_backtest/blueprint.md §3.2
 
 from __future__ import annotations
 
+import re
+from bisect import bisect_right
 from dataclasses import dataclass, field
-from decimal import Decimal
-from typing import Any, Optional
+from decimal import Decimal, InvalidOperation
+from typing import Any, Final, Optional, Sequence
 
 import pandas as pd
+
+# 现金账本闭合容差（H4-A 单一真源，1 分钱）：成交流水独立重算的现金与逐日现金
+# 快照之差。量级选择理由：trades_log 落 float（Decimal→float→str 往返误差 ≤1e-10
+# 元/笔），千笔累计仍 <1e-6 元，故 1 分钱足以让"双计手续费/漏记成交/现金旁路"爆掉，
+# 又不会把浮点噪声当破口。禁止在消费方复写此数。
+CASH_LEDGER_TOLERANCE: Final[Decimal] = Decimal("0.01")
+
+# 日频账本键归一：str(Timestamp)="2024-01-05 00:00:00" 与 str(date)="2024-01-05"
+# 必须落同一键（否则成交与现金快照错位，闭合断言假阴/假阳都可能）
+_ISO_DATE_PREFIX = re.compile(r"^\d{4}-\d{2}-\d{2}$")
 
 
 class PortfolioError(Exception):
@@ -51,6 +68,13 @@ class PortfolioError(Exception):
         super().__init__(*args, **kwargs)
         if error_code is not None:
             self.error_code = error_code
+
+
+def _ledger_date_key(value: Any) -> str:
+    """账本日期键归一（日频）——ISO 前缀优先，非 ISO 原样字符串兜底。"""
+    s = str(value)
+    head = s[:10]
+    return head if _ISO_DATE_PREFIX.match(head) else s
 
 
 @dataclass
@@ -153,6 +177,10 @@ class Portfolio:
         self._cash = initial_capital
         self._positions: dict[str, Position] = {}
         self._nav_history: list[tuple[Any, float]] = []
+        # 逐日现金快照（与 _nav_history 同索引、同日追加）——H4-A 现金账本闭合的
+        # 观测腿：NAV 曲线只给"现金+市值"合计，现金腿单独缺失时账本轧差无法独立
+        # 复核（成交额/手续费/过户费是否真扣到了现金上），故与净值同点落地。
+        self._cash_history: list[tuple[Any, Decimal]] = []
         self._trades_log: list[dict] = []
         # 最后已知价结转（2026-08-19 AI-NIGHT-001 阶段2 红队实证 P0）：
         # 持仓标的停牌/缺价日不得按 0 估值（否则 NAV 幻视回撤→复牌幻视恢复，
@@ -161,6 +189,7 @@ class Portfolio:
 
         # 记录初始净值
         self._nav_history.append((None, float(initial_capital)))
+        self._cash_history.append((None, initial_capital))
 
     def apply_fill(self, fill: BacktestFill, allow_t_plus_1: bool = False) -> None:
         """应用成交记录
@@ -275,6 +304,7 @@ class Portfolio:
 
         nav = self._cash + market_value
         self._nav_history.append((date, float(nav)))
+        self._cash_history.append((date, self._cash))
         return float(nav)
 
     @property
@@ -288,6 +318,15 @@ class Portfolio:
     def cash(self) -> Decimal:
         """当前现金"""
         return self._cash
+
+    @property
+    def cash_history(self) -> list[tuple[Any, Decimal]]:
+        """逐日现金快照 [(date, cash)]（首行 date=None 初始化点）
+
+        与 nav_series 同索引（同一次 update_market_value 追加），供
+        reconcile_cash_ledger 做 Σ 闭合对账。
+        """
+        return list(self._cash_history)
 
     @property
     def positions(self) -> dict[str, Position]:
@@ -344,4 +383,120 @@ class Portfolio:
         return self._cash + self.total_market_value(prices)
 
 
-__all__ = ["Portfolio", "Position", "BacktestFill", "PortfolioError"]
+def reconcile_cash_ledger(
+    cash_points: Sequence[tuple[Any, Any]],
+    trade_rows: Sequence[dict[str, Any]],
+    initial_capital: Any,
+    tolerance: Decimal = CASH_LEDGER_TOLERANCE,
+) -> dict[str, Any]:
+    """现金账本 Σ 闭合对账（H4-A/H4-B）——成交流水独立重算现金腿。
+
+    真口径：日 D 末现金 = 初始资金 + Σ_{日≤D} 卖出所得 − Σ_{日≤D} 买入支出，
+    其中每笔金额直接取 `Portfolio.trades_log` 的 ``total_cost``（买=成交额+佣金/
+    过户费，卖=成交额−佣金/过户费；滑点已含在成交价里，口径同 BacktestFill.total_cost
+    的 AI-NIGHT-001 双计修复）。与 ``Portfolio.cash_history`` 的当日快照逐日相减。
+
+    为什么这条恒等式不是废话（绊线价值）：现金腿是账本唯一的"钱去哪了"科目，
+    手续费/过户费在撮合层被记进 commission 字段、滑点被记进成交价，两者只要有一处
+    被二次扣、漏记成交、或未来有人绕过 apply_fill 直接改持仓，Σ 就会张开——而净值
+    曲线看不出来（NAV 由同一份现金算，自洽地错）。故本函数**只用流水、不用余额**
+    重算，作为外部可复核的独立腿。
+
+    Args:
+        cash_points: ``Portfolio.cash_history`` [(date, cash)]；date=None 的初始化行跳过。
+        trade_rows: ``Portfolio.trades_log``（dict 行，需 date/side/total_cost）。
+        initial_capital: 初始资金（重算起点）。
+        tolerance: 容差（默认 CASH_LEDGER_TOLERANCE，单一真源，消费方禁复写）。
+
+    Returns:
+        {schema, samples, points_total, trade_rows, bad_trade_rows, tolerance_abs,
+         max_abs_residual, worst_date, over_tolerance, within_tolerance,
+         cash_last, reconstructed_cash_last, note}
+        —— `within_tolerance` 是验收判据（缺 samples 时为 False，fail-closed）；
+        残差以 Decimal 字符串落盘（float 会把 1e-9 级差异糊成 0）。
+        流水脏行（金额不可解析）计入 bad_trade_rows 并强制 within=False——
+        对账器自身不得把无法核对的行静默当"已核对"。
+    """
+    base = _to_decimal(initial_capital)
+    flows: dict[str, Decimal] = {}
+    bad_rows = 0
+    for row in trade_rows:
+        try:
+            cost = _to_decimal(row.get("total_cost", 0.0))
+        except (TypeError, ValueError, InvalidOperation):
+            bad_rows += 1
+            continue
+        side = str(row.get("side", "")).upper()
+        signed = -cost if side == "BUY" else cost
+        key = _ledger_date_key(row.get("date", ""))
+        flows[key] = flows.get(key, Decimal("0")) + signed
+
+    keys = sorted(flows)
+    cumulative: list[Decimal] = []
+    running = Decimal("0")
+    for k in keys:
+        running += flows[k]
+        cumulative.append(running)
+
+    samples = 0
+    max_abs = Decimal("0")
+    worst_date: str | None = None
+    over = 0
+    reconstructed_last = base + running
+    cash_last: Decimal | None = None
+
+    for date, cash in cash_points:
+        if date is None:  # 初始化点（与 _nav_history 首行对齐，不参与逐日闭合）
+            continue
+        value = _to_decimal(cash)
+        cash_last = value
+        key = _ledger_date_key(date)
+        idx = bisect_right(keys, key) - 1
+        reconstructed = base + (cumulative[idx] if idx >= 0 else Decimal("0"))
+        residual = value - reconstructed
+        samples += 1
+        if abs(residual) > max_abs:
+            max_abs = abs(residual)
+            worst_date = key
+        if abs(residual) > tolerance:
+            over += 1
+
+    within = samples > 0 and over == 0 and bad_rows == 0
+    return {
+        "schema": "cash_ledger_reconciliation/v1",
+        "samples": samples,
+        "points_total": len(cash_points),
+        "trade_rows": len(trade_rows),
+        "bad_trade_rows": bad_rows,
+        "tolerance_abs": str(tolerance),
+        "max_abs_residual": str(max_abs),
+        "worst_date": worst_date,
+        "over_tolerance": over,
+        "within_tolerance": within,
+        "cash_last": None if cash_last is None else float(cash_last),
+        "reconstructed_cash_last": float(reconstructed_last),
+        "note": (
+            "现金腿由 trades_log 的 total_cost（佣金/过户费已含、滑点在价内）独立重算，"
+            "与 cash_history 逐日快照相减；残差>容差即账本破（H4-A）"
+            + (f"；{bad_rows} 笔流水金额不可解析=未核对" if bad_rows else "")
+        ),
+    }
+
+
+def _to_decimal(value: Any) -> Decimal:
+    """账本金额归一为 Decimal（str 往返保精度：Decimal→float→str 无损）。"""
+    if isinstance(value, Decimal):
+        return value
+    if value is None:
+        raise ValueError("现金账本金额为 None")
+    return Decimal(str(value))
+
+
+__all__ = [
+    "Portfolio",
+    "Position",
+    "BacktestFill",
+    "PortfolioError",
+    "CASH_LEDGER_TOLERANCE",
+    "reconcile_cash_ledger",
+]

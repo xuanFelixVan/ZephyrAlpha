@@ -11,10 +11,13 @@
 # [INVARIANTS] 契约钉死 run_fw_backtest_due(event: dict) -> dict；事件不丢（journal 先落，
 #   成功才出队，失败留档计 attempts 毒丸告警）；重活子进程隔离（生成器/回测/regime 印制均
 #   subprocess+超时，禁长活阻塞挂图进程主流程）；证据包必含 plan 身份/面板对账/核心指标/
-#   bt-fw 产物路径/时间戳（验收五要素）；幂等=plan 指纹（权重+TDM sha）不变且最近一次 ok
-#   →跳过重跑（force=True 可越过）；语义失败（对账超容差/空净值/组合完整性不过：未兑现 α
-#   占方案 >framework_composer.DEAD_MEMBER_ALPHA_SHARE_LIMIT 或无 dead_weight_disclosed
-#   披露）不重试——落证据包+ERROR
+#   bt-fw 产物路径/时间戳（验收五要素）+ 执行链六要素（换手实测/标的池幸存者偏差披露/
+#   现金账本闭合/目标权重 Σ→1 归一统计/拒单分类/未建模清单 #24）；标的池必 PIT 窗口口径
+#   （禁 valid_to IS NULL 期末快照=幸存者偏差）；幂等=plan 指纹（权重+TDM sha）不变且最近
+#   一次 ok →跳过重跑（force=True 可越过）；语义失败（对账超容差/空净值/组合完整性不过：
+#   未兑现 α 占方案 >framework_composer.DEAD_MEMBER_ALPHA_SHARE_LIMIT 或无
+#   dead_weight_disclosed 披露；现金账本不闭合或无 cash_ledger_reconciliation 披露）不重试
+#   ——落证据包+ERROR
 #   告警+消费出队（同输入重跑结果必然相同，重试无意义）；瞬时故障（生成器 rc≠0/CH 不可达/
 #   异常）上抛留 journal 等重放
 # [MODIFY-GUARD] tests/strategy_pipeline/test_fw_backtest.py
@@ -30,12 +33,17 @@
 流程（S11 README §5 施工项 3，四步）:
   ① 重跑方案表生成器（generate_framework_plan_from_tdm，子进程）——TDM sleeves→fw-tdm-current；
   ② 幂等闸: plan 指纹（成员权重+TDM sha12）与最近一次 ok 证据包相同→跳过（返回 skipped 摘要）；
-  ③ 组装参数: symbols=沪深300 成份快照 ∪ STR 成员面板列并集（预取缓存零二次 build）；
+  ③ 组装参数: symbols=沪深300 窗口内成份并集（PIT，含期末已调出/退市者；#24 H3-D 反
+     幸存者偏差）∪ STR 成员面板列并集（预取缓存零二次 build）；
      窗口=滚动 12 个月（payload 可覆盖）；regime 日序=regime_snapshot_history.dominant
      窗口内日序（可用则附——fw-tdm-current 无 regime_overrides 时纯披露口径，权重不变）；
   ④ run_framework_backtest → 验收（panel_reconciliation.within_tolerance ∧ equity_points>0
-     ∧ 风险闸 evaluate_strategy_risk_admission ∧ 组合完整性闸 _evaluate_composition_integrity）
-     → 证据包 JSON 落 data/backtest_artifacts/fw-auto/（fw-auto-<ts>-<fp8>.json + latest.json）。
+     ∧ 风险闸 evaluate_strategy_risk_admission ∧ 组合完整性闸 _evaluate_composition_integrity
+     ∧ 现金账本闭合闸 _evaluate_cash_closure）
+     → 证据包 JSON 落 data/backtest_artifacts/fw-auto/（fw-auto-<ts>-<fp8>.json + latest.json；
+     run.* 含 #24 执行链六要素：turnover_disclosure / universe_disclosure /
+     cash_ledger_reconciliation / target_weight_renormalization / skipped_fills /
+     execution_model_disclosure / signal_age_disclosed）。
 
 事件语义（本班裁定留痕——pipeline_events.py 并行编辑禁令未动其文件）:
   fw_backtest_due 为重 kind（分钟级），但 pipeline_events 的 LIGHT/HEAVY 词表与
@@ -66,6 +74,7 @@ from __future__ import annotations
 import argparse
 import hashlib
 import json
+import re
 import subprocess
 import sys
 import time
@@ -83,6 +92,23 @@ DEFAULT_TIMEOUT_S = 3600  # S11 §5 施工项 5 首值
 _REGIME_STALE_DAYS = 3
 
 _EVENT_KIND = "fw_backtest_due"
+
+# 自动标的池基池（H3-D PIT 成份窗口查询用）
+_H300_INDEX_CODE = "000300.SH"
+# ClickHouse SCD-2 未失效哨兵（口径真源=zephyr.data.pit_query 的 valid_to 谓词）
+_NO_EXPIRY_SENTINEL = "1900-01-01"
+_ISO_DATE_RE = re.compile(r"^\d{4}-\d{2}-\d{2}$")
+
+
+def _assert_iso_date(value: str, name: str) -> str:
+    """窗口日期硬校验（SQL 拼接前置闸）。
+
+    start/end 来自事件 payload（外部可填），拼进 CH SQL 前必须是裸 ISO 日期——
+    不符即抛，禁"查不出来当空池"（空池在本模块是硬失败，但畸形日期更该早爆）。
+    """
+    if not _ISO_DATE_RE.match(str(value or "")):
+        raise RuntimeError(f"{name} 须为 YYYY-MM-DD，got {value!r}——拒绝拼接 PIT 成份查询")
+    return str(value)
 
 
 # ---------- 幂等指纹 ----------
@@ -127,18 +153,61 @@ def default_window(today: date | None = None) -> tuple[str, str]:
     return start.isoformat(), end.isoformat()
 
 
-def _hs300_symbols() -> list[str]:
-    """沪深300 成份快照（纯 6 位代码；与 _c4_engine.load_hs300 同真源同口径）。"""
+def _hs300_symbols(start: str, end: str) -> tuple[list[str], dict[str, Any]]:
+    """沪深300 **窗口内成份并集**（PIT，纯 6 位代码）+ 幸存者偏差披露（H3-D，#24）。
+
+    旧口径 `WHERE valid_to IS NULL` 取的是"今天还在指数里"的名字——回测窗口内被调出/
+    退市的成分从未进入标的池（实测近 12 个月窗口 300 → 331，9.4% 的票整批缺席），
+    等于用后视镜选股，收益/回撤系统性偏乐观。改为 SCD-2 区间与回测窗口求交，谓词与
+    zephyr.data.pit_query 的 in-window 口径同源（含 1900-01-01 未失效哨兵）。
+
+    同花顺/与 `_c4_engine.load_hs300` 的关系：那份是"当前成份"用途（择时快照），本份
+    是"回测窗口宇宙"用途——两者语义不同，禁止互相替换（替换即把幸存者偏差重新引入）。
+
+    Returns:
+        (symbols, disclosure)——disclosure 显式给出旧口径会给多少个、差额多少，
+        使"少了票"这件事在证据包里可见（禁静默）。
+    """
     from zephyr.data.ch_writer import get_client_strict
 
+    _assert_iso_date(start, "start")
+    _assert_iso_date(end, "end")
     rows = get_client_strict().execute(
-        "SELECT symbol_canonical FROM c1_market.index_constituent "
-        "WHERE index_code = '000300.SH' AND valid_to IS NULL"
+        "SELECT symbol_canonical, valid_to FROM c1_market.index_constituent "
+        f"WHERE index_code = '{_H300_INDEX_CODE}' "
+        f"AND valid_from <= toDate('{end}') "
+        f"AND (valid_to IS NULL OR valid_to = toDate('{_NO_EXPIRY_SENTINEL}') "
+        f"OR valid_to > toDate('{start}'))"
     )
-    syms = sorted({(r[0] or "")[:6] for r in rows if r[0]})
-    if not syms:
+    universe: set[str] = set()
+    still_in_at_end: set[str] = set()
+    for raw, valid_to in rows:
+        code = (str(raw) if raw else "")[:6]
+        if not code:
+            continue
+        universe.add(code)
+        vt = "" if valid_to is None else str(valid_to)[:10]
+        if vt in ("", _NO_EXPIRY_SENTINEL) or vt > end:
+            still_in_at_end.add(code)
+    if not universe:
         raise RuntimeError("index_constituent 沪深300 成份缺失——自动标的池不可组装")
-    return syms
+    exited = sorted(universe - still_in_at_end)
+    disclosure: dict[str, Any] = {
+        "schema": "universe_disclosure/v1",
+        "mode": "pit_index_window",
+        "index_code": _H300_INDEX_CODE,
+        "window": {"start": start, "end": end},
+        "universe_n": len(universe),
+        "snapshot_n": len(still_in_at_end),
+        "since_exit_n": len(exited),
+        "since_exit_share": round(len(exited) / len(universe), 4) if universe else None,
+        "since_exit_sample": exited[:20],
+        "note": (
+            "窗口内曾为成份即入池（含期末已调出/退市者）；snapshot_n=旧 'valid_to IS NULL' "
+            "口径会给的只数，差额即被幸存者偏差静默剔除的标的数"
+        ),
+    }
+    return sorted(universe), disclosure
 
 
 def resolve_symbols(
@@ -148,12 +217,11 @@ def resolve_symbols(
 
     返回 (symbols, info)；info.str_columns_by_sid 供证据包披露各 STR 成员标的宇宙。
     """
+    from zephyr.pf_core.strategy_engine.framework_composer import get_framework_plan
     from zephyr.pf_core.strategy_engine.translated_strategy_adapter import (
         is_translated_member,
         prefetch_translated_panels,
     )
-
-    from zephyr.pf_core.strategy_engine.framework_composer import get_framework_plan
 
     plan = get_framework_plan(PLAN_ID)
     str_ids = [w.strategy_id for w in plan.weights if is_translated_member(w.strategy_id)]
@@ -164,8 +232,26 @@ def resolve_symbols(
         cols = {str(c) for c in panel.columns}
         str_cols |= cols
         by_sid[sid] = len(cols)
-    symbols = sorted(set(base or _hs300_symbols()) | str_cols)
-    return symbols, {"str_members": str_ids, "str_columns_n": by_sid, "total": len(symbols)}
+    symbols_base, universe = (
+        (sorted({str(s) for s in base}), {
+            "schema": "universe_disclosure/v1",
+            "mode": "payload_override",
+            "universe_n": len(set(base or [])),
+            "snapshot_n": None,
+            "since_exit_n": None,
+            "note": "基池由 payload.symbols 给定——PIT 成份窗口未参与，幸存者偏差由调用方承担"
+            "（自动挂图路径不应给 base）",
+        })
+        if base
+        else _hs300_symbols(start, end)
+    )
+    symbols = sorted(set(symbols_base) | str_cols)
+    return symbols, {
+        "str_members": str_ids,
+        "str_columns_n": by_sid,
+        "total": len(symbols),
+        "universe_disclosure": universe,
+    }
 
 
 def load_regime_series(start: str, end: str) -> dict[str, Any]:
@@ -185,14 +271,14 @@ def load_regime_series(start: str, end: str) -> dict[str, Any]:
                         "note": "fw-tdm-current 无 regime_overrides——日序仅供分段披露，权重=基准（查表语义）"})
         else:
             out["note"] = "窗口内无 regime 快照行——静态模式降级"
-    except Exception as exc:  # noqa: BLE001——regime 供给失败降静态，不阻断整装跑
+    except Exception as exc:  # noqa: BLE001  ——regime 供给失败降静态，不阻断整装跑
         out["note"] = f"regime 日序加载失败（静态降级）: {type(exc).__name__}: {exc}"[:160]
     return out
 
 
 # ---------- 风险信号消费（车道 L：acceptance 真读 overfitting_flag/DSR/n_trials）----------
 
-def _load_artifact_nav(run_id: str | None) -> "Any":
+def _load_artifact_nav(run_id: str | None) -> Any:
     """读回测产物 equity_curve 重建净值序列（只读；缺文件/短序列/异常→None，禁崩主流程）。
 
     run_framework_backtest 落 `data/backtest_artifacts/<run_id>.json`，其 metrics 快照仅含
@@ -243,7 +329,7 @@ def _evaluate_risk_decision(result: dict) -> dict[str, Any]:
                 n_trials_source = full.get("n_trials_source", n_trials_source)
                 if overfitting_flag is None:
                     overfitting_flag = full.get("is_overfitting")
-            except Exception as exc:  # noqa: BLE001——DSR 复算失败=缺证据，交由 fail-closed 拒
+            except Exception as exc:  # noqa: BLE001  ——DSR 复算失败=缺证据，交由 fail-closed 拒
                 _alert(f"整装回测风险裁决 DSR 复算失败（fail-closed 将拒）: {type(exc).__name__}: {exc}"[:200],
                        level="WARN")
 
@@ -309,6 +395,93 @@ def _evaluate_composition_integrity(result: dict) -> dict[str, Any]:
     }
 
 
+# ---------- 执行链证据（#24 H3/H4）----------
+
+def _evaluate_cash_closure(result: dict) -> dict[str, Any]:
+    """现金账本闭合闸（H4-B，#24）——账本不闭合，指标再漂亮也不可采信。
+
+    与组合完整性闸同族 fail-closed：无披露键（产物过旧 / 引擎换成不落地现金腿的
+    实现）判不过，禁"没数据=通过"。判据取 ``reconcile_cash_ledger.within_tolerance``
+    （逐日残差 ≤ portfolio.CASH_LEDGER_TOLERANCE，容差单一真源在账本属主侧）。
+
+    本闸只核对**内账**（成交流水 ↔ 现金余额），与 tracker #275 裁定的"外账不可对"
+    （成员净值 vs 整装净值因整手取整/最低佣金/涨跌停拒单不可闭合）是两件事——
+    那条裁定不约束本闸，本闸也不得被拿去当外账判据。
+    """
+    metrics = result.get("metrics") or {}
+    recon = (
+        result.get("cash_ledger_reconciliation")
+        or metrics.get("cash_ledger_reconciliation")
+        or {}
+    )
+    if not recon:
+        return {
+            "accepted": False,
+            "samples": None,
+            "max_abs_residual": None,
+            "tolerance_abs": None,
+            "reasons": ["无 cash_ledger_reconciliation 披露（产物过旧或现金腿未接）"],
+        }
+    samples = int(recon.get("samples") or 0)
+    reasons: list[str] = []
+    if samples <= 0:
+        reasons.append("现金账本无逐日样本可核对（cash_history 空）")
+    elif not bool(recon.get("within_tolerance")):
+        reasons.append(
+            f"现金账本不闭合：最大逐日残差 {recon.get('max_abs_residual')} 元 "
+            f"> 容差 {recon.get('tolerance_abs')}（{recon.get('over_tolerance')} 日破口，"
+            f"最差日 {recon.get('worst_date')}，未核对流水 {recon.get('bad_trade_rows')} 笔）"
+            "——成交/手续费与现金余额对不上，回测账本有洞"
+        )
+    return {
+        "accepted": not reasons,
+        "samples": samples,
+        "max_abs_residual": recon.get("max_abs_residual"),
+        "tolerance_abs": recon.get("tolerance_abs"),
+        "worst_date": recon.get("worst_date"),
+        "cash_last": recon.get("cash_last"),
+        "reconstructed_cash_last": recon.get("reconstructed_cash_last"),
+        "reasons": reasons,
+    }
+
+
+def _turnover_disclosure(result: dict) -> dict[str, Any]:
+    """换手证据上提（H3-A，#24）——成本归因算出的换手率必须在验收面可见。
+
+    归因层**已**算出年化单边换手并带告警（真源 cost_attribution），但 ``core_metrics``
+    白名单不含换手，证据包只看得到收益——"换手预算"这条约束此前在整装回测面等于
+    不存在。本函数把它连同阈值与告警原文提进 ``run.turnover_disclosure``。
+
+    阈值引用不复制（RULE-SSOT）：只读 ``TURNOVER_ONE_SIDE_ANNUAL_ALERT``。
+    **没有**在此实现 no-trade band/换手硬节流——那是改成交行为（执行口径），
+    属 Owner 裁定项（AI 自主权外，登记在 lane #24 报告）。
+    """
+    from zephyr.backtest.core.cost_attribution import TURNOVER_ONE_SIDE_ANNUAL_ALERT
+
+    metrics = result.get("metrics") or {}
+    cost = metrics.get("cost_attribution") or {}
+    friction = cost.get("friction") or {}
+    turnover = friction.get("turnover_one_side_annualized")
+    measured = isinstance(turnover, (int, float)) and turnover == turnover  # NaN=未测
+    alerts = [
+        a for a in (cost.get("alerts") or []) if str(a.get("code", "")).startswith("TURNOVER")
+    ]
+    return {
+        "schema": "turnover_disclosure/v1",
+        "measured": bool(measured),
+        "one_side_annualized": turnover,
+        "alert_threshold_one_side_annual": TURNOVER_ONE_SIDE_ANNUAL_ALERT,
+        "over_alert": (bool(turnover > TURNOVER_ONE_SIDE_ANNUAL_ALERT) if measured else None),
+        "cost_alerts": alerts,
+        "cost_total": friction.get("cost_total"),
+        "cost_share_of_abs_result": friction.get("cost_share_of_abs_result"),
+        "note": (
+            "换手率=成本归因层实测（单边年化）；阈值只作告警不作节流——"
+            "no-trade band/换手预算硬约束未实现（改执行口径需 Owner 裁定）"
+        ),
+    }
+
+
 # ---------- 核心契约 ----------
 
 def run_fw_backtest_due(event: dict) -> dict[str, Any]:
@@ -344,11 +517,13 @@ def run_fw_backtest_due(event: dict) -> dict[str, Any]:
     #    面板由同窗口同数据决定，引擎确定性；省分钟级重跑与产物膨胀）。
     #    车道 L：额外要求旧证据 risk_admitted is True——车道 L 接线前落的老证据只有 ok=True
     #    从无 risk_admitted（风险闸未接），据其短路将令被冻结的过拟合策略永不再判 → 必须重跑复评。
+    #    #24 H4-B 同族：老证据无 cash_closure_admitted（账本闸后接）→ 同样不得据其短路。
     fp = plan_fingerprint()
     latest = _latest_evidence()
     if not force and latest and latest.get("plan", {}).get("fingerprint") == fp["fingerprint"] \
             and latest.get("acceptance", {}).get("ok") \
-            and latest.get("acceptance", {}).get("risk_admitted") is True:
+            and latest.get("acceptance", {}).get("risk_admitted") is True \
+            and latest.get("acceptance", {}).get("cash_closure_admitted") is True:
         return {
             "ok": True,
             "skipped": "plan_fingerprint_unchanged（同指纹最近已 ok，force=true 可强制重跑）",
@@ -376,17 +551,20 @@ def run_fw_backtest_due(event: dict) -> dict[str, Any]:
     # 经与实盘共用判据 evaluate_strategy_risk_admission，不过关即判失败（禁静默放行）。
     risk = _evaluate_risk_decision(result)
     composition = _evaluate_composition_integrity(result)
+    cash = _evaluate_cash_closure(result)
     base_ok = (
         bool(result.get("ok")) and bool(recon.get("within_tolerance"))
         and int(result.get("equity_points") or 0) > 0
     )
     acceptance = {
-        "ok": bool(base_ok and risk["accepted"] and composition["accepted"]),
+        "ok": bool(base_ok and risk["accepted"] and composition["accepted"] and cash["accepted"]),
         "run_ok": bool(result.get("ok")),
         "within_tolerance": bool(recon.get("within_tolerance")),
         "equity_points": int(result.get("equity_points") or 0),
         "risk_admitted": bool(risk["accepted"]),
         "composition_admitted": bool(composition["accepted"]),
+        "cash_closure_admitted": bool(cash["accepted"]),
+        "cash_max_abs_residual": cash["max_abs_residual"],
         "skipped_alpha_share": composition["skipped_alpha_share"],
         "composition_over_limit": bool(
             composition["skipped_alpha_share"] is not None
@@ -398,6 +576,7 @@ def run_fw_backtest_due(event: dict) -> dict[str, Any]:
         "n_trials_source": risk["n_trials_source"],
         "risk_reasons": risk["reasons"],
         "composition_reasons": composition["reasons"],
+        "cash_closure_reasons": cash["reasons"],
     }
     metrics = result.get("metrics") or {}
     core_metrics = {
@@ -405,6 +584,18 @@ def run_fw_backtest_due(event: dict) -> dict[str, Any]:
         for k in ("total_return", "annual_return", "sharpe_ratio", "max_drawdown",
                   "win_rate", "trades_count")
         if k in metrics
+    }
+    # #24 H3/H4 执行链证据（禁只进日志）：换手实测 + 标的池幸存者偏差 + 现金腿闭合
+    # + 引擎侧静默点（Σ→1 归一统计/拒单分类/未建模清单）+ 混频有效信号龄
+    chain_evidence = {
+        k: metrics.get(k)
+        for k in (
+            "cash_ledger_reconciliation",
+            "target_weight_renormalization",
+            "skipped_fills",
+            "execution_model_disclosure",
+            "signal_age_disclosed",
+        )
     }
     summary: dict[str, Any] = {
         "ok": acceptance["ok"],
@@ -433,6 +624,10 @@ def run_fw_backtest_due(event: dict) -> dict[str, Any]:
             "risk_decision": risk,
             "dead_weight_disclosed": result.get("dead_weight_disclosed") or {},
             "composition_decision": composition,
+            "turnover_disclosure": _turnover_disclosure(result),
+            "universe_disclosure": sym_info.get("universe_disclosure") or {},
+            "cash_decision": cash,
+            **chain_evidence,
         },
         "generator": gen,
         "duration_s": round(time.time() - t0, 1),
@@ -451,11 +646,17 @@ def run_fw_backtest_due(event: dict) -> dict[str, Any]:
         comp_note = ""
         if base_ok and risk["accepted"] and not composition["accepted"]:
             comp_note = f" 组合完整性闸否决: reasons={composition['reasons']}"
+        cash_note = ""
+        if (
+            base_ok and risk["accepted"] and composition["accepted"]
+            and not cash["accepted"]
+        ):
+            cash_note = f" 现金账本闭合闸否决: reasons={cash['reasons']}"
         _alert(
             f"fw-tdm-current 整装回测验收未过: ok={acceptance['run_ok']} "
             f"within_tolerance={acceptance['within_tolerance']} "
             f"equity_points={acceptance['equity_points']} warn={result.get('warn')!r}"
-            f"{risk_note}{comp_note} evidence={evidence_path}",
+            f"{risk_note}{comp_note}{cash_note} evidence={evidence_path}",
             level="ERROR",
         )
     return summary
@@ -564,7 +765,7 @@ def emit_fw_backtest_due(trigger: str, sids: list[str] | None = None, **extra: A
             capture_output=True, text=True, timeout=timeout_s, cwd=str(ROOT),
             encoding="utf-8", errors="replace",
         )
-    except Exception as exc:  # noqa: BLE001——超时/启动失败=留档等重放
+    except Exception as exc:  # noqa: BLE001  ——超时/启动失败=留档等重放
         _retain_event(pe, evt, f"{type(exc).__name__}: {exc}"[:200])
         return {"event": evt["id"], "drained": False, "error": str(exc)[:200]}
     if proc.returncode != 0:
@@ -587,7 +788,7 @@ def _retain_event(pe: Any, evt: dict[str, Any], err: str) -> None:
                     e["poison"] = True
                     _alert(f"管线事件毒丸留档: {evt['id']} kind={evt['kind']} err={err}", level="ERROR")
         pe._rewrite(evts)
-    except Exception:  # noqa: BLE001——簿记失败不反噬
+    except Exception:  # noqa: BLE001  ——簿记失败不反噬
         pass
     _alert(f"fw_backtest_due 消费失败（事件留 journal 待重放）: {evt['id']} {err}", level="WARN")
 
@@ -610,7 +811,7 @@ def _alert(message: str, level: str = "WARN") -> None:
         from zephyr.strategy_pipeline.pipeline_events import alert as pe_alert
 
         pe_alert(message, level=level)
-    except Exception:  # noqa: BLE001——告警通道故障不反噬主流程
+    except Exception:  # noqa: BLE001  ——告警通道故障不反噬主流程
         pass
 
 

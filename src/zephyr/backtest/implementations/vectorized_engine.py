@@ -5,7 +5,9 @@
 # [CONSUMERS]
 # [STARTUP] imported
 # [MATURITY] production
-# [INVARIANTS] PIT铁律; BacktestResult全字段填充; 手续费/滑点实际扣除
+# [INVARIANTS] PIT铁律; BacktestResult全字段填充; 手续费/滑点实际扣除; 静默点必须出声——
+#   目标权重行 Σ 口径逐行统计(last_signal_row_stats)/拒单计数(last_skipped_fills)/未建模
+#   清单(EXECUTION_MODEL_CAPABILITY) 三腿随产物披露，禁止只写日志不进证据
 # [MODIFY-GUARD] none
 # [STABILITY] evolving
 # [SAFETY] L
@@ -43,7 +45,7 @@ from dataclasses import dataclass
 from datetime import date as _date_class
 from datetime import datetime, timezone
 from decimal import Decimal
-from typing import Any, Optional
+from typing import Any, Final, Optional
 
 import pandas as pd
 
@@ -61,6 +63,7 @@ from zephyr.backtest.core.matching_engine import (
     MatchingEngine,
     StkLimitProvider,
 )
+
 # T1A-4 费率单一真源：回测侧不再自写字面量（matching_logic 零依赖，导入不成环）
 # 滑点不在此导入：SLIPPAGE_BPS 是 #23 H2 的 legacy 对照口径，默认不再生效，
 # 逐笔由 cost_model_calibration 解析（见 BacktestConfig.slippage_bps）。
@@ -73,6 +76,27 @@ from zephyr.backtest.core.walk_forward import WalkForwardAnalyzer, WalkForwardCo
 _logger = logging.getLogger(__name__)
 
 __backtest_id__ = "default-backtest-engine"
+
+# H4-E 执行模型能力披露（单一真源，#24）：本引擎**没有**建模的东西必须在这里正面登记，
+# 而不是让消费方从"回测跑通了"推断"回测建模了"。全仓无券商席位/信用账户维度的生产者
+# 也无消费口——造功能超出 AI 自主权（实盘接口/合规口径需 Owner 定），但缺失本身必须
+# 进产物、进验收证据（禁静默纪律）。新增/删除条目只改本 dict，消费方透传不改写。
+EXECUTION_MODEL_CAPABILITY: Final[dict[str, str]] = {
+    "schema": "execution_model_capability/v1",
+    "account_topology": "单账户单现金池——无多席位/多券商账户切分，NAV×权重即全部可用资金",
+    "broker_seat": "未建模：无席位（seat）/交易单元/通道维度，佣金按合约价单一费率"
+    "（真源 matching_logic.COMMISSION_RATE 万0.854 + 最低5元），席位级费率差异不进回测",
+    "margin_financing": "未建模：无融资融券/杠杆/担保品，现金不足即拒单（记入 skipped_fills）",
+    "short_selling": "不支持：A股现货单边，目标权重仅取 >0 分量（_normalize_day_signals）",
+    "settlement": "T+1 持仓锁定（买入当日不可卖）；资金 T+0 可用",
+    "cash_yield": "现金不计利息、无货基/国债逆回购收益",
+    "zero_signal_row": "全零行/缺行 = 当日不下单（维持原持仓），**不是清仓持现金**——"
+    "空仓意图无法由权重表达（H3-C/H4-C，语义翻转属 Owner 裁定）",
+    "sub_unit_target_weights": "Σ<1 的目标权重行被 _normalize_day_signals 放大为满仓；"
+    "减仓位只能经 ShrinkageBacktestEngine 在引擎边界表达（裁定#270 §6④，剩余质量→现金）",
+    "drift_rebalance": "每个有信号的交易日把实际持仓拉回目标权重（无 no-trade band），"
+    "漂移即成交——换手成本由该口径主导，见 metrics.cost_attribution",
+}
 
 
 @dataclass
@@ -112,7 +136,7 @@ class BacktestConfig:
 
     initial_capital: Decimal = Decimal("1000000")
     commission_rate: Decimal = COMMISSION_RATE  # 万0.854（真源=matching_logic.COMMISSION_RATE，T1A-4）
-    slippage_bps: Optional[Decimal] = None  # None=逐笔按标定真源解析（非"没有滑点"）
+    slippage_bps: Decimal | None = None  # None=逐笔按标定真源解析（非"没有滑点"）
     benchmark_symbol: str = "000300"
     risk_free_rate: float = DEFAULT_RISK_FREE_RATE
     strict_overfitting_gate: bool = False
@@ -150,7 +174,7 @@ class DefaultBacktestEngine(BacktestEngineBase):
         self,
         config: BacktestConfig | None = None,
         enable_stk_limit_provider: bool = True,
-        universe_provider: "PitUniverseProvider | None" = None,
+        universe_provider: PitUniverseProvider | None = None,
     ):
         self._config = config or BacktestConfig()
         self._matching_config = MatchingConfig(
@@ -176,6 +200,12 @@ class DefaultBacktestEngine(BacktestEngineBase):
         self._volume_warned = False
         self._results: list[BacktestResult] = []
         self._last_portfolio: Portfolio | None = None
+        # H3-C/H4-C 绊线（#24）：引擎侧"目标权重行 Σ 口径"逐行统计 + 拒单计数。
+        # 只写 _logger 不进产物的披露等于没披露（生产路径上没人翻日志），故落在
+        # 引擎实例上由整装回测透传进 artifact metrics。每次 run() 重置。
+        self._signal_rows: dict[str, Any] = _new_signal_row_stats()
+        self._skipped_fills: int = 0
+        self._fill_reject_reasons: dict[str, int] = {}
 
     def run(
         self,
@@ -237,7 +267,11 @@ class DefaultBacktestEngine(BacktestEngineBase):
         # 逐日回测（P0-1：date=T 执行的是 T-lag 日信号，成交价=T 日开盘优先/收盘兜底）
         prev_close: dict[str, Decimal] = {}
         skipped_fills = 0  # AI-NIGHT-001：apply_fill 失败计数（原静默 debug 吞没）
+        reject_reasons: dict[str, int] = {}  # H4-D：拒单按原因分类（现金/T+1/持仓…）
         open_price_seen = False
+        # 绊线按 run 重置（引擎实例可复用跑多次回测）
+        self._signal_rows = _new_signal_row_stats()
+        self._skipped_fills = 0
 
         for i, date in enumerate(dates):
             # 获取当日所有symbol的价格（收盘=估值/兜底成交价）
@@ -306,6 +340,8 @@ class DefaultBacktestEngine(BacktestEngineBase):
                         portfolio.apply_fill(fill, allow_t_plus_1=False)
                     except Exception as e:  # noqa: BLE001 — fill 应用拒绝（现金不足/T+1/持仓不足）
                         skipped_fills += 1
+                        code = _classify_fill_reject(str(e))
+                        reject_reasons[code] = reject_reasons.get(code, 0) + 1
                         # AI-NIGHT-001：回测偏离信号意图必须可见（原 debug 静默吞没致满仓信号零成交无感知）
                         _logger.warning(
                             "Fill skipped (%d 累计): %s %s qty=%s date=%s 原因=%s",
@@ -322,6 +358,10 @@ class DefaultBacktestEngine(BacktestEngineBase):
 
             # 记录前一日收盘价(用于涨跌停检查)
             prev_close = dict(day_prices)
+
+        # 绊线落到实例上（H4-D：拒单量必须能进产物，日志不算消费口）
+        self._skipped_fills = skipped_fills
+        self._fill_reject_reasons = dict(reject_reasons)
 
         if skipped_fills > 0:
             _logger.warning(
@@ -399,6 +439,51 @@ class DefaultBacktestEngine(BacktestEngineBase):
         """
         return self._last_portfolio
 
+    @property
+    def last_signal_row_stats(self) -> dict[str, Any]:
+        """最近一次 run() 的目标权重行 Σ 口径统计（H3-C 绊线，JSON 可序列化）。
+
+        `_normalize_day_signals` 把每个非零行强行放大/缩小至 Σ=1（满仓），策略侧
+        "留 20% 现金"的意图到引擎就没了——本属性把被吞掉的量测出来：
+          - rows_with_signal: 有正分量的行数（每行都执行了一次 Σ=1 归一）
+          - rows_below_unit / target_sum_min: 归一前 Σ<1 的行数与最小 Σ
+          - swallowed_cash_mass: Σ(1−Σ) 归一前不足满仓的总质量（被静默补足的仓位置换量）
+          - rows_all_zero: 全零行数（引擎语义=当日不下单，**不是**清仓持现金，H4-C）
+        整装回测把它透传进 artifact metrics（见 framework_composer）。
+        """
+        rows = self._signal_rows
+        sums: list[float] = list(rows.get("raw_sums") or [])
+        n = len(sums)
+        swallowed = sum(max(0.0, 1.0 - s) for s in sums)
+        return {
+            "schema": "target_weight_renormalization/v1",
+            "rows_with_signal": n,
+            "rows_all_zero": int(rows.get("rows_all_zero", 0)),
+            "rows_absent": int(rows.get("rows_absent", 0)),
+            "rows_renormalized": sum(1 for s in sums if abs(s - 1.0) > 1e-9),
+            "rows_below_unit": sum(1 for s in sums if s < 1.0 - 1e-9),
+            "target_sum_min": round(min(sums), 9) if n else None,
+            "target_sum_max": round(max(sums), 9) if n else None,
+            "target_sum_mean": round(sum(sums) / n, 9) if n else None,
+            "swallowed_cash_mass": round(swallowed, 9),
+            "swallowed_cash_fraction_mean": round(swallowed / n, 9) if n else None,
+            "note": (
+                "引擎对每个非零目标权重行执行 Σ→1 归一（满仓口径，裁定#270 §6④）；"
+                "rows_below_unit>0 即策略/成员的现金缓冲被引擎吞掉，"
+                "全零行=当日不下单≠清仓（持现金意图须经 ShrinkageBacktestEngine）"
+            ),
+        }
+
+    @property
+    def last_skipped_fills(self) -> dict[str, Any]:
+        """最近一次 run() 被拒绝的 fill 统计（H4-D：留下的量要能归因，JSON 可序列化）。"""
+        return {
+            "schema": "skipped_fills/v1",
+            "count": int(self._skipped_fills),
+            "by_reason": dict(self._fill_reject_reasons),
+            "note": "apply_fill 被拒（现金缺口/T+1 锁定/持仓不足）→ 实际执行偏离信号意图",
+        }
+
     def _get_sorted_dates(self, data: pd.DataFrame) -> list[Any]:
         """获取排序后的日期列表"""
         if isinstance(data.index, pd.MultiIndex):
@@ -460,8 +545,11 @@ class DefaultBacktestEngine(BacktestEngineBase):
     def _get_day_signals(self, signals: pd.DataFrame, date: object) -> dict[str, float]:
         """获取指定日期的信号(目标权重)
 
+        引擎按 Σ=1 满仓口径归一（见 _normalize_day_signals），本方法顺带把归一**前**
+        的行 Σ 记进 self._signal_rows（H3-C 绊线，经 last_signal_row_stats 出产物）。
+
         Args:
-            signals: 信号DataFrame(date × symbol)
+            signals: 信号DataFrame (date × symbol)
             date: 日期
 
         Returns:
@@ -475,12 +563,19 @@ class DefaultBacktestEngine(BacktestEngineBase):
             elif date in signals.index:
                 day_signals = signals.loc[date]
             else:
+                self._signal_rows["rows_absent"] += 1
                 return weights
 
-            _normalize_day_signals(day_signals, weights)
+            raw_sum = _normalize_day_signals(day_signals, weights)
         except (KeyError, TypeError):
-            pass
+            self._signal_rows["rows_absent"] += 1
+            return weights
 
+        if raw_sum is None or raw_sum <= 0.0 or not weights:
+            # 全零/全 NaN 行：引擎语义=当日不下单（维持原持仓），不是清仓（H4-C）
+            self._signal_rows["rows_all_zero"] += 1
+        else:
+            self._signal_rows["raw_sums"].append(float(raw_sum))
         return weights
 
     def _to_datetime(self, date: object) -> datetime:
@@ -711,7 +806,7 @@ def _normalize_date_obj(value: object) -> _date_class | None:
         return value
     if isinstance(value, datetime):
         return value.date()
-    if hasattr(value, "date") and callable(getattr(value, "date")):
+    if hasattr(value, "date") and callable(value.date):
         # pd.Timestamp 等
         try:
             return value.date()
@@ -836,14 +931,41 @@ class PitUniverseProvider:
         return registry
 
 
-def _normalize_day_signals(day_signals: object, weights: dict[str, float]) -> None:
+def _new_signal_row_stats() -> dict[str, Any]:
+    """H3-C 绊线的累加器初值（每 run() 重置）——只存行 Σ，不做流式统计。"""
+    return {"rows_absent": 0, "rows_all_zero": 0, "raw_sums": []}
+
+
+# H4-D：PortfolioError 文案 → 稳定原因码（证据包按原因分类展示"因何留下未成交的量"）
+_FILL_REJECT_REASONS: Final[tuple[tuple[str, str], ...]] = (
+    ("现金不足", "cash_insufficient"),
+    ("T+1锁定", "t_plus_1_locked"),
+    ("持仓不足", "position_insufficient"),
+    ("无持仓可卖", "no_position"),
+    ("无效side", "invalid_side"),
+)
+
+
+def _classify_fill_reject(reason: str) -> str:
+    """拒单原因归类（未匹配归 other，禁静默丢弃计数）。"""
+    for needle, code in _FILL_REJECT_REASONS:
+        if needle in reason:
+            return code
+    return "other"
+
+
+def _normalize_day_signals(day_signals: object, weights: dict[str, float]) -> float | None:
     """对单日信号做dropna/过滤>0/归一化,结果写入weights。
 
     等价于原_get_day_signals中获取day_signals之后的归一化逻辑:
     早期返回等价于原函数的 return weights(此时weights保持当前状态)。
+
+    Returns:
+        归一**前**的正分量行 Σ（float）；行空/不可解析返回 None。调用方用它测
+        "Σ→1 满仓归一吞掉了多少现金意图"（H3-C），本函数行为不变。
     """
     if day_signals is None or (hasattr(day_signals, "empty") and day_signals.empty):
-        return
+        return None
 
     # dropna并过滤>0的
     day_signals = day_signals.dropna() if hasattr(day_signals, "dropna") else day_signals
@@ -851,7 +973,7 @@ def _normalize_day_signals(day_signals: object, weights: dict[str, float]) -> No
 
     total = float(day_signals.sum()) if hasattr(day_signals, "sum") else 0.0
     if total <= 0:
-        return
+        return total
 
     # 归一化为权重
     if hasattr(day_signals, "items"):
@@ -862,5 +984,12 @@ def _normalize_day_signals(day_signals: object, weights: dict[str, float]) -> No
             if val > 0:
                 weights[str(symbol)] = float(val) / total
 
+    return total
 
-__all__ = ["BacktestConfig", "DefaultBacktestEngine", "PitUniverseProvider"]
+
+__all__ = [
+    "BacktestConfig",
+    "DefaultBacktestEngine",
+    "PitUniverseProvider",
+    "EXECUTION_MODEL_CAPABILITY",
+]

@@ -74,6 +74,14 @@ def _fake_run_result(ok: bool = True, within: bool = True, equity: int = 60,
         "per_regime": [],
         "panel_reconciliation": {"within_tolerance": within, "max_abs_diff": 0.0 if within else 1e-3,
                                  "over_tolerance_cells": 0 if within else 5},
+        # #24 H4-B 现金账本闭合闸的默认披露（形状=portfolio.reconcile_cash_ledger 产出）：
+        # 缺这个键等于"账本没接"，闸按 fail-closed 判不过——反证用例自行覆写。
+        "cash_ledger_reconciliation": {
+            "within_tolerance": True, "samples": 5, "trade_rows": 12,
+            "max_abs_residual": 0.0, "tolerance_abs": 0.01, "over_tolerance": 0,
+            "worst_date": "2026-01-06", "bad_trade_rows": 0,
+            "cash_last": 900000.0, "reconstructed_cash_last": 900000.0,
+        },
         "equity_points": equity,
         "trades": 42,
         "metrics": {"total_return": 0.1, "sharpe_ratio": 1.2, "plan_id": "fw-tdm-current",
@@ -138,11 +146,28 @@ class TestRunFwBacktestDue:
         _patch_happy_path(monkeypatch)
         monkeypatch.setattr(fw, "_latest_evidence", lambda: {
             "plan": {"fingerprint": _FP["fingerprint"]},
-            "acceptance": {"ok": True, "risk_admitted": True},
+            "acceptance": {"ok": True, "risk_admitted": True, "cash_closure_admitted": True},
             "evidence_path": "latest.json",
         })
         out = fw.run_fw_backtest_due({"payload": {"trigger": "auto_mount"}})
         assert out.get("skipped") and "fingerprint_unchanged" in out["skipped"]
+
+    def test_evidence_without_cash_closure_forces_reeval(self, isolated, monkeypatch):
+        """账本闸（#24 H4-B）后接前写的证据无 cash_closure_admitted → 不得据其短路。
+
+        与 test_legacy_ok_evidence_forces_reeval 同族：幂等闸的语义是"同一份已验收
+        证据不必重跑"，而账本闭合成为验收要件之前产出的证据并没有这项证据，短路它
+        等于用新口径给旧证据背书。
+        """
+        calls = _patch_happy_path(monkeypatch)
+        monkeypatch.setattr(fw, "_latest_evidence", lambda: {
+            "plan": {"fingerprint": _FP["fingerprint"]},
+            "acceptance": {"ok": True, "risk_admitted": True},  # 缺 cash_closure_admitted
+            "evidence_path": "latest.json",
+        })
+        out = fw.run_fw_backtest_due({"payload": {"trigger": "auto_mount"}})
+        assert not out.get("skipped"), out
+        assert calls and out["acceptance"]["cash_closure_admitted"] is True
 
     def test_force_bypasses_idempotent_skip(self, isolated, monkeypatch):
         calls = _patch_happy_path(monkeypatch)
