@@ -47,3 +47,14 @@ algo_flow: |
     # I3 --> A1
     # I4 --> A1
     # A1 --> O1
+
+# 以下 algo_flow_prose = 契约头双真源清偿归并（P2-1 死块批 2026-09-16）：
+# 源码头块手写算法速记逐字副本，algo_flow 机器块未覆盖其口径故不删信息；
+algo_flow_prose: |
+    # [ALGO_FLOW]
+    # I1: state_seq(全历史 Viterbi 解码状态序列, 既有 detector 产物, 任意可哈希标签)
+    # I2: allowed_paths(spec §4 定义的合法转移路径集 (from,to)) + coverage_threshold=0.80
+    # F1: 逐日相邻对提取(默认剔除自环) → 转移计数
+    # A1: compute_path_coverage(覆盖率统计 + 未覆盖路径 top 榜 + ≥80% 判定)
+    # O1: A3CoverageReport(total/covered/coverage/passed/top_uncovered)
+    # [/ALGO_FLOW]

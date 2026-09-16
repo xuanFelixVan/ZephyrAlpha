@@ -47,3 +47,12 @@ algo_flow: |
     # I3 --> A1
     # I4 --> A1
     # A1 --> O1
+
+# 以下 algo_flow_prose = 契约头双真源清偿归并（P2-1 死块批 2026-09-16）：
+# 源码头块手写算法速记逐字副本，algo_flow 机器块未覆盖其口径故不删信息；
+algo_flow_prose: |
+    # [ALGO_FLOW]
+    # I1: n_samples/n_splits + t1(各样本标签末端索引,可选) + embargo(隔离样本数)
+    # A1: purged_kfold_split(K折连续块→test; 其余train; 按t1重叠purge+test末端embargo剔除)
+    # O1: list[(train_indices, test_indices)] 长度=n_splits
+    # [/ALGO_FLOW]

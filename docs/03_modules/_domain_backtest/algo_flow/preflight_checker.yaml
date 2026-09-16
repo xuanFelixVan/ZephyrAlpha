@@ -47,3 +47,11 @@ algo_flow: |
     # I3 --> A1
     # I4 --> A1
     # A1 --> O1
+
+# 以下 algo_flow_prose = 契约头双真源清偿归并（P2-1 死块批 2026-09-16）：
+# 源码头块手写算法速记逐字副本，algo_flow 机器块未覆盖其口径故不删信息；
+algo_flow_prose: |
+    # [ALGO_FLOW] 目的: 回测启动前数据质量前置检查（15号 memo BM-BT-02-D，函数级 MVP，绑定入口由调用方注入）
+    # [ALGO_FLOW] 输入: symbols/start/end + 可选 DQ 检查函数表（默认空集，纯结构检查）
+    # [ALGO_FLOW] 输出: PreflightReport(passed/violations/skipped)，fail-visible 不静默
+    # [ALGO_FLOW] 不变量: 无数据注入时保守通过结构检查并标 skipped；任何 DQ 违规→passed=False

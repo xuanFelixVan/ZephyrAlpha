@@ -37,3 +37,16 @@ algo_flow: |
     # I1 --> A1
     # I2 --> A1
     # A1 --> O1
+
+# 以下 algo_flow_prose = 契约头双真源清偿归并（P2-1 死块批 2026-09-16）：
+# 源码头块手写算法速记逐字副本，algo_flow 机器块未覆盖其口径故不删信息；
+algo_flow_prose: |
+    # [ALGO_FLOW]
+    # I1: ColdStartEvalInput(stage/days_in_stage/divergence/risk_downgraded/rolling_sharpe/oos_sharpe/loss/decay_alert/consecutive_rollbacks)
+    # I2: ColdStartProgressionConfig(T0 5-10 日/T1 10-20 日/divergence 阈值 0.30/Sharpe 系数 0.7/0.85/回退上限 2)
+    # F1: T0 门控（divergence<阈值 且未风控降级 → PROMOTE T1；失败证据 → ROLLBACK SIMULATION）
+    # F2: T1 门控（Rolling Sharpe≥OOS×0.7 且无连续 3 日亏损超限 → PROMOTE T2；否则 ROLLBACK T0）
+    # F3: T2 门控（Rolling Sharpe≥OOS×0.85 且 Decay 无告警 → HOLD；否则 ROLLBACK T1）
+    # F4: 回退计数（连续 2 次 → ESCALATE_RETIREMENT）；retrain_paused=stage≠T2
+    # O1: ColdStartEvalResult(stage/action/position_ratio/retrain_paused/consecutive_rollbacks/detail)
+    # [/ALGO_FLOW]

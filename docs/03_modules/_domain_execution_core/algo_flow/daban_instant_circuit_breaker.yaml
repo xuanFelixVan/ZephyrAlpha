@@ -31,3 +31,12 @@ algo_flow: |
     # 边:
     # I1 --> A1
     # A1 --> O1
+
+# 以下 algo_flow_prose = 契约头双真源清偿归并（P2-1 死块批 2026-09-16）：
+# 源码头块手写算法速记逐字副本，algo_flow 机器块未覆盖其口径故不删信息；
+algo_flow_prose: |
+    # [ALGO_FLOW]
+    # I1: live_data(current_seal/initial_seal) + echelon_status + quant_seat_ratio
+    # F1: 触发器①seal_ratio<70%→SEAL_COLLAPSE ②梯队断层→ECHELON_FRACTURE ③量化席位hard→QUANT_SEAT_HARD
+    # O1: {trigger, action, qty_ratio?, reason?}（熔断=INSTANT_SELL 全仓 / 未触发=MONITOR）
+    # [/ALGO_FLOW]

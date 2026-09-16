@@ -67,3 +67,14 @@ algo_flow: |
     # A1 --> A2
     # A2 --> A3
     # A3 --> O1
+
+# 以下 algo_flow_prose = 契约头双真源清偿归并（P2-1 死块批 2026-09-16）：
+# 源码头块手写算法速记逐字副本，algo_flow 机器块未覆盖其口径故不删信息；
+algo_flow_prose: |
+    # [ALGO_FLOW]
+    # I1: snapshot 季度持仓快照(trade_date/ts_code/hold_share) + vwap 当季个股 VWAP Series
+    # F1: compute_quarter_position_changes(两季度持仓外连接 → Δ持股×VWAP；退出=负全仓/新进=全仓)
+    # F2: top_position_changes(delta_amount 降序取 top 加仓 / 升序取 top 减仓)
+    # F3: estimate_quarterly_net_inflow(Σ Δ持股×VWAP → 准北向季度净流入)
+    # O1: 变化明细 DataFrame / top_add+top_reduce dict / 净流入 float
+    # [/ALGO_FLOW]

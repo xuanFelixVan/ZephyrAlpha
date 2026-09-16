@@ -100,3 +100,12 @@ algo_flow: |
     # A5 --> A6
     # A6 --> A7
     # A7 --> O1
+
+# 以下 algo_flow_prose = 契约头双真源清偿归并（P2-1 死块批 2026-09-16）：
+# 源码头块手写算法速记逐字副本，algo_flow 机器块未覆盖其口径故不删信息；
+algo_flow_prose: |
+    # [ALGO_FLOW]
+    # I1: Sequence[SessionChainReview]（原始任务意图 + 当前动作链摘要）；I2: EmbeddingProvider（注入）
+    # F1: 批量嵌入（意图 vs 动作链摘要成对）→ F2: 余弦相似度 < threshold 判疑似意图偏差 → F3: 汇总复核报告
+    # O1: SemanticReviewReport（pending_human_review）；O2: drift_semantic_review-<report_id>.json 落盘
+    # [/ALGO_FLOW]

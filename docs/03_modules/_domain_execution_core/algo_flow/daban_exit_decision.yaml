@@ -49,3 +49,15 @@ algo_flow: |
     # I3 --> A1
     # A1 --> A2
     # A2 --> O1
+
+# 以下 algo_flow_prose = 契约头双真源清偿归并（P2-1 死块批 2026-09-16）：
+# 源码头块手写算法速记逐字副本，algo_flow 机器块未覆盖其口径故不删信息；
+algo_flow_prose: |
+    # [ALGO_FLOW]
+    # I1: position(cost_basis/consecutive_board/exploded) + auction_data(open_price) + forecast(phase/divergence) + holding_days
+    # I2: t1_data(close/high/limit_up_price/seal_ratio) + echelon_status（classify_position_status 输入）
+    # F1: NextDayExitDecision.decide——硬退出①低开闷杀②持仓超时③炸板退潮→高开两档止盈→分歧度软退出→连板持有
+    # F2: classify_position_status——T+1涨停收盘+封单存在+梯队非孤板→consecutive_board; 触涨停未封收→exploded（回写 position）
+    # F3: reflush_next_day_exit_decision——反核后次日：高开≥5%止盈/低开≤-3%止损/持5天时间止盈/其余观察
+    # O1: {action, qty_ratio, reason}（action∈STOP_LOSS/SELL_ALL/SELL_HALF/HOLD）
+    # [/ALGO_FLOW]

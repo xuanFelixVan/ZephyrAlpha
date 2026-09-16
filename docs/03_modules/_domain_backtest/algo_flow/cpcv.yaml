@@ -68,3 +68,14 @@ algo_flow: |
     # A1 --> A2
     # A2 --> A3
     # A3 --> O1
+
+# 以下 algo_flow_prose = 契约头双真源清偿归并（P2-1 死块批 2026-09-16）：
+# 源码头块手写算法速记逐字副本，algo_flow 机器块未覆盖其口径故不删信息；
+algo_flow_prose: |
+    # [ALGO_FLOW]
+    # I1: n_samples/n_groups/k_test + t1(各样本标签末端索引,可选) + embargo(隔离样本数)
+    # I2: is_performance/oos_performance 性能矩阵(n_splits×n_trials, 调用方注入)
+    # A1: generate_cpcv_splits(N组取k组组合→test; 其余组train; 按t1重叠purge+各test组末端embargo剔除)
+    # A2: compute_pbo(每split取IS最优trial→其OOS相对秩ω=rank/(M+1)→logit(ω)→PBO=P(logit<0))
+    # O1: list[CPCVSplit] / PBO报告dict(pbo/logits/omega)
+    # [/ALGO_FLOW]

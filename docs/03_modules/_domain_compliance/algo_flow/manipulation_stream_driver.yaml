@@ -37,3 +37,16 @@ algo_flow: |
     # I1 --> A1
     # I2 --> A1
     # A1 --> O1
+
+# 以下 algo_flow_prose = 契约头双真源清偿归并（P2-1 死块批 2026-09-16）：
+# 源码头块手写算法速记逐字副本，algo_flow 机器块未覆盖其口径故不删信息；
+algo_flow_prose: |
+    # [ALGO_FLOW]
+    # I1: ComplianceOrderRecord(挂单/撤单事件) + ComplianceTradeRecord(成交事件) + minute_volume_provider(分钟均量注入)
+    # F1: on_order_placed(record)——入窗口缓存→评估该 symbol(Spoofing 需分钟均量/Layering 同侧梯度序列预筛)
+    # F2: on_order_cancelled(symbol, order_id, cancelled_at)——冻结记录 replace 标记撤单→重评估
+    # F3: on_trade(trade)——WashTrade 零容忍即时检测(买卖双方同账户)
+    # F4: trim_before(cutoff)——30min 滚动窗口修剪(detector.spoof_repeat_window_s 口径)
+    # A1: _evaluate_symbol(symbol)——check_spoofing(窗口内全部订单) + check_layering(同侧按时间序单调梯度最长run≥3档)
+    # O1: list[ManipulationVerdict](命中一律 HARD_BLOCK, 证据由 detector 落 compliance_log)
+    # [/ALGO_FLOW]

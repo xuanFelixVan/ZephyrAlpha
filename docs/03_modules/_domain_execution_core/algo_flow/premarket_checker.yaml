@@ -48,3 +48,17 @@ algo_flow: |
     # A1 --> A2
     # A2 --> A3
     # A3 --> O1
+
+# 以下 algo_flow_prose = 契约头双真源清偿归并（P2-1 死块批 2026-09-16）：
+# 源码头块手写算法速记逐字副本，algo_flow 机器块未覆盖其口径故不删信息；
+algo_flow_prose: |
+    # [ALGO_FLOW]
+    # I1: trading_date + clock
+    # I2: 四探针(risk_limits/compliance/data_quality/system_readiness)
+    # A1: 限额基线关(取值域+基线日期=当日)
+    # A2: 纪律预检关(违规清单须空)
+    # A3: 数据完整性关(QualityReport.passed)
+    # A4: 系统就绪关(子系统映射全真,未就绪点名)
+    # A5: 全量聚合(ready=全过; 探针异常=PROBE_ERROR阻断项)
+    # O1: PremarketReport(frozen)
+    # [/ALGO_FLOW]

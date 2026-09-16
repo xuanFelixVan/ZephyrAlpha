@@ -39,3 +39,13 @@ algo_flow: |
     # I1 --> A1
     # A1 --> A2
     # A2 --> O1
+
+# 以下 algo_flow_prose = 契约头双真源清偿归并（P2-1 死块批 2026-09-16）：
+# 源码头块手写算法速记逐字副本，algo_flow 机器块未覆盖其口径故不删信息；
+algo_flow_prose: |
+    # [ALGO_FLOW]
+    # I1: 三层单票上限口径映射 SINGLE_NAME_CAP_LAYERS（MOD-POS-001 策略层 5% / MOD-POS-021 firm 聚合 8% / MOD-POS-010 最终硬限 5%）
+    # A1: validate_tier_calibers（合法性+冗余裁剪检测：firm 层 > 最终硬限时 8% 永不 binding 属冗余中间值）
+    # A2: check_production_consistency（映射表 vs 三模块生产默认值漂移检测）
+    # O1: 问题列表 list[str]（空=通过；冗余裁剪为 WARNING 级登记项，非阻断）
+    # [/ALGO_FLOW]

@@ -47,3 +47,13 @@ algo_flow: |
     # I3 --> A1
     # I4 --> A1
     # A1 --> O1
+
+# 以下 algo_flow_prose = 契约头双真源清偿归并（P2-1 死块批 2026-09-16）：
+# 源码头块手写算法速记逐字副本，algo_flow 机器块未覆盖其口径故不删信息；
+algo_flow_prose: |
+    # [ALGO_FLOW]
+    # I1: max_p_values(walk-forward 全区间逐日 max(P) 序列, 既有 detector 产物, 值域[0,1])
+    # I2: edges 四档边界 + low_share_max=0.40 / high_share_max=0.50(memo §4.2 B3 判定阈值)
+    # A1: analyze_confidence_distribution(分位数统计 + 四档桶占比 + 死档检测 + 判定)
+    # O1: B3ConfidenceReport(均值/分位数/桶占比/dead_buckets/passed)
+    # [/ALGO_FLOW]

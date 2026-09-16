@@ -47,3 +47,13 @@ algo_flow: |
     # I3 --> A1
     # I4 --> A1
     # A1 --> O1
+
+# 以下 algo_flow_prose = 契约头双真源清偿归并（P2-1 死块批 2026-09-16）：
+# 源码头块手写算法速记逐字副本，algo_flow 机器块未覆盖其口径故不删信息；
+algo_flow_prose: |
+    # [ALGO_FLOW]
+    # I1: close 价格序列（index=日期；取末段多窗口拟合）
+    # F1: _lppl_fit_window（单窗口网格搜索：固定 (tc,m,ω) → y=A+B·dt^m+C1·dt^m·cos(ωln dt)+C2·dt^m·sin(ωln dt) 线性 lstsq，取 SSE 最小）
+    # F2: lppl_blowoff_score（多窗口拟合 → 五维评分映射：m/ω 经验区间 +20/+20，tc 中位≤20 日 +25，有效窗口占比>50% +15，tc 标准差<20 日 +10）
+    # O1: LPPLResult（score 0-90 + m/ω/tc 中位 + valid_window_ratio + degraded）
+    # [/ALGO_FLOW]

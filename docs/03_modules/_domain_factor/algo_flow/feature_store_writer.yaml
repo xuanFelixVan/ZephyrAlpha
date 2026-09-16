@@ -59,3 +59,13 @@ algo_flow: |
     # I4 --> A1
     # A1 --> A2
     # A2 --> O1
+
+# 以下 algo_flow_prose = 契约头双真源清偿归并（P2-1 死块批 2026-09-16）：
+# 源码头块手写算法速记逐字副本，algo_flow 机器块未覆盖其口径故不删信息；
+algo_flow_prose: |
+    # [ALGO_FLOW]
+    # I1: 长表特征值 DataFrame(trade_date/symbol/factor_id/value) + factor_version + 可选 client(注入式)
+    # F1: build_feature_value_rows(校验必需列 → 对齐 INSERT_COLUMNS 的行 tuple；NaN→None 保 NULL 语义)
+    # F2: write_feature_values(空输入短路 0；client 缺省延迟取 get_client；分块 INSERT c1_market.factor_feature_value)
+    # O1: 行 tuple 列表 / 写入行数 int
+    # [/ALGO_FLOW]

@@ -56,3 +56,14 @@ algo_flow: |
     # A2 --> A3
     # A3 --> A4
     # A4 --> O1
+
+# 以下 algo_flow_prose = 契约头双真源清偿归并（P2-1 死块批 2026-09-16）：
+# 源码头块手写算法速记逐字副本，algo_flow 机器块未覆盖其口径故不删信息；
+algo_flow_prose: |
+    # [ALGO_FLOW]
+    # I1: 模板库(默认9情景/可注入覆盖) + market_state + active_scenario + events + bar_index
+    # A1: match(情景过滤→触发命中(常配或state∧event)→保守优先多命中取risk_escalation最高)
+    # A2: 确认流状态机(PROPOSED→CONFIRMED→EXECUTED; REJECTED/EXPIRED终态; 非法迁移拒绝)
+    # A3: settle(Beta(1,1)命中率平滑→review payload→review_sink回调)
+    # O1: PlaybookMatch / PlaybookConfirmation.status / settle payload
+    # [/ALGO_FLOW]

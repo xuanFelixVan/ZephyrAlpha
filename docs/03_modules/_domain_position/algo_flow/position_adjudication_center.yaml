@@ -55,3 +55,15 @@ algo_flow: |
     # I4 --> A1
     # A1 --> A2
     # A2 --> O1
+
+# 以下 algo_flow_prose = 契约头双真源清偿归并（P2-1 死块批 2026-09-16）：
+# 源码头块手写算法速记逐字副本，algo_flow 机器块未覆盖其口径故不删信息；
+algo_flow_prose: |
+    # [ALGO_FLOW]
+    # I1: AdjudicationRequest(request_id/strategy_id/symbol/action/intended_weight/context)
+    # I2: 四层callable(组合/策略/标的/动态,装配批接MOD-POS-013/020族/001+010/018)
+    # A1: 请求校验+规范化指纹(sha256前16hex=adjudication_id)
+    # A2: 四层依序裁决(任一层拒绝/异常→终审拒绝汇聚violations)
+    # A3: 最保守收敛(全过→final_weight=min(adjusted_weight))+幂等注册
+    # O1: AdjudicatedPositionPlan / verify_bypass(令牌缺失或不符=True)
+    # [/ALGO_FLOW]

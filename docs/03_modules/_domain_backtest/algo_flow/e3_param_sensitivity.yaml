@@ -60,3 +60,15 @@ algo_flow: |
     # I4 --> A1
     # A1 --> A2
     # A2 --> O1
+
+# 以下 algo_flow_prose = 契约头双真源清偿归并（P2-1 死块批 2026-09-16）：
+# 源码头块手写算法速记逐字副本，algo_flow 机器块未覆盖其口径故不删信息；
+algo_flow_prose: |
+    # [ALGO_FLOW]
+    # I1: baseline_effect(基线参数下的效果指标, 如 MaxDD 改善幅度)
+    # I2: points(各参数 ±20% 扰动后的效果指标, 既有网格回测产物)
+    # I3: tolerance=0.30(§4.4: ±20% 扰动效果变化<30% → 稳健)
+    # A1: analyze_param_sensitivity(按参数聚合→相对变化→悬崖检测)
+    # A2: perturb_pm20(基线值×0.8/×1.2 扰动值生成器)
+    # O1: E3SensitivityReport(逐参数判定 + max_rel_change + passed + 悬崖参数清单)
+    # [/ALGO_FLOW]

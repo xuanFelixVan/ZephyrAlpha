@@ -49,3 +49,13 @@ algo_flow: |
     # I3 --> A1
     # A1 --> A2
     # A2 --> O1
+
+# 以下 algo_flow_prose = 契约头双真源清偿归并（P2-1 死块批 2026-09-16）：
+# 源码头块手写算法速记逐字副本，algo_flow 机器块未覆盖其口径故不删信息；
+algo_flow_prose: |
+    # [ALGO_FLOW]
+    # I1: C2ProtectionReport(events/mean_improvement/min_improvement/skipped/passed) 或 C3AttributionReport(states/total_avoided/defensive_share/bull_mean_shrinkage/passed)（鸭子类型）
+    # I2: lineage(上游 run_id 映射,如 c1_run_id) + extra_tags
+    # F1: track_c2_result(per-event 改善指标 + passed → run) / track_c3_result(per-state 归因 + passed → run)
+    # O1: run_id（NullBackend="null-run"）
+    # [/ALGO_FLOW]

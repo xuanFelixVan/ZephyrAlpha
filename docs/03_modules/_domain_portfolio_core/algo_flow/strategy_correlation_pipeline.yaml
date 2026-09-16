@@ -55,3 +55,23 @@ algo_flow: |
     # I3 --> A1
     # A1 --> A2
     # A2 --> O1
+
+# 以下 algo_flow_prose = 契约头双真源清偿归并（P2-1 死块批 2026-09-16）：
+# 源码头块手写算法速记逐字副本，algo_flow 机器块未覆盖其口径故不删信息；
+algo_flow_prose: |
+    # [ALGO_FLOW]
+    # 层: 输入
+    # - id: I1 策略日收益率面板 returns(T×k, index=date, columns=strategy_names)
+    # - id: I2 可选 BM-SEL-23-B 情绪分层标签(phase_labels+confidences 或 grayscale_map)
+    # - id: I3 可选过拟合审计结果/正交维度映射(第6/7部分留口)
+    # 层: 算法
+    # - id: A1 预处理: 伪净值→preprocess_strategy_returns(ln(1+r)+ADF+Modified Z-score标注+交集对齐)
+    # - id: A2 双相关矩阵: compute_strategy_correlation(Pearson+Spearman)
+    # - id: A3 分层: build_phase_labels/labels_from_grayscale→split_by_phase→逐阶段双矩阵(消费 BM-SEL-23-B)
+    # - id: A4 block-bootstrap CI: bootstrap_correlation_ci(2000×同步行重采样+Fisher z互验)
+    # - id: A5 Neff: effective_bets(Ledoit-Wolf收缩前置)
+    # - id: A6 结论: 三条件交叉(各阶段>0.6对数>=3 / Neff<3 / 两两最大>0.6, 任一触发即REVIEW_REQUIRED)
+    # - id: A7 漂移监控: compute_rolling_spearman(63日)+assess_pair_drift(CUSUM k=0.5σ/h=4σ + PSI>0.2/0.4)
+    # 层: 输出
+    # - id: O1 StrategyCorrelationReport(七部分+漂移附录) + render_markdown(23号文报告模板)
+    # [/ALGO_FLOW]

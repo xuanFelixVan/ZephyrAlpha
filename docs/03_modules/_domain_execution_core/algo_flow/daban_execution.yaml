@@ -47,3 +47,16 @@ algo_flow: |
     # A1 --> A2
     # A2 --> A3
     # A3 --> O1
+
+# 以下 algo_flow_prose = 契约头双真源清偿归并（P2-1 死块批 2026-09-16）：
+# 源码头块手写算法速记逐字副本，algo_flow 机器块未覆盖其口径故不删信息；
+algo_flow_prose: |
+    # [ALGO_FLOW]
+    # I1: queue_position/seal_volume/order_volume/distance_to_mid（填充概率）; order_book(bid_levels)（SaR）
+    # I2: near_limit/seal_strength/volume_surge/time_to_close_min（时点决策）
+    # I3: nav/seal_volume/float_shares/order_book/price（动态容量）
+    # F1: DabanExecutionAlgorithm——指数填充概率+SaR 前置检查→FIRST/REFLUSH/RESERVE 三段执行计划
+    # F2: DabanTimingDecision——封板概率估算→CHASE(MARKET)/AMBUSH(LIMIT)/WAIT
+    # F3: DynamicCapacityCalculator——sar/seal/float/nav 四约束取 min→max_qty+binding_constraint
+    # O1: 执行计划 list[dict] / 时点决策 dict / 容量测算 dict
+    # [/ALGO_FLOW]

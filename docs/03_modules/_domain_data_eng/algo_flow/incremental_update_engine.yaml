@@ -61,3 +61,17 @@ algo_flow: |
     # A2 --> A3
     # A3 --> A4
     # A4 --> O1
+
+# 以下 algo_flow_prose = 契约头双真源清偿归并（P2-1 死块批 2026-09-16）：
+# 源码头块手写算法速记逐字副本，algo_flow 机器块未覆盖其口径故不删信息；
+algo_flow_prose: |
+    # [ALGO_FLOW]
+    # I1: ChangeSignal(source_id/watermark/updated_at_max/row_count/row_hash)——源侧统一变更观测(三通道)
+    # I2: incremental/full 抽样行映射——增量结果与全量重算抽样对账输入
+    # I3: register/update_window_state——增量因子窗口状态登记(incremental_compute 挂调度前置)
+    # F1: detect_change(prev,curr)——统一变更检测: 三通道任一前进/变化→changed+reasons
+    # F2: SamplingReconciler.reconcile()——抽样对账: 匹配/差异/缺失计数→deviation_ratio>容差→告警(不静默)
+    # F3: IncrementalFactorRegistry——因子注册+窗口状态更新+快照持久化往返
+    # A1: 输入非法/未知因子/tolerance<0→Fail-Closed; sink 异常仅日志不阻断
+    # O1: ChangeVerdict / SampleReconcileResult / FactorWindowState(快照可持久化)
+    # [/ALGO_FLOW]

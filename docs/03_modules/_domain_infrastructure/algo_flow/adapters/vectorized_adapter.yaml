@@ -46,3 +46,14 @@ algo_flow: |
     # I3 --> A1
     # I4 --> A1
     # A1 --> O1
+
+# 以下 algo_flow_prose = 契约头双真源清偿归并（P2-1 死块批 2026-09-16）：
+# 源码头块手写算法速记逐字副本，algo_flow 机器块未覆盖其口径故不删信息；
+algo_flow_prose: |
+    # [ALGO_FLOW]
+    # I1: result(BacktestResult 鸭子类型: strategy_id/start_date/end_date/sharpe_ratio/max_drawdown/annual_return/total_return/win_rate/trades_count)
+    # I2: config(BacktestConfig,可选: initial_capital/commission_rate/slippage_bps/benchmark_symbol/risk_free_rate) + nav_series(净值序列,可选) + lineage(上游 run_id,可选)
+    # F1: _extract_params(config 五字段 + 策略 + 日期范围) / _extract_metrics(七项核心指标)
+    # F2: track_vectorized_backtest(start_run(component=vectorized-backtest) → log_* + nav CSV artifact → run_id)
+    # O1: run_id（NullBackend="null-run"）
+    # [/ALGO_FLOW]

@@ -71,3 +71,14 @@ algo_flow: |
     # A2 --> A3
     # A3 --> A4
     # A4 --> O1
+
+# 以下 algo_flow_prose = 契约头双真源清偿归并（P2-1 死块批 2026-09-16）：
+# 源码头块手写算法速记逐字副本，algo_flow 机器块未覆盖其口径故不删信息；
+algo_flow_prose: |
+    # [ALGO_FLOW]
+    # I1: 因子/收益 DataFrame + DistributionFeatureConfig（lags/windows/quantiles/interactions/shift）
+    # A1: 滞后项——{col}_lag{k}（k ∈ lags）
+    # A2: 滚动分布统计——trailing 窗口 mean/std/skew/kurt(Fisher)/分位数（{col}_roll*{w}）
+    # A3: 交互项——{a}_x_{b} 列对乘积；全特征统一 shift（PIT 对齐）
+    # O1: 增强 DataFrame（原列 + 派生特征列，副本返回）
+    # [/ALGO_FLOW]

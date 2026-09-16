@@ -47,3 +47,16 @@ algo_flow: |
     # I3 --> A1
     # I4 --> A1
     # A1 --> O1
+
+# 以下 algo_flow_prose = 契约头双真源清偿归并（P2-1 死块批 2026-09-16）：
+# 源码头块手写算法速记逐字副本，algo_flow 机器块未覆盖其口径故不删信息；
+algo_flow_prose: |
+    # [ALGO_FLOW]
+    # I1: ping_fn(连接探活可调用, 返回 rtt 秒或抛异常) + submit_fn(下单可调用) + clock(时钟注入, 默认 time.monotonic)
+    # I2: warn_ms/crit_ms 延迟阈值(注入) + max_samples(样本界)
+    # F1: probe_connection(ping_fn)——连接状态+RTT 测量(异常=DOWN 不抛)
+    # F2: time_order_submission(submit_fn, *args)——下单延迟测量, 透传返回值/异常, 延迟落样本
+    # F3: record_fill_report_latency(submit_ts, fill_ts)——成交回报延迟登记(回报-下单时间差)
+    # A1: snapshot()——健康汇总: 连接状态/下单延迟(avg/max)/回报延迟(avg/max)/样本量 -> LinkHealth(HEALTHY/DEGRADED/DOWN)
+    # O1: ConnectionProbeResult + LinkHealthSnapshot(55 号 §3.2 健康总览消费)
+    # [/ALGO_FLOW]

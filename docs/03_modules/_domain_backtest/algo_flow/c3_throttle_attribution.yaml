@@ -47,3 +47,14 @@ algo_flow: |
     # I3 --> A1
     # I4 --> A1
     # A1 --> O1
+
+# 以下 algo_flow_prose = 契约头双真源清偿归并（P2-1 死块批 2026-09-16）：
+# 源码头块手写算法速记逐字副本，algo_flow 机器块未覆盖其口径故不删信息；
+algo_flow_prose: |
+    # [ALGO_FLOW]
+    # I1: records(逐日 DataFrame: state/shrinkage/ret_baseline/ret_experiment, 既有 C1 回测产物+Viterbi 主导态)
+    # I2: defensive_states=(r4,r10) + bull_state=r3 + 门槛(防御贡献≥60% / 牛均值Shrinkage≥0.85, §4.3 C3)
+    # A1: attribute_throttle(按态分组: 天数/均值Shrinkage/避免损失→正部归一化贡献份额)
+    # A2: 判定: r4+CRISIS 贡献份额≥60% 且 r3 均值 Shrinkage≥0.85(牛市基本不缩)
+    # O1: C3AttributionReport(逐态归因 + defensive_share + bull_mean_shrinkage + passed)
+    # [/ALGO_FLOW]

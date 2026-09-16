@@ -42,3 +42,13 @@ algo_flow: |
     # I2 --> A1
     # I3 --> A1
     # A1 --> O1
+
+# 以下 algo_flow_prose = 契约头双真源清偿归并（P2-1 死块批 2026-09-16）：
+# 源码头块手写算法速记逐字副本，algo_flow 机器块未覆盖其口径故不删信息；
+algo_flow_prose: |
+    # [ALGO_FLOW]
+    # I1: points(各交易成本 bps 下的 Shrinkage 效果指标, 如 MaxDD 改善, 既有网格回测产物)
+    # I2: cost_range=[0,50]bps(§4.5 E4 设计网格 0/2/5/10/50bps)
+    # A1: analyze_cost_sensitivity(符号一致性检验 + 效果区间统计 + 网格覆盖度检查)
+    # O1: E4CostReport(direction / direction_consistent / passed + 覆盖度信息)
+    # [/ALGO_FLOW]

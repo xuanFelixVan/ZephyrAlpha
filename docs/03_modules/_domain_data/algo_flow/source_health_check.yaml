@@ -52,3 +52,41 @@ algo_flow: |
     # A1 --> A2
     # A2 --> A3
     # A3 --> O1
+
+# 以下 algo_flow_prose = 契约头双真源清偿归并（P2-1 死块批 2026-09-16）：
+# 源码头块手写算法速记逐字副本，algo_flow 机器块未覆盖其口径故不删信息；
+algo_flow_prose: |
+    # [ALGO_FLOW]
+    # 层: 输入
+    # - id: I1
+    #   name: 源检查配置
+    #   fields: _HEALTH_CHECKS（source/module/class/测试 API 探针）
+    #   code: 模块级 _HEALTH_CHECKS 常量
+    # - id: I2
+    #   name: 内存结果缓存
+    #   fields: _latest_results（各源 status + timestamp）
+    #   code: get_latest_results/_health_check_age_minutes
+    # 层: 算法
+    # - id: A1
+    #   name_zh: ① 单源三段探测
+    #   name_en: _run_single_check
+    #   intro: import provider→实例化 connect→测试 API 调用，逐段记耗时与错误，任意段失败记状态不抛异常（60s 超时红线）
+    #   inputs: I1
+    #   outputs: 单源 result 字典（status/connect_ok/耗时/error）
+    # - id: A2
+    #   name_zh: ② 全量检查与缓存落盘
+    #   name_en: run_source_health_check
+    #   intro: 遍历全部源执行 A1，单源异常不波及其他源；结果写 logs/source_health_YYYYMMDD.log + 更新 _latest_results（scheduler 启动时调用一次）
+    #   inputs: I1
+    #   outputs: results 列表 + 日志文件 + 缓存
+    # - id: A3
+    #   name_zh: ③ 缓存 TTL 单源重检
+    #   name_en: _recheck_single_source
+    #   intro: scheduler 因缓存 test_fail 跳过某源且距上次检查超 30min 时，仅对该源重检并更新缓存（成败均入缓存），避免 QMT 恢复后被永久跳过（8/18 分钟线零采集事故根因修复）
+    #   inputs: I1 I2
+    #   outputs: 该源最新 result + 缓存更新
+    # 层: 输出
+    # - id: O1
+    #   name_zh: 健康状态查询面
+    #   name_en: get_latest_results
+    #   intro: 供 scheduler 健康门查询各源 healthy/test_fail；日志落盘供人工巡检

@@ -32,3 +32,14 @@ algo_flow: |
     # 边:
     # I1 --> A1
     # A1 --> O1
+
+# 以下 algo_flow_prose = 契约头双真源清偿归并（P2-1 死块批 2026-09-16）：
+# 源码头块手写算法速记逐字副本，algo_flow 机器块未覆盖其口径故不删信息；
+algo_flow_prose: |
+    # [ALGO_FLOW]
+    # I1: list[TrackSignal](track/direction/target_weight/source/ai_discovered)
+    # A1: 校验(同轨冲突Fail-Closed) + 分组(应急/人工/自动)
+    # A2: 优先级裁决(应急>人工>自动; 人工与自动冲突加L6标记)
+    # A3: 自动轨融合(双轨同向强共振min weight/单轨中等/反向CONFLICT_L6不出指令)
+    # O1: FusedDirective(direction/target_weight/priority_track/strength/needs_l6_review/reason)
+    # [/ALGO_FLOW]

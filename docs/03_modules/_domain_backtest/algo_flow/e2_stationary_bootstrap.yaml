@@ -68,3 +68,15 @@ algo_flow: |
     # A1 --> A2
     # A2 --> A3
     # A3 --> O1
+
+# 以下 algo_flow_prose = 契约头双真源清偿归并（P2-1 死块批 2026-09-16）：
+# 源码头块手写算法速记逐字副本，algo_flow 机器块未覆盖其口径故不删信息；
+algo_flow_prose: |
+    # [ALGO_FLOW]
+    # I1: returns_on/returns_off(Shrinkage 开/关两组逐期收益序列, 等长, C1 既有回测产物)
+    # I2: E2BootstrapConfig(n_boot=2000 / mean_block=21 / ci_level=0.90 / prob_threshold=0.75)
+    # F1: stationary_bootstrap_indices(Politis-Romano: 每步以 p=1/mean_block 重开新块, 否则顺移, 环形取模)
+    # F2: annualized_sharpe(逐期收益→年化 Sharpe, 零波动/样本<2 退化为 0)
+    # A1: bootstrap_sharpe_difference(B 次成对重采样→Sharpe 差值分布→percentile CI + P(diff>0))
+    # O1: E2BootstrapResult(observed_diff / CI / prob_positive / passed), prob_positive≥0.75 对齐 §4.3 C4 判定
+    # [/ALGO_FLOW]

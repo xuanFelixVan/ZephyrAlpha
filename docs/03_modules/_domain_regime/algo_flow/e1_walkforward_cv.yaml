@@ -55,3 +55,14 @@ algo_flow: |
     # I3 --> A1
     # A1 --> A2
     # A2 --> O1
+
+# 以下 algo_flow_prose = 契约头双真源清偿归并（P2-1 死块批 2026-09-16）：
+# 源码头块手写算法速记逐字副本，algo_flow 机器块未覆盖其口径故不删信息；
+algo_flow_prose: |
+    # [ALGO_FLOW]
+    # I1: improvements(walk-forward 各季度窗口 MaxDD 改善序列, 既有回测产物, 如 46 季度)
+    # I2: cv_threshold=0.50(§5 E1 判定门槛)
+    # F1: improvements_from_pairs((dd_base, dd_exp) 窗口对 → |dd_base|−|dd_exp| 改善序列, 统一正/负值约定)
+    # A1: compute_improvement_cv(mean/std/CV 正式统计 → CV<0.5 判定)
+    # O1: E1CVReport(n_windows/mean/std/cv/passed)
+    # [/ALGO_FLOW]

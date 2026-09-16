@@ -46,3 +46,14 @@ algo_flow: |
     # I3 --> A1
     # I4 --> A1
     # A1 --> O1
+
+# 以下 algo_flow_prose = 契约头双真源清偿归并（P2-1 死块批 2026-09-16）：
+# 源码头块手写算法速记逐字副本，algo_flow 机器块未覆盖其口径故不删信息；
+algo_flow_prose: |
+    # [ALGO_FLOW]
+    # I1: probabilities(RegimeProbabilities 鸭子类型: probabilities/dominant_regime/dominant_frequency/confidence) + shrinkage(ShrinkageResult: value/confidence_signal/risk_signal/shrinkage_enabled)
+    # I2: feature_stats(输入特征统计,可选) + model_params(HMM 超参,可选) + lineage(上游 run_id 映射,可选)
+    # F1: _extract_metrics(输出状态分布 per-state 概率 + confidence + shrinkage 三值)
+    # F2: track_regime_detection(start_run(component=regime-detector) → log_params/log_metrics → run_id)
+    # O1: run_id（NullBackend="null-run"）
+    # [/ALGO_FLOW]

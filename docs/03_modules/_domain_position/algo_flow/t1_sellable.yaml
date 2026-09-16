@@ -36,3 +36,13 @@ algo_flow: |
     # I1 --> A1
     # I2 --> A1
     # A1 --> O1
+
+# 以下 algo_flow_prose = 契约头双真源清偿归并（P2-1 死块批 2026-09-16）：
+# 源码头块手写算法速记逐字副本，algo_flow 机器块未覆盖其口径故不删信息；
+algo_flow_prose: |
+    # [ALGO_FLOW]
+    # I1: last_session_weights（T-1 收盘持仓权重 {symbol: weight}）
+    # I2: today_sold_weights（今日已卖出权重 {symbol: weight}，可选）
+    # A1: t1_sellable_weights（可卖_i = max(0, 昨仓_i − 今卖_i)；今买不在输入域——T+1 冻结）
+    # O1: {symbol: 可卖权重}（供 FirmRiskAggregator §2.3 净额截断 current_holdings 口径）
+    # [/ALGO_FLOW]

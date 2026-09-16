@@ -83,3 +83,15 @@ algo_flow: |
     # A3 --> A4
     # A4 --> A5
     # A5 --> O1
+
+# 以下 algo_flow_prose = 契约头双真源清偿归并（P2-1 死块批 2026-09-16）：
+# 源码头块手写算法速记逐字副本，algo_flow 机器块未覆盖其口径故不删信息；
+algo_flow_prose: |
+    # [ALGO_FLOW]
+    # I1: score 序列+事件日期（事件研究）/ params dict（预注册）/ Sharpe+矩或收益序列（MinTRL）/ IS+OOS Sharpe（WFE）
+    # F1: event_study（事件日 asof 对齐 → ±窗口评分极值 vs 事件前全历史滚动窗口极值的分位）
+    # F2: PreRegistrationRegistry（JSON 文件级参数 hash 锁定：register 禁覆盖 / verify 一致性）
+    # F3: min_track_record_length（MinTRL=1+[1-γ3·SR+(γ4-1)/4·SR²]·(Z_α/SR)²，Bailey & López de Prado 2014）
+    # F4: walk_forward_efficiency/assess_wfe（WFE=OOS/IS，≥0.6 pass / 0.5-0.6 marginal / <0.5 red_flag）
+    # O1: 事件研究 DataFrame / verify bool / MinTRL 年数 / WFE 裁决 dict
+    # [/ALGO_FLOW]

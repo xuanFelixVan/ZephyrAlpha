@@ -62,3 +62,15 @@ algo_flow: |
     # A1 --> A2
     # A2 --> A3
     # A3 --> O1
+
+# 以下 algo_flow_prose = 契约头双真源清偿归并（P2-1 死块批 2026-09-16）：
+# 源码头块手写算法速记逐字副本，algo_flow 机器块未覆盖其口径故不删信息；
+algo_flow_prose: |
+    # [ALGO_FLOW]
+    # I1: signal(衰减信号 Series, 滞回用)
+    # I2: open/high/low/close/volume(OHLCV 五序列, EVR/flush 用)
+    # F1: hysteresis_edge_trigger(双阈值状态机: >=enter 置1, <=exit 置0, 区间保持, NaN 保持)
+    # F2: s2_evr_score(EVR 核心60: 量>1.6x均量+实体极小; ADL 三模式: 经典背离80/吸筹脉冲70/隐形吸筹50; 四分量取 max)
+    # F3: s2_flush_flag(N日新低+收盘回前日区间+下影>50%+量>2x均量 四合取 → 0/1)
+    # O1: 滞回状态 Series{0,1} / EVR 评分 Series[0,100] / flush flag Series{0,1}
+    # [/ALGO_FLOW]

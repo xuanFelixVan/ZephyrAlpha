@@ -68,3 +68,14 @@ algo_flow: |
     # A1 --> A2
     # A2 --> A3
     # A3 --> O1
+
+# 以下 algo_flow_prose = 契约头双真源清偿归并（P2-1 死块批 2026-09-16）：
+# 源码头块手写算法速记逐字副本，algo_flow 机器块未覆盖其口径故不删信息；
+algo_flow_prose: |
+    # [ALGO_FLOW]
+    # I1: strategy_id + StrategyArchiveArtifacts(training_run_id/decay_knight/reason/params_snapshot/pnl_curve) + archive_root(默认 MAIN_REPO_ROOT/strategy_archive)
+    # F1: archive_strategy(建 strategy_archive/<sid>/ → manifest.json + params_snapshot.json + pnl_curve.csv；重复归档拒)
+    # F2: retrieve_strategy_archive(读 manifest.json + 产物文件清单；不存在→StrategyArchiveError)
+    # F3: list_archived_strategies(扫描 archive_root 下含 manifest.json 的子目录)
+    # O1: archive_strategy→归档目录 Path；retrieve→{manifest, files}
+    # [/ALGO_FLOW]

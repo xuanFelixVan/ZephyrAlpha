@@ -42,3 +42,15 @@ algo_flow: |
     # I2 --> A1
     # I3 --> A1
     # A1 --> O1
+
+# 以下 algo_flow_prose = 契约头双真源清偿归并（P2-1 死块批 2026-09-16）：
+# 源码头块手写算法速记逐字副本，algo_flow 机器块未覆盖其口径故不删信息；
+algo_flow_prose: |
+    # [ALGO_FLOW]
+    # I1: StrategyValidationRequest(strategy_id/is_sharpe/params/walk_forward_results/oos_sharpe + 可选扰动/泛化/DSR注入)
+    # I2: DecisionGate + OverfittingDetector 实例(可注入, 默认新建)
+    # A1: 过拟合三维+SIM-38样本内外对比(OverfittingDetector.detect)
+    # A2: IS→WFA→OOS三阶段门控(DecisionGate.evaluate, dsr可选判定器默认关闭)
+    # A3: 综合裁决 can_deploy = gate.can_deploy ∧ ¬is_overfitting
+    # O1: StrategyValidationVerdict(gate三阶段结果+过拟合结论+can_deploy+理由)
+    # [/ALGO_FLOW]
