@@ -68,44 +68,7 @@ Usage::
     )
     registry.register(make_scripts_import_integrity_gate())
 
-# [ALGO_FLOW]
-# 层: 输入
-# - id: I1
-#   name: project_root 参数
-#   fields: 参数 project_root，类型注解 Path
-#   code: scripts_import_integrity_gate.py 顶层公共函数形参（AST 提取）
-# 层: 算法
-# - id: A1
-#   name_zh: ① make_scripts_import_integrity_gate
-#   name_en: make_scripts_import_integrity_gate
-#   intro: 构造 _shared.constants 符号导入完整性门禁 GateSpec（硬阻断型）。
-#   desc: 构造 _shared.constants 符号导入完整性门禁 GateSpec（硬阻断型）。 Returns: GateSpec(gate_id="SCRIPTS-IMPORT-…；源码 L280-L328
-#   inputs: 无参数
-#   outputs: GateSpec
-# - id: A2
-#   name_zh: ② scan_all_scripts_for_import_violations
-#   name_en: scan_all_scripts_for_import_violations
-#   intro: 全仓 baseline 扫描 scripts/governance/**/*.py 的 _shared.constan…
-#   desc: 全仓 baseline 扫描 scripts/governance/**/*.py 的 _shared.constants 导入完整性。 与 make_scripts_impor…；源码 L335-L383
-#   inputs: project_root
-#   outputs: tuple[list[str], str | None]
-# 层: 输出
-# - id: O1
-#   name_zh: GateSpec
-#   name_en: GateSpec
-#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
-#   downstream: zephyr.gov_enforcement.rule_bridge.git_commit_gateway.GitCommitGateway.__init__…
-# - id: O2
-#   name_zh: tuple[list[str], str | None]
-#   name_en: tuple[list[str], str | None]
-#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
-#   downstream: zephyr.gov_enforcement.rule_bridge.git_commit_gateway.GitCommitGateway.__init__…
-# [/ALGO_FLOW]
-#
-# 边:
-# I1 --> A1
-# A1 --> A2
-# A2 --> O1
+# [ALGO_FLOW] external: docs/03_modules/_domain_gov_enforcement/algo_flow/commit_gates/s/scripts_import_integrity_gate.yaml
 """
 
 from __future__ import annotations

@@ -1,0 +1,46 @@
+# ALGO_FLOW 外部真源——reconciler_file_ops_gate（_domain_gov_enforcement 域，真源 src/zephyr/gov_enforcement/commit_gates/reconciler_file_ops_gate.py）
+# 2026-09-15 P2-1 契约头减负批量出仓：docstring 内联块逐字节副本，extractor 经
+# external 锚加载走同一 parse_algo_flow 管线；算法公共面变化时同步更新本块。
+doc_type: architecture_view
+ttl: permanent
+module: src.zephyr.gov_enforcement.commit_gates.reconciler_file_ops_gate
+source_of_truth: src/zephyr/gov_enforcement/commit_gates/reconciler_file_ops_gate.py
+algo_flow: |
+    # [ALGO_FLOW]
+    # 层: 输入
+    # - id: I1
+    #   name: path 参数
+    #   fields: 参数 path，类型注解 Path
+    #   code: reconciler_file_ops_gate.py 顶层公共函数形参（AST 提取）
+    # 层: 算法
+    # - id: A1
+    #   name_zh: ① scan_file_for_bare_primitives
+    #   name_en: scan_file_for_bare_primitives
+    #   intro: 扫描单文件裸删除/移动原语调用行。
+    #   desc: 扫描单文件裸删除/移动原语调用行。 Returns: [(lineno, line_stripped), ...] 违规行清单（注释行/豁免标记行/docstring 行已过滤）。；源码 L114-L143
+    #   inputs: path
+    #   outputs: list[tuple[int, str]]
+    # - id: A2
+    #   name_zh: ② make_reconciler_file_ops_gate
+    #   name_en: make_reconciler_file_ops_gate
+    #   intro: 构造 RECONCILER-FILE-OPS 静态扫描门禁 GateSpec。
+    #   desc: 构造 RECONCILER-FILE-OPS 静态扫描门禁 GateSpec。 priority=117：在 CONSUMERS-ACCURACY(116) 之后——语义层门禁先…；源码 L146-L187
+    #   inputs: 无参数
+    #   outputs: GateSpec
+    # 层: 输出
+    # - id: O1
+    #   name_zh: list[tuple[int, str]]
+    #   name_en: list[tuple[int, str]]
+    #   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+    #   downstream: gate_auto_registrar（in_process_gate_registry.yaml 条目驱动）
+    # - id: O2
+    #   name_zh: GateSpec
+    #   name_en: GateSpec
+    #   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+    #   downstream: gate_auto_registrar（in_process_gate_registry.yaml 条目驱动）
+    # [/ALGO_FLOW]
+    #
+    # 边:
+    # I1 --> A1
+    # A1 --> A2
+    # A2 --> O1

@@ -57,31 +57,7 @@ Usage::
 
     registry.register(make_mutable_const_without_final_gate())
 
-# [ALGO_FLOW]
-# 层: 输入
-# - id: I1
-#   name: 模块内部数据
-#   fields: 无公共形参/无再导出（AST 事实）
-#   code: mutable_const_without_final_gate.py
-# 层: 算法
-# - id: A1
-#   name_zh: ① make_mutable_const_without_final_gate
-#   name_en: make_mutable_const_without_final_gate
-#   intro: 构造可变常量缺 Final 标注硬阻断 GateSpec。
-#   desc: 构造可变常量缺 Final 标注硬阻断 GateSpec。 Returns: GateSpec(gate_id="MUTABLE-CONST-WITHOUT-FINAL", pr…；源码 L221-L252
-#   inputs: 无参数
-#   outputs: GateSpec
-# 层: 输出
-# - id: O1
-#   name_zh: GateSpec
-#   name_en: GateSpec
-#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
-#   downstream: zephyr.gov_enforcement.rule_bridge.git_commit_gateway.GitCommitGateway.__init__
-# [/ALGO_FLOW]
-#
-# 边:
-# I1 --> A1
-# A1 --> O1
+# [ALGO_FLOW] external: docs/03_modules/_domain_gov_enforcement/algo_flow/commit_gates/m/mutable_const_without_final_gate.yaml
 """
 
 from __future__ import annotations

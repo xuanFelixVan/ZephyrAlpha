@@ -53,44 +53,7 @@ Usage::
 
     registry.register(make_precommit_offline_gate())
 
-# [ALGO_FLOW]
-# 层: 输入
-# - id: I1
-#   name: config_text 参数
-#   fields: 参数 config_text，类型注解 str
-#   code: precommit_offline_gate.py 顶层公共函数形参（AST 提取）
-# 层: 算法
-# - id: A1
-#   name_zh: ① scan_precommit_config_offline
-#   name_en: scan_precommit_config_offline
-#   intro: 扫描 .pre-commit-config.yaml 内容，检测外部 repo 引用 + language 违规。
-#   desc: 扫描 .pre-commit-config.yaml 内容，检测外部 repo 引用 + language 违规。 Args: config_text: .pre-commit-…；源码 L165-L209
-#   inputs: config_text
-#   outputs: tuple[bool, list[str], list[str]]
-# - id: A2
-#   name_zh: ② make_precommit_offline_gate
-#   name_en: make_precommit_offline_gate
-#   intro: 构造 GATE-PRECOMMIT-OFFLINE pre-commit 门禁（priority=109，硬阻断）。
-#   desc: 构造 GATE-PRECOMMIT-OFFLINE pre-commit 门禁（priority=109，硬阻断）。 检测 staged .pre-commit-config.y…；源码 L232-L285
-#   inputs: 无参数
-#   outputs: GateSpec
-# 层: 输出
-# - id: O1
-#   name_zh: tuple[bool, list[str], list[str]]
-#   name_en: tuple[bool, list[str], list[str]]
-#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
-#   downstream: zephyr.gov_enforcement.rule_bridge.git_commit_gateway.GitCommitGateway.__init__
-# - id: O2
-#   name_zh: GateSpec
-#   name_en: GateSpec
-#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
-#   downstream: zephyr.gov_enforcement.rule_bridge.git_commit_gateway.GitCommitGateway.__init__
-# [/ALGO_FLOW]
-#
-# 边:
-# I1 --> A1
-# A1 --> A2
-# A2 --> O1
+# [ALGO_FLOW] external: docs/03_modules/_domain_gov_enforcement/algo_flow/commit_gates/p/precommit_offline_gate.yaml
 """
 
 from __future__ import annotations

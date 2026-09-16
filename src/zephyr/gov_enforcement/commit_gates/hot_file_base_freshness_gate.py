@@ -67,31 +67,7 @@ Usage::
 
     registry.register(make_hot_file_base_freshness_gate())
 
-# [ALGO_FLOW]
-# 层: 输入
-# - id: I1
-#   name: 模块内部数据
-#   fields: 无公共形参/无再导出（AST 事实）
-#   code: hot_file_base_freshness_gate.py
-# 层: 算法
-# - id: A1
-#   name_zh: ① make_hot_file_base_freshness_gate
-#   name_en: make_hot_file_base_freshness_gate
-#   intro: 构造热文件 base 新鲜度门禁 GateSpec（硬阻断型）。
-#   desc: 构造热文件 base 新鲜度门禁 GateSpec（硬阻断型）。 Returns: GateSpec(gate_id="HOT-FILE-BASE-FRESHNESS", pri…；源码 L155-L211
-#   inputs: 无参数
-#   outputs: GateSpec
-# 层: 输出
-# - id: O1
-#   name_zh: GateSpec
-#   name_en: GateSpec
-#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
-#   downstream: zephyr.gov_enforcement.rule_bridge.git_commit_gateway.GitCommitGateway.__init__…
-# [/ALGO_FLOW]
-#
-# 边:
-# I1 --> A1
-# A1 --> O1
+# [ALGO_FLOW] external: docs/03_modules/_domain_gov_enforcement/algo_flow/commit_gates/h/hot_file_base_freshness_gate.yaml
 """
 
 from __future__ import annotations

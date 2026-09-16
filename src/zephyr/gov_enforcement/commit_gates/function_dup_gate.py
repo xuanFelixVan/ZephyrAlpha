@@ -52,31 +52,7 @@ Usage::
     registry.register(make_function_dup_gate())
     # commit() 内部：registry.check_all(gateway, files, session_id=sid, ...)
 
-# [ALGO_FLOW]
-# 层: 输入
-# - id: I1
-#   name: 模块内部数据
-#   fields: 无公共形参/无再导出（AST 事实）
-#   code: function_dup_gate.py
-# 层: 算法
-# - id: A1
-#   name_zh: ① make_function_dup_gate
-#   name_en: make_function_dup_gate
-#   intro: 构造重复函数实现阻断门禁 GateSpec（硬阻断型）。
-#   desc: 构造重复函数实现阻断门禁 GateSpec（硬阻断型）。 Returns: GateSpec(gate_id="FUNCTION-DUP", priority=90)。 prio…；源码 L300-L325
-#   inputs: 无参数
-#   outputs: GateSpec
-# 层: 输出
-# - id: O1
-#   name_zh: GateSpec
-#   name_en: GateSpec
-#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
-#   downstream: zephyr.gov_enforcement.rule_bridge.git_commit_gateway.GitCommitGateway.__init__
-# [/ALGO_FLOW]
-#
-# 边:
-# I1 --> A1
-# A1 --> O1
+# [ALGO_FLOW] external: docs/03_modules/_domain_gov_enforcement/algo_flow/commit_gates/f/function_dup_gate.yaml
 """
 
 from __future__ import annotations
