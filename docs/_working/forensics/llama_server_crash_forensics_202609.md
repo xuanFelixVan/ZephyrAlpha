@@ -79,3 +79,41 @@ Get-WinEvent -FilterHashtable @{LogName='Application'; Id=1000} -MaxEvents 2000 
   ForEach-Object { $_.TimeCreated; ($_.Message -split "`n" | Select-String '异常代码','出错模块') }
 ```
 升级验收 = 上查无新增 0xc0000005/0xc0000409 事件。
+
+## 7. Resolution（2026-09-16 升级闭环，会话 st-ollama2-20260916，裁定#269）
+
+- 升级执行：Ollama 0.32.1 → **0.34.1**（GitHub 官方发行 tag v0.34.1，published
+  2026-09-14T22:14:03Z；资产 OllamaSetup.exe 1,570,506,608 B，api.github.com
+  /releases/latest 当日 15:00/15:03 双时点复核一致）。来源 URL：
+  https://github.com/ollama/ollama/releases/download/v0.34.1/OllamaSetup.exe
+  接力说明：复用前任会话 st-ollama-20260916 的分段下载断点（9.3/16 段）+脚本，
+  续传 49 分钟补齐；装前三道校验全过=大小精确匹配+PE MZ 头+Authenticode Valid
+  （CN=Ollama Inc.）。安装包 SHA256=
+  a92986c86ab6854675ffd1b725db7c0350d40755895c95c397c58d61014e14d9
+  留存 `.runtime/tmp/ollama_upgrade/OllamaSetup.exe`（回滚保险，不入 git）。
+- 时间线：15:50:29 正常停服（ollama serve PID 15628=ZephyrAlpha_OllamaServe 编排
+  实例，01:01 起运行，cmdline/父链归属核实）→ 15:51 静默安装
+  （OllamaSetup.exe /VERYSILENT /NORESTART）→ 16:09:21 服务恢复（新 serve
+  PID 24788，绑 127.0.0.1:11434 与旧实例一致）。
+- 编排如实记录：安装器尾随托盘链路（ollama app.exe→serve，绑 0.0.0.0）不符项目
+  编排，已停；`schtasks /run` 两次触发 0.34.1 均启动阻塞（1 线程挂起不绑端口，
+  非瞬态——0.34.1 在非 AtLogOn 触发上下文的启动缺陷），改用与原生产实例同形态
+  分离启动（同 exe 同参，输出续写 .runtime/tmp/ollama_serve.log）；
+  ZephyrAlpha_OllamaServe 任务定义零改动保留，下次 AtLogOn 真实登录按端口冲突
+  自退出幂等设计自然接管（/run 挂起缺陷对 AtLogOn 路径无证据影响，留观察项）。
+- 验证四全：① CLI+HTTP version=0.34.1；② GPU 识别正常（RTX 3090 CUDA
+  driver 13.3，22.8 GiB 可用，vram-based default ctx 32768）；③ 冒烟 /api/tags
+  200（9 模型与本报告 §3 清单逐一吻合）+ /api/generate 真实推理
+  response='OK'（qwen3:8b，done_reason=stop，97 tok/s，keep_alive=0 冒烟后卸载）；
+  ④ 四层合围零改动（git status config/gguf_vram_budget.yaml=clean）。
+- 模型目录 E:\OllamaModels blob 数据零变动：目录 delta +38,500 B 恰为 0.34.1
+  新增 9 个 `metadata/*.json` 边车（新版本正常行为，非安装器触碰模型数据）；
+  冒烟产生的 2 个孤儿 llama-server runner（服务已报空载但进程不退）已手动收割，
+  VRAM 回落 1,852 MiB。
+- 升级动机对位：§2 AV-LLAMA 签名族为 0.32.1 内嵌 llama.cpp 构建的确定性缺陷
+  路径；0.34.1 底层 llama.cpp 已多轮重建，缺陷根已换，同偏移路径不复存在。
+- 被动验收（§6 口径）：升级前后均无新增 llama 崩溃事件（事件日志末次=
+  2026-09-15 23:22:31）；**自 2026-09-16 16:09 服务恢复起 7 天（至 2026-09-23）
+  无新增 0xc0000005/0xc0000409 llama 事件即正式闭环**，届时本报告按
+  GATE-WORKING-DOCS 语义结案。登记：裁定#269（ruling_registry 同 commit）。
+- 遗留转办：`qwen3-coder:30b` 保留性核查仍待裁（Owner 门位，与本升级解耦）。

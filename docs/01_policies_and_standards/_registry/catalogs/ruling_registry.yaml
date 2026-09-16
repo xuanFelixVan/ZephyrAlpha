@@ -2366,3 +2366,45 @@ entries:
   related_arch: ['#ARCH-BREG-001']
   related_rulings: ['裁定#262']
   superseded_by: null
+
+- ruling_id: '裁定#269'
+  title: Ollama 0.32.1→0.34.1 升级闭环 M4 崩溃族根因修复——AV-LLAMA 签名族（libllama.dll +0x2a230 ×4 确定性同偏移）随底层 llama.cpp 重建换根；静默安装+编排保留+冒烟全通+被动验收 7 天签名族清零
+  date: '2026-09-16'
+  category: 系统治理
+  status: active
+  summary: >-
+    欠账清偿战 GW-B2（st-ollama2-20260916，Owner"解决所有欠账"令=软件安装授权生效；
+    接力 st-ollama-20260916 配额墙阵亡现场，复用其分段下载断点 9.3/16 段+脚本，续传
+    49 分钟补齐）。M4 取证（docs/_working/forensics/llama_server_crash_forensics_202609.md）
+    判定 AV-LLAMA 签名族=Ollama 0.32.1 内嵌 llama.cpp 构建缺陷在 VRAM 超订压力下
+    确定性暴露（4×同模块同偏移，排除随机硬件故障），版本升级为根因修复路径（该报告
+    §5 待裁项，本裁定即其 Owner 批准落位）。执行：官方 v0.34.1（2026-09-14 发行，
+    资产 1,570,506,608 B，GitHub API 当日两次复核一致）静默安装
+    （/VERYSILENT /NORESTART），装前三道校验（大小精确匹配+PE MZ 头+Authenticode
+    Valid CN=Ollama Inc.），安装包 SHA256
+    a92986c86ab6854675ffd1b725db7c0350d40755895c95c397c58d61014e14d9，留存
+    .runtime/tmp/ollama_upgrade/（回滚保险，不入 git）。装前正常停服（PID 15628=
+    ZephyrAlpha_OllamaServe 编排实例，2026-09-16 01:01 起运行，cmdline/父链归属核实，
+    15:50:29 停）；装后服务恢复如实记录：安装器尾随托盘链路（ollama app.exe→serve，
+    绑 0.0.0.0）不符编排已停；schtasks /run 两次触发 0.34.1 均启动阻塞（1 线程挂起
+    不绑端口，非瞬态——0.34.1 在非 AtLogOn 触发上下文的启动缺陷），改用与原生产实例
+    同形态分离启动（同 exe 同参 serve，输出续写 .runtime/tmp/ollama_serve.log，绑
+    127.0.0.1:11434=与旧实例一致），ZephyrAlpha_OllamaServe 任务零改动保留，下次
+    AtLogOn 按端口冲突自退出幂等设计自然接管（schtasks /run 挂起缺陷对 AtLogOn
+    真实登录路径无证据影响，留观察项）。验证四全：CLI+HTTP version=0.34.1；
+    RTX 3090 CUDA 识别（driver 13.3，22.8GiB 可用）；冒烟 /api/tags 200（9 模型与
+    M4 §3 清单逐一吻合）+/api/generate 真实推理 response='OK'（qwen3:8b，done=stop，
+    97 tok/s，keep_alive=0 卸载）；VRAM 四层合围与 config/gguf_vram_budget.yaml
+    零改动（git clean）。模型目录 E:\OllamaModels blob 数据零变动（目录 delta
+    +38,500B 恰为 0.34.1 新增 9 个 metadata/*.json 边车=新版本正常行为）；冒烟产生
+    2 个孤儿 llama-server runner（服务已报空载但进程不退）已手动收割，VRAM 回落。
+    验收=报告 §6 口径：基线 2026-09-16 15:05（事件日志 llama 族末次
+    2026-09-15 23:22:31）起 7 天无新增 0xc0000005/0xc0000409 llama 事件即闭环
+    （被动验证，无需再施压力）。
+  affected_files:
+    - docs/_working/forensics/llama_server_crash_forensics_202609.md
+    - docs/01_policies_and_standards/_registry/catalogs/ruling_registry.yaml
+    - .runtime/tmp/ollama_upgrade/（OllamaSetup.exe+SHA256+smoke_tags.json+smoke_generate.json+resume_download.log+serve_probe.log；不入 git）
+  related_arch: []
+  related_rulings: []
+  superseded_by: null
