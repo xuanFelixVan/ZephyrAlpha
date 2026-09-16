@@ -37,7 +37,10 @@
 
 设计权衡
 --------
-1. diff 块归因按"最近出现的 node_id"粗粒度归属——足够判定"动了谁的块"，不做行级精确。
+1. diff 块归因主路径=行号精确锚（GW5/GW4 超窗漂移治本，2026-09-16）：用
+   staged/HEAD 全文构建 行号→node_id 索引，按 hunk 头行号归属 +/- 行；
+   unified diff 3 行上下文窗内 node_id 缺席不再导致归因漂移。全文不可得时
+   回退"最近出现的 node_id"窗内扫描（粗粒度，可能漂移，属降级非静默错误）。
 2. fail-open 只用于基础设施故障（地图缺失/git 异常）；diff 干净且节点受影响=真违规，阻断。
 3. priority=62：CREATE-GUARD(61) 与邻域段（63-75 已占）之间的唯一空位——必须在暂存集冻结后运行；
    首选 76 与 RULE-FOUR-WAY-ALIGN 冲突，按"后到者让位"先例改 62（历史先例：DATA-TASK 78->41 等）。
@@ -79,11 +82,16 @@ def _norm_posix(f: str | Path, repo_root: Path) -> str:
 
 
 def _collect_node_block_changes(diff_text: str) -> dict[str, set[str]]:
-    """从地图 YAML 的 unified diff 提取 {node_id: 变更过的键集合}。
+    """从地图 YAML 的 unified diff 提取 {node_id: 变更过的键集合}（回退路径）。
 
     归因规则：按 diff 行序跟踪最近出现的 node_id（+/-/上下文行都更新归属），
     变更行（+/−前缀、非文件头）计入当前 node 名下。粗粒度但足以判定
     "该节点的块在同 commit 内被动过、动的是不是 algo_note_zh/note_confirmed"。
+
+    .. deprecated:: 已知缺陷（GW5/GW4 实证，2026-09-16 治本）：unified diff 上下文
+        仅 3 行——node_id 行距修订行超窗时锚丢失，归因漂移到前一节点。仅在
+        staged/HEAD 全文不可得（git show 失败）时作为回退；主路径见
+        ``_collect_node_block_changes_by_linenos``。
     """
     changed: dict[str, set[str]] = {}
     current = ""
@@ -103,6 +111,82 @@ def _collect_node_block_changes(diff_text: str) -> dict[str, set[str]]:
     return changed
 
 
+_HUNK_BOTH_RE = re.compile(r"^@@ -(\d+)(?:,\d+)? \+(\d+)(?:,\d+)? @@")
+
+
+def _build_node_index(text: str) -> dict[int, str]:
+    """构建 行号(1-based)→归属节点 索引：每行归属=该行及其之前最近出现的 node_id。"""
+    index: dict[int, str] = {}
+    current = ""
+    for i, line in enumerate(text.split("\n"), start=1):
+        m = _NODE_ID_RE.search(line)
+        if m:
+            current = m.group(1)
+        index[i] = current
+    return index
+
+
+def _node_at(index: dict[int, str], total: int, line_no: int) -> str:
+    """查行号归属节点；行号越过 EOF（无尾换行 append 场景）钳到末行继承锚。"""
+    if line_no < 1:
+        return ""
+    if line_no > total:
+        line_no = total
+    return index.get(line_no, "")
+
+
+def _collect_node_block_changes_by_linenos(
+    diff_text: str,
+    old_text: str,
+    new_text: str,
+) -> dict[str, set[str]]:
+    """按 hunk 行号在完整文件内容上精确归因——GW5/GW4 超窗漂移治本（2026-09-16）。
+
+    病根：unified diff 上下文仅 3 行，node_id 行距修订行超窗时 diff 文本内锚丢失，
+    变更被归到前一节点（或丢失）——GW4 曾被迫以 note_confirmed 键行贴 node_id 绕开。
+
+    治本：用 staged/HEAD 全文各建 行号→node_id 索引，按 hunk 头双侧行号游标归属：
+      ``+`` 行按新文件行号取锚；``-`` 行按旧文件行号取锚；上下文行双游标推进
+      （取新文件锚——staged 态是归因权威）。空行跳过沿用 _diff_helpers AI-00
+      惯例（``\\r\\r\\n`` 翻译幻影行不占行号）。
+    """
+    old_index = _build_node_index(old_text)
+    new_index = _build_node_index(new_text)
+    old_total = len(old_text.split("\n"))
+    new_total = len(new_text.split("\n"))
+    changed: dict[str, set[str]] = {}
+    old_ln = 0
+    new_ln = 0
+    for raw_line in diff_text.split("\n"):
+        if raw_line == "":
+            continue  # \r\r\n→\n\n 翻译幻影空行 / diff 末尾空串，不占行号
+        m = _HUNK_BOTH_RE.match(raw_line)
+        if m:
+            old_ln = int(m.group(1))
+            new_ln = int(m.group(2))
+            continue
+        if raw_line.startswith(("diff ", "index ", "+++ ", "--- ", "\\")):
+            continue  # 文件头 / diff 元数据（\ No newline at end of file）
+        body = raw_line[1:]
+        if raw_line.startswith("+"):
+            node = _node_at(new_index, new_total, new_ln)
+            new_ln += 1
+        elif raw_line.startswith("-"):
+            node = _node_at(old_index, old_total, old_ln)
+            old_ln += 1
+        else:
+            node = _node_at(new_index, new_total, new_ln)
+            old_ln += 1
+            new_ln += 1
+        if raw_line[:1] in ("+", "-") and node:
+            for key in _NOTE_KEYS:
+                if key + ":" in body:
+                    changed.setdefault(node, set()).add(key)
+            if "node_id:" in body:
+                changed.setdefault(node, set()).add("node_id")
+    return changed
+
+
 def _edges_needing_review(dm: Any, note_changed_ids: list[str]) -> list[dict[str, str]]:
     """大白话被修订的节点 → 其带 payload_zh 的出边清单（复审提醒载体）。"""
     changed = set(note_changed_ids)
@@ -117,8 +201,20 @@ def check_algo_note_sync(
     files: list[str] | None,
     map_path: str | Path,
     diff_text: str | None,
+    old_text: str | None = None,
+    new_text: str | None = None,
 ) -> tuple[bool, str, list[dict[str, str]]]:
     """纯逻辑核心（可单测，不触 git）。
+
+    Args:
+        files: 本 commit 触碰的文件清单。
+        map_path: 地图真源路径。
+        diff_text: 地图 YAML 的 staged unified diff。
+        old_text: HEAD 版地图全文（``git show HEAD:<map>``）。None=不可得。
+        new_text: staged 版地图全文（``git show :<map>``）。None=不可得。
+
+    归因路径：new_text 可得时用行号精确归因（``_collect_node_block_changes_by_linenos``，
+    GW5/GW4 超窗漂移治本）；否则回退 diff 窗内锚扫描（``_collect_node_block_changes``）。
 
     Returns:
         (blocked, message, payload_review_edges)
@@ -135,7 +231,10 @@ def check_algo_note_sync(
     if not affected:
         return False, "", []
 
-    block_changes = _collect_node_block_changes(diff_text or "")
+    if new_text is not None:
+        block_changes = _collect_node_block_changes_by_linenos(diff_text or "", old_text or "", new_text)
+    else:
+        block_changes = _collect_node_block_changes(diff_text or "")
     failures: list[str] = []
     note_changed: list[str] = []
     for n in affected:
@@ -151,8 +250,7 @@ def check_algo_note_sync(
     if failures:
         msg = (
             f"ALGO-NOTE-SYNC：{len(failures)} 个节点的实现代码在本 commit 被触碰，"
-            f"但其大白话算法说明未同步——算法改了大白话必须跟着改（Owner 2026-09-09）。"
-            + "；".join(failures)
+            f"但其大白话算法说明未同步——算法改了大白话必须跟着改（Owner 2026-09-09）。" + "；".join(failures)
         )
         return True, msg, []
 
@@ -169,6 +267,21 @@ def _write_review_audit(project_root: Path, review: list[dict[str, str]]) -> Non
             fh.write(json.dumps(record, ensure_ascii=False) + "\n")
     except Exception:  # noqa: BLE001 — 审计失败不影响 gate 结果
         logger.debug("algo note payload review audit write failed", exc_info=True)
+
+
+def _read_map_text(gateway: Any, rev: str) -> str | None:
+    """读取地图指定 revision 全文（``rev=":"``=staged，``"HEAD:"``=HEAD 版）。
+
+    行号精确归因原料。失败（新文件无 HEAD blob / git 异常）返回 None——
+    调用方传 None 给 check_algo_note_sync 即回退窗内锚扫描（不阻断主链路）。
+    """
+    try:
+        res = gateway.run_git(["git", "show", rev + _MAP_REL])
+        if getattr(res, "returncode", 1) == 0:
+            return res.stdout
+    except Exception:  # noqa: BLE001 — 基础设施故障回退，不影响 gate 主流程
+        pass
+    return None
 
 
 def make_algo_note_sync_gate() -> Any:
@@ -189,7 +302,11 @@ def make_algo_note_sync_gate() -> Any:
                 return True, ""
             diff_res = gateway.run_git(["git", "diff", "--cached", "--", _MAP_REL])
             diff_text = diff_res.stdout if getattr(diff_res, "returncode", 1) == 0 else ""
-            blocked, msg, review = check_algo_note_sync(files, map_path, diff_text)
+            # 行号精确归因原料：staged/HEAD 全文（GW5/GW4 超窗漂移治本，2026-09-16）。
+            # 任一侧不可得（新文件 HEAD 无此 blob / git 异常）→ 传 None 回退窗内锚扫描。
+            new_text = _read_map_text(gateway, ":")
+            old_text = _read_map_text(gateway, "HEAD:")
+            blocked, msg, review = check_algo_note_sync(files, map_path, diff_text, old_text, new_text)
             if review:
                 _write_review_audit(project_root, review)
                 logger.warning(
