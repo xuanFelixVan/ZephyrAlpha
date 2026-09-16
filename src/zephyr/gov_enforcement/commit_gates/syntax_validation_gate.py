@@ -58,31 +58,7 @@ SyntaxError 即 fail-closed 阻断（detail 含文件名+行号+错误信息）�
    parse 通常抛 SyntaxError（若抛）——ENCODING-SAFETY(42) 已管编码规范，
    本 gate 优先报语法。真正 null-byte 文件抛 ValueError 走 fail-open。
 
-# [ALGO_FLOW]
-# 层: 输入
-# - id: I1
-#   name: 模块内部数据
-#   fields: 无公共形参/无再导出（AST 事实）
-#   code: syntax_validation_gate.py
-# 层: 算法
-# - id: A1
-#   name_zh: ① make_syntax_validation_gate
-#   name_en: make_syntax_validation_gate
-#   intro: 构造 staged .py 语法错误硬阻断门禁 GateSpec（fail-closed 型）。
-#   desc: 构造 staged .py 语法错误硬阻断门禁 GateSpec（fail-closed 型）。 Returns: GateSpec(gate_id="SYNTAX-VALIDATION", priority=49)；源码 L207-L268
-#   inputs: 无参数
-#   outputs: GateSpec
-# 层: 输出
-# - id: O1
-#   name_zh: GateSpec
-#   name_en: GateSpec
-#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
-#   downstream: zephyr.gov_enforcement.rule_bridge.git_commit_gateway.GitCommitGateway.__init__
-# [/ALGO_FLOW]
-#
-# 边:
-# I1 --> A1
-# A1 --> O1
+# [ALGO_FLOW] external: docs/03_modules/_domain_gov_enforcement/algo_flow/commit_gates/s/syntax_validation_gate.yaml
 """
 
 from __future__ import annotations

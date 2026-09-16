@@ -33,31 +33,7 @@ zephyr_env_direct_access_gate.py — ZEPHYR_ENV 直访硬阻断门禁（ZEPHYR-E
 3. **priority=125**：在既有 gate 之后、200 段之前。
 4. **noqa 豁免**：合法场景用 ``# noqa: e34-env`` 并附理由说明文本（≥10字符）。
 
-# [ALGO_FLOW]
-# 层: 输入
-# - id: I1
-#   name: 模块内部数据
-#   fields: 无公共形参/无再导出（AST 事实）
-#   code: zephyr_env_direct_access_gate.py
-# 层: 算法
-# - id: A1
-#   name_zh: ① make_zephyr_env_direct_access_gate
-#   name_en: make_zephyr_env_direct_access_gate
-#   intro: 构造 ZEPHYR_ENV 直访硬阻断 GateSpec。
-#   desc: 构造 ZEPHYR_ENV 直访硬阻断 GateSpec。 Returns: GateSpec(gate_id="ZEPHYR-ENV-DIRECT-ACCESS", prior…；源码 L135-L166
-#   inputs: 无参数
-#   outputs: GateSpec
-# 层: 输出
-# - id: O1
-#   name_zh: GateSpec
-#   name_en: GateSpec
-#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
-#   downstream: zephyr.gov_enforcement.rule_bridge.git_commit_gateway.GitCommitGateway.__init__
-# [/ALGO_FLOW]
-#
-# 边:
-# I1 --> A1
-# A1 --> O1
+# [ALGO_FLOW] external: docs/03_modules/_domain_gov_enforcement/algo_flow/commit_gates/z/zephyr_env_direct_access_gate.yaml
 """
 
 from __future__ import annotations

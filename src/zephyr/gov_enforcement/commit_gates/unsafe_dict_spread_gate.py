@@ -48,31 +48,7 @@ Usage::
     from zephyr.gov_enforcement.commit_gates.unsafe_dict_spread_gate import make_unsafe_dict_spread_gate
     registry.register(make_unsafe_dict_spread_gate())
 
-# [ALGO_FLOW]
-# 层: 输入
-# - id: I1
-#   name: 模块内部数据
-#   fields: 无公共形参/无再导出（AST 事实）
-#   code: unsafe_dict_spread_gate.py
-# 层: 算法
-# - id: A1
-#   name_zh: ① make_unsafe_dict_spread_gate
-#   name_en: make_unsafe_dict_spread_gate
-#   intro: 构造 ``**data`` 直接展开 warn 级 GateSpec。
-#   desc: 构造 ``**data`` 直接展开 warn 级 GateSpec。 Returns: GateSpec(gate_id="UNSAFE-DICT-SPREAD", prior…；源码 L169-L193
-#   inputs: 无参数
-#   outputs: GateSpec
-# 层: 输出
-# - id: O1
-#   name_zh: GateSpec
-#   name_en: GateSpec
-#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
-#   downstream: zephyr.gov_enforcement.rule_bridge.git_commit_gateway.GitCommitGateway.__init__
-# [/ALGO_FLOW]
-#
-# 边:
-# I1 --> A1
-# A1 --> O1
+# [ALGO_FLOW] external: docs/03_modules/_domain_gov_enforcement/algo_flow/commit_gates/u/unsafe_dict_spread_gate.yaml
 """
 
 from __future__ import annotations

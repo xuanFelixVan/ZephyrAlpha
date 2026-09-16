@@ -24,48 +24,7 @@
 与 AuditWriter 的 events.jsonl 同目录约定（data/audit_trail/）。
 5.37.9：clear() 权限保护——必须显式 confirm=True，操作本身写核心审计链留痕。
 
-# [ALGO_FLOW]
-# 层: 输入
-# - id: I1
-#   name: persist_path 参数
-#   fields: 参数 persist_path（无注解）
-#   code: audit_chain_verifier.py 顶层公共函数形参（AST 提取）
-# 层: 算法
-# - id: A1
-#   name_zh: ① AuditReport
-#   name_en: AuditReport
-#   intro: class AuditReport 源码 L105-L116
-#   desc: 公共方法（定义序）: summary；源码 L105-L116
-#   inputs: 无参数
-#   outputs: 返回值
-# - id: A2
-#   name_zh: ② AuditChainVerifier
-#   name_en: AuditChainVerifier
-#   intro: class AuditChainVerifier 源码 L119-L356
-#   desc: 公共方法（定义序）: core_writer, last_hash, chain, compute_hash, append, verify_chain, replay, length, clear；源码 L119-L…
-#   inputs: persist_path
-#   outputs: 返回值
-# - id: A3
-#   name_zh: ③ main
-#   name_en: main
-#   intro: main() 源码 L362-L363
-#   desc: 源码 L362-L363
-#   inputs: 无参数
-#   outputs: 返回值
-#   （注：A3 之后另有 1 个公共定义未列入（含 1 个数据契约/异常/枚举声明类），见源码）
-# 层: 输出
-# - id: O1
-#   name_zh: 模块公共 API 面（4 定义）
-#   name_en: public defs
-#   intro: AuditReport, AuditChainVerifier, main
-#   downstream: 见模块头 [CONSUMERS]
-# [/ALGO_FLOW]
-#
-# 边:
-# I1 --> A1
-# A1 --> A2
-# A2 --> A3
-# A3 --> O1
+# [ALGO_FLOW] external: docs/03_modules/_domain_gov_enforcement/algo_flow/rule_enforcement/audit_chain_verifier.yaml
 """
 
 import hashlib

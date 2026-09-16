@@ -31,31 +31,7 @@ ZephyrAlpha 门禁子包
 的 Gate 操作均通过本子包接口调用，禁止跨层直接操作门禁逻辑。
 统一决策入口：任何涉及风险控制的 AI 决策在此汇总评估。
 
-# [ALGO_FLOW]
-# 层: 输入
-# - id: I1
-#   name: 包内子模块公共符号
-#   fields: import 再导出符号: annotations, importlib, logging, Any, ThresholdSplitDetector, gate_he…
-#   code: __init__.py import L61
-# 层: 算法
-# - id: A1
-#   name_zh: ① 包公共面再导出
-#   name_en: __init__ re-export
-#   intro: 再导出 AdaptiveThreshold, AuditChainVerifier, GateContext, GateHealth, GateIntegri…
-#   desc: __init__ import L61；__all__ 55 项（AST 事实）
-#   inputs: I1
-#   outputs: __all__ 公共符号表
-# 层: 输出
-# - id: O1
-#   name_zh: 公共 API 面（55 符号）
-#   name_en: __all__
-#   intro: AdaptiveThreshold, AuditChainVerifier, GateContext, GateHealth, GateIntegrityGu…
-#   downstream: 见模块头 [CONSUMERS]
-# [/ALGO_FLOW]
-#
-# 边:
-# I1 --> A1
-# A1 --> O1
+# [ALGO_FLOW] external: docs/03_modules/_domain_gov_enforcement/algo_flow/rule_enforcement/rule_enforcement__init__.yaml
 """
 
 from __future__ import annotations

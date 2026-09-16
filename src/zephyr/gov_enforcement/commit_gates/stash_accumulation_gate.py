@@ -58,31 +58,7 @@ Usage::
 
     registry.register(make_stash_accumulation_gate())
 
-# [ALGO_FLOW]
-# 层: 输入
-# - id: I1
-#   name: 模块内部数据
-#   fields: 无公共形参/无再导出（AST 事实）
-#   code: stash_accumulation_gate.py
-# 层: 算法
-# - id: A1
-#   name_zh: ① make_stash_accumulation_gate
-#   name_en: make_stash_accumulation_gate
-#   intro: 构造 stash 堆积阈值检测 GateSpec。
-#   desc: 构造 stash 堆积阈值检测 GateSpec。 Returns: GateSpec(gate_id="STASH-ACCUMULATION", priority=118).…；源码 L132-L169
-#   inputs: 无参数
-#   outputs: GateSpec
-# 层: 输出
-# - id: O1
-#   name_zh: GateSpec
-#   name_en: GateSpec
-#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
-#   downstream: zephyr.gov_enforcement.rule_bridge.gate_auto_registrar.auto_register_gates
-# [/ALGO_FLOW]
-#
-# 边:
-# I1 --> A1
-# A1 --> O1
+# [ALGO_FLOW] external: docs/03_modules/_domain_gov_enforcement/algo_flow/commit_gates/s/stash_accumulation_gate.yaml
 """
 
 from __future__ import annotations

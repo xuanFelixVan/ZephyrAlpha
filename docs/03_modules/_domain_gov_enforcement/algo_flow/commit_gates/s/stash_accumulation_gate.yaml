@@ -1,0 +1,33 @@
+# ALGO_FLOW 外部真源——stash_accumulation_gate（_domain_gov_enforcement 域，真源 src/zephyr/gov_enforcement/commit_gates/stash_accumulation_gate.py）
+# 2026-09-15 P2-1 契约头减负批量出仓：docstring 内联块逐字节副本，extractor 经
+# external 锚加载走同一 parse_algo_flow 管线；算法公共面变化时同步更新本块。
+doc_type: architecture_view
+ttl: permanent
+module: src.zephyr.gov_enforcement.commit_gates.stash_accumulation_gate
+source_of_truth: src/zephyr/gov_enforcement/commit_gates/stash_accumulation_gate.py
+algo_flow: |
+    # [ALGO_FLOW]
+    # 层: 输入
+    # - id: I1
+    #   name: 模块内部数据
+    #   fields: 无公共形参/无再导出（AST 事实）
+    #   code: stash_accumulation_gate.py
+    # 层: 算法
+    # - id: A1
+    #   name_zh: ① make_stash_accumulation_gate
+    #   name_en: make_stash_accumulation_gate
+    #   intro: 构造 stash 堆积阈值检测 GateSpec。
+    #   desc: 构造 stash 堆积阈值检测 GateSpec。 Returns: GateSpec(gate_id="STASH-ACCUMULATION", priority=118).…；源码 L132-L169
+    #   inputs: 无参数
+    #   outputs: GateSpec
+    # 层: 输出
+    # - id: O1
+    #   name_zh: GateSpec
+    #   name_en: GateSpec
+    #   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+    #   downstream: zephyr.gov_enforcement.rule_bridge.gate_auto_registrar.auto_register_gates
+    # [/ALGO_FLOW]
+    #
+    # 边:
+    # I1 --> A1
+    # A1 --> O1
