@@ -2244,6 +2244,25 @@ entries:
   related_rulings: ['裁定#257']
   superseded_by: null
 
+- ruling_id: '裁定#265'
+  title: 编号让位空号保留（tombstone，非裁定）——GW-A 改号历程 #264→#265→#266 的中间号作废留痕
+  date: '2026-09-16'
+  category: 数据治理
+  status: void
+  summary: >-
+    本号永久空缺保留，不承载裁定内容。来龙去脉：GW-A 审计链治本案（终号 #266）原登记
+    #264 时与 st-wyf3-20260916 撞号，GW-A 班改号 #265 并在 events.jsonl 追加链上修正事件
+    AUD-T-20260916055323-38ce9b9a-0001（old_value=#265 前身 #264）；后 #265 号位在多会话
+    并发窗口让位规避，终定 #266，链上以二次修正事件 AUD-T-20260916073948-cf34458b-0001
+    （#265→#266）收口。因链上修正事件以 #265 为 old_value 永久存在，本号若复用将与链上
+    引用歧义——由 st-auditfix2-20260916 登记空号保留，堵编号连续分配铁律下的复用缺口。
+  evidence: >-
+    events.jsonl 行 #114424（#264→#265 修正）与行 #115630（#265→#266 修正）；
+    docs/_working/audit_integrity/audit_chain_incident_forensics_gwa.md §7.1/§9.2
+  related_arch: []
+  related_rulings: ['裁定#266']
+  superseded_by: '裁定#266'
+
 - ruling_id: '裁定#266'
   title: 审计链多写方互踩断链治本——events.jsonl 追加临界区跨进程文件锁+锁内实时重读尾哈希；5,595 prev 断链根因实证；26,909 HMAC 不可验段与 5,343 内容失配段以 integrity_incident 追加事件显式处置
   date: '2026-09-16'
