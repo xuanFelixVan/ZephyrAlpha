@@ -49769,6 +49769,27 @@ entries:
   desc_zh: "注册表→周历网格数据（rw-data.js 机生禁手改），冲突同源标注，供只读前端页渲染"
   desc_en: ""
   plain_zh: "它把排班花名册画成一张一周日历图：每件活儿占一条泳道，几点到几点一块一块标出来，撞车的涂红。图上的数据全部机器生成，谁也不能在图上手工涂改。"
+- module_path: scripts/data/audit_technical_indicator_coverage.py
+  domain_id: D_DATA
+  name_zh: "技术指标覆盖审计器"
+  name_en: "Technical Indicator Coverage Auditor"
+  desc_zh: "对 c1_market.technical_indicator 宽表按单标的+时间窗样本逐列审计非空率，fail-loud 分批查询防 CH 内存炸与假绿"
+  desc_en: ""
+  plain_zh: "回填补完数据后跑它验收：把指标宽表的每一列挨个查一遍有没有空列。查询失败会大声报错绝不假装全绿，162 列拆成小批查免得把数据库内存顶爆。全绿打印 AUDIT PASS，有缺口退出码非零"
+- module_path: scripts/backtest/lane_e_enhanced.py
+  domain_id: D_BACKTEST
+  name_zh: "车道E分布预测增强件"
+  name_en: ""
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "用三种模型（线性/梯度提升/LightGBM）预测明天涨跌的分布区间，对比谁预测得又准又窄"
+- module_path: tests/backtest/test_lane_e_enhanced.py
+  domain_id: D_BACKTEST
+  name_zh: "车道E增强件测试"
+  name_en: ""
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "用编造的行情数据检查车道E增强件的预测区间功能没坏"
 
 battle_map_steps:
 - step_id: BM-BUY-05

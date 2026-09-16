@@ -17144,6 +17144,14 @@ creation_tokens:
   token: auto-chain-c6-qmt-smoke-result-2026-09-15
   created_by: st-fullauto-20260915
   capability: auto-chain-c6
+- file: scripts/backtest/lane_e_enhanced.py
+  token: auto-chain-c6-lane-e-enhanced-2026-09-16
+  created_by: st-fullauto-20260915
+  capability: auto-chain-c6
+- file: docs/_working/full-auto-chain/evidence/scr-dev-test-rows-deleted.yaml
+  token: auto-chain-c6-scr-dev-test-rows-deleted-2026-09-16
+  created_by: st-fullauto-20260915
+  capability: auto-chain-c6
 - file: docs/_working/2026-09-15-gutters-eoc3-verification-deadend.md
   token: gutters-eoc3-note-2026-09-15-gutters-eoc3-verification-deadend-20260915
   created_by: st-patgov-20260914
