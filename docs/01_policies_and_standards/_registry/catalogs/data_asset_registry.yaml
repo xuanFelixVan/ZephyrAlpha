@@ -84,6 +84,10 @@ unique_key:
   jobs: [job_id]
 entry_counts: {sources: 18, datasets: 241, jobs: 105}  # 2026-09-14 v1.9.3：+DS-241/242 +JOB-106/107（C-1 消费端首批：sentiment_panel+alt_regime_signal）；派生快照值，以 yaml 实测为准——禁止凭此报数（#83 漏报教训）  # 2026-09-14 v1.9.2：+SRC-SZOPENDATA-001 +DS-234~240 +JOB-099~105（深圳开放数据批量源 7 表 16 系列）；派生快照值，以 yaml 实测为准——禁止凭此报数（#83 漏报教训）  # 2026-09-14 v1.9.1：+DS-233 台风路径 +JOB-097/098（气象事件层）；派生快照值，以 yaml 实测为准——禁止凭此报数（#83 漏报教训）
 
+# v1.9.7 changelog(2026-09-16): 战役补登四张实表——+DS-271 c1_market.daban_engine_load（打板四引擎
+#   应用层负载日批，车道 E/T3⑧ 挖矿 LUE-1 治本）+DS-272~274 c1_backtest.alloc_budget_daily /
+#   alloc_shrinkage_daily / alloc_budget_change_log（车道 D 分配链落地三表，pf_alloc_consumer_mining
+#   PFA-1/PFA-2 治本）；四表 2026-09-16 CH system.tables 实测已建、均 0 行（尚无产出）。
 # v1.9.2 changelog(2026-09-14): 深圳开放数据批量源——+SRC-SZOPENDATA-001（appKey 订阅制，
 #   Owner 已全量订阅 17 接口实测通过）+DS-234~240 七表（统计月报长表 7 系列并表/口岸流量
 #   3 系列并表/楼市日度成交 2 系列并表/灾害天气预警信号流/海洋气象预报/台风历史登陆档案/
@@ -10638,6 +10642,150 @@ datasets:
   evidence: "DDL schemas/categories/market/market_alt_sz_visibility.py；实测 24,167 行
     （2026-09-02~09-14）；7 站=深汕/松岗/大浪/南澳/邮轮中心/铁岗水库/市民中心"
   code_symbol: "src/zephyr/data/implementations/akshare_alt_provider.py::AkshareAltProvider._fetch_sz_open_data"
+- dataset_id: DS-271
+  entity_name: c1_market.daban_engine_load
+  entity_type: dataset
+  scope: production
+  contract_ref: null
+  physical_type: clickhouse_table
+  produced_by_job: daban_engine_load_daily
+  consumed_by_jobs: []
+  domain_id: D_MARKET
+  pit_policy: strict
+  format_summary: 打板四引擎应用层负载日批（trade_date×symbol 候选负载宽表，selector/youzi/quant/fusion_context 四引擎共用一行，非按引擎分行；口径版本列 load_version 默认 v1；源 internal｜任务 daban_engine_load_daily｜时段 daily_kline）；DDL 真源 schemas/categories/market/market_daban_engine_load.py，ReplacingMergeTree (trade_date, symbol) 同键幂等；列集=producer LOAD_INSERT_COLUMNS 21 列；2026-09-16 实测建表 0 行
+  valid_since: "2026-09-16"
+  module_id: MOD-L06-001
+  design_maturity: testing
+  name: c1_market.daban_engine_load
+  name_zh: 打板四引擎应用层负载日批表
+  status: active
+  version: 1.0.0
+  created_at: "2026-09-16"
+  updated_at: "2026-09-16"
+  owner: MOD-L06-001
+  produced_by_source: SRC-INTERNAL-001
+  survivorship_free: true
+  pit_available: null
+  earnings_lag_days: null
+  llm_training_cutoff: N/A
+  lookahead_test_method: "PIT shift(1)——决策日 T 只取 max(trade_date) < T 的事件日分区（封板/收盘为当日盘后事实）"
+  label_delay_days: null
+  drift_detector: none
+  entry_role: state
+  applies_to: ["stock"]
+  tags: ["事件", "行情", "数据"]
+  algorithm_status: not_applicable
+  evidence: "T3⑧ 挖矿 LUE-1 治本（docs/_working/full-auto-chain/S11_assembled_backtest/nodes/limit_up_event_load_mining.md）：daban-sleeve 在 fw-tdm-current 挂 0.0945 权重而四引擎负载无日频批产源；float_market_cap 真连 stock_indicator.circ_mv（万元×1e4 折元）补 youzi 封流比/quant 资金分母；derived_fields JSON 逐字段可产性留痕；2026-09-16 CH 实测存在 0 行"
+  code_symbol: "src/zephyr/ex_core/daban_load_producer.py::run_daily_batch"
+  code_fingerprint: null
+- dataset_id: DS-272
+  entity_name: c1_backtest.alloc_budget_daily
+  entity_type: dataset
+  scope: production
+  contract_ref: null
+  physical_type: clickhouse_table
+  produced_by_job: null
+  consumed_by_jobs: []
+  domain_id: D_BACKTEST
+  pit_policy: strict
+  format_summary: 组合分配链逐策略预算落地（grain=trade_date×run_id×strategy_id，MergeTree 只增不改、重跑=新 run_id 追加；先验权重/绩效分/相对占比/全局节流/冷启动比例/实收预算/分配金额/裁决终值/钱包额度同表可归因）；DDL 真源 schemas/categories/alloc_budget_daily.py；写入=管线事件 pf_alloc_daily→allocation_orchestrator 子进程（无调度任务）；2026-09-16 实测建表 0 行
+  valid_since: "2026-09-16"
+  module_id: MOD-PA-032
+  design_maturity: experimental
+  name: c1_backtest.alloc_budget_daily
+  name_zh: 组合分配逐策略预算表
+  status: active
+  version: 1.0.0
+  created_at: "2026-09-16"
+  updated_at: "2026-09-16"
+  owner: MOD-PA-032
+  produced_by_source: SRC-INTERNAL-001
+  survivorship_free: unknown
+  pit_available: null
+  earnings_lag_days: null
+  llm_training_cutoff: N/A
+  lookahead_test_method: "N/A（分配 as-of 日只读 ≤trade_date 的 regime 快照与账本态）"
+  label_delay_days: null
+  drift_detector: none
+  entry_role: state
+  applies_to: ["market"]
+  tags: ["组合", "资金", "数据"]
+  algorithm_status: not_applicable
+  evidence: "pf_alloc_consumer_mining PFA-1/PFA-2 治本（docs/_working/full-auto-chain/S11_assembled_backtest/nodes/pf_alloc_consumer_mining.md）：MOD-PA-007 链此前零生产调用方且 CH 无 alloc 表→分配从未落地不可归因；建表经 scripts/ch/apply_pf_alloc_ddl.py（IF NOT EXISTS 幂等，默认 dry-run）；2026-09-16 CH 实测存在 0 行"
+  code_symbol: "src/zephyr/pf_alloc/allocation_persistence.py::write_budget_daily"
+  code_fingerprint: null
+- dataset_id: DS-273
+  entity_name: c1_backtest.alloc_shrinkage_daily
+  entity_type: dataset
+  scope: production
+  contract_ref: null
+  physical_type: clickhouse_table
+  produced_by_job: null
+  consumed_by_jobs: []
+  domain_id: D_BACKTEST
+  pit_policy: strict
+  format_summary: 全局 Shrinkage 节流与总暴露落地（grain=trade_date×run_id，不含 strategy_id——Shrinkage 是全局量一态一值所有策略共用；ConfidenceSignal 四档×RiskSignal 13 参数聚合→global_shrinkage∈[0.05,1.0] 只减不增，另登记 regime 输入溯源与滞后天数）；DDL 真源 schemas/categories/alloc_shrinkage_daily.py；2026-09-16 实测建表 0 行
+  valid_since: "2026-09-16"
+  module_id: MOD-PA-032
+  design_maturity: experimental
+  name: c1_backtest.alloc_shrinkage_daily
+  name_zh: 全局风险节流与总暴露表
+  status: active
+  version: 1.0.0
+  created_at: "2026-09-16"
+  updated_at: "2026-09-16"
+  owner: MOD-PA-032
+  produced_by_source: SRC-INTERNAL-001
+  survivorship_free: unknown
+  pit_available: null
+  earnings_lag_days: null
+  llm_training_cutoff: N/A
+  lookahead_test_method: "PIT——regime_source_date 必 ≤trade_date，教材缺席走 neutral_fail_closed 退化（不为零）"
+  label_delay_days: null
+  drift_detector: none
+  entry_role: state
+  applies_to: ["market"]
+  tags: ["组合", "风控", "数据"]
+  algorithm_status: not_applicable
+  evidence: "pf_alloc_consumer_mining PFA-2/PFA-3 治本输入（regime/Shrinkage 此前在实盘分配零消费）；与 regime_snapshot_history 快照 Shrinkage 偏差列=回测/实盘同源性对表面；建表经 scripts/ch/apply_pf_alloc_ddl.py；2026-09-16 CH 实测存在 0 行"
+  code_symbol: "src/zephyr/pf_alloc/allocation_persistence.py::write_shrinkage_daily"
+  code_fingerprint: null
+- dataset_id: DS-274
+  entity_name: c1_backtest.alloc_budget_change_log
+  entity_type: dataset
+  scope: production
+  contract_ref: null
+  physical_type: clickhouse_table
+  produced_by_job: null
+  consumed_by_jobs: []
+  domain_id: D_BACKTEST
+  pit_policy: strict
+  format_summary: budget 变动裁决与三级升级事件流水（grain=trade_date×run_id×strategy_id×seq，只增不去重=流水语义；E-POS-40 BudgetChangeHandled / E-POS-41 TierEscalation 的落地面，action/current_tier/trim_ratio/freeze_new_positions 独立成列可 SQL 直判，payload_json 全量冗余供归因重放）；DDL 真源 schemas/categories/alloc_budget_change_log.py；2026-09-16 实测建表 0 行
+  valid_since: "2026-09-16"
+  module_id: MOD-PA-032
+  design_maturity: experimental
+  name: c1_backtest.alloc_budget_change_log
+  name_zh: 预算变动裁决与升级流水表
+  status: active
+  version: 1.0.0
+  created_at: "2026-09-16"
+  updated_at: "2026-09-16"
+  owner: MOD-PA-032
+  produced_by_source: SRC-INTERNAL-001
+  survivorship_free: unknown
+  pit_available: null
+  earnings_lag_days: null
+  llm_training_cutoff: N/A
+  lookahead_test_method: "N/A（事件流水，只记已发生事实）"
+  label_delay_days: null
+  drift_detector: none
+  entry_role: state
+  applies_to: ["market"]
+  tags: ["组合", "订单", "数据"]
+  algorithm_status: not_applicable
+  evidence: "MOD-POS-022 BudgetChangeHandler 进程内事件→可持久审计面的唯一出口（无此表则三级升级链不可对账）；防抖 5%/10% 挡掉的抖动次数经 action 列可对账；建表经 scripts/ch/apply_pf_alloc_ddl.py；2026-09-16 CH 实测存在 0 行"
+  code_symbol: "src/zephyr/pf_alloc/allocation_persistence.py::write_budget_change_log"
+  code_fingerprint: null
 jobs:
 - job_id: JOB-001
   job_name: ingest.minqmt_kline

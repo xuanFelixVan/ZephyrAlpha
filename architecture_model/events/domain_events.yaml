@@ -26,6 +26,7 @@ partition:
     来源：domain-event-catalog.md v1.0.0 迁移。
     2026-08-17 AI-02 审计修正计数口径：25 条（含红线 2 条）。
     2026-08-30 A13 补登 Position 域 2 条（E-POS-40/41）→ 27 条 8 域。
+    2026-09-16 车道 D 补登 Portfolio 域 1 条（E-PF-03 分配落地，运行时 kind=pf_alloc_daily）→ 28 条 8 域。
   source_views:
     - domain-event-catalog.md
   related_kb_refs:
@@ -72,7 +73,7 @@ frequency_levels:
     observability: "每条必 alert + 留痕"
 
 # =============================================================================
-# 27 条领域事件
+# 28 条领域事件
 # =============================================================================
 events:
   # ─── Research 域（3 条）───
@@ -371,6 +372,31 @@ events:
     causal_precondition: "Position 变动 + Risk Policy 已配置"
     causal_successor: "可能触发 E-RK-01 或手工减仓"
     audit_level: high
+
+  # ─── 2026-09-16 车道 D 补登（分配链日频落地 1 条；运行时管线事件 kind=pf_alloc_daily）───
+  - id: E-PF-03
+    name: "AllocationBudgetPersisted / 组合分配预算落地"
+    domain: portfolio
+    frequency: L2
+    publisher: l05
+    publisher_module: "pf_alloc.allocation_orchestrator"
+    subscribers: [l06, l07]
+    subscriber_details:
+      - {layer: l06, action: "模拟盘账本 ensure_wallet 取 effective_budget 作钱包额度上游"}
+      - {layer: l07, action: "归因（预算→裁决→下注规模三段对账）"}
+    aggregate_root: null
+    payload_contract: null
+    description: "MOD-PA-007 RegimeMetaAllocator 完成一个分配周期并落库（c1_backtest.alloc_budget_daily / alloc_shrinkage_daily / alloc_budget_change_log 三表同 run_id 对账）。运行时载体=策略管线轻 kind pf_alloc_daily（strategy_pipeline.pipeline_events.LIGHT_KINDS，调度器 task_completed 唤醒入队，payload 必带 trade_date 禁墙钟猜业务日，trade_date 级 marker 防同日双写，子进程有界超时，3 次失败判毒丸留档）。"
+    payload_fields:
+      - {name: run_id, type: "str（alloc-<trade_date>-<uuid6>，重跑=新 run_id 追加）"}
+      - {name: trade_date, type: "date（业务交易日，分配 as-of 日）"}
+      - {name: strategy_ids, type: "List[str]（本轮出预算的策略钱包键）"}
+      - {name: global_shrinkage, type: float}
+      - {name: persistence_disposition, type: "enum: ch_committed / local_durable / not_durable"}
+    causal_precondition: "盘后数据齐备（daily_kline 唤醒）+ regime 教材可用（缺席则 neutral_fail_closed 退化，节流不为零）"
+    causal_successor: "同日 sim_ledger_daily 账本据预算开户/取额度；budget 变动超阈值→E-POS-40→级联 E-POS-41"
+    audit_level: medium
+    retention: "≥7 年"
 
   # ─── Position 域（2 条，2026-08-30 A13 补登）───
   - id: E-POS-40
@@ -842,19 +868,19 @@ event_chains:
 # 统计摘要
 # =============================================================================
 summary:
-  total_events: 27
+  total_events: 28
   by_domain:
     research: 3
     backtest: 3
     signal: 3
-    portfolio: 2
+    portfolio: 3
     position: 2
     execution: 7
     risk: 4
     ops: 3
   by_frequency:
     L1: 8
-    L2: 4
+    L2: 5
     L3: 5
     L4: 10
   by_audit_level:

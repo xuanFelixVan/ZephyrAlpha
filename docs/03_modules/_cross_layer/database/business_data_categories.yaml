@@ -2967,3 +2967,21 @@
   frequency: 日频
   data_source: [internal]
   blueprint: null
+
+# --- 车道 E（2026-09-16，T3⑧ daban 四引擎应用层负载批产，挖矿 LUE-1 治本）---
+
+- category_id: market_daban_engine_load
+  name: "打板四引擎应用层负载日批（连板/开板次数/首触时刻/封板分钟/封单额/流通市值/个股涨幅/涨停价/一字/同板块与全市场封板家数/涨跌家数比/大盘涨幅；derived_fields 逐字段 real|default 留痕）"
+  engine: clickhouse
+  database: c1_market
+  table: daban_engine_load
+  schema_file: schemas/categories/market/market_daban_engine_load.py
+  data_type: 成品
+  lifecycle: permanent
+  sla_level: L2
+  enabled: true
+  hard_constraint: "PIT：trade_date=打板事件日（决策日 T 只读 ≤T-1 分区，封板/收盘当日盘后才知）；不可产字段省略交引擎 dataclass 中性默认，禁拍假值冒充真值（derived_fields 留痕可查）"
+  calc_mode: lazy
+  frequency: 日频
+  data_source: [internal]
+  blueprint: "src/zephyr/ex_core/daban_load_producer.py（run_daily_batch/persist 负载口径真源，T3⑧ 挖矿 LUE-1 治本）"
