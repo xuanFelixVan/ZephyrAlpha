@@ -27163,4 +27163,8 @@ creation_tokens:
   token: ai-layer-vision-ai-layer-vision-and-roadmap-v1-20260916
   created_by: st-ailayer-20260917
   capability: ai_layer_vision
+- file: docs/_working/industry_chain_alpha/industry_chain_alpha_plan.md
+  token: industry-chain-alpha-industry-chain-alpha-plan-20260916
+  created_by: st-igalpha-20260917
+  capability: industry_chain_alpha
 di_seam_exemptions: []
