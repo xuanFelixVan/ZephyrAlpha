@@ -24,39 +24,7 @@ SLO budget + burn rate + time_to_exhaustion 追踪：
   - time_to_exhaustion_h: 预算完全耗尽预估小时
   - self_api_capacity_headroom: 自身API容量余量
 
-# [ALGO_FLOW]
-# 层: 输入
-# - id: I1
-#   name: 模块内部数据
-#   fields: 无公共形参/无再导出（AST 事实）
-#   code: slo_capacity_metrics.py
-# 层: 算法
-# - id: A1
-#   name_zh: ① SLOWindow
-#   name_en: SLOWindow
-#   intro: class SLOWindow 源码 L68-L82
-#   desc: 公共方法（定义序）: burn_rate, alert；源码 L68-L82
-#   inputs: 无参数
-#   outputs: 返回值
-# - id: A2
-#   name_zh: ② SLOCapacityMetrics
-#   name_en: SLOCapacityMetrics
-#   intro: class SLOCapacityMetrics 源码 L86-L118
-#   desc: 公共方法（定义序）: record, error_budget_remaining_pct, exhaustion_alerts；源码 L86-L118
-#   inputs: 无参数
-#   outputs: 返回值
-# 层: 输出
-# - id: O1
-#   name_zh: 模块公共 API 面（2 定义）
-#   name_en: public defs
-#   intro: SLOWindow, SLOCapacityMetrics
-#   downstream: 见模块头 [CONSUMERS]
-# [/ALGO_FLOW]
-#
-# 边:
-# I1 --> A1
-# A1 --> A2
-# A2 --> O1
+# [ALGO_FLOW] external: docs/03_modules/_domain_feedback_loop/algo_flow/diagnosers/reliability/slo_capacity_metrics.yaml
 """
 
 from __future__ import annotations

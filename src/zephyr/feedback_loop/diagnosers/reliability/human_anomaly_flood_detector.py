@@ -30,32 +30,7 @@ Mitigation: Track anomalies-per-human-per-hour. If rate exceeds human processing
 capacity -> auto-triage: auto-resolve P3/P4, aggregate P2 into digest, only
 surface P0/P1 individually. Alert when human is at risk of "flood dropout."
 
-# [ALGO_FLOW]
-# 层: 输入
-# - id: I1
-#   name: 模块内部数据
-#   fields: 无公共形参/无再导出（AST 事实）
-#   code: human_anomaly_flood_detector.py
-# 层: 算法
-# - id: A1
-#   name_zh: ① HumanAnomalyFloodDetector
-#   name_en: HumanAnomalyFloodDetector
-#   intro: class HumanAnomalyFloodDetector 源码 L76-L205
-#   desc: 公共方法（定义序）: record_anomaly_exposure, get_auto_triage_plan, get_all_human_status, overall_human_attention_healt…
-#   inputs: 无参数
-#   outputs: 返回值
-#   （注：A1 之后另有 1 个公共定义未列入（含 1 个数据契约/异常/枚举声明类），见源码）
-# 层: 输出
-# - id: O1
-#   name_zh: 模块公共 API 面（2 定义）
-#   name_en: public defs
-#   intro: HumanAnomalyFloodDetector
-#   downstream: 见模块头 [CONSUMERS]
-# [/ALGO_FLOW]
-#
-# 边:
-# I1 --> A1
-# A1 --> O1
+# [ALGO_FLOW] external: docs/03_modules/_domain_feedback_loop/algo_flow/diagnosers/reliability/human_anomaly_flood_detector.yaml
 """
 
 from __future__ import annotations

@@ -26,32 +26,7 @@ Risk: R453 — One-size-fits-all sensitivity causes regime-specific blind spots.
 Mitigation: Per-regime gain scheduling. Map current market regime to gain multiplier.
 Low vol -> higher sensitivity; high vol -> damped response to avoid noise-triggered actions.
 
-# [ALGO_FLOW]
-# 层: 输入
-# - id: I1
-#   name: 模块内部数据
-#   fields: 无公共形参/无再导出（AST 事实）
-#   code: regime_gain_scheduling.py
-# 层: 算法
-# - id: A1
-#   name_zh: ① RegimeGainScheduling
-#   name_en: RegimeGainScheduling
-#   intro: class RegimeGainScheduling 源码 L71-L102
-#   desc: 公共方法（定义序）: set_regime, apply_gain, detect_regime_from_volatility；源码 L71-L102
-#   inputs: 无参数
-#   outputs: 返回值
-#   （注：A1 之后另有 1 个公共定义未列入（含 1 个数据契约/异常/枚举声明类），见源码）
-# 层: 输出
-# - id: O1
-#   name_zh: 模块公共 API 面（2 定义）
-#   name_en: public defs
-#   intro: RegimeGainScheduling
-#   downstream: 见模块头 [CONSUMERS]
-# [/ALGO_FLOW]
-#
-# 边:
-# I1 --> A1
-# A1 --> O1
+# [ALGO_FLOW] external: docs/03_modules/_domain_feedback_loop/algo_flow/diagnosers/reliability/regime_gain_scheduling.yaml
 """
 
 from __future__ import annotations
