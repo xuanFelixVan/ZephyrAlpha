@@ -395,6 +395,7 @@ from schemas.categories.market.market_typhoon_landfall_history import MARKET_TYP
 from schemas.categories.market.market_typhoon_names import MARKET_TYPHOON_NAMES_DDL
 from schemas.categories.market.market_breadth_snapshot import MARKET_BREADTH_SNAPSHOT_DDL
 from schemas.categories.market.market_daban_board_event import MARKET_DABAN_BOARD_EVENT_DDL
+from schemas.categories.market.market_daban_engine_load import MARKET_DABAN_ENGINE_LOAD_DDL
 from schemas.categories.intraday.market_execution_report import MARKET_EXECUTION_REPORT_DDL
 from schemas.categories.market.market_index_valuation_daily import MARKET_INDEX_VALUATION_DAILY_DDL
 from schemas.categories.market.market_ipo_calendar import IPO_CALENDAR_DDL
@@ -476,6 +477,8 @@ _ALL_DDL: list[tuple[str, str]] = [
     ("c1_market.execution_report", MARKET_EXECUTION_REPORT_DDL),
     ("c1_market.sector_fund_flow", MARKET_SECTOR_FUND_FLOW_DDL),
     ("c1_market.daban_board_event", MARKET_DABAN_BOARD_EVENT_DDL),
+    # 车道 E（2026-09-16）：打板四引擎收盘后候选负载批产落库（producer=ex_core.daban_load_producer）
+    ("c1_market.daban_engine_load", MARKET_DABAN_ENGINE_LOAD_DDL),
     # 2026-08-29 S2 估值路A + A22（44号 §9.6 通道1）
     ("c1_market.index_valuation_daily", MARKET_INDEX_VALUATION_DAILY_DDL),
     ("c1_market.a50_futures_daily", A50_FUTURES_DAILY_DDL),
