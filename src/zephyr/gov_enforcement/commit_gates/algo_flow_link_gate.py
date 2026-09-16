@@ -11,8 +11,10 @@
 #   边端点已定义/断点一致——图坏=全景图静默空图，判据真源在 algo_flow_validate_marker 不重写第二份），
 #   本 commit 触碰的 */algo_flow/*.yaml 必须自身可解析且
 #   source_of_truth 指向实存源文件（Owner 批7 认可，2026-09-16），且本 commit 触碰的 src/zephyr .py
-#   不得在 module docstring 之外另留 ALGO_FLOW 机器块（双真源，P2-1 死块批 2026-09-16 增；几何判据
-#   共用 extractor.algo_flow_dead_block_spans，extractor 不可用=基础设施故障 fail-open）；
+#   不得在 module docstring 之外另留 ALGO_FLOW 机器块，
+#   docstring 之内也不得留第 2 块（两处都是永不被消费的副本=双真源，P2-1 死块批 2026-09-16 增、
+#   体内多块线 2026-09-17 增；几何判据共用 extractor.algo_flow_dead_block_spans 与
+#   extractor.duplicate_inline_algo_flow_spans，extractor 不可用=基础设施故障 fail-open）；
 #   own-diff 扫描——只查本次 commit files 清单，
 #   他会话 staged 文件零接触（#ARCH-GATE-OWN-SCOPE-001 单一真源模式）；staged 内容优先（锚校验读 staged，
 #   无 staged 回退工作区）；fail-open（git/文件不可读/yaml 解析器不可用等基础设施故障放行，logger.warning）；
@@ -49,7 +51,12 @@ pre-commit 注册（priority=108，own-diff）：
   4. 本 commit files 中每个 src/zephyr .py：module docstring 之外不得另留 ALGO_FLOW 机器块
      （P2-1 死块普查实证：14 字段契约头里的副本所有读卡路径都看不见，锚+副本=双真源，
      184 件长期静默存活；几何判据与出仓器共用 extractor.algo_flow_dead_block_spans）
-  5. 违规聚合一次给全，硬阻断；基础设施故障 fail-open
+  5. 同件 docstring **之内**也不得出现第 2 个 ALGO_FLOW 块（parse_algo_flow 只认首个
+     起→止 对，§4.16）——第 2 块连同其边段全体不可达，全景图显示半张图而作者以为显示
+     整张。与死块同属"静默不可达"类、只是几何位置相反，故判据分家：
+     extractor.duplicate_inline_algo_flow_spans（2026-09-17 普查 src/zephyr 3575 件
+     体内多块=0，本判据是零存量防复发线）
+  6. 违规聚合一次给全，硬阻断；基础设施故障 fail-open
 
 设计权衡
 --------
@@ -85,8 +92,9 @@ def _norm_posix(f: str | Path, repo_root: Path) -> str:
     return p.as_posix()
 
 
-def _load_graph_rules(root: Path) -> tuple[Callable, Callable, Callable] | None:
-    """取判据真源 (parse_algo_flow, validate_graph, algo_flow_dead_block_spans)。
+def _load_graph_rules(root: Path) -> tuple[Callable, Callable, Callable, Callable] | None:
+    """取判据真源 (parse_algo_flow, validate_graph, algo_flow_dead_block_spans,
+    duplicate_inline_algo_flow_spans)。
 
     判据一律不在门禁内重写第二份：解析/图规则真源在 scripts/governance/_shared，
     几何规则真源在 extractor。找不到落点返回 None=基础设施故障降级。
@@ -99,10 +107,13 @@ def _load_graph_rules(root: Path) -> tuple[Callable, Callable, Callable] | None:
         from _shared.algo_flow_validate_marker import validate_graph  # noqa: PLC0415
         from _shared.code_algorithm_extractor import (  # noqa: PLC0415
             algo_flow_dead_block_spans,
+            duplicate_inline_algo_flow_spans,
             parse_algo_flow,
         )
 
-        return parse_algo_flow, validate_graph, algo_flow_dead_block_spans
+        return parse_algo_flow, validate_graph, algo_flow_dead_block_spans, (
+            duplicate_inline_algo_flow_spans
+        )
 
     try:
         return _try()
@@ -211,6 +222,16 @@ def check_algo_flow_links(
             logger.warning("ALGO-FLOW-LINK 双真源检出异常: %s", e)
             return []
 
+    def _dup_inline_lines(content: str) -> list[int]:
+        """docstring 内第 2+ 个 ALGO_FLOW 块起行（1 基）——与死块同族但几何位置相反。"""
+        if rules is None:
+            return []
+        try:
+            return [s + 1 for s, _e, _c in rules[3](content)]
+        except Exception as e:  # noqa: BLE001
+            logger.warning("ALGO-FLOW-LINK 体内多块检出异常: %s", e)
+            return []
+
     for rel in py_files:
         content = _read(rel)
         if content is None:
@@ -232,6 +253,15 @@ def check_algo_flow_links(
                     f"（起行 {dead[:3]}）——锚与体外副本并存=双真源，所有读卡路径只读 "
                     "docstring，副本永不被消费也永不更新；清偿："
                     f"python scripts/governance/d5_architecture/generators/externalize_algo_flow.py --file {rel}"
+                )
+            dup = _dup_inline_lines(content)
+            if dup:
+                failures.append(
+                    f"{rel} 的 module docstring 内有 {len(dup)} 处多余 ALGO_FLOW 机器块"
+                    f"（第 2+ 块起行 {dup[:3]}）——parse_algo_flow 只认首个 起→止 对，"
+                    "其后每块连同自己的边段全体不可达：全景图显示半张图而作者以为显示整张，"
+                    "与体外死块同属静默不可达类（只是几何位置相反，故判据分家）。清偿："
+                    "把多块合并成单一块，或跑 externalize_algo_flow.py 外迁后留一行锚"
                 )
 
     for rel in yaml_files:

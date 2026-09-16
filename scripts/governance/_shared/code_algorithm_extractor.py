@@ -244,6 +244,19 @@ def _find_richest_docstring_file(py_path: Path) -> tuple[Path, str, int, int]:
     return candidates[0]
 
 
+def _module_docstring_line_range(tree: ast.Module) -> tuple[int, int]:
+    """module docstring 的 1 基起止行；无 docstring 返回 ``(0, 0)``。
+
+    判据与 ``ast.get_docstring`` 同条规则（body[0] 是裸字符串 Expr），两处共用一份，
+    避免"一个认 body[0]、一个 ast.walk 找首个字符串 Expr"在边角处给出不同范围。
+    """
+    node = tree.body[0] if tree.body else None
+    val = getattr(node, "value", None)
+    if isinstance(node, ast.Expr) and isinstance(val, ast.Constant) and isinstance(val.value, str):
+        return node.lineno, val.end_lineno or node.lineno
+    return 0, 0
+
+
 def _parse_module_docstring(py_path: Path) -> tuple[Path, str, int, int]:
     """ast.parse 提取 module docstring，返回 (path, docstring, start_line, end_line)。
 
@@ -255,18 +268,7 @@ def _parse_module_docstring(py_path: Path) -> tuple[Path, str, int, int]:
         ds = ast.get_docstring(tree)
         if not ds:
             return py_path, "", 0, 0
-        # 估算行范围：找第一个 Expr(Constant) 的行号
-        start_line = 1
-        end_line = 1
-        for node in ast.walk(tree):
-            if (
-                isinstance(node, ast.Expr)
-                and isinstance(node.value, ast.Constant)
-                and isinstance(node.value.value, str)
-            ):
-                start_line = node.lineno
-                end_line = node.end_lineno or node.lineno
-                break
+        start_line, end_line = _module_docstring_line_range(tree)
         return py_path, ds, start_line, end_line
     except (SyntaxError, OSError, ValueError):
         return py_path, "", 0, 0
@@ -361,15 +363,29 @@ def _load_external_algo_flow(docstring: str) -> str | None:
     return block
 
 
-def algo_flow_dead_block_spans(src: str) -> list[tuple[int, int, bool]]:
-    """源码中位于 module docstring **之外** 的 ALGO_FLOW 块行区间 ``[(起, 止, 闭合)]``（0 基含端点）。
-
-    双真源几何的唯一判据（出仓器据此清偿、ALGO-FLOW-LINK 门禁据此拦截，不各写一份）。
-    病根：更早的注资把机器块写进 14 字段契约头（或留下第二个裸字符串字面量块），而所有
-    读卡路径只读 module docstring → 那份副本既看不见也删不掉，出仓后成为静默双真源。
+def _algo_flow_block_end(lines: list[str], i: int, ds_start: int) -> tuple[int, bool]:
+    """自起标记 ``i`` 向后定块：返回 ``(止行, 是否闭合)``（0 基含端点）。
 
     止界三态：``# [/ALGO_FLOW]`` 收标记（closed=True）/ 撞进 docstring 首行或首个非注释
     行（截断型 closed=False，止于其前一行）/ 文件尾。
+    """
+    end = i
+    for j in range(i + 1, len(lines)):
+        t = lines[j].strip()
+        if (ds_start >= 0 and j == ds_start) or (t and not t.startswith("#")):
+            return end, False
+        if t:
+            end = j
+        if _ALGO_FLOW_END in t:
+            return end, True
+    return end, False
+
+
+def _algo_flow_block_spans(src: str) -> tuple[list[tuple[int, int, bool]], int, int]:
+    """全部非锚 ALGO_FLOW 块行区间 + module docstring 跨度（几何唯一真源）。
+
+    返回 ``([(起, 止, 闭合)], docstring 起行, docstring 止行)``（0 基含端点，无 docstring
+    时后两者为 -1）。调用方按"块起点在 docstring 内/外"分区，不各写一套几何。
     """
     lines = src.splitlines()
     starts = [
@@ -377,36 +393,48 @@ def algo_flow_dead_block_spans(src: str) -> list[tuple[int, int, bool]]:
         if _ALGO_FLOW_START in ln and ln.strip().startswith("#") and "external:" not in ln
     ]
     if not starts:
-        return []
+        return [], -1, -1
     try:
         tree = ast.parse(src)
     except (SyntaxError, ValueError, RecursionError):
-        return []
-    ds_start = ds_end = -1
-    first = tree.body[0] if tree.body else None
-    val = getattr(first, "value", None)
-    if isinstance(val, ast.Constant) and isinstance(val.value, str):
-        ds_start = first.lineno - 1
-        ds_end = (val.end_lineno or first.lineno) - 1
+        return [], -1, -1
+    ds_start, ds_end = _module_docstring_line_range(tree)
+    ds_start -= 1  # 1 基 → 0 基；无 docstring 时 (0,0) 落成 (-1,-1)
+    ds_end -= 1
     spans: list[tuple[int, int, bool]] = []
     for i in starts:
-        if ds_start >= 0 and ds_start <= i <= ds_end:
-            continue
         if any(s <= i <= e for s, e, _c in spans):
             continue  # 起标记落在已定块内（未收口块吞掉后续标记）——不叠区间，删块者按不重叠前提
-        end = i
-        closed = False
-        for j in range(i + 1, len(lines)):
-            t = lines[j].strip()
-            if (ds_start >= 0 and j == ds_start) or (t and not t.startswith("#")):
-                break
-            if t:
-                end = j
-            if _ALGO_FLOW_END in t:
-                closed = True
-                break
-        spans.append((i, end, closed))
-    return spans
+        spans.append((i, *_algo_flow_block_end(lines, i, ds_start)))
+    return spans, ds_start, ds_end
+
+
+def _in_docstring(i: int, ds_start: int, ds_end: int) -> bool:
+    return ds_start >= 0 and ds_start <= i <= ds_end
+
+
+def algo_flow_dead_block_spans(src: str) -> list[tuple[int, int, bool]]:
+    """源码中位于 module docstring **之外** 的 ALGO_FLOW 块行区间 ``[(起, 止, 闭合)]``（0 基含端点）。
+
+    双真源几何的唯一判据（出仓器据此清偿、ALGO-FLOW-LINK 门禁据此拦截，不各写一份）。
+    病根：更早的注资把机器块写进 14 字段契约头（或留下第二个裸字符串字面量块），而所有
+    读卡路径只读 module docstring → 那份副本既看不见也删不掉，出仓后成为静默双真源。
+    """
+    spans, ds_start, ds_end = _algo_flow_block_spans(src)
+    return [sp for sp in spans if not _in_docstring(sp[0], ds_start, ds_end)]
+
+
+def duplicate_inline_algo_flow_spans(src: str) -> list[tuple[int, int, bool]]:
+    """module docstring **之内** 第 2 个及以后 ALGO_FLOW 块（同 dead_block 口径）。
+
+    ``parse_algo_flow`` 只认首个 起→止 对（§4.16），第二个块连同其边段全体不可达——
+    全景图显示半张图而作者以为显示整张，与"体外契约头副本"同属静默不可达类，只是几何
+    位置相反故判据分家。2026-09-17 全仓普查 src/zephyr 3575 件体内多块=0：本判据是
+    零存量防复发线（写进第二块的当下即被门禁拦，不留静默窗口）。
+    """
+    spans, ds_start, ds_end = _algo_flow_block_spans(src)
+    inline = [sp for sp in spans if _in_docstring(sp[0], ds_start, ds_end)]
+    return inline[1:]
 
 
 def _has_inline_algo_flow(docstring: str) -> bool:

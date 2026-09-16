@@ -276,3 +276,45 @@ def test_graph_rules_unavailable_degrades_fail_open(tmp_path: Path, monkeypatch)
     monkeypatch.setattr(g, "_load_graph_rules", lambda _root: None)
     blocked, msg = check_algo_flow_links(["docs/03_modules/_domain_x/algo_flow/demo.yaml"], root)
     assert not blocked, msg
+
+
+_PY_DUP_INLINE = (
+    '"""demo —— 说明。\n\n'
+    "# [ALGO_FLOW]\n# 层: 输入\n# - id: I1\n#   name: 入参\n# [/ALGO_FLOW]\n"
+    "\n"
+    "# [ALGO_FLOW]\n# 层: 算法\n# - id: A1\n#   name_zh: 第二块\n# [/ALGO_FLOW]\n"
+    '"""\n\nX = 1\n'
+)
+
+
+def test_second_in_body_block_blocks(tmp_path: Path) -> None:
+    """体内第 2 块：parse_algo_flow 只认首个 起→止 对，第二块连边段永不可达 → 硬阻断。"""
+    root = _make_repo(tmp_path)
+    (root / "src/zephyr/pkg_a/twoblocks.py").write_text(_PY_DUP_INLINE, encoding="utf-8")
+    blocked, msg = check_algo_flow_links(["src/zephyr/pkg_a/twoblocks.py"], root)
+    assert blocked, msg
+    assert "多余 ALGO_FLOW 机器块" in msg and "第 2+ 块" in msg
+
+
+def test_two_judgments_do_not_cross_report(tmp_path: Path) -> None:
+    """判据分家（门禁侧）：死块只报"体外"、多块只报"体内"——混装会让清偿者找错位置。"""
+    root = _make_repo(tmp_path)
+    dead_only = root / "src/zephyr/pkg_a/deadonly.py"
+    dead_only.write_text(_PY_DEAD_BLOCK, encoding="utf-8")
+    _b1, msg1 = check_algo_flow_links(["src/zephyr/pkg_a/deadonly.py"], root)
+    assert "双真源" in msg1 and "多余 ALGO_FLOW 机器块" not in msg1, msg1
+
+    dup_only = root / "src/zephyr/pkg_a/duponly.py"
+    dup_only.write_text(_PY_DUP_INLINE, encoding="utf-8")
+    _b2, msg2 = check_algo_flow_links(["src/zephyr/pkg_a/duponly.py"], root)
+    assert "多余 ALGO_FLOW 机器块" in msg2 and "落在 module docstring 之外" not in msg2, msg2
+
+
+def test_dup_inline_check_scoped_to_src_zephyr(tmp_path: Path) -> None:
+    """范围护栏同死块判据：tests/scripts 夹具里的示例多块样块不入本判据（own-diff 例外口径）。"""
+    root = _make_repo(tmp_path)
+    s = root / "scripts/governance/demo_twoblocks.py"
+    s.parent.mkdir(parents=True, exist_ok=True)
+    s.write_text(_PY_DUP_INLINE, encoding="utf-8")
+    blocked, msg = check_algo_flow_links(["scripts/governance/demo_twoblocks.py"], root)
+    assert not blocked, msg

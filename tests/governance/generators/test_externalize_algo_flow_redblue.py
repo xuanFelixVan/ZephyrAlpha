@@ -372,3 +372,60 @@ def test_applier_chain_externalizes(monkeypatch, tmp_path: Path) -> None:
     assert got.algo_flow is not None and len(got.algo_flow.nodes) == 3, "锚→yaml 链路未解出全图"
 
     assert applier.externalize_after_apply(p)[0] == "already", "二跑必须 already（幂等）"
+
+
+# ---------------------------------------------------------------- 写法变体红蓝（图判据批 2026-09-16）
+# 出仓器只搬字节不搬语义的风险，全在"写法"这一维：真实语料里三种写法（速记 id 带中文描述 /
+# 并列端点 # I1,I2 --> F1 / 分号紧凑 # 边: A --> B ; C --> D）曾被解析器静默降级成
+# "锚在、块在、图空"。三写法过出仓器必须图逐项等——这才是链路真通的判据。
+_SPELLINGS: dict[str, str] = {
+    "shorthand_id": (
+        "# [ALGO_FLOW]\n"
+        "# 层: 输入\n# - id: I1 入参闸门\n"
+        "# 层: 算法\n# - id: A1 主流程\n"
+        "# 层: 输出\n# - id: O1 出参\n"
+        "# [/ALGO_FLOW]\n#\n# 边:\n# I1 --> A1\n# A1 --> O1\n"
+    ),
+    "comma_fanin": (
+        "# [ALGO_FLOW]\n"
+        "# 层: 输入\n# - id: I1\n#   name: 入参一\n# - id: I2\n#   name: 入参二\n"
+        "# 层: 算法\n# - id: F1\n#   name_zh: 汇流\n# - id: A1\n#   name_zh: 主流程\n"
+        "# [/ALGO_FLOW]\n#\n# 边:\n# I1, I2 --> F1\n# F1 --> A1\n"
+    ),
+    "semicolon_compact": (
+        "# [ALGO_FLOW]\n"
+        "# 层: 输入\n# - id: I1\n#   name: 入参\n"
+        "# 层: 算法\n# - id: A1\n#   name_zh: 主流程\n"
+        "# 层: 输出\n# - id: O1\n#   name_zh: 出参\n#   is_break: true\n"
+        "# [/ALGO_FLOW]\n#\n# 边: I1 --> A1 ; A1 -.->|断点| O1\n"
+    ),
+}
+
+
+@pytest.mark.parametrize("name", sorted(_SPELLINGS))
+def test_spelling_variants_survive_externalization(name: str, tmp_path: Path) -> None:
+    """三种真实写法过出仓器：镜像图 == 内联图 == 锚回读图，且过图判据零问题。"""
+    from _shared.algo_flow_validate_marker import validate_graph  # noqa: PLC0415
+
+    def key(g):
+        return ({n.id for n in g.nodes}, {(e.src, e.dst, e.is_break) for e in g.edges})
+
+    p = tmp_path / "src/zephyr/zz_spell/solo.py"
+    p.parent.mkdir(parents=True)
+    p.write_text(f'"""solo —— 红蓝夹具。\n\n{_SPELLINGS[name]}"""\n', encoding="utf-8")
+    before = coae.parse_algo_flow(p.read_text(encoding="utf-8"))
+    assert before is not None and before.edges, "夹具本身无边=红蓝失效（前置判据）"
+
+    r = ext.externalize(p, dry_run=False)
+    assert r["status"] == "externalized", f"出仓失败：{r}"
+    mirror = (tmp_path / r["yaml"]).read_text(encoding="utf-8")
+    after = coae.parse_algo_flow(mirror)
+    assert after is not None, "镜像重解析不到节点"
+
+    assert key(after) == key(before), f"{name} 出仓前后图不等：{key(before)} -> {key(after)}"
+    problems = validate_graph(after)
+    assert problems == [], f"{name} 镜像过图判据仍有问题：{problems}"
+
+    back = coae.extract_algorithm_from_code(p, module_id="", truncate=False)
+    assert back.algo_flow is not None, "锚→yaml 读路未解出图"
+    assert key(back.algo_flow) == key(before), f"{name} 锚回读图与源图不等：{key(back.algo_flow)}"

@@ -675,3 +675,150 @@ def test_id_without_description_and_non_ascii_head_unchanged():
     assert by_id["I2"].name_zh == "日历规则组"  # 仅 "- id: I2" → id 原样
     odd = next(i for i in by_id if i.startswith("中文节点名"))
     assert "非 ASCII 头不截断" in odd
+
+
+# ── 机器块几何分区：体外死块 / 体内第 2+ 块（双真源两态判据锚点）──────────
+# 病根分两半：契约头里的副本（docstring 之外）所有读卡路径看不见；docstring 内的
+# 第 2 块 parse_algo_flow 只认首个 起→止 对，同样不可达。两判据共用一份几何函数，
+# 一旦有人重写第二份实现，两态就会各判各的（出仓器与门禁口径分叉=静默双真源）。
+
+_HEAD_COPY = (
+    "# [BLUEPRINT] MOD-X | docs/03_modules/_domain_x/blueprint.md\n"
+    "# [ALGO_FLOW]\n# 层: 输入\n# - id: I9\n#   name: 契约头副本\n# [/ALGO_FLOW]\n"
+)
+_ONE_BLOCK = "# [ALGO_FLOW]\n# 层: 输入\n# - id: I1\n#   name: 入参\n# [/ALGO_FLOW]\n"
+_ANCHOR = "# [ALGO_FLOW] external: docs/03_modules/_domain_x/algo_flow/demo.yaml\n"
+
+
+def _block_start_lines(src: str, spans) -> list[str]:
+    """把 span 起行还原成源码行文本——断言"报的就是这一块"，不只看条数。"""
+    lines = src.splitlines()
+    return [lines[s].strip() for s, _e, _c in spans]
+
+
+def _starts(src: str) -> list[int]:
+    """全部非锚 ALGO_FLOW 起标记行号（0 基）——两分区的公共候选集。"""
+    return [i for i, ln in enumerate(src.splitlines()) if ln.strip() == "# [ALGO_FLOW]"]
+
+
+def test_head_copy_is_dead_block_and_not_duplicate_inline():
+    """契约头副本只进"体外"分区：体内分区必须为空（否则同一块被两判据连报）。"""
+    from _shared.code_algorithm_extractor import (
+        algo_flow_dead_block_spans,
+        duplicate_inline_algo_flow_spans,
+    )
+
+    src = _HEAD_COPY + '"""demo —— 说明。\n\n' + _ANCHOR + '"""\n\nX = 1\n'
+    dead = algo_flow_dead_block_spans(src)
+    assert [s for s, _e, _c in dead] == _starts(src)
+    assert _block_start_lines(src, dead) == ["# [ALGO_FLOW]"]
+    assert duplicate_inline_algo_flow_spans(src) == []
+
+
+def test_second_in_body_block_is_duplicate_inline_only():
+    """体内第 2 块只进"多块"分区，且报的是第 2 块起行（首块是合法出仓前形态）。"""
+    from _shared.code_algorithm_extractor import (
+        algo_flow_dead_block_spans,
+        duplicate_inline_algo_flow_spans,
+    )
+
+    src = '"""demo —— 说明。\n\n' + _ONE_BLOCK + "\n" + _ONE_BLOCK + '"""\n\nX = 1\n'
+    assert algo_flow_dead_block_spans(src) == []
+    dup = duplicate_inline_algo_flow_spans(src)
+    assert [s for s, _e, _c in dup] == _starts(src)[1:]
+
+
+def test_single_in_body_block_has_zero_problems():
+    """零存量基线口径：单块（无论闭合与否）两判据全空——防把合法形态报成违规。"""
+    from _shared.code_algorithm_extractor import (
+        algo_flow_dead_block_spans,
+        duplicate_inline_algo_flow_spans,
+    )
+
+    src = '"""demo —— 说明。\n\n' + _ONE_BLOCK + '"""\n\nX = 1\n'
+    assert algo_flow_dead_block_spans(src) == []
+    assert duplicate_inline_algo_flow_spans(src) == []
+
+
+def test_external_anchor_line_is_never_a_block():
+    """锚行自身含 `[ALGO_FLOW]` 字面量——两判据都必须先排除锚行（2026-09-15 实测坑）。"""
+    from _shared.code_algorithm_extractor import (
+        algo_flow_dead_block_spans,
+        duplicate_inline_algo_flow_spans,
+    )
+
+    src = '"""demo —— 说明。\n\n' + _ANCHOR + '"""\n\nX = 1\n'
+    assert algo_flow_dead_block_spans(src) == []
+    assert duplicate_inline_algo_flow_spans(src) == []
+
+
+def test_unclosed_first_block_swallows_second_marker():
+    """未闭合首块吞掉后续起标记=一块（区间不叠）：清偿者按不重叠前提删，重叠会漏行。"""
+    from _shared.code_algorithm_extractor import duplicate_inline_algo_flow_spans
+
+    src = (
+        '"""demo —— 说明。\n\n'
+        "# [ALGO_FLOW]\n# 层: 输入\n# - id: I1\n#   name: 无收口\n"
+        + _ONE_BLOCK
+        + '"""\n\nX = 1\n'
+    )
+    assert duplicate_inline_algo_flow_spans(src) == []
+
+
+def test_geometry_partitions_are_disjoint_and_exhaustive():
+    """三块混合态（体外 1 + 体内 2）：分区互斥，且各判据只咬自己那一块。
+
+    第二块（体内首块）两判据都不报——它是合法的出仓前形态；把它报出去=一次性连坐
+    全仓未出仓件，正是判据分家要防的方向性错误。
+    """
+    from _shared.code_algorithm_extractor import (
+        algo_flow_dead_block_spans,
+        duplicate_inline_algo_flow_spans,
+    )
+
+    src = (
+        _HEAD_COPY
+        + '"""demo —— 说明。\n\n'
+        + _ONE_BLOCK
+        + "\n"
+        + _ONE_BLOCK
+        + '"""\n\nX = 1\n'
+    )
+    starts = _starts(src)
+    assert len(starts) == 3, starts
+    dead = {s for s, _e, _c in algo_flow_dead_block_spans(src)}
+    dup = {s for s, _e, _c in duplicate_inline_algo_flow_spans(src)}
+    assert dead == {starts[0]}
+    assert dup == {starts[2]}
+    assert not (dead & dup)
+
+
+def test_repo_src_has_zero_duplicate_inline_blocks():
+    """存量防线：src/zephyr 全仓体内多块=0（2026-09-17 实测 3576 件 0 块，1.4s）。
+
+    门禁只拦"本 commit 触碰的件"，防复发的零存量线必须全仓跑——否则第二块在无人再
+    触碰的文件里静默存活，正是 P2-1 死块批 184 件长期存活的同型病。锚行含
+    ``[ALGO_FLOW]`` 字面量，故先用子串预筛再 ast.parse（全仓 ast.parse 白烧 30s+）。
+    """
+    from _shared.code_algorithm_extractor import (
+        algo_flow_dead_block_spans,
+        duplicate_inline_algo_flow_spans,
+    )
+
+    root = REPO_ROOT / "src" / "zephyr"
+    files = list(root.rglob("*.py"))
+    assert files, "src/zephyr 无 .py=仓库检出异常（判据失真前置）"
+    bad: list[str] = []
+    dead: list[str] = []
+    for p in files:
+        try:
+            src = p.read_text(encoding="utf-8", errors="replace")
+        except OSError:
+            continue
+        if "[ALGO_FLOW]" not in src:
+            continue
+        rel = p.relative_to(REPO_ROOT).as_posix()
+        bad.extend(f"{rel}:{s + 1}" for s, _e, _c in duplicate_inline_algo_flow_spans(src))
+        dead.extend(f"{rel}:{s + 1}" for s, _e, _c in algo_flow_dead_block_spans(src))
+    assert not bad, f"{len(bad)} 处体内第 2+ 机器块（第二块起 parse 只认首块，永不可达）：" + "，".join(bad[:8])
+    assert not dead, f"{len(dead)} 处 docstring 外死块（双真源）：" + "，".join(dead[:8])
