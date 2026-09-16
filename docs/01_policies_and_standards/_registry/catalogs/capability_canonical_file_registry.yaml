@@ -27847,6 +27847,14 @@ creation_tokens:
   token: automation-linkage-promotion-combo-gate-blueprint-20260916
   created_by: st-autolnk-20260917
   capability: automation_linkage
+- file: scripts/data/onboard_source.py
+  token: automation-linkage-onboard-source-20260916
+  created_by: st-autolnk-20260917
+  capability: automation_linkage
+- file: scripts/data/fx_ecb_ingest.py
+  token: automation-linkage-fx-ecb-ingest-20260916
+  created_by: st-autolnk-20260917
+  capability: automation_linkage
 - file: docs/_working/trading_vision/2026-09-16-skeleton-coverage-audit.md
   token: trading-vision-audit-2026-09-16-skeleton-coverage-audit-20260916
   created_by: st-skeletonaudit-20260916
@@ -27881,6 +27889,14 @@ creation_tokens:
   capability: chain_alpha
 - file: scripts/industry_graph/hog_chain_quickcheck.py
   token: chain-alpha-hog-chain-quickcheck-20260916
+  created_by: st-igalpha-20260917
+  capability: chain_alpha
+- file: schemas/categories/market/market_commodity_futures_main.py
+  token: chain-alpha-market-commodity-futures-main-20260916
+  created_by: st-igalpha-20260917
+  capability: chain_alpha
+- file: schemas/categories/market/market_commodity_spot_price.py
+  token: chain-alpha-market-commodity-spot-price-20260916
   created_by: st-igalpha-20260917
   capability: chain_alpha
 - file: src/zephyr/data/implementations/calendar_event_derivations.py
@@ -28015,4 +28031,32 @@ creation_tokens:
   token: auction-backfill-backfill-auction-snapshot-history-20260916
   created_by: st-auction-bridge-20260917
   capability: auction_backfill
+- file: docs/_working/sharpe2_prep/README.md
+  token: sharpe2-prep-readme-20260916
+  created_by: st-sharpe2gc-20260917
+  capability: sharpe2_prep
+- file: docs/_working/sharpe2_prep/c_audit/2026-09-17-cleanliness-audit.md
+  token: sharpe2-prep-2026-09-17-cleanliness-audit-20260916
+  created_by: st-sharpe2gc-20260917
+  capability: sharpe2_prep
+- file: docs/_working/sharpe2_prep/c_audit/2026-09-17-e4-anti-self-deception-audit.md
+  token: sharpe2-prep-2026-09-17-e4-anti-self-deception-audit-20260916
+  created_by: st-sharpe2gc-20260917
+  capability: sharpe2_prep
+- file: docs/_working/sharpe2_prep/c_audit/2026-09-17-tonight-sampling-audit.md
+  token: sharpe2-prep-2026-09-17-tonight-sampling-audit-20260916
+  created_by: st-sharpe2gc-20260917
+  capability: sharpe2_prep
+- file: docs/_working/sharpe2_prep/d_ledger/2026-09-17-backtest-backlog-executability.md
+  token: sharpe2-prep-2026-09-17-backtest-backlog-executability-20260916
+  created_by: st-sharpe2gc-20260917
+  capability: sharpe2_prep
+- file: docs/_working/sharpe2_prep/d_ledger/2026-09-17-node-verdict-triage.md
+  token: sharpe2-prep-2026-09-17-node-verdict-triage-20260916
+  created_by: st-sharpe2gc-20260917
+  capability: sharpe2_prep
+- file: docs/_working/sharpe2_prep/d_ledger/node_triage.csv
+  token: sharpe2-prep-node-triage-20260916
+  created_by: st-sharpe2gc-20260917
+  capability: sharpe2_prep
 di_seam_exemptions: []
