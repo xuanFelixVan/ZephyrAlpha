@@ -1,11 +1,11 @@
 # [BLUEPRINT] MOD-GOV-047 | scripts/governance/commit_queue_landing.py | §
 # [MODULE] scripts.governance.commit_queue_landing
 # [DOMAIN] D_GOVERNANCE
-# [DEPENDENCIES] stdlib；scripts.commit_queue（队列协议/LandingResult）；zephyr.gov_enforcement.rule_bridge.git_commit_gateway（全门禁落盘执行体）；zephyr.security.access_control.session_concurrency（主仓 session registry）
+# [DEPENDENCIES] stdlib；scripts.commit_queue（队列协议/LandingResult）；scripts.session_worktree（环境三件套备置真源 _provision_worktree_env，延迟 import）；zephyr.gov_enforcement.rule_bridge.git_commit_gateway（全门禁落盘执行体）；zephyr.security.access_control.session_concurrency（主仓 session registry）
 # [CONSUMERS] 全部 AI session（drain_queue(landing=...) 真落盘注入点）；zephyr.gov_enforcement.rule_bridge.git_commit_gateway._commit_auto（flag ON 时 reroute 目标，延迟 import）
 # [STARTUP] imported
 # [MATURITY] testing
-# [INVARIANTS] 永不改主工作区脏文件（66 号 §9.7 受控放松 2026-08-23：只写专用 worktree + 对象库 + dev ref CAS；landing 后主工作区受限收敛——仅当文件与旧 HEAD 逐字节一致才快进写入新内容，脏/缺失/删除冲突一律跳过留痕，零 WIP 丢失风险）；单写者（仅 Serializer lease 持有者经 drain 调用）；幂等不双落（done/landed_id + is-ancestor + 标记 grep 三重判定）；门禁一套不裁（GitCommitGateway 全门禁链零适配，worktree 形态 100 门禁天然生效）；CAS 冲突/基底冲突→死信不卡队；**瞬态环境失败（git index.lock 争用 / Windows 句柄占用致 reset --hard unlink 失败 / 全局提交锁 LOCK_TIMEOUT；特征串真源=_TRANSIENT_GIT_MARKERS）→ 抛 LandingEnvironmentError 让项退回 pending，绝不死信**；主工作区收敛 fail-open（landing 已成功，收敛异常仅留痕不改变结果）
+# [INVARIANTS] 永不改主工作区脏文件（66 号 §9.7 受控放松 2026-08-23：只写专用 worktree + 对象库 + dev ref CAS；landing 后主工作区受限收敛——仅当文件与旧 HEAD 逐字节一致才快进写入新内容，脏/缺失/删除冲突一律跳过留痕，零 WIP 丢失风险）；单写者（仅 Serializer lease 持有者经 drain 调用）；幂等不双落（done/landed_id + is-ancestor + 标记 grep 三重判定）；门禁一套不裁（GitCommitGateway 全门禁链零适配，worktree 形态 100 门禁天然生效）；CAS 冲突/基底冲突→死信不卡队；**瞬态环境失败（git index.lock 争用 / Windows 句柄占用致 reset --hard unlink 失败 / 全局提交锁 LOCK_TIMEOUT；特征串真源=_TRANSIENT_GIT_MARKERS）→ 抛 LandingEnvironmentError 让项退回 pending，绝不死信**；主工作区收敛 fail-open（landing 已成功，收敛异常仅留痕不改变结果）；worktree 环境备置（ensure_worktree 两出口经 scripts.session_worktree._provision_worktree_env 从主仓取 PG+CH 配置——门禁/reconciler 在 worktree 内与主区等价，不再 fail-open；备置失败仅 warning 不阻断落盘）
 # [MODIFY-GUARD] 66 号备忘 §6.3 MVP 形态 + §8 幂等算法 + §9 边界；08 号文 §4.2 步骤 3/5；[GW:{sid}:{qid}] 标记格式（POST-COMMIT-GUARD / REFERENCE-TRANSACTION-GUARD 消费方）
 # [STABILITY] evolving
 # [SAFETY] M
@@ -323,12 +323,35 @@ class WorktreeLanding:
     # ------------------------------------------------------------------
     # 专用 worktree 生命周期（66 号 §6.3 MVP 形态）
     # ------------------------------------------------------------------
+    def _provision_env(self, wt: Path) -> None:
+        """专用 worktree 环境备置（委托 session_worktree 真源，不复制实现）。
+
+        病根（2026-09-16 fail-open 实证）：队列落盘在 worktree 内跑 pre-commit 门禁 +
+        post-commit reconciler，进程 REPO_ROOT 解析到 `.runtime/commit_queue/worktree`，
+        而该处从未备置 config/.env.postgres / config/.env.clickhouse →
+        DEPGRAPH-PRE-REGISTRATION 抛 FileNotFoundError、CH 依赖 reconciler 记
+        "CH 配置文件不存在 …（CH 连接将失败）"（reconcile_execution_log 自 2026-09-12
+        起多条）。队列是提交正门（宪法 §2），正门上的 enforcement 必须与主区等价。
+        备置失败永不阻断落盘（与 session_worktree create 同口径）：全量降级 warning。
+        """
+        try:
+            from scripts.session_worktree import _provision_worktree_env  # noqa: PLC0415
+
+            warns = [n for n in _provision_worktree_env(wt, source_root=self.repo_root) if n.startswith("WARN")]
+            if warns:
+                logger.warning("[landing] 专用 worktree 环境备置降级: %s", "; ".join(warns))
+        except Exception as exc:  # noqa: BLE001
+            logger.warning("[landing] 专用 worktree 环境备置异常（不阻断落盘）: %s", exc)
+
     def ensure_worktree(self) -> Path:
         """确保专用 worktree 就位（幂等；仅 Serializer 调用，单写者无竞态）。
 
         状态机：已注册且目录在 → 复用；注册残留但目录丢失 → prune 后重建；
         目录在但未注册（上次半成品）→ 物理删除该专用目录后重建；
         分支已存在（历史遗留）→ 不 -b 直接检出复用。
+
+        两条出口（复用/新建）都过 _provision_env：新建路径缺配置是必然，复用路径
+        补置是为了配置在主区被轮换（换 PG 密码/CH 迁移）后 worktree 跟上。
         """
         wt = self.worktree_path
         r = self._git_repo("worktree", "list", "--porcelain")
@@ -341,6 +364,7 @@ class WorktreeLanding:
         # .git 链接存在性=复用前提（2026-08-29 事故：目录在而链接丢失 → git walk-up 打穿主仓）
         git_link_ok = wt.is_dir() and (wt / ".git").exists()
         if registered and git_link_ok:
+            self._provision_env(wt)
             return wt  # 就位，复用
         if registered and not git_link_ok:
             logger.warning("[landing] 专用 worktree 注册残留但目录/.git 链接丢失，prune+清残骸后重建: %s", wt)
@@ -370,6 +394,7 @@ class WorktreeLanding:
             self._git_repo("worktree", "add", str(wt), self.serializer_branch)
         else:
             self._git_repo("worktree", "add", str(wt), "-b", self.serializer_branch, f"refs/heads/{self.target_branch}")
+        self._provision_env(wt)
         logger.info("[landing] 专用 worktree 就位: %s (branch=%s)", wt, self.serializer_branch)
         return wt
 

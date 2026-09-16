@@ -56,8 +56,14 @@ REPO_ROOT = Path(__file__).resolve().parent.parent
 WORKTREE_ROOT = REPO_ROOT / ".worktrees"
 BRANCH_PREFIX = "ai/"
 
+# worktree 备置的连接配置清单（(文件名, 日志标签)；真源=主仓 config/，gitignore 豁免 git 追踪）
+_CONN_ENV_FILES: tuple[tuple[str, str], ...] = (
+    (".env.postgres", "PG"),
+    (".env.clickhouse", "CH"),
+)
 
-def _provision_worktree_env(wt_path: Path) -> list[str]:
+
+def _provision_worktree_env(wt_path: Path, source_root: Path | None = None) -> list[str]:
     """环境三件套备置（#ARCH-WORKTREE-ENV-001 P2-8，2026-08-14 裁定）。
 
     病根：site-packages .pth 把 import zephyr 硬锚主仓 src，worktree 内跑网关/治理
@@ -65,25 +71,37 @@ def _provision_worktree_env(wt_path: Path) -> list[str]:
     全部锚定错位（2026-08-14 AI-LIQ-001/AI-SELL-001 两会话同日踩坑实证）。
     create 时一次性备置，任一步失败仅告警不阻断 worktree 创建（环境治理不挡施工）：
 
-    1. config/.env.postgres 复制（depgraph_schema._PG_ENV_PATH 锚进程 REPO_ROOT）
+    1. 连接配置复制（PG+CH，见 _CONN_ENV_FILES；depgraph_schema._PG_ENV_PATH 与
+       ch_config._CH_ENV_PATH 都锚进程 REPO_ROOT。CH 于 2026-09-16 补入：
+       提交队列 serializer worktree 缺该文件，致队列落地的每个 commit 上
+       depgraph/CH 依赖型门禁与 reconciler 全部 fail-open——reconcile_execution_log
+       实证 "CH 配置文件不存在: …\\.runtime\\commit_queue\\worktree\\config\\.env.clickhouse"）
     2. .runtime/lookup_audit/ 初始化（CAPABILITY-LOOKUP-REQUIRED fail-closed 目录检查）
     3. activate_env.ps1 生成（$env:PYTHONPATH=<worktree>\\src，网关提交前激活，
        使 zephyr 解析回 worktree 自身 src）
+
+    source_root：配置真源所在仓根，默认本模块 REPO_ROOT；调用方进程的 REPO_ROOT
+    可能随 sys.path 锚点漂移（同一 worktree 树被 import 时它会指向该树自身，
+    于是"从主仓取配置"变成"从不存在的自己取"），故队列侧必须显式传入。
     """
     notes: list[str] = []
+    root = REPO_ROOT if source_root is None else Path(source_root)
 
-    # 1. PG 连接配置复制
-    pg_src = REPO_ROOT / "config" / ".env.postgres"
-    pg_dst = wt_path / "config" / ".env.postgres"
-    try:
-        if pg_src.exists():
-            pg_dst.parent.mkdir(parents=True, exist_ok=True)
-            pg_dst.write_bytes(pg_src.read_bytes())
-            notes.append("PG 配置已复制 config/.env.postgres")
-        else:
-            notes.append("WARN: 主仓 PG 配置 config/.env.postgres 不存在，跳过（depgraph 操作将不可用）")
-    except OSError as e:
-        notes.append(f"WARN: PG 配置复制失败: {e}")
+    # 1. 连接配置复制（config/.env.* 已 gitignore，clean -fd 不伤，故备置一次即长期生效）
+    for cfg_name, label in _CONN_ENV_FILES:
+        src = root / "config" / cfg_name
+        dst = wt_path / "config" / cfg_name
+        try:
+            if src.exists():
+                dst.parent.mkdir(parents=True, exist_ok=True)
+                dst.write_bytes(src.read_bytes())
+                notes.append(f"{label} 配置已复制 config/{cfg_name}")
+            else:
+                notes.append(
+                    f"WARN: 主仓 {label} 配置 config/{cfg_name} 不存在，跳过（依赖它的门禁/对账将不可用）"
+                )
+        except OSError as e:
+            notes.append(f"WARN: {label} 配置复制失败: {e}")
 
     # 2. lookup_audit 目录初始化
     try:

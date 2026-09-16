@@ -2,7 +2,7 @@
 # [BLUEPRINT] MOD-GOV-047 | scripts/governance/commit_queue_landing.py | §
 # [MODULE] tests.governance.test_commit_queue_landing
 # [DOMAIN] D_GOVERNANCE
-# [DEPENDENCIES] pytest; pyyaml; scripts.commit_queue; scripts.governance.commit_queue_landing; zephyr.gov_enforcement.rule_bridge.git_commit_gateway; zephyr.security.access_control.session_concurrency
+# [DEPENDENCIES] pytest; pyyaml; scripts.commit_queue; scripts.governance.commit_queue_landing; scripts.session_worktree; zephyr.gov_enforcement.rule_bridge.git_commit_gateway; zephyr.security.access_control.session_concurrency
 # [CONSUMERS] pytest 自动发现
 # [STARTUP] python -m pytest tests/governance/test_commit_queue_landing.py
 # [MATURITY] testing
@@ -36,6 +36,10 @@
    main_workspace_sync.jsonl（零 WIP 丢失）；delete action 收敛删除；崩溃窗口
    （update-ref 后收敛前）重放补收敛且 already_synced 幂等；收敛异常 fail-open
    不改变 LandingResult。
+6. worktree 环境备置（2026-09-16 fail-open 治本）：ensure_worktree 两出口（新建/复用）
+   都把主仓 config/.env.postgres + .env.clickhouse 备到 worktree（scripts.session_worktree
+   _provision_worktree_env 真源，source_root=landing.repo_root）；备置产物不污染
+   worktree git 状态；备置抛错仅告警，落盘照常成功。
 """
 
 from __future__ import annotations
@@ -938,3 +942,107 @@ class TestTransientLockAndCasRetries:
             "'x.yaml': Invalid argument"
         ) == "env", "q-…-0018 生产实录死因必须归 env（历史死信 requeue 判读口径）"
         assert set(cql._TRANSIENT_GIT_MARKERS) >= {"index.lock", "unable to unlink", "permission denied"}
+
+
+# ---------------------------------------------------------------------------
+# 8. worktree 环境备置（2026-09-16 fail-open 治本：正门上的门禁/对账须与主区等价）
+# ---------------------------------------------------------------------------
+
+
+def _seed_conn_env(repo: Path) -> None:
+    """主仓连接配置就位 + .gitignore 豁免其追踪（对标主仓真源：config/.env.* 与根平铺
+    activate_env.ps1 均被忽略——否则备置会让 worktree 变脏，违反 §11 #6 clean 不变量）。
+
+    规则须进 dev 可达的提交：worktree 从 refs/heads/dev 检出，其 .gitignore 决定忽略面。
+    """
+    (repo / "config").mkdir(parents=True, exist_ok=True)
+    (repo / "config" / ".env.postgres").write_text("PGHOST=main\n", encoding="utf-8")
+    (repo / "config" / ".env.clickhouse").write_text("CLICKHOUSE_HOST=main\n", encoding="utf-8")
+    ig = repo / ".gitignore"
+    ig.write_text(ig.read_text(encoding="utf-8") + "config/.env.*\n/activate_env.ps1\n", encoding="utf-8")
+    _git(repo, "add", ".gitignore")
+    _git(repo, "commit", "-qm", "seed conn env + ignore rules")
+    _git(repo, "branch", "-f", "dev")
+
+
+class TestWorktreeEnvProvisioning:
+    def test_fresh_worktree_gets_conn_configs_without_pollution(self, tmp_repo: Path, queue_root: Path) -> None:
+        """新建出口：PG+CH 配置 + lookup_audit 备到 worktree，且 worktree 仍 git-clean。"""
+        _seed_conn_env(tmp_repo)
+        landing, _stub = _make_landing(tmp_repo, queue_root)
+
+        wt = landing.ensure_worktree()
+
+        assert (wt / "config" / ".env.postgres").read_text(encoding="utf-8") == "PGHOST=main\n"
+        assert (wt / "config" / ".env.clickhouse").read_text(encoding="utf-8") == "CLICKHOUSE_HOST=main\n"
+        assert (wt / ".runtime" / "lookup_audit").is_dir()
+        assert _git_text(wt, "status", "--porcelain") == "", "备置产物不得让 worktree 变脏（§11 #6 clean 不变量）"
+
+    def test_reuse_path_reprovisions_rotated_configs(self, tmp_repo: Path, queue_root: Path) -> None:
+        """复用出口：主区配置轮换后（worktree 副本被删/过期）每项处理仍重新备置。
+
+        生产常态——worktree 跨 drain 长期存活，第二次起走复用快路径直接 return，
+        早于本修复的语义是"永不更新"（旧 worktree 缺配置即永久缺）。
+        """
+        _seed_conn_env(tmp_repo)
+        landing, _stub = _make_landing(tmp_repo, queue_root)
+        wt = landing.ensure_worktree()
+        assert (wt / "config" / ".env.clickhouse").is_file()
+
+        (wt / "config" / ".env.postgres").unlink()
+        (wt / "config" / ".env.clickhouse").unlink()
+        assert landing.ensure_worktree() == wt, "已注册且 .git 链接在 → 复用同一路径"
+
+        assert (wt / "config" / ".env.postgres").read_text(encoding="utf-8") == "PGHOST=main\n"
+        assert (wt / "config" / ".env.clickhouse").read_text(encoding="utf-8") == "CLICKHOUSE_HOST=main\n"
+
+    def test_source_root_is_the_landing_repo_root(
+        self, tmp_repo: Path, queue_root: Path, tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+    ) -> None:
+        """配置真源=landing.repo_root（非 session_worktree 模块自身 REPO_ROOT 的 import 锚点）。"""
+        _seed_conn_env(tmp_repo)
+        landing, _stub = _make_landing(tmp_repo, queue_root)
+        decoy = tmp_path / "anchored_elsewhere"
+        (decoy / "config").mkdir(parents=True)
+        (decoy / "config" / ".env.postgres").write_text("PGHOST=decoy\n", encoding="utf-8")
+        import scripts.session_worktree as ses
+
+        # 把模块锚点漂到别处：若备置读模块 REPO_ROOT，worktree 会拿到 decoy 内容
+        monkeypatch.setattr(ses, "REPO_ROOT", decoy)
+
+        wt = landing.ensure_worktree()
+
+        assert (wt / "config" / ".env.postgres").read_text(encoding="utf-8") == "PGHOST=main\n"
+
+    def test_provisioning_failure_never_blocks_landing(
+        self, tmp_repo: Path, queue_root: Path, monkeypatch: pytest.MonkeyPatch
+    ) -> None:
+        """备置抛错=环境治理不挡施工：worktree 照常就位、落盘照常成功。"""
+        landing, _stub = _make_landing(tmp_repo, queue_root)
+        import scripts.session_worktree as ses
+
+        monkeypatch.setattr(
+            ses, "_provision_worktree_env", lambda *a, **k: (_ for _ in ()).throw(OSError("磁盘不可用"))
+        )
+
+        assert landing.ensure_worktree().is_dir(), "备置异常不得阻断 worktree 就位"
+
+        item = cq.enqueue_item("sess-env-a", "feat: 备置异常仍落盘", [("docs/env.txt", b"v\n")], queue_root=queue_root)
+        stats = cq.drain_queue(queue_root, landing=landing)
+
+        assert stats["done"] == 1 and stats["dead"] == 0, f"备置异常必须不影响落盘: {stats}"
+        assert _dev_commit_count(tmp_repo) == 1
+        done_qids = [json.loads(p.read_text(encoding="utf-8"))["qid"] for p in (queue_root / "done").glob("*.json")]
+        assert item["qid"] in done_qids
+
+    def test_drain_leads_to_provisioned_worktree(self, tmp_repo: Path, queue_root: Path) -> None:
+        """端到端：真 drain 一次（经 _land_item → ensure_worktree）后 worktree 已备置。"""
+        _seed_conn_env(tmp_repo)
+        landing, _stub = _make_landing(tmp_repo, queue_root)
+        cq.enqueue_item("sess-env-b", "feat: 落盘即备置", [("docs/env2.txt", b"v\n")], queue_root=queue_root)
+
+        stats = cq.drain_queue(queue_root, landing=landing)
+
+        assert stats["done"] == 1 and stats["dead"] == 0
+        wt = landing.worktree_path
+        assert (wt / "config" / ".env.postgres").is_file() and (wt / "config" / ".env.clickhouse").is_file()
