@@ -4,7 +4,7 @@ title: L5 排产段——门闸开施工（对比胜者进施工队列）
 owner: ZephyrAlpha-Owner
 session: st-ailayer-20260917
 date: 2026-09-17
-status: skeleton_pending_mining
+status: design_done
 ---
 
 # L5 排产段骨架卡
@@ -32,4 +32,7 @@ MLOps CT 编排（触发器驱动的再训练排程）；MAPE-K 的 Plan 环。
 5. 排产优先级规则：多区域同时过闸怎么排（进化量尺两问打分？）
 
 ## 状态
-壳已立。
+**2026-09-17 深挖完成**：真源设计稿=[DESIGN.md](DESIGN.md)（design_v1：两级门闸（T0 成熟度
+M1-M4/T1 配额四读数+E0 拉式段闸）/工单自动套模板字段映射表（criteria_hash 机检）/种子文件
+登记接口（排班一张真源零手改）/三证据骨架级分流器/两问打分优先级/五契约接线/10 施工项；
+自审闸=施工，4 项待 Owner）。

@@ -4,8 +4,13 @@ title: L3 清洗段——强模型消化（API 判断质量环节）
 owner: ZephyrAlpha-Owner
 session: st-ailayer-20260917
 date: 2026-09-17
-status: skeleton_pending_mining
+status: design_done
 ---
+
+> **状态 2026-09-17：design_done**——真源设计稿=[DESIGN.md](DESIGN.md)（spec_card_v0 schema/
+> 模型分派矩阵五工序对齐 OBJ_M 既有轨/外部代码零执行规程 E0-E6/LSG 四接线点/清洗质量抽验协议/
+> 本地优先-API 分界清单/四契约接线图/8 施工项/2 待 Owner）。本卡其余部分保留作骨架底稿，与
+> DESIGN.md 冲突时以 DESIGN.md 为准。
 
 # L3 清洗段骨架卡
 
