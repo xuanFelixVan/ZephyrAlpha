@@ -17310,4 +17310,8 @@ creation_tokens:
   token: resource-schedule-e2e-sandbox-registry-st-resource-20260916
   created_by: st-resource-20260916
   capability: resource_schedule_delivery_report
+- file: docs/_working/greatwall_integration/2026-09-16-eight-greatwall-e2e-integration.md
+  token: greatwall-integration-2026-09-16-eight-greatwall-e2e-integration-20260916
+  created_by: st-overseer-20260916
+  capability: greatwall_integration
 di_seam_exemptions: []
