@@ -324,7 +324,15 @@ class TestBootHooksMCPIntegrationMock:
     def test_register_boot_hooks_does_not_raise(self, boot_hooks_module, launcher_module):
         """验证 register_boot_hooks 调用不抛异常（mock launch_all 避免阻塞）。"""
         # mock launch_all 避免进入 while running 循环
-        with patch.object(launcher_module, "launch_all", lambda: {}):
+        # mock reconcile_stale：本测试只验证钩子注册不抛异常。真实 reconcile 会在
+        # db_only marker 过期时于测试进程内重生成生产产物（domain_doc 实测 158.7s
+        # > 120s pytest timeout，杀死全量；且违反测试禁写生产路径）。
+        def _fake_reconcile_stale():
+            return {"status": "skipped_test_mock", "regenerated": [], "skipped": [], "total_scanned": 0}
+
+        with patch.object(launcher_module, "launch_all", lambda: {}), patch(
+            "scripts.governance.reconcile_generators.reconcile_stale", _fake_reconcile_stale
+        ):
             try:
                 # register_boot_hooks 可能因为其他钩子注册失败而抛异常，
                 # 但 MCP 自动启动部分应该被 try/except 保护
