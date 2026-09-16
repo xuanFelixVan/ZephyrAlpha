@@ -28,6 +28,8 @@ from __future__ import annotations
 import importlib.util
 import json
 import sys
+import threading
+import time
 from datetime import UTC, datetime, timedelta
 from datetime import time as dtime
 from decimal import Decimal
@@ -572,6 +574,14 @@ def _order(om, symbol: str = "600000.SH", qty: str = "100"):
     return order
 
 
+def _drain_fills(session) -> None:
+    """排空成交派发线程（stop 投哨兵=FIFO 之前的成交全部落账后才返回）。
+
+    断言不得依赖线程调度：入账已移出回调线程，"入队即入账"是假命题。
+    """
+    assert session.fill_dispatcher.stop(timeout=5.0) is True
+
+
 class TestRiskLayerBaseline:
     def test_drawdown_baseline_comes_from_broker_not_constant(self, tmp_path):
         """基线=券商实时净值：10M 起跌到 9M 应是 CRITICAL（-10%）。
@@ -617,6 +627,7 @@ class TestRiskLayerReconcileChain:
         om = session._order_manager
         order = _order(om)
         om._on_fill(_fill(order.broker_order_id))
+        _drain_fills(session)
         assert session._risk_layer.run_reconcile_once() is True
         assert session._risk_layer.is_symbol_frozen("600000.SH") is False
 
@@ -627,6 +638,7 @@ class TestRiskLayerReconcileChain:
         om = session._order_manager
         order = _order(om)
         om._on_fill(_fill(order.order_id))
+        _drain_fills(session)
         assert session._risk_layer.run_reconcile_once() is True
 
     def test_unpaired_fill_and_foreign_position_freeze_symbol(self, tmp_path):
@@ -635,6 +647,7 @@ class TestRiskLayerReconcileChain:
         session = sps.assemble_session(sps.parse_args([]), broker, state_dir=tmp_path)
         om = session._order_manager
         om._on_fill(_fill("brk-unknown-order"))  # 配不上单：只告警不入账
+        _drain_fills(session)
         assert session._risk_layer.run_reconcile_once() is False
         assert session._risk_layer.is_symbol_frozen("600000.SH") is True
 
@@ -645,9 +658,89 @@ class TestRiskLayerReconcileChain:
         for session in (first, second):
             order = _order(session._order_manager)
             session._order_manager._on_fill(_fill(order.order_id))
+            _drain_fills(session)
         files = sorted(p.name for p in tmp_path.glob("paper_fill_ids-*"))
         assert len(files) == 2
         assert all(f.endswith(".txt") for f in files)
+
+
+class TestAsyncFillDispatch:
+    """成交入账离回调线程（AsyncFillDispatcher [MATURITY] production 却全仓零消费的治本）。"""
+
+    def test_broker_callback_is_only_an_enqueue(self, tmp_path):
+        """挂在 OrderManager 上的必须是派发器 enqueue——入账不得发生在回调线程。
+
+        miniQMT 成交回报在底层 C++ 线程回调，回调内耗时=后续回报延迟（实盘案例 3 秒），
+        而 apply_fill 要 append 去重文件=同步磁盘 I/O。
+        """
+        session = sps.assemble_session(sps.parse_args([]), _RiskBroker(), state_dir=tmp_path)
+        callbacks = session._order_manager.fill_callbacks
+        assert len(callbacks) == 1
+        assert callbacks[0].__self__ is session.fill_dispatcher
+        assert callbacks[0].__name__ == "enqueue"
+        assert session.fill_dispatcher.is_running is True  # 装配完即有消费者，不留悬空队列
+
+    def test_accounting_runs_off_the_pushing_thread(self, tmp_path, monkeypatch):
+        """落账线程名必须是派发线程，而非推单/测试线程。"""
+        from zephyr.ex_core.position_tracker.tracker import PositionTracker
+
+        seen: list[str] = []
+        real = PositionTracker.apply_fill
+
+        def spy(self, fill, side):
+            seen.append(threading.current_thread().name)
+            return real(self, fill, side)
+
+        monkeypatch.setattr(PositionTracker, "apply_fill", spy)
+        session = sps.assemble_session(sps.parse_args([]), _RiskBroker(), state_dir=tmp_path)
+        order = _order(session._order_manager)
+        session._order_manager._on_fill(_fill(order.order_id))
+        _drain_fills(session)
+        assert len(seen) == 1
+        assert seen[0].startswith("paper-fill-dispatch")
+        assert seen[0] != threading.current_thread().name
+
+    def test_session_stop_drains_inflight_fills(self, tmp_path, monkeypatch):
+        """慢落账 + session.stop()：哨兵排在队尾（FIFO）→ stop 返回时三笔必须都已入账。
+
+        不经 stop() 排空的替代方案是"靠 daemon 线程自然死"——那等于把在途成交
+        丢给进程退出时序，重启后账本落后于券商=首轮对账误冻结正常仓位。
+        """
+        from zephyr.ex_core.position_tracker.tracker import PositionTracker
+
+        real = PositionTracker.apply_fill
+
+        def slow(self, fill, side):
+            time.sleep(0.2)
+            return real(self, fill, side)
+
+        monkeypatch.setattr(PositionTracker, "apply_fill", slow)
+        broker = _RiskBroker(holdings={"600000.SH": "300"})
+        session = sps.assemble_session(sps.parse_args([]), broker, state_dir=tmp_path)
+        om = session._order_manager
+        order = _order(om, qty="300")
+        for i in range(3):
+            om._on_fill(_fill(order.order_id, fill_id=f"f{i}", qty="100"))
+        session.stop()  # 返回时刻仍在第一笔 sleep 里 → 只有排空语义成立才会全落账
+        assert session.fill_dispatcher.is_running is False
+        assert session.fill_dispatcher.stats.dispatched == 3
+        book = session._risk_layer._position_tracker.get_positions()
+        assert book.holdings["600000.SH"] == Decimal("300")
+        assert session._risk_layer.run_reconcile_once() is True  # 账与仓对齐，不留假漂移
+
+    def test_fill_arriving_after_stop_surfaces_as_drift(self, tmp_path):
+        """停机后券商仍在推成交（C++ 线程不等人）：绝不静默入账，也绝不炸掉回调链。"""
+        broker = _RiskBroker(holdings={"600000.SH": "100"})
+        session = sps.assemble_session(sps.parse_args([]), broker, state_dir=tmp_path)
+        om = session._order_manager
+        order = _order(om)
+        session.stop()
+        om._on_fill(_fill(order.order_id))  # OrderManager 逐回调隔离异常，不会上抛
+        assert session.fill_dispatcher.stats.enqueued == 0
+        assert session._risk_layer._position_tracker.get_positions().holdings == {}
+        # 漏的这笔以漂移暴露 → 冻结该标的（停错方向，不静默放行）
+        assert session._risk_layer.run_reconcile_once() is False
+        assert session._risk_layer.is_symbol_frozen("600000.SH") is True
 
 
 class TestRiskLayerFailFast:

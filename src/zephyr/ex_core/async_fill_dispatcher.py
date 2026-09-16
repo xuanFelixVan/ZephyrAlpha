@@ -2,7 +2,7 @@
 # [MODULE] zephyr.ex_core.async_fill_dispatcher
 # [DOMAIN] D_EX_CORE
 # [DEPENDENCIES] stdlib; zephyr.shared.contracts.fill; zephyr.shared.contracts.order
-# [CONSUMERS] ex_core.adapters.miniqmt_broker ; ex_core.trading_session
+# [CONSUMERS] scripts.start_paper_session（唯一生产装配点：券商成交回调内 enqueue，会话 stop 排空）
 # [STARTUP] event_driven
 # [MATURITY] production
 # [INVARIANTS] 回调内只入队不处理;独立线程消费;fill_id幂等;线程安全(queue+lock);优雅停机(join+sentinel)

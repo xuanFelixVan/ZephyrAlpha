@@ -1,11 +1,11 @@
 # [BLUEPRINT] MOD-SCRIPT-start_paper_session | scripts/start_paper_session.py | §
 # [MODULE] scripts.start_paper_session
 # [DOMAIN] D_EX_CORE
-# [DEPENDENCIES] stdlib；zephyr.ex_core.trading_session（TradingSession/TradingSessionConfig 真源）；zephyr.ex_core.live_strategy_adapter（--service 常驻服务模式：LiveStrategyAdapter/StrategySlot）；zephyr.ex_core.adapters.miniqmt_broker（延迟 import）；zephyr.ex_core.order_manager；zephyr.ex_core.signal_providers；zephyr.ex_core.risk_layer_orchestrator+position_reconciler+position_tracker.tracker（H5-P0 风控接线批）；zephyr.governance.adapters.risk_validation_bridge；zephyr.risk.implementations.default_risk_validator；zephyr.risk.core.drawdown_tracker/var_calculator/tail_risk_monitor；zephyr.position.core.drawdown_controller；zephyr.shared.state_store（JsonStateStore+AppendOnlyDedupSet Crash-only 外部化）；zephyr.governance.strategies.strategy_base；zephyr.pf_core.topn_momentum_strategy（--strategy 可选）；zephyr.shared.infra.process_pool（run_subprocess_hidden SSoT）
+# [DEPENDENCIES] stdlib；zephyr.ex_core.trading_session（TradingSession/TradingSessionConfig 真源）；zephyr.ex_core.live_strategy_adapter（--service 常驻服务模式：LiveStrategyAdapter/StrategySlot）；zephyr.ex_core.adapters.miniqmt_broker（延迟 import）；zephyr.ex_core.order_manager；zephyr.ex_core.signal_providers；zephyr.ex_core.risk_layer_orchestrator+position_reconciler+position_tracker.tracker（H5-P0 风控接线批）；zephyr.ex_core.async_fill_dispatcher（成交入账离回调线程，stop 排空）；zephyr.governance.adapters.risk_validation_bridge；zephyr.risk.implementations.default_risk_validator；zephyr.risk.core.drawdown_tracker/var_calculator/tail_risk_monitor；zephyr.position.core.drawdown_controller；zephyr.shared.state_store（JsonStateStore+AppendOnlyDedupSet Crash-only 外部化）；zephyr.governance.strategies.strategy_base；zephyr.pf_core.topn_momentum_strategy（--strategy 可选）；zephyr.shared.infra.process_pool（run_subprocess_hidden SSoT）
 # [CONSUMERS] 57 号文 §2 盘中模拟盘——交易日 09:25 前人工拉起；--service=LiveStrategyAdapter 常驻服务模式（GAP-2 残余① CLI 接线已落）；挂计划任务/调度=Owner 窗口
 # [STARTUP] manual
 # [MATURITY] testing
-# [INVARIANTS] 仅连 QMT 模拟账户（config/.env.qmt QMT_SIM_*，实盘 QMT_REAL_* 永不触碰）；默认纯会话保活不自动 rebalance（--strategy 缺省=安全默认）；--dry-run 只连不打任何单；有界保活循环 15:05 自动 stop；KeyboardInterrupt 优雅 stop（stop 自动撤未成交单语义保留）；--service 模式 assemble_session 包 StrategySlot 交 LiveStrategyAdapter 监督（异常隔离+退避重启熔断+biz 心跳 tmp/live_strategy_biz.heartbeat），adapter.run(close_at) 有界收场；**风控层必装配**——DrawdownTracker 基线只取券商实时净值（读不到/非正=拒绝装配会话 exit 1，禁兜底常量猜基线）；Kill Switch 状态经 JsonStateStore 外部化（重启存活熔断，#ARCH-QUANT-002 生产零注入治本）；成交经 OrderManager 回调喂本地持仓账供盘中对账冻结
+# [INVARIANTS] 仅连 QMT 模拟账户（config/.env.qmt QMT_SIM_*，实盘 QMT_REAL_* 永不触碰）；默认纯会话保活不自动 rebalance（--strategy 缺省=安全默认）；--dry-run 只连不打任何单；有界保活循环 15:05 自动 stop；KeyboardInterrupt 优雅 stop（stop 自动撤未成交单语义保留）；--service 模式 assemble_session 包 StrategySlot 交 LiveStrategyAdapter 监督（异常隔离+退避重启熔断+biz 心跳 tmp/live_strategy_biz.heartbeat），adapter.run(close_at) 有界收场；**风控层必装配**——DrawdownTracker 基线只取券商实时净值（读不到/非正=拒绝装配会话 exit 1，禁兜底常量猜基线）；Kill Switch 状态经 JsonStateStore 外部化（重启存活熔断，#ARCH-QUANT-002 生产零注入治本）；成交经 OrderManager 回调**只入队** AsyncFillDispatcher（回调线程零耗时，落账在派发线程），会话 stop() MUST 排空派发队列（含 --service 退避重启路径，排不掉=CRITICAL 出声）供盘中对账冻结
 # [MODIFY-GUARD] 57_daily_cycle_sop.md §2/§7 GAP-2；#ARCH-DAILY-CYCLE-GAP23-001
 # [STABILITY] evolving
 # [SAFETY] M
@@ -93,6 +93,7 @@ _REPO_ROOT = Path(__file__).resolve().parents[1]
 if str(_REPO_ROOT / "src") not in sys.path:
     sys.path.insert(0, str(_REPO_ROOT / "src"))
 
+from zephyr.ex_core.async_fill_dispatcher import AsyncFillDispatcher  # noqa: E402
 from zephyr.ex_core.live_strategy_adapter import LiveStrategyAdapter, StrategySlot  # noqa: E402
 from zephyr.ex_core.order_manager import OrderManager  # noqa: E402
 from zephyr.ex_core.position_reconciler import PositionReconciler  # noqa: E402
@@ -108,6 +109,7 @@ from zephyr.risk.core.tail_risk_monitor import TailRiskMonitor  # noqa: E402
 from zephyr.risk.core.var_calculator import VaRCalculator  # noqa: E402
 from zephyr.risk.implementations.default_risk_validator import DefaultRiskValidator  # noqa: E402
 from zephyr.shared.contracts.fill import Fill  # noqa: E402
+from zephyr.shared.contracts.order import Order  # noqa: E402
 from zephyr.shared.contracts.risk_limits import RiskLimits  # noqa: E402
 from zephyr.shared.infra.process_pool import run_subprocess_hidden  # noqa: E402
 from zephyr.shared.state_store import AppendOnlyDedupSet, JsonStateStore  # noqa: E402
@@ -131,6 +133,9 @@ _RISK_STATE_DIR = _REPO_ROOT / "data" / "runtime" / "state"
 #: 死回调会替新账本"抢先登记"fill_id，令新 tracker 漏入账→对账假漂移→误冻结）。
 #: 新账本启动即经 recover_from_broker 把当日成交号登记入自己的去重集，语义不丢。
 _FILL_DEDUP_PREFIX = "paper_fill_ids"
+#: 会话停机时等待成交派发线程排空的秒数：在途成交未落本地账就重启，新会话拿到的
+#: 账本必然落后于券商 → 首轮对账误冻结。超时不阻断停机（停机优先），但大声出声。
+_FILL_DISPATCH_DRAIN_TIMEOUT_S = 5.0
 
 
 # ── 纯保活占位策略（默认安全态）──────────────────────────────────────────────
@@ -319,17 +324,26 @@ def _account_nav(broker: object) -> tuple[Decimal, float]:
     return cash, nav
 
 
-def _wire_position_book_feed(order_manager: OrderManager, tracker: PositionTracker) -> None:
-    """券商成交 → 本地持仓账（盘中对账链的前置件）。
+def _wire_position_book_feed(
+    order_manager: OrderManager,
+    tracker: PositionTracker,
+    *,
+    strategy_id: str,
+) -> AsyncFillDispatcher:
+    """券商成交 → 入队 → 派发线程落本地持仓账（盘中对账链的前置件）。
 
-    没有本地账，对账只能"全盲"（不接对账器）或"全冻结"（空账 vs 实仓必然漂移）
-    ——两者都不是风控。fill.order_id 双口径（miniqmt_broker.query_trades_today：
-    券商推送带 broker 订单号，而 OrderManager 以本地 UUID 为键）故两路都查。
-    查不到只告警不入账：漏入账会在下一轮对账暴露为 drift 并冻结该标的
-    （停错方向，不静默放行）。
+    为什么必须异步（AsyncFillDispatcher 的立身理由，40_execution_broker §决策①
+    工程约束1）：券商成交回报在 miniQMT 底层 C++ 线程内回调，回调里任何耗时操作
+    都会拖慢后续回报（该模块记录的实盘案例=3 秒延迟），而 ``tracker.apply_fill``
+    要 append fill_id 去重文件=同步磁盘 I/O。故回调线程只做 O(1) 入队，落账
+    在消费线程。
+
+    fill.order_id 双口径（miniqmt_broker.query_trades_today：券商推送带 broker
+    订单号，而 OrderManager 以本地 UUID 为键）故两路都查。查不到只告警不入账：
+    漏入账会在下一轮对账暴露为 drift 并冻结该标的（停错方向，不静默放行）。
     """
 
-    def _on_fill(fill: Fill) -> None:
+    def _lookup_order(fill: Fill) -> Order | None:
         order = order_manager.get_order(fill.order_id)
         if order is None:
             order = next((o for o in order_manager.orders.values() if o.broker_order_id == fill.order_id), None)
@@ -339,10 +353,53 @@ def _wire_position_book_feed(order_manager: OrderManager, tracker: PositionTrack
                 fill.order_id,
                 fill.symbol,
             )
-            return
-        tracker.apply_fill(fill, order.side)
+        return order
 
-    order_manager.register_fill_callback(_on_fill)
+    dispatcher = AsyncFillDispatcher(
+        consumer=lambda fill, order: tracker.apply_fill(fill, order.side),
+        lookup_order_fn=_lookup_order,
+        consumer_name=f"paper-fill-dispatch-{strategy_id}",
+    )
+    # 先起消费线程再挂回调：未 start 时 enqueue 仍会成功但永不消费（Queue 静默积压），
+    # 顺序反了就把"成交不见了"变成一种可能。
+    dispatcher.start()
+    order_manager.register_fill_callback(dispatcher.enqueue)
+    return dispatcher
+
+
+def _attach_dispatcher_teardown(
+    session: TradingSession,
+    dispatcher: AsyncFillDispatcher,
+) -> None:
+    """把派发器排空挂进会话停机路径（成交入账线程不得靠 daemon 身份"自然死"）。
+
+    TradingSession.stop() 是全仓唯一拆除口（CLI 收盘/Ctrl+C 与
+    LiveStrategyAdapter._stop_slot 退避重启都经此处），故在此包一层而不是改
+    [SAFETY] M 的会话契约。在途成交未落账就重启=新会话账本落后于券商，
+    首轮对账会把正常仓位误判为漂移并冻结标的——排空失败必须大声。
+    """
+    original_stop = session.stop
+
+    def _stop() -> None:
+        try:
+            original_stop()
+        finally:
+            drained = dispatcher.stop(timeout=_FILL_DISPATCH_DRAIN_TIMEOUT_S)
+            if not drained:
+                stats = dispatcher.stats
+                _logger.critical(
+                    "成交派发器未能在 %ss 内排空（queue_size=%d enqueued=%d dispatched=%d errors=%d）"
+                    "——本地持仓账落后于券商，下一轮对账将冻结相关标的，须人工核对成交",
+                    _FILL_DISPATCH_DRAIN_TIMEOUT_S,
+                    stats.queue_size,
+                    stats.enqueued,
+                    stats.dispatched,
+                    stats.errors,
+                )
+
+    session.stop = _stop  # type: ignore[method-assign]
+    # 留把手：运维/测试经 session.fill_dispatcher.stats 看积压与去重数
+    session.fill_dispatcher = dispatcher  # type: ignore[attr-defined]
 
 
 def _log_position_drift(result: object) -> None:
@@ -363,7 +420,7 @@ def assemble_risk_layer(
     state_store: JsonStateStore,
     initial_cash: Decimal,
     nav_baseline: float,
-) -> RiskLayerOrchestrator:
+) -> tuple[RiskLayerOrchestrator, AsyncFillDispatcher]:
     """装配组合级风控层（H5-P0 治本：编排器全仓零生产装配=四链全盲）。
 
     四条链在此点亮（前 3 条由 TradingSession.start/rebalance 消费）：
@@ -377,6 +434,9 @@ def assemble_risk_layer(
     ``get_today_fills`` 全仓无任何 broker 实现（探针名是幻影，链 4 的成交重放
     恒降级为空列表）——本处是唯一生产装配点，按真名注入，不改 Safety-H 默认值。
 
+    链 3 的进料（成交→本地账）走异步派发线程：返回 (编排器, 派发器)，调用方 MUST
+    经 _attach_dispatcher_teardown 把派发器挂进会话停机路径，否则在途成交随进程退出。
+
     未接线（缺市场级进料口生产者，登记 tracker）：systemic_input_provider（需
     盘口 sell_pressure/spread，sentiment_index 全仓无产源）、rollback_metrics_provider
     （需 daily_loss/reject_rate，且注入即令启动姿态 fail-closed 落 SOFT_HALT、
@@ -389,7 +449,7 @@ def assemble_risk_layer(
             state_store.root_dir / f"{_FILL_DEDUP_PREFIX}-{strategy_id}-{uuid.uuid4().hex[:8]}.txt"
         ),
     )
-    _wire_position_book_feed(order_manager, tracker)
+    dispatcher = _wire_position_book_feed(order_manager, tracker, strategy_id=strategy_id)
 
     def _open_orders_provider() -> dict[str, dict]:
         return {o.broker_order_id: {} for o in order_manager.get_open_orders() if o.broker_order_id}
@@ -410,7 +470,7 @@ def assemble_risk_layer(
         open_orders_provider=_open_orders_provider,
         config=RiskLayerConfig(today_fills_probe="query_trades_today"),
         state_store=state_store,
-    )
+    ), dispatcher
 
 
 def assemble_session(args: argparse.Namespace, broker: object, *, state_dir: Path | None = None) -> TradingSession:
@@ -459,7 +519,7 @@ def assemble_session(args: argparse.Namespace, broker: object, *, state_dir: Pat
         raise ValueError(f"未知策略: {args.strategy!r}（可选: {_STRATEGY_TOPN_MOMENTUM}）")
 
     initial_cash, nav_baseline = _account_nav(broker)
-    risk_layer = assemble_risk_layer(
+    risk_layer, fill_dispatcher = assemble_risk_layer(
         broker,
         order_manager,
         strategy_id=strategy_id,
@@ -472,6 +532,7 @@ def assemble_session(args: argparse.Namespace, broker: object, *, state_dir: Pat
         f"[RISK] 组合级风控层已装配：回撤基线={nav_baseline:.2f}（券商实时净值）"
         f" 熔断状态外部化={state_store.root_dir}"
         " 成交探针=query_trades_today"
+        " 成交入账=异步派发线程（回调内只入队）"
     )
     print(
         "[RISK] 未接线（缺市场级进料口生产者，已登记 tracker）：systemic_input_provider"
@@ -491,7 +552,7 @@ def assemble_session(args: argparse.Namespace, broker: object, *, state_dir: Pat
             max_single_position=max(args.max_single, 0.01),
         ),
     )
-    return TradingSession(
+    session = TradingSession(
         broker=broker,
         strategy=strategy,
         risk_validator=risk_validator,
@@ -501,6 +562,8 @@ def assemble_session(args: argparse.Namespace, broker: object, *, state_dir: Pat
         config=config,
         risk_layer=risk_layer,
     )
+    _attach_dispatcher_teardown(session, fill_dispatcher)
+    return session
 
 
 def assemble_adapter(
