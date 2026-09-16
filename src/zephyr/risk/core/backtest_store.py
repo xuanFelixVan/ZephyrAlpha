@@ -6,7 +6,7 @@
 # [CONSUMERS] daily_auditor(日终持久化); RiskLayerOrchestrator(盘前加载); 35号 §3.15/§3.16(entry_var 配对消费)
 # [STARTUP] imported
 # [MATURITY] evolving
-# [INVARIANTS] 命名空间纯名字(date后缀禁路径分隔符); cvar≥var(盘前基线写入守卫,§3.18阶段0); entry_var≥0; 读损坏→StateCorruptError上抛(fail-closed,不静默兜底); 历史加载缺日记None不补0(数据缺口即缺口)
+# [INVARIANTS] 命名空间纯名字(date后缀禁路径分隔符); cvar≥var(盘前基线写入守卫,§3.18阶段0); entry_var≥0; 盘前基线双写(latest单记录+var_premarket_baseline_YYYY-MM-DD归档,同一载荷); 读损坏→StateCorruptError上抛(fail-closed,不静默兜底); 历史加载缺日记None不补0(数据缺口即缺口)
 # [MODIFY-GUARD] blueprint.md
 # [STABILITY] evolving
 # [SAFETY] M
@@ -15,13 +15,6 @@
 # [TESTS] tests/risk/test_backtest_store.py
 # [TTL] permanent
 
-# [ALGO_FLOW]
-# I1: JsonStateStore 同接口 store(save/load 单记录原语, 双后端经 make_state_store 工厂)
-# I2: trade_date + 各类载荷(回测报告/双轨P&L/盘中重算日志/盘前基线/entry_var)
-# A1: save_*(写入守卫: 有限值/cvar≥var/entry_var≥0 → 命名空间单记录原子写)
-# A2: load_*(读取: None=冷启动 / dict=记录 / StateCorruptError=损坏上抛; 历史按显式日期序列逐日加载)
-# O1: 持久化记录 → §3.19 盘前初始化 / §3.9 回测历史 clean P&L / 35号 §3.16 回撤归因
-# [/ALGO_FLOW]
 """
 Backtest Store — VaR 回测/基线/双轨 P&L/entry_var 持久化门面 (36号 §3.4/§3.13/§3.18)
 
@@ -33,6 +26,9 @@ JsonStateStore 单记录原语 → 业务命名空间方法的薄门面 (只编�
     var_intraday_recalc_YYYY-MM-DD   §3.18 阶段 3 盘中重算日志 (§3.12)
     var_premarket_baseline           §3.18 阶段 2 盘前 VaR/ES 基线 (latest 单记录,
                                      供次日 §3.12 盘中对比 + §3.16 回撤归因)
+    var_premarket_baseline_YYYY-MM-DD 同上基线的按日归档 (与 latest 同写, 供 §3.9/
+                                     §3.10 回测配对"预测腿"——latest 单记录会被覆盖,
+                                     归档才可重建历史日序)
     entry_var                        §3.4 入场 VaR/ES 基准 (latest 单记录,
                                      与 35号 §3.18 阶段 4b 配对, §3.19 阶段 4 加载)
 
@@ -72,6 +68,7 @@ PREMARKET_BASELINE_NAMESPACE: Final = "var_premarket_baseline"
 _BACKTEST_REPORT_PREFIX: Final = "var_backtest_report_"
 _PNL_DUAL_PREFIX: Final = "var_pnl_dual_"
 _INTRADAY_RECALC_PREFIX: Final = "var_intraday_recalc_"
+_PREMARKET_BASELINE_PREFIX: Final = "var_premarket_baseline_"
 
 
 class InvalidBacktestStoreError(ZephyrBaseError):
@@ -182,6 +179,10 @@ class VarBacktestStore:
         """持久化盘前 VaR/ES 基线 (供次日 §3.12 盘中对比 + §3.16 回撤归因)。
 
         ES ≥ VaR 不变式写入守卫 (§3.18 阶段 0: 违反即拒绝持久化)。
+
+        双写语义：latest 单记录（向后兼容消费方）+ `var_premarket_baseline_
+        YYYY-MM-DD` 按日归档——§3.9/§3.10 回测的"预测腿"必须按历史交易日重建
+        日序，latest 单记录会被次日覆盖故不足以支撑回测。
         """
         day = _validate_trade_date(trade_date)
         var = _require_finite(var_95, "var_95")
@@ -190,15 +191,27 @@ class VarBacktestStore:
             raise InvalidBacktestStoreError(f"var_95 必须 ≥0, got {var_95}")
         if cvar < var:
             raise InvalidBacktestStoreError(f"cvar_95({cvar}) 必须 ≥ var_95({var}) (ES ≥ VaR 不变式, §3.18 阶段 0)")
-        self._store.save(
-            PREMARKET_BASELINE_NAMESPACE,
-            {"trade_date": day, "var_95": var, "cvar_95": cvar},
-        )
+        record = {"trade_date": day, "var_95": var, "cvar_95": cvar}
+        self._store.save(PREMARKET_BASELINE_NAMESPACE, record)
+        self._store.save(f"{_PREMARKET_BASELINE_PREFIX}{day}", record)
 
     def load_premarket_baseline(self) -> dict[str, Any] | None:
         """加载盘前基线 (None=首次启动/前日未持久化, §3.19 阶段 2:
         盘中重算 var_change_ratio 跳过对比)。"""
         return self._store.load(PREMARKET_BASELINE_NAMESPACE)
+
+    def load_premarket_baseline_for_date(self, trade_date: date) -> dict[str, Any] | None:
+        """加载指定交易日盘前基线归档 (None=当日无盘前快照=预测腿缺口)。"""
+        day = _validate_trade_date(trade_date)
+        return self._store.load(f"{_PREMARKET_BASELINE_PREFIX}{day}")
+
+    def load_premarket_baseline_history(self, trade_dates: Iterable[date]) -> list[dict[str, Any] | None]:
+        """按显式日期序列加载历史盘前基线归档 (§3.9 回测预测腿)。
+
+        与 load_pnl_dual_history 同一语义：缺失日返回 None 由调用方过滤——
+        不静默补 0 (补 0 会把"无基线"日伪装成零风险日，污染超限判定)。
+        """
+        return [self.load_premarket_baseline_for_date(d) for d in trade_dates]
 
     # ── §3.18 阶段 3: 盘中重算日志 ──
 

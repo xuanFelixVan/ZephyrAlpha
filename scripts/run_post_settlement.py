@@ -1,11 +1,11 @@
 # [BLUEPRINT] MOD-SCRIPT-run_post_settlement | scripts/run_post_settlement.py | §
 # [MODULE] scripts.run_post_settlement
 # [DOMAIN] D_TRADING
-# [DEPENDENCIES] stdlib；zephyr.trading.post_settlement_pipeline（流水线真源）；zephyr.trading.settlement_reconciliation（SettlementReconciler）；zephyr.trading.broker_settlement_adapter（fetch_broker_settlement_records 券商侧适配）；zephyr.ex_core.fill_handler（query_fills_by_date 读取口径）；zephyr.risk.core.daily_auditor（DailyAuditor.audit）；zephyr.data.trading_calendar（is_trading_day 交易日回推）；zephyr.ex_core.adapters.miniqmt_broker（QMT 模拟盘连接，延迟 import 可降级）
+# [DEPENDENCIES] stdlib；zephyr.trading.post_settlement_pipeline（流水线真源）；zephyr.trading.settlement_reconciliation（SettlementReconciler）；zephyr.trading.broker_settlement_adapter（fetch_broker_settlement_records 券商侧适配）；zephyr.ex_core.fill_handler（query_fills_by_date 读取口径）；zephyr.risk.core.daily_auditor（DailyAuditor.audit + run_var_backtest_from_store）；zephyr.risk.core.backtest_store（VarBacktestStore 门面，VaR 定级归档）；zephyr.shared.state_store（JsonStateStore 风控状态根）；zephyr.data.trading_calendar（is_trading_day 交易日回推）；zephyr.ex_core.adapters.miniqmt_broker（QMT 模拟盘连接，延迟 import 可降级）
 # [CONSUMERS] 57 号文 §3 收盘结算管线触发入口（人工 CLI 保留；挂调度已获 Owner 2026-09-15 全自动指令批准——计划任务 ZephyrAlpha_PostSettlement 工作日 15:30 经 scripts/register_post_settlement_task.ps1 注册，幂等只读不变）
 # [STARTUP] manual
 # [MATURITY] testing
-# [INVARIANTS] 只读对账+审计不写业务 DB（reconciliation_differences 落库由 recon_runner 负责，本脚本不重复写）；QMT 不在线降级为仅系统侧+显式标注（不伪造"券商侧为空"的假比对）；对账不一致必打印 C 类异常清单+exit 3（不静默）；步骤异常 exit 1；幂等（同 trade_date 重跑无副作用）
+# [INVARIANTS] 只读对账+审计不写业务 DB（reconciliation_differences 落库由 recon_runner 负责，本脚本不重复写）；VaR 回测定级为本脚本新增状态写副作用且只写既有风控状态根(data/runtime/state)的 var_backtest_report_* 归档——状态根/盘前基线缺失即整步跳过且绝不 mkdir 造目录，本步异常与结论永不改退出码，定级动作不在本脚本执行（§3.10 唯一执行者=编排层 apply_var_backtest_action）；QMT 不在线降级为仅系统侧+显式标注（不伪造"券商侧为空"的假比对）；对账不一致必打印 C 类异常清单+exit 3（不静默）；步骤异常 exit 1；幂等（同 trade_date 重跑无副作用）
 # [MODIFY-GUARD] 57_daily_cycle_sop.md §3/§7 GAP-3；54_reconciliation_attribution.md §2.4/§3.3；#ARCH-DAILY-CYCLE-GAP23-001
 # [STABILITY] evolving
 # [SAFETY] M
@@ -15,7 +15,7 @@
 # [A_module] module_id=MOD-SCRIPT-run_post_settlement | layer=script | stability=evolving | safety=M | ai_autonomy=ai_modifiable
 # [TTL] permanent
 # noqa: m11-perm-manual-legitimate  M11豁免: 本文件是 57 号文 §3 盘后结算 CLI（无常驻进程无自轮询循环；工作日 15:30 计划任务经外部 Task Scheduler 单发触发本幂等 CLI，2026-09-15 Owner 全自动指令批准），与 commit_queue.py 同类
-# @高风险动作: 只读对账+审计，不写业务 DB（唯一写副作用=FillHandler 初始化时 mkdir data/fills 目录兜底；券商侧仅 query 查询不下单）
+# @高风险动作: 只读对账+审计，不写业务 DB（写副作用两处=① FillHandler 初始化时 mkdir data/fills 目录兜底；② VaR 回测定级归档写既有 data/runtime/state 的 var_backtest_report_*（根/盘前基线不存在则整步跳过，不 mkdir 不建根）；券商侧仅 query 查询不下单，定级动作不在本脚本执行）
 """run_post_settlement.py — 盘后结算对账+日终审计 CLI（57 号文 GAP-3，Owner 2026-08-21 批准施工）
 
 真源
@@ -40,7 +40,13 @@
    成交会被误判 MISSING_IN_BROKER 假 DRIFT）。
 3. 审计：DailyAuditor().audit 包装（MOD-RK-20 五件套）。持仓/净值/限额真源
    未接线（57 号文 GAP 族后续批），当前以空快照最小输入跑通链路并显式标注。
-4. 打印 PostSettlementRunResult 全字段 + C 类异常清单（若有）。
+4. VaR 回测定级归档：``DailyAuditor.run_var_backtest_from_store`` 以风控状态根
+   （``data/runtime/state``，编排层同款）的盘前基线归档为预测腿、``var_pnl_dual_*``
+   clean P&L 为实现腿配对定级，归档 ``var_backtest_report_YYYY-MM-DD`` 供**下一会话
+   编排层唯一执行者** ``apply_var_backtest_action`` 落地（本脚本不改任何风控态）。
+   状态根/盘前基线不存在 → 整步跳过并标注（不 mkdir、不伪造定级）；本步异常/结论
+   **永不改退出码**。
+5. 打印 PostSettlementRunResult 全字段 + C 类异常清单（若有）。
 
 exit code 矩阵（57 号文 §3 验收口径）
 -------------------------------------
@@ -72,7 +78,9 @@ if str(_REPO_ROOT / "src") not in sys.path:
 
 from zephyr.data.trading_calendar import is_trading_day  # noqa: E402
 from zephyr.ex_core.fill_handler import FillHandler  # noqa: E402
+from zephyr.risk.core.backtest_store import VarBacktestStore  # noqa: E402
 from zephyr.risk.core.daily_auditor import AuditRequest, DailyAuditor  # noqa: E402
+from zephyr.shared.state_store import JsonStateStore  # noqa: E402
 from zephyr.trading.broker_settlement_adapter import fetch_broker_settlement_records  # noqa: E402
 from zephyr.trading.post_settlement_pipeline import (  # noqa: E402
     PostSettlementRunResult,
@@ -90,6 +98,11 @@ _logger = logging.getLogger(__name__)
 _DEFAULT_FILLS_DIR = _REPO_ROOT / "data" / "fills"
 #: QMT 模拟盘配置文件（QMT_SIM_PATH / QMT_SIM_ACCOUNT；实盘 QMT_REAL_* 本脚本永不触碰）
 _ENV_QMT_PATH = _REPO_ROOT / "config" / ".env.qmt"
+#: 风控层状态根（36号 §3.18 持久化门面根目录）——盘后 VaR 回测定级的**跨进程交付面**：
+#: 编排层（start_paper_session 装配）读同一根，本脚本写 var_backtest_report_* 归档。
+#: 字面真源在 scripts/start_paper_session.py `_RISK_STATE_DIR`（两脚本各持一份是
+#: SSOT 债，收敛点待主会话裁决——本件不擅自改禁改清单内文件）
+_RISK_STATE_DIR = _REPO_ROOT / "data" / "runtime" / "state"
 #: 交易日回推上限（防御性有界——exchange_calendars 异常 + 全周末也不可能超 31 天）
 _MAX_LOOKBACK_DAYS = 31
 #: 模拟盘组合标识（审计报告 portfolio_id 标签；与券商侧 portfolio 语义无关）
@@ -116,6 +129,9 @@ class PipelineDeps:
             供 main 打印 C 类异常清单（流水线结果只带状态不带 drifts 明细）。
         system_fills_reader: 降级路径专用——系统侧 Fill 读取 callable
             （trade_date → list[Fill]），供 main 打印"仅系统侧"笔数标注。
+        var_backtest_fn: 盘后 VaR 回测定级装配 callable（trade_date →
+            VarBacktestReport|None，36号 §3.9/§3.10/§3.18 产端）；
+            None=状态根不可用（该步不跑，永不影响退出码）。
     """
 
     reconcile_fn: Callable[[str], object] | None
@@ -124,6 +140,7 @@ class PipelineDeps:
     notes: list[str] = field(default_factory=list)
     reconcile_results: list[ReconciliationResult] = field(default_factory=list)
     system_fills_reader: Callable[[str], list] | None = None
+    var_backtest_fn: Callable[[str], object] | None = None
 
 
 # ── CLI 参数与交易日解析 ─────────────────────────────────────────────────────
@@ -290,6 +307,68 @@ def _build_audit_fn() -> Callable[[str], object]:
     return _audit
 
 
+def _build_var_backtest_fn(
+    auditor: DailyAuditor | None = None,
+    *,
+    state_dir: Path | None = None,
+) -> Callable[[str], object] | None:
+    """构造盘后 VaR 回测定级装配闭包（36号 §3.9 装配 + §3.10 定级 + §3.18 归档）。
+
+    状态根门禁：`data/runtime/state`（编排层同款根）不存在，或尚无盘前基线
+    归档 `var_premarket_baseline.json`（编排层未跑过=预测腿零来源）→ 返回
+    None 让该步整体不跑。**本脚本绝不为此 mkdir 状态根**：一只往不存在的
+    空归档里写数据的"产端"是假接线，且会把只读脚本变成写脚本。
+
+    Args:
+        auditor: DailyAuditor 实例（缺省新建，与 audit_fn 同型）
+        state_dir: 状态根覆盖（测试注入 tmp_path 隔离）
+
+    Returns:
+        callable(trade_date) → VarBacktestReport|None；None=条件不具备，跳过
+    """
+    root = state_dir or _RISK_STATE_DIR
+    if not root.is_dir() or not (root / "var_premarket_baseline.json").is_file():
+        return None
+    bt_auditor = auditor or DailyAuditor()
+    store = VarBacktestStore(JsonStateStore(root))
+
+    def _grade(trade_date: str) -> object:
+        return bt_auditor.run_var_backtest_from_store(store, date.fromisoformat(trade_date))
+
+    return _grade
+
+
+def _run_var_backtest_step(deps: PipelineDeps, trade_date: str) -> None:
+    """执行 VaR 定级装配并记结论标注（永不抛异常、永不改退出码）。
+
+    定级动作不在本脚本执行——归档 `var_backtest_report_YYYY-MM-DD` 后由
+    下一会话编排层唯一执行者 `apply_var_backtest_action` 落地（36号 §3.10
+    单一执行者；在此直接改风控态=另立第二个头）。
+    """
+    if deps.var_backtest_fn is None:
+        deps.notes.append(
+            f"VaR 回测定级：跳过（状态根 {_RISK_STATE_DIR} 无盘前基线归档——"
+            "编排层未在此根跑过，预测腿零来源，绝不拿空归档伪造定级）"
+        )
+        return
+    try:
+        report = deps.var_backtest_fn(trade_date)
+    except Exception:  # noqa: BLE001 — 新增步骤永不改既有退出码矩阵（异常大声留痕）
+        _logger.exception("VaR 回测定级装配异常（已吞没，不影响盘后对账/审计结论）")
+        deps.notes.append("VaR 回测定级：异常（详见日志），本步未归档")
+        return
+    if report is None:
+        deps.notes.append(
+            "VaR 回测定级：两腿零配对未定级未归档（clean P&L 双轨真源未接线，57号文 GAP 族后续批）"
+        )
+        return
+    deps.notes.append(
+        f"VaR 回测定级已归档: action={getattr(report, 'action', '?')} "
+        f"n_obs={getattr(report, 'n_obs', '?')} flags={getattr(report, 'flags', ())} "
+        "→ 下一会话编排层 apply_var_backtest_action 单一执行者落地"
+    )
+
+
 def _stdout_alert_sink(trade_date: str, message: str) -> None:
     """告警出口：stdout 大字打印（57 号文 §6——异常当日 tracker 登记闭环，本脚本不静默）。"""
     print(f"[ALERT] {trade_date} {message}")
@@ -305,6 +384,7 @@ def build_production_deps() -> tuple[PipelineDeps, object | None]:
         reconcile_fn=None,
         audit_fn=_build_audit_fn(),
         alert_sink=_stdout_alert_sink,
+        var_backtest_fn=_build_var_backtest_fn(),
     )
     broker, note = _try_connect_sim_broker()
     if broker is None:
@@ -411,6 +491,7 @@ def main(argv: list[str] | None = None, *, deps: PipelineDeps | None = None) -> 
             except Exception:  # noqa: BLE001 — 断开失败不影响本次结果
                 _logger.exception("broker.disconnect() 异常（已吞没）")
 
+    _run_var_backtest_step(deps, trade_date)
     _print_result(result, deps)
     code = _exit_code_of(result)
     print(f"[INFO] exit_code={code}（0=OK/SKIPPED, 3=DRIFT, 1=ERROR）")

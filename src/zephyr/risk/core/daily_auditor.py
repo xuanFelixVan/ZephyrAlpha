@@ -2,10 +2,10 @@
 # [MODULE] zephyr.risk.core.daily_auditor
 # [DOMAIN] D_RISK
 # [DEPENDENCIES] zephyr.shared.foundation.errors; zephyr.shared.alerts.threshold_loader; MOD-RK-16(Risk Decomposition,归因复用); MOD-RK-06(限额消耗); MOD-RK-03(持仓快照)
-# [CONSUMERS] D-REPORTING(CTR-P1-011 AuditRiskMetricsReport)
+# [CONSUMERS] D-REPORTING(CTR-P1-011 AuditRiskMetricsReport); RiskLayerOrchestrator(经 var_backtest_report_* 消费本模块盘后 VaR 定级归档)
 # [STARTUP] imported
 # [MATURITY] production
-# [INVARIANTS] total_pnl=realized+unrealized;gap=expected-total_pnl;归因占比分母=|factor_pnl|+|residual_pnl|;任一FAIL→整体FAIL;报告幂等(同日同组合等价)
+# [INVARIANTS] total_pnl=realized+unrealized;gap=expected-total_pnl;归因占比分母=|factor_pnl|+|residual_pnl|;任一FAIL→整体FAIL;报告幂等(同日同组合等价);VaR定级只归档不执行动作(执行唯一口=编排层apply_var_backtest_action);回测配对只取clean P&L且缺腿日记None剔除(不补0);两腿零配对→不落报告+CRITICAL(无数据≠通过)
 # [MODIFY-GUARD] blueprint.md
 # [STABILITY] evolving
 # [SAFETY] H
@@ -44,8 +44,9 @@ from __future__ import annotations
 
 import logging
 import math
+from collections.abc import Mapping, Sequence
 from dataclasses import dataclass, field
-from datetime import date, datetime, timezone
+from datetime import date, datetime, timedelta, timezone
 from enum import Enum
 from pathlib import Path
 from typing import Any, Final
@@ -74,6 +75,7 @@ __all__: Final = [
     "VarBacktestReport",
     "VAR_BACKTEST_MIN_SAMPLES",
     "VAR_BACKTEST_LOW_POWER_SAMPLES",
+    "VAR_BACKTEST_DEFAULT_WINDOW_DAYS",
 ]
 
 logger = logging.getLogger(__name__)
@@ -540,6 +542,10 @@ class AuditRequest:
 VAR_BACKTEST_MIN_SAMPLES: Final = 30
 #: 低检验力窗口上界（30≤n<60 仅 E-backtesting 参与定级，传统 3 法标记 low_power）
 VAR_BACKTEST_LOW_POWER_SAMPLES: Final = 60
+#: 盘后回测默认回看自然日窗口（§3.9 数据装配；实际样本数=两腿齐备的交易日数，
+#: 120 自然日≈80 交易日，够 n≥60 全 4 法定级；冷启动期配对不足自动落
+#: INSUFFICIENT_SAMPLE_SKIP/LOW_POWER 档，不人为放宽门槛）
+VAR_BACKTEST_DEFAULT_WINDOW_DAYS: Final = 120
 
 
 @dataclass(frozen=True)
@@ -561,6 +567,37 @@ class VarBacktestReport:
     flags: tuple[str, ...]
     n_obs: int
     report: dict[str, Any] | None
+
+
+def _default_backtest_window(trade_date: date, window_days: int) -> list[date]:
+    """§3.9 回测日序（自然日窗口近似，周末剔除）。
+
+    交易日历未注入本模块（depgraph 无日历依赖边）——按自然日近似并按 A 股
+    "周末绝无交易" 硬事实剔除非交易日，其余缺口（节假日/停摆/上线前）由
+    记录本身缺失体现，配对阶段自动剔除（数据缺口即缺口）。
+    """
+    n = max(1, int(window_days))
+    return [trade_date - timedelta(days=k) for k in range(n) if (trade_date - timedelta(days=k)).weekday() < 5]
+
+
+def _build_observation(day: date, baseline: Any, pnl_record: Any) -> BacktestObservation | None:
+    """单日两腿配对 → BacktestObservation；任一腿缺失/非法返回 None（不补 0）。"""
+    if not isinstance(baseline, Mapping) or not isinstance(pnl_record, Mapping):
+        return None
+    try:
+        var_fc = float(baseline["var_95"])
+        es_fc = float(baseline["cvar_95"])
+        realized = float(pnl_record["clean_pnl"])
+    except (KeyError, TypeError, ValueError):
+        return None
+    if not (math.isfinite(var_fc) and math.isfinite(es_fc) and math.isfinite(realized)):
+        return None
+    return BacktestObservation(
+        date=datetime(day.year, day.month, day.day, tzinfo=timezone.utc),
+        var_forecast=var_fc,
+        es_forecast=es_fc,
+        realized_return=realized,
+    )
 
 
 # ──────────────────────────────────────────────────────────────────────────────
@@ -1016,6 +1053,135 @@ class DailyAuditor:
             n_obs=n_obs,
             report=report,
         )
+
+    # ── 公开 API: 从持久化门面装配观测并归档定级 (§3.9 数据装配 + §3.18 阶段 6) ──
+
+    def run_var_backtest_from_store(
+        self,
+        store: Any,
+        trade_date: date,
+        *,
+        window_days: int = VAR_BACKTEST_DEFAULT_WINDOW_DAYS,
+        trade_dates: Sequence[date] | None = None,
+        backtester: VarBacktester | None = None,
+    ) -> VarBacktestReport | None:
+        """盘后 VaR 回测端到端产端：装配观测 → 定级 → 归档报告供下一会话消费。
+
+        两腿配对 (36号 §3.9/§3.18，两腿均为绝对金额口径):
+          - 预测腿: ``var_premarket_baseline_YYYY-MM-DD`` 归档
+            (RiskLayerOrchestrator 盘前落盘, 当日盘前 VaR/ES 金额)
+          - 实现腿: ``var_pnl_dual_YYYY-MM-DD`` 的 clean_pnl (§3.13 模型纯度
+            检验只接受 clean; dirty 构造即被 BacktestObservation 拒绝)
+
+        缺口口径: 任一腿缺失/字段非法的日记为缺口并剔除——绝不补 0
+        (补 0 会把"无基线"日伪装成零风险日, 污染超限判定)。全部日均无配对
+        (n_obs==0) 时**不落报告**并 CRITICAL 出声: 无数据≠通过, 猜一个 PASS
+        等于给未验证的模型盖质检章。
+
+        消费方: RiskLayerOrchestrator 启动期 `_consume_var_calibration_verdict`
+        读 ``var_backtest_report_YYYY-MM-DD`` → 唯一执行者
+        `apply_var_backtest_action` (§3.10 三档; 本方法只归档定级不执行动作,
+        避免另立第二个决策头)。
+
+        Args:
+            store: VarBacktestStore 门面实例 (与编排层同一 JsonStateStore 根)
+            trade_date: 本次盘后定级归属交易日 (报告命名空间日期后缀)
+            window_days: 回看自然日窗口上界 (交易日历未接入按自然日近似，
+                周末剔除；实际样本数 = 两腿齐备的交易日数)
+            trade_dates: 显式交易日序列 (给定则覆盖 window_days 推导)
+            backtester: 注入 VarBacktester (缺省默认置信度)
+
+        Returns:
+            VarBacktestReport；None=数据/存储不可用（未落任何报告，调用方无需处置）
+
+        Raises:
+            InvalidAuditInputError: store 缺少历史读取接口（接线错误，非数据缺口）
+        """
+        load_baseline = getattr(store, "load_premarket_baseline_history", None)
+        load_pnl = getattr(store, "load_pnl_dual_history", None)
+        save_report = getattr(store, "save_backtest_report", None)
+        if load_baseline is None or load_pnl is None or save_report is None:
+            raise InvalidAuditInputError("store 须为 VarBacktestStore 门面（缺历史读取/报告落盘接口）")
+
+        days = list(trade_dates) if trade_dates is not None else _default_backtest_window(trade_date, window_days)
+        try:
+            baselines = list(load_baseline(days))
+            pnls = list(load_pnl(days))
+        except Exception:  # noqa: BLE001 — 状态目录损坏/不可读：出声但不改盘后流水线退出码
+            logger.critical(
+                "VaR 回测历史读取失败（状态目录损坏/不可用），本次盘后定级跳过（不落报告、不改动作）",
+                exc_info=True,
+            )
+            return None
+
+        observations: list[BacktestObservation] = []
+        gaps = 0
+        for day, base, pnl in zip(days, baselines, pnls, strict=True):
+            obs = _build_observation(day, base, pnl)
+            if obs is None:
+                gaps += 1
+                continue
+            observations.append(obs)
+
+        if not observations:
+            logger.warning(
+                "VaR 回测两腿零配对（窗口 %s 自然日全缺口：盘前基线归档或 clean P&L 双轨未落库——"
+                "后者 57 号文 GAP 族尚未接线），本次不定级不归档：无数据不等于通过，"
+                "补 0 更会把未验证的模型盖成通过（36号 §3.9 数据缺口即缺口）",
+                len(days),
+            )
+            return None
+
+        report = self.run_var_backtest(trade_date, observations, backtester=backtester)
+        digest: dict[str, Any] = {
+            "trade_date": trade_date.isoformat(),
+            "action": report.action,
+            "reason": report.reason,
+            "flags": list(report.flags),
+            "n_obs": report.n_obs,
+            "window_days": len(days),
+            "gap_days": gaps,
+            "source": "daily_auditor.run_var_backtest_from_store",
+            "report": self._to_json_safe(report.report),
+        }
+        try:
+            save_report(trade_date, digest)
+        except Exception:  # noqa: BLE001 — 落盘失败只出声：定级已产出并留日志，消费端读旧报告或不读
+            logger.critical("VaR 回测定级归档失败（%s action=%s），下一会话无法消费本轮定级", trade_date, report.action, exc_info=True)
+            return report
+        logger.info(
+            "VaR 回测定级已归档: date=%s action=%s n_obs=%d gaps=%d（等待下一会话编排层单一执行者消费）",
+            trade_date.isoformat(),
+            report.action,
+            report.n_obs,
+            gaps,
+        )
+        return report
+
+    @staticmethod
+    def _to_json_safe(value: Any, _depth: int = 0) -> Any:
+        """回测报告 → JSON 可序列化载荷 (numpy 标量降 python 标量, 日期降 ISO,
+        非有限值降字符串——JsonStateStore 原子写不接受 numpy/NaN)。"""
+        if _depth > 6:
+            return str(value)
+        if value is None or isinstance(value, (bool, str)):
+            return value
+        if isinstance(value, int):
+            return int(value)
+        if isinstance(value, float):
+            return value if math.isfinite(value) else str(value)
+        if isinstance(value, (date, datetime)):
+            return value.isoformat()
+        if getattr(value, "ndim", None) is not None and hasattr(value, "tolist"):
+            try:
+                return DailyAuditor._to_json_safe(value.tolist(), _depth + 1)  # numpy 标量/数组
+            except Exception:  # noqa: BLE001 — 降级为字符串不丢留痕
+                return str(value)
+        if isinstance(value, Mapping):
+            return {str(k): DailyAuditor._to_json_safe(v, _depth + 1) for k, v in value.items()}
+        if isinstance(value, (list, tuple, set, frozenset)):
+            return [DailyAuditor._to_json_safe(v, _depth + 1) for v in value]
+        return str(value)
 
     @staticmethod
     def _grade_var_backtest(report: dict[str, Any], *, low_power: bool) -> tuple[str, str]:

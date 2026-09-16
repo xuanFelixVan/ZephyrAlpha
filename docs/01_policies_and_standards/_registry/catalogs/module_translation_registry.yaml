@@ -49944,6 +49944,20 @@ entries:
   desc_zh: ""
   desc_en: ""
   plain_zh: "回测跑完把每一笔成交摊开算账：佣金里有多少是被五元最低收费吃掉的、单子切太碎让成本贵了几倍、冲击那一腿到底有没有真的计费。算完把这些事实和告警塞进回测产物，让亏掉的钱一半是手续费写在报告上，而不是靠人猜。"
+- module_path: tests/risk/test_bankruptcy_floor_wiring.py
+  domain_id: D_AUDITTEST
+  name_zh: "破产底线接入单一熔断仲裁点的真实装配测试"
+  name_en: ""
+  desc_zh: "以真实 DrawdownController/DrawdownTracker/VaRCalculator/TailRiskMonitor/DefaultRiskValidator 实例 + FakeBroker 边界，验证破产底线第五类触发源经 _engage_kill_switch 单一仲裁点落地（含未武装告警、非法本金 fail-fast、双源同轮只清算一次、KILL 闩锁人工复位语义）。"
+  desc_en: ""
+  plain_zh: "这条测试验证：给风控编排器注入初始本金后，净值一旦跌破本金的85%，系统会走和回撤熔断同一个开关把仓位全部清算；没注入本金时只会大声告警并且不做判定，绝不拿会话峰值猜本金。"
+- module_path: tests/risk/test_var_calibration_handoff.py
+  domain_id: D_AUDITTEST
+  name_zh: "VaR 回测定级产消交接测试"
+  name_en: ""
+  desc_zh: "覆盖 run_post_settlement 日终落 backtest_store 的 var_backtest_report 命名空间 → RiskLayerOrchestrator 启动消费（_consume_var_calibration_verdict 经唯一执行者 apply_var_backtest_action）+ var_calibration_applied 消费指针幂等 + 损坏 fail-closed 三档语义。"
+  desc_en: ""
+  plain_zh: "这条测试验证：日终算出的 VaR 准不准的定级报告，会被第二天开盘前的风控编排器自动读一次并按结论调整模型（通过就用、要重校就探探针、要重建就退回静态阈值），同一天不会被重复消费，报告坏了就保守退回静态值。"
 
 battle_map_steps:
 - step_id: BM-BUY-05

@@ -1,11 +1,11 @@
 # [BLUEPRINT] MOD-L06-001 | docs/03_modules/_domain_execution_core/blueprint.md
 # [MODULE] zephyr.ex_core.risk_layer_orchestrator
 # [DOMAIN] D_EX_CORE
-# [DEPENDENCIES] zephyr.position.core.drawdown_controller; zephyr.risk.core.drawdown_tracker; zephyr.risk.core.var_calculator; zephyr.risk.core.tail_risk_monitor; zephyr.risk.core.ashare_systemic_risk_detector; zephyr.risk.core.liquidity_crisis_manager; zephyr.risk.stop_loss; zephyr.ex_core.position_reconciler; zephyr.ex_core.position_tracker.tracker; zephyr.trading.trading_contracts.broker_interface; zephyr.shared.contracts.order; zephyr.shared.contracts.enums.order_enums; zephyr.governance.lifecycle_governance.rollback_state_machine; zephyr.risk.core.fhs_engine; zephyr.risk.core.var_breach_state_machine; zephyr.shared.state_store
+# [DEPENDENCIES] zephyr.position.core.drawdown_controller; zephyr.risk.core.drawdown_tracker; zephyr.risk.core.drawdown_bankruptcy_floor; zephyr.risk.core.backtest_store; zephyr.risk.core.var_calculator; zephyr.risk.core.tail_risk_monitor; zephyr.risk.core.ashare_systemic_risk_detector; zephyr.risk.core.liquidity_crisis_manager; zephyr.risk.stop_loss; zephyr.ex_core.position_reconciler; zephyr.ex_core.position_tracker.tracker; zephyr.trading.trading_contracts.broker_interface; zephyr.shared.contracts.order; zephyr.shared.contracts.enums.order_enums; zephyr.governance.lifecycle_governance.rollback_state_machine; zephyr.risk.core.fhs_engine; zephyr.risk.core.var_breach_state_machine; zephyr.shared.state_store
 # [CONSUMERS] zephyr.ex_core.trading_session
 # [STARTUP] imported
 # [MATURITY] production
-# [INVARIANTS] 重建完成前禁止下单(Fail-Closed); 熔断单一仲裁点(重复触发不重复清算); 清算以券商实时持仓为准; 样本不足降级标记degraded不阻断; 只编排不重造(回撤/VaR/尾部/系统性风险计算全委托既有模块); LEVEL_3必须经build_escape_directive进单一仲裁点; 降级机只迁移警报级别不解除熔断闩锁(KILL态人工复位,35号KILL态禁止37号恢复); 五态降级机单向更保守+恢复须人工RCA双人复核(53号§3.8,UNWINDING进同一仲裁点,SOFT_HALT起禁新开仓); REBUILD静态映射VaR3%/CVaR5%由编排层兜底(36号§3.10,不依赖组件force_static_mode落地)
+# [INVARIANTS] 重建完成前禁止下单(Fail-Closed); 熔断单一仲裁点(重复触发不重复清算); 清算以券商实时持仓为准; 样本不足降级标记degraded不阻断; 只编排不重造(回撤/VaR/尾部/系统性风险计算全委托既有模块); LEVEL_3必须经build_escape_directive进单一仲裁点; 降级机只迁移警报级别不解除熔断闩锁(KILL态人工复位,35号KILL态禁止37号恢复); 五态降级机单向更保守+恢复须人工RCA双人复核(53号§3.8,UNWINDING进同一仲裁点,SOFT_HALT起禁新开仓); REBUILD静态映射VaR3%/CVaR5%由编排层兜底(36号§3.10,不依赖组件force_static_mode落地); 破产底线(35号§4.10 static腿)只判定不发单——唯一发单点=_engage_kill_switch同一仲裁点,初始本金未注入=大声告警不判定(禁猜默认); VaR回测定级只经apply_var_backtest_action落地(单一执行者),同一trade_date仅消费一次(消费指针幂等)
 # [MODIFY-GUARD] docs/_working/reviews/2026-08-16-dual-review-adjudication.md §六 (#ARCH-100)
 # [STABILITY] evolving
 # [SAFETY] H
@@ -13,23 +13,6 @@
 # [ERROR_CONTRACT]
 # [TESTS] tests/ex_core/test_risk_layer_orchestrator.py
 # [TTL] permanent
-# [ALGO_FLOW]
-# I1: nav(盘中净值, cash+持仓市值) + positions(券商持仓快照) + today_fills(当日成交)
-# I2: DrawdownController/VaRCalculator/TailRiskMonitor/DrawdownTracker(既有风控组件实例)
-# I3: broker(券商接口, 启动恢复查询+清算执行) + reconciler(持仓对账器)
-# I4: rollback_metrics_provider(五态机指标: intraday_dd/daily_loss/reject_rate/trade_count/p0_event) + state_store(姿态持久化)
-# I5: fhs_engine(36号§3.16 FHS引擎,可选) + var_breach_machine(36号§3.15 VaR breach状态机,可选)
-# F1: recover_from_broker(以券商持仓为准重建账本, 重建完成前 is_trading_allowed=False)
-# F2: evaluate_intraday(净值→回撤追踪→收益序列→VaR/ES→DrawdownController.evaluate→position_cap)
-# F3: evaluate_intraday 内嵌系统性风险评估(systemic_input_provider→MOD-RK-10 detector.check→三级警报→37号§3.6降级机)
-# F4: evaluate_intraday 内嵌五态降级机(53号§3.8: provider指标→MOD-GOV-045 evaluate_rollback单向更保守迁移→SOFT_HALT/HARD_HALT禁新开仓, UNWINDING→同一仲裁点Flatten; 恢复须人工recover_rollback_posture)
-# A1: _engage_kill_switch(单一仲裁点: EMERGENCY/尾部极值/BS-007/系统性LEVEL_3/五态UNWINDING→trigger_kill_switch+清算)
-# A2: start/stop_reconcile_loop(盘中定时对账, 蓝图MOD-EX-056阶段2规划位, 默认300s)
-# A3: _evaluate_systemic_risk(LEVEL_3→build_escape_directive→_engage_kill_switch; 降级候选→check_recovery门禁)
-# A4: apply_var_backtest_action(36号§3.10三档校准执行者: RECALIBRATE→组件update_config探针(缺失即skipped留痕); REBUILD→静态VaR3%/CVaR5%映射+UNAVAILABLE持久化, clear_var_model_unavailable业主确认恢复)
-# A5: FHS编排(36号§3.16: should_switch_to_fhs三触发+10日冷却/3次永久禁用→try_activate_fhs→evaluate_intraday FHS产出链, 不收敛/失效自动回退既有链记失败; note_fhs_backtest_verdict次日裁决PASS保留) + var_breach_state乘性折扣注入evaluate
-# O1: RiskLayerSnapshot(position_cap/allow_new_position/degraded/systemic_level/rollback_state/var_model_status/fhs_active) + RecoveryResult + 清算报告
-# [/ALGO_FLOW]
 """D_EX_CORE — 风控层运行时编排器（Risk Layer Orchestrator）
 双轮审查裁定书 §六 P0 风控接线批（#ARCH-100，AI-RWIRE-001 施工）：
 35 回撤 / 36 VaR-ES / 37 流动性模块 + KillSwitch + PositionReconciler 模块全写完、
@@ -88,6 +71,30 @@
      state_store 持久化（损坏 fail-closed 永久禁用）。var_breach_machine
      注入即经 controller.evaluate(var_breach_state=...) 乘性折扣
      （BREACHED×0.8/RECOVERY×0.9），日迁移由调用方盘前驱动 transition。
+  9. 破产底线第五类触发源接线（35 号 §4.10 static 腿 + §3.5 触发条件表第 5 行，
+     H5-P0「产而不消」清偿）：evaluate_intraday 每轮以已在圈的 nav 调
+     drawdown_bankruptcy_floor.check_bankruptcy_floor(nav, 初始本金)——
+     nav < 初始本金×0.85（static 绝对破产口径，与 trailing peak 口径正交，
+     §3.5 多源 OR 取最严）→ 本模块只判定不发单，唯一发单点仍是
+     _engage_kill_switch（与回撤/尾部 EMERGENCY、BS-007、系统性 LEVEL_3、
+     五态 UNWINDING 同一仲裁点，重复触发不重复清算）；击穿轮快照
+     bankruptcy_floor_breached=True → position_cap 0.0 + 禁新开仓（最严口径，
+     每轮按当前 nav 重算故不锁死其他层语义）。初始本金由装配方注入
+     （bankruptcy_floor_initial_capital）——未注入即大声告警且不判定
+     （绝不拿 nav_baseline 猜本金：那是峰值锚点，当 static 锚会把
+     「绝对破产防护」偷换成「会话内回撤防护」）。
+ 10. VaR 回测校准闭环 + 盘前基线持久化（36 号 §3.10/§3.11 + §3.18 阶段 2/6，
+     H5-P0 双端死链清偿）：产端 scripts/run_post_settlement.py 日终调
+     DailyAuditor.run_var_backtest_from_store 把定级报告落
+     backtest_store（var_backtest_report_YYYY-MM-DD 命名空间，同一
+     JsonStateStore 根）；本层启动时（state_store 已注入）读最近一份定级，
+     经唯一执行者 apply_var_backtest_action 落地（PASS/RECALIBRATE/REBUILD
+     语义不变），并以 var_calibration_applied 消费指针保证同一 trade_date
+     只消费一次（业主 clear_var_model_unavailable 后重启不被旧报告复扣）；
+     报告损坏 fail-closed 按 REBUILD 静态映射。盘侧每轮首次健康 VaR/ES
+     评估经 backtest_store.save_premarket_baseline 落 §3.18 阶段 2 基线，
+     成为次日回测的预测腿进料（无进料时产端如实报 INSUFFICIENT_SAMPLE_SKIP，
+     不伪造定级）。
 
 边界（并发会话 AI-RRESIL-001）：DefaultRiskValidator / fill_handler /
 PositionTracker 内部实现归 RRESIL，本模块只做调用点接入。
@@ -98,19 +105,24 @@ PositionTracker 内部实现归 RRESIL，本模块只做调用点接入。
 # I3: broker(券商接口, 启动恢复查询+清算执行) + reconciler(持仓对账器)
 # I4: rollback_metrics_provider(五态机指标: intraday_dd/daily_loss/reject_rate/trade_count/p0_event) + state_store(姿态持久化)
 # I5: fhs_engine(36号§3.16 FHS引擎,可选) + var_breach_machine(36号§3.15 VaR breach状态机,可选)
+# I6: bankruptcy_floor_initial_capital(35号§4.10 static 锚=初始本金,可选未注入即不判定) + state_store 内 var_backtest_report_YYYY-MM-DD(36号§3.18阶段6 产端日终落盘)
 # F1: recover_from_broker(以券商持仓为准重建账本, 重建完成前 is_trading_allowed=False)
-# F2: evaluate_intraday(净值→回撤追踪→收益序列→VaR/ES→DrawdownController.evaluate→position_cap)
+# F2: evaluate_intraday(净值→破产底线判定→回撤追踪→收益序列→VaR/ES→DrawdownController.evaluate→position_cap)
 # F3: evaluate_intraday 内嵌系统性风险评估(systemic_input_provider→MOD-RK-10 detector.check→三级警报→37号§3.6降级机)
 # F4: evaluate_intraday 内嵌五态降级机(53号§3.8: provider指标→MOD-GOV-045 evaluate_rollback单向更保守迁移→SOFT_HALT/HARD_HALT禁新开仓, UNWINDING→同一仲裁点Flatten; 恢复须人工recover_rollback_posture)
-# A1: _engage_kill_switch(单一仲裁点: EMERGENCY/尾部极值/BS-007/系统性LEVEL_3/五态UNWINDING→trigger_kill_switch+清算)
+# F5: evaluate_intraday 当日首次健康 VaR/ES 评估→backtest_store.save_premarket_baseline(36号§3.18阶段2 盘前基线, 次日回测预测腿进料)
+# A1: _engage_kill_switch(单一仲裁点: EMERGENCY/尾部极值/BS-007/系统性LEVEL_3/五态UNWINDING/破产底线击穿→trigger_kill_switch+清算)
 # A2: start/stop_reconcile_loop(盘中定时对账, 蓝图MOD-EX-056阶段2规划位, 默认300s)
 # A3: _evaluate_systemic_risk(LEVEL_3→build_escape_directive→_engage_kill_switch; 降级候选→check_recovery门禁)
 # A4: apply_var_backtest_action(36号§3.10三档校准执行者: RECALIBRATE→组件update_config探针(缺失即skipped留痕); REBUILD→静态VaR3%/CVaR5%映射+UNAVAILABLE持久化, clear_var_model_unavailable业主确认恢复)
 # A5: FHS编排(36号§3.16: should_switch_to_fhs三触发+10日冷却/3次永久禁用→try_activate_fhs→evaluate_intraday FHS产出链, 不收敛/失效自动回退既有链记失败; note_fhs_backtest_verdict次日裁决PASS保留) + var_breach_state乘性折扣注入evaluate
-# O1: RiskLayerSnapshot(position_cap/allow_new_position/degraded/systemic_level/rollback_state/var_model_status/fhs_active) + RecoveryResult + 清算报告
+# A6: 启动消费持久化定级(_consume_var_calibration_verdict: 读最近var_backtest_report→唯一执行者apply_var_backtest_action→var_calibration_applied消费指针幂等; 损坏fail-closed按REBUILD)
+# O1: RiskLayerSnapshot(position_cap/allow_new_position/degraded/systemic_level/rollback_state/var_model_status/fhs_active/bankruptcy_floor_breached) + RecoveryResult + 清算报告
 # [/ALGO_FLOW]
-（ALGO_FLOW 双位镜像：docstring 内本块=GATE-ALGO-FLOW 门禁 AST 读取真源，文件头注区为人工速览镜像——
-2026-08-18 第八统筹恢复 docstring 副本：AI-R2-001 删副本治本时未识门禁读取口径，头注区镜像门禁不可见）
+（ALGO_FLOW 单一真源：docstring 内本块即 GATE-ALGO-FLOW 门禁 AST 读取点，不再另设头注区人工速览
+镜像——2026-08-18 第八统筹恢复本块时头注区副本并存，2026-09-16 GATE-ALGO-FLOW-LINK 判
+"锚与体外副本并存=双真源（副本永不被消费也永不更新）"，经 externalize_algo_flow.py
+plan=dedup_header_mirror 出清副本）
 """
 
 from __future__ import annotations
@@ -122,7 +134,7 @@ import uuid
 from collections import deque
 from collections.abc import Callable, Mapping
 from dataclasses import dataclass, field
-from datetime import UTC, date, datetime
+from datetime import UTC, date, datetime, timedelta
 from decimal import Decimal
 from typing import Any, Final, Protocol
 
@@ -147,6 +159,13 @@ from zephyr.risk.core.ashare_systemic_risk_detector import (
     AshareSystemicRiskDetector,
     SystemicRiskAlert,
     SystemicRiskAlertLevel,
+)
+from zephyr.risk.core.backtest_store import VarBacktestStore
+from zephyr.risk.core.drawdown_bankruptcy_floor import (
+    BankruptcyFloorBreach,
+    BankruptcyFloorConfig,
+    InvalidBankruptcyFloorInputError,
+    check_bankruptcy_floor,
 )
 from zephyr.risk.core.drawdown_tracker import (
     DrawdownAlertedEvent,
@@ -215,6 +234,9 @@ class RiskLayerConfig:
         rebuild_static_var_pct: REBUILD 静态映射 VaR 口径（36 号 §3.10：固定 3%）
         rebuild_static_cvar_pct: REBUILD 静态映射 CVaR 口径（36 号 §3.10：固定 5%，
             组合 position_cap 0.5——不再用 var_calculator 动态计算）
+        var_calibration_lookback_days: 启动消费 VaR 回测定级的有界回看窗口（自然日，
+            36 号 §3.18 阶段 6 日频报告 var_backtest_report_YYYY-MM-DD 取最近一份；
+            有界防无界扫盘——交易日历未接入按自然日近似，同 FHS 冷却期口径）
     """
 
     reconcile_interval_seconds: float = 300.0
@@ -228,6 +250,7 @@ class RiskLayerConfig:
     systemic_min_hold_minutes: dict[int, int] = field(default_factory=lambda: {1: 10, 2: 15, 3: 30})
     rebuild_static_var_pct: float = 0.03
     rebuild_static_cvar_pct: float = 0.05
+    var_calibration_lookback_days: int = 10
 
 
 @dataclass(frozen=True)
@@ -264,6 +287,11 @@ class RiskLayerSnapshot:
             §3.10 REBUILD 静态映射 VaR 3%/CVaR 5%）
         fhs_active: FHS 产出口径是否生效（36 号 §3.16：True=本轮 VaR/ES 由
             fhs_engine GARCH 残差重采样产出；False=var_calculator 既有链）
+        bankruptcy_floor_breached: 本轮 nav 是否击穿静态破产底线（35 号 §4.10
+            static 腿 = §3.5 第五类触发源；未注入初始本金=恒 False 不判定）。
+            击穿轮 position_cap 强制 0.0 + 禁新开仓——每轮按当前 nav 重算，
+            不改写回撤/系统性/五态各层自身的级别语义（与 §3.6 降级机
+            "只迁移警报级别不解除熔断闩锁" 口径不冲突）
     """
 
     timestamp: datetime
@@ -290,20 +318,27 @@ class RiskLayerSnapshot:
     rollback_escalated: bool = False
     var_model_status: str = "DYNAMIC"
     fhs_active: bool = False
+    bankruptcy_floor_breached: bool = False
 
     @property
     def position_cap(self) -> float:
         """仓位上限系数（无响应=未评估完成，默认 1.0 不加约束）。
 
-        回撤响应与系统性层取最严（37 号 §3.8 三循环乘性叠加口径）。
+        回撤响应与系统性层取最严（37 号 §3.8 三循环乘性叠加口径）；破产底线
+        击穿轮直接 0.0（35 号 §3.5 多源 OR 取最严——static 绝对破产腿）。
         """
+        if self.bankruptcy_floor_breached:
+            return 0.0
         base = self.response.position_cap if self.response is not None else 1.0
         return min(base, self.systemic_cap)
 
     @property
     def allow_new_position(self) -> bool:
         """是否允许新开仓（无响应=默认允许；橙/红/黑或熔断建议=禁止；
-        系统性层停开仓=禁止；数据异常兜底=禁止；五态机 REDUCING 起=禁止）。"""
+        系统性层停开仓=禁止；数据异常兜底=禁止；五态机 REDUCING 起=禁止；
+        破产底线击穿=禁止）。"""
+        if self.bankruptcy_floor_breached:
+            return False
         base = self.response.allow_new_position if self.response is not None else True
         return base and not self.systemic_halt and not self.halt_new_position and not self.rollback_halt
 
@@ -390,6 +425,10 @@ _SYSTEMIC_LEVEL_TO_INT: Final = {
 _ROLLBACK_HALT_STATES: Final = frozenset({RollbackState.SOFT_HALT, RollbackState.HARD_HALT, RollbackState.UNWINDING})
 # 36 号 §3.10 REBUILD 动作1 持久化命名空间（var 模型 UNAVAILABLE 标记）
 _VAR_MODEL_STATUS_NAMESPACE: Final = "var_model_status"
+# 定级消费指针命名空间（latest 单记录：已消费的 trade_date+action，保证
+# VarBacktestStore.load_backtest_report 取到的同一份定级只落地一次——
+# 业主 clear_var_model_unavailable 后重启不被旧报告复扣）
+_VAR_CALIBRATION_APPLIED_NAMESPACE: Final = "var_calibration_applied"
 # 36 号 §3.16 FHS 切换状态持久化命名空间 + 冷却期参数
 _FHS_STATE_NAMESPACE: Final = "fhs_switch_state"
 FHS_COOLDOWN_DAYS: Final = 10
@@ -439,6 +478,9 @@ class RiskLayerOrchestrator:
             # 可选：FHS 编排（36 号 §3.16，tracker #147）+ VaR breach 状态机（§3.15）
             fhs_engine=FHSEngine(),
             var_breach_machine=VarBreachStateMachine.load(state_store),
+            # 可选：35 号 §4.10 static 破产底线——注入初始本金即武装（判定→同一熔断仲裁点）；
+            # 未注入=开机大声告警"未武装"，绝不猜默认本金
+            bankruptcy_floor_initial_capital=float(initial_cash),
         )
         session = TradingSession(..., risk_layer=orchestrator)
         session.start()  # 内部先 recover_from_broker，完成前禁止下单
@@ -465,6 +507,8 @@ class RiskLayerOrchestrator:
         rollback_metrics_provider: Callable[[], Mapping[str, Any] | None] | None = None,
         fhs_engine: FHSEngine | None = None,
         var_breach_machine: VarBreachStateMachine | None = None,
+        bankruptcy_floor_initial_capital: float | None = None,
+        bankruptcy_floor_config: BankruptcyFloorConfig | None = None,
         config: RiskLayerConfig | None = None,
         clock: Callable[[], datetime] | None = None,
         state_store: JsonStateStore | None = None,
@@ -487,6 +531,31 @@ class RiskLayerOrchestrator:
         # 36 号 §3.15 VaR breach 状态机（×0.8/×0.9 乘性折扣）：注入即经
         # controller.evaluate(var_breach_state=...) 生效，日迁移由调用方盘前驱动
         self._var_breach_machine = var_breach_machine
+        # 35 号 §4.10 static 破产底线（§3.5 第五类触发源）：注入初始本金即武装。
+        # 未注入 = 大声告警 + 不判定——绝不拿 nav_baseline/tracker 峰值猜本金
+        # （那是 trailing 锚，当 static 锚会把「绝对破产防护」偷换成
+        # 「会话内回撤防护」，重启即重置=防护静默失效）；注入非法值 = 构造期
+        # fail-fast 抛错（拒绝带错误底线开盘，比"悄悄放宽"安全）
+        self._bankruptcy_floor_capital = bankruptcy_floor_initial_capital
+        self._bankruptcy_floor_config = bankruptcy_floor_config or BankruptcyFloorConfig()
+        # 36 号 §3.18 阶段 2 盘前基线当日已落标记（每交易日首个健康 VaR/ES 轮落一次）
+        self._baseline_persisted_on: date | None = None
+        if bankruptcy_floor_initial_capital is None:
+            _logger.warning(
+                "破产底线未武装：装配方未注入 bankruptcy_floor_initial_capital"
+                "（35 号 §4.10 static 腿缺席，仅 trailing peak 回撤口径生效——不猜默认本金）"
+            )
+        elif bankruptcy_floor_initial_capital <= 0 or not math.isfinite(bankruptcy_floor_initial_capital):
+            raise InvalidBankruptcyFloorInputError(
+                f"bankruptcy_floor_initial_capital 须为正的有限值, got {bankruptcy_floor_initial_capital!r}"
+            )
+        else:
+            _logger.info(
+                "破产底线已武装：初始本金=%.2f × floor_ratio=%.2f = 底线 %.2f",
+                bankruptcy_floor_initial_capital,
+                self._bankruptcy_floor_config.floor_ratio,
+                bankruptcy_floor_initial_capital * self._bankruptcy_floor_config.floor_ratio,
+            )
         self._config = config or RiskLayerConfig()
         self._clock = clock or (lambda: datetime.now(UTC))
         # Crash-only 状态外部化（AI-R3 复审 P1 治本）：贯穿 trigger→liquidation
@@ -559,6 +628,11 @@ class RiskLayerOrchestrator:
                     self._fhs_permanently_disabled = bool(_fhs_rec.get("permanently_disabled", False))
                     self._fhs_failure_count = int(_fhs_rec.get("failure_count", 0) or 0)
                     self._fhs_last_failure_date = _fhs_rec.get("last_failure_date")
+
+        # 36 号 §3.10/§3.18 阶段 6 消费端：盘后产端落在同一 state_store 根的
+        # 回测定级在此经唯一执行者 apply_var_backtest_action 落地（跨进程交接，
+        # 消费指针 var_calibration_applied 保证同一 trade_date 只扣一次）
+        self._var_calibration_result = self._consume_var_calibration_verdict()
 
         # EMERGENCY 监听链（E-RK-03）：级别变化去抖由 tracker 保证
         self._tracker.on_drawdown_alerted(self._on_drawdown_alerted)
@@ -661,6 +735,12 @@ class RiskLayerOrchestrator:
             return self._fallback_snapshot(nav, "nav_non_positive_or_non_finite")
         now = now or self._clock()
 
+        # 0. 破产底线（35 号 §4.10 static 腿 = §3.5 Kill Switch 第五类触发源）：
+        #    绝对本金口径与 trailing peak 口径正交，先于回撤/VaR 链判定——
+        #    收益样本降级/回撤失明时绝对破产防护不得跟着失明（只判定不发单，
+        #    发单唯一入口在 _check_bankruptcy_floor 内走同一仲裁点）
+        bankruptcy_breach = self._check_bankruptcy_floor(nav)
+
         # 1. 回撤追踪（EMERGENCY 经监听链同步触发熔断，tracker 内部去抖）
         dd_snapshot = self._tracker.update(nav, now=now)
         self._nav_history.append(nav)
@@ -752,6 +832,10 @@ class RiskLayerOrchestrator:
         #    独立于收益样本/系统性链；UNWINDING 迁移进同一熔断仲裁点
         rollback = self._evaluate_rollback_posture(dd_snapshot)
 
+        # 6. 盘前 VaR/ES 基线落盘（36 号 §3.18 阶段 2）：当日首个健康评估即本轮
+        #    产出的 VaR/ES 绝对额，供次日盘后回测配对 clean P&L 成观测样本
+        self._persist_premarket_baseline(now, nav, var_pct, es_pct, degraded=degraded)
+
         snapshot = RiskLayerSnapshot(
             timestamp=now,
             nav=nav,
@@ -774,6 +858,7 @@ class RiskLayerOrchestrator:
             rollback_escalated=rollback.escalated if rollback is not None else False,
             var_model_status="STATIC_REBUILD" if var_model_unavailable else "DYNAMIC",
             fhs_active=fhs_pair is not None,
+            bankruptcy_floor_breached=bankruptcy_breach is not None,
         )
         with self._lock:
             self._latest = snapshot
@@ -795,6 +880,64 @@ class RiskLayerOrchestrator:
         prev = arr[:-1]
         prev[prev == 0] = np.nan  # 除零保护（NaN 由下游校验过滤）
         return (arr[1:] - prev) / prev
+
+    def _check_bankruptcy_floor(self, nav: float) -> BankruptcyFloorBreach | None:
+        """破产底线判定（35 号 §4.10 static 腿 = §3.5 第五类触发源）。
+
+        本方法只判定不发单（模块契约）：击穿后的唯一动作入口是
+        _engage_kill_switch 单一仲裁点——与回撤 EMERGENCY / 尾部 EMERGENCY /
+        BS-007 / 系统性 LEVEL_3 / 五态 UNWINDING 同口互斥，重复触发不重复清算
+        （熔断单一仲裁点不变式，不另立第二个头自行决定清算）。
+
+        Returns:
+            BankruptcyFloorBreach（击穿）；未击穿或底线未武装（未注入初始
+            本金=大声告警过）→ None
+        """
+        if self._bankruptcy_floor_capital is None:
+            return None
+        breach = check_bankruptcy_floor(nav, float(self._bankruptcy_floor_capital), self._bankruptcy_floor_config)
+        if breach is not None:
+            self._engage_kill_switch(f"破产底线击穿（§3.5 第五类触发源）: {breach.reason}")
+        return breach
+
+    @property
+    def bankruptcy_floor(self) -> float | None:
+        """static 破产底线绝对值（None=未武装，装配方未注入初始本金）。"""
+        capital = self._bankruptcy_floor_capital
+        if capital is None:
+            return None
+        return float(capital) * self._bankruptcy_floor_config.floor_ratio
+
+    def _persist_premarket_baseline(
+        self,
+        now: datetime,
+        nav: float,
+        var_pct: float | None,
+        es_pct: float | None,
+        *,
+        degraded: bool,
+    ) -> None:
+        """盘前 VaR/ES 基线落盘（36 号 §3.18 阶段 2，当日首个健康评估一次）。
+
+        绝对额口径（var_pct×nav，与 BacktestObservation.var_forecast「损失额」
+        约定一致）；ES 以 VaR 为地板（与本层 controller 调用点同一 ES≥VaR
+        口径）。落盘失效只出声（观测面缺口），绝不改本轮仓位裁决。
+        """
+        if self._state_store is None or degraded or var_pct is None or es_pct is None:
+            return
+        day = now.date()
+        if self._baseline_persisted_on == day:
+            return
+        try:
+            VarBacktestStore(self._state_store).save_premarket_baseline(
+                day,
+                float(var_pct) * nav,
+                max(float(es_pct), float(var_pct)) * nav,
+            )
+        except Exception:  # noqa: BLE001 — 回测进料落盘失败不影响风控裁决
+            _logger.exception("盘前 VaR/ES 基线落盘失败（次日回测预测腿缺口，不影响本轮仓位）")
+        else:
+            self._baseline_persisted_on = day
 
     def _fallback_snapshot(self, nav: float, reason: str) -> RiskLayerSnapshot:
         """评估无法执行时的兜底快照（数据异常 Fail-Closed：禁新开仓）。
@@ -1151,9 +1294,12 @@ class RiskLayerOrchestrator:
     ) -> dict[str, Any]:
         """36 号 §3.10 三档响应执行者入口（PASS / RECALIBRATE / REBUILD）。
 
-        调用方：回测综合定级产出方（daily_auditor 包装层/人工）——本方法只做
-        编排层动作分发，审计日志（log_recalibration）由调用方按 36 号 D1 时序
-        补记（daily_auditor 未注入本编排层）。
+        调用方：本类启动消费点 `_consume_var_calibration_verdict()` —— 盘后
+        `DailyAuditor.run_var_backtest_from_store`（宿主 `scripts/
+        run_post_settlement.py`）把定级归档为 `var_backtest_report_YYYY-MM-DD`，
+        下次开仓会话经 `VarBacktestStore`/`JsonStateStore` 读回并在此**单一执行者**
+        落地（同一 trade_date 幂等只消费一次）。审计日志（log_recalibration）仍由
+        产出方按 36 号 D1 时序补记（daily_auditor 未注入本编排层）。
 
         RECALIBRATE：recalibrate_params={组件名: 参数映射} 经组件
         update_config(**params) 鸭子探针分发（36 号动作表：扩窗口/切方法→
@@ -1261,6 +1407,124 @@ class RiskLayerOrchestrator:
         """var 模型是否处于 REBUILD 静态映射态（36 号 §3.10）。"""
         with self._lock:
             return self._var_model_unavailable
+
+    # ------------------------------------------------------------------
+    # VaR 回测定级跨进程消费端（36 号 §3.10/§3.18 阶段 6 交接，H5-P0 双端死链）
+    # ------------------------------------------------------------------
+
+    def _consume_var_calibration_verdict(self) -> dict[str, Any] | None:
+        """启动消费盘后产端落库的 VaR 回测定级（唯一落地口=apply_var_backtest_action）。
+
+        产端：scripts/run_post_settlement.py → DailyAuditor.run_var_backtest_from_store
+        → VarBacktestStore.save_backtest_report（同一 JsonStateStore 根的
+        ``var_backtest_report_YYYY-MM-DD`` 命名空间）。本方法只在构造期跑一次，
+        且绝不自行改风控态——所有动作经 §3.10 三档执行者分发（熔断单一仲裁点
+        的镜像约束：校准单一执行者，不另立第二个头）。
+
+        口径：
+          - 有界回看 ``config.var_calibration_lookback_days`` 自然日，取最近一份
+            （交易日历未接入按自然日近似，同 FHS 冷却期口径）
+          - 消费指针 ``var_calibration_applied`` 记录已落地的报告日：同日重放
+            不再扣（业主 clear_var_model_unavailable 后重启不被旧报告复扣；
+            产端出新报告才再扣）
+          - 无报告 = 冷启动/产端未跑（正常态，静默 None——不是缺件，
+            盘后步骤本身可选）
+          - 报告损坏 / 动作字段非法 = fail-closed 按 REBUILD 静态映射 + CRITICAL
+            大声出声（绝不按 PASS 放行、绝不猜动作）
+        """
+        if self._state_store is None:
+            return None
+        store = VarBacktestStore(self._state_store)
+        today = self._clock().date()
+        window = max(1, int(self._config.var_calibration_lookback_days))
+        report: dict[str, Any] | None = None
+        report_day: date | None = None
+        for offset in range(window):
+            day = today - timedelta(days=offset)
+            try:
+                rec = store.load_backtest_report(day)
+            except Exception:  # noqa: BLE001 — 损坏记录 fail-closed 按 REBUILD（停错<放错）
+                _logger.critical(
+                    "var_backtest_report %s 记录损坏，fail-closed 按 REBUILD 静态映射运行（人工核查状态目录后业主确认恢复）",
+                    day.isoformat(),
+                    exc_info=True,
+                )
+                return self.apply_var_backtest_action(
+                    "REBUILD",
+                    reason=f"回测报告 {day.isoformat()} 记录损坏（消费端 fail-closed 静态映射）",
+                )
+            if isinstance(rec, Mapping):
+                report, report_day = rec, day
+                break
+        if report is None or report_day is None:
+            return None
+        raw_action = report.get("action")
+        action = raw_action.upper() if isinstance(raw_action, str) else ""
+        if action not in ("PASS", "RECALIBRATE", "REBUILD"):
+            _logger.critical(
+                "回测定级报告 %s 动作字段非法（%r），fail-closed 按 REBUILD（不猜动作）",
+                report_day.isoformat(),
+                raw_action,
+            )
+            return self.apply_var_backtest_action(
+                "REBUILD",
+                reason=f"定级动作字段非法（消费端 fail-closed，报告日 {report_day.isoformat()}）",
+            )
+        applied_day = self._last_applied_calibration_day()
+        if applied_day is not None and applied_day >= report_day:
+            _logger.debug("回测定级 %s 已消费（消费指针幂等），本轮不重复落地", report_day.isoformat())
+            return None
+        reason = str(report.get("reason") or "")
+        result = self.apply_var_backtest_action(action, reason=f"[盘后定级消费 {report_day.isoformat()}] {reason}")
+        self._persist_calibration_applied(report_day, action)
+        _logger.warning(
+            "VaR 回测定级已消费落地：date=%s action=%s n_obs=%s applied=%s",
+            report_day.isoformat(),
+            action,
+            report.get("n_obs"),
+            result.get("applied"),
+        )
+        return result
+
+    def _last_applied_calibration_day(self) -> date | None:
+        """读消费指针（None=未曾消费）。指针损坏按未消费处理——重放定级是
+        保守方向（REBUILD/RECALIBRATE 只会更严），绝不反向静默放行。"""
+        if self._state_store is None:
+            return None
+        try:
+            rec = self._state_store.load(_VAR_CALIBRATION_APPLIED_NAMESPACE)
+        except Exception:  # noqa: BLE001 — 指针损坏=按未消费（重放保守，不放松）
+            _logger.critical("var_calibration_applied 消费指针损坏，按未消费处理（定级重放为保守方向）", exc_info=True)
+            return None
+        if not isinstance(rec, Mapping):
+            return None
+        raw = rec.get("trade_date")
+        try:
+            return date.fromisoformat(str(raw))
+        except (TypeError, ValueError):
+            _logger.warning("var_calibration_applied.trade_date 非法（%r），按未消费处理", raw)
+            return None
+
+    def _persist_calibration_applied(self, report_day: date, action: str) -> None:
+        """落消费指针（失败只出声：内存态已落地，重启重放是保守方向）。"""
+        if self._state_store is None:
+            return
+        try:
+            self._state_store.save(
+                _VAR_CALIBRATION_APPLIED_NAMESPACE,
+                {
+                    "trade_date": report_day.isoformat(),
+                    "action": action,
+                    "applied_at": self._clock().isoformat(),
+                },
+            )
+        except Exception:  # noqa: BLE001 — 指针落盘失败不阻断已生效的内存态
+            _logger.exception("var_calibration_applied 消费指针落盘失败（重启会重放同一份定级，保守方向）")
+
+    @property
+    def var_calibration_result(self) -> dict[str, Any] | None:
+        """本次启动消费的盘后定级执行结果（None=无可消费报告/已消费过）。"""
+        return self._var_calibration_result
 
     # ------------------------------------------------------------------
     # FHS 编排层接线（36 号 §3.16，tracker #147：三触发 + 冷却期）
