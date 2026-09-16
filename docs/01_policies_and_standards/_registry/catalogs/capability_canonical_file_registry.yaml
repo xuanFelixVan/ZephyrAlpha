@@ -27739,6 +27739,10 @@ creation_tokens:
   token: ai-layer-vision-design-20260916
   created_by: st-ailayer-20260917
   capability: ai_layer_vision
+- file: docs/_working/ai_layer_vision/L1_perceive/DESIGN.md
+  token: ai-layer-vision-design-20260916
+  created_by: st-ailayer-20260917
+  capability: ai_layer_vision
 - file: docs/_working/industry_chain_alpha/industry_chain_alpha_plan.md
   token: industry-chain-alpha-industry-chain-alpha-plan-20260916
   created_by: st-igalpha-20260917
@@ -27909,6 +27913,70 @@ creation_tokens:
   capability: auction_derive
 - file: src/zephyr/data/implementations/tushare_news_connector.py
   token: auction-derive-tushare-news-connector-20260916
+  created_by: st-auction-bridge-20260917
+  capability: auction_derive
+- file: docs/_working/auction_bridge_switch_mining_2026_09_17.md
+  token: auction-derive-auction-bridge-switch-mining-2026-09-17-20260916
+  created_by: st-auction-bridge-20260917
+  capability: auction_derive
+- file: docs/_working/full-auto-chain/S11_assembled_backtest/nodes/kill_switch_circuit_breaker_mining.md
+  token: auction-derive-kill-switch-circuit-breaker-mining-20260916
+  created_by: st-auction-bridge-20260917
+  capability: auction_derive
+- file: docs/_working/kimi_audit/kimi_audit_checklist.md
+  token: auction-derive-kimi-audit-checklist-20260916
+  created_by: st-auction-bridge-20260917
+  capability: auction_derive
+- file: docs/_working/pipeline-research/reports/intake-20260917-0300.md
+  token: auction-derive-intake-20260917-0300-20260916
+  created_by: st-auction-bridge-20260917
+  capability: auction_derive
+- file: docs/_working/pipeline-research/reports/intake-20260917-0300.yaml
+  token: auction-derive-intake-20260917-0300-20260916
+  created_by: st-auction-bridge-20260917
+  capability: auction_derive
+- file: docs/_working/reports/2026-09-16-batch-b-subspace-report.md
+  token: auction-derive-2026-09-16-batch-b-subspace-report-20260916
+  created_by: st-auction-bridge-20260917
+  capability: auction_derive
+- file: docs/_working/reports/2026-09-17-c4-audit-batch4.md
+  token: auction-derive-2026-09-17-c4-audit-batch4-20260916
+  created_by: st-auction-bridge-20260917
+  capability: auction_derive
+- file: docs/_working/sharpe2_prep/a_reexam/pool_manifest.csv
+  token: auction-derive-pool-manifest-20260916
+  created_by: st-auction-bridge-20260917
+  capability: auction_derive
+- file: docs/_working/sharpe2_prep/a_reexam/reexam_results.csv
+  token: auction-derive-reexam-results-20260916
+  created_by: st-auction-bridge-20260917
+  capability: auction_derive
+- file: docs/_working/sharpe2_prep/b_match_mine/2026-09-17-altdata-inventory-mining.md
+  token: auction-derive-2026-09-17-altdata-inventory-mining-20260916
+  created_by: st-auction-bridge-20260917
+  capability: auction_derive
+- file: docs/_working/sharpe2_prep/b_match_mine/2026-09-17-e1c-sandbox-mining.md
+  token: auction-derive-2026-09-17-e1c-sandbox-mining-20260916
+  created_by: st-auction-bridge-20260917
+  capability: auction_derive
+- file: docs/_working/sharpe2_prep/b_match_mine/2026-09-17-factor-matching-prereview.md
+  token: auction-derive-2026-09-17-factor-matching-prereview-20260916
+  created_by: st-auction-bridge-20260917
+  capability: auction_derive
+- file: docs/_working/sharpe2_prep/b_match_mine/altdata_inventory.csv
+  token: auction-derive-altdata-inventory-20260916
+  created_by: st-auction-bridge-20260917
+  capability: auction_derive
+- file: docs/_working/sharpe2_prep/b_match_mine/prereview.csv
+  token: auction-derive-prereview-20260916
+  created_by: st-auction-bridge-20260917
+  capability: auction_derive
+- file: docs/_working/trading_vision/2026-09-16-blueprint-addendum-warroom-three-tasks.md
+  token: auction-derive-2026-09-16-blueprint-addendum-warroom-three-tasks-20260916
+  created_by: st-auction-bridge-20260917
+  capability: auction_derive
+- file: docs/_working/trading_vision/2026-09-16-judgment-ledger-standard.md
+  token: auction-derive-2026-09-16-judgment-ledger-standard-20260916
   created_by: st-auction-bridge-20260917
   capability: auction_derive
 - file: docs/_working/trading_vision/2026-09-16-daily-orchestrator-blueprint.md
