@@ -26,47 +26,7 @@ Schema + run 编排），失效传播路径有向事件链记录，恢复时间�
 查重分工（蓝图 §0）：chaos_injector=故障注入原语实现（本件只做场景编排并强
 制经回调执行）；rollback_drill=回滚演练（本件为失效传播仿真，零交集）。
 
-# [ALGO_FLOW]
-# 层: 输入
-# - id: I1
-#   name: injector 参数
-#   fields: 参数 injector（无注解）
-#   code: cascade_failure_simulator.py 顶层公共函数形参（AST 提取）
-# - id: I2
-#   name: is_trading_hours 参数
-#   fields: 参数 is_trading_hours（无注解）
-#   code: cascade_failure_simulator.py 顶层公共函数形参（AST 提取）
-# - id: I3
-#   name: backup_confirmed 参数
-#   fields: 参数 backup_confirmed（无注解）
-#   code: cascade_failure_simulator.py 顶层公共函数形参（AST 提取）
-# - id: I4
-#   name: clock 参数
-#   fields: 参数 clock（无注解）
-#   code: cascade_failure_simulator.py 顶层公共函数形参（AST 提取）
-# 层: 算法
-# - id: A1
-#   name_zh: ① CascadeFailureSimulator
-#   name_en: CascadeFailureSimulator
-#   intro: 级联失效仿真器（场景编排 + 护栏 + 传播记录 + 恢复测量）。
-#   desc: 级联失效仿真器（场景编排 + 护栏 + 传播记录 + 恢复测量）。；公共方法（定义序）: run, history；源码 L160-L272
-#   inputs: injector is_trading_hours backup_confirmed clock timeout_minutes
-#   outputs: 返回值
-#   （注：A1 之后另有 7 个公共定义未列入（含 7 个数据契约/异常/枚举声明类），见源码）
-# 层: 输出
-# - id: O1
-#   name_zh: 模块公共 API 面（8 定义）
-#   name_en: public defs
-#   intro: CascadeFailureSimulator
-#   downstream: 运行时装配批（灾备演练编排 / 恢复时间度量 / 失效传播复盘）
-# [/ALGO_FLOW]
-#
-# 边:
-# I1 --> A1
-# I2 --> A1
-# I3 --> A1
-# I4 --> A1
-# A1 --> O1
+# [ALGO_FLOW] external: docs/03_modules/_domain_infrastructure/algo_flow/rollback/cascade_failure_simulator.yaml
 """
 
 from __future__ import annotations

@@ -1,0 +1,41 @@
+# ALGO_FLOW 外部真源——__init__（_domain_infrastructure 域，真源 src/zephyr/infrastructure/rollback/__init__.py）
+# 2026-09-15 P2-1 契约头减负批量出仓：docstring 内联块逐字节副本，extractor 经
+# external 锚加载走同一 parse_algo_flow 管线；算法公共面变化时同步更新本块。
+doc_type: architecture_view
+ttl: permanent
+module: src.zephyr.infrastructure.rollback.__init__
+source_of_truth: src/zephyr/infrastructure/rollback/__init__.py
+algo_flow: |
+    # [ALGO_FLOW]
+    # 层: 输入
+    # - id: I1
+    #   name: 包导入请求（import zephyr.infrastructure.rollback）
+    #   fields: 无参数，触发包级急切导入与再导出
+    #   code: rollback/__init__.py L35
+    # 层: 算法
+    # - id: A1
+    #   name_zh: ① 子模块急切导入聚合
+    #   name_en: eager submodule imports
+    #   intro: 急切导入 35 个回滚子模块，deprecated 三模块已移出急切导入保证零副作用
+    #   desc: L35-69：agent_cooldown/auditor/.../vulnerability_rescanner；S4-A 移除 cross_platform_shell/venv_sync/warm_standby
+    #   inputs: I1
+    #   outputs: 子模块命名空间
+    # - id: A2
+    #   name_zh: ② 核心 API 再导出
+    #   name_en: __all__ 公共入口
+    #   intro: 再导出 6 个核心类 + concurrency_guard 3 个冲突检测函数，version 0.10.0
+    #   desc: L74-84：AutoRollbackTrigger/KillSwitchManager/RollbackBootIntegration/RollbackExecutor/RollbackVerifier/BootResult + check_rollback_conflict 等
+    #   inputs: A1
+    #   outputs: 回滚基础设施公共 API
+    # 层: 输出
+    # - id: O1
+    #   name_zh: 回滚基础设施公共入口
+    #   name_en: rollback package public API
+    #   intro: 双轨 Checkpoint/四级回滚/Forward-Fix/Kill Switch 等能力的统一入口（blueprint MOD-INF-021）
+    #   downstream: trading.boot_hooks（RollbackBootIntegration）；feedback_loop.scheduler_act 与 integration.mcp.governance_server（RollbackExecutor）
+    # [/ALGO_FLOW]
+    #
+    # 边:
+    # I1 --> A1
+    # A1 --> A2
+    # A2 --> O1

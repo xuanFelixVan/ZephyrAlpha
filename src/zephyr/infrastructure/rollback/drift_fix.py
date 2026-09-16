@@ -18,31 +18,7 @@
 """
 
 
-# [ALGO_FLOW]
-# 层: 输入
-# - id: I1
-#   name: 模块内部数据
-#   fields: 无公共形参/无再导出（AST 事实）
-#   code: drift_fix.py
-# 层: 算法
-# - id: A1
-#   name_zh: ① DriftFixHandler
-#   name_en: DriftFixHandler
-#   intro: 漂移自动修复处理器 — G-CT-005 消费端.
-#   desc: 漂移自动修复处理器 — G-CT-005 消费端.；公共方法（定义序）: on_drift_fix；源码 L71-L93
-#   inputs: 无参数
-#   outputs: 返回值
-# 层: 输出
-# - id: O1
-#   name_zh: 模块公共 API 面（1 定义）
-#   name_en: public defs
-#   intro: DriftFixHandler
-#   downstream: rollback_executor;auto_rollback_trigger;tests/drift/test_drift_fix.py
-# [/ALGO_FLOW]
-#
-# 边:
-# I1 --> A1
-# A1 --> O1
+# [ALGO_FLOW] external: docs/03_modules/_domain_infrastructure/algo_flow/rollback/drift_fix.yaml
 """
 
 from __future__ import annotations

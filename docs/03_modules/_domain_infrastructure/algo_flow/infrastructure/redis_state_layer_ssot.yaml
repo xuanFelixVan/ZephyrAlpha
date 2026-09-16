@@ -1,0 +1,84 @@
+# ALGO_FLOW 外部真源——redis_state_layer_ssot（_domain_infrastructure 域，真源 src/zephyr/infrastructure/redis_state_layer_ssot.py）
+# 2026-09-15 P2-1 契约头减负批量出仓：docstring 内联块逐字节副本，extractor 经
+# external 锚加载走同一 parse_algo_flow 管线；算法公共面变化时同步更新本块。
+doc_type: architecture_view
+ttl: permanent
+module: src.zephyr.infrastructure.redis_state_layer_ssot
+source_of_truth: src/zephyr/infrastructure/redis_state_layer_ssot.py
+algo_flow: |
+    # [ALGO_FLOW]
+    # 层: 输入
+    # - id: I1
+    #   name: name 参数
+    #   fields: 参数 name，类型注解 str
+    #   code: redis_state_layer_ssot.py 顶层公共函数形参（AST 提取）
+    # - id: I2
+    #   name: key 参数
+    #   fields: 参数 key，类型注解 str
+    #   code: redis_state_layer_ssot.py 顶层公共函数形参（AST 提取）
+    # 层: 算法
+    # - id: A1
+    #   name_zh: ① get_namespace
+    #   name_en: get_namespace
+    #   intro: 按名取命名空间声明；未知命名空间 Fail-Closed。
+    #   desc: 按名取命名空间声明；未知命名空间 Fail-Closed。；源码 L351-L356
+    #   inputs: name
+    #   outputs: NamespaceSpec
+    # - id: A2
+    #   name_zh: ② ttl_for
+    #   name_en: ttl_for
+    #   intro: 命名空间静态 TTL（秒）；None=永不过期；未知命名空间 Fail-Closed。
+    #   desc: 命名空间静态 TTL（秒）；None=永不过期；未知命名空间 Fail-Closed。；源码 L359-L361
+    #   inputs: name
+    #   outputs: int | None
+    # - id: A3
+    #   name_zh: ③ validate_key
+    #   name_en: validate_key
+    #   intro: 校验 Key 属于已登记命名空间，返回命名空间名；未知/畸形 Fail-Closed。
+    #   desc: 校验 Key 属于已登记命名空间，返回命名空间名；未知/畸形 Fail-Closed。；源码 L364-L372
+    #   inputs: key
+    #   outputs: str
+    # - id: A4
+    #   name_zh: ④ render_redis_conf_draft
+    #   name_en: render_redis_conf_draft
+    #   intro: 产出 redis.conf 配置就绪件草稿文本（仅文本，不执行任何系统写入）。
+    #   desc: 产出 redis.conf 配置就绪件草稿文本（仅文本，不执行任何系统写入）。 硬边界：实际应用（写 redis.conf / CONFIG SET / 重启 Redis 服务）…；源码 L375-L395
+    #   inputs: 无参数
+    #   outputs: str
+    # - id: A5
+    #   name_zh: ⑤ recovery_runbook
+    #   name_en: recovery_runbook
+    #   intro: AOF 重放优先混合恢复 runbook 步骤（声明；演练执行属 Owner 窗口）。
+    #   desc: AOF 重放优先混合恢复 runbook 步骤（声明；演练执行属 Owner 窗口）。；源码 L398-L408
+    #   inputs: 无参数
+    #   outputs: list[str]
+    # - id: A6
+    #   name_zh: ⑥ check_registry_consistency
+    #   name_en: check_registry_consistency
+    #   intro: 注册表一致性自检：13 命名空间/三层归属合法/TTL 矩阵完整/Key 前缀无冲突。
+    #   desc: 注册表一致性自检：13 命名空间/三层归属合法/TTL 矩阵完整/Key 前缀无冲突。；源码 L411-L434
+    #   inputs: 无参数
+    #   outputs: dict[str, object]
+    #   （注：A6 之后另有 3 个公共定义未列入（含 3 个数据契约/异常/枚举声明类），见源码）
+    # 层: 输出
+    # - id: O1
+    #   name_zh: NamespaceSpec
+    #   name_en: NamespaceSpec
+    #   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+    #   downstream: 见模块头 [CONSUMERS]
+    # - id: O2
+    #   name_zh: int | None
+    #   name_en: int | None
+    #   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+    #   downstream: 见模块头 [CONSUMERS]
+    # [/ALGO_FLOW]
+    #
+    # 边:
+    # I1 --> A1
+    # I2 --> A1
+    # A1 --> A2
+    # A2 --> A3
+    # A3 --> A4
+    # A4 --> A5
+    # A5 --> A6
+    # A6 --> O1
