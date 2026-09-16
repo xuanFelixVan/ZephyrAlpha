@@ -44,6 +44,13 @@ Version: 1.1.0
 
 # [ALGO_FLOW] external: docs/03_modules/_domain_position/algo_flow/strategy_book.yaml
 """
+# [ALGO_FLOW]
+# 层: 算法
+# - id: RB9
+#   name: 红蓝探针块
+# [/ALGO_FLOW]
+# 边:
+# RB9 --> RB9
 
 from __future__ import annotations
 
