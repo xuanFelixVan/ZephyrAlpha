@@ -108,7 +108,7 @@ P1-5 完成后，ZephyrAlpha 暴露 `/metrics` 端点（Prometheus 兼容）。�
 - P1-5 metrics_server 提供 /metrics 端点
 - depgraph 边: 6680250 → 6682516 (metrics.py)
 
-## §4 代码文件清单（已施工）
+## §4 代码文件清单（已施工，未接线）
 
 ```
 src/zephyr/shared/observability/dashboard/
@@ -130,8 +130,12 @@ tests/zephyr/shared/observability/test_dashboard.py  # 14 项测试 ✅
 
 ## §5 验收标准
 
-- [x] Grafana 可同时查询 Prometheus 和 ClickHouse 两个数据源（clickhouse.yml + docker-compose 插件）
-- [x] 3 个 Dashboard 可正常展示（数据采集/CH写入/Drain健康）
-- [x] 6 条告警规则可触发并通知（ALERT_RULES）
-- [x] docker-compose up 后 Grafana 自动加载数据源和 Dashboard（provisioning + GF_INSTALL_PLUGINS）
+> **未验收**：下列项依赖「代码→Grafana provisioning」生成器 + CI/运行时验证钩子，二者均不存在
+> （`config/infra/grafana/*` 为手工维护，`alert_rules.py` 产出的 ALERT_RULES 无落盘面，
+> `config/infra/grafana/` 下亦无 `alerts/` 目录），故全部记为未达成，保留意图不删除。
+
+- [ ] Grafana 可同时查询 Prometheus 和 ClickHouse 两个数据源（clickhouse.yml + docker-compose 插件）
+- [ ] 3 个 Dashboard 可正常展示（数据采集/CH写入/Drain健康）
+- [ ] 6 条告警规则可触发并通知（ALERT_RULES）
+- [ ] docker-compose up 后 Grafana 自动加载数据源和 Dashboard（provisioning + GF_INSTALL_PLUGINS）
 - [ ] 行情数据概览 / 回测结果 Dashboard（需 ClickHouse 查询层，P3 迭代）

@@ -90,5 +90,6 @@ class AlertCenterInputError(Exception): 占位 ZA-FE-UNREGISTERED-ALERT-CENTER
 ## 5. 依赖
 
 - 标准库（statistics/datetime）；panel 可选（try/except，测试环境 None）
-- 下游（运行时装配，不 import）：app_panel 挂「告警中心」Tab；
-  alert_manager/alert_router 数据经 DI 适配注入
+- 下游：**未装配**——`app_panel.py` 的 14 Tab 清单无「告警中心」，全仓 import 仅
+  `tests/frontend/test_alert_center.py` + `components/__init__.py` re-export；
+  alert_manager/alert_router 数据经 DI 适配注入 = 设计意图，尚未接线（接线时同步本行与 `[CONSUMERS]` 头）

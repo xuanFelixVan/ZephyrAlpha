@@ -241,11 +241,11 @@ C轨人机交互层是系统与用户之间的桥梁。当前B轨治理基础设
 | 通知渠道 | 0 实现 | 3 渠道 | 无 DefaultNotificationManager | P1 |
 | 审批流程 | 0 实现 | 5 流程 | 无 DefaultApprovalGateway | P1 |
 | C轨集成 | active | active | B轨容量升级未完成（C轨占位已解除[ARCH-045 P0]） | P0 |
-| **v2.2.0**: 回测可视化 | 0 | backtest_results组件 | 缺组件, **规格已就绪(§16.7.1), 待施工** | P1 |
-| **v2.2.0**: Tick回放可视化 | 0 | tick_replay组件 | 缺组件, **规格已就绪(§16.7.2), 待施工** | P1 |
-| **v2.2.0**: 5档盘口 | 0 | order_book组件 | 缺组件, **规格已就绪(§16.7.3), 待施工** | P1 |
-| **v2.2.0**: 实盘持仓监控 | 0 | position_monitor组件 | 缺组件, **规格已就绪(§16.7.4), 待施工** | P1 |
-| **v2.2.0**: 实盘交易面板 | 0 | trade_panel组件 | 缺组件, **规格已就绪(§16.7.5), 待施工** | P1 |
+| **v2.2.0**: 回测可视化 | 已实现+已装配（app_panel Tab「回测结果」） | backtest_results组件 | 无（§16.7.1 已落地） | 已完成 |
+| **v2.2.0**: Tick回放可视化 | 已实现+已装配（app_panel Tab「Tick 回放」） | tick_replay组件 | 无（§16.7.2 已落地） | 已完成 |
+| **v2.2.0**: 5档盘口 | 已实现+已装配（app_panel Tab「5档盘口」） | order_book组件 | 无（§16.7.3 已落地） | 已完成 |
+| **v2.2.0**: 实盘持仓监控 | 已实现+已装配（app_panel Tab「持仓监控」） | position_monitor组件 | 无（§16.7.4 已落地） | 已完成 |
+| **v2.2.0**: 实盘交易面板 | 已实现+已装配（app_panel Tab「交易面板」） | trade_panel组件 | 无（§16.7.5 已落地） | 已完成 |
 
 ### 1.7 典型场景
 
@@ -704,7 +704,7 @@ class FitnessDashboardData(BaseModel):
 | AI 自治范围 | ai_modifiable |
 | 检查点 | backtest_results.py 存在且非空 + Mock BacktestResult测试通过 |
 
-**状态**：待施工（v2.2.0规划，规格已就绪于§16.7.1）
+**状态**：已施工+已装配（app_panel.py:92 import / Tab「回测结果」；tests/governance/observability/test_p1_components_unit.py）
 
 #### 步骤 5：实现 tick_replay Tick回放可视化组件（v2.2.0新增）
 
@@ -718,7 +718,7 @@ class FitnessDashboardData(BaseModel):
 | AI 自治范围 | ai_modifiable |
 | 检查点 | tick_replay.py 存在且非空 + Mock Tick数据测试通过 |
 
-**状态**：待施工（v2.2.0规划，规格已就绪于§16.7.2）
+**状态**：已施工+已装配（app_panel.py:142 import / Tab「Tick 回放」；tests/governance/observability/test_p1_components_unit.py）
 
 #### 步骤 6：实现 order_book 5档盘口展示组件（v2.2.0新增）
 
@@ -732,7 +732,7 @@ class FitnessDashboardData(BaseModel):
 | AI 自治范围 | ai_modifiable |
 | 检查点 | order_book.py 存在且非空 + Mock 5档数据测试通过 |
 
-**状态**：待施工（v2.2.0规划，规格已就绪于§16.7.3）
+**状态**：已施工+已装配（app_panel.py:126 import / Tab「5档盘口」；tests/governance/observability/test_p1_components_unit.py）
 
 #### 步骤 7：实现 position_monitor 实盘持仓监控组件（v2.2.0新增）
 
@@ -746,7 +746,7 @@ class FitnessDashboardData(BaseModel):
 | AI 自治范围 | ai_modifiable |
 | 检查点 | position_monitor.py 存在且非空 + Mock PositionSnapshot测试通过 |
 
-**状态**：待施工（v2.2.0规划，规格已就绪于§16.7.4）
+**状态**：已施工+已装配（app_panel.py:130 import / Tab「持仓监控」；tests/governance/observability/test_p1_components_unit.py）
 
 #### 步骤 8：实现 trade_panel 实盘交易面板组件（v2.2.0新增）
 
@@ -760,7 +760,7 @@ class FitnessDashboardData(BaseModel):
 | AI 自治范围 | human_gated——实盘交易面板接入需Owner审批 |
 | 检查点 | trade_panel.py 存在且非空 + Mock ExecutionEngine测试通过 + 小资金实盘验证(100股) |
 
-**状态**：待施工（v2.2.0规划，规格已就绪于§16.7.5）
+**状态**：已施工+已装配（app_panel.py:147 import / Tab「交易面板」；tests/governance/observability/test_p1_components_unit.py）
 
 ### 16.4 回滚方案
 

@@ -37,7 +37,7 @@ granularity: file
 
 ## 2. 接口
 
-见代码 `__all__` 与 docstring。消费方=运行时装配批（统一注入点装配）。
+见代码 `__all__` 与 docstring。消费方=无（tests-only）。
 
 ## 3. 测试
 

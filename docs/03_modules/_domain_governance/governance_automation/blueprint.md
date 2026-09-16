@@ -4,7 +4,7 @@ submodule_path: src/zephyr/governance
 title: 脚本系统蓝图 — 第三条生产线的自动化审计与门禁
 doc_type: blueprint
 status: Active
-version: 5.5.26
+version: 5.5.27
 layer: L0_infrastructure
 layer_name: infrastructure
 functional_domain: governance
@@ -114,7 +114,7 @@ design_maturity: production
 
 | 图 | 位置 | 状态 | 链接 |
 |----|------|------|------|
-| 依赖图 (depgraph) | `blueprint_id=MOD-INF-005` 的 487 个 file 节点 | production | `extract_depgraph.py --modules MOD-INF-005` |
+| 依赖图 (depgraph) | `blueprint_id=MOD-INF-005` 的 488 个 file 节点 | production | `extract_depgraph.py --modules MOD-INF-005` |
 | 数据流图 (dataflow) | 0 个 Dataset / 1 个 Job | active | `apply_dataflowgraph.py --list-datasets` |
 | 决策架构图 (decision) | 0 个决策节点 / 1 个决策层 | N/A | `generate_decision_diagram.py` |
 | 蓝图 (blueprint) | 本文件 | Active | — |
@@ -126,7 +126,7 @@ design_maturity: production
 | module_id | MOD-INF-005 | MOD-INF-005 | ✅ |
 | domain_id | N/A | N/A | ✅ |
 | build_status | generated | generated | ✅ |
-| file_count | 487 文件 | 13 文件（§0.1） | ❌ |
+| file_count | 488 文件 | 13 文件（§0.1） | ❌ |
 
 > 冲突时以 depgraph 为准（ARCH-056 + ARCH-MM-001 声明 vs 验证框架）。
 
@@ -1458,6 +1458,7 @@ scripts/governance/quickstart.md → §22 Zero-Memory 冷启动卡片
 
 | 文件路径 | 实现状态 | 说明 |
 |---------|:---:|------|
+| `tests/blueprint/test_no_stale_agents_numbered_refs_in_scripts.py` | ✅ 已实现 | |
 | `tests/blueprint/test_normalize_blueprint_autogen_anchors.py` | ✅ 已实现 | |
 | `tests/blueprint/test_sync_blueprint_code_index_template.py` | ✅ 已实现 | |
 | `tests/dr/test_backup_lock_stale.py` | ✅ 已实现 | |
