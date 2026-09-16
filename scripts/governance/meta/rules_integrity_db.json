@@ -66,7 +66,7 @@
       "desc": "pre-commit 门禁注册表 + tests/豁免真源（TEST_EXEMPT_PREFIXES/is_test_exempt）"
     },
     "scripts/governance/_shared/code_algorithm_extractor.py": {
-      "hash": "7a475347788fc38f",
+      "hash": "a8c9b7e57f12d3e0",
       "critical": true,
       "desc": "ALGO_FLOW 标记解析器（parse_algo_flow/_strip_algo_flow_block，§4.16 全景图推导真源）"
     },
@@ -81,11 +81,11 @@
       "desc": "算法全景图生成器测试锚点（行为契约防回归）"
     },
     "tests/governance/shared/test_code_algorithm_extractor.py": {
-      "hash": "63c66f91f6cd74ee",
+      "hash": "4236f2d9a0ddb234",
       "critical": false,
       "desc": "ALGO_FLOW 解析器测试锚点（行为契约防回归）"
     }
   },
-  "registered_at": "2026-09-16T16:45:26.629639+00:00",
+  "registered_at": "2026-09-16T16:52:32.690374+00:00",
   "last_check_at": "2026-08-02T13:43:07.830785+00:00"
 }
