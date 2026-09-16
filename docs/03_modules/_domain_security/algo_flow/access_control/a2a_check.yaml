@@ -1,0 +1,38 @@
+# ALGO_FLOW 外部真源——a2a_check（_domain_security 域，真源 src/zephyr/security/access_control/a2a_check.py）
+# 2026-09-15 P2-1 契约头减负批量出仓：docstring 内联块逐字节副本，extractor 经
+# external 锚加载走同一 parse_algo_flow 管线；算法公共面变化时同步更新本块。
+doc_type: architecture_view
+ttl: permanent
+module: src.zephyr.security.access_control.a2a_check
+source_of_truth: src/zephyr/security/access_control/a2a_check.py
+algo_flow: |
+    # [ALGO_FLOW]
+    # 层: 输入
+    # - id: I1
+    #   name: from_agent 参数
+    #   fields: 参数 from_agent，类型注解 str
+    #   code: a2a_check.py 顶层公共函数形参（AST 提取）
+    # - id: I2
+    #   name: to_agent 参数
+    #   fields: 参数 to_agent，类型注解 str
+    #   code: a2a_check.py 顶层公共函数形参（AST 提取）
+    # 层: 算法
+    # - id: A1
+    #   name_zh: ① verify_a2a_pair
+    #   name_en: verify_a2a_pair
+    #   intro: 验证两个 agent 之间是否允许 A2A 通信。
+    #   desc: 验证两个 agent 之间是否允许 A2A 通信。 Args: from_agent: 发起方 agent ID/角色。 to_agent: 接收方 agent ID/角色。 R…；源码 L79-L117
+    #   inputs: from_agent to_agent
+    #   outputs: dict[str, Any]
+    # 层: 输出
+    # - id: O1
+    #   name_zh: dict[str, Any]
+    #   name_en: dict[str, Any]
+    #   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+    #   downstream: scripts.a2a_full_verification ; tests.governance.test_adversarial_contract_atta…
+    # [/ALGO_FLOW]
+    #
+    # 边:
+    # I1 --> A1
+    # I2 --> A1
+    # A1 --> O1

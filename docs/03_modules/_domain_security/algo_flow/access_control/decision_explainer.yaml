@@ -1,0 +1,41 @@
+# ALGO_FLOW 外部真源——decision_explainer（_domain_security 域，真源 src/zephyr/security/access_control/decision_explainer.py）
+# 2026-09-15 P2-1 契约头减负批量出仓：docstring 内联块逐字节副本，extractor 经
+# external 锚加载走同一 parse_algo_flow 管线；算法公共面变化时同步更新本块。
+doc_type: architecture_view
+ttl: permanent
+module: src.zephyr.security.access_control.decision_explainer
+source_of_truth: src/zephyr/security/access_control/decision_explainer.py
+algo_flow: |
+    # [ALGO_FLOW]
+    # 层: 输入
+    # - id: I1
+    #   name: 模块内部数据
+    #   fields: 无公共形参/无再导出（AST 事实）
+    #   code: decision_explainer.py
+    # 层: 算法
+    # - id: A1
+    #   name_zh: ① Explanation
+    #   name_en: Explanation
+    #   intro: 拒绝解释 — 结构化载体.
+    #   desc: 拒绝解释 — 结构化载体. Attributes: blocked_layer: 阻塞层（L0/L1/L2/L3/L5/N/A 等） rule_id: 触发的规则 ID reas…；公共方法（定义序）: to_dict…
+    #   inputs: 无参数
+    #   outputs: 返回值
+    # - id: A2
+    #   name_zh: ② DecisionExplainer
+    #   name_en: DecisionExplainer
+    #   intro: 拒绝决策解释器 — 生成结构化拒绝解释.
+    #   desc: 拒绝决策解释器 — 生成结构化拒绝解释.；公共方法（定义序）: structured_rejection, explain_auto_guard；源码 L107-L166
+    #   inputs: 无参数
+    #   outputs: 返回值
+    # 层: 输出
+    # - id: O1
+    #   name_zh: 模块公共 API 面（2 定义）
+    #   name_en: public defs
+    #   intro: Explanation, DecisionExplainer
+    #   downstream: tests.agent_rbac.test_decision_explainer_agent_rbac
+    # [/ALGO_FLOW]
+    #
+    # 边:
+    # I1 --> A1
+    # A1 --> A2
+    # A2 --> O1

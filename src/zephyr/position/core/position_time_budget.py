@@ -31,42 +31,7 @@ Position Time Budget — 持仓时间预算 (MOD-POS-015)
 纪律：纯函数、无 IO；entry_date/as_of 由调用方注入（可测试替换）。
 Version: 1.0.0
 
-# [ALGO_FLOW]
-# 层: 输入
-# - id: I1
-#   name: positions 参数
-#   fields: 参数 positions，类型注解 Mapping[str, TimeBudgetPosition]
-#   code: position_time_budget.py 顶层公共函数形参（AST 提取）
-# - id: I2
-#   name: as_of 参数
-#   fields: 参数 as_of（无注解）
-#   code: position_time_budget.py 顶层公共函数形参（AST 提取）
-# - id: I3
-#   name: warn_ratio 参数
-#   fields: 参数 warn_ratio（无注解）
-#   code: position_time_budget.py 顶层公共函数形参（AST 提取）
-# 层: 算法
-# - id: A1
-#   name_zh: ① check_time_budgets
-#   name_en: check_time_budgets
-#   intro: 检查持仓时间预算（纯函数）。
-#   desc: 检查持仓时间预算（纯函数）。 Args: positions: {symbol: TimeBudgetPosition} as_of: 基准日（注入可测试替换） warn_rat…；源码 L159-L216
-#   inputs: positions as_of warn_ratio
-#   outputs: TimeBudgetReport
-#   （注：A1 之后另有 5 个公共定义未列入（含 5 个数据契约/异常/枚举声明类），见源码）
-# 层: 输出
-# - id: O1
-#   name_zh: TimeBudgetReport
-#   name_en: TimeBudgetReport
-#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
-#   downstream: D-SELL-DECISION(时间止损信号源) ; MOD-SELL-013(离场情景规划)
-# [/ALGO_FLOW]
-#
-# 边:
-# I1 --> A1
-# I2 --> A1
-# I3 --> A1
-# A1 --> O1
+# [ALGO_FLOW] external: docs/03_modules/_domain_position/algo_flow/position_time_budget.yaml
 """
 
 from __future__ import annotations

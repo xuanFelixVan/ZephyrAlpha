@@ -1,0 +1,41 @@
+# ALGO_FLOW 外部真源——cold_start_lock（_domain_security 域，真源 src/zephyr/security/access_control/cold_start_lock.py）
+# 2026-09-15 P2-1 契约头减负批量出仓：docstring 内联块逐字节副本，extractor 经
+# external 锚加载走同一 parse_algo_flow 管线；算法公共面变化时同步更新本块。
+doc_type: architecture_view
+ttl: permanent
+module: src.zephyr.security.access_control.cold_start_lock
+source_of_truth: src/zephyr/security/access_control/cold_start_lock.py
+algo_flow: |
+    # [ALGO_FLOW]
+    # 层: 输入
+    # - id: I1
+    #   name: immutable_core 参数
+    #   fields: 参数 immutable_core（无注解）
+    #   code: cold_start_lock.py 顶层公共函数形参（AST 提取）
+    # 层: 算法
+    # - id: A1
+    #   name_zh: ① ColdStartLock
+    #   name_en: ColdStartLock
+    #   intro: 冷启动锁 — 启动自检门控.
+    #   desc: 冷启动锁 — 启动自检门控. 初始状态为锁定，需依次通过: 1. load_config — 加载配置（需含有效 version 字段） 2. verify_integrity…；公共方法（定义序）: is_locke…
+    #   inputs: immutable_core
+    #   outputs: 返回值
+    # - id: A2
+    #   name_zh: ② get_cold_start_lock
+    #   name_en: get_cold_start_lock
+    #   intro: 获取 ColdStartLock 单例.
+    #   desc: 获取 ColdStartLock 单例.；源码 L241-L246
+    #   inputs: 无参数
+    #   outputs: ColdStartLock
+    # 层: 输出
+    # - id: O1
+    #   name_zh: ColdStartLock
+    #   name_en: ColdStartLock
+    #   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+    #   downstream: tests/agent_rbac/test_redteam_adversarial.py
+    # [/ALGO_FLOW]
+    #
+    # 边:
+    # I1 --> A1
+    # A1 --> A2
+    # A2 --> O1

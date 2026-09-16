@@ -1,0 +1,70 @@
+# ALGO_FLOW 外部真源——strategy_book（_domain_position 域，真源 src/zephyr/position/core/strategy_book.py）
+# 2026-09-15 P2-1 契约头减负批量出仓：docstring 内联块逐字节副本，extractor 经
+# external 锚加载走同一 parse_algo_flow 管线；算法公共面变化时同步更新本块。
+doc_type: architecture_view
+ttl: permanent
+module: src.zephyr.position.core.strategy_book
+source_of_truth: src/zephyr/position/core/strategy_book.py
+algo_flow: |
+    # [ALGO_FLOW]
+    # 层: 输入
+    # - id: I1
+    #   name: alpha 选股信号 alpha_signals
+    #   fields: 策略 specific 信号字典（子类定义格式）
+    #   code: build_target_portfolio L294
+    # - id: I2
+    #   name: 波动率输入 volatility_data
+    #   fields: symbol → 年化波动率 float 或 VolatilityInfo(sigma/valid_samples/listing_days)
+    #   code: VolatilityInfo L159
+    # - id: I3
+    #   name: 资金预算 budget（RegimeMetaAllocator 分配）+ 策略 PnL 历史 + 情绪周期信号
+    #   fields: budget 占比 / pnl 日收益序列 / SentimentStageSignal(stage/confidence/retreat_weight)
+    #   code: build_target_portfolio L294
+    # 层: 特征
+    # - id: F1
+    #   name_zh: inverse-vol 权重
+    #   name_en: inverse_vol_weight
+    #   intro: w_i=(1/σ_i)/Σ(1/σ_j)，只估 σ 不估协方差（30号 §3.1 拒绝 MVO）
+    #   formula: w_i = budget × (1/σ_i) / Σ_j(1/σ_j)，σ_i=60日年化波动率
+    #   code: _size_risk_parity L628
+    #   registry: 无
+    # - id: F2
+    #   name_zh: σ_i 异常判定 4 检查链
+    #   name_en: sigma_anomaly_check
+    #   intro: 任一触发→该标的部分降级等权（缺失/样本<30/年化>150%/上市<60日），非阻断
+    #   formula: σ∈{NaN,None,≤0} ∨ valid_samples<30 ∨ σ>1.50 ∨ listing_days<60 → 降级
+    #   code: _is_vol_anomaly L699
+    #   registry: 无
+    # - id: F3
+    #   name_zh: 60 日滚动 Sortino 绩效分
+    #   name_en: performance_score
+    #   intro: Sortino→[0.5,1.5] 线性映射，供 RegimeMetaAllocator 后验分配
+    #   formula: Sortino=mean(excess)×252/(downside_dev×√252) → clip([0.5,1.5])
+    #   code: compute_performance_score L474
+    #   registry: 无
+    # 层: 算法
+    # - id: A1
+    #   name_zh: 粗仓位三段流水线
+    #   name_en: sizing_pipeline
+    #   intro: 选股→粗仓位(等权/inverse-vol)→回撤Protocol缩放→budget裁剪
+    #   formula: positions=size_positions(selected)→×L1/L2 scalar→pro-rata clip(Σ≤budget)
+    #   code: build_target_portfolio L294
+    # - id: A2
+    #   name_zh: σ_i 异常部分降级
+    #   name_en: partial_equal_weight_fallback
+    #   intro: 异常标的取等权份额 budget/N，正常标的按 inverse-vol 瓜分剩余 budget×N_ok/N
+    #   formula: w_bad=budget/N; w_ok=budget×(N_ok/N)×(1/σ_j)/Σ_ok(1/σ)
+    #   code: _size_risk_parity L628
+    # - id: A3
+    #   name_zh: 四级回撤 Protocol
+    #   name_en: drawdown_protocol
+    #   intro: 回撤>8/15/20/25% → L1缩放/L2减仓/L3停仓/L4清仓+强制休息5天
+    #   formula: dd≥0.08→×0.75新仓; dd≥0.15→×0.75全部; dd≥0.20→停新开; dd≥0.25→清仓+休息5日
+    #   code: _update_drawdown_level L776
+    # 层: 输出
+    # - id: O1
+    #   name: TargetPortfolio 策略目标组合（CTR-POS-020）
+    #   fields: strategy_id/positions(symbol→TargetWeight)/total_weight/budget/cash_ratio/sizing_method/idempotency_key
+    #   code: TargetPortfolio L185
+    #   consumers: MOD-POS-021 FirmRiskAggregator 求和→MOD-POS-001 Kelly 精裁决
+    # [/ALGO_FLOW]

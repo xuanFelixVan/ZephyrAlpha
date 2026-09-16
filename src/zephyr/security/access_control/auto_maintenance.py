@@ -21,40 +21,7 @@ AutoMaintenance — 自动维护与规则健康仪表盘.
 - 提供 OwnerDashboard 视图，展示活跃规则与总规则数
 - 支持自动维护流程的健康检查与复杂度预算跟踪
 
-# [ALGO_FLOW]
-# 层: 输入
-# - id: I1
-#   name: 模块内部数据
-#   fields: 无公共形参/无再导出（AST 事实）
-#   code: auto_maintenance.py
-# 层: 算法
-# - id: A1
-#   name_zh: ① ComplexityBudget
-#   name_en: ComplexityBudget
-#   intro: 复杂度预算跟踪器 — 限制规则体系复杂度.
-#   desc: 复杂度预算跟踪器 — 限制规则体系复杂度.；公共方法（定义序）: allocate；源码 L93-L104
-#   inputs: 无参数
-#   outputs: 返回值
-# - id: A2
-#   name_zh: ② AutoMaintenance
-#   name_en: AutoMaintenance
-#   intro: 自动维护器 — 产出 OwnerDashboard 健康视图.
-#   desc: 自动维护器 — 产出 OwnerDashboard 健康视图.；公共方法（定义序）: rules, register_rule, get_dashboard；源码 L107-L147
-#   inputs: 无参数
-#   outputs: 返回值
-#   （注：A2 之后另有 2 个公共定义未列入（含 2 个数据契约/异常/枚举声明类），见源码）
-# 层: 输出
-# - id: O1
-#   name_zh: 模块公共 API 面（4 定义）
-#   name_en: public defs
-#   intro: ComplexityBudget, AutoMaintenance
-#   downstream: tests/agent_rbac/test_redteam_adversarial.py
-# [/ALGO_FLOW]
-#
-# 边:
-# I1 --> A1
-# A1 --> A2
-# A2 --> O1
+# [ALGO_FLOW] external: docs/03_modules/_domain_security/algo_flow/access_control/auto_maintenance.yaml
 """
 
 from __future__ import annotations

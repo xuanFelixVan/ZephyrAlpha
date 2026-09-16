@@ -22,31 +22,7 @@ AsymmetricAudit - quorum-based approval for high-risk operations.
 - approve(operation, approver): 累计不同 approver, 达到 quorum 时 approved=True
 - duplicate approver 被拒绝(approved=False)
 
-# [ALGO_FLOW]
-# 层: 输入
-# - id: I1
-#   name: 模块内部数据
-#   fields: 无公共形参/无再导出（AST 事实）
-#   code: asymmetric_audit.py
-# 层: 算法
-# - id: A1
-#   name_zh: ① AsymmetricAudit
-#   name_en: AsymmetricAudit
-#   intro: class AsymmetricAudit 源码 L57-L82
-#   desc: 公共方法（定义序）: require_quorum, approve；源码 L57-L82
-#   inputs: 无参数
-#   outputs: 返回值
-# 层: 输出
-# - id: O1
-#   name_zh: 模块公共 API 面（1 定义）
-#   name_en: public defs
-#   intro: AsymmetricAudit
-#   downstream: tests.agent_rbac.test_forensic_a
-# [/ALGO_FLOW]
-#
-# 边:
-# I1 --> A1
-# A1 --> O1
+# [ALGO_FLOW] external: docs/03_modules/_domain_security/algo_flow/access_control/asymmetric_audit.yaml
 """
 
 from __future__ import annotations

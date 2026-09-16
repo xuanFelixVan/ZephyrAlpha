@@ -1,0 +1,41 @@
+# ALGO_FLOW 外部真源——single_name_cap_caliber（_domain_position 域，真源 src/zephyr/position/core/single_name_cap_caliber.py）
+# 2026-09-15 P2-1 契约头减负批量出仓：docstring 内联块逐字节副本，extractor 经
+# external 锚加载走同一 parse_algo_flow 管线；算法公共面变化时同步更新本块。
+doc_type: architecture_view
+ttl: permanent
+module: src.zephyr.position.core.single_name_cap_caliber
+source_of_truth: src/zephyr/position/core/single_name_cap_caliber.py
+algo_flow: |
+    # [ALGO_FLOW]
+    # 层: 输入
+    # - id: I1
+    #   name: caps 参数
+    #   fields: 参数 caps，类型注解 dict[str, float] | None
+    #   code: single_name_cap_caliber.py 顶层公共函数形参（AST 提取）
+    # 层: 算法
+    # - id: A1
+    #   name_zh: ① validate_tier_calibers
+    #   name_en: validate_tier_calibers
+    #   intro: 校验单票三层口径配置（不改动生产默认，只返回问题列表）。
+    #   desc: 校验单票三层口径配置（不改动生产默认，只返回问题列表）。 校验规则（31号 §2.4.1）： 1. 三层齐全（MOD-POS-001/021/010 各一条） 2. 各层值 ∈…；源码 L96-L132
+    #   inputs: caps
+    #   outputs: list[str]
+    # - id: A2
+    #   name_zh: ② check_production_consistency
+    #   name_en: check_production_consistency
+    #   intro: 映射表 vs 三模块生产默认值的漂移检测（只读，不改生产）。
+    #   desc: 映射表 vs 三模块生产默认值的漂移检测（只读，不改生产）。 Returns: 漂移问题列表（空=映射表与生产默认一致）；源码 L135-L151
+    #   inputs: 无参数
+    #   outputs: list[str]
+    # 层: 输出
+    # - id: O1
+    #   name_zh: list[str]
+    #   name_en: list[str]
+    #   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+    #   downstream: 治理审计/配置校验调用方（G04 首批策略产出后统一口径时的核查工具）
+    # [/ALGO_FLOW]
+    #
+    # 边:
+    # I1 --> A1
+    # A1 --> A2
+    # A2 --> O1

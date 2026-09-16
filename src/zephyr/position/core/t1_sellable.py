@@ -30,36 +30,7 @@ current_holdings 应为 **T+1 口径可卖权重（昨持仓 − 今日已卖）
 
 Version: 1.0.0
 
-# [ALGO_FLOW]
-# 层: 输入
-# - id: I1
-#   name: last_session_weights 参数
-#   fields: 参数 last_session_weights，类型注解 dict[str, float]
-#   code: t1_sellable.py 顶层公共函数形参（AST 提取）
-# - id: I2
-#   name: today_sold_weights 参数
-#   fields: 参数 today_sold_weights，类型注解 dict[str, float] | None
-#   code: t1_sellable.py 顶层公共函数形参（AST 提取）
-# 层: 算法
-# - id: A1
-#   name_zh: ① t1_sellable_weights
-#   name_en: t1_sellable_weights
-#   intro: 计算 T+1 口径可卖权重（昨持仓 − 今日已卖，负值兜底 0）。
-#   desc: 计算 T+1 口径可卖权重（昨持仓 − 今日已卖，负值兜底 0）。 口径声明（32号 §6）： - 输入必须是 **T-1 收盘持仓** 权重（昨仓），不含今日买入部分—— 今日…；源码 L70-L101
-#   inputs: last_session_weights today_sold_weights
-#   outputs: dict[str, float]
-# 层: 输出
-# - id: O1
-#   name_zh: dict[str, float]
-#   name_en: dict[str, float]
-#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
-#   downstream: 持仓对账/供数方（position_reconciler 等）→ FirmRiskAggregator.current_holdings 供数口径
-# [/ALGO_FLOW]
-#
-# 边:
-# I1 --> A1
-# I2 --> A1
-# A1 --> O1
+# [ALGO_FLOW] external: docs/03_modules/_domain_position/algo_flow/t1_sellable.yaml
 """
 
 from __future__ import annotations

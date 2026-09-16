@@ -34,31 +34,7 @@ tests/governance/security/test_adversarial_contract_attacks.py 的契约定义�
   - approved=True 时含 "agent_id" (str) 和 "capabilities" (list[str])
   - approved=False 时含 "reason" (str)
 
-# [ALGO_FLOW]
-# 层: 输入
-# - id: I1
-#   name: cap 参数
-#   fields: 参数 cap，类型注解 'AgentCapability'
-#   code: capability_check.py 顶层公共函数形参（AST 提取）
-# 层: 算法
-# - id: A1
-#   name_zh: ① verify_capability_scope
-#   name_en: verify_capability_scope
-#   intro: 验证 agent 声明的 capability 集合是否在合法范围内。
-#   desc: 验证 agent 声明的 capability 集合是否在合法范围内。 Args: cap: AgentCapability 实例，含 agent_id (str) 和 capa…；源码 L84-L128
-#   inputs: cap
-#   outputs: dict[str, Any]
-# 层: 输出
-# - id: O1
-#   name_zh: dict[str, Any]
-#   name_en: dict[str, Any]
-#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
-#   downstream: tests.governance.test_adversarial_contract_attacks ; tests.governance.test_gct_…
-# [/ALGO_FLOW]
-#
-# 边:
-# I1 --> A1
-# A1 --> O1
+# [ALGO_FLOW] external: docs/03_modules/_domain_security/algo_flow/access_control/capability_check.yaml
 """
 
 from typing import TYPE_CHECKING, Any, Final

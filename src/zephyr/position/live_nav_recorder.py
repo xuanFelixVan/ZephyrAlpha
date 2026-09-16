@@ -31,21 +31,7 @@ r"""MOD-POS-023 — 实盘净值曲线序列（GAP-F-29，总览页净值图后�
   目标表 c1_market.account_nav_daily DDL 草稿见
   .runtime/construction_20260823/fragments/GAP7_registry.yaml（禁直建，Owner 窗口）。
 
-# [ALGO_FLOW]
-# 层: 输入
-# - id: I1 AssetSnapshot（现金/市值；资产源适配产出）
-# - id: I2 base_nav / benchmark_close / benchmark_base（基准注入位）
-# 层: 算法
-# - id: A1 日频 NavPoint（净值比/基准比）
-# - id: A2 曲线组装（累计收益/最大回撤/超额）
-# 层: 输出
-# - id: O1 NavPoint / NavCurve（frozen dataclass，JSON 可序列化）
-# [/ALGO_FLOW]
-#
-# 边:
-# I1,I2 --> A1
-# A1 --> A2
-# A2 --> O1
+# [ALGO_FLOW] external: docs/03_modules/_domain_position/algo_flow/live_nav_recorder.yaml
 """
 
 from __future__ import annotations

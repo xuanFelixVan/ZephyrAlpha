@@ -25,31 +25,7 @@ Position Reconciler — v0.10.1 持仓对账: execution report+book record+count
   - 禁止时间触发（无 cron/Timer/sleep-loop/periodic）
   - 调用方通过 handle_execution_report 事件入口触发对账
 
-# [ALGO_FLOW]
-# 层: 输入
-# - id: I1
-#   name: 模块内部数据
-#   fields: 无公共形参/无再导出（AST 事实）
-#   code: position_reconciler.py
-# 层: 算法
-# - id: A1
-#   name_zh: ① PositionReconciler
-#   name_en: PositionReconciler
-#   intro: 持仓对账器——事件驱动（ExecutionReport到达时触发）
-#   desc: 持仓对账器——事件驱动（ExecutionReport到达时触发）；公共方法（定义序）: reconcile, handle_execution_report, should_escalate；源码 L65-L123
-#   inputs: 无参数
-#   outputs: 返回值
-# 层: 输出
-# - id: O1
-#   name_zh: 模块公共 API 面（1 定义）
-#   name_en: public defs
-#   intro: PositionReconciler
-#   downstream: 见模块头 [CONSUMERS]
-# [/ALGO_FLOW]
-#
-# 边:
-# I1 --> A1
-# A1 --> O1
+# [ALGO_FLOW] external: docs/03_modules/_domain_position/algo_flow/position_reconciler.yaml
 """
 
 from __future__ import annotations

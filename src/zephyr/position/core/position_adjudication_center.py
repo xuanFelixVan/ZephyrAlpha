@@ -49,55 +49,7 @@ AdjudicatedPositionPlan+令牌）、不做预算分配（归 MOD-PA-007 effectiv
 
 SSoT: docs/03_modules/_domain_position/position_adjudication_center/blueprint.md
 
-# [ALGO_FLOW]
-# 层: 输入
-# - id: I1
-#   name: portfolio_layer 参数
-#   fields: 参数 portfolio_layer（无注解）
-#   code: position_adjudication_center.py 顶层公共函数形参（AST 提取）
-# - id: I2
-#   name: strategy_layer 参数
-#   fields: 参数 strategy_layer（无注解）
-#   code: position_adjudication_center.py 顶层公共函数形参（AST 提取）
-# - id: I3
-#   name: symbol_layer 参数
-#   fields: 参数 symbol_layer（无注解）
-#   code: position_adjudication_center.py 顶层公共函数形参（AST 提取）
-# - id: I4
-#   name: dynamic_layer 参数
-#   fields: 参数 dynamic_layer（无注解）
-#   code: position_adjudication_center.py 顶层公共函数形参（AST 提取）
-# 层: 算法
-# - id: A1
-#   name_zh: ① AdjudicationRequest
-#   name_en: AdjudicationRequest
-#   intro: 裁决请求（不可变）。
-#   desc: 裁决请求（不可变）。 Attributes: request_id: 请求标识（审计留痕） strategy_id: 策略标识 symbol: 标的代码 action: 交易意图…；公共方法（定义序）: fingerp…
-#   inputs: 无参数
-#   outputs: 返回值
-# - id: A2
-#   name_zh: ② PositionAdjudicationCenter
-#   name_en: PositionAdjudicationCenter
-#   intro: 仓位管理唯一裁决中心（四层编排 + 唯一令牌 + 旁路阻断）。
-#   desc: 仓位管理唯一裁决中心（四层编排 + 唯一令牌 + 旁路阻断）。 四层 callable 注入（装配批接既有件）；本中心只编排不判定。；公共方法（定义序）: adjudicate, verify_bypass…
-#   inputs: portfolio_layer strategy_layer symbol_layer dynamic_layer
-#   outputs: 返回值
-#   （注：A2 之后另有 4 个公共定义未列入（含 4 个数据契约/异常/枚举声明类），见源码）
-# 层: 输出
-# - id: O1
-#   name_zh: 模块公共 API 面（6 定义）
-#   name_en: public defs
-#   intro: AdjudicationRequest, PositionAdjudicationCenter
-#   downstream: 运行时装配批（四层 callable 接 MOD-POS-001/010/013/018；下单链令牌校验接线）
-# [/ALGO_FLOW]
-#
-# 边:
-# I1 --> A1
-# I2 --> A1
-# I3 --> A1
-# I4 --> A1
-# A1 --> A2
-# A2 --> O1
+# [ALGO_FLOW] external: docs/03_modules/_domain_position/algo_flow/position_adjudication_center.yaml
 """
 
 from __future__ import annotations
