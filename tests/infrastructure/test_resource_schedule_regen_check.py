@@ -493,6 +493,8 @@ _SCH_FIXTURE = (
     r'"\ZephyrAlpha_Run","-","Running"' + "\n"
     # C4Exam 由 register_c4_exam_task.ps1 真实声明为 active → 实测 Disabled = 纸面班次
     r'"\ZephyrAlpha_C4Exam","N/A","Disabled"' + "\n"
+    # NightlySentiment=豁免表在册孤儿残余（现役真源=schedule.yaml）→ 差集转 EXEMPT 留痕行
+    r'"\ZephyrAlpha_NightlySentiment","N/A","Disabled"' + "\n"
 )
 
 
@@ -593,13 +595,16 @@ def test_reconcile_reports_real_machine_diffs():
     for name in handled:  # 反向：报出来的每一项都得能落到真实对象上（不得凭空造差集）
         assert (name in live or name in claims or name in gen.OPS_TASK_ALIASES
                 or name in {str(e["task_id"]) for e in reg["entities"]}), name
-    # 已知实测差集（2026-09-17 全量）：4 个实验遗留 + PatternMining（有源无任务）
-    # + NightlySentiment（OS 退役残余，现役真源=schedule.yaml）+ WeeklyRest（Ready 关机任务，
-    # blackout 窗建模未定→移交 P3），全部豁免留痕（豁免表是留痕机制，不是静默开关）。
+    # 已知实测差集（2026-09-17 P3 收尾批后）：4 个实验遗留 + NightlySentiment（OS 退役
+    # 残余，现役真源=schedule.yaml）——删任务=Owner 门位，豁免留痕在册（豁免表是留痕
+    # 机制，不是静默开关）。PatternMining/WeeklyRest 已销项：前者真挂上系统（每日
+    # 09:01），后者收编为 ops_weekly_rest 实体+machine_blackout 组标。
     assert {"ZephyrAlpha_C4Exam_Full0916", "ZephyrAlpha_C4Exam_OneShot0915",
             "ZephyrAlpha_FactoryLaneC_Full0916", "ZephyrAlpha_FactoryLaneC_OneShot0915",
-            "ZephyrAlpha_PatternMining", "ZephyrAlpha_NightlySentiment",
-            "ZephyrAlpha_WeeklyRest"} <= {e["task_name"] for e in exempted}, exempted
+            "ZephyrAlpha_NightlySentiment"} <= {e["task_name"] for e in exempted}, exempted
+    resolved = {"ZephyrAlpha_PatternMining", "ZephyrAlpha_WeeklyRest"}
+    assert not (resolved & {e["task_name"] for e in exempted}), "销项项不得回潮豁免表"
+    assert not (resolved & {f["task_ids"][0] for f in findings}), "销项项不得报差集"
     # 别名表不得指向不存在的实体（那会变成孤儿误报）
     by_tid = {str(e["task_id"]) for e in reg["entities"]}
     assert set(gen.OPS_TASK_ALIASES.values()) <= by_tid, "别名指向不存在的实体=孤儿误报"

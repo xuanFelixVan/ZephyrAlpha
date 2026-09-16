@@ -121,12 +121,31 @@ def test_merge_preserve_marks_orphaned_source(tmp_path):
     assert any("ghost" in w for w in warns)
 
 
+def test_merge_preserve_keeps_co_start_intent(tmp_path):
+    """裁定 R-F：co_start_intent 是人审声明位，再生必须保全（否则豁免账被洗）。"""
+    fresh = [{"task_id": "lane_a", "status": "active", "window_expr": "*/10 9 * * 1-5"}]
+    existing = [{"task_id": "lane_a", "co_start_intent": True, "notes_zh": "[R-F] 行情时钟共生"}]
+    merged, warns = gen.merge_preserve(fresh, existing)
+    assert merged[0]["co_start_intent"] is True
+
+
+def test_merge_preserve_warns_declaration_without_notes(tmp_path):
+    """R-F 配套臂：只翻开关不写理由=warn 留痕（防豁免成为无理由静默）。"""
+    fresh = [{"task_id": "lane_b", "status": "active"}]
+    existing = [{"task_id": "lane_b", "co_start_intent": True, "notes_zh": "  "}]
+    merged, warns = gen.merge_preserve(fresh, existing)
+    assert any("co_start_declared_without_notes" in w for w in warns)
+    ok = [{"task_id": "lane_c", "status": "active", "co_start_intent": True, "notes_zh": "理由在册"}]
+    _m2, w2 = gen.merge_preserve([{"task_id": "lane_c", "status": "active"}], ok)
+    assert not any("co_start_declared_without_notes" in w for w in w2)
+
+
 def test_full_registry_build_and_drift_check(tmp_path):
     out = tmp_path / "reg.yaml"
     reg = gen.build_registry(existing_path=tmp_path / "nonexistent.yaml", output_path=out)
     assert reg["total_entities"] >= 50
     assert reg["mem_ceiling_gb"] == 10.0
-    assert set(gen.GROUPS) == {"ch_bulk_write", "tick_drain", "mine_vs_exam", "repair_passport", "gpu_default", "llm_local"}
+    assert set(gen.GROUPS) == {"ch_bulk_write", "tick_drain", "mine_vs_exam", "repair_passport", "gpu_default", "llm_local", "machine_blackout"}
     text = gen.registry_text(reg)
     out.write_text(text, encoding="utf-8")
     # 磁盘内容可解析且 --check 无漂移

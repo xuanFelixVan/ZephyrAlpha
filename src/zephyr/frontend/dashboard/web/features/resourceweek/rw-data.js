@@ -2,10 +2,10 @@
  * 刷新=重跑生成器；渲染契约见 features/resourceweek/rw-engine.js。
  */
 window.RW_VIEW_DATA = {
- "generated_at": "2026-09-16T23:07:01+00:00",
+ "generated_at": "2026-09-16T23:47:26+00:00",
  "generator": "scripts/governance/generators/generate_resource_week_view.py",
  "registry": "config\\resource_profile_registry.yaml",
- "registry_sha256": "f25d32147e52",
+ "registry_sha256": "dfb206c9182f",
  "week_start": "2026-09-14",
  "days": [
   "09-14 周一",
@@ -16,7 +16,7 @@ window.RW_VIEW_DATA = {
   "09-19 周六",
   "09-20 周日"
  ],
- "total_entities": 77,
+ "total_entities": 78,
  "scheduled": 30,
  "block_conflicts": 0,
  "conflicts": [],
@@ -2461,6 +2461,24 @@ window.RW_VIEW_DATA = {
    "unscheduled": true
   },
   {
+   "task_id": "ops_weekly_rest",
+   "resource_class": "light",
+   "pool": "default",
+   "exclusive_group": [
+    "machine_blackout"
+   ],
+   "trading_sensitive": false,
+   "peak_mem_gb": 0.1,
+   "measured_peak_mem_gb": null,
+   "measured_p90_duration_min": null,
+   "status": "planned",
+   "window_type": "manual",
+   "window_expr": null,
+   "est_duration_min": 10,
+   "slots": [],
+   "unscheduled": true
+  },
+  {
    "task_id": "ops_weekly_vm_backup",
    "resource_class": "light",
    "pool": "default",
@@ -3407,6 +3425,7 @@ window.RW_VIEW_DATA = {
   "mine_vs_exam": "周六挖掘→考尺串行（成功先例：10:00→14:00）",
   "repair_passport": "亿行级修复=护照登记+窗口+白名单三件套",
   "gpu_default": "GPU 显存互斥（Kronos/Ollama/SFT/转换）",
-  "llm_local": "本地 LLM 推理批互斥（qwen3:8b 单实例）"
+  "llm_local": "本地 LLM 推理批互斥（qwen3:8b 单实例）",
+  "machine_blackout": "全机 blackout 窗标（weekly_rest 周日 05:00 关机；可见性而非互斥）"
  }
 };

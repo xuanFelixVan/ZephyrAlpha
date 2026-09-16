@@ -114,12 +114,12 @@ class CapacityBudgetController:
         if self._state.active_tasks >= self._budget.max_concurrent_tasks:
             return False
 
-        pool = self._try_parse_system(system)
-        if pool is None:
-            return True
+        key = self._normalize_key(system)
+        quota = self._budget.wip_limit_per_system.get(key)
+        if quota is None:
+            return True  # 无声明配额=放行（不臆造配额；枚举系统默认预算已含全量配额）
 
-        quota = self._budget.wip_limit_per_system.get(pool.value, 4)
-        current = self._state.system_active.get(pool.value, 0)
+        current = self._state.system_active.get(key, 0)
         return current < quota
 
     def try_accept(self, task_id: str, system: str) -> bool:
@@ -133,16 +133,14 @@ class CapacityBudgetController:
 
     def _accept(self, task_id: str, system: str) -> None:
         self._state.active_tasks += 1
-        pool = self._try_parse_system(system)
-        if pool:
-            self._state.system_active[pool.value] += 1
+        key = self._normalize_key(system)
+        self._state.system_active[key] = self._state.system_active.get(key, 0) + 1
         self._state.last_updated = datetime.now(UTC)
 
     def release(self, task_id: str, system: str) -> str | None:
         self._state.active_tasks = max(0, self._state.active_tasks - 1)
-        pool = self._try_parse_system(system)
-        if pool:
-            self._state.system_active[pool.value] = max(0, self._state.system_active[pool.value] - 1)
+        key = self._normalize_key(system)
+        self._state.system_active[key] = max(0, self._state.system_active.get(key, 0) - 1)
 
         self._state.last_updated = datetime.now(UTC)
 
@@ -160,15 +158,14 @@ class CapacityBudgetController:
             return -1
 
     @staticmethod
-    def _try_parse_system(system: str) -> SystemPool | None:
+    def _normalize_key(system: str) -> str:
+        """枚举成员归一取 value；否则原样用作池键——注册表泳道（default/heavy/realtime/
+        intraday_* 等）由 WIP 供给后即可强制，向后兼容枚举路径。"""
         try:
-            return SystemPool(system)
-        except ValueError as e:
-            logger.warning("_try_parse_system: failed to parse system pool %r (%s: %s)", system, type(e).__name__, e)
-            return None
+            return SystemPool(system).value
+        except ValueError:
+            return system
 
     def get_pool_quota(self, system: str) -> int:
-        pool = self._try_parse_system(system)
-        if pool is None:
-            return 4
-        return self._budget.wip_limit_per_system.get(pool.value, 4)
+        key = self._normalize_key(system)
+        return int(self._budget.wip_limit_per_system.get(key, 4))

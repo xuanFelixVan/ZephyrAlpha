@@ -26,7 +26,7 @@ schedules:
   # 停复牌/指数成分/ST状态），供盘中策略与打板回测消费；全部 akshare 源，
   # 不依赖 QMT 服务器。配合盘后 daily_capital(18:00) 双调度点。
   pre_market:
-    cron: "30 8 * * 0-4"
+    cron: "34 8 * * 0-4"
     executor: default
     description: "盘前元数据层——JOB-077 股票基本信息/涨跌停价格/停复牌/指数成分/ST状态（universe构造与回测撮合约束前提）"
 
@@ -62,13 +62,13 @@ schedules:
   # 独立 max_instances(APScheduler默认1) 不阻塞 event_driven 快新闻轮询。
   # stock_em 与 research_report 共享 akshare 单例的 60次/分 限流额度，并行各~180min（总时间与串行相同，限流是瓶颈）。
   news_slow:
-    cron: "*/30 * * * *"    # 每30分钟触发；max_instances=1 下跑完才再跑，实际~90-180min/轮
+    cron: "17,47 * * * *"    # 每30分钟触发；max_instances=1 下跑完才再跑，实际~90-180min/轮
     executor: default        # 复用8线程池（慢任务仅占2线程，快任务仍有6线程可用）
     description: "慢新闻层——个股新闻(stock_em)/研报(research_report)，独立队列不堵 event_driven 快新闻"
 
   # L4 盘后日K线层：16:30 周一至周五
   daily_crypto:
-    cron: "30 8 * * *"
+    cron: "41 8 * * *"
     executor: default   # 2026-09-16 治本：原 light 在 scheduler.py 执行器字典中不存在（default/heavy/realtime/intraday_minute/intraday_sector），APScheduler 注册不校验、每日 08:30 触发时 Executor lookup failed 并移除 job——该任务自上线从未自动跑成过（水位全靠手动）。改挂通用池（08:30 空闲时段无争抢）。
     description: "币圈日线层——7×24 市场 UTC 日界，北京 08:30=UTC 00:30 拉上一完整 UTC 日（每日含周末）"
   daily_kline:
@@ -120,7 +120,7 @@ schedules:
 
   # L9 月初静态层：每月1日 09:00
   monthly_static:
-    cron: "00 9 1 * *"
+    cron: "16 9 1 * *"
     executor: default
     description: "月初静态层——股票列表/板块分类/指数成分/交易日历"
 

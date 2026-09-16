@@ -7,11 +7,11 @@ doc_type: register
 ttl: permanent
 title: 资源画像注册表（resource profile registry）
 status: active
-generated_at: '2026-09-16T23:06:59Z'
+generated_at: '2026-09-16T23:47:23Z'
 generated_by: scripts/governance/generators/generate_resource_profile_registry.py
 maintenance: auto
 counting_rule: entities 数组条目数（生成器四源全量再生；条目禁手工增删）
-total_entities: 78
+total_entities: 79
 field_count: 18
 mem_ceiling_gb: 10.0
 mem_ceiling_source: src/zephyr/trading/process_reaper.py _DANGEROUS_MEM_GB（引用不收编）
@@ -22,6 +22,7 @@ groups:
   repair_passport: 亿行级修复=护照登记+窗口+白名单三件套
   gpu_default: GPU 显存互斥（Kronos/Ollama/SFT/转换）
   llm_local: 本地 LLM 推理批互斥（qwen3:8b 单实例）
+  machine_blackout: 全机 blackout 窗标（weekly_rest 周日 05:00 关机；可见性而非互斥）
 pool_vocabulary:
   lanes:
   - default
@@ -68,7 +69,9 @@ entities:
       台账 join 亦未给出该槽位记录，故 measured 留 null（禁编造）
   samples_uri: .runtime/logs/resource_samples/data_slot_auction_highfreq.jsonl
   status: active
-  notes_zh: 集合竞价高频层——9:15-9:25每10秒抓取五档盘口快照，用于主力行为分析
+  notes_zh: 集合竞价高频层——9:15-9:25每10秒抓取五档盘口快照，用于主力行为分析；[R-F] 盘中行情时钟共生车道：与 intraday_* /paper_session /fund_flow 同窗共开是设计语义（竞价段
+    9:15-9:25 每分钟触发，错峰无意义）；判据②同刻内存和 2.0GB≤10GB ceiling。裁定 R-F 只豁免判据①。
+  co_start_intent: true
 - task_id: data_slot_catchup_guard
   module_id: null
   map_node_id: null
@@ -291,7 +294,8 @@ entities:
       台账 join 亦未给出该槽位记录，故 measured 留 null（禁编造）
   samples_uri: .runtime/logs/resource_samples/data_slot_intraday_minute.jsonl
   status: active
-  notes_zh: 盘中分钟K线层——A股/ETF/LOF分钟K线盘中滚动更新
+  notes_zh: 盘中分钟K线层——A股/ETF/LOF分钟K线盘中滚动更新；[R-F] 同上：realtime 行情车道组共窗是设计语义，内存账安全余量 5 倍。
+  co_start_intent: true
 - task_id: data_slot_intraday_realtime
   module_id: null
   map_node_id: null
@@ -313,7 +317,8 @@ entities:
       台账 join 亦未给出该槽位记录，故 measured 留 null（禁编造）
   samples_uri: .runtime/logs/resource_samples/data_slot_intraday_realtime.jsonl
   status: active
-  notes_zh: 盘中实时层——Tick/L2/Greeks/IV/期货/涨跌停/集合竞价/港股K线
+  notes_zh: 盘中实时层——Tick/L2/Greeks/IV/期货/涨跌停/集合竞价/港股K线；[R-F] 同上：realtime 行情车道组共窗是设计语义，内存账安全余量 5 倍。
+  co_start_intent: true
 - task_id: data_slot_intraday_sector
   module_id: null
   map_node_id: null
@@ -335,7 +340,8 @@ entities:
       台账 join 亦未给出该槽位记录，故 measured 留 null（禁编造）
   samples_uri: .runtime/logs/resource_samples/data_slot_intraday_sector.jsonl
   status: active
-  notes_zh: 盘中板块K线层——880xxx板块分钟K线（mootdx TCP直连，独立于miniqmt慢任务）
+  notes_zh: 盘中板块K线层——880xxx板块分钟K线（mootdx TCP直连，独立于miniqmt慢任务）；[R-F] 同上：realtime 行情车道组共窗是设计语义，内存账安全余量 5 倍。
+  co_start_intent: true
 - task_id: data_slot_monthly_static
   module_id: null
   map_node_id: null
@@ -1229,6 +1235,28 @@ entities:
   samples_uri: .runtime/logs/resource_samples/ops_ttl_rejudge_daily.jsonl
   status: planned
   notes_zh: TTL 日重判 run_ttl_rejudge_daily.ps1（实测每日 18:05；治理清理）
+- task_id: ops_weekly_rest
+  module_id: null
+  map_node_id: null
+  resource_class: light
+  pool: default
+  peak_mem_gb: 0.1
+  est_duration_min: 10
+  exclusive_group:
+  - machine_blackout
+  window_type: manual
+  window_expr: null
+  schedule_truth_source: docs/_working/resource_schedule/resource_schedule_panorama_plan_v1.md
+  trading_sensitive: false
+  measured:
+    peak_mem_gb: null
+    p90_duration_min: null
+    samples: 0
+    last_at: null
+    no_sample_reason_zh: null
+  samples_uri: .runtime/logs/resource_samples/ops_weekly_rest.jsonl
+  status: planned
+  notes_zh: 周休息机守卫 weekly_rest_guard.ps1（实测周日 05:00 关机；全机 blackout 窗，Owner 2026-09-17 全批点头）
 - task_id: ops_weekly_vm_backup
   module_id: null
   map_node_id: null
@@ -1417,7 +1445,8 @@ entities:
     no_sample_reason_zh: 本轮进程表无匹配进程：ps1 真源在册但该班次未被触发（或采样间隔内已退出）
   samples_uri: .runtime/logs/resource_samples/sch_intraday_fund_flow.jsonl
   status: active
-  notes_zh: IntradayFundFlow
+  notes_zh: IntradayFundFlow；[R-F] 盘中资金流扫描与行情车道组同窗（共享行情时钟），错峰将错过盘口时敏窗口；判据②预算余量充足。
+  co_start_intent: true
 - task_id: sch_ollama_serve
   module_id: null
   map_node_id: null
@@ -1460,7 +1489,8 @@ entities:
     no_sample_reason_zh: 本轮进程表无匹配进程：ps1 真源在册但该班次未被触发（或采样间隔内已退出）
   samples_uri: .runtime/logs/resource_samples/sch_paper_session.jsonl
   status: active
-  notes_zh: PaperSession
+  notes_zh: PaperSession；[R-F] 盘中会话主体，与行情车道组同窗是业务必需（撮合依赖行情流），内存账见审计 warn 留痕。
+  co_start_intent: true
 - task_id: sch_pattern_mining
   module_id: null
   map_node_id: null

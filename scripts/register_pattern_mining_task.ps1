@@ -56,7 +56,7 @@ $settings = New-ScheduledTaskSettingsSet `
 $principal = New-ScheduledTaskPrincipal -UserId $CurrentUser -LogonType Interactive -RunLevel Limited
 
 # Daily trigger: Run once daily (default 09:00, adjust as needed)
-$dailyTrigger = New-ScheduledTaskTrigger -Daily -At "09:00"
+$dailyTrigger = New-ScheduledTaskTrigger -Daily -At "09:01"
 
 if (Get-ScheduledTask -TaskName $TaskName -ErrorAction SilentlyContinue) {
     Set-ScheduledTask -TaskName $TaskName -Action $action -Trigger $dailyTrigger `

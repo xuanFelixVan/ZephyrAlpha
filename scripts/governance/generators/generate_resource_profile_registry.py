@@ -304,6 +304,9 @@ GROUPS: dict[str, str] = {
     "repair_passport": "亿行级修复=护照登记+窗口+白名单三件套",
     "gpu_default": "GPU 显存互斥（Kronos/Ollama/SFT/转换）",
     "llm_local": "本地 LLM 推理批互斥（qwen3:8b 单实例）",
+    # P3 销项（2026-09-17）：全机 blackout 窗可见性标（非互斥对——关机由 OS 强制，
+    # 闸拦不住也不需拦；登记目的=晨报/周历显示重活误排周日 05:00 关机窗即被错过）。
+    "machine_blackout": "全机 blackout 窗标（weekly_rest 周日 05:00 关机；可见性而非互斥）",
 }
 
 # E0 四值映射层（方案 §2.1：local→light，local_gpu/mixed→heavy，api→按用途拆；
@@ -399,6 +402,10 @@ MANUAL_ENTITY_SEED: list[dict] = [
     {"task_id": "ops_qmt_watchdog", "cn": "QMT 行情桥看门狗 qmt_watchdog.ps1（实测每日 08:45）", "class": "light", "dmin": 5, "mem": 0.5, "grp": [], "wt": "manual"},
     {"task_id": "ops_ttl_rejudge_daily", "cn": "TTL 日重判 run_ttl_rejudge_daily.ps1（实测每日 18:05；治理清理）", "class": "light", "dmin": 15, "mem": 0.5, "grp": [], "wt": "manual"},
     {"task_id": "ops_ai_wrapper_inject", "cn": "AI Wrapper 注入保活 ensure_ai_wrapper_injection.ps1（实测每日 12:41；开发工具链）", "class": "light", "dmin": 5, "mem": 0.5, "grp": [], "wt": "manual"},
+    # --- P3 销项（2026-09-17）：WeeklyRest 建模裁定=ops 一等实体+machine_blackout 组标 ---
+    # 关机由 OS 强制（排班拦不住也不需拦）；表侧职责=可见性——晨报/周历在周日 05:00 显示
+    # 全机 blackout，重活误排此窗即被错过并由 catchup_guard 语义兜住。wt=manual 不入同刻账。
+    {"task_id": "ops_weekly_rest", "cn": "周休息机守卫 weekly_rest_guard.ps1（实测周日 05:00 关机；全机 blackout 窗，Owner 2026-09-17 全批点头）", "class": "light", "dmin": 10, "mem": 0.1, "grp": ["machine_blackout"], "wt": "manual"},
     # --- L-8 收编（2026-09-17 P4-α）：唯一漏网的"自动触发重活"——新模型入库即 Quick 考试 ---
     {"task_id": "event_model_exam_trigger", "cn": "触发式考试调度器（ModelDiscovery 见新模型→自动 Quick 考试 39 次推断，经本地 Ollama 吃 GPU）"
                                                  "｜窗档=event 参照 sch_resource_regen_check 先例（无 cron 可抽，触发即开工）"
@@ -793,7 +800,9 @@ def _extract_trigger_exprs(code: str, task_name: str) -> list[str]:
 # 真的挂在系统里、是否被禁用"从无第二方核验——register_*.ps1 写得再漂亮，任务被
 # 禁用/被删/从未注册，排班就是纸面文章（实测 2026-09-17：系统共 229 条任务、其中
 # ZephyrAlpha_* 37 条，ps1 声称 22 条里 1 条查无此任务（PatternMining），另有 5 条系统在册
-# 而注册表完全不认识（4 条实验遗留 + WeeklyRest），6 条处于 Disabled）。
+# 而注册表完全不认识（4 条实验遗留 + WeeklyRest）。
+# P3 收尾批销项（2026-09-17）：PatternMining 真挂上系统、WeeklyRest 收编为 ops 实体——
+# 残余孤儿=4 条实验遗留+NightlySentiment（均 Owner 门位删任务，豁免留痕在册）。
 # 纪律：本臂**只读**（schtasks /query，零写系统），且永不阻断再生（再生改不动操作系统的
 # 任务表）——差集全落 check 臂健康码，复用 P0 的 collect_check_findings/告警码机制。
 # 任务名 → 实体 task_id 的推导与 I1 实体臂同源（_RE_TASKNAME + _snake），不另立第二套
@@ -814,6 +823,7 @@ OPS_TASK_ALIASES: dict[str, str] = {
     "ZephyrAlpha_BdpanTickWatch": "ops_bdpan_tick_watch",
     "ZephyrAlpha_BoardIndexRealtime": "ops_board_index_realtime",
     "ZephyrAlpha_SectorSnapshot": "ops_sector_snapshot",
+    "ZephyrAlpha_WeeklyRest": "ops_weekly_rest",
     # 注意：**不**收编 ZephyrAlpha_NightlySentiment——该 job 的现役真源是 schedule.yaml:169
     # （cron 20 8 * * *，executor default）在数据调度器进程内触发，挂 OS 任务名上去会让
     # 对账臂误报"active 却 Disabled=纸面班次"。那条已退役 OS 残余见 SCHED_TASK_EXEMPTIONS。
@@ -841,13 +851,8 @@ SCHED_TASK_EXEMPTIONS: dict[str, dict] = {
         "reason_code": REASON_TASK_ORPHAN,
         "reason_zh": "2026-09-15 一次性重跑实验遗留（每日 15:35），同上 §待裁-4",
     },
-    # 有源无任务：ps1 在、实体 active，系统里没有——报警是它的本职，但已登记给图形库线核对
-    # （§待裁-5），此处豁免到该线回复；删掉本行即恢复每小时告警（不留静默黑洞）。
-    "ZephyrAlpha_PatternMining": {
-        "reason_code": REASON_TASK_MISSING,
-        "reason_zh": "register_pattern_mining_task.ps1 在、注册表实体 active，Task Scheduler 无此任务"
-                     "（20260917 联动方案 §待裁-5 已登记图形库线核对是否重挂）",
-    },
+    # （ZephyrAlpha_PatternMining 豁免已销项：2026-09-17 P3 收尾批经
+    #  register_pattern_mining_task.ps1 真挂上系统，实测 Ready/每日 09:01。）
     # OPS_TASK_ALIASES 注释承诺的"已退役 OS 残余"落地点（2026-09-17 P1-a 补：注释在册、
     # 表内缺条目=孤儿误报，且 --check 永远退不出 0）。
     "ZephyrAlpha_NightlySentiment": {
@@ -858,17 +863,8 @@ SCHED_TASK_EXEMPTIONS: dict[str, dict] = {
                      "Disabled OS 名=误报纸面班次，见 OPS_TASK_ALIASES 注释），删除本条 OS 任务即"
                      "可彻底销项——删任务=Owner 门位，本会话禁改活任务",
     },
-    "ZephyrAlpha_WeeklyRest": {
-        "reason_code": REASON_TASK_ORPHAN,
-        "reason_zh": "真孤儿但**不在本臂销项**：scripts/ops/weekly_rest_guard.ps1 周日 05:00 关机"
-                     "（Owner 2026-09-17 全批点头，docs/_working/automation/20260917_fullauto_"
-                     "skeleton_v1.md 要求「排班表登记」），无 register_*.ps1 真源故 I1 抽不到。"
-                     "不随手挂 ops_* 种子：关机房保养窗在现模型里无法如实表达——它是全机 "
-                     "blackout（谁都不许跑），而 GROUPS 无 rest/blackout 档、peak_mem_gb 求和"
-                     "会把「关机」当成「零内存占用的普通班次」，登记错比不登记更危险（闸会据此"
-                     "放行同窗重活）。移交 P3 全局重排班：先定 blackout 窗建模（新增 "
-                     "exclusive_group 档或独立 rest 实体语义），再由落地线登记",
-    },
+    # （ZephyrAlpha_WeeklyRest 豁免已销项：2026-09-17 P3 收尾批落建模裁定——ops_weekly_rest
+    #  一等实体 + machine_blackout 组标 + OPS_TASK_ALIASES 收编，见 ops 种子区注释。）
 }
 
 _RE_DISABLED_TOKEN = re.compile(r"(?i)^(disabled|disable)|禁用|已停止")
@@ -1454,7 +1450,7 @@ def report_gate_declaration_gaps(entities: list[dict]) -> int:
 # ---------------------------------------------------------------------------
 # 人填字段（再生保全；消费者=对齐机制/闸/图）+采样器独占字段
 _HUMAN_FIELDS = ("module_id", "map_node_id", "pool", "peak_mem_gb", "est_duration_min",
-                 "exclusive_group", "status", "notes_zh")
+                 "exclusive_group", "status", "notes_zh", "co_start_intent")
 _SAMPLER_FIELDS = ("measured", "samples_uri")
 
 
@@ -1484,6 +1480,12 @@ def merge_preserve(fresh: list[dict], existing: list[dict] | None) -> tuple[list
                     f"→ 回落到派生值 {derived_pool!r}"
                 )
                 ent["pool"] = derived_pool if derived_pool else DEFAULT_POOL
+            # 裁定 R-F 配套臂：co_start_intent 声明必须附 notes 理由，防"只翻开关不写账"
+            if ent.get("co_start_intent") is True and not str(ent.get("notes_zh") or "").strip():
+                warnings.append(
+                    f"co_start_declared_without_notes: {tid} 声明同刻共开但 notes_zh 空"
+                    "→ 豁免留痕缺理由，补 notes 后再生"
+                )
             # 申报初值防回退：旧档人已填（非 None）则不覆盖初值
         merged.append(ent)
     for tid, old in old_by_id.items():

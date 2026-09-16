@@ -20,7 +20,7 @@
 $ErrorActionPreference = "Stop"
 $action = New-ScheduledTaskAction -Execute "powershell.exe" `
     -Argument "-NoProfile -ExecutionPolicy Bypass -File D:\ZephyrAlpha\scripts\run_f06_grid.ps1"
-$trigger = New-ScheduledTaskTrigger -Weekly -DaysOfWeek Saturday -At 14:00
+$trigger = New-ScheduledTaskTrigger -Weekly -DaysOfWeek Saturday -At 23:00
 $settings = New-ScheduledTaskSettingsSet -ExecutionTimeLimit (New-TimeSpan -Hours 24) `
     -StartWhenAvailable -MultipleInstances IgnoreNew
 $principal = New-ScheduledTaskPrincipal -UserId $env:USERNAME -LogonType Interactive
