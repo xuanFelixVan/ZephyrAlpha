@@ -302,3 +302,6 @@ freedom_weekly_report:
 - **待 Owner 项（2 个）**：①§4 双指标软/硬线数值（金额+回撤百分比，建议 OBJ_M 首月数据
   后定标）；②secret_registry.yaml 是否增设 `ai_exposure: forbidden` 字段（registry 修改
   =Owner 门位；不增设则 S1 白名单 deny-list 为唯一机检面，功能等价、少一层结构保证）。
+
+
+**验收标准补全（红蓝 R1-F4）**：S1 白名单=含 QMT_REAL_* 的环境在代理会话被拒且留证；S2 负面清单 gate=六条各有一条违例样例被拦的测试；S3 DROP-GATE=对禁删清单样例路径的 DROP 语句被阻断；S4 生成器×2=产出与 DDL 真源/ROOR 逐条一致（幂等再生）；S5 看板=双指标日更且数据源可追溯；S6 SEV 探针=四级事件样例各一可聚合成"开放事件数"；S7 周报=样例周报含自由使用/擦边/配额三节；S8 年审=流程挂 OBJ_R 流水线有登记。

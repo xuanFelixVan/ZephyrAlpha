@@ -9,7 +9,7 @@ status: design_v1
 
 # OBJ_R 标准与规则线——真源设计稿
 
-> 骨架卡 [README.md](README.md) 的挖矿产出。定调依据：主文档 v1.1 增补"核心定调十二条"
+> 骨架卡 [README.md](README.md) 的挖矿产出。定调依据：主文档 §0.5 核心定调十三条
 > （#8 根约束不可自我迭代 / #9 先他指后自指 / #12 进化留痕可回滚）+ 宪法 §4（季度退役
 > 审计=reconcile_execution_log 触发率）。**形态保守铁律：自动化的是提案和证据，不是裁决**
 > ——本稿全部产出均为"AI 提案→治理立案→Owner 修标→重考历史"四步流水线的执行件设计。
@@ -148,7 +148,8 @@ report.jsonl 每行字段：`run_id, commit_hash, commit_date, stratum, files[],
 ## ⑤ 案例库 schema（事故归因→缺陷模式→阈值提案）
 
 - **登记表起步于本目录 casebook.md（攒 ≥5 案后由 Owner 裁定是否升 catalogs 正式 YAML 注册表）**——避免未成熟即建注册表（规范预算 §4.1）。
-- **schema**：`case_id / date / source_incident（事故登记引用）/ 死因归因 root_cause / 缺陷模式 defect_pattern（受控词表，随案扩充去重）/ 波及面 affected_gates|registries / 阈值提案 → standards_proposal_id / 状态（open→patterned→proposed→ruled）/ 防复发验证（重放用例|体检指标挂钩）`。
+- **schema**：`case_id / date / source_incident（事故登记引用）/ 死因归因 root_cause / 缺陷模式 defect_pattern（受控词表；真源=L7 heritage 词表，casebook 只引用不扩展）/ 复发签名 signature / 修复配方 recipe / 模式规范名 pattern_norm（与 L7 H4 具名三字段同名同义，pattern_norm=同案归并键）/ 波及面 affected_gates|registries / 阈值提案 → standards_proposal_id / 状态（open→patterned→proposed→ruled）/ 防复发验证（重放用例|体检指标挂钩）`。
+- **三字段与词表边界（红蓝 R1-B6）**：signature/recipe/pattern_norm 与 L7 `ai_heritage_defect`（H4）同名同义——归并时模式登记落 L7（机读真源），casebook 只留 case+三字段引用；pattern 词表扩充一律在 L7 侧办理（L7 §2.1 五方地盘图同源裁定），casebook 禁自造新 pattern 值。
 - **流程**：事故自动喂（L1 内监捕获告警行/死信/回滚）→ AI 归因填 root_cause → 模式归并（同 pattern 合案）→ 生成阈值提案进 §④ 流水线 → Owner 裁决 → ruling_registry 登记 → 重放验证闭环 → 回写 L7 传承。
 - **首案（示例，写入卡内）**：
   ```yaml
@@ -178,6 +179,8 @@ report.jsonl 每行字段：`run_id, commit_hash, commit_date, stratum, files[],
 | S3 | 阈值外置化提案 | commit gate 硬编码常量→注册表条目清单（对标 AI-THD-001 统读） | 治理立案 | 改 gate 源码=治理层资产，非本卡权限 |
 | S4 | 月度体检任务 | 触发率/误拦率统计器 + standards_proposal 生成器，挂 L1 内监慢周期 | gate_execution_stats 积累 ≥1 窗 | |
 | S5 | 案例库起步 | casebook.md + 首案补登确认 | Owner-4 | |
+
+**验收标准补全（红蓝 R1-F4）**：S1=对 ≥50 笔历史提交重放出 report.jsonl 且字段齐全可聚合；S2=同一报告两次聚合结果逐位一致+四判据 P1-P4 输出；S3=外置化提案清单覆盖全部硬编码常量且逐条标真源行号；S4=体检产出 standards_proposal 且含触发率/误拦率两指标；S5=casebook.md 含首案且 pattern_norm 字段可被 L7 引用。
 
 ### 挖矿日志
 
@@ -233,3 +236,9 @@ templates/ 全部目录 8 件/TTL·status·doc_type 枚举/各注册表 entry_sc
 （ttl task_bound）；#4 首案按本卡记录登记 CASE-2026-0917-001；#7 token 已由主会话 wave1
 ceremony 登记（capability ai_layer_vision）——该待办销项。#2/#5/#6 属治理立案类，保留待
 治理流程（合规不越权）。
+
+## 红蓝 R1 修复记录（2026-09-17，红队 B 发现，修复组 1）
+
+| 编号 | 修复内容 | 落点 |
+|------|---------|------|
+| B6 | casebook schema 补 signature/recipe/pattern_norm 三具名字段（与 L7 `ai_heritage_defect` H4 同名同义，pattern_norm=同案归并键）；声明 pattern 词表真源=L7 heritage 词表、casebook 只引用不扩展（禁自造新 pattern 值） | §⑤ |

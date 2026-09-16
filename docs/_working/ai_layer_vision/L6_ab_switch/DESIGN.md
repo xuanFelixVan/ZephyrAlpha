@@ -9,7 +9,7 @@ status: design_v1
 
 # L6 切换段真源设计稿
 
-> 骨架卡 [README.md](README.md) 的挖干产出。定调依据：主文档 v1.1 增补定调 #7（A/B 蓝绿=进化
+> 骨架卡 [README.md](README.md) 的挖干产出。定调依据：主文档 §0.5 定调 #7（A/B 蓝绿=进化
 > 安全带）/ #9（进化分级自治）/ #12（进化留痕可回滚）+ 宪法 §5（risk_tier 人机门位）。
 > **本段最大空白=模块级影子运行**（README 状态行自认），本稿把它挖到可直接施工粒度。
 > **形态铁律**：B 组并行的一切产出只写对比区，永不回流生产决策路径——影子不下真决策是
@@ -25,7 +25,7 @@ status: design_v1
 | R2 | 内部反查·下（代码层） | 并行隔离/flag/前端拍板的真实机制 | signal | `session_worktree.py`（worktree 物理隔离：独立 index/branch/目录；pool lease 瞬时返回；merge 串行化+pre-merge gate）；`config/flags.yaml`（MOD-INF-015 flag 主开关）；`exempt_zone_frontmatter_gate.py` 头注释（post-commit warn→pre-commit 阻断+git ls-tree 渐进收敛）；`web/pages/promotion.html`+`promotion.js`（S13 建议卡：API 真源+二次确认+留痕回执+禁手工造建议） |
 | R3 | 内部横查·同构参照 | 业务层与兄弟段的切换先例 | signal | 业务层 §7 A/B 联赛（晋升预注册/降级不退役/regime 标记复活/相关性闸）+§10 三级算法升级（血肉自动/锦标赛自动/骨 Owner）+实盘灰度（1/10 仓 1 个月坡道）；OBJ_R 重放器（gate 参数影子运行已覆盖，DESIGN §②）；OBJ_M 同任务双跑（§4.2，判据冻结+显著性）；OBJ_T 基准任务集（壳，契约预留） |
 | R4 | 内部横查·事故与制度档案 | 墓碑与不演练的代价 | signal | 墓碑合并法：registry 计数"含 deprecated 全量"（registry_of_registries.yaml counting_rule×3）、OBJ_M model_registry status=tombstone"退役不删（对齐 L6 蓝绿纪律）"；反例 ARCH-046 全景图不保留墓碑（登记图≠资产登记，本稿墓碑只落资产登记层不落全景图）；884 死信积压 8 天=无监控无演练的同构代价 |
-| R5 | 内部推理·方法裁定 | 状态机定形/观察节拍/分级映射 | signal（裁定） | 五态定形 shadow→canary→promote→champion→retire/tombstone（理由 §②-B）；A 股节奏=月度而非周度（对齐月度结算+月度体检既有节拍，周度撞盘中噪声）；审批分级映射 risk_tier 三档（§②-E） |
+| R5 | 内部推理·方法裁定 | 状态机定形/观察节拍/分级映射 | signal（裁定） | 七态规范枚举定形 shadow→canary→promoted→champion→retired→tombstone→aborted（promote=切换动作非态；retired/tombstone 两段分开；理由与拼写裁定 §②-B）；A 股节奏=月度而非周度（对齐月度结算+月度体检既有节拍，周度撞盘中噪声）；审批分级映射 risk_tier 三档（§②-E） |
 | R6 | 外部业界（补盲） | 蓝绿/金丝雀/影子部署做法 | signal | EX-R1：shadow=镜像流量零用户影响、晋升判据=同负载指标对齐；canary=分档放量 1%→10%→50%→100%+逐档指标门；blue-green=双环境瞬时互切；特性旗解耦部署与发布。EX-R2：SR 11-7/OCC 2026-13 champion-challenger 影子并行+有效挑战；观察期业界下限 14 天（原地替换）/30 天（架构级）；漂移告警=回滚触发器。EX-R2 子查询 429×1，退避重试成功 |
 | REUSE | 在档复用 | V2-R1/迁移项⑥/L4 三查/L1 月度挂点 | signal | champion/challenger 业界名（V2-R1 在档）；灰度成文（README §1.6 ⑥）；"好得反常"三查（L4 卡）；回切演练挂月度体检（L1 内监慢周期） |
 
@@ -82,11 +82,15 @@ light 档，**禁 cron/sleep-loop**，宪法 §9.3）；盘中 heavy 模块影�
 
 **6) 资源预算**：影子跑算力进配额池（定调 #10），配额越限→暂停影子（非回切信号）。
 
-### B. 状态机（五态，进入/退出判据字段）
+### B. 状态机（七态规范枚举，每态补入边事件+进入/退出判据）
 
-**裁定留痕（R5）**：五态取业界 canary 分档与银行 champion/challenger 的并集——本仓是
-单机系统，流量分档=作用域分档（canary=限模块实例/限场景/仅 warn 档），不需要 1%→10%
-的流量百分比档（EX-R1 的 K8s 语境不适用，取其"逐档指标门"精神）。
+**裁定留痕（R5；红蓝 R1-B3 定形规范枚举）**：态集=业界 canary 分档与银行 champion/challenger
+的并集——本仓是单机系统，流量分档=作用域分档（canary=限模块实例/限场景/仅 warn 档），不需要
+1%→10% 的流量百分比档（EX-R1 的 K8s 语境不适用，取其"逐档指标门"精神）。**拼写裁定**：
+`promote`=B 升默认的一次性切换**动作**（事件），`promoted`=动作完成后的驻留**态**——动作与态
+分开命名，全稿统一此拼写（初稿"五态"表述与 promote/retire 拼写漂移就此废止）。**retired 与
+tombstone 两段裁定**：retired=已退役摘除消费、仍在复活观察窗内；tombstone=观察期满正式封存
+（§②-D 规程与 TTL 清理计时自此起算）——二段皆保留、定义不重叠。
 
 ```yaml
 switch_registry:            # 运营态架构数据 → DB（DatabaseService，禁裸 duckdb；RULE-SSOT 裁定留痕）
@@ -95,7 +99,7 @@ switch_registry:            # 运营态架构数据 → DB（DatabaseService，�
   domain: D_XXX             # risk_tier 查表键
   champion_ref / challenger_ref: <分支|tag|版本|model_id>
   criteria_yaml_ref + criteria_hash          # 预注册冻结
-  state: shadow | canary | promoted | champion | retired | tombstone | aborted
+  state: shadow | canary | promoted | champion | retired | tombstone | aborted   # 七态规范枚举；promote=切换动作（事件）非态
   state_history: [{state, since<UTC>, evidence_ref}]
   observation: {start, min_months, signals{...}}   # §②-C
   rollback: {plan_ref, last_drill_date, drill_result}
@@ -103,13 +107,15 @@ switch_registry:            # 运营态架构数据 → DB（DatabaseService，�
   tombstone: {sealed_at, seal_ref, revival_conditions[], ttl_deadline}
 ```
 
-| 态 | 进入判据 | 退出判据（→向） |
-|----|---------|----------------|
-| **shadow** | L5 施工完成回执 + L4 对比裁定卡（判据冻结哈希在案）+ 双 worktree 就绪 + corpus 冻结 | 影子期判据全绿且满 min_months → **canary**；判据败/好得反常未释疑 → **aborted**（L7 记档） |
-| **canary** | shadow 毕业审批（按 §②-E 分级）+ 作用域限定方案在案（限实例/限场景/gate 类仅 warn 档） | canary 期零事故且满 canary 期 → **promote**；任一回切触发（§②-C 表）→ 退 **shadow** 或 **aborted** |
-| **promote** | canary 毕业 + 分级审批通过（§②-E）——本态=B 升默认的一次性切换事件，状态即"已切换" | 切换满 1 个体检窗无回切 → **champion**；期内触发回切 → 一键回退，B 退回 **canary** 或 **aborted** |
-| **champion** | promote 稳定期满 | 被下一代 challenger promote → **retire**；自身劣化触发 → 自身降级并复活前代（走墓碑复检） |
-| **retire/tombstone** | 退位即封存：registry status=tombstone（deprecated 链不删先例），§②-D 规程 | 复活条件触发 → 回 **shadow**（复活≠直提，重走对比）；TTL 满且零复活动量 → 清理提案（Owner 净删门） |
+| 态 | 入边事件（从哪来） | 进入判据 | 退出判据（→向） |
+|----|------------------|---------|----------------|
+| **shadow** | ←新对比开工（L5 施工完成回执触发）；←retired/tombstone 复活复检（复活≠直提） | L5 施工完成回执 + L4 对比裁定卡（判据冻结哈希在案）+ 双 worktree 就绪 + corpus 冻结 | 影子期判据全绿且满 min_months → **canary**；判据败/好得反常未释疑 → **aborted**（L7 记档） |
+| **canary** | ←shadow 毕业审批通过；←promoted 期内回切（B 退回） | shadow 毕业审批（按 §②-E 分级）+ 作用域限定方案在案（限实例/限场景/gate 类仅 warn 档） | canary 期零事故且满 canary 期 → 执行 **promote 动作**进 **promoted**；任一回切触发（§②-C 表）→ 退 **shadow** 或 **aborted** |
+| **promoted** | ←promote 动作执行（canary 毕业+分级审批通过后的一次性切换事件） | canary 毕业 + 分级审批通过（§②-E）——promote=动作，promoted=动作后的"已切换"驻留态 | 切换满 1 个体检窗无回切 → **champion**；期内触发回切 → 一键回退，B 退回 **canary** 或 **aborted** |
+| **champion** | ←promoted 稳定期（1 体检窗）满无回切 | promote 稳定期满 | 被下一代 challenger 的 promote 动作顶替 → **retired**；自身劣化触发 → 自身降级并复活前代（走墓碑复检） |
+| **retired** | ←champion 被下一代顶替（退位事件） | 退位摘除消费指针，进复活观察窗（registry status=retired，观察窗=1 个月度体检窗） | 观察窗满 → 走 §②-D 封存规程进 **tombstone**；观察窗内复活条件触发（§②-D①-④）→ 回 **shadow** 重走对比 |
+| **tombstone** | ←retired 观察窗满（封存事件，§②-D 规程执行） | 观察期满正式封存：registry status=tombstone（deprecated 链不删先例）+git tag，TTL 清理计时自此起算 | 复活条件触发 → 回 **shadow**（复活≠直提，重走对比）；TTL 满且零复活动量 → 清理提案（Owner 净删门） |
+| **aborted** | ←shadow/canary 判据败或 T5 好得反常未释疑；←T1 事故冻结待查结案；←promoted 期内回切且不可退回 canary | 回切/判据败事件落卡，L7 记档留痕 | Owner 手递重开卡 → 回 **shadow**（新 switch_id 重走对比）；否则为终态留档 |
 
 ### C. 观察期判据（量化信号+A 股节奏）
 
@@ -210,7 +216,7 @@ EXEMPT-ZONE-FM 真实路径（R2 头注释）：前身=post-commit warn reconcil
 | S1 | switch_registry 表 | DatabaseService 迁移：§②-B schema 全字段（state/state_history/rollback/tombstone）；时间字段显式时区（RULE-SCHEMA-TZ） | 无 | RULE-SSOT：运营态=DB；禁裸 duckdb |
 | S2 | 判据预注册 YAML | `config/switch_criteria.yaml`：per-family 判据模板+T1-T6 阈值族+corpus 冻结字段（常数预注册） | 无 | 改判据=新 switch_id；OWNER 批一次初值 |
 | S3 | 影子运行执行器 | `src/zephyr/intelligence/switch_engine/shadow_runner.py`（新增模块）：双 worktree 租借（session_worktree 同款）+corpus 分发+三闸强制+分歧统计落盘 | S1/S2 | 事件+周历触发禁 cron；新模块走 CREATE-GUARD+add_module_translation+RULE-DEPGRAPH |
-| S4 | 状态机引擎 | switch_engine 迁移器（五态+T1-T6 机检）+一键回切执行器（revert=状态回拨+消费指针还原，RTO≤1 交易日） | S3 | 回切执行须预演（S7 演练覆盖） |
+| S4 | 状态机引擎 | switch_engine 迁移器（七态规范枚举+T1-T6 机检）+一键回切执行器（revert=状态回拨+消费指针还原，RTO≤1 交易日） | S3 | 回切执行须预演（S7 演练覆盖） |
 | S5 | 墓碑管理器 | 封存登记（git tag+status=tombstone）/复活复检工单生成（regime 触发接 L1）/TTL 清理提案（Owner 门） | S1 | git tag 永不清 |
 | S6 | 审批分流器 | risk_tier 查表→auto/independent_review/owner_one_click 三道分流；owner 道接 promotion 页 advisory（kind=switch） | S1/S4 | 复用 S13 前端先例，零新页面 |
 | S7 | 回切演练任务 | round-robin 抽样+dry-run 三查+演练报告，挂月度体检 | S4 | `rollback.last_drill_date` 超窗告警 |
@@ -230,7 +236,7 @@ EXEMPT-ZONE-FM 真实路径（R2 头注释）：前身=post-commit warn reconcil
 | R2 | 代码层反查（session_worktree/flags.yaml/EXEMPT-ZONE-FM/promotion 页） | signal | 双检出方案+flag/门位先例+前端契约 |
 | R3 | 同构横查（业务层 §7/§10+OBJ_R/OBJ_M/OBJ_T） | signal | 状态机判据字段四家族复用与引用边界 |
 | R4 | 事故与制度档案（墓碑法/ARCH-046/884 死信） | signal | 墓碑规程+演练制度的反例支撑 |
-| R5 | 方法裁定（状态机定形/月度节拍/SSOT 落位） | signal（裁定） | 五态+canary 作用域化+registry DB 裁定 |
+| R5 | 方法裁定（状态机定形/月度节拍/SSOT 落位） | signal（裁定） | 七态规范枚举+canary 作用域化+registry DB 裁定 |
 | R6 | 外部业界（EX-R1 部署策略/EX-R2 SR 11-7 观察期） | signal | 指标门精神+月度制与业界下限相容性 |
 | REUSE | V2-R1/迁移项⑥/L4 三查/L1 挂点 | signal（在档复用） | 零重复挖矿 |
 
@@ -254,3 +260,13 @@ EXEMPT-ZONE-FM 真实路径（R2 头注释）：前身=post-commit warn reconcil
    净删行=high human_gate 系 risk_tier 强制，AI 永远只提案。
 3. **CREATE-GUARD creation_token 补登**：本班硬边界"禁登记 token"，DESIGN.md 的
    creation_token 由主会话/Owner 补登。
+
+
+**验收标准补全（红蓝 R1-F4）**：S1 switch_registry=两版本同登记互斥生效；S2 判据 YAML=判据字段 sha256 锁定可验；S3 影子执行器=影子运行零写生产路径（隔离测试证明）；S4 状态机=七态迁移全覆盖+回切单命令可逆；S5 墓碑=退役件可查询+复活条件字段非空；S6 分流=三档路由与 risk_tier 九域映射零漏；S7 演练=回切演练留档含耗时与结果；S8 灰度=三档升级有留痕且可回退。
+
+---
+
+## 红蓝 R1 修复记录（2026-09-17，修复组 2）
+
+- **B3（状态机自称五态实为七枚举值）**：①全稿统一为**七态规范枚举** shadow/canary/promoted/champion/retired/tombstone/aborted，并给出清晰裁定：`promote`=一次性切换**动作**（事件）、`promoted`=动作后驻留**态**，分开命名、全稿拼写统一（改 §①-R5 台账行、§②-B 标题与裁定留痕、§②-B 状态表、S4 施工项、验收标准行、挖矿日志 R5，初稿 promote/retire 拼写漂移废止）。②**retired 与 tombstone 二段裁定**（不二选一、定义不重叠）：retired=已退役摘除消费、仍在复活观察窗内（registry status=retired，观察窗=1 个月度体检窗）；tombstone=观察期满正式封存（git tag+status=tombstone，§②-D 规程与 TTL 清理计时自此起算）。③状态表扩为"入边事件/进入判据/退出判据"四列，**七态每一态补齐入边事件**；aborted 此前在枚举里有值但无表行，已补行（入边=判据败/T5 未释疑/T1 结案/promoted 期回切不可退，出边=Owner 重开回 shadow）。
+- 连带核查：switch_registry 字段零变更（state 枚举本就七值，仅补注释）；L4/L5/L7 契约与 §②-D 墓碑规程不受影响；§②-G"promote=block 档"为动作语义，与裁定一致未改。

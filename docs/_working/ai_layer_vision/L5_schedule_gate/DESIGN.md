@@ -15,6 +15,11 @@ status: design_v1
 > 事：①门闸判定（成熟度/配额/算力三条件 AND）②胜者证据包→任务书自动套模板 ③派工编排
 > （优先级/分流/登记）。登记走既有生成器种子源扩展，闸走 E0 拉式既有函数，堵点走堵点本
 > 既有台账。**硬边界自守**：本轮只写 L5_schedule_gate/ 目录内文件，零代码。
+>
+> **考场边界声明（红蓝 R1，L4/L5 双稿同款）**：策略候选的考场止于 L4 证据包产出；转正/流转
+> 归业务层 S12-S14 与 Owner 拍板，AI 层不设第二转正门；交易算法专域不在 AI 层自动流转范围
+> ——L5 工单只承接 AI 层对象（模块/模型/工具/规则/门禁参数）的施工派工，策略候选胜出只
+> 产生"施工类工单"，不产生任何策略转正/上线动作。
 
 ---
 
@@ -25,7 +30,7 @@ status: design_v1
 | ① | 上游（谁喂 L5） | `L4_compare/DESIGN.md` §3：双路胜者输入已锁（库内=INTAKE_E2_HANDOFF 事件加 evidence_ref；库外=experiment 卡 verdict='win' 即门闸输入）；L4 §2.2 带星胜（win*）指令"L5 排产降优先级"；L4 §2.3 锁定机制①指名"L5 工单生成器机检 hash 缺失/不匹配=不许派工"；`L2_intake_library/DESIGN.md`：INTAKE_E2_HANDOFF 事件（payload {card_id, spec_ref, four_gates, labor_killed, domain_id}，"E2 具体排产属 L5 段"） | — | signal |
 | ② | 下游（谁吃 L5） | `L6_ab_switch/DESIGN.md`：L5→L6 契约已锁 {work_order_id, module_id, challenger_branch, criteria_yaml_ref+hash, domain, tier_action}，"工单关单+worktree 就绪+验收门绿=shadow 入场券"；主文档 §3.5 维护班领单/关单四闸；堵点本 `.runtime/audit/bottleneck_ledger.jsonl`（{ts,kind:'dead_letter',qid,session_id,reason,protocol:'专人专事'} 实档结构） | — | signal |
 | ③ | 算法机制（怎么闸/怎么排） | E0 真源 `scripts/backtest/compute_window_gate.py`：拉式闸门（check_gate() 纯函数+四理由码+fail-closed+四值词表 local/api/local_gpu/mixed，CONSTANT OPEN_BUFFER 09:00/CLOSE_BUFFER 15:30，exit 0/3/1）；belt_daemon `src/zephyr/gov_enforcement/rule_bridge/commit_belt_daemon.py`：watchdog 事件四件套（目录 file-created→0.5s 防抖→单例锁 PID+TTL 600s→bootstrap 排空，无常驻轮询）；`config/resource_profile_registry.yaml`+生成器 `scripts/governance/generators/generate_resource_profile_registry.py`：E0_CLASS_TO_RESOURCE 映射层、TRADING_SENSITIVE_CLASSES、幽灵池禁令、种子源 I3+`manual_lane_c_agentic_miner` AI 任务登记先例 | MLOps CT 触发器分类：schedule-based vs trigger-based 再训练排程（MLflow《Continuous Training in ML: A Practical MLOps Guide》mlflow.org/articles/what-is-continuous-training-ml/；Snowflake CT 页 snowflake.com/en/artificial-intelligence/machine-learning/mlops/continuous-training/——drift 触发+challenger 逐版治理；enhancedmlops.com 事件驱动再训练）。触发器思想收编为"胜者到达+资源释放"双事件源，schedule-based 排程被宪法"事件触发禁定时器"否定不收 | signal |
-| ④ | 后端（落哪个仓/什么件） | 工单库表=PG ai_intake 同实例新表（对标 L2 apply_ai_intake_ddl.py/L4 ai_comparison_experiment 母版，全经 `src/zephyr/infrastructure/database_service.py` 禁裸连接）；事件层=`src/zephyr/ai_layer/intake/events.py` 六要素母版（JSONL journal+KillSwitch 探针+毒丸+task_completed 唤醒）；登记数据面=`config/evolution_schedule_seeds.yaml`（新增种子文件，生成器新源 I7 消费）；policy 常量=对标 `config/comparison_policy.yaml`（L4 C1 同款治理锚定头） | — | signal |
+| ④ | 后端（落哪个仓/什么件） | 工单库表=PG 同实例**独立 schema `ai_scheduling`** 新表（与 L2 ai_intake schema 隔离，产线禁读界不破；对标 L2 apply_ai_intake_ddl.py/L4 ai_comparison_experiment 母版，全经 `src/zephyr/infrastructure/database_service.py` 禁裸连接）；事件层=`src/zephyr/ai_layer/intake/events.py` 六要素母版（JSONL journal+KillSwitch 探针+毒丸+task_completed 唤醒）；登记数据面=`config/evolution_schedule_seeds.yaml`（新增种子文件，生成器新源 I7 消费）；policy 常量=对标 `config/comparison_policy.yaml`（L4 C1 同款治理锚定头） | — | signal |
 | ⑤ | 前端（Owner 门位呈现） | `src/zephyr/frontend/dashboard/web/features/promotion/promotion.js` 拍板页先例（L4/L2 两稿同判：登记不施工归本段消费）；骨架级"一键确认"=拍板按钮+只读路由惯例（api_server.py） | — | signal（登记不施工） |
 | ⑥ | 数据字段（记什么） | 主文档附录 A 任务书 schema v0 十三字段；§3.4 配额自治调度四资源（子代理槽 2-3/LLM token/GPU 档/提交带宽）；risk_tier_registry.yaml（域→tier→human_gate，未列默认 low）；README §1.6 登记接口归属（AI 层运营轴）；registry 18 字段中 8 个可由工单自动推导 | — | signal |
 
@@ -38,11 +43,15 @@ status: design_v1
 
 ### 2.1 工单自动生成器（D-L5-02）
 
-**事件源（watchdog 事件驱动，belt_daemon 真实模式同款）**：胜者落库即 emit
+**事件源（红蓝 R1 裁定：events journal=唯一真源）**：胜者落库即 emit
 `evolution_winner_due` 事件（JSONL journal，intake/events.py 母版）→ 工单生成守护
-`order_daemon` 以 watchdog 目录事件驱动（winners/ 目录 file-created→0.5s 防抖合并→单例锁
-PID+TTL 600s+僵尸检测→生成后排空），**无常驻轮询无 cron**（belt_daemon M10 豁免先例同款）。
-守护非施工会话所有（专属消费者，对标 belt"不属于任何 AI 会话的常驻消费者"设计）。
+`order_daemon` 只消费 journal（尾随+last_read_offset 断点续读），**无常驻轮询无 cron**。
+**watchdog 双通道合并裁定**：watchdog 不再独立扫 winners/ 目录，降级为 journal 的
+**补偿读指针**——守护重启/漏事件时从 last_read_offset 起补放未消费事件（belt_daemon 的
+防抖/单例锁 PID+TTL 600s/僵尸检测机械照用，仅作用对象从目录改为 journal 文件）。
+裁定理由（一行）：目录扫描与 journal 双通道=双真源，必然产生消费竞态与重复生成工单，
+events.py 母版（journal+唤醒+毒丸）已足够承载，砍目录通道。守护非施工会话所有（专属
+消费者，对标 belt"不属于任何 AI 会话的常驻消费者"设计）。
 
 **字段映射表（胜者证据包→任务书附录 A schema v0）**：
 
@@ -94,9 +103,9 @@ experiment archived 事件重算，过线即自动转 pending——事件唤醒�
 | 验收段 | C4 双窗批测/DSR/门禁重放/训练 | local_gpu→cpu_heavy / GPU 推理→llm_api_local / CH 大重放→db_heavy / API 评分→api→llm_api_paid | 受闸四类（TRADING_SENSITIVE_CLASSES 逐字对齐）：开工瞬间拉式问闸；llm_api_paid 免 E0 但免不了配额（定调 #10） |
 
 **问闸方式=纯拉式（E0 INVARIANTS 同款）**：每段开工瞬间调一次
-`check_gate(purpose='evolution_<order_id>', compute_class=<段>)`，exit 3=拒→工单回 pending
-等下一窗事件（新 schedule 槽位 `evo_heavy_window_opener` 发 heavy_ok 窗开事件+复用
-DataScheduler task_completed 唤醒，**不轮询不 sleep-loop**）。
+`check_gate(purpose='evolution_<order_id>', compute_class=<段>)`，exit 3=拒→工单转
+**deferred**（§2.7），资源恢复事件重评回 pending（新 schedule 槽位 `evo_heavy_window_opener`
+发 heavy_ok 窗开事件+复用 DataScheduler task_completed 唤醒，**不轮询不 sleep-loop**）。
 
 **走排班登记接口的字段（README §1.6 ③使用=客户自助登记，AI 层运营轴供接口）**：登记=
 自动写种子文件 `config/evolution_schedule_seeds.yaml`（新源 I7）+ 触发生成器
@@ -154,9 +163,9 @@ pending 深度）；另 GPU 档走 registry exclusive_group 冲突闸（既有�
 
 | 超限 | 动作 |
 |------|------|
-| Q1 满 | 工单留 pending（门闸保持关），会话释放事件唤醒重评 |
+| Q1 满 | 工单转 deferred（门闸保持关），会话释放事件唤醒重评回 pending |
 | Q2 超 | 降单代理模式；任务确需多代理→拆单或 defer+堵点本 |
-| Q3 超 | model_tier 降档 strong→flash（**仅限施工段**；验收 reviewer 恒 strong）；仍超→defer 至次日窗+堵点本 |
+| Q3 超 | model_tier 降档 strong→flash（**仅限施工段**；验收 reviewer 恒 strong）；仍超→转 deferred 至次日窗+堵点本 |
 | Q4 积压 | 暂停新派工（在途工单照常），belt drain 事件唤醒 |
 | GPU 档冲突 | 验收段改排下一 heavy_ok 窗，exclusive_group 排队留痕 |
 
@@ -164,6 +173,20 @@ pending 深度）；另 GPU 档走 registry exclusive_group 冲突闸（既有�
 _ENV_ABORT_ESCALATE=3）。**T1 派工前置双预检**：①老组不动——champion 文件清单（depgraph
 反查）有活跃 claim/在途会话=hold（HELD-OVERLAP 不硬闯，宪法规则 3 同语义）；②KillSwitch
 探针（L2 events 同款，非 normal 全量保留停消费）。
+
+### 2.7 工单状态机（红蓝 R1-B10 补全：defer 补态、dead 补进入判据）
+
+**状态枚举**（C2 CHECK 同步）：`pending / held_maturity / held_incomplete / dispatched / deferred / done / dead`
+
+| 态 | 入边事件 | 退出（→向） |
+|----|---------|------------|
+| pending | 胜者到达生成工单（order_created_due）；held 挂起解除/deferred 重评过线 | 派工→dispatched；缺字段→held_incomplete；成熟度不过→held_maturity |
+| held_maturity | M1-M4 门闸任一不过（§2.2） | 区域新 experiment archived 事件重算过线→pending |
+| held_incomplete | 必填机检缺失（§2.1） | 补齐回执→pending；超期→堵点本 |
+| dispatched | 派工指令（order_dispatch_due，Q1-Q4 配额+E0 双预检过） | 关单四闸全过→done；施工失败/资源中断回执→deferred |
+| **deferred**（红蓝 R1 补态） | 进入=**配额不足（Q1-Q4 任一超限）或算力窗关闭（E0 exit 3）**——此前 defer 只有 order_deferred_due 事件无对应态，就此补齐 | 退出=**资源恢复事件**（会话释放/heavy_ok 窗开/belt drain 唤醒）重评→pending；同一工单连续 3 次 defer→堵点本 CRITICAL（§2.6） |
+| done | 关单四闸全过（own-scope/gate 绿/回归绿/独立复核） | 终态：发 L6 shadow 入场券 |
+| **dead**（红蓝 R1 补进入判据） | 进入判据=**连续 N 次派工失败**，或**任务书机检连续三次不过**（N 初值 3，设计定值非实测标定——**进 OBJ_R 阈值盘点**，首轮运行数据回来后按 OBJ_R 流水线提案修订） | 终态：归档留审计不删；复活仅 Owner 手递重开（新 order_id，旧单不复活） |
 
 ---
 
@@ -185,9 +208,9 @@ _ENV_ABORT_ESCALATE=3）。**T1 派工前置双预检**：①老组不动——c
 | # | 项 | 文件（新增/修改） | 验收标准 |
 |---|-----|------------------|---------|
 | C1 | policy 常量文件 | `config/schedule_gate_policy.yaml`（新增，治理锚定头+OBJ_R 管辖声明） | 全常数齐（M1-M4/优势分桶/降级线/配额上限/首批白名单区）；Owner 点头记录位 |
-| C2 | 工单库表 | ai_intake 同实例 PG 新表 `ai_work_order`+DDL 登记器 `scripts/ai_layer/apply_ai_layer_scheduling_ddl.py`（L2 母版同模式） | 全经 DatabaseService；TIMESTAMPTZ；状态机 CHECK（pending/held_maturity/held_incomplete/dispatched/done/dead）；append-only 审计字段 |
+| C2 | 工单库表 | PG 同实例独立 schema `ai_scheduling` 新表 `ai_work_order`+DDL 登记器 `scripts/ai_layer/apply_ai_layer_scheduling_ddl.py`（L2 母版同模式；与 L2 ai_intake schema 隔离，产线禁读界不破） | 全经 DatabaseService；TIMESTAMPTZ；状态机 CHECK（pending/held_maturity/held_incomplete/dispatched/deferred/done/dead，迁移判据=§2.7）；append-only 审计字段 |
 | C3 | 事件层 | `src/zephyr/ai_layer/scheduling/events.py`（对齐 intake/events.py 六要素） | 5 个轻 kind（evolution_winner_due/order_created_due/order_confirmed_due/order_dispatch_due/order_deferred_due）；KillSwitch 探针；毒丸；零定时器 |
-| C4 | 工单生成守护 | `src/zephyr/ai_layer/scheduling/order_daemon.py`（belt_daemon 模式：目录事件→0.5s 防抖→单例锁 PID+TTL 600s） | §2.1 映射表全实现；criteria_hash 机检缺失/不匹配拒派；必填机检 held_incomplete |
+| C4 | 工单生成守护 | `src/zephyr/ai_layer/scheduling/order_daemon.py`（journal 唯一真源：尾随+last_read_offset 断点续读；belt_daemon 防抖/单例锁 PID+TTL 600s 机械仅作 journal 补偿读指针，§2.1 裁定不扫目录） | §2.1 映射表全实现；criteria_hash 机检缺失/不匹配拒派；必填机检 held_incomplete |
 | C5 | 成熟度门闸 | scheduling/maturity.py | M1-M4 可配置读 policy；新鲜度衰减；区域聚合 SQL 正确；held_maturity 自动转正留痕 |
 | C6 | 分流器 | scheduling/router.py | R1-R3 三证据机检；骨架级必置 owner_gate=true；自指命中必 Owner 有测试 |
 | C7 | 排产调度器 | scheduling/dispatcher.py | 两问打分+防饥饿+四读数+check_gate 拉式调用+老组 claim 预检；exit 3 回队不轮询；降级梯度全留痕 |
@@ -247,3 +270,13 @@ promotion 页），一样是常量文件（policy）；②过度工程检查：�
 | 日期 | 版本 | 变更 |
 |------|------|------|
 | 2026-09-17 | design_v1 | 初稿：六向台账（8 signal/1 首轮 429 后成功）+两级门闸（T0 成熟度 M1-M4/T1 资源四读数）+工单分段算力归类+种子文件登记接口+三证据分流器+两问打分法+五契约接线+10 施工项+4 待 Owner |
+
+---
+
+## 红蓝 R1 修复记录（2026-09-17，修复组 2）
+
+- **B9（工单库表落"ai_intake 同实例"未指 schema，违 L2 §2.1 产线禁读界）**：工单库表改落 PG 同实例**独立 schema `ai_scheduling`**（表=`ai_scheduling.ai_work_order`），两处同步（§1 台账④行、C2 施工项），均加"与 L2 ai_intake schema 隔离，产线禁读界不破"；仍同 PG 实例、全经 DatabaseService、禁裸连接。
+- **B10 附带一（defer 有事件无态、dead 无进入判据）**：新增 §2.7 工单状态机——**deferred 补态**（进入=配额不足 Q1-Q4 超限/算力窗关闭 E0 exit 3；退出=资源恢复事件重评回 pending，连续 3 次 defer 仍走堵点本 CRITICAL），**dead 补进入判据**（连续 N 次派工失败，或任务书机检连续三次不过；N 初值 3，标注"进 OBJ_R 阈值盘点"）；C2 CHECK 枚举补 deferred；§2.3/§2.6 的 defer 措辞与 §2.7 对齐（exit 3/Q1 满/Q3 超一律转 deferred）。
+- **B10 附带二（目录 watchdog 与 events journal 双通道过度工程）**：裁定合并——**events journal=唯一真源**，watchdog 降级为 journal 的补偿读指针（last_read_offset 断点续读，不再独立扫描 winners/ 目录；belt_daemon 防抖/单例锁机械照用、作用对象改为 journal 文件）。裁定理由一行：双通道=双真源，必然产生消费竞态与重复生成工单，events.py 母版已足够承载；§2.1 与 C4 同步改写。
+- **第 7 项（跨稿边界声明，L4+L5 同款）**：稿首新增"考场边界声明"——策略候选的考场止于 L4 证据包产出；转正/流转归业务层 S12-S14 与 Owner 拍板，AI 层不设第二转正门；交易算法专域不在 AI 层自动流转范围。
+- 连带核查：order_deferred_due 事件 kind（C3）与 deferred 态同名对齐零冲突；L6 关单契约载荷零变更；堵点本/配额降级梯度表语义不变，仅挂起态名归一。

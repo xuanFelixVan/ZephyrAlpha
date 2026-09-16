@@ -9,9 +9,10 @@ status: active
 
 # AI 层进化引擎——骨架总览与挖矿导航
 
-> **一句话**：本目录是第三层（AI 层）的骨架工地。三层定义与进化循环的**验证挖矿已完成**
-> （V0/V1/V2 三份报告），七段骨架卡已立（L1-L7，待逐段深挖）。主文档=
-> [ai_layer_vision_and_roadmap_v1.md](ai_layer_vision_and_roadmap_v1.md)（v1.1，含核心定调十二条）。
+> **一句话**：本目录是第三层（AI 层）的骨架工地。验证挖矿（V0/V1/V2 三份报告）与七段逐段
+> 深挖全部完成：L1-L7 段卡+OBJ_M/T/S/R 四条对象线均 **design_done**（各 DESIGN.md 为真源）。
+> 主文档=[ai_layer_vision_and_roadmap_v1.md](ai_layer_vision_and_roadmap_v1.md)
+> （v2.0 active，定调十三条，Owner 2026-09-17 夜全批；文件名沿用 v1 防断链）。
 
 ## 0. 验证结论速览（详见三份 V 报告）
 
@@ -19,9 +20,9 @@ status: active
 |--------|------|-----------|
 | V0 大层定义（不犯错/赚钱/进化） | ✅ 站得住，两条精化 | 治理/业务=IIA 三线模型的一线与二三线合并；AI 层=进化=业界前沿同名能力（AlphaEvolve/DGM） |
 | V1 三层划分 | ✅ 站得住，一条定位精化 | AI 层=平台型横切引擎（组织独立、运行时咬合）=把 MLOps Level 2 的自动化对象从模型扩到整个系统 |
-| V2 六段完备性 | ⚡ 建议升级**六段→七段一常数** | 搜索→感知（外扫+内监）、新增传承段（回流闭环）、新增目标常数（"更好"的真源不参与自迭代） |
+| V2 六段完备性 | ✅ 已升级**六段→七段一常数**（Owner 夜批采纳） | 搜索→感知（外扫+内监）、新增传承段（回流闭环）、新增目标常数（"更好"的真源不参与自迭代） |
 
-## 1. 进化循环骨架（七段一常数，v2.0 提案，待 Owner 点头后定稿）
+## 1. 进化循环骨架（七段一常数，Owner 2026-09-17 夜批定稿）
 
 ```
                     ┌─────────────────────────────────────────────┐
@@ -104,31 +105,116 @@ AI 层自己的尺子升级=OBJ_R（标准与规则线）。
 
 | 路径 | 内容 | 状态 |
 |------|------|------|
-| `ai_layer_vision_and_roadmap_v1.md` | 主文档（v1.1：五节研讨+定调十二条） | 待 Owner 对十二条点头 → v2.0 重构 |
-| `V0_layer_definition/` | 挖矿① 大层定义验证报告 | ✅ 本班完成 |
-| `V1_three_layer_split/` | 挖矿② 三层划分验证报告 | ✅ 本班完成 |
-| `V2_evolution_loop/` | 挖矿③ 六段完备性→七段一常数提案 | ✅ 本班完成 |
-| `L1_perceive/` | 感知段骨架卡 | 壳（待逐段深挖） |
-| `L2_intake_library/` | 收集段骨架卡 | 壳 |
-| `L3_cleaning/` | 清洗段骨架卡 | 壳 |
-| `L4_compare/` | 对比段骨架卡 | 壳 |
-| `L5_schedule_gate/` | 排产段骨架卡 | 壳 |
-| `L6_ab_switch/` | 切换段骨架卡 | 壳 |
-| `L7_heredity/` | 传承段骨架卡（增补提案） | 壳（段位本身待 Owner 点头） |
-| `OBJ_M_models/` | 模型对象线（API+本地模型升级/考试/切换/预算分析） | 壳（2026-09-17 三轮新增） |
-| `OBJ_T_tools/` | 工具对象线（AI 的手眼脚升级） | 壳（2026-09-17 三轮新增） |
-| `OBJ_S_perimeter/` | 红线与自由域（最大自由原则/删除分级/付费独占） | 壳（2026-09-17 三轮新增） |
-| `OBJ_R_rules_standards/` | 标准与规则线（AI 层尺子升级流水线：提案→立案→修标→重考历史） | 壳（2026-09-17 四轮新增） |
+| `ai_layer_vision_and_roadmap_v1.md` | 主文档（v2.0：定调十三条+七段一常数+三轴一具+排班归属；文件名沿用 v1 防断链） | v2.0 active（Owner 2026-09-17 夜全批） |
+| `V0_layer_definition/` | 挖矿① 大层定义验证报告 | ✅ done |
+| `V1_three_layer_split/` | 挖矿② 三层划分验证报告 | ✅ done |
+| `V2_evolution_loop/` | 挖矿③ 六段完备性→七段一常数提案 | ✅ done |
+| `L1_perceive/` | 感知段骨架卡 | design_done（DESIGN.md 真源） |
+| `L2_intake_library/` | 收集段骨架卡 | design_done（DESIGN.md 真源） |
+| `L3_cleaning/` | 清洗段骨架卡 | design_done（DESIGN.md 真源） |
+| `L4_compare/` | 对比段骨架卡 | design_done（DESIGN.md 真源） |
+| `L5_schedule_gate/` | 排产段骨架卡 | design_done（DESIGN.md 真源） |
+| `L6_ab_switch/` | 切换段骨架卡 | design_done（DESIGN.md 真源） |
+| `L7_heredity/` | 传承段骨架卡（增补段） | design_done（DESIGN.md 真源） |
+| `OBJ_M_models/` | 模型对象线（API+本地模型升级/考试/切换/预算分析） | design_done（DESIGN.md 真源） |
+| `OBJ_T_tools/` | 工具对象线（AI 的手眼脚升级） | design_done（DESIGN.md 真源） |
+| `OBJ_S_perimeter/` | 红线与自由域（最大自由原则/删除分级/付费独占） | design_done（DESIGN.md 真源） |
+| `OBJ_R_rules_standards/` | 标准与规则线（AI 层尺子升级流水线：提案→立案→修标→重考历史） | design_done（DESIGN.md 真源） |
 
-## 3. 后续挖矿序列（每段深挖走挖矿 SOP 六向寻路）
+## 3. 真源登记与净零批次（红蓝 R1-F1/F2/F5 收敛，2026-09-17）
 
-1. **已完**：V0 大层定义 → V1 三层划分 → V2 循环段位（本班，从大到小三步验证，Owner 要求的顺序）。
-2. **下一班**：七段逐段深挖（每段一个子文件夹一轮挖矿，产出该段的真源设计稿）；
-   建议顺序=L2 收集库（其他段的枢纽）→ L1 感知（源头）→ L4 对比（咽喉）→ L6 切换（安全带）
-   → L3 清洗 → L5 排产 → L7 传承。
-3. **并行**：主文档 v2.0 重构（待 Owner 对"七段一常数"+定调十二条点头）。
+红队 R1 指认：各 DESIGN 新提议的 YAML 真源未挂 ROOR、未声明净零。统一裁定：**施工开单前
+必须完成 ROOR 挂接登记+净零声明**（宪法 §4 净零纪律）。批次清单：
 
-## 4. 挖矿日志汇总（本班三轮验证，明细见各 V 报告）
+| 新真源 | ROOR 挂接 | 净零声明（替代/吸收什么） |
+|--------|-----------|-------------------------|
+| config/ai_source_registry.yaml（L1） | 数据源族 | 吸收各班散落搜索源笔记+2026-09-13 甄别轮清单 |
+| L4 comparison_policy.yaml | 治理族 | 吸收各稿分散显著性判据口述 |
+| L5 evolution_schedule_seeds.yaml | 排班族（resource_profile_registry 生成器新源 I7） | 吸收进化任务散落排班需求（不建第二张排班表） |
+| L6 switch_criteria.yaml | 治理族 | 主文档 §五 判据的工程化（同一真源非新增） |
+| L7 heritage_policy.yaml | 治理族 | 吸收记忆目录坑集的机读化（人读副本保留不删） |
+| OBJ_M model_intel_sources / model_scoring_policy / dual_run_criteria / model_routing_policy | 模型族 | 吸收挖矿 SOP 模型分派二维法（升级为数据驱动）+计费线口头约定成文 |
+| OBJ_T tool_inventory / tool_exam_policy / tool_model_pairing_policy | 工具族 | 吸收 capability_cards 静态盘点（生成器替代手维护） |
+| OBJ_S obj_s_degradation.yaml | 治理族 | 吸收 resource_optimization.yaml 阈值先例的降档语义（不重复建阈值） |
+
+**裁定登记前置（T3 双前置，红蓝 R2 改判）**：L1 施工项 7（外扫节拍宿主）开工前，"外扫=日历
+节拍+E0 实闸"属放宽宪法 §9.3 射程的 T3 语义级解释，按 OBJ_R"放松永不自动"自律须 **Owner 追认+
+裁定登记双前置**（追认后按 RULE-RULING 原子补进 ruling_registry，详见 L1 DESIGN 修复注记）；
+双前置齐前施工项 7 禁开工，其余施工项不受阻。
+**宪法挂接批次**：.runtime/ai_layer/perceive/search_orders/ 与 .runtime/ai_intake/ 两新路径
+按 .runtime/strategy_pipeline 先例镜像，列入下次宪法等长替换批次（§9.4 落点枚举增补）。
+**数值类待 Owner 项追认**：OBJ_R #1/#3/#4、L4 #1、L5 #1、OBJ_S #1 等数值初值按 Owner 夜批
+授权追认提案原值生效（红蓝 R2 复核）；治理立案类（OBJ_R #2/#5/#6、L4 gate 立案、L5 白名单
+等）保留待治理流程，不越权。逐条全量对账见 §3.5 处置总表。
+
+## 3.5 待 Owner 项处置总表（红蓝 R1 修复新增，2026-09-17）
+
+> 全目录 10 份稿件 DESIGN.md"待 Owner"节汇总对账：**31 项**（红队 B 计数核验一致）。
+> 三态处置：**已销**=Owner 2026-09-17 夜批授权下自裁追认（红蓝 R2 复核，§3 既有记录的全量
+> 展开）；**治理立案保留**=真需 OBJ_R 四步流水线/治理流程，不越权；**真待 Owner**=唯 Owner
+> 可解（资金/门位/跨稿契约/主文档附录级变更）。
+
+### 已销项（16 项，夜批自裁追认）
+
+| 编号 | 稿件 | 事项 | 处置 |
+|------|------|------|------|
+| OBJ_R-#1 | OBJ_R_rules_standards | 重放通过判据数值预注册（P1 放走=0/P2 ≤2%/P3 Jaccard 0.98·0.95） | 按提案原值追认生效；首轮数据后走 OBJ_R 提案修订 |
+| OBJ_R-#3 | OBJ_R_rules_standards | 重放 summary promote 落点目录 | 自裁 `docs/_working/ai_layer_vision/OBJ_R_rules_standards/replays/`（ttl task_bound） |
+| OBJ_R-#4 | OBJ_R_rules_standards | 首案 CASE-2026-0917-001 死因细节补登 | 按本卡记录登记销项 |
+| OBJ_R-#7 | OBJ_R_rules_standards | creation_token 补登 | 主会话 wave1 ceremony 已登记（capability ai_layer_vision） |
+| L2-#1 | L2_intake_library | 机制族 8 族词表+40 格初始网格 | 自裁生效追认；Owner 口味修正走字典数据（数据操作非结构变更） |
+| L3-#1 | L3_cleaning | 清洗考尺初值（cleaning_policy.yaml 全部常数） | 按提案原值追认生效 |
+| L3-#2 | L3_cleaning | creation_token 补登 | 夜批追认补登（token ×5 之一） |
+| L4-#1 | L4_compare | 判据常量初值（触发线 G1-G5/α/效应量门槛/锦标赛 K） | 按提案原值追认生效 |
+| L4-#4 | L4_compare | creation_token 补登 | 同上（token ×5 之二） |
+| L5-#1 | L5_schedule_gate | policy 常量初值（M1-M4/分桶线/降级线/配额上限） | 按提案原值追认生效 |
+| L5-#4 | L5_schedule_gate | creation_token 补登 | 同上（token ×5 之三） |
+| L6-#1 | L6_ab_switch | 观察期数值门槛（min_months/T2 分歧率 5%/T3 +20%/T4 +15%） | 按提案原值追认生效；首轮数据后 OBJ_R 修订 |
+| L6-#3 | L6_ab_switch | CREATE-GUARD creation_token 补登 | 同上（token ×5 之四） |
+| L7-#1 | L7_heredity | heritage_policy 数值初值（遗忘/防近亲繁殖参数） | 按提案原值追认生效 |
+| L7-#3 | L7_heredity | creation_token 补登 | 同上（token ×5 之五） |
+| OBJ_S-#1 | OBJ_S_perimeter | 双指标软/硬线数值（金额+回撤百分比） | 按提案原值追认生效；OBJ_M 首月数据后 OBJ_R 定标 |
+
+### 治理立案保留（9 项，真需流程）
+
+| 编号 | 稿件 | 事项 | 去向 |
+|------|------|------|------|
+| OBJ_R-#2 | OBJ_R_rules_standards | 评分裁定追认（Jaccard 主判据/Kendall tau 否决理由） | 治理立案 |
+| OBJ_R-#5 | OBJ_R_rules_standards | S3 阈值外置化是否立案（触及 gate 源码=治理层资产） | 治理立案 |
+| OBJ_R-#6 | OBJ_R_rules_standards | 案例库升格 catalogs 正式注册表时机 | 治理立案（攒案门槛） |
+| L4-#2 | L4_compare | 独立性 gate 立案准许（判据保护 gate+criteria_ref 机检） | OBJ_R 四步立案（C7） |
+| L5-#2 | L5_schedule_gate | 首批区域白名单点头 | policy 文件 Owner 区登记（治理流程；自治满一季可提案退役） |
+| L7-#2 | L7_heredity | defect_pattern_checklist 增量登记纪律增补 | 治理域 policy 修订流程 |
+| OBJ_M-#2 | OBJ_M_models | M3 考纲正式化（尺子归治理层） | OBJ_R 四步流水线 |
+| OBJ_T-#1 | OBJ_T_tools | 考纲正式化（tool_exam_policy+基准任务集） | OBJ_R 四步流水线 |
+| OBJ_T-#2 | OBJ_T_tools | 沙箱边界细则+删除双闸 gate 立案准许 | Owner 对方案点头后治理立案 |
+
+### 真待 Owner（6 项）
+
+| 编号 | 稿件 | 事项 | 为何唯 Owner |
+|------|------|------|-------------|
+| OBJ_M-#1 | OBJ_M_models | M4 路由表 api_providers 增删+免费窗合规终批（8 条 AI 层轨映射，C6 施工前置） | 计费线/订阅=Owner 独占四类事③② |
+| OBJ_S-#2 | OBJ_S_perimeter | secret_registry.yaml 是否增设 `ai_exposure: forbidden` 字段 | registry 修改=Owner 门位（不增设则 S1 deny-list 为唯一机检面，功能等价） |
+| L4-#3 | L4_compare | 两条增补边跨稿对齐（`intake_exam_due`+`intake_e2_handoff` 增 evidence_ref；L2 已 design_done） | 跨稿契约变更，需 Owner 确认或 L2 侧修订 |
+| L5-#3 | L5_schedule_gate | 任务书 schema v0 增补 provenance 字段（附录 A 版本化变更） | 主文档附录级变更，设计两可 Owner 定向 |
+| L6-#2 | L6_ab_switch | 墓碑 TTL 清理判据+注册表净删门确认 | 净删=high human_gate（宪法 §5），AI 永远只提案 |
+| OBJ_T-#3 | OBJ_T_tools | creation_token 补登（OBJ_T/DESIGN.md，×5 批次外） | 主会话/Owner 补登动作，登记留痕待办 |
+
+**对账**：已销 16+治理立案保留 9+真待 Owner 6=**31**，与红队 B 计数一致。分稿核验：
+L2 共 1（销 1）｜L3 共 2（销 2）｜L4 共 4（销 2/立案 1/待 1）｜L5 共 4（销 2/立案 1/待 1）｜
+L6 共 3（销 2/待 1）｜L7 共 3（销 2/立案 1）｜OBJ_M 共 2（立案 1/待 1）｜OBJ_T 共 3（立案 2/待 1）｜
+OBJ_R 共 7（销 4/立案 3）｜OBJ_S 共 2（销 1/待 1）。
+
+## 4. 后续挖矿序列（每段深挖走挖矿 SOP 六向寻路）
+
+1. **已完**：V0 大层定义 → V1 三层划分 → V2 循环段位（从大到小三步验证，Owner 要求的顺序）。
+2. **已完**：七段逐段深挖+四条对象线（建议顺序=L2 收集库（其他段的枢纽）→ L1 感知（源头）
+   → L4 对比（咽喉）→ L6 切换（安全带）→ L3 清洗 → L5 排产 → L7 传承，OBJ_M/T/S/R 同批），
+   各段 DESIGN.md=工程真源。
+3. **当前**：主文档已升 v2.0 active（Owner 2026-09-17 夜全批）；下一步=各稿施工项按
+   construction_workflow 15 步闭环开单施工（L1 施工项 7 受 T3 双前置约束，见 §3）。
+
+## 5. 挖矿日志汇总（本班验证轮次明细，V 报告+各 DESIGN 挖矿日志为全量真源）
 
 | 轮次 | 矿脉 | 判定 | 关键产出 |
 |------|------|------|---------|
@@ -147,3 +233,16 @@ AI 层自己的尺子升级=OBJ_R（标准与规则线）。
 | BIZ-R1 | 业务层骨架并轨 | signal（跨会话同步） | automation 目录 2a11b881：四轴+底板/标准库四步/生命周期轴/骨锁肉动 |
 | BIZ-R2 | 排班表归属 | signal（内部推理） | 共享资源全机单点（GPU/CH 锁/并发槽/API 配额）→一张真源治理层资产，两层为客户 |
 | 多轮 | 搜索服务 429 风暴 | 受阻 | 按挖矿 SOP 60-130s 单发间隔重试，全部轮次最终成功；记档不判查无 |
+
+---
+
+## 红蓝 R1 修复记录（红队 B 发现，修复组 3，2026-09-17）
+
+1. **B①（L1+README）**：L1 §2.4"外扫=日历节拍"升格 T3 处置——开工前置由"自裁补进
+   ruling_registry"改为 **Owner 追认+裁定登记双前置**（按 OBJ_R"放松永不自动"自律）；
+   §3 裁定登记前置行同步改写，追认前施工项 7 禁开工、其余施工项不受阻。
+2. **B②**：§2 目录结构表全量刷新（L1-L7/OBJ_M-T-S-R 统一 design_done（DESIGN.md 真源），
+   V0-V2=done，主文档行=v2.0 active）；头部一句话、§0 速览"建议升级"、§4"待 Owner 点头"
+   等框架类陈旧措辞清除（Owner 已夜批）；真实治理立案类措辞保留。
+3. **B③**：新增 §3.5 待 Owner 项处置总表（全目录 31 项对账：已销 16/治理立案保留 9/真待
+   Owner 6，含 token 补登×5 与数值初值追认逐条编号）。

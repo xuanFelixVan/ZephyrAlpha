@@ -22,7 +22,8 @@ status: active
 >
 > **配套骨架工地**：[README.md](README.md)（七段一常数图+三轴+并轨裁定）+
 > L1-L7 段位 DESIGN.md 真源设计稿 + OBJ_M/T/S/R 对象线 DESIGN.md——本文是愿景与定调真源，
-> 逐段工程细节以各 DESIGN.md 为准。
+> 逐段工程细节以各 DESIGN.md 为准。本文件名沿用 ai_layer_vision_and_roadmap_v1.md
+> （历史命名不改名防断链），内容= v2.0 真源。
 
 ## 0. 三层架构定案（V0/V1 挖矿已验证，对标证据见 V0/V1 报告）
 
@@ -76,13 +77,13 @@ status: active
 
 | 段 | 卡 | 状态 |
 |----|----|------|
-| L1 感知（外扫+内监） | L1_perceive/ | 挖干中→design_done |
-| L2 收集（原材料库） | L2_intake_library/ | design_done（施工 9 项） |
-| L3 清洗 | L3_cleaning/ | 挖干中 |
-| L4 对比 | L4_compare/ | 挖干中 |
-| L5 排产（门闸） | L5_schedule_gate/ | 挖干中 |
-| L6 切换（A/B 蓝绿） | L6_ab_switch/ | 挖干中 |
-| L7 传承（回流） | L7_heredity/ | 挖干中 |
+| L1 感知（外扫+内监） | L1_perceive/ | design_done（DESIGN.md 真源） |
+| L2 收集（原材料库） | L2_intake_library/ | design_done（DESIGN.md 真源） |
+| L3 清洗 | L3_cleaning/ | design_done（DESIGN.md 真源） |
+| L4 对比 | L4_compare/ | design_done（DESIGN.md 真源） |
+| L5 排产（门闸） | L5_schedule_gate/ | design_done（DESIGN.md 真源） |
+| L6 切换（A/B 蓝绿） | L6_ab_switch/ | design_done（DESIGN.md 真源） |
+| L7 传承（回流） | L7_heredity/ | design_done（DESIGN.md 真源） |
 
 **v1.0 §一（找策略闭环）迁移说明**：该节的源注册表/三层漏斗/防灌水五闸已升格为 L1/L2/L3
 段的工程设计（防灌水五闸进 L2 入库闸与 KPI，投毒防御进 L3）；"找策略"用途本身标注迁移至
@@ -231,3 +232,4 @@ Chess 2003）/Google MLOps 成熟度/Champion-Challenger（FICO/DataRobot）/MAP
 | 2026-09-17 | 1.0.0 | 初稿：五节研讨+路线图三阶段+四附录 | Owner 审定中 |
 | 2026-09-17 | 1.1.0 | 增补二轮定调：AI 层终局重铸=自我进化引擎（六段循环）+定调十二条 | Owner 审定中 |
 | 2026-09-17 | 2.0.0 | 全文重构定稿：三层更名定案（治理/业务/AI）+定调十三条（新增最大自由原则）+七段一常数引擎轴+对象轴四家族（OBJ_M/T/R 新增）+运营轴+排班归属三段裁定+找策略迁移业务层+状态升 active；逐段工程真源移交各 DESIGN.md | **Owner 2026-09-17 夜全批** |
+| 2026-09-17 | 2.0.1 | 红蓝 R1 修复（F1-F5+B1-B14 收敛：净零批次/验收补全/状态机规范化/边界声明/过度工程五项处置/待 Owner 处置总表） | 修复组 3（Owner 夜批授权框架内，红蓝 R2 复核） |

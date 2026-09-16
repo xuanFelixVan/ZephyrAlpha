@@ -27,7 +27,7 @@ status: design_v1
 | ③ | 算法机制（怎么考/怎么比） | L4 §2.4 已把"工具基准（5-10 题）"定为 **Tier B 有限样本档**（效应量+区间+未决不硬判，禁硬套 p 值）；L4 §2.5 G3（工具 too-good 触发线=100% 全对且含陷阱题）；挖矿 SOP §5 四闸+受阻纪律；MCP 蓝图 R89（tools/list vs 契约 100% 一致性=现成判据）+B308/B311（tool description 注入/rug-pull=沙箱审查项） | τ-bench（Sierra，arXiv 2406.12045，2024，pass^k 一致性指标+判据机检思想）；MCPMark（eval-sys/mcpmark，arXiv 2509.24002，ICLR 2026，127 任务 CRUD+隔离容器+状态终态判据）——考法参照不整卷照搬 | signal |
 | ④ | 后端（落哪个仓/什么件） | `config/mcp.json`（Gateway+servers：tool_count/safety_level/rate_limit 现成字段）；`src/zephyr/integration/mcp/tool-contracts.yaml`（契约 SSoT v1.2.0，L/M/H 三级）；`data/capability_cards/` 33 件技能域卡（盘点索引起点）；`config/resource_profile_registry.yaml`（排班 v1：pool 词表/peak_mem_gb/exclusive_group，生成器再生禁手改）——工具画像挂排班库的落点 | — | signal |
 | ⑤ | 前端（呈现） | 无独立呈现件需求——工具盘点/配对结论归 OBJ_M 预算页与 L4 裁定卡呈现（复刻 S13 promotion 先例），OBJ_T 本轮不新增前端（登记不施工） | — | signal |
-| ⑥ | 数据字段（记什么） | 使用频率数据源：`.runtime/audit/gate_execution_stats.jsonl`（gate 触发计数先例）+MOD-INF-015 telemetry_server（遥测在库）+`data/failures/*.json`（alerter ERROR+ 落盘=故障率主源）+`.runtime/audit/commit_block_events.jsonl`；缺口：多数非 MCP 工具无自动计量（诚实兜底=manual_v0 标注，施工项 C2 补计量） | 基准可靠性警示：业界基准审计博客（moogician.github.io 2026，"How We Broke Top AI Agent Benchmarks"）曝 SWE-bench/WebArena/OSWorld 判据缺陷——支持本卡"考卷版本化+判据冻结+陷阱题"三防 | signal |
+| ⑥ | 数据字段（记什么） | 使用频率数据源：`.runtime/audit/gate_execution_stats.jsonl`（gate 触发计数先例）+MOD-INF-015 telemetry_server（遥测在库）+`data/failures/*.json`（alerter ERROR+ 落盘=故障率主源）+`.runtime/audit/commit_block_events.jsonl`；缺口：多数非 MCP 工具无自动计量（诚实兜底=manual_v0 标注，施工项 C2 补计量） | 基准可靠性警示：业界基准审计博客（moogician.github.io/blog/2026/trustworthy-benchmarks-cont/（2026，How We Broke Top AI Agent Benchmarks））曝 SWE-bench/WebArena/OSWorld 判据缺陷——支持本卡"考卷版本化+判据冻结+陷阱题"三防 | signal |
 
 **受阻记录**：零整向受阻。429 风波 2 起：awesome-mcp-servers 矿脉 429×7（跨三次调用）后
 第 8 次成功——退避纪律执行偏差（未足时等待即重试）如实自记警戒一格，未编引文；浏览器基准
@@ -200,6 +200,12 @@ pairing_record: {tool_id, model_id, task_ref, success_rate, cost_usd_unit}   # �
 - **裁定 D-T-03**：配对结论**只写 tool_affinity 参考字段，不直接改 preferred_model/preferred_tier**——
   路由主判据仍是任务定档+同档最便宜（OBJ_M D-M2-03）；tool_affinity 作平手 tie-breaker 与
   证据链。理由：防"为工具迁模型"越权改路由（路由=模型线主权，工具线只供证词）。
+- **裁定 D-T-06（红蓝 R1-B13：9 格矩阵挂起排期）**：9 格配对矩阵**暂无主判消费方**
+  （tool_affinity 仅 tie-breaker 证词，路由主判据不消费 9 格数据），v0 **只保留格定义不施工**
+  ——解锁条件=**OBJ_M 路由表 v0 上线且双跑数据 ≥1 窗**；解锁后按 OBJ_R 流水线提案排期，
+  本条已登记进本稿挂起清单（§9.4）。解锁前 C6 不派工；§5 执行节奏三个触发器（新模型入职/
+  新工具转正/季度常巡）与 §7 接线图 OBJ_M 行的 9 格配对部分一并顺延（T2 基准集/T3 进货流/
+  T5/T6 不受影响，照常施工）。
 
 ---
 
@@ -250,13 +256,14 @@ pairing_record: {tool_id, model_id, task_ref, success_rate, cost_usd_unit}   # �
 | C3 | T2 考卷落盘 | `OBJ_T_tools/tool_benchmark_suite_v0.yaml`（21 题+陷阱题标记+seed）+`config/tool_exam_policy.yaml`（判据常量：+10pp 门槛/时长上限/Tier B 规则） | 判据全部可执行；task_suite_version+sha256 登记（L4 公平性机检消费）；常量带治理锚定头 |
 | C4 | T2 考试执行接线 | venue_tool_bench 适配器（L4 C4 清单内，OBJ_T 供考卷 schema 对齐验收） | 零复制考尺逻辑；调不到考卷=fail-closed 拒考；产出 L4 格式证据包 |
 | C5 | T3 沙箱规程 | sandbox profile（隔离 venv/容器+禁写清单）+试用档案卡模板 | 注入 probe 必跑；试用工具默认禁用；源 1 Registry API 连通核验销账；密钥零发放有测试 |
-| C6 | T4 配对常量 | `config/tool_model_pairing_policy.yaml`（9 格矩阵+节奏触发器） | 矩阵定义齐；触发器=事件（入职/转正）+季度常巡进周历；结论只写 tool_affinity（D-T-03 机检） |
+| C6 | T4 配对常量（**挂起**，§9.4 H1：解锁前不派工） | `config/tool_model_pairing_policy.yaml`（9 格矩阵+节奏触发器） | 矩阵定义齐；触发器=事件（入职/转正）+季度常巡进周历；结论只写 tool_affinity（D-T-03 机检）；解锁前置=OBJ_M 路由表 v0 上线且双跑数据 ≥1 窗（D-T-06） |
 | C7 | T5 删除 gate 立案 | 归 OBJ_R 流水线（非本卡施工）：delete_class 登记闸+调用闸 gate | 提案含 P1-P4 重放验收（OBJ_R 同款）；上线前过历史重放 |
 | C8 | T1 排班第四源 | resource_profile_registry 生成器增源 tool_inventory | 生成器幂等再生；零手工改表；冲突闸绿 |
 | C9 | T6 坑集过渡 | `OBJ_T_tools/tool_pitfalls_v0.md`（过渡载体，三字段同构） | L7 建库时一次性迁移销账；迁移前只增不改 |
 
-依赖序：C3 可先行（考卷独立）；C1→C2/C8；C5→转正流；C6 依赖 C3+OBJ_M C5（dual_run 落地）；
-C7 走 OBJ_R；C9 挂 L7 建库。全部走 worktree 隔离+网关提交+改前 claim；测试禁写生产路径（tmp_path）。
+依赖序：C3 可先行（考卷独立）；C1→C2/C8；C5→转正流；C6 依赖 C3+OBJ_M C5（dual_run 落地），
+C6 另受 §9.4 H1 挂起约束（解锁前不派工）；C7 走 OBJ_R；C9 挂 L7 建库。全部走 worktree 隔离+
+网关提交+改前 claim；测试禁写生产路径（tmp_path）。
 
 ---
 
@@ -299,6 +306,12 @@ C7 走 OBJ_R；C9 挂 L7 建库。全部走 worktree 隔离+网关提交+改前 
 3. **creation_token 补登**：本班硬边界"禁登记 token"，DESIGN.md 的 creation_token 由主会话/
    Owner 补登（OBJ_M/L4 稿同款先例）。
 
+### 9.4 挂起清单（红蓝 R1 起，销账须走 OBJ_R 流水线提案）
+
+| # | 项 | 挂起原因 | 解锁条件 | 销账处 |
+|---|----|---------|---------|--------|
+| H1 | T4 9 格配对矩阵施工（C6+§5 执行节奏三触发器+§7 接线图 OBJ_M 行配对部分） | 无主判消费方：tool_affinity 仅 tie-breaker 证词，路由主判据（任务定档+同档最便宜）不消费 9 格数据（D-T-03/D-T-06） | OBJ_M 路由表 v0 上线且双跑数据 ≥1 窗 | OBJ_R 流水线提案排期；C6 销账 |
+
 ---
 
 ## 修订记录
@@ -306,3 +319,10 @@ C7 走 OBJ_R；C9 挂 L7 建库。全部走 worktree 隔离+网关提交+改前 
 | 日期 | 版本 | 变更 |
 |------|------|------|
 | 2026-09-17 | design_v1 | 初稿：六向台账（10 signal/0 受阻）+T1 盘点 schema/T2 考卷 21 题（手 8 眼 7 脚 6，Tier B 轻量制式裁定）/T3 进货流 9 源+沙箱规程/T4 配对 9 格矩阵+tool_affinity 回写/T5 删除双闸接口/T6 坑集归 L7+六契约接线+9 施工项+3 待 Owner |
+
+---
+
+## 红蓝 R1 修复记录（2026-09-17，修复组 2）
+
+- **B13（9 格配对矩阵无主判消费方）**：新增裁定 **D-T-06 挂起排期**——v0 只保留格定义不施工，解锁条件=**OBJ_M 路由表 v0 上线且双跑数据 ≥1 窗**；§5 执行节奏三触发器与 §7 接线图 OBJ_M 行配对部分一并顺延；C6 施工项标注"挂起，解锁前不派工"；新增 **§9.4 挂起清单**（H1 条目登记挂起原因/解锁条件/销账处）。T2 基准集、T3 进货流、T5 删除红线、T6 坑集均不涉及，照常施工。
+- 连带核查：OBJ_M §7 的 tool_affinity 扩展位为字段预留（非施工项），OBJ_M 侧零改动；L4 §2.1 工具行考场制式与 T2 考卷真源契约不受挂起影响；D-T-06 与 D-T-03 无冲突（前者挂施工，后者锁结论用途）。

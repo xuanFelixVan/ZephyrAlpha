@@ -26,7 +26,7 @@ status: design_v1
 | ③算法机制 | 在档复用：DGM 代理档案库 archive 支持从任意祖先分支（V0-R3，arXiv 2505.22954）；MAP-Elites 精英档案防进化遗忘（V2-R2，arXiv 1504.04909）；AlphaEvolve evolutionary database（V0-R2，arXiv 2506.13131）；PDCA Act=改善不写回标准等于没发生（V2 报告 §1 映射行） | **CBR 四 REs**=Aamodt & Plaza 1994《CBR: Foundational Issues...》AI Communications 7(1):39-59（retrieve/reuse/revise/retain；交叉验证=de Mantaras et al. 2005 Knowledge Engineering Review, iiia.csic.es/~mantaras/RRRR.pdf + CEUR-WS 2019 综述；**纠正常见误引 Aamodt & Nygård**）；**案例库遗忘**=Smyth & Keane 1995《Remembering To Forget: A Competence-Preserving Case Deletion Policy》IJCAI-95 pp.377-382（coverage/reachability 竞争力模型，pivotal/spanning/auxiliary 三分、优先删 auxiliary；交叉验证=ijcai.org/proceedings/1995-1 + Wilson & Leake 2001 维护综述 cse.hkust.edu.hk/~qyang/Docs/2001/maintaincbr.pdf + AIJ 2016 case-base editing）；**经验回放优先级**=Schaul et al. 2016 Prioritized Experience Replay arXiv 1511.05952（TD 误差定优先+recency 互补；交叉验证=MathWorks rlPrioritizedReplayMemory 文档+MDPI recency 论文）；**防早熟收敛**=Lehman & Stanley 2011《Abandoning Objectives: Novelty Search》Evolutionary Computation 19(2):189-223（纯目标导向搜索早熟，novelty/行为多样性是抗衡轴，QD/MAP-Elites 谱系源头；交叉验证=pubmed.ncbi.nlm.nih.gov/20868264 + QD 教程 rl-vs.github.io）；**关单复盘三字段业界对应**=Google SRE blameless postmortem（SRE Book Ch.15 sre.google/sre-book/postmortem-culture/ + SRE Workbook Ch.5 sre.google/workbook/postmortem-culture/：impact/root causes/action items 且 action item 必须被跟踪落实）——五脉各自 ≥2 独立来源，交叉验证闸通过 | signal |
 | ④后端 | `src/zephyr/infrastructure/database_service.py`（get_depgraph_conn=PG 唯一通道，禁裸连接）；`scripts/industry_graph/apply_industry_graph_ddl.py`+L2 施工项 1（DDL 登记器幂等模式）；`src/zephyr/strategy_pipeline/pipeline_events.py`（JSONL journal+轻/重 kind+KillSwitch 探针+幂等 marker，L2/L4 已声明对齐）；`src/zephyr/gov_enforcement/rule_bridge/commit_gate_registry.py`（GateSpec 签名——关单机检 gate 立案走 OBJ_R 流水线的落点）；`docs/01_policies_and_standards/_registry/catalogs/ruling_registry.yaml`（判据留痕传统真源，#20-D 编号铁律）；L2 T4 `ai_intake_ref_snapshot`（ref_family='L7' 行的落点表，写入权划分见 §2.6） | 开源无需引入（传承库=薄登记层；CBR/竞争力模型自研 <200 行量级） | signal |
 | ⑤前端 | `src/zephyr/frontend/dashboard/` OpsAlertFeed→`GET /api/ops-notifications`（通知板先例，坑集月报出口）；`web/features/reglib/reg-engine.js`（注册表浏览面板先例） | 同类呈现=库浏览面板惯例，内部先例已足；已查无必要 | signal（登记不施工） |
-| ⑥数据字段 | L6 switch_registry 字段（promotion_record/tombstone/criteria_yaml_ref+criteria_hash/state_history）；L4 `ai_comparison_experiment` 字段（experiment_id/criteria_yaml/criteria_hash/verdict/evidence_ref）；OBJ_R casebook schema（case_id/root_cause/defect_pattern 受控词表/状态）；checklist 14 条字段结构（模式/案例锚点/审查问句/轴）；L2 T1 域字典 5 域+机制族 8 族词表；L2 T4 字段口径（ref_key/text_norm/simhash/refreshed_at）；任务书 schema 附录 A（pre_rulings 判据预注册） | 字段行业口径（postmortem: impact/root cause/action items；case: problem/solution/outcome）已由③行引文覆盖；已查无必要 | signal |
+| ⑥数据字段 | L6 switch_registry 字段（promotion_record/tombstone/criteria_yaml_ref+criteria_hash/state_history）；L4 `ai_comparison_experiment` 字段（experiment_id/criteria_yaml/criteria_hash/verdict/evidence_ref）；OBJ_R casebook schema（case_id/root_cause/defect_pattern 受控词表/状态）；checklist 14 条字段结构（模式/案例锚点/审查问句/轴）；L2 T1 域字典 6 域（含工具域，红蓝 R1-B2 同步增补）+机制族 8 族词表；L2 T4 字段口径（ref_key/text_norm/simhash/refreshed_at）；任务书 schema 附录 A（pre_rulings 判据预注册） | 字段行业口径（postmortem: impact/root cause/action items；case: problem/solution/outcome）已由③行引文覆盖；已查无必要 | signal |
 
 **受阻记录**：0 次（5 轮外部搜索全部一次成功）。noise 轮：0。
 
@@ -45,8 +45,9 @@ status: design_v1
 | **defect_pattern_checklist**（14 条） | **深度审查消费面**：审查问句+轴标签，人读 policy 文件（治理域资产） | 不是模式真源（14 条是精选投影） | **增量单向**：新模式先登记 L7（三字段），上 checklist 时引用 pattern_norm 并增补审查问句/轴（其特有字段）；checklist 不回灌 L7 |
 | **ruling_registry** | 治理裁定留痕（制度语义） | 不管考卷与判优历史 | L7 判据档案条目 source_ref 可指 ruling_id；两库语义不同不并表 |
 | **memory 目录**（Owner 人读坑集） | Owner 视角人读副本（项目外个人资产，无 schema 无 TTL） | 不作机检输入（库外文件不可机检）；L7 永不写入（硬边界） | 双轨不对称见 §2.7 |
+| **OBJ_T 工具线** | 工具资产登记（工具注册/路由/配额/评测） | 不承载工具踩坑的机读登记——工具域坑集归 L7（H4 tool_id/scene 列+domain_id=工具域，红蓝 R1-B2） | **OBJ_T 只持只读视图**（读 V2 工具域缺陷条目），**写入权归 L7**（store.register() 唯一入口）——防双头登记；工具域词表已同步 L2 T1（六域） |
 
-流向一句话：**L6/L4/工单/红蓝/casebook/checklist/memory → L7（只进一个真源）→ L1/L2/L4/L5（只从一个真源读）**。
+流向一句话：**L6/L4/工单/红蓝/casebook/checklist/memory/OBJ_T 工具坑集 → L7（只进一个真源）→ L1/L2/L4/L5（只从一个真源读；OBJ_T 持只读视图）**。
 
 ### 2.2 存储裁定（D-L7-02）
 
@@ -68,12 +69,12 @@ DDL 由幂等登记器 `scripts/ai_layer/apply_ai_heritage_ddl.py` 部署（照 
 | plain_zh | TEXT NOT NULL CHECK (length(plain_zh)>=10) | 大白话一句话（人读双轨基础，禁占位串；对齐 add_module_translation 精神） |
 | domain_id | TEXT NOT NULL | 域标签，词表真源=L2 `ai_intake.ai_intake_domain`（只读引用，应用层校验，不建跨 schema FK） |
 | source_kind | TEXT NOT NULL CHECK IN ('l6_switch','l4_experiment','work_order','redblue','casebook','checklist_seed','memory_digest','manual') | 来源通道 |
-| source_ref | TEXT NOT NULL | 来源可溯锚点（switch_id/experiment_id/work_order_id/case_id/ruling_id/commit hash） |
+| source_ref | TEXT NOT NULL | 来源可溯锚点（switch_id/experiment_id/work_order_id/case_id/ruling_id/commit hash/DR-*/TP-*） |
 | text_norm | TEXT NOT NULL | 归一化文本（title+核心字段拼接，simhash 输入） |
 | simhash | BIT(64) NOT NULL | 指纹（自库防重登记 + 供 T4 快照；算法复用 L2 dedup.py 实现） |
 | content_sha256 | CHAR(64) NOT NULL UNIQUE | 精确查重键（同文重复登记即拒） |
 | status | TEXT NOT NULL DEFAULT 'active' CHECK IN ('active','archived','retired','compressed') | 遗忘状态机（§2.8）：只降级不物理删（删除红线三档） |
-| hit_count | INT DEFAULT 0 | 被消费次数（dedup 命中/派工命中/先验引用，回写累加——遗忘判据燃料，对齐 PER"被用才值得记"） |
+| hit_count | INT DEFAULT 0 | 被消费次数（dedup 命中/派工命中/先验引用；异步聚合回写——消费只记计数流水，月度体检窗 SUM 落库，裁定见 §2.4 红蓝 R1-B7——遗忘判据燃料，对齐 PER"被用才值得记"） |
 | last_hit_at | TIMESTAMPTZ | 末次消费时间 |
 | created_at / updated_at | TIMESTAMPTZ NOT NULL | |
 
@@ -102,6 +103,8 @@ DDL 由幂等登记器 `scripts/ai_layer/apply_ai_heritage_ddl.py` 部署（照 
 | criteria_hash | CHAR(64) NOT NULL | 冻结判据哈希（与 L4 卡一致性校验键） |
 | venue | TEXT NOT NULL CHECK IN ('c4','replay','dual_run','tool_bench','other') | 考场 |
 | verdict | TEXT NOT NULL | win/loss/tie/rejected_too_good |
+| simhash | BIT(64) | 可空——仅 mechanism 族条目填（text_norm 派生指纹；comparison_prior_query 相似过滤轴，红蓝 R1-B4 补） |
+| mechanism_family | TEXT | 可空——仅 mechanism 族条目填（词表=L2 8 族；comparison_prior_query 格过滤轴） |
 | why_win | TEXT NOT NULL | **当时为什么算它赢**：判据口径+显著性结论+归因叙述（≥30 字；判据翻案后此字段仍是史实，不改写只标注） |
 | still_valid | BOOL NOT NULL DEFAULT true | 判据现行有效性（判据翻案/考纲换版/修标重放否决时 L4 回写 false——防重复考古只查 true 行） |
 | invalidated_by | TEXT | 翻案依据（ruling_id/experiment_id） |
@@ -116,6 +119,8 @@ DDL 由幂等登记器 `scripts/ai_layer/apply_ai_heritage_ddl.py` 部署（照 
 | recipe | TEXT NOT NULL | **字段 3 配方**：修复配方+预防配方（命中带配方派工的供给端；固化进 gate 后写明 gate_id） |
 | pattern_norm | TEXT NOT NULL UNIQUE | 受控词表 slug（checklist 模式名同源；如 `single_side_defense`——checklist #4"单侧防御"同型） |
 | affected_surfaces | JSONB NOT NULL | 受影响面清单（模块/gate/注册表路径）——存活判定=遗忘判据（§2.8） |
+| tool_id | TEXT | 涉事工具标识（工具域条目必填：工具名/CLI/MCP id；非工具域 NULL）——OBJ_T 工具坑集登记落点（红蓝 R1-B2 补） |
+| scene | TEXT | 触发场景（工具域条目必填：调用形态/参数形态/环境约束；非工具域 NULL） |
 | exclusion_keywords | JSONB DEFAULT '[]' | 排除词表贡献（供 L1 任务单 keyword_groups 过滤） |
 | occurrence_count | INT DEFAULT 1 | 累计案发数（casebook 同 pattern 归并时累加，source_refs 追加） |
 | first_seen / last_seen | TIMESTAMPTZ NOT NULL | 首末案发 |
@@ -132,20 +137,21 @@ DDL 由幂等登记器 `scripts/ai_layer/apply_ai_heritage_ddl.py` 部署（照 
         V4 l1_exclusion ──同上──▶ keyword_groups 过滤（只滤词不灭矿脉）                     │
 [读·L2] V2 defect_hot+V1 elites_active ──gen_heritage_dedup_snapshot.py──▶ L2 T4           │
         （ref_family='L7' 行，只写本 family；完发 intake_heritage_baseline 轻事件）          │
-[读·L2] dedup_query（L2 侧服务）执行比对，命中回写 L7 hit_count+1（经 store 只读代理）        │
+[读·L2] dedup_query（L2 侧服务）执行比对，命中只记计数流水（异步聚合，红蓝 R1-B7 裁定见下）        │
 [读·L4] comparison_prior_query(simhash/mechanism_family) → H3 still_valid=true 行防重复考古 │
 [读·L5] heritage_parents_query(surface, family) → V1 祖先精英（组合素材/分支起点）           │
 ```
 
 - **L1 先验字段**：L1 §2.3 任务单 `trigger='l7_prior'`+`priority` 落地。`priors.py` 只做两件事：①按 domain×family 读 V3 得 prior_factor（富矿加权，见 §2.6 权力边界）；②读 V4 得排除词表。消费触发=每次开单时调用（纯只读，无事件依赖）；L1 施工项 9 随本稿解锁。
 - **L2 查重基线**：T4 行写入权按 ref_family 划分——`gen_intake_ref_snapshots.py` 管 chart/indicator/algo_flow 三族，`gen_heritage_dedup_snapshot.py` 只写 `ref_family='L7'`（幂等重刷，refreshed_at 更新）。刷新时点=传承条目登记/降级后（`heritage_snapshot_dirty` 轻事件）+ 月度兜底。入快照面=V2 缺陷（已踩坑防再进）+V1 精英 top3（已有赢家防换皮进货）；L2 侧闸机检不变（五比对面全过才入库）。
-- **L4 判据先验**：领考前 `comparison_prior_query` 查 H3（simhash+mechanism_family 过滤，still_valid=true）——同对象已考且判据未翻案=引用旧裁定，防重复考古（L4 §3 已声明本服务，本稿补数据面）。
+- **L4 判据先验**：领考前 `comparison_prior_query` 查 H3（simhash+mechanism_family 过滤，still_valid=true）——同对象已考且判据未翻案=引用旧裁定，防重复考古（L4 §3 已声明本服务，本稿补数据面；H3 已补 simhash/mechanism_family 两列支撑本查询，红蓝 R1-B4）。
+- **hit_count 回写裁定（红蓝 R1-B7）**：一律**异步聚合**——消费路径（dedup 命中/派工命中/先验引用）只写轻量计数流水，**月度体检窗一次性聚合回写 H1.hit_count/last_hit_at**（与 forget.py/坑集月报同节拍宿主）；消费路径同步回写=跨 schema 高频小事务写耦合，裁定为过度工程，禁止。
 
 ### 2.5 登记闸（写 H1 必须全过，store.register() 机检）
 
 | 闸 | 机检规则 |
 |----|---------|
-| 来源可溯 | source_kind+source_ref 双非空；source_ref 格式校验（SW-*/EX-*/WO-*/CASE-*/HT-*） |
+| 来源可溯 | source_kind+source_ref 双非空；source_ref 格式校验（SW-*/EX-*/WO-*/CASE-*/HT-*/DR-*/TP-*；DR-*=OBJ_M 双跑记录、TP-*=OBJ_T 配对实验记录，与 L4 实验卡同构同通道，红蓝 R1-B3 补） |
 | 类内完备 | elite：winner_ref+diff_summary≥30 字+evidence_ref；criteria：experiment_id+criteria_hash+why_win≥30 字；defect：三字段全非空且 recipe≠root_cause 复读（≥20 字差异校验） |
 | 无案例不入册 | defect 条目必须 source_kind ∈ ('work_order','redblue','casebook','l6_switch')（对齐 checklist 入册纪律：教训带真实锚点，禁凭印象登记） |
 | 自查重 | content_sha256 UNIQUE+simhash 全库汉明 ≤3 命中即拒（拒因 duplicate_of=既有 entry_id；同坑复发走 occurrence_count 累加不新登记） |
@@ -159,13 +165,13 @@ DDL 由幂等登记器 `scripts/ai_layer/apply_ai_heritage_ddl.py` 部署（照 
 1. **L7 只调排序、永不碰配额**：prior_factor ∈ [1.0, 2.0] 只做加法（富矿加权）；**贫矿降级权完全留在 L2 KPI→L1 配额既有通道**（L1 §2.1 配额三闸），L7 无任何下调路径（防"传承记忆把贫矿判死"——贫矿判定的真源是入考率实数，不是历史印象）。配额真源=L1 源注册表，L7 零写权。
 2. **l7_prior 触发单占比 ≤50%/日**：L1 任务单 journal 按 trigger 统计，超限=当日冻结 l7_prior 开单权+告警（外部节拍+内监保底 ≥50%——搜索面的一半永远留给"没有历史经验的地方"）。
 3. **排除词表只滤词不灭矿脉**：V4 词表过滤 keyword_groups 时每单至少保留 1 组关键词（priors.py 机检）；矿脉封矿=结构判据（L1 §2.5.4：六向全查无+无未挖长尾），**L7 先验不参与封矿判定**。
-4. **多样性保底体检**：月度体检核查 L2 行为格覆盖率（40 格 v0）——覆盖率 <60% 或连续 2 个月下降 → 全局 prior_factor 上限冻结 1.0（只留排除词表防换皮，停富矿加权）直到恢复。冻结状态写 V5 kpi 并进月报。
+4. **多样性保底体检**：月度体检核查 L2 行为格覆盖率（48 格 v0=6 域×8 族，含工具域，红蓝 R1-B2 后重计）——覆盖率 <60% 或连续 2 个月下降 → 全局 prior_factor 上限冻结 1.0（只留排除词表防换皮，停富矿加权）直到恢复。冻结状态写 V5 kpi 并进月报。
 
 ### 2.7 人读-机读双轨（D-L7-04：不对称双轨）
 
 | 轨 | 载体 | 地位 | 流向 |
 |----|------|------|------|
-| 机读（强制） | ai_heritage schema（PG） | **唯一机检真源**：T4 快照/排除词表/派工签名/L4 先验全部只认它 | 登记走闸（§2.5），消费留痕（hit_count） |
+| 机读（强制） | ai_heritage schema（PG） | **唯一机检真源**：T4 快照/排除词表/派工签名/L4 先验全部只认它 | 登记走闸（§2.5），消费留痕（hit_count，异步聚合回写 §2.4/B7） |
 | 人读（自愿） | memory 目录（Owner 坑集）+checklist（审查面）+月度 digest | 参考与消费面，不作机检输入 | 见下 |
 
 - **机读→人读**：生成器 `gen_heritage_human_digest.py` 每月从 V2/V5 导出**坑集月报**（plain_zh 一句话+案例锚点+配方摘要），推通知板（OpsAlertFeed 先例）+落本目录 `digests/YYYY-MM.md`（生成器产出禁手工维护，宪法 §9.5）。会话**可自愿**引用月报补写 memory 目录（人读通道零强制——memory 是 Owner 个人资产，L7 永不写入，硬边界自守）。
@@ -201,7 +207,7 @@ DDL 由幂等登记器 `scripts/ai_layer/apply_ai_heritage_ddl.py` 部署（照 
 | **L4 对比** | `comparison_archived_due`（L4 §③ 已定名）：experiment 卡 archived 时 emit；反向 `comparison_prior_query` 只读服务 | L4↔L7 | 回写：{experiment_id, criteria_hash, venue, verdict, why_win 归因, too_good 出口}→criteria 条目（+win 时 elite 条目）；查询→H3 still_valid=true 历史裁定列表 |
 | **工单流** | `work_order_closed_due` 关单事件+派工前签名匹配读调用（§2.9）；红蓝对抗发现经 redblu_finding 类工单同通道进 | 工单流→L7 | 关单：{work_order_id, kind, heritage_ref \| no_new_pattern{reason}}；派工查询：{symptoms}→{entry_id, recipe, signature} |
 | **L1 感知** | `priors.py` 只读服务（V3/V4）；L1 施工项 9 挂起随本稿解锁 | L7→L1 | {domain, mechanism_family}→{prior_factor, rationale_refs, exclusion_keywords[]} |
-| **L2 收集** | T4 快照（ref_family='L7'，生成器直写本 family 行）+`intake_heritage_baseline` 轻事件（L2 §三 已声明）；`heritage_parents_query` 组合素材服务（V1） | L7→L2 | baseline：{baseline_ref, kind:'elite'\|'pattern', count}；parents：{surface, family}→[entry_id, diff_summary, evidence_ref] |
+| **L2 收集** | T4 快照（ref_family='L7'，生成器直写本 family 行）+`intake_heritage_baseline` 轻事件（L2 §三 已声明）；`heritage_parents_query` 组合素材服务（V1） | L7→L2 | baseline：{baseline_ref, kind:'elite'\|'pattern', count}（**裁定（红蓝 R1-B5）**：只发 elite\|pattern 两 kind+count、不收阴性——negative 留 L2 自用 KPI 不入传承，系对 L2 侧的契约要求，L2 稿同批对齐）；parents：{surface, family}→[entry_id, diff_summary, evidence_ref] |
 | **L5 排产** | 命中缺陷签名的工单自带 recipe；祖先精英可作为施工任务书的参照素材（pre_rulings 引用 entry_id） | L7→L5 | {recipe, entry_id, pattern_norm} 附进工单 payload |
 | **OBJ_R casebook** | 归并动作：case 状态→patterned 时经 store.register() 建/累加 defect 条目；casebook.defect_pattern 字段引用 pattern_norm | casebook→L7 | {case_id, root_cause, signature, recipe, pattern_norm} |
 | **月度体检（L1 内监慢周期）** | forget.py+digest 生成器+多样性覆盖率核查同窗执行 | L1 节拍→L7 | 遗忘报告+坑集月报+prior 冻结状态 |
@@ -213,7 +219,7 @@ DDL 由幂等登记器 `scripts/ai_layer/apply_ai_heritage_ddl.py` 部署（照 
 | # | 项 | 文件/模块 | 验收标准 |
 |---|----|----------|---------|
 | 1 | DDL 登记器 | 新 `scripts/ai_layer/apply_ai_heritage_ddl.py`：建 schema ai_heritage + H1-H4 + V1-V5；`config/heritage_policy.yaml` 规则参数初值落盘 | 幂等执行两次零错；CHECK 值域与 2.3/2.5 一致；TIMESTAMPTZ 全覆盖 |
-| 2 | 传承库服务 | 新 `src/zephyr/ai_layer/heritage/store.py`：register() 登记闸+状态机降级+hit_count 回写，全经 DatabaseService | 五类拒收样本（缺锚点/占位/自查重命中/哈希不一致/无案例）全部被拒且拒因正确 |
+| 2 | 传承库服务 | 新 `src/zephyr/ai_layer/heritage/store.py`：register() 登记闸+状态机降级+hit_count 月度聚合回写（异步，红蓝 R1-B7），全经 DatabaseService | 五类拒收样本（缺锚点/占位/自查重命中/哈希不一致/无案例）全部被拒且拒因正确 |
 | 3 | L2 快照生成器 | 新 `scripts/ai_layer/gen_heritage_dedup_snapshot.py`：V1/V2→T4 ref_family='L7'（只写本 family） | 幂等重刷 refreshed_at 刷新；不触碰其他 family 行；登记/降级后快照 24h 内刷新 |
 | 4 | L1 先验服务 | 新 `src/zephyr/ai_layer/heritage/priors.py`：V3/V4 只读薄封装+每单保 1 组关键词机检 | 解锁 L1 施工项 9；factor 越界 [1.0,2.0] 被拒；词表过滤保底有单测 |
 | 5 | 回写事件消费件 | 新 `src/zephyr/ai_layer/heritage/events.py`：switch_archived_due/comparison_archived_due/work_order_closed_due 消费（JSONL journal 对齐 pipeline_events 语义，施工前 clone_guard.check_before_write 预查） | 三事件各注入合成载荷→正确生成 elite/criteria/defect 条目；KillSwitch 非 normal 停消费全量保留；毒丸 MAX_ATTEMPTS=3 |
@@ -265,3 +271,13 @@ DDL 由幂等登记器 `scripts/ai_layer/apply_ai_heritage_ddl.py` 部署（照 
 | 日期 | 版本 | 变更 | 批准 |
 |------|------|------|------|
 | 2026-09-17 | 1.0.0 | 初稿：六向台账（7 外内轮 signal/0 受阻）+五方边界裁定（对 L2/OBJ_R/checklist/memory 划界）+PG ai_heritage 真源设计（4 表 5 视图三类条目统一登记）+三条回写边四条读边+防近亲繁殖四约束+双轨不对称+三类差异化遗忘+关单机检+9 施工项+自审闸=施工 | 设计稿（status: design_v1，施工立项另走 15 步闭环） |
+
+## 红蓝 R1 修复记录（2026-09-17，红队 B 发现，修复组 1）
+
+| 编号 | 修复内容 | 落点 |
+|------|---------|------|
+| B2 | H4 补 tool_id/scene 两列（工具域条目必填、非工具域 NULL）；§2.1 补 OBJ_T 边界行（OBJ_T 只持只读视图，写入权归 L7，防双头登记）；工具域词表已同步 L2 T1（v0 六域），行为格重计 48 格（6 域×8 族） | §2.1/§2.3 H4/§2.6.4/§六向⑥ |
+| B3 | §2.5 source_ref 白名单补 DR-*（OBJ_M 双跑记录）、TP-*（OBJ_T 配对实验记录）两前缀，注明与 L4 实验卡同构同通道；H1 source_ref 字段说明同步 | §2.5/§2.3 H1 |
+| B4 | H3 补 simhash/mechanism_family 两列（可空，仅 mechanism 族条目填），解锁 L4 comparison_prior_query(simhash/mechanism_family) | §2.3 H3/§2.4 |
+| B5（L7 侧） | 契约声明：intake_heritage_baseline 只发 elite\|pattern 两 kind+count、不收阴性——negative 留 L2 自用 KPI 不入传承（对 L2 侧的契约要求，L2 稿同批已改 payload） | §三 |
+| B7 | hit_count 同步回写裁定为过度工程、改异步：消费路径只记计数流水，月度体检窗聚合回写（与 forget.py/月报同节拍）；§2.4 加裁定行 | §2.3 H1/§2.4/§2.7/施工项 2 |

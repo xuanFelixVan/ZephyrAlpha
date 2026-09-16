@@ -10,7 +10,7 @@ status: design_v1
 # OBJ_M 模型对象线真源设计稿 v1
 
 > **本文性质**：骨架卡挖干产出=可直接施工的设计真源。上承骨架卡（README.md）与主文档
-> 定调十二条（ai_layer_vision_and_roadmap_v1.md §v1.1），内部反查优先（config/registry/
+> 定调十三条（ai_layer_vision_and_roadmap_v1.md §0.5），内部反查优先（config/registry/
 > 真实源码），外部补盲四闸过闸（台账见 §9）。施工时另走 construction_workflow_policy，
 > 本文不代替它。**硬边界自守**：本轮只写了 OBJ_M_models/ 目录内文件，未碰任何代码/config/
 > 注册表；下文所有"施工项"是留给后续班的任务定义。
@@ -297,8 +297,11 @@ estimated_cost = tokens_in × 牌价_in + tokens_out × 牌价_out   # 牌价=mo
 
 1. **速率外推**：近 30 天日消耗序列 → `predicted_30d = 0.5×mean(7d) + 0.5×mean(30d)`
    （平滑防单日尖峰）；对 `budget_policy.cost_limits.daily_cost_usd`（现值 10）与周软限
-   （global_level.soft_limit，500K tokens）算 burn rate——**镜像 SRE 多窗口法**
-   （`burn_rate_alerter.py` 1h/6h/3d → 预算版 1d/7d/30d 三窗口）。
+   （global_level.soft_limit，500K tokens）算 burn rate——**镜像 SRE 多窗口法但降为两窗**
+   （`burn_rate_alerter.py` 1h/6h/3d → 预算版 7d/30d 两窗口）。**裁定（红蓝 R1-B14）**：
+   日均 $10 量级预算下 1d 短窗噪声占比过高、三窗统计功耗过重，v0 只跑 7d/30d 两窗；SRE
+   原版三窗（+1d 短窗）留作预算升级解锁项（日预算 ≥$100 或多渠道并行时，按 OBJ_R 流水线
+   提案开启，不在 v0 施工）。
 2. **充值建议**：预计超限日 T = 剩余额度 / 近 7 天日均消耗；建议充值额 = 缺口 × 1.2 安全
    系数 + 直达链接（支付动作留 Owner）。
 3. **免费窗利用建议**：从 M4 路由表估算"可迁移到谷时/免费窗的任务占比"×该部分差价
@@ -347,7 +350,7 @@ estimated_cost = tokens_in × 牌价_in + tokens_out × 牌价_out   # 牌价=mo
 | C4 | M2 打分口径 | `config/model_scoring_policy.yaml`（新增，常数预注册） | 常数齐（P 权重/αβ/档界）；Owner 确认一次；重算幂等（同输入同分） |
 | C5 | M3 双跑执行器 | `src/zephyr/intelligence/model_profiling/dual_run.py` + `config/dual_run_criteria.yaml`（新增） | 五层×20 件抽样可复现（固定 seed）；判据冻结校验（改判据=拒绝+强制新 experiment_id）；产出 L4 格式证据包 |
 | C6 | M4 路由表增轨 | `config/model_routing_policy.yaml`（修改：AI 层轨 8 条+free_window_pref 字段） | 既有 12 轨零改动；新轨逐条带 evidence_ref；router 加载不报错+既有测试全绿 |
-| C7 | M5 预算分析器 | `src/zephyr/intelligence/budget_analyzer.py` + `/api/budget-advisories` + `web/pages/budget.html` + `features/budget/budget.js`（新增） | 日报告=usage_records 口径；四档阈值告警有测试；免费节省单列；**页面无支付按钮**（验收硬查） |
+| C7 | M5 预算分析器 | `src/zephyr/intelligence/budget_analyzer.py` + `/api/budget-advisories` + `web/pages/budget.html` + `features/budget/budget.js`（新增） | 日报告=usage_records 口径；burn-rate 两窗（7d/30d，§6.3 裁定，三窗为解锁项不施工）有测试；四档阈值告警有测试；免费节省单列；**页面无支付按钮**（验收硬查） |
 | C8 | 排班登记 | resource_profile_registry 生成器三源增补后 `--force` 再生 | 三实体入库；生成器幂等；考试窗口与 mine_vs_exam 冲突闸绿；零手工改表 |
 
 依赖序：C1→C2→C3→C4（M1/M2 前后件）；C5/C6 依赖 C3；C7 依赖 C3；C8 可与 C2 并行。
@@ -396,3 +399,10 @@ estimated_cost = tokens_in × 牌价_in + tokens_out × 牌价_out   # 牌价=mo
 | 日期 | 版本 | 变更 |
 |------|------|------|
 | 2026-09-17 | design_v1 | 初稿：六向台账+M1-M5 五件真源设计+四契约接线图+8 施工项+挖矿日志（10 signal/1 受阻） |
+
+---
+
+## 红蓝 R1 修复记录（2026-09-17，修复组 2）
+
+- **B14（M5 三窗 burn-rate 对日均 $10 量级预算过重）**：§6.3 速率外推由三窗（1d/7d/30d）降为**两窗（7d/30d）**，留一行裁定——日均 $10 量级下 1d 短窗噪声占比过高、三窗统计功耗过重；SRE 原版三窗（+1d 短窗）留作**预算升级解锁项**（日预算 ≥$100 或多渠道并行时按 OBJ_R 流水线提案开启）；C7 验收标准同步标注"两窗有测试、三窗不施工"。
+- 连带核查：predicted_30d 外推公式（0.5×mean(7d)+0.5×mean(30d)）本就只用 7d/30d 两窗，与本裁定天然一致；四档告警阈值表（§6.4）按日预算占比触发，不依赖 1d burn 窗，零连带改动。

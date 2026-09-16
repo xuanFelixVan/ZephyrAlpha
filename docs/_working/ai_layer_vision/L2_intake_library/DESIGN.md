@@ -12,7 +12,7 @@ status: design_v1
 > **一句话**：把 L1 感知抓回的生原材料（论文/开源/机制/基准）结构化入 PostgreSQL 原材料库
 > （经 DatabaseService，禁裸连接），simhash 查重防换皮，MAP-Elites 行为格保多样性，
 > 进货费两问机检防灌水，淘汰率 KPI 防贫矿——没过 L4 对比+门闸的卡永不进产线。
-> 主文档锚点：ai_layer_vision_and_roadmap_v1.md §v1.1 定调 5/6/11 + 附录 B 候选卡 schema v0。
+> 主文档锚点：ai_layer_vision_and_roadmap_v1.md §0.5 定调 5/6/11 + 附录 B 候选卡 schema v0。
 
 ---
 
@@ -53,7 +53,7 @@ DDL 由幂等登记器 `scripts/ai_layer/apply_ai_intake_ddl.py` 部署（照 ap
 
 | 字段 | 类型 | 说明 |
 |------|------|------|
-| domain_id | TEXT PK | 治理学/交易算法/ai_eng/数据工程/成本工程（v0 五域，slug） |
+| domain_id | TEXT PK | 治理学/交易算法/ai_eng/数据工程/成本工程/工具域（v0 六域，slug；工具域=红蓝 R1-B2 增补，承接 OBJ_T 工具坑集经 L7 登记） |
 | name_zh | TEXT NOT NULL | 大白话域名（经三层翻译 loader 语义，禁生成器硬编码翻译） |
 | enabled | BOOL DEFAULT true | 停用域不删（墓碑制） |
 | created_at | TIMESTAMPTZ DEFAULT now() | |
@@ -75,7 +75,7 @@ DDL 由幂等登记器 `scripts/ai_layer/apply_ai_intake_ddl.py` 部署（照 ap
 | elite_score | REAL | L4 对比分（L4 回填，NULL=未考） |
 | elite_rank | SMALLINT | 同格排名（L4 回填） |
 | elite_status | TEXT DEFAULT 'active' CHECK IN ('active','benched') | 格满降位标记（保优见 2.4） |
-| funnel_stage | TEXT NOT NULL DEFAULT 'L0' CHECK IN ('L0','L1','L2','E2','intake','rejected') | 状态机（命名沿附录 B；与七段 L1-L7 无关，见 2.5 流转图） |
+| funnel_stage | TEXT NOT NULL DEFAULT 'L0' CHECK IN ('L0','L1','L2','E2','intake','e2_pending','rejected') | 状态机（命名沿附录 B；与七段 L1-L7 无关，见 2.5 流转图）；e2_pending=已过 intake、待 E4 考试（红蓝 R1-B1 补） |
 | stage_changed_at | TIMESTAMPTZ | 末次流转时间 |
 | rejection_reason | TEXT | rejected 必填（应用层校验；本表即阴性库，见视图 V2） |
 | labor_killed | TEXT NOT NULL CHECK (length(labor_killed)>=20) | 进货费问 1：消灭哪段人工（≥20 字防占位） |
@@ -86,6 +86,8 @@ DDL 由幂等登记器 `scripts/ai_layer/apply_ai_intake_ddl.py` 部署（照 ap
 | duplicate_of | TEXT FK→card_id | 命中近似重复时指向存量卡 |
 | raw_ref | TEXT | 原料暂存路径（.runtime/sessions/<sid>/staging/，24h TTL 内须完成 L1 初筛） |
 | spec_ref | TEXT | L3 规格卡回填指针 |
+| handoff_ref | TEXT | intake_e2_handoff 受理回执指针（跨生熟边界留痕；e2_pending 态必填） |
+| evidence_ref | TEXT | 考试/裁定证据指针（intake_exam_due 回执回填） |
 | created_at / updated_at | TIMESTAMPTZ NOT NULL | 入库/更新时间 |
 
 索引：`(domain_id, funnel_stage)`、`(elite_cell)`、`(source_name, created_at)`（配额与 KPI 用）、`(simhash)`（Phase 2 换分块表，见 2.3）。
@@ -120,7 +122,7 @@ DDL 由幂等登记器 `scripts/ai_layer/apply_ai_intake_ddl.py` 部署（照 ap
 
 ### 2.4 MAP-Elites 式行为格
 
-- **坐标轴裁定：域（domain_id，5 格 v0）× 机制族（mechanism_family，8 格 v0）=40 格初始网格，写死如下**。选域×机制族而不用"性能带"：L2 阶段卡未考（无性能），性能带是 L4 之后才有坐标——L2 格管多样性保底（防同质化进货），L4 分数只做格内排序。
+- **坐标轴裁定：域（domain_id，6 格 v0，含工具域）× 机制族（mechanism_family，8 格 v0）=48 格初始网格，写死如下**。选域×机制族而不用"性能带"：L2 阶段卡未考（无性能），性能带是 L4 之后才有坐标——L2 格管多样性保底（防同质化进货），L4 分数只做格内排序。
 - **机制族 v0 词表（8 族，全域通用）**：①预测/回归 ②排序/筛选 ③优化/调度 ④检测/审计 ⑤抽取/构建 ⑥流程/编排 ⑦定价/风控 ⑧待归类。词表落 T1 同款字典逻辑（首版内嵌 gate.py 常量+T2 CHECK），Owner 可改（见"待 Owner"节）。
 - **保优数=每格 3 条**：MAP-Elites 原版每格 1 精英（防局部最优）；本库是原料库非解空间，3 条保格内候补与消融对比素材（AlphaEvolve 库亦多精英+岛屿）。执行时点=**L4 出分后**：`intake_scored_due` 事件→回写 elite_score/elite_rank→同格 rank>3 者 elite_status='benched'（不删，墓碑制；benched 卡仍参与查重）。L2 阶段新卡只占位入格（elite_score NULL），不挤任何人。
 
@@ -129,7 +131,7 @@ DDL 由幂等登记器 `scripts/ai_layer/apply_ai_intake_ddl.py` 部署（照 ap
 状态机（附录 B 原名，勿与七段混淆）：
 
 ```
-(新卡)→L0 硬过滤→L1 AI初筛→L2 深读→E2 假说预审→intake(产线吸收)
+(新卡)→L0 硬过滤→L1 AI初筛→L2 深读→E2 假说预审→intake(产线吸收)→e2_pending(待 E4 考试，intake_exam_due 回执留痕)
          ├─任一环拒→rejected(必填 rejection_reason，自动入 V2 阴性视图)
          └─L3/L4 退回→rejected(事件 intake_reject_due)
 ```
@@ -143,7 +145,7 @@ DDL 由幂等登记器 `scripts/ai_layer/apply_ai_intake_ddl.py` 部署（照 ap
 | 注入探针 | injection_probe 非空 |
 | L0 硬过滤 | license 非空且不在禁止清单；source_year ∈ [2000, 当前年]；content_sha256 无冲突；simhash 全比对面无 k≤3 命中（命中存量 active 卡=拒；命中 rejected=拒+记 duplicate_of_rejected） |
 | 配额闸 | 当日该 source_slug 入库数 < T5.daily_quota（防单源刷屏；外部源配额不可清零=多样性保底，宪法级约束的进货端落点） |
-| 状态机合法性 | 流转只许沿 L0→L1→L2→E2→intake 顺序前进、任意非 intake 态可跳 rejected（card_store.transition() 校验，禁跳跃/禁复活；复活=新卡重新进货） |
+| 状态机合法性 | 流转只许沿 L0→L1→L2→E2→intake→e2_pending 顺序前进、任意非 intake 态可跳 rejected（card_store.transition() 校验，禁跳跃/禁复活；复活=新卡重新进货） |
 
 ### 2.6 与附录 B schema v0 的对齐说明
 
@@ -186,10 +188,15 @@ L2 ──intake_e2_handoff──▶ L5 排产（E2 假说预审通道）        
   payload: {card_id, spec_ref, four_gates, labor_killed, domain_id}
   语义: L2 对产线的唯一出口；跨生熟边界前最后留痕。E2 具体排产属 L5 段
 
+考试线 ──intake_exam_due──▶ L2                                 （产线→L2 回执）
+  payload: {intake_id, candidate_card_id, evidence_ref}
+  语义: e2_pending 卡的考试到期/出证回执；L2 留痕 evidence_ref（考试归产线，L2 只记帐）
+
 L7 传承 ──dedup_query(text)→hits / intake_heritage_baseline──▶ L2  （传承→查重基线）
   dedup_query 是只读服务调用（非事件）: 返回 {card_id, simhash, hamming, funnel_stage}
-  intake_heritage_baseline payload: {baseline_ref, kind:'negative'|'pattern'|'elite'}
-  语义: L7 精英/坑集入 T4 快照 ref_family='L7'，成为第 5 个比对面
+  intake_heritage_baseline payload: {baseline_ref, kind:'elite'|'pattern', count}
+  语义: L7 精英/坑集入 T4 快照 ref_family='L7'，成为第 5 个比对面；
+        negative 不入传承（留 L2 自用 KPI/V2 阴性库）——红蓝 R1-B5 与 L7 契约对齐
 ```
 
 KPI 告警事件 `intake_kpi_alert`：payload {scope:'domain'|'source', key, pass_rate, window_weeks, action:'demote'|'tighten'}。
@@ -205,7 +212,7 @@ KPI 告警事件 `intake_kpi_alert`：payload {scope:'domain'|'source', key, pas
 | 3 | 查重服务 | 新 `src/zephyr/ai_layer/intake/dedup.py`：simhash64 实现+比对面执行+dedup_query 公开接口 | 中文重复文本对 hamming≤3 命中、改写>50% 不命中；五比对面逐一有单测 |
 | 4 | 入库闸 | 新 `src/zephyr/ai_layer/intake/gate.py`：2.5 全部规则（两问/四闸/license/配额/探针） | 缺 labor_killed、单来源、超配额、换皮四类样本卡全部被拒且拒因正确 |
 | 5 | 比对面快照生成器 | 新 `scripts/ai_layer/gen_intake_ref_snapshots.py`：两 registry+ALGO_FLOW→T4 | 生成器产出零手工；重跑幂等；refreshed_at 刷新 |
-| 6 | 事件层 | 新 `src/zephyr/ai_layer/intake/events.py`：6 个轻 kind emit/drain/status | emit→status 可见→drain 幂等；KillSwitch 非 normal 停消费全量保留；毒丸留档 |
+| 6 | 事件层 | 新 `src/zephyr/ai_layer/intake/events.py`：7 个轻 kind emit/drain/status | emit→status 可见→drain 幂等；KillSwitch 非 normal 停消费全量保留；毒丸留档 |
 | 7 | KPI 告警 | 新 `src/zephyr/ai_layer/intake/kpi.py`：读 V3+阈值判定+alert 事件 | 构造数据可触发贫矿降级/收紧两路告警；阈值读 YAML 非硬编码 |
 | 8 | 登记套件 | 施工班走 15 步闭环时办：add_module_translation 大白话简介 ×新模块、apply_depgraph.py --add-design-node、capability card、alert_threshold_registry 挂阈值、gate_registry 若挂 own-scope 红线 gate | 全部登记器零报错；TRANSLATION-COVERAGE/CREATE-GUARD/DEPGRAPH gate 全绿 |
 | 9 | 测试 | 新 `tests/ai_layer/intake/`（test_dedup/test_gate/test_card_store/test_events/test_kpi） | 全绿；零生产路径写入；进回归批 |
@@ -242,7 +249,7 @@ KPI 告警事件 `intake_kpi_alert`：payload {scope:'domain'|'source', key, pas
 
 ### 5.3 待 Owner（1 项）
 
-1. **机制族 8 族 v0 词表与 40 格初始网格**：本稿按第一性原理自裁生效（词表见 2.4）；Owner 若对分族口径有口味修正，改 T1 同款字典数据即可（数据操作非结构变更），不影响 schema。
+1. **机制族 8 族 v0 词表与 48 格初始网格（6 域×8 族，含工具域）**：本稿按第一性原理自裁生效（词表见 2.4）；Owner 若对分族口径有口味修正，改 T1 同款字典数据即可（数据操作非结构变更），不影响 schema。
 
 ---
 
@@ -251,3 +258,11 @@ KPI 告警事件 `intake_kpi_alert`：payload {scope:'domain'|'source', key, pas
 | 日期 | 版本 | 变更 | 批准 |
 |------|------|------|------|
 | 2026-09-17 | 1.0.0 | 初稿：六向寻路台账（4 外部矿脉全过闸/0 受阻）+PG ai_intake 真源设计（5 表 3 视图）+simhash 查重+MAP-Elites 40 格+进货费机检+KPI+六边接线图+9 施工项+自审闸=施工 | 设计稿（status: design_v1，施工立项另走 15 步闭环） |
+
+## 红蓝 R1 修复记录（2026-09-17，红队 B 发现，修复组 1）
+
+| 编号 | 修复内容 | 落点 |
+|------|---------|------|
+| B1 | 状态机枚举补 `e2_pending`（语义=已过 intake、待 E4 考试，CHECK 六值→七值）；事件清单补 `intake_exam_due`（payload=intake_id/candidate_card_id/evidence_ref）；卡 schema 补 handoff_ref/evidence_ref 两字段；状态机合法性链与施工项 6 事件计数同步 | §2.2 T2/§2.5/§三/施工项 6 |
+| B5（L2 侧） | `intake_heritage_baseline` payload 改 elite\|pattern 两 kind+count（删 negative）；negative 留 L2 自用 KPI（V2 阴性库）不入传承——与 L7 契约同批对齐 | §三 |
+| B2（L2 侧） | T1 域字典补"工具域"（v0 六域），行为格重计 6×8=48（原 5×8=40）；H4 tool_id/scene 与 OBJ_T 写入权裁定在 L7 稿同批登记 | §2.2 T1/§2.4/§5.3 |

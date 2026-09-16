@@ -10,7 +10,7 @@ status: design_v1
 # L4 对比段真源设计稿：通用对比器（考卷统一、裁定统一、独立性机检）
 
 > **本文性质**：骨架卡挖干产出=可直接施工的设计真源。上承骨架卡（README.md）、主文档定调
-> 六/七/八/11/12（ai_layer_vision_and_roadmap_v1.md §v1.1）、V2 报告 DGM objective hacking
+> 六/七/八/11/12（ai_layer_vision_and_roadmap_v1.md §0.5）、V2 报告 DGM objective hacking
 > 反面实证。**核心裁定 D-L4-01：L4 不自建考尺，做"协议层+登记层"**——考尺全部复用既有/在建
 > 件（C4 双窗/OBJ_R 重放器/OBJ_M 三把尺/OBJ_T 基准集），L4 供给五样公共品：统一考场矩阵、
 > 公平性对齐、判据预注册登记、显著性分级判据、too-good 三查与独立性机检。施工另走
@@ -25,7 +25,7 @@ status: design_v1
 | ① | 上游（谁喂 L4） | `L2_intake_library/DESIGN.md` 事件表（`intake_clean_due`→L3，L3 完成回写 spec_ref+stage=E2 前态）；`L3_cleaning/README.md`（输出=规格卡→L4）；库外对象直入（OBJ_M M1 情报卡→M3 考试、OBJ_R 标准提案、L5 施工件回归） | — | signal |
 | ② | 下游（谁吃 L4） | L2 事件表已预留 L4 位：`intake_scored_due`（回填 elite_score/verdict win|draw|loss）+`intake_reject_due`（退阴性）+`intake_e2_handoff`（L2→L5 唯一产线出口）；`L5_schedule_gate/README.md`（输入=L4 胜者带证据包→工单）；`L7_heredity/README.md`（输入=判据档案） | — | signal |
 | ③ | 算法机制（怎么判优） | 策略级：`scripts/backtest/c4_batch_screen.py`（IS 冻结窗 2020-01-01..2023-12-31/OOS `--start --end`/DSR 批内折减委托 `src/zephyr/backtest/regime_validation/c4_deflated_sharpe_runner.py`）+`src/zephyr/strategy_pipeline/screen_source.py` fetch_bothwin；因子级：`src/zephyr/factor/analysis/bhy_fdr.py`（BHY FDR q=10%+ICIR≥0.5 硬门禁现行真源）；规则级：`OBJ_R_rules_standards/DESIGN.md` §② 重放器（Jaccard 主判据+P1-P4）；模型级：`OBJ_M_models/DESIGN.md` §4 三把尺（McNemar/Wilcoxon/单价口径）；护栏栈：`src/zephyr/backtest/core/overfitting_adjudicator.py` 三检验器（WFO 衰减/DSR/参数扰动，现未接门禁=可复用件） | 泄漏分类学：Kapoor & Narayanan "Leakage and the Reproducibility Crisis in ML-based Science"，Patterns 2023，八类泄漏分类+329 篇受影响论文（pubmed.ncbi.nlm.nih.gov/37720327 / arxiv.org/abs/2207.07048，EX-R2 第 4 次重试成功） | signal |
-| ④ | 后端（落哪个仓/什么件） | 判据常量→`config/`（新建 comparison_policy.yaml，对标 alert_threshold_registry.yaml REG-ATH-001+threshold_loader 外置化母版）；实验卡→PG ai_intake 同实例新表（经 `src/zephyr/infrastructure/database_service.py` get_depgraph_conn，禁裸连接）；run 档案先例=`data/backtest_artifacts/runs/`（22 个 SCR-C4 档案）；gate 触发数据=`.runtime/audit/gate_execution_stats.jsonl` | — | signal |
+| ④ | 后端（落哪个仓/什么件） | 判据常量→`config/`（新建 comparison_policy.yaml，对标 alert_threshold_registry.yaml REG-ATH-001+threshold_loader 外置化母版）；实验卡→PG 同实例**独立 schema `ai_compare`** 新表（与 L2 ai_intake schema 隔离，产线禁读界不破；经 `src/zephyr/infrastructure/database_service.py`，禁裸连接）；run 档案先例=`data/backtest_artifacts/runs/`（22 个 SCR-C4 档案）；gate 触发数据=`.runtime/audit/gate_execution_stats.jsonl` | — | signal |
 | ⑤ | 前端（裁定呈现） | 复刻 S13 promotion 先例（`src/zephyr/frontend/dashboard/web/features/promotion/promotion.js`+api_server 只读路由）：裁定卡=只读 API+JS 渲染，Owner 只读（登记不施工，归 L5/L6 呈现件） | — | signal（登记不施工） |
 | ⑥ | 数据字段（记什么） | 任务书 schema v0 附录 A（definition_of_done 预注册/acceptance.reviewer 异会话异档/pre_rulings）；附录 C #5 验收判据自改=根约束禁区；OBJ_M M2 exam_suite_version 必记字段（防题库污染）；L2 卡 elite_score/elite_rank/elite_status 回填位已留；`config/resource_profile_registry.yaml`（排班 v1 互斥组/E0 算力档词表） | — | signal |
 
@@ -46,6 +46,10 @@ status: design_v1
 | **工具** | **OBJ_T 基准任务集引用，不重建**（OBJ_T 卡待深挖，L4 先锁制式）：同基准任务集版本双跑（同工具族新 vs 老），判成功率/速度/成本；小样本按 Tier B 诚实条款（未决不硬判） | 工具-模型配对实验借用 OBJ_M dual_run 执行器（OBJ_M §7 已预留）；删除类工具专项红线走 OBJ_S | 现状=capability_cards（data/capability_cards/ 33 件工具卡）+工具坑集（OBJ_T 待建，建后挂本行）；基准任务集真源=OBJ_T 目录（建成后此处引用） |
 | **成本线/降档规则** | 历史重放（OBJ_R 重放器同构，换数据底表）：新降档规则对近 30 天 usage_records 重放算总成本/性能档命中，对比现行规则 | 数据只读（usage_records=SQLite governance.db 经 `src/zephyr/infrastructure/cost_tracker.py`）；判据=总成本降幅≥门槛 且 关键任务档位零降级 | `config/budget_policy.yaml` 现行五级阈值+degradation 阈值族；用量底表=usage_records |
 | 骨架级/排班表自身 | **不进自动判据**（定调 #9：骨架级=AI 提案+Owner 前端一键确认；先他指后自指） | L4 只产证据包（利弊对照表），裁决权在 Owner 门位 | risk_tier_registry.yaml（域→tier→human_gate） |
+
+**考场边界声明（红蓝 R1，L4/L5 双稿同款）**：策略候选的考场止于 L4 证据包产出；转正/流转归
+业务层 S12-S14 与 Owner 拍板，AI 层不设第二转正门；交易算法专域不在 AI 层自动流转范围
+——本表"算法选型"行的 verdict 只是证据，不构成任何策略上线/转正动作。
 
 ### 2.2 公平性规则（防"新候选吃更好资源"的假胜）
 
@@ -68,7 +72,7 @@ status: design_v1
 双层结构（D-L4-03）：
 
 - **常量层（尺子，治理层资产）**：`config/comparison_policy.yaml`（新建）——显著性 α、效应量门槛、锦标赛 K、too-good 触发线、公平性词表、阴性拒绝理由受控词表。改动走 OBJ_R 四步流水线（AI 提案→治理立案→Owner 修标→重考历史），**AI 层不持尺**。
-- **实例层（考卷，一场一张卡）**：PG ai_intake 同实例新表 `ai_comparison_experiment`（经 DatabaseService，TIMESTAMPTZ）：`experiment_id(EX-<yyyymmdd>-<slug>) / 对象三方(challenger_ref, champion_ref, venue_ref) / criteria_yaml(canonical 文本) / criteria_hash(sha256) / status(frozen→running→verdict→archived) / 公平性字段组 / verdict / evidence_ref / evaluator_session / contractor_session / created_at / frozen_at`。
+- **实例层（考卷，一场一张卡）**：PG 同实例独立 schema `ai_compare` 新表 `ai_compare.ai_comparison_experiment`（**与 L2 ai_intake schema 隔离，产线禁读界不破**；经 DatabaseService，TIMESTAMPTZ）：`experiment_id(EX-<yyyymmdd>-<slug>) / 对象三方(challenger_ref, champion_ref, venue_ref) / criteria_yaml(canonical 文本) / criteria_hash(sha256) / status(frozen→running→verdict→archived) / 公平性字段组 / verdict / evidence_ref / evaluator_session / contractor_session / created_at / frozen_at`。
 
 锁定机制（三道）：
 
@@ -147,7 +151,7 @@ DGM 教训（V2-R5）的机制化落地，七道机检（前五道进执行器�
 | # | 项 | 文件（新增/修改） | 验收标准 |
 |---|-----|------------------|---------|
 | C1 | 判据常量文件 | `config/comparison_policy.yaml`（新增，带治理锚定头） | 全部常数齐（α/效应量门槛/K/触发线 G1-G5/ε/受控词表）；Owner 点头记录；改动走 OBJ_R 流水线 |
-| C2 | 实验卡库表 | ai_intake 同实例 PG 新表 `ai_comparison_experiment`+DDL 登记器（挂 L2 的 apply_ai_intake_ddl.py 同模式） | 全经 DatabaseService（禁裸连接）；TIMESTAMPTZ；frozen 后判据字段 UPDATE 拒绝有测试；append-only verdict |
+| C2 | 实验卡库表 | PG 同实例独立 schema `ai_compare` 新表 `ai_comparison_experiment`+DDL 登记器（挂 L2 的 apply_ai_intake_ddl.py 同模式；与 L2 ai_intake schema 隔离，产线禁读界不破） | 全经 DatabaseService（禁裸连接）；TIMESTAMPTZ；frozen 后判据字段 UPDATE 拒绝有测试；append-only verdict |
 | C3 | 对比执行器 | `src/zephyr/ai_layer/comparator/`（新增模块：领考/哈希校验/公平性机检/裁定卡产出） | 会话互斥+时序锁+哈希锁三检有测试；新模块登记 add_module_translation+CREATE-GUARD+RULE-DEPGRAPH |
 | C4 | 考场适配器×4 | 同目录 venue_c4.py / venue_replay.py / venue_dual_run.py / venue_tool_bench.py（薄封装） | 各适配器零复制考尺逻辑（只转调既有件）；调不到考尺=fail-closed 拒考 |
 | C5 | 公平性对齐器 | comparator 内 fairness.py | 三轴+防假胜三条全机检；不等=拒考且留 reason；"带星胜"降级路径有测试 |
@@ -193,3 +197,11 @@ DGM 教训（V2-R5）的机制化落地，七道机检（前五道进执行器�
 | 日期 | 版本 | 变更 |
 |------|------|------|
 | 2026-09-17 | design_v1 | 初稿：六向台账（8 signal/1 受阻）+考场矩阵七行+公平性三轴+判据双层预注册+显著性四档+too-good 三查流程化+独立性七道机检+六契约接线+8 施工项+4 待 Owner |
+
+---
+
+## 红蓝 R1 修复记录（2026-09-17，修复组 2）
+
+- **B9（新表落"ai_intake 同实例"未指 schema，违 L2 §2.1 产线禁读界）**：实验卡表改落 PG 同实例**独立 schema `ai_compare`**（表=`ai_compare.ai_comparison_experiment`），三处同步（§1 台账④行、§2.3 实例层、C2 施工项），均加"与 L2 ai_intake schema 隔离，产线禁读界不破"；仍同 PG 实例、全经 DatabaseService、禁裸连接。
+- **第 7 项（跨稿边界声明，L4+L5 同款）**：§2.1 表后新增"考场边界声明"——策略候选的考场止于 L4 证据包产出；转正/流转归业务层 S12-S14 与 Owner 拍板，AI 层不设第二转正门；交易算法专域不在 AI 层自动流转范围。
+- 连带核查：experiment 卡字段与 status 流转零变更；L5/L7 契约不受影响；DDL 登记器沿用 L2 母版模式，仅建表语句挂 `ai_compare` schema。
