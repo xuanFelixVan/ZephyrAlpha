@@ -5002,6 +5002,19 @@ capabilities:
   description: 施工 新模块 建新文件 写代码 施工流程 15步闭环 前必读的端到端编排 SOP——设计备忘→文档审查→蓝图→depgraph 登记→施工→测试→git
     提交→全景对齐→清理 全流程步骤与失败处置；适用 07 域（regime/选股/仓位/风控/买卖/执行/对账/治理）施工，RULE-CAPABILITY-LOOKUP
     检索"施工"应命中本条
+- capability_id: consensus_daily_repaired
+  name: consensus_daily_repaired
+  canonical_file: schemas/categories/fundamental/consensus_daily_repaired.py
+  module_id: MOD-L04-001
+  name_zh: 一致预期每日快照历史修复双轨表（C4 PDF 发布时点预测重建）
+  description: 用 C4 从研报 PDF 原文提取的"发布时点 EPS 预测"（pdf_forecast_extracted high-only +
+    0<eps<=50 守卫）重建 consensus_daily 历史，与污染表 DS-229 物理隔离双轨并存；A 段 2017-2021
+    （PDF 证据）+ B 段 2026-07+（analyst_forecast 快照）两源，eps_source/build_batch 两列溯源；
+    聚合真源复用生产纯函数核 build_consensus_rows（不另立口径、不克隆）；switch_gate=Owner，
+    验收前 DS-229 消费方不得改指。canonical = DDL-as-Code 真源
+    schemas/categories/fundamental/consensus_daily_repaired.py；台账 =
+    docs/_working/reports/2026-09-16-consensus-repaired-build.md；设计 =
+    docs/01_policies_and_standards/policies/expectation_consumption_design_policy.md §M1/§9。
 creation_tokens:
 - file: "docs/_working/audit_integrity/2026-09-16-audit-key-era-deployment.md"
   token: "audit-key-era-deploy-report-20260916"
@@ -27078,4 +27091,28 @@ creation_tokens:
   token: ruling-mirror-20260916-ruling-271-272-wyf3-dsr-mirror-20260916
   created_by: st-qoder-t1a-20260915
   capability: ruling_mirror_20260916
+- file: docs/_working/reports/2026-09-16-c4-audit-batch3.md
+  token: consensus-daily-repaired-2026-09-16-c4-audit-batch3-20260916
+  created_by: st-consrep-20260916
+  capability: consensus_daily_repaired
+- file: docs/_working/reports/2026-09-16-consensus-repaired-build.md
+  token: consensus-daily-repaired-2026-09-16-consensus-repaired-build-20260916
+  created_by: st-consrep-20260916
+  capability: consensus_daily_repaired
+- file: schemas/categories/fundamental/consensus_daily_repaired.py
+  token: consensus-daily-repaired-consensus-daily-repaired-20260916
+  created_by: st-consrep-20260916
+  capability: consensus_daily_repaired
+- file: src/zephyr/data/implementations/consensus_daily_repaired_compute.py
+  token: consensus-daily-repaired-consensus-daily-repaired-compute-20260916
+  created_by: st-consrep-20260916
+  capability: consensus_daily_repaired
+- file: scripts/ch/apply_consensus_daily_repaired_ddl.py
+  token: consensus-daily-repaired-apply-consensus-daily-repaired-ddl-20260916
+  created_by: st-consrep-20260916
+  capability: consensus_daily_repaired
+- file: scripts/ch/build_consensus_daily_repaired.py
+  token: consensus-daily-repaired-build-consensus-daily-repaired-20260916
+  created_by: st-consrep-20260916
+  capability: consensus_daily_repaired
 di_seam_exemptions: []

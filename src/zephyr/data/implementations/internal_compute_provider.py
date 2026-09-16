@@ -124,6 +124,7 @@ _INTERNAL_COMPUTE_CAPABILITIES = frozenset(
 _TBL_LIMIT_UP_POOL = get_registry().table("market_limit_up_pool")
 _TBL_DABAN_BOARD_EVENT = get_registry().table("market_daban_board_event")
 _TBL_DABAN_ENGINE_LOAD = get_registry().table("market_daban_engine_load")
+_TBL_CONSENSUS_DAILY_REPAIRED = get_registry().table("fund_consensus_daily_repaired")
 
 # SQL 模板常量（NO-BARE-SQL gate 豁免：_SQL_* 前缀的常量定义行）
 _SQL_GET_SYMBOLS = "SELECT DISTINCT symbol FROM {table} WHERE {where} ORDER BY symbol"
@@ -409,6 +410,11 @@ class InternalComputeProvider(IngestProviderBase):
             CapabilityContract("limit_up_pool", supports_symbols_null=True),
             # 打板日频事件派生（STR-DABAN-022/裁定#257⑤ LUE-3 2026-09-16）：CH 只读推导三级涨停价解析链，symbols=null=全市场
             CapabilityContract("daban_board_event", supports_symbols_null=True),
+            # 打板四引擎应用层负载日批（T3⑧/挖矿 LUE-1 2026-09-16，8057549c8e 接线）：路由能力集与
+            # _fetch_daban_engine_load 已在 dev 落地但 meta 漏声明 → CAP-CONSISTENCY 全线硬阻断 +
+            # 启动期 capability_validator 对 tasks.yaml daban_engine_load_daily（symbols=null 全市场）判 ERROR。
+            # 本行=补该漏声明（外来欠账代偿，详见台账 §8.14），口径真源仍在 ex_core.daban_load_producer。
+            CapabilityContract("daban_engine_load", supports_symbols_null=True),
             # 指数涨跌家数内生聚合回填真表（车道 G 广度进料口治本 2026-09-16）：
             # kline_daily 自算宇宙宽度→整行读-改-写 kline_index 零宽度位，symbols=null=注册表全量
             CapabilityContract("kline_index_breadth", supports_symbols_null=True),
@@ -500,6 +506,9 @@ class InternalComputeProvider(IngestProviderBase):
         if payload.table == "c3_fundamental.consensus_daily":
             yield from self._fetch_fund_consensus_daily(payload)
             return
+        if payload.table == _TBL_CONSENSUS_DAILY_REPAIRED:
+            yield from self._fetch_consensus_daily_repaired(payload)
+            return
         if payload.table == "c1_market.market_pattern_event":
             yield from self._fetch_pattern_event(payload)
             return
@@ -557,6 +566,23 @@ class InternalComputeProvider(IngestProviderBase):
             symbols=payload.symbols,
             start=infer_incremental_start(),
             end=payload.end,
+        )
+
+    def _fetch_consensus_daily_repaired(self, payload: FetchPayload) -> Iterator[FetchResult]:
+        """一致预期修复双轨表重建路由分支（consensus_daily_repaired capability，DS-275）。
+
+        委托 consensus_daily_repaired_compute（C4 从研报 PDF 原文提取的"发布时点 EPS 预测"
+        high-only + 0<eps<=50 守卫 → 两段合流；PIT=只认 publish_date，与 DS-229 的
+        当前快照回放口径物理隔离）。全量重算幂等（ReplacingMergeTree 同键覆盖）。
+        刻意不挂 tasks.yaml 夜间档：本表是双轨并存的重建轨，生产读路径改指与否由 Owner
+        切换门位裁定（switch_gate=Owner），在此之前只允许按需触发重建。
+        """
+        from zephyr.data.implementations.consensus_daily_repaired_compute import (
+            run_compute_repaired,
+        )
+
+        yield from run_compute_repaired(
+            symbols=payload.symbols, start=payload.start, end=payload.end
         )
 
     def _fetch_financial_derived(self, payload: FetchPayload) -> Iterator[FetchResult]:

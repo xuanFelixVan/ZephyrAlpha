@@ -2118,6 +2118,23 @@
   frequency: 日频
   data_source: [internal]
   blueprint: null
+- category_id: fund_consensus_daily_repaired
+  name: "一致预期每日快照·历史修复双轨表（研报 PDF 发布时点预测）"
+  engine: clickhouse
+  database: c3_fundamental
+  table: consensus_daily_repaired
+  schema_file: schemas/categories/fundamental/consensus_daily_repaired.py
+  data_type: 成品
+  lifecycle: permanent
+  sla_level: L2
+  enabled: true
+  hard_constraint: null
+  calc_mode: preload
+  frequency: 日频
+  data_source: [internal]
+  blueprint: null
+  # 双轨隔离：与 fund_consensus_daily(DS-229) 并存，DS-229 历史行=今日预期回放（§9 档案）；
+  # 本品类 switch_gate=Owner，验收前 DS-229 消费方不得改指。空洞 2022-01-01~2026-07-21。
 
 - category_id: fund_financial_derived
   name: "财报派生层（单季/TTM/跨表对齐）"

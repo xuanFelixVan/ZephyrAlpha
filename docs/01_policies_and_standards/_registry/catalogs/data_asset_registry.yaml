@@ -74,7 +74,7 @@ description: >-
 owner: MOD-GOVERNANCE
 tier: tier_2_data_runtime
 status: active
-version: 1.9.6
+version: 1.9.8
 created: '2026-08-13'
 last_updated: '2026-09-14'
 related_arch: '#ARCH-BREG-001'
@@ -84,6 +84,14 @@ unique_key:
   jobs: [job_id]
 entry_counts: {sources: 18, datasets: 241, jobs: 105}  # 2026-09-14 v1.9.3：+DS-241/242 +JOB-106/107（C-1 消费端首批：sentiment_panel+alt_regime_signal）；派生快照值，以 yaml 实测为准——禁止凭此报数（#83 漏报教训）  # 2026-09-14 v1.9.2：+SRC-SZOPENDATA-001 +DS-234~240 +JOB-099~105（深圳开放数据批量源 7 表 16 系列）；派生快照值，以 yaml 实测为准——禁止凭此报数（#83 漏报教训）  # 2026-09-14 v1.9.1：+DS-233 台风路径 +JOB-097/098（气象事件层）；派生快照值，以 yaml 实测为准——禁止凭此报数（#83 漏报教训）
 
+# v1.9.8 changelog(2026-09-16): C4 历史修复双轨重建——+DS-275 c3_fundamental.consensus_daily_repaired
+#   （研报 PDF 原文提取的**发布时点** EPS 重建一致预期历史，治 §9 档案「历史快照=今天的预期回放」污染；
+#   dual_track=true 与 DS-229 物理隔离并存、DS-229 历史行零触及；switch_gate=Owner 验收前消费方不得改指）。
+#   取号说明：本班原登记 DS-271，与 dev 已落地的 DS-271（c1_market.daban_engine_load，895ce2c91f）
+#   撞号，按「注册表内部唯一」不变量（test_registry_internal_uniqueness）改取段内 max+1=DS-275；
+#   过程与证据见台账 docs/_working/reports/2026-09-16-consensus-repaired-build.md §8.13。
+#   entry_counts.datasets 未随本批更新：该字段全仓已漂移（声明 241 / 实测 263），属
+#   check_registry_consistency.py --update-entry-counts 回填职责，不在本批作用域内擅改。
 # v1.9.7 changelog(2026-09-16): 战役补登四张实表——+DS-271 c1_market.daban_engine_load（打板四引擎
 #   应用层负载日批，车道 E/T3⑧ 挖矿 LUE-1 治本）+DS-272~274 c1_backtest.alloc_budget_daily /
 #   alloc_shrinkage_daily / alloc_budget_change_log（车道 D 分配链落地三表，pf_alloc_consumer_mining
@@ -10786,6 +10794,64 @@ datasets:
   evidence: "MOD-POS-022 BudgetChangeHandler 进程内事件→可持久审计面的唯一出口（无此表则三级升级链不可对账）；防抖 5%/10% 挡掉的抖动次数经 action 列可对账；建表经 scripts/ch/apply_pf_alloc_ddl.py；2026-09-16 CH 实测存在 0 行"
   code_symbol: "src/zephyr/pf_alloc/allocation_persistence.py::write_budget_change_log"
   code_fingerprint: null
+- dataset_id: DS-275
+  entity_name: c3_fundamental.consensus_daily_repaired
+  entity_type: dataset
+  scope: production
+  contract_ref:
+  physical_type: clickhouse_table
+  produced_by_job:
+  consumed_by_jobs: []
+  domain_id: D_FACTOR
+  pit_policy: strict
+  format_summary: 一致预期每日快照·历史修复双轨表（C4 研报 PDF 原文提取的**发布时点**预测重建，
+    2026-09-16 施工班）｜dual_track=true：与 DS-229 物理隔离并存，DS-229 历史行（今天的预期回放）
+    原样保留未触｜switch_gate=Owner：本表经 Owner 验收前，DS-229 现存 5 类 9 处消费方（生产夜批
+    internal_compute_provider+tasks.yaml research_nightly 20:30／生产对账 consensus_crosscheck+
+    schedule.yaml 23:30／研究评估器 eval_exp_expectations／建表 DDL consensus_daily_compute+
+    apply_consensus_daily_ddl／纯函数与测试 factor.expectations）一律不得改指本表；注：pit_query
+    白名单实测**不含** consensus_daily，故本表切换不涉及 pit_query（原稿误列已订正）｜粒度与字段=DS-229 同款 20 列 + eps_source + build_batch 两列溯源
+    （聚合真源复用生产纯函数核 build_consensus_rows，口径不另立）｜分段：A 段
+    eps_source=pdf_forecast_high 1,472,629 行/1,854 标的（2017-01-03~2021-12-31，60/60 月覆盖，
+    证据=pdf_forecast_extracted 高置信 + 守卫 0<eps<=50 剔除 634 行）；B 段
+    eps_source=analyst_forecast_snapshot 91,367 行/2,632 标的（2026-07-22 起同花顺一致预期官方
+    快照，源侧仅 forecast_year=2028 单一年份且无机构明细，n_orgs=0/eps_std=0，消费须分段对待）
+    ｜**已知空洞 2022-01-01~2026-07-21**（上游提取批止于 2021-12-31 且前向快照自 2026-07 起，
+    非构建缺陷）｜PIT 铁律沿用=只聚合 publish_date<=trade_date 零 embargo、无覆盖不成行禁前向填充
+    ｜DDL 真源=schemas/categories/fundamental/consensus_daily_repaired.py（DDL-as-Code）；
+    台账=docs/_working/reports/2026-09-16-consensus-repaired-build.md；设计=
+    expectation_consumption_design_policy.md §M1/§9
+  valid_since: "2017-01-02"
+  module_id: MOD-L00-004
+  design_maturity: design
+  name: c3_fundamental.consensus_daily_repaired
+  name_zh: 一致预期每日快照·历史修复双轨表（研报 PDF 发布时点预测）
+  status: active
+  version: 1.0.0
+  created_at: "2026-09-16"
+  updated_at: "2026-09-16"
+  owner: MOD-L00-004
+  produced_by_source: SRC-INTERNAL-001
+  survivorship_free: true
+  pit_available: true
+  earnings_lag_days:
+  llm_training_cutoff: N/A
+  lookahead_test_method: 三重对照 --check 全过：① B 段与 DS-229 重叠期逐日秩相关均值 0.9713（>=0.9）；
+    ② 锚点股"多源须有修正"违反数=0（同窗 DS-229 反面证据 uniq=1/1,074 日）；③ A 段 20 季末快照日
+    全抽、从 pdf_forecast_extracted 走独立 SQL 路径重算窗口均值比对 213 行不一致 0
+  label_delay_days:
+  drift_detector: none
+  entry_role: "state"
+  applies_to: ["stock"]
+  tags: ["数据", "研报", "财报", "基本面", "因子"]
+  algorithm_status: "not_applicable"
+  evidence: "2026-09-16 落库 1,563,996 行（A 1,472,629/B 91,367，build_batch=c4-repair-20260916）；
+    纯函数单测 9 项全绿（槽位规则/守卫/评级统计用全窗研报/溯源列宽 22）；抽核滚动 25/30 份、
+    high 表路径 25/25 全对（reports/2026-09-16-c4-audit-batch2.md + batch3.md）；
+    守卫与判据口径变更披露、以及 C4 提取批死在 91.7%/IS 窗 2019-2023 仅能覆盖 36/60 月等
+    Owner 级发现=docs/_working/reports/2026-09-16-consensus-repaired-build.md"
+  code_symbol: "src/zephyr/data/implementations/consensus_daily_repaired_compute.py::build_segment_a"
+  code_fingerprint:
 jobs:
 - job_id: JOB-001
   job_name: ingest.minqmt_kline

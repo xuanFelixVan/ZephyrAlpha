@@ -2,11 +2,14 @@
 # [BLUEPRINT] MOD-BT-033 | docs/03_modules/_domain_backtest/blueprint.md
 # [MODULE] scripts.backtest.eval_exp_expectations
 # [DOMAIN] D_BACKTEST
-# [DEPENDENCIES] zephyr.data.ch_reader; zephyr.factor.expectations; zephyr.backtest.core.matching_logic; scipy
+# [DEPENDENCIES] zephyr.data.ch_reader; zephyr.data.table_registry; zephyr.factor.expectations;
+#                zephyr.backtest.core.matching_logic; scipy
 # [CONSUMERS] factor_registry FCT-EXP 族晋级证据（SOP-B ④⑤⑥ 单脚本链）；experiment_registry EXP-FACTOR-EVAL-*；CLI 输出 JSON
 # [STARTUP] manual
 # [MATURITY] design
-# [INVARIANTS] PIT as-of：因子输入=consensus_daily（publish_date<=trade_date 结构性保证，DS-229）；
+# [INVARIANTS] PIT as-of：因子输入=consensus_daily（publish_date<=trade_date 结构性保证，DS-229
+#              默认；--source repaired 切 DS-275 双轨修复表，出证 JSON 落 consensus_table 溯源，
+#              判据不随开关变）；
 #              前向收益=close t→t+20 交易日（标签，检验允许）；IC=月末截面 Spearman；
 #              晋级门槛（预注册禁挪，registry 头 2026-09-12 成文）：IS 2019-2023 |IC|>=0.02 且 t p<0.05 且覆盖>=60%；
 #              ⑥ 准入线=IS 超额 Sharpe>=0.5 且 OOS/IS>=0.7（FQ 同款）；滑点压力=cfg+{20,40,80}bp（§8.1 协议，
@@ -75,10 +78,16 @@ _MIN_NAMES = 100
 _PANEL_START = "2018-06-01"     # k=60 回看缓冲
 _AUM = 1_000_000.0              # 组合名义额（最小佣金分摊基数；FQ 同款量级）
 
+# 表名走 TableRegistry 真源（#ARCH-CH-024：已注册表名禁硬编码字面量）
+from zephyr.data.table_registry import get_registry  # noqa: E402
+
+_CONSENSUS_TABLE_POLLUTED = get_registry().table("fund_consensus_daily")  # DS-229：历史行=今日预期回放（§9 档案）
+_CONSENSUS_TABLE_REPAIRED = get_registry().table("fund_consensus_daily_repaired")  # DS-275：PDF 发布时点重建双轨
+
 # —— SQL 常量区（NO-BARE-SQL 集中化；查询口径与 §8 预注册判据一并固化）——
 _SQL_CONSENSUS_MONTH = (
     "SELECT symbol, trade_date, forecast_year, eps_consensus, eps_std, rating_score_mean "
-    "FROM c3_fundamental.consensus_daily FINAL "
+    "FROM {table} FINAL "
     "WHERE trade_date >= toDate('{y}-{m:02d}-01') "
     "AND trade_date <= toDate('{y}-{m:02d}-{last_day:02d}') FORMAT TSV")
 _SQL_REPORTS = (
@@ -105,8 +114,8 @@ _SQL_REGIME = (
     "SELECT trade_date, dominant FROM c1_backtest.regime_state_anchored FINAL FORMAT TSV")
 
 
-def load_consensus_fy1() -> pd.DataFrame:
-    """consensus_daily → fy1 快照长表（每股每日一行：>=当年最小预测年）。
+def load_consensus_fy1(table: str = _CONSENSUS_TABLE_POLLUTED) -> pd.DataFrame:
+    """consensus_daily（或 DS-275 双轨修复表）→ fy1 快照长表（每股每日一行：>=当年最小预测年）。
 
     按月分块拉取（防御性；坏列名会被 TCP/HTTP 双通道报错掩盖成空串，逐块易定位），
     fy1 选择在客户端完成（forecast_year 升序取首行）。
@@ -120,14 +129,14 @@ def load_consensus_fy1() -> pd.DataFrame:
         y, m = ym
         last_day = [31, 29 if y % 4 == 0 and (y % 100 != 0 or y % 400 == 0) else 28,
                     31, 30, 31, 30, 31, 31, 30, 31, 30, 31][m - 1]
-        q = _SQL_CONSENSUS_MONTH.format(y=y, m=m, last_day=last_day)
+        q = _SQL_CONSENSUS_MONTH.format(table=table, y=y, m=m, last_day=last_day)
         tsv = ch_reader.query(q, timeout=300)
         if tsv and tsv.strip():
             rows = [ln.split("\t") for ln in tsv.strip().split("\n")]
             frames.append(pd.DataFrame(rows, columns=["symbol", "td", "fy", "eps_consensus", "eps_std", "rating_mean"]))
         ym = (y + 1, 1) if m == 12 else (y, m + 1)
     if not frames:
-        raise RuntimeError("consensus_daily fy1 快照为空")
+        raise RuntimeError(f"{table} fy1 快照为空")
     df = pd.concat(frames, ignore_index=True)
     df["td"] = pd.to_datetime(df["td"])
     df["fy"] = pd.to_numeric(df["fy"], errors="coerce")
@@ -496,10 +505,17 @@ def main() -> None:
     ap.add_argument("--factor", default="exp02", choices=["exp02", "exp04", "exp06"],
                     help="评估因子（exp02=值类已 data-gap；exp04/06=计数/评级类，裁定#253 放行）")
     ap.add_argument("--out", default=None, help="JSON 输出路径（缺省打印）")
+    ap.add_argument("--source", choices=("polluted", "repaired"), default="polluted",
+                    help="一致预期输入表：polluted=DS-229（默认，既有出证口径零漂移）/"
+                         "repaired=DS-275 历史修复双轨表（仅影响 exp02/exp06 的 eps/rating 输入，"
+                         "exp04 走研报计数不受影响）")
     args = ap.parse_args()
+    cons_table = (
+        _CONSENSUS_TABLE_REPAIRED if args.source == "repaired" else _CONSENSUS_TABLE_POLLUTED
+    )
 
     if args.factor == "exp02":
-        cons = load_consensus_fy1()
+        cons = load_consensus_fy1(cons_table)
         cal = load_calendar()
         mes = month_ends(cal, _IS[0], _OOS[1])
         cal_pos = {d: i for i, d in enumerate(cal)}
@@ -536,7 +552,8 @@ def main() -> None:
         px_close = px.pivot(index="td", columns="symbol", values="close").reindex(
             pd.to_datetime(cal)).sort_index()
 
-    report: dict = {"factor": args.factor, "is_window": list(_IS),
+    report: dict = {"factor": args.factor, "consensus_table": cons_table,
+                    "is_window": list(_IS),
                     "oos_window": list(_OOS), "fwd_td": _FWD}
     trials = 0
     if args.factor == "exp02":
@@ -554,7 +571,7 @@ def main() -> None:
             report[f"k{k}td"] = seg
     elif args.factor == "exp06":
         k = 60    # FCT-EXP-006 params.k_td=60（§8.2 无网格=单配置）
-        fac = compute_factor_exp06(load_consensus_fy1(), k)
+        fac = compute_factor_exp06(load_consensus_fy1(cons_table), k)
         report[f"k{k}td"] = _full_eval(fac, px_close, bench, mes, fwd_map, mom_k=20)
         trials = 1 + len(_SLIP_STRESS)
     else:  # exp04
