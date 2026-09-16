@@ -21943,3 +21943,35 @@ entries:
   status: fixed
   created: '2026-09-17'
   last_updated: '2026-09-17'
+- issue_id: "#ARCH-328"
+  title: >-
+    队列落地 worktree 备置的激活脚本使 66 号 §11 #6「处理前 worktree clean」断言确定性假红：
+    测试夹具 tmp_repo 只镜像了主仓 .gitignore 的运行时目录豁免，未覆盖备置器第 3 步产物，
+    而该豁免契约（真仓侧 + 夹具侧）此前两面皆无钉
+  severity: P3低
+  adjudication: >-
+    取证：本战役端到端 3092 项治理批测试唯一失败
+    tests/governance/test_commit_queue_integration.py::TestWorktreeSyncInvariant::test_sequential_same_file_items_keep_worktree_synced
+    → AssertionError: assert '?? activate_env.ps1' == ''；单跑 3.84s 复现=确定性非竞态。
+    判据分家（关键：这不是生产缺陷）：①产品侧实测干净——git check-ignore -v activate_env.ps1
+    命中 .gitignore:262 根规则 /*，真 serializer worktree 里该文件被忽略，落盘判读不受影响；
+    ②缺陷在夹具——tmp_repo 注释自陈「与主仓 .gitignore 对齐」却只写 .runtime/ + .ailocks/
+    两条，未随 scripts/session_worktree._provision_worktree_env 第 3 步（58aced8cbf，
+    2026-08-14 #ARCH-WORKTREE-ENV-001 三件套）同步扩表；③成因同族于 #ARCH-327——
+    一条"契约靠另一处文件的隐式规则成立"的链路，两端都没钉，于是假红被读成环境噪声挂了
+    一个月，本战役把它当自家回归挖出来才归因。
+    裁定：收紧不放松——不把 clean 断言改成"忽略未知未跟踪文件"（那正是本断言要防的搭便车口子），
+    而是把隐式契约显式化为可测两面。
+  fix_phase: >-
+    ①夹具豁免表提为模块级单一真源常量 _WORKTREE_IGNORE_LINES（消除"字面量两处各写一遍"），
+    补 /activate_env.ps1；②新增 TestProvisionedArtifactIgnoreContract 三钉：
+    (a) 备置器落在 worktree 根的产物集合本身=={{activate_env.ps1}}（产物搬家/新增即提示契约面已变）；
+    (b) 真仓必须忽略每个备置根产物（生产侧漂移=serializer worktree 变脏）；
+    (c) 夹具豁免表必须覆盖备置根产物（夹具侧漂移=§11 #6 假红）。
+    机证=双向变异：删 (c) 条目 → RED「夹具侧漂移：缺 ['activate_env.ps1']」；
+    喂未豁免名 README.md 给 (b) → RED「生产侧漂移」；原态 4 passed（含原红用例转绿）。
+    已知弱点留痕：主仓 /* 会豁免任意根文件，故 (b) 只在 /* 被删/被收窄或产物被显式 !
+    白名单时才红——它防的是"规则消失"，不防"根目录堆料"（后者由 GOV-DOC/根零临时文件纪律管）。
+  status: fixed
+  created: '2026-09-17'
+  last_updated: '2026-09-17'

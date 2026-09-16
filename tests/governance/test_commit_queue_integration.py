@@ -65,6 +65,10 @@ from zephyr.security.access_control.session_concurrency import SessionRegistry
 REPO_ROOT = Path(__file__).resolve().parents[2]
 _HOOKS_SRC = REPO_ROOT / "scripts" / "governance" / "git_hooks"
 
+# 夹具 worktree 豁免表（单一真源：TestProvisionedArtifactIgnoreContract 用它反查
+# landing 备置产物是否全覆盖——备置器新增根文件而未补此表 = 本文件 §11 #6 断言假红）。
+_WORKTREE_IGNORE_LINES: tuple[str, ...] = (".runtime/", ".ailocks/", "/activate_env.ps1")
+
 
 def _git(cwd: Path, *args: str, check: bool = True) -> subprocess.CompletedProcess:
     """tmp 仓 git 执行（字节安全：commit 内容比对走 bytes）。
@@ -130,8 +134,15 @@ def tmp_repo(tmp_path: Path) -> Path:
     _git(repo, "config", "user.name", "test")
     _git(repo, "config", "core.autocrlf", "false")
     # 与主仓 .gitignore 对齐：运行时目录豁免——worktree 内网关写 .runtime/.ailocks
-    # 属运行时产物（66 号 §11 #6 的 clean 断言依赖此豁免，生产同理）
-    (repo / ".gitignore").write_text(".runtime/\n.ailocks/\n", encoding="utf-8")
+    # 属运行时产物（66 号 §11 #6 的 clean 断言依赖此豁免，生产同理）。
+    # activate_env.ps1 是 landing 备置 worktree 环境时生成的激活脚本
+    # （scripts/session_worktree._provision_worktree_env 第 3 步），主仓由 .gitignore
+    # 根规则 /* 豁免（TestProvisionedArtifactIgnoreContract 双向钉住该契约：真仓漏豁免
+    # = 生产脏 worktree，夹具漏豁免 = 本断言假红）；夹具不复制主仓全量 .gitignore，
+    # 故此处按同口径显式列举。
+    (repo / ".gitignore").write_text(
+        "\n".join(_WORKTREE_IGNORE_LINES) + "\n", encoding="utf-8"
+    )
     (repo / "base.txt").write_text("base\n", encoding="utf-8")
     _git(repo, "add", ".")
     _git(repo, "commit", "-qm", "init")
@@ -851,3 +862,52 @@ class TestCleanResilience:
         monkeypatch.setattr(cql, "_run_git", self._fake_git({"reset"}))
         with pytest.raises(RuntimeError):
             landing._sync_worktree()
+
+
+# ---------------------------------------------------------------------------
+# #ARCH-328：landing 备置产物的忽略契约（真仓豁免 + 夹具豁免双向钉）
+# ---------------------------------------------------------------------------
+
+
+class TestProvisionedArtifactIgnoreContract:
+    """备置器写在 worktree 根的文件必须被忽略——否则 §11 #6 clean 断言失去判据。
+
+    病根（2026-09-17 取证）：_provision_worktree_env 第 3 步在 worktree 根写
+    activate_env.ps1，主仓靠 .gitignore 根规则 ``/*`` 豁免，而测试夹具只镜像了
+    运行时目录豁免 → TestWorktreeSyncInvariant 确定性假红（3.84s，非竞态）。
+    单向修夹具只是止血：本类把两条真源同时钉住——
+    ① 真仓漏豁免 = 生产 serializer worktree 变脏（落地侧会把无关键混进 status 判读）；
+    ② 夹具漏豁免 = 本文件断言假红。任一漂移即红，且指名是哪个方向。
+    """
+
+    @staticmethod
+    def _provisioned_root_files(tmp_path: Path) -> list[str]:
+        """跑真备置器，返回它落在 worktree 根的文件名（目录不计）。"""
+        from scripts.session_worktree import _provision_worktree_env
+
+        wt = tmp_path / "wt"
+        wt.mkdir()
+        _provision_worktree_env(wt, source_root=tmp_path)  # source 空仓=配置全 WARN 跳过
+        return sorted(p.name for p in wt.iterdir() if p.is_file())
+
+    def test_provisioned_root_files_exist_to_pin_the_class(self, tmp_path: Path):
+        """备置器确在根落文件（若哪天搬进子目录，本钉提示契约面已变）。"""
+        assert self._provisioned_root_files(tmp_path) == ["activate_env.ps1"]
+
+    def test_real_repo_ignores_provisioned_root_files(self, tmp_path: Path):
+        """生产侧：主仓 .gitignore 必须忽略每个备置根产物（否则真 worktree 变脏）。"""
+        for name in self._provisioned_root_files(tmp_path):
+            r = _git(REPO_ROOT, "check-ignore", "-q", "--no-index", name, check=False)
+            assert r.returncode == 0, (
+                f"#ARCH-328 生产侧漂移：主仓 .gitignore 不再忽略备置产物 {name}"
+                "（serializer worktree 将被 git status 判脏）——恢复 /* 规则或改备置路径"
+            )
+
+    def test_fixture_exemptions_cover_provisioned_root_files(self, tmp_path: Path):
+        """夹具侧：豁免表须覆盖备置根产物（否则 §11 #6 clean 断言假红）。"""
+        exempted = {ln.lstrip("/").rstrip("/") for ln in _WORKTREE_IGNORE_LINES}
+        missing = [n for n in self._provisioned_root_files(tmp_path) if n not in exempted]
+        assert missing == [], (
+            f"#ARCH-328 夹具侧漂移：_WORKTREE_IGNORE_LINES 缺 {missing}——"
+            "备置器新增根文件须同步补豁免表（或把产物挪进已豁免目录）"
+        )
