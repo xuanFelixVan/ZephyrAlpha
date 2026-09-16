@@ -2,7 +2,7 @@
 # [MODULE] zephyr.frontend.frontend_api_proxy
 # [DOMAIN] D_FRONTEND
 # [DEPENDENCIES] 无（协议核心纯内存；token校验/令牌桶时钟/上游client全注入）
-# [CONSUMERS] 运行时装配批（前端唯一接触点 / 上游服务适配器装配）
+# [CONSUMERS] 无装配消费方（tests-only：tests/frontend/test_frontend_api_proxy.py）
 # [STARTUP] imported
 # [MATURITY] production
 # [INVARIANTS] 方法词表闭合(GET|POST); 路由最长前缀匹配(确定性); token校验未注入Fail-Closed; 限流按principal分桶(注入时钟); 上游client注入不真发(异常→502规范化); 响应规范化(JSON可序列化, 不落token); 非法输入Fail-Closed; 同输入必同输出

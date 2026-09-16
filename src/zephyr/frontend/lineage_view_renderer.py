@@ -2,7 +2,7 @@
 # [MODULE] zephyr.frontend.lineage_view_renderer
 # [DOMAIN] D_FRONTEND
 # [DEPENDENCIES] 无（纯内存；血缘实体/边快照注入，装配批自 lineage_tracker 适配）
-# [CONSUMERS] 运行时装配批（血缘面板N跳高亮/变更影响着色/布局分层数据供给）
+# [CONSUMERS] 无装配消费方（tests-only：tests/frontend/test_lineage_view_renderer.py）
 # [STARTUP] imported
 # [MATURITY] production
 # [INVARIANTS] 实体id唯一非空; 边端点须在实体集且无自环(重复边幂等去重); 血缘DAG闭合(环拒绝); N跳闭包=双向BFS(跳数有界); 影响着色changed优先于impacted; 层分配=最长路径; 输出确定性排序; 同输入必同输出

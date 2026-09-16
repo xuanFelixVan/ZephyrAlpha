@@ -2,7 +2,7 @@
 # [MODULE] zephyr.frontend.dashboard.components.trade_panel
 # [DOMAIN] D_FRONTEND
 # [DEPENDENCIES] zephyr.frontend.dashboard.components.chart_factory; zephyr.trading.trading_contracts.execution.order; zephyr.shared.utils.time_utils
-# [CONSUMERS] zephyr.frontend.dashboard.app
+# [CONSUMERS] zephyr.frontend.dashboard.app_panel
 # [STARTUP] manual
 # [MATURITY] production
 # [INVARIANTS] human_gated(实盘交易需Owner审批); 二次确认; 风控提示; 紧急停止; 1万元100股灰度

@@ -2,7 +2,7 @@
 # [MODULE] zephyr.frontend.implementations.feishu_bot_sender
 # [DOMAIN] D_FRONTEND
 # [DEPENDENCIES] 无（协议核心纯内存；webhook client/时钟全注入，密钥仅 secrets 引用不落地）
-# [CONSUMERS] 运行时装配批（审批通知发送 / 告警推送微信备选通道装配）
+# [CONSUMERS] 无装配消费方（tests-only：tests/frontend/test_feishu_bot_sender.py；implementations/__init__.py 仅 re-export）
 # [STARTUP] imported
 # [MATURITY] production
 # [INVARIANTS] webhook_ref 仅 secrets:// 引用(明文URL拒绝); 按钮动作词表闭合(approve|reject|view); 告警级别词表闭合(info|warning|critical); 审批模板字段≥1且按钮≤3; client注入不真发(异常记失败不阻断); 发送回执全量留痕(receipt_id确定性); 时钟全注入; 同输入必同输出

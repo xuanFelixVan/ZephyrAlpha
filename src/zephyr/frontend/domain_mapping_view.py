@@ -2,7 +2,7 @@
 # [MODULE] zephyr.frontend.domain_mapping_view
 # [DOMAIN] D_FRONTEND
 # [DEPENDENCIES] 无（纯内存；architecture_model 实体快照/clock 全注入，装配批自 depgraph_reader 适配）
-# [CONSUMERS] 运行时装配批（业务域×DB域映射矩阵/桑基图/孤儿清单面板数据供给）
+# [CONSUMERS] 无装配消费方（tests-only：tests/frontend/test_domain_mapping_view.py）
 # [STARTUP] imported
 # [MATURITY] production
 # [INVARIANTS] 实体须在注入快照内; 域名单元非空; 同实体重复登记仅同三元组幂等(冲突拒绝); 矩阵单元格计数=桑基边权重(同一聚合); 孤儿=快照内未映射实体; 输出确定性排序; 同输入必同输出

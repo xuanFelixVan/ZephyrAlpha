@@ -2,7 +2,7 @@
 # [MODULE] zephyr.frontend.notification_router
 # [DOMAIN] D_FRONTEND
 # [DEPENDENCIES] 无（协议核心纯内存；通道发送器/时钟全注入，密钥仅 secrets 引用不落地）
-# [CONSUMERS] 运行时装配批（alert_manager 挂接 / 企业微信·飞书 webhook 发送器装配）
+# [CONSUMERS] 无装配消费方（tests-only：tests/frontend/test_notification_router.py）
 # [STARTUP] imported
 # [MATURITY] production
 # [INVARIANTS] 严重级词表闭合(info|warning|critical); 通道词表闭合(wecom|feishu); secret_ref 仅 secrets:// 引用(明文URL拒绝); 静默时段内非 critical 抑制(critical 不静默); 超时未 ack 升级更严重通道(单次升级不循环); 投递 best-effort(发送器异常记失败不阻断); 时钟全注入; 同输入必同输出

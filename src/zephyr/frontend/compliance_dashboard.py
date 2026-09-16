@@ -2,7 +2,7 @@
 # [MODULE] zephyr.frontend.compliance_dashboard
 # [DOMAIN] D_FRONTEND
 # [DEPENDENCIES] 无（协议核心纯内存；四卡数据源/趋势数据源/时钟全注入）
-# [CONSUMERS] 运行时装配批（compliance_report_registry 适配注入 / 仪表盘面板装配）
+# [CONSUMERS] 无装配消费方（tests-only：tests/frontend/test_compliance_dashboard.py）
 # [STARTUP] imported
 # [MATURITY] production
 # [INVARIANTS] 异常严重级词表闭合(low|medium|high); 整改状态词表闭合(open|in_progress|done|overdue); 趋势指标词表闭合(rule_hit_rate|anomaly_count|evidence_completeness|open_remediation); 数据源记录类型不符Fail-Closed; 命中率/完整度空集=0.0; 清单输出确定性排序; 趋势按日窗口升序(缺值=0.0); 时钟全注入; 同输入必同输出

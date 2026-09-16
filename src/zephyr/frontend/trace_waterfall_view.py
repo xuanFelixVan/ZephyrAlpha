@@ -2,7 +2,7 @@
 # [MODULE] zephyr.frontend.trace_waterfall_view
 # [DOMAIN] D_FRONTEND
 # [DEPENDENCIES] 无（纯内存；span_store 注入不触网，装配批自 shared.observability.tracing 适配）
-# [CONSUMERS] 运行时装配批（Trace瀑布面板检索/布局/采样/慢链路高亮数据供给）
+# [CONSUMERS] 无装配消费方（tests-only：tests/frontend/test_trace_waterfall_view.py）
 # [STARTUP] imported
 # [MATURITY] production
 # [INVARIANTS] 四视图词表闭合(trade_main|data_chain|ai_ops|gpu_infer); span树闭合(父引用可解析/无环/单span单父); span.trace_id须等于检索id; 采样=sha256(trace_id)哈希确定性; 慢链路=视图阈值映射(duration>=threshold); 瀑布行=DFS先序父子嵌套; 同输入必同输出

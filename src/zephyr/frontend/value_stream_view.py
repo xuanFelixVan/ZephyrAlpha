@@ -2,7 +2,7 @@
 # [MODULE] zephyr.frontend.value_stream_view
 # [DOMAIN] D_FRONTEND
 # [DEPENDENCIES] 无（纯内存；模块段归属/依赖边快照注入，装配批自 depgraph_reader 适配）
-# [CONSUMERS] 运行时装配批（价值流泳道面板段归属/段间边/全链高亮数据供给）
+# [CONSUMERS] 无装配消费方（tests-only：tests/frontend/test_value_stream_view.py）
 # [STARTUP] imported
 # [MATURITY] production
 # [INVARIANTS] 五段词表闭合(data|factor|signal|execution|portfolio); 段间边仅顺流(源段序号<目标段序号,同段/逆流/自环拒绝,故天然无环); 重复边幂等去重; 高亮=选中节点全链上下游传递闭包; 输出确定性排序; 同输入必同输出

@@ -2,7 +2,7 @@
 # [MODULE] zephyr.frontend.dashboard.components.tick_replay
 # [DOMAIN] D_FRONTEND
 # [DEPENDENCIES] zephyr.frontend.dashboard.components.chart_factory
-# [CONSUMERS] zephyr.frontend.dashboard.app
+# [CONSUMERS] zephyr.frontend.dashboard.app_panel
 # [STARTUP] imported
 # [MATURITY] production
 # [INVARIANTS] none

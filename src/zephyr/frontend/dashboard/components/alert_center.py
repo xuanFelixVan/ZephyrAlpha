@@ -2,7 +2,7 @@
 # [MODULE] zephyr.frontend.dashboard.components.alert_center
 # [DOMAIN] D_FRONTEND
 # [DEPENDENCIES] 标准库(dataclasses/datetime/statistics); panel(可选, try/except 测试环境 None)
-# [CONSUMERS] zephyr.frontend.dashboard.app_panel（运行时装配批挂「告警中心」Tab）
+# [CONSUMERS] 无装配消费方（tests-only：tests/frontend/test_alert_center.py；app_panel 未挂「告警中心」Tab）
 # [STARTUP] imported
 # [MATURITY] production
 # [INVARIANTS] fetch/render 纯函数无IO; 输入非法Fail-Closed; render 输出 JSON 可序列化; 不 import 告警后端(数据源 DI 注入)

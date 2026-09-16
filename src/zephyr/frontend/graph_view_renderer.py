@@ -2,7 +2,7 @@
 # [MODULE] zephyr.frontend.graph_view_renderer
 # [DOMAIN] D_FRONTEND
 # [DEPENDENCIES] 无（渲染数据底座纯内存；依赖图节点/边快照注入，装配批自 depgraph_reader 适配）
-# [CONSUMERS] 运行时装配批（依赖图面板分层布局/状态着色/钻取邻居子图数据供给）
+# [CONSUMERS] 无装配消费方（tests-only：tests/frontend/test_graph_view_renderer.py）
 # [STARTUP] imported
 # [MATURITY] production
 # [INVARIANTS] 节点id唯一非空; 边端点须在节点集且无自环(重复边幂等去重); DAG闭合(环拒绝); 层分配=最长路径; 层内序=barycenter降交叉+node_id兜底; 钻取子图=双向N跳诱导子图; 同输入必同输出

@@ -2,7 +2,7 @@
 # [MODULE] zephyr.frontend.implementations.wechat_bot_handler
 # [DOMAIN] D_FRONTEND
 # [DEPENDENCIES] 无（协议核心纯内存；鉴权器/盯盘·查询数据源/下单执行器/时钟全注入）
-# [CONSUMERS] 运行时装配批（企业微信回调入口 / 盯盘·查询·下单适配器装配）
+# [CONSUMERS] 无装配消费方（tests-only：tests/frontend/test_wechat_bot_handler.py；implementations/__init__.py 仅 re-export）
 # [STARTUP] imported
 # [MATURITY] production
 # [INVARIANTS] 消息schema校验(msg_type仅text); 指令词表闭合(盯盘|查询|下单|确认|取消); 白名单+注入鉴权器双重鉴权(鉴权器未注入Fail-Closed); 下单强制二次确认(超时拒绝硬约束, 待确认期间禁止新下单); 回复渲染JSON可序列化; 时钟全注入; 同输入必同输出
