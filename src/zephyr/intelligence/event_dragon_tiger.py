@@ -15,12 +15,6 @@
 # [A_module] module_id=MOD-INT-EVENT-DT | layer=module | stability=evolving | safety=M | ai_autonomy=ai_modifiable
 # [TTL] permanent
 # [ARCH-REF] 26_event_driven_strategy_detail §2.5 龙虎榜 2026 机构信号失效校准
-# [ALGO_FLOW]
-# I1: DragonTigerData（net_buy_amount/total_turnover/total_buy/buyer_seats[type,buy_amount]）
-# F1: 净买率=net_buy/turnover 硬阈值门控（≥12%→1.2 否则→1.0）
-# F2: 量化席位过滤（≥3席：占比>30%→×0.7 hard；否则→×0.85 soft）
-# O1: modifier∈[0.7,1.2]（event_score 乘法修正因子）
-# [/ALGO_FLOW]
 """
 MOD-INT-EVENT-DT — 龙虎榜佐证修正因子（26 号 §2.5 v1.8.0，2026 失效校准）。
 
@@ -43,32 +37,7 @@ MOD-INT-EVENT-DT — 龙虎榜佐证修正因子（26 号 §2.5 v1.8.0，2026 �
 依据: docs/02_enterprise_architecture/07_trading_decision_architecture/design_memos/26_event_driven_strategy_detail.md §2.5
 Version: 0.1.0
 
-# [ALGO_FLOW]
-# 层: 输入
-# - id: I1
-#   name: data 参数
-#   fields: 参数 data，类型注解 DragonTigerData | None
-#   code: event_dragon_tiger.py 顶层公共函数形参（AST 提取）
-# 层: 算法
-# - id: A1
-#   name_zh: ① dragon_tiger_corroboration_modifier
-#   name_en: dragon_tiger_corroboration_modifier
-#   intro: 龙虎榜佐证修正因子（2026 失效校准）。
-#   desc: 龙虎榜佐证修正因子（2026 失效校准）。返回乘法因子 ∈ [0.7, 1.2]。 - 无数据 → 1.0（非龙虎榜标的不修正） - 净买率 ≥12% → 1.2（极端值硬阈值门…；源码 L108-L130
-#   inputs: data
-#   outputs: float
-#   （注：A1 之后另有 2 个公共定义未列入（含 2 个数据契约/异常/枚举声明类），见源码）
-# 层: 输出
-# - id: O1
-#   name_zh: float
-#   name_en: float
-#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
-#   downstream: 事件驱动 sleeve（event_score 龙虎榜佐证乘法修正：event_score_final = event_score × modifier）
-# [/ALGO_FLOW]
-#
-# 边:
-# I1 --> A1
-# A1 --> O1
+# [ALGO_FLOW] external: docs/03_modules/_domain_intelligence/algo_flow/event_dragon_tiger.yaml
 """
 
 from __future__ import annotations

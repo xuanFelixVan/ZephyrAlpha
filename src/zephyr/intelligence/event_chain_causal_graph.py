@@ -27,47 +27,7 @@ B10-01448（AUD-DRAFT-001-DIGEST P2 波 P2-W04，CAND-AISA-011，A1 模块41）�
 注入 granger_tester 消费其语义，不重建检验算法）；event_* 族=事件打分/地
 图（本件=事件间统计因果边与条件概率，零交集）。
 
-# [ALGO_FLOW]
-# 层: 输入
-# - id: I1
-#   name: granger_tester 参数
-#   fields: 参数 granger_tester（无注解）
-#   code: event_chain_causal_graph.py 顶层公共函数形参（AST 提取）
-# - id: I2
-#   name: p_threshold 参数
-#   fields: 参数 p_threshold（无注解）
-#   code: event_chain_causal_graph.py 顶层公共函数形参（AST 提取）
-# - id: I3
-#   name: max_lag 参数
-#   fields: 参数 max_lag（无注解）
-#   code: event_chain_causal_graph.py 顶层公共函数形参（AST 提取）
-# - id: I4
-#   name: laplace_alpha 参数
-#   fields: 参数 laplace_alpha（无注解）
-#   code: event_chain_causal_graph.py 顶层公共函数形参（AST 提取）
-# 层: 算法
-# - id: A1
-#   name_zh: ① EventChainCausalGraph
-#   name_en: EventChainCausalGraph
-#   intro: 事件链因果图件（节点表 + Granger 边 + 贝叶斯 CPT + 概率查询）。
-#   desc: 事件链因果图件（节点表 + Granger 边 + 贝叶斯 CPT + 概率查询）。；公共方法（定义序）: register_event, event, node_count, add_granger_edge, ed…
-#   inputs: granger_tester p_threshold max_lag laplace_alpha
-#   outputs: 返回值
-#   （注：A1 之后另有 4 个公共定义未列入（含 4 个数据契约/异常/枚举声明类），见源码）
-# 层: 输出
-# - id: O1
-#   name_zh: 模块公共 API 面（5 定义）
-#   name_en: public defs
-#   intro: EventChainCausalGraph
-#   downstream: 运行时装配批（granger 检验器接 causal_inference_engine / 事件注册接事件采集 / 概率查询接信号层）
-# [/ALGO_FLOW]
-#
-# 边:
-# I1 --> A1
-# I2 --> A1
-# I3 --> A1
-# I4 --> A1
-# A1 --> O1
+# [ALGO_FLOW] external: docs/03_modules/_domain_intelligence/algo_flow/event_chain_causal_graph.yaml
 """
 
 from __future__ import annotations

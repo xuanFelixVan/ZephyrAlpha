@@ -28,47 +28,7 @@ B1-00118（AUD-DRAFT-001-DIGEST P1 波 W-P1-09，D-ALT-11）：三路输入
 （MOD-PLAN-007，盘前复盘单点）；本模块为三路统一解读引擎，LLM 能力经
 注入 callable 消费，零密钥零直连。
 
-# [ALGO_FLOW]
-# 层: 输入
-# - id: I1
-#   name: local_llm 参数
-#   fields: 参数 local_llm（无注解）
-#   code: llm_market_interpreter.py 顶层公共函数形参（AST 提取）
-# - id: I2
-#   name: api_llm 参数
-#   fields: 参数 api_llm（无注解）
-#   code: llm_market_interpreter.py 顶层公共函数形参（AST 提取）
-# - id: I3
-#   name: mode_selector 参数
-#   fields: 参数 mode_selector（无注解）
-#   code: llm_market_interpreter.py 顶层公共函数形参（AST 提取）
-# - id: I4
-#   name: audit_sink 参数
-#   fields: 参数 audit_sink（无注解）
-#   code: llm_market_interpreter.py 顶层公共函数形参（AST 提取）
-# 层: 算法
-# - id: A1
-#   name_zh: ① LlmMarketInterpreter
-#   name_en: LlmMarketInterpreter
-#   intro: 三路统一市场解读引擎（判定核心纯内存，LLM/审计全注入式）。
-#   desc: 三路统一市场解读引擎（判定核心纯内存，LLM/审计全注入式）。；公共方法（定义序）: sink_errors, interpret；源码 L137-L225
-#   inputs: local_llm api_llm mode_selector audit_sink
-#   outputs: 返回值
-#   （注：A1 之后另有 4 个公共定义未列入（含 4 个数据契约/异常/枚举声明类），见源码）
-# 层: 输出
-# - id: O1
-#   name_zh: 模块公共 API 面（5 定义）
-#   name_en: public defs
-#   intro: LlmMarketInterpreter
-#   downstream: 运行时装配批（local_llm 接本地池 qwen3:8b / api_llm 接 API 池·gateway / mode_selector 接交易时段真…
-# [/ALGO_FLOW]
-#
-# 边:
-# I1 --> A1
-# I2 --> A1
-# I3 --> A1
-# I4 --> A1
-# A1 --> O1
+# [ALGO_FLOW] external: docs/03_modules/_domain_intelligence/algo_flow/llm_market_interpreter.yaml
 """
 
 from __future__ import annotations

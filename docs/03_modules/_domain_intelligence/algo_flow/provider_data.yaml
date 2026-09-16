@@ -1,0 +1,33 @@
+# ALGO_FLOW 外部真源——provider_data（_domain_intelligence 域，真源 src/zephyr/intelligence/model_profiling/provider_data.py）
+# 2026-09-15 P2-1 契约头减负批量出仓：docstring 内联块逐字节副本，extractor 经
+# external 锚加载走同一 parse_algo_flow 管线；算法公共面变化时同步更新本块。
+doc_type: architecture_view
+ttl: permanent
+module: src.zephyr.intelligence.model_profiling.provider_data
+source_of_truth: src/zephyr/intelligence/model_profiling/provider_data.py
+algo_flow: |
+    # [ALGO_FLOW]
+    # 层: 输入
+    # - id: I1
+    #   name: 模块内部数据
+    #   fields: 无公共形参/无再导出（AST 事实）
+    #   code: provider_data.py
+    # 层: 算法
+    # - id: A1
+    #   name_zh: ① 模块占位（无公共定义）
+    #   name_en: placeholder
+    #   intro: provider_data.py 无顶层公共函数/类/再导出（AST 事实）
+    #   desc: 源码 L1-L106；包结构占位或纯内部模块
+    #   inputs: I1
+    #   outputs: 无（占位）
+    # 层: 输出
+    # - id: O1
+    #   name_zh: 无输出（占位模块）
+    #   name_en: none
+    #   intro: 无公共定义无再导出（AST 事实）
+    #   downstream: src.zephyr.infrastructure.budget_enforcement.model_router;src.zephyr.intelligen…
+    # [/ALGO_FLOW]
+    #
+    # 边:
+    # I1 --> A1
+    # A1 --> O1

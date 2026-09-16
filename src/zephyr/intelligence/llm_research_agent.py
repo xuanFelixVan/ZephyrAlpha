@@ -28,47 +28,7 @@ B6-08553（AUD-DRAFT-001-DIGEST P2 波 P2-W14，CAND-AISA-017，B6 D-RESEARCH-11
 episodic_memory_store=情景记忆存储（本件仅经 kb_writer 回调写记忆，不建存储）；
 sentinel_hallucination_detector=幻觉检测（本件事实回查经注入回调，不实现检测）。
 
-# [ALGO_FLOW]
-# 层: 输入
-# - id: I1
-#   name: tools 参数
-#   fields: 参数 tools（无注解）
-#   code: llm_research_agent.py 顶层公共函数形参（AST 提取）
-# - id: I2
-#   name: planner 参数
-#   fields: 参数 planner（无注解）
-#   code: llm_research_agent.py 顶层公共函数形参（AST 提取）
-# - id: I3
-#   name: thinker 参数
-#   fields: 参数 thinker（无注解）
-#   code: llm_research_agent.py 顶层公共函数形参（AST 提取）
-# - id: I4
-#   name: reflector 参数
-#   fields: 参数 reflector（无注解）
-#   code: llm_research_agent.py 顶层公共函数形参（AST 提取）
-# 层: 算法
-# - id: A1
-#   name_zh: ① LlmResearchAgent
-#   name_en: LlmResearchAgent
-#   intro: LLM 研究助手（规划 + 白名单工具 + ReAct 循环 + 事实回查）。
-#   desc: LLM 研究助手（规划 + 白名单工具 + ReAct 循环 + 事实回查）。；公共方法（定义序）: plan, invoke_tool, run, plans, reports；源码 L164-L343
-#   inputs: tools planner thinker reflector fact_checker kb_writer clock max_roun…
-#   outputs: 返回值
-#   （注：A1 之后另有 6 个公共定义未列入（含 6 个数据契约/异常/枚举声明类），见源码）
-# 层: 输出
-# - id: O1
-#   name_zh: 模块公共 API 面（7 定义）
-#   name_en: public defs
-#   intro: LlmResearchAgent
-#   downstream: 运行时装配批（本地模型优先绑定规划/思考/反思回调 / 检索计算数据库工具白名单注册 / KB 写库与事实回查装配）
-# [/ALGO_FLOW]
-#
-# 边:
-# I1 --> A1
-# I2 --> A1
-# I3 --> A1
-# I4 --> A1
-# A1 --> O1
+# [ALGO_FLOW] external: docs/03_modules/_domain_intelligence/algo_flow/llm_research_agent.yaml
 """
 
 from __future__ import annotations

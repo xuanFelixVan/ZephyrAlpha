@@ -1,0 +1,53 @@
+# ALGO_FLOW 外部真源——event_geopolitical_map（_domain_intelligence 域，真源 src/zephyr/intelligence/event_geopolitical_map.py）
+# 2026-09-15 P2-1 契约头减负批量出仓：docstring 内联块逐字节副本，extractor 经
+# external 锚加载走同一 parse_algo_flow 管线；算法公共面变化时同步更新本块。
+doc_type: architecture_view
+ttl: permanent
+module: src.zephyr.intelligence.event_geopolitical_map
+source_of_truth: src/zephyr/intelligence/event_geopolitical_map.py
+algo_flow: |
+    # [ALGO_FLOW]
+    # 层: 输入
+    # - id: I1
+    #   name: event_nlp_tag 参数
+    #   fields: 参数 event_nlp_tag，类型注解 str
+    #   code: event_geopolitical_map.py 顶层公共函数形参（AST 提取）
+    # - id: I2
+    #   name: sentiment_score 参数
+    #   fields: 参数 sentiment_score，类型注解 float
+    #   code: event_geopolitical_map.py 顶层公共函数形参（AST 提取）
+    # - id: I3
+    #   name: days_since_event 参数
+    #   fields: 参数 days_since_event，类型注解 int
+    #   code: event_geopolitical_map.py 顶层公共函数形参（AST 提取）
+    # 层: 算法
+    # - id: A1
+    #   name_zh: ① map_geopolitical_event_to_sectors
+    #   name_en: map_geopolitical_event_to_sectors
+    #   intro: 地缘事件→受益/受害板块映射 + event_score（§2.5b）。
+    #   desc: 地缘事件→受益/受害板块映射 + event_score（§2.5b）。 Parameters ---------- event_nlp_tag : NLP 产出的事件标签（GE…；源码 L130-L166
+    #   inputs: event_nlp_tag sentiment_score days_since_event
+    #   outputs: tuple[list[str], list[str], float]
+    # 层: 输出
+    # - id: O1
+    #   name_zh: tuple[list[str], list[str], float]
+    #   name_en: tuple[list[str], list[str], float]
+    #   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+    #   downstream: 事件驱动 sleeve（地缘/宏观事件类→受益/受害板块 alpha 方向）
+    # [/ALGO_FLOW]
+    #
+    # 边:
+    # I1 --> A1
+    # I2 --> A1
+    # I3 --> A1
+    # A1 --> O1
+
+# 以下 algo_flow_prose = 契约头双真源清偿归并（P2-1 死块批 2026-09-16）：
+# 源码头块手写算法速记逐字副本，algo_flow 机器块未覆盖其口径故不删信息；
+algo_flow_prose: |
+    # [ALGO_FLOW]
+    # I1: event_nlp_tag（NLP 事件标签/规则匹配降级）+ sentiment_score∈[-1,1] + days_since_event
+    # F1: GEOPOLITICAL_SECTOR_MAP 静态映射查表（5 类）
+    # F2: event_score = 1.4 × direction × sentiment × decay(rising_hl 内 1.0 否则 0.5) × 1.0
+    # O1: (beneficiary_sectors, victim_sectors, event_score)
+    # [/ALGO_FLOW]

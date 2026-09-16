@@ -15,12 +15,6 @@
 # [A_module] module_id=MOD-INT-EVENT-IPO | layer=module | stability=evolving | safety=M | ai_autonomy=ai_modifiable
 # [TTL] permanent
 # [ARCH-REF] 26_event_driven_strategy_detail §2.5a IPO 虹吸效应量化算法
-# [ALGO_FLOW]
-# I1: raise_amount（募资额）+ market_avg_volume（全市场20日均成交额）
-# F1: compute_ipo_siphon_coefficient——ratio→四级 NEGLIGIBLE/MODERATE/SEVERE/EXTREME
-# F2: ipo_siphon_position_adjustment——days_to_listing×level→ACCELERATE_ENTRY/HOLD_CASH/REDUCE_EXISTING/NORMAL
-# O1: (ratio, level) / (action, reason)
-# [/ALGO_FLOW]
 """
 MOD-INT-EVENT-IPO — IPO 虹吸效应量化算法（26 号 §2.5a 施工化）。
 
@@ -37,59 +31,7 @@ MOD-INT-EVENT-IPO — IPO 虹吸效应量化算法（26 号 §2.5a 施工化）�
 依据: docs/02_enterprise_architecture/07_trading_decision_architecture/design_memos/26_event_driven_strategy_detail.md §2.5a
 Version: 0.1.0
 
-# [ALGO_FLOW]
-# 层: 输入
-# - id: I1
-#   name: raise_amount 参数
-#   fields: 参数 raise_amount，类型注解 float
-#   code: event_ipo_siphon.py 顶层公共函数形参（AST 提取）
-# - id: I2
-#   name: market_avg_volume 参数
-#   fields: 参数 market_avg_volume，类型注解 float
-#   code: event_ipo_siphon.py 顶层公共函数形参（AST 提取）
-# - id: I3
-#   name: days_to_listing 参数
-#   fields: 参数 days_to_listing，类型注解 int
-#   code: event_ipo_siphon.py 顶层公共函数形参（AST 提取）
-# - id: I4
-#   name: siphon_level 参数
-#   fields: 参数 siphon_level，类型注解 str
-#   code: event_ipo_siphon.py 顶层公共函数形参（AST 提取）
-# 层: 算法
-# - id: A1
-#   name_zh: ① compute_ipo_siphon_coefficient
-#   name_en: compute_ipo_siphon_coefficient
-#   intro: IPO 上市日对存量板块的流动性分流系数。
-#   desc: IPO 上市日对存量板块的流动性分流系数。 Parameters ---------- raise_amount : IPO 募资额（如长鑫科技 579-666 亿）。 mark…；源码 L121-L150
-#   inputs: raise_amount market_avg_volume
-#   outputs: tuple[float, str]
-# - id: A2
-#   name_zh: ② ipo_siphon_position_adjustment
-#   name_en: ipo_siphon_position_adjustment
-#   intro: IPO 虹吸效应驱动的仓位调整（final_report 实证策略，§2.5a 算法 2）。
-#   desc: IPO 虹吸效应驱动的仓位调整（final_report 实证策略，§2.5a 算法 2）。 Parameters ---------- days_to_listing : 距上…；源码 L153-L181
-#   inputs: days_to_listing siphon_level ipo_name
-#   outputs: tuple[str, str]
-# 层: 输出
-# - id: O1
-#   name_zh: tuple[float, str]
-#   name_en: tuple[float, str]
-#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
-#   downstream: 事件驱动 sleeve（IPO/再融资事件类仓位策略）；37_liquidity_crisis_protocol §3.2 IPO 流动性抽离预警维度
-# - id: O2
-#   name_zh: tuple[str, str]
-#   name_en: tuple[str, str]
-#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
-#   downstream: 事件驱动 sleeve（IPO/再融资事件类仓位策略）；37_liquidity_crisis_protocol §3.2 IPO 流动性抽离预警维度
-# [/ALGO_FLOW]
-#
-# 边:
-# I1 --> A1
-# I2 --> A1
-# I3 --> A1
-# I4 --> A1
-# A1 --> A2
-# A2 --> O1
+# [ALGO_FLOW] external: docs/03_modules/_domain_intelligence/algo_flow/event_ipo_siphon.yaml
 """
 
 from __future__ import annotations

@@ -28,47 +28,7 @@ AISA-010 归并。
 语义，不重建评分实现）；model_profiling=模型画像（零交集）；本件输出仅
 advisory 信号，无下单语义。
 
-# [ALGO_FLOW]
-# 层: 输入
-# - id: I1
-#   name: judge 参数
-#   fields: 参数 judge（无注解）
-#   code: llm_self_evaluation.py 顶层公共函数形参（AST 提取）
-# - id: I2
-#   name: models 参数
-#   fields: 参数 models（无注解）
-#   code: llm_self_evaluation.py 顶层公共函数形参（AST 提取）
-# - id: I3
-#   name: cot_rechecker 参数
-#   fields: 参数 cot_rechecker（无注解）
-#   code: llm_self_evaluation.py 顶层公共函数形参（AST 提取）
-# - id: I4
-#   name: consistency_threshold 参数
-#   fields: 参数 consistency_threshold（无注解）
-#   code: llm_self_evaluation.py 顶层公共函数形参（AST 提取）
-# 层: 算法
-# - id: A1
-#   name_zh: ① LlmSelfEvaluation
-#   name_en: LlmSelfEvaluation
-#   intro: LLM 自评估件（Judge 三维 + CoT 自校验 + 三模型投票 + 争议处置）。
-#   desc: LLM 自评估件（Judge 三维 + CoT 自校验 + 三模型投票 + 争议处置）。；公共方法（定义序）: evaluate；源码 L157-L275
-#   inputs: judge models cot_rechecker consistency_threshold dispute_weight revie…
-#   outputs: 返回值
-#   （注：A1 之后另有 5 个公共定义未列入（含 5 个数据契约/异常/枚举声明类），见源码）
-# 层: 输出
-# - id: O1
-#   name_zh: 模块公共 API 面（6 定义）
-#   name_en: public defs
-#   intro: LlmSelfEvaluation
-#   downstream: 运行时装配批（judge 接 exam_judge / 三模型接 llm 池回调 / 争议人工审核队列 / CoT 审计接审计链）
-# [/ALGO_FLOW]
-#
-# 边:
-# I1 --> A1
-# I2 --> A1
-# I3 --> A1
-# I4 --> A1
-# A1 --> O1
+# [ALGO_FLOW] external: docs/03_modules/_domain_intelligence/algo_flow/llm_self_evaluation.yaml
 """
 
 from __future__ import annotations

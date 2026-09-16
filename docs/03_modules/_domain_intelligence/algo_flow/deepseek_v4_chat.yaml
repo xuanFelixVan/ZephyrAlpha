@@ -1,0 +1,48 @@
+# ALGO_FLOW 外部真源——deepseek_v4_chat（_domain_intelligence 域，真源 src/zephyr/intelligence/model_profiling/deepseek_v4_chat.py）
+# 2026-09-15 P2-1 契约头减负批量出仓：docstring 内联块逐字节副本，extractor 经
+# external 锚加载走同一 parse_algo_flow 管线；算法公共面变化时同步更新本块。
+doc_type: architecture_view
+ttl: permanent
+module: src.zephyr.intelligence.model_profiling.deepseek_v4_chat
+source_of_truth: src/zephyr/intelligence/model_profiling/deepseek_v4_chat.py
+algo_flow: |
+    # [ALGO_FLOW]
+    # 层: 输入
+    # - id: I1
+    #   name: model 参数
+    #   fields: 参数 model（无注解）
+    #   code: deepseek_v4_chat.py 顶层公共函数形参（AST 提取）
+    # - id: I2
+    #   name: api_key 参数
+    #   fields: 参数 api_key（无注解）
+    #   code: deepseek_v4_chat.py 顶层公共函数形参（AST 提取）
+    # - id: I3
+    #   name: base_url 参数
+    #   fields: 参数 base_url（无注解）
+    #   code: deepseek_v4_chat.py 顶层公共函数形参（AST 提取）
+    # - id: I4
+    #   name: thinking 参数
+    #   fields: 参数 thinking（无注解）
+    #   code: deepseek_v4_chat.py 顶层公共函数形参（AST 提取）
+    # 层: 算法
+    # - id: A1
+    #   name_zh: ① DeepSeekV4Chat
+    #   name_en: DeepSeekV4Chat
+    #   intro: DeepSeek V4 系列模型客户端——兼容 ExamOrchestrator 的 inference 接口。
+    #   desc: DeepSeek V4 系列模型客户端——兼容 ExamOrchestrator 的 inference 接口。 Attributes: model_id: 模型标识（deeps…；公共方法（定义序）: model,…
+    #   inputs: model api_key base_url thinking temperature max_tokens timeout_s
+    #   outputs: 返回值
+    # 层: 输出
+    # - id: O1
+    #   name_zh: 模块公共 API 面（1 定义）
+    #   name_en: public defs
+    #   intro: DeepSeekV4Chat
+    #   downstream: MOD-INF-034
+    # [/ALGO_FLOW]
+    #
+    # 边:
+    # I1 --> A1
+    # I2 --> A1
+    # I3 --> A1
+    # I4 --> A1
+    # A1 --> O1
