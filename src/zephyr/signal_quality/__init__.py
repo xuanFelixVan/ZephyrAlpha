@@ -14,31 +14,7 @@ D_SIGQC — Signal Quality Domain
   degradation_detector — 多维滑窗基线对比降级检测器（MOD-SIGQC-001，包级导出）
   signal_dedup / signal_degradation_monitor / signal_explainability_guarantor / signal_quality_benchmark — 域内待装配模块（各自独立蓝图 MOD-SIGQC-003~006）
 
-# [ALGO_FLOW]
-# 层: 输入
-# - id: I1
-#   name: 子模块 degradation_monitor_base
-#   fields: DegradationMonitorBase 信号质量降级监视器抽象基类（OCP扩展点D_SIGQC-DEG）
-#   code: zephyr.signal_quality.degradation_monitor_base
-# 层: 算法
-# - id: A1
-#   name_zh: ① 包级再导出
-#   name_en: signal_quality.__init__
-#   intro: 把子模块的降级监视器基类提升为包公共API
-#   desc: from degradation_monitor_base import DegradationMonitorBase → __all__=["DegradationMonitorBase"] 对外暴露
-#   inputs: I1
-#   outputs: 包公共API __all__
-# 层: 输出
-# - id: O1
-#   name_zh: 信号质量域包公共接口
-#   name_en: zephyr.signal_quality __all__
-#   intro: 对外暴露DegradationMonitorBase，承担信号质量评估/过滤/降级/冲突检测域入口
-#   downstream: 无下游/内部使用（无[CONSUMERS]头；由import方使用）
-# [/ALGO_FLOW]
-#
-# 边:
-# I1 --> A1
-# A1 --> O1
+# [ALGO_FLOW] external: docs/03_modules/_domain_signal_quality/algo_flow/signal_quality__init__.yaml
 """
 
 from __future__ import annotations

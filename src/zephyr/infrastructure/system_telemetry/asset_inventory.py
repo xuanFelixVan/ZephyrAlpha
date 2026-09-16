@@ -25,37 +25,7 @@ unified_asset_index 统一资产索引（资产类型词表 + 注册表）+ 资�
 查重分工（蓝图 §0）：registry_governance=注册表治理（本件不重建注册框
 架，只做运维视角资产盘点）；本件纯内存确定性，时钟注入，同输入必同输出。
 
-# [ALGO_FLOW]
-# 层: 输入
-# - id: I1
-#   name: clock 参数
-#   fields: 参数 clock（无注解）
-#   code: asset_inventory.py 顶层公共函数形参（AST 提取）
-# - id: I2
-#   name: freshness_ttl_seconds 参数
-#   fields: 参数 freshness_ttl_seconds（无注解）
-#   code: asset_inventory.py 顶层公共函数形参（AST 提取）
-# 层: 算法
-# - id: A1
-#   name_zh: ① AssetInventory
-#   name_en: AssetInventory
-#   intro: 统一资产索引（注册表 + 健康评分 + 孤儿率 + 依赖图）。
-#   desc: 统一资产索引（注册表 + 健康评分 + 孤儿率 + 依赖图）。；公共方法（定义序）: register, deregister, get, list_assets, health_score, orphan_stats…
-#   inputs: clock freshness_ttl_seconds
-#   outputs: 返回值
-#   （注：A1 之后另有 6 个公共定义未列入（含 6 个数据契约/异常/枚举声明类），见源码）
-# 层: 输出
-# - id: O1
-#   name_zh: 模块公共 API 面（7 定义）
-#   name_en: public defs
-#   intro: AssetInventory
-#   downstream: 运行时装配批（统一资产索引装配 / 健康评分入面板 / 依赖图供运维拓扑消费）
-# [/ALGO_FLOW]
-#
-# 边:
-# I1 --> A1
-# I2 --> A1
-# A1 --> O1
+# [ALGO_FLOW] external: docs/03_modules/_domain_infrastructure/algo_flow/system_telemetry/asset_inventory.yaml
 """
 
 from __future__ import annotations

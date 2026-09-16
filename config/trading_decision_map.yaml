@@ -4025,7 +4025,7 @@ nodes:
   decay_scan_frequency: semiannual
 
 - node_id: TDM-F-C3-05
-  note_confirmed: 2026-09-16
+  note_confirmed: 2026-09-16  # grp2p2s3 出仓复核：机器块搬 yaml，算法口径逐字未变
   name_zh: 可靠度养成与信号健康
   market: cn_a
   flow: portfolio_flow

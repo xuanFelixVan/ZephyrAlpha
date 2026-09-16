@@ -1,0 +1,33 @@
+# ALGO_FLOW 外部真源——__init__（_domain_trading 域，真源 src/zephyr/cross_asset/infrastructure/__init__.py）
+# 2026-09-15 P2-1 契约头减负批量出仓：docstring 内联块逐字节副本，extractor 经
+# external 锚加载走同一 parse_algo_flow 管线；算法公共面变化时同步更新本块。
+doc_type: architecture_view
+ttl: permanent
+module: src.zephyr.cross_asset.infrastructure.__init__
+source_of_truth: src/zephyr/cross_asset/infrastructure/__init__.py
+algo_flow: |
+    # [ALGO_FLOW]
+    # 层: 输入
+    # - id: I1
+    #   name: 包标记文件（无数据输入）
+    #   fields: 无字段——包内仅此 __init__.py 占位/聚合，无独立业务逻辑
+    #   code: src/zephyr/cross_asset/infrastructure/__init__.py
+    # 层: 算法
+    # - id: A1
+    #   name_zh: ① 包命名空间占位/聚合导出
+    #   name_en: __init__（模块级 __all__）
+    #   intro: 声明 zephyr.cross_asset.infrastructure 包命名空间，按 __all__ 声明导出
+    #   desc: 包级占位/聚合再导出，无函数无副作用，子模块挂载点
+    #   inputs: I1
+    #   outputs: 包级公共命名空间
+    # 层: 输出
+    # - id: O1
+    #   name_zh: 包公共 API 面
+    #   name_en: __all__
+    #   intro: 包级导出以 __all__ 声明为准
+    #   downstream: 见头部 [CONSUMERS] 声明
+    # [/ALGO_FLOW]
+    #
+    # 边:
+    # I1 --> A1
+    # A1 --> O1

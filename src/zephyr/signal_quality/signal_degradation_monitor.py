@@ -27,55 +27,7 @@ D-SIGNAL-156）：质量指标（命中率/IC/衰减）滚动窗跟踪 + 阈值�
 signal_audit 设施）；本件=轻量三指标滚动窗阈值监控器，alert_router 与
 mark_sink 全回调注入，不绑具体设施，消费端凭 weight_hint 降权。
 
-# [ALGO_FLOW]
-# 层: 输入
-# - id: I1
-#   name: window_size 参数
-#   fields: 参数 window_size（无注解）
-#   code: signal_degradation_monitor.py 顶层公共函数形参（AST 提取）
-# - id: I2
-#   name: min_samples 参数
-#   fields: 参数 min_samples（无注解）
-#   code: signal_degradation_monitor.py 顶层公共函数形参（AST 提取）
-# - id: I3
-#   name: hit_rate_floor 参数
-#   fields: 参数 hit_rate_floor（无注解）
-#   code: signal_degradation_monitor.py 顶层公共函数形参（AST 提取）
-# - id: I4
-#   name: ic_floor 参数
-#   fields: 参数 ic_floor（无注解）
-#   code: signal_degradation_monitor.py 顶层公共函数形参（AST 提取）
-# 层: 算法
-# - id: A1
-#   name_zh: ① DegradationReport
-#   name_en: DegradationReport
-#   intro: 滚动窗评估报告（frozen；degraded ⇔ level != NONE）。
-#   desc: 滚动窗评估报告（frozen；degraded ⇔ level != NONE）。；公共方法（定义序）: degraded；源码 L151-L166
-#   inputs: 无参数
-#   outputs: 返回值
-# - id: A2
-#   name_zh: ② SignalDegradationMonitor
-#   name_en: SignalDegradationMonitor
-#   intro: 三指标滚动窗退化监控器（纯内存/DI，不阻断流水线）。
-#   desc: 三指标滚动窗退化监控器（纯内存/DI，不阻断流水线）。 - 指标：命中率（hit 均值）/ IC 均值 / 衰减（窗内前半 IC 均值相对后半的 回落占比，|前半均值|≈0 时退…；公共方法（定义序）: observe…
-#   inputs: window_size min_samples hit_rate_floor ic_floor decay_warn decay_seve…
-#   outputs: 返回值
-#   （注：A2 之后另有 4 个公共定义未列入（含 4 个数据契约/异常/枚举声明类），见源码）
-# 层: 输出
-# - id: O1
-#   name_zh: 模块公共 API 面（6 定义）
-#   name_en: public defs
-#   intro: DegradationReport, SignalDegradationMonitor
-#   downstream: 运行时装配批（信号消费端降权联动 / 告警接 alert 路由）
-# [/ALGO_FLOW]
-#
-# 边:
-# I1 --> A1
-# I2 --> A1
-# I3 --> A1
-# I4 --> A1
-# A1 --> A2
-# A2 --> O1
+# [ALGO_FLOW] external: docs/03_modules/_domain_signal_quality/algo_flow/signal_degradation_monitor.yaml
 """
 
 from __future__ import annotations

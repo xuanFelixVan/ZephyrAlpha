@@ -26,37 +26,7 @@ B14-04702（AUD-DRAFT-001-DIGEST P2 波 P2-W01，CAND-INFRATEL-004，A9运维架
 不重建实时计数）；latency_budget_allocator=预算分配（本件只做归因统计，零交
 集）。
 
-# [ALGO_FLOW]
-# 层: 输入
-# - id: I1
-#   name: slow_threshold_ms 参数
-#   fields: 参数 slow_threshold_ms（无注解）
-#   code: latency_attributor.py 顶层公共函数形参（AST 提取）
-# - id: I2
-#   name: capacity 参数
-#   fields: 参数 capacity（无注解）
-#   code: latency_attributor.py 顶层公共函数形参（AST 提取）
-# 层: 算法
-# - id: A1
-#   name_zh: ① LatencyAttributor
-#   name_en: LatencyAttributor
-#   intro: 延迟归因器（占比归因 + 慢样本环形缓冲 + 周报聚合）。
-#   desc: 延迟归因器（占比归因 + 慢样本环形缓冲 + 周报聚合）。；公共方法（定义序）: attribute, slow_samples, weekly_report；源码 L135-L215
-#   inputs: slow_threshold_ms capacity
-#   outputs: 返回值
-#   （注：A1 之后另有 5 个公共定义未列入（含 5 个数据契约/异常/枚举声明类），见源码）
-# 层: 输出
-# - id: O1
-#   name_zh: 模块公共 API 面（6 定义）
-#   name_en: public defs
-#   intro: LatencyAttributor
-#   downstream: 运行时装配批（Tick→信号→订单链路巡检 / 周报聚合消费）
-# [/ALGO_FLOW]
-#
-# 边:
-# I1 --> A1
-# I2 --> A1
-# A1 --> O1
+# [ALGO_FLOW] external: docs/03_modules/_domain_infrastructure/algo_flow/system_telemetry/latency_attributor.yaml
 """
 
 from __future__ import annotations

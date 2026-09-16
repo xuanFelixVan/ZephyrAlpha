@@ -14,31 +14,7 @@
 """
 logs — 结构化日志流（structlog + JSONL + trace注入）（D_SYSTEM_TELEMETRY）
 
-# [ALGO_FLOW]
-# 层: 输入
-# - id: I1
-#   name: 包内子模块公共符号
-#   fields: import 再导出符号: append_jsonl_record, buffer_depth, configure, flush, log_record_stub,…
-#   code: __init__.py import L44
-# 层: 算法
-# - id: A1
-#   name_zh: ① 包公共面再导出
-#   name_en: __init__ re-export
-#   intro: 再导出 append_jsonl_record, log_record_stub, flush, panic_flush, buffer_depth, con…
-#   desc: __init__ import L44；__all__ 7 项（AST 事实）
-#   inputs: I1
-#   outputs: __all__ 公共符号表
-# 层: 输出
-# - id: O1
-#   name_zh: 公共 API 面（7 符号）
-#   name_en: __all__
-#   intro: append_jsonl_record, log_record_stub, flush, panic_flush, buffer_depth, configu…
-#   downstream: facade.py
-# [/ALGO_FLOW]
-#
-# 边:
-# I1 --> A1
-# A1 --> O1
+# [ALGO_FLOW] external: docs/03_modules/_domain_infrastructure/algo_flow/system_telemetry/logs_doc/logs__init__.yaml
 """
 
 from zephyr.infrastructure.system_telemetry.logs.structured_sink import (

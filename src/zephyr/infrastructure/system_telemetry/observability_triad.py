@@ -27,47 +27,7 @@ Traces/Metrics/Logs 三支柱统一 TriadSink 入口——Metrics Prometheus 文
 查重分工（蓝图 §0）：shared/observability/tracing.py=OTel 接线（本件为门面语义
 层，不做 SDK 初始化）；archive 族=归档存储实现（本件只裁决窗口并经回调执行）。
 
-# [ALGO_FLOW]
-# 层: 输入
-# - id: I1
-#   name: clock 参数
-#   fields: 参数 clock（无注解）
-#   code: observability_triad.py 顶层公共函数形参（AST 提取）
-# - id: I2
-#   name: audit_sink 参数
-#   fields: 参数 audit_sink（无注解）
-#   code: observability_triad.py 顶层公共函数形参（AST 提取）
-# - id: I3
-#   name: archive_executor 参数
-#   fields: 参数 archive_executor（无注解）
-#   code: observability_triad.py 顶层公共函数形参（AST 提取）
-# - id: I4
-#   name: hot_days 参数
-#   fields: 参数 hot_days（无注解）
-#   code: observability_triad.py 顶层公共函数形参（AST 提取）
-# 层: 算法
-# - id: A1
-#   name_zh: ① ObservabilityTriad
-#   name_en: ObservabilityTriad
-#   intro: 可观测性三支柱门面（统一入口 + 归档裁决 + 审计对接）。
-#   desc: 可观测性三支柱门面（统一入口 + 归档裁决 + 审计对接）。；公共方法（定义序）: emit_trace, traces, register_counter, register_gauge, inc_counter,…
-#   inputs: clock audit_sink archive_executor hot_days
-#   outputs: 返回值
-#   （注：A1 之后另有 4 个公共定义未列入（含 4 个数据契约/异常/枚举声明类），见源码）
-# 层: 输出
-# - id: O1
-#   name_zh: 模块公共 API 面（5 定义）
-#   name_en: public defs
-#   intro: ObservabilityTriad
-#   downstream: 运行时装配批（三支柱统一入口装配 / 审计链对接 / 冷归档调度）
-# [/ALGO_FLOW]
-#
-# 边:
-# I1 --> A1
-# I2 --> A1
-# I3 --> A1
-# I4 --> A1
-# A1 --> O1
+# [ALGO_FLOW] external: docs/03_modules/_domain_infrastructure/algo_flow/system_telemetry/observability_triad.yaml
 """
 
 from __future__ import annotations

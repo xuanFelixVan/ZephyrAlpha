@@ -26,42 +26,7 @@ OpsIncident 核心聚合——incident_id + 分级（P0~P2 词表闭合）+ 状�
 （incident_responder 职责）、不做资产视角（asset_inventory 职责）；外部副
 作用（事件总线/持久化/时钟）全注入，纯内存确定性，同输入必同输出。
 
-# [ALGO_FLOW]
-# 层: 输入
-# - id: I1
-#   name: clock 参数
-#   fields: 参数 clock（无注解）
-#   code: ops_incident_aggregate.py 顶层公共函数形参（AST 提取）
-# - id: I2
-#   name: event_sink 参数
-#   fields: 参数 event_sink（无注解）
-#   code: ops_incident_aggregate.py 顶层公共函数形参（AST 提取）
-# - id: I3
-#   name: store 参数
-#   fields: 参数 store（无注解）
-#   code: ops_incident_aggregate.py 顶层公共函数形参（AST 提取）
-# 层: 算法
-# - id: A1
-#   name_zh: ① OpsIncidentAggregate
-#   name_en: OpsIncidentAggregate
-#   intro: 运维事件聚合根（注册表 + 状态机 + 三件套事件 + 持久化注入）。
-#   desc: 运维事件聚合根（注册表 + 状态机 + 三件套事件 + 持久化注入）。；公共方法（定义序）: detect, acknowledge, start_mitigation, resolve, close_postmort…
-#   inputs: clock event_sink store
-#   outputs: 返回值
-#   （注：A1 之后另有 8 个公共定义未列入（含 8 个数据契约/异常/枚举声明类），见源码）
-# 层: 输出
-# - id: O1
-#   name_zh: 模块公共 API 面（9 定义）
-#   name_en: public defs
-#   intro: OpsIncidentAggregate
-#   downstream: 运行时装配批（运维事件聚合注册 / 事件总线绑定 / 持久化适配器装配）
-# [/ALGO_FLOW]
-#
-# 边:
-# I1 --> A1
-# I2 --> A1
-# I3 --> A1
-# A1 --> O1
+# [ALGO_FLOW] external: docs/03_modules/_domain_infrastructure/algo_flow/system_telemetry/ops_incident_aggregate.yaml
 """
 
 from __future__ import annotations

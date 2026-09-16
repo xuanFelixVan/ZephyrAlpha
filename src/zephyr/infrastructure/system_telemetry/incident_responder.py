@@ -26,47 +26,7 @@ AIOps Detect-Diagnose-Remediate-Learn 闭环——事件分级（P0~P2 词表）
 OpsIncident/IncidentSeverity 类型，不重建状态机）；本件只做处置执行与学
 习统计；处置动作副作用全部经注入 handler，纯内存确定性，同输入必同输出。
 
-# [ALGO_FLOW]
-# 层: 输入
-# - id: I1
-#   name: clock 参数
-#   fields: 参数 clock（无注解）
-#   code: incident_responder.py 顶层公共函数形参（AST 提取）
-# - id: I2
-#   name: policies 参数
-#   fields: 参数 policies（无注解）
-#   code: incident_responder.py 顶层公共函数形参（AST 提取）
-# - id: I3
-#   name: rules 参数
-#   fields: 参数 rules（无注解）
-#   code: incident_responder.py 顶层公共函数形参（AST 提取）
-# - id: I4
-#   name: escalation_sink 参数
-#   fields: 参数 escalation_sink（无注解）
-#   code: incident_responder.py 顶层公共函数形参（AST 提取）
-# 层: 算法
-# - id: A1
-#   name_zh: ① IncidentResponder
-#   name_en: IncidentResponder
-#   intro: 事件响应器（策略表 + 升级规则 + 效果学习）。
-#   desc: 事件响应器（策略表 + 升级规则 + 效果学习）。；公共方法（定义序）: classify, register_policy, respond, policy_effectiveness, effectiveness_…
-#   inputs: clock policies rules escalation_sink
-#   outputs: 返回值
-#   （注：A1 之后另有 5 个公共定义未列入（含 5 个数据契约/异常/枚举声明类），见源码）
-# 层: 输出
-# - id: O1
-#   name_zh: 模块公共 API 面（6 定义）
-#   name_en: public defs
-#   intro: IncidentResponder
-#   downstream: 运行时装配批（事件类型策略表绑定 / 升级路由接告警 / 效果统计入面板）
-# [/ALGO_FLOW]
-#
-# 边:
-# I1 --> A1
-# I2 --> A1
-# I3 --> A1
-# I4 --> A1
-# A1 --> O1
+# [ALGO_FLOW] external: docs/03_modules/_domain_infrastructure/algo_flow/system_telemetry/incident_responder.yaml
 """
 
 from __future__ import annotations

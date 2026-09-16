@@ -1,0 +1,39 @@
+# ALGO_FLOW 外部真源——latency_attributor（_domain_infrastructure 域，真源 src/zephyr/infrastructure/system_telemetry/latency_attributor.py）
+# 2026-09-15 P2-1 契约头减负批量出仓：docstring 内联块逐字节副本，extractor 经
+# external 锚加载走同一 parse_algo_flow 管线；算法公共面变化时同步更新本块。
+doc_type: architecture_view
+ttl: permanent
+module: src.zephyr.infrastructure.system_telemetry.latency_attributor
+source_of_truth: src/zephyr/infrastructure/system_telemetry/latency_attributor.py
+algo_flow: |
+    # [ALGO_FLOW]
+    # 层: 输入
+    # - id: I1
+    #   name: slow_threshold_ms 参数
+    #   fields: 参数 slow_threshold_ms（无注解）
+    #   code: latency_attributor.py 顶层公共函数形参（AST 提取）
+    # - id: I2
+    #   name: capacity 参数
+    #   fields: 参数 capacity（无注解）
+    #   code: latency_attributor.py 顶层公共函数形参（AST 提取）
+    # 层: 算法
+    # - id: A1
+    #   name_zh: ① LatencyAttributor
+    #   name_en: LatencyAttributor
+    #   intro: 延迟归因器（占比归因 + 慢样本环形缓冲 + 周报聚合）。
+    #   desc: 延迟归因器（占比归因 + 慢样本环形缓冲 + 周报聚合）。；公共方法（定义序）: attribute, slow_samples, weekly_report；源码 L135-L215
+    #   inputs: slow_threshold_ms capacity
+    #   outputs: 返回值
+    #   （注：A1 之后另有 5 个公共定义未列入（含 5 个数据契约/异常/枚举声明类），见源码）
+    # 层: 输出
+    # - id: O1
+    #   name_zh: 模块公共 API 面（6 定义）
+    #   name_en: public defs
+    #   intro: LatencyAttributor
+    #   downstream: 运行时装配批（Tick→信号→订单链路巡检 / 周报聚合消费）
+    # [/ALGO_FLOW]
+    #
+    # 边:
+    # I1 --> A1
+    # I2 --> A1
+    # A1 --> O1
