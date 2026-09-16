@@ -158,12 +158,22 @@ def marker(tmp_path, monkeypatch):
 
 
 def _stub_executors(monkeypatch):
-    """钩子内 drain 用真 _default_handler——所有可达执行体必须 stub（测试零生产 IO 铁律）。"""
+    """钩子内 drain 用真 _default_handler——所有可达执行体必须 stub（测试零生产 IO 铁律）。
+
+    pf_alloc 两件套（清单 #15 起唤醒钩子会解析业务日并入队分配件）：业务日桩固定回一个
+    合法日、执行体桩只回 rc——真 CH/真子进程都不得进测试。
+    regime 日序供给（挖矿 F3 起同一唤醒点先刷新 regime_snapshot_history）：整件打桩——
+    真实现会查 CH 新鲜度并可能起分钟级全窗重印子进程（真件回归见
+    tests/pf_alloc/test_pf_alloc_event_wiring.py ⑧ 族）。
+    """
     monkeypatch.setattr(pe, "run_mount_audit", lambda: {"audit": "stub"})
     monkeypatch.setattr(pe, "run_sim_memo", lambda: {"memo": "stub"})
     monkeypatch.setattr(pe, "run_sim_ledger_daily", lambda p: {"rc": 0})
     monkeypatch.setattr(pe, "run_sim_journal_daily", lambda p: {"rc": 0})
     monkeypatch.setattr(pe, "run_sim_deviation_monthly", lambda p: {"rc": 0, "month": "2026-08"})
+    monkeypatch.setattr(pe, "resolve_pf_alloc_trade_date", lambda: "2026-09-15")
+    monkeypatch.setattr(pe, "maybe_refresh_regime_snapshot", lambda **kw: {"action": "fresh"})
+    monkeypatch.setattr(pe, "run_pf_alloc_daily", lambda p: {"rc": 0, "trade_date": "2026-09-15"})
     monkeypatch.setattr(pe, "alert", lambda msg, level="WARN": None)
 
 

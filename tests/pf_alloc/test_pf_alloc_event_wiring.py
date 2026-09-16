@@ -11,9 +11,10 @@
 # [ERROR_CONTRACT] pytest exit 0 on pass, non-zero on fail
 # [TESTS] tests/pf_alloc/test_pf_alloc_event_wiring.py
 # [TTL] task_bound
-"""pf_alloc_daily 事件接线回归锁（车道 D 接线②③：产出者→派发→分配链装配体）。
+"""pf_alloc_daily 事件接线回归锁（车道 D 接线②③：产出者→派发→分配链装配体；
+⑧ 族另锁 regime_snapshot_history 日序供给产出者，挖矿节点 F3）。
 
-锁的是"事件正门通到装配体 + 装配体有人按电铃"这条链的五个不变量
+锁的是"事件正门通到装配体 + 装配体有人按电铃"这条链的六个不变量
 （宪法 §9.3：触发面=事件，禁 cron/Timer/sleep）：
 1. kind 归轻 kind（调度器唤醒钩子可消费）且非重 kind；派发分支把事件路由到 run_pf_alloc_daily；
 2. 执行体=subprocess 隔离 `python -m zephyr.pf_alloc.allocation_orchestrator --date <D>`，
@@ -24,7 +25,12 @@
 5. **产出者存在且给得出日**（清单 #15 治本，此前 1-4 全绿却恒 0 行=有消费端无发射方）：
    daily_kline SUCCESS 唤醒即入队、业务日=行情最新入库日（解析不出即不发事件+告警，
    绝不墙钟猜）、入队先于 sim_ledger_daily（分配先落，账本同日开户才拿到真实额度）、
-   落地结果一行摘要进告警面（"产而不消"的反面=算了没人知道）。
+   落地结果一行摘要进告警面（"产而不消"的反面=算了没人知道）；
+6. **regime 日序台账同样有自动产出者**（挖矿节点 F3 治本，⑧ 族）：此前
+   c1_backtest.regime_snapshot_history 唯一写方=manual CLI print_regime_history.py，
+   两次手工印制之间表静默腐烂（2026-09-16 实测滞后 5 天）→ 现挂同一行情 SUCCESS 唤醒点、
+   **先于** pf_alloc（分配链的 regime 口径就读这张表）、一个业务日至多一印（全窗重印
+   append-only 台账）、刷新失败一律转 [REGIME-SNAPSHOT] ERROR 出声且绝不上抛。
 
 全程 tmp_path（JOURNAL/RECEIPT/AUDIT_MARKER 重定向）+ subprocess.run 打桩，零生产 IO、零真实等待。
 """
@@ -326,6 +332,8 @@ def test_wake_hook_orders_alloc_before_ledger_and_journal(state, monkeypatch, al
     monkeypatch.setattr(pe, "run_sim_memo", lambda: {"memo": "stub"})
     monkeypatch.setattr(pe, "run_sim_deviation_monthly", lambda p: {"rc": 0, "month": "2026-09"})
     monkeypatch.setattr(pe, "resolve_pf_alloc_trade_date", lambda: DAY)
+    monkeypatch.setattr(pe, "maybe_refresh_regime_snapshot",
+                        lambda **kw: {"action": "fresh"})  # 真件另有 ⑧ 族锁；此处防真 CH/真重印
     monkeypatch.setattr(pe, "run_pf_alloc_daily",
                         lambda p: order.append("alloc") or {"rc": 0, "trade_date": p["trade_date"],
                                                             "alloc_brief": "run=alloc-x 落地=ch_committed"})
@@ -415,3 +423,156 @@ def test_brief_degrades_on_non_json_stdout_without_failing(state, spied, alerts)
     out = pe.run_pf_alloc_daily({"trade_date": DAY})
     assert out["rc"] == 0 and "分配完成" in out["alloc_brief"]
     assert _markers(state)[f"{pe.PF_ALLOC_KIND}:{DAY}"]
+
+
+# ── ⑧ regime 日序供给产出者（挖矿 F3 治本：表只有 manual 写方=两次手工印制之间静默腐烂）──
+# 锁的是"这张表有人自动补日"这条链的四个不变量（宪法 §9.3 触发面=事件，禁 cron/Timer/sleep）：
+# 1. 唤醒点=行情日件 SUCCESS（与分配链同一自然唤醒点），非行情/失败任务连业务日都不解析；
+# 2. 一个业务日至多一印（写方 print_regime_history=2019 起全窗重印 append-only，同日二印
+#    =整窗行数再翻一份零信息增益）——永久业务日记号，UTC 日口径会漏（行情停更/周末）；
+# 3. 刷新永不反噬唤醒钩子链：抛错/子进程失败一律转 [REGIME-SNAPSHOT] ERROR 出声 + 返回值；
+# 4. 次序：regime 刷新先于 pf_alloc 入队（分配链的 regime 口径就读这张表，表旧=快照带旧教材）。
+REFRESH_OK = {"action": "refreshed", "max_trade_date": DAY, "stale_days": 0, "rows": 3618}
+
+
+@pytest.fixture()
+def refreshes(monkeypatch):
+    """印制件打桩：记录 ensure_regime_snapshot 的调用参数，可配返回/抛错（零真 CH、零真子进程）。"""
+    from zephyr.strategy_pipeline import fw_backtest as fwb
+
+    box: dict = {"calls": [], "ret": REFRESH_OK, "raise": None}
+
+    def fake(**kwargs):
+        box["calls"].append(kwargs)
+        if box["raise"]:
+            raise box["raise"]
+        return box["ret"]
+
+    monkeypatch.setattr(fwb, "ensure_regime_snapshot", fake)
+    monkeypatch.setattr(pe, "resolve_pf_alloc_trade_date", lambda: DAY)
+    return box
+
+
+def test_regime_refresh_fires_on_kline_success_exactly_once_per_business_day(state, refreshes,
+                                                                            alerts):
+    """行情唤醒即印（refresh=True 才真写表），同一业务日第二次唤醒零调用、零事件、零再播报。"""
+    r = pe.maybe_refresh_regime_snapshot(task_id="kline_daily_incremental", success=True)
+    assert r["action"] == "refreshed" and r["trade_date"] == DAY
+    assert refreshes["calls"] == [{"refresh": True}]  # 不带 refresh=True 就只是看门狗（不写表）
+    assert pe.pending() == []  # 挂点 A=唤醒钩子内直调，不建新 kind（零新机制）
+    assert any(m.startswith(pe.REGIME_SNAPSHOT_PREFIX) and lv == "INFO" for m, lv in alerts)
+    assert _markers(state)[f"{pe.REGIME_SNAPSHOT_KIND}:{DAY}"]
+
+    for tid in ("daily_kline", "kline_index_incremental"):  # 同业务日再唤醒=一次都不许多印
+        assert pe.maybe_refresh_regime_snapshot(task_id=tid)["action"] == "already_refreshed"
+    assert len(refreshes["calls"]) == 1
+    assert len(alerts) == 1  # 去重路径静默（每次唤醒都播报=噪声，且掩盖真信号）
+
+
+def test_regime_refresh_gate_is_business_day_scoped_not_utc_day(state, refreshes, monkeypatch):
+    """行情停更/周末：UTC 日翻篇而业务日仍是已印过的 D=不得再印（全窗台账拒绝重复整窗）。"""
+    (state / "last_audit.json").write_text(
+        json.dumps({f"{pe.REGIME_SNAPSHOT_KIND}:{DAY}": "2020-01-01T00:00:00"}), encoding="utf-8")
+
+    assert pe.maybe_refresh_regime_snapshot(task_id="daily_kline")["action"] == "already_refreshed"
+    assert refreshes["calls"] == []
+    monkeypatch.setattr(pe, "resolve_pf_alloc_trade_date", lambda: "2026-09-16")  # 新业务日照印
+    assert pe.maybe_refresh_regime_snapshot(task_id="daily_kline")["trade_date"] == "2026-09-16"
+    assert len(refreshes["calls"]) == 1  # 闸不是把链关掉，只挡"这一日已印过"
+
+
+def test_regime_refresh_not_called_when_day_marker_already_seen(state, refreshes):
+    """(c) 记号已见=连 ensure_regime_snapshot 都不进（滞后闸在印制件内，不在此处重复查询）。"""
+    pe._touch_marker(f"{pe.REGIME_SNAPSHOT_KIND}:{DAY}")
+    refreshes["raise"] = AssertionError("已印过的业务日不得再起印制")
+    r = pe.maybe_refresh_regime_snapshot(task_id="kline_index_incremental", success=True)
+    assert r == {"action": "already_refreshed", "trade_date": DAY}
+
+
+def test_regime_refresh_silent_on_non_kline_or_failed_wake(state, refreshes, monkeypatch):
+    """非行情任务/失败任务=不唤醒（禁"每次 task_completed 都跑一遍"），且绝不触库解析业务日。"""
+    refreshes["raise"] = AssertionError("非唤醒点不得触库/印制")
+    monkeypatch.setattr(pe, "resolve_pf_alloc_trade_date",
+                        lambda: (_ for _ in ()).throw(AssertionError("非唤醒点不得解析业务日")))
+    assert pe.maybe_refresh_regime_snapshot(task_id="news_ingest", success=True) \
+        == {"action": "skipped_wake_point"}
+    assert pe.maybe_refresh_regime_snapshot(task_id="daily_kline", success=False) \
+        == {"action": "skipped_wake_point"}
+    assert pe.maybe_refresh_regime_snapshot() == {"action": "skipped_wake_point"}
+    assert refreshes["calls"] == [] and pe.pending() == []
+
+
+def test_regime_refresh_never_raises_and_is_loud(state, refreshes, alerts, monkeypatch):
+    """(b) 印制件抛错不得出钩子：转 [REGIME-SNAPSHOT] ERROR（log+告警双出声）+ 本日不再风暴。"""
+    class _RecLog:
+        def __init__(self):
+            self.records: list[tuple[str, str]] = []
+
+        def __getattr__(self, lvl):
+            return lambda msg, *a, **k: self.records.append((lvl, str(msg)))
+
+    rec = _RecLog()
+    monkeypatch.setattr(pe, "log", rec)
+    refreshes["raise"] = RuntimeError("方案表生成器失败 rc=1")
+
+    r = pe.maybe_refresh_regime_snapshot(task_id="daily_kline", success=True)  # 不抛=通过一半
+
+    assert r["action"] == "error" and "RuntimeError" in r["error"] and r["trade_date"] == DAY
+    assert alerts and alerts[0][1] == "ERROR" and alerts[0][0].startswith(pe.REGIME_SNAPSHOT_PREFIX)
+    assert any(lvl == "error" and pe.REGIME_SNAPSHOT_PREFIX in m for lvl, m in rec.records)
+    # 记号先落=失败也只烧掉本业务日一次预算（否则每个行情唤醒点重起分钟级全窗重印=风暴）
+    assert _markers(state)[f"{pe.REGIME_SNAPSHOT_KIND}:{DAY}"]
+    assert pe.maybe_refresh_regime_snapshot(task_id="daily_kline")["action"] == "already_refreshed"
+    assert len(refreshes["calls"]) == 1
+
+
+def test_regime_refresh_unresolvable_day_does_not_consume_the_day(state, refreshes, alerts,
+                                                                  monkeypatch):
+    """业务日解析不出（CH 抖动）=不印、不落号（下个唤醒点自会重解析），但必须 ERROR 出声。"""
+    monkeypatch.setattr(pe, "resolve_pf_alloc_trade_date",
+                        lambda: (_ for _ in ()).throw(RuntimeError("CH 不可达")))
+
+    r = pe.maybe_refresh_regime_snapshot(task_id="daily_kline", success=True)
+
+    assert r["action"] == "error" and refreshes["calls"] == []
+    assert _markers(state) == {}  # 未定日=不占本业务日预算（禁墙钟猜日落号）
+    assert alerts and alerts[0][1] == "ERROR" and pe.REGIME_SNAPSHOT_PREFIX in alerts[0][0]
+
+
+def test_regime_refresh_failed_action_broadcasts_at_error(state, refreshes, alerts):
+    """子进程 rc≠0 不抛（印制件自返 refresh_failed）→ 播报档位必须升级为 ERROR，不得混同成功。"""
+    refreshes["ret"] = {"action": "refresh_failed", "rc": 1, "max_trade_date": "2026-09-11",
+                        "stale_days": 5, "rows": 1809}
+    r = pe.maybe_refresh_regime_snapshot(task_id="daily_kline", success=True)
+
+    assert r["action"] == "refresh_failed"
+    assert alerts[-1][1] == "ERROR" and "滞后=5" in alerts[-1][0] and "行数=1809" in alerts[-1][0]
+
+
+def test_wake_hook_refreshes_regime_before_alloc_chain(state, monkeypatch, refreshes):
+    """端到端次序锁：一次行情唤醒 → regime 先印 → 再入队分配件 → 账本/日刊（下游读新鲜数据）。"""
+    class FakeScheduler:
+        def subscribe(self, event, handler):
+            self.h = handler
+
+    order: list[str] = []
+    monkeypatch.setattr(pe, "kill_switch_clear", lambda: (True, "normal"))
+    monkeypatch.setattr(pe, "scan_translated_backlog", lambda: {"backlog": []})
+    monkeypatch.setattr(pe, "scan_c1_c2_backlog", lambda: {})
+    monkeypatch.setattr(pe, "alert", lambda msg, level="WARN": None)
+    monkeypatch.setattr(pe, "run_mount_audit", lambda: {"audit": "stub"})
+    monkeypatch.setattr(pe, "run_sim_memo", lambda: {"memo": "stub"})
+    monkeypatch.setattr(pe, "run_sim_deviation_monthly", lambda p: {"rc": 0, "month": "2026-08"})
+    monkeypatch.setattr(pe, "run_pf_alloc_daily", lambda p: order.append("alloc") or {"rc": 0})
+    monkeypatch.setattr(pe, "run_sim_ledger_daily", lambda p: order.append("ledger") or {"rc": 0})
+    monkeypatch.setattr(pe, "run_sim_journal_daily", lambda p: order.append("journal") or {"rc": 0})
+    from zephyr.strategy_pipeline import fw_backtest as fwb
+
+    monkeypatch.setattr(fwb, "ensure_regime_snapshot",
+                        lambda **kw: order.append("regime") or REFRESH_OK)
+
+    s = FakeScheduler()
+    pe.wire_data_scheduler(s)
+    s.h(task_id="kline_index_incremental", success=True)
+
+    assert order == ["regime", "alloc", "ledger", "journal"]

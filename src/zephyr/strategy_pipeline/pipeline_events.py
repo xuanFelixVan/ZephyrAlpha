@@ -5,7 +5,9 @@
 #   scripts.backtest.sim_paper_ledger(import 复用 ensure_wallet，经 sys.path);
 #   scripts.backtest.{sim_platform_journal,sim_deviation_report,sim_governance}(子进程);
 #   zephyr.pf_alloc.allocation_orchestrator(子进程 -m，pf_alloc_daily 日分配执行体);
-#   zephyr.infrastructure.database_service(reader 角色——pf_alloc_daily 业务日解析，宪法 §9.1 禁裸连接)
+#   zephyr.strategy_pipeline.fw_backtest(import 复用 ensure_regime_snapshot——regime 日序供给，
+#     函数级惰性导入避开 fw_backtest 侧对本模块的相互引用);
+#   zephyr.infrastructure.database_service(reader 角色——日频产出者共用业务日解析，宪法 §9.1 禁裸连接)
 # [CONSUMERS] DataScheduler task_completed（调度器侧 wire_data_scheduler 注册）; c4_batch_screen 落账钩子;
 #   intake sim 流转钩子（emit_sim_wallet_due）; 管线 CLI（python -m zephyr.strategy_pipeline.pipeline_events emit/drain/status）
 # [STARTUP] imported（本包不建线程/不建调度器；事件持久化=JSONL 日志，恢复重放由 drain 完成）
@@ -24,6 +26,13 @@
 #   业务日=行情最新入库日（resolve_pf_alloc_trade_date，禁墙钟猜日）、解析不出日=不发事件+告警、
 #   已成功分配过的业务日永不再自动重发（幂等键=trade_date → 用 _marker_seen 永久闸而非
 #   当日口径，否则行情停更/周末唤醒对同一 D 追加重复快照；人工重跑走 CLI/emit 不受此挡）；
+#   regime_snapshot_history 的**唯一自动产出者=本模块 maybe_refresh_regime_snapshot**
+#   （S11 §5 施工项 4 挂点 A：此前该表唯一写方=manual CLI print_regime_history，两次手工
+#   印制之间表静默腐烂；2026-09-16 实测 1809 行/max=2026-09-11/滞后 5 天）——挂同一
+#   daily_kline SUCCESS 唤醒且**先于** pf_alloc（分配链 regime 口径读本表）、同一业务日只印
+#   一次（写方=全窗重印 append-only，同日二次自动印=纯台账膨胀零信息增益，故用 _marker_seen
+#   业务日级永久闸；记号先落再动手=失败不得在每个唤醒点重起分钟级重印）、刷新失败只
+#   [REGIME-SNAPSHOT] ERROR 出声、绝不上抛（快照腐烂不许反噬唤醒钩子链）；
 #   日件幂等双闸=当日 UTC date-marker（消费成功才落）∨ 非 poison 同 kind 在队；月度档毒丸不堵队
 #   （毒丸不算已入队——sim_memo_monthly 从未正常轮转的病根修复，C2/X2）；
 #   OPTIONAL_DUE_KINDS 预埋派发缺失=逐出队跳过（不抛不占 attempts，实现由后续批次交付）；
@@ -57,7 +66,12 @@
     它是账本 ensure_wallet 钱包额度的上游——分配先落，账本同日开户才拿得到真实额度；
     产出者=本模块 maybe_emit_pf_alloc_daily，与 sim 日件同一 daily_kline SUCCESS 唤醒点、
     且先于其入队。清单 #15 前该 kind 只有派发/执行体没有发射方=分配链恒 0 行的真断点）；
-  fw_backtest_due / promotion_advisory_due（预埋派发，实现模块由 S12/S13 批次交付，缺失跳过）。
+  fw_backtest_due / promotion_advisory_due（预埋派发，实现模块由 S12/S13 批次交付，缺失跳过）；
+  regime_snapshot_history 日序台账（S11 §5 施工项 4 挂点 A，挖矿节点 F3 治本）：唯一自动产出者
+    =本模块 maybe_refresh_regime_snapshot，与 pf_alloc 同一 daily_kline SUCCESS 唤醒点、且先于
+    其调用（分配链的 regime 口径就读这张表，表旧=分配带旧教材）；内部走 fw_backtest.
+    ensure_regime_snapshot(refresh=True)——滞后 ≤3 天零成本直通，超限才子进程全窗重印；
+    一个业务日至多一印（append-only 台账，同日重印=纯行数膨胀零信息增益）。
 
 用法:
     python -m zephyr.strategy_pipeline.pipeline_events status          # 看积压
@@ -104,6 +118,12 @@ SIM_DAILY_WAKE_TASKS = ("daily_kline", "kline_daily", "kline_index")
 PF_ALLOC_KIND = "pf_alloc_daily"
 PF_ALLOC_MODULE = "zephyr.pf_alloc.allocation_orchestrator"
 PF_ALLOC_TIMEOUT_S = 900
+# regime 日序供给件（S11 §5 施工项 4 挂点 A，挖矿节点 F3）：幂等键前缀（业务日级 marker，不建事件
+# kind=零新机制，挂点 A 的本意）+ 播报稳定前缀（日志/告警面可 grep，"腐烂"与"刷新失败"必须出声）
+REGIME_SNAPSHOT_KIND = "regime_snapshot_daily"
+REGIME_SNAPSHOT_PREFIX = "[REGIME-SNAPSHOT]"
+# ensure_regime_snapshot 返回 action 中视为成功/无异常的两态（其余=refresh_failed/error → ERROR 播报）
+REGIME_SNAPSHOT_OK_ACTIONS = frozenset({"fresh", "refreshed"})
 # 预埋派发（S12/S13 前置契约）：实现模块由后续批次交付，缺失=log-and-skip（不抛、出队留痕）
 OPTIONAL_DUE_KINDS = {
     "fw_backtest_due": ("zephyr.strategy_pipeline.fw_backtest", "run_fw_backtest_due"),
@@ -585,7 +605,7 @@ def maybe_emit_sim_daily(task_id: Any = None, success: bool = True, **_kwargs) -
     return {"emitted": emitted}
 
 
-# ---------- pf_alloc 日分配产出者（清单 #15 治本：kind 有消费端无产出者=分配链"消而不产"）──
+# ---- 日频产出者（清单 #15 分配链 / 挖矿 F3 regime 日序：kind 有消费端无产出者=静默纸面链）────
 # 业务日真源=行情最新入库日（daily_kline/kline_index 任务 SUCCESS 即该日已入库）。
 # 查询口径与 scripts/backtest/sim_platform_journal.py 健检 1 同源（同表同 symbol），此处只解析
 # 不猜：解析不出=不发事件（分配链正门 handle_pf_alloc_daily_event 对缺 trade_date 抛错，
@@ -598,6 +618,10 @@ _EMPTY_TABLE_SENTINEL = "1971-01-01"
 
 def resolve_pf_alloc_trade_date() -> str:
     """分配链业务日（数据驱动，非墙钟）：行情最新入库交易日 -> 'YYYY-MM-DD'。
+
+    本模块日频产出者共用的业务日真源（名字里的 pf_alloc 是历史遗留）：regime 日序刷新
+    （maybe_refresh_regime_snapshot）也走这一条只读模板 + DatabaseService reader 角色，
+    不在别处再拼第二条 SQL。
 
     Raises:
         RuntimeError: CH 不可达 / 无行 / 空表哨兵 / 日期非法——宁可不发事件也不猜日。
@@ -647,6 +671,66 @@ def maybe_emit_pf_alloc_daily(task_id: Any = None, success: bool = True,
     return {"emitted": [PF_ALLOC_KIND], "trade_date": day}
 
 
+# ---------- regime 日序供给产出者（挖矿 F3 治本：表有唯一消费端与 manual 写方，无自动写方）──
+def maybe_refresh_regime_snapshot(task_id: Any = None, success: bool = True,
+                                 **_kwargs) -> dict[str, Any]:
+    """regime_snapshot_history 的唯一自动产出者：行情日件 SUCCESS=自然唤醒，一业务日至多一印。
+
+    宪法 §9.3 合规（S11 §5 施工项 4「挂点 A」，零新机制）：本件不建 cron/Timer/sleep 循环，
+    节拍由调度器 task_completed 唤醒给。此前该表唯一写方=manual CLI
+    scripts/backtest/print_regime_history.py（START=2019-01-01 全窗重印，每次手工跑一批新
+    run_id），两次手工印制之间无人补日 → 表静默腐烂（2026-09-16 实测 1809 行、
+    max=2026-09-11、滞后 5 天且逐日变大），而 fw_backtest/auto_mount/pf_alloc 三方都读它。
+
+    幂等闸=业务日级永久记号（_marker_seen，与 pf_alloc_daily 同款，不用 UTC 日口径）：
+      键 regime_snapshot_daily:<D>，D=行情最新入库日（resolve_pf_alloc_trade_date，禁墙钟猜日；
+      解析不出=不印 + ERROR 出声，且因日未定→记号不落，下个唤醒点自会重解析）。写方是全窗
+      重印 append-only 台账，同一 D 二次自动印制=整窗行数再翻一份而信息增益为零；行情停更/
+      周末唤醒时 UTC 日翻篇而 D 不变，按日口径必漏。
+      **记号先落再动手**（与 pf_alloc handler 的"成功才落号"相反，自裁留痕）：pf_alloc 有
+      journal attempts/毒丸兜底且由事件驱动（一次入队一次执行），本件是唤醒钩子内直调——失败
+      若不留号=每个行情唤醒点重起一次分钟级 walk-forward 全窗重印（风暴）。失败已 ERROR 出声，
+      当日人工补跑走逃生口（见下）。
+      真正的重印闸门在 ensure_regime_snapshot 内：滞后 ≤_REGIME_STALE_DAYS(3) 天零成本直通
+      （只花一条只读新鲜度查询），只有超限才起子进程 → 常态下本钩子是廉价的看门狗。
+
+    永不抛：快照刷新失败绝不得反噬唤醒钩子链（记 [REGIME-SNAPSHOT] ERROR + 返回值）。
+    人工逃生口（不受本闸约束）：`python scripts/backtest/print_regime_history.py [--start/--end]`。
+
+    Returns:
+        {"action": "fresh|refreshed|refresh_failed|already_refreshed|skipped_wake_point|error",
+         "trade_date": D（唤醒点不匹配时缺）, 成功态另带 "brief": 一行摘要}
+    """
+    tid = str(task_id or "")
+    if not success or not any(k in tid for k in SIM_DAILY_WAKE_TASKS):
+        return {"action": "skipped_wake_point"}
+    day = ""
+    try:
+        day = resolve_pf_alloc_trade_date()  # 共用业务日真源（DatabaseService reader，§9.1）
+        key = f"{REGIME_SNAPSHOT_KIND}:{day}"
+        if _marker_seen(key):
+            return {"action": "already_refreshed", "trade_date": day}
+        _touch_marker(key)  # 先落号再动手（防失败重印风暴，见 docstring 裁定）
+        from zephyr.strategy_pipeline.fw_backtest import ensure_regime_snapshot  # noqa: PLC0415
+
+        out = ensure_regime_snapshot(refresh=True)
+    except Exception as exc:  # noqa: BLE001——钩子永不反噬调度器，但失败必须出声（静默=链又变纸面）
+        msg = (f"{REGIME_SNAPSHOT_PREFIX} 刷新未完成（trade_date={day or '未知'}）："
+               f"{type(exc).__name__}: {exc}")
+        log.error(f"{REGIME_SNAPSHOT_PREFIX} 刷新异常（不影响唤醒链，人工补跑 "
+                  f"scripts/backtest/print_regime_history.py）trade_date={day or '未知'}",
+                  exc_info=True)
+        alert(msg[:300], level="ERROR")
+        return {"action": "error", "trade_date": day, "error": f"{type(exc).__name__}"[:200]}
+    action = str(out.get("action") or "")
+    # 出声：滞后天数/行数/动作一行进告警面（Alerter→日志）——"印了没印、还滞后几天"当场可见
+    brief = (f"action={action} max_trade_date={out.get('max_trade_date')} "
+             f"滞后={out.get('stale_days')}日 行数={out.get('rows')}")
+    level = "INFO" if action in REGIME_SNAPSHOT_OK_ACTIONS else "ERROR"
+    alert(f"{REGIME_SNAPSHOT_PREFIX} 刷新体检 trade_date={day}: {brief}", level=level)
+    return {"action": action, "trade_date": day, "brief": brief}
+
+
 # ---------- 写侧钩子 ----------
 def emit_c4_batch_completed(batch: str, run_id: str, inserted: int) -> dict[str, Any]:
     """C4 批测落账成功后的通知钩子（c4_batch_screen 调用）：记录事件并尝试立即消费。"""
@@ -678,14 +762,18 @@ def wire_data_scheduler(scheduler: Any) -> None:
     """DataScheduler.subscribe("task_completed", ...) 轻钩子：数据任务完成=自然唤醒点。
 
     职责边界：只做 ①轻 kind drain（intake 重放/审计）②翻译件积压扫描→记录 c4_batch_due+告警
-    ③日频产出者唤醒（pf_alloc 分配链 → 模拟盘日件 → 月度档；顺序即 journal FIFO 顺序，
-    分配先于账本入队是"钱包额度来自分配链"这一接通的唯一次序保证）。
+    ③日频产出者唤醒（regime 日序供给 → pf_alloc 分配链 → 模拟盘日件 → 月度档；顺序即下游
+    读到新鲜数据的顺序：先刷新 regime_snapshot_history 再入队分配件，分配链读本表口径；
+    分配再先于账本入队是"钱包额度来自分配链"这一接通的唯一次序保证）。
     永不抛异常（数据任务完成回调故障不得反噬调度器）；重 kind 不在此消费（见模块裁定）。
     """
     def _on_task_completed(**_kwargs) -> None:
         try:
             scan_translated_backlog()
             scan_c1_c2_backlog()
+            # 挖矿 F3：regime 日序台账日产出者——须先于分配链（pf_alloc 的 regime 口径读本表，
+            # 表旧=分配快照带旧教材）；滞后 ≤3 天时只是一条只读查询，不起子进程
+            maybe_refresh_regime_snapshot(**_kwargs)
             # 车道 D #15：分配链日产出者——必须先于日件入队（journal FIFO=分配先落，
             # 同日账本 ensure_wallet 才读得到 alloc_budget_daily 的真实钱包额度）
             maybe_emit_pf_alloc_daily(**_kwargs)
