@@ -1,0 +1,41 @@
+# ALGO_FLOW 外部真源——app（_domain_security 域，真源 src/zephyr/security/llm_defense/llm_security/dashboard/app.py）
+# 2026-09-15 P2-1 契约头减负批量出仓：docstring 内联块逐字节副本，extractor 经
+# external 锚加载走同一 parse_algo_flow 管线；算法公共面变化时同步更新本块。
+doc_type: architecture_view
+ttl: permanent
+module: src.zephyr.security.llm_defense.llm_security.dashboard.app
+source_of_truth: src/zephyr/security/llm_defense/llm_security/dashboard/app.py
+algo_flow: |
+    # [ALGO_FLOW]
+    # 层: 输入
+    # - id: I1
+    #   name: 模块内部数据
+    #   fields: 无公共形参/无再导出（AST 事实）
+    #   code: app.py
+    # 层: 算法
+    # - id: A1
+    #   name_zh: ① SecurityDashboard
+    #   name_en: SecurityDashboard
+    #   intro: 安全仪表板主类
+    #   desc: 安全仪表板主类；公共方法（定义序）: setup_page_config, load_payloads, setup_sidebar, render_security_overview, render_attack_d…
+    #   inputs: 无参数
+    #   outputs: 返回值
+    # - id: A2
+    #   name_zh: ② main
+    #   name_en: main
+    #   intro: 主函数
+    #   desc: 主函数；源码 L769-L777
+    #   inputs: 无参数
+    #   outputs: 返回值
+    # 层: 输出
+    # - id: O1
+    #   name_zh: 模块公共 API 面（2 定义）
+    #   name_en: public defs
+    #   intro: SecurityDashboard, main
+    #   downstream: 见模块头 [CONSUMERS]
+    # [/ALGO_FLOW]
+    #
+    # 边:
+    # I1 --> A1
+    # A1 --> A2
+    # A2 --> O1

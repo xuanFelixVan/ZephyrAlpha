@@ -1,0 +1,48 @@
+# ALGO_FLOW 外部真源——l6_feishu_alert（_domain_security 域，真源 src/zephyr/security/llm_defense/llm_security/layers/l6_feishu_alert.py）
+# 2026-09-15 P2-1 契约头减负批量出仓：docstring 内联块逐字节副本，extractor 经
+# external 锚加载走同一 parse_algo_flow 管线；算法公共面变化时同步更新本块。
+doc_type: architecture_view
+ttl: permanent
+module: src.zephyr.security.llm_defense.llm_security.layers.l6_feishu_alert
+source_of_truth: src/zephyr/security/llm_defense/llm_security/layers/l6_feishu_alert.py
+algo_flow: |
+    # [ALGO_FLOW]
+    # 层: 输入
+    # - id: I1
+    #   name: pending_path 参数
+    #   fields: 参数 pending_path（无注解）
+    #   code: l6_feishu_alert.py 顶层公共函数形参（AST 提取）
+    # - id: I2
+    #   name: webhook_url 参数
+    #   fields: 参数 webhook_url（无注解）
+    #   code: l6_feishu_alert.py 顶层公共函数形参（AST 提取）
+    # - id: I3
+    #   name: dry_run 参数
+    #   fields: 参数 dry_run（无注解）
+    #   code: l6_feishu_alert.py 顶层公共函数形参（AST 提取）
+    # - id: I4
+    #   name: timeout_sec 参数
+    #   fields: 参数 timeout_sec（无注解）
+    #   code: l6_feishu_alert.py 顶层公共函数形参（AST 提取）
+    # 层: 算法
+    # - id: A1
+    #   name_zh: ① LsgFeishuAlerter
+    #   name_en: LsgFeishuAlerter
+    #   intro: LSG 高危事件飞书告警器（L6 层内件，委托 FeishuAlertChannel）。
+    #   desc: LSG 高危事件飞书告警器（L6 层内件，委托 FeishuAlertChannel）。 用法:: alerter = LsgFeishuAlerter() delivered…；公共方法（定义序）: send_hig…
+    #   inputs: pending_path webhook_url dry_run timeout_sec channel
+    #   outputs: 返回值
+    # 层: 输出
+    # - id: O1
+    #   name_zh: 模块公共 API 面（1 定义）
+    #   name_en: public defs
+    #   intro: LsgFeishuAlerter
+    #   downstream: tests.llm_security.test_l6_feishu_alert
+    # [/ALGO_FLOW]
+    #
+    # 边:
+    # I1 --> A1
+    # I2 --> A1
+    # I3 --> A1
+    # I4 --> A1
+    # A1 --> O1

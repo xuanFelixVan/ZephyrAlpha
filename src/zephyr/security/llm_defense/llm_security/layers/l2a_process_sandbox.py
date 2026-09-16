@@ -18,48 +18,7 @@
 """
 
 
-# [ALGO_FLOW]
-# 层: 输入
-# - id: I1
-#   name: config 参数
-#   fields: 参数 config（无注解）
-#   code: l2a_process_sandbox.py 顶层公共函数形参（AST 提取）
-# 层: 算法
-# - id: A1
-#   name_zh: ① BlindSpot5ProcessSandboxGuard
-#   name_en: BlindSpot5ProcessSandboxGuard
-#   intro: Combined blind-spot detection and process sandboxing guard.
-#   desc: Combined blind-spot detection and process sandboxing guard. Scans code/command text for d…；公共方法（定义序）: scan, c…
-#   inputs: config
-#   outputs: 返回值
-# - id: A2
-#   name_zh: ② ProcessSandbox
-#   name_en: ProcessSandbox
-#   intro: Low-level process sandbox executor (legacy interface).
-#   desc: Low-level process sandbox executor (legacy interface).；公共方法（定义序）: execute, validate_command；源码 L213-L223
-#   inputs: config
-#   outputs: 返回值
-# - id: A3
-#   name_zh: ③ ProcessSandboxLayer
-#   name_en: ProcessSandboxLayer
-#   intro: L2a Process Sandbox Layer.
-#   desc: L2a Process Sandbox Layer. Executes untrusted Python code in an isolated subprocess with…；公共方法（定义序）: execute_…
-#   inputs: config
-#   outputs: 返回值
-#   （注：A3 之后另有 6 个公共定义未列入（含 6 个数据契约/异常/枚举声明类），见源码）
-# 层: 输出
-# - id: O1
-#   name_zh: 模块公共 API 面（9 定义）
-#   name_en: public defs
-#   intro: BlindSpot5ProcessSandboxGuard, ProcessSandbox, ProcessSandboxLayer
-#   downstream: zephyr.security.llm_defense.llm_security.gateway; tests.llm_security.test_l2a_p…
-# [/ALGO_FLOW]
-#
-# 边:
-# I1 --> A1
-# A1 --> A2
-# A2 --> A3
-# A3 --> O1
+# [ALGO_FLOW] external: docs/03_modules/_domain_security/algo_flow/llm_defense/llm_security/layers/l2a_process_sandbox.yaml
 """
 
 import hashlib

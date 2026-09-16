@@ -17,61 +17,7 @@
 """
 
 
-# [ALGO_FLOW]
-# 层: 输入
-# - id: I1
-#   name: config 参数
-#   fields: 参数 config（无注解）
-#   code: l8_multi_agent.py 顶层公共函数形参（AST 提取）
-# - id: I2
-#   name: hmac_key 参数
-#   fields: 参数 hmac_key（无注解）
-#   code: l8_multi_agent.py 顶层公共函数形参（AST 提取）
-# 层: 算法
-# - id: A1
-#   name_zh: ① MultiAgentSecurityLayer
-#   name_en: MultiAgentSecurityLayer
-#   intro: class MultiAgentSecurityLayer 源码 L81-L158
-#   desc: 公共方法（定义序）: validate, check_communication, enforce_boundary, authenticate_cross_agent, isolate_agent_communica…
-#   inputs: config hmac_key
-#   outputs: 返回值
-# - id: A2
-#   name_zh: ② AgentIdentityResolver
-#   name_en: AgentIdentityResolver
-#   intro: Resolves and verifies agent identities via attestation + me…
-#   desc: Resolves and verifies agent identities via attestation + message signing.；公共方法（定义序）: resolve, verify_identity…
-#   inputs: config
-#   outputs: 返回值
-# - id: A3
-#   name_zh: ③ CrossAgentPermission
-#   name_en: CrossAgentPermission
-#   intro: Permission for a cross-agent interaction.
-#   desc: Permission for a cross-agent interaction. Instance-based (not an Enum) so callers can att…；公共方法（定义序）: is_expi…
-#   inputs: from_agent_id to_agent_id scope granted expires_at
-#   outputs: 返回值
-# - id: A4
-#   name_zh: ④ TrustScoreCalculator
-#   name_en: TrustScoreCalculator
-#   intro: Calculates weighted trust scores for agents.
-#   desc: Calculates weighted trust scores for agents.；公共方法（定义序）: calculate, update_score；源码 L275-L312
-#   inputs: config
-#   outputs: 返回值
-#   （注：A4 之后另有 3 个公共定义未列入（含 3 个数据契约/异常/枚举声明类），见源码）
-# 层: 输出
-# - id: O1
-#   name_zh: 模块公共 API 面（7 定义）
-#   name_en: public defs
-#   intro: MultiAgentSecurityLayer, AgentIdentityResolver, CrossAgentPermission, TrustScor…
-#   downstream: zephyr.security.llm_defense.llm_security.gateway; tests.llm_security.test_l8_mu…
-# [/ALGO_FLOW]
-#
-# 边:
-# I1 --> A1
-# I2 --> A1
-# A1 --> A2
-# A2 --> A3
-# A3 --> A4
-# A4 --> O1
+# [ALGO_FLOW] external: docs/03_modules/_domain_security/algo_flow/llm_defense/llm_security/layers/l8_multi_agent.yaml
 """
 
 from enum import Enum

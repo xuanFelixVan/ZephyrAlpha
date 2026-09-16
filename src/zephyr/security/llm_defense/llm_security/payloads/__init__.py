@@ -4,32 +4,7 @@
 """
 
 
-# [ALGO_FLOW]
-# 层: 输入
-# - id: I1
-#   name: category 参数
-#   fields: 参数 category（无注解）
-#   code: __init__.py 顶层公共函数形参（AST 提取）
-# 层: 算法
-# - id: A1
-#   name_zh: ① load_red_team_payloads
-#   name_en: load_red_team_payloads
-#   intro: 加载内置 red-team 载荷数据。
-#   desc: 加载内置 red-team 载荷数据。 返回 dict: {"payloads": [...]}，每项含 id/name/category/severity/variants。…；源码 L165-L175
-#   inputs: category
-#   outputs: 返回值
-#   （注：A1 之后另有 2 个公共定义未列入（含 2 个数据契约/异常/枚举声明类），见源码）
-# 层: 输出
-# - id: O1
-#   name_zh: 模块公共 API 面（3 定义）
-#   name_en: public defs
-#   intro: load_red_team_payloads
-#   downstream: 见模块头 [CONSUMERS]
-# [/ALGO_FLOW]
-#
-# 边:
-# I1 --> A1
-# A1 --> O1
+# [ALGO_FLOW] external: docs/03_modules/_domain_security/algo_flow/llm_defense/llm_security/payloads/payloads__init__.yaml
 """
 
 
