@@ -17,32 +17,7 @@
 """
 
 
-# [ALGO_FLOW]
-# 层: 输入
-# - id: I1
-#   name: 模块内部数据
-#   fields: 无公共形参/无再导出（AST 事实）
-#   code: trust_ring_manager.py
-# 层: 算法
-# - id: A1
-#   name_zh: ① TrustRingManager
-#   name_en: TrustRingManager
-#   intro: class TrustRingManager 源码 L97-L181
-#   desc: 公共方法（定义序）: register_identity, can, grant, revoke, get_ring, verify, recent_grants, active_identities；源码 L97-L…
-#   inputs: 无参数
-#   outputs: 返回值
-#   （注：A1 之后另有 2 个公共定义未列入（含 2 个数据契约/异常/枚举声明类），见源码）
-# 层: 输出
-# - id: O1
-#   name_zh: 模块公共 API 面（3 定义）
-#   name_en: public defs
-#   intro: TrustRingManager
-#   downstream: 见模块头 [CONSUMERS]
-# [/ALGO_FLOW]
-#
-# 边:
-# I1 --> A1
-# A1 --> O1
+# [ALGO_FLOW] external: docs/03_modules/_domain_gov_audit/algo_flow/trust_ring_manager.yaml
 """
 
 import hashlib
