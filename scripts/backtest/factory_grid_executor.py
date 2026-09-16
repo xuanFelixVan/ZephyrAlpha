@@ -24,12 +24,25 @@ v1 求值实现边界（诚实披露，立项稿 §十二 两批次的批次 A�
             E_single_cap 全部 / G_universe 全部 / H_turnover_lambda 全部 /
             A1(raw/rank/zscore) / A2(equal/ic_mean/ic_ir/halflife20/halflife60) /
             C(equal_weight/inv_vol/signal_strength)
-  降级实现(degraded=true, 结构知识阶段剔除): A1(industry_neutral/size_neutral/
-            industsize_neutral→zscore; 行业数据健康观察项，等数据线修复)。
-            T2a（2026-09-16）: A2 orth_equal(逐日 Gram-Schmidt)/lasso(60日滚动重训)/
+  T2a（2026-09-16）: A2 orth_equal(逐日 Gram-Schmidt)/lasso(60日滚动重训)/
             pc1(滚动 PC1 载荷) 与 C mkt_cap(total_mv 宽表)/risk_parity(naive RP=inv_vol
             同形语义，Maillard 2010 术语)/kelly_025/kelly_050(fraction×μ/σ² 非满仓) 全部
-            转精确实现——降级格点占比由 86.6% 降至 ~24%（仅 A1 行业族）。
+            转精确实现。
+  T2b（2026-09-16）: A1 行业族转精确实现，降级格点占比归零——
+            industry_neutral=逐日截面按 sws2021_l1 行业分组去均值（组内 demean）；
+            size_neutral=逐日对 log(total_mv) 截面 OLS 残差；industsize_neutral=
+            行业组内 demean→log 市值残差。行业锚=c1_market.industry_class L1 现行快照
+            （词表校验拦截数据线 'nan' 坏行，诊断见 schema industry_anchor）；市值复用
+            mkt_cap 宽表。锚/市值数据缺失时 fail-closed 降级 zscore 并标 degraded。
+  T2c（2026-09-16）: 性能优化（不改数值语义）: combined 截面+rank 按 (G,A1,A2) prefix
+            缓存（同 prefix 格点复用，LRU 单元格预算防内存膨胀）；_apply_freq_trigger
+            periodic 向量化（iloc[::step]+reindex ffill，与逐日循环逐位等价）/drift_band
+            numpy 行循环（nansum=逐行 skipna 同语义）；【记录】lasso 重训参数放宽为
+            Lasso(selection='random', random_state=0, tol=1e-4)——坐标下降随机序+松弛
+            收敛阈，格点语义等价（60 日滚动重训节奏/alpha/前视防御不变），非逐位等价。
+            收益序列档案: run_batch 成功分支 nets 落盘 net_returns.parquet（环境无
+            pyarrow 兜底 net_returns.csv.gz），summary.net_returns_file=文件名——
+            DSR 精确口径数据基础。
 
 用法:
   python scripts/backtest/factory_grid_executor.py --smoke                 # 烟测（管线联通，8 格点）
@@ -73,6 +86,16 @@ _SQL_MV = (
 _SQL_ALL_A = (
     "SELECT DISTINCT symbol FROM " + _get_table_registry().table("meta_stock_basic") +
     " WHERE valid_to IS NULL AND name NOT LIKE '%ST%' AND name NOT LIKE '%退%'"
+)
+# T2b 行业锚: c1_market.industry_class L1 现行快照（category_id=market_industry_class 真源反查）
+_SQL_INDUSTRY_MAP = (
+    "SELECT symbol, industry_sw, valid_from, updated_at FROM "
+    + _get_table_registry().table("market_industry_class")
+    + " WHERE industry_level = 1 AND valid_to IS NULL"
+)
+# 行业词表真源（sws2021_l1 = schema industry_anchor.vocabulary_source；禁硬编码行业清单）
+_SWS_VOCAB_SOURCE = (
+    _REPO / "docs" / "01_policies_and_standards" / "_registry" / "catalogs" / "io_sector_sws_map.yaml"
 )
 # v1 因子集（F-02 接线后扩展；全部从 close 现算，零额外依赖）
 V1_FACTORS = ("f_mom20", "f_lowvol20", "f_ma_gap")
@@ -138,6 +161,61 @@ def _engine_query_all_a() -> set[str]:
     return {(r[0] or "")[:6] for r in rows if r[0]}
 
 
+def _load_sws_vocab() -> set[str]:
+    """sws2021_l1 行业词表（io_sector_sws_map.yaml mappings[].sws，禁硬编码行业清单）。"""
+    import yaml
+
+    data = yaml.safe_load(_SWS_VOCAB_SOURCE.read_text(encoding="utf-8"))
+    return {str(m["sws"]) for m in data["mappings"]}
+
+
+def _clean_industry_rows(rows: list, vocab: set[str]) -> tuple[dict[str, str], int]:
+    """(symbol, industry_sw, valid_from, updated_at) 行清洗 + 6 位化确定性去重。
+
+    返回 ({symbol6: industry}, 非词表行数)。表内符号格式混用（2026-08-03 ifind 批=裸
+    6 位，2026-09-13 批=带 .SH/.SZ 后缀），6 位化后同票多行按 (valid_from, updated_at)
+    最新者胜——PIT 正确且与返回行序无关；词表外值统一拦截（含已知坏行: 688806 裸符号行
+    industry_sw='nan' 字面量，其 09-13 新批 .SH 行带正常行业接管；删除属数据线职责，
+    此处只做消费侧防御）。
+    """
+    best: dict[str, tuple] = {}
+    dropped_nonvocab = 0
+    for sym, ind, vf, ua in rows:
+        s6 = (sym or "")[:6]
+        if not s6:
+            continue
+        if ind not in vocab:
+            dropped_nonvocab += 1
+            continue
+        key = (str(vf), str(ua))  # ISO 字符串序=时间序（类型稳健，兼容 NaT/None）
+        if s6 not in best or key > best[s6][0]:
+            best[s6] = (key, ind)
+    return {s6: ind for s6, (_, ind) in best.items()}, dropped_nonvocab
+
+
+def _industry_map() -> dict[str, str]:
+    """行业中性锚: c1_market.industry_class L1 现行快照（valid_to IS NULL）→ {symbol: industry}。
+
+    词表=sws2021_l1（io_sector_sws_map.yaml）。查询失败或清洗后为空抛 RuntimeError
+    （fail-closed，调用方降级 zscore 并标 degraded，禁静默）。
+    """
+    from _c4_engine import run_query
+
+    vocab = _load_sws_vocab()
+    rows = run_query(_SQL_INDUSTRY_MAP)
+    mapping, dropped_nonvocab = _clean_industry_rows(rows, vocab)
+    if not mapping:
+        raise RuntimeError("industry_map 清洗后为空（industry_class 数据健康异常）")
+    if dropped_nonvocab:
+        import logging as _lg
+
+        _lg.getLogger(__name__).warning(
+            "industry_map 剔除非词表行业 %d 行（含已知 'nan' 坏行，详见 schema industry_anchor）",
+            dropped_nonvocab,
+        )
+    return mapping
+
+
 def _load_mkt_cap_wide(start: str, end: str, columns: pd.Index) -> pd.DataFrame | None:
     """total_mv 宽表（c1_market.stock_indicator，2020-01 起覆盖）；空则 None（mkt_cap 格点将 fail-closed 记阴性）。"""
     from _c4_engine import run_query, wide
@@ -161,8 +239,46 @@ def compute_v1_factors(closes: pd.DataFrame) -> dict[str, pd.DataFrame]:
     return {"f_mom20": f_mom20, "f_lowvol20": f_lowvol20, "f_ma_gap": f_ma_gap}
 
 
-def _normalize(factor: pd.DataFrame, mode: str) -> tuple[pd.DataFrame, bool]:
-    """A1 标准化。返回 (截面, degraded)。降级取值→zscore 并标记。"""
+def _demean_by_group(factor: pd.DataFrame, group_of_col: dict[str, str]) -> pd.DataFrame:
+    """逐日截面按组去均值（组内 demean，完全向量化）。
+
+    实现: 列→组标签 groupby mean 得 (date × group) 组均值矩阵，广播回列相减。
+    NaN 语义: 组均值 skipna——组内个别缺失不影响组均值，缺失格保持 NaN（无跨票污染）；
+    无组标签的列 fail-closed 置 NaN（无行业信息的票不得留在截面泄露行业效应）。
+    """
+    grp = factor.columns.to_series().map(group_of_col)
+    valid = grp.dropna().index
+    f = factor[valid]
+    means = f.T.groupby(grp[valid]).mean().T  # (date × group)
+    out = f - means[grp[valid]].set_axis(valid, axis=1)
+    return out.reindex(columns=factor.columns)
+
+
+def _regress_out(factor: pd.DataFrame, ctrl: pd.DataFrame) -> pd.DataFrame:
+    """逐日截面一元 OLS 残差: factor 对 ctrl 回归取残差（无自由参数，完全向量化）。"""
+    ctrl = ctrl.reindex(index=factor.index, columns=factor.columns)
+    m = factor.notna() & ctrl.notna()
+    fw = factor.where(m)
+    xw = ctrl.where(m)
+    f0 = fw.sub(fw.mean(axis=1), axis=0)
+    x0 = xw.sub(xw.mean(axis=1), axis=0)
+    var = (x0 * x0).mean(axis=1).replace(0, np.nan)
+    beta = (f0 * x0).mean(axis=1) / var
+    return f0.sub(x0.mul(beta, axis=0)).where(m)
+
+
+def _normalize(factor: pd.DataFrame, mode: str, industry_map: dict[str, str] | None = None,
+               mkt_cap_w: pd.DataFrame | None = None) -> tuple[pd.DataFrame, bool]:
+    """A1 标准化。返回 (截面, degraded)。
+
+    行业族精确实现（T2b 2026-09-16，数据锚经 schema industry_anchor）:
+      industry_neutral   = 逐日截面按 sws2021_l1 行业分组去均值（组内 demean）
+      size_neutral       = 逐日对 log(total_mv) 截面 OLS 残差
+      industsize_neutral = 行业组内 demean → 对组内 demean 的 log(total_mv) OLS 残差
+                           （FWL 定理下严格等价于行业虚拟变量+市值联合截面回归，
+                           行业与市值效应同时精确消除；对原始市值级联回归不等价）
+    行业锚/市值宽表缺失（含加载失败）时 fail-closed 降级 zscore 并标 degraded（诚实披露，禁静默）。
+    """
     if mode == "raw":
         return factor, False
     if mode == "rank":
@@ -171,10 +287,24 @@ def _normalize(factor: pd.DataFrame, mode: str) -> tuple[pd.DataFrame, bool]:
         mu = factor.mean(axis=1)
         sd = factor.std(axis=1)
         return factor.sub(mu, axis=0).div(sd.replace(0, np.nan), axis=0), False
-    # industry_neutral / size_neutral / industsize_neutral: v1 降级（行业数据健康观察项+市值列未接）
-    mu = factor.mean(axis=1)
-    sd = factor.std(axis=1)
-    return factor.sub(mu, axis=0).div(sd.replace(0, np.nan), axis=0), True
+
+    def _degraded_zscore() -> tuple[pd.DataFrame, bool]:
+        mu = factor.mean(axis=1)
+        sd = factor.std(axis=1)
+        return factor.sub(mu, axis=0).div(sd.replace(0, np.nan), axis=0), True
+
+    log_mv = None if mkt_cap_w is None else np.log(mkt_cap_w.where(mkt_cap_w > 0))
+    if mode == "industry_neutral" and industry_map:
+        return _demean_by_group(factor, industry_map), False
+    if mode == "size_neutral" and log_mv is not None:
+        return _regress_out(factor, log_mv), False
+    if mode == "industsize_neutral" and industry_map and log_mv is not None:
+        # FWL: M_D(y) 对 M_D(x) 回归取残差 ≡ 行业虚拟变量+市值联合截面回归残差
+        resid = _demean_by_group(factor, industry_map)
+        x_dm = _demean_by_group(log_mv, industry_map)
+        return _regress_out(resid, x_dm), False
+    # 行业族锚缺失 / 未知 mode: 诚实降级
+    return _degraded_zscore()
 
 
 def _combine(factors: dict[str, pd.DataFrame], normalized: list[pd.DataFrame], mode: str,
@@ -248,7 +378,12 @@ def _combine(factors: dict[str, pd.DataFrame], normalized: list[pd.DataFrame], m
             w_new = np.full(F, 1.0 / F)
             if mode == "lasso":
                 if int(ok.sum()) > 500:
-                    mdl = Lasso(alpha=1e-4, fit_intercept=False, max_iter=2000)
+                    # T2c 性能【记录】: selection='random'+random_state=0（确定性）+
+                    # tol=1e-4（默认 1e-4 即坐标下降收敛阈，显式化）——坐标下降随机
+                    # 遍历序显著加速大窗口 fit；60 日滚动重训节奏/alpha/前视防御不变，
+                    # 格点语义等价（非逐位等价，偏差在 tol 量级内）
+                    mdl = Lasso(alpha=1e-4, fit_intercept=False, max_iter=2000,
+                                tol=1e-4, selection="random", random_state=0)
                     mdl.fit(Xtr[ok], ytr[ok])
                     w_abs = np.abs(mdl.coef_)
                     s = float(w_abs.sum())
@@ -279,9 +414,14 @@ def _combine(factors: dict[str, pd.DataFrame], normalized: list[pd.DataFrame], m
 def _sizing(scores: pd.DataFrame, top_n: int, mode: str,
             vol20: pd.DataFrame, mkt_cap_w: pd.DataFrame | None = None,
             rets60_mean: pd.DataFrame | None = None,
-            rets60_var: pd.DataFrame | None = None) -> tuple[pd.DataFrame, bool]:
-    """B 选股 + C 定尺寸。返回 (weights 截面, degraded)。"""
-    rank = scores.rank(axis=1, ascending=False)
+            rets60_var: pd.DataFrame | None = None,
+            rank_pre: pd.DataFrame | None = None) -> tuple[pd.DataFrame, bool]:
+    """B 选股 + C 定尺寸。返回 (weights 截面, degraded)。
+
+    rank_pre（T2c 缓存加速）: 同一 scores 已算好的 rank（combined 缓存随附）；
+    rank 仅依赖 scores，传入时跳过重算，数值恒等。调用方保证 scores 对应关系。
+    """
+    rank = rank_pre if rank_pre is not None else scores.rank(axis=1, ascending=False)
     mask = rank <= top_n
     base = mask.astype(float)
     base[base == 0] = np.nan
@@ -341,47 +481,98 @@ def _apply_cap_and_lambda(w: pd.DataFrame, cap: str, lam: str) -> pd.DataFrame:
 
 
 def _apply_freq_trigger(w: pd.DataFrame, freq: str, trigger: str) -> pd.DataFrame:
-    """D1 频率 + D2 触发: 非调仓日沿用旧权重；drift_band=偏离>10% 才重平衡。"""
+    """D1 频率 + D2 触发: 非调仓日沿用旧权重；drift_band=偏离>10% 才重平衡。
+
+    T2c 性能（数值语义与逐日循环逐位等价）:
+      periodic → 每 step 行取值: out[i] = w.iloc[(i//step)*step]，用
+        iloc[::step].reindex(index, method='ffill') 一步到位（索引单调且第 0 行
+        必为调仓日，ffill 语义严格等于逐日沿用旧权重）；step=1 短路直返。
+      drift_band → 保持逐日循环但切 numpy 行数组（省 .loc 逐行标签查找）；
+        np.nansum ≡ pandas row-sum skipna 语义，判阈 (|Δw|.sum()/2 > 0.10)。
+    """
     step = {"daily": 1, "weekly": 5, "biweekly": 10, "monthly": 21}[freq]
-    dates = w.index
-    keep = w.copy()
-    last = w.iloc[0].copy()
-    out_rows = []
-    drift = 0.10
-    for i, d in enumerate(dates):
-        target = w.loc[d]
-        if i % step == 0:
-            last = target
-        elif trigger == "drift_band":
-            if (target - last).abs().sum() / 2.0 > drift:
-                last = target
-        out_rows.append(last)
-    out = pd.DataFrame(out_rows, index=dates, columns=w.columns)
-    return out
+    if trigger != "drift_band":
+        if step == 1:
+            return w.copy()
+        return w.iloc[::step].reindex(w.index, method="ffill")
+    vals = w.to_numpy()
+    last = vals[0].copy()
+    out = np.empty_like(vals)
+    thr = 0.10 * 2.0  # 原语义: |Δw|.sum()/2 > 0.10（×2 免逐行除法）
+    for i in range(len(vals)):
+        row = vals[i]
+        if i % step == 0 or np.nansum(np.abs(row - last)) > thr:
+            last = row.copy()
+        out[i] = last
+    return pd.DataFrame(out, index=w.index, columns=w.columns)
+
+
+# T2c combined 缓存单元格预算（entry=combined+rank 各 T×S float64；970×1800 级
+# 单 entry≈3.5e6 cell，预算 24e6 cell ≈ 全窗口池化 <400MB，超限 FIFO 逐出最旧 prefix）
+_COMBINE_CACHE_MAX_CELLS = 24_000_000
+
+
+def _combine_cache_store(cache: dict, key, entry: tuple) -> None:
+    """combined 缓存存入 + 单元格预算逐出（防内存膨胀；命中侧用 pop+reinsert 做 LRU 续期）。"""
+    cache[key] = entry
+    total = 0
+    for e in cache.values():
+        total += e[0].size + e[1].size
+    while total > _COMBINE_CACHE_MAX_CELLS and len(cache) > 1:
+        old_key, old = next(iter(cache.items()))
+        total -= old[0].size + old[1].size
+        cache.pop(old_key)
 
 
 def evaluate_recipe(recipe, closes: pd.DataFrame, factors: dict[str, pd.DataFrame],
                     vol20: pd.DataFrame, universe_cols: list[str],
                     mkt_cap_w: pd.DataFrame | None = None,
                     rets60_mean: pd.DataFrame | None = None,
-                    rets60_var: pd.DataFrame | None = None) -> tuple[pd.DataFrame, tuple[str, ...]]:
-    """recipe → (weights 宽表, degraded 维元组)。求值失败抛 RuntimeError（fail-closed，调用方记阴性）。"""
+                    rets60_var: pd.DataFrame | None = None,
+                    industry_map: dict[str, str] | None = None,
+                    combine_cache: dict | None = None) -> tuple[pd.DataFrame, tuple[str, ...]]:
+    """recipe → (weights 宽表, degraded 维元组)。求值失败抛 RuntimeError（fail-closed，调用方记阴性）。
+
+    combine_cache（T2c）: 按 (G,A1,A2) prefix 复用 combined 截面+rank——同 prefix 格点
+    的 normalize/combine 输入确定则输出确定（industry_map/mkt_cap_w 批内恒定），rank 仅
+    依赖 combined。命中时 A1/A2 degraded 标记一并复现，manifest 口径与无缓存逐位一致。
+    """
     v = recipe.values
     degraded: list[str] = []
     cols = universe_cols
-    cl = closes[cols]
-    normalized: list[pd.DataFrame] = []
-    names = list(factors.keys())
-    for n in names:
-        f = factors[n][cols]
-        nf, deg = _normalize(f, v["A1_factor_normalize"])
-        if deg:
-            if "A1_factor_normalize" not in degraded:
+    combined: pd.DataFrame | None = None
+    rank: pd.DataFrame | None = None
+    cache_key = None
+    if combine_cache is not None:
+        cache_key = (v["G_universe"], v["A1_factor_normalize"], v["A2_combine_weight"])
+        hit = combine_cache.pop(cache_key, None)
+        if hit is not None:
+            combine_cache[cache_key] = hit  # LRU 续期
+            combined, rank, a1_deg, a2_deg = hit
+            if a1_deg:
                 degraded.append("A1_factor_normalize")
-        normalized.append(nf)
-    combined, deg2 = _combine(factors, normalized, v["A2_combine_weight"], cl)
-    if deg2:
-        degraded.append("A2_combine_weight")
+            if a2_deg:
+                degraded.append("A2_combine_weight")
+    if combined is None:
+        cl = closes[cols]
+        normalized: list[pd.DataFrame] = []
+        names = list(factors.keys())
+        a1_deg = False
+        for n in names:
+            f = factors[n][cols]
+            nf, deg = _normalize(f, v["A1_factor_normalize"], industry_map=industry_map,
+                                 mkt_cap_w=mkt_cap_w)
+            if deg:
+                a1_deg = True
+            normalized.append(nf)
+        if a1_deg:
+            degraded.append("A1_factor_normalize")
+        combined, deg2 = _combine(factors, normalized, v["A2_combine_weight"], cl)
+        if deg2:
+            degraded.append("A2_combine_weight")
+        if combine_cache is not None:
+            rank = combined.rank(axis=1, ascending=False)
+            _combine_cache_store(combine_cache, cache_key, (combined, rank, a1_deg, bool(deg2)))
     top_n = int(v["B_top_n"].replace("top", ""))
     # E cap 约束的持仓数扩展（B×E 交互的实务语义）: 满仓+单票≤cap 要求
     # M=ceil(1/cap) 只——M>top_n 时有效持仓数扩展为 M（仍按分数序取）
@@ -389,7 +580,7 @@ def evaluate_recipe(recipe, closes: pd.DataFrame, factors: dict[str, pd.DataFram
     effective_n = max(top_n, -(-1 // cap_val) if (top_n * cap_val) < 1.0 else top_n)
     weights, deg3 = _sizing(combined, effective_n, v["C_sizing"], vol20[cols],
                             mkt_cap_w=mkt_cap_w, rets60_mean=rets60_mean,
-                            rets60_var=rets60_var)
+                            rets60_var=rets60_var, rank_pre=rank)
     if deg3:
         degraded.append("C_sizing")
     weights = _apply_freq_trigger(weights, v["D1_rebalance_freq"], v["D2_rebalance_trigger"])
@@ -473,12 +664,23 @@ def run_batch(n_samples: int, seed: int, start: str, end: str, smoke: bool = Fal
 
     universe_cache: dict[str, set[str]] = {}
     factors_cache: dict[str, dict[str, pd.DataFrame]] = {}
+    # T2c: g → (closes_eval[cols], vol20[cols]) 切片一次复用（免每格点重切 T×S）；prefix 级 combined 缓存
+    slice_cache: dict[str, tuple[pd.DataFrame, pd.DataFrame]] = {}
+    combine_cache: dict = {}  # (G,A1,A2) → (combined, rank, a1_deg, a2_deg)
     vol20 = closes_eval.pct_change().rolling(20).std()
     # T2a 精确实现数据面: 市值宽表 + 60 日收益矩（mkt_cap/kelly sizing 消费）
     mkt_cap_w = _load_mkt_cap_wide(warm_start, end, closes_all.columns)
     rets_daily = closes_eval.pct_change()
     rets60_mean = rets_daily.rolling(60).mean()
     rets60_var = rets_daily.rolling(60).var()
+    # T2b 行业族数据面: 行业锚一次拉取（失败→None，行业族格点 fail-closed 降级记 degraded）
+    try:
+        industry_map = _industry_map()
+    except Exception as exc:  # noqa: BLE001
+        import logging as _lg
+
+        _lg.getLogger(__name__).warning("行业锚加载失败，A1 行业族降级 zscore（degraded）: %s", exc)
+        industry_map = None
 
     manifest_rows: list[GridEvalOutcome] = []
     negatives: list[NegativeRecord] = []
@@ -500,19 +702,23 @@ def run_batch(n_samples: int, seed: int, start: str, end: str, smoke: bool = Fal
             eval_dead += 1
             continue
         if g not in factors_cache:
-            factors_cache[g] = compute_v1_factors(closes_eval[cols])
+            closes_g = closes_eval[cols]
+            factors_cache[g] = compute_v1_factors(closes_g)
+            slice_cache[g] = (closes_g, vol20[cols])
+        closes_g, vol20_g = slice_cache[g]
         try:
-            weights, degraded = evaluate_recipe(r, closes_eval, factors_cache[g], vol20, cols,
+            weights, degraded = evaluate_recipe(r, closes_g, factors_cache[g], vol20_g, cols,
                                                 mkt_cap_w=mkt_cap_w, rets60_mean=rets60_mean,
-                                                rets60_var=rets60_var)
+                                                rets60_var=rets60_var, industry_map=industry_map,
+                                                combine_cache=combine_cache)
         except Exception as exc:  # noqa: BLE001
             negatives.append(NegativeRecord(r.recipe_id, "eval", f"eval_fail:{type(exc).__name__}",
                                             r.values, "", str(exc)[:120]))
             eval_dead += 1
             continue
         try:
-            stats = run_backtest(weights, closes_eval[cols])
-            net = daily_net_returns(weights, closes_eval[cols])
+            stats = run_backtest(weights, closes_g)
+            net = daily_net_returns(weights, closes_g)
             if len(net.dropna()) < 60 or float(net.std()) == 0:
                 raise RuntimeError(f"insufficient_net:{len(net)}")
             sharpe = stats["sharpe"]
@@ -546,6 +752,19 @@ def run_batch(n_samples: int, seed: int, start: str, end: str, smoke: bool = Fal
 
         _lg.getLogger(__name__).warning("N_eff 计算失败（披露位留空）: %s", exc)
 
+    # T2c 收益序列档案: 成功格点 net 序列落盘（行=交易日 T，列=recipe_id）——
+    # DSR 精确口径数据基础；环境无 pyarrow 时兜底 csv.gz
+    net_returns_file: str | None = None
+    if nets_for_neff:
+        nr = pd.concat([pd.Series(v, name=k) for k, v in nets_for_neff.items()], axis=1)
+        try:
+            nr_path = out_dir / "net_returns.parquet"
+            nr.to_parquet(nr_path)
+        except (ImportError, ModuleNotFoundError):
+            nr_path = out_dir / "net_returns.csv.gz"
+            nr.to_csv(nr_path, index=False, compression="gzip")
+        net_returns_file = nr_path.name
+
     manifest = pd.DataFrame([asdict(o) | {"values_json": json.dumps(o.values, sort_keys=True)} for o in manifest_rows])
     manifest.drop(columns=["values"]).to_csv(out_dir / "manifest.csv", index=False)
     neg_df = pd.DataFrame([asdict(n) for n in negatives])
@@ -560,6 +779,7 @@ def run_batch(n_samples: int, seed: int, start: str, end: str, smoke: bool = Fal
         "degraded_recipes": int(manifest["degraded_dimensions"].apply(bool).sum()) if len(manifest) else 0,
         "window": [start, end], "seed": seed,
         "out_dir": str(out_dir),
+        "net_returns_file": net_returns_file,
         "n_trials_effective": n_eff,
         "n_eff_meta": n_eff_meta,
     }

@@ -87,4 +87,5 @@ industry_anchor:
   membership_table: c1_market.industry_class
   membership_column: industry_sw
   membership_level: L1
-  known_issue: "2026-09-15 观察项：industry_class 表聚合查询（DISTINCT/GROUP BY）触发 CH server 崩溃（count/DESCRIBE 正常）——数据健康属数据线职责；行业中性求值在烟测实证前降级并标记 degraded"
+  known_issue: "2026-09-16 复诊（F-06 解锁）：industry_class 聚合查询已恢复正常——GROUP BY symbol 全表排序/DISTINCT/PREWHERE 聚合/重复 3 次全量拉取（10472 行）全部通过，2026-09-15 的崩溃无法复现，判定为 CH 服务端瞬时故障。数据健康实况（Executor 消费侧已防御，物理删除留数据线职责）：①符号格式混用——L1 现行快照 10472 行中 5534 行（2026-08-03 ifind 批）用裸 6 位符号、4938 行（2026-09-13 ifind 批）用 .SH/.SZ 后缀，6 位化后 5545 只股票、重叠 4927 行，Executor 按 (valid_from, updated_at) 最新者胜（PIT 正确，行序无关）；②词表坏行恰 1 行——688806 裸符号行 industry_sw='nan' 字面量（08-03 批），其 09-13 新批 .SH 行带正常行业（医药生物）接管，Executor 词表校验再兜底拦截；③新旧批行业真冲突仅 1 例（688002：国防军工→电子，取新批）；④两池覆盖=hs300/zz500 成分在 L1 锚下均 100%"
+  fallback_anchor_rejected: "替代锚 c1_market.stock_basic.industry 经 2026-09-16 实证不可用：现行快照（valid_to IS NULL，8,987,931 行）中 8,889,889 行（98.9%）industry 为空串，且值域为证监会门类/大类混合词表（'C 制造业' 等 100 值）非 sws2021_l1，不满足锚点词表一致性；industry_class L1 为唯一可用锚"
