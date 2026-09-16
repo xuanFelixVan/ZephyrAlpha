@@ -2943,6 +2943,12 @@ entries:
     协议表落库这一步本身即预注册动作（时间戳不可变、先于任何结果）；出证已在看结果之前
     完成协议冻结后另行执行（结论见本条 evidence：三因子零通过），产物按 evidence_class
     分开归档（降权协议证据禁与主协议出证混放）。
+    【2026-09-17 事实前提更正（判据与结论不变）】：F: 盘已重挂，data/c4_pdf_cache junction
+    复活，实测缓存 60,245 份 PDF 全部落在 2017~2021 五个年桶（10,795/11,992/11,947/
+    12,647/12,864），2022~2026 年桶为 0 份——上文的「PDF 缓存 99.6% 就位」只对 A 段残余
+    4,993 份补提取成立；路径 B（补 2022-2026 空洞）在缓存内无一份现成 PDF，需全新语料
+    下载批，代价量级与本条写作时的估计完全不同。本更正不动判据、不动结论（路径 B 本就
+    「本批不授权」），只更正其代价估计；是否立项补洞批仍属 Owner 门位（语料规模授权）。
   evidence: >-
     代码与钉：_PROTOCOLS 协议表 + --protocol CLI + _seg_oos 显式 not_evaluable +
     _emit 单一出口 + _PANEL_HI 面板上界（缺省=主协议 OOS 末，历史行为零漂移）。
@@ -3045,4 +3051,47 @@ entries:
     - scripts/backtest/eval_exp_expectations.py
   related_arch: []
   related_rulings: []
+  superseded_by: null
+
+- ruling_id: '裁定#285'
+  title: WYF-3 v2 重跑（#271 触发条件第 1 条执行）——SC 量能腿固定基准量纲三族候选 0/204 合格，证伪加厚一档，维度维持置零
+  date: '2026-09-16'
+  category: 研究证伪
+  status: active
+  summary: >-
+    执行裁定#271 明文重跑触发条件第 1 条："SC 量能腿由滚动 volume_anomaly z 换成固定基准
+    量纲"。按预注册协议 v2（跑数前写死 + PreRegistrationRegistry hash 锁定）扫描三族候选：
+    C1 量比（V/SMA，W_b∈{20,60}×thr 1.5-3.0）、C2 expanding 历史分位（thr 0.95-0.99）、
+    C3 固定分位基准比（V/EXP_Q95，thr 1.0-1.5），×sc_pct×sc_window 共 204 网格点
+    （新腿 168 + vol_z 对照臂 36）。结果：**新腿臂 0/168 合格**（SC 触发日最好 5 日 vs
+    验收下限 10 日，且最好点全部来自 2015 单一波段、聚集数同不达标）；对照臂 9 日=裁定#264
+    v1 扫描逐位复现（harness 交叉验证通过）。级联层按协议 §5.2.4 终止，验证段与程序级
+    折叠未评（无冻结向量）。**证伪加厚**：缺陷不在"20 日滚动 z 太滚动"，而在恐慌日本身
+    对任何量能基准都不再异常——2015-08-24（-8.75%）量比@20=1.009、历史分位=0.945、
+    分位基准比=0.905 三族同时失明；expanding 族被第一波历史级巨量永久再锚定（第二波与
+    2016/2018/2020/2022 后样本全盲）；分位基准比叠加成交量长期趋势（后样本暴跌日中位数
+    0.815<1）。判别信息在价格腿（跌幅+新低），量能腿对指数 SC 无 any-baseline 判别增益。
+    处置：DEFAULT_WYCKOFF_PARAMS 全部保持现值（sc_vol_mode 出厂锁 vol_z）；sc_vol_mode
+    六字段+sc_volume_leg 构造作为**可复算能力**保留（PIT 自反测试锁死，非生产推荐值）；
+    _DIMENSION_STATUS 维持 falsified，新增 recheck_log 台账（触发 1=已执行加厚，触发 2/3/4
+    仍未执行）。下一候选方向（供 Owner 立项，本裁定不动工）：①普跌结构腿
+    （advance_count/decline_count 在库，语义更贴 SC 多空力竭本义，推荐）；②成交额 amount
+    口径（在库未试）；③量能腿→波动率腿=触发条件第 2 条，须新预注册。若开 v3 协议：
+    事后诊断（阈值压低曲线）已构成数据先验，须声明；信息量门（#271 池化 t/命中率/WFE）
+    仍是翻转必要条件。
+  evidence: >-
+    协议 v2：docs/_working/wyf3/wyf3_preregistered_protocol_v2.md（先写死后跑数，登记名
+    wyf3_v2_r2；r1 登记为网格构造 bug 已作废，零候选明细被消费，两次登记均在案）。
+    终态报告：docs/_working/wyf3/wyf3_v2_rerun_report.md（表一 L0 逐臂 0/204；表三 2015H2
+    18 个暴跌日新旧四族特征逐日对照，08-24 行三族同盲；失败模式四条；事后诊断明确标注
+    非预注册判定）。扫描产物 .runtime/tmp/wyf3_v2/（prereg hash 锁+候选表+结果 JSON）。
+    引擎：wyckoff_engine.py 六字段默认值=历史路径逐位一致（tests/regime 锁死）。
+  affected_files:
+    - src/zephyr/regime/features/wyckoff_engine.py
+    - tests/regime/test_wyckoff_engine.py
+    - tests/regime/validation/test_wyckoff_walkforward.py
+    - docs/_working/wyf3/wyf3_preregistered_protocol_v2.md
+    - docs/_working/wyf3/wyf3_v2_rerun_report.md
+  related_arch: []
+  related_rulings: ['裁定#264', '裁定#271']
   superseded_by: null

@@ -278,8 +278,12 @@ def test_shipped_dimension_status_is_falsified_and_documented():
     assert evidence.exists(), f"evidence 指针必须指向真实报告：{evidence}"
     assert st["params_source"] == "DEFAULT_WYCKOFF_PARAMS"
     assert st.get("recheck_when"), "证伪非永久真理：必须写明何种改动触发重跑"
+    assert st.get("recheck_log"), "已执行的触发必须留台账（防同一触发重复立项）"
     # 阈值真源仍为 WYF-1 修复后基线（证伪的是判据，不是"发现了更好的数字"）
     assert DEFAULT_WYCKOFF_PARAMS.sc_vol_z == 2.0 and DEFAULT_WYCKOFF_PARAMS.s2_confirm_gate == 60.0
+    # v2（裁定#285）后锁定：SC 量能腿出厂口径仍为历史 vol_z 路径（固定基准候选已被证伪，
+    # sc_vol_mode 仅作为可复算能力保留，禁被悄悄改默认）
+    assert DEFAULT_WYCKOFF_PARAMS.sc_vol_mode == "vol_z"
 
 
 def test_falsified_status_zeroes_score_and_warns_once(cyc, caplog, enabled):

@@ -30,12 +30,20 @@
 
 from __future__ import annotations
 
+from dataclasses import replace
+
 import pandas as pd
 import pytest
 from typing import Final
 
 from zephyr.regime.features import wyckoff_engine as we
-from zephyr.regime.features.wyckoff_engine import detect_wyckoff_events, wyckoff_score
+from zephyr.regime.features.market_features import volume_anomaly
+from zephyr.regime.features.wyckoff_engine import (
+    WyckoffParams,
+    detect_wyckoff_events,
+    sc_volume_leg,
+    wyckoff_score,
+)
 
 
 @pytest.fixture(autouse=True)
@@ -398,3 +406,191 @@ def test_st_band_boundary_inside_outside():
     events = detect_wyckoff_events(**inputs)
     assert events["st"].iloc[72] == 1.0  # 恰带沿（<= 上带）在带内
     assert events["st"].iloc[73] == 0.0  # 出带不触发
+
+
+# ---------------------------------------------------------------------------
+# WYF-3 v2：SC 量能腿固定基准量纲（sc_vol_mode 可切换；协议
+# docs/_working/wyf3/wyf3_preregistered_protocol_v2.md §3 构造式）
+# ---------------------------------------------------------------------------
+
+
+def test_default_sc_vol_mode_preserves_legacy_path():
+    """默认 sc_vol_mode="vol_z"：不传参与显式 vol_z 的逐日事件完全一致（向后兼容铁律）。
+
+    裁定#285（WYF-3 v2 重跑）后此为出厂锁：固定基准量纲候选（vol_ratio/vol_epct/
+    vol_qratio）已被预注册协议证伪，默认口径禁漂移；切换能力仅为可复算保留。
+    """
+    assert we.DEFAULT_WYCKOFF_PARAMS.sc_vol_mode == "vol_z"
+    inputs = _inputs_from_bars(_absorption_bars())
+    legacy = detect_wyckoff_events(**inputs)
+    explicit = detect_wyckoff_events(**inputs, params=replace(WyckoffParams(), sc_vol_mode="vol_z"))
+    pd.testing.assert_frame_equal(legacy, explicit)
+
+
+def test_vol_ratio_construction_exact_values_and_warmup_nan():
+    """量比构造式：V/SMA(V,W_b) 精确值 + 不满窗 NaN（min_periods=W_b）。"""
+    v = pd.Series([10.0, 20.0, 30.0, 40.0, 50.0])
+    leg = sc_volume_leg(v, replace(WyckoffParams(), sc_vol_mode="vol_ratio", sc_vol_baseline_window=3))
+    assert leg.iloc[0] != leg.iloc[0]  # NaN（预热不满窗）
+    assert leg.iloc[1] != leg.iloc[1]
+    assert leg.iloc[2] == pytest.approx(30.0 / 20.0)
+    assert leg.iloc[3] == pytest.approx(40.0 / 30.0)
+    assert leg.iloc[4] == pytest.approx(50.0 / 40.0)
+
+
+def test_vol_epct_construction_exact_rank_and_warmup_nan():
+    """expanding 历史分位构造式：PCT_RANK(V; V(1..T))，手算秩 oracle。"""
+    v = pd.Series([30.0, 10.0, 20.0, 40.0, 25.0])
+    leg = sc_volume_leg(v, replace(WyckoffParams(), sc_vol_mode="vol_epct", sc_vol_expanding_min_periods=3))
+    assert leg.iloc[0] != leg.iloc[0] and leg.iloc[1] != leg.iloc[1]
+    assert leg.iloc[2] == pytest.approx(2.0 / 3.0)  # 20 在 [30,10,20] 秩 2/3
+    assert leg.iloc[3] == pytest.approx(1.0)        # 40 在 4 个值中最大
+    assert leg.iloc[4] == pytest.approx(3.0 / 5.0)  # 25 在 5 个值中秩 3/5
+
+
+def test_vol_qratio_construction_exact_quantile_baseline():
+    """固定分位基准比构造式：V/EXP_QUANTILE(V,0.95)，手算分位 oracle（线性插值）。"""
+    v = pd.Series([10.0, 20.0, 30.0, 40.0, 50.0])
+    leg = sc_volume_leg(v, replace(WyckoffParams(), sc_vol_mode="vol_qratio", sc_vol_expanding_min_periods=4))
+    assert leg.iloc[3] == pytest.approx(40.0 / 38.5)  # q95([10..40])=30+0.85*10=38.5
+    assert leg.iloc[4] == pytest.approx(50.0 / 48.0)  # q95([10..50])=40+0.8*10=48
+    assert leg.iloc[2] != leg.iloc[2]                 # 预热不满 min_periods
+
+
+def _sustained_panic_inputs():
+    """持续放量阴跌后暴跌的合成序列（旧腿 z 钝化复现场景，v1 报告 §5 同构）。
+
+    60 日平量(1M)平静 → 25 日量能逐日爬升(2.0M→3.92M)且价格滑落 → 末日暴跌
+    （pct≈-5.7%、收盘创 60 日新低、量 3.92M）。20 日滚窗 z 被台阶均值/std 吞没
+    （复算 <2.0，钝化）；W_b=60 量比≈2.16>2.0（W_b=20 量比≈1.24 仍钝——窗长即
+    v2 网格轴的存在依据）。
+    """
+    n_flat, n_ramp = 60, 25
+    volumes = [1_000_000.0] * n_flat
+    closes = [100.0] * n_flat
+    for i in range(n_ramp):
+        volumes.append(2_000_000.0 + i * 80_000.0)          # 2.0M → 3.92M
+        closes.append(100.0 - i * 0.35)                     # 100 → 91.6
+    closes[-1] = closes[-2] * 0.943                          # 末日暴跌 ≈ -5.7%
+    df = pd.DataFrame({"volume": volumes, "close": closes})
+    df["high"] = df["close"] + 1.0
+    df["low"] = df["close"] - 1.0
+    df["open"] = df["close"].shift(1).fillna(df["close"])
+    df.index = pd.date_range("2021-01-01", periods=len(df), freq="D")
+    return {
+        "close": df["close"],
+        "high": df["high"],
+        "low": df["low"],
+        "volume": df["volume"],
+        "pct_change": df["close"].pct_change().fillna(0.0),
+        "vol_z": volume_anomaly(df["volume"], window=20),
+    }
+
+
+def test_vol_ratio_unblinds_sustained_panic_that_blinds_vol_z():
+    """钝化修复的构造级证明：同一天量能腿，旧 z 腿闭眼、量比(60) 腿睁眼。
+
+    场景前提自检：末日 20 日滚窗 z < 2.0（v1 报告 §5 钝化的合成复现——持续放量台阶
+    抬升滚动均值/标准差，z 对水平位移不敏感）。W_b=60 的量比≈2.16>2.0 → SC 触发；
+    W_b=20 的量比≈1.24<2.0 仍钝（窗长轴的网格存在依据）。价格/新低两腿不变。
+    """
+    inputs = _sustained_panic_inputs()
+    z_last = float(inputs["vol_z"].iloc[-1])
+    assert z_last < 2.0  # 场景前提：旧腿在该日闭眼（钝化复现）
+    legacy = detect_wyckoff_events(**inputs)  # 默认 vol_z 模式
+    assert legacy["sc"].iloc[-1] == 0.0
+    ratio60 = detect_wyckoff_events(
+        **inputs, params=replace(WyckoffParams(), sc_vol_mode="vol_ratio", sc_vol_baseline_window=60)
+    )
+    assert ratio60["sc"].iloc[-1] == 1.0
+    ratio20 = detect_wyckoff_events(
+        **inputs, params=replace(WyckoffParams(), sc_vol_mode="vol_ratio", sc_vol_baseline_window=20)
+    )
+    assert ratio20["sc"].iloc[-1] == 0.0  # 短基准窗对台阶同样钝化 → 网格须含窗长轴
+    leg60 = sc_volume_leg(inputs["volume"], replace(WyckoffParams(), sc_vol_mode="vol_ratio", sc_vol_baseline_window=60))
+    sma60_last = (35 * 1_000_000.0 + sum(2_000_000.0 + i * 80_000.0 for i in range(25))) / 60.0
+    assert leg60.iloc[-1] == pytest.approx(3_920_000.0 / sma60_last, rel=1e-9)  # ≈2.158
+
+
+def test_new_legs_pit_reflexivity_tail_perturbation():
+    """PIT 自反：改动 T+1 起的数据，≤T 的量能腿取值与 SC 事件逐位不变。
+
+    三种固定基准口径分别验证（构造式全部只用 ≤T 信息：rolling 向后含 T、
+    expanding 定义域 [1..T]）。前缀严格相等是"无未来泄漏"的充分检查。
+    """
+    base_v = pd.Series(
+        [1_000_000.0] * 40 + [2_000_000.0 + i * 100_000.0 for i in range(20)],
+        index=pd.date_range("2022-01-01", periods=60, freq="D"),
+    )
+    close = pd.Series(
+        [100.0] * 55 + [94.0, 90.0, 89.0, 88.0, 88.5],  # 与 base_v 等长(60)
+        index=base_v.index,
+    )
+    for mode, kw in (
+        ("vol_ratio", {"sc_vol_baseline_window": 20}),
+        ("vol_epct", {"sc_vol_expanding_min_periods": 20}),
+        ("vol_qratio", {"sc_vol_expanding_min_periods": 20}),
+    ):
+        params = replace(WyckoffParams(), sc_vol_mode=mode, **kw)
+
+        def run(vols: pd.Series) -> tuple[pd.Series, pd.DataFrame]:
+            inputs = {
+                "close": close,
+                "high": close + 1.0,
+                "low": close - 1.0,
+                "volume": vols,
+                "pct_change": close.pct_change().fillna(0.0),
+                "vol_z": pd.Series(0.0, index=close.index),
+            }
+            events = detect_wyckoff_events(**inputs, params=params)
+            return sc_volume_leg(vols, params), events
+
+        leg_full, ev_full = run(base_v)
+        perturbed = base_v.copy()
+        perturbed.iloc[55:] = 999_999.0 * perturbed.iloc[55:]  # 只改 T+1 起（末日段）
+        leg_part, ev_part = run(perturbed)
+        cut = 55
+        pd.testing.assert_series_equal(leg_full.iloc[:cut], leg_part.iloc[:cut])
+        pd.testing.assert_frame_equal(ev_full.iloc[:cut], ev_part.iloc[:cut])
+
+
+def test_zero_volume_semantics_no_false_trigger():
+    """零量纲语义：停牌日 V=0 → 量比/基准比取 0、分位取最低档，均不触发 SC；
+    基准窗全零（长期无量）→ 基准 NaN → 不触发（禁 inf 假触发）。"""
+    params = replace(WyckoffParams(), sc_vol_mode="vol_ratio", sc_vol_baseline_window=5)
+    v = pd.Series([0.0] * 10 + [500_000.0])  # 前 10 日全停牌（基准窗全零）末日放量
+    leg = sc_volume_leg(v, params)
+    assert leg.iloc[:10].isna().all()   # 基准 0 → NaN → 恒不触发
+    assert leg.iloc[10] == pytest.approx(5.0)  # 基准=近 5 日均量 100k → 500k/100k
+    v2 = pd.Series([1_000_000.0] * 10 + [0.0])       # 停牌日本身
+    leg2 = sc_volume_leg(v2, params)
+    assert leg2.iloc[10] == 0.0                      # 0/基准=0 → 不触发
+    leg3 = sc_volume_leg(v2, replace(WyckoffParams(), sc_vol_mode="vol_epct", sc_vol_expanding_min_periods=5))
+    assert leg3.iloc[10] == pytest.approx(1.0 / 11.0)  # 0 是 11 个值中的最低秩
+    leg4 = sc_volume_leg(v2, replace(WyckoffParams(), sc_vol_mode="vol_qratio", sc_vol_expanding_min_periods=5))
+    assert leg4.iloc[10] == 0.0                        # 0/q95=0 → 不触发
+
+
+def test_vol_ratio_threshold_strict_inequality_boundary():
+    """量比阈值严格不等式：恰等值（ratio=2.0）不触发，越界触发（防静默放宽为 >=）。
+
+    精确等值构造：末 9 日平量 1M + 暴跌日 2.25M，W_b=10 → SMA10=1.125M，
+    ratio=2.0 恰等值（二进制精确）；2_250_001 → 2.0000009 越界。
+    """
+    def inputs_with_crash_volume(vol: float):
+        bars = _flat_bars(70)
+        bars.append((94.0, 95.0, 90.0, 91.0, vol, 0.0))  # 暴跌创新低，量=vol
+        inputs = _inputs_from_bars(bars)
+        inputs["vol_z"] = pd.Series(0.0, index=inputs["close"].index)  # 隔离量能腿变量
+        return inputs
+
+    params = replace(WyckoffParams(), sc_vol_mode="vol_ratio", sc_vol_baseline_window=10)
+    assert detect_wyckoff_events(**inputs_with_crash_volume(2_250_000.0), params=params)["sc"].iloc[-1] == 0.0
+    assert detect_wyckoff_events(**inputs_with_crash_volume(2_250_001.0), params=params)["sc"].iloc[-1] == 1.0
+
+
+def test_unknown_sc_vol_mode_raises():
+    """未知口径 fail-fast：ValueError（禁静默回落到任一已知口径）。"""
+    v = pd.Series([1.0, 2.0, 3.0])
+    with pytest.raises(ValueError, match="sc_vol_mode"):
+        sc_volume_leg(v, replace(WyckoffParams(), sc_vol_mode="bogus"))

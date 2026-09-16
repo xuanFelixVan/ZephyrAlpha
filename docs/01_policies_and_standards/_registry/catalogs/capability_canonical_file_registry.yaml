@@ -27131,4 +27131,16 @@ creation_tokens:
   token: consensus-daily-repaired-build-consensus-daily-repaired-20260916
   created_by: st-consrep-20260916
   capability: consensus_daily_repaired
+- file: "docs/_working/wyf3/wyf3_preregistered_protocol_v2.md"
+  token: "wyf3-v2-prereg-protocol-20260916"
+  created_by: "st-wyffeat-20260916"
+  capability: "wyckoff_threshold_recalibration"
+- file: "docs/_working/wyf3/wyf3_v2_rerun_report.md"
+  token: "wyf3-v2-rerun-report-20260916"
+  created_by: "st-wyffeat-20260916"
+  capability: "wyckoff_threshold_recalibration"
+- file: src/zephyr/gov_audit/secret_registry_drift.py
+  token: secret-registry-drift-secret-registry-drift-20260916
+  created_by: st-maint-20260916
+  capability: secret_registry_drift
 di_seam_exemptions: []

@@ -5,7 +5,7 @@
 # [CONSUMERS] MOD-REGIME-002(OverlaySignalsConstructor消费s2_wyckoff_score→S2 confirm)
 # [STARTUP] imported
 # [MATURITY] production
-# [INVARIANTS] score∈[0,100]; 无结构=0(平时不干预); PIT严格(只用历史事件,ffill传播已发生阶段); PIT由调用方shift(1); 2026-09-16 WYF-3 起 _DIMENSION_STATUS=falsified ⇒ wyckoff_score 显式恒 0+一次性告警(禁静默恒零)
+# [INVARIANTS] score∈[0,100]; 无结构=0(平时不干预); PIT严格(只用历史事件,ffill传播已发生阶段); PIT由调用方shift(1); 2026-09-16 WYF-3 起 _DIMENSION_STATUS=falsified ⇒ wyckoff_score 显式恒 0+一次性告警(禁静默恒零); SC 量能腿口径由 sc_vol_mode 承载(默认 vol_z=历史路径零改变, 固定基准量纲候选经 v2 协议预注册)
 # [MODIFY-GUARD] blueprint=docs/03_modules/_domain_regime/regime_feature_builder/blueprint.md
 # [STABILITY] evolving
 # [SAFETY] M
@@ -40,8 +40,12 @@ Wyckoff 吸筹理论（10_regime_detector_spec §4.12.2）：
   - **当前维度状态 = falsified（WYF-3 裁定，2026-09-16）**：`wyckoff_score` 显式恒 0 +
     一次性 WARNING 披露，`wyckoff_dimension_status()` 供面板/审计读取。判据本身经
     walk-forward 重校无任何可用样本外信息量，详见
-    docs/_working/wyf3/wyf3_recalibration_report.md。
+    docs/_working/wyf3/wyf3_recalibration_report.md（v1 证伪）与
+    docs/_working/wyf3/wyf3_v2_rerun_report.md（v2 重跑触发条件第 1 条执行=证伪加厚，
+    裁定#285）。
     阈值真源 `WyckoffParams` 保持原值不动（证伪的是判据，不是某个数字）。
+    SC 量能腿口径经 `sc_vol_mode` 可切换（默认 "vol_z"=历史路径零改变；固定基准候选
+    已被 v2 协议证伪，保留为可复算能力供后续复议，非生产推荐值）。
 
 依据: 10_regime_detector_spec v1.3.1 §4.12.2 / Phase 2c 计划 §任务3
 Version: 0.1.0
@@ -62,6 +66,7 @@ __all__ = [
     "DEFAULT_WYCKOFF_PARAMS",
     "WyckoffParams",
     "detect_wyckoff_events",
+    "sc_volume_leg",
     "wyckoff_dimension_status",
     "wyckoff_score",
     "wyckoff_score_from_events",
@@ -96,7 +101,17 @@ class WyckoffParams:
     # ── PS 初步支撑 ──
     ps_vol_z: float = 1.0            # 放量异动下限（严格 >）
     # ── SC 抛售高潮 ──
-    sc_vol_z: float = 2.0            # 恐慌巨量下限（严格 >）
+    sc_vol_mode: str = "vol_z"       # SC 量能腿口径："vol_z"(历史/生产现役) | "vol_ratio"(量比)
+                                     # | "vol_epct"(expanding 历史分位) | "vol_qratio"(固定分位基准比)
+                                     # ——WYF-3 v2 特征工程（裁定#271 重跑触发条件第 1 条执行），
+                                     # 默认 vol_z ⇒ 不传参时逐日行为与历史完全一致（向后兼容铁律）
+    sc_vol_z: float = 2.0            # mode=vol_z：恐慌巨量下限（严格 >）
+    sc_vol_ratio: float = 2.0        # mode=vol_ratio：V/SMA(V,W_b) 下限（严格 >）
+    sc_vol_epct: float = 0.98        # mode=vol_epct：expanding 历史分位下限（严格 >）
+    sc_vol_qratio: float = 1.2       # mode=vol_qratio：V/EXP_QUANTILE(V,0.95) 下限（严格 >）
+    sc_vol_baseline_window: int = 60   # mode=vol_ratio 的均量基准窗 W_b（v2 网格 {20,60}）
+    sc_vol_expanding_min_periods: int = 260  # mode=vol_epct/vol_qratio 的 expanding 预热下限
+                                             # （=WARMUP_TRADE_DAYS；不满窗=NaN=不触发，PIT 首日边界防泄漏）
     sc_pct: float = -0.04            # 单日跌幅下限（严格 <）
     sc_window: int | None = None     # 收盘新低回看窗；None=沿用函数 window 入参（现值口径）
     # ── AR 自动反弹（两道门，可独立摘除做消融）──
@@ -183,8 +198,15 @@ _DIMENSION_STATUS: dict[str, Any] = {
         "（on_share 29.3%），纯净留存段 max_score=45 仍不达门。另：cummax 永久粘滞使 on_share"
         "只取两端（见 latch_dichotomy：生产事件集 + 门槛降到 40 ⇒ 单次 2018 事件即永久在线"
         "1927 日=36.6%），故不存在任何阈值向量能同时避免恒零与误爆——问题在判据而非门限。"
+        "【v2 加厚 2026-09-16】裁定#271 重跑触发条件第 1 条已执行：SC 量能腿换固定基准量纲"
+        "三族候选（量比/expanding 历史分位/固定分位基准比）×204 预注册网格点 0 合格"
+        "（新腿臂最好 5 日 vs 下限 10；级联死，验证段/折叠未评）。钝化根因加深一层：恐慌日"
+        "本身对任何基准都不再量能异常（2015-08-24 单日 -8.75%：量比@20=1.009、历史分位=0.945、"
+        "分位基准比=0.905）——第一波放量永久抬高一切基准，第二波与后样本全部失明。"
+        "详见 evidence 报告 §钝化段对照与 §失败模式。"
     ),
-    "evidence": "docs/_working/wyf3/wyf3_recalibration_report.md",
+    "evidence": "docs/_working/wyf3/wyf3_v2_rerun_report.md",
+    "evidence_v1": "docs/_working/wyf3/wyf3_recalibration_report.md",
     "params_source": "DEFAULT_WYCKOFF_PARAMS",
     # 重跑触发条件（证伪不是永久真理；下列任一发生必须重跑管线并复议本状态）
     "recheck_when": (
@@ -192,7 +214,12 @@ _DIMENSION_STATUS: dict[str, Any] = {
         "或六阶段判据/权重/memory_window 语义任一改动；或 TRANSITION_CONFIG S2 confirm "
         "keys_or_gte 的 wyckoff 门槛变动；或指数标的/量纲口径变动（H1-P0 未复权治本后）。"
     ),
-    "ruling": "待主会话登记（WYF-3 证伪置零 + 告警披露）",
+    # 触发执行台账（重跑不是无限循环：已执行的触发记录其结论，防重复立项）
+    "recheck_log": (
+        "触发1（固定基准量纲）2026-09-16 已执行=证伪加厚：协议 v2 预注册 204 点 0 合格"
+        "（裁定#285）；触发2/3/4 仍未执行。"
+    ),
+    "ruling": "裁定#271（证伪置零）+ 裁定#285（v2 触发1执行：证伪加厚，维度维持置零）",
 }
 _status_warned = False
 
@@ -225,6 +252,48 @@ def _falsified_zero_index(index: pd.Index) -> pd.Series:
     return pd.Series(0.0, index=index)
 
 
+# ── SC 量能腿口径表（WYF-3 v2：mode → WyckoffParams 阈值字段名）────────────
+# 单一真源仍是 WyckoffParams 默认值；本表只登记"哪个口径读哪个字段"，禁另写字面值。
+_SC_VOL_MODE_TO_THRESHOLD: Final[dict[str, str]] = {
+    "vol_z": "sc_vol_z",
+    "vol_ratio": "sc_vol_ratio",
+    "vol_epct": "sc_vol_epct",
+    "vol_qratio": "sc_vol_qratio",
+}
+
+
+def sc_volume_leg(volume: pd.Series, params: WyckoffParams | None = None) -> pd.Series:
+    """SC 量能腿取值序列（固定基准量纲候选，WYF-3 v2 协议 §3 构造式）。
+
+    全部口径只用 ≤T 数据（PIT 严格）：
+      - vol_ratio：V(T)/SMA(V,W_b)(T)，rolling 向后含 T，min_periods=W_b（不满窗=NaN）；
+      - vol_epct：V(T) 在 V(1..T) expanding 历史中的分位（rank pct），min_periods=N；
+      - vol_qratio：V(T)/EXP_QUANTILE(V,0.95)(T)，同 expanding 预热。
+    基准为 0（如长期无量）→ NaN → 与阈值比较恒 False（无量纲语义：无基准不触发，
+    禁 inf 假触发）。停牌日 V=0 → 取值 0 → 不触发（放量腿的零量语义）。
+
+    mode="vol_z" 时抛 ValueError：该腿由调用方传入的 vol_z 序列承载（生产口径单一
+    真源是 RegimeFeatureBuilder F5，引擎内重算即制造第二实现=漂移温床）。
+
+    供 detect_wyckoff_events 内部与校准管线（钝化段新旧腿对照表）使用。
+    """
+    p = params or DEFAULT_WYCKOFF_PARAMS
+    v = volume.astype(float).fillna(0.0)
+    if p.sc_vol_mode == "vol_ratio":
+        base = v.rolling(p.sc_vol_baseline_window, min_periods=p.sc_vol_baseline_window).mean()
+        return v / base.replace(0.0, np.nan)
+    if p.sc_vol_mode == "vol_epct":
+        return v.expanding(min_periods=p.sc_vol_expanding_min_periods).rank(pct=True)
+    if p.sc_vol_mode == "vol_qratio":
+        q95 = v.expanding(min_periods=p.sc_vol_expanding_min_periods).quantile(0.95)
+        return v / q95.replace(0.0, np.nan)
+    msg = (
+        f"sc_vol_mode={p.sc_vol_mode!r} 无固定基准构造式；vol_z 腿由调用方传入序列承载，"
+        "禁引擎内重算（生产同款口径单一真源）"
+    )
+    raise ValueError(msg)
+
+
 def detect_wyckoff_events(
     close: pd.Series,
     high: pd.Series,
@@ -247,7 +316,9 @@ def detect_wyckoff_events(
     close, high, low : OHLC 序列（市场代理）。
     volume : 成交量序列。
     pct_change : 日涨跌幅序列（close.pct_change()）。
-    vol_z : 量能异动 z-score（volume_anomaly，复用 HMM F5，20 日滚窗）。
+    vol_z : 量能异动 z-score（volume_anomaly，复用 HMM F5，20 日滚窗）。SC 量能腿
+        sc_vol_mode="vol_z"（默认）时即 SC 第一腿；其余 mode 下 SC 腿改由 volume
+        现算固定基准量纲（sc_volume_leg），本参数仍供 PS 腿使用。
     window : PS 的 low 滚动窗，亦是 SC 收盘新低窗的缺省来源（params.sc_window=None 时）。
     params : 阈值集（None=DEFAULT_WYCKOFF_PARAMS）。校准期由网格构造候选实例。
 
@@ -274,7 +345,15 @@ def detect_wyckoff_events(
     events["ps"] = ((p.ps_vol_z < z) & not_new_low & (pct < 0)).astype(float)
 
     # ── SC 抛售高潮：巨量暴跌 + 收盘创滚动新低 ──
-    sc_condition = (z > p.sc_vol_z) & (pct < p.sc_pct) & (c <= close_rolling_min + 1e-8)
+    # 量能腿口径可切换（WYF-3 v2，sc_vol_mode 承载）：默认 vol_z=历史路径逐位一致；
+    # 固定基准口径（vol_ratio/vol_epct/vol_qratio）由 volume 现算（PIT 安全见
+    # sc_volume_leg）。不满窗/无基准=NaN → 与阈值比较恒 False（预热日不触发）。
+    if p.sc_vol_mode == "vol_z":
+        sc_vol_leg = z
+    else:
+        sc_vol_leg = sc_volume_leg(v, p)  # v=volume.fillna(0)，与引擎内口径一致
+    sc_vol_threshold = getattr(p, _SC_VOL_MODE_TO_THRESHOLD[p.sc_vol_mode])
+    sc_condition = (sc_vol_leg > sc_vol_threshold) & (pct < p.sc_pct) & (c <= close_rolling_min + 1e-8)
     events["sc"] = sc_condition.astype(float)
 
     # ── AR 自动反弹：SC 后近窗内、两道门（反弹幅度 / high 创新高）──
