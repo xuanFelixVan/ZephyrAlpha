@@ -599,8 +599,13 @@ data/sentiment_batch/
 data/fix_patterns/
 # 临时调试脚本（AI 会话一次性）
 data/_tmp_*.py
-# scripts 下运行时数据目录（非代码）
-scripts/data/
+# scripts 下运行时数据目录（非代码；* 而非 / 结尾=允许子路径豁免，git 否定规则要求父目录不被整目录排除）
+scripts/data/*
+# 豁免（2026-09-16 钥匙库治本配套，commit 见 ARCH-APPROVAL 标记）：sz_open_data 双钥匙检测工具
+# 为 depgraph file 节点在册常驻件（status_all/probe_all_new），方向=收编入库增强追踪，非排除。
+!scripts/data/sz_open_data/
+scripts/data/sz_open_data/*
+!scripts/data/sz_open_data/*.py
 
 # 2026-09-09 工作区卫生(#ARCH-308 分类处置): 运行时产物与数据源二进制留档不入库
 data/asset_index/offrepo_scan_report.json
