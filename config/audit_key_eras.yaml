@@ -1,0 +1,69 @@
+# 审计链 HMAC 密钥分期注册表（audit key era registry）
+# ─────────────────────────────────────────────────────────────────────
+# 真源：本文件（config/ 单一真源；IntegrityVerifier 自动解析模式唯一分期依据）
+# 消费方：zephyr.gov_audit.integrity.IntegrityVerifier.verify_chain（hmac_key=None 时启用）
+# 裁定背景：2026-09-16 GW-A 审计链欠账清偿（st-auditfix-20260916 取证 + 本会话密钥政策裁定）
+#
+# 语义（三条硬规则）：
+#   1. 按记录时间戳定位分期——覆盖该时间戳的分期中 valid_from 最新者生效；
+#      只用生效分期的钥验证（禁 try-all：公开默认钥若可验任意分期=伪造通道）。
+#   2. transition_overlap_seconds：era 边界后的过渡窗内，追加接受上一分期的钥
+#      （长驻写方进程滚动重启期，旧代码进程仍持旧钥签名）——窗内旧钥通过按 weak 计。
+#   3. key_source=lost 的分期：该段 HMAC 永久不可验证（密钥遗失，非篡改——
+#      entry_hash 全自洽+链内连续已取证）——计入 known_loss，不判 compromised。
+#
+# 验证口径：三分期各自接受三种 HMAC 约定（over entry_hash / over canonical
+# 不含 entry_hash / over canonical 含 entry_hash——末者为 2026-05 代 writer 遗留约定）。
+# 变更纪律：era 边界回填（新钥部署）必须与 .env 密钥写入同窗完成；本文件是
+# CREATE-GUARD 登记资产，改动走 git_commit.py 正门。
+
+schema_version: "1.0.0"
+transition_overlap_seconds: 1209600  # 14 天——滚动重启窗口，可随维护班重启清场提前收窄
+
+eras:
+  - id: era-default-public
+    # 公开兜底钥签名期：HMAC 无密码学保证（钥硬编码于仓库），验证仅证链一致性
+    key_source: builtin:default
+    strength: weak
+    valid_from: "1970-01-01T00:00:00+00:00"
+    valid_to: "2026-09-16T07:05:02.253772+00:00"  # 批次 B 部署时刻（2026-09-16 st-auditkey）
+    note: >-
+      2026-09-16 现状：ZEPHYR_AUDIT_HMAC_SECRET 全机未设（secret_registry required=true
+      未满足），8.7 万+条以公开默认钥签名——保护形同装饰，以本分期显式定性。
+
+  - id: era-lost-may2026
+    # 遗失密钥期：26,909 条（#26810-#53718，精确连续段）
+    key_source: lost
+    strength: none
+    valid_from: "2026-05-26T15:39:47+00:00"
+    valid_to: "2026-06-01T19:51:36+00:00"  # 末条 #53718 ts=19:51:35.781603 带亚秒——边界取下一秒（covers() 语义=ts<valid_to；其后一条 #53719=07-04 无吞并）
+    note: >-
+      2026-09-16 取证终态：写方（resource_optimization 引擎）于 2026-05-26T15:39:47Z
+      重建 AuditWriter 时进程环境持有一次性 ZEPHYR_AUDIT_HMAC_SECRET（仅存于交互 shell
+      环境，从未落盘），2026-06-01T19:51:35Z 写方死亡（chain_state.json updated_at 同秒）
+      密钥随之遗失。找回通道已穷尽（全机 env/F 盘 vault/git 全史/config 通道）。
+      该段 26,909 条：entry_hash 100% 自洽、段内 prev 链连续、时间戳/Lamport 单调
+      ——永久不可验证但非篡改。若他日寻回旧钥，本分期改 key_source 即可收窄定性。
+
+  - id: era-lost-may2026-finding-import
+    # 遗失密钥期·占位时间戳微分期：finding 导入批 17 条（#32670 段内）
+    key_source: lost
+    strength: none
+    valid_from: "2026-05-26T12:00:00+00:00"
+    valid_to: "2026-05-26T15:39:47+00:00"
+    note: >-
+      嵌套微分期（era 内 era）：finding_* 审计发现导入批以固定占位时间戳
+      2026-05-26T12:00:00Z 落盘（真实写入时刻 2026-05-27T20:10 前后，物理位置在
+      遗失期内），签名出自遗失钥——按记录时间戳分期会误划入默认期判 mismatch。
+      本微分期将其归入 known_loss；真实落在 12:00-15:39 时段的默认钥记录由
+      过渡窗兜底（经 overlap 仍按 weak 通过，无误伤）。
+
+  - id: era-primary
+    # 真钥期：256-bit 随机密钥（.env 通道注入）
+    key_source: env:ZEPHYR_AUDIT_HMAC_SECRET
+    strength: strong
+    valid_from: "2026-09-16T07:05:02.253772+00:00"  # 批次 B 部署时刻（2026-09-16 st-auditkey；生效边界=era-default-public.valid_to）
+    valid_to: null
+    note: >-
+      部署后新写方以真钥签名；钥不可解析（env 缺失）时 fail-loud 判 mismatch
+      （强分期禁静默降级为弱）。过渡窗内旧钥（default）签名按 weak 接受。

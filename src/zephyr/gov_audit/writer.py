@@ -238,7 +238,12 @@ def _cross_process_append_lock(event_log_path: Path) -> Iterator[None]:
     - 锁文件（events.jsonl.lock）只创建永不删除——删除=拆散互斥域
     """
     lock_path = event_log_path.with_name(event_log_path.name + ".lock")
-    lock_path.parent.mkdir(parents=True, exist_ok=True)
+    # GW-A 收尾修复（2026-09-16 st-auditkey）：不做 lock_path.parent.mkdir——
+    # 预建目录会把"event_log_path 指向不存在目录"这一写入失败前置消灭（目录被
+    # 副作用建出后 append 反而成功），破坏 I8 失败保护语义（连续失败→readonly，
+    # tests/audit/audit_core/test_audit_integration_fracture.py 实证回归）。
+    # 正常路径目录由 __init__ 的 data_dir.mkdir 保证，此处无需兜底；锁 open
+    # 失败（目录缺失）在 write() 失败计数临界区内，计入 readonly 保护。
     # with 持句柄：释放顺序=内层 finally 先 UNLCK、with 退出后关柄——
     # 解锁先于关柄，互斥语义完整（无需裸句柄，过 OPEN-WITHOUT-WITH）。
     with open(lock_path, "a+b") as fh:
@@ -482,59 +487,63 @@ class AuditWriter:
         event.setdefault("provenance", "direct_agent")
         prefix = "AUD-F" if event_type == "file_detail" else "AUD-T"
 
-        with self._lock, _cross_process_append_lock(self._event_log_path):
-            # 治本（GW-A 2026-09-16 多写方互踩断链）：跨进程锁内实时重读文件尾哈希。
-            # 实例内存 _last_hash 仅为初始化启发式——多进程/多实例并发 append 时
-            # 各持陈旧尾哈希交错落盘即 prev 断链（实证 #35155/#35156 同 prev 同秒）。
-            tail_hash = _read_tail_entry_hash(self._event_log_path)
-            self._lamport_counter += 1
-            entry_id = _generate_entry_id(prefix=prefix, seq=self._lamport_counter)
-
-            entry: dict[str, Any] = dict(event)
-            # 治本（AI-AUDIT12 保留字段净化）：剔除生产方注入的保留字段——实证主仓
-            # 2026-07-04 起 5343 条 gate_audit 事件（audit_chain_verifier 预注入自有
-            # entry_hash）canonical 绑定了不可恢复的外来哈希值，整段链永久不可验证；
-            # 且 writer 无 HMAC 密钥时外来 hmac_signature 会原样落盘（伪造签名幻象）。
-            # entry_hash/hmac_signature 只能由本 writer 计算赋值，禁止生产方预注入。
-            entry.pop("entry_hash", None)
-            entry.pop("hmac_signature", None)
-            entry["entry_id"] = entry_id
-            entry["timestamp"] = datetime.now(timezone.utc).isoformat()
-            entry["prev_hash"] = tail_hash
-            entry["lamport_time"] = self.lamport_time + 1
-            entry["lamport_clock_counter"] = self._lamport_counter
-            entry["lamport_clock_ide"] = self.ide_source
-
-            # entry_hash = SHA-256(canonical JSON of entry，不含 entry_hash/hmac_signature)
-            canonical = dumps(entry, sort_keys=True, ensure_ascii=False)
-            entry_hash = hashlib.sha256(canonical.encode("utf-8")).hexdigest()
-            entry["entry_hash"] = entry_hash
-
-            # HMAC-SHA256 签名（覆盖 entry_hash）
-            if self._hmac_key:
-                entry["hmac_signature"] = hmac.new(
-                    self._hmac_key, entry_hash.encode("utf-8"), hashlib.sha256
-                ).hexdigest()
-
+        with self._lock:
+            # GW-A 收尾修复（2026-09-16 st-auditkey）：失败计数临界区覆盖锁获取+
+            # 尾读+落盘全链——锁 open/尾读失败（目录缺失、超限 fail-closed）同样
+            # 计入 I8 失败保护（连续 5 次→readonly），恢复 GW-A 前语义。
             try:
-                with open(self._event_log_path, "a", encoding="utf-8") as f:
-                    f.write(dumps(entry, ensure_ascii=False) + "\n")
-                    f.flush()
-                    os.fsync(f.fileno())
+                with _cross_process_append_lock(self._event_log_path):
+                    # 治本（GW-A 2026-09-16 多写方互踩断链）：跨进程锁内实时重读文件尾哈希。
+                    # 实例内存 _last_hash 仅为初始化启发式——多进程/多实例并发 append 时
+                    # 各持陈旧尾哈希交错落盘即 prev 断链（实证 #35155/#35156 同 prev 同秒）。
+                    tail_hash = _read_tail_entry_hash(self._event_log_path)
+                    self._lamport_counter += 1
+                    entry_id = _generate_entry_id(prefix=prefix, seq=self._lamport_counter)
+
+                    entry: dict[str, Any] = dict(event)
+                    # 治本（AI-AUDIT12 保留字段净化）：剔除生产方注入的保留字段——实证主仓
+                    # 2026-07-04 起 5343 条 gate_audit 事件（audit_chain_verifier 预注入自有
+                    # entry_hash）canonical 绑定了不可恢复的外来哈希值，整段链永久不可验证；
+                    # 且 writer 无 HMAC 密钥时外来 hmac_signature 会原样落盘（伪造签名幻象）。
+                    # entry_hash/hmac_signature 只能由本 writer 计算赋值，禁止生产方预注入。
+                    entry.pop("entry_hash", None)
+                    entry.pop("hmac_signature", None)
+                    entry["entry_id"] = entry_id
+                    entry["timestamp"] = datetime.now(timezone.utc).isoformat()
+                    entry["prev_hash"] = tail_hash
+                    entry["lamport_time"] = self.lamport_time + 1
+                    entry["lamport_clock_counter"] = self._lamport_counter
+                    entry["lamport_clock_ide"] = self.ide_source
+
+                    # entry_hash = SHA-256(canonical JSON of entry，不含 entry_hash/hmac_signature)
+                    canonical = dumps(entry, sort_keys=True, ensure_ascii=False)
+                    entry_hash = hashlib.sha256(canonical.encode("utf-8")).hexdigest()
+                    entry["entry_hash"] = entry_hash
+
+                    # HMAC-SHA256 签名（覆盖 entry_hash）
+                    if self._hmac_key:
+                        entry["hmac_signature"] = hmac.new(
+                            self._hmac_key, entry_hash.encode("utf-8"), hashlib.sha256
+                        ).hexdigest()
+
+                    with open(self._event_log_path, "a", encoding="utf-8") as f:
+                        f.write(dumps(entry, ensure_ascii=False) + "\n")
+                        f.flush()
+                        os.fsync(f.fileno())
+
+                    self._last_hash = entry_hash
+                    self.event_count += 1
+                    self.lamport_time += 1
+                    # 治本（AI-AUDIT12 Merkle 批聚合断链）：写入成功后把 entry_hash 累积进当前
+                    # 批次——此前 _batch_event_hashes 无任何追加点，finalize_current_batch()
+                    # 恒返回 None、get_merkle_batches() 恒为空，Merkle 批聚合路径整体死代码。
+                    if self.enable_merkle:
+                        self._batch_event_hashes.append(entry_hash)
             except Exception:  # noqa: BLE001 — 5.135治标: broad exception catch
                 self._write_failures += 1
                 if self._write_failures >= self._max_write_failures:
                     self._readonly = True
                 raise
-
-            self._last_hash = entry_hash
-            self.event_count += 1
-            self.lamport_time += 1
-            # 治本（AI-AUDIT12 Merkle 批聚合断链）：写入成功后把 entry_hash 累积进当前
-            # 批次——此前 _batch_event_hashes 无任何追加点，finalize_current_batch()
-            # 恒返回 None、get_merkle_batches() 恒为空，Merkle 批聚合路径整体死代码。
-            if self.enable_merkle:
-                self._batch_event_hashes.append(entry_hash)
 
         return entry_hash
 
