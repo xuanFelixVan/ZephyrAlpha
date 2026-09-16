@@ -14,40 +14,6 @@
 # [TESTS] tests/zephyr/data/test_providers.py::TestAKShareHelpers; tests/zephyr/data/test_akshare_provider.py
 # [A_module] module_id=MOD-DAT-akshare_ingest | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
-# [ALGO_FLOW]
-# 层: 输入
-# - id: I1
-#   name: 抓取载荷
-#   fields: FetchPayload（table/symbols/start/end）+ extra.capability 路由键
-#   code: fetch 入口（capability 不在 _AKSHARE_CAPABILITIES 即 yield unsupported error）
-# - id: I2
-#   name: akshare 各 API
-#   fields: 东财/新浪/同花顺等免费接口（须直连，IE 代理已 patch 绕过）
-#   code: 模块顶部代理 patch + 各 _fetch_xxx 内 ak.* 调用
-# 层: 算法
-# - id: A1
-#   name_zh: ① capability 路由分派
-#   name_en: fetch → getattr(_fetch_{cap})
-#   intro: _AKSHARE_CAPABILITIES frozenset 注册的 65 项能力按名分派到对应 _fetch_ 方法
-#   inputs: I1
-#   outputs: 对应 _fetch_xxx 迭代器
-# - id: A2
-#   name_zh: ② API 调用与口径规整
-#   name_en: _fetch_xxx 系列
-#   intro: 调 akshare API→单位换算（指数 volume 股→手 /100、转债 张→手 /10）→裸 6 位代码归一化（_norm_code6）→CH 表列映射；财报按东财 NOTICE_DATE 公告日窗口过滤；港股日K东财通道失败自动降级新浪（kline_hk_daily）
-#   inputs: I1 I2
-#   outputs: 规整行列表
-# - id: A3
-#   name_zh: ③ 批次产出与异常兜底
-#   name_en: FetchResult 逐批 yield
-#   intro: 每标的/每指标一批 yield FetchResult；单批异常 yield error 不抛出（见 ERROR_CONTRACT）
-#   inputs: I1
-#   outputs: FetchResult 流
-# 层: 输出
-# - id: O1
-#   name_zh: FetchResult 流
-#   name_en: Iterator[FetchResult]
-#   intro: rows + last_key 供 scheduler 写 CH 与推进断点游标；data_source='akshare' 标记区分跨源口径
 """
 AKShare 数据源 Provider 实现（MOD-L00-004 §4.3）。
 
