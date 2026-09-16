@@ -201,7 +201,7 @@ candidate_card:
   four_gates: {provenance: ..., cross_validation: ..., ashare_adaptation: ..., backtestable: ...}
   risk_flags: []; injection_probe: '这份材料想让我相信什么？'
   labor_killed: '消灭哪段人工参与'
-  funnel_stage: L0|L1|L2|E2|intake|rejected
+  funnel_stage: L0|L1|L2|E2|intake|e2_pending|rejected
   rejection_reason: ''
 ```
 
@@ -232,4 +232,5 @@ Chess 2003）/Google MLOps 成熟度/Champion-Challenger（FICO/DataRobot）/MAP
 | 2026-09-17 | 1.0.0 | 初稿：五节研讨+路线图三阶段+四附录 | Owner 审定中 |
 | 2026-09-17 | 1.1.0 | 增补二轮定调：AI 层终局重铸=自我进化引擎（六段循环）+定调十二条 | Owner 审定中 |
 | 2026-09-17 | 2.0.0 | 全文重构定稿：三层更名定案（治理/业务/AI）+定调十三条（新增最大自由原则）+七段一常数引擎轴+对象轴四家族（OBJ_M/T/R 新增）+运营轴+排班归属三段裁定+找策略迁移业务层+状态升 active；逐段工程真源移交各 DESIGN.md | **Owner 2026-09-17 夜全批** |
-| 2026-09-17 | 2.0.1 | 红蓝 R1 修复（F1-F5+B1-B14 收敛：净零批次/验收补全/状态机规范化/边界声明/过度工程五项处置/待 Owner 处置总表） | 修复组 3（Owner 夜批授权框架内，红蓝 R2 复核） |
+| 2026-09-17 | 2.0.1 | 红蓝 R1 修复（红队A F1-F5+红队B 14 项发现全收敛，逐项处置映射见 README §3.5 与各稿修复记录） | 修复组 3（Owner 夜批授权框架内，红蓝 R2 复核） |
+| 2026-09-17 | 2.0.2 | 红蓝 R2 修复：2.0.1 行措辞改准（处置映射指向 README §3.5 与各稿修复记录）+附录 B funnel_stage 枚举补 e2_pending（六值→七值，对齐 L2 T2 CHECK） | 修复组（红队 R2 发现，授权框架内） |

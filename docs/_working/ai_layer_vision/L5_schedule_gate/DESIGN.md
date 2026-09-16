@@ -27,7 +27,7 @@ status: design_v1
 
 | # | 向 | 内部反查命中（真源路径） | 外部补盲 | 判定 |
 |---|-----|------------------------|---------|------|
-| ① | 上游（谁喂 L5） | `L4_compare/DESIGN.md` §3：双路胜者输入已锁（库内=INTAKE_E2_HANDOFF 事件加 evidence_ref；库外=experiment 卡 verdict='win' 即门闸输入）；L4 §2.2 带星胜（win*）指令"L5 排产降优先级"；L4 §2.3 锁定机制①指名"L5 工单生成器机检 hash 缺失/不匹配=不许派工"；`L2_intake_library/DESIGN.md`：INTAKE_E2_HANDOFF 事件（payload {card_id, spec_ref, four_gates, labor_killed, domain_id}，"E2 具体排产属 L5 段"） | — | signal |
+| ① | 上游（谁喂 L5） | `L4_compare/DESIGN.md` §3：双路胜者输入已锁（库内=INTAKE_E2_HANDOFF 事件加 evidence_ref；库外=experiment 卡 verdict='win' 即门闸输入）；L4 §2.2 带星胜（win*）指令"L5 排产降优先级"；L4 §2.3 锁定机制①指名"L5 工单生成器机检 hash 缺失/不匹配=不许派工"；`L2_intake_library/DESIGN.md`：INTAKE_E2_HANDOFF 事件（payload {card_id, spec_ref, four_gates, labor_killed, domain_id, evidence_ref}，末字段 R2 由 L2 稿补；"E2 具体排产属 L5 段"） | — | signal |
 | ② | 下游（谁吃 L5） | `L6_ab_switch/DESIGN.md`：L5→L6 契约已锁 {work_order_id, module_id, challenger_branch, criteria_yaml_ref+hash, domain, tier_action}，"工单关单+worktree 就绪+验收门绿=shadow 入场券"；主文档 §3.5 维护班领单/关单四闸；堵点本 `.runtime/audit/bottleneck_ledger.jsonl`（{ts,kind:'dead_letter',qid,session_id,reason,protocol:'专人专事'} 实档结构） | — | signal |
 | ③ | 算法机制（怎么闸/怎么排） | E0 真源 `scripts/backtest/compute_window_gate.py`：拉式闸门（check_gate() 纯函数+四理由码+fail-closed+四值词表 local/api/local_gpu/mixed，CONSTANT OPEN_BUFFER 09:00/CLOSE_BUFFER 15:30，exit 0/3/1）；belt_daemon `src/zephyr/gov_enforcement/rule_bridge/commit_belt_daemon.py`：watchdog 事件四件套（目录 file-created→0.5s 防抖→单例锁 PID+TTL 600s→bootstrap 排空，无常驻轮询）；`config/resource_profile_registry.yaml`+生成器 `scripts/governance/generators/generate_resource_profile_registry.py`：E0_CLASS_TO_RESOURCE 映射层、TRADING_SENSITIVE_CLASSES、幽灵池禁令、种子源 I3+`manual_lane_c_agentic_miner` AI 任务登记先例 | MLOps CT 触发器分类：schedule-based vs trigger-based 再训练排程（MLflow《Continuous Training in ML: A Practical MLOps Guide》mlflow.org/articles/what-is-continuous-training-ml/；Snowflake CT 页 snowflake.com/en/artificial-intelligence/machine-learning/mlops/continuous-training/——drift 触发+challenger 逐版治理；enhancedmlops.com 事件驱动再训练）。触发器思想收编为"胜者到达+资源释放"双事件源，schedule-based 排程被宪法"事件触发禁定时器"否定不收 | signal |
 | ④ | 后端（落哪个仓/什么件） | 工单库表=PG 同实例**独立 schema `ai_scheduling`** 新表（与 L2 ai_intake schema 隔离，产线禁读界不破；对标 L2 apply_ai_intake_ddl.py/L4 ai_comparison_experiment 母版，全经 `src/zephyr/infrastructure/database_service.py` 禁裸连接）；事件层=`src/zephyr/ai_layer/intake/events.py` 六要素母版（JSONL journal+KillSwitch 探针+毒丸+task_completed 唤醒）；登记数据面=`config/evolution_schedule_seeds.yaml`（新增种子文件，生成器新源 I7 消费）；policy 常量=对标 `config/comparison_policy.yaml`（L4 C1 同款治理锚定头） | — | signal |
@@ -186,7 +186,7 @@ _ENV_ABORT_ESCALATE=3）。**T1 派工前置双预检**：①老组不动——c
 | dispatched | 派工指令（order_dispatch_due，Q1-Q4 配额+E0 双预检过） | 关单四闸全过→done；施工失败/资源中断回执→deferred |
 | **deferred**（红蓝 R1 补态） | 进入=**配额不足（Q1-Q4 任一超限）或算力窗关闭（E0 exit 3）**——此前 defer 只有 order_deferred_due 事件无对应态，就此补齐 | 退出=**资源恢复事件**（会话释放/heavy_ok 窗开/belt drain 唤醒）重评→pending；同一工单连续 3 次 defer→堵点本 CRITICAL（§2.6） |
 | done | 关单四闸全过（own-scope/gate 绿/回归绿/独立复核） | 终态：发 L6 shadow 入场券 |
-| **dead**（红蓝 R1 补进入判据） | 进入判据=**连续 N 次派工失败**，或**任务书机检连续三次不过**（N 初值 3，设计定值非实测标定——**进 OBJ_R 阈值盘点**，首轮运行数据回来后按 OBJ_R 流水线提案修订） | 终态：归档留审计不删；复活仅 Owner 手递重开（新 order_id，旧单不复活） |
+| **dead**（红蓝 R1 补进入判据） | 进入判据=**连续 N 次派工失败**，或**任务书机检连续三次不过**（N 初值 3，设计定值非实测标定——**进 OBJ_R 阈值盘点**，首轮运行数据回来后按 OBJ_R 流水线提案修订） | 终态：归档留审计不删；复活仅 Owner 手递重开（新 order_id，旧单不复活）；dead 回执事件 `work_order_dead`（payload={order_id, reason}）→L2 候选卡跳 rejected（R2 补终态回传，L2 稿同批补入边） |
 
 ---
 
@@ -194,7 +194,7 @@ _ENV_ABORT_ESCALATE=3）。**T1 派工前置双预检**：①老组不动——c
 
 | 对端 | 契约 | 方向 | 载荷 |
 |------|------|------|------|
-| **L4（胜者输入）** | 双路：①库内对象=L2 既有 `INTAKE_E2_HANDOFF`（payload 增 evidence_ref，L4 待 Owner-3 已挂单，本稿不重复立案）；②库外对象=experiment 卡 verdict='win' 直达 | L4/L2→L5 | verdict + evidence_pack {experiment_id, criteria_hash, 判据结果, significance, too_good 结论, 公平性核验（含带星）} + {card_id, labor_killed, domain_id} |
+| **L4（胜者输入）** | 双路：①库内对象=L2 既有 `INTAKE_E2_HANDOFF`（payload 增 evidence_ref——R2 已经 L2 稿同批落地）；②库外对象=experiment 卡 verdict='win' 直达 | L4/L2→L5 | verdict + evidence_pack {experiment_id, criteria_hash, 判据结果, significance, too_good 结论, 公平性核验（含带星）} + {card_id, labor_killed, domain_id} |
 | **L6（施工完成→切换）** | 关单回执=shadow 入场券：**工单关单四闸全过**（own-scope/gate 绿/回归绿/独立复核，主文档 §3.5 既有定义）+worktree 就绪才发 | L5→L6 | {work_order_id, module_id, challenger_branch, criteria_yaml_ref+hash, domain, tier_action}（L6 DESIGN 已锁，本稿只消费） |
 | **排班系统** | 四线：①E0 拉式问闸（每段开工一次 `check_gate()`，真源 compute_window_gate.py 零改造）；②登记接口=seeds 种子文件+生成器再生（§2.3 字段表）；③配额读数四源（§2.6）；④exclusive_group 冲突闸+周历可视（一库一闸一图既有件） | L5↔排班 | 种子 18 字段子集 / 理由码 gate_allow_light_always 等 / PoolStats / 冲突判决 |
 | **堵点本** | 工单 held_incomplete/连续 defer/配额饥饿→append（{ts, kind, order_id, reason, protocol:'专人专事：高模型维护班清账'} 实档 schema 同款）；告警阈值复用 belt 语义（≥20 条或最老 >24h） | L5→堵点本 | JSONL 行 |
@@ -280,3 +280,7 @@ promotion 页），一样是常量文件（policy）；②过度工程检查：�
 - **B10 附带二（目录 watchdog 与 events journal 双通道过度工程）**：裁定合并——**events journal=唯一真源**，watchdog 降级为 journal 的补偿读指针（last_read_offset 断点续读，不再独立扫描 winners/ 目录；belt_daemon 防抖/单例锁机械照用、作用对象改为 journal 文件）。裁定理由一行：双通道=双真源，必然产生消费竞态与重复生成工单，events.py 母版已足够承载；§2.1 与 C4 同步改写。
 - **第 7 项（跨稿边界声明，L4+L5 同款）**：稿首新增"考场边界声明"——策略候选的考场止于 L4 证据包产出；转正/流转归业务层 S12-S14 与 Owner 拍板，AI 层不设第二转正门；交易算法专域不在 AI 层自动流转范围。
 - 连带核查：order_deferred_due 事件 kind（C3）与 deferred 态同名对齐零冲突；L6 关单契约载荷零变更；堵点本/配额降级梯度表语义不变，仅挂起态名归一。
+
+## 红蓝 R2 修复记录（2026-09-17，红队 R2 发现）
+
+- **R2（dead 终态无回传）**：§2.7 dead 行补回执事件 `work_order_dead`（payload={order_id, reason}）→L2 候选卡跳 rejected——L2 稿同批补 rejected 入边，dead 不再是无回传黑洞。连带核记：§1 台账①与 §3 库内路 `INTAKE_E2_HANDOFF` 的 evidence_ref 增补已经 L2 稿 R2 同批落地。

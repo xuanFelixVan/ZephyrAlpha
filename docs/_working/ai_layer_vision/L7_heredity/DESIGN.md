@@ -188,7 +188,7 @@ DDL 由幂等登记器 `scripts/ai_layer/apply_ai_heritage_ddl.py` 部署（照 
 | **精英档案**（随战局代谢） | 同格（surface×family）**保 top3**（对齐 L2 保优 3=格内候补）；被现役 champion/evidence 引用即保 | 格内跌出 top3，或对应 L6 对象进 tombstone 满 2 体检窗（L6 §②-D 同款）→ archived；archived 条目仍可被 heritage_parents_query 作祖先分支起点（DGM 语义：退役≠不可借鉴） | archived 满 12 个月且 diff_summary 已被后代条目吸收（parent 链核验）→ compressed：保留 entry_id/title/lineage/一行差异，正文转年度册 |
 | **判据档案**（随考纲代谢） | still_valid=true 全保留（防重复考古的燃料） | 判据翻案（重放否决/修标/ruling）→ L4 回写 still_valid=false+invalidated_by → archived；考纲换版（comparison_policy/exam_suite_version 变更）时全旧代批量 archived | 同 venue 保留最近 3 代全文，更早 compressed（保留 experiment_id+hash+verdict 摘要；yaml 全文仍在 L4 卡不丢） |
 
-执行件：`forget.py` 挂月度体检窗（L1 §2.6 同一节拍宿主，**日历节拍+每次点火实闸复核**——对齐 L1 §2.4 合规裁定，禁 sleep-loop）；输出 `heritage_forget_due` 轻事件+降级报告进月报。任何 compressed 条目 10 年内可由 entry_id 反查全量（DB 不删，只是字段摘要化）。
+执行件：`forget.py` 挂月度体检窗（L1 §2.6 同一节拍宿主，**日历节拍+每次点火实闸复核**——对齐 L1 §2.4 合规裁定，禁 sleep-loop）；输出 `heritage_forget_due` 轻事件+降级报告进月报。任何 compressed 条目 10 年内可由 entry_id 反查全量（DB 不删，只是字段摘要化）。Owner 不追认外扫裁定（L1 §2.4 双前置）时的降级路线=月度体检由高模型维护班人工开会话执行（排班表登记人工任务），自动化宿主解锁顺延。
 
 ### 2.9 关单强制登记机检（对接主文档 §三 关单四闸）
 
@@ -281,3 +281,9 @@ DDL 由幂等登记器 `scripts/ai_layer/apply_ai_heritage_ddl.py` 部署（照 
 | B4 | H3 补 simhash/mechanism_family 两列（可空，仅 mechanism 族条目填），解锁 L4 comparison_prior_query(simhash/mechanism_family) | §2.3 H3/§2.4 |
 | B5（L7 侧） | 契约声明：intake_heritage_baseline 只发 elite\|pattern 两 kind+count、不收阴性——negative 留 L2 自用 KPI 不入传承（对 L2 侧的契约要求，L2 稿同批已改 payload） | §三 |
 | B7 | hit_count 同步回写裁定为过度工程、改异步：消费路径只记计数流水，月度体检窗聚合回写（与 forget.py/月报同节拍）；§2.4 加裁定行 | §2.3 H1/§2.4/§2.7/施工项 2 |
+
+## 红蓝 R2 修复记录（2026-09-17，红队 R2 发现）
+
+| 编号 | 修复内容 | 落点 |
+|------|---------|------|
+| R2 | 月度体检宿主补降级路线：Owner 不追认外扫裁定（L1 §2.4 双前置）时，月度体检由高模型维护班人工开会话执行（排班表登记人工任务），自动化宿主解锁顺延——消解 T3 双前置射程张力（forget.py/坑集月报不因外扫未追认而悬空） | §2.8 |

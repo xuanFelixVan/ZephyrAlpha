@@ -124,7 +124,7 @@ status: design_v1
 DGM 教训（V2-R5）的机制化落地，七道机检（前五道进执行器，后两道进治理流程）：
 
 1. **会话互斥**：experiment 卡 contractor_session（提案/清洗/施工方）≠evaluator_session（出卷+裁定方），执行器机检相同=拒考；L4 裁定卡由 evaluator_session 签发。
-2. **异档异厂**：模型裁判档位 premium 且与被测异厂（OBJ_M RISK-3.2 复用）；复核会话异会话异档（主文档 §2.3 验收协议复用）。
+2. **异档异厂**：模型裁判档位 premium 且与被测异厂（OBJ_M RISK-3.2 复用）；复核会话异会话异档（主文档 §3.2 验收三级协议复用）。
 3. **时序锁**：criteria_frozen_at < 任务书派发时间 < 首个施工 commit 时间（三时间戳机检，倒挂=拒绝）。
 4. **不可变锁**：frozen 后判据字段 UPDATE 拒绝+审计（§2.3）；施工会话 commit 触达考卷文件/experiment 卡判据字段=gate 阻断（对接附录 C #5；新 gate 立案归 OBJ_R 流水线，见待 Owner-2）。
 5. **路径分离**：考卷真源（基准任务集/重放抽样集/考题/判据常量）在治理层路径（config/+data/ 基准目录），候选实现禁写考卷路径；考卷文件 sha256 开考前登记、考后复核。
@@ -138,7 +138,7 @@ DGM 教训（V2-R5）的机制化落地，七道机检（前五道进执行器�
 | 对端 | 契约 | 方向 | 载荷 |
 |------|------|------|------|
 | **L3（规格卡输入）** | L3 完成回写 spec_ref（L2 库 stage=E2 前态）后，**增补事件 `intake_exam_due`**：L2 emit、L4 领考。该边在 L2 设计稿事件表中未列（其表止于 clean_due/handoff），需 L2 侧实施时对齐（待 Owner-3） | L2/L3→L4 | {card_id, spec_ref, domain_id, mechanism_family, four_gates} |
-| **L5（胜者输出→排产）** | 双路：①库内对象走 L2 既有 `intake_e2_handoff`（payload 增补 evidence_ref=experiment_id 一字段，随待 Owner-3 一并对齐）；②库外对象（模型/工具/门禁/模块）=experiment 卡 verdict='win' 即门闸输入，L5 工单生成器读 criteria_ref+evidence pack 套任务书 schema（definition_of_done 锚 criteria_ref） | L4→L5 | verdict + evidence_pack {experiment_id, criteria_hash, 判据结果, significance, too_good 结论, 公平性核验} |
+| **L5（胜者输出→排产）** | 双路：①库内对象走 L2 既有 `intake_e2_handoff`（payload 增补 evidence_ref=experiment_id 一字段，R2 已经 L2 稿同批落地）；②库外对象（模型/工具/门禁/模块）=experiment 卡 verdict='win' 即门闸输入，L5 工单生成器读 criteria_ref+evidence pack 套任务书 schema（definition_of_done 锚 criteria_ref） | L4→L5 | verdict + evidence_pack {experiment_id, criteria_hash, 判据结果, significance, too_good 结论, 公平性核验} |
 | **L2（败者→阴性库）** | 原样对齐 L2 已定义两事件：败者/平局 `intake_reject_due` {card_id, stage:'L4', rejection_reason(受控词表), evidence_ref}；出分回填 `intake_scored_due` {card_id, verdict:'win'|'draw'|'loss', score, evidence_ref}（触发 L2 保优 benched 机制） | L4→L2 | 如 payload。**平局裁定（D-L4-05）**：平局=维持现状，rejection_reason='tie_no_gain' 入阴性视图，但带**可重考条件**（考纲版本变更/数据窗滚动进新数据/公平性参数变化时 L4 重开考），与败者永久阴性不同 |
 | **L7（判据档案回写）** | **增补事件 `comparison_archived_due`**：experiment 卡 archived 时 emit，L7 判据档案收"当时为什么算它赢"；反向=L4 领考前调 L7 只读服务 comparison_prior_query(simhash/mechanism_family)→历史裁定列表，同候选已考直接引用旧裁定防重复考古 | L4↔L7 | {experiment_id, criteria_yaml, verdict, 归因, too_good 出口} / 查询→{历史 experiment 列表} |
 | **目标常数段** | 判据常量真源=config/comparison_policy.yaml=目标常数段的落地件之一；改动走 OBJ_R 四步+Owner 门（§2.3） | L4←常数 | α/门槛/触发线/K/受控词表 |
@@ -187,7 +187,7 @@ DGM 教训（V2-R5）的机制化落地，七道机检（前五道进执行器�
 
 1. **判据常量初值点头**：config/comparison_policy.yaml 全部常数（触发线 G1-G5/α/效应量门槛/锦标赛 K）——尺子归 Owner 修标。
 2. **独立性 gate 立案准许**：判据文件保护 gate+任务书 criteria_ref 机检=治理层 gate 资产变更，提案经 OBJ_R 四步立案（C7）。
-3. **两条增补边的跨稿对齐确认**：`intake_exam_due`（L2→L4）与 `intake_e2_handoff` payload 增 evidence_ref——L2 设计稿已 design_done，增补需 Owner 确认或 L2 侧修订。
+3. **两条增补边的跨稿对齐确认**：`intake_exam_due`（L2→L4）与 `intake_e2_handoff` payload 增 evidence_ref——R2 更新：后者已经 L2 稿同批补入 payload；且 L2 侧同名回执事件已改名 `intake_exam_receipt` 拆分，本项仅余派考边 `intake_exam_due` 的跨稿确认。
 4. **creation_token 补登**：本班硬边界"禁登记 token"，DESIGN.md 的 creation_token 由主会话/Owner 补登（OBJ_R 稿同款先例）。
 
 ---
@@ -205,3 +205,7 @@ DGM 教训（V2-R5）的机制化落地，七道机检（前五道进执行器�
 - **B9（新表落"ai_intake 同实例"未指 schema，违 L2 §2.1 产线禁读界）**：实验卡表改落 PG 同实例**独立 schema `ai_compare`**（表=`ai_compare.ai_comparison_experiment`），三处同步（§1 台账④行、§2.3 实例层、C2 施工项），均加"与 L2 ai_intake schema 隔离，产线禁读界不破"；仍同 PG 实例、全经 DatabaseService、禁裸连接。
 - **第 7 项（跨稿边界声明，L4+L5 同款）**：§2.1 表后新增"考场边界声明"——策略候选的考场止于 L4 证据包产出；转正/流转归业务层 S12-S14 与 Owner 拍板，AI 层不设第二转正门；交易算法专域不在 AI 层自动流转范围。
 - 连带核查：experiment 卡字段与 status 流转零变更；L5/L7 契约不受影响；DDL 登记器沿用 L2 母版模式，仅建表语句挂 `ai_compare` schema。
+
+## 红蓝 R2 修复记录（2026-09-17，红队 R2 发现）
+
+- **R2（同名事件冲突拆分+节锚漂移）**：L2 侧回执事件改名 `intake_exam_receipt`（payload 删未定义的 intake_id），本稿 §3 `intake_exam_due`（L2→L4 派考）**保留原名不变**——同名冲突消解，两事件方向/载荷不再交叠；§2.6 第 2 道机检锚的过时节号（v2.0 节号漂移）改指"主文档 §3.2 验收三级协议"，grep 零残留。连带核记：§3 L5 行与待 Owner-3 的 evidence_ref 增补已经 L2 稿 R2 同批落地，挂单仅余派考边跨稿确认。

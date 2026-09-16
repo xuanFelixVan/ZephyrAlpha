@@ -20,7 +20,7 @@ status: design_v1
 
 | 向 | 内部发现（真实路径） | 外部发现（URL/发布方/年份） | 判定 |
 |----|---------------------|---------------------------|------|
-| ①上游 | `docs/_working/ai_layer_vision/L1_perceive/README.md`（输出=定向搜索任务单给 L2；源注册表 v0-v1 是 L1 待挖清单）；`docs/01_policies_and_standards/sop/mining_sop/mining_sop_policy.md` §2 矿脉/§5 四闸（signal/noise/受阻三态+429 重试纪律）；主文档 §1.3(1) 源注册表 v0 四轨 8-12 源 | 源清单属 L1 段职责，本轮不重复挖（边界留痕，非查无） | signal |
+| ①上游 | `docs/_working/ai_layer_vision/L1_perceive/README.md`（输出=定向搜索任务单给 L2；源注册表 v0-v1 是 L1 待挖清单）；`docs/01_policies_and_standards/sop/mining_sop/mining_sop_policy.md` §2 矿脉/§5 四闸（signal/noise/受阻三态+429 重试纪律）；主文档 §0.5 与本稿 §2(1) 源注册表 v0 四轨 8-12 源 | 源清单属 L1 段职责，本轮不重复挖（边界留痕，非查无） | signal |
 | ②下游 | `L3_cleaning/README.md`（输入=L2 待洗条目，不可洗退回 L2 记阴性）；`L4_compare/README.md`（输出=败者退 L2 阴性库）；`L7_heredity/README.md`（查重基线+组合素材读 L2）；`src/zephyr/strategy_pipeline/intake.py`（E2 既有产线真入口：fdr_gate/differentiation_ok/promote_to_sim）；`config/strategy_production_map.yaml` L25 negative_archive=工厂五类产品之一（尚无物理实现） | 无需外部（下游全内部）；已查无必要 | signal |
 | ③算法机制 | simhash 词表先例：`docs/01_policies_and_standards/_registry/catalogs/_archive/candidate_module_registry_harvest_archive.yaml` L116225（SimHash 相似度，数据工程域 15-D 在档）；MAP-Elites/AlphaEvolve 在档引文（V2-R2/V0-R2） | MAP-Elites=Mouret & Clune 2015，arXiv 1504.04909（+ pymap_elites github.com/resibots/pymap_elites + members.loria.fr/jbmouret/qd.html）；AlphaEvolve 进化数据库=MAP-Elites+岛屿模型，Novikov et al. 2025 arXiv 2506.13131（+ deepmind.google/blog/alphaevolve-a-gemini-powered-coding-agent-for-designing-advanced-algorithms/ + news.ycombinator.com/item?id=44043625）；SimHash 64-bit/汉明距离 k=3=Manku et al. WWW 2007（archives.iw3c2.org/www2007/papers/paper215.pdf + dl.acm.org/doi/10.1145/1242572.1242592，Charikar 2002 为其理论基础）——三方各自 ≥2 独立来源，交叉验证闸通过 | signal |
 | ④后端 | `src/zephyr/infrastructure/database_service.py`（get_governance_conn=SQLite/get_depgraph_conn=PostgreSQL/get_clickhouse_conn=CH，L37 注：market.duckdb 已于 2026-07-05 删除）；`src/zephyr/governance/depgraph_schema.py`（PG 连接串=DATABASE_URL）；`scripts/industry_graph/apply_industry_graph_ddl.py`（ig_fact 建表先例：BIGSERIAL PK+UNIQUE 自然键+TIMESTAMPTZ）；`scripts/backtest/graph_enrich_staging.py`（暂存台账先例：绝不写 ig_fact 正图、入图需 Owner 审核=生熟分离本仓现成样板）；`src/zephyr/strategy_pipeline/pipeline_events.py`（JSONL journal+emit/drain/status+轻/重 kind+KillSwitch 探针+幂等 marker+毒丸 MAX_ATTEMPTS=3）；`src/zephyr/shared/event_bus.py`（EventBus 领域事件+EventBusBackpressure） | 开源实现无需引入（simhash 为 <100 行自研算法，python-simhash scrapinghub 参考实现已核对算法一致性）；判 signal 不引依赖 | signal |
@@ -87,7 +87,7 @@ DDL 由幂等登记器 `scripts/ai_layer/apply_ai_intake_ddl.py` 部署（照 ap
 | raw_ref | TEXT | 原料暂存路径（.runtime/sessions/<sid>/staging/，24h TTL 内须完成 L1 初筛） |
 | spec_ref | TEXT | L3 规格卡回填指针 |
 | handoff_ref | TEXT | intake_e2_handoff 受理回执指针（跨生熟边界留痕；e2_pending 态必填） |
-| evidence_ref | TEXT | 考试/裁定证据指针（intake_exam_due 回执回填） |
+| evidence_ref | TEXT | 考试/裁定证据指针（intake_exam_receipt 回执回填） |
 | created_at / updated_at | TIMESTAMPTZ NOT NULL | 入库/更新时间 |
 
 索引：`(domain_id, funnel_stage)`、`(elite_cell)`、`(source_name, created_at)`（配额与 KPI 用）、`(simhash)`（Phase 2 换分块表，见 2.3）。
@@ -131,9 +131,10 @@ DDL 由幂等登记器 `scripts/ai_layer/apply_ai_intake_ddl.py` 部署（照 ap
 状态机（附录 B 原名，勿与七段混淆）：
 
 ```
-(新卡)→L0 硬过滤→L1 AI初筛→L2 深读→E2 假说预审→intake(产线吸收)→e2_pending(待 E4 考试，intake_exam_due 回执留痕)
+(新卡)→L0 硬过滤→L1 AI初筛→L2 深读→E2 假说预审→intake(产线吸收)→e2_pending(待 E4 考试，intake_exam_receipt 回执留痕)
          ├─任一环拒→rejected(必填 rejection_reason，自动入 V2 阴性视图)
-         └─L3/L4 退回→rejected(事件 intake_reject_due)
+         ├─L3/L4 退回→rejected(事件 intake_reject_due)
+         └─L5 工单 dead 回执→rejected(事件 work_order_dead——R2 补 dead 终态回传)
 ```
 
 入库（写 T2）必须同时过，任何一挂=拒绝且登记拒因：
@@ -149,7 +150,7 @@ DDL 由幂等登记器 `scripts/ai_layer/apply_ai_intake_ddl.py` 部署（照 ap
 
 ### 2.6 与附录 B schema v0 的对齐说明
 
-附录 B 候选卡=本设计的字段来源（card_id/源四件套/dedup/novelty/mechanism/four_gates/risk_flags/injection_probe/labor_killed/funnel_stage/rejection_reason 全部收编）；新增=domain/mechanism_family/elite 三列（行为格）、content_sha256（精确查重）、dedup_compared_vs/duplicate_of（比对面留痕）、raw_ref/spec_ref（上下游指针）。附录 B 是 YAML 草案，本表是其 DB 化+分域化终版；主文档 v2.0 重构时建议本节为其替换指针。
+附录 B 候选卡=本设计的字段来源（card_id/源四件套/dedup/novelty/mechanism/four_gates/risk_flags/injection_probe/labor_killed/funnel_stage/rejection_reason 全部收编，含 R1-B1 增补（e2_pending/handoff_ref/evidence_ref））；新增=domain/mechanism_family/elite 三列（行为格）、content_sha256（精确查重）、dedup_compared_vs/duplicate_of（比对面留痕）、raw_ref/spec_ref（上下游指针）。附录 B 是 YAML 草案，本表是其 DB 化+分域化终版；主文档 v2.0 重构时建议本节为其替换指针。
 
 ### 2.7 淘汰率 KPI
 
@@ -185,12 +186,14 @@ L4 ──intake_scored_due──▶ L2                                 （回填
   语义: 回写 elite_score/elite_rank，格满 benched（2.4）
 
 L2 ──intake_e2_handoff──▶ L5 排产（E2 假说预审通道）           （下游→产线）
-  payload: {card_id, spec_ref, four_gates, labor_killed, domain_id}
+  payload: {card_id, spec_ref, four_gates, labor_killed, domain_id, evidence_ref}
   语义: L2 对产线的唯一出口；跨生熟边界前最后留痕。E2 具体排产属 L5 段
+  （R2：payload 补 evidence_ref——L4/L5 双方期待，卡 schema 已有同名字段）
 
-考试线 ──intake_exam_due──▶ L2                                 （产线→L2 回执）
-  payload: {intake_id, candidate_card_id, evidence_ref}
+考试回执线 ──intake_exam_receipt──▶ L2                         （产线→L2 回执）
+  payload: {candidate_card_id, evidence_ref}
   语义: e2_pending 卡的考试到期/出证回执；L2 留痕 evidence_ref（考试归产线，L2 只记帐）
+  （R2：与 L4 派考事件 intake_exam_due 同名冲突，改名拆分——L4 侧派考边 L2→L4 不变）
 
 L7 传承 ──dedup_query(text)→hits / intake_heritage_baseline──▶ L2  （传承→查重基线）
   dedup_query 是只读服务调用（非事件）: 返回 {card_id, simhash, hamming, funnel_stage}
@@ -263,6 +266,16 @@ KPI 告警事件 `intake_kpi_alert`：payload {scope:'domain'|'source', key, pas
 
 | 编号 | 修复内容 | 落点 |
 |------|---------|------|
-| B1 | 状态机枚举补 `e2_pending`（语义=已过 intake、待 E4 考试，CHECK 六值→七值）；事件清单补 `intake_exam_due`（payload=intake_id/candidate_card_id/evidence_ref）；卡 schema 补 handoff_ref/evidence_ref 两字段；状态机合法性链与施工项 6 事件计数同步 | §2.2 T2/§2.5/§三/施工项 6 |
+| B1 | 状态机枚举补 `e2_pending`（语义=已过 intake、待 E4 考试，CHECK 六值→七值）；事件清单补 `intake_exam_due`（payload=intake_id/candidate_card_id/evidence_ref；R2 起该回执件改名 intake_exam_receipt）；卡 schema 补 handoff_ref/evidence_ref 两字段；状态机合法性链与施工项 6 事件计数同步 | §2.2 T2/§2.5/§三/施工项 6 |
 | B5（L2 侧） | `intake_heritage_baseline` payload 改 elite\|pattern 两 kind+count（删 negative）；negative 留 L2 自用 KPI（V2 阴性库）不入传承——与 L7 契约同批对齐 | §三 |
 | B2（L2 侧） | T1 域字典补"工具域"（v0 六域），行为格重计 6×8=48（原 5×8=40）；H4 tool_id/scene 与 OBJ_T 写入权裁定在 L7 稿同批登记 | §2.2 T1/§2.4/§5.3 |
+
+## 红蓝 R2 修复记录（2026-09-17，红队 R2 发现）
+
+| 编号 | 修复内容 | 落点 |
+|------|---------|------|
+| R2-1 | `intake_exam_due`（产线→L2 回执版）改名 `intake_exam_receipt`，payload 删全 schema 无定义的 intake_id（={candidate_card_id, evidence_ref}）；与 L4 §3 派考事件同名冲突消解、方向拆分（L4 侧派考边 L2→L4 原名不变），改名处已旁注 | §三/§2.2 T2/§2.5 |
+| R2-2 | 节锚漂移：§一① 过时节锚（v2.0 已删该节）改"主文档 §0.5 与本稿 §2(1)" | §一① |
+| R2-3 | rejected 入边补 `work_order_dead`（L5 dead 终态回传，L5 稿同批） | §2.5 |
+| R2-4 | `intake_e2_handoff` payload 补 evidence_ref（L4/L5 双方期待，卡 schema 已有同名字段；L4 待 Owner-3 该项挂单可销账） | §三 |
+| R2-5 | §2.6"全部收编"补注 R1-B1 增补（e2_pending/handoff_ref/evidence_ref） | §2.6 |

@@ -11,7 +11,8 @@ status: design_v1
 
 > **一句话**：L1=进化循环的点火器——**内监**（五个既有探测器的事件信号）与**外扫**（源注册表
 > 驱动的节拍浅扫）双通道，产出定向**搜索任务单**喂 L2 收集段；骨架即地图，骨架长一节搜索网密一层。
-> 主文档锚点：ai_layer_vision_and_roadmap_v1.md §0.5 定调 3/4/10 + §1.3(1)(5)；方法论真源=
+> 主文档锚点：ai_layer_vision_and_roadmap_v1.md §0.5 定调 3/4/10 + 本稿 §2（源注册表/投毒防御
+> 细则已迁 L1/L2/L3 各稿 §2）；方法论真源=
 > [mining_sop_policy.md](../../01_policies_and_standards/sop/mining_sop/mining_sop_policy.md)
 > （六向寻路/四闸/矿脉枯竭/挖后自审闸，本轮全部照办）；下游契约对齐
 > [L2 DESIGN.md](../L2_intake_library/DESIGN.md) §三（intake_ingest_due）。
@@ -49,7 +50,7 @@ MLOps 白皮书与 arXiv cs.AI 列表页 WebFetch 直连超时（MLOps 改在档
 
 | slug | 轨 | URL（全真实） | 抓取方式 | 频率 | 每日配额 | 健康度 | 最后核验 | 依据 |
 |------|----|--------------|---------|------|---------|--------|---------|------|
-| awesome-quant | GitHub | https://github.com/wilsonfreitas/awesome-quant | WebFetch 抓 README，diff 监视新条目 | 周 | 10 | active | 2026-09-17 | 当日验证（29k stars；主文档 §1.3 在档分级复用） |
+| awesome-quant | GitHub | https://github.com/wilsonfreitas/awesome-quant | WebFetch 抓 README，diff 监视新条目 | 周 | 10 | active | 2026-09-17 | 当日验证（29k stars；主文档 §0.5 与本稿 §2 在档分级复用） |
 | qlib | GitHub | https://github.com/microsoft/qlib | Releases/commits 监视+社区策略库扫描 | 月 | 5 | active | 2026-09-17 | 在档（2026-09-13 甄别轮+Kronos 官方 Qlib 微调管线依赖，config FAC-E1E） |
 | rd-agent | GitHub | https://github.com/microsoft/RD-Agent （含 RD-Agent(Q) 产出流） | Releases 监视 | 月 | 5 | active | 2026-09-17 | 在档复用（V2-R3，arXiv 2505.15155） |
 | alphagen | GitHub | https://github.com/ICT-FinD-Lab/alphagen | Issues/commits 监视 | 月 | 5 | active | 2026-09-17 | 当日验证（KDD 2023，arXiv 2306.12964；**旧址 RL-MLDM/alphagen 已迁=换皮监测点**，闸 5 防同名反复进货） |
@@ -68,7 +69,7 @@ MLOps 白皮书与 arXiv cs.AI 列表页 WebFetch 直连超时（MLOps 改在档
 
 **配额治理三闸**（定调 10 落点）：①每源每日配额（上表）防单源刷屏；②总量闸=全注册表每日进
 漏斗候选 ≤40；③贫矿降级闸=消费 L2 `intake_kpi_alert`（入考率 <5% 连续 2 周→配额减半，4 周→
-quota=1 移长尾**禁清零**——多样性保底，主文档 §1.3(4) 闸 5）。**配额真源=本注册表**；
+quota=1 移长尾**禁清零**——多样性保底，主文档 §0.5 与本稿 §2(4) 闸 5）。**配额真源=本注册表**；
 L2 T5 `ai_intake_source_quota` 自本表落地日起降级为只读缓存（生成器同步，L2 DESIGN §2.6 已预留此裁定）。
 
 ### 2.2 内部信号接线图（探测器→定向搜索映射表）
@@ -85,7 +86,7 @@ L2 T5 `ai_intake_source_quota` 自本表落地日起降级为只读缓存（生�
 | feedback_loop Detector 族 | `src/zephyr/feedback_loop/detectors/`：anomaly.{`AnomalyDetector`,`FlappingDetector`(AlertState),`HeisenbugDetector`,`IntermittentFailurePattern`} + correlation.`AgentTrajectoryAnomalyDetector`(TrajectoryEvent) + guard.`GuardOscillationDetector` + reliability.`MetricCardinalityGuard`；调度=`scheduler_collect_detect.py`（MOD-FEEDBACK_LOOP） | 各 Detector 告警事件经 alert_dispatcher/ops_alert_feed 出口 | flapping/振荡→搜告警治理与 SLO 实践（喂 OBJ_R 尺子升级提案）；agent 轨迹异常→搜 agent 安全/评测新方法（喂 OBJ_T/OBJ_S）；heisenbug→搜测试隔离与确定性实践 |
 
 **接线纪律**：①内监**零定时器**——全部挂既有事件源（ops_alert_feed 出口/task_completed/月报生成）；
-②翻译器只**开单**不执行（执行=L2 起的收集链+会话级深挖，深浅两档互不替代，主文档 §1.3(3)）；
+②翻译器只**开单**不执行（执行=L2 起的收集链+会话级深挖，深浅两档互不替代，主文档 §0.5 与本稿 §2(3)）；
 ③全部任务单共享每日预算（§2.3 budget），内监开单优先级高于节拍扫。
 
 ### 2.3 搜索任务 schema（任务单 v1）
@@ -158,7 +159,8 @@ L2 T5 `ai_intake_source_quota` 自本表落地日起降级为只读缓存（生�
 > 血肉级自动/骨架级 Owner）。
 
 - **节拍**：每月 1 日 09:00（与 schedule.yaml `monthly_static` 同窗族），任务宿主按 §2.4 ② 档
-  登记（FactoryLaneC 同构，施工项 8）。
+  登记（FactoryLaneC 同构，施工项 8）。Owner 不追认外扫裁定（§2.4 双前置）时的降级路线=
+  月度体检由高模型维护班人工开会话执行（排班表登记人工任务），自动化宿主解锁顺延。
 - **产出=AI 层骨架月度建议书**，schema v1：
   - `kpi_summary`：每源配额消耗/429 受阻次数/候选产出/入考率（读 L2 视图 V3 `ai_intake_kpi_weekly`）
   - `vein_coverage`：矿脉总数/已挖/长尾/封矿数（读矿脉清单生成器产物）
@@ -191,7 +193,7 @@ L1 外扫（节拍+实闸，§2.4）──┘                                   
 | **L2 收集** | ①`intake_ingest_due` 事件（上式，字段照抄 L2 DESIGN §三）；②配额真源回迁：本注册表（§2.1）落地后 L2 T5 降级只读缓存（同步器=施工项 2）；③候选卡必带 search_order_ref 回指任务单（出生证） | L2 已 design_done，本稿对齐其契约 |
 | **L7 传承** | ①L7 精英/坑集入 L2 T4 快照 ref_family='L7'（L2 已定）；②L1 侧消费=vein **priority 权重表**（哪族矿脉历史上富/贫）+negative pattern **排除词表**→任务单 keyword_groups 过滤。接口现为**声明态**：解锁条件=L7 DESIGN.md 定稿（挂起排期，施工项 9） | 声明态 |
 | **排班表** | L1 两个常驻件（外扫节拍/月度体检）按 AI 层运营轴登记接口入册：register_*.ps1 任务宿主+resource_profile_registry 生成器再生（三真源收敛），冲突走 exclusive_group（如 llm_local 互斥）；**禁自建排班逻辑**（README §1.6：全项目一张真源，两层客户自助登记） | 既有接口，直接可用 |
-| **宪法/LSG** | 外扫内容按宪法 §9.11=数据非指令；进上下文前过 `zephyr.security.llm_defense.llm_security.gateway` 洗涤（主文档 §1.3(5) 投毒防御的 L1 落实）；外部代码零执行 | 原则约束，全程适用 |
+| **宪法/LSG** | 外扫内容按宪法 §9.11=数据非指令；进上下文前过 `zephyr.security.llm_defense.llm_security.gateway` 洗涤（主文档 §0.5 与本稿 §2(5) 投毒防御的 L1 落实）；外部代码零执行 | 原则约束，全程适用 |
 
 ---
 
@@ -261,3 +263,10 @@ L1 外扫（节拍+实闸，§2.4）──┘                                   
 同 commit 原子补进 ruling_registry。双前置齐前施工项 7 禁开工，**其余施工项（1-6/8）不受阻**；
 本稿任务单层设计不变，若 Owner 不追认仅替换任务宿主（§2.4 边界）。真源登记批次见
 README §3，全目录待 Owner 项对账见 README §3.5 处置总表。
+
+## 红蓝 R2 修复记录（2026-09-17，红队 R2 发现）
+
+**R2**：①节锚漂移修复——全文 5 处过时节锚（v2.0 已删该节）统一改指"主文档 §0.5
+与本稿 §2"（内容已迁 L1/L2/L3 各稿 §2），grep 确认零残留；②§2.6 月度体检宿主补降级路线：Owner
+不追认外扫裁定（§2.4 双前置）时，月度体检由高模型维护班人工开会话执行（排班表登记人工
+任务），自动化宿主解锁顺延——消解 T3 双前置射程张力（外扫未追认不连带冻结月度体检）。
