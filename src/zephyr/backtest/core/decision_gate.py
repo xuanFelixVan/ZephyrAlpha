@@ -5,7 +5,7 @@
 # [CONSUMERS] zephyr.backtest.implementations.vectorized_engine; zephyr.backtest.implementations.event_driven_engine
 # [STARTUP] imported
 # [MATURITY] production
-# [INVARIANTS] IS->WFA->OOS不可跳级;参数锁定;Sharpe>0.5准入;偏离阈值真源=alert_threshold_registry(THD-DEVIATION-001/002,fail-closed);DSR判定器默认开启(dsr_threshold=DSR_SIGNIFICANCE_THRESHOLD=0.95,fail-closed,车道L接线)——三线裁决evaluate_dsr与回测→实盘准入谓词evaluate_strategy_risk_admission=唯一判定源,DecisionGate/fw_backtest验收/risk_validation_bridge实盘准入共用(禁两轨各算各的)
+# [INVARIANTS] IS->WFA->OOS不可跳级;参数锁定;Sharpe>0.5准入;偏离阈值真源=alert_threshold_registry(THD-DEVIATION-001/002,fail-closed);DSR判定器默认开启(dsr_threshold=DSR_SIGNIFICANCE_THRESHOLD=0.95,fail-closed,车道L接线)——三线裁决evaluate_dsr与回测→实盘准入谓词evaluate_strategy_risk_admission=唯一判定源,现仅两轨共用(本模块三线裁决 + strategy_pipeline/fw_backtest 验收；禁两轨各算各的)。第三轨"实盘准入"目前是缺件而非漏传：risk_validation_bridge 只暴露 validate_order/validate_portfolio，无策略准入端口，dsr 在下单/会话装配路径上无消费口(只在 auto_mount 挂载门生效)——证据与裁定见 docs/_working/wyf3/ruling_271_272_wyf3_dsr_mirror.md
 # [MODIFY-GUARD] none
 # [STABILITY] evolving
 # [SAFETY] M
@@ -175,7 +175,11 @@ def evaluate_strategy_risk_admission(
     *,
     dsr_threshold: float = DSR_SIGNIFICANCE_THRESHOLD,
 ) -> RiskAdmissionVerdict:
-    """回测与实盘共用的风险准入判据（单一真源——禁两轨各算各的）。
+    """风险准入判据（单一真源——禁两轨各算各的）。
+
+    现共用两轨：本模块三线裁决 + `strategy_pipeline/fw_backtest` 验收。实盘侧**尚无**策略
+    准入端口（`risk_validation_bridge` 只有 validate_order/validate_portfolio），故后来者
+    建该端口时 MUST 复用本函数，不得另算第二套判定——那才是本函数存在的理由。
 
     规则（全 fail-closed，禁静默放行）：
       - overfitting_flag is True            -> 拒（SIM-56 过拟合阻断：产出的旗标必须被消费）
@@ -788,7 +792,7 @@ class DecisionGate:
                     dsr_f = float(dsr)
                 except (TypeError, ValueError) as exc:
                     raise DecisionGateError(f"dsr必须是数值: {dsr!r}") from exc
-            # 单一判定源：与回测验收/实盘准入共用 evaluate_dsr 三线语义（禁两轨各算各的）
+            # 单一判定源：与 fw_backtest 验收共用 evaluate_dsr 三线语义（禁两轨各算各的）
             dv = evaluate_dsr(dsr_f, threshold=self.config.dsr_threshold)
             dsr_passed = dv.passed
             reasons.append(dv.reason)

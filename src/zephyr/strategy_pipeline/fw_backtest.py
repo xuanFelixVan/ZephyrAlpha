@@ -548,7 +548,8 @@ def run_fw_backtest_due(event: dict) -> dict[str, Any]:
     # ④ 验收+证据包
     recon = result.get("panel_reconciliation") or {}
     # 车道 L（P0）：风险信号产即必消——acceptance 真读 overfitting_flag/DSR/n_trials，
-    # 经与实盘共用判据 evaluate_strategy_risk_admission，不过关即判失败（禁静默放行）。
+    # 经与决策门同源判据 evaluate_strategy_risk_admission（不是"与实盘共用"：实盘无策略
+    # 准入端口），不过关即判失败（禁静默放行）。
     risk = _evaluate_risk_decision(result)
     composition = _evaluate_composition_integrity(result)
     cash = _evaluate_cash_closure(result)
