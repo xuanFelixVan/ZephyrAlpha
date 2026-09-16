@@ -107,7 +107,10 @@ created: 2026-09-16
 ## 8. 修复权限分级（Owner 2026-09-16 裁定：自己找的自己修，但分级）
 
 - **Kimi 直接修（低风险类）**：文档错漏/死链/假完成状态文案/注释与蓝图头失真——直改+自查后记入报告"已修复清单"；正式区文档（docs/01..）改前留 before/after 摘录。
-- **出修复施工单（代码级 P0-P2，禁直改）**：算法逻辑/数据口径/钱闸相关/并发竞态——产出施工单（file:line+根因+最小 diff+回归测试建议），主力会话秒级插队施工。理由：代码修复必经 GitCommitGateway/CAS 热文件锁/depgraph 登记（队列入队-死信回滚曾吞编辑的无门禁直改事故在案）；Kimi 的 token 花在覆盖面比花在修复管道上值。
+- **边查边修（热上下文当场修，Owner 2026-09-16 二次裁定）**：查到问题当场产修复，不攒批——重新建上下文才是贵的，当场修命中 KV 缓存≈白送。
+  - 文档类（含正式区）：直接改文件。
+  - 代码类（src//scripts//config/）：**禁直接改工作区文件**（并发会话的队列回滚会静默吞编辑，真实事故在案）——当场产最小 diff 落 `docs/_working/kimi_audit_reports/fix_queue/<战场>-<序号>.diff`（格式：file:line+根因一行+标准 diff），主力会话机械 apply+走门禁，apply 侧近零成本。若你本地可执行命令：直接 `python scripts/git_commit.py --session kimi-audit --skip-preflight --allow-non-worktree --allow-overlap --files "<逗号分隔>" --message "fix(...)"`。
+  - P0 钱闸/资金路径/破坏性数据操作：即使能修也先标注"插队"交主力复核后再动（double-check 钱闸）。
 - 每条发现：file:line 锚点+复现路径+严重级 P0-P3+修复建议；**禁编造锚点**（抽查复核制）。
 - P0 双角色加试：审查者产出后，自己切换"复算反驳者"给最强三条反驳再定级（2×token）。
 - 产出落点：`docs/_working/kimi_audit_reports/`（每战场一份报告+一份 executive summary）。
