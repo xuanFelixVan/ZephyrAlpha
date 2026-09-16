@@ -3115,7 +3115,7 @@ entries:
     passed（test_internal_compute_limit_up_routing + test_collectors）。deriver 与 FPB-4 修复后
     派生路径不读本表（kline×stk_limit 自算），结构性免疫，无需重跑。
   evidence: >-
-    普查与执行留痕：docs/_working/limit_up_down_weekend_ghost_cleanup.md（分区清单/幽灵行样例/
+    普查与执行留痕：docs/_working/reports/limit_up_down_weekend_ghost_cleanup.md（分区清单/幽灵行样例/
     下游污染路径表/三步验证/删除对照）。备份：data/backups/c1_market_limit_up_down_weekend_rows_
     20260916_pre_ghostclean.csv（664 行 71404 字节，SHA256
     8c59014c02bda7cc36af767b0520d6dfa8db59a1536909af52c7745e96e93bd3，写后进程外复核一致）+
@@ -3124,7 +3124,8 @@ entries:
   affected_files:
     - data/backups/c1_market_limit_up_down_weekend_rows_20260916_pre_ghostclean.csv
     - data/backups/c1_market_limit_up_down_weekend_rows_20260916_pre_ghostclean.manifest.json
-    - docs/_working/limit_up_down_weekend_ghost_cleanup.md
+    - docs/01_policies_and_standards/_registry/catalogs/capability_canonical_file_registry.yaml
+    - docs/_working/reports/limit_up_down_weekend_ghost_cleanup.md
   related_arch: []
   related_rulings: ['裁定#257', '裁定#277']
   superseded_by: null
@@ -3229,4 +3230,46 @@ entries:
   related_rulings:
     - '裁定#277'
     - '裁定#284'
+  superseded_by: ''
+
+- ruling_id: '裁定#289'
+  title: 'limit_up_down 周末幽灵行存量清理执行收尾（裁定#277 残余）——GW-P 执行+GW-P2 接力核验双留痕'
+  date: '2026-09-16'
+  category: '数据治理'
+  status: 'active'
+  summary: >-
+    裁定：c1_market.limit_up_down 周末伪行存量清理执行完毕并接力核验闭环（Owner 开工令
+    破坏性操作授权生效）。普查（2026-09-16 清理前 CH 只读）：总 5378 行，周末 664 行/10 分区
+    （2026-08-15/16/22/23/29/30、09-05/06/12/13），成因=akshare 涨停池接口非交易日回吐最近
+    交易日池被按日采集复制进周末分区（守卫 LUE-2（裁定#257⑤）上线前累积）。执行（GW-P
+    st-ghostclean-20260916）：先全量备份 data/backups/ 下 pre_ghostclean.csv+manifest（664 行
+    /71404 字节，SHA256 见 evidence 原样串，断行即损——manifest 内嵌同值可机械比对），再走 ch_writer
+    正道逐分区 ALTER TABLE ... DELETE WHERE trade_date=<分区> SETTINGS mutations_sync=2 共
+    10 条（system.mutations mutation_538~547 全部 is_done=1），逐分区 pre 计数=备份行数
+    （73/73/67/67/83/83/48/48/61/61）、post 全 0。核验（GW-P2 st-ghostclean2-20260916 接力，
+    2026-09-17）：备份 SHA256/行数/manifest 逐分区独立复核一致；清理后实态=全表 4714 行全部
+    工作日（43 日，2026-07-20~09-16，59 天-16 周末日=43 自洽）、周末分区 0、对照日
+    2026-09-11(五)=71 行不变；守卫回归 tests/zephyr/data/test_internal_compute_limit_up_
+    routing.py + tests/feedback/scheduling/test_collectors.py 复跑 85 passed；静态证明
+    daban_board_event_deriver 零引用本表、FPB-4 _derive_limit_up_down_from_kline 仅读
+    kline_daily×stk_limit（结构上不受清理影响）。遗留待裁（边界外，本裁定不处置）：
+    下游 c1_market.alt_regime_signal 表 F23_LIMITUP_EMOTION 仍有 20 行周末键（幽灵派生存量，
+    最新 2026-09-13，清理后零新增）；F14_BTC_MOMENTUM_30D 周末键属 7x24 合法语义勿误删。
+  evidence: >-
+    备份 SHA256 全值（一行，勿折）：8c59014c02bda7cc36af767b0520d6dfa8db59a1536909af52c7745e96e93bd3。
+    普查+清理+核验全留痕：docs/_working/reports/limit_up_down_weekend_ghost_cleanup.md（§2 普查清单/
+    §5 备份/§6 执行对照+GW-P2 附录）。mutations 实证：system.mutations mutation_538~547
+    （DELETE WHERE trade_date=<10 周末分区>）is_done=1。备份复核：SHA256 与 manifest 内嵌值
+    一致，665 行（664 数据+表头）。守卫复跑：85 passed（2026-09-17）。下游抽查：
+    alt_regime_signal 周末行按 signal_id 分组 F23=20/F14=212（合法）/F7=58/F4=20/F15=8/F8=4，
+    最新周末 signal_date=2026-09-13（清理后零新增）。
+  affected_files:
+    - docs/_working/reports/limit_up_down_weekend_ghost_cleanup.md
+    - docs/01_policies_and_standards/_registry/catalogs/ruling_registry.yaml
+    - data/backups/c1_market_limit_up_down_weekend_rows_20260916_pre_ghostclean.csv
+    - data/backups/c1_market_limit_up_down_weekend_rows_20260916_pre_ghostclean.manifest.json
+  related_arch: []
+  related_rulings:
+    - '裁定#277'
+    - '裁定#257'
   superseded_by: ''
