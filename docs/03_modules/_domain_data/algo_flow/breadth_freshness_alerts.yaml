@@ -1,0 +1,105 @@
+# ALGO_FLOW 外部真源——breadth_freshness_alerts（_domain_data 域，真源 src/zephyr/data/implementations/breadth_freshness_alerts.py）
+# 车道 G 施工项3：广度断供哨兵（2026-09-16）。源码 docstring 只留 external 锚，
+# 算法公共面记录在本块；公共面变化时同步更新（GOV-DOC-018 子目录镜像约定）。
+doc_type: architecture_view
+ttl: permanent
+module: zephyr.data.implementations.breadth_freshness_alerts
+source_of_truth: src/zephyr/data/implementations/breadth_freshness_alerts.py
+algo_flow: |
+    # [ALGO_FLOW]
+    # 层: 输入
+    # - id: I1
+    #   name: today 参数
+    #   fields: 参数 today（date | None，缺省取当日）
+    #   code: breadth_freshness_alerts.py scan / run_check 形参
+    # - id: I2
+    #   name: lookback_days 参数
+    #   fields: 扫描窗（默认 _SCAN_LOOKBACK_DAYS=60 自然日）
+    #   code: breadth_freshness_alerts.py 模块级 Final + 形参默认值
+    # - id: I3
+    #   name: 阈值常量
+    #   fields: _ALERT_TRAILING_DAYS=2（刷板线）/ _CRITICAL_TRAILING_DAYS=5（升 critical）
+    #   code: breadth_freshness_alerts.py 模块级 Final 常量
+    # - id: I4
+    #   name: c1_market.kline_index + market_trade_calendar
+    #   fields: 宽度现状表与交易日历表（表名经 table_registry 取真名，禁硬编码）
+    #   code: breadth_freshness_alerts.py _TBL_KLINE_INDEX / _TBL_TRADE_CALENDAR
+    # - id: I5
+    #   name: INDEX_UNIVERSE
+    #   fields: 被监 universe（复用 index_breadth_compute 注册表，禁双真源）
+    #   code: zephyr.data.implementations.index_breadth_compute.INDEX_UNIVERSE
+    # 层: 算法
+    # - id: A1
+    #   name_zh: ① _trading_days
+    #   name_en: BreadthFreshnessAlerts._trading_days
+    #   intro: 窗内交易日清单（判据基准，缺失即失去判据）。
+    #   desc: 交易日空 → scan 抛 RuntimeError（"哨兵失去判据"），不允许把"无日历"
+    #     误判成"无断供"。；源码 L173-L175
+    #   inputs: I1 I2 I4
+    #   outputs: list[str]
+    # - id: A2
+    #   name_zh: ② _breadth_state
+    #   name_en: BreadthFreshnessAlerts._breadth_state
+    #   intro: {symbol: {trade_date: ok|zero|missing}} 逐日三态判定。
+    #   desc: 整行缺失=missing、advance/decline 双零=zero、其余=ok——把 399106 型
+    #     "有行无宽度"与"无行"同判 bad，避免只盯缺行的旧盲区。；源码 L177-L194
+    #   inputs: I4 I5
+    #   outputs: dict
+    # - id: A3
+    #   name_zh: ③ _trailing_bad
+    #   name_en: BreadthFreshnessAlerts._trailing_bad
+    #   intro: 自窗尾向前数连续非 ok 天数（当前持续性，区别于历史累计）。
+    #   desc: 尾部未达 _ALERT_TRAILING_DAYS 不刷板——当日任务晚到不该惊动人。；源码 L163-L171
+    #   inputs: A1 A2
+    #   outputs: int
+    # - id: A4
+    #   name_zh: ④ scan
+    #   name_en: BreadthFreshnessAlerts.scan
+    #   intro: 逐 universe 汇总触发项（含 gap_start/gap_end/missing_rows/total_bad）。
+    #   desc: 返回触发项列表，不落板；判据与展示解耦，便于巡检与路由共用同一 scan。；源码 L129-L161
+    #   inputs: I1 I2
+    #   outputs: list[dict]
+    # - id: A5
+    #   name_zh: ⑤ publish
+    #   name_en: BreadthFreshnessAlerts.publish
+    #   intro: 触发项落 promotion 页 + 已消失 key resolve（滞回语义）。
+    #   desc: key=breadth_gap:<symbol> 稳定去重；trailing≥5 升 critical，否则 warning；
+    #     本轮未触发的既有 key 走 resolve 解除（照抄 ops_alert_feed 滞回），扫描自身
+    #     失败额外落 selfcheck critical；单条发布异常记日志继续——告警线自身不得成为故障源。；源码 L209-L280
+    #   inputs: A4 产物 scan_error
+    #   outputs: O1
+    # - id: A6
+    #   name_zh: ⑦ run_check
+    #   name_en: run_check
+    #   intro: 便捷入口：scan + publish + 摘要（供 provider 路由与手动巡检共用）。
+    #   desc: 捕获 scan 异常转 scan_error（fail-safe），返回含 items/scan_error 的摘要。；源码 L293-L311
+    #   inputs: I1 I2
+    #   outputs: O2
+    # 层: 输出
+    # - id: O1
+    #   name_zh: promotion 页告警条目
+    #   name_en: ops_alert_feed 条目
+    #   intro: 断供事实的可处置告警（灰显解除，不重复刷屏）
+    #   downstream: 前端 promotion 页（Owner 唯一通知面，飞书/SMTP 通道已删）
+    # - id: O2
+    #   name_zh: 巡检摘要 dict
+    #   name_en: dict
+    #   intro: {items, scan_error, published, resolved} —— 供调度侧留痕与二次判定
+    #   downstream: zephyr.data.implementations.internal_compute_provider（路由调用点）
+    # [/ALGO_FLOW]
+    #
+    # 边:
+    # I1 --> A1
+    # I2 --> A1
+    # I4 --> A2
+    # I5 --> A2
+    # A1 --> A3
+    # A2 --> A3
+    # A1 --> A4
+    # A2 --> A4
+    # A3 --> A4
+    # A4 --> A5
+    # I3 --> A5
+    # A5 --> O1
+    # A4 --> A6
+    # A6 --> O2

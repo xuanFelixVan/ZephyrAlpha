@@ -1,0 +1,110 @@
+# ALGO_FLOW 外部真源——index_breadth_compute（_domain_data 域，真源 src/zephyr/data/implementations/index_breadth_compute.py）
+# 车道 G 内生广度进料口（2026-09-16）：源码 docstring 只留 external 锚，算法公共面
+# 全量记录在本块；公共面变化时同步更新本块（GOV-DOC-018 子目录镜像约定）。
+doc_type: architecture_view
+ttl: permanent
+module: zephyr.data.implementations.index_breadth_compute
+source_of_truth: src/zephyr/data/implementations/index_breadth_compute.py
+algo_flow: |
+    # [ALGO_FLOW]
+    # 层: 输入
+    # - id: I1
+    #   name: payload 参数
+    #   fields: 参数 payload，类型注解 FetchPayload（start/end/symbols/extra）
+    #   code: index_breadth_compute.py IndexBreadthComputeProvider.fetch 形参
+    # - id: I2
+    #   name: policy 参数
+    #   fields: 参数 policy（调度侧拉取策略，本件不消费其字段）
+    #   code: index_breadth_compute.py IndexBreadthComputeProvider.fetch 形参
+    # - id: I3
+    #   name: INDEX_UNIVERSE 常量
+    #   fields: 10 只指数 →（市场片段, 官方宽度经验校准系数）注册表，宇宙单一真源
+    #   code: index_breadth_compute.py 模块级 Final 常量
+    # - id: I4
+    #   name: FLOOR_DATE 常量
+    #   fields: 回补地板 2019-01-01（实测 2018 及以前深市覆盖不足）
+    #   code: index_breadth_compute.py 模块级 Final 常量
+    # - id: I5
+    #   name: extra.repair_lookback_days
+    #   fields: 自愈窗深度（显式放大跨月修复；缺省取调度 payload 窗尾）
+    #   code: index_breadth_compute.py resolve_window 读取 payload.extra
+    # 层: 算法
+    # - id: A1
+    #   name_zh: ① resolve_window
+    #   name_en: resolve_window
+    #   intro: 调度窗 + 地板 + 自愈 lookback → 实际修复窗（取交集尾窗）。
+    #   desc: 修复窗不直接取 scheduler 月初 start，而取 max(FLOOR_DATE, min(payload.start,
+    #     payload.end - repair_lookback_days))——上游同 trade_date 重灌（adv=0 且 ingest_ts
+    #     更新）可在窗内被再次填回，跨月断档自愈。；源码 L211-L221
+    #   inputs: payload FLOOR_DATE I5
+    #   outputs: tuple[date, date]
+    # - id: A2
+    #   name_zh: ② build_agg_columns / agg_column_names
+    #   name_en: build_agg_columns
+    #   intro: 宇宙片段 → 单条 SQL 的涨跌家数聚合列与列名（禁逐指数 N 次查询）。
+    #   desc: 按 universe（SH/SZ/CY/KC/BJ）生成 countIf 条件聚合列，列名与
+    #     parse_agg 解析口径一一对应（同一函数产列名，杜绝列序漂移）。；源码 L224-L241
+    #   inputs: I3
+    #   outputs: str list[str]
+    # - id: A3
+    #   name_zh: ③ clean_symbols
+    #   name_en: clean_symbols
+    #   intro: 标的清单 → 纯数字码（剔除后缀/非法码，fail-visible 计数）。
+    #   desc: 只保留六位数字码；异常码不静默丢弃而是计入 skipped，供告警与对账区分。；源码 L244-L251
+    #   inputs: payload.symbols
+    #   outputs: list[str]
+    # - id: A4
+    #   name_zh: ④ parse_tsv / parse_agg
+    #   name_en: parse_agg
+    #   intro: CH TSV → {(trade_date, universe): {adv, dec, total}} 索引。
+    #   desc: TSV 字符串原样保留零精度损失；parse_agg 按 A2 列名对齐成三元组，
+    #     缺列即抛（fail-closed，不让半截数据进写入侧）。；源码 L254-L282
+    #   inputs: I1 tsv names
+    #   outputs: dict
+    # - id: A5
+    #   name_zh: ⑤ build_fill_rows
+    #   name_en: build_fill_rows
+    #   intro: 聚合索引 + 现值零宽度行 → 整行读-改-写产物（仅替换 adv/dec）。
+    #   desc: kline_index 是 ReplacingMergeTree(ingest_ts)，无部分列更新能力 → 唯一
+    #     非破坏性修复是整行回写：name/OHLC/volume/amount/quality_flag 原样保留，
+    #     仅替换 advance_count/decline_count，不写 ingest_ts（DEFAULT now() 令新行胜出）。
+    #     真源优先：仅当现值 adv=0 AND dec=0 才填；data_source 改标 internal_breadth 可溯源。
+    #     永不 DELETE、永不 ALTER。；源码 L285-L335
+    #   inputs: A4 产物 I2
+    #   outputs: list[dict]
+    # - id: A6
+    #   name_zh: ⑦ IndexBreadthComputeProvider.fetch
+    #   name_en: IndexBreadthComputeProvider.fetch
+    #   intro: Provider 主入口——解析窗→聚合查→零值行查→回写→产 FetchResult。
+    #   desc: 委托 _load_agg/_load_zero_rows 走 DatabaseService（禁裸 duckdb）；
+    #     CH 读取/计算失败返回 FetchResult(error=...) 不抛；覆盖度不足当日跳过并计数。；源码 L367-L425
+    #   inputs: I1 I2
+    #   outputs: O1
+    # 层: 输出
+    # - id: O1
+    #   name_zh: FetchResult 迭代 + c1_market.kline_index 回写行
+    #   name_en: Iterator[FetchResult]
+    #   intro: 每行含 advance_count/decline_count/data_source=internal_breadth 的宽度事实
+    #   downstream: zephyr.regime.features.overlay_features（F4 ad_ratio 截面 z-score 消费）；
+    #     zephyr.data.implementations.breadth_freshness_alerts（新鲜度哨兵区分内生/官方来源）
+    # - id: O2
+    #   name_zh: skipped/covered 计数摘要
+    #   name_en: dict
+    #   intro: 本轮跳过与覆盖计数——fail-visible 的落点（禁静默零值）
+    #   downstream: 调度侧日志与告警线
+    # [/ALGO_FLOW]
+    #
+    # 边:
+    # I1 --> A1
+    # I5 --> A1
+    # I4 --> A1
+    # I3 --> A2
+    # A1 --> A4
+    # A2 --> A4
+    # A3 --> A4
+    # A4 --> A5
+    # I2 --> A5
+    # A1 --> A6
+    # A5 --> A6
+    # A6 --> O1
+    # A6 --> O2
