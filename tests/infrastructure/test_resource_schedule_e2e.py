@@ -119,6 +119,8 @@ def test_e2e_full_chain(sandbox, tmp_path):
         assert probe["measured"]["peak_mem_gb"] is not None
         steps["03_writeback"] = {"ok": True, "measured": probe["measured"]}
     finally:
+        if proc.stdout is not None:
+            proc.stdout.close()  # 管道句柄显式关闭，防 GC 随机点 ResourceWarning 被 filterwarnings=error 升级炸测试
         proc.wait(timeout=15)
 
     # ── ④ 闸检测冲突（互斥组重叠+内存天花板 12>10）──

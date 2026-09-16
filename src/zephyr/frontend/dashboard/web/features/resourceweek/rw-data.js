@@ -2,10 +2,10 @@
  * 刷新=重跑生成器；渲染契约见 features/resourceweek/rw-engine.js。
  */
 window.RW_VIEW_DATA = {
- "generated_at": "2026-09-16T02:05:13+00:00",
+ "generated_at": "2026-09-16T02:29:34+00:00",
  "generator": "scripts/governance/generators/generate_resource_week_view.py",
  "registry": "config\\resource_profile_registry.yaml",
- "registry_sha256": "53151a956a4f",
+ "registry_sha256": "46bed77c7489",
  "week_start": "2026-09-14",
  "days": [
   "09-14 周一",
@@ -16,7 +16,7 @@ window.RW_VIEW_DATA = {
   "09-19 周六",
   "09-20 周日"
  ],
- "total_entities": 56,
+ "total_entities": 57,
  "scheduled": 27,
  "block_conflicts": 0,
  "conflicts": [],
@@ -2046,6 +2046,24 @@ window.RW_VIEW_DATA = {
    "window_type": "manual",
    "window_expr": null,
    "est_duration_min": 60,
+   "slots": [],
+   "unscheduled": true
+  },
+  {
+   "task_id": "manual_kronos_finetune",
+   "resource_class": "gpu",
+   "pool": "heavy",
+   "exclusive_group": [
+    "gpu_default"
+   ],
+   "trading_sensitive": true,
+   "peak_mem_gb": 8.0,
+   "measured_peak_mem_gb": null,
+   "measured_p90_duration_min": null,
+   "status": "planned",
+   "window_type": "manual",
+   "window_expr": null,
+   "est_duration_min": 240,
    "slots": [],
    "unscheduled": true
   },

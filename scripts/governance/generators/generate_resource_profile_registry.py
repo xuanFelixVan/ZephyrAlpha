@@ -171,6 +171,7 @@ DOW_PS1_TO_CRON = {  # ps1 DaysOfWeek → cron dow（0/7=周日…6=周六，APS
 MANUAL_ENTITY_SEED: list[dict] = [
     {"task_id": "manual_factory_grid_executor", "cn": "工厂网格执行器（单批最大算力实体，2万配方）", "class": "cpu_heavy", "dmin": 240, "mem": 4.0, "grp": [], "wt": "manual"},
     {"task_id": "manual_kronos_adapter", "cn": "Kronos 适配器（CUDA auto，GPU 与 Ollama/桌面抢显存）", "class": "gpu", "dmin": 60, "mem": 6.0, "grp": ["gpu_default"], "wt": "manual"},
+    {"task_id": "manual_kronos_finetune", "cn": "Kronos 两段式微调（tokenizer→predictor，torchrun 单卡；2026-09-16 实测 GPU 峰值~7GB、两段各 0.5-2h，kronos_small bs=128）", "class": "gpu", "dmin": 240, "mem": 8.0, "grp": ["gpu_default"], "wt": "manual"},
     {"task_id": "manual_run_sentiment_batch", "cn": "情绪批量（2010-2026 全历史，llm_api_local 小时级）", "class": "llm_api_local", "dmin": 180, "mem": 3.0, "grp": ["llm_local"], "wt": "manual"},
     {"task_id": "manual_run_sft_train", "cn": "SFT 手动重训（GPU 小时级）", "class": "gpu", "dmin": 240, "mem": 8.0, "grp": ["gpu_default"], "wt": "manual"},
     {"task_id": "manual_convert_gguf", "cn": "GGUF 转换（GPU 手动）", "class": "gpu", "dmin": 60, "mem": 6.0, "grp": ["gpu_default"], "wt": "manual"},

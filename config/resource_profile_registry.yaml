@@ -7,11 +7,11 @@ doc_type: register
 ttl: permanent
 title: 资源画像注册表（resource profile registry）
 status: active
-generated_at: '2026-09-16T01:14:27Z'
+generated_at: '2026-09-16T02:29:28Z'
 generated_by: scripts/governance/generators/generate_resource_profile_registry.py
 maintenance: auto
 counting_rule: entities 数组条目数（生成器三源全量再生；条目禁手工增删）
-total_entities: 57
+total_entities: 58
 field_count: 18
 mem_ceiling_gb: 10.0
 mem_ceiling_source: src/zephyr/trading/process_reaper.py _DANGEROUS_MEM_GB（引用不收编）
@@ -658,6 +658,27 @@ entities:
   samples_uri: .runtime/logs/resource_samples/manual_kronos_adapter.jsonl
   status: planned
   notes_zh: Kronos 适配器（CUDA auto，GPU 与 Ollama/桌面抢显存）
+- task_id: manual_kronos_finetune
+  module_id: null
+  map_node_id: null
+  resource_class: gpu
+  pool: heavy
+  peak_mem_gb: 8.0
+  est_duration_min: 240
+  exclusive_group:
+  - gpu_default
+  window_type: manual
+  window_expr: null
+  schedule_truth_source: docs/_working/resource_schedule/resource_schedule_panorama_plan_v1.md
+  trading_sensitive: true
+  measured:
+    peak_mem_gb: null
+    p90_duration_min: null
+    samples: 0
+    last_at: null
+  samples_uri: .runtime/logs/resource_samples/manual_kronos_finetune.jsonl
+  status: planned
+  notes_zh: Kronos 两段式微调（tokenizer→predictor，torchrun 单卡；2026-09-16 实测 GPU 峰值~7GB、两段各 0.5-2h，kronos_small bs=128）
 - task_id: manual_lane_b_miner
   module_id: null
   map_node_id: null
