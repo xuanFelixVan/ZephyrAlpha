@@ -81,7 +81,7 @@ _WARN_CHILDREN = 12    # 单父节点子节点数 warning 阈值（超=提示分
 # D34 交叉索引门禁（Owner 裁定"最细节点须能交叉定位其他全景图"）+ 膨胀预算
 _MAX_NODES_PER_FLOW = 80  # 单流节点数 warning 阈值（防血肉阶段无限膨胀）
 _NODE_ID_RE = r"TDM-[A-Z]-[A-Z0-9]+(-[A-Z0-9]+)*"  # R20：TDM-{流}-{层}-{序号}… 骨架
-_MOD_ID_RE = r"MOD-[A-Z0-9]+(-[A-Z0-9]+)*"        # R21：MOD-* 交叉锚格式
+_MOD_ID_RE = r"MOD-[A-Z0-9]+(?:[_-][A-Z0-9]+)*"    # R21：MOD-* 交叉锚格式（2026-09-16 复核班放宽：depgraph 库侧已下划线治理 MOD-INT_NEWS_CHAIN 类，旧连字符-only 正则与缓存一致性检查互斥=R21 死锁残留）
 _DEPGRAPH_CACHE = ".runtime/depgraph_scan_cache.json"  # path→blueprint_id 映射（派生缓存，缺失记 warning）
 
 # D36 全库交叉轴（Owner 裁定"按消费场景分批打通全库"）：八业务库引用字段
