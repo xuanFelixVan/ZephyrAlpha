@@ -138,3 +138,72 @@ def test_provenance_columns_appended_without_breaking_column_count():
     # INSERT_COLUMNS 必须与行宽一致（否则写入静默错位）
     from schemas.categories.fundamental.consensus_daily_repaired import INSERT_COLUMNS
     assert len(INSERT_COLUMNS.strip("()").split(",")) == 22
+
+
+# ---------------------------------------------------------------------------
+# 评估协议（exp_primary 判据禁挪 / exp_r36 另行预注册降权协议）
+# DS-275 覆盖边界：A 段 2017-01~2021-12、B 段 2026-07-22 起，中间为源覆盖空洞 ⇒
+# 主协议 IS 窗（2019-2023，60 月）在修复源上只有 36 月可得。处置=另立协议，禁挪主闸门。
+# ---------------------------------------------------------------------------
+
+_EVAL = Path(__file__).resolve().parents[2] / "scripts" / "backtest" / "eval_exp_expectations.py"
+_espec = importlib.util.spec_from_file_location("eval_exp_expectations", _EVAL)
+_ev = importlib.util.module_from_spec(_espec)
+sys.modules.setdefault("eval_exp_expectations", _ev)
+_espec.loader.exec_module(_ev)
+
+
+def test_primary_protocol_judgement_criteria_are_frozen():
+    """主协议窗与判据逐字冻结：任何"顺手调一下"都必须先撞红本钉（预注册禁挪）。"""
+    p = _ev._PROTOCOLS["exp_primary"]
+    assert p["is"] == ("2019-01-01", "2023-12-31")
+    assert p["oos"] == ("2024-01-01", "2026-09-11")
+    assert (p["ic_min"], p["sig_rule"], p["coverage_min"]) == (0.02, "t_p<0.05", 0.60)
+    assert p["promotion_authority"] == "authoritative"
+    assert _ev._IS == p["is"] and _ev._OOS == p["oos"] and _ev._PANEL_HI == p["oos"][1]
+
+
+def test_r36_protocol_tightens_not_loosens():
+    """降权协议只能更严：SE 按 1/sqrt(T) 放大 sqrt(60/36)=1.291 ⇒ 显著性门槛提高、
+    效应量地板不动、无 OOS 即无晋级权。放宽任何一项都等于用事后信息改闸门。"""
+    r = _ev._PROTOCOLS["exp_r36"]
+    assert r["is"] == ("2019-01-01", "2021-12-31"), "IS'=修复源真覆盖区（36 个月）"
+    assert r["oos"] == _ev._PROTOCOL_OOS_NA and r["panel_hi"] == "2021-12-31"
+    assert r["sig_rule"] == "|t|>3.0", "收紧到 Harvey-Liu-Zhu 新因子门槛（不得回退 p<0.05）"
+    assert r["ic_min"] == 0.02, "效应量地板与主协议同值（放大它=变相放宽）"
+    assert r["se_inflation_vs_primary"] == 1.291
+    assert r["promotion_authority"] == "none" and r["evidence_class"] == "preliminary-coverage-limited"
+
+
+def test_no_oos_window_reports_not_evaluable_not_zero(monkeypatch):
+    """协议无 OOS 窗 → 显式 not_evaluable；禁让空段落成 n_months=0（与"跑了但样本不足"同形）。"""
+    import pandas as pd
+
+    empty = pd.DataFrame(columns=["td", "ic", "n", "mom_ic"])
+    monkeypatch.setattr(_ev, "_OOS", _ev._PROTOCOL_OOS_NA)
+    seg = _ev._seg_oos(empty)
+    assert seg["status"] == "not_evaluable" and "源覆盖空洞" in seg["reason"]
+    monkeypatch.setattr(_ev, "_OOS", ("2024-01-01", "2026-09-11"))
+    assert "status" not in _ev._seg_oos(empty), "有 OOS 窗时走既有 _seg 口径（零漂移）"
+
+
+def test_cli_r36_on_polluted_source_is_fail_closed(monkeypatch):
+    """exp_r36 只成立在修复源上：污染源跑降权协议=给假历史发一张看起来合法的证 → 退出 2。"""
+    monkeypatch.setattr(sys, "argv", ["eval", "--protocol", "exp_r36", "--source", "polluted"])
+    try:
+        _ev.main()
+        raise AssertionError("必须 fail-closed 退出（argparse error=2）")
+    except SystemExit as exc:
+        assert exc.code == 2
+
+
+def test_cli_exp02_on_repaired_source_is_not_evaluable(monkeypatch, capsys):
+    """exp02 在修复源上必须出 not_evaluable：eps_std 结构性恒 0，分歧归一分母为 0 ⇒
+    跑出来的 IC 是对不存在数据的断言（χ²(n-1) 在 n=1 时自由度 0=无定义）。"""
+    import json as _json
+
+    monkeypatch.setattr(sys, "argv", ["eval", "--factor", "exp02", "--source", "repaired"])
+    _ev.main()
+    rep = _json.loads(capsys.readouterr().out)
+    assert rep["status"] == "not_evaluable" and rep["promotion_authority"] == "none"
+    assert "eps_std" in rep["reason"] and rep["oos_window"] is None

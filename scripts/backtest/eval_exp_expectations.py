@@ -22,7 +22,7 @@
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] consensus_daily/kline 缺失->RuntimeError
-# [TESTS] 纯统计流程（EXP 函数语义由 tests/factor/test_expectations.py 覆盖）；本脚本 --help 即用
+# [TESTS] 纯统计流程（EXP 函数语义由 tests/factor/test_expectations.py 覆盖）；协议表与 CLI fail-closed 由 tests/scripts/test_build_consensus_daily_repaired.py 钉四性质：exp_primary 判据逐字冻结（预注册禁挪）、exp_r36 只严不宽（|t|>3.0 + 效应量地板不动 + 无晋级权）、无 OOS 窗显式 not_evaluable（禁落成 n_months=0）、exp_r36×polluted 与 exp02×repaired 两条 fail-closed 出口
 # [TTL] permanent
 # noqa: m11-perm-manual-legitimate  M11豁免: 因子晋级评估 CLI（A 类一次性运维，随晋级批次按需手动执行）
 """eval_exp_expectations.py — EXP 一致预期族 IC 出证（SOP-B ④⑤⑥）。
@@ -35,6 +35,21 @@
 +滑点压力四档（cfg/20/40/80bp）。
 预注册真源=docs/01_policies_and_standards/policies/expectation_consumption_design_policy.md
 （§8 预注册/§9 数据缺口档案，跑前冻结禁挪）。
+
+双协议口径（--protocol，真源=_PROTOCOLS）
+----------------------------------------
+exp_primary（缺省）＝registry 头 2026-09-12 成文的晋级协议，唯一持晋级权，判据禁挪。
+exp_r36＝因 DS-275 修复源覆盖边界**另行预注册**的降权协议：修复表 A 段止于 2021-12、
+B 段起于 2026-07-22，主协议 IS 窗（2019-2023，60 月）在其上只有 36 月可得。处置不是
+挪主闸门（挪＝用事后信息改判据，预注册即失效），而是另立一个在看结果前就写死口径的
+降权协议：IS' 2019-01~2021-12；显著性由 t p<0.05 **收紧**到 |t|>3.0（Harvey-Liu-Zhu
+2016 新因子门槛；量化依据 SE ∝ 1/sqrt(T)，T 60→36 月使 SE 放大 sqrt(60/36)=1.291 倍，
+同等严格度只能提高门槛）；|IC|>=0.02 效应量地板不动；无 OOS' ⇒ OOS 段显式
+not_evaluable；evidence_class=preliminary-coverage-limited、promotion_authority=none
+（永不产出晋级/否决结论）。仅在 --source repaired 上成立，否则 fail-closed 退出 2。
+另：exp02（修正动量）在修复源上恒 not_evaluable——DS-275 的 eps_std 结构性不可得
+（表内恒 0），以其为分歧归一分母算出的 IC 是对不存在数据的断言（χ²(n-1) 在 n=1 时
+自由度 0＝无定义，0 不是「零分歧」而是「不可得」）。
 
 因子分派（裁定#253，2026-09-15）：
 - exp02 修正动量：消费 eps_consensus/eps_std——值类，历史快照污染（§9.1），首跑已出证
@@ -77,6 +92,42 @@ _SLIP_STRESS = (None, 20.0, 40.0, 80.0)   # None=MatchingConfig 原值 1bp（#23
 _MIN_NAMES = 100
 _PANEL_START = "2018-06-01"     # k=60 回看缓冲
 _AUM = 1_000_000.0              # 组合名义额（最小佣金分摊基数；FQ 同款量级）
+
+# —— 评估协议表（预注册真源；**主协议判据禁挪**，第二协议是另立不是修改）——
+# exp_primary：registry 头 2026-09-12 成文的晋级协议（IS 2019-2023 |IC|>=0.02 &
+#   t p<0.05 & 覆盖>=60%；OOS 2024+ 复核）。唯一持晋级权的协议，字段与历史出证逐字一致。
+# exp_r36：DS-275 修复表覆盖边界所致——A 段 2017-01~2021-12（C4 研报 PDF 发布时点重建），
+#   B 段 2026-07-22 起（analyst_forecast_snapshot 干净 PIT），中间 2022-01~2026-07 是
+#   **源覆盖空洞**（不是构建缺陷）。主协议 IS 窗（2019-2023，60 个月）在修复源上只有
+#   36 个月可得，直接跑会把"覆盖不足"伪装成"因子不行"。处置不是挪闸门（挪=用事后信息
+#   改判据，预注册即失效），而是**另行预注册一个降权协议**，在看结果之前把三件事写死：
+#   · IS' 2019-01~2021-12（36 个月=修复源真覆盖区）；OOS' 结构上不存在 → 9999 哨兵窗
+#     产出零行 + 报告显式 not_evaluable（禁把空段写成 0）；
+#   · 显著性由 t p<0.05 **收紧**到 |t|>3.0（Harvey-Liu-Zhu 2016：多重检验下 t≈2 的
+#     新因子假阳性率不可接受）。量化依据：SE ∝ 1/sqrt(T)（Lo 2002），T 由 60→36 月
+#     使 SE 放大 sqrt(60/36)=1.291 倍——同等严格度只能提高门槛，降低即自我放水；
+#   · |IC|>=0.02 效应量地板**不变**（效应量与样本量无关，放大它=变相放宽）；
+#     覆盖率>=60% 的分母换成 IS' 月数（36），不是主协议的 60；
+#   · evidence_class=preliminary-coverage-limited、promotion_authority=none：本协议
+#     永不产出晋级/否决结论，只产出"修复源上有无信号"的初筛证据，且必须与主协议出证
+#     分开归档（同一 JSON 里混两口径=未来读者无法分辨哪张证有晋级权）。
+_PROTOCOL_OOS_NA = ("9999-12-31", "9999-12-31")   # OOS 不存在的哨兵窗（零行，禁伪装成 0）
+_PROTOCOLS = {
+    "exp_primary": {
+        "is": _IS, "oos": _OOS, "panel_hi": _OOS[1],
+        "ic_min": 0.02, "sig_rule": "t_p<0.05", "coverage_min": 0.60,
+        "evidence_class": "pre-registered-primary", "promotion_authority": "authoritative",
+        "se_inflation_vs_primary": 1.0,
+    },
+    "exp_r36": {
+        "is": ("2019-01-01", "2021-12-31"), "oos": _PROTOCOL_OOS_NA,
+        "panel_hi": "2021-12-31",
+        "ic_min": 0.02, "sig_rule": "|t|>3.0", "coverage_min": 0.60,
+        "evidence_class": "preliminary-coverage-limited", "promotion_authority": "none",
+        "se_inflation_vs_primary": 1.291,
+    },
+}
+_PANEL_HI = _OOS[1]   # 面板上界（main 按协议改写；缺省=主协议 OOS 末，历史行为零漂移）
 
 # 表名走 TableRegistry 真源（#ARCH-CH-024：已注册表名禁硬编码字面量）
 from zephyr.data.table_registry import get_registry  # noqa: E402
@@ -355,7 +406,7 @@ def _full_eval(fac: pd.DataFrame, px_close: pd.DataFrame, bench: pd.Series,
     fac_wide = fac.pivot(index="td", columns="symbol", values="f").sort_index()
     icdf = build_ic_table(fac_wide, px_close, mes, fwd_map, mom_k)
     seg = {"is": _seg(icdf[icdf["td"] <= _IS[1]]),
-           "oos": _seg(icdf[icdf["td"] >= _OOS[0]])}
+           "oos": _seg_oos(icdf)}
     seg["prune_material"] = _prune_material(fac_wide, px_close, mes, fwd_map)
     seg["narrow_top50"] = _narrow(fac_wide, px_close, bench, mes, fwd_map)
     return seg
@@ -394,6 +445,20 @@ def _seg(d: pd.DataFrame) -> dict:
             "t_p": round(float(tp.pvalue), 5),
             "coverage_mean": round(float(d["n"].mean()), 0),
             "mom_ic_mean": None if d["mom_ic"].isna().all() else round(float(d["mom_ic"].mean()), 4)}
+
+
+def _seg_oos(d: pd.DataFrame) -> dict:
+    """OOS 段：协议无 OOS 窗时显式 not_evaluable（禁把"结构上不存在"写成 n_months=0）。
+
+    exp_r36 的 OOS' 在 DS-275 上结构不存在（A 段止于 2021-12，B 段起于 2026-07-22，
+    2024+ 复核窗整体落在源覆盖空洞里）。空段经 _seg 会得到 {"n_months": 0,
+    "ic_mean": None}——与"跑了但样本不足"同形，读者无法分辨，故另立显式态。
+    """
+    if _OOS == _PROTOCOL_OOS_NA:
+        return {"status": "not_evaluable",
+                "reason": "协议无 OOS 窗：DS-275 修复源 2022-01~2026-07 为源覆盖空洞，"
+                          "2024+ 复核窗无数据可得（非因子失败、非构建缺陷）"}
+    return _seg(d[d["td"] >= _OOS[0]])
 
 
 def _prune_material(fac_wide: pd.DataFrame, px_close: pd.DataFrame,
@@ -500,7 +565,18 @@ def _narrow(fac_wide: pd.DataFrame, px_close: pd.DataFrame, bench: pd.Series,
     return out
 
 
+def _emit(report: dict, out: str | None) -> None:
+    """出证 JSON 唯一出口（正常出证与 not_evaluable 短路出证共用，禁两套写法漂移）。"""
+    line = json.dumps(report, ensure_ascii=False, indent=1, default=str)
+    if out:
+        Path(out).write_text(line, encoding="utf-8")
+        print(f"WROTE {out}")
+    else:
+        print(line)
+
+
 def main() -> None:
+    global _IS, _OOS, _PANEL_HI
     ap = argparse.ArgumentParser(description="EXP 族 SOP-B ④⑤⑥ 出证（§8 预注册判据，禁挪）")
     ap.add_argument("--factor", default="exp02", choices=["exp02", "exp04", "exp06"],
                     help="评估因子（exp02=值类已 data-gap；exp04/06=计数/评级类，裁定#253 放行）")
@@ -509,15 +585,48 @@ def main() -> None:
                     help="一致预期输入表：polluted=DS-229（默认，既有出证口径零漂移）/"
                          "repaired=DS-275 历史修复双轨表（仅影响 exp02/exp06 的 eps/rating 输入，"
                          "exp04 走研报计数不受影响）")
+    ap.add_argument("--protocol", choices=tuple(_PROTOCOLS), default="exp_primary",
+                    help="评估协议：exp_primary=registry 头 2026-09-12 成文的晋级协议（缺省，"
+                         "判据禁挪、历史出证零漂移）/ exp_r36=为 DS-275 覆盖边界**另行预注册**的"
+                         "降权协议（IS' 2019-01~2021-12、|t|>3.0、无 OOS'、"
+                         "evidence_class=preliminary-coverage-limited、无晋级权）")
     args = ap.parse_args()
+    if args.protocol == "exp_r36" and args.source != "repaired":
+        ap.error(
+            "--protocol exp_r36 只在 --source repaired 上成立：该协议是为 DS-275 的源覆盖边界"
+            "（A 段止 2021-12 / B 段起 2026-07-22）另行预注册的降权口径；在 DS-229 上跑它"
+            "=给「历史快照当发布时点」的污染数据发一张看起来合法的降权证（口径混用比不跑更坏）"
+        )
     cons_table = (
         _CONSENSUS_TABLE_REPAIRED if args.source == "repaired" else _CONSENSUS_TABLE_POLLUTED
     )
 
+    proto = _PROTOCOLS[args.protocol]
+    if args.factor == "exp02" and args.source == "repaired":
+        # 出声不静默：DS-275 的 eps_std 结构性不可得（表内恒 0，见 schema COMMENT 与
+        # consensus_daily_repaired_compute 头 §eps_std）。exp02 修正动量以 eps_std 为
+        # 分歧归一分母——拿恒 0 的列算出来的 IC 是对不存在数据的断言，且分母为 0 时
+        # 因子退化（χ²(n-1)：n=1 自由度 0=无定义，0 不是"零分歧"而是"不可得"）。
+        # 故直接产出 not_evaluable 出证，绝不跑出一个看起来像数的假 IC。
+        _emit({
+            "factor": "exp02", "protocol": args.protocol, "consensus_table": cons_table,
+            "status": "not_evaluable",
+            "reason": "DS-275 的 eps_std 结构性不可得（A 段=窗口聚合值不经原始离散度、"
+                      "B 段=源快照本身是聚合值），表内恒 0；exp02 的分歧归一项分母为 0 ⇒ "
+                      "因子退化。0 不得读作「零分歧」（χ²(n-1) 在 n=1 时自由度 0=无定义）",
+            "remedy": "分歧类因子在修复源上需 n_reports>=2 的原始离散度真源；"
+                      "A 段可由 pdf_forecast_extracted 的逐研报 EPS 重算（另案，未授权本批）",
+            "evidence_class": proto["evidence_class"], "promotion_authority": "none",
+            "is_window": list(proto["is"]), "oos_window": None,
+        }, args.out)
+        return
+
+    _IS, _OOS, _PANEL_HI = proto["is"], proto["oos"], proto["panel_hi"]
+
     if args.factor == "exp02":
         cons = load_consensus_fy1(cons_table)
         cal = load_calendar()
-        mes = month_ends(cal, _IS[0], _OOS[1])
+        mes = month_ends(cal, _IS[0], _PANEL_HI)
         cal_pos = {d: i for i, d in enumerate(cal)}
         fwd_map = {d: (cal[cal_pos[d] + _FWD] if cal_pos[d] + _FWD < len(cal) else None)
                    for d in mes}
@@ -534,7 +643,7 @@ def main() -> None:
             pd.to_datetime(cal)).sort_index()
     else:
         cal = load_calendar()
-        mes = month_ends(cal, _IS[0], _OOS[1])
+        mes = month_ends(cal, _IS[0], _PANEL_HI)
         cal_pos = {d: i for i, d in enumerate(cal)}
         fwd_map = {d: (cal[cal_pos[d] + _FWD] if cal_pos[d] + _FWD < len(cal) else None)
                    for d in mes}
@@ -553,8 +662,13 @@ def main() -> None:
             pd.to_datetime(cal)).sort_index()
 
     report: dict = {"factor": args.factor, "consensus_table": cons_table,
+                    "protocol": args.protocol,
+                    "evidence_class": proto["evidence_class"],
+                    "promotion_authority": proto["promotion_authority"],
+                    "se_inflation_vs_primary": proto["se_inflation_vs_primary"],
                     "is_window": list(_IS),
-                    "oos_window": list(_OOS), "fwd_td": _FWD}
+                    "oos_window": None if _OOS == _PROTOCOL_OOS_NA else list(_OOS),
+                    "fwd_td": _FWD}
     trials = 0
     if args.factor == "exp02":
         for k in _K_GRID:
@@ -562,7 +676,7 @@ def main() -> None:
             fac_wide = fac.pivot(index="td", columns="symbol", values="f").sort_index()
             icdf = build_ic_table(fac_wide, px_close, mes, fwd_map, k)
             seg = {"is": _seg(icdf[icdf["td"] <= _IS[1]]),
-                   "oos": _seg(icdf[icdf["td"] >= _OOS[0]])}
+                   "oos": _seg_oos(icdf)}
             if k == _K_GRID[0]:
                 seg["prune_material"] = _prune_material(fac_wide, px_close, mes, fwd_map)
                 seg["narrow_top50"] = _narrow(fac_wide, px_close, bench, mes, fwd_map)
@@ -595,15 +709,20 @@ def main() -> None:
 
     report["n_trials"] = trials
     report["thresholds"] = {
-        "ic_gate": "IS |IC|>=0.02 & t_p<0.05 & coverage>=60%（registry 头 2026-09-12 成文）",
-        "narrow_gate": "IS 超额 Sharpe>=0.5 & OOS/IS>=0.7（FQ 同款）；can_deploy 与 P0-003 解耦",
+        "ic_gate": (
+            f"IS |IC|>={proto['ic_min']:g} & {proto['sig_rule']} & coverage>={proto['coverage_min']:.0%}"
+            + ("（registry 头 2026-09-12 成文）" if args.protocol == "exp_primary"
+               else "（另行预注册降权协议：覆盖率分母=IS' 月数；SE 相对主协议放大 "
+                    f"{proto['se_inflation_vs_primary']} 倍=sqrt(60/36)；无晋级权）")
+        ),
+        "narrow_gate": (
+            "IS 超额 Sharpe>=0.5 & OOS/IS>=0.7（FQ 同款）；can_deploy 与 P0-003 解耦"
+            if _OOS != _PROTOCOL_OOS_NA else
+            "IS' 超额 Sharpe>=0.5；OOS/IS>=0.7 一项 not_evaluable（协议无 OOS 窗）——"
+            "缺一项即不构成 narrow 通过，禁把缺项当满足"
+        ),
     }
-    line = json.dumps(report, ensure_ascii=False, indent=1, default=str)
-    if args.out:
-        Path(args.out).write_text(line, encoding="utf-8")
-        print(f"WROTE {args.out}")
-    else:
-        print(line)
+    _emit(report, args.out)
 
 
 if __name__ == "__main__":
