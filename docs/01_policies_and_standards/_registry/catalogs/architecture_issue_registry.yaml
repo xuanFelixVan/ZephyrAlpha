@@ -21911,3 +21911,35 @@ entries:
   status: open
   created: '2026-09-17'
   last_updated: '2026-09-17'
+- issue_id: "#ARCH-327"
+  title: >-
+    双锁统一加固自落地即静默失效：队列 CAS 给 _GlobalCommitLock 传 str（契约是 Path），
+    AttributeError 被 fail-open 的 except Exception 吞掉并写成"锁不可得"——W4 孤魂提交
+    301a6ee82a 的防线实际是空的，且既有测试因整体 mock 该锁而全绿
+  severity: P1高
+  adjudication: >-
+    实测：本战役第 8 轮端到端核销期间，enqueue 自举 drain 的输出里冒出 traceback
+    （src/zephyr/shared/io/paths.py:112 `parts = root.parts` ← git_commit_gateway.py:321
+    ← scripts/governance/commit_queue_landing.py:600 `_GlobalCommitLock(str(self.repo_root), …)`），
+    而 drain 仍报 DRAIN: done=2 ——即"每次 CAS 落地都拿不到全局锁、静默退化裸 CAS"。
+    判据分家：①根因是入参类型（_GlobalCommitLock 声明 Path，内部 strip_session_worktree 取
+    .parts），不是锁竞争；②措辞"全局锁不可得（30s 超时）"把代码缺陷读成环境噪声，
+    30s 超时更是误导（构造期就炸，根本没等）；③测试面同样漏判——
+    tests/governance/rule_bridge/test_dual_lock_unification.py 两条用例都把
+    _GlobalCommitLock patch 成 MagicMock，传什么都"通过"，红蓝价值=零。
+    影响面：该加固落地批（e9381d33dc，09-16 12:36 维护班）以来的**全部**队列 CAS 落地都在无全局锁下与直连提交
+    竞争 dev ref（W4 型孤魂窗口重新打开）；CAS 自身仍原子，故未观测到实际孤魂产生，
+    属防线失效非已造成损失。
+  fix_phase: >-
+    已修（三层且只收紧，不放松任何兜底）：①调用方改传 Path（根因）；②_GlobalCommitLock
+    入口把 project_root 归一为 Path 并把注解改 str | Path——让"类型契约违背"在这条
+    常被远端 except 包住的路径上**不可能再伪装成锁竞争**；③告警正文带异常类型与消息
+    （exc_info 保留），下次同类问题一眼可归因；④红蓝钉
+    test_cas_critical_section_really_holds_the_real_lock：**禁 mock 锁本体**，用真锁 +
+    tmp_path 作 repo_root，在 update-ref 临界区内当场断言全局锁文件存在（退出后已释放）。
+    机证=预修复码（dev b5e72ff59f 复刻 worktree）该钉 FAILED 并打出同一条 AttributeError
+    traceback；修复后 test_dual_lock_unification + test_commit_queue_landing 40 passed，
+    网关/守护/门禁侧 53 passed + 1 xpassed。
+  status: fixed
+  created: '2026-09-17'
+  last_updated: '2026-09-17'

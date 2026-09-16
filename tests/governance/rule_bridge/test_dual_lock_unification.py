@@ -55,6 +55,40 @@ class TestCasGlobalLock:
             landing._advance_dev("old_sha", "new_sha")
             landing._git_repo.assert_called_once()
 
+    def test_cas_critical_section_really_holds_the_real_lock(self, tmp_path):
+        """#ARCH-327 红蓝钉：**不 mock 锁本体**，断言 CAS 真的跑在真全局锁里。
+
+        上面两条把 `_GlobalCommitLock` 整体 patch 成 MagicMock——入参传 `str` 也"通过"，
+        而真类把它交给 `strip_session_worktree`（取 `.parts`）→ AttributeError 被
+        fail-open 的 `except Exception` 吞掉并写成"锁不可得"，于是双锁统一自落地起
+        在真路由上从未生效（W4 孤魂 301a6ee82a 的防线实际是空的）。本钉改用真锁 +
+        tmp_path 作 repo_root，在 `_git_repo`（update-ref 临界区）里当场断言锁文件存在：
+        入参类型错 → 锁拿不到 → 断言即红。
+        """
+        import sys
+        sys.path.insert(0, "scripts")
+        sys.path.insert(0, "src")
+        from scripts.governance.commit_queue_landing import WorktreeLanding
+
+        from zephyr.gov_enforcement.rule_bridge.git_commit_gateway import _GLOBAL_LOCK_FILE
+
+        landing = WorktreeLanding(repo_root=tmp_path)
+        lock_path = tmp_path / ".ailocks" / _GLOBAL_LOCK_FILE
+        held_inside_cas: list[bool] = []
+
+        def _git_repo_probe(*_args, **_kwargs):
+            held_inside_cas.append(lock_path.is_file())
+            return MagicMock(returncode=0)
+
+        landing._git_repo = _git_repo_probe
+        landing._advance_dev("old_sha", "new_sha")
+
+        assert held_inside_cas == [True], (
+            "update-ref 临界区内全局锁文件不存在＝双锁统一加固未生效"
+            "（锁构造异常被 fail-open 吞掉，须查入参类型/锁路径）"
+        )
+        assert not lock_path.exists(), "退出临界区后锁文件应已释放"
+
 
 class TestOrphanDetection:
     """②网关孤魂检测：commit 后 hash 不在 HEAD 祖先链→落审计事件。"""

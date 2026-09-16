@@ -268,3 +268,31 @@ date: 2026-09-17
   `ARCH-` 前缀），读回复解析断言 `ids[-1] == "#ARCH-326"` 当场抓到并在同一工作区副本内改正——
   注册表是永久产物，**读回断言必须比"写成功"更严**，它抓到的正是这类事后 review 抓不住的错。
   机证：对 dev 纯追加 26 行、`cl[:len(dev)] == dev` 逐位相同（零删除），条目数 771→772 且 `issue_id` 全表唯一。
+
+## 15. 双锁统一加固自落地即空转：一条被 fail-open 吞掉的 AttributeError（P1，#ARCH-327，已修）
+
+- **线索来源不是评审而是"残留噪声"**：第 8 轮核销期间 `enqueue` 自举 drain 的 stdout 里夹着一条
+  traceback（`src/zephyr/shared/io/paths.py:112 parts = root.parts` ← `git_commit_gateway.py:321`
+  ← `scripts/governance/commit_queue_landing.py:600`），而 drain 照样报 `DRAIN: done=2`——
+  "异常被兜底吞掉但业务仍成功"的典型形态。若无第 8 轮把 stdout 落盘复查，这条会一直沉在日志里。
+- **机械归因**：`_advance_dev` 把 `str(self.repo_root)` 传给 `_GlobalCommitLock`——该类注解是 `Path`
+  且内部 `strip_session_worktree` 要取 `.parts` → **每次 CAS 落地构造锁即 AttributeError** →
+  被 `except Exception` 吞掉并写成"全局锁不可得（30s 超时），退化为裸 CAS"。措辞把代码缺陷
+  伪装成环境噪声，"30s 超时"更是误导（构造期就炸，根本没等待）。
+- **影响面**：该加固落地批（`e9381d33dc`，09-16 12:36 维护班；W4 孤魂提交 301a6ee82a 的防线：
+  队列 CAS 与直连提交共用同一把全局锁）以来，**全部**队列 CAS 落地都在无全局锁下与直连提交
+  竞争 dev ref。CAS 自身仍原子，故未观测到实际孤魂——属**防线失效**，非已造成损失（不夸大也不淡化）。
+- **测试面同漏（更值得记住的一半）**：`test_dual_lock_unification.py` 两条用例都把
+  `_GlobalCommitLock` 整体 patch 成 MagicMock——传什么都"通过"，验证加固的测试对加固本身零判别力。
+- **治本三层，且只收紧**：①调用方改传 `Path`（根因）；②`_GlobalCommitLock` 入口把入参归一为
+  `Path`（注解 `str | Path`）——让类型契约违背在这条"常被远端 except 包住"的路径上**不可能再
+  伪装成锁竞争**；③告警正文带异常类型与消息（`exc_info` 保留），下次同类问题一眼可归因。
+- **红蓝机证**：新钉 `test_cas_critical_section_really_holds_the_real_lock` **禁 mock 锁本体**——
+  真锁 + `tmp_path` 作 `repo_root`，在 `update-ref` 临界区内当场断言全局锁文件存在、退出后已释放。
+  预修复码复刻（scratch worktree @ dev `b5e72ff59f`）该钉 **FAILED 并打出同一条 AttributeError
+  traceback**；修复后 dual-lock + landing 共 40 passed，gateway/daemon/ALGO-FLOW-LINK 共
+  53 passed + 1 xpassed。
+- **一般化教训（已进项目记忆）**：被 `except Exception` 包住的加固代码，必须至少有一条
+  **"不 mock 该防线自身"** 的钉；否则 mock 掉防线的测试会让失效长期不可见。兜底日志
+  **不得预设失败类别**（"超时/不可得"），必须打印异常类型——否则代码缺陷会被读成环境噪声，
+  本役这条空转了 ~17 小时（09-16 12:36 → 09-17 06:00 复查）。

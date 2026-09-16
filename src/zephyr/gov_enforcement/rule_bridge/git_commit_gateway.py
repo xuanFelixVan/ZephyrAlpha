@@ -312,13 +312,15 @@ class _GlobalCommitLock:
 
     def __init__(
         self,
-        project_root: Path,
+        project_root: str | Path,
         timeout: float = _LOCK_TIMEOUT_DEFAULT,
         poll_interval: float = _POLL_INTERVAL,
     ) -> None:
         from zephyr.shared.io.paths import strip_session_worktree
 
-        self._lock_file = strip_session_worktree(project_root) / ".ailocks" / _GLOBAL_LOCK_FILE
+        # 入参归一：本组件常被远端 except Exception 包住使用，str 入参会在那里炸成
+        # AttributeError 并伪装成"锁不可得"（#ARCH-327 实证：加固静默失效数小时）。
+        self._lock_file = strip_session_worktree(Path(project_root)) / ".ailocks" / _GLOBAL_LOCK_FILE
         self._lock_file.parent.mkdir(parents=True, exist_ok=True)
         self._timeout = timeout
         self._poll_interval = poll_interval

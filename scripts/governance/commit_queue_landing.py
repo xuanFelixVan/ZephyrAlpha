@@ -597,12 +597,18 @@ class WorktreeLanding:
         _lock = None
         try:
             _lock = _GlobalCommitLock(
-                str(self.repo_root),
+                self.repo_root,
                 timeout=30.0,  # 短窗：直连提交临界区最长 ~5min，30s 探测够用
             )
             _lock.__enter__()
-        except Exception:  # noqa: BLE001 — 锁不可得=裸 CAS 降级（fail-open 加固）
-            logger.warning("[landing] 双锁统一：全局锁不可得（30s 超时），退化为裸 CAS", exc_info=True)
+        except Exception as exc:  # noqa: BLE001 — 锁不可得=裸 CAS 降级（fail-open 加固）
+            # 异常类型必须进正文：本行曾把 str 传给 _GlobalCommitLock（其契约是 Path，
+            # 内部 strip_session_worktree 取 .parts）→ AttributeError 被 "锁不可得" 的
+            # 措辞读成锁竞争，加固自落地起静默失效数小时（#ARCH-327）。
+            logger.warning(
+                "[landing] 双锁统一：全局锁未取到（%s: %s），退化为裸 CAS",
+                type(exc).__name__, exc, exc_info=True,
+            )
             _lock = None
         try:
             r = self._git_repo("update-ref", f"refs/heads/{self.target_branch}", new_sha, old_sha, check=False)
