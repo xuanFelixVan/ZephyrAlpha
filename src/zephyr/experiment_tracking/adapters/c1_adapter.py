@@ -45,46 +45,7 @@ Zephyr 语义 → 实验跟踪映射:
 依据: 11_regime_backtest_validation_plan §3 ② + backtest_observability_mlflow_plan.md M1-3
 Version: 0.1.0
 
-# [ALGO_FLOW]
-# 层: 输入
-# - id: I1
-#   name: result 参数
-#   fields: 参数 result，类型注解 C1ComparisonResult
-#   code: c1_adapter.py 顶层公共函数形参（AST 提取）
-# - id: I2
-#   name: comparator 参数
-#   fields: 参数 comparator（无注解）
-#   code: c1_adapter.py 顶层公共函数形参（AST 提取）
-# - id: I3
-#   name: mode 参数
-#   fields: 参数 mode（无注解）
-#   code: c1_adapter.py 顶层公共函数形参（AST 提取）
-# - id: I4
-#   name: strategy_name 参数
-#   fields: 参数 strategy_name（无注解）
-#   code: c1_adapter.py 顶层公共函数形参（AST 提取）
-# 层: 算法
-# - id: A1
-#   name_zh: ① track_c1_result
-#   name_en: track_c1_result
-#   intro: 把 ``C1ComparisonResult`` 记录为一个实验跟踪 run。
-#   desc: 把 ``C1ComparisonResult`` 记录为一个实验跟踪 run。 Args: result: C1 开/关对比结果（含四项 verdicts + passed +…；源码 L263-L310
-#   inputs: result comparator mode strategy_name extra_tags
-#   outputs: str
-# 层: 输出
-# - id: O1
-#   name_zh: str
-#   name_en: str
-#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
-#   downstream: zephyr.backtest.regime_validation.c1_runner (track=True 时 lazy import 调用)
-# [/ALGO_FLOW]
-#
-# 边:
-# I1 --> A1
-# I2 --> A1
-# I3 --> A1
-# I4 --> A1
-# A1 --> O1
+# [ALGO_FLOW] external: docs/03_modules/_domain_infrastructure/algo_flow/adapters/c1_adapter.yaml
 """
 
 from __future__ import annotations

@@ -39,40 +39,7 @@ OWASP ASI01-10 映射（tests/a2a/test_a2a_check_gateway.py 逐条用例）：
 与既有件分工：本网关管"调用前检查"；a2a_check.verify_a2a_pair 管通信对简表；
 governance/policy_engine 管策略、rate_limiter 管限流（本网关不重复实现）。
 
-# [ALGO_FLOW]
-# 层: 输入
-# - id: I1
-#   name: request 参数
-#   fields: 参数 request，类型注解 A2AGateRequest
-#   code: a2a_check_gateway.py 顶层公共函数形参（AST 提取）
-# 层: 算法
-# - id: A1
-#   name_zh: ① build_signed_event
-#   name_en: build_signed_event
-#   intro: 签名规范结构——调用方与网关 MUST 用本函数构造待签名事件（防结构歧义）。
-#   desc: 签名规范结构——调用方与网关 MUST 用本函数构造待签名事件（防结构歧义）。；源码 L139-L147
-#   inputs: request
-#   outputs: dict[str, Any]
-# - id: A2
-#   name_zh: ② A2aCheckGateway
-#   name_en: A2aCheckGateway
-#   intro: A2A 检查网关：身份→能力→边界三段校验，PASS/DENY/GATED 三态。
-#   desc: A2A 检查网关：身份→能力→边界三段校验，PASS/DENY/GATED 三态。；公共方法（定义序）: check, pending_approvals, approve；源码 L150-L271
-#   inputs: registry approval_queue clock
-#   outputs: 返回值
-#   （注：A2 之后另有 3 个公共定义未列入（含 3 个数据契约/异常/枚举声明类），见源码）
-# 层: 输出
-# - id: O1
-#   name_zh: dict[str, Any]
-#   name_en: dict[str, Any]
-#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
-#   downstream: 见模块头 [CONSUMERS]
-# [/ALGO_FLOW]
-#
-# 边:
-# I1 --> A1
-# A1 --> A2
-# A2 --> O1
+# [ALGO_FLOW] external: docs/03_modules/_domain_infrastructure/algo_flow/a2a_protocol/a2a_check_gateway.yaml
 """
 
 from __future__ import annotations

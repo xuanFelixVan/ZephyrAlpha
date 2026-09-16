@@ -1,0 +1,44 @@
+# ALGO_FLOW 外部真源——config_center（_domain_infrastructure 域，真源 src/zephyr/infrastructure/config/config_center.py）
+# 2026-09-15 P2-1 契约头减负批量出仓：docstring 内联块逐字节副本，extractor 经
+# external 锚加载走同一 parse_algo_flow 管线；算法公共面变化时同步更新本块。
+doc_type: architecture_view
+ttl: permanent
+module: src.zephyr.infrastructure.config.config_center
+source_of_truth: src/zephyr/infrastructure/config/config_center.py
+algo_flow: |
+    # [ALGO_FLOW]
+    # 层: 输入
+    # - id: I1
+    #   name: audit_sink 参数
+    #   fields: 参数 audit_sink（无注解）
+    #   code: config_center.py 顶层公共函数形参（AST 提取）
+    # - id: I2
+    #   name: guard 参数
+    #   fields: 参数 guard（无注解）
+    #   code: config_center.py 顶层公共函数形参（AST 提取）
+    # - id: I3
+    #   name: clock 参数
+    #   fields: 参数 clock（无注解）
+    #   code: config_center.py 顶层公共函数形参（AST 提取）
+    # 层: 算法
+    # - id: A1
+    #   name_zh: ① ConfigCenter
+    #   name_en: ConfigCenter
+    #   intro: 统一配置中心件（注册表 + 版本快照 + 审计 + 回滚 + 守卫）。
+    #   desc: 统一配置中心件（注册表 + 版本快照 + 审计 + 回滚 + 守卫）。；公共方法（定义序）: register, set, rollback, get, version_of, list_versions, snaps…
+    #   inputs: audit_sink guard clock
+    #   outputs: 返回值
+    #   （注：A1 之后另有 3 个公共定义未列入（含 3 个数据契约/异常/枚举声明类），见源码）
+    # 层: 输出
+    # - id: O1
+    #   name_zh: 模块公共 API 面（4 定义）
+    #   name_en: public defs
+    #   intro: ConfigCenter
+    #   downstream: 运行时装配批（配置注册与热更新装配 / 审计路由 / 热更新守卫钩子绑定）
+    # [/ALGO_FLOW]
+    #
+    # 边:
+    # I1 --> A1
+    # I2 --> A1
+    # I3 --> A1
+    # A1 --> O1

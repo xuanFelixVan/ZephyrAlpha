@@ -1,0 +1,72 @@
+# ALGO_FLOW 外部真源——experiment_tracker（_domain_infrastructure 域，真源 src/zephyr/experiment_tracking/experiment_tracker.py）
+# 2026-09-15 P2-1 契约头减负批量出仓：docstring 内联块逐字节副本，extractor 经
+# external 锚加载走同一 parse_algo_flow 管线；算法公共面变化时同步更新本块。
+doc_type: architecture_view
+ttl: permanent
+module: src.zephyr.experiment_tracking.experiment_tracker
+source_of_truth: src/zephyr/experiment_tracking/experiment_tracker.py
+algo_flow: |
+    # [ALGO_FLOW]
+    # 层: 输入
+    # - id: I1
+    #   name: backend 参数
+    #   fields: 参数 backend（无注解）
+    #   code: experiment_tracker.py 顶层公共函数形参（AST 提取）
+    # - id: I2
+    #   name: run_id 参数
+    #   fields: 参数 run_id（无注解）
+    #   code: experiment_tracker.py 顶层公共函数形参（AST 提取）
+    # - id: I3
+    #   name: component 参数
+    #   fields: 参数 component（无注解）
+    #   code: experiment_tracker.py 顶层公共函数形参（AST 提取）
+    # - id: I4
+    #   name: run_name 参数
+    #   fields: 参数 run_name（无注解）
+    #   code: experiment_tracker.py 顶层公共函数形参（AST 提取）
+    # 层: 算法
+    # - id: A1
+    #   name_zh: ① RunContext
+    #   name_en: RunContext
+    #   intro: 单次 run 的上下文管理器。
+    #   desc: 单次 run 的上下文管理器。 用法: with tracker.start_run("c1-validation", tags={...}) as run: run.log_p…；公共方法（定义序）: log_par…
+    #   inputs: backend run_id component run_name
+    #   outputs: 返回值
+    # - id: A2
+    #   name_zh: ② ExperimentTracker
+    #   name_en: ExperimentTracker
+    #   intro: 统一实验跟踪入口（单一 JSON 后端）。
+    #   desc: 统一实验跟踪入口（单一 JSON 后端）。 自动选择 backend: - enable_tracking=False → _NullBackend - 否则 → Fallbac…；公共方法（定义序）: availab…
+    #   inputs: config
+    #   outputs: 返回值
+    # - id: A3
+    #   name_zh: ③ get_tracker
+    #   name_en: get_tracker
+    #   intro: 获取全局 tracker 单例（首次调用按 config 初始化）。
+    #   desc: 获取全局 tracker 单例（首次调用按 config 初始化）。；源码 L255-L260
+    #   inputs: 无参数
+    #   outputs: ExperimentTracker
+    # - id: A4
+    #   name_zh: ④ reset_tracker
+    #   name_en: reset_tracker
+    #   intro: 重置单例（测试用：改环境变量后重新初始化）。
+    #   desc: 重置单例（测试用：改环境变量后重新初始化）。；源码 L263-L266
+    #   inputs: 无参数
+    #   outputs: 返回值
+    # 层: 输出
+    # - id: O1
+    #   name_zh: ExperimentTracker
+    #   name_en: ExperimentTracker
+    #   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+    #   downstream: zephyr.experiment_tracking.adapters.c1_adapter ; zephyr.experiment_tracking.que…
+    # [/ALGO_FLOW]
+    #
+    # 边:
+    # I1 --> A1
+    # I2 --> A1
+    # I3 --> A1
+    # I4 --> A1
+    # A1 --> A2
+    # A2 --> A3
+    # A3 --> A4
+    # A4 --> O1

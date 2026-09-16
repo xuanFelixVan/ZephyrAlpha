@@ -1,0 +1,33 @@
+# ALGO_FLOW 外部真源——escalation_bridge（_domain_infrastructure 域，真源 src/zephyr/infrastructure/auto_fix_engine/escalation_bridge.py）
+# 2026-09-15 P2-1 契约头减负批量出仓：docstring 内联块逐字节副本，extractor 经
+# external 锚加载走同一 parse_algo_flow 管线；算法公共面变化时同步更新本块。
+doc_type: architecture_view
+ttl: permanent
+module: src.zephyr.infrastructure.auto_fix_engine.escalation_bridge
+source_of_truth: src/zephyr/infrastructure/auto_fix_engine/escalation_bridge.py
+algo_flow: |
+    # [ALGO_FLOW]
+    # 层: 输入
+    # - id: I1
+    #   name: config 参数
+    #   fields: 参数 config（无注解）
+    #   code: escalation_bridge.py 顶层公共函数形参（AST 提取）
+    # 层: 算法
+    # - id: A1
+    #   name_zh: ① EscalationBridge
+    #   name_en: EscalationBridge
+    #   intro: class EscalationBridge 源码 L59-L126
+    #   desc: 公共方法（定义序）: escalate, escalate_dead_letter, get_escalation_history, enabled；源码 L59-L126
+    #   inputs: config
+    #   outputs: 返回值
+    # 层: 输出
+    # - id: O1
+    #   name_zh: 模块公共 API 面（1 定义）
+    #   name_en: public defs
+    #   intro: EscalationBridge
+    #   downstream: engine.py;fix_reliability.py
+    # [/ALGO_FLOW]
+    #
+    # 边:
+    # I1 --> A1
+    # A1 --> O1

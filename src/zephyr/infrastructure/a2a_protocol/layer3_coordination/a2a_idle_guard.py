@@ -34,31 +34,7 @@
 """
 A2A 空闲守卫
 
-# [ALGO_FLOW]
-# 层: 输入
-# - id: I1
-#   name: idle_timeout 参数
-#   fields: 参数 idle_timeout（无注解）
-#   code: a2a_idle_guard.py 顶层公共函数形参（AST 提取）
-# 层: 算法
-# - id: A1
-#   name_zh: ① A2AIdleGuard
-#   name_en: A2AIdleGuard
-#   intro: class A2AIdleGuard 源码 L65-L72
-#   desc: 公共方法（定义序）: check_idle；源码 L65-L72
-#   inputs: idle_timeout
-#   outputs: 返回值
-# 层: 输出
-# - id: O1
-#   name_zh: 模块公共 API 面（1 定义）
-#   name_en: public defs
-#   intro: A2AIdleGuard
-#   downstream: 见模块头 [CONSUMERS]
-# [/ALGO_FLOW]
-#
-# 边:
-# I1 --> A1
-# A1 --> O1
+# [ALGO_FLOW] external: docs/03_modules/_domain_infrastructure/algo_flow/a2a_protocol/layer3_coordination/a2a_idle_guard.yaml
 """
 
 

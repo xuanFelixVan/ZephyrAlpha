@@ -1,0 +1,34 @@
+# ALGO_FLOW 外部真源——config（_domain_infrastructure 域，真源 src/zephyr/experiment_tracking/config.py）
+# 2026-09-15 P2-1 契约头减负批量出仓：docstring 内联块逐字节副本，extractor 经
+# external 锚加载走同一 parse_algo_flow 管线；算法公共面变化时同步更新本块。
+doc_type: architecture_view
+ttl: permanent
+module: src.zephyr.experiment_tracking.config
+source_of_truth: src/zephyr/experiment_tracking/config.py
+algo_flow: |
+    # [ALGO_FLOW]
+    # 层: 输入
+    # - id: I1
+    #   name: 模块内部数据
+    #   fields: 无公共形参/无再导出（AST 事实）
+    #   code: config.py
+    # 层: 算法
+    # - id: A1
+    #   name_zh: ① load_config
+    #   name_en: load_config
+    #   intro: 从环境变量加载配置（覆盖默认值）。
+    #   desc: 从环境变量加载配置（覆盖默认值）。；源码 L83-L86
+    #   inputs: 无参数
+    #   outputs: ExperimentTrackingConfig
+    #   （注：A1 之后另有 1 个公共定义未列入（含 1 个数据契约/异常/枚举声明类），见源码）
+    # 层: 输出
+    # - id: O1
+    #   name_zh: ExperimentTrackingConfig
+    #   name_en: ExperimentTrackingConfig
+    #   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+    #   downstream: zephyr.experiment_tracking.experiment_tracker ; zephyr.experiment_tracking.query
+    # [/ALGO_FLOW]
+    #
+    # 边:
+    # I1 --> A1
+    # A1 --> O1

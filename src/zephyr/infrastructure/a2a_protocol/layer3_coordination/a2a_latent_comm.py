@@ -25,32 +25,7 @@ A2A 隐性通信检测 — 检测 Agent 通过副作用隐式通信
 
 方法: 分析 Agent 间没有显式 A2A 消息但访问了相同资源的场景
 
-# [ALGO_FLOW]
-# 层: 输入
-# - id: I1
-#   name: confidence_threshold 参数
-#   fields: 参数 confidence_threshold（无注解）
-#   code: a2a_latent_comm.py 顶层公共函数形参（AST 提取）
-# 层: 算法
-# - id: A1
-#   name_zh: ① A2ALatentComm
-#   name_en: A2ALatentComm
-#   intro: class A2ALatentComm 源码 L70-L98
-#   desc: 公共方法（定义序）: record_access, detect；源码 L70-L98
-#   inputs: confidence_threshold
-#   outputs: 返回值
-#   （注：A1 之后另有 1 个公共定义未列入（含 1 个数据契约/异常/枚举声明类），见源码）
-# 层: 输出
-# - id: O1
-#   name_zh: 模块公共 API 面（2 定义）
-#   name_en: public defs
-#   intro: A2ALatentComm
-#   downstream: 见模块头 [CONSUMERS]
-# [/ALGO_FLOW]
-#
-# 边:
-# I1 --> A1
-# A1 --> O1
+# [ALGO_FLOW] external: docs/03_modules/_domain_infrastructure/algo_flow/a2a_protocol/layer3_coordination/a2a_latent_comm.yaml
 """
 
 from __future__ import annotations

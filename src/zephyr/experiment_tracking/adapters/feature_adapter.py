@@ -31,46 +31,7 @@ L_INFRA_TELEMETRY — regime_feature_builder 特征矩阵 → 实验跟踪语义
 依据: 50_backtest_observability_workplan §3 ⑥
 Version: 0.1.0
 
-# [ALGO_FLOW]
-# 层: 输入
-# - id: I1
-#   name: features 参数
-#   fields: 参数 features，类型注解 pd.DataFrame
-#   code: feature_adapter.py 顶层公共函数形参（AST 提取）
-# - id: I2
-#   name: builder_info 参数
-#   fields: 参数 builder_info（无注解）
-#   code: feature_adapter.py 顶层公共函数形参（AST 提取）
-# - id: I3
-#   name: snapshot_rows 参数
-#   fields: 参数 snapshot_rows（无注解）
-#   code: feature_adapter.py 顶层公共函数形参（AST 提取）
-# - id: I4
-#   name: lineage 参数
-#   fields: 参数 lineage（无注解）
-#   code: feature_adapter.py 顶层公共函数形参（AST 提取）
-# 层: 算法
-# - id: A1
-#   name_zh: ① track_feature_build
-#   name_en: track_feature_build
-#   intro: 把一次特征矩阵构建记录为一个实验跟踪 run。
-#   desc: 把一次特征矩阵构建记录为一个实验跟踪 run。 Args: features: 特征矩阵（DataFrame 鸭子类型，读 columns/shape/isna/index）。…；源码 L91-L145
-#   inputs: features builder_info snapshot_rows lineage extra_tags
-#   outputs: str
-# 层: 输出
-# - id: O1
-#   name_zh: str
-#   name_en: str
-#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
-#   downstream: regime 特征构建入口（track 时 lazy import 调用）
-# [/ALGO_FLOW]
-#
-# 边:
-# I1 --> A1
-# I2 --> A1
-# I3 --> A1
-# I4 --> A1
-# A1 --> O1
+# [ALGO_FLOW] external: docs/03_modules/_domain_infrastructure/algo_flow/adapters/feature_adapter.yaml
 """
 
 from __future__ import annotations

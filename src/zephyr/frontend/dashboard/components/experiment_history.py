@@ -26,36 +26,7 @@ fetch_* dataclass 为数据契约（G1 升级时复用），render 层将来重�
 依据: 51_panel_experiment_history_mlflow_retirement.md 工作流 B + §七 P0×3/P1×4/P2×3
 Version: 0.1.0
 
-# [ALGO_FLOW]
-# 层: 输入
-# - id: I1
-#   name: 实验历史数据请求
-#   fields: component 名 / run_id / 多选 run_id 列表
-#   code: fetch_experiment_history / fetch_c1_comparison / render_experiment_history
-# 层: 算法
-# - id: A1
-#   name_zh: 后端查询 + fallback
-#   name_en: backend_query_fallback
-#   intro: query.list_runs/get_run 拉取；失败→空状态 payload 不抛（ERROR_CONTRACT）
-#   code: fetch_* 系列
-# - id: A2
-#   name_zh: 双净值归一化对比
-#   name_en: nav_normalized_compare
-#   intro: baseline/experiment nav 归一化 + 时间轴交集对齐（P0-1/P0-2）
-#   code: _nav_figure
-# - id: A3
-#   name_zh: 视图渲染
-#   name_en: view_render
-#   intro: pn 可用→Panel 布局；pn=None→纯 dict（可测）
-#   code: _render_c1_comparison / _render_multi_run_comparison / _detail
-# 层: 输出
-# - id: O1
-#   name_zh: Tab payload
-#   name_en: tab_payload
-#   intro: 含 _layout 的 dict 供 app_panel 挂载
-#   downstream: zephyr.frontend.dashboard.app_panel
-# [/ALGO_FLOW]
-# 边: I1 --> A1 ; A1 --> A2 ; A2 --> A3 ; A3 --> O1
+# [ALGO_FLOW] external: docs/03_modules/_domain_frontend/algo_flow/experiment_history.yaml
 """
 
 from __future__ import annotations

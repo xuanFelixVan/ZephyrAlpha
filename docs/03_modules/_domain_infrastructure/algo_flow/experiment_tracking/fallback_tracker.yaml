@@ -1,0 +1,33 @@
+# ALGO_FLOW 外部真源——fallback_tracker（_domain_infrastructure 域，真源 src/zephyr/experiment_tracking/fallback_tracker.py）
+# 2026-09-15 P2-1 契约头减负批量出仓：docstring 内联块逐字节副本，extractor 经
+# external 锚加载走同一 parse_algo_flow 管线；算法公共面变化时同步更新本块。
+doc_type: architecture_view
+ttl: permanent
+module: src.zephyr.experiment_tracking.fallback_tracker
+source_of_truth: src/zephyr/experiment_tracking/fallback_tracker.py
+algo_flow: |
+    # [ALGO_FLOW]
+    # 层: 输入
+    # - id: I1
+    #   name: fallback_dir 参数
+    #   fields: 参数 fallback_dir（无注解）
+    #   code: fallback_tracker.py 顶层公共函数形参（AST 提取）
+    # 层: 算法
+    # - id: A1
+    #   name_zh: ① FallbackBackend
+    #   name_en: FallbackBackend
+    #   intro: 单一 JSON 实验跟踪后端（MLflow 已退役，本后端即唯一生产后端）。
+    #   desc: 单一 JSON 实验跟踪后端（MLflow 已退役，本后端即唯一生产后端）。 每次 run 写一个 JSON 文件到 {fallback_dir}/{component}/{ru…；公共方法（定义序）: start_r…
+    #   inputs: fallback_dir
+    #   outputs: 返回值
+    # 层: 输出
+    # - id: O1
+    #   name_zh: 模块公共 API 面（1 定义）
+    #   name_en: public defs
+    #   intro: FallbackBackend
+    #   downstream: zephyr.experiment_tracking.experiment_tracker
+    # [/ALGO_FLOW]
+    #
+    # 边:
+    # I1 --> A1
+    # A1 --> O1

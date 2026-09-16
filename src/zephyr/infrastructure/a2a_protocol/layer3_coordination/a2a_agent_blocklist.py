@@ -55,31 +55,7 @@ A2A Agent 黑名单管理（重命名自 a2a_protocol_security.py，AI-14 审计
 
 接口: A2AAgentBlocklist.block(agent_id, reason) / is_blocked(agent_id)
 
-# [ALGO_FLOW]
-# 层: 输入
-# - id: I1
-#   name: 模块内部数据
-#   fields: 无公共形参/无再导出（AST 事实）
-#   code: a2a_agent_blocklist.py
-# 层: 算法
-# - id: A1
-#   name_zh: ① A2AAgentBlocklist
-#   name_en: A2AAgentBlocklist
-#   intro: A2A Agent 黑名单管理器。
-#   desc: A2A Agent 黑名单管理器。 提供 agent 级别的拉黑与查询，用于治理违规 agent 的通信隔离。；公共方法（定义序）: block, is_blocked；源码 L86-L127
-#   inputs: 无参数
-#   outputs: 返回值
-# 层: 输出
-# - id: O1
-#   name_zh: 模块公共 API 面（1 定义）
-#   name_en: public defs
-#   intro: A2AAgentBlocklist
-#   downstream: 见模块头 [CONSUMERS]
-# [/ALGO_FLOW]
-#
-# 边:
-# I1 --> A1
-# A1 --> O1
+# [ALGO_FLOW] external: docs/03_modules/_domain_infrastructure/algo_flow/a2a_protocol/layer3_coordination/a2a_agent_blocklist.yaml
 """
 
 

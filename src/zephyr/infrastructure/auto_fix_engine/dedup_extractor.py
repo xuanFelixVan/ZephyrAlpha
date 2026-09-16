@@ -19,31 +19,7 @@
 """
 
 
-# [ALGO_FLOW]
-# 层: 输入
-# - id: I1
-#   name: min_occurrences 参数
-#   fields: 参数 min_occurrences（无注解）
-#   code: dedup_extractor.py 顶层公共函数形参（AST 提取）
-# 层: 算法
-# - id: A1
-#   name_zh: ① DedupExtractor
-#   name_en: DedupExtractor
-#   intro: class DedupExtractor 源码 L72-L250
-#   desc: 公共方法（定义序）: normalize_code, min_occurrences, scan, fix, validate, rollback；源码 L72-L250
-#   inputs: min_occurrences
-#   outputs: 返回值
-# 层: 输出
-# - id: O1
-#   name_zh: 模块公共 API 面（1 定义）
-#   name_en: public defs
-#   intro: DedupExtractor
-#   downstream: engine.py;MOD-INF-017(code-dedup-engine)
-# [/ALGO_FLOW]
-#
-# 边:
-# I1 --> A1
-# A1 --> O1
+# [ALGO_FLOW] external: docs/03_modules/_domain_infrastructure/algo_flow/auto_fix_engine/dedup_extractor.yaml
 """
 
 from __future__ import annotations

@@ -32,49 +32,7 @@ L_INFRA_TELEMETRY — C2/C3 验证器结果 → 实验跟踪语义适配器（50
 依据: 50_backtest_observability_workplan §3 ⑥
 Version: 0.1.0
 
-# [ALGO_FLOW]
-# 层: 输入
-# - id: I1
-#   name: report 参数
-#   fields: 参数 report，类型注解 C2ProtectionReport
-#   code: c2c3_adapter.py 顶层公共函数形参（AST 提取）
-# - id: I2
-#   name: lineage 参数
-#   fields: 参数 lineage（无注解）
-#   code: c2c3_adapter.py 顶层公共函数形参（AST 提取）
-# - id: I3
-#   name: extra_tags 参数
-#   fields: 参数 extra_tags（无注解）
-#   code: c2c3_adapter.py 顶层公共函数形参（AST 提取）
-# 层: 算法
-# - id: A1
-#   name_zh: ① track_c2_result
-#   name_en: track_c2_result
-#   intro: 把 C2 极端事件保护报告记录为一个实验跟踪 run（鸭子类型，只读 report 属性）。
-#   desc: 把 C2 极端事件保护报告记录为一个实验跟踪 run（鸭子类型，只读 report 属性）。；源码 L109-L136
-#   inputs: report lineage extra_tags
-#   outputs: str
-# - id: A2
-#   name_zh: ② track_c3_result
-#   name_en: track_c3_result
-#   intro: 把 C3 节流归因报告记录为一个实验跟踪 run（鸭子类型，只读 report 属性）。
-#   desc: 把 C3 节流归因报告记录为一个实验跟踪 run（鸭子类型，只读 report 属性）。；源码 L139-L168
-#   inputs: report lineage extra_tags
-#   outputs: str
-# 层: 输出
-# - id: O1
-#   name_zh: str
-#   name_en: str
-#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
-#   downstream: C2/C3 验证入口（track 时 lazy import 调用）
-# [/ALGO_FLOW]
-#
-# 边:
-# I1 --> A1
-# I2 --> A1
-# I3 --> A1
-# A1 --> A2
-# A2 --> O1
+# [ALGO_FLOW] external: docs/03_modules/_domain_infrastructure/algo_flow/adapters/c2c3_adapter.yaml
 """
 
 from __future__ import annotations

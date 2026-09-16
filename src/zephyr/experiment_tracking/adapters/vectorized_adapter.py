@@ -32,46 +32,7 @@ L_INFRA_TELEMETRY — vectorized_engine 回测结果 → 实验跟踪语义适�
 依据: 50_backtest_observability_workplan §3 ⑥
 Version: 0.1.0
 
-# [ALGO_FLOW]
-# 层: 输入
-# - id: I1
-#   name: result 参数
-#   fields: 参数 result，类型注解 BacktestResult
-#   code: vectorized_adapter.py 顶层公共函数形参（AST 提取）
-# - id: I2
-#   name: config 参数
-#   fields: 参数 config（无注解）
-#   code: vectorized_adapter.py 顶层公共函数形参（AST 提取）
-# - id: I3
-#   name: nav_series 参数
-#   fields: 参数 nav_series（无注解）
-#   code: vectorized_adapter.py 顶层公共函数形参（AST 提取）
-# - id: I4
-#   name: lineage 参数
-#   fields: 参数 lineage（无注解）
-#   code: vectorized_adapter.py 顶层公共函数形参（AST 提取）
-# 层: 算法
-# - id: A1
-#   name_zh: ① track_vectorized_backtest
-#   name_en: track_vectorized_backtest
-#   intro: 把一次向量化回测结果记录为一个实验跟踪 run。
-#   desc: 把一次向量化回测结果记录为一个实验跟踪 run。 Args: result: CTR-P1-016 回测结果（鸭子类型，读 strategy_id/日期/七项指标）。 confi…；源码 L95-L157
-#   inputs: result config nav_series lineage extra_tags
-#   outputs: str
-# 层: 输出
-# - id: O1
-#   name_zh: str
-#   name_en: str
-#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
-#   downstream: 向量化回测入口（track 时 lazy import 调用）
-# [/ALGO_FLOW]
-#
-# 边:
-# I1 --> A1
-# I2 --> A1
-# I3 --> A1
-# I4 --> A1
-# A1 --> O1
+# [ALGO_FLOW] external: docs/03_modules/_domain_infrastructure/algo_flow/adapters/vectorized_adapter.yaml
 """
 
 from __future__ import annotations

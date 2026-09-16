@@ -35,45 +35,7 @@ P3 禁磁盘 IO（除日志）、miniQMT 连接独占、Redis 本地读路径。
 
 硬边界：核独占/禁磁盘 IO/连接独占等系统级应用属 Owner 窗口，AI 不执行。
 
-# [ALGO_FLOW]
-# 层: 输入
-# - id: I1
-#   name: stage_latencies_ms 参数
-#   fields: 参数 stage_latencies_ms，类型注解 dict[str, float]
-#   code: hot_plane_budget.py 顶层公共函数形参（AST 提取）
-# 层: 算法
-# - id: A1
-#   name_zh: ① check_budget
-#   name_en: check_budget
-#   intro: 判定一次 Tick→风控→下单端到端时延是否在 10ms 预算内。
-#   desc: 判定一次 Tick→风控→下单端到端时延是否在 10ms 预算内。 Args: stage_latencies_ms: {阶段名: 实测时延 ms}，必须恰好覆盖三阶段。 Ret…；源码 L176-L209
-#   inputs: stage_latencies_ms
-#   outputs: BudgetVerdict
-# - id: A2
-#   name_zh: ② render_hot_plane_declaration
-#   name_en: render_hot_plane_declaration
-#   intro: 产出 Hot 平面配置就绪件声明 dict（YAML 可序列化；仅声明不执行）。
-#   desc: 产出 Hot 平面配置就绪件声明 dict（YAML 可序列化；仅声明不执行）。 硬边界：核独占/禁磁盘 IO/连接独占等系统级应用属 Owner 窗口。；源码 L212-L240
-#   inputs: 无参数
-#   outputs: dict[str, object]
-#   （注：A2 之后另有 5 个公共定义未列入（含 5 个数据契约/异常/枚举声明类），见源码）
-# 层: 输出
-# - id: O1
-#   name_zh: BudgetVerdict
-#   name_en: BudgetVerdict
-#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
-#   downstream: 见模块头 [CONSUMERS]
-# - id: O2
-#   name_zh: dict[str, object]
-#   name_en: dict[str, object]
-#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
-#   downstream: 见模块头 [CONSUMERS]
-# [/ALGO_FLOW]
-#
-# 边:
-# I1 --> A1
-# A1 --> A2
-# A2 --> O1
+# [ALGO_FLOW] external: docs/03_modules/_domain_infrastructure/algo_flow/infrastructure/hot_plane_budget.yaml
 """
 
 from __future__ import annotations

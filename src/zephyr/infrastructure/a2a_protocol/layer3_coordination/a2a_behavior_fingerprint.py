@@ -26,39 +26,7 @@ A2A 行为指纹 — Agent 行为模式学习与画像
 
 当 Agent 行为偏离其历史指纹时 -> 触发 A2AAnomalyDetector
 
-# [ALGO_FLOW]
-# 层: 输入
-# - id: I1
-#   name: 模块内部数据
-#   fields: 无公共形参/无再导出（AST 事实）
-#   code: a2a_behavior_fingerprint.py
-# 层: 算法
-# - id: A1
-#   name_zh: ① BehaviorFingerprint
-#   name_en: BehaviorFingerprint
-#   intro: class BehaviorFingerprint 源码 L70-L95
-#   desc: 公共方法（定义序）: similarity, top_actions, avg_session_seconds；源码 L70-L95
-#   inputs: 无参数
-#   outputs: 返回值
-# - id: A2
-#   name_zh: ② A2ABehaviorFingerprint
-#   name_en: A2ABehaviorFingerprint
-#   intro: class A2ABehaviorFingerprint 源码 L98-L134
-#   desc: 公共方法（定义序）: record_action, record_file_touch, record_session, record_interaction, get_fingerprint, compare；源码…
-#   inputs: 无参数
-#   outputs: 返回值
-# 层: 输出
-# - id: O1
-#   name_zh: 模块公共 API 面（2 定义）
-#   name_en: public defs
-#   intro: BehaviorFingerprint, A2ABehaviorFingerprint
-#   downstream: 见模块头 [CONSUMERS]
-# [/ALGO_FLOW]
-#
-# 边:
-# I1 --> A1
-# A1 --> A2
-# A2 --> O1
+# [ALGO_FLOW] external: docs/03_modules/_domain_infrastructure/algo_flow/a2a_protocol/layer3_coordination/a2a_behavior_fingerprint.yaml
 """
 
 from __future__ import annotations

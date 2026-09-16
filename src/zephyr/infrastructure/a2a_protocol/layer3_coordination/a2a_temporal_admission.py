@@ -34,31 +34,7 @@
 """
 时序准入控制
 
-# [ALGO_FLOW]
-# 层: 输入
-# - id: I1
-#   name: max_concurrent 参数
-#   fields: 参数 max_concurrent（无注解）
-#   code: a2a_temporal_admission.py 顶层公共函数形参（AST 提取）
-# 层: 算法
-# - id: A1
-#   name_zh: ① A2ATemporalAdmission
-#   name_en: A2ATemporalAdmission
-#   intro: class A2ATemporalAdmission 源码 L65-L82
-#   desc: 公共方法（定义序）: admit, enter, leave；源码 L65-L82
-#   inputs: max_concurrent
-#   outputs: 返回值
-# 层: 输出
-# - id: O1
-#   name_zh: 模块公共 API 面（1 定义）
-#   name_en: public defs
-#   intro: A2ATemporalAdmission
-#   downstream: 见模块头 [CONSUMERS]
-# [/ALGO_FLOW]
-#
-# 边:
-# I1 --> A1
-# A1 --> O1
+# [ALGO_FLOW] external: docs/03_modules/_domain_infrastructure/algo_flow/a2a_protocol/layer3_coordination/a2a_temporal_admission.yaml
 """
 
 

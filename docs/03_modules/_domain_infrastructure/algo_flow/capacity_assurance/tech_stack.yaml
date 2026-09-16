@@ -1,0 +1,42 @@
+# ALGO_FLOW 外部真源——tech_stack（_domain_infrastructure 域，真源 src/zephyr/infrastructure/capacity_assurance/tech_stack.py）
+# 2026-09-15 P2-1 契约头减负批量出仓：docstring 内联块逐字节副本，extractor 经
+# external 锚加载走同一 parse_algo_flow 管线；算法公共面变化时同步更新本块。
+doc_type: architecture_view
+ttl: permanent
+module: src.zephyr.infrastructure.capacity_assurance.tech_stack
+source_of_truth: src/zephyr/infrastructure/capacity_assurance/tech_stack.py
+algo_flow: |
+    # [ALGO_FLOW]
+    # 层: 输入
+    # - id: I1
+    #   name: manifest_path 参数
+    #   fields: 参数 manifest_path，类型注解 str | None
+    #   code: tech_stack.py 顶层公共函数形参（AST 提取）
+    # 层: 算法
+    # - id: A1
+    #   name_zh: ① TechStackValidator
+    #   name_en: TechStackValidator
+    #   intro: 启动时逐一校验 16 项技术栈组件的可用性。
+    #   desc: 启动时逐一校验 16 项技术栈组件的可用性。 支持从 YAML manifest 加载决策清单，然后逐项检查。；公共方法（定义序）: default_decisions, validate, inspect_pydan…
+    #   inputs: manifest_path
+    #   outputs: 返回值
+    # - id: A2
+    #   name_zh: ② validate_on_startup
+    #   name_en: validate_on_startup
+    #   intro: validate_on_startup(manifest_path) 源码 L315-L325
+    #   desc: 源码 L315-L325
+    #   inputs: manifest_path
+    #   outputs: bool
+    #   （注：A2 之后另有 1 个公共定义未列入（含 1 个数据契约/异常/枚举声明类），见源码）
+    # 层: 输出
+    # - id: O1
+    #   name_zh: bool
+    #   name_en: bool
+    #   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+    #   downstream: 见模块头 [CONSUMERS]
+    # [/ALGO_FLOW]
+    #
+    # 边:
+    # I1 --> A1
+    # A1 --> A2
+    # A2 --> O1

@@ -19,31 +19,7 @@
 """
 
 
-# [ALGO_FLOW]
-# 层: 输入
-# - id: I1
-#   name: 模块内部数据
-#   fields: 无公共形参/无再导出（AST 事实）
-#   code: dep_version_fixer.py
-# 层: 算法
-# - id: A1
-#   name_zh: ① DepVersionFixer
-#   name_en: DepVersionFixer
-#   intro: class DepVersionFixer 源码 L117-L257
-#   desc: 公共方法（定义序）: is_higher, scan, fix, validate, rollback；源码 L117-L257
-#   inputs: 无参数
-#   outputs: 返回值
-# 层: 输出
-# - id: O1
-#   name_zh: 模块公共 API 面（1 定义）
-#   name_en: public defs
-#   intro: DepVersionFixer
-#   downstream: engine.py
-# [/ALGO_FLOW]
-#
-# 边:
-# I1 --> A1
-# A1 --> O1
+# [ALGO_FLOW] external: docs/03_modules/_domain_infrastructure/algo_flow/auto_fix_engine/dep_version_fixer.yaml
 """
 
 from __future__ import annotations

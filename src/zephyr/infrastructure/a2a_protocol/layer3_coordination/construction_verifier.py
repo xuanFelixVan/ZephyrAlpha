@@ -18,32 +18,7 @@
 """
 施工后验证器 — 自指悖论防御：不橡胶图章，真正验证 A2A 协议模块的施工完整性
 
-# [ALGO_FLOW]
-# 层: 输入
-# - id: I1
-#   name: 模块内部数据
-#   fields: 无公共形参/无再导出（AST 事实）
-#   code: construction_verifier.py
-# 层: 算法
-# - id: A1
-#   name_zh: ① ConstructionVerifier
-#   name_en: ConstructionVerifier
-#   intro: class ConstructionVerifier 源码 L200-L285
-#   desc: 公共方法（定义序）: verify；源码 L200-L285
-#   inputs: 无参数
-#   outputs: 返回值
-#   （注：A1 之后另有 2 个公共定义未列入（含 2 个数据契约/异常/枚举声明类），见源码）
-# 层: 输出
-# - id: O1
-#   name_zh: 模块公共 API 面（3 定义）
-#   name_en: public defs
-#   intro: ConstructionVerifier
-#   downstream: 见模块头 [CONSUMERS]
-# [/ALGO_FLOW]
-#
-# 边:
-# I1 --> A1
-# A1 --> O1
+# [ALGO_FLOW] external: docs/03_modules/_domain_infrastructure/algo_flow/a2a_protocol/layer3_coordination/construction_verifier.yaml
 """
 
 import ast

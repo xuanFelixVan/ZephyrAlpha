@@ -18,40 +18,7 @@
 """
 
 
-# [ALGO_FLOW]
-# 层: 输入
-# - id: I1
-#   name: project_root 参数
-#   fields: 参数 project_root（无注解）
-#   code: metadata.py 顶层公共函数形参（AST 提取）
-# 层: 算法
-# - id: A1
-#   name_zh: ① GitMetadataExtractor
-#   name_en: GitMetadataExtractor
-#   intro: class GitMetadataExtractor 源码 L116-L283
-#   desc: 公共方法（定义序）: current_lines, parse_date, is_ai_commit, root, extract；源码 L116-L283
-#   inputs: project_root
-#   outputs: 返回值
-# - id: A2
-#   name_zh: ② MultiIDERuleGenerator
-#   name_en: MultiIDERuleGenerator
-#   intro: 多 IDE 规则文件生成器——从 asset-inventory 配置生成。
-#   desc: 多 IDE 规则文件生成器——从 asset-inventory 配置生成。 支持: Cursor (.cursorrules) / Trae (.trae/rules/) /…；公共方法（定义序）: root, ge…
-#   inputs: project_root
-#   outputs: 返回值
-#   （注：A2 之后另有 2 个公共定义未列入（含 2 个数据契约/异常/枚举声明类），见源码）
-# 层: 输出
-# - id: O1
-#   name_zh: 模块公共 API 面（4 定义）
-#   name_en: public defs
-#   intro: GitMetadataExtractor, MultiIDERuleGenerator
-#   downstream: 见模块头 [CONSUMERS]
-# [/ALGO_FLOW]
-#
-# 边:
-# I1 --> A1
-# A1 --> A2
-# A2 --> O1
+# [ALGO_FLOW] external: docs/03_modules/_domain_infrastructure/algo_flow/asset_inventory/metadata.yaml
 """
 
 from zephyr.shared.infra.process_pool import run_subprocess_hidden

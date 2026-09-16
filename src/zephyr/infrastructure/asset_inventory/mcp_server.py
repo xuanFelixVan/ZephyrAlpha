@@ -30,61 +30,7 @@ AssetInventory MCP Server — MOD-INF-026 蓝图 §21
     聚合 schema，无明细数组，工具语义不可实现（零生产挂载实证，rg dispatch_tool
     零调用方）。
 
-# [ALGO_FLOW]
-# 层: 输入
-# - id: I1
-#   name_zh: 索引文件
-#   name_en: unified_index
-#   fields: data/asset_index/unified-asset-index.yaml（宽口径 v2 计数聚合）
-# 层: 算法
-# - id: A1
-#   name_zh: ① get_asset_summary
-#   name_en: get_asset_summary
-#   intro: get_asset_summary() 源码 L118-L137
-#   desc: 源码 L118-L137
-#   inputs: 无参数
-#   outputs: str
-# - id: A2
-#   name_zh: ② get_health_dashboard
-#   name_en: get_health_dashboard
-#   intro: get_health_dashboard() 源码 L140-L159
-#   desc: 源码 L140-L159
-#   inputs: 无参数
-#   outputs: str
-# - id: A3
-#   name_zh: ③ dispatch_tool
-#   name_en: dispatch_tool
-#   intro: dispatch_tool(name) 源码 L177-L189
-#   desc: 源码 L177-L189
-#   inputs: name
-#   outputs: str
-# - id: A4
-#   name_zh: ④ list_tools
-#   name_en: list_tools
-#   intro: list_tools() 源码 L192-L193
-#   desc: 源码 L192-L193
-#   inputs: 无参数
-#   outputs: list[dict[str, str]]
-# 层: 输出
-# - id: O1
-#   name_zh: str
-#   name_en: str
-#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
-#   downstream: 见模块头 [CONSUMERS]
-# - id: O2
-#   name_zh: list[dict[str, str]]
-#   name_en: list[dict[str, str]]
-#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
-#   downstream: 见模块头 [CONSUMERS]
-# [/ALGO_FLOW]
-#
-# 边:
-# I1 --> A1
-# I1 --> A2
-# A1 --> O1
-# A2 --> O1
-# A3 --> O1
-# A4 --> O2
+# [ALGO_FLOW] external: docs/03_modules/_domain_infrastructure/algo_flow/asset_inventory/mcp_server.yaml
 """
 
 import json

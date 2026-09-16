@@ -31,32 +31,7 @@ AUD-DRAFT-001 裁定=做 P0）。
 gpu:allocation Hash 字段草稿（命名空间契约引用 MOD-INF-063，不重复建 Redis SSOT）。
 采集归 trading/gpu_monitor.py（nvidia-smi 快照）；系统级显存分配/进程重启属 Owner 窗口。
 
-# [ALGO_FLOW]
-# 层: 输入
-# - id: I1
-#   name: 模块内部数据
-#   fields: 无公共形参/无再导出（AST 事实）
-#   code: gpu_hot_swap_model.py
-# 层: 算法
-# - id: A1
-#   name_zh: ① GpuHotSwapModel
-#   name_en: GpuHotSwapModel
-#   intro: GPU 上岗热交换模型——契约校验与状态草稿产出（纯声明，零系统级执行）。
-#   desc: GPU 上岗热交换模型——契约校验与状态草稿产出（纯声明，零系统级执行）。；公共方法（定义序）: validate_allocation, plan_swap, render_gpu_allocation_state,…
-#   inputs: 无参数
-#   outputs: 返回值
-#   （注：A1 之后另有 6 个公共定义未列入（含 6 个数据契约/异常/枚举声明类），见源码）
-# 层: 输出
-# - id: O1
-#   name_zh: 模块公共 API 面（7 定义）
-#   name_en: public defs
-#   intro: GpuHotSwapModel
-#   downstream: P4 运维进程（GPU 调度决策消费契约）；P5 盘后训练进程（上岗画像）
-# [/ALGO_FLOW]
-#
-# 边:
-# I1 --> A1
-# A1 --> O1
+# [ALGO_FLOW] external: docs/03_modules/_domain_infrastructure/algo_flow/infrastructure/gpu_hot_swap_model.yaml
 """
 
 from __future__ import annotations

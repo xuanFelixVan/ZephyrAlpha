@@ -1,0 +1,33 @@
+# ALGO_FLOW 外部真源——shadow_workspace（_domain_infrastructure 域，真源 src/zephyr/infrastructure/auto_fix_engine/shadow_workspace.py）
+# 2026-09-15 P2-1 契约头减负批量出仓：docstring 内联块逐字节副本，extractor 经
+# external 锚加载走同一 parse_algo_flow 管线；算法公共面变化时同步更新本块。
+doc_type: architecture_view
+ttl: permanent
+module: src.zephyr.infrastructure.auto_fix_engine.shadow_workspace
+source_of_truth: src/zephyr/infrastructure/auto_fix_engine/shadow_workspace.py
+algo_flow: |
+    # [ALGO_FLOW]
+    # 层: 输入
+    # - id: I1
+    #   name: config 参数
+    #   fields: 参数 config（无注解）
+    #   code: shadow_workspace.py 顶层公共函数形参（AST 提取）
+    # 层: 算法
+    # - id: A1
+    #   name_zh: ① ShadowWorkspace
+    #   name_en: ShadowWorkspace
+    #   intro: class ShadowWorkspace 源码 L119-L269
+    #   desc: 公共方法（定义序）: run_type_check, run_test, run_ruff, run_pytest, run_mypy, run_lint, pytest_timeout, base_dir, pref…
+    #   inputs: config
+    #   outputs: 返回值
+    # 层: 输出
+    # - id: O1
+    #   name_zh: 模块公共 API 面（1 定义）
+    #   name_en: public defs
+    #   intro: ShadowWorkspace
+    #   downstream: engine.py
+    # [/ALGO_FLOW]
+    #
+    # 边:
+    # I1 --> A1
+    # A1 --> O1

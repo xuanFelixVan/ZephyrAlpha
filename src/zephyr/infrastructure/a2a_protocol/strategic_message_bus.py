@@ -23,47 +23,7 @@ B11-02493（AUD-DRAFT-001-DIGEST P2 波 P2-W01，CAND-INFRAA2A-002，A7-Agent
 网关（注入网关回调，未注入 Fail-Closed）+ 层内直连层间留痕（审计回
 调）。战术层/执行层总线作为同机制实例（layer 参数实例化）。
 
-# [ALGO_FLOW]
-# 层: 输入
-# - id: I1
-#   name: layer 参数
-#   fields: 参数 layer（无注解）
-#   code: strategic_message_bus.py 顶层公共函数形参（AST 提取）
-# - id: I2
-#   name: agent_layers 参数
-#   fields: 参数 agent_layers（无注解）
-#   code: strategic_message_bus.py 顶层公共函数形参（AST 提取）
-# - id: I3
-#   name: a2a_gateway 参数
-#   fields: 参数 a2a_gateway（无注解）
-#   code: strategic_message_bus.py 顶层公共函数形参（AST 提取）
-# - id: I4
-#   name: audit_sink 参数
-#   fields: 参数 audit_sink（无注解）
-#   code: strategic_message_bus.py 顶层公共函数形参（AST 提取）
-# 层: 算法
-# - id: A1
-#   name_zh: ① StrategicMessageBus
-#   name_en: StrategicMessageBus
-#   intro: 三层逻辑总线件（命名空间校验 + 层级权限 + 跨层网关 + 审计）。
-#   desc: 三层逻辑总线件（命名空间校验 + 层级权限 + 跨层网关 + 审计）。；公共方法（定义序）: subscribe, publish, layer, subscriber_count；源码 L116-L225
-#   inputs: layer agent_layers a2a_gateway audit_sink clock
-#   outputs: 返回值
-#   （注：A1 之后另有 3 个公共定义未列入（含 3 个数据契约/异常/枚举声明类），见源码）
-# 层: 输出
-# - id: O1
-#   name_zh: 模块公共 API 面（4 定义）
-#   name_en: public defs
-#   intro: StrategicMessageBus
-#   downstream: 运行时装配批（战略/战术/执行三层总线实例装配 / A2A 检查网关绑定 / 审计留痕路由）
-# [/ALGO_FLOW]
-#
-# 边:
-# I1 --> A1
-# I2 --> A1
-# I3 --> A1
-# I4 --> A1
-# A1 --> O1
+# [ALGO_FLOW] external: docs/03_modules/_domain_infrastructure/algo_flow/a2a_protocol/strategic_message_bus.yaml
 """
 
 from __future__ import annotations
