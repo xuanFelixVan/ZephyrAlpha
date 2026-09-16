@@ -22,32 +22,7 @@ IntegritySelfCheck — 完整性自检.
 - 返回检查结果列表
 - 汇总检查状态
 
-# [ALGO_FLOW]
-# 层: 输入
-# - id: I1
-#   name: 模块内部数据
-#   fields: 无公共形参/无再导出（AST 事实）
-#   code: integrity_self_check.py
-# 层: 算法
-# - id: A1
-#   name_zh: ① IntegritySelfCheck
-#   name_en: IntegritySelfCheck
-#   intro: 完整性自检器.
-#   desc: 完整性自检器.；公共方法（定义序）: check_all, summary；源码 L139-L167
-#   inputs: 无参数
-#   outputs: 返回值
-#   （注：A1 之后另有 1 个公共定义未列入（含 1 个数据契约/异常/枚举声明类），见源码）
-# 层: 输出
-# - id: O1
-#   name_zh: 模块公共 API 面（2 定义）
-#   name_en: public defs
-#   intro: IntegritySelfCheck
-#   downstream: tests/agent_rbac/test_integrity_agent_rbac.py
-# [/ALGO_FLOW]
-#
-# 边:
-# I1 --> A1
-# A1 --> O1
+# [ALGO_FLOW] external: docs/03_modules/_domain_security/algo_flow/access_control/integrity_self_check.yaml
 """
 
 from __future__ import annotations

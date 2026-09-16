@@ -22,32 +22,7 @@ VibeCodingGuard — Vibe Coding 攻击面检测.
 - 检测权限绕过模式
 - 评估风险分数
 
-# [ALGO_FLOW]
-# 层: 输入
-# - id: I1
-#   name: 模块内部数据
-#   fields: 无公共形参/无再导出（AST 事实）
-#   code: vibe_coding_guard.py
-# 层: 算法
-# - id: A1
-#   name_zh: ① VibeCodingGuard
-#   name_en: VibeCodingGuard
-#   intro: Vibe Coding 攻击面检测器.
-#   desc: Vibe Coding 攻击面检测器.；公共方法（定义序）: scan；源码 L87-L115
-#   inputs: 无参数
-#   outputs: 返回值
-#   （注：A1 之后另有 1 个公共定义未列入（含 1 个数据契约/异常/枚举声明类），见源码）
-# 层: 输出
-# - id: O1
-#   name_zh: 模块公共 API 面（2 定义）
-#   name_en: public defs
-#   intro: VibeCodingGuard
-#   downstream: tests/agent_rbac/test_vibe_coding.py
-# [/ALGO_FLOW]
-#
-# 边:
-# I1 --> A1
-# A1 --> O1
+# [ALGO_FLOW] external: docs/03_modules/_domain_security/algo_flow/access_control/guards/vibe_coding_guard.yaml
 """
 
 from __future__ import annotations

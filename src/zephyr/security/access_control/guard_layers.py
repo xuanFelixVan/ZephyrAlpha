@@ -23,48 +23,7 @@ GuardLayers — 权限守卫层组件.
 - ColdStartLock: 冷启动锁
 - AutoGuard: 自动守卫
 
-# [ALGO_FLOW]
-# 层: 输入
-# - id: I1
-#   name: mode 参数
-#   fields: 参数 mode（无注解）
-#   code: guard_layers.py 顶层公共函数形参（AST 提取）
-# 层: 算法
-# - id: A1
-#   name_zh: ① AutoGuard
-#   name_en: AutoGuard
-#   intro: 自动守卫.
-#   desc: 自动守卫.；公共方法（定义序）: evaluate, allow_with_guard, get_active_guards；源码 L122-L164
-#   inputs: mode
-#   outputs: 返回值
-# - id: A2
-#   name_zh: ② ColdStartLock
-#   name_en: ColdStartLock
-#   intro: 冷启动锁 — 系统启动时锁定，防止未授权操作.
-#   desc: 冷启动锁 — 系统启动时锁定，防止未授权操作.；公共方法（定义序）: locked, unlock, lock, owner_bypass, is_locked；源码 L167-L199
-#   inputs: 无参数
-#   outputs: 返回值
-# - id: A3
-#   name_zh: ③ EscalationHandler
-#   name_en: EscalationHandler
-#   intro: 升级处理器.
-#   desc: 升级处理器.；公共方法（定义序）: escalate, should_throttle, reset_agent；源码 L202-L266
-#   inputs: 无参数
-#   outputs: 返回值
-#   （注：A3 之后另有 3 个公共定义未列入（含 3 个数据契约/异常/枚举声明类），见源码）
-# 层: 输出
-# - id: O1
-#   name_zh: 模块公共 API 面（6 定义）
-#   name_en: public defs
-#   intro: AutoGuard, ColdStartLock, EscalationHandler
-#   downstream: tests/agent_rbac/test_permissions.py
-# [/ALGO_FLOW]
-#
-# 边:
-# I1 --> A1
-# A1 --> A2
-# A2 --> A3
-# A3 --> O1
+# [ALGO_FLOW] external: docs/03_modules/_domain_security/algo_flow/access_control/guard_layers.yaml
 """
 
 from __future__ import annotations

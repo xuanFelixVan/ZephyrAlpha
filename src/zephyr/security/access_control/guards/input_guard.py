@@ -22,32 +22,7 @@ InputGuard — 输入参数守卫.
 - 检测路径穿越攻击（../../../etc/passwd）
 - 安全参数放行
 
-# [ALGO_FLOW]
-# 层: 输入
-# - id: I1
-#   name: 模块内部数据
-#   fields: 无公共形参/无再导出（AST 事实）
-#   code: input_guard.py
-# 层: 算法
-# - id: A1
-#   name_zh: ① InputGuard
-#   name_en: InputGuard
-#   intro: 输入参数守卫.
-#   desc: 输入参数守卫. 检测危险命令模式和路径穿越攻击。；公共方法（定义序）: check_params；源码 L108-L181
-#   inputs: 无参数
-#   outputs: 返回值
-#   （注：A1 之后另有 1 个公共定义未列入（含 1 个数据契约/异常/枚举声明类），见源码）
-# 层: 输出
-# - id: O1
-#   name_zh: 模块公共 API 面（2 定义）
-#   name_en: public defs
-#   intro: InputGuard
-#   downstream: tests/agent_rbac/test_redteam_adversarial.py
-# [/ALGO_FLOW]
-#
-# 边:
-# I1 --> A1
-# A1 --> O1
+# [ALGO_FLOW] external: docs/03_modules/_domain_security/algo_flow/access_control/guards/input_guard.yaml
 """
 
 from __future__ import annotations

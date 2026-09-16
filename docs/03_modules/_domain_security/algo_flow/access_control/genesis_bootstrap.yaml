@@ -1,0 +1,50 @@
+# ALGO_FLOW 外部真源——genesis_bootstrap（_domain_security 域，真源 src/zephyr/security/access_control/genesis_bootstrap.py）
+# 2026-09-15 P2-1 契约头减负批量出仓：docstring 内联块逐字节副本，extractor 经
+# external 锚加载走同一 parse_algo_flow 管线；算法公共面变化时同步更新本块。
+doc_type: architecture_view
+ttl: permanent
+module: src.zephyr.security.access_control.genesis_bootstrap
+source_of_truth: src/zephyr/security/access_control/genesis_bootstrap.py
+algo_flow: |
+    # [ALGO_FLOW]
+    # 层: 输入
+    # - id: I1
+    #   name: 模块内部数据
+    #   fields: 无公共形参/无再导出（AST 事实）
+    #   code: genesis_bootstrap.py
+    # 层: 算法
+    # - id: A1
+    #   name_zh: ① GenesisState
+    #   name_en: GenesisState
+    #   intro: RBAC启动状态.
+    #   desc: RBAC启动状态.；公共方法（定义序）: bootstrapped, is_ready, progress；源码 L107-L136
+    #   inputs: 无参数
+    #   outputs: 返回值
+    # - id: A2
+    #   name_zh: ② GenesisBootstrap
+    #   name_en: GenesisBootstrap
+    #   intro: RBAC系统启动引导器 — 单例.
+    #   desc: RBAC系统启动引导器 — 单例. 5阶段启动序列: 1. COLD_START_LOCK — 冷启动锁检查 2. IMMUTABLE_CORE — 不可变核心验证 3. KIL…；公共方法（定义序）: state,…
+    #   inputs: 无参数
+    #   outputs: 返回值
+    # - id: A3
+    #   name_zh: ③ get_genesis_bootstrap
+    #   name_en: get_genesis_bootstrap
+    #   intro: 获取GenesisBootstrap单例.
+    #   desc: 获取GenesisBootstrap单例.；源码 L346-L348
+    #   inputs: 无参数
+    #   outputs: GenesisBootstrap
+    #   （注：A3 之后另有 2 个公共定义未列入（含 2 个数据契约/异常/枚举声明类），见源码）
+    # 层: 输出
+    # - id: O1
+    #   name_zh: GenesisBootstrap
+    #   name_en: GenesisBootstrap
+    #   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+    #   downstream: N/A (all consumers verified as phantom — stale references removed)
+    # [/ALGO_FLOW]
+    #
+    # 边:
+    # I1 --> A1
+    # A1 --> A2
+    # A2 --> A3
+    # A3 --> O1

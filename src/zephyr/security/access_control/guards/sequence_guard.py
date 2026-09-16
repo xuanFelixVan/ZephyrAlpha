@@ -23,32 +23,7 @@ SequenceGuard — 操作序列守卫.
 - 每个 session 独立维护操作历史
 - 匹配禁止序列时返回违规描述
 
-# [ALGO_FLOW]
-# 层: 输入
-# - id: I1
-#   name: 模块内部数据
-#   fields: 无公共形参/无再导出（AST 事实）
-#   code: sequence_guard.py
-# 层: 算法
-# - id: A1
-#   name_zh: ① SequenceGuard
-#   name_en: SequenceGuard
-#   intro: 操作序列守卫.
-#   desc: 操作序列守卫. 维护每个 session 的操作历史，检测禁止的操作序列。；公共方法（定义序）: whitelist, record, check_cross_session, add_whitelist, reset…
-#   inputs: 无参数
-#   outputs: 返回值
-#   （注：A1 之后另有 1 个公共定义未列入（含 1 个数据契约/异常/枚举声明类），见源码）
-# 层: 输出
-# - id: O1
-#   name_zh: 模块公共 API 面（2 定义）
-#   name_en: public defs
-#   intro: SequenceGuard
-#   downstream: tests/agent_rbac/test_redteam_adversarial.py
-# [/ALGO_FLOW]
-#
-# 边:
-# I1 --> A1
-# A1 --> O1
+# [ALGO_FLOW] external: docs/03_modules/_domain_security/algo_flow/access_control/guards/sequence_guard.yaml
 """
 
 from __future__ import annotations

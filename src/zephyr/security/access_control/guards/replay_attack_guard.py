@@ -22,31 +22,7 @@ ReplayAttackGuard — 重放攻击防护.
 - 第一次出现的 nonce 允许通过
 - 重复 nonce 判定为重放攻击并拒绝
 
-# [ALGO_FLOW]
-# 层: 输入
-# - id: I1
-#   name: 模块内部数据
-#   fields: 无公共形参/无再导出（AST 事实）
-#   code: replay_attack_guard.py
-# 层: 算法
-# - id: A1
-#   name_zh: ① ReplayAttackGuard
-#   name_en: ReplayAttackGuard
-#   intro: 重放攻击防护器.
-#   desc: 重放攻击防护器.；公共方法（定义序）: check；源码 L57-L83
-#   inputs: 无参数
-#   outputs: 返回值
-# 层: 输出
-# - id: O1
-#   name_zh: 模块公共 API 面（1 定义）
-#   name_en: public defs
-#   intro: ReplayAttackGuard
-#   downstream: tests/agent_rbac/test_redteam_adversarial.py
-# [/ALGO_FLOW]
-#
-# 边:
-# I1 --> A1
-# A1 --> O1
+# [ALGO_FLOW] external: docs/03_modules/_domain_security/algo_flow/access_control/guards/replay_attack_guard.yaml
 """
 
 from __future__ import annotations

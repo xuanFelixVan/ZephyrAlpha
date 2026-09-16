@@ -21,31 +21,7 @@ PathGuard — 路径守卫.
 - 检查路径是否在允许/禁止范围内
 - 关键文件写操作被阻止
 
-# [ALGO_FLOW]
-# 层: 输入
-# - id: I1
-#   name: 模块内部数据
-#   fields: 无公共形参/无再导出（AST 事实）
-#   code: path_guard.py
-# 层: 算法
-# - id: A1
-#   name_zh: ① PathGuard
-#   name_en: PathGuard
-#   intro: 路径守卫.
-#   desc: 路径守卫. 检查路径是否在允许/禁止范围内，关键文件写操作被阻止。；公共方法（定义序）: check；源码 L99-L157
-#   inputs: 无参数
-#   outputs: 返回值
-# 层: 输出
-# - id: O1
-#   name_zh: 模块公共 API 面（1 定义）
-#   name_en: public defs
-#   intro: PathGuard
-#   downstream: tests/agent_rbac/test_redteam_adversarial.py
-# [/ALGO_FLOW]
-#
-# 边:
-# I1 --> A1
-# A1 --> O1
+# [ALGO_FLOW] external: docs/03_modules/_domain_security/algo_flow/access_control/guards/path_guard.yaml
 """
 
 from __future__ import annotations

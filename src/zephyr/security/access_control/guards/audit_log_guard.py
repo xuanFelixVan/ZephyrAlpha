@@ -26,31 +26,7 @@ validate_entry/validate_dict 方法，导致 tests/audit/audit_core/test_audit_l
 - validate_entry(key, value): 校验单个键值对，返回 {key, clean, original_len}。
 - validate_dict(data): 批量校验字典，返回 {clean, issues}，非字符串值跳过。
 
-# [ALGO_FLOW]
-# 层: 输入
-# - id: I1
-#   name: 模块内部数据
-#   fields: 无公共形参/无再导出（AST 事实）
-#   code: audit_log_guard.py
-# 层: 算法
-# - id: A1
-#   name_zh: ① AuditLogGuard
-#   name_en: AuditLogGuard
-#   intro: 审计日志注入防护守卫——治本（ G4）。
-#   desc: 审计日志注入防护守卫——治本（ G4）。 提供 sanitize/validate_entry/validate_dict 三个方法，确保写入审计日志的 字符串不包含控制字符或转…；公共方法（定义序）: sanitiz…
-#   inputs: 无参数
-#   outputs: 返回值
-# 层: 输出
-# - id: O1
-#   name_zh: 模块公共 API 面（1 定义）
-#   name_en: public defs
-#   intro: AuditLogGuard
-#   downstream: tests.agent_rbac.test_forensic_c
-# [/ALGO_FLOW]
-#
-# 边:
-# I1 --> A1
-# A1 --> O1
+# [ALGO_FLOW] external: docs/03_modules/_domain_security/algo_flow/access_control/guards/audit_log_guard.yaml
 """
 
 from typing import Any, Final

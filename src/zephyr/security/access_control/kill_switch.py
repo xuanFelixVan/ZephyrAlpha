@@ -32,40 +32,7 @@ KillSwitch — 熔断器.
   回滚姿态/对账循环）。另注意：本单例为**纯进程内存态**，进程崩溃即归零——
   禁作为任何交易资金安全场景的依赖（交易侧熔断有独立级联与持久化覆盖）。
 
-# [ALGO_FLOW]
-# 层: 输入
-# - id: I1
-#   name: 模块内部数据
-#   fields: 无公共形参/无再导出（AST 事实）
-#   code: kill_switch.py
-# 层: 算法
-# - id: A1
-#   name_zh: ① KillSwitch
-#   name_en: KillSwitch
-#   intro: 熔断器 — 系统级安全制动.
-#   desc: 熔断器 — 系统级安全制动. 在检测到严重故障时触发，阻止系统继续运行。 支持单Agent阻断和全局熔断两级机制。；公共方法（定义序）: status, state, trigger_count, triggers,…
-#   inputs: 无参数
-#   outputs: 返回值
-# - id: A2
-#   name_zh: ② get_kill_switch
-#   name_en: get_kill_switch
-#   intro: 获取KillSwitch单例.
-#   desc: 获取KillSwitch单例.；源码 L349-L354
-#   inputs: 无参数
-#   outputs: KillSwitch
-#   （注：A2 之后另有 5 个公共定义未列入（含 5 个数据契约/异常/枚举声明类），见源码）
-# 层: 输出
-# - id: O1
-#   name_zh: KillSwitch
-#   name_en: KillSwitch
-#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
-#   downstream: tests/agent_rbac/test_kill_switch_agent_rbac.py
-# [/ALGO_FLOW]
-#
-# 边:
-# I1 --> A1
-# A1 --> A2
-# A2 --> O1
+# [ALGO_FLOW] external: docs/03_modules/_domain_security/algo_flow/access_control/kill_switch.yaml
 """
 
 from __future__ import annotations

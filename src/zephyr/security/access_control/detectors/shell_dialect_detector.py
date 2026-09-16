@@ -24,32 +24,7 @@ ShellDialectDetector — Shell 方言检测器.
 
 治本(2026-07-18): 实现 stub 以匹配 tests/agent_rbac/test_forensic_b.py 契约.
 
-# [ALGO_FLOW]
-# 层: 输入
-# - id: I1
-#   name: 模块内部数据
-#   fields: 无公共形参/无再导出（AST 事实）
-#   code: shell_dialect_detector.py
-# 层: 算法
-# - id: A1
-#   name_zh: ① ShellDialectDetector
-#   name_en: ShellDialectDetector
-#   intro: Shell 方言检测器 — 识别命令方言与危险模式.
-#   desc: Shell 方言检测器 — 识别命令方言与危险模式.；公共方法（定义序）: detect；源码 L100-L206
-#   inputs: 无参数
-#   outputs: 返回值
-#   （注：A1 之后另有 1 个公共定义未列入（含 1 个数据契约/异常/枚举声明类），见源码）
-# 层: 输出
-# - id: O1
-#   name_zh: 模块公共 API 面（2 定义）
-#   name_en: public defs
-#   intro: ShellDialectDetector
-#   downstream: tests.agent_rbac.test_forensic_b
-# [/ALGO_FLOW]
-#
-# 边:
-# I1 --> A1
-# A1 --> O1
+# [ALGO_FLOW] external: docs/03_modules/_domain_security/algo_flow/access_control/detectors/shell_dialect_detector.yaml
 """
 
 from __future__ import annotations
