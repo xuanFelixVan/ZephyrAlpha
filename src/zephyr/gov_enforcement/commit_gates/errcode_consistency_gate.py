@@ -1,11 +1,11 @@
 # [BLUEPRINT] MOD-GATE_ENGINE | docs/03_modules/_cross_layer/gate_engine/blueprint.md | §ARCH-ERRCODE-001
 # [MODULE] zephyr.gov_enforcement.commit_gates.errcode_consistency_gate
 # [DOMAIN] D_GOV_CODE_QUALITY
-# [DEPENDENCIES] zephyr.gov_enforcement.rule_bridge.commit_gate_registry (GateSpec); tests/governance/test_error_code_consistency.py（判定逻辑 SSoT，importlib 按路径加载调用，不重实现）
+# [DEPENDENCIES] zephyr.gov_enforcement.rule_bridge.commit_gate_registry (GateSpec); tests/governance/test_error_code_consistency.py（判定逻辑 SSoT，importlib 按路径加载调用 collect_violations，不重实现）
 # [CONSUMERS] zephyr.gov_enforcement.rule_bridge.git_commit_gateway.GitCommitGateway.__init__（in_process_gate_registry.yaml 自动注册）
 # [STARTUP] imported
 # [MATURITY] production
-# [INVARIANTS] staged 含 src/zephyr/**.py 或 error_code_registry.yaml 才执行；判定逻辑零重实现（调用测试 SSoT 六断言）；非 Zephyr 项目 fail-open；priority=131 唯一
+# [INVARIANTS] staged 含 src/zephyr/**.py 或 error_code_registry.yaml 才执行；判定逻辑零重实现（调用测试 SSoT collect_violations 六断言证据集）；观测面=git index（本 commit 后的仓库态），基线=HEAD——**只阻断本次新增违规**，存量违规降级 warn+留痕并归属其责任人（裁定登记号待补；治 2026-09-16 起 4 小时全局卡死：他会话未入 git 的文件让所有含 src/zephyr 的批次连坐）；SSoT 缺 collect_violations=fail-closed（禁退回逐断言遍历＝禁把存量算到本次头上）；index 面全绿即短路返回（不扫 HEAD 基线——常态提交零额外开销，基线扫描仅在有违规时付）；非 Zephyr 项目 fail-open；priority=131 唯一
 # [MODIFY-GUARD] gate_id="GATE-ERRCODE-CONSISTENCY"; check 闭包签名 (gateway, files, **kwargs) -> tuple[bool, str]
 # [STABILITY] evolving
 # [SAFETY] M
@@ -31,12 +31,34 @@
 --------
 1. 本 gate 把六断言判定搬进 gateway in-process：importlib 按路径加载
    tests/governance/test_error_code_consistency.py（判定逻辑 SSoT，同
-   外部 hook「仅调用不重实现」口径），逐个调用三测试类六方法，
-   AssertionError 即违规证据。
+   外部 hook「仅调用不重实现」口径），调用其 ``collect_violations()`` 取
+   六断言违规证据集（可差分口径），按基线差分决定阻断（见下节）。
 2. 阻断 detail 内嵌受影响前缀的下一可用号（扫描真源+注册表取 max+1），
    被拦 AI 直接获得可执行答案——编号分配靠工具不靠纪律。
 3. files 触发（staged 含 src/zephyr/**.py 或注册表 yaml 才执行），
    控制 commit 时延；非 Zephyr 项目 fail-open。
+
+观测面与基线差分（2026-09-16 事故治本；裁定登记号待补）
+--------------------------------------
+第一性原理：全局对账型门禁的**判定对象**必须是「本 commit 之后的仓库态」，
+不是「本机磁盘上碰巧有什么」。旧实现两条都错：
+  ① 观测面＝文件系统 rglob——未入 git 的文件（他会话在途/从未 add）照样被判，
+     而 staged 内容（部分暂存）反而看不见；
+  ② 无基线——存量违规算到本次提交人头上。
+实证：2026-09-16 16:34 起，ZA-PA-0031/32/33 指向从未进 git 的 pf_alloc 文件，
+GATE-ERRCODE-CONSISTENCY 挡死**所有**含 src/zephyr 的批次（含提交队列），
+全局卡死 4 小时，责任人以外的会话全部连坐（q-…-0008 死信）。
+
+治本两条（SSoT 侧实现，本 gate 只消费）：
+  ① 观测面改 git index（``git grep --cached`` 枚举 + ``git cat-file --batch``
+     批量读，实测 0.23s/640 文件，比 rglob 更快）；``tree=`` 可切任意 tree-ish；
+     git 不可达时退回文件系统面**并告警**（禁静默换口径）。
+  ② 基线差分：``NOW = collect_violations()``（index）与
+     ``BASE = collect_violations(tree="HEAD")`` 取差，**只阻断 NOW−BASE**；
+     NOW∩BASE（存量）降级 warn+留痕，归属其责任人（宪法 §3.4 他会话在途违规
+     不代修）。对齐业界：Google Tricorder「只报新增告警」（《Software
+     Engineering at Google》ch.20）、bors-ng「先合到 staging 分支验，坏了只
+     退回该 PR」——存量债不得成为无辜提交的阻断理由。
 
 priority=131（ISSUE-RESOLVED-INTEGRITY=130 之后、200 段之前，2026-08-21 实测空位）。
 """
@@ -94,9 +116,10 @@ def _next_free_hints(mod, project_root: Path, bad_codes: list[str]) -> str:
 def make_errcode_consistency_gate() -> GateSpec:
     """构造 GATE-ERRCODE-CONSISTENCY pre-commit 门禁（priority=131，硬阻断）。
 
-    staged 含 src/zephyr/**.py 或 error_code_registry.yaml 时，调用判定 SSoT
-    六断言（方向A 未登记/未声明前缀、方向B 存活锚定/注册表内部唯一、重码
-    白名单外零容忍/白名单防腐）——AssertionError 即阻断证据。
+    staged 含 src/zephyr/**.py 或 error_code_registry.yaml 时，调用判定 SSoT 的
+    ``collect_violations()`` 取六断言证据集（方向A 未登记/未声明前缀、方向B 存活
+    锚定/注册表内部唯一、重码白名单外零容忍/白名单防腐），观测面=git index、
+    基线=HEAD，**只阻断本次新增**（2026-09-16 事故治本）。
     """
 
     def _check(gateway, files: list[str], **_kwargs) -> tuple[bool, str]:
@@ -123,28 +146,58 @@ def make_errcode_consistency_gate() -> GateSpec:
         except Exception as e:  # SSoT 缺失=治理资产事故，fail-closed
             return False, f"GATE-ERRCODE-CONSISTENCY: 判定 SSoT 加载失败（{_SSDOT_TEST_REL}）: {e}"
 
-        failures: list[str] = []
-        for cls_name in ("TestCodeToRegistry", "TestRegistryToCode", "TestDuplicates"):
-            cls = getattr(mod, cls_name)
-            inst = cls()
-            for meth_name in dir(inst):
-                if not meth_name.startswith("test_"):
-                    continue
-                try:
-                    getattr(inst, meth_name)()
-                except AssertionError as ae:
-                    failures.append(f"[{cls_name}.{meth_name}] {ae}")
-                except Exception as e:  # noqa: BLE001 — 断言外异常=扫描环境事故，fail-closed
-                    failures.append(f"[{cls_name}.{meth_name}] 非断言异常: {type(e).__name__}: {e}")
+        collect = getattr(mod, "collect_violations", None)
+        if not callable(collect):
+            # fail-closed，且**禁**退回旧的逐断言遍历：旧口径无基线，会把存量违规算到
+            # 本次提交人头上（4 小时全局卡死的成因），不得以"向后兼容"名义复活。
+            return False, (
+                "GATE-ERRCODE-CONSISTENCY: 判定 SSoT 未提供 collect_violations（基线差分口径缺失，fail-closed）\n"
+                f"-> 升级 {_SSDOT_TEST_REL} 至基线差分口径（观测面=git index + tree= 基线）后重提"
+            )
 
-        if not failures:
+        try:
+            now = collect()  # 本 commit 之后的仓库态（git index）
+        except Exception as e:  # noqa: BLE001 — 对账执行失败=扫描环境事故，fail-closed
+            return False, f"GATE-ERRCODE-CONSISTENCY: 对账执行失败（fail-closed）: {type(e).__name__}: {e}"
+
+        # 短路：index 面全绿 → 无需基线（存量必为空集）。HEAD 基线扫描 ≈2.7s（纯净 dev
+        # sandbox 实测），本门禁每个含 src/zephyr 的提交都跑，常态零额外开销是硬要求；
+        # 只有出现违规时才付第二次扫描的代价去区分"本次新增"与"存量连坐"。
+        if not any(now.values()):
             return True, ""
 
-        bad_codes = re.findall(r"ZA-[A-Z0-9]+(?:-[A-Z0-9]+)*", "\n".join(failures))
+        try:
+            base = collect(tree="HEAD")  # 提交前基线：存量违规归属其责任人，不连坐本次
+        except Exception as e:  # noqa: BLE001 — 基线不可得（如注册表在 HEAD 尚不存在）
+            logger.warning(
+                "GATE-ERRCODE-CONSISTENCY: HEAD 基线不可得（%s: %s）——退严格口径，"
+                "NOW 全部违规视为本次新增",
+                type(e).__name__,
+                e,
+            )
+            base = {}
+
+        introduced = {k: sorted(now[k] - base.get(k, set())) for k in now if now[k] - base.get(k, set())}
+        inherited = {k: sorted(now[k] & base.get(k, set())) for k in now if now[k] & base.get(k, set())}
+        if inherited:
+            logger.warning(
+                "GATE-ERRCODE-CONSISTENCY: %d 项存量违规（HEAD 基线已在，非本次引入）不阻断，"
+                "归属其责任人（宪法 §3.4 他会话在途违规不代修）: %s",
+                sum(len(v) for v in inherited.values()),
+                "; ".join(f"{k}={v[:3]}" for k, v in list(inherited.items())[:4]),
+            )
+        if not introduced:
+            return True, ""
+
+        evidence = [
+            f"[{k}] {', '.join(v[:8])}{' …' if len(v) > 8 else ''}" for k, v in sorted(introduced.items())
+        ]
+        bad_codes = re.findall(r"ZA-[A-Z0-9]+(?:-[A-Z0-9]+)*", "\n".join(evidence))
         hints = _next_free_hints(mod, project_root, sorted(set(bad_codes)))
         detail = (
-            "GATE-ERRCODE-CONSISTENCY 阻断: error_code 注册表↔代码真源对账失败 "
-            f"（{len(failures)} 断言红，#ARCH-ERRCODE-001；治本=先登记/改号再提交）:\n" + "\n".join(failures[:6])
+            "GATE-ERRCODE-CONSISTENCY 阻断: error_code 注册表↔代码真源对账失败（本次新增 "
+            f"{sum(len(v) for v in introduced.values())} 项违规，#ARCH-ERRCODE-001；"
+            "观测面=git index，基线=HEAD，存量违规不在此列）:\n" + "\n".join(evidence)
         )
         if hints:
             detail += f"\n{hints}（取号以扫描真源+注册表并集 max+1 为准）"
