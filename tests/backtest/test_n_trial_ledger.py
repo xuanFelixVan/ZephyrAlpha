@@ -196,6 +196,15 @@ class TestEffectiveRank:
         n_eff, _ = compute_effective_rank(data)
         assert n_eff == 1  # 完全相关→有效试验数 1
 
+    def test_uneven_lengths_aligned_not_crash(self) -> None:
+        """红蓝实战（批 11h 白跑根因）：不同格点净收益天数不齐——必须 index 对齐而非构造炸。"""
+        import numpy as np
+
+        rng = np.random.default_rng(9)
+        data = {f"s{i}": list(rng.normal(0, 0.01, 200 - i * 7)) for i in range(5)}  # 200..172 不齐
+        n_eff, meta = compute_effective_rank(data)  # 旧实现此处 ValueError
+        assert meta["common_T"] == 172 and not meta["boundary"]
+
     def test_short_common_T_boundary_no_reduction(self) -> None:
         import numpy as np
 

@@ -151,7 +151,10 @@ def compute_effective_rank(
     import numpy as np
     import pandas as pd
 
-    df = pd.DataFrame(dict(net_returns_by_id)).dropna(how="any")
+    # 序列按 index 对齐（不同格点净收益天数不齐是常态——universe/窗口差异），
+    # 外连接对齐后 dropna 取共同覆盖窗
+    aligned = pd.concat({k: pd.Series(v) for k, v in net_returns_by_id.items()}, axis=1)
+    df = aligned.dropna(how="any")
     n = df.shape[1]
     meta: dict[str, Any] = {"n_trials": n, "common_T": int(len(df)), "boundary": False}
     if n < 2:
