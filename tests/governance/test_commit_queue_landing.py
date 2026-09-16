@@ -145,6 +145,7 @@ class _StubGateway:
         allow_tracked_drift: bool = False,  # #ARCH-310 B2：landing 传入（衍生漂移容忍）
         allow_multi_domain: bool = False,  # #ARCH-310 B3：landing 传入（队列项单任务豁免）
         allow_promote: bool = False,  # #ARCH-310 B3b：landing 传入（永久区新文件准入透传）
+        lock_wait_timeout: float | None = None,  # 2026-09-16：landing 传入（全局锁等待放宽）
     ) -> CommitResult:
         self.events.append(
             (
@@ -157,6 +158,7 @@ class _StubGateway:
                     "allow_tracked_drift": allow_tracked_drift,
                     "allow_multi_domain": allow_multi_domain,
                     "allow_promote": allow_promote,
+                    "lock_wait_timeout": lock_wait_timeout,
                 },
             )
         )
@@ -813,3 +815,77 @@ class TestPathspecSelfHeal:
         with patch.object(type(gw), "commit", flaky_commit):
             result = landing(item, tmp_path / "cq_sh")
         assert result.ok, f"自愈重试后须落地成功: {result.reason}"
+
+
+# ---------------------------------------------------------------------------
+# 6. 瞬态失败与环境失败分流（2026-09-16 q-…-0009/0010/0011 LOCK_TIMEOUT 死信 +
+#    q-…-0013 CAS 重试耗尽死信 治本钉）
+# ---------------------------------------------------------------------------
+
+
+class _LockTimeoutStub(_StubGateway):
+    """模拟他会话正持全局提交锁：commit 返回 LOCK_TIMEOUT 且不产生任何 commit。"""
+
+    def commit(self, *args, **kwargs):  # noqa: ANN002, ANN003 — 桩签名放宽
+        self.events.append(
+            ("commit", {"lock_wait_timeout": kwargs.get("lock_wait_timeout"), "files": []})
+        )
+        return CommitResult(
+            status=CommitStatus.LOCK_TIMEOUT,
+            message="internal error: Cannot acquire global commit lock (timeout 300.0s)",
+        )
+
+
+class TestTransientLockAndCasRetries:
+    def test_lock_wait_timeout_is_wired_to_gateway(self, tmp_repo: Path, queue_root: Path) -> None:
+        """落地必须把放宽后的锁等待透传给 gateway（缺省 60s 在并发期必然假失败）。"""
+        landing, stub = _make_landing(tmp_repo, queue_root)
+        assert landing._lock_wait_seconds == cql._LANDING_LOCK_WAIT_SECONDS == 300.0
+        cq.enqueue_item("sess-lock-a", "feat: 锁等待接线", [("docs/lw.txt", b"v1\n")], queue_root=queue_root)
+        stats = cq.drain_queue(queue_root, landing=landing)
+        assert stats["done"] == 1, stats
+        assert stub.commit_calls()[0]["lock_wait_timeout"] == 300.0
+
+    def test_lock_timeout_returns_item_to_pending_not_dead(
+        self, tmp_repo: Path, queue_root: Path, monkeypatch: pytest.MonkeyPatch
+    ) -> None:
+        """LOCK_TIMEOUT=瞬态环境失败：项退回 pending、零死信、dev 不推进、claim 已释放。"""
+        landing, _stub = _make_landing(tmp_repo, queue_root)
+        locky = _LockTimeoutStub(landing.worktree_path)
+        monkeypatch.setattr(landing, "_gateway", locky)
+        before = _git_text(tmp_repo, "rev-parse", "refs/heads/dev")
+
+        item = cq.enqueue_item("sess-lock-b", "feat: 撞锁项", [("docs/lock.txt", b"v1\n")], queue_root=queue_root)
+        stats = cq.drain_queue(queue_root, landing=landing)
+
+        assert stats["dead"] == 0, f"锁争用绝不死信（q-…-0009/0010/0011 事故）: {stats}"
+        assert stats["done"] == 0
+        assert (queue_root / "pending" / f"{item['qid']}.json").is_file(), "项必须退回 pending 等下次自举"
+        assert not list((queue_root / "dead").glob("*.json")), "dead/ 必须空"
+        assert not list((queue_root / "processing").glob("*.json")), "processing 不残留"
+        assert _git_text(tmp_repo, "rev-parse", "refs/heads/dev") == before, "未落盘不得推进 dev"
+        kinds = [kind for kind, _ in locky.events]
+        assert kinds == ["claim", "commit", "release"], f"claim 必须释放（否则下次自举撞 CLAIM_REQUIRED）: {kinds}"
+
+    def test_cas_exhaustion_still_dead_letters(
+        self, tmp_repo: Path, queue_root: Path, monkeypatch: pytest.MonkeyPatch
+    ) -> None:
+        """模块 INVARIANT 守住：CAS 重试耗尽仍是死信（不卡队），不是环境失败。"""
+        landing, stub = _make_landing(tmp_repo, queue_root)
+        monkeypatch.setattr(landing, "_max_cas_retries", 2)
+
+        def _always_conflict(old_sha: str, new_sha: str) -> None:
+            raise cql.CasConflict(f"simulated CAS race {old_sha[:8]}->{new_sha[:8]}")
+
+        monkeypatch.setattr(landing, "_advance_dev", _always_conflict)
+        # 无同路径重叠 → 走重同步重试分支（有重叠会直接死信，测不到重试上限）
+        monkeypatch.setattr(landing, "_changed_paths_between", lambda a, b: set())
+
+        item = cq.enqueue_item("sess-cas-x", "feat: CAS 耗尽", [("docs/cas.txt", b"v1\n")], queue_root=queue_root)
+        stats = cq.drain_queue(queue_root, landing=landing)
+
+        assert stats["dead"] == 1 and stats["done"] == 0, stats
+        dead = json.loads((queue_root / "dead" / f"{item['qid']}.json").read_text(encoding="utf-8"))
+        assert "重试耗尽" in dead["dead_reason"], dead["dead_reason"]
+        assert len(stub.commit_calls()) == 2, f"重试次数=上限（{landing._max_cas_retries}）: {len(stub.commit_calls())}"
+        assert cql._MAX_CAS_RETRIES == 6, "缺省上限 3→6（q-…-0013 死信实证），改动须同步本钉"

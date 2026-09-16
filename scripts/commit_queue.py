@@ -191,11 +191,16 @@ _DEAD_REASON_ENV_MARKERS = (
     "pytest_50136", "pytest_19944", "rev-parse --show-toplevel",
     "index.lock", "Unable to create", "Author identity unknown",
     "LandingEnvironmentError", "瞬态锁争用",
+    # LOCK_TIMEOUT 归 env（2026-09-16 q-…-0009/0010/0011 实证）：内容合法，仅因他会话
+    # 正持全局提交锁而死信——瞬态争用，requeue 即愈。classify_dead_reason 先查 env 标记，
+    # 故 "网关落盘失败（LOCK_TIMEOUT）" 这类混合串也会正确归 env（落地侧现已转
+    # LandingEnvironmentError 让项退回 pending，此标记只兜历史/直连路径的死信）。
+    "LOCK_TIMEOUT",
 )
 _DEAD_REASON_ITEM_MARKERS = (
-    "PROTECTED-PATHS", "CAS 竞态", "快进判定失败", "SESSION-REQUIRED",
+    "PROTECTED-PATHS", "CAS 竞态", "CAS 冲突", "快进判定失败", "SESSION-REQUIRED",
     "CLAIM_REQUIRED", "COMMIT_SCOPE", "cascade_stale", "基底重校验",
-    "TRACKED-DRIFT-READONLY", "LOCK_TIMEOUT", "网关落盘失败",
+    "TRACKED-DRIFT-READONLY", "网关落盘失败",
 )
 
 # session_id 字符白名单：session_id 进入 qid 与 seq 文件名，必须防路径注入

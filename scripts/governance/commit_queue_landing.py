@@ -5,13 +5,13 @@
 # [CONSUMERS] 全部 AI session（drain_queue(landing=...) 真落盘注入点）；zephyr.gov_enforcement.rule_bridge.git_commit_gateway._commit_auto（flag ON 时 reroute 目标，延迟 import）
 # [STARTUP] imported
 # [MATURITY] testing
-# [INVARIANTS] 永不改主工作区脏文件（66 号 §9.7 受控放松 2026-08-23：只写专用 worktree + 对象库 + dev ref CAS；landing 后主工作区受限收敛——仅当文件与旧 HEAD 逐字节一致才快进写入新内容，脏/缺失/删除冲突一律跳过留痕，零 WIP 丢失风险）；单写者（仅 Serializer lease 持有者经 drain 调用）；幂等不双落（done/landed_id + is-ancestor + 标记 grep 三重判定）；门禁一套不裁（GitCommitGateway 全门禁链零适配，worktree 形态 100 门禁天然生效）；CAS 冲突/基底冲突→死信不卡队；主工作区收敛 fail-open（landing 已成功，收敛异常仅留痕不改变结果）
+# [INVARIANTS] 永不改主工作区脏文件（66 号 §9.7 受控放松 2026-08-23：只写专用 worktree + 对象库 + dev ref CAS；landing 后主工作区受限收敛——仅当文件与旧 HEAD 逐字节一致才快进写入新内容，脏/缺失/删除冲突一律跳过留痕，零 WIP 丢失风险）；单写者（仅 Serializer lease 持有者经 drain 调用）；幂等不双落（done/landed_id + is-ancestor + 标记 grep 三重判定）；门禁一套不裁（GitCommitGateway 全门禁链零适配，worktree 形态 100 门禁天然生效）；CAS 冲突/基底冲突→死信不卡队；**瞬态环境失败（git index.lock 争用 / 全局提交锁 LOCK_TIMEOUT）→ 抛 LandingEnvironmentError 让项退回 pending，绝不死信**；主工作区收敛 fail-open（landing 已成功，收敛异常仅留痕不改变结果）
 # [MODIFY-GUARD] 66 号备忘 §6.3 MVP 形态 + §8 幂等算法 + §9 边界；08 号文 §4.2 步骤 3/5；[GW:{sid}:{qid}] 标记格式（POST-COMMIT-GUARD / REFERENCE-TRANSACTION-GUARD 消费方）
 # [STABILITY] evolving
 # [SAFETY] M
 # [AI_AUTONOMY] ai_modifiable
-# [ERROR_CONTRACT] __call__ 永不抛普通 Exception（落盘失败→LandingResult(ok=False, reason) 进死信）；BaseException 向上传播（模拟进程崩溃语义，项留 processing 等回收）
-# [TESTS] tests/governance/test_commit_queue_integration.py
+# [ERROR_CONTRACT] __call__ 永不抛普通 Exception（落盘失败→LandingResult(ok=False, reason) 进死信）；cq.LandingEnvironmentError 按设计向上逃逸（drain 捕获后项退回 pending + 终止本轮）；BaseException 向上传播（模拟进程崩溃语义，项留 processing 等回收）
+# [TESTS] tests/governance/test_commit_queue_integration.py; tests/governance/test_commit_queue_landing.py
 # [A_module] module_id=MOD-GOV-047 | layer=script | stability=evolving | safety=M | ai_autonomy=ai_modifiable
 # [TTL] permanent
 """commit_queue_landing.py — 提交队列 B 段：专用 worktree 真落盘 + _commit_auto 改道预备
@@ -118,8 +118,17 @@ _WORKTREE_DIR_NAME = "worktree"  # <queue_root>/worktree——任务口径专用
 _NOOP_LANDED_PREFIX = "noop@"  # no-op 落地哨兵（2026-09-16）：快照与 HEAD 逐字节一致（幂等空转）
 # 时 landed_id 记为 "noop@<old_dev>"——裸记 old_dev 会错位成他会话提交（q-20260916-0004 实证：
 # done 指向 st-redfix 的 commit，排查者误以为内容已随其落库）。_already_landed 剥前缀后判 is-ancestor。
-_MAX_CAS_RETRIES = 3  # dev CAS 冲突重试上限（66 号 §8：重放产生同内容 commit，CAS 保护不分叉）
+_MAX_CAS_RETRIES = 6  # dev CAS 冲突重试上限（66 号 §8：重放产生同内容 commit，CAS 保护不分叉）
+# 上限 3→6（2026-09-16 q-20260916-st-consrep-20260916-0013 死信实证）：8 会话并发期
+# 单轮落地 ~70s，3 次重试全被队列外写入者插队耗尽 → 无辜物品死信回退人工。CAS 重放
+# 幂等（同内容 commit），提高上限不产生分叉，只是把"人工 requeue"换成"自动重同步"。
 _GIT_TIMEOUT_SECONDS = _get_threshold("git_operations.commit_queue_git_timeout_seconds", 120)  # 治本(AI-20 P0③): 从SSoT读取；与 worktree_pool.run_git 同款
+# 全局提交锁等待（2026-09-16 q-…-0009/0010/0011 死信实证）：gateway 缺省 60s 在并发
+# 提交期必然撞锁（另一会话正 commit），而锁争用是**瞬态**——排队等待即可落地，死信是
+# 假失败。落地侧把等待放宽到 300s（队列本就异步、无交互延迟预算），并把仍超时归为
+# 环境失败（项退回 pending，绝不死信）。刻意用普通常量而非新增 thresholds 注册键：
+# 这是队列落地内部实现细节，不是可调业务阈值（避免注册表膨胀）。
+_LANDING_LOCK_WAIT_SECONDS = 300.0
 _MAIN_WS_SYNC_AUDIT_NAME = (
     "main_workspace_sync.jsonl"  # <queue_root>/ 下——主工作区收敛跳过/异常留痕（66 号 §9.7 受控放松 2026-08-23）
 )
@@ -223,6 +232,9 @@ class WorktreeLanding:
     registry : 主仓根 SessionRegistry（SESSION-REQUIRED/CLAIM-REQUIRED 判定真源；
         默认按 repo_root 构造——生产者会话注册处）。
     gateway : 测试注入位（默认惰性构造 GitCommitGateway(project_root=worktree)）。
+    max_cas_retries : dev CAS 冲突重试上限（默认 _MAX_CAS_RETRIES=6；耗尽=死信回退人工）。
+    lock_wait_seconds : 透传 gateway.commit(lock_wait_timeout=...) 的全局锁等待秒数
+        （默认 _LANDING_LOCK_WAIT_SECONDS=300；测试可注入小值免等）。
     """
 
     def __init__(
@@ -236,6 +248,7 @@ class WorktreeLanding:
         registry=None,
         gateway=None,
         max_cas_retries: int = _MAX_CAS_RETRIES,
+        lock_wait_seconds: float = _LANDING_LOCK_WAIT_SECONDS,
     ) -> None:
         """__init__ implementation."""
         self.repo_root = Path(repo_root).resolve()
@@ -248,6 +261,7 @@ class WorktreeLanding:
         self._registry = registry
         self._gateway = gateway
         self._max_cas_retries = max_cas_retries
+        self._lock_wait_seconds = lock_wait_seconds
 
     # ------------------------------------------------------------------
     # git 便捷封装
@@ -815,6 +829,9 @@ class WorktreeLanding:
                         # 意思表示（q-0015 死信实证：REG-RISK-TIER-001 被拦）；allow_promote
                         # 落地留痕审计不变。
                         allow_promote=True,
+                        # 锁等待放宽（2026-09-16 q-…-0009/0010/0011 死信实证）：并发
+                        # 提交期撞全局锁是瞬态，排队等待即可落地，gateway 缺省 60s 太短。
+                        lock_wait_timeout=self._lock_wait_seconds,
                     )
                     # Mode B 自愈（st-commitspeed-20260916 晚，st-resched-fix/st-auditfix
                     # pathspec 死信实证）：新文件在 prestage 已 staged，但 gateway commit
@@ -844,6 +861,7 @@ class WorktreeLanding:
                             allow_tracked_drift=True,
                             allow_multi_domain=True,
                             allow_promote=True,
+                            lock_wait_timeout=self._lock_wait_seconds,
                         )
                         if result.status.name == "COMMIT_FAILED" and "did not match" in (result.message or ""):
                             result = CommitResult(
@@ -863,6 +881,16 @@ class WorktreeLanding:
                     gateway.release_files(session_id, claimed)
 
             from zephyr.gov_enforcement.rule_bridge.git_commit_gateway import CommitStatus
+
+            # 锁超时=瞬态环境失败，不是物品失败（2026-09-16 q-…-0009/0010/0011 死信实证：
+            # 三项内容合法，仅因他会话正持全局提交锁而被判死信）。与 index.lock 同款语义
+            # → 转环境专类：claim 已在上面 finally 释放，项退回 pending、终止本轮等下次
+            # 自举，绝不死信（宪法「真实物品不被环境事故拖进坟墓」）。
+            if result.status is CommitStatus.LOCK_TIMEOUT:
+                raise cq.LandingEnvironmentError(
+                    f"全局提交锁争用（等待 {self._lock_wait_seconds:g}s 仍未得），项退回 pending 等下次自举: "
+                    f"{(result.message or '')[:400]}"
+                )
 
             if result.status is not CommitStatus.OK:
                 # 门禁阻断/git 失败 → 死信（不卡队，66 号 §4 裁定 4）；NOTHING_TO_COMMIT
