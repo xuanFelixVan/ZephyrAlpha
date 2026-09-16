@@ -21715,3 +21715,63 @@ entries:
   related_adjudication: '裁定#279'
   created: '2026-09-17'
   last_updated: '2026-09-17'
+- issue_id: "#ARCH-317"
+  title: >-
+    提交队列 serializer worktree 单写者不变量无强制——lease TTL 不续约 + 双写者起手 reset/clean 互抹未提交新件
+  severity: P1高
+  adjudication: >-
+    实测三批整批报 ALGO-FLOW-LINK「12 处 yaml 不可读（已删除?）」+「no changes added to commit」；监视器 2s 采样证明快照 apply+prestage 本身正常（02:27 那次 24/24 在场且 staged 全程未掉，下一帧归零），对照实验=同批内容原封 requeue、只让常驻 commit_belt_daemon 消费 → 24/24 干净落地，决定性排除「门禁误判/快照写坏」两假设。结构病根：commit_queue_landing._sync_worktree() 起手 git reset --hard refs/heads/dev + git clean -fd，SerializerLease 用 O_EXCL+TTL=300s 且 acquired_at 只写一次不续约，而单批 gate 链实测 3-7 分钟与 TTL 同量级，超时后任何进程可合法接管成为第二写者。建议处置：lease 心跳续约（消费循环每 60s touch acquired_at）+ 接管前强制读 processing/ 判活 + 「新件 apply→commit」做成同进程不可打断临界区。本会话规避=自家脚本 bt_land_queue._wait 删自举 drain，仅在守护 PID 判死时才自己排空；未动他人进程。
+  fix_phase: >-
+    登记待治本（消费侧已自规避，落地器本体未改）
+  status: 'open'
+  related_adjudication: '裁定#292'
+  created: '2026-09-17'
+  last_updated: '2026-09-17'
+- issue_id: "#ARCH-318"
+  title: >-
+    own_scope:false 全索引扫描型门禁仍连坐无辜提交人——裁定#279/#ARCH-316 只治内容扫描门，结构扫描面未覆盖
+  severity: P1高
+  adjudication: >-
+    实测：他会话在途 staged 的 src/zephyr/strategy_pipeline/fw_backtest.py 触发 NO-LONG-PARAM-LIST，把本会话一个字节都没碰它的批次拦死，红蓝探针 R2/R4/R5 三轮 verdict=wrong_gate 皆因此；同族已治四门（CAP-CONSISTENCY/SCHEMA-FILE-EXISTS/DOC-REF-BROKEN/CONSUMERS-ACCURACY，#ARCH-316）的做法是补 HEAD 基线差分（NOW−BASE 只阻断本次新增，NOW∩BASE 存量降级 warn 归属责任人）。建议处置=按同一配方补结构扫描面的基线差分，或将该类门禁强制 own-scope 化；短期规避=提交一律走序列化队列（净暂存区结构性免疫，AGENTS.md §2 第 6 条）。
+  fix_phase: >-
+    登记待治本（战役后续批全改走队列，未弱化任何门禁）
+  status: 'open'
+  related_adjudication: '裁定#292'
+  created: '2026-09-17'
+  last_updated: '2026-09-17'
+- issue_id: "#ARCH-319"
+  title: >-
+    共享主工作区在途未提交工作可被批量改写整片吞掉——2026-09-17 02:59:14 214 个脏文件同分钟被改写
+  severity: P1高
+  adjudication: >-
+    实测：本会话 4 个未提交工具件在 02:59:14 被还原到 HEAD（丢 +290/−13），03:06 的队列快照因此抓到 HEAD 内容，队列项 q-20260917-st-btfix-p17-20260916-0049 落 noop@2436f92c（in_commit=0 missing=4）；同时刻 214 个脏文件 mtime 聚在同一分钟（docs/03_modules/**/blueprint.md 为主）。排除项：stash 通道非本次（stash_notice.json 当夜仅 1 文件且属 st-skeletonaudit-20260916 的 pre_merge_clean）；无文件锁在场（lock_files.py status=CLEAN）；本会话未执行任何 mutating git 命令。恢复路径：23 条编辑从会话记录 sidechain 逐条重放，old_string 全部唯一命中、零模糊匹配，自 pristine HEAD blob 二次重放得同 sha256，重发批 tl1b=2bdc9f074a 4/4 干净落地。建议处置：①直改主区模式下 RULE-GIT-SAFE「每轮修改即 git add」必须真执行（staged 有 blob 可恢复）；②长战役工具链改完即出小批，不攒到收尾；③批量归一化/全库刷类工具应限定自身产出面，禁整片回写。
+  fix_phase: >-
+    登记待治本（根因归属未定，需跨会话并发模型侧处置）
+  status: 'open'
+  related_adjudication: '裁定#292'
+  created: '2026-09-17'
+  last_updated: '2026-09-17'
+- issue_id: "#ARCH-320"
+  title: >-
+    apply_depgraph --add-design-node 以 blueprint_id 当目录名推蓝图路径，与裁定#208 三轨制触发器互斥而恒发假告警
+  severity: P3低
+  adjudication: >-
+    实测：apply_depgraph.py:1097 按 docs/03_modules/{blueprint_id}/blueprint.md 判存在，而 DB 触发器 check_blueprint_id_three_track() 只接受 MOD-*/D-*/SH-*/SYS-*/PLACEHOLDER*——两口径不可能同时满足：填 MOD-* 必报「蓝图文件不存在」并标 missing，填目录名（_cross_layer/gov_scripts）直接被触发器拒绝（本轮两次调用分别撞中，第二次 add_design_node失败: nodes.blueprint_id format violation）；机械推导的 blueprint_path 对 MOD-* 亦写成不存在的 docs/03_modules/MOD-XXX/。建议处置=路径推导改查 module→blueprint 映射真源，不拿 id 当目录名。本轮结果=节点以 MOD-GOV_ALGO_EXTRACTOR 注册成功（node_id=14462964，granularity=file）带 missing 标记，与既有先例同形态。
+  fix_phase: >-
+    登记待治本（登记侧，未阻塞本役落地）
+  status: 'open'
+  related_adjudication: '裁定#292'
+  created: '2026-09-17'
+  last_updated: '2026-09-17'
+- issue_id: "#ARCH-321"
+  title: >-
+    ALGO-FLOW-LINK 门禁 _read_staged 调用不存在的 gateway.read_staged_file 而恒退磁盘；覆盖 scope 外存量 28 处需分家
+  severity: P2中
+  adjudication: >-
+    实测：algo_flow_link_gate.py::_read_staged 调 gateway.read_staged_file（该方法不存在）→ 异常后回退 (root/rel).read_text() 读磁盘，判的是工作区内容而非 staged blob，与 #ARCH-316 所治「观测面错位」同病（staged≠磁盘时误判/漏判），修法=改 git show :<path> 或补 gateway 方法（不可反向放宽门禁）。另一半边：门禁 scope 仅 src/zephyr，scripts/ 6 处 5 件 + tests/ 22 处 19 件在其外；其中 ≥9 处是解析器/门禁的自指夹具（code_algorithm_extractor.py 2、check_algo_flow.py 1、test_algo_flow_link_gate.py 2、test_code_algorithm_extractor.py 3），出仓即毁测试，其余 19 件为真存量。结论=先分家（夹具显式豁免口径 + 真存量逐件判该搬该删），两条处置均需算法作者语义输入，工具无权代判（承裁定#291）。
+  fix_phase: >-
+    登记待治本（本役覆盖树 src/zephyr 已实测零死块）
+  status: 'open'
+  related_adjudication: '裁定#292'
+  created: '2026-09-17'
+  last_updated: '2026-09-17'

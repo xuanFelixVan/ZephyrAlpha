@@ -27783,6 +27783,22 @@ creation_tokens:
   token: automation-linkage-20260917-fullauto-skeleton-v1-20260916
   created_by: st-autolnk-20260917
   capability: automation_linkage
+- file: docs/_working/automation/campaign/CAMPAIGN_LEDGER.md
+  token: automation-linkage-campaign-ledger-20260916
+  created_by: st-autolnk-20260917
+  capability: automation_linkage
+- file: scripts/backtest/promotion_combo_gate.py
+  token: automation-linkage-promotion-combo-gate-20260916
+  created_by: st-autolnk-20260917
+  capability: automation_linkage
+- file: tests/backtest/test_promotion_combo_gate.py
+  token: automation-linkage-test-promotion-combo-gate-20260916
+  created_by: st-autolnk-20260917
+  capability: automation_linkage
+- file: docs/_working/automation/campaign/blueprints/promotion_combo_gate_blueprint.md
+  token: automation-linkage-promotion-combo-gate-blueprint-20260916
+  created_by: st-autolnk-20260917
+  capability: automation_linkage
 - file: docs/_working/trading_vision/2026-09-16-skeleton-coverage-audit.md
   token: trading-vision-audit-2026-09-16-skeleton-coverage-audit-20260916
   created_by: st-skeletonaudit-20260916
@@ -27815,4 +27831,76 @@ creation_tokens:
   token: chain-alpha-backfill-futures-main-20260916
   created_by: st-igalpha-20260917
   capability: chain_alpha
+- file: scripts/industry_graph/hog_chain_quickcheck.py
+  token: chain-alpha-hog-chain-quickcheck-20260916
+  created_by: st-igalpha-20260917
+  capability: chain_alpha
+- file: src/zephyr/data/implementations/calendar_event_derivations.py
+  token: auction-derive-calendar-event-derivations-20260916
+  created_by: st-auction-bridge-20260917
+  capability: auction_derive
+- file: src/zephyr/data/implementations/ch_auction_derive.py
+  token: auction-derive-ch-auction-derive-20260916
+  created_by: st-auction-bridge-20260917
+  capability: auction_derive
+- file: src/zephyr/data/implementations/ch_tick_kline.py
+  token: auction-derive-ch-tick-kline-20260916
+  created_by: st-auction-bridge-20260917
+  capability: auction_derive
+- file: src/zephyr/data/implementations/cls_provider.py
+  token: auction-derive-cls-provider-20260916
+  created_by: st-auction-bridge-20260917
+  capability: auction_derive
+- file: src/zephyr/data/implementations/crypto_profile_provider.py
+  token: auction-derive-crypto-profile-provider-20260916
+  created_by: st-auction-bridge-20260917
+  capability: auction_derive
+- file: src/zephyr/data/implementations/crypto_universe_selector.py
+  token: auction-derive-crypto-universe-selector-20260916
+  created_by: st-auction-bridge-20260917
+  capability: auction_derive
+- file: src/zephyr/data/implementations/eastmoney_news_provider.py
+  token: auction-derive-eastmoney-news-provider-20260916
+  created_by: st-auction-bridge-20260917
+  capability: auction_derive
+- file: src/zephyr/data/implementations/index_eqw_compute.py
+  token: auction-derive-index-eqw-compute-20260916
+  created_by: st-auction-bridge-20260917
+  capability: auction_derive
+- file: src/zephyr/data/implementations/okx_provider.py
+  token: auction-derive-okx-provider-20260916
+  created_by: st-auction-bridge-20260917
+  capability: auction_derive
+- file: src/zephyr/data/implementations/okx_swap_provider.py
+  token: auction-derive-okx-swap-provider-20260916
+  created_by: st-auction-bridge-20260917
+  capability: auction_derive
+- file: src/zephyr/data/implementations/sentiment_panel_provider.py
+  token: auction-derive-sentiment-panel-provider-20260916
+  created_by: st-auction-bridge-20260917
+  capability: auction_derive
+- file: src/zephyr/data/implementations/tqcenter_provider.py
+  token: auction-derive-tqcenter-provider-20260916
+  created_by: st-auction-bridge-20260917
+  capability: auction_derive
+- file: src/zephyr/data/implementations/tushare_news_connector.py
+  token: auction-derive-tushare-news-connector-20260916
+  created_by: st-auction-bridge-20260917
+  capability: auction_derive
+- file: docs/_working/trading_vision/2026-09-16-daily-orchestrator-blueprint.md
+  token: daily-orchestrator-blueprint-2026-09-16-daily-orchestrator-blueprint-20260916
+  created_by: st-orchbp-20260916
+  capability: daily_orchestrator_blueprint
+- file: docs/_working/reports/algo_flow_author_debt.md
+  token: algo-flow-externalize-author-debt-ledger-2026-09-17
+  created_by: st-btfix-p17-20260916
+  capability: algo_flow_externalize
+- file: docs/_working/reports/p21_algo_flow_link_findings.md
+  token: algo-flow-externalize-link-findings-2026-09-17
+  created_by: st-btfix-p17-20260916
+  capability: algo_flow_externalize
+- file: scripts/data/backfill_auction_snapshot_history.py
+  token: auction-backfill-backfill-auction-snapshot-history-20260916
+  created_by: st-auction-bridge-20260917
+  capability: auction_backfill
 di_seam_exemptions: []

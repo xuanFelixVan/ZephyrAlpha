@@ -3318,3 +3318,117 @@ entries:
   related_rulings:
     - '裁定#269'
   superseded_by: ''
+
+- ruling_id: '裁定#291'
+  title: 'DSR 三实现口径统一治本——V[SR] 峰度 Pearson 化 + E[max(Z_N)] 论文闭式 + 退化态 Fail-Closed（历史台账读数须按新口径重算后方可比）（编号注：登记时段内 #290~#294 曾被并行"排班 v2"会话占用，随后一次他会话 autostash/merge 把未提交条目扫回 HEAD，#290 由"qwen3-coder 移除"会话重新落地；本条按登记时注册表最大值+1 取 #291）'
+  date: '2026-09-17'
+  category: '回测口径'
+  status: 'active'
+  summary: >-
+    裁定：把 Deflated Sharpe Ratio 的计算口径收归单一真源，并声明历史读数不可跨口径混比。
+    根因=同一 V[SR] 公式在仓内被三处各自实现（deflated_sharpe_calculator 真源、
+    overfitting_adjudicator 自带私有 Acklam 逆正态+自有 V[SR] 块、dsr_recalc_backfill
+    文档字符串写死旧口径并导入私有名），三者对峰度的解释互不一致——文献
+    （Lo 2002 / Bailey-Lopez de Prado 2014 / Harvey-Liu-Zhu 2021）的 V[SR] 用的是
+    Pearson 峰度 κ_p（正态=3），而仓库各调用方一致传入超额峰度 κ_x（正态=0），
+    旧实现直接把 κ_x 当 κ_p 代入 (κ−1)/4 项，等于把正态基准算成 (0−1)/4·SR² 的
+    负修正，与 iid 正态锚点 (1+SR²/2)/(T−1) 自相矛盾。裁定四要点：
+    ①口径钉死：V[SR]=(1−γ₃·SR+(κ_p−1)/4·SR²)/(T−1)，κ_p=κ_x+3，转换在真源内部完成，
+    对外 API variance_of_sharpe(sharpe, skewness, excess_kurtosis, num_obs) 只收超额峰度；
+    三处实现一律委派真源，私有别名仅为兼容保留。
+    ②E[max(Z_N)] 钉死为论文闭式 (1−γ)·Φ⁻¹(1−1/N)+γ·Φ⁻¹(1−1/(N·e))，γ=Euler–Mascheroni，
+    旧近似（N=1 时 0.8469）作废，闭式 N=1 给 0.5198。
+    ③退化态判据：V[SR] 非正或非有限即"不可判定"，输出 degenerate=True + WARNING，
+    下游判定 Fail-Closed（is_significant=False，不放行），禁止静默返回 0.0/1.0 充数；
+    DSR 值域仍钉在 [0,1]。
+    ④历史可比性：新旧口径净偏非单调（实测比值跨 0.967…1.165，随 SR/峰度组合双向摆动），
+    不存在统一换算系数，故任何跨期 DSR 比较必须先按新真源重算；旧台账数值保留但不作为
+    新判据的对照基线。
+    边界声明（本裁定不改的东西）：DSR 放行阈值、_DECAY_SUSPECT、手续费万 0.854、
+    MIN_COMMISSION=5、回撤阶梯 THD-DRAWDOWN-001/002/003=5%/10%/15% 全部零改动——
+    本裁定只修"算错的数"，不放松也不收紧任何预注册判据强度。
+    遗留待裁 R-2（不在本裁定处置范围）：近奇异正方差下 γ₃·SR→2⁻ 且 κ_x 取下界 γ₃²−2 时
+    V→0⁺（实测 2.5e−7…2.5e−15），DSR 合法饱和为 1.0 而 degenerate=False，恰取等号（V=0）
+    则判退化，两侧不连续。建议形态 V ≥ c/(T−1)（c>0 常量）统一判退化，属预注册判据强度
+    变更，留 Owner 裁定后另批执行。
+  evidence: >-
+    真源件：src/zephyr/simulation/deflated_sharpe_calculator.py（variance_of_sharpe/
+    expected_max_sharpe_z/sharpe_variance_is_degenerate/deflated_sharpe_from_moments，
+    KURTOSIS_PEARSON_NORMAL=3.0，DSR_UNDECIDABLE=0.0）；消费方
+    src/zephyr/backtest/core/overfitting_adjudicator.py（adjudicate_dsr 委派，净 −75 行）、
+    src/zephyr/backtest/core/metrics.py（result[dsr_degenerate] 双路径）、
+    scripts/backtest/dsr_recalc_backfill.py（第 4 个错口径实现，已改委派真源+docstring 更正）。
+    独立复测（2026-09-17 收口方实跑）：iid 正态锚点新旧 V 比值恰为 2.0000（SR 项符号
+    翻转的解析预期）；焦点件逐档 49 / 38 / 15 passed——
+    tests/simulation/test_deflated_sharpe_calculator.py（含独立oracle 对拍 rel=1e−12、
+    退化态 fail-closed caplog、跨实现收敛）、tests/backtest/test_overfitting_adjudicator.py、
+    tests/backtest/test_dsr_recalc_backfill.py；目录级合跑 tests/simulation + tests/backtest +
+    tests/strategy_pipeline = 2244 passed；圈复杂度 9/14/11 均在 15 以下；ruff 净零新增违规。
+    本批另含一次工作区事故清偿：02:59 他会话 autostash/merge 把本批未提交改动扫回 HEAD，
+    已按 lane 转录逐 Edit 重放复原，numstat 与 §12.1 实测逐条一致（+242/−52、+60/−135、
+    +9/−3、+279/−6、+46/−0）。口径变更影响面档案=
+    docs/_working/full-auto-chain/S11_assembled_backtest/nodes/coverage_map_cert_gates_mining.md
+    §11（裁定与三实现前后对照）+ §12（收口批实测核验）。
+  affected_files:
+    - src/zephyr/simulation/deflated_sharpe_calculator.py
+    - src/zephyr/backtest/core/overfitting_adjudicator.py
+    - src/zephyr/backtest/core/metrics.py
+    - scripts/backtest/dsr_recalc_backfill.py
+    - docs/03_modules/_domain_simulation/algo_flow/deflated_sharpe_calculator.yaml
+    - docs/03_modules/_domain_backtest/algo_flow/overfitting_adjudicator.yaml
+  related_arch: []
+  related_rulings:
+    - '裁定#289'
+  superseded_by: ''
+- ruling_id: '裁定#292'
+  title: 'ALGO_FLOW 出仓作者欠账三态处置口径——禁工具臆造节点/边，欠账转生成器台账派工，战役本体不连坐'
+  date: '2026-09-17'
+  category: '架构治理'
+  status: 'active'
+  summary: >-
+    裁定：机器块语义残缺（欠 - id: 机器行 / 零边图 / 块不可解析）判为**作者欠账**，出仓工具
+    禁止代补——补节点或补边即臆造算法语义，错图会被全景图渲染成「已验证」，比无图更坏；
+    欠账由生成器产出台账逐件派工，可机械出仓部分先行收口、不因欠账连坐整役。分析过程：
+    ①第一性原理——出仓是存储位置搬家（inline 机器块 → docs 镜像 yaml + 一行 external 锚），
+    搬运工无权改语义；本役"搬家是否等价"的可机械判据=剔机器块后的可执行指令流同一性
+    （dis.get_instructions 递归字节码流）+ 节点 id 集/边三元组集逐位相等，凡需新增语义即越界。
+    ②100% AI 开发的责任链——工具越权补图会把"AI 猜的边"洗成"作者写的边"，事后无从追溯谁负责；
+    与裁定#273（CloneGuard 触碰税禁以白名单消警=治理逃逸）、裁定#274（治本在解析器分段展开，
+    禁改语料迁就解析器）同一价值观。③机构实践对标——自动生成资产入库强制 owner+人工评审
+    （auto-generated ≠ auto-approved），schema 演进把"格式迁移"与"语义变更"分两类工单。
+    ④量化社区做法——qlib/backtrader/vectorbt 的因子契约以显式表达式或依赖声明入册，
+    未见从散文注释反推因子依赖并入库的先例，即"从注释猜边"无工程先例支持；
+    GitHub 侧同类搬运工具（docstring 抽取器如 pydoc-markdown/sphinx 系列）亦只做"呈现"不做"补语义"。
+    ⑤存量实测——尾池 143 件分家=73 件机械出仓（本役全落地）+ 69 件作者欠账 + 5 件池内可机械复跑；
+    69 件三态=五段式散文 47 / 零边图 17 / 块不可解析 5。执行：新器
+    report_algo_flow_author_debt.py（dry_run 全程零写入分类、报因常量 import 出仓器单一真源、
+    恒等式"欠账三类+可机械+其他=池总数"自证不缺件）产出台账，逐件挂派工口径；
+    后续按域分批由算法作者补语义，补完重跑同一器即自动消账。可逆性：台账为纯新增登记，
+    撤销=删台账与本裁定条目，不动语料一字节。
+  evidence: >-
+    台账实测（池 74，--scan-pool 现扫无手工清单，两次独立复跑同值）：AUTHOR_DEBT total=69
+    prose=47 no_edges=17 no_nodes=5 resolvable=5。判据同源=出仓器 skipped 常量
+    （_LEGACY_PROSE_SKIP_REASON / _NO_EDGE_SKIP_REASON / _NO_NODES_SKIP_REASON，生成器零重复硬编码）。
+    尾池落地 commit：t00 af2f1ebbd3 / t01 d99c7068c2 / t02 76e376b3e3 / t03 aabbde6575 /
+    t04 3c4e3cb2d0 / t05 984728c6a3，逐批 landed_id 反查 git log -1 --name-only 得
+    in_commit=expected、extra=0、missing=0。治理面零死块：src/zephyr 死块实测 0 处
+    （判据 algo_flow_dead_block_spans 与 ALGO-FLOW-LINK 门禁第 3 判据同一函数，不另起口径）。
+    覆盖外存量：scripts/ 6 处 5 件 + tests/ 22 处 19 件（其中 ≥9 处为解析器/门禁自指夹具，
+    出仓即毁测试，须显式豁免口径而非清仓）。环境/治理面发现 5 则随本批登记（编号见 related_arch），
+    证据与处置建议详情见 docs/_working/reports/p21_algo_flow_link_findings.md。
+  affected_files:
+    - docs/_working/reports/algo_flow_author_debt.md
+    - scripts/governance/d5_architecture/generators/report_algo_flow_author_debt.py
+    - docs/_working/reports/p21_algo_flow_link_findings.md
+    - docs/01_policies_and_standards/_registry/catalogs/ruling_registry.yaml
+  related_arch: 
+    - '#ARCH-317'
+    - '#ARCH-318'
+    - '#ARCH-319'
+    - '#ARCH-320'
+    - '#ARCH-321'
+  related_rulings:
+    - '裁定#273'
+    - '裁定#274'
+    - '裁定#276'
+  superseded_by: ''
