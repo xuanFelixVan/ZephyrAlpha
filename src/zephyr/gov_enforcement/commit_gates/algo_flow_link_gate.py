@@ -1,7 +1,7 @@
 # [BLUEPRINT] MOD-GATE_ENGINE | docs/03_modules/_cross_layer/gate_engine/blueprint.md | §0.1
 # [MODULE] zephyr.gov_enforcement.commit_gates.algo_flow_link_gate
 # [DOMAIN] D_GOV_CODE_QUALITY
-# [DEPENDENCIES] zephyr.gov_enforcement.rule_bridge.commit_gate_registry (GateSpec); zephyr.shared.utils.time_utils;
+# [DEPENDENCIES] zephyr.gov_enforcement.rule_bridge.commit_gate_registry (GateSpec); zephyr.gov_enforcement.commit_gates._diff_helpers (_read_staged_file); zephyr.shared.utils.time_utils;
 #   scripts.governance._shared.code_algorithm_extractor（解析+死块几何）; scripts.governance._shared.algo_flow_validate_marker（validate_graph 图判据真源）
 # [CONSUMERS] in_process_gate_registry.yaml（auto_register_gates YAML 驱动注册）
 # [STARTUP] imported
@@ -12,12 +12,14 @@
 #   本 commit 触碰的 */algo_flow/*.yaml 必须自身可解析且
 #   source_of_truth 指向实存源文件（Owner 批7 认可，2026-09-16），且本 commit 触碰的 src/zephyr .py
 #   不得在 module docstring 之外另留 ALGO_FLOW 机器块，
-#   docstring 之内也不得留第 2 块（两处都是永不被消费的副本=双真源，P2-1 死块批 2026-09-16 增、
-#   体内多块线 2026-09-17 增；几何判据共用 extractor.algo_flow_dead_block_spans 与
+#   docstring 之内只允许一个载体（锚或块二选一，两处并存=永不被消费的副本=双真源；P2-1 死块批
+#   2026-09-16 增、体内多块线 2026-09-17 增、锚块并存同日经红蓝实弹哑火后并入同一判据；
+#   几何判据共用 extractor.algo_flow_dead_block_spans 与
 #   extractor.duplicate_inline_algo_flow_spans，extractor 不可用=基础设施故障 fail-open）；
 #   own-diff 扫描——只查本次 commit files 清单，
 #   他会话 staged 文件零接触（#ARCH-GATE-OWN-SCOPE-001 单一真源模式）；staged 内容优先（锚校验读 staged，
-#   无 staged 回退工作区）；fail-open（git/文件不可读/yaml 解析器不可用等基础设施故障放行，logger.warning）；
+#   经 _diff_helpers._read_staged_file=``git show :<path>``，无 staged 回退工作区）；
+#   fail-open（git/文件不可读/yaml 解析器不可用等基础设施故障放行，logger.warning）；
 #   检出本 commit 违规 fail-closed
 # [MODIFY-GUARD] gate_id="ALGO-FLOW-LINK"; check 闭包签名 (gateway, files, **kwargs) -> tuple[bool, str]
 # [STABILITY] evolving
@@ -51,11 +53,15 @@ pre-commit 注册（priority=108，own-diff）：
   4. 本 commit files 中每个 src/zephyr .py：module docstring 之外不得另留 ALGO_FLOW 机器块
      （P2-1 死块普查实证：14 字段契约头里的副本所有读卡路径都看不见，锚+副本=双真源，
      184 件长期静默存活；几何判据与出仓器共用 extractor.algo_flow_dead_block_spans）
-  5. 同件 docstring **之内**也不得出现第 2 个 ALGO_FLOW 块（parse_algo_flow 只认首个
-     起→止 对，§4.16）——第 2 块连同其边段全体不可达，全景图显示半张图而作者以为显示
-     整张。与死块同属"静默不可达"类、只是几何位置相反，故判据分家：
-     extractor.duplicate_inline_algo_flow_spans（2026-09-17 普查 src/zephyr 3575 件
-     体内多块=0，本判据是零存量防复发线）
+  5. 同件 docstring **之内**只允许一个 ALGO_FLOW 载体（锚或机器块二选一）：
+     - 块+块：parse_algo_flow 只认首个起→止 对（§4.16），第 2 块连同其边段全体不可达，
+       全景图显示半张图而作者以为显示整张；
+     - 锚+块：锚已外链，写回的块永不被读卡路径消费=货真价实的第二真源——2026-09-17
+       红蓝实弹 R2 经生产队列链路真落地（HEAD=b873ee71d3）暴露本形态原判据哑火，
+       因原判据把锚行排除在候选外，"锚+一块"数出来只有 1，遂判合法。
+     与死块同属"静默不可达"类、只是几何位置相反，故判据分家：
+     extractor.duplicate_inline_algo_flow_spans（2026-09-17 普查 src/zephyr 3576 件
+     体内多块=0、锚块并存=0，本判据是零存量防复发线）
   6. 违规聚合一次给全，硬阻断；基础设施故障 fail-open
 
 设计权衡
@@ -258,8 +264,9 @@ def check_algo_flow_links(
             if dup:
                 failures.append(
                     f"{rel} 的 module docstring 内有 {len(dup)} 处多余 ALGO_FLOW 机器块"
-                    f"（第 2+ 块起行 {dup[:3]}）——parse_algo_flow 只认首个 起→止 对，"
-                    "其后每块连同自己的边段全体不可达：全景图显示半张图而作者以为显示整张，"
+                    f"（起行 {dup[:3]}）——一个 docstring 只能有一个 ALGO_FLOW 载体：parse_algo_flow "
+                    "只认首个 起→止 对，其后每块连同自己的边段全体不可达；锚已在场外指真源，"
+                    "体内再写块=永不被消费的副本。全景图显示半张图而作者以为显示整张，"
                     "与体外死块同属静默不可达类（只是几何位置相反，故判据分家）。清偿："
                     "把多块合并成单一块，或跑 externalize_algo_flow.py 外迁后留一行锚"
                 )
@@ -295,6 +302,7 @@ def check_algo_flow_links(
 
 def make_algo_flow_link_gate() -> object:
     """构造 ALGO_FLOW 锚链接校验 GateSpec（硬阻断型，priority=108，own-diff）。"""
+    from zephyr.gov_enforcement.commit_gates._diff_helpers import _read_staged_file
     from zephyr.gov_enforcement.rule_bridge.commit_gate_registry import GateSpec
 
     def _check(gateway: object, files: list[str] | None, **kwargs: object) -> tuple[bool, str]:
@@ -302,10 +310,15 @@ def make_algo_flow_link_gate() -> object:
             project_root = Path(str(gateway.project_root))
 
             def _read_staged(rel: str) -> str | None:
-                try:
-                    return gateway.read_staged_file(rel)  # 网关如有 staged 读取器则用
-                except Exception:  # noqa: BLE001
-                    return None
+                """staged blob 真源（#ARCH-321 治本）。
+
+                原写法调 ``gateway.read_staged_file``——网关无此方法，异常被宽 except
+                吞掉后静默回退读磁盘：门禁判的于是是工作区内容，而 commit 落的是 index
+                内容。staged≠磁盘（他会话 staged 未改、或本会话改完未 add）时双向误判，
+                与 #ARCH-316 治的"观测面错位"同病。判据不重写第二份，复用同包
+                ``_diff_helpers._read_staged_file``（``git show :<path>`` + run_git 双解码）。
+                """
+                return _read_staged_file(gateway, rel)
 
             blocked, msg = check_algo_flow_links(files, project_root, read_staged=_read_staged)
             return (not blocked), msg

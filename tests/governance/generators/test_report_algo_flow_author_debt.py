@@ -211,6 +211,8 @@ def test_main_writes_report_and_json_without_touching_repo(fake_repo, monkeypatc
         encoding="utf-8",
     )
     before = _snapshot(fake_repo)
+    real_ledger = REPO_ROOT / "docs" / "_working" / "reports" / "algo_flow_author_debt.md"
+    ledger_before = real_ledger.read_bytes() if real_ledger.is_file() else None
     out_md = tmp_path / "outside" / "debt.md"
     out_json = tmp_path / "outside" / "debt.json"
     rc = rep.main(
@@ -226,7 +228,10 @@ def test_main_writes_report_and_json_without_touching_repo(fake_repo, monkeypatc
     assert len(payload["entries"]) == 4
     assert payload["debt_classes"]["no_edges"]["skip_reason"] == ext._NO_EDGE_SKIP_REASON
     assert _snapshot(fake_repo) == before
-    assert not (REPO_ROOT / "docs" / "_working" / "reports" / "algo_flow_author_debt.md").exists()
+    # 零写入判据用指纹，不用"不存在"：台账一经交付进 HEAD 就长存，断不存在=交付即炸本测试
+    assert (real_ledger.read_bytes() if real_ledger.is_file() else None) == ledger_before, (
+        "--out 未生效：CLI 写了真仓生产台账路径"
+    )
 
 
 def test_read_file_list_skips_blanks_and_comments(tmp_path):

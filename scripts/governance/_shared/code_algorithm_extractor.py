@@ -427,6 +427,14 @@ def _in_docstring(i: int, ds_start: int, ds_end: int) -> bool:
     return ds_start >= 0 and ds_start <= i <= ds_end
 
 
+def _algo_flow_external_anchor_lines(src: str) -> list[int]:
+    """external 锚行行号（0 基）——strip 后匹配（14 字段契约头里有两空格缩进锚，实测）。"""
+    return [
+        i for i, ln in enumerate(src.splitlines())
+        if _ALGO_FLOW_EXTERNAL_RE.match(ln.strip())
+    ]
+
+
 def algo_flow_dead_block_spans(src: str) -> list[tuple[int, int, bool]]:
     """源码中位于 module docstring **之外** 的 ALGO_FLOW 块行区间 ``[(起, 止, 闭合)]``（0 基含端点）。
 
@@ -439,16 +447,25 @@ def algo_flow_dead_block_spans(src: str) -> list[tuple[int, int, bool]]:
 
 
 def duplicate_inline_algo_flow_spans(src: str) -> list[tuple[int, int, bool]]:
-    """module docstring **之内** 第 2 个及以后 ALGO_FLOW 块（同 dead_block 口径）。
+    """module docstring **之内** 违反"载体唯一"的内联 ALGO_FLOW 块（同 dead_block 口径）。
 
-    ``parse_algo_flow`` 只认首个 起→止 对（§4.16），第二个块连同其边段全体不可达——
-    全景图显示半张图而作者以为显示整张，与"体外契约头副本"同属静默不可达类，只是几何
-    位置相反故判据分家。2026-09-17 全仓普查 src/zephyr 3575 件体内多块=0：本判据是
-    零存量防复发线（写进第二块的当下即被门禁拦，不留静默窗口）。
+    判据=一个 module docstring 只能有一个 ALGO_FLOW 载体，载体含两类：external 锚行与
+    内联机器块。两种并存形态都判违规：
+    - 块+块：``parse_algo_flow`` 只认首个 起→止 对（§4.16），第 2 块连同其边段全体不可达
+      ——全景图显示半张图而作者以为显示整张，与"体外契约头副本"同属静默不可达类，只是
+      几何位置相反故判据分家；首块不报（它是合法的出仓前形态，报出去=连坐全仓未出仓件）；
+    - 锚+块（2026-09-17 红蓝实弹 R2 实测哑火形态）：锚已外链，其后写回的块永不被读卡路径
+      消费，是货真价实的第二真源，故锚在场时**全部**内联块都报，与块的行序无关。
+
+    零存量防复发线：2026-09-17 全仓普查 src/zephyr 体内多块=0、锚块并存=0（探针注资那件
+    除外）——本判据不背存量债，写进第二块的当下即被门禁拦，不留静默窗口。
     """
     spans, ds_start, ds_end = _algo_flow_block_spans(src)
     inline = [sp for sp in spans if _in_docstring(sp[0], ds_start, ds_end)]
-    return inline[1:]
+    if not inline:
+        return []
+    anchors = [i for i in _algo_flow_external_anchor_lines(src) if _in_docstring(i, ds_start, ds_end)]
+    return inline if anchors else inline[1:]
 
 
 def _has_inline_algo_flow(docstring: str) -> bool:

@@ -21770,8 +21770,31 @@ entries:
   adjudication: >-
     实测：algo_flow_link_gate.py::_read_staged 调 gateway.read_staged_file（该方法不存在）→ 异常后回退 (root/rel).read_text() 读磁盘，判的是工作区内容而非 staged blob，与 #ARCH-316 所治「观测面错位」同病（staged≠磁盘时误判/漏判），修法=改 git show :<path> 或补 gateway 方法（不可反向放宽门禁）。另一半边：门禁 scope 仅 src/zephyr，scripts/ 6 处 5 件 + tests/ 22 处 19 件在其外；其中 ≥9 处是解析器/门禁的自指夹具（code_algorithm_extractor.py 2、check_algo_flow.py 1、test_algo_flow_link_gate.py 2、test_code_algorithm_extractor.py 3），出仓即毁测试，其余 19 件为真存量。结论=先分家（夹具显式豁免口径 + 真存量逐件判该搬该删），两条处置均需算法作者语义输入，工具无权代判（承裁定#291）。
   fix_phase: >-
-    登记待治本（本役覆盖树 src/zephyr 已实测零死块）
+    ①staged 读取器已治本（2026-09-17：门禁改用 _diff_helpers._read_staged_file=``git show :<path>``，判据不重写第二份；回归测试 test_gate_spec_reads_staged_blob_not_worktree 双向钉死——index 脏/工作区净=必拦，index 净/工作区脏=必放）。②另一半边仍在：scope 外 28 处死块分家待作者语义输入（承裁定#291），本役覆盖树 src/zephyr 已实测零死块。
   status: 'open'
   related_adjudication: '裁定#292'
+  created: '2026-09-17'
+  last_updated: '2026-09-17'
+- issue_id: "#ARCH-322"
+  title: >-
+    ALGO-FLOW-LINK 体内多块判据把 external 锚行排除在候选外，「锚+内联块」并存形态零拦截——红蓝实弹
+    R2 注资经生产队列真链路落地 HEAD=b873ee71d3（本役自造新向量，非存量债）
+  severity: P1高
+  adjudication: >-
+    实测三段：①红蓝实弹 R2 在锚行紧随处注入一份 7 行 # [ALGO_FLOW] 块（同处 module docstring 内），
+    走 commit_queue → serializer worktree → 真门禁链，ALGO-FLOW-LINK 未阻断，b873ee71d3 把死内容带进
+    HEAD——本役此前所有落地批次皆"干净通过"，等于该门禁从未在真批次上开过火，纯单测把链路三段全短路了。
+    ②根因：extractor._algo_flow_block_spans 的起标记候选显式排除含 external: 的锚行（2026-09-15 为防
+    锚行字面量误判而加，本身必要），于是 duplicate_inline_algo_flow_spans 在"锚+一块"形态只数到 1 块，
+    inline[1:] 为空即判合法；而该形态恰是出仓战役自己制造的新向量——锚已在场外指真源，体内再写回的块
+    永不被任何读卡路径消费=货真价实的第二真源，比"块+块"更常见也更危险（出仓后有人补写机器块即可复现）。
+    ③修法：判据从"体内第 2+ 块"升级为"module docstring 载体唯一"（锚与内联块同为载体）——锚在场时
+    全部内联块一律报出、与行序无关；无锚时维持"首块合法、第 2 块起报"的原口径，不把全仓未出仓件连坐。
+    零存量核验：新判据全量重扫 src/zephyr 3576 件命中恰 1 件=探针注资本件，fix-forward 清偿后 0。
+  fix_phase: >-
+    已修（2026-09-17，extractor.duplicate_inline_algo_flow_spans 载体唯一口径 + _algo_flow_external_anchor_lines
+    锚行定位器 + 门禁文案；测试 3 条：体内并存正反序、门禁并存阻断、GateSpec staged 指纹回归；
+    strategy_book.py 注资 7 行 Edit 清偿 fix-forward，不改写历史）
+  status: fixed
   created: '2026-09-17'
   last_updated: '2026-09-17'

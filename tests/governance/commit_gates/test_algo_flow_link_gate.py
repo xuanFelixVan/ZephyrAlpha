@@ -293,7 +293,36 @@ def test_second_in_body_block_blocks(tmp_path: Path) -> None:
     (root / "src/zephyr/pkg_a/twoblocks.py").write_text(_PY_DUP_INLINE, encoding="utf-8")
     blocked, msg = check_algo_flow_links(["src/zephyr/pkg_a/twoblocks.py"], root)
     assert blocked, msg
-    assert "多余 ALGO_FLOW 机器块" in msg and "第 2+ 块" in msg
+    assert "多余 ALGO_FLOW 机器块" in msg and "只能有一个 ALGO_FLOW 载体" in msg
+
+
+_PY_ANCHOR_PLUS_BLOCK = (
+    '"""demo —— 说明。\n\n'
+    "# [ALGO_FLOW] external: docs/03_modules/_domain_x/algo_flow/demo.yaml\n"
+    "# [ALGO_FLOW]\n# 层: 算法\n# - id: A9\n#   name_zh: 写回的块\n# [/ALGO_FLOW]\n"
+    '"""\n\nX = 1\n'
+)
+
+_PY_BLOCK_PLUS_ANCHOR = (
+    '"""demo —— 说明。\n\n'
+    "# [ALGO_FLOW]\n# 层: 算法\n# - id: A9\n#   name_zh: 写回的块\n# [/ALGO_FLOW]\n"
+    "# [ALGO_FLOW] external: docs/03_modules/_domain_x/algo_flow/demo.yaml\n"
+    '"""\n\nX = 1\n'
+)
+
+
+def test_anchor_plus_inline_block_blocks(tmp_path: Path) -> None:
+    """红蓝实弹 R2 哑火形态的门禁侧复现（2026-09-17，HEAD=b873ee71d3 真落地过）。
+
+    锚本身合法（yaml 在、图可达），所以锚校验分支一条都不报；违规全在"载体并存"这一条。
+    """
+    root = _make_repo(tmp_path)
+    for name, txt in (("conflict_a.py", _PY_ANCHOR_PLUS_BLOCK), ("conflict_b.py", _PY_BLOCK_PLUS_ANCHOR)):
+        (root / f"src/zephyr/pkg_a/{name}").write_text(txt, encoding="utf-8")
+        blocked, msg = check_algo_flow_links([f"src/zephyr/pkg_a/{name}"], root)
+        assert blocked, f"{name}: {msg}"
+        assert "多余 ALGO_FLOW 机器块" in msg, f"{name}: {msg}"
+        assert "不存在的 yaml" not in msg, f"{name}: {msg}"
 
 
 def test_two_judgments_do_not_cross_report(tmp_path: Path) -> None:
@@ -318,3 +347,48 @@ def test_dup_inline_check_scoped_to_src_zephyr(tmp_path: Path) -> None:
     s.write_text(_PY_DUP_INLINE, encoding="utf-8")
     blocked, msg = check_algo_flow_links(["scripts/governance/demo_twoblocks.py"], root)
     assert not blocked, msg
+
+
+class _FakeGateway:
+    """只提供门禁用到的两个面：project_root 与 run_git（``git show :<path>``）。"""
+
+    def __init__(self, root: Path, staged: dict[str, str]) -> None:
+        self.project_root = root
+        self._staged = staged
+        self.calls: list[list[str]] = []
+
+    def run_git(self, cmd, cwd=None):  # noqa: ANN001, ARG002 — 契约同 gateway.run_git
+        import subprocess
+
+        self.calls.append(list(cmd))
+        assert cmd[:2] == ["git", "show"] and cmd[2].startswith(":"), cmd
+        rel = cmd[2][1:]
+        if rel in self._staged:
+            return subprocess.CompletedProcess(cmd, 0, self._staged[rel], "")
+        return subprocess.CompletedProcess(cmd, 128, "", f"fatal: path '{rel}' does not exist")
+
+
+def test_gate_spec_reads_staged_blob_not_worktree(tmp_path: Path) -> None:
+    """#ARCH-321 治本回归：原 ``gateway.read_staged_file`` 不存在，宽 except 吞异常后
+    静默回退读磁盘——门禁判的于是是工作区内容，而 commit 落的是 index 内容。
+
+    双向钉死：① index 脏 / 工作区净 → 必拦（漏判方向）；② index 净 / 工作区脏 → 必放
+    （误判方向，且证明它读的是 staged 而非磁盘）。
+    """
+    from zephyr.gov_enforcement.commit_gates.algo_flow_link_gate import make_algo_flow_link_gate
+
+    root = _make_repo(tmp_path)
+    rel = "src/zephyr/pkg_a/demo.py"
+    spec = make_algo_flow_link_gate()
+
+    root.joinpath(rel).write_text(_PY_ANCHORED, encoding="utf-8")  # 工作区=净
+    dirty = _FakeGateway(root, {rel: _PY_ANCHOR_PLUS_BLOCK})  # index=脏
+    passed, msg = spec.check(dirty, [rel])
+    assert passed is False, msg
+    assert "多余 ALGO_FLOW 机器块" in msg, msg
+    assert dirty.calls, "未走 git show :<path>=staged 读取器没接上"
+
+    root.joinpath(rel).write_text(_PY_ANCHOR_PLUS_BLOCK, encoding="utf-8")  # 工作区=脏
+    clean = _FakeGateway(root, {rel: _PY_ANCHORED})  # index=净
+    passed2, msg2 = spec.check(clean, [rel])
+    assert passed2 is True, msg2

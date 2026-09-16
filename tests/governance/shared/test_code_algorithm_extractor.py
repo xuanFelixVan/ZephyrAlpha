@@ -765,6 +765,36 @@ def test_unclosed_first_block_swallows_second_marker():
     assert duplicate_inline_algo_flow_spans(src) == []
 
 
+def test_anchor_plus_inline_block_after_is_duplicate_inline():
+    """锚后写回一块=红蓝实弹 R2 实测哑火形态（2026-09-17，HEAD=b873ee71d3 真落地过）。
+
+    原判据把锚行排除在候选外，"锚+一块"数出来只有 1 块 → 判合法；载体唯一口径下锚即
+    载体，其后的块是第二真源，必报。
+    """
+    from _shared.code_algorithm_extractor import (
+        algo_flow_dead_block_spans,
+        duplicate_inline_algo_flow_spans,
+    )
+
+    src = '"""demo —— 说明。\n\n' + _ANCHOR + "\n" + _ONE_BLOCK + '"""\n\nX = 1\n'
+    dup = duplicate_inline_algo_flow_spans(src)
+    assert [s for s, _e, _c in dup] == _starts(src)
+    assert _block_start_lines(src, dup) == ["# [ALGO_FLOW]"]
+    assert algo_flow_dead_block_spans(src) == []  # 块在体内，不进体外分区
+
+
+def test_anchor_plus_inline_block_before_is_also_duplicate_inline():
+    """反序（块在前、锚在后）同判：并存即双真源，与行序无关。
+
+    不报出去=留一个"锚指向 yaml、体内还有一份没人读"的静默窗口，与 R2 同病。
+    """
+    from _shared.code_algorithm_extractor import duplicate_inline_algo_flow_spans
+
+    src = '"""demo —— 说明。\n\n' + _ONE_BLOCK + "\n" + _ANCHOR + '"""\n\nX = 1\n'
+    dup = duplicate_inline_algo_flow_spans(src)
+    assert [s for s, _e, _c in dup] == _starts(src)
+
+
 def test_geometry_partitions_are_disjoint_and_exhaustive():
     """三块混合态（体外 1 + 体内 2）：分区互斥，且各判据只咬自己那一块。
 
