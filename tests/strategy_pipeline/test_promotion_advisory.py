@@ -49,6 +49,70 @@ def alerter_calls(monkeypatch):
     return calls
 
 
+def _cand(n: str) -> str:
+    """屏侧候选 id（衰减台账与 fdr_keep 都按它建行）。"""
+    return f"CAND-0000000000{n}"
+
+
+def _src_file(n: str) -> str:
+    """翻译件路径（注册表 code_path ↔ strategy_screen source_file 联查锚）。"""
+    return f"scripts/backtest/translated/c4_0000000000{n}_test.py"
+
+
+def _bothwin_item(n: str) -> dict:
+    """fetch_bothwin 产物行形状（§8 双窗及格集成员）。"""
+    return {"key": f"{_cand(n)}@{_src_file(n).rsplit('/', 1)[-1]}",
+            "strategy_id": _cand(n), "source_file": _src_file(n),
+            "is_sharpe": 1.1, "segments": [{"batch": "OOS-2024", "sharpe": 0.8, "decay": 0.1}]}
+
+
+def _preauth(n: str = "1", *, dual: bool = True, fdr: bool = True, decay: str = "certified") -> dict:
+    """SIM 预授权三条件实据注入位（PA-1）；dual/fdr=False 或 decay=None/越线=该路证据拆掉。"""
+    fdr_keys = {_bothwin_item(n)["key"]} if fdr else set()
+    states = {_cand(n): decay} if decay else {}
+    return {
+        "bothwin_items": [_bothwin_item(n)] if dual else [],
+        "fdr_keys": fdr_keys,
+        "decay_states": states,
+    }
+
+
+def _intake_report(dir_: Path, name: str, keep: list[str]) -> None:
+    dir_.mkdir(parents=True, exist_ok=True)
+    (dir_ / name).write_text(
+        yaml.safe_dump({"fdr_keep": keep}, allow_unicode=True), encoding="utf-8")
+
+
+def _decay_ledger(path: Path, states: dict[str, str]) -> None:
+    path.parent.mkdir(parents=True, exist_ok=True)
+    path.write_text(json.dumps({"schema": "strategy_decay/2", "updated_at": "2026-09-17",
+                                "strategies": {k: {"state": v} for k, v in states.items()}}),
+                    encoding="utf-8")
+
+
+def _reg_entries(states: dict[str, str]) -> str:
+    """真册同形条目（两空格缩进+双引号标量，registry_writer 渲染约定）。
+
+    PA-1：条目须带 code_path/aliases——三条件实据的注册表锚点，缺锚点即"证据缺位=不通过"。
+    """
+    out = []
+    for sid, state in states.items():
+        n = sid[-1]
+        out.append(
+            f'  - strategy_id: "{sid}"\n'
+            f'    name_zh: "测试策略 {sid}"\n'
+            f'    aliases: ["{_cand(n)}"]\n'
+            f'    code_path: "{_src_file(n)}"\n'
+            f'    lifecycle_status: "{state}"\n'
+            "    updated_at: 2026-09-01\n"
+        )
+    return "".join(out)
+
+
+def _write_reg(path: Path, states: dict[str, str]) -> None:
+    path.write_text("strategies:\n" + _reg_entries(states), encoding="utf-8")
+
+
 @pytest.fixture()
 def tree(tmp_path, monkeypatch):
     """tmp 证据树：runs/fw-auto/sim-memos/advisories/registry 全在 tmp_path，零生产 IO。"""
@@ -59,20 +123,17 @@ def tree(tmp_path, monkeypatch):
     for d in (runs, fw, memo, adv):
         d.mkdir(parents=True)
     reg = tmp_path / "strategy_registry.yaml"
-    # 真册同形（两空格缩进条目+双引号标量，registry_writer 渲染约定）
-    entries = "".join(
-        f'  - strategy_id: "STR-SIM-00{i}"\n'
-        f'    name_zh: "测试策略 00{i}"\n'
-        f'    lifecycle_status: "sim"\n'
-        f'    updated_at: 2026-09-01\n'
-        for i in (1, 2, 3, 4, 5))
-    reg.write_text(f"strategies:\n{entries}", encoding="utf-8")
+    _write_reg(reg, {f"STR-SIM-00{i}": "sim" for i in (1, 2, 3, 4, 5)})
     monkeypatch.setattr(pa, "RUNS_DIR", runs)
     monkeypatch.setattr(pa, "FW_DIR", fw)
     monkeypatch.setattr(pa, "MEMO_DIR", memo)
     monkeypatch.setattr(pa, "ADVISORY_DIR", adv)
     monkeypatch.setattr(pa, "REGISTRY", reg)
-    return {"runs": runs, "fw": fw, "memo": memo, "adv": adv, "reg": reg}
+    # PA-1 两路只读证据源也钉到 tmp（禁读真 intake 批报告/真衰减台账）
+    monkeypatch.setattr(pa, "INTAKE_REPORT_DIR", tmp_path / "intake-reports")
+    monkeypatch.setattr(pa, "DECAY_LEDGER", tmp_path / "strategy_decay_ledger.json")
+    return {"runs": runs, "fw": fw, "memo": memo, "adv": adv, "reg": reg,
+            "intake": tmp_path / "intake-reports", "ledger": tmp_path / "strategy_decay_ledger.json"}
 
 
 def _gov_run(runs: Path, run_id: str, recs: list[dict]) -> None:
@@ -220,9 +281,11 @@ class TestDecide:
         _fake_alerter(monkeypatch, calls)
         aid = self._adv(tree)
         out = pa.decide(aid, "approve", token=None, via="frontend",  # token=None=服务端自取
-                        advisory_dir=tree["adv"], registry_path=tree["reg"])
+                        advisory_dir=tree["adv"], registry_path=tree["reg"],
+                        sim_evidence=_preauth("1"))  # PA-1：candidate→sim 三条件实据
         assert out["ok"] is True and out["decision"] == "approve"
         assert out["fsm"] == {"from": "sim", "to": "production"}
+        assert out["sim_preauthorization"]["mode"] == "evidence"
         assert out["registry"]["lifecycle_status"] == "production"
         # 注册表真变 + 他条目零触碰
         reg = yaml.safe_load(tree["reg"].read_text(encoding="utf-8"))
@@ -243,7 +306,8 @@ class TestDecide:
         assert bad == {"ok": False, "advisory_id": aid, "reason": "invalid_token"}
         assert not (tree["adv"] / f"{aid}.decision.json").exists()  # 拒门不落台账
         good = pa.decide(aid, "approve", token=TOKEN,
-                         advisory_dir=tree["adv"], registry_path=tree["reg"])
+                         advisory_dir=tree["adv"], registry_path=tree["reg"],
+                         sim_evidence=_preauth("1"))
         assert good["ok"] is True and good["fsm"]["to"] == "production"
 
     def test_token_unconfigured_fail_closed(self, tree, monkeypatch):
@@ -260,7 +324,8 @@ class TestDecide:
     def test_already_decided_rejects(self, tree, monkeypatch):
         monkeypatch.setenv("ZEPHYR_OWNER_APPROVAL_TOKEN", TOKEN)
         aid = self._adv(tree)
-        first = pa.decide(aid, "approve", advisory_dir=tree["adv"], registry_path=tree["reg"])
+        first = pa.decide(aid, "approve", advisory_dir=tree["adv"], registry_path=tree["reg"],
+                          sim_evidence=_preauth("1"))
         assert first["ok"] is True
         again = pa.decide(aid, "approve", advisory_dir=tree["adv"], registry_path=tree["reg"])
         assert again["ok"] is False and again["reason"] == "already_decided"
@@ -277,10 +342,12 @@ class TestDecide:
         assert reg["strategies"][0]["lifecycle_status"] == "sim"
 
     def test_demote_approve_flows_to_shelved(self, tree, monkeypatch):
+        """PA-1 反向不变量：降档是风险收敛动作，零晋升证据也必须放行（不被预授权反向卡住）。"""
         monkeypatch.setenv("ZEPHYR_OWNER_APPROVAL_TOKEN", TOKEN)
         aid = self._adv(tree, sid="STR-SIM-002", rec="demote")
         out = pa.decide(aid, "approve", advisory_dir=tree["adv"], registry_path=tree["reg"])
-        assert out["ok"] is True and out["fsm"] == {"from": "sim", "to": "shelved"}
+        assert out["ok"] is True and out["fsm"] == {"from": "candidate", "to": "shelved"}
+        assert out["sim_preauthorization"]["mode"] == "not_required"
         assert out["registry"]["lifecycle_status"] == "shelved"
 
     def test_invalid_inputs(self, tree, monkeypatch):
@@ -291,10 +358,8 @@ class TestDecide:
             pa.decide(f"ADV-{_TODAY}-STR-NOPE-999", "approve",
                       advisory_dir=tree["adv"], registry_path=tree["reg"])
         # lifecycle 已非观察态（candidate）→ 拒绝且不落台账
-        text = tree["reg"].read_text(encoding="utf-8").replace(
-            '  - strategy_id: "STR-SIM-004"\n    name_zh: "测试策略 004"\n    lifecycle_status: "sim"',
-            '  - strategy_id: "STR-SIM-004"\n    name_zh: "测试策略 004"\n    lifecycle_status: "candidate"')
-        tree["reg"].write_text(text, encoding="utf-8")
+        _write_reg(tree["reg"], {"STR-SIM-001": "sim", "STR-SIM-002": "sim",
+                                 "STR-SIM-004": "candidate"})
         aid = self._adv(tree, sid="STR-SIM-004")
         out = pa.decide(aid, "approve", advisory_dir=tree["adv"], registry_path=tree["reg"])
         assert out["ok"] is False and out["reason"] == "invalid_lifecycle"
@@ -310,8 +375,13 @@ class TestListAdvisories:
         monkey_token = pytest.MonkeyPatch()
         try:
             monkey_token.setenv("ZEPHYR_OWNER_APPROVAL_TOKEN", TOKEN)
-            aid = pa.list_advisories(tree["adv"])[0]["advisory_id"]
-            pa.decide(aid, "approve", advisory_dir=tree["adv"], registry_path=tree["reg"])
+            row0 = pa.list_advisories(tree["adv"])[0]
+            aid = row0["advisory_id"]
+            # PA-1：promote 拍板须带三条件实据（缺证据=fail-closed 拒绝），demote 不需要
+            out = pa.decide(aid, "approve", advisory_dir=tree["adv"],
+                            registry_path=tree["reg"],
+                            sim_evidence=_preauth(row0["strategy_id"][-1]))
+            assert out["ok"] is True, out
         finally:
             monkey_token.undo()
         rows = {a["advisory_id"]: a for a in pa.list_advisories(tree["adv"])}
