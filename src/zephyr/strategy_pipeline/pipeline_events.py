@@ -4,7 +4,8 @@
 # [DEPENDENCIES] zephyr.strategy_pipeline.intake; zephyr.data.alerter; zephyr.security.access_control.kill_switch(探针);
 #   scripts.backtest.sim_paper_ledger(import 复用 ensure_wallet，经 sys.path);
 #   scripts.backtest.{sim_platform_journal,sim_deviation_report,sim_governance}(子进程);
-#   zephyr.pf_alloc.allocation_orchestrator(子进程 -m，pf_alloc_daily 日分配执行体)
+#   zephyr.pf_alloc.allocation_orchestrator(子进程 -m，pf_alloc_daily 日分配执行体);
+#   zephyr.infrastructure.database_service(reader 角色——pf_alloc_daily 业务日解析，宪法 §9.1 禁裸连接)
 # [CONSUMERS] DataScheduler task_completed（调度器侧 wire_data_scheduler 注册）; c4_batch_screen 落账钩子;
 #   intake sim 流转钩子（emit_sim_wallet_due）; 管线 CLI（python -m zephyr.strategy_pipeline.pipeline_events emit/drain/status）
 # [STARTUP] imported（本包不建线程/不建调度器；事件持久化=JSONL 日志，恢复重放由 drain 完成）
@@ -17,6 +18,12 @@
 #   pf_alloc_daily（车道 D 分配链）归轻 kind：payload 必带 trade_date（禁墙钟猜业务日）、
 #   trade_date 级 marker 防同日双写（alloc 三表只增不改）、子进程超时 PF_ALLOC_TIMEOUT_S 有界、
 #   失败/超时抛错进 attempts 计数（MAX_ATTEMPTS=3 后毒丸留档）；
+#   pf_alloc_daily 的**唯一自动产出者=本模块 maybe_emit_pf_alloc_daily**（清单 #15 治本：此前
+#   该 kind 有派发/执行体/幂等闸却无发射方=分配链"消而不产"，alloc 三表恒 0 行）——挂
+#   daily_kline SUCCESS 唤醒、先于 sim_ledger_daily 入队（分配先落，账本同日开户才拿到真实额度）、
+#   业务日=行情最新入库日（resolve_pf_alloc_trade_date，禁墙钟猜日）、解析不出日=不发事件+告警、
+#   已成功分配过的业务日永不再自动重发（幂等键=trade_date → 用 _marker_seen 永久闸而非
+#   当日口径，否则行情停更/周末唤醒对同一 D 追加重复快照；人工重跑走 CLI/emit 不受此挡）；
 #   日件幂等双闸=当日 UTC date-marker（消费成功才落）∨ 非 poison 同 kind 在队；月度档毒丸不堵队
 #   （毒丸不算已入队——sim_memo_monthly 从未正常轮转的病根修复，C2/X2）；
 #   OPTIONAL_DUE_KINDS 预埋派发缺失=逐出队跳过（不抛不占 attempts，实现由后续批次交付）；
@@ -47,7 +54,9 @@
   sim_ledger_daily → sim_journal_daily（daily_kline 唤醒入队，FIFO 串行，date-marker 日幂等）；
   sim_deviation_monthly（30 天 marker 月度档，成功后串行触发治理建议器）；
   pf_alloc_daily（车道 D：分配链日分配，子进程隔离+有界超时+trade_date 级幂等 marker；
-    它是账本 ensure_wallet 钱包额度的上游——分配先落，账本同日开户才拿得到真实额度）；
+    它是账本 ensure_wallet 钱包额度的上游——分配先落，账本同日开户才拿得到真实额度；
+    产出者=本模块 maybe_emit_pf_alloc_daily，与 sim 日件同一 daily_kline SUCCESS 唤醒点、
+    且先于其入队。清单 #15 前该 kind 只有派发/执行体没有发射方=分配链恒 0 行的真断点）；
   fw_backtest_due / promotion_advisory_due（预埋派发，实现模块由 S12/S13 批次交付，缺失跳过）。
 
 用法:
@@ -387,6 +396,24 @@ def run_sim_deviation_monthly(payload: dict[str, Any]) -> dict[str, Any]:
     return {"rc": rc, "month": month, "governance_rc": gov_rc}
 
 
+def _pf_alloc_brief(stdout: str) -> str:
+    """装配体 CLI 的 summary JSON → 一行可播报的人读摘要（解析失败退回首文本，绝不误判失败）。"""
+    try:
+        s = json.loads((stdout or "").strip() or "{}")
+    except ValueError:
+        return (stdout or "").strip()[-200:] or "无摘要"
+    if not isinstance(s, dict):
+        return str(s)[:200]
+    wallets = s.get("wallet_capital") or {}
+    wallet_txt = ",".join(f"{k}={v}" for k, v in wallets.items()) or "无（链停用/宇宙为空）"
+    rg = s.get("regime") or {}
+    regime_txt = f"{rg.get('dominant')}@{rg.get('source_date')}(滞后{rg.get('lag_days')}日)"
+    return (f"run={s.get('run_id')} 总盘={s.get('portfolio_total_capital')} "
+            f"Σbudget={s.get('sum_effective_budget')} shrinkage={s.get('global_shrinkage')} "
+            f"未分配现金={s.get('unallocated_cash')} 钱包[{wallet_txt}] "
+            f"落地={s.get('persisted')} 告警={len(s.get('warnings') or [])}条 regime={regime_txt}")
+
+
 def run_pf_alloc_daily(payload: dict[str, Any]) -> dict[str, Any]:
     """pf_alloc 日分配（车道 D 实盘接线，MOD-PA-030 装配体的事件执行体）：一事件=一分配周期。
 
@@ -405,7 +432,8 @@ def run_pf_alloc_daily(payload: dict[str, Any]) -> dict[str, Any]:
     失败：超时 / rc≠0 → 告警 + 抛错，交 drain 的 attempts 计数（MAX_ATTEMPTS=3 后毒丸留档）。
 
     Returns:
-        {"rc": 0, "trade_date": D, "summary_tail": str} 或 {"skipped": ..., "trade_date": D}
+        {"rc": 0, "trade_date": D, "alloc_brief": 一行摘要, "summary_tail": str}
+        或 {"skipped": ..., "trade_date": D}
     """
     import subprocess
 
@@ -435,7 +463,12 @@ def run_pf_alloc_daily(payload: dict[str, Any]) -> dict[str, Any]:
         alert(err, level="ERROR")
         raise RuntimeError(err)
     _touch_marker(marker)  # 成功才落号（失败不落→同唤醒点重试仍可执行）
-    return {"rc": 0, "trade_date": day, "summary_tail": (proc.stdout or "")[-300:]}
+    brief = _pf_alloc_brief(proc.stdout)
+    # 出声：分配结果不能只停在子进程 stdout——一行摘要进告警面（Alerter→日志）+ drain 回执，
+    # 落库投递事实（ch_committed/local_durable）在摘要里，"算了没落地"当场可见。
+    alert(f"pf_alloc 日分配已落地 trade_date={day}: {brief}", level="INFO")
+    return {"rc": 0, "trade_date": day, "alloc_brief": brief,
+            "summary_tail": (proc.stdout or "")[-300:]}
 
 
 def run_optional_due(kind: str, evt: dict[str, Any]) -> dict[str, Any]:
@@ -516,6 +549,20 @@ def _date_marker_done(name: str) -> bool:
         return False
 
 
+def _marker_seen(name: str) -> bool:
+    """记号**曾**落过盘（不看 UTC 日期，永久闸）：幂等键本身是业务日时用它而非 _date_marker_done。
+
+    分配链幂等键=trade_date（alloc 三表只增不改）。用 UTC 日口径会漏：行情停更/周末唤醒时
+    业务日仍是旧的 D，而记号日期已翻篇 → 同一 D 再发一件 → 只增表里多一份重复快照。
+    """
+    try:
+        if not AUDIT_MARKER.exists():
+            return False
+        return bool(json.loads(AUDIT_MARKER.read_text(encoding="utf-8")).get(name))
+    except Exception:  # noqa: BLE001 — 标记损坏按未做过处理（宁可重发，分配链同日双写另有闸）
+        return False
+
+
 def maybe_emit_sim_daily(task_id: Any = None, success: bool = True, **_kwargs) -> dict[str, Any]:
     """模拟盘日件到期评估（S09 C2）：daily_kline 数据任务当日 SUCCESS=自然唤醒（非自走时钟）。
 
@@ -536,6 +583,68 @@ def maybe_emit_sim_daily(task_id: Any = None, success: bool = True, **_kwargs) -
     if emitted:
         alert(f"模拟盘日件已入队: {emitted}")
     return {"emitted": emitted}
+
+
+# ---------- pf_alloc 日分配产出者（清单 #15 治本：kind 有消费端无产出者=分配链"消而不产"）──
+# 业务日真源=行情最新入库日（daily_kline/kline_index 任务 SUCCESS 即该日已入库）。
+# 查询口径与 scripts/backtest/sim_platform_journal.py 健检 1 同源（同表同 symbol），此处只解析
+# 不猜：解析不出=不发事件（分配链正门 handle_pf_alloc_daily_event 对缺 trade_date 抛错，
+# 墙钟猜日会在非交易日/数据晚到日写出错误的分配快照，且 alloc 三表只增不改无法回收）。
+PF_ALLOC_BIZ_DATE_SQL = ("SELECT max(trade_date) FROM c1_market.kline_index "
+                         "WHERE symbol = '000300'")
+# CH 对空 Date 列的 min/max 返回 1970-01-01 哨兵（实证见 market_daban_engine_load.py 注记）
+_EMPTY_TABLE_SENTINEL = "1971-01-01"
+
+
+def resolve_pf_alloc_trade_date() -> str:
+    """分配链业务日（数据驱动，非墙钟）：行情最新入库交易日 -> 'YYYY-MM-DD'。
+
+    Raises:
+        RuntimeError: CH 不可达 / 无行 / 空表哨兵 / 日期非法——宁可不发事件也不猜日。
+    """
+    from zephyr.infrastructure.database_service import get_db_service
+
+    conn = get_db_service().get_clickhouse_conn(role="reader")
+    rows = list(conn.execute(PF_ALLOC_BIZ_DATE_SQL) or [])
+    raw = rows[0][0] if rows and rows[0] else None
+    day = str(raw or "")[:10]
+    if not day or day < _EMPTY_TABLE_SENTINEL:
+        raise RuntimeError(f"行情无可用业务日（kline_index max(trade_date)={raw!r}）")
+    return day
+
+
+def maybe_emit_pf_alloc_daily(task_id: Any = None, success: bool = True,
+                              **_kwargs) -> dict[str, Any]:
+    """pf_alloc 日分配的唯一自动产出者：行情日件 SUCCESS=自然唤醒，一个唤醒=一个分配周期。
+
+    宪法 §9.3 合规：本件不建 cron/Timer/sleep 循环，节拍由调度器 task_completed 唤醒给。
+    入队顺序即落地顺序（journal FIFO）——本件在 maybe_emit_sim_daily **之前**被调用，
+    故 pf_alloc_daily 先于 sim_ledger_daily 消费，账本同日 ensure_wallet 才读得到真实额度
+    （否则 alloc_budget_daily 恒空、账本恒回退 flat 100 万=PFA-2 原状）。
+    幂等双闸：该业务日**曾**已成功（trade_date 级记号，永久）∨ 同业务日非 poison 事件在队
+    → 零副作用跳过。用永久记号而非"当日"记号：幂等键是业务日，行情停更/周末唤醒时业务日
+    还是旧的 D，按 UTC 日口径会再发一件 → 只增不改的 alloc 表里多出一份重复快照。
+    人工重跑不受本闸约束：`pipeline_events emit pf_alloc_daily --payload '{"trade_date":D}'`
+    或直接 `python -m zephyr.pf_alloc.allocation_orchestrator --date D`（重跑=新 run_id 追加）。
+    """
+    tid = str(task_id or "")
+    if not success or not any(k in tid for k in SIM_DAILY_WAKE_TASKS):
+        return {"emitted": []}
+    try:
+        day = resolve_pf_alloc_trade_date()
+    except Exception as exc:  # noqa: BLE001 — 业务日不可得=不发事件，但必须出声（静默=链又变纸面）
+        msg = f"pf_alloc 日分配未入队（业务日不可解析，禁墙钟猜日）: {type(exc).__name__}: {exc}"
+        alert(msg[:300], level="WARN")
+        return {"emitted": [], "error": msg[:200]}
+    if _marker_seen(f"{PF_ALLOC_KIND}:{day}") or any(
+            e["kind"] == PF_ALLOC_KIND and not e.get("poison")
+            and str((e.get("payload") or {}).get("trade_date") or "") == day
+            for e in pending()):
+        return {"emitted": [], "skipped": "already_queued_or_done", "trade_date": day}
+    record(PF_ALLOC_KIND, {"trade_date": day, "due": "sim_daily_wake", "task_id": tid})
+    alert(f"pf_alloc 日分配已入队 trade_date={day}（先于账本消费=同日钱包拿真实额度）",
+          level="INFO")
+    return {"emitted": [PF_ALLOC_KIND], "trade_date": day}
 
 
 # ---------- 写侧钩子 ----------
@@ -568,13 +677,18 @@ def emit_sim_wallet_due(strategies: list[dict[str, Any]]) -> dict[str, Any]:
 def wire_data_scheduler(scheduler: Any) -> None:
     """DataScheduler.subscribe("task_completed", ...) 轻钩子：数据任务完成=自然唤醒点。
 
-    职责边界：只做 ①轻 kind drain（intake 重放/审计）②翻译件积压扫描→记录 c4_batch_due+告警。
+    职责边界：只做 ①轻 kind drain（intake 重放/审计）②翻译件积压扫描→记录 c4_batch_due+告警
+    ③日频产出者唤醒（pf_alloc 分配链 → 模拟盘日件 → 月度档；顺序即 journal FIFO 顺序，
+    分配先于账本入队是"钱包额度来自分配链"这一接通的唯一次序保证）。
     永不抛异常（数据任务完成回调故障不得反噬调度器）；重 kind 不在此消费（见模块裁定）。
     """
     def _on_task_completed(**_kwargs) -> None:
         try:
             scan_translated_backlog()
             scan_c1_c2_backlog()
+            # 车道 D #15：分配链日产出者——必须先于日件入队（journal FIFO=分配先落，
+            # 同日账本 ensure_wallet 才读得到 alloc_budget_daily 的真实钱包额度）
+            maybe_emit_pf_alloc_daily(**_kwargs)
             maybe_emit_sim_daily(**_kwargs)  # S09 C2：daily_kline SUCCESS=模拟盘日件自然唤醒
             maybe_emit_monthly()
             drain(allow_heavy=False)
