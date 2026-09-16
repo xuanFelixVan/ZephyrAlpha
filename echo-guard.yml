@@ -145,3 +145,17 @@ acknowledged:
   verdict: intentional
   stable_key: "scripts/governance/d5_architecture/generators/generate_blueprint_panorama.py:_depgraph_status_str||scripts/governance/d5_architecture/generators/generate_blueprint_panorama.py:_decision_status_str"
   note: 状态串归一助手镜像（depgraph/decision 各图状态枚举文案化）；本班（st-bptmpl-20260916 蓝图模板治本）仅改该文件头注一行，四对函数均为既有实现非本批引入；合并参数化治本移交后续重构班
+- id: cg-govaudit-datadir-20260917
+  verdict: intentional
+  stable_key: "src/zephyr/gov_audit/bridges/audit_tiered_storage_bridge.py:data_dir||src/zephyr/gov_audit/evidence_pack.py:data_dir"
+  note: 审计存储根目录解析器双实例（分级存储桥/证据包各自 data_dir 属性），P2-1 尾池出仓批
+    t00/t01 只搬 docstring 内 ALGO_FLOW 机器块、零可执行行变更（bt_ast_identity 69/69 件 AST
+    指纹逐位相同；本对两侧函数 AST dump HEAD==工作区 380B/380B 实测同形）=既有克隆被触碰税
+    判给本批，非本批引入。合并属 gov_audit 域作者的语义重构（两审计件各自依赖不同存储根），
+    不由零代码变更的文档批代做（AGENTS §3.4 owner 责任制）。
+- id: cg-govaudit-init-20260917
+  verdict: intentional
+  stable_key: "src/zephyr/gov_audit/contracts.py:__init__||src/zephyr/gov_audit/event_store.py:__init__"
+  note: 审计契约/事件存储构造样板同构（同为 dataclass 风格字段直存），P2-1 尾池出仓批 t00/t01
+    零可执行行变更（两侧函数 AST dump HEAD==工作区 899B/860B 实测同形）=既有克隆被触碰税判给
+    本批，非本批引入；处置同上（合并须由 gov_audit 责任人裁定）。
