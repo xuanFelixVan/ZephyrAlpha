@@ -28,9 +28,10 @@ sys.path.insert(0, str(Path(__file__).resolve().parents[2] / "scripts"))
 from backtest.auto_mount import (  # noqa: E402
     CLASS_CANDIDATE_STATES,
     FAMILY_DEFAULT_ROUTE,
-    IS_WIN,
+    IS_WIN_START,
     MIN_SEG_DAYS,
     NEW_SLEEVE_WEIGHT,
+    PIT_TAIL_LAG,
     R2SIX,
     insert_cell,
     insert_node_mount,
@@ -73,11 +74,20 @@ class TestMappingRules:
 
     def test_candidate_states_keyed_by_family(self):
         # 候选态按分类家族键：择时类家族必须有候选态；选股/打分类 None 或缺省（缺省=不挂状态格）
-        assert CLASS_CANDIDATE_STATES["value_reversal"] == {"capitulation", "accumulation"}
+        # 原断言 value_reversal=={capitulation,accumulation}、daban=={accumulation,expansion}
+        # 因 SLE-3③ 盲区补映射改为下述集合：微观相位 overlay 让 euphoria/distribution
+        # 自此可在判定窗出现（value_reversal=L1 防御腿主体四态全候选；daban=地图 L4
+        # euphoria 格早已预登记，候选态据此补 euphoria；distribution 对 daban 按图注"不进"封闭）。
+        assert CLASS_CANDIDATE_STATES["value_reversal"] == {"capitulation", "accumulation",
+                                                            "euphoria", "distribution"}
         assert CLASS_CANDIDATE_STATES["momentum_trend"] == {"expansion", "ignition"}
-        assert CLASS_CANDIDATE_STATES["daban"] == {"accumulation", "expansion"}
+        assert CLASS_CANDIDATE_STATES["daban"] == {"accumulation", "expansion", "euphoria"}
         assert CLASS_CANDIDATE_STATES["multifactor"] is None
         assert CLASS_CANDIDATE_STATES.get("sector_rotation", set()) == set()
+        # 禁全态海选：任何候选态必须是六段词表子集
+        for cands in CLASS_CANDIDATE_STATES.values():
+            assert cands is None or cands <= {"capitulation", "accumulation", "ignition",
+                                              "expansion", "euphoria", "distribution"}
 
     def test_route_resolution_prefers_explicit(self):
         # 显式 mount_route 优先于家族兜底（TSMALL/VAL 虽归 multifactor，路由仍走 L3-07-3 选股链）
@@ -257,18 +267,26 @@ portfolio_plan:
 
 class TestWriteReport:
     def test_report_written_with_three_sections(self, tmp_path):
+        # 原断言 "+3.72(73d)"（segments 值=(n,sr) 二元组）因 SLE-3①② 改为逐相位证据 dict
+        # （sr/t/p/n/oos + FDR 回执 accepted/reject_reason），报告口径随新 schema 渲染。
+        seg = {"n": 73, "sr": 3.72, "t": 4.1, "p": 3.1e-5, "vol": 0.18,
+               "oos_n": 40, "oos_sr": 1.2, "qvalue": 3.1e-5, "fdr_rejected": True,
+               "accepted": True, "reject_reason": ""}
         payload = {
             "diff": "+++ map.after\n+mount line",
             "judgements": [{"sid": "STR-X-001", "cls": "value_reversal", "node": "TDM-E-L1",
                              "activated": ["capitulation"],
-                             "segments": {"capitulation": (73, 3.72)}}],
+                             "segments": {"capitulation": seg}}],
             "fails": [],
             "weights": "{\"STR-X-001\": 0.05}",
+            "window": "2020-01-01..2026-09-10",
+            "fdr": {"m": 1, "q": 0.10, "threshold": 0.01, "n_rejected": 1, "hlz": False},
         }
         rp = write_report(payload, "STR-X-001", out_dir=tmp_path)
         text = rp.read_text(encoding="utf-8")
         assert "## 挂了哪" in text and "## 为什么" in text and "## 证据指针" in text
-        assert "STR-X-001" in text and "+3.72(73d)" in text and "TDM-E-L1" in text
+        assert "STR-X-001" in text and "SR=+3.72" in text and "n=73d" in text and "TDM-E-L1" in text
+        assert "BHY-FDR q=0.1" in text  # 多重检验回执进报告（SLE-3①）
 
     def test_report_replay_zero_diff_shape(self, tmp_path):
         payload = {"diff": None, "judgements": [], "fails": [], "weights": "{}"}
@@ -279,7 +297,11 @@ class TestWriteReport:
 # ---------- ⑤ 常量契约 ----------
 class TestConstants:
     def test_window_frozen(self):
-        assert IS_WIN == ("2020-01-01", "2023-12-31")
+        # 原断言 IS_WIN == ("2020-01-01", "2023-12-31") 因 SLE-3② 解冻改为：起点锚保留
+        # 2020-01-01（与 C4 冻结口径可比），终点禁写死——由快照表最新可用日回退
+        # PIT_TAIL_LAG 行动态派生（见 load_phase_panel / window_of）。
+        assert IS_WIN_START == "2020-01-01"
+        assert PIT_TAIL_LAG >= 1  # PIT 尾窗：尾日证据未定不入样
 
     def test_min_seg_days(self):
         assert MIN_SEG_DAYS == 30
