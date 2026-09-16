@@ -10,31 +10,7 @@ Backward-compat shim — only instrument remains.
 Data contracts (market_data/factor_signal/factor_monitor_report/macro_factor_signal/synthesized_signal)
 canonical location is now zephyr.shared.contracts.* (codegen SSoT, cross_layer_contracts.yaml declared).
 
-# [ALGO_FLOW]
-# 层: 输入
-# - id: I1
-#   name: 包内子模块公共符号
-#   fields: import 再导出符号: importlib
-#   code: __init__.py import L40
-# 层: 算法
-# - id: A1
-#   name_zh: ① 包公共面再导出
-#   name_en: __init__ re-export
-#   intro: 再导出 instrument（共 1 符号）
-#   desc: __init__ import L40；__all__ 1 项（AST 事实）
-#   inputs: I1
-#   outputs: __all__ 公共符号表
-# 层: 输出
-# - id: O1
-#   name_zh: 公共 API 面（1 符号）
-#   name_en: __all__
-#   intro: instrument
-#   downstream: 见模块头 [CONSUMERS]
-# [/ALGO_FLOW]
-#
-# 边:
-# I1 --> A1
-# A1 --> O1
+# [ALGO_FLOW] external: docs/03_modules/_domain_shared/algo_flow/contracts/market/market__init__.yaml
 """
 
 import importlib
