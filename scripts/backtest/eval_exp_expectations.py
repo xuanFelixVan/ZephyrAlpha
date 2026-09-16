@@ -22,7 +22,7 @@
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] consensus_daily/kline 缺失->RuntimeError
-# [TESTS] 纯统计流程（EXP 函数语义由 tests/factor/test_expectations.py 覆盖）；协议表与 CLI fail-closed 由 tests/scripts/test_build_consensus_daily_repaired.py 钉四性质：exp_primary 判据逐字冻结（预注册禁挪）、exp_r36 只严不宽（|t|>3.0 + 效应量地板不动 + 无晋级权）、无 OOS 窗显式 not_evaluable（禁落成 n_months=0）、exp_r36×polluted 与 exp02×repaired 两条 fail-closed 出口
+# [TESTS] 纯统计流程（EXP 函数语义由 tests/factor/test_expectations.py 覆盖）；协议表与 CLI fail-closed 由 tests/scripts/test_build_consensus_daily_repaired.py 钉四性质：exp_primary 判据逐字冻结（预注册禁挪）、exp_r36 只严不宽（|t|>3.0 + 效应量地板不动 + 无晋级权）、无 OOS 窗显式 not_evaluable（禁落成 n_months=0）、exp_r36×polluted 与 exp02×repaired 两条 fail-closed 出口；同文件另钉 _narrow 窄口径滑点腿三性质（两处曾致整轮评估崩溃且零覆盖）：广度不足的退化面板四档降级 None 而非 TypeError（空 rets 会落 RangeIndex(int64) 与日期串比较）、够广面板四档超额 Sharpe 随滑点严格递减（证明基准档消费标定正滑点，非 0bp 假乐观亦非 legacy 1bp）、钉住档 20/40/80bp 原样返回（压力腿历史可比性）
 # [TTL] permanent
 # noqa: m11-perm-manual-legitimate  M11豁免: 因子晋级评估 CLI（A 类一次性运维，随晋级批次按需手动执行）
 """eval_exp_expectations.py — EXP 一致预期族 IC 出证（SOP-B ④⑤⑥）。
@@ -88,7 +88,7 @@ _OOS = ("2024-01-01", "2026-09-11")
 _FWD = 20
 _K_GRID = (20, 60)              # §8.2 预注册（主档 20=1m，复核档 60=3m）
 _TOP_N = 50
-_SLIP_STRESS = (None, 20.0, 40.0, 80.0)   # None=MatchingConfig 原值 1bp（#233 真源）
+_SLIP_STRESS = (None, 20.0, 40.0, 80.0)   # None=MatchingConfig 生产默认（滑点逐笔走标定真源，非固定 1bp）
 _MIN_NAMES = 100
 _PANEL_START = "2018-06-01"     # k=60 回看缓冲
 _AUM = 1_000_000.0              # 组合名义额（最小佣金分摊基数；FQ 同款量级）
@@ -502,6 +502,7 @@ def _narrow(fac_wide: pd.DataFrame, px_close: pd.DataFrame, bench: pd.Series,
     """⑥ Top50 等权月频多头（成本五项读 MatchingConfig）+ 滑点四档压力，超额对 000300。"""
     import dataclasses
 
+    from zephyr.backtest.core import cost_model_calibration as cost_cal
     from zephyr.backtest.core.matching_logic import MatchingConfig
 
     out: dict = {}
@@ -516,11 +517,16 @@ def _narrow(fac_wide: pd.DataFrame, px_close: pd.DataFrame, bench: pd.Series,
     for slip in _SLIP_STRESS:
         cfg = MatchingConfig() if slip is None else dataclasses.replace(
             MatchingConfig(), slippage_bps=Decimal(str(slip)))
-        one_side = float(cfg.commission_rate + cfg.transfer_fee_rate
-                         + cfg.slippage_bps / Decimal(10000))
         sell_extra = float(cfg.stamp_tax_rate)
         min_comm = float(cfg.min_commission)
         per_trade = _AUM / _TOP_N
+        # 滑点腿只经标定真源解析：cfg.slippage_bps=None（基准档）在生产语义里是"逐笔按
+        # ADV 分层解析"，不是 0 也不是 1bp——直接拿它做除法会 TypeError（EXP 族三个因子的
+        # narrow_top50 腿曾因此全部出不了证）。钉住档（20/40/80）由 pinned_flat_bps 原样
+        # 返回，历史行为零漂移。分层判断禁在本件复制（复制即第二真源）。
+        slip_bps = cost_cal.resolve_slippage_bps(per_trade, pinned_flat_bps=cfg.slippage_bps)
+        one_side = float(cfg.commission_rate + cfg.transfer_fee_rate
+                         + slip_bps / Decimal(10000))
         comm_ratio = max(per_trade * float(cfg.commission_rate), min_comm) / per_trade
 
         rets: dict[str, float] = {}
@@ -547,7 +553,11 @@ def _narrow(fac_wide: pd.DataFrame, px_close: pd.DataFrame, bench: pd.Series,
             prev = cur
             rets[t] = gross - cost - bench_ret.get(t, 0.0)
 
-        s = pd.Series(rets).sort_index()
+        # rets 为空时（窗内没有任何一个月截面广度达 _MIN_NAMES）pd.Series({}) 会落默认
+        # RangeIndex(int64)，与 _IS/_OOS 的日期串比较抛 TypeError——整轮评估死于一个难懂的
+        # pandas 报错。正确行为是"广度不足"降级成 None：显式声明 object 索引即可让空面板
+        # 安全落到 _sharpe 的样本量守卫上。
+        s = pd.Series(rets, index=pd.Index(list(rets.keys()), dtype="object")).sort_index()
 
         def _sharpe(seg: pd.Series) -> float | None:
             seg = seg.dropna()

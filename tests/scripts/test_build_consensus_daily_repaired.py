@@ -207,3 +207,89 @@ def test_cli_exp02_on_repaired_source_is_not_evaluable(monkeypatch, capsys):
     rep = _json.loads(capsys.readouterr().out)
     assert rep["status"] == "not_evaluable" and rep["promotion_authority"] == "none"
     assert "eps_std" in rep["reason"] and rep["oos_window"] is None
+
+
+# ---------------------------------------------------------------------------
+# 滑点腿必须走标定真源（35cf0eb36a 把 MatchingConfig.slippage_bps 默认从 Decimal("1")
+# 改成 None=逐笔解析后，_narrow 仍拿它做除法 → 基准档 TypeError，EXP 族三因子的
+# narrow_top50 腿全部出不了证，且零测试覆盖 ⇒ 本段是该缺陷的复发钉）
+# ---------------------------------------------------------------------------
+
+def _synth_panel(n_syms: int, n_months: int):
+    """合成面板（n_months 个月末 × n_syms 只票），够驱动 _narrow 全流程，不连任何 IO。
+
+    月末与 t+20 前向日错开一天，避免 fac/px 索引重叠造成的假对齐。
+    """
+    import numpy as np
+    import pandas as pd
+
+    mes = [f"2019-{m:02d}-28" for m in range(1, n_months + 1)]
+    fwd = [f"2019-{m:02d}-20" for m in range(2, n_months + 2)]
+    syms = [f"{i:06d}.SZ" for i in range(1, n_syms + 1)]
+    idx = pd.to_datetime(sorted(set(mes) | set(fwd)))
+    rng = np.random.default_rng(20260916)
+    px = pd.DataFrame(
+        100.0 * np.cumprod(1.0 + rng.normal(0.0005, 0.02, (len(idx), len(syms))), axis=0),
+        index=idx, columns=syms)
+    fac = pd.DataFrame(rng.normal(0, 1, (len(mes), len(syms))),
+                       index=pd.to_datetime(mes), columns=syms)
+    bench = pd.Series(3000.0 * np.cumprod(1.0 + rng.normal(0, 0.01, len(idx))), index=idx)
+    return fac, px, bench, mes, {m: f for m, f in zip(mes, fwd)}
+
+
+def test_narrow_degenerate_panel_degrades_to_none_not_typeerror():
+    """广度不足（截面 < _MIN_NAMES）→ 四档全 None，禁抛 TypeError。
+
+    病根：rets 为空时 pd.Series({}) 落默认 RangeIndex(int64)，与 _IS/_OOS 的日期串比较
+    抛 "Invalid comparison between dtype=int64 and str"——整轮评估死于一个难懂的 pandas
+    报错，而"该窗广度不足"本该是一张能读懂的 None 出证。
+    """
+    fac, px, bench, mes, fwd_map = _synth_panel(n_syms=4, n_months=4)
+    assert 4 < _ev._MIN_NAMES, "面板必须真的够不着广度闸门，否则本测试测不到退化路径"
+    out = _ev._narrow(fac, px, bench, mes, fwd_map)
+    assert set(out) == {"slip_cfgbp", "slip_20bp", "slip_40bp", "slip_80bp"}
+    for leg, vals in out.items():
+        assert vals == {"excess_sharpe_is": None, "excess_sharpe_oos": None,
+                        "oos_over_is": None}, f"{leg} 广度不足须降级 None，不得崩也不得伪造数值"
+
+
+def test_narrow_base_slip_leg_consumes_calibrated_cost():
+    """基准档（slip=None）必须消费标定真源的正滑点：既不是崩溃，也不是 0bp 的假乐观。
+
+    None 在生产语义里是"按当日成交额走 ADV 分层标定"，不是"没有滑点"也不是旧 1bp 一口价。
+    四档成本单调性是本条的判据：cfg 档滑点(标定值) < 20bp ⇒ 超额 Sharpe 严格更高，
+    且四档随滑点递增单调下降——若 cfg 档被读成 0 或被读成 20bp，单调关系当场破。
+    """
+    from zephyr.backtest.core import cost_model_calibration as cost_cal
+
+    per_trade = _ev._AUM / _ev._TOP_N
+    base_bps = float(cost_cal.resolve_slippage_bps(per_trade, pinned_flat_bps=None))
+    assert 0 < base_bps < 20.0, (
+        f"基准档标定滑点须为正且低于最低压力档（实得 {base_bps}bp）；"
+        "0=假乐观，>=20=压力网格失去意义，1.0=回退到无出处的 legacy 一口价"
+    )
+    assert base_bps != float(cost_cal.LEGACY_FLAT_SLIPPAGE_BPS), (
+        "result_repository 同口径：consumed 滑点取标定档，不取 legacy 1bp"
+    )
+
+    fac, px, bench, mes, fwd_map = _synth_panel(n_syms=120, n_months=8)
+    out = _ev._narrow(fac, px, bench, mes, fwd_map)   # 修复前此处 TypeError
+    sharpes = [out[k]["excess_sharpe_is"] for k in
+               ("slip_cfgbp", "slip_20bp", "slip_40bp", "slip_80bp")]
+    assert all(v is not None for v in sharpes), f"够广面板须出数，实得 {sharpes}"
+    assert sharpes[0] > sharpes[1] > sharpes[2] > sharpes[3], (
+        f"四档超额 Sharpe 须随滑点严格递减（cfg={base_bps}bp < 20 < 40 < 80），实得 {sharpes}"
+    )
+
+
+def test_narrow_pinned_slip_legs_are_returned_verbatim():
+    """钉住档 20/40/80 必须原样返回钉住值——压力腿的历史可比性靠这条（零漂移）。"""
+    from decimal import Decimal
+
+    from zephyr.backtest.core import cost_model_calibration as cost_cal
+
+    per_trade = _ev._AUM / _ev._TOP_N
+    for pinned in (20.0, 40.0, 80.0):
+        got = cost_cal.resolve_slippage_bps(per_trade, pinned_flat_bps=Decimal(str(pinned)))
+        assert float(got) == pinned, f"钉住档 {pinned}bp 被分层改写=压力腿失去可比性"
+    assert _ev._SLIP_STRESS == (None, 20.0, 40.0, 80.0), "压力网格是预注册档，禁顺手改档位"

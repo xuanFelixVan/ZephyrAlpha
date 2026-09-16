@@ -116,17 +116,24 @@ completes_when: consensus_daily_repaired 经 Owner 验收切换（或判废）�
 | 集成器路由分支 | `src/zephyr/data/implementations/internal_compute_provider.py`（`payload.table=c3_fundamental.consensus_daily_repaired` → `run_compute_repaired`；按需触发，不挂 tasks.yaml 夜间档） |
 | 建表部署 | `scripts/ch/apply_consensus_daily_repaired_ddl.py` |
 | 重建+验收 | `scripts/ch/build_consensus_daily_repaired.py` |
-| 纯函数单测（9 项） | `tests/scripts/test_build_consensus_daily_repaired.py` |
+| 纯函数单测（17 项：builder 9 + 评估协议 5 + 滑点腿 3） | `tests/scripts/test_build_consensus_daily_repaired.py` |
+| 评估双协议表（`_PROTOCOLS`：exp_primary / exp_r36） | `scripts/backtest/eval_exp_expectations.py` |
+| 降权协议出证 JSON（运行留痕，gitignored） | `logs/experiment_tracking_fallback/{exp02,exp04,exp06}_eval_run1_r36_20260916.json`；**追踪态正本内联见 §9.2** |
 
 复现：`python scripts/ch/apply_consensus_daily_repaired_ddl.py`（建表，幂等 IF NOT EXISTS，
 DDL 走 base/admin 账号——writer 无 CREATE 权限，#ARCH-CH-027）
 → `python scripts/ch/build_consensus_daily_repaired.py`（全量重建，可 `--start/--end/--symbols` 局部）
-→ `python scripts/ch/build_consensus_daily_repaired.py --check`（三重对照，三项全 PASS 才退 0）。
+→ `python scripts/ch/build_consensus_daily_repaired.py --check`（三重对照，三项全 PASS 才退 0）
+→ `PYTHONPATH=src python scripts/backtest/eval_exp_expectations.py --factor exp04
+--source repaired --protocol exp_r36 --out <路径>`（降权协议复评，两次运行逐字节相同）。
 
 切换门位：本表 `switch_gate=Owner`——DS-229 的消费方（pit_query 白名单、EXP 族评估器）
 在 Owner 验收前不得改指本表。评估器 `scripts/backtest/eval_exp_expectations.py` 的
 `--source {polluted,repaired}` 开关本班已就位（默认 polluted=既有出证口径零漂移；出证 JSON
-落 `consensus_table` 字段防两轨跑混认），但**未运行**——运行即撞 §5.2 的 IS 窗裁定点。
+落 `consensus_table` 字段防两轨跑混认），**并已在修复源上运行完毕**——
+处置与三因子实绩见 **§9**（原"未运行，运行即撞 §5.2 IS 窗裁定点"的表述已被 §9.1 的双协议处置取代：
+主协议判据逐字未挪，另立 `exp_r36` 降权协议出证，结论为"暂不可判定"而非"因子通过"）。
+**生产读路径零改动**：DS-229 消费方未改指本表，切换仍待 Owner 验收。
 
 ## 7. 抽核滚动进度（承接 30 份协议）
 
@@ -315,3 +322,243 @@ DDL 走 base/admin 账号——writer 无 CREATE 权限，#ARCH-CH-027）
     CAP 以**整文件 AST**为观测面（不看 own-diff，于是他人欠账连坐后来人）。
     两者都违反宪法 §3.1「内容扫描型 gate 默认 own-diff 作用域」的精神，且都让"谁先提交谁被别人的债挡死"。
     治本方向已另立裁定批处理（见 2026-09-16 裁定批台账）。
+
+## 9. EXP 族复评闭环（交接包步骤 7）+ 两处潜在崩溃治本 + 外部实践对标
+
+### 9.1 §5.2 IS 窗裁定点的处置：主闸门不挪，另立降权协议
+
+§5.2 把"IS 窗 2019-2023（60 月）在修复源上只有 36 月可得"列为 Owner 裁定点，候选 A=缩窗、
+B=补提取、C=换源。本班**未按 A 缩窗**，理由是第一性原理的：预注册的全部价值在于"看结果之前写死"，
+一旦按数据可得性回头改主窗，它就退化成事后叙事——而 A 恰好是"因为跑不通所以改判据"，
+方向与预注册相反。B 未授权（本会话明令禁拉起提取批），C 的干净窗最早 2027-07。
+
+处置=**第二协议另立预注册**（`eval_exp_expectations.py::_PROTOCOLS`，与主协议同表并列，非替换）：
+
+| 字段 | exp_primary（主，判据禁挪） | exp_r36（降权，另行预注册） |
+|---|---|---|
+| IS | 2019-01-01 ~ 2023-12-31（60 月） | 2019-01-01 ~ 2021-12-31（36 月=修复源真覆盖区） |
+| OOS | 2024-01-01 ~ 2026-09-11 | 无（源覆盖空洞）⇒ 段落显式 `not_evaluable` |
+| 效应量地板 | \|IC\| ≥ 0.02 | \|IC\| ≥ 0.02（**不动**：效应量与样本量无关，放大它=变相放宽） |
+| 显著性 | t 双侧 p < 0.05 | **\|t\| > 3.0（收紧）** |
+| 覆盖率 | ≥ 60%（分母=IS 月数） | ≥ 60%（分母换成 IS' 月数） |
+| 证据等级 | `pre-registered-primary` | `preliminary-coverage-limited` |
+| 晋级权 | `authoritative`（唯一） | **`none`（永不产出晋级/否决结论）** |
+
+收紧幅度的量化依据（不是拍的）：夏普比/IC 的标准误按 **SE ∝ 1/√T**（Lo 2002, *The Statistics of
+Sharpe Ratios*）缩放，T 由 60 月降到 36 月 ⇒ SE 放大 **√(60/36)=1.291 倍**。同等严格度只能提高门槛，
+降低即自我放水；取 \|t\|>3.0 对标 **Harvey-Liu-Zhu (2016)** 对"新因子"的门槛（其论证是多重检验下
+t>2 的假阳性率已不可接受）。该 1.291 与 `none` 晋级权都写进出证 JSON
+（`se_inflation_vs_primary` / `promotion_authority` 字段），读者不必看代码就知道这张证的分量。
+
+两条 fail-closed 闸（出声不静默）：`exp_r36 × --source polluted` → argparse 退出 2
+（给"历史快照当发布时点"的污染数据发一张看起来合法的降权证，口径混用比不跑更坏）；
+`exp02 × --source repaired` → 直接出 `not_evaluable`（见 9.2）。
+
+### 9.2 复评实绩（`--source repaired --protocol exp_r36`，三因子全跑）
+
+出证归档（**两处，各司其职**）：
+
+- **机器可读 JSON**：`logs/experiment_tracking_fallback/{exp02,exp04,exp06}_eval_run1_r36_20260916.json`
+  ——与既有 `expNN_eval_runK_YYYYMMDD.json`（EXP-FACTOR-EVAL-001/002/003 的 run 出证）同目录同命名族；
+  该目录 gitignored（`.gitignore:262`），是评估器 `--out` 的原生落点。
+- **受追踪的证据正本**：本节下方**逐字内联的三份 JSON 全文**（单一 `.md`，无新文件）。
+
+为什么内联而不是把 JSON 提交进 `docs/_working/`：`DIRECTORY-CONTRACT` 门禁规定 `docs/_working/`
+只允许 `.csv/.html/.md/.yaml`（首版把 JSON 放 `docs/_working/reports/evidence_exp_r36/` 被
+DCR-005 + DCR-008 共 **6 条 error 挡死**，`q-…-0023` 死信实证）；改扩展名为 `.yaml` 又要
+`creation_token`（CREATE-GUARD 对非 `rules/` 新增 `.yaml` 硬阻断），而该热注册表当时正被活跃会话
+`st-btfix-p17-20260916` 持有、禁抢占（宪法 §3.4）。**处置=不与门禁对抗、也不为绕门造第二真源**：
+沿用本仓既有惯例（JSON 落 gitignored 的 logs，台账承载正本），零新文件、零 token 义务。
+
+两次独立运行输出**逐字节相同**（可复现）；内联全文与 logs 副本经 `json.load` 后逐键相同。
+
+<details><summary>出证正本 1/3：exp02（not_evaluable，结构性）</summary>
+
+```json
+{
+ "factor": "exp02",
+ "protocol": "exp_r36",
+ "consensus_table": "c3_fundamental.consensus_daily_repaired",
+ "status": "not_evaluable",
+ "reason": "DS-275 的 eps_std 结构性不可得（A 段=窗口聚合值不经原始离散度、B 段=源快照本身是聚合值），表内恒 0；exp02 的分歧归一项分母为 0 ⇒ 因子退化。0 不得读作「零分歧」（χ²(n-1) 在 n=1 时自由度 0=无定义）",
+ "remedy": "分歧类因子在修复源上需 n_reports>=2 的原始离散度真源；A 段可由 pdf_forecast_extracted 的逐研报 EPS 重算（另案，未授权本批）",
+ "evidence_class": "preliminary-coverage-limited",
+ "promotion_authority": "none",
+ "is_window": ["2019-01-01", "2021-12-31"],
+ "oos_window": null
+}
+```
+
+</details>
+
+<details><summary>出证正本 2/3：exp04（不通过——显著性腿）</summary>
+
+```json
+{
+ "factor": "exp04",
+ "consensus_table": "c3_fundamental.consensus_daily_repaired",
+ "protocol": "exp_r36",
+ "evidence_class": "preliminary-coverage-limited",
+ "promotion_authority": "none",
+ "se_inflation_vs_primary": 1.291,
+ "is_window": ["2019-01-01", "2021-12-31"],
+ "oos_window": null,
+ "fwd_td": 20,
+ "k60td": {
+  "is": {"n_months": 33, "ic_mean": 0.0363, "t_p": 0.02505,
+         "coverage_mean": 920.0, "mom_ic_mean": 0.0065},
+  "oos": {"status": "not_evaluable",
+          "reason": "协议无 OOS 窗：DS-275 修复源 2022-01~2026-07 为源覆盖空洞，2024+ 复核窗无数据可得（非因子失败、非构建缺陷）"},
+  "prune_material": {"quintile_monthly_rank_corr_mean": 0.206,
+                     "regime_cond_ic": {"r1": -0.0202, "r2": 0.0235, "r3": 0.0566, "r4": 0.0847}},
+  "narrow_top50": {
+   "slip_cfgbp": {"excess_sharpe_is": 0.612, "excess_sharpe_oos": null, "oos_over_is": null},
+   "slip_20bp":  {"excess_sharpe_is": 0.513, "excess_sharpe_oos": null, "oos_over_is": null},
+   "slip_40bp":  {"excess_sharpe_is": 0.357, "excess_sharpe_oos": null, "oos_over_is": null},
+   "slip_80bp":  {"excess_sharpe_is": 0.05,  "excess_sharpe_oos": null, "oos_over_is": null}
+  }
+ },
+ "coverage_notes": {
+  "window_days": 90,
+  "n_reports_proxy": "research_report 90自然日滚动全部研报数",
+  "n_orgs_proxy": "窗口内非空机构去重数",
+  "turnover_derived": "volume(手)x100/(circ_mv(万元)x1e4/close)，600519 三时点实测校准"
+ },
+ "n_trials": 5,
+ "thresholds": {
+  "ic_gate": "IS |IC|>=0.02 & |t|>3.0 & coverage>=60%（另行预注册降权协议：覆盖率分母=IS' 月数；SE 相对主协议放大 1.291 倍=sqrt(60/36)；无晋级权）",
+  "narrow_gate": "IS' 超额 Sharpe>=0.5；OOS/IS>=0.7 一项 not_evaluable（协议无 OOS 窗）——缺一项即不构成 narrow 通过，禁把缺项当满足"
+ }
+}
+```
+
+</details>
+
+<details><summary>出证正本 3/3：exp06（不通过——三腿全负）</summary>
+
+```json
+{
+ "factor": "exp06",
+ "consensus_table": "c3_fundamental.consensus_daily_repaired",
+ "protocol": "exp_r36",
+ "evidence_class": "preliminary-coverage-limited",
+ "promotion_authority": "none",
+ "se_inflation_vs_primary": 1.291,
+ "is_window": ["2019-01-01", "2021-12-31"],
+ "oos_window": null,
+ "fwd_td": 20,
+ "k60td": {
+  "is": {"n_months": 36, "ic_mean": -0.0191, "t_p": 0.19403,
+         "coverage_mean": 190.0, "mom_ic_mean": 0.0127},
+  "oos": {"status": "not_evaluable",
+          "reason": "协议无 OOS 窗：DS-275 修复源 2022-01~2026-07 为源覆盖空洞，2024+ 复核窗无数据可得（非因子失败、非构建缺陷）"},
+  "prune_material": {"quintile_monthly_rank_corr_mean": -0.131,
+                     "regime_cond_ic": {"r1": 0.036, "r2": -0.03, "r3": -0.0308, "r4": -0.018}},
+  "narrow_top50": {
+   "slip_cfgbp": {"excess_sharpe_is": 0.297, "excess_sharpe_oos": null, "oos_over_is": null},
+   "slip_20bp":  {"excess_sharpe_is": 0.133, "excess_sharpe_oos": null, "oos_over_is": null},
+   "slip_40bp":  {"excess_sharpe_is": -0.121, "excess_sharpe_oos": null, "oos_over_is": null},
+   "slip_80bp":  {"excess_sharpe_is": -0.62,  "excess_sharpe_oos": null, "oos_over_is": null}
+  }
+ },
+ "n_trials": 5,
+ "thresholds": {
+  "ic_gate": "IS |IC|>=0.02 & |t|>3.0 & coverage>=60%（另行预注册降权协议：覆盖率分母=IS' 月数；SE 相对主协议放大 1.291 倍=sqrt(60/36)；无晋级权）",
+  "narrow_gate": "IS' 超额 Sharpe>=0.5；OOS/IS>=0.7 一项 not_evaluable（协议无 OOS 窗）——缺一项即不构成 narrow 通过，禁把缺项当满足"
+ }
+}
+```
+
+</details>
+
+> 内联排版说明：`is_window` / `regime_cond_ic` 等仅为可读性做了同行折叠与键序整理，
+> **所有数值、字符串与键集合与 logs 副本逐键相同**（`json.load` 后 dict 相等）；
+> 需要机读时以 logs 副本为准，需要引证时以本节为准。
+
+| 因子 | n_months | IC | \|IC\|≥0.02 | \|t\| | \|t\|>3.0 | 窄口径 IS' Sharpe（cfg/20/40/80bp） | ≥0.5 | OOS/IS | 判定 |
+|---|---|---|---|---|---|---|---|---|---|
+| exp02 修正动量 | — | — | — | — | — | — | — | — | **not_evaluable**（结构性） |
+| exp04 异常覆盖 | 33 | +0.0363 | ✅ | 2.241 | ❌ | 0.612 / 0.513 / 0.357 / 0.050 | ✅ | not_evaluable | **不通过**（显著性腿） |
+| exp06 评级动量 | 36 | −0.0191 | ❌（且符号为负） | 1.299 | ❌ | 0.297 / 0.133 / −0.121 / −0.620 | ❌ | not_evaluable | **不通过**（三腿全负） |
+
+- **exp02**：DS-275 的 `eps_std` 结构性不可得（A 段=窗口聚合值不经原始离散度、B 段=源快照本身即聚合值），
+  表内恒 0；exp02 以 `eps_std` 为分歧归一分母 ⇒ 因子退化。出证写明
+  **0 不得读作"零分歧"**（χ²(n−1) 在 n=1 时自由度 0=无定义），并附 remedy
+  （需 n_reports≥2 的原始离散度真源，A 段可由 `pdf_forecast_extracted` 逐研报 EPS 重算=另案，本批未授权）。
+  这与 §5.4 的"high-only 密度偏低（中位约 2 份研报/标的-年）"是同一件事的两个侧面：
+  分歧类因子在低 n 上不是"弱"，是"无定义"。
+- **exp04**：效应量达标但显著性不达标——这正是降权协议设计要捕捉的情形。若按主协议的 p<0.05 读，
+  p=0.02505 会"通过"；而在 36 月窗上 SE 已被放大 1.291 倍，同一 IC 的 \|t\|=2.241 够不着 3.0。
+  窄口径 cfg 档 0.612 过 0.5，但 80bp 档只剩 0.050（cost-fragile），且 **OOS/IS 腿 not_evaluable
+  ⇒ 窄口径闸门不构成通过**（出证 thresholds 明写"缺一项即不构成通过，禁把缺项当满足"）。
+- **exp06**：IC 符号为负且量级不足，窄口径四档单调恶化至 −0.620，与 §8/既有出证
+  EXP-FACTOR-EVAL-003 的"noise / cost-fragile"结论方向一致（该历史出证跑在 DS-229 + 主协议窗上，
+  与本行不同源不同窗，**不可直接比数**，只可比方向）。
+
+**结论**：修复源上**零因子通过降权协议**；且因 `promotion_authority=none`，这批证据
+**既不能用于晋级也不能用于否决**——它的合法用途只有一个：说明"2022-2026 源空洞补齐之前，
+EXP 族在修复轨上不具备可判定的证据基础"。主协议（唯一持晋级权）判据逐字未动、
+在修复源上**未运行**（运行即是把 36 月的数据当 60 月的协议用=类别错误）。
+§8.2 的"阻塞 EXP 族复评"据此**解除阻塞但结论为负面**：步骤 7 已执行完毕，产出是"暂不可判定"，
+不是"因子通过"。真正能改变结论的只有 B（补 2022-2026 提取）——仍需 Owner 授权。
+
+### 9.3 复评过程查出的两处潜在崩溃（均已治本，非豁免）
+
+两者都在 `_narrow`（窄口径 Top50 腿），都会让**整轮评估以难懂的报错收场而不产出任何证**，
+且此前**零测试覆盖**：
+
+1. **滑点基准档把 `None` 当数字除**。commit `35cf0eb36a`（2026-09-16 20:02，车道 M 台账 #23 H2
+   成本模型治本）把 `MatchingConfig.slippage_bps` 默认值从 `Decimal("1")` 改成 `None`，语义是
+   "逐笔经 `cost_model_calibration.resolve_slippage_bps` 按 ADV 分层解析"（**不是**"没有滑点"，
+   **也不是**旧 1bp 一口价）。评估器未随改，仍写 `cfg.slippage_bps / Decimal(10000)` ⇒
+   基准档当场 `TypeError: unsupported operand type(s) for /: 'NoneType' and 'decimal.Decimal'`。
+   该行原注释 `None=MatchingConfig 原值 1bp（#233 真源）` **写成时是对的、后来烂掉了**
+   ——这正是"字面量口径注释"必然漂移的实证。
+   治本=改为调用唯一解析入口并传入本笔名义额（`_AUM/_TOP_N`）：
+   `cost_cal.resolve_slippage_bps(per_trade, pinned_flat_bps=cfg.slippage_bps)`，
+   分层判断**不在评估器复制**（复制即第二真源）。全仓审计其余消费方
+   （`vectorized_adapter.py:91` 显式把 None 记作 `calibrated_per_fill`、`result_repository.py:305`
+   取标定档名义加权、`event_driven_engine.py:159` 透传）**均已正确处理 None**——评估器是唯一漏网者。
+2. **空 `rets` 落 `RangeIndex(int64)` 与日期串比较**。窗内没有任何一个月的截面广度达到
+   `_MIN_NAMES`（=100）时 `rets` 为空，`pd.Series({})` 拿到默认 int64 RangeIndex，
+   随后 `s.index >= _IS[0]`（字符串）抛 `TypeError: Invalid comparison between dtype=int64 and str`。
+   正确行为是"该窗广度不足"降级成 `None` 出证（`_sharpe` 本就有 `len(seg) < 6` 守卫，只是崩在守卫之前）。
+   治本=显式声明 object 索引：`pd.Series(rets, index=pd.Index(list(rets.keys()), dtype="object"))`。
+   这不是纯理论路径：exp_r36 的 2019 年早段与任何稀疏因子都会走到。
+
+**行为变更披露（知情后果，禁藏）**：基准档滑点由**旧 1bp** 变为**标定值**
+（本批实测 `_AUM/_TOP_N`=2 万元名义额 ⇒ **7.24bp**；全市场名义加权 `slippage_bps_universal()`=3.79bp，
+legacy 一口价=1bp）。因此：
+
+- 钉住档 20/40/80bp **原样返回钉住值**（实测逐档全等），压力腿历史可比性零漂移；
+- 基准档（出证键 `slip_cfgbp`）**不再与历史出证同口径**——`1d23039e90` 归档的
+  EXP-FACTOR-EVAL-002/003（"窄测 cfg 档 0.105<0.5"等）跑在 1bp 上，该腿**已不可逐位复现**。
+  这是成本模型治本的**预期后果**（标定值比 legacy 更保守，方向是收紧不是放水），
+  但必须在台账写明，禁把"数字变了"悄悄当成"重跑一致"。
+- 新增 3 项复发钉（`tests/scripts/test_build_consensus_daily_repaired.py`，该文件 14 → **17 passed**）：
+  退化面板四档全 `None` 且不崩；够广面板（120 票 × 8 月末）四档超额 Sharpe **随滑点严格递减**
+  （cfg > 20 > 40 > 80——若 cfg 档被读成 0bp 或 20bp，单调关系当场破）；钉住档原样返回。
+
+### 9.4 外部实践对标与本班自裁结果
+
+按"100% AI 开发"的前提，把本班四个争议点分别对标专业机构做法、量化社区共识、
+氛围编程（vibe-coding）社区教训与可直接借用的开源实现：
+
+| 争议点 | 专业机构 / 学术 | 量化与氛围编程社区 | 开源可借用件 | 本班裁定（已执行） |
+|---|---|---|---|---|
+| IS 窗跑不满怎么办 | 预注册不可事后改窗；样本量变化须反映在门槛上（Lo 2002 SE∝1/√T；Harvey-Liu-Zhu 2016 t>3.0） | 社区通行"缩窗重跑"，正是过拟合的主要来源；vibe-coding 下 AI 更倾向"改到跑通为止" | `mlfinlab`/DSR 族（Bailey & López de Prado 2014 Deflated Sharpe、PBO）提供试验数校正；`QuantStats` 只报口径不做预注册约束 | **另立降权协议 + 收紧门槛 + 零晋级权**，主协议逐字冻结并加测试钉 |
+| 缺数据段的读数 | 缺失≠0；不可判定须显式标注（统计上 χ²(n−1) 在 n=1 无定义） | 社区普遍让空段落成 `n=0 / mean=None`，与"跑了但样本不足"同形而被误读 | 无现成件——这是本项目 `_seg_oos()` 显式 `not_evaluable` 的自研口径 | **`not_evaluable` + reason 出证**，禁把"结构上不存在"伪装成日期或 0 |
+| mid 置信度是否入聚合 | 记录链接三分区（Fellegi-Sunter 1969：match / non-match / **clerical review**）——中间区从不直接进总体；分歧类因子需 n≥2（Diether-Malloy-Scherbina 2002） | "多源合进来提密度"是常见直觉，代价是把待核项当已核项 | 无（属口径选择，非工具问题） | **mid 留档不入聚合**（铁律不动）；密度不足的后果如实体现为 exp02 `not_evaluable`，不用 mid 填补 |
+| 门禁观测面不一致（§8.12/§8.14 同族） | Google Tricorder 的核心经验=**只报新增告警**、误报率必须近零，否则开发者直接忽略工具 | CI 社区共识=staging 批验证（bors-ng 模型：先合到临时分支跑全绿再动主干） | Tricorder 的 baseline-differencing 与 bors-ng 的 staging 模型都可直接对标 | **判 post-commit 仓库态（git index）而非本机磁盘；违规集 = NOW(index) − BASE(HEAD)**；全绿短路保持稳态成本 |
+
+方法论结论（供后续班次复用，与 §8.14 的"忠实 serializer 沙盘"互补）：
+**在 100% AI 开发下，最危险的失效不是写错代码，而是"把跑不通改成跑得通"**——
+它同时污染判据（缩窗）、污染读数（空段当 0）、污染口径（mid 当 high）、污染归因（门禁观测面随环境漂）。
+四者的共同解药是同一条：**让"不可判定"成为一等公民的出证状态**，
+并用测试把判据钉死（本批 `_PROTOCOLS` 冻结钉 + 收紧方向钉 + fail-closed CLI 钉 + 滑点单调性钉）。
+外部工具能借的是校正算术（DSR/PBO、ADV 分层标定），**借不到的是"禁挪"这条纪律**——它只能由本仓的门禁与台账承载。
+
+> 本节裁定为本会话按 Owner 授权（"你自己裁定并直接执行"）作出的**执行级裁定**，
+> 涉及晋级权、口径变更与门禁观测面的部分仍须登记 `ruling_registry.yaml`（草稿已备，
+> 号段自 #279 起，待该热文件从活跃会话 `st-btfix-p17-20260916` 释放后与本批同一 commit 原子落库，
+> RULE-RULING）。登记前本节结论**不得**被引用为已生效裁定。
