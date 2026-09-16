@@ -28,32 +28,7 @@ overfitting_guard=预注册/WFE 方法论栈（本件不重算指标，各层算
 检查器消费其语义）；本件=检查项注册/编排/统一裁决/报告协议面，检查器
 全注入，缺层 Fail-Closed 不放行。
 
-# [ALGO_FLOW]
-# 层: 输入
-# - id: I1
-#   name: clock 参数
-#   fields: 参数 clock（无注解）
-#   code: overfitting_protection_gate.py 顶层公共函数形参（AST 提取）
-# 层: 算法
-# - id: A1
-#   name_zh: ① OverfittingProtectionGate
-#   name_en: OverfittingProtectionGate
-#   intro: 四层过拟合防护统一门禁（注册表 + 编排 + 裁决 + 报告）。
-#   desc: 四层过拟合防护统一门禁（注册表 + 编排 + 裁决 + 报告）。；公共方法（定义序）: register_check, checks_of, evaluate；源码 L161-L270
-#   inputs: clock
-#   outputs: 返回值
-#   （注：A1 之后另有 8 个公共定义未列入（含 8 个数据契约/异常/枚举声明类），见源码）
-# 层: 输出
-# - id: O1
-#   name_zh: 模块公共 API 面（9 定义）
-#   name_en: public defs
-#   intro: OverfittingProtectionGate
-#   downstream: 运行时装配批（因子/策略/信号/ML 四层检查器绑定 / 上线前统一裁决装配）
-# [/ALGO_FLOW]
-#
-# 边:
-# I1 --> A1
-# A1 --> O1
+# [ALGO_FLOW] external: docs/03_modules/_domain_simulation/algo_flow/overfitting_protection_gate.yaml
 """
 
 from __future__ import annotations

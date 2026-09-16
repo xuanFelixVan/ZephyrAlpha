@@ -28,47 +28,7 @@ schema 字段 → pytest 骨架文本，产物仅经注入 writer，不直写 tr
 查重分工（蓝图 §0）：look_ahead_bias_detector=偏差检测实现（本件仅做接线与
 异常包装，不重复实现检测算法）；result_analyzer=回测结果分析（零交集）。
 
-# [ALGO_FLOW]
-# 层: 输入
-# - id: I1
-#   name: clock 参数
-#   fields: 参数 clock（无注解）
-#   code: quality_assurance_selfdrive.py 顶层公共函数形参（AST 提取）
-# - id: I2
-#   name: random_source 参数
-#   fields: 参数 random_source（无注解）
-#   code: quality_assurance_selfdrive.py 顶层公共函数形参（AST 提取）
-# - id: I3
-#   name: bias_detector 参数
-#   fields: 参数 bias_detector（无注解）
-#   code: quality_assurance_selfdrive.py 顶层公共函数形参（AST 提取）
-# - id: I4
-#   name: skeleton_writer 参数
-#   fields: 参数 skeleton_writer（无注解）
-#   code: quality_assurance_selfdrive.py 顶层公共函数形参（AST 提取）
-# 层: 算法
-# - id: A1
-#   name_zh: ① QualityAssuranceSelfdrive
-#   name_en: QualityAssuranceSelfdrive
-#   intro: 质量保障自驱动四件套（骨架生成 + 偏差接线 + 回归比对 + 准确率抽检）。
-#   desc: 质量保障自驱动四件套（骨架生成 + 偏差接线 + 回归比对 + 准确率抽检）。；公共方法（定义序）: generate_test_skeleton, diagnose_bias, compare_performance…
-#   inputs: clock random_source bias_detector skeleton_writer alert_sink
-#   outputs: 返回值
-#   （注：A1 之后另有 6 个公共定义未列入（含 6 个数据契约/异常/枚举声明类），见源码）
-# 层: 输出
-# - id: O1
-#   name_zh: 模块公共 API 面（7 定义）
-#   name_en: public defs
-#   intro: QualityAssuranceSelfdrive
-#   downstream: 运行时装配批（契约变更钩子 / look_ahead 自诊断接线 / 回归基线比对 / 数据准确率抽检）
-# [/ALGO_FLOW]
-#
-# 边:
-# I1 --> A1
-# I2 --> A1
-# I3 --> A1
-# I4 --> A1
-# A1 --> O1
+# [ALGO_FLOW] external: docs/03_modules/_domain_simulation/algo_flow/quality_assurance_selfdrive.yaml
 """
 
 from __future__ import annotations

@@ -1,0 +1,33 @@
+# ALGO_FLOW 外部真源——db_utils（_domain_shared 域，真源 src/zephyr/shared/utils/db_utils.py）
+# 2026-09-15 P2-1 契约头减负批量出仓：docstring 内联块逐字节副本，extractor 经
+# external 锚加载走同一 parse_algo_flow 管线；算法公共面变化时同步更新本块。
+doc_type: architecture_view
+ttl: permanent
+module: src.zephyr.shared.utils.db_utils
+source_of_truth: src/zephyr/shared/utils/db_utils.py
+algo_flow: |
+    # [ALGO_FLOW]
+    # 层: 输入
+    # - id: I1
+    #   name: db_path 参数
+    #   fields: 参数 db_path（无注解）
+    #   code: db_utils.py 顶层公共函数形参（AST 提取）
+    # 层: 算法
+    # - id: A1
+    #   name_zh: ① ensure_schema
+    #   name_en: ensure_schema
+    #   intro: 确保数据库 schema 已初始化（委托给 sqlite_schema.init_db）。
+    #   desc: 确保数据库 schema 已初始化（委托给 sqlite_schema.init_db）。；源码 L76-L78
+    #   inputs: db_path
+    #   outputs: 返回值
+    # 层: 输出
+    # - id: O1
+    #   name_zh: 模块公共 API 面（1 定义）
+    #   name_en: public defs
+    #   intro: ensure_schema
+    #   downstream: 见模块头 [CONSUMERS]
+    # [/ALGO_FLOW]
+    #
+    # 边:
+    # I1 --> A1
+    # A1 --> O1

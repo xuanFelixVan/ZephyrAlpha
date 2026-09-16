@@ -40,37 +40,7 @@
 
 SSoT: docs/02_enterprise_architecture/07_trading_decision_architecture/design_memos/53_simulation_live_path.md §3.5
 
-# [ALGO_FLOW]
-# 层: 输入
-# - id: I1
-#   name: observation 参数
-#   fields: 参数 observation，类型注解 DivergenceObservation
-#   code: divergence_attributor.py 顶层公共函数形参（AST 提取）
-# - id: I2
-#   name: thresholds 参数
-#   fields: 参数 thresholds，类型注解 DivergenceThresholds | None
-#   code: divergence_attributor.py 顶层公共函数形参（AST 提取）
-# 层: 算法
-# - id: A1
-#   name_zh: ① attribute_divergence
-#   name_en: attribute_divergence
-#   intro: 回测-实盘偏差四因子归因(输入注入式)
-#   desc: 回测-实盘偏差四因子归因(输入注入式) Args: observation: 观测量(None=该因子未观测, 跳过判定) thresholds: 门禁阈值(None=默认, 对…；源码 L263-L299
-#   inputs: observation thresholds
-#   outputs: DivergenceReport
-#   （注：A1 之后另有 5 个公共定义未列入（含 5 个数据契约/异常/枚举声明类），见源码）
-# 层: 输出
-# - id: O1
-#   name_zh: DivergenceReport
-#   name_en: DivergenceReport
-#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
-#   downstream: 预留(paper_live_transition SHADOW/GRAY_RAMP 阶段实盘数据累积后接线, 53号§3.5)
-# [/ALGO_FLOW]
-#
-# 边:
-# I1 --> A1
-# I2 --> A1
-# A1 --> O1
+# [ALGO_FLOW] external: docs/03_modules/_domain_simulation/algo_flow/divergence_attributor.yaml
 """
 
 from __future__ import annotations
