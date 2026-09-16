@@ -84,32 +84,7 @@ TSV 裁定 (B10-01465, CAND-POS-005, A1交易决策架构 §8模块24)：
 SSoT: docs/03_modules/_domain_position/core_satellite_allocator/blueprint.md
 Version: 0.1.0
 
-# [ALGO_FLOW]
-# 层: 输入
-# - id: I1
-#   name: 模块内部数据
-#   fields: 无公共形参/无再导出（AST 事实）
-#   code: core_satellite_allocator.py
-# 层: 算法
-# - id: A1
-#   name_zh: ① CoreSatelliteAllocator
-#   name_en: CoreSatelliteAllocator
-#   intro: 核心-卫星仓位管理——结构分配+做T信号+换仓触发。
-#   desc: 核心-卫星仓位管理——结构分配+做T信号+换仓触发。 用法: allocator = CoreSatelliteAllocator() candidates = [Candida…；公共方法（定义序）: allocat…
-#   inputs: 无参数
-#   outputs: 返回值
-#   （注：A1 之后另有 8 个公共定义未列入（含 8 个数据契约/异常/枚举声明类），见源码）
-# 层: 输出
-# - id: O1
-#   name_zh: 模块公共 API 面（9 定义）
-#   name_en: public defs
-#   intro: CoreSatelliteAllocator
-#   downstream: MOD-POS-001(精裁) ; MOD-POS-024(裁决) ; MOD-SELL-018(做T执行)
-# [/ALGO_FLOW]
-#
-# 边:
-# I1 --> A1
-# A1 --> O1
+# [ALGO_FLOW] external: docs/03_modules/_domain_position/algo_flow/core_satellite_allocator.yaml
 """
 
 from __future__ import annotations

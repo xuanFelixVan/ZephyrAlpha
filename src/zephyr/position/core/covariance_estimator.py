@@ -34,40 +34,7 @@ Covariance Estimator — Ledoit-Wolf 收缩协方差估计器 (MOD-POS-011)
 large-dimensional covariance matrices"
 Version: 1.0.0
 
-# [ALGO_FLOW]
-# 层: 输入
-# - id: I1
-#   name: returns 参数
-#   fields: 参数 returns，类型注解 Mapping[str, Sequence[float]]
-#   code: covariance_estimator.py 顶层公共函数形参（AST 提取）
-# 层: 算法
-# - id: A1
-#   name_zh: ① CovarianceEstimate
-#   name_en: CovarianceEstimate
-#   intro: 协方差估计结果（frozen 不可变）。
-#   desc: 协方差估计结果（frozen 不可变）。 Attributes: symbols: 标的代码（字典序排序，与 matrix 行列对齐） matrix: N×N 收缩后协方差矩阵（…；公共方法（定义序）: to_nest…
-#   inputs: 无参数
-#   outputs: 返回值
-# - id: A2
-#   name_zh: ② estimate_covariance
-#   name_en: estimate_covariance
-#   intro: Ledoit-Wolf 收缩协方差估计（纯函数）。
-#   desc: Ledoit-Wolf 收缩协方差估计（纯函数）。 Args: returns: {symbol: 收益率序列}，要求 N≥2 个标的、各序列等长 T≥2、 全部为有限值、无零方…；源码 L123-L202
-#   inputs: returns
-#   outputs: CovarianceEstimate
-#   （注：A2 之后另有 1 个公共定义未列入（含 1 个数据契约/异常/枚举声明类），见源码）
-# 层: 输出
-# - id: O1
-#   name_zh: CovarianceEstimate
-#   name_en: CovarianceEstimate
-#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
-#   downstream: MOD-POS-013(风险预算分配器) ; MOD-POS-012(相关性regime监控) ; D_RISK
-# [/ALGO_FLOW]
-#
-# 边:
-# I1 --> A1
-# A1 --> A2
-# A2 --> O1
+# [ALGO_FLOW] external: docs/03_modules/_domain_position/algo_flow/covariance_estimator.yaml
 """
 
 from __future__ import annotations

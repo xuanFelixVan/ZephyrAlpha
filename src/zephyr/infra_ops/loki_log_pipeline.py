@@ -24,47 +24,7 @@ B8-10662（AUD-DRAFT-001-DIGEST P2 波 P2-W01，CAND-INFRAOPS-006，A8集成
 冷数据导出 Parquet 策略裁决（注入时钟），日志脱敏钩子注入。
 docker-compose 部署面归 Owner 窗口，不在本件范围。
 
-# [ALGO_FLOW]
-# 层: 输入
-# - id: I1
-#   name: loki_push_client 参数
-#   fields: 参数 loki_push_client（无注解）
-#   code: loki_log_pipeline.py 顶层公共函数形参（AST 提取）
-# - id: I2
-#   name: clock 参数
-#   fields: 参数 clock（无注解）
-#   code: loki_log_pipeline.py 顶层公共函数形参（AST 提取）
-# - id: I3
-#   name: sanitizer 参数
-#   fields: 参数 sanitizer（无注解）
-#   code: loki_log_pipeline.py 顶层公共函数形参（AST 提取）
-# - id: I4
-#   name: max_retries 参数
-#   fields: 参数 max_retries（无注解）
-#   code: loki_log_pipeline.py 顶层公共函数形参（AST 提取）
-# 层: 算法
-# - id: A1
-#   name_zh: ① LokiLogPipeline
-#   name_en: LokiLogPipeline
-#   intro: Loki 日志管道件（构建 + 推送重试/DLQ + LogQL + 保留裁决）。
-#   desc: Loki 日志管道件（构建 + 推送重试/DLQ + LogQL + 保留裁决）。；公共方法（定义序）: build_entry, push, retry_count, dlq, build_logql, retent…
-#   inputs: loki_push_client clock sanitizer max_retries hot_retention_days
-#   outputs: 返回值
-#   （注：A1 之后另有 3 个公共定义未列入（含 3 个数据契约/异常/枚举声明类），见源码）
-# 层: 输出
-# - id: O1
-#   name_zh: 模块公共 API 面（4 定义）
-#   name_en: public defs
-#   intro: LokiLogPipeline
-#   downstream: 运行时装配批（Loki push client 绑定 / 脱敏钩子装配 / 保留策略裁决与 Parquet 导出编排）
-# [/ALGO_FLOW]
-#
-# 边:
-# I1 --> A1
-# I2 --> A1
-# I3 --> A1
-# I4 --> A1
-# A1 --> O1
+# [ALGO_FLOW] external: docs/03_modules/_domain_infrastructure_operations/algo_flow/loki_log_pipeline.yaml
 """
 
 from __future__ import annotations

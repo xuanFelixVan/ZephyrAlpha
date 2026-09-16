@@ -23,50 +23,7 @@ B13-04333（AUD-DRAFT-001-DIGEST P2 波 P2-W01，CAND-INFRAOPS-004，A3数据
 算）得各层月成本与总成本对比报表（纯字典结构）；并量化归档策略收益
 （归档前后月成本差与节省比例）。层占用采集经注入 usage_probe 回调。
 
-# [ALGO_FLOW]
-# 层: 输入
-# - id: I1
-#   name: disk_cost 参数
-#   fields: 参数 disk_cost（无注解）
-#   code: storage_cost_calculator.py 顶层公共函数形参（AST 提取）
-# - id: I2
-#   name: disk_tb 参数
-#   fields: 参数 disk_tb（无注解）
-#   code: storage_cost_calculator.py 顶层公共函数形参（AST 提取）
-# - id: I3
-#   name: amortize_months 参数
-#   fields: 参数 amortize_months（无注解）
-#   code: storage_cost_calculator.py 顶层公共函数形参（AST 提取）
-# 层: 算法
-# - id: A1
-#   name_zh: ① derive_tb_price
-#   name_en: derive_tb_price
-#   intro: 本地盘折旧折算 TB 月单价：disk_cost / disk_tb / amortize_months。
-#   desc: 本地盘折旧折算 TB 月单价：disk_cost / disk_tb / amortize_months。；源码 L107-L115
-#   inputs: disk_cost disk_tb amortize_months
-#   outputs: float
-# - id: A2
-#   name_zh: ② StorageCostCalculator
-#   name_en: StorageCostCalculator
-#   intro: 三层存储成本核算件（占用采集 + 月成本报表 + 归档收益量化）。
-#   desc: 三层存储成本核算件（占用采集 + 月成本报表 + 归档收益量化）。；公共方法（定义序）: collect_usage, cost_calculator, archive_benefit；源码 L118-L208
-#   inputs: usage_probe price_per_tb_month
-#   outputs: 返回值
-#   （注：A2 之后另有 2 个公共定义未列入（含 2 个数据契约/异常/枚举声明类），见源码）
-# 层: 输出
-# - id: O1
-#   name_zh: float
-#   name_en: float
-#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
-#   downstream: 运行时装配批（热温冷三层占用采集绑定 / 折旧单价表装配 / 成本报表消费）
-# [/ALGO_FLOW]
-#
-# 边:
-# I1 --> A1
-# I2 --> A1
-# I3 --> A1
-# A1 --> A2
-# A2 --> O1
+# [ALGO_FLOW] external: docs/03_modules/_domain_infrastructure_operations/algo_flow/storage_cost_calculator.yaml
 """
 
 from __future__ import annotations

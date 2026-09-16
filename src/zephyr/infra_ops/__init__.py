@@ -20,31 +20,7 @@ zephyr.infra_ops — 基础设施运维域包门面（MOD-INF_OPS）。
 WAL 检查点监控 / 存储成本核算 / 运行时依赖拓扑 / Loki 日志管道四件
 主类的守卫式导出入口（参照 data_eng 可逆模式：目标类落地即自愈）。
 
-# [ALGO_FLOW]
-# 层: 输入
-# - id: I1
-#   name: 包内子模块公共符号
-#   fields: import 再导出符号: annotations, Final
-#   code: __init__.py import L50
-# 层: 算法
-# - id: A1
-#   name_zh: ① 包公共面再导出
-#   name_en: __init__ re-export
-#   intro: 再导出 annotations, Final（共 2 符号）
-#   desc: __init__ import L50；__all__ 0 项（AST 事实）
-#   inputs: I1
-#   outputs: __all__ 公共符号表
-# 层: 输出
-# - id: O1
-#   name_zh: 公共 API 面（2 符号）
-#   name_en: __all__
-#   intro: annotations, Final
-#   downstream: 运行时装配批（统一注入点装配）
-# [/ALGO_FLOW]
-#
-# 边:
-# I1 --> A1
-# A1 --> O1
+# [ALGO_FLOW] external: docs/03_modules/_domain_infrastructure_operations/algo_flow/infra_ops__init__.yaml
 """
 
 from __future__ import annotations

@@ -38,45 +38,7 @@ Signal Synthesis Combiner — 信号合成器 (MOD-PA-002)
 SSoT: depgraph MOD-PA-002
 Version: 0.1.0
 
-# [ALGO_FLOW]
-# 层: 输入
-# - id: I1
-#   name: calibrator 参数
-#   fields: 参数 calibrator（无注解）
-#   code: signal_synthesis_combiner.py 顶层公共函数形参（AST 提取）
-# - id: I2
-#   name: position_cap 参数
-#   fields: 参数 position_cap（无注解）
-#   code: signal_synthesis_combiner.py 顶层公共函数形参（AST 提取）
-# 层: 算法
-# - id: A1
-#   name_zh: ① ConfidenceCalibrator
-#   name_en: ConfidenceCalibrator
-#   intro: 信号置信度校准器协议 (R-96 学习系统, PA-02 预留接口)。
-#   desc: 信号置信度校准器协议 (R-96 学习系统, PA-02 预留接口)。 实现方: Platt Scaling / Isotonic Regression / MC Dropout…；公共方法（定义序）: calibra…
-#   inputs: 无参数
-#   outputs: 返回值
-# - id: A2
-#   name_zh: ② SignalSynthesisCombiner
-#   name_en: SignalSynthesisCombiner
-#   intro: 多策略信号合成器——投票+共振+去重+冲突检测+仓位合并。
-#   desc: 多策略信号合成器——投票+共振+去重+冲突检测+仓位合并。 用法: combiner = SignalSynthesisCombiner() results = combiner…；公共方法（定义序）: combine…
-#   inputs: calibrator position_cap
-#   outputs: 返回值
-#   （注：A2 之后另有 6 个公共定义未列入（含 6 个数据契约/异常/枚举声明类），见源码）
-# 层: 输出
-# - id: O1
-#   name_zh: 模块公共 API 面（8 定义）
-#   name_en: public defs
-#   intro: ConfidenceCalibrator, SignalSynthesisCombiner
-#   downstream: MOD-PA-003(资金分配) ; D-PF-CORE(TargetPortfolio) ; D-POSITION(仓位裁决)
-# [/ALGO_FLOW]
-#
-# 边:
-# I1 --> A1
-# I2 --> A1
-# A1 --> A2
-# A2 --> O1
+# [ALGO_FLOW] external: docs/03_modules/_domain_pf_alloc/algo_flow/signal_synthesis_combiner.yaml
 """
 
 from __future__ import annotations

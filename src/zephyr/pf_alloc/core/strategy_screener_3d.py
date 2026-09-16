@@ -32,47 +32,7 @@ B10-02090（AUD-DRAFT-001-DIGEST P2 波 P2-W09，CAND-PFALLOC-009，A1 PA-02）�
 侧）；strategy_correlation_gate=组合相关性二元门禁（是否允许共线）。本件
 =**入库前三维评分**（准入打分与档位建议），不做退役、不做二元门禁。
 
-# [ALGO_FLOW]
-# 层: 输入
-# - id: I1
-#   name: weights 参数
-#   fields: 参数 weights（无注解）
-#   code: strategy_screener_3d.py 顶层公共函数形参（AST 提取）
-# - id: I2
-#   name: accept_threshold 参数
-#   fields: 参数 accept_threshold（无注解）
-#   code: strategy_screener_3d.py 顶层公共函数形参（AST 提取）
-# - id: I3
-#   name: watchlist_threshold 参数
-#   fields: 参数 watchlist_threshold（无注解）
-#   code: strategy_screener_3d.py 顶层公共函数形参（AST 提取）
-# - id: I4
-#   name: clock 参数
-#   fields: 参数 clock（无注解）
-#   code: strategy_screener_3d.py 顶层公共函数形参（AST 提取）
-# 层: 算法
-# - id: A1
-#   name_zh: ① StrategyScreener3D
-#   name_en: StrategyScreener3D
-#   intro: 策略入库三维评估器（纯内存确定性，时钟注入）。
-#   desc: 策略入库三维评估器（纯内存确定性，时钟注入）。；公共方法（定义序）: evaluate；源码 L166-L322
-#   inputs: weights accept_threshold watchlist_threshold clock
-#   outputs: 返回值
-#   （注：A1 之后另有 4 个公共定义未列入（含 4 个数据契约/异常/枚举声明类），见源码）
-# 层: 输出
-# - id: O1
-#   name_zh: 模块公共 API 面（5 定义）
-#   name_en: public defs
-#   intro: StrategyScreener3D
-#   downstream: 运行时装配批（策略入库评审流水线装配 / 组合分配域策略准入闸）
-# [/ALGO_FLOW]
-#
-# 边:
-# I1 --> A1
-# I2 --> A1
-# I3 --> A1
-# I4 --> A1
-# A1 --> O1
+# [ALGO_FLOW] external: docs/03_modules/_domain_pf_alloc/algo_flow/strategy_screener_3d.yaml
 """
 
 from __future__ import annotations

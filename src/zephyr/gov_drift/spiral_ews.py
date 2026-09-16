@@ -17,37 +17,7 @@
 """
 
 
-# [ALGO_FLOW]
-# 层: 输入
-# - id: I1
-#   name: window 参数
-#   fields: 参数 window（无注解）
-#   code: spiral_ews.py 顶层公共函数形参（AST 提取）
-# - id: I2
-#   name: threshold 参数
-#   fields: 参数 threshold（无注解）
-#   code: spiral_ews.py 顶层公共函数形参（AST 提取）
-# 层: 算法
-# - id: A1
-#   name_zh: ① SpiralEarlyWarningSystem
-#   name_en: SpiralEarlyWarningSystem
-#   intro: class SpiralEarlyWarningSystem 源码 L68-L132
-#   desc: 公共方法（定义序）: feed, check, recent_signals, is_spiraling, reset；源码 L68-L132
-#   inputs: window threshold
-#   outputs: 返回值
-#   （注：A1 之后另有 1 个公共定义未列入（含 1 个数据契约/异常/枚举声明类），见源码）
-# 层: 输出
-# - id: O1
-#   name_zh: 模块公共 API 面（2 定义）
-#   name_en: public defs
-#   intro: SpiralEarlyWarningSystem
-#   downstream: src/zephyr/governance/ops_governance/budget_engine.py; tests/budget/test_budget…
-# [/ALGO_FLOW]
-#
-# 边:
-# I1 --> A1
-# I2 --> A1
-# A1 --> O1
+# [ALGO_FLOW] external: docs/03_modules/_domain_gov_drift/algo_flow/spiral_ews.yaml
 """
 
 import time

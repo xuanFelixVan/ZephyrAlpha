@@ -3636,6 +3636,7 @@ nodes:
   # ── 组合资金流 portfolio_flow（cn_a，v1.1 新增：整装仿真系统核心骨架）────
   # 地图终极定位（Owner 2026-09-05 拍板）：整装仿真策略组合的蓝图——本流=资金切分→组合聚合→归因反馈闭环
 - node_id: TDM-F-C1
+  note_confirmed: 2026-09-16  # grp5p1s3 出仓复核：机器块搬 yaml，算法口径逐字未变
   name_zh: 预算切分
   market: cn_a
   flow: portfolio_flow
@@ -3789,6 +3790,7 @@ nodes:
   decay_scan_frequency: semiannual
 
 - node_id: TDM-F-C2-03
+  note_confirmed: 2026-09-16  # grp5p1s3 出仓复核：机器块搬 yaml，算法口径逐字未变
   name_zh: 相关性聚类与cluster上限
   market: cn_a
   flow: portfolio_flow
@@ -3819,6 +3821,7 @@ nodes:
   decay_scan_frequency: semiannual
 
 - node_id: TDM-F-C2-04
+  note_confirmed: 2026-09-16  # grp5p1s3 出仓复核：机器块搬 yaml，算法口径逐字未变
   name_zh: budget变动三级升级
   market: cn_a
   flow: portfolio_flow
@@ -3939,6 +3942,7 @@ nodes:
   decay_scan_frequency: semiannual
 
 - node_id: TDM-F-C3-03
+  note_confirmed: 2026-09-16  # grp5p1s3 出仓复核：机器块搬 yaml，算法口径逐字未变
   name_zh: sleeve权重调权
   market: cn_a
   flow: portfolio_flow

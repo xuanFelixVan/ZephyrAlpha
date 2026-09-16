@@ -38,37 +38,7 @@ StrategyBook 按天数自动晋升（MVP 基线），本模块是 61 号双门�
 依据: 61_lifecycle_multi_ai §3.1（渐进建仓节奏细化表 + 回退/暂停重训练纪律）
 Version: 0.1.0
 
-# [ALGO_FLOW]
-# 层: 输入
-# - id: I1
-#   name: inp 参数
-#   fields: 参数 inp，类型注解 ColdStartEvalInput
-#   code: cold_start_progression.py 顶层公共函数形参（AST 提取）
-# - id: I2
-#   name: cfg 参数
-#   fields: 参数 cfg，类型注解 ColdStartProgressionConfig | None
-#   code: cold_start_progression.py 顶层公共函数形参（AST 提取）
-# 层: 算法
-# - id: A1
-#   name_zh: ① evaluate_cold_start
-#   name_en: evaluate_cold_start
-#   intro: 评估冷启动阶段流转（纯函数，61 号 §3.1 双门控）。
-#   desc: 评估冷启动阶段流转（纯函数，61 号 §3.1 双门控）。 门控口径：晋升须正面证据（数据缺失 → HOLD 至阶段窗满才回退）； 回退须正面失败证据（divergence 超标…；源码 L199-L230
-#   inputs: inp cfg
-#   outputs: ColdStartEvalResult
-#   （注：A1 之后另有 6 个公共定义未列入（含 6 个数据契约/异常/枚举声明类），见源码）
-# 层: 输出
-# - id: O1
-#   name_zh: ColdStartEvalResult
-#   name_en: ColdStartEvalResult
-#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
-#   downstream: 调用方（新策略上线冷启动编排；53 号迁移路径 PARALLEL→SHADOW→GRAY_RAMP 承载时装配）
-# [/ALGO_FLOW]
-#
-# 边:
-# I1 --> A1
-# I2 --> A1
-# A1 --> O1
+# [ALGO_FLOW] external: docs/03_modules/_domain_position/algo_flow/cold_start_progression.yaml
 """
 
 from __future__ import annotations

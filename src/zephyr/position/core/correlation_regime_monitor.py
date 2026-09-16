@@ -31,42 +31,7 @@ Correlation Regime Monitor — 相关性 regime 监控 (MOD-POS-012)
 纪律：纯函数、无 IO；数据校验委托 MOD-POS-011（Fail-Closed 透传）。
 Version: 1.0.0
 
-# [ALGO_FLOW]
-# 层: 输入
-# - id: I1
-#   name: returns 参数
-#   fields: 参数 returns，类型注解 Mapping[str, Sequence[float]]
-#   code: correlation_regime_monitor.py 顶层公共函数形参（AST 提取）
-# - id: I2
-#   name: low_threshold 参数
-#   fields: 参数 low_threshold（无注解）
-#   code: correlation_regime_monitor.py 顶层公共函数形参（AST 提取）
-# - id: I3
-#   name: high_threshold 参数
-#   fields: 参数 high_threshold（无注解）
-#   code: correlation_regime_monitor.py 顶层公共函数形参（AST 提取）
-# 层: 算法
-# - id: A1
-#   name_zh: ① assess_correlation_regime
-#   name_en: assess_correlation_regime
-#   intro: 评估组合相关性 regime（纯函数）。
-#   desc: 评估组合相关性 regime（纯函数）。 Args: returns: {symbol: 收益率序列}（前置条件同 MOD-POS-011） low_threshold: LOW…；源码 L144-L217
-#   inputs: returns low_threshold high_threshold
-#   outputs: CorrelationRegimeReport
-#   （注：A1 之后另有 3 个公共定义未列入（含 3 个数据契约/异常/枚举声明类），见源码）
-# 层: 输出
-# - id: O1
-#   name_zh: CorrelationRegimeReport
-#   name_en: CorrelationRegimeReport
-#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
-#   downstream: MOD-POS-013(风险预算分配器) ; D_RISK(自适应风控⑤相关性监控)
-# [/ALGO_FLOW]
-#
-# 边:
-# I1 --> A1
-# I2 --> A1
-# I3 --> A1
-# A1 --> O1
+# [ALGO_FLOW] external: docs/03_modules/_domain_position/algo_flow/correlation_regime_monitor.yaml
 """
 
 from __future__ import annotations

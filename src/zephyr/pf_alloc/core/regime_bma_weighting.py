@@ -30,47 +30,7 @@ regime 条件 BMA（贝叶斯模型平均思想轻量版）权重——
 查重分工（蓝图 §0）：signal_synthesis_combiner=信号合成投票器（消费权重做
 合成），本件=**权重生产侧**（按体制估计并平滑输出权重），不做信号合成。
 
-# [ALGO_FLOW]
-# 层: 输入
-# - id: I1
-#   name: window 参数
-#   fields: 参数 window（无注解）
-#   code: regime_bma_weighting.py 顶层公共函数形参（AST 提取）
-# - id: I2
-#   name: half_life 参数
-#   fields: 参数 half_life（无注解）
-#   code: regime_bma_weighting.py 顶层公共函数形参（AST 提取）
-# - id: I3
-#   name: min_samples 参数
-#   fields: 参数 min_samples（无注解）
-#   code: regime_bma_weighting.py 顶层公共函数形参（AST 提取）
-# - id: I4
-#   name: metric 参数
-#   fields: 参数 metric（无注解）
-#   code: regime_bma_weighting.py 顶层公共函数形参（AST 提取）
-# 层: 算法
-# - id: A1
-#   name_zh: ① RegimeBmaWeighting
-#   name_en: RegimeBmaWeighting
-#   intro: 体制条件 BMA 信号权重估计器（纯内存确定性，审计/时钟注入）。
-#   desc: 体制条件 BMA 信号权重估计器（纯内存确定性，审计/时钟注入）。；公共方法（定义序）: update, current_regime, current_weights；源码 L160-L282
-#   inputs: window half_life min_samples metric audit_sink clock
-#   outputs: 返回值
-#   （注：A1 之后另有 4 个公共定义未列入（含 4 个数据契约/异常/枚举声明类），见源码）
-# 层: 输出
-# - id: O1
-#   name_zh: 模块公共 API 面（5 定义）
-#   name_en: public defs
-#   intro: RegimeBmaWeighting
-#   downstream: 运行时装配批（signal_synthesis_combiner 权重源 / 体制切换审计落库）
-# [/ALGO_FLOW]
-#
-# 边:
-# I1 --> A1
-# I2 --> A1
-# I3 --> A1
-# I4 --> A1
-# A1 --> O1
+# [ALGO_FLOW] external: docs/03_modules/_domain_pf_alloc/algo_flow/regime_bma_weighting.yaml
 """
 
 from __future__ import annotations
