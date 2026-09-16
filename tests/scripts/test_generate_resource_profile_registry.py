@@ -41,7 +41,9 @@ def test_parse_ps1_entities_covers_all_task_names():
     assert "sch_trading_watchdog" in tids
     assert "sch_resource_sampler_scan" in tids
     assert "sch_resource_sampler_writeback" in tids
-    assert len(ents) == 19
+    # 2026-09-17 追认：register_f06_grid_task.ps1 落地（4ea29d816f）使 ps1 实体 19→20，
+    # 该测试解析真实磁盘 ps1（环境敏感），计数随真源走。
+    assert len(ents) == 20
     # 杂音捕获杜绝：无变量名误捕实体
     assert not any("task_name" in t or t.endswith("_name") or t == "sch_svc" for t in tids)
 

@@ -189,6 +189,20 @@ MANUAL_ENTITY_SEED: list[dict] = [
     {"task_id": "event_dashboard_backtest_run", "cn": "面板 backtest-run 端点（无 E0 远程重算入口→B2 已纳管）", "class": "cpu_heavy", "dmin": 60, "mem": 2.0, "grp": [], "wt": "event"},
     {"task_id": "event_dashboard_services_control", "cn": "面板服务编排端点（重启/停止控制面，轻载触发器）", "class": "light", "dmin": 5, "mem": 0.5, "grp": [], "wt": "event"},
     {"task_id": "dynamic_local_replay", "cn": "local_replay 排水（事件突发 replay_batch，与 tick 回补互斥）", "class": "db_heavy", "dmin": 120, "mem": 3.0, "grp": ["tick_drain"], "wt": "dynamic"},
+    # --- ops_* 补注册批（2026-09-17，st-autolnk-20260917）：Task Scheduler 直注册、
+    # 无 register_*.ps1 真源的系统运维任务（I1 解析盲区：dash 命名/非 register 脚本）。
+    # 触发时间=实测 StartBoundary 记入备注；window_expr 留空，待立 register ps1 后由真源重抽。
+    {"task_id": "ops_ch_optimize_merge_weekly", "cn": "CH 周度优化合并（实测周六 03:30；ch_bulk_write 族，与 weekend_calibration 03:00+180min 同窗——补注册后冲突闸首次可见）", "class": "db_heavy", "dmin": 120, "mem": 3.0, "grp": ["ch_bulk_write"], "wt": "manual"},
+    {"task_id": "ops_daily_backup", "cn": "全量日备份 backup.ps1 -Mode all（实测每日 06:00；F 盘增量，磁盘 I/O 主导）", "class": "light", "dmin": 60, "mem": 1.0, "grp": [], "wt": "manual"},
+    {"task_id": "ops_weekly_vm_backup", "cn": "CH VM VHDX 周备份 backup_ch_vm.ps1（实测周六 06:00，与日备份同刻叠 I/O）", "class": "light", "dmin": 240, "mem": 1.0, "grp": [], "wt": "manual"},
+    {"task_id": "ops_io_check_monthly", "cn": "磁盘 IO 月检 io_check_task.bat（实测每月 13 日 09:00）", "class": "light", "dmin": 30, "mem": 0.5, "grp": [], "wt": "manual"},
+    {"task_id": "ops_tilib_indicator_backfill_nightly", "cn": "指标库夜间回填 backfill_night.bat（实测每日 02:30；tilib 线资产，cpu+db）", "class": "cpu_heavy", "dmin": 120, "mem": 2.0, "grp": [], "wt": "manual"},
+    {"task_id": "ops_bdpan_tick_watch", "cn": "bdpan tick 兜底回灌守望 bdpan_tick_watch.py（实测每日 08:00；tick_drain 族）", "class": "network_download", "dmin": 30, "mem": 1.0, "grp": ["tick_drain"], "wt": "manual"},
+    {"task_id": "ops_board_index_realtime", "cn": "板块指数实时采集 board_index_realtime.py（实测每日 09:20）", "class": "network_download", "dmin": 15, "mem": 1.0, "grp": [], "wt": "manual"},
+    {"task_id": "ops_sector_snapshot", "cn": "板块快照 run_sector_snapshot.py（实测每日 16:40）", "class": "network_download", "dmin": 15, "mem": 1.0, "grp": [], "wt": "manual"},
+    {"task_id": "ops_qmt_watchdog", "cn": "QMT 行情桥看门狗 qmt_watchdog.ps1（实测每日 08:45）", "class": "light", "dmin": 5, "mem": 0.5, "grp": [], "wt": "manual"},
+    {"task_id": "ops_ttl_rejudge_daily", "cn": "TTL 日重判 run_ttl_rejudge_daily.ps1（实测每日 18:05；治理清理）", "class": "light", "dmin": 15, "mem": 0.5, "grp": [], "wt": "manual"},
+    {"task_id": "ops_ai_wrapper_inject", "cn": "AI Wrapper 注入保活 ensure_ai_wrapper_injection.ps1（实测每日 12:41；开发工具链）", "class": "light", "dmin": 5, "mem": 0.5, "grp": [], "wt": "manual"},
 ]
 
 # schedule.yaml 槽位 → resource_class/申报时长 特化映射（executor 兜底，槽位覆写）
@@ -264,6 +278,8 @@ _RE_TIME_STR = re.compile(r'"(\d{1,2}:\d{2})"')
 PS1_TASK_OVERRIDES: dict[str, dict] = {
     "FactoryLaneC": {"class": "cpu_heavy", "pool": "heavy", "mem": 2.0, "dmin": 240, "grp": ["mine_vs_exam"], "status": "active"},
     "C4Exam": {"class": "cpu_heavy", "pool": "heavy", "mem": 2.0, "dmin": 240, "grp": ["mine_vs_exam"], "status": "active"},
+    "F06Grid": {"class": "cpu_heavy", "pool": "heavy", "mem": 4.0, "dmin": 240, "grp": [], "status": "active",
+                "note": "周六 14:00 批 A census+批 B subspace（factory_grid_executor×2，4ea29d816f；与 C4Exam 同刻——错窗处置待 Owner/资源线裁）"},
     "OllamaServe": {"class": "llm_api_local", "pool": "light", "mem": 8.0, "dmin": 0, "grp": ["gpu_default"], "status": "active", "wt": "event",
                     "note": "AtLogOn 常驻（est=0 表示常驻）；qwen3:8b 显存/内存驻留"},
     "PatternMining": {"class": "light", "pool": "light", "mem": 1.0, "dmin": 5, "status": "active"},

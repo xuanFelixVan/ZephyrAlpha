@@ -7,11 +7,11 @@ doc_type: register
 ttl: permanent
 title: 资源画像注册表（resource profile registry）
 status: active
-generated_at: '2026-09-16T05:09:25Z'
+generated_at: '2026-09-16T17:14:03Z'
 generated_by: scripts/governance/generators/generate_resource_profile_registry.py
 maintenance: auto
 counting_rule: entities 数组条目数（生成器三源全量再生；条目禁手工增删）
-total_entities: 60
+total_entities: 72
 field_count: 18
 mem_ceiling_gb: 10.0
 mem_ceiling_source: src/zephyr/trading/process_reaper.py _DANGEROUS_MEM_GB（引用不收编）
@@ -869,6 +869,228 @@ entities:
   samples_uri: .runtime/logs/resource_samples/manual_tick_depth5_backfill.jsonl
   status: planned
   notes_zh: tick 五档深度回补（水位 7600 万行，手动）
+- task_id: ops_ai_wrapper_inject
+  module_id: null
+  map_node_id: null
+  resource_class: light
+  pool: default
+  peak_mem_gb: 0.5
+  est_duration_min: 5
+  exclusive_group: []
+  window_type: manual
+  window_expr: null
+  schedule_truth_source: docs/_working/resource_schedule/resource_schedule_panorama_plan_v1.md
+  trading_sensitive: false
+  measured:
+    peak_mem_gb: null
+    p90_duration_min: null
+    samples: 0
+    last_at: null
+  samples_uri: .runtime/logs/resource_samples/ops_ai_wrapper_inject.jsonl
+  status: planned
+  notes_zh: AI Wrapper 注入保活 ensure_ai_wrapper_injection.ps1（实测每日 12:41；开发工具链）
+- task_id: ops_bdpan_tick_watch
+  module_id: null
+  map_node_id: null
+  resource_class: network_download
+  pool: default
+  peak_mem_gb: 1.0
+  est_duration_min: 30
+  exclusive_group:
+  - tick_drain
+  window_type: manual
+  window_expr: null
+  schedule_truth_source: docs/_working/resource_schedule/resource_schedule_panorama_plan_v1.md
+  trading_sensitive: false
+  measured:
+    peak_mem_gb: null
+    p90_duration_min: null
+    samples: 0
+    last_at: null
+  samples_uri: .runtime/logs/resource_samples/ops_bdpan_tick_watch.jsonl
+  status: planned
+  notes_zh: bdpan tick 兜底回灌守望 bdpan_tick_watch.py（实测每日 08:00；tick_drain 族）
+- task_id: ops_board_index_realtime
+  module_id: null
+  map_node_id: null
+  resource_class: network_download
+  pool: default
+  peak_mem_gb: 1.0
+  est_duration_min: 15
+  exclusive_group: []
+  window_type: manual
+  window_expr: null
+  schedule_truth_source: docs/_working/resource_schedule/resource_schedule_panorama_plan_v1.md
+  trading_sensitive: false
+  measured:
+    peak_mem_gb: null
+    p90_duration_min: null
+    samples: 0
+    last_at: null
+  samples_uri: .runtime/logs/resource_samples/ops_board_index_realtime.jsonl
+  status: planned
+  notes_zh: 板块指数实时采集 board_index_realtime.py（实测每日 09:20）
+- task_id: ops_ch_optimize_merge_weekly
+  module_id: null
+  map_node_id: null
+  resource_class: db_heavy
+  pool: heavy
+  peak_mem_gb: 3.0
+  est_duration_min: 120
+  exclusive_group:
+  - ch_bulk_write
+  window_type: manual
+  window_expr: null
+  schedule_truth_source: docs/_working/resource_schedule/resource_schedule_panorama_plan_v1.md
+  trading_sensitive: true
+  measured:
+    peak_mem_gb: null
+    p90_duration_min: null
+    samples: 0
+    last_at: null
+  samples_uri: .runtime/logs/resource_samples/ops_ch_optimize_merge_weekly.jsonl
+  status: planned
+  notes_zh: CH 周度优化合并（实测周六 03:30；ch_bulk_write 族，与 weekend_calibration 03:00+180min 同窗——补注册后冲突闸首次可见）
+- task_id: ops_daily_backup
+  module_id: null
+  map_node_id: null
+  resource_class: light
+  pool: default
+  peak_mem_gb: 1.0
+  est_duration_min: 60
+  exclusive_group: []
+  window_type: manual
+  window_expr: null
+  schedule_truth_source: docs/_working/resource_schedule/resource_schedule_panorama_plan_v1.md
+  trading_sensitive: false
+  measured:
+    peak_mem_gb: null
+    p90_duration_min: null
+    samples: 0
+    last_at: null
+  samples_uri: .runtime/logs/resource_samples/ops_daily_backup.jsonl
+  status: planned
+  notes_zh: 全量日备份 backup.ps1 -Mode all（实测每日 06:00；F 盘增量，磁盘 I/O 主导）
+- task_id: ops_io_check_monthly
+  module_id: null
+  map_node_id: null
+  resource_class: light
+  pool: default
+  peak_mem_gb: 0.5
+  est_duration_min: 30
+  exclusive_group: []
+  window_type: manual
+  window_expr: null
+  schedule_truth_source: docs/_working/resource_schedule/resource_schedule_panorama_plan_v1.md
+  trading_sensitive: false
+  measured:
+    peak_mem_gb: null
+    p90_duration_min: null
+    samples: 0
+    last_at: null
+  samples_uri: .runtime/logs/resource_samples/ops_io_check_monthly.jsonl
+  status: planned
+  notes_zh: 磁盘 IO 月检 io_check_task.bat（实测每月 13 日 09:00）
+- task_id: ops_qmt_watchdog
+  module_id: null
+  map_node_id: null
+  resource_class: light
+  pool: default
+  peak_mem_gb: 0.5
+  est_duration_min: 5
+  exclusive_group: []
+  window_type: manual
+  window_expr: null
+  schedule_truth_source: docs/_working/resource_schedule/resource_schedule_panorama_plan_v1.md
+  trading_sensitive: false
+  measured:
+    peak_mem_gb: null
+    p90_duration_min: null
+    samples: 0
+    last_at: null
+  samples_uri: .runtime/logs/resource_samples/ops_qmt_watchdog.jsonl
+  status: planned
+  notes_zh: QMT 行情桥看门狗 qmt_watchdog.ps1（实测每日 08:45）
+- task_id: ops_sector_snapshot
+  module_id: null
+  map_node_id: null
+  resource_class: network_download
+  pool: default
+  peak_mem_gb: 1.0
+  est_duration_min: 15
+  exclusive_group: []
+  window_type: manual
+  window_expr: null
+  schedule_truth_source: docs/_working/resource_schedule/resource_schedule_panorama_plan_v1.md
+  trading_sensitive: false
+  measured:
+    peak_mem_gb: null
+    p90_duration_min: null
+    samples: 0
+    last_at: null
+  samples_uri: .runtime/logs/resource_samples/ops_sector_snapshot.jsonl
+  status: planned
+  notes_zh: 板块快照 run_sector_snapshot.py（实测每日 16:40）
+- task_id: ops_tilib_indicator_backfill_nightly
+  module_id: null
+  map_node_id: null
+  resource_class: cpu_heavy
+  pool: heavy
+  peak_mem_gb: 2.0
+  est_duration_min: 120
+  exclusive_group: []
+  window_type: manual
+  window_expr: null
+  schedule_truth_source: docs/_working/resource_schedule/resource_schedule_panorama_plan_v1.md
+  trading_sensitive: true
+  measured:
+    peak_mem_gb: null
+    p90_duration_min: null
+    samples: 0
+    last_at: null
+  samples_uri: .runtime/logs/resource_samples/ops_tilib_indicator_backfill_nightly.jsonl
+  status: planned
+  notes_zh: 指标库夜间回填 backfill_night.bat（实测每日 02:30；tilib 线资产，cpu+db）
+- task_id: ops_ttl_rejudge_daily
+  module_id: null
+  map_node_id: null
+  resource_class: light
+  pool: default
+  peak_mem_gb: 0.5
+  est_duration_min: 15
+  exclusive_group: []
+  window_type: manual
+  window_expr: null
+  schedule_truth_source: docs/_working/resource_schedule/resource_schedule_panorama_plan_v1.md
+  trading_sensitive: false
+  measured:
+    peak_mem_gb: null
+    p90_duration_min: null
+    samples: 0
+    last_at: null
+  samples_uri: .runtime/logs/resource_samples/ops_ttl_rejudge_daily.jsonl
+  status: planned
+  notes_zh: TTL 日重判 run_ttl_rejudge_daily.ps1（实测每日 18:05；治理清理）
+- task_id: ops_weekly_vm_backup
+  module_id: null
+  map_node_id: null
+  resource_class: light
+  pool: default
+  peak_mem_gb: 1.0
+  est_duration_min: 240
+  exclusive_group: []
+  window_type: manual
+  window_expr: null
+  schedule_truth_source: docs/_working/resource_schedule/resource_schedule_panorama_plan_v1.md
+  trading_sensitive: false
+  measured:
+    peak_mem_gb: null
+    p90_duration_min: null
+    samples: 0
+    last_at: null
+  samples_uri: .runtime/logs/resource_samples/ops_weekly_vm_backup.jsonl
+  status: planned
+  notes_zh: CH VM VHDX 周备份 backup_ch_vm.ps1（实测周六 06:00，与日备份同刻叠 I/O）
 - task_id: sch_c4_exam
   module_id: null
   map_node_id: null
@@ -950,6 +1172,26 @@ entities:
   samples_uri: .runtime/logs/resource_samples/sch_deadman_switch.jsonl
   status: active
   notes_zh: DeadmanSwitch
+- task_id: sch_f06_grid
+  module_id: null
+  map_node_id: null
+  resource_class: cpu_heavy
+  pool: light
+  peak_mem_gb: 0.5
+  est_duration_min: 1440
+  exclusive_group: []
+  window_type: cron
+  window_expr: 0 14 * * 6
+  schedule_truth_source: scripts/register_f06_grid_task.ps1
+  trading_sensitive: true
+  measured:
+    peak_mem_gb: null
+    p90_duration_min: null
+    samples: 0
+    last_at: null
+  samples_uri: .runtime/logs/resource_samples/sch_f06_grid.jsonl
+  status: active
+  notes_zh: F06Grid
 - task_id: sch_factory_lane_c
   module_id: null
   map_node_id: null
