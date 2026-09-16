@@ -296,3 +296,108 @@ date: 2026-09-17
   **"不 mock 该防线自身"** 的钉；否则 mock 掉防线的测试会让失效长期不可见。兜底日志
   **不得预设失败类别**（"超时/不可得"），必须打印异常类型——否则代码缺陷会被读成环境噪声，
   本役这条空转了 ~17 小时（09-16 12:36 → 09-17 06:00 复查）。
+
+
+## 16. 机械面清零（尾池最后 5 件）+ 一次门禁假判抓出双写者（#ARCH-328 / #ARCH-324 实证追加）
+
+落地回执：批A `481aaed065`（12 文件，逐文件核实全为本 lane 自有内容）、批B `688bcffc6e`（2 文件）。
+
+### 16.1 尾池 5 件机械出仓，池 74 → 69（机械面 0）
+
+作者欠账台账 dry-run 判"可动"的最后 5 件全部出仓：`gov_audit/{integrity,log_rotation,secret_registry_drift,writer}.py`
++ `red_blue_validator/__init__.py`。5 镜像 creation_token 走官方通道 `batch_creation_tokens.py`
+（CAS attempt 1，注册表纯追加 +20/−0），台账重生成后恒等式 **69 欠账 + 0 可机械 + 0 其他 = 69** 成立——
+P2-1 的**机械可完成面自此清零**，残余 69 件全属作者语义欠账（47 五段式散文欠 `- id:` 行 /
+17 零边图欠边 / 5 块不可解析零节点），补边补节点即臆造语义，禁工具代做。
+
+### 16.2 "死边段归并"的取证与一次我自己的错判（教训：跨度必须与被检判据同读法）
+
+出仓器把这 5 件 docstring 里 **落在 `# [/ALGO_FLOW]` 之后**的 `# 边:` 段一并收进镜像（33 行）。
+我第一版复验用"起标记→止标记"的朴素跨度比对，5 件全报"镜像多出 6/8/5/10/4 行"，
+我据此判成"工具臆造边"（伪造边=本战役红线）。实为跨度取错：正确跨度是**起标记→边段尾**，
+按此重算 5/5 逐字节相同。再用真判据复核而不是相信自己的比对脚本——
+`parse_algo_flow` 的契约是"边可从止标记后扫到文本尾"（`code_algorithm_extractor` 注释原话），
+全量实测 3232 镜像中 **3218 件带止标记后边段，其中零边件 = 0**，
+`integrity.yaml` 实测 nodes=5 / edges=4 齐全，门禁 `check_algo_flow_links` 判 **BLOCKED=False**。
+结论：无回归、无伪造。**教训**：红线级判据（"是否臆造语义"）必须用被检方自己的解析器复算，
+自制字符串跨度比对在边界处必然与判据不一致，误报方向恰好是指控最重的那一类。
+
+### 16.3 #ARCH-328：一个"生产无缺陷"的确定性假红（同 #ARCH-327 族：隐式契约两端无钉）
+
+3092 项治理批测试唯一失败 = `TestWorktreeSyncInvariant`（`?? activate_env.ps1`，单跑 3.84s 非竞态）。
+判据分家：生产侧实测干净（`git check-ignore -v activate_env.ps1` → `.gitignore:262` 根规则 `/*` 命中，
+真 serializer worktree 不受影响），缺陷在测试夹具 `tmp_repo` 只镜像了 `.runtime/` + `.ailocks/`
+两条豁免，没跟上 `_provision_worktree_env` 第 3 步（`58aced8cbf`，08-14）新增的激活脚本
+→ 该断言在夹具面上恒红一个月，被读成环境噪声未归因。处置=**收紧不放松**：clean 断言原样保留
+（它正是防搭便车的判据），豁免表提为单一真源常量 `_WORKTREE_IGNORE_LINES`，新增
+`TestProvisionedArtifactIgnoreContract` 三钉（备置根产物集合本身 / 真仓必须忽略 / 夹具表必须覆盖）。
+机证=双向变异各 RED：删夹具条目 → "夹具侧漂移：缺 ['activate_env.ps1']"；喂未豁免名 `README.md`
+→ "生产侧漂移"；原态 4 passed（含原红用例转绿）。已知弱点留痕：主仓 `/*` 会豁免任意根文件，
+故生产侧钉防的是"规则消失"，不防"根目录堆料"（后者由 §9 根零临时文件纪律管）。
+
+### 16.4 #ARCH-324 追加实证：双写者不止坏顺序，它会**伪造门禁结论**
+
+批A 首次投递 `0076` 死信，报"5 处 algo_flow yaml 不可读（已删除?）"——而 5 个镜像**在盘、blob 全在库**。
+机制：`enqueue` 默认自举 drain 与常驻 belt 守护（PID 28648，正是 #ARCH-324 点名那位无安全点自检的旧码守护）
+并发；租约过期后自举 drain 合法成为第二写者，其 `_sync_worktree` 的 `git clean -fd` 删掉了
+**尚未入库的新文件**，门禁于是把"在"判成"已删除"。独立旁证：同晨他会话提交 `69b17ece1a`
+的标题即"红蓝 R5 修复批（直连落地——队列序列化器工作树污染转直连正门）"，同一污染第二次逼走直连。
+危害等级据此从"顺序竞态"上调为"证据污染"（门禁假判会烧掉整批 claim 并把好件打成死信），
+已追加进 #ARCH-324 档案；本 lane 临时防线=**enqueue/requeue 一律 `--no-bootstrap`**（批A 重投 0077
+与批B 0078 即此口径，均由守护单写落地）。修法等 #324 的 A 案（重启窗）或 B 案（每项短命子进程）。
+
+### 16.5 两条自伤留痕（工具误用 / 热文件写入）
+
+1. `lock_files.py acquire` 是 `acquire <file> <session>` 位置参数式，我传了多文件 + `--session`
+   → 第二个**文件路径被当成 session** 写进锁注册表（假 owner claim），且只锁了 1 个文件。
+   多文件必须用 `acquire-batch <sid> --files-from`（本战役自家交付件）。查锁只认
+   `.ailocks/registry.json` 的 `owner_id` 字段，CLI 回显的"持有者"行在误用时是误导源。
+2. #ARCH-324 追加第一次落笔用 3 空格缩进插进 4 空格折叠块 → 整份注册表 YAML 解析炸。
+   读回断言（`yaml.safe_load` + 条目数 + 唯一性）在 `git add` **之前**抓住，改 4 空格复写后
+   774 条无重、#ARCH-324 status/severity 未动。热文件"写完立刻出进程重解析"这条纪律，
+   本次是它第一次真拦住我自己的手——不是 #ARCH-326 那种写完才想起。
+
+### 16.6 循环复验（第 12 轮，批A/批B 落地后的推进态）
+
+`bt_verify_wave.py` 全 60 批复跑：**defects={}**，coverage
+`{"py": 2342, "anchored": 2338, "prior_block": 2176, "compared": 2176, "yaml_ok": 2338, "backlog_inline": 2, "no_graph": 1}`；
+`bt_head_state_check.py` 在批A 落地前的唯一新报项就是"5 镜像在盘未入 git=锚悬空"，落地后该项消解，
+存量孤件 1（`model_capability_exam__init__.yaml`，#ARCH-326 待 Owner 门位）。
+
+
+### 16.7 一次归属串位的实测定量（登记 #ARCH-329：队列正门第三形态吸收）
+
+批A 落地后按 §2.5 跑 `git log -1 --name-only` 核实，暴露注册表 numstat **3636/28** 而我在这份
+文件上只写了 +20/−0。逐行归属：883 条 `st-auction-bridge` + 12 `st-autolnk` + 7 `st-sharpe2gc`
++ 我自己的 5 条 + 2 条杂项；出进程 yaml 全集比对 **LOST=0 / GAINED=902**——他人令牌一条没丢，
+被搬走的只是归属记账（28 行删除经查为令牌重排）。
+
+机制是队列正门独有的**第三形态**：`enqueue` 把整份文件的当前工作区字节流快照进
+`blobs/<sha256>`，落地按 blob 覆写且不经主区 index，于是 #ARCH-054（claim 基线快照）与
+#ARCH-318/#ARCH-GATE-OWN-SCOPE-001（own-scope）两套防线在结构上都照不到它。据此登记
+**#ARCH-329（P2中）**：零数据损失，害在可审计性与按 commit 归属的产能统计，并给出三案、
+采"观测先行"（吸收行数升级为机生台账）。
+
+自家口径更正：任务 #37 当年把这条风险的缓解记成"延后落地、等他会话 staged 清零"——对直连路径
+成立，对队列路径**无效**（快照发生在 enqueue 瞬间，与 staged 状态无关）。教训并入 #ARCH-329 档案。
+
+
+### 16.8 落地路径三度分家：队列假死信 → 直连被连坐 → 回到队列（#ARCH-324 追加实证②）
+
+批C（报告+架构问题注册表 2 件）投递后死信 `0079`，dead_reason 是 `no changes added to commit`，
+而同一份报错里列出 **15 个他会话未暂存改动**躺在序列化器 worktree（`framework_composer.py` /
+`engine_base.py` / `screen_source.py`… 即 #ARCH-325 那批）。出仓核对：该 worktree 的注册表副本里
+`#ARCH-329` 计数=0 —— 我的 blob 被并发 `reset --hard` 回滚成 HEAD 形态，网关于是把"有内容"判成
+"无差异"烧成死信。这是 #ARCH-324 的**第二形态**（第一形态=门禁把在盘文件判成"已删除"）。
+
+独立旁证把根因从"双 drain"扩到"锚点漂移"：主区 pre_commit 的 CRITICAL RECONCILER 日志同时出现
+`.worktrees\st-sowner002-20260916\scripts\…` 与 `.runtime\commit_queue\worktree\scripts\…`
+两种根路径的命令——post-commit reconciler 以漂移后的 REPO_ROOT 为 cwd 被拉起，正是
+`session_worktree.py` 注释里警告过的"同一 worktree 树被 import 时 REPO_ROOT 指向该树自身"。
+含义：A 案（重启窗）若不同步收紧 anchored-path，新守护照样被污染。
+
+中途试过直连正门（同日先例 `69b17ece1a`），两道墙：①`WORKTREE-REQUIRED`（非 worktree + 多活跃会话，
+裁定许可旗 `--allow-non-worktree` 可越）；②越过后被 **BLUEPRINT-FORMAT 全索引扫描**连坐——报的 6 个
+违规文件（`generate_skeleton_health.py` 等 `MOD-AUTO-L*-001(暂编号)`）全是他会话 staged 在途件，
+按 §3.4 不代修。结论：**队列仍是本役唯一不连坐的正门**，代价是要认 `--no-bootstrap` + 死信重投；
+这也说明 #ARCH-318（own_scope:false 连坐面未覆盖）与本条是同一场病的两面。

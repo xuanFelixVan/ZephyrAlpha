@@ -21851,6 +21851,18 @@ entries:
     另补头注清偿：`stop` 模式要么实现要么从 [CONSUMERS]/[ERROR_CONTRACT] 删除（头注=契约，
     虚写=下一次事故的误导源）。在此之前本类的临时防线=红蓝实弹以队列路由为准（非直连），
     且效力证据只认 HEAD 字节核实。
+    证据追加（2026-09-17 晨，P2-1 尾池批 A 死信 0076 实测——危害等级从"顺序竞态"升到"伪造门禁结论"）：enqueue 默认自举 drain 与本守护（PID 28648）并发时，第二写者 _sync_worktree 的 git clean -fd 会删掉**尚未入库的新文件**（本批 5 个 algo_flow 镜像全在盘、blob 全在库），于是 ALGO-FLOW-LINK 报「5 处 yaml 不可读（已删除?）」并阻断——即双写者把"在"判成"已删除"，把好件打成死信并烧掉整批 claim。本 lane 临时防线=enqueue/requeue 一律 --no-bootstrap（只由本守护单写）；A 案重启窗的紧迫性据此上调。
+    追加实证②（同日，落地面第二形态=**内容被并发回滚**）：q-…-0079（本 lane 报告+注册表 2 件）
+    死信 dead_reason=「git commit failed: … no changes added to commit」，且同报 15 个**他会话未暂存
+    改动**躺在序列化器 worktree 里（framework_composer / engine_base / screen_source 等，正是 #ARCH-325
+    那批文件）；出仓核对：该 worktree 的注册表副本内 #ARCH-329 计数=0，即本项 blob 已被并发
+    reset --hard 回滚到 HEAD 形态，于是网关在 apply→add→commit 之间拿到"无差异"→假判成死信。
+    独立旁证（锚点漂移实锤）：主区 pre_commit 的 CRITICAL RECONCILER 日志里出现
+    「Command [...python.exe, 'D:\ZephyrAlpha\.runtime\commit_queue\worktree\scripts\…']」
+    与 .worktrees\st-sowner002-… 两种根路径混列——post-commit reconciler 以漂移后的 REPO_ROOT 为
+    cwd 执行，正是 scripts/session_worktree 注释所警告的"同一 worktree 树被 import 时 REPO_ROOT
+    指向该树自身"。含义：污染不只来自双 drain，也来自**任何在队列 worktree 内被拉起的治理进程**，
+    故 A 案的"重启窗"必须连带收 anchored-path 面（否则新守护一样被污染）。
   status: open
   created: '2026-09-17'
   last_updated: '2026-09-17'
@@ -21973,5 +21985,38 @@ entries:
     已知弱点留痕：主仓 /* 会豁免任意根文件，故 (b) 只在 /* 被删/被收窄或产物被显式 !
     白名单时才红——它防的是"规则消失"，不防"根目录堆料"（后者由 GOV-DOC/根零临时文件纪律管）。
   status: fixed
+  created: '2026-09-17'
+  last_updated: '2026-09-17'
+- issue_id: "#ARCH-329"
+  title: >-
+    队列 enqueue 整文件 blob 快照无 own-diff 过滤——共享热文件上他会话在途内容被烤进本会话
+    blob 并落到本会话 commit 名下（批A 实证吸收 897 条 foreign creation_token，零数据丢失）
+  severity: P2中
+  adjudication: >-
+    取证：commit 481aaed065（本 lane「尾池最后 5 件机械出仓」12 文件）对
+    capability_canonical_file_registry.yaml 报 numstat 3636/28，而本会话在该文件的写入仅
+    batch_creation_tokens.py 的纯追加 +20/−0。逐行归属：新增 created_by 分布
+    st-auction-bridge-20260917 883 + st-autolnk-20260917 12 + st-sharpe2gc-20260917 7 +
+    本会话 5 + 杂项 2；出进程 yaml 全集比对（两 blob 的 creation_tokens 取 (file,token) 集合）
+    得 LOST=0 / GAINED=902，即他人令牌一条未丢，被搬走的只是归属记账（28 行删除为令牌重排）。
+    与既有登记的三个分家：①#ARCH-054 FOREIGN-CHANGE-DETECTION 治的是 claim 时基线快照，
+    作用于网关直连路径的 index；②#ARCH-318 / #ARCH-GATE-OWN-SCOPE-001 治的是门禁扫全索引连坐；
+    ③本条是队列正门独有的第三形态——enqueue 把整份文件的**当前工作区字节流**写进
+    .runtime/commit_queue/blobs/<sha256>，落地侧按 blob 覆写且全程不经主区 index，
+    上述两套防线在结构上都照不到它。热文件天然多会话同写，队列用量上来后必然复现。
+    裁定 P2中 而非 P1：零数据损失、零损坏，害在可审计性——他人成果记入本 commit 使按
+    commit 归属的周审计/产能统计失真，且本 commit 若死信则他人令牌内嵌在死信 blob 中随批次漂着。
+    不代修他班在途内容（§3.4），本 lane 只按 §2.5 事后核实并登记。
+  fix_phase: >-
+    登记待治本（队列基础设施属共享面，不代修）。三案比较：①enqueue 侧按 claim 过滤——
+    仅对本会话 claim 的文件取 blob，未 claim 文件拒绝入队（最贴 §2.5 精神，代价=热文件永远
+    抢不到独占，会把队列可用性打掉）；②落地侧按 hunk 归属拆分（撞 RULE-GIT-SAFE 禁 plumbing
+    与 §3.1 own-diff 的结构性困难，不采）；③观测先行（推荐）：enqueue 时在 item 记
+    base_head 侧该文件 sha256，落地后写 commit_queue_absorption_log
+    （file/base_sha/landed_sha/foreign_line_count/landed_commit），把"这次吸收了几行别人的"
+    从 git log -1 --name-only 的人工核实升级为机生台账（§9.5 静态清单禁手工维护）。
+    另更正自家口径：任务 #37「等他会话 staged 清零再落」对直连路径（index 搭便车）成立，
+    对队列路径不成立——快照取工作区字节流，与 staged 状态无关，等清零等不到。
+  status: open
   created: '2026-09-17'
   last_updated: '2026-09-17'
