@@ -2,7 +2,7 @@
 # [MODULE] zephyr.risk.core.survival_line_monitor
 # [DOMAIN] D_RISK
 # [DEPENDENCIES] 无（纯判定）
-# [CONSUMERS] 55 号 KPI 监控/复盘编排（接线待排期，本批仅交付模块本体）；告警通道复用 alert_rules.yaml（ALERT-KPI-001/002）
+# [CONSUMERS] zephyr.infrastructure.system_telemetry.alerts.ops_alert_feed（告警发射已接线：kpi.survival_line.status → ALERT-KPI-001/002 → 通知板/promotion 横幅）；55 号 KPI 监控/复盘编排接线仍待排期
 # [STARTUP] imported
 # [MATURITY] testing
 # [INVARIANTS] 失败指标优先于生存线突破；健康/卓越线配置占位默认不启用
@@ -25,8 +25,9 @@ D_RISK — 生存线监控（90 号 Phase2 项，#16 系统级成功指标修订
   ② 健康/卓越线暂缓定死——运行 6-12 个月（≥30 个收益观测点）后用实盘分布校准，
      本模块仅以配置占位（enabled=False）。
 
-注意：本模块为 90 号 Phase2 交付物，MATURITY=testing；告警发射/复盘编排接线
-挂起待 Owner（宪章 B-007 纪律）。
+注意：本模块为 90 号 Phase2 交付物，MATURITY=testing；告警发射已由
+ops_alert_feed 接线（2026-09-16 清偿"产而不消"断链——发布 kpi.survival_line.status
+供 ALERT-KPI-001/002 评估），复盘编排接线仍挂起待 Owner（宪章 B-007 纪律）。
 
 # [ALGO_FLOW] external: docs/03_modules/_domain_risk/algo_flow/survival_line_monitor.yaml
 """

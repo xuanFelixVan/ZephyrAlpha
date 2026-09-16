@@ -1,3 +1,5 @@
+# [BLUEPRINT] MOD-FE-006 | (auto-injected by S4 reconciler) | §
+# [TTL] permanent
 # [TTL] permanent
 # [MODULE] tests.frontend.test_ops_alert_feed
 # [DOMAIN] D_FRONTEND
@@ -9,6 +11,10 @@
 - 探针 fail-safe：probe 抛异常 → ok:false 不上抛；真 psutil 探针返回正数
 - GET /api/ops-notifications：有数据透传 / 板异常降级（TestClient + 板目录重定向）
 - 前端接线静态断言：api.js 通道 + promotion.js 横幅注入/轮询/静默降级
+- 生存线 KPI 供给（ALERT-KPI-001/002 断链清偿）：净值 TSV 解析 → SurvivalInput →
+  真调 evaluate_survival_line → 状态词表与 config/alert_rules.yaml 逐字对齐 →
+  落板形态；输入缺席/查询失败/判定异常 = 不产指标+loud warning+不炸循环；
+  日频复评节奏（30s 不重打 CH）；与内存段互不连坐；src 侧死代码回归锁
 - E2E（playwright，可选）：promotion 页注入假 OOM critical 事件 → 横幅可见（造假事件
   端到端"看到页面通知"的实测形态；浏览器缺席自动 skip）
 
@@ -28,13 +34,41 @@ _PROJECT_ROOT = Path(__file__).resolve().parents[2]
 if str(_PROJECT_ROOT / "src") not in sys.path:
     sys.path.insert(0, str(_PROJECT_ROOT / "src"))
 
+from zephyr.infrastructure.system_telemetry.alerts import ops_alert_feed as feed_mod  # noqa: E402
 from zephyr.infrastructure.system_telemetry.alerts.ops_alert_feed import (  # noqa: E402
+    SURVIVAL_METRIC_FRAGMENT,
     OpsAlertFeed,
+    parse_nav_tsv,
     probe_project_rss_bytes,
+    probe_survival_status,
+    survival_input_from_nav,
 )
 
 GB = 1024**3
 THRESHOLD = 8 * GB  # 与 ALERT-SYS-002 condition "> 8589934592" 同源
+
+
+def _slm():
+    """生存线判定模块 lazy 导入（带重试）。
+
+    既有缺陷（非本文件引入，2026-09-16 实测）：`zephyr.risk.core.__init__` ↔
+    `daily_auditor` 是循环导入，与 api_server 模块导入期启动的 daemon 线程
+    （bt-strategy-warm / ops-alert-feed）并发首导入时，CPython 判为跨线程锁环
+    → `_frozen_importlib._DeadlockError`（RuntimeError 子类），受害者是该窗口内
+    任何 `import zephyr.risk.*` 的模块（tests/frontend/test_dashboard_feeds.py
+    全量收集崩溃同因）。对方线程导入完成后重试即成——本文件据此不在模块顶层
+    导入 risk，避免把一次可重试的运行时抖动升级成整目录收集中断。
+    """
+    last: Exception | None = None
+    for _ in range(6):
+        try:
+            import zephyr.risk.core.survival_line_monitor as slm
+
+            return slm
+        except RuntimeError as exc:  # _DeadlockError / 部分初始化的环
+            last = exc
+            time.sleep(0.5)
+    raise AssertionError(f"zephyr.risk.core 持续不可导入（既有循环导入抖动）: {last}")
 
 
 @pytest.fixture()
@@ -329,3 +363,356 @@ def test_frontend_e2e_fake_oom_event_visible(page, base_url):
     assert "9663676416" in content
     first_cls = banner.locator(".promo-alert-item").first.get_attribute("class") or ""
     assert "promo-alert-resolved" not in first_cls
+
+
+# ── 生存线 KPI 供给（ALERT-KPI-001/002 断链清偿，2026-09-16）───────────────────
+
+# 生产规则镜像（阈值/严重度/静默窗真源=config/alert_rules.yaml，本处仅测试夹具）
+_SURVIVAL_RULES = {
+    "rules": [
+        {
+            "id": "ALERT-SYS-002",
+            "name": "oom_risk",
+            "severity": "critical",
+            "metric": "system.memory_rss_bytes",
+            "condition": f"> {THRESHOLD}",
+            "description": "内存即将耗尽（>8GB RSS）",
+            "silence_window": "5m",
+        },
+        {
+            "id": "ALERT-KPI-001",
+            "name": "survival_line_breach",
+            "severity": "critical",
+            "metric": "kpi.survival_line.status",
+            "condition": "== survival_breach",
+            "description": "破生存线（滚动12月超额≤0 或 MaxDD≥15% 或 Sharpe<0.8）→降仓/关停评估",
+            "silence_window": "1d",
+        },
+        {
+            "id": "ALERT-KPI-002",
+            "name": "survival_line_failure",
+            "severity": "critical",
+            "metric": "kpi.survival_line.status",
+            "condition": "== failure",
+            "description": "触失败指标（连续6个月亏损或回撤>25%，对齐4级Protocol Level4）→失败处置",
+            "silence_window": "1d",
+        },
+    ]
+}
+
+_ONE_DAY = 86400.0
+
+
+@pytest.fixture()
+def survival_feed(board: Path, tmp_path: Path) -> OpsAlertFeed:
+    """含两条生存线规则的 feed（板与规则均注入 tmp_path，禁触生产 config/.runtime）。"""
+    rules_path = tmp_path / "alert_rules_survival.yaml"
+    import yaml
+
+    rules_path.write_text(yaml.safe_dump(_SURVIVAL_RULES, allow_unicode=True), encoding="utf-8")
+    return OpsAlertFeed(board_dir=board, rules_path=rules_path)
+
+
+def _nav_tsv(daily_returns, *, with_benchmark=True, bench_drift=0.0, start="2025-01-02") -> str:
+    """合成日频净值 TSV（trade_date / nav_ratio / benchmark_ratio，CH 同列序）。"""
+    from datetime import date, timedelta
+
+    nav = 1.0
+    bench = 1.0
+    d = date.fromisoformat(start)
+    lines: list[str] = []
+    for r in daily_returns:
+        nav *= 1.0 + r
+        bench *= 1.0 + bench_drift
+        b = f"{bench:.8f}" if with_benchmark else "\\N"
+        lines.append(f"{d.isoformat()}\t{nav:.8f}\t{b}")
+        d += timedelta(days=1)
+    return "\n".join(lines)
+
+
+_FALLING = [-0.01] * 40  # 峰谷回撤 33% → FAILURE（对齐 Level4 回撤>25%）
+_NOISY_FLAT = [0.002, -0.0019] * 20  # 净升但波动大 → Sharpe≈0.41 破生存线
+_STRONG = [0.004, 0.0039] * 20  # 稳升低波 → OK
+
+
+# ── 输入推导（纯函数 + 降级护栏）──
+
+
+def test_parse_nav_tsv_handles_null_benchmark_and_bad_rows():
+    rows = parse_nav_tsv("2025-01-02\t1.00000000\t1.00000000\n2025-01-03\t0.9\t\\N\n坏行\n2025-01-04\tNaN\t1.0")
+    assert rows[0] == ("2025-01-02", 1.0, 1.0)
+    assert rows[1] == ("2025-01-03", 0.9, None)  # Nullable 列 NULL → None（超额无定义）
+    assert len(rows) == 2  # 坏行/非数值 nav 跳过，不致命
+
+
+def test_parse_nav_tsv_recognizes_writer_side_none_token():
+    # ch_writer 手工拼 TSV 用 str(v) → Nullable NULL 落成字面量 "None"；空串是第三种形态
+    rows = parse_nav_tsv("2025-01-02\t1.0\tNone\n2025-01-03\t1.01\t\n2025-01-04\t1.02")
+    assert [r[2] for r in rows] == [None, None, None]
+    assert [r[1] for r in rows] == [1.0, 1.01, 1.02]  # 基准缺席不毁净值行
+
+
+def test_survival_input_from_nav_derives_all_four_fields():
+    pts = parse_nav_tsv(_nav_tsv(_FALLING))
+    m = survival_input_from_nav(pts)
+    assert m is not None
+    assert 0.25 < m.max_drawdown < 0.40  # 峰谷最大回撤（正数）
+    assert m.excess_return_12m < 0  # 净值区间收益 − 基准区间收益
+    assert m.consecutive_loss_months >= 1
+    assert m.sharpe < 0
+
+
+@pytest.mark.parametrize(
+    "daily_returns, expected",
+    [
+        # 三个状态字面量由 test_alert_rules_yaml_vocabulary_… 逐字对齐 SurvivalStatus 枚举
+        (_STRONG, "ok"),
+        (_NOISY_FLAT, "survival_breach"),
+        (_FALLING, "failure"),
+    ],
+)
+def test_status_vocabulary_is_measured_not_hardcoded(daily_returns, expected):
+    """三态均由合成净值经真判定产出（词表来源=实算，非本文件硬编）。"""
+    tsv = _nav_tsv(daily_returns)
+    got = probe_survival_status(query_fn=lambda sql, timeout: tsv)
+    assert got is not None and got["status"] == expected
+
+
+def test_survival_input_requires_benchmark_series():
+    """缺基准=超额无定义 → None（不猜口径，同 build_nav_curve 降级纪律）。"""
+    assert survival_input_from_nav(parse_nav_tsv(_nav_tsv(_STRONG, with_benchmark=False))) is None
+
+
+def test_survival_input_requires_min_samples_and_alive_series():
+    assert survival_input_from_nav(parse_nav_tsv(_nav_tsv(_STRONG[:10]))) is None  # 样本 < 30
+    assert survival_input_from_nav(parse_nav_tsv(_nav_tsv([0.0] * 40))) is None  # 序列冻结不可测
+
+
+# ── 探针：真调 evaluate_survival_line（产而不消回归锁）──
+
+
+def test_probe_survival_status_actually_calls_the_monitor(monkeypatch: pytest.MonkeyPatch):
+    """回归锁：生产路径必须真的调用判定模块（不只是"可导入"）。"""
+    slm = _slm()
+
+    calls: list = []
+    sqls: list[str] = []
+    real = slm.evaluate_survival_line
+
+    def _spy(metrics, config=None):
+        calls.append(metrics)
+        return real(metrics, config)
+
+    def _capture(sql, timeout):
+        sqls.append(sql)
+        return _nav_tsv(_FALLING)
+
+    monkeypatch.setattr(slm, "evaluate_survival_line", _spy)
+    got = probe_survival_status(query_fn=_capture)
+    assert calls, "evaluate_survival_line 未被生产路径调用——断链复发"
+    assert got is not None and got["status"] == slm.SurvivalStatus.FAILURE.value
+    assert any("回撤" in b for b in got["breaches"])
+    # 表名取自 DDL-as-Code 真源、滚动窗口取自裁定配置（90 号 §16 window_months=12）
+    assert sqls and "c1_market.account_nav_daily" in sqls[0]
+    assert f"subtractMonths(today(), {slm.SurvivalLineConfig().window_months})" in sqls[0]
+
+
+def test_probe_survival_status_query_failure_degrades_with_warning(caplog: pytest.LogCaptureFixture):
+    def _boom(sql, timeout):
+        raise RuntimeError("clickhouse down")
+
+    with caplog.at_level("WARNING", logger=feed_mod.logger.name):
+        assert probe_survival_status(query_fn=_boom) is None
+    assert any("nav query failed" in str(r.msg) for r in caplog.records)
+
+
+def test_probe_survival_status_empty_table_degrades_loudly_not_silently(caplog: pytest.LogCaptureFixture):
+    """净值表空（现状 account_nav_daily=0 行）→ 不产指标 + loud warning，绝不兜底 ok。"""
+    with caplog.at_level("WARNING", logger=feed_mod.logger.name):
+        assert probe_survival_status(query_fn=lambda sql, timeout: "") is None
+    assert any("metric not published" in str(r.msg) for r in caplog.records)
+
+
+def test_probe_survival_status_swallows_monitor_crash(monkeypatch: pytest.MonkeyPatch, caplog: pytest.LogCaptureFixture):
+    """判定模块自身抛（脏数据 ValueError 等）→ 降级缺席，绝不上抛、绝不猜状态。"""
+    slm = _slm()
+
+    def _boom(metrics, config=None):
+        raise ValueError("dirty data")
+
+    monkeypatch.setattr(slm, "evaluate_survival_line", _boom)
+    with caplog.at_level("WARNING", logger=feed_mod.logger.name):
+        assert probe_survival_status(query_fn=lambda sql, timeout: _nav_tsv(_STRONG)) is None
+    assert any("evaluate_survival_line raised" in str(r.msg) for r in caplog.records)
+
+
+# ── 规则词表对齐（真源=config/alert_rules.yaml，非夹具）──
+
+
+def test_alert_rules_yaml_vocabulary_matches_survival_status_enum():
+    """两条 KPI 规则的 condition 右端必须逐字等于 SurvivalStatus 枚举值。"""
+    import yaml
+
+    status_enum = _slm().SurvivalStatus
+    prod = _PROJECT_ROOT / "config" / "alert_rules.yaml"
+    rules = (yaml.safe_load(prod.read_text(encoding="utf-8")) or {}).get("rules", [])
+    kpi = {r["id"]: r for r in rules if SURVIVAL_METRIC_FRAGMENT in str(r.get("metric", ""))}
+    assert {"ALERT-KPI-001", "ALERT-KPI-002"} <= set(kpi)
+    assert kpi["ALERT-KPI-001"]["condition"] == f"== {status_enum.SURVIVAL_BREACH.value}"
+    assert kpi["ALERT-KPI-002"]["condition"] == f"== {status_enum.FAILURE.value}"
+    for r in kpi.values():
+        assert r["metric"] == "kpi.survival_line.status" and r["severity"] == "critical"
+    # 枚举全集 = 规则右端 ∪ 不触发的 ok（探针产出的任何状态都有规则可落，反之亦然）
+    right_sides = {r["condition"].split()[-1] for r in kpi.values()}
+    assert {s.value for s in status_enum} == right_sides | {status_enum.OK.value}
+
+
+def test_evaluate_survival_rules_selects_by_status(tmp_path: Path):
+    """规则选择直读生产 config/alert_rules.yaml（只读，无落板）。"""
+    f = OpsAlertFeed(board_dir=tmp_path / "board", rules_path=_PROJECT_ROOT / "config" / "alert_rules.yaml")
+    assert [r["id"] for r in f.evaluate_survival_rules("survival_breach")] == ["ALERT-KPI-001"]
+    assert [r["id"] for r in f.evaluate_survival_rules("failure")] == ["ALERT-KPI-002"]
+    assert f.evaluate_survival_rules("ok") == []
+    assert f.survival_refresh_interval_s() == _ONE_DAY  # silence_window "1d" 取真源
+
+
+# ── 发布形态（指标真的抵达 publisher）──
+
+
+def test_tick_publishes_survival_metric_with_rule_shape(survival_feed: OpsAlertFeed, board: Path):
+    payload = {"status": "survival_breach", "breaches": ["Sharpe 0.41 < 0.8"], "input": None}
+    s = survival_feed.tick(
+        probe=lambda: int(1 * GB),
+        now=1000.0,
+        survival_probe=lambda: payload,
+    )
+    assert s["ok"] is True and s["survival"]["status"] == "survival_breach"
+    entries = [json.loads(x) for x in (board / "notifications.jsonl").read_text(encoding="utf-8").splitlines() if x]
+    assert [e["key"] for e in entries] == ["ALERT-KPI-001"]  # 只命中 breach 规则，不连坐 failure
+    e = entries[0]
+    assert e["severity"] == "critical" and e["title"] == "survival_line_breach"
+    assert e["labels"]["metric"] == "kpi.survival_line.status"
+    assert e["labels"]["value"] == "survival_breach"
+    assert e["labels"]["breaches"] == ["Sharpe 0.41 < 0.8"]
+    assert "破生存线" in e["message"] and "Sharpe 0.41 < 0.8" in e["message"]
+
+
+def test_tick_publishes_failure_rule_only(survival_feed: OpsAlertFeed):
+    s = survival_feed.tick(
+        probe=lambda: int(1 * GB),
+        now=1000.0,
+        survival_probe=lambda: {"status": "failure", "breaches": ["回撤 33% > 25%"], "input": None},
+    )
+    assert [op["key"] for op in s["survival"]["ops"]] == ["ALERT-KPI-002"]
+
+
+def test_tick_ok_resolves_earlier_survival_alert(survival_feed: OpsAlertFeed):
+    breach = {"status": "survival_breach", "breaches": ["x"], "input": None}
+    survival_feed.tick(probe=lambda: int(1 * GB), now=1000.0, survival_probe=lambda: breach)
+    s2 = survival_feed.tick(
+        probe=lambda: int(1 * GB),
+        now=1000.0 + _ONE_DAY + 1,
+        survival_probe=lambda: {"status": "ok", "breaches": [], "input": None},
+    )
+    assert any(op["op"] == "resolved" and op["key"] == "ALERT-KPI-001" for op in s2["survival"]["ops"])
+    assert survival_feed.list_active(now=1000.0 + _ONE_DAY + 2)[0]["resolved_at"]
+
+
+def test_survival_input_absent_publishes_nothing_and_keeps_feed_alive(
+    survival_feed: OpsAlertFeed, caplog: pytest.LogCaptureFixture
+):
+    """缺输入 → 生存线一段不产任何通知 + loud warning + tick 仍 ok（内存段照跑）。"""
+    with caplog.at_level("WARNING", logger=feed_mod.logger.name):
+        s = survival_feed.tick(
+            probe=lambda: int(9 * GB),
+            now=1000.0,
+            survival_probe=lambda: probe_survival_status(query_fn=lambda sql, timeout: ""),
+        )
+    assert s["ok"] is True
+    assert s["survival"] == {"available": False, "reason": "input-unavailable", "status": None, "ops": []}
+    # 板上有且仅有内存段的 OOM 项——生存线一个字节都没产出（不静默兜底、不伪造健康）
+    assert [e["key"] for e in survival_feed.list_active(now=1000.0)] == ["ALERT-SYS-002"]
+    assert any("metric not published" in str(r.msg) for r in caplog.records)
+
+
+def test_survival_probe_crash_does_not_break_feed(survival_feed: OpsAlertFeed):
+    def _boom():
+        raise RuntimeError("nav source exploded")
+
+    s = survival_feed.tick(probe=lambda: int(1 * GB), now=1000.0, survival_probe=_boom)
+    assert s["ok"] is True and s["survival"]["available"] is False
+    assert s["survival"]["ops"] == []
+
+
+def test_survival_segment_not_suppressed_by_memory_probe_crash(survival_feed: OpsAlertFeed):
+    """两段独立：内存探针炸 = 生存线指标照常落板（不连坐）。"""
+
+    def _boom():
+        raise RuntimeError("psutil exploded")
+
+    s = survival_feed.tick(
+        probe=_boom,
+        now=1000.0,
+        survival_probe=lambda: {"status": "failure", "breaches": ["连续亏损 6 个月"], "input": None},
+    )
+    assert s["ok"] is False and "probe failed" in s["reason"]
+    assert s["survival"]["status"] == "failure"
+    assert [e["key"] for e in survival_feed.list_active(now=1000.0)] == ["ALERT-KPI-002"]
+
+
+def test_survival_recomputed_on_rule_cadence_not_every_tick(survival_feed: OpsAlertFeed):
+    """日频指标按规则 silence_window 复评；30s tick 不重复打 CH。"""
+    calls: list[int] = []
+
+    def _probe():
+        calls.append(1)
+        return {"status": "ok", "breaches": [], "input": None}
+
+    survival_feed.tick(probe=lambda: int(1 * GB), now=1000.0, survival_probe=_probe)
+    survival_feed.tick(probe=lambda: int(1 * GB), now=1030.0, survival_probe=_probe)
+    assert len(calls) == 1
+    survival_feed.tick(probe=lambda: int(1 * GB), now=1000.0 + _ONE_DAY + 1, survival_probe=_probe)
+    assert len(calls) == 2
+
+
+def test_survival_refresh_interval_comes_from_rules(survival_feed: OpsAlertFeed, tmp_path: Path):
+    import yaml
+
+    assert survival_feed.survival_refresh_interval_s() == _ONE_DAY
+    rules = {"rules": [{"id": "ALERT-SYS-001", "metric": "system.cpu_percent", "condition": "> 80"}]}
+    p = tmp_path / "no_kpi.yaml"
+    p.write_text(yaml.safe_dump(rules, allow_unicode=True), encoding="utf-8")
+    assert OpsAlertFeed(board_dir=tmp_path / "b", rules_path=p).survival_refresh_interval_s() is None
+
+
+# ── 死代码回归锁（监视器不再无人消费）──
+
+
+def test_survival_monitor_is_no_longer_unreferenced_in_src():
+    """src 生产代码必须真的引用 evaluate_survival_line（本次修复的终局断言）。"""
+    src = _PROJECT_ROOT / "src"
+    consumers: list[str] = []
+    for p in src.rglob("*.py"):
+        try:
+            text = p.read_text(encoding="utf-8")
+        except (UnicodeDecodeError, OSError):
+            continue
+        if "evaluate_survival_line" in text and p.name != "survival_line_monitor.py":
+            consumers.append(p.name)
+    assert "ops_alert_feed.py" in consumers, "生存线判定又回到产而不消"
+
+
+def test_survival_end_to_end_from_nav_tsv_to_board(survival_feed: OpsAlertFeed, board: Path):
+    """端到端（无网络）：合成净值 TSV → 判定 → 规则 → 通知板（真实探针，仅换查询通道）。"""
+    tsv = _nav_tsv(_FALLING)
+    s = survival_feed.tick(
+        probe=lambda: int(1 * GB),
+        now=1000.0,
+        survival_probe=lambda: probe_survival_status(query_fn=lambda sql, timeout: tsv),
+    )
+    assert s["survival"]["available"] is True and s["survival"]["status"] == "failure"
+    entries = [json.loads(x) for x in (board / "notifications.jsonl").read_text(encoding="utf-8").splitlines() if x]
+    assert [e["key"] for e in entries] == ["ALERT-KPI-002"]
+    assert entries[0]["labels"]["metric"] == "kpi.survival_line.status"
+    # 落板规则由判定结果选择（非硬编 id）
+    assert [r["id"] for r in survival_feed.evaluate_survival_rules(s["survival"]["status"])] == ["ALERT-KPI-002"]
