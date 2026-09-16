@@ -2,7 +2,7 @@
 # [MODULE] zephyr.backtest.core.decision_gate
 # [DOMAIN] D_BACKTEST
 # [DEPENDENCIES] zephyr.backtest.core.overfitting_detector; zephyr.shared.alerts.threshold_loader
-# [CONSUMERS] zephyr.backtest.implementations.vectorized_engine; zephyr.backtest.implementations.event_driven_engine
+# [CONSUMERS] zephyr.strategy_pipeline.fw_backtest(H5-B:S11 整装回测验收调 DecisionGate.evaluate,三段结论 IS/WFA/OOS+DSR 进 acceptance.ok 判据,阈值零自造,证据=该次实测净值的时间切片); zephyr.backtest.implementations.vectorized_engine; zephyr.backtest.implementations.event_driven_engine(注:该二文件内 evaluate_decision_gate 包装器实测全仓零调用)
 # [STARTUP] imported
 # [MATURITY] production
 # [INVARIANTS] IS->WFA->OOS不可跳级;参数锁定;Sharpe>0.5准入;偏离阈值真源=alert_threshold_registry(THD-DEVIATION-001/002,fail-closed);DSR判定器默认开启(dsr_threshold=DSR_SIGNIFICANCE_THRESHOLD=0.95,fail-closed,车道L接线)——三线裁决evaluate_dsr与回测→实盘准入谓词evaluate_strategy_risk_admission=唯一判定源,现仅两轨共用(本模块三线裁决 + strategy_pipeline/fw_backtest 验收；禁两轨各算各的)。第三轨"实盘准入"目前是缺件而非漏传：risk_validation_bridge 只暴露 validate_order/validate_portfolio，无策略准入端口，dsr 在下单/会话装配路径上无消费口(只在 auto_mount 挂载门生效)——证据与裁定见 docs/_working/wyf3/ruling_271_272_wyf3_dsr_mirror.md

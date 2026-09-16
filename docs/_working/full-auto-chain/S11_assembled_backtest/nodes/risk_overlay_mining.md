@@ -133,3 +133,83 @@ P0（H5-A）建议立即移交——它是"过拟合结果被当合格证据固�
 | H5-D | 4 处风险护栏 fail-open 不进验收 | **P1** | 施工班（可观测性） |
 | H5-E | 回测风险旗标不跨到实盘准入 | **P1** | 治理+实盘车道 |
 | H5-F | sanity 容差过宽 | **P2** | 排期 |
+
+## 7 施工回填（H5-B + H5-D，session st-qoder-t1a-20260915，2026-09-17）
+
+> 只记实测结论。开工前逐个 `git status --porcelain` 核实的既有未提交改动（含
+> `src/zephyr/pf_core/strategy_engine/framework_composer.py`、`vectorized_engine.py`、
+> `event_driven_engine.py`）均为他会话 WIP，本轮**未改一字**。
+
+### 7.1 施工前事实核验（防按旧图施工）
+
+| 清单条目 | 开工前实测 | 结论 |
+|---|---|---|
+| H5-A acceptance 读 overfitting_flag | `fw_backtest._evaluate_risk_decision` 已在 HEAD 调 `evaluate_strategy_risk_admission`，`acceptance.risk_admitted` 参与 `ok` | 已落地，本轮不重复施工 |
+| H5-C n_trials 真值 | 产物 `metrics.n_trials_source="trial_ledger:4497"`（现网 bt-fw-823d7fd7） | 已落地（TrialLedger/MOD-BT-200） |
+| H5-B 三段门控 | `DecisionGate.evaluate` 生产调用方仅 `strategy_validation_pipeline`（离线脚本独占）；引擎内 `evaluate_decision_gate` 全仓**只有 2 处 def、0 处调用** | 确为缺件，本轮施工 |
+| H5-D fail-open 可见性 | 引擎侧 `PitUniverseProvider._degraded` / ST 腿 / `StkLimitProvider` / 冲击旁路均为私有态，`_engine_chain_diagnostics` 只上收 `last_signal_row_stats`+`last_skipped_fills` | 状态消费端不可达，本轮以出声归类落地（见 7.3 局限） |
+
+### 7.2 H5-B：三段门控进 S11 验收（落点 `src/zephyr/strategy_pipeline/fw_backtest.py`）
+
+- 判定器：`DecisionGate().evaluate(...)`（`_evaluate_staged_gate`，阈值零自造，全取
+  `DecisionGateConfig` 默认；DSR 与风险闸同一数值，禁二次计算）。
+- 证据口径（**关键裁定**）：S11 窗口内不再拟合参数（方案权重按 plan 指纹锁定），故三段
+  证据取自**该次实测净值的时间切片**——IS=首段、WFA=其后各完整折（切分委托既有
+  `WalkForwardAnalyzer(mode="expanding")`，零手写切片）、OOS=各折起点后全部后段；
+  `scheme.caliber="locked_book_time_split"` 随证据包落档。真正的 fit-window IS 属 TDM 侧
+  欠账（本文 §登记远期），此处不假造该数字。
+- 样本下限取既有常量 `metrics.MIN_SAMPLES_FOR_SHARPE + 1 = 61`，需切出 IS + ≥2 完整折；
+  切不出 → `evidence=None` + `passed=False`（fail-closed，禁"没测=通过"）。
+- 结论进验收：`acceptance` 新增 `gate_passed/gate_can_deploy/gate_is_passed/gate_wfa_passed/
+  gate_wfa_windows/gate_oos_passed/gate_oos_is_ratio/gate_has_disaster/gate_reasons`，
+  `gate_passed` 参与 `ok` 与幂等闸要件（`_IDEMPOTENT_REQUIRED_ACCEPTANCE` 四键，与
+  #24 H4-B 同族）；否决时 ERROR 告警带 `三段门控否决: IS=… WFA=…(x/y) OOS=…(ratio=…)`。
+- 现网锚点复验（只读 `data/backtest_artifacts/bt-fw-823d7fd7.json`，净值 242 日）：
+  风险闸 `accepted=False`（flag=True、DSR=1.69e-9、n_trials=4497/trial_ledger）+ 三段门控
+  `passed=False, is_passed=False, oos_passed=False, oos_is_ratio=0.0, wfa_windows="0/0"`
+  （IS 未过 → WFA/OOS 依"不可跳级"不评），reasons=
+  `["Sharpe准入未通过: -2.3030 <= 0.5", "未提供参数敏感性数据,跳过稳定性门控", "IS阶段未通过,后续阶段跳过"]`，
+  IS Sharpe=-2.3030、折 Sharpe=-2.00/-1.78、OOS Sharpe=-2.0525 → **双闸独立否决**。
+
+### 7.3 H5-D：4 处 fail-open 护栏降级在消费侧计数（禁改引擎的替代方案）
+
+- 机制：`_capture_guard_degradations()` 在 `run_framework_backtest` 执行期向
+  `logging.getLogger("zephyr.backtest")` 挂 `_GuardDegradationCollector`（同进程、计数=
+  当次真事件数，退出即摘钩还原级别；`emit()` 零抛，观测面不得反噬回测）。7 条正则逐条
+  实测命中引擎既有出声（grep 验真）：
+
+| guard | 命中源（实测 file:line） |
+|---|---|
+| pit_universe_filter | vectorized_engine.py:918（标的池过滤降级）/ :923（上市注册表为空） |
+| pit_st_filter | vectorized_engine.py:867（PIT ST 判定失败）、matching_engine.py:1259/1267（ST 兜底降级） |
+| impact_cost_model | matching_engine.py:809（冲击成本旁路）/ :876（冲击报价失败） |
+| liquidity_participation_cap | vectorized_engine.py:288（成交量上限/冲击成本自动旁路） |
+| participation_rate_sanity | matching_engine.py:864（冲击报价参与率越界） |
+| stk_limit_bounds | matching_engine.py:998（预取失败）/ :1019、:1301（切片真源调用失败）/ :1082（涨跌停表行不可用） |
+| fill_integrity | vectorized_engine.py:347（Fill skipped）/ :368（fill 被拒绝） |
+
+- 落地字段：`acceptance.degraded_guard_n` + `acceptance.degraded_guards`，证据包
+  `run.guard_degradation_ledger`（schema `degraded_guards/v1`，每条含 count/source/meaning/
+  sample 日志原文截样），每条降级各自 WARN 一次。另记 3 条消费侧配置旁路
+  （`regime_dynamic_overlay`/`pit_universe_window`/`stk_limit_provider`）与 2 条门控证据
+  缺件（`is_param_plateau_gate`/`phase5_regime_gate`）→ watched 共 12 项。
+- **不新增否决权**（本轮裁定：护栏降级是否升格为否决属 Owner 门位），且明确
+  `count=0 ≠ 健康`（引擎改文案即退为 0=未听见），note 随账落档。
+- 局限（如实登记，非"顺手修"范围）：引擎私有 `_degraded` 标志消费端不可达，出声归类是
+  替代方案不是治本。治本需二选一——① `framework_composer._engine_chain_diagnostics`
+  上收结构化降级计数；② 引擎侧落 `metrics.degraded_guards`。两文件均在本车道禁改清单
+  （st-auditfix-20260916 在途），**移交后续车道**。
+
+### 7.4 复验记录（全绿）
+
+- 复杂度门（整文件，上限 15）：`fw_backtest.py` / `decision_gate.py` 一条命令输出**空**。
+  顺带清偿存量违规：`run_fw_backtest_due` 原 cc=39 → 抽出
+  `_idempotent_skip/_assemble_acceptance/_build_run_block/_acceptance_failure_note` 后达标。
+- `python -m ruff check` 三改文件：All checks passed!（与 `git show HEAD:` 基线比零新增）。
+- `python -m pytest tests/strategy_pipeline/test_fw_backtest.py -q` → **24 passed**
+  （18 既有 + 6 新增：门控正路/时间退化否决/缺证据 fail-closed/幂等闸需 gate_passed/
+  降级计数+WARN/账本不升格否决）；`tests/backtest/test_decision_gate.py -q` → **60 passed**。
+  全程 tmp_path 隔离（journal/EVIDENCE_DIR/ARTIFACT_DIR 三向 monkeypatch），无生产目录写入。
+- 现网证据包形状核验：最新 `fw-auto-20260916-005201-fe90e572.json` 的 acceptance 仅 4 键
+  （无 risk_admitted/cash_closure_admitted/gate_passed）→ 产自接线前，按新幂等口径**不会**
+  被短路，下轮自动重跑复评（这正是后加闸要求旧证据显式认账的目的）。

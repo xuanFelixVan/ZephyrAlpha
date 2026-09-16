@@ -21,6 +21,8 @@
     - 契约钉死: run_fw_backtest_due(event) 四步流（生成器→幂等闸→参数→回测+证据包）
     - 幂等: 同 plan 指纹且最近 ok → skipped（不重跑）
     - 验收: 对账超容差 → ok=False + ERROR 告警 + 证据包落档（不 raise）
+    - H5-B 三段门控: IS/WFA/OOS+DSR 裁决进 acceptance（达标放行、退化否决、缺净值 fail-closed）
+    - H5-D 护栏降级: 引擎 fail-open 出声在消费侧计数可见 + WARN，且不新增否决权
     - 瞬时故障: 生成器失败 → RuntimeError 上抛（journal 留档语义）
     - emit 帮手: rc=0 出队 / rc≠0 留档计 attempts
 """
@@ -28,9 +30,11 @@
 from __future__ import annotations
 
 import json
+import logging
 import types
 from pathlib import Path
 
+import pandas as pd
 import pytest
 
 import zephyr.pf_core.strategy_engine.framework_composer as fc
@@ -94,17 +98,47 @@ def _fake_run_result(ok: bool = True, within: bool = True, equity: int = 60,
     return result
 
 
+#: 三段门控最小可用净值长度：_GATE_MIN_SEG_SAMPLES(61) × 3 段 = 183；取 250 让 IS + 2 完整折成立
+_NAV_DAYS = 250
+
+
+def _write_nav_artifact(artifact_dir: Path, run_id: str = "bt-fw-test1234",
+                        n: int = _NAV_DAYS, mode: str = "rise") -> Path:
+    """落一份 tmp 回测产物的 equity_curve（H5-B 三段门控的唯一真源输入）。
+
+    mode="rise" 稳步上行（三段皆达标）；mode="collapse" 前 40% 上行后下行（IS 达标、
+    WFA/OOS 退化），用于验证门控确有否决权而非装饰。
+    """
+    artifact_dir.mkdir(parents=True, exist_ok=True)
+    idx = pd.bdate_range("2025-01-02", periods=n)
+    cut = int(n * 0.4)
+    eq, vals = 1_000_000.0, []
+    for i in range(n):
+        drift = 0.0015 + (0.004 if i % 7 == 0 else -0.0012 if i % 5 == 0 else 0.0005)
+        if mode == "collapse" and i >= cut:
+            drift = -abs(drift) - 0.004
+        eq *= (1 + drift)
+        vals.append({"timestamp": idx[i].strftime("%Y-%m-%d"), "equity": round(eq, 2)})
+    path = artifact_dir / f"{run_id}.json"
+    path.write_text(json.dumps({"run_id": run_id, "equity_curve": vals}), encoding="utf-8")
+    return path
+
+
 @pytest.fixture()
 def isolated(tmp_path: Path, monkeypatch):
-    """隔离三件套：事件 journal→tmp、证据目录→tmp、告警→捕获。"""
+    """隔离四件套：事件 journal→tmp、证据目录→tmp、产物目录→tmp（含可用净值）、告警→捕获。"""
     state = tmp_path / "strategy_pipeline"
     monkeypatch.setattr(pe, "STATE_DIR", state)
     monkeypatch.setattr(pe, "JOURNAL", state / "pending_events.jsonl")
     monkeypatch.setattr(pe, "RECEIPT", state / "last_receipt.json")
     monkeypatch.setattr(fw, "EVIDENCE_DIR", tmp_path / "fw-auto")
+    artifact_dir = tmp_path / "backtest_artifacts"
+    monkeypatch.setattr(fw, "ARTIFACT_DIR", artifact_dir)
+    # 默认给一份达标净值：让"风险旗标 False + 指标达标 → 过"这一路是真·四闸全绿
+    _write_nav_artifact(artifact_dir)
     alerts: list[tuple[str, str]] = []
     monkeypatch.setattr(fw, "_alert", lambda msg, level="WARN": alerts.append((level, msg)))
-    return {"alerts": alerts, "tmp": tmp_path}
+    return {"alerts": alerts, "tmp": tmp_path, "artifact_dir": artifact_dir}
 
 
 def _patch_happy_path(monkeypatch, run_result: dict | None = None, fp: dict | None = None):
@@ -137,20 +171,43 @@ class TestRunFwBacktestDue:
         assert out["run"]["run_id"] == "bt-fw-test1234"
         assert out["run"]["artifact_path"].endswith("bt-fw-test1234.json")
         assert out["acceptance"]["within_tolerance"] is True
-        assert Path(out["evidence_path"]).exists()
+        # H5-B：三段门控（IS/WFA/OOS + DSR）结论是验收要件，不是旁路日志
+        acc = out["acceptance"]
+        assert (acc["gate_passed"], acc["gate_is_passed"], acc["gate_wfa_passed"],
+                acc["gate_oos_passed"]) == (True, True, True, True)
+        assert acc["gate_wfa_windows"] == "2/2"
         body = json.loads(Path(out["evidence_path"]).read_text(encoding="utf-8"))
         assert body["plan"]["fingerprint"] == _FP["fingerprint"]  # 证据包含 plan 身份
+        gate_ev = body["run"]["staged_gate_decision"]["evidence"]
+        assert gate_ev["scheme"]["nav_days"] == _NAV_DAYS  # 证据口径可复核（切片自实测净值）
         assert (fw.EVIDENCE_DIR / "latest.json").exists()
 
     def test_idempotent_skip_on_same_fingerprint(self, isolated, monkeypatch):
         _patch_happy_path(monkeypatch)
         monkeypatch.setattr(fw, "_latest_evidence", lambda: {
             "plan": {"fingerprint": _FP["fingerprint"]},
-            "acceptance": {"ok": True, "risk_admitted": True, "cash_closure_admitted": True},
+            "acceptance": {"ok": True, "risk_admitted": True, "cash_closure_admitted": True,
+                           "gate_passed": True},
             "evidence_path": "latest.json",
         })
         out = fw.run_fw_backtest_due({"payload": {"trigger": "auto_mount"}})
         assert out.get("skipped") and "fingerprint_unchanged" in out["skipped"]
+
+    def test_evidence_without_gate_passed_forces_reeval(self, isolated, monkeypatch):
+        """三段门控（H5-B）后接前写的证据无 gate_passed → 不得据其短路（与账本闸同族）。
+
+        幂等闸的语义是"同一份已验收证据不必重跑"；门控成为验收要件之前产出的证据没有
+        这项证据，短路它等于用新口径给旧证据背书——被门控拒的策略会永不再判。
+        """
+        calls = _patch_happy_path(monkeypatch)
+        monkeypatch.setattr(fw, "_latest_evidence", lambda: {
+            "plan": {"fingerprint": _FP["fingerprint"]},
+            "acceptance": {"ok": True, "risk_admitted": True, "cash_closure_admitted": True},
+            "evidence_path": "latest.json",
+        })
+        out = fw.run_fw_backtest_due({"payload": {"trigger": "auto_mount"}})
+        assert not out.get("skipped"), out
+        assert calls and out["acceptance"]["gate_passed"] is True
 
     def test_evidence_without_cash_closure_forces_reeval(self, isolated, monkeypatch):
         """账本闸（#24 H4-B）后接前写的证据无 cash_closure_admitted → 不得据其短路。
@@ -245,6 +302,38 @@ class TestRunFwBacktestDue:
         assert rd["dsr"] is not None  # 复算成功
         assert rd["n_trials"] is not None and rd["n_trials"] >= 1  # 真值来源，非 None
 
+    def test_staged_gate_vetoes_time_degradation_even_with_clean_flag(self, isolated, monkeypatch):
+        """H5-B 反证：旗标 False、DSR 达标，但净值后段塌陷 → 三段门控独立否决（门控非装饰）。
+
+        阈值一律取 DecisionGate 既有真源，本用例只证"消费端确实读了它的结论"：
+        IS 段过、WFA/OOS 段不过 → ok=False + gate_reasons 摊开 + ERROR 留痕。
+        """
+        _write_nav_artifact(isolated["artifact_dir"], mode="collapse")  # 覆写同 run_id
+        _patch_happy_path(monkeypatch)
+        out = fw.run_fw_backtest_due({"payload": {"trigger": "auto_mount"}})
+        acc = out["acceptance"]
+        assert out["ok"] is False
+        assert acc["risk_admitted"] is True  # 风险闸（旗标/DSR）独独放行不了
+        assert acc["gate_passed"] is False and acc["gate_is_passed"] is True
+        assert acc["gate_wfa_passed"] is False and acc["gate_oos_passed"] is False
+        assert acc["gate_wfa_windows"] == "0/2"
+        assert any("Walk-Forward" in r or "OOS" in r for r in acc["gate_reasons"])
+        assert any(lv == "ERROR" and "三段门控否决" in m for lv, m in isolated["alerts"])
+
+    def test_staged_gate_fail_closed_without_nav_evidence(self, isolated, monkeypatch):
+        """缺净值证据（产物缺件/样本切不出 IS+2 折）→ 门控按不通过处理，禁"没测=通过"。"""
+        for p in isolated["artifact_dir"].glob("bt-*.json"):
+            p.unlink()  # 模拟引擎产物未落/读不回
+        _patch_happy_path(monkeypatch)
+        out = fw.run_fw_backtest_due({"payload": {"trigger": "auto_mount"}})
+        acc = out["acceptance"]
+        assert out["ok"] is False
+        assert acc["gate_passed"] is False and acc["gate_can_deploy"] is False
+        assert any("fail-closed" in r for r in acc["gate_reasons"])
+        body = json.loads(Path(out["evidence_path"]).read_text(encoding="utf-8"))
+        assert body["run"]["staged_gate_decision"]["evidence"] is None  # 缺件如实留痕，不补默认
+        assert any(lv == "ERROR" and "三段门控否决" in m for lv, m in isolated["alerts"])
+
     def test_dead_member_alpha_over_limit_vetoes_acceptance(self, isolated, monkeypatch):
         """P0 组合完整性（T1A-2 消费端）：44.1% 未兑现 α 必须判 ok=false——warn 只进日志=知情放行。"""
         _patch_happy_path(monkeypatch, run_result=_fake_run_result(dead_share=0.441))
@@ -295,6 +384,76 @@ class TestRunFwBacktestDue:
                             lambda t: (_ for _ in ()).throw(RuntimeError("方案表生成器失败 rc=1")))
         with pytest.raises(RuntimeError, match="生成器失败"):
             fw.run_fw_backtest_due({"payload": {}})  # 瞬时故障上抛→journal 留档重试
+
+
+class TestGuardDegradationLedger:
+    """H5-D：引擎侧 4 处 fail-open 护栏降级在消费侧计数可见（观测面，不新增否决权）。"""
+
+    @staticmethod
+    def _emit_engine_degradations(run_result: dict):
+        """复刻引擎真实出声（同进程同 logger 家族），令采集器计数为当次真值。"""
+        logging.getLogger("zephyr.backtest.core.engines.vectorized_engine").warning(
+            "PIT 上市/退市窗口不可用: 标的池过滤降级（当日不做幸存者/次新剔除）")
+        logging.getLogger("zephyr.backtest.core.engines.vectorized_engine").warning(
+            "PIT ST 判定失败: 600000 该轮不剔 ST")
+        logging.getLogger("zephyr.backtest.core.engines.event_driven_engine").warning(
+            "冲击成本旁路: 报价失败 → 按无冲击成交")
+        logging.getLogger("zephyr.backtest.core.engines.event_driven_engine").warning(
+            "成交量上限/冲击成本自动旁路: 面板无 volume 列")
+        return run_result
+
+    def _patch_run_that_degrades(self, monkeypatch, run_result: dict):
+        calls = _patch_happy_path(monkeypatch, run_result=run_result)
+        monkeypatch.setattr(
+            fc, "run_framework_backtest",
+            lambda plan_id, symbols, start, end, config=None: self._emit_engine_degradations(run_result),
+        )
+        return calls
+
+    def test_engine_fail_open_counted_and_warned(self, isolated, monkeypatch):
+        self._patch_run_that_degrades(monkeypatch, _fake_run_result())
+        out = fw.run_fw_backtest_due({"payload": {"trigger": "auto_mount"}})
+        acc = out["acceptance"]
+        assert acc["degraded_guard_n"] >= 4
+        for gid in ("pit_universe_filter", "pit_st_filter", "impact_cost_model",
+                    "liquidity_participation_cap"):
+            assert gid in acc["degraded_guards"], acc["degraded_guards"]
+        body = json.loads(Path(out["evidence_path"]).read_text(encoding="utf-8"))
+        ledger = body["run"]["guard_degradation_ledger"]
+        by_guard = {g["guard"]: g for g in ledger["degraded"]}
+        assert by_guard["pit_universe_filter"]["count"] == 1  # 计数=当次真事件数，非布尔
+        assert by_guard["pit_universe_filter"]["source"] == "engine_log_observed"
+        assert "标的池过滤降级" in by_guard["pit_universe_filter"]["sample"]
+        warns = [m for lv, m in isolated["alerts"] if lv == "WARN" and "护栏降级" in m]
+        assert len(warns) >= 4  # 每条降级各自出声一次
+
+    def test_ledger_visibility_only_no_new_veto(self, isolated, monkeypatch):
+        """配置性旁路 + 门控证据缺件都入账，但不得凭此否决（升格否决属 Owner 门位）。"""
+        _patch_happy_path(monkeypatch)
+        out = fw.run_fw_backtest_due({"payload": {"trigger": "auto_mount",
+                                                 "symbols": ["600000"]}})
+        assert out["ok"] is True  # 有降级账，仍按既有四闸放行
+        acc = out["acceptance"]
+        assert "pit_universe_window" in acc["degraded_guards"]  # payload 自报标的池
+        assert "regime_dynamic_overlay" in acc["degraded_guards"]  # 打桩 regime=static
+        assert "is_param_plateau_gate" in acc["degraded_guards"]  # DecisionGate 自报跳过
+        assert "phase5_regime_gate" in acc["degraded_guards"]
+        assert "stk_limit_provider" not in acc["degraded_guards"]  # 默认开闸=在岗
+
+    def test_clean_run_still_enumerates_watched_guards(self, isolated, monkeypatch):
+        """本次未听见过降级出声 → 观测项不入 degraded，但七项全在 watched 清单里可枚举。"""
+        _patch_happy_path(monkeypatch)
+        out = fw.run_fw_backtest_due({"payload": {"trigger": "auto_mount"}})
+        ledger = json.loads(Path(out["evidence_path"]).read_text(encoding="utf-8"))[
+            "run"]["guard_degradation_ledger"]
+        assert ledger["schema"] == "degraded_guards/v1"
+        assert ledger["log_watch_patterns"] == 7
+        assert len(ledger["watched"]) == 12  # 7 引擎出声 + 3 消费侧配置 + 2 门控证据缺件
+        assert "fill_integrity" in ledger["watched"]
+        observed = [g["guard"] for g in ledger["degraded"] if g["source"] == "engine_log_observed"]
+        assert observed == []  # 没听见就不记——但下面 note 说明"未听见≠健康"
+        assert "未听见" in ledger["note"]
+        assert "fill_integrity" not in out["acceptance"]["degraded_guards"]
 
 
 class TestEmitFwBacktestDue:

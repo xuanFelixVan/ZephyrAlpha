@@ -2,6 +2,8 @@
 # [MODULE] zephyr.strategy_pipeline.fw_backtest
 # [DOMAIN] D_BACKTEST
 # [DEPENDENCIES] zephyr.strategy_pipeline.pipeline_events（journal/告警原语，import 复用非修改）;
+#   zephyr.backtest.core.decision_gate（三段门控+风险准入判定源，只调不改）; zephyr.backtest.core.walk_forward
+#   （折切分件）; zephyr.backtest.core.metrics（分段指标/DSR 复算，同一真源）;
 #   zephyr.pf_core.strategy_engine.framework_composer; zephyr.pf_core.strategy_engine.translated_strategy_adapter;
 #   scripts/backtest/generate_framework_plan_from_tdm（子进程）; scripts/backtest/print_regime_history（子进程，regime 供给）
 # [CONSUMERS] scripts/backtest/auto_mount.py（挂图落地后 emit_fw_backtest_due）;
@@ -13,13 +15,22 @@
 #   subprocess+超时，禁长活阻塞挂图进程主流程）；证据包必含 plan 身份/面板对账/核心指标/
 #   bt-fw 产物路径/时间戳（验收五要素）+ 执行链六要素（换手实测/标的池幸存者偏差披露/
 #   现金账本闭合/目标权重 Σ→1 归一统计/拒单分类/未建模清单 #24）；标的池必 PIT 窗口口径
-#   （禁 valid_to IS NULL 期末快照=幸存者偏差）；幂等=plan 指纹（权重+TDM sha）不变且最近
-#   一次 ok →跳过重跑（force=True 可越过）；语义失败（对账超容差/空净值/组合完整性不过：
-#   未兑现 α 占方案 >framework_composer.DEAD_MEMBER_ALPHA_SHARE_LIMIT 或无
+#   （禁 valid_to IS NULL 期末快照=幸存者偏差）；幂等=plan 指纹（权重+TDM sha）不变且旧证据
+#   acceptance 每道闸键（ok/risk_admitted/cash_closure_admitted/gate_passed）逐条显式 True
+#   →跳过重跑（force=True 可越过，缺任一键=该闸当时未接线，必须重跑复评）；语义失败（对账超
+#   容差/空净值/组合完整性不过：未兑现 α 占方案
+#   >framework_composer.DEAD_MEMBER_ALPHA_SHARE_LIMIT 或无
 #   dead_weight_disclosed 披露；现金账本不闭合或无 cash_ledger_reconciliation 披露）不重试
 #   ——落证据包+ERROR
 #   告警+消费出队（同输入重跑结果必然相同，重试无意义）；瞬时故障（生成器 rc≠0/CH 不可达/
-#   异常）上抛留 journal 等重放
+#   异常）上抛留 journal 等重放；
+#   H5-B：acceptance 另要求三段决策门控 overall_passed（判定器=zephyr.backtest.core
+#   .decision_gate.DecisionGate，阈值零自造）——IS/WFA/OOS 证据取本 run 同一条实测净值的
+#   时间切片（口径=窗口内零再拟合的锁定账簿稳定性/退化考核，非参数拟合内外；真 fit-window
+#   IS 属 TDM 侧欠账），净值切不出 IS+≥2 完整折即"缺证据"按 fail-closed 判拒；
+#   H5-D：引擎/撮合侧 fail-open 降级在 run 期经 logging 出声归类计数，落
+#   run.guard_degradation_ledger + acceptance.degraded_guards 并逐条 WARN——只做可见性不新增
+#   否决权（是否升格为否决属 Owner 门位），计数 0 仅表示"本次未听见"，不等同健康
 # [MODIFY-GUARD] tests/strategy_pipeline/test_fw_backtest.py
 # [STABILITY] experimental
 # [SAFETY] L
@@ -38,12 +49,15 @@
      窗口=滚动 12 个月（payload 可覆盖）；regime 日序=regime_snapshot_history.dominant
      窗口内日序（可用则附——fw-tdm-current 无 regime_overrides 时纯披露口径，权重不变）；
   ④ run_framework_backtest → 验收（panel_reconciliation.within_tolerance ∧ equity_points>0
-     ∧ 风险闸 evaluate_strategy_risk_admission ∧ 组合完整性闸 _evaluate_composition_integrity
+     ∧ 风险闸 evaluate_strategy_risk_admission ∧ 三段门控闸 DecisionGate.evaluate(IS→WFA→OOS
+     +DSR，H5-B) ∧ 组合完整性闸 _evaluate_composition_integrity
      ∧ 现金账本闭合闸 _evaluate_cash_closure）
      → 证据包 JSON 落 data/backtest_artifacts/fw-auto/（fw-auto-<ts>-<fp8>.json + latest.json；
      run.* 含 #24 执行链六要素：turnover_disclosure / universe_disclosure /
      cash_ledger_reconciliation / target_weight_renormalization / skipped_fills /
-     execution_model_disclosure / signal_age_disclosed）。
+     execution_model_disclosure / signal_age_disclosed，另含 H5-B staged_gate_decision
+     与 H5-D guard_degradation_ledger=当次哪些风险护栏降级/未生效）；幂等短路要求旧证据
+     每道闸（ok/risk_admitted/cash_closure_admitted/gate_passed）均显式放行，缺键=重跑复评。
 
 事件语义（本班裁定留痕——pipeline_events.py 并行编辑禁令未动其文件）:
   fw_backtest_due 为重 kind（分钟级），但 pipeline_events 的 LIGHT/HEAVY 词表与
@@ -72,15 +86,17 @@ regime 日序供给（S11 README §5 施工项 4）——精确挂法登记（�
 from __future__ import annotations
 
 import argparse
+import contextlib
 import hashlib
 import json
+import logging
 import re
 import subprocess
 import sys
 import time
 from datetime import date, datetime, timedelta
 from pathlib import Path
-from typing import Any
+from typing import Any, Final
 
 ROOT = Path(__file__).resolve().parents[3]
 EVIDENCE_DIR = ROOT / "data" / "backtest_artifacts" / "fw-auto"
@@ -303,12 +319,16 @@ def _load_artifact_nav(run_id: str | None) -> Any:
         return None
 
 
-def _evaluate_risk_decision(result: dict) -> dict[str, Any]:
+def _evaluate_risk_decision(result: dict, nav: Any = None) -> dict[str, Any]:
     """对整装回测结果施加回测→实盘共用风险判据（单一真源，fail-closed）。
 
     取值优先级：产物 metrics 若已带 dsr/n_trials 直接用（前向兼容引擎侧上收），否则用
     净值序列复算（同一 DSR 官方件 + 账本 n_trials）。overfitting_flag 取引擎产物旗标。
     最终裁决一律经 decision_gate.evaluate_strategy_risk_admission——缺失即拒，绝不静默放行。
+
+    Args:
+        result: run_framework_backtest 产物 dict。
+        nav: 已载入的净值序列（None 时本函数自行按 run_id 读产物，保持可独立调用）。
     """
     from zephyr.backtest.core.decision_gate import evaluate_strategy_risk_admission
     from zephyr.backtest.core.metrics import calculate_full_metrics
@@ -320,7 +340,8 @@ def _evaluate_risk_decision(result: dict) -> dict[str, Any]:
     n_trials_source = metrics.get("n_trials_source")
 
     if dsr is None:
-        nav = _load_artifact_nav(result.get("run_id"))
+        if nav is None:
+            nav = _load_artifact_nav(result.get("run_id"))
         if nav is not None:
             try:
                 full = calculate_full_metrics(nav, trades_count=int(metrics.get("trades_count") or 0))
@@ -341,6 +362,135 @@ def _evaluate_risk_decision(result: dict) -> dict[str, Any]:
         "n_trials": n_trials,
         "n_trials_source": n_trials_source,
         "reasons": list(admission.reasons),
+    }
+
+
+# ---------- 三段决策门控接线（H5-B：IS→WFA→OOS + DSR，判定全委托 DecisionGate） ----------
+#
+# 为什么在此接线而不是引擎里：引擎（vectorized/event_driven）自带 `evaluate_decision_gate`
+# 全仓零调用（本车道禁改该二文件），而 S11 收尾是**唯一自动跑的整装回测出口**——门控结论
+# 不进 acceptance 就等于整套 IS/WFA/OOS  machinery 在产线上不存在（挖矿 §1.2 判"蓝图兑现为 0"）。
+# 阈值零自造：全部取 `DecisionGate()` 默认配置（DSR 线 0.95 与 OOS/IS 比率等单一真源），
+# 本模块只负责"把证据搬到判定器面前"。
+#
+# 证据口径（关键裁定，勿当参数拟合内外读）：S11 在窗口内**不再拟合参数**（方案权重由 plan
+# 指纹锁定），故三段证据取自同一条**实测净值**的时间切片——IS=首段、WFA=其后各完整折、
+# OOS=各折起点之后的全部后段。这是"锁定账簿的时间稳定性/退化"考核（walk-forward 的退化
+# 分支），不是"参数拟合样本内/外"考核；真正的 fit-window IS 属 TDM 侧欠账（S11 README
+# §登记远期第 6 条），本处不假造该数字。
+
+#: 单段最少样本数 = metrics.MIN_SAMPLES_FOR_SHARPE + 1（低于该线 calculate_metrics 恒返
+#: Sharpe=0，折证据无效——用既有常量作下限，禁另拍魔数）
+_GATE_MIN_SEG_SAMPLES: Final[int] = 61
+#: 净值等分份数（1 份 IS + ≥2 份 WFA 折；"多数通过"判定在 ≥2 折上才有意义）
+_GATE_TARGET_SEGMENTS: Final[int] = 3
+#: WFA 折数下限——切不出即缺证据，按 fail-closed 判拒
+_GATE_MIN_FOLDS: Final[int] = 2
+
+
+def _gate_fold_evidence(nav: Any) -> dict[str, Any] | None:
+    """净值 → IS/WFA/OOS 三段证据（切分委托既有 WalkForwardAnalyzer，零手写切片算法）。
+
+    Returns:
+        {is_sharpe, oos_sharpe, folds:[{fold,sharpe,max_drawdown,days}], scheme:{...}}；
+        样本不足以切出 IS + ≥_GATE_MIN_FOLDS 折时返回 None（调用方按缺证据 fail-closed）。
+    """
+    from zephyr.backtest.core.metrics import calculate_metrics
+    from zephyr.backtest.core.walk_forward import WalkForwardAnalyzer, WalkForwardConfig
+
+    if nav is None or len(nav) < _GATE_MIN_SEG_SAMPLES * _GATE_TARGET_SEGMENTS:
+        return None
+    seg = max(_GATE_MIN_SEG_SAMPLES, len(nav) // _GATE_TARGET_SEGMENTS)
+    analyzer = WalkForwardAnalyzer(
+        WalkForwardConfig(mode="expanding", train_window=seg, test_window=seg)
+    )
+    folds = analyzer.split(list(nav.index))
+    if len(folds) < _GATE_MIN_FOLDS:
+        return None
+
+    fold_rows: list[dict[str, Any]] = []
+    for k, (_train, test) in enumerate(folds):
+        m = calculate_metrics(nav.loc[test], trades_count=0)
+        fold_rows.append(
+            {"fold": k, "sharpe": float(m["sharpe_ratio"]), "max_drawdown": float(m["max_drawdown"]),
+             "days": len(test)}
+        )
+    is_m = calculate_metrics(nav.iloc[:seg], trades_count=0)
+    oos_m = calculate_metrics(nav.iloc[seg:], trades_count=0)  # 各折起点后的全部后段（含末段残样）
+    return {
+        "is_sharpe": float(is_m["sharpe_ratio"]),
+        "oos_sharpe": float(oos_m["sharpe_ratio"]),
+        "folds": fold_rows,
+        "scheme": {
+            "caliber": "locked_book_time_split（窗口内无再拟合，净值时间切片）",
+            "segment_days": int(seg),
+            "is_days": int(seg),
+            "oos_days": int(len(nav) - seg),
+            "n_folds": len(fold_rows),
+            "min_seg_samples": _GATE_MIN_SEG_SAMPLES,
+            "nav_days": int(len(nav)),
+        },
+    }
+
+
+def _evaluate_staged_gate(result: dict, *, nav: Any, locked_params: dict[str, Any], dsr: Any) -> dict[str, Any]:
+    """把三段决策门控接进 S11 验收（判定器=DecisionGate，本函数只搬证据+摊开结论）。
+
+    Args:
+        result: run_framework_backtest 产物 dict（仅用于 run_id 留痕）。
+        nav: 与风险裁决同一条净值序列（None=无产物净值，缺证据判拒）。
+        locked_params: 方案锁定权重（IS 阶段参数稳定性判定的参数字典；敏感性扫描缺件见
+            degraded_guards 的 is_param_plateau_gate 条目）。
+        dsr: 已解析的 DSR（与 evaluate_strategy_risk_admission 同一数值，禁二次计算）。
+
+    Returns:
+        {passed, can_deploy, is_passed, wfa_passed, wfa_windows, has_disaster, oos_passed,
+         oos_is_ratio, reasons, evidence}——reasons 逐条留痕，evidence 落证据包可复核。
+    """
+    from zephyr.backtest.core.decision_gate import DecisionGate
+
+    ev = _gate_fold_evidence(nav)
+    if ev is None:
+        return {
+            "passed": False,
+            "can_deploy": False,
+            "is_passed": False,
+            "wfa_passed": False,
+            "wfa_windows": "0/0",
+            "has_disaster": False,
+            "oos_passed": False,
+            "oos_is_ratio": None,
+            "reasons": [
+                "三段门控证据不足：净值切不出 IS + ≥"
+                f"{_GATE_MIN_FOLDS} 个完整折（每折 ≥{_GATE_MIN_SEG_SAMPLES} 样本）——缺证据按不通过处理(fail-closed)"
+            ],
+            "evidence": None,
+        }
+
+    verdict = DecisionGate().evaluate(
+        is_sharpe=ev["is_sharpe"],
+        params=dict(locked_params),
+        param_sensitivity=None,  # S11 无敏感性扫描产物——门控自身记"跳过稳定性门控"，消费侧另落降级账
+        walk_forward_results=[
+            {"sharpe": f["sharpe"], "max_drawdown": f["max_drawdown"]} for f in ev["folds"]
+        ],
+        oos_sharpe=ev["oos_sharpe"],
+        params_locked=True,  # 方案权重按 plan 指纹锁定，窗口内零再拟合（见 _evaluate_composition_integrity 同族披露）
+        dsr=dsr,
+    )
+    return {
+        "passed": bool(verdict.overall_passed),
+        "can_deploy": bool(verdict.can_deploy),
+        "is_passed": bool(verdict.is_stage.passed),
+        "wfa_passed": bool(verdict.wfa_stage.passed),
+        "wfa_windows": f"{verdict.wfa_stage.windows_passed}/{verdict.wfa_stage.windows_total}",
+        "has_disaster": bool(verdict.wfa_stage.has_disaster),
+        "oos_passed": bool(verdict.oos_stage.passed),
+        "oos_is_ratio": round(float(verdict.oos_stage.oos_is_ratio), 4),
+        "downgraded": bool(verdict.downgraded),
+        "reasons": list(verdict.reasons),
+        "evidence": ev,
+        "run_id": result.get("run_id"),
     }
 
 
@@ -482,7 +632,320 @@ def _turnover_disclosure(result: dict) -> dict[str, Any]:
     }
 
 
+# ---------- 风险护栏 fail-open 可观测性（H5-D：降级计数进 acceptance + WARNING 出声） ----------
+#
+# 降级点位在引擎/撮合内部（vectorized_engine / matching_engine 的 4+ 处 fail-open，本车道
+# **禁改**该二文件），其共同点是"每次降级都记一条日志、但不进产物 metrics"。消费侧的等价
+# 观测手段=在 run_framework_backtest 执行期挂一个 logging.Handler，把 zephyr.backtest.* 的
+# 降级出声**结构化成计数**（同进程、同一次 run，计数=当次真值）。语义零改：本账本只让
+# "哪些闸当次失效"可见（acceptance + 证据包 + WARN），不新增否决权（既有 cash/composition/
+# risk/三段门四闸已有否决，护栏降级是否升格为否决属 Owner 门位，登记在节点报告）。
+
+#: 监视表：(guard_id, 匹配正则, 一句话"失效含义")——正则锚在引擎既有出声文案关键词上；
+#: 引擎若改文案，该项计数恒为 0（=未听见，不等于健康），故 note 里标明来源是出声归类。
+_GUARD_LOG_WATCH: Final[tuple[tuple[str, str, str], ...]] = (
+    ("pit_universe_filter", r"标的池过滤降级|上市注册表为空",
+     "PIT 上市/退市窗口腿不可用→当日不做幸存者/次新过滤（护栏当次失效）"),
+    ("pit_st_filter", r"PIT ST 判定失败|ST 兜底降级",
+     "ST 腿故障→该轮不剔 ST（护栏当次失效）"),
+    ("impact_cost_model", r"冲击成本旁路|冲击报价失败",
+     "Almgren-Chriss 冲击不可用→按无冲击成交（成本低估）"),
+    ("liquidity_participation_cap", r"成交量上限/冲击成本自动旁路",
+     "数据无 volume 列→P0-2 参与率上限整体旁路（容量约束当次不存在）"),
+    ("participation_rate_sanity", r"参与率越界",
+     "参与率∉[0,1]（疑 INV-UNIT-001 量纲违例）→该标的按无冲击成交"),
+    ("stk_limit_bounds", r"StkLimitProvider 预取失败|涨跌停表行不可用|切片真源调用失败",
+     "涨跌停价腿故障→退规则兜底/按不封板处理（可成交性约束当次失效）"),
+    ("fill_integrity", r"Fill skipped|fill 被拒绝",
+     "撮合拒单→实际成交偏离信号意图（回测非所求组合）"),
+)
+
+
+class _GuardDegradationCollector(logging.Handler):
+    """把 zephyr.backtest.* 的护栏降级出声归类计数（emit 零抛——观测面不得反噬回测）。"""
+
+    def __init__(self) -> None:
+        super().__init__(level=logging.INFO)
+        self._watch = [(gid, re.compile(pat), note) for gid, pat, note in _GUARD_LOG_WATCH]
+        self.counts: dict[str, int] = {gid: 0 for gid, _p, _n in _GUARD_LOG_WATCH}
+        self.samples: dict[str, str] = {}
+
+    def emit(self, record: logging.LogRecord) -> None:
+        try:
+            msg = record.getMessage()
+        except Exception:  # noqa: BLE001  ——格式化失败不该拖垮回测
+            return
+        for gid, rx, _note in self._watch:
+            if rx.search(msg):
+                self.counts[gid] = self.counts.get(gid, 0) + 1
+                self.samples.setdefault(gid, f"{record.name}:{record.levelname}: {msg[:180]}")
+                return
+
+
+@contextlib.contextmanager
+def _capture_guard_degradations():
+    """run_framework_backtest 执行期的护栏降级采集器（退出即摘钩、还原级别）。"""
+    logger = logging.getLogger("zephyr.backtest")
+    handler = _GuardDegradationCollector()
+    prev_level = logger.level
+    logger.addHandler(handler)
+    if logger.level > logging.INFO or logger.level == logging.NOTSET:
+        logger.setLevel(logging.INFO)
+    try:
+        yield handler
+    finally:
+        logger.removeHandler(handler)
+        logger.setLevel(prev_level)
+
+
+#: 证据缺件型"闸未生效"的一句话解释（不新增判定，只把 DecisionGate 自己的跳过语义说出声）
+_GAP_MEANINGS: Final[dict[str, str]] = {
+    "is_param_plateau_gate": "无参数敏感性扫描产物→DecisionGate IS 段稳定性/悬崖门当次跳过",
+    "phase5_regime_gate": "未注入 regime 适配/参数收缩 checker→Phase5 后置双闸当次不参与",
+}
+
+
+def _degraded_guard_report(
+    handler: _GuardDegradationCollector | None,
+    *,
+    regime_mode: str,
+    symbols_override: bool,
+    stk_limit_enabled: bool,
+    gate_skipped: list[str],
+) -> dict[str, Any]:
+    """汇总本次运行的护栏失效账（日志观测 + 消费侧配置缺件），并对每条降级 WARN 出声。
+
+    计数语义：`count=0` 且该闸在 watch 表内=本次未听见过其降级出声（引擎只在真失效时记
+    日志）；`count>0`=当次失效次数。配置性旁路（payload 关闸/自报标的池/regime 静态回退/
+    敏感性扫描缺件）由消费侧直接登记，不依赖日志。
+    """
+    observed = handler.counts if handler is not None else {}
+    samples = handler.samples if handler is not None else {}
+    guards: list[dict[str, Any]] = [
+        {
+            "guard": gid,
+            "count": int(observed.get(gid, 0)),
+            "source": "engine_log_observed",
+            "meaning": note,
+            "sample": samples.get(gid),
+        }
+        for gid, _pat, note in _GUARD_LOG_WATCH
+    ]
+    guards += [
+        {
+            "guard": "regime_dynamic_overlay",
+            "count": 0 if regime_mode != "static" else 1,
+            "source": "consumer_config",
+            "meaning": f"regime 日序模式={regime_mode}（static=动态权重腿当次未生效，仅静态基准权重）",
+        },
+        {
+            "guard": "pit_universe_window",
+            "count": 1 if symbols_override else 0,
+            "source": "consumer_config",
+            "meaning": "标的池由 payload 自报→PIT 成份窗口未参与，幸存者偏差由调用方承担",
+        },
+        {
+            "guard": "stk_limit_provider",
+            "count": 0 if stk_limit_enabled else 1,
+            "source": "consumer_config",
+            "meaning": "payload 显式关闭涨跌停 PIT 提供器（退回规则兜底口径）",
+        },
+    ]
+    guards += [
+        {"guard": g, "count": 1, "source": "gate_evidence_gap", "meaning": _GAP_MEANINGS[g]}
+        for g in gate_skipped
+        if g in _GAP_MEANINGS
+    ]
+
+    degraded = [g for g in guards if g["count"]]
+    for g in degraded:
+        _alert(
+            f"整装回测护栏降级: {g['guard']} ×{g['count']}（{g['source']}）—— {g['meaning']}"
+            + (f" 样例: {g['sample']}" if g.get("sample") else ""),
+            level="WARN",
+        )
+    return {
+        "schema": "degraded_guards/v1",
+        "degraded": degraded,
+        "degraded_n": len(degraded),
+        "watched": [g["guard"] for g in guards],
+        "log_watch_patterns": len(_GUARD_LOG_WATCH),
+        "note": (
+            "count=本次运行内该护栏降级次数；source=engine_log_observed 者由 zephyr.backtest.* "
+            "出声归类而得（引擎侧改文案会使该项退为 0=未听见，非=健康）；count=0 的 "
+            "consumer_config 项=本次配置下该闸确实在岗"
+        ),
+    }
+
+
 # ---------- 核心契约 ----------
+
+#: 幂等闸要求旧证据具备的验收键——缺任一键=该闸当时未接线，据其短路会让被冻结的策略永不再判
+_IDEMPOTENT_REQUIRED_ACCEPTANCE: Final[tuple[str, ...]] = (
+    "ok", "risk_admitted", "cash_closure_admitted", "gate_passed",
+)
+
+
+def _idempotent_skip(fp: dict[str, Any], latest: dict[str, Any] | None, force: bool) -> str | None:
+    """幂等闸判据：同指纹 + 旧证据"每一道闸都显式放行"才返回跳过理由，否则 None（须重跑）。
+
+    车道 L：要求旧证据 risk_admitted is True——接线前的老证据只有 ok=True 从无该键，
+    据其短路将令被冻结的过拟合策略永不再判。#24 H4-B（cash_closure_admitted）与本轮
+    H5-B（gate_passed，三段门控后接）同族：任何后加的闸都要旧证据显式认账才可短路。
+    """
+    if force or not latest:
+        return None
+    if (latest.get("plan", {}).get("fingerprint") or "") != fp["fingerprint"]:
+        return None
+    acc = latest.get("acceptance") or {}
+    for key in _IDEMPOTENT_REQUIRED_ACCEPTANCE:
+        if acc.get(key) is not True:
+            return None
+    return "plan_fingerprint_unchanged（同指纹最近已 ok 且各闸均放行，force=true 可强制重跑）"
+
+
+def _assemble_acceptance(
+    result: dict[str, Any],
+    risk: dict[str, Any],
+    gate: dict[str, Any],
+    composition: dict[str, Any],
+    cash: dict[str, Any],
+    guard_report: dict[str, Any],
+) -> dict[str, Any]:
+    """验收七硬项汇总（跑通 ∧ 面板对账 ∧ 净值非空 ∧ 风险准入 ∧ 三段门控 ∧ 组合完整性 ∧ 现金闭合）。
+
+    降级护栏不进 ok 判据（H5-D 裁定）：本项是"当次哪些闸失效"的可见性账，升格为否决权
+    属 Owner 门位——故只落 acceptance 字段 + WARN 出声，不参与 ok 计算。
+    """
+    recon = result.get("panel_reconciliation") or {}
+    base_ok = (
+        bool(result.get("ok"))
+        and bool(recon.get("within_tolerance"))
+        and int(result.get("equity_points") or 0) > 0
+    )
+    return {
+        "ok": bool(
+            base_ok and risk["accepted"] and gate["passed"]
+            and composition["accepted"] and cash["accepted"]
+        ),
+        "run_ok": bool(result.get("ok")),
+        "within_tolerance": bool(recon.get("within_tolerance")),
+        "equity_points": int(result.get("equity_points") or 0),
+        "risk_admitted": bool(risk["accepted"]),
+        "gate_passed": bool(gate["passed"]),
+        "gate_can_deploy": bool(gate["can_deploy"]),
+        "gate_is_passed": bool(gate["is_passed"]),
+        "gate_wfa_passed": bool(gate["wfa_passed"]),
+        "gate_wfa_windows": gate["wfa_windows"],
+        "gate_oos_passed": bool(gate["oos_passed"]),
+        "gate_oos_is_ratio": gate["oos_is_ratio"],
+        "gate_has_disaster": bool(gate["has_disaster"]),
+        "composition_admitted": bool(composition["accepted"]),
+        "cash_closure_admitted": bool(cash["accepted"]),
+        "cash_max_abs_residual": cash["max_abs_residual"],
+        "skipped_alpha_share": composition["skipped_alpha_share"],
+        "composition_over_limit": bool(
+            composition["skipped_alpha_share"] is not None
+            and composition["skipped_alpha_share"] > composition["limit"]
+        ),
+        "overfitting_flag": risk["overfitting_flag"],
+        "dsr": risk["dsr"],
+        "n_trials": risk["n_trials"],
+        "n_trials_source": risk["n_trials_source"],
+        "degraded_guard_n": guard_report["degraded_n"],
+        "degraded_guards": [g["guard"] for g in guard_report["degraded"]],
+        "risk_reasons": risk["reasons"],
+        "gate_reasons": gate["reasons"],
+        "composition_reasons": composition["reasons"],
+        "cash_closure_reasons": cash["reasons"],
+    }
+
+
+def _build_run_block(
+    result: dict[str, Any],
+    recon: dict[str, Any],
+    risk: dict[str, Any],
+    gate: dict[str, Any],
+    composition: dict[str, Any],
+    cash: dict[str, Any],
+    guard_report: dict[str, Any],
+    sym_info: dict[str, Any],
+) -> dict[str, Any]:
+    """证据包 run 章：核心指标 + 四道裁决 + #24 执行链证据 + H5-D 护栏失效账。
+
+    `chain_evidence` 只透传产物 metrics 既有键（缺键=None，消费方按缺键 fail-closed），
+    本函数不补默认值——补了就是把"没测"洗成"测过"。
+    """
+    metrics = result.get("metrics") or {}
+    core_metrics = {
+        k: metrics.get(k)
+        for k in ("total_return", "annual_return", "sharpe_ratio", "max_drawdown",
+                  "win_rate", "trades_count")
+        if k in metrics
+    }
+    chain_evidence = {
+        k: metrics.get(k)
+        for k in (
+            "cash_ledger_reconciliation",
+            "target_weight_renormalization",
+            "skipped_fills",
+            "execution_model_disclosure",
+            "signal_age_disclosed",
+        )
+    }
+    run_id = result.get("run_id")
+    return {
+        "ok": result.get("ok"),
+        "run_id": run_id,
+        "artifact_path": f"data/backtest_artifacts/{run_id}.json" if run_id else None,
+        "participants": result.get("participants"),
+        "skipped": result.get("skipped"),
+        "rescale_factor": result.get("rescale_factor"),
+        "warn": result.get("warn"),
+        "panel_reconciliation": recon,
+        "equity_points": result.get("equity_points"),
+        "trades": result.get("trades"),
+        "core_metrics": core_metrics,
+        "risk_decision": risk,
+        "staged_gate_decision": gate,
+        "dead_weight_disclosed": result.get("dead_weight_disclosed") or {},
+        "composition_decision": composition,
+        "turnover_disclosure": _turnover_disclosure(result),
+        "universe_disclosure": sym_info.get("universe_disclosure") or {},
+        "cash_decision": cash,
+        "guard_degradation_ledger": guard_report,
+        **chain_evidence,
+    }
+
+
+def _acceptance_failure_note(
+    acceptance: dict[str, Any],
+    risk: dict[str, Any],
+    gate: dict[str, Any],
+    composition: dict[str, Any],
+    cash: dict[str, Any],
+) -> str:
+    """验收失败时按"第一道否决闸"补一段人可读否决留痕（禁只报 ok=false 不报为什么）。"""
+    if not acceptance["run_ok"] or not acceptance["within_tolerance"] or not acceptance["equity_points"]:
+        return " 基础跑通闸（run/对账/净值）未过——后续闸结论不作数"
+    notes: list[str] = []
+    if not risk["accepted"]:
+        notes.append(
+            f" 风险闸否决: overfitting_flag={risk['overfitting_flag']} dsr={risk['dsr']} "
+            f"n_trials={risk['n_trials']} ({risk['n_trials_source']}) reasons={risk['reasons']}"
+        )
+    if not gate["passed"]:
+        notes.append(
+            f" 三段门控否决: IS={gate['is_passed']} WFA={gate['wfa_passed']}"
+            f"({gate['wfa_windows']}) OOS={gate['oos_passed']}(ratio={gate['oos_is_ratio']}) "
+            f"reasons={gate['reasons']}"
+        )
+    if not composition["accepted"]:
+        notes.append(f" 组合完整性闸否决: reasons={composition['reasons']}")
+    if not cash["accepted"]:
+        notes.append(f" 现金账本闭合闸否决: reasons={cash['reasons']}")
+    return "".join(notes)
+
 
 def run_fw_backtest_due(event: dict) -> dict[str, Any]:
     """fw_backtest_due 事件处理体（契约钉死）。
@@ -513,22 +976,17 @@ def run_fw_backtest_due(event: dict) -> dict[str, Any]:
     # ①.5 regime 日序新鲜度闸（fresh=零成本直通；stale=告警披露进证据包，不阻断跑批）
     regime_guard = ensure_regime_snapshot()
 
-    # ② 幂等闸：指纹未变且最近一次"已风险放行"ok → 跳过（自裁留痕：同指纹重跑结果必然逐位同——
-    #    面板由同窗口同数据决定，引擎确定性；省分钟级重跑与产物膨胀）。
-    #    车道 L：额外要求旧证据 risk_admitted is True——车道 L 接线前落的老证据只有 ok=True
-    #    从无 risk_admitted（风险闸未接），据其短路将令被冻结的过拟合策略永不再判 → 必须重跑复评。
-    #    #24 H4-B 同族：老证据无 cash_closure_admitted（账本闸后接）→ 同样不得据其短路。
+    # ② 幂等闸：指纹未变且最近一次"每道闸都已放行"→ 跳过（同指纹重跑结果必然逐位同——
+    #    面板由同窗口同数据决定，引擎确定性；省分钟级重跑与产物膨胀）。判据见 _idempotent_skip。
     fp = plan_fingerprint()
     latest = _latest_evidence()
-    if not force and latest and latest.get("plan", {}).get("fingerprint") == fp["fingerprint"] \
-            and latest.get("acceptance", {}).get("ok") \
-            and latest.get("acceptance", {}).get("risk_admitted") is True \
-            and latest.get("acceptance", {}).get("cash_closure_admitted") is True:
+    skip_reason = _idempotent_skip(fp, latest, force)
+    if skip_reason:
         return {
             "ok": True,
-            "skipped": "plan_fingerprint_unchanged（同指纹最近已 ok，force=true 可强制重跑）",
+            "skipped": skip_reason,
             "plan_fingerprint": fp["fingerprint"],
-            "latest_evidence": str(latest.get("evidence_path", "")),
+            "latest_evidence": str((latest or {}).get("evidence_path", "")),
             "generator": gen,
         }
 
@@ -543,61 +1001,25 @@ def run_fw_backtest_due(event: dict) -> dict[str, Any]:
         regime_by_date=regime.get("series"),
         enable_stk_limit_provider=bool(payload.get("enable_stk_limit_provider", True)),
     )
-    result = run_framework_backtest(PLAN_ID, symbols, start, end, config=config)
+    # ④ 回测（执行期挂 H5-D 护栏降级采集器——引擎 fail-open 只出声不落地，消费侧就地计数）
+    with _capture_guard_degradations() as guard_handler:
+        result = run_framework_backtest(PLAN_ID, symbols, start, end, config=config)
 
-    # ④ 验收+证据包
+    # ⑤ 验收（同一条净值喂风险裁决与三段门控，禁两次读产物）
     recon = result.get("panel_reconciliation") or {}
-    # 车道 L（P0）：风险信号产即必消——acceptance 真读 overfitting_flag/DSR/n_trials，
-    # 经与决策门同源判据 evaluate_strategy_risk_admission（不是"与实盘共用"：实盘无策略
-    # 准入端口），不过关即判失败（禁静默放行）。
-    risk = _evaluate_risk_decision(result)
+    nav = _load_artifact_nav(result.get("run_id"))
+    risk = _evaluate_risk_decision(result, nav)
+    gate = _evaluate_staged_gate(result, nav=nav, locked_params=fp["weights"], dsr=risk["dsr"])
+    guard_report = _degraded_guard_report(
+        guard_handler,
+        regime_mode=str(regime.get("mode") or "static"),
+        symbols_override=bool(base),
+        stk_limit_enabled=bool(config.enable_stk_limit_provider),
+        gate_skipped=["is_param_plateau_gate", "phase5_regime_gate"],
+    )
     composition = _evaluate_composition_integrity(result)
     cash = _evaluate_cash_closure(result)
-    base_ok = (
-        bool(result.get("ok")) and bool(recon.get("within_tolerance"))
-        and int(result.get("equity_points") or 0) > 0
-    )
-    acceptance = {
-        "ok": bool(base_ok and risk["accepted"] and composition["accepted"] and cash["accepted"]),
-        "run_ok": bool(result.get("ok")),
-        "within_tolerance": bool(recon.get("within_tolerance")),
-        "equity_points": int(result.get("equity_points") or 0),
-        "risk_admitted": bool(risk["accepted"]),
-        "composition_admitted": bool(composition["accepted"]),
-        "cash_closure_admitted": bool(cash["accepted"]),
-        "cash_max_abs_residual": cash["max_abs_residual"],
-        "skipped_alpha_share": composition["skipped_alpha_share"],
-        "composition_over_limit": bool(
-            composition["skipped_alpha_share"] is not None
-            and composition["skipped_alpha_share"] > composition["limit"]
-        ),
-        "overfitting_flag": risk["overfitting_flag"],
-        "dsr": risk["dsr"],
-        "n_trials": risk["n_trials"],
-        "n_trials_source": risk["n_trials_source"],
-        "risk_reasons": risk["reasons"],
-        "composition_reasons": composition["reasons"],
-        "cash_closure_reasons": cash["reasons"],
-    }
-    metrics = result.get("metrics") or {}
-    core_metrics = {
-        k: metrics.get(k)
-        for k in ("total_return", "annual_return", "sharpe_ratio", "max_drawdown",
-                  "win_rate", "trades_count")
-        if k in metrics
-    }
-    # #24 H3/H4 执行链证据（禁只进日志）：换手实测 + 标的池幸存者偏差 + 现金腿闭合
-    # + 引擎侧静默点（Σ→1 归一统计/拒单分类/未建模清单）+ 混频有效信号龄
-    chain_evidence = {
-        k: metrics.get(k)
-        for k in (
-            "cash_ledger_reconciliation",
-            "target_weight_renormalization",
-            "skipped_fills",
-            "execution_model_disclosure",
-            "signal_age_disclosed",
-        )
-    }
+    acceptance = _assemble_acceptance(result, risk, gate, composition, cash, guard_report)
     summary: dict[str, Any] = {
         "ok": acceptance["ok"],
         "trigger": trigger,
@@ -609,27 +1031,7 @@ def run_fw_backtest_due(event: dict) -> dict[str, Any]:
         "regime": {k: regime[k] for k in ("mode", "freshness", "note") if k in regime}
         | {"freshness_guard": regime_guard.get("action")},
         "regime_day_counts": result.get("regime_day_counts") or {},
-        "run": {
-            "ok": result.get("ok"),
-            "run_id": result.get("run_id"),
-            "artifact_path": f"data/backtest_artifacts/{result.get('run_id')}.json"
-            if result.get("run_id") else None,
-            "participants": result.get("participants"),
-            "skipped": result.get("skipped"),
-            "rescale_factor": result.get("rescale_factor"),
-            "warn": result.get("warn"),
-            "panel_reconciliation": recon,
-            "equity_points": result.get("equity_points"),
-            "trades": result.get("trades"),
-            "core_metrics": core_metrics,
-            "risk_decision": risk,
-            "dead_weight_disclosed": result.get("dead_weight_disclosed") or {},
-            "composition_decision": composition,
-            "turnover_disclosure": _turnover_disclosure(result),
-            "universe_disclosure": sym_info.get("universe_disclosure") or {},
-            "cash_decision": cash,
-            **chain_evidence,
-        },
+        "run": _build_run_block(result, recon, risk, gate, composition, cash, guard_report, sym_info),
         "generator": gen,
         "duration_s": round(time.time() - t0, 1),
         "acceptance": acceptance,
@@ -637,27 +1039,13 @@ def run_fw_backtest_due(event: dict) -> dict[str, Any]:
     evidence_path = _write_evidence(summary)
     summary["evidence_path"] = str(evidence_path)
     if not acceptance["ok"]:
-        risk_note = ""
-        if base_ok and not risk["accepted"]:
-            risk_note = (
-                f" 风险闸否决: overfitting_flag={risk['overfitting_flag']} "
-                f"dsr={risk['dsr']} n_trials={risk['n_trials']} "
-                f"({risk['n_trials_source']}) reasons={risk['reasons']}"
-            )
-        comp_note = ""
-        if base_ok and risk["accepted"] and not composition["accepted"]:
-            comp_note = f" 组合完整性闸否决: reasons={composition['reasons']}"
-        cash_note = ""
-        if (
-            base_ok and risk["accepted"] and composition["accepted"]
-            and not cash["accepted"]
-        ):
-            cash_note = f" 现金账本闭合闸否决: reasons={cash['reasons']}"
         _alert(
             f"fw-tdm-current 整装回测验收未过: ok={acceptance['run_ok']} "
             f"within_tolerance={acceptance['within_tolerance']} "
             f"equity_points={acceptance['equity_points']} warn={result.get('warn')!r}"
-            f"{risk_note}{comp_note}{cash_note} evidence={evidence_path}",
+            + _acceptance_failure_note(acceptance, risk, gate, composition, cash)
+            + f" degraded_guards={acceptance['degraded_guards']}"
+            f" evidence={evidence_path}",
             level="ERROR",
         )
     return summary
