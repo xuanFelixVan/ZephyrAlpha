@@ -174,14 +174,26 @@ class TestDeadmanSwitchInvariants:
     def test_has_cooldown(self):
         text = DEADMAN_SWITCH.read_text(encoding="utf-8")
         assert "Cooldown" in text or "cooldown" in text, (
-            "deadman_switch.ps1: missing cooldown (would spam Feishu during multi-hour outage)"
+            "deadman_switch.ps1: missing cooldown (would spam the alert channel during multi-hour outage)"
         )
 
-    def test_has_feishu_webhook_alert(self):
+    def test_alerts_survive_process_death(self):
+        """Owner 2026-09-15 裁定裁撤外推通道（飞书 webhook + SMTP 邮件，见 00843073ad）：
+        通知以前端 promotion 页为准。死人开关的独立性代价是不能再依赖任何推送通道——
+        告警必须落到进程崩了仍可读的持久载体，否则被监控服务挂掉时告警一起消失。"""
         text = DEADMAN_SWITCH.read_text(encoding="utf-8")
-        assert "ZEPHYR_FEISHU_WEBHOOK" in text, (
-            "deadman_switch.ps1: must alert via Feishu webhook (push to phone, survives service failure)"
+        assert "Write-AlertLog" in text, (
+            "deadman_switch.ps1: must append alerts to a durable alert log (readable after the monitored process dies)"
         )
+        assert "Write-EventLog" in text, (
+            "deadman_switch.ps1: must also write the Windows Application event log (survives Python stack failure)"
+        )
+        for removed_channel in ("ZEPHYR_FEISHU_WEBHOOK", "Send-MailMessage", "smtp"):
+            for ln in _non_comment_lines(DEADMAN_SWITCH):
+                assert removed_channel not in ln, (
+                    f"deadman_switch.ps1: outbound alert channel was retired by Owner ruling, "
+                    f"do not re-add it ({removed_channel!r} in {ln!r})"
+                )
 
 
 class TestDeadmanSwitchRegistered:
