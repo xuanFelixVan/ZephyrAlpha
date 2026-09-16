@@ -64,3 +64,17 @@ date: 2026-09-15
 **门禁会战实录（收尾批 9b/9c 过闸路径）**：DECISION-MAP 基线红（STR-VREV-027/STR-MULTIFACTOR-097 悬空，登记不追归属 automount/btfix 管线自清）一度硬阻 TDM 提交——总包 GW4 注册表补全批落工作区后转绿（收尾批实测 HEAD 9 fails→0）；ALGO-NOTE-SYNC 需 staged diff 先行（门禁链先于网关暂存运行+`_unstage_non_target_files` 会清非清单暂存）——TDM 必须入 --files 且预暂存；CAPABILITY-LOOKUP-REQUIRED 补 `CapabilityLookup.find` 审计后放行。他会话在途件零吸收处置：data/config/tasks.yaml、akshare_provider.py（混有 LUE-2 未提交改动）剔除出 9c，后者 yaml 照常入库、源锚随他会话提交落地。
 
 **claim 体系双轨教训**：lock_files（.ailocks）与 GitCommitGateway claim_files（SessionRegistry.held_files）是两套账——前者不满足提交门检，重试前必须 `git_commit.py --claim-only` 重建 held_files（失败提交 finally 会释放 claim）；会话保活（裁定#252 锁存活=会话存活）需常驻心跳进程，保活进程被杀窗口期 .ailocks 条目会被他会话清理。
+
+## GW11 遗留清偿批（2026-09-16，st-btfix-p17-20260916 会话）
+
+### ① events.jsonl 80MB 瘦身——查证后「登记不执行」（三步验证留痕）
+
+**必要性**：data/audit_trail/events.jsonl 实测 84.6MB / 112,975+ 事件（多会话活跃期 ~100 事件/20 分钟增速），无界增长属实。但交接包所称 verify_chain >120s 未能复现：独立实测 4.8s（112,975 事件全链校验，含 HMAC/内容哈希重算）——>120s 疑为 12 会话并发负载下测量，非文件体积单变量结论。
+
+**真实性**：该文件是活跃追加式哈希链（gate_engine 当日在写）。且链已带历史损伤（先于本会话）：verify_chain 报 37,845 issues——HMAC 失配 26,909 条（自事件 #26810 起）、prev 链断裂 5,595 条（自 #35156 起）、内容哈希失配 5,343 条（自 #53721 起）。疑似密钥轮换/多写方互踩事故现场，瘦身=销毁取证现场。
+
+**可逆性**：两方案均不可逆受损——
+1. **截头保尾（保留近 30 天）**：合成链实证（AuditWriter 建 5 事件链→截头保尾 3 事件）：verify_chain 从 valid 翻 compromised，报 `event #1: genesis prev_hash must be '' or '0'*64`。integrity.py L207-213 genesis 哨兵要求首行 prev 为空/全零，截头必破，代码层无解（修 verify_chain 需改 gov_audit，越车道）。
+2. **整链分段轮转（LogRotationManager 式）**：违反已登记不变量（retention.py INVARIANTS"不碰核心不可变链data/audit_trail/events.jsonl"+paths.py SSoT 注+AuditChainVerifier 同声明）；跨段防篡改证明永久弱化（删归档段不可检）；merkle_hourly/全史查询消费方（query/anomaly/indexer/drift_bridge/forensic）静默丢史；文件活跃写入窗口内备份-轮转-恢复链路有丢事件窗口；且 ~4 个月即复长回 80MB，无车道内常治机制。
+
+**决定**：登记不执行。附新发现移交 Owner：事件 #26810 起的 HMAC 大面积失配 + #35156/#53721 起的链断裂需专项取证（多写方并发 append 互踩嫌疑：两 writer 各持 _last_hash 交错落盘即致 prev 链断），any 轮转/瘦身动作在取证完成前冻结。
