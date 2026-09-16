@@ -109,9 +109,11 @@ created: 2026-09-16
 - **Kimi 直接修（低风险类）**：文档错漏/死链/假完成状态文案/注释与蓝图头失真——直改+自查后记入报告"已修复清单"；正式区文档（docs/01..）改前留 before/after 摘录。
 - **边查边修（热上下文当场修，Owner 2026-09-16 二次裁定）**：查到问题当场产修复，不攒批——重新建上下文才是贵的，当场修命中 KV 缓存≈白送。
   - 文档类（含正式区）：直接改文件。
-  - 代码类（src//scripts//config/）：**若你是 IDE 内代理（可执行命令）=与施工 AI 同权同责**：按宪法冷启动（PATH 修正→lock_files cleanup→reaper status→注册 session kimi-audit）→ `lock_files.py acquire <file> kimi-audit` 取号 → 直接改 → `python scripts/git_commit.py --session kimi-audit --skip-preflight --allow-non-worktree --allow-overlap --files "<逗号分隔>" --message "fix(...)"` 提交。禁裸 git commit。
-    仅当你只能读不能跑命令时：当场产最小 diff 落 `docs/_working/kimi_audit_reports/fix_queue/<战场>-<序号>.diff`（file:line+根因一行+标准 diff），主力机械 apply。
-    禁无 claim 直改工作区（并发会话的队列回滚会静默吞无主编辑，真实事故在案——报备不是为了限制你，是防你的活被当垃圾扫掉）。
+  - 代码类（src//scripts//config/）：与施工 AI 同权同责——
+    冷启动：`export PATH="/c/Users/fanzi/AppData/Local/Programs/Python/Python312:/c/Users/fanzi/AppData/Local/Programs/Python/Python312/Scripts:$PATH"` → `python scripts/lock_files.py cleanup && python -m zephyr.trading.process_reaper --status`
+    改前取号：`python scripts/lock_files.py acquire <文件> kimi-audit`
+    改完提交（禁裸 git commit）：`python scripts/git_commit.py --session kimi-audit --skip-preflight --allow-non-worktree --allow-overlap --files "<逗号分隔>" --message "fix(<域>): <一句话根因> [GW:kimi-audit:non-worktree]"`
+    禁无 claim 直改工作区——并发会话的队列回滚会静默吞无主编辑（真实事故在案）：报备不是限制，是防你的活被当垃圾扫掉。
   - P0 钱闸/资金路径/破坏性数据操作：即使能修也先标注"插队"交主力复核后再动（double-check 钱闸）。
 - 每条发现：file:line 锚点+复现路径+严重级 P0-P3+修复建议；**禁编造锚点**（抽查复核制）。
 - P0 双角色加试：审查者产出后，自己切换"复算反驳者"给最强三条反驳再定级（2×token）。
