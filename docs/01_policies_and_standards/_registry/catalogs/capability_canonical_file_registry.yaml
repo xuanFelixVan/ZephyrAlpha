@@ -17346,8 +17346,12 @@ creation_tokens:
   token: "auto-wyf3-recalibration-report-20260916"
   created_by: "st-wyf3-20260916"
   capability: "wyckoff_threshold_recalibration"
-- file: docs/_working/audit_chain_incident_forensics_gwa.md
+- file: docs/_working/audit_integrity/audit_chain_incident_forensics_gwa.md
   token: audit-chain-incident-forensics-20260916
   created_by: st-auditfix-20260916
   capability: audit_chain_incident_forensics
+- file: docs/_working/reports/2026-09-16-consensus-repaired-handoff.md
+  token: c4-history-repair-2026-09-16-consensus-repaired-handoff-20260916
+  created_by: st-expectation-20260915
+  capability: c4_history_repair
 di_seam_exemptions: []
