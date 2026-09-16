@@ -27699,6 +27699,18 @@ creation_tokens:
   token: ai-layer-vision-readme-20260916
   created_by: st-ailayer-20260917
   capability: ai_layer_vision
+- file: docs/_working/ai_layer_vision/OBJ_M_models/README.md
+  token: ai-layer-vision-readme-20260916
+  created_by: st-ailayer-20260917
+  capability: ai_layer_vision
+- file: docs/_working/ai_layer_vision/OBJ_S_perimeter/README.md
+  token: ai-layer-vision-readme-20260916
+  created_by: st-ailayer-20260917
+  capability: ai_layer_vision
+- file: docs/_working/ai_layer_vision/OBJ_T_tools/README.md
+  token: ai-layer-vision-readme-20260916
+  created_by: st-ailayer-20260917
+  capability: ai_layer_vision
 - file: docs/_working/industry_chain_alpha/industry_chain_alpha_plan.md
   token: industry-chain-alpha-industry-chain-alpha-plan-20260916
   created_by: st-igalpha-20260917
@@ -27779,4 +27791,16 @@ creation_tokens:
   token: "lud-weekend-ghost-cleanup-report-20260917"
   created_by: "st-ghostclean2-20260916"
   capability: "limit_up_down_weekend_ghost_cleanup"
+- file: tests/infrastructure/test_resource_schedule_regen_check.py
+  token: resource-schedule-regen-tasks-test-resource-schedule-regen-check-20260916
+  created_by: st-govmap-20260915
+  capability: resource_schedule_regen_tasks
+- file: scripts/register_resource_regen_check_task.ps1
+  token: resource-schedule-regen-tasks-register-resource-regen-check-task-20260916
+  created_by: st-govmap-20260915
+  capability: resource_schedule_regen_tasks
+- file: scripts/register_resource_view_publish_task.ps1
+  token: resource-schedule-regen-tasks-register-resource-view-publish-task-20260916
+  created_by: st-govmap-20260915
+  capability: resource_schedule_regen_tasks
 di_seam_exemptions: []
