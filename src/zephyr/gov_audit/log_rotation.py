@@ -5,7 +5,7 @@
 # [CONSUMERS] audit-orchestrator.writer; tiered_storage
 # [STARTUP] imported
 # [MATURITY] production
-# [INVARIANTS] 按大小和时间双策略轮转; 不丢失审计日志; 覆盖.json+.jsonl含MCP审计目录logs/mcp_audit
+# [INVARIANTS] 按大小和时间双策略轮转; 不丢失审计日志; 覆盖.json+.jsonl含MCP审计目录logs/mcp_audit; 轮转/瘦身必须持与追加方同一把跨进程文件锁(C-2 裁定#287——防轮转与追加并发互踩); 核心不可变链目录data/audit_trail整目录禁轮转(retention.py 不变量同源)
 # [MODIFY-GUARD] 轮转参数变更必须同步 retention.py
 # [STABILITY] evolving
 # [SAFETY] M
@@ -72,6 +72,8 @@ from __future__ import annotations
 
 import gzip
 import logging
+from collections.abc import Iterator
+from contextlib import contextmanager
 from datetime import datetime
 from pathlib import Path
 from typing import Any, Final
@@ -89,6 +91,36 @@ DEFAULT_MAX_FILES: Final[int] = 1000
 # 5.37.12：MCP 审计日志目录纳入轮转覆盖；.jsonl 与 .json 均参与轮转
 MCP_AUDIT_LOG_DIR: Final[Path] = Path("logs/mcp_audit")
 _ROTATE_PATTERNS: Final[tuple[str, ...]] = ("*.json", "*.jsonl")
+
+
+@contextmanager
+def _append_lock_for(path: Path) -> Iterator[None]:
+    """C-2（裁定#287 2026-09-16）：轮转/瘦身持与追加方同一把跨进程文件锁。
+
+    复用 zephyr.gov_audit.writer._cross_process_append_lock（锁路径=<file>.lock
+    派生，与 AuditWriter.append / AuditChainVerifier.append 共享同一互斥域）——
+    GW11 曾实证轮转与追加并发互踩破坏哈希链（取证期"冻结一切轮转"，16befe06
+    留痕）；本锁是解冻前置。锁不可用（gov_audit.writer 缺失的降级环境）时退化为
+    无锁并告警——与追加方已无共享互斥域，宁可告警不静默。
+    """
+    try:
+        from zephyr.gov_audit.writer import _cross_process_append_lock
+
+        with _cross_process_append_lock(path):
+            yield
+    except ImportError:  # pragma: no cover — 降级环境
+        logger.warning("append lock unavailable for rotation of %s; proceeding WITHOUT cross-process mutual exclusion", path)
+        yield
+
+
+def _is_core_chain_dir(path: Path) -> bool:
+    """核心不可变链目录判定（retention.py 不变量同源：不碰 data/audit_trail）。"""
+    from zephyr.shared.io.paths import AUDIT_DATA_DIR
+
+    try:
+        return path.resolve().parent == AUDIT_DATA_DIR.resolve()
+    except OSError:  # pragma: no cover — resolve 失败按保守不跳过
+        return False
 
 
 class LogRotation:
@@ -145,30 +177,36 @@ class LogRotation:
         cutoff = now_utc().timestamp() - (self._max_age_days * 86400)
         for f in files:
             try:
+                # C-2（裁定#287）：核心不可变链目录（data/audit_trail）整目录禁轮转——
+                # retention.py 不变量"不碰核心不可变链"同源；取证/对账消费方依赖其原样保全。
+                if _is_core_chain_dir(f):
+                    result["details"].append({"file": f.name, "action": "skip", "reason": "core_immutable_chain"})
+                    continue
                 fstat = f.stat()
                 if fstat.st_mtime < cutoff:
-                    # 5.37.12：保留原扩展名再加 .gz（.jsonl -> .jsonl.gz，不再误改 .json.gz）
-                    gz_path = f.with_name(f.name + ".gz")
-                    result["details"].append({"file": f.name, "action": "compress", "reason": "age"})
-                    if not dry_run:
-                        data = f.read_bytes()
-                        with gzip.open(gz_path, "wb") as gz:
-                            gz.write(data)
-                        f.unlink()
-                        result["compressed"] += 1
+                    self._compress_and_remove(f, "age", result, dry_run)
                 elif fstat.st_size > self._max_size_bytes:
-                    gz_path = f.with_name(f.name + ".gz")
-                    result["details"].append({"file": f.name, "action": "compress", "reason": "size"})
-                    if not dry_run:
-                        data = f.read_bytes()
-                        with gzip.open(gz_path, "wb") as gz:
-                            gz.write(data)
-                        f.unlink()
-                        result["compressed"] += 1
+                    self._compress_and_remove(f, "size", result, dry_run)
             except Exception as exc:  # noqa: BLE001 — 5.135治标: broad exception catch
                 logger.error("Failed to process %s: %s", f, exc, exc_info=True)
 
         return result
+
+    def _compress_and_remove(self, f: Path, reason: str, result: dict[str, Any], dry_run: bool) -> None:
+        """压缩并移除单个轮转候选（C-2：全程持与追加方同一把跨进程文件锁）。
+
+        5.37.12：保留原扩展名再加 .gz（.jsonl -> .jsonl.gz，不再误改 .json.gz）。
+        """
+        gz_path = f.with_name(f.name + ".gz")
+        result["details"].append({"file": f.name, "action": "compress", "reason": reason})
+        if dry_run:
+            return
+        with _append_lock_for(f):
+            data = f.read_bytes()
+            with gzip.open(gz_path, "wb") as gz:
+                gz.write(data)
+            f.unlink()
+        result["compressed"] += 1
 
     def stats(self) -> dict[str, Any]:
         json_files: list[Path] = []
@@ -251,34 +289,42 @@ class LogRotationManager:
         return LogRotationManager.extract_date(filename)
 
     def rotate(self, force: bool = False) -> RotationRecord | None:
-        """轮转活跃日志。返回 RotationRecord 或 None。"""
+        """轮转活跃日志。返回 RotationRecord 或 None。
+
+        C-2（裁定#287 2026-09-16）：read→archive→truncate 全程持与追加方同一把
+        跨进程文件锁——GW11 曾实证无锁轮转与并发追加互踩破坏哈希链（轮转窗口内
+        追加事件既不在归档也不在清空后的活跃段=丢失；或半行撕裂）。持锁后追加方
+        在轮转临界区外阻塞，事件完整归入归档或清空后的新段，零互踩。
+        """
         active = self._active_log_path
         if not active.exists():
-            return None
-
-        content = active.read_text(encoding="utf-8")
-        if not content.strip():
             return None
 
         today = now_utc().strftime("%Y-%m-%d")
         if not force and self._last_rotation_date == today:
             return None
 
-        entries = sum(1 for line in content.splitlines() if line.strip())
-        rotated_name = f"{self._ROTATED_PREFIX}{today}.jsonl"
-        rotated_path = self._data_dir / rotated_name
-        compressed = False
+        with _append_lock_for(active):
+            content = active.read_text(encoding="utf-8")
+            if not content.strip():
+                return None
 
-        if self._compress_rotated:
-            rotated_path = rotated_path.with_suffix(".jsonl.gz")
-            data = content.encode("utf-8")
-            with gzip.open(rotated_path, "wb") as gz:
-                gz.write(data)
-            compressed = True
-        else:
-            rotated_path.write_text(content, encoding="utf-8")
+            entries = sum(1 for line in content.splitlines() if line.strip())
+            rotated_name = f"{self._ROTATED_PREFIX}{today}.jsonl"
+            rotated_path = self._data_dir / rotated_name
+            compressed = False
 
-        active.write_text("", encoding="utf-8")
+            if self._compress_rotated:
+                rotated_path = rotated_path.with_suffix(".jsonl.gz")
+                data = content.encode("utf-8")
+                with gzip.open(rotated_path, "wb") as gz:
+                    gz.write(data)
+                compressed = True
+            else:
+                rotated_path.write_text(content, encoding="utf-8")
+
+            active.write_text("", encoding="utf-8")
+
         self._last_rotation_date = today
 
         return RotationRecord(

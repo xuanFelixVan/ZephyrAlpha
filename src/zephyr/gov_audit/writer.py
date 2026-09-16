@@ -171,12 +171,16 @@ _TAIL_SCAN_CHUNK_BYTES: Final[int] = 65536
 _TAIL_SCAN_MAX_BYTES: Final[int] = 32 * 1024 * 1024
 
 
-def _read_tail_entry_hash(event_log_path: Path) -> str:
-    """反向扫描 JSONL 尾部，返回最后一条完整事件的 entry_hash（GW-A 治本）。
+def _read_tail_entry_hash(event_log_path: Path, hash_field: str = "entry_hash") -> str:
+    """反向扫描 JSONL 尾部，返回最后一条完整事件的尾哈希（GW-A 治本）。
 
     prev_hash 必须取自文件真实尾部而非实例内存——N 写方（多进程/同进程多
     AuditWriter 实例，如 AuditChainVerifier 每实例自建 writer 与全局单例并存）
     各持内存尾哈希交错落盘即断链。
+
+    C-1 同型锁推广（裁定#287 2026-09-16 st-maint）：hash_field 参数化——
+    gate_chain.jsonl 条目尾哈希字段名为 "hash"（events.jsonl 为 "entry_hash"），
+    同一扫描算法服务两条链，禁复制实现（RULE-CLONEGUARD）。
 
     - 空文件/不存在 → genesis（"0"*64）
     - 尾部撕裂行（崩溃残留半行）→ 跳过，回溯上一条完整行
@@ -210,7 +214,7 @@ def _read_tail_entry_hash(event_log_path: Path) -> str:
                 if idx == len(segs) - 1 and not trailing_newline and pos > 0:
                     break
                 try:
-                    entry_hash = json.loads(seg.decode("utf-8")).get("entry_hash")
+                    entry_hash = json.loads(seg.decode("utf-8")).get(hash_field)
                 except (UnicodeDecodeError, json.JSONDecodeError):
                     continue  # 撕裂/坏行：继续向前回溯
                 if entry_hash:

@@ -18,7 +18,14 @@
 # CREATE-GUARD 登记资产，改动走 git_commit.py 正门。
 
 schema_version: "1.0.0"
-transition_overlap_seconds: 1209600  # 14 天——滚动重启窗口，可随维护班重启清场提前收窄
+# C-3 收窄（裁定#287 2026-09-16 st-maint）：过渡窗 0——滚动重启清场已完成，实证依据：
+# ① 部署（2026-09-16T07:05:02Z）后生产链 935 条事件 100% 真钥签名（strong）、零默认钥
+#    签名（census 只读复核，收窄前后 mismatch 恒 0）；② 全机早于部署时刻启动的进程仅
+#    3 个治理守护（commit_belt_daemon/worktree_drift_watchdog/write_audit_daemon），
+#    均不持核心链 AuditWriter（写 .runtime/gate_audit 经 audit_jsonl_writer，无哈希链）。
+# 语义效果：era 边界后旧钥（default）签名一律判 mismatch（原 14 天窗内按 weak 接纳）——
+# §4.2 交接的攻击面（窗内公开默认钥可伪造 weak 通过）就此关闭。
+transition_overlap_seconds: 0
 
 eras:
   - id: era-default-public
@@ -66,4 +73,5 @@ eras:
     valid_to: null
     note: >-
       部署后新写方以真钥签名；钥不可解析（env 缺失）时 fail-loud 判 mismatch
-      （强分期禁静默降级为弱）。过渡窗内旧钥（default）签名按 weak 接受。
+      （强分期禁静默降级为弱）。原 14 天过渡窗经维护班清场实证后已收窄至 0
+      （裁定#287：边界后旧钥签名一律判 mismatch，伪造 weak 通道关闭）。

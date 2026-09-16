@@ -3095,3 +3095,92 @@ entries:
   related_arch: []
   related_rulings: ['裁定#264', '裁定#271']
   superseded_by: null
+- ruling_id: '裁定#286'
+  title: limit_up_down 周末幽灵行存量清理——10 分区 664 行按交易日历判定伪行，全量备份后逐分区删除，工作日零变化
+  date: '2026-09-16'
+  category: 数据治理
+  status: active
+  summary: >-
+    裁定#277 残余执行（GW-P，Owner 开工令=破坏性操作授权生效；守卫两段已由裁定#257⑤/GW-G2
+    落地，本次只清存量）。RULE-DATA-OPS 三步验证：①必要性——CH 只读普查实证
+    c1_market.limit_up_down 存 10 个周末分区共 664 行伪行（2026-08-15~2026-09-13，周六/周日
+    成对等行数），下游多消费方无周末过滤（alt_regime_signals F23 全表扫、regime_data_loader/
+    sector_report_builder 窗口查询），周末伪日会进连板高度/晋级率/窗口聚合；②真实性——表口径
+    =交易日历（business_data_categories.yaml market_limit_up_down，日频成品），A股周末不交易，
+    周末分区无合法语义（抽样行 ingest_ts=周日采集回吐的周五池快照）；③可逆性——全量 664 行
+    备份 data/backups/（SHA256 在案，manifest 逐分区行数+恢复指引）。执行：ch_writer 正道
+    （get_client + ALTER TABLE DELETE SETTINGS mutations_sync=2）逐分区删除，逐分区 pre 计数
+    全部=备份行数、post 全部=0；复验周末=0、weekday=4714 行/43 日不变、system.mutations 无
+    残留。下游核验：2026-09-11(五)=71 行与清理前一致、下游涨停序列周末键=空、守卫回归 85
+    passed（test_internal_compute_limit_up_routing + test_collectors）。deriver 与 FPB-4 修复后
+    派生路径不读本表（kline×stk_limit 自算），结构性免疫，无需重跑。
+  evidence: >-
+    普查与执行留痕：docs/_working/limit_up_down_weekend_ghost_cleanup.md（分区清单/幽灵行样例/
+    下游污染路径表/三步验证/删除对照）。备份：data/backups/c1_market_limit_up_down_weekend_rows_
+    20260916_pre_ghostclean.csv（664 行 71404 字节，SHA256
+    8c59014c02bda7cc36af767b0520d6dfa8db59a1536909af52c7745e96e93bd3，写后进程外复核一致）+
+    同名 .manifest.json。成因实证：docs/_working/full-auto-chain/S11_assembled_backtest/nodes/
+    limit_up_event_load_mining.md §2。
+  affected_files:
+    - data/backups/c1_market_limit_up_down_weekend_rows_20260916_pre_ghostclean.csv
+    - data/backups/c1_market_limit_up_down_weekend_rows_20260916_pre_ghostclean.manifest.json
+    - docs/_working/limit_up_down_weekend_ghost_cleanup.md
+  related_arch: []
+  related_rulings: ['裁定#257', '裁定#277']
+  superseded_by: null
+- ruling_id: '裁定#287'
+  title: 审计链治本收尾加固四项（C-1~C-4）——gate_chain 同型锁推广/轮转接锁解冻前置/重启 overlap 清场实证+era 过渡窗收窄至 0/secret_registry 三方周期核对
+  date: '2026-09-16'
+  category: 治本
+  status: active
+  summary: >-
+    裁定#266/#267 移交维护班四项加固的收口批（st-maint-20260916，Owner 开工令 GW-M 车道，
+    直改主区=开工令指定流程+全程 claim 制）。①C-1 gate_chain.jsonl 同型锁：AuditChainVerifier.append
+    临界区改持 _persist_lock+跨进程文件锁（复用 writer._cross_process_append_lock）+锁内实时
+    重读文件尾哈希（_read_tail_entry_hash 泛化 hash_field="hash"，禁复制实现），previous_hash
+    禁凭实例内存（#266 events.jsonl 同型病根）；fail-closed=锁超时/尾读超限/落盘失败→本条
+    不入链仅告警（宁缺不叉链，与 events.jsonl 同语义）；clear() 同锁域清空+删除，锁文件永不删。
+    ②C-2 轮转接锁（解冻轮转前置，GW11 实证无锁轮转破坏哈希链）：LogRotationManager.rotate 的
+    read→archive→truncate 与 LogRotation 的 compress+remove 全程持与追加方同一把锁；核心不可变
+    链目录 data/audit_trail 整目录禁轮转（retention 不变量同源，skip 留痕）。③C-3 长驻写方重启
+    overlap 收窄至 0：红蓝实测——同进程 overlap 2.265s/121 写、跨进程 2.641s/1196 写，链叉=0、
+    成功写入丢失=0（OS 锁串行化+锁内尾读使损伤窗口恒 0；TimeoutError fail-closed 丢弃与叉链
+    严格区分记账）；era transition_overlap_seconds 1209600→0 收窄，判据=部署（07:05:02Z）后生产
+    链事件 100% 真钥签名（935 条只读普查+收窄后 1,188 条复核，mismatch 恒 0）+全机早于部署时刻
+    进程仅 3 个治理守护（commit_belt_daemon/worktree_drift_watchdog/write_audit_daemon，均不持
+    核心链 AuditWriter）——#267 §4.2 交接的 14 天窗内 weak 伪造攻击面关闭。④C-4 secret_registry
+    三方周期核对（新件 zephyr.gov_audit.secret_registry_drift，post-commit 事件触发 priority=216，
+    禁 cron/sleep-loop——PERM-TRIGGER 同源；.env gitignored 故 trigger 恒真）：required=true 失守/
+    签名钥未登记/active 分期钥不可解析=critical_warn；.env 未登记 secret 形态键/默认期未收口/
+    钥值指纹漂移（rotation 未重锚 era 边界告警）=warn；核对永不输出密钥明文（仅 sha256[:12]
+    指纹）。真实仓根首扫即出活体告警：GRAFANA_ADMIN_PASSWORD required=true 失守（critical——
+    修复属 Owner 门位：补钥或降级 required）+IFIND_PASSWORD/QWEN_API_KEY 未登记漂移
+    （warn）；HMAC 真钥指纹 0fc77a652196 与 #267 部署报告互证。附带回补：integrity.py
+    event_log_path 只读 property（eb27876747 以"零消费方"论断删除系实证失误——
+    tests/audit/audit_core/test_audit_integrity.py 两用例读取该 property，审计域全量 2 failed；
+    回补为只读形状，与 writer 读写版不构成克隆）。登记三件套：creation_token
+    （capability=secret_registry_drift）+module_translation 条目+depgraph 设计节点
+    （node_id=14341400）。
+  evidence: >-
+    tests/governance/audit/test_gate_chain_multiproc_append.py（9 用例：4 进程×20 文件链连续/
+    同 prev 绝迹/prev 取文件尾决定性用例/重启 overlap 计时/fail-closed 不入链）+
+    test_log_rotation_append_lock.py（5：守恒律并发对账/持锁阻塞/genesis 重链/核心链目录守卫）+
+    test_writer_restart_overlap.py（2：同进程 2.265s 与跨进程 2.641s overlap 计时留证）+
+    test_secret_registry_drift.py（18）；审计域全量（tests/governance/audit+tests/audit）连续
+    两轮 0 失败（终轮数字见汇报）；只读普查与红蓝探针=.runtime/tmp/gwm_era_census.py+
+    gwm_overlap_probe.py。
+  affected_files:
+    - src/zephyr/gov_audit/writer.py
+    - src/zephyr/gov_audit/log_rotation.py
+    - src/zephyr/gov_audit/integrity.py
+    - src/zephyr/gov_audit/secret_registry_drift.py
+    - src/zephyr/gov_enforcement/rule_enforcement/audit_chain_verifier.py
+    - src/zephyr/gov_enforcement/rule_bridge/git_commit_gateway.py
+    - config/audit_key_eras.yaml
+    - tests/governance/audit/test_gate_chain_multiproc_append.py
+    - tests/governance/audit/test_log_rotation_append_lock.py
+    - tests/governance/audit/test_writer_restart_overlap.py
+    - tests/governance/audit/test_secret_registry_drift.py
+  related_arch: ['#ARCH-308']
+  related_rulings: ['裁定#266', '裁定#267']
+  superseded_by: null

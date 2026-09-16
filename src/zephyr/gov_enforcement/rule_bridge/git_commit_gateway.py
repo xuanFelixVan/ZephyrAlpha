@@ -59,6 +59,9 @@ from zephyr.gov_enforcement.rule_bridge.gate_auto_registrar import (
 from zephyr.governance.audit.blueprint_status_transition_reconciler import (
     make_blueprint_status_transition_reconciler,  # 12维度审计自动化 P1-d BLUEPRINT状态转跃reconciler
 )
+from zephyr.gov_audit.secret_registry_drift import (  # C-4 secret_registry 周期核对（裁定#287 2026-09-16）
+    make_secret_registry_drift_reconciler,
+)
 from zephyr.governance.audit.commit_gateway_abuse_monitor_reconciler import (  # ARCH-TOOL-HEALTH-V1 Phase 5b
     make_commit_gateway_abuse_monitor_reconciler,
 )
@@ -1350,6 +1353,9 @@ class GitCommitGateway:
             make_capability_lookup_health_reconciler(self)
         )  # #ARCH-CAPABILITY-LOOKUP-BYPASS-DEAD Phase 4 G6 监控欠缺（priority=220，post-commit 检测 [no-lookup:] bypass 频率 + audit log 健康）
         self._reconciliation_registry.register(
+            make_secret_registry_drift_reconciler(self)
+        )  # C-4 secret_registry 周期核对（裁定#287 2026-09-16 st-maint，priority=216，post-commit 事件触发：registry↔.env↔era 三方漂移告警，required=true 失守/签名钥失守=critical_warn；.env gitignored 故 trigger 恒真）
+        self._reconciliation_registry.register(
             make_blueprint_id_legacy_reconciler(self)
         )  # ARCH-DATAQUALITY-V1.8 Task I blueprint_id legacy baseline 全扫（priority=145，post-commit warn-only，检测存量 119 条 invalid [BLUEPRINT] 头部，落盘报告供追踪，与 BLUEPRINT-FORMAT gate 互补——gate 防蔓延，reconciler 清存量）
         self._reconciliation_registry.register(
@@ -2228,7 +2234,7 @@ class GitCommitGateway:
     def _should_use_no_pathspec(self, files: list[str], normal_files: list[str]) -> bool:
         """判断本次 commit 是否应用无 pathspec 模式（目标含 gitignored 文件时必须）。
 
-        AGENTS.md §8 警告勿删调用（staged delete 保护核心，commit 32ead90e 教训）。
+        AGENTS.md RULE-GIT-SAFE 警告勿删调用（staged delete 保护核心，commit 32ead90e 教训）。
         """
         return len(normal_files) < len(files)
 
@@ -3431,7 +3437,7 @@ class GitCommitGateway:
                 stderr=(
                     "_run_git: git commit 禁止裸调——必须经 commit()/_commit_auto()/"
                     "_commit_with_file_message 统一入口（DIRECTORY-CONTRACT gate 覆盖）。"
-                    "见 AGENTS.md §8 L281。"
+                    "见 AGENTS.md RULE-GIT-SAFE。"
                 ),
             )
         # A1 读缓存（窗口=门禁链；读类才查，写/其他类即整体失效退出窗口）

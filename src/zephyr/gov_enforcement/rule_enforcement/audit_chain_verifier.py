@@ -5,8 +5,8 @@
 # [CONSUMERS]
 # [STARTUP] manual
 # [MATURITY] production
-# [INVARIANTS] 链append-only持久化(gate_chain.jsonl); clear需confirm=True且留痕核心链
-# [MODIFY-GUARD] none
+# [INVARIANTS] 链append-only持久化(gate_chain.jsonl); clear需confirm=True且留痕核心链; gate_chain追加临界区必须持跨进程文件锁+锁内重读文件尾哈希(C-1同型锁 裁定#287——prev禁凭实例内存)
+# [MODIFY-GUARD] gate_chain 追加临界区变更必须同步 tests/governance/audit/test_gate_chain_multiproc_append.py 并发测试
 # [STABILITY] evolving
 # [SAFETY] M
 # [AI_AUTONOMY] ai_modifiable
@@ -23,6 +23,10 @@
 5.37.8：本地门禁 hash 链持久化——append-only JSONL（gate_chain.jsonl）+ 重启恢复，
 与 AuditWriter 的 events.jsonl 同目录约定（data/audit_trail/）。
 5.37.9：clear() 权限保护——必须显式 confirm=True，操作本身写核心审计链留痕。
+C-1 同型锁（裁定#287 2026-09-16 st-maint）：gate_chain.jsonl 追加临界区复用
+zephyr.gov_audit.writer 的跨进程文件锁（_cross_process_append_lock）+ 锁内实时
+重读文件尾哈希（_read_tail_entry_hash(hash_field="hash")）——多进程 verifier
+并发追加不再凭实例内存 _last_hash 链接（裁定#266 events.jsonl 同型病根）。
 
 # [ALGO_FLOW] external: docs/03_modules/_domain_gov_enforcement/algo_flow/rule_enforcement/audit_chain_verifier.yaml
 """
@@ -46,6 +50,19 @@ try:
     _CORE_AUDIT_AVAILABLE = True
 except ImportError:
     _CoreAuditWriter = None
+
+# C-1 同型锁（裁定#287）：锁助手与核心 writer 同源——gov_audit.writer 可导入时
+# 必可用；不可导入时退化为仅进程内 threading.Lock（ERROR_CONTRACT 降级路径，
+# 与 _CORE_AUDIT_AVAILABLE 同触发条件，logger.warning 留痕）。
+_LOCK_HELPERS_AVAILABLE = False
+try:
+    from zephyr.gov_audit.writer import _cross_process_append_lock as _xp_append_lock
+    from zephyr.gov_audit.writer import _read_tail_entry_hash as _read_tail_hash
+
+    _LOCK_HELPERS_AVAILABLE = True
+except ImportError:  # pragma: no cover — 与 _CORE_AUDIT_AVAILABLE 同触发条件
+    _xp_append_lock = None
+    _read_tail_hash = None
 
 logger = logging.getLogger(__name__)
 
@@ -162,53 +179,101 @@ class AuditChainVerifier:
         except OSError:
             logger.warning("load persisted gate chain failed: %s", self._persist_path, exc_info=True)
 
-    def _persist_entry(self, entry: AuditEntry, ts: datetime) -> None:
-        """追加一条门禁审计条目到 JSONL（5.37.8：落盘失败仅告警，不阻断门禁主流程）。
+    def _persist_entry(self, entry: AuditEntry, ts: datetime, previous_hash: str) -> None:
+        """在跨进程锁内追加一条门禁审计条目到 JSONL（C-1 同型锁，裁定#287）。
+
+        仅负责落盘一行（调用方已持 _persist_lock + 跨进程文件锁）——OSError
+        向上冒泡，由 append() 统一告警（ERROR_CONTRACT：落盘失败仅告警不阻断）。
 
         ts 必须是 entry.hash 计算时覆盖的时间戳（即 GateResult.timestamp）——
         持久化 entry.timestamp（append 时刻）会导致重载后 verify_chain 重算不一致。
+        previous_hash 为锁内重读的文件尾哈希（告警诊断用，非链数据源）。
         """
-        try:
-            self._persist_path.parent.mkdir(parents=True, exist_ok=True)
-            line = dumps(
-                {
-                    "gate_id": entry.gate_id,
-                    "status": entry.status.name,
-                    "reasons": entry.reasons,
-                    "previous_hash": entry.previous_hash,
-                    "hash": entry.hash,
-                    "timestamp": ts.isoformat(),
-                },
-                ensure_ascii=False,
-            )
-            with self._persist_lock, open(self._persist_path, "a", encoding="utf-8") as f:
-                f.write(line + "\n")
-                f.flush()
-                os.fsync(f.fileno())
-        except OSError:
-            logger.warning("persist gate audit entry failed: %s", self._persist_path, exc_info=True)
+        self._persist_path.parent.mkdir(parents=True, exist_ok=True)
+        line = dumps(
+            {
+                "gate_id": entry.gate_id,
+                "status": entry.status.name,
+                "reasons": entry.reasons,
+                "previous_hash": previous_hash,
+                "hash": entry.hash,
+                "timestamp": ts.isoformat(),
+            },
+            ensure_ascii=False,
+        )
+        with open(self._persist_path, "a", encoding="utf-8") as f:
+            f.write(line + "\n")
+            f.flush()
+            os.fsync(f.fileno())
 
     def append(self, gate_id: str, result: GateResult) -> AuditEntry:
-        payload = {
-            "gate_id": gate_id,
-            "status": result.status.name,
-            "reasons": result.reasons,
-            "timestamp": result.timestamp.isoformat(),
-            "previous_hash": self._last_hash,
-        }
-        entry_hash = self._compute_hash(payload)
-        entry = AuditEntry(
-            gate_id=gate_id,
-            status=result.status,
-            reasons=list(result.reasons),
-            previous_hash=self._last_hash,
-            hash=entry_hash,
-        )
-        self._chain.append(entry)
-        self._last_hash = entry_hash
-        logger.debug("audit entry #%d: %s -> %s", len(self._chain), gate_id, entry_hash[:16])
-        # 持久化时间戳与 hash 载荷一致（result.timestamp，见 _persist_entry docstring）
-        self._persist_entry(entry, result.timestamp)
+        """追加门禁审计条目——C-1 同型锁临界区（裁定#287 2026-09-16）。
+
+        previous_hash 取自 gate_chain.jsonl 文件尾（跨进程文件锁内实时重读，
+        _read_tail_entry_hash(hash_field="hash")），禁凭实例内存 _last_hash——
+        多进程/多实例并发追加交错落盘即断链（裁定#266 events.jsonl 同型病根）。
+
+        fail-closed：锁获取超时（TimeoutError⊂OSError）/尾读超限（RuntimeError）/
+        落盘失败（OSError）→ 本条不入内存链（宁缺不叉链），仅告警不阻断门禁主流程
+        （本模块 ERROR_CONTRACT），返回未入链的旁观条目（hash 不在链上）。
+        """
+        entry: AuditEntry | None = None
+        try:
+            if _LOCK_HELPERS_AVAILABLE and _xp_append_lock is not None:
+                lock_cm = _xp_append_lock(self._persist_path)
+            else:  # pragma: no cover — gov_audit.writer 不可导入的降级环境
+                import contextlib
+
+                lock_cm = contextlib.nullcontext()
+                logger.warning("gate_chain cross-process lock unavailable; degraded to in-process lock only")
+            with self._persist_lock, lock_cm:
+                if _LOCK_HELPERS_AVAILABLE and _read_tail_hash is not None:
+                    prev_hash: str = _read_tail_hash(self._persist_path, hash_field="hash")
+                else:  # pragma: no cover — 同上降级环境
+                    prev_hash = self._last_hash
+                payload = {
+                    "gate_id": gate_id,
+                    "status": result.status.name,
+                    "reasons": result.reasons,
+                    "timestamp": result.timestamp.isoformat(),
+                    "previous_hash": prev_hash,
+                }
+                entry_hash = self._compute_hash(payload)
+                entry = AuditEntry(
+                    gate_id=gate_id,
+                    status=result.status,
+                    reasons=list(result.reasons),
+                    previous_hash=prev_hash,
+                    hash=entry_hash,
+                    # timestamp 保持默认 now()——内存条目构造时刻与哈希载荷
+                    # result.timestamp 的微秒差是被 tests/audit 钉死的既定契约
+                    # （test_verify_chain_timestamp_mismatch_breaks_chain 断言
+                    # 链效验按 entry.timestamp 重算；_append_sync 助手负责对齐），
+                    # 持久化行恒写 result.timestamp（_persist_entry 契约不变）。
+                )
+                self._persist_entry(entry, result.timestamp, prev_hash)
+                self._chain.append(entry)
+                self._last_hash = entry_hash
+                logger.debug("audit entry #%d: %s -> %s", len(self._chain), gate_id, entry_hash[:16])
+        except (OSError, RuntimeError):
+            logger.warning("persist gate audit entry failed: %s", self._persist_path, exc_info=True)
+            # fail-closed：不入链（内存/磁盘都不落），返回旁观条目维持返回契约
+            entry = AuditEntry(
+                gate_id=gate_id,
+                status=result.status,
+                reasons=list(result.reasons),
+                previous_hash=self._last_hash,
+                hash=self._compute_hash(
+                    {
+                        "gate_id": gate_id,
+                        "status": result.status.name,
+                        "reasons": result.reasons,
+                        "timestamp": result.timestamp.isoformat(),
+                        "previous_hash": self._last_hash,
+                    }
+                ),
+                timestamp=result.timestamp,
+            )
 
         if self._core_writer is not None:
             try:
@@ -306,11 +371,20 @@ class AuditChainVerifier:
                 )
             except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
                 logger.warning("suppressed error in audit_chain_verifier", exc_info=True)
-        self._chain.clear()
-        self._last_hash = "0" * 64
+        # C-1 同型锁（裁定#287）：清空与并发追加互斥——同一把 gate_chain 跨进程锁
+        # 内完成内存清空+文件删除（锁文件本身永不删除，互斥域不拆散）。
         try:
-            if self._persist_path.exists():
-                self._persist_path.unlink()
+            if _LOCK_HELPERS_AVAILABLE and _xp_append_lock is not None:
+                lock_cm = _xp_append_lock(self._persist_path)
+            else:  # pragma: no cover — 降级环境
+                import contextlib
+
+                lock_cm = contextlib.nullcontext()
+            with self._persist_lock, lock_cm:
+                self._chain.clear()
+                self._last_hash = "0" * 64
+                if self._persist_path.exists():
+                    self._persist_path.unlink()
         except OSError:
             logger.warning("remove persisted gate chain failed: %s", self._persist_path, exc_info=True)
 
