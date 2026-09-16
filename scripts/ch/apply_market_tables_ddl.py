@@ -412,6 +412,9 @@ from schemas.categories.market.market_us_futures_intraday import US_FUTURES_INTR
 from schemas.categories.meta_stock_basic import STOCK_BASIC_DDL
 from schemas.categories.meta.meta_stock_profile_ths import STOCK_PROFILE_THS_DDL
 from schemas.categories.meta.meta_stock_profile_ths import TABLE_NAME as _THS_PROFILE_TABLE
+# 商品期货主力连续+商品现货基差（2026-09-17，st-igalpha-20260917，照生猪模式复制）：fail-closed 直接导入
+from schemas.categories.market.market_commodity_futures_main import COMMODITY_FUTURES_MAIN_DDL
+from schemas.categories.market.market_commodity_spot_price import COMMODITY_SPOT_PRICE_DDL
 
 # 所有 DDL（按依赖顺序）
 _ALL_DDL: list[tuple[str, str]] = [
@@ -487,6 +490,10 @@ _ALL_DDL: list[tuple[str, str]] = [
     # 2026-09-09 DS-223：THS 行业/公司简介全市场主数据（细分行业缺口补齐）
     # 表名经 schema 真源 TABLE_NAME 拼接（TABLE-NAME-REGISTRY：全限定名真源=categories YAML）
     ("c1_market." + _THS_PROFILE_TABLE, STOCK_PROFILE_THS_DDL),
+    # 商品期货主力连续+商品现货基差（2026-09-17，st-igalpha-20260917，照生猪模式复制）
+    # 同键 (symbol, trade_date) 重跑幂等替换
+    ("c1_market.commodity_futures_main", COMMODITY_FUTURES_MAIN_DDL),
+    ("c1_market.commodity_spot_price", COMMODITY_SPOT_PRICE_DDL),
 ]
 
 # 增量迁移（ALTER TABLE ADD COLUMN IF NOT EXISTS）
@@ -1048,6 +1055,9 @@ _EXPECTED_ENGINES: dict[str, str] = {
     "kline_global": "ReplacingMergeTree",
     # 2026-09-09 DS-223：THS 主数据快照按 (trade_date, symbol) 同键替换幂等
     "stock_profile_ths": "ReplacingMergeTree",
+    # 2026-09-17 商品期货主力连续+现货基差：日频按 (symbol, trade_date) 同键替换幂等
+    "commodity_futures_main": "ReplacingMergeTree",
+    "commodity_spot_price": "ReplacingMergeTree",
 }
 
 _DATABASE = "c1_market"

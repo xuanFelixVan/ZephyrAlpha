@@ -158,6 +158,13 @@ _TBL_ETF_NAV = get_registry().table("market_etf_nav")
 _TBL_HOG_SPOT_INDEX = get_registry().table("market_hog_spot_index")
 _TBL_HOG_FUTURES_CORE = get_registry().table("market_hog_futures_core")
 _TBL_HOG_PROVINCE_SPOT = get_registry().table("market_hog_province_spot")
+# 2026-09-17 商品期货主力连续+商品现货基差（照生猪模式复制，st-igalpha-20260917）
+_TBL_COMMODITY_FUTURES_MAIN = get_registry().table("market_commodity_futures_main")
+_TBL_COMMODITY_SPOT_PRICE = get_registry().table("market_commodity_spot_price")
+# 商品期货主力连续首批品种（新浪主力连续码，后缀 0=主力连续合约）
+COMMODITY_FUTURES_MAIN_SYMBOLS = ("lh0", "lc0", "si0", "ps0", "m0", "c0", "jd0", "cu0", "al0")
+# 生意社现货全量刷新回补起点（源数据 2011 年起但逐日 HTTP 抓取，5 年窗口为 weekend_calibration 单批可行口径）
+COMMODITY_SPOT_PRICE_FULL_START = "20210101"
 _TBL_HK_CONNECT_FLOW = get_registry().table("market_hk_connect_flow")
 _TBL_HK_STOCK_LIST = get_registry().table("market_hk_stock_list")
 _TBL_STOCK_HOT_RANK = get_registry().table("market_stock_hot_rank")  # #ARCH-REALTIME-ACCUM
@@ -323,6 +330,8 @@ _AKSHARE_CAPABILITIES = frozenset(
         "hog_spot_index",  # 2026-07-29 生猪现货价格指数（akshare index_hog_spot_price）
         "hog_futures_core",  # 生猪期货核心价（akshare futures_hog_core）
         "hog_province_spot",  # 分省生猪现价（akshare spot_hog_soozhu）
+        "market_commodity_futures_main",  # 2026-09-17 商品期货主力连续（akshare futures_main_sina，多品种循环）
+        "market_commodity_spot_price",  # 2026-09-17 商品现货基差（akshare futures_spot_price_daily，生意社 T-1）
         "stock_list_delisted",  # #ARCH-CH-021 P0-1: 退市股票列表（SH+SZ delist）
         "futures_position",  # #ARCH-FUTURES-POSITION: 替代 QMT（QMT get_instrument_detail 返回全0）
         # #ARCH-IFIND-FAILOVER: 承接原 iFind 能力（iFind 已于 2026-08-14 退役，本源为正式主承担）
@@ -712,6 +721,9 @@ class AkshareIngestProvider(IngestProviderBase):
             CapabilityContract("hog_spot_index", supports_symbols_null=True),
             CapabilityContract("hog_futures_core", supports_symbols_null=True),
             CapabilityContract("hog_province_spot", supports_symbols_null=True),
+            # 2026-09-17 商品期货主力连续+现货基差（照生猪模式：内置品种常量/全品种拉取，无 symbols 概念）
+            CapabilityContract("market_commodity_futures_main", supports_symbols_null=True),
+            CapabilityContract("market_commodity_spot_price", supports_symbols_null=True),
             # #ARCH-IFIND-FAILOVER: 承接原 iFind 能力（iFind 已于 2026-08-14 退役，本源为正式主承担）
             CapabilityContract("concept_sector", supports_symbols_null=True),
             CapabilityContract("realtime_snapshot", supports_symbols_null=True),
@@ -6348,6 +6360,135 @@ class AkshareIngestProvider(IngestProviderBase):
             )
         except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
             self._log.warning(f"hog_province_spot 获取失败: {e}")
+            yield FetchResult(
+                table=table,
+                columns=columns,
+                rows=[],
+                last_key="",
+                elapsed_sec=time.monotonic() - t0,
+                error=str(e),
+            )
+
+    @staticmethod
+    def _norm_spot_date(v) -> str | None:
+        """生意社 date 列（YYYYMMDD）规范化为 'YYYY-MM-DD'（兼容 str/Timestamp/NaT）。"""
+        if v is None:
+            return None
+        s = str(v)
+        if s in ("NaT", "nan", "None", ""):
+            return None
+        digits = s[:10].replace("-", "").replace("/", "")[:8]
+        if len(digits) != 8 or not digits.isdigit():
+            return None
+        return f"{digits[:4]}-{digits[4:6]}-{digits[6:8]}"
+
+    def _fetch_market_commodity_futures_main(self, payload: FetchPayload, policy: SourcePolicy) -> Iterator[FetchResult]:
+        """商品期货主力连续日行情（多品种循环），写入 c1_market.commodity_futures_main。
+
+        akshare futures_main_sina(symbol="XX0") 单次返回该品种全历史日线，中文列
+        （日期/开盘价/最高价/最低价/收盘价/成交量/持仓量/动态结算价）映射为英文列。
+        增量模式按 payload.start 过滤；全量模式取全部。单品种失败跳过不拖垮整批
+        （全部失败才置 error）。
+        """
+        import akshare as ak
+
+        table = payload.table or _TBL_COMMODITY_FUTURES_MAIN
+        columns = ["trade_date", "symbol", "open", "high", "low", "close", "volume", "hold", "settle"]
+        t0 = time.monotonic()
+        start_str = payload.start.strftime("%Y-%m-%d") if payload.start else None
+        rows: list[tuple] = []
+        errors: list[str] = []
+        for symbol in COMMODITY_FUTURES_MAIN_SYMBOLS:
+            try:
+                df = self._call_with_policy(ak.futures_main_sina, policy, symbol=symbol)
+                if df is None or len(df) == 0:
+                    errors.append(f"{symbol}: futures_main_sina 返回空")
+                    continue
+                for _, r in df.iterrows():
+                    trade_date = self._norm_hog_date(r.get("日期"))
+                    if not trade_date:
+                        continue
+                    if start_str and trade_date < start_str:
+                        continue
+                    rows.append(
+                        (
+                            trade_date,
+                            symbol,
+                            safe_float(r.get("开盘价")),
+                            safe_float(r.get("最高价")),
+                            safe_float(r.get("最低价")),
+                            safe_float(r.get("收盘价")),
+                            safe_float(r.get("成交量")),
+                            safe_float(r.get("持仓量")),
+                            safe_float(r.get("动态结算价")),
+                        )
+                    )
+            except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
+                self._log.warning(f"commodity_futures_main {symbol} 获取失败: {e}")
+                errors.append(f"{symbol}: {e}")
+        last_key = max((row[0] for row in rows), default="")
+        yield FetchResult(
+            table=table,
+            columns=columns,
+            rows=rows,
+            last_key=last_key,
+            elapsed_sec=time.monotonic() - t0,
+            error="; ".join(errors) if errors and not rows else None,
+        )
+
+    def _fetch_market_commodity_spot_price(self, payload: FetchPayload, policy: SourcePolicy) -> Iterator[FetchResult]:
+        """商品现货价格与基差（生意社 100ppi，日度 T-1 发布），写入 c1_market.commodity_spot_price。
+
+        akshare futures_spot_price_daily(start_day, end_day)（已装版本无 date= 参数，
+        实证确认）逐日抓取全品种现货价+主力合约结算价+基差（约54品种；
+        symbol 为源站中文名映射的英文缩写如 CU/RB/JD）。
+        字段映射：futures_close←dominant_contract_price，basis←dom_basis。
+        增量模式用 payload.start..payload.end 窗口；全量模式自
+        COMMODITY_SPOT_PRICE_FULL_START 起回补（源限 2011+，逐日 HTTP 故取近年窗口）。
+        """
+        import akshare as ak
+
+        table = payload.table or _TBL_COMMODITY_SPOT_PRICE
+        columns = ["trade_date", "symbol", "spot_price", "futures_close", "basis"]
+        t0 = time.monotonic()
+        start_day = payload.start.strftime("%Y%m%d") if payload.start else COMMODITY_SPOT_PRICE_FULL_START
+        end_day = payload.end.strftime("%Y%m%d") if payload.end else None
+        try:
+            df = self._call_with_policy(ak.futures_spot_price_daily, policy, start_day=start_day, end_day=end_day)
+            if df is None or len(df) == 0:
+                yield FetchResult(
+                    table=table,
+                    columns=columns,
+                    rows=[],
+                    last_key="",
+                    elapsed_sec=time.monotonic() - t0,
+                    error="futures_spot_price_daily 返回空",
+                )
+                return
+            rows: list[tuple] = []
+            for _, r in df.iterrows():
+                trade_date = self._norm_spot_date(r.get("date"))
+                if not trade_date:
+                    continue
+                rows.append(
+                    (
+                        trade_date,
+                        str(r.get("symbol") or ""),
+                        safe_float(r.get("spot_price")),
+                        safe_float(r.get("dominant_contract_price")),
+                        safe_float(r.get("dom_basis")),
+                    )
+                )
+            last_key = max((row[0] for row in rows), default="")
+            yield FetchResult(
+                table=table,
+                columns=columns,
+                rows=rows,
+                last_key=last_key,
+                elapsed_sec=time.monotonic() - t0,
+            )
+        except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
+            self._log.warning(f"market_commodity_spot_price 获取失败: {e}")
             yield FetchResult(
                 table=table,
                 columns=columns,

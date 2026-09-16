@@ -1719,7 +1719,7 @@ tasks:
 
 - task_id: auction_data_snapshot
   table: c1_market.auction_snapshot
-  source: miniqmt
+  source: qmt_bridge
   schedule: auction_highfreq    # 集合竞价9:15-9:25仅10分钟，intraday_realtime每5分钟仅抓2次；改用auction_highfreq每10秒~60次
   incremental: true
   date_col: trade_date
@@ -1727,11 +1727,11 @@ tasks:
   capability: auction_data
   symbols:
   extra:
-    description: "集合竞价数据快照（miniQMT get_full_tick，9:15-9:25实时积累，基础字段）"
+    description: "集合竞价数据快照（桥源派生：tick_depth_5 竞价窗口终态 CH 内 INSERT-only，9:15-9:25，基础字段；2026-09-17 切 qmt_bridge，原 miniqmt get_full_tick 通道随 9/18 miniQMT 退役）"
 
 - task_id: auction_book_snapshot
   table: c1_market.auction_book
-  source: miniqmt
+  source: qmt_bridge
   schedule: auction_highfreq    # 3秒高频层（9:15-9:25 interval trigger）
   incremental: true
   date_col: trade_date
@@ -1739,7 +1739,7 @@ tasks:
   capability: auction_book
   symbols:
   extra:
-    description: "集合竞价盘口快照（miniQMT get_full_tick 五档，9:15-9:25实时积累，用于主力挂撤单行为分析）"
+    description: "集合竞价盘口快照（桥源派生：tick_depth_5 竞价窗口逐拍五档+昨收/涨跌停规则推导，9:15-9:25，用于主力挂撤单行为分析；2026-09-17 切 qmt_bridge）"
 
 - task_id: futures_kline_qmt_incremental
   table: c1_market.futures_kline_qmt
@@ -3136,3 +3136,51 @@ tasks:
   fallback_sources: []    # internal 派生源天然无副源
   extra:
     description: "打板四引擎应用层负载日批（T3⑧/挖矿 LUE-1：连板/开板次数/首触/封板分钟/封单额/流通市值/个股涨幅/板块与全市场封板家数/宽度/大盘涨幅；触发=盘后 daily_kline 事件批 → internal_compute_provider._fetch_daban_engine_load 逐交易日驱动 ex_core.daban_load_producer.run_daily_batch（口径真源在生产者，路由件零业务复制），落表由调度器写通道承担；derived_fields 逐字段 real|default 留痕，不可产字段省略交引擎中性默认）"
+
+# ============== 商品期货主力连续+商品现货基差（2026-09-17 新增，照生猪数据接入模式复制，st-igalpha-20260917）==============
+
+- task_id: commodity_futures_main_refresh
+  table: c1_market.commodity_futures_main
+  source: akshare
+  schedule: daily_event
+  incremental: true
+  date_col: trade_date
+  dependencies: []
+  capability: market_commodity_futures_main
+  symbols:
+  extra:
+    description: "商品期货主力连续日行情增量（AKShare futures_main_sina(symbol='XX0')，新浪源单品种单次返回全历史；首批9品种 lh0/lc0/si0/ps0/m0/c0/jd0/cu0/al0；中文列 日期/开盘价/最高价/最低价/收盘价/成交量/持仓量/动态结算价 映射为 trade_date/symbol/open/high/low/close/volume/hold/settle；ReplacingMergeTree(symbol,trade_date) 同键重放幂等）"
+
+- task_id: commodity_futures_main_full_refresh
+  table: c1_market.commodity_futures_main
+  source: akshare
+  schedule: weekend_calibration
+  incremental: false
+  dependencies: []
+  capability: market_commodity_futures_main
+  symbols:
+  extra:
+    description: "商品期货主力连续日行情全量刷新（AKShare futures_main_sina，同上9品种全历史回补，同键幂等重放）"
+
+- task_id: commodity_spot_price_refresh
+  table: c1_market.commodity_spot_price
+  source: akshare
+  schedule: daily_event
+  incremental: true
+  date_col: trade_date
+  dependencies: []
+  capability: market_commodity_spot_price
+  symbols:
+  extra:
+    description: "商品现货价格与基差增量（AKShare futures_spot_price_daily，生意社100ppi 全品种约54个，T-1 发布；已装版本无 date= 参数，用 start_day/end_day 窗口；symbol=源站中文名映射英文缩写如 CU/RB/JD；字段映射 futures_close←dominant_contract_price 主力合约结算价、basis←dom_basis 主力基差；JD/FG/LH 单位折算已由源内完成；ReplacingMergeTree(symbol,trade_date) 同键重放幂等）"
+
+- task_id: commodity_spot_price_full_refresh
+  table: c1_market.commodity_spot_price
+  source: akshare
+  schedule: weekend_calibration
+  incremental: false
+  dependencies: []
+  capability: market_commodity_spot_price
+  symbols:
+  extra:
+    description: "商品现货价格与基差全量刷新（AKShare futures_spot_price_daily，自 2021-01-01 起回补——源数据限 2011+ 但逐日 HTTP 抓取，5 年窗口为 weekend_calibration 单批可行口径；同键幂等重放）"

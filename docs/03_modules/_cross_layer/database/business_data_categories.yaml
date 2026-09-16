@@ -2988,3 +2988,37 @@
   frequency: 日频
   data_source: [internal]
   blueprint: "src/zephyr/ex_core/daban_load_producer.py（run_daily_batch/persist 负载口径真源，T3⑧ 挖矿 LUE-1 治本）"
+
+# --- 商品期货主力连续+商品现货基差（2026-09-17，st-igalpha-20260917，照生猪模式复制；本文件追加经 Owner 授权）---
+
+- category_id: market_commodity_futures_main
+  name: "商品期货主力连续日行情"
+  engine: clickhouse
+  database: c1_market
+  table: commodity_futures_main
+  schema_file: schemas/categories/market/market_commodity_futures_main.py
+  data_type: 原料
+  lifecycle: permanent
+  sla_level: L2
+  enabled: true
+  hard_constraint: null
+  calc_mode: preload
+  frequency: 日频
+  data_source: [akshare]
+  blueprint: null
+
+- category_id: market_commodity_spot_price
+  name: "商品现货价格与基差(生意社)"
+  engine: clickhouse
+  database: c1_market
+  table: commodity_spot_price
+  schema_file: schemas/categories/market/market_commodity_spot_price.py
+  data_type: 原料
+  lifecycle: permanent
+  sla_level: L2
+  enabled: true
+  hard_constraint: null
+  calc_mode: preload
+  frequency: 日频
+  data_source: [akshare]
+  blueprint: null
