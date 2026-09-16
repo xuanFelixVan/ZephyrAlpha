@@ -53,6 +53,7 @@ from zephyr.data.provider_base import (
     IngestProviderBase,
     IngestProviderMeta,
 )
+from zephyr.data.table_registry import get_registry
 from zephyr.shared.utils.time_utils import now_utc
 
 # 与 BridgeTickSource.ENV_CONFIG 同源（ticks3.csv = v19 产出，#BRIDGE-WRONG-FILE 教训：
@@ -96,6 +97,61 @@ _KLINE_PERIOD_MAP: Final[dict[str, tuple[str, str]]] = {
     "kline_60min": ("60min", "c1_market.kline_60min"),
 }
 
+# 竞价族桥通道（2026-09-17 收盘后窗口，挖矿文档
+# docs/_working/auction_bridge_switch_mining_2026_09_17.md §3 方案 A'）：
+# capability → 目标表（注册表真源派生，#ARCH-CH-024 禁硬编码）。派生执行走
+# _call_derive_auction 懒导入（ch_auction_derive 依赖 table_registry，不依赖本模块）。
+# 派生源=tick_depth_5 竞价窗口 [09:15,09:26)，INSERT-only 幂等（ReplacingMergeTree）。
+_AUCTION_CAPABILITIES: Final[dict[str, str]] = {
+    "auction_data": get_registry().table("market_auction_snapshot"),
+    "auction_book": get_registry().table("market_auction_book"),
+}
+
+
+def _call_derive_auction(capability: str, start: str, end: str) -> int:
+    """竞价族派生入口（懒导入，ch_auction_derive 同 ch_tick_kline 解耦模式）。
+
+    capability=auction_data → 快照终态（每股一行）；auction_book → 逐拍五档。
+    逐日派生 [start, end] 窗口内日期（含端点），返回末日表内行数。
+
+    历史日防覆盖闸（红队审计 P1#3，2026-09-17）：scheduler resume 起点=last_key
+    （前一日），会把带 miniqmt 原产数据的日期带入区间——该日重派生会以派生近似
+    覆盖原产精确值（ReplacingMergeTree 最后插入胜出）。故凡早于 end 的日期先过
+    day_has_auction_rows 闸：已有数据=跳过；end 当日不过闸（盘内每 10 秒反复
+    派生是设计行为，幂等收敛为终态）。
+    """
+    from datetime import date, timedelta
+
+    from zephyr.data.ch_writer import get_client
+    from zephyr.data.implementations.ch_auction_derive import (
+        day_has_auction_rows,
+        derive_auction_book,
+        derive_auction_snapshot,
+    )
+
+    derive = derive_auction_book if capability == "auction_book" else derive_auction_snapshot
+    d0 = date.fromisoformat(start)
+    d1 = date.fromisoformat(end)
+    if d1 < d0:  # 防御：区间倒置按单日军处理
+        d0, d1 = d1, d0
+    table = _AUCTION_CAPABILITIES[capability]
+    # 闸 fail-closed（红队二轮 P3）：client 循环外一次取，None 即抛——静默跳闸会让
+    # 历史原产日在 derive 内冷却恢复后被无闸重灌（ReplacingMergeTree 后写胜出）
+    client = get_client()
+    if client is None:
+        raise RuntimeError("ch_writer get_client() 返回 None（连接冷却期），历史日闸无法核验")
+    n = 0
+    cur = d0
+    while cur <= d1:
+        if cur < d1:
+            # 历史日防覆盖闸（当日除外）
+            if day_has_auction_rows(client, table, cur.isoformat()):
+                cur += timedelta(days=1)
+                continue
+        n = derive(cur.isoformat())
+        cur += timedelta(days=1)
+    return n
+
 
 class QmtBridgeIngestProvider(IngestProviderBase):
     """QMT 文件桥数据源 Provider（骨架：桥文件族探活 + 逐 capability 映射）。
@@ -127,11 +183,17 @@ class QmtBridgeIngestProvider(IngestProviderBase):
             CapabilityContract("kline_15min", supports_symbols_null=True),
             CapabilityContract("kline_30min", supports_symbols_null=True),
             CapabilityContract("kline_60min", supports_symbols_null=True),
+            # 竞价族桥通道（2026-09-17 方案 A'）：tick_depth_5 竞价窗口 CH 内派生
+            # （ch_auction_derive），替代 miniqmt get_full_tick 实时快照——
+            # 消费端/表 schema/调度名零改动，tasks.yaml 两任务仅切 source 字段。
+            CapabilityContract("auction_data", supports_symbols_null=True),
+            CapabilityContract("auction_book", supports_symbols_null=True),
         ],
         known_issues=[
             "依赖大QMT 终端（XtItClient.exe）+ 沙箱策略常驻（EXEC_V16.4/QUOTE_V17/TICKDUMP3_v19）",
             "quote 族/指数取价桥通道未实现——QUOTE_V17 并入评估见 93 §14.9（9/15 检查点）",
-            "无历史回补能力（桥只产出实时流，历史靠 miniQMT 9/18 前囤货；分钟K 自 9/9 起随窗口累积）",
+            "tick 深史无回补通道（历史靠 miniQMT 9/18 前囤货；分钟K/竞价族自切换起随窗口累积，"
+            "竞价快照 2026-06 起空窗日可由 scripts/backfill_auction_snapshot_history.py 回补）",
         ],
     )
 
@@ -240,6 +302,47 @@ class QmtBridgeIngestProvider(IngestProviderBase):
         except OSError as e:
             return {"alive": False, "detail": str(e)[:60], "ms": round((time.perf_counter() - t0) * 1000)}
 
+    # ============== 竞价族桥通道（方案 A'，2026-09-17） ==============
+
+    def _fetch_auction_data(self, payload: FetchPayload, policy) -> Iterator[FetchResult]:
+        """auction_data → auction_snapshot 终态派生（tick_depth_5 竞价窗口，INSERT-only）。"""
+        yield from self._derive_auction(payload, policy, "auction_data")
+
+    def _fetch_auction_book(self, payload: FetchPayload, policy) -> Iterator[FetchResult]:
+        """auction_book → auction_book 逐拍五档派生（含昨收/涨跌停规则推导）。"""
+        yield from self._derive_auction(payload, policy, "auction_book")
+
+    def _derive_auction(self, payload: FetchPayload, policy, capability: str) -> Iterator[FetchResult]:
+        table_hint = _AUCTION_CAPABILITIES[capability]
+        started = time.perf_counter()
+        start_str = payload.start.strftime("%Y-%m-%d")
+        end_str = payload.end.strftime("%Y-%m-%d")
+        try:
+            n = _call_derive_auction(capability, start_str, end_str)
+            self._log.info(
+                "桥通道竞价派生完成: %s [%s~%s] 末日 %d 行（INSERT-only 幂等）",
+                capability, start_str, end_str, n,
+            )
+            yield FetchResult(
+                table=table_hint,
+                columns=[],
+                rows=[],
+                # rows_fetched 必填：scheduler 仅在 >0 时推进 last_key 游标并豁免
+                # 0 行告警（红队二轮 P1：缺失=游标冻结+每交易日 120 条 0 行告警）
+                rows_fetched=n,
+                last_key=end_str,
+                elapsed_sec=round(time.perf_counter() - started, 3),
+            )
+        except Exception as e:  # noqa: BLE001 — 错误契约：error 不抛
+            yield FetchResult(
+                table=table_hint,
+                columns=[],
+                rows=[],
+                last_key=end_str,
+                elapsed_sec=round(time.perf_counter() - started, 3),
+                error=f"qmt_bridge {capability} 竞价派生失败: {e}",
+            )
+
     # ============== fetch 路由 ==============
 
     def fetch(self, payload: FetchPayload, policy) -> Iterator[FetchResult]:
@@ -289,6 +392,13 @@ class QmtBridgeIngestProvider(IngestProviderBase):
                     elapsed_sec=round(time.perf_counter() - started, 3),
                     error=f"qmt_bridge {capability} 合成失败: {e}",
                 )
+            return
+        # 竞价族桥通道（方案 A'，2026-09-17）：tick_depth_5 竞价窗口 CH 内派生
+        if capability == "auction_data":
+            yield from self._fetch_auction_data(payload, policy)
+            return
+        if capability == "auction_book":
+            yield from self._fetch_auction_book(payload, policy)
             return
         # quote 族/指数取价等：待 QUOTE_V17 并入评估（93 §14.9，9/15 检查点）
         yield FetchResult(

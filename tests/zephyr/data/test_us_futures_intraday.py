@@ -287,7 +287,8 @@ class TestTasksYamlRegistration:
     def test_ddl_schema_registered_in_apply_script(self):
         """新表 DDL 真源文件存在且已注册进 apply_market_tables_ddl 表清单。"""
         root = pathlib.Path(__file__).resolve().parents[3]
-        schema_file = root / "schemas" / "categories" / "market_us_futures_intraday.py"
+        # GOV-DOC-018 拆分后 DDL 真源归位 categories/market/ 子目录（平铺旧路径已废）
+        schema_file = root / "schemas" / "categories" / "market" / "market_us_futures_intraday.py"
         assert schema_file.is_file()
         ns: dict = {}
         exec(schema_file.read_text(encoding="utf-8"), ns)  # noqa: S102 — 测试内读取 DDL 常量

@@ -4793,6 +4793,9 @@ class MiniQmtIngestProvider(IngestProviderBase):
                 error=f"集合竞价数据抓取失败: {e}",
             )
 
+    # [RETIRED-2026-09-18] 竞价族已切 qmt_bridge 派生（tick_depth_5 竞价窗口 CH 内派生，
+    # ch_auction_derive；tasks.yaml source 2026-09-17 切换）。本方法保留至退役后清理批，
+    # 不再有任务路由至此（台账 §2.2-B auction 两项勾选）。
     def _fetch_auction_data(self, payload: FetchPayload, policy: SourcePolicy) -> Iterator[FetchResult]:
         """向后兼容 thin wrapper（Stage 4 公共化）。"""
         yield from self.fetch_auction_data(payload, policy)
@@ -4925,6 +4928,8 @@ class MiniQmtIngestProvider(IngestProviderBase):
             "miniqmt",
         )
 
+    # [RETIRED-2026-09-18] 竞价族已切 qmt_bridge 派生（ch_auction_derive，tasks.yaml
+    # source 2026-09-17 切换）。本方法保留至退役后清理批，不再有任务路由至此。
     def _fetch_auction_book(
         self,
         payload: FetchPayload,
