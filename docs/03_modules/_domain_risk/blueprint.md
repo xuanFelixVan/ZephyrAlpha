@@ -4,7 +4,7 @@ submodule_path: src/zephyr/risk
 title: "Risk Management Core 蓝图+施工图 — 风险管理引擎"
 doc_type: blueprint
 status: Active
-version: "2.2.37"
+version: "2.2.38"
 layer: L2_domain
 layer_name: risk_management
 functional_domain: risk
@@ -26,7 +26,7 @@ generation: 2
 rule_form: structural
 scope: module
 stability: evolving
-design_maturity: design
+design_maturity: production
 verifiability: manual
 depends_on:
   - target: "MOD-L02-001"
@@ -59,7 +59,7 @@ build_status: generated
 > 本蓝图仅做审查、回填、压缩、对齐，不触发任何代码变更。
 
 > actual_disk_path: src/zephyr/risk/ (10 .py files)
-> module_id: MOD-L04-001 | version: 2.2.37 | status: Active | layer: L2_domain
+> module_id: MOD-L04-001 | version: 2.2.38 | status: Active | layer: L2_domain
 > generation: 2 | construction_progress: partially_implemented
 
 # Risk Management Core 蓝图+施工图 — 风险管理引擎
@@ -143,8 +143,8 @@ build_status: generated
 
 | 图 | 位置 | 状态 | 链接 |
 |----|------|------|------|
-| 依赖图 (depgraph) | `blueprint_id=MOD-L04-001` 的 206 个 file 节点 | design | `extract_depgraph.py --modules MOD-L04-001` |
-| 数据流图 (dataflow) | 1 个 Dataset / 2 个 Job | planned | `apply_dataflowgraph.py --list-datasets` |
+| 依赖图 (depgraph) | `blueprint_id=MOD-L04-001` 的 206 个 file 节点 | production | `extract_depgraph.py --modules MOD-L04-001` |
+| 数据流图 (dataflow) | 1 个 Dataset / 2 个 Job | active | `apply_dataflowgraph.py --list-datasets` |
 | 决策架构图 (decision) | 76 个决策节点 / 2 个决策层 | design | `generate_decision_diagram.py` |
 | 蓝图 (blueprint) | 本文件 | Active | — |
 
@@ -933,6 +933,7 @@ class ViolationDetail(BaseModel):
 | `schemas/categories/crypto/crypto_kline_daily.py` | ✅ 已实现 | |
 | `schemas/categories/fundamental/__init__.py` | ⚠️ 骨架 | |
 | `schemas/categories/fundamental/consensus_daily.py` | ✅ 已实现 | |
+| `schemas/categories/fundamental/consensus_daily_repaired.py` | ✅ 已实现 | |
 | `schemas/categories/fundamental/financial_derived.py` | ✅ 已实现 | |
 | `schemas/categories/fundamental/fundamental_analyst_forecast.py` | ✅ 已实现 | |
 | `schemas/categories/fundamental/fundamental_balance_sheet.py` | ✅ 已实现 | |
@@ -1094,6 +1095,7 @@ class ViolationDetail(BaseModel):
 | `schemas/categories/meta_stock_profile_ths.py` | ✅ 已实现 | |
 | `src/zephyr/backtest/implementations/ch_tick_replay.py` | ✅ 已实现 | |
 | `src/zephyr/data/implementations/consensus_daily_compute.py` | ✅ 已实现 | |
+| `src/zephyr/data/implementations/consensus_daily_repaired_compute.py` | ✅ 已实现 | |
 | `src/zephyr/data/implementations/financial_derived_compute.py` | ✅ 已实现 | |
 | `src/zephyr/risk/__init__.py` | ✅ 已实现 | |
 | `src/zephyr/risk/implementations/__init__.py` | ✅ 已实现 | |

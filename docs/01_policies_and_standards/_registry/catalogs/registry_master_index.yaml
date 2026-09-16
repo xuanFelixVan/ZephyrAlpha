@@ -1,8 +1,8 @@
-# 自动生成于 2026-09-16T13:57:11Z
+# 自动生成于 2026-09-16T14:38:47Z
 # 来源: _registry/catalogs/*.yaml frontmatter
 # 手工编辑无效——修改请通过各登记表的 frontmatter
 
-generated_at: '2026-09-16T13:57:11Z'
+generated_at: '2026-09-16T14:38:47Z'
 generated_by: scripts/governance/generators/generate_registry_master_index.py
 source: _registry/catalogs/*.yaml → frontmatter
 total_registries: 55
@@ -37,7 +37,7 @@ registries:
   physical_path: docs/01_policies_and_standards/_registry/catalogs/architecture_issue_registry.yaml
   format: yaml
   maintenance: manual
-  entry_count: 760
+  entry_count: 761
   status: active
 - registry_id: REG-BTB-001
   name: Backtest Object Backlog
@@ -381,7 +381,7 @@ registries:
   physical_path: docs/01_policies_and_standards/_registry/catalogs/ruling_registry.yaml
   format: yaml
   maintenance: manual
-  entry_count: 94
+  entry_count: 96
   status: active
 - registry_id: REG-SEAT-001
   name: Seat Registry
