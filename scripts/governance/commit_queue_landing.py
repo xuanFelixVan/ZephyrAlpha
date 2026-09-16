@@ -5,7 +5,7 @@
 # [CONSUMERS] 全部 AI session（drain_queue(landing=...) 真落盘注入点）；zephyr.gov_enforcement.rule_bridge.git_commit_gateway._commit_auto（flag ON 时 reroute 目标，延迟 import）
 # [STARTUP] imported
 # [MATURITY] testing
-# [INVARIANTS] 永不改主工作区脏文件（66 号 §9.7 受控放松 2026-08-23：只写专用 worktree + 对象库 + dev ref CAS；landing 后主工作区受限收敛——仅当文件与旧 HEAD 逐字节一致才快进写入新内容，脏/缺失/删除冲突一律跳过留痕，零 WIP 丢失风险）；单写者（仅 Serializer lease 持有者经 drain 调用）；幂等不双落（done/landed_id + is-ancestor + 标记 grep 三重判定）；门禁一套不裁（GitCommitGateway 全门禁链零适配，worktree 形态 100 门禁天然生效）；CAS 冲突/基底冲突→死信不卡队；**瞬态环境失败（git index.lock 争用 / 全局提交锁 LOCK_TIMEOUT）→ 抛 LandingEnvironmentError 让项退回 pending，绝不死信**；主工作区收敛 fail-open（landing 已成功，收敛异常仅留痕不改变结果）
+# [INVARIANTS] 永不改主工作区脏文件（66 号 §9.7 受控放松 2026-08-23：只写专用 worktree + 对象库 + dev ref CAS；landing 后主工作区受限收敛——仅当文件与旧 HEAD 逐字节一致才快进写入新内容，脏/缺失/删除冲突一律跳过留痕，零 WIP 丢失风险）；单写者（仅 Serializer lease 持有者经 drain 调用）；幂等不双落（done/landed_id + is-ancestor + 标记 grep 三重判定）；门禁一套不裁（GitCommitGateway 全门禁链零适配，worktree 形态 100 门禁天然生效）；CAS 冲突/基底冲突→死信不卡队；**瞬态环境失败（git index.lock 争用 / Windows 句柄占用致 reset --hard unlink 失败 / 全局提交锁 LOCK_TIMEOUT；特征串真源=_TRANSIENT_GIT_MARKERS）→ 抛 LandingEnvironmentError 让项退回 pending，绝不死信**；主工作区收敛 fail-open（landing 已成功，收敛异常仅留痕不改变结果）
 # [MODIFY-GUARD] 66 号备忘 §6.3 MVP 形态 + §8 幂等算法 + §9 边界；08 号文 §4.2 步骤 3/5；[GW:{sid}:{qid}] 标记格式（POST-COMMIT-GUARD / REFERENCE-TRANSACTION-GUARD 消费方）
 # [STABILITY] evolving
 # [SAFETY] M
@@ -141,6 +141,31 @@ _GATEWAY_ENV = "ZEPHYR_COMMIT_GATEWAY"
 # Serializer 可信 git 调用 env（66 号 §4 裁定 7 plumbing 白名单 + worktree_pool fast-path 先例）
 _SERIALIZER_MODE_ENV = "ZEPHYR_SERIALIZER_MODE"
 _GIT_GUARD_FAST_PATH_ENV = "ZEPHYR_GIT_GUARD_FAST_PATH"
+
+# 瞬态 git 环境失败特征串（大小写不敏感匹配）：全部是"外部进程/OS 一时占着文件"，
+# 与队列项内容无关——重放即可落地，死信是假失败。
+#   index.lock / Unable to create —— 他会话 commit 持索引锁（2026-09-10 二阶死信：26 项）
+#   unable to unlink / Permission denied / being used by another process /
+#   The process cannot access the file —— Windows 句柄占用（2026-09-16
+#   q-20260916-st-consrep-20260916-0018 死信实证：reset --hard 撞
+#   "unable to unlink old 'docs/.../business_data_categories.yaml': Invalid argument"，
+#   一个只含 13 个 consensus 文件的合法批次被误判物品失败）。
+# 刻意不收 "Invalid argument" 裸串：它太宽（真 bug 也报这个），只收 git 的 unlink/占用
+# 原话——句柄一释放重放就过，与 index.lock 同款语义。
+_TRANSIENT_GIT_MARKERS = (
+    "index.lock",
+    "unable to create",
+    "unable to unlink",
+    "permission denied",
+    "being used by another process",
+    "the process cannot access the file",
+)
+
+
+def _is_transient_git_error(exc: BaseException | str) -> bool:
+    """git 失败是否属瞬态环境类（锁争用/句柄占用）——是则项退回 pending，绝不死信。"""
+    text = str(exc).lower()
+    return any(marker in text for marker in _TRANSIENT_GIT_MARKERS)
 
 
 class CasConflict(RuntimeError):
@@ -780,12 +805,15 @@ class WorktreeLanding:
             except cq.LandingEnvironmentError:
                 raise
             except RuntimeError as exc:
-                # 瞬态 git 锁争用（index.lock/Unable to create）≠ 物品失败——高并发期
+                # 瞬态 git 环境失败（索引锁争用 / Windows 句柄占用）≠ 物品失败——高并发期
                 # 他会话 commit 持主仓/worktree 索引锁是常态（2026-09-10 二阶死信：
-                # worktree 修复后 26 项死于 reset --hard 撞锁）。转环境专类 → 项退回
-                # pending、整轮终止等下次自举，绝不死信。
-                if "index.lock" in str(exc) or "Unable to create" in str(exc):
-                    raise cq.LandingEnvironmentError(f"git 瞬态锁争用，项退回 pending 等下次自举: {exc}") from exc
+                # worktree 修复后 26 项死于 reset --hard 撞锁）；同族还有 Windows 下
+                # 外部进程开着文件句柄导致 reset --hard unlink 失败（2026-09-16
+                # q-…-0018 实证："unable to unlink old '…business_data_categories.yaml':
+                # Invalid argument"）。转环境专类 → 项退回 pending、整轮终止等下次自举，
+                # 绝不死信（特征串单一真源=_TRANSIENT_GIT_MARKERS）。
+                if _is_transient_git_error(exc):
+                    raise cq.LandingEnvironmentError(f"git 瞬态环境失败，项退回 pending 等下次自举: {exc}") from exc
                 raise
             old_dev = self._dev_head()
             reason = self._conflict_reason(item, old_dev)

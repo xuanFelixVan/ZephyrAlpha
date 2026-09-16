@@ -196,6 +196,13 @@ _DEAD_REASON_ENV_MARKERS = (
     # 故 "网关落盘失败（LOCK_TIMEOUT）" 这类混合串也会正确归 env（落地侧现已转
     # LandingEnvironmentError 让项退回 pending，此标记只兜历史/直连路径的死信）。
     "LOCK_TIMEOUT",
+    # Windows 文件句柄占用同归 env（2026-09-16 q-…-0018 实证：reset --hard 撞
+    # "unable to unlink old '…business_data_categories.yaml': Invalid argument"，
+    # 13 文件合法批次被误判物品失败）。落地侧特征串真源=
+    # commit_queue_landing._TRANSIENT_GIT_MARKERS（现已转 LandingEnvironmentError），
+    # 此处只兜历史/直连路径；刻意不收裸 "Invalid argument"（太宽，真 bug 也报它）。
+    "unable to unlink", "Permission denied", "being used by another process",
+    "The process cannot access the file", "瞬态环境失败",
 )
 _DEAD_REASON_ITEM_MARKERS = (
     "PROTECTED-PATHS", "CAS 竞态", "CAS 冲突", "快进判定失败", "SESSION-REQUIRED",

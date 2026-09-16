@@ -889,3 +889,52 @@ class TestTransientLockAndCasRetries:
         assert "重试耗尽" in dead["dead_reason"], dead["dead_reason"]
         assert len(stub.commit_calls()) == 2, f"重试次数=上限（{landing._max_cas_retries}）: {len(stub.commit_calls())}"
         assert cql._MAX_CAS_RETRIES == 6, "缺省上限 3→6（q-…-0013 死信实证），改动须同步本钉"
+
+    def test_windows_handle_collision_returns_item_to_pending_not_dead(
+        self, tmp_repo: Path, queue_root: Path, monkeypatch: pytest.MonkeyPatch
+    ) -> None:
+        """Windows 句柄占用致 reset --hard unlink 失败=瞬态环境失败：退回 pending、零死信。
+
+        生产实录（q-20260916-st-consrep-20260916-0018，2026-09-16 22:18）：一个只含 13 个
+        consensus 文件的合法批次，因外部进程开着 worktree 内某 yaml 的句柄，被
+        "landing 异常: RuntimeError" 通道误判物品失败而死信。
+        """
+        landing, _stub = _make_landing(tmp_repo, queue_root)
+        before = _git_text(tmp_repo, "rev-parse", "refs/heads/dev")
+
+        def _handle_collision() -> None:
+            raise RuntimeError(
+                "git reset --hard refs/heads/dev -> rc=128: error: unable to unlink old "
+                "'docs/03_modules/_cross_layer/database/business_data_categories.yaml': "
+                "Invalid argument\nfatal: Could not reset index file to revision 'refs/heads/dev'."
+            )
+
+        monkeypatch.setattr(landing, "_sync_worktree", _handle_collision)
+        item = cq.enqueue_item("sess-hdl-a", "feat: 句柄占用项", [("docs/hdl.txt", b"v1\n")], queue_root=queue_root)
+        stats = cq.drain_queue(queue_root, landing=landing)
+
+        assert stats["dead"] == 0, f"句柄占用绝不死信（q-…-0018 事故）: {stats}"
+        assert stats["done"] == 0
+        assert (queue_root / "pending" / f"{item['qid']}.json").is_file(), "项必须退回 pending 等下次自举"
+        assert not list((queue_root / "dead").glob("*.json")), "dead/ 必须空"
+        assert not list((queue_root / "processing").glob("*.json")), "processing 不残留"
+        assert _git_text(tmp_repo, "rev-parse", "refs/heads/dev") == before, "未落盘不得推进 dev"
+
+    def test_transient_marker_table_covers_handle_and_lock_families(self) -> None:
+        """特征串表钉住两族覆盖 + 裸 "Invalid argument" 不算瞬态（太宽会掩盖真 bug）。"""
+        for text in (
+            "Unable to create 'D:/x/.git/index.lock': File exists.",
+            "error: unable to unlink old 'a.yaml': Invalid argument",
+            "Permission denied",
+            "The process cannot access the file because it is being used by another process",
+        ):
+            assert cql._is_transient_git_error(text), f"落地侧须归瞬态: {text}"
+            assert cq.classify_dead_reason(f"landing 异常: {text}") == "env", f"死因三分类须归 env: {text}"
+        assert not cql._is_transient_git_error("快照路径校验拒绝: ../evil（Invalid argument）"), (
+            "裸 Invalid argument 不得归瞬态——真 bug 也报它"
+        )
+        assert cq.classify_dead_reason(
+            "landing 异常: RuntimeError: git reset --hard -> rc=128: error: unable to unlink old "
+            "'x.yaml': Invalid argument"
+        ) == "env", "q-…-0018 生产实录死因必须归 env（历史死信 requeue 判读口径）"
+        assert set(cql._TRANSIENT_GIT_MARKERS) >= {"index.lock", "unable to unlink", "permission denied"}
