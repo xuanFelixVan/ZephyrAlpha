@@ -1,13 +1,13 @@
-# 自动生成于 2026-09-15T16:35:55Z
+# 自动生成于 2026-09-16T01:40:04Z
 # 来源: scripts/governance/**/*.py __manifest__ 块
 # 手工编辑无效——修改请通过各 .py 文件的 __manifest__ 块
 
-generated_at: '2026-09-15T16:35:55Z'
+generated_at: '2026-09-16T01:40:04Z'
 generated_by: scripts/governance/generators/generate_script_manifest.py
 source: scripts/governance/**/*.py → __manifest__ 块
-total_scripts: 431
+total_scripts: 433
 with_manifest: 407
-missing_manifest: 24
+missing_manifest: 26
 categories:
   governance:_sync: 4
   governance:_tasks: 3
@@ -25,7 +25,7 @@ categories:
   governance:d8_doc_sync: 14
   governance:d9_knowledge: 2
   governance:data_quality: 2
-  governance:generators: 11
+  governance:generators: 13
   governance:git_hooks: 1
   governance:meta: 47
   governance:migrate_sqlite_to_pg: 2
@@ -4132,6 +4132,26 @@ scripts:
   - Critical
   - Disruptive
   - Quick
+- name: generators/generate_resource_profile_registry.py
+  owner: governance:generators
+  dimensions: []
+  priority: P2
+  timeout_seconds: 60
+  args: []
+  warn_only: false
+  description: ⚠ __manifest__ 缺失——请添加元数据块
+  tags: []
+  _manifest_missing: true
+- name: generators/generate_resource_week_view.py
+  owner: governance:generators
+  dimensions: []
+  priority: P2
+  timeout_seconds: 60
+  args: []
+  warn_only: false
+  description: ⚠ __manifest__ 缺失——请添加元数据块
+  tags: []
+  _manifest_missing: true
 - name: generators/generate_rule_ai_perception_index.py
   owner: governance:generators
   dimensions:
