@@ -384,6 +384,48 @@ DDL_STATEMENTS = [
     )
     """,
     "CREATE INDEX IF NOT EXISTS idx_stock_concept_concept ON stock_concept (concept)",
+    # ========== v9 增量（2026-09-17 Entity Master: 实体唯一身份证库;
+    #     一实体一 master 身份——非上市实体=UE- 主键, 上市实体=多市场代码映射;
+    #     治病=同一公司多代码多身份(实证: 台积电 2330.TW/TSM.TW 双落位并存);
+    #     业界对齐 FIGI/LEI/OpenFIGI 设计理念; Owner 四轮令批准, 挖矿总账 D7 场景） ---
+    """
+    ALTER TABLE ig_unlisted_entity ADD COLUMN IF NOT EXISTS name_en TEXT
+    """,
+    """
+    ALTER TABLE ig_unlisted_entity ADD COLUMN IF NOT EXISTS aliases TEXT[] DEFAULT '{}'
+    """,
+    """
+    ALTER TABLE ig_unlisted_entity ADD COLUMN IF NOT EXISTS country TEXT
+    """,
+    """
+    ALTER TABLE ig_unlisted_entity ADD COLUMN IF NOT EXISTS primary_market TEXT
+    """,
+    """
+    ALTER TABLE ig_unlisted_entity ADD COLUMN IF NOT EXISTS entity_type TEXT
+    """,
+    """
+    CREATE TABLE IF NOT EXISTS ig_entity_code_map (
+        id          BIGSERIAL PRIMARY KEY,
+        master_id   TEXT NOT NULL,
+        code        TEXT NOT NULL,
+        market      TEXT NOT NULL,
+        code_type   TEXT NOT NULL DEFAULT 'listing_primary',
+        source      TEXT,
+        as_of       DATE,
+        valid_from  DATE,
+        valid_to    DATE,
+        created_at  TIMESTAMPTZ NOT NULL DEFAULT now(),
+        updated_at  TIMESTAMPTZ NOT NULL DEFAULT now(),
+        UNIQUE (code, market)
+    )
+    """,
+    "CREATE INDEX IF NOT EXISTS idx_entity_code_map_master ON ig_entity_code_map (master_id)",
+    "CREATE INDEX IF NOT EXISTS idx_entity_code_map_code ON ig_entity_code_map (code)",
+    # v9.1（红蓝 R2 修正）: code_type 默认值对齐词表; UNIQUE(code,market)=仅存当前映射,
+    # PIT 三列预留未来换绑历史(换绑语义裁定登记 d_mining_workbook)
+    """
+    ALTER TABLE ig_entity_code_map ALTER COLUMN code_type SET DEFAULT 'listing_primary'
+    """,
 ]
 
 # 裁定#ARCH-DEPGRAPH_ACCESS_CONTROL: reader 只读 / writer 读写
@@ -402,6 +444,7 @@ _ALL_TABLES = (
     "ig_product_revenue",
     "ig_io_edge",
     "stock_concept",
+    "ig_entity_code_map",
 )
 GRANT_STATEMENTS = (
     [f"GRANT SELECT ON {t} TO depgraph_reader" for t in _ALL_TABLES]
@@ -417,6 +460,7 @@ GRANT_STATEMENTS = (
         "GRANT USAGE, SELECT ON SEQUENCE ig_product_revenue_id_seq TO depgraph_writer",
         "GRANT USAGE, SELECT ON SEQUENCE ig_io_edge_id_seq TO depgraph_writer",
         "GRANT USAGE, SELECT ON SEQUENCE stock_concept_id_seq TO depgraph_writer",
+        "GRANT USAGE, SELECT ON SEQUENCE ig_entity_code_map_id_seq TO depgraph_writer",
     ]
 )
 

@@ -661,6 +661,26 @@ tables:
         type: text
         required: false
         standard: 上市后回填真代码（2330.TW/9973.HK/830946.BJ 格式）；NULL=未上市；回填后跑 promote 换码三步流程
+      name_en:
+        type: text
+        required: false
+        standard: 英文名（v9 Entity Master）；中英双名防一司多名漂移
+        good_example: TSMC
+      aliases:
+        type: text[]
+        required: false
+        standard: 别名数组（v9）；历史用名/缩写/译名归集，归并批先例 TEXT[]
+        good_example: "{台积电,台湾积体电路,TSMC}"
+      primary_market:
+        type: text
+        required: false
+        standard: 主上市市场（v9）；多市场实体以主市场为 master 身份锚
+        good_example: TW
+      entity_type:
+        type: text
+        required: false
+        standard: 实体类型（v9）：unlisted/listed/parent/subsidiary/jv 等，封发展开随词表登记
+        good_example: listed
       covered:
         type: boolean
         required: true
@@ -683,6 +703,58 @@ tables:
         type: text
         required: false
         standard: 自动/存量列，无人工填写标准（补齐对账）
+  ig_entity_code_map:
+    pk: id
+    fields:
+      master_id:
+        type: text
+        required: true
+        standard: 实体 master 身份（v9 Entity Master）——上市实体=主市场代码（如 2330.TW），非上市实体=UE-{id}；一实体一 master 行族
+        good_example: 2330.TW / UNLISTED:UE-xxxx
+      code:
+        type: text
+        required: true
+        standard: 该实体在某市场的交易代码；UNIQUE(code,market)=仅存当前映射，PIT 三列预留换绑历史（红蓝 R2 注记）
+        good_example: TSM
+      market:
+        type: text
+        required: true
+        standard: 代码所属市场（TW/US/HK/KS/SH/SZ/BJ…）
+        good_example: US
+      code_type:
+        type: text
+        required: false
+        standard: 词表 listing_primary/listing/adr/alias；默认 listing_primary（v9.1 对齐）
+        good_example: adr
+      source:
+        type: text
+        required: false
+        standard: 登记来源留痕（如 entity_master_pilot_20260917）
+        good_example: entity_master_pilot_20260917
+      id:
+        type: bigint
+        required: true
+        standard: BIGSERIAL 主键（v9）
+      as_of:
+        type: date
+        required: false
+        standard: 信息口径日（v9）
+      valid_from:
+        type: date
+        required: false
+        standard: PIT 生效日（v9；当前映射语义=仅存当前行，换绑历史留待 v9.1 裁定落地）
+      valid_to:
+        type: date
+        required: false
+        standard: PIT 失效日（v9；NULL=现行）
+      created_at:
+        type: timestamptz
+        required: true
+        standard: 登记时间（v9，DEFAULT now()）
+      updated_at:
+        type: timestamptz
+        required: true
+        standard: 更新时间（v9，DEFAULT now()）
   ig_product_revenue:
     pk: id
     fields:

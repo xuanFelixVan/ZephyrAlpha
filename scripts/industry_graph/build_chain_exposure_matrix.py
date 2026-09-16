@@ -68,23 +68,19 @@ def _fetch_graph() -> dict:
     try:
         cur = conn.cursor()
         cur.execute(
-            "SELECT chain_id, name, market FROM ig_chain WHERE status='active'"
-            " ORDER BY chain_id"
+            SQL_CHAINS
         )
         chains = cur.fetchall()
         cur.execute(
-            "SELECT node_id, chain_id, name FROM ig_node WHERE valid_to IS NULL"
-            " ORDER BY node_id"
+            SQL_NODES
         )
         nodes = cur.fetchall()
         cur.execute(
-            "SELECT from_node, to_node, edge_type FROM ig_edge WHERE valid_to IS NULL"
-            " ORDER BY from_node, to_node"
+            SQL_EDGES
         )
         edges = cur.fetchall()
         cur.execute(
-            "SELECT node_id, symbol, role FROM ig_node_company WHERE valid_to IS NULL"
-            " ORDER BY node_id, symbol"
+            SQL_PLACEMENTS
         )
         placements = cur.fetchall()
         cur.execute(
@@ -185,15 +181,28 @@ def _build_rows(
     return rows, unknown
 
 
-def _dedup_company_edges(company_edges: list[dict]) -> tuple[list[dict], int]:
+def _dedup_company_edges(company_edges: list[dict]) -> tuple[list[dict], int, int]:
+    """权重语义 v1.2（红蓝 R2 修正）: percent 族(revenue_pct/sales_pct)按
+    数值自适应缩放(>1.5 视为百分数 /100, ≤1.5 视为已约分分数), 钳 [0,1];
+    非比例量纲(collab_count 等计数类)不入权重列, 丢行计数登记——量纲统一
+    治本在 websearch_ingest 入库侧(登记数据治理项)。"""
     dedup: dict[tuple, dict] = {}
     neg = 0
+    nonscale = 0
     for e in company_edges:
-        raw = e.get("revenue_pct") or 0.0
-        w = raw / 100.0 if raw else (float(e["weight"] or 0.0))
+        wt = (e.get("weight_type") or "").strip()
+        raw = e.get("revenue_pct")
+        if raw is None:
+            raw = e.get("weight")
+        if raw is None or wt in ("collab_count",):
+            nonscale += 1
+            continue
+        w = float(raw)
         if w < 0:
             neg += 1
             continue
+        if w > 1.5:  # 百分数口径
+            w = w / 100.0
         w = min(w, 1.0)
         key = (e["from_symbol"], e["to_symbol"], e.get("year"))
         prev = dedup.get(key)
@@ -203,13 +212,13 @@ def _dedup_company_edges(company_edges: list[dict]) -> tuple[list[dict], int]:
                 "to_symbol": e["to_symbol"],
                 "year": e.get("year"),
                 "weight": round(w, 4),
-                "weight_type": e.get("weight_type") or "",
+                "weight_type": wt,
             }
     edge_rows = [
         dedup[k]
         for k in sorted(dedup, key=lambda k: (str(k[0]), str(k[1]), str(k[2])))
     ]
-    return edge_rows, neg
+    return edge_rows, neg, nonscale
 
 
 def build() -> tuple[list[dict], list[dict], dict]:
@@ -227,7 +236,9 @@ def build() -> tuple[list[dict], list[dict], dict]:
     rows, unknown_role = _build_rows(
         g, node_chain, chain_name, node_name, up_reach, down_reach
     )
-    edge_rows, neg_dropped = _dedup_company_edges(g["company_edges"])
+    edge_rows, neg_dropped, nonscale_dropped = _dedup_company_edges(
+        g["company_edges"]
+    )
 
     summary = {
         "active_chains": len(g["chains"]),
@@ -240,14 +251,15 @@ def build() -> tuple[list[dict], list[dict], dict]:
         "exposure_rows": len(rows),
         "companies": len({r["symbol"] for r in rows}),
         "company_edges_deduped": len(edge_rows),
-        "company_edges_neg_dropped": neg_dropped,
+                "company_edges_neg_dropped": neg_dropped,
+        "company_edges_nonscale_dropped": nonscale_dropped,
         "params": {
             "role_weight": ROLE_WEIGHT,
             "unknown_role_weight": _UNKNOWN_ROLE_W,
             "hop_decay": HOP_DECAY,
             "max_hops": MAX_HOPS,
             "hop0_baseline": "自身 role 权重×(1+Σ衰减), 自身项=1.0",
-            "revenue_pct_semantics": "恒为百分数/100 钳[0,1], 负值丢行",
+            "weight_semantics": "percent 族>1.5 按百分数/100, ≤1.5 按分数, 钳[0,1]; 计数类丢行",
             "edge_scope": "BFS 限同链; edge_type 全保留(构成见 edge_type_composition)",
         },
     }

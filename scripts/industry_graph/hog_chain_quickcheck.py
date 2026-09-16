@@ -88,12 +88,7 @@ def _load_universe() -> list[str]:
 def _load_weekly_returns(conn, symbols: list[str]) -> dict[str, dict[str, float]]:
     """{symbol_canonical: {week_friday: week_return}}，周收益由日收盘聚合。"""
     daily: dict[str, dict[str, float]] = defaultdict(dict)
-    rows = conn.execute(
-        f"SELECT symbol_canonical, trade_date, close FROM {_TBL_KLINE} FINAL"
-        " WHERE symbol_canonical IN %(syms)s AND market_type='A_share'"
-        " ORDER BY symbol_canonical, trade_date",
-        {"syms": symbols},
-    )
+    rows = conn.execute(SQL_KLINE, {"syms": symbols})
     for sym, d, close in rows:
         if close is None:
             continue
