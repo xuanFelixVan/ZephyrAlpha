@@ -680,6 +680,9 @@ _ALGO_NODE_FIELD_MAP = {
 # 边定义正则：# SRC -.->|断点| DST  或  # SRC --> DST  或  # SRC -->|label| DST
 _ALGO_EDGE_RE = re.compile(r"^#\s*([A-Za-z0-9_]+)\s+(-\.->|-->)(\|[^|]*\|)?\s+([A-Za-z0-9_]+)")
 
+# 紧凑边段行：# 边: SRC --> DST ; SRC2 --> DST2（分号分隔多边，一行装一条以上）
+_ALGO_EDGE_SECTION_RE = re.compile(r"^\s*#\s*边\s*[:：]\s*(.*)$")
+
 # 节点字段行：key: value（key 含字母数字下划线）
 _ALGO_FIELD_RE = re.compile(r"^(\w+)\s*:\s*(.*)$")
 
@@ -774,17 +777,36 @@ def _parse_algo_flow_nodes(block: str) -> list[AlgoFlowNode]:
     return nodes
 
 
+def _algo_edge_line_segments(raw: str) -> list[str]:
+    """边行 → 可送检片段列表（一行一边是既有语法，紧凑分号写法在此展开）。
+
+    病根（静默丢边实证）：``_ALGO_EDGE_RE`` 要求 ``#`` 后紧跟 ASCII 节点号，
+    而契约允许的 ``# 边: A --> B ; A --> C`` 整行以中文"边"开头→永不匹配→
+    该文件边数直接归零且无任何报错（普查 62 个 ALGO_FLOW 镜像 yaml 丢 162 条边）。
+    仅对带 ``边:`` 段标记的行做分号切分——单行边语法一字不改，零回归面。
+    """
+    line = raw.rstrip()
+    m = _ALGO_EDGE_SECTION_RE.match(line)
+    if not m:
+        return [line]
+    body = m.group(1).strip()
+    if not body:
+        return []
+    return [f"# {seg.strip()}" for seg in re.split(r"[;；]", body) if seg.strip()]
+
+
 def _parse_algo_flow_edges(scan_region: str) -> list[AlgoFlowEdge]:
-    """解析边定义行（``# SRC -.->|断点| DST`` 或 ``# SRC --> DST``）。
+    """解析边定义行（``# SRC -.->|断点| DST`` 或 ``# SRC --> DST``，含 ``# 边: A --> B ; C --> D`` 紧凑写法）。
 
     断点边判定：箭头为 ``-.->`` 或边标签含"断点"。
     """
     edges: list[AlgoFlowEdge] = []
     for raw in scan_region.splitlines():
-        m = _ALGO_EDGE_RE.match(raw.rstrip())
-        if not m:
-            continue
-        src, arrow, label, dst = m.group(1), m.group(2), (m.group(3) or ""), m.group(4)
-        is_break = arrow == "-.->" or "断点" in label
-        edges.append(AlgoFlowEdge(src=src, dst=dst, is_break=is_break))
+        for seg in _algo_edge_line_segments(raw):
+            m = _ALGO_EDGE_RE.match(seg)
+            if not m:
+                continue
+            src, arrow, label, dst = m.group(1), m.group(2), (m.group(3) or ""), m.group(4)
+            is_break = arrow == "-.->" or "断点" in label
+            edges.append(AlgoFlowEdge(src=src, dst=dst, is_break=is_break))
     return edges

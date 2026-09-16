@@ -516,3 +516,65 @@ def test_init_without_own_graph_still_rescans_rich_child(tmp_path, monkeypatch):
     assert s.source_path.replace("\\", "/").endswith("pkg3/child.py")
 
     clear_blueprint_cache()
+
+
+# --- 紧凑边行（# 边: A --> B ; C --> D）静默丢边回归（P2-1 普查实证 62 件 162 条） ---
+
+def _flow_block(edge_section: str) -> str:
+    return (
+        "# [ALGO_FLOW]\n"
+        "# 层: 输入\n"
+        "# - id: I1\n"
+        "#   name: 入参\n"
+        "# 层: 算法\n"
+        "# - id: A1\n"
+        "#   name_zh: ① 主流程\n"
+        "# - id: A2\n"
+        "#   name_zh: ② 次流程\n"
+        "# - id: O1\n"
+        "#   name_zh: 结果\n"
+        "# [/ALGO_FLOW]\n"
+        f"{edge_section}"
+    )
+
+
+def test_compact_semicolon_edges_parse_all_edges():
+    """紧凑分号写法曾整行落空（"边"非 ASCII 节点号→正则不匹配→零边无告警）。"""
+    from _shared.code_algorithm_extractor import parse_algo_flow
+
+    g = parse_algo_flow(_flow_block("# 边: I1 --> A1 ; A1 --> A2 ; A2 --> O1\n"))
+    assert g is not None
+    assert [(e.src, e.dst) for e in g.edges] == [("I1", "A1"), ("A1", "A2"), ("A2", "O1")]
+
+
+def test_compact_edges_fullwidth_semicolon_and_break_label():
+    """全角分号与断点标签同在紧凑行内也必须逐条产出。"""
+    from _shared.code_algorithm_extractor import parse_algo_flow
+
+    g = parse_algo_flow(_flow_block("# 边：I1 -.->|断点| A1 ；A1 --> A2；A2 --> O1\n"))
+    assert g is not None
+    assert [(e.src, e.dst, e.is_break) for e in g.edges] == [
+        ("I1", "A1", True),
+        ("A1", "A2", False),
+        ("A2", "O1", False),
+    ]
+
+
+def test_one_edge_per_line_syntax_unchanged():
+    """零回归面：单行一边语法逐字不变（分号切分只作用于带 "边:" 段标记的行）。"""
+    from _shared.code_algorithm_extractor import parse_algo_flow
+
+    g = parse_algo_flow(_flow_block("# 边:\n# I1 --> A1\n# A1 --> O1\n"))
+    assert g is not None
+    assert [(e.src, e.dst) for e in g.edges] == [("I1", "A1"), ("A1", "O1")]
+
+
+def test_empty_edge_section_and_indented_block_scalar():
+    """`# 边:` 空段 → 零边不报错；yaml 块标量缩进行同样吃得到（镜像真源实际形态）。"""
+    from _shared.code_algorithm_extractor import parse_algo_flow
+
+    assert parse_algo_flow(_flow_block("# 边:\n")).edges == []
+    indented = "\n".join("    " + ln for ln in _flow_block("# 边: I1 --> A1 ; A1 --> O1\n").splitlines())
+    g = parse_algo_flow(indented)
+    assert g is not None
+    assert [(e.src, e.dst) for e in g.edges] == [("I1", "A1"), ("A1", "O1")]

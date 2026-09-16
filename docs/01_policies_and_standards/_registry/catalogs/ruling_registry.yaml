@@ -2549,3 +2549,33 @@ entries:
   related_arch: []
   related_rulings: []
   superseded_by: null
+
+- ruling_id: '裁定#274'
+  title: ALGO_FLOW 紧凑边段（分号多边一行）被 parse_algo_flow 静默丢零边——治本在解析器分段展开，禁改语料迁就解析器
+  date: '2026-09-16'
+  category: 治本
+  status: active
+  summary: >-
+    病根实证：P2-1 出仓战役语料普查测得仓内 62 个已出仓 algo_flow yaml 的
+    `# 边: A --> B ; C --> D` 紧凑段解析出 0 条边、合计静默丢 162 条；源侧另有 2 个
+    .py 同形丢 5 条。机理=`_ALGO_EDGE_RE` 要求 `#` 后紧跟单个 ASCII 端点，整行只匹到
+    第一条边的前缀，分号之后的边不报错、不告警地蒸发——下游把"缺边"读成"无依赖"，
+    比抛异常更坏（假事实进全景图/依赖图）。
+    第一性原理裁定：该写法已在仓 62 件成立，即事实语法；解析器的职责是忠实解析。
+    两条路中"改语料迁就解析器"要把已入库真源再改一遍（62 件二次 churn、破"出仓只搬
+    机器块逐字一致"不变量），且下次同类写法照样丢——治标且新增静默失败面。故治本落在
+    解析器：新增 `_algo_edge_line_segments` 按 [;；] 切段并补齐 `# ` 前缀后逐段匹配，
+    一行一边既有语法零改动（回归测试锁死），空段段名 `# 边:` 独占一行亦不误伤。
+    实践对齐：编译器/配置解析器把 parser 视作 breaking surface、对已发布语法做兼容
+    解析（robustness principle），mermaid/dot 类 DSL 对分隔符多样性容错——同方向。
+    残余不隐藏：①162 条边从 0 变 162 后，衍生图/全景计数在下次重建时跳变，属正确性
+    恢复非回归；②抽取器与 ALGO-FLOW-LINK 门禁的锚点口径不对称（门禁读 external 锚、
+    抽取器读块体）另案登记波次收口报告；③普查其余缺陷类（15 件块不可解析 / 7 件仅
+    unreachable / 4 件 span 未找到 / 3 件 module_key 漂移）与 211 件残留内联块、
+    255 件 docstring 外死块一并进收口报告待清账序。
+  affected_files:
+    - scripts/governance/_shared/code_algorithm_extractor.py
+    - tests/governance/shared/test_code_algorithm_extractor.py
+  related_arch: []
+  related_rulings: []
+  superseded_by: null
