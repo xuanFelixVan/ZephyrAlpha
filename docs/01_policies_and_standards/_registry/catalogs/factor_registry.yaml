@@ -12448,8 +12448,8 @@ factors:
   last_decay_scan_at: null
   turnover: null
   capacity: null
-  last_evaluated_at: "2026-09-14"
-  evidence: "SOP-B④ 2026-09-14 首跑出证=data-gap（非noise非valid）：IS/OOS IC=NaN——因子全市场零方差（快照回放使 20 交易日零修正）。根因=research_report 预测槽位字段系东财源站当前快照语义（infoCode AP201807161166783168 2018 年报告携带 2026 槽位+当前值；2020 前研报 40,176/47,610 份槽位年=2026，uniq(eps_fy0)=487），历史区间无 PIT。评估真源=设计文档 §9 数据缺口档案；run=EXP-FACTOR-EVAL-001。修复路径=前向积累（2026-09 起 PIT 干净）+analyst_forecast 同花顺快照（2026-07 起）双源，预估干净回测窗 2027-07 起；C4 PDF 原文提取为历史修复候选。coverage IS 908/月、OOS 1262/月（覆盖计数真实）"
+  last_evaluated_at: "2026-09-16"
+  evidence: "SOP-B④ 2026-09-14 首跑出证=data-gap（非noise非valid）：IS/OOS IC=NaN——因子全市场零方差（快照回放使 20 交易日零修正）。根因=research_report 预测槽位字段系东财源站当前快照语义（infoCode AP201807161166783168 2018 年报告携带 2026 槽位+当前值；2020 前研报 40,176/47,610 份槽位年=2026，uniq(eps_fy0)=487），历史区间无 PIT。评估真源=设计文档 §9 数据缺口档案；run=EXP-FACTOR-EVAL-001。修复路径=前向积累（2026-09 起 PIT 干净）+analyst_forecast 同花顺快照（2026-07 起）双源，预估干净回测窗 2027-07 起；C4 PDF 原文提取为历史修复候选。coverage IS 908/月、OOS 1262/月（覆盖计数真实）。‖ EXP-FACTOR-EVAL-004（2026-09-16，修复源 DS-275=c3_fundamental.consensus_daily_repaired，降权协议 exp_r36：IS' 2019-01~2021-12、无 OOS'、|t|>3.0、run=logs/experiment_tracking_fallback/exp02_eval_run1_r36_20260916.json）：出证=not_evaluable，但**成因与首跑不同**——首跑是快照回放使因子零方差（数据污染），本次是 DS-275 的 eps_std 结构性不可得（A 段窗口聚合值不经原始离散度、B 段源快照本身即聚合值，表内恒 0），分歧归一分母为 0。0 不得读作「零分歧」（χ²(n-1) 在 n=1 自由度 0=无定义）。补救面=n_reports>=2 的原始离散度真源（A 段可由 pdf_forecast_extracted 逐研报 EPS 重算，另案未授权）。evidence_class=preliminary-coverage-limited、promotion_authority=none ⇒ 本条不晋级也不否决；维持 candidate。"
   code_symbol: "src/zephyr/factor/expectations.py::exp02_revision_momentum"
   code_fingerprint: null
   entry_role: "ranking"
@@ -12526,8 +12526,8 @@ factors:
   last_decay_scan_at: null
   turnover: null
   capacity: null
-  last_evaluated_at: '2026-09-15'
-  evidence: "EXP-FACTOR-EVAL-002（2026-09-15，裁定#253 放行首跑，run=logs/experiment_tracking_fallback/exp04_eval_run1_20260915.json）：数据实证=600519 IS 窗 n_reports 48 值/n_orgs 20 值时变（计数类不受 EPS 槽位污染，裁定#253）；coverage IS 1,161 只/月充分。④ IS RankIC=+0.0043（p=0.72，57/60 月有效）不达门槛，OOS 符号翻转 -0.0183（p=0.14）；⑤ 五分位单调秩相关 -0.079 无结构；⑥ 窄测四档全负（cfg -0.262→80bp -0.871）；mom_ic≈-0.005=残差化已剥净动量共线。出证=noise（数据干净、因子弱）：与华泰 2.34% 的差距或系作者数维度缺+特征集少机构持仓项。维持 candidate 不晋级，改进旋钮留 C4 历史修复后统一复评。注：turnover_20 为推导值（volume(手)×100÷(circ_mv(万元)×1e4÷close)，600519 三时点校准，历史换手真源缺位）。"
+  last_evaluated_at: '2026-09-16'
+  evidence: "EXP-FACTOR-EVAL-002（2026-09-15，裁定#253 放行首跑，run=logs/experiment_tracking_fallback/exp04_eval_run1_20260915.json）：数据实证=600519 IS 窗 n_reports 48 值/n_orgs 20 值时变（计数类不受 EPS 槽位污染，裁定#253）；coverage IS 1,161 只/月充分。④ IS RankIC=+0.0043（p=0.72，57/60 月有效）不达门槛，OOS 符号翻转 -0.0183（p=0.14）；⑤ 五分位单调秩相关 -0.079 无结构；⑥ 窄测四档全负（cfg -0.262→80bp -0.871）；mom_ic≈-0.005=残差化已剥净动量共线。出证=noise（数据干净、因子弱）：与华泰 2.34% 的差距或系作者数维度缺+特征集少机构持仓项。维持 candidate 不晋级，改进旋钮留 C4 历史修复后统一复评。注：turnover_20 为推导值（volume(手)×100÷(circ_mv(万元)×1e4÷close)，600519 三时点校准，历史换手真源缺位）。‖ EXP-FACTOR-EVAL-005（2026-09-16，修复源 DS-275，降权协议 exp_r36：IS' 2019-01~2021-12（33 个有效月，窗内 3 个月截面广度未达 _MIN_NAMES=100）、无 OOS'、显著性由 t p<0.05 收紧到 |t|>3.0（SE∝1/sqrt(T)，T 60→36 ⇒ 放大 sqrt(60/36)=1.291；|IC|>=0.02 地板不动）、run=logs/experiment_tracking_fallback/exp04_eval_run1_r36_20260916.json）：出证=不通过。④ IS' RankIC=+0.0363 **过效应量地板**（首跑仅 +0.0043），但 t_p=0.02505 ⇒ |t|=2.241 < 3.0；mom_ic=0.0065 无 variant_of 问题；⑤ 五分位月秩相关 0.206 无单调结构，分状态 IC r4=0.0847/r3=0.0566/r2=0.0235/r1=-0.0202；⑥ 窄测 IS' 超额 Sharpe 标定档 0.612>0.5、20bp=0.513、40bp=0.357、80bp=0.050 ⇒ cost-fragile，且 OOS/IS 腿 not_evaluable（协议无 OOS 窗）——**缺一项即不构成 narrow 通过，禁把缺项当满足**。口径变更披露：窄测基准档（slip_cfgbp）自 35cf0eb36a 起 MatchingConfig.slippage_bps=None 语义=逐笔经 cost_model_calibration 标定解析（本档名义额 2 万元 ⇒ 实测 7.24bp），故本条 cfg 档与首跑 EVAL-002 的字面 1bp 档**不可逐位对比**，钉住档 20/40/80 仍原样可比。另注：coverage_mean=920.0 系原始研报份数而非百分比，与「coverage>=60%」属门类不可比（既存门类错误，如实照录未静默改写，另案上报）。evidence_class=preliminary-coverage-limited、promotion_authority=none ⇒ 不晋级也不否决；维持 candidate，2022-2026 源洞补齐后按主协议复评。"
   code_symbol: "src/zephyr/factor/expectations.py::exp04_anomaly_coverage"
   code_fingerprint: null
   entry_role: "ranking"
@@ -12604,8 +12604,8 @@ factors:
   last_decay_scan_at: null
   turnover: null
   capacity: null
-  last_evaluated_at: '2026-09-15'
-  evidence: "EXP-FACTOR-EVAL-003（2026-09-15，裁定#253 放行首跑，run=logs/experiment_tracking_fallback/exp06_eval_run1_20260915.json）：数据实证=600519 IS 窗 rating_score_mean 104 值时变、年度非空覆盖 92-98%（计数/评级类不受 EPS 槽位污染，裁定#253）。④ IS RankIC=-0.0035（t_p=0.53，覆盖 723 只/月）/OOS +0.0127（p=0.16）→ 不达 |IC|>=0.02 门槛；⑤ 五分位单调秩相关 -0.008 无结构，分状态 IC 全噪声区，动量对照 mom_ic=0.032（无 variant_of 问题）；⑥ 窄测 cfg 档 IS 超额 Sharpe 0.105<0.5 且 20bp 转负、80bp=-0.695=cost-fragile。出证=noise（真实数据上不达标，非 data-gap）：60td 评级动量或被快速定价/卖方评级粘性稀释，华泰 2.26% 出自评级水平而非动量。维持 candidate 不晋级，留档作文献对照。"
+  last_evaluated_at: '2026-09-16'
+  evidence: "EXP-FACTOR-EVAL-003（2026-09-15，裁定#253 放行首跑，run=logs/experiment_tracking_fallback/exp06_eval_run1_20260915.json）：数据实证=600519 IS 窗 rating_score_mean 104 值时变、年度非空覆盖 92-98%（计数/评级类不受 EPS 槽位污染，裁定#253）。④ IS RankIC=-0.0035（t_p=0.53，覆盖 723 只/月）/OOS +0.0127（p=0.16）→ 不达 |IC|>=0.02 门槛；⑤ 五分位单调秩相关 -0.008 无结构，分状态 IC 全噪声区，动量对照 mom_ic=0.032（无 variant_of 问题）；⑥ 窄测 cfg 档 IS 超额 Sharpe 0.105<0.5 且 20bp 转负、80bp=-0.695=cost-fragile。出证=noise（真实数据上不达标，非 data-gap）：60td 评级动量或被快速定价/卖方评级粘性稀释，华泰 2.26% 出自评级水平而非动量。维持 candidate 不晋级，留档作文献对照。‖ EXP-FACTOR-EVAL-006（2026-09-16，修复源 DS-275，降权协议 exp_r36：IS' 2019-01~2021-12（36 个有效月=A 段全覆盖）、无 OOS'、|t|>3.0、run=logs/experiment_tracking_fallback/exp06_eval_run1_r36_20260916.json）：出证=不通过（三腿全负）。④ IS' RankIC=-0.0191（t_p=0.19403 ⇒ |t|=1.299，既不过 |IC|>=0.02 地板也不过显著性门槛）；mom_ic=0.0127；⑤ 五分位月秩相关 -0.131 反向无结构，分状态 IC r1=+0.036/r2=-0.030/r3=-0.031/r4=-0.018；⑥ 窄测四档单调恶化 标定档 0.297<0.5、20bp=0.133、40bp=-0.121、80bp=-0.620 ⇒ cost-fragile，OOS/IS 腿 not_evaluable（协议无 OOS 窗）。**与首跑 EVAL-003（IC=-0.0035、cfg 档 0.105）方向一致**：60td 评级动量在污染轨与修复轨上均无信号，即该否定结论不是修复引入的翻转，两轨互证。口径变更披露：窄测基准档自 35cf0eb36a 起改走 cost_model_calibration 标定解析（实测 7.24bp，非字面 1bp），cfg 档与首跑不可逐位对比，钉住档 20/40/80 原样可比。coverage_mean=190.0 同 EVAL-005 属门类不可比（份数 vs 百分比），如实照录。evidence_class=preliminary-coverage-limited、promotion_authority=none ⇒ 不晋级也不否决；维持 candidate。"
   code_symbol: "src/zephyr/factor/expectations.py::exp06_rating_momentum"
   code_fingerprint: null
   entry_role: "ranking"

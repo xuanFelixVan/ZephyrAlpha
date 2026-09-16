@@ -739,6 +739,158 @@ experiments:
     created_at: '2026-09-15'
     completed_at: '2026-09-15'
 
+  - experiment_id: EXP-FACTOR-EVAL-004
+    name: EXP-02 Revision Momentum Down-weighted Re-evaluation on Repaired Source (DS-275, protocol exp_r36)
+    name_zh: EXP-02 修正动量降权协议复评（修复源 DS-275，协议 exp_r36）
+    experiment_type: factor_eval
+    target_type: factor
+    target_id: FCT-EXP-002
+    params_summary:
+      protocol: exp_r36              # 另行预注册降权协议（主协议 IS 窗逐字未动）
+      source: repaired               # c3_fundamental.consensus_daily_repaired（DS-275）
+      se_inflation_vs_primary: 1.291 # sqrt(60/36)，T 60→36 月 ⇒ 显著性门槛收紧到 |t|>3.0
+      windows: {is: 2019-01-01~2021-12-31, oos: null}   # 无 OOS'（2022-01~2026-07 源覆盖空洞）
+    data_period: "2019-01-01~2021-12-31"
+    universe: UNI-RULE-001
+    benchmark_id: BMK-INDEX-000300
+    cost_model_ref: CST-ASTOCK-001
+    result_summary:
+      sharpe: null                   # 因子在修复源上退化，未进入窄测
+      max_dd: null
+      ic: null                       # 分歧归一分母为 0 ⇒ IC 不可计算（非 IC=0）
+    conclusion: >-
+      出证=not_evaluable（结构性，非因子失败、非构建缺陷）。DS-275 的 eps_std 不可得：
+      A 段=窗口聚合值不经原始离散度、B 段=源快照本身即聚合值，表内恒 0；exp02 以离散度为
+      分歧归一分母 ⇒ 因子退化。0 不得读作「全体分析师完全一致」（χ²(n-1) 在 n=1 时自由度
+      0=无定义），故本条落 not_evaluable 一等状态而非 ic=0。补救面：需 n_reports>=2 的
+      原始离散度真源，A 段可由 pdf_forecast_extracted 逐研报 EPS 重算（另案，未授权）。
+      evidence_class=preliminary-coverage-limited、promotion_authority=none ⇒
+      本条既不晋级也不否决任何因子。
+    is_overfit: null                 # 因子未产出可判定量，过拟合判定不适用
+    pbo_value: null
+    dsr_value: null
+    psr_value: null
+    n_trials: 1                      # 单配置无网格（降权协议只改窗与门槛，不引入搜索面）
+    pre_registered: true             # 协议表先于出证落库（a3287030e3），冻结钉在测试内
+    backtest_bias_checks:
+      survivorship: unknown
+      lookahead: unknown             # 未产出面板，PIT 面未被本条实际行使（源侧 publish_date 口径另案已验）
+      stop_exit: unknown
+    log_location: logs/experiment_tracking_fallback/exp02_eval_run1_r36_20260916.json
+    artifact_path: logs/experiment_tracking_fallback/
+    fallback_ref: null
+    mace_env_ref: null
+    status: completed
+    module_id: MOD-BT-033
+    doc_ref: docs/_working/reports/2026-09-16-consensus-repaired-build.md §9.1+§9.2
+    code_path: scripts/backtest/eval_exp_expectations.py
+    created_at: '2026-09-16'
+    completed_at: '2026-09-16'
+
+  - experiment_id: EXP-FACTOR-EVAL-005
+    name: EXP-04 Anomaly Coverage Down-weighted Re-evaluation on Repaired Source (DS-275, protocol exp_r36)
+    name_zh: EXP-04 异常覆盖降权协议复评（修复源 DS-275，协议 exp_r36）
+    experiment_type: factor_eval
+    target_type: factor
+    target_id: FCT-EXP-004
+    params_summary:
+      protocol: exp_r36
+      source: repaired
+      fwd_td: 20
+      se_inflation_vs_primary: 1.291
+      narrow: {top_n: 50, slip_stress_bps: [cfg_calibrated, 20, 40, 80]}
+      windows: {is: 2019-01-01~2021-12-31, oos: null}
+    data_period: "2019-01-01~2021-12-31"
+    universe: UNI-RULE-001           # IS' 33 个有效月（窗内 3 个月截面广度未达 _MIN_NAMES=100）
+    benchmark_id: BMK-INDEX-000300
+    cost_model_ref: CST-ASTOCK-001
+    result_summary:
+      sharpe: 0.612                  # ⑥ 窄测 IS' 超额 Sharpe（标定档 7.24bp）>0.5 准入线
+      max_dd: null
+      ic: 0.0363                     # IS' RankIC 均值，过 |IC|>=0.02 效应量地板
+    conclusion: >-
+      出证=不通过（显著性腿 + 缺项腿）。④ IS' RankIC=+0.0363 过效应量地板，但
+      t_p=0.02505 ⇒ |t|=2.241 < 3.0（降权协议按 Harvey-Liu-Zhu 收紧后的门槛）；
+      mom_ic=0.0065 无 variant_of 问题；五分位月秩相关 0.206 无单调结构，分状态 IC
+      r4=0.0847 / r3=0.0566 / r2=0.0235 / r1=-0.0202。⑥ 窄测标定档 0.612>0.5、
+      20bp=0.513、40bp=0.357、80bp=0.050 ⇒ cost-fragile；OOS/IS 腿 not_evaluable
+      （协议无 OOS 窗）——**缺一项即不构成 narrow 通过，禁把缺项当满足**。
+      coverage_mean=920.0 是原始研报份数而非百分比，与「coverage>=60%」属门类不可比
+      （既存门类错误，本条如实照录未静默改写，另案上报）。
+      evidence_class=preliminary-coverage-limited、promotion_authority=none ⇒ 不晋级不否决。
+    is_overfit: null                 # 降权协议无 OOS，过拟合判定不可得
+    pbo_value: null
+    dsr_value: null
+    psr_value: null
+    n_trials: 5
+    pre_registered: true             # 协议表先于出证落库（a3287030e3），冻结钉在测试内
+    backtest_bias_checks:
+      survivorship: unknown
+      lookahead: passed              # 修复源按 publish_date PIT 取数（DS-275 构建口径三重对照 3/3 PASS）
+      stop_exit: unknown
+    log_location: logs/experiment_tracking_fallback/exp04_eval_run1_r36_20260916.json
+    artifact_path: logs/experiment_tracking_fallback/
+    fallback_ref: null
+    mace_env_ref: null
+    status: completed
+    module_id: MOD-BT-033
+    doc_ref: docs/_working/reports/2026-09-16-consensus-repaired-build.md §9.1+§9.2
+    code_path: scripts/backtest/eval_exp_expectations.py
+    created_at: '2026-09-16'
+    completed_at: '2026-09-16'
+
+  - experiment_id: EXP-FACTOR-EVAL-006
+    name: EXP-06 Rating Momentum Down-weighted Re-evaluation on Repaired Source (DS-275, protocol exp_r36)
+    name_zh: EXP-06 评级动量降权协议复评（修复源 DS-275，协议 exp_r36）
+    experiment_type: factor_eval
+    target_type: factor
+    target_id: FCT-EXP-006
+    params_summary:
+      protocol: exp_r36
+      source: repaired
+      k_td: 60
+      fwd_td: 20
+      se_inflation_vs_primary: 1.291
+      narrow: {top_n: 50, slip_stress_bps: [cfg_calibrated, 20, 40, 80]}
+      windows: {is: 2019-01-01~2021-12-31, oos: null}
+    data_period: "2019-01-01~2021-12-31"
+    universe: UNI-RULE-001           # IS' 36 个有效月（修复源 A 段全覆盖）
+    benchmark_id: BMK-INDEX-000300
+    cost_model_ref: CST-ASTOCK-001
+    result_summary:
+      sharpe: 0.297                  # ⑥ 窄测 IS' 超额 Sharpe（标定档）<0.5 准入线
+      max_dd: null
+      ic: -0.0191                    # IS' RankIC 均值，|IC| 不足且符号为负
+    conclusion: >-
+      出证=不通过（三腿全负）。④ IS' RankIC=-0.0191（t_p=0.19403 ⇒ |t|=1.299，
+      既不过效应量地板也不过显著性门槛）；mom_ic=0.0127；五分位月秩相关 -0.131 反向，
+      分状态 IC r1=+0.036 / r2=-0.030 / r3=-0.031 / r4=-0.018 无结构。⑥ 窄测四档单调
+      恶化：标定档 0.297 < 0.5、20bp=0.133、40bp=-0.121、80bp=-0.620 ⇒ cost-fragile；
+      OOS/IS 腿 not_evaluable（协议无 OOS 窗）。coverage_mean=190.0 同 EVAL-005 属
+      门类不可比（份数 vs 百分比），如实照录。与 EXP-FACTOR-EVAL-003（污染轨首跑
+      IC=-0.0035、cfg 档 0.105）方向一致：评级动量在两轨上均无信号，非修复引入的翻转。
+      evidence_class=preliminary-coverage-limited、promotion_authority=none ⇒ 不晋级不否决。
+    is_overfit: null
+    pbo_value: null
+    dsr_value: null
+    psr_value: null
+    n_trials: 5
+    pre_registered: true             # 协议表先于出证落库（a3287030e3），冻结钉在测试内
+    backtest_bias_checks:
+      survivorship: unknown
+      lookahead: passed              # 修复源按 publish_date PIT 取数（DS-275 构建口径三重对照 3/3 PASS）
+      stop_exit: unknown
+    log_location: logs/experiment_tracking_fallback/exp06_eval_run1_r36_20260916.json
+    artifact_path: logs/experiment_tracking_fallback/
+    fallback_ref: null
+    mace_env_ref: null
+    status: completed
+    module_id: MOD-BT-033
+    doc_ref: docs/_working/reports/2026-09-16-consensus-repaired-build.md §9.1+§9.2
+    code_path: scripts/backtest/eval_exp_expectations.py
+    created_at: '2026-09-16'
+    completed_at: '2026-09-16'
+
 # ── Step 4 交叉引用校验记录（dangling FK 登记，62 号 §4.6 弱 FK 规则）──
 pending_fk:
   - fk_field: universe
