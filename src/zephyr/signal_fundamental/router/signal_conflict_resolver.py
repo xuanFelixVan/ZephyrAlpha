@@ -14,12 +14,6 @@
 # [TESTS] tests/signal_fundamental/router/test_signal_conflict_resolver.py
 # [A_module] module_id=MOD-SIG-010 | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
-# [ALGO_FLOW]
-# I1: ConflictSignal（signal_id/symbol/方向 LONG·EXIT/类别/置信度/到达序号/来源）
-# A1: 按 symbol 分组——单方向组直通 ADOPT（no_conflict）
-# A2: 规则链裁定——R1 风险否决(风险类高置信→REJECT) → R2 置信度差(≥margin 高者胜) → R3 时效(新者胜) → R4 来源优先级 → R5 平局 DEFER
-# O1: list[ConflictResolution]（symbol/action/winner/losers/rule_applied 留痕）
-# [/ALGO_FLOW]
 """
 信号冲突消解器（MOD-SIG-010）。
 
@@ -35,37 +29,7 @@ A 股不能做空（宪章 §2 约束三）：方向空间 = LONG（买入/持�
   R4 来源优先级——按 source_priority 表（未登记来源=0）；
   R5 仍平局 → DEFER（挂起不动作，等下一信号或人工）。
 
-# [ALGO_FLOW]
-# 层: 输入
-# - id: I1
-#   name: signals 参数
-#   fields: 参数 signals，类型注解 list[ConflictSignal]
-#   code: signal_conflict_resolver.py 顶层公共函数形参（AST 提取）
-# - id: I2
-#   name: config 参数
-#   fields: 参数 config（无注解）
-#   code: signal_conflict_resolver.py 顶层公共函数形参（AST 提取）
-# 层: 算法
-# - id: A1
-#   name_zh: ① resolve_conflicts
-#   name_en: resolve_conflicts
-#   intro: 冲突消解主入口：按 symbol 分组逐组走规则链。
-#   desc: 冲突消解主入口：按 symbol 分组逐组走规则链。confidence 非法 → ValueError。；源码 L203-L217
-#   inputs: signals config
-#   outputs: list[ConflictResolution]
-#   （注：A1 之后另有 4 个公共定义未列入（含 4 个数据契约/异常/枚举声明类），见源码）
-# 层: 输出
-# - id: O1
-#   name_zh: list[ConflictResolution]
-#   name_en: list[ConflictResolution]
-#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
-#   downstream: (待 sleeve 编排层 / StrategyBook 接线)
-# [/ALGO_FLOW]
-#
-# 边:
-# I1 --> A1
-# I2 --> A1
-# A1 --> O1
+# [ALGO_FLOW] external: docs/03_modules/_domain_fundamental_signal/algo_flow/signal_conflict_resolver.yaml
 """
 
 from __future__ import annotations

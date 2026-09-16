@@ -1,0 +1,33 @@
+# ALGO_FLOW 外部真源——__init__（_domain_fundamental_signal 域，真源 src/zephyr/signal_fundamental/__init__.py）
+# 2026-09-15 P2-1 契约头减负批量出仓：docstring 内联块逐字节副本，extractor 经
+# external 锚加载走同一 parse_algo_flow 管线；算法公共面变化时同步更新本块。
+doc_type: architecture_view
+ttl: permanent
+module: src.zephyr.signal_fundamental.__init__
+source_of_truth: src/zephyr/signal_fundamental/__init__.py
+algo_flow: |
+    # [ALGO_FLOW]
+    # 层: 输入
+    # - id: I1
+    #   name: 包属性访问 请求
+    #   fields: name 属性名（10个公开符号之一）
+    #   code: __getattr__(name) L44
+    # 层: 算法
+    # - id: A1
+    #   name_zh: ① 信号域符号懒加载聚合
+    #   name_en: __getattr__ + _lazy 映射
+    #   intro: 按需加载信号生成/合成/资本配置/管线的基类与默认实现
+    #   desc: _lazy 映射 10 符号到 gen/strategy/synth/combiner/capital/pipeline 子模块，命中即 importlib.import_module 取符号；DegradationMonitorBase 真源已迁 D_SIGQC 域（L44-63）
+    #   inputs: I1
+    #   outputs: SignalAggregatorBase/DefaultSignalAggregator/DefaultCapitalAllocator/AlphaSignalPipeline 等
+    # 层: 输出
+    # - id: O1
+    #   name_zh: 信号域公共API面
+    #   name_en: signal_fundamental 公共符号集
+    #   intro: 对外暴露信号聚合、合成、资本配置与Alpha管线的核心抽象
+    #   downstream: 无下游/内部使用（# [CONSUMERS] 头为空）
+    # [/ALGO_FLOW]
+    #
+    # 边:
+    # I1 --> A1
+    # A1 --> O1

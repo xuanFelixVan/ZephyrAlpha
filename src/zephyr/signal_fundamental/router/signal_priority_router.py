@@ -14,12 +14,6 @@
 # [TESTS] tests/signal_fundamental/router/test_signal_priority_router.py
 # [A_module] module_id=MOD-SIG-009 | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
-# [ALGO_FLOW]
-# I1: RoutableSignal（signal_id/symbol/类别/置信度/到达序号/来源）
-# A1: 优先级分 = kind_base(风险1000/机会100/元0) + confidence×100
-# A2: 排序——优先级分降序，同分按 created_seq 升序（FIFO 公平），再按 signal_id 字典序兜底确定性
-# O1: RouteResult(ordered signal_ids + scores + 首信号 = 当前应处理信号)
-# [/ALGO_FLOW]
 """
 信号优先级路由器（MOD-SIG-009）。
 
@@ -30,60 +24,7 @@
 路由分 = kind_base + confidence×100：类别差（1000/100/0）恒大于置信度差
 （0-100），保证风险类在任何置信度下都先于机会类被处理。
 
-# [ALGO_FLOW]
-# 层: 输入
-# - id: I1
-#   name: sig 参数
-#   fields: 参数 sig，类型注解 RoutableSignal
-#   code: signal_priority_router.py 顶层公共函数形参（AST 提取）
-# - id: I2
-#   name: cfg 参数
-#   fields: 参数 cfg（无注解）
-#   code: signal_priority_router.py 顶层公共函数形参（AST 提取）
-# - id: I3
-#   name: signals 参数
-#   fields: 参数 signals，类型注解 list[RoutableSignal]
-#   code: signal_priority_router.py 顶层公共函数形参（AST 提取）
-# - id: I4
-#   name: config 参数
-#   fields: 参数 config（无注解）
-#   code: signal_priority_router.py 顶层公共函数形参（AST 提取）
-# 层: 算法
-# - id: A1
-#   name_zh: ① priority_score
-#   name_en: priority_score
-#   intro: 优先级分 = kind_base + confidence×scale。
-#   desc: 优先级分 = kind_base + confidence×scale。confidence∉[0,1] → ValueError。；源码 L151-L155
-#   inputs: sig cfg
-#   outputs: float
-# - id: A2
-#   name_zh: ② route_signals
-#   name_en: route_signals
-#   intro: 按优先级排序信号：风险>机会>元；同类置信度降序；同分 FIFO（created_seq 升序）。
-#   desc: 按优先级排序信号：风险>机会>元；同类置信度降序；同分 FIFO（created_seq 升序）。；源码 L158-L167
-#   inputs: signals config
-#   outputs: RouteResult
-#   （注：A2 之后另有 4 个公共定义未列入（含 4 个数据契约/异常/枚举声明类），见源码）
-# 层: 输出
-# - id: O1
-#   name_zh: float
-#   name_en: float
-#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
-#   downstream: zephyr.signal_fundamental.router.signal_conflict_resolver
-# - id: O2
-#   name_zh: RouteResult
-#   name_en: RouteResult
-#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
-#   downstream: zephyr.signal_fundamental.router.signal_conflict_resolver
-# [/ALGO_FLOW]
-#
-# 边:
-# I1 --> A1
-# I2 --> A1
-# I3 --> A1
-# I4 --> A1
-# A1 --> A2
-# A2 --> O1
+# [ALGO_FLOW] external: docs/03_modules/_domain_fundamental_signal/algo_flow/signal_priority_router.yaml
 """
 
 from __future__ import annotations

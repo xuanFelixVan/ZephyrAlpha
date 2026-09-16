@@ -1,0 +1,43 @@
+# ALGO_FLOW 外部真源——sector_rotation_score_mapping（_domain_fundamental_signal 域，真源 src/zephyr/signal_fundamental/sector_rotation_score_mapping.py）
+# 2026-09-15 P2-1 契约头减负批量出仓：docstring 内联块逐字节副本，extractor 经
+# external 锚加载走同一 parse_algo_flow 管线；算法公共面变化时同步更新本块。
+doc_type: architecture_view
+ttl: permanent
+module: src.zephyr.signal_fundamental.sector_rotation_score_mapping
+source_of_truth: src/zephyr/signal_fundamental/sector_rotation_score_mapping.py
+algo_flow: |
+    # [ALGO_FLOW]
+    # 层: 输入
+    # - id: I1
+    #   name: quadrant 参数
+    #   fields: 参数 quadrant，类型注解 RRGQuadrant | str
+    #   code: sector_rotation_score_mapping.py 顶层公共函数形参（AST 提取）
+    # - id: I2
+    #   name: strength_score 参数
+    #   fields: 参数 strength_score，类型注解 float
+    #   code: sector_rotation_score_mapping.py 顶层公共函数形参（AST 提取）
+    # - id: I3
+    #   name: pullback_quality 参数
+    #   fields: 参数 pullback_quality，类型注解 str | None
+    #   code: sector_rotation_score_mapping.py 顶层公共函数形参（AST 提取）
+    # 层: 算法
+    # - id: A1
+    #   name_zh: ① map_sector_rotation_score
+    #   name_en: map_sector_rotation_score
+    #   intro: RRG 象限 + 板块强度 + 回踩质量 → SynthesizedSignal.score ∈ [0,1]。
+    #   desc: RRG 象限 + 板块强度 + 回踩质量 → SynthesizedSignal.score ∈ [0,1]。 Args: quadrant: RRGQuadrant 枚举或其…；源码 L100-L124
+    #   inputs: quadrant strength_score pullback_quality
+    #   outputs: float
+    # 层: 输出
+    # - id: O1
+    #   name_zh: float
+    #   name_en: float
+    #   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+    #   downstream: (待 G06 板块轮动定型后 L2-C→sleeve SynthesizedSignal.score 接线)
+    # [/ALGO_FLOW]
+    #
+    # 边:
+    # I1 --> A1
+    # I2 --> A1
+    # I3 --> A1
+    # A1 --> O1

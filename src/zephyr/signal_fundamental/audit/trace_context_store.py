@@ -28,42 +28,7 @@ B2-05117（AUD-DRAFT-001-DIGEST P1 波 W-P1-25，CAND-FUNDAMEN-002，D-SIGNAL
 表）；lineage_tracker=结构级血缘 DAG（本件=实例级，链路摘要登记为边而不
 重建 DAG）；ctr002_producer_validator=出厂验证（零交集）。
 
-# [ALGO_FLOW]
-# 层: 输入
-# - id: I1
-#   name: db_path 参数
-#   fields: 参数 db_path（无注解）
-#   code: trace_context_store.py 顶层公共函数形参（AST 提取）
-# - id: I2
-#   name: clock 参数
-#   fields: 参数 clock（无注解）
-#   code: trace_context_store.py 顶层公共函数形参（AST 提取）
-# - id: I3
-#   name: lineage_sink 参数
-#   fields: 参数 lineage_sink（无注解）
-#   code: trace_context_store.py 顶层公共函数形参（AST 提取）
-# 层: 算法
-# - id: A1
-#   name_zh: ① TraceContextStore
-#   name_en: TraceContextStore
-#   intro: SQLite 追踪上下文表 + 反查服务（:memory: 默认，文件路径注入）。
-#   desc: SQLite 追踪上下文表 + 反查服务（:memory: 默认，文件路径注入）。；公共方法（定义序）: record_span, trace_chain, signal_origin, sync_to_lineage…
-#   inputs: db_path clock lineage_sink
-#   outputs: 返回值
-#   （注：A1 之后另有 4 个公共定义未列入（含 4 个数据契约/异常/枚举声明类），见源码）
-# 层: 输出
-# - id: O1
-#   name_zh: 模块公共 API 面（5 定义）
-#   name_en: public defs
-#   intro: TraceContextStore
-#   downstream: 运行时装配批（FactorSignal/SynthesizedSignal 生产侧填充 trace_context 后写入 / EX_CORE 订单层 spa…
-# [/ALGO_FLOW]
-#
-# 边:
-# I1 --> A1
-# I2 --> A1
-# I3 --> A1
-# A1 --> O1
+# [ALGO_FLOW] external: docs/03_modules/_domain_fundamental_signal/algo_flow/trace_context_store.yaml
 """
 
 from __future__ import annotations

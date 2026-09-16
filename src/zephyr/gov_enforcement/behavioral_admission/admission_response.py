@@ -17,32 +17,7 @@
 """
 
 
-# [ALGO_FLOW]
-# 层: 输入
-# - id: I1
-#   name: admission_controller 参数
-#   fields: 参数 admission_controller（无注解）
-#   code: admission_response.py 顶层公共函数形参（AST 提取）
-# 层: 算法
-# - id: A1
-#   name_zh: ① AdmissionResponseBuilder
-#   name_en: AdmissionResponseBuilder
-#   intro: class AdmissionResponseBuilder 源码 L136-L258
-#   desc: 公共方法（定义序）: build_response, build_batch_responses；源码 L136-L258
-#   inputs: admission_controller
-#   outputs: 返回值
-#   （注：A1 之后另有 3 个公共定义未列入（含 3 个数据契约/异常/枚举声明类），见源码）
-# 层: 输出
-# - id: O1
-#   name_zh: 模块公共 API 面（4 定义）
-#   name_en: public defs
-#   intro: AdmissionResponseBuilder
-#   downstream: GovernanceServer;run_all.py
-# [/ALGO_FLOW]
-#
-# 边:
-# I1 --> A1
-# A1 --> O1
+# [ALGO_FLOW] external: docs/03_modules/_domain_gov_enforcement/algo_flow/behavioral_admission/admission_response.yaml
 """
 
 from __future__ import annotations

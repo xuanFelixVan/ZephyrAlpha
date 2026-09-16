@@ -33,42 +33,7 @@ CTR 契约：
 
 SSoT: cross_layer_contracts.yaml -> CTR-P1-003 + CTR-P1-015
 
-# [ALGO_FLOW]
-# 层: 输入
-# - id: I1
-#   name: method 参数
-#   fields: 参数 method（无注解）
-#   code: default_capital_allocator.py 顶层公共函数形参（AST 提取）
-# - id: I2
-#   name: min_signal_threshold 参数
-#   fields: 参数 min_signal_threshold（无注解）
-#   code: default_capital_allocator.py 顶层公共函数形参（AST 提取）
-# - id: I3
-#   name: max_per_strategy 参数
-#   fields: 参数 max_per_strategy（无注解）
-#   code: default_capital_allocator.py 顶层公共函数形参（AST 提取）
-# 层: 算法
-# - id: A1
-#   name_zh: ① DefaultCapitalAllocator
-#   name_en: DefaultCapitalAllocator
-#   intro: 默认资本分配器——四种分配策略
-#   desc: 默认资本分配器——四种分配策略；公共方法（定义序）: allocate；源码 L96-L185
-#   inputs: method min_signal_threshold max_per_strategy
-#   outputs: 返回值
-#   （注：A1 之后另有 1 个公共定义未列入（含 1 个数据契约/异常/枚举声明类），见源码）
-# 层: 输出
-# - id: O1
-#   name_zh: 模块公共 API 面（2 定义）
-#   name_en: public defs
-#   intro: DefaultCapitalAllocator
-#   downstream: 见模块头 [CONSUMERS]
-# [/ALGO_FLOW]
-#
-# 边:
-# I1 --> A1
-# I2 --> A1
-# I3 --> A1
-# A1 --> O1
+# [ALGO_FLOW] external: docs/03_modules/_domain_fundamental_signal/algo_flow/implementations__default_capital_allocator.yaml
 """
 
 from __future__ import annotations

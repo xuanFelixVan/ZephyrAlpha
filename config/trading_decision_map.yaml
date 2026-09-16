@@ -1412,7 +1412,7 @@ nodes:
   materiality: normal
   decay_scan_frequency: semiannual
 - node_id: TDM-E-L3-02
-  note_confirmed: 2026-09-13
+  note_confirmed: 2026-09-16  # grp6p1s2 出仓复核：机器块搬 yaml，算法口径逐字未变
   name_zh: 九阶段选票主链
   market: cn_a
   flow: entry_flow
@@ -1525,6 +1525,7 @@ nodes:
   materiality: normal
   decay_scan_frequency: semiannual
 - node_id: TDM-E-L3-03-3
+  note_confirmed: 2026-09-16  # grp6p1s2 出仓复核：机器块搬 yaml，算法口径逐字未变
   name_zh: 双策略合流体检
   market: cn_a
   flow: entry_flow
@@ -1590,7 +1591,7 @@ nodes:
   materiality: normal
   decay_scan_frequency: semiannual
 - node_id: TDM-E-L3-05
-  note_confirmed: 2026-09-11
+  note_confirmed: 2026-09-16  # grp6p1s2 出仓复核：机器块搬 yaml，算法口径逐字未变
   name_zh: 顺位排序
   market: cn_a
   flow: entry_flow
@@ -2205,6 +2206,7 @@ nodes:
   decay_scan_frequency: semiannual
 
 - node_id: TDM-E-L4-04
+  note_confirmed: 2026-09-16  # grp6p1s2 出仓复核：机器块搬 yaml，算法口径逐字未变
   name_zh: 资金分配多标的
   market: cn_a
   flow: entry_flow

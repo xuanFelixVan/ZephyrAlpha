@@ -14,17 +14,6 @@
 # [TESTS] tests/signal_fundamental/test_selection_confidence.py
 # [TTL] permanent
 #
-# [ALGO_FLOW]
-# 层: 输入
-# - id: I1  打板=情绪周期阶段置信度+融合评分 / 多因子=因子 IC 集 / 事件=LLM 置信度+事件日反应
-# 层: 算法
-# - id: A1  compute_daban_confidence：路径② 阶段置信度×信号强度（memo §3.5 v1.0.1）
-# - id: A2  compute_multifactor_confidence：路径① surrogate variance 代理（收缩：IC 均值×离散度折扣）
-# - id: A3  compute_event_confidence：路径②+④ LLM gate × PEAD Inversion gate（|reaction|>3% → ×0.1）
-# - id: A4  事件过滤阈值表 + validate_event_confidence_thresholds（配置级，G10 校准）
-# 层: 输出
-# - id: O1  sleeve 自评置信度 ∈[0,1]（喂 firm 层 PerformanceScore）+ 事件过滤判定
-# [/ALGO_FLOW]
 """
 SelectionResult.confidence sleeve 差异化算法 + 事件过滤阈值（21 号 memo §3.5/§3.6）。
 
@@ -40,83 +29,7 @@ sleeve 差异化选型（memo §3.5 四候选汇总）：
 
 事件过滤阈值（memo §3.6 v1.0.1）：初拟 0.7，按事件类型差异化，**待 G10 校准**。
 
-# [ALGO_FLOW]
-# 层: 输入
-# - id: I1
-#   name: thresholds 参数
-#   fields: 参数 thresholds，类型注解 dict[str, float] | None
-#   code: selection_confidence.py 顶层公共函数形参（AST 提取）
-# - id: I2
-#   name: event_type 参数
-#   fields: 参数 event_type，类型注解 str
-#   code: selection_confidence.py 顶层公共函数形参（AST 提取）
-# - id: I3
-#   name: llm_confidence 参数
-#   fields: 参数 llm_confidence，类型注解 float
-#   code: selection_confidence.py 顶层公共函数形参（AST 提取）
-# - id: I4
-#   name: event_day_reaction 参数
-#   fields: 参数 event_day_reaction，类型注解 float
-#   code: selection_confidence.py 顶层公共函数形参（AST 提取）
-# 层: 算法
-# - id: A1
-#   name_zh: ① validate_event_confidence_thresholds
-#   name_en: validate_event_confidence_thresholds
-#   intro: 校验事件阈值表合法性。
-#   desc: 校验事件阈值表合法性。返回问题清单（空=通过）。 规则：每值 ∈ (0,1]；键非空字符串；默认阈值常量 ∈ (0,1]。；源码 L148-L166
-#   inputs: thresholds
-#   outputs: list[str]
-# - id: A2
-#   name_zh: ② event_passes_confidence_filter
-#   name_en: event_passes_confidence_filter
-#   intro: 漏斗②过滤：LLM 事件标签 confidence 低于阈值 → 过滤（False=过滤掉）。
-#   desc: 漏斗②过滤：LLM 事件标签 confidence 低于阈值 → 过滤（False=过滤掉）。 未知事件类型回退默认阈值（保守：宁严勿宽由 G10 校准修正）。；源码 L169-L181
-#   inputs: event_type llm_confidence thresholds
-#   outputs: bool
-# - id: A3
-#   name_zh: ③ compute_event_confidence
-#   name_en: compute_event_confidence
-#   intro: 事件 sleeve confidence = LLM gate × PEAD Inversion gate（memo…
-#   desc: 事件 sleeve confidence = LLM gate × PEAD Inversion gate（memo §3.5 v1.1.0）。 |reaction|≤3% →…；源码 L184-L196
-#   inputs: llm_confidence event_day_reaction
-#   outputs: float
-# - id: A4
-#   name_zh: ④ compute_daban_confidence
-#   name_en: compute_daban_confidence
-#   intro: 打板 sleeve confidence（路径② 情绪周期阶段 confidence × 信号强度）。
-#   desc: 打板 sleeve confidence（路径② 情绪周期阶段 confidence × 信号强度）。 phase_confidence：情绪周期定位器阶段置信度（BM-SEL-…；源码 L199-L210
-#   inputs: phase_confidence signal_strength
-#   outputs: float
-# - id: A5
-#   name_zh: ⑤ compute_multifactor_confidence
-#   name_en: compute_multifactor_confidence
-#   intro: 多因子 sleeve confidence（路径① surrogate variance **代理**，收缩实现）。
-#   desc: 多因子 sleeve confidence（路径① surrogate variance **代理**，收缩实现）。 真 surrogate 模型（AlphaSchema 路线）…；源码 L213-L234
-#   inputs: factor_ics min_factors
-#   outputs: float
-# 层: 输出
-# - id: O1
-#   name_zh: list[str]
-#   name_en: list[str]
-#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
-#   downstream: (待 G08/G09/G10 sleeve SelectionResult 接线)
-# - id: O2
-#   name_zh: bool
-#   name_en: bool
-#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
-#   downstream: (待 G08/G09/G10 sleeve SelectionResult 接线)
-# [/ALGO_FLOW]
-#
-# 边:
-# I1 --> A1
-# I2 --> A1
-# I3 --> A1
-# I4 --> A1
-# A1 --> A2
-# A2 --> A3
-# A3 --> A4
-# A4 --> A5
-# A5 --> O1
+# [ALGO_FLOW] external: docs/03_modules/_domain_fundamental_signal/algo_flow/selection_confidence.yaml
 """
 
 from __future__ import annotations

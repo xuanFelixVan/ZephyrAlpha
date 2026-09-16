@@ -1,0 +1,41 @@
+# ALGO_FLOW 外部真源——decision_snapshot（_domain_fundamental_signal 域，真源 src/zephyr/signal_fundamental/audit/decision_snapshot.py）
+# 2026-09-15 P2-1 契约头减负批量出仓：docstring 内联块逐字节副本，extractor 经
+# external 锚加载走同一 parse_algo_flow 管线；算法公共面变化时同步更新本块。
+doc_type: architecture_view
+ttl: permanent
+module: src.zephyr.signal_fundamental.audit.decision_snapshot
+source_of_truth: src/zephyr/signal_fundamental/audit/decision_snapshot.py
+algo_flow: |
+    # [ALGO_FLOW]
+    # 层: 输入
+    # - id: I1
+    #   name: log_path 参数
+    #   fields: 参数 log_path（无注解）
+    #   code: decision_snapshot.py 顶层公共函数形参（AST 提取）
+    # 层: 算法
+    # - id: A1
+    #   name_zh: ① DecisionSnapshot
+    #   name_en: DecisionSnapshot
+    #   intro: 决策快照（C-030 溯源链最小单元，不可变）。
+    #   desc: 决策快照（C-030 溯源链最小单元，不可变）。 Attributes: decision_id: 决策唯一标识（溯源链锚点） timestamp: 决策时间 strategy_…；公共方法（定义序）: degrade…
+    #   inputs: 无参数
+    #   outputs: 返回值
+    # - id: A2
+    #   name_zh: ② DecisionSnapshotRecorder
+    #   name_en: DecisionSnapshotRecorder
+    #   intro: 决策快照记录器——内存索引 + 可选 JSONL 追加持久化（append-only）。
+    #   desc: 决策快照记录器——内存索引 + 可选 JSONL 追加持久化（append-only）。 Args: log_path: JSONL 日志路径；None=纯内存模式（测试/进程内…；公共方法（定义序）: record,…
+    #   inputs: log_path
+    #   outputs: 返回值
+    # 层: 输出
+    # - id: O1
+    #   name_zh: 模块公共 API 面（2 定义）
+    #   name_en: public defs
+    #   intro: DecisionSnapshot, DecisionSnapshotRecorder
+    #   downstream: Owner 周复盘溯源（C-031 置信度分层触发人工复核时呈现证据）；决策链路埋点接线待排期
+    # [/ALGO_FLOW]
+    #
+    # 边:
+    # I1 --> A1
+    # A1 --> A2
+    # A2 --> O1
