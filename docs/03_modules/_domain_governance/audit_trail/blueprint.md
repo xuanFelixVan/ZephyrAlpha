@@ -4,7 +4,7 @@ submodule_path: src/zephyr/gov_audit
 title: "Audit Trail 蓝图 — 不可变动作审计与密码学完整性保证"
 doc_type: blueprint
 status: Active
-version: "2.1.13"
+version: "2.1.15"
 generation: 9
 layer: L0_infrastructure
 layer_name: infrastructure
@@ -63,7 +63,7 @@ design_maturity: production
 build_status: generated
 ---
 
-> module_id: MOD-INF-020 | version: 2.1.13 | status: active | domain: infra_ops
+> module_id: MOD-INF-020 | version: 2.1.15 | status: active | domain: infra_ops
 > actual_disk_path: src/zephyr/audit-trail/ (352 .py files) | generation: 9 | construction_progress: partially_implemented
 
 # Audit Trail 蓝图 — 不可变动作审计与密码学完整性保证
@@ -195,8 +195,8 @@ build_status: generated
 
 | 图 | 位置 | 状态 | 链接 |
 |----|------|------|------|
-| 依赖图 (depgraph) | `blueprint_id=MOD-INF-020` 的 128 个 file 节点 | production | `extract_depgraph.py --modules MOD-INF-020` |
-| 数据流图 (dataflow) | 0 个 Dataset / 1 个 Job | active | `apply_dataflowgraph.py --list-datasets` |
+| 依赖图 (depgraph) | `blueprint_id=MOD-INF-020` 的 132 个 file 节点 | production | `extract_depgraph.py --modules MOD-INF-020` |
+| 数据流图 (dataflow) | （无节点） | N/A | `apply_dataflowgraph.py --list-datasets` |
 | 决策架构图 (decision) | 0 个决策节点 / 1 个决策层 | N/A | `generate_decision_diagram.py` |
 | 蓝图 (blueprint) | 本文件 | Active | — |
 
@@ -207,7 +207,7 @@ build_status: generated
 | module_id | MOD-INF-020 | MOD-INF-020 | ✅ |
 | domain_id | N/A | N/A | ✅ |
 | build_status | generated | generated | ✅ |
-| file_count | 128 文件 | 52 文件（§0.1） | ❌ |
+| file_count | 132 文件 | 52 文件（§0.1） | ❌ |
 
 > 冲突时以 depgraph 为准（ARCH-056 + ARCH-MM-001 声明 vs 验证框架）。
 
@@ -1717,6 +1717,7 @@ class LamportClockV2:
 | `src/zephyr/gov_audit/finding_model.py` | ✅ 已实现 | |
 | `src/zephyr/gov_audit/kb_gate.py` | ✅ 已实现 | |
 | `src/zephyr/gov_audit/resource_aware_pool.py` | ✅ 已实现 | |
+| `src/zephyr/gov_audit/secret_registry_drift.py` | ✅ 已实现 | |
 | `src/zephyr/gov_audit/text_to_finding_adapter.py` | ✅ 已实现 | |
 | `src/zephyr/gov_audit/tiered_storage_bridge.py` | ✅ 已实现 | |
 | `src/zephyr/gov_audit/trust_bridge.py` | ✅ 已实现 | |
@@ -1771,12 +1772,14 @@ class LamportClockV2:
 | `tests/governance/audit/test_integrity_root.py` | ✅ 已实现 | |
 | `tests/governance/audit/test_key_era_verification.py` | ✅ 已实现 | |
 | `tests/governance/audit/test_log_rotation.py` | ✅ 已实现 | |
+| `tests/governance/audit/test_log_rotation_append_lock.py` | ✅ 已实现 | |
 | `tests/governance/audit/test_merkle_hourly.py` | ✅ 已实现 | |
 | `tests/governance/audit/test_privacy.py` | ✅ 已实现 | |
 | `tests/governance/audit/test_query.py` | ✅ 已实现 | |
 | `tests/governance/audit/test_replay_engine.py` | ✅ 已实现 | |
 | `tests/governance/audit/test_retention.py` | ✅ 已实现 | |
 | `tests/governance/audit/test_sbom_generator.py` | ✅ 已实现 | |
+| `tests/governance/audit/test_secret_registry_drift.py` | ✅ 已实现 | |
 | `tests/governance/audit/test_spec_auditor.py` | ✅ 已实现 | |
 | `tests/governance/audit/test_supply_chain.py` | ✅ 已实现 | |
 | `tests/governance/audit/test_tiered_storage.py` | ✅ 已实现 | |
@@ -1786,6 +1789,7 @@ class LamportClockV2:
 | `tests/governance/audit/test_wqa_scorer.py` | ✅ 已实现 | |
 | `tests/governance/audit/test_writer.py` | ✅ 已实现 | |
 | `tests/governance/audit/test_writer_multiproc_append.py` | ✅ 已实现 | |
+| `tests/governance/audit/test_writer_restart_overlap.py` | ✅ 已实现 | |
 | `tests/self_check/test_self_monitor.py` | ✅ 已实现 | |
 
 ### 1.5 路径索引使用指南

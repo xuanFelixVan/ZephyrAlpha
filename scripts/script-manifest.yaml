@@ -3,8 +3,8 @@
 #
 manifest_version: 2.0.0
 generated_by: generate_manifest.py (auto-scan)
-generated_at: '2026-09-16'
-total_scripts: 990
+generated_at: '2026-09-17'
+total_scripts: 991
 scripts:
 - name: __init__.py
   path: __init__.py
@@ -689,6 +689,14 @@ scripts:
 - name: backtest/eval_f2_rework_variants.py
   path: backtest/eval_f2_rework_variants.py
   description: 基线（⑥ 窄回测）：月频 Top50 多头 IS 超额 Sharpe=+0.421（差 0.5 准入线），
+  domain: test
+  execution_plane: warm-path
+  status: registered
+  timeout_seconds: 60
+  dimensions: []
+- name: backtest/f06_e4_wfa_exam.py
+  path: backtest/f06_e4_wfa_exam.py
+  description: 对 F-06 网格幸存者配方（默认 38b453ca3683）做滚动 Walk-Forward Analysis 正考：
   domain: test
   execution_plane: warm-path
   status: registered
