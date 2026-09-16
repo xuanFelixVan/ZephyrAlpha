@@ -12,7 +12,9 @@
 #   成功才出队，失败留档计 attempts 毒丸告警）；重活子进程隔离（生成器/回测/regime 印制均
 #   subprocess+超时，禁长活阻塞挂图进程主流程）；证据包必含 plan 身份/面板对账/核心指标/
 #   bt-fw 产物路径/时间戳（验收五要素）；幂等=plan 指纹（权重+TDM sha）不变且最近一次 ok
-#   →跳过重跑（force=True 可越过）；语义失败（对账超容差/空净值）不重试——落证据包+ERROR
+#   →跳过重跑（force=True 可越过）；语义失败（对账超容差/空净值/组合完整性不过：未兑现 α
+#   占方案 >framework_composer.DEAD_MEMBER_ALPHA_SHARE_LIMIT 或无 dead_weight_disclosed
+#   披露）不重试——落证据包+ERROR
 #   告警+消费出队（同输入重跑结果必然相同，重试无意义）；瞬时故障（生成器 rc≠0/CH 不可达/
 #   异常）上抛留 journal 等重放
 # [MODIFY-GUARD] tests/strategy_pipeline/test_fw_backtest.py
@@ -31,7 +33,8 @@
   ③ 组装参数: symbols=沪深300 成份快照 ∪ STR 成员面板列并集（预取缓存零二次 build）；
      窗口=滚动 12 个月（payload 可覆盖）；regime 日序=regime_snapshot_history.dominant
      窗口内日序（可用则附——fw-tdm-current 无 regime_overrides 时纯披露口径，权重不变）；
-  ④ run_framework_backtest → 验收（panel_reconciliation.within_tolerance ∧ equity_points>0）
+  ④ run_framework_backtest → 验收（panel_reconciliation.within_tolerance ∧ equity_points>0
+     ∧ 风险闸 evaluate_strategy_risk_admission ∧ 组合完整性闸 _evaluate_composition_integrity）
      → 证据包 JSON 落 data/backtest_artifacts/fw-auto/（fw-auto-<ts>-<fp8>.json + latest.json）。
 
 事件语义（本班裁定留痕——pipeline_events.py 并行编辑禁令未动其文件）:
@@ -255,6 +258,57 @@ def _evaluate_risk_decision(result: dict) -> dict[str, Any]:
     }
 
 
+def _evaluate_composition_integrity(result: dict) -> dict[str, Any]:
+    """组合完整性闸（T1A-2 消费端）——死成员摊派超阈即否决验收，禁"知情放行"。
+
+    为什么必须在这一层消费：compose 侧把"方案承诺的 α 有多少没能兑现"如实落进
+    ``metrics.dead_weight_disclosed`` 并写进 warn，但 warn 只进日志——若验收仍判 ok，
+    披露就退化成产而不消。回测结论的前提是"跑的组合=方案说的组合"，前提破了，
+    指标再漂亮也不可采信（量化实务同口径：construction integrity check 先于
+    performance check）。
+
+    口径:
+      - 判据用 ``skipped_alpha_share_of_plan``（**全部**未兑现 α：面板缺失/整表为零/
+        显式零权重/构建路空跑），因为"组合已非方案原意"的幅度与死法无关；死法分域
+        （kind）只用于处置路由，留在 ``run.dead_weight_disclosed`` 里看。
+      - 行级归一 material（成员部分日无信号）只披露不否决——整装面板逐日常态，
+        拿它当否决条件会制造告警噪声，掩盖真正的结构性缺口。
+      - 无披露=无证据，fail-closed 判不过（与风险闸"缺失即拒"同族）。
+    """
+    from zephyr.pf_core.strategy_engine.framework_composer import (
+        DEAD_MEMBER_ALPHA_SHARE_LIMIT,
+    )
+
+    disclosure = result.get("dead_weight_disclosed") or {}
+    row_norm = disclosure.get("row_normalization") or {}
+    if not disclosure:
+        return {
+            "accepted": False,
+            "skipped_alpha_share": None,
+            "limit": DEAD_MEMBER_ALPHA_SHARE_LIMIT,
+            "row_norm_material": None,
+            "reasons": ["无 dead_weight_disclosed 披露（组合未按方案合成或产物过旧）"],
+        }
+    share = float(disclosure.get("skipped_alpha_share_of_plan") or 0.0)
+    reasons: list[str] = []
+    if share > DEAD_MEMBER_ALPHA_SHARE_LIMIT:
+        reasons.append(
+            f"未兑现 α 占方案 {share * 100:.1f}%（>限 {DEAD_MEMBER_ALPHA_SHARE_LIMIT * 100:.0f}%）"
+            "——跑的组合已非方案原意，回测结论不可用"
+        )
+    return {
+        "accepted": not reasons,
+        "skipped_alpha_share": share,
+        "limit": DEAD_MEMBER_ALPHA_SHARE_LIMIT,
+        "row_norm_material": bool(row_norm.get("material")),
+        "dead_member_alpha_share_of_plan": float(
+            (disclosure.get("dead_member_alpha_base") or 0.0)
+            / float(disclosure.get("plan_weight_total") or 1.0)
+        ),
+        "reasons": reasons,
+    }
+
+
 # ---------- 核心契约 ----------
 
 def run_fw_backtest_due(event: dict) -> dict[str, Any]:
@@ -321,21 +375,29 @@ def run_fw_backtest_due(event: dict) -> dict[str, Any]:
     # 车道 L（P0）：风险信号产即必消——acceptance 真读 overfitting_flag/DSR/n_trials，
     # 经与实盘共用判据 evaluate_strategy_risk_admission，不过关即判失败（禁静默放行）。
     risk = _evaluate_risk_decision(result)
+    composition = _evaluate_composition_integrity(result)
     base_ok = (
         bool(result.get("ok")) and bool(recon.get("within_tolerance"))
         and int(result.get("equity_points") or 0) > 0
     )
     acceptance = {
-        "ok": bool(base_ok and risk["accepted"]),
+        "ok": bool(base_ok and risk["accepted"] and composition["accepted"]),
         "run_ok": bool(result.get("ok")),
         "within_tolerance": bool(recon.get("within_tolerance")),
         "equity_points": int(result.get("equity_points") or 0),
         "risk_admitted": bool(risk["accepted"]),
+        "composition_admitted": bool(composition["accepted"]),
+        "skipped_alpha_share": composition["skipped_alpha_share"],
+        "composition_over_limit": bool(
+            composition["skipped_alpha_share"] is not None
+            and composition["skipped_alpha_share"] > composition["limit"]
+        ),
         "overfitting_flag": risk["overfitting_flag"],
         "dsr": risk["dsr"],
         "n_trials": risk["n_trials"],
         "n_trials_source": risk["n_trials_source"],
         "risk_reasons": risk["reasons"],
+        "composition_reasons": composition["reasons"],
     }
     metrics = result.get("metrics") or {}
     core_metrics = {
@@ -369,6 +431,8 @@ def run_fw_backtest_due(event: dict) -> dict[str, Any]:
             "trades": result.get("trades"),
             "core_metrics": core_metrics,
             "risk_decision": risk,
+            "dead_weight_disclosed": result.get("dead_weight_disclosed") or {},
+            "composition_decision": composition,
         },
         "generator": gen,
         "duration_s": round(time.time() - t0, 1),
@@ -384,11 +448,14 @@ def run_fw_backtest_due(event: dict) -> dict[str, Any]:
                 f"dsr={risk['dsr']} n_trials={risk['n_trials']} "
                 f"({risk['n_trials_source']}) reasons={risk['reasons']}"
             )
+        comp_note = ""
+        if base_ok and risk["accepted"] and not composition["accepted"]:
+            comp_note = f" 组合完整性闸否决: reasons={composition['reasons']}"
         _alert(
             f"fw-tdm-current 整装回测验收未过: ok={acceptance['run_ok']} "
             f"within_tolerance={acceptance['within_tolerance']} "
             f"equity_points={acceptance['equity_points']} warn={result.get('warn')!r}"
-            f"{risk_note} evidence={evidence_path}",
+            f"{risk_note}{comp_note} evidence={evidence_path}",
             level="ERROR",
         )
     return summary

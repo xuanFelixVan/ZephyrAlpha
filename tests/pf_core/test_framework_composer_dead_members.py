@@ -41,6 +41,7 @@ import yaml
 from zephyr.pf_core.strategy_engine.framework_composer import (
     ACTIVATION_POLICY_LENIENT,
     ACTIVATION_POLICY_STRICT,
+    DEAD_MEMBER_ALPHA_SHARE_LIMIT,
     MEMBER_PAYLOAD_ROUTES,
     REASON_ACTIVATION_OFF,
     REASON_ALL_ZERO_ROWS,
@@ -52,11 +53,13 @@ from zephyr.pf_core.strategy_engine.framework_composer import (
     ROUTE_NESTED_FACTOR,
     ROUTE_NO_DAILY_SOURCE,
     ROUTE_TRANSLATED,
+    ComposeReport,
     FrameworkBacktestConfig,
     FrameworkPlan,
     FrameworkPlanError,
     FrameworkValidationError,
     PlanWeight,
+    _assemble_run_warn,
     _build_member_panels,
     _member_route_id,
     _member_signal_contracts,
@@ -706,3 +709,67 @@ def test_explicit_zero_weight_member_skipped_without_data_access(monkeypatch):
     )
     assert panels == {}
     assert skipped == [("daban-sleeve", REASON_ZERO_WEIGHT)]
+
+
+# ---------------------------------------------------------------------------
+# T1A-2 绊线：warn 必须把"组合已非方案原意"组装出来（消费端验收闸的输入）
+# ---------------------------------------------------------------------------
+
+_TS_OK = {"equity_curve": [{"date": "2026-08-03", "equity": 1.0}]}
+
+
+def _report(disclosure: dict[str, Any], *, skipped: list[tuple[str, str]] | None = None):
+    return ComposeReport(panel=_panel({"600519": [1.0]}), skipped=skipped or [],
+                         dead_weight_disclosed=disclosure)
+
+
+def _disclosure(dead_base: float, *, plan_total: float = 1.0, skipped_share: float | None = None,
+                row_material: bool = False) -> dict[str, Any]:
+    return {
+        "schema": 1,
+        "plan_id": "fw-dead",
+        "plan_weight_total": plan_total,
+        "skipped_alpha_base": skipped_share if skipped_share is not None else dead_base,
+        "skipped_alpha_share_of_plan": (
+            skipped_share if skipped_share is not None else dead_base
+        ) / plan_total,
+        "dead_member_alpha_base": dead_base,
+        "row_normalization": {"material": row_material, "max_deviation": 0.31 if row_material else 0.0},
+    }
+
+
+def test_warn_trips_on_dead_member_alpha_over_limit():
+    """矿脉案例（44.1%）必须进 warn 文本，且阈值以常量口径出声（禁只落产物不出声）。"""
+    report = _report(_disclosure(DEAD_MEMBER_ALPHA_SHARE_LIMIT + 0.191))
+    warn = _assemble_run_warn(_TS_OK, report, None)
+    assert warn is not None
+    assert "dead-member alpha 44.1% of plan" in warn
+    assert f">限 {DEAD_MEMBER_ALPHA_SHARE_LIMIT * 100:.0f}%" in warn
+    assert "组合已非方案原意" in warn
+
+
+def test_warn_stays_clean_when_plan_is_honoured():
+    plan = _plan([PlanWeight("a", 0.5), PlanWeight("c", 0.5)])
+    report = compose_weight_panels(
+        plan, {"a": _all_600519(), "c": _all_000858()}
+    )
+    assert _assemble_run_warn(_TS_OK, report, None) is None
+
+
+def test_warn_trips_on_material_row_normalization():
+    """部分日死的静默通道：行归一显著偏差单独出声（不是只落产物数字）。"""
+    report = _report(_disclosure(0.0, row_material=True))
+    warn = _assemble_run_warn(_TS_OK, report, None)
+    assert warn is not None and "row normalization MATERIAL" in warn
+
+
+def test_warn_dead_clause_scoped_to_all_zero_deaths_not_panel_missing():
+    """死法分域：面板缺失只进 skipped 清单，不吃 dead-member 绊线（处置动作不同）。"""
+    report = _report(
+        _disclosure(0.0, skipped_share=DEAD_MEMBER_ALPHA_SHARE_LIMIT + 0.2),
+        skipped=[("x", REASON_PANEL_MISSING)],
+    )
+    warn = _assemble_run_warn(_TS_OK, report, None)
+    assert warn is not None
+    assert "dead-member alpha" not in warn
+    assert warn.startswith("skipped: x(panel missing/empty)")

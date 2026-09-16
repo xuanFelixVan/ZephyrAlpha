@@ -179,6 +179,10 @@ REASON_TICK_ONLY: Final = "tick-only（向量化整装回测跳过，权重显�
 REASON_MEMBER_PANEL_DATA_EMPTY: Final = "panel/data empty"
 #: 行级归一"大额"阈值——超过即在 notes 里点名（缺口摊派幅度显著，不可只当数值噪声）
 _ROW_NORM_MATERIALITY: Final = 0.05
+#: 死成员 α 占方案总额上限——超过即"组合已非方案原意"（44.1% 摊派案例）。
+#: 唯一阈值真源：本模块 warn 绊线 + 消费端 `zephyr.strategy_pipeline.fw_backtest`
+#: 组合完整性闸均引用本常量，禁消费端另写字面量。
+DEAD_MEMBER_ALPHA_SHARE_LIMIT: Final = 0.25
 
 
 def _activation_states() -> tuple[str, ...]:
@@ -2236,7 +2240,8 @@ def _assemble_run_warn(
 ) -> str | None:
     """run_framework_backtest 的 warn 组装（空净值/跳过成员/摊派绊线/面板对账超容差）。
 
-    摊派绊线（T1A-2）: 死成员 α 占方案份额 >25% 或行级归一显著偏差（>5%）→ warn——
+    摊派绊线（T1A-2）: 死成员 α 占方案份额 >``DEAD_MEMBER_ALPHA_SHARE_LIMIT`` 或行级归一
+    显著偏差（>``_ROW_NORM_MATERIALITY``）→ warn——
     整装回测的"组合"若大半来自摊派，回测结论不可用，必须在 done 响应里可见。
     """
     parts: list[str] = []
@@ -2249,9 +2254,10 @@ def _assemble_run_warn(
     dead_only = float(disclosure.get("dead_member_alpha_base") or 0.0) / float(
         disclosure.get("plan_weight_total") or 1.0
     )
-    if dead_only > 0.25:
+    if dead_only > DEAD_MEMBER_ALPHA_SHARE_LIMIT:
         parts.append(
-            f"dead-member alpha {dead_only * 100:.1f}% of plan (含跳过员 {dead_share * 100:.1f}%)"
+            f"dead-member alpha {dead_only * 100:.1f}% of plan"
+            f"(>限 {DEAD_MEMBER_ALPHA_SHARE_LIMIT * 100:.0f}%，含跳过员 {dead_share * 100:.1f}%)"
             "——组合已非方案原意，见 metrics.dead_weight_disclosed"
         )
     row_norm = disclosure.get("row_normalization") or {}

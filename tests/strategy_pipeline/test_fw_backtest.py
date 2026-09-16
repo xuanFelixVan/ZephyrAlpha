@@ -43,8 +43,26 @@ _FP = {"plan_id": "fw-tdm-current", "weights": {"a": 1.0}, "tdm_sha256_12": "dea
 
 def _fake_run_result(ok: bool = True, within: bool = True, equity: int = 60,
                      overfitting: bool = False, dsr: float | None = 0.97,
-                     n_trials: int | None = 4497) -> dict:
-    return {
+                     n_trials: int | None = 4497,
+                     dead_share: float | None = 0.0) -> dict:
+    disclosure: dict | None = None
+    if dead_share is not None:
+        disclosure = {
+            "schema": 1,
+            "plan_id": "fw-tdm-current",
+            "plan_weight_total": 1.0,
+            "participants": [{"strategy_id": "a", "alpha": 1.0 - dead_share}],
+            "skipped_members": [{"strategy_id": "b", "alpha": dead_share,
+                                 "kind": "dead-member", "reason": "all-zero weight rows"}],
+            "participants_alpha_base": 1.0 - dead_share,
+            "skipped_alpha_base": dead_share,
+            "skipped_alpha_share_of_plan": dead_share,
+            "dead_member_alpha_base": dead_share,
+            "rescale_factor": 1.0 / (1.0 - dead_share) if dead_share < 1.0 else 1.0,
+            "row_normalization": {"rows_total": 60, "rows_normalized": 0,
+                                  "max_deviation": 0.0, "material": False},
+        }
+    result = {
         "ok": ok,
         "run_id": "bt-fw-test1234",
         "plan_id": "fw-tdm-current",
@@ -63,6 +81,9 @@ def _fake_run_result(ok: bool = True, within: bool = True, equity: int = 60,
                     "n_trials": n_trials, "n_trials_source": "trial_ledger" if n_trials else None},
         "warn": None if (ok and within and equity) else "degraded",
     }
+    if disclosure is not None:
+        result["dead_weight_disclosed"] = disclosure
+    return result
 
 
 @pytest.fixture()
@@ -198,6 +219,51 @@ class TestRunFwBacktestDue:
         rd = out["acceptance"]
         assert rd["dsr"] is not None  # 复算成功
         assert rd["n_trials"] is not None and rd["n_trials"] >= 1  # 真值来源，非 None
+
+    def test_dead_member_alpha_over_limit_vetoes_acceptance(self, isolated, monkeypatch):
+        """P0 组合完整性（T1A-2 消费端）：44.1% 未兑现 α 必须判 ok=false——warn 只进日志=知情放行。"""
+        _patch_happy_path(monkeypatch, run_result=_fake_run_result(dead_share=0.441))
+        out = fw.run_fw_backtest_due({"payload": {"trigger": "auto_mount"}})
+        assert out["ok"] is False
+        acc = out["acceptance"]
+        assert acc["run_ok"] is True and acc["risk_admitted"] is True  # 唯组合闸否决
+        assert acc["composition_admitted"] is False
+        assert acc["composition_over_limit"] is True
+        assert acc["skipped_alpha_share"] == pytest.approx(0.441)
+        assert any(lv == "ERROR" and "组合完整性闸否决" in m for lv, m in isolated["alerts"])
+        body = json.loads(Path(out["evidence_path"]).read_text(encoding="utf-8"))
+        assert body["run"]["dead_weight_disclosed"]["skipped_alpha_share_of_plan"] == 0.441
+        assert body["run"]["composition_decision"]["accepted"] is False
+
+    def test_dead_member_alpha_under_limit_accepts(self, isolated, monkeypatch):
+        """限额内的摊派仍放行，但份额必须落证据（可审计，不是布尔黑洞）。"""
+        _patch_happy_path(monkeypatch, run_result=_fake_run_result(dead_share=0.2))
+        out = fw.run_fw_backtest_due({"payload": {"trigger": "auto_mount"}})
+        assert out["ok"] is True
+        assert out["acceptance"]["composition_admitted"] is True
+        assert out["acceptance"]["composition_over_limit"] is False
+        assert out["acceptance"]["skipped_alpha_share"] == pytest.approx(0.2)
+
+    def test_missing_composition_disclosure_fails_closed(self, isolated, monkeypatch):
+        """无 dead_weight_disclosed=无证据，与风险闸"缺失即拒"同族，禁默认放行。"""
+        _patch_happy_path(monkeypatch, run_result=_fake_run_result(dead_share=None))
+        out = fw.run_fw_backtest_due({"payload": {"trigger": "auto_mount"}})
+        assert out["ok"] is False
+        assert out["acceptance"]["composition_admitted"] is False
+        assert any("dead_weight_disclosed" in r for r in out["acceptance"]["composition_reasons"])
+
+    def test_composition_threshold_shares_single_truth_source(self, isolated, monkeypatch):
+        """阈值边界一律取 composer 常量（禁消费端另写字面量）——恰好等于限额仍放行。"""
+        from zephyr.pf_core.strategy_engine.framework_composer import (
+            DEAD_MEMBER_ALPHA_SHARE_LIMIT as LIMIT,
+        )
+
+        _patch_happy_path(monkeypatch, run_result=_fake_run_result(dead_share=LIMIT))
+        assert fw.run_fw_backtest_due({"payload": {}})["ok"] is True
+        _patch_happy_path(monkeypatch, run_result=_fake_run_result(dead_share=LIMIT + 1e-6))
+        vetoed = fw.run_fw_backtest_due({"payload": {}})
+        assert vetoed["ok"] is False
+        assert vetoed["acceptance"]["composition_admitted"] is False
 
     def test_generator_failure_raises(self, isolated, monkeypatch):
         monkeypatch.setattr(fw, "_run_generator",
