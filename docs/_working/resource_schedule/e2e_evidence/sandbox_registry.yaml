@@ -1,0 +1,168 @@
+schema_version: 1.0.0
+doc_type: register
+ttl: task_bound
+title: 资源画像注册表（resource profile registry）
+status: active
+generated_at: '2026-09-16T01:14:27Z'
+generated_by: scripts/governance/generators/generate_resource_profile_registry.py
+maintenance: auto
+counting_rule: entities 数组条目数（生成器三源全量再生；条目禁手工增删）
+total_entities: 57
+field_count: 18
+mem_ceiling_gb: 10.0
+mem_ceiling_source: src/zephyr/trading/process_reaper.py _DANGEROUS_MEM_GB（引用不收编）
+groups:
+  ch_bulk_write: CH 大 DELETE+INSERT 互斥（亿行级写库族）
+  tick_drain: tick 排水 vs 回补互斥（local_replay 排水/大回补族）
+  mine_vs_exam: 周六挖掘→考尺串行（成功先例：10:00→14:00）
+  repair_passport: 亿行级修复=护照登记+窗口+白名单三件套
+  gpu_default: GPU 显存互斥（Kronos/Ollama/SFT/转换）
+  llm_local: 本地 LLM 推理批互斥（qwen3:8b 单实例）
+cron_convention: 标准 cron（0=周日，croniter 口径）；schedule.yaml 的 APScheduler dow（0=周一）由生成器归一——生成器=映射层
+e0_mapping_note: resource_class←E0 compute_class 映射层在本生成器（local→light，local_gpu/mixed→heavy，api→llm_api_*）；E0 真源 scripts/backtest/compute_window_gate.py
+  不动
+plan_ref: docs/_working/resource_schedule/resource_schedule_panorama_plan_v1.md
+entities:
+- task_id: data_slot_auction_highfreq
+  module_id: null
+  map_node_id: null
+  resource_class: light
+  pool: realtime
+  peak_mem_gb: 1.0
+  est_duration_min: 10
+  exclusive_group: []
+  window_type: cron
+  window_expr: 15-25 9 * * 1-5
+  schedule_truth_source: src/zephyr/data/config/schedule.yaml
+  trading_sensitive: false
+  measured:
+    peak_mem_gb: null
+    p90_duration_min: null
+    samples: 0
+    last_at: null
+  samples_uri: .runtime/logs/resource_samples/data_slot_auction_highfreq.jsonl
+  status: active
+  notes_zh: 集合竞价高频层——9:15-9:25每10秒抓取五档盘口快照，用于主力行为分析
+- task_id: data_slot_catchup_guard
+  module_id: null
+  map_node_id: null
+  resource_class: light
+  pool: default
+  peak_mem_gb: 1.0
+  est_duration_min: 30
+  exclusive_group: []
+  window_type: cron
+  window_expr: 30 5 * * *
+  schedule_truth_source: src/zephyr/data/config/schedule.yaml
+  trading_sensitive: false
+  measured:
+    peak_mem_gb: null
+    p90_duration_min: null
+    samples: 0
+    last_at: null
+  samples_uri: .runtime/logs/resource_samples/data_slot_catchup_guard.jsonl
+  status: active
+  notes_zh: 调度对账补跑层——检测错过档期的任务并自动补跑（月度/周度/日频 overdue + 空表兜底）
+- task_id: data_slot_consensus_crosscheck
+  module_id: null
+  map_node_id: null
+  resource_class: db_heavy
+  pool: default
+  peak_mem_gb: 2.5
+  est_duration_min: 60
+  exclusive_group: []
+  window_type: cron
+  window_expr: 30 23 * * 1-5
+  schedule_truth_source: src/zephyr/data/config/schedule.yaml
+  trading_sensitive: true
+  measured:
+    peak_mem_gb: null
+    p90_duration_min: null
+    samples: 0
+    last_at: null
+  samples_uri: .runtime/logs/resource_samples/data_slot_consensus_crosscheck.jsonl
+  status: active
+  notes_zh: 一致预期管线双向验证——自建聚合 vs 同花顺快照每日对答案（独立真源互查，非数据下载层）
+- task_id: data_slot_daily_backfill
+  module_id: null
+  map_node_id: null
+  resource_class: network_download
+  pool: heavy
+  peak_mem_gb: 2.5
+  est_duration_min: 120
+  exclusive_group:
+  - tick_drain
+  window_type: cron
+  window_expr: 00 17 * * 1-5
+  schedule_truth_source: src/zephyr/data/config/schedule.yaml
+  trading_sensitive: false
+  measured:
+    peak_mem_gb: null
+    p90_duration_min: null
+    samples: 0
+    last_at: null
+  samples_uri: .runtime/logs/resource_samples/data_slot_daily_backfill.jsonl
+  status: active
+  notes_zh: 每日盘后补下载层——检测当日数据缺口并自动补下载（治本#ARCH-DATA-TICK-GAP-001）
+- task_id: data_slot_daily_capital
+  module_id: null
+  map_node_id: null
+  resource_class: network_download
+  pool: default
+  peak_mem_gb: 2.0
+  est_duration_min: 45
+  exclusive_group: []
+  window_type: cron
+  window_expr: 00 18 * * 1-5
+  schedule_truth_source: src/zephyr/data/config/schedule.yaml
+  trading_sensitive: false
+  measured:
+    peak_mem_gb: null
+    p90_duration_min: null
+    samples: 0
+    last_at: null
+  samples_uri: .runtime/logs/resource_samples/data_slot_daily_capital.jsonl
+  status: active
+  notes_zh: 盘后资金面层——资金流向/龙虎榜/大宗/期货/股本变动/限售解禁/美股
+- task_id: e2e_probe_heavy
+  module_id: null
+  map_node_id: null
+  resource_class: cpu_heavy
+  pool: heavy
+  peak_mem_gb: 6.0
+  est_duration_min: 10
+  exclusive_group:
+  - e2e_excl
+  window_type: dynamic
+  window_expr: '* * * * *'
+  schedule_truth_source: docs/_working/resource_schedule/resource_schedule_panorama_plan_v1.md
+  trading_sensitive: true
+  measured:
+    peak_mem_gb: 0.0116
+    p90_duration_min: 0
+    samples: 1
+    last_at: '2026-09-16T01:56:22+00:00'
+  samples_uri: .runtime/logs/resource_samples/e2e_probe_heavy.jsonl
+  status: planned
+  notes_zh: E2E 探针（模拟重活，仅沙箱注册表）
+- task_id: e2e_rival_backfill
+  module_id: null
+  map_node_id: null
+  resource_class: db_heavy
+  pool: heavy
+  peak_mem_gb: 6.0
+  est_duration_min: 240
+  exclusive_group:
+  - e2e_excl
+  window_type: cron
+  window_expr: '* * * * *'
+  schedule_truth_source: docs/_working/resource_schedule/resource_schedule_panorama_plan_v1.md
+  trading_sensitive: false
+  measured:
+    peak_mem_gb: null
+    p90_duration_min: null
+    samples: 0
+    last_at: null
+  samples_uri: .runtime/logs/resource_samples/e2e_rival_backfill.jsonl
+  status: active
+  notes_zh: E2E 对手实体（构造互斥组重叠）

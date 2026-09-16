@@ -1,0 +1,2 @@
+sample_time_seconds,task_id,pid,process_resident_bytes,process_cpu_ratio,process_elapsed_seconds,exit_code,e0_gate_result
+1789523782.3069522,e2e_probe_heavy,34504,10788864,0.0,0.0,None,None

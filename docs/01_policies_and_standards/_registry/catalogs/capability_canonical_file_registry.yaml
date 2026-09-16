@@ -17294,8 +17294,20 @@ creation_tokens:
   token: metamorphic-mutation-pilot-report-metamorphic-mutation-pilot-report-20260916
   created_by: st-sopx-20260916
   capability: metamorphic_mutation_pilot_report
-di_seam_exemptions: []
 - file: docs/_working/resource_schedule/resource_schedule_delivery_report_v1.md
   token: resource-schedule-delivery-report-v1-st-resource-20260916
   created_by: st-resource-20260916
   capability: resource_schedule_delivery_report
+- file: docs/_working/resource_schedule/e2e_evidence/e2e_report.yaml
+  token: resource-schedule-e2e-report-st-resource-20260916
+  created_by: st-resource-20260916
+  capability: resource_schedule_delivery_report
+- file: docs/_working/resource_schedule/e2e_evidence/notifications.yaml
+  token: resource-schedule-e2e-notifications-st-resource-20260916
+  created_by: st-resource-20260916
+  capability: resource_schedule_delivery_report
+- file: docs/_working/resource_schedule/e2e_evidence/sandbox_registry.yaml
+  token: resource-schedule-e2e-sandbox-registry-st-resource-20260916
+  created_by: st-resource-20260916
+  capability: resource_schedule_delivery_report
+di_seam_exemptions: []

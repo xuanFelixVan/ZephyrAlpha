@@ -1,0 +1,56 @@
+generated_at: '2026-09-16T01:56:28.400121+00:00'
+chain: 启动→采样→回写→闸→图→告警
+view_data_js: src/zephyr/frontend/dashboard/web/features/resourceweek/rw-data.js
+steps:
+  01_spawn:
+    ok: true
+    pid: 34504
+    cmdline_marker: zephyr-resource-probe:e2e_probe_heavy
+  02_sampler_capture:
+    ok: true
+    samples_written:
+      e2e_probe_heavy: 1
+    scanned_processes: 135
+  03_writeback:
+    ok: true
+    measured:
+      peak_mem_gb: 0.0116
+      p90_duration_min: 0
+      samples: 1
+      last_at: '2026-09-16T01:56:22+00:00'
+  04_gate_conflict:
+    ok: true
+    block_count: 3
+    reasons:
+    - sched_e0_block
+    - sched_mem_ceiling
+    - sched_overlap_group
+    detail:
+    - '[sched_overlap_group/block] e2e_probe_heavy+e2e_rival_backfill: 互斥组 e2e_excl
+      时间窗交叠（at=2026-09-16T09:57:00+08:00）'
+    - '[sched_mem_ceiling/block] e2e_probe_heavy+e2e_rival_backfill: 同窗并发内存和 12.0GB
+      > mem_ceiling_gb=10.0（at=2026-09-16T09:57:00+08:00）'
+    - '[sched_e0_block/block] e2e_probe_heavy: 交易敏感实体窗档开工未过 E0（reason=gate_deny_trading_hours）——改排休市日/盘后（at=2026-09-16T09:57:00+08:00）'
+  05_view_render:
+    ok: true
+    total_entities: 7
+    scheduled: 7
+    block_conflicts: 3
+    js_bytes: 8300
+  06_alert_delivery:
+    ok: true
+    board_entries: 3
+    critical_keys:
+    - sched_overlap_group:e2e_probe_heavy,e2e_rival_backfill
+    - sched_mem_ceiling:e2e_probe_heavy,e2e_rival_backfill
+    - sched_e0_block:e2e_probe_heavy
+    morning_audit_read:
+    - key: sched_overlap_group:e2e_probe_heavy,e2e_rival_backfill
+      severity: critical
+      title: 排班冲突：互斥组时间窗交叠
+    - key: sched_mem_ceiling:e2e_probe_heavy,e2e_rival_backfill
+      severity: critical
+      title: 排班冲突：内存天花板超限
+    - key: sched_e0_block:e2e_probe_heavy
+      severity: critical
+      title: 排班冲突：交易时段未过 E0 闸
