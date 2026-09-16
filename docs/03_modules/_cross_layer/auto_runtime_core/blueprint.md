@@ -5,7 +5,7 @@ title: "AutoRuntime Core 蓝图 — 系统大脑·三层运行时运营中心"
 doc_type: blueprint
 template_for: blueprint
 status: Active
-version: "6.0.14"
+version: "6.0.15"
 layer: L1_foundation
 owner: ZephyrAlpha-Owner
 classification: confidential
@@ -149,7 +149,7 @@ responsibility_domain:
 
 | 图 | 位置 | 状态 | 链接 |
 |----|------|------|------|
-| 依赖图 (depgraph) | `blueprint_id=MOD-INF-035` 的 74 个 file 节点 | design | `extract_depgraph.py --modules MOD-INF-035` |
+| 依赖图 (depgraph) | `blueprint_id=MOD-INF-035` 的 76 个 file 节点 | design | `extract_depgraph.py --modules MOD-INF-035` |
 | 数据流图 (dataflow) | 0 个 Dataset / 1 个 Job | planned | `apply_dataflowgraph.py --list-datasets` |
 | 决策架构图 (decision) | 0 个决策节点 / 1 个决策层 | N/A | `generate_decision_diagram.py` |
 | 蓝图 (blueprint) | 本文件 | Active | — |
@@ -161,7 +161,7 @@ responsibility_domain:
 | module_id | MOD-INF-035 | MOD-INF-035 | ✅ |
 | domain_id | N/A | N/A | ✅ |
 | build_status | planned | planned | ✅ |
-| file_count | 74 文件 | 26 文件（§0.1） | ❌ |
+| file_count | 76 文件 | 26 文件（§0.1） | ❌ |
 
 > 冲突时以 depgraph 为准（ARCH-056 + ARCH-MM-001 声明 vs 验证框架）。
 
@@ -1054,6 +1054,7 @@ STEP 3: 拆分后验证
 | `tests/capability/test_capability_sync.py` | ✅ 已实现 | |
 | `tests/f_lifecycle/test_f1_event_trigger.py` | ✅ 已实现 | |
 | `tests/feedback/feedback_loop/test_feedback_loop.py` | ✅ 已实现 | |
+| `tests/ops/test_ollama_version_guard.py` | ✅ 已实现 | |
 | `tests/resource/test_resource_optimization.py` | ✅ 已实现 | |
 | `tests/task/test_task_gate.py` | ✅ 已实现 | |
 | `tests/trading/extreme/test_f1_extreme.py` | ✅ 已实现 | |

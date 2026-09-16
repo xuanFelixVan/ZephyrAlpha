@@ -4,7 +4,7 @@ submodule_path: src/zephyr/risk
 title: "Risk Management Core 蓝图+施工图 — 风险管理引擎"
 doc_type: blueprint
 status: Active
-version: "2.2.36"
+version: "2.2.37"
 layer: L2_domain
 layer_name: risk_management
 functional_domain: risk
@@ -59,7 +59,7 @@ build_status: generated
 > 本蓝图仅做审查、回填、压缩、对齐，不触发任何代码变更。
 
 > actual_disk_path: src/zephyr/risk/ (10 .py files)
-> module_id: MOD-L04-001 | version: 2.2.36 | status: Active | layer: L2_domain
+> module_id: MOD-L04-001 | version: 2.2.37 | status: Active | layer: L2_domain
 > generation: 2 | construction_progress: partially_implemented
 
 # Risk Management Core 蓝图+施工图 — 风险管理引擎
@@ -90,7 +90,7 @@ build_status: generated
 > 查询最新文件清单：`python scripts/governance/extract_depgraph.py --modules MOD-L04-001`
 > 以下手写内容保留职责描述（depgraph 无此信息），文件列表以 depgraph 为准。
 
-> **架构归属SSoT**：见 AGENTS.md §7「代码规范」（depgraph SSoT 真源唯一指针）
+> **架构归属 SSoT**：见 AGENTS.md RULE-DEPGRAPH / RULE-SSOT（depgraph SSoT 真源唯一指针）
 > **代码头部规范**：`[BLUEPRINT]/[MODULE]/[DOMAIN]/[DEPENDENCIES]/[CONSUMERS]/[STARTUP]/[MATURITY]/[INVARIANTS]/[MODIFY-GUARD]/[STABILITY]/[SAFETY]/[AI_AUTONOMY]/[ERROR_CONTRACT]/[TESTS]/[TTL]` — 见防幻觉十八条
 
 > **完整文件清单SSoT**：`python scripts/governance/extract_depgraph.py --modules MOD-L04-001`
@@ -143,7 +143,7 @@ build_status: generated
 
 | 图 | 位置 | 状态 | 链接 |
 |----|------|------|------|
-| 依赖图 (depgraph) | `blueprint_id=MOD-L04-001` 的 205 个 file 节点 | design | `extract_depgraph.py --modules MOD-L04-001` |
+| 依赖图 (depgraph) | `blueprint_id=MOD-L04-001` 的 206 个 file 节点 | design | `extract_depgraph.py --modules MOD-L04-001` |
 | 数据流图 (dataflow) | 1 个 Dataset / 2 个 Job | planned | `apply_dataflowgraph.py --list-datasets` |
 | 决策架构图 (decision) | 76 个决策节点 / 2 个决策层 | design | `generate_decision_diagram.py` |
 | 蓝图 (blueprint) | 本文件 | Active | — |
@@ -155,7 +155,7 @@ build_status: generated
 | module_id | MOD-L04-001 | MOD-L04-001 | ✅ |
 | domain_id | N/A | N/A | ✅ |
 | build_status | generated | generated | ✅ |
-| file_count | 205 文件 | 14 文件（§0.1） | ❌ |
+| file_count | 206 文件 | 14 文件（§0.1） | ❌ |
 
 > 冲突时以 depgraph 为准（ARCH-056 + ARCH-MM-001 声明 vs 验证框架）。
 
@@ -1031,6 +1031,7 @@ class ViolationDetail(BaseModel):
 | `schemas/categories/market/market_concept_sector.py` | ✅ 已实现 | |
 | `schemas/categories/market/market_convertible_bond_list.py` | ✅ 已实现 | |
 | `schemas/categories/market/market_daban_board_event.py` | ✅ 已实现 | |
+| `schemas/categories/market/market_daban_engine_load.py` | ✅ 已实现 | |
 | `schemas/categories/market/market_daily_valuation.py` | ✅ 已实现 | |
 | `schemas/categories/market/market_dividend_tax_node.py` | ✅ 已实现 | |
 | `schemas/categories/market/market_dragon_tiger.py` | ✅ 已实现 | |

@@ -3,7 +3,7 @@ module_id: MOD-REGIME-002
 title: "Regime特征管道蓝图 — ClickHouse→RegimeFeatures/OverlaySignals/RiskSignalInputs（C1一票否决验证的数据地基）"
 doc_type: blueprint
 status: Active
-version: "0.1.9"
+version: "0.1.10"
 design_maturity: production
 build_status: production
 ttl: permanent
@@ -861,8 +861,8 @@ MOD-REGIME-002 → D_DATA (ClickHouse 行情)
 
 | 图 | 位置 | 状态 | 链接 |
 |----|------|------|------|
-| 依赖图 (depgraph) | `blueprint_id=MOD-REGIME-002` 的 29 个 file 节点 | production | `extract_depgraph.py --modules MOD-REGIME-002` |
-| 数据流图 (dataflow) | 0 个 Dataset / 1 个 Job | active | `apply_dataflowgraph.py --list-datasets` |
+| 依赖图 (depgraph) | `blueprint_id=MOD-REGIME-002` 的 32 个 file 节点 | production | `extract_depgraph.py --modules MOD-REGIME-002` |
+| 数据流图 (dataflow) | （无节点） | N/A | `apply_dataflowgraph.py --list-datasets` |
 | 决策架构图 (decision) | 0 个决策节点 / 1 个决策层 | N/A | `generate_decision_diagram.py` |
 | 蓝图 (blueprint) | 本文件 | Active | — |
 
@@ -873,7 +873,7 @@ MOD-REGIME-002 → D_DATA (ClickHouse 行情)
 | module_id | MOD-REGIME-002 | MOD-REGIME-002 | ✅ |
 | domain_id | N/A | N/A | ✅ |
 | build_status | production | production | ✅ |
-| file_count | 29 文件 | N/A | — |
+| file_count | 32 文件 | N/A | — |
 
 > 冲突时以 depgraph 为准（ARCH-056 + ARCH-MM-001 声明 vs 验证框架）。
 
@@ -893,6 +893,7 @@ MOD-REGIME-002 → D_DATA (ClickHouse 行情)
 | `src/zephyr/regime/features/regime_data_loader.py` | ✅ 已实现 | |
 | `src/zephyr/regime/features/risk_features.py` | ✅ 已实现 | |
 | `src/zephyr/regime/features/wyckoff_engine.py` | ✅ 已实现 | |
+| `src/zephyr/regime/validation/wyckoff_walkforward.py` | ✅ 已实现 | |
 
 ### 14.2 测试文件
 
@@ -908,7 +909,9 @@ MOD-REGIME-002 → D_DATA (ClickHouse 行情)
 | `tests/regime/test_overlay_signals_builder_valuation.py` | ✅ 已实现 | |
 | `tests/regime/test_risk_signal_builder.py` | ✅ 已实现 | |
 | `tests/regime/test_synthetic_vix.py` | ✅ 已实现 | |
+| `tests/regime/test_synthetic_vix_iv_path.py` | ✅ 已实现 | |
 | `tests/regime/test_wyckoff_engine.py` | ✅ 已实现 | |
+| `tests/regime/validation/test_wyckoff_walkforward.py` | ✅ 已实现 | |
 
 ### 14.5 路径索引使用指南
 
