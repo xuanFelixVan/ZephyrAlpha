@@ -1,0 +1,33 @@
+# ALGO_FLOW 外部真源——safety_gate_l66_l67（_domain_feedback_loop 域，真源 src/zephyr/feedback_loop/gates/safety_gate_l66_l67.py）
+# 2026-09-15 P2-1 契约头减负批量出仓：docstring 内联块逐字节副本，extractor 经
+# external 锚加载走同一 parse_algo_flow 管线；算法公共面变化时同步更新本块。
+doc_type: architecture_view
+ttl: permanent
+module: src.zephyr.feedback_loop.gates.safety_gate_l66_l67
+source_of_truth: src/zephyr/feedback_loop/gates/safety_gate_l66_l67.py
+algo_flow: |
+    # [ALGO_FLOW]
+    # 层: 输入
+    # - id: I1
+    #   name: 动作上下文 + 上游门禁结果
+    #   fields: ActionContext（compliance_ok 等）+ evaluate 内累积的 results
+    #   code: SafetyGateL66L67.evaluate
+    # 层: 算法
+    # - id: A1
+    #   name_zh: L66 财务审慎校验
+    #   name_en: l66_financial_prudence
+    #   intro: compliance_ok=False → HARD REJECT；否则 PASS（Market Abuse/Stress/Price/Collateral/Tax/Privacy/IP/Insurance 八项合规前提）
+    #   code: _l66
+    # - id: A2
+    #   name_zh: L67 全链路审计终判
+    #   name_en: l67_full_pipeline_audit
+    #   intro: 校验 67 层每层独立留痕；逐层 verdict 聚合 + write_to_core 写不可变审计链
+    #   code: _l67 / _log
+    # 层: 输出
+    # - id: O1
+    #   name_zh: 双层门禁裁决
+    #   name_en: gate_verdicts
+    #   intro: list[GateResult]（L66/L67 各一）+ 核心审计链落账
+    #   downstream: 门禁链编排器 / zephyr.gov_audit.writer.AuditWriter
+    # [/ALGO_FLOW]
+    # 边: I1 --> A1 ; A1 --> A2 ; A2 --> O1

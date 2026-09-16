@@ -1,0 +1,33 @@
+# ALGO_FLOW 外部真源——safety_gate_l48_l49（_domain_feedback_loop 域，真源 src/zephyr/feedback_loop/gates/safety_gate_l48_l49.py）
+# 2026-09-15 P2-1 契约头减负批量出仓：docstring 内联块逐字节副本，extractor 经
+# external 锚加载走同一 parse_algo_flow 管线；算法公共面变化时同步更新本块。
+doc_type: architecture_view
+ttl: permanent
+module: src.zephyr.feedback_loop.gates.safety_gate_l48_l49
+source_of_truth: src/zephyr/feedback_loop/gates/safety_gate_l48_l49.py
+algo_flow: |
+    # [ALGO_FLOW]
+    # 层: 输入
+    # - id: I1
+    #   name: 动作上下文与门禁状态
+    #   fields: ctx；门禁态 dependency_integrity_ok / transitive_trust_score / cognitive_budget_remaining_pct / alert_flood_detected
+    #   code: SafetyGateL48L49.evaluate
+    # 层: 算法
+    # - id: A1
+    #   name_zh: L48 供应链治理校验
+    #   name_en: l48_supply_chain_governance
+    #   intro: 依赖完整性破坏或传递信任分 <0.5 → REJECT
+    #   code: _l48_supply_chain_governance
+    # - id: A2
+    #   name_zh: L49 认知安全校验
+    #   name_en: l49_cognitive_safety
+    #   intro: 告警洪水 → REJECT 抑制；负责人认知预算 <10% → OBSERVE_ONLY（A1 未拒才执行）
+    #   code: _l49_cognitive_safety
+    # 层: 输出
+    # - id: O1
+    #   name_zh: 门禁裁决列表
+    #   name_en: gate_results
+    #   intro: list[GateResult]（PASS / REJECT / OBSERVE_ONLY，HARD 门）
+    #   downstream: MOD-GATE_ENGINE 门禁编排聚合 → 动作授权决策
+    # [/ALGO_FLOW]
+    # 边: I1 --> A1 ; A1 --> A2 ; A2 --> O1

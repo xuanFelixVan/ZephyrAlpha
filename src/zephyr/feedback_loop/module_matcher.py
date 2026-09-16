@@ -27,42 +27,7 @@ PARTIAL(0.5~0.85) / NO_MATCH(<0.5) 三档判定输出（阈值边界恰等归低
 向量检索（本件=模块 capability 匹配，不建技能库）。embedder 全注入，本件
 仅实现注册表 + 余弦 + 三档判定。
 
-# [ALGO_FLOW]
-# 层: 输入
-# - id: I1
-#   name: embedder 参数
-#   fields: 参数 embedder（无注解）
-#   code: module_matcher.py 顶层公共函数形参（AST 提取）
-# - id: I2
-#   name: exact_threshold 参数
-#   fields: 参数 exact_threshold（无注解）
-#   code: module_matcher.py 顶层公共函数形参（AST 提取）
-# - id: I3
-#   name: partial_threshold 参数
-#   fields: 参数 partial_threshold（无注解）
-#   code: module_matcher.py 顶层公共函数形参（AST 提取）
-# 层: 算法
-# - id: A1
-#   name_zh: ① ModuleMatcher
-#   name_en: ModuleMatcher
-#   intro: 模块匹配器（capability_tags 注册表 + embedding 余弦 + 三档判定）。
-#   desc: 模块匹配器（capability_tags 注册表 + embedding 余弦 + 三档判定）。；公共方法（定义序）: register_module, match；源码 L140-L272
-#   inputs: embedder exact_threshold partial_threshold
-#   outputs: 返回值
-#   （注：A1 之后另有 5 个公共定义未列入（含 5 个数据契约/异常/枚举声明类），见源码）
-# 层: 输出
-# - id: O1
-#   name_zh: 模块公共 API 面（6 定义）
-#   name_en: public defs
-#   intro: ModuleMatcher
-#   downstream: 运行时装配批（capability_tags 注册表装配 / embedder 接 EmbeddingRouter / 知识包功能需求匹配路由）
-# [/ALGO_FLOW]
-#
-# 边:
-# I1 --> A1
-# I2 --> A1
-# I3 --> A1
-# A1 --> O1
+# [ALGO_FLOW] external: docs/03_modules/_domain_feedback_loop/algo_flow/feedback_loop/module_matcher.yaml
 """
 
 from __future__ import annotations

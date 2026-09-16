@@ -1,0 +1,33 @@
+# ALGO_FLOW 外部真源——safety_gate_l56_l57（_domain_feedback_loop 域，真源 src/zephyr/feedback_loop/gates/safety_gate_l56_l57.py）
+# 2026-09-15 P2-1 契约头减负批量出仓：docstring 内联块逐字节副本，extractor 经
+# external 锚加载走同一 parse_algo_flow 管线；算法公共面变化时同步更新本块。
+doc_type: architecture_view
+ttl: permanent
+module: src.zephyr.feedback_loop.gates.safety_gate_l56_l57
+source_of_truth: src/zephyr/feedback_loop/gates/safety_gate_l56_l57.py
+algo_flow: |
+    # [ALGO_FLOW]
+    # 层: 输入
+    # - id: I1
+    #   name: 动作上下文与门禁状态
+    #   fields: ctx；门禁态 evolution_debt / purpose_drift / loop_detected
+    #   code: SafetyGateL56L57.evaluate
+    # 层: 算法
+    # - id: A1
+    #   name_zh: L56 进化完整性校验
+    #   name_en: l56_evolutionary_integrity
+    #   intro: 进化债 >0.5 或检测到进化循环 → REJECT；目的漂移 >0.3 → OBSERVE_ONLY
+    #   code: _l56
+    # - id: A2
+    #   name_zh: L57 跨代一致性校验
+    #   name_en: l57_cross_generational_coherence
+    #   intro: 跨代一致性与自修改副作用守护（当前恒 PASS）
+    #   code: _l57
+    # 层: 输出
+    # - id: O1
+    #   name_zh: 门禁裁决列表
+    #   name_en: gate_results
+    #   intro: list[GateResult]（PASS / REJECT / OBSERVE_ONLY，HARD 门）
+    #   downstream: MOD-GATE_ENGINE 门禁编排聚合 → 动作授权决策
+    # [/ALGO_FLOW]
+    # 边: I1 --> A1 ; A1 --> A2 ; A2 --> O1

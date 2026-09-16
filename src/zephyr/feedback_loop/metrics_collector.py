@@ -24,40 +24,7 @@ and Evolution Engine consumption.
 Task: T-1-19 | experimental | GLM-5.1
 Depends: sqlite_schema.py (T-1-04), task_repo.py (T-1-04)
 
-# [ALGO_FLOW]
-# 层: 输入
-# - id: I1
-#   name: db_path 参数
-#   fields: 参数 db_path（无注解）
-#   code: metrics_collector.py 顶层公共函数形参（AST 提取）
-# 层: 算法
-# - id: A1
-#   name_zh: ① MetricsCollector
-#   name_en: MetricsCollector
-#   intro: Append-only metrics recorder backed by SQLite.
-#   desc: Append-only metrics recorder backed by SQLite. Usage:: mc = MetricsCollector(db_path="met…；公共方法（定义序）: conn, d…
-#   inputs: db_path
-#   outputs: 返回值
-# - id: A2
-#   name_zh: ② EMABaseline
-#   name_en: EMABaseline
-#   intro: class EMABaseline 源码 L320-L330
-#   desc: 公共方法（定义序）: update；源码 L320-L330
-#   inputs: alpha initial_value
-#   outputs: 返回值
-#   （注：A2 之后另有 2 个公共定义未列入（含 2 个数据契约/异常/枚举声明类），见源码）
-# 层: 输出
-# - id: O1
-#   name_zh: 模块公共 API 面（4 定义）
-#   name_en: public defs
-#   intro: MetricsCollector, EMABaseline
-#   downstream: 见模块头 [CONSUMERS]
-# [/ALGO_FLOW]
-#
-# 边:
-# I1 --> A1
-# A1 --> A2
-# A2 --> O1
+# [ALGO_FLOW] external: docs/03_modules/_domain_feedback_loop/algo_flow/feedback_loop/metrics_collector.yaml
 """
 
 from __future__ import annotations

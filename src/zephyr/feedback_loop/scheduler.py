@@ -25,55 +25,7 @@ FLE 全链路调度器 —— collect->detect->diagnose->act->verify 闭环。
   - 安全门: 67 层 (L1-L67) 在 action 执行前后
   - v0.40.0: 集成 32 个治理级组件 (R470-R501)
 
-# [ALGO_FLOW]
-# 层: 输入
-# - id: I1
-#   name: 模块内部数据
-#   fields: 无公共形参/无再导出（AST 事实）
-#   code: scheduler.py
-# 层: 算法
-# - id: A1
-#   name_zh: ① FLEPipelineEvent
-#   name_en: FLEPipelineEvent
-#   intro: 单次 FLE pipeline 完整运行事件——用于遥测记录。
-#   desc: 单次 FLE pipeline 完整运行事件——用于遥测记录。；公共方法（定义序）: to_dict；源码 L129-L153
-#   inputs: 无参数
-#   outputs: 返回值
-# - id: A2
-#   name_zh: ② PeriodicGovernanceInspector
-#   name_en: PeriodicGovernanceInspector
-#   intro: 周期治理巡检器（FeedbackLoopScheduler 协作者，职责簇：drift 扫描/自动修复/审计链校验）。
-#   desc: 周期治理巡检器（FeedbackLoopScheduler 协作者，职责簇：drift 扫描/自动修复/审计链校验）。 5.150.3 Extract Class: 从 Feed…；公共方法（定义序）: run_dri…
-#   inputs: 无参数
-#   outputs: 返回值
-# - id: A3
-#   name_zh: ③ ExternalPersistenceWriter
-#   name_en: ExternalPersistenceWriter
-#   intro: 外部持久化写出器（FeedbackLoopScheduler 协作者，职责簇：指标/告警/失败模式持久化）。
-#   desc: 外部持久化写出器（FeedbackLoopScheduler 协作者，职责簇：指标/告警/失败模式持久化）。 5.150.3 Extract Class: 从 FeedbackL…；公共方法（定义序）: persist…
-#   inputs: 无参数
-#   outputs: 返回值
-# - id: A4
-#   name_zh: ④ FeedbackLoopScheduler
-#   name_en: FeedbackLoopScheduler
-#   intro: FLE 全链路调度器——wire collect->detect->diagnose->act->verify。
-#   desc: FLE 全链路调度器——wire collect->detect->diagnose->act->verify。 Usage: scheduler = FeedbackLoopS…；公共方法（定义序）: running…
-#   inputs: 无参数
-#   outputs: 返回值
-# 层: 输出
-# - id: O1
-#   name_zh: 模块公共 API 面（4 定义）
-#   name_en: public defs
-#   intro: FLEPipelineEvent, PeriodicGovernanceInspector, ExternalPersistenceWriter, Feedb…
-#   downstream: auto_runtime_core.py
-# [/ALGO_FLOW]
-#
-# 边:
-# I1 --> A1
-# A1 --> A2
-# A2 --> A3
-# A3 --> A4
-# A4 --> O1
+# [ALGO_FLOW] external: docs/03_modules/_domain_feedback_loop/algo_flow/feedback_loop/scheduler.yaml
 """
 
 from __future__ import annotations

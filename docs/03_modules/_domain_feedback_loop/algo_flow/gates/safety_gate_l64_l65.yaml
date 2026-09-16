@@ -1,0 +1,33 @@
+# ALGO_FLOW 外部真源——safety_gate_l64_l65（_domain_feedback_loop 域，真源 src/zephyr/feedback_loop/gates/safety_gate_l64_l65.py）
+# 2026-09-15 P2-1 契约头减负批量出仓：docstring 内联块逐字节副本，extractor 经
+# external 锚加载走同一 parse_algo_flow 管线；算法公共面变化时同步更新本块。
+doc_type: architecture_view
+ttl: permanent
+module: src.zephyr.feedback_loop.gates.safety_gate_l64_l65
+source_of_truth: src/zephyr/feedback_loop/gates/safety_gate_l64_l65.py
+algo_flow: |
+    # [ALGO_FLOW]
+    # 层: 输入
+    # - id: I1
+    #   name: 动作上下文与门禁状态
+    #   fields: ctx；门禁态 pre_trade_risk_ok / pnl_reconciled / kb_injection_defense_active
+    #   code: SafetyGateL64L65.evaluate
+    # 层: 算法
+    # - id: A1
+    #   name_zh: L64 金融完整性校验
+    #   name_en: l64_financial_integrity
+    #   intro: 盘前风控失败 → REJECT；PnL 未对账 → OBSERVE_ONLY
+    #   code: _l64
+    # - id: A2
+    #   name_zh: L65 VibeOps:Solo 完整性校验
+    #   name_en: l65_vibeops_solo
+    #   intro: KB 注入防御等单人运维完整性守护（当前恒 PASS）
+    #   code: _l65
+    # 层: 输出
+    # - id: O1
+    #   name_zh: 门禁裁决列表
+    #   name_en: gate_results
+    #   intro: list[GateResult]（PASS / REJECT / OBSERVE_ONLY，HARD 门）
+    #   downstream: MOD-GATE_ENGINE 门禁编排聚合 → 动作授权决策
+    # [/ALGO_FLOW]
+    # 边: I1 --> A1 ; A1 --> A2 ; A2 --> O1

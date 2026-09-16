@@ -32,32 +32,7 @@ cycles. When config changes mid-cycle, either: (a) defer change to next cycle
 boundary, or (b) validate all consumers acknowledge new version before
 proceeding. Flag inconsistent config states.
 
-# [ALGO_FLOW]
-# 层: 输入
-# - id: I1
-#   name: 模块内部数据
-#   fields: 无公共形参/无再导出（AST 事实）
-#   code: config_hot_reload_guard.py
-# 层: 算法
-# - id: A1
-#   name_zh: ① ConfigHotReloadGuard
-#   name_en: ConfigHotReloadGuard
-#   intro: class ConfigHotReloadGuard 源码 L81-L196
-#   desc: 公共方法（定义序）: compute_config_hash, register_config, mark_cycle_start, mark_cycle_end, consumer_acknowledge, chec…
-#   inputs: 无参数
-#   outputs: 返回值
-#   （注：A1 之后另有 1 个公共定义未列入（含 1 个数据契约/异常/枚举声明类），见源码）
-# 层: 输出
-# - id: O1
-#   name_zh: 模块公共 API 面（2 定义）
-#   name_en: public defs
-#   intro: ConfigHotReloadGuard
-#   downstream: 见模块头 [CONSUMERS]
-# [/ALGO_FLOW]
-#
-# 边:
-# I1 --> A1
-# A1 --> O1
+# [ALGO_FLOW] external: docs/03_modules/_domain_feedback_loop/algo_flow/resilience/config_hot_reload_guard.yaml
 """
 
 from __future__ import annotations

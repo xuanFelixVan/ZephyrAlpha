@@ -1,0 +1,33 @@
+# ALGO_FLOW 外部真源——safety_gate_l60_l61（_domain_feedback_loop 域，真源 src/zephyr/feedback_loop/gates/safety_gate_l60_l61.py）
+# 2026-09-15 P2-1 契约头减负批量出仓：docstring 内联块逐字节副本，extractor 经
+# external 锚加载走同一 parse_algo_flow 管线；算法公共面变化时同步更新本块。
+doc_type: architecture_view
+ttl: permanent
+module: src.zephyr.feedback_loop.gates.safety_gate_l60_l61
+source_of_truth: src/zephyr/feedback_loop/gates/safety_gate_l60_l61.py
+algo_flow: |
+    # [ALGO_FLOW]
+    # 层: 输入
+    # - id: I1
+    #   name: 动作上下文与门禁状态
+    #   fields: ctx.owner_fatigue；门禁态 exchange_halted / corporate_event_active / burnout_risk
+    #   code: SafetyGateL60L61.evaluate
+    # 层: 算法
+    # - id: A1
+    #   name_zh: L60 环境接地校验
+    #   name_en: l60_environmental_grounding
+    #   intro: 交易所停牌 → REJECT 交易动作；公司行动事件激活 → OBSERVE_ONLY 抑制非关键
+    #   code: _l60
+    # - id: A2
+    #   name_zh: L61 元系统完整性校验
+    #   name_en: l61_meta_system_integrity
+    #   intro: owner_fatigue >0.8（负责人倦怠风险） → REJECT
+    #   code: _l61
+    # 层: 输出
+    # - id: O1
+    #   name_zh: 门禁裁决列表
+    #   name_en: gate_results
+    #   intro: list[GateResult]（PASS / REJECT / OBSERVE_ONLY，HARD 门）
+    #   downstream: MOD-GATE_ENGINE 门禁编排聚合 → 动作授权决策
+    # [/ALGO_FLOW]
+    # 边: I1 --> A1 ; A1 --> A2 ; A2 --> O1
