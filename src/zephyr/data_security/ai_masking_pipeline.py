@@ -24,42 +24,7 @@ L1-L4 **分级脱敏管道**——L4 禁发原文仅统计摘要 / L3 金额分�
 MOD-DATSEC-003 共用策略表 schema 语义：Mapping 键查表、未注册 Fail-Closed）；
 每次 LLM 调用记录**脱敏前后对比**入审计回调。Presidio 分级思想单机化。
 
-# [ALGO_FLOW]
-# 层: 输入
-# - id: I1
-#   name: policies 参数
-#   fields: 参数 policies（无注解）
-#   code: ai_masking_pipeline.py 顶层公共函数形参（AST 提取）
-# - id: I2
-#   name: clock 参数
-#   fields: 参数 clock（无注解）
-#   code: ai_masking_pipeline.py 顶层公共函数形参（AST 提取）
-# - id: I3
-#   name: audit_sink 参数
-#   fields: 参数 audit_sink（无注解）
-#   code: ai_masking_pipeline.py 顶层公共函数形参（AST 提取）
-# 层: 算法
-# - id: A1
-#   name_zh: ① AiMaskingPipeline
-#   name_en: AiMaskingPipeline
-#   intro: L1-L4 分级脱敏管道（策略表驱动 + 审计留痕）。
-#   desc: L1-L4 分级脱敏管道（策略表驱动 + 审计留痕）。；公共方法（定义序）: level_of, mask_for_llm；源码 L136-L248
-#   inputs: policies clock audit_sink
-#   outputs: 返回值
-#   （注：A1 之后另有 4 个公共定义未列入（含 4 个数据契约/异常/枚举声明类），见源码）
-# 层: 输出
-# - id: O1
-#   name_zh: 模块公共 API 面（5 定义）
-#   name_en: public defs
-#   intro: AiMaskingPipeline
-#   downstream: 运行时装配批（LLM 外发前统一脱敏装配点 / 审计接 gov_audit 路由）
-# [/ALGO_FLOW]
-#
-# 边:
-# I1 --> A1
-# I2 --> A1
-# I3 --> A1
-# A1 --> O1
+# [ALGO_FLOW] external: docs/03_modules/_domain_data_security/algo_flow/ai_masking_pipeline.yaml
 """
 
 from __future__ import annotations

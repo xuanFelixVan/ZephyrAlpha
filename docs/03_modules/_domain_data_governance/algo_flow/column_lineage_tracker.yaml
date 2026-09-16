@@ -1,0 +1,42 @@
+# ALGO_FLOW 外部真源——column_lineage_tracker（_domain_data_governance 域，真源 src/zephyr/data_governance/column_lineage_tracker.py）
+# 2026-09-15 P2-1 契约头减负批量出仓：docstring 内联块逐字节副本，extractor 经
+# external 锚加载走同一 parse_algo_flow 管线；算法公共面变化时同步更新本块。
+doc_type: architecture_view
+ttl: permanent
+module: src.zephyr.data_governance.column_lineage_tracker
+source_of_truth: src/zephyr/data_governance/column_lineage_tracker.py
+algo_flow: |
+    # [ALGO_FLOW]
+    # 层: 输入
+    # - id: I1
+    #   name: 模块内部数据
+    #   fields: 无公共形参/无再导出（AST 事实）
+    #   code: column_lineage_tracker.py
+    # 层: 算法
+    # - id: A1
+    #   name_zh: ① ColumnRef
+    #   name_en: ColumnRef
+    #   intro: 列引用（table.column 二元闭合，frozen）。
+    #   desc: 列引用（table.column 二元闭合，frozen）。；公共方法（定义序）: parse；源码 L89-L106
+    #   inputs: 无参数
+    #   outputs: 返回值
+    # - id: A2
+    #   name_zh: ② ColumnLineageTracker
+    #   name_en: ColumnLineageTracker
+    #   intro: 列级血缘追踪器（映射登记 + 上下游查询 + 删列影响面）。
+    #   desc: 列级血缘追踪器（映射登记 + 上下游查询 + 删列影响面）。；公共方法（定义序）: register, register_mapping, mappings, direct_upstream, direct_downs…
+    #   inputs: 无参数
+    #   outputs: 返回值
+    #   （注：A2 之后另有 2 个公共定义未列入（含 2 个数据契约/异常/枚举声明类），见源码）
+    # 层: 输出
+    # - id: O1
+    #   name_zh: 模块公共 API 面（4 定义）
+    #   name_en: public defs
+    #   intro: ColumnRef, ColumnLineageTracker
+    #   downstream: 运行时装配批（SQL 解析列映射登记 / 删列影响面评审 / 重构门禁）
+    # [/ALGO_FLOW]
+    #
+    # 边:
+    # I1 --> A1
+    # A1 --> A2
+    # A2 --> O1

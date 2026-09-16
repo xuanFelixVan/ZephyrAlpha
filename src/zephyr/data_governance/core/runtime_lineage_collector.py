@@ -31,32 +31,7 @@ M8-S03 动态采集器（MOD-DATA_GOV-006）。
      `ingest_into_tracker`（批内去重首条胜出/幂等 updated/环 rejected 不中断）；
      幂等与环检测复用 MOD-DATA_GOV-002 不重造。
 
-# [ALGO_FLOW]
-# 层: 输入
-# - id: I1
-#   name: max_buffer 参数
-#   fields: 参数 max_buffer（无注解）
-#   code: runtime_lineage_collector.py 顶层公共函数形参（AST 提取）
-# 层: 算法
-# - id: A1
-#   name_zh: ① RuntimeLineageCollector
-#   name_en: RuntimeLineageCollector
-#   intro: 运行时血缘采集器——轻量缓冲 + fail-open + 盘后汇总。
-#   desc: 运行时血缘采集器——轻量缓冲 + fail-open + 盘后汇总。 emit/flush 路径不抛异常（fail-open 不阻塞交易主链路）；构造参数与 汇总面 tracke…；公共方法（定义序）: emit, e…
-#   inputs: max_buffer
-#   outputs: 返回值
-#   （注：A1 之后另有 3 个公共定义未列入（含 3 个数据契约/异常/枚举声明类），见源码）
-# 层: 输出
-# - id: O1
-#   name_zh: 模块公共 API 面（4 定义）
-#   name_en: public defs
-#   intro: RuntimeLineageCollector
-#   downstream: 见模块头 [CONSUMERS]
-# [/ALGO_FLOW]
-#
-# 边:
-# I1 --> A1
-# A1 --> O1
+# [ALGO_FLOW] external: docs/03_modules/_domain_data_governance/algo_flow/runtime_lineage_collector.yaml
 """
 
 from __future__ import annotations

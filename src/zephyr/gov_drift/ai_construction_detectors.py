@@ -28,31 +28,7 @@ AI 生成代码的质量/安全检测：幻觉导入、死代码、损坏逻辑�
 
 从 drift_engine.py 提取，对标 blueprint.md §5.1。
 
-# [ALGO_FLOW]
-# 层: 输入
-# - id: I1
-#   name: 模块内部数据
-#   fields: 无公共形参/无再导出（AST 事实）
-#   code: ai_construction_detectors.py
-# 层: 算法
-# - id: A1
-#   name_zh: ① AIConstructionDetectors
-#   name_en: AIConstructionDetectors
-#   intro: class AIConstructionDetectors 源码 L203-L711
-#   desc: 公共方法（定义序）: detect_ai_hallucination_import, detect_ai_dead_code, detect_ai_broken_logic, detect_ai_duplicate_f…
-#   inputs: 无参数
-#   outputs: 返回值
-# 层: 输出
-# - id: O1
-#   name_zh: 模块公共 API 面（1 定义）
-#   name_en: public defs
-#   intro: AIConstructionDetectors
-#   downstream: tests/ai/test_ai_construction_detectors.py (+3 more)
-# [/ALGO_FLOW]
-#
-# 边:
-# I1 --> A1
-# A1 --> O1
+# [ALGO_FLOW] external: docs/03_modules/_domain_gov_drift/algo_flow/ai_construction_detectors.yaml
 """
 
 from __future__ import annotations

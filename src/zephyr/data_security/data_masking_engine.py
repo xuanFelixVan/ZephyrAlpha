@@ -24,42 +24,7 @@ B13-04295（AUD-DRAFT-001-DIGEST P2 波 P2-W02，CAND-DATSEC-003，A3数据架�
 输出拉普拉斯噪声，ε 可配，随机源注入）。策略表与 MOD-DATSEC-001 共用 schema
 语义（Mapping 键查表、未注册 Fail-Closed）。
 
-# [ALGO_FLOW]
-# 层: 输入
-# - id: I1
-#   name: key 参数
-#   fields: 参数 key（无注解）
-#   code: data_masking_engine.py 顶层公共函数形参（AST 提取）
-# - id: I2
-#   name: cipher 参数
-#   fields: 参数 cipher（无注解）
-#   code: data_masking_engine.py 顶层公共函数形参（AST 提取）
-# - id: I3
-#   name: rng 参数
-#   fields: 参数 rng（无注解）
-#   code: data_masking_engine.py 顶层公共函数形参（AST 提取）
-# 层: 算法
-# - id: A1
-#   name_zh: ① DataMaskingEngine
-#   name_en: DataMaskingEngine
-#   intro: 脱敏引擎（FPE + 角色动态脱敏 + 拉普拉斯差分隐私噪声）。
-#   desc: 脱敏引擎（FPE + 角色动态脱敏 + 拉普拉斯差分隐私噪声）。；公共方法（定义序）: fpe_encrypt, fpe_decrypt, register_policy, policy_of, mask_field…
-#   inputs: key cipher rng
-#   outputs: 返回值
-#   （注：A1 之后另有 2 个公共定义未列入（含 2 个数据契约/异常/枚举声明类），见源码）
-# 层: 输出
-# - id: O1
-#   name_zh: 模块公共 API 面（3 定义）
-#   name_en: public defs
-#   intro: DataMaskingEngine
-#   downstream: 运行时装配批（身份证/账号出库加密装配点 / 按角色查询出参动态脱敏 / 统计输出差分隐私）
-# [/ALGO_FLOW]
-#
-# 边:
-# I1 --> A1
-# I2 --> A1
-# I3 --> A1
-# A1 --> O1
+# [ALGO_FLOW] external: docs/03_modules/_domain_data_security/algo_flow/data_masking_engine.yaml
 """
 
 from __future__ import annotations

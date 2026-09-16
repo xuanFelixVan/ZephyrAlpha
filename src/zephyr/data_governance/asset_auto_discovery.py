@@ -27,42 +27,7 @@ diff 只更新变更**）。
 现与增量推送协调，不重建台账）；core/metadata_registry=元数据注册实现（本
 件仅注入其注册回调）。
 
-# [ALGO_FLOW]
-# 层: 输入
-# - id: I1
-#   name: clock 参数
-#   fields: 参数 clock（无注解）
-#   code: asset_auto_discovery.py 顶层公共函数形参（AST 提取）
-# - id: I2
-#   name: registry_sink 参数
-#   fields: 参数 registry_sink（无注解）
-#   code: asset_auto_discovery.py 顶层公共函数形参（AST 提取）
-# - id: I3
-#   name: default_quality_score 参数
-#   fields: 参数 default_quality_score（无注解）
-#   code: asset_auto_discovery.py 顶层公共函数形参（AST 提取）
-# 层: 算法
-# - id: A1
-#   name_zh: ① AssetAutoDiscovery
-#   name_en: AssetAutoDiscovery
-#   intro: 资产自动发现器（scanner 注册 + 卡片生成 + 指纹 diff 增量推送）。
-#   desc: 资产自动发现器（scanner 注册 + 卡片生成 + 指纹 diff 增量推送）。；公共方法（定义序）: register_scanner, fingerprint_of, run；源码 L141-L246
-#   inputs: clock registry_sink default_quality_score
-#   outputs: 返回值
-#   （注：A1 之后另有 5 个公共定义未列入（含 5 个数据契约/异常/枚举声明类），见源码）
-# 层: 输出
-# - id: O1
-#   name_zh: 模块公共 API 面（6 定义）
-#   name_en: public defs
-#   intro: AssetAutoDiscovery
-#   downstream: 运行时装配批（CH表/因子注册表/信号注册表 scanner 绑定 / metadata_registry 注册回调）
-# [/ALGO_FLOW]
-#
-# 边:
-# I1 --> A1
-# I2 --> A1
-# I3 --> A1
-# A1 --> O1
+# [ALGO_FLOW] external: docs/03_modules/_domain_data_governance/algo_flow/asset_auto_discovery.yaml
 """
 
 from __future__ import annotations

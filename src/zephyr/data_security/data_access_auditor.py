@@ -23,47 +23,7 @@ CH/SQLite/Parquet 访问日志**统一采集**（AccessEvent Schema）+ 查询�
 出/非常时段三维规则）+ 敏感数据访问追踪（敏感表注册表），事件写 gov_audit
 回调。UEBA 轻量单机版。
 
-# [ALGO_FLOW]
-# 层: 输入
-# - id: I1
-#   name: clock 参数
-#   fields: 参数 clock（无注解）
-#   code: data_access_auditor.py 顶层公共函数形参（AST 提取）
-# - id: I2
-#   name: audit_sink 参数
-#   fields: 参数 audit_sink（无注解）
-#   code: data_access_auditor.py 顶层公共函数形参（AST 提取）
-# - id: I3
-#   name: alert_sink 参数
-#   fields: 参数 alert_sink（无注解）
-#   code: data_access_auditor.py 顶层公共函数形参（AST 提取）
-# - id: I4
-#   name: bulk_multiplier 参数
-#   fields: 参数 bulk_multiplier（无注解）
-#   code: data_access_auditor.py 顶层公共函数形参（AST 提取）
-# 层: 算法
-# - id: A1
-#   name_zh: ① DataAccessAuditor
-#   name_en: DataAccessAuditor
-#   intro: 数据访问审计器（采集 + 基线画像 + 三维异常检测 + 敏感表追踪）。
-#   desc: 数据访问审计器（采集 + 基线画像 + 三维异常检测 + 敏感表追踪）。；公共方法（定义序）: register_sensitive_table, is_sensitive, sensitive_tables, rec…
-#   inputs: clock audit_sink alert_sink bulk_multiplier min_repeat baseline_min_s…
-#   outputs: 返回值
-#   （注：A1 之后另有 7 个公共定义未列入（含 7 个数据契约/异常/枚举声明类），见源码）
-# 层: 输出
-# - id: O1
-#   name_zh: 模块公共 API 面（8 定义）
-#   name_en: public defs
-#   intro: DataAccessAuditor
-#   downstream: 运行时装配批（CH/SQLite/Parquet 访问切面统一采集 / 事件写 gov_audit 路由）
-# [/ALGO_FLOW]
-#
-# 边:
-# I1 --> A1
-# I2 --> A1
-# I3 --> A1
-# I4 --> A1
-# A1 --> O1
+# [ALGO_FLOW] external: docs/03_modules/_domain_data_security/algo_flow/data_access_auditor.yaml
 """
 
 from __future__ import annotations
