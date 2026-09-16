@@ -27,32 +27,7 @@ OpenTelemetry 计费思想单机化。
 比例动态调速，不替代其执行面）；budget_aware_prompt=LLM prompt 预算感知
 （域不同零交集）。
 
-# [ALGO_FLOW]
-# 层: 输入
-# - id: I1
-#   name: clock 参数
-#   fields: 参数 clock（无注解）
-#   code: api_cost_governor.py 顶层公共函数形参（AST 提取）
-# 层: 算法
-# - id: A1
-#   name_zh: ① ApiCostGovernor
-#   name_en: ApiCostGovernor
-#   intro: 外部API成本治理器（计量 + 预算降级 + 动态令牌桶）。
-#   desc: 外部API成本治理器（计量 + 预算降级 + 动态令牌桶）。；公共方法（定义序）: register_source, register_budget, record_call, is_degraded, usage,…
-#   inputs: clock
-#   outputs: 返回值
-#   （注：A1 之后另有 4 个公共定义未列入（含 4 个数据契约/异常/枚举声明类），见源码）
-# 层: 输出
-# - id: O1
-#   name_zh: 模块公共 API 面（5 定义）
-#   name_en: public defs
-#   intro: ApiCostGovernor
-#   downstream: 运行时装配批（外部数据源适配层统一计量 / 预算降级标记读侧 / QPS 分配器）
-# [/ALGO_FLOW]
-#
-# 边:
-# I1 --> A1
-# A1 --> O1
+# [ALGO_FLOW] external: docs/03_modules/_domain_shared/algo_flow/capacity_governance/api_cost_governor.yaml
 """
 
 from __future__ import annotations

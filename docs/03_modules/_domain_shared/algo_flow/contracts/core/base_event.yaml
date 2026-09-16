@@ -1,0 +1,54 @@
+# ALGO_FLOW 外部真源——base_event（_domain_shared 域，真源 src/zephyr/shared/contracts/core/base_event.py）
+# 2026-09-15 P2-1 契约头减负批量出仓：docstring 内联块逐字节副本，extractor 经
+# external 锚加载走同一 parse_algo_flow 管线；算法公共面变化时同步更新本块。
+doc_type: architecture_view
+ttl: permanent
+module: src.zephyr.shared.contracts.core.base_event
+source_of_truth: src/zephyr/shared/contracts/core/base_event.py
+algo_flow: |
+    # [ALGO_FLOW]
+    # 层: 输入
+    # - id: I1
+    #   name: key 参数
+    #   fields: 参数 key，类型注解 str
+    #   code: base_event.py 顶层公共函数形参（AST 提取）
+    # 层: 算法
+    # - id: A1
+    #   name_zh: ① generate_idempotency_key
+    #   name_en: generate_idempotency_key
+    #   intro: generate_idempotency_key() 源码 L87-L88
+    #   desc: 源码 L87-L88
+    #   inputs: 无参数
+    #   outputs: str
+    # - id: A2
+    #   name_zh: ② validate_idempotency_key
+    #   name_en: validate_idempotency_key
+    #   intro: validate_idempotency_key(key) 源码 L91-L100
+    #   desc: 源码 L91-L100
+    #   inputs: key
+    #   outputs: tuple[bool, str | None]
+    # - id: A3
+    #   name_zh: ③ BaseEvent
+    #   name_en: BaseEvent
+    #   intro: class BaseEvent 源码 L103-L122
+    #   desc: 公共方法（定义序）: is_replay；源码 L103-L122
+    #   inputs: 无参数
+    #   outputs: 返回值
+    # 层: 输出
+    # - id: O1
+    #   name_zh: str
+    #   name_en: str
+    #   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+    #   downstream: N/A (all consumers verified as phantom — stale references removed)
+    # - id: O2
+    #   name_zh: tuple[bool, str | None]
+    #   name_en: tuple[bool, str | None]
+    #   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+    #   downstream: N/A (all consumers verified as phantom — stale references removed)
+    # [/ALGO_FLOW]
+    #
+    # 边:
+    # I1 --> A1
+    # A1 --> A2
+    # A2 --> A3
+    # A3 --> O1

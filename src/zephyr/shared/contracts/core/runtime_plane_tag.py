@@ -103,31 +103,7 @@ D_FRONTEND api_gateway 的订单提交端点）。Hot-adjacent 模块在 Warm Pa
   - OQ-083（已 closed，本批次拍板）
 ═══════════════════════════════════════════════════════════════════════
 
-# [ALGO_FLOW]
-# 层: 输入
-# - id: I1
-#   name: 模块内部数据
-#   fields: 无公共形参/无再导出（AST 事实）
-#   code: runtime_plane_tag.py
-# 层: 算法
-# - id: A1
-#   name_zh: ① 包公共面再导出
-#   name_en: __init__ re-export
-#   intro: 再导出 COLD_PATH_LATENCY_BUDGET_MS, COLD_PATH_PARTIAL_ACTIVATED, HOT_PATH_ACTIVATE…
-#   desc: __init__ import L0；__all__ 6 项（AST 事实）
-#   inputs: I1
-#   outputs: __all__ 公共符号表
-# 层: 输出
-# - id: O1
-#   name_zh: 数据契约声明（1 类）
-#   name_en: data classes
-#   intro: RuntimePlane
-#   downstream: 见模块头 [CONSUMERS]
-# [/ALGO_FLOW]
-#
-# 边:
-# I1 --> A1
-# A1 --> O1
+# [ALGO_FLOW] external: docs/03_modules/_domain_shared/algo_flow/contracts/core/runtime_plane_tag.yaml
 '''
 
 from enum import Enum

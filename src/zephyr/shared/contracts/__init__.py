@@ -12,31 +12,7 @@ Backward-compat re-export facade. Canonical trading-domain types now live in
 zephyr.trading.trading_contracts. This module re-exports them so existing imports
 continue to work.
 
-# [ALGO_FLOW]
-# 层: 输入
-# - id: I1
-#   name: 包内子模块公共符号
-#   fields: import 再导出符号: importlib, ContractViolationError, EnforcementMode, enforce, enforce_…
-#   code: __init__.py import L42
-# 层: 算法
-# - id: A1
-#   name_zh: ① 包公共面再导出
-#   name_en: __init__ re-export
-#   intro: 再导出 NormalizedMarketData, FactorSignal, RiskLimits, Order, OrderSide, OrderType…
-#   desc: __init__ import L42；__all__ 110 项（AST 事实）
-#   inputs: I1
-#   outputs: __all__ 公共符号表
-# 层: 输出
-# - id: O1
-#   name_zh: 公共 API 面（110 符号）
-#   name_en: __all__
-#   intro: NormalizedMarketData, FactorSignal, RiskLimits, Order, OrderSide, OrderType, Or…
-#   downstream: 见模块头 [CONSUMERS]
-# [/ALGO_FLOW]
-#
-# 边:
-# I1 --> A1
-# A1 --> O1
+# [ALGO_FLOW] external: docs/03_modules/_domain_shared/algo_flow/contracts/contracts__init__.yaml
 """
 
 import importlib
