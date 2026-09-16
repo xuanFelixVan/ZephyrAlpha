@@ -3,7 +3,8 @@
 # [DOMAIN] D_BACKTEST
 # [DEPENDENCIES] zephyr.strategy_pipeline.intake; zephyr.data.alerter; zephyr.security.access_control.kill_switch(探针);
 #   scripts.backtest.sim_paper_ledger(import 复用 ensure_wallet，经 sys.path);
-#   scripts.backtest.{sim_platform_journal,sim_deviation_report,sim_governance}(子进程)
+#   scripts.backtest.{sim_platform_journal,sim_deviation_report,sim_governance}(子进程);
+#   zephyr.pf_alloc.allocation_orchestrator(子进程 -m，pf_alloc_daily 日分配执行体)
 # [CONSUMERS] DataScheduler task_completed（调度器侧 wire_data_scheduler 注册）; c4_batch_screen 落账钩子;
 #   intake sim 流转钩子（emit_sim_wallet_due）; 管线 CLI（python -m zephyr.strategy_pipeline.pipeline_events emit/drain/status）
 # [STARTUP] imported（本包不建线程/不建调度器；事件持久化=JSONL 日志，恢复重放由 drain 完成）
@@ -13,6 +14,9 @@
 #   单条事件重试超 MAX_ATTEMPTS 判毒丸留档+告警，不再自动重试；drain 幂等（消费成功=出队，重放零副作用）；
 #   模拟盘件（S08/S09/S10 C1C2）：sim_wallet_due/sim_ledger_daily/sim_journal_daily/sim_deviation_monthly
 #   归轻 kind（幂等写/分钟级子进程，月频或日频；sim_deviation_monthly 归轻=无人值守自动消费的显式裁定）；
+#   pf_alloc_daily（车道 D 分配链）归轻 kind：payload 必带 trade_date（禁墙钟猜业务日）、
+#   trade_date 级 marker 防同日双写（alloc 三表只增不改）、子进程超时 PF_ALLOC_TIMEOUT_S 有界、
+#   失败/超时抛错进 attempts 计数（MAX_ATTEMPTS=3 后毒丸留档）；
 #   日件幂等双闸=当日 UTC date-marker（消费成功才落）∨ 非 poison 同 kind 在队；月度档毒丸不堵队
 #   （毒丸不算已入队——sim_memo_monthly 从未正常轮转的病根修复，C2/X2）；
 #   OPTIONAL_DUE_KINDS 预埋派发缺失=逐出队跳过（不抛不占 attempts，实现由后续批次交付）；
@@ -23,7 +27,7 @@
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] RuntimeError(KillSwitch 激活)；IO 异常上抛（journal 不可达=管线故障，fail-closed）
-# [TESTS] tests/strategy_pipeline/test_pipeline_events.py
+# [TESTS] tests/strategy_pipeline/test_pipeline_events.py; tests/pf_alloc/test_pf_alloc_event_wiring.py
 # [A_module] module_id=MOD-BT-190 | layer=module | stability=experimental | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 # [CREATION-TOKEN] pipeline-events-mod-bt-190-20260915
@@ -42,6 +46,8 @@
   sim_wallet_due（intake sim 流转后开户，import 复用账本 ensure_wallet，幂等）；
   sim_ledger_daily → sim_journal_daily（daily_kline 唤醒入队，FIFO 串行，date-marker 日幂等）；
   sim_deviation_monthly（30 天 marker 月度档，成功后串行触发治理建议器）；
+  pf_alloc_daily（车道 D：分配链日分配，子进程隔离+有界超时+trade_date 级幂等 marker；
+    它是账本 ensure_wallet 钱包额度的上游——分配先落，账本同日开户才拿得到真实额度）；
   fw_backtest_due / promotion_advisory_due（预埋派发，实现模块由 S12/S13 批次交付，缺失跳过）。
 
 用法:
@@ -71,9 +77,12 @@ MAX_ATTEMPTS = 3
 # 轻 kind=调度器唤醒钩子可消费（有界耗时/只读或幂等写）；重 kind=批测级耗时，只经显式 drain
 # sim_deviation_monthly 裁定（C2/X2 自裁留痕）：偏离报告为分钟级子进程（月频），归轻 kind 走
 # 调度器唤醒自动消费（无人值守优先）；handler 子进程隔离+超时+失败告警，重活不进主进程。
+# pf_alloc_daily（车道 D 分配链，2026-09-16）同归轻 kind：handler=子进程隔离 + 有界超时
+# （PF_ALLOC_TIMEOUT_S，分配链是分钟级：逐策略读净值 + 三表追加写），且三表只增不改
+# （重跑=新 run_id 追加=同日双写）→ 幂等由 trade_date 级 date-marker 跳过闸承担（见 handler）。
 LIGHT_KINDS = frozenset({"c4_batch_completed", "mount_audit_monthly", "c2_screen_due",
                          "sim_memo_monthly", "sim_wallet_due", "sim_ledger_daily",
-                         "sim_journal_daily", "sim_deviation_monthly"})
+                         "sim_journal_daily", "sim_deviation_monthly", "pf_alloc_daily"})
 HEAVY_KINDS = frozenset({"c4_batch_due"})
 # 模拟盘日件（S09 C2）：顺序=journal 依赖账本日账先行（drain FIFO 天然串行）
 SIM_DAILY_KINDS = ("sim_ledger_daily", "sim_journal_daily")
@@ -81,6 +90,11 @@ SIM_DAILY_KINDS = ("sim_ledger_daily", "sim_journal_daily")
 # 主任务/kline_index_incremental（账本直读指数行情）。DAG 并行竞态由 journal 失败重试兜底
 # （行情未齐→账本 RuntimeError→留队，下个数据任务完成唤醒重试）。
 SIM_DAILY_WAKE_TASKS = ("daily_kline", "kline_daily", "kline_index")
+# pf_alloc 日分配件（车道 D）：kind 名 + 装配体模块（子进程 -m 调用，进程级超时边界）+ 有界运行时
+# （分配链=分钟级：逐策略读净值/regime + 三表追加；超时视同失败进重试计数，不挂住调度器线程）
+PF_ALLOC_KIND = "pf_alloc_daily"
+PF_ALLOC_MODULE = "zephyr.pf_alloc.allocation_orchestrator"
+PF_ALLOC_TIMEOUT_S = 900
 # 预埋派发（S12/S13 前置契约）：实现模块由后续批次交付，缺失=log-and-skip（不抛、出队留痕）
 OPTIONAL_DUE_KINDS = {
     "fw_backtest_due": ("zephyr.strategy_pipeline.fw_backtest", "run_fw_backtest_due"),
@@ -192,6 +206,10 @@ def _default_handler(evt: dict[str, Any]) -> dict[str, Any]:
     if kind == "sim_deviation_monthly":
         out = run_sim_deviation_monthly(evt["payload"])
         _touch_marker("sim_deviation")
+        return out
+    if kind == "pf_alloc_daily":
+        out = run_pf_alloc_daily(evt["payload"])
+        _touch_marker("pf_alloc_daily")  # kind 级日号（唤醒侧去重）；trade_date 级双写闸在 handler 内
         return out
     if kind in OPTIONAL_DUE_KINDS:
         return run_optional_due(kind, evt)
@@ -367,6 +385,57 @@ def run_sim_deviation_monthly(payload: dict[str, Any]) -> dict[str, Any]:
     if gov_rc != 0:
         alert(f"模拟盘治理失败 rc={gov_rc}: {gov_err}", level="ERROR")
     return {"rc": rc, "month": month, "governance_rc": gov_rc}
+
+
+def run_pf_alloc_daily(payload: dict[str, Any]) -> dict[str, Any]:
+    """pf_alloc 日分配（车道 D 实盘接线，MOD-PA-030 装配体的事件执行体）：一事件=一分配周期。
+
+    触发面=事件（宪法 §9.3）：本件不建 cron/Timer/sleep 循环，节拍由调度器唤醒链上的
+    pf_alloc_daily 事件给；执行体=subprocess 隔离 `python -m zephyr.pf_alloc.allocation_orchestrator
+    --date <D>`（与 run_c2_screen/run_sim_ledger_daily 同款"重活不进主进程"，超时即硬边界）。
+    该 CLI 与事件正门 handle_pf_alloc_daily_event 调的是同一个 run_daily_allocation。
+
+    Args:
+        payload: 必带 ``trade_date``（或 ``biz_date``）——缺失即抛错，**不按墙钟猜业务日**
+          （分配链 handle_pf_alloc_daily_event 同口径，发射方负责给日）；
+          可选 ``strategy_ids``（限定策略，透传 --strategy-id）/``timeout_s``（默认 PF_ALLOC_TIMEOUT_S）。
+
+    幂等：alloc 三表 MergeTree 只增不改（重跑=新 run_id 追加），故以 trade_date 级 date-marker
+      做当日跳过闸——同一业务日已成功落地则零副作用返回（不双写快照、不重复落库）。
+    失败：超时 / rc≠0 → 告警 + 抛错，交 drain 的 attempts 计数（MAX_ATTEMPTS=3 后毒丸留档）。
+
+    Returns:
+        {"rc": 0, "trade_date": D, "summary_tail": str} 或 {"skipped": ..., "trade_date": D}
+    """
+    import subprocess
+
+    day = str(payload.get("trade_date") or payload.get("biz_date") or "").strip()
+    if not day:
+        raise RuntimeError(
+            "pf_alloc_daily 事件 payload 缺 trade_date——分配链禁按墙钟猜交易日"
+            "（zephyr.pf_alloc.allocation_orchestrator.handle_pf_alloc_daily_event 同口径），"
+            "发射方须带业务日")
+    marker = f"{PF_ALLOC_KIND}:{day}"
+    if _date_marker_done(marker):
+        log.info("pf_alloc_daily %s 当日已落地，跳过（防同日双写分配快照）", day)
+        return {"skipped": "already_persisted", "trade_date": day}
+    cmd = [sys.executable, "-m", PF_ALLOC_MODULE, "--date", day]
+    for sid in payload.get("strategy_ids") or []:
+        cmd += ["--strategy-id", str(sid)]
+    timeout_s = int(payload.get("timeout_s", PF_ALLOC_TIMEOUT_S))
+    try:
+        proc = subprocess.run(cmd, capture_output=True, text=True, timeout=timeout_s,
+                              cwd=str(ROOT), encoding="utf-8", errors="replace")
+    except subprocess.TimeoutExpired as exc:
+        alert(f"pf_alloc 日分配超时（>{timeout_s}s）trade_date={day}", level="ERROR")
+        raise RuntimeError(f"pf_alloc_daily 超时 {timeout_s}s trade_date={day}") from exc
+    if proc.returncode != 0:
+        err = (f"pf_alloc 日分配失败 rc={proc.returncode} trade_date={day}: "
+               f"{(proc.stderr or '')[-300:]}")
+        alert(err, level="ERROR")
+        raise RuntimeError(err)
+    _touch_marker(marker)  # 成功才落号（失败不落→同唤醒点重试仍可执行）
+    return {"rc": 0, "trade_date": day, "summary_tail": (proc.stdout or "")[-300:]}
 
 
 def run_optional_due(kind: str, evt: dict[str, Any]) -> dict[str, Any]:
@@ -589,7 +658,7 @@ def main(argv: list[str] | None = None) -> int:  # pragma: no cover — CLI 薄�
                                     "c2_screen_due", "sim_memo_monthly", "sim_wallet_due",
                                     "sim_ledger_daily", "sim_journal_daily",
                                     "sim_deviation_monthly", "fw_backtest_due",
-                                    "promotion_advisory_due"])
+                                    "promotion_advisory_due", "pf_alloc_daily"])
     e.add_argument("--payload", default="{}", help="JSON payload")
     args = ap.parse_args(argv)
     logging.basicConfig(level=logging.INFO, format="%(levelname)s %(name)s: %(message)s")

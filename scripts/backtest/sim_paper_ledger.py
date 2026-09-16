@@ -1,7 +1,8 @@
 # [BLUEPRINT] MOD-BT-084 | docs/03_modules/_domain_backtest/blueprint.md
 # [MODULE] scripts.backtest.sim_paper_ledger
 # [DOMAIN] D_BACKTEST
-# [DEPENDENCIES] zephyr.data.ch_writer; zephyr.data.ch_config
+# [DEPENDENCIES] zephyr.data.ch_writer; zephyr.data.ch_config;
+#   schemas.categories.alloc_budget_daily(读钱包额度模板); zephyr.pf_alloc.allocation_inputs(日期校验)
 # [CONSUMERS] c1_backtest.sim_pocket_daily（注册表全部 sim 策略钱包）；每日自动化（C2 已接线：
 #   pipeline_events kind sim_ledger_daily/sim_wallet_due 经 subprocess/import 调本模块）
 # [STARTUP] manual+event（CLI 手工；sim_ledger_daily/sim_wallet_due 事件消费为自动）
@@ -10,13 +11,14 @@
 #   （方案 C 口径，仅内置引擎策略 STR-VREV-025）；成本=冻结土规（买 2.5bp+5bp，卖 2.5bp+10bp+5bp）；
 #   幂等（同策略+日替换写；ensure_wallet 同策略+日已有行=零副作用跳过）；
 #   模拟盘模式 mode 标记 replay_demo/sim_daily；
-#   多策略（S08 C1）：非内置引擎策略的开户行=初始资金现金仓 signal=open（策略引擎未接线
-#   不伪造信号/收益，日账待翻译件重放接线），--from-registry 扫 lifecycle==sim 全部条目
+#   多策略（S08 C1）：非内置引擎策略的开户行=signal=open（策略引擎未接线不伪造信号/收益，
+#   日账待翻译件重放接线），钱包额度=pf_alloc 分配快照 allocated_capital，链当日无行/表未建
+#   才回退 flat 初始资金且回退原因入 note（禁静默伪造额度），--from-registry 扫 lifecycle==sim 全部条目
 # [STABILITY] experimental
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] RuntimeError(行情缺失/落库未确认)
-# [TESTS] tests/backtest/test_c4_batch_smoke.py
+# [TESTS] tests/backtest/test_c4_batch_smoke.py; tests/pf_alloc/test_sim_ledger_allocation_wiring.py
 # [A_module] module_id=MOD-BT-133 | layer=module | stability=experimental | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 """模拟盘方案 C 账本——多策略虚拟钱包引擎（S08 C1 参数化；内置引擎=恐慌反弹 STR-VREV-025）。
@@ -174,6 +176,47 @@ def registry_sim_entries() -> list[dict]:
             for s in reg.get("strategies", []) if s.get("lifecycle_status") == "sim"]
 
 
+def allocation_wallet_capital(strategy_id: str, day: str) -> tuple[float | None, str]:
+    """读 pf_alloc 分配快照取本策略当日钱包额度 → (额度 | None, 溯源/回退说明)。
+
+    额度真值 = alloc_budget_daily.allocated_capital，与 `run_daily_allocation()` 返回对象的
+    ``wallet_capital[strategy_id]`` 同源（orchestrator 以同一值装配行与返回值，重跑=新 run_id
+    追加，故读"当日该策略最近一次 run"即最新口径）。SQL 取 schemas 读模板真源（禁裸 SQL/
+    禁复制列名），只读通道复用本模块 `_q`。
+
+    回退（fail-open **只在回退路径**）：表未建 / 当日无行 / 本策略无行 / 额度非法 / 查询异常
+    → (None, 原因)。账本据此按旧 flat 口径开行并把原因写进行 note——绝不静默伪造额度，
+    也绝不因"分配链当日缺席"阻断开户（钱包行是分配链自身的绩效输入，先有鸡）。
+    """
+    try:
+        # 先挂 pf_alloc：它把仓根（schemas DDL-as-Code 真源所在）插进 sys.path——
+        # 账本以 `python scripts/backtest/sim_paper_ledger.py` 裸脚本跑时仓根不在 sys.path
+        from zephyr.pf_alloc.allocation_inputs import validate_date_literal
+
+        day = validate_date_literal(day)
+    except Exception as exc:  # noqa: BLE001 — 日期不合分配口径=不查库，直接回退
+        return None, f"业务日期不可用于分配查询（{type(exc).__name__}: {str(exc)[:120]}）"
+    try:
+        from schemas.categories.alloc_budget_daily import SQL_DAY_SLICE, TABLE_NAME
+    except Exception as exc:  # noqa: BLE001 — 读模板不可用=回退（分配链尚未落地该表）
+        return None, f"alloc_budget_daily 读模板不可用（{type(exc).__name__}: {str(exc)[:120]}）"
+    try:
+        rows = list(_q(SQL_DAY_SLICE.format(table=TABLE_NAME, date=day)))
+    except Exception as exc:  # noqa: BLE001 — 未建表/CH 不可达，原因原样入 note
+        return None, f"{TABLE_NAME} 不可读（{type(exc).__name__}: {str(exc)[:120]}）"
+    row = next((r for r in rows if str(r[0]) == strategy_id), None)
+    if row is None:
+        return None, (f"分配链当日无本策略行（{day} 共 {len(rows)} 行）" if rows
+                      else f"分配链当日无快照行（{day}，链未跑或已回退 flat）")
+    try:
+        capital = round(float(row[5]), 2)
+    except (TypeError, ValueError) as exc:  # noqa: BLE001 — 非数值额度=不可信，回退
+        return None, f"allocated_capital 非数值（{row[5]!r}，{type(exc).__name__}）"
+    if capital != capital or capital < 0:  # NaN / 负额度（口径不可能值）
+        return None, f"allocated_capital={capital} 非法（须为非负有限值）"
+    return capital, f"pf_alloc 分配快照 run={row[1]}（{TABLE_NAME} {day}）"
+
+
 def _write_rows(rows: list[list], events: list[list]) -> None:
     from zephyr.data import ch_writer
 
@@ -198,10 +241,14 @@ def ensure_wallet(strategy_id: str, day: str | None = None, mode: str = "sim_dai
     """幂等开钱包（C1 核心）：同策略+日已有钱包行则跳过（重复调用零副作用）。
 
     - 内置引擎策略（STRATEGY_ID）→ run() 当日全口径（与既有 sim_daily 行为等值，不迁移不破坏）；
-    - 其余注册表 sim 条目 → 开户行（初始资金现金仓，signal=open，note 注明引擎未接线——
+    - 其余注册表 sim 条目 → 开户行（signal=open，note 记额度来源——
       策略日账/信号待翻译件 build() 重放接线，禁伪造信号与收益）；
+      钱包额度=pf_alloc 分配快照 allocated_capital（= run_daily_allocation().wallet_capital，
+      见 `allocation_wallet_capital`）；分配链当日无行/表未建/查询异常 → 回退旧 flat
+      INITIAL_CAPITAL 口径并把回退原因写进 note（回退是显式事实，不是静默伪造数字）；
     - sim_trade_log 同步落 open 事件（事件溯源：rebuild() 对非 entry 动作按现金到账处理，兼容）。
-    返回 {"strategy_id", "day", "created": bool, ...}；code_path 仅作 payload 透传留痕。
+    返回 {"strategy_id", "day", "created": bool, "capital", "capital_source", ...}；
+    code_path 仅作 payload 透传留痕。
     """
     day = day or date.today().strftime("%Y-%m-%d")
     existing = _q(f"SELECT count() FROM {_TABLE} FINAL "
@@ -212,15 +259,25 @@ def ensure_wallet(strategy_id: str, day: str | None = None, mode: str = "sim_dai
     if strategy_id == STRATEGY_ID:
         res = run(mode, day, day, run_id=run_id, strategy_id=strategy_id)
         rows, events = res["rows"], res["events"]
+        capital, source = INITIAL_CAPITAL, "内置引擎策略日账（额度不经分配链）"
     else:
-        rows = [[day, strategy_id, INITIAL_CAPITAL, round(INITIAL_CAPITAL, 2), "", 0.0, 0.0,
-                 round(INITIAL_CAPITAL, 2), 0.0, "open", mode, run_id,
-                 "C1 自动开户（策略引擎未接线，日账待翻译件重放）"]]
-        events = [[day, strategy_id, "", "open", 0.0, 0.0, 0.0, INITIAL_CAPITAL,
-                   "C1 自动开户", mode, run_id]]
+        alloc_cap, source = allocation_wallet_capital(strategy_id, day)
+        if alloc_cap is None:
+            # 回退路径（fail-open）：额度=旧 flat 口径，**原因入 note 留痕**，不静默伪造
+            capital = INITIAL_CAPITAL
+            note = (f"C1 自动开户（策略引擎未接线，日账待翻译件重放）"
+                    f"｜钱包额度回退 flat 旧口径：{source}")
+        else:
+            capital = alloc_cap
+            note = f"C1 自动开户（钱包额度={source}）｜信号待翻译件重放，不伪造信号/收益"
+        rows = [[day, strategy_id, capital, round(capital, 2), "", 0.0, 0.0,
+                 round(capital, 2), 0.0, "open", mode, run_id, note]]
+        events = [[day, strategy_id, "", "open", 0.0, 0.0, 0.0, capital,
+                   f"C1 自动开户｜{source}", mode, run_id]]
     _write_rows(rows, events)
     return {"strategy_id": strategy_id, "day": day, "created": True,
-            "rows": len(rows), "events": len(events)}
+            "rows": len(rows), "events": len(events),
+            "capital": capital, "capital_source": source}
 
 
 def open_wallets_from_registry(day: str | None = None) -> dict:
