@@ -4,10 +4,14 @@ title: OBJ_R 标准与规则线——AI 层自己的尺子也要有升级流水�
 owner: ZephyrAlpha-Owner
 session: st-ailayer-20260917
 date: 2026-09-17
-status: skeleton_pending_mining
+status: design_done
 ---
 
 # OBJ_R 标准与规则线骨架卡（Owner 2026-09-17 四轮问：标准/规则要不要自动升级流水线？）
+
+> **状态 2026-09-17：design_done**——真源设计稿=[DESIGN.md](DESIGN.md)（历史重放器设计/
+> 标准资产全量盘点/月度体检/案例库 schema/施工项 S1-S5/待 Owner 7 项）。本卡其余部分
+> 保留作骨架底稿，与 DESIGN.md 冲突时以 DESIGN.md 为准。
 
 > **客观答案：要，而且这是 AI 层当前最不自治的一块**——门禁阈值、甄别 rubric、考纲、配额
 > 数值、SOP，现在全靠人工+裁定升级（挖矿 SOP 两天改四版全是 Owner 口述人工修）。

@@ -4,7 +4,7 @@ title: OBJ_M 模型对象线——AI 升级 AI 的"脑"升级（API+本地双线
 owner: ZephyrAlpha-Owner
 session: st-ailayer-20260917
 date: 2026-09-17
-status: skeleton_pending_mining
+status: design_done
 ---
 
 # OBJ_M 模型对象线骨架卡（Owner 2026-09-17 口述新增）
@@ -59,6 +59,10 @@ model_capability_exam（蓝图在档）/ 挖矿 SOP 模型分派二维法 / GLM 
 夜间 Flash 免费实战经验 / 配额池提案（排班 v1）/ 充值预警设计（主文档 §四）。
 
 ## 待挖矿清单（下一班，本卡仅壳）
+
+> **2026-09-17 已挖干**：真源设计稿=[DESIGN.md](DESIGN.md)（六向台账+M1-M5 五件施工级设计
+>+四契约接线图+8 施工项；挖矿日志 10 signal/1 受阻）。下列 5 项已全部在 DESIGN.md §2-§6
+> 定稿；施工按其 §8 清单领单。
 
 1. 模型情报源清单+扫描频率（发布渠道/价格页/活动页各哪些，L1 感知挂接）
 2. 模型库 schema：双轴打分口径与分表字段

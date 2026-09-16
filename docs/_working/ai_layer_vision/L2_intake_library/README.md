@@ -4,7 +4,7 @@ title: L2 收集段——原材料库（分库分表，生熟分离）
 owner: ZephyrAlpha-Owner
 session: st-ailayer-20260917
 date: 2026-09-17
-status: skeleton_pending_mining
+status: design_done
 ---
 
 # L2 收集段骨架卡
@@ -33,3 +33,4 @@ negative_archive 阴性库（工厂五类产品之一）；ig_fact 知识库先�
 
 ## 状态
 壳已立。**建议本段第一个深挖**（它是七段的枢纽：L1 喂它、L3/L4/L7 都读它）。
+**2026-09-17 深挖完成**：真源设计稿=[DESIGN.md](DESIGN.md)（design_v1：PG ai_intake 库表/simhash 查重/MAP-Elites 40 格/进货费机检/淘汰率 KPI/六边接线图/9 施工项；自审闸=施工）。

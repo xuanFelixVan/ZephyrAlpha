@@ -27715,6 +27715,18 @@ creation_tokens:
   token: ai-layer-vision-readme-20260916
   created_by: st-ailayer-20260917
   capability: ai_layer_vision
+- file: docs/_working/ai_layer_vision/L2_intake_library/DESIGN.md
+  token: ai-layer-vision-design-20260916
+  created_by: st-ailayer-20260917
+  capability: ai_layer_vision
+- file: docs/_working/ai_layer_vision/OBJ_M_models/DESIGN.md
+  token: ai-layer-vision-design-20260916
+  created_by: st-ailayer-20260917
+  capability: ai_layer_vision
+- file: docs/_working/ai_layer_vision/OBJ_R_rules_standards/DESIGN.md
+  token: ai-layer-vision-design-20260916
+  created_by: st-ailayer-20260917
+  capability: ai_layer_vision
 - file: docs/_working/industry_chain_alpha/industry_chain_alpha_plan.md
   token: industry-chain-alpha-industry-chain-alpha-plan-20260916
   created_by: st-igalpha-20260917
