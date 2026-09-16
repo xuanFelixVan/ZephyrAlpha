@@ -4,8 +4,13 @@ title: L4 对比段——定优劣（进化循环的咽喉）
 owner: ZephyrAlpha-Owner
 session: st-ailayer-20260917
 date: 2026-09-17
-status: skeleton_pending_mining
+status: design_done
 ---
+
+> **状态 2026-09-17：design_done**——真源设计稿=[DESIGN.md](DESIGN.md)（通用对比器协议层设计/
+> 考场矩阵七行/公平性三轴/判据双层预注册/显著性四档/too-good 三查流程化/独立性七道机检/
+> 六契约接线图/8 施工项/4 待 Owner）。本卡其余部分保留作骨架底稿，与 DESIGN.md 冲突时以
+> DESIGN.md 为准。
 
 # L4 对比段骨架卡
 
