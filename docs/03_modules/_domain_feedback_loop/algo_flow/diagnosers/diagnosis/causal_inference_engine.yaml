@@ -1,0 +1,41 @@
+# ALGO_FLOW 外部真源——causal_inference_engine（_domain_feedback_loop 域，真源 src/zephyr/feedback_loop/diagnosers/diagnosis/causal_inference_engine.py）
+# 2026-09-15 P2-1 契约头减负批量出仓：docstring 内联块逐字节副本，extractor 经
+# external 锚加载走同一 parse_algo_flow 管线；算法公共面变化时同步更新本块。
+doc_type: architecture_view
+ttl: permanent
+module: src.zephyr.feedback_loop.diagnosers.diagnosis.causal_inference_engine
+source_of_truth: src/zephyr/feedback_loop/diagnosers/diagnosis/causal_inference_engine.py
+algo_flow: |
+    # [ALGO_FLOW]
+    # 层: 输入
+    # - id: I1
+    #   name: 模块内部数据
+    #   fields: 无公共形参/无再导出（AST 事实）
+    #   code: causal_inference_engine.py
+    # 层: 算法
+    # - id: A1
+    #   name_zh: ① CausalGraph
+    #   name_en: CausalGraph
+    #   intro: class CausalGraph 源码 L63-L67
+    #   desc: 公共方法（定义序）: find_root_cause；源码 L63-L67
+    #   inputs: 无参数
+    #   outputs: 返回值
+    # - id: A2
+    #   name_zh: ② CausalInferenceEngine
+    #   name_en: CausalInferenceEngine
+    #   intro: class CausalInferenceEngine 源码 L71-L75
+    #   desc: 公共方法（定义序）: infer；源码 L71-L75
+    #   inputs: 无参数
+    #   outputs: 返回值
+    # 层: 输出
+    # - id: O1
+    #   name_zh: 模块公共 API 面（2 定义）
+    #   name_en: public defs
+    #   intro: CausalGraph, CausalInferenceEngine
+    #   downstream: 见模块头 [CONSUMERS]
+    # [/ALGO_FLOW]
+    #
+    # 边:
+    # I1 --> A1
+    # A1 --> A2
+    # A2 --> O1

@@ -30,32 +30,7 @@ Mitigation: Track data volume growth rates per storage sink. Project time-to-ful
 using linear/exponential growth models. Alert when TTF (time-to-full) drops
 below threshold. Auto-trigger retention policy tightening or compaction.
 
-# [ALGO_FLOW]
-# 层: 输入
-# - id: I1
-#   name: 模块内部数据
-#   fields: 无公共形参/无再导出（AST 事实）
-#   code: data_volume_growth_monitor.py
-# 层: 算法
-# - id: A1
-#   name_zh: ① DataVolumeGrowthMonitor
-#   name_en: DataVolumeGrowthMonitor
-#   intro: class DataVolumeGrowthMonitor 源码 L75-L196
-#   desc: 公共方法（定义序）: register_sink, record_volume, get_all_projections, overall_storage_health；源码 L75-L196
-#   inputs: 无参数
-#   outputs: 返回值
-#   （注：A1 之后另有 1 个公共定义未列入（含 1 个数据契约/异常/枚举声明类），见源码）
-# 层: 输出
-# - id: O1
-#   name_zh: 模块公共 API 面（2 定义）
-#   name_en: public defs
-#   intro: DataVolumeGrowthMonitor
-#   downstream: 见模块头 [CONSUMERS]
-# [/ALGO_FLOW]
-#
-# 边:
-# I1 --> A1
-# A1 --> O1
+# [ALGO_FLOW] external: docs/03_modules/_domain_feedback_loop/algo_flow/diagnosers/reliability/data_volume_growth_monitor.yaml
 """
 
 from __future__ import annotations

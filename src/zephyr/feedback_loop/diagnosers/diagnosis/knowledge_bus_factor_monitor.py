@@ -29,31 +29,7 @@ Mitigation: Track knowledge distribution across subsystems. Assign and monitor
 "AI bus factor" — how many independent agents understand each subsystem. Alert when
 any subsystem has bus factor < 2. Generate knowledge transfer recommendations.
 
-# [ALGO_FLOW]
-# 层: 输入
-# - id: I1
-#   name: 模块内部数据
-#   fields: 无公共形参/无再导出（AST 事实）
-#   code: knowledge_bus_factor_monitor.py
-# 层: 算法
-# - id: A1
-#   name_zh: ① KnowledgeBusFactorMonitor
-#   name_en: KnowledgeBusFactorMonitor
-#   intro: class KnowledgeBusFactorMonitor 源码 L66-L165
-#   desc: 公共方法（定义序）: register_subsystem, remove_owner, check_bus_factor, get_knowledge_heatmap, suggest_knowledge_trans…
-#   inputs: 无参数
-#   outputs: 返回值
-# 层: 输出
-# - id: O1
-#   name_zh: 模块公共 API 面（1 定义）
-#   name_en: public defs
-#   intro: KnowledgeBusFactorMonitor
-#   downstream: 见模块头 [CONSUMERS]
-# [/ALGO_FLOW]
-#
-# 边:
-# I1 --> A1
-# A1 --> O1
+# [ALGO_FLOW] external: docs/03_modules/_domain_feedback_loop/algo_flow/diagnosers/diagnosis/knowledge_bus_factor_monitor.yaml
 """
 
 from __future__ import annotations

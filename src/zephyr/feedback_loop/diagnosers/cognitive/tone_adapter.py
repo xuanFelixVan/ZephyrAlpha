@@ -21,31 +21,7 @@ Tone Adapter — v0.9.0 R127
 Blindspot: FLE notification tone static regardless of severity or owner state.
 Risk: R127 — Wrong tone causes owner to ignore critical alerts.
 
-# [ALGO_FLOW]
-# 层: 输入
-# - id: I1
-#   name: 模块内部数据
-#   fields: 无公共形参/无再导出（AST 事实）
-#   code: tone_adapter.py
-# 层: 算法
-# - id: A1
-#   name_zh: ① ToneAdapter
-#   name_en: ToneAdapter
-#   intro: class ToneAdapter 源码 L55-L59
-#   desc: 公共方法（定义序）: adapt；源码 L55-L59
-#   inputs: 无参数
-#   outputs: 返回值
-# 层: 输出
-# - id: O1
-#   name_zh: 模块公共 API 面（1 定义）
-#   name_en: public defs
-#   intro: ToneAdapter
-#   downstream: 见模块头 [CONSUMERS]
-# [/ALGO_FLOW]
-#
-# 边:
-# I1 --> A1
-# A1 --> O1
+# [ALGO_FLOW] external: docs/03_modules/_domain_feedback_loop/algo_flow/diagnosers/cognitive/tone_adapter.yaml
 """
 
 from dataclasses import dataclass
