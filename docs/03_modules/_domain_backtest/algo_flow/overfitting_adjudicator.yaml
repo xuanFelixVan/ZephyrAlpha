@@ -28,29 +28,29 @@ algo_flow: |
     # - id: A1
     #   name_zh: ① expected_max_sharpe_z
     #   name_en: expected_max_sharpe_z
-    #   intro: 多重试验期望最大值 E[max(Z_N)](Bailey & López de Prado 2014 闭式)。
-    #   desc: 多重试验期望最大值 E[max(Z_N)](Bailey & López de Prado 2014 闭式)。 N=1: 0(无多重试验膨胀) N>1: E[max(Z_N)]≈…；源码 L263-L285
+    #   intro: 多重试验期望最大值 E[max(Z_N)]——校验入参后委托 MOD-SIM-024 唯一真源。
+    #   desc: 多重试验期望最大值 E[max(Z_N)]——校验入参后委托 MOD-SIM-024 唯一真源。 本件原自建 Acklam 有理逼近 Φ⁻¹ + 论文闭式块已随 SDC-3/SDC-4 口径统一删除…；源码 L95-L112
     #   inputs: num_trials
     #   outputs: float
     # - id: A2
     #   name_zh: ② adjudicate_dsr
     #   name_en: adjudicate_dsr
-    #   intro: DSR 裁定: 多次试验后真实 Sharpe 折减(Bailey & López de Prado 2014)。
-    #   desc: DSR 裁定: 多次试验后真实 Sharpe 折减(Bailey & López de Prado 2014)。 DSR = Φ((SR − E[max SR]) / √V[SR…；源码 L317-L391
+    #   intro: DSR 裁定: 多次试验后真实 Sharpe 折减(Bailey & López de Prado 2014)，数学全委托 MOD-SIM-024。
+    #   desc: DSR 裁定: 多次试验后真实 Sharpe 折减(Bailey & López de Prado 2014)，数学全委托 MOD-SIM-024。 V[SR]/E[max]/退化判定不自写公式；峰度入参为超额口径(正态=0)，+3 转 Pearson 由真源完成。 退化态 Fail-Closed: dsr=DSR_UNDECIDABLE(0.0)+degenerate=True，永不判显著（旧"SR>0→1.0"fail-open 分支已删）；源码 L147-L223
     #   inputs: sharpe num_trials num_obs skewness kurtosis threshold
     #   outputs: DSRVerdict
     # - id: A3
     #   name_zh: ③ summarize_walk_forward
     #   name_en: summarize_walk_forward
     #   intro: 检验器①: 各折 OOS/IS 衰减比分布 + 最差折汇总。
-    #   desc: 检验器①: 各折 OOS/IS 衰减比分布 + 最差折汇总。 Args: folds: 各折 (is_sharpe, oos_sharpe) 对, 至少 1 折; IS<=0 折…；源码 L428-L494
+    #   desc: 检验器①: 各折 OOS/IS 衰减比分布 + 最差折汇总。 Args: folds: 各折 (is_sharpe, oos_sharpe) 对, 至少 1 折; IS<=0 折…；源码 L260-L326
     #   inputs: folds threshold
     #   outputs: WalkForwardDecaySummary
     # - id: A4
     #   name_zh: ④ perturbation_stability
     #   name_en: perturbation_stability
     #   intro: 检验器③: 策略参数 ±pct one-at-a-time 扰动, 统计绩效衰减率与稳健区间占比。
-    #   desc: 检验器③: 策略参数 ±pct one-at-a-time 扰动, 统计绩效衰减率与稳健区间占比。 回测引擎走契约接口: backtest_fn(params) -> 绩效标量(…；源码 L550-L642
+    #   desc: 检验器③: 策略参数 ±pct one-at-a-time 扰动, 统计绩效衰减率与稳健区间占比。 回测引擎走契约接口: backtest_fn(params) -> 绩效标量(…；源码 L382-L474
     #   inputs: base_params backtest_fn pct tolerance min_robust_share
     #   outputs: PerturbationStabilityReport
     # - id: A5

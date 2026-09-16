@@ -5,7 +5,7 @@
 # [CONSUMERS] zephyr.backtest.implementations.vectorized_engine
 # [STARTUP] imported
 # [MATURITY] production
-# [INVARIANTS] PIT铁律; Sharpe修正(中国10年期国债); 样本量<60不计算Sharpe
+# [INVARIANTS] PIT铁律; Sharpe修正(中国10年期国债); 样本量<60不计算Sharpe; DSR退化态fail-closed(dsr_degenerate=True⇒dsr=0.0地板,不可读作"测得不显著")
 # [MODIFY-GUARD] none
 # [STABILITY] evolving
 # [SAFETY] L
@@ -288,8 +288,10 @@ def calculate_full_metrics(
     Returns:
         dict: 基础指标(total_return/annual_return/sharpe_ratio/sortino_ratio/
               max_drawdown/win_rate/trades_count) +
-              dsr/adjusted_sharpe/expected_max_sharpe/is_overfitting
-              (dsr∈(0,1)概率; adjusted_sharpe=年化Sharpe;
+              dsr/adjusted_sharpe/expected_max_sharpe/is_overfitting/dsr_degenerate
+              (dsr∈[0,1]概率, dsr_degenerate=True 时为不可判定的 Fail-Closed 地板 0.0,
+               须先读 dsr_degenerate 再信 dsr;
+               adjusted_sharpe=年化Sharpe;
                expected_max_sharpe=E[max(Z_N)] 多重测试期望;
                is_overfitting=dsr<0.5 运气中值否决线,放行线0.95归 is_significant) +
               n_trials(实际用于修正的基数) + n_trials_source(来源可溯标记)
@@ -317,6 +319,7 @@ def calculate_full_metrics(
         result["adjusted_sharpe"] = float(base_metrics["sharpe_ratio"])
         result["expected_max_sharpe"] = 0.0
         result["is_overfitting"] = True
+        result["dsr_degenerate"] = True  # 样本不足=不可判定(SDC-4 fail-closed)
         result["n_trials"] = int(n_trials_resolved)
         result["n_trials_source"] = n_trials_source
         return result
@@ -336,7 +339,10 @@ def calculate_full_metrics(
     result["expected_max_sharpe"] = float(dsr_result.expected_max)
     # is_overfitting 语义=运气中值否决线(dsr < DSR_OVERFITTING_FLOOR=0.5);
     # 显著性放行线 0.95 归 MOD-SIM-024 is_significant。
+    # 退化态(dsr_result.degenerate, dsr=DSR_UNDECIDABLE=0.0)在此同样落 True：
+    # "判不了"必须阻断晋级，不得被读成"测得不显著"（SDC-4 Fail-Closed）。
     result["is_overfitting"] = bool(dsr_result.dsr < DSR_OVERFITTING_FLOOR)
+    result["dsr_degenerate"] = bool(dsr_result.degenerate)
     result["n_trials"] = int(n_trials_resolved)
     result["n_trials_source"] = n_trials_source
     return result

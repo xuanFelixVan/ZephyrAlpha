@@ -5,7 +5,7 @@
 # [CONSUMERS] 上线评审流程(挂钩点预留, 未接真门禁)
 # [STARTUP] imported
 # [MATURITY] production
-# [INVARIANTS] 三检验器纯统计; OOS/IS阈值0.70与扰动容忍0.30复用overfitting_detector SSoT; DSR显著线0.95复用MOD-SIM-024 SSoT; backtest引擎走注入callable契约; 报告frozen不可变; 无有效折fail-closed
+# [INVARIANTS] 三检验器纯统计; OOS/IS阈值0.70与扰动容忍0.30复用overfitting_detector SSoT; DSR显著线0.95复用MOD-SIM-024 SSoT; DSR数学(V[SR]峰度口径/E[max]/退化判定)全委托MOD-SIM-024禁另写公式; 退化态fail-closed(degenerate=True⇒dsr=0.0且永不判显著); backtest引擎走注入callable契约; 报告frozen不可变; 无有效折fail-closed
 # [MODIFY-GUARD] none
 # [STABILITY] evolving
 # [SAFETY] M
@@ -21,8 +21,10 @@ P-5 过拟合裁定协议组件(三检验器 + 上线门禁挂钩点预留)
   - 检验器① walk-forward 汇总: 各折 OOS/IS 衰减比分布(mean/std/min) + 最差折定位,
     阈值复用 overfitting_detector.DEFAULT_OOS_SHARPE_THRESHOLD_RATIO=0.70(P0-9 SSoT);
     IS<=0 折不适用比率(对齐 compare_in_out_sample 口径), 无有效折 fail-closed 判不稳定
-  - 检验器② Deflated Sharpe Ratio: Bailey & López de Prado (2014) 闭式,
-    E[max(Z_N)]≈(1−γ)Φ⁻¹(1−1/N)+γΦ⁻¹(1−1/(N·e)) (γ=Euler–Mascheroni 常数);
+  - 检验器② Deflated Sharpe Ratio: 数学全量委托官方件 MOD-SIM-024
+    (zephyr.simulation.deflated_sharpe_calculator)——V[SR] 峰度口径(超额→Pearson +3)、
+    E[max(Z_N)] 闭式 (1−γ)Φ⁻¹(1−1/N)+γΦ⁻¹(1−1/(N·e)) 与退化态 fail-closed 判定
+    皆同一真源, 本件只做"输入矩→裁定卡"封装;
     输入=观测Sharpe/试验次数/收益矩(偏度+超额峰度)/样本量, 输出=DSR≥阈值判定,
     显著性阈值复用 MOD-SIM-024 DSR_SIGNIFICANCE_THRESHOLD=0.95(SSoT)
   - 检验器③ 参数扰动±20%收益稳定性: one-at-a-time ±pct 网格,
@@ -34,7 +36,8 @@ P-5 过拟合裁定协议组件(三检验器 + 上线门禁挂钩点预留)
 约束:
   - 不重造轮子: 切分/三维度检测/扰动引擎既有件(walk_forward/overfitting_detector/
     parameter_robustness_tester)之上做裁定口径汇总, 仅阈值常量单向导入复用
-  - Φ⁻¹ 用 Acklam 有理逼近 + 一步 Newton 精化(纯 math, 无 scipy 硬依赖)
+  - DSR 数学不另立真源: Φ/Φ⁻¹、V[SR]、E[max(Z_N)]、退化判定一律取自 MOD-SIM-024
+    (原自建 Acklam 有理逼近块已随 SDC-3/SDC-4 口径统一删除, 免同族三处互斥)
 
 SSoT: docs/03_modules/_domain_backtest/blueprint.md §16.7
 # [ALGO_FLOW] external: docs/03_modules/_domain_backtest/algo_flow/overfitting_adjudicator.yaml
@@ -52,14 +55,18 @@ from zephyr.backtest.core.overfitting_detector import (
     DEFAULT_OOS_SHARPE_THRESHOLD_RATIO,
     PARAM_MAX_CHANGE_THRESHOLD,
 )
-from zephyr.simulation.deflated_sharpe_calculator import DSR_SIGNIFICANCE_THRESHOLD
+from zephyr.simulation.deflated_sharpe_calculator import (
+    DSR_SIGNIFICANCE_THRESHOLD,
+    EULER_MASCHERONI,
+    deflated_sharpe_from_moments,
+)
+from zephyr.simulation.deflated_sharpe_calculator import (
+    expected_max_sharpe_z as _canonical_expected_max_z,
+)
 
 _logger = logging.getLogger(__name__)
 
 _EPS = 1e-12
-
-#: Euler–Mascheroni 常数 γ(Bailey & López de Prado 2014 E[max] 闭式)
-EULER_MASCHERONI = 0.5772156649015329
 
 #: 参数扰动默认幅度(P-5 协议口径: ±20%)
 DEFAULT_PERTURBATION_PCT = 0.20
@@ -77,109 +84,19 @@ class OverfittingAdjudicationError(Exception):
 
 
 # ---------------------------------------------------------------------------
-# 正态分布 Φ / Φ⁻¹(纯 math 实现)
-# ---------------------------------------------------------------------------
-
-
-def _normal_cdf(x: float) -> float:
-    """标准正态 CDF Φ(x), math.erf 实现。"""
-    return 0.5 * (1.0 + math.erf(x / math.sqrt(2.0)))
-
-
-# Acklam 有理逼近系数(Φ⁻¹, 最大绝对误差 ~1.15e-9, 再经 Newton 精化至机器精度)
-_ACKLAM_A = (
-    -3.969683028665376e01,
-    2.209460984245205e02,
-    -2.759285104469687e02,
-    1.383577518672690e02,
-    -3.066479806614716e01,
-    2.506628277459239e00,
-)
-_ACKLAM_B = (
-    -5.447609879822406e01,
-    1.615858368580409e02,
-    -1.556989798598866e02,
-    6.680131188771972e01,
-    -1.328068155288572e01,
-)
-_ACKLAM_C = (
-    -7.784894002430293e-03,
-    -3.223964580411365e-01,
-    -2.400758277161838e00,
-    -2.549732539343734e00,
-    4.374664141464968e00,
-    2.938163982698783e00,
-)
-_ACKLAM_D = (
-    7.784695709041462e-03,
-    3.224671290700398e-01,
-    2.445134137142996e00,
-    3.754408661907416e00,
-)
-_ACKLAM_P_LOW = 0.02425
-_ACKLAM_P_HIGH = 1.0 - _ACKLAM_P_LOW
-
-
-def _inverse_normal_cdf(p: float) -> float:
-    """标准正态逆 CDF Φ⁻¹(p), Acklam 逼近 + 一步 Newton 精化。
-
-    Args:
-        p: 概率, 必须落在 (0, 1) 开区间。
-
-    Returns:
-        x 使 Φ(x)=p, 精度约 1e-15。
-
-    Raises:
-        OverfittingAdjudicationError: p 不在 (0, 1)。
-    """
-    if not (0.0 < p < 1.0):
-        raise OverfittingAdjudicationError(f"Φ⁻¹ 定义域为 (0,1): p={p}")
-
-    if p < _ACKLAM_P_LOW:
-        q = math.sqrt(-2.0 * math.log(p))
-        x = (
-            ((((_ACKLAM_C[0] * q + _ACKLAM_C[1]) * q + _ACKLAM_C[2]) * q + _ACKLAM_C[3]) * q + _ACKLAM_C[4]) * q
-            + _ACKLAM_C[5]
-        ) / ((((_ACKLAM_D[0] * q + _ACKLAM_D[1]) * q + _ACKLAM_D[2]) * q + _ACKLAM_D[3]) * q + 1.0)
-    elif p <= _ACKLAM_P_HIGH:
-        q = p - 0.5
-        r = q * q
-        x = (
-            (
-                ((((_ACKLAM_A[0] * r + _ACKLAM_A[1]) * r + _ACKLAM_A[2]) * r + _ACKLAM_A[3]) * r + _ACKLAM_A[4]) * r
-                + _ACKLAM_A[5]
-            )
-            * q
-            / (
-                ((((_ACKLAM_B[0] * r + _ACKLAM_B[1]) * r + _ACKLAM_B[2]) * r + _ACKLAM_B[3]) * r + _ACKLAM_B[4]) * r
-                + 1.0
-            )
-        )
-    else:
-        q = math.sqrt(-2.0 * math.log(1.0 - p))
-        x = -(
-            ((((_ACKLAM_C[0] * q + _ACKLAM_C[1]) * q + _ACKLAM_C[2]) * q + _ACKLAM_C[3]) * q + _ACKLAM_C[4]) * q
-            + _ACKLAM_C[5]
-        ) / ((((_ACKLAM_D[0] * q + _ACKLAM_D[1]) * q + _ACKLAM_D[2]) * q + _ACKLAM_D[3]) * q + 1.0)
-
-    # 一步 Newton 精化: x -= (Φ(x)-p)/φ(x)
-    err = _normal_cdf(x) - p
-    pdf = math.exp(-0.5 * x * x) / math.sqrt(2.0 * math.pi)
-    if pdf > 0.0:
-        x -= err / pdf
-    return x
-
-
-# ---------------------------------------------------------------------------
 # 检验器② DSR (Deflated Sharpe Ratio)
 # ---------------------------------------------------------------------------
+# 数学真源不在本件：Φ/Φ⁻¹、V[SR]、E[max(Z_N)]、退化判定一律取自
+# MOD-SIM-024(zephyr.simulation.deflated_sharpe_calculator)，本件只做
+# "输入矩 → 裁定卡"的封装。同族三处实现口径必须一致(SDC-3/SDC-4 施工 2026-09-17)，
+# 故此处只准委托、不准另写公式；原自建的 _normal_cdf/Φ⁻¹ Acklam 逼近块已删。
 
 
 def expected_max_sharpe_z(num_trials: int) -> float:
-    """多重试验期望最大值 E[max(Z_N)](Bailey & López de Prado 2014 闭式)。
+    """多重试验期望最大值 E[max(Z_N)]——委托官方件 MOD-SIM-024（SSoT，禁重写数学）。
 
     N=1: 0(无多重试验膨胀)
-    N>1: E[max(Z_N)]≈(1−γ)Φ⁻¹(1−1/N)+γΦ⁻¹(1−1/(N·e)), γ=Euler–Mascheroni 常数
+    N>1: (1−γ)Φ⁻¹(1−1/N)+γΦ⁻¹(1−1/(N·e)), γ=Euler–Mascheroni 常数
 
     Args:
         num_trials: 试验次数 N(回测尝试的策略/参数组合数)
@@ -188,16 +105,11 @@ def expected_max_sharpe_z(num_trials: int) -> float:
         E[max(Z_N)], 随 N 单调不减。
 
     Raises:
-        OverfittingAdjudicationError: num_trials < 1。
+        OverfittingAdjudicationError: num_trials < 1(本件输入契约，官方件口径为 N≤1→0)。
     """
     if num_trials < 1:
         raise OverfittingAdjudicationError(f"num_trials 必须 >= 1: {num_trials}")
-    if num_trials == 1:
-        return 0.0
-    n = float(num_trials)
-    return (1.0 - EULER_MASCHERONI) * _inverse_normal_cdf(1.0 - 1.0 / n) + EULER_MASCHERONI * _inverse_normal_cdf(
-        1.0 - 1.0 / (n * math.e)
-    )
+    return _canonical_expected_max_z(num_trials)
 
 
 @dataclass(frozen=True)
@@ -209,12 +121,14 @@ class DSRVerdict:
         num_trials: 试验次数 N
         num_obs: 样本量 T
         skewness: 收益率偏度(正态=0)
-        kurtosis: 收益率超额峰度(正态=0, 内部转 Pearson=excess+3 参与 V[SR])
-        var_sr: Sharpe 估计量方差 V[SR]=(1−γ3·SR+(γ4−1)/4·SR²)/(T−1)
-        expected_max_sharpe: 多重试验期望虚高 E[max SR]=√V[SR]·E[max(Z_N)]
-        dsr: Deflated Sharpe Ratio ∈ [0,1]
+        kurtosis: 收益率**超额**峰度(正态=0; V[SR] 内转 Pearson=excess+3, 转换真源 MOD-SIM-024)
+        var_sr: Sharpe 估计量方差 V[SR]=(1−γ3·SR+(κ_p−1)/4·SR²)/(T−1), κ_p 为 Pearson 峰度
+        expected_max_sharpe: 多重试验期望虚高 E[max SR]=√V[SR]·E[max(Z_N)](Sharpe 量纲;
+            官方件 DSRResult.expected_max 是同一 E[max(Z_N)] 的无量纲 z 形式, 两者差一个 σ_SR)
+        dsr: Deflated Sharpe Ratio ∈ [0,1]; degenerate=True 时恒为 DSR_UNDECIDABLE(=0.0)
         threshold: 显著性阈值(默认 0.95 SSoT)
-        is_significant: dsr >= threshold
+        is_significant: dsr >= threshold 且非退化(退化态永不判显著)
+        degenerate: True=V[SR] 估计失效(矩输入互斥等) ⇒ "不可判定"而非"测得不显著"(SDC-4)
     """
 
     sharpe: float
@@ -227,6 +141,7 @@ class DSRVerdict:
     dsr: float
     threshold: float
     is_significant: bool
+    degenerate: bool = False
 
 
 def adjudicate_dsr(
@@ -250,7 +165,10 @@ def adjudicate_dsr(
         threshold: 显著性阈值(默认 DSR_SIGNIFICANCE_THRESHOLD=0.95)
 
     Returns:
-        DSRVerdict; is_significant = dsr >= threshold。
+        DSRVerdict; is_significant = dsr >= threshold 且非退化。
+        退化态（V[SR] 非正/NaN=矩输入互斥、估计失效）下 degenerate=True、
+        dsr=DSR_UNDECIDABLE(=0.0)、is_significant=False，并由官方件出声 WARNING
+        ——绝不用占位值把"没有信息"伪装成"极显著"(SDC-4)。
 
     Raises:
         OverfittingAdjudicationError: 输入非有限 / num_trials<1 / num_obs<2 / 阈值越界。
@@ -267,19 +185,16 @@ def adjudicate_dsr(
 
     sr = float(sharpe)
     skew = float(skewness)
-    kurt_pearson = float(kurtosis) + 3.0  # 超额峰度 -> Pearson 峰度(正态=3)
 
-    var_term = 1.0 - skew * sr + (kurt_pearson - 1.0) / 4.0 * sr * sr
-    var_sr = var_term / (num_obs - 1)
-
-    if var_sr <= 0.0:
-        # 方差退化(极端矩输入): DSR 退化为阶跃判定
-        dsr = 1.0 if sr > 0.0 else 0.0
-        expected_max = 0.0
-    else:
-        sigma_sr = math.sqrt(var_sr)
-        expected_max = sigma_sr * expected_max_sharpe_z(num_trials)
-        dsr = _normal_cdf((sr - expected_max) / sigma_sr)
+    # 数学全部委托 MOD-SIM-024（V[SR] 峰度口径 + E[max(Z_N)] + 退化判定同一真源）
+    var_sr, dsr, emax_z, degenerate = deflated_sharpe_from_moments(
+        sr,
+        int(num_trials),
+        int(num_obs),
+        skewness=skew,
+        excess_kurtosis=float(kurtosis),
+    )
+    expected_max = 0.0 if degenerate else math.sqrt(var_sr) * emax_z
 
     verdict = DSRVerdict(
         sharpe=sr,
@@ -291,10 +206,11 @@ def adjudicate_dsr(
         expected_max_sharpe=expected_max,
         dsr=dsr,
         threshold=float(threshold),
-        is_significant=bool(dsr >= threshold),
+        is_significant=bool(not degenerate and dsr >= threshold),
+        degenerate=degenerate,
     )
     _logger.debug(
-        "DSR裁定: SR=%.4f N=%d T=%d V[SR]=%.6f E[max]=%.4f DSR=%.4f significant=%s",
+        "DSR裁定: SR=%.4f N=%d T=%d V[SR]=%.6f E[max]=%.4f DSR=%.4f significant=%s degenerate=%s",
         sr,
         num_trials,
         num_obs,
@@ -302,6 +218,7 @@ def adjudicate_dsr(
         expected_max,
         dsr,
         verdict.is_significant,
+        degenerate,
     )
     return verdict
 
@@ -637,10 +554,18 @@ class OverfittingAdjudicator:
         if dsr_kwargs is not None:
             dsr_verdict = adjudicate_dsr(**dict(dsr_kwargs))  # type: ignore[arg-type]
             if not dsr_verdict.is_significant:
-                reasons.append(
-                    f"DSR={dsr_verdict.dsr:.4f}低于显著性阈值{dsr_verdict.threshold:.2f}"
-                    f"(N={dsr_verdict.num_trials}次试验折减后无超出运气的证据)"
-                )
+                if dsr_verdict.degenerate:
+                    # 退化态≠"测得不显著"：如实上报为不可判定，仍按 fail-closed 计入否决理由
+                    reasons.append(
+                        f"DSR 不可判定(V[SR]={dsr_verdict.var_sr:.6g} 退化:"
+                        f"矩输入互斥/样本不足=估计失效, N={dsr_verdict.num_trials} T={dsr_verdict.num_obs})"
+                        "→ Fail-Closed 不放行(非'已证明不显著')"
+                    )
+                else:
+                    reasons.append(
+                        f"DSR={dsr_verdict.dsr:.4f}低于显著性阈值{dsr_verdict.threshold:.2f}"
+                        f"(N={dsr_verdict.num_trials}次试验折减后无超出运气的证据)"
+                    )
 
         if perturbation_kwargs is not None:
             pert_report = perturbation_stability(**dict(perturbation_kwargs))  # type: ignore[arg-type]

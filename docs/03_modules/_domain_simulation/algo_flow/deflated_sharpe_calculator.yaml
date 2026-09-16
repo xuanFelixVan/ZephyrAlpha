@@ -11,46 +11,54 @@ algo_flow: |
     # - id: I1
     #   name: 收益率序列 returns
     #   fields: 每期收益率 list[float]（非年化；空序列/样本<3拒绝）
-    #   code: calculate(returns) L241
+    #   code: calculate(returns) L414
     # - id: I2
     #   name: 试次数 num_trials
     #   fields: 回测尝试的策略/参数组合数 N（≥1，默认1=无多重测试修正）
-    #   code: calculate(num_trials) L244
+    #   code: calculate(num_trials) L415
     # - id: I3
     #   name: DSR配置 DSRConfig
     #   fields: 显著性阈值0.95 + 年化频率252 + 无风险利率rf
-    #   code: DSRConfig L46
+    #   code: DSRConfig L96
     # 层: 特征
     # - id: F1
     #   name_zh: 收益率偏度
     #   name_en: gamma
     #   intro: 收益率分布的不对称程度（Fisher-Pearson有偏估计）
-    #   formula: γ=m3/m2^1.5，mk=(1/n)Σ(xi-mean)^k；n<3返回0
-    #   code: deflated_sharpe_calculator.py L131
+    #   formula: γ=m3/m2^1.5，mk=(1/n)Σ(xi-mean)^k；n<3返回0.0占位值（非"测得对称"），不足由F5退化门按无信息处理
+    #   code: deflated_sharpe_calculator.py L219
     #   registry: factor_registry: 无FCT条目
     #   is_break: true
     # - id: F2
     #   name_zh: 收益率超额峰度
     #   name_en: kappa
-    #   intro: 收益率分布的厚尾程度（超额峰度）
-    #   formula: κ=m4/m2²-3；n<4返回0
-    #   code: deflated_sharpe_calculator.py L148
+    #   intro: 收益率分布的厚尾程度（超额峰度，正态=0；全仓入参统一此口径）
+    #   formula: κ=m4/m2²-3；n<4返回0.0占位值（非"测得薄尾"），不足由F5退化门按无信息处理
+    #   code: deflated_sharpe_calculator.py L239
     #   registry: factor_registry: 无FCT条目
     #   is_break: true
     # - id: F3
     #   name_zh: Sharpe估计量方差
     #   name_en: var_sr
-    #   intro: 非正态修正下Sharpe比率估计量的方差
-    #   formula: V[SR]=(1-γ·SR+(κ-1)/4·SR²)/(T-1)；T≤1返回0
-    #   code: deflated_sharpe_calculator.py L188
+    #   intro: 非正态修正下Sharpe比率估计量的方差（全仓唯一真源，他处只准委托）
+    #   formula: V[SR]=(1-γ·SR+(κp-1)/4·SR²)/(T-1)，κp=κ+3（入参κ为超额峰度正态=0，式要求Pearson正态=3）；iid正态回落(1+SR²/2)/(T-1)；T≤1返回0.0
+    #   code: variance_of_sharpe L303-L305
     #   registry: factor_registry: 无FCT条目
     #   is_break: true
     # - id: F4
     #   name_zh: 多重测试期望最大值
     #   name_en: expected_max
-    #   intro: 试N次取最好时Sharpe的期望虚高幅度（Euler-Maclaurin近似）
-    #   formula: E[max(Z_N)]≈√(2lnN)-(lnπ+lnlnN)/(2√(2lnN))；N≤1返回0
-    #   code: deflated_sharpe_calculator.py L164
+    #   intro: 试N次取最好时Sharpe的期望虚高幅度（z单位；论文闭式，非N→∞渐近式）
+    #   formula: E[max(Z_N)]=(1-γe)Φ⁻¹(1-1/N)+γeΦ⁻¹(1-1/(N·e))，γe=0.5772157；N≤1返回0
+    #   code: expected_max_sharpe_z L266
+    #   registry: factor_registry: 无FCT条目
+    #   is_break: true
+    # - id: F5
+    #   name_zh: 退化态判定与DSR共享内核
+    #   name_en: deflated_sharpe_from_moments
+    #   intro: V[SR]/E[max]/Φ 装配成单一内核；"没有信息"不得映射成"极显著"（SDC-4 Fail-Closed）
+    #   formula: 退化 ⇔ ¬(V[SR]>0) ∨ std_ret=0/NaN ∨ T<4（矩不可估）⇒ dsr=DSR_UNDECIDABLE(0.0)+degenerate=True+WARNING
+    #   code: sharpe_variance_is_degenerate L312 / deflated_sharpe_from_moments L322
     #   registry: factor_registry: 无FCT条目
     #   is_break: true
     # 层: 算法
@@ -58,15 +66,15 @@ algo_flow: |
     #   name_zh: ① DSR主计算
     #   name_en: DeflatedSharpeCalculator.calculate
     #   intro: 修正"试N次取最好"偏差后的Deflated Sharpe Ratio
-    #   desc: SR=(mean-rf)/std → SR年=SR×√252 → SR*=SR/√V[SR]-E[max(Z_N)] → DSR=Φ(SR*)（Φ用math.erf实现）；var_sr≤0时DSR退化为1.0或0.5
-    #   inputs: I1 I2 I3 F1 F2 F3 F4
-    #   outputs: DSRResult（sharpe/年化sharpe/dsr/偏度/峰度/var_sr/expected_max/is_significant）
-    #   invariant: DSR∈(0,1)；样本<3或N<1抛SimulationError(ZA-SIM-0024)
+    #   desc: SR=(mean-rf)/std → SR年=SR×√252 → SR*=SR/√V[SR]-E[max(Z_N)] → DSR=Φ(SR*)（Φ用math.erf实现）；退化态经F5恒为DSR_UNDECIDABLE=0.0且degenerate=True（旧"var_sr≤0退化为1.0或0.5"的fail-open分支已删）
+    #   inputs: I1 I2 I3 F1 F2 F3 F4 F5
+    #   outputs: DSRResult（sharpe/年化sharpe/dsr/偏度/峰度/var_sr/expected_max/is_significant/degenerate）
+    #   invariant: DSR∈[0,1]，退化态恒0.0且degenerate=True；样本<3或N<1抛SimulationError(ZA-SIM-0024)
     # - id: A2
     #   name_zh: ② 滚动窗口DSR趋势追踪
     #   name_en: DeflatedSharpeCalculator.track_trend
     #   intro: 每个滚动窗口算一次DSR，形成DSR趋势序列
-    #   desc: 从window-1位置起逐位取前window期收益率调calculate，收集DSRTrendPoint(index,dsr,年化sharpe)
+    #   desc: 从window-1位置起逐位取前window期收益率调calculate，收集DSRTrendPoint(index,dsr,年化sharpe)；退化窗口的dsr=0.0不判显著
     #   inputs: I1 I2 A1
     #   outputs: DSRTrendPoint列表（长度=len-window+1）
     # 层: 输出
@@ -74,7 +82,7 @@ algo_flow: |
     #   name_zh: DSR计算结果 DSRResult
     #   name_en: DSRResult
     #   intro: 含DSR值/显著性判断/全套中间统计量的不可变结果
-    #   invariant: frozen不可变；DSR∈(0,1)
+    #   invariant: frozen不可变；DSR∈[0,1]；退化态dsr=0.0且degenerate=True且is_significant=False
     #   downstream: zephyr.simulation.sharpe_calculator_fixer; zephyr.simulation.result_analyzer（[CONSUMERS]）
     # - id: O2
     #   name_zh: DSR趋势点序列
@@ -88,6 +96,9 @@ algo_flow: |
     # I1 -.->|断点| F2
     # I1 -.->|断点| F3
     # I2 -.->|断点| F4
+    # I1 -.->|断点| F5
+    # F3 -.->|断点| F5
+    # F5 --> A1
     # I1 --> A1
     # I2 --> A1
     # I3 --> A1

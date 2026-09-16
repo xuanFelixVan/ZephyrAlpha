@@ -516,3 +516,232 @@ python scripts/governance/d3_metadata/batch_creation_tokens.py \
 - 新建：`tests/signal_ashare/strategy_signal/test_strategy_decay_certifier_boundary.py`（20 例，实测全绿）
 - **未改动**：任何 `src/**`、`scripts/**`、`config/**`、catalogs；未 `git add`/`git commit`；
   ClickHouse 全程只读；临时件仅落 `.runtime/tmp/`。
+
+---
+
+## 11 施工回填 SDC-3/SDC-4（2026-09-17，施工会话 `st-qoder-t1a-20260915`）
+
+§10 的"未改动 src/**"只对该挖矿会话成立；本批是其后续**施工**，改了 `src/**` 与测试，
+仍**未** `git add`/`git commit`。全部数值为本批进程内实测，非引用他文。
+
+### 11.1 裁定（第一性原理，非口味）
+
+> 本批口径更正已登记为 **裁定#291**（`docs/01_policies_and_standards/_registry/catalogs/ruling_registry.yaml`，
+> 与本批 `src/**`+测试同 commit 原子落地，RULE-RULING 铁律#6）。编号注：拟号期间 #290~#294 曾被并行
+> "排班 v2"会话占用，随后他会话一次 autostash/merge 把双方未提交条目一并扫回 HEAD（本批 `src/**`
+> 同遭扫回，已按 lane 转录逐 Edit 重放复原，见 §12.4），#290 由"qwen3-coder 移除"会话重新落地，
+> 本条按登记时注册表最大值+1 取 #291。
+
+真源公式取 Lo(2002) / Bailey & López de Prado(2014) / Harvey-Liu-Zhu(2021) 同源式：
+
+```
+V[SR] = (1 − γ₃·SR + (κ_p − 1)/4 · SR²) / (T − 1)      ← κ_p 为 Pearson 峰度（正态=3）
+```
+
+全仓入参统一为**超额**峰度（正态=0），故内部恒 `κ_p = κ_超额 + 3`，SR² 系数落为
+`(κ_超额 + 2)/4`。机检锚点 = iid 正态边界：`κ_超额=0 ⇒ 系数=+1/2 ⇒ V=(1+SR²/2)/(T−1)`
+（Lo 原文该边界即校验式）。凡使该边界回落到 `−1/2` 的实现即为口径错，无需争。
+
+**顺带定理**（本批实测 E2 佐证）：Pearson 不等式 `κ_p ≥ γ₃²+1 ⇒ κ_超额 ≥ γ₃²−2`，代入得
+`V 的分子 ≥ 1 − γ₃SR + γ₃²SR²/4 = (1 − γ₃SR/2)² ≥ 0`。⇒ **正确口径下一致矩输入几乎不可能
+产出 V≤0**；旧口径把符号写成 `−3/4`，等于**凭空造出**一大片退化区（见 11.4 E2）。
+这直接改变了 SDC-4 的病灶边界（11.5 更正本档原展品归因）。
+
+### 11.2 三实现峰度口径前后对照
+
+| 实现 | 角色 | 施工前 SR² 系数（κ=入参超额峰度） | 施工前 iid 正态边界（SR=1,T=252 真值 0.005976096） | 施工后 |
+|---|---|---|---|---|
+| `src/zephyr/simulation/deflated_sharpe_calculator.py` | **活件 SSOT**（metrics/C4/衰减认证皆经此） | `(κ−1)/4` ⇒ κ=0 时 **−1/4**（符号反） | 实测 **0.002988048 = 真值一半（−50.000%）** ❌ | `(κ+2)/4` ⇒ κ=0 时 **+1/2** ✅，`+3` 常量唯一真源 `KURTOSIS_PEARSON_NORMAL` |
+| `src/zephyr/backtest/core/overfitting_adjudicator.py` | 死件（未接生产线，但公式此前**正确**） | `+3.0` 转 Pearson ⇒ κ=0 时 +1/2 ✅ | 0.005976096 ✅ | **自建公式整块删除**（含 Acklam 有理逼近 Φ⁻¹，+60/−135），`adjudicate_dsr` 改调 `deflated_sharpe_from_moments` |
+| `src/zephyr/backtest/core/metrics.py::calculate_full_metrics` | 活件（晋级闸门实际读数点） | 无自有公式，委托上表第一件 ⇒ **继承 −1/4** | 同第一件 ❌ | 仍委托（本件不该有公式）；新增 `dsr_degenerate` 出参，退化态不再与"测得不显著"混同 |
+
+同仓两实现数学互斥、错的是在跑的那个——本档 §SDC-3 的判断经施工复核**成立**，
+且修复方向取"活件向死件对齐"（死件此前是对的）。
+
+### 11.3 同族第二缺陷（本批新发现，本档原 SDC-3/SDC-4 未拆出）
+
+活件 `E[max(Z_N)]` 用的是 Euler–Maclaurin **N→∞ 渐近式**，却被用在 N=2 这类小样本上。
+以数值积分精确值 `∫x·N·φ(x)·Φ(x)^{N−1}dx` 为预言机（先用解析锚 `N=2→1/√π=0.5641896`、
+`N=3→3/(2√π)=0.8462844` 自校，两锚均吻合到 1e−7，方用于对拍）：
+
+| N | 精确值 | 施工前（渐近式） | 偏差 | 施工后（论文闭式） | 偏差 |
+|---|---|---|---|---|---|
+| 2 | 0.564190 | 0.846932 | **+0.2827** | 0.519755 | −0.0444 |
+| 3 | 0.846284 | 1.064448 | +0.2182 | 0.852804 | +0.0065 |
+| 10 | 1.538753 | 1.684924 | +0.1462 | 1.574598 | +0.0358 |
+| 50 | 2.249074 | 2.348696 | +0.0996 | 2.276303 | +0.0272 |
+| 1000 | 3.241436 | 3.302954 | +0.0615 | 3.255122 | +0.0137 |
+| 4497（生产年化 N） | 3.650272 | 3.702346 | +0.0521 | 3.660603 | +0.0103 |
+
+**为什么历史上数字"看着还行"**：SDC-3 让 V[SR] 偏小 → DSR **偏高**（欠折减），渐近式让
+E[max] 偏大 → DSR **偏低**（超折减）；两者在生产的大 N 端部分对消。**只修其一必偏另一向**，
+故本批同修，且三方一致性测试才敢用 `rel=1e−12` 恒等式而非区间容差（避免造新同谋测试）。
+闭式本身仍是近似（≤0.045 个 z 单位），已在 docstring 显式披露，禁止把断言改回钉自身输出。
+
+### 11.4 数值复验（前后差，方向可解释）
+
+| 场景 | 施工前 DSR | 施工后 DSR | Δ | 解释 |
+|---|---|---|---|---|
+| iid 正态 SR_期=0.05 T=252 **N=1** | 0.785935 | 0.785719 | −0.0002 | 无多重修正 ⇒ 只剩 V[SR] 的 0.02% 差 |
+| 同上 **N=2** | 0.478254 | 0.607150 | **+0.1289** | E[max] 超折减 +0.283 z 消失，主导差值 |
+| 同上 N=10 / 50 / 100 | 0.186055 / 0.059818 / 0.035753 | 0.216830 / 0.068818 / 0.041022 | +0.0308 / +0.0090 / +0.0053 | 差值随 N 单调收敛，与 11.3 一致 |
+| 300 点正态样本 SR_期=0.1323 **N=50** | 0.477574 | 0.500474 | +0.0229 | **跨过 `DSR_OVERFITTING_FLOOR=0.5` ⇒ `is_overfitting` 由 True 翻 False**（判定级差异，非小数位） |
+| 一致矩网格 18300 例（κ_超额≥γ₃²−2）V≤0 计数 | **4285 例（23.4%）** | 50 例（0.27%，全在 γ₃SR=2 取等号边界） | −4235 | 旧口径凭空造出的退化区，正是旧 fail-open 的入口 |
+
+阈值面：`DSR_SIGNIFICANCE_THRESHOLD=0.95`、`DSR_OVERFITTING_FLOOR=0.5`、佣金率
+`Decimal("0.0000854")`、`MIN_COMMISSION=5`、回撤阶梯 5%/10%/15% **一律未动**（本批零阈值改动）。
+
+### 11.5 SDC-4 前后 + 本档原展品的归因更正
+
+| 输入 | 施工前 | 施工后 |
+|---|---|---|
+| 矩互斥 γ₃=2, κ_超额=2, SR=1, T=100, N=5（V=0 恰取等号） | `dsr=1.0`、`is_significant=True` | `dsr=0.0`+`degenerate=True`+WARNING，**永不判显著**（threshold 降到 1e−9 也救不回） |
+| 矩互斥 γ₃=3, κ_超额=0, SR=1, T=100（V=−0.0152） | `dsr=1.0` | 同上（旧 V=−0.0227 亦负，此例两代同判） |
+| 零方差常数序列 T=10, N=50 | sr 被"除 0 保护"成 0.0 → 得 `Φ(−E[max])≈0.02` 这种**看着像结论的数** | `dsr=0.0`+`degenerate=True`+WARNING |
+| 矩不可估（T=3，偏度/峰度取占位 0.0） | 同上，占位值伪装"薄尾" | `degenerate=True`（`_MIN_OBS_FOR_MOMENTS=4`，是既有可估性下限的推论，非新阈值） |
+| `OverfittingAdjudicator.adjudicate` 汇总语 | "DSR 低于显著性阈值"（把估计失败说成测得不显著） | **"DSR 不可判定(V[SR]=… 退化: 矩输入互斥/样本不足=估计失效) → Fail-Closed 不放行"**，仍阻断 |
+
+**归因更正（本档 §SDC-4 须读此条）**：原文展品"锯齿序列 `base±amp`、κ_超额=−2.000、
+`var_sr=−7.98e−3`、年化 SR 31.7、N=4497 ⇒ dsr=1.0000"本批逐字节复现成功
+（交替 0.06/0.02、T=250 ⇒ SR_期=1.995996、γ₃=0、κ_超额=−2.000000、旧 V=**−0.007984** ✓）。
+但按 11.1 定理，该负方差是 **SDC-3 的 −3/4 系数所造**，非退化序列本身：
+正确口径下 `(κ_p−1)/4=(−2+3−1)/4=0 ⇒ V=(1−γ₃SR)/(T−1)=+0.004016`，**不退化**，
+其 `dsr=1.0` 出自年化 SR 31.7 的合法 Φ 饱和（该 SR 在 A股不可实现，属入参事故而非闸门事故）。
+⇒ SDC-4 的**真实残余病灶**改为三条：外部喂入的互斥矩（adjudicator 公共面收矩，可达）、
+零方差/近零方差序列、样本低于可估下限。方向不变（旧行为一律给"最显著"），**结论强度降级为
+"修 SDC-3 后残余面收窄，但仍必须 Fail-Closed"**；`_check_status`（不认识的条件绝不触发）与
+`_resolve_n_trials`（不猜，可溯）两范式已据此落地。
+
+### 11.6 落盘面与门禁（自证）
+
+- `src/zephyr/simulation/deflated_sharpe_calculator.py` **+242/−52**（新公共面
+  `variance_of_sharpe`/`expected_max_sharpe_z`/`sharpe_variance_is_degenerate`/
+  `deflated_sharpe_from_moments`/`KURTOSIS_PEARSON_NORMAL`/`EULER_MASCHERONI`/
+  `DSR_UNDECIDABLE`/`_inverse_normal_cdf`；`DSRResult.degenerate`；私有名
+  `_variance_of_sharpe`/`_expected_max_sharpe` 保别名不炸既有导入方）
+- `src/zephyr/backtest/core/overfitting_adjudicator.py` **+60/−135（净 −75 行）**（删自建 Φ⁻¹/闭式/V[SR]，改委托；
+  `DSRVerdict.degenerate`）
+- `src/zephyr/backtest/core/metrics.py` **+9/−3**（`dsr_degenerate` 出参 + `[INVARIANTS]` 同步）
+- 两份 ALGO_FLOW 外部真源 YAML 同步（canonical **+31/−20**：F3 峰度 `+3` 转换、F4 论文闭式、
+  新增 **F5 退化门**、A1/O1 不变量、`code:` 行号刷新；adjudicator **+6/−6**：A1/A2 改委托，
+  A3/A4 行号刷新），均经 `parse_algo_flow` 实解析通过（12 节点/19 边、12 节点/10 边）
+- 测试：`tests/simulation/test_deflated_sharpe_calculator.py` **+279/−6**、
+  `tests/backtest/test_overfitting_adjudicator.py` **+46/−0**（该文件头 guard 所限，只增不改）。
+  新增 5 个类共 24 例（`TestAgainstIndependentOracle` 全链独立预言机对拍
+  `fmean/pstdev/fsum`+`NormalDist`，`rel=1e−12`；`TestDegenerateFailClosed` 7 例含 caplog；
+  `TestCrossImplementationConvergence` 三实现恒等 + metrics 委托；
+  `TestAdjudicateDsrFailClosedSdc4` 5 例；`variance_of_sharpe` 4 例含 iid 边界网格），
+  重写 1 例同义反复断言（`test_expected_max_known_value` 原钉渐近式自身输出）
+- 门禁：**127 通过 × 连跑两次全绿**；DSR 消费方回归 `test_dsr_recalc_backfill /
+  test_c4_deflated_sharpe_runner / test_c4_batch_smoke / test_sharpe_calculator_fixer /
+  test_overfitting_protection_gate / test_overfitting_guard /
+  test_correlation_overfitting_audit` 合跑 **137 通过**（无连带破坏）；
+  5 个改动件 NO-HIGH-COMPLEXITY 扫描**输出为空**（全文件最大 14 ≤ 15，为既有
+  `perturbation_stability`，本批未新增分支）；ruff 净零新增（残留 4 条
+  `test_overfitting_adjudicator.py:136 B905/RUF007`、`metrics.py:35 I001 / :258 BLE001`
+  经 `git show HEAD:` 比对确证为**既有**）；全程未写 `data/`，测试走 `tmp_path`
+
+### 11.7 残余（本批不裁，登记待决）
+
+- **R-1**｜**已清偿（收口批 2026-09-17，随本批同 commit）**，且本档原归因**说轻了**：
+  `scripts/backtest/dsr_recalc_backfill.py::approx_dsr_from_sharpe` 不止 docstring 过期——
+  它**自带** `var_sr = (1.0 - sr*sr/4.0)/(window_days-1)` 字面式，即 SDC-3 同一处错口径的
+  **第 4 个实现**（也正违反本件自己的 `[INVARIANTS]`"DSR 数学全委托官方件，禁重写"）。
+  收口处置：删自写式，改 `variance_of_sharpe(sr, 0.0, 0.0, T)` 委托；退化判据同官方件写成
+  `not (var_sr > 0.0)`（吃掉 NaN，旧 `<= 0.0` 对 NaN 恒 False）；`expected_max_z` 由导入
+  私有别名 `_expected_max_sharpe` 改公开名 `expected_max_sharpe_z`。
+  数值影响（该件 is-only 补齐路径，γ=κ=0，SR_期=1.15/√252=0.07244319）：T=970 ⇒
+  旧 V=1.030638e−3、新 V=1.034700e−3（**+0.394%**）；DSR N=1 由 0.987982→0.987842
+  （−0.000139）、N=4481 由 0.080287→0.079629（−0.000659）——量级小，但旧式给不出正确
+  方向（该项符号本就反了），且口径分叉本身即病。`tests/backtest/test_dsr_recalc_backfill.py` 15 passed
+  连跑两次全绿（该文件对 approx 只做区间/单调断言，无钉值同谋）。
+- **R-2**｜近奇异正方差：`γ₃SR→2⁻` 且 κ_超额 取下界 `γ₃²−2` 时 `V→0⁺`（实测 2.5e−7…2.5e−15），
+  `dsr` 合法饱和为 1.0 而 `degenerate=False`；恰取等号（V=0）则判退化 → 两侧不连续。
+  加"V 下限"需新造阈值 ⇒ **属 RULE-RULING，本批禁改阈值故未动**。Owner 若裁定，
+  建议以 `V ≥ c/(T−1)` 形式（c 由裁定给），而非按 dsr 数值封顶。
+  该边界已作为"明示不处置项"写进 **裁定#291** summary 尾段（含本行数值与推荐形态），
+  待 Owner 另批裁定，不随本批夹带。
+- **R-3**｜`DSRResult.expected_max`（z 单位）与 `DSRVerdict.expected_max_sharpe`（√V·E[max]，
+  SR 单位）**同名不同量纲**。本批按"只做口径统一+去错、不大改"边界未合并，已写进两处 docstring。
+- **R-4**｜`tests/backtest/test_overfitting_adjudicator.py:198-201` 的同谋断言
+  `assert verdict.dsr in (0.0, 1.0)` 字面仍在——该文件头 `[MODIFY-GUARD] only_add_tests`
+  禁改既有用例，故本批只**新增**严格类把同输入钉成 `0.0/不可判定`（弱断言不再单独承重）。
+  清理需解除 guard 或另批。
+- **R-5**｜三实现**类合并**（canonical/adjudicator/metrics 收为一个 DSR 门面）= **另案**。
+  本批止于"口径单一真源 + 委托 + 去错"，公共面签名全保持向后兼容。
+- **R-6**｜历史台账数值须按新口径重算后才可比：旧 `certified/probation` 读数与新读数
+  **不可混比**（11.3 的双向偏差意味着差值非单调）。本批未跑任何写库/回填脚本。
+
+---
+
+## 12 收口批实测核验（2026-09-17，主会话 st-qoder-t1a-20260915 独立复测）
+
+§11 的施工方子代理在 150 轮上限处中断（自述"引入两处结构性错误待修"），故本档 §11 全部
+**数值断言由收口方逐条独立复测**后才落盘——复测不过的一律改写，不复用其自述结论。
+
+### 12.1 落盘面 numstat 逐条复核（`git diff --numstat` 实测）
+
+| 件 | 本档 §11.6 自述 | 实测 | 判定 |
+|---|---|---|---|
+| `deflated_sharpe_calculator.py` | +242/−52 | +242/−52 | ✅ |
+| `overfitting_adjudicator.py` | +60/−135 | +60/−135 | ✅ |
+| `metrics.py` | +9/−3 | +9/−3 | ✅ |
+| `test_deflated_sharpe_calculator.py` | +279/−6 | +279/−6 | ✅ |
+| `test_overfitting_adjudicator.py` | +46/−0 | +46/−0 | ✅ |
+| ALGO_FLOW 两份 YAML | +31/−20、+6/−6 | +31/−20、+6/−6 | ✅ |
+
+结构错误复核：5 件 `python -m py_compile` 全通过，`ast.parse` 全通过 ⇒ 自述的"两处结构性
+错误"在中断前已自行修完，收口方未发现残留。
+
+### 12.2 口径边界锚与影响面（收口方进程内复算，非引用 §11）
+
+- iid 正态边界锚（γ=0、κ_超额=0、SR=1、T=252）：旧 V=0.002988048、新 V=0.005976096
+  ⇒ 比值恰 **2.0000**，与 §11.2 表所记"旧式把方差砍半"逐位吻合（该锚即 Lo(2002) 自检式）。
+- `E[max(Z_N)]`（旧 Euler–Maclaurin 渐近式 vs 新论文闭式）：N=2 旧 0.8469→新 0.5198、
+  N=10 旧 1.6849→新 1.5746、N=4497 旧 3.7023→新 3.6606 —— 与 §11.3 表同向同量级。
+- **影响面网格**（γ=0、κ_超额∈{0,1,3}、(T,N)∈{252×4497, 2520×4497, 252×10}、SR_期 0.05…1.0）：
+  新/旧 DSR 比落在 **0.967…1.165**。分带读法：生产日频带（SR_期 0.05–0.10、T=252、N=4497）
+  新值**偏高 +4%…+16%**（E[max] 去掉超折减主导）；SR_期 0.20–0.30 带新值**偏低 −0.4%…−3.3%**
+  （V[SR] 去掉欠折减主导）；SR_期≥0.5 两误差近乎完全对消（比值 1.000）。
+  ⇒ 净效应**非单调、随 SR 换向**，这是 R-6"历史读数不可混比"的定量依据，
+  也是"只修其一必偏另一向"（§11.3）的直接证据。
+- R-1 清偿后的本件自校（年化 SR=1.15、T=970）：V 由 1.030638e−3→1.034700e−3（+0.394%），
+  DSR N=1 由 0.987982→0.987842。
+
+### 12.3 回归与门禁（收口方实跑）
+
+- DSR 全消费面：`tests/simulation` + `tests/backtest` 合跑 **2120 passed**；
+  `tests/regime` + `tests/factor` 合跑 **1831 passed**（覆盖 c4_deflated_sharpe_runner /
+  overfitting_guard / correlation_overfitting_audit / sharpe_calculator_fixer 等消费方）；
+  `tests/backtest/test_dsr_recalc_backfill.py` **15 passed 连跑两次**。
+- 复杂度：`deflated_sharpe_calculator.py` 全文件最大 cc=9、`overfitting_adjudicator.py`=14
+  （既有 `perturbation_stability`，本批未加分支）、`metrics.py`=11 ⇒ NO-HIGH-COMPLEXITY 空输出。
+- ruff：三 src 件与收口新碰的 `dsr_recalc_backfill.py` 与 `git show HEAD:` 基线**逐条同数**
+  （metrics I001+258、backfill B905 皆存量），零新增。
+- 阈值面零改动复述：`DSR_SIGNIFICANCE_THRESHOLD=0.95`、`DSR_OVERFITTING_FLOOR=0.5`、
+  佣金 `Decimal("0.0000854")`、`MIN_COMMISSION=5`、回撤阶梯 5%/10%/15% 全部未动。
+
+### 12.4 工作区扫回事故与逐 Edit 重放复原（2026-09-17 03:3x，收口方）
+
+本批 9 件改动在 02:59 前后被他会话 `session_worktree` 的 **autostash/merge** 扫回 HEAD
+（`git status` 由 ` M` 变干净、`git fsck` 侧无任何含本批改动的 stash 存活），同窗被扫回的还有
+本会话的两份未提交节点档与一并行会话的 5 条裁定（#290~#294）。复原路径与自证：
+
+| 件 | 复原来源 | 复原后 `git diff --numstat` | 与 §11.6/§12.1 记录 |
+|---|---|---|---|
+| `deflated_sharpe_calculator.py` | lane 转录逐 Edit 重放 | +242/−52 | ✅ 逐字一致 |
+| `overfitting_adjudicator.py` | 同上（16 op，其中 1 op 当时即失败、重试 op 已覆盖） | +60/−135 | ✅ |
+| `metrics.py` | 同上 | +9/−3 | ✅ |
+| `test_deflated_sharpe_calculator.py` | 同上 | +279/−6 | ✅ |
+| `test_overfitting_adjudicator.py` | 同上 | +46/−0 | ✅ |
+| 两份 ALGO_FLOW YAML | 同上 | +31/−20、+6/−6 | ✅ |
+| `dsr_recalc_backfill.py` | 主会话转录 Edit 重放 | +12/−7 | ✅（R-1 清偿） |
+| 本档 | lane+主会话 Edit 重放 + 转录内 heredoc 取回 §12 | +202/−0（§12.4 本小节自身再 +27，故落盘总 +229/−0） | ✅ |
+
+功能侧二次证明（非仅行数）：`py_compile` 5 件全通过；焦点测试逐档 49 / 38 / 15 passed；
+`tests/simulation`+`tests/backtest`+`tests/strategy_pipeline` 合跑 2244 passed。
+行数与测试结果同时吻合 ⇒ 重放不是"重写一份近似件"。
+
+**治本建议（登记，非本批施工）**：`session_worktree` 的 autostash 路径在 merge 前把**非本会话**
+的未提交改动一并扫走，且 `stash_notice.json` 只记自会话那 1 个文件——对无辜会话零告警。
+建议：扫回前按 claim 归属过滤，或对被扫回的他会话文件写告警清单（与 §10 降级直改计数同源）。

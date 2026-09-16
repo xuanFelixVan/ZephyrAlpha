@@ -24,6 +24,7 @@
 
 from __future__ import annotations
 
+import logging
 import math
 from statistics import NormalDist
 
@@ -208,6 +209,51 @@ class TestAdjudicateDsr:
             adjudicate_dsr(sharpe=0.3, num_trials=1, num_obs=1)
         with pytest.raises(OverfittingAdjudicationError):
             adjudicate_dsr(sharpe=float("nan"), num_trials=1, num_obs=252)
+
+
+class TestAdjudicateDsrFailClosedSdc4:
+    """SDC-4 严格化（只增不改，本文件 [MODIFY-GUARD] only_add_tests）。
+
+    原 `test_zero_variance_degenerate` 断言 `dsr in (0.0, 1.0)`——把**相反**的两种
+    后果都算通过，等于没判（挖矿文档 §3 SDC-4"测试侧"）。本类把口径钉死为
+    "退化⇒不可判定，永不显著"，使旧 fail-open 值 1.0 无法再通过本套件。
+    """
+
+    # 退化输入：γ=3 与超额峰度=0 互斥（违反 Pearson 不等式 κ≥γ²−2）⇒ V[SR]<0
+    _DEGENERATE = dict(sharpe=1.0, num_trials=5, num_obs=100, skewness=3.0, kurtosis=0.0)
+
+    def test_degenerate_is_undecidable_not_significant(self):
+        from zephyr.simulation.deflated_sharpe_calculator import DSR_UNDECIDABLE
+
+        verdict = adjudicate_dsr(**self._DEGENERATE)  # type: ignore[arg-type]
+        assert verdict.var_sr < 0.0
+        assert verdict.degenerate is True
+        assert verdict.dsr == DSR_UNDECIDABLE
+        assert verdict.is_significant is False
+        assert verdict.dsr != 1.0  # 旧 fail-open："估计失败"被翻译成"以 5 次折减仍极显著"
+
+    def test_degenerate_cannot_be_rescued_by_low_threshold(self):
+        verdict = adjudicate_dsr(threshold=1e-9, **self._DEGENERATE)  # type: ignore[arg-type]
+        assert verdict.degenerate is True
+        assert verdict.is_significant is False  # 退化优先于阈值
+
+    def test_degenerate_emits_warning(self, caplog):
+        with caplog.at_level(logging.WARNING, logger="zephyr.simulation.deflated_sharpe_calculator"):
+            adjudicate_dsr(**self._DEGENERATE)  # type: ignore[arg-type]
+        assert any(rec.levelno == logging.WARNING for rec in caplog.records), "退化态必须出声"
+
+    def test_decidable_case_not_flagged_degenerate(self):
+        verdict = adjudicate_dsr(sharpe=0.1, num_trials=1, num_obs=101, skewness=0.0, kurtosis=0.0)
+        assert verdict.degenerate is False
+        assert verdict.var_sr == pytest.approx(0.01005, rel=1e-12)
+        assert verdict.dsr == pytest.approx(0.84074, abs=1e-4)
+
+    def test_adjudicate_reports_undecidable_rather_than_insufficient(self):
+        report = OverfittingAdjudicator().adjudicate(dsr_kwargs=self._DEGENERATE)
+        assert report.is_overfitting is True  # Fail-Closed：判不了就不放行
+        assert report.dsr is not None and report.dsr.degenerate is True
+        assert any("不可判定" in r for r in report.reasons)
+        assert not any("低于显著性阈值" in r for r in report.reasons)
 
 
 # ============== ③ 参数扰动 ±20% 收益稳定性 ==============

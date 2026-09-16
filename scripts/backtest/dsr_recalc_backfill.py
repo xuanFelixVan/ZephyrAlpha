@@ -70,9 +70,9 @@ _WINDOW_RE = re.compile(r"window=([\d-]+)/([\d-]+); kind=(\w+)")
 
 def expected_max_z(num_trials: int) -> float:
     """E[max(Z_N)]——委托官方件 MOD-SIM-024（SSOT，禁重写数学）。"""
-    from zephyr.simulation.deflated_sharpe_calculator import _expected_max_sharpe
+    from zephyr.simulation.deflated_sharpe_calculator import expected_max_sharpe_z
 
-    return _expected_max_sharpe(int(num_trials))
+    return expected_max_sharpe_z(int(num_trials))
 
 
 def refold_dsr(dsr_old: float, n_old: int, n_new: int) -> float:
@@ -90,15 +90,20 @@ def refold_dsr(dsr_old: float, n_old: int, n_new: int) -> float:
 def approx_dsr_from_sharpe(is_sharpe: float, window_days: int, n_new: int) -> float:
     """is-only 缺口补齐：正态近似（γ=0，超额峰度=0）+ 窗口交易日数 T。
 
-    SR=is_sharpe/√252；V[SR]=(1−SR²/4)/(T−1)（官方件 (κ−1)/4·SR² 项 κ=0 口径）；
-    DSR=Φ(SR/σ_SR − E[max(Z_N)])。
+    SR=is_sharpe/√252；V[SR] 委托官方件 `variance_of_sharpe`（γ=κ=0 ⇒ iid 正态边界
+    (1+SR²/2)/(T−1)）；DSR=Φ(SR/σ_SR − E[max(Z_N)])。
+
+    口径更正（SDC-3，2026-09-17）：此处曾自写 `(1−SR²/4)/(T−1)`——那是把超额峰度当
+    Pearson 峰度喂进 Lo(2002) 式的产物，与本仓官方件同源同错；现改委托，本件不再自写公式。
     """
     if window_days < 3:
         raise ValueError(f"window_days 需 >=3: {window_days}")
+    from zephyr.simulation.deflated_sharpe_calculator import variance_of_sharpe
+
     sr = float(is_sharpe) / math.sqrt(252.0)
-    var_sr = (1.0 - sr * sr / 4.0) / (window_days - 1)
-    if var_sr <= 0.0:
-        raise ValueError(f"V[SR]<=0（Sharpe 超常）: is_sharpe={is_sharpe}")
+    var_sr = variance_of_sharpe(sr, 0.0, 0.0, window_days)
+    if not (var_sr > 0.0):
+        raise ValueError(f"V[SR]<=0/NaN（Sharpe 超常）: is_sharpe={is_sharpe}")
     z = sr / math.sqrt(var_sr) - expected_max_z(n_new)
     return NormalDist().cdf(z)
 
