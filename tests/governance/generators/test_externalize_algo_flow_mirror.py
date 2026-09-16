@@ -72,12 +72,14 @@ def _isolate(monkeypatch, tmp_path):
     # 两个根都要打桩：出仓器落点用 ext.REPO_ROOT，写时终验走 extractor 自己的 REPO_ROOT
     monkeypatch.setattr(ext, "REPO_ROOT", tmp_path)
     monkeypatch.setattr(coae, "REPO_ROOT", tmp_path)
+    ext._IGNORED_DIR_NAMES = None
     ext._PLANNED_MIRROR.clear()
     ext._PLANNED_REMAP.clear()
     ext._PLANNED_UNIQ.clear()
     ext._MIRROR_DOMAINS.clear()
     ext._EXISTING_YAML_CACHE.clear()
     yield tmp_path
+    ext._IGNORED_DIR_NAMES = None
     ext._PLANNED_MIRROR.clear()
     ext._PLANNED_REMAP.clear()
     ext._PLANNED_UNIQ.clear()
@@ -385,3 +387,67 @@ def test_residual_dead_block_counted_on_success(tmp_path):
     assert r["status"] == "externalized", r
     assert r["unreachable_blocks"] == 1
     assert "DEAD1" in p.read_text(encoding="utf-8")
+
+
+def test_gitignore_named_bucket_is_renamed(tmp_path):
+    """撞 .gitignore 目录型忽略规则的镜像桶改道 *_doc——否则落点 yaml 静默漏提交、源码锚点变悬空指针。
+
+    波次实证：src/zephyr/infrastructure/system_telemetry/logs/ 的镜像桶原名 logs，
+    .gitignore:234 的未锚定 ``logs/`` 规则把它整域吞掉，登记工具（git ls-files --others）
+    看不见=CREATE-GUARD 无令牌可查=提交静默漏件。
+    """
+    (tmp_path / ".gitignore").write_text(
+        "# ignore rules\nlogs/\nbuild\n!keep/\n/runtime/\n*.tmp\n", encoding="utf-8"
+    )
+    _seed_flat(tmp_path, "_domain_d", ext._MIRROR_TRIGGER)
+    p = _mk_src(tmp_path, "src/zephyr/d/logs/wal.py")
+    ext._plan_capacity_mirrors([p])
+    planned = ext._PLANNED_MIRROR["src/zephyr/d/logs/wal.py"]
+    assert planned == "docs/03_modules/_domain_d/algo_flow/logs_doc/wal.yaml"
+    r = ext.externalize(p, dry_run=False)
+    assert r["status"] == "externalized", r
+    assert r["yaml"] == planned
+    assert (tmp_path / planned).is_file()
+    assert f"# [ALGO_FLOW] external: {planned}" in p.read_text(encoding="utf-8")
+
+
+def test_unanchored_rules_only_and_nested_segments(tmp_path):
+    """只认未锚定纯目录名规则（/runtime/ 带锚定、*.tmp 带通配、!keep/ 取反都不算）；嵌套段逐段规避。"""
+    (tmp_path / ".gitignore").write_text("logs/\nbuild\n!keep/\n/runtime/\n*.tmp\n", encoding="utf-8")
+    ignored = ext._gitignored_dir_names()
+    assert {"logs", "build"} <= ignored
+    assert not {"keep", "runtime", "*.tmp"} & ignored
+    _seed_flat(tmp_path, "_domain_d", ext._MIRROR_TRIGGER)
+    p = _mk_src(tmp_path, "src/zephyr/d/logs/build/keep/x.py")
+    ext._plan_capacity_mirrors([p])
+    assert ext._PLANNED_MIRROR["src/zephyr/d/logs/build/keep/x.py"].endswith(
+        "logs_doc/build_doc/keep/x.yaml"
+    )
+
+
+def test_no_gitignore_means_no_renames(tmp_path):
+    """缺 .gitignore（或读不到）→ 空规则集，桶名一律原样，绝不凭空加后缀。"""
+    assert not (tmp_path / ".gitignore").exists()
+    _seed_flat(tmp_path, "_domain_d", ext._MIRROR_TRIGGER)
+    targets = [_mk_src(tmp_path, "src/zephyr/d/logs/wal.py"), _mk_src(tmp_path, "src/zephyr/d/access/wal.py")]
+    ext._plan_capacity_mirrors(targets)
+    vals = sorted(ext._PLANNED_MIRROR.values())
+    assert vals == [
+        "docs/03_modules/_domain_d/algo_flow/access/wal.yaml",
+        "docs/03_modules/_domain_d/algo_flow/logs/wal.yaml",
+    ]
+
+
+def test_bucket_rename_is_deterministic_across_runs(tmp_path):
+    """撞名改道可复算：连跑两遍同名（新件重跑不得改道、既有 yaml 走复用不重复落盘）。"""
+    (tmp_path / ".gitignore").write_text("logs/\n", encoding="utf-8")
+    _seed_flat(tmp_path, "_domain_d", ext._MIRROR_TRIGGER)
+    p = _mk_src(tmp_path, "src/zephyr/d/logs/wal.py")
+    ext._plan_capacity_mirrors([p])
+    first = ext.externalize(p, dry_run=False)
+    ext._plan_capacity_mirrors([p])
+    second = ext.externalize(p, dry_run=False)
+    assert first["yaml"] == second["yaml"] == "docs/03_modules/_domain_d/algo_flow/logs_doc/wal.yaml"
+    assert first["status"] == "externalized"
+    assert second["status"] in {"externalized", "already", "skipped"}
+    assert len(list((tmp_path / "docs/03_modules/_domain_d/algo_flow/logs_doc").glob("*.yaml"))) == 1

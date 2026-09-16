@@ -239,13 +239,56 @@ def _flat_yaml_count(domain_dir: str) -> int:
     return sum(1 for p in root.iterdir() if p.is_file() and not p.name.startswith("."))
 
 
+_IGNORED_DIR_NAMES: frozenset[str] | None = None
+
+
+def _gitignored_dir_names() -> frozenset[str]:
+    """.gitignore 里"未锚定纯目录名"型忽略规则（``logs/`` ``build/`` ``tmp/`` …）。
+
+    镜像桶沿用源子包名，撞上这类规则会让落点 yaml 被 git 忽略：提交时静默漏件、
+    源码锚点变悬空指针，且登记工具（走 ``git ls-files --others``）根本看不见它。
+    带通配或带路径的锚定规则只作用于特定路径，不纳入（避免无谓改名）。
+    """
+    global _IGNORED_DIR_NAMES
+    if _IGNORED_DIR_NAMES is not None:
+        return _IGNORED_DIR_NAMES
+    names: set[str] = set()
+    try:
+        lines = (REPO_ROOT / ".gitignore").read_text(encoding="utf-8", errors="replace").splitlines()
+    except OSError:
+        lines = []
+    for ln in lines:
+        s = ln.strip()
+        if not s or s.startswith(("#", "!", "/")):
+            continue
+        core = s.rstrip("/")
+        if not core or "*" in core or "?" in core or "/" in core:
+            continue
+        names.add(core.lower())
+    _IGNORED_DIR_NAMES = frozenset(names)
+    return _IGNORED_DIR_NAMES
+
+
+def _safe_bucket_path(bucket: str) -> str:
+    """桶路径逐段规避 git 忽略名（撞名段加 ``_doc`` 后缀，确定性可复算）。"""
+    if not bucket:
+        return bucket
+    ignored = _gitignored_dir_names()
+    return "/".join(
+        f"{seg}_doc" if seg.lower() in ignored else seg for seg in bucket.split("/")
+    )
+
+
 def _src_bucket(rel_py: str) -> tuple[str, str]:
-    """(pkg, 镜像桶路径)：桶 = 源文件相对域根的子包路径；域根件桶空（调用侧补域名）。"""
+    """(pkg, 镜像桶路径)：桶 = 源文件相对域根的子包路径；域根件桶空（调用侧补域名）。
+
+    段名经 _safe_bucket_path 规避 .gitignore 目录型忽略规则（撞名会被静默漏提交）。
+    """
     parts = rel_py.split("/")
     if parts[:2] == ["src", "zephyr"] and len(parts) > 3:
-        return parts[2], "/".join(parts[3:-1])
+        return parts[2], _safe_bucket_path("/".join(parts[3:-1]))
     if parts[0] == "scripts" and len(parts) > 2:
-        return parts[1], "/".join(parts[2:-1])
+        return parts[1], _safe_bucket_path("/".join(parts[2:-1]))
     return "", ""
 
 
