@@ -401,3 +401,37 @@ P2-1 的**机械可完成面自此清零**，残余 69 件全属作者语义欠�
 违规文件（`generate_skeleton_health.py` 等 `MOD-AUTO-L*-001(暂编号)`）全是他会话 staged 在途件，
 按 §3.4 不代修。结论：**队列仍是本役唯一不连坐的正门**，代价是要认 `--no-bootstrap` + 死信重投；
 这也说明 #ARCH-318（own_scope:false 连坐面未覆盖）与本条是同一场病的两面。
+
+
+### 16.9 复验器自己的 fail-open 被抓出来：批次全集 60 → 97，暴露 6 项硬缺陷（全归因，零遗留）
+
+第 13 轮本意只是"再来一次"，输出却是 `VERIFY batches=0 coverage={} defects={}` ——**空跑冒充零缺陷**。
+两处根因，都是我自制核销器的缺陷而非被验对象的缺陷：
+
+1. 断点文件复用：默认 out 参数指到了第 1 轮的 `bt_verify_round1.jsonl`，`todo = 全集 − 已验` 直接归零。
+   已改为 `todo` 为空即打 `NOOP-ROUND` 并 `return 3`，非零退出，杜绝"换个参数=又过一轮"。
+2. **持久批次真源一直是空的**：`git log --grep=[GW:st-btfix-p17-20260916]` 未加 `--fixed-strings`，
+   方括号被 git 当字符区间 → `fatal: Invalid range end` → `_git()` 吞错返回空串。这条 `--grep`
+   正是我在 docstring 里写明的"摘要文件收尾即删，故以 [GW:] 标记为持久真源"的那一路——
+   真源失能后历轮只从摘要文件取到 60 批，`defects={}` 却照样打印。**加 `--fixed-strings` 后全集 = 97 批**
+   （`probe_excluded=3` 为红蓝探针批），一次性多照出 6 项硬缺陷。教训与 #ARCH-327 同族：
+   吞错的取数语句 = 静默缩小检验面，判"通过"的脚本自身必须先被证明"能红"。
+
+6 项硬缺陷逐条取证归因（无一是镜像内容与源码不符）：
+
+- `node_set_diff` / `edge_set_diff` / `block_text_diff`（各 1，同一件 `position/core/strategy_book.py`）
+  = **红蓝实弹探针残留**：探针批 `b873ee71d3`（R2_dup_inline，04:15）往该件注入 `RB9` 单节点坏块，
+  治本批 `025bdc0a57`（04:41）清除；复验取"`sha^` 的内联块 vs 镜像"，正好照到探针态 vs 真镜像。
+  归类判据不用"父提交含探针"（多会话交叉提交会把父子打断——实测父是他人 docs 批 `26cfbd46c0`），
+  改用**探针命名空间**：`RB\d+` 节点在全仓 HEAD 出现次数 0（镜像 0 / 源码 0），故"旧块独有节点
+  全属 RB"才降级；反例机证：`{A1}`→仍硬判、`{RB9,A1}`→仍硬判、`∅`→不触发（真臆造逃不掉）。
+- `yaml_absent_at_commit` 3 例（`_diff_helpers.py` / `capability_overlap_gate.py` / `session_concurrency.py`）
+  = **中间态悬空锚已自愈**：镜像首次入库提交（如 `410f38e54c` 22:03）晚于被验批（`2ddbbdee` 18:38），
+  即锚早于镜像一个提交落地——根因正是 #ARCH-323 那段"常驻守护判据装载失能"窗口（链接门禁当时
+  三条判据静默关闭，故未阻断）。HEAD 态三件锚↔镜像俱在且图校验通过（全树 head_state 复扫 defects 只余
+  1 项已知孤件）。新判据 `_mirror_landed_later` 亦双向机证：落地前批=True、落地提交自身=False、
+  HEAD=False（**若镜像曾入库后被删，仍落硬判**，不会被这条降级放过）。
+
+终局口径：**第 15 轮 97 批 defects={} （exit=0）**，覆盖 `py=2512 / anchored=2500 / compared=2330 /
+yaml_ok=2497 / backlog_inline=2 / no_graph=9`；info 侧 `probe_residue=3 / intermediate_absent=3 /
+foreign_absorbed_code=6 / block_ws_only=5` 全部逐条归因完毕，无未解释项。
