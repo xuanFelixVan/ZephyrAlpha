@@ -27815,4 +27815,8 @@ creation_tokens:
   token: chain-alpha-backfill-futures-main-20260916
   created_by: st-igalpha-20260917
   capability: chain_alpha
+- file: docs/_working/trading_vision/2026-09-16-daily-orchestrator-blueprint.md
+  token: daily-orchestrator-blueprint-2026-09-16-daily-orchestrator-blueprint-20260916
+  created_by: st-orchbp-20260916
+  capability: daily_orchestrator_blueprint
 di_seam_exemptions: []
