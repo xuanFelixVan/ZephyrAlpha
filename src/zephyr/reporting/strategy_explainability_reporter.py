@@ -27,47 +27,7 @@ Fail-Closed）+ **可解释性门控**（解释覆盖度 < 阈值 → 策略降�
 性/解释覆盖度，不重复收益分解）；策略降权/拦截的执行归决策门（本件仅产
 出门控结论与报告）；本件纯内存/DI，不触网不落盘。
 
-# [ALGO_FLOW]
-# 层: 输入
-# - id: I1
-#   name: shap_explainer 参数
-#   fields: 参数 shap_explainer（无注解）
-#   code: strategy_explainability_reporter.py 顶层公共函数形参（AST 提取）
-# - id: I2
-#   name: lime_explainer 参数
-#   fields: 参数 lime_explainer（无注解）
-#   code: strategy_explainability_reporter.py 顶层公共函数形参（AST 提取）
-# - id: I3
-#   name: rule_importance 参数
-#   fields: 参数 rule_importance（无注解）
-#   code: strategy_explainability_reporter.py 顶层公共函数形参（AST 提取）
-# - id: I4
-#   name: fallback_coverage 参数
-#   fields: 参数 fallback_coverage（无注解）
-#   code: strategy_explainability_reporter.py 顶层公共函数形参（AST 提取）
-# 层: 算法
-# - id: A1
-#   name_zh: ① StrategyExplainabilityReporter
-#   name_en: StrategyExplainabilityReporter
-#   intro: 策略可解释性报告件（双归因 + 门控 + 发布对接）。
-#   desc: 策略可解释性报告件（双归因 + 门控 + 发布对接）。；公共方法（定义序）: build_report, report_of, history_of；源码 L149-L300
-#   inputs: shap_explainer lime_explainer rule_importance fallback_coverage pass_…
-#   outputs: 返回值
-#   （注：A1 之后另有 6 个公共定义未列入（含 6 个数据契约/异常/枚举声明类），见源码）
-# 层: 输出
-# - id: O1
-#   name_zh: 模块公共 API 面（7 定义）
-#   name_en: public defs
-#   intro: StrategyExplainabilityReporter
-#   downstream: 运行时装配批（策略 SHAP+LIME 双归因报告 / 可解释性门控降权拦截 / 报告发布对接）
-# [/ALGO_FLOW]
-#
-# 边:
-# I1 --> A1
-# I2 --> A1
-# I3 --> A1
-# I4 --> A1
-# A1 --> O1
+# [ALGO_FLOW] external: docs/03_modules/_domain_reporting/algo_flow/strategy_explainability_reporter.yaml
 """
 
 from __future__ import annotations

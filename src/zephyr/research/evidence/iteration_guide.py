@@ -34,42 +34,7 @@ Why 显式规则而非学习模型（11号文 §3.1）：个人项目假设量�
     no_support_within_weeks: int/float——近 N 周内无新支持证据
     （无支持证据或最新支持早于 N 周前，视为满足）
 
-# [ALGO_FLOW]
-# 层: 输入
-# - id: I1
-#   name: 证据聚合视图
-#   fields: EvidenceSummary（support/contradict/neutral/total 计数 + latest_support_at/latest_at）
-#   code: IterationGuide.evaluate(summary, at=...) 入口
-# - id: I2
-#   name: 规则表 config（YAML）
-#   fields: rules[]（rule_id/recommendation/conditions/rationale_zh）
-#   code: load_rules（默认 config/iteration_guide_rules.yaml；非法配置 ZA-RE-0021 加载即拒）
-# 层: 算法
-# - id: A1
-#   name_zh: ① 规则表校验
-#   name_en: _validate_rules
-#   desc: rule_id 非空去重 + recommendation 三态词表 + 条件键词表/非负数值校验——非法即拒
-#   inputs: I2 或注入规则
-#   outputs: 规范化规则表
-# - id: A2
-#   name_zh: ② 顺序求值首命中
-#   name_en: evaluate
-#   desc: 按配置顺序逐规则 AND 求值条件（含 no_support_within_weeks 时窗判定），首命中即产出建议；无命中 raise ZA-RE-0020
-#   inputs: I1 + A1
-#   outputs: 命中规则
-# 层: 输出
-# - id: O1
-#   name_zh: 迭代建议（可追溯）
-#   name_en: Guidance（hypothesis_id/recommendation/rule_id/rationale_zh/evidence_counts/generated_at）
-#   downstream: zephyr.research.evidence.batch_entry（批量评估落盘）；tests/research/test_evidence_phase0.py
-# [/ALGO_FLOW]
-#
-# 边:
-# I2 --> A1
-# I1 --> A2
-# A1 --> A2
-# A2 --> O1
-
+# [ALGO_FLOW] external: docs/03_modules/_domain_research/algo_flow/iteration_guide.yaml
 依据: 11号文 §3.1/§4.2 P0-3 + 18号清单 §6 波4-11
 Version: 0.1.0
 """

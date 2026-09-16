@@ -40,42 +40,7 @@ data/brain/passports/（模型画像研究产物 JSON 落盘 data/brain/）；�
 频率约束（11号文 §2.3/§5-3）：本组件按日频/周频批量消费，不做盘中实时更新；
 批量入口见 batch_entry.py（盘中 09:30-15:00 拒绝执行守卫）。
 
-# [ALGO_FLOW]
-# 层: 输入
-# - id: I1
-#   name: 假设 CRUD/状态迁移请求
-#   fields: create(statement/tags/notes/at)；update(hypothesis_id/statement/tags/notes/at)；transition(hypothesis_id/to_status/reason/at)
-#   code: HypothesisRegistry.create / update / transition 入口
-# - id: I2
-#   name: 落盘快照 hypotheses.json（构造时加载）
-#   fields: schema_version + hypotheses[]（Hypothesis.to_dict 行）
-#   code: HypothesisRegistry._load（损坏 fail-fast ZA-RE-0001）
-# 层: 算法
-# - id: A1
-#   name_zh: ① 状态机迁移判定+留痕
-#   name_en: transition
-#   desc: 目标状态词表校验 → ALLOWED_TRANSITIONS 出边判定（非法即 ZA-RE-0003）→ replace 新实例 + status_history 追加（from/to/at/reason）
-#   inputs: I1
-#   outputs: 迁移后 Hypothesis 新实例
-# - id: A2
-#   name_zh: ② 原子快照落盘
-#   name_en: _save
-#   desc: 全量快照 JSON 经 atomic_write（tmp+os.replace）写 hypotheses.json；create/update/transition 每步变更即落盘
-#   inputs: A1 及 CRUD 变更结果
-#   outputs: hypotheses.json 落盘文件
-# 层: 输出
-# - id: O1
-#   name_zh: Hypothesis 值对象与查询视图
-#   name_en: create/get/list_all/update/transition 返回值
-#   downstream: zephyr.research.evidence.evidence_chain（外键真源）；zephyr.research.evidence.batch_entry；tests/research/test_evidence_phase0.py
-# [/ALGO_FLOW]
-#
-# 边:
-# I1 --> A1
-# I2 --> A1（加载重建内存表后服务迁移判定）
-# A1 --> A2
-# A2 --> O1
-
+# [ALGO_FLOW] external: docs/03_modules/_domain_research/algo_flow/hypothesis_registry.yaml
 依据: 11号文 §3.1/§4.2 P0-1 + 18号清单 §6 波4-11
 Version: 0.1.0
 """

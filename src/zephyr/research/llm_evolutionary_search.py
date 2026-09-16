@@ -27,47 +27,7 @@ B10-01877（AUD-DRAFT-001-DIGEST P2 波 P2-W07，CAND-FAC-021，A1 §29.32）：
 LLM）；本件=LLM 三角色**语义变异**进化（LLM 回调驱动），共享"三重门禁+人工
 队列"治理骨架但变异算子与驱动源正交。
 
-# [ALGO_FLOW]
-# 层: 输入
-# - id: I1
-#   name: exploit_llm 参数
-#   fields: 参数 exploit_llm（无注解）
-#   code: llm_evolutionary_search.py 顶层公共函数形参（AST 提取）
-# - id: I2
-#   name: explore_llm 参数
-#   fields: 参数 explore_llm（无注解）
-#   code: llm_evolutionary_search.py 顶层公共函数形参（AST 提取）
-# - id: I3
-#   name: crossover_llm 参数
-#   fields: 参数 crossover_llm（无注解）
-#   code: llm_evolutionary_search.py 顶层公共函数形参（AST 提取）
-# - id: I4
-#   name: fitness_evaluator 参数
-#   fields: 参数 fitness_evaluator（无注解）
-#   code: llm_evolutionary_search.py 顶层公共函数形参（AST 提取）
-# 层: 算法
-# - id: A1
-#   name_zh: ① LlmEvolutionarySearch
-#   name_en: LlmEvolutionarySearch
-#   intro: LLM 进化式策略搜索器（三角色变异 + 精英保留 + 盘后语义 + 人工裁决）。
-#   desc: LLM 进化式策略搜索器（三角色变异 + 精英保留 + 盘后语义 + 人工裁决）。 Args: exploit_llm: Exploit 保守变异，``elite_express…；公共方法（定义序）: run, ad…
-#   inputs: exploit_llm explore_llm crossover_llm fitness_evaluator purged_kfold_…
-#   outputs: 返回值
-#   （注：A1 之后另有 4 个公共定义未列入（含 4 个数据契约/异常/枚举声明类），见源码）
-# 层: 输出
-# - id: O1
-#   name_zh: 模块公共 API 面（5 定义）
-#   name_en: public defs
-#   intro: LlmEvolutionarySearch
-#   downstream: 运行时装配批（盘后 LLM 进化策略搜索批 / 人工裁决后入因子库草稿治理串行合并）
-# [/ALGO_FLOW]
-#
-# 边:
-# I1 --> A1
-# I2 --> A1
-# I3 --> A1
-# I4 --> A1
-# A1 --> O1
+# [ALGO_FLOW] external: docs/03_modules/_domain_research/algo_flow/llm_evolutionary_search.yaml
 """
 
 from __future__ import annotations

@@ -25,47 +25,7 @@ B10-02221（AUD-DRAFT-001-DIGEST P2 波 P2-W07，CAND-FAC-022，A1 D-RESEARCH-17
 议（假设生命周期层）；本件=策略归因→**权重/因子候选**产物层（产出经注入回
 调登记 hypothesis_registry，本件不直写注册表、不落盘）。
 
-# [ALGO_FLOW]
-# 层: 输入
-# - id: I1
-#   name: attribution_parser 参数
-#   fields: 参数 attribution_parser（无注解）
-#   code: strategy_iteration_upgrader.py 顶层公共函数形参（AST 提取）
-# - id: I2
-#   name: hypothesis_sink 参数
-#   fields: 参数 hypothesis_sink（无注解）
-#   code: strategy_iteration_upgrader.py 顶层公共函数形参（AST 提取）
-# - id: I3
-#   name: weak_threshold 参数
-#   fields: 参数 weak_threshold（无注解）
-#   code: strategy_iteration_upgrader.py 顶层公共函数形参（AST 提取）
-# - id: I4
-#   name: strong_threshold 参数
-#   fields: 参数 strong_threshold（无注解）
-#   code: strategy_iteration_upgrader.py 顶层公共函数形参（AST 提取）
-# 层: 算法
-# - id: A1
-#   name_zh: ① StrategyIterationUpgrader
-#   name_en: StrategyIterationUpgrader
-#   intro: 策略迭代升级器（归因→权重建议 + 新因子候选 + registry 回调 + 历史）。
-#   desc: 策略迭代升级器（归因→权重建议 + 新因子候选 + registry 回调 + 历史）。 Args: attribution_parser: 注入归因报告解析器，``raw_re…；公共方法（定义序）: upgrade…
-#   inputs: attribution_parser hypothesis_sink weak_threshold strong_threshold in…
-#   outputs: 返回值
-#   （注：A1 之后另有 5 个公共定义未列入（含 5 个数据契约/异常/枚举声明类），见源码）
-# 层: 输出
-# - id: O1
-#   name_zh: 模块公共 API 面（6 定义）
-#   name_en: public defs
-#   intro: StrategyIterationUpgrader
-#   downstream: 运行时装配批（策略迭代升级批 / 产物经 hypothesis_registry 回调入研究治理流）
-# [/ALGO_FLOW]
-#
-# 边:
-# I1 --> A1
-# I2 --> A1
-# I3 --> A1
-# I4 --> A1
-# A1 --> O1
+# [ALGO_FLOW] external: docs/03_modules/_domain_research/algo_flow/strategy_iteration_upgrader.yaml
 """
 
 from __future__ import annotations

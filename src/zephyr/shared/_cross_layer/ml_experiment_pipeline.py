@@ -40,32 +40,7 @@ ME-CT-004: 统计验证门禁
 ME-CT-005: 模型提升审批链
 ME-CT-006: 跨层审计追踪
 
-# [ALGO_FLOW]
-# 层: 输入
-# - id: I1
-#   name: 模块内部数据
-#   fields: 无公共形参/无再导出（AST 事实）
-#   code: ml_experiment_pipeline.py
-# 层: 算法
-# - id: A1
-#   name_zh: ① MLExperimentPipeline
-#   name_en: MLExperimentPipeline
-#   intro: D_ML_TRAIN->实验 ML Experiment 跨层集成管道。
-#   desc: D_ML_TRAIN->实验 ML Experiment 跨层集成管道。 将 D_ML_TRAIN ML平台层的模型推理结果输入 实验 实验管线， 执行实验设计、统计验证和胜出模…；公共方法（定义序）: experim…
-#   inputs: 无参数
-#   outputs: 返回值
-#   （注：A1 之后另有 2 个公共定义未列入（含 2 个数据契约/异常/枚举声明类），见源码）
-# 层: 输出
-# - id: O1
-#   name_zh: 模块公共 API 面（3 定义）
-#   name_en: public defs
-#   intro: MLExperimentPipeline
-#   downstream: 见模块头 [CONSUMERS]
-# [/ALGO_FLOW]
-#
-# 边:
-# I1 --> A1
-# A1 --> O1
+# [ALGO_FLOW] external: docs/03_modules/_domain_shared/algo_flow/_cross_layer/ml_experiment_pipeline.yaml
 """
 
 from __future__ import annotations

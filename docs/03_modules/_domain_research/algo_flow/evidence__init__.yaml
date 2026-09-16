@@ -1,0 +1,31 @@
+# ALGO_FLOW 外部真源——__init__（_domain_research 域，真源 src/zephyr/research/evidence/__init__.py）
+# 2026-09-15 P2-1 契约头减负批量出仓：docstring 内联块逐字节副本，extractor 经
+# external 锚加载走同一 parse_algo_flow 管线；算法公共面变化时同步更新本块。
+doc_type: architecture_view
+ttl: permanent
+module: src.zephyr.research.evidence.__init__
+source_of_truth: src/zephyr/research/evidence/__init__.py
+algo_flow: |
+    # [ALGO_FLOW]
+    # 层: 输入
+    # - id: I1
+    #   name: Python 包导入请求
+    #   fields: 无数据字段（解释器 import 机制触发）
+    #   code: import zephyr.research.evidence
+    # 层: 算法
+    # - id: A1
+    #   name_zh: ① 子包公共 API 面聚合
+    #   name_en: __init__ re-export
+    #   desc: 从四个子模块（hypothesis_registry/evidence_chain/iteration_guide/batch_entry）re-export 公共符号，__all__ 声明 27 项
+    #   inputs: I1
+    #   outputs: 子包公共命名空间
+    # 层: 输出
+    # - id: O1
+    #   name_zh: 公共 API 面 __all__
+    #   name_en: __all__
+    #   downstream: 手动 CLI/调度挂点（batch_entry.main）；tests/research/test_evidence_phase0.py
+    # [/ALGO_FLOW]
+    #
+    # 边:
+    # I1 --> A1
+    # A1 --> O1

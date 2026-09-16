@@ -31,29 +31,7 @@
 设计真源：docs/02_enterprise_architecture/09_ai_architecture/
 implementation_plans/11_evidence_skill_router.md §3.1/§4.2。
 
-# [ALGO_FLOW]
-# 层: 输入
-# - id: I1
-#   name: Python 包导入请求
-#   fields: 无数据字段（解释器 import 机制触发）
-#   code: import zephyr.research.evidence
-# 层: 算法
-# - id: A1
-#   name_zh: ① 子包公共 API 面聚合
-#   name_en: __init__ re-export
-#   desc: 从四个子模块（hypothesis_registry/evidence_chain/iteration_guide/batch_entry）re-export 公共符号，__all__ 声明 27 项
-#   inputs: I1
-#   outputs: 子包公共命名空间
-# 层: 输出
-# - id: O1
-#   name_zh: 公共 API 面 __all__
-#   name_en: __all__
-#   downstream: 手动 CLI/调度挂点（batch_entry.main）；tests/research/test_evidence_phase0.py
-# [/ALGO_FLOW]
-#
-# 边:
-# I1 --> A1
-# A1 --> O1
+# [ALGO_FLOW] external: docs/03_modules/_domain_research/algo_flow/evidence__init__.yaml
 """
 
 from zephyr.research.evidence.batch_entry import (

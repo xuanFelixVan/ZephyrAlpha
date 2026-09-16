@@ -27,32 +27,7 @@ AlertPrecisionTracker — 告警精度/假阳性计数器（16号文 §4.3 P1-3�
 - 传入 ``persist_path`` 才启用落盘：每次记录 append 一条 ``{"ts","kind"}``
   JSONL（只增不改），初始化时回放已有记录恢复计数。
 
-# [ALGO_FLOW]
-# 层: 输入
-# - id: I1
-#   name: persist_path 参数
-#   fields: 参数 persist_path（无注解）
-#   code: alert_precision_tracker.py 顶层公共函数形参（AST 提取）
-# 层: 算法
-# - id: A1
-#   name_zh: ① AlertPrecisionTracker
-#   name_en: AlertPrecisionTracker
-#   intro: 告警精度/假阳性计数器（可选 append-only 落盘 + 启动回放恢复）。
-#   desc: 告警精度/假阳性计数器（可选 append-only 落盘 + 启动回放恢复）。；公共方法（定义序）: persist_path, record_true_positive, record_false_positive…
-#   inputs: persist_path
-#   outputs: 返回值
-#   （注：A1 之后另有 1 个公共定义未列入（含 1 个数据契约/异常/枚举声明类），见源码）
-# 层: 输出
-# - id: O1
-#   name_zh: 模块公共 API 面（2 定义）
-#   name_en: public defs
-#   intro: AlertPrecisionTracker
-#   downstream: zephyr.infrastructure.capacity_assurance.modules.__init__ ; zephyr.feedback_loo…
-# [/ALGO_FLOW]
-#
-# 边:
-# I1 --> A1
-# A1 --> O1
+# [ALGO_FLOW] external: docs/03_modules/_domain_shared/algo_flow/alerts/alert_precision_tracker.yaml
 """
 
 from __future__ import annotations

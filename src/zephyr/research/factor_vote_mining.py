@@ -26,47 +26,7 @@ FactorMAD——3-5 个生成 Agent 独立产出因子（Agent 回调全注入）
 本件=多 Agent **提案-验证-投票-辩论**协议（Agent 产出/投票回调全注入，本件
 不实现 Agent 本体，不重建注册表）。
 
-# [ALGO_FLOW]
-# 层: 输入
-# - id: I1
-#   name: agents 参数
-#   fields: 参数 agents（无注解）
-#   code: factor_vote_mining.py 顶层公共函数形参（AST 提取）
-# - id: I2
-#   name: ic_validator 参数
-#   fields: 参数 ic_validator（无注解）
-#   code: factor_vote_mining.py 顶层公共函数形参（AST 提取）
-# - id: I3
-#   name: oos_validator 参数
-#   fields: 参数 oos_validator（无注解）
-#   code: factor_vote_mining.py 顶层公共函数形参（AST 提取）
-# - id: I4
-#   name: min_ic 参数
-#   fields: 参数 min_ic（无注解）
-#   code: factor_vote_mining.py 顶层公共函数形参（AST 提取）
-# 层: 算法
-# - id: A1
-#   name_zh: ① FactorVoteMiner
-#   name_en: FactorVoteMiner
-#   intro: FactorMAD 多智能体投票因子挖掘器（提案→IC/OOS 验证→多数投票→辩论护栏）。
-#   desc: FactorMAD 多智能体投票因子挖掘器（提案→IC/OOS 验证→多数投票→辩论护栏）。 Args: agents: 3-5 个 VoteAgent（回调全注入，id 唯一）…；公共方法（定义序）: mine；源码…
-#   inputs: agents ic_validator oos_validator min_ic max_debate_rounds latency_bu…
-#   outputs: 返回值
-#   （注：A1 之后另有 5 个公共定义未列入（含 5 个数据契约/异常/枚举声明类），见源码）
-# 层: 输出
-# - id: O1
-#   name_zh: 模块公共 API 面（6 定义）
-#   name_en: public defs
-#   intro: FactorVoteMiner
-#   downstream: 运行时装配批（FactorMAD 多智能体因子挖掘批 / 因子库草稿治理串行合并）
-# [/ALGO_FLOW]
-#
-# 边:
-# I1 --> A1
-# I2 --> A1
-# I3 --> A1
-# I4 --> A1
-# A1 --> O1
+# [ALGO_FLOW] external: docs/03_modules/_domain_research/algo_flow/factor_vote_mining.yaml
 """
 
 from __future__ import annotations

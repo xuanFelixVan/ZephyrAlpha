@@ -37,49 +37,7 @@ hash 固化防篡改，append-only jsonl 落盘。
 
 频率约束（11号文 §2.3/§5-3）：日频/周频批量写入，不做盘中实时更新。
 
-# [ALGO_FLOW]
-# 层: 输入
-# - id: I1
-#   name: 证据挂链请求
-#   fields: hypothesis_id（外键）/polarity（三态）/source/content/at
-#   code: EvidenceChain.append 入口
-# - id: I2
-#   name: 落盘 evidence_chain.jsonl（构造时加载）
-#   fields: 每行一条 EvidenceEntry.to_dict（含 content_hash）
-#   code: EvidenceChain._load（任一行不可解析 fail-fast ZA-RE-0010）
-# 层: 算法
-# - id: A1
-#   name_zh: ① 外键+三态词表校验
-#   name_en: append 前置判定
-#   desc: registry.get 外键存在性（缺失即 ZA-RE-0011）→ EvidencePolarity 词表校验（越表即 ZA-RE-0012）
-#   inputs: I1
-#   outputs: 合法挂链请求
-# - id: A2
-#   name_zh: ② hash 固化+append-only 落盘
-#   name_en: compute_entry_hash + _append_line
-#   desc: 六字段规范化 JSON 的 SHA-256 固化进 content_hash → jsonl 单行追加（flush+fsync）
-#   inputs: A1
-#   outputs: EvidenceEntry（落盘固化）
-# - id: A3
-#   name_zh: ③ 完整性重算校验
-#   name_en: verify_integrity
-#   desc: 全量条目重算 hash 与落盘值比对，任一不一致即 ZA-RE-0013（篡改检出）
-#   inputs: I2 加载结果
-#   outputs: 通过/raise
-# 层: 输出
-# - id: O1
-#   name_zh: 证据条目/聚合视图
-#   name_en: list_for / summary_for（EvidenceSummary）/ iter_all
-#   downstream: zephyr.research.evidence.iteration_guide（EvidenceSummary 消费）；zephyr.research.evidence.batch_entry；tests/research/test_evidence_phase0.py
-# [/ALGO_FLOW]
-#
-# 边:
-# I1 --> A1
-# A1 --> A2
-# I2 --> A3
-# A2 --> O1
-# A3 --> O1
-
+# [ALGO_FLOW] external: docs/03_modules/_domain_research/algo_flow/evidence_chain.yaml
 依据: 11号文 §3.1/§4.2 P0-2 + 18号清单 §6 波4-11
 Version: 0.1.0
 """

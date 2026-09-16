@@ -1,0 +1,57 @@
+# ALGO_FLOW 外部真源——review_template_registry（_domain_reporting 域，真源 src/zephyr/reporting/review_template_registry.py）
+# 2026-09-15 P2-1 契约头减负批量出仓：docstring 内联块逐字节副本，extractor 经
+# external 锚加载走同一 parse_algo_flow 管线；算法公共面变化时同步更新本块。
+doc_type: architecture_view
+ttl: permanent
+module: src.zephyr.reporting.review_template_registry
+source_of_truth: src/zephyr/reporting/review_template_registry.py
+algo_flow: |
+    # [ALGO_FLOW]
+    # 层: 输入
+    # - id: I1
+    #   name: templates 参数
+    #   fields: 参数 templates（无注解）
+    #   code: review_template_registry.py 顶层公共函数形参（AST 提取）
+    # - id: I2
+    #   name: default_version 参数
+    #   fields: 参数 default_version（无注解）
+    #   code: review_template_registry.py 顶层公共函数形参（AST 提取）
+    # - id: I3
+    #   name: source 参数
+    #   fields: 参数 source（无注解）
+    #   code: review_template_registry.py 顶层公共函数形参（AST 提取）
+    # - id: I4
+    #   name: statuses 参数
+    #   fields: 参数 statuses（无注解）
+    #   code: review_template_registry.py 顶层公共函数形参（AST 提取）
+    # 层: 算法
+    # - id: A1
+    #   name_zh: ① TemplateSpec
+    #   name_en: TemplateSpec
+    #   intro: 单条模板产出（kind+version 定位，notes 留痕回退原因）。
+    #   desc: 单条模板产出（kind+version 定位，notes 留痕回退原因）。；公共方法（定义序）: to_dict；源码 L182-L193
+    #   inputs: 无参数
+    #   outputs: 返回值
+    # - id: A2
+    #   name_zh: ② ReviewTemplateRegistry
+    #   name_en: ReviewTemplateRegistry
+    #   intro: 复盘模板注册表（版本可切换 + 默认模板回退）。
+    #   desc: 复盘模板注册表（版本可切换 + 默认模板回退）。 Args: templates: {kind: {version: body}} 映射。 default_version: 默认…；公共方法（定义序）: embedde…
+    #   inputs: templates default_version source statuses notes
+    #   outputs: 返回值
+    #   （注：A2 之后另有 1 个公共定义未列入（含 1 个数据契约/异常/枚举声明类），见源码）
+    # 层: 输出
+    # - id: O1
+    #   name_zh: 模块公共 API 面（3 定义）
+    #   name_en: public defs
+    #   intro: TemplateSpec, ReviewTemplateRegistry
+    #   downstream: MOD-RPT-009_summary(ai_review_summary 战报/prompt/兜底模板供给) ; 复盘页调用方(版本切换)
+    # [/ALGO_FLOW]
+    #
+    # 边:
+    # I1 --> A1
+    # I2 --> A1
+    # I3 --> A1
+    # I4 --> A1
+    # A1 --> A2
+    # A2 --> O1

@@ -34,44 +34,7 @@
 落盘：data/research/evidence/guidance/guidance_YYYYMMDD_HHMMSS_{frequency}.json
     （落点选择理由见 hypothesis_registry.py docstring"落点选择"段）。
 
-# [ALGO_FLOW]
-# 层: 输入
-# - id: I1
-#   name: 批量执行请求（CLI 参数/API 关键字）
-#   fields: frequency（daily/weekly）/store_dir/rules_path/output_dir/at
-#   code: main → run_batch 入口
-# 层: 算法
-# - id: A1
-#   name_zh: ① 盘中零调用守卫
-#   name_en: is_intraday 判定
-#   desc: 工作日 09:30-15:00 CST（含午间休市从严）执行尝试一律 ZA-RE-0031 拒绝；frequency 词表外 ValueError
-#   inputs: I1
-#   outputs: 放行时刻
-# - id: A2
-#   name_zh: ② 加载+完整性自检
-#   name_en: registry/chain 加载 + verify_integrity
-#   desc: 假设注册表+证据链加载 → 证据链 hash 全量重算自检（篡改即 ZA-RE-0013 fail-fast，防线前移）
-#   inputs: A1 放行后
-#   outputs: 可评估假设集（未归档）
-# - id: A3
-#   name_zh: ③ 全量迭代评估
-#   name_en: guide.evaluate 循环
-#   desc: 未归档假设逐一证据聚合 → 迭代引导器产出建议（带 rule_id+证据计数）
-#   inputs: A2
-#   outputs: Guidance 清单
-# 层: 输出
-# - id: O1
-#   name_zh: 建议清单落盘 + 执行报告
-#   name_en: guidance_*.json（atomic_write）+ BatchReport
-#   downstream: 人工/统筹消费清单（后续 Phase 3 闭环回流接线由 11号文 §4.5 裁定）；tests/research/test_evidence_phase0.py
-# [/ALGO_FLOW]
-#
-# 边:
-# I1 --> A1
-# A1 --> A2
-# A2 --> A3
-# A3 --> O1
-
+# [ALGO_FLOW] external: docs/03_modules/_domain_research/algo_flow/batch_entry.yaml
 依据: 11号文 §3.1/§4.2 P0-4 + 18号清单 §6 波4-11
 Version: 0.1.0
 """

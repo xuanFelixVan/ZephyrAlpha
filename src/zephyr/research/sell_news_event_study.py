@@ -47,47 +47,7 @@ dReport 因子的实证底座——"事前 20 日涨幅分位高 + 强利好披�
   **因子值**计算件（单事件数值项），不做跨事件 CAR 分布统计；
 - 本件：**跨事件统计研究**（分组 CAR 分布 -> priced-in 规则建议），纯研究态不落因子表。
 
-# [ALGO_FLOW]
-# 层: 输入
-# - id: I1
-#   name: events 参数
-#   fields: 参数 events，类型注解 pd.DataFrame
-#   code: sell_news_event_study.py 顶层公共函数形参（AST 提取）
-# - id: I2
-#   name: prices 参数
-#   fields: 参数 prices，类型注解 pd.DataFrame
-#   code: sell_news_event_study.py 顶层公共函数形参（AST 提取）
-# - id: I3
-#   name: benchmark 参数
-#   fields: 参数 benchmark，类型注解 pd.DataFrame
-#   code: sell_news_event_study.py 顶层公共函数形参（AST 提取）
-# - id: I4
-#   name: config 参数
-#   fields: 参数 config，类型注解 SellNewsStudyConfig | None
-#   code: sell_news_event_study.py 顶层公共函数形参（AST 提取）
-# 层: 算法
-# - id: A1
-#   name_zh: ① run_sell_news_study
-#   name_en: run_sell_news_study
-#   intro: 高位利好落地事件研究主入口（纯函数，数据全注入）。
-#   desc: 高位利好落地事件研究主入口（纯函数，数据全注入）。 Parameters ---------- events : 事件清单，列 symbol / event_date / eve…；源码 L525-L590
-#   inputs: events prices benchmark config
-#   outputs: SellNewsStudyReport
-#   （注：A1 之后另有 5 个公共定义未列入（含 5 个数据契约/异常/枚举声明类），见源码）
-# 层: 输出
-# - id: O1
-#   name_zh: SellNewsStudyReport
-#   name_en: SellNewsStudyReport
-#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
-#   downstream: 运行时装配批（事件清单+日K+基准指数 DataFrame 注入）；L3 消化层 priced-in 规则标定（产出为规则建议文本，不直接落库）
-# [/ALGO_FLOW]
-#
-# 边:
-# I1 --> A1
-# I2 --> A1
-# I3 --> A1
-# I4 --> A1
-# A1 --> O1
+# [ALGO_FLOW] external: docs/03_modules/_domain_research/algo_flow/sell_news_event_study.yaml
 """
 
 from __future__ import annotations

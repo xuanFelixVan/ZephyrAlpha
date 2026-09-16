@@ -43,49 +43,7 @@ D_SHARED — Email/WeChat 实发 sender（55 号 §6 暂缓项施工，AI-NIGHT-
     ReportPublisher(webhook_sender=sender.as_report_sender(),
                     email_sender=EmailSmtpSender(...).as_report_sender())
 
-# [ALGO_FLOW]
-# 层: 输入
-# - id: I1
-#   name: webhook_url 参数
-#   fields: 参数 webhook_url（无注解）
-#   code: alert_senders.py 顶层公共函数形参（AST 提取）
-# - id: I2
-#   name: http_post 参数
-#   fields: 参数 http_post（无注解）
-#   code: alert_senders.py 顶层公共函数形参（AST 提取）
-# - id: I3
-#   name: timeout_seconds 参数
-#   fields: 参数 timeout_seconds（无注解）
-#   code: alert_senders.py 顶层公共函数形参（AST 提取）
-# 层: 算法
-# - id: A1
-#   name_zh: ① WeChatWebhookSender
-#   name_en: WeChatWebhookSender
-#   intro: 企业微信机器人 webhook 实发 sender（markdown 消息）。
-#   desc: 企业微信机器人 webhook 实发 sender（markdown 消息）。 Args: webhook_url: 企业微信机器人 webhook 完整 URL（含 key；视…；公共方法（定义序）: send_ma…
-#   inputs: webhook_url http_post timeout_seconds
-#   outputs: 返回值
-# - id: A2
-#   name_zh: ② EmailSmtpSender
-#   name_en: EmailSmtpSender
-#   intro: SMTP 邮件实发 sender（SSL / STARTTLS）。
-#   desc: SMTP 邮件实发 sender（SSL / STARTTLS）。 Args: host/port: SMTP 服务地址。 username/password: 认证凭据（pas…；公共方法（定义序）: send_ma…
-#   inputs: host port username password from_addr to_addrs use_ssl smtp_factory
-#   outputs: 返回值
-# 层: 输出
-# - id: O1
-#   name_zh: 模块公共 API 面（2 定义）
-#   name_en: public defs
-#   intro: WeChatWebhookSender, EmailSmtpSender
-#   downstream: zephyr.risk.core.alert_generator(EmailChannel/WeChatChannel sender 注入); zephyr.…
-# [/ALGO_FLOW]
-#
-# 边:
-# I1 --> A1
-# I2 --> A1
-# I3 --> A1
-# A1 --> A2
-# A2 --> O1
+# [ALGO_FLOW] external: docs/03_modules/_domain_shared/algo_flow/alerts/alert_senders.yaml
 """
 
 from __future__ import annotations
