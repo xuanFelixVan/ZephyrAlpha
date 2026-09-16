@@ -27659,6 +27659,10 @@ creation_tokens:
   token: industry-chain-alpha-industry-chain-alpha-mining-ledger-20260916
   created_by: st-igalpha-20260917
   capability: industry_chain_alpha
+- file: docs/_working/industry_chain_alpha/industry_chain_data_source_expansion.md
+  token: industry-chain-alpha-industry-chain-data-source-expansion-20260916
+  created_by: st-igalpha-20260917
+  capability: industry_chain_alpha
 - file: docs/_working/automation/20260917_automation_linkage_plan_v1.md
   token: automation-linkage-20260917-automation-linkage-plan-v1-20260916
   created_by: st-autolnk-20260917
