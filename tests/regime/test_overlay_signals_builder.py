@@ -235,6 +235,30 @@ def _make_limit_up_down(
     return df.set_index(["trade_date", "symbol"]).sort_index()
 
 
+def _make_events_limit_df(dates: pd.DatetimeIndex, specs: list[tuple[int, str, str]]) -> pd.DataFrame:
+    """任意稀疏涨跌停**事件行**表（仅列出的日/标的有行，模拟真表无逐日全市场行）。
+
+    specs: [(day_idx, symbol, "涨停"/"跌停"), ...] → MultiIndex(trade_date, symbol)。
+    用于 OVB-2 日历对齐连板 + OVB-5 个股龙头大面率的受控验证。
+    """
+    rows = [(dates[i], sym, lt, 0.1, 1e8) for (i, sym, lt) in specs]
+    df = pd.DataFrame(rows, columns=["trade_date", "symbol", "limit_type", "pct_change", "amount"])
+    return df.set_index(["trade_date", "symbol"]).sort_index()
+
+
+def _ctor_with_limit(dates: pd.DatetimeIndex, limit_df: pd.DataFrame | None) -> OverlaySignalsConstructor:
+    """构造接线 limit_up_down 的 OverlaySignalsConstructor（常态市场代理，仅验 T3/T5 输入）。"""
+    feat = _make_features(dates, vol_pct=0.3, corr=0.5)
+    idx_df = _make_index_df(dates, np.linspace(3000, 3100, len(dates)), np.full(len(dates), 1e8))
+    fb = _MockFeatureBuilder(feat, idx_df, limit_up_down=limit_df)
+    return OverlaySignalsConstructor(
+        backtest_start="2020-01-01",
+        backtest_end="2021-03-01",
+        data_load_start="2020-01-01",
+        feature_builder=fb,
+    )
+
+
 # ---------------------------------------------------------------------------
 # 结构契约测试
 # ---------------------------------------------------------------------------
@@ -805,6 +829,77 @@ class TestPhase2cT3Dims:
         overlay_probs = detector._run_overlay(overlay_signals)
         # T3 fail → r11 (RECOVERY) 获得非零概率
         assert overlay_probs.get("r11", 0.0) > 0, f"T3 fail 应给 r11 非零概率，实际 overlay_probs={overlay_probs}"
+
+    # ── OVB-2 连板日历对齐 + OVB-5 个股龙头口径（2026-09 车道C 治本回归）────────────
+
+    def test_consec_calendar_aligned_no_false_chain(self):
+        """OVB-2：同 symbol 涨停跨"缺口交易日"不得接续为连板（旧事件行 cumsum 会虚增）。
+
+        事件行制真表无逐日全市场行：day100 涨停→day101 无行（缺口）→day102 涨停，
+        旧实现按 symbol 对事件行 cumsum 会把 day102 记成 2 连板；日历对齐后须=1。
+        """
+        dates = _make_dates(300)
+        limit_df = _make_events_limit_df(
+            dates,
+            [(100, "G", "涨停"), (102, "G", "涨停"), (110, "H", "涨停"), (111, "H", "涨停")],
+        )
+        ctor = _ctor_with_limit(dates, limit_df)
+        mc = ctor._compute_limit_up_metrics(limit_df, dates)["max_consec_limit"]
+        assert mc[dates[100]] == 1, f"首板应=1，实际 {mc[dates[100]]}"
+        assert mc[dates[102]] == 1, f"缺口日不得接续连板（应=1），实际 {mc[dates[102]]}"
+        assert mc[dates[111]] == 2, f"相邻两交易日涨停应=2 连板，实际 {mc[dates[111]]}"
+
+    def test_promotion_and_leader_distress(self):
+        """晋级率=昨涨停今续涨停/昨涨停；leader_distress=昨涨停今跌停/昨涨停（个股口径）。"""
+        dates = _make_dates(300)
+        limit_df = _make_events_limit_df(
+            dates,
+            [(200, "A", "涨停"), (200, "B", "涨停"), (201, "A", "涨停"), (201, "B", "跌停")],
+        )
+        ctor = _ctor_with_limit(dates, limit_df)
+        m = ctor._compute_limit_up_metrics(limit_df, dates)
+        assert m["limit_up_count"][dates[200]] == 2, "day200 涨停家数应=2"
+        assert m["promotion_rate"][dates[201]] == 0.5, (
+            f"晋级率应=0.5（A 续涨停/昨 2 涨停），实际 {m['promotion_rate'][dates[201]]}"
+        )
+        assert m["leader_distress"][dates[201]] == 0.5, (
+            f"龙头大面率应=0.5（B 昨涨停今跌停/昨 2 涨停），实际 {m['leader_distress'][dates[201]]}"
+        )
+
+    def test_leader_break_uses_individual_cohort(self):
+        """OVB-5：leader_break 由真实个股龙头 cohort 大面率驱动，非指数 close<MA20。
+
+        昨 20 只涨停、今其中 6 只跌停 → 大面率 0.30 ≥0.22 → t5 评分 85。
+        """
+        dates = _make_dates(300)
+        specs = [(248, f"S{k:02d}", "涨停") for k in range(20)]
+        specs += [(249, f"S{k:02d}", "跌停") for k in range(6)]
+        limit_df = _make_events_limit_df(dates, specs)
+        ctor = _ctor_with_limit(dates, limit_df)
+        result = ctor.build_for_date(dates[250])
+        lb = result["transitions"]["T5"]["leader_break"]
+        assert lb == 85.0, f"龙头大面率 0.30 → leader_break=85，实际 {lb}"
+
+    def test_leader_break_degrades_without_limit_data(self):
+        """OVB-5：缺 limit_up_down → leader_break=0.0，禁用指数 close<MA20 冒充领涨股。
+
+        构造下行指数（旧实现会命中 close<MA20+放量给非零分），无个股龙头源时须降级 0.0。
+        """
+        dates = _make_dates(300)
+        close = np.linspace(3000, 2500, 300)  # 持续跌破 MA20
+        feat = _make_features(dates, vol_pct=0.9, corr=0.5)
+        idx_df = _make_index_df(dates, close, np.full(300, 1e8))
+        fb = _MockFeatureBuilder(feat, idx_df)  # 无 limit_up_down
+        ctor = OverlaySignalsConstructor(
+            backtest_start="2020-01-01",
+            backtest_end="2021-03-01",
+            data_load_start="2020-01-01",
+            feature_builder=fb,
+        )
+        result = ctor.build_for_date(dates[250])
+        assert result["transitions"]["T5"]["leader_break"] == 0.0, (
+            "无个股龙头源须降级 0.0，禁指数冒充"
+        )
 
 
 # ---------------------------------------------------------------------------

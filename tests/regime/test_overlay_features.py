@@ -46,6 +46,7 @@ from zephyr.regime.features.overlay_features import (
     t3_one_day_mainline_flag,
     t3_sentiment_score,
     t3_volume_price_score,
+    t5_leader_break_score,
 )
 
 # ---------------------------------------------------------------------------
@@ -470,3 +471,66 @@ class TestT3ScoreContracts:
         assert isinstance(t3_volume_price_score(pct, vol_z), pd.Series)
         assert isinstance(t3_sentiment_score(pd.Series([0.1] * 5)), pd.Series)
         assert isinstance(t3_one_day_mainline_flag(pd.Series([-3.0] * 5)), pd.Series)
+
+
+# ---------------------------------------------------------------------------
+# t5_leader_break_score — 领涨股破位（OVB-5 治本：真实个股龙头 cohort 大面率）
+# ---------------------------------------------------------------------------
+
+
+class TestT5LeaderBreakScore:
+    """领涨股破位评分：输入个股龙头大面率 leader_distress∈[0,1]（非指数代理）。"""
+
+    def test_normal_no_break(self):
+        """大面率 ≤0.05（常态）→ 0（无信号不干预）。"""
+        distress = _series([0.0, 0.02, 0.05])
+        result = t5_leader_break_score(distress)
+        assert (result == 0).all()
+
+    def test_cooling(self):
+        """0.05<distress<0.10 → 35（偏冷，未达 trigger 门槛）。"""
+        distress = _series([0.06, 0.08, 0.099])
+        result = t5_leader_break_score(distress)
+        assert (result == 35).all()
+
+    def test_trigger_threshold(self):
+        """distress>=0.10 → 60（过 T5 trigger 门槛）。"""
+        distress = _series([0.10, 0.12])
+        result = t5_leader_break_score(distress)
+        assert (result == 60).all()
+
+    def test_strong_break(self):
+        """distress>=0.15 → 70（强破位）。"""
+        distress = _series([0.15, 0.18, 0.21])
+        result = t5_leader_break_score(distress)
+        assert (result == 70).all()
+
+    def test_extreme_break(self):
+        """distress>=0.22（≈p98 龙头集体核）→ 85（极端退潮）。"""
+        distress = _series([0.22, 0.30, 0.5])
+        result = t5_leader_break_score(distress)
+        assert (result == 85).all()
+
+    def test_boundary_values(self):
+        """精确边界：0.10→60、0.099→35；0.22→85、0.219→70。"""
+        assert t5_leader_break_score(_series([0.10])).iloc[0] == 60
+        assert t5_leader_break_score(_series([0.0999])).iloc[0] == 35
+        assert t5_leader_break_score(_series([0.22])).iloc[0] == 85
+        assert t5_leader_break_score(_series([0.2199])).iloc[0] == 70
+
+    def test_nan_and_clip_tolerated(self):
+        """NaN→0；越界值 clip 到 [0,1]（0.5 与 2.0 同归 85）。"""
+        result = t5_leader_break_score(_series([np.nan]))
+        assert result.iloc[0] == 0
+        clipped = t5_leader_break_score(_series([2.0]))
+        assert clipped.iloc[0] == 85
+
+    def test_value_domain_and_alignment(self):
+        """值域∈{0,35,60,70,85}⊂[0,100]；索引与输入对齐。"""
+        idx = pd.date_range("2024-01-01", periods=6, freq="B")
+        distress = pd.Series([0.0, 0.06, 0.10, 0.15, 0.22, 0.40], index=idx)
+        result = t5_leader_break_score(distress)
+        assert isinstance(result, pd.Series)
+        assert list(result.index) == list(idx)
+        assert set(result.unique()) <= {0.0, 35.0, 60.0, 70.0, 85.0}
+        assert result.min() >= 0 and result.max() <= 100

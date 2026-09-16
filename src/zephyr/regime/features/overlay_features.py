@@ -91,7 +91,51 @@ __all__ = [
     "t5_rebound_wrap_flag",
     # T6
     "t6_sudden_volume_flag",
+    # 阈值校准台账（OVB-1 五项，2026-09 车道C 实证裁定）
+    "THRESHOLD_CALIBRATION_LEDGER",
+    "ALERT_UNCALIBRATED_THRESHOLDS",
 ]
+
+# ---------------------------------------------------------------------------
+# 阈值校准欠账台账（OVB-4 五项，overlay_dims_mining §2#4/§4）
+# ---------------------------------------------------------------------------
+# 连板虚增（OVB-2）与 T5 冒充（OVB-5）另行治本，见 builder/_compute_limit_up_metrics
+# 与 t5_leader_break_score；本表只登记 OVB-4 "阈值 A 股校准缺口" 五项的实证裁定与处置。
+# 值格式："<状态> | <CH 只读实证依据> | <处置>"
+#   状态 ALERT    = 现行阈值未经 A 股本土 walk-forward 复推且影响生产 → 运行期一次性告警，值沿用
+#   状态 RESOLVED = 经实证非缺陷 / 无第二套实阈值在跑 → 不告警（避免噪声），台账留痕备查
+# 方法论对齐 S2 capitulation（仓库内唯一已跑通"预注册→样本外→不炸才用"闭环的维度，
+# overlay_dims_mining §2#4 正面对照）：ALERT 项的本土化复推须走同一预注册流程，施工期
+# 禁止降阈值凑分；本表只登记欠账与处置，不改数值（Owner 采纳归主力会话施工班）。
+THRESHOLD_CALIBRATION_LEDGER: dict[str, str] = {
+    "s2_breadth_thrust": (
+        "ALERT | 0.615/0.40 为美股 NYSE 标准，A 股实测≈分位 p88/p10（方向正确）但未经本土 "
+        "walk-forward 复推；校准闭环前置 FPB-1（OVB-1 广度死源）已由他车道修复 | 保留现值 + "
+        "告警，补跑 OVB-1 预注册扫描（0.58-0.65 区间）出本土阈值 + walk-forward 报告"
+    ),
+    "s2_capitulation_confirm": (
+        "RESOLVED | confirm halflife=30/lookback=40 仅 docstring 占位，生产 _precompute 单用 trigger "
+        "默认(hl10/lb20)，无第二套实阈值在跑 | 无运行期欠账；接 confirm 分支前禁止引入未校准参数"
+    ),
+    "s1_vix_panic_s2_vix": (
+        "RESOLVED | §2#4 担忧「合成 VIX 与 vol_pct 分布不同却套同阈值」不成立：两路输入均经滚动 "
+        "rank(pct=True) 归一为分位秩（CH 实测近似均匀，均值≈0.49），0.75/0.85/0.90/0.95 恒为 "
+        "p75/85/90/95 分位切点，与底层是下行半偏差还是已实现波动无关 | 已实证等价，无需改"
+    ),
+    "t3_money_effect": (
+        "ALERT | 涨停家数门槛 30/50/100 单调（CH 全历史命中≈62%/45%/10%）但随市场扩容分时代漂移，"
+        "无 A 股预注册标定 | 保留现值 + 告警，待改滚动分位口径"
+    ),
+    "t3_mainline": (
+        "ALERT | HHI 阶梯 0.08/0.10/0.15 依赖板块分类法版本（596 板块口径下每日 HHI 中枢≈p35 恒低，"
+        "三档几乎不区分）| 保留现值 + 告警，待按板块数归一或分位重标定"
+    ),
+}
+
+# 运行期需告警的欠账项（RESOLVED 不进入，避免噪声）
+ALERT_UNCALIBRATED_THRESHOLDS: tuple[str, ...] = tuple(
+    k for k, v in THRESHOLD_CALIBRATION_LEDGER.items() if v.startswith("ALERT")
+)
 
 
 # ---------------------------------------------------------------------------
@@ -118,6 +162,10 @@ def s1_vix_panic_score(vol_pct: pd.Series, vix_pct: pd.Series | None = None) -> 
 
     与 #1 realized_vol_coef 对齐：vol_pct>0.90+下跌→#1=0.30（危机地板），
     S1 vix_panic>85 → 与 #1 危机区重合，提供 overlay 层 CRISIS 概率叠加。
+
+    阈值口径：0.75/0.85/0.90/0.95 是输入分位秩的 p75/85/90/95 切点（vol_pct/vix_pct∈[0,1]
+    近似均匀，CH 实测均值≈0.49），非美股 VIX 绝对点位抄录——此 VIX 阈值族已实证等价，
+    无本土化欠账（台账 `THRESHOLD_CALIBRATION_LEDGER["s1_vix_panic_s2_vix"]` = RESOLVED）。
     """
     if vix_pct is not None and not vix_pct.empty:
         # vix_pct 优先；其 NaN 处（warmup/局部缺失）per-element 回退 vol_pct
@@ -256,6 +304,9 @@ def s2_capitulation_score(
     lookback/halflife 按 stage 分参数化（§4.1 注）：trigger（近 1 月）halflife=10/
     lookback=20（默认）；confirm（政策底→市场底滞后 1.5-3 月）halflife=30/lookback=40
     （占位，待 §4.5 walk-forward 校准）。
+    注：confirm 分支的 30/40 从未接线——生产 `_precompute` 单用 trigger 默认（hl10/lb20），
+    无第二套实阈值在跑，故此项无运行期欠账（台账 `THRESHOLD_CALIBRATION_LEDGER
+    ["s2_capitulation_confirm"]` = RESOLVED）；接 confirm 分支前禁止引入未校准参数。
 
     参数化候选族（2026-08-28 S2 校准调查报告 §四预注册草案，Owner 裁定聚合=C1 主 +
     C3 对照；全部默认值 = legacy，现行为不变）：
@@ -835,6 +886,7 @@ def s2_breadth_thrust_score(
 
     注：0.615/0.40 是美股 NYSE 标准，A 股本土化校准（0.58-0.65 区间扫描）属
     §4.5 验证闭环（Step 0 ③ 勘探得 399106 涨跌家数可用），预注册参数禁止施工调参。
+    欠账登记于 `THRESHOLD_CALIBRATION_LEDGER["s2_breadth_thrust"]`（ALERT，运行期告警、值沿用）。
     """
     total = adv_issues + dec_issues + 1e-8
     breadth_ratio = adv_issues / total
@@ -1031,6 +1083,9 @@ def t3_money_effect_score(inflow_pct: pd.Series, limit_up_count: pd.Series) -> p
     Phase 2c：原 stub=0，现接入 money_flow + limit_up_down 真实数据。
     主力净流入占比 + 涨停家数共振 = 资金驱动主线确立信号。
 
+    阈值欠账（OVB-4）：涨停家数门槛 30/50/100 未经 A 股本土 walk-forward 复推且随市场扩容
+    漂移，登记于 `THRESHOLD_CALIBRATION_LEDGER["t3_money_effect"]`（ALERT），运行期告警、值沿用。
+
     映射（对齐 T3 confirm 门槛 money_effect>=50）：
       inflow>5% & 涨停>100 → 80  （强资金+广涨停，主线确立）
       >3% & >50            → 65  （中度资金+涨停，过 trigger 门槛）
@@ -1063,6 +1118,10 @@ def t3_mainline_score(sector_hhi: pd.Series, top_sector_pct: pd.Series) -> pd.Se
     Phase 2c：原 stub=0，现接入 kline_sector 真实数据。
     主线 = 板块涨幅集中（少数板块领涨）+ 头部板块涨幅显著。
     HHI = Σ(share_i²)，share_i = |ret_i| / Σ|ret_j|，越高越集中。
+
+    阈值欠账（OVB-4）：HHI 阶梯 0.08/0.10/0.15 在 ~596 板块口径下退化（每日 HHI 中枢≈p35
+    恒低，三档几乎不区分），登记于 `THRESHOLD_CALIBRATION_LEDGER["t3_mainline"]`（ALERT），
+    运行期告警、值沿用，待按板块数归一或分位重标定。
 
     映射（对齐 T3 trigger 门槛 mainline>=60）：
       HHI>0.15 & Top>3% → 80  （强集中+强领涨，主线明确）
@@ -1164,24 +1223,38 @@ def t4_shrink_flat_flag(vol_pct: pd.Series) -> pd.Series:
 # ---------------------------------------------------------------------------
 
 
-def t5_leader_break_score(close: pd.Series, volume: pd.Series) -> pd.Series:
-    """T5 leader_break: 领涨股破位 → 0-100（价格跌破 MA20 + 放量）。
+def t5_leader_break_score(leader_distress: pd.Series) -> pd.Series:
+    """T5 leader_break: 领涨股破位 → 0-100（真实个股龙头 cohort 大面率，OVB-5 治本）。
 
-    MVP 用市场代理代替领涨股：close < MA20 + 放量 = 破位信号。
+    语义（第一性原理）：T5 是"逃顶退潮"转换，"领涨股破位" = 本轮**领涨的个股龙头**
+    集体转弱。经典 A 股情绪周期口径（淘股吧/开盘啦）= "昨日涨停龙头今日被核/大面"——
+    龙头首阴、连板梯队崩塌即主线见顶。这与"指数跌破 MA20"是两件不同的事。
 
-    映射（对齐 T5 trigger 门槛 leader_break>=60）：
-      close<MA20 & z>2 → 75  （放量跌破MA20，强破位）
-      close<MA20 & z>1 → 60  （量价配合破位，过门槛）
-      close<MA20       → 30  （跌破MA20无量，未达门槛）
-      else             → 0   （在线上）
+    OVB-5 修复（overlay_dims_mining §2#5/§4 OVB-5）：旧实现"MVP 用市场代理（指数 close<MA20+
+    放量）代替领涨股"是**指数冒充个股**，语义错位。CH 只读实测（2023-01~2026-06）：000300
+    close<MA20 的常态占比 = **49.5%**（牛市任意回调即命中），会把 T5 逃顶信号在正常回踩中反复
+    误触发（"牛市回调即触发"）。而真实龙头 cohort 大面率 ≥0.10 仅占 **9.1%** 交易日，且高值日
+    精确落在 2024-01-30 / 02-05 / 02-28（微盘踩踏）、2024-10-10、2024-12-17、2025-04-07
+    （关税急跌）等真实退潮日——特异性碾压指数代理。
+
+    输入 `leader_distress`（0~1）= |昨日涨停龙头 ∩ 今日跌停| / |昨日涨停龙头|，由
+    OverlaySignalsConstructor 从 limit_up_down（**个股级**事件，非指数）计算。这是
+    在 overlay 构造器可得的个股源；非跌停的普通下跌不入事件表 → 本指标度量的是龙头
+    "核按钮/大面"这一极端破位形态（保守、低覆盖），已在 builder 侧披露局限。
+
+    映射（对齐 T5 trigger 门槛 leader_break>=60，阈值锚定 A 股实证分位）：
+      distress>=0.22（≈p98，龙头集体核）  → 85  （极端退潮）
+      distress>=0.15（≈p96）              → 70  （强破位）
+      distress>=0.10（≈p90，过门槛）      → 60  （龙头明显转弱，触发 T5）
+      distress >0.05 （≈p72，未达门槛）   → 35  （偏冷，不干预）
+      else（≤0.05 常态）                  → 0   （无破位，不干预）
     """
-    score = pd.Series(0.0, index=close.index)
-    ma20 = close.rolling(20).mean()
-    below = close < ma20
-    vol_z = (volume - volume.rolling(20).mean()) / (volume.rolling(20).std() + 1e-8)
-    score[below] = 30
-    score[below & (vol_z > 1)] = 60
-    score[below & (vol_z > 2)] = 75
+    score = pd.Series(0.0, index=leader_distress.index)
+    d = leader_distress.fillna(0.0).clip(lower=0.0, upper=1.0)
+    score[d > 0.05] = 35
+    score[d >= 0.10] = 60
+    score[d >= 0.15] = 70
+    score[d >= 0.22] = 85
     return score
 
 

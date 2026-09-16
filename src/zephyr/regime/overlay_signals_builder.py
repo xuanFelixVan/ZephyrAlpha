@@ -482,10 +482,16 @@ class OverlaySignalsConstructor:
             _logger.warning("T4 shrink_flat 数据缺失，降级 0.0")
 
         # ── T5: Bull-High → Bear-Med ──
-        if close is not None and volume is not None:
-            cache["leader_break"] = overlay_features.t5_leader_break_score(close, volume)
+        # OVB-5 治本：leader_break 用**个股**龙头 cohort 大面率（limit_up_down），非指数代理。
+        # 缺 limit_up_down → 降级 0.0 并告警，禁止静默回退指数 close<MA20 冒充领涨股。
+        leader_distress = t3_inputs.get("leader_distress")
+        if leader_distress is not None:
+            cache["leader_break"] = overlay_features.t5_leader_break_score(leader_distress)
         else:
-            _logger.warning("T5 leader_break 数据缺失，降级 0.0")
+            _logger.warning(
+                "T5 leader_break 缺少个股龙头大面数据（limit_up_down），降级 0.0"
+                "（OVB-5：禁用指数 close<MA20 冒充领涨股）"
+            )
         if close is not None:
             cache["rebound_wrap"] = overlay_features.t5_rebound_wrap_flag(close)
         else:
@@ -496,6 +502,17 @@ class OverlaySignalsConstructor:
             cache["sudden_volume"] = overlay_features.t6_sudden_volume_flag(vol_z, pct_change)
         else:
             _logger.warning("T6 sudden_volume 数据缺失，降级 0.0")
+
+        # ── 阈值校准欠账一次性告警（OVB-4 五项，RESOLVED 不告警）──
+        if not getattr(self, "_threshold_ledger_warned", False):
+            self._threshold_ledger_warned = True
+            pending = overlay_features.ALERT_UNCALIBRATED_THRESHOLDS
+            if pending:
+                _logger.warning(
+                    "overlay 阈值校准欠账（未经 A 股本土 walk-forward 复推，现行值沿用）: %s "
+                    "— 详情见 overlay_features.THRESHOLD_CALIBRATION_LEDGER",
+                    ", ".join(pending),
+                )
 
         _logger.info(
             "OverlaySignalsConstructor._precompute: 可算维度 %d，policy/bad_news_flat=%s，vix_pct=%s，wyckoff=%s",
@@ -633,6 +650,7 @@ class OverlaySignalsConstructor:
             "max_consec_limit": None,
             "promotion_rate": None,
             "prev_top3_max_today_pct": None,
+            "leader_distress": None,
         }
         # money_effect: 全市场主力净流入占比
         money_flow = self._fb_call("get_money_flow")
@@ -660,13 +678,14 @@ class OverlaySignalsConstructor:
             inputs["sector_hhi"] = sector_inputs.get("sector_hhi")
             inputs["top_sector_pct"] = sector_inputs.get("top_sector_pct")
             inputs["prev_top3_max_today_pct"] = sector_inputs.get("prev_top3_max_today_pct")
-        # limit_up_down: leader(max_consec+promotion) + limit_up_count
+        # limit_up_down: leader(max_consec+promotion) + limit_up_count + T5 leader_distress
         limit_df = self._fb_call("get_limit_up_down")
         if limit_df is not None and not limit_df.empty:
             lu_inputs = self._compute_limit_up_metrics(limit_df, index)
             inputs["max_consec_limit"] = lu_inputs.get("max_consec_limit")
             inputs["promotion_rate"] = lu_inputs.get("promotion_rate")
             inputs["limit_up_count"] = lu_inputs.get("limit_up_count")
+            inputs["leader_distress"] = lu_inputs.get("leader_distress")
         return inputs
 
     def _compute_sector_metrics(self, sector_df: pd.DataFrame, index: pd.Index) -> dict[str, pd.Series]:
@@ -700,31 +719,86 @@ class OverlaySignalsConstructor:
             return {}
 
     def _compute_limit_up_metrics(self, limit_df: pd.DataFrame, index: pd.Index) -> dict[str, pd.Series]:
-        """从涨跌停统计算 max_consec_limit / promotion_rate / limit_up_count。
+        """从涨跌停事件表算 max_consec_limit / promotion_rate / limit_up_count / leader_distress。
 
-        max_consec_limit = 全市场最高连板数（按 symbol 分组，非涨停重置 cumsum）。
-        promotion_rate = 昨日涨停今日继续涨停比例（晋级率）。
-        limit_up_count = 每日涨停家数。
+        【OVB-2 治本：连板虚增】limit_up_down 是**事件行表**（仅涨停/跌停日有行，非涨停日
+        无行）。旧实现按 symbol 对事件行直接 `cumsum` 计连板，等价于把"3 月一次涨停 + 4 月
+        一次涨停"错认成 2 连板（跨无事件日虚假接续），max_consec 被系统性虚增——CH 只读实测
+        （2023-01~2026-06，82532 事件行 / 5142 股 / 842 交易日，走本生产实现）按交易日的最高
+        连板均值 12.44→6.24（虚增 1.99x），≥7 连板交易日占比 94.5%→37.5%（旧算法几乎把每天
+        都伪装成涨停潮）。现改为**按交易日历
+        （index = 市场代理连续交易日序列）对齐**：某 symbol 在某交易日无涨停行 = 该日非涨停
+        （连板自然中断）；仅相邻两"涨停事件"的日历位置相差 1 才接续。晋级率同理按日历日算
+        （旧实现按事件行 shift(1)，遇停牌/断更错位）。
+
+        【T5 治本：个股龙头口径，禁指数冒充】额外产出 leader_distress =
+        |昨日涨停 ∩ 今日跌停| / |昨日涨停|（真实**个股**龙头 cohort 大面/核按钮率），供
+        t5_leader_break_score 消费；非跌停的普通下跌不入事件表 → 本指标是保守、低覆盖的
+        极端破位口径（局限已在函数级披露）。
+
+        定义（全部对齐连续交易日历，无事件日 = 0）：
+          max_consec_limit = 当日全市场最高连板数
+          promotion_rate   = 昨日涨停个股中今日继续涨停的比例（晋级率）
+          limit_up_count   = 当日涨停家数
+          leader_distress  = 昨日涨停个股中今日跌停的比例（龙头大面率，[0,1]）
         """
         try:
             df = limit_df.reset_index().copy()
-            df["is_up"] = df["limit_type"].astype(str).str.contains("涨停").astype(int)
-            df = df.sort_values(["symbol", "trade_date"])
-            # 连板数：按 symbol 分组，遇到非涨停重置 run_group
-            df["run_group"] = df.groupby("symbol")["is_up"].transform(lambda x: (x == 0).cumsum())
-            df["consec"] = df.groupby(["symbol", "run_group"])["is_up"].cumsum()
-            max_consec = df.groupby("trade_date")["consec"].max()
-            lu_count = df.groupby("trade_date")["is_up"].sum()
-            # 晋级率：昨日涨停今日继续涨停比例
-            pivot = df.pivot(index="trade_date", columns="symbol", values="is_up").fillna(0)
-            yesterday_up = pivot.shift(1)
-            continued = (pivot == 1) & (yesterday_up == 1)
-            yest_count = yesterday_up.sum(axis=1).replace(0, np.nan)
-            promotion = (continued.sum(axis=1) / yest_count).fillna(0.0)
+            lt = df["limit_type"].astype(str)
+            df["is_up"] = lt.str.contains("涨停").astype(int)
+            df["is_down"] = lt.str.contains("跌停").astype(int)
+            # 锚定到连续交易日历：不在 index 内的事件（非本代理交易日）丢弃，cp 为日历位置
+            dates = pd.to_datetime(df["trade_date"])
+            cp = pd.Index(index).get_indexer(dates)
+            df = df.assign(cp=cp)
+            df = df[df["cp"] >= 0]
+            if df.empty:
+                return {}
+            n_days = len(index)
+            day_range = range(n_days)
+
+            # 唯一 (symbol, cp) 事件（同日同标的至多一行，去重防御重复行）
+            up_u = df[df["is_up"] == 1][["symbol", "cp"]].drop_duplicates()
+            down_u = df[df["is_down"] == 1][["symbol", "cp"]].drop_duplicates()
+
+            # 涨停家数（按日历日，缺日=0）
+            lu_full = up_u.groupby("cp").size().reindex(day_range, fill_value=0).astype(float)
+
+            # ── 连板高度：仅相邻交易日（cp 差 1）的两条涨停才接续为同一 run ──
+            up_sorted = up_u.sort_values(["symbol", "cp"]).reset_index(drop=True)
+            same_run = (up_sorted["symbol"] == up_sorted["symbol"].shift()) & (
+                up_sorted["cp"] == up_sorted["cp"].shift() + 1
+            )
+            up_sorted["run_id"] = (~same_run).cumsum()
+            up_sorted["consec"] = up_sorted.groupby("run_id").cumcount() + 1
+            max_consec_full = (
+                up_sorted.groupby("cp")["consec"].max().reindex(day_range, fill_value=0).astype(float)
+            )
+
+            # 昨日涨停家数（shift(1) 在连续日历上 = 上一交易日）
+            lu_prev = lu_full.shift(1)
+            denom = lu_prev.replace(0.0, np.nan)
+
+            # ── 晋级：昨日涨停今日续涨停的家数 / 昨日涨停家数 ──
+            up_keys = set(zip(up_sorted["symbol"], up_sorted["cp"]))
+            cont = pd.DataFrame(
+                {"cp": up_sorted["cp"].to_numpy(), "hit": [(s, c - 1) in up_keys for s, c in zip(up_sorted["symbol"], up_sorted["cp"])]}
+            )
+            promo_num = cont.groupby("cp")["hit"].sum().reindex(day_range, fill_value=0)
+            promotion_full = (promo_num / denom).fillna(0.0)
+
+            # ── 龙头大面率：昨日涨停今日跌停的家数 / 昨日涨停家数 ──
+            dist = pd.DataFrame(
+                {"cp": down_u["cp"].to_numpy(), "hit": [(s, c - 1) in up_keys for s, c in zip(down_u["symbol"], down_u["cp"])]}
+            )
+            dist_num = dist.groupby("cp")["hit"].sum().reindex(day_range, fill_value=0)
+            distress_full = (dist_num / denom).fillna(0.0)
+
             return {
-                "max_consec_limit": max_consec.reindex(index),
-                "promotion_rate": promotion.reindex(index),
-                "limit_up_count": lu_count.reindex(index),
+                "max_consec_limit": pd.Series(max_consec_full.to_numpy(), index=index),
+                "promotion_rate": pd.Series(promotion_full.to_numpy(), index=index),
+                "limit_up_count": pd.Series(lu_full.to_numpy(), index=index),
+                "leader_distress": pd.Series(distress_full.to_numpy(), index=index),
             }
         except Exception as exc:  # noqa: BLE001
             _logger.warning("涨跌停指标计算失败，降级 None: %s", exc)
