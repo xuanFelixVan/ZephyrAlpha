@@ -1834,8 +1834,8 @@ nodes:
   parent_node: TDM-E-L3
   factor_refs: []
   data_refs: [DS-082, DS-150]
-  module_ref: src/zephyr/data/instrument_master.py
-  module_id: MOD-DATA-069
+  module_ref: src/zephyr/signal_ashare/tradability_preflight.py
+  module_id: MOD-SIG-151
   algo_refs: []
   doc_ref:
   activation: premarket
