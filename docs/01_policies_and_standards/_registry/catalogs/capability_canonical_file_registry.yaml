@@ -27715,6 +27715,26 @@ creation_tokens:
   token: industry-chain-alpha-industry-chain-global-expansion-plan-20260916
   created_by: st-igalpha-20260917
   capability: industry_chain_alpha
+- file: docs/_working/industry_chain_alpha/README.md
+  token: industry-chain-alpha-readme-20260916
+  created_by: st-igalpha-20260917
+  capability: industry_chain_alpha
+- file: docs/_working/industry_chain_alpha/a_batch1_construction/a_mining_workbook.md
+  token: industry-chain-alpha-a-mining-workbook-20260916
+  created_by: st-igalpha-20260917
+  capability: industry_chain_alpha
+- file: docs/_working/industry_chain_alpha/b_data_sources/b_mining_workbook.md
+  token: industry-chain-alpha-b-mining-workbook-20260916
+  created_by: st-igalpha-20260917
+  capability: industry_chain_alpha
+- file: docs/_working/industry_chain_alpha/c_research_feed/c_mining_workbook.md
+  token: industry-chain-alpha-c-mining-workbook-20260916
+  created_by: st-igalpha-20260917
+  capability: industry_chain_alpha
+- file: docs/_working/industry_chain_alpha/d_entity_master/d_mining_workbook.md
+  token: industry-chain-alpha-d-mining-workbook-20260916
+  created_by: st-igalpha-20260917
+  capability: industry_chain_alpha
 - file: docs/_working/automation/20260917_automation_linkage_plan_v1.md
   token: automation-linkage-20260917-automation-linkage-plan-v1-20260916
   created_by: st-autolnk-20260917
@@ -27733,6 +27753,18 @@ creation_tokens:
   capability: automation_linkage
 - file: docs/_working/automation/20260917_wo_gpu04_rl_execution_training.md
   token: automation-linkage-20260917-wo-gpu04-rl-execution-training-20260916
+  created_by: st-autolnk-20260917
+  capability: automation_linkage
+- file: docs/_working/automation/20260917_autolnk_session_log.md
+  token: automation-linkage-20260917-autolnk-session-log-20260916
+  created_by: st-autolnk-20260917
+  capability: automation_linkage
+- file: docs/_working/automation/20260917_decision_skeleton_mining_report_v1.md
+  token: automation-linkage-20260917-decision-skeleton-mining-report-v1-20260916
+  created_by: st-autolnk-20260917
+  capability: automation_linkage
+- file: docs/_working/automation/20260917_fullauto_skeleton_v1.md
+  token: automation-linkage-20260917-fullauto-skeleton-v1-20260916
   created_by: st-autolnk-20260917
   capability: automation_linkage
 - file: docs/_working/trading_vision/2026-09-16-skeleton-coverage-audit.md
