@@ -61,6 +61,25 @@ _STAGE_WEIGHTS: Final[dict[str, float]] = {
     "test": 20.0,
 }
 
+# ── 阶段判定阈值（预注册，禁静默调值）───────────────────────────────────
+# 2026-09-16 WYF-3 walk-forward 重校（裁定#264）：预注册协议网格（36+36+64+4+20 点
+# 分层扫描，2010-2022 校准/2023-2026 样本外）内无合格替代值，全部维持现值。
+# 根因=vol_z(20日) 特征恐慌钝化（持续放量台阶使 z-score 失灵，2015-08-24 -8.75% 日
+# z=0.04），属特征构造层缺陷非常数校准债。
+# 证据：docs/_working/wyf3/wyf3_recalibration_report.md；协议：docs/_working/wyf3/wyf3_preregistered_protocol.md
+# 任何阈值改动 MUST 先登记裁定 + 重跑协议（先写死验收标准后跑数）。
+_PS_VOL_Z: Final[float] = 1.0          # PS：放量异动下限
+_SC_VOL_Z: Final[float] = 2.0          # SC：恐慌巨量下限
+_SC_PCT: Final[float] = -0.04          # SC：单日跌幅下限（严格 <）
+_AR_SC_RECENT_WIN: Final[int] = 10     # AR：SC 后回看窗（ST 复用同窗，拆分须裁定）
+_AR_PCT: Final[float] = 0.01           # AR：反弹幅度下限（严格 >）
+_AR_BREAKOUT_WIN: Final[int] = 10      # AR：high 突破窗
+_ST_BAND: Final[float] = 0.02          # ST：sc_low 回踩带宽（±2%）
+_ST_SHRINK: Final[float] = 0.7         # ST：缩量判定（< AR均量×0.7）
+_SPRING_SHRINK: Final[float] = 0.8     # Spring：缩量判定（< AR均量×0.8）
+_TEST_SPRING_RECENT_WIN: Final[int] = 20  # Test：Spring 后回看窗
+_TEST_VOL_RATIO: Final[float] = 1.0    # Test：放量判定（> 20日均量×1.0，严格 >）
+
 
 def detect_wyckoff_events(
     close: pd.Series,
@@ -103,19 +122,19 @@ def detect_wyckoff_events(
     # ── PS 初步支撑：下跌中放量但不再创新低 ──
     # vol_z>1（放量）& low>rolling_min.shift(1)（不再创新低）& pct<0（下跌趋势中）
     not_new_low = l > rolling_min.shift(1)
-    events["ps"] = ((z > 1.0) & not_new_low & (pct < 0)).astype(float)
+    events["ps"] = ((_PS_VOL_Z < z) & not_new_low & (pct < 0)).astype(float)
 
     # ── SC 抛售高潮：巨量暴跌收最低 ──
-    # vol_z>2 & pct<-4% & close<=rolling_min（收在区间最低）
+    # vol_z>_SC_VOL_Z & pct<_SC_PCT & close<=rolling_min（收在区间最低）
     # WYF-1 Bug1 修复：SC 收在区间最低 = 收盘价创滚动新低（原 low 滚动低点数学不可达）
-    sc_condition = (z > 2.0) & (pct < -0.04) & (c <= close_rolling_min + 1e-8)
+    sc_condition = (z > _SC_VOL_Z) & (pct < _SC_PCT) & (c <= close_rolling_min + 1e-8)
     events["sc"] = sc_condition.astype(float)
 
-    # ── AR 自动反弹：SC 后 10 日内创新高 ──
-    # 近10日有SC & 当日high创近10日新高 & pct>1%（反弹）
-    sc_recent = events["sc"].rolling(10).max() > 0
-    high_breakout = h >= h.rolling(10).max()
-    events["ar"] = (sc_recent & high_breakout & (pct > 0.01)).astype(float)
+    # ── AR 自动反弹：SC 后 _AR_SC_RECENT_WIN 日内创新高 ──
+    # 近窗有SC & 当日high创近窗新高 & pct>_AR_PCT（反弹）
+    sc_recent = events["sc"].rolling(_AR_SC_RECENT_WIN).max() > 0
+    high_breakout = h >= h.rolling(_AR_BREAKOUT_WIN).max()
+    events["ar"] = (sc_recent & high_breakout & (pct > _AR_PCT)).astype(float)
 
     # SC 低点 forward fill（只用已发生的 SC 事件的 low，PIT 安全）
     sc_low = l.where(events["sc"] > 0).ffill()
@@ -127,22 +146,23 @@ def detect_wyckoff_events(
     ar_high = h.where(events["ar"] > 0).ffill()
 
     # ── ST 二次测试：回落至 SC 区域 + 缩量 ──
-    # low 接近 sc_low（±2%）& volume < AR均量×0.7（缩量）& 近期有 SC
-    in_sc_zone = (l <= sc_low * 1.02) & (l >= sc_low * 0.98)
-    shrink_vol = v < (ar_vol_avg * 0.7)
+    # low 接近 sc_low（±_ST_BAND）& volume < AR均量×_ST_SHRINK（缩量）& 近期有 SC
+    # （ST 的 sc_recent 复用 AR 同窗 _AR_SC_RECENT_WIN；拆分独立窗须裁定——WYF-3 §2.2）
+    in_sc_zone = (l <= sc_low * (1.0 + _ST_BAND)) & (l >= sc_low * (1.0 - _ST_BAND))
+    shrink_vol = v < (ar_vol_avg * _ST_SHRINK)
     events["st"] = (in_sc_zone & shrink_vol & sc_recent).astype(float)
 
     # ── Spring 震仓：跌破 sc_low 但收回 + 缩量 ──
-    # low<sc_low（跌破）& close>sc_low（收回）& volume<AR均量×0.8（缩量）
+    # low<sc_low（跌破）& close>sc_low（收回）& volume<AR均量×_SPRING_SHRINK（缩量）
     broke_sc = l < sc_low
     recovered = c > sc_low
-    spring_shrink = v < (ar_vol_avg * 0.8)
+    spring_shrink = v < (ar_vol_avg * _SPRING_SHRINK)
     events["spring"] = (broke_sc & recovered & spring_shrink).astype(float)
 
     # ── Test/SOS 强势信号：Spring 后上突 AR 高点 + 放量 ──
-    # 近20日有Spring & close>ar_high（突破AR高点）& 放量（>20日均量）
-    spring_recent = events["spring"].rolling(20).max() > 0
-    vol_expanding = v > v.rolling(20).mean()
+    # 近_TEST_SPRING_RECENT_WIN 日有Spring & close>ar_high（突破AR高点）& 放量（>20日均量×_TEST_VOL_RATIO）
+    spring_recent = events["spring"].rolling(_TEST_SPRING_RECENT_WIN).max() > 0
+    vol_expanding = v > (v.rolling(20).mean() * _TEST_VOL_RATIO)
     events["test"] = (spring_recent & (c > ar_high) & vol_expanding).astype(float)
 
     return events.fillna(0.0)

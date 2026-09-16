@@ -276,3 +276,106 @@ def test_pit_prefix_consistency_at_event_days():
         trunc_score = wyckoff_score(**cut_inputs)
         pd.testing.assert_frame_equal(trunc_events, full_events.iloc[: cut + 1])
         pd.testing.assert_series_equal(trunc_score, full_score.iloc[: cut + 1])
+
+
+# ---------------------------------------------------------------------------
+# WYF-3 锁值与阈值精确边界（裁定#264：阈值维持现值，防静默漂移）
+# ---------------------------------------------------------------------------
+
+
+def test_threshold_constants_locked_to_ruling_264():
+    """WYF-3 终态（裁定#264）：预注册协议网格内无合格替代值，阈值锁死为现值。
+
+    锁值依据=docs/_working/wyf3/wyf3_recalibration_report.md §3 新旧对照表
+    （终态全部"不动"）。任何值变化必须先登记新裁定并更新本断言。
+    """
+    from zephyr.regime.features import wyckoff_engine as we
+
+    assert we._PS_VOL_Z == 1.0
+    assert we._SC_VOL_Z == 2.0
+    assert we._SC_PCT == -0.04
+    assert we._AR_SC_RECENT_WIN == 10
+    assert we._AR_PCT == 0.01
+    assert we._AR_BREAKOUT_WIN == 10
+    assert we._ST_BAND == 0.02
+    assert we._ST_SHRINK == 0.7
+    assert we._SPRING_SHRINK == 0.8
+    assert we._TEST_SPRING_RECENT_WIN == 20
+    assert we._TEST_VOL_RATIO == 1.0
+    # 权重表同锁（S2 confirm 门槛 60 的累加语义真源）
+    assert we._STAGE_WEIGHTS == {
+        "ps": 10.0, "sc": 30.0, "ar": 15.0, "st": 20.0, "spring": 40.0, "test": 20.0,
+    }
+
+
+def _sc_boundary_inputs(close: float, vol_z: float, explicit_pct: float | None = None):
+    """构造 SC 边界场景：70 日 flat(close=100) 后接单日暴跌候选（close 创 60 日收盘新低）。
+
+    explicit_pct 显式钉死 pct（消除 96.0/100-1 的浮点累差）——边界测试要求输入
+    精确等于阈值常量的双精度表示。
+    """
+    bars = _flat_bars(70)
+    bars.append((close * 1.01, close * 1.02, close - 1.0, close, 3_000_000.0, vol_z))
+    inputs = _inputs_from_bars(bars)
+    if explicit_pct is not None:
+        inputs["pct_change"].iloc[-1] = explicit_pct
+    return inputs
+
+
+def test_sc_threshold_exact_equality_does_not_fire():
+    """SC 阈值严格不等式边界（WYF-3 锁值回归）。
+
+    判定条件为 z > 2.0 且 pct < -0.04（严格）：恰在等值点（z=2.0 整 / pct=-0.04
+    双精度字面量）均不得触发；仅双侧同时越界才触发。防未来把严格不等式改成
+    >=（静默放宽）。
+    """
+    # 恰等值：pct=-0.04 字面量 + vol_z=2.0 整 → 不触发
+    inputs = _sc_boundary_inputs(close=96.0, vol_z=2.0, explicit_pct=-0.04)
+    assert inputs["pct_change"].iloc[-1] == -0.04
+    assert inputs["vol_z"].iloc[-1] == 2.0
+    events = detect_wyckoff_events(**inputs)
+    assert events["sc"].iloc[-1] == 0.0
+    # 单侧越界（z 过线 pct 恰等值）→ 不触发
+    events = detect_wyckoff_events(**_sc_boundary_inputs(close=96.0, vol_z=2.5, explicit_pct=-0.04))
+    assert events["sc"].iloc[-1] == 0.0
+    # 单侧越界（pct 过线 z 恰等值）→ 不触发
+    events = detect_wyckoff_events(**_sc_boundary_inputs(close=95.9, vol_z=2.0, explicit_pct=-0.0401))
+    assert inputs["pct_change"].iloc[-1] != 0.0
+    assert events["sc"].iloc[-1] == 0.0
+    # 双侧越界 + 收盘创 60 日新低 + 非光脚收盘 → 触发（Bug1 语义保持）
+    events = detect_wyckoff_events(**_sc_boundary_inputs(close=95.9, vol_z=2.5, explicit_pct=-0.0401))
+    assert events["sc"].iloc[-1] == 1.0
+
+
+def test_ar_pct_exact_equality_does_not_fire():
+    """AR 阈值严格不等式边界：SC 后反弹日 pct 恰 +1% 不触发，+1.1% 触发。"""
+    bars = _flat_bars(70)
+    bars.append(_SC)  # 70 SC
+    # AR 候选日：high 创 10 日新高，pct 显式钉死
+    ar_bar = (91.5, 102.5, 91.5, 100.0, 2_500_000.0, 0.0)
+    bars.append(ar_bar)  # 71
+    inputs = _inputs_from_bars(bars)
+    pct = inputs["pct_change"]
+    pct.iloc[-1] = 0.01  # 恰 +1%（严格 > 下不触发）
+    events = detect_wyckoff_events(**inputs)
+    assert events["ar"].iloc[-1] == 0.0
+    pct.iloc[-1] = 0.0101  # 越界触发
+    events = detect_wyckoff_events(**inputs)
+    assert events["ar"].iloc[-1] == 1.0
+
+
+def test_st_band_boundary_inside_outside():
+    """ST 回踩带宽边界（±2%）：low 恰落在带沿内触发、恰带外不触发。
+
+    sc_low=90（SC 日 low）：带=[88.2, 91.8]。low=91.8（恰 1.02×sc_low）在带内，
+    low=91.9 出带 → ST 不触发（缺带内腿，缩量/近期SC 另配齐）。
+    """
+    bars = _flat_bars(70)
+    bars.append(_SC)                                            # 70 SC, sc_low=90
+    bars.append(_AR)                                            # 71 AR（供 ar_vol_avg 基准）
+    bars.append((91.0, 92.0, 91.8, 91.0, 900_000.0, 0.0))       # 72 low 恰带沿 91.8=90×1.02
+    bars.append((91.0, 92.0, 91.9, 91.2, 900_000.0, 0.0))       # 73 low 出带
+    inputs = _inputs_from_bars(bars)
+    events = detect_wyckoff_events(**inputs)
+    assert events["st"].iloc[72] == 1.0  # 恰带沿（<= 上带）在带内
+    assert events["st"].iloc[73] == 0.0  # 出带不触发

@@ -29,14 +29,14 @@ algo_flow: |
     #   name_zh: ① detect_wyckoff_events
     #   name_en: detect_wyckoff_events
     #   intro: 识别 Wyckoff 6 阶段事件点，返回 DataFrame[ps,sc,ar,st,spring,test]（0/…
-    #   desc: 识别 Wyckoff 6 阶段事件点，返回 DataFrame[ps,sc,ar,st,spring,test]（0/1 flag）。 所有事件标记用 rolling + shi…；源码 L115-L193
+    #   desc: 识别 Wyckoff 6 阶段事件点，返回 DataFrame[ps,sc,ar,st,spring,test]（0/1 flag）。 所有事件标记用 rolling + shi…；源码 L84-L168
     #   inputs: close high low volume pct_change vol_z window
     #   outputs: pd.DataFrame
     # - id: A2
     #   name_zh: ② wyckoff_score
     #   name_en: wyckoff_score
     #   intro: Wyckoff 吸筹评分 → 0-100（累加已出现阶段分数，cap 100）。
-    #   desc: Wyckoff 吸筹评分 → 0-100（累加已出现阶段分数，cap 100）。 每个阶段一旦出现，后续日期都算"已发生"（cummax 传播），加权累加。 映射（对齐 S2 c…；源码 L196-L230
+    #   desc: Wyckoff 吸筹评分 → 0-100（累加已出现阶段分数，cap 100）。 每个阶段一旦出现，后续日期都算"已发生"（cummax 传播），加权累加。 映射（对齐 S2 c…；源码 L171-L205
     #   inputs: close high low volume pct_change vol_z window
     #   outputs: pd.Series
     # 层: 输出

@@ -17338,4 +17338,8 @@ creation_tokens:
   token: "auto-wyf3-recalibration-report-20260916"
   created_by: "st-wyf3-20260916"
   capability: "wyckoff_threshold_recalibration"
+- file: docs/_working/audit_chain_incident_forensics_gwa.md
+  token: audit-chain-incident-forensics-20260916
+  created_by: st-auditfix-20260916
+  capability: audit_chain_incident_forensics
 di_seam_exemptions: []
