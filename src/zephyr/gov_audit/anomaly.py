@@ -57,55 +57,7 @@
 """
 
 
-# [ALGO_FLOW]
-# 层: 输入
-# - id: I1
-#   name: signature 参数
-#   fields: 参数 signature（无注解）
-#   code: anomaly.py 顶层公共函数形参（AST 提取）
-# - id: I2
-#   name: severity 参数
-#   fields: 参数 severity（无注解）
-#   code: anomaly.py 顶层公共函数形参（AST 提取）
-# - id: I3
-#   name: description 参数
-#   fields: 参数 description（无注解）
-#   code: anomaly.py 顶层公共函数形参（AST 提取）
-# - id: I4
-#   name: evidence 参数
-#   fields: 参数 evidence（无注解）
-#   code: anomaly.py 顶层公共函数形参（AST 提取）
-# 层: 算法
-# - id: A1
-#   name_zh: ① AnomalyResult
-#   name_en: AnomalyResult
-#   intro: 异常检测结果——治本（ G3）：对齐 test_audit_anomaly.py 契约。
-#   desc: 异常检测结果——治本（ G3）：对齐 test_audit_anomaly.py 契约。 构造：AnomalyResult(signature=AnomalySignature.…；公共方法（定义序）: to_dict…
-#   inputs: signature severity description evidence score
-#   outputs: 返回值
-# - id: A2
-#   name_zh: ② AnomalyDetector
-#   name_en: AnomalyDetector
-#   intro: 异常检测器——治本（ G3 + G-CT-002）：双 API 检测器。
-#   desc: 异常检测器——治本（ G3 + G-CT-002）：双 API 检测器。 旧桩仅有 feed/detect/scan_series（统计 z-score），无 scan/_eve…；公共方法（定义序）: event_l…
-#   inputs: event_log_path window_size
-#   outputs: 返回值
-#   （注：A2 之后另有 2 个公共定义未列入（含 2 个数据契约/异常/枚举声明类），见源码）
-# 层: 输出
-# - id: O1
-#   name_zh: 模块公共 API 面（4 定义）
-#   name_en: public defs
-#   intro: AnomalyResult, AnomalyDetector
-#   downstream: audit-orchestrator.pipeline_runner ; integrity
-# [/ALGO_FLOW]
-#
-# 边:
-# I1 --> A1
-# I2 --> A1
-# I3 --> A1
-# I4 --> A1
-# A1 --> A2
-# A2 --> O1
+# [ALGO_FLOW] external: docs/03_modules/_domain_gov_audit/algo_flow/anomaly.yaml
 """
 
 import json

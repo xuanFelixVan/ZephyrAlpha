@@ -26,31 +26,7 @@ audit-trail.agent_signer — MOD-INF-020 · Agent Ed25519 签名器
   2. 签名追加到 event.signature 字段
   3. Notary 公钥可验证签名
 
-# [ALGO_FLOW]
-# 层: 输入
-# - id: I1
-#   name: 模块内部数据
-#   fields: 无公共形参/无再导出（AST 事实）
-#   code: agent_signer.py
-# 层: 算法
-# - id: A1
-#   name_zh: ① AgentSigner
-#   name_en: AgentSigner
-#   intro: class AgentSigner 源码 L67-L103
-#   desc: 公共方法（定义序）: generate_key_pair, sign, verify；源码 L67-L103
-#   inputs: 无参数
-#   outputs: 返回值
-# 层: 输出
-# - id: O1
-#   name_zh: 模块公共 API 面（1 定义）
-#   name_en: public defs
-#   intro: AgentSigner
-#   downstream: 见模块头 [CONSUMERS]
-# [/ALGO_FLOW]
-#
-# 边:
-# I1 --> A1
-# A1 --> O1
+# [ALGO_FLOW] external: docs/03_modules/_domain_gov_audit/algo_flow/agent_signer.yaml
 """
 
 from __future__ import annotations

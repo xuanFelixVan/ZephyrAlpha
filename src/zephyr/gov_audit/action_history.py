@@ -28,45 +28,7 @@ ActionHistory — 操作历史持久化审计 + 去重 + 循环检测
   spiral_5x     -> HALT  + 系统介入（自修复螺旋）
   semantic_10x  -> KILL_SWITCH（疑似 runaway agent）
 
-# [ALGO_FLOW]
-# 层: 输入
-# - id: I1
-#   name: buffer_size 参数
-#   fields: 参数 buffer_size（无注解）
-#   code: action_history.py 顶层公共函数形参（AST 提取）
-# - id: I2
-#   name: ttl 参数
-#   fields: 参数 ttl（无注解）
-#   code: action_history.py 顶层公共函数形参（AST 提取）
-# 层: 算法
-# - id: A1
-#   name_zh: ① ActionSignature
-#   name_en: ActionSignature
-#   intro: class ActionSignature 源码 L92-L103
-#   desc: 公共方法（定义序）: fingerprint；源码 L92-L103
-#   inputs: 无参数
-#   outputs: 返回值
-# - id: A2
-#   name_zh: ② ActionHistory
-#   name_en: ActionHistory
-#   intro: class ActionHistory 源码 L133-L274
-#   desc: 公共方法（定义序）: record, get_loop_events, get_recent_actions, clear, size, summary；源码 L133-L274
-#   inputs: buffer_size ttl
-#   outputs: 返回值
-#   （注：A2 之后另有 3 个公共定义未列入（含 3 个数据契约/异常/枚举声明类），见源码）
-# 层: 输出
-# - id: O1
-#   name_zh: 模块公共 API 面（5 定义）
-#   name_en: public defs
-#   intro: ActionSignature, ActionHistory
-#   downstream: 见模块头 [CONSUMERS]
-# [/ALGO_FLOW]
-#
-# 边:
-# I1 --> A1
-# I2 --> A1
-# A1 --> A2
-# A2 --> O1
+# [ALGO_FLOW] external: docs/03_modules/_domain_gov_audit/algo_flow/action_history.yaml
 """
 
 from __future__ import annotations

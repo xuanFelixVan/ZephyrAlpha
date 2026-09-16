@@ -1,0 +1,38 @@
+# ALGO_FLOW 外部真源——audit_schema（_domain_gov_audit 域，真源 src/zephyr/gov_audit/audit_schema.py）
+# 2026-09-15 P2-1 契约头减负批量出仓：docstring 内联块逐字节副本，extractor 经
+# external 锚加载走同一 parse_algo_flow 管线；算法公共面变化时同步更新本块。
+doc_type: architecture_view
+ttl: permanent
+module: src.zephyr.gov_audit.audit_schema
+source_of_truth: src/zephyr/gov_audit/audit_schema.py
+algo_flow: |
+    # [ALGO_FLOW]
+    # 层: 输入
+    # - id: I1
+    #   name: db_path 参数
+    #   fields: 参数 db_path（无注解）
+    #   code: audit_schema.py 顶层公共函数形参（AST 提取）
+    # - id: I2
+    #   name: auto_init 参数
+    #   fields: 参数 auto_init（无注解）
+    #   code: audit_schema.py 顶层公共函数形参（AST 提取）
+    # 层: 算法
+    # - id: A1
+    #   name_zh: ① AuditQuery
+    #   name_en: AuditQuery
+    #   intro: 审计视图查询器。
+    #   desc: 审计视图查询器。 参数 ---- db_path SQLite 数据库路径，默认 DB_PATH。 auto_init True 时构造时自动 init_db()。；公共方法（定义序）: get_conn, query…
+    #   inputs: db_path auto_init
+    #   outputs: 返回值
+    # 层: 输出
+    # - id: O1
+    #   name_zh: 模块公共 API 面（1 定义）
+    #   name_en: public defs
+    #   intro: AuditQuery
+    #   downstream: 见模块头 [CONSUMERS]
+    # [/ALGO_FLOW]
+    #
+    # 边:
+    # I1 --> A1
+    # I2 --> A1
+    # A1 --> O1

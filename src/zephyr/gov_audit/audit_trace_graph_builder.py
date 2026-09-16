@@ -27,32 +27,7 @@ M48-S01）：审计追踪依赖图——决策→代码→测试→部署四段�
 整性缺口，零交集）；evidence_pack=证据包组装（本件图数据供其复用，
 不组装证据包）。
 
-# [ALGO_FLOW]
-# 层: 输入
-# - id: I1
-#   name: 模块内部数据
-#   fields: 无公共形参/无再导出（AST 事实）
-#   code: audit_trace_graph_builder.py
-# 层: 算法
-# - id: A1
-#   name_zh: ① AuditTraceGraphBuilder
-#   name_en: AuditTraceGraphBuilder
-#   intro: 审计追踪依赖图（四段边登记 + 全链反查 + 缺口检测 + 补齐建议）。
-#   desc: 审计追踪依赖图（四段边登记 + 全链反查 + 缺口检测 + 补齐建议）。；公共方法（定义序）: register_node, register_edge, nodes, edges, chain_of, reachab…
-#   inputs: 无参数
-#   outputs: 返回值
-#   （注：A1 之后另有 7 个公共定义未列入（含 7 个数据契约/异常/枚举声明类），见源码）
-# 层: 输出
-# - id: O1
-#   name_zh: 模块公共 API 面（8 定义）
-#   name_en: public defs
-#   intro: AuditTraceGraphBuilder
-#   downstream: 运行时装配批（合规证据包装配：四段边登记 + 缺口报告统一注入）
-# [/ALGO_FLOW]
-#
-# 边:
-# I1 --> A1
-# A1 --> O1
+# [ALGO_FLOW] external: docs/03_modules/_domain_gov_audit/algo_flow/audit_trace_graph_builder.yaml
 """
 
 from __future__ import annotations
