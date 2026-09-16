@@ -49958,6 +49958,27 @@ entries:
   desc_zh: "覆盖 run_post_settlement 日终落 backtest_store 的 var_backtest_report 命名空间 → RiskLayerOrchestrator 启动消费（_consume_var_calibration_verdict 经唯一执行者 apply_var_backtest_action）+ var_calibration_applied 消费指针幂等 + 损坏 fail-closed 三档语义。"
   desc_en: ""
   plain_zh: "这条测试验证：日终算出的 VaR 准不准的定级报告，会被第二天开盘前的风控编排器自动读一次并按结论调整模型（通过就用、要重校就探探针、要重建就退回静态阈值），同一天不会被重复消费，报告坏了就保守退回静态值。"
+- module_path: scripts/data/bdpan_tick_watch.py
+  domain_id: D_DATA
+  name_zh: "bdpan tick 缺口看门狗"
+  name_en: "bdpan tick gap watchdog"
+  desc_zh: "每日检查 bdpan 网盘按月归档是否上传缺口日分笔 zip，出现即自动下载并调 import_bdpan_tick_zip 导入"
+  desc_en: ""
+  plain_zh: "有 7 天的历史分笔数据在网盘上还没传上来。这个看门狗每天去看一眼，网盘一上传就自动下载进数据库，全程不用人管"
+- module_path: src/zephyr/gov_audit/secret_registry_drift.py
+  domain_id: D_GOV_AUDIT
+  name_zh: "密钥登记漂移核对器"
+  name_en: "Secret Registry Drift Checker"
+  desc_zh: "secret_registry↔真实密钥面↔era 表三方周期核对与漂移告警（post-commit 事件触发）"
+  desc_en: ""
+  plain_zh: "它像一个仓库钥匙总管的巡检员：定期把密钥登记本、实际钥匙串、审计签名钥匙三代履历表三样东西对一遍——登记本说要有的钥匙实际没有（失守）、钥匙串上出现登记本没记的野钥匙（未登记）、签名钥匙被换过但履历没更新（轮换漂移）都会拉响警报。警报在每次代码提交后自动触发，不需要定时器。"
+- module_path: scripts/backtest/f06_e4_wfa_exam.py
+  domain_id: D_BACKTEST
+  name_zh: "F06幸存者WFA正考"
+  name_en: ""
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "对网格工厂选出的候选策略做完整的滚动前推考试：把历史切成多段，每段用之前的数据训练、用之后的数据验证，汇总所有验证段的成绩，再用防过拟合公式和样本外衰减检查判定这个策略是真本事还是运气，给出通过或不通过的正式结论。"
 
 battle_map_steps:
 - step_id: BM-BUY-05
