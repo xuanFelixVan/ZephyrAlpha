@@ -46,7 +46,7 @@
       "desc": "GitCommitGateway 主入口(43门禁+串行锁+stash隔离+_commit_auto五重gate)"
     },
     "src/zephyr/governance/audit/reconciliation_registry.py": {
-      "hash": "379cbd15c9512a33",
+      "hash": "e5bf8b7f85dc1ab4",
       "critical": true,
       "desc": "post-commit reconciler 注册表(17 reconciler+_commit_auto统一入口)"
     },
@@ -56,7 +56,7 @@
       "desc": "规则完整性校验器自身(C层golden hash自举保护,防篡改清单本身)"
     },
     "docs/01_policies_and_standards/_registry/catalogs/capability_canonical_file_registry.yaml": {
-      "hash": "daa5ed56af921307",
+      "hash": "c91582c042e5ba13",
       "critical": true,
       "desc": "capability 索引 + creation_tokens 真源（create_guard/capability_overlap_gate 依赖）"
     },
@@ -66,7 +66,7 @@
       "desc": "pre-commit 门禁注册表 + tests/豁免真源（TEST_EXEMPT_PREFIXES/is_test_exempt）"
     },
     "scripts/governance/_shared/code_algorithm_extractor.py": {
-      "hash": "79fcc6577d9c2451",
+      "hash": "1d13fdf2dbe41f09",
       "critical": true,
       "desc": "ALGO_FLOW 标记解析器（parse_algo_flow/_strip_algo_flow_block，§4.16 全景图推导真源）"
     },
@@ -81,11 +81,11 @@
       "desc": "算法全景图生成器测试锚点（行为契约防回归）"
     },
     "tests/governance/shared/test_code_algorithm_extractor.py": {
-      "hash": "efba3a35c5da8449",
+      "hash": "28e87e0131bd9f70",
       "critical": false,
       "desc": "ALGO_FLOW 解析器测试锚点（行为契约防回归）"
     }
   },
-  "registered_at": "2026-09-16T07:34:25.750317+00:00",
+  "registered_at": "2026-09-16T09:23:57.025986+00:00",
   "last_check_at": "2026-08-02T13:43:07.830785+00:00"
 }
