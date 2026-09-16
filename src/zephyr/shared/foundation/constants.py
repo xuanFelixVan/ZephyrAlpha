@@ -39,31 +39,7 @@ AI 施工约定：
 SSoT: MOD-INF-016 §2.4 shared-constants
 Version: 0.1.0
 
-# [ALGO_FLOW]
-# 层: 输入
-# - id: I1
-#   name: 共享枚举/常量查找
-#   fields: import zephyr.shared.foundation.constants（含懒加载符号名）
-#   code: L48+ 分组 from-import / __getattr__ (L134)
-# 层: 算法
-# - id: A1
-#   name_zh: 常量集中再导出
-#   name_en: constants_reexport
-#   intro: 纯 re-export——各域枚举/常量 SSoT 仍在原文件，本文件按域分组集中暴露
-#   code: 模块级 import + __all__ (L141)
-# - id: A2
-#   name_zh: 向上依赖懒加载
-#   name_en: lazy_symbol_loading
-#   intro: _LAZY_SYMBOLS 命中时 importlib 按需加载 trading/governance 上层符号，避免循环依赖
-#   code: __getattr__ (L134) / _LAZY_SYMBOLS (L131)
-# 层: 输出
-# - id: O1
-#   name_zh: 共享常量符号
-#   name_en: shared_constant_symbols
-#   intro: AssetClass/OrderSide/EventType/RuntimePlane/TaskStatus 等统一出口
-#   downstream: 全库 AI 施工与运行态模块
-# [/ALGO_FLOW]
-# 边: I1 --> A1 ; A1 --> A2 ; A2 --> O1
+# [ALGO_FLOW] external: docs/03_modules/_domain_shared/algo_flow/foundation/constants.yaml
 """
 
 import importlib
