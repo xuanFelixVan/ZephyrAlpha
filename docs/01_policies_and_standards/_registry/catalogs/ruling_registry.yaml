@@ -2579,3 +2579,102 @@ entries:
   related_arch: []
   related_rulings: []
   superseded_by: null
+
+- ruling_id: '裁定#275'
+  title: pytest 精简跑法 ini 在合同下无容身之处——定项目根白名单位（DCR-005 禁 config/*.ini），顺带治好 -c 把 rootdir 搬出仓的旧位缺陷
+  date: '2026-09-16'
+  category: 治本
+  status: active
+  summary: >-
+    病根实证：P2-1 波次落地 pytest 双配置对齐工具（T5 批）时，DIRECTORY-CONTRACT
+    DCR-005 硬拦 config/pytest_min.ini（config/ allowed 仅 .yaml/.yml/.json）。
+    四条机证定落点：①directory_contract.yaml 全 77 个目录条目无一 allowed 含 .ini，
+    即"合同下不存在任何允许 .ini 的子目录"；②root_directory_whitelist 是根目录唯一
+    纳管机制，其中已列 py.ini（同型先例，.gitignore 以 /* 忽略根目录、以 !py.ini 单点
+    放行，配套机制现成）；③pytest 8.4.2 load_config_dict_from_file 只识别 .ini /
+    .cfg([tool:pytest]) / .toml 三种后缀，故"改名 .conf 塞 config/system_configs/"
+    或"改 .yaml 由工具派生"两条取巧路直接不可行（pytest 不认=静默丢配置，比拦下更坏）；
+    ④探针测得 `-c <ini>` 的 rootdir 就是该 ini 所在目录（.runtime/tmp/bt_probe 与
+    系统 Temp 两次均 rootdir 出仓）——旧位 .runtime/tmp/pytest_min.ini 除 2026-09-16
+    外审遗留㉑已判的 TTL 断裂风险外，还静默把 rootdir 搬出仓库（conftest 截断、
+    .pytest_cache 与相对路径锚点全部外移），㉑只治了 TTL 未看见这一半。
+    裁定：ini 迁项目根 pytest_min.ini（非 pytest 自动发现名，只有显式 -c 才生效，
+    不会覆盖 pyproject 默认跑法），.gitignore 紧随 py.ini 加 !pytest_min.ini，
+    工具常量/pre-commit files 正则/gate_registry/module_translation/creation_token
+    四处引用同步改派。㉑的原则"永久产物禁入 TTL 区"原样保留，改的只是永久区里的
+    具体位置。被否方案：(a) 放宽合同让 config/ 收 .ini——为单件产物开政策口子，
+    目录合同的意义即"按目录约束扩展名"，破例成本大于收益；(b) 工具派生 ini 到系统
+    临时目录——rootdir 仍出仓且与 TTL 同族问题未变；(c) 干脆废除第二份配置只留
+    pyproject——两轮测试协议（同测试双配置必须同判定）失去载体，属能力净减。
+    残余不隐藏：①双份手工维护本身未消除，仍由 GATE-PYTEST-CONFIG-DRIFT 看守，
+    按 §9.5"清单须生成器产出"的正解是派生生成器，已登记波次收口报告为候选（本裁定
+    不扩面施工）；②仓内既有报告文本仍写旧路径 .runtime/tmp/pytest_min.ini，属历史
+    留痕不回改，以本裁定与本件头注为准。
+  affected_files:
+    - pytest_min.ini
+    - .gitignore
+    - scripts/governance/d7_code/compare_pytest_configs.py
+    - tests/governance/d7_code/test_compare_pytest_configs.py
+    - .pre-commit-config.yaml
+  related_arch: []
+  related_rulings:
+    - 外审遗留㉑（2026-09-16：永久产物禁入 TTL 区）
+  superseded_by: null
+- ruling_id: '裁定#276'
+  title: ALGO_FLOW 死块双真源四态收口（转正/转正留内联/并入 algo_flow_prose/镜像件 docstring 参照清偿）+ 几何判据单一真源 + ALGO-FLOW-LINK 第 3 判据硬拦
+  date: '2026-09-16'
+  category: 治本
+  status: active
+  summary: >-
+    病根实证：P2-1 出仓战役普查测得 src/zephyr 有 184 件源码在 module docstring **之外**
+    （14 字段契约头区）留有 ALGO_FLOW 机器块，其中 177 件已带 external 锚——即"锚指向
+    yaml 真源 + 体外还有一份永不更新副本"的双真源形态。所有读卡路径（extractor
+    _load_external_algo_flow / check_algo_flow / 翻译 reconciler）只读 docstring，头块
+    既读不到也删不掉；更早的出仓器对它是"只计数不处理"（报 skipped unreachable 后跳过），
+    于是 184 件长期停在死块态。门禁上线当场取证：波次批 grp5p2s3 被 ALGO-FLOW-LINK 拦住
+    scaling_out.py / trade_level_circuit_breaker.py 两件（头块起行 16），机制有效非纸面。
+    裁定（四态收口，全部在出仓器同一编排函数内）：①块只在头且可解析 → 逐字转正进
+    docstring 后走同一管写出仓（header_promoted，实测 4 件）；②转正后仍不可解析（手写
+    速记无 ``# - id:``）→ 留在 docstring 当单真源内联块，不回滚（promoted_inline，2 件：
+    drift_observatory_orchestrator / wyckoff_walkforward）——回滚等于把不可解析件永久
+    锁死在"门禁不可提交"态，与既有口径（全仓不可解析块一律内联不出仓）自相矛盾；
+    ③已出仓/本批出仓仍有头块 → 节点 id 被 yaml 机器块覆盖者直删（19 件，零信息损失），
+    未覆盖者逐字并入 yaml 新键 ``algo_flow_prose`` 后再删（158 件，Owner 2026-09-09
+    "算法改了大白话必须跟着改"口径下的手写算法速记不销毁）；④无锚无 yaml 的双位镜像件
+    （risk_layer_orchestrator：2026-08-18 人工恢复 docstring 副本时留的头注镜像）→ 以
+    docstring 内块为参照，只删 provably 覆盖者（deduped），未覆盖即 failed 拒删。
+    四条治本纪律：(a) 死块几何判据唯一真源=extractor.algo_flow_dead_block_spans，出仓器
+    与门禁共用一份规则，禁第二份实现；(b) 每条清偿路径终验四要件（死块归零 + ast 可解析
+    + docstring 逐字未变 + yaml 机器块逐字节未变），任一不过即源码+yaml 双件字节还原，
+    不留"头块已删/prose 未落"半成品；(c) ``algo_flow_prose`` 追加在 yaml 文件尾，机器块
+    永不动，且不落在 source_of_truth 反查的前 8/12 行窗口内（实测所有读卡路径静默忽略
+    未知键）；(d) 门禁第 3 判据 own-scope 且只扫 src/zephyr/ 前缀，脚本区不拦（工具夹具
+    合法含块），import 失败必走 sys.path bootstrap——不补则该判据在网关进程静默
+    fail-open，等于装了不咬人的门。收口终态：全仓死块普查 184→0。
+    被否方案：(a) 一把删光头块——158 件手写算法速记随之销毁，正是本战役要防的"信息随
+    双真源一起烂在源码里"的反面，且违 Owner 大白话令；(b) 门禁降级为 warn——双真源副本
+    继续存在，读图口径分叉只是不被看见；(c) 扩收解析器把 ``# I1: 速记`` 当节点——层归属
+    由字母猜测（I/F/A/O 无规范映射），会为 62+ 件造出凭空发明的流程图，比"不可解析、
+    内联留档"更坏，登记为独立候选不在此扩面；(d) 出仓器/门禁各写一份 span 几何——第二
+    真源正是本次要消灭的对象。
+    残余不隐藏：① src/zephyr/experiment_tracking/adapters/vectorized_adapter.py 的头块
+    清偿与他会话未提交的 slippage 口径改动同处一件，按 §3.4 不代修不搭车，该件死块删除
+    留工作区随其归属会话提交（普查已计为清偿，门禁不再拦该件）；② 速记块件（含②的两件
+    转正留内联者）仍无 yaml 卡片、不进全景图，待 (c) 方案独立裁定；③ ``algo_flow_prose``
+    暂无渲染消费方，当前价值=不丢信息 + 可检索，消费侧接线随文档管线批次；④ 根目录
+    pytest_min.ini 在被 T5 批提交进 HEAD 前，仍暴露给 GATE-ROOT-TEMP-SWEEP 的 10 分钟
+    新鲜度窗口（该门白名单动态取 ``git ls-tree HEAD``，未 tracked 即可能被扫走），tracked
+    后永久豁免——故 T5 批须在复活 ini 后尽快提交，本轮已按此执行。
+  affected_files:
+    - scripts/governance/_shared/code_algorithm_extractor.py
+    - scripts/governance/d5_architecture/generators/externalize_algo_flow.py
+    - src/zephyr/gov_enforcement/commit_gates/algo_flow_link_gate.py
+    - tests/governance/generators/test_externalize_algo_flow_mirror.py
+    - tests/governance/commit_gates/test_algo_flow_link_gate.py
+  related_arch: []
+  related_rulings:
+    - '裁定#274'
+    - '裁定#275'
+    - 裁定#NNN（2026-09-15：P2-1 出仓方向成立，yaml 为覆盖式真源，须补链接校验）
+    - 裁定#NNN（2026-09-09：算法改了大白话必须跟着改）
+  superseded_by: null

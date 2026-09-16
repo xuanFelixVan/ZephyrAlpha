@@ -7,7 +7,10 @@
 # [MATURITY] production
 # [INVARIANTS] 硬阻断——本 commit 触碰的 .py 中 ``# [ALGO_FLOW] external: <path>`` 锚指向的 yaml 必须存在且
 #   algo_flow 块可解析（parse_algo_flow 有节点），本 commit 触碰的 */algo_flow/*.yaml 必须自身可解析且
-#   source_of_truth 指向实存源文件（Owner 批7 认可，2026-09-16）；own-diff 扫描——只查本次 commit files 清单，
+#   source_of_truth 指向实存源文件（Owner 批7 认可，2026-09-16），且本 commit 触碰的 src/zephyr .py
+#   不得在 module docstring 之外另留 ALGO_FLOW 机器块（双真源，P2-1 死块批 2026-09-16 增；几何判据
+#   共用 extractor.algo_flow_dead_block_spans，extractor 不可用=基础设施故障 fail-open）；
+#   own-diff 扫描——只查本次 commit files 清单，
 #   他会话 staged 文件零接触（#ARCH-GATE-OWN-SCOPE-001 单一真源模式）；staged 内容优先（锚校验读 staged，
 #   无 staged 回退工作区）；fail-open（git/文件不可读/yaml 解析器不可用等基础设施故障放行，logger.warning）；
 #   检出本 commit 违规 fail-closed
@@ -35,7 +38,10 @@ docs/03_modules/<domain>/algo_flow/<stem>.yaml，算法图真源在 yaml 侧。
 pre-commit 注册（priority=108，own-diff）：
   1. 本 commit files 中每个 .py：扫 external 锚 → 目标 yaml 存在 + algo_flow 块可解析
   2. 本 commit files 中每个 */algo_flow/*.yaml：可解析 + source_of_truth 实存
-  3. 违规聚合一次给全，硬阻断；基础设施故障 fail-open
+  3. 本 commit files 中每个 src/zephyr .py：module docstring 之外不得另留 ALGO_FLOW 机器块
+     （P2-1 死块普查实证：14 字段契约头里的副本所有读卡路径都看不见，锚+副本=双真源，
+     184 件长期静默存活；几何判据与出仓器共用 extractor.algo_flow_dead_block_spans）
+  4. 违规聚合一次给全，硬阻断；基础设施故障 fail-open
 
 设计权衡
 --------
@@ -141,6 +147,45 @@ def check_algo_flow_links(
 
     failures: list[str] = []
 
+    def _dead_block_lines(content: str) -> list[int]:
+        """docstring 外的 ALGO_FLOW 块起行（1 基）；extractor 不可用=基础设施故障放行。
+
+        网关进程未必已把 scripts/governance 放进 sys.path——不补 bootstrap 本判据会
+        静默 fail-open（与 import_integrity_gate 同源套路）。
+        """
+        import sys
+
+        mod = None
+        try:
+            from _shared.code_algorithm_extractor import algo_flow_dead_block_spans as _f  # noqa: PLC0415
+
+            mod = _f
+        except ImportError:
+            # 几何判据是纯字符串函数，不依赖目标仓——落点找不到时退回本门所属检出
+            cands = (
+                root / "scripts" / "governance",
+                Path(__file__).resolve().parents[4] / "scripts" / "governance",
+            )
+            gov = next((c for c in cands if (c / "_shared" / "code_algorithm_extractor.py").is_file()), None)
+            if gov is None:
+                return []
+            if str(gov) not in sys.path:
+                sys.path.insert(0, str(gov))
+            try:
+                from _shared.code_algorithm_extractor import algo_flow_dead_block_spans as _f  # noqa: PLC0415
+
+                mod = _f
+            except ImportError:
+                return []
+        except Exception as e:  # noqa: BLE001
+            logger.warning("ALGO-FLOW-LINK 双真源检出异常: %s", e)
+            return []
+        try:
+            return [s + 1 for s, _e, _c in mod(content)]
+        except Exception as e:  # noqa: BLE001
+            logger.warning("ALGO-FLOW-LINK 双真源检出异常: %s", e)
+            return []
+
     for rel in py_files:
         content = _read(rel)
         if content is None:
@@ -154,6 +199,15 @@ def check_algo_flow_links(
             ok, why = _validate_block(tgt.read_text(encoding="utf-8"))
             if not ok:
                 failures.append(f"{rel} external 锚 yaml 不可解析: {target}（{why}）")
+        if rel.startswith("src/zephyr/"):
+            dead = _dead_block_lines(content)
+            if dead:
+                failures.append(
+                    f"{rel} 有 {len(dead)} 处 ALGO_FLOW 机器块落在 module docstring 之外"
+                    f"（起行 {dead[:3]}）——锚与体外副本并存=双真源，所有读卡路径只读 "
+                    "docstring，副本永不被消费也永不更新；清偿："
+                    f"python scripts/governance/d5_architecture/generators/externalize_algo_flow.py --file {rel}"
+                )
 
     for rel in yaml_files:
         content = _read(rel)

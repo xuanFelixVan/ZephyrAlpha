@@ -5,7 +5,8 @@
 # [CONSUMERS] scripts/governance/d5_architecture/generators/generate_module_algorithm_overview.py; generate_domain_doc.py
 # [STARTUP] imported
 # [MATURITY] production
-# [INVARIANTS] 降级不抛异常; 三档优先级(code>blueprint>empty); 截断长度上限; __init__.py回退扫描子文件; blueprint章节鲁棒匹配; ALGO_FLOW标记块(含边段)整块剥离不泄漏进文字字段
+# [INVARIANTS] 降级不抛异常; 三档优先级(code>blueprint>empty); 截断长度上限; __init__.py回退扫描子文件; blueprint章节鲁棒匹配; ALGO_FLOW标记块(含边段)整块剥离不泄漏进文字字段;
+#   死块几何判据 algo_flow_dead_block_spans 是全仓唯一真源（出仓器头块清偿与 ALGO-FLOW-LINK 门禁第 3 判据共用同一函数，禁第二份实现）
 # [MODIFY-GUARD] 修改需同步更新 tests/governance/test_code_algorithm_extractor.py
 # [STABILITY] evolving
 # [SAFETY] L
@@ -358,6 +359,54 @@ def _load_external_algo_flow(docstring: str) -> str | None:
     if not isinstance(block, str) or _ALGO_FLOW_START not in block:
         return None
     return block
+
+
+def algo_flow_dead_block_spans(src: str) -> list[tuple[int, int, bool]]:
+    """源码中位于 module docstring **之外** 的 ALGO_FLOW 块行区间 ``[(起, 止, 闭合)]``（0 基含端点）。
+
+    双真源几何的唯一判据（出仓器据此清偿、ALGO-FLOW-LINK 门禁据此拦截，不各写一份）。
+    病根：更早的注资把机器块写进 14 字段契约头（或留下第二个裸字符串字面量块），而所有
+    读卡路径只读 module docstring → 那份副本既看不见也删不掉，出仓后成为静默双真源。
+
+    止界三态：``# [/ALGO_FLOW]`` 收标记（closed=True）/ 撞进 docstring 首行或首个非注释
+    行（截断型 closed=False，止于其前一行）/ 文件尾。
+    """
+    lines = src.splitlines()
+    starts = [
+        i for i, ln in enumerate(lines)
+        if _ALGO_FLOW_START in ln and ln.strip().startswith("#") and "external:" not in ln
+    ]
+    if not starts:
+        return []
+    try:
+        tree = ast.parse(src)
+    except (SyntaxError, ValueError, RecursionError):
+        return []
+    ds_start = ds_end = -1
+    first = tree.body[0] if tree.body else None
+    val = getattr(first, "value", None)
+    if isinstance(val, ast.Constant) and isinstance(val.value, str):
+        ds_start = first.lineno - 1
+        ds_end = (val.end_lineno or first.lineno) - 1
+    spans: list[tuple[int, int, bool]] = []
+    for i in starts:
+        if ds_start >= 0 and ds_start <= i <= ds_end:
+            continue
+        if any(s <= i <= e for s, e, _c in spans):
+            continue  # 起标记落在已定块内（未收口块吞掉后续标记）——不叠区间，删块者按不重叠前提
+        end = i
+        closed = False
+        for j in range(i + 1, len(lines)):
+            t = lines[j].strip()
+            if (ds_start >= 0 and j == ds_start) or (t and not t.startswith("#")):
+                break
+            if t:
+                end = j
+            if _ALGO_FLOW_END in t:
+                closed = True
+                break
+        spans.append((i, end, closed))
+    return spans
 
 
 def _has_inline_algo_flow(docstring: str) -> bool:

@@ -91,6 +91,66 @@ def test_empty_files_pass(tmp_path: Path) -> None:
     assert check_algo_flow_links(None, tmp_path) == (False, "")
 
 
+_PY_DEAD_BLOCK = (
+    '# [BLUEPRINT] MOD-X | docs/03_modules/_domain_x/blueprint.md\n'
+    "# [ALGO_FLOW]\n# 层: 输入\n# - id: I9\n#   name: 契约头副本\n# [/ALGO_FLOW]\n"
+    '"""demo —— 说明。\n\n'
+    "# [ALGO_FLOW] external: docs/03_modules/_domain_x/algo_flow/demo.yaml\n"
+    '"""\n\nX = 1\n'
+)
+
+
+def test_dead_block_outside_docstring_blocks(tmp_path: Path) -> None:
+    """锚 + 契约头副本=双真源（读卡路径看不见副本）→ 硬阻断，且指名清偿命令。"""
+    root = _make_repo(tmp_path)
+    (root / "src/zephyr/pkg_a/dead.py").write_text(_PY_DEAD_BLOCK, encoding="utf-8")
+    blocked, msg = check_algo_flow_links(["src/zephyr/pkg_a/dead.py"], root)
+    assert blocked, msg
+    assert "双真源" in msg and "externalize_algo_flow.py" in msg
+
+
+def test_dead_block_check_scoped_to_src_zephyr(tmp_path: Path) -> None:
+    """范围护栏：scripts/tests 下的夹具字符串块不入本判据（波次夹具大量合法内联样块）。"""
+    root = _make_repo(tmp_path)
+    s = root / "scripts/governance/demo.py"
+    s.parent.mkdir(parents=True)
+    s.write_text(_PY_DEAD_BLOCK, encoding="utf-8")
+    blocked, msg = check_algo_flow_links(["scripts/governance/demo.py"], root)
+    assert not blocked, msg
+
+
+def test_dead_block_check_survives_missing_syspath_bootstrap(tmp_path: Path, monkeypatch) -> None:
+    """网关进程未必预置 scripts/governance：判据必须自己补 bootstrap，不得静默放行。"""
+    import sys
+    from pathlib import PurePosixPath
+
+    root = _make_repo(tmp_path)
+    (root / "src/zephyr/pkg_a/dead.py").write_text(_PY_DEAD_BLOCK, encoding="utf-8")
+    saved = list(sys.path)
+    removed = {m: sys.modules.pop(m) for m in list(sys.modules) if m.startswith("_shared")}
+    monkeypatch.setattr(sys, "path", [p for p in saved if "governance" not in p.replace("\\", "/")])
+    try:
+        blocked, msg = check_algo_flow_links(["src/zephyr/pkg_a/dead.py"], root)
+    finally:
+        sys.modules.update(removed)
+    assert blocked, f"bootstrap 缺失导致 fail-open: {msg}"
+    assert "双真源" in msg
+
+
+def test_inline_block_in_docstring_not_flagged(tmp_path: Path) -> None:
+    """合法内联块（出仓前形态，块在 docstring 内）不触发双真源判据。"""
+    root = _make_repo(tmp_path)
+    p = root / "src/zephyr/pkg_a/inline.py"
+    p.write_text(
+        '"""demo —— 说明。\n\n'
+        "# [ALGO_FLOW]\n# 层: 输入\n# - id: I1\n#   name: 入参\n# [/ALGO_FLOW]\n"
+        '"""\n\nX = 1\n',
+        encoding="utf-8",
+    )
+    blocked, msg = check_algo_flow_links(["src/zephyr/pkg_a/inline.py"], root)
+    assert not blocked, msg
+
+
 def test_staged_content_preferred(tmp_path: Path) -> None:
     """staged 版本可解析而工作区坏 → 以 staged 为准放行（commit 语义真源）。"""
     root = _make_repo(tmp_path)

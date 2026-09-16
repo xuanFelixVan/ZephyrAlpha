@@ -9,7 +9,18 @@
 #   外部 yaml 落 docs/03_modules/<domain>/algo_flow/<stem>.yaml（doc_type=architecture_view 过 DCR-001，
 #   目录契约 allowed=[.md,.yaml]）；幂等（已带 external 锚的文件跳过）；域过滤 --domain/--file；
 #   --dry-run 零写入；yaml 块文本 = docstring 内联块逐字节副本（含边段，block-scalar 保留原样）；
-#   只处理 module docstring 含真内联块的文件（锚行不算）；
+#   死块四态收口（P2-1 普查 184 件实证，2026-09-16；旧口径"docstring 外块只计数不处理"留下
+#   锚+头块双真源，读卡路径永看不见头块）——几何判据唯一真源
+#   =extractor.algo_flow_dead_block_spans（与 ALGO-FLOW-LINK 门禁第 3 判据共用一份规则）：
+#     ① 块只在契约头且可解析 → 逐字转正进 docstring 后走同一管写出仓（header_promoted）；
+#     ② 转正后仍不可解析（手写速记无 ``# - id:``）→ 留在 docstring 当单真源内联块
+#        （promoted_inline，不回滚——回滚即把该件永久锁死在门禁不可提交态）；
+#     ③ 已出仓/本批出仓仍有头块 → 节点 id 被 yaml 覆盖者直删，未覆盖者逐字并入 yaml 新键
+#        ``algo_flow_prose``（机器块零改动）后再删（header_reconcile=reconciled）；
+#     ④ 无锚无 yaml 的双位镜像件 → 以 docstring 内块为参照，只删 provably 覆盖者（deduped），
+#        未覆盖即 failed（宁漏不销毁口径）；
+#   ②③④ 终验四要件：死块归零 + ast 可解析 + docstring 逐字未变 + yaml 机器块逐字节未变，
+#   任一不过即源码/yaml 双件字节还原（不留"头块已删/prose 未落"半成品）；
 #   批级 stem 碰撞预判（P2-1 orchestrator 批实证）：同域非 __init__ 同 stem 多文件时子包件
 #   确定性改道 parent__stem，dry-run 预测=落盘路径（消除盘存在改道的时序依赖）；
 #   批级容量镜像（P2-1 波次 GOV-DOC-018 实证）：域 algo_flow/ 平铺数（盘上+本批）≥ T_soft-20 时
@@ -31,17 +42,23 @@
     # [ALGO_FLOW] external: <yaml 相对路径>
 extractor（code_algorithm_extractor）已支持 external 锚加载 → 同一 parse_algo_flow 管线。
 
-安全序（每文件）：
+安全序（每文件，``externalize`` 编排）：
+  0. 死块定位（extractor.algo_flow_dead_block_spans）：块在 module docstring 之外即双真源，
+     按形态分流——只在头且可解析→转正进 docstring（①）；转正后仍不可解析→留在 docstring
+     （②）；已出仓仍有头块→yaml 覆盖者删/未覆盖者逐字进 ``algo_flow_prose``（③）；
+     无锚无 yaml 的镜像件→docstring 块覆盖者删，否则拒删（④）
   1. 解析内联块（_has_inline_algo_flow）→ 抽块原文（docstring 内 [# [ALGO_FLOW]..边段尾]）
   2. 写外部 yaml（algo_flow: | block-scalar 逐行缩进副本）
   3. 源码 docstring 内联块+边段替换为锚行（AST 定位 docstring 行范围，禁止正则改源码体）
   4. round-trip 断言：extract_algorithm_from_code 重新解析，nodes/edges 与迁移前逐项一致
   5. 失败 → .bak 回滚源文件 + 删除 yaml，计入 failed
+  6. 步骤 0 的③④在出仓后收尾：终验不过即源码+yaml 双件字节还原
 
 Usage::
     python scripts/governance/d5_architecture/generators/externalize_algo_flow.py --domain backtest --dry-run
     python scripts/governance/d5_architecture/generators/externalize_algo_flow.py --domain backtest
     python scripts/governance/d5_architecture/generators/externalize_algo_flow.py --file src/zephyr/x/y.py
+    python scripts/governance/d5_architecture/generators/externalize_algo_flow.py --files-from list.txt
 """
 
 from __future__ import annotations
@@ -62,12 +79,19 @@ from _shared.code_algorithm_extractor import (  # noqa: E402
     _ALGO_FLOW_END,
     _ALGO_FLOW_START,
     _has_inline_algo_flow,
+    algo_flow_dead_block_spans,
     parse_algo_flow,
     REPO_ROOT,
 )
 from zephyr.shared.io.file_utils import safe_write_text  # noqa: E402
 
 _ANCHOR_RE = re.compile(r"^#\s*\[ALGO_FLOW\]\s+external:\s*(\S+)\s*$", re.MULTILINE)
+
+# 机器块节点行（``# - id: A3``）——判定头块是"机器块旧快照"还是"手写算法速记"
+_ID_LINE_RE = re.compile(r"^#\s*-\s*id:\s*(\S+)")
+
+# 头块里的口径若 yaml 机器块未覆盖，逐字并入 yaml 该键（文件尾追加，所有读卡器忽略未知键）
+_PROSE_KEY = "algo_flow_prose"
 
 # 既有 yaml 反查缓存：domain_dir → {source_of_truth: yaml_rel}（批9 幂等治本）
 _EXISTING_YAML_CACHE: dict[str, dict[str, str]] = {}
@@ -549,31 +573,280 @@ def _yaml_rel_for(py_path: Path, rel: str, domain_dir: str) -> str:
     return yaml_rel
 
 
-def _count_unreachable_blocks(src: str) -> int:
-    """module docstring 之外的 ALGO_FLOW 起标记数（死块计数）。
+# 双真源几何判据唯一真源在 extractor（门禁与此共用一份规则，不各写一份）
+_header_block_spans = algo_flow_dead_block_spans
 
-    出处=文件头注释横幅区 / 第二个裸字符串字面量（S4 注入历史产物）。所有读卡路径
-    （extractor、check_algo_flow 门禁、翻译 reconciler）只读 module docstring，
-    故出仓不碰它=零信息变化；此处只计数不隐藏，供报告与普查消费。
-    """
-    starts = [
-        ln for ln in src.splitlines()
-        if _ALGO_FLOW_START in ln and ln.strip().startswith("#") and "external:" not in ln
-    ]
-    if not starts:
-        return 0
+
+def _module_docstring(src: str) -> str:
     try:
-        ds = ast.get_docstring(ast.parse(src)) or ""
-    except SyntaxError:
-        return 0
-    in_ds = sum(
-        1 for ln in ds.splitlines()
-        if _ALGO_FLOW_START in ln and ln.strip().startswith("#") and "external:" not in ln
-    )
-    return max(0, len(starts) - in_ds)
+        return ast.get_docstring(ast.parse(src)) or ""
+    except (SyntaxError, ValueError, RecursionError):
+        return ""
+
+
+def _ids_of(text: str) -> set[str]:
+    """块内 ``# - id: X`` 节点 id 集合（机器块格式判据；手写速记块无此行→空集）。"""
+    return {m.group(1) for m in (_ID_LINE_RE.match(x.strip()) for x in text.splitlines()) if m}
+
+
+def _yaml_machine_block(yaml_path: Path) -> str:
+    """yaml 侧 ``algo_flow`` 机器块原文（读不到=空串，交调用方判失败）。"""
+    try:
+        import yaml  # noqa: PLC0415 — 仅清偿路径需要，避免批处理期无谓导入
+
+        doc = yaml.safe_load(yaml_path.read_text(encoding="utf-8")) or {}
+    except Exception:  # noqa: BLE001 — 普查/清偿容错：坏 yaml 由链接门禁另判
+        return ""
+    block = doc.get("algo_flow") if isinstance(doc, dict) else None
+    return block if isinstance(block, str) else ""
+
+
+def _count_unreachable_blocks(src: str) -> int:
+    """docstring 外死块计数（对外口径不变，供报告与普查消费；真源=_header_block_spans）。"""
+    return len(_header_block_spans(src))
+
+
+def _src_with_promoted_header(src: str, spans: list[tuple[int, int, bool]]) -> str | None:
+    """把契约头里的机器块转正进 module docstring（供标准出仓管线消费），返回新源码。
+
+    只处理唯一安全形态：块整体位于 module docstring **之上**（14 字段契约头区），且
+    docstring 收引号独占一行——块体逐字插在其前（截断型补一行 ``# [/ALGO_FLOW]`` 收口，
+    内容零改动）。其余形态（块在 docstring 之后 / 收引号与正文同行 / 无 docstring）一律
+    None，交调用方判 skipped——宁漏勿猜，绝不在源码体里造字符串。
+    """
+    lines = src.splitlines()
+    ds = _docstring_span(src)
+    if ds is None or not spans:
+        return None
+    start, end, closed = spans[0]
+    d_start, d_end = ds
+    if start >= d_start or end >= d_end or len(spans) > 1:
+        return None
+    if lines[d_end].strip() not in ('"""', "'''"):
+        return None
+    block = lines[start : end + 1]
+    if not closed:
+        block = block + [_ALGO_FLOW_END]
+    new_lines = lines[:start] + lines[end + 1 : d_end] + block + lines[d_end:]
+    text = "\n".join(new_lines)
+    if src.endswith("\n"):
+        text += "\n"
+    try:
+        ast.parse(text)
+    except (SyntaxError, ValueError, RecursionError):
+        return None
+    if _module_docstring(text) == _module_docstring(src) or not _has_inline_algo_flow(_module_docstring(text)):
+        return None
+    return text
+
+
+def _append_prose(yaml_path: Path, prose: str) -> tuple[bool, str]:
+    """把未覆盖口径逐字追加进 yaml 的 ``algo_flow_prose`` 块标量（文件尾，键恒最后）。
+
+    yaml 的 ``algo_flow`` 机器块永不动；新键对所有读卡路径是未知键（实测静默忽略），
+    且不落在 ``source_of_truth`` 反查的前 8/12 行窗口内。
+    """
+    try:
+        txt = yaml_path.read_text(encoding="utf-8")
+    except OSError as e:
+        return False, f"yaml 不可读: {e}"
+    chunk = "".join(("    " + ln if ln.strip() else "") + "\n" for ln in prose.rstrip("\n").splitlines())
+    if not txt.endswith("\n"):
+        txt += "\n"
+    if f"\n{_PROSE_KEY}:" in txt:
+        # 已有 prose 键（本函数追加的恒在文件尾）：续块，幂等复核由调用方删块后再跑一次保证
+        new = txt + chunk
+    else:
+        new = (
+            txt
+            + f"\n# 以下 {_PROSE_KEY} = 契约头双真源清偿归并（P2-1 死块批 2026-09-16）：\n"
+            + f"# 源码头块手写算法速记逐字副本，algo_flow 机器块未覆盖其口径故不删信息；\n"
+            + f"{_PROSE_KEY}: |\n"
+            + chunk
+        )
+    try:
+        safe_write_text(yaml_path, new)
+    except Exception as e:  # noqa: BLE001 — 写入被占等，调用方回滚
+        return False, f"prose 写入失败: {type(e).__name__}"
+    return True, ""
+
+
+def _reconcile_header_blocks(py_path: Path, dry_run: bool, ref: str = "yaml") -> dict:
+    """契约头双真源清偿：重复者删，未覆盖者逐字并入 yaml 后删。
+
+    判据（宁保守勿丢口径）：头块是机器块格式（含 ``# - id:``）且其 id 集合 ⊙ 参照块
+    的 id 集合（或块体本身是参照块子串）→ 参照已覆盖 → 删零信息损失；
+    其余（手写速记 / 头块含参照没有的节点）→ 先进 ``algo_flow_prose`` 再删。
+
+    ``ref="docstring"``：尚未出仓（无锚无 yaml）的"双位镜像"形态——参照块=docstring 内
+    机器块本身（risk_layer_orchestrator 实证：头块与 docstring 块逐字相同，2026-08-18
+    人工恢复副本留下的镜像）。此模式无 yaml 可归并 prose，故只删 provably 覆盖者，
+    未覆盖即 failed（不造第二真源、也不静默销毁口径）。
+    """
+    rel = py_path.relative_to(REPO_ROOT).as_posix()
+    src = py_path.read_text(encoding="utf-8")
+    spans = _header_block_spans(src)
+    if not spans:
+        return {"file": rel, "status": "nothing"}
+    yaml_path: Path | None = None
+    yaml_rel = ""
+    if ref == "docstring":
+        extracted = _extract_inline_block(_module_docstring(src))
+        if extracted is None:
+            return {"file": rel, "status": "failed", "reason": "docstring 内无机器块可判覆盖"}
+        machine = extracted[0]
+    else:
+        anchor = _ANCHOR_RE.search(src)
+        if not anchor:
+            return {"file": rel, "status": "failed", "reason": "头块无 external 锚可归并"}
+        yaml_rel = anchor.group(1)
+        yaml_path = REPO_ROOT / yaml_rel
+        if not yaml_path.is_file():
+            return {"file": rel, "status": "failed", "reason": f"锚指向不存在的 yaml: {yaml_rel}"}
+        machine = _yaml_machine_block(yaml_path)
+    if not machine.strip():
+        return {"file": rel, "status": "failed", "reason": f"{ref} 参照机器块为空，无从判覆盖"}
+    machine_ids = _ids_of(machine)
+    lines = src.splitlines(keepends=True)
+    src_lines = src.splitlines()
+    prose: list[str] = []
+    dropped = 0
+    for start, end, _closed in sorted(spans, reverse=True):
+        text = "\n".join(src_lines[start : end + 1])
+        ids = _ids_of(text)
+        covered = bool(ids) and ids <= machine_ids
+        if not covered and text.strip() and text.strip() in machine.strip():
+            covered = True
+        if not covered:
+            prose.insert(0, text)
+        else:
+            dropped += 1
+        del lines[start : end + 1]
+    plan = {"file": rel, "status": "dryrun", "deleted_blocks": dropped, "prose_blocks": len(prose)}
+    if dry_run:
+        return plan
+    if prose and yaml_path is None:
+        return {
+            "file": rel,
+            "status": "failed",
+            "reason": f"{len(prose)} 个头块未被 docstring 机器块覆盖且无 yaml 可归并（不删信息）",
+        }
+    new_src = "".join(lines)
+    py_orig = py_path.read_bytes()
+    yaml_orig = yaml_path.read_bytes() if yaml_path is not None else b""
+    try:
+        if prose and yaml_path is not None:
+            ok, why = _append_prose(yaml_path, "\n".join(prose))
+            if not ok:
+                return {"file": rel, "status": "failed", "reason": why}
+        safe_write_text(py_path, new_src)
+    except Exception as e:  # noqa: BLE001 — 写入失败即还原，不留半成品
+        py_path.write_bytes(py_orig)
+        if yaml_path is not None:
+            yaml_path.write_bytes(yaml_orig)
+        return {"file": rel, "status": "failed", "reason": f"写入异常 {type(e).__name__}"}
+    # 终验：死块归零 + 源码仍可解析 + docstring 逐字未变 + yaml 机器块逐字节未变
+    chk = py_path.read_text(encoding="utf-8")
+    doc_ok = _module_docstring(chk) == _module_docstring(src)
+    block_ok = not _header_block_spans(chk)
+    mach_ok = yaml_path is None or _yaml_machine_block(yaml_path) == machine
+    if not (doc_ok and block_ok and mach_ok):
+        py_path.write_bytes(py_orig)
+        if yaml_path is not None:
+            yaml_path.write_bytes(yaml_orig)
+        return {
+            "file": rel,
+            "status": "failed",
+            "reason": f"清偿终验不过 doc={doc_ok} dead={block_ok} machine={mach_ok}",
+        }
+    try:
+        ast.parse(chk)
+    except SyntaxError as e:
+        py_path.write_bytes(py_orig)
+        if yaml_path is not None:
+            yaml_path.write_bytes(yaml_orig)
+        return {"file": rel, "status": "failed", "reason": f"清偿后语法错: {e}"}
+    return {
+        "file": rel,
+        "status": "reconciled",
+        "yaml": yaml_rel,
+        "deleted_blocks": dropped,
+        "prose_blocks": len(prose),
+    }
 
 
 def externalize(py_path: Path, dry_run: bool) -> dict:
+    """单文件出仓编排：先转正契约头死块，再走标准出仓，最后清偿残留双真源。
+
+    旧口径（只报告 unreachable 并跳过）在 184 件上留下"锚 + 头块"双真源——读卡路径
+    看不见头块，于是没人再删它。此处把两种形态一次收口：
+      - 无锚且块只在头 → 搬进 docstring 后走同一管写出仓（``header_promoted``）；
+      - 已出仓/本批出仓且仍有头块 → 删或并入 ``algo_flow_prose``（``header_reconcile``）。
+    """
+    rel = py_path.relative_to(REPO_ROOT).as_posix()
+    try:
+        src = py_path.read_text(encoding="utf-8")
+    except OSError as e:
+        return {"file": rel, "status": "failed", "reason": f"读取失败 {type(e).__name__}"}
+    spans = _header_block_spans(src)
+    anchored = _ANCHOR_RE.search(src)
+    if spans and not anchored and not _has_inline_algo_flow(_module_docstring(src)):
+        promoted = _src_with_promoted_header(src, spans)
+        if promoted is None:
+            return {"file": rel, "status": "skipped", "reason": "header block unpromotable (no docstring)"}
+        if dry_run:
+            return {
+                "file": rel,
+                "status": "dryrun",
+                "plan": "promote_header_block",
+                "header_blocks": len(spans),
+            }
+        orig = py_path.read_bytes()
+        try:
+            safe_write_text(py_path, promoted)
+        except Exception as e:  # noqa: BLE001 — 写入被占即放弃本件
+            return {"file": rel, "status": "failed", "reason": f"转正写入失败 {type(e).__name__}"}
+        res = _outbox_docstring_block(py_path, dry_run)
+        if res["status"] in ("externalized", "already"):
+            res["header_promoted"] = True
+            return res
+        if res["status"] == "skipped" and "unparsable" in res.get("reason", ""):
+            # 速记块（无 ``# - id:`` 节点）按既有口径不出仓——但"块在契约头=永远读不到"
+            # 才是本件缺陷。转正后留在 docstring 内即与全仓其他不可解析块同状态（内联、
+            # 单真源、门禁放行），不回滚——回滚等于把不可解析件永久锁死在死块态。
+            chk = py_path.read_text(encoding="utf-8")
+            try:
+                ast.parse(chk)
+                ok = not _header_block_spans(chk) and _has_inline_algo_flow(_module_docstring(chk))
+            except (SyntaxError, ValueError, RecursionError):
+                ok = False
+            if ok:
+                return {"file": rel, "status": "promoted_inline", "reason": res["reason"],
+                        "header_promoted": True}
+            res["reason"] = f"转正终验不过，已回滚（{res['reason']}）"
+        py_path.write_bytes(orig)
+        return res
+    res = _outbox_docstring_block(py_path, dry_run)
+    if spans and res["status"] in ("externalized", "already"):
+        res["header_reconcile"] = _reconcile_header_blocks(py_path, dry_run)
+        if res["header_reconcile"]["status"] == "failed":
+            res["status"] = "failed"
+            res["reason"] = f"头块清偿失败: {res['header_reconcile']['reason']}"
+        return res
+    if spans and res["status"] == "skipped" and not anchored:
+        # 不出仓的"双位镜像"件（docstring 块为速记格式→无 yaml）：头块与 docstring 块
+        # 逐字相同即可删——门禁第 3 判据对此类件同样生效，不清偿则该件永不可提交。
+        dedup = _reconcile_header_blocks(py_path, dry_run, ref="docstring")
+        if dedup["status"] in ("reconciled", "dryrun"):
+            dedup["file"] = rel
+            dedup["status"] = "deduped" if dedup["status"] == "reconciled" else "dryrun"
+            dedup.setdefault("plan", "dedup_header_mirror")
+            return dedup
+        res["header_dedup"] = dedup
+    return res
+
+
+def _outbox_docstring_block(py_path: Path, dry_run: bool) -> dict:
     """单文件出仓。返回 result dict（status: externalized|already|skipped|failed|dryrun）。"""
     rel = py_path.relative_to(REPO_ROOT).as_posix()
     src = py_path.read_text(encoding="utf-8")

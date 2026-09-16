@@ -353,24 +353,35 @@ def test_rerun_reports_already_with_anchor_target(tmp_path):
     assert again["yaml"] == first["yaml"]
 
 
-def test_block_only_outside_docstring_is_skipped_as_unreachable(tmp_path):
-    """死块（docstring 外横幅区）不出仓也不隐藏：reason 点名 unreachable。"""
+def test_header_only_block_is_promoted_and_externalized(tmp_path):
+    """契约头单真源形态（无锚）：头块转正进 docstring 后走同一管写出仓。
+
+    旧口径是 skipped + "unreachable"——184 件因此长期停在"读卡路径看不见的头块"里，
+    既不出仓也没人删（P2-1 死块普查 2026-09-16）。
+    """
     p = tmp_path / "src/zephyr/d/dead.py"
     p.parent.mkdir(parents=True)
     p.write_text(
         "# [BLUEPRINT] MOD-X | docs/03_modules/_domain_d/blueprint.md\n"
-        "# [ALGO_FLOW]\n# 层: 输入\n# - id: B1\n#   name: 死块\n# [/ALGO_FLOW]\n"
+        "# [ALGO_FLOW]\n# 层: 输入\n# - id: B1\n#   name: 头块节点\n# [/ALGO_FLOW]\n"
         '"""DeadBanner — 横幅区块，docstring 无块。\n\n概述文字。\n"""\n\nX = 1\n',
         encoding="utf-8",
     )
     r = ext.externalize(p, dry_run=False)
-    assert r["status"] == "skipped"
-    assert "outside module docstring" in r["reason"]
-    assert p.read_text(encoding="utf-8").count("# [ALGO_FLOW]") == 1  # 死块原样保留（无人读，不删）
+    assert r["status"] == "externalized", r
+    assert r["header_promoted"] is True
+    src = p.read_text(encoding="utf-8")
+    assert ext._header_block_spans(src) == []
+    assert src.count("# [ALGO_FLOW]") == 1  # 只剩锚行
+    machine = ext._yaml_machine_block(tmp_path / r["yaml"])
+    assert "- id: B1" in machine and "头块节点" in machine
+    # 转正后 extractor 看得见（旧形态永远看不见=死图）
+    got = coae.extract_algorithm_from_code(p, module_id="", truncate=False)
+    assert [n.id for n in got.algo_flow.nodes] == ["B1"]
 
 
-def test_residual_dead_block_counted_on_success(tmp_path):
-    """出仓成功时把残留死块计数带进结果，报告侧可见（不静默）。"""
+def test_residual_dead_block_reconciled_into_prose(tmp_path):
+    """出仓成功后残留死块（第二个裸字符串字面量块）不再只计数：未覆盖口径进 prose。"""
     p = tmp_path / "src/zephyr/d/twoblock.py"
     p.parent.mkdir(parents=True)
     p.write_text(
@@ -385,8 +396,164 @@ def test_residual_dead_block_counted_on_success(tmp_path):
     )
     r = ext.externalize(p, dry_run=False)
     assert r["status"] == "externalized", r
-    assert r["unreachable_blocks"] == 1
-    assert "DEAD1" in p.read_text(encoding="utf-8")
+    rec = r["header_reconcile"]
+    assert rec["status"] == "reconciled", rec
+    assert rec["prose_blocks"] == 1
+    src = p.read_text(encoding="utf-8")
+    assert ext._header_block_spans(src) == []
+    assert "DEAD1" not in src
+    ytxt = (tmp_path / r["yaml"]).read_text(encoding="utf-8")
+    assert "DEAD1" in ytxt and f"{ext._PROSE_KEY}:" in ytxt
+    assert ext._ids_of(ext._yaml_machine_block(tmp_path / r["yaml"])) == {"I1"}
+
+
+def _mk_dual_truth(tmp_path: Path, rel: str, header_block: str) -> tuple[Path, str]:
+    """造 184 件盘上现场：docstring 已带锚（yaml 已落）+ 契约头留一份 ALGO_FLOW 副本。"""
+    p = tmp_path / rel
+    p.parent.mkdir(parents=True)
+    p.write_text(
+        "# [BLUEPRINT] MOD-X | docs/03_modules/_domain_d/blueprint.md\n"
+        "# [TTL] permanent\n"
+        + _module_src(p.stem),
+        encoding="utf-8",
+    )
+    first = ext.externalize(p, dry_run=False)
+    assert first["status"] == "externalized", first
+    txt = p.read_text(encoding="utf-8")
+    assert "# [ALGO_FLOW] external:" in txt
+    p.write_text(txt.replace("# [TTL] permanent\n", "# [TTL] permanent\n" + header_block), encoding="utf-8")
+    assert ext._header_block_spans(p.read_text(encoding="utf-8"))
+    return p, first["yaml"]
+
+
+def test_anchored_header_duplicate_dropped_without_prose(tmp_path):
+    """头块是 yaml 机器块的旧快照（节点 id 全被覆盖）→ 直删，不造 prose 键（零信息损失）。"""
+    dup = (
+        "# [ALGO_FLOW]\n# 层: 输入\n# - id: I1\n#   name: 入参\n# 层: 算法\n"
+        "# - id: A1\n#   name_zh: ① 主流程\n# [/ALGO_FLOW]\n"
+    )
+    p, yaml_rel = _mk_dual_truth(tmp_path, "src/zephyr/d/dup.py", dup)
+    r = ext.externalize(p, dry_run=False)
+    assert r["status"] == "already", r
+    assert r["header_reconcile"]["status"] == "reconciled", r
+    assert r["header_reconcile"]["deleted_blocks"] == 1
+    src = p.read_text(encoding="utf-8")
+    assert ext._header_block_spans(src) == []
+    assert src.count("# [ALGO_FLOW]") == 1  # 只剩锚行
+    ytxt = (tmp_path / yaml_rel).read_text(encoding="utf-8")
+    assert ext._PROSE_KEY not in ytxt
+    assert ext._ids_of(ext._yaml_machine_block(tmp_path / yaml_rel)) == {"I1", "A1"}
+
+
+def test_anchored_header_shorthand_preserved_verbatim(tmp_path):
+    """头块是手写算法速记（yaml 机器块无此口径）→ 逐字进 prose 后才删头块。"""
+    shorthand = "# [ALGO_FLOW]\n# F1: 阈值>0.3 判漂移\n# [/ALGO_FLOW]\n"
+    p, yaml_rel = _mk_dual_truth(tmp_path, "src/zephyr/d/prose.py", shorthand)
+    r = ext.externalize(p, dry_run=False)
+    rec = r["header_reconcile"]
+    assert rec["status"] == "reconciled" and rec["prose_blocks"] == 1, rec
+    src = p.read_text(encoding="utf-8")
+    assert ext._header_block_spans(src) == [] and "F1:" not in src
+    ytxt = (tmp_path / yaml_rel).read_text(encoding="utf-8")
+    assert "F1: 阈值>0.3 判漂移" in ytxt and f"{ext._PROSE_KEY}:" in ytxt
+    assert ext._ids_of(ext._yaml_machine_block(tmp_path / yaml_rel)) == {"I1", "A1"}
+
+
+def test_reconcile_write_failure_restores_both_files(tmp_path, monkeypatch):
+    """清偿中途写盘失败必须双件还原（不留"头块已删/prose 未落"的半吊子真源）。"""
+    shorthand = "# [ALGO_FLOW]\n# F9: 只有头块有的口径\n# [/ALGO_FLOW]\n"
+    p, yaml_rel = _mk_dual_truth(tmp_path, "src/zephyr/d/rollback.py", shorthand)
+    before_py = p.read_bytes()
+    yaml_path = tmp_path / yaml_rel
+    before_y = yaml_path.read_bytes()
+
+    real = ext.safe_write_text
+
+    def _fail_on_py(path, content, *a, **k):
+        if str(path).endswith(".yaml"):
+            return real(path, content, *a, **k)
+        raise OSError("simulated .py write lock")
+
+    monkeypatch.setattr(ext, "safe_write_text", _fail_on_py)
+    res = ext._reconcile_header_blocks(p, False)
+    monkeypatch.undo()
+    assert res["status"] == "failed", res
+    assert p.read_bytes() == before_py
+    assert yaml_path.read_bytes() == before_y
+
+
+def test_unparsable_header_mirror_deduped_without_yaml(tmp_path):
+    """双位镜像件（无锚无 yaml，块为速记不可解析）：头块与 docstring 块逐字相同 → 删头块。
+
+    盘上现场=risk_layer_orchestrator（2026-08-18 人工恢复 docstring 副本时留的头注镜像）。
+    此类件出仓器永不产 yaml（速记块 parse 无节点），若只报 skipped 则门禁第 3 判据把该件
+    永久锁死在"不可提交"态，故按 docstring 参照清偿。
+    """
+    shorthand = "# [ALGO_FLOW]\n# I1: nav(盘中净值)\n# F1: evaluate_intraday(净值→回撤)\n# [/ALGO_FLOW]\n"
+    p = tmp_path / "src/zephyr/d/mirror.py"
+    p.parent.mkdir(parents=True)
+    p.write_text(
+        "# [BLUEPRINT] MOD-X | docs/03_modules/_domain_d/blueprint.md\n"
+        "# [TTL] permanent\n"
+        + shorthand
+        + '"""Mirror — 双位镜像夹具。\n\n'
+        + shorthand
+        + '"""\n\nX = 1\n',
+        encoding="utf-8",
+    )
+    r = ext.externalize(p, dry_run=False)
+    assert r["status"] == "deduped", r
+    assert r["deleted_blocks"] == 1 and r["prose_blocks"] == 0, r
+    src = p.read_text(encoding="utf-8")
+    assert ext._header_block_spans(src) == []
+    assert src.count("# [ALGO_FLOW]") == 1  # 只剩 docstring 内那一份
+    assert "F1: evaluate_intraday" in ext._module_docstring(src)  # 口径零损失
+    assert not (tmp_path / "docs/03_modules/_domain_d/algo_flow").exists()
+
+
+def test_uncovered_header_mirror_without_yaml_is_not_deleted(tmp_path):
+    """同类件但头块含 docstring 没有的口径 → 无 yaml 可归并 → 拒绝删除（不静默销毁）。"""
+    inner = "# [ALGO_FLOW]\n# I1: nav(盘中净值)\n# [/ALGO_FLOW]\n"
+    outer = "# [ALGO_FLOW]\n# I1: nav(盘中净值)\n# A9: 只有头块有的清算口径\n# [/ALGO_FLOW]\n"
+    p = tmp_path / "src/zephyr/d/mirror_uncovered.py"
+    p.parent.mkdir(parents=True)
+    p.write_text(
+        "# [TTL] permanent\n" + outer + '"""MirrorUncovered — 夹具。\n\n' + inner + '"""\n\nX = 1\n',
+        encoding="utf-8",
+    )
+    before = p.read_bytes()
+    r = ext.externalize(p, dry_run=False)
+    assert r["status"] == "skipped", r
+    assert r["header_dedup"]["status"] == "failed" and "无 yaml" in r["header_dedup"]["reason"]
+    assert p.read_bytes() == before  # 逐字节未动
+
+
+def test_unparsable_promoted_block_stays_inline(tmp_path):
+    """只在契约头的速记块：转正后仍不可解析 → 留在 docstring（promoted_inline），不回滚。
+
+    盘上现场=drift_observatory_orchestrator / wyckoff_walkforward。回滚等于把此类件永久
+    锁死在死块态；转正后它和全仓其他不可解析块同状态（内联单真源、门禁放行）。
+    """
+    p = tmp_path / "src/zephyr/d/shorthand_head.py"
+    p.parent.mkdir(parents=True)
+    p.write_text(
+        "# [BLUEPRINT] MOD-X | docs/03_modules/_domain_d/blueprint.md\n"
+        "# [ALGO_FLOW]\n# I1: 入参速记\n# F1: 主流程速记\n# [/ALGO_FLOW]\n"
+        '"""ShorthandHead — 速记只在头注。\n\n概述。\n"""\n\nX = 1\n',
+        encoding="utf-8",
+    )
+    r = ext.externalize(p, dry_run=False)
+    assert r["status"] == "promoted_inline", r
+    assert r["header_promoted"] is True
+    src = p.read_text(encoding="utf-8")
+    assert ext._header_block_spans(src) == []
+    doc = ext._module_docstring(src)
+    assert "I1: 入参速记" in doc and "F1: 主流程速记" in doc  # 逐字进 docstring
+    assert src.count("# [ALGO_FLOW]") == 1
+    assert not (tmp_path / "docs/03_modules/_domain_d/algo_flow").exists()
+    import ast
+
+    ast.parse(src)
 
 
 def test_gitignore_named_bucket_is_renamed(tmp_path):
