@@ -1670,7 +1670,7 @@ nodes:
   decay_scan_frequency: semiannual
 
 - node_id: TDM-E-L3-07-1
-  note_confirmed: 2026-09-13
+  note_confirmed: 2026-09-16
   name_zh: 打板选股链
   market: cn_a
   flow: entry_flow
@@ -1683,6 +1683,9 @@ nodes:
     最终 1-3 只进打板候选。
     实现锚=daban_sleeve_strategy 四引擎组装（ShortTermStockSelector 资格门+连板 7 维评分卡/游资情绪 6 因子/量化强度
     6 维/双引擎融合），final_score 降序 Top-N≤10。
+    负载取数（2026-09-16 车道 E2 接线）：无注入 load_source 时默认从持久表 c1_market.daban_engine_load
+    按 PIT 真读（先解析 max(trade_date)<T 的最近事件日分区，SQL 谓词 + 逐行剔除 day>=as_of 双保险；
+    回退更早事件日必发恰好一条 WARNING），表由盘后 internal 批 daban_engine_load_daily 逐交易日产出。
   parent_node: TDM-E-L3-07
   factor_refs: [FCT-SENT-007, FCT-MOM-016]
   data_refs: [DS-150, DS-082]
