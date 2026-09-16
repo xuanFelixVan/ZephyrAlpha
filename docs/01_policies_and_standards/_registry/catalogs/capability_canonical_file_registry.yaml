@@ -27879,30 +27879,6 @@ creation_tokens:
   token: automation-linkage-intel-20260916-20260916
   created_by: st-autolnk-20260917
   capability: automation_linkage
-- file: src/zephyr/ex_sor/risk_redline.py
-  token: automation-linkage-risk-redline-20260916
-  created_by: st-autolnk-20260917
-  capability: automation_linkage
-- file: tests/ex_sor/test_risk_redline.py
-  token: automation-linkage-test-risk-redline-20260916
-  created_by: st-autolnk-20260917
-  capability: automation_linkage
-- file: config/standards.yaml
-  token: automation-linkage-standards-20260916
-  created_by: st-autolnk-20260917
-  capability: automation_linkage
-- file: tests/governance/test_standards_lib.py
-  token: automation-linkage-test-standards-lib-20260916
-  created_by: st-autolnk-20260917
-  capability: automation_linkage
-- file: docs/_working/automation/campaign/blueprints/standards_lib_blueprint.md
-  token: automation-linkage-standards-lib-blueprint-20260916
-  created_by: st-autolnk-20260917
-  capability: automation_linkage
-- file: docs/_working/automation/campaign/blueprints/risk_redline_blueprint.md
-  token: automation-linkage-risk-redline-blueprint-20260916
-  created_by: st-autolnk-20260917
-  capability: automation_linkage
 - file: docs/_working/trading_vision/2026-09-16-skeleton-coverage-audit.md
   token: trading-vision-audit-2026-09-16-skeleton-coverage-audit-20260916
   created_by: st-skeletonaudit-20260916
@@ -31667,4 +31643,20 @@ creation_tokens:
   token: runtime-admission-runtime-admission-20260916
   created_by: st-govmap-20260915
   capability: runtime_admission
+- file: docs/_working/full-auto-chain/S11_assembled_backtest/breadth_thrust_walkforward_20260916.md
+  token: overlay-threshold-calibration-breadth-thrust-walkforward-20260916-20260916
+  created_by: st-qoder-t1a-20260915
+  capability: overlay_threshold_calibration
+- file: docs/_working/full-auto-chain/S11_assembled_backtest/t3_threshold_walkforward_20260917.md
+  token: overlay-threshold-calibration-t3-threshold-walkforward-20260917-20260916
+  created_by: st-qoder-t1a-20260915
+  capability: overlay_threshold_calibration
+- file: docs/_working/full-auto-chain/S11_assembled_backtest/nodes/dashboard_automation_chain_mining.md
+  token: s11-nodes-mining-dashboard-automation-chain-mining-20260916
+  created_by: st-qoder-t1a-20260915
+  capability: s11_nodes_mining
+- file: docs/_working/full-auto-chain/S11_assembled_backtest/nodes/reconciler_event_trigger_chain_mining.md
+  token: s11-nodes-mining-reconciler-event-trigger-chain-mining-20260916
+  created_by: st-qoder-t1a-20260915
+  capability: s11_nodes_mining
 di_seam_exemptions: []

@@ -1,0 +1,34 @@
+# 标准库（考纲真源 v0）——骨架 v1.1 §8 治理底板
+# 三原则：①标准=治理资产版本化 ②先 freeze 后开考 ③修标必须重考历史（新旧尺子全量重打分，排序不变或可解释）
+# 修标流程：AI 层提案 → 治理层立案 → Owner 修宪（改本文件=修标，须附 why + 重考报告引用）
+schema_version: 0.1.0
+doc_type: config
+ttl: permanent
+title: 考纲标准库（standards registry v0）
+status: active
+standards:
+  - std_id: STD-SIM-ACCESS-001
+    name_zh: 模拟盘准入组合门
+    version: 1
+    status: frozen
+    frozen_at: "2026-09-17"
+    source: "docs/_working/trading_vision/2026-09-16-owner-vision-system-mapping.md#L57（Owner 草案在案）"
+    thresholds:
+      oos_sharpe_min: 1.5
+      max_drawdown_max: 0.15
+      min_trades: 30
+      dsr_min: 0.0
+    change_rule: "修标须重考历史：对全部在架组合用新尺子重打分，排序不变或变化可解释方可放行"
+  - std_id: STD-LIVE-REDLINE-001
+    name_zh: 实盘红线分级（骨架 §9 v0 草案）
+    version: 1
+    status: draft
+    frozen_at: null
+    source: "docs/_working/automation/20260917_fullauto_skeleton_v1.md §9"
+    thresholds:
+      daily_yellow: 0.02
+      daily_red: 0.04
+      weekly_red: 0.05
+      monthly_red: 0.10
+      blackswan_grace_days: 2
+    change_rule: "同上；draft→frozen 须附各组合回测分布校准记录"

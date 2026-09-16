@@ -175,7 +175,7 @@ def score_candidate(adv: dict, screen: dict | None, pocket: dict | None) -> dict
 
 
 def render_report(results: list[dict]) -> str:
-    now = datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ")
+    now = now_utc_str()
     lines = [
         "# 转正建议书（组合门打分）",
         "",
@@ -220,7 +220,9 @@ def main() -> int:
 
     advisories = load_advisories(args.advisory_dir)
     if args.strategy_id:
-        advisories = [a for a in advisories if args.strategy_id in json.dumps(a, ensure_ascii=False)]
+        target = _safe_id(args.strategy_id)
+        advisories = [a for a in advisories
+                      if str(a.get("strategy_id") or a.get("str_id") or "") == target]
     results = []
     for adv in advisories:
         sid = str(adv.get("strategy_id") or adv.get("str_id") or adv.get("_file") or "unknown")
@@ -231,7 +233,7 @@ def main() -> int:
         return 0
     out_dir = Path(args.out_dir) if args.out_dir else OUT_DIR
     out_dir.mkdir(parents=True, exist_ok=True)
-    stamp = datetime.now(timezone.utc).strftime("%Y%m%d-%H%M%S")
+    stamp = now_utc().strftime("%Y%m%d-%H%M%S")
     out = out_dir / f"promotion-report-{stamp}.md"
     expected = content_sha256(out.read_text(encoding="utf-8")) if out.exists() else None
     safe_write_text(out, report, expected_base_sha256=expected)

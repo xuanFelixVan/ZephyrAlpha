@@ -50028,13 +50028,6 @@ entries:
   desc_zh: "从 tick_depth_5/tick_data 的竞价窗口 CH 内派生 auction_snapshot/auction_book，替代 miniqmt get_full_tick 实时快照通道"
   desc_en: ""
   plain_zh: "以前每天早上的集合竞价数据靠 miniQMT 一家供应，9月18号它退休了。这个模块改从我们自己攒的3秒快照流水里，把9点15到9点25这段竞价时间的数掐出来，算好塞进原来那两张竞价表。表没换、用表的分析程序也没换，只是换了个供水的人。竞价时段的价格量额是全对的；昨天收盘价和涨停跌停价按交易所规则现算，除权除息那天的股票这两项会和交易所官方值差一点，这是盘前拿不到官方数的天然边界。"
-- module_path: scripts/data/backfill_auction_snapshot_history.py
-  domain_id: D_DATA
-  name_zh: "竞价快照历史回补执行器"
-  name_en: "auction snapshot history backfill runner"
-  desc_zh: "枚举 tick_data 竞价窗口密集日，仅对 auction_snapshot 空窗日 INSERT-only 回灌，防覆盖 miniqmt 原产"
-  desc_en: ""
-  plain_zh: "这个脚本是把过去漏掉的集合竞价数据补回来的工具。它会自己找出哪些天的数据够完整可以补、哪些天已经有数据不能碰，然后只往空白的日子里灌数，已经有的数一根毫毛都不动。6月到9月一共补了32天约16万行，一次性活儿干完就收工。"
 - module_path: scripts/backtest/promotion_combo_gate.py
   domain_id: D_BACKTEST
   name_zh: "转正组合门打分器"
@@ -50042,6 +50035,69 @@ entries:
   desc_zh: ""
   desc_en: ""
   plain_zh: "给模拟盘里的策略打分：OOS 夏普够不够大、回撤够不够浅、成交笔数够不够多、DSR 是不是正的，四条全过才建议转正，缺证据就判继续观察，绝不冤枉也不放水，最后一页报告给 Owner 拍板"
+- module_path: scripts/data/onboard_source.py
+  domain_id: D_DATA
+  name_zh: "数据源上架编排器"
+  name_en: ""
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "想接一个新数据源？写张卡片填上网址、表名、几点跑，一条命令先试探拉两行看数据长啥样，没问题就建表补历史挂每日定时，最后报告行数和最新日期"
+- module_path: scripts/data/fx_ecb_ingest.py
+  domain_id: D_DATA
+  name_zh: "ECB 汇率采集"
+  name_en: ""
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "每晚从欧洲央行免费接口拉美元欧元兑人民币日元汇率，顺手重拉最近七天，重复不怕同键去重，漏跑次日自愈"
+- module_path: scripts/automation/intel_harvester.py
+  domain_id: D_GOV_SCRIPTS
+  name_zh: "情报采集器"
+  name_en: ""
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "每天去 arXiv 上把量化相关的新论文标题抓回来，按关键词筛一遍，再让本地大模型用中文给你写一句话它对咱们的工厂有啥可借鉴的，攒进一个收件箱文件里等人来看，绝不自作主张往库里塞东西"
+- module_path: scripts/governance/apply_resource_plan.py
+  domain_id: D_GOV_SCRIPTS
+  name_zh: "资源排班方案写回工具"
+  name_en: ""
+  desc_zh: "apply_resource_plan: plan YAML -> truth-source patch -> regen -> gate recheck -> rollback archive"
+  desc_en: ""
+  plain_zh: "把 AI 产出的排班方案（哪个任务改到哪个时间窗）逐条翻译成对排班真源文件（数据车道 YAML、注册任务脚本、方案种子、演练排程）的补丁，改完自动重生成排班注册表和周历视图，并用并发闸复验；改坏了自动按存档一键回滚。简单说：改排班不直接动表，动的是真源，表是抄出来的，抄错了会自己纠回来。"
+- module_path: src/zephyr/infra_runtime/runtime_admission.py
+  domain_id: D_INFRA
+  name_zh: "运行时准入协调器"
+  name_en: ""
+  desc_zh: "registry-driven admission coordinator merging capacity_budget + api_cost_governor + resource_scheduler.admit"
+  desc_en: ""
+  plain_zh: "任务开工前的门卫台：查排班注册表知道每条泳道能开几个、占多少内存、跑多久，再让三个旧准入件（并发配额、接口成本桶、核存裁决）各管一维统一点头或摇头。没排上表的活（planned）一律不占门票。"
+- module_path: scripts/backfill_auction_snapshot_history.py
+  domain_id: D_DATA
+  name_zh: "竞价快照历史回补执行器"
+  name_en: ""
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "6月到9月之间有32天的集合竞价数据当年没采到，这个执行器负责补漏：先扫 tick_data 把每天 9 点 15 到 9 点 25 的行数数一遍，行数过万才算候选日；再逐日查 auction_snapshot 该日是否已有行，有一行都不碰（miniqmt 原产的精确值怕被近似覆盖），空日才从 tick_data 派生灌入。9 月 17 日实弹跑了 32 天共 16.6 万行零失败，另有 5 天因已有原产数据被闸门跳过。支持 --dry-run 先看不写。"
+- module_path: scripts/governance/standards/standards_lib.py
+  domain_id: D_GOV_SCRIPTS
+  name_zh: "考纲标准库工具"
+  name_en: ""
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "管考试尺子的工具：每把尺子有版本号和冻结状态，草稿状态的尺子不许用来打分；想改尺子必须先用新尺子把所有考生重考一遍，列出谁的成绩会翻转，给治理层和老板审"
+- module_path: src/zephyr/ex_sor/risk_redline.py
+  domain_id: D_EX_SOR
+  name_zh: "实盘红线引擎"
+  name_en: ""
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "盯着实盘组合的日亏周亏月亏，亏到黄线就减半仓写检讨，亏到红线就清仓冻结；要是碰上全市场暴跌这种天灾，给两天观察期看能不能修复，但只给一次，且只有天灾才给"
+- module_path: scripts/regime_breadth_thrust_walkforward.py
+  domain_id: D_REGIME
+  name_zh: "S2 广度冲刺阈值本土复推管线"
+  name_en: ""
+  desc_zh: "预注册网格 5×3 + 稀有度双边界验收带（hash 锁），候选评分映射与生产 s2_breadth_thrust_score 逐日等值自检，结果 JSON 落临时区，报告出仓 docs/_working。"
+  desc_en: ""
+  plain_zh: "换生产阈值之前先把考卷写死：拿 A 股约 20 年涨跌家数广度数据做预注册 walk-forward，训练段挑档位、没见过的年份只判一次分，样本外不过就维持现值并继续挂告警——清偿台账里『这套数字是抄美股的、没在本土考过』这笔欠账。"
 
 battle_map_steps:
 - step_id: BM-BUY-05

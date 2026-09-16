@@ -1,0 +1,16 @@
+source_id: fx_rate_ecb
+title: "ECB 日频汇率（frankfurter.app 免费源）"
+schema_module: schemas.categories.market.market_alt_fx_rate_ecb
+table: c1_market.alt_fx_rate_ecb
+ingest_script: scripts/data/fx_ecb_ingest.py
+ingest_args: "--days 7"
+task_name: ZephyrAlpha_AltFxECB
+schedule:
+  type: weekly
+  days: [MON, TUE, WED, THU, FRI]
+  time: "23:30"
+probe_days: 2
+backfill_days: 30
+compliance:
+  source_url: https://frankfurter.app
+  tos_note: "ECB 公开数据经由 frankfurter 免费开放 API，无鉴权；礼貌限频（日 1 班，重拉 7 日幂等自愈）"
