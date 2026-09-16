@@ -55,3 +55,14 @@ algo_flow: |
     # I4 --> A1
     # A1 --> A2
     # A2 --> O1
+
+# 以下 algo_flow_prose = 契约头双真源清偿归并（P2-1 死块批 2026-09-16）：
+# 源码头块手写算法速记逐字副本，algo_flow 机器块未覆盖其口径故不删信息；
+algo_flow_prose: |
+    # [ALGO_FLOW]
+    # I1: 事件节点+关联边（公司/行业/概念，边权+传导时滞）；因子/收益/市场控制序列
+    # A1: conduction_paths——BFS 传导路径推演（深度×边权衰减，cutoff 剪枝）
+    # A2: propagate_impact——事件冲击沿图衰减扩散 → 各节点传导风险分
+    # A3: assess_causality——lead-lag 双 IC + 控制市场后的偏 IC（残差法）→ 因果/相关/伪相关裁定
+    # O1: ConductionPath / ImpactMap / CausalAssessment(forward_ic/backward_ic/partial_ic/verdict)
+    # [/ALGO_FLOW]

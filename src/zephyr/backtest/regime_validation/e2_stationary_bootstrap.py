@@ -13,14 +13,6 @@
 # [ERROR_CONTRACT] E2BootstrapError(ZA-BT-0027)
 # [TESTS] tests/backtest/test_e2_stationary_bootstrap.py
 # [TTL] permanent
-# [ALGO_FLOW]
-# I1: returns_on/returns_off(Shrinkage 开/关两组逐期收益序列, 等长, C1 既有回测产物)
-# I2: E2BootstrapConfig(n_boot=2000 / mean_block=21 / ci_level=0.90 / prob_threshold=0.75)
-# F1: stationary_bootstrap_indices(Politis-Romano: 每步以 p=1/mean_block 重开新块, 否则顺移, 环形取模)
-# F2: annualized_sharpe(逐期收益→年化 Sharpe, 零波动/样本<2 退化为 0)
-# A1: bootstrap_sharpe_difference(B 次成对重采样→Sharpe 差值分布→percentile CI + P(diff>0))
-# O1: E2BootstrapResult(observed_diff / CI / prob_positive / passed), prob_positive≥0.75 对齐 §4.3 C4 判定
-# [/ALGO_FLOW]
 """
 D_BACKTEST — E2 Stationary Bootstrap 重采样引擎（11 号 memo §0.6.3 缺口 3）。
 

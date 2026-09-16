@@ -15,13 +15,6 @@
 # [A_module] module_id=MOD-DAT-northbound_hold_analysis | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 # [ARCH-REF] #19_northbound_hold_snapshot §6.3/§6.5
-# [ALGO_FLOW]
-# I1: snapshot 季度持仓快照(trade_date/ts_code/hold_share) + vwap 当季个股 VWAP Series
-# F1: compute_quarter_position_changes(两季度持仓外连接 → Δ持股×VWAP；退出=负全仓/新进=全仓)
-# F2: top_position_changes(delta_amount 降序取 top 加仓 / 升序取 top 减仓)
-# F3: estimate_quarterly_net_inflow(Σ Δ持股×VWAP → 准北向季度净流入)
-# O1: 变化明细 DataFrame / top_add+top_reduce dict / 净流入 float
-# [/ALGO_FLOW]
 """
 北向季度持仓快照分析层（19 号 memo §6.3/§6.5 MVP，数据断档后的准北向估算）。
 

@@ -42,3 +42,16 @@ algo_flow: |
     # I2 --> A1
     # I3 --> A1
     # A1 --> O1
+
+# 以下 algo_flow_prose = 契约头双真源清偿归并（P2-1 死块批 2026-09-16）：
+# 源码头块手写算法速记逐字副本，algo_flow 机器块未覆盖其口径故不删信息；
+algo_flow_prose: |
+    # [ALGO_FLOW]
+    # I1: LiquidityWatchInput 序列(标的级 Amihud/萎缩/非流动标记, 上游 MOD-RK-048 产出)
+    # I2: 相关性收益矩阵 {symbol: returns}(可空)
+    # I3: RiskWatchConfig(非流动占比黄/红阈 + 相关性 regime 阈值)
+    # A1: 流动性分级(illiquid_ratio≥红阈→red告警; ≥黄阈→yellow告警)
+    # A2: 相关性体制评估(复用MOD-POS-012 assess_correlation_regime; HIGH→orange分散失效告警)
+    # A3: 综合严重度取最严 + 告警聚合
+    # O1: RiskWatchSnapshot(仪表盘快照+MonitoringAlert元组) → C-004/仪表盘/告警接线
+    # [/ALGO_FLOW]

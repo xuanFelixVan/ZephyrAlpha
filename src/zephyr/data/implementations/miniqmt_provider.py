@@ -15,40 +15,6 @@
 # [A_module] module_id=MOD-DAT-miniqmt_ingest | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 # noqa: m03-duplicate  M03豁免: AI趋同演化(不同模块为相似问题生成相似代码),非复制粘贴;M05(文件复制对=0)已覆盖文件级复制检测
-# [ALGO_FLOW]
-# 层: 输入
-# - id: I1
-#   name: 抓取载荷
-#   fields: FetchPayload（table/capability/symbols/start/end/extra）
-#   code: fetch → _route_kline_capability 等路由入口
-# - id: I2
-#   name: 本地 QMT 会话
-#   fields: xtdata SDK 连接（XtMiniQmt.exe 进程在跑为前提）
-#   code: connect()/_ensure_connected（_connected=False 触发自动重连）
-# 层: 算法
-# - id: A1
-#   name_zh: ① capability 路由
-#   name_en: fetch/_route_kline_capability
-#   intro: 按 payload.extra.capability 分派到 _fetch_kline/期权/转债/财报等抓取器
-#   inputs: I1
-#   outputs: 对应抓取器调用
-# - id: A2
-#   name_zh: ② 逐标的 K 线抓取（单票跳过 + 失败率熔断 + 断连标记）
-#   name_en: fetch_kline/_fetch_kline
-#   intro: 逐标的 download_history_data + get_market_data_ex；单票非连接异常记 warning 跳过继续；连接类异常（isNetError/OSError/10054）置 _connected=False 并中止本批；收尾失败率>5%（_KLINE_BATCH_FAIL_RATE_LIMIT）才 yield error 熔断，否则 SUCCESS 留告警
-#   inputs: I1 I2
-#   outputs: FetchResult 流（rows/last_key）+ 失败计数汇总
-# - id: A3
-#   name_zh: ③ 行规整与日期窗口
-#   name_en: 行解析/_ts_to_date
-#   intro: xtdata 返回转 CH 表列序，时间戳按 UTC 解释避免跨日，last_key 推进供断点续传
-#   inputs: I1
-#   outputs: 规整行列表
-# 层: 输出
-# - id: O1
-#   name_zh: FetchResult 流
-#   name_en: Iterator[FetchResult]
-#   intro: 每标的/批次一条 FetchResult；异常路径 yield error 不抛出（见 ERROR_CONTRACT）
 """
 MOD-L00-004 数据源集成器 · MiniQmtIngestProvider 实现。
 

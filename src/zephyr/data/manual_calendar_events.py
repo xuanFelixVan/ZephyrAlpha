@@ -14,21 +14,6 @@
 # [TESTS] tests/zephyr/data/test_manual_calendar_events.py
 # [A_module] module_id=MOD-L00-004-MCE | layer=module | stability=evolving | safety=M | ai_autonomy=ai_modifiable
 # [TTL] permanent
-# [ALGO_FLOW]
-# 层: 输入
-# - id: I1
-#   name: manual 日历事件 CSV
-#   fields: event_date,event_type,description[,data_source]（utf-8-sig，# 注释行跳过）
-# 层: 算法
-# - id: A1
-#   name_zh: 逐行格式校验
-#   name_en: validate_manual_events_csv
-#   intro: 列头核对→日期 ISO 格式+范围→event_type 白名单（manual 三类）→description 非空≤200→同键去重
-# 层: 输出
-# - id: O1
-#   name_zh: 合法行 + 错误清单
-#   name_en: (list[dict], list[str])
-#   intro: 合法行可直接映射 calendar_event INSERT_COLUMNS；错误带 CSV 行号供台账修正
 """
 manual 日历事件 CSV 录入校验（17号 §6.3，2026-08-20 AI-NIGHT-001 施工）。
 

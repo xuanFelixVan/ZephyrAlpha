@@ -14,14 +14,6 @@
 # [TESTS] tests/autonomy_core/test_agentic_drift_guard.py
 # [A_module] module_id=MOD-AU-003 | layer=module | stability=evolving | safety=H | ai_autonomy=human_gated
 # [TTL] permanent
-# [ALGO_FLOW]
-# I1: Sequence[ChainOperation]（op_type/path）；I2: confidence×intent_deviation；I3: 历史 SessionBehavior 序列
-# F1: S1.2 内联漂移检查——10 步滑窗内类型熵>1.5 且类型偏离率>drift_tolerance → WARNING(auto_guard)；路径熵>2.0 且路径偏离率>drift_tolerance → DETECTED(blocked+P0)
-# F2: 双维度 Hard-Gate——置信度<0.3 × 意图偏差>0.3 双坏 → DETECTED(blocked)；单维异常 → WARNING(auto_guard)
-# F3: S1.1 行为基线——委托 ai_behavior_baseline（compute_baseline/detect_anomalies，BM-RC-04-F 口径）
-# F4: Challenge 工单——字段=原始任务意图复述+动作链对齐说明+检测器证据；degraded=True → degraded_human_review
-# O1: DriftVerdict（level/blocked/auto_guard/熵值/证据）；O2: 16号文统一事件 schema jsonl（audit + P0 alerts）；O3: challenge-<id>.json 工单
-# [/ALGO_FLOW]
 """
 AgenticDriftGuard — Agentic Drift 防护实时档（MOD-AU-003，15号文 §4.2 S1.1/S1.2）.
 

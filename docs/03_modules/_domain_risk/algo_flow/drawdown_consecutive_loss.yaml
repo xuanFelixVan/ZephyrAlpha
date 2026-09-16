@@ -45,3 +45,14 @@ algo_flow: |
     # I2 --> A1
     # A1 --> A2
     # A2 --> O1
+
+# 以下 algo_flow_prose = 契约头双真源清偿归并（P2-1 死块批 2026-09-16）：
+# 源码头块手写算法速记逐字副本，algo_flow 机器块未覆盖其口径故不删信息；
+algo_flow_prose: |
+    # [ALGO_FLOW]
+    # I1: 日PnL序列(list[float], 负=亏) 或 ConsecutiveLossTracker逐日update(trade_date+pnl)
+    # I2: ConsecutiveLossConfig(consecutive_days=5+reduction_pct=0.5, §6.2/§2.5.5表第3行)
+    # F1: check_consecutive_loss(纯函数: 序列末尾连续pnl<0计数≥阈值→触发)
+    # F2: ConsecutiveLossTracker.update(有状态: 逐日推进, pnl<0计数+1否则重置, 同日幂等)
+    # O1: ConsecutiveLossAlert(triggered+consecutive_loss_days+cap_multiplier+reason)
+    # [/ALGO_FLOW]

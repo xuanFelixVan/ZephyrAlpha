@@ -14,11 +14,6 @@
 # [TESTS] tests/backtest/test_purged_kfold.py
 # [TTL] permanent
 # [A_module] module_id=MOD-BT-001 | layer=module | stability=evolving | safety=M | ai_autonomy=ai_modifiable
-# [ALGO_FLOW]
-# I1: n_samples/n_splits + t1(各样本标签末端索引,可选) + embargo(隔离样本数)
-# A1: purged_kfold_split(K折连续块→test; 其余train; 按t1重叠purge+test末端embargo剔除)
-# O1: list[(train_indices, test_indices)] 长度=n_splits
-# [/ALGO_FLOW]
 """
 Purged K-Fold 交叉验证切分模块(BM-BT-04-C)
 

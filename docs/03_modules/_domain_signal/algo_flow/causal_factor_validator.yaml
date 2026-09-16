@@ -60,3 +60,14 @@ algo_flow: |
     # I4 --> A1
     # A1 --> A2
     # A2 --> O1
+
+# 以下 algo_flow_prose = 契约头双真源清偿归并（P2-1 死块批 2026-09-16）：
+# 源码头块手写算法速记逐字副本，algo_flow 机器块未覆盖其口径故不删信息；
+algo_flow_prose: |
+    # [ALGO_FLOW]
+    # I1: 候选因子值序列 + 前瞻收益序列 + 市场控制序列（可空）+ 因子名
+    # A1: 调 MOD-SIG-042 assess_causality（lead-lag 双 IC + 偏 IC）→ 因果/相关/伪相关/不显著裁定
+    # A2: 加权映射——CAUSAL_CANDIDATE ×1.2（因果加权提升 proposed）/ CORRELATED ×1.0 / SPURIOUS ×0.5 / INSIGNIFICANT ×1.0
+    # A3: 降级——样本不足等 ValueError → degraded=True 中性乘子（仅统计评估口径，跳过因果加权）
+    # O1: FactorCausalReport（单因子）/ list[FactorCausalReport]（批量）
+    # [/ALGO_FLOW]

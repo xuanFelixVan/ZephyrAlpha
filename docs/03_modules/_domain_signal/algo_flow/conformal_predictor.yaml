@@ -76,3 +76,14 @@ algo_flow: |
     # A2 --> A3
     # A3 --> A4
     # A4 --> O1
+
+# 以下 algo_flow_prose = 契约头双真源清偿归并（P2-1 死块批 2026-09-16）：
+# 源码头块手写算法速记逐字副本，algo_flow 机器块未覆盖其口径故不删信息；
+algo_flow_prose: |
+    # [ALGO_FLOW]
+    # I1: 校准集 (预测值, 实际值) 序列 / 滚动残差流 / 密度 PDF 分位数
+    # A1: split-conformal 标准算法——非 conformity 分数 s_i=|y−ŷ|，q̂=第 ⌈(n+1)(1−α)⌉ 小值
+    # A2: rolling conformal——trailing window 无加权残差分位数（Phase 0 基线，慢而稳）
+    # A3: conformal_band_around_quantiles——PDF 分位数外裹 conformal 安全缓冲
+    # O1: PredictionInterval(lo, hi) / margin；empirical_coverage 覆盖率评估件
+    # [/ALGO_FLOW]

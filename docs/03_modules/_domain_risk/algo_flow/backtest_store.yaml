@@ -32,3 +32,14 @@ algo_flow: |
     # 边:
     # I1 --> A1
     # A1 --> O1
+
+# 以下 algo_flow_prose = 契约头双真源清偿归并（P2-1 死块批 2026-09-16）：
+# 源码头块手写算法速记逐字副本，algo_flow 机器块未覆盖其口径故不删信息；
+algo_flow_prose: |
+    # [ALGO_FLOW]
+    # I1: JsonStateStore 同接口 store(save/load 单记录原语, 双后端经 make_state_store 工厂)
+    # I2: trade_date + 各类载荷(回测报告/双轨P&L/盘中重算日志/盘前基线/entry_var)
+    # A1: save_*(写入守卫: 有限值/cvar≥var/entry_var≥0 → 命名空间单记录原子写)
+    # A2: load_*(读取: None=冷启动 / dict=记录 / StateCorruptError=损坏上抛; 历史按显式日期序列逐日加载)
+    # O1: 持久化记录 → §3.19 盘前初始化 / §3.9 回测历史 clean P&L / 35号 §3.16 回撤归因
+    # [/ALGO_FLOW]

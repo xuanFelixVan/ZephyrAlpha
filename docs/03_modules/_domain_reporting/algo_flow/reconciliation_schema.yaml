@@ -44,3 +44,15 @@ algo_flow: |
     # I1 --> A1
     # A1 --> A2
     # A2 --> O1
+
+# 以下 algo_flow_prose = 契约头双真源清偿归并（P2-1 死块批 2026-09-16）：
+# 源码头块手写算法速记逐字副本，algo_flow 机器块未覆盖其口径故不删信息；
+algo_flow_prose: |
+    # [ALGO_FLOW]
+    # I1: 无运行时输入（纯 DDL 常量模块）
+    # F1: reconciliation_differences——对账差异表(成交对账 5 类 DriftType 落库, 54 号 §3.3)
+    # F2: attribution_results——归因结果表(策略层/firm 层两层归因产物, §3.5 两层架构)
+    # F3: audit_trail——三阶段审计轨迹(原始事件/匹配决策/归因结果, §3.3, append-only + 哈希链)
+    # F4: report_archive——报告归档表(§3.7 ReportPublisher DB 归档位, 对齐哈希链模式)
+    # O1: ALL_TABLES 有序 DDL 元组 + table_names() 查询
+    # [/ALGO_FLOW]

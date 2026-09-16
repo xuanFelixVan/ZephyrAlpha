@@ -14,14 +14,6 @@
 # [TESTS] tests/compliance/test_intraday_manipulation_detector.py
 # [A_module] module_id=MOD-CMP-011 | layer=module | stability=evolving | safety=H | ai_autonomy=ai_modifiable
 # [TTL] permanent
-# [ALGO_FLOW]
-# I1: ManipulationBatchInput(trade_date + 全日订单记录(含撤单时间) + 全日成交记录)——券商历史导出/订单日志重放
-# F1: run_batch——按 symbol 分组→scan_symbol_orders 逐标的时间序重放(30min trim)→scan_trade 逐笔 WashTrade→聚合报告→落 MANIPULATION_BATCH_SCAN 汇总
-# F2: scan_symbol_orders(symbol, orders)——实时兼容单标的人口: placed_at 时间序重放经 ManipulationStreamDriver(同一 detector 实例), 首命中去重
-# F3: scan_trade(trade)——WashTrade 零容忍直查(detector.check_wash_trade)
-# A1: 窗口口径=detector.thresholds.spoof_repeat_window_s(1800s, 43号§7.3)——trim_before(placed_at-窗口)后喂入, 与实时喂入命中集合一致
-# O1: ManipulationBatchReport(首命中去重后 hits) + compliance_log 双类事件(MANIPULATION_VERDICT 逐命中/MANIPULATION_BATCH_SCAN 批汇总)
-# [/ALGO_FLOW]
 """
 D_COMPLIANCE — 盘中操纵检测三规则离线批处理口径 MVP（43 号 §7.3，BM-BUY-15 补强残余）。
 

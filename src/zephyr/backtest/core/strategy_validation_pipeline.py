@@ -14,14 +14,6 @@
 # [TESTS] tests/backtest/test_strategy_validation_pipeline.py
 # [TTL] permanent
 # [A_module] module_id=MOD-BT-001 | layer=module | stability=evolving | safety=M | ai_autonomy=ai_modifiable
-# [ALGO_FLOW]
-# I1: StrategyValidationRequest(strategy_id/is_sharpe/params/walk_forward_results/oos_sharpe + 可选扰动/泛化/DSR注入)
-# I2: DecisionGate + OverfittingDetector 实例(可注入, 默认新建)
-# A1: 过拟合三维+SIM-38样本内外对比(OverfittingDetector.detect)
-# A2: IS→WFA→OOS三阶段门控(DecisionGate.evaluate, dsr可选判定器默认关闭)
-# A3: 综合裁决 can_deploy = gate.can_deploy ∧ ¬is_overfitting
-# O1: StrategyValidationVerdict(gate三阶段结果+过拟合结论+can_deploy+理由)
-# [/ALGO_FLOW]
 """
 策略验证流水线编排入口模块(52号 §7①)
 

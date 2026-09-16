@@ -15,44 +15,6 @@
 # [A_module] module_id=MOD-L00-004 | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 # noqa: m02-manual  M02豁免: APScheduler常驻服务,由cli.py启动,启动后自动运行;非reconciler无需事件触发
-# [ALGO_FLOW]
-# 层: 输入
-# - id: I1
-#   name: 调度与任务配置 YAML
-#   fields: schedules（cron 时段）+ tasks（table/source/capability/fallback_sources/dependencies/trading_day_only）
-#   code: IntegratorScheduler._load_config
-# - id: I2
-#   name: 源健康状态缓存
-#   fields: source_health_check._latest_results（healthy/test_fail + timestamp）
-#   code: run_task 健康门分支（超 30min TTL 先 _recheck_single_source 单源重检再判定）
-# - id: I3
-#   name: 断点游标
-#   fields: task_progress.last_key（上次推进到的日期键）
-#   code: progress_store.get_last_key → _compute_start_date
-# 层: 算法
-# - id: A1
-#   name_zh: ① cron 时段触发与交易日过滤
-#   name_en: _run_schedule_callback
-#   intro: APScheduler cron 触发时段批次；trading_day_only 任务非 A 股交易日跳过
-#   inputs: I1
-#   outputs: 本时段待执行任务清单
-# - id: A2
-#   name_zh: ② DAG 就绪并行调度
-#   name_en: _run_schedule_dag
-#   intro: TaskQueue 按 dependencies 拓扑出就绪任务，per-source 串行 + 跨源并行（线程池），未就绪任务阻塞等待
-#   inputs: I1
-#   outputs: 各任务 run_task 调用
-# - id: A3
-#   name_zh: ③ 单任务执行链（健康门→主源→fallback→重试→写库→游标）
-#   name_en: run_task/_try_source/_fetch_and_write
-#   intro: 健康门（含 TTL 重检）→主源 fetch 流→按 error_classifier 不可恢复判定切 fallback→call_with_policy 按 policies.retry_on 重试→流式写 ClickHouse→推进 last_key→FAILED 经 alerter 告警
-#   inputs: I2 I3
-#   outputs: CH 目标表行 + task_progress/task_runs 状态
-# 层: 输出
-# - id: O1
-#   name_zh: 数据落库与进度面
-#   name_en: CH rows + progress_store
-#   intro: ClickHouse 目标表行写入；SQLite task_progress.last_key 游标 + task_runs 运行记录；subscribe() 事件回调（config_changed/shutdown/task_completed）
 """
 数据源调度编排层（MOD-L00-004 §6）。
 

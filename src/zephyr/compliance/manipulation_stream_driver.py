@@ -13,15 +13,6 @@
 # [ERROR_CONTRACT] InvalidStreamEventError(ZA-CMP-0011)
 # [TESTS] tests/compliance/test_manipulation_stream_driver.py
 # [TTL] permanent
-# [ALGO_FLOW]
-# I1: ComplianceOrderRecord(挂单/撤单事件) + ComplianceTradeRecord(成交事件) + minute_volume_provider(分钟均量注入)
-# F1: on_order_placed(record)——入窗口缓存→评估该 symbol(Spoofing 需分钟均量/Layering 同侧梯度序列预筛)
-# F2: on_order_cancelled(symbol, order_id, cancelled_at)——冻结记录 replace 标记撤单→重评估
-# F3: on_trade(trade)——WashTrade 零容忍即时检测(买卖双方同账户)
-# F4: trim_before(cutoff)——30min 滚动窗口修剪(detector.spoof_repeat_window_s 口径)
-# A1: _evaluate_symbol(symbol)——check_spoofing(窗口内全部订单) + check_layering(同侧按时间序单调梯度最长run≥3档)
-# O1: list[ManipulationVerdict](命中一律 HARD_BLOCK, 证据由 detector 落 compliance_log)
-# [/ALGO_FLOW]
 """
 D_COMPLIANCE — 市场操纵盘中实时检测流驱动适配（43 号 §10 边界项施工）。
 

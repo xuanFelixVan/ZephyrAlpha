@@ -14,16 +14,6 @@
 # [TESTS] tests/zephyr/data/test_incremental_update_engine.py
 # [A_module] module_id=MOD-DATA_ENG | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
-# [ALGO_FLOW]
-# I1: ChangeSignal(source_id/watermark/updated_at_max/row_count/row_hash)——源侧统一变更观测(三通道)
-# I2: incremental/full 抽样行映射——增量结果与全量重算抽样对账输入
-# I3: register/update_window_state——增量因子窗口状态登记(incremental_compute 挂调度前置)
-# F1: detect_change(prev,curr)——统一变更检测: 三通道任一前进/变化→changed+reasons
-# F2: SamplingReconciler.reconcile()——抽样对账: 匹配/差异/缺失计数→deviation_ratio>容差→告警(不静默)
-# F3: IncrementalFactorRegistry——因子注册+窗口状态更新+快照持久化往返
-# A1: 输入非法/未知因子/tolerance<0→Fail-Closed; sink 异常仅日志不阻断
-# O1: ChangeVerdict / SampleReconcileResult / FactorWindowState(快照可持久化)
-# [/ALGO_FLOW]
 """
 D_DATA_ENG — Incremental Update Engine（91 增量更新协调引擎，§1 子模块清单）。
 

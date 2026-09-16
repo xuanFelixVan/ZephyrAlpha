@@ -13,13 +13,6 @@
 # [ERROR_CONTRACT] C3AttributionError(ZA-BT-0031)
 # [TESTS] tests/backtest/test_c3_throttle_attribution.py
 # [TTL] permanent
-# [ALGO_FLOW]
-# I1: records(逐日 DataFrame: state/shrinkage/ret_baseline/ret_experiment, 既有 C1 回测产物+Viterbi 主导态)
-# I2: defensive_states=(r4,r10) + bull_state=r3 + 门槛(防御贡献≥60% / 牛均值Shrinkage≥0.85, §4.3 C3)
-# A1: attribute_throttle(按态分组: 天数/均值Shrinkage/避免损失→正部归一化贡献份额)
-# A2: 判定: r4+CRISIS 贡献份额≥60% 且 r3 均值 Shrinkage≥0.85(牛市基本不缩)
-# O1: C3AttributionReport(逐态归因 + defensive_share + bull_mean_shrinkage + passed)
-# [/ALGO_FLOW]
 """
 D_BACKTEST — C3 节流归因分析（11 号 memo §4.3 C3）。
 

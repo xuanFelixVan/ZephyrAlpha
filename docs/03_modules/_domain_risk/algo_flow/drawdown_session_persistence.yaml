@@ -124,3 +124,16 @@ algo_flow: |
     # A8 --> A9
     # A9 --> A10
     # A10 --> O1
+
+# 以下 algo_flow_prose = 契约头双真源清偿归并（P2-1 死块批 2026-09-16）：
+# 源码头块手写算法速记逐字副本，algo_flow 机器块未覆盖其口径故不删信息；
+algo_flow_prose: |
+    # [ALGO_FLOW]
+    # I1: JsonStateStore(6命名空间: peak_nav/nav_history/entry_var/attribution/strategy_state/persistable)
+    # I2: 盘前输入(broker_holdings+strategy_state+kill_switch_state+health_check探针)
+    # I3: 盘后输入(closing_nav+state_machine+var_95+attribution_result+strategy_holdings+audit门控)
+    # F1: premarket_initialization(Ghost核对→状态机恢复/冷启动→peak+nav_history基线(不足30日保守50%cap)→健康检查→entry_var/prev_attribution)
+    # F2: postmarket_persist(审计门控→终态nav→peak max→状态机→nav_history append/trim→entry_var→归因→策略持仓→标COMPLETE)
+    # A1: 低层存取原语对(save/load peak_nav·entry_var·attribution·strategy_state + append/trim nav_history + mark/load persistable)
+    # O1: PremarketResult(status READY/REFUSED+状态机+基线) / PostmarketResult(status PERSISTED/SKIPPED+peak对)
+    # [/ALGO_FLOW]

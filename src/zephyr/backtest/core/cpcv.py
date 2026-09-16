@@ -14,13 +14,6 @@
 # [TESTS] tests/backtest/test_cpcv.py
 # [TTL] permanent
 # [A_module] module_id=MOD-BT-001 | layer=module | stability=evolving | safety=M | ai_autonomy=ai_modifiable
-# [ALGO_FLOW]
-# I1: n_samples/n_groups/k_test + t1(各样本标签末端索引,可选) + embargo(隔离样本数)
-# I2: is_performance/oos_performance 性能矩阵(n_splits×n_trials, 调用方注入)
-# A1: generate_cpcv_splits(N组取k组组合→test; 其余组train; 按t1重叠purge+各test组末端embargo剔除)
-# A2: compute_pbo(每split取IS最优trial→其OOS相对秩ω=rank/(M+1)→logit(ω)→PBO=P(logit<0))
-# O1: list[CPCVSplit] / PBO报告dict(pbo/logits/omega)
-# [/ALGO_FLOW]
 """
 CPCV(组合净化交叉验证) + PBO(回测过拟合概率)模块
 

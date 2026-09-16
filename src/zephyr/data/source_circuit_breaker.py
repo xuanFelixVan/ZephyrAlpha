@@ -14,21 +14,6 @@
 # [TESTS] tests/zephyr/data/test_source_circuit_breaker.py
 # [A_module] module_id=MOD-L00-004-CB | layer=module | stability=evolving | safety=M | ai_autonomy=ai_modifiable
 # [TTL] permanent
-# [ALGO_FLOW]
-# 层: 输入
-# - id: I1
-#   name: 源调用结果
-#   fields: record_success/record_failure(source)；时钟 clock()
-# 层: 算法
-# - id: A1
-#   name_zh: 熔断状态机
-#   name_en: SourceCircuitBreaker.allow_request/record_*
-#   intro: 连续失败≥N 或滑窗错误率≥阈值→OPEN（熔断 M 分钟）；冷却到点→HALF_OPEN 放行单探针；探针成功→CLOSED 复位，失败→再 OPEN 重计冷却
-# 层: 输出
-# - id: O1
-#   name_zh: 放行判定与跳闸事件
-#   name_en: allow_request bool + on_trip 回调
-#   intro: scheduler._validate_provider_and_policy 在手动 pause 检查后调用；OPEN 冷却期内拒绝（任务跳过该源）
 """
 per-source 自动熔断器（64号 Q17，P1，2026-08-20 AI-NIGHT-001 施工）。
 

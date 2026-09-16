@@ -47,3 +47,16 @@ algo_flow: |
     # I3 --> A1
     # I4 --> A1
     # A1 --> O1
+
+# 以下 algo_flow_prose = 契约头双真源清偿归并（P2-1 死块批 2026-09-16）：
+# 源码头块手写算法速记逐字副本，algo_flow 机器块未覆盖其口径故不删信息；
+algo_flow_prose: |
+    # [ALGO_FLOW]
+    # I1: crowding_score(MOD-RK-13产出标量) + drawdown_pct/slope(回撤状态标量)
+    # I2: fingerprints {strategy_id: PnL形态序列}(可空)
+    # I3: CrowdingResponseConfig(拥挤阈/相似阈/三档缩放/悖论回撤阈)
+    # A1: 逻辑指纹相似度(z-归一化→两两DTW复用clone_guard→sim=1/(1+dtw)取max)
+    # A2: 拥挤判定(score超阈 OR sim超阈)→降杠杆/降仓/漏斗降权
+    # A3: 悖论防护(拥挤∧回撤超阈∧斜率>0→熔断式退出)
+    # O1: CrowdingResponseAction(frozen) → 漏斗第六层降权/仓位杠杆收紧/强制退出
+    # [/ALGO_FLOW]

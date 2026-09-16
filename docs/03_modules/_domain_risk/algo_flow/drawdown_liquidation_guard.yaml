@@ -60,3 +60,14 @@ algo_flow: |
     # I4 --> A1
     # A1 --> A2
     # A2 --> O1
+
+# 以下 algo_flow_prose = 契约头双真源清偿归并（P2-1 死块批 2026-09-16）：
+# 源码头块手写算法速记逐字副本，algo_flow 机器块未覆盖其口径故不删信息；
+algo_flow_prose: |
+    # [ALGO_FLOW]
+    # I1: 撤单计数对(cancelled_count+total_order_count) + 阈值对(warn12%/hard15%, A股2026新规)
+    # I2: 全清计时对(started_monotonic+now_monotonic, 秒) + remaining_positions残余持仓 + timeout_seconds=30
+    # F1: check_cancel_rate(撤单率三档: <12%正常 / 12-15%预警留buffer / ≥15% blocked+剩余额度)
+    # F2: check_liquidation_timeout(elapsed>30s且残余非空→LiquidationTimeoutAlert人工介入; 否则None)
+    # O1: CancelRatePrecheck(rate+warning+blocked+remaining_budget) / LiquidationTimeoutAlert|None
+    # [/ALGO_FLOW]

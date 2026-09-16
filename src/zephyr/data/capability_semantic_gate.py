@@ -14,12 +14,6 @@
 # [TESTS] tests/zephyr/data/test_capability_semantic_gate.py
 # [A_module] module_id=MOD-GOV-capability_semantic_gate | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
-# [ALGO_FLOW]
-# I1: provider .py 文件内容 + CapabilitySemanticEntry 注册表（默认 3 条：hk_trade_calendar/trade_calendar/industry_class）
-# F1: _import_aliases（import ... as 别名映射）+ _extract_called_apis（_fetch_<cap> 方法体内 alias.attr 调用提取；exchange_calendars.get_calendar("XHKG") 特化为 exchange_calendars.XHKG）
-# F2: check_capability_api_whitelist_content（已登记 capability 的提取 API ⊆ allowed_apis；通配符前缀 THS_*/ifind.*；违例提示登记或换 API）
-# O1: 违规描述列表（空=通过）
-# [/ALGO_FLOW]
 """
 capability 语义注册表 + API 白名单 AST gate（17 号 §5.3 施工项 2 + §5.4 施工项 3 合并收缩 MVP）。
 

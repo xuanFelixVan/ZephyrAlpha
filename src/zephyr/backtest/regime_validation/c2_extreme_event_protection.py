@@ -13,13 +13,6 @@
 # [ERROR_CONTRACT] C2ProtectionError(ZA-BT-0030)
 # [TESTS] tests/backtest/test_c2_extreme_event_protection.py
 # [TTL] permanent
-# [ALGO_FLOW]
-# I1: nav_baseline/nav_experiment(C1 开/关两组净值序列, pd.Series 日期索引, 既有回测产物)
-# I2: crisis_windows(CRISIS 时段清单 (name,start,end)) + improvement_threshold=0.05(§5 C2)
-# F1: max_drawdown_of(窗口净值切片→cummax 回撤序列最小值)
-# A1: evaluate_extreme_event_protection(逐窗口开/关 MaxDD→改善→均值≥5pp 判定)
-# O1: C2ProtectionReport(逐事件结果 + mean_improvement + passed + skipped 留痕)
-# [/ALGO_FLOW]
 """
 D_BACKTEST — C2 极端事件回撤保护分析（11 号 memo §4.3 C2）。
 

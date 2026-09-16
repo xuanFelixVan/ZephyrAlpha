@@ -32,3 +32,14 @@ algo_flow: |
     # 边:
     # I1 --> A1
     # A1 --> O1
+
+# 以下 algo_flow_prose = 契约头双真源清偿归并（P2-1 死块批 2026-09-16）：
+# 源码头块手写算法速记逐字副本，algo_flow 机器块未覆盖其口径故不删信息；
+algo_flow_prose: |
+    # [ALGO_FLOW]
+    # I1: trigger(trade_date)记录Level4触发日 + clear()人工清除
+    # I2: ForcedRestConfig(rest_trading_days=5, §2.5.2 Level4) + 有序交易日历list[date](调用方注入)
+    # F1: is_resting(current_date,trading_days)→触发日后已完成休息交易日数<5即休息中
+    # F2: remaining_rest_days(current_date,trading_days)→max(0, 5-已完成休息交易日数)
+    # O1: bool休息中 / int剩余休息天数 (消费方: 复位链前置校验+盘前启动闸门)
+    # [/ALGO_FLOW]

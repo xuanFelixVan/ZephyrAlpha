@@ -100,3 +100,17 @@ algo_flow: |
     # A5 --> A6
     # A6 --> A7
     # A7 --> O1
+
+# 以下 algo_flow_prose = 契约头双真源清偿归并（P2-1 死块批 2026-09-16）：
+# 源码头块手写算法速记逐字副本，algo_flow 机器块未覆盖其口径故不删信息；
+algo_flow_prose: |
+    # [ALGO_FLOW]
+    # I1: p_sector(板块指数收盘价日频序列, market_kline_sector_880) + p_bench(基准收盘价, 880001.SH)
+    # A1: RS(t) = 100 × P_sector/P_bench（标准化到 100 基准）
+    # A2: RS-Ratio(t) = EMA(RS,10)/EMA(RS,26)×100（JdK DualEma, >100 相对走强）
+    # A3: RS-Momentum(t) = EMA(RS-Ratio,10)/EMA(RS-Ratio,26)×100（动量的动量, 引导转向）
+    # A4: classify_quadrant(领先>100,>100 / 疲软>100,<100 / 滞后<100,<100 / 改善<100,>100)
+    # A5: confirm_quadrant_series(whipsaw 连续 2 日确认, 单日跳变不采信; 容许强趋势半圆)
+    # A6: rrg_zscore(Z=(RS-Ratio−63日均值)/63日标准差) + zscore_signal_adjust(领先 Z>+2 降级持有 / 改善 Z<−2 升级提前布局)
+    # O1: RRGPoint(rs_ratio, rs_momentum, quadrant) 序列 + 已确认象限序列 + 信号/强度调整分
+    # [/ALGO_FLOW]

@@ -14,21 +14,6 @@
 # [TESTS] tests/zephyr/data/test_fetch_perf_recorder.py
 # [A_module] module_id=MOD-L00-004-FP | layer=module | stability=evolving | safety=M | ai_autonomy=ai_modifiable
 # [TTL] permanent
-# [ALGO_FLOW]
-# 层: 输入
-# - id: I1
-#   name: 任务执行结果
-#   fields: task_id/source/capability/table/status/elapsed_sec/rows/error
-# 层: 算法
-# - id: A1
-#   name_zh: JSONL 追加落盘
-#   name_en: record_fetch_perf
-#   intro: 按日滚动文件追加一行 JSON；模块级锁防多线程行交错
-# 层: 输出
-# - id: O1
-#   name_zh: .runtime/fetch_perf/fetch_perf_YYYYMMDD.jsonl
-#   name_en: 落盘路径或 None（失败）
-#   intro: 为 64号 Q11 调度动态化/Q17 自动熔断供数据基础（替代 c0_meta.fetch_perf 仅测速抽样的盲区）
 """
 fetch_perf 被动记录通道（64号 Q16，P2，2026-08-20 AI-NIGHT-001 施工）。
 

@@ -40,6 +40,13 @@ algo_flow: |
     #   inputs: trade_date positions cash price_probe risk_reassess_fn expected_nav n…
     #   outputs: EodReport
     #   （注：A2 之后另有 4 个公共定义未列入（含 4 个数据契约/异常/枚举声明类），见源码）
+    # - id: A3
+    #   name_zh: ③ 日终风险重估（run_eod_processor 内步骤 3，委托既有 risk 件）
+    #   name_en: risk_reassess_step
+    #   intro: 拿确认后的 NAV 找既有 risk 件重估风险，出错只落状态字段，绝不让异常逃回调度器。
+    #   desc: risk_reassess_fn(trade_date, nav)；未注入→risk_status=SKIPPED；抛异常→ERROR+errors+alert；成功→OK；源码 L239-L249（模块头 docstring 日终三步之③）
+    #   inputs: trade_date nav risk_reassess_fn alert_sink audit_sink
+    #   outputs: risk_status(OK/ERROR/SKIPPED) 落进 EodReport
     # 层: 输出
     # - id: O1
     #   name_zh: EodJobSpec
@@ -60,3 +67,27 @@ algo_flow: |
     # I4 --> A1
     # A1 --> A2
     # A2 --> O1
+    # A2 --> A3
+    # A3 --> O2
+
+# 以下 algo_flow_prose = 契约头双真源清偿归并（P2-1 死块批 2026-09-16）：
+# 源码头块手写算法速记逐字副本，algo_flow 机器块未覆盖其口径故不删信息；
+algo_flow_prose: |
+    # [ALGO_FLOW]
+    # I1: trade_date + positions(EodPosition) + cash
+    # I2: price_probe/risk_reassess_fn/expected_nav/nav_tolerance(注入)
+    # A1: 价格快照(逐symbol取日终价; 异常/非正→unpriced按0计如实披露)
+    # A2: NAV/P&L(mv=Σqty×price; nav=cash+mv; pnl=Σ(price−cost)×qty; |nav−expected|>tol→DRIFT)
+    # A3: 风险重估(委托回调; 异常→ERROR+alert; 未注入→SKIPPED)
+    # O1: EodReport(frozen)
+    # 边:
+    # I1 --> A1
+    # I1 --> A2
+    # I2 --> A1
+    # I2 --> A2
+    # I2 --> A3
+    # A1 --> A2
+    # A1 --> O1
+    # A2 --> O1
+    # A3 --> O1
+    # [/ALGO_FLOW]

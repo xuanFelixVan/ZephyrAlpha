@@ -14,14 +14,6 @@
 # [TESTS] tests/backtest/test_strategy_cpcv_matrix.py
 # [A_module] module_id=MOD-BT-028 | layer=module | stability=evolving | safety=M | ai_autonomy=ai_modifiable
 # [TTL] permanent
-# [ALGO_FLOW]
-# I1: performance(策略×样本性能矩阵,注入) + strategy_ids + config
-# I2: candidate_votes(策略→候选名单,注入)
-# A1: build_score_matrix(复用generate_cpcv_splits→逐折各策略IS/OOS均值)
-# A2: compute_robust_scores(逐折OOS降序秩(同值平均秩)→稳健分=mean秩/M)
-# A3: select_candidates(稳健池≤threshold→≥min_votes交集→票数降序+稳健分升序→≤30封顶)
-# O1: StrategyCPCVReport(split_scores/robust_scores/robust_pool/selected_candidates/degraded)
-# [/ALGO_FLOW]
 """
 第五层：多策略交叉验证——策略级 CPCV 打分矩阵 + 多策略交集筛选（MOD-BT-028）。
 

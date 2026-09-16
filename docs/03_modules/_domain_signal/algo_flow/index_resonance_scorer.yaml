@@ -10,7 +10,13 @@ algo_flow: |
     # 层: 输入
     # - id: I1 指数日K序列 list[DailyBar]（date/open/high/low/close/volume 升序，kline_index）
     # 层: 特征
-    # - id: F1~F7 七族指标末值（MACD/KDJ/RSI/量能/均线/BOLL/趋势）
+    # - id: F1 MACD(12,26,9) 末值 DIF/DEA（_macd_dif_dea L178，投票 L304）
+    # - id: F2 KDJ(9,3,3) 末值 K/D（_kdj L191，投票 L316）
+    # - id: F3 RSI(14) Wilder 末值（_rsi_wilder L207，投票 L324）
+    # - id: F4 量能（5日均量 vs 20日均量 × 近5日价格方向，投票 L343）
+    # - id: F5 均线（close vs MA20 × MA20 五日斜率，投票 L357）
+    # - id: F6 BOLL(20,2) 中轨比较（中轨=MA20，投票 L373）
+    # - id: F7 趋势（close vs 20 日前 close，投票 L384）
     # 层: 算法
     # - id: A1 七族投票（族票 ∈ {+1,0,-1}，理由留痕）
     # - id: A2 加权合成 + 三态信号 + 共振计数 + 启发式置信度
@@ -19,7 +25,19 @@ algo_flow: |
     # [/ALGO_FLOW]
     #
     # 边:
-    # I1 --> F1..F7
-    # F1..F7 --> A1
+    # I1 --> F1
+    # I1 --> F2
+    # I1 --> F3
+    # I1 --> F4
+    # I1 --> F5
+    # I1 --> F6
+    # I1 --> F7
+    # F1 --> A1
+    # F2 --> A1
+    # F3 --> A1
+    # F4 --> A1
+    # F5 --> A1
+    # F6 --> A1
+    # F7 --> A1
     # A1 --> A2
     # A2 --> O1

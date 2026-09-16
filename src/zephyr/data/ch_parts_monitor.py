@@ -14,21 +14,6 @@
 # [TESTS] tests/zephyr/data/test_ch_parts_monitor.py
 # [A_module] module_id=MOD-L00-004-PM | layer=module | stability=evolving | safety=M | ai_autonomy=ai_modifiable
 # [TTL] permanent
-# [ALGO_FLOW]
-# 层: 输入
-# - id: I1
-#   name: system.parts TSV
-#   fields: database\ttable\tparts（active=1 GROUP BY 表）
-# 层: 算法
-# - id: A1
-#   name_zh: parts 阈值判定
-#   name_en: check_parts_threshold
-#   intro: 逐表比较 active parts 计数与阈值（默认 100），超阈记入违规清单
-# 层: 输出
-# - id: O1
-#   name_zh: 违规清单
-#   name_en: [{database, table, parts}]
-#   intro: 供告警链路（ALERT-CH-001）/CLI 巡检消费；空列表=健康
 """
 CH data parts 爆炸监控（64号 Q8，P1，2026-08-20 AI-NIGHT-001 施工）。
 

@@ -14,14 +14,6 @@
 # [TESTS] tests/zephyr/data/test_calendar_event_derivations.py
 # [A_module] module_id=MOD-DATA-CALDERIV | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
-# [ALGO_FLOW]
-# I1: by_month{(year,month): 月末交易日} + trading_days_set（A股交易日集合）+ range_start/range_end
-# F1: derive_earnings_deadline（优先；每年 4/30、8/31、10/31，遇非交易日取前一交易日）
-# F2: derive_mlf_operation（每月 15 日，遇非交易日顺延下一交易日——与 LPR 派生同口径，94号 §4.1/#261 日历注入）
-# F3: derive_bond_futures_delivery（国债期货交割日：季月 3/6/9/12 第 2 个周五，非交易日顺延）
-# F4: derive_a50_futures_delivery（富时 A50 交割日：每月倒数第 2 个工作日，SGX 口径 Mon-Fri）
-# O1: list[tuple(event_date, event_type, description, "internal")]（未去重未排序，由调用方 _dedupe_and_sort_events 收口）
-# [/ALGO_FLOW]
 """
 日历事件派生函数（17 号 §2.4 待评估项，函数级 MVP）。
 

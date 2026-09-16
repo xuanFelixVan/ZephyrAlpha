@@ -47,3 +47,18 @@ algo_flow: |
     # I3 --> A1
     # I4 --> A1
     # A1 --> O1
+
+# 以下 algo_flow_prose = 契约头双真源清偿归并（P2-1 死块批 2026-09-16）：
+# 源码头块手写算法速记逐字副本，algo_flow 机器块未覆盖其口径故不删信息；
+algo_flow_prose: |
+    # [ALGO_FLOW]
+    # I1: evaluate日输入(trade_date+drawdown_pct+var_95/cvar_95+recovered_pct+black_swan_systemic+strategy_pnls)
+    # I2: JsonStateStore(状态/复位历史外部化, namespace=drawdown_state_machine/drawdown_reset_history)
+    # I3: DrawdownStateMachineConfig(升级阈值5/10/15/25%+VaR2/4/6%+CVaR10%; 半阈值比0.5; min_hold5/10/20; 持续窗3/3/5; 毕业准则3盈利日/0.3R/80%/1.2R; 复位守卫3次/20日+冷却3日+永久锁5次)
+    # F1: 升级判定(多源OR取最严: dd/ var/cvar/BS-007→目标态, severity高于当前即直接升级)
+    # F2: hysteresis降级判定(§3.20: 半阈值持续N日+min_hold门控+VaR回落目标态触发阈值下, 逐级降一档)
+    # F3: RECOVERY阶梯机(0→1→2→NORMAL: recovered_pct≥0.5/0.75/1.0+毕业准则+阶梯min_hold5日; dd>15%回退阶梯, 阶梯0再退→KILL; dd>10%且step>0回退; dd>5%冻结5日)
+    # A1: request_manual_reset(KILL→RECOVERY唯一出口: 三项确认+复位窗口/冷却/永久锁三重守卫, §3.14)
+    # A2: 持久化(每次转换/日推进后原子写快照; load_or_none启动恢复, None=冷启动默认NORMAL)
+    # O1: StateTransition(from/to/reason/trade_date)或None + position_cap/recovery_factor/defensive_only查询面
+    # [/ALGO_FLOW]

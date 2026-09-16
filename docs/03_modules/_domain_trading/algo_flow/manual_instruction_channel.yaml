@@ -33,6 +33,27 @@ algo_flow: |
     #   inputs: premarket_check_fn risk_check_fn audit_sink alert_sink clock qty_tole…
     #   outputs: 返回值
     #   （注：A1 之后另有 7 个公共定义未列入（含 7 个数据契约/异常/枚举声明类），见源码）
+    # - id: A2
+    #   name_zh: ② 风控闸（intake 内第二道闸，委托 MOD-EX-024/trading_session 合规闸）
+    #   name_en: risk_gate
+    #   intro: 问 C-004 风控这单能不能做；探针没接、报错、或说不能，一律判拒——绝不臆造放行。
+    #   desc: ok, reason = risk_check_fn(instruction)；False→RISK_REJECTED；None→PROBE_UNWIRED；抛异常→PROBE_ERROR（均 Fail-Closed）；源码 L229-L243
+    #   inputs: instruction risk_check_fn
+    #   outputs: risk_fail(reason_code, reason) 或 None
+    # - id: A3
+    #   name_zh: ③ 录入裁决（双闸全过才受理）
+    #   name_en: intake_verdict
+    #   intro: 汇总边界闸与风控闸的结论出终判，两闸都过才 ACCEPTED，不过就 REJECTED 并记下第一条失败原因。
+    #   desc: fail = pre_fail or risk_fail（取首因）；无 fail→ACCEPTED 放行执行委托 ex_core 链；有 fail→REJECTED + 告警；逐事件落审计链；源码 L245-L252
+    #   inputs: A1 A2 events
+    #   outputs: IntakeVerdict(accepted/reason_code/reason/audit_trail)
+    # - id: A4
+    #   name_zh: ④ 执行回报对账
+    #   name_en: reconcile
+    #   intro: 拿券商成交回报跟指令量对账，差得超出容差就报 DRIFT 并告警+留审计；本通道不直接下单。
+    #   desc: execution_probe(instruction_id) 取回报；None→UNFILLED；异常或数量不可解析→PROBE_ERROR；|filled−expected|>qty_tolerance→DRIFT(alert+audit)；否则 MATCHED；源码 L255-L287
+    #   inputs: instruction execution_probe qty_tolerance
+    #   outputs: ExecutionReconReport(status/expected/filled/detail)
     # 层: 输出
     # - id: O1
     #   name_zh: 模块公共 API 面（8 定义）
@@ -47,3 +68,31 @@ algo_flow: |
     # I3 --> A1
     # I4 --> A1
     # A1 --> O1
+    # A1 --> A2
+    # A1 --> A3
+    # A2 --> A3
+    # A3 --> O1
+    # A1 --> A4
+    # A4 --> O1
+
+# 以下 algo_flow_prose = 契约头双真源清偿归并（P2-1 死块批 2026-09-16）：
+# 源码头块手写算法速记逐字副本，algo_flow 机器块未覆盖其口径故不删信息；
+algo_flow_prose: |
+    # [ALGO_FLOW]
+    # I1: ManualInstruction(schema校验Fail-Closed)
+    # I2: premarket_check_fn/risk_check_fn(注入委托 MOD-EX-063/MOD-EX-024)
+    # A1: 边界闸(premarket_check_fn; False→PREMARKET_NOT_READY; None→PROBE_UNWIRED; 异常→PROBE_ERROR)
+    # A2: 风控闸(risk_check_fn C-004面; (False,reason)→RISK_REJECTED; None→PROBE_UNWIRED; 异常→PROBE_ERROR)
+    # A3: 裁决(双闸全过→ACCEPTED; 任一不过→REJECTED首因reason_code; 逐事件落审计链)
+    # A4: 对账(execution_probe取回报; None→UNFILLED; 异常→PROBE_ERROR; |filled−expected|>tol→DRIFT+alert+audit)
+    # O1: IntakeVerdict(frozen,含audit_trail) / ExecutionReconReport(frozen)
+    # 边:
+    # I1 --> A1
+    # I1 --> A2
+    # I2 --> A1
+    # I2 --> A2
+    # A1 --> A3
+    # A2 --> A3
+    # A3 --> O1
+    # A4 --> O1
+    # [/ALGO_FLOW]

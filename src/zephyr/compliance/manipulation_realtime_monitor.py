@@ -14,14 +14,6 @@
 # [TESTS] tests/compliance/test_manipulation_realtime_monitor.py
 # [A_module] module_id=MOD-CMP-018 | layer=module | stability=evolving | safety=H | ai_autonomy=ai_modifiable
 # [TTL] permanent
-# [ALGO_FLOW]
-# I1: 委托事件流(OrderManager 订单事件回调: 报单/撤单) + 成交事件流(fill 回调) + tick 行情流(Redis tick 缓存, tick_subscriber CP-01 通道懒拉)
-# F1: on_order_placed/on_order_cancelled/on_trade——喂 ManipulationStreamDriver(同一 detector 实例)→拉抬打压短窗评估→30min/5min 双窗 trim→命中分发
-# F2: attach_order_manager(om)——register_order_event_callback+register_fill_callback 挂接, Order/Fill→合规记录映射(市价单 price=0 照喂, 关联账户标记经 counterparty_resolver)
-# F3: RedisTickMarketProvider——tick:{symbol}:latest 懒读: minute_avg_volume=累计量/已交易分钟(Spoofing 前提), market_window=5min 滚动观测价变+量差(拉抬打压前提); 缺失/异常→降级(0.0/None)
-# A1: _dispatch——命中一律 logging.error 告警+MANIPULATION_REALTIME_ALERT 落 compliance_log+冻结标的(线程安全)
-# O1: is_frozen/frozen_symbols(阻断判定, C-002 既有闸抛转 ComplianceGateBlockError) + release_freeze(人工复解释放, MANIPULATION_FREEZE_RELEASE 留痕)
-# [/ALGO_FLOW]
 """
 D_COMPLIANCE — 盘中操纵 4 类检测实时流驱动接线层（43 号 §7.2/§7.3，A8 批）。
 

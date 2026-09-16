@@ -14,13 +14,6 @@
 # [TESTS] tests/zephyr/data/test_capability_symbol_gate.py
 # [A_module] module_id=MOD-GOV-capability_symbol_gate | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
-# [ALGO_FLOW]
-# I1: provider .py 文件内容（字符串）
-# F1: _collect_method_defs（全部 ClassDef 方法名并集）+ _has_dynamic_fetch_dispatch（getattr(self, f"_fetch_{cap}") 动态分发检测）
-# F2: 正向校验（self._fetch_*(...) 调用 + 路由表 dict 的 _fetch_ 字符串值引用 → 必须类内定义，防 internal_compute 式 AttributeError 半截工程）
-# F3: 反向校验（memo §5.5 范围=frozenset/set + CapabilityContract 声明：无 _fetch_<cap> 方法 且 无路由证据（==/in 字面量比较、共享方法路由 in <var>、dict 方法引用已定义）→ 声明残留）
-# O1: 违规描述列表（空=通过；语法错误 fail-open 空）
-# [/ALGO_FLOW]
 """
 Provider 声明-实现符号一致性双向 AST gate（17 号 §5.5 施工项 4，§5.8 定稿最优先）。
 

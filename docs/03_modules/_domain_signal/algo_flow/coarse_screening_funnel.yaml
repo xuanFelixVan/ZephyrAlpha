@@ -42,3 +42,13 @@ algo_flow: |
     # I2 --> A1
     # I3 --> A1
     # A1 --> O1
+
+# 以下 algo_flow_prose = 契约头双真源清偿归并（P2-1 死块批 2026-09-16）：
+# 源码头块手写算法速记逐字副本，algo_flow 机器块未覆盖其口径故不删信息；
+algo_flow_prose: |
+    # [ALGO_FLOW]
+    # I1: CoarseScreenRecord（技术形态/量比/换手率/板块强度排名/主力阶段/市场状态适配 + liquidity_score）
+    # A1: 五维门槛初筛——技术(布尔) + 量价(量比>1.5、换手率门槛) + 板块(强度排名前30%) + 主力(C-011布尔) + 状态(C-021布尔)
+    # A2: 容量收敛——通过数 > capacity_target 时按 liquidity_score 降序截断（截断标记 truncated=True）
+    # O1: CoarseScreenResult(kept/excluded{symbol:reason}/degraded/truncated)
+    # [/ALGO_FLOW]

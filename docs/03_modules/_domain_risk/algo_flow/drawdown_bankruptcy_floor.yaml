@@ -42,3 +42,12 @@ algo_flow: |
     # I2 --> A1
     # I3 --> A1
     # A1 --> O1
+
+# 以下 algo_flow_prose = 契约头双真源清偿归并（P2-1 死块批 2026-09-16）：
+# 源码头块手写算法速记逐字副本，algo_flow 机器块未覆盖其口径故不删信息；
+algo_flow_prose: |
+    # [ALGO_FLOW]
+    # I1: current_nav当前净值 + initial_capital初始本金 + BankruptcyFloorConfig(floor_ratio=0.85)
+    # F1: check_bankruptcy_floor(floor=initial×0.85; nav<floor→Breach(含breach_pct=距底线深度); 否则None)
+    # O1: BankruptcyFloorBreach(floor+breach_pct+reason)或None → Kill Switch 第5类触发源(§3.5表新增行)
+    # [/ALGO_FLOW]

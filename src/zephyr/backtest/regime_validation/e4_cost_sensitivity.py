@@ -13,12 +13,6 @@
 # [ERROR_CONTRACT] E4CostSensitivityError(ZA-BT-0029)
 # [TESTS] tests/backtest/test_e4_cost_sensitivity.py
 # [TTL] permanent
-# [ALGO_FLOW]
-# I1: points(各交易成本 bps 下的 Shrinkage 效果指标, 如 MaxDD 改善, 既有网格回测产物)
-# I2: cost_range=[0,50]bps(§4.5 E4 设计网格 0/2/5/10/50bps)
-# A1: analyze_cost_sensitivity(符号一致性检验 + 效果区间统计 + 网格覆盖度检查)
-# O1: E4CostReport(direction / direction_consistent / passed + 覆盖度信息)
-# [/ALGO_FLOW]
 """
 D_BACKTEST — E4 交易成本敏感性 0-50bps 分析（11 号 memo §4.5 E4）。
 

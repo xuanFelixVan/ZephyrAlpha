@@ -13,12 +13,6 @@
 # [ERROR_CONTRACT] C4DeflatedSharpeError(ZA-BT-0032)
 # [TESTS] tests/backtest/test_c4_deflated_sharpe_runner.py
 # [TTL] permanent
-# [ALGO_FLOW]
-# I1: returns_by_variant(变体名→逐期收益序列, 既有回测产物, 如 Shrinkage 开/关/参数网格各点)
-# I2: DSRConfig(可选) + num_trials(默认=变体数, memo §0.6.3: 测了 N 个变体后 Sharpe 要打折)
-# A1: run_deflated_sharpe_batch(逐变体调 DeflatedSharpeCalculator.calculate→年化Sharpe最优者裁定)
-# O1: C4BatchReport(逐变体 DSR + best_variant + is_significant + passed)
-# [/ALGO_FLOW]
 """
 D_BACKTEST — C4 Deflated Sharpe 跑批封装入口（11 号 memo §0.6.3 / §4.3 C4）。
 

@@ -13,10 +13,6 @@
 # [ERROR_CONTRACT] PreflightReport(passed/violations/skipped)——无异常类，违规经ZA-BT-0036前缀承载
 # [TESTS] tests/backtest/test_preflight_checker.py
 # [TTL] permanent
-# [ALGO_FLOW] 目的: 回测启动前数据质量前置检查（15号 memo BM-BT-02-D，函数级 MVP，绑定入口由调用方注入）
-# [ALGO_FLOW] 输入: symbols/start/end + 可选 DQ 检查函数表（默认空集，纯结构检查）
-# [ALGO_FLOW] 输出: PreflightReport(passed/violations/skipped)，fail-visible 不静默
-# [ALGO_FLOW] 不变量: 无数据注入时保守通过结构检查并标 skipped；任何 DQ 违规→passed=False
 """
 回测前置检查器（15_data_feature_layer_spec BM-BT-02-D，函数级落地）。
 

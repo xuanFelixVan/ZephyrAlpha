@@ -68,3 +68,15 @@ algo_flow: |
     # A1 --> A2
     # A2 --> A3
     # A3 --> O1
+
+# 以下 algo_flow_prose = 契约头双真源清偿归并（P2-1 死块批 2026-09-16）：
+# 源码头块手写算法速记逐字副本，algo_flow 机器块未覆盖其口径故不删信息；
+algo_flow_prose: |
+    # [ALGO_FLOW]
+    # I1: ForwardVarForecast(①预判层契约) + regime_state(C-021 状态)
+    # I2: RiskWatchSnapshot(②监控层契约) + black_swan_escalated(C-038 升级标记)
+    # I3: CoordinatorConfig(降仓档/regime乘数表/未知保守乘数) + B-001~B-006硬边界注册表
+    # A1: 盘前计划(limit_scale×regime_multiplier收紧+sit_out透传)
+    # A2: 盘中熔断分级(monitor红→HALT_NEW/橙→REDUCE; breach→REDUCE; sit_out→HALT_NEW; 黑天鹅→KILL_SWITCH advised; 取最严)
+    # O1: PremarketRiskPlan / AdaptiveRiskDecision(frozen) → 执行侧编排消费
+    # [/ALGO_FLOW]

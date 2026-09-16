@@ -14,14 +14,6 @@
 # [TESTS] tests/zephyr/data/test_providers.py::TestBaostockProvider
 # [A_module] module_id=MOD-GOV-baostock_provider | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
-# [ALGO_FLOW]
-# I1: FetchPayload(table/symbols/start/end) + capability 路由键 + SourcePolicy(降级策略)
-# I2: baostock SDK(bs.login/thread_local 登录态/query_history_k_data_plus/query_hs300_stocks/query_trade_date)
-# A1: fetch 路由分派(capability→_fetch_index_constituent/_fetch_trade_calendar/_fetch_kline_daily/_fetch_kline_daily_delisted)
-# A2: _fetch_kline_daily 主表口径=不复权(adjustflag=3，#196：对齐 miniQMT 主口径，防 ReplacingMergeTree 同键 raw/qfq 跑序漂移)
-# A3: 退市股回填链(_fetch_delisted_universe→_kline_span_map 缺口探测→_fetch_one_delisted_kline 逐标的补缺)
-# O1: Iterator[FetchResult](CH 表行；fetch 异常->yield FetchResult(error=str))
-# [/ALGO_FLOW]
 """
 Baostock 数据源 Provider 实现（MOD-L00-004 §4.3）。
 

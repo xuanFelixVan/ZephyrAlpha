@@ -13,14 +13,6 @@
 # [ERROR_CONTRACT] E3SensitivityError(ZA-BT-0028)
 # [TESTS] tests/backtest/test_e3_param_sensitivity.py
 # [TTL] permanent
-# [ALGO_FLOW]
-# I1: baseline_effect(基线参数下的效果指标, 如 MaxDD 改善幅度)
-# I2: points(各参数 ±20% 扰动后的效果指标, 既有网格回测产物)
-# I3: tolerance=0.30(§4.4: ±20% 扰动效果变化<30% → 稳健)
-# A1: analyze_param_sensitivity(按参数聚合→相对变化→悬崖检测)
-# A2: perturb_pm20(基线值×0.8/×1.2 扰动值生成器)
-# O1: E3SensitivityReport(逐参数判定 + max_rel_change + passed + 悬崖参数清单)
-# [/ALGO_FLOW]
 """
 D_BACKTEST — E3 参数敏感性 ±20% 网格分析（11 号 memo §4.5 E3 / §4.4）。
 

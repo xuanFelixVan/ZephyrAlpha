@@ -92,3 +92,16 @@ algo_flow: |
     # A4 --> A5
     # A5 --> A6
     # A6 --> O1
+
+# 以下 algo_flow_prose = 契约头双真源清偿归并（P2-1 死块批 2026-09-16）：
+# 源码头块手写算法速记逐字副本，algo_flow 机器块未覆盖其口径故不删信息；
+algo_flow_prose: |
+    # [ALGO_FLOW]
+    # I1: 订单(side/qty/price/order_type) + 最新价/昨收/涨跌停幅度
+    # I2: 封单量/对手盘流量(成交概率估算输入, 调用方注入)
+    # A1: detect_board_state(最新价 vs 昨收×(1±limit_pct) 判板态, 0.01最小价位取整)
+    # A2: route_order(涨停:BUY排队/SELL即成交;跌停:SELL排队/BUY即成交;市价触板转限价排队)
+    # A3: LimitBoardQueue.on_counter_volume(对手盘流量FIFO冲销队列, 支持部分成交)
+    # A4: estimate_fill_probability(min(1, counter_volume/(queue_ahead+order_size)), 53号§3.2公式②)
+    # O1: OrderRoutingResult(FILLED/QUEUED/CONVERTED_QUEUED) + 队列快照 + 成交概率
+    # [/ALGO_FLOW]

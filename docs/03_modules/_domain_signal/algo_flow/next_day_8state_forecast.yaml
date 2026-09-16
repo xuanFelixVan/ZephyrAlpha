@@ -92,3 +92,16 @@ algo_flow: |
     # A4 --> A5
     # A5 --> A6
     # A6 --> O1
+
+# 以下 algo_flow_prose = 契约头双真源清偿归并（P2-1 死块批 2026-09-16）：
+# 源码头块手写算法速记逐字副本，algo_flow 机器块未覆盖其口径故不删信息；
+algo_flow_prose: |
+    # [ALGO_FLOW]
+    # I1: 指数日 K OHLC 序列（默认 000300，loader 走 market_index_kline 真源表）
+    # A1: 单日 8 态分类: 振幅≥3% → VIOLENT; |涨跌幅|≤0.3% → FLAT_CLOSE;
+    #     缺口>+0.5% 高开 / <-0.5% 低开 / 其间平开 × 收≥开高走 / 收<开低走 → 6 网格态
+    # A2: 一阶马尔可夫转移矩阵: 历史状态转移频次 + Laplace(α=1) 平滑 → 8×8 行归一矩阵
+    # A3: 平稳分布修正: 幂迭代求 π，预测分布 = (1−blend)×经验行 + blend×π（防稀有态过拟合）
+    # A4: confidence = top_probability × 支持度因子 min(1, 当前态出发转移数/30)
+    # O1: NextDayForecast（8 态概率分布 + 众数态 + 置信度，供下游风控节流/权重修正）
+    # [/ALGO_FLOW]

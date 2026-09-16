@@ -14,11 +14,6 @@
 # [TESTS] tests/autonomy_core/test_drift_semantic_reviewer.py
 # [A_module] module_id=MOD-AU-003 | layer=module | stability=evolving | safety=M | ai_autonomy=human_gated
 # [TTL] permanent
-# [ALGO_FLOW]
-# I1: Sequence[SessionChainReview]（原始任务意图 + 当前动作链摘要）；I2: EmbeddingProvider（注入）
-# F1: 批量嵌入（意图 vs 动作链摘要成对）→ F2: 余弦相似度 < threshold 判疑似意图偏差 → F3: 汇总复核报告
-# O1: SemanticReviewReport（pending_human_review）；O2: drift_semantic_review-<report_id>.json 落盘
-# [/ALGO_FLOW]
 """
 DriftSemanticReviewer — Agentic Drift 深度语义复核批量件（MOD-AU-003，15号文 §4.2 S1.3）.
 

@@ -67,3 +67,14 @@ algo_flow: |
     # A1 --> A2
     # A2 --> A3
     # A3 --> O1
+
+# 以下 algo_flow_prose = 契约头双真源清偿归并（P2-1 死块批 2026-09-16）：
+# 源码头块手写算法速记逐字副本，algo_flow 机器块未覆盖其口径故不删信息；
+algo_flow_prose: |
+    # [ALGO_FLOW]
+    # I1: closes_by_sector(板块→日K收盘价序列 dict, market_kline_sector_880 盘后批量)
+    # A1: ret_N(i,t) = close(t)/close(t-N) − 1（N 日累计涨跌幅）
+    # A2: qN(i,t) = percentile_rank(ret_N(i,t), 全板块截面)（0~1 归一化消除量纲）
+    # A3: strength_momentum = 0.4×q20 + 0.3×q5 + 0.3×q3（多时间框架动量加权）
+    # O1: dict[板块代码, strength_momentum ∈ [0,1]]（板块强度综合层第三维输入）
+    # [/ALGO_FLOW]

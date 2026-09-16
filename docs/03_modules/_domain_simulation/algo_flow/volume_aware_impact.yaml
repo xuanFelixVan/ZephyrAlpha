@@ -60,3 +60,13 @@ algo_flow: |
     # I4 --> A1
     # A1 --> A2
     # A2 --> O1
+
+# 以下 algo_flow_prose = 契约头双真源清偿归并（P2-1 死块批 2026-09-16）：
+# 源码头块手写算法速记逐字副本，algo_flow 机器块未覆盖其口径故不删信息；
+algo_flow_prose: |
+    # [ALGO_FLOW]
+    # I1: delta_weight(权重变化) + notional(组合名义金额) + dollar_volume(标的成交额) + impact_coef
+    # A1: volume_aware_sqrt_impact(impact=coef×√(|Δw|×notional/dollar_volume), 零量fallback/符号对称/零系数兼容)
+    # A2: volume_aware_sqrt_impact_batch(逐标的批量形式, NAV loop rebalance_cost 用)
+    # O1: impact 成本率(标量或list[float], 占notional比例)
+    # [/ALGO_FLOW]
