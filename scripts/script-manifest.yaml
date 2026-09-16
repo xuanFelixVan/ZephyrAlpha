@@ -4,7 +4,7 @@
 manifest_version: 2.0.0
 generated_by: generate_manifest.py (auto-scan)
 generated_at: '2026-09-16'
-total_scripts: 983
+total_scripts: 986
 scripts:
 - name: __init__.py
   path: __init__.py
@@ -1873,6 +1873,14 @@ scripts:
 - name: ch/apply_pdf_forecast_extracted_ddl.py
   path: ch/apply_pdf_forecast_extracted_ddl.py
   description: DDL 真源：schemas/categories/fundamental/pdf_forecast_extracted.py（DDL-as-Code）。
+  domain: ch
+  execution_plane: warm-path
+  status: registered
+  timeout_seconds: 60
+  dimensions: []
+- name: ch/apply_pf_alloc_ddl.py
+  path: ch/apply_pf_alloc_ddl.py
+  description: 真源：pf_alloc_consumer_mining PFA-2——"ClickHouse 里没有任何 alloc/budget/shrinkage 表"，
   domain: ch
   execution_plane: warm-path
   status: registered
@@ -4393,6 +4401,14 @@ scripts:
 - name: governance/d5_architecture/syncers/merge_readme_to_index.py
   path: governance/d5_architecture/syncers/merge_readme_to_index.py
   description: 'Strategy:'
+  domain: governance
+  execution_plane: warm-path
+  status: registered
+  timeout_seconds: 60
+  dimensions: []
+- name: governance/d5_architecture/syncers/normalize_blueprint_autogen_anchors.py
+  path: governance/d5_architecture/syncers/normalize_blueprint_autogen_anchors.py
+  description: 病根：L0 宪法 2026-09-12 替换 v1 后 AGENTS.md 的 §编号全部失效（§7 由「代码规范」
   domain: governance
   execution_plane: warm-path
   status: registered
@@ -7153,6 +7169,14 @@ scripts:
 - name: ops/e2e_ch_alert_probe.py
   path: ops/e2e_ch_alert_probe.py
   description: 启动一个 HeartbeatMonitor + Alerter 探针，指向真实 CH。
+  domain: ops
+  execution_plane: warm-path
+  status: registered
+  timeout_seconds: 60
+  dimensions: []
+- name: ops/ollama_version_guard.py
+  path: ops/ollama_version_guard.py
+  description: 背景（真源）：docs/_working/forensics/llama_server_crash_forensics_202609.md（治理战役 M4）
   domain: ops
   execution_plane: warm-path
   status: registered
