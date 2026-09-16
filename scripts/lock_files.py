@@ -58,7 +58,7 @@ AI 施工铁律：
   （Global\\ZephyrLockFilesRegistry，5s 超时）串行化；写入先落 tmp（flush+fsync）
   再 os.replace 原子替换，防崩溃半成品。
 
-SSoT: AGENTS.md §4 编码安全（扩展）
+SSoT: quality_standard.md 维度 D-A 编码安全（扩展）
 Version: 2.2.0
 """
 
@@ -86,7 +86,7 @@ sys.path.insert(0, str(_PROJECT_ROOT / "scripts" / "governance" / "d3_metadata")
 from check_naming_convention import check_file as _check_naming  # noqa: E402
 
 from zephyr.shared.infra.process_pool import (
-    is_pid_alive,  # noqa: E402  僵尸锁检测真源唯一（AGENTS.md §8 is_pid_alive 真源声明，禁止本地重复定义）
+    is_pid_alive,  # noqa: E402  僵尸锁检测真源唯一（TRAE-001 is_pid_alive 真源声明，禁止本地重复定义）
 )
 from zephyr.shared.infra.process_pool import (  # noqa: E402
     run_subprocess_hidden,  # trae_067 铁律2 统一无窗口 subprocess 入口（B5③ _is_git_tracked 用）
@@ -187,15 +187,18 @@ def _is_stale(lock_dir: Path) -> bool:
                 import time as _time
 
                 if _is_session_alive(info, _time.time()):
-                    # 会话存活 → 锁有效，直接判非 stale（裁定#252 语义：锁的生死=会话的
-                    # 生死；PID 判定/TTL 判定均不再适用——瞬时 PID 必死会误杀活锁，
-                    # TTL 由 expires_at 保留在 gate 侧兑底，且会话自身有 90s/3600s 生命周期）
+                    # 会话存活 → 锁有效（裁定#252 语义：锁的生死=会话的生死；PID 判定
+                    # 不适用——瞬时 PID 必死会误杀活锁）。但 claim 自身 expires_at 已过
+                    # 且会话静默超窗（T10 治本 2026-09-17）→ 回收，治"acquire 对 TTL
+                    # 完全不敏感"的交接班互挡。
+                    if _claim_expired_and_idle(owner, info):
+                        return True
                     return False
                 return True  # 会话已死（心跳超时/PID 亡/TTL 超）→ 锁 stale
             # info is None（registry 无此会话条目）：退化旧语义继续判定
         except Exception:
             pass  # registry 不可达时退回 PID+TTL 语义（fail-open，不误清活锁）
-    # PID 已死 → 立即判 stale（零窗口期，治本 2026-06-30：AGENTS.md §8 L273 is_pid_alive 真源唯一）
+    # PID 已死 → 立即判 stale（零窗口期，治本 2026-06-30：TRAE-001 is_pid_alive 真源唯一）
     # 仅对无 session_id 的旧格式锁生效（裁定#252：带 session_id 的锁在上方已提前返回）
     pid = owner.get("pid", 0)
     if pid and not is_pid_alive(pid):
@@ -208,6 +211,51 @@ def _is_stale(lock_dir: Path) -> bool:
     if time.time() - ts > DEFAULT_TTL_S:
         return True
     return False
+
+
+# T10 治本（2026-09-17）：裁定#252"锁存活=会话存活"短路了 claim 自身 expires_at，
+# 实测会话存活+claim 过期时 acquire 恒 DENIED（对 TTL 完全不敏感，交接班互挡）。
+# 对齐交接纪律 §5 三查（claim expires_at + pid 存活 + 最近是否还在 commit）：
+# 过期 + 会话静默（last_activity 超 _CLAIM_IDLE_RECLAIM_SECONDS，heartbeat 不刷新
+# last_activity）才可回收；过期 + 活跃仍 DENIED（它随时会重 claim，禁抢）。
+_CLAIM_IDLE_RECLAIM_SECONDS = 1800.0
+
+
+def _claim_expired_and_idle(owner: dict[str, Any], info: Any) -> bool:
+    """claim 自身已过期且其会话超静默窗无真实治理活动 → 可回收。"""
+    expires_at = owner.get("expires_at")
+    if expires_at is None or time.time() <= float(expires_at):
+        return False
+    last_activity = float(getattr(info, "last_activity", 0.0) or 0.0)
+    return (time.time() - last_activity) > _CLAIM_IDLE_RECLAIM_SECONDS
+
+
+def _audit_claim_reclaim(normalized: str, prev_owner: dict[str, Any], lines: list[str]) -> None:
+    """回收过期 claim 留审计（jsonl 追加 + 输出行），禁静默夺锁。"""
+    reason = "expired+idle" if prev_owner.get("session_id") else "expired"
+    lines.append(
+        f"RECLAIMED — {normalized} 原 {prev_owner.get('owner_id', '?')} 的过期 claim 已回收"
+        f"（{reason}，静默窗 {_CLAIM_IDLE_RECLAIM_SECONDS / 60:.0f}min）"
+    )
+    try:
+        audit_path = LOCK_ROOT / "reclaim_audit.jsonl"
+        audit_path.parent.mkdir(parents=True, exist_ok=True)
+        with open(audit_path, "a", encoding="utf-8") as f:
+            f.write(
+                json.dumps(
+                    {
+                        "ts": time.time(),
+                        "file": normalized,
+                        "prev_owner": prev_owner.get("owner_id", "?"),
+                        "reason": reason,
+                        "by": os.environ.get("ZEPHYR_SESSION_ID", ""),
+                    },
+                    ensure_ascii=False,
+                )
+                + chr(10)
+            )
+    except Exception:
+        pass  # 审计盘写失败不阻断回收（输出行已留痕）
 
 
 def _read_owner(lock_dir: Path) -> dict[str, Any] | None:
@@ -440,14 +488,27 @@ def _acquire_prepare(
 
     if lock_dir.is_dir():
         if _is_stale(lock_dir):
+            prev_owner = _read_owner(lock_dir)
             _cleanup_stale(lock_dir)
+            if prev_owner:
+                _audit_claim_reclaim(normalized, prev_owner, lines)
         else:
             owner = _read_owner(lock_dir)
             existing_owner = owner.get("owner_id", "unknown") if owner else "unknown"
             if existing_owner == owner_id:
                 lines.append(f"OK — {normalized} 已被你持有（重入）")
                 return 0, normalized, lines, False
-            lines.append(f"DENIED — {normalized} 已被 {existing_owner} 锁定")
+            if owner and owner.get("expires_at") is not None and time.time() > float(owner["expires_at"]):
+                # T10 治本：DENIED 也要给三查实情——claim 已过期但会话仍活跃（未达
+                # 静默窗），禁抢但如实告知可回收条件，禁一条 DENIED 走天下
+                lines.append(
+                    f"DENIED — {normalized} 已被 {existing_owner} 锁定"
+                    f"（claim 已过期 {max(0, int((time.time() - float(owner['expires_at'])) / 60))}min，"
+                    f"但会话仍活跃（最后活动 <{_CLAIM_IDLE_RECLAIM_SECONDS / 60:.0f}min）——"
+                    "过期+静默才可回收，等其重 claim 或协调）"
+                )
+            else:
+                lines.append(f"DENIED — {normalized} 已被 {existing_owner} 锁定")
             existing_task = owner.get("task", "") if owner else ""
             if existing_task:
                 lines.append(f"  对方任务: {existing_task}")

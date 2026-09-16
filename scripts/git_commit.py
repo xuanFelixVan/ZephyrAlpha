@@ -38,6 +38,7 @@ exit codes: 0=commit成功, 1=commit失败/无变更, 2=锁超时/stash冲突, 5
 from __future__ import annotations
 
 import argparse
+import json
 import logging
 import os
 import subprocess
@@ -134,7 +135,7 @@ _COMMIT_RESULT_MAP: dict[CommitStatus, tuple[int, str, str | None, bool]] = {
         6,
         "CLAIM_REQUIRED_VIOLATION: {message}",
         "  session 已注册但目标文件未 claim_files（红蓝对抗红攻1治本）。"
-        "  commit 前 MUST 调 claim_files 声明工作范围（AGENTS.md §8 L284）。"
+        "  commit 前 MUST 调 claim_files 声明工作范围（RULE-ZERO 锁协议，.trae/rules/project_rules.md）。"
         "  如确认需提交，添加 --allow-overlap 重新执行"
         "（2026-08-13 裁定：AI 可默认使用，留痕审计；冲突处置按 67 号三分法）。",
         False,
@@ -363,6 +364,71 @@ def _validate_reconciler_verify(args, is_pure_claim: bool, message: str, project
     return None, message
 
 
+def _release_and_verify(gw, session_id: str, files: list[str]) -> tuple[int, list[str]]:
+    """释放两处 claim 登记处（SessionRegistry + .ailocks）并回读注册表校验。
+
+    T10 治本（2026-09-17）：旧 --release-only 只释放 SessionRegistry 声明，从不触碰
+    .ailocks/registry.json（lock_files 库），却无条件打印 "RELEASED: N files"——
+    收尾序列据此误判"claim 全释放"（上一班实测：registry.json mtime 不变、claim 全在，
+    只能靠 lock_files.py release 逐个兜底）。治本两条：
+    ①.ailocks 声明经 lock_files 正门（cmd_release_batch）同步释放；
+    ②释放后**回读两处注册表现值**校验（禁信 stdout），凡本会话仍持有的文件即
+    RELEASE-VERIFY FAILED 非零退出。
+
+    Returns:
+        (exit_code, 输出行)——0=全部释放并核实；6=仍有持有（含明细）。
+    """
+    lines: list[str] = []
+    gw.release_files(session_id, files)  # SessionRegistry（gateway 正门）
+
+    # ① .ailocks/registry.json（lock_files 库）——旧实现完全漏掉的第二登记处
+    ailocks_warn = ""
+    try:
+        scripts_dir = Path(__file__).resolve().parent
+        if str(scripts_dir) not in sys.path:
+            sys.path.insert(0, str(scripts_dir))
+        import lock_files as _lf  # noqa: PLC0415
+
+        if _lf.cmd_release_batch(session_id, list(files), warn=False):
+            ailocks_warn = "WARNING: .ailocks 批量释放部分失败（详见上方逐条输出）"
+    except Exception as e:  # noqa: BLE001 — 释放通道不可达不静默，交回读校验定论
+        ailocks_warn = f"WARNING: .ailocks 释放通道不可达（{type(e).__name__}: {e}）"
+    if ailocks_warn:
+        lines.append(ailocks_warn)
+
+    # ② 回读校验：只认注册表现值，不信释放调用的返回/输出
+    leftover: list[str] = []
+    held: set[str] = set()
+    try:
+        info = gw.registry.get_session(session_id)
+        held = {str(h).replace("\\", "/") for h in (getattr(info, "held_files", None) or [])}
+    except Exception:  # noqa: BLE001 — 登记处不可读时按"无法证伪"只查 .ailocks
+        pass
+    ailocks_owned: set[str] = set()
+    try:
+        reg_path = Path(gw.project_root) / ".ailocks" / "registry.json"
+        if reg_path.exists():
+            data = json.loads(reg_path.read_text(encoding="utf-8"))
+            ailocks_owned = {
+                k.replace("\\", "/")
+                for k, v in (data.get("locks") or {}).items()
+                if isinstance(v, dict) and v.get("owner_id") == session_id
+            }
+    except Exception as e:  # noqa: BLE001 — 回读失败=校验面缺失，如实告警
+        lines.append(f"WARNING: .ailocks 回读失败（{type(e).__name__}: {e}）")
+    for f in files:
+        norm = f.replace("\\", "/")
+        in_session = norm in held
+        in_ailocks = norm in ailocks_owned
+        if in_session or in_ailocks:
+            leftover.append(f"{norm} (session_registry={in_session}, ailocks={in_ailocks})")
+    if leftover:
+        lines.append("RELEASE-VERIFY FAILED — 以下文件释放后仍被本会话持有：")
+        lines.extend(f"  {x}" for x in leftover)
+        return 6, lines
+    return 0, lines
+
+
 def _handle_pure_claim(gw, args, files: list[str]) -> int | None:
     """claim-only / release-only 快速路径（claim 前移协议，不进入 commit 流程）。
 
@@ -372,8 +438,13 @@ def _handle_pure_claim(gw, args, files: list[str]) -> int | None:
         exit_code — 非 None 时 main 应立即 return；None 表示非快速路径，继续标准流程。
     """
     if args.release_only:
-        gw.release_files(args.session, files)
-        print(f"RELEASED: {len(files)} files (session={args.session})")
+        rc, lines = _release_and_verify(gw, args.session, files)
+        for ln in lines:
+            print(ln, file=sys.stderr)
+        if rc:
+            print(f"FAILED: release 校验未过（exit={rc}），未释放成功的 claim 需手工处置", file=sys.stderr)
+            return rc
+        print(f"RELEASED: {len(files)} files (session={args.session}, verified)")
         return 0
     if args.claim_only:
         claimed = gw.claim_files(args.session, files, adopt_prior_work=args.adopt_prior_work)
