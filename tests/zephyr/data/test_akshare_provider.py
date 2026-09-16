@@ -892,3 +892,172 @@ class TestCollectBjBasicRows:
     def test_source_failure_yields_empty(self, monkeypatch):
         rows = self._rows(monkeypatch, RuntimeError("巨潮接口挂了"))
         assert rows == []
+
+
+# ============== 裁定#285 残余治本: stock_indicator circ_mv/total_mv 映射 + 写前主键去重 ==============
+
+
+def _indicator_df(dates, total_mv=2.3e11, circ_mv=2.29e11):
+    """构造 stock_value_em 返回形态（东财估值历史，单位=元）。"""
+    return pd.DataFrame(
+        {
+            "数据日期": [f"{d[:4]}-{d[4:6]}-{d[6:8]}" for d in dates],
+            "PE(TTM)": [5.29] * len(dates),
+            "市净率": [0.49] * len(dates),
+            "市销率": [1.73] * len(dates),
+            "市现率": [0.64] * len(dates),
+            "总市值": [total_mv] * len(dates),
+            "流通市值": [circ_mv] * len(dates),
+        }
+    )
+
+
+class TestStockIndicatorCircMvMap:
+    """circ_mv/total_mv 字段映射（元→万元 ÷1e4）。"""
+
+    def _rows(self, monkeypatch, df, code="000001", start="2026-09-14", end="2026-09-16"):
+        ak = _mock_ak(monkeypatch, stock_value_em=df)
+        policy = MagicMock(rpm=0, max_retries=1, backoff="fixed", initial_wait=0)
+        return AkshareIngestProvider()._collect_indicator_rows(ak, policy, code, start, end)
+
+    def test_market_cap_mapped_in_wan(self, monkeypatch):
+        """总市值/流通市值映射进 total_mv/circ_mv，元→万元 ÷1e4。"""
+        _mock_ak(monkeypatch, stock_value_em=_indicator_df(["20260914", "20260915"]))
+        policy = MagicMock(rpm=0, max_retries=1, backoff="fixed", initial_wait=0)
+        rows = AkshareIngestProvider()._collect_indicator_rows(
+            sys.modules["akshare"], policy, "000001", "2026-09-14", "2026-09-15"
+        )
+        assert len(rows) == 2
+        r = rows[0]
+        assert len(r) == 10
+        assert r[0] == "2026-09-14"
+        assert r[7] == pytest.approx(2.3e11 / 1e4)  # total_mv 万元
+        assert r[8] == pytest.approx(2.29e11 / 1e4)  # circ_mv 万元
+        assert r[9] == "akshare"
+
+    def test_missing_cap_columns_tolerated(self, monkeypatch):
+        """红蓝·字段改名: 上游缺 总市值/流通市值 列 → circ_mv/total_mv=None 不崩。"""
+        df = pd.DataFrame(
+            {
+                "数据日期": ["2026-09-14"],
+                "PE(TTM)": [5.29],
+                "市净率": [0.49],
+                "市销率": [1.73],
+                "市现率": [0.64],
+            }
+        )
+        rows = self._rows(monkeypatch, df)
+        assert len(rows) == 1
+        assert rows[0][7] is None
+        assert rows[0][8] is None
+
+    def test_upstream_timeout_yields_empty(self, monkeypatch):
+        """红蓝·上游超时: stock_value_em 抛异常 → 空行不崩。"""
+        rows = self._rows(monkeypatch, TimeoutError("上游超时"))
+        assert rows == []
+
+    def test_empty_df_yields_empty(self, monkeypatch):
+        """红蓝·空响应: 空 DataFrame → 空行。"""
+        rows = self._rows(monkeypatch, pd.DataFrame())
+        assert rows == []
+
+
+class TestStockIndicatorWriteDedup:
+    """写前主键去重（双批幂等治本）：已完成键跳过、未完成键升级、CH 故障降级。"""
+
+    def _fetch(self, monkeypatch, symbols, complete_tsv="", start=D(2026, 9, 14), end=D(2026, 9, 14)):
+        dates = [start.strftime("%Y%m%d")]
+        _mock_ak(
+            monkeypatch,
+            stock_value_em=_indicator_df(dates),
+            stock_info_a_code_name=pd.DataFrame({"code": [], "name": []}),
+        )
+        provider = AkshareIngestProvider()
+        monkeypatch.setattr(
+            provider, "_get_all_a_symbols", lambda ak, policy: list(symbols), raising=False
+        )
+        recorded = {}
+
+        def fake_query(sql, timeout=30):
+            recorded["sql"] = sql
+            if complete_tsv:
+                return complete_tsv
+            return ""
+
+        monkeypatch.setattr("zephyr.data.ch_reader.query", fake_query)
+        policy = MagicMock(rpm=0, max_retries=1, backoff="fixed", initial_wait=0)
+        results = _call_fetch(provider, "stock_indicator", _payload(start, end, symbols=list(symbols)))
+        return results, recorded
+
+    def test_complete_keys_skipped(self, monkeypatch):
+        """已完成键（akshare+circ_mv 非空）不再重插；未完成键照插。"""
+        results, recorded = self._fetch(
+            monkeypatch,
+            ["000001", "000002", "000003"],
+            complete_tsv="2026-09-14\t000001\n2026-09-14\t000002\n",
+        )
+        assert "FINAL" in recorded.get("sql", "")
+        rows = [r for res in results for r in res.rows]
+        keys = {(r[0], r[1]) for r in rows}
+        assert ("2026-09-14", "000001") not in keys
+        assert ("2026-09-14", "000002") not in keys
+        assert ("2026-09-14", "000003") in keys
+
+    def test_no_complete_keys_all_emitted(self, monkeypatch):
+        """空完成键集（如断供日 09-15）→ 全部行照发（升级路径）。"""
+        results, _ = self._fetch(monkeypatch, ["000001"], complete_tsv="")
+        rows = [r for res in results for r in res.rows]
+        assert len(rows) == 1
+        assert rows[0][8] == pytest.approx(2.29e11 / 1e4)
+
+    def test_big_window_skips_dedup_query(self, monkeypatch):
+        """窗口 >62 天（全量重建语义）不预查键集，全量行照发。"""
+        dates = [d.strftime("%Y%m%d") for d in (D(2026, 7, 1), D(2026, 9, 14))]
+        _mock_ak(monkeypatch, stock_value_em=_indicator_df(dates))
+        provider = AkshareIngestProvider()
+        monkeypatch.setattr(
+            provider, "_get_all_a_symbols", lambda ak, policy: ["000001"], raising=False
+        )
+        called = {"n": 0}
+
+        def fake_query(sql, timeout=30):
+            called["n"] += 1
+            return ""
+
+        monkeypatch.setattr("zephyr.data.ch_reader.query", fake_query)
+        policy = MagicMock(rpm=0, max_retries=1, backoff="fixed", initial_wait=0)
+        results = _call_fetch(
+            provider, "stock_indicator", _payload(D(2026, 5, 1), D(2026, 9, 14), symbols=["000001"])
+        )
+        assert called["n"] == 0
+        rows = [r for res in results for r in res.rows]
+        assert len(rows) == 2
+
+    def test_ch_failure_degrades_to_insert(self, monkeypatch):
+        """红蓝·CH 不可达: 完成键预查失败 → 降级直插（fail-open，ReplacingMergeTree 兜底）。"""
+        _mock_ak(monkeypatch, stock_value_em=_indicator_df(["20260914"]))
+        provider = AkshareIngestProvider()
+        monkeypatch.setattr(
+            provider, "_get_all_a_symbols", lambda ak, policy: ["000001"], raising=False
+        )
+        monkeypatch.setattr(
+            "zephyr.data.ch_reader.query", MagicMock(side_effect=RuntimeError("CH down"))
+        )
+        policy = MagicMock(rpm=0, max_retries=1, backoff="fixed", initial_wait=0)
+        results = _call_fetch(
+            provider, "stock_indicator", _payload(D(2026, 9, 14), D(2026, 9, 14), symbols=["000001"])
+        )
+        rows = [r for res in results for r in res.rows]
+        assert len(rows) == 1
+
+    def test_replay_idempotent_after_keys_registered(self, monkeypatch):
+        """红蓝·双批并发: 同窗口重放（首轮完成后）→ 第二轮 0 行（幂等收敛）。"""
+        symbols = ["000001", "000002"]
+        results1, _ = self._fetch(monkeypatch, symbols, complete_tsv="")
+        rows1 = [r for res in results1 for r in res.rows]
+        assert len(rows1) == 2
+        # 第二轮：首轮已写库，完成键集含两键
+        complete = "2026-09-14\t000001\n2026-09-14\t000002\n"
+        results2, _ = self._fetch(monkeypatch, symbols, complete_tsv=complete)
+        rows2 = [r for res in results2 for r in res.rows]
+        assert rows2 == []

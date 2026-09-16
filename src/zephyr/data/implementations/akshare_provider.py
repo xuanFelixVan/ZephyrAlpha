@@ -248,6 +248,12 @@ _SQL_ADJ_FACTOR_MINIQMT_KEYS = (
     "WHERE data_source = 'miniqmt' AND symbol IN ({symbols}) "
     "AND trade_date >= '{start}' AND trade_date <= '{end}'"
 )
+# 裁定 #285 写前主键去重：窗口内已完成键集（akshare 且 circ_mv 非空=本链路完整行）
+_SQL_INDICATOR_COMPLETE_KEYS = (
+    "SELECT DISTINCT toString(trade_date), symbol FROM {table} FINAL "
+    "WHERE trade_date >= '{start}' AND trade_date <= '{end}' "
+    "AND data_source = 'akshare' AND circ_mv IS NOT NULL"
+)
 # CH 不可达探活（ch_reader.query 故障静默返回空串，count() 仍为空=不可达）
 _SQL_KLINE_PROBE = "SELECT count() FROM c1_market.kline_daily"
 # ST 最近可得快照加载（PIT 严格：≤T 口径，窗口前推 400 天）
@@ -4225,8 +4231,26 @@ class AkshareIngestProvider(IngestProviderBase):
 
     # ---- 27. 指标数据（stock_indicator） ----
 
+    @staticmethod
+    def _yuan_to_wan(value) -> float | None:
+        """元 → 万元（stock_indicator.circ_mv/total_mv 表口径=万元，见 daban_load_producer 实证）。
+
+        裁定 #285 残余治本：上游 ak.stock_value_em 返回 总市值/流通市值 单位=元，
+        表口径=万元（tushare daily_basic 惯例承袭），÷1e4 折算；上游缺列/空值返 None。
+        """
+        f = safe_float(value)
+        if f is None:
+            return None
+        return f / 1e4
+
     def _collect_indicator_rows(self, ak, policy, code: str, start_str: str, end_str: str) -> list[tuple]:
-        """获取单只股票的指标行（通用辅助，按日期范围过滤）。"""
+        """获取单只股票的指标行（通用辅助，按日期范围过滤）。
+
+        裁定 #285 残余治本（circ_mv 断供根因）：上游 ak.stock_value_em 本就返回
+        总市值/流通市值（单位=元），原映射仅取 PE/PB/PS/PCF 将市值列丢弃——
+        tushare_daily_basic 07-01 断供后表内 circ_mv/total_mv 永久 NULL。
+        现补全映射（÷1e4 折万元对齐表口径）。
+        """
         rows: list[tuple] = []
         try:
             df = self._call_with_policy(
@@ -4252,13 +4276,58 @@ class AkshareIngestProvider(IngestProviderBase):
                     safe_float(row.get("市销率")),
                     safe_float(row.get("市现率")),
                     None,  # dividend_yield 接口未提供
+                    self._yuan_to_wan(row.get("总市值")),
+                    self._yuan_to_wan(row.get("流通市值")),
                     "akshare",
                 )
             )
         return rows
 
+    #: 写前主键去重的最大窗口（天）：超出视为全量重建语义，跳过键集预查（内存保护）
+    _INDICATOR_DEDUP_MAX_WINDOW_DAYS = 62
+
+    def _load_indicator_complete_keys(self, table: str, start_str: str, end_str: str) -> set[tuple[str, str]]:
+        """预查窗口内已完成主键集 {(trade_date_iso, symbol)}（裁定 #285 双批幂等治本）。
+
+        完成定义=data_source='akshare' 且 circ_mv 非空（本链路产出的完整行）。
+        已完成键不再重插（消灭断点续传边界日重采双批）；未完成键仍插=升级路径。
+        CH 不可达/查询失败返回空集（降级为旧行为重插，由 ReplacingMergeTree 兜底），
+        不阻断采集。只读经 ch_reader（zephyr_reader 账号，与 consensus_daily_compute
+        同款 provider 内只读先例）。
+        """
+        try:
+            from datetime import date as _date
+
+            d0 = _date.fromisoformat(start_str)
+            d1 = _date.fromisoformat(end_str)
+            if (d1 - d0).days > self._INDICATOR_DEDUP_MAX_WINDOW_DAYS:
+                self._log.info(
+                    f"stock_indicator 写前去重跳过: 窗口 {start_str}~{end_str} 超过"
+                    f" {self._INDICATOR_DEDUP_MAX_WINDOW_DAYS} 天（全量重建语义）"
+                )
+                return set()
+            from zephyr.data import ch_reader
+
+            tsv = ch_reader.query(
+                _SQL_INDICATOR_COMPLETE_KEYS.format(
+                    table=table, start=start_str, end=end_str
+                )
+            )
+            keys: set[tuple[str, str]] = set()
+            for line in tsv.splitlines():
+                line = line.strip()
+                if not line:
+                    continue
+                parts = line.split("\t")
+                if len(parts) >= 2:
+                    keys.add((parts[0], parts[1]))
+            return keys
+        except Exception as e:  # noqa: BLE001 — 去重失败降级不阻断采集
+            self._log.warning(f"stock_indicator 完成键预查失败（降级为直接重插）: {e}")
+            return set()
+
     def _fetch_stock_indicator(self, payload: FetchPayload, policy: SourcePolicy) -> Iterator[FetchResult]:
-        """获取指标数据(PE/PB/PS/PCF)，写入 c1_market.stock_indicator。
+        """获取指标数据(PE/PB/PS/PCF/市值)，写入 c1_market.stock_indicator。
 
         调用 ak.stock_value_em(symbol) 逐只获取历史指标。
         dividend_yield 接口未提供，填 None。
@@ -4266,6 +4335,13 @@ class AkshareIngestProvider(IngestProviderBase):
         #ARCH-PARALLEL-STOCK-INDICATOR（2026-08-09 治本）：
         原串行 5000只×~1s=90min，逼近6h STALE红线被 reaped。
         改 ThreadPoolExecutor 并行（参照 _fetch_daily_valuation 已验证模式）。
+
+        裁定 #285 残余治本（双批幂等性）：增量窗口与断点续传天然存在边界日重叠
+        （last_key=start=最后采集日），重采即插第二版本行，ReplacingMergeTree 无
+        version 列合并时任意胜出——曾把一次性回填的 synth circ_mv 版本整体吞掉。
+        治本=写前按主键 (trade_date,symbol) 条件去重：已完成行（akshare 且
+        circ_mv 非空）不再重插；未完成行仍插（升级路径）。窗口>62 天的全量重建
+        跳过该去重（重建语义本就全量重写，且避免大窗口键集内存膨胀）。
         """
         from concurrent.futures import ThreadPoolExecutor, as_completed
 
@@ -4280,6 +4356,8 @@ class AkshareIngestProvider(IngestProviderBase):
             "ps",
             "pcf",
             "dividend_yield",
+            "total_mv",
+            "circ_mv",
             "data_source",
         ]
         symbols = payload.symbols
@@ -4290,6 +4368,9 @@ class AkshareIngestProvider(IngestProviderBase):
         end_str = payload.end.isoformat()
         batch_rows: list[tuple] = []
         t0 = time.monotonic()
+
+        # 写前主键去重（裁定 #285）：已完成键集（增量小窗口才查，防全量重建内存膨胀）
+        complete_keys = self._load_indicator_complete_keys(table, start_str, end_str)
 
         _MAX_WORKERS = 4  # 保守并发，与 _fetch_daily_valuation 一致
 
@@ -4311,6 +4392,7 @@ class AkshareIngestProvider(IngestProviderBase):
 
             done = 0
             total = len(future_to_code)
+            skipped = 0
             for fut in as_completed(future_to_code):
                 code = future_to_code[fut]
                 try:
@@ -4318,6 +4400,10 @@ class AkshareIngestProvider(IngestProviderBase):
                 except Exception as e:  # noqa: BLE001 — 5.135治标
                     self._log.warning(f"stock_indicator {code} 并行任务异常: {e}")
                     rows = []
+                if complete_keys:
+                    fresh = [r for r in rows if (r[0], r[1]) not in complete_keys]
+                    skipped += len(rows) - len(fresh)
+                    rows = fresh
                 batch_rows.extend(rows)
                 done += 1
                 if done % 100 == 0:
@@ -4332,6 +4418,11 @@ class AkshareIngestProvider(IngestProviderBase):
                     )
                     batch_rows.clear()
 
+        if skipped:
+            self._log.info(
+                f"stock_indicator 写前去重(裁定#285): 跳过已完成键 {skipped} 行"
+                f"（窗口 {start_str}~{end_str}，完成键 {len(complete_keys)} 个）"
+            )
         yield FetchResult(
             table=table,
             columns=columns,

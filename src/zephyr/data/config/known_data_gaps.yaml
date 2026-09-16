@@ -674,19 +674,38 @@ gaps:
     table: "c1_market.stock_indicator"
     gap_type: "date_range"
     start_date: "2026-07-01"   # 实测最后有值日 2026-06-30（交接文档称 09-04 起，探针口径有误，已修正）
-    end_date: "2026-09-14"
+    end_date: "2026-09-15"   # #285 修订：09-15 行在值空（边界日重采吞并 synth 版本+断供未补），07-01~09-15 全窗口经采集正道重采真源补齐
     date_column: "trade_date"
     detection_threshold: 5500  # circ_mv 非空行 < 5500/日 = 断供
     expected_daily_avg: 5508   # 06-30 tushare_daily_basic 真实覆盖（11,016 行 FINAL 后 5,508 股）
     actual_daily_avg: 0        # 07-01~09-14 circ_mv/total_mv 100% NULL（299,789 行）
     status: "resolved"  # 2026-09-15 st-circmv-synthcw-20260915 回填 297,003 行：方案 J §1 口径 circ_mv=circ_shares×close——股本基线=06-30 真实 circ_mv/kline_daily 06-30 close 反推（万元量纲），乘以各日 kline_daily A_share close（argMax 防重）；INSERT 新版本行携带原行 pe/pb/ps/pcf/dividend_yield 防丢，data_source='synth_shares_close' 诚实标记；FINAL 视角逐日覆盖 99.89%→98.87%
-    root_cause: "tushare_daily_basic 源 07-01 起 circ_mv/total_mv 字段断供（最后有值 2026-06-30）；akshare 侧 stock_indicator 行照常写入（data_source='akshare'）但市值列 NULL。断供起点早于交接文档所述 09-04 达两个多月。"
+    root_cause: "tushare_daily_basic 源 07-01 起 circ_mv/total_mv 字段断供（最后有值 2026-06-30）；akshare 侧 stock_indicator 行照常写入（data_source='akshare'）但市值列 NULL。断供起点早于交接文档所述 09-04 达两个多月。#285 沙箱推翻'akshare 无市值'假设：ak.stock_value_em 全史返回 总市值/流通市值（元），真因=采集链字段映射仅取 PE/PB/PS/PCF 把市值列硬丢弃——tushare 断供只是历史断供面，akshare 链从未供过 circ_mv，synth 回填不是采集链一部分故边界日重采即被合并仲裁吞并。"
     impact: "①方案 J 市值/股本加权合成无权重源（本回填主因）；②所有用 circ_mv/total_mv 的估值/权重消费方 07-01 后空转。"
     resolution_plan: "已完成（INSERT 股本反推回填）。长期：tushare_daily_basic 断链恢复或 daily_valuation 数值修复后，用真源重灌并保 data_source 可识别。"
     primary_alternative: "本回填（synth_shares_close）即当前替代口径；送转除权自动相抵（股本↑价↓），残余误差=增发/回购/解禁（少数股，板块级影响微小）。"
     evidence: "回填脚本 .runtime/tmp/backfill_circ_mv.py（DRY-RUN 297,003 行/5,508 股/54 日，连续性：06-30 真实 105.69 万亿→07-01 合成 106.10 万亿 +0.4%→09-14 96.83 万亿）；残余缺口：07 月后上市新股无 06-30 基线（约 60 只，1.1%，权重影响微小）"
     created: "2026-09-15"
-    last_updated: "2026-09-15"
+    last_updated: "2026-09-16"
+
+  # === 2026-09-16: stock_indicator 双批+边界日重采吞并 synth circ_mv 行（裁定#285 治本） ===
+  - id: "stock_indicator_boundary_redup_wipe"
+    table: "c1_market.stock_indicator"
+    gap_type: "pipeline_idempotency"
+    start_date: "2026-09-14"
+    end_date: "2026-09-15"
+    date_column: "trade_date"
+    detection_threshold: 5500
+    expected_daily_avg: 5508
+    actual_daily_avg: 0   # 09-14/09-15 circ_mv 非空 0（synth 版本被合并仲裁吞并）
+    status: "resolved"   # 裁定#285（st-stkind-20260916）治本：provider 补 total_mv/circ_mv 映射（元÷1e4=万元）+ 写前完成键预查去重（≤62 天窗口，fail-open）；存量=备份后采集正道重采 07-01~09-16（真上游数据替换 synth hack）+ OPTIMIZE FINAL 收敛
+    root_cause: "双批形态=增量断点续传边界日重叠（last_key=最后采集日=下次 start）逐日重插第二版本行 + 09-15 synth 一次性回填对 07-01~09-14 已采日期插平行版本 → GW-G2 实测 09-14 raw 11112 行=双版本并存；ReplacingMergeTree 无 version 列合并任意版本胜出，09-15 晚间增量重采 09-14/09-15 的新 part 合并时整体胜过 synth 版本 → circ_mv 从 5556 非空被打回 0（09-11 则任意留存 5488 合成行）——这正是合成行不进采集链的结构性脆弱。"
+    impact: "daban 四引擎 float_market_cap 09-15 负载行降级 default；任何以 raw 视角读该表的消费方见到双批。"
+    resolution_plan: "已完成（#285）。下游 daban_engine_load 已落 default 行不强行改写：重算路径=盘后 daily_kline 批内 DAG（daban_board_event_derive→daban_engine_load_daily）按事件日窗口 ReplacingMergeTree (trade_date,symbol) 同键重放幂等，重放即恢复 real——事件日 09-15 的 default 行须显式重跑 daban_engine_load_daily 才回 real，登记待 Owner/盘后批决断。"
+    primary_alternative: "写前主键去重后稳态无重复；上游若再断供，回退口径=股本反推法（本表 synth_shares_close 前例）。"
+    evidence: "备份 data/backup/stock_indicator_circmv_20260916/（202607/202608/202609 三分区原始全版本 552,159 行+progress db 快照）；上游沙箱 ak.stock_value_em('000001') 2113 行全史含 总市值/流通市值（09-14=2.2996e11 元）；09-15 FINAL circ_mv 非空 0→5562（重采后）；采集链修复见 akshare_provider._yuan_to_wan/_load_indicator_complete_keys/_fetch_stock_indicator"
+    created: "2026-09-16"
+    last_updated: "2026-09-16"
 
   # === 2026-09-15: 逆势榜指数腿 index_quote 采集残缺（每日仅 ~12 快照） ===
   - id: "index_quote_minute_sparse"
