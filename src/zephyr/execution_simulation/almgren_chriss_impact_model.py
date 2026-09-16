@@ -28,37 +28,7 @@ B3-06286（AUD-DRAFT-001-DIGEST P2 波 P2-W08，CAND-EXSIM-001，B3 R-118）：
 场景），含衰减曲线与参数估计器，不改动既有 slippage 链路。本件纯数学
 无时间/随机需求——无需时钟/随机源注入点。
 
-# [ALGO_FLOW]
-# 层: 输入
-# - id: I1
-#   name: params 参数
-#   fields: 参数 params（无注解）
-#   code: almgren_chriss_impact_model.py 顶层公共函数形参（AST 提取）
-# - id: I2
-#   name: decay_lambda 参数
-#   fields: 参数 decay_lambda（无注解）
-#   code: almgren_chriss_impact_model.py 顶层公共函数形参（AST 提取）
-# 层: 算法
-# - id: A1
-#   name_zh: ① AlmgrenChrissImpactModel
-#   name_en: AlmgrenChrissImpactModel
-#   intro: Almgren-Chriss 冲击成本模型（临时+永久参数化 + 衰减曲线 + 估计器）。
-#   desc: Almgren-Chriss 冲击成本模型（临时+永久参数化 + 衰减曲线 + 估计器）。；公共方法（定义序）: params, temporary_impact, permanent_impact, quote, d…
-#   inputs: params decay_lambda
-#   outputs: 返回值
-#   （注：A1 之后另有 7 个公共定义未列入（含 7 个数据契约/异常/枚举声明类），见源码）
-# 层: 输出
-# - id: O1
-#   name_zh: 模块公共 API 面（8 定义）
-#   name_en: public defs
-#   intro: AlmgrenChrissImpactModel
-#   downstream: 运行时装配批（执行仿真/回测冲击成本真源装配）
-# [/ALGO_FLOW]
-#
-# 边:
-# I1 --> A1
-# I2 --> A1
-# A1 --> O1
+# [ALGO_FLOW] external: docs/03_modules/_domain_execution_sim/algo_flow/almgren_chriss_impact_model.yaml
 """
 
 from __future__ import annotations

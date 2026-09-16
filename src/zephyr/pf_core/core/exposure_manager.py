@@ -31,43 +31,7 @@ concentration_monitor（MOD-RK-07）=HHI/集中度三级告警；constraint_solv
 依据: blueprint.md（MOD-PF-011）§1 规则
 Version: 0.1.0
 
-# [ALGO_FLOW]
-# 层: 输入
-# - id: I1
-#   name: 组合持仓 + 行业映射（申万31）
-#   fields: positions {symbol: weight}（非负归一化）; industry_map {symbol: industry}
-# - id: I2
-#   name: 基准（二选一）
-#   fields: benchmark_weights（经映射合成行业权重）或 benchmark_industry_weights 直注
-# - id: I3
-#   name: 风格载荷 + 基准风格 + 行业动量
-#   fields: style_loadings/benchmark_style_exposures/industry_momentum（可选注入）
-# 层: 算法
-# - id: A1
-#   name_zh: ① 主动敞口计算
-#   name_en: _active
-#   intro: industry_active=p−b; style_active=Σw_p×loading−benchmark_style
-# - id: A2
-#   name_zh: ② 偏离分级
-#   name_en: _deviations
-#   intro: |active|>breach→BREACH, ≥warn→WARNING, 按|active/limit|降序
-# - id: A3
-#   name_zh: ③ 行业轮动信号
-#   name_en: _rotation
-#   intro: 动量横截面排名: top_n且active<band→OVERWEIGHT; bottom_n且active>−band→UNDERWEIGHT
-# 层: 输出
-# - id: O1
-#   name: ActiveExposureReport
-#   fields: industry_active/style_active/deviations/rotation/uncovered_symbols（frozen）
-# 边:
-# I1 --> A1
-# I2 --> A1
-# I3 --> A1
-# A1 --> A2
-# A1 --> A3
-# A2 --> O1
-# A3 --> O1
-# [/ALGO_FLOW]
+# [ALGO_FLOW] external: docs/03_modules/_domain_portfolio_core/algo_flow/exposure_manager.yaml
 """
 
 from __future__ import annotations

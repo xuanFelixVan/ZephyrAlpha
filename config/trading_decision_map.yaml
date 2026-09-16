@@ -3850,6 +3850,7 @@ nodes:
 
   # C3 树枝：多维归因→{升降级评审/权重调权/参数校准/可靠度养成}（结论分发四路）
 - node_id: TDM-F-C3-01
+  note_confirmed: 2026-09-16  # grp4p1s1 出仓复核：机器块搬 yaml，算法口径逐字未变
   name_zh: 多维归因引擎
   market: cn_a
   flow: portfolio_flow

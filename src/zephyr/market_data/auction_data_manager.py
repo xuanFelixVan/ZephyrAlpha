@@ -37,68 +37,7 @@ D-DATA-32 A股集合竞价数据管理器（B10-02234 canonical + B13-04251 归�
 依据: D-DATA-32 §30.3.1（B10-02234）+ A3数据架构 §17.1（B13-04251）；
 construction_backlog_dig.tsv 双 D-DATA-32 撞名裁定。
 
-# [ALGO_FLOW]
-# 层: 输入
-# - id: I1
-#   name: ts 参数
-#   fields: 参数 ts，类型注解 datetime.datetime
-#   code: auction_data_manager.py 顶层公共函数形参（AST 提取）
-# - id: I2
-#   name: raw 参数
-#   fields: 参数 raw，类型注解 Mapping[str, Any]
-#   code: auction_data_manager.py 顶层公共函数形参（AST 提取）
-# - id: I3
-#   name: trade_date 参数
-#   fields: 参数 trade_date（无注解）
-#   code: auction_data_manager.py 顶层公共函数形参（AST 提取）
-# - id: I4
-#   name: session 参数
-#   fields: 参数 session（无注解）
-#   code: auction_data_manager.py 顶层公共函数形参（AST 提取）
-# 层: 算法
-# - id: A1
-#   name_zh: ① session_of
-#   name_en: session_of
-#   intro: 判定时间戳所属竞价时段（含端点），窗口外返回 None。
-#   desc: 判定时间戳所属竞价时段（含端点），窗口外返回 None。；源码 L176-L182
-#   inputs: ts
-#   outputs: AuctionSession | None
-# - id: A2
-#   name_zh: ② validate_tick
-#   name_en: validate_tick
-#   intro: 把原始 tick 规范化为 AuctionSnapshotRecord（Fail-Closed）。
-#   desc: 把原始 tick 规范化为 AuctionSnapshotRecord（Fail-Closed）。 Args: raw: 原始 tick（fetcher/loader 产出的 M…；源码 L317-L361
-#   inputs: raw trade_date session data_source
-#   outputs: AuctionSnapshotRecord
-# - id: A3
-#   name_zh: ③ AuctionDataManager
-#   name_en: AuctionDataManager
-#   intro: A股集合竞价数据管理器（采集编排 + 回放供数，三面全注入无 IO）。
-#   desc: A股集合竞价数据管理器（采集编排 + 回放供数，三面全注入无 IO）。；公共方法（定义序）: collect_session, replay；源码 L369-L558
-#   inputs: 无参数
-#   outputs: 返回值
-#   （注：A3 之后另有 7 个公共定义未列入（含 7 个数据契约/异常/枚举声明类），见源码）
-# 层: 输出
-# - id: O1
-#   name_zh: AuctionSession | None
-#   name_en: AuctionSession | None
-#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
-#   downstream: MOD-SIG-089 auction_microstructure_analyzer（快照注入面）；MOD-PLAN-015 auction_hit_rec…
-# - id: O2
-#   name_zh: AuctionSnapshotRecord
-#   name_en: AuctionSnapshotRecord
-#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
-#   downstream: MOD-SIG-089 auction_microstructure_analyzer（快照注入面）；MOD-PLAN-015 auction_hit_rec…
-# [/ALGO_FLOW]
-#
-# 边:
-# I1 --> A1
-# I2 --> A1
-# I3 --> A1
-# I4 --> A1
-# A1 --> A2
-# A2 --> A3
-# A3 --> O1
+# [ALGO_FLOW] external: docs/03_modules/_domain_mkt_data/algo_flow/auction_data_manager.yaml
 """
 
 from __future__ import annotations

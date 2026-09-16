@@ -32,38 +32,7 @@ ADV/参与率上限/换手率/冲击成本容忍度四约束合成策略容量�
 依据: blueprint.md（MOD-PF-012）§1 规则
 Version: 0.1.0
 
-# [ALGO_FLOW]
-# 层: 输入
-# - id: I1
-#   name: 标的 ADV 表
-#   fields: adv_values {symbol: 日成交额>0}
-# - id: I2
-#   name: 策略参数
-#   fields: daily_turnover>0; participation_max; impact_tolerance_bps; current_aum≥0
-# 层: 算法
-# - id: A1
-#   name_zh: ① 有效参与率
-#   name_en: _effective_participation
-#   intro: p_impact=(tolerance/coef)²; effective=min(p_max,p_impact); 记录绑定约束
-# - id: A2
-#   name_zh: ② 容量与利用率
-#   name_en: estimate
-#   intro: capacity=Σadv×effective/turnover; utilization=current/capacity
-# - id: A3
-#   name_zh: ③ 预警与扩容建议
-#   name_en: _alert_advice
-#   intro: ≥1.0 BREACH(+DELEVERAGE), ≥0.8 WARNING; 建议按绑定约束枚举产出
-# 层: 输出
-# - id: O1
-#   name: StrategyCapacityReport
-#   fields: capacity_aum/binding/effective_participation/utilization/alert/advice（frozen）
-# 边:
-# I1 --> A2
-# I2 --> A1
-# A1 --> A2
-# A2 --> A3
-# A3 --> O1
-# [/ALGO_FLOW]
+# [ALGO_FLOW] external: docs/03_modules/_domain_portfolio_core/algo_flow/strategy_capacity_estimator.yaml
 """
 
 from __future__ import annotations

@@ -1,0 +1,70 @@
+# ALGO_FLOW 外部真源——multifactor_constraint_arbitration（_domain_portfolio_core 域，真源 src/zephyr/pf_core/core/multifactor_constraint_arbitration.py）
+# 2026-09-15 P2-1 契约头减负批量出仓：docstring 内联块逐字节副本，extractor 经
+# external 锚加载走同一 parse_algo_flow 管线；算法公共面变化时同步更新本块。
+doc_type: architecture_view
+ttl: permanent
+module: src.zephyr.pf_core.core.multifactor_constraint_arbitration
+source_of_truth: src/zephyr/pf_core/core/multifactor_constraint_arbitration.py
+algo_flow: |
+    # [ALGO_FLOW]
+    # 层: 输入
+    # - id: I1
+    #   name: violations 参数
+    #   fields: 参数 violations，类型注解 list[ConstraintViolation]
+    #   code: multifactor_constraint_arbitration.py 顶层公共函数形参（AST 提取）
+    # - id: I2
+    #   name: universe_size 参数
+    #   fields: 参数 universe_size，类型注解 int
+    #   code: multifactor_constraint_arbitration.py 顶层公共函数形参（AST 提取）
+    # - id: I3
+    #   name: as_of_date 参数
+    #   fields: 参数 as_of_date，类型注解 datetime
+    #   code: multifactor_constraint_arbitration.py 顶层公共函数形参（AST 提取）
+    # - id: I4
+    #   name: idempotency_key 参数
+    #   fields: 参数 idempotency_key，类型注解 str
+    #   code: multifactor_constraint_arbitration.py 顶层公共函数形参（AST 提取）
+    # 层: 算法
+    # - id: A1
+    #   name_zh: ① ConstraintViolation
+    #   name_en: ConstraintViolation
+    #   intro: 单条约束违规记录。
+    #   desc: 单条约束违规记录。 Attributes: constraint_id: "C1".."C7" magnitude: 违反幅度（如超出上限的绝对值） detail: 人类可读说明；公共方法（定义序）: is_hard；…
+    #   inputs: 无参数
+    #   outputs: 返回值
+    # - id: A2
+    #   name_zh: ② arbitrate
+    #   name_en: arbitrate
+    #   intro: 7 约束链冲突仲裁——优化器求解后处理层。
+    #   desc: 7 约束链冲突仲裁——优化器求解后处理层。 决策逻辑（25号memo §3.7#2）： ① 无违反 → FEASIBLE / ACCEPT ② 仅软约束违反 → SOFT_VIO…；源码 L206-L244
+    #   inputs: violations universe_size
+    #   outputs: ArbitrationResult
+    # - id: A3
+    #   name_zh: ③ build_multifactor_risk_limits
+    #   name_en: build_multifactor_risk_limits
+    #   intro: C1-C7 策略级约束 → CTR-003 RiskLimits 注入（多因子 sleeve 上线前对齐）。
+    #   desc: C1-C7 策略级约束 → CTR-003 RiskLimits 注入（多因子 sleeve 上线前对齐）。 可映射项：C1 单票≤2% → max_single_positio…；源码 L247-L265
+    #   inputs: as_of_date idempotency_key
+    #   outputs: RiskLimits
+    #   （注：A3 之后另有 3 个公共定义未列入（含 3 个数据契约/异常/枚举声明类），见源码）
+    # 层: 输出
+    # - id: O1
+    #   name_zh: ArbitrationResult
+    #   name_en: ArbitrationResult
+    #   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+    #   downstream: multifactor_pit_backtest; PortfolioOptimizer 后处理层
+    # - id: O2
+    #   name_zh: RiskLimits
+    #   name_en: RiskLimits
+    #   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+    #   downstream: multifactor_pit_backtest; PortfolioOptimizer 后处理层
+    # [/ALGO_FLOW]
+    #
+    # 边:
+    # I1 --> A1
+    # I2 --> A1
+    # I3 --> A1
+    # I4 --> A1
+    # A1 --> A2
+    # A2 --> A3
+    # A3 --> O1

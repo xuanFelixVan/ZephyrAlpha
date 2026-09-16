@@ -26,47 +26,7 @@
 谁来管"的断裂点——每日盘后监控因子暴露偏差（C6 边界 ±10%）与行业偏离
 （C2 边界 ±5%），critical 时触发 RebalanceTrigger 强制换仓（覆盖三触发器）。
 
-# [ALGO_FLOW]
-# 层: 输入
-# - id: I1
-#   name: current_factor_exposure 参数
-#   fields: 参数 current_factor_exposure，类型注解 dict[str, float] | None
-#   code: multifactor_holding_drift_monitor.py 顶层公共函数形参（AST 提取）
-# - id: I2
-#   name: target_factor_exposure 参数
-#   fields: 参数 target_factor_exposure，类型注解 dict[str, float] | None
-#   code: multifactor_holding_drift_monitor.py 顶层公共函数形参（AST 提取）
-# - id: I3
-#   name: current_industry_exposure 参数
-#   fields: 参数 current_industry_exposure，类型注解 dict[str, float] | None
-#   code: multifactor_holding_drift_monitor.py 顶层公共函数形参（AST 提取）
-# - id: I4
-#   name: target_industry_exposure 参数
-#   fields: 参数 target_industry_exposure，类型注解 dict[str, float] | None
-#   code: multifactor_holding_drift_monitor.py 顶层公共函数形参（AST 提取）
-# 层: 算法
-# - id: A1
-#   name_zh: ① monitor
-#   name_en: monitor
-#   intro: 持仓偏差监控（每日盘后）。
-#   desc: 持仓偏差监控（每日盘后）。 Returns: HoldingDriftReport。critical>0 → should_trigger_rebalance=True， 触发…；源码 L143-L185
-#   inputs: current_factor_exposure target_factor_exposure current_industry_expos…
-#   outputs: HoldingDriftReport
-#   （注：A1 之后另有 4 个公共定义未列入（含 4 个数据契约/异常/枚举声明类），见源码）
-# 层: 输出
-# - id: O1
-#   name_zh: HoldingDriftReport
-#   name_en: HoldingDriftReport
-#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
-#   downstream: multifactor_pit_backtest; PortfolioOptimizer 每日盘后调用
-# [/ALGO_FLOW]
-#
-# 边:
-# I1 --> A1
-# I2 --> A1
-# I3 --> A1
-# I4 --> A1
-# A1 --> O1
+# [ALGO_FLOW] external: docs/03_modules/_domain_portfolio_core/algo_flow/multifactor_holding_drift_monitor.yaml
 """
 
 from __future__ import annotations

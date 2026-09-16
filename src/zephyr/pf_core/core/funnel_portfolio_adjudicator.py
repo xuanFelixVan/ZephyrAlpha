@@ -28,43 +28,7 @@ corr<0.7 过滤 + C-045 拥挤度降权 + C-036 合力偏空整体降仓。
 依据: blueprint.md（MOD-PF-010）§1 规则
 Version: 0.1.0
 
-# [ALGO_FLOW]
-# 层: 输入
-# - id: I1
-#   name: 候选清单 FunnelCandidate
-#   fields: symbol/score/industry/market_cap/volatility/max_drawdown/style_loadings/crowding_score
-# - id: I2
-#   name: 相关性矩阵 + 基准行业权重 + 偏空标记
-#   fields: correlations {(a,b):corr}（缺失按0计披露）; benchmark_industry_weights; bearish
-# 层: 算法
-# - id: A1
-#   name_zh: ① 拥挤度降权+确定性排序
-#   name_en: _adjusted_score
-#   intro: crowding≥warn→score×(1−derate×crowding)；adjusted降序+symbol升序
-# - id: A2
-#   name_zh: ② 贪心遴选（corr/行业/市值桶）
-#   name_en: _greedy_select
-#   intro: |corr|≥limit跳过；行业≤min(abs_cap,基准+band)；单桶≤bucket_cap（按1/max_names投影）
-# - id: A3
-#   name_zh: ③ 风险预算与风格淘汰
-#   name_en: _enforce_budgets
-#   intro: |风格|超限→淘汰最大贡献者；σp/MaxDD超限→淘汰最低adjusted；重算至满足
-# - id: A4
-#   name_zh: ④ 偏空降仓与装配
-#   name_en: adjudicate
-#   intro: bearish→权重×bearish_gross；装 FunnelPortfolioVerdict（frozen）
-# 层: 输出
-# - id: O1
-#   name: FunnelPortfolioVerdict
-#   fields: picks(N≤10含权重)/rejected(逐因)/gross_scale/组合诊断/missing_corr_pairs
-# 边:
-# I1 --> A1
-# I2 --> A2
-# A1 --> A2
-# A2 --> A3
-# A3 --> A4
-# A4 --> O1
-# [/ALGO_FLOW]
+# [ALGO_FLOW] external: docs/03_modules/_domain_portfolio_core/algo_flow/funnel_portfolio_adjudicator.yaml
 """
 
 from __future__ import annotations

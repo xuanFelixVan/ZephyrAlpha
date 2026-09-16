@@ -1,0 +1,49 @@
+# ALGO_FLOW 外部真源——multifactor_rebalance_trigger（_domain_portfolio_core 域，真源 src/zephyr/pf_core/core/multifactor_rebalance_trigger.py）
+# 2026-09-15 P2-1 契约头减负批量出仓：docstring 内联块逐字节副本，extractor 经
+# external 锚加载走同一 parse_algo_flow 管线；算法公共面变化时同步更新本块。
+doc_type: architecture_view
+ttl: permanent
+module: src.zephyr.pf_core.core.multifactor_rebalance_trigger
+source_of_truth: src/zephyr/pf_core/core/multifactor_rebalance_trigger.py
+algo_flow: |
+    # [ALGO_FLOW]
+    # 层: 输入
+    # - id: I1
+    #   name: days_since_last 参数
+    #   fields: 参数 days_since_last，类型注解 int
+    #   code: multifactor_rebalance_trigger.py 顶层公共函数形参（AST 提取）
+    # - id: I2
+    #   name: weight_drift 参数
+    #   fields: 参数 weight_drift，类型注解 float | None
+    #   code: multifactor_rebalance_trigger.py 顶层公共函数形参（AST 提取）
+    # - id: I3
+    #   name: top30_rank_change 参数
+    #   fields: 参数 top30_rank_change，类型注解 float | None
+    #   code: multifactor_rebalance_trigger.py 顶层公共函数形参（AST 提取）
+    # - id: I4
+    #   name: params 参数
+    #   fields: 参数 params，类型注解 RebalanceTriggerParams | None
+    #   code: multifactor_rebalance_trigger.py 顶层公共函数形参（AST 提取）
+    # 层: 算法
+    # - id: A1
+    #   name_zh: ① should_rebalance
+    #   name_en: should_rebalance
+    #   intro: 换仓触发决策——三触发器 + Inaction Cost 成本门控。
+    #   desc: 换仓触发决策——三触发器 + Inaction Cost 成本门控。 Args: days_since_last: 距上次换仓交易日数 weight_drift: 组合权重漂移（…；源码 L144-L238
+    #   inputs: days_since_last weight_drift top30_rank_change params
+    #   outputs: RebalanceDecision
+    #   （注：A1 之后另有 3 个公共定义未列入（含 3 个数据契约/异常/枚举声明类），见源码）
+    # 层: 输出
+    # - id: O1
+    #   name_zh: RebalanceDecision
+    #   name_en: RebalanceDecision
+    #   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+    #   downstream: multifactor_pit_backtest; multifactor_holding_drift_monitor(critical强制换仓)
+    # [/ALGO_FLOW]
+    #
+    # 边:
+    # I1 --> A1
+    # I2 --> A1
+    # I3 --> A1
+    # I4 --> A1
+    # A1 --> O1

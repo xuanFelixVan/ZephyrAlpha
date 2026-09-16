@@ -18,31 +18,7 @@
 """
 
 
-# [ALGO_FLOW]
-# 层: 输入
-# - id: I1
-#   name: NormalizedMarketData 契约
-#   fields: 标准化行情数据契约（来自共享契约层）
-#   code: zephyr.shared.contracts.market_data.NormalizedMarketData
-# 层: 算法
-# - id: A1
-#   name_zh: ① 包入口再导出
-#   name_en: zephyr.market_data.__init__
-#   intro: 把共享契约里的标准化行情数据类型提为包级公开符号
-#   desc: import + __all__ 导出 NormalizedMarketData，统一 D_MKT_DATA 域包级访问入口
-#   inputs: I1
-#   outputs: 包级符号 NormalizedMarketData
-# 层: 输出
-# - id: O1
-#   name_zh: NormalizedMarketData 包级符号
-#   name_en: NormalizedMarketData
-#   intro: 域内各模块经包入口统一引用标准化行情数据契约
-#   downstream: 无下游/内部使用（D_MKT_DATA 域内模块）
-# [/ALGO_FLOW]
-#
-# 边:
-# I1 --> A1
-# A1 --> O1
+# [ALGO_FLOW] external: docs/03_modules/_domain_mkt_data/algo_flow/market_data__init__.yaml
 """
 
 from zephyr.shared.contracts.market_data import NormalizedMarketData
