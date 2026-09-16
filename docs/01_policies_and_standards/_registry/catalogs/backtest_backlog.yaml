@@ -1861,3 +1861,36 @@ objects:
     frozen_at: '2026-09-12'
     freeze_ruling: Owner 通宵施工指令（2026-09-12）"尽量不要留下任何需要我裁定的内容"+既定夜班 AI 自裁授权：阈值数值依据 validation_method_registry.yaml
       裁定土规线（滑点 20/40bp）与 agg_discrimination verdict_mapping 推导，提案过程见 threshold 源字段；冻结后只许批次决策点公开修订并留痕
+- object_id: BT-P1-030
+  node_ids: []
+  node_type: strategy_template
+  layer: L2板块
+  map_layer: sector_rotation
+  flow: factory_flow
+  market: cn_a
+  module_ref: 板块轮动策略包模板（880 板块分钟数据在库，轮动策略缺=Owner 愿景映射矩阵 L2 薄层）
+  testable: true
+  confidence: untested
+  plan_note: Owner 愿景映射（docs/_working/trading_vision/2026-09-16-owner-vision-system-mapping.md）缺口件；策略假设与考试规格未预注册，E4 考前须批次决策点冻结
+- object_id: BT-P1-031
+  node_ids: []
+  node_type: orchestration_loop
+  layer: L4组合
+  map_layer: cross_cutting
+  flow: cross_flow
+  market: cn_a
+  module_ref: 组合日度编排闭环——晨取 regime 状态→定策略包→定仓位→盘中执行→收盘复盘的每日自动串联（含今日不交易权）
+  testable: true
+  confidence: untested
+  plan_note: Owner 愿景映射 L4 缺电件；依赖 pf_alloc production 接线（裁定#257②触发条件）；编排器设计须先落蓝图过审
+- object_id: BT-P2-055
+  node_ids: []
+  node_type: execution_template
+  layer: L5执行
+  map_layer: execution
+  flow: factory_flow
+  market: cn_a
+  module_ref: 底仓+日内回转执行模板——A股 T+1 底仓T 结构显式建模（日回转额度≤前收盘持仓），S-OWNER-001 做T 臂的执行底座
+  testable: true
+  confidence: untested
+  plan_note: Owner 愿景映射 L5 缺件；与 H2 真成本模型联调（做T 次数/成本上限参数化）

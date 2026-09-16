@@ -27147,4 +27147,20 @@ creation_tokens:
   token: secret-registry-drift-secret-registry-drift-20260916
   created_by: st-maint-20260916
   capability: secret_registry_drift
+- file: docs/_working/trading_vision/2026-09-16-owner-vision-system-mapping.md
+  token: owner-vision-mapping-2026-09-16-owner-vision-system-mapping-20260916
+  created_by: st-overseer-20260916
+  capability: owner_vision_mapping
+- file: docs/_working/factory/strategy_cards/2026-09-16-s-owner-001-300etf-band-t.md
+  token: owner-strategy-cards-2026-09-16-s-owner-001-300etf-band-t-20260916
+  created_by: st-overseer-20260916
+  capability: owner_strategy_cards
+- file: docs/_working/factory/strategy_cards/2026-09-16-s-owner-002-regime-switcher.md
+  token: owner-strategy-cards-2026-09-16-s-owner-002-regime-switcher-20260916
+  created_by: st-overseer-20260916
+  capability: owner_strategy_cards
+- file: docs/_working/ai_layer_vision/ai_layer_vision_and_roadmap_v1.md
+  token: ai-layer-vision-ai-layer-vision-and-roadmap-v1-20260916
+  created_by: st-ailayer-20260917
+  capability: ai_layer_vision
 di_seam_exemptions: []
