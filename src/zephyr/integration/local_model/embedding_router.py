@@ -5,7 +5,7 @@
 # [CONSUMERS] zephyr.autonomy_core.skills.skill_router; zephyr.integration.vector_memory.in_process_vector_memory; zephyr.integration.pipeline_orchestrator; zephyr.integration.local_model.local_model_scheduler; zephyr.integration.local_model.__init__; zephyr.trading.auto_runtime_core; tests.automation.test_auto_runtime_core
 # [STARTUP] imported
 # [MATURITY] production
-# [INVARIANTS] none
+# [INVARIANTS] backend=ollama 时单模型 Ollama 不可用/加载异常 MUST 回落 _load_local(同 model_key)——可选增强不得在运行态升级为硬依赖；两后端皆不可用才允许 warmup 落 in_memory
 # [MODIFY-GUARD] none
 # [STABILITY] stable
 # [SAFETY] L
@@ -351,18 +351,26 @@ class EmbeddingRouter:
         self.load_bge_small()
 
     def _load_ollama(self, model_key: str) -> None:
+        """加载 Ollama 嵌入后端；不可用时**真正降级**到 local（SentenceTransformer）。
+
+        治本（2026-09-16，Ollama 依赖定性）：本方法原实现只把 `_bge_*_available` 置
+        False 就返回，与模块 docstring 承诺的降级链（BGE-M3 失败→bge-small→InMemory）
+        不符——Ollama 一掉线整个嵌入栈直接落 InMemory 零向量兜底，把"可选增强"在
+        运行态变成了"硬依赖"。现改为委派 `_load_local(model_key)`：本地模型可加载则
+        照常工作，不可加载时 `_load_local` 自身置 False，warmup 再按既有语义降级。
+        """
         try:
             from zephyr.integration.local_model.ollama_embedding import OllamaEmbedder
 
             model_name = OLLAMA_BGE_M3_MODEL if model_key == "m3" else OLLAMA_BGE_SMALL_MODEL
             embedder = OllamaEmbedder(model=model_name)
             if not embedder.available:
-                if model_key == "m3":
-                    _logger.warning("EmbeddingRouter: Ollama BGE-M3 (%s) 不可用", model_name)
-                    self._bge_m3_available = False
-                else:
-                    _logger.warning("EmbeddingRouter: Ollama bge-small (%s) 不可用", model_name)
-                    self._bge_small_available = False
+                _logger.warning(
+                    "EmbeddingRouter: Ollama %s (%s) 不可用，降级到 local 后端",
+                    "BGE-M3" if model_key == "m3" else "bge-small",
+                    model_name,
+                )
+                self._load_local(model_key)
                 return
 
             if model_key == "m3":
@@ -376,12 +384,13 @@ class EmbeddingRouter:
                 self._bge_small_available = True
                 _logger.info("EmbeddingRouter: Ollama bge-small 就绪 (%s, %dd)", model_name, embedder.dim)
         except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
-            if model_key == "m3":
-                _logger.warning("EmbeddingRouter: Ollama BGE-M3 加载失败: %s", e, exc_info=True)
-                self._bge_m3_available = False
-            else:
-                _logger.warning("EmbeddingRouter: Ollama bge-small 加载失败: %s", e)
-                self._bge_small_available = False
+            _logger.warning(
+                "EmbeddingRouter: Ollama %s 加载失败（%s），降级到 local 后端",
+                "BGE-M3" if model_key == "m3" else "bge-small",
+                e,
+                exc_info=True,
+            )
+            self._load_local(model_key)
 
     def _load_local(self, model_key: str) -> None:
         model_path = self._model_dir_bge_m3 if model_key == "m3" else self._model_dir_bge_small

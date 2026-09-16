@@ -20,6 +20,7 @@
 from __future__ import annotations
 
 import importlib.util
+import re
 from pathlib import Path
 
 import pytest
@@ -163,3 +164,39 @@ class TestLiveSystemEvidence:
         if ver is None:
             pytest.skip("ollama 不在本执行环境 PATH（不影响守卫逻辑正确性）")
         assert g.is_compliant(ver) is True, f"现装 {ver} 仍非合规——须走 --upgrade"
+
+
+class TestServeTaskPreconditionPin:
+    """机器化前置钉（2026-09-16 Ollama 依赖定性）：注册脚本的版本地板与本守卫同源。
+
+    `scripts/register_ollama_serve_task.ps1` 在注册 ZephyrAlpha_OllamaServe 常驻任务前
+    自检 `ollama --version`，<= 地板即 throw（附本守卫 --upgrade 一条命令）。两处阈值
+    若漂移，本测试即红——把"记得升级 Ollama"的人工待办转成断言，不再靠口头。
+    """
+
+    PS1_PATH = REPO_ROOT / "scripts" / "register_ollama_serve_task.ps1"
+
+    def _ps1_text(self) -> str:
+        assert self.PS1_PATH.exists(), "注册脚本消失——Ollama 常驻服务失去版本前置"
+        return self.PS1_PATH.read_text(encoding="utf-8")
+
+    def test_floor_matches_guard_ceiling(self, g):
+        m = re.search(r'\$MinOllamaVersion\s*=\s*"([\d.]+)"', self._ps1_text())
+        assert m, "register_ollama_serve_task.ps1 丢失 $MinOllamaVersion 前置（人工待办会复发）"
+        floor = tuple(int(x) for x in m.group(1).split("."))
+        assert floor == tuple(g.CRASH_BEARING_CEILING), f"阈值漂移: ps1={floor} guard={g.CRASH_BEARING_CEILING}"
+
+    def test_floor_is_itself_non_compliant(self, g):
+        """两侧语义一致：地板版本本身判非合规（严格大于）。"""
+        assert g.is_compliant(tuple(g.CRASH_BEARING_CEILING)) is False
+        assert g.is_compliant((g.CRASH_BEARING_CEILING[0], g.CRASH_BEARING_CEILING[1], g.CRASH_BEARING_CEILING[2] + 1))
+
+    def test_ps1_mentions_actionable_remediation(self):
+        text = self._ps1_text()
+        assert "ollama_version_guard.py --upgrade" in text, "前置消息未给出可执行修复命令"
+
+    def test_ps1_is_pure_ascii(self):
+        """宪法 §9.7：PowerShell 5.1 无 BOM 按 GBK 解码，非 ASCII 注释=假语法错误。"""
+        raw = self.PS1_PATH.read_bytes()
+        offenders = [i for i, b in enumerate(raw) if b > 127]
+        assert not offenders, f"ps1 含非 ASCII 字节 @ {offenders[:5]}"

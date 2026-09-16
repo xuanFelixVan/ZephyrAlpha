@@ -13,6 +13,7 @@
 
 from __future__ import annotations
 
+import sys
 from unittest.mock import MagicMock, patch
 
 import numpy as np
@@ -192,6 +193,73 @@ class TestEmbeddingRouter:
         with tempfile.TemporaryDirectory() as td:
             td_path = Path(td)
             assert embedding_router.verify_model_checksum(td_path) is True
+
+
+class TestEmbeddingRouterOllamaFallback:
+    """治本回归（2026-09-16 Ollama 依赖定性）——Ollama 嵌入后端不可用必须**真正**回落 local。
+
+    原实现只置 `_bge_*_available=False` 就返回，与模块 docstring 承诺的降级链不符：
+    Ollama 一掉线即落 InMemory 零向量，把可选增强在运行态升级成硬依赖。
+    """
+
+    def _router(self, tmp_path):
+        return EmbeddingRouter(
+            model_dir_bge_m3=tmp_path / "bge-m3",
+            model_dir_bge_small=tmp_path / "small",
+            backend="ollama",
+        )
+
+    def test_unavailable_ollama_delegates_to_local(self, tmp_path, monkeypatch):
+        router = self._router(tmp_path)
+        seen: list[str] = []
+        monkeypatch.setattr(ollama_embedding.OllamaEmbedder, "quick_alive", staticmethod(lambda *a, **k: False))
+        monkeypatch.setattr(router, "_load_local", lambda key: seen.append(key))
+        router._load_ollama("m3")
+        assert seen == ["m3"], "Ollama 不可用未回落 local——降级链断裂复发"
+        assert router.bge_m3_available is False
+
+    def test_unavailable_small_ollama_delegates_to_local(self, tmp_path, monkeypatch):
+        router = self._router(tmp_path)
+        seen: list[str] = []
+        monkeypatch.setattr(ollama_embedding.OllamaEmbedder, "available", property(lambda self: False))
+        monkeypatch.setattr(router, "_load_local", lambda key: seen.append(key))
+        router._load_ollama("small")
+        assert seen == ["small"]
+
+    def test_ollama_construction_error_delegates_to_local(self, tmp_path, monkeypatch):
+        router = self._router(tmp_path)
+        seen: list[str] = []
+
+        class _Boom:
+            def __init__(self, *a, **k):
+                raise RuntimeError("ollama down")
+
+        monkeypatch.setattr(ollama_embedding, "OllamaEmbedder", _Boom)
+        monkeypatch.setattr(router, "_load_local", lambda key: seen.append(key))
+        router._load_ollama("m3")
+        assert seen == ["m3"], "Ollama 加载异常未回落 local"
+
+    def test_available_ollama_does_not_touch_local(self, tmp_path, monkeypatch):
+        router = self._router(tmp_path)
+        seen: list[str] = []
+        monkeypatch.setattr(ollama_embedding.OllamaEmbedder, "available", property(lambda self: True))
+        monkeypatch.setattr(ollama_embedding.OllamaEmbedder, "dim", property(lambda self: 1024))
+        monkeypatch.setattr(router, "_load_local", lambda key: seen.append(key))
+        router._load_ollama("m3")
+        assert seen == []
+        assert router.bge_m3_available is True
+        assert router.bge_m3_dim == 1024
+
+    def test_local_fallback_loads_when_ollama_gone(self, tmp_path, monkeypatch):
+        """端到端（不 mock _load_local）：Ollama 不可用且 local 可加载 → 仍可用。"""
+        router = self._router(tmp_path)
+        stub_st = MagicMock()
+        stub_st.return_value.encode.return_value = np.ones(1024, dtype=np.float32)
+        monkeypatch.setattr(ollama_embedding.OllamaEmbedder, "quick_alive", staticmethod(lambda *a, **k: False))
+        monkeypatch.setitem(sys.modules, "sentence_transformers", MagicMock(SentenceTransformer=stub_st))
+        router._load_ollama("m3")
+        assert router.bge_m3_available is True
+        assert router.bge_m3_model is stub_st.return_value
 
 
 class TestOllamaEmbedder:

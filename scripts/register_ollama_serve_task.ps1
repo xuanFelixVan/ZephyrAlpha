@@ -33,6 +33,34 @@ if (-not (Test-Path $OllamaExe)) {
     throw "ollama.exe not found; install Ollama first"
 }
 
+# --- Version precondition (machine-checked, 2026-09-16) -------------------
+# Root cause of the old manual "upgrade Ollama" to-do: Ollama builds <= 0.32.1 embed a
+# llama-server.exe with a deterministic access violation (AV at libllama.dll+0x2a230);
+# evidence = docs/_working/forensics/llama_server_crash_forensics_202609.md.
+# Registering a keep-alive task for a crash-bearing build only feeds the crash-respawn
+# loop, so registration refuses. Floor must equal CRASH_BEARING_CEILING in
+# scripts/ops/ollama_version_guard.py -- the equality is pinned by
+# tests/ops/test_ollama_version_guard.py (drift shows up as a failing test, never as a
+# silent divergence between the two files).
+$MinOllamaVersion = "0.32.1"
+$versionText = (& $OllamaExe --version 2>&1 | Out-String)
+$versionMatch = [regex]::Match($versionText, "(\d+)\.(\d+)\.(\d+)")
+if (-not $versionMatch.Success) {
+    Write-Warning ("ollama version unparseable from output '" + $versionText.Trim() + "'; " +
+        "proceeding, but run: python scripts/ops/ollama_version_guard.py --check")
+} else {
+    $installed = [version]$versionMatch.Value
+    $floor = [version]$MinOllamaVersion
+    if ($installed -le $floor) {
+        throw ("Ollama $installed <= crash-bearing ceiling $MinOllamaVersion (known llama-server " +
+            "access violation). Upgrade first with one command (software install = Owner gate): " +
+            "python scripts/ops/ollama_version_guard.py --upgrade --installer-path <exe> " +
+            "--expected-sha256 <hex> ; verify with --check")
+    }
+    Write-Output "OK ollama version $installed (above crash-bearing ceiling $MinOllamaVersion)"
+}
+# --- end version precondition --------------------------------------------
+
 $Action = New-ScheduledTaskAction -Execute $OllamaExe -Argument "serve"
 $Trigger = New-ScheduledTaskTrigger -AtLogOn -User $CurrentUser
 $Settings = New-ScheduledTaskSettingsSet -ExecutionTimeLimit (New-TimeSpan -Hours 0) `
