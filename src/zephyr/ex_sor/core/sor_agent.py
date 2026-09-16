@@ -28,47 +28,7 @@ B11-02491（AUD-DRAFT-001-DIGEST P1 波 W-P1-24，CAND-SOR-001，A7-Agent架构
 重建）；llm_agent_router=LLM 模型路由（零交集）；smart_order_router 全仓
 不存在。与 C-026/C-046 对齐：本 Agent 无下单语义，执行委托券商通道装配批。
 
-# [ALGO_FLOW]
-# 层: 输入
-# - id: I1
-#   name: weights 参数
-#   fields: 参数 weights（无注解）
-#   code: sor_agent.py 顶层公共函数形参（AST 提取）
-# - id: I2
-#   name: min_liquidity 参数
-#   fields: 参数 min_liquidity（无注解）
-#   code: sor_agent.py 顶层公共函数形参（AST 提取）
-# - id: I3
-#   name: splitter_fn 参数
-#   fields: 参数 splitter_fn（无注解）
-#   code: sor_agent.py 顶层公共函数形参（AST 提取）
-# - id: I4
-#   name: feedback_sink 参数
-#   fields: 参数 feedback_sink（无注解）
-#   code: sor_agent.py 顶层公共函数形参（AST 提取）
-# 层: 算法
-# - id: A1
-#   name_zh: ① SorAgent
-#   name_en: SorAgent
-#   intro: 路由Agent（SOR，MOD-XS-015）——Level 0 纯规则。
-#   desc: 路由Agent（SOR，MOD-XS-015）——Level 0 纯规则。 用法： agent = SorAgent(splitter_fn=my_splitter, feedb…；公共方法（定义序）: decide,…
-#   inputs: weights min_liquidity splitter_fn feedback_sink replay_sink
-#   outputs: 返回值
-#   （注：A1 之后另有 6 个公共定义未列入（含 6 个数据契约/异常/枚举声明类），见源码）
-# 层: 输出
-# - id: O1
-#   name_zh: 模块公共 API 面（7 定义）
-#   name_en: public defs
-#   intro: SorAgent
-#   downstream: 运行时装配批（MOD-XS-001 路由算法委托 / EX-CORE Pre-Trade 风控链 / broker_api_connector 券商通道执行…
-# [/ALGO_FLOW]
-#
-# 边:
-# I1 --> A1
-# I2 --> A1
-# I3 --> A1
-# I4 --> A1
-# A1 --> O1
+# [ALGO_FLOW] external: docs/03_modules/_domain_ex_sor/algo_flow/sor_agent.yaml
 """
 
 from __future__ import annotations

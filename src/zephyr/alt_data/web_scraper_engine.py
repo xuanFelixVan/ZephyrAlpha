@@ -30,47 +30,7 @@ provider；news_collector（MOD-DATA-NEWS-001）为库内读取面。本模块�
 页面（雪球热帖页/股吧列表页等）定向爬取，不复制任何具体源 provider 逻辑与
 news_dedup 窗口查询。
 
-# [ALGO_FLOW]
-# 层: 输入
-# - id: I1
-#   name: fetcher 参数
-#   fields: 参数 fetcher（无注解）
-#   code: web_scraper_engine.py 顶层公共函数形参（AST 提取）
-# - id: I2
-#   name: extractors 参数
-#   fields: 参数 extractors（无注解）
-#   code: web_scraper_engine.py 顶层公共函数形参（AST 提取）
-# - id: I3
-#   name: seen 参数
-#   fields: 参数 seen（无注解）
-#   code: web_scraper_engine.py 顶层公共函数形参（AST 提取）
-# - id: I4
-#   name: sink 参数
-#   fields: 参数 sink（无注解）
-#   code: web_scraper_engine.py 顶层公共函数形参（AST 提取）
-# 层: 算法
-# - id: A1
-#   name_zh: ① WebScraperEngine
-#   name_en: WebScraperEngine
-#   intro: 无 API 页面定向爬取引擎（判定核心纯内存，IO 全注入）。
-#   desc: 无 API 页面定向爬取引擎（判定核心纯内存，IO 全注入）。 Args: fetcher: (url: str) -> str，返回页面 html/text extractor…；公共方法（定义序）: registe…
-#   inputs: fetcher extractors seen sink allowed_domains max_records_per_target
-#   outputs: 返回值
-#   （注：A1 之后另有 6 个公共定义未列入（含 6 个数据契约/异常/枚举声明类），见源码）
-# 层: 输出
-# - id: O1
-#   name_zh: 模块公共 API 面（7 定义）
-#   name_en: public defs
-#   intro: WebScraperEngine
-#   downstream: 运行时装配批（fetcher 接 requests/playwright 抓取层 / seen 接 news_dedup 库窗口 / sink 接 ch_wr…
-# [/ALGO_FLOW]
-#
-# 边:
-# I1 --> A1
-# I2 --> A1
-# I3 --> A1
-# I4 --> A1
-# A1 --> O1
+# [ALGO_FLOW] external: docs/03_modules/_domain_alt_data/algo_flow/web_scraper_engine.yaml
 """
 
 from __future__ import annotations

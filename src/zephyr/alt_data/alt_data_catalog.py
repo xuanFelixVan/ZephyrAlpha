@@ -27,42 +27,7 @@ canonical 承接 TESTA-011 归并）：数据源/数据集**元数据登记**（
 alt_data_compliance_reviewer=合规台账（本件生命周期仅接入状态，不做合规审
 查）；web_scraper_engine=采集引擎（零交集）。
 
-# [ALGO_FLOW]
-# 层: 输入
-# - id: I1
-#   name: clock 参数
-#   fields: 参数 clock（无注解）
-#   code: alt_data_catalog.py 顶层公共函数形参（AST 提取）
-# - id: I2
-#   name: lineage_sink 参数
-#   fields: 参数 lineage_sink（无注解）
-#   code: alt_data_catalog.py 顶层公共函数形参（AST 提取）
-# - id: I3
-#   name: fts_connection 参数
-#   fields: 参数 fts_connection（无注解）
-#   code: alt_data_catalog.py 顶层公共函数形参（AST 提取）
-# 层: 算法
-# - id: A1
-#   name_zh: ① AltDataCatalog
-#   name_en: AltDataCatalog
-#   intro: 另类数据目录（元数据登记 + 标签 + 血缘回调 + FTS5 检索 + 生命周期）。
-#   desc: 另类数据目录（元数据登记 + 标签 + 血缘回调 + FTS5 检索 + 生命周期）。；公共方法（定义序）: register, get, add_tags, remove_tags, tags_of, approve…
-#   inputs: clock lineage_sink fts_connection
-#   outputs: 返回值
-#   （注：A1 之后另有 5 个公共定义未列入（含 5 个数据契约/异常/枚举声明类），见源码）
-# 层: 输出
-# - id: O1
-#   name_zh: 模块公共 API 面（6 定义）
-#   name_en: public defs
-#   intro: AltDataCatalog
-#   downstream: 运行时装配批（元数据登记入目录 / 真实 LineageTracker 与 SQLite FTS5 连接绑定 / 生命周期审批流）
-# [/ALGO_FLOW]
-#
-# 边:
-# I1 --> A1
-# I2 --> A1
-# I3 --> A1
-# A1 --> O1
+# [ALGO_FLOW] external: docs/03_modules/_domain_alt_data/algo_flow/alt_data_catalog.yaml
 """
 
 from __future__ import annotations

@@ -31,60 +31,7 @@ D_EX_SOR — 做T成本模型（90 号 Phase1 项①，注册表条目 CST-T0-00
 注意：本模块为 90 号 Phase1 交付物，MATURITY=testing；生产链路（做T策略开仓
 前置检查/回测成本注入点）接线挂起待 Owner（宪章 B-007 纪律）。
 
-# [ALGO_FLOW]
-# 层: 输入
-# - id: I1
-#   name: buy_notional 参数
-#   fields: 参数 buy_notional，类型注解 Decimal
-#   code: t0_cost_model.py 顶层公共函数形参（AST 提取）
-# - id: I2
-#   name: sell_notional 参数
-#   fields: 参数 sell_notional，类型注解 Decimal
-#   code: t0_cost_model.py 顶层公共函数形参（AST 提取）
-# - id: I3
-#   name: config 参数
-#   fields: 参数 config，类型注解 T0CostConfig | None
-#   code: t0_cost_model.py 顶层公共函数形参（AST 提取）
-# - id: I4
-#   name: overnight_exposure 参数
-#   fields: 参数 overnight_exposure，类型注解 Decimal
-#   code: t0_cost_model.py 顶层公共函数形参（AST 提取）
-# 层: 算法
-# - id: A1
-#   name_zh: ① calc_t0_roundtrip_cost
-#   name_en: calc_t0_roundtrip_cost
-#   intro: 计算单次做T往返总成本（元）。
-#   desc: 计算单次做T往返总成本（元）。 Args: buy_notional: 买入成交额（元） sell_notional: 卖出成交额（元） config: 成本配置（None=默认…；源码 L152-L192
-#   inputs: buy_notional sell_notional config overnight_exposure overnight_var_ra…
-#   outputs: T0CostBreakdown
-# - id: A2
-#   name_zh: ② t0_open_allowed
-#   name_en: t0_open_allowed
-#   intro: 做T开仓硬前置：预期价差率 ≥0.3%（90 号 §5/§21 裁定）。
-#   desc: 做T开仓硬前置：预期价差率 ≥0.3%（90 号 §5/§21 裁定）。；源码 L195-L197
-#   inputs: expected_edge_rate
-#   outputs: bool
-#   （注：A2 之后另有 3 个公共定义未列入（含 3 个数据契约/异常/枚举声明类），见源码）
-# 层: 输出
-# - id: O1
-#   name_zh: T0CostBreakdown
-#   name_en: T0CostBreakdown
-#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
-#   downstream: 做T策略开仓前置检查（接线待排期，本批仅交付模块本体）
-# - id: O2
-#   name_zh: bool
-#   name_en: bool
-#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
-#   downstream: 做T策略开仓前置检查（接线待排期，本批仅交付模块本体）
-# [/ALGO_FLOW]
-#
-# 边:
-# I1 --> A1
-# I2 --> A1
-# I3 --> A1
-# I4 --> A1
-# A1 --> A2
-# A2 --> O1
+# [ALGO_FLOW] external: docs/03_modules/_domain_ex_sor/algo_flow/t0_cost_model.yaml
 """
 
 from __future__ import annotations

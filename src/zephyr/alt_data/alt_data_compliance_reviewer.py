@@ -27,42 +27,7 @@ canonical 承接 TESTA-020 归并。
 审查判定核心与名单输出，不 import 不重建日志实现，仅产生审查事件可注入
 回调）；本件不做采集（在 connector 族），仅做数据源准入前合规判定。
 
-# [ALGO_FLOW]
-# 层: 输入
-# - id: I1
-#   name: checklist 参数
-#   fields: 参数 checklist（无注解）
-#   code: alt_data_compliance_reviewer.py 顶层公共函数形参（AST 提取）
-# - id: I2
-#   name: review_interval_days 参数
-#   fields: 参数 review_interval_days（无注解）
-#   code: alt_data_compliance_reviewer.py 顶层公共函数形参（AST 提取）
-# - id: I3
-#   name: clock 参数
-#   fields: 参数 clock（无注解）
-#   code: alt_data_compliance_reviewer.py 顶层公共函数形参（AST 提取）
-# 层: 算法
-# - id: A1
-#   name_zh: ① AltDataComplianceReviewer
-#   name_en: AltDataComplianceReviewer
-#   intro: 另类数据合规审查器（四要素 + 清单审查 + 复核 + 白名单/禁用清单）。
-#   desc: 另类数据合规审查器（四要素 + 清单审查 + 复核 + 白名单/禁用清单）。；公共方法（定义序）: register, review, ban, pending_reviews, whitelist, blacklis…
-#   inputs: checklist review_interval_days clock
-#   outputs: 返回值
-#   （注：A1 之后另有 4 个公共定义未列入（含 4 个数据契约/异常/枚举声明类），见源码）
-# 层: 输出
-# - id: O1
-#   name_zh: 模块公共 API 面（5 定义）
-#   name_en: public defs
-#   intro: AltDataComplianceReviewer
-#   downstream: 运行时装配批（数据源上线前接 alt_data_connector 准入 / 白名单输出接健康度管理器准入 / 审查记录接 compliance_log 路由）
-# [/ALGO_FLOW]
-#
-# 边:
-# I1 --> A1
-# I2 --> A1
-# I3 --> A1
-# A1 --> O1
+# [ALGO_FLOW] external: docs/03_modules/_domain_alt_data/algo_flow/alt_data_compliance_reviewer.yaml
 """
 
 from __future__ import annotations

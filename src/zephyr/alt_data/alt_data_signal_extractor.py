@@ -30,47 +30,7 @@ alphalens/Barra 思想单机版。
 分层回测框架（本件仅 IC/衰减/正交三判定面）；本件不做因子计算本身
 （原始特征在采集族），仅做注册、检验与统一出口。
 
-# [ALGO_FLOW]
-# 层: 输入
-# - id: I1
-#   name: ic_calculator 参数
-#   fields: 参数 ic_calculator（无注解）
-#   code: alt_data_signal_extractor.py 顶层公共函数形参（AST 提取）
-# - id: I2
-#   name: ic_threshold 参数
-#   fields: 参数 ic_threshold（无注解）
-#   code: alt_data_signal_extractor.py 顶层公共函数形参（AST 提取）
-# - id: I3
-#   name: regressor 参数
-#   fields: 参数 regressor（无注解）
-#   code: alt_data_signal_extractor.py 顶层公共函数形参（AST 提取）
-# - id: I4
-#   name: validator 参数
-#   fields: 参数 validator（无注解）
-#   code: alt_data_signal_extractor.py 顶层公共函数形参（AST 提取）
-# 层: 算法
-# - id: A1
-#   name_zh: ① AltDataSignalExtractor
-#   name_en: AltDataSignalExtractor
-#   intro: 另类数据信号提取网关（注册表 + IC + 衰减 + 正交化 + CTR-002 出口）。
-#   desc: 另类数据信号提取网关（注册表 + IC + 衰减 + 正交化 + CTR-002 出口）。；公共方法（定义序）: register_feature, features, test_ic, decay_weight, a…
-#   inputs: ic_calculator ic_threshold regressor validator clock
-#   outputs: 返回值
-#   （注：A1 之后另有 3 个公共定义未列入（含 3 个数据契约/异常/枚举声明类），见源码）
-# 层: 输出
-# - id: O1
-#   name_zh: 模块公共 API 面（4 定义）
-#   name_en: public defs
-#   intro: AltDataSignalExtractor
-#   downstream: 运行时装配批（另类数据因子统一输出网关接信号族 / 校验器接 shared/contracts/ctr002_producer_validator）
-# [/ALGO_FLOW]
-#
-# 边:
-# I1 --> A1
-# I2 --> A1
-# I3 --> A1
-# I4 --> A1
-# A1 --> O1
+# [ALGO_FLOW] external: docs/03_modules/_domain_alt_data/algo_flow/alt_data_signal_extractor.yaml
 """
 
 from __future__ import annotations

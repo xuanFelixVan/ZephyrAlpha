@@ -35,42 +35,7 @@ news_dual_tagger（MOD-NLP-DUALTAG-001）为新闻双标签面。本模块为公
 事件级 NLP，解析粒度=事件类型+影响分，LLM 能力经 llm_extractor 注入委托
 intelligence 族（api_llm_pool），零密钥零直连。
 
-# [ALGO_FLOW]
-# 层: 输入
-# - id: I1
-#   name: llm_extractor 参数
-#   fields: 参数 llm_extractor（无注解）
-#   code: filing_nlp_engine.py 顶层公共函数形参（AST 提取）
-# - id: I2
-#   name: keyword_rules 参数
-#   fields: 参数 keyword_rules（无注解）
-#   code: filing_nlp_engine.py 顶层公共函数形参（AST 提取）
-# - id: I3
-#   name: sink 参数
-#   fields: 参数 sink（无注解）
-#   code: filing_nlp_engine.py 顶层公共函数形参（AST 提取）
-# 层: 算法
-# - id: A1
-#   name_zh: ① FilingNlpEngine
-#   name_en: FilingNlpEngine
-#   intro: A 股公告文本事件级 NLP（判定核心纯内存，IO 全注入）。
-#   desc: A 股公告文本事件级 NLP（判定核心纯内存，IO 全注入）。 Args: llm_extractor: 可选，(FilingInput) -> {"event_type","i…；公共方法（定义序）: classif…
-#   inputs: llm_extractor keyword_rules sink
-#   outputs: 返回值
-#   （注：A1 之后另有 5 个公共定义未列入（含 5 个数据契约/异常/枚举声明类），见源码）
-# 层: 输出
-# - id: O1
-#   name_zh: 模块公共 API 面（6 定义）
-#   name_en: public defs
-#   intro: FilingNlpEngine
-#   downstream: 运行时装配批（公告文本接 announcement_provider 采集产物 / llm_extractor 接 api_llm_pool·llm_gate…
-# [/ALGO_FLOW]
-#
-# 边:
-# I1 --> A1
-# I2 --> A1
-# I3 --> A1
-# A1 --> O1
+# [ALGO_FLOW] external: docs/03_modules/_domain_alt_data/algo_flow/filing_nlp_engine.yaml
 """
 
 from __future__ import annotations

@@ -27,47 +27,7 @@ D-ALT-DATA-12）：地缘风险分析——**事件采集**（免费新闻/RSS �
 静态映射（本件=事件评分/制裁筛查/总线发布运行时面，不重建映射表，传导
 矩阵全注入）；本件不做新闻抓取（采集在 connector 族），事件源注入委托。
 
-# [ALGO_FLOW]
-# 层: 输入
-# - id: I1
-#   name: event_source 参数
-#   fields: 参数 event_source（无注解）
-#   code: geopolitical_risk_analyzer.py 顶层公共函数形参（AST 提取）
-# - id: I2
-#   name: transmission_matrix 参数
-#   fields: 参数 transmission_matrix（无注解）
-#   code: geopolitical_risk_analyzer.py 顶层公共函数形参（AST 提取）
-# - id: I3
-#   name: sanction_list 参数
-#   fields: 参数 sanction_list（无注解）
-#   code: geopolitical_risk_analyzer.py 顶层公共函数形参（AST 提取）
-# - id: I4
-#   name: publish_threshold 参数
-#   fields: 参数 publish_threshold（无注解）
-#   code: geopolitical_risk_analyzer.py 顶层公共函数形参（AST 提取）
-# 层: 算法
-# - id: A1
-#   name_zh: ① GeopoliticalRiskAnalyzer
-#   name_en: GeopoliticalRiskAnalyzer
-#   intro: 地缘风险分析器（采集注入 + 传导矩阵评分 + 制裁筛查 + 总线发布）。
-#   desc: 地缘风险分析器（采集注入 + 传导矩阵评分 + 制裁筛查 + 总线发布）。；公共方法（定义序）: assess, run, history；源码 L142-L262
-#   inputs: event_source transmission_matrix sanction_list publish_threshold high…
-#   outputs: 返回值
-#   （注：A1 之后另有 4 个公共定义未列入（含 4 个数据契约/异常/枚举声明类），见源码）
-# 层: 输出
-# - id: O1
-#   name_zh: 模块公共 API 面（5 定义）
-#   name_en: public defs
-#   intro: GeopoliticalRiskAnalyzer
-#   downstream: 运行时装配批（事件源接免费新闻/RSS 采集族 / 风险事件入事件总线仅作信号输入 / 传导矩阵接 intelligence 地缘映射）
-# [/ALGO_FLOW]
-#
-# 边:
-# I1 --> A1
-# I2 --> A1
-# I3 --> A1
-# I4 --> A1
-# A1 --> O1
+# [ALGO_FLOW] external: docs/03_modules/_domain_alt_data/algo_flow/geopolitical_risk_analyzer.yaml
 """
 
 from __future__ import annotations

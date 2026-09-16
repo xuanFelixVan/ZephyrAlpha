@@ -30,32 +30,7 @@ B1-00596（AUD-DRAFT-001-DIGEST P1 波 W-P1-14，§1 子模块清单 37）：股
 点）"——本模块即该产出位；sector_ranking_engine=板块排名面。本模块为
 个股↔概念统一映射入口，与采集/因子化/排名各面正交不重复。
 
-# [ALGO_FLOW]
-# 层: 输入
-# - id: I1
-#   name: config 参数
-#   fields: 参数 config（无注解）
-#   code: concept_factor_mapper.py 顶层公共函数形参（AST 提取）
-# 层: 算法
-# - id: A1
-#   name_zh: ① ConceptFactorMapper
-#   name_en: ConceptFactorMapper
-#   intro: 概念因子映射引擎（双向索引 + 质量校验 + PIT 版本判定核心）。
-#   desc: 概念因子映射引擎（双向索引 + 质量校验 + PIT 版本判定核心）。 Args: config: ConceptMapperConfig（None=默认阈值）；公共方法（定义序）: config, parse_exc…
-#   inputs: config
-#   outputs: 返回值
-#   （注：A1 之后另有 8 个公共定义未列入（含 8 个数据契约/异常/枚举声明类），见源码）
-# 层: 输出
-# - id: O1
-#   name_zh: 模块公共 API 面（9 定义）
-#   name_en: public defs
-#   intro: ConceptFactorMapper
-#   downstream: 运行时装配批（成分行接 akshare_provider market_concept_board 系列表产物；输出供 signal_ashare 与 sec…
-# [/ALGO_FLOW]
-#
-# 边:
-# I1 --> A1
-# A1 --> O1
+# [ALGO_FLOW] external: docs/03_modules/_domain_alt_data/algo_flow/concept_factor_mapper.yaml
 """
 
 from __future__ import annotations

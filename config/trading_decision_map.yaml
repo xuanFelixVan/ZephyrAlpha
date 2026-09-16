@@ -410,6 +410,7 @@ nodes:
   #   方法论=复用周级三步法（滚动分位→加权合成→天气分 0-100），输出喂月级谨慎度修正
   #   A股范式权重修正：政策/产业因子权重↑、总量因子权重↓
 - node_id: TDM-E-L1-S0
+  note_confirmed: 2026-09-16  # grp6p1s1 出仓复核：机器块搬 yaml，算法口径逐字未变
   name_zh: 宏观环境传感器
   market: cn_a
   flow: entry_flow
@@ -2258,6 +2259,7 @@ nodes:
   decay_scan_frequency: semiannual
 
 - node_id: TDM-E-L4-06
+  note_confirmed: 2026-09-16  # grp6p1s1 出仓复核：机器块搬 yaml，算法口径逐字未变
   name_zh: 执行算法
   market: cn_a
   flow: entry_flow
@@ -2482,7 +2484,7 @@ nodes:
   decay_scan_frequency: semiannual
 
 - node_id: TDM-E-L4-14
-  note_confirmed: 2026-09-11
+  note_confirmed: 2026-09-16  # grp6p1s1 出仓复核：机器块搬 yaml，算法口径逐字未变
   name_zh: 执行成本反馈与选型回写
   market: cn_a
   flow: entry_flow

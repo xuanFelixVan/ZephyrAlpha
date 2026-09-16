@@ -29,37 +29,7 @@ B1-00123（AUD-DRAFT-001-DIGEST P1 波 W-P1-14，D-ALT-19）：政策主题库�
 llm_classifier 注入委托）。本模块为政策主题→行业映射与影响持续度评估判定
 核心，口径不重复。仅信号输入语义，无下单含义。
 
-# [ALGO_FLOW]
-# 层: 输入
-# - id: I1
-#   name: theme_library 参数
-#   fields: 参数 theme_library（无注解）
-#   code: policy_theme_mapper.py 顶层公共函数形参（AST 提取）
-# - id: I2
-#   name: llm_classifier 参数
-#   fields: 参数 llm_classifier（无注解）
-#   code: policy_theme_mapper.py 顶层公共函数形参（AST 提取）
-# 层: 算法
-# - id: A1
-#   name_zh: ① PolicyThemeMapper
-#   name_en: PolicyThemeMapper
-#   intro: 政策主题映射器（主题归类 + 半衰期热度 + 受益/受损清单判定核心）。
-#   desc: 政策主题映射器（主题归类 + 半衰期热度 + 受益/受损清单判定核心）。 Args: theme_library: 主题库（None=DEFAULT_THEME_LIBRARY）…；公共方法（定义序）: theme_l…
-#   inputs: theme_library llm_classifier
-#   outputs: 返回值
-#   （注：A1 之后另有 6 个公共定义未列入（含 6 个数据契约/异常/枚举声明类），见源码）
-# 层: 输出
-# - id: O1
-#   name_zh: 模块公共 API 面（7 定义）
-#   name_en: public defs
-#   intro: PolicyThemeMapper
-#   downstream: 运行时装配批（政策类新闻接 data 域采集族产物 / llm_classifier 接 api_llm_pool·llm_gateway；主题热度与受益/受…
-# [/ALGO_FLOW]
-#
-# 边:
-# I1 --> A1
-# I2 --> A1
-# A1 --> O1
+# [ALGO_FLOW] external: docs/03_modules/_domain_alt_data/algo_flow/policy_theme_mapper.yaml
 """
 
 from __future__ import annotations

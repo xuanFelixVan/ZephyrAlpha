@@ -1,0 +1,67 @@
+# ALGO_FLOW 外部真源——rl_exec_boundary（_domain_ex_sor 域，真源 src/zephyr/ex_sor/core/rl_exec_boundary.py）
+# 2026-09-15 P2-1 契约头减负批量出仓：docstring 内联块逐字节副本，extractor 经
+# external 锚加载走同一 parse_algo_flow 管线；算法公共面变化时同步更新本块。
+doc_type: architecture_view
+ttl: permanent
+module: src.zephyr.ex_sor.core.rl_exec_boundary
+source_of_truth: src/zephyr/ex_sor/core/rl_exec_boundary.py
+algo_flow: |
+    # [ALGO_FLOW]
+    # 层: 输入
+    # - id: I1
+    #   name: 策略原始动作 action
+    #   fields: price_offset_idx(档位索引) + quantity_ratio(数量比例) + is_market(市价标志)
+    #   code: RlExecBoundary.enforce L120
+    # - id: I2
+    #   name: 盘口快照 book + 剩余量 remaining
+    #   fields: 五档价量(中间价基准/对方档量POV基数) + 母单剩余量
+    #   code: OrderBookSnapshot (matching_logic.py L127)
+    # - id: I3
+    #   name: 冻结契约 RlExecContract
+    #   fields: 涨跌停带/POV上限/禁市价标志/偏移档位表/整手数
+    #   code: RlExecContract (rl_exec_contract.py L82)
+    # 层: 算法
+    # - id: A1
+    #   name_zh: ① 禁市价拒绝
+    #   name_en: _reject_market_if_forbidden
+    #   intro: is_market ∧ forbid_market → rejected=True 数量归零, 本步不成交
+    #   desc: 市价类动作在禁市价契约下直接拒绝, reason=market_forbidden
+    #   inputs: I1 I3
+    #   outputs: BoundedAction(rejected)
+    #   invariant: 禁市价标志下市价类动作不可成交
+    # - id: A2
+    #   name_zh: ② 价格裁剪到涨跌停带
+    #   name_en: _clip_price_to_band
+    #   intro: 限价=mid×(1+offset) 量化到 tick 后夹到 [跌停,涨停], 越界置 clipped_price
+    #   desc: mid=(ask1+bid1)/2; 带上限 prev_close×(1+pct) ROUND_FLOOR, 带下限 ROUND_CEILING; clip 后必在带内
+    #   inputs: I1 I2 I3
+    #   outputs: 带内限价 limit_price + clipped_price 标记
+    #   invariant: 裁剪后价格不越涨跌停带
+    # - id: A3
+    #   name_zh: ③ 数量裁剪到 POV 上限并整手对齐
+    #   name_en: _clip_qty_to_pov
+    #   intro: min(比例×剩余量, pov×对方五档总量, 剩余量) → 买入 round_buy_qty / 卖出 lot 向下; 尾单全清
+    #   desc: 比例 float→Decimal(str) 精确化; qty≥remaining 取 remaining(尾单); 否则整手向下对齐
+    #   inputs: I1 I2 I3
+    #   outputs: 合法数量 quantity + clipped_qty 标记
+    #   invariant: 单步数量≤POV上限×盘口量; 整手对齐(尾单豁免)
+    # 层: 输出
+    # - id: O1
+    #   name_zh: 有界动作 BoundedAction
+    #   name_en: BoundedAction
+    #   intro: 裁剪/拒绝后的可执行动作+审计标记(clipped_price/clipped_qty/rejected/reason), 供环境撮合
+    #   downstream: zephyr.ex_sor.core.rl_exec_env
+    # [/ALGO_FLOW]
+    #
+    # 边:
+    # I1 --> A1
+    # I1 --> A2
+    # I1 --> A3
+    # I2 --> A2
+    # I2 --> A3
+    # I3 --> A1
+    # I3 --> A2
+    # I3 --> A3
+    # A1 --> O1
+    # A2 --> O1
+    # A3 --> O1

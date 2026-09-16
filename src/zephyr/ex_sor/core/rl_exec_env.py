@@ -51,56 +51,7 @@ gym 风格自约定接口（不依赖 gym 库）:
 SSoT: depgraph MOD-XS-008
 Version: 0.1.0
 
-# [ALGO_FLOW]
-# 层: 输入
-# - id: I1
-#   name: 策略动作 RlExecAction
-#   fields: price_offset_idx + quantity_ratio + is_market
-#   code: RlExecAction L92
-# - id: I2
-#   name: 合成数据源 book_provider
-#   fields: step_index → OrderBookSnapshot 五档盘口（注入式，环境不内置行情）
-#   code: RlExecEnv.__init__ L150
-# 层: 算法
-# - id: A1
-#   name_zh: ① 回合重置
-#   name_en: RlExecEnv.reset
-#   intro: seed 重建 RNG + 取首帧盘口 + 清零成交/剩余量/累计IS
-#   desc: 同种子同数据源 → 完全相同的初始状态与轨迹（确定性复现）
-#   inputs: I2
-#   outputs: 初始 RlExecState
-#   invariant: reset(seed) 确定性可复现
-# - id: A2
-#   name_zh: ② 硬边界裁定（必经）
-#   name_en: boundary.enforce
-#   intro: 原始动作 → 有界动作（裁剪/拒绝），策略不可绕过
-#   desc: rl_exec_boundary.RlExecBoundary.enforce L166
-#   inputs: I1
-#   outputs: BoundedAction
-#   invariant: step 必经硬边界层
-# - id: A3
-#   name_zh: ③ 撮合与奖励结算
-#   name_en: match_and_reward
-#   intro: 有界动作经 MatchingLogic 撮合并按 IS 负值结算奖励
-#   desc: LIMIT→match_limit_order / MARKET→match_market_order；reward=-is_step；累计 cum_is
-#   inputs: I2 A2
-#   outputs: reward + fill + 新状态
-#   invariant: 奖励=-实现短缺; 数量守恒 filled+remaining=total
-# 层: 输出
-# - id: O1
-#   name_zh: gym 风格四元组
-#   name_en: (state, reward, done, info)
-#   intro: 状态快照/标量奖励/终止位/审计信息(boundary+fill+cum_is)
-#   downstream: 未来 RL 训练管线（B-007 闸门后）；当前仅单测消费
-# [/ALGO_FLOW]
-#
-# 边:
-# I2 --> A1
-# I1 --> A2
-# I2 --> A3
-# A2 --> A3
-# A1 --> O1
-# A3 --> O1
+# [ALGO_FLOW] external: docs/03_modules/_domain_ex_sor/algo_flow/rl_exec_env.yaml
 """
 
 from __future__ import annotations

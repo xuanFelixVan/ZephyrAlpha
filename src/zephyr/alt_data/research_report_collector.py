@@ -28,47 +28,7 @@ B1-00628（AUD-DRAFT-001-DIGEST P2 波 P2-W04，CAND-TESTA-012，C2 72）：研�
 filing_nlp_engine=公告正文 NLP（本件仅存 body_ref 引用，正文结构化归彼）；
 sentiment_engine=情绪聚合（消费评级变动事件下游，零交集）。
 
-# [ALGO_FLOW]
-# 层: 输入
-# - id: I1
-#   name: clock 参数
-#   fields: 参数 clock（无注解）
-#   code: research_report_collector.py 顶层公共函数形参（AST 提取）
-# - id: I2
-#   name: fetch_api 参数
-#   fields: 参数 fetch_api（无注解）
-#   code: research_report_collector.py 顶层公共函数形参（AST 提取）
-# - id: I3
-#   name: symbol_linker 参数
-#   fields: 参数 symbol_linker（无注解）
-#   code: research_report_collector.py 顶层公共函数形参（AST 提取）
-# - id: I4
-#   name: event_bus 参数
-#   fields: 参数 event_bus（无注解）
-#   code: research_report_collector.py 顶层公共函数形参（AST 提取）
-# 层: 算法
-# - id: A1
-#   name_zh: ① ResearchReportCollector
-#   name_en: ResearchReportCollector
-#   intro: 研报采集器（元数据采集 + 标的映射 + 快照 diff + 事件总线）。
-#   desc: 研报采集器（元数据采集 + 标的映射 + 快照 diff + 事件总线）。；公共方法（定义序）: collect, reports, latest_rating, events, body_ref_of…
-#   inputs: clock fetch_api symbol_linker event_bus
-#   outputs: 返回值
-#   （注：A1 之后另有 4 个公共定义未列入（含 4 个数据契约/异常/枚举声明类），见源码）
-# 层: 输出
-# - id: O1
-#   name_zh: 模块公共 API 面（5 定义）
-#   name_en: public defs
-#   intro: ResearchReportCollector
-#   downstream: 运行时装配批（东财研报 API 绑定 / 标的映射接 symbol_linker / 评级变动事件接事件总线路由）
-# [/ALGO_FLOW]
-#
-# 边:
-# I1 --> A1
-# I2 --> A1
-# I3 --> A1
-# I4 --> A1
-# A1 --> O1
+# [ALGO_FLOW] external: docs/03_modules/_domain_alt_data/algo_flow/research_report_collector.yaml
 """
 
 from __future__ import annotations

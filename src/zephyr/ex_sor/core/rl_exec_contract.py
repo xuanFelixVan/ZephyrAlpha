@@ -37,32 +37,7 @@ D-EX-SOR §2.1 XS-08: RL Execution Training Env 的参数契约层。
 SSoT: depgraph MOD-XS-008
 Version: 0.1.0
 
-# [ALGO_FLOW]
-# 层: 输入
-# - id: I1
-#   name: 母单与硬约束参数
-#   fields: symbol/side/total_quantity/slice_count/pov_limit/forbid_market/offset_levels/prev_close/arrival_price
-#   code: RlExecContract L61
-# 层: 算法
-# - id: A1
-#   name_zh: ① 冻结契约载体
-#   name_en: frozen_dataclass
-#   intro: 纯值对象无行为，字段即契约；默认值复用 MatchingConfig 撮合口径
-#   desc: frozen=True 实例化后不可变；price_limit_pct=0.10/lot_size=100 取自 MatchingConfig 默认
-#   inputs: I1
-#   outputs: 不可变契约实例
-#   invariant: frozen 契约实例化后不可变
-# 层: 输出
-# - id: O1
-#   name_zh: 执行约束契约
-#   name_en: RlExecContract
-#   intro: 被硬边界层（裁剪/拒绝判定）与环境（回合推进）共同消费
-#   downstream: zephyr.ex_sor.core.rl_exec_boundary ; zephyr.ex_sor.core.rl_exec_env
-# [/ALGO_FLOW]
-#
-# 边:
-# I1 --> A1
-# A1 --> O1
+# [ALGO_FLOW] external: docs/03_modules/_domain_ex_sor/algo_flow/rl_exec_contract.yaml
 """
 
 from __future__ import annotations

@@ -30,37 +30,7 @@ detector（MOD-SIG-099）=极端情绪**反转事件检测**。本模块为跨**
 +历史分位状态判定引擎，与采集/打分/投票/检测各面正交不重复。LLM 能力不内嵌，
 分数一律注入；仅信号输入语义，无下单含义。
 
-# [ALGO_FLOW]
-# 层: 输入
-# - id: I1
-#   name: config 参数
-#   fields: 参数 config（无注解）
-#   code: sentiment_engine.py 顶层公共函数形参（AST 提取）
-# - id: I2
-#   name: history_provider 参数
-#   fields: 参数 history_provider（无注解）
-#   code: sentiment_engine.py 顶层公共函数形参（AST 提取）
-# 层: 算法
-# - id: A1
-#   name_zh: ① SentimentEngine
-#   name_en: SentimentEngine
-#   intro: 统一情绪引擎（跨类别聚合 + 历史分位状态判定核心）。
-#   desc: 统一情绪引擎（跨类别聚合 + 历史分位状态判定核心）。 Args: config: SentimentEngineConfig（None=默认） history_provider…；公共方法（定义序）: config…
-#   inputs: config history_provider
-#   outputs: 返回值
-#   （注：A1 之后另有 8 个公共定义未列入（含 8 个数据契约/异常/枚举声明类），见源码）
-# 层: 输出
-# - id: O1
-#   name_zh: 模块公共 API 面（9 定义）
-#   name_en: public defs
-#   intro: SentimentEngine
-#   downstream: 运行时装配批（价量情绪分接 sentiment_cycle 产出 / 社媒分接 social_sentiment_collector 日频聚合 / 新闻分接…
-# [/ALGO_FLOW]
-#
-# 边:
-# I1 --> A1
-# I2 --> A1
-# A1 --> O1
+# [ALGO_FLOW] external: docs/03_modules/_domain_alt_data/algo_flow/sentiment_engine.yaml
 """
 
 from __future__ import annotations
