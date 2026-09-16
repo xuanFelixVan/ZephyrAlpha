@@ -125,6 +125,9 @@ from zephyr.gov_enforcement.commit_gates.test_residue_ssot_gate import (  # noqa
 from zephyr.gov_enforcement.commit_gates.syntax_validation_gate import (  # noqa: F401  # SYNTAX-VALIDATION staged .py 语法错误硬阻断门禁（红蓝 v3 P0-1 批 2 治本，priority=49）
     make_syntax_validation_gate as _make_syntax_validation_gate,
 )
+from zephyr.gov_enforcement.commit_gates.resource_schedule_gate import (  # noqa: F401  # RESOURCE-SCHEDULE 排班冲突检测门禁（资源排班全景 B2，own-scope，priority=144，MOD-RESCHED-GATE）
+    make_resource_schedule_gate as _make_resource_schedule_gate,
+)
 
 __all__: list[str] = []  # 子模块各自导出 make_*_gate()，包级不 re-export
 

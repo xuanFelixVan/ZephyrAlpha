@@ -3,11 +3,11 @@ doc_type: register
 ttl: permanent
 title: GATE 门禁登记表
 status: active
-generated_at: '2026-09-15T22:49:00Z'
+generated_at: '2026-09-16T00:42:48Z'
 generated_by: scripts/governance/generators/generate_gate_registry.py
 maintenance: auto
 source: .pre-commit-config.yaml + commit_gates/*.py + MANUAL_GATES
-total_gates: 167
+total_gates: 169
 gates:
 - gate_id: GATE-PROTECTED-PATHS
   name: 'GATE-PROTECTED-PATHS: 受保护路径写入检测（#ARCH-MODEL-LIFECYCLE-001 P1 Layer 2）'
@@ -566,6 +566,16 @@ gates:
   category: unknown
   status: active
   source: pre-commit
+- gate_id: ALGO-FLOW-LINK
+  name: 'ALGO-FLOW-LINK: ALGO_FLOW external 锚链接校验门禁（ALGO-FLOW-LINK）（CommitGate, priority=108）'
+  entry: in-process (GitCommitGateway)
+  description: ALGO_FLOW external 锚链接校验门禁（ALGO-FLOW-LINK）
+  files_trigger: ''
+  always_run: false
+  category: commit_gate
+  status: active
+  source: commit-gate
+  own_scope: false
 - gate_id: ALGO-NOTE-SYNC
   name: 'ALGO-NOTE-SYNC: 算法锚与大白话同步绑定门禁（ALGO-NOTE-SYNC，Owner 2026-09-09 任务三）（CommitGate,
     priority=62）'
@@ -1136,16 +1146,6 @@ gates:
   status: active
   source: commit-gate
   own_scope: true
-- gate_id: ALGO-FLOW-LINK
-  name: 'ALGO-FLOW-LINK: ALGO_FLOW external 锚链接校验（CommitGate, priority=108）'
-  entry: in-process (GitCommitGateway)
-  description: ALGO_FLOW external 锚指向 yaml 实存且可解析、yaml source_of_truth 实存（own-diff）
-  files_trigger: ''
-  always_run: false
-  category: commit_gate
-  status: active
-  source: commit-gate
-  own_scope: true
 - gate_id: INDUSTRY-CHAIN-MAP
   name: 'INDUSTRY-CHAIN-MAP: 产业链全景图 git 侧工件门禁（INDUSTRY-CHAIN-MAP，priority=141）（CommitGate,
     priority=141）'
@@ -1428,6 +1428,17 @@ gates:
   status: active
   source: commit-gate
   own_scope: false
+- gate_id: RESOURCE-SCHEDULE
+  name: 'RESOURCE-SCHEDULE: 排班冲突检测 commit gate（MOD-RESCHED-GATE，B2 闸）。（CommitGate,
+    priority=144）'
+  entry: in-process (GitCommitGateway)
+  description: 排班冲突检测 commit gate（MOD-RESCHED-GATE，B2 闸）。
+  files_trigger: ''
+  always_run: false
+  category: commit_gate
+  status: active
+  source: commit-gate
+  own_scope: true
 - gate_id: RULE-EXECUTION-PAIRING
   name: 'RULE-EXECUTION-PAIRING: RULE-EXECUTION-PAIRING（CommitGate, priority=61）'
   entry: in-process (GitCommitGateway)

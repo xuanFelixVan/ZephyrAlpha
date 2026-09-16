@@ -751,6 +751,35 @@ _BT_STRAT_SNAPSHOT = _REPO / "data" / "runtime" / "strategy_registry_snapshot.js
 _BT_WARM_DONE = threading.Event()   # 预热完成标志：置位前请求走快照/等待（registry 半成品竞态防线）
 
 
+def _e0_gate_decision_for_backtest() -> dict[str, Any] | None:
+    """backtest-run 开工 E0 判决（MOD-RESCHED-GATE runtime 同口径）。
+
+    返回 None=E0 模块不可装载（闸失效——此时放行并记审计日志，避免面板回测被
+    基础设施故障整体卡死；闸本体语义是 fail-closed，但端点侧对"闸缺席"与
+    "闸拒绝"分档处理：前者降级放行+日志留痕，后者硬拒）。
+    """
+    try:
+        import importlib.util
+        from datetime import datetime as _dt
+        from zoneinfo import ZoneInfo
+
+        path = _REPO / "scripts" / "backtest" / "compute_window_gate.py"
+        spec = importlib.util.spec_from_file_location("zk_e0_compute_window_gate", path)
+        if spec is None or spec.loader is None:
+            raise RuntimeError(f"E0 模块装载失败: {path}")
+        mod = importlib.util.module_from_spec(spec)
+        spec.loader.exec_module(mod)
+        now = _dt.now(ZoneInfo("Asia/Shanghai"))
+        try:
+            is_td = mod.fetch_is_trading_day(now.date())
+        except Exception:  # noqa: BLE001 — 日历通道异常 → None（gate_decision 内 fail-closed）
+            is_td = None
+        return mod.gate_decision("dashboard_backtest_run", True, now, is_td)
+    except Exception as exc:  # noqa: BLE001 — 闸缺席降级放行+审计
+        logger.warning("backtest-run E0 gate unavailable, allowing with audit: %s", exc)
+        return None
+
+
 def _strategy_rows() -> list[dict[str, Any]]:
     """从两个注册表构建策略行（name=StrategyMeta.name 中文真源；battle_map_ref=作战地图环节归属声明真源）。"""
     from zephyr.governance.strategies.strategy_base import StrategyRegistry
@@ -892,6 +921,10 @@ def backtest_run(body: dict[str, Any]) -> dict[str, Any]:
            mode?: vectorized|tick, factor_ids?, top_n?, initial_capital?...}
     多策略循环串行跑（max_workers=1 队列天然排队）；mode=tick 走 EDE 完全仿真
     （ChTickProvider 逐 tick 回放 + 5 档盘口撮合）。
+    E0 闸（资源排班全景 B2 前置批，裁定"backtest-run 补 E0=提前执行"）：
+    回测=cpu_heavy 重算力，开工先过 FAC-E0 compute_window_gate——交易日盘中
+    （09:00-15:30 保守带）拒重放轻，日历未知 fail-closed；拒绝响应附 e0_gate
+    判决（reason_code 可前端展示）。
     """
     strategies = [str(s).strip() for s in body.get("strategies", []) if str(s).strip()]
     if not strategies and body.get("strategy_id"):
@@ -904,6 +937,15 @@ def backtest_run(body: dict[str, Any]) -> dict[str, Any]:
         mode = "vectorized"
     if not strategies or not symbols or not start or not end:
         return {"ok": False, "error": "strategies/symbols/start/end required", "task_id": None}
+    # ── E0 算力闸检查段（MOD-RESCHED-GATE 同口径；只动本段，其余端点零触碰）──
+    e0_gate = _e0_gate_decision_for_backtest()
+    if e0_gate is not None and not e0_gate.get("allowed"):
+        return {
+            "ok": False,
+            "error": f"E0 闸拒绝：交易日盘中重算力不放行（reason={e0_gate.get('reason_code')}）——收盘后/休市日再跑",
+            "e0_gate": e0_gate,
+            "task_id": None,
+        }
     task_id = f"btrun-{int(time.time())}-{len(_BT_RUN_STATE) % 10000}"
     with _BT_RUN_LOCK:
         _BT_RUN_STATE[task_id] = {
