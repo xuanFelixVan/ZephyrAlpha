@@ -1,0 +1,57 @@
+# ALGO_FLOW 外部真源——redis_stream_message_queue（_domain_shared 域，真源 src/zephyr/shared/redis_stream_message_queue.py）
+# 2026-09-15 P2-1 契约头减负批量出仓：docstring 内联块逐字节副本，extractor 经
+# external 锚加载走同一 parse_algo_flow 管线；算法公共面变化时同步更新本块。
+doc_type: architecture_view
+ttl: permanent
+module: src.zephyr.shared.redis_stream_message_queue
+source_of_truth: src/zephyr/shared/redis_stream_message_queue.py
+algo_flow: |
+    # [ALGO_FLOW]
+    # 层: 输入
+    # - id: I1
+    #   name: client 参数
+    #   fields: 参数 client（无注解）
+    #   code: redis_stream_message_queue.py 顶层公共函数形参（AST 提取）
+    # - id: I2
+    #   name: clock 参数
+    #   fields: 参数 clock（无注解）
+    #   code: redis_stream_message_queue.py 顶层公共函数形参（AST 提取）
+    # - id: I3
+    #   name: dlq_sink 参数
+    #   fields: 参数 dlq_sink（无注解）
+    #   code: redis_stream_message_queue.py 顶层公共函数形参（AST 提取）
+    # - id: I4
+    #   name: group 参数
+    #   fields: 参数 group（无注解）
+    #   code: redis_stream_message_queue.py 顶层公共函数形参（AST 提取）
+    # 层: 算法
+    # - id: A1
+    #   name_zh: ① StreamClient
+    #   name_en: StreamClient
+    #   intro: Redis Streams 客户端协议（全注入；生产=redis-py，测试=内存 fake）。
+    #   desc: Redis Streams 客户端协议（全注入；生产=redis-py，测试=内存 fake）。；公共方法（定义序）: xadd, xreadgroup, xack, xpending；源码 L146-L169
+    #   inputs: 无参数
+    #   outputs: 返回值
+    # - id: A2
+    #   name_zh: ② RedisStreamMessageQueue
+    #   name_en: RedisStreamMessageQueue
+    #   intro: Redis Streams 可靠消息队列（双通道路由 + ACK重试 + DLQ）。
+    #   desc: Redis Streams 可靠消息队列（双通道路由 + ACK重试 + DLQ）。；公共方法（定义序）: bind, channel_of, topics, publish, consume_inproc, poll…
+    #   inputs: client clock dlq_sink group consumer max_deliveries pending_timeout_ms
+    #   outputs: 返回值
+    #   （注：A2 之后另有 5 个公共定义未列入（含 5 个数据契约/异常/枚举声明类），见源码）
+    # 层: 输出
+    # - id: O1
+    #   name_zh: 模块公共 API 面（7 定义）
+    #   name_en: public defs
+    #   intro: StreamClient, RedisStreamMessageQueue
+    #   downstream: 运行时装配批（事件总线 stream 通道绑定 / 进程内快路径装配 / DLQ 接告警路由）
+    # [/ALGO_FLOW]
+    #
+    # 边:
+    # I1 --> A1
+    # I2 --> A1
+    # I3 --> A1
+    # I4 --> A1
+    # A1 --> A2
+    # A2 --> O1

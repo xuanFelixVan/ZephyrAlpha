@@ -1,0 +1,34 @@
+# ALGO_FLOW 外部真源——execution_model（_domain_shared 域，真源 src/zephyr/shared/schema/execution_model.py）
+# 2026-09-15 P2-1 契约头减负批量出仓：docstring 内联块逐字节副本，extractor 经
+# external 锚加载走同一 parse_algo_flow 管线；算法公共面变化时同步更新本块。
+doc_type: architecture_view
+ttl: permanent
+module: src.zephyr.shared.schema.execution_model
+source_of_truth: src/zephyr/shared/schema/execution_model.py
+algo_flow: |
+    # [ALGO_FLOW]
+    # 层: 输入
+    # - id: I1
+    #   name: value 参数
+    #   fields: 参数 value，类型注解 str | ExecutionModel
+    #   code: execution_model.py 顶层公共函数形参（AST 提取）
+    # 层: 算法
+    # - id: A1
+    #   name_zh: ① normalize_execution_model
+    #   name_en: normalize_execution_model
+    #   intro: normalize_execution_model(value) 源码 L67-L87
+    #   desc: 源码 L67-L87
+    #   inputs: value
+    #   outputs: ExecutionModel
+    #   （注：A1 之后另有 1 个公共定义未列入（含 1 个数据契约/异常/枚举声明类），见源码）
+    # 层: 输出
+    # - id: O1
+    #   name_zh: ExecutionModel
+    #   name_en: ExecutionModel
+    #   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+    #   downstream: orchestrator ; mcp ; kb
+    # [/ALGO_FLOW]
+    #
+    # 边:
+    # I1 --> A1
+    # A1 --> O1

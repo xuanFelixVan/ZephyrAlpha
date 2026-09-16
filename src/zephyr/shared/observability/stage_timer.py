@@ -47,36 +47,7 @@ stage_timer —— 分段延迟打点助手（CAND-OBS-001 打点契约 MVP 施�
 
 异常即未 begin 的阶段被 end（计时语义断裂，fail-closed 阻断契约漂移）。
 
-# [ALGO_FLOW]
-# 层: 输入
-# - id: I1
-#   name: module 参数
-#   fields: 参数 module（无注解）
-#   code: stage_timer.py 顶层公共函数形参（AST 提取）
-# - id: I2
-#   name: registry 参数
-#   fields: 参数 registry（无注解）
-#   code: stage_timer.py 顶层公共函数形参（AST 提取）
-# 层: 算法
-# - id: A1
-#   name_zh: ① StageTimer
-#   name_en: StageTimer
-#   intro: 单事务多阶段分段计时器——契约命名的打点样板消除器。
-#   desc: 单事务多阶段分段计时器——契约命名的打点样板消除器。 线程安全由底层 MetricsRegistry 保证（其 inc/observe 均持锁）； 本类自身只在 begin/en…；公共方法（定义序）: begin,…
-#   inputs: module registry
-#   outputs: 返回值
-# 层: 输出
-# - id: O1
-#   name_zh: 模块公共 API 面（1 定义）
-#   name_en: public defs
-#   intro: StageTimer
-#   downstream: zephyr.data.tick_subscriber（CAND-OBS-001 试点）；后续各生产模块按契约接入
-# [/ALGO_FLOW]
-#
-# 边:
-# I1 --> A1
-# I2 --> A1
-# A1 --> O1
+# [ALGO_FLOW] external: docs/03_modules/_domain_shared/algo_flow/observability/stage_timer.yaml
 """
 
 from __future__ import annotations

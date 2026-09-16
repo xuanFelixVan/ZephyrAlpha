@@ -27,55 +27,7 @@ Redis Streams 承载事件总线语义——stream + consumer group + ACK 重试
 inproc 快路径即其承载；stream 通道与可靠投递为本件新增）；alert 路由族=
 告警出口（DLQ 经注入 dlq_sink 对接，不重建告警总线）。
 
-# [ALGO_FLOW]
-# 层: 输入
-# - id: I1
-#   name: client 参数
-#   fields: 参数 client（无注解）
-#   code: redis_stream_message_queue.py 顶层公共函数形参（AST 提取）
-# - id: I2
-#   name: clock 参数
-#   fields: 参数 clock（无注解）
-#   code: redis_stream_message_queue.py 顶层公共函数形参（AST 提取）
-# - id: I3
-#   name: dlq_sink 参数
-#   fields: 参数 dlq_sink（无注解）
-#   code: redis_stream_message_queue.py 顶层公共函数形参（AST 提取）
-# - id: I4
-#   name: group 参数
-#   fields: 参数 group（无注解）
-#   code: redis_stream_message_queue.py 顶层公共函数形参（AST 提取）
-# 层: 算法
-# - id: A1
-#   name_zh: ① StreamClient
-#   name_en: StreamClient
-#   intro: Redis Streams 客户端协议（全注入；生产=redis-py，测试=内存 fake）。
-#   desc: Redis Streams 客户端协议（全注入；生产=redis-py，测试=内存 fake）。；公共方法（定义序）: xadd, xreadgroup, xack, xpending；源码 L146-L169
-#   inputs: 无参数
-#   outputs: 返回值
-# - id: A2
-#   name_zh: ② RedisStreamMessageQueue
-#   name_en: RedisStreamMessageQueue
-#   intro: Redis Streams 可靠消息队列（双通道路由 + ACK重试 + DLQ）。
-#   desc: Redis Streams 可靠消息队列（双通道路由 + ACK重试 + DLQ）。；公共方法（定义序）: bind, channel_of, topics, publish, consume_inproc, poll…
-#   inputs: client clock dlq_sink group consumer max_deliveries pending_timeout_ms
-#   outputs: 返回值
-#   （注：A2 之后另有 5 个公共定义未列入（含 5 个数据契约/异常/枚举声明类），见源码）
-# 层: 输出
-# - id: O1
-#   name_zh: 模块公共 API 面（7 定义）
-#   name_en: public defs
-#   intro: StreamClient, RedisStreamMessageQueue
-#   downstream: 运行时装配批（事件总线 stream 通道绑定 / 进程内快路径装配 / DLQ 接告警路由）
-# [/ALGO_FLOW]
-#
-# 边:
-# I1 --> A1
-# I2 --> A1
-# I3 --> A1
-# I4 --> A1
-# A1 --> A2
-# A2 --> O1
+# [ALGO_FLOW] external: docs/03_modules/_domain_shared/algo_flow/shared/redis_stream_message_queue.yaml
 """
 
 from __future__ import annotations

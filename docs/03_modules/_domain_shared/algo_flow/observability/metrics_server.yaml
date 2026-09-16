@@ -1,0 +1,46 @@
+# ALGO_FLOW 外部真源——metrics_server（_domain_shared 域，真源 src/zephyr/shared/observability/metrics_server.py）
+# 2026-09-15 P2-1 契约头减负批量出仓：docstring 内联块逐字节副本，extractor 经
+# external 锚加载走同一 parse_algo_flow 管线；算法公共面变化时同步更新本块。
+doc_type: architecture_view
+ttl: permanent
+module: src.zephyr.shared.observability.metrics_server
+source_of_truth: src/zephyr/shared/observability/metrics_server.py
+algo_flow: |
+    # [ALGO_FLOW]
+    # 层: 输入
+    # - id: I1
+    #   name: provider 参数
+    #   fields: 参数 provider，类型注解 Callable[[], dict] | None
+    #   code: metrics_server.py 顶层公共函数形参（AST 提取）
+    # - id: I2
+    #   name: port 参数
+    #   fields: 参数 port，类型注解 int
+    #   code: metrics_server.py 顶层公共函数形参（AST 提取）
+    # 层: 算法
+    # - id: A1
+    #   name_zh: ① set_health_provider
+    #   name_en: set_health_provider
+    #   intro: 注入自定义 /health 负载提供者（契约 §3.4）。
+    #   desc: 注入自定义 /health 负载提供者（契约 §3.4）。 Args: provider: 返回 dict 的可调用（须含 status/uptime_seconds）； Non…；源码 L101-L109
+    #   inputs: provider
+    #   outputs: 返回值
+    # - id: A2
+    #   name_zh: ② start_metrics_server
+    #   name_en: start_metrics_server
+    #   intro: 启动 /metrics HTTP 服务（daemon 线程）。
+    #   desc: 启动 /metrics HTTP 服务（daemon 线程）。 Args: port: 监听端口（默认 9925） Returns: HTTPServer 实例（端口冲突时返回…；源码 L145-L164
+    #   inputs: port
+    #   outputs: HTTPServer | None
+    # 层: 输出
+    # - id: O1
+    #   name_zh: HTTPServer | None
+    #   name_en: HTTPServer | None
+    #   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+    #   downstream: zephyr.data.tick_subscriber
+    # [/ALGO_FLOW]
+    #
+    # 边:
+    # I1 --> A1
+    # I2 --> A1
+    # A1 --> A2
+    # A2 --> O1
