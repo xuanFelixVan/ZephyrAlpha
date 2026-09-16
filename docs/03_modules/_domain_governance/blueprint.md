@@ -2270,7 +2270,7 @@ STEP 3: 拆分后验证
 
 ## §0 代码对齐验证
 
-> **架构归属SSoT**：见 AGENTS.md §7「代码规范」（depgraph SSoT 真源唯一指针）
+> **架构归属 SSoT**：见 AGENTS.md RULE-DEPGRAPH / RULE-SSOT（depgraph SSoT 真源唯一指针）
 > **代码头部规范**：`[BLUEPRINT]/[MODULE]/[INVARIANTS]/[MODIFY-GUARD]/[CONSUMERS]/[STABILITY]/[SAFETY]/[AI_AUTONOMY]/[ERROR_CONTRACT]/[TESTS]` — 见防幻觉十八条
 
 | 验证项 | 命令 | 通过标准 |

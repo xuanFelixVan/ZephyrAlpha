@@ -102,7 +102,7 @@ build_status: deprecated
 > 查询最新文件清单：`python scripts/governance/extract_depgraph.py --modules MOD-INF-019`
 > 以下手写内容保留职责描述（depgraph 无此信息），文件列表以 depgraph 为准。
 
-> **架构归属SSoT**：见 AGENTS.md §7「代码规范」（depgraph SSoT 真源唯一指针）
+> **架构归属 SSoT**：见 AGENTS.md RULE-DEPGRAPH / RULE-SSOT（depgraph SSoT 真源唯一指针）
 > **代码头部规范**：`[BLUEPRINT]/[MODULE]/[DOMAIN]/[DEPENDENCIES]/[CONSUMERS]/[STARTUP]/[MATURITY]/[INVARIANTS]/[MODIFY-GUARD]/[STABILITY]/[SAFETY]/[AI_AUTONOMY]/[ERROR_CONTRACT]/[TESTS]/[TTL]` — 见防幻觉十八条
 
 > 存在性：未实现/已实现/已阻塞（MUST注明原因）/已废弃（MUST在§5.3说明）

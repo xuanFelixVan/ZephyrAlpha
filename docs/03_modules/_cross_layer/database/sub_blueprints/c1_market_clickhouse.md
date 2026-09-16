@@ -85,7 +85,7 @@ C1 market_clickhouse 是业务数据库仓库层的**行情仓库**，存储 L1 
 > 查询最新文件清单：`python scripts/governance/extract_depgraph.py --modules MOD-C1-MARKETCH`
 > 以下手写内容保留职责描述（depgraph 无此信息），文件列表以 depgraph 为准。
 
-> **架构归属 SSoT**：见 AGENTS.md §7「代码规范」（depgraph SSoT 真源唯一指针）
+> **架构归属 SSoT**：见 AGENTS.md RULE-DEPGRAPH / RULE-SSOT（depgraph SSoT 真源唯一指针）
 > **代码头部规范**：`[BLUEPRINT]/[MODULE]/[INVARIANTS]/[MODIFY-GUARD]/[CONSUMERS]/[STABILITY]/[SAFETY]/[AI_AUTONOMY]/[ERROR_CONTRACT]/[TESTS]` — 见防幻觉十八条
 
 > **完整文件清单 SSoT**：`python scripts/governance/extract_depgraph.py --modules C1-MARKET-CH`

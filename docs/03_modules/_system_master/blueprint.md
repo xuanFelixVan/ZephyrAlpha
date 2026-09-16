@@ -2193,7 +2193,7 @@ Step 4: 稳定后清理flag branching code
 | L0 模型 | Temperature=0 + fixed model version |
 | L1 上下文 | Same AGENTS.md + §0.1 词语表 + §15.2 指令词典 |
 
-> **架构归属SSoT**：见 AGENTS.md §7「代码规范」（depgraph SSoT 真源唯一指针）
+> **架构归属 SSoT**：见 AGENTS.md RULE-DEPGRAPH / RULE-SSOT（depgraph SSoT 真源唯一指针）
 > **代码头部规范**：`[BLUEPRINT]/[MODULE]/[DOMAIN]/[DEPENDENCIES]/[CONSUMERS]/[STARTUP]/[MATURITY]/[INVARIANTS]/[MODIFY-GUARD]/[STABILITY]/[SAFETY]/[AI_AUTONOMY]/[ERROR_CONTRACT]/[TESTS]/[TTL]` — 见防幻觉十八条
 | L2 依赖 | random.seed(42) + numpy.seed(42) + pip-lock + tree-sitter |
 | L3 验证 | CSCV 每10 session自动运行→写入Handover |
