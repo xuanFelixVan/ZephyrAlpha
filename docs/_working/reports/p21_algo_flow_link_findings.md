@@ -218,3 +218,27 @@ date: 2026-09-17
   队列路由的效力证据改由"新进程侧 drain + 字节核实"给出；守护重启处置登记
   **#ARCH-324**（A=静默窗/Owner 门位重启一次即闭合；B=每项起短命子进程=结构根治但动
   lease 单写者语义，须独占基建窗）。
+
+## 13. 新码效力证据（FRESH5）+ 两条操作性教训
+
+- **FRESH5**（`.runtime/tmp/bt_rb_fresh5.py`，scratch worktree 生产形态复刻）：判定入口用与
+  `GitCommitGateway` 同形的 `check_algo_flow_links(files, root, read_staged=...)`，判据真源从
+  **该 root 的盘上**直载（#ARCH-323 第一层），五发变异 = R1 体外死块 / R2 体内多块 /
+  R3 图无边 / R4 锚指向不存在 yaml / R5 `source_of_truth` 断链 →
+  **`blocked_ok=5/5`，每条都命中本场景门禁原文**，`criteria loaded from disk: OK`。
+  单测侧同族证据：`test_stale_sys_modules_criteria_does_not_disable_gate`（把 `sys.modules`
+  灌成"只有旧符号"的假 `_shared` 后，判据仍可得且死块照样硬阻断）。
+- **为什么不再往默认队列根投注资变异**：那台上（#ARCH-324）按旧码消费，注资极可能再进
+  HEAD；而"开第二个 Serializer"直接违反单写者不变量（66 号 §9.7 / lease TTL 竞态在案）。
+  队列路由已有的生产证据不撤回：R4/R5 真死信（q…0064/0065）+ 本役 90+ 批次全经该路由落地。
+- 教训①（探针侧）：`enqueue` 的自举 drain 只在 lease 空闲时生效，守护持 lease 期间项由它
+  消费；`judge` 对已被同键覆盖撤换的 qid 会一路干到 `_wait` 超时（本轮 0069 即手动停表）。
+- 教训②（claim 生命周期，AGENTS §2.3/§1 第 3 条同源）：`lock_files` 单把 claim **TTL=30 分钟**，
+  且落地 `finally` 会释放本批文件的 claim（95f1832aeb 落毕即释放 8 件）——随后 q…0070 仍投
+  同两件 → `CLAIM_REQUIRED_VIOLATION` 死信；`requeue`（重建快照=重新走落地侧 claim）后
+  q…0072 正常落地（aade2d4fef）。**口径：跨批续投同一文件必须重新 claim，勿沿用上一批的锁；
+  死信先看是否 claim 类，是则直接 requeue 而非改内容。**本条成因不硬判"旧守护"：
+  落地侧 pre-claim 源码在 09-16 07:17 版（e926198085:743）与当前版逐字相同，故更可能是
+  TTL/配额类瞬态，未取证前不下结论。
+- 归属留痕：79da32493a（#ARCH-324 登记）把他会话 staged 的 **#ARCH-325** 一条（31 行完整条目）
+  一并带进 commit——AGENTS §2.5 记录的暂存区吸收常态，条目完好无损，此处仅为归属可追溯。
