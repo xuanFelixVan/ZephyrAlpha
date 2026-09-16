@@ -162,7 +162,7 @@ AI 层自己的尺子升级=OBJ_R（标准与规则线）。
 | OBJ_R-#3 | OBJ_R_rules_standards | 重放 summary promote 落点目录 | 自裁 `docs/_working/ai_layer_vision/OBJ_R_rules_standards/replays/`（ttl task_bound） |
 | OBJ_R-#4 | OBJ_R_rules_standards | 首案 CASE-2026-0917-001 死因细节补登 | 按本卡记录登记销项 |
 | OBJ_R-#7 | OBJ_R_rules_standards | creation_token 补登 | 主会话 wave1 ceremony 已登记（capability ai_layer_vision） |
-| L2-#1 | L2_intake_library | 机制族 8 族词表+40 格初始网格 | 自裁生效追认；Owner 口味修正走字典数据（数据操作非结构变更） |
+| L2-#1 | L2_intake_library | 机制族 8 族词表+48 格初始网格（6 域×8 族） | 自裁生效追认；Owner 口味修正走字典数据（数据操作非结构变更） |
 | L3-#1 | L3_cleaning | 清洗考尺初值（cleaning_policy.yaml 全部常数） | 按提案原值追认生效 |
 | L3-#2 | L3_cleaning | creation_token 补登 | 夜批追认补登（token ×5 之一） |
 | L4-#1 | L4_compare | 判据常量初值（触发线 G1-G5/α/效应量门槛/锦标赛 K） | 按提案原值追认生效 |

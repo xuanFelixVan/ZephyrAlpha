@@ -200,7 +200,7 @@ EXEMPT-ZONE-FM 真实路径（R2 头注释）：前身=post-commit warn reconcil
 
 | 对端 | 契约 | 方向 | 载荷 |
 |------|------|------|------|
-| **L5 排产** | 施工完成回执=shadow 入场券：工单关单+worktree 就绪+验收门绿才发 | L5→L6 | {work_order_id, module_id, challenger_branch, criteria_yaml_ref+hash, domain, tier_action} |
+| **L5 排产** | 影子上岗券=`work_order_shadow_ready`：工单关单+worktree 就绪+验收门绿才发（事件名 R4 两稿对齐） | L5→L6 | {work_order_id, module_id, challenger_branch, criteria_yaml_ref+hash, domain, tier_action} |
 | **L4 对比** | 影子期=L4 判据的持续执行现场；L6 回传实测数据供 L4 终裁（升 canary/promote 的裁定出自 L4，评估者独立）；好得反常触发 L4 三查 | L6↔L4 | {switch_id, corpus 统计, disagreement_rate, evidence_pack（判据冻结哈希）} |
 | **L7 传承** | 每次切换终局留档：胜者档案/败者档案/判据档案/墓碑登记/回切记录——"判据档案=当时为什么算它赢"直接消费本稿 criteria_yaml | L6→L7 | 事件 `switch_archived_due`（红蓝 R3 两稿对齐，接收方口径）：{switch_id, object{family, ref}, outcome, winner_ref, loser_ref, diff_summary, criteria_ref+criteria_hash, tombstone_entry?}——语义映射：胜局→elite+criteria；aborted 带根因→defect；retired→elite 降级信号 |
 | **promotion 前端页** | high 域/骨架级/规则类切换建议卡。真实先例=`src/zephyr/frontend/dashboard/web/pages/promotion.html`+`features/promotion/promotion.js`（S13：真源 `/api/promotion-advisories`、JS 渲染、**二次确认**、服务端留痕回执、**建议由流水线自动生成禁手工造**）。裁定：**复用该页**，advisory 增 `kind=switch`，不新建页面 | L6→前端 | 建议卡 {switch_id, A/B 对比摘要, 一键切换/一键回切按钮, 证据包链接} → 拍板回执 {approved_by, 时刻, 新状态} |
@@ -272,3 +272,5 @@ EXEMPT-ZONE-FM 真实路径（R2 头注释）：前身=post-commit warn reconcil
 - 连带核查：switch_registry 字段零变更（state 枚举本就七值，仅补注释）；L4/L5/L7 契约与 §②-D 墓碑规程不受影响；§②-G"promote=block 档"为动作语义，与裁定一致未改。
 
 **红蓝 R3 修复记录**：R3：L6→L7 事件定名 switch_archived_due 并对齐接收方 8 字段口径。
+
+**红蓝 R4 修复记录**：①影子上岗券事件定名 work_order_shadow_ready（§③ L203 行同步）；②switch_archived_due 字段映射明文化：winner_ref←本稿 champion_ref、loser_ref←challenger_ref、diff_summary←"A/B 对比摘要"档、criteria_ref+criteria_hash←criteria_yaml_ref+hash（微名以 L7 接收方口径为准）。
