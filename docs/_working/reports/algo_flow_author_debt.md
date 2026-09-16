@@ -22,11 +22,11 @@ generated_by: scripts/governance/d5_architecture/generators/report_algo_flow_aut
 | 零边图（欠边） | 17 | `graph has no edges (validate_graph would block)` | 补边须作者裁定语义，禁工具臆造（伪造边=错图冒充已验证） |
 | 块不可解析（零节点） | 5 | `block unparsable (no nodes)` | 逐件诊断块形，能补则补、该删则删（须作者确认） |
 | **作者欠账合计** | **69** | — | 本台账的账 |
-| 可机械出仓（dry-run 判可动） | 5 | — | 归出仓批，非欠账 |
+| 可机械出仓（dry-run 判可动） | 0 | — | 归出仓批，非欠账 |
 | 其他（须逐件看报因） | 0 | — | 几何/定位类，非内容欠账 |
-| 池总数 | 74 | — | 恒等式：欠账+可机械+其他=池总数 |
+| 池总数 | 69 | — | 恒等式：欠账+可机械+其他=池总数 |
 
-状态分布：dryrun=5、skipped=69
+状态分布：skipped=69
 
 ## 五段式散文（欠机器块行）（47 件）
 
@@ -169,20 +169,9 @@ generated_by: scripts/governance/d5_architecture/generators/report_algo_flow_aut
 
 - `src/zephyr/risk/core/drawdown_tracker.py`
 
-## 可机械出仓（5 件，非欠账，登记防漏）
+## 可机械出仓（0 件，非欠账，登记防漏）
 
-构成：待出仓（dryrun）=5
-
-### gov_audit（4 件）
-
-- `src/zephyr/gov_audit/integrity.py`
-- `src/zephyr/gov_audit/log_rotation.py`
-- `src/zephyr/gov_audit/secret_registry_drift.py`
-- `src/zephyr/gov_audit/writer.py`
-
-### red_blue_validator（1 件）
-
-- `src/zephyr/red_blue_validator/__init__.py`
+（无）
 
 ## 其他报因（0 件，逐件诊断）
 

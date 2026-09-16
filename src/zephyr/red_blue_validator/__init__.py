@@ -25,32 +25,7 @@ red_blue_validator — re-export shim for zephyr.security.adversarial_validation
 直接调用 ss._import_time("zephyr.red_blue_validator")，要求该包可导入。
 本包从 zephyr.security.adversarial_validation 重新导出关键符号。
 
-# [ALGO_FLOW]
-# 层: 输入
-# - id: I1
-#   name: adversarial_validation 源模块 符号
-#   fields: RedBlueValidator + ConstitutionArticle/ConstitutionGuard/ConstitutionViolationError
-#   code: zephyr.security.adversarial_validation.validator L27 / constitution_guard L28
-# 层: 算法
-# - id: A1
-#   name_zh: ① re-export shim 符号转发
-#   name_en: __init__ 重导出
-#   intro: 原样转发4个符号，保证 zephyr.red_blue_validator 包可导入
-#   desc: 从 zephyr.security.adversarial_validation 两个子模块 import 4 符号并列入 __all__，无自有逻辑（L27-39）
-#   inputs: I1
-#   outputs: 4 个公共符号
-#   invariant: re-export shim，不包含任何自有实现
-# 层: 输出
-# - id: O1
-#   name_zh: 红蓝对抗验证公共符号
-#   name_en: RedBlueValidator + ConstitutionGuard 等
-#   intro: 对外提供红蓝验证器与宪法守卫类
-#   downstream: tests/audit/audit_core/test_audit_red_blue_e2e.py（import_time 测量，# [CONSUMERS] 头）
-# [/ALGO_FLOW]
-#
-# 边:
-# I1 --> A1
-# A1 --> O1
+# [ALGO_FLOW] external: docs/03_modules/_domain_red_blue_validator/algo_flow/red_blue_validator__init__.yaml
 """
 
 from zephyr.security.adversarial_validation.constitution_guard import (  # noqa: F401

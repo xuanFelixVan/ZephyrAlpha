@@ -49,38 +49,7 @@ Usage::
     report = check_secret_registry_drift(project_root)          # 直接核对
     registry.register(make_secret_registry_drift_reconciler(gateway))  # 事件触发
 
-# [ALGO_FLOW]
-# 层: 输入
-# - id: I1
-#   name: project_root 参数
-#   fields: 参数 project_root，类型注解 Path | str
-#   code: check_secret_registry_drift 形参（AST 提取）
-# 层: 算法
-# - id: A1
-#   name_zh: ① check_secret_registry_drift
-#   name_en: check_secret_registry_drift
-#   intro: 三方核对纯函数——registry↔env↔era 漂移检查，返回 findings 报告。
-#   desc: 顶层公共函数（定义序）: check_secret_registry_drift, make_secret_registry_drift_reconciler
-#   inputs: project_root env state_dir
-#   outputs: dict（status/findings）
-# - id: A2
-#   name_zh: ② make_secret_registry_drift_reconciler
-#   name_en: make_secret_registry_drift_reconciler
-#   intro: post-commit 事件触发 reconciler 工厂（每次 commit=周期节拍）。
-#   inputs: gateway
-#   outputs: ReconcilerSpec
-# 层: 输出
-# - id: O1
-#   name_zh: dict / ReconcilerSpec
-#   name_en: public defs
-#   intro: 模块公共 API 面（2 定义）
-#   downstream: git_commit_gateway（reconcile 链）
-# [/ALGO_FLOW]
-#
-# 边:
-# I1 --> A1
-# A1 --> A2
-# A2 --> O1
+# [ALGO_FLOW] external: docs/03_modules/_domain_gov_audit/algo_flow/secret_registry_drift.yaml
 """
 
 from __future__ import annotations
