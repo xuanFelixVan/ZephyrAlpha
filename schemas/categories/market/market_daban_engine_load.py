@@ -39,7 +39,10 @@ ClickHouse 实际表结构必须与本文件 DDL 一致；结构变更通过 app
     - market_limit_up_count —— 当日全市场真封板家数（窗口自产）。
     - market_breadth_ratio —— market_breadth_snapshot 当日末快照 advancing/(adv+dec)
       （快照仅 2026-08-24 起，早于该窗 None 显式缺省）。
-    - market_change_pct —— index_quote 000300.SH 收盘环比（无则 None 显式缺省）。
+    - market_change_pct —— 基准指数 000300 收盘环比（真源=c1_market.kline_index 日收盘序列
+      相邻行环比；不取 index_quote——该表 000300 实测 0 行（2026-09-16 只读探查，
+      min/max(trade_date) 回空表哨兵 1970-01-01），按其取数本列将永远缺省）；
+      无当日或前一收盘行则 None 显式缺省。
     - derived_fields —— JSON {字段: "real"|"default"}，逐字段留痕可产性，禁拍默认值冒充。
 
 引擎选型说明：

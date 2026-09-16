@@ -1,7 +1,7 @@
 # [BLUEPRINT] MOD-L00-004 | docs/03_modules/_domain_data/data_source_integrator_blueprint.md
 # [MODULE] zephyr.data.implementations.internal_compute_provider
 # [DOMAIN] D_DATA
-# [DEPENDENCIES] zephyr.data.provider_base; zephyr.data.ch_reader; zephyr.factor.technical_indicators
+# [DEPENDENCIES] zephyr.data.provider_base; zephyr.data.ch_reader; zephyr.factor.technical_indicators; zephyr.ex_core.daban_load_producer（lazy，daban_engine_load 路由分支的口径真源，本件只驱动不复制）
 # [CONSUMERS] zephyr.data.scheduler (source=internal 分支)
 # [STARTUP] manual
 # [MATURITY] production
@@ -114,6 +114,7 @@ _INTERNAL_COMPUTE_CAPABILITIES = frozenset(
         "trading_lifecycle_weekly",  # 三域生命周期周扫（协议 v2.0：因子/策略/指标衰减认证）
         "limit_up_pool",  # 涨停池明细采集（GAP-F-13，裁定#257⑤ LUE-3 接线）
         "daban_board_event",  # 打板日频事件派生（STR-DABAN-022，裁定#257⑤ LUE-3 接线）
+        "daban_engine_load",  # 打板四引擎应用层负载日批（T3⑧/挖矿 LUE-1，口径真源=ex_core.daban_load_producer）
         "kline_index_breadth",  # 指数涨跌家数内生聚合回填真表（车道 G 广度治本 2026-09-16）
         "breadth_freshness_sentinel",  # 广度断供哨兵→promotion 页（车道 G 施工项3 同日）
     }
@@ -122,6 +123,7 @@ _INTERNAL_COMPUTE_CAPABILITIES = frozenset(
 # 路由表名（TableRegistry 真源派生——#ARCH-CH-024 TABLE-NAME-REGISTRY 门合规）
 _TBL_LIMIT_UP_POOL = get_registry().table("market_limit_up_pool")
 _TBL_DABAN_BOARD_EVENT = get_registry().table("market_daban_board_event")
+_TBL_DABAN_ENGINE_LOAD = get_registry().table("market_daban_engine_load")
 
 # SQL 模板常量（NO-BARE-SQL gate 豁免：_SQL_* 前缀的常量定义行）
 _SQL_GET_SYMBOLS = "SELECT DISTINCT symbol FROM {table} WHERE {where} ORDER BY symbol"
@@ -516,6 +518,11 @@ class InternalComputeProvider(IngestProviderBase):
         if payload.table == _TBL_DABAN_BOARD_EVENT:
             yield from self._fetch_daban_board_event(payload)
             return
+        # daban_engine_load 必须显式路由：它是 source=internal 的日批（tasks.yaml
+        # daban_engine_load_daily），落到下方默认分支=技术指标行写进负载表=静默串台。
+        if payload.table == _TBL_DABAN_ENGINE_LOAD:
+            yield from self._fetch_daban_engine_load(payload)
+            return
         if payload.extra.get("capability") == "trading_lifecycle_weekly":
             yield from self._fetch_trading_lifecycle_weekly(payload)
             return
@@ -701,6 +708,39 @@ class InternalComputeProvider(IngestProviderBase):
             last_key=payload.end.isoformat(),
             elapsed_sec=time.monotonic() - t0,
         )
+
+    def _fetch_daban_engine_load(self, payload: FetchPayload) -> Iterator[FetchResult]:
+        """打板四引擎应用层负载日批路由分支（daban_engine_load，T3⑧/挖矿 LUE-1 接线）。
+
+        口径真源在生产者 `zephyr.ex_core.daban_load_producer.run_daily_batch`——本件只做
+        三件事：逐交易日驱动（`_trade_days_guarded` 周末/非交易日守卫）、市场级上下文注入
+        （`fetch_market_context`，宽度末快照 + 基准指数环比，缺源字段降 default 不补零）、
+        流通市值注入（`fetch_float_cap_map`）。**零业务口径复制**（两处口径=未来必漂移）。
+
+        逐日 yield：负载表分区键=事件日（ReplacingMergeTree (trade_date, symbol) 同键重放
+        幂等），单日一个 FetchResult 让 last_key 与内存都按日界定。上游 daban_board_event
+        未派生的日子由生产者自己发 warning 产空批（fail-visible），本件不另造降级路径。
+        CH 不可达 fail-closed 抛错——禁把"读不到"伪装成"当日无负载"。
+        """
+        from zephyr.data import ch_writer
+        from zephyr.ex_core.daban_load_producer import (
+            fetch_float_cap_map,
+            fetch_market_context,
+            run_daily_batch,
+        )
+
+        days = self._trade_days_guarded(payload.start, payload.end)
+        if not days:
+            return
+        if ch_writer.get_client() is None:
+            raise RuntimeError(
+                "CH 不可达，daban_engine_load 批产 fail-closed（禁伪空批/禁规则外落库）"
+            )
+        market_context = fetch_market_context(days)
+        for day in days:
+            yield run_daily_batch(
+                day, market_context=market_context, cap_source=fetch_float_cap_map
+            )
 
     def _fetch_trading_lifecycle_weekly(self, payload: FetchPayload) -> Iterator[FetchResult]:
         """三域生命周期周扫路由分支（trading_lifecycle_weekly 命名约定，协议 v2.0）。

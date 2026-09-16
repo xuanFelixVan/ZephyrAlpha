@@ -3122,3 +3122,17 @@ tasks:
   fallback_sources: []    # internal 派生源天然无副源
   extra:
     description: "调权同步（消费班方案 v1.0 C3：物化完成后拉统计全行→low_sample/查无跳过→win_rate=Wilson 95% LB+ic=命中率相对基准代理→MOD-SIG-131 限幅调权→权重状态持久化 data/runtime/pattern_signal_weights.json；喂 MOD-SIG-147 runtime weight_version）"
+
+# ============== 车道 E（2026-09-16，T3⑧ daban 四引擎应用层负载批产，挖矿 LUE-1 治本）==============
+- task_id: daban_engine_load_daily
+  table: c1_market.daban_engine_load
+  source: internal  # 本地计算（读 c1_market.daban_board_event 事件 + stock_indicator.circ_mv 市值 + market_breadth_snapshot 末快照宽度 + kline_index 000300 环比，不从外部API拉取）
+  schedule: daily_kline    # 盘后批（trade_date=打板事件日=决策日 T 的 T-1，T 日盘前消费）
+  incremental: true    # 按事件日窗口产出（ReplacingMergeTree (trade_date, symbol) 同键重放幂等）
+  date_col: trade_date
+  dependencies: ["daban_board_event_derive"]    # DAG: 事件派生落库后才有负载原料
+  capability: daban_engine_load
+  symbols:         # null=全市场（当日真封板事件集，由上游派生表界定）
+  fallback_sources: []    # internal 派生源天然无副源
+  extra:
+    description: "打板四引擎应用层负载日批（T3⑧/挖矿 LUE-1：连板/开板次数/首触/封板分钟/封单额/流通市值/个股涨幅/板块与全市场封板家数/宽度/大盘涨幅；触发=盘后 daily_kline 事件批 → internal_compute_provider._fetch_daban_engine_load 逐交易日驱动 ex_core.daban_load_producer.run_daily_batch（口径真源在生产者，路由件零业务复制），落表由调度器写通道承担；derived_fields 逐字段 real|default 留痕，不可产字段省略交引擎中性默认）"

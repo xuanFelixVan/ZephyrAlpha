@@ -2,10 +2,10 @@
 # [MODULE] zephyr.ex_core.daban_load_producer
 # [DOMAIN] D_EXECUTION_CORE
 # [DEPENDENCIES] pandas; zephyr.data.ch_reader（lazy，只读）; zephyr.data.ch_writer（lazy，落表）; zephyr.data.implementations.daban_board_event_deriver（collect_derived_events，回填/验证只读）; zephyr.data.table_registry（表真源，lazy）
-# [CONSUMERS] 日频 reconciler 链（事件触发调 run_daily_batch+persist，tasks.yaml 接线=主会话待办）; zephyr.pf_core.strategies.daban_sleeve_strategy（**默认消费方**：无注入 load_source 时经其 _PersistedDabanLoadSource 走 DatabaseService PIT 真读本表；ClickHouseDabanEngineLoadSource 为 ch_reader 备选通道）; lane A framework_composer（build_weight_panel_for_dates 产面板路由）
+# [CONSUMERS] zephyr.data.implementations.internal_compute_provider._fetch_daban_engine_load（**生产触发方**：tasks.yaml daban_engine_load_daily 盘后 internal 批，逐交易日驱动 run_daily_batch，落表经调度器写通道）; zephyr.pf_core.strategies.daban_sleeve_strategy（**默认消费方**：无注入 load_source 时经其 _PersistedDabanLoadSource 走 DatabaseService PIT 真读本表；ClickHouseDabanEngineLoadSource 为 ch_reader 备选通道）; lane A framework_composer（build_weight_panel_for_dates 产面板路由）
 # [STARTUP] manual
 # [MATURITY] testing
-# [INVARIANTS] 事件驱动非周期：本模块是**批产生产者**，由上游 reconciler（daban_board_event 派生任务落库后）触发的 run_daily_batch 调用，MUST NOT 自带 cron/Timer/sleep-loop；生成器纯函数路径零 datetime.now()/time.time()（RULE-SCHEMA-TZ——ingest_ts 由 DDL 侧 now() DEFAULT 承载，Python 侧不取时钟，elapsed_sec 恒 0.0）；真源唯一：负载字段口径以 schemas/categories/market/market_daban_engine_load.py DDL 为唯一真源，LOAD_INSERT_COLUMNS 与其 INSERT_COLUMNS 严格同序 21 列；可产字段真实映射（float_market_cap 真连 stock_indicator.circ_mv 万元×1e4）、不可产字段**省略**（交引擎 dataclass 中性默认，禁拍假值冒充真值）并逐字段留痕 derived_fields；PIT：本表 trade_date=打板事件日（=决策日 T 的 T-1），消费侧（本模块 ClickHouseDabanEngineLoadSource 与策略侧 daban_sleeve_strategy._PersistedDabanLoadSource）只回 trade_date < as_of 的最新事件日分区；CH 全程经 ch_reader/ch_writer（禁裸 SQL 散落，_SQL_* 常量集中）；selector 资格门不喂（见 row→payload 契约在策略侧，本模块只产负载行不产引擎负载键）
+# [INVARIANTS] 事件驱动非周期：本模块是**批产生产者**，由数据集成器盘后 internal 批（tasks.yaml daban_engine_load_daily，DAG 前置=daban_board_event_derive 落库后）经 internal_compute_provider._fetch_daban_engine_load 调用 run_daily_batch，MUST NOT 自带 cron/Timer/sleep-loop；生成器纯函数路径零 datetime.now()/time.time()（RULE-SCHEMA-TZ——ingest_ts 由 DDL 侧 now() DEFAULT 承载，Python 侧不取时钟，elapsed_sec 恒 0.0）；真源唯一：负载字段口径以 schemas/categories/market/market_daban_engine_load.py DDL 为唯一真源，LOAD_INSERT_COLUMNS 与其 INSERT_COLUMNS 严格同序 21 列；可产字段真实映射（float_market_cap 真连 stock_indicator.circ_mv 万元×1e4；market_breadth_ratio 真连 market_breadth_snapshot 末快照 adv/(adv+dec)；market_change_pct 真连基准指数 000300 收盘环比——index_quote 该标的首尾 0 行，2026-09-16 实测，故取 kline_index）、不可产字段**省略**（交引擎 dataclass 中性默认，禁拍假值冒充真值）并逐字段留痕 derived_fields；PIT：本表 trade_date=打板事件日（=决策日 T 的 T-1），消费侧（本模块 ClickHouseDabanEngineLoadSource 与策略侧 daban_sleeve_strategy._PersistedDabanLoadSource）只回 trade_date < as_of 的最新事件日分区；CH 全程经 ch_reader/ch_writer（禁裸 SQL 散落，_SQL_* 常量集中）；selector 资格门不喂（见 row→payload 契约在策略侧，本模块只产负载行不产引擎负载键）
 # [MODIFY-GUARD] none
 # [STABILITY] evolving
 # [SAFETY] L
@@ -230,6 +230,28 @@ _SQL_CAP_BY_DAY_SYMBOLS = (
     "SELECT toString(trade_date), symbol, circ_mv "
     f"FROM {_CAP_TABLE} "
     "WHERE trade_date IN ({dates}) AND symbol IN ({symbols}) AND circ_mv IS NOT NULL"
+)
+
+#: 市场级日频上下文只读源（负载列 market_breadth_ratio / market_change_pct 的真值来源）。
+#: 宽度=market_breadth_snapshot 当日**末**快照 argMax(...,ts)（盘中多行，收盘行才是日频口径）；
+#: 大盘涨幅=基准指数收盘环比。基准指数取 kline_index 的 000300 而非 index_quote——
+#: 2026-09-16 只读实测 `c1_market.index_quote WHERE symbol='000300'` 回 **0 行**
+#: （min/max(trade_date) 返 1970-01-01 空表哨兵），按其取数 market_change_pct 将永远
+#: default；kline_index 000300 实有 5272 个交易日（2005-01-04~2026-09-15）。
+_BREADTH_TABLE: Final = "c1_market.market_breadth_snapshot"
+_INDEX_TABLE: Final = "c1_market.kline_index"
+_BENCHMARK_INDEX_SYMBOL: Final = "000300"
+#: 环比需前一收盘行，回溯窗口须跨长假/停市（国庆+中秋连休实测 ≥8 天，取 15 留余量）。
+_INDEX_LOOKBACK_DAYS: Final = 15
+_SQL_BREADTH_EOD_BY_DAYS = (
+    "SELECT toString(trade_date), argMax(advancing, ts), argMax(declining, ts) "
+    f"FROM {_BREADTH_TABLE} WHERE trade_date IN ({{dates}}) GROUP BY trade_date"
+)
+_SQL_INDEX_CLOSES_BY_RANGE = (
+    "SELECT toString(trade_date), close "
+    f"FROM {_INDEX_TABLE} WHERE symbol = '{_BENCHMARK_INDEX_SYMBOL}' "
+    "AND trade_date >= toDate('{from_day}') AND trade_date <= toDate('{to_day}') "
+    "ORDER BY trade_date"
 )
 
 
@@ -580,6 +602,110 @@ def fetch_float_cap_map(
 
 
 # ---------------------------------------------------------------------------
+# 市场级日频上下文（只读维度源——负载 market_breadth_ratio / market_change_pct）
+# ---------------------------------------------------------------------------
+
+
+def parse_market_context_rows(
+    breadth_rows: Sequence[Sequence[Any]],
+    index_rows: Sequence[Sequence[Any]],
+    days: Sequence[datetime.date | str],
+) -> dict[str, dict[str, float]]:
+    """宽度末快照行 + 基准指数收盘序列 → {day_iso: {breadth_ratio?, change_pct?}}（纯函数零 IO）。
+
+    Args:
+        breadth_rows: ``[day_iso, advancing, declining]``（当日末快照，argMax 已在 SQL 侧做）。
+        index_rows: ``[day_iso, close]`` **按 trade_date 升序**（SQL ORDER BY 承载），
+            环比=当日收盘 / 序列内前一有效行收盘 - 1。
+        days: 请求的事件日（结果只含这些日；序列外的行仅用于算环比）。
+
+    缺数据的键**省略不补零**：省略→上层记 ``default`` 并写进 derived_fields（"当日该字段
+    无源"可查）；补 0 则是把"无数据"伪装成"数据为 0"（涨跌家数比 0=全市场尽跌、
+    大盘涨幅 0=平盘，两者都是能进决策的假信号）。
+    """
+    wanted = {_iso_day(d) for d in days}
+    ctx: dict[str, dict[str, float]] = {d: {} for d in wanted}
+
+    for r in breadth_rows:
+        if len(r) < 3:
+            continue
+        day = _iso_day(r[0])
+        if day not in ctx:
+            continue
+        adv = _maybe_float(_tsv_val(str(r[1])))
+        dec = _maybe_float(_tsv_val(str(r[2])))
+        if adv is None or dec is None:
+            continue
+        denom = adv + dec
+        if denom <= 0:
+            continue  # 零涨跌家数=无信息日，不是 0.0 宽度比
+        ctx[day]["breadth_ratio"] = adv / denom
+
+    prev_close: float | None = None
+    for r in index_rows:
+        if len(r) < 2:
+            continue
+        close = _maybe_float(_tsv_val(str(r[1])))
+        day = _iso_day(r[0])
+        if close is None or close <= 0:
+            continue
+        if day in ctx and prev_close is not None and prev_close > 0:
+            ctx[day]["change_pct"] = (close / prev_close - 1.0) * 100.0
+        prev_close = close
+
+    return {d: v for d, v in ctx.items() if v}
+
+
+def fetch_market_context(
+    days: Sequence[datetime.date | str],
+    *,
+    reader: Any | None = None,
+) -> dict[str, dict[str, float]]:
+    """事件日市场级上下文真连接（只读）。reader 注入位（None=lazy ch_reader，测试注 fake 零 DB）。
+
+    两路各自独立 try/except：宽度有源而指数无源（或反之）时**保留已得那一路**，
+    缺的那一字段降 default——整批丢弃会把可用真字段也扔了。
+    ERROR_CONTRACT：CH 不可达→空 map（全字段 default + WARNING），不抛（对齐事件源/
+    市值源同一 fail-open 契约；生产 fail-closed 由调用方 run_daily_batch 的空事件分支承担）。
+    """
+    day_iso = sorted({_iso_day(d) for d in days})
+    if not day_iso:
+        return {}
+
+    def _tsv(sql: str) -> str:
+        if reader is not None:
+            return str(reader(sql) or "")
+        from zephyr.data import ch_reader
+
+        return str(ch_reader.query(sql) or "")
+
+    def _lines(sql: str) -> list[list[str]]:
+        return [ln.split("\t") for ln in sql.strip().splitlines() if ln.strip()]
+
+    breadth: list[Sequence[Any]] = []
+    try:
+        breadth = _lines(
+            _tsv(_SQL_BREADTH_EOD_BY_DAYS.format(
+                dates=",".join(f"toDate('{d}')" for d in day_iso)
+            ))
+        )
+    except Exception as exc:  # noqa: BLE001 — fail-open：宽度腿缺失降 default
+        _logger.warning("market_context: 宽度末快照读取异常，该字段降级 default（fail-open）: %s", exc)
+
+    closes: list[Sequence[Any]] = []
+    try:
+        first = datetime.date.fromisoformat(day_iso[0])
+        from_day = (first - datetime.timedelta(days=_INDEX_LOOKBACK_DAYS)).isoformat()
+        closes = _lines(
+            _tsv(_SQL_INDEX_CLOSES_BY_RANGE.format(from_day=from_day, to_day=day_iso[-1]))
+        )
+    except Exception as exc:  # noqa: BLE001 — fail-open：指数腿缺失降 default
+        _logger.warning("market_context: 基准指数收盘读取异常，该字段降级 default（fail-open）: %s", exc)
+
+    return parse_market_context_rows(breadth, closes, day_iso)
+
+
+# ---------------------------------------------------------------------------
 # 消费侧 PIT 读源（决策日 T 只读 trade_date < T 的最新事件日分区）
 # ---------------------------------------------------------------------------
 
@@ -761,9 +887,12 @@ __all__: Final = [
     "DerivedDabanBoardEventSource",
     "LOAD_INSERT_COLUMNS",
     "LOAD_VERSION",
+    "MIN_EVENT_DATE",
     "events_to_load_rows",
     "fetch_float_cap_map",
+    "fetch_market_context",
     "load_rows_to_tuples",
+    "parse_market_context_rows",
     "persist",
     "run_daily_batch",
     "seal_time_minutes_from_touch",
