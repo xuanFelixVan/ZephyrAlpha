@@ -26,7 +26,7 @@
   ⑥ 全空输入（None / 空表 / 全非 ATM / iv 全 NaN / 空 vix）→ 空 Series 且不抛
   ⑦ vix_pct_from_vix 值域 [0,1] 与 warmup 期 NaN（含 rank 端点精确值）
   ⑧ IV 量纲回归：输入必须是**小数**（0.20）、输出是**百分数**（20.0）
-  ＋ PIT 粗检（截断输入与全量前缀严格相等）＋ 生产形态 delta 全 0 的静默降级
+  ＋ PIT 粗检（截断输入与全量前缀严格相等）＋ 零 delta 曲面的 fail-closed 显式降级
 
 量纲判定依据（⑧）：本模块头 §CBOE 简化公式第 4 步 "VIX = σ_30 × 100（百分数）"，
 且唯一进料口 src/zephyr/data/implementations/miniqmt_provider.py::_solve_iv 用
@@ -37,6 +37,8 @@ Black-Scholes + Newton-Raphson（初值 σ=0.3）反解 → 落库 iv 为小数�
 """
 
 from __future__ import annotations
+
+import logging
 
 import numpy as np
 import pandas as pd
@@ -398,9 +400,13 @@ class TestEmptyInputs:
     def test_missing_delta_column_raises_keyerror_by_contract(self) -> None:
         """契约：曲面必须带 delta 列。缺列 → KeyError（调用方 try/except 已兜底降级）。
 
-        生产事实：option_iv_surface 的唯一写入方 miniqmt_provider._fetch_option_iv_surface
-        的 columns 清单不含 delta/vega → 落库 delta 恒为 DDL DEFAULT 0 → 主路径静默空降级。
-        见 TestProductionShapeDeltaAlwaysZero。
+        SVX-1-P0 治本后（2026-09-16）：唯一写入方
+        miniqmt_provider._fetch_option_iv_surface 的 columns 清单已声明
+        delta/gamma/theta/vega（此前未声明 → 被 BufferedWriter 列过滤丢弃 →
+        落库恒为 DDL DEFAULT 0 → 主路径静默空降级），列缺失现由该清单守护。
+        真库 2026-01-29~2026-09-16 存量 9653 行仍为 delta=0，待回灌，
+        见 TestZeroDeltaSurfaceFailClosed 与
+        tests/data/implementations/test_option_iv_surface_delta_feed.py。
         """
         df = _surface([("2024-06-01", "510050", "2024-07-01", 0.20, 0.50, "call")]).drop(columns=["delta"])
         with pytest.raises(KeyError):
@@ -503,15 +509,20 @@ class TestIvDimensionRegression:
         assert pct.dropna().between(0, 1).all()
 
 
-class TestProductionShapeDeltaAlwaysZero:
-    """生产形态回归（SVX-1 矿脉）：曲面 delta 恒为 0 时主路径静默空降级。"""
+class TestZeroDeltaSurfaceFailClosed:
+    """零 delta 曲面 fail-closed（SVX-1-P0 治本后语义）：仍不产出，但**必须出声**。
 
-    def test_all_zero_delta_yields_empty_vix(self) -> None:
-        """delta 全 0（当前唯一写入方不落 delta/vega，DDL DEFAULT 0）→ |0-0.5|=0.5 → 全被排除。
+    治本前：delta 恒 0 是**生产形态**（进料口未声明该列），主路径静默零产出半年。
+    治本后：进料口按 BS 真源落 delta；库内 2026-01-29~2026-09-16 的 9653 存量行
+    仍是 delta=0（待回灌），故零 delta 输入必须 fail-closed——不猜 ATM、不静默降级。
+    """
 
-        含义：期权 IV 主路径在现有数据面上**结构性不产出**，vix_pct 恒走 synthetic_vix_pct 后备。
-        本用例不是"期望行为"，而是把这条静默降级钉成红灯——一旦进料口补上 delta，
-        此测试会失败并提醒同步复核主路径（届时应改写本用例）。
+    def test_all_zero_delta_yields_empty_vix_but_warns(self, caplog) -> None:
+        """delta 全 0 → |0-0.5|=0.5 → 全被排除 → 空 Series；且 WARNING 点名 delta。
+
+        本用例不是"期望行为"的美化版：它同时钉住两件事——
+        ① 不产出（宁可回退后备路径，也不用 0 delta 猜 ATM 池）；
+        ② 非静默（降级必须能被日志发现，禁静默零值）。
         """
         df = _surface(
             [
@@ -519,13 +530,33 @@ class TestProductionShapeDeltaAlwaysZero:
                 ("2024-06-01", "510300", "2024-07-01", 0.30, 0.0, "put"),
             ]
         )
-        assert compute_synthetic_vix(df).empty
+        with caplog.at_level(logging.WARNING):
+            out = compute_synthetic_vix(df)
+        assert out.empty
+        msgs = " | ".join(r.getMessage() for r in caplog.records if r.levelno >= logging.WARNING)
+        assert "delta" in msgs, f"零产出未点名可疑字段：{msgs}"
 
     def test_all_zero_delta_end_to_end_pct_is_empty(self) -> None:
         df = _surface([("2024-06-01", "510050", "2024-07-01", 0.20, 0.0, "call")])
         pct = vix_pct_from_vix(compute_synthetic_vix(df))
         assert pct.empty
         assert pct.name == "vix_pct"
+
+    def test_same_surface_with_real_delta_now_produces(self) -> None:
+        """治本对照：同一天、同 IV，delta 换成进料口真值（BS ATM 0.53/-0.47）→ 出数。
+
+        与上一用例构成"唯一变量是 delta"的对照，锁住进料口补 delta 的因果。
+        """
+        df = _surface(
+            [
+                ("2024-06-01", "510050", "2024-07-01", 0.20, 0.53, "call"),
+                ("2024-06-01", "510300", "2024-07-01", 0.30, -0.47, "put"),
+            ]
+        )
+        vix = compute_synthetic_vix(df)
+        assert not vix.empty
+        assert vix.iloc[0] == pytest.approx(25.0, rel=1e-12)  # mean(0.20,0.30)×100
+        assert vix_pct_from_vix(vix, window=1).iloc[0] == pytest.approx(1.0, rel=1e-12)
 
 
 class TestChainIntegrationAndPit:

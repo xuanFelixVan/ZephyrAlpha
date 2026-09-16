@@ -370,11 +370,20 @@ nodes:
   layer: L1
   node_type: sensor
   point: 盘前
-  decision_question: 市场波动状态是否允许正常仓位（可选通道；中国VIX表未登记=数据缺口）
+  decision_question: 市场波动状态是否允许正常仓位（双路径通道：期权 IV 主路径 + 合成 VIX 后备）
   algo_note_zh: >-
-    可选通道（中国 VIX 数据缺口，用 ATR 替代）：ATR/价格>3.5%=极端波动降仓，<1%=死水难做降仓，中间正常。
-    波动两端的行情都不适合正常仓位。
-    （2026-09-15 ALGO_FLOW 块出仓至 docs/03_modules/_domain_regime/algo_flow/synthetic_vix.yaml：算法推导图外迁，算法口径不变）
+    两条路径算同一个量——"当前恐慌处于历史什么分位"（vix_pct∈[0,1]），主路径优先：
+    ① 主路径（期权 IV 曲面）：取 50ETF+300ETF 期权 IV 曲面，按 ATM 筛子 |abs(delta)-0.5|<0.15
+      选平值档，跨到期日插值成 CBOE 简化 VIX，再取 250 日滚动分位。
+      SVX-1-P0 治本（2026-09-16）：进料口此前未声明 delta 列⇒全库 delta 恒 0⇒ATM 筛子
+      把 9653/9653 行全排除⇒主路径半年零产出且静默回退；现 delta 由本行反解 iv 经
+      BS 真源 calc_bs_greeks 导出，反解失败的行不落库并出声，消费侧 iv<=0 伪装值不入池、
+      曲面有行而池空必发 WARNING（区分"进料口事故"与"当日确无平值档"两种成因）。
+    ② 后备路径（仅依赖 close）：期权数据缺失时用**下行半偏差分位** synthetic_vix_pct——
+      只计负收益的年化下行波动率取 250 日分位，危机特异性强于总波动率。
+    两路径均失败⇒返回 None⇒s1_vix_panic/s2_vix 回退 vol_pct（C1 不退化）。
+    语义：波动两端的行情都不适合正常仓位，故进决策的是分位而非绝对值。
+    （2026-09-15 ALGO_FLOW 块出仓至 docs/03_modules/_domain_regime/algo_flow/synthetic_vix.yaml）
   factor_refs: []
   data_refs: [DS-150]
   module_ref: src/zephyr/regime/features/synthetic_vix.py
@@ -4013,6 +4022,7 @@ nodes:
   decay_scan_frequency: semiannual
 
 - node_id: TDM-F-C3-05
+  note_confirmed: 2026-09-16
   name_zh: 可靠度养成与信号健康
   market: cn_a
   flow: portfolio_flow

@@ -1,17 +1,17 @@
 # [BLUEPRINT] MOD-REGIME-002 | docs/03_modules/_domain_regime/regime_feature_builder/blueprint.md | §4.9 Phase2c
 # [MODULE] zephyr.regime.features.synthetic_vix
 # [DOMAIN] D_REGIME
-# [DEPENDENCIES] numpy; pandas
+# [DEPENDENCIES] numpy; pandas; logging
 # [CONSUMERS] MOD-REGIME-002(OverlaySignalsConstructor消费vix_pct→S1 vix_panic/S2 vix)
 # [STARTUP] imported
 # [MATURITY] production
-# [INVARIANTS] vix_pct∈[0,1]; 数据缺失返回空Series(调用方回退vol_pct); PIT由调用方shift(1)
+# [INVARIANTS] vix_pct∈[0,1]; 数据缺失返回空Series(调用方回退vol_pct); PIT由调用方shift(1); fail-closed消费（SVX-1-P0）：iv<=0 的 DEFAULT 0 伪装值与 delta=NULL 的行不入 ATM 池，曲面有行而池空必发非静默 WARNING（禁静默零值）
 # [MODIFY-GUARD] blueprint=docs/03_modules/_domain_regime/regime_feature_builder/blueprint.md
 # [STABILITY] evolving
 # [SAFETY] M
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] —
-# [TESTS] tests/regime/test_synthetic_vix.py
+# [TESTS] tests/regime/test_synthetic_vix.py; tests/regime/test_synthetic_vix_iv_path.py; tests/data/implementations/test_option_iv_surface_delta_feed.py
 # [A_module] module_id=MOD-REGIME-002 | layer=module | stability=evolving | safety=M | ai_autonomy=ai_modifiable
 # [TTL] permanent
 # [ARCH-REF] #10_regime_detector_spec §4.9 #MOD-REGIME-002 #Phase2c
@@ -44,8 +44,12 @@ Version: 0.1.0
 
 from __future__ import annotations
 
+import logging
+
 import numpy as np
 import pandas as pd
+
+_logger = logging.getLogger(__name__)
 
 __all__ = ["compute_synthetic_vix", "vix_pct_from_vix", "synthetic_vix_pct"]
 
@@ -77,6 +81,28 @@ def _interp_vix_for_date(group: pd.DataFrame) -> float:
     return float(iv_near + (iv_far - iv_near) * (30 - t1) / (t2 - t1))
 
 
+def _atm_empty_warning(df: pd.DataFrame) -> None:
+    """ATM 池空但曲面有行 → 出声（SVX-1-P0：这条静默降级曾让期权 IV 主路径死半年）。
+
+    区分两种成因，第一类是**进料口事故**，第二类是正常市场结构：
+      ① delta 恒 0 —— miniqmt 未声明 delta/vega 列，被 DDL DEFAULT 0 兜底，
+         |0-0.5|=0.5 → 全库行被 ATM 筛子排除 → 主路径零产出、vix_pct 恒走后备；
+      ② 当日确无平值档（delta 分布合理但离 0.5 远）。
+    """
+    dabs = df["delta"].abs()
+    all_zero = bool((dabs == 0).all())
+    _logger.warning(
+        "期权 IV 曲面 %d 行全部被 ATM 筛子(|abs(delta)-0.5|<0.15) 排除，"
+        "主路径零产出→调用方回退合成 VIX；|delta| 区间[%s, %s]%s",
+        len(df),
+        float(dabs.min()),
+        float(dabs.max()),
+        "（delta 恒 0：进料口未落 delta/vega，SVX-1-P0 事故签名，非市场结构）"
+        if all_zero
+        else "",
+    )
+
+
 def compute_synthetic_vix(option_iv_df: pd.DataFrame | None) -> pd.Series:
     """合成 VIX → VIX 绝对值序列（百分数）。
 
@@ -96,10 +122,33 @@ def compute_synthetic_vix(option_iv_df: pd.DataFrame | None) -> pd.Series:
     df["expiry"] = pd.to_datetime(df["expiry"])
     df["trade_date"] = pd.to_datetime(df["trade_date"])
     df["dte"] = (df["expiry"] - df["trade_date"]).dt.days
+    # SVX-1-P0 消费纪律（禁静默零值）：坏行不静默参与 ATM 均值
+    #   iv<=0 = 进料口反解失败被 Decimal DEFAULT 0 兜出的假值（非"零波动"），
+    #           混入均值会把 VIX 腰斩（plausible-but-wrong 比 None 更坏）。
+    fake_zero_iv = df["iv"].notna() & (df["iv"] <= 0)
+    if fake_zero_iv.any():
+        _logger.warning(
+            "期权 IV 曲面 %d/%d 行 iv<=0（进料口反解失败的 DEFAULT 0 伪装值）已排除，"
+            "不参与 ATM 均值——若占比持续偏高，请查 miniqmt_provider._compute_iv_rows",
+            int(fake_zero_iv.sum()),
+            len(df),
+        )
+        df = df[~fake_zero_iv]
+    if df.empty:
+        return pd.Series(dtype=float, name="vix")
+    null_delta = int(df["delta"].isna().sum())
+    if null_delta:
+        _logger.warning(
+            "期权 IV 曲面 %d/%d 行 delta 为 NULL（进料口显式标注不可用），"
+            "这些行不进入 ATM 池（fail-closed，不按 0 处理）",
+            null_delta,
+            len(df),
+        )
     # ATM 筛选：|delta-0.5|<0.15（call delta 接近 0.5 为 ATM）
     df["delta_abs"] = df["delta"].abs()
     atm = df[(df["delta_abs"] - 0.5).abs() < 0.15].copy()
     if atm.empty:
+        _atm_empty_warning(df)
         return pd.Series(dtype=float, name="vix")
     # 按 underlying 分组计算 VIX
     vix_by_underlying: dict[str, pd.Series] = {}

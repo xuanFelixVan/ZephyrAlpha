@@ -5,13 +5,13 @@
 # [CONSUMERS] zephyr.data.scheduler
 # [STARTUP] manual
 # [MATURITY] production
-# [INVARIANTS] connect() 仅验证 SDK 可导入；单线程使用（xtquant 非线程安全）
+# [INVARIANTS] connect() 仅验证 SDK 可导入；单线程使用（xtquant 非线程安全）；option_iv_surface 的 columns 清单 MUST 声明 delta/gamma/theta/vega（未声明=被 BufferedWriter 列过滤丢弃→恒为 DDL DEFAULT 0 的静默零，SVX-1-P0）且 Greeks 一律由本行反解 iv 经 calc_bs_greeks 真源导出；IV 反解失败的行不落库（非 Nullable Decimal 会把 None 兜成假 0）+ WARNING 计数出声
 # [MODIFY-GUARD] none
 # [STABILITY] evolving
 # [SAFETY] M
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] fetch 异常->yield FetchResult(error=str)；_ts_to_date 按 UTC 解释避免跨日
-# [TESTS] tests/zephyr/data/test_providers.py::TestMiniQMTHelpers
+# [TESTS] tests/zephyr/data/test_providers.py::TestMiniQMTHelpers; tests/data/implementations/test_option_iv_surface_delta_feed.py
 # [A_module] module_id=MOD-DAT-miniqmt_ingest | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 # noqa: m03-duplicate  M03豁免: AI趋同演化(不同模块为相似问题生成相似代码),非复制粘贴;M05(文件复制对=0)已覆盖文件级复制检测
@@ -2545,9 +2545,15 @@ class MiniQmtIngestProvider(IngestProviderBase):
         标的/期权类型），用 xtdata.get_market_data_ex 获取期权与标的收盘价，
         结合 Black-Scholes 模型 + Newton-Raphson 迭代反解隐含波动率。
         表 schema: (trade_date, symbol, underlying, strike, expiry, option_type,
-                    iv, data_source)
+                    iv, exchange, delta, gamma, theta, vega, data_source)
         #ARCH-CH-021 P0-3: 列名 opt_type→option_type（与 DDL 列名对齐，否则
         BufferedWriter 列过滤丢弃该列致 option_type 全库为空字符串）。
+        SVX-1-P0（2026-09-16）：columns 清单 MUST 声明 delta/gamma/theta/vega——
+        未声明即被 BufferedWriter 列交集过滤掉，四列永远停在 DDL DEFAULT 0，
+        而消费端 synthetic_vix 的 ATM 筛子是 |abs(delta)-0.5|<0.15，
+        delta≡0 ⇒ 全库行被排除 ⇒ 期权 IV 主路径结构性零产出（真库取证
+        9653/9653 行 delta=0）。Greeks 由本行反解出的 iv 经 BS 真源
+        calc_bs_greeks 导出，禁第二套公式。
 
         Args:
             payload: 下载请求（symbols为期权合约代码列表）
@@ -2566,6 +2572,10 @@ class MiniQmtIngestProvider(IngestProviderBase):
             "option_type",
             "iv",
             "exchange",
+            "delta",
+            "gamma",
+            "theta",
+            "vega",
             "data_source",
         ]
         last_key = self._date_to_str(payload.end)
@@ -2660,10 +2670,11 @@ class MiniQmtIngestProvider(IngestProviderBase):
 
     @staticmethod
     def _compute_iv_rows(ctx: _OptionCtx) -> list[tuple]:
-        """遍历对齐日期计算 IV 行。"""
+        """遍历对齐日期计算 IV 行（Greeks 由本行反解 iv 经 BS 真源导出）。"""
         import pandas as pd
 
         rows = []
+        unsolved = 0
         common_dates = ctx.opt_df.index.intersection(ctx.ul_df.index)
         for dt in common_dates:
             opt_close = MiniQmtIngestProvider.safe_float(ctx.opt_df.loc[dt, "close"])
@@ -2677,6 +2688,17 @@ class MiniQmtIngestProvider(IngestProviderBase):
             else:
                 T = 0.25
             iv = _solve_iv(spot, ctx.strike, T, ctx.r, opt_close, ctx.opt_type)
+            if iv is None:
+                # SVX-1-P0：iv 列是 Decimal(18,6) DEFAULT 0（非 Nullable），
+                # 写 None 会被 TSV "\N" → DEFAULT 兜底成"零波动"假值，与真 0 不可区分
+                # （真库 9653 行中 1028 行 iv=0 即此路径）。解不出=整行无信息 → 不落，
+                # 但必须出声（禁静默零值）。
+                unsolved += 1
+                continue
+            greeks = MiniQmtIngestProvider.calc_bs_greeks(spot, ctx.strike, T, ctx.r, iv, ctx.opt_type)
+            if not greeks:
+                unsolved += 1
+                continue
             rows.append(
                 (
                     pd.Timestamp(dt).strftime("%Y-%m-%d"),
@@ -2687,8 +2709,20 @@ class MiniQmtIngestProvider(IngestProviderBase):
                     ctx.opt_type,
                     iv,
                     ctx.exchange,
+                    greeks["delta"],
+                    greeks["gamma"],
+                    greeks["theta"],
+                    greeks["vega"],
                     ctx.data_source,
                 )
+            )
+        if unsolved:
+            logging.getLogger(__name__).warning(
+                "option_iv_surface %s: %d/%d 日 IV 反解失败已丢弃（不落库=不伪装成 0；"
+                "SVX-1-P0 禁静默零值）",
+                ctx.symbol,
+                unsolved,
+                len(common_dates),
             )
         return rows
 

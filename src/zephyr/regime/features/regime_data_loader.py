@@ -11,7 +11,7 @@
 # [SAFETY] M
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] 查询失败->log warning+返回None(调用方按0.0/1.0降级); 表未注册->KeyError(fail-closed)
-# [TESTS] none  # 2026-09-05 AI-00：全仓无测试 import 本模块（原声明路径不存在）
+# [TESTS] tests/data/implementations/test_option_iv_surface_delta_feed.py::TestLoaderPredicateMatchesProductionShape  # 2026-09-16 SVX-1-P0：_load_option_iv 谓词首个锚（原声明 none=全仓无测试 import 本模块）
 # [A_module] module_id=MOD-REGIME-002 | layer=module | stability=evolving | safety=M | ai_autonomy=ai_modifiable
 # [TTL] permanent
 # [ARCH-REF] #10_regime_detector_spec §5.3 #MOD-REGIME-002 #Phase2c
@@ -479,13 +479,22 @@ class RegimeDataLoader:
     def _load_option_iv(self) -> pd.DataFrame | None:
         table = self._registry.table("market_option_iv")
         underlyings = ", ".join([f"'{u}'" for u in _VIX_UNDERLYINGS])
+        # SVX-1-P0（2026-09-16 真库取证）两处结构性零：
+        #   ① 谓词口径：进料口写入的 underlying 带交易所后缀（'510050.SH'），
+        #      原谓词 `underlying IN ('510050','510300')` 命中 0 行（带后缀命中 9653 行）
+        #      → splitByChar 归一化裸码比较，两种存储形态都能命中（口径唯一真源仍是
+        #      _VIX_UNDERLYINGS 裸码清单）。
+        #   ② iv<=0 假值：iv 是 Decimal(18,6) DEFAULT 0（非 Nullable），Newton 反解失败
+        #      的 None 被兜底成 0（真库 9653 行中 1028 行 iv=0），与"零波动"不可区分；
+        #      混入 ATM 池会把 VIX 均值腰斩 → 谓词侧直接排除（对齐 option_sentiment 口径）。
         sql = (
             f"SELECT trade_date, underlying, strike, expiry, iv, option_type, delta, vega "
             f"FROM {table} FINAL "
-            f"WHERE underlying IN ({underlyings}) "
+            f"WHERE splitByChar('.', underlying)[1] IN ({underlyings}) "
             f"AND trade_date >= toDate('{self.data_load_start}') "
             f"AND trade_date <= toDate('{self.backtest_end}') "
             f"AND quality_flag = 1 "
+            f"AND iv > 0 "
             f"ORDER BY underlying, trade_date, expiry, strike"
         )
         tsv = self._query(sql, "option_iv_surface")
