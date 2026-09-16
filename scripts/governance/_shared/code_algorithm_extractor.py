@@ -381,6 +381,20 @@ def _algo_flow_block_end(lines: list[str], i: int, ds_start: int) -> tuple[int, 
     return end, False
 
 
+def unclosed_block_end(lines: list[str], start: int) -> int:
+    """未闭合 ALGO_FLOW 块（无 ``# [/ALGO_FLOW]``）的止行索引，0 基含端点。
+
+    委托 ``_algo_flow_block_end(lines, start, -1)``——``ds_start=-1`` 即关闭"撞进
+    module docstring 首行"那条边界规则（调用方传入的已是块所在文本，无源码边界可言），
+    只保留"止于首个非空非 ``#`` 行前一行 / 文本尾"两条截断判据。
+
+    :param lines: 文本行列表（``splitlines()`` 口径）
+    :param start: 块起标记行索引（0 基）
+    :return: 止行索引（0 基含端点）
+    """
+    return _algo_flow_block_end(lines, start, -1)[0]
+
+
 def _algo_flow_block_spans(src: str) -> tuple[list[tuple[int, int, bool]], int, int]:
     """全部非锚 ALGO_FLOW 块行区间 + module docstring 跨度（几何唯一真源）。
 

@@ -793,6 +793,52 @@ def test_geometry_partitions_are_disjoint_and_exhaustive():
     assert not (dead & dup)
 
 
+def test_unclosed_block_end_stops_before_first_non_comment_line():
+    """截断判据（出仓器补收标记时的止界真源）：止于首个非空非 # 行的前一行。
+
+    空行不推进止界（块内 ``#`` 分隔行才是内容，空行只是排版），其后的注释行不再
+    属于本块——按出仓器口径把块外注释并进镜像就是造第二真源。
+    """
+    from _shared.code_algorithm_extractor import unclosed_block_end
+
+    lines = [
+        "# [ALGO_FLOW]",  # 0
+        "# 层: 输入",  # 1
+        "# - id: I1",  # 2
+        "",  # 3 排版空行：不推进止界
+        "#   name: 入参",  # 4
+        "概述：散文行不属于块",  # 5 首个非注释行 → 止于其前
+        "# - id: A1",  # 6 散文之后的注释行不再算块
+    ]
+    assert unclosed_block_end(lines, 0) == 4
+
+
+def test_unclosed_block_end_returns_last_comment_line_of_open_tail():
+    """开到文本尾的块：止行=最后一个非空注释行（尾部空行不算块体，补的标记不悬空）。"""
+    from _shared.code_algorithm_extractor import unclosed_block_end
+
+    lines = ["# [ALGO_FLOW]", "# 层: 算法", "# - id: A1", "#   name_zh: 主流程", "", ""]
+    assert unclosed_block_end(lines, 0) == 3
+
+
+def test_unclosed_block_end_on_closed_block_lands_on_marker():
+    """已闭合块同判据落在收标记行（与 _algo_flow_block_end 一致，两套几何不分叉）。"""
+    from _shared.code_algorithm_extractor import unclosed_block_end
+
+    lines = ["# [ALGO_FLOW]", "# - id: I1", "# [/ALGO_FLOW]", "# 边:", "# I1 --> A1"]
+    assert unclosed_block_end(lines, 0) == 2
+
+
+def test_unclosed_block_end_disables_docstring_boundary_rule():
+    """ds_start=-1 语义：调用方给的是块所在文本，不再被"撞进 docstring 首行"截断。"""
+    from _shared.code_algorithm_extractor import _algo_flow_block_end, unclosed_block_end
+
+    lines = ["# [ALGO_FLOW]", "# - id: I1", "#   name: 入参"]
+    assert unclosed_block_end(lines, 0) == len(lines) - 1
+    # 同一文本按源码坐标推（首行=docstring 起行）会被边界判据立刻截断
+    assert _algo_flow_block_end(lines, 0, 1) == (0, False)
+
+
 def test_repo_src_has_zero_duplicate_inline_blocks():
     """存量防线：src/zephyr 全仓体内多块=0（2026-09-17 实测 3576 件 0 块，1.4s）。
 

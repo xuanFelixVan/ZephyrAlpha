@@ -618,3 +618,131 @@ def test_bucket_rename_is_deterministic_across_runs(tmp_path):
     assert first["status"] == "externalized"
     assert second["status"] in {"externalized", "already", "skipped"}
     assert len(list((tmp_path / "docs/03_modules/_domain_d/algo_flow/logs_doc").glob("*.yaml"))) == 1
+
+
+# --- P2-1 尾池三态分家（截断型块 / 零边 / 五段式散文 / 根层件落点）----------------
+
+
+_TRUNC_BODY = (
+    "trunc —— 截断型块夹具（块体无收口标记，P2-1 尾池 17 件实测形态）。\n"
+    "\n"
+    "# [ALGO_FLOW]\n"
+    "# 层: 输入\n"
+    "# - id: I1\n"
+    "#   name: 入参\n"
+    "# 层: 算法\n"
+    "# - id: A1\n"
+    "#   name_zh: ① 主流程\n"
+)
+_EDGE_TAIL = "#\n# 边:\n# I1 --> A1\n"
+
+
+def _mk_trunc(root: Path, rel: str, *, with_edge: bool) -> tuple[Path, str]:
+    """写未闭合块夹具，返回 (路径, docstring 值文本)（值文本即迁移前的解析输入）。"""
+    body = _TRUNC_BODY + (_EDGE_TAIL if with_edge else "")
+    p = root / rel
+    p.parent.mkdir(parents=True, exist_ok=True)
+    p.write_text(f'"""{body}"""\n\nX = 1\n', encoding="utf-8")
+    return p, body
+
+
+def _graph(text: str) -> tuple[list, list]:
+    g = coae.parse_algo_flow(text)
+    assert g is not None
+    return [(n.id, n.layer) for n in g.nodes], [(e.src, e.dst, e.is_break) for e in g.edges]
+
+
+def test_truncated_block_with_edges_is_externalized(tmp_path):
+    """截断型块 + 有边 → 出仓：镜像补 # [/ALGO_FLOW]，源码只留锚行，图逐字等价。
+
+    补标记可证语义零改动（parse_algo_flow 节点段"见收标记即止、否则扫到文本尾"，
+    边段一律扫到文本尾），所以截断块不必先人工补口再出仓。
+    """
+    p, body = _mk_trunc(tmp_path, "src/zephyr/d/trunc.py", with_edge=True)
+    nodes_b, edges_b = _graph(body)
+    assert edges_b == [("I1", "A1", False)]
+    r = ext.externalize(p, dry_run=False)
+    assert r["status"] == "externalized", r
+    machine = ext._yaml_machine_block(tmp_path / r["yaml"])
+    assert machine.rstrip().endswith("# [/ALGO_FLOW]"), machine
+    assert _graph(machine) == (nodes_b, edges_b)  # 镜像即新真源，节点/边逐项一致
+    src = p.read_text(encoding="utf-8")
+    assert src.count("# [ALGO_FLOW]") == 1 and f"# [ALGO_FLOW] external: {r['yaml']}" in src
+    assert "- id: I1" not in src and "-->" not in src  # 块体与边段都收进镜像
+    final = coae.extract_algorithm_from_code(p, module_id="", truncate=False)
+    assert [(n.id, n.layer) for n in final.algo_flow.nodes] == nodes_b
+    assert [(e.src, e.dst, e.is_break) for e in final.algo_flow.edges] == edges_b
+
+
+def test_truncated_block_without_edges_is_refused(tmp_path):
+    """截断型块 + 零边 → 拒不出仓（validate_graph 对无边图报"无边定义"，镜像必被门禁拦）。"""
+    p, body = _mk_trunc(tmp_path, "src/zephyr/d/trunc_noedge.py", with_edge=False)
+    nodes_b, edges_b = _graph(body)
+    assert nodes_b and edges_b == []
+    before = p.read_bytes()
+    r = ext.externalize(p, dry_run=False)
+    assert r["status"] == "skipped", r
+    assert "no edges" in r["reason"], r
+    assert p.read_bytes() == before  # 源码零改动
+    assert not (tmp_path / "docs").exists()  # 零写入
+
+
+def test_legacy_five_section_block_reports_its_own_reason(tmp_path):
+    """零节点两族分家（一）：五段式散文块报 legacy 五段式，不再与"不可解析"混一档。"""
+    p = tmp_path / "src/zephyr/d/legacy5.py"
+    p.parent.mkdir(parents=True)
+    p.write_text(
+        '"""Legacy5 — 五段式散文夹具（旧版语法，无 - id: 行）。\n\n'
+        "# [ALGO_FLOW]\n"
+        "# 输入: 因子 IC 序列\n"
+        "# 算法: 逐窗 deflated Sharpe 判合格\n"
+        "# 输出: 状态标签\n"
+        "# [/ALGO_FLOW]\n"
+        '"""\n\nX = 1\n',
+        encoding="utf-8",
+    )
+    r = ext.externalize(p, dry_run=False)
+    assert r["status"] == "skipped", r
+    assert r["reason"] == ext._LEGACY_PROSE_SKIP_REASON, r
+    assert not (tmp_path / "docs").exists()
+
+
+def test_shorthand_zero_node_block_keeps_generic_reason(tmp_path):
+    """零节点两族分家（二）：``# I1: 速记`` 型（无五段式口径行）仍报原口径。"""
+    p = tmp_path / "src/zephyr/d/shorthand.py"
+    p.parent.mkdir(parents=True)
+    p.write_text(
+        '"""Shorthand — 速记夹具。\n\n'
+        "# [ALGO_FLOW]\n# I1: 入参速记\n# F1: 主流程速记\n# [/ALGO_FLOW]\n"
+        '"""\n\nX = 1\n',
+        encoding="utf-8",
+    )
+    r = ext.externalize(p, dry_run=False)
+    assert r["status"] == "skipped", r
+    assert r["reason"] == ext._NO_NODES_SKIP_REASON, r
+
+
+def test_root_level_module_mirrors_into_shared_domain(tmp_path):
+    """根层件 src/zephyr/<mod>.py：域落既有 _domain_shared，镜像名 root_<stem>.yaml。
+
+    旧口径把末段文件名当包名，造出 ``_domain___init__`` 这类不存在的域目录（盘上从未
+    落盘=静默丢图）；``source_of_truth:`` 头仍指真实源路径，provenance 机械可逆。
+    """
+    assert ext._domain_of("src/zephyr/demo_root.py") == "_domain_shared"
+    assert ext._domain_of("src/zephyr/__init__.py") == "_domain_shared"
+    assert ext._yaml_rel_for(
+        tmp_path / "src/zephyr/demo_root.py", "src/zephyr/demo_root.py", "_domain_shared"
+    ) == "docs/03_modules/_domain_shared/algo_flow/root_demo_root.yaml"
+    assert ext._yaml_rel_for(
+        tmp_path / "src/zephyr/__init__.py", "src/zephyr/__init__.py", "_domain_shared"
+    ) == "docs/03_modules/_domain_shared/algo_flow/root___init__.yaml"
+
+    p = _mk_src(tmp_path, "src/zephyr/demo_root.py")
+    r = ext.externalize(p, dry_run=False)
+    assert r["status"] == "externalized", r
+    assert r["yaml"] == "docs/03_modules/_domain_shared/algo_flow/root_demo_root.yaml"
+    ytxt = (tmp_path / r["yaml"]).read_text(encoding="utf-8")
+    assert "source_of_truth: src/zephyr/demo_root.py" in ytxt
+    assert "module: src.zephyr.demo_root" in ytxt
+    assert "root_demo_root" in ytxt.splitlines()[0]  # 头注与镜像名同源
+    assert f"# [ALGO_FLOW] external: {r['yaml']}" in p.read_text(encoding="utf-8")

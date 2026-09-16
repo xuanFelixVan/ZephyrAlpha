@@ -26,7 +26,12 @@
 #   批级容量镜像（P2-1 波次 GOV-DOC-018 实证）：域 algo_flow/ 平铺数（盘上+本批）≥ T_soft-20 时
 #   该域本批新件全部改道 algo_flow/<源相对域根子包>/<名>.yaml（域根件入域名桶），桶仍超阈值按
 #   stem 首/次字符分片；落点名逐级消歧且绝不覆盖他人真源 yaml（覆盖即 failed）；
-#   既有 yaml（source_of_truth 反查）永最优先——重跑不改道（防锚错位）
+#   既有 yaml（source_of_truth 反查）永最优先——重跑不改道（防锚错位）；
+#   截断型块（docstring 内无 [/ALGO_FLOW]）：有边→按 extractor 同一几何推止界、镜像补一行
+#   收标记后出仓（节点段"见标记即止否则扫到文本尾"、边段恒扫到文本尾 ⇒ 节点/边集可证等价）；
+#   无边→拒出仓（validate_graph 对无边图报"无边定义"，出仓即造门禁必拦的镜像）；
+#   根层件 src/zephyr/<mod>.py 无子包=跨包位置 → 落 _domain_shared，镜像名加 root_ 前缀保 provenance；
+#   零节点块报因分家（五段式散文 vs 其余不可解析），只影响台账口径不影响处置；
 # [MODIFY-GUARD] 无
 # [STABILITY] stable
 # [SAFETY] M
@@ -47,7 +52,9 @@ extractor（code_algorithm_extractor）已支持 external 锚加载 → 同一 p
      按形态分流——只在头且可解析→转正进 docstring（①）；转正后仍不可解析→留在 docstring
      （②）；已出仓仍有头块→yaml 覆盖者删/未覆盖者逐字进 ``algo_flow_prose``（③）；
      无锚无 yaml 的镜像件→docstring 块覆盖者删，否则拒删（④）
-  1. 解析内联块（_has_inline_algo_flow）→ 抽块原文（docstring 内 [# [ALGO_FLOW]..边段尾]）
+  1. 解析内联块（_has_inline_algo_flow）→ 抽块原文（docstring 内 [# [ALGO_FLOW]..边段尾]）；
+     截断型（无收标记）止界走 extractor 同一判据 unclosed_block_end，块尾补一行收标记
+     （节点/边集逐字等价）；截断型且零边则拒出仓（门禁 validate_graph 必拦无边镜像）
   2. 写外部 yaml（algo_flow: | block-scalar 逐行缩进副本）
   3. 源码 docstring 内联块+边段替换为锚行（AST 定位 docstring 行范围，禁止正则改源码体）
   4. round-trip 断言：extract_algorithm_from_code 重新解析，nodes/edges 与迁移前逐项一致
@@ -81,6 +88,7 @@ from _shared.code_algorithm_extractor import (  # noqa: E402
     _has_inline_algo_flow,
     algo_flow_dead_block_spans,
     parse_algo_flow,
+    unclosed_block_end,
     REPO_ROOT,
 )
 from zephyr.shared.io.file_utils import safe_write_text  # noqa: E402
@@ -92,6 +100,23 @@ _ID_LINE_RE = re.compile(r"^#\s*-\s*id:\s*(\S+)")
 
 # 头块里的口径若 yaml 机器块未覆盖，逐字并入 yaml 该键（文件尾追加，所有读卡器忽略未知键）
 _PROSE_KEY = "algo_flow_prose"
+
+# 五段式散文口径行（``# 输入:`` ``# 算法:`` …）——旧版机器块语法，无 ``- id:`` 行
+_FIVE_SECTION_RE = re.compile(r"^#\s*(输入|特征|指标|算法|输出)\s*[:：]")
+
+# skipped 口径（进生成的盘点台账，措辞即后续批的分派依据，勿随手改写）
+_LEGACY_PROSE_SKIP_REASON = "legacy 五段式 prose (no - id: rows)"
+_NO_NODES_SKIP_REASON = "block unparsable (no nodes)"
+# 零边拒出仓只作用于截断型块（本批新开的通道）：已闭合零边块沿用既有口径继续出仓
+# （盘上 3157 件有边 / 1 件无边先例，改判即把死块清偿路径上的件一起锁死）
+_NO_EDGE_SKIP_REASON = "graph has no edges (validate_graph would block)"
+
+# 内容级 skipped（块定位良好、按口径不出仓）：契约头转正后留在 docstring 即与其他内联件
+# 同状态，回滚反而把该件永久锁死在死块态——externalize() 据此决定不回滚
+_CONTENT_SKIP_REASONS = (_LEGACY_PROSE_SKIP_REASON, _NO_NODES_SKIP_REASON, _NO_EDGE_SKIP_REASON)
+
+# src/zephyr/<mod>.py 根层件（无子包=跨包位置）镜像名前缀：落 _domain_shared 时保 provenance
+_ROOT_STEM_PREFIX = "root_"
 
 # 既有 yaml 反查缓存：domain_dir → {source_of_truth: yaml_rel}（批9 幂等治本）
 _EXISTING_YAML_CACHE: dict[str, dict[str, str]] = {}
@@ -210,11 +235,33 @@ _DOMAIN_DIRS: dict[str, str] = {
 }
 
 
+def _is_root_module(parts: list[str]) -> bool:
+    """``src/zephyr/<mod>.py`` 根层件判定（parts 为拆好的路径段列表）。"""
+    return parts[:2] == ["src", "zephyr"] and len(parts) == 3
+
+
+def _mirror_stem_for(py_path: Path, rel: str) -> str:
+    """镜像文件名主干（与 _yaml_rel_for 推导同源）。
+
+    根层件无子包可作域键，落 ``_domain_shared`` 后加 ``root_`` 前缀保 provenance
+    （``source_of_truth:`` 头仍指真实源路径，机械可逆）。
+    """
+    stem = py_path.stem
+    return f"{_ROOT_STEM_PREFIX}{stem}" if _is_root_module(rel.replace("\\", "/").split("/")) else stem
+
+
 def _domain_of(py_rel: str) -> str:
-    """src/zephyr/<pkg>/... → 域目录名；scripts 走 _domain_governance。"""
+    """src/zephyr/<pkg>/... → 域目录名；scripts 走 _domain_governance。
+
+    根层件（``src/zephyr/<mod>.py``）无子包=跨包位置，落既有 ``_domain_shared``，
+    ``root_`` 前缀保 provenance（旧口径 ``parts[-1]`` 会造出 ``_domain___init__`` 这类
+    不存在的域目录）。
+    """
     parts = py_rel.replace("\\", "/").split("/")
     if parts[0] == "scripts":
         return "_domain_governance"
+    if _is_root_module(parts):
+        return "_domain_shared"
     pkg = parts[2] if len(parts) > 3 else parts[-1].removesuffix(".py")
     return _DOMAIN_DIRS.get(pkg, f"_domain_{pkg}")
 
@@ -330,6 +377,9 @@ def _candidate_bases(py_path: Path, rel_py: str, bucket: str) -> list[str]:
     """
     pkg, _ = _src_bucket(rel_py)
     parent = py_path.parent.name
+    if _is_root_module(rel_py.split("/")):
+        # 根层件与 _yaml_rel_for 同源：root_<stem> 优先，撞名再退到最后一路拉平名
+        return [f"{_ROOT_STEM_PREFIX}{py_path.stem}.yaml", _flatten_base(rel_py)]
     if py_path.name == "__init__.py":
         owner = parent if parent and parent != "zephyr" else bucket.rsplit("/", 1)[-1]
         base = f"{owner or 'algo_flow'}__init__.yaml"
@@ -516,8 +566,34 @@ def _docstring_span(src: str) -> tuple[int, int] | None:
     return None
 
 
+def _zero_node_reason(docstring: str) -> str:
+    """零节点块的报因分家：五段式散文（欠机器块行）vs 其余不可解析（欠逐件诊断）。
+
+    两族都不能自动出仓——补节点/边等于替作者臆造算法语义；分开报只是让后续批能按
+    口径派工（旧口径一股脑报 ``block unparsable (no nodes)`` 把两族混成一族）。
+    """
+    if any(_FIVE_SECTION_RE.match(ln.strip()) for ln in docstring.splitlines()):
+        return _LEGACY_PROSE_SKIP_REASON
+    return _NO_NODES_SKIP_REASON
+
+
+def _is_content_skip_reason(reason: str) -> bool:
+    """skipped 是否"块内容欠账"（而非几何/定位缺陷）——契约头转正后不回滚的判据。"""
+    return any(k in reason for k in _CONTENT_SKIP_REASONS)
+
+
 def _extract_inline_block(docstring: str) -> tuple[str, int, int] | None:
-    """返回 (块原文含边段, 起行 idx, 止行 idx)（docstring 内 0 基）。无边段时止于 [/ALGO_FLOW]。"""
+    """返回 (闭合块原文含边段, 起行 idx, 止行 idx)（docstring 内 0 基）。
+
+    两形态：
+      1. 有 ``# [/ALGO_FLOW]`` → 原文止于边段尾（无边段时止于收标记）；
+      2. 截断型（全篇无收标记）→ 止界走 extractor 同一几何判据 ``unclosed_block_end``
+         （止于首个非空非 ``#`` 行前一行 / 文本尾），并在块尾**补**一行收标记。
+
+    补标记可证语义零改动：``parse_algo_flow`` 节点段"见收标记即止、否则扫到文本尾"，
+    边段一律从起标记扫到文本尾，而补的标记行既非节点行也非边行 → 节点集/边集逐字等价
+    （P2-1 尾池裁定：镜像必为闭合块，源码只留锚行）。
+    """
     lines = docstring.splitlines()
     start = end = -1
     in_block = False
@@ -538,8 +614,14 @@ def _extract_inline_block(docstring: str) -> tuple[str, int, int] | None:
                 edge_tail = i
                 continue
             break  # 边段结束（首个真实内容行）
-    if start < 0 or end < 0:
+    if start < 0:
         return None
+    if end < 0:
+        end = unclosed_block_end(lines, start)
+        body = lines[start : end + 1]
+        if not body or _ALGO_FLOW_END not in body[-1].strip():
+            body = body + [_ALGO_FLOW_END]
+        return "\n".join(body), start, end
     # 边段尾部空行并入
     while edge_tail + 1 < len(lines) and not lines[edge_tail + 1].strip():
         edge_tail += 1
@@ -560,8 +642,10 @@ def _yaml_for(rel_py: str, domain_dir: str, stem: str, block: str) -> str:
 
 def _yaml_rel_for(py_path: Path, rel: str, domain_dir: str) -> str:
     """外部 yaml 相对路径；同目录同 stem 并存时加父目录后缀防覆盖。"""
-    stem = py_path.stem
+    stem = _mirror_stem_for(py_path, rel)
     yaml_rel = f"docs/03_modules/{domain_dir}/algo_flow/{stem}.yaml"
+    if _is_root_module(rel.replace("\\", "/").split("/")):
+        return yaml_rel  # 根层件 root_<stem> 源路径唯一 ⇒ 名称唯一，不进 __init__/碰撞阶梯
     if py_path.name == "__init__.py" or (REPO_ROOT / yaml_rel).exists():
         parent = py_path.parent.name
         if parent and parent not in ("zephyr",) and py_path.name != "__init__.py":
@@ -810,7 +894,7 @@ def externalize(py_path: Path, dry_run: bool) -> dict:
         if res["status"] in ("externalized", "already"):
             res["header_promoted"] = True
             return res
-        if res["status"] == "skipped" and "unparsable" in res.get("reason", ""):
+        if res["status"] == "skipped" and _is_content_skip_reason(res.get("reason", "")):
             # 速记块（无 ``# - id:`` 节点）按既有口径不出仓——但"块在契约头=永远读不到"
             # 才是本件缺陷。转正后留在 docstring 内即与全仓其他不可解析块同状态（内联、
             # 单真源、门禁放行），不回滚——回滚等于把不可解析件永久锁死在死块态。
@@ -859,16 +943,16 @@ def _outbox_docstring_block(py_path: Path, dry_run: bool) -> dict:
         if dead:
             res["unreachable_blocks"] = dead
         return res
+    dead_reason = f"{dead} block(s) outside module docstring (unreachable)" if dead else ""
     if not _has_inline_algo_flow(src):
-        reason = f"{dead} block(s) outside module docstring (unreachable)" if dead else "no inline block"
-        return {"file": rel, "status": "skipped", "reason": reason}
+        return {"file": rel, "status": "skipped", "reason": dead_reason or "no inline block"}
 
     tree = ast.parse(src)
     ds = ast.get_docstring(tree) or ""
     before = parse_algo_flow(ds)
     if before is None or not before.nodes:
-        reason = f"{dead} block(s) outside module docstring (unreachable)" if dead else "block unparsable (no nodes)"
-        return {"file": rel, "status": "skipped", "reason": reason}
+        # 零节点两族分开报（后续批据此派工：五段式=按口径补机器块，其余=逐件诊断）
+        return {"file": rel, "status": "skipped", "reason": dead_reason or _zero_node_reason(ds)}
     extracted = _extract_inline_block(ds)
     if extracted is None:
         return {"file": rel, "status": "skipped", "reason": "block span not found"}
@@ -897,7 +981,7 @@ def _outbox_docstring_block(py_path: Path, dry_run: bool) -> dict:
         or _PLANNED_REMAP.get(rel, "")
         or _yaml_rel_for(py_path, rel, domain_dir)
     )
-    stem = py_path.stem
+    stem = _mirror_stem_for(py_path, rel)
 
     # 锚行窗口：纯源码坐标实测。值↔源码行映射在含 ``\n`` 转义的 docstring 上不保真
     # （memory_bank/skill_attention 实证：desc 行内 "\n" 转义在值中展开 +3 幻影行，
@@ -919,7 +1003,12 @@ def _outbox_docstring_block(py_path: Path, dry_run: bool) -> dict:
             we = i
             break
     if we is None:
-        return {"file": rel, "status": "skipped", "reason": "block end marker not found in source"}
+        if not before.edges:
+            # 截断型 + 无边：出仓即造门禁必拦镜像（validate_graph 报"无边定义"）——宁不出仓
+            return {"file": rel, "status": "skipped", "reason": dead_reason or _NO_EDGE_SKIP_REASON}
+        # 截断型块（源码区无收标记）：止界按 extractor 同一几何判据推定，再映射回
+        # 源码绝对坐标——镜像补收标记（_extract_inline_block 已补），源码只留锚行。
+        we = ws + unclosed_block_end(ds_lines[ws : doc_end + 1], 0)
     while we + 1 <= doc_end and (
         not ds_lines[we + 1].strip() or ds_lines[we + 1].lstrip().startswith("#")
     ):
