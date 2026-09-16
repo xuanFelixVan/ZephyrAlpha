@@ -5,8 +5,8 @@
 # [CONSUMERS] V1 api_server 只读端点（规划中）；tests/trading/test_decision_map.py
 # [STARTUP] imported（纯函数库，无常驻进程/无事件订阅）
 # [MATURITY] production
-# [INVARIANTS] INV-1 地图YAML不复制注册表条目只持稳定标识符引用; INV-2 load产出全frozen dataclass; INV-3 validate纯函数无副作用; INV-4 error=0才可被下游消费; INV-5 module_ref=null记warning不记error（V0缺口可视化输入）; INV-6 R21 MOD 对账只认「当前文件 sha256 命中」的 depgraph 缓存条目——hash 未命中＝缓存陈旧，降级 warning 禁报 error（拿旧版本文件的 module_id 判违规＝假阳性，实证 q-…-0012）
-# [MODIFY-GUARD] schema_version 变更必须同步升级 dataclasses+校验规则+测试（R1-R36）
+# [INVARIANTS] INV-1 地图YAML不复制注册表条目只持稳定标识符引用; INV-2 load产出全frozen dataclass; INV-3 validate纯函数无副作用; INV-4 error=0才可被下游消费; INV-5 module_ref=null记warning不记error（V0缺口可视化输入）; INV-6 R21 MOD 对账只认「当前文件 sha256 命中」的 depgraph 缓存条目——hash 未命中＝缓存陈旧，降级 warning 禁报 error（拿旧版本文件的 module_id 判违规＝假阳性，实证 q-…-0012）; INV-7 R41 空格子必归因——mounted 为空的矩阵格必须带 mounted_reason（首词取 _EMPTY_CELL_REASONS 词表），"设计留空"与"忘了填"不得同形
+# [MODIFY-GUARD] schema_version 变更必须同步升级 dataclasses+校验规则+测试（R1-R41）
 # [STABILITY] evolving
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
@@ -51,6 +51,11 @@ _NODE_TYPES = frozenset({"gate", "stage", "sensor", "aggregation", "cross_cuttin
 _POINTS = frozenset({"盘前", "盘中", "盘后", "持续"})
 _EDGE_TYPES = frozenset({"feed", "sequence", "broadcast", "feedback"})
 _CONFIDENCE = frozenset({"verified", "proposed", "untested"})
+# R41 空格子归因词表（封闭枚举，防"随手写句好话"糊弄门禁）：
+#   pending-owner-adoption=填格=资金分配，等 Owner 采纳（高风险域，AI 禁自填）
+#   by-design-empty=该状态按节点口径本就不挂策略（设计留空）
+#   pending-evidence=候选已有但证据未达 proposed→verified 门槛，暂不挂
+_EMPTY_CELL_REASONS = frozenset({"pending-owner-adoption", "by-design-empty", "pending-evidence"})
 _SCHEMA_VERSIONS = frozenset({"1.0", "1.1", "1.2"})
 _LAYER_PREFIX_BY_FLOW: Final = {
     "entry_flow": "L",
@@ -208,12 +213,17 @@ class DecisionMapEdge:
 
 @dataclass(frozen=True)
 class TdmMatrixCell:
-    """环节×市场状态矩阵格子（D5：proposed 起步）。"""
+    """环节×市场状态矩阵格子（D5：proposed 起步）。
+
+    mounted_reason（R41，2026-09-16 治"空格子静默"）：mounted 为空时必填的归因说明，
+    首词须取自 _EMPTY_CELL_REASONS 词表 + 空格 + 短句备注。mounted 非空时可省略。
+    """
 
     node_id: str
     state: str
     mounted: tuple[str, ...]
     confidence: str
+    mounted_reason: str | None = None
 
 
 @dataclass(frozen=True)
@@ -343,7 +353,10 @@ def load_decision_map(path: Path) -> DecisionMap:
     _require(isinstance(raw, dict), "地图真源顶层必须是映射")
     for key in ("schema_version", "map_id", "markets", "nodes", "edges", "state_matrix"):
         _require(key in raw, f"地图真源缺顶层字段 {key}")
-    _require(str(raw["schema_version"]) in _SCHEMA_VERSIONS, "schema_version 必须为 1.0 或 1.1")
+    _require(
+        str(raw["schema_version"]) in _SCHEMA_VERSIONS,
+        f"schema_version 必须为 {'/'.join(sorted(_SCHEMA_VERSIONS))} 之一",
+    )
 
     nodes = tuple(_parse_node(n) for n in raw["nodes"])
     _require(len({n.node_id for n in nodes}) == len(nodes), "node_id 重复")
@@ -363,6 +376,8 @@ def load_decision_map(path: Path) -> DecisionMap:
             state=str(c["state"]),
             mounted=tuple(str(x) for x in c.get("mounted", []) or []),
             confidence=str(c["confidence"]),
+            # None=键缺失（R41 报"未归因"）；空串/空白=有键但没内容（R41 报"归因为空"）
+            mounted_reason=(None if c.get("mounted_reason") is None else str(c["mounted_reason"])),
         )
         for c in sm.get("cells", []) or []
     )
@@ -598,7 +613,13 @@ def _validate_matrix_cell(
     strat_ids: frozenset[str],
     known_strategy_ids: frozenset[str] | None,
 ) -> None:
-    """R7 矩阵格：引用环节/策略存在性 + state 在列轴 + confidence 枚举 + mounted ⊆ 节点挂载。"""
+    """R7 矩阵格：引用环节/策略存在性 + state 在列轴 + confidence 枚举 + mounted ⊆ 节点挂载。
+
+    R41 空格子归因（error）：mounted 为空必须写 mounted_reason——治"设计留空"与
+    "忘了填"同形。R7 只遍历 c.mounted，空格子在 R41 之前结构上不可能被任何规则发现
+    （24 格 16 空全绿的病根）；只查归因存在性，不替 Owner 决定该挂谁（填格=资金分配，
+    risk_tier_registry 归 Owner 门位）。
+    """
     node = {n.node_id: n for n in dm.nodes}.get(c.node_id)
     if node is None:
         add("error", "R7", c.node_id, "矩阵格引用环节不存在")
@@ -618,6 +639,26 @@ def _validate_matrix_cell(
             )
     if c.confidence not in _CONFIDENCE:
         add("error", "R7", c.node_id, f"矩阵格 confidence 非法: {c.confidence}")
+    # ── R41 空格子必须归因 ──────────────────────────────────────────────────
+    reason = (c.mounted_reason or "").strip()
+    if not c.mounted and not reason:
+        add(
+            "error",
+            "R41",
+            c.node_id,
+            f"矩阵格 {c.state} mounted 为空且无 mounted_reason（空格子必须显式归因："
+            f"词表 {sorted(_EMPTY_CELL_REASONS)} + 空格 + 短句备注；不填=禁静默留空）",
+        )
+    if reason:
+        token = reason.split()[0].rstrip("，,。;；")
+        if token not in _EMPTY_CELL_REASONS:
+            add(
+                "error",
+                "R41",
+                c.node_id,
+                f"矩阵格 {c.state} mounted_reason 首词 {token!r} 不在归因词表 "
+                f"{sorted(_EMPTY_CELL_REASONS)}（归因必须可机判，不能是散文）",
+            )
 
 
 def _validate_xrefs(n, xref_ids: dict[str, frozenset[str]], add) -> None:
@@ -850,7 +891,7 @@ def validate_decision_map(
     known_strategy_ids: frozenset[str] | None = None,
     depgraph_cache: Path | None = None,
 ) -> tuple[bool, list[GapReportItem]]:
-    """引用存在性+治理门禁校验（纯函数，R1-R25）→ (error 数为 0, GapReport 列表)。
+    """引用存在性+治理门禁校验（纯函数，R1-R41）→ (error 数为 0, GapReport 列表)。
 
     depgraph_cache：depgraph 扫描缓存路径（path→blueprint_id 映射，R21 对账用）；
     None=默认仓库根 .runtime/depgraph_scan_cache.json；缓存缺失记 warning 不硬阻断。

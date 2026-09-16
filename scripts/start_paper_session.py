@@ -1,11 +1,11 @@
 # [BLUEPRINT] MOD-SCRIPT-start_paper_session | scripts/start_paper_session.py | §
 # [MODULE] scripts.start_paper_session
 # [DOMAIN] D_EX_CORE
-# [DEPENDENCIES] stdlib；zephyr.ex_core.trading_session（TradingSession/TradingSessionConfig 真源）；zephyr.ex_core.live_strategy_adapter（--service 常驻服务模式：LiveStrategyAdapter/StrategySlot）；zephyr.ex_core.adapters.miniqmt_broker（延迟 import）；zephyr.ex_core.order_manager；zephyr.ex_core.signal_providers；zephyr.ex_core.risk_layer_orchestrator+position_reconciler+position_tracker.tracker（H5-P0 风控接线批）；zephyr.ex_core.async_fill_dispatcher（成交入账离回调线程，stop 排空）；zephyr.governance.adapters.risk_validation_bridge；zephyr.risk.implementations.default_risk_validator；zephyr.risk.core.drawdown_tracker/var_calculator/tail_risk_monitor；zephyr.position.core.drawdown_controller；zephyr.shared.state_store（JsonStateStore+AppendOnlyDedupSet Crash-only 外部化）；zephyr.governance.strategies.strategy_base；zephyr.pf_core.topn_momentum_strategy（--strategy 可选）；zephyr.shared.infra.process_pool（run_subprocess_hidden SSoT）
+# [DEPENDENCIES] stdlib；zephyr.ex_core.trading_session（TradingSession/TradingSessionConfig 真源）；zephyr.ex_core.live_strategy_adapter（--service 常驻服务模式：LiveStrategyAdapter/StrategySlot）；zephyr.ex_core.adapters.miniqmt_broker（延迟 import）；zephyr.ex_core.order_manager；zephyr.ex_core.signal_providers；zephyr.ex_core.risk_layer_orchestrator+position_reconciler+position_tracker.tracker（H5-P0 风控接线批）；zephyr.ex_core.async_fill_dispatcher（成交入账离回调线程，stop 排空）；zephyr.governance.adapters.risk_validation_bridge；zephyr.risk.implementations.default_risk_validator；zephyr.risk.core.drawdown_tracker/var_calculator/tail_risk_monitor；zephyr.position.core.drawdown_controller；zephyr.shared.state_store（JsonStateStore+AppendOnlyDedupSet Crash-only 外部化）；zephyr.governance.strategies.strategy_base；zephyr.pf_core.topn_momentum_strategy（--strategy 可选）；zephyr.shared.infra.process_pool（run_subprocess_hidden SSoT）；zephyr.ex_core.pre_execution_checker（MOD-EX-024 执行前四级闸门，经 TradingSession.attach_pre_execution_gate 挂载）
 # [CONSUMERS] 57 号文 §2 盘中模拟盘——交易日 09:25 前人工拉起；--service=LiveStrategyAdapter 常驻服务模式（GAP-2 残余① CLI 接线已落）；挂计划任务/调度=Owner 窗口
 # [STARTUP] manual
 # [MATURITY] testing
-# [INVARIANTS] 仅连 QMT 模拟账户（config/.env.qmt QMT_SIM_*，实盘 QMT_REAL_* 永不触碰）；默认纯会话保活不自动 rebalance（--strategy 缺省=安全默认）；--dry-run 只连不打任何单；有界保活循环 15:05 自动 stop；KeyboardInterrupt 优雅 stop（stop 自动撤未成交单语义保留）；--service 模式 assemble_session 包 StrategySlot 交 LiveStrategyAdapter 监督（异常隔离+退避重启熔断+biz 心跳 tmp/live_strategy_biz.heartbeat），adapter.run(close_at) 有界收场；**风控层必装配**——DrawdownTracker 基线只取券商实时净值（读不到/非正=拒绝装配会话 exit 1，禁兜底常量猜基线）；Kill Switch 状态经 JsonStateStore 外部化（重启存活熔断，#ARCH-QUANT-002 生产零注入治本）；成交经 OrderManager 回调**只入队** AsyncFillDispatcher（回调线程零耗时，落账在派发线程），会话 stop() MUST 排空派发队列（含 --service 退避重启路径，排不掉=CRITICAL 出声）供盘中对账冻结
+# [INVARIANTS] 仅连 QMT 模拟账户（config/.env.qmt QMT_SIM_*，实盘 QMT_REAL_* 永不触碰）；默认纯会话保活不自动 rebalance（--strategy 缺省=安全默认）；--dry-run 只连不打任何单；有界保活循环 15:05 自动 stop；KeyboardInterrupt 优雅 stop（stop 自动撤未成交单语义保留）；--service 模式 assemble_session 包 StrategySlot 交 LiveStrategyAdapter 监督（异常隔离+退避重启熔断+biz 心跳 tmp/live_strategy_biz.heartbeat），adapter.run(close_at) 有界收场；**风控层必装配**——DrawdownTracker 基线只取券商实时净值（读不到/非正=拒绝装配会话 exit 1，禁兜底常量猜基线）；Kill Switch 状态经 JsonStateStore 外部化（重启存活熔断，#ARCH-QUANT-002 生产零注入治本）；成交经 OrderManager 回调**只入队** AsyncFillDispatcher（回调线程零耗时，落账在派发线程），会话 stop() MUST 排空派发队列（含 --service 退避重启路径，排不掉=CRITICAL 出声）供盘中对账冻结；**执行前四级闸门必装配**（H5-P0 决策门零接线清偿）——探针真源=DefaultRiskValidator.kill_switch_active，禁静默退化为"熔断级不判定"
 # [MODIFY-GUARD] 57_daily_cycle_sop.md §2/§7 GAP-2；#ARCH-DAILY-CYCLE-GAP23-001
 # [STABILITY] evolving
 # [SAFETY] M
@@ -561,6 +561,11 @@ def assemble_session(args: argparse.Namespace, broker: object, *, state_dir: Pat
         order_manager=order_manager,
         config=config,
         risk_layer=risk_layer,
+    )
+    session.attach_pre_execution_gate(kill_switch_probe=lambda: validator.kill_switch_active)
+    print(
+        "[RISK] 执行前四级闸门已挂载：熔断→交易时段(A股连续竞价)→统一风控快照→否决引擎"
+        " 熔断探针=KillSwitch 真源（RiskValidationBridge 不代理 kill_switch_active，故显式注入）"
     )
     _attach_dispatcher_teardown(session, fill_dispatcher)
     return session

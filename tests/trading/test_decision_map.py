@@ -2,7 +2,7 @@
 # [DOMAIN] D_TRADING
 # [TESTS] tests/trading/test_decision_map.py
 # [TTL] permanent
-"""交易决策地图模块测试——加载/schema/校验 R1-R19/真源自检（回归锚）。"""
+"""交易决策地图模块测试——加载/schema/校验 R1-R41（含 R41 空格子归因）/真源自检（回归锚）。"""
 
 from __future__ import annotations
 
@@ -12,10 +12,10 @@ import pytest
 import yaml
 
 from zephyr.trading.decision_map import (
+    _XREF_SPECS,
     DecisionMapSchemaError,
     load_decision_map,
     validate_decision_map,
-    _XREF_SPECS,
 )
 
 _REPO = Path(__file__).resolve().parents[2]
@@ -787,6 +787,118 @@ class TestNewRegistryGate:
         assert _stale_exemptions(_REGISTRY_DIR) == []
 
 
+# ── R41 空格子归因（治"设计留空"与"忘了填"同形）─────────────────────────────
+
+#: 归因词表在测试里钉死（不 import 私有常量）——放宽词表必须同时改这里，防静默注水
+_R41_TOKENS = frozenset({"pending-owner-adoption", "by-design-empty", "pending-evidence"})
+
+
+def _cell_payload(cell: dict) -> dict:
+    """单格合成地图：节点 TDM-T-1 + 列轴 强势（node_id/state 均在域内，只剩 R41 可报）。"""
+
+    def _mount(sid: str) -> dict:
+        return {"strategy_ref": sid, "confidence": "proposed", "evidence": None}
+
+    mounted = list(cell.get("mounted") or [])
+    payload = _minimal_payload()
+    payload["nodes"] = [_make_min_node(strategy_mounts=[_mount(s) for s in mounted])]
+    payload["state_matrix"] = {"states": ["强势"], "cells": [dict(cell)]}
+    return payload
+
+
+class TestR41EmptyCellAttribution:
+    def test_empty_cell_with_reason_passes(self, tmp_path: Path) -> None:
+        payload = _cell_payload(
+            {
+                "node_id": "TDM-T-1",
+                "state": "强势",
+                "mounted": [],
+                "confidence": "proposed",
+                "mounted_reason": "by-design-empty 该状态按节点口径不挂策略",
+            }
+        )
+        dm = load_decision_map(_write_map(tmp_path, payload))
+        assert dm.state_matrix.cells[0].mounted_reason  # 归因确实落到 dataclass
+        ok, issues = validate_decision_map(dm, _REGISTRY_DIR, _KNOWN_STRATEGIES)
+        assert not any(i.code == "R41" for i in issues)
+        assert ok is True
+        _assert_no_unexpected_errors(issues)
+
+    def test_empty_cell_without_reason_fails(self, tmp_path: Path) -> None:
+        """核心牙齿：R7 只遍历 mounted，空格子历史上不可能被任何规则发现。"""
+        payload = _cell_payload(
+            {"node_id": "TDM-T-1", "state": "强势", "mounted": [], "confidence": "proposed"}
+        )
+        dm = load_decision_map(_write_map(tmp_path, payload))
+        assert dm.state_matrix.cells[0].mounted_reason is None  # 键缺失≠空串
+        ok, issues = validate_decision_map(dm, _REGISTRY_DIR, _KNOWN_STRATEGIES)
+        assert ok is False
+        hits = [i for i in issues if i.code == "R41"]
+        assert len(hits) == 1
+        assert hits[0].level == "error"
+        assert "mounted_reason" in hits[0].detail and "强势" in hits[0].detail
+
+    def test_empty_cell_whitespace_reason_fails(self, tmp_path: Path) -> None:
+        payload = _cell_payload(
+            {
+                "node_id": "TDM-T-1",
+                "state": "强势",
+                "mounted": [],
+                "confidence": "proposed",
+                "mounted_reason": "   ",
+            }
+        )
+        dm = load_decision_map(_write_map(tmp_path, payload))
+        ok, issues = validate_decision_map(dm, _REGISTRY_DIR, _KNOWN_STRATEGIES)
+        assert ok is False and any(i.code == "R41" for i in issues)
+
+    def test_unknown_reason_token_fails(self, tmp_path: Path) -> None:
+        """归因必须可机判——写句好话糊弄不过词表关。"""
+        payload = _cell_payload(
+            {
+                "node_id": "TDM-T-1",
+                "state": "强势",
+                "mounted": [],
+                "confidence": "proposed",
+                "mounted_reason": "todo-later 以后再补",
+            }
+        )
+        dm = load_decision_map(_write_map(tmp_path, payload))
+        ok, issues = validate_decision_map(dm, _REGISTRY_DIR, _KNOWN_STRATEGIES)
+        assert ok is False
+        hits = [i for i in issues if i.code == "R41"]
+        assert hits and "todo-later" in hits[0].detail
+
+    def test_filled_cell_needs_no_reason(self, tmp_path: Path) -> None:
+        """非空格子不受影响（R41 只管空洞，不动既成挂载事实）。"""
+        payload = _cell_payload(
+            {
+                "node_id": "TDM-T-1",
+                "state": "强势",
+                "mounted": ["daban-sleeve"],
+                "confidence": "proposed",
+            }
+        )
+        dm = load_decision_map(_write_map(tmp_path, payload))
+        ok, issues = validate_decision_map(dm, _REGISTRY_DIR, _KNOWN_STRATEGIES)
+        assert not any(i.code == "R41" for i in issues)
+        assert ok is True
+        _assert_no_unexpected_errors(issues)
+
+    def test_repo_map_has_no_unexplained_hole(self) -> None:
+        """真源棘轮：16 个空格子全部归因后本规则必须零 error（且不得靠删格子空过）。"""
+        dm = load_decision_map(_MAP_PATH)
+        ok, issues = validate_decision_map(dm, _REGISTRY_DIR, _KNOWN_STRATEGIES)
+        assert [i.detail for i in issues if i.code == "R41"] == []
+        assert ok is True
+        empty = [c for c in dm.state_matrix.cells if not c.mounted]
+        assert empty, "真源已无空格子——本棘轮失去意义，改锚并留痕（勿直接删测试）"
+        for c in empty:
+            assert c.mounted_reason and c.mounted_reason.split()[0] in _R41_TOKENS, (
+                f"{c.node_id}:{c.state} 空格子归因缺失或词表外"
+            )
+
+
 # ── 真源自检（回归锚：仓库内真实地图必须持续全绿）───────────────────────────
 
 
@@ -809,7 +921,7 @@ class TestRepoTruthSource:
         """
         dm = load_decision_map(_MAP_PATH)
         mounted = {m.strategy_ref for n in dm.nodes for m in n.strategy_mounts}
-        assert _KNOWN_STRATEGIES <= mounted
+        assert mounted >= _KNOWN_STRATEGIES
 
     def test_repo_map_matrix_cells_proposed_only(self) -> None:
         """V0 血肉阶段：矩阵格子只允许 proposed/untested，禁止冒充 verified（D5）。"""

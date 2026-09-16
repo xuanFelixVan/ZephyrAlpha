@@ -21,6 +21,8 @@
   9. --service 常驻服务模式（GAP-2 残余①：assemble_session 包 slot 交 LiveStrategyAdapter）
   10. H5-P0 风控层接线（回撤基线取券商净值 / EMERGENCY→熔断落盘 / 启动恢复 Fail-Closed /
       成交→本地账→对账冻结链 / 净值不可读拒装配 exit 1）
+  11. H5-P0 决策门接线（执行前四级闸门必挂载 + 熔断探针指向真 DefaultRiskValidator，
+      禁经 RiskValidationBridge 反查落空而静默不判定）
 """
 
 from __future__ import annotations
@@ -170,6 +172,27 @@ class TestAssembleSession:
         # mock 信号彩排口径：全 1.0 等强
         assert session._signal_provider(["600000.SH", "000001.SZ"]) == {"600000.SH": 1.0, "000001.SZ": 1.0}
         assert isinstance(session._risk_layer, sps.RiskLayerOrchestrator)
+
+    def test_pre_execution_gate_mounted_with_live_kill_switch_probe(self, tmp_path):
+        """H5-P0 决策门零接线清偿：真装配链挂上四级闸门，熔断探针指向真风控器。
+
+        会话注入的 risk_validator 是 RiskValidationBridge 包装且不代理
+        kill_switch_active——若装配方不显式给探针，attach 的自动反查得 None，
+        闸门第一级（熔断）会静默退化成"不判定"，正是本批清偿的病根。
+        """
+        args = sps.parse_args(["--strategy", "topn-momentum", "--universe", "600000.SH"])
+        session = sps.assemble_session(args, _MockBroker(), state_dir=tmp_path)
+
+        checker = session._pre_execution_checker
+        assert checker is not None, "执行前闸门未挂载=决策门零接线回潮"
+        probe = checker._kill_switch_probe
+        assert probe is not None, "熔断探针 None=闸门第一级静默不判定"
+
+        real_validator = session._risk_validator._validator
+        assert isinstance(real_validator, sps.DefaultRiskValidator)
+        assert probe() is real_validator.kill_switch_active is False
+        real_validator._kill_switch_active = True  # 活引用而非装配期快照
+        assert probe() is True, "探针须实时反映真风控器熔断态"
 
     def test_unknown_strategy_rejected(self, tmp_path):
         args = sps.parse_args(["--strategy", "foo", "--universe", "600000.SH"])

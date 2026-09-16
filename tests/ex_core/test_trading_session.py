@@ -20,7 +20,7 @@
 
 from __future__ import annotations
 
-from datetime import date, datetime, timezone
+from datetime import UTC, date, datetime, timezone
 from decimal import Decimal
 from unittest.mock import MagicMock
 
@@ -38,6 +38,10 @@ from zephyr.compliance.discipline_prohibition_checker import (
 )
 from zephyr.compliance.trading_compliance_detector import TradingComplianceDetector
 from zephyr.ex_core.order_manager import OrderManager
+from zephyr.ex_core.pre_execution_checker import (
+    PreExecutionChecker,
+    PreExecutionReport,
+)
 from zephyr.ex_core.signal_providers import (
     make_mock_price_provider,
     make_mock_signal_provider,
@@ -49,7 +53,9 @@ from zephyr.ex_core.trading_session import (
 )
 from zephyr.governance.adapters.risk_validation_bridge import RiskViolation
 from zephyr.governance.adapters.simulation_broker import SimulationBroker
+from zephyr.risk.core.risk_data_pipeline import RiskDataPipelineError
 from zephyr.shared.contracts.enums.order_enums import OrderSide, OrderStatus
+from zephyr.shared.contracts.fill import Fill
 from zephyr.shared.contracts.position import PositionSnapshot
 
 # ---------------------------------------------------------------------
@@ -1089,3 +1095,275 @@ class TestCancelRateGuardSingleInstanceContract:
                 config=TradingSessionConfig(universe=["600519.SH"], broker_id="test_broker"),
                 cancel_rate_guard=CancelRateGuard(),
             )
+
+
+# ---------------------------------------------------------------------
+# 执行前闸门接线（MOD-EX-024 × MOD-RK-25，T1-α 产而不消清偿批）
+#
+# 断言口径：一律断言"订单是否到达 broker"——闸门被摘线即测试失败，
+# 不断言函数/类存在（那是自证式假绿）。
+# ---------------------------------------------------------------------
+
+
+def _gate_session(
+    *,
+    weights: dict[str, float],
+    prices: dict[str, Decimal],
+    position: PositionSnapshot | None = None,
+    universe: list[str] | None = None,
+    risk_validator=None,
+    checker: PreExecutionChecker | None = None,
+):
+    """构建带/不带执行前闸门的会话（broker/价格/持仓全注入假件，无 DB 无行情源）。"""
+    universe = universe or list(weights) or ["600519.SH"]
+    broker = MagicMock()
+    broker.get_positions.return_value = position or _make_position(cash=Decimal("1000000"))
+    broker.submit_order.side_effect = lambda order: f"broker_{order.order_id[:8]}"
+    if risk_validator is None:
+        risk_validator = MagicMock()
+        risk_validator.validate_order.return_value = []
+    config = TradingSessionConfig(universe=universe, broker_id="test_broker")
+    config.max_single_order_pct = Decimal("1.0")
+    config.max_symbol_orders_per_day = 999999
+    config.max_total_orders_per_day = 999999
+    om = OrderManager()
+    om.register_broker("test_broker", broker)
+    session = TradingSession(
+        broker=broker,
+        strategy=MagicMock(generate_target_weights=MagicMock(return_value=weights)),
+        risk_validator=risk_validator,
+        signal_provider=make_mock_signal_provider({}),
+        price_provider=make_mock_price_provider(prices),
+        order_manager=om,
+        config=config,
+        pre_execution_checker=checker,
+    )
+    return session, broker
+
+
+class TestPreExecutionGateDecidesOrders:
+    """闸门判定真正决定订单去向（同一接线，仅风险状态变化即翻转结果）。"""
+
+    def test_over_limit_buy_vetoed_by_pipeline_but_compliant_buy_passes(self, caplog):
+        """经真实 MOD-RK-25 管道：超单仓限额买入被否决拒单，限额内同接线放行。"""
+        import logging
+
+        caplog.set_level(logging.ERROR)
+        # 50% 目标权重 → 单仓 0.5 > config.risk_limits.max_single_position 0.10（既有阈值）
+        session, broker = _gate_session(
+            weights={"600519.SH": 0.50},
+            prices={"600519.SH": Decimal("100")},
+        )
+        session.attach_pre_execution_gate(session_window_probe=lambda now: True)
+        assert session.rebalance() == []
+        broker.submit_order.assert_not_called()
+        assert [o.symbol for o in session._blocked_orders] == ["600519.SH"]
+        # 判定理由可观测（结构化 reason_code 进日志，不另开平行通道）
+        assert "SINGLE_POSITION_LIMIT" in caplog.text
+
+        # 同接线、仅目标权重回到限额内 → 必须放行（否则=静默全拦，同样不可接受）
+        session2, broker2 = _gate_session(
+            weights={"600519.SH": 0.03},
+            prices={"600519.SH": Decimal("100")},
+        )
+        session2.attach_pre_execution_gate(session_window_probe=lambda now: True)
+        assert len(session2.rebalance()) == 1
+        broker2.submit_order.assert_called_once()
+
+    def test_kill_switch_state_flip_releases_orders(self):
+        """熔断探针 True→False：拒单→放行（短路语义下未接线快照不被装配）。"""
+        state = {"kill": True}
+        session, broker = _gate_session(
+            weights={"600519.SH": 0.03},
+            prices={"600519.SH": Decimal("100")},
+        )
+        session.attach_pre_execution_gate(
+            kill_switch_probe=lambda: state["kill"],
+            session_window_probe=lambda now: True,
+        )
+        assert session.rebalance() == []
+        broker.submit_order.assert_not_called()
+        assert session._pre_exec_cycle_snapshot is None  # 闸门 1 短路，不建快照
+
+        state["kill"] = False
+        assert len(session.rebalance()) == 1
+        assert broker.submit_order.call_count == 1
+        assert session._pre_exec_cycle_snapshot is not None
+
+    def test_session_window_gate_blocks_outside_hours_only(self):
+        """时段闸门生效：非交易时段整批拒，交易时段内同批放行。"""
+        state = {"open": False}
+        kwargs = dict(
+            weights={"600519.SH": 0.03},
+            prices={"600519.SH": Decimal("100")},
+        )
+        session, broker = _gate_session(**kwargs)
+        session.attach_pre_execution_gate(session_window_probe=lambda now: state["open"])
+        assert session.rebalance() == []
+        broker.submit_order.assert_not_called()
+
+        state["open"] = True
+        assert len(session.rebalance()) == 1
+        assert broker.submit_order.call_count == 1
+
+    def test_kill_switch_probe_auto_wired_from_risk_validator(self):
+        """探针自动接线：注入风控器暴露 bool kill_switch_active 即被消费。"""
+        validator = MagicMock()
+        validator.validate_order.return_value = []
+        validator.kill_switch_active = True
+        session, broker = _gate_session(
+            weights={"600519.SH": 0.03},
+            prices={"600519.SH": Decimal("100")},
+            risk_validator=validator,
+        )
+        session.attach_pre_execution_gate(session_window_probe=lambda now: True)
+        assert session.rebalance() == []
+        broker.submit_order.assert_not_called()
+
+        validator.kill_switch_active = False
+        assert len(session.rebalance()) == 1
+        assert broker.submit_order.call_count == 1
+
+    def test_unwired_gate_keeps_existing_behaviour(self):
+        """未注入闸门=不改既有行为（注入是装配层职责，本测试守这条边界）。"""
+        session, broker = _gate_session(
+            weights={"600519.SH": 0.50},
+            prices={"600519.SH": Decimal("100")},
+        )
+        assert len(session.rebalance()) == 1
+        assert broker.submit_order.call_count == 1
+
+
+class TestPreExecutionGateFailClosed:
+    """注入后失效一律拒该单——既不静默放行，也不新增整批/整会话阻断。"""
+
+    def test_checker_exception_rejects_only_that_order(self, caplog):
+        import logging
+
+        caplog.set_level(logging.ERROR)
+
+        class _HalfBrokenChecker:
+            def check(self, request, *, now=None):
+                if request.symbol == "600519.SH":
+                    raise RuntimeError("veto engine exploded")
+                return PreExecutionReport(
+                    allowed=True,
+                    blocks=(),
+                    veto_decision=None,
+                    snapshot_id="rs-ok",
+                    request_id=request.request_id,
+                    evaluated_at=datetime(2026, 8, 21, 10, 0, tzinfo=UTC),
+                )
+
+        session, broker = _gate_session(
+            weights={"600519.SH": 0.03, "000001.SZ": 0.03},
+            prices={"600519.SH": Decimal("100"), "000001.SZ": Decimal("10")},
+            universe=["600519.SH", "000001.SZ"],
+            checker=_HalfBrokenChecker(),  # type: ignore[arg-type]
+        )
+        submitted = session.rebalance()
+        # 失效那一单被拒（未静默放行），同批另一单照常提交（未牵连整批）
+        assert [o.symbol for o in submitted] == ["000001.SZ"]
+        assert [o.symbol for o in session._blocked_orders] == ["600519.SH"]
+        assert broker.submit_order.call_count == 1
+        assert "Fail-Closed" in caplog.text
+
+    def test_snapshot_unavailable_rejects_order(self, caplog):
+        """快照装配失败 → SNAPSHOT_UNAVAILABLE 拒单（MOD-EX-024 闸门 3 Fail-Closed）。"""
+        import logging
+
+        caplog.set_level(logging.ERROR)
+
+        def _boom() -> None:
+            raise RiskDataPipelineError("持仓真源不可用", details={})
+
+        checker = PreExecutionChecker(
+            snapshot_builder=_boom,  # type: ignore[arg-type]
+            kill_switch_probe=lambda: False,
+            session_window_probe=lambda now: True,
+        )
+        session, broker = _gate_session(
+            weights={"600519.SH": 0.03},
+            prices={"600519.SH": Decimal("100")},
+            checker=checker,
+        )
+        assert session.rebalance() == []
+        broker.submit_order.assert_not_called()
+        assert "SNAPSHOT_UNAVAILABLE" in caplog.text
+
+
+class TestSessionFeedsRiskPipeline:
+    """MOD-RK-25 管道的生产消费方：四路真源全部取会话在手数据。"""
+
+    def test_snapshot_assembled_once_per_batch_and_reused(self, monkeypatch):
+        """一批两单只装配一次快照（与同批 positions 同口径），批内各单复用。"""
+        session, _ = _gate_session(
+            weights={"600519.SH": 0.03, "000001.SZ": 0.03},
+            prices={"600519.SH": Decimal("100"), "000001.SZ": Decimal("10")},
+            universe=["600519.SH", "000001.SZ"],
+        )
+        session.attach_pre_execution_gate(session_window_probe=lambda now: True)
+        original = TradingSession.build_risk_snapshot
+        calls: list[int] = []
+
+        def _counting(self, **kwargs):
+            calls.append(1)
+            return original(self, **kwargs)
+
+        monkeypatch.setattr(TradingSession, "build_risk_snapshot", _counting)
+        assert len(session.rebalance()) == 2
+        assert len(calls) == 1
+        # 下一批必须重装配（不吃上一批的过期真相）
+        assert len(session.rebalance()) == 2
+        assert len(calls) == 2
+
+    def test_snapshot_carries_session_truth(self):
+        """快照内容=会话注入的 broker 持仓/价格/成交/限额（原值，不造数）。"""
+        position = _make_position(
+            cash=Decimal("900000"),
+            holdings={"600519.SH": Decimal("1000")},
+            total_market_value=Decimal("100000"),
+        )
+        session, _ = _gate_session(
+            weights={"600519.SH": 0.03},
+            prices={"600519.SH": Decimal("100")},
+            position=position,
+        )
+        session._fills.append(
+            Fill(
+                fill_id="f-1",
+                order_id="o-1",
+                symbol="600519.SH",
+                strategy_id="trading_session",
+                fill_price=Decimal("100"),
+                filled_quantity=Decimal("100"),
+                fill_timestamp=datetime(2026, 8, 21, 9, 40, tzinfo=UTC),
+                idempotency_key="f-1",
+                commission=Decimal("30"),
+            )
+        )
+        snap = session.build_risk_snapshot(as_of=datetime(2026, 8, 21, 10, 0, tzinfo=UTC))
+        assert snap.cash == Decimal("900000")
+        assert snap.nav == Decimal("1000000")  # 900000 + 1000×100（行情取 price_provider）
+        assert [v.symbol for v in snap.positions] == ["600519.SH"]
+        assert snap.positions[0].market_value == Decimal("100000")
+        assert snap.fills_summary.fill_count == 1
+        assert snap.fills_summary.total_commission == Decimal("30")
+        assert snap.limits is session._config.risk_limits  # 限额原值透传，零新阈值
+        assert not snap.degraded
+
+    def test_missing_price_degrades_instead_of_fabricating(self):
+        """无价持仓不被补零：计入 missing_price_symbols（缺价即双向否决的输入）。"""
+        position = _make_position(
+            cash=Decimal("900000"),
+            holdings={"600519.SH": Decimal("1000"), "000002.SZ": Decimal("500")},
+            total_market_value=Decimal("100000"),
+        )
+        session, _ = _gate_session(
+            weights={"600519.SH": 0.03},
+            prices={"600519.SH": Decimal("100")},
+            position=position,
+        )
+        snap = session.build_risk_snapshot(as_of=datetime(2026, 8, 21, 10, 0, tzinfo=UTC))
+        assert snap.missing_price_symbols == ("000002.SZ",)
+        assert snap.degraded

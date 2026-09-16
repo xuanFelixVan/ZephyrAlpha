@@ -2,7 +2,7 @@
 # [MODULE] zephyr.ex_core.pre_execution_checker
 # [DOMAIN] D_EX_CORE
 # [DEPENDENCIES] zephyr.risk.core.risk_data_pipeline; zephyr.risk.core.risk_veto_engine; zephyr.data.calendar; zephyr.data.trading_calendar
-# [CONSUMERS] MOD-L06-001(TradingSession._validate_and_submit 前置硬拦) ; MOD-EX-007(Execution Risk Gate)
+# [CONSUMERS] MOD-L06-001(TradingSession 逐单执行前硬拦：_validate_and_submit→_is_blocked_by_pre_execution，经 attach_pre_execution_gate()/pre_execution_checker= 注入即生效，快照源=TradingSession.build_risk_snapshot) ; MOD-EX-007(Execution Risk Gate, planned—全仓无实现代码，未落地)
 # [STARTUP] imported
 # [MATURITY] production
 # [INVARIANTS] 四级检查顺序固定(熔断→时段→快照→否决); 熔断激活短路不建快照; 各环节Fail-Closed(探针异常按熔断/非交易时段处理,快照失败拒单,C-004默认拒绝); 风险判定核心委托MOD-RK-24纯函数(本模块只编排不重造); 报告frozen不可变
@@ -51,9 +51,12 @@ from zephyr.risk.core.risk_veto_engine import (
 _logger = logging.getLogger(__name__)
 
 __all__: Final = [
+    "KillSwitchProbe",
     "PreExecutionBlock",
     "PreExecutionChecker",
     "PreExecutionReport",
+    "SessionWindowProbe",
+    "SnapshotBuilder",
     "is_ashare_trading_window",
 ]
 

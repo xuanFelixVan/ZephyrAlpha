@@ -2,7 +2,7 @@
 # [MODULE] zephyr.risk.core.risk_data_pipeline
 # [DOMAIN] D_RISK
 # [DEPENDENCIES] zephyr.shared.contracts.market_data; zephyr.shared.contracts.position; zephyr.shared.contracts.fill; zephyr.shared.contracts.risk_limits; zephyr.shared.foundation.errors
-# [CONSUMERS] MOD-RK-22(Agent Risk Monitor) ; MOD-RK-24(Risk Veto Engine) ; MOD-EX-024(Pre-Execution Checker)
+# [CONSUMERS] 管道(build_snapshot)生产消费方: MOD-L06-001(TradingSession.build_risk_snapshot——四路真源由会话注入端口适配，执行前闸门按调仓批次装配) ; 仅消费 RiskSnapshot 类型: MOD-RK-22(Agent Risk Monitor) ; MOD-RK-24(Risk Veto Engine) ; MOD-EX-024(Pre-Execution Checker) ; MOD-L06-001/zephyr.ex_core.services.live_portfolio(注入式 snapshot_supplier)
 # [STARTUP] imported
 # [MATURITY] production
 # [INVARIANTS] nav=cash+Σ可得市价市值; nav<=0→RiskDataPipelineError(Fail-Closed); 持仓数量<0→RiskDataPipelineError; 缺价/缺限额/缺成交→degraded=True不静默补零; 快照frozen不可变; 持仓/成交/限价数据全部经provider注入(禁自造数据管道)
@@ -18,9 +18,12 @@
 Risk Data Pipeline — 风控数据底座 (MOD-RK-25)
 
 汇总行情 / 持仓 / 成交 / 限额为统一风控快照 (RiskSnapshot)，供下游消费：
-  - MOD-RK-22 AgentRiskMonitor（agent 风险监控）
-  - MOD-RK-24 RiskVetoEngine（风险否决引擎）
-  - MOD-EX-024 PreExecutionChecker（执行前检查）
+  - MOD-L06-001 TradingSession.build_risk_snapshot（管道唯一生产装配点：会话把
+    在手四路真源 broker 持仓 / price_provider 行情 / 会话成交回报 /
+    config.risk_limits 适配进下列四个 provider 协议，逐批出快照喂 MOD-EX-024）
+  - MOD-RK-22 AgentRiskMonitor（agent 风险监控，消费 RiskSnapshot 类型）
+  - MOD-RK-24 RiskVetoEngine（风险否决引擎，消费 RiskSnapshot 类型）
+  - MOD-EX-024 PreExecutionChecker（执行前检查，消费 RiskSnapshot 类型）
 
 数据真源纪律（禁自造管道）：
   - 行情  ← MarketDataProvider 协议注入（CTR-001 NormalizedMarketData，D_DATA 既有数据层）

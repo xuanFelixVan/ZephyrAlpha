@@ -1,11 +1,11 @@
 # [BLUEPRINT] MOD-L06-001 | docs/03_modules/_domain_execution_core/blueprint.md
 # [MODULE] zephyr.ex_core.trading_session
 # [DOMAIN] D_EX_CORE
-# [DEPENDENCIES] zephyr.ex_core.order_manager; zephyr.ex_core.cancel_rate_guard; zephyr.ex_core.risk_layer_orchestrator; zephyr.ex_core.board_lot; zephyr.trading.trading_contracts.broker_interface; zephyr.governance.strategies.strategy_base; zephyr.governance.adapters.risk_validation_bridge; zephyr.shared.contracts.order; zephyr.shared.contracts.position; zephyr.shared.contracts.risk_limits; zephyr.shared.contracts.fill; zephyr.compliance.discipline_must_do_checker; zephyr.compliance.discipline_prohibition_checker; zephyr.compliance.trading_compliance_detector; zephyr.shared.contracts.enums.order_enums
+# [DEPENDENCIES] zephyr.ex_core.order_manager; zephyr.ex_core.cancel_rate_guard; zephyr.ex_core.risk_layer_orchestrator; zephyr.ex_core.board_lot; zephyr.ex_core.pre_execution_checker; zephyr.risk.core.risk_data_pipeline; zephyr.risk.core.risk_veto_engine; zephyr.data.calendar; zephyr.trading.trading_contracts.broker_interface; zephyr.governance.strategies.strategy_base; zephyr.governance.adapters.risk_validation_bridge; zephyr.shared.contracts.order; zephyr.shared.contracts.position; zephyr.shared.contracts.risk_limits; zephyr.shared.contracts.fill; zephyr.compliance.discipline_must_do_checker; zephyr.compliance.discipline_prohibition_checker; zephyr.compliance.trading_compliance_detector; zephyr.shared.contracts.enums.order_enums
 # [CONSUMERS]
 # [STARTUP] imported
 # [MATURITY] production
-# [INVARIANTS] 只编排不重造——复用 OrderManager/BrokerInterface/StrategyBase/RiskValidationPort/CancelRateGuard/RiskLayerOrchestrator；权重驱动非订单驱动；资金预占串行扣减+拒单回滚；C-004 合规闸（清单/纪律/操纵/熔断）注入即生效、检测失效 Fail-Closed 拒单；风控层注入即生效——启动恢复未完成或熔断触发禁止下单、position_cap 缩放目标权重、对账冻结标的硬拦
+# [INVARIANTS] 只编排不重造——复用 OrderManager/BrokerInterface/StrategyBase/RiskValidationPort/CancelRateGuard/RiskLayerOrchestrator；权重驱动非订单驱动；资金预占串行扣减+拒单回滚；C-004 合规闸（清单/纪律/操纵/熔断）注入即生效、检测失效 Fail-Closed 拒单；风控层注入即生效——启动恢复未完成或熔断触发禁止下单、position_cap 缩放目标权重、对账冻结标的硬拦；执行前闸门(MOD-EX-024)注入即生效——判定失效逐单 Fail-Closed 拒(不牵连整批)、风控快照按调仓批次装配一次(MOD-RK-25 四路真源=本会话在手数据)、限额原值透传不改阈值
 # [MODIFY-GUARD] 43_compliance_discipline.md §3.4/§4.3/§7.1（AI-ASM-001 装配批接线）+ docs/_working/reviews/2026-08-16-dual-review-adjudication.md §六（#ARCH-100，AI-RWIRE-001 风控接线批）
 # [STABILITY] evolving
 # [SAFETY] L
@@ -47,12 +47,20 @@ C-004 合规闸（2026-08-15 AI-ASM-001 装配批接线，43_compliance_discipli
   3. 回撤 EMERGENCY 经监听链触发熔断+清算（编排器内单一仲裁点）；
   4. 盘中定时对账冻结的标的在 _validate_and_submit 逐单硬拦。
 
+执行前闸门（T1-α 产而不消清偿批，MOD-EX-024 × MOD-RK-25 首次生产消费）：
+  此前 PreExecutionChecker 与 RiskDataPipeline.build_snapshot 全仓零调用方
+  （仅测试+表头自证），四级判定产出不进单链。本会话在 _validate_and_submit
+  逐单消费：build_risk_snapshot() 把手在四路真源（broker 持仓 / price_provider
+  行情 / 会话成交回报 / config.risk_limits）适配进 MOD-RK-25 管道，
+  attach_pre_execution_gate() 或 pre_execution_checker= 注入即生效；
+  未注入不改既有行为，注入后判定失效逐单 Fail-Closed 拒（不牵连整批）。
+
 # [ALGO_FLOW]
 # I1: target_weights(策略目标权重) + positions(持仓快照cash/holdings/total_market_value) + prices(当前价格)
 # I2: risk_limits(风控限额) + config(熔断阈值/资金费率) + CancelRateGuard(撤单率状态)
 # F1: _compute_order_deltas(差额下单: 目标qty-当前qty, 先卖后买排序, 板块整手取整board_lot真源, 零股一次性清仓)
 # F2: _is_blocked_by_circuit_breaker(订单层熔断: 单票单笔≤4%/单票≤10笔日/全账户≤50笔日)
-# A1: _validate_and_submit(资金预占: 串行扣减available_cash+卖出预占释放+提交前拦截+拒单回滚; C-004 合规闸: INTRADAY清单HardBlock→KillSwitchLite熔断→四项严禁纪律闸→交易合规检测, 失效Fail-Closed)
+# A1: _validate_and_submit(资金预占: 串行扣减available_cash+卖出预占释放+提交前拦截+拒单回滚; 执行前闸门 MOD-EX-024 四级硬拦(熔断/时段/快照/否决,快照按批装配); C-004 合规闸: INTRADAY清单HardBlock→KillSwitchLite熔断→四项严禁纪律闸→交易合规检测, 失效Fail-Closed)
 # A2: CancelRateGuard(can_place_order冻结拦截+can_submit_now限频+record_submit计数)
 # A3: _handle_rejection(拒单分类: 涨跌停/资金/持仓不重试, 价格/连接重试1次)
 # O1: submitted_orders(已提交订单) + blocked_orders(已拦截订单) + session_report(统计)
@@ -65,7 +73,7 @@ import logging
 import threading
 import uuid
 from collections import defaultdict
-from collections.abc import Callable
+from collections.abc import Callable, Mapping, Sequence
 from dataclasses import dataclass, field
 from datetime import date, datetime, time, timezone
 from decimal import Decimal
@@ -88,17 +96,26 @@ from zephyr.compliance.trading_compliance_detector import (
     ManipulationVerdict,
     TradingComplianceDetector,
 )
+from zephyr.data.calendar import MarketCalendar
 from zephyr.ex_core.board_lot import adjust_sell_for_odd_lot, round_buy_qty
 from zephyr.ex_core.cancel_rate_guard import CancelRateGuard
 from zephyr.ex_core.order_manager import OrderManager, RejectionAction
+from zephyr.ex_core.pre_execution_checker import (
+    KillSwitchProbe,
+    PreExecutionChecker,
+    SessionWindowProbe,
+)
 from zephyr.ex_core.risk_layer_orchestrator import RiskLayerOrchestrator, RiskLayerSnapshot
 from zephyr.governance.adapters.risk_validation_bridge import (
     RiskValidationPort,
     RiskViolation,
 )
 from zephyr.governance.strategies.strategy_base import StrategyBase
+from zephyr.risk.core.risk_data_pipeline import RiskDataPipeline, RiskSnapshot
+from zephyr.risk.core.risk_veto_engine import OrderRiskRequest, RiskVetoEngine
 from zephyr.shared.contracts.enums.order_enums import OrderSide, OrderStatus, OrderType
 from zephyr.shared.contracts.fill import Fill
+from zephyr.shared.contracts.market_data import NormalizedMarketData
 from zephyr.shared.contracts.order import Order
 from zephyr.shared.contracts.position import PositionSnapshot
 from zephyr.shared.contracts.risk_limits import RiskLimits
@@ -141,6 +158,81 @@ ComplianceCtxProvider = Callable[[Order], ComplianceMarketContext]
 
 # 需要撤单的活跃状态
 _ACTIVE_STATUSES = frozenset({OrderStatus.PENDING, OrderStatus.SUBMITTED, OrderStatus.PARTIAL})
+
+
+def _as_utc(dt: datetime) -> datetime:
+    """naive datetime 按 UTC 口径补齐（成交回报时间戳与窗口起点可比）。"""
+    return dt if dt.tzinfo is not None else dt.replace(tzinfo=timezone.utc)
+
+
+class _SessionPositionProvider:
+    """MOD-RK-25 PositionProvider 适配：持仓真源=本会话 broker 注入（CTR-006）。"""
+
+    def __init__(self, broker: BrokerInterface) -> None:
+        self._broker = broker
+
+    def get_position_snapshot(self) -> PositionSnapshot:
+        return self._broker.get_positions()
+
+
+class _SessionQuoteProvider:
+    """MOD-RK-25 MarketDataProvider 适配：行情真源=本会话 price_provider（CTR-001）。
+
+    price_provider 只供最新价、无成交量真源，故 OHLC 同价折叠 + volume=0；
+    MOD-RK-25 快照仅消费 close（市值/权重/杠杆派生）与 is_suspended，
+    缺价标的不在结果中出现即被管道计入 missing_price_symbols（不静默补零）。
+    """
+
+    def __init__(self, price_provider: PriceProvider) -> None:
+        self._price_provider = price_provider
+
+    def get_latest_quotes(self, symbols: Sequence[str]) -> Mapping[str, NormalizedMarketData]:
+        targets = list(symbols)
+        if not targets:
+            return {}  # 管道无需求（如空仓）→ 不打扰行情真源
+        prices = self._price_provider(targets)
+        now = datetime.now(timezone.utc)
+        quotes: dict[str, NormalizedMarketData] = {}
+        for symbol in targets:
+            price = prices.get(symbol)
+            if price is None or price <= 0:
+                continue  # 无有效价 → 交由管道记缺价降级（不造数）
+            quotes[symbol] = NormalizedMarketData(
+                symbol=symbol,
+                timestamp=now,
+                open=price,
+                high=price,
+                low=price,
+                close=price,
+                volume=Decimal("0"),
+                data_source="ex_core.trading_session.price_provider",
+                idempotency_key=f"tsq-{symbol}-{now.isoformat()}",
+            )
+        return quotes
+
+
+class _SessionFillProvider:
+    """MOD-RK-25 FillProvider 适配：成交真源=本会话 fill 回报（CTR-005）。"""
+
+    def __init__(self, fills_provider: Callable[[], Sequence[Fill]]) -> None:
+        self._fills_provider = fills_provider
+
+    def get_fills_since(self, start: datetime) -> Sequence[Fill]:
+        start_utc = _as_utc(start)
+        return [f for f in self._fills_provider() if _as_utc(f.fill_timestamp) >= start_utc]
+
+
+class _SessionLimitsProvider:
+    """MOD-RK-25 RiskLimitsProvider 适配：限额真源=本会话 config.risk_limits（CTR-003）。
+
+    限额值原值透传——本接线不引入、不修改任何阈值（阈值变更属 Owner 采纳域）。
+    """
+
+    def __init__(self, limits_provider: Callable[[], RiskLimits]) -> None:
+        self._limits_provider = limits_provider
+
+    def get_current_limits(self) -> RiskLimits:
+        return self._limits_provider()
 
 
 def _default_risk_limits() -> RiskLimits:
@@ -223,6 +315,7 @@ class TradingSession:
         compliance_detector: TradingComplianceDetector | None = None,
         compliance_ctx_provider: ComplianceCtxProvider | None = None,
         risk_layer: RiskLayerOrchestrator | None = None,
+        pre_execution_checker: PreExecutionChecker | None = None,
     ) -> None:
         # C-004 合规闸成对注入校验（43 号 §4.3/§7.6：检测失效 Fail-Closed，
         # 缺 ctx 提供器=检测不可评估=配置错误，装配期 fail-fast 优于盘中拒单）
@@ -261,6 +354,11 @@ class TradingSession:
         self._compliance_ctx_provider = compliance_ctx_provider
         # 组合级风控层（None=未接线不评估，AI-RWIRE-001 接线批 #ARCH-100）
         self._risk_layer = risk_layer
+        # 执行前闸门（None=未接线不拦，T1-α 产而不消清偿批）：
+        # 快照按调仓批次装配一次——与同批 positions/price_provider 口径一致，
+        # 避免逐单重复拉四路真源（PreExecutionChecker 逐单消费同一快照）
+        self._pre_execution_checker = pre_execution_checker
+        self._pre_exec_cycle_snapshot: RiskSnapshot | None = None
         self._lock = threading.Lock()
         self._running = False
         self._fills: list[Fill] = []
@@ -322,6 +420,92 @@ class TradingSession:
         self._cancel_pending_orders()
         self._broker.disconnect()
         _logger.info("TradingSession stopped: %s", self.get_session_report())
+
+    # ------------------------------------------------------------------
+    # 执行前闸门（MOD-EX-024 × MOD-RK-25 接线，T1-α 产而不消清偿批）
+    # ------------------------------------------------------------------
+
+    def build_risk_snapshot(
+        self,
+        *,
+        as_of: datetime | None = None,
+        pipeline: RiskDataPipeline | None = None,
+        sellable_quantities: Mapping[str, Decimal] | None = None,
+    ) -> RiskSnapshot:
+        """装配 MOD-RK-25 统一风控快照——四路真源全部取本会话在手数据。
+
+        接线方向：本会话是管道的生活消费者（管道自身不连任何数据源）。
+          持仓 ← broker.get_positions() / 行情 ← price_provider /
+          成交 ← 会话 fill 回报 / 限额 ← config.risk_limits（原值透传，不改阈值）
+        Fail-Closed 分级由管道保证：持仓真源失败 → 抛 RiskDataPipelineError
+        （不出快照）；行情/成交/限额失败 → degraded 快照 + data_warnings。
+        """
+        pipe = pipeline or RiskDataPipeline(
+            position_provider=_SessionPositionProvider(self._broker),
+            market_data_provider=_SessionQuoteProvider(self._price_provider),
+            fill_provider=_SessionFillProvider(lambda: list(self._fills)),
+            limits_provider=_SessionLimitsProvider(lambda: self._config.risk_limits),
+        )
+        return pipe.build_snapshot(as_of=as_of, sellable_quantities=sellable_quantities)
+
+    def _pre_exec_snapshot_builder(self) -> RiskSnapshot:
+        """执行前闸门的快照供给：每个调仓批次装配一次，批内各单复用。"""
+        if self._pre_exec_cycle_snapshot is None:
+            self._pre_exec_cycle_snapshot = self.build_risk_snapshot()
+        return self._pre_exec_cycle_snapshot
+
+    def _detect_kill_switch_probe(self) -> KillSwitchProbe | None:
+        """熔断探针自动接线：注入的风控器暴露 bool kill_switch_active 时用之。
+
+        真源不可得（属性缺失/非 bool，含未配置该属性的 mock）→ 返回 None，
+        由 MOD-EX-024 记 DEBUG 留痕——无真源不臆造熔断态（该模块铁律）；
+        属性读取本身抛异常时返回会再读一次的探针，交由闸门 Fail-Closed 处置。
+        """
+        try:
+            raw = getattr(self._risk_validator, "kill_switch_active", None)
+        except Exception:  # noqa: BLE001 — 探针取不到真相时交给检查器 Fail-Closed
+            return lambda: bool(self._risk_validator.kill_switch_active)
+        if isinstance(raw, bool):
+            return lambda: bool(self._risk_validator.kill_switch_active)
+        return None
+
+    def attach_pre_execution_gate(
+        self,
+        *,
+        checker: PreExecutionChecker | None = None,
+        kill_switch_probe: KillSwitchProbe | None = None,
+        session_window_probe: SessionWindowProbe | None = None,
+        market_calendar: MarketCalendar | None = None,
+        veto_engine: RiskVetoEngine | None = None,
+    ) -> PreExecutionChecker:
+        """装配并挂上执行前四级闸门（熔断→时段→快照→否决），返回该闸门实例。
+
+        默认快照源=本会话 build_risk_snapshot()（在手数据，见上），故调用方
+        无需再搭一条数据管道；`checker=` 供测试/特殊装配整体替换。
+        熔断探针缺省从注入的风控器自动反查（DefaultRiskValidator.kill_switch_active）。
+        交易时段探针缺省由 MOD-EX-024 走 market_calendar（默认 A 股窗口）判定。
+        """
+        if checker is None:
+            probe = kill_switch_probe if kill_switch_probe is not None else self._detect_kill_switch_probe()
+            checker = PreExecutionChecker(
+                snapshot_builder=self._pre_exec_snapshot_builder,
+                kill_switch_probe=probe,
+                session_window_probe=session_window_probe,
+                veto_engine=veto_engine,
+                market_calendar=market_calendar,
+            )
+            probe_state = "on" if probe is not None else "unwired"
+        else:
+            probe_state = "injected_checker"
+        self._pre_execution_checker = checker
+        _logger.info(
+            "执行前闸门已接线(MOD-EX-024): strategy=%s snapshot_source=session_pipeline "
+            "kill_switch_probe=%s session_window_probe=%s",
+            self._config.strategy_id,
+            probe_state,
+            "injected" if session_window_probe is not None else "calendar_default",
+        )
+        return checker
 
     # ------------------------------------------------------------------
     # 核心调仓
@@ -540,7 +724,8 @@ class TradingSession:
         """逐单风控验证 + 资金预占 + 创建并提交订单。返回已提交订单列表。
 
         执行顺序（40_execution_broker §2.1 架构总览）：
-          盘前检查链（风控）→ 资金预占预校验 → 订单层熔断 → 提交 broker。
+          盘前检查链（风控）→ 执行前四级闸门（MOD-EX-024）→ 资金预占预校验
+          → 订单层熔断 → 提交 broker。
         先卖后买——卖出释放 T+0 资金再买入，避免资金不足（error_code=54）。
         A 股 T+0 资金：当日卖出回笼资金可立即用于当日买入（§2.6 决策⑤）。
         资金预占（§2.14 决策⑬）：串行扣减 available_cash，提交前本地拦截，
@@ -551,6 +736,10 @@ class TradingSession:
         sorted_deltas = sorted(deltas, key=lambda o: 0 if o.side is OrderSide.SELL else 1)
         current_holdings_float = {s: float(q) for s, q in positions.holdings.items()}
         submitted: list[Order] = []
+
+        # ── 执行前闸门：本批快照失效重装配（批内各单复用同一时点真相）──
+        if self._pre_execution_checker is not None:
+            self._pre_exec_cycle_snapshot = None
 
         # ── C-004 合规闸 0：INTRADAY 必做清单（43 号 §3.4，订单无关每次循环查一次）──
         if self._checklist_checker is not None:
@@ -577,6 +766,11 @@ class TradingSession:
             # ── 盘前检查链 Step 1-3: 风控检查（仓位/行业/杠杆/Kill Switch）──
             target_weight = float(target_weights.get(order.symbol, 0.0))
             if self._is_blocked_by_risk(order.symbol, target_weight, current_holdings_float):
+                self._blocked_orders.append(order)
+                continue
+
+            # ── 执行前四级闸门（MOD-EX-024：熔断→时段→快照→否决，逐单硬拦）──
+            if self._is_blocked_by_pre_execution(order):
                 self._blocked_orders.append(order)
                 continue
 
@@ -692,6 +886,39 @@ class TradingSession:
                 [(v.constraint, v.description) for v in violations],
             )
         return halt
+
+    def _is_blocked_by_pre_execution(self, order: Order) -> bool:
+        """执行前四级闸门（MOD-EX-024）：熔断→时段→快照→否决，逐单判定。
+
+        未注入=不拦（既有行为不变，注入是装配层职责）；注入后任何失效
+        （快照装配异常/否决引擎异常/非法请求）一律 Fail-Closed 拒**该单**——
+        不放行，也不牵连整批（43 号 §1.3 与 C-004 合规闸同口径）。
+        判定理由取自 report.blocks 的结构化 reason_code，不外传平行通道。
+        """
+        if self._pre_execution_checker is None:
+            return False
+        try:
+            report = self._pre_execution_checker.check(
+                OrderRiskRequest(
+                    symbol=order.symbol,
+                    side=order.side,
+                    quantity=order.quantity,
+                    price=order.limit_price,
+                    strategy_id=order.strategy_id,
+                )
+            )
+        except Exception:  # noqa: BLE001 — 失效类型不可枚举，Fail-Closed 必须全捕获
+            _logger.exception("执行前检查失效，Fail-Closed 拒单: symbol=%s", order.symbol)
+            return True
+        if not report.allowed:
+            _logger.error(
+                "执行前闸门拒单: symbol=%s snapshot=%s blocks=%s",
+                order.symbol,
+                report.snapshot_id,
+                [(b.check_id, b.reason_code) for b in report.blocks],
+            )
+            return True
+        return False
 
     # ------------------------------------------------------------------
     # C-004 合规闸（43 号 §3.4/§4.3/§7.1，AI-ASM-001 装配批接线）

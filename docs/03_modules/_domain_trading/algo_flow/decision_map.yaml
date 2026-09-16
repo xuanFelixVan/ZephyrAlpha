@@ -31,8 +31,8 @@ algo_flow: |
     # - id: A2
     #   name_zh: ② 校验（validate_decision_map）
     #   name_en: validate_decision_map
-    #   intro: 引用存在性+治理门禁 R1-R36 → (ok, GapReport)；缺口即地图红节点语义
-    #   desc: R1 节点枚举; R2 边端点+类型+无环; R3 策略引用（STR-* 查 REG-STR-001，其余查 known_strategy_ids）; R4 因子引用 REG-FCT-001; R5 数据引用 REG-DATAFLOW-001 datasets; R6 置信度枚举+verified必带evidence; R7 矩阵格引用存在性; R8 sequence 边成环检测; R10 市场实例一致性; R12 整装方案; R13 算法引用（IND/EXA/DAL）; R14 doc_ref 存在+路径穿越拒绝; R15 治理字段枚举+新节点必填; R16 父子完整+树深≤4+树宽预警; R17 粒度（问题≤100字+禁模糊词）+容量（挂载≤8/因子≤12/数据≤8/算法≤8+各交叉轴上限）; R18 name_zh 唯一; R19 module_ref 存在; R20 node_id 骨架; R21 MOD-* 交叉锚（格式+depgraph 缓存对账，只认当前文件内容 hash 命中的条目；缓存陈旧/缺失→降级 warning 禁 error+欠账 warning）; R22 矩阵覆盖 warning; R23 流预算 warning（>80）; R24 因子欠账 warning; R25 空转叶子 warning; R26-R38 12 库交叉轴（形态/席位/宏观/周期/宇宙/成本/事件/风险限额/组合模型/基准/告警阈值/ML模型，表驱动 _XREF_SPECS）; R98 空地图; R99 注册表真源缺失; module_ref=null 记 warning; R39 盘中/持续节点时效预算欠账 warning（v1.9 latency_budget）
+    #   intro: 引用存在性+治理门禁 R1-R41 → (ok, GapReport)；缺口即地图红节点语义
+    #   desc: R1 节点枚举; R2 边端点+类型+无环; R3 策略引用（STR-* 查 REG-STR-001，其余查 known_strategy_ids）; R4 因子引用 REG-FCT-001; R5 数据引用 REG-DATAFLOW-001 datasets; R6 置信度枚举+verified必带evidence; R7 矩阵格引用存在性; R8 sequence 边成环检测; R10 市场实例一致性; R12 整装方案; R13 算法引用（IND/EXA/DAL）; R14 doc_ref 存在+路径穿越拒绝; R15 治理字段枚举+新节点必填; R16 父子完整+树深≤4+树宽预警; R17 粒度（问题≤100字+禁模糊词）+容量（挂载≤8/因子≤12/数据≤8/算法≤8+各交叉轴上限）; R18 name_zh 唯一; R19 module_ref 存在; R20 node_id 骨架; R21 MOD-* 交叉锚（格式+depgraph 缓存对账，只认当前文件内容 hash 命中的条目；缓存陈旧/缺失→降级 warning 禁 error+欠账 warning）; R22 矩阵覆盖 warning; R23 流预算 warning（>80）; R24 因子欠账 warning; R25 空转叶子 warning; R26-R38 12 库交叉轴（形态/席位/宏观/周期/宇宙/成本/事件/风险限额/组合模型/基准/告警阈值/ML模型，表驱动 _XREF_SPECS）; R98 空地图; R99 注册表真源缺失; module_ref=null 记 warning; R39 盘中/持续节点时效预算欠账 warning（v1.9 latency_budget）; R40 红节点缺 red_reason 欠账 warning（v1.10）; R41 空格子归因（error）：state_matrix 格子 mounted 为空必带 mounted_reason，首词取封闭词表 _EMPTY_CELL_REASONS（pending-owner-adoption/by-design-empty/pending-evidence）——治「设计留空」与「忘了填」同形（R7 只遍历 mounted，空格子在 R41 前结构上不可被发现），只查有无交代不替 Owner 决定挂谁
     #   inputs: DecisionMap I2 I3
     #   outputs: (bool, list[GapReportItem])
     # 层: 输出

@@ -1,6 +1,6 @@
 # [A_config] module_id=MOD-TRADING-015 | layer=config | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # ============================================================================
-# 交易决策地图真源（Trading Decision Map SSOT）— schema 文件级版本见 schema_version 字段（当前 1.1；节点规范演进由解析器承载）
+# 交易决策地图真源（Trading Decision Map SSOT）— schema 文件级版本见下方 schema_version 字段（散文不复制版本号，防漂移）；节点规范演进由解析器承载
 # 设计真源: docs/02_enterprise_architecture/07_trading_decision_architecture/design_memos/69_trading_decision_map.md
 # 蓝图: docs/03_modules/_domain_trading/decision_map/blueprint.md
 # 裁定: Owner 2026-09-04 D1-D6（讨论备忘录 docs/_working/2026-09-04-trading-decision-map-discussion.md）
@@ -2430,7 +2430,7 @@ nodes:
   decay_scan_frequency: semiannual
 
 - node_id: TDM-E-L4-12
-  note_confirmed: 2026-09-15
+  note_confirmed: 2026-09-16  # H5-P0 决策门接线复核：算法五查口径逐字未变（本批只改契约头/__all__ 导出）；实现侧变化=四级闸门自此有真实装配方（TradingSession.attach_pre_execution_gate + start_paper_session 模拟盘装配链），此前生产链路零装配
   name_zh: 订单级预检
   market: cn_a
   flow: entry_flow
@@ -4403,18 +4403,19 @@ state_matrix:
   states: [capitulation, accumulation, ignition, expansion, euphoria, 
       distribution]
   cells:
+    # R41（2026-09-16 治"空格子静默"）：mounted 为空的格子必须写 mounted_reason，首词取封闭词表
+    #   pending-owner-adoption | by-design-empty | pending-evidence（真源 decision_map._EMPTY_CELL_REASONS）
+    #   + 空格 + 短句备注。缺该键=地图校验 error（DECISION-MAP gate 阻断 commit）——病根是 R7 只遍历
+    #   mounted，24 格 16 空在此规则前结构上不可能被发现；本规则只查"有没有交代"，不替 Owner 决定挂谁。
     # L1 总闸：六段各输出预算/姿态细则（格子内容待填，proposed）
   - {node_id: TDM-E-L1, state: capitulation, mounted: [STR-VREV-025, STR-VREV-027],
     confidence: proposed}
   - {node_id: TDM-E-L1, state: accumulation, mounted: [STR-VREV-026, 
         STR-VREV-027], confidence: proposed}
-  - {node_id: TDM-E-L1, state: ignition, mounted: [], confidence: 
-      proposed}
+  - {node_id: TDM-E-L1, state: ignition, mounted: [], confidence: proposed, mounted_reason: pending-owner-adoption 本格从未填过（上方注释自述「格子内容待填」）：填格=该段真金投哪条 sleeve，属 Owner 资金分配门位，AI 禁自填}
   - {node_id: TDM-E-L1, state: expansion, mounted: [STR-MOMTREND-033], confidence: proposed}
-  - {node_id: TDM-E-L1, state: euphoria, mounted: [], confidence: 
-      proposed}
-  - {node_id: TDM-E-L1, state: distribution, mounted: [], confidence: 
-      proposed}
+  - {node_id: TDM-E-L1, state: euphoria, mounted: [], confidence: proposed, mounted_reason: pending-owner-adoption 亢奋段无挂载且无可挂的防御档：PP-001 sleeves 里不存在防御型 sleeve，是否新设属 Owner 资金分配决策（风险登记 R2SIX 同源欠账）}
+  - {node_id: TDM-E-L1, state: distribution, mounted: [], confidence: proposed, mounted_reason: pending-owner-adoption 派发段无挂载且无可挂的防御档：同上（PP-001 无防御型 sleeve）；该段预算带 0%=禁新开仓、存量由 X 流信号驱动离场（见 portfolio_plan 注记 D98）}
     # L4 买卖点：打板只进点火确认后的三档（发酵=1进2主战场，高潮=警惕高开不追，退潮/冰点/修复不进）
   - {node_id: TDM-E-L4, state: ignition, mounted: [daban-sleeve], confidence: 
       proposed}
@@ -4422,9 +4423,9 @@ state_matrix:
       proposed}
   - {node_id: TDM-E-L4, state: euphoria, mounted: [daban-sleeve], confidence: 
       proposed}
-  - {node_id: TDM-E-L4, state: capitulation, mounted: [], confidence: proposed}
-  - {node_id: TDM-E-L4, state: accumulation, mounted: [], confidence: proposed}
-  - {node_id: TDM-E-L4, state: distribution, mounted: [], confidence: proposed}
+  - {node_id: TDM-E-L4, state: capitulation, mounted: [], confidence: proposed, mounted_reason: by-design-empty 本节点口径「打板只进点火确认后的三档」，冰点段不进（依据=上方 L4 注释，非漏填）}
+  - {node_id: TDM-E-L4, state: accumulation, mounted: [], confidence: proposed, mounted_reason: by-design-empty 本节点口径「打板只进点火确认后的三档」，修复段不进（依据=上方 L4 注释，非漏填）}
+  - {node_id: TDM-E-L4, state: distribution, mounted: [], confidence: proposed, mounted_reason: by-design-empty 本节点口径「打板只进点火确认后的三档」，退潮段不进（依据=上方 L4 注释，非漏填）}
     # P2 做T：修复期（震荡筹码交换）为主战场 + 发酵期次之；高潮/退潮/冰点不做
   - {node_id: TDM-P-P2, state: accumulation, mounted: [intraday-surge-fall, 
         orderbook-imbalance, vwap-reversion, STR-DABAN-023], confidence: 
@@ -4432,17 +4433,17 @@ state_matrix:
   - {node_id: TDM-P-P2, state: expansion, mounted: [intraday-surge-fall, 
         orderbook-imbalance, vwap-reversion, STR-DABAN-023], confidence: 
       proposed}
-  - {node_id: TDM-P-P2, state: capitulation, mounted: [], confidence: proposed}
-  - {node_id: TDM-P-P2, state: ignition, mounted: [], confidence: proposed}
-  - {node_id: TDM-P-P2, state: euphoria, mounted: [], confidence: proposed}
-  - {node_id: TDM-P-P2, state: distribution, mounted: [], confidence: proposed}
+  - {node_id: TDM-P-P2, state: capitulation, mounted: [], confidence: proposed, mounted_reason: by-design-empty 做T 主战场=修复段+发酵段（依据=上方 P2 注释「高潮/退潮/冰点不做」），冰点段不做}
+  - {node_id: TDM-P-P2, state: ignition, mounted: [], confidence: proposed, mounted_reason: by-design-empty 做T 节点口径只列修复/发酵两段，点火段未在列（非漏填）；扩段=资金分配变更，须 Owner 采纳后改}
+  - {node_id: TDM-P-P2, state: euphoria, mounted: [], confidence: proposed, mounted_reason: by-design-empty 做T 主战场=修复段+发酵段（依据=上方 P2 注释「高潮/退潮/冰点不做」），高潮段不做}
+  - {node_id: TDM-P-P2, state: distribution, mounted: [], confidence: proposed, mounted_reason: by-design-empty 做T 主战场=修复段+发酵段（依据=上方 P2 注释「高潮/退潮/冰点不做」），退潮段不做}
     # C1 组合预算：六段预算带（灰度区间，数值见 TDM-F-C1 节点注释），带内连续插值非查表
-  - {node_id: TDM-F-C1, state: capitulation, mounted: [], confidence: proposed}
-  - {node_id: TDM-F-C1, state: accumulation, mounted: [], confidence: proposed}
-  - {node_id: TDM-F-C1, state: ignition, mounted: [], confidence: proposed}
-  - {node_id: TDM-F-C1, state: expansion, mounted: [], confidence: proposed}
-  - {node_id: TDM-F-C1, state: euphoria, mounted: [], confidence: proposed}
-  - {node_id: TDM-F-C1, state: distribution, mounted: [], confidence: proposed}
+  - {node_id: TDM-F-C1, state: capitulation, mounted: [], confidence: proposed, mounted_reason: by-design-empty C1 该段内容=预算带 0-10%（只试错），带内连续插值非查表挂载，数值在本节点注释（见 TDM-F-C1 六段预算带）}
+  - {node_id: TDM-F-C1, state: accumulation, mounted: [], confidence: proposed, mounted_reason: by-design-empty C1 该段内容=预算带 20-30%（试错+底仓），带内连续插值非查表挂载，数值在本节点注释（见 TDM-F-C1 六段预算带）}
+  - {node_id: TDM-F-C1, state: ignition, mounted: [], confidence: proposed, mounted_reason: by-design-empty C1 该段内容=预算带 30-50%，带内连续插值非查表挂载，数值在本节点注释（见 TDM-F-C1 六段预算带）}
+  - {node_id: TDM-F-C1, state: expansion, mounted: [], confidence: proposed, mounted_reason: by-design-empty C1 该段内容=预算带 50-70%（verified 后 earned-position 上探 70-80%），带内连续插值非查表挂载，数值在本节点注释}
+  - {node_id: TDM-F-C1, state: euphoria, mounted: [], confidence: proposed, mounted_reason: by-design-empty C1 该段内容=预算带 ≤30%（只卖不买），带内连续插值非查表挂载，数值在本节点注释（见 TDM-F-C1 六段预算带）}
+  - {node_id: TDM-F-C1, state: distribution, mounted: [], confidence: proposed, mounted_reason: by-design-empty C1 该段内容=预算带 0%（空仓），带内连续插值非查表挂载，数值在本节点注释（见 TDM-F-C1 六段预算带）}
 
 portfolio_plan:
   # 整装仿真组合方案（v1.1 新增，Owner 终极定位：地图=整装仿真系统的蓝图）
