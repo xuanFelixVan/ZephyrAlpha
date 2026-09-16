@@ -32,22 +32,7 @@ r"""MOD-PLAN-016 — 执行偏差归因器（GAP-F-26，复盘页「执行回看
   ⑥ 未执行 UNFILLED=零成交且无任何记录（原因待核，不硬编）。
 - 计划外成交（计划无此 symbol+direction 条目）不参评，仅 notes 留痕。
 
-# [ALGO_FLOW]
-# 层: 输入
-# - id: I1 DailyTradePlan（MOD-PLAN-011 产出）
-# - id: I2 ExecutionRecord 列表（成交/拒单/撤单）
-# - id: I3 VetoRecord 列表（风控拦截，注入位）
-# 层: 算法
-# - id: A1 (symbol,direction) 匹配 + 多笔 VWAP 聚合
-# - id: A2 六类归因 + 汇总
-# 层: 输出
-# - id: O1 ExecutionDeviationReport（items + category_counts + notes）
-# [/ALGO_FLOW]
-#
-# 边:
-# I1,I2,I3 --> A1
-# A1 --> A2
-# A2 --> O1
+# [ALGO_FLOW] external: docs/03_modules/_domain_plan_engine/algo_flow/execution_deviation_attributor.yaml
 """
 
 from __future__ import annotations

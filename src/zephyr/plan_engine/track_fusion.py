@@ -44,32 +44,7 @@
 
 SSoT: docs/03_modules/_domain_plan_engine/track_fusion/blueprint.md
 
-# [ALGO_FLOW]
-# 层: 输入
-# - id: I1
-#   name: 模块内部数据
-#   fields: 无公共形参/无再导出（AST 事实）
-#   code: track_fusion.py
-# 层: 算法
-# - id: A1
-#   name_zh: ① MultiTrackFusion
-#   name_en: MultiTrackFusion
-#   intro: 四轨融合器：应急 > 人工 > 自动 优先级裁决。
-#   desc: 四轨融合器：应急 > 人工 > 自动 优先级裁决。；公共方法（定义序）: fuse；源码 L199-L291
-#   inputs: 无参数
-#   outputs: 返回值
-#   （注：A1 之后另有 6 个公共定义未列入（含 6 个数据契约/异常/枚举声明类），见源码）
-# 层: 输出
-# - id: O1
-#   name_zh: 模块公共 API 面（7 定义）
-#   name_en: public defs
-#   intro: MultiTrackFusion
-#   downstream: 运行时装配批（四轨信号注入；FusedDirective 交 MOD-POS-001 精裁；verdict 供 MOD-POS-009 审计落库）
-# [/ALGO_FLOW]
-#
-# 边:
-# I1 --> A1
-# A1 --> O1
+# [ALGO_FLOW] external: docs/03_modules/_domain_plan_engine/algo_flow/track_fusion.yaml
 """
 
 from __future__ import annotations

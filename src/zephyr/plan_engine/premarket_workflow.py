@@ -53,58 +53,7 @@ takeover_point（人工接管点）；ready = 全部 mandatory DONE 且无 block
 
 SSoT: docs/03_modules/_domain_plan_engine/premarket_workflow/blueprint.md
 
-# [ALGO_FLOW]
-# 层: 输入
-# - id: I1
-#   name: trading_date 参数
-#   fields: 参数 trading_date，类型注解 str
-#   code: premarket_workflow.py 顶层公共函数形参（AST 提取）
-# - id: I2
-#   name: stages 参数
-#   fields: 参数 stages，类型注解 Sequence[StageSpec] | None
-#   code: premarket_workflow.py 顶层公共函数形参（AST 提取）
-# 层: 算法
-# - id: A1
-#   name_zh: ① default_stages
-#   name_en: default_stages
-#   intro: 默认三段式 SOP（08:00-09:15 分钟级排程，§30.2.5）。
-#   desc: 默认三段式 SOP（08:00-09:15 分钟级排程，§30.2.5）。；源码 L203-L275
-#   inputs: 无参数
-#   outputs: tuple[StageSpec, ...]
-# - id: A2
-#   name_zh: ② build_premarket_dag
-#   name_en: build_premarket_dag
-#   intro: 构建盘前三段式 WorkDAG（复用 MOD-INF-035 模型，纯声明不调度执行）。
-#   desc: 构建盘前三段式 WorkDAG（复用 MOD-INF-035 模型，纯声明不调度执行）。；源码 L296-L333
-#   inputs: trading_date stages
-#   outputs: WorkDAG
-# - id: A3
-#   name_zh: ③ PremarketWorkflowTracker
-#   name_en: PremarketWorkflowTracker
-#   intro: 盘前工作流进度追踪器（状态机 + 阻断/接管点 + state_sink 回调）。
-#   desc: 盘前工作流进度追踪器（状态机 + 阻断/接管点 + state_sink 回调）。；公共方法（定义序）: blocked, takeover_point, ready, mark_running, mark_done,…
-#   inputs: trading_date stages state_sink
-#   outputs: 返回值
-#   （注：A3 之后另有 3 个公共定义未列入（含 3 个数据契约/异常/枚举声明类），见源码）
-# 层: 输出
-# - id: O1
-#   name_zh: tuple[StageSpec, ...]
-#   name_en: tuple[StageSpec, ...]
-#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
-#   downstream: 运行时装配批（conductor 执行 DAG；进度 state_sink 接 state_store 落库）
-# - id: O2
-#   name_zh: WorkDAG
-#   name_en: WorkDAG
-#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
-#   downstream: 运行时装配批（conductor 执行 DAG；进度 state_sink 接 state_store 落库）
-# [/ALGO_FLOW]
-#
-# 边:
-# I1 --> A1
-# I2 --> A1
-# A1 --> A2
-# A2 --> A3
-# A3 --> O1
+# [ALGO_FLOW] external: docs/03_modules/_domain_plan_engine/algo_flow/premarket_workflow.yaml
 """
 
 from __future__ import annotations

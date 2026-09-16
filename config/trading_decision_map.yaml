@@ -170,6 +170,7 @@ nodes:
   materiality: normal
   decay_scan_frequency: semiannual
 - node_id: TDM-E-L0-02
+  note_confirmed: 2026-09-16  # grp3p2s3 出仓复核：机器块搬 yaml，算法口径逐字未变
   name_zh: 偏离监控与修订
   market: cn_a
   flow: entry_flow

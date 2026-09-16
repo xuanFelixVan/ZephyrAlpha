@@ -1,0 +1,33 @@
+# ALGO_FLOW 外部真源——vms_memory_backend（_domain_integration 域，真源 src/zephyr/integration/vector_memory/vms_memory_backend.py）
+# 2026-09-15 P2-1 契约头减负批量出仓：docstring 内联块逐字节副本，extractor 经
+# external 锚加载走同一 parse_algo_flow 管线；算法公共面变化时同步更新本块。
+doc_type: architecture_view
+ttl: permanent
+module: src.zephyr.integration.vector_memory.vms_memory_backend
+source_of_truth: src/zephyr/integration/vector_memory/vms_memory_backend.py
+algo_flow: |
+    # [ALGO_FLOW]
+    # 层: 输入
+    # - id: I1
+    #   name: 统一记忆 API 三件套调用
+    #   fields: write(MemoryRecord) / recall(topic) / search(query)
+    #   code: VMSMemoryBackend.write/recall/search
+    # 层: 算法
+    # - id: A1
+    #   name_zh: topic→Collection 路由
+    #   name_en: topic_collection_routing
+    #   intro: TOPIC_TO_COLLECTION 前缀匹配，未命中兜底 "knowledge"
+    #   code: _resolve_collection
+    # - id: A2
+    #   name_zh: VMS 委托 + 降级
+    #   name_en: vms_delegate_fallback
+    #   intro: is_vms_available 时委托 InProcessVectorMemory；异常/不可用降级 InMemoryMemoryBackend
+    #   code: _try_vms_write / recall / search 内 try-except
+    # 层: 输出
+    # - id: O1
+    #   name_zh: 记忆操作结果
+    #   name_en: memory_op_result
+    #   intro: chunk_id / list[MemoryRecord]
+    #   downstream: zephyr.intelligence.model_evaluation.unified_memory_api
+    # [/ALGO_FLOW]
+    # 边: I1 --> A1 ; A1 --> A2 ; A2 --> O1

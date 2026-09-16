@@ -30,32 +30,7 @@ compute the blast radius: what other actions/state changes depend on this
 one? Generate complete rollback plan covering all dependents. Verify
 post-rollback consistency.
 
-# [ALGO_FLOW]
-# 层: 输入
-# - id: I1
-#   name: 模块内部数据
-#   fields: 无公共形参/无再导出（AST 事实）
-#   code: cascading_rollback_analyzer.py
-# 层: 算法
-# - id: A1
-#   name_zh: ① CascadingRollbackAnalyzer
-#   name_en: CascadingRollbackAnalyzer
-#   intro: class CascadingRollbackAnalyzer 源码 L75-L161
-#   desc: 公共方法（定义序）: record_action_dependency, analyze_rollback, build_dependency_graph, get_most_depended_upon, verify…
-#   inputs: 无参数
-#   outputs: 返回值
-#   （注：A1 之后另有 1 个公共定义未列入（含 1 个数据契约/异常/枚举声明类），见源码）
-# 层: 输出
-# - id: O1
-#   name_zh: 模块公共 API 面（2 定义）
-#   name_en: public defs
-#   intro: CascadingRollbackAnalyzer
-#   downstream: 见模块头 [CONSUMERS]
-# [/ALGO_FLOW]
-#
-# 边:
-# I1 --> A1
-# A1 --> O1
+# [ALGO_FLOW] external: docs/03_modules/_domain_feedback_loop/algo_flow/verifiers/cascading_rollback_analyzer.yaml
 """
 
 from __future__ import annotations

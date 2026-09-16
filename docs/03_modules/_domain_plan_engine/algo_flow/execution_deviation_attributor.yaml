@@ -1,0 +1,24 @@
+# ALGO_FLOW 外部真源——execution_deviation_attributor（_domain_plan_engine 域，真源 src/zephyr/plan_engine/execution_deviation_attributor.py）
+# 2026-09-15 P2-1 契约头减负批量出仓：docstring 内联块逐字节副本，extractor 经
+# external 锚加载走同一 parse_algo_flow 管线；算法公共面变化时同步更新本块。
+doc_type: architecture_view
+ttl: permanent
+module: src.zephyr.plan_engine.execution_deviation_attributor
+source_of_truth: src/zephyr/plan_engine/execution_deviation_attributor.py
+algo_flow: |
+    # [ALGO_FLOW]
+    # 层: 输入
+    # - id: I1 DailyTradePlan（MOD-PLAN-011 产出）
+    # - id: I2 ExecutionRecord 列表（成交/拒单/撤单）
+    # - id: I3 VetoRecord 列表（风控拦截，注入位）
+    # 层: 算法
+    # - id: A1 (symbol,direction) 匹配 + 多笔 VWAP 聚合
+    # - id: A2 六类归因 + 汇总
+    # 层: 输出
+    # - id: O1 ExecutionDeviationReport（items + category_counts + notes）
+    # [/ALGO_FLOW]
+    #
+    # 边:
+    # I1,I2,I3 --> A1
+    # A1 --> A2
+    # A2 --> O1

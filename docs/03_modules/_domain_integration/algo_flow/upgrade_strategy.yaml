@@ -1,0 +1,27 @@
+# ALGO_FLOW 外部真源——upgrade_strategy（_domain_integration 域，真源 src/zephyr/integration/shared/events/upgrade_strategy.py）
+# 2026-09-15 P2-1 契约头减负批量出仓：docstring 内联块逐字节副本，extractor 经
+# external 锚加载走同一 parse_algo_flow 管线；算法公共面变化时同步更新本块。
+doc_type: architecture_view
+ttl: permanent
+module: src.zephyr.integration.shared.events.upgrade_strategy
+source_of_truth: src/zephyr/integration/shared/events/upgrade_strategy.py
+algo_flow: |
+    # [ALGO_FLOW]
+    # 层: 输入
+    # - id: I1
+    #   name: shim 导入请求
+    #   fields: 旧路径 import zephyr.integration.shared.events.upgrade_strategy
+    #   code: L26-31 from-import
+    # 层: 算法
+    # - id: A1
+    #   name_zh: 真源透传
+    #   name_en: ssot_reexport
+    #   intro: 无逻辑——四个符号从 zephyr.shared.events 真源原样再导出
+    # 层: 输出
+    # - id: O1
+    #   name_zh: 兼容符号
+    #   name_en: compat_symbols
+    #   intro: EventBusUpgrade / UpgradePlan / UpgradeStatus / UpgradeStep
+    #   downstream: tests/infrastructure + zephyr.infrastructure.event_bus_upgrade
+    # [/ALGO_FLOW]
+    # 边: I1 --> A1 ; A1 --> O1
