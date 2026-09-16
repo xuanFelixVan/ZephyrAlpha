@@ -21,31 +21,7 @@ Checkpoint Manager — v0.3.0 R18
 Blindspot: FLE state lost on crash; no recovery checkpoint.
 Risk: R18 — Crash during repair leaves system in inconsistent state.
 
-# [ALGO_FLOW]
-# 层: 输入
-# - id: I1
-#   name: 模块内部数据
-#   fields: 无公共形参/无再导出（AST 事实）
-#   code: checkpoint_manager.py
-# 层: 算法
-# - id: A1
-#   name_zh: ① CheckpointManager
-#   name_en: CheckpointManager
-#   intro: class CheckpointManager 源码 L55-L60
-#   desc: 公共方法（定义序）: save；源码 L55-L60
-#   inputs: 无参数
-#   outputs: 返回值
-# 层: 输出
-# - id: O1
-#   name_zh: 模块公共 API 面（1 定义）
-#   name_en: public defs
-#   intro: CheckpointManager
-#   downstream: 见模块头 [CONSUMERS]
-# [/ALGO_FLOW]
-#
-# 边:
-# I1 --> A1
-# A1 --> O1
+# [ALGO_FLOW] external: docs/03_modules/_domain_feedback_loop/algo_flow/gates/checkpoint_manager.yaml
 """
 
 from dataclasses import dataclass, field

@@ -29,46 +29,7 @@
 
 feedback-loop.gates — auto-generated package init.
 
-# [ALGO_FLOW]
-# 层: 输入
-# - id: I1
-#   name: _governance_gates 子模块符号 1个
-#   fields: SUBMODULES
-#   code: zephyr.feedback_loop.gates._governance_gates
-# - id: I2
-#   name: _operational_gates 子模块符号 1个
-#   fields: SUBMODULES
-#   code: zephyr.feedback_loop.gates._operational_gates
-# - id: I3
-#   name: _safety_gates 子模块符号 1个
-#   fields: SUBMODULES
-#   code: zephyr.feedback_loop.gates._safety_gates
-# - id: I4
-#   name: _security_gates 子模块符号 1个
-#   fields: SUBMODULES
-#   code: zephyr.feedback_loop.gates._security_gates
-# 层: 算法
-# - id: A1
-#   name_zh: ① 包级聚合再导出
-#   name_en: zephyr.feedback_loop.gates.__init__
-#   intro: feedback-loop.gates — auto-generated package init.
-#   desc: MOD-GATE_ENGINE 包入口，包级聚合再导出并声明 __all__（48项）
-#   inputs: I1 I2 I3 I4
-#   outputs: zephyr.feedback_loop.gates 包级公共命名空间
-#   invariant: 包级导出以 __all__ 声明为准（48项）
-# 层: 输出
-# - id: O1
-#   name_zh: zephyr.feedback_loop.gates 包公共 API
-#   name_en: __all__ 48项
-#   intro: feedback-loop.gates — auto-generated package init.——对外统一出口
-#   downstream: 见蓝图头 [CONSUMERS] 声明
-# [/ALGO_FLOW]
-# 边:
-# I1 --> A1
-# I2 --> A1
-# I3 --> A1
-# I4 --> A1
-# A1 --> O1
+# [ALGO_FLOW] external: docs/03_modules/_domain_feedback_loop/algo_flow/gates/gates__init__.yaml
 """
 
 import importlib

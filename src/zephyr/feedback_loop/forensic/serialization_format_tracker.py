@@ -31,32 +31,7 @@ hash, library versions) for all persisted state. Validate compatibility
 at write time and read time. Alert when format version changes. Maintain
 backward compatibility map.
 
-# [ALGO_FLOW]
-# 层: 输入
-# - id: I1
-#   name: 模块内部数据
-#   fields: 无公共形参/无再导出（AST 事实）
-#   code: serialization_format_tracker.py
-# 层: 算法
-# - id: A1
-#   name_zh: ① SerializationFormatTracker
-#   name_en: SerializationFormatTracker
-#   intro: class SerializationFormatTracker 源码 L85-L182
-#   desc: 公共方法（定义序）: record_artifact, check_compatibility, validate_state_load, get_format_history, get_breaking_change…
-#   inputs: 无参数
-#   outputs: 返回值
-#   （注：A1 之后另有 2 个公共定义未列入（含 2 个数据契约/异常/枚举声明类），见源码）
-# 层: 输出
-# - id: O1
-#   name_zh: 模块公共 API 面（3 定义）
-#   name_en: public defs
-#   intro: SerializationFormatTracker
-#   downstream: 见模块头 [CONSUMERS]
-# [/ALGO_FLOW]
-#
-# 边:
-# I1 --> A1
-# A1 --> O1
+# [ALGO_FLOW] external: docs/03_modules/_domain_feedback_loop/algo_flow/forensic/serialization_format_tracker.yaml
 """
 
 from __future__ import annotations

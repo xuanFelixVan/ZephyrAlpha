@@ -21,31 +21,7 @@ Conflict Arbitration — v0.10.0 R130
 Blindspot: Two subsystems propose contradictory autonomous actions.
 Risk: R130 — Arbitration failure leads to oscillating repairs.
 
-# [ALGO_FLOW]
-# 层: 输入
-# - id: I1
-#   name: 模块内部数据
-#   fields: 无公共形参/无再导出（AST 事实）
-#   code: conflict_arbitration.py
-# 层: 算法
-# - id: A1
-#   name_zh: ① ConflictArbitration
-#   name_en: ConflictArbitration
-#   intro: class ConflictArbitration 源码 L55-L57
-#   desc: 公共方法（定义序）: arbitrate；源码 L55-L57
-#   inputs: 无参数
-#   outputs: 返回值
-# 层: 输出
-# - id: O1
-#   name_zh: 模块公共 API 面（1 定义）
-#   name_en: public defs
-#   intro: ConflictArbitration
-#   downstream: 见模块头 [CONSUMERS]
-# [/ALGO_FLOW]
-#
-# 边:
-# I1 --> A1
-# A1 --> O1
+# [ALGO_FLOW] external: docs/03_modules/_domain_feedback_loop/algo_flow/gates/conflict_arbitration.yaml
 """
 
 from dataclasses import dataclass

@@ -27,31 +27,7 @@ Mitigation: Event-sourced state reconstruction. Log all state transitions
 with vector clocks. Replay from last known-good snapshot + apply events
 up to target timestamp to reconstruct any point in time.
 
-# [ALGO_FLOW]
-# 层: 输入
-# - id: I1
-#   name: 模块内部数据
-#   fields: 无公共形参/无再导出（AST 事实）
-#   code: point_in_time_reconstructor.py
-# 层: 算法
-# - id: A1
-#   name_zh: ① PointInTimeReconstructor
-#   name_en: PointInTimeReconstructor
-#   intro: class PointInTimeReconstructor 源码 L64-L118
-#   desc: 公共方法（定义序）: take_snapshot, record_event, reconstruct, get_event_count_between；源码 L64-L118
-#   inputs: 无参数
-#   outputs: 返回值
-# 层: 输出
-# - id: O1
-#   name_zh: 模块公共 API 面（1 定义）
-#   name_en: public defs
-#   intro: PointInTimeReconstructor
-#   downstream: 见模块头 [CONSUMERS]
-# [/ALGO_FLOW]
-#
-# 边:
-# I1 --> A1
-# A1 --> O1
+# [ALGO_FLOW] external: docs/03_modules/_domain_feedback_loop/algo_flow/forensic/point_in_time_reconstructor.yaml
 """
 
 from __future__ import annotations

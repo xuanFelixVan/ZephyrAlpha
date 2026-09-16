@@ -20,31 +20,7 @@ Meta Performance Gate — v0.11.0 R158
 
 Blindspot: FLE performance evaluated only externally; internal benchmark invisible.
 
-# [ALGO_FLOW]
-# 层: 输入
-# - id: I1
-#   name: 模块内部数据
-#   fields: 无公共形参/无再导出（AST 事实）
-#   code: meta_performance_gate.py
-# 层: 算法
-# - id: A1
-#   name_zh: ① 数据契约声明
-#   name_en: data class declarations
-#   intro: 纯声明类（无公共方法，AST 事实）: MetaPerformanceGate
-#   desc: 数据契约/异常/枚举声明共 1 类；无算法流程（AST 事实）
-#   inputs: I1
-#   outputs: 数据契约类集合
-# 层: 输出
-# - id: O1
-#   name_zh: 数据契约声明（1 类）
-#   name_en: data classes
-#   intro: MetaPerformanceGate
-#   downstream: 见模块头 [CONSUMERS]
-# [/ALGO_FLOW]
-#
-# 边:
-# I1 --> A1
-# A1 --> O1
+# [ALGO_FLOW] external: docs/03_modules/_domain_feedback_loop/algo_flow/gates/meta_performance_gate.yaml
 """
 
 from dataclasses import dataclass
