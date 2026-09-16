@@ -1277,7 +1277,8 @@ nodes:
   factor_refs: []
   data_refs: [DS-224, DS-225]
   algo_refs: []
-  module_ref: src/zephyr/intelligence/news_chain_node_linker.py      # module_ref-only warn 路线：R21 格式冲突已解挂（源文件头归一纯连字符），2026-09-12 补 module_id=MOD-INT-NEWS-CHAIN
+  module_ref: src/zephyr/intelligence/news_chain_node_linker.py
+  module_id: MOD-INT-NEWS-CHAIN
   strategy_mounts: []
   activation: continuous
   ai_autonomy: auto
@@ -1302,7 +1303,8 @@ nodes:
   factor_refs: []
   data_refs: [DS-224]
   algo_refs: []
-  module_ref: src/zephyr/intelligence/chain_impact_resolver.py      # module_ref-only warn 路线：MOD-INT_CHAIN_IMPACT 待 R21 格式冲突解挂后补 module_id
+  module_ref: src/zephyr/intelligence/chain_impact_resolver.py
+  module_id: MOD-INT-CHAIN-IMPACT
   strategy_mounts: []
   activation: continuous
   ai_autonomy: auto
@@ -1827,7 +1829,7 @@ nodes:
   algo_note_zh: >-
     当日可买性预检：停牌/一字涨停（买不进）/价格笼子（申报价超±2% 会被拒）/科创板权限/资金不够一手。
     买不进的标记跳过，防止下单层空转报错。
-    部分锚=instrument_master（停牌标志/昨收价算涨跌停/最小申报单位）；价格笼子/科创板权限/资金一手三查缺口在册，专件挂下批评估。
+    三查专件已落地（2026-09-16 MOD-SIG-151 tradability_preflight 五查聚合：停牌/一字/权限/资金一手 fail-closed+笼子建议价；笼子按 ex_core 实装=夹边建议非拒单）；instrument_master 为数据口径锚（停牌/昨收/申报单位）。
     （2026-09-15 ALGO_FLOW 块出仓至 docs/03_modules/_domain_data/algo_flow/instrument_master.yaml：算法推导图外迁，算法口径不变）
   parent_node: TDM-E-L3
   factor_refs: []
@@ -4361,13 +4363,12 @@ state_matrix:
     confidence: proposed}
   - {node_id: TDM-E-L1, state: accumulation, mounted: [STR-VREV-026, 
         STR-VREV-027], confidence: proposed}
-  - {node_id: TDM-E-L1, state: ignition, mounted: [STR-VREV-027], confidence: 
+  - {node_id: TDM-E-L1, state: ignition, mounted: [], confidence: 
       proposed}
-  - {node_id: TDM-E-L1, state: expansion, mounted: [STR-MOMTREND-033, 
-        STR-VREV-027], confidence: proposed}
-  - {node_id: TDM-E-L1, state: euphoria, mounted: [STR-VREV-027], confidence: 
+  - {node_id: TDM-E-L1, state: expansion, mounted: [STR-MOMTREND-033], confidence: proposed}
+  - {node_id: TDM-E-L1, state: euphoria, mounted: [], confidence: 
       proposed}
-  - {node_id: TDM-E-L1, state: distribution, mounted: [STR-VREV-027], confidence: 
+  - {node_id: TDM-E-L1, state: distribution, mounted: [], confidence: 
       proposed}
     # L4 买卖点：打板只进点火确认后的三档（发酵=1进2主战场，高潮=警惕高开不追，退潮/冰点/修复不进）
   - {node_id: TDM-E-L4, state: ignition, mounted: [daban-sleeve], confidence: 
