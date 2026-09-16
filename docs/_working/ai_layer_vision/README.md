@@ -136,6 +136,8 @@ AI 层自己的尺子升级=OBJ_R（标准与规则线）。
 | OBJ_M model_intel_sources / model_scoring_policy / dual_run_criteria / model_routing_policy | 模型族 | 吸收挖矿 SOP 模型分派二维法（升级为数据驱动）+计费线口头约定成文 |
 | OBJ_T tool_inventory / tool_exam_policy / tool_model_pairing_policy | 工具族 | 吸收 capability_cards 静态盘点（生成器替代手维护） |
 | OBJ_S obj_s_degradation.yaml | 治理族 | 吸收 resource_optimization.yaml 阈值先例的降档语义（不重复建阈值） |
+| config/cleaning_policy.yaml（L3 C1） | 治理族 | 吸收各稿分散的清洗策略常数（R8-B 补登） |
+| config/schedule_gate_policy.yaml（L5 C1） | 排班族 | 吸收成熟度门闸与配额四读数阈值（R8-B 补登；唯一 OBJ_R 管辖常量件） |
 
 **裁定登记前置（T3 双前置，红蓝 R2 改判）**：L1 施工项 7（外扫节拍宿主）开工前，"外扫=日历
 节拍+E0 实闸"属放宽宪法 §9.3 射程的 T3 语义级解释，按 OBJ_R"放松永不自动"自律须 **Owner 追认+
