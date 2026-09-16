@@ -3432,3 +3432,333 @@ entries:
     - '裁定#274'
     - '裁定#276'
   superseded_by: ''
+- ruling_id: '裁定#293'
+  title: '回测合理性收益带单一真源化并收紧（+1000%→+300% / 11.0x→4.0x）——四落点字面量收归 engine_base 两常量，产物层倍数带由收益带推出'
+  date: '2026-09-17'
+  category: '治本'
+  status: 'active'
+  summary: >-
+    裁定：回测合理性护栏的收益带数值单一真源=engine_base.MAX_PLAUSIBLE_TOTAL_RETURN=3.0 /
+    MIN_PLAUSIBLE_TOTAL_RETURN=-0.95；产物层落盘兜底的净值首尾倍数带 MUST 由
+    plausible_equity_multiple_bounds() 推出（=(4.0, 0.05)，即 1+收益带），下游四落点
+    （引擎函数默认值 / BacktestConfig 字段默认 / event_driven getattr 兜底 / 产物层倍数比较）
+    一律引常量，禁复述数值。同时把上限由 +1000% 收紧到 +300%（预注册口径变更，再动须另立裁定）。
+    病根不是"阈值松"而是"一个口径两个数"：引擎层判 total_return>10.0、产物层判倍数>11.0x，
+    两条线互不知情，改一处漏一处等于没有上限，且两个数互相背书制造"已对齐"假象。
+    分析过程：①第一性原理——护栏的唯一职责是截断物理上不可能的样本；带越宽漏过的失真越多，
+    而"上限有两个值"比"值不对"更坏，因为它让任何一侧的收紧都不产生确定效果。②100% AI 开发的
+    责任链——字面量散落意味着后续 AI 只看得见局部字面量，会把它当权威抄到第五处；单一真源常量
+    +机读 [INVARIANTS] 条款才是"改口径只有一个落点"的机械保证。③机构实践——主流回测框架把
+    implausible-return 检查做成一处可配置常量（qlib/vectorbt 的 sanity check、Zipline 算法模拟器
+    侧的极端值门），要点从来不是阈值多少而是"只有一处定义"。④量化社区——A 股无杠杆 long-only
+    多年份实证里累计 +300% 已在头部区间，+1000% 段几乎只与前视/未复权/无限流动性三类失真同现，
+    正是本护栏要拦的对象，把该段写成合法带等于给失真发通行证。⑤存量实测——现网 52 份回测产物
+    total_return 最大 +118.7%、最小 −53.0%，净值首尾倍数最大 2.187x、最小 0.470x，
+    >3.0 与 >4.0x 均为 0 件 → 收紧对现网零隔离、零 retroactive quarantine。
+    执行：engine_base 新增两常量+换算函数并入 __all__；result_repository 倍数带改取该函数；
+    vectorized_engine BacktestConfig 默认值（曾 10.0）与 event_driven_engine getattr 兜底
+    （曾 10.0/−0.95）改引常量；三文件 [DEPENDENCIES]/[INVARIANTS] 头补真源条款；
+    tests/backtest/test_bt_financial_correctness_p0.py 改口径驱动断言并新增同源测试
+    （倍数带=1+收益带、Config 默认=真源、实证带内放行、5x 两层都拦）。
+    编号注：按登记时注册表最大值+1 取号，与并行会话同规则；若并行 autostash/merge 扫回条目，
+    以本文件最终态为准（可机械复核：ruling_id 唯一键）。
+  evidence: >-
+    现网 52 份产物实测（data/backtest_artifacts/bt-*.json，只读脚本逐件解析 metrics.total_return
+    与 equity_curve 首尾倍数）：n=52 / n_curve=48，total_return max=1.187067 min=−0.530165，
+    multiple max=2.187067 min=0.469835；>3.0 计 0 件、>4.0x 计 0 件、<0.05x 计 0 件 →
+    新旧口径对现网裁决结果完全一致，差别只在"未来出现 5x 产物时是否有人解释得了"。
+    旧口径双字面量的定位证据（施工前实测）：engine_base.enforce_result_plausibility 默认
+    10.0/−0.95、vectorized_engine.BacktestConfig 155-156 行 10.0/−0.95、
+    event_driven_engine getattr 兜底 10.0/−0.95、result_repository._artifact_plausibility_violations
+    11.0x/0.05x——同一"上限"四套写法。复验：tests/backtest/test_bt_financial_correctness_p0.py
+    35 passed（含新增 test_plausibility_band_single_source）；ruff 与 HEAD 基线比零新增。
+  affected_files:
+    - src/zephyr/backtest/core/engine_base.py
+    - src/zephyr/backtest/io/result_repository.py
+    - src/zephyr/backtest/implementations/vectorized_engine.py
+    - src/zephyr/backtest/implementations/event_driven_engine.py
+    - tests/backtest/test_bt_financial_correctness_p0.py
+    - docs/01_policies_and_standards/_registry/catalogs/ruling_registry.yaml
+  related_arch: []
+  related_rulings:
+    - '裁定#291'
+  superseded_by: ''
+
+- ruling_id: '裁定#294'
+  title: 'DSR 显著性接入 candidate→sim 晋升预授权作第四条件 dsr_significance_pass——判定委托 evaluate_dsr（阈值零改动），证据缺位一律 fail-closed；实盘 pre-trade 接入与 combo 门 dsr_min=0.0 残余项显式留待 Owner'
+  date: '2026-09-17'
+  category: '量化施工'
+  status: 'active'
+  summary: >-
+    裁定：DSR 显著性裁决 MUST 被 candidate→sim 晋升预授权消费，作第四条件
+    `dsr_significance_pass`；判定委托既有单一裁决器 decision_gate.evaluate_dsr
+    （DSR_SIGNIFICANCE_THRESHOLD=0.95 / DSR_OVERFITTING_FLOOR=0.5，本裁定零改动），
+    数值只从台账列 c1_backtest.strategy_screen.deflated_sharpe 读取（经
+    screen_source.fetch_dsr_map 侧车，N=trial_ledger 折减），消费侧禁重算；
+    证据缺位（无该策略条目 / 侧车空 / 行键不可构造 / 台账无行 / 列 NULL / 读取异常）
+    一律按"判不了=不放行"fail-closed，禁把缺席当 0 也禁当当通过。
+    分析过程：①第一性原理——晋升是一次资源承诺（进 sim=占真实模拟额度与观测窗口），其前提
+    必须包含"这套收益比运气更可信"；DSR 恰是该命题的唯一量化裁决，产出而不消费=信号白产，
+    与本战役 H5-A（overfitting_flag 产而不消）同族病灶。②100% AI 开发的责任链——把既有裁决器
+    接进既有门，判定口径仍可追溯到 decision_gate 一处；若新写一套"晋升用 DSR 判据"，就多出一个
+    只有晋升路径知道的口径，事后无从审计谁定的标准。③机构实践——研究→模拟的准入门吃多重检验
+    修正后的显著性（Bailey & López de Prado 2014 提出 DSR 的用途即"这份 SR 是否只是多次试验的
+    产物"），且缺证据默认拒绝，与本件同构。④量化社区惯例——显著性不达标者留在研究池继续观察，
+    但不得进入 forward test；本件只挡 candidate→sim，不挡回测与档案，正是该口径。⑤存量实测——
+    台账 87 行 IS 批 DSR 最大 0.122，16 行及格集全部 <0.5（样例 CAND-29eb91dbaf60
+    DSR=0.0002、N=35），注册表 161 条 candidate 的前三条件通过集=0 → 第四条件今日不改变任何
+    现网裁决，其价值是把"没看过这一列"变成"看过并拒"，并在今日三条件被满足时仍留一道刹车。
+    与 FSM guard 的不对称（有意保留，非欠账）：SimPromotionContext 仍三字段、guard 契约不动，
+    本件比 guard 严，方向只会更少放行、不会反向放行——避免"改契约即改实盘可达状态集"的连坐。
+    边界声明（本裁定不改的东西）：DSR_SIGNIFICANCE_THRESHOLD / DSR_OVERFITTING_FLOOR /
+    手续费万 0.854 / MIN_COMMISSION=5 / 回撤阶梯 THD-DRAWDOWN-001/002/003 全零改动；
+    台账列只读，本裁定不产生任何写入。
+    编号注：按登记时注册表最大值+1 取号，与并行会话同规则；若并行 autostash/merge 扫回条目，
+    以本文件最终态为准（可机械复核：ruling_id 唯一键）。
+  evidence: >-
+    现网只读实测（screen_source.fetch_bothwin/fetch_dsr_map + decision_gate.evaluate_dsr）：
+    及格集 16 行 ∩ DSR 侧车 87 行 = 16 行全部有值，DSR min 0.0 / median 0.0018 / max 0.0793，
+    <0.5 共 16 行、≥0.95 共 0 行，侧车全体 max=0.122；单条裁决样例
+    evaluate_dsr(0.0002)→passed=False band=overfitting
+    reason="DSR判定未通过(低于运气中值否决线): 0.0002 < 0.5（N=35 试验折减后）"。
+    晋升评估器实跑：failed=['bh_fdr_pass','dsr_significance_pass']（接线前只 fail 前一项）。
+    测试面：tests/strategy_pipeline/test_promotion_advisory.py 23 passed（含 TestSimPreauthorizationDsr
+    7 项：显著通过 / 复核带 0.7 拒 / 过拟合带 0.12 拒 / 列 NULL 拒 / 台账无行拒 / 侧车读取异常
+    降级为拒 / Context 仍三字段 / decide 带第四条件失败上呈 Owner 且不落决策墓碑）+
+    test_screen_source.py 22 passed（含 TestDsrSidecar 键与及格集同源、NULL/零列语义、只读 SELECT）。
+  affected_files:
+    - src/zephyr/strategy_pipeline/screen_source.py
+    - src/zephyr/strategy_pipeline/promotion_advisory.py
+    - src/zephyr/strategy_pipeline/fw_backtest.py
+    - tests/strategy_pipeline/test_promotion_advisory.py
+    - tests/strategy_pipeline/test_screen_source.py
+    - docs/_working/full-auto-chain/S11_assembled_backtest/nodes/risk_overlay_mining.md
+    - docs/01_policies_and_standards/_registry/catalogs/ruling_registry.yaml
+  related_arch: []
+  related_rulings:
+    - '裁定#291'
+    - '裁定#293'
+  superseded_by: ''
+- ruling_id: '裁定#295'
+  title: secret_registry 三方漂移清零——GRAFANA_ADMIN_PASSWORD 死要求降级（experimental
+    零消费）+IFIND_PASSWORD/QWEN_API_KEY 补登记收口反向漂移
+  date: '2026-09-17'
+  category: 治理运维
+  status: active
+  summary: >-
+    裁定：secret_registry_drift 首扫（裁定#287 C-4，GW-M 班落地）三项活体告警的收口批
+    （st-secrets-20260917，GW-R1 车道，Owner 开工令明示全部解决不留待裁）。
+    ①GRAFANA_ADMIN_PASSWORD required=true 失守（critical）——消费方普查实证当前阶段零消费：
+    唯一引用面=docker-compose.yml grafana 服务 ${GRAFANA_ADMIN_PASSWORD:?} fail-fast 插值
+    +SECURITY.md/.env.example 文档面，而该 compose 栈系#ARCH-065（2026-07-22）裁定的
+    Post-Activation 预置配置，experimental 阶段（Windows 本地单机）明确不调用 docker compose up，
+    宿主机实测 docker 命令不存在（容器栈从未部署）；全仓无密码找回渠道（无 .env 备份、
+    handoff 无记载、无密码库文件）。第一性原理：required 的语义是"缺失即生产事故"，
+    对一个从未部署服务的部署期凭据该断言恒假，死要求登记即噪音——按裁定#255 同型先例
+    （required 密钥对应死通道=降级/移除登记）降级 required=false；不删条目：compose 未来
+    激活仍引用该键且 RULE-SECRETS 映射保留（Post-Activation 激活时由 Owner 补钥再翻转）。
+    ②IFIND_PASSWORD 反向漂移（.env 有钥未登记）——iFind 数据源已于 2026-08-14 退役
+    （#ARCH-IFIND-FAILOVER，akshare/tushare 承接），代码零消费，属死凭据残留 .env：
+    补登记 required=false 台账收口（告警消失），.env 残值清理属 .env 写域走 Owner 门位，
+    不在本件边界。③QWEN_API_KEY 反向漂移——活跃消费方实证：src/zephyr/integration/
+    llm_runtime_gateway.py CHANNEL_QWEN（2026-08-22 #ARCH-162 MVP 引入）经
+    get_required_secret 读取，通道链 deepseek→qwen→ollama 缺失即自动降级（非硬依赖），
+    补登记 required=false/category=secret/rotation 90d，阿里云百炼 DashScope OpenAI
+    兼容端点。三件处置后全仓 drift 复扫 critical=0/warn=0（era 面本已收口）。
+    登记纪律：两 hot 文件 safe_write_text CAS+claim 制；本件不落盘任何密钥明文
+    （核对件同款 sha256[:12] 指纹纪律）。编号注：按登记时注册表最大值+1 取号
+    （本件登记时 max=294，取#295），与并行会话同规则；若并行 autostash/merge 扫回条目，
+    以本文件最终态为准（可机械复核：ruling_id 唯一键）。
+  evidence: >-
+    普查取证（2026-09-17）：docker-compose.yml:104 唯一消费点+文件头注（#ARCH-065
+    Post-Activation 定性/experimental 阶段不调用 compose up）+宿主机 docker command
+    not found；全仓 GRAFANA grep 零运行时消费方；找回渠道三查零命中（.env 备份/
+    backups 目录、docs/_working handoff 记载、.runtime/sessions staging 均 none）。
+    基线复扫→终扫：status critical→clean，findings 3→0
+    （required_key_missing[GRAFANA_ADMIN_PASSWORD] 消失；
+    unregistered_secret_in_env[IFIND_PASSWORD/QWEN_API_KEY] 双双消失），
+    keys_total 102→104（total_keys 计数字段同步），required_total 17→16。
+    测试面：tests/governance/audit/test_secret_registry_drift.py 18 用例两轮全过
+    +审计域全量（tests/governance/audit+tests/audit）两轮 0 失败（终轮数字见汇报）；
+    红蓝三项（登记条目格式注入/密钥值特殊字符/era 交界）全过。
+    指纹留痕（禁明文）：IFIND_PASSWORD len=8 fp=3aae9850ec7a；
+    QWEN_API_KEY len=35 fp=f0514df440c4。
+  affected_files:
+    - config/secret_registry.yaml
+    - docs/01_policies_and_standards/_registry/catalogs/ruling_registry.yaml
+  related_arch:
+    - '#ARCH-065'
+  related_rulings:
+    - '裁定#255'
+    - '裁定#287'
+  superseded_by: ''
+- ruling_id: 裁定#296
+  title: 排班写回走真源不走表（R-A）——[GENERATED] 注册表禁手工，AI 重排班=对真源（数据车道 schedule.yaml/register_*.ps1/方案种子/演练排程）的受闸 patch 提交，工具产
+    patch 不产表
+  date: '2026-09-17'
+  category: 治理运维
+  status: active
+  summary: '裁定：双向同步的机制表达。时间值只活在真源，表=生成器派生件；apply_resource_plan 写回真源→再生→闸复验→失败自动回滚，禁一切直改注册表 window_expr 通道。编号注：原登记
+    #290-294 于并发窗口被其他会话撞号覆盖（盘上 290-294 现属 qwen3 移除/DSR 统一/ALGO_FLOW/收益带/secret 五件），本批按登记时最大值+1 重取 #296-#301，旧号断链注记于此。'
+  affected_files:
+  - docs/_working/resource_schedule/resource_schedule_v2_construction_plan.md
+  - config/resource_profile_registry.yaml
+  - docs/01_policies_and_standards/_registry/catalogs/ruling_registry.yaml
+  related_rulings:
+  - 裁定#289
+  superseded_by: ''
+- ruling_id: 裁定#297
+  title: measured 双轨不动（R-B）——样本流 append-only JSONL 为历史真源，注册表 measured 快照为消费便利面，单向刷新禁反向
+  date: '2026-09-17'
+  category: 治理运维
+  status: active
+  summary: 裁定：两腿各管时效——JSONL 流可重放可聚 p90；表内快照供闸/视图直读；由 sch_resource_sampler_writeback 单向刷新，表→流方向非法。v1 §4.5-② 裁定在 v2
+    维持。
+  affected_files:
+  - docs/_working/resource_schedule/resource_schedule_v2_construction_plan.md
+  - config/resource_profile_registry.yaml
+  - docs/01_policies_and_standards/_registry/catalogs/ruling_registry.yaml
+  related_rulings:
+  - 裁定#296
+  superseded_by: ''
+- ruling_id: 裁定#298
+  title: 幽灵池先治再排班（R-C，条件已闭合）——池词表未收编执行器真源前禁全局重排班；light 幽灵池 19 实体已清零，合法词表=default/heavy/realtime/intraday_*
+  date: '2026-09-17'
+  category: 治理运维
+  status: active
+  summary: 裁定：池错则同窗内存求和全错，排班质量判据失去算术基础。P1-b 落地=词表实测提取+sched_pool_undeclared 阻断再生，R-C 前置闭合，P3 放行。
+  affected_files:
+  - docs/_working/resource_schedule/resource_schedule_v2_construction_plan.md
+  - config/resource_profile_registry.yaml
+  - docs/01_policies_and_standards/_registry/catalogs/ruling_registry.yaml
+  related_rulings:
+  - 裁定#296
+  superseded_by: ''
+- ruling_id: 裁定#299
+  title: planned 实体不计入闸的内存并发和（R-D）——纸面排班不占预算；planned 保留状态不激活，激活批另过闸
+  date: '2026-09-17'
+  category: 治理运维
+  status: active
+  summary: 裁定：未排产实体的 est_duration/peak_mem 是猜值，计入并发和会挤掉真实重活预算；planned 的账=激活批的账。运行时准入件 runtime_admission 同口径拒绝 planned。
+  affected_files:
+  - docs/_working/resource_schedule/resource_schedule_v2_construction_plan.md
+  - config/resource_profile_registry.yaml
+  - docs/01_policies_and_standards/_registry/catalogs/ruling_registry.yaml
+  related_rulings:
+  - 裁定#296
+  superseded_by: ''
+- ruling_id: 裁定#300
+  title: 排班权归 AI+闸不归人（R-E）——时间窗变更必得过闸；人只保复核字段；写回前旧值全量存档逐字节可回滚
+  date: '2026-09-17'
+  category: 治理运维
+  status: active
+  summary: 裁定：Owner 目标②机制化。pool/peak_mem/est_duration/exclusive_group/status/notes/声明位=人审面；window_expr=闸管面。交易敏感窗
+    Owner 不可达时按放行令 AI 自裁+全量留痕，可逆性由 apply_resource_plan 存档+--rollback 实证钉。
+  affected_files:
+  - docs/_working/resource_schedule/resource_schedule_v2_construction_plan.md
+  - config/resource_profile_registry.yaml
+  - docs/01_policies_and_standards/_registry/catalogs/ruling_registry.yaml
+  related_rulings:
+  - 裁定#296
+  superseded_by: ''
+- ruling_id: 裁定#301
+  title: 同刻共开工意图声明 co_start_intent（R-F）——判据①跳过双方均声明的同池对，判据②预算求和不豁免，单侧声明不豁免
+  date: '2026-09-17'
+  category: 治理运维
+  status: active
+  summary: 裁定：盘中车道并行是设计意图（auction 每 10 秒采集 vs intraday 三车道 */5，分钟粒度错峰数学不可消解：任一相位在 9:15-9:25 全分钟区间必命中），且 realtime
+    池和 5.5GB≤10GB ceiling。豁免=声明制（对标 Airflow pool 声明式并行/K8s PDB 意图面），真冲突由②预算与互斥组交叠检查守住；豁免对数在审计输出留痕可数；声明位列人审字段 merge
+    保全，--check 臂要求声明实体 notes_zh 附理由。
+  affected_files:
+  - docs/_working/resource_schedule/resource_schedule_v2_construction_plan.md
+  - config/resource_profile_registry.yaml
+  - docs/01_policies_and_standards/_registry/catalogs/ruling_registry.yaml
+  related_rulings:
+  - 裁定#298
+  - 裁定#300
+  superseded_by: ''
+- ruling_id: '裁定#302'
+  title: 'daban 09-15 default 降级行同键重放复真 + alt_regime_signal F23 周末键派生存量清零（GW-R3 残余清零，limit_up/alt_regime 数据链合并裁定）'
+  date: '2026-09-17'
+  category: '数据修复'
+  status: 'active'
+  summary: >-
+    裁定（A+B 两项一车道合并）：A 项 daban_engine_load 事件日 09-15 的 57 行系
+    stock_indicator.circ_mv 缺源期（裁定#288 补齐前）default 降级行，走盘后 DAG
+    daban_board_event_derive→daban_engine_load_daily 生产同款路径
+    （InternalComputeProvider.fetch→ch_writer.write_result，零代码修改）单日窗口
+    同键重放，RMT (trade_date,symbol) 幂等替换；实测 57/57 行 float_market_cap 由
+    default 转 real，抽 5 只+全量 57 行对照 stock_indicator.circ_mv×1e4 逐行一致，
+    09-14 两表 SHA256 逐字节不变、09-16 非事件日本无行=零误伤。遗留如实登记：
+    09-14 的 96 行同为 default（超出本裁定授权窗口未动，后续同路径单日重放即可，
+    机械可复核）。B 项 alt_regime_signal F23_LIMITUP_EMOTION 周末键派生存量实测
+    10 行（2026-08-15..2026-09-13 共 5 个周末；立项简报口径 20 行与现场 FINAL=raw
+    实测 2 倍差，以实测为准登记），机制=源表 limit_up_down 幽灵期周末行被 F23
+    全历史逐日推进（无周末过滤）派生；源侧守卫+幽灵清理后零新增（现存涨停日 43
+    全工作日）。RULE-DATA-OPS 三步（必要性=下游 regime_data_loader.
+    load_alt_regime_signals 全表 FINAL 读入周末键失真；真实性=源表涨停日 43 日
+    周末=0，表内周末行=派生存留；可逆性=全列 TSV 备份
+    data/backup/alt_regime_f23_weekend_20260917/ 10 行+SHA256 见 evidence）后经
+    ch_writer.delete_where 手术删除（异步 mutation 轮询收敛），复验 F23 周末=0、
+    工作日 43 行不变（=源表交易日数，自洽）、F14_BTC 373 行（周末 107，7×24
+    合法语义）原样、其余信号位计数零变化。F23 生成器对清理态自洽：只读重派生
+    43 行/周末 0/键集与表完全一致；6 个周末后首个交易日 promotion 仍带幽灵链残值
+    （08-24、09-14 两处状态 高潮→发酵、分歧→发酵），下次 alt_regime_signal_refresh
+    全量重算 RMT 幂等自愈，重写工作日行超出本裁定边界故不动、登记在案。
+    红蓝四场景：重放双写收敛（raw==ded 57/57 两表）、幂等重入（FINAL 除
+    ingest_ts 逐字节一致）、周末边界（_trade_days_guarded 周末窗=[]）、F23 空窗
+    下游（regime 读侧帧周末行=0）。测试：daban 链 6 套件+alt_regime 两轮
+    142 passed 0 失败；tests/regime 广扫 1133 passed+1 失败
+    （test_breadth_thrust_walkforward 未跟踪在途件断言 overlay_features 常量
+    基线，属 GW-V 车道在途，他会话在途不代修、如实登记）。
+  evidence: >-
+    A 项：重放前 engine_load@09-15 57 行 float_market_cap 非空=0、derived_fields
+    float_market_cap=default×57；重放后非空=57、real×57/default×0；抽验
+    000859=8645635440.15、000823=14218878791.3、000868=3758055940.0、
+    000980=11396017996.14、000981=28730335400.86（元），与 stock_indicator
+    circ_mv×1e4 逐分一致；全量 57/57 对账 OK；board_event@09-15 57→57 行；
+    09-14 两表 SHA256 前后同为 d80029d2be3cd5b1/5ee432de1dd2e8a1。
+    B 项：删除对象 10 行（signal_date,signal_value,state）=08-15 0.8873 高潮/
+    08-16 1.0 高潮/08-22 0.8852 发酵/08-23 1.0 高潮/08-29 0.9762 高潮/
+    08-30 1.0 高潮/09-05 0.629 高潮/09-06 1.0 高潮/09-12 0.8889 高潮/
+    09-13 1.0 高潮；删除后 F23 总 53→43、周末 10→0（FINAL=raw）、F14_BTC
+    373/107 前后一致、其余 7 信号位计数零变化；备份 SHA256=
+    919f9feb82bbb29f66f78901184b96e93d05bb939c116e60e4133379df384dcd。
+    编号注：按登记时点注册表 ruling_id 字段最大值+1 取号（取号时点实测 max=301，
+    兼容带引号/不带引号两种登记风格），与并行会话同规则；条目吸收说明=本文件
+    工作区含并行会话未提交追加条目，提交时按文件级整体落地、以最终态为准。
+  affected_files:
+    - docs/01_policies_and_standards/_registry/catalogs/ruling_registry.yaml
+  related_arch: []
+  related_rulings:
+    - '裁定#288'
+    - '裁定#257⑤'
+  superseded_by: ''
+- ruling_id: '裁定#303'
+  title: '生产 DataScheduler 守护重启核验与 09-16 daily_kline 缺口处置（GW-R2 残余清零，Owner 开工令=生产重启+补批授权）'
+  date: '2026-09-17'
+  category: '数据修复'
+  status: 'active'
+  summary: >-
+    裁定（三项一车道合并，Owner 开工令明示全部解决=生产守护重启授权生效）：
+    ①守护事实=移交所述 01:12 旧码守护已于 05:32:54→05:33:26 经 watchdog 正道整链
+    干净重启（guard 15344 心跳失活→18172；scheduler 6068→30424→22700），新守护
+    启动晚于全部采集新码提交（d21198d1ad 01:43 circ_mv 映射+写前完成键去重、
+    9322ce6710 05:31 商品期货任务注册），文件 mtime 链证明守护加载字节与磁盘一致；
+    本班核验 /health ok、task_count=234、重启后未知任务错误归零，判定不再重复强杀
+    重启（对生产零增量扰动）。
+    ②09-16 kline_daily=0 行缺口处置：QMT/xtquant 服务当前下线（实测无法连接），
+    baostock fallback 对 symbols=null 仅取单票（sh.600000）且 FetchResult.last_key
+    恒=窗口末日，现跑必致缺口日游标 overrun（L10 已知坑 2026-08-24 D1 同款）——
+    判定 QMT 上线前禁跑 kline_daily_incremental，游标保持 20260915 不动；16:30
+    daily_kline 槽位与 17:00 L10.5 daily_backfill 双 safety net 经 miniqmt 全量
+    自愈该缺口，本班窗口内 QMT 未上线则如实留现场移交（禁硬闯生产）。
+    ③新链生产实证：stock_indicator 写前完成键去重单票探针命中「跳过已完成键
+    1 行（完成键 5564 个）」且零重复写入，circ_mv 元→万元映射随 05:33 重启驻入
+    生产守护；09-17 全量验证由 16:30 调度自跑承担。
+  affected_files:
+  - docs/01_policies_and_standards/_registry/catalogs/ruling_registry.yaml
+  related_rulings:
+  - 裁定#288
+  - 裁定#302
+  superseded_by: ''
