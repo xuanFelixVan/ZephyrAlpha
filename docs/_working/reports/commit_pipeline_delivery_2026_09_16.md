@@ -241,3 +241,9 @@ noise 轮：无。矿脉枯竭：R3 五脉全见底，本域收口。
 | 顺手 | BARE-SUBPROCESS 注册失败（priority 108 被 ALGO-FLOW-LINK 抢占，112/113） | 108→132 让位（后到者让位先例同款），恢复 113/113 全注册 |
 
 Mode B 自愈钉+landing 回归 26/26；预检白名单终态 15 道。
+
+
+### 13.1 终局验证（三坑批）
+- 双连戒达成：**DEF_1=3511 passed/0 failed（35:57）+ DEF_2=3465 passed/0 failed（12:07，skip 46=resource 套件会话态环境性）**，exit 0×2。
+- 途中一次失败（test_priority）经查=回滚者把工作区 bare_subprocess_gate 回滚到 pre-ALGO_FLOW 旧版（HEAD 正确），checkout 恢复+清 pycache 后 43/43；该回滚者行为已被 SACL 4663 归因覆盖，下次必留进程指纹。
+- 收口链：5736dadf（三坑修复 4 文件）+ 54e33612（§13 档案）+ 本节。
