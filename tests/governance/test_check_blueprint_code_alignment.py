@@ -182,3 +182,120 @@ class TestScanBlueprintFrontmatterEntries:
     def test_blueprints_dir_not_exists(self, tmp_path):
         entries = cbca.scan_blueprint_frontmatter_entries()
         assert entries == []
+
+
+class TestBlueprintTargetResolution:
+    """裁定#262 后续批治本：[BLUEPRINT] 落点账实校验（存在性 + 自述 id 一致）。"""
+
+    @staticmethod
+    def _entry(target: str, modid: str = "MOD-A") -> dict:
+        return {"file": "src/zephyr/pkg/mod.py", "package": "pkg", "header_modid": modid, "target": target}
+
+    def test_missing_target_reports_high(self):
+        findings = cbca.check_blueprint_target_resolution([self._entry("docs/03_modules/gone/blueprint.md")])
+        assert len(findings) == 1
+        assert findings[0]["type"] == "BLUEPRINT_TARGET_MISSING"
+        assert findings[0]["severity"] == "HIGH"
+        assert "docs/03_modules/gone/blueprint.md" in findings[0]["detail"]
+
+    def test_id_mismatch_reports_high(self, tmp_path):
+        bp = tmp_path / "docs" / "03_modules" / "mod_a" / "blueprint.md"
+        bp.parent.mkdir(parents=True)
+        bp.write_text("---\nmodule_id: MOD-B\n---\n# body\n", encoding="utf-8")
+        findings = cbca.check_blueprint_target_resolution([self._entry("docs/03_modules/mod_a/blueprint.md")])
+        assert [f["type"] for f in findings] == ["BLUEPRINT_TARGET_ID_MISMATCH"]
+        assert findings[0]["severity"] == "HIGH"
+        assert "MOD-B" in findings[0]["detail"]
+
+    def test_matching_module_id_no_finding(self, tmp_path):
+        bp = tmp_path / "docs" / "03_modules" / "mod_a" / "blueprint.md"
+        bp.parent.mkdir(parents=True)
+        bp.write_text('---\nmodule_id: "MOD-A"\n---\n# body\n', encoding="utf-8")
+        assert cbca.check_blueprint_target_resolution([self._entry("docs/03_modules/mod_a/blueprint.md")]) == []
+
+    def test_blueprint_id_key_also_accepted(self, tmp_path):
+        """批量生成的蓝图用 blueprint_id 键——两种键并存都算自述 id。"""
+        bp = tmp_path / "docs" / "03_modules" / "mod_a" / "blueprint.md"
+        bp.parent.mkdir(parents=True)
+        bp.write_text("---\nblueprint_id: MOD-A\n---\n", encoding="utf-8")
+        assert cbca.check_blueprint_target_resolution([self._entry("docs/03_modules/mod_a/blueprint.md")]) == []
+
+    def test_no_declared_id_only_checks_existence(self, tmp_path):
+        bp = tmp_path / "docs" / "03_modules" / "mod_a" / "blueprint.md"
+        bp.parent.mkdir(parents=True)
+        bp.write_text("---\ntitle: no id here\n---\n", encoding="utf-8")
+        assert cbca.check_blueprint_target_resolution([self._entry("docs/03_modules/mod_a/blueprint.md")]) == []
+
+    @pytest.mark.parametrize(
+        "target",
+        [
+            "待统筹登记（10号文 §4 Phase 0/1.1 + 18号清单 §5 裁定）",
+            "",
+            "scripts/ops/some_tool.py",
+            "src/zephyr/pkg/other.py",
+        ],
+    )
+    def test_non_docs_or_prose_target_skipped(self, target):
+        assert cbca.check_blueprint_target_resolution([self._entry(target)]) == []
+
+    def test_scan_headers_surfaces_target(self, tmp_path):
+        pkg = tmp_path / "src" / "zephyr" / "pkg"
+        pkg.mkdir(parents=True)
+        (pkg / "mod.py").write_text(
+            "# [BLUEPRINT] MOD-A | docs/03_modules/mod_a/blueprint.md | §3.1\n"
+            '"""docstring."""\n',
+            encoding="utf-8",
+        )
+        headers = cbca.scan_code_blueprint_headers()
+        assert len(headers) == 1
+        assert headers[0]["header_modid"] == "MOD-A"
+        assert headers[0]["target"] == "docs/03_modules/mod_a/blueprint.md"
+
+
+class TestTransportBlueprintIdLanded:
+    """裁定#262 后续批交付钉：transport 双节点 blueprint_id=MOD-DATA-072 落位且账实一致。
+
+    真源=docs/03_modules/_domain_data/transport/blueprint.md（st-transport-20260916 转正批）。
+    本测试防的是"落位后再漂移"——头注释 id 改走、蓝图文件被删、蓝图自述 id 与头不一致。
+    """
+
+    TRANSPORT_ID = "MOD-DATA-072"
+    TRANSPORT_BP = "docs/03_modules/_domain_data/transport/blueprint.md"
+    TRANSPORT_SOURCES = (
+        "src/zephyr/data/transport/__init__.py",
+        "src/zephyr/data/transport/cross_border_dual.py",
+    )
+
+    def _headers(self) -> list[dict]:
+        out: list[dict] = []
+        for rel in self.TRANSPORT_SOURCES:
+            content = (_REPO_ROOT / rel).read_text(encoding="utf-8")
+            m = cbca.BLUEPRINT_HEADER_RE.search(content)
+            assert m, f"{rel} 丢失 [BLUEPRINT] 头（blueprint_id 欠账复发）"
+            pair = cbca.BLUEPRINT_HEADER_PAIR_RE.search(content)
+            out.append(
+                {
+                    "file": rel,
+                    "package": "data",
+                    "header_modid": m.group(1),
+                    "target": pair.group(2).strip() if pair else "",
+                }
+            )
+        return out
+
+    def test_both_sources_carry_landed_id(self):
+        for entry in self._headers():
+            assert entry["header_modid"] == self.TRANSPORT_ID
+            assert entry["target"] == self.TRANSPORT_BP
+
+    def test_blueprint_file_exists_and_declares_same_id(self, monkeypatch):
+        monkeypatch.setattr(cbca, "REPO_ROOT", _REPO_ROOT)
+        bp = _REPO_ROOT / self.TRANSPORT_BP
+        assert bp.is_file(), f"{self.TRANSPORT_BP} 不存在——#262 后续批落位被回退"
+        declared = cbca.TARGET_ID_RE.search(bp.read_text(encoding="utf-8"))
+        assert declared is not None
+        assert declared.group(1).strip() == self.TRANSPORT_ID
+
+    def test_resolution_findings_empty(self, monkeypatch):
+        monkeypatch.setattr(cbca, "REPO_ROOT", _REPO_ROOT)
+        assert cbca.check_blueprint_target_resolution(self._headers()) == []

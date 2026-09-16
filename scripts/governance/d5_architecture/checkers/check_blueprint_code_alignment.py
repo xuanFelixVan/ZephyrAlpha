@@ -17,7 +17,7 @@
 """
 [BLUEPRINT] MOD-INF-005 | docs/03_modules/_domain_governance/governance_automation/blueprint.md | §
 [MODULE] scripts.governance.d5_architecture.checkers.check_blueprint_code_alignment
-[INVARIANTS] 代码[BLUEPRINT]头部module_id必须与蓝图注册表一致; 蓝图§4已实现文件必须在磁盘存在; frontmatter.build_status 必须与 depgraph 聚合 build_status 一致（FRONTMATTER_STATE_STALE, WARN/MEDIUM）
+[INVARIANTS] 代码[BLUEPRINT]头部module_id必须与蓝图注册表一致; 蓝图§4已实现文件必须在磁盘存在; frontmatter.build_status 必须与 depgraph 聚合 build_status 一致（FRONTMATTER_STATE_STALE, WARN/MEDIUM）; --check-targets 开启时 [BLUEPRINT] 声明的 docs/ 落点必须存在且自述同 id（BLUEPRINT_TARGET_MISSING / BLUEPRINT_TARGET_ID_MISMATCH, HIGH, 默认不入链）
 [MODIFY-GUARD] script_manifest.yaml; blueprint_registry.yaml; ARCH-FRONTMATTER-STATE-001 Phase 4
 [CONSUMERS] CI pipeline; AI session 冷启动; Phase Gate; session_worktree pre-merge 拓扑检查
 [STABILITY] evolving
@@ -50,7 +50,7 @@ from _shared.frontmatter import parse_frontmatter
 from _shared.walk import iter_files
 
 __manifest__ = """
-args: [--warn-only, --json, --package, --scan-root]
+args: [--warn-only, --json, --package, --scan-root, --check-targets]
 description: 蓝图↔代码双向对齐检测——代码[BLUEPRINT]头部module_id双源验证(registry+depgraph)+蓝图§4文件清单depgraph派生(裁定#211)；--scan-root 用于 #ARCH-DEP-001 第二期 pre-merge 拓扑硬阻断（扫描 worktree session 分支代码，DB 配置留 main）
 dimensions:
 - D5
@@ -65,6 +65,14 @@ BLUEPRINT_REGISTRY = BLUEPRINTS_DIR / "blueprint_registry.yaml"
 MODULE_REGISTRY = BLUEPRINTS_DIR / "module-registry.yaml"
 
 BLUEPRINT_HEADER_RE = re.compile(r"\[BLUEPRINT\]\s+(\S+)")
+# 头注释第二字段=蓝图落点（`[BLUEPRINT] <id> | <path> | §anchor`）。裁定#262 后续批治本：
+# 只校验 id 是否在 registry/depgraph 里，检测不到"id 有、但指向的蓝图文件不存在/
+# 该文件声明的 id 与之不符"这类账实不符（transport 双节点当年即挂此形态）。
+BLUEPRINT_HEADER_PAIR_RE = re.compile(r"\[BLUEPRINT\]\s*(\S+)\s*\|\s*([^|\n]*)")
+# 蓝图 frontmatter 的自述 id（两种键并存：早期 module_id / 批量生成的 blueprint_id）
+TARGET_ID_RE = re.compile(r"^(?:module_id|blueprint_id):\s*[\"']?([^\"'\n]+)", re.M)
+# 只认仓内文档落点；`待统筹登记（…）` 之类的散文锚不参与存在性判定
+_TARGET_PREFIXES = ("docs/",)
 MODULE_ID_RE = re.compile(r'(?:-\s*)?module_id:\s*["\']?(\S+?)["\']?\s*$')
 
 # 裁定#211：depgraph 查询 SQL（提取为模块级常量，遵循 §5.160.2 SQL 集中化原则）
@@ -292,7 +300,14 @@ def scan_code_blueprint_headers(
         if not m:
             return None
         header_modid = m.group(1)
-        return {"file": str(py_file.relative_to(base_root)), "package": pkg_name, "header_modid": header_modid}
+        pair = BLUEPRINT_HEADER_PAIR_RE.search(content)
+        target = pair.group(2).strip() if pair else ""
+        return {
+            "file": str(py_file.relative_to(base_root)),
+            "package": pkg_name,
+            "header_modid": header_modid,
+            "target": target,
+        }
 
     for pkg in packages:
         py_files = list(pkg.rglob("*.py"))
@@ -348,6 +363,63 @@ def check_header_vs_registry(
             )
 
     return drifts
+
+
+def check_blueprint_target_resolution(code_headers: list[dict]) -> list[dict]:
+    """校验 `[BLUEPRINT] <id> | <落点> |` 的账实一致（裁定#262 后续批治本，2026-09-16）。
+
+    现有 ORPHAN_MODULE_ID 只回答"id 登记过没有"，答不出"id 指向的蓝图在不在、
+    那个蓝图自述的 id 是不是它"。本检查补齐后者两类账实不符：
+
+    - ``BLUEPRINT_TARGET_MISSING``（HIGH）：落点是仓内 docs 路径但磁盘无此文件
+      ——blueprint_id 指向不存在的蓝图（transport 双节点当年形态：挂 CAND-* 无 MOD 锚）。
+    - ``BLUEPRINT_TARGET_ID_MISMATCH``（HIGH）：落点文件存在，但其 frontmatter
+      自述 id 与头注释 id 不同——同一 id 两处漂移，扫描器与蓝图互相指错。
+
+    跳过的输入（非缺陷）：落点为空/为散文锚（如 `待统筹登记（10号文 §4 …）`）/不在
+    ``docs/`` 下；落点文件无 frontmatter id 时只查存在性，不查一致性。
+    """
+    findings: list[dict] = []
+    for entry in code_headers:
+        target = (entry.get("target") or "").strip().replace("\\", "/")
+        if not target.startswith(_TARGET_PREFIXES):
+            continue
+        header_modid = entry["header_modid"]
+        bp_path = REPO_ROOT / target
+        if not bp_path.is_file():
+            findings.append(
+                {
+                    "type": "BLUEPRINT_TARGET_MISSING",
+                    "severity": "HIGH",
+                    "file": entry["file"],
+                    "detail": f"[BLUEPRINT] {header_modid} 指向的蓝图不存在: {target}",
+                }
+            )
+            continue
+        try:
+            content = bp_path.read_text(encoding="utf-8", errors="replace")
+        except OSError as exc:
+            findings.append(
+                {
+                    "type": "BLUEPRINT_TARGET_MISSING",
+                    "severity": "HIGH",
+                    "file": entry["file"],
+                    "detail": f"[BLUEPRINT] {header_modid} 的蓝图落点不可读: {target} ({exc})",
+                }
+            )
+            continue
+        m = TARGET_ID_RE.search(content)
+        declared = m.group(1).strip() if m else ""
+        if declared and declared != header_modid:
+            findings.append(
+                {
+                    "type": "BLUEPRINT_TARGET_ID_MISMATCH",
+                    "severity": "HIGH",
+                    "file": entry["file"],
+                    "detail": f"[BLUEPRINT] 标注 {header_modid}，但 {target} frontmatter 自述 {declared}",
+                }
+            )
+    return findings
 
 
 def check_blueprint_file_list(
@@ -412,6 +484,13 @@ def main() -> None:
         "DB 配置和蓝图注册表仍用 main REPO_ROOT。用于 session_worktree "
         "pre-merge 检查 worktree session 分支代码相对 production depgraph 的漂移。",
     )
+    parser.add_argument(
+        "--check-targets",
+        action="store_true",
+        help="启用 [BLUEPRINT] 落点账实校验（BLUEPRINT_TARGET_MISSING / "
+        "BLUEPRINT_TARGET_ID_MISMATCH）。默认关：仓内既存数百条历史未解析落点，"
+        "清债前直接入链会把既有漂移变成全局硬阻断（裁定#262 后续批治本，2026-09-16）。",
+    )
     args = parser.parse_args()
 
     blueprint_registry = load_blueprint_registry()
@@ -434,7 +513,12 @@ def main() -> None:
     frontmatter_entries = scan_blueprint_frontmatter_entries()
     frontmatter_stale_findings = check_frontmatter_state_stale(frontmatter_entries, depgraph_build_status)
 
-    all_findings = drift_findings + file_missing_findings + code_not_in_bp_findings + frontmatter_stale_findings
+    # 裁定#262 后续批治本：[BLUEPRINT] 落点账实校验（--check-targets 显式开启，默认不入链）
+    target_findings = check_blueprint_target_resolution(code_headers) if args.check_targets else []
+
+    all_findings = (
+        drift_findings + file_missing_findings + code_not_in_bp_findings + frontmatter_stale_findings + target_findings
+    )
 
     high_count = sum(1 for f in all_findings if f["severity"] == "HIGH")
     medium_count = sum(1 for f in all_findings if f["severity"] == "MEDIUM")

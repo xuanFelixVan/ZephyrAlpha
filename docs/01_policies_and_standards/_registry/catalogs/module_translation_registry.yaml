@@ -49979,6 +49979,13 @@ entries:
   desc_zh: ""
   desc_en: ""
   plain_zh: "对网格工厂选出的候选策略做完整的滚动前推考试：把历史切成多段，每段用之前的数据训练、用之后的数据验证，汇总所有验证段的成绩，再用防过拟合公式和样本外衰减检查判定这个策略是真本事还是运气，给出通过或不通过的正式结论。"
+- module_path: tests/governance/test_sync_registry_from_blueprints.py
+  domain_id: D_AUDITTEST
+  name_zh: "蓝图登记表自举单测"
+  name_en: ""
+  desc_zh: "验证 blueprint_registry.yaml 缺席时同步器能从蓝图 frontmatter 全量重建（回归锚：旧硬退出造成自举死锁）"
+  desc_en: ""
+  plain_zh: "登记清单被判定成可随时重生的派生件后，它一旦丢失，负责重生的脚本反倒拒绝运行——本测试钉死\"没有文件也能凭空造出来\"这条路必须通。"
 
 battle_map_steps:
 - step_id: BM-BUY-05

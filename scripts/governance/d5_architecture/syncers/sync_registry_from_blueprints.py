@@ -5,13 +5,13 @@
 # [CONSUMERS]
 # [STARTUP] manual
 # [MATURITY] production
-# [INVARIANTS]
+# [INVARIANTS] blueprint_registry.yaml 是纯派生件（frontmatter 为 SSoT）：磁盘缺失 MUST 走 BOOTSTRAP 全量重建，禁 exit 拒绝——旧硬退出=自举死锁，连带 check_blueprint_code_alignment 的 registry 维度静默空转（fail-open）
 # [MODIFY-GUARD]
 # [STABILITY] evolving
 # [SAFETY] M
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT]
-# [TESTS]
+# [TESTS] tests/governance/test_sync_registry_from_blueprints.py
 # [A_module] module_id=MOD-INF-005 | layer=module | stability=evolving | safety=M | ai_autonomy=ai_modifiable
 # [TTL] permanent
 """sync_registry_from_blueprints.py -- 从 blueprint.md frontmatter 同步 blueprint_registry.yaml
@@ -146,12 +146,24 @@ def field_signature(fm: dict[str, Any]) -> str:
     return hashlib.md5("|".join(fields).encode()).hexdigest()[:8]
 
 
-def load_registry() -> dict[str, Any] | None:
-    """load_registry implementation."""
+def load_registry() -> dict[str, Any]:
+    """读 registry；缺失=返回 {} 并出声 BOOTSTRAP（派生文件不依赖旧内容才能自举）。
+
+    治本（2026-09-16）：本文件经裁定转 gitignore 派生件（commit 03df6215e8「本地文件保留、
+    事件自动重生」），但旧实现在文件不存在时返回 None、main() 据此 exit(ERROR)——
+    唯一能重生的工具拒绝在无文件时工作，"自动重生"因此永不成立：干净 worktree 或
+    git clean 之后 registry 永久缺席，且 check_blueprint_code_alignment 的 registry 维度
+    静默空转（读空={}，零发现=看起来全对齐，实为 fail-open）。
+    """
     if not BLUEPRINT_REGISTRY_PATH.exists():
-        return None
+        print(
+            f"BOOTSTRAP: {BLUEPRINT_REGISTRY_PATH.name} 缺失 → 从磁盘 blueprint.md frontmatter "
+            "全量重建（registry 是派生件，无需旧内容）"
+        )
+        return {}
     with open(BLUEPRINT_REGISTRY_PATH, encoding="utf-8") as f:
-        return yaml.safe_load(f)
+        data = yaml.safe_load(f)
+    return data if isinstance(data, dict) else {}
 
 
 def make_registry_path(filepath: Path) -> str:
@@ -195,6 +207,21 @@ def _bump_changelog_semver(existing: list[Any]) -> str:
     return "1.0.0"
 
 
+def _diff_bullets_for_module(mid: str, old: dict | None, new: dict | None, key_fields: tuple[str, ...]) -> list[str]:
+    """单个 module_id 的 changelog 短句（新增/移除/字段变更三形态）。"""
+    if old is None and new is not None:
+        return [f"新增 {mid} → {new.get('file_path', '?')}"]
+    if old is not None and new is None:
+        return [f"移除 {mid}（曾位于 {old.get('file_path', '?')}）"]
+    if not (old and new):
+        return []
+    return [
+        f"{mid}.{k}: [{old.get(k, '')}] → [{new.get(k, '')}]"
+        for k in key_fields
+        if str(old.get(k, "")) != str(new.get(k, ""))
+    ]
+
+
 def collect_registry_diff_bullets(
     old_entries: list[dict[str, Any]],
     new_entries: list[dict[str, Any]],
@@ -219,22 +246,12 @@ def collect_registry_diff_bullets(
         "blueprint_status",
     )
     mids = sorted(set(old_map.keys()) | set(new_map.keys()))
-    out: list[str] = []
-    for mid in mids:
-        if not mid:
-            continue
-        old = old_map.get(mid)
-        new = new_map.get(mid)
-        if old is None and new is not None:
-            out.append(f"新增 {mid} → {new.get('file_path', '?')}")
-        elif old is not None and new is None:
-            out.append(f"移除 {mid}（曾位于 {old.get('file_path', '?')}）")
-        elif old and new:
-            for k in key_fields:
-                ov = str(old.get(k, ""))
-                nv = str(new.get(k, ""))
-                if ov != nv:
-                    out.append(f"{mid}.{k}: [{ov}] → [{nv}]")
+    out: list[str] = [
+        b
+        for mid in mids
+        if mid
+        for b in _diff_bullets_for_module(mid, old_map.get(mid), new_map.get(mid), key_fields)
+    ]
 
     excess = len(out) - max_lines
     if excess > 0:
@@ -407,9 +424,6 @@ def main() -> None:
         print("", file=sys.stderr)
 
     registry = load_registry()
-    if registry is None:
-        print("ERROR: blueprint_registry.yaml not found")
-        sys.exit(EXIT_ERROR if not args.warn_only else EXIT_PASS)
 
     if args.write:
         rc = run_write(
