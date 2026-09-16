@@ -1,11 +1,11 @@
 # [BLUEPRINT] MOD-GOV_ALGO_FLOW_APPLIER | docs/03_modules/_cross_layer/gov_scripts/blueprint.md
 # [MODULE] scripts.governance._shared.algo_flow_applier
 # [DOMAIN] D_GOV_SCRIPTS
-# [DEPENDENCIES] scripts.governance._shared.code_algorithm_extractor; scripts.git_guard
+# [DEPENDENCIES] scripts.governance._shared.code_algorithm_extractor; scripts.git_guard; scripts.governance.d5_architecture.generators.externalize_algo_flow
 # [CONSUMERS] algorithm_map_rollout（ALGO_FLOW 全量落地步骤③集中应用+验证）
 # [STARTUP] event_driven
 # [MATURITY] production
-# [INVARIANTS] 应用前必验证（AST解析+parse_algo_flow+extract回读三重验证失败则不写盘）; 幂等（同标记重复应用=替换不追加）; 每文件应用后立即git_guard add
+# [INVARIANTS] 应用前必验证（AST解析+parse_algo_flow+extract回读三重验证失败则不写盘）; 幂等（同标记重复应用=替换不追加）; 每文件应用后立即git_guard add; 应用后必串调出仓器外迁机器块（源码只留锚，源+yaml 同批 git add）——内联块在 extractor own_graph 优先，不外迁会把已出仓件吞回并留下孤儿 yaml
 # [MODIFY-GUARD] 无
 # [STABILITY] evolving
 # [SAFETY] M
@@ -54,6 +54,7 @@ from code_algorithm_extractor import (  # noqa: E402
 CALIBRATED_DIR = REPO_ROOT / ".trae" / "documents" / "algo_flow_calibrated"
 PLAN_JSON = REPO_ROOT / ".trae" / "documents" / "algo_flow_calibration_plan.json"
 MODULES_JSON = REPO_ROOT / ".trae" / "documents" / "_operational_modules.json"
+_GEN_DIR = str(_THIS_FILE.parents[1] / "d5_architecture" / "generators")
 
 _MARKER_START = "# [ALGO_FLOW]"
 
@@ -252,6 +253,37 @@ def _git_add(rel_path: str) -> str:
         return f"git add 异常: {e}"
 
 
+def _load_outboxer():
+    """按路径把出仓器拉进来（与批级战役同一实现，杜绝两套落点口径）。
+
+    externalize() 内部 `import _shared.code_algorithm_extractor`——需要 scripts/ 根在
+    sys.path 上（本模块只挂了 _shared 目录）。
+    """
+    for d in (str(REPO_ROOT / "scripts"), _GEN_DIR):
+        if d not in sys.path:
+            sys.path.insert(0, d)
+    import externalize_algo_flow as gen  # noqa: PLC0415
+
+    return gen
+
+
+def externalize_after_apply(py_abs: Path) -> tuple[str, str]:
+    """写完内联块后立刻外迁：源码留单行锚，机器块落 algo_flow yaml。
+
+    方向对齐 P2-1（Owner 2026-09-15 裁定）：内联块在 extractor `own_graph` 里优先于
+    external 锚，rollout 若只写内联，已出仓件会被内联吞回、yaml 成孤儿图。
+    落点三表按本件复算，与批级规划同源。
+
+    :return: (status, yaml_rel)——status ∈ externalized|already|skipped|failed
+    """
+    gen = _load_outboxer()
+    gen._plan_stem_collision_remaps([py_abs])
+    gen._plan_capacity_mirrors([py_abs])
+    gen._plan_path_uniqueness([py_abs])
+    res = gen.externalize(py_abs, dry_run=False)
+    return str(res.get("status", "")), str(res.get("yaml", "") or "")
+
+
 def _verify_readback(depgraph_path: str, expect_first_node: str) -> tuple[bool, str]:
     """用生成器同款 extract_algorithm_from_code 回读，确认命中本模块标记。"""
     s = extract_algorithm_from_code(REPO_ROOT / depgraph_path, module_id="verify")
@@ -305,9 +337,23 @@ def _apply() -> None:
             failures.append({"module_id": mid, "error": err2})
             fail += 1
             continue
-        gerr = _git_add(item["target_path"])
-        if gerr:
-            failures.append({"module_id": mid, "error": f"git add: {gerr}"})
+        ex_status, ex_yaml = externalize_after_apply(tgt)
+        if ex_status == "failed":
+            failures.append({"module_id": mid, "error": f"externalize 失败: {ex_status} {ex_yaml}"})
+            fail += 1
+            continue
+        if ex_yaml:
+            ok3, err3 = _verify_readback(item["depgraph_path"], _first_node_id(marker))
+            if not ok3:
+                failures.append({"module_id": mid, "error": f"出仓后回读失败: {err3}"})
+                fail += 1
+                continue
+        for rel_path in [item["target_path"], ex_yaml]:
+            if not rel_path:
+                continue
+            gerr = _git_add(rel_path)
+            if gerr:
+                failures.append({"module_id": mid, "error": f"git add: {gerr}"})
         ok += 1
         if ok % 25 == 0:
             print(f"  进度 {ok} 已应用…")

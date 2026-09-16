@@ -111,8 +111,10 @@ def main(argv: list[str]) -> int:
         print("[GATE-ALGO-FLOW] 以下 src/zephyr 模块缺 # [ALGO_FLOW] docstring 标记（§4.16）：")
         for m in missing:
             print(f"  - {m}")
-        print("  修复：在 module docstring 补 ALGO_FLOW 块（格式见 visualization_view_template.md §4.16；")
-        print("  草稿生成器：python scripts/governance/_shared/algo_flow_drafter.py <file>）")
+        print("  修复：先补块再出仓（P2-1 口径=docstring 内只留一行 `# [ALGO_FLOW] external: <yaml>` 锚，")
+        print("  机器块落 docs/03_modules/_domain_<X>/algo_flow/*.yaml；格式见 visualization_view_template.md §4.16）：")
+        print("  ① 草稿 python scripts/governance/_shared/algo_flow_drafter.py <file>")
+        print("  ② 出仓 python scripts/governance/d5_architecture/generators/externalize_algo_flow.py --file <file>")
         return EXIT_FINDINGS
     return EXIT_PASS
 
