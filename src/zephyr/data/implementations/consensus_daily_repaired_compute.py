@@ -77,9 +77,10 @@ WINDOW_DAYS = 90
 # 表名走 TableRegistry 真源（#ARCH-CH-024：已注册表名禁硬编码字面量）
 _TBL_RESEARCH_REPORT = get_registry().table("fund_research_report")
 _TBL_ANALYST_FORECAST = get_registry().table("fund_analyst_forecast")
+_TBL_PDF_EVIDENCE = get_registry().table("pdf_forecast_extracted")
 
 # SQL 集中化（§5.160.2：应用代码禁裸 SQL 字面量；参数只经 .format 注入自家常量/推断值，
-# 无外部输入拼接面）。pdf_forecast_extracted 属 C4 域、尚未登记品类，故仍是字面量。
+# 无外部输入拼接面）。
 _SQL_REPORT_ROWS = (
     "SELECT report_id, symbol, publish_date, org_name, rating "
     "FROM {tbl} FINAL "
@@ -87,7 +88,7 @@ _SQL_REPORT_ROWS = (
 )
 _SQL_PDF_EPS = (
     "SELECT report_id, forecast_year, eps "
-    "FROM c3_fundamental.pdf_forecast_extracted FINAL "
+    "FROM {tbl} FINAL "
     "WHERE confidence = '{confidence}'"
 )
 _SQL_ANALYST_ROWS = (
@@ -206,7 +207,7 @@ def load_pdf_evidence() -> tuple[list[dict], dict[str, list[tuple[int, float]]],
     if not (rr_tsv or "").strip():
         raise RuntimeError("research_report segment A 区间为空（源表不可达），拒绝产出空派生层")
 
-    pdf_tsv = ch_reader.query(_SQL_PDF_EPS.format(confidence=GUARD_CONFIDENCE))
+    pdf_tsv = ch_reader.query(_SQL_PDF_EPS.format(tbl=_TBL_PDF_EVIDENCE, confidence=GUARD_CONFIDENCE))
     if not (pdf_tsv or "").strip():
         raise RuntimeError("pdf_forecast_extracted high 置信行为空，拒绝产出空派生层")
 

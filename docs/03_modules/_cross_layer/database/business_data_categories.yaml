@@ -1376,38 +1376,6 @@
   data_source: [qmt]
   blueprint: null
 
-- category_id: market_limit_up_pool
-  name: "涨停股池明细（东财全量字段：封板资金/首末封板时间/炸板次数/连板数/行业，GAP-F-13）"
-  engine: clickhouse
-  database: c1_market
-  table: limit_up_pool
-  schema_file: null
-  data_type: 成品
-  lifecycle: permanent
-  sla_level: L2
-  enabled: true
-  hard_constraint: null
-  calc_mode: preload
-  frequency: 日频
-  data_source: [akshare]
-  blueprint: null
-
-- category_id: market_daban_board_event
-  name: "打板日频事件派生表（触板/封住/一字/首触/开板次数/封单代理/连板，三级涨停价解析链 88445 样本 100% 验证）"
-  engine: clickhouse
-  database: c1_market
-  table: daban_board_event
-  schema_file: null
-  data_type: 成品
-  lifecycle: permanent
-  sla_level: L2
-  enabled: true
-  hard_constraint: null
-  calc_mode: preload
-  frequency: 日频
-  data_source: [internal]
-  blueprint: "src/zephyr/data/implementations/daban_board_event_deriver.py（模块 docstring DDL 与口径真源）"
-
 - category_id: market_limit_up_down
   name: "涨跌停统计"
   engine: clickhouse
@@ -1572,7 +1540,7 @@
   calc_mode: lazy
   frequency: 日频
   data_source: [internal]
-  blueprint: null
+  blueprint: "src/zephyr/data/implementations/daban_board_event_deriver.py（模块 docstring DDL 与口径真源）"
 
 - category_id: market_st_stock_list
   name: "ST/*ST股票列表（delist_date=1970-01-01表示未摘帽）"
@@ -2135,6 +2103,24 @@
   blueprint: null
   # 双轨隔离：与 fund_consensus_daily(DS-229) 并存，DS-229 历史行=今日预期回放（§9 档案）；
   # 本品类 switch_gate=Owner，验收前 DS-229 消费方不得改指。空洞 2022-01-01~2026-07-21。
+
+- category_id: pdf_forecast_extracted
+  name: "研报 PDF 预测提取明细（EPS/评级逐研报行，发布时点，C4 提取批产物）"
+  engine: clickhouse
+  database: c3_fundamental
+  table: pdf_forecast_extracted
+  schema_file: schemas/categories/fundamental/pdf_forecast_extracted.py
+  data_type: 原料
+  lifecycle: permanent
+  sla_level: L2
+  enabled: true
+  hard_constraint: null
+  calc_mode: preload
+  frequency: 日频
+  data_source: [internal]
+  blueprint: null
+  # 消费方=DS-275 双轨重建（scripts/ch/build_consensus_daily_repaired.py）；
+  # 此前无品类条目、消费端以字面量承载（"登记后须改走真源"），2026-09-17 补登记。
 
 - category_id: fund_financial_derived
   name: "财报派生层（单季/TTM/跨表对齐）"

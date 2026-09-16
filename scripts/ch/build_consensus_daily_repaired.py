@@ -90,8 +90,7 @@ ANCHOR_SYMBOLS = ("600519", "000858", "601318", "000651", "600036")
 _TBL_REPAIRED = get_registry().table("fund_consensus_daily_repaired")
 _TBL_POLLUTED = get_registry().table("fund_consensus_daily")
 _TBL_RESEARCH_REPORT = get_registry().table("fund_research_report")
-# pdf_forecast_extracted 属 C4 域、尚未登记品类，故仍是字面量（登记后须改走真源）
-_TBL_PDF_EVIDENCE = "c3_fundamental.pdf_forecast_extracted"
+_TBL_PDF_EVIDENCE = get_registry().table("pdf_forecast_extracted")
 
 
 def run_build(args: argparse.Namespace) -> int:
