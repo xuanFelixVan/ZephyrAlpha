@@ -5003,6 +5003,10 @@ capabilities:
     提交→全景对齐→清理 全流程步骤与失败处置；适用 07 域（regime/选股/仓位/风控/买卖/执行/对账/治理）施工，RULE-CAPABILITY-LOOKUP
     检索"施工"应命中本条
 creation_tokens:
+- file: "docs/_working/wyf3/wyf3_preregistered_protocol.md"
+  token: "auto-wyf3-preregistered-protocol-20260916"
+  created_by: "st-wyf3-20260916"
+  capability: "wyckoff_threshold_recalibration"
 - file: "docs/_working/handoff/2026-09-15-f06-dsr-handoff.md"
   token: "f06-dsr-handoff-20260915"
   created_by: "st-f06combo-20260915"
@@ -17233,6 +17237,10 @@ creation_tokens:
 - file: scripts/backtest/kronos_finetune_pkl_prep.py
   token: kronos-finetune-kronos-finetune-pkl-prep-20260915
   created_by: st-kronosft-20260916
+  capability: kronos_finetune
+- file: docs/_working/factory/kronos_finetune_e2e_evidence.md
+  token: kronos-finetune-kronos-finetune-e2e-evidence-20260916
+  created_by: st-fac4sch-20260916
   capability: kronos_finetune
 - file: docs/03_modules/_domain_infrastructure_operations/ops_alert_feed/blueprint.md
   token: ops-alert-feed-blueprint-blueprint-20260915

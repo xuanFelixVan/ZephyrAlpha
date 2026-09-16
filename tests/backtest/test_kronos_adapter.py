@@ -90,6 +90,31 @@ class TestRepoGuard:
             _load_kronos_classes()
 
 
+class TestResolveWeightDirs:
+    def test_daily_ft_is_paired_finetuned_tier(self):
+        # 2026-09-16 审计治本：daily_ft 档=微调 tokenizer+predictor 成对目录
+        # （predictor 训练时用微调 tokenizer，推理必须同源防 token 空间错位）
+        from scripts.backtest.kronos_adapter import _resolve_weight_dirs
+
+        tok, mod = _resolve_weight_dirs("daily_ft")
+        assert tok.name == "kronos_tokenizer_daily_ft"
+        assert mod.name == "kronos_daily_ft"
+
+    def test_small_tier_official_base(self):
+        from scripts.backtest.kronos_adapter import _resolve_weight_dirs
+
+        tok, mod = _resolve_weight_dirs("small")
+        assert tok.name == "kronos_tokenizer_base"
+        assert mod.name == "kronos_small"
+
+    def test_mini_tier_official_mini(self):
+        from scripts.backtest.kronos_adapter import _resolve_weight_dirs
+
+        tok, mod = _resolve_weight_dirs("mini")
+        assert tok.name == "kronos_tokenizer_mini"
+        assert mod.name == "kronos_mini"
+
+
 if __name__ == "__main__":  # pragma: no cover
     pytest.main([__file__, "-v"])
 

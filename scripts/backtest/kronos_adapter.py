@@ -105,15 +105,35 @@ def fetch_kline(symbol: str, days: int) -> pd.DataFrame:
 
 def load_predictor(device: str = "auto", model_size: str = "small"):
     """加载 Tokenizer+模型+Predictor（权重缺失 fail-closed 带下载指引）。"""
+    import torch  # noqa: F401  历史导入契约保留（调用方依赖 torch 已就绪态）
+
+    return _load_model(model_size=model_size, device=device)
+
+def _resolve_weight_dirs(model_size: str) -> tuple[Path, Path]:
+    """档位 → (tokenizer 目录, predictor 目录)。
+
+    daily_ft=微调成对档（tokenizer+predictor 同源自微调，token 空间自洽——
+    2026-09-16 审计治本：predictor 训练时用的是微调 tokenizer
+    （train_predictor.py 加载 finetuned_tokenizer_path），推理若配 base
+    tokenizer 则 token 语义错位、微调收益被稀释）；small/mini=官方预训练底座。
+    """
+    if model_size == "daily_ft":
+        return (WEIGHTS_DIR / "kronos_tokenizer_daily_ft",
+                WEIGHTS_DIR / "kronos_daily_ft")
+    return (WEIGHTS_DIR / ("kronos_tokenizer_base" if model_size != "mini" else
+                           "kronos_tokenizer_mini"),
+            WEIGHTS_DIR / f"kronos_{model_size}")
+
+
+def _load_model(model_size: str = "small", device: str = "auto"):
+    """加载 Kronos predictor（档位缺失 fail-closed 带指引）。"""
     import torch
 
     _load_kronos_classes()
     sys.path.insert(0, str(KRONOS_REPO))
     from model.kronos import Kronos, KronosPredictor, KronosTokenizer
 
-    tok_dir = WEIGHTS_DIR / ("kronos_tokenizer_base" if model_size != "mini" else
-                             "kronos_tokenizer_mini")
-    model_dir = WEIGHTS_DIR / f"kronos_{model_size}"
+    tok_dir, model_dir = _resolve_weight_dirs(model_size)
     for d in (tok_dir, model_dir):
         if not d.exists():
             raise RuntimeError(
@@ -396,7 +416,8 @@ def main() -> int:
     ap.add_argument("--n-test", type=int, default=60)
     ap.add_argument("--sample-count", type=int, default=8)
     ap.add_argument("--days", type=int, default=250)
-    ap.add_argument("--model-size", default="small")
+    ap.add_argument("--model-size", default="small",
+                    help="small=官方底座 | daily_ft=微调成对档（tok+pred 同源自洽）")
     args = ap.parse_args()
     try:
         from scripts.backtest.distribution_forecast_eval import (
