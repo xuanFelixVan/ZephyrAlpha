@@ -2678,3 +2678,52 @@ entries:
     - 裁定#NNN（2026-09-15：P2-1 出仓方向成立，yaml 为覆盖式真源，须补链接校验）
     - 裁定#NNN（2026-09-09：算法改了大白话必须跟着改）
   superseded_by: null
+- ruling_id: '裁定#277'
+  title: 裁定#257⑤ daban/LUE 四引擎应用层解除挂起终态=已建成/已实跑/已消费闭环——双零表 936 行真数据贯通，daban-sleeve 0.0945 权重自此有真输入（应用层收口执行批）
+  date: '2026-09-16'
+  category: 量化施工
+  status: active
+  summary: >-
+    承裁定#257⑤ 解除授权（Owner 2026-09-16 明令解除"四引擎应用层批产挂起不建"），
+    应用层执行终态登记（执行会话 st-dabanapp2-20260916 接力收口）。三段式终态：
+    ①生产侧（车道E/st-qoder-t1a，33e3dc83b4+895ce2c91f）：ex_core.daban_load_producer
+    （run_daily_batch，21 列 INSERT 同序/event_time DateTime64(3)+显式时区/Python 侧零时钟/
+    不可产字段省略交引擎中性默认+derived_fields 逐字段 real|default 留痕）+
+    internal_compute_provider._fetch_daban_engine_load 路由分支（CH 不可达 fail-closed）+
+    tasks.yaml daban_engine_load_daily（daily_kline 档事件触发，依赖 daban_board_event_derive，
+    禁 cron）+DS-271/品类 market_daban_engine_load 登记。
+    ②真数据贯通（本会话实跑）：daban_board_event_derive 936 行 → daban_engine_load_daily
+    936 行（2026-09-01..15 窗；09-16 空批 warning=fail-visible）。口径对账（09-15）：
+    touched=57 / close_sealed=32（eps=0.001 容差）/ 精确 close≥stk_limit.limit_up=30，
+    与挖矿 LUE-4"精确=30-32"吻合。流通市值真连 stock_indicator.circ_mv：有源日 real
+    （09-08..11 每日 ~5490 行有值，09-11 负载行 64/65 real），09-14/15 上游 circ_mv 缺源
+    （5562 行中 0 行有值=采集端缺口，登记不隐藏）负载行如实降 default——降级留痕非静默。
+    ③消费侧（原 GW-G 半成品经 st-dabanapp2-20260916 审计收编，4a667ff2+34fd6a7c）：
+    daban_sleeve_strategy._PersistedDabanLoadSource 默认经 DatabaseService reader PIT 真读
+    （SQL 谓词 trade_date<T+代码级逐行双保险/回退更早分区恰好一条 WARNING/读异常降级
+    fail-closed）+row_to_engine_payload（selector 资格门键按契约省略，防 overall<45 系统性
+    清零）+build_weight_panel_for_dates 三态源择路。消费闭环实证：T=09-12（T-1=09-11 分区
+    cap real）面板产真实权重 4 只各 0.15（max_single 截顶，sum=0.60）；T=09-16（09-15 分区
+    cap 缺源）全 57 标的融合判"中性"→0 权重=设计内现金日（六类决策优先级表无中性项，
+    无信念不加仓）。
+    边界与残余（登记不隐藏）：a) framework_composer 面板路仍 ROUTE_NO_DAILY_SOURCE 披露位
+    （归 lane A，其"本班不造数据"披露如实保留）；b) limit_up_down 周末幽灵行=守卫落地前
+    历史遗留（09-16 守卫后新窗无新增，派生双表周末分区=0；存量清理属破坏性操作留 Owner）；
+    c) stock_indicator 09-14 双批 11112 行+09-15 circ_mv 全缺=上游采集缺口另案；d) 09-15
+    全标的融合"中性"与挖矿"融合分压默认档"同根——seal_time/seal_amount 代理依赖 tick 链
+    深度，属引擎输入质量演进项非常数可调。
+  evidence: >-
+    实跑日志（integrator run 两任务 exit 0：rows=936/last_key 09-16 与 rows=936/last_key
+    09-15）+ CH 终态（daban_board_event/daban_engine_load 各 936 行，周末分区=0）+
+    消费面板真数据输出（T=09-12 四只 0.15 权重）+ 红蓝活体探测（未来日 PIT 回最近分区/
+    读超时降级空/越权投毒剔除=0/注入串 ValueError/短行剔除）+ 测试 140 例×2 轮零失败
+    （strategy 10+load 41+producer 26+routing 6+provider daban 37+deriver 20）+
+    口径对账 SQL 三口径（57/32/30）。
+  affected_files:
+    - src/zephyr/pf_core/strategies/daban_sleeve_strategy.py
+    - tests/pf_core/test_daban_sleeve_strategy_load.py
+    - docs/03_modules/_domain_portfolio_core/algo_flow/daban_sleeve_strategy.yaml
+    - config/trading_decision_map.yaml
+  related_arch: []
+  related_rulings: ['裁定#257']
+  superseded_by: null
