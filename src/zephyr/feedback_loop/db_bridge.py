@@ -20,54 +20,7 @@ FLE DB契约适配器 — 通过规范zephyr.governance.sqlite_schema连接写�
 CT-FLE-DB-001: FLE采集的指标 -> Database持久化落地。
 DDL与sqlite_schema.py的_DDL_FLE_METRICS保持一致（SSoT）。
 
-# [ALGO_FLOW]
-# 层: 输入
-# - id: I1
-#   name: metric_type 参数
-#   fields: 参数 metric_type，类型注解 str
-#   code: db_bridge.py 顶层公共函数形参（AST 提取）
-# - id: I2
-#   name: metric_name 参数
-#   fields: 参数 metric_name，类型注解 str
-#   code: db_bridge.py 顶层公共函数形参（AST 提取）
-# - id: I3
-#   name: metric_value 参数
-#   fields: 参数 metric_value，类型注解 float
-#   code: db_bridge.py 顶层公共函数形参（AST 提取）
-# - id: I4
-#   name: tags 参数
-#   fields: 参数 tags，类型注解 list[str] | None
-#   code: db_bridge.py 顶层公共函数形参（AST 提取）
-# 层: 算法
-# - id: A1
-#   name_zh: ① record_via_db_contract
-#   name_en: record_via_db_contract
-#   intro: record_via_db_contract(metric_type, metric_name, metric_val…
-#   desc: 源码 L130-L161
-#   inputs: metric_type metric_name metric_value tags session_id task_id cost_usd…
-#   outputs: int
-# - id: A2
-#   name_zh: ② bulk_record_via_db_contract
-#   name_en: bulk_record_via_db_contract
-#   intro: bulk_record_via_db_contract(records, db_path) 源码 L164-L209
-#   desc: 源码 L164-L209
-#   inputs: records db_path
-#   outputs: int
-# 层: 输出
-# - id: O1
-#   name_zh: int
-#   name_en: int
-#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
-#   downstream: zephyr.feedback_loop.metrics_collector
-# [/ALGO_FLOW]
-#
-# 边:
-# I1 --> A1
-# I2 --> A1
-# I3 --> A1
-# I4 --> A1
-# A1 --> A2
-# A2 --> O1
+# [ALGO_FLOW] external: docs/03_modules/_domain_feedback_loop/algo_flow/feedback_loop/db_bridge.yaml
 """
 
 from __future__ import annotations

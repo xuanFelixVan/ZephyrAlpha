@@ -6,31 +6,7 @@
 """
 
 
-# [ALGO_FLOW]
-# 层: 输入
-# - id: I1
-#   name: 包内子模块公共符号
-#   fields: import 再导出符号: DistributionDriftMonitor
-#   code: __init__.py import L34
-# 层: 算法
-# - id: A1
-#   name_zh: ① 包公共面再导出
-#   name_en: __init__ re-export
-#   intro: 再导出 concept_drift, config_drift, context_window_contamination_detector, diminis…
-#   desc: __init__ import L34；__all__ 9 项（AST 事实）
-#   inputs: I1
-#   outputs: __all__ 公共符号表
-# 层: 输出
-# - id: O1
-#   name_zh: 公共 API 面（9 符号）
-#   name_en: __all__
-#   intro: concept_drift, config_drift, context_window_contamination_detector, diminishing…
-#   downstream: zephyr.feedback_loop.detectors.__init__
-# [/ALGO_FLOW]
-#
-# 边:
-# I1 --> A1
-# A1 --> O1
+# [ALGO_FLOW] external: docs/03_modules/_domain_feedback_loop/algo_flow/detectors/drift/drift__init__.yaml
 """
 
 from zephyr.feedback_loop.detectors.drift.distribution_drift_monitor import DistributionDriftMonitor

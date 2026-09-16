@@ -21,31 +21,7 @@ Temporal Pattern Detector — v0.12.0 R164
 Blindspot: Anomaly patterns tied to time-of-day/week invisible.
 Risk: R164 — Daily 3am backup spike misdiagnosed as anomaly.
 
-# [ALGO_FLOW]
-# 层: 输入
-# - id: I1
-#   name: 模块内部数据
-#   fields: 无公共形参/无再导出（AST 事实）
-#   code: temporal_pattern.py
-# 层: 算法
-# - id: A1
-#   name_zh: ① TemporalPattern
-#   name_en: TemporalPattern
-#   intro: class TemporalPattern 源码 L55-L59
-#   desc: 公共方法（定义序）: learn；源码 L55-L59
-#   inputs: 无参数
-#   outputs: 返回值
-# 层: 输出
-# - id: O1
-#   name_zh: 模块公共 API 面（1 定义）
-#   name_en: public defs
-#   intro: TemporalPattern
-#   downstream: 见模块头 [CONSUMERS]
-# [/ALGO_FLOW]
-#
-# 边:
-# I1 --> A1
-# A1 --> O1
+# [ALGO_FLOW] external: docs/03_modules/_domain_feedback_loop/algo_flow/detectors/anomaly/temporal_pattern.yaml
 """
 
 from dataclasses import dataclass, field

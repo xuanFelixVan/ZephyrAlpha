@@ -21,31 +21,7 @@ Temporal Event Store — v0.3.0 R9
 Blindspot: Event timeline fragmented across subsystems.
 Risk: R9 — Causal ordering lost; diagnosis uses wrong temporal context.
 
-# [ALGO_FLOW]
-# 层: 输入
-# - id: I1
-#   name: 模块内部数据
-#   fields: 无公共形参/无再导出（AST 事实）
-#   code: temporal_event_store.py
-# 层: 算法
-# - id: A1
-#   name_zh: ① TemporalEventStore
-#   name_en: TemporalEventStore
-#   intro: class TemporalEventStore 源码 L55-L59
-#   desc: 公共方法（定义序）: append；源码 L55-L59
-#   inputs: 无参数
-#   outputs: 返回值
-# 层: 输出
-# - id: O1
-#   name_zh: 模块公共 API 面（1 定义）
-#   name_en: public defs
-#   intro: TemporalEventStore
-#   downstream: 见模块头 [CONSUMERS]
-# [/ALGO_FLOW]
-#
-# 边:
-# I1 --> A1
-# A1 --> O1
+# [ALGO_FLOW] external: docs/03_modules/_domain_feedback_loop/algo_flow/collectors/temporal_event_store.yaml
 """
 
 from dataclasses import dataclass, field

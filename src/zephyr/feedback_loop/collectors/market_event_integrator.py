@@ -23,32 +23,7 @@ Risk: R197 — Market-wide circuit breaker tripped; FLE diagnoses "missing data"
 
 Mitigation: Market calendar + event-driven mode switching for FLE behavior.
 
-# [ALGO_FLOW]
-# 层: 输入
-# - id: I1
-#   name: 模块内部数据
-#   fields: 无公共形参/无再导出（AST 事实）
-#   code: market_event_integrator.py
-# 层: 算法
-# - id: A1
-#   name_zh: ① MarketEventIntegrator
-#   name_en: MarketEventIntegrator
-#   intro: class MarketEventIntegrator 源码 L77-L116
-#   desc: 公共方法（定义序）: on_circuit_breaker, on_fomc, on_holiday, should_suppress_anomaly；源码 L77-L116
-#   inputs: 无参数
-#   outputs: 返回值
-#   （注：A1 之后另有 2 个公共定义未列入（含 2 个数据契约/异常/枚举声明类），见源码）
-# 层: 输出
-# - id: O1
-#   name_zh: 模块公共 API 面（3 定义）
-#   name_en: public defs
-#   intro: MarketEventIntegrator
-#   downstream: 见模块头 [CONSUMERS]
-# [/ALGO_FLOW]
-#
-# 边:
-# I1 --> A1
-# A1 --> O1
+# [ALGO_FLOW] external: docs/03_modules/_domain_feedback_loop/algo_flow/collectors/market_event_integrator.yaml
 """
 
 from __future__ import annotations
