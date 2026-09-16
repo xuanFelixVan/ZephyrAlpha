@@ -4,7 +4,7 @@ title: OBJ_S 红线与自由域——最大自由原则（负面清单制）
 owner: ZephyrAlpha-Owner
 session: st-ailayer-20260917
 date: 2026-09-17
-status: skeleton_pending_mining
+status: design_done
 ---
 
 # OBJ_S 红线与自由域骨架卡（Owner 2026-09-17 口述新增）
@@ -52,3 +52,5 @@ RULE-GIT-SAFE / REGISTRY-MASS-DELETION 闸 / 配额池提案 / reaper 电闸。
 3. 双指标看板设计：日成本+模拟盘回撤的数据源与降档联动
 4. 负面清单的年度审计：清单外是否出现"事实红线"（应有而未列的补列机制）
 5. 自由域试运行报告：负面清单制跑两周，AI 实际用了哪些自由、有没有擦边（给 Owner 的透明度报告）
+
+**2026-09-17 深挖完成**：真源设计稿=[DESIGN.md](DESIGN.md)（负面清单六条机检化 NL-1..6/删除分级三档/禁删清单生成器×2/SEV 探针/双指标看板/周报/年审挂 OBJ_R；自审闸=PASS 全绿，8 施工项）。

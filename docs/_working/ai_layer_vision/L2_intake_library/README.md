@@ -33,4 +33,4 @@ negative_archive 阴性库（工厂五类产品之一）；ig_fact 知识库先�
 
 ## 状态
 壳已立。**建议本段第一个深挖**（它是七段的枢纽：L1 喂它、L3/L4/L7 都读它）。
-**2026-09-17 深挖完成**：真源设计稿=[DESIGN.md](DESIGN.md)（design_v1：PG ai_intake 库表/simhash 查重/MAP-Elites 40 格/进货费机检/淘汰率 KPI/六边接线图/9 施工项；自审闸=施工）。
+**2026-09-17 深挖完成**：真源设计稿=[DESIGN.md](DESIGN.md)（design_v1：PG ai_intake 库表/simhash 查重/MAP-Elites 48 格（6 域×8 族）/进货费机检/淘汰率 KPI/六边接线图/9 施工项；自审闸=施工）。

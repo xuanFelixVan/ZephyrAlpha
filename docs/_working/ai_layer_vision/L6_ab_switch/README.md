@@ -4,7 +4,7 @@ title: L6 切换段——A/B 蓝绿（champion/challenger，进化的安全带�
 owner: ZephyrAlpha-Owner
 session: st-ailayer-20260917
 date: 2026-09-17
-status: design_done   # 真源设计稿=[DESIGN.md](DESIGN.md)（模块级影子运行框架/五态状态机/灰度三档成文）
+status: design_done   # 真源设计稿=[DESIGN.md](DESIGN.md)（模块级影子运行框架/七态状态机/灰度三档成文）
 ---
 
 # L6 切换段骨架卡
@@ -35,5 +35,5 @@ promotion 前端拍板页（Owner 门位）；OwnerTokenGuard。
 
 ## 状态
 **design_done（2026-09-17 挖干）**：真源设计稿=[DESIGN.md](DESIGN.md)——模块级影子运行框架
-（worktree 双检出+不互染三闸）、五态状态机、观察期 T1-T6 自动回切触发器、墓碑规程、
+（worktree 双检出+不互染三闸）、七态状态机（R1-B3 规范化）、观察期 T1-T6 自动回切触发器、墓碑规程、
 审批分级（risk_tier 映射）、回切演练挂月度体检、灰度三档成文（EXEMPT-ZONE-FM 先例）。

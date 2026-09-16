@@ -71,7 +71,7 @@ DDL 由幂等登记器 `scripts/ai_layer/apply_ai_intake_ddl.py` 部署（照 ap
 | content_sha256 | CHAR(64) NOT NULL UNIQUE | 精确查重键（url+title 归一化后哈希，同文重复提交即拒） |
 | simhash | BIT(64) NOT NULL | 近似查重指纹（参数见 2.3） |
 | mechanism_family | TEXT NOT NULL | 机制族（行为格第二轴，词表见 2.4） |
-| elite_cell | TEXT GENERATED ALWAYS AS (domain_id \|\| '|' \|\| mechanism_family) STORED | 行为格坐标（生成列，禁手写） |
+| elite_cell | TEXT GENERATED ALWAYS AS (domain_id \|\| '\|' \|\| mechanism_family) STORED | 行为格坐标（生成列，禁手写；SQL 内管道符已转义） |
 | elite_score | REAL | L4 对比分（L4 回填，NULL=未考） |
 | elite_rank | SMALLINT | 同格排名（L4 回填） |
 | elite_status | TEXT DEFAULT 'active' CHECK IN ('active','benched') | 格满降位标记（保优见 2.4） |
