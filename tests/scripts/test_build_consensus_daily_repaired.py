@@ -293,3 +293,47 @@ def test_narrow_pinned_slip_legs_are_returned_verbatim():
         got = cost_cal.resolve_slippage_bps(per_trade, pinned_flat_bps=Decimal(str(pinned)))
         assert float(got) == pinned, f"钉住档 {pinned}bp 被分层改写=压力腿失去可比性"
     assert _ev._SLIP_STRESS == (None, 20.0, 40.0, 80.0), "压力网格是预注册档，禁顺手改档位"
+
+
+# ── T5 口径治本钉（2026-09-17）：coverage 门可比数=月覆盖率，coverage_mean=计数 ──
+
+def _synth_ic_df(n_months=33, n_val=920.0):
+    import pandas as pd
+    import numpy as np
+    return pd.DataFrame({
+        "td": [f"20{19 + i // 12}-{(i % 12) * 3 + 1:02d}-28" for i in range(n_months)],
+        "n": np.full(n_months, n_val),
+        "ic": np.linspace(0.01, 0.05, n_months),
+        "mom_ic": np.full(n_months, np.nan),
+    })
+
+
+def test_seg_coverage_ratio_is_month_fraction():
+    """coverage_ratio=n_months/IS 月数（百分比门可比数），33/36=0.9167。"""
+    seg = _ev._seg(_synth_ic_df(33), 36)
+    assert seg["coverage_ratio"] == round(33 / 36, 4)
+    assert seg["n_months"] == 33
+
+
+def test_seg_coverage_mean_stays_breadth_count():
+    """coverage_mean 原样保留为月均截面广度计数（920.0）——历史出证逐键可比。"""
+    seg = _ev._seg(_synth_ic_df(33), 36)
+    assert seg["coverage_mean"] == 920.0
+
+
+def test_seg_without_total_months_has_no_ratio_key():
+    """OOS/legacy 路径不传分母 → coverage_ratio 键不出现，既有键集零漂移。"""
+    seg = _ev._seg(_synth_ic_df(33))
+    assert "coverage_ratio" not in seg
+    assert set(seg) == {"n_months", "ic_mean", "t_p", "coverage_mean", "mom_ic_mean"}
+
+
+def test_is_total_months_denominator_follows_protocol(monkeypatch):
+    """分母随协议窗：exp_r36 IS' 2019-2021=36 个月末（非主协议 60）。"""
+    cal = [f"2019-{m:02d}-28" for m in range(1, 13)] + \
+          [f"20{y}-{m:02d}-28" for y in (20, 21) for m in range(1, 13)] + \
+          [f"20{y}-{m:02d}-28" for y in (22, 23) for m in range(1, 13)]
+    monkeypatch.setattr(_ev, "_IS", ("2019-01-01", "2021-12-31"))
+    assert _ev._is_total_months(cal) == 36
+    monkeypatch.setattr(_ev, "_IS", ("2019-01-01", "2023-12-31"))
+    assert _ev._is_total_months(cal) == 60

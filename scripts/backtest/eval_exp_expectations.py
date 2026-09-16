@@ -401,11 +401,12 @@ def compute_factor_exp04(cov: pd.DataFrame, chars: dict) -> pd.DataFrame:
 
 
 def _full_eval(fac: pd.DataFrame, px_close: pd.DataFrame, bench: pd.Series,
-               mes: list[str], fwd_map: dict, mom_k: int = 20) -> dict:
+               mes: list[str], fwd_map: dict, mom_k: int = 20,
+               is_total: int | None = None) -> dict:
     """④ IC + ⑤ 剪枝 + ⑥ 窄测一站式（因子动量对照窗按 §8.1 预注册=20td）。"""
     fac_wide = fac.pivot(index="td", columns="symbol", values="f").sort_index()
     icdf = build_ic_table(fac_wide, px_close, mes, fwd_map, mom_k)
-    seg = {"is": _seg(icdf[icdf["td"] <= _IS[1]]),
+    seg = {"is": _seg(icdf[icdf["td"] <= _IS[1]], is_total),
            "oos": _seg_oos(icdf)}
     seg["prune_material"] = _prune_material(fac_wide, px_close, mes, fwd_map)
     seg["narrow_top50"] = _narrow(fac_wide, px_close, bench, mes, fwd_map)
@@ -437,14 +438,29 @@ def build_ic_table(fac_wide: pd.DataFrame, px_close: pd.DataFrame,
     return pd.DataFrame(rows)
 
 
-def _seg(d: pd.DataFrame) -> dict:
+def _seg(d: pd.DataFrame, total_months: int | None = None) -> dict:
+    """IS 段统计。
+
+    total_months 给定时另出 coverage_ratio=n_months/total（**月覆盖率**，即 ic_gate
+    "coverage>=60%" 的可比数——2026-09-17 T5 口径治本：此前出证只有 coverage_mean=
+    月均截面广度**计数**，与百分比门直比属量纲错配；coverage_mean 原样保留保证
+    既有出证逐键可比）。不传 total_months（OOS/legacy 路径）键不出现，零漂移。
+    """
     if len(d) < 12:
         return {"n_months": int(len(d)), "ic_mean": None}
     tp = stats.ttest_1samp(d["ic"], 0.0)
-    return {"n_months": int(len(d)), "ic_mean": round(float(d["ic"].mean()), 4),
-            "t_p": round(float(tp.pvalue), 5),
-            "coverage_mean": round(float(d["n"].mean()), 0),
-            "mom_ic_mean": None if d["mom_ic"].isna().all() else round(float(d["mom_ic"].mean()), 4)}
+    out = {"n_months": int(len(d)), "ic_mean": round(float(d["ic"].mean()), 4),
+           "t_p": round(float(tp.pvalue), 5),
+           "coverage_mean": round(float(d["n"].mean()), 0)}
+    if total_months:
+        out["coverage_ratio"] = round(len(d) / total_months, 4)
+    out["mom_ic_mean"] = None if d["mom_ic"].isna().all() else round(float(d["mom_ic"].mean()), 4)
+    return out
+
+
+def _is_total_months(cal: list[str]) -> int:
+    """月覆盖分母：协议 IS 窗内月末数（主协议 2019-2023=60；exp_r36 2019-2021=36）。"""
+    return len(month_ends(cal, _IS[0], _IS[1]))
 
 
 def _seg_oos(d: pd.DataFrame) -> dict:
@@ -637,6 +653,7 @@ def main() -> None:
         cons = load_consensus_fy1(cons_table)
         cal = load_calendar()
         mes = month_ends(cal, _IS[0], _PANEL_HI)
+        is_total = _is_total_months(cal)
         cal_pos = {d: i for i, d in enumerate(cal)}
         fwd_map = {d: (cal[cal_pos[d] + _FWD] if cal_pos[d] + _FWD < len(cal) else None)
                    for d in mes}
@@ -654,6 +671,7 @@ def main() -> None:
     else:
         cal = load_calendar()
         mes = month_ends(cal, _IS[0], _PANEL_HI)
+        is_total = _is_total_months(cal)
         cal_pos = {d: i for i, d in enumerate(cal)}
         fwd_map = {d: (cal[cal_pos[d] + _FWD] if cal_pos[d] + _FWD < len(cal) else None)
                    for d in mes}
@@ -685,7 +703,7 @@ def main() -> None:
             fac = compute_factor(cons, k)
             fac_wide = fac.pivot(index="td", columns="symbol", values="f").sort_index()
             icdf = build_ic_table(fac_wide, px_close, mes, fwd_map, k)
-            seg = {"is": _seg(icdf[icdf["td"] <= _IS[1]]),
+            seg = {"is": _seg(icdf[icdf["td"] <= _IS[1]], is_total),
                    "oos": _seg_oos(icdf)}
             if k == _K_GRID[0]:
                 seg["prune_material"] = _prune_material(fac_wide, px_close, mes, fwd_map)
@@ -708,12 +726,15 @@ def main() -> None:
             pd.to_datetime(cal)).sort_index()
         chars = build_char_panel(mes, px_close, mv_wide, vol_wide)
         fac = compute_factor_exp04(cov, chars)
-        report["k60td"] = _full_eval(fac, px_close, bench, mes, fwd_map, mom_k=20)
+        report["k60td"] = _full_eval(fac, px_close, bench, mes, fwd_map, mom_k=20, is_total=is_total)
         report["coverage_notes"] = {
             "window_days": 90,
             "n_reports_proxy": "research_report 90自然日滚动全部研报数",
             "n_orgs_proxy": "窗口内非空机构去重数",
             "turnover_derived": "volume(手)x100/(circ_mv(万元)x1e4/close)，600519 三时点实测校准",
+            "coverage_caliber": "ic_gate 的 coverage>=60% 指**月覆盖率** coverage_ratio="
+                                "n_months/IS 月数（T5 口径治本 2026-09-17）；coverage_mean 是"
+                                "月均截面股票数（计数），量纲不同禁与百分比门直比",
         }
         trials = 1 + len(_SLIP_STRESS)
 
@@ -721,6 +742,8 @@ def main() -> None:
     report["thresholds"] = {
         "ic_gate": (
             f"IS |IC|>={proto['ic_min']:g} & {proto['sig_rule']} & coverage>={proto['coverage_min']:.0%}"
+            + f"（coverage 口径=月覆盖率 coverage_ratio=n_months/{is_total} IS 月数；"
+              "coverage_mean=月均截面广度计数非百分比，禁与本门直比）"
             + ("（registry 头 2026-09-12 成文）" if args.protocol == "exp_primary"
                else "（另行预注册降权协议：覆盖率分母=IS' 月数；SE 相对主协议放大 "
                     f"{proto['se_inflation_vs_primary']} 倍=sqrt(60/36)；无晋级权）")
