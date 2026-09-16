@@ -38,10 +38,14 @@ def root(tmp_path: Path) -> Path:
     (tmp_path / "docs/01_policies_and_standards/_registry/catalogs").mkdir(parents=True)
     (tmp_path / "docs/02_enterprise_architecture/07_trading_decision_architecture/design_memos").mkdir(parents=True)
     (tmp_path / ".runtime/quarantine").mkdir(parents=True)
+    (tmp_path / "scripts").mkdir(parents=True)
+    (tmp_path / "config").mkdir(parents=True)
     (tmp_path / "AGENTS.md").write_text("rules", encoding="utf-8")
     (tmp_path / "docs/01_policies_and_standards/_registry/catalogs/factor_registry.yaml").write_text(
         "v: 1", encoding="utf-8"
     )
+    (tmp_path / "scripts/git_commit.py").write_text("# commit gateway", encoding="utf-8")
+    (tmp_path / "config/gateway_flags.yaml").write_text("on: true", encoding="utf-8")
     return tmp_path
 
 
@@ -69,6 +73,17 @@ class TestHashAndCache:
         """基准扫描覆盖热目录集：注册表目录文件+仓根平铺热文件均入缓存。"""
         assert "docs/01_policies_and_standards/_registry/catalogs/factor_registry.yaml" in handler._hash_cache
         assert "AGENTS.md" in handler._hash_cache  # 仓根平铺（非递归）
+
+    def test_watch_specs_include_scripts_and_config(self, handler: wad.WriteAuditHandler) -> None:
+        """watch 集含 scripts/+config/ 且 recursive（09-16 W1/W3 回滚归因盲区治本，§11.4-C）。
+
+        断言目录列表（_WATCH_SPECS 显式条目）+ 行为面（基准扫描实际吃到两目录文件）。
+        """
+        specs = dict(wad._WATCH_SPECS)
+        assert specs.get("scripts") is True
+        assert specs.get("config") is True
+        assert "scripts/git_commit.py" in handler._hash_cache
+        assert "config/gateway_flags.yaml" in handler._hash_cache
 
     def test_rel_posix(self, root: Path) -> None:
         assert wad._rel(root / "docs/x.md", root) == "docs/x.md"

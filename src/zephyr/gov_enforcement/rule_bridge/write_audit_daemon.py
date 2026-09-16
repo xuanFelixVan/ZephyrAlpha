@@ -31,7 +31,9 @@ ops_guard 全审计窗口零命中）。对带外通道，Windows 无内核驱�
      直接回答"哪个 AI 会话"，比通用进程级归因高一级（#ARCH-264 三要素之可归因）。
 
 边界（防洪峰纪律）：只监视热目录集（_registry/catalogs/、design_memos/、
-仓根平铺、.runtime/quarantine）——全部历史事故面；不做全盘监控。
+仓根平铺、.runtime/quarantine、scripts/、config/——后两目录为 2026-09-16
+W1/W3 回滚窗口归因盲区实证后补，交付报告 §11.4-C）——全部历史事故面；
+不做全盘监控。
 Restart Manager 句柄级归因留作后续增强（MVP 以快照+会话映射为主，
 热目录候选写者任一时刻个位数进程，近似归因工程上已够定凶）。
 
@@ -165,10 +167,15 @@ _STATE_DIR: Final = ".runtime/write_audit"
 _SESSION_REGISTRY: Final = ".runtime/session_registry.json"
 
 # 热目录集（#ARCH-279 裁定B1：全部历史事故面；相对仓根，recursive 标记）
+# scripts/+config/（2026-09-16 补，交付报告 §11.4 治本建议 C）：09-16 W1/W3 窗口
+# scripts/git_commit.py+commit_queue.py 被回滚时 write_audit 零归因记录（盲区实证）。
+# 两目录写入频率适中（非 build 产物区），RDCW 事件风暴风险可接受，recursive=True。
 _WATCH_SPECS: Final = (
     ("docs/01_policies_and_standards/_registry/catalogs", True),
     ("docs/02_enterprise_architecture/07_trading_decision_architecture/design_memos", True),
     (".runtime/quarantine", True),
+    ("scripts", True),
+    ("config", True),
     ("", False),  # 仓根平铺（AGENTS.md 等热文件，非递归）
 )
 

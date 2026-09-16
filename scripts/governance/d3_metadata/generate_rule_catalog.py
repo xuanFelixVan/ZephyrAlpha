@@ -5,7 +5,7 @@
 # [CONSUMERS]
 # [STARTUP] event_driven
 # [MATURITY] production
-# [INVARIANTS] 输出文件名必须为 rule_catalog_registry.yaml（snake_case 硬约束）；generate_catalog 幂等——内容零变更跳过写入（2026-09-13 Owner 指令，reconciler 周期触发防时间戳噪音）
+# [INVARIANTS] 输出文件名必须为 rule_catalog_registry.yaml（snake_case 硬约束）；generate_catalog 幂等——内容零变更跳过写入（2026-09-13 Owner 指令，reconciler 周期触发防时间戳噪音）；保育语义——已存在但非本生成器输入源产出的 files 条目透传保留，生成器只更新它管的条目、不删它不管的（2026-09-16 #11.4-W2，防工具 YAML 侧合法登记被再生成剪除）
 # [MODIFY-GUARD]
 # [STABILITY] evolving
 # [SAFETY] M
@@ -142,6 +142,40 @@ def _count_sections(sections) -> int:
     return EXIT_PASS
 
 
+def _load_unmanaged_entries(output: Path, managed_paths: set[str]) -> list[dict]:
+    """读取既有输出中非本生成器输入源产出的条目（保育语义透传，#11.4-W2）。
+
+    背景（2026-09-16 02:58:54 write_audit 取证）：工具合法登记的条目
+    （add_module_translation / batch_creation_tokens 等 YAML 侧通道写入）不在
+    生成器扫描输入里，原实现整体替换 files 列表会将其剪除、再被 reconciler
+    自动提交固化为 HEAD——与"静态清单禁手工维护"红线的合法通道冲突。
+    保育语义：生成器只管理自身输入源（扫描 frontmatter）产出的条目；对既有
+    输出中 path 不在本次输入里的条目原样保留（不修改字段、不重排序、除按
+    path 去重外不做任何清洗）。同 path 冲突时以本次扫描条目为准（更新语义）。
+    既有文件读不出/解析失败/结构异常 → 返回空列表（不阻塞再生成为主）。
+    """
+    if not output.exists():
+        return []
+    try:
+        old = yaml.safe_load(output.read_text(encoding="utf-8"))
+    except (OSError, UnicodeDecodeError, yaml.YAMLError):
+        return []
+    old_files = old.get("files") if isinstance(old, dict) else None
+    if not isinstance(old_files, list):
+        return []
+    unmanaged: list[dict] = []
+    seen: set[str] = set()
+    for item in old_files:
+        if not isinstance(item, dict):
+            continue
+        path = item.get("path")
+        if not isinstance(path, str) or not path or path in managed_paths or path in seen:
+            continue
+        seen.add(path)
+        unmanaged.append(item)
+    return unmanaged
+
+
 def scan_directory(scan_dir: str, repo_root: Path) -> list[dict]:
     """Scan directory for .md and .yaml files, extract frontmatter."""
     results: list[dict] = []
@@ -202,14 +236,27 @@ def scan_directory(scan_dir: str, repo_root: Path) -> list[dict]:
 
 
 def generate_catalog(entries: list[dict], output_path: str) -> None:
-    """Write rule_catalog_registry.yaml（原子写入：tmp + os.replace；内容零变更跳过）."""
+    """Write rule_catalog_registry.yaml（原子写入：tmp + os.replace；内容零变更跳过）.
+
+    保育语义（#11.4-W2）：非本生成器输入源产出的既有条目透传保留
+    （见 _load_unmanaged_entries）——生成器只更新它管的条目，不删它不管的。
+    """
     gen_ts = datetime.now(UTC).strftime("%Y-%m-%dT%H:%M:%SZ")
 
-    # 派生 tier_distribution 和 total_rules（仅统计有 tier 的规则文件）
-    # #ARCH-024 治本：原由 rules/_index.yaml 手工维护，现从 entries 自动派生
+    output = Path(output_path)
+    output.parent.mkdir(parents=True, exist_ok=True)
+
+    # 保育合并（#11.4-W2）：管辖条目（本次扫描输入）在前，被保育条目（既有
+    # 输出中非本次输入产出）按原顺序追加在后。确定性合并 → 幂等跳过仍成立。
+    managed_paths = {e["path"] for e in entries if isinstance(e.get("path"), str)}
+    merged_entries = list(entries) + _load_unmanaged_entries(output, managed_paths)
+
+    # 派生 tier_distribution 和 total_rules（仅统计有 tier 的规则文件；基于合并
+    # 后列表——计数字段必须描述落盘 files 列表本身，防表内自相矛盾）
+    # #ARCH-024 治本：原由 rules/_index.yaml 手工维护，现从条目自动派生
     tier_distribution: dict[str, int] = {}
     total_rules = 0
-    for e in entries:
+    for e in merged_entries:
         tier = e.get("tier", "")
         if tier:
             tier_distribution[tier] = tier_distribution.get(tier, 0) + 1
@@ -229,14 +276,11 @@ def generate_catalog(entries: list[dict], output_path: str) -> None:
         # maintenance 字段治本（2026-06-29）：声明 auto 让 generate_registry_master_index.py
         # 正确标记本表为自动维护——原缺省填 manual 是标记滞后根因（registry_master_index L167 误标 manual）
         "maintenance": "auto",
-        "total_files": len(entries),
+        "total_files": len(merged_entries),
         "total_rules": total_rules,
         "tier_distribution": tier_distribution,
-        "files": entries,
+        "files": merged_entries,
     }
-
-    output = Path(output_path)
-    output.parent.mkdir(parents=True, exist_ok=True)
 
     # 幂等跳过（2026-09-13 Owner 指令"内容没变就不刷时间戳"）：本生成器被
     # reconciler 周期触发（实测约 12min/次），原实现每次必刷 generated_at=
@@ -264,7 +308,7 @@ def generate_catalog(entries: list[dict], output_path: str) -> None:
                 == old_text
             ):
                 print(
-                    f"Catalog unchanged ({len(entries)} entries), skip rewrite (idempotent)",
+                    f"Catalog unchanged ({len(merged_entries)} entries), skip rewrite (idempotent)",
                     file=sys.stderr,
                 )
                 return
@@ -273,7 +317,7 @@ def generate_catalog(entries: list[dict], output_path: str) -> None:
         output,
         yaml.dump(catalog, allow_unicode=True, default_flow_style=False, sort_keys=False),
     )
-    print(f"Generated catalog with {len(entries)} entries -> {output_path}", file=sys.stderr)
+    print(f"Generated catalog with {len(merged_entries)} entries -> {output_path}", file=sys.stderr)
 
 
 def main() -> None:

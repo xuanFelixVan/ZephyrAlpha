@@ -12,7 +12,7 @@
 #   .runtime/audit/write_audit.jsonl (exact_attribution=true).
 #
 # Rollback: powershell -ExecutionPolicy Bypass -File scripts\governance\enable_write_audit_sacls.ps1 -Undo
-# Scope: hot dir set only (registry catalogs / design memos / quarantine). No full-disk audit.
+# Scope: hot dir set only (registry catalogs / design memos / quarantine / scripts / config). No full-disk audit.
 
 param(
     [switch]$Undo
@@ -67,7 +67,9 @@ try {
 $hotDirs = @(
     (Join-Path $repoRoot "docs\01_policies_and_standards\_registry\catalogs"),
     (Join-Path $repoRoot "docs\02_enterprise_architecture\07_trading_decision_architecture\design_memos"),
-    (Join-Path $repoRoot ".runtime\quarantine")
+    (Join-Path $repoRoot ".runtime\quarantine"),
+    (Join-Path $repoRoot "scripts"),
+    (Join-Path $repoRoot "config")
 )
 
 if ($Undo) {

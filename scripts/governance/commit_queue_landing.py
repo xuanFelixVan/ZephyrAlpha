@@ -506,8 +506,36 @@ class WorktreeLanding:
         branch -f 的 checkout 保护）。共享 index 不被触碰（66 号 §9.7 保留）；
         主工作区文件由 ``_converge_main_workspace`` 受限收敛（仅快进干净文件），
         脏文件陈旧由「会话 worktree 独立工作区 + 死信重新入队」机制覆盖。
+
+        双锁统一（2026-09-16 晚 Owner 开工令，st-commitspeed-20260916）：
+        CAS 前获取 _GlobalCommitLock——消灭直连路径（git_commit.py 持全局锁
+        [gate→stage→commit]）与队列 CAS 的 dev ref 竞态窗口（W4 孤魂提交
+        301a6ee82a 实证：两把互斥锁互不排他→61 秒 gate 窗口内 dev 被抢先）。
+        锁窗口极短（仅 update-ref 调用，<1s）；fail-open：锁不可得时退化为
+        原裸 CAS（CAS 自身仍原子，全局锁是防线加固非正确性前提）。
         """
-        r = self._git_repo("update-ref", f"refs/heads/{self.target_branch}", new_sha, old_sha, check=False)
+        from zephyr.gov_enforcement.rule_bridge.git_commit_gateway import (  # noqa: PLC0415
+            _GlobalCommitLock,
+        )
+
+        _lock = None
+        try:
+            _lock = _GlobalCommitLock(
+                str(self.repo_root),
+                timeout=30.0,  # 短窗：直连提交临界区最长 ~5min，30s 探测够用
+            )
+            _lock.__enter__()
+        except Exception:  # noqa: BLE001 — 锁不可得=裸 CAS 降级（fail-open 加固）
+            logger.warning("[landing] 双锁统一：全局锁不可得（30s 超时），退化为裸 CAS", exc_info=True)
+            _lock = None
+        try:
+            r = self._git_repo("update-ref", f"refs/heads/{self.target_branch}", new_sha, old_sha, check=False)
+        finally:
+            if _lock is not None:
+                try:
+                    _lock.__exit__(None, None, None)
+                except Exception:  # noqa: BLE001
+                    pass
         if r.returncode != 0:
             raise CasConflict(f"dev CAS 推进失败（期望 {old_sha[:12]}）: {(r.stderr or r.stdout).strip()[:300]}")
 

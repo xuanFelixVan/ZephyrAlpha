@@ -148,8 +148,11 @@ def make_worktree_required_gate() -> GateSpec:
         return False, (
             f"非 worktree commit 且存在其他活跃 session（{other_ids}），"
             f"共享工作区 commit 可能搭便车带入其他 session WIP。"
+            f"【09-16 取证级警告】共享区 stash 隔离可吞他会话 tracked 修改"
+            f"（W1 战伤：17 文件回 HEAD，pop 被 reaper 误杀即丢失）。"
             f"治本：使用 session_worktree_start() 创建物理隔离 worktree。"
-            f"逃生通道：commit(allow_non_worktree=True) 或 CLI --allow-non-worktree。"
+            f"逃生通道：commit(allow_non_worktree=True) 或 CLI --allow-non-worktree"
+            f"（逃生后你的 WIP 仍在共享区 stash 吞噬风险面内——改完即提交不留窗）。"
         )
 
     return GateSpec(gate_id="WORKTREE-REQUIRED", check=_check, priority=44)

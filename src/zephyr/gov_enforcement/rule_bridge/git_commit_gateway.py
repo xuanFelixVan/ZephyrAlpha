@@ -2606,6 +2606,26 @@ class GitCommitGateway:
                 status=CommitStatus.COMMIT_FAILED,
                 message=f"git commit failed: {commit_err}",
             )
+        # 双锁统一·孤魂检测（2026-09-16 晚 Owner 开工令，W4 孤魂 301a6ee82a 治本）：
+        # commit 后验证 hash 在 HEAD 祖先链——若被并发 ref 覆盖（孤儿化），立刻
+        # 可见（而非静默丢失等下次发现）；fail-open：检测异常不改变 OK 判定。
+        try:
+            _anc = self.run_git(["git", "merge-base", "--is-ancestor", commit_hash, "HEAD"])
+            if _anc.returncode != 0:
+                logger.error(
+                    "GitCommitGateway: 孤魂提交警告 hash=%s 不在 HEAD 祖先链"
+                    "（并发 ref 竞态覆盖嫌疑，内容保留在对象库可 cherry-pick 恢复）",
+                    commit_hash[:12],
+                )
+                self._append_commit_anomaly_jsonl({
+                    "session_id": session_id,
+                    "event": "orphan_commit_detected",
+                    "commit_hash": commit_hash,
+                    "files_count": len(files),
+                    "recovery": f"git cherry-pick {commit_hash}",
+                })
+        except Exception:  # noqa: BLE001 — 孤魂检测自身异常不阻断 OK 路径
+            logger.debug("孤魂检测异常（不阻断）", exc_info=True)
         os.environ[_GATEWAY_ENV] = "1"
         logger.info(
             "GitCommitGateway: commit 成功 hash=%s marker=%s files=%d",

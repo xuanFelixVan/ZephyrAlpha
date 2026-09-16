@@ -59,10 +59,14 @@ _AUDIT_FILE = "write_audit.jsonl"
 _STATE_FILE = ".runtime/write_audit/sacl_collector_state.json"
 
 # 热目录集前缀（与 write_audit_daemon._WATCH_SPECS 对齐；相对仓根正斜杠）
+# scripts/+config/（2026-09-16 补，交付报告 §11.4 治本建议 C，与 daemon 同批）；
+# 仓根平铺条目（""）不在采集器侧（前缀空无法收敛过滤面）。
 _HOT_PREFIXES: tuple[str, ...] = (
     "docs/01_policies_and_standards/_registry/catalogs",
     "docs/02_enterprise_architecture/07_trading_decision_architecture/design_memos",
     ".runtime/quarantine",
+    "scripts",
+    "config",
 )
 
 # 4663 Access Mask 位（写删语义判定）

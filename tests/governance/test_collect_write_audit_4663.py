@@ -101,3 +101,19 @@ class TestParse4663:
     def test_bad_access_mask_degrade_to_access(self) -> None:
         rec = parse_4663_inserts(_inserts("D:\\ZephyrAlpha\\.runtime\\quarantine\\q\\a.md", "zz"), _ROOT)
         assert rec is not None and rec["op"] == "access"
+
+
+class TestHotPrefixAlignment:
+    def test_hot_prefixes_aligned_with_daemon_watch_specs(self) -> None:
+        """collector 前缀集与 daemon _WATCH_SPECS 对齐（防三镜像漂移；仓根平铺豁免）。
+
+        2026-09-16 W1/W3 回滚盲区根因=热目录集镜像失同步——本断言锁死
+        scripts/governance/collect_write_audit_4663.py 与 daemon 的目录集一致
+        （仓根平铺 "" 无前缀语义，daemon 侧豁免）。
+        """
+        from scripts.governance import collect_write_audit_4663 as collector  # noqa: E402
+        from zephyr.gov_enforcement.rule_bridge.write_audit_daemon import _WATCH_SPECS
+
+        daemon_dirs = {spec for spec, _recursive in _WATCH_SPECS if spec}
+        assert set(collector._HOT_PREFIXES) == daemon_dirs
+        assert {"scripts", "config"} <= daemon_dirs  # 09-16 盲区治本（§11.4-C）
