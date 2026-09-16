@@ -16580,6 +16580,10 @@ creation_tokens:
   token: btfix-p1p2-wave-generator-20260916
   created_by: st-btfix-p16-20260916
   capability: btfix_p1p2
+- file: docs/_working/reports/p21_algo_flow_orchestrator_wave_report.md
+  token: btfix-p1p2-p21-algo-flow-orchestrator-wave-report-20260916
+  created_by: st-btfix-p16-20260916
+  capability: btfix_p1p2
 - file: "docs/_working/2026-09-14-full-chain-factory-blueprint.md"
   token: "fullchain-factory-blueprint-20260914"
   created_by: "st-fullchain-20260914"
@@ -17291,3 +17295,7 @@ creation_tokens:
   created_by: st-sopx-20260916
   capability: metamorphic_mutation_pilot_report
 di_seam_exemptions: []
+- file: docs/_working/resource_schedule/resource_schedule_delivery_report_v1.md
+  token: resource-schedule-delivery-report-v1-st-resource-20260916
+  created_by: st-resource-20260916
+  capability: resource_schedule_delivery_report
