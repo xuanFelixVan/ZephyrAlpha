@@ -4,7 +4,7 @@ submodule_path: src/zephyr/autonomy_core
 title: "可执行 Agent Spec 蓝图 — 蓝图→Skill 升级引擎"
 doc_type: blueprint
 status: Active
-version: "0.19.9"
+version: "0.19.10"
 layer: L1_foundation
 owner: ZephyrAlpha-Owner
 classification: confidential
@@ -75,7 +75,7 @@ build_status: deprecated
 > **什么时候建**: 当未注册 Skill ≥3（新模块大量增加），或 Skill 加载失败率 ≥10%，或 Owner 要求 Skill 自发现自注册时。
 > **自动化宿主**: CircadianScheduler `hour=4` → `_skill_registration_scan()` + FLE `_periodic_checks()` → `_skill_health_check()`
 
-> module_id: MOD-INF-019 | version: 0.19.9 | status: Active | layer: cross_layer
+> module_id: MOD-INF-019 | version: 0.19.10 | status: Active | layer: cross_layer
 > actual_disk_path: src/zephyr/agent-spec/ | generation: 2 | construction_progress: partially_implemented
 
 ## 概述
@@ -1522,7 +1522,7 @@ Factory Agent 问 3 个问题：Q1 核心操作？Q2 独特约束/模式？Q3 �
 
 ## 1. 已实现代码完整路径索引
 
-> **AGENTS.md §6.1 蓝图-代码同步强制约定**——本节是蓝图与磁盘代码的「地址簿」。
+> **蓝图-代码同步强制约定**（稳定锚：AGENTS.md RULE-DEPGRAPH / RULE-PANORAMA；验证端 validate_blueprint_code_sync.py）——本节是蓝图与磁盘代码的「地址簿」。
 > 蓝图声称的文件必须与磁盘实际一致。不一致 = 蓝图漂移 = 下一个 AI session 冷启动时被误导。
 > **AUTOGEN**：本表由 sync_blueprint_code_index.py 从 depgraph.nodes 运营态（build_status∈generated/testing/stable）单向派生，禁止手写；重跑本脚本幂等更新。
 > 
@@ -1676,7 +1676,7 @@ Factory Agent 问 3 个问题：Q1 核心操作？Q2 独特约束/模式？Q3 �
 3. 读施工 Phase 规划 → 知道「下一步该做什么」
 
 **路径约定**：
-- 所有路径相对于 `D:\ZephyrAlpha\\`
+- 所有路径相对于仓库根目录（REPO_ROOT，不写死盘符绝对路径）
 - 源码在 `src/zephyr/` 下
 - 测试在 `tests/` 下
 - 配置在 `config/` 下

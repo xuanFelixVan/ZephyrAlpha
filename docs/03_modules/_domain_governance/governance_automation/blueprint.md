@@ -4,7 +4,7 @@ submodule_path: src/zephyr/governance
 title: 脚本系统蓝图 — 第三条生产线的自动化审计与门禁
 doc_type: blueprint
 status: Active
-version: 5.5.23
+version: 5.5.25
 layer: L0_infrastructure
 layer_name: infrastructure
 functional_domain: governance
@@ -115,7 +115,7 @@ design_maturity: production
 | 图 | 位置 | 状态 | 链接 |
 |----|------|------|------|
 | 依赖图 (depgraph) | `blueprint_id=MOD-INF-005` 的 484 个 file 节点 | production | `extract_depgraph.py --modules MOD-INF-005` |
-| 数据流图 (dataflow) | （无节点） | N/A | `apply_dataflowgraph.py --list-datasets` |
+| 数据流图 (dataflow) | 0 个 Dataset / 1 个 Job | active | `apply_dataflowgraph.py --list-datasets` |
 | 决策架构图 (decision) | 0 个决策节点 / 1 个决策层 | N/A | `generate_decision_diagram.py` |
 | 蓝图 (blueprint) | 本文件 | Active | — |
 
@@ -1442,7 +1442,7 @@ scripts/governance/quickstart.md → §22 Zero-Memory 冷启动卡片
 
 ## 14. 已实现代码完整路径索引
 
-> **AGENTS.md §6.1 蓝图-代码同步强制约定**——本节是蓝图与磁盘代码的「地址簿」。
+> **蓝图-代码同步强制约定**（稳定锚：AGENTS.md RULE-DEPGRAPH / RULE-PANORAMA；验证端 validate_blueprint_code_sync.py）——本节是蓝图与磁盘代码的「地址簿」。
 > 蓝图声称的文件必须与磁盘实际一致。不一致 = 蓝图漂移 = 下一个 AI session 冷启动时被误导。
 > **AUTOGEN**：本表由 sync_blueprint_code_index.py 从 depgraph.nodes 运营态（build_status∈generated/testing/stable）单向派生，禁止手写；重跑本脚本幂等更新。
 > 脚本系统——第三条生产线，scaffold MVP已交付
@@ -1458,6 +1458,7 @@ scripts/governance/quickstart.md → §22 Zero-Memory 冷启动卡片
 
 | 文件路径 | 实现状态 | 说明 |
 |---------|:---:|------|
+| `tests/blueprint/test_sync_blueprint_code_index_template.py` | ✅ 已实现 | |
 | `tests/dr/test_backup_lock_stale.py` | ✅ 已实现 | |
 | `tests/f_lifecycle/test_f18_automation.py` | ✅ 已实现 | |
 | `tests/f_lifecycle/test_f18_redblue.py` | ✅ 已实现 | |
@@ -1505,7 +1506,7 @@ scripts/governance/quickstart.md → §22 Zero-Memory 冷启动卡片
 3. 读施工 Phase 规划 → 知道「下一步该做什么」
 
 **路径约定**：
-- 所有路径相对于 `D:\ZephyrAlpha\\`
+- 所有路径相对于仓库根目录（REPO_ROOT，不写死盘符绝对路径）
 - 源码在 `src/zephyr/` 下
 - 测试在 `tests/` 下
 - 配置在 `config/` 下

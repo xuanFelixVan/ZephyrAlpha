@@ -129,3 +129,19 @@ acknowledged:
   verdict: intentional
   stable_key: "scripts/industry_graph/graph_quality_check.py:_load_alive_stocks||scripts/industry_graph/websearch_ingest.py:_load_stock_basic"
   note: 存量重复非本次引入——_load_alive_stocks 与 websearch_ingest._load_stock_basic 均为既有代码，本批仅改 _check_s21 连通分量判定，合并重构另立任务（st-f06dsr-shift2-20260915）
+- id: cg-panorama-fetch-all-modules-20260916
+  verdict: intentional
+  stable_key: "scripts/governance/d5_architecture/generators/generate_blueprint_panorama.py:_fetch_all_dataflow_modules||scripts/governance/d5_architecture/generators/generate_blueprint_panorama.py:_fetch_all_decision_modules"
+  note: 三图全景「遍历模块→逐图全量拉取」样板 dataflow/decision 镜像同构；本班（st-bptmpl-20260916 蓝图模板治本）仅改该文件头注一行，四对函数均为既有实现非本批引入；合并参数化治本移交后续重构班
+- id: cg-panorama-fetch-single-module-20260916
+  verdict: intentional
+  stable_key: "scripts/governance/d5_architecture/generators/generate_blueprint_panorama.py:_fetch_dataflow_module||scripts/governance/d5_architecture/generators/generate_blueprint_panorama.py:_fetch_decision_module"
+  note: 单模块数据拉取函数 dataflow/decision 镜像同构；本班（st-bptmpl-20260916 蓝图模板治本）仅改该文件头注一行，四对函数均为既有实现非本批引入；合并参数化治本移交后续重构班
+- id: cg-panorama-col-20260916
+  verdict: intentional
+  stable_key: "scripts/governance/d5_architecture/generators/generate_blueprint_panorama.py:_col||scripts/governance/d5_architecture/generators/generate_blueprint_panorama.py:_col"
+  note: 同名私有列取值助手 _col 双副本（表格渲染局部工具，行取值样板）；本班（st-bptmpl-20260916 蓝图模板治本）仅改该文件头注一行，四对函数均为既有实现非本批引入；合并参数化治本移交后续重构班
+- id: cg-panorama-status-str-20260916
+  verdict: intentional
+  stable_key: "scripts/governance/d5_architecture/generators/generate_blueprint_panorama.py:_depgraph_status_str||scripts/governance/d5_architecture/generators/generate_blueprint_panorama.py:_decision_status_str"
+  note: 状态串归一助手镜像（depgraph/decision 各图状态枚举文案化）；本班（st-bptmpl-20260916 蓝图模板治本）仅改该文件头注一行，四对函数均为既有实现非本批引入；合并参数化治本移交后续重构班

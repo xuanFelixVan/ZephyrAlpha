@@ -3,7 +3,7 @@ module_id: MOD-SIM-005
 title: "场景生成器蓝图 — 蒙特卡洛+历史场景+自定义场景"
 doc_type: blueprint
 status: Active
-version: "0.1.3"
+version: "0.1.4"
 design_maturity: production
 build_status: production
 ttl: permanent
@@ -112,7 +112,7 @@ responsibility_domain:
 | 图 | 位置 | 状态 | 链接 |
 |----|------|------|------|
 | 依赖图 (depgraph) | `blueprint_id=MOD-SIM-005` 的 1 个 file 节点 | production | `extract_depgraph.py --modules MOD-SIM-005` |
-| 数据流图 (dataflow) | （无节点） | N/A | `apply_dataflowgraph.py --list-datasets` |
+| 数据流图 (dataflow) | 0 个 Dataset / 1 个 Job | active | `apply_dataflowgraph.py --list-datasets` |
 | 决策架构图 (decision) | 0 个决策节点 / 1 个决策层 | N/A | `generate_decision_diagram.py` |
 | 蓝图 (blueprint) | 本文件 | Active | — |
 
@@ -131,7 +131,7 @@ responsibility_domain:
 
 ## 8. 已实现代码完整路径索引
 
-> **AGENTS.md §6.1 蓝图-代码同步强制约定**——本节是蓝图与磁盘代码的「地址簿」。
+> **蓝图-代码同步强制约定**（稳定锚：AGENTS.md RULE-DEPGRAPH / RULE-PANORAMA；验证端 validate_blueprint_code_sync.py）——本节是蓝图与磁盘代码的「地址簿」。
 > 蓝图声称的文件必须与磁盘实际一致。不一致 = 蓝图漂移 = 下一个 AI session 冷启动时被误导。
 > **AUTOGEN**：本表由 sync_blueprint_code_index.py 从 depgraph.nodes 运营态（build_status∈generated/testing/stable）单向派生，禁止手写；重跑本脚本幂等更新。
 > 
@@ -150,7 +150,7 @@ responsibility_domain:
 3. 读施工 Phase 规划 → 知道「下一步该做什么」
 
 **路径约定**：
-- 所有路径相对于 `D:\ZephyrAlpha\\`
+- 所有路径相对于仓库根目录（REPO_ROOT，不写死盘符绝对路径）
 - 源码在 `src/zephyr/` 下
 - 测试在 `tests/` 下
 - 配置在 `config/` 下

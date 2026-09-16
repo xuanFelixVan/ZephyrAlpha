@@ -9,6 +9,7 @@
 # [MODIFY-GUARD]
 # [STABILITY] evolving
 # [SAFETY] M
+# noqa: m11-perm-manual-legitimate  M11豁免: 本工具由 post-commit reconciler 事件链（blueprint_code_index_reconciler）自动调用+AI/CI 按需 CLI 双入口，非常驻服务非 cron
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT]
 # [TESTS]
@@ -17,7 +18,8 @@
 """
 
 
-对标：AGENTS.md §6.1 蓝图-代码同步强制约定
+对标：蓝图-代码同步强制约定（稳定锚：AGENTS.md RULE-DEPGRAPH / RULE-PANORAMA，
+      trae_080_panorama_alignment.yaml——L0 宪法 2026-09-12 替换后禁写死 §编号）
       validate_blueprint_code_sync.py（验证端）的修复端——验证查问题，同步修问题
 
 功能：
@@ -40,8 +42,8 @@ import os
 
 __manifest__ = """
 args: []
-description: SYNC-BLUEPRINT-CODE — 蓝图§19已实现代码路径索引自动同步（AGENTS.md §6.1 — 为缺少路径索引的蓝图自动补齐+version
-  patch+1，--check模式仅检测漂移）
+description: SYNC-BLUEPRINT-CODE — 蓝图「已实现代码完整路径索引」章节自动同步（锚：AGENTS.md RULE-DEPGRAPH /
+  RULE-PANORAMA — 为缺少路径索引的蓝图自动补齐+version patch+1，--check模式仅检测漂移）
 dimensions:
 - D5
 - D8
@@ -547,7 +549,10 @@ def _generate_path_index_section(
     lines = []
     lines.append(f"## {section_num}. 已实现代码完整路径索引")
     lines.append("")
-    lines.append("> **AGENTS.md §6.1 蓝图-代码同步强制约定**——本节是蓝图与磁盘代码的「地址簿」。")
+    lines.append(
+        "> **蓝图-代码同步强制约定**（稳定锚：AGENTS.md RULE-DEPGRAPH / RULE-PANORAMA；"
+        "验证端 validate_blueprint_code_sync.py）——本节是蓝图与磁盘代码的「地址簿」。"
+    )
     lines.append("> 蓝图声称的文件必须与磁盘实际一致。不一致 = 蓝图漂移 = 下一个 AI session 冷启动时被误导。")
     lines.append(_AUTOGEN_NOTE)
     lines.append(f"> {note}")
@@ -614,7 +619,7 @@ def _generate_path_index_section(
     lines.append("3. 读施工 Phase 规划 → 知道「下一步该做什么」")
     lines.append("")
     lines.append("**路径约定**：")
-    lines.append("- 所有路径相对于 `D:\\ZephyrAlpha\\\\`")
+    lines.append("- 所有路径相对于仓库根目录（REPO_ROOT，不写死盘符绝对路径）")
     lines.append("- 源码在 `src/zephyr/` 下")
     lines.append("- 测试在 `tests/` 下")
     lines.append("- 配置在 `config/` 下")
@@ -642,13 +647,19 @@ def _extract_existing_section(content: str) -> tuple[int, int, int] | None:
 def _extract_note(section_text: str) -> str:
     """从现有章节提取人工 note 行（保留人工描述，更新模式不丢信息）。
 
-    note = blockquote 行中排除固定两行（AGENTS.md §6.1 / 蓝图声称）与 AUTOGEN 行后的第一条。
+    note = blockquote 行中排除固定两行（蓝图-代码同步强制约定 / 蓝图声称）与 AUTOGEN 行后的第一条。
     """
     for line in section_text.splitlines():
         stripped = line.strip()
         if not stripped.startswith(">"):
             continue
-        if "AGENTS.md §6.1" in stripped or "蓝图声称的文件必须" in stripped or "AUTOGEN" in stripped:
+        # 稳定短语匹配：新旧模板行均含「蓝图-代码同步强制约定」（2026-09-12 L0 宪法替换后
+        # 模板去 §编号化，匹配器不得锚定编号文本，否则旧文案行会被误认为人工 note）。
+        if (
+            "蓝图-代码同步强制约定" in stripped
+            or "蓝图声称的文件必须" in stripped
+            or "AUTOGEN" in stripped
+        ):
             continue
         return stripped.lstrip("> ").strip()
     return ""
@@ -786,7 +797,9 @@ def sync(check_only: bool = False) -> int:
 
 def main() -> None:
     """入口函数."""
-    parser = ArgumentParser(description="蓝图 §19 已实现代码路径索引自动同步（AGENTS.md §6.1）")
+    parser = ArgumentParser(
+        description="蓝图「已实现代码完整路径索引」章节自动同步（锚：AGENTS.md RULE-DEPGRAPH / RULE-PANORAMA）"
+    )
     parser.add_argument(
         "--check",
         action="store_true",

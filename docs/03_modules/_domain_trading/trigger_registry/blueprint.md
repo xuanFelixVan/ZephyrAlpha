@@ -3,7 +3,7 @@ module_id: MOD-TRIG-001
 title: "扳机清单注册与仲裁引擎 — 触发器统一注册+优先级仲裁+同源去重+冷却期防重"
 doc_type: blueprint
 status: Active
-version: "0.1.3"
+version: "0.1.4"
 ttl: permanent
 layer: L2_domain
 functional_domain: trading
@@ -29,7 +29,7 @@ summary: "41 §3.9 条件触发执行队列：买入/卖出/执行/风控触发�
 ---
 # Trigger Registry 蓝图+施工图 — 扳机清单注册与仲裁引擎 — 触发器统一注册+优先级仲裁+同源去重+冷却期防重
 
-> module_id: MOD-TRIG-001 | version: 0.1.3 | status: Active | layer: L2_domain (trading)
+> module_id: MOD-TRIG-001 | version: 0.1.4 | status: Active | layer: L2_domain (trading)
 > actual_disk_path: src/zephyr/trading/trigger_registry.py | generation: 1
 > 设计真源: 41_buy_flow v1.7.0 §3.9 | 施工性质: 回填蓝图（代码已完工，83用例通过，2026-08-13 补建，遗留项 #29）
 
@@ -82,7 +82,7 @@ summary: "41 §3.9 条件触发执行队列：买入/卖出/执行/风控触发�
 | 图 | 位置 | 状态 | 链接 |
 |----|------|------|------|
 | 依赖图 (depgraph) | `blueprint_id=MOD-TRIG-001` 的 2 个 file 节点 | production | `extract_depgraph.py --modules MOD-TRIG-001` |
-| 数据流图 (dataflow) | （无节点） | N/A | `apply_dataflowgraph.py --list-datasets` |
+| 数据流图 (dataflow) | 0 个 Dataset / 1 个 Job | active | `apply_dataflowgraph.py --list-datasets` |
 | 决策架构图 (decision) | 0 个决策节点 / 1 个决策层 | N/A | `generate_decision_diagram.py` |
 | 蓝图 (blueprint) | 本文件 | Active | — |
 
@@ -504,7 +504,7 @@ class TriggeredEvent:
 
 ## 1. 已实现代码完整路径索引
 
-> **AGENTS.md §6.1 蓝图-代码同步强制约定**——本节是蓝图与磁盘代码的「地址簿」。
+> **蓝图-代码同步强制约定**（稳定锚：AGENTS.md RULE-DEPGRAPH / RULE-PANORAMA；验证端 validate_blueprint_code_sync.py）——本节是蓝图与磁盘代码的「地址簿」。
 > 蓝图声称的文件必须与磁盘实际一致。不一致 = 蓝图漂移 = 下一个 AI session 冷启动时被误导。
 > **AUTOGEN**：本表由 sync_blueprint_code_index.py 从 depgraph.nodes 运营态（build_status∈generated/testing/stable）单向派生，禁止手写；重跑本脚本幂等更新。
 > 
@@ -523,7 +523,7 @@ class TriggeredEvent:
 3. 读施工 Phase 规划 → 知道「下一步该做什么」
 
 **路径约定**：
-- 所有路径相对于 `D:\ZephyrAlpha\\`
+- 所有路径相对于仓库根目录（REPO_ROOT，不写死盘符绝对路径）
 - 源码在 `src/zephyr/` 下
 - 测试在 `tests/` 下
 - 配置在 `config/` 下

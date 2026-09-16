@@ -5,7 +5,7 @@ submodule_path: src/zephyr/governance
 title: "Audit Orchestrator 蓝图 — 审计编排器·三子系统架构"
 doc_type: blueprint
 status: Active
-version: "6.1.3"
+version: "6.1.4"
 layer: L1_foundation
 architecture_layer: "L2_编排调度"
 layer_name: cross_layer
@@ -96,7 +96,7 @@ design_maturity: production
 
 # Audit Orchestrator 蓝图 — 审计编排器·三子系统架构
 
-> module_id: MOD-INF-027 | version: 6.1.3 | status: active | layer: cross_layer
+> module_id: MOD-INF-027 | version: 6.1.4 | status: active | layer: cross_layer
 > actual_disk_path: src/zephyr/audit-orchestrator/ | generation: 6 | construction_progress: partially_implemented | realized: 7/33
 
 ## 概述
@@ -195,7 +195,7 @@ Audit Orchestrator 是 ZephyrAlpha 的全维度系统自证清白引擎，基于
 | 图 | 位置 | 状态 | 链接 |
 |----|------|------|------|
 | 依赖图 (depgraph) | `blueprint_id=MOD-INF-027` 的 8 个 file 节点 | production | `extract_depgraph.py --modules MOD-INF-027` |
-| 数据流图 (dataflow) | （无节点） | N/A | `apply_dataflowgraph.py --list-datasets` |
+| 数据流图 (dataflow) | 0 个 Dataset / 1 个 Job | active | `apply_dataflowgraph.py --list-datasets` |
 | 决策架构图 (decision) | 0 个决策节点 / 1 个决策层 | N/A | `generate_decision_diagram.py` |
 | 蓝图 (blueprint) | 本文件 | Active | — |
 
@@ -1015,7 +1015,7 @@ STEP 3: 拆分后验证
 
 ## 1. 已实现代码完整路径索引
 
-> **AGENTS.md §6.1 蓝图-代码同步强制约定**——本节是蓝图与磁盘代码的「地址簿」。
+> **蓝图-代码同步强制约定**（稳定锚：AGENTS.md RULE-DEPGRAPH / RULE-PANORAMA；验证端 validate_blueprint_code_sync.py）——本节是蓝图与磁盘代码的「地址簿」。
 > 蓝图声称的文件必须与磁盘实际一致。不一致 = 蓝图漂移 = 下一个 AI session 冷启动时被误导。
 > **AUTOGEN**：本表由 sync_blueprint_code_index.py 从 depgraph.nodes 运营态（build_status∈generated/testing/stable）单向派生，禁止手写；重跑本脚本幂等更新。
 > 
@@ -1041,7 +1041,7 @@ STEP 3: 拆分后验证
 3. 读施工 Phase 规划 → 知道「下一步该做什么」
 
 **路径约定**：
-- 所有路径相对于 `D:\ZephyrAlpha\\`
+- 所有路径相对于仓库根目录（REPO_ROOT，不写死盘符绝对路径）
 - 源码在 `src/zephyr/` 下
 - 测试在 `tests/` 下
 - 配置在 `config/` 下

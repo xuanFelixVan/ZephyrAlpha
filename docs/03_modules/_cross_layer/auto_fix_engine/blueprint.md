@@ -4,7 +4,7 @@ submodule_path: src/zephyr/infrastructure/auto_fix_engine
 title: "Auto Fix Engine 蓝图 — 自动修复引擎·模板化修复执行"
 doc_type: blueprint
 status: Active
-version: "5.1.5"
+version: "5.1.6"
 layer: L1_foundation
 owner: ZephyrAlpha-Owner
 classification: confidential
@@ -61,7 +61,7 @@ build_status: production
 
 本蓝图描述 AutoFixEngine——ZephyrAlpha 的自动修复引擎。它解决了审计发现问题到自动修复执行的闭环问题。核心职责包括：三通道修复管道（结构→模板化100%确定 / 语义→LLM Bridge 95~98%置信 / 行为→Block+Alert永不自动修复）、8状态修复生命周期、WAL原子修复保证、病因修复法九阶链。当前规模 ~51模块/~268脚本/单Session，目标容量 1500模块/10000脚本/100 AI并发。上游依赖 DriftDetector(MOD-INF-023)/OrphanJudge(MOD-INF-029)/SemanticAuditor(MOD-INF-028) 提供审计发现，下游被 AuditOrchestrator(MOD-INF-027) 消费修复结果。
 
-> module_id: MOD-INF-031 | version: 5.1.5 | status: Active | layer: cross_layer
+> module_id: MOD-INF-031 | version: 5.1.6 | status: Active | layer: cross_layer
 > actual_disk_path: src/zephyr/auto-fix-engine/ | generation: 5 | construction_progress: design_only
 
 > **标准锚点（防幻觉）**——本蓝图必须严格遵循以下标准：
@@ -153,7 +153,7 @@ build_status: production
 | 图 | 位置 | 状态 | 链接 |
 |----|------|------|------|
 | 依赖图 (depgraph) | `blueprint_id=MOD-INF-031` 的 60 个 file 节点 | production | `extract_depgraph.py --modules MOD-INF-031` |
-| 数据流图 (dataflow) | （无节点） | N/A | `apply_dataflowgraph.py --list-datasets` |
+| 数据流图 (dataflow) | 0 个 Dataset / 1 个 Job | active | `apply_dataflowgraph.py --list-datasets` |
 | 决策架构图 (decision) | 0 个决策节点 / 1 个决策层 | N/A | `generate_decision_diagram.py` |
 | 蓝图 (blueprint) | 本文件 | Active | — |
 
@@ -1264,7 +1264,7 @@ ConvergenceController：RedBlue 对抗验证→全部 GREEN→收敛检测→N �
 
 ## 1. 已实现代码完整路径索引
 
-> **AGENTS.md §6.1 蓝图-代码同步强制约定**——本节是蓝图与磁盘代码的「地址簿」。
+> **蓝图-代码同步强制约定**（稳定锚：AGENTS.md RULE-DEPGRAPH / RULE-PANORAMA；验证端 validate_blueprint_code_sync.py）——本节是蓝图与磁盘代码的「地址簿」。
 > 蓝图声称的文件必须与磁盘实际一致。不一致 = 蓝图漂移 = 下一个 AI session 冷启动时被误导。
 > **AUTOGEN**：本表由 sync_blueprint_code_index.py 从 depgraph.nodes 运营态（build_status∈generated/testing/stable）单向派生，禁止手写；重跑本脚本幂等更新。
 > 
@@ -1325,7 +1325,7 @@ ConvergenceController：RedBlue 对抗验证→全部 GREEN→收敛检测→N �
 3. 读施工 Phase 规划 → 知道「下一步该做什么」
 
 **路径约定**：
-- 所有路径相对于 `D:\ZephyrAlpha\\`
+- 所有路径相对于仓库根目录（REPO_ROOT，不写死盘符绝对路径）
 - 源码在 `src/zephyr/` 下
 - 测试在 `tests/` 下
 - 配置在 `config/` 下

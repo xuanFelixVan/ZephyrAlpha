@@ -4,7 +4,7 @@ submodule_path: src/zephyr/governance/persistence
 title: "Database 集成蓝图 — 2库职责划分(SQLite治理+PG架构) + 三层冷热架构定位"
 doc_type: blueprint
 status: Active
-version: "4.3.10"
+version: "4.3.11"
 layer: L1_foundation
 blueprint_level: domain
 owner: ZephyrAlpha-Owner
@@ -261,7 +261,7 @@ v3.0: 脚本执行器 ──→ get_depgraph_pg_connection() ──→ depgraph 
 | 图 | 位置 | 状态 | 链接 |
 |----|------|------|------|
 | 依赖图 (depgraph) | `blueprint_id=SH-DB-001` 的 12 个 file 节点 | production | `extract_depgraph.py --modules SH-DB-001` |
-| 数据流图 (dataflow) | （无节点） | N/A | `apply_dataflowgraph.py --list-datasets` |
+| 数据流图 (dataflow) | 0 个 Dataset / 1 个 Job | active | `apply_dataflowgraph.py --list-datasets` |
 | 决策架构图 (decision) | 0 个决策节点 / 1 个决策层 | N/A | `generate_decision_diagram.py` |
 | 蓝图 (blueprint) | 本文件 | Active | — |
 
@@ -385,7 +385,7 @@ v3.0: 脚本执行器 ──→ get_depgraph_pg_connection() ──→ depgraph 
 
 ## 1. 已实现代码完整路径索引
 
-> **AGENTS.md §6.1 蓝图-代码同步强制约定**——本节是蓝图与磁盘代码的「地址簿」。
+> **蓝图-代码同步强制约定**（稳定锚：AGENTS.md RULE-DEPGRAPH / RULE-PANORAMA；验证端 validate_blueprint_code_sync.py）——本节是蓝图与磁盘代码的「地址簿」。
 > 蓝图声称的文件必须与磁盘实际一致。不一致 = 蓝图漂移 = 下一个 AI session 冷启动时被误导。
 > **AUTOGEN**：本表由 sync_blueprint_code_index.py 从 depgraph.nodes 运营态（build_status∈generated/testing/stable）单向派生，禁止手写；重跑本脚本幂等更新。
 > 数据库——task_repo+sqlite_schema+ATM+olap_engine 均已实现（012A 完整）
@@ -413,7 +413,7 @@ v3.0: 脚本执行器 ──→ get_depgraph_pg_connection() ──→ depgraph 
 3. 读施工 Phase 规划 → 知道「下一步该做什么」
 
 **路径约定**：
-- 所有路径相对于 `D:\ZephyrAlpha\\`
+- 所有路径相对于仓库根目录（REPO_ROOT，不写死盘符绝对路径）
 - 源码在 `src/zephyr/` 下
 - 测试在 `tests/` 下
 - 配置在 `config/` 下

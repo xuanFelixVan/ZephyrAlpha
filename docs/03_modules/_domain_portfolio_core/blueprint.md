@@ -4,7 +4,7 @@ submodule_path: src/zephyr/pf_core
 title: "Portfolio Construction Core 蓝图+施工图 — 组合构建层"
 doc_type: blueprint
 status: Active
-version: "2.1.10"
+version: "2.1.11"
 layer: L2_domain
 layer_name: portfolio_construction
 functional_domain: portfolio
@@ -48,7 +48,7 @@ build_status: generated
 
 > ✅ **业务层已开放，可施工** — C轨（业务价值线·线7）当前状态为 partially_implemented。本蓝图仅供架构参考和预研代码维护，可以此蓝图为依据新增组合构建业务代码。
 
-> module_id: MOD-L05-001 | version: 2.1.10 | status: Active | layer: L2_domain
+> module_id: MOD-L05-001 | version: 2.1.11 | status: Active | layer: L2_domain
 > actual_disk_path: src/zephyr/pf_core/ | generation: 2 | construction_progress: partially_implemented
 
 # Portfolio Construction Core 蓝图+施工图 — 组合构建层
@@ -132,7 +132,7 @@ build_status: generated
 | 图 | 位置 | 状态 | 链接 |
 |----|------|------|------|
 | 依赖图 (depgraph) | `blueprint_id=MOD-L05-001` 的 49 个 file 节点 | production | `extract_depgraph.py --modules MOD-L05-001` |
-| 数据流图 (dataflow) | 3 个 Dataset / 3 个 Job | planned | `apply_dataflowgraph.py --list-datasets` |
+| 数据流图 (dataflow) | 3 个 Dataset / 4 个 Job | planned | `apply_dataflowgraph.py --list-datasets` |
 | 决策架构图 (decision) | 73 个决策节点 / 2 个决策层 | design | `generate_decision_diagram.py` |
 | 蓝图 (blueprint) | 本文件 | Active | — |
 
@@ -945,7 +945,7 @@ ZephyrAlpha 量化架构需要从信号层（D_SIGNAL）和风控层（D_RISK）
 
 ## 1. 已实现代码完整路径索引
 
-> **AGENTS.md §6.1 蓝图-代码同步强制约定**——本节是蓝图与磁盘代码的「地址簿」。
+> **蓝图-代码同步强制约定**（稳定锚：AGENTS.md RULE-DEPGRAPH / RULE-PANORAMA；验证端 validate_blueprint_code_sync.py）——本节是蓝图与磁盘代码的「地址簿」。
 > 蓝图声称的文件必须与磁盘实际一致。不一致 = 蓝图漂移 = 下一个 AI session 冷启动时被误导。
 > **AUTOGEN**：本表由 sync_blueprint_code_index.py 从 depgraph.nodes 运营态（build_status∈generated/testing/stable）单向派生，禁止手写；重跑本脚本幂等更新。
 > 
@@ -985,7 +985,7 @@ ZephyrAlpha 量化架构需要从信号层（D_SIGNAL）和风控层（D_RISK）
 3. 读施工 Phase 规划 → 知道「下一步该做什么」
 
 **路径约定**：
-- 所有路径相对于 `D:\ZephyrAlpha\\`
+- 所有路径相对于仓库根目录（REPO_ROOT，不写死盘符绝对路径）
 - 源码在 `src/zephyr/` 下
 - 测试在 `tests/` 下
 - 配置在 `config/` 下

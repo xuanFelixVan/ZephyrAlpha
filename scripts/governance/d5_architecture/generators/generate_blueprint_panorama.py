@@ -19,7 +19,7 @@
 # 真源说明：本生成器从 depgraph / dataflowgraph / decisiongraph (PostgreSQL) 读取三图节点，
 # 从 docs/03_modules/ 下的蓝图文件 frontmatter 采集第四张图（blueprint），
 # 生成 §0.6 五图对齐视图（全景位置表 + 四核心字段对比表）并写入蓝图文件。
-# 详见 AGENTS.md §真源分类（11.0.2）+ ARCH-053 / ARCH-056 裁定 + 蓝图模板 v2.1.0 §0.6。
+# 详见 AGENTS.md RULE-SSOT（真源分类）+ ARCH-053 / ARCH-056 裁定 + 蓝图模板 v2.1.0 §0.6。
 """G-panorama-gen: 蓝图 §0.6 五图对齐视图生成器（ARCH-053 + ARCH-056 + 模板 v2.1.0）
 
 依据：蓝图模板 v2.1.0 §0.6 格式定义；ARCH-053 裁定（2026-07-06）；ARCH-056 五图升级（2026-07-09）

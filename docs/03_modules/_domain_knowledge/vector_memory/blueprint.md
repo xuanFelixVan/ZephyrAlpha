@@ -4,7 +4,7 @@ submodule_path: src/zephyr/integration/vector_memory
 title: "Vector Memory Service 蓝图+施工图 — ChromaDB 8 Collection 统一向量持久化"
 doc_type: blueprint
 status: Active
-version: "0.12.7"
+version: "0.12.8"
 layer: L1_foundation
 owner: ZephyrAlpha-Owner
 classification: confidential
@@ -1467,7 +1467,7 @@ class FeedbackEntry(BaseModel):
 
 ## 1. 已实现代码完整路径索引
 
-> **AGENTS.md §6.1 蓝图-代码同步强制约定**——本节是蓝图与磁盘代码的「地址簿」。
+> **蓝图-代码同步强制约定**（稳定锚：AGENTS.md RULE-DEPGRAPH / RULE-PANORAMA；验证端 validate_blueprint_code_sync.py）——本节是蓝图与磁盘代码的「地址簿」。
 > 蓝图声称的文件必须与磁盘实际一致。不一致 = 蓝图漂移 = 下一个 AI session 冷启动时被误导。
 > **AUTOGEN**：本表由 sync_blueprint_code_index.py 从 depgraph.nodes 运营态（build_status∈generated/testing/stable）单向派生，禁止手写；重跑本脚本幂等更新。
 > 向量记忆——仅目录+__init__.py docstring
@@ -1511,7 +1511,7 @@ class FeedbackEntry(BaseModel):
 3. 读施工 Phase 规划 → 知道「下一步该做什么」
 
 **路径约定**：
-- 所有路径相对于 `D:\ZephyrAlpha\\`
+- 所有路径相对于仓库根目录（REPO_ROOT，不写死盘符绝对路径）
 - 源码在 `src/zephyr/` 下
 - 测试在 `tests/` 下
 - 配置在 `config/` 下
