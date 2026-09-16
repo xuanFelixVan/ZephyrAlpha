@@ -17,7 +17,7 @@ completes_when: 资源排班全景 B1-B4+端到端 已交付并经 Owner 复核�
 | 环节 | 结果 | 证据（e2e_evidence/） |
 |---|---|---|
 | ① 启动（模拟重活：轻量 marker 子进程） | PASS | e2e_report.yaml steps.01_spawn（pid+marker） |
-| ② 采样器捕获（真实 psutil 全表 159 进程） | PASS | steps.02_sampler_capture + e2e_probe_heavy_samples.jsonl |
+| ② 采样器捕获（真实 psutil 全表 159 进程） | PASS | steps.02_sampler_capture + e2e_probe_heavy_samples.csv |
 | ③ 实测回写（max+15% margin/P90，CAS 只动 measured 四键） | PASS | steps.03_writeback（peak_mem_gb=0.0116 实测落账） |
 | ④ 闸检测冲突（overlap_group+mem_ceiling+e0_block 三码齐发） | PASS | steps.04_gate_conflict（4 条阻断）+ sandbox_registry.yaml |
 | ⑤ 图渲染（生成器产出，冲突入图） | PASS | steps.05_view_render + 机生 rw-data.js（7 泳道/4 冲突块；本体=web/features/resourceweek/rw-data.js） |
@@ -38,7 +38,7 @@ completes_when: 资源排班全景 B1-B4+端到端 已交付并经 Owner 复核�
 | B2 闸 | backtest-run 端点接 E0 | 实盘冒烟：交易日盘中请求被拒（reason=gate_deny_trading_hours），响应附 e0_gate 判决 |
 | B3 图 | 渲染全部实体 | 56 泳道（57-1 retired）=27 排程块+29 常驻/无窗清单段 |
 | B3 图 | 数据全部来自生成器/视图禁手改 | rw-data.js GENERATED 头+只读引擎零 fetch 零写路径 |
-| B4 告警 | 告警可送达 promotion 页 | notifications.jsonl 同格式落板（/api/ops-notifications 既有通道零改动） |
+| B4 告警 | 告警可送达 promotion 页 | notifications.yaml（板 JSONL 的归档形态）同源落板（/api/ops-notifications 既有通道零改动） |
 | B4 告警 | 晨审可见 | 板=机器可读 JSONL，晨审直读即得（E2E 步骤⑥模拟晨审读取） |
 
 ## 3. 测试与红蓝（统计）
