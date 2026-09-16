@@ -26293,6 +26293,10 @@ creation_tokens:
   token: algo-flow-externalize-root---init---2026-09-16
   created_by: st-btfix-p17-20260916
   capability: algo_flow_externalize
+- file: scripts/governance/d5_architecture/generators/report_algo_flow_author_debt.py
+  token: algo-flow-externalize-report-algo-flow-author-debt-2026-09-16
+  created_by: st-btfix-p17-20260916
+  capability: algo_flow_externalize
 - file: scripts/data/run_nightly_sentiment.py
   token: nightly-sentiment-automation-20260915
   created_by: st-880fill-20260911
@@ -27651,6 +27655,50 @@ creation_tokens:
   token: ai-layer-vision-ai-layer-vision-and-roadmap-v1-20260916
   created_by: st-ailayer-20260917
   capability: ai_layer_vision
+- file: docs/_working/ai_layer_vision/L1_perceive/README.md
+  token: ai-layer-vision-readme-20260916
+  created_by: st-ailayer-20260917
+  capability: ai_layer_vision
+- file: docs/_working/ai_layer_vision/L2_intake_library/README.md
+  token: ai-layer-vision-readme-20260916
+  created_by: st-ailayer-20260917
+  capability: ai_layer_vision
+- file: docs/_working/ai_layer_vision/L3_cleaning/README.md
+  token: ai-layer-vision-readme-20260916
+  created_by: st-ailayer-20260917
+  capability: ai_layer_vision
+- file: docs/_working/ai_layer_vision/L4_compare/README.md
+  token: ai-layer-vision-readme-20260916
+  created_by: st-ailayer-20260917
+  capability: ai_layer_vision
+- file: docs/_working/ai_layer_vision/L5_schedule_gate/README.md
+  token: ai-layer-vision-readme-20260916
+  created_by: st-ailayer-20260917
+  capability: ai_layer_vision
+- file: docs/_working/ai_layer_vision/L6_ab_switch/README.md
+  token: ai-layer-vision-readme-20260916
+  created_by: st-ailayer-20260917
+  capability: ai_layer_vision
+- file: docs/_working/ai_layer_vision/L7_heredity/README.md
+  token: ai-layer-vision-readme-20260916
+  created_by: st-ailayer-20260917
+  capability: ai_layer_vision
+- file: docs/_working/ai_layer_vision/README.md
+  token: ai-layer-vision-readme-20260916
+  created_by: st-ailayer-20260917
+  capability: ai_layer_vision
+- file: docs/_working/ai_layer_vision/V0_layer_definition/README.md
+  token: ai-layer-vision-readme-20260916
+  created_by: st-ailayer-20260917
+  capability: ai_layer_vision
+- file: docs/_working/ai_layer_vision/V1_three_layer_split/README.md
+  token: ai-layer-vision-readme-20260916
+  created_by: st-ailayer-20260917
+  capability: ai_layer_vision
+- file: docs/_working/ai_layer_vision/V2_evolution_loop/README.md
+  token: ai-layer-vision-readme-20260916
+  created_by: st-ailayer-20260917
+  capability: ai_layer_vision
 - file: docs/_working/industry_chain_alpha/industry_chain_alpha_plan.md
   token: industry-chain-alpha-industry-chain-alpha-plan-20260916
   created_by: st-igalpha-20260917
@@ -27661,6 +27709,10 @@ creation_tokens:
   capability: industry_chain_alpha
 - file: docs/_working/industry_chain_alpha/industry_chain_data_source_expansion.md
   token: industry-chain-alpha-industry-chain-data-source-expansion-20260916
+  created_by: st-igalpha-20260917
+  capability: industry_chain_alpha
+- file: docs/_working/industry_chain_alpha/industry_chain_global_expansion_plan.md
+  token: industry-chain-alpha-industry-chain-global-expansion-plan-20260916
   created_by: st-igalpha-20260917
   capability: industry_chain_alpha
 - file: docs/_working/automation/20260917_automation_linkage_plan_v1.md
@@ -27691,4 +27743,8 @@ creation_tokens:
   token: resource-schedule-v2-construction-plan-resource-schedule-v2-construction-plan-20260916
   created_by: st-govmap-20260915
   capability: resource_schedule_v2_construction_plan
+- file: "docs/_working/reports/limit_up_down_weekend_ghost_cleanup.md"
+  token: "lud-weekend-ghost-cleanup-report-20260917"
+  created_by: "st-ghostclean2-20260916"
+  capability: "limit_up_down_weekend_ghost_cleanup"
 di_seam_exemptions: []
