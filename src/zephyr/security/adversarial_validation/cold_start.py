@@ -18,32 +18,7 @@
 """
 
 
-# [ALGO_FLOW]
-# 层: 输入
-# - id: I1
-#   name: registry_path 参数
-#   fields: 参数 registry_path（无注解）
-#   code: cold_start.py 顶层公共函数形参（AST 提取）
-# 层: 算法
-# - id: A1
-#   name_zh: ① ColdStart
-#   name_en: ColdStart
-#   intro: class ColdStart 源码 L117-L270
-#   desc: 公共方法（定义序）: phase, onboard_module, onboard_batch, registry_path, classify, is_registered, verify_registration,…
-#   inputs: registry_path
-#   outputs: 返回值
-#   （注：A1 之后另有 2 个公共定义未列入（含 2 个数据契约/异常/枚举声明类），见源码）
-# 层: 输出
-# - id: O1
-#   name_zh: 模块公共 API 面（3 定义）
-#   name_en: public defs
-#   intro: ColdStart
-#   downstream: game_day_runner.py; validator.py
-# [/ALGO_FLOW]
-#
-# 边:
-# I1 --> A1
-# A1 --> O1
+# [ALGO_FLOW] external: docs/03_modules/_domain_security/algo_flow/adversarial_validation/cold_start.yaml
 """
 
 from __future__ import annotations

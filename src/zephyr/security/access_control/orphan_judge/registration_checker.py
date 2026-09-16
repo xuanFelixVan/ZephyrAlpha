@@ -20,31 +20,7 @@
 
 扫描项目注册表，判断文件是否已登记在册。
 
-# [ALGO_FLOW]
-# 层: 输入
-# - id: I1
-#   name: project_root 参数
-#   fields: 参数 project_root（无注解）
-#   code: registration_checker.py 顶层公共函数形参（AST 提取）
-# 层: 算法
-# - id: A1
-#   name_zh: ① RegistrationChecker
-#   name_en: RegistrationChecker
-#   intro: class RegistrationChecker 源码 L85-L140
-#   desc: 公共方法（定义序）: check；源码 L85-L140
-#   inputs: project_root
-#   outputs: 返回值
-# 层: 输出
-# - id: O1
-#   name_zh: 模块公共 API 面（1 定义）
-#   name_en: public defs
-#   intro: RegistrationChecker
-#   downstream: orphan-judge.judge._run_layer L0
-# [/ALGO_FLOW]
-#
-# 边:
-# I1 --> A1
-# A1 --> O1
+# [ALGO_FLOW] external: docs/03_modules/_domain_security/algo_flow/access_control/orphan_judge/registration_checker.yaml
 """
 
 from __future__ import annotations

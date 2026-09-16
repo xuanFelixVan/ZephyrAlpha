@@ -20,31 +20,7 @@
 
 AST节点比对，检测文件中的独特代码元素(类/函数/常量定义等)。
 
-# [ALGO_FLOW]
-# 层: 输入
-# - id: I1
-#   name: project_root 参数
-#   fields: 参数 project_root（无注解）
-#   code: unique_analyzer.py 顶层公共函数形参（AST 提取）
-# 层: 算法
-# - id: A1
-#   name_zh: ① UniqueValueAnalyzer
-#   name_en: UniqueValueAnalyzer
-#   intro: class UniqueValueAnalyzer 源码 L68-L166
-#   desc: 公共方法（定义序）: check；源码 L68-L166
-#   inputs: project_root
-#   outputs: 返回值
-# 层: 输出
-# - id: O1
-#   name_zh: 模块公共 API 面（1 定义）
-#   name_en: public defs
-#   intro: UniqueValueAnalyzer
-#   downstream: orphan-judge.judge._run_layer L3
-# [/ALGO_FLOW]
-#
-# 边:
-# I1 --> A1
-# A1 --> O1
+# [ALGO_FLOW] external: docs/03_modules/_domain_security/algo_flow/access_control/orphan_judge/unique_analyzer.yaml
 """
 
 from __future__ import annotations

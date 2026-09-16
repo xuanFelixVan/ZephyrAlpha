@@ -18,37 +18,7 @@
 """
 
 
-# [ALGO_FLOW]
-# 层: 输入
-# - id: I1
-#   name: registry_path 参数
-#   fields: 参数 registry_path（无注解）
-#   code: constitution_guard.py 顶层公共函数形参（AST 提取）
-# - id: I2
-#   name: gate_engine 参数
-#   fields: 参数 gate_engine（无注解）
-#   code: constitution_guard.py 顶层公共函数形参（AST 提取）
-# 层: 算法
-# - id: A1
-#   name_zh: ① ConstitutionGuard
-#   name_en: ConstitutionGuard
-#   intro: class ConstitutionGuard 源码 L109-L256
-#   desc: 公共方法（定义序）: load, validate_constitution, validate_all, enforce, guard_attack, get, get_active, get_guarded_rul…
-#   inputs: registry_path gate_engine
-#   outputs: 返回值
-#   （注：A1 之后另有 2 个公共定义未列入（含 2 个数据契约/异常/枚举声明类），见源码）
-# 层: 输出
-# - id: O1
-#   name_zh: 模块公共 API 面（3 定义）
-#   name_en: public defs
-#   intro: ConstitutionGuard
-#   downstream: validator.py; convergence_checker.py
-# [/ALGO_FLOW]
-#
-# 边:
-# I1 --> A1
-# I2 --> A1
-# A1 --> O1
+# [ALGO_FLOW] external: docs/03_modules/_domain_security/algo_flow/adversarial_validation/constitution_guard.yaml
 """
 
 from __future__ import annotations

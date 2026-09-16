@@ -17,31 +17,7 @@
 """
 
 
-# [ALGO_FLOW]
-# 层: 输入
-# - id: I1
-#   name: db 参数
-#   fields: 参数 db（无注解）
-#   code: report_generator.py 顶层公共函数形参（AST 提取）
-# 层: 算法
-# - id: A1
-#   name_zh: ① ReportGenerator
-#   name_en: ReportGenerator
-#   intro: class ReportGenerator 源码 L58-L121
-#   desc: 公共方法（定义序）: generate, summary_text；源码 L58-L121
-#   inputs: db
-#   outputs: 返回值
-# 层: 输出
-# - id: O1
-#   name_zh: 模块公共 API 面（1 定义）
-#   name_en: public defs
-#   intro: ReportGenerator
-#   downstream: orphan-judge.__main__._cmd_report
-# [/ALGO_FLOW]
-#
-# 边:
-# I1 --> A1
-# A1 --> O1
+# [ALGO_FLOW] external: docs/03_modules/_domain_security/algo_flow/access_control/orphan_judge/report_generator.yaml
 """
 
 import logging

@@ -1,0 +1,33 @@
+# ALGO_FLOW 外部真源——mcp_integration（_domain_security 域，真源 src/zephyr/security/access_control/orphan_judge/mcp_integration.py）
+# 2026-09-15 P2-1 契约头减负批量出仓：docstring 内联块逐字节副本，extractor 经
+# external 锚加载走同一 parse_algo_flow 管线；算法公共面变化时同步更新本块。
+doc_type: architecture_view
+ttl: permanent
+module: src.zephyr.security.access_control.orphan_judge.mcp_integration
+source_of_truth: src/zephyr/security/access_control/orphan_judge/mcp_integration.py
+algo_flow: |
+    # [ALGO_FLOW]
+    # 层: 输入
+    # - id: I1
+    #   name: 模块内部数据
+    #   fields: 无公共形参/无再导出（AST 事实）
+    #   code: mcp_integration.py
+    # 层: 算法
+    # - id: A1
+    #   name_zh: ① register_tools
+    #   name_en: register_tools
+    #   intro: register_tools() 源码 L112-L124
+    #   desc: 源码 L112-L124
+    #   inputs: 无参数
+    #   outputs: bool
+    # 层: 输出
+    # - id: O1
+    #   name_zh: bool
+    #   name_en: bool
+    #   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+    #   downstream: MCP Server Tool Registry; FastMCP clients
+    # [/ALGO_FLOW]
+    #
+    # 边:
+    # I1 --> A1
+    # A1 --> O1
