@@ -26,37 +26,7 @@ B10-01868（AUD-DRAFT-001-DIGEST P2 波 P2-W15，CAND-SECLLM-001，A1
 查重分工（蓝图 §0）：sentinel_hallucination_detector=哨兵幻觉检测语义
 （本件=注意力谱特征通路，不重建哨兵流水线）。
 
-# [ALGO_FLOW]
-# 层: 输入
-# - id: I1
-#   name: thresholds 参数
-#   fields: 参数 thresholds（无注解）
-#   code: spectral_guard.py 顶层公共函数形参（AST 提取）
-# - id: I2
-#   name: recall_first 参数
-#   fields: 参数 recall_first（无注解）
-#   code: spectral_guard.py 顶层公共函数形参（AST 提取）
-# 层: 算法
-# - id: A1
-#   name_zh: ① SpectralGuard
-#   name_en: SpectralGuard
-#   intro: Spectral 注意力谱幻觉检测器（谱特征 + 双阈值 + recall 优先）。
-#   desc: Spectral 注意力谱幻觉检测器（谱特征 + 双阈值 + recall 优先）。；公共方法（定义序）: features, evaluate；源码 L128-L222
-#   inputs: thresholds recall_first
-#   outputs: 返回值
-#   （注：A1 之后另有 5 个公共定义未列入（含 5 个数据契约/异常/枚举声明类），见源码）
-# 层: 输出
-# - id: O1
-#   name_zh: 模块公共 API 面（6 定义）
-#   name_en: public defs
-#   intro: SpectralGuard
-#   downstream: 运行时装配批（LLM 输出护栏装配点注入模型阈值表后调用判定）
-# [/ALGO_FLOW]
-#
-# 边:
-# I1 --> A1
-# I2 --> A1
-# A1 --> O1
+# [ALGO_FLOW] external: docs/03_modules/_domain_security/algo_flow/llm_defense/spectral_guard.yaml
 """
 
 from __future__ import annotations

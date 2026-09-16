@@ -36,50 +36,7 @@ SELL-01 收集的原始信号 → 综合评分（0~1），供融合/仲裁/紧�
 纪律：纯函数、无 IO；准确率统计由调用方注入（禁自造数据管道）。
 Version: 1.0.0
 
-# [ALGO_FLOW]
-# 层: 输入
-# - id: I1
-#   name: signals 参数
-#   fields: 参数 signals，类型注解 Sequence[SellSignal]
-#   code: sell_signal_scorer.py 顶层公共函数形参（AST 提取）
-# - id: I2
-#   name: accuracy_stats 参数
-#   fields: 参数 accuracy_stats（无注解）
-#   code: sell_signal_scorer.py 顶层公共函数形参（AST 提取）
-# - id: I3
-#   name: resonance_bonus 参数
-#   fields: 参数 resonance_bonus（无注解）
-#   code: sell_signal_scorer.py 顶层公共函数形参（AST 提取）
-# 层: 算法
-# - id: A1
-#   name_zh: ① AccuracyStat
-#   name_en: AccuracyStat
-#   intro: 信号类型历史准确率统计。
-#   desc: 信号类型历史准确率统计。 Attributes: hits: 命中次数（信号触发后按预期方向兑现） total: 总触发次数；公共方法（定义序）: adjusted_rate；源码 L118-L131
-#   inputs: 无参数
-#   outputs: 返回值
-# - id: A2
-#   name_zh: ② score_signals
-#   name_en: score_signals
-#   intro: 卖出信号综合评分（纯函数）。
-#   desc: 卖出信号综合评分（纯函数）。 Args: signals: SELL-01 标准化信号列表 accuracy_stats: {SellSignalType: AccuracySt…；源码 L165-L224
-#   inputs: signals accuracy_stats resonance_bonus
-#   outputs: list[ScoredSellSignal]
-#   （注：A2 之后另有 2 个公共定义未列入（含 2 个数据契约/异常/枚举声明类），见源码）
-# 层: 输出
-# - id: O1
-#   name_zh: list[ScoredSellSignal]
-#   name_en: list[ScoredSellSignal]
-#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
-#   downstream: MOD-SELL-007(融合引擎) ; MOD-SELL-008(仲裁器) ; MOD-SELL-009(紧迫度评分)
-# [/ALGO_FLOW]
-#
-# 边:
-# I1 --> A1
-# I2 --> A1
-# I3 --> A1
-# A1 --> A2
-# A2 --> O1
+# [ALGO_FLOW] external: docs/03_modules/_domain_sell_decision/algo_flow/sell_signal_scorer.yaml
 """
 
 from __future__ import annotations

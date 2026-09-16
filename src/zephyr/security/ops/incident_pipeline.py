@@ -56,72 +56,7 @@
 security_event_bus / MOD-RK-14 任何本体逻辑（16号文 §5 第 6 条；12号文 §4.1）。
 修复引擎以协议注入（默认工厂懒加载 AutoFixEngine），LLM/DB/网络不在本模块。
 
-# [ALGO_FLOW]
-# 层: 输入
-# - id: I1
-#   name: store_dir 参数
-#   fields: 参数 store_dir（无注解）
-#   code: incident_pipeline.py 顶层公共函数形参（AST 提取）
-# 层: 算法
-# - id: A1
-#   name_zh: ① FixEngineProtocol
-#   name_en: FixEngineProtocol
-#   intro: 修复引擎协议（AutoFixEngine 签名子集——本管线只消费不改结构）。
-#   desc: 修复引擎协议（AutoFixEngine 签名子集——本管线只消费不改结构）。；公共方法（定义序）: fix；源码 L275-L278
-#   inputs: 无参数
-#   outputs: 返回值
-# - id: A2
-#   name_zh: ② FixPatternStore
-#   name_en: FixPatternStore
-#   intro: 修复策略知识库（``data/fix_patterns/``，记录优先，不做匹配；append-only）。
-#   desc: 修复策略知识库（``data/fix_patterns/``，记录优先，不做匹配；append-only）。 - ``pattern_index.yaml``（REG-AFX-P…；公共方法（定义序）: index_p…
-#   inputs: store_dir
-#   outputs: 返回值
-# - id: A3
-#   name_zh: ③ EscalationSink
-#   name_en: EscalationSink
-#   intro: 不可自动修判决的 escalation 通道落盘（append-only JSONL）。
-#   desc: 不可自动修判决的 escalation 通道落盘（append-only JSONL）。；公共方法（定义序）: escalate, entries；源码 L583-L599
-#   inputs: path
-#   outputs: 返回值
-# - id: A4
-#   name_zh: ④ WhitelistApprovalGate
-#   name_en: WhitelistApprovalGate
-#   intro: 保护路径/豁免白名单的 human_gated 审批闸（P1-4，GOV-AI-001 实质对接）。
-#   desc: 保护路径/豁免白名单的 human_gated 审批闸（P1-4，GOV-AI-001 实质对接）。 不变量：未经审批的豁免 0 条——``request_exemption``…；公共方法（定义序）: authori…
-#   inputs: ledger_path registry_path
-#   outputs: 返回值
-# - id: A5
-#   name_zh: ⑤ InterventionTicketStore
-#   name_en: InterventionTicketStore
-#   intro: 人工介入处置工单存储（append-only 快照 JSONL，同 ticket 最新快照为准）。
-#   desc: 人工介入处置工单存储（append-only 快照 JSONL，同 ticket 最新快照为准）。；公共方法（定义序）: save, get, find_by_event, tickets；源码 L721-L767
-#   inputs: path
-#   outputs: 返回值
-# - id: A6
-#   name_zh: ⑥ IncidentPipeline
-#   name_en: IncidentPipeline
-#   intro: 统一事件流消费 → 诊断 → 三通道判决 → 修复/升级 + 知识库 + 涌现工单。
-#   desc: 统一事件流消费 → 诊断 → 三通道判决 → 修复/升级 + 知识库 + 涌现工单。 不变量（16号文 §4.3/MOD-INF-031 铁律）： - 行为类故障 MUST Bl…；公共方法（定义序）: store,…
-#   inputs: config engine alerter
-#   outputs: 返回值
-#   （注：A6 之后另有 9 个公共定义未列入（含 9 个数据契约/异常/枚举声明类），见源码）
-# 层: 输出
-# - id: O1
-#   name_zh: 模块公共 API 面（15 定义）
-#   name_en: public defs
-#   intro: FixEngineProtocol, FixPatternStore, EscalationSink, WhitelistApprovalGate, Inte…
-#   downstream: 见模块头 [CONSUMERS]
-# [/ALGO_FLOW]
-#
-# 边:
-# I1 --> A1
-# A1 --> A2
-# A2 --> A3
-# A3 --> A4
-# A4 --> A5
-# A5 --> A6
-# A6 --> O1
+# [ALGO_FLOW] external: docs/03_modules/_domain_security/algo_flow/ops/incident_pipeline.yaml
 """
 
 from __future__ import annotations

@@ -1,0 +1,77 @@
+# ALGO_FLOW 外部真源——sell_execution_planner（_domain_sell_decision 域，真源 src/zephyr/sell_decision/core/sell_execution_planner.py）
+# 2026-09-15 P2-1 契约头减负批量出仓：docstring 内联块逐字节副本，extractor 经
+# external 锚加载走同一 parse_algo_flow 管线；算法公共面变化时同步更新本块。
+doc_type: architecture_view
+ttl: permanent
+module: src.zephyr.sell_decision.core.sell_execution_planner
+source_of_truth: src/zephyr/sell_decision/core/sell_execution_planner.py
+algo_flow: |
+    # [ALGO_FLOW]
+    # 层: 输入
+    # - id: I1
+    #   name: 卖出信号类型 signal_type SellExecutionSignal
+    #   fields: KILL_SWITCH/BLACK_SWAN/BREAKOUT_FAIL_K/ATR_STOP/CHANDELIER_STOP/SUPPORT_BROKEN/TRAILING_TP/REBALANCE/SENTIMENT_EBB
+    #   code: schedule_sell_order() 参数
+    # - id: I2
+    #   name: 当前时间 current_time time
+    #   fields: 交易时段判断(14:57收盘竞价不可撤单分界), 可注入测试
+    #   code: schedule_sell_order() 参数
+    # - id: I3
+    #   name: T+1与跌停状态 buy_date/is_limit_down
+    #   fields: buy_date拟卖仓位买入日期(可选,T+1校验) + is_limit_down当前是否跌停
+    #   code: schedule_sell_order() 关键字参数
+    # - id: I4
+    #   name: 跌停持仓列表 LimitDownPosition列表
+    #   fields: symbol+urgency_score+unrealized_pnl_pct+position_value
+    #   code: rank_limit_down_orders() 参数
+    # - id: I5
+    #   name: 清仓持仓列表 LiquidationPosition列表
+    #   fields: symbol+liquidity_score+position_value+unrealized_pnl_pct
+    #   code: rank_kill_switch_liquidation() 参数
+    # 层: 算法
+    # - id: A1
+    #   name_zh: ① 执行时序映射
+    #   name_en: schedule_sell_order
+    #   intro: 信号类型查表得时序与订单类型, 先查T+1/跌停硬约束再排时序
+    #   desc: 当日买入→BLOCKED_T1(强制清仓亦不例外,交易所物理约束); 止损/止盈遇跌停→LIMIT_DOWN_QUEUE(强制清仓例外仍挂跌停价); 强制清仓→MARKET_ORDER_NOW; 止损→14:57前LIMIT_ORDER_NOW后CLOSING_AUCTION_LIMIT; 止盈换仓退潮→TAIL_BATCH_14_50
+    #   inputs: I1 I2 I3
+    #   outputs: SellOrderPlan
+    #   invariant: 强制清仓市价单立即执行; 止损盘中立即; 止盈尾盘集中; T+1/跌停硬约束
+    # - id: A2
+    #   name_zh: ② 跌停排队优先级排序
+    #   name_en: rank_limit_down_orders
+    #   intro: 亏损越大风控优先级越高越先排队
+    #   desc: sorted按(-urgency_score, unrealized_pnl_pct, -position_value)三级键排序
+    #   inputs: I4
+    #   outputs: 排序后LimitDownPosition列表
+    #   invariant: 紧迫度降序→亏损升序→仓位降序
+    # - id: A3
+    #   name_zh: ③ Kill Switch清仓排序
+    #   name_en: rank_kill_switch_liquidation
+    #   intro: 流动性差的先卖防封死跌停无法成交
+    #   desc: sorted按(liquidity_score升序, -position_value, unrealized_pnl_pct)三级键排序; 首要目标全部成交非卖好价
+    #   inputs: I5
+    #   outputs: 排序后LiquidationPosition列表
+    #   invariant: 流动性升序→仓位降序→亏损升序
+    # 层: 输出
+    # - id: O1
+    #   name_zh: 卖出执行计划 SellOrderPlan
+    #   name_en: SellOrderPlan
+    #   intro: 含action/订单类型/时序窗口说明/理由, 喂给40号执行层订单分解与PricingPolicy
+    #   downstream: D-EX-CORE(40号执行层)
+    # - id: O2
+    #   name_zh: 排序后持仓列表
+    #   name_en: list[LimitDownPosition] / list[LiquidationPosition]
+    #   intro: 跌停挂单顺序/KillSwitch清仓顺序, 喂给40号OpenOrderResolver
+    #   downstream: D-EX-CORE(40号OpenOrderResolver/PricingPolicy)
+    # [/ALGO_FLOW]
+    #
+    # 边:
+    # I1 --> A1
+    # I2 --> A1
+    # I3 --> A1
+    # I4 --> A2
+    # I5 --> A3
+    # A1 --> O1
+    # A2 --> O2
+    # A3 --> O2

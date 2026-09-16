@@ -1,0 +1,69 @@
+# ALGO_FLOW 外部真源——position_triage（_domain_sell_decision 域，真源 src/zephyr/sell_decision/core/position_triage.py）
+# 2026-09-15 P2-1 契约头减负批量出仓：docstring 内联块逐字节副本，extractor 经
+# external 锚加载走同一 parse_algo_flow 管线；算法公共面变化时同步更新本块。
+doc_type: architecture_view
+ttl: permanent
+module: src.zephyr.sell_decision.core.position_triage
+source_of_truth: src/zephyr/sell_decision/core/position_triage.py
+algo_flow: |
+    # [ALGO_FLOW]
+    # 层: 输入
+    # - id: I1
+    #   name: 持仓快照 SellPositionSnapshot
+    #   fields: entry_price(入场价)+current_price(现价)+strategy_type(策略类型,影响降级参数)
+    #   code: SellPositionSnapshot dataclass
+    # - id: I2
+    #   name: ATR值 atr_value float
+    #   fields: ATR(14)数值, 可None(触发降级)
+    #   code: triage() 参数
+    # - id: I3
+    #   name: 止损价位 stop_loss_price float
+    #   fields: 当前止损锚定价(来自MOD-SELL-005 Chandelier)
+    #   code: triage() 参数
+    # - id: I4
+    #   name: 阈值动态调整量 threshold_delta float
+    #   fields: 来自BM-POS-09双向反馈, 默认0.0, 范围[-0.10,+0.10]
+    #   code: triage() 参数
+    # 层: 算法
+    # - id: A1
+    #   name_zh: ① 输入合法性校验
+    #   name_en: _validate
+    #   intro: 检查价格和ATR参数合法性, 不合法直接抛错
+    #   desc: entry_price>0 / current_price>0 / stop_loss_price>0; ATR None或<=0时降级固定%
+    #   inputs: I1 I2 I3
+    #   outputs: 合法输入或异常
+    # - id: A2
+    #   name_zh: ② ATR自适应分级判定
+    #   name_en: _triage_atr
+    #   intro: 用ATR距离驱动三级判定, 高波动股自动给更多缓冲
+    #   desc: 绝对价格距离比较(与spec伪代码数学等价,消除法防浮点尾差); distance_abs<1.5×ATR-delta_abs→WATCH / profit_abs>3.0×ATR-delta_abs→HOLD / 中间→MONITOR; delta正放宽负收紧
+    #   inputs: I1 I2 I3 I4
+    #   outputs: TriageLevel
+    #   invariant: 距止损<1.5×ATR→WATCH; 深度盈利>3×ATR→HOLD
+    # - id: A3
+    #   name_zh: ③ ATR缺失降级
+    #   name_en: 降级默认MONITOR
+    #   intro: ATR缺失无法判定接近程度, 降级到"正常持仓"中间档, 不过度监控不漏监控
+    #   desc: atr None或<=0 → 直接返回MONITOR(§3.2"正常持仓"档), 记debug日志
+    #   inputs: I2
+    #   outputs: TriageLevel.MONITOR
+    #   invariant: ATR缺失时仍有分级输出(最保守中间档)
+    # 层: 输出
+    # - id: O1
+    #   name_zh: 持仓分级 TriageLevel
+    #   name_en: TriageLevel
+    #   intro: WATCH(分钟级)/MONITOR(5分钟级)/HOLD(事件驱动), 决定扫描频率
+    #   downstream: D-POSITION(漂移监控) ; MOD-SELL-007(融合) ; MOD-SELL-009(紧迫度)
+    # [/ALGO_FLOW]
+    #
+    # 边:
+    # I1 --> A1
+    # I2 --> A1
+    # I3 --> A1
+    # I1 --> A2
+    # I2 --> A2
+    # I3 --> A2
+    # I4 --> A2
+    # I2 --> A3
+    # A2 --> O1
+    # A3 --> O1

@@ -25,47 +25,7 @@ B12-03993（AUD-DRAFT-001-DIGEST P2 波 P2-W15，CAND-SEC-007，B12 §15.1）：
 查重分工（蓝图 §0）：feedback_loop/gates/cve_scanner=CVE 门禁扫描实现
 （本件仅注入其回调做关联，不重建扫描）；锁文件读取副作用全 DI，纯内存。
 
-# [ALGO_FLOW]
-# 层: 输入
-# - id: I1
-#   name: requirements_reader 参数
-#   fields: 参数 requirements_reader（无注解）
-#   code: supply_chain_security_scanner.py 顶层公共函数形参（AST 提取）
-# - id: I2
-#   name: license_table 参数
-#   fields: 参数 license_table（无注解）
-#   code: supply_chain_security_scanner.py 顶层公共函数形参（AST 提取）
-# - id: I3
-#   name: license_rules 参数
-#   fields: 参数 license_rules（无注解）
-#   code: supply_chain_security_scanner.py 顶层公共函数形参（AST 提取）
-# - id: I4
-#   name: cve_scanner 参数
-#   fields: 参数 cve_scanner（无注解）
-#   code: supply_chain_security_scanner.py 顶层公共函数形参（AST 提取）
-# 层: 算法
-# - id: A1
-#   name_zh: ① SupplyChainSecurityScanner
-#   name_en: SupplyChainSecurityScanner
-#   intro: 供应链安全扫描器（SBOM 生成 + 许可证扫描 + CVE 关联）。
-#   desc: 供应链安全扫描器（SBOM 生成 + 许可证扫描 + CVE 关联）。；公共方法（定义序）: generate_sbom, to_cyclonedx_dict, scan_licenses, correlate_cve…
-#   inputs: requirements_reader license_table license_rules cve_scanner clock
-#   outputs: 返回值
-#   （注：A1 之后另有 6 个公共定义未列入（含 6 个数据契约/异常/枚举声明类），见源码）
-# 层: 输出
-# - id: O1
-#   name_zh: 模块公共 API 面（7 定义）
-#   name_en: public defs
-#   intro: SupplyChainSecurityScanner
-#   downstream: 运行时装配批（CI/发布闸装配 SBOM 生成+许可证扫描+CVE 关联三件套）
-# [/ALGO_FLOW]
-#
-# 边:
-# I1 --> A1
-# I2 --> A1
-# I3 --> A1
-# I4 --> A1
-# A1 --> O1
+# [ALGO_FLOW] external: docs/03_modules/_domain_security/algo_flow/security/supply_chain_security_scanner.yaml
 """
 
 from __future__ import annotations

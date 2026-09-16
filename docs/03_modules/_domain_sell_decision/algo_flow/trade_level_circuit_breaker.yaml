@@ -1,0 +1,59 @@
+# ALGO_FLOW 外部真源——trade_level_circuit_breaker（_domain_sell_decision 域，真源 src/zephyr/sell_decision/core/trade_level_circuit_breaker.py）
+# 2026-09-15 P2-1 契约头减负批量出仓：docstring 内联块逐字节副本，extractor 经
+# external 锚加载走同一 parse_algo_flow 管线；算法公共面变化时同步更新本块。
+doc_type: architecture_view
+ttl: permanent
+module: src.zephyr.sell_decision.core.trade_level_circuit_breaker
+source_of_truth: src/zephyr/sell_decision/core/trade_level_circuit_breaker.py
+algo_flow: |
+    # [ALGO_FLOW]
+    # 层: 输入
+    # - id: I1
+    #   name: consecutive_loss_threshold 参数
+    #   fields: 参数 consecutive_loss_threshold（无注解）
+    #   code: trade_level_circuit_breaker.py 顶层公共函数形参（AST 提取）
+    # - id: I2
+    #   name: reduction_factor 参数
+    #   fields: 参数 reduction_factor（无注解）
+    #   code: trade_level_circuit_breaker.py 顶层公共函数形参（AST 提取）
+    # - id: I3
+    #   name: min_scale 参数
+    #   fields: 参数 min_scale（无注解）
+    #   code: trade_level_circuit_breaker.py 顶层公共函数形参（AST 提取）
+    # - id: I4
+    #   name: reset_on_win 参数
+    #   fields: 参数 reset_on_win（无注解）
+    #   code: trade_level_circuit_breaker.py 顶层公共函数形参（AST 提取）
+    # 层: 算法
+    # - id: A1
+    #   name_zh: ① TradeLevelCircuitBreaker
+    #   name_en: TradeLevelCircuitBreaker
+    #   intro: 策略级连续亏损熔断：连续 N 笔亏损→递减减仓，盈利→重置（42 号 §3.10 施工算法）。
+    #   desc: 策略级连续亏损熔断：连续 N 笔亏损→递减减仓，盈利→重置（42 号 §3.10 施工算法）。；公共方法（定义序）: on_trade_close, get_position_scale, is_blocked；源码…
+    #   inputs: consecutive_loss_threshold reduction_factor min_scale reset_on_win
+    #   outputs: 返回值
+    # 层: 输出
+    # - id: O1
+    #   name_zh: 模块公共 API 面（1 定义）
+    #   name_en: public defs
+    #   intro: TradeLevelCircuitBreaker
+    #   downstream: 策略级仓位缩放链(42号§3.10: budget×position_cap×circuit_breaker_scale×conformal_scale 乘性…
+    # [/ALGO_FLOW]
+    #
+    # 边:
+    # I1 --> A1
+    # I2 --> A1
+    # I3 --> A1
+    # I4 --> A1
+    # A1 --> O1
+
+# 以下 algo_flow_prose = 契约头双真源清偿归并（P2-1 死块批 2026-09-16）：
+# 源码头块手写算法速记逐字副本，algo_flow 机器块未覆盖其口径故不删信息；
+algo_flow_prose: |
+    # [ALGO_FLOW]
+    # I1: trade_pnl_pct(每笔交易盈亏百分比, 平仓后喂入) + 参数(threshold=2/reduction=0.25/min_scale=0.25/reset_on_win=True, 42号§3.10 Li 2026 实证)
+    # F1: on_trade_close(pnl)——负盈亏累计连亏计数; 正盈亏重置(reset_on_win); 零盈亏不动
+    # F2: get_position_scale()——连亏≥threshold 起 scale=1.0-(1+excess)×0.25, 下限 0.25
+    # F3: is_blocked()——连亏≥threshold+3 暂停该策略开新仓(只允许平仓)
+    # O1: 仓位缩放因子 [0.25, 1.0] + 阻断标记 -> 策略级仓位合成链
+    # [/ALGO_FLOW]

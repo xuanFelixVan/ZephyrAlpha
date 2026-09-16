@@ -2314,6 +2314,7 @@ nodes:
   decay_scan_frequency: semiannual
 
 - node_id: TDM-E-L4-08
+  note_confirmed: 2026-09-16  # grp5p2s3 出仓复核：机器块搬 yaml，算法口径逐字未变
   name_zh: 突破失败降级
   market: cn_a
   flow: entry_flow
@@ -2611,6 +2612,7 @@ nodes:
   decay_scan_frequency: semiannual
 
 - node_id: TDM-P-P1-02
+  note_confirmed: 2026-09-16  # grp5p2s3 出仓复核：机器块搬 yaml，算法口径逐字未变
   name_zh: 持仓分级与监控频率
   market: cn_a
   flow: position_flow
@@ -2806,6 +2808,7 @@ nodes:
   decay_scan_frequency: monthly
 
 - node_id: TDM-P-P2-02
+  note_confirmed: 2026-09-16  # grp5p2s3 出仓复核：机器块搬 yaml，算法口径逐字未变
   name_zh: 做T策略调度
   market: cn_a
   flow: position_flow
@@ -3228,6 +3231,7 @@ nodes:
   materiality: normal
   decay_scan_frequency: semiannual
 - node_id: TDM-X-S1-01
+  note_confirmed: 2026-09-16  # grp5p2s3 出仓复核：机器块搬 yaml，算法口径逐字未变
   name_zh: 信号收集与六桶分类
   market: cn_a
   flow: exit_flow
@@ -3256,6 +3260,7 @@ nodes:
   decay_scan_frequency: semiannual
 
 - node_id: TDM-X-S1-02
+  note_confirmed: 2026-09-16  # grp5p2s3 出仓复核：机器块搬 yaml，算法口径逐字未变
   name_zh: 止损族判定
   market: cn_a
   flow: exit_flow
@@ -3289,6 +3294,7 @@ nodes:
   decay_scan_frequency: semiannual
 
 - node_id: TDM-X-S1-03
+  note_confirmed: 2026-09-16  # grp5p2s3 出仓复核：机器块搬 yaml，算法口径逐字未变
   name_zh: 止盈族判定
   market: cn_a
   flow: exit_flow
@@ -3316,6 +3322,7 @@ nodes:
   decay_scan_frequency: semiannual
 
 - node_id: TDM-X-S1-04
+  note_confirmed: 2026-09-16  # grp5p2s3 出仓复核：机器块搬 yaml，算法口径逐字未变
   name_zh: 破位与情绪退潮信号
   market: cn_a
   flow: exit_flow
@@ -3351,6 +3358,7 @@ nodes:
   decay_scan_frequency: semiannual
 
 - node_id: TDM-X-S1-05
+  note_confirmed: 2026-09-16  # grp5p2s3 出仓复核：机器块搬 yaml，算法口径逐字未变
   name_zh: 信号融合与紧迫度评分
   market: cn_a
   flow: exit_flow
@@ -3419,6 +3427,7 @@ nodes:
 
   # S2 树枝：路由→{涨跌停约束/时段路由/条件单/分批}→闭环退出效率；paper×4 实盘执行
 - node_id: TDM-X-S2-01
+  note_confirmed: 2026-09-16  # grp5p2s3 出仓复核：机器块搬 yaml，算法口径逐字未变
   name_zh: 执行方式路由
   market: cn_a
   flow: exit_flow
@@ -3570,6 +3579,7 @@ nodes:
   decay_scan_frequency: semiannual
 
 - node_id: TDM-X-S2-05
+  note_confirmed: 2026-09-16  # grp5p2s3 出仓复核：机器块搬 yaml，算法口径逐字未变
   name_zh: 分批止盈执行
   market: cn_a
   flow: exit_flow
@@ -3600,6 +3610,7 @@ nodes:
   decay_scan_frequency: semiannual
 
 - node_id: TDM-X-S2-06
+  note_confirmed: 2026-09-16  # grp5p2s3 出仓复核：机器块搬 yaml，算法口径逐字未变
   name_zh: 卖出闭环与退出效率
   market: cn_a
   flow: exit_flow

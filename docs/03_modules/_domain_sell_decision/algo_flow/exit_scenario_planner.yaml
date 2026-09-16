@@ -1,0 +1,34 @@
+# ALGO_FLOW 外部真源——exit_scenario_planner（_domain_sell_decision 域，真源 src/zephyr/sell_decision/core/exit_scenario_planner.py）
+# 2026-09-15 P2-1 契约头减负批量出仓：docstring 内联块逐字节副本，extractor 经
+# external 锚加载走同一 parse_algo_flow 管线；算法公共面变化时同步更新本块。
+doc_type: architecture_view
+ttl: permanent
+module: src.zephyr.sell_decision.core.exit_scenario_planner
+source_of_truth: src/zephyr/sell_decision/core/exit_scenario_planner.py
+algo_flow: |
+    # [ALGO_FLOW]
+    # 层: 输入
+    # - id: I1
+    #   name: intent 参数
+    #   fields: 参数 intent，类型注解 ExitPlanningInput
+    #   code: exit_scenario_planner.py 顶层公共函数形参（AST 提取）
+    # 层: 算法
+    # - id: A1
+    #   name_zh: ① plan_exit_scenarios
+    #   name_en: plan_exit_scenarios
+    #   intro: 规划离场情景（纯函数）。
+    #   desc: 规划离场情景（纯函数）。 Raises: InvalidExitPlanInputError: 输入非法；源码 L162-L233
+    #   inputs: intent
+    #   outputs: ExitScenarioPlan
+    #   （注：A1 之后另有 5 个公共定义未列入（含 5 个数据契约/异常/枚举声明类），见源码）
+    # 层: 输出
+    # - id: O1
+    #   name_zh: ExitScenarioPlan
+    #   name_en: ExitScenarioPlan
+    #   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+    #   downstream: MOD-SELL-017(分批卖出架构) ; MOD-SELL-018(做T协调) ; D-EX-CORE(执行)
+    # [/ALGO_FLOW]
+    #
+    # 边:
+    # I1 --> A1
+    # A1 --> O1

@@ -31,42 +31,7 @@ Sell Execution Quality Tracker — 卖出执行质量追踪 (MOD-SELL-012)
 纪律：纯函数、无 IO；成交记录由调用方注入（禁自造数据管道）。
 Version: 1.0.0
 
-# [ALGO_FLOW]
-# 层: 输入
-# - id: I1
-#   name: fills 参数
-#   fields: 参数 fills，类型注解 Sequence[SellFillRecord]
-#   code: sell_execution_quality_tracker.py 顶层公共函数形参（AST 提取）
-# - id: I2
-#   name: good_threshold_pct 参数
-#   fields: 参数 good_threshold_pct（无注解）
-#   code: sell_execution_quality_tracker.py 顶层公共函数形参（AST 提取）
-# - id: I3
-#   name: acceptable_threshold_pct 参数
-#   fields: 参数 acceptable_threshold_pct（无注解）
-#   code: sell_execution_quality_tracker.py 顶层公共函数形参（AST 提取）
-# 层: 算法
-# - id: A1
-#   name_zh: ① evaluate_execution_quality
-#   name_en: evaluate_execution_quality
-#   intro: 评估卖出执行质量（纯函数）。
-#   desc: 评估卖出执行质量（纯函数）。 Args: fills: 卖出成交记录 good_threshold_pct: GOOD 线上限 ≥0（默认 0.1%） acceptable_th…；源码 L164-L245
-#   inputs: fills good_threshold_pct acceptable_threshold_pct
-#   outputs: ExecutionQualityReport
-#   （注：A1 之后另有 5 个公共定义未列入（含 5 个数据契约/异常/枚举声明类），见源码）
-# 层: 输出
-# - id: O1
-#   name_zh: ExecutionQualityReport
-#   name_en: ExecutionQualityReport
-#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
-#   downstream: D-EX-CORE(执行质量回执) ; MOD-SELL-011(AB测试执行维度输入) ; D_RISK
-# [/ALGO_FLOW]
-#
-# 边:
-# I1 --> A1
-# I2 --> A1
-# I3 --> A1
-# A1 --> O1
+# [ALGO_FLOW] external: docs/03_modules/_domain_sell_decision/algo_flow/sell_execution_quality_tracker.yaml
 """
 
 from __future__ import annotations

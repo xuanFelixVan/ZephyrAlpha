@@ -37,55 +37,7 @@ Strategy Specific Stop Framework — 策略特异止损框架 (MOD-SELL-014)
 纪律：纯函数、无 IO；价格/持有期由调用方注入。
 Version: 1.0.0
 
-# [ALGO_FLOW]
-# 层: 输入
-# - id: I1
-#   name: profile 参数
-#   fields: 参数 profile，类型注解 StrategyProfile
-#   code: strategy_specific_stop_framework.py 顶层公共函数形参（AST 提取）
-# - id: I2
-#   name: position 参数
-#   fields: 参数 position，类型注解 StopPositionInput
-#   code: strategy_specific_stop_framework.py 顶层公共函数形参（AST 提取）
-# - id: I3
-#   name: overrides 参数
-#   fields: 参数 overrides（无注解）
-#   code: strategy_specific_stop_framework.py 顶层公共函数形参（AST 提取）
-# 层: 算法
-# - id: A1
-#   name_zh: ① default_stop_params
-#   name_en: default_stop_params
-#   intro: 取风格画像的默认止损参数。
-#   desc: 取风格画像的默认止损参数。；源码 L219-L221
-#   inputs: profile
-#   outputs: StopParams
-# - id: A2
-#   name_zh: ② compute_stop_state
-#   name_en: compute_stop_state
-#   intro: 计算持仓止损状态（纯函数）。
-#   desc: 计算持仓止损状态（纯函数）。 Args: position: 入场价/现价/入场后最高价/持有天数 profile: 策略风格画像 overrides: 参数覆写（缺省用画像默认…；源码 L236-L315
-#   inputs: position profile overrides
-#   outputs: StopEvaluation
-#   （注：A2 之后另有 6 个公共定义未列入（含 6 个数据契约/异常/枚举声明类），见源码）
-# 层: 输出
-# - id: O1
-#   name_zh: StopParams
-#   name_en: StopParams
-#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
-#   downstream: MOD-SELL-013(离场情景规划) ; MOD-SELL-017(分批卖出架构) ; MOD-SELL-001(信号源)
-# - id: O2
-#   name_zh: StopEvaluation
-#   name_en: StopEvaluation
-#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
-#   downstream: MOD-SELL-013(离场情景规划) ; MOD-SELL-017(分批卖出架构) ; MOD-SELL-001(信号源)
-# [/ALGO_FLOW]
-#
-# 边:
-# I1 --> A1
-# I2 --> A1
-# I3 --> A1
-# A1 --> A2
-# A2 --> O1
+# [ALGO_FLOW] external: docs/03_modules/_domain_sell_decision/algo_flow/strategy_specific_stop_framework.yaml
 """
 
 from __future__ import annotations

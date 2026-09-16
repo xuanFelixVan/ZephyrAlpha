@@ -26,42 +26,7 @@ payload **字段级过滤**（持仓/策略/因子三类白名单，白名单外
 擎）；output_guard=输出内容守卫语义（本件=外发出口拦截闸，仅作出口统一
 装配点，不重建内容审查）。
 
-# [ALGO_FLOW]
-# 层: 输入
-# - id: I1
-#   name: field_whitelists 参数
-#   fields: 参数 field_whitelists（无注解）
-#   code: outbound_data_sanitizer.py 顶层公共函数形参（AST 提取）
-# - id: I2
-#   name: mask_patterns 参数
-#   fields: 参数 mask_patterns（无注解）
-#   code: outbound_data_sanitizer.py 顶层公共函数形参（AST 提取）
-# - id: I3
-#   name: clock 参数
-#   fields: 参数 clock（无注解）
-#   code: outbound_data_sanitizer.py 顶层公共函数形参（AST 提取）
-# 层: 算法
-# - id: A1
-#   name_zh: ① OutboundDataSanitizer
-#   name_en: OutboundDataSanitizer
-#   intro: 外发出口拦截闸（白名单过滤 + PII/凭证掩码 + 未过检不放行）。
-#   desc: 外发出口拦截闸（白名单过滤 + PII/凭证掩码 + 未过检不放行）。；公共方法（定义序）: sanitize；源码 L127-L232
-#   inputs: field_whitelists mask_patterns clock
-#   outputs: 返回值
-#   （注：A1 之后另有 3 个公共定义未列入（含 3 个数据契约/异常/枚举声明类），见源码）
-# 层: 输出
-# - id: O1
-#   name_zh: 模块公共 API 面（4 定义）
-#   name_en: public defs
-#   intro: OutboundDataSanitizer
-#   downstream: 运行时装配批（外发 API 出口统一装配本拦截闸：持仓/策略/因子 payload）
-# [/ALGO_FLOW]
-#
-# 边:
-# I1 --> A1
-# I2 --> A1
-# I3 --> A1
-# A1 --> O1
+# [ALGO_FLOW] external: docs/03_modules/_domain_security/algo_flow/security/outbound_data_sanitizer.yaml
 """
 
 from __future__ import annotations

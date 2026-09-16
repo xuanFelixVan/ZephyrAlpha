@@ -34,32 +34,7 @@ TNR 违规（修复不可撤销/修复后恶化）一旦记录，连续零违规
 本件只做状态机与留痕；Learn 回写（fix_pattern_miner 周期挖掘）复用既有
 ``auto_fix_engine/fix_pattern_miner.py``，不在本件重复实现。
 
-# [ALGO_FLOW]
-# 层: 输入
-# - id: I1
-#   name: config 参数
-#   fields: 参数 config（无注解）
-#   code: ops_maturity.py 顶层公共函数形参（AST 提取）
-# 层: 算法
-# - id: A1
-#   name_zh: ① OpsMaturityTracker
-#   name_en: OpsMaturityTracker
-#   intro: A-L0→A-L2 成熟度状态机 + 解锁/违规/采纳留痕（append-only 台账）。
-#   desc: A-L0→A-L2 成熟度状态机 + 解锁/违规/采纳留痕（append-only 台账）。 不变量： - 逐级解锁，禁止跳级；A-L3 请求 MUST 拒绝（不在本件范围）；…；公共方法（定义序）: current_…
-#   inputs: config
-#   outputs: 返回值
-#   （注：A1 之后另有 5 个公共定义未列入（含 5 个数据契约/异常/枚举声明类），见源码）
-# 层: 输出
-# - id: O1
-#   name_zh: 模块公共 API 面（6 定义）
-#   name_en: public defs
-#   intro: OpsMaturityTracker
-#   downstream: 见模块头 [CONSUMERS]
-# [/ALGO_FLOW]
-#
-# 边:
-# I1 --> A1
-# A1 --> O1
+# [ALGO_FLOW] external: docs/03_modules/_domain_security/algo_flow/ops/ops_maturity.yaml
 """
 
 from __future__ import annotations

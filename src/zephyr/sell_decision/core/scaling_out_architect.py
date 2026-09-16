@@ -35,47 +35,7 @@ t1_deferred_weight 顺延。
 纪律：纯函数、无 IO。
 Version: 1.0.0
 
-# [ALGO_FLOW]
-# 层: 输入
-# - id: I1
-#   name: total_weight 参数
-#   fields: 参数 total_weight（无注解）
-#   code: scaling_out_architect.py 顶层公共函数形参（AST 提取）
-# - id: I2
-#   name: sellable_weight 参数
-#   fields: 参数 sellable_weight（无注解）
-#   code: scaling_out_architect.py 顶层公共函数形参（AST 提取）
-# - id: I3
-#   name: urgency 参数
-#   fields: 参数 urgency（无注解）
-#   code: scaling_out_architect.py 顶层公共函数形参（AST 提取）
-# - id: I4
-#   name: tranche_count 参数
-#   fields: 参数 tranche_count（无注解）
-#   code: scaling_out_architect.py 顶层公共函数形参（AST 提取）
-# 层: 算法
-# - id: A1
-#   name_zh: ① design_scaling_plan
-#   name_en: design_scaling_plan
-#   intro: 设计分批卖出计划（纯函数）。
-#   desc: 设计分批卖出计划（纯函数）。 Args: total_weight: 计划卖出总权重 >0 sellable_weight: T+1 可卖权重 ∈[0, total_weight…；源码 L188-L271
-#   inputs: total_weight sellable_weight urgency tranche_count
-#   outputs: ScalingPlan
-#   （注：A1 之后另有 5 个公共定义未列入（含 5 个数据契约/异常/枚举声明类），见源码）
-# 层: 输出
-# - id: O1
-#   name_zh: ScalingPlan
-#   name_en: ScalingPlan
-#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
-#   downstream: MOD-SELL-013(离场情景SCALED_EXIT落地) ; D-EX-CORE(批次执行)
-# [/ALGO_FLOW]
-#
-# 边:
-# I1 --> A1
-# I2 --> A1
-# I3 --> A1
-# I4 --> A1
-# A1 --> O1
+# [ALGO_FLOW] external: docs/03_modules/_domain_sell_decision/algo_flow/scaling_out_architect.yaml
 """
 
 from __future__ import annotations

@@ -33,32 +33,7 @@ Exit Scenario Planner — 离场情景规划器 (MOD-SELL-013)
 MOD-SELL-014 产出可直插）。
 Version: 1.0.0
 
-# [ALGO_FLOW]
-# 层: 输入
-# - id: I1
-#   name: intent 参数
-#   fields: 参数 intent，类型注解 ExitPlanningInput
-#   code: exit_scenario_planner.py 顶层公共函数形参（AST 提取）
-# 层: 算法
-# - id: A1
-#   name_zh: ① plan_exit_scenarios
-#   name_en: plan_exit_scenarios
-#   intro: 规划离场情景（纯函数）。
-#   desc: 规划离场情景（纯函数）。 Raises: InvalidExitPlanInputError: 输入非法；源码 L162-L233
-#   inputs: intent
-#   outputs: ExitScenarioPlan
-#   （注：A1 之后另有 5 个公共定义未列入（含 5 个数据契约/异常/枚举声明类），见源码）
-# 层: 输出
-# - id: O1
-#   name_zh: ExitScenarioPlan
-#   name_en: ExitScenarioPlan
-#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
-#   downstream: MOD-SELL-017(分批卖出架构) ; MOD-SELL-018(做T协调) ; D-EX-CORE(执行)
-# [/ALGO_FLOW]
-#
-# 边:
-# I1 --> A1
-# A1 --> O1
+# [ALGO_FLOW] external: docs/03_modules/_domain_sell_decision/algo_flow/exit_scenario_planner.yaml
 """
 
 from __future__ import annotations
