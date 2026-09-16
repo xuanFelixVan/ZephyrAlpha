@@ -4,10 +4,15 @@ title: OBJ_T 工具对象线——AI 升级 AI 的"手眼脚"升级
 owner: ZephyrAlpha-Owner
 session: st-ailayer-20260917
 date: 2026-09-17
-status: skeleton_pending_mining
+status: design_done
 ---
 
 # OBJ_T 工具对象线骨架卡（Owner 2026-09-17 口述新增）
+
+> **真源设计稿已出**（2026-09-17 挖干）：[DESIGN.md](DESIGN.md)（status: design_v1）——
+> T1 工具盘点 schema/T2 基准任务集 21 题（手 8 眼 7 脚 6）/T3 进货流 9 源+沙箱规程/
+> T4 配对 9 格矩阵回写 tool_affinity/T5 删除双闸/T6 坑集归 L7；六契约接线+9 施工项+
+> 3 待 Owner。本文骨架卡保留作口述定调存档，工程细节以 DESIGN.md 为准。
 
 > **Owner 定调原话要点**：AI 升级 AI 不光是升级模型，还要升级工具——AI 的手、眼、脚
 > 等等都要升级；执行、修改、删除等等这些能力都要有升级通道。
@@ -40,10 +45,10 @@ status: skeleton_pending_mining
 browser-use/computer-use 技能（本会话在用）/ MCP servers 蓝图在档 / capability_cards
 （33 件工具卡）/ 挖矿 SOP 工具甄别（Scrapling 等分级在档）。
 
-## 待挖矿清单（下一班）
+## 待挖矿清单（已挖干，2026-09-17 → DESIGN.md）
 
-1. 工具资产盘点：现有工具×使用频率×故障率画像（工具资源画像，挂排班库）
-2. 基准任务集 v0：每类器官 5-10 个标准任务（考试卷）
-3. 新工具进货流：扫描源（MCP 生态/自动化工具榜）→沙箱试用规程
-4. 工具-模型配对实验：哪些工具配哪些模型效果最好（与 OBJ_M 路由表联动）
-5. 删除类工具的专项红线（对接 OBJ_S 删除分级）
+1. 工具资产盘点 → DESIGN.md §2（T1：盘点 schema+生成器真源+排班第四源）
+2. 基准任务集 v0 → DESIGN.md §3（T2：21 题考卷+Tier B 轻量制式裁定）
+3. 新工具进货流 → DESIGN.md §4（T3：9 源+沙箱规程+四判据转正）
+4. 工具-模型配对实验 → DESIGN.md §5（T4：9 格矩阵+tool_affinity 回写 OBJ_M）
+5. 删除类专项红线 → DESIGN.md §6（T5：对接 OBJ_S 三档的双闸接口；附 T6 坑集归 L7）
