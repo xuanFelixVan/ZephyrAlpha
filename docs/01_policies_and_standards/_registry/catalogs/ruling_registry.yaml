@@ -2443,7 +2443,7 @@ entries:
     - docs/_working/full-auto-chain/S11_assembled_backtest/rsc2_shrinkage_backtest_ruling.md
     - docs/01_policies_and_standards/_registry/catalogs/ruling_registry.yaml
     - docs/_working/full-auto-chain/S11_assembled_backtest/nodes/regime_supply_chain_mining.md
-  related_arch: ['#11_regime_backtest_validation_plan', '#ARCH-REGIME-OVERLAY-001']
+  related_arch: ['#ARCH-REGIME-OVERLAY-001']
   related_rulings: ['裁定#257', '裁定#269']
   superseded_by: null
 
@@ -2475,7 +2475,7 @@ entries:
     - docs/03_modules/_domain_regime/algo_flow/wyckoff_engine.yaml
     - tests/regime/test_wyckoff_engine.py
     - tests/regime/validation/test_wyckoff_walkforward.py
-  related_arch: ['#14_regime_s2_diagnosis', '#10_regime_detector_spec']
+  related_arch: []
   related_rulings: ['裁定#264', '裁定#257']
   superseded_by: null
 
@@ -2510,7 +2510,7 @@ entries:
     - tests/backtest/test_decision_gate_regime.py
     - tests/backtest/test_strategy_validation_pipeline.py
     - tests/strategy_pipeline/test_fw_backtest.py
-  related_arch: ['#52_backtest_validation_standard']
+  related_arch: []
   related_rulings: []
   superseded_by: null
 - ruling_id: '裁定#273'
