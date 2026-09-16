@@ -5,13 +5,13 @@
 # [CONSUMERS] V1 api_server 只读端点（规划中）；tests/trading/test_decision_map.py
 # [STARTUP] imported（纯函数库，无常驻进程/无事件订阅）
 # [MATURITY] production
-# [INVARIANTS] INV-1 地图YAML不复制注册表条目只持稳定标识符引用; INV-2 load产出全frozen dataclass; INV-3 validate纯函数无副作用; INV-4 error=0才可被下游消费; INV-5 module_ref=null记warning不记error（V0缺口可视化输入）
+# [INVARIANTS] INV-1 地图YAML不复制注册表条目只持稳定标识符引用; INV-2 load产出全frozen dataclass; INV-3 validate纯函数无副作用; INV-4 error=0才可被下游消费; INV-5 module_ref=null记warning不记error（V0缺口可视化输入）; INV-6 R21 MOD 对账只认「当前文件 sha256 命中」的 depgraph 缓存条目——hash 未命中＝缓存陈旧，降级 warning 禁报 error（拿旧版本文件的 module_id 判违规＝假阳性，实证 q-…-0012）
 # [MODIFY-GUARD] schema_version 变更必须同步升级 dataclasses+校验规则+测试（R1-R36）
 # [STABILITY] evolving
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] DecisionMapSchemaError（load阶段结构错误）; validate不抛异常只产GapReport
-# [TESTS] tests/trading/test_decision_map.py
+# [TESTS] tests/trading/test_decision_map.py; tests/trading/test_decision_map_adversarial.py
 # [A_module] module_id=MOD-TRADING-015 | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 
@@ -432,7 +432,16 @@ def _load_depgraph_entries(cache_path: Path) -> dict[str, dict[str, dict]] | Non
 
 
 def _resolve_mod_id(entries: dict[str, dict[str, dict]], repo_root: Path, path: str) -> str | None:
-    """解析 path 的现役 blueprint_id：优先匹配当前文件 sha256 的条目，回退首条；清洗 supplement 后缀。"""
+    """解析 path 的现役 blueprint_id：只认当前文件 sha256 命中的条目；清洗 supplement 后缀。
+
+    hash 未命中一律返回 None（**禁回退首条**）：缓存按 content_hash 累积多版本条目，
+    未命中＝该文件已改动而缓存未刷新，此时任何条目描述的都是**旧版本文件**——拿它
+    判定"module_id 不一致"是对不存在的仓库状态断言违规（假阳性）。实证：提交队列
+    落地 worktree 的 .runtime/depgraph_scan_cache.json 比 checkout 旧一天，回退首条
+    取到改名前的 MOD-INT_NEWS_CHAIN/MOD-INT_CHAIN_IMPACT，R21 报 2 项 error 挡死
+    一个与地图无关的 13 文件批次（q-…-0012，2026-09-16）。未知即降级，与"缓存整体
+    缺失→R21 降级为格式校验"同一哲学；陈旧本身由 DEPGRAPH-FRESHNESS 负责浮出。
+    """
     hashes = entries.get(path)
     if not isinstance(hashes, dict) or not hashes:
         return None
@@ -444,8 +453,6 @@ def _resolve_mod_id(entries: dict[str, dict[str, dict]], repo_root: Path, path: 
         entry = hashes.get(actual)
     except OSError:
         entry = None
-    if entry is None:
-        entry = next(iter(hashes.values()))
     if not isinstance(entry, dict) or not entry.get("blueprint_id"):
         return None
     bid = str(entry["blueprint_id"]).strip()
@@ -680,6 +687,16 @@ def _validate_governance(
             actual = _resolve_mod_id(depgraph_entries, repo_root, n.module_ref)
             if actual is not None and actual != n.module_id:
                 add("error", "R21", n.node_id, f"module_id {n.module_id} 与 depgraph 缓存 {actual} 不一致（module_ref={n.module_ref}）")
+            elif actual is None and depgraph_entries.get(n.module_ref):
+                # 禁静默降级：有缓存条目却无当前内容 hash 命中＝缓存陈旧（或条目缺
+                # blueprint_id），对账降级为格式校验，欠账必须浮出（不阻断：对不存在的
+                # 旧版本文件断言违规＝假阳性，见 _resolve_mod_id docstring）
+                add(
+                    "warning",
+                    "R21",
+                    n.node_id,
+                    f"depgraph 缓存无当前内容 hash 条目（缓存陈旧，{n.module_ref}）——MOD 对账降级为格式校验，请刷新 depgraph 扫描缓存",
+                )
         if n.module_ref and not n.module_id:
             add("warning", "R21", n.node_id, "有 module_ref 无 module_id（MOD-* 交叉锚欠账，五图对齐 key 缺失）")
         # R26-R33 八库交叉轴（表驱动）

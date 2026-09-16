@@ -8,13 +8,14 @@
   A 绕过类：注册表缺失/空地图/目录冒充文件/路径穿越——防违规静默通过（假阴性）
   B 边界值类：卡线 100 字/8 挂载/树深 4/流预算 80——精确放行，+1 必拦
   C 伪装类：大小写/后缀/畸形 node_id/module_id——防枚举与格式绕过
-  D 交叉对账类：MOD 锚与 depgraph 缓存不一致/缓存缺失降级/supplement 清洗
+  D 交叉对账类：MOD 锚与 depgraph 缓存不一致/缓存缺失降级/缓存陈旧降级/supplement 清洗
   E 组合攻击类：多重违规叠加全报 / feedback 合法回指放行（防误杀）
   F warning 语义类：欠账浮出但 ok=True（防 warning 变相阻断）
 """
 
 from __future__ import annotations
 
+import hashlib
 import json
 from pathlib import Path
 
@@ -68,11 +69,16 @@ def _write_map(tmp_path: Path, payload: dict) -> Path:
     return p
 
 
-def _write_cache(tmp_path: Path, path_to_mod: dict[str, str]) -> Path:
-    """构造 depgraph 扫描缓存（红队可控的 path→blueprint_id 映射）。"""
-    entries = {
-        path: {"deadbeef": {"path": path, "blueprint_id": mod}} for path, mod in path_to_mod.items()
-    }
+def _write_cache(tmp_path: Path, path_to_mod: dict[str, str], *, stale: bool = False) -> Path:
+    """构造 depgraph 扫描缓存（红队可控的 path→blueprint_id 映射）。
+
+    默认按文件**当前 sha256** 建条目＝新鲜缓存（命中现役条目）；``stale=True`` 用伪
+    hash＝缓存落后于 checkout（R21 必须降级为格式校验，禁拿旧版本条目报 error）。
+    """
+    entries = {}
+    for path, mod in path_to_mod.items():
+        key = "deadbeef" if stale else hashlib.sha256((_REPO / path).read_bytes()).hexdigest()
+        entries[path] = {key: {"path": path, "blueprint_id": mod}}
     p = tmp_path / "dep.json"
     p.write_text(json.dumps({"_meta": {}, "entries": entries}), encoding="utf-8")
     return p
@@ -403,6 +409,26 @@ class TestCrossReconciliation:
         ok, issues = _validate(tmp_path, payload)
         assert ok is True
         assert any(i.code == "R21" and "交叉锚欠账" in i.detail for i in issues)
+
+    def test_d6_stale_cache_degrades_not_blocks(self, tmp_path: Path) -> None:
+        """缓存落后于 checkout（当前内容 hash 未命中）→ R21 降级 warning，禁报 error。
+
+        回归实证（2026-09-16 q-…-0012）：提交队列落地 worktree 的
+        .runtime/depgraph_scan_cache.json 比 checkout 旧一天，旧"回退首条"逻辑取到改名前
+        的 MOD-INT_NEWS_CHAIN/MOD-INT_CHAIN_IMPACT，2 项**假** error 挡死一个与地图无关的
+        13 文件批次。旧版本文件的 module_id 不是当前仓库状态，无权判违规。
+        """
+        real = "src/zephyr/trading/decision_map.py"
+        cache = _write_cache(tmp_path, {real: "MOD-AAA-001"}, stale=True)
+        payload = _payload()
+        payload["nodes"][0]["module_ref"] = real
+        payload["nodes"][0]["module_id"] = "MOD-BBB-002"  # 与陈旧条目不同：仍不得报 error
+        ok, issues = _validate(tmp_path, payload, cache=cache)
+        assert ok is True
+        assert not any(i.code == "R21" and i.level == "error" for i in issues)
+        assert any(
+            i.code == "R21" and i.level == "warning" and "缓存陈旧" in i.detail for i in issues
+        )
 
 
 # ── E 组合攻击类：多重违规叠加 ───────────────────────────────────────────────
