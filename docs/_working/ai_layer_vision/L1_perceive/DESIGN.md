@@ -13,7 +13,7 @@ status: design_v1
 > 驱动的节拍浅扫）双通道，产出定向**搜索任务单**喂 L2 收集段；骨架即地图，骨架长一节搜索网密一层。
 > 主文档锚点：ai_layer_vision_and_roadmap_v1.md §0.5 定调 3/4/10 + 本稿 §2（源注册表/投毒防御
 > 细则已迁 L1/L2/L3 各稿 §2）；方法论真源=
-> [mining_sop_policy.md](../../01_policies_and_standards/sop/mining_sop/mining_sop_policy.md)
+> [mining_sop_policy.md](../../../01_policies_and_standards/sop/mining_sop/mining_sop_policy.md)
 > （六向寻路/四闸/矿脉枯竭/挖后自审闸，本轮全部照办）；下游契约对齐
 > [L2 DESIGN.md](../L2_intake_library/DESIGN.md) §三（intake_ingest_due）。
 > 本文是设计稿非施工清单：施工另走 construction_workflow_policy 15 步闭环。

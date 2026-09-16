@@ -209,7 +209,7 @@ _ENV_ABORT_ESCALATE=3）。**T1 派工前置双预检**：①老组不动——c
 |---|-----|------------------|---------|
 | C1 | policy 常量文件 | `config/schedule_gate_policy.yaml`（新增，治理锚定头+OBJ_R 管辖声明） | 全常数齐（M1-M4/优势分桶/降级线/配额上限/首批白名单区）；Owner 点头记录位 |
 | C2 | 工单库表 | PG 同实例独立 schema `ai_scheduling` 新表 `ai_work_order`+DDL 登记器 `scripts/ai_layer/apply_ai_layer_scheduling_ddl.py`（L2 母版同模式；与 L2 ai_intake schema 隔离，产线禁读界不破） | 全经 DatabaseService；TIMESTAMPTZ；状态机 CHECK（pending/held_maturity/held_incomplete/dispatched/deferred/done/dead，迁移判据=§2.7）；append-only 审计字段 |
-| C3 | 事件层 | `src/zephyr/ai_layer/scheduling/events.py`（对齐 intake/events.py 六要素） | 5 个轻 kind（evolution_winner_due/order_created_due/order_confirmed_due/order_dispatch_due/order_deferred_due）；KillSwitch 探针；毒丸；零定时器 |
+| C3 | 事件层 | `src/zephyr/ai_layer/scheduling/events.py`（对齐 intake/events.py 六要素） | 7 个轻 kind（evolution_winner_due/order_created_due/order_confirmed_due/order_dispatch_due/order_deferred_due/work_order_shadow_ready=done 出口影子上岗券→L6/work_order_closed_due=关单回执→L7/work_order_dead=死单回执→L2 rejected，红蓝 R3 补全）；KillSwitch 探针；毒丸；零定时器 |
 | C4 | 工单生成守护 | `src/zephyr/ai_layer/scheduling/order_daemon.py`（journal 唯一真源：尾随+last_read_offset 断点续读；belt_daemon 防抖/单例锁 PID+TTL 600s 机械仅作 journal 补偿读指针，§2.1 裁定不扫目录） | §2.1 映射表全实现；criteria_hash 机检缺失/不匹配拒派；必填机检 held_incomplete |
 | C5 | 成熟度门闸 | scheduling/maturity.py | M1-M4 可配置读 policy；新鲜度衰减；区域聚合 SQL 正确；held_maturity 自动转正留痕 |
 | C6 | 分流器 | scheduling/router.py | R1-R3 三证据机检；骨架级必置 owner_gate=true；自指命中必 Owner 有测试 |
@@ -284,3 +284,5 @@ promotion 页），一样是常量文件（policy）；②过度工程检查：�
 ## 红蓝 R2 修复记录（2026-09-17，红队 R2 发现）
 
 - **R2（dead 终态无回传）**：§2.7 dead 行补回执事件 `work_order_dead`（payload={order_id, reason}）→L2 候选卡跳 rejected——L2 稿同批补 rejected 入边，dead 不再是无回传黑洞。连带核记：§1 台账①与 §3 库内路 `INTAKE_E2_HANDOFF` 的 evidence_ref 增补已经 L2 稿 R2 同批落地。
+
+**红蓝 R3 修复记录**：R3：C3 事件 5→7 kind 补全（shadow_ready/closed_due/dead），计数同步。

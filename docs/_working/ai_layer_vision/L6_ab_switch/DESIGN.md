@@ -202,7 +202,7 @@ EXEMPT-ZONE-FM 真实路径（R2 头注释）：前身=post-commit warn reconcil
 |------|------|------|------|
 | **L5 排产** | 施工完成回执=shadow 入场券：工单关单+worktree 就绪+验收门绿才发 | L5→L6 | {work_order_id, module_id, challenger_branch, criteria_yaml_ref+hash, domain, tier_action} |
 | **L4 对比** | 影子期=L4 判据的持续执行现场；L6 回传实测数据供 L4 终裁（升 canary/promote 的裁定出自 L4，评估者独立）；好得反常触发 L4 三查 | L6↔L4 | {switch_id, corpus 统计, disagreement_rate, evidence_pack（判据冻结哈希）} |
-| **L7 传承** | 每次切换终局留档：胜者档案/败者档案/判据档案/墓碑登记/回切记录——"判据档案=当时为什么算它赢"直接消费本稿 criteria_yaml | L6→L7 | {promotion_record, tombstone_entry, 判据档案, 回切历史} |
+| **L7 传承** | 每次切换终局留档：胜者档案/败者档案/判据档案/墓碑登记/回切记录——"判据档案=当时为什么算它赢"直接消费本稿 criteria_yaml | L6→L7 | 事件 `switch_archived_due`（红蓝 R3 两稿对齐，接收方口径）：{switch_id, object{family, ref}, outcome, winner_ref, loser_ref, diff_summary, criteria_ref+criteria_hash, tombstone_entry?}——语义映射：胜局→elite+criteria；aborted 带根因→defect；retired→elite 降级信号 |
 | **promotion 前端页** | high 域/骨架级/规则类切换建议卡。真实先例=`src/zephyr/frontend/dashboard/web/pages/promotion.html`+`features/promotion/promotion.js`（S13：真源 `/api/promotion-advisories`、JS 渲染、**二次确认**、服务端留痕回执、**建议由流水线自动生成禁手工造**）。裁定：**复用该页**，advisory 增 `kind=switch`，不新建页面 | L6→前端 | 建议卡 {switch_id, A/B 对比摘要, 一键切换/一键回切按钮, 证据包链接} → 拍板回执 {approved_by, 时刻, 新状态} |
 | L1 内监（辅） | 观察期信号=内监数据源；regime 变化触发墓碑复检（§②-D 复活裁判） | 双向 | drift/偏离信号 → 复检工单 |
 | 排班表（辅） | 影子跑/演练任务注册 resource_profile_registry（生成器三源再生，**禁手工增条目**；全项目一张真源） | L6→排班 | 实体登记+周历窗口申请 |
@@ -270,3 +270,5 @@ EXEMPT-ZONE-FM 真实路径（R2 头注释）：前身=post-commit warn reconcil
 
 - **B3（状态机自称五态实为七枚举值）**：①全稿统一为**七态规范枚举** shadow/canary/promoted/champion/retired/tombstone/aborted，并给出清晰裁定：`promote`=一次性切换**动作**（事件）、`promoted`=动作后驻留**态**，分开命名、全稿拼写统一（改 §①-R5 台账行、§②-B 标题与裁定留痕、§②-B 状态表、S4 施工项、验收标准行、挖矿日志 R5，初稿 promote/retire 拼写漂移废止）。②**retired 与 tombstone 二段裁定**（不二选一、定义不重叠）：retired=已退役摘除消费、仍在复活观察窗内（registry status=retired，观察窗=1 个月度体检窗）；tombstone=观察期满正式封存（git tag+status=tombstone，§②-D 规程与 TTL 清理计时自此起算）。③状态表扩为"入边事件/进入判据/退出判据"四列，**七态每一态补齐入边事件**；aborted 此前在枚举里有值但无表行，已补行（入边=判据败/T5 未释疑/T1 结案/promoted 期回切不可退，出边=Owner 重开回 shadow）。
 - 连带核查：switch_registry 字段零变更（state 枚举本就七值，仅补注释）；L4/L5/L7 契约与 §②-D 墓碑规程不受影响；§②-G"promote=block 档"为动作语义，与裁定一致未改。
+
+**红蓝 R3 修复记录**：R3：L6→L7 事件定名 switch_archived_due 并对齐接收方 8 字段口径。

@@ -195,7 +195,7 @@ AI 层自己的尺子升级=OBJ_R（标准与规则线）。
 |------|------|------|-------------|
 | OBJ_M-#1 | OBJ_M_models | M4 路由表 api_providers 增删+免费窗合规终批（8 条 AI 层轨映射，C6 施工前置） | 计费线/订阅=Owner 独占四类事③② |
 | OBJ_S-#2 | OBJ_S_perimeter | secret_registry.yaml 是否增设 `ai_exposure: forbidden` 字段 | registry 修改=Owner 门位（不增设则 S1 deny-list 为唯一机检面，功能等价） |
-| L4-#3 | L4_compare | 两条增补边跨稿对齐（`intake_exam_due`+`intake_e2_handoff` 增 evidence_ref；L2 已 design_done） | 跨稿契约变更，需 Owner 确认或 L2 侧修订 |
+| L4-#3 | L4_compare | 派考边 `intake_exam_due` 契约对齐（R2 后仅余此边；evidence_ref 增补已随 R2 销账，回执件已改名 intake_exam_receipt） | 跨稿契约变更，需 Owner 确认或 L2 侧修订 |
 | L5-#3 | L5_schedule_gate | 任务书 schema v0 增补 provenance 字段（附录 A 版本化变更） | 主文档附录级变更，设计两可 Owner 定向 |
 | L6-#2 | L6_ab_switch | 墓碑 TTL 清理判据+注册表净删门确认 | 净删=high human_gate（宪法 §5），AI 永远只提案 |
 | OBJ_T-#3 | OBJ_T_tools | creation_token 补登（OBJ_T/DESIGN.md，×5 批次外） | 主会话/Owner 补登动作，登记留痕待办 |
@@ -246,3 +246,5 @@ OBJ_R 共 7（销 4/立案 3）｜OBJ_S 共 2（销 1/待 1）。
    等框架类陈旧措辞清除（Owner 已夜批）；真实治理立案类措辞保留。
 3. **B③**：新增 §3.5 待 Owner 项处置总表（全目录 31 项对账：已销 16/治理立案保留 9/真待
    Owner 6，含 token 补登×5 与数值初值追认逐条编号）。
+
+**红蓝 R3 修复记录**：R3：L4-#3 行同步 R2 后实际余量。

@@ -203,7 +203,7 @@ DDL 由幂等登记器 `scripts/ai_layer/apply_ai_heritage_ddl.py` 部署（照 
 
 | 对端 | 契约 | 方向 | 载荷 |
 |------|------|------|------|
-| **L6 切换** | 事件 `switch_archived_due`（L6 §③ 已声明边未定名，本稿提名，实施时两稿对齐）：L6 终局态转换（promote→champion / aborted / retire→tombstone）时 emit | L6→L7 | {switch_id, object{family, ref}, outcome, winner_ref, loser_ref, diff_summary, criteria_ref+criteria_hash, tombstone_entry?}——L7 消费：胜局→elite+criteria 双条目；aborted 带根因→defect 条目；retired→elite 降级信号 |
+| **L6 切换** | 事件 `switch_archived_due`（L6 §③ 红蓝 R3 已对齐本口径）：L6 终局态转换（promote→champion / aborted / retire→tombstone）时 emit | L6→L7 | {switch_id, object{family, ref}, outcome, winner_ref, loser_ref, diff_summary, criteria_ref+criteria_hash, tombstone_entry?}——L7 消费：胜局→elite+criteria 双条目；aborted 带根因→defect 条目；retired→elite 降级信号 |
 | **L4 对比** | `comparison_archived_due`（L4 §③ 已定名）：experiment 卡 archived 时 emit；反向 `comparison_prior_query` 只读服务 | L4↔L7 | 回写：{experiment_id, criteria_hash, venue, verdict, why_win 归因, too_good 出口}→criteria 条目（+win 时 elite 条目）；查询→H3 still_valid=true 历史裁定列表 |
 | **工单流** | `work_order_closed_due` 关单事件+派工前签名匹配读调用（§2.9）；红蓝对抗发现经 redblu_finding 类工单同通道进 | 工单流→L7 | 关单：{work_order_id, kind, heritage_ref \| no_new_pattern{reason}}；派工查询：{symptoms}→{entry_id, recipe, signature} |
 | **L1 感知** | `priors.py` 只读服务（V3/V4）；L1 施工项 9 挂起随本稿解锁 | L7→L1 | {domain, mechanism_family}→{prior_factor, rationale_refs, exclusion_keywords[]} |
@@ -287,3 +287,5 @@ DDL 由幂等登记器 `scripts/ai_layer/apply_ai_heritage_ddl.py` 部署（照 
 | 编号 | 修复内容 | 落点 |
 |------|---------|------|
 | R2 | 月度体检宿主补降级路线：Owner 不追认外扫裁定（L1 §2.4 双前置）时，月度体检由高模型维护班人工开会话执行（排班表登记人工任务），自动化宿主解锁顺延——消解 T3 双前置射程张力（forget.py/坑集月报不因外扫未追认而悬空） | §2.8 |
+
+**红蓝 R3 修复记录**：R3：switch_archived_due 两稿对齐确认（L6 侧已改）。
