@@ -204,6 +204,15 @@ def _check_filepath_exists(filepath: str, project_root: Path) -> bool:
 
     支持相对路径（scripts/git_commit.py）和 src/ 前缀路径。
     文件名-only 路径（无目录前缀）递归搜索项目内同名文件。
+
+    豁免登记（裁定#279 同盲区家族清偿，2026-09-17 核查结论）：本门存在性探测
+    （此处与 _check_module_path_exists）维持磁盘观测面、不做 HEAD 基线差分，
+    理由=①本门 **warn-only**（passed=True 恒成立，无阻断权）——裁定#279 的病根
+    是"阻断无辜提交人"，本门对磁盘陈旧/他会话在途删除最多产出 phantom 假警
+    （warn 噪声），不构成连坐阻断；②扫描面=本批 staged 文件自身（own-staged），
+    无跨文件对账面。已知残余噪声=落地 worktree 未落盘的消费者文件会出假 phantom
+    警告；治本候选（存在性探测加 index 面）留待本门升 block 时随升随治，禁为
+    warn 噪声预付大改（逐门清偿纪律）。
     """
     import glob as _glob
 

@@ -64,6 +64,7 @@ __all__ = [
     "_parse_diff_with_line_numbers",
     "_read_staged_file",
     "_read_head_file",
+    "_repo_state_has_file",
     "_collect_function_names",
     "_get_staged_py_files",
     "_get_added_lines",
@@ -304,6 +305,42 @@ def _read_head_file(gateway, py_file: str) -> str | None:
     except Exception:  # noqa: BLE001 — 5.135治标: broad exception catch
         pass
     return None
+
+
+def _repo_state_has_file(gateway, rel_path: str, rev: str = "") -> bool:
+    """存在性观测面=git 仓库态（裁定#279：index 或指定 rev），磁盘只作补充证据。
+
+    门禁要判的命题是"本 commit 之后的仓库里有没有这个文件"，不是"本机磁盘上
+    碰巧有没有"——序列化器落地 worktree 未 checkout 的 staged 新文件、他会话
+    在途删除等场景下磁盘面必然误判（2026-09-17 同盲区家族清偿）。
+    rev="" 查 index（ls-files --cached）；rev="HEAD" 等查该 tree（ls-tree）。
+    布尔判别用输出行数而非退出码：``cat-file -e`` 的"不存在"与"git 故障"同为
+    非零 rc 不可判别，ls-files/ls-tree 的 rc==0 恒成立、空输出=不存在。
+    git 失败（rc!=0，环境故障）时退回磁盘 ``os.path.exists`` 并**告警留痕**
+    （禁静默换口径——磁盘=本机暂态，非仓库态）。
+    """
+    args = (["git", "ls-tree", rev, "--", rel_path] if rev
+            else ["git", "ls-files", "--cached", "--", rel_path])
+    root = getattr(gateway, "project_root", None)
+    try:
+        result = gateway.run_git(args)
+        if result.returncode == 0:
+            if result.stdout.strip():
+                return True
+            # 仓库态没有 → 磁盘补充证据：未跟踪但在盘的目标对"存在性"判定合法
+            # （断链/悬空检测关心的是读者能不能找到它）；staged 未落盘的假阳性
+            # 场景由前面的仓库态分支消除。git 判"有"时不再问磁盘（主证据已足）。
+            return bool(root) and (Path(root) / rel_path).exists()
+        logger.warning(
+            "_repo_state_has_file: git rc=%d（%s %s）——退回磁盘观测面（降级留痕，裁定#279）",
+            result.returncode, args[1], rel_path,
+        )
+    except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
+        logger.warning(
+            "_repo_state_has_file: git 异常（%s: %s）——退回磁盘观测面（降级留痕，裁定#279）",
+            type(e).__name__, e,
+        )
+    return bool(root) and (Path(root) / rel_path).exists()
 
 
 def _collect_function_names(file_content: str) -> set[str]:

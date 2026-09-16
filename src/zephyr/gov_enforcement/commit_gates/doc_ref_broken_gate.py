@@ -5,7 +5,7 @@
 # [CONSUMERS] zephyr.gov_enforcement.rule_bridge.git_commit_gateway.GitCommitGateway.__init__
 # [STARTUP] imported
 # [MATURITY] production
-# [INVARIANTS] 硬阻断——staged 新增 .md 文件中 markdown 链接的相对路径指向不存在文件时阻断 commit；只检测新增文件（diff-filter=A）；in-process 正则 + os.path.exists 检测；URL/锚点/file:/// 链接正确解析（绝对路径不当相对路径误判，#ARCH-DOC-REF-FILE-URL）；草稿/归档区跳过目录豁免（对齐 N-16 skip_dirs_docs SSoT，#ARCH-DOC-REF-BROKEN-SKIP）；文件读取失败 fail-open（logger.warning）
+# [INVARIANTS] 硬阻断——staged 新增 .md 文件中 markdown 链接的相对路径指向不存在文件时阻断 commit；只检测新增文件（diff-filter=A）；in-process 正则 + os.path.exists 检测；URL/锚点/file:/// 链接正确解析（绝对路径不当相对路径误判，#ARCH-DOC-REF-FILE-URL）；草稿/归档区跳过目录豁免（对齐 N-16 skip_dirs_docs SSoT，#ARCH-DOC-REF-BROKEN-SKIP）；文件读取失败 fail-open（logger.warning）；观测面=git 仓库态（裁定#279 同盲区家族清偿 2026-09-17）：内容读 staged blob、链接目标存在性走 index（磁盘只作降级补充+告警）——序列化器落地 worktree 未 checkout 的同批目标文件不再误报断链；基线差分豁免=只测新增 .md，违规必然属本次
 # [MODIFY-GUARD] gate_id="DOC-REF-BROKEN"；check 闭包签名 (gateway, files, **kwargs) -> tuple[bool, str]
 # [STABILITY] evolving
 # [SAFETY] L
@@ -65,6 +65,10 @@ from pathlib import Path
 
 import yaml
 
+from zephyr.gov_enforcement.commit_gates._diff_helpers import (
+    _read_staged_file,
+    _repo_state_has_file,
+)
 from zephyr.gov_enforcement.rule_bridge.commit_gate_registry import GateSpec, is_test_exempt
 
 logger = logging.getLogger(__name__)
@@ -151,16 +155,22 @@ def _is_url_or_anchor(target: str) -> bool:
     return target.lower().startswith(_URL_PREFIXES)
 
 
-def _find_broken_refs(content: str, md_dir: str) -> list[str]:
+def _find_broken_refs(content: str, md_dir: str, exists_fn=None) -> list[str]:
     """查找 .md 文件中所有断裂的相对路径引用。
 
     Args:
         content: .md 文件内容。
         md_dir: .md 文件所在目录（绝对路径）。
+        exists_fn: 存在性探测函数（输入解析后的绝对路径）；None=磁盘
+            ``os.path.exists``（旧口径，兼容既有直调测试）。门禁闭包注入
+            ``_repo_state_has_file`` 探针（裁定#279：观测面=git 仓库态，磁盘只作
+            降级补充）——序列化器落地 worktree 里"同批 staged 的目标文件未
+            checkout 到磁盘"不再误报断链。
 
     Returns:
         断裂引用的目标路径列表（原始 target 字符串）。
     """
+    probe = exists_fn or os.path.exists
     broken: list[str] = []
     for match in _MD_LINK_RE.finditer(content):
         target = match.group(2).strip()
@@ -173,7 +183,7 @@ def _find_broken_refs(content: str, md_dir: str) -> list[str]:
         if not target_no_anchor:
             continue  # 纯锚点 "#section"
         # file:/// 绝对路径链接（#ARCH-DOC-REF-FILE-URL, 2026-08-05 治本）
-        # 提取本地路径直接检查存在性，不当相对路径拼接
+        # 提取本地路径直接检查存在性，不当相对路径拼接（仓库外目标=磁盘语义）
         if target_no_anchor.startswith(_FILE_URL_PREFIX):
             file_path = _resolve_file_url(target_no_anchor)
             if file_path is None:
@@ -183,7 +193,7 @@ def _find_broken_refs(content: str, md_dir: str) -> list[str]:
             continue
         # 相对 .md 目录解析
         resolved = os.path.normpath(os.path.join(md_dir, target_no_anchor))
-        if not os.path.exists(resolved):
+        if not probe(resolved):
             broken.append(target)
     return broken
 
@@ -226,14 +236,22 @@ def _get_worktree_root(gateway) -> str:
     return str(gateway.project_root)
 
 
-def _resolve_abs_md_files(new_md_files: list[str], wt_root: str) -> list[str]:
-    """将相对路径解析为存在的绝对路径 .md 文件列表。"""
+def _resolve_abs_md_files(new_md_files: list[str], wt_root: str, gateway=None) -> list[str]:
+    """将相对路径解析为绝对路径 .md 文件列表。
+
+    磁盘 ``os.path.isfile`` 是旧口径：落地 worktree 里 staged 新 .md 可能尚未
+    checkout 到磁盘，按磁盘过滤会把整批新文档漏检（假阴性）。gateway 给定时
+    （裁定#279 观测面）仓库态 staged 文件一律保留——内容读 staged blob，不依赖
+    磁盘副本；gateway=None（兼容旧直调）保持纯磁盘口径。
+    """
     abs_files: list[str] = []
     for rel in new_md_files:
         if os.path.isabs(rel):
             abs_files.append(rel)
         else:
             abs_files.append(os.path.join(wt_root, rel.replace("/", os.sep)))
+    if gateway is not None:
+        return abs_files
     return [f for f in abs_files if os.path.isfile(f)]
 
 
@@ -248,30 +266,47 @@ def _dedup_broken_targets(broken: list[str]) -> list[str]:
     return unique
 
 
-def _detect_md_file_violation(abs_path: str, wt_root: str) -> str | None:
+def _detect_md_file_violation(abs_path: str, wt_root: str, gateway=None) -> str | None:
     """检测单个 .md 文件的断裂引用。
 
     Args:
         abs_path: .md 文件绝对路径。
         wt_root: worktree 根目录（用于生成相对路径描述）。
+        gateway: GitCommitGateway 实例；给定时内容读 staged blob（index，裁定#279——
+            磁盘上可能尚未 checkout/已被他会话操作），存在性探测走 git 仓库态；
+            None（兼容旧直调）保持纯磁盘口径。
 
     Returns:
         违规描述字符串；读取失败返回 None（跳过），无断链返回 None。
     """
-    try:
-        with open(abs_path, encoding="utf-8", errors="replace") as f:
-            content = f.read()
-    except OSError as e:
-        logger.warning(
-            "DOC-REF-BROKEN gate skip file %s: 读取失败(%s: %s)。",
-            abs_path,
-            type(e).__name__,
-            e,
-        )
-        return None
+    content: str | None = None
+    if gateway is not None:
+        rel = os.path.relpath(abs_path, wt_root).replace("\\", "/")
+        content = _read_staged_file(gateway, rel) or None  # 空 staged=读取失败语义→磁盘回退
+
+    def _probe(resolved: str) -> bool:
+        if gateway is None:
+            return os.path.exists(resolved)
+        rel_target = os.path.relpath(resolved, wt_root).replace("\\", "/")
+        if rel_target.startswith(".."):
+            return os.path.exists(resolved)  # 仓库外目标=磁盘语义
+        return _repo_state_has_file(gateway, rel_target)
+
+    if content is None:
+        try:
+            with open(abs_path, encoding="utf-8", errors="replace") as f:
+                content = f.read()
+        except OSError as e:
+            logger.warning(
+                "DOC-REF-BROKEN gate skip file %s: 读取失败(%s: %s)。",
+                abs_path,
+                type(e).__name__,
+                e,
+            )
+            return None
 
     md_dir = os.path.dirname(abs_path)
-    broken = _find_broken_refs(content, md_dir)
+    broken = _find_broken_refs(content, md_dir, exists_fn=_probe)
     if not broken:
         return None
     rel_name = os.path.relpath(abs_path, wt_root).replace("\\", "/")
@@ -304,14 +339,17 @@ def make_doc_ref_broken_gate() -> GateSpec:
         wt_root = _get_worktree_root(gateway)
 
         # 3. 解析为绝对路径
-        abs_files = _resolve_abs_md_files(new_md_files, wt_root)
+        abs_files = _resolve_abs_md_files(new_md_files, wt_root, gateway=gateway)
         if not abs_files:
             return True, ""
 
-        # 4. 检测每个 .md 文件的断裂引用
+        # 4. 检测每个 .md 文件的断裂引用（观测面=git 仓库态，裁定#279 同盲区家族
+        # 清偿 2026-09-17：内容读 staged blob、目标存在性走 index/HEAD——磁盘只作
+        # 降级补充。基线差分豁免理由：本门只测 --diff-filter=A **新增** .md，文件
+        # 内容整体属本次提交，违规必然由本次引入，HEAD 基线差分无增量信息）
         all_violations: list[str] = []
         for abs_path in abs_files:
-            violation = _detect_md_file_violation(abs_path, wt_root)
+            violation = _detect_md_file_violation(abs_path, wt_root, gateway=gateway)
             if violation:
                 all_violations.append(violation)
 

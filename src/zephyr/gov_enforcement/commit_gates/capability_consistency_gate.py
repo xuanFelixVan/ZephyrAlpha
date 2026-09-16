@@ -5,7 +5,7 @@
 # [CONSUMERS] zephyr.gov_enforcement.rule_bridge.git_commit_gateway.GitCommitGateway.__init__
 # [STARTUP] imported
 # [MATURITY] production
-# [INVARIANTS] 硬阻断——staged *_provider.py 文件中"fetch 路由能力集"与"meta.capabilities 声明集"不一致时阻断 commit（passed=False）；治本本次 8 条 ERROR 根因：路由支持某 capability 但 meta 遗漏声明（miniqmt 8 个 CapabilityContract 漏声明）；#ARCH-DATA-002 施工项4（17号 §5.5）并入：路由引用/声明的 _fetch_* 方法无真实定义亦阻断（防"半截工程"声明残留）；检测 staged 内 *_provider.py 文件（如 akshare/miniqmt/tushare）；AST 解析失败 fail-open（passed=True，其他 gate 处理）；git diff 不可达 fail-open（logger.warning）
+# [INVARIANTS] 硬阻断——staged *_provider.py 文件中"fetch 路由能力集"与"meta.capabilities 声明集"不一致时阻断 commit（passed=False）；治本本次 8 条 ERROR 根因：路由支持某 capability 但 meta 遗漏声明（miniqmt 8 个 CapabilityContract 漏声明）；#ARCH-DATA-002 施工项4（17号 §5.5）并入：路由引用/声明的 _fetch_* 方法无真实定义亦阻断（防"半截工程"声明残留）；检测 staged 内 *_provider.py 文件（如 akshare/miniqmt/tushare）；AST 解析失败 fail-open（passed=True，其他 gate 处理）；git diff 不可达 fail-open（logger.warning）；基线差分（裁定#279 同盲区家族清偿 2026-09-17）：整文件 AST 判定配 HEAD 基线同判，NOW−BASE 只阻断本次新增，NOW∩BASE 存量降级 warn 归属其责任人——治"他人 provider 欠账连坐后续任何触碰该文件的批次"
 # [MODIFY-GUARD] gate_id="CAP-CONSISTENCY"；check 闭包签名 (gateway, files, **kwargs) -> tuple[bool, str]
 # [STABILITY] stable
 # [SAFETY] L
@@ -68,6 +68,7 @@ from zephyr.gov_enforcement.commit_gates._diff_helpers import (
     _build_own_scope,
     _get_staged_py_files,
     _norm_rel,
+    _read_head_file,
     _read_staged_file,
 )
 from zephyr.gov_enforcement.rule_bridge.commit_gate_registry import GateSpec
@@ -160,15 +161,40 @@ def make_capability_consistency_gate() -> GateSpec:
             if not provider_files:
                 return True, ""
 
-        # 3. 检测每个 provider 文件的路由-meta 一致性
+        # 3. 检测每个 provider 文件的路由-meta 一致性（基线差分：只阻断本次新增）
         violations: list[str] = []
+        inherited_total = 0
         for provider_file in provider_files:
             content = _read_staged_file(gateway, provider_file)
             if not content:
                 continue
             file_violations = _check_provider_content(content, provider_file)
-            for v in file_violations:
+            if not file_violations:
+                continue
+            # 基线差分（裁定#279 同盲区家族清偿，2026-09-17）：本门用整文件 AST 判定，
+            # 无基线时他人落地批的存量欠账（如 meta 漏声明一行）会连坐**任何**后续触碰
+            # 该 provider 的批次（§8.14 实证形态）。HEAD 版本同判：NOW−BASE 只阻断本次
+            # 新增；NOW∩BASE（存量）降级 warn 归属其责任人（宪法 §3.4 他会话在途违规
+            # 不代修）。HEAD 无此文件（新增）→ 基线空集，全部违规属本次。
+            head_content = _read_head_file(gateway, provider_file)
+            base_set = set(_check_provider_content(head_content, provider_file)) if head_content else set()
+            now_set = set(file_violations)
+            inherited = sorted(now_set & base_set)
+            introduced = sorted(now_set - base_set)
+            if inherited:
+                inherited_total += len(inherited)
+                logger.warning(
+                    "CAP-CONSISTENCY: %s 存量违规 %d 项（HEAD 基线已在，非本次引入，"
+                    "不阻断、归属其责任人）",
+                    provider_file,
+                    len(inherited),
+                )
+            for v in introduced:
                 violations.append(f"  {provider_file}: {v}")
+        if inherited_total:
+            logger.warning(
+                "CAP-CONSISTENCY: 共 %d 项存量违规未阻断（基线差分，裁定#279）", inherited_total
+            )
 
         # 4. 硬阻断
         if violations:

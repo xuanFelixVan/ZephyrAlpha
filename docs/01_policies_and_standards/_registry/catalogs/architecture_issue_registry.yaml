@@ -21706,3 +21706,12 @@ entries:
   related_adjudication: '裁定#278'
   created: '2026-09-14'
   last_updated: '2026-09-16'
+- issue_id: "#ARCH-316"
+  title: 裁定#279 同盲区门禁家族清偿——CAP-CONSISTENCY/SCHEMA-FILE-EXISTS/DOC-REF-BROKEN/CONSUMERS-ACCURACY 四门观测面核查与治本（2026-09-17 班）
+  severity: P1高
+  adjudication: 按裁定#279「同族盲区逐个另案清偿，禁一次性大改」逐门核查观测面口径并处置——①CAP-CONSISTENCY（block，priority 101）：观测面已是 git index（staged blob），缺 HEAD 基线差分（整文件 AST 判定使他人落地批的存量欠账连坐任何后续触碰该 provider 的批次，§8.14 实证形态）→ 治本=HEAD 版本同判，NOW−BASE 只阻断本次新增、NOW∩BASE 存量降级 warn 归属其责任人；②SCHEMA-FILE-EXISTS（block，121）：os.path.exists 判磁盘+无基线，双盲区都在 → 治本=存在面走 git 仓库态（新增 _diff_helpers._repo_state_has_file：ls-files --cached/ls-tree 输出行数布尔判别，规避 cat-file -e 缺失与故障同为非零 rc 不可判别问题；磁盘作补充证据+git 失败降级告警）+ HEAD 版 YAML 悬空集基线差分；③DOC-REF-BROKEN（block，91）：.md 内容读磁盘+链接目标 os.path.exists 判磁盘 → 治本=内容读 staged blob（空 staged=失败语义回退磁盘）、目标存在面走 _repo_state_has_file、_resolve_abs_md_files 不再按磁盘过滤 staged 新文档（旧口径整批漏检=假阴性）；基线差分豁免理由=只测 --diff-filter=A 新增文件，违规必然属本次；④CONSUMERS-ACCURACY（warn-only，116）：磁盘存在性面**豁免不改**，理由=无阻断权即无连坐（裁定#279 病根=阻断无辜提交人），磁盘陈旧最多产 phantom 假警，治本候选留待升 block 时随升随治（豁免理由已登记在该门 _check_filepath_exists docstring）。机证=tests/governance/commit_gates/test_repo_state_observation.py 9 例：他会话在途删除/磁盘陈旧（staged 未落盘）两场景断言不误伤无辜提交人 + 真违规仍拦 + CAP 存量欠账不连坐 + warn-only 豁免钉。回归=schema 22+doc 47+consumers 41+cap validator 48+errcode 19 全绿。
+  fix_phase: 已落地（_diff_helpers._repo_state_has_file + 三门治本 + 一门豁免登记 + 9 例机证）
+  status: 'resolved'
+  related_adjudication: '裁定#279'
+  created: '2026-09-17'
+  last_updated: '2026-09-17'

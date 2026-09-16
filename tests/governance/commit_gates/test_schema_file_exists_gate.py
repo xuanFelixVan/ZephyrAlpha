@@ -154,8 +154,8 @@ class TestCheckSchemaFilesExist:
         gw = _make_mock_gateway(yaml_content=yaml_content)
         # monkeypatch os.path.exists 全返回 True
         monkeypatch.setattr(
-            "zephyr.gov_enforcement.commit_gates.schema_file_exists_gate.os.path.exists",
-            lambda p: True,
+            "zephyr.gov_enforcement.commit_gates.schema_file_exists_gate._repo_state_has_file",
+            lambda gw, rel, rev="": True,
         )
         result = _check_schema_files_exist(gw, str(tmp_path))
         assert result == []
@@ -173,7 +173,11 @@ class TestCheckSchemaFilesExist:
             "  schema_file: schemas/categories/nonexistent.py\n"
         )
         gw = _make_mock_gateway(yaml_content=yaml_content)
-        # 真实 os.path.exists（不 mock，依赖 tmp_path 下的真实文件）
+        # 观测面=git 仓库态（裁定#279）：market_tick.py 在仓库态、nonexistent.py 不在
+        monkeypatch.setattr(
+            "zephyr.gov_enforcement.commit_gates.schema_file_exists_gate._repo_state_has_file",
+            lambda gw, rel, rev="": rel.endswith("market_tick.py"),
+        )
         result = _check_schema_files_exist(gw, str(tmp_path))
         assert len(result) == 1
         assert "broken_cat" in result[0]
@@ -185,8 +189,8 @@ class TestCheckSchemaFilesExist:
         yaml_content = "- category_id: null_cat\n  schema_file: null\n"
         gw = _make_mock_gateway(yaml_content=yaml_content)
         monkeypatch.setattr(
-            "zephyr.gov_enforcement.commit_gates.schema_file_exists_gate.os.path.exists",
-            lambda p: True,  # 即使存在也不该被调用
+            "zephyr.gov_enforcement.commit_gates.schema_file_exists_gate._repo_state_has_file",
+            lambda gw, rel, rev="": True,  # 即使存在也不该被调用
         )
         result = _check_schema_files_exist(gw, str(tmp_path))
         assert result == []
@@ -196,8 +200,8 @@ class TestCheckSchemaFilesExist:
         yaml_content = "- category_id: no_field_cat\n  description: some metadata table\n"
         gw = _make_mock_gateway(yaml_content=yaml_content)
         monkeypatch.setattr(
-            "zephyr.gov_enforcement.commit_gates.schema_file_exists_gate.os.path.exists",
-            lambda p: True,
+            "zephyr.gov_enforcement.commit_gates.schema_file_exists_gate._repo_state_has_file",
+            lambda gw, rel, rev="": True,
         )
         result = _check_schema_files_exist(gw, str(tmp_path))
         assert result == []
@@ -207,8 +211,8 @@ class TestCheckSchemaFilesExist:
         yaml_content = "- category_id: empty_cat\n  schema_file: ''\n"
         gw = _make_mock_gateway(yaml_content=yaml_content)
         monkeypatch.setattr(
-            "zephyr.gov_enforcement.commit_gates.schema_file_exists_gate.os.path.exists",
-            lambda p: True,
+            "zephyr.gov_enforcement.commit_gates.schema_file_exists_gate._repo_state_has_file",
+            lambda gw, rel, rev="": True,
         )
         result = _check_schema_files_exist(gw, str(tmp_path))
         assert result == []
@@ -221,8 +225,8 @@ class TestCheckSchemaFilesExist:
         yaml_content = "".join(yaml_lines)
         gw = _make_mock_gateway(yaml_content=yaml_content)
         monkeypatch.setattr(
-            "zephyr.gov_enforcement.commit_gates.schema_file_exists_gate.os.path.exists",
-            lambda p: False,
+            "zephyr.gov_enforcement.commit_gates.schema_file_exists_gate._repo_state_has_file",
+            lambda gw, rel, rev="": False,
         )
         result = _check_schema_files_exist(gw, str(tmp_path))
         assert len(result) == 3
@@ -252,8 +256,8 @@ class TestCheckClosure:
         yaml_content = "- category_id: cat_a\n  schema_file: schemas/categories/market_tick.py\n"
         gw = _make_mock_gateway(yaml_content=yaml_content, project_root=str(tmp_path))
         monkeypatch.setattr(
-            "zephyr.gov_enforcement.commit_gates.schema_file_exists_gate.os.path.exists",
-            lambda p: True,
+            "zephyr.gov_enforcement.commit_gates.schema_file_exists_gate._repo_state_has_file",
+            lambda gw, rel, rev="": True,
         )
         gate = make_schema_file_exists_gate()
         passed, detail = gate.check(gw, files=[_YAML_REL])
@@ -265,8 +269,8 @@ class TestCheckClosure:
         yaml_content = "- category_id: broken_cat\n  schema_file: schemas/categories/nonexistent.py\n"
         gw = _make_mock_gateway(yaml_content=yaml_content, project_root=str(tmp_path))
         monkeypatch.setattr(
-            "zephyr.gov_enforcement.commit_gates.schema_file_exists_gate.os.path.exists",
-            lambda p: False,
+            "zephyr.gov_enforcement.commit_gates.schema_file_exists_gate._repo_state_has_file",
+            lambda gw, rel, rev="": False,
         )
         gate = make_schema_file_exists_gate()
         passed, detail = gate.check(gw, files=[_YAML_REL])
@@ -304,8 +308,8 @@ class TestCheckClosure:
         yaml_content = "- category_id: cat_a\n  schema_file: schemas/categories/market_tick.py\n"
         gw = _make_mock_gateway(yaml_content=yaml_content, project_root=str(tmp_path))
         monkeypatch.setattr(
-            "zephyr.gov_enforcement.commit_gates.schema_file_exists_gate.os.path.exists",
-            lambda p: True,
+            "zephyr.gov_enforcement.commit_gates.schema_file_exists_gate._repo_state_has_file",
+            lambda gw, rel, rev="": True,
         )
         gate = make_schema_file_exists_gate()
         # Windows 反斜杠
@@ -321,8 +325,8 @@ class TestCheckClosure:
         yaml_content = "".join(yaml_lines)
         gw = _make_mock_gateway(yaml_content=yaml_content, project_root=str(tmp_path))
         monkeypatch.setattr(
-            "zephyr.gov_enforcement.commit_gates.schema_file_exists_gate.os.path.exists",
-            lambda p: False,
+            "zephyr.gov_enforcement.commit_gates.schema_file_exists_gate._repo_state_has_file",
+            lambda gw, rel, rev="": False,
         )
         gate = make_schema_file_exists_gate()
         passed, detail = gate.check(gw, files=[_YAML_REL])
@@ -364,10 +368,10 @@ class TestIntegrationWithRealYaml:
             yaml_content=yaml_content,
             project_root=str(real_root),
         )
-        # 真实 os.path.exists（不 mock，用 lambda 包装 Path.exists）
+        # 真实磁盘判定（真实根下 schema 文件全部在盘 → helper 判存在）
         monkeypatch.setattr(
-            "zephyr.gov_enforcement.commit_gates.schema_file_exists_gate.os.path.exists",
-            lambda p: Path(p).exists(),
+            "zephyr.gov_enforcement.commit_gates.schema_file_exists_gate._repo_state_has_file",
+            lambda gw, rel, rev="": (Path(real_root) / rel).exists(),
         )
         gate = make_schema_file_exists_gate()
         passed, detail = gate.check(gw, files=[_YAML_REL])
