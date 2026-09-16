@@ -26,37 +26,7 @@ B13-04324（AUD-DRAFT-001-DIGEST P2 波 P2-W02，CAND-SHARED-003，A3数据架�
 与一致性裁定，消费其失效事件但不重建广播总线）；io_cache=读写缓存实现
 （本件不实现缓存存储，只治理元数据与一致性状态机）。
 
-# [ALGO_FLOW]
-# 层: 输入
-# - id: I1
-#   name: clock 参数
-#   fields: 参数 clock（无注解）
-#   code: cache_consistency_manager.py 顶层公共函数形参（AST 提取）
-# - id: I2
-#   name: alert_sink 参数
-#   fields: 参数 alert_sink（无注解）
-#   code: cache_consistency_manager.py 顶层公共函数形参（AST 提取）
-# 层: 算法
-# - id: A1
-#   name_zh: ① CacheConsistencyManager
-#   name_en: CacheConsistencyManager
-#   intro: 缓存一致性管理器（分层注册 + 失效策略 + 写策略裁定 + 巡检）。
-#   desc: 缓存一致性管理器（分层注册 + 失效策略 + 写策略裁定 + 巡检）。；公共方法（定义序）: register_entry, set_write_policy, write_policy_for, write, flu…
-#   inputs: clock alert_sink
-#   outputs: 返回值
-#   （注：A1 之后另有 6 个公共定义未列入（含 6 个数据契约/异常/枚举声明类），见源码）
-# 层: 输出
-# - id: O1
-#   name_zh: 模块公共 API 面（7 定义）
-#   name_en: public defs
-#   intro: CacheConsistencyManager
-#   downstream: 运行时装配批（分层缓存注册 / 写策略裁定读侧 / 一致性巡检计划任务）
-# [/ALGO_FLOW]
-#
-# 边:
-# I1 --> A1
-# I2 --> A1
-# A1 --> O1
+# [ALGO_FLOW] external: docs/03_modules/_domain_shared/algo_flow/io/cache_consistency_manager.yaml
 """
 
 from __future__ import annotations

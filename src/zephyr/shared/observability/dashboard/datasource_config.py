@@ -19,54 +19,7 @@ Usage::
     from zephyr.shared.observability.dashboard import generate_clickhouse_datasource_yaml
     yaml_text = generate_clickhouse_datasource_yaml(host="172.24.30.100", port=8123)
 
-# [ALGO_FLOW]
-# 层: 输入
-# - id: I1
-#   name: url 参数
-#   fields: 参数 url，类型注解 str
-#   code: datasource_config.py 顶层公共函数形参（AST 提取）
-# - id: I2
-#   name: is_default 参数
-#   fields: 参数 is_default，类型注解 bool
-#   code: datasource_config.py 顶层公共函数形参（AST 提取）
-# - id: I3
-#   name: host 参数
-#   fields: 参数 host，类型注解 str
-#   code: datasource_config.py 顶层公共函数形参（AST 提取）
-# - id: I4
-#   name: port 参数
-#   fields: 参数 port，类型注解 int
-#   code: datasource_config.py 顶层公共函数形参（AST 提取）
-# 层: 算法
-# - id: A1
-#   name_zh: ① generate_prometheus_datasource_yaml
-#   name_en: generate_prometheus_datasource_yaml
-#   intro: 生成 Prometheus datasource YAML。
-#   desc: 生成 Prometheus datasource YAML。 Args: url: Prometheus URL（docker-compose 内部网络用 http://prom…；源码 L73-L106
-#   inputs: url is_default
-#   outputs: str
-# - id: A2
-#   name_zh: ② generate_clickhouse_datasource_yaml
-#   name_en: generate_clickhouse_datasource_yaml
-#   intro: 生成 ClickHouse datasource YAML。
-#   desc: 生成 ClickHouse datasource YAML。 需要安装 grafana-clickhouse-datasource 插件： docker-compose.yml…；源码 L109-L155
-#   inputs: host port database username is_default
-#   outputs: str
-# 层: 输出
-# - id: O1
-#   name_zh: str
-#   name_en: str
-#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
-#   downstream: 见模块头 [CONSUMERS]
-# [/ALGO_FLOW]
-#
-# 边:
-# I1 --> A1
-# I2 --> A1
-# I3 --> A1
-# I4 --> A1
-# A1 --> A2
-# A2 --> O1
+# [ALGO_FLOW] external: docs/03_modules/_domain_shared/algo_flow/observability/dashboard/datasource_config.yaml
 """
 
 from __future__ import annotations

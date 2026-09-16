@@ -45,46 +45,7 @@ Usage
     if not ok:
         stats["audit_failed"] += 1
 
-# [ALGO_FLOW]
-# 层: 输入
-# - id: I1
-#   name: audit_dir 参数
-#   fields: 参数 audit_dir，类型注解 Path
-#   code: audit_jsonl_writer.py 顶层公共函数形参（AST 提取）
-# - id: I2
-#   name: filename 参数
-#   fields: 参数 filename，类型注解 str
-#   code: audit_jsonl_writer.py 顶层公共函数形参（AST 提取）
-# - id: I3
-#   name: record 参数
-#   fields: 参数 record，类型注解 dict
-#   code: audit_jsonl_writer.py 顶层公共函数形参（AST 提取）
-# - id: I4
-#   name: max_bytes 参数
-#   fields: 参数 max_bytes（无注解）
-#   code: audit_jsonl_writer.py 顶层公共函数形参（AST 提取）
-# 层: 算法
-# - id: A1
-#   name_zh: ① append_audit_jsonl
-#   name_en: append_audit_jsonl
-#   intro: 审计记录追加落盘（jsonl 一行一条）+ 写前大小轮转。
-#   desc: 审计记录追加落盘（jsonl 一行一条）+ 写前大小轮转。 Args: audit_dir: 审计目录（不存在则创建；创建失败返回 False）。 filename: 审计文件名…；源码 L120-L153
-#   inputs: audit_dir filename record max_bytes backup_count
-#   outputs: bool
-# 层: 输出
-# - id: O1
-#   name_zh: bool
-#   name_en: bool
-#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
-#   downstream: scripts.ops_guard; zephyr.gov_enforcement.rule_bridge.git_commit_gateway; zephy…
-# [/ALGO_FLOW]
-#
-# 边:
-# I1 --> A1
-# I2 --> A1
-# I3 --> A1
-# I4 --> A1
-# A1 --> O1
+# [ALGO_FLOW] external: docs/03_modules/_domain_shared/algo_flow/io/audit_jsonl_writer.yaml
 """
 
 from __future__ import annotations

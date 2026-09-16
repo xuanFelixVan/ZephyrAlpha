@@ -22,31 +22,7 @@ Usage::
     from zephyr.shared.observability.dashboard import generate_alert_rules_yaml
     yaml_text = generate_alert_rules_yaml()
 
-# [ALGO_FLOW]
-# 层: 输入
-# - id: I1
-#   name: 模块内部数据
-#   fields: 无公共形参/无再导出（AST 事实）
-#   code: alert_rules.py
-# 层: 算法
-# - id: A1
-#   name_zh: ① generate_alert_rules_yaml
-#   name_en: generate_alert_rules_yaml
-#   intro: 生成 Prometheus 告警规则 YAML（用于 prometheus rules 文件）。
-#   desc: 生成 Prometheus 告警规则 YAML（用于 prometheus rules 文件）。 Returns: Prometheus alerting rules YAML…；源码 L105-L132
-#   inputs: 无参数
-#   outputs: str
-# 层: 输出
-# - id: O1
-#   name_zh: str
-#   name_en: str
-#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
-#   downstream: 见模块头 [CONSUMERS]
-# [/ALGO_FLOW]
-#
-# 边:
-# I1 --> A1
-# A1 --> O1
+# [ALGO_FLOW] external: docs/03_modules/_domain_shared/algo_flow/observability/dashboard/alert_rules.yaml
 """
 
 from __future__ import annotations
