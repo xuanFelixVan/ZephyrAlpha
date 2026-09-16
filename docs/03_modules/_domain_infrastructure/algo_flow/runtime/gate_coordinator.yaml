@@ -1,0 +1,50 @@
+# ALGO_FLOW 外部真源——gate_coordinator（_domain_infrastructure 域，真源 src/zephyr/infrastructure/runtime/gate_coordinator.py）
+# 2026-09-15 P2-1 契约头减负批量出仓：docstring 内联块逐字节副本，extractor 经
+# external 锚加载走同一 parse_algo_flow 管线；算法公共面变化时同步更新本块。
+doc_type: architecture_view
+ttl: permanent
+module: src.zephyr.infrastructure.runtime.gate_coordinator
+source_of_truth: src/zephyr/infrastructure/runtime/gate_coordinator.py
+algo_flow: |
+    # [ALGO_FLOW]
+    # 层: 输入
+    # - id: I1
+    #   name: 模块内部数据
+    #   fields: 无公共形参/无再导出（AST 事实）
+    #   code: gate_coordinator.py
+    # 层: 算法
+    # - id: A1
+    #   name_zh: ① GateCoordinator
+    #   name_en: GateCoordinator
+    #   intro: class GateCoordinator 源码 L82-L89
+    #   desc: 公共方法（定义序）: freeze_all, thaw_all；源码 L82-L89
+    #   inputs: 无参数
+    #   outputs: 返回值
+    # - id: A2
+    #   name_zh: ② freeze_all_gates
+    #   name_en: freeze_all_gates
+    #   intro: freeze_all_gates() 源码 L92-L93
+    #   desc: 源码 L92-L93
+    #   inputs: 无参数
+    #   outputs: CoordinatorResult
+    # - id: A3
+    #   name_zh: ③ thaw_all_gates
+    #   name_en: thaw_all_gates
+    #   intro: thaw_all_gates() 源码 L96-L97
+    #   desc: 源码 L96-L97
+    #   inputs: 无参数
+    #   outputs: CoordinatorResult
+    #   （注：A3 之后另有 1 个公共定义未列入（含 1 个数据契约/异常/枚举声明类），见源码）
+    # 层: 输出
+    # - id: O1
+    #   name_zh: CoordinatorResult
+    #   name_en: CoordinatorResult
+    #   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+    #   downstream: zephyr.infrastructure.rollback.rollback_engine; zephyr.trading.boot_hooks
+    # [/ALGO_FLOW]
+    #
+    # 边:
+    # I1 --> A1
+    # A1 --> A2
+    # A2 --> A3
+    # A3 --> O1

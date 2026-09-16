@@ -27,45 +27,7 @@ B14-04678（AUD-DRAFT-001-DIGEST P1 波 W-P1-24，CAND-INFRAOPS-002，A9运维�
 =因子级放量与生命周期；本件=**策略级**真实流量分阶段灰度状态机。本件只产
 目标 ratio 与状态，不直接切流量（执行归运行时装配批）。
 
-# [ALGO_FLOW]
-# 层: 输入
-# - id: I1
-#   name: strategy_id 参数
-#   fields: 参数 strategy_id，类型注解 str
-#   code: strategy_canary_release.py 顶层公共函数形参（AST 提取）
-# - id: I2
-#   name: raw 参数
-#   fields: 参数 raw，类型注解 dict
-#   code: strategy_canary_release.py 顶层公共函数形参（AST 提取）
-# 层: 算法
-# - id: A1
-#   name_zh: ① config_from_dict
-#   name_en: config_from_dict
-#   intro: 从 config/canary.yaml 语义的 dict 构造配置（装配批加载 YAML 后调用）。
-#   desc: 从 config/canary.yaml 语义的 dict 构造配置（装配批加载 YAML 后调用）。；源码 L196-L225
-#   inputs: strategy_id raw
-#   outputs: StrategyCanaryConfig
-# - id: A2
-#   name_zh: ② StrategyCanaryRelease
-#   name_en: StrategyCanaryRelease
-#   intro: 策略灰度发布状态机（MOD-INF-072）。
-#   desc: 策略灰度发布状态机（MOD-INF-072）。 用法： rel = StrategyCanaryRelease() rel.start(config, now_utc, is_t…；公共方法（定义序）: start,…
-#   inputs: 无参数
-#   outputs: 返回值
-#   （注：A2 之后另有 6 个公共定义未列入（含 6 个数据契约/异常/枚举声明类），见源码）
-# 层: 输出
-# - id: O1
-#   name_zh: StrategyCanaryConfig
-#   name_en: StrategyCanaryConfig
-#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
-#   downstream: 运行时装配批（D_ASHARE_SIGNAL 策略运行面按 ratio 切流 / D_RISK 风控完整性指标供给 / config/canary.yaml…
-# [/ALGO_FLOW]
-#
-# 边:
-# I1 --> A1
-# I2 --> A1
-# A1 --> A2
-# A2 --> O1
+# [ALGO_FLOW] external: docs/03_modules/_domain_infrastructure/algo_flow/infrastructure/strategy_canary_release.yaml
 """
 
 from __future__ import annotations
