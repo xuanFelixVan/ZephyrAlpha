@@ -123,6 +123,8 @@ class VendetectAdapter:
                 cmd,
                 capture_output=True,
                 text=True,
+                encoding="utf-8",
+                errors="replace",
                 timeout=timeout_sec,
                 cwd=str(self._repo_root),
                 env={**os.environ, **self._config.env},

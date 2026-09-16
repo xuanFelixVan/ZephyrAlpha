@@ -169,6 +169,8 @@ class EchoGuardAdapter:
                 ["echo-guard", "--version"],
                 capture_output=True,
                 text=True,
+                encoding="utf-8",
+                errors="replace",
                 timeout=5,
                 cwd=str(self._repo_root),
                 env={**os.environ, **self._config.env},
@@ -204,6 +206,8 @@ class EchoGuardAdapter:
                     ["echo-guard", "check", "--output", "json"] + files,
                     capture_output=True,
                     text=True,
+                    encoding="utf-8",
+                    errors="replace",
                     timeout=timeout_sec,
                     cwd=str(self._repo_root),
                     env={**os.environ, **self._config.env},
@@ -272,6 +276,8 @@ class EchoGuardAdapter:
                     ["echo-guard", "scan", "--output", "json"],
                     capture_output=True,
                     text=True,
+                    encoding="utf-8",
+                    errors="replace",
                     timeout=timeout_sec,
                     cwd=str(self._repo_root),
                     env={**os.environ, **self._config.env},
@@ -376,6 +382,8 @@ class EchoGuardAdapter:
                     ],
                     capture_output=True,
                     text=True,
+                    encoding="utf-8",
+                    errors="replace",
                     timeout=timeout_sec,
                     cwd=str(self._repo_root),
                     env={**os.environ, **self._config.env},
@@ -416,7 +424,7 @@ class EchoGuardAdapter:
         本方法用 ruamel round-trip 只更新 acknowledged 段，保留其他注释/格式/引号风格。
 
         复现 echo-guard CLI 的 acknowledged 段格式（echo_guard/config.py:238-255）：
-        - intentional: ``{id, verdict, source_hash[:8], existing_hash[:8]}``
+        - intentional: ``{id, verdict, source_hash[:8], existing_hash[:8], stable_key}``
         - dismissed:   ``{id, verdict, stable_key=make_stable_key(finding_id)}``
 
         兼容性：echo-guard ``is_suppressed``（config.py:171-221）完全基于 yml acknowledged
@@ -441,6 +449,10 @@ class EchoGuardAdapter:
                 "verdict": verdict,
                 "source_hash": src_hash[:8] if src_hash else "",
                 "existing_hash": ext_hash[:8] if ext_hash else "",
+                # 双读者契约：echo-guard 侧按 id+hash 判 is_suppressed，而
+                # CloneGuardOrchestrator._load_acknowledged_pairs 只认含 "||" 的
+                # stable_key——缺此字段则 intentional 豁免对本仓编排器完全失效。
+                "stable_key": self._make_stable_key(finding_id),
             }
         elif verdict == "dismissed":
             entry = {

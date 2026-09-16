@@ -689,6 +689,27 @@ class TestEchoGuardAdapterAcknowledgeRoundTrip:
         assert entry["source_hash"] == "abcdef12"  # 前 8 字符
         assert entry["existing_hash"] == "fedcba98"
 
+    def test_roundtrip_intentional_visible_to_orchestrator_pairs(self, tmp_path: Path):
+        """逃生闭环：intentional 回执必须带 stable_key，否则编排器看不见→"标 acknowledged" 豁免失效。
+
+        _load_acknowledged_pairs 只收含 "||" 的 stable_key；缺字段时 intentional entry 对
+        echo-guard 自己的 is_suppressed 有效、对本仓 CloneGuard 编排器完全无效（仍阻断）。
+        """
+        from ruamel.yaml import YAML
+
+        from zephyr.clone_guard.orchestrator import _load_acknowledged_pairs
+
+        yml = tmp_path / "echo-guard.yml"
+        yml.write_text("acknowledged: []\n", encoding="utf-8")
+        adapter = EchoGuardAdapter(tmp_path, CloneGuardConfig())
+        fid = "src/zephyr/a.py:fn:abcdef12||src/zephyr/b.py:fn:fedcba98"
+        success, error = adapter.acknowledge(fid, "intentional", "合理重复")
+        assert success is True, f"acknowledge 失败: {error}"
+        data = YAML().load(yml.read_text(encoding="utf-8"))
+        assert data["acknowledged"][0]["stable_key"] == "src/zephyr/a.py:fn||src/zephyr/b.py:fn"
+        pairs = _load_acknowledged_pairs(dict(data))
+        assert frozenset({"src/zephyr/a.py:fn", "src/zephyr/b.py:fn"}) in pairs
+
     def test_roundtrip_dismissed_entry_format(self, tmp_path: Path):
         """dismissed entry 含 id/verdict/stable_key。"""
         yml = tmp_path / "echo-guard.yml"
