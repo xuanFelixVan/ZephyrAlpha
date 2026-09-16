@@ -18,31 +18,7 @@
 """
 主题聚类器 — 噪声信号比·告警疲劳缓解.
 
-# [ALGO_FLOW]
-# 层: 输入
-# - id: I1
-#   name: 模块内部数据
-#   fields: 无公共形参/无再导出（AST 事实）
-#   code: thematic_clusterer.py
-# 层: 算法
-# - id: A1
-#   name_zh: ① ThematicClusterer
-#   name_en: ThematicClusterer
-#   intro: 重复组主题聚类——将50组重复归约到3-5个主题.
-#   desc: 重复组主题聚类——将50组重复归约到3-5个主题.；公共方法（定义序）: classify, cluster；源码 L51-L90
-#   inputs: 无参数
-#   outputs: 返回值
-# 层: 输出
-# - id: O1
-#   name_zh: 模块公共 API 面（1 定义）
-#   name_en: public defs
-#   intro: ThematicClusterer
-#   downstream: tests/governance/compliance/test_thematic_clusterer.py
-# [/ALGO_FLOW]
-#
-# 边:
-# I1 --> A1
-# A1 --> O1
+# [ALGO_FLOW] external: docs/03_modules/_domain_governance/algo_flow/code_dedup/thematic_clusterer.yaml
 """
 
 from collections import defaultdict

@@ -29,47 +29,7 @@ B10-01864（AUD-DRAFT-001-DIGEST P2 波 P2-W08，CAND-DIGITALT-001，A1 §29.23�
 策略 NAV 回放（无多智能体/无情绪传染）。随机源不内置——需要噪声的规则
 由调用方在注入规则库闭包内自带。
 
-# [ALGO_FLOW]
-# 层: 输入
-# - id: I1
-#   name: initial_price 参数
-#   fields: 参数 initial_price（无注解）
-#   code: market_twin_simulator.py 顶层公共函数形参（AST 提取）
-# - id: I2
-#   name: rules 参数
-#   fields: 参数 rules（无注解）
-#   code: market_twin_simulator.py 顶层公共函数形参（AST 提取）
-# - id: I3
-#   name: adjacency 参数
-#   fields: 参数 adjacency（无注解）
-#   code: market_twin_simulator.py 顶层公共函数形参（AST 提取）
-# - id: I4
-#   name: contagion_weight 参数
-#   fields: 参数 contagion_weight（无注解）
-#   code: market_twin_simulator.py 顶层公共函数形参（AST 提取）
-# 层: 算法
-# - id: A1
-#   name_zh: ① MarketTwinSimulator
-#   name_en: MarketTwinSimulator
-#   intro: 数字孪生市场仿真器（Phase1 规则 ABM：BDI + 三模式撮合 + 情绪传染 + 统计校验）。
-#   desc: 数字孪生市场仿真器（Phase1 规则 ABM：BDI + 三模式撮合 + 情绪传染 + 统计校验）。；公共方法（定义序）: register_agent, submit_order, match, step_sent…
-#   inputs: initial_price rules adjacency contagion_weight clock audit_sink stats…
-#   outputs: 返回值
-#   （注：A1 之后另有 15 个公共定义未列入（含 15 个数据契约/异常/枚举声明类），见源码）
-# 层: 输出
-# - id: O1
-#   name_zh: 模块公共 API 面（16 定义）
-#   name_en: public defs
-#   intro: MarketTwinSimulator
-#   downstream: 运行时装配批（规则库绑定 / 邻接网络注入 / 审计路由绑定 / 压测验证编排装配）
-# [/ALGO_FLOW]
-#
-# 边:
-# I1 --> A1
-# I2 --> A1
-# I3 --> A1
-# I4 --> A1
-# A1 --> O1
+# [ALGO_FLOW] external: docs/03_modules/_domain_digital_twin/algo_flow/market_twin_simulator.yaml
 """
 
 from __future__ import annotations

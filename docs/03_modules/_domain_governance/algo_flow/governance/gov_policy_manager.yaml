@@ -1,0 +1,39 @@
+# ALGO_FLOW 外部真源——gov_policy_manager（_domain_governance 域，真源 src/zephyr/governance/gov_policy_manager.py）
+# 2026-09-15 P2-1 契约头减负批量出仓：docstring 内联块逐字节副本，extractor 经
+# external 锚加载走同一 parse_algo_flow 管线；算法公共面变化时同步更新本块。
+doc_type: architecture_view
+ttl: permanent
+module: src.zephyr.governance.gov_policy_manager
+source_of_truth: src/zephyr/governance/gov_policy_manager.py
+algo_flow: |
+    # [ALGO_FLOW]
+    # 层: 输入
+    # - id: I1
+    #   name: clock 参数
+    #   fields: 参数 clock（无注解）
+    #   code: gov_policy_manager.py 顶层公共函数形参（AST 提取）
+    # - id: I2
+    #   name: sqlite_conn 参数
+    #   fields: 参数 sqlite_conn（无注解）
+    #   code: gov_policy_manager.py 顶层公共函数形参（AST 提取）
+    # 层: 算法
+    # - id: A1
+    #   name_zh: ① GovPolicyManager
+    #   name_en: GovPolicyManager
+    #   intro: GOV-* 策略生命周期管理器（CRUD + 版本递增 + sqlite 镜像持久化）。
+    #   desc: GOV-* 策略生命周期管理器（CRUD + 版本递增 + sqlite 镜像持久化）。；公共方法（定义序）: create_policy, get_policy, update_policy, delete_poli…
+    #   inputs: clock sqlite_conn
+    #   outputs: 返回值
+    #   （注：A1 之后另有 3 个公共定义未列入（含 3 个数据契约/异常/枚举声明类），见源码）
+    # 层: 输出
+    # - id: O1
+    #   name_zh: 模块公共 API 面（4 定义）
+    #   name_en: public defs
+    #   intro: GovPolicyManager
+    #   downstream: 运行时装配批（GOV-* 策略装配：sqlite 连接 + 时钟统一注入）
+    # [/ALGO_FLOW]
+    #
+    # 边:
+    # I1 --> A1
+    # I2 --> A1
+    # A1 --> O1

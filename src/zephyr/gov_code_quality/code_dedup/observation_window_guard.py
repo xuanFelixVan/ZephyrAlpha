@@ -18,31 +18,7 @@
 """
 提取后稳定观察期守护 — 对标SDP 14天观察.
 
-# [ALGO_FLOW]
-# 层: 输入
-# - id: I1
-#   name: 模块内部数据
-#   fields: 无公共形参/无再导出（AST 事实）
-#   code: observation_window_guard.py
-# 层: 算法
-# - id: A1
-#   name_zh: ① ObservationWindowGuard
-#   name_en: ObservationWindowGuard
-#   intro: 14天稳定观察期.
-#   desc: 14天稳定观察期.；公共方法（定义序）: check；源码 L51-L66
-#   inputs: 无参数
-#   outputs: 返回值
-# 层: 输出
-# - id: O1
-#   name_zh: 模块公共 API 面（1 定义）
-#   name_en: public defs
-#   intro: ObservationWindowGuard
-#   downstream: tests/governance/resilience/test_observation_window_guard.py
-# [/ALGO_FLOW]
-#
-# 边:
-# I1 --> A1
-# A1 --> O1
+# [ALGO_FLOW] external: docs/03_modules/_domain_governance/algo_flow/code_dedup/observation_window_guard.yaml
 """
 
 from datetime import UTC, datetime

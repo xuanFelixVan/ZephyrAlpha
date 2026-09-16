@@ -1,0 +1,33 @@
+# ALGO_FLOW 外部真源——function_discovery（_domain_governance 域，真源 src/zephyr/gov_code_quality/code_dedup/function_discovery.py）
+# 2026-09-15 P2-1 契约头减负批量出仓：docstring 内联块逐字节副本，extractor 经
+# external 锚加载走同一 parse_algo_flow 管线；算法公共面变化时同步更新本块。
+doc_type: architecture_view
+ttl: permanent
+module: src.zephyr.gov_code_quality.code_dedup.function_discovery
+source_of_truth: src/zephyr/gov_code_quality/code_dedup/function_discovery.py
+algo_flow: |
+    # [ALGO_FLOW]
+    # 层: 输入
+    # - id: I1
+    #   name: 模块内部数据
+    #   fields: 无公共形参/无再导出（AST 事实）
+    #   code: function_discovery.py
+    # 层: 算法
+    # - id: A1
+    #   name_zh: ① FunctionDiscovery
+    #   name_en: FunctionDiscovery
+    #   intro: 主动发现未注册的共享函数.
+    #   desc: 主动发现未注册的共享函数.；公共方法（定义序）: scan_codebase；源码 L52-L89
+    #   inputs: 无参数
+    #   outputs: 返回值
+    # 层: 输出
+    # - id: O1
+    #   name_zh: 模块公共 API 面（1 定义）
+    #   name_en: public defs
+    #   intro: FunctionDiscovery
+    #   downstream: tests/governance/code_quality/test_function_discovery.py
+    # [/ALGO_FLOW]
+    #
+    # 边:
+    # I1 --> A1
+    # A1 --> O1

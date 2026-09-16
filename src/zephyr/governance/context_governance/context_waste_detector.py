@@ -17,37 +17,7 @@
 """
 
 
-# [ALGO_FLOW]
-# 层: 输入
-# - id: I1
-#   name: max_context 参数
-#   fields: 参数 max_context（无注解）
-#   code: context_waste_detector.py 顶层公共函数形参（AST 提取）
-# - id: I2
-#   name: waste_threshold 参数
-#   fields: 参数 waste_threshold（无注解）
-#   code: context_waste_detector.py 顶层公共函数形参（AST 提取）
-# 层: 算法
-# - id: A1
-#   name_zh: ① ContextWasteDetector
-#   name_en: ContextWasteDetector
-#   intro: class ContextWasteDetector 源码 L69-L130
-#   desc: 公共方法（定义序）: feed, analyze, context_fill_ratio, reset；源码 L69-L130
-#   inputs: max_context waste_threshold
-#   outputs: 返回值
-#   （注：A1 之后另有 1 个公共定义未列入（含 1 个数据契约/异常/枚举声明类），见源码）
-# 层: 输出
-# - id: O1
-#   name_zh: 模块公共 API 面（2 定义）
-#   name_en: public defs
-#   intro: ContextWasteDetector
-#   downstream: 见模块头 [CONSUMERS]
-# [/ALGO_FLOW]
-#
-# 边:
-# I1 --> A1
-# I2 --> A1
-# A1 --> O1
+# [ALGO_FLOW] external: docs/03_modules/_domain_governance/algo_flow/context_governance/context_waste_detector.yaml
 """
 
 from __future__ import annotations

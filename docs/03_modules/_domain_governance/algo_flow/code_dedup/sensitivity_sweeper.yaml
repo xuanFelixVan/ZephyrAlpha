@@ -1,0 +1,41 @@
+# ALGO_FLOW 外部真源——sensitivity_sweeper（_domain_governance 域，真源 src/zephyr/gov_code_quality/code_dedup/sensitivity_sweeper.py）
+# 2026-09-15 P2-1 契约头减负批量出仓：docstring 内联块逐字节副本，extractor 经
+# external 锚加载走同一 parse_algo_flow 管线；算法公共面变化时同步更新本块。
+doc_type: architecture_view
+ttl: permanent
+module: src.zephyr.gov_code_quality.code_dedup.sensitivity_sweeper
+source_of_truth: src/zephyr/gov_code_quality/code_dedup/sensitivity_sweeper.py
+algo_flow: |
+    # [ALGO_FLOW]
+    # 层: 输入
+    # - id: I1
+    #   name: 模块内部数据
+    #   fields: 无公共形参/无再导出（AST 事实）
+    #   code: sensitivity_sweeper.py
+    # 层: 算法
+    # - id: A1
+    #   name_zh: ① SweepResult
+    #   name_en: SweepResult
+    #   intro: class SweepResult 源码 L60-L73
+    #   desc: 公共方法（定义序）: f1；源码 L60-L73
+    #   inputs: 无参数
+    #   outputs: 返回值
+    # - id: A2
+    #   name_zh: ② SensitivitySweeper
+    #   name_en: SensitivitySweeper
+    #   intro: class SensitivitySweeper 源码 L77-L108
+    #   desc: 公共方法（定义序）: sweep, get_baseline；源码 L77-L108
+    #   inputs: 无参数
+    #   outputs: 返回值
+    # 层: 输出
+    # - id: O1
+    #   name_zh: 模块公共 API 面（2 定义）
+    #   name_en: public defs
+    #   intro: SweepResult, SensitivitySweeper
+    #   downstream: tests/governance/security/test_sensitivity_sweeper.py
+    # [/ALGO_FLOW]
+    #
+    # 边:
+    # I1 --> A1
+    # A1 --> A2
+    # A2 --> O1

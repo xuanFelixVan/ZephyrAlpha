@@ -17,32 +17,7 @@
 """
 
 
-# [ALGO_FLOW]
-# 层: 输入
-# - id: I1
-#   name: 模块内部数据
-#   fields: 无公共形参/无再导出（AST 事实）
-#   code: think_time_model.py
-# 层: 算法
-# - id: A1
-#   name_zh: ① ThinkTimeModel
-#   name_en: ThinkTimeModel
-#   intro: class ThinkTimeModel 源码 L63-L113
-#   desc: 公共方法（定义序）: record_think_segment, record_chunk_latency, estimate_next_duration, average_tps, average_chunk_lat…
-#   inputs: 无参数
-#   outputs: 返回值
-#   （注：A1 之后另有 1 个公共定义未列入（含 1 个数据契约/异常/枚举声明类），见源码）
-# 层: 输出
-# - id: O1
-#   name_zh: 模块公共 API 面（2 定义）
-#   name_en: public defs
-#   intro: ThinkTimeModel
-#   downstream: 见模块头 [CONSUMERS]
-# [/ALGO_FLOW]
-#
-# 边:
-# I1 --> A1
-# A1 --> O1
+# [ALGO_FLOW] external: docs/03_modules/_domain_governance/algo_flow/context_governance/think_time_model.yaml
 """
 
 import time

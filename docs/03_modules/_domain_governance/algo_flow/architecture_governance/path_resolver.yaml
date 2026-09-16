@@ -1,0 +1,33 @@
+# ALGO_FLOW 外部真源——path_resolver（_domain_governance 域，真源 src/zephyr/governance/architecture_governance/path_resolver.py）
+# 2026-09-15 P2-1 契约头减负批量出仓：docstring 内联块逐字节副本，extractor 经
+# external 锚加载走同一 parse_algo_flow 管线；算法公共面变化时同步更新本块。
+doc_type: architecture_view
+ttl: permanent
+module: src.zephyr.governance.architecture_governance.path_resolver
+source_of_truth: src/zephyr/governance/architecture_governance/path_resolver.py
+algo_flow: |
+    # [ALGO_FLOW]
+    # 层: 输入
+    # - id: I1
+    #   name: 期望路径+项目根
+    #   fields: project_root / expected_path / module_hint / task_card_content
+    #   code: PathResolver.__init__ (L49) / validate_path (L133)
+    # 层: 算法
+    # - id: A1
+    #   name_zh: 目录树索引构建
+    #   name_en: build_tree_index
+    #   intro: os.walk 扫描 src/zephyr 建文件/目录/模块索引，忽略缓存与隐藏目录
+    #   code: _build_index (L57)
+    # - id: A2
+    #   name_zh: 路径校验与建议
+    #   name_en: validate_and_suggest
+    #   intro: 精确/模糊匹配定位真实路径，生成 PathResolution 状态与建议路径
+    #   code: validate_path (L133) / resolve_module (L91) / resolve_path (L122)
+    # 层: 输出
+    # - id: O1
+    #   name_zh: 路径解析结果
+    #   name_en: path_resolution
+    #   intro: PathResolution(exists/found_exact_elsewhere/found_fuzzy/suggested_path/status)
+    #   downstream: task card 施工前校验流程
+    # [/ALGO_FLOW]
+    # 边: I1 --> A1 ; A1 --> A2 ; A2 --> O1

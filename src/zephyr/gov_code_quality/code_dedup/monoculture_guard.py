@@ -24,32 +24,7 @@ Monoculture 免疫 — BRS 0-100 + 去重悖论检测.
   - BRS≥76 -> 停止去重 + 生成"不建议修复"报告
   - --force-monoculture CLI 覆盖逻辑
 
-# [ALGO_FLOW]
-# 层: 输入
-# - id: I1
-#   name: 模块内部数据
-#   fields: 无公共形参/无再导出（AST 事实）
-#   code: monoculture_guard.py
-# 层: 算法
-# - id: A1
-#   name_zh: ① MonocultureGuard
-#   name_en: MonocultureGuard
-#   intro: BRS 计算 + 去重悖论检测.
-#   desc: BRS 计算 + 去重悖论检测.；公共方法（定义序）: compute_brs, should_block_dedup, generate_report, save_risk_report；源码 L76-L179
-#   inputs: 无参数
-#   outputs: 返回值
-#   （注：A1 之后另有 1 个公共定义未列入（含 1 个数据契约/异常/枚举声明类），见源码）
-# 层: 输出
-# - id: O1
-#   name_zh: 模块公共 API 面（2 定义）
-#   name_en: public defs
-#   intro: MonocultureGuard
-#   downstream: tests/governance/code_quality/test_code_dedup_engine.py; tests/governance/code_…
-# [/ALGO_FLOW]
-#
-# 边:
-# I1 --> A1
-# A1 --> O1
+# [ALGO_FLOW] external: docs/03_modules/_domain_governance/algo_flow/code_dedup/monoculture_guard.yaml
 """
 
 from __future__ import annotations

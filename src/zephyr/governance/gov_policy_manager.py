@@ -27,37 +27,7 @@ D-GOVERNANCE-01）：GOV-* 策略 CRUD + 版本管理（版本递增 + 历史留
 （本件只产出策略记录，不挂运行时判定）；audit_trail=审计落证（本件
 sqlite 注入仅作策略持久化镜像，零交集）。
 
-# [ALGO_FLOW]
-# 层: 输入
-# - id: I1
-#   name: clock 参数
-#   fields: 参数 clock（无注解）
-#   code: gov_policy_manager.py 顶层公共函数形参（AST 提取）
-# - id: I2
-#   name: sqlite_conn 参数
-#   fields: 参数 sqlite_conn（无注解）
-#   code: gov_policy_manager.py 顶层公共函数形参（AST 提取）
-# 层: 算法
-# - id: A1
-#   name_zh: ① GovPolicyManager
-#   name_en: GovPolicyManager
-#   intro: GOV-* 策略生命周期管理器（CRUD + 版本递增 + sqlite 镜像持久化）。
-#   desc: GOV-* 策略生命周期管理器（CRUD + 版本递增 + sqlite 镜像持久化）。；公共方法（定义序）: create_policy, get_policy, update_policy, delete_poli…
-#   inputs: clock sqlite_conn
-#   outputs: 返回值
-#   （注：A1 之后另有 3 个公共定义未列入（含 3 个数据契约/异常/枚举声明类），见源码）
-# 层: 输出
-# - id: O1
-#   name_zh: 模块公共 API 面（4 定义）
-#   name_en: public defs
-#   intro: GovPolicyManager
-#   downstream: 运行时装配批（GOV-* 策略装配：sqlite 连接 + 时钟统一注入）
-# [/ALGO_FLOW]
-#
-# 边:
-# I1 --> A1
-# I2 --> A1
-# A1 --> O1
+# [ALGO_FLOW] external: docs/03_modules/_domain_governance/algo_flow/governance/gov_policy_manager.yaml
 """
 
 from __future__ import annotations

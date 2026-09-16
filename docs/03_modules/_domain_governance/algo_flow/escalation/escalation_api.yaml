@@ -1,0 +1,38 @@
+# ALGO_FLOW 外部真源——escalation_api（_domain_governance 域，真源 src/zephyr/governance/escalation/escalation_api.py）
+# 2026-09-15 P2-1 契约头减负批量出仓：docstring 内联块逐字节副本，extractor 经
+# external 锚加载走同一 parse_algo_flow 管线；算法公共面变化时同步更新本块。
+doc_type: architecture_view
+ttl: permanent
+module: src.zephyr.governance.escalation.escalation_api
+source_of_truth: src/zephyr/governance/escalation/escalation_api.py
+algo_flow: |
+    # [ALGO_FLOW]
+    # 层: 输入
+    # - id: I1
+    #   name: engine 参数
+    #   fields: 参数 engine（无注解）
+    #   code: escalation_api.py 顶层公共函数形参（AST 提取）
+    # - id: I2
+    #   name: rate_limit_per_hour 参数
+    #   fields: 参数 rate_limit_per_hour（无注解）
+    #   code: escalation_api.py 顶层公共函数形参（AST 提取）
+    # 层: 算法
+    # - id: A1
+    #   name_zh: ① EscalationAPI
+    #   name_en: EscalationAPI
+    #   intro: class EscalationAPI 源码 L65-L158
+    #   desc: 公共方法（定义序）: api_keys, register_service, validate_request, get_audit_log, clear_audit_log, trigger_escalation；源…
+    #   inputs: engine rate_limit_per_hour
+    #   outputs: 返回值
+    # 层: 输出
+    # - id: O1
+    #   name_zh: 模块公共 API 面（1 定义）
+    #   name_en: public defs
+    #   intro: EscalationAPI
+    #   downstream: zephyr.infrastructure.escalation
+    # [/ALGO_FLOW]
+    #
+    # 边:
+    # I1 --> A1
+    # I2 --> A1
+    # A1 --> O1

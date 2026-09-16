@@ -19,31 +19,7 @@ tracker 族子包 — 风险/盲点/热点跟踪器集合.
 
 从 code_dedup/ 根目录迁入以符合 GOV-DOC-018 阈值（根目录 ≤ 60）.
 
-# [ALGO_FLOW]
-# 层: 输入
-# - id: I1
-#   name: 包内子模块公共符号
-#   fields: import 再导出符号: Final
-#   code: __init__.py import L49
-# 层: 算法
-# - id: A1
-#   name_zh: ① 包公共面再导出
-#   name_en: __init__ re-export
-#   intro: 再导出 Final（共 1 符号）
-#   desc: __init__ import L49；__all__ 0 项（AST 事实）
-#   inputs: I1
-#   outputs: __all__ 公共符号表
-# 层: 输出
-# - id: O1
-#   name_zh: 公共 API 面（1 符号）
-#   name_en: __all__
-#   intro: Final
-#   downstream: zephyr.governance.__init__（blind_spot_tracker->BlindSpotStatus）
-# [/ALGO_FLOW]
-#
-# 边:
-# I1 --> A1
-# A1 --> O1
+# [ALGO_FLOW] external: docs/03_modules/_domain_governance/algo_flow/code_dedup/trackers/trackers__init__.yaml
 """
 
 from typing import Final

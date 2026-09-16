@@ -27,47 +27,7 @@ XS-15）：扫描 API 版本号与接口签名变更（注入 api_scanner）→ 
 只经注入 writer 产出更新载荷，不写盘）；doc_drift 检测族=文档漂移
 告警（本件=版本/签名驱动的主动同步，零交集）。
 
-# [ALGO_FLOW]
-# 层: 输入
-# - id: I1
-#   name: api_scanner 参数
-#   fields: 参数 api_scanner（无注解）
-#   code: api_doc_version_syncer.py 顶层公共函数形参（AST 提取）
-# - id: I2
-#   name: doc_writer 参数
-#   fields: 参数 doc_writer（无注解）
-#   code: api_doc_version_syncer.py 顶层公共函数形参（AST 提取）
-# - id: I3
-#   name: trading_hours 参数
-#   fields: 参数 trading_hours（无注解）
-#   code: api_doc_version_syncer.py 顶层公共函数形参（AST 提取）
-# - id: I4
-#   name: human_confirmer 参数
-#   fields: 参数 human_confirmer（无注解）
-#   code: api_doc_version_syncer.py 顶层公共函数形参（AST 提取）
-# 层: 算法
-# - id: A1
-#   name_zh: ① ApiDocVersionSyncer
-#   name_en: ApiDocVersionSyncer
-#   intro: API 文档版本同步器（扫描 → diff → dry-run 计划 → 写文档/changelog）。
-#   desc: API 文档版本同步器（扫描 → diff → dry-run 计划 → 写文档/changelog）。；公共方法（定义序）: scan_changes, sync；源码 L159-L335
-#   inputs: api_scanner doc_writer trading_hours human_confirmer diff_threshold c…
-#   outputs: 返回值
-#   （注：A1 之后另有 7 个公共定义未列入（含 7 个数据契约/异常/枚举声明类），见源码）
-# 层: 输出
-# - id: O1
-#   name_zh: 模块公共 API 面（8 定义）
-#   name_en: public defs
-#   intro: ApiDocVersionSyncer
-#   downstream: 运行时装配批（非交易时段同步批：API 扫描器 + 文档写入器 + 时段判定 + 人工确认回调统一注入）
-# [/ALGO_FLOW]
-#
-# 边:
-# I1 --> A1
-# I2 --> A1
-# I3 --> A1
-# I4 --> A1
-# A1 --> O1
+# [ALGO_FLOW] external: docs/03_modules/_domain_governance/algo_flow/docs/api_doc_version_syncer.yaml
 """
 
 from __future__ import annotations

@@ -1,0 +1,34 @@
+# ALGO_FLOW 外部真源——__init__（_domain_governance 域，真源 src/zephyr/gov_code_quality/code_dedup/__init__.py）
+# 2026-09-15 P2-1 契约头减负批量出仓：docstring 内联块逐字节副本，extractor 经
+# external 锚加载走同一 parse_algo_flow 管线；算法公共面变化时同步更新本块。
+doc_type: architecture_view
+ttl: permanent
+module: src.zephyr.gov_code_quality.code_dedup.__init__
+source_of_truth: src/zephyr/gov_code_quality/code_dedup/__init__.py
+algo_flow: |
+    # [ALGO_FLOW]
+    # 层: 输入
+    # - id: I1
+    #   name: 子包内 58 个功能模块 Python源码
+    #   fields: detector_*/auditor_*/guard_*/tracker_* 等功能角色模块（annotations 到 verifier）
+    #   code: zephyr/gov_code_quality/code_dedup/ 目录 L32
+    # 层: 算法
+    # - id: A1
+    #   name_zh: ① 子包命名空间聚合导出
+    #   name_en: __init__ (code_dedup 包初始化)
+    #   intro: 声明这是 MOD-INF-017 重复代码治理引擎的唯一物理位置，导出58个子模块名单
+    #   desc: 仅定义 __version__=0.15.0、__module_id__=MOD-INF-017、__all__ 58项导出清单；无任何运行逻辑，import 时只做命名空间登记
+    #   inputs: I1
+    #   outputs: code_dedup 子包公共命名空间
+    #   invariant: MOD-INF-017蓝图模块唯一物理位置；新增文件MUST登记 capability_canonical_file_registry.yaml 的 creation_token
+    # 层: 输出
+    # - id: O1
+    #   name_zh: 子包公共导出清单
+    #   name_en: __all__ 58项
+    #   intro: 对外暴露58个重复代码检测/治理子模块供上层 import
+    #   downstream: zephyr.governance.__init__（4处import: blind_spot_tracker/canary_manager/cli/phase_executor）
+    # [/ALGO_FLOW]
+    #
+    # 边:
+    # I1 --> A1
+    # A1 --> O1

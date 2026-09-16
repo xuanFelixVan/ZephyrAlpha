@@ -1,0 +1,82 @@
+# ALGO_FLOW 外部真源——rollback_state_machine（_domain_governance 域，真源 src/zephyr/governance/lifecycle_governance/rollback_state_machine.py）
+# 2026-09-15 P2-1 契约头减负批量出仓：docstring 内联块逐字节副本，extractor 经
+# external 锚加载走同一 parse_algo_flow 管线；算法公共面变化时同步更新本块。
+doc_type: architecture_view
+ttl: permanent
+module: src.zephyr.governance.lifecycle_governance.rollback_state_machine
+source_of_truth: src/zephyr/governance/lifecycle_governance/rollback_state_machine.py
+algo_flow: |
+    # [ALGO_FLOW]
+    # 层: 输入
+    # - id: I1
+    #   name: 每 tick 风险指标
+    #   fields: intraday_dd/daily_loss/reject_rate/circuit_breaker/p0_event/reject_rate_duration_s
+    #   code: evaluate_rollback(metrics)
+    # - id: I2
+    #   name: 当前姿态与累计样本量
+    #   fields: current: RollbackState + trade_count: int
+    #   code: evaluate_rollback(current, trade_count)
+    # - id: I3
+    #   name: 人工恢复三要素
+    #   fields: rca_written/dual_approval/position_flat（bool 三件套）
+    #   code: recover(rca_written, dual_approval, position_flat)
+    # - id: I4
+    #   name: 持久化姿态记录
+    #   fields: state/reason/trade_count/updated_at（JsonStateStore 命名空间 rollback_state）
+    #   code: load_persisted_state(store) / safe_read_state(persisted)
+    # 层: 算法
+    # - id: A1
+    #   name_zh: ① 样本地板闸门
+    #   name_en: sample floor gate
+    #   intro: 累计 <30 笔且无 P0 事件 → 不触发自动降级（AlphaFactory G2.2 统计地板，防小样本噪声误触发）
+    #   desc: trade_count < _MIN_SAMPLE_TRADES and not p0_event → return current
+    #   inputs: I1, I2
+    #   outputs: 放行/拦截判定
+    #   invariant: P0 事件绕过地板
+    # - id: A2
+    #   name_zh: ② 单向更保守梯子评估
+    #   name_en: evaluate_rollback one-way ladder
+    #   intro: 每 tick 单步：NORMAL→THROTTLED（soft 超限）→SOFT_HALT（hard 超限/daily_loss>2.5%/持续 60s）→HARD_HALT（daily_loss≥3%/熔断/P0）
+    #   desc: _breach 按 _HYSTERESIS[key].trip×mult 严格大于判定；HARD_HALT→UNWINDING 不自动
+    #   inputs: I1, I2
+    #   outputs: 新状态（等于 current 或更保守态）
+    #   invariant: to_idx > from_idx；无自动恢复路径
+    # - id: A3
+    #   name_zh: ③ 人工恢复三件套裁决
+    #   name_en: recover manual adjudication
+    #   intro: 权限（RCA+双人复核缺一 PermissionError）→ 方向（非更宽松 ValueError）→ 仓位（UNWINDING 未平 ValueError）
+    #   desc: 检查序固定：权限先于方向先于仓位；UNWINDING→NORMAL 须 position_flat（T+1 仅 T-1 持仓可平）
+    #   inputs: I3
+    #   outputs: 目标状态
+    #   invariant: 恢复只能向更宽松态
+    # - id: A4
+    #   name_zh: ④ fail-closed 姿态读取
+    #   name_en: safe_read_state fail-closed
+    #   intro: 读取失败/无持久化/畸形/损坏一律 SOFT_HALT（停错代价 < 不停代价）
+    #   desc: StateCorruptError/None/KeyError/ValueError 全收敛 SOFT_HALT；与 circuit breaker fail-open 职责相反
+    #   inputs: I4
+    #   outputs: RollbackState（永不为 None）
+    #   invariant: 任何异常路径不抛给调用方，默认停
+    # 层: 输出
+    # - id: O1
+    #   name_zh: 降级姿态（RollbackState）
+    #   name_en: degradation posture
+    #   intro: 供执行层按姿态撤单/阻断/减仓/平仓；供 paper_live_transition 晋级前置校验
+    #   downstream: zephyr.governance.lifecycle_governance.paper_live_transition.check_promotion_allowed
+    # - id: O2
+    #   name_zh: 持久化姿态载荷
+    #   name_en: persisted posture payload
+    #   intro: persist_state 原子写 JsonStateStore（pid-tmp+os.replace），重启存活
+    #   downstream: JsonStateStore（#ARCH-QUANT-002 承载层）
+    # [/ALGO_FLOW]
+    #
+    # 边:
+    # I1 --> A1
+    # I2 --> A1
+    # A1 --> A2
+    # I3 --> A3
+    # I4 --> A4
+    # A2 --> O1
+    # A3 --> O1
+    # A4 --> O1
+    # A2 --> O2

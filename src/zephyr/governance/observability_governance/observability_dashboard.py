@@ -16,26 +16,7 @@
 # [TTL] permanent
 """observability_dashboard — 可观测性仪表板配置（4 面板×11 SLI）。
 
-# [ALGO_FLOW]
-# 层: 输入
-# - id: I1
-#   name: 仪表板配置请求
-#   fields: 无入参（default 工厂方法）
-#   code: DashboardConfig.default (L49)
-# 层: 算法
-# - id: A1
-#   name_zh: 默认面板装配
-#   name_en: default_panel_assembly
-#   intro: 组装 system_health/cost/order_flow/model_drift 四面板的 SLI 与指标清单
-#   code: DashboardConfig.default (L49)
-# 层: 输出
-# - id: O1
-#   name_zh: 仪表板配置
-#   name_en: dashboard_config
-#   intro: DashboardConfig（panels + refresh_interval_seconds=10）
-#   downstream: 可观测性展示层
-# [/ALGO_FLOW]
-# 边: I1 --> A1 ; A1 --> O1
+# [ALGO_FLOW] external: docs/03_modules/_domain_governance/algo_flow/observability_governance/observability_dashboard.yaml
 """
 
 from __future__ import annotations

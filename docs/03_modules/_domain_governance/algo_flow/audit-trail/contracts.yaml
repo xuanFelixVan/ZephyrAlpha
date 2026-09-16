@@ -1,0 +1,33 @@
+# ALGO_FLOW 外部真源——contracts（_domain_governance 域，真源 src/zephyr/governance/audit-trail/contracts.py）
+# 2026-09-15 P2-1 契约头减负批量出仓：docstring 内联块逐字节副本，extractor 经
+# external 锚加载走同一 parse_algo_flow 管线；算法公共面变化时同步更新本块。
+doc_type: architecture_view
+ttl: permanent
+module: src.zephyr.governance.audit-trail.contracts
+source_of_truth: src/zephyr/governance/audit-trail/contracts.py
+algo_flow: |
+    # [ALGO_FLOW]
+    # 层: 输入
+    # - id: I1
+    #   name: AuditWriter 审计写入契约 类定义
+    #   fields: zephyr.gov_audit.contracts.AuditWriter（G-CT-002 Audit 契约）
+    #   code: from zephyr.gov_audit.contracts import AuditWriter L21
+    # 层: 算法
+    # - id: A1
+    #   name_zh: ① 契约再导出
+    #   name_en: re-export AuditWriter
+    #   intro: 把 AuditWriter 从 gov_audit.contracts 原样再导出，作为 audit-trail 域的统一入口
+    #   desc: 单行 import + __all__=["AuditWriter"]，无包装无逻辑；桥接失败返回 None
+    #   inputs: I1
+    #   outputs: AuditWriter 符号
+    # 层: 输出
+    # - id: O1
+    #   name_zh: G-CT-002 Audit 契约符号
+    #   name_en: AuditWriter
+    #   intro: 审计写入契约的统一引用点，保证 audit-trail 域与 gov_audit 同源
+    #   downstream: zephyr.gov_audit.bridge（[CONSUMERS]）
+    # [/ALGO_FLOW]
+    #
+    # 边:
+    # I1 --> A1
+    # A1 --> O1

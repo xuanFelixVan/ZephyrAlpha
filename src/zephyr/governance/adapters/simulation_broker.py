@@ -42,46 +42,7 @@ CTR 契约：
 
 SSoT: cross_layer_contracts.yaml -> OCP-003 + CTR-004 + CTR-005 + CTR-006
 
-# [ALGO_FLOW]
-# 层: 输入
-# - id: I1
-#   name: initial_cash 参数
-#   fields: 参数 initial_cash（无注解）
-#   code: simulation_broker.py 顶层公共函数形参（AST 提取）
-# - id: I2
-#   name: commission_rate 参数
-#   fields: 参数 commission_rate（无注解）
-#   code: simulation_broker.py 顶层公共函数形参（AST 提取）
-# - id: I3
-#   name: slippage_bps 参数
-#   fields: 参数 slippage_bps（无注解）
-#   code: simulation_broker.py 顶层公共函数形参（AST 提取）
-# - id: I4
-#   name: fill_latency_ms 参数
-#   fields: 参数 fill_latency_ms（无注解）
-#   code: simulation_broker.py 顶层公共函数形参（AST 提取）
-# 层: 算法
-# - id: A1
-#   name_zh: ① SimulationBroker
-#   name_en: SimulationBroker
-#   intro: 模拟券商——实现 BrokerInterface，用于回测和模拟交易
-#   desc: 模拟券商——实现 BrokerInterface，用于回测和模拟交易；公共方法（定义序）: fill_callbacks, connect, disconnect, submit_order, cancel_order…
-#   inputs: initial_cash commission_rate slippage_bps fill_latency_ms
-#   outputs: 返回值
-# 层: 输出
-# - id: O1
-#   name_zh: 模块公共 API 面（1 定义）
-#   name_en: public defs
-#   intro: SimulationBroker
-#   downstream: 见模块头 [CONSUMERS]
-# [/ALGO_FLOW]
-#
-# 边:
-# I1 --> A1
-# I2 --> A1
-# I3 --> A1
-# I4 --> A1
-# A1 --> O1
+# [ALGO_FLOW] external: docs/03_modules/_domain_governance/algo_flow/adapters/simulation_broker.yaml
 """
 
 from __future__ import annotations

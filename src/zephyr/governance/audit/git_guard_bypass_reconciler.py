@@ -63,55 +63,7 @@ Usage
 
     registry.register(make_git_guard_bypass_reconciler(gateway))
 
-# [ALGO_FLOW]
-# 层: 输入
-# - id: I1
-#   name: git reflog 与 commit 时间戳 subprocess 数据
-#   fields: git log --format=%ct（HEAD/HEAD~1）+ git reflog --format=%ct|%gs 的 reset 条目
-#   code: _get_commit_timestamp L86 / _get_reflog_resets_in_window L112
-# - id: I2
-#   name: git_guard 自伤审计日志 JSONL
-#   fields: .runtime/gate_audit/git_guard_self_harm.jsonl 的 timestamp 记录
-#   code: _AUDIT_LOG_REL L83
-# 层: 算法
-# - id: A1
-#   name_zh: ① 时间窗口定位
-#   name_en: _get_commit_timestamp
-#   intro: 取本次 commit（HEAD）与上次 commit（HEAD~1）的时间戳划定检测窗口
-#   desc: git log -1 --format=%ct <ref>，失败返回 None；无 HEAD~1（首次 commit）则 skip
-#   inputs: I1
-#   outputs: 窗口 [prev_ts, head_ts]
-# - id: A2
-#   name_zh: ② 窗口内 reset 双侧采集
-#   name_en: _get_reflog_resets_in_window / _get_audited_resets_in_window
-#   intro: 分别统计窗口内 reflog 的 reset 条目数和审计日志的记录数
-#   desc: reflog 侧筛 subject 以 "reset:" 开头且 ts 落在窗口（含两端）；审计侧逐行 json.loads 筛 timestamp 落窗
-#   inputs: I1 I2 A1
-#   outputs: reflog_count 与 audit_count
-# - id: A3
-#   name_zh: ③ 绕过判定分级
-#   name_en: _reconcile
-#   intro: reflog 有 reset 而审计空白=疑似 alias 绕过 warn；reflog>审计=弱信号 warn；否则 clean
-#   desc: reflog_count==0→skip；audit_count==0→warn（强信号）；diff>0→warn（弱信号，容忍 --soft/--mixed 误报）；否则 clean；异常降级 warn
-#   inputs: A2
-#   outputs: ReconcileResult（warn-only 不阻断）
-#   invariant: reconciler 永不抛异常
-# 层: 输出
-# - id: O1
-#   name_zh: 绕过检测对账结果
-#   name_en: ReconcileResult
-#   intro: skip/clean/warn 三态结论，报告差值供 AI/人工研判，不阻断 commit
-#   invariant: warn-only
-#   downstream: GitCommitGateway（[CONSUMERS] zephyr.gov_enforcement.rule_bridge.git_commit_gateway）
-# [/ALGO_FLOW]
-#
-# 边:
-# I1 --> A1
-# I1 --> A2
-# I2 --> A2
-# A1 --> A2
-# A2 --> A3
-# A3 --> O1
+# [ALGO_FLOW] external: docs/03_modules/_domain_governance/algo_flow/audit/git_guard_bypass_reconciler.yaml
 """
 
 from __future__ import annotations

@@ -32,32 +32,7 @@ Usage::
 
     old_source = git_show_file(str(project_root), rel_path, "HEAD~1")
 
-# [ALGO_FLOW]
-# 层: 输入
-# - id: I1
-#   name: git 仓库历史版本内容 subprocess 数据
-#   fields: repo_root 仓库根 + rel_path 相对路径 + ref（HEAD/HEAD~1/commit hash）
-#   code: git_show_file(repo_root, rel_path, ref) L40
-# 层: 算法
-# - id: A1
-#   name_zh: ① git show 内容读取
-#   name_en: git_show_file
-#   intro: 用 git show <ref>:<path> 取指定历史版本的文件内容，失败一律返回 None
-#   desc: run_subprocess_hidden 执行 git show（15s 超时，encoding=utf-8 errors=replace）→ returncode≠0 返回 None → 成功返回 stdout；异常 fail-open 返回 None
-#   inputs: I1
-#   outputs: 文件内容 str 或 None
-#   invariant: 纯函数无副作用；fail-open 不抛异常
-# 层: 输出
-# - id: O1
-#   name_zh: 历史版本文件内容
-#   name_en: str | None
-#   intro: 指定 ref 的文件文本，供 reconciler 对比新旧版本；None 表示不可达
-#   downstream: cross_layer_contract_signature_reconciler 与 blueprint_status_transition_reconciler（[CONSUMERS]）
-# [/ALGO_FLOW]
-#
-# 边:
-# I1 --> A1
-# A1 --> O1
+# [ALGO_FLOW] external: docs/03_modules/_domain_governance/algo_flow/audit/_git_helpers.yaml
 """
 
 from __future__ import annotations

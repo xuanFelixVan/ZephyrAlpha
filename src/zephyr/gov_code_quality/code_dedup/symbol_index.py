@@ -18,31 +18,7 @@
 """
 符号索引 — 全局函数/类/import映射表.
 
-# [ALGO_FLOW]
-# 层: 输入
-# - id: I1
-#   name: 模块内部数据
-#   fields: 无公共形参/无再导出（AST 事实）
-#   code: symbol_index.py
-# 层: 算法
-# - id: A1
-#   name_zh: ① SymbolIndex
-#   name_en: SymbolIndex
-#   intro: 全局符号索引.
-#   desc: 全局符号索引.；公共方法（定义序）: classes, functions, imports, index_file, lookup_function, lookup_class, lookup_import, sta…
-#   inputs: 无参数
-#   outputs: 返回值
-# 层: 输出
-# - id: O1
-#   name_zh: 模块公共 API 面（1 定义）
-#   name_en: public defs
-#   intro: SymbolIndex
-#   downstream: tests/governance/data_layer/test_symbol_index.py
-# [/ALGO_FLOW]
-#
-# 边:
-# I1 --> A1
-# A1 --> O1
+# [ALGO_FLOW] external: docs/03_modules/_domain_governance/algo_flow/code_dedup/symbol_index.yaml
 """
 
 import ast
