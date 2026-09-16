@@ -49993,6 +49993,48 @@ entries:
   desc_zh: ""
   desc_en: ""
   plain_zh: "验证门禁判的是'提交后的仓库状态'而不是'这台机器磁盘上碰巧有什么'：构造磁盘陈旧、他会话在途删除、他人欠账等场景，断言不误伤无辜提交人"
+- module_path: scripts/industry_graph/build_chain_exposure_matrix.py
+  domain_id: D_DATA
+  name_zh: "链暴露矩阵构建"
+  name_en: ""
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "读产业链图谱，算出每只股票在每条链上对上游供给和下游传导的暴露强度，供链因子和组合聚类用"
+- module_path: scripts/industry_graph/hog_chain_quickcheck.py
+  domain_id: D_DATA
+  name_zh: "生猪链快检"
+  name_en: ""
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "用猪价动量分上行下行两个市况，检验养殖股组合在两种市况下的未来收益差异，验证猪价能不能当养殖股的择时信号"
+- module_path: scripts/industry_graph/backfill_futures_main.py
+  domain_id: D_DATA
+  name_zh: "期货主力回补"
+  name_en: ""
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "按品种清单从免费接口拉期货主力连续全历史存成CSV，给链因子当上游价格数据"
+- module_path: scripts/governance/d5_architecture/generators/report_algo_flow_author_debt.py
+  domain_id: D_GOV_SCRIPTS
+  name_zh: "ALGO_FLOW 出仓作者欠账台账生成器"
+  name_en: ""
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "扫 ALGO_FLOW 尾池里还没外置的源件，逐件问出仓器能不能机械搬走：搬得走的归出仓批，搬不走的按欠机器块行、欠边、块读不出三类分桶写成台账，每类标报因和该由谁补什么，避免手工数件数漏项"
+- module_path: src/zephyr/data/implementations/ch_auction_derive.py
+  domain_id: D_DATA
+  name_zh: "集合竞价表桥源派生器"
+  name_en: "auction tables bridge-source deriver"
+  desc_zh: "从 tick_depth_5/tick_data 的竞价窗口 CH 内派生 auction_snapshot/auction_book，替代 miniqmt get_full_tick 实时快照通道"
+  desc_en: ""
+  plain_zh: "以前每天早上的集合竞价数据靠 miniQMT 一家供应，9月18号它退休了。这个模块改从我们自己攒的3秒快照流水里，把9点15到9点25这段竞价时间的数掐出来，算好塞进原来那两张竞价表。表没换、用表的分析程序也没换，只是换了个供水的人。竞价时段的价格量额是全对的；昨天收盘价和涨停跌停价按交易所规则现算，除权除息那天的股票这两项会和交易所官方值差一点，这是盘前拿不到官方数的天然边界。"
+- module_path: scripts/data/backfill_auction_snapshot_history.py
+  domain_id: D_DATA
+  name_zh: "竞价快照历史回补执行器"
+  name_en: "auction snapshot history backfill runner"
+  desc_zh: "枚举 tick_data 竞价窗口密集日，仅对 auction_snapshot 空窗日 INSERT-only 回灌，防覆盖 miniqmt 原产"
+  desc_en: ""
+  plain_zh: "这个脚本是把过去漏掉的集合竞价数据补回来的工具。它会自己找出哪些天的数据够完整可以补、哪些天已经有数据不能碰，然后只往空白的日子里灌数，已经有的数一根毫毛都不动。6月到9月一共补了32天约16万行，一次性活儿干完就收工。"
 
 battle_map_steps:
 - step_id: BM-BUY-05
