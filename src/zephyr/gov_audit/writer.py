@@ -5,8 +5,8 @@
 # [CONSUMERS] audit-orchestrator.pipeline_runner; cli
 # [STARTUP] imported
 # [MATURITY] production
-# [INVARIANTS] 报告写入必须原子操作(temp-file+os.replace)
-# [MODIFY-GUARD] 报告格式变更必须同步 cli.py + query.py
+# [INVARIANTS] 报告写入必须原子操作(temp-file+os.replace); events.jsonl 追加必须持跨进程文件锁+锁内重读尾哈希(GW-A 2026-09-16, 禁凭实例内存 _last_hash 链接——多写方交错落盘=断链根因)
+# [MODIFY-GUARD] 报告格式变更必须同步 cli.py + query.py; events.jsonl 追加临界区变更必须同步 tests/governance/audit/test_writer_multiproc_append.py 并发测试
 # [STABILITY] stable
 # [SAFETY] H
 # [AI_AUTONOMY] ai_modifiable
@@ -95,9 +95,10 @@ import logging
 import os
 import threading
 import uuid
+from contextlib import contextmanager
 from datetime import datetime, timezone
 from pathlib import Path
-from typing import Any, Final
+from typing import Any, Final, Iterator
 
 from zephyr.gov_audit.contracts import AuditWriter as AuditWriterABC  # 5.104.15 修复: 继承ABC契约
 from zephyr.gov_audit.models import AuditEventType, AuditIssue, GlobalAuditReport
@@ -148,12 +149,126 @@ _KNOWN_EVENT_TYPES: frozenset[str] = frozenset(
         "generic",
         "unknown",
         "file_detail",
+        # GW-A 2026-09-16：审计链完整性事故显式声明事件（T4 追加式处置）——
+        # 记录损伤边界/根因结论/治本 commit，append-only 账本的合法自述。
+        "integrity_incident",
     }
 )
 
 # 5.17.1 修复：模块级单例（供 contracts.py 委托桥接使用）
 _GLOBAL_WRITER: "AuditWriter | None" = None
 _GLOBAL_WRITER_LOCK = threading.Lock()
+
+# ── GW-A 治本（2026-09-16 多写方互踩断链）常量 ──
+# 主仓实证（data/audit_trail/events.jsonl，113,694 事件普查）：
+#   prev 断链 5,595 处（首处 #35156，签名=#35155/#35156 同 prev 同秒——
+#   两写方各持陈旧内存 _last_hash 交错落盘），且断链持续发生至普查当日。
+# 治本=append 临界区跨进程互斥 + 锁内实时重读文件尾哈希。
+# 等待语义：OS 阻塞锁（Windows msvcrt LK_LOCK 每 1s 自动重试约 10s 后 OSError；
+# POSIX flock LOCK_EX 全阻塞）——零用户态轮询（守"永久系统禁时间触发轮询"铁律，
+# PERM-TRIGGER 同源），获取失败（约 10s 超时）映射 TimeoutError fail-closed。
+_TAIL_SCAN_CHUNK_BYTES: Final[int] = 65536
+_TAIL_SCAN_MAX_BYTES: Final[int] = 32 * 1024 * 1024
+
+
+def _read_tail_entry_hash(event_log_path: Path) -> str:
+    """反向扫描 JSONL 尾部，返回最后一条完整事件的 entry_hash（GW-A 治本）。
+
+    prev_hash 必须取自文件真实尾部而非实例内存——N 写方（多进程/同进程多
+    AuditWriter 实例，如 AuditChainVerifier 每实例自建 writer 与全局单例并存）
+    各持内存尾哈希交错落盘即断链。
+
+    - 空文件/不存在 → genesis（"0"*64）
+    - 尾部撕裂行（崩溃残留半行）→ 跳过，回溯上一条完整行
+    - 单行超块长：最后一段仅在行已终结（尾部换行）或已到文件头时才解析
+    - 扫描超限仍无法确定 → 抛 RuntimeError（fail-closed：宁可不写，不可 fork 链）
+    """
+    if not event_log_path.exists():
+        return _GENESIS_HASH
+    size = event_log_path.stat().st_size
+    if size == 0:
+        return _GENESIS_HASH
+    scanned = 0
+    buf = b""
+    with open(event_log_path, "rb") as f:
+        pos = size
+        while pos > 0:
+            step = min(_TAIL_SCAN_CHUNK_BYTES, pos)
+            pos -= step
+            scanned += step
+            f.seek(pos)
+            buf = f.read(step) + buf
+            segs = buf.split(b"\n")
+            trailing_newline = segs[-1] == b""
+            if trailing_newline:
+                segs.pop()
+            for idx in range(len(segs) - 1, -1, -1):
+                seg = segs[idx].strip()
+                if not seg:
+                    continue
+                # 最后一段尚未确认行终结且前面还有未读数据 → 读满再判
+                if idx == len(segs) - 1 and not trailing_newline and pos > 0:
+                    break
+                try:
+                    entry_hash = json.loads(seg.decode("utf-8")).get("entry_hash")
+                except (UnicodeDecodeError, json.JSONDecodeError):
+                    continue  # 撕裂/坏行：继续向前回溯
+                if entry_hash:
+                    return str(entry_hash)
+            if scanned > _TAIL_SCAN_MAX_BYTES:
+                break
+    raise RuntimeError(
+        f"audit tail scan failed: cannot determine last entry_hash in {event_log_path} "
+        f"(scanned {scanned} bytes) — fail-closed, refusing to fork the hash chain"
+    )
+
+
+@contextmanager
+def _cross_process_append_lock(event_log_path: Path) -> Iterator[None]:
+    """events.jsonl 追加跨进程互斥锁（GW-A 治本 2026-09-16）。
+
+    复用仓内既有 OS 字节排他锁先例（src/zephyr/data/scheduler.py
+    acquire_single_instance_lock：msvcrt.locking/fcntl.flock），差异=本锁是
+    单条 append 的短临界区，等待交给 OS：
+    - Windows: msvcrt.locking(LK_LOCK) 每 1s 自动重试、约 10s 后 OSError（映射
+      TimeoutError，fail-closed：丢一条事件好过写断链）
+    - POSIX: fcntl.flock(LOCK_EX) 阻塞直至获取
+    全程零用户态轮询（无 sleep/spin——守"永久系统必须全自动事件触发"铁律）。
+    - 进程崩溃/被杀 → OS 关句柄自动释放，无 stale 锁残留（句柄即锁生命周期）
+    - 锁文件（events.jsonl.lock）只创建永不删除——删除=拆散互斥域
+    """
+    lock_path = event_log_path.with_name(event_log_path.name + ".lock")
+    lock_path.parent.mkdir(parents=True, exist_ok=True)
+    # with 持句柄：释放顺序=内层 finally 先 UNLCK、with 退出后关柄——
+    # 解锁先于关柄，互斥语义完整（无需裸句柄，过 OPEN-WITHOUT-WITH）。
+    with open(lock_path, "a+b") as fh:
+        try:
+            fh.seek(0)
+            if os.name == "nt":
+                import msvcrt
+
+                msvcrt.locking(fh.fileno(), msvcrt.LK_LOCK, 1)
+            else:
+                import fcntl  # noqa: import-integrity  平台条件分支：fcntl 仅 Unix 存在，Windows 上不可解析属预期
+
+                fcntl.flock(fh.fileno(), fcntl.LOCK_EX)
+        except OSError as exc:
+            raise TimeoutError(f"audit append lock not acquired (OS blocking wait exhausted): {lock_path}") from exc
+        try:
+            yield
+        finally:
+            try:
+                fh.seek(0)
+                if os.name == "nt":
+                    import msvcrt
+
+                    msvcrt.locking(fh.fileno(), msvcrt.LK_UNLCK, 1)
+                else:
+                    import fcntl  # noqa: import-integrity  平台条件分支：fcntl 仅 Unix 存在
+
+                    fcntl.flock(fh.fileno(), fcntl.LOCK_UN)
+            except OSError:
+                pass
 
 
 class AuditReportWriter(AuditWriterABC):  # 5.104.15 修复: 继承ABC契约
@@ -350,6 +465,9 @@ class AuditWriter:
 
         每条 entry 包含：entry_id, timestamp, prev_hash, entry_hash, hmac_signature,
         lamport_time, lamport_clock_counter, lamport_clock_ide。
+
+        GW-A 治本（2026-09-16）：临界区持有跨进程文件锁，且 prev_hash 在锁内
+        实时重读自文件尾（_read_tail_entry_hash）——N 写方并发追加链仍完整。
         """
         if self._readonly:
             raise RuntimeError("AuditWriter is in readonly mode (too many write failures)")
@@ -364,7 +482,11 @@ class AuditWriter:
         event.setdefault("provenance", "direct_agent")
         prefix = "AUD-F" if event_type == "file_detail" else "AUD-T"
 
-        with self._lock:
+        with self._lock, _cross_process_append_lock(self._event_log_path):
+            # 治本（GW-A 2026-09-16 多写方互踩断链）：跨进程锁内实时重读文件尾哈希。
+            # 实例内存 _last_hash 仅为初始化启发式——多进程/多实例并发 append 时
+            # 各持陈旧尾哈希交错落盘即 prev 断链（实证 #35155/#35156 同 prev 同秒）。
+            tail_hash = _read_tail_entry_hash(self._event_log_path)
             self._lamport_counter += 1
             entry_id = _generate_entry_id(prefix=prefix, seq=self._lamport_counter)
 
@@ -378,7 +500,7 @@ class AuditWriter:
             entry.pop("hmac_signature", None)
             entry["entry_id"] = entry_id
             entry["timestamp"] = datetime.now(timezone.utc).isoformat()
-            entry["prev_hash"] = self._last_hash
+            entry["prev_hash"] = tail_hash
             entry["lamport_time"] = self.lamport_time + 1
             entry["lamport_clock_counter"] = self._lamport_counter
             entry["lamport_clock_ide"] = self.ide_source

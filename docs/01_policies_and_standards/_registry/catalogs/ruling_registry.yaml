@@ -2203,3 +2203,81 @@ entries:
   related_arch: ['#ARCH-BREG-001']
   related_rulings: ['裁定#258', '裁定#259']
   superseded_by: null
+
+- ruling_id: '裁定#264'
+  title: WYF-3 wyckoff 阈值 walk-forward 重校终态=阈值全维持现值——预注册协议 160 网格点分层扫描零合格根因=vol_z(20日) 特征恐慌钝化属特征层债非常数校准债（P2 搭车执行批）
+  date: '2026-09-16'
+  category: 量化施工
+  status: active
+  summary: >-
+    承裁定#257⑥ WYF-3 P2 搭车授权（Owner 2026-09-16 明令解除挂起，执行会话
+    st-wyf3-20260916）。先写死后跑数：预注册协议（docs/_working/wyf3/
+    wyf3_preregistered_protocol.md）钉死 walk-forward 窗口（warmup 2009 / 校准
+    2010-2022=3159 日 / 样本外验证 2023-2026=898 日）、各阶段检出力带+精度约束+
+    机械选值准则后，对 000300 真数据（CH reader 只读，c1_market.kline_index 经
+    TableRegistry 真源解析）分层贪心扫描 SC→AR→ST→Spring→Test 全网格
+    （36+36+64+4+20 点）。终态：SC 根层 0 合格（最好 9 触发日/8 聚集 vs 检出力下限
+    10 日；8 聚集全为真实系统性恐慌底零误报——2010-04-19/2011-08-08/2013-06-24
+    钱荒/2018-06-19/2018-10-11/2021-07-26/27/2022-03-15/2022-04-25）；AR 层在 SC
+    现值上游下 0 合格（sc_recent/ar_vol_avg 级联死）。依协议 §5.3 与任务书诚实条款：
+    12 项阈值全部维持现值，wyckoff_engine.py 阈值提为模块级 Final 常量（值不变+
+    本裁定留痕注释）+tests/regime/test_wyckoff_engine.py 锁值断言与阈值精确等值/
+    带宽边界 4 新用例（13 用例全绿）。根因实证：vol_z(20 日滚动 z-score) 在持续
+    放量恐慌段结构性钝化——2015 股灾段 18 个 pct<-3% 日 vol_z 全部<=1.34
+    （2015-08-24 -8.75% 日 z=0.04；2015-06-26 -7.87% 日 z=0.04），z 阈值降至网格
+    下限 1.5 仍仅 15 日候选——属特征构造层缺陷，非引擎常数可修。参考证据（非验收
+    口径）：若 SC 放宽至 z1.5/-3%/win40，下游 AR(30 日窗)/ST/Spring/Test 全链可
+    复活且校准段全部落带（SC9/AR11/ST40/Sp37/Te19，score>=60=72.9% 合规），但
+    样本外 score>=60 占比 100% 仍超协议 85% 上限（cummax 粘滞跨段语义，协议瑕疵
+    已自记终态报告 §6 供修订）——终态"阈值不动"判定双重稳固。后续立项建议：SC
+    量能腿换量比口径（v/rolling(60)mean）或成交额绝对分位特征（超出本裁定边界，
+    需新一轮预注册协议+特征工程评审）。
+  evidence: >-
+    docs/_working/wyf3/wyf3_recalibration_report.md（终态报告：触发数-阈值曲线表/
+    新旧对照表/根因实证/协议瑕疵自记）+ docs/_working/wyf3/wyf3_preregistered_protocol.md
+    （预注册协议，选值前冻结）+ src/zephyr/regime/features/wyckoff_engine.py（Final
+    常量提取+裁定留痕注释+真数据全样本逐日等价 PASS）+ tests/regime/test_wyckoff_engine.py
+    （13 用例全绿）+ docs/03_modules/_domain_regime/algo_flow/wyckoff_engine.yaml
+    （行号引用同步）+ .runtime/tmp/wyf3/wyf3_lib.py（参数化诊断引擎，与生产默认参数
+    全样本逐日一致 PASS；临时区不入库）
+  related_arch: []
+  related_rulings: ['裁定#257']
+  superseded_by: null
+
+- ruling_id: '裁定#264'
+  title: 审计链多写方互踩断链治本——events.jsonl 追加临界区跨进程文件锁+锁内实时重读尾哈希；5,595 prev 断链根因实证；26,909 HMAC 不可验段与 5,343 内容失配段以 integrity_incident 追加事件显式处置
+  date: '2026-09-16'
+  category: 数据治理
+  status: active
+  summary: >-
+    欠账清偿战 GW-A（st-auditfix-20260916，Owner"解决所有欠账"授权；前班 GW11 取证
+    commit 16befe06）。三维损伤普查精确复验：prev 断链 5,595（#35156-#113145，普查当日
+    仍新发）、内容哈希失配 5,343（#53721-#77356，100% gate_audit）、HMAC 失配 26,909
+    （#26810-#53718 单一连续段）。归因修正（GW11 单一根因假设→三维三根因）：
+    ① prev 断链=AuditWriter 实例内存 _last_hash+实例内 threading.Lock 无跨进程/跨实例
+    互斥，多写方（gate_engine 经 AuditChainVerifier 每实例自建 writer、session_audit
+    单例通道、spec_engine 等 fresh 实例）交错落盘——铁证 #35155/#35156 同 prev_hash
+    同秒 entry_id 序号同为-263，双进程复现测试同签名 REPRODUCED；② 内容失配=
+    audit_chain_verifier 预注入 entry_hash（既有 AI-AUDIT12 strip 治本已覆盖，生效点
+    #77357 起零新发）；③ HMAC=写入期 env 密钥轮转后密钥值丢失，现行密钥两约定均
+    不可验（不可验证≠证实篡改），永久不可修复只能显式声明。治本：writer.py append
+    临界区改 with 实例锁+_cross_process_append_lock（msvcrt.locking LK_NBLCK 自旋
+    2ms 至 10s 超时/fcntl 降级，复用 scheduler.py::acquire_single_instance_lock 先例
+    语义；锁文件 events.jsonl.lock 永不删除；随句柄生命周期，进程被杀 OS 自动释放；
+    超时 fail-closed 抛 TimeoutError）+ _read_tail_entry_hash（反向块扫描实时尾哈希，
+    容忍撕裂尾行，扫描超限 fail-closed 拒写）——锁内重读真实尾，prev_hash 不再取自
+    实例内存。性能 p50=4.7ms（fsync 主导），旧读取方（verifier/query/merkle/retention）
+    零改动。处置：追加式 integrity_incident 事件（新事件类型已入 writer 白名单）记录
+    三维边界+根因+治本 commit+快照指针；损坏历史段原样保全（取证快照
+    events.jsonl.bak_20260916_gwa_forensic + SHA256 81651ba2...c5529）；禁修改/删除/
+    重算既有事件（retention 不变量+"截头必破 genesis"既证）。gate_chain.jsonl 现健康
+    （145 条 0 断链）未加锁为观察项：若未来多进程 verifier 并发成现实，复用同型锁改造。
+  evidence: >-
+    docs/_working/audit_chain_incident_forensics_gwa.md（普查复验表/HMAC 密钥分段考古/
+    写方清单/复现输出/性能基准）+ src/zephyr/gov_audit/writer.py diff + 
+    tests/governance/audit/test_writer_multiproc_append.py（11 用例：4 进程并发链完整/
+    同 prev 签名绝迹/撕裂尾行/锁超时/被杀释放）+ .runtime/tmp/audit_census_gwa*.json
+    + 双进程 repro REPRODUCED→治本后 0 断链
+  related_arch: []
+  related_rulings: []
+  superseded_by: null
