@@ -1,3 +1,5 @@
+# [BLUEPRINT] MOD-GOV_COMMIT_GATES | (auto-injected by S4 reconciler) | §
+# [TTL] permanent
 """双锁统一红蓝钉（st-commitspeed-20260916 晚 Owner 开工令）。
 
 覆盖：①队列 CAS 获取全局锁（W4 孤魂 301a6ee82a 治本）②网关孤魂检测

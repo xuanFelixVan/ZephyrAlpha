@@ -5,7 +5,7 @@ title: "Gate Engine 蓝图 — G0-G7任务门禁 + G1-G5 KMS决策门 + 门禁�
 doc_type: blueprint
 template_for: blueprint
 status: Draft
-version: "0.8.36"
+version: "0.8.38"
 layer: L1_foundation
 owner: ZephyrAlpha-Owner
 classification: confidential
@@ -297,8 +297,8 @@ build_status: stable
 
 | 图 | 位置 | 状态 | 链接 |
 |----|------|------|------|
-| 依赖图 (depgraph) | `blueprint_id=MOD-GATE_ENGINE` 的 335 个 file 节点 | production | `extract_depgraph.py --modules MOD-GATE_ENGINE` |
-| 数据流图 (dataflow) | （无节点） | N/A | `apply_dataflowgraph.py --list-datasets` |
+| 依赖图 (depgraph) | `blueprint_id=MOD-GATE_ENGINE` 的 336 个 file 节点 | production | `extract_depgraph.py --modules MOD-GATE_ENGINE` |
+| 数据流图 (dataflow) | 0 个 Dataset / 1 个 Job | active | `apply_dataflowgraph.py --list-datasets` |
 | 决策架构图 (decision) | 0 个决策节点 / 1 个决策层 | N/A | `generate_decision_diagram.py` |
 | 蓝图 (blueprint) | 本文件 | Draft | — |
 
@@ -309,7 +309,7 @@ build_status: stable
 | module_id | MOD-GATE_ENGINE | MOD-GATE_ENGINE | ✅ |
 | domain_id | N/A | N/A | ✅ |
 | build_status | stable | stable | ✅ |
-| file_count | 335 文件 | 28 文件（§0.1） | ❌ |
+| file_count | 336 文件 | 28 文件（§0.1） | ❌ |
 
 > 冲突时以 depgraph 为准（ARCH-056 + ARCH-MM-001 声明 vs 验证框架）。
 
@@ -1457,7 +1457,7 @@ STEP 3: 拆分后验证
 
 ## 1. 已实现代码完整路径索引
 
-> **AGENTS.md §6.1 蓝图-代码同步强制约定**——本节是蓝图与磁盘代码的「地址簿」。
+> **蓝图-代码同步强制约定**（稳定锚：AGENTS.md RULE-DEPGRAPH / RULE-PANORAMA；验证端 validate_blueprint_code_sync.py）——本节是蓝图与磁盘代码的「地址簿」。
 > 蓝图声称的文件必须与磁盘实际一致。不一致 = 蓝图漂移 = 下一个 AI session 冷启动时被误导。
 > **AUTOGEN**：本表由 sync_blueprint_code_index.py 从 depgraph.nodes 运营态（build_status∈generated/testing/stable）单向派生，禁止手写；重跑本脚本幂等更新。
 > 门禁引擎——gate_engine.py+5个KMS YAML门禁已实现
@@ -1472,6 +1472,7 @@ STEP 3: 拆分后验证
 | `src/zephyr/feedback_loop/gates/_safety_gates.py` | ✅ 已实现 | |
 | `src/zephyr/feedback_loop/gates/_security_gates.py` | ✅ 已实现 | |
 | `src/zephyr/gov_enforcement/behavioral_admission/gate_event_adapter.py` | ✅ 已实现 | |
+| `src/zephyr/gov_enforcement/commit_gates/algo_flow_link_gate.py` | ✅ 已实现 | |
 | `src/zephyr/gov_enforcement/commit_gates/algo_note_sync_gate.py` | ✅ 已实现 | |
 | `src/zephyr/gov_enforcement/commit_gates/battle_map_alignment_gate.py` | ✅ 已实现 | |
 | `src/zephyr/gov_enforcement/commit_gates/blueprint_format_gate.py` | ✅ 已实现 | |
@@ -1635,7 +1636,7 @@ STEP 3: 拆分后验证
 3. 读施工 Phase 规划 → 知道「下一步该做什么」
 
 **路径约定**：
-- 所有路径相对于 `D:\ZephyrAlpha\\`
+- 所有路径相对于仓库根目录（REPO_ROOT，不写死盘符绝对路径）
 - 源码在 `src/zephyr/` 下
 - 测试在 `tests/` 下
 - 配置在 `config/` 下

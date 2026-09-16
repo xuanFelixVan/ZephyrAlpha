@@ -5,7 +5,7 @@ submodule_path: src/zephyr/compliance/behavioral_auditor
 title: "Behavioral Auditor 蓝图 — 行为审计器·AI行为边界监控"
 doc_type: blueprint
 status: Draft
-version: "3.3.6"
+version: "3.3.9"
 layer: L1_foundation
 owner: ZephyrAlpha-Owner
 classification: confidential
@@ -79,7 +79,7 @@ build_status: planned
 > **什么时候建**: 当 AuditTrail 事件积累 ≥1000 条且 ≥14 天，或 Owner 要求主动行为监控时。基线数据由 Audit Trail 自动积累，达到门槛后自动触发。
 > **自动化宿主**: FLE `_periodic_checks()` → `_behavioral_audit_check()` + CircadianScheduler `hour=6` → `_behavioral_baseline_update()`
 
-> module_id: MOD-INF-033 | version: 3.3.6 | status: draft | layer: cross_layer
+> module_id: MOD-INF-033 | version: 3.3.9 | status: draft | layer: cross_layer
 > actual_disk_path: src/zephyr/behavioral_audit/ | generation: 3 | construction_progress: partially_implemented
 
 ## 概述
@@ -210,7 +210,7 @@ BehavioralAuditor 是 AI 行为边界审计引擎——解决"AI 做了不该做
 
 | 图 | 位置 | 状态 | 链接 |
 |----|------|------|------|
-| 依赖图 (depgraph) | `blueprint_id=MOD-INF-033` 的 72 个 file 节点 | design | `extract_depgraph.py --modules MOD-INF-033` |
+| 依赖图 (depgraph) | `blueprint_id=MOD-INF-033` 的 74 个 file 节点 | design | `extract_depgraph.py --modules MOD-INF-033` |
 | 数据流图 (dataflow) | 0 个 Dataset / 1 个 Job | planned | `apply_dataflowgraph.py --list-datasets` |
 | 决策架构图 (decision) | 0 个决策节点 / 1 个决策层 | N/A | `generate_decision_diagram.py` |
 | 蓝图 (blueprint) | 本文件 | Draft | — |
@@ -222,7 +222,7 @@ BehavioralAuditor 是 AI 行为边界审计引擎——解决"AI 做了不该做
 | module_id | MOD-INF-033 | MOD-INF-033 | ✅ |
 | domain_id | N/A | N/A | ✅ |
 | build_status | planned | planned | ✅ |
-| file_count | 72 文件 | 59 文件（§0.1） | ❌ |
+| file_count | 74 文件 | 59 文件（§0.1） | ❌ |
 
 > 冲突时以 depgraph 为准（ARCH-056 + ARCH-MM-001 声明 vs 验证框架）。
 
@@ -1346,7 +1346,7 @@ STEP 3: 拆分后验证
 
 ## 1. 已实现代码完整路径索引
 
-> **AGENTS.md §6.1 蓝图-代码同步强制约定**——本节是蓝图与磁盘代码的「地址簿」。
+> **蓝图-代码同步强制约定**（稳定锚：AGENTS.md RULE-DEPGRAPH / RULE-PANORAMA；验证端 validate_blueprint_code_sync.py）——本节是蓝图与磁盘代码的「地址簿」。
 > 蓝图声称的文件必须与磁盘实际一致。不一致 = 蓝图漂移 = 下一个 AI session 冷启动时被误导。
 > **AUTOGEN**：本表由 sync_blueprint_code_index.py 从 depgraph.nodes 运营态（build_status∈generated/testing/stable）单向派生，禁止手写；重跑本脚本幂等更新。
 > 
@@ -1367,10 +1367,12 @@ STEP 3: 拆分后验证
 | `tests/ai/test_ai_construction_detectors.py` | ✅ 已实现 | |
 | `tests/ai/test_ai_context_injector.py` | ✅ 已实现 | |
 | `tests/audit/audit_core/test_tamper_proof_audit.py` | ✅ 已实现 | |
+| `tests/audit/conftest.py` | ✅ 已实现 | |
 | `tests/audit/drift_integrity/test_baseline_manager.py` | ✅ 已实现 | |
 | `tests/audit/drift_integrity/test_baseline_poisoning_guard.py` | ✅ 已实现 | |
 | `tests/audit/drift_integrity/test_cascade_detector.py` | ✅ 已实现 | |
 | `tests/audit/drift_integrity/test_detector_dispatcher.py` | ✅ 已实现 | |
+| `tests/audit/drift_integrity/test_detector_dispatcher_drain.py` | ✅ 已实现 | |
 | `tests/audit/drift_integrity/test_gitignore_auditor.py` | ✅ 已实现 | |
 | `tests/audit/drift_integrity/test_orphan_scanner.py` | ✅ 已实现 | |
 | `tests/audit/drift_integrity/test_symlink_checker.py` | ✅ 已实现 | |
@@ -1436,7 +1438,7 @@ STEP 3: 拆分后验证
 3. 读施工 Phase 规划 → 知道「下一步该做什么」
 
 **路径约定**：
-- 所有路径相对于 `D:\ZephyrAlpha\\`
+- 所有路径相对于仓库根目录（REPO_ROOT，不写死盘符绝对路径）
 - 源码在 `src/zephyr/` 下
 - 测试在 `tests/` 下
 - 配置在 `config/` 下

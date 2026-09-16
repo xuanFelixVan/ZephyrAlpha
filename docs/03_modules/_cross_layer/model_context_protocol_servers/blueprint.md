@@ -4,7 +4,7 @@ submodule_path: src/zephyr/integration/mcp
 title: "MCP Servers 蓝图 — MCP 服务器管理与调度"
 doc_type: blueprint
 status: Draft
-version: "0.3.47"
+version: "0.3.49"
 layer: L1_foundation
 owner: ZephyrAlpha-Owner
 classification: confidential
@@ -191,8 +191,8 @@ END_REQUIRED_SECTIONS
 
 | 图 | 位置 | 状态 | 链接 |
 |----|------|------|------|
-| 依赖图 (depgraph) | `blueprint_id=MOD-INF-013` 的 30 个 file 节点 | production | `extract_depgraph.py --modules MOD-INF-013` |
-| 数据流图 (dataflow) | （无节点） | N/A | `apply_dataflowgraph.py --list-datasets` |
+| 依赖图 (depgraph) | `blueprint_id=MOD-INF-013` 的 31 个 file 节点 | production | `extract_depgraph.py --modules MOD-INF-013` |
+| 数据流图 (dataflow) | 0 个 Dataset / 1 个 Job | active | `apply_dataflowgraph.py --list-datasets` |
 | 决策架构图 (decision) | 0 个决策节点 / 1 个决策层 | N/A | `generate_decision_diagram.py` |
 | 蓝图 (blueprint) | 本文件 | Draft | — |
 
@@ -203,7 +203,7 @@ END_REQUIRED_SECTIONS
 | module_id | MOD-INF-013 | MOD-INF-013 | ✅ |
 | domain_id | N/A | N/A | ✅ |
 | build_status | generated | generated | ✅ |
-| file_count | 30 文件 | N/A | — |
+| file_count | 31 文件 | N/A | — |
 
 > 冲突时以 depgraph 为准（ARCH-056 + ARCH-MM-001 声明 vs 验证框架）。
 
@@ -778,7 +778,7 @@ MCP 职责：通过 stdio 向外部 Agent 暴露任务管理/门禁决策等能�
 
 ## 1. 已实现代码完整路径索引
 
-> **AGENTS.md §6.1 蓝图-代码同步强制约定**——本节是蓝图与磁盘代码的「地址簿」。
+> **蓝图-代码同步强制约定**（稳定锚：AGENTS.md RULE-DEPGRAPH / RULE-PANORAMA；验证端 validate_blueprint_code_sync.py）——本节是蓝图与磁盘代码的「地址簿」。
 > 蓝图声称的文件必须与磁盘实际一致。不一致 = 蓝图漂移 = 下一个 AI session 冷启动时被误导。
 > **AUTOGEN**：本表由 sync_blueprint_code_index.py 从 depgraph.nodes 运营态（build_status∈generated/testing/stable）单向派生，禁止手写；重跑本脚本幂等更新。
 > MCP服务器——task_manager decompose_blueprint已实现
@@ -798,6 +798,7 @@ MCP 职责：通过 stdio 向外部 Agent 暴露任务管理/门禁决策等能�
 | 文件路径 | 实现状态 | 说明 |
 |---------|:---:|------|
 | `tests/a2a/test_mcp.py` | ✅ 已实现 | |
+| `tests/infrastructure/conftest.py` | ✅ 已实现 | |
 | `tests/infrastructure/mcp/__init__.py` | ⚠️ 骨架 | |
 | `tests/infrastructure/mcp/test_mcp_boot_hooks_integration.py` | ✅ 已实现 | |
 | `tests/infrastructure/mcp/test_mcp_full_lifecycle_e2e.py` | ✅ 已实现 | |
@@ -815,7 +816,7 @@ MCP 职责：通过 stdio 向外部 Agent 暴露任务管理/门禁决策等能�
 3. 读施工 Phase 规划 → 知道「下一步该做什么」
 
 **路径约定**：
-- 所有路径相对于 `D:\ZephyrAlpha\\`
+- 所有路径相对于仓库根目录（REPO_ROOT，不写死盘符绝对路径）
 - 源码在 `src/zephyr/` 下
 - 测试在 `tests/` 下
 - 配置在 `config/` 下

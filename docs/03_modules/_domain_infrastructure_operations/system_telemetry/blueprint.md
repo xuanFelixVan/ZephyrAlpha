@@ -4,7 +4,7 @@ submodule_path: src/zephyr/infrastructure/system_telemetry
 title: "System Telemetry 蓝图+施工图 — 全系统可观测性"
 doc_type: blueprint
 status: Active
-version: "2.0.8"
+version: "2.0.9"
 layer: L0_infrastructure
 owner: ZephyrAlpha-Owner
 classification: confidential
@@ -58,7 +58,7 @@ design_maturity: production
 
 # System Telemetry 蓝图+施工图 — 全系统可观测性
 
-> module_id: MOD-INF-015 | version: 2.0.8 | status: Active | layer: L0_infrastructure
+> module_id: MOD-INF-015 | version: 2.0.9 | status: Active | layer: L0_infrastructure
 > actual_disk_path: src/zephyr/system_telemetry/ | generation: 3 | construction_progress: completed
 
 ## 概述
@@ -174,7 +174,7 @@ design_maturity: production
 | 图 | 位置 | 状态 | 链接 |
 |----|------|------|------|
 | 依赖图 (depgraph) | `blueprint_id=MOD-INF-015` 的 43 个 file 节点 | production | `extract_depgraph.py --modules MOD-INF-015` |
-| 数据流图 (dataflow) | （无节点） | N/A | `apply_dataflowgraph.py --list-datasets` |
+| 数据流图 (dataflow) | 0 个 Dataset / 1 个 Job | active | `apply_dataflowgraph.py --list-datasets` |
 | 决策架构图 (decision) | 0 个决策节点 / 1 个决策层 | N/A | `generate_decision_diagram.py` |
 | 蓝图 (blueprint) | 本文件 | Active | — |
 
@@ -837,7 +837,26 @@ MOD-INF-015 在线6:运维保障线。上游: 系统运行时 → MOD-INF-015。
 | 9 | `src/zephyr/infrastructure/runtime_integration/system_telemetry/alerts/__init__.py` | scaffold.py module | `__init__.py` __all__ | AlertsSubsystem: add_rule/check_alerts/get_active，规则引擎+阈值告警 |
 | 10 | `src/zephyr/infrastructure/runtime_integration/system_telemetry/schema/__init__.py` | scaffold.py module | `__init__.py` __all__ | SchemaSubsystem: register_schema/check_compatibility/get_schema，版本兼容检查 |
 | 11 | `src/zephyr/infrastructure/runtime_integration/system_telemetry/auto_bootstrap.py` | scaffold.py module | `__init__.py` __all__ | 自动初始化：import时触发register_module+monkey-patch |
-| 12 | `src/zephyr/infrastructure/runtime_integration/system_telemetry/watchdog.py` | scaffold.py script | script-manifest.yaml | 独立watchdog进程：健康巡检+告警触发+自愈 |
+|
+| 12 | `__init__.py` | §3.1 |   init   | 已实现 | — |
+| 13 | `_budget_telemetry_bridge.py` | §3.1 |  budget telemetry bridge | 已实现 | — |
+| 14 | `_trace_bridge.py` | §3.1 |  trace bridge | 已实现 | — |
+| 15 | `agent_call_tracer.py` | §3.1 | agent call tracer | 已实现 | — |
+| 16 | `asset_inventory.py` | §3.1 | asset inventory | 已实现 | — |
+| 17 | `auto_bootstrap.py` | §3.1 | auto bootstrap | 已实现 | — |
+| 18 | `contract_metrics.py` | §3.1 | contract metrics | 已实现 | — |
+| 19 | `facade.py` | §3.1 | facade | 已实现 | — |
+| 20 | `health_aggregator.py` | §3.1 | health aggregator | 已实现 | — |
+| 21 | `health_probes.py` | §3.1 | health probes | 已实现 | — |
+| 22 | `incident_responder.py` | §3.1 | incident responder | 已实现 | — |
+| 23 | `latency_attributor.py` | §3.1 | latency attributor | 已实现 | — |
+| 24 | `metrics_bridge.py` | §3.1 | metrics bridge | 已实现 | — |
+| 25 | `observability_triad.py` | §3.1 | observability triad | 已实现 | — |
+| 26 | `ops_incident_aggregate.py` | §3.1 | ops incident aggregate | 已实现 | — |
+| 27 | `otel_instrumentation.py` | §3.1 | otel instrumentation | 已实现 | — |
+| 28 | `reproducibility_packager.py` | §3.1 | reproducibility packager | 已实现 | — |
+| 29 | `resource_sampler.py` | §3.1 | resource sampler | 已实现 | — |
+| 30 | `watchdog.py` | §3.1 | watchdog | 已实现 | — | 12 | `src/zephyr/infrastructure/runtime_integration/system_telemetry/watchdog.py` | scaffold.py script | script-manifest.yaml | 独立watchdog进程：健康巡检+告警触发+自愈 |
 
 #### 步骤 1：logs 子系统独立模块化 — ✅ 已完成
 
@@ -1097,10 +1116,10 @@ construction_status=completed | verification_status=passed | code_alignment_veri
 
 ## 1. 已实现代码完整路径索引
 
-> **AGENTS.md §6.1 蓝图-代码同步强制约定**——本节是蓝图与磁盘代码的「地址簿」。
+> **蓝图-代码同步强制约定**（稳定锚：AGENTS.md RULE-DEPGRAPH / RULE-PANORAMA；验证端 validate_blueprint_code_sync.py）——本节是蓝图与磁盘代码的「地址簿」。
 > 蓝图声称的文件必须与磁盘实际一致。不一致 = 蓝图漂移 = 下一个 AI session 冷启动时被误导。
 > **AUTOGEN**：本表由 sync_blueprint_code_index.py 从 depgraph.nodes 运营态（build_status∈generated/testing/stable）单向派生，禁止手写；重跑本脚本幂等更新。
-> **蓝图-代码同步强制约定（见 AGENTS.md §7 代码规范）**——本节是蓝图与磁盘代码的「地址簿」。
+> 
 
 ### 1.1 源码文件
 
@@ -1144,7 +1163,7 @@ construction_status=completed | verification_status=passed | code_alignment_veri
 3. 读施工 Phase 规划 → 知道「下一步该做什么」
 
 **路径约定**：
-- 所有路径相对于 `D:\ZephyrAlpha\\`
+- 所有路径相对于仓库根目录（REPO_ROOT，不写死盘符绝对路径）
 - 源码在 `src/zephyr/` 下
 - 测试在 `tests/` 下
 - 配置在 `config/` 下
