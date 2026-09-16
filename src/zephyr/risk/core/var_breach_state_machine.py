@@ -15,13 +15,6 @@
 # [TESTS] tests/risk/test_var_breach_state_machine.py
 # [TTL] permanent
 
-# [ALGO_FLOW]
-# I1: current_var(当日盘前 VaR 占净值比, ≥0) + today(交易日, 每日调用一次)
-# I2: VarBreachConfig(breach_threshold=0.02 / recovery_threshold=×0.8 / 3日→RECOVERY / 5日→NORMAL)
-# A1: transition(NORMAL超breach→BREACHED记date清零; BREACHED连续低于recovery计数≥3→RECOVERY; RECOVERY计数≥5→NORMAL; 复燃>breach→BREACHED清零; 中间带停留+计数重置)
-# A2: save/load(JsonStateStore 命名空间快照, 缺失→冷启动NORMAL, 损坏→StateCorruptError 上抛由消费方 fail-closed)
-# O1: VarBreachState + position_cap_multiplier(×1.0/×0.8/×0.9) → drawdown_controller.evaluate 乘性折扣
-# [/ALGO_FLOW]
 """
 VaR Breach State Machine — VaR breach 恢复/复位状态机 (36号 §3.15)
 

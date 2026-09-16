@@ -13,15 +13,6 @@
 # [ERROR_CONTRACT] InvalidSessionPersistInputError(ZA-RK-0062)
 # [TESTS] tests/risk/test_drawdown_session_persistence.py
 # [TTL] permanent
-# [ALGO_FLOW]
-# I1: JsonStateStore(6命名空间: peak_nav/nav_history/entry_var/attribution/strategy_state/persistable)
-# I2: 盘前输入(broker_holdings+strategy_state+kill_switch_state+health_check探针)
-# I3: 盘后输入(closing_nav+state_machine+var_95+attribution_result+strategy_holdings+audit门控)
-# F1: premarket_initialization(Ghost核对→状态机恢复/冷启动→peak+nav_history基线(不足30日保守50%cap)→健康检查→entry_var/prev_attribution)
-# F2: postmarket_persist(审计门控→终态nav→peak max→状态机→nav_history append/trim→entry_var→归因→策略持仓→标COMPLETE)
-# A1: 低层存取原语对(save/load peak_nav·entry_var·attribution·strategy_state + append/trim nav_history + mark/load persistable)
-# O1: PremarketResult(status READY/REFUSED+状态机+基线) / PostmarketResult(status PERSISTED/SKIPPED+peak对)
-# [/ALGO_FLOW]
 """
 D_RISK — 盘前初始化 + 盘后持久化配对编排（35 号 memo §3.15/§3.18/§6.12 施工）。
 

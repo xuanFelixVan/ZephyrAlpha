@@ -24,45 +24,6 @@
 # [TESTS] tests/governance/commit_gates/test_resource_schedule_gate.py
 # [A_module] module_id=MOD-RESCHED-GATE | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
-# [ALGO_FLOW]
-# 层: 输入
-# - id: I1
-#   name: staged 注册表
-#   fields: config/resource_profile_registry.yaml（own-scope 触发）
-#   code: _check 后缀命中触发
-# - id: I2
-#   name: E0 闸纯函数
-#   fields: classify_window/gate_decision（compute_window_gate.py，importlib 按路径装载）
-#   code: _load_e0_module
-# 层: 算法
-# - id: A1
-#   name_zh: ① 窗档展开
-#   name_en: expand_windows
-#   intro: cron（'|'-多段，5/6 段 croniter）+est_duration_min → 28 天地平线区间集
-#   desc: 区间数学=重叠判定基础；解析异常实体跳过并记 finding
-#   inputs: I1
-#   outputs: dict[task_id, list[(start,end)]]
-# - id: A2
-#   name_zh: ② 三检查
-#   name_en: check_overlap_group/check_mem_ceiling/check_e0_trading
-#   intro: 互斥组区间交叠/同窗内存和超天花板/交易敏感窗落 E0 light_only 带
-#   desc: 理由码 sched_overlap_group/sched_mem_ceiling/sched_e0_block；E0 异常 fail-closed
-#   inputs: A1, I2
-#   outputs: list[Finding]
-# - id: A3
-#   name_zh: ③ 真源漂移
-#   name_en: check_truth_drift
-#   intro: 生成器重抽 window_expr 与快照比对（指针失效告警，warn 不阻断）
-#   desc: 复用生成器 parse 函数防克隆；漂移=sched_truth_drift
-#   inputs: I1
-#   outputs: list[Finding(severity=warn)]
-# 层: 输出
-# - id: O1
-#   name_zh: GateSpec(RESOURCE-SCHEDULE)
-#   name_en: make_resource_schedule_gate
-#   intro: own-scope 硬阻断型提交门禁（阻断=finding severity=block）
-#   downstream: git_commit_gateway
-# [/ALGO_FLOW]
 #
 # 边:
 # I1 --> A1
@@ -89,6 +50,7 @@
 
 runtime 快查（非提交链路）：``runtime_e0_decision(now, is_trading_day, purpose)`` ——
 api_server backtest-run 端点接 E0 用的同口径封装。
+# [ALGO_FLOW] external: docs/03_modules/_domain_gov_enforcement/algo_flow/resource_schedule_gate.yaml
 """
 
 from __future__ import annotations

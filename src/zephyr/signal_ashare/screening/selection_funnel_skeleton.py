@@ -14,29 +14,6 @@
 # [TESTS] tests/signal_ashare/screening/test_selection_funnel_skeleton.py
 # [A_module] module_id=MOD-SIG-086 | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
-# [ALGO_FLOW]
-# 层: 输入
-# - id: I1
-#   name: 漏斗候选标的记录（泛型 RecT）
-#   fields: 字段语义不固化——符号/物理标记/门禁/流动性/五维初筛/六要素评分全部经钩子闭包注入
-# 层: 算法
-# - id: A1
-#   name: BM-SEL-16 run_graded_exclusion（~7000→~1200）
-#   desc: 物理排除(涨跌停封死/停牌/ST)→门禁排除(次新<N天)→分级排除(日均成交额+extra_tier_checks 注入位)→概率排除(弃庄)；降级=仅物理排除
-# - id: A2
-#   name: BM-SEL-17 run_preliminary_gates（~1200→~300）
-#   desc: 五维门槛初筛(技术/量比/换手/板块排名/主力/状态)+可选 CapacityTruncation 容量截断（liquidity_score 降序、同分 symbol 字典序）；降级=全量放行
-# - id: A3
-#   name: BM-SEL-18 run_fine_scoring（~300→~50）
-#   desc: 六要素合成(基础四维×(1+状态偏移截断)+主力−拥挤−密度钩子+8态) → 横截面 Z-score → tie_break(stable/symbol) Top-N；降级=等权综合
-# - id: A4
-#   name: run_funnel_chain 三层串联
-#   desc: 层序与数据流唯一真源：kept 子集逐层传递（graded→screened→scored）
-# 层: 输出
-# - id: O1
-#   name: ExclusionOutcome / GateOutcome / ScoredItem / FunnelChainResult
-#   intro: 域适配层把骨架输出包装为本域结果类型（kept/excluded/degraded/truncated/raw/z/rank）
-# [/ALGO_FLOW]
 """
 选股漏斗共享骨架（MOD-SIG-086，SIGNAL-ARCH-001 归并裁定落地）。
 

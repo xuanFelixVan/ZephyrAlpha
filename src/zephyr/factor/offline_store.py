@@ -14,14 +14,6 @@
 # [TESTS] tests/factor/test_offline_store.py
 # [A_module] module_id=MOD-L02-001 | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
-# [ALGO_FLOW]
-# I1: 7列因子值行 dict 批次 + layer(daily/intraday/snapshots) + root_dir
-# A1: validate_rows——7列/日期/质量标记 fail-closed 校验
-# A2: 分区映射——daily/intraday→trade_date=YYYY-MM-DD；snapshots→year=YYYY/month=MM
-# A3: 写入——分区内行规范化排序→内容寻址批文件名(sha256前16)→已存在跳过(幂等)→pyarrow原子写
-# A4: 读取——DuckDB read_parquet 递归扫描+因子/日期/质量过滤+ROW_NUMBER同键取最新
-# O1: WriteReceipt(写入回执) / list[dict](7列行)
-# [/ALGO_FLOW]
 """
 离线存储 Offline Store（CAND-FAC-015 / B13-04144，feast 式 Parquet/DuckDB 离线仓）。
 

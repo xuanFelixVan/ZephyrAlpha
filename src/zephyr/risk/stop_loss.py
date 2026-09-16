@@ -22,79 +22,6 @@
 # created: "2026-05-05"
 # ---
 
-# [ALGO_FLOW]
-# 层: 输入
-# - id: I1
-#   name: Kill Switch 触发原因 reason
-#   fields: 触发 Kill Switch 的原因描述（如 drawdown > 25%）
-# - id: I2
-#   name: 执行范围 scope
-#   fields: "all"=全部平仓；"position"=仅平仓不撤单；"order"=仅撤单不平仓
-# - id: I3
-#   name: broker 接口实例 broker
-#   fields: ExecutionBroker 实例，提供 get_holdings/get_open_orders/place_order/cancel_order
-# - id: I4
-#   name: 持仓信息 positions
-#   fields: symbol → qty 字典，当前所有持仓
-# - id: I5
-#   name: 挂单信息 open_orders
-#   fields: order_id → order_info 字典，当前所有未成交挂单
-# - id: I6
-#   name: 最大撤单笔数 max_orders_per_second
-#   fields: A 股 2026 新规限频，默认 15 笔/秒
-# - id: I7
-#   name: broker 持仓 broker_holdings
-#   fields: symbol → PositionInfo，broker 端实际持仓
-# - id: I8
-#   name: 策略状态 strategy_state
-#   fields: symbol → "OPEN"/"CLOSED"，策略侧持仓状态
-# - id: I9
-#   name: Kill Switch 状态 kill_switch_state
-#   fields: "OPEN"/"CLOSED"，Kill Switch 当前状态
-# 层: 算法
-# - id: A1
-#   name_zh: ① 生成 Kill Switch 事件
-#   name_en: generate_kill_switch_event
-#   intro: 记录 Kill Switch 触发事件（日志 + event_id），返回事件 dict
-#   desc: 生成 UUID event_id，CRITICAL 日志记录，返回 requires_manual_reset=True
-#   inputs: I1 I2
-#   outputs: event dict
-# - id: A2
-#   name_zh: ② 撤所有挂单
-#   name_en: cancel_all_open_orders
-#   intro: 遍历所有未成交挂单，逐笔撤单，统计成功/失败
-#   desc: 调用 broker.cancel_order(order_id)，捕获异常继续执行
-#   inputs: I5
-#   outputs: cancelled_orders 列表 + cancel_errors 列表
-# - id: A3
-#   name_zh: ③ 平仓所有持仓
-#   name_en: liquidate_all_positions
-#   intro: 遍历所有持仓，按 15 笔/秒限频分批发市价平仓单
-#   desc: A 股 2026 新规：15 笔/秒限频，持仓 >15 只需分 ⌈N/15⌉ 秒执行；调用 broker.place_order(direction=SELL, order_type=MARKET)
-#   inputs: I4 I6
-#   outputs: liquidation_orders 列表 + liquidation_errors 列表
-#   invariant: 平仓必须按 15 笔/秒限频分片
-# - id: A4
-#   name_zh: ④ Ghost Position 检测
-#   name_en: detect_ghost_positions
-#   intro: 检测策略认为已平仓但 broker 仍持有的幽灵持仓
-#   desc: 两种情况：① 策略侧 CLOSED 但 broker 有持仓；② Kill Switch CLOSED 但 broker 仍有任意持仓
-#   inputs: I7 I8 I9
-#   outputs: ghost_positions 列表
-# - id: A5
-#   name_zh: ⑤ 汇总执行结果
-#   name_en: aggregate_execution_result
-#   intro: 汇总撤单/平仓/Ghost 检测结果，生成完整执行报告
-#   desc: 合并 A2/A3/A4 结果，计算总耗时，判断是否全部成功
-#   inputs: A1 A2 A3 A4
-#   outputs: 完整执行报告 dict
-# 层: 输出
-# - id: O1
-#   name_zh: Kill Switch 执行报告
-#   name_en: kill_switch_execution_report
-#   intro: 包含事件 ID、撤单结果、平仓结果、Ghost 检测、总耗时、是否全部成功
-#   downstream: DefaultRiskValidator.validate_order（后续校验）；daily_auditor（日终审计）
-# [/ALGO_FLOW]
 
 """D_RISK — Stop-Loss & Kill Switch 兼容层
 
@@ -113,6 +40,7 @@ LIQUIDATING 全局状态锁（二次进入拒绝）+ event_id 幂等重放（不
 
 SSoT: zephyr.risk.implementations.default_stop_loss_engine
 SSoT(状态记录): zephyr.risk.implementations.default_risk_validator（单一仲裁 schema）
+# [ALGO_FLOW] external: docs/03_modules/_domain_risk/algo_flow/stop_loss.yaml
 """
 
 from __future__ import annotations

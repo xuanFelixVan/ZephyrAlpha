@@ -13,16 +13,6 @@
 # [ERROR_CONTRACT] 非法阶段名->ValueError; 空标签->ValueError
 # [TESTS] tests/factor/test_correlation_sentiment_stratifier.py
 # [TTL] permanent
-# [ALGO_FLOW]
-# I1: 逐日情绪标签 labels(5档中文) + confidences(灰度 max(P)) / 灰度结果映射(grayscale_map)
-# I2: 策略收益率面板 returns_panel(T×k, 已对交易日)
-# F1: 置信度兜底(confidence<0.60->冰点保守, fallback_mask留痕; 30号§6.3定位器错判污染防护)
-# A1: build_phase_labels(硬标签+置信度->有效标签Series + 兜底统计)
-# A2: labels_from_grayscale(消费 analyze_grayscale() 输出的 duck-type 适配器)
-# A3: split_by_phase(按5阶段切面板, 每阶段标注样本量/充足标记>=30)
-# A4: phase_weight_frame(灰度软分配权重帧, 30号§6.5过渡期天按P比例; 兜底行全押保守阶段)
-# O1: PhaseLabelResult / dict[phase→PhaseSlice] / 权重DataFrame
-# [/ALGO_FLOW]
 """
 D_FACTOR — G07 情绪周期分层标签器（23 号 memo §3.1②，消费 BM-SEL-23-B）
 

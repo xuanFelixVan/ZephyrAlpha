@@ -12,12 +12,6 @@
 # [ERROR_CONTRACT] 空暴露字典->零偏差无警报
 # [TESTS] tests/pf_core/test_multifactor_holding_drift_monitor.py
 # [TTL] permanent
-# [ALGO_FLOW]
-# I1: current/target 因子暴露 + current/target 行业暴露 + weight_drift(权重漂移)
-# I2: HoldingDriftParams(factor alert 0.05/critical 0.10(C6边界); industry alert 0.03/critical 0.05(C2边界); weight alert 0.10→喂RebalanceTrigger 15%阈值)
-# F1: monitor每日盘后(①因子暴露偏差→FACTOR_CRITICAL/FACTOR_ALERT ②行业偏差→INDUSTRY_CRITICAL/INDUSTRY_ALERT ③权重漂移>10%→WEIGHT_DRIFT/FEED_REBALANCE_TRIGGER)
-# O1: HoldingDriftReport(alerts/critical_count/should_trigger_rebalance/weight_drift)
-# [/ALGO_FLOW]
 """
 25号memo §3.7#8 持仓偏差监控（HoldingDriftMonitor，MVP 即做）。
 

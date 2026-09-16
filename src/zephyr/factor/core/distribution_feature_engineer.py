@@ -14,13 +14,6 @@
 # [TESTS] tests/factor/test_distribution_feature_engineer.py
 # [A_module] module_id=MOD-L02-026 | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
-# [ALGO_FLOW]
-# I1: 因子/收益 DataFrame + DistributionFeatureConfig（lags/windows/quantiles/interactions/shift）
-# A1: 滞后项——{col}_lag{k}（k ∈ lags）
-# A2: 滚动分布统计——trailing 窗口 mean/std/skew/kurt(Fisher)/分位数（{col}_roll*{w}）
-# A3: 交互项——{a}_x_{b} 列对乘积；全特征统一 shift（PIT 对齐）
-# O1: 增强 DataFrame（原列 + 派生特征列，副本返回）
-# [/ALGO_FLOW]
 """
 分布特征工程器（MOD-L02-026，D_FACTOR core）。
 

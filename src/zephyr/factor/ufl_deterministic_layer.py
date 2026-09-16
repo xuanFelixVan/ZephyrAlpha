@@ -14,14 +14,6 @@
 # [TESTS] tests/factor/test_ufl_deterministic_layer.py
 # [A_module] module_id=MOD-L02-001 | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
-# [ALGO_FLOW]
-# I1: 因子级 is_deterministic 标记（显式 mark 或 classify_from_inputs 推导）+ 特征值长表行
-# A1: 标记台账——fail-closed 查询；同值幂等/异值冲突拒绝（追加式）
-# A2: 行级打标——tag_feature_rows 为每行附加 is_deterministic 键（元数据层，不碰 CH DDL）
-# A3: 确定性查询视图——build_deterministic_view_sql 生成 factor_id IN 确定性集合的 VIEW（空集→1=0）
-# A4: 读侧过滤——filter_deterministic 只留确定性因子行
-# O1: 打标行/过滤行/视图 SQL/确定性因子集合
-# [/ALGO_FLOW]
 """
 UFL 确定性事实层（v8.1，CAND-FAC-011 / B10-01176）。
 

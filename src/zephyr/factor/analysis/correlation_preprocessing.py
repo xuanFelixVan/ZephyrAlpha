@@ -13,15 +13,6 @@
 # [ERROR_CONTRACT] 空输入->ValueError; 常数序列ADF->degraded标记; 对齐后为空->ValueError
 # [TESTS] tests/factor/test_correlation_preprocessing.py
 # [TTL] permanent
-# [ALGO_FLOW]
-# I1: 策略净值/价格序列 nav_map(dict[str, Series])
-# F1: 对数收益率 r_t=ln(P_t/P_{t-1})(时间可加, 混用算术/对数致Pearson低估0.07-0.12)
-# F2: ADF平稳性(自实现OLS+MacKinnon临界值插值, statsmodels非项目依赖, 同bhy_fdr纯numpy先例)
-# F3: Modified Z-score异常值标注(MAD法, |M|>3.5, 不剔除, Spearman天然抗)
-# A1: preprocess_strategy_returns(对数化+ADF+异常值标注+交易日交集对齐)
-# A2: compute_strategy_correlation(策略级Pearson+Spearman双版本矩阵)
-# O1: PreprocessResult(aligned_log_returns + adf + outliers) / 双版本相关矩阵
-# [/ALGO_FLOW]
 """
 D_FACTOR — G07 策略相关性验证·数据预处理 pipeline（23 号 memo §3.1①）
 

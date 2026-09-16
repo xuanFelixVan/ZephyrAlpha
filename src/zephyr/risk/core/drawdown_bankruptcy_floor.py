@@ -13,11 +13,6 @@
 # [ERROR_CONTRACT] InvalidBankruptcyFloorInputError(ZA-RK-0067)
 # [TESTS] tests/risk/test_drawdown_bankruptcy_floor.py
 # [TTL] permanent
-# [ALGO_FLOW]
-# I1: current_nav当前净值 + initial_capital初始本金 + BankruptcyFloorConfig(floor_ratio=0.85)
-# F1: check_bankruptcy_floor(floor=initial×0.85; nav<floor→Breach(含breach_pct=距底线深度); 否则None)
-# O1: BankruptcyFloorBreach(floor+breach_pct+reason)或None → Kill Switch 第5类触发源(§3.5表新增行)
-# [/ALGO_FLOW]
 """
 D_RISK — Static 模式破产底线 Kill Switch 触发源（35 号 memo §6.15 施工，§4.10 部分采纳）。
 

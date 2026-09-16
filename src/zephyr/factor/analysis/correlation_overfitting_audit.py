@@ -13,15 +13,6 @@
 # [ERROR_CONTRACT] n_params<1/样本对长度不一致->ValueError; avg_sharpe<=0->PSI=inf判fail
 # [TESTS] tests/factor/test_correlation_overfitting_audit.py
 # [TTL] permanent
-# [ALGO_FLOW]
-# I1: IS/OOS Sharpe + N_obs/N_params + 可选 dsr/pbo/win_rate/profit_factor/trial级IS-OOS序列
-# F1: PDR=(IS−OOS)/IS(<0.5通过); PSI_param=Best/Avg(<3.0通过, 与§5.4 PSI同名异义); DFR=N_obs/N_params(>=30通过)
-# F2: OOS退化斜率(IS→OOS Sharpe回归斜率>0通过) + 胜率>70%/PF>3.0警戒线(软警告)
-# A1: compute_pdr / compute_parameter_stability_index / compute_degrees_of_freedom_ratio(三指标自实现核心)
-# A2: compute_oos_degradation_slope(最小二乘斜率) / check_extreme_backtest_metrics(警戒线)
-# A3: audit(函数级入口: 汇总硬指标+可选dsr/pbo→LIKELY_REAL/INCONCLUSIVE/LIKELY_OVERFIT)
-# O1: OverfitAuditResult(各指标值+per-check状态+三态verdict)
-# [/ALGO_FLOW]
 """
 D_FACTOR — G07 过拟合检测引擎（23 号 memo §3.3，PDR/PSI/DFR 自实现核心）
 

@@ -13,13 +13,6 @@
 # [ERROR_CONTRACT] A3CoverageError(ZA-REGIME-0031)
 # [TESTS] tests/regime/validation/test_a3_transition_coverage.py
 # [TTL] permanent
-# [ALGO_FLOW]
-# I1: state_seq(全历史 Viterbi 解码状态序列, 既有 detector 产物, 任意可哈希标签)
-# I2: allowed_paths(spec §4 定义的合法转移路径集 (from,to)) + coverage_threshold=0.80
-# F1: 逐日相邻对提取(默认剔除自环) → 转移计数
-# A1: compute_path_coverage(覆盖率统计 + 未覆盖路径 top 榜 + ≥80% 判定)
-# O1: A3CoverageReport(total/covered/coverage/passed/top_uncovered)
-# [/ALGO_FLOW]
 """
 D_REGIME — A3 状态转移路径覆盖正式统计（11 号 memo §0.5.7 A3 / §4.1 A3）。
 

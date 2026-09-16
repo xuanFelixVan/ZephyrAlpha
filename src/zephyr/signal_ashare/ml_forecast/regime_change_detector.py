@@ -14,16 +14,6 @@
 # [TESTS] tests/signal_ashare/ml_forecast/test_regime_change_detector.py
 # [A_module] module_id=MOD-SIG-039 | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
-# [ALGO_FLOW]
-# I1: 指数日 K 收盘序列 closes（默认 000300，loader 走 market_index_kline 真源表）
-# A1: 牛熊规则判定: 收盘价 < MA60 或自 250 日峰值回撤 ≥20% → BEAR，否则 BULL
-# A2: 双侧 CUSUM 变点统计: 去均值收益累积偏差（allowance=0.5σ），按 σ√n 归一
-# A3: 切换状态机: 尾部连续同态天数 k ≤ confirm_days → TRIGGERED(候选待确认);
-#     k > confirm_days → CONFIRMED(体制更新); 无翻转但 CUSUM 超 watch_band → WATCH 预警
-# A4: 切换概率: STABLE 0.05+0.20×cusum / WATCH 0.15+0.25×cusum /
-#     TRIGGERED 0.35+0.45×k/confirm_days / CONFIRMED 0.90（对应 spec §4 触发→确认概率爬升）
-# O1: RegimeChangeSnapshot（当前体制 + 切换相位 + 切换概率 + 置信度，供下游风控节流消费）
-# [/ALGO_FLOW]
 """
 regime 变更检测器（10 号 regime spec §2.1 BM-BUY-02-A-1-d，MOD-SIG-039）。
 

@@ -13,13 +13,6 @@
 # [ERROR_CONTRACT] InvalidTemplateInputError(ZA-RPT-0031)
 # [TESTS] tests/reporting/test_review_template_engine.py
 # [TTL] permanent
-# [ALGO_FLOW]
-# I1: period(复盘周期) + 四段内容(pnl_attribution/deviation_events/threshold_changes 字符串, action_items 字符串序列) + risk_overview(可选风险概览行)
-# F1: render_weekly_review()——按 weekly_review_template.md 结构渲染四段式周报 markdown
-# F2: 空段降级——空字符串/空序列段渲染"（本期无）"(结构完整不留空洞)
-# A1: 段标题渲染顺序=WEEKLY_REVIEW_SECTIONS 常量序(四段固定)
-# O1: markdown 字符串(调用方经 ReportPublisher TRADING_REVIEW 源归档)
-# [/ALGO_FLOW]
 """
 D_REPORTING — 周复盘模板引擎（55 号 §6 暂缓项固化，函数级 MVP）。
 

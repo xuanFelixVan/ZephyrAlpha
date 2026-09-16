@@ -14,38 +14,6 @@
 # [TESTS] tests/position/test_core_satellite_allocator.py
 # [A_module] module_id=MOD-POS-025 | layer=module | stability=evolving | safety=M | ai_autonomy=ai_modifiable
 # [TTL] permanent
-# [ALGO_FLOW]
-# 层: 输入
-# - id: I1
-#   name: 候选标的 CandidateAsset
-#   fields: symbol/kelly_fraction/rs_pct/price/vwap/atr
-# - id: I2
-#   name: 核心-卫星配置 CoreSatelliteConfig
-#   fields: satellite_cap/single_name_cap/core_atr_k/satellite_atr_k/t_band_atr/rs_keep_pct
-# 层: 算法
-# - id: A1
-#   name_zh: ① 核心-卫星分组
-#   name_en: allocate
-#   intro: 按kelly降序,核心仓先配至core_budget,卫星≤satellite_cap硬帽,超出截断
-# - id: A2
-#   name_zh: ② 权重与止损参数分轨
-#   name_en: weight_and_stop
-#   intro: 单标的=half-kelly(kelly_fraction×0.5)≤single_name_cap;核心k=core_atr_k/卫星k=satellite_atr_k
-# - id: A3
-#   name_zh: ③ 卫星做T信号
-#   name_en: satellite_t_signals
-#   intro: price>vwap+t_band_atr×atr→SELL_PART; price<vwap−t_band_atr×atr→BUY_BACK; 仅卫星仓
-# - id: A4
-#   name_zh: ④ RS排名换仓触发
-#   name_en: rs_swap_check
-#   intro: 卫星rs_pct跌出rs_keep_pct且池外challenger rs_pct更高→SwapTrigger(out=掉队,in=challenger)
-# 层: 输出
-# - id: O1
-#   name_zh: 核心-卫星方案 CoreSatellitePlan
-#   name_en: CoreSatellitePlan
-#   intro: legs/satellite_weight/t_signals/swap_triggers/notes完整结构方案
-#   downstream: MOD-POS-001 精裁; MOD-POS-024 裁决; MOD-SELL-018 做T执行 ([CONSUMERS] 头)
-# [/ALGO_FLOW]
 #
 # 边:
 # I1 --> A1

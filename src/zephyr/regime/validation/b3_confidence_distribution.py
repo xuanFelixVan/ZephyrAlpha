@@ -13,12 +13,6 @@
 # [ERROR_CONTRACT] B3ConfidenceError(ZA-REGIME-0034)
 # [TESTS] tests/regime/validation/test_b3_confidence_distribution.py
 # [TTL] permanent
-# [ALGO_FLOW]
-# I1: max_p_values(walk-forward 全区间逐日 max(P) 序列, 既有 detector 产物, 值域[0,1])
-# I2: edges 四档边界 + low_share_max=0.40 / high_share_max=0.50(memo §4.2 B3 判定阈值)
-# A1: analyze_confidence_distribution(分位数统计 + 四档桶占比 + 死档检测 + 判定)
-# O1: B3ConfidenceReport(均值/分位数/桶占比/dead_buckets/passed)
-# [/ALGO_FLOW]
 """
 D_REGIME — B3 置信度合理性分析（11 号 memo §4.2 B3）。
 

@@ -14,13 +14,6 @@
 # [TESTS] tests/signal_ashare/ml_forecast/test_conditional_density_predictor.py
 # [A_module] module_id=MOD-SIG-043 | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
-# [ALGO_FLOW]
-# I1: 历史收益率序列 + 平行条件标签（波动率分桶/regime 标签，可空）
-# A1: 条件分桶——按条件值分组，组内 trailing window 经验分布
-# A2: 矩估计——均值/标准差/偏度/超额峰度（Fisher）+ 经验分位数网格 P1/P5/P25/P50/P75/P95/P99
-# A3: 尾部派生——VaR95（5% 分位）/CVaR95（≤VaR 的均值）/前瞻VaR%/负偏度/超额峰度摘要
-# O1: DensityForecast（矩+分位数+尾部+样本数+degraded）；crps_empirical 评估件
-# [/ALGO_FLOW]
 """
 收益率条件密度预测（BM-SEL-13，MOD-SIG-043）。
 

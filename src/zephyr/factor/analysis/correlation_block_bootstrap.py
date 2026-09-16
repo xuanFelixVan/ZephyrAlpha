@@ -13,15 +13,6 @@
 # [ERROR_CONTRACT] 样本不足(<MIN_OBS)/列数<2->ValueError; 常数列PPW退化为b=1
 # [TESTS] tests/factor/test_correlation_block_bootstrap.py
 # [TTL] permanent
-# [ALGO_FLOW]
-# I1: 对齐收益率面板(T×k) + n_bootstrap(默认2000) + threshold(默认0.6战略级)
-# F1: PPW b.star自动块长(Patton-Politis-White 2009: mhat显著滞后判定+flat-top窗Ghat/DSBhat)
-# F2: stationary bootstrap索引(块长L~Geometric(1/b), 起点均匀, 环绕, 对齐walk_forward单变量版模式)
-# A1: ppw_block_size(逐列b*取max, 钳[1,Bmax], Bmax=ceil(min(3√n,n/3)))
-# A2: stationary_bootstrap_indices(生成长度T环绕索引一次, 全列共用=行重采样)
-# A3: bootstrap_correlation_ci(2000×重采样→每对Pearson/Spearman的90%CI+P(ρ>0.6); Fisher z参数CI互验, 不一致以bootstrap为准)
-# O1: BootstrapCIResult(per-pair CI/概率/点估计/块长)
-# [/ALGO_FLOW]
 """
 D_FACTOR — G07 multivariate stationary block-bootstrap 引擎（23 号 memo §3.2）
 

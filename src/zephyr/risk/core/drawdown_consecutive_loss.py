@@ -13,13 +13,6 @@
 # [ERROR_CONTRACT] InvalidConsecutiveLossInputError(ZA-RK-0064)
 # [TESTS] tests/risk/test_drawdown_consecutive_loss.py
 # [TTL] permanent
-# [ALGO_FLOW]
-# I1: 日PnL序列(list[float], 负=亏) 或 ConsecutiveLossTracker逐日update(trade_date+pnl)
-# I2: ConsecutiveLossConfig(consecutive_days=5+reduction_pct=0.5, §6.2/§2.5.5表第3行)
-# F1: check_consecutive_loss(纯函数: 序列末尾连续pnl<0计数≥阈值→触发)
-# F2: ConsecutiveLossTracker.update(有状态: 逐日推进, pnl<0计数+1否则重置, 同日幂等)
-# O1: ConsecutiveLossAlert(triggered+consecutive_loss_days+cap_multiplier+reason)
-# [/ALGO_FLOW]
 """
 D_RISK — 连续亏损降仓触发器（35 号 memo §6.2 施工，§3.5 触发条件表第 3 行）。
 

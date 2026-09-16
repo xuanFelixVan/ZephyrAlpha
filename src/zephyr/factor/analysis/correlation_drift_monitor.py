@@ -13,16 +13,6 @@
 # [ERROR_CONTRACT] 空序列->ValueError; σ=0/常数基线->degraded标记不告警
 # [TESTS] tests/factor/test_correlation_drift_monitor.py
 # [TTL] permanent
-# [ALGO_FLOW]
-# I1: 滚动63日Spearman ρ_t序列(每策略对) + 基线ρ₀(block-bootstrap验证基线) + 可选基线/近期分布
-# F1: CUSUM S⁺ₜ=max(0,S⁺ₜ₋₁+(ρ_t−ρ₀)−k), k=0.5σ, h=4σ(~0.5次/年误报, 检测延迟~50交易日)
-# F2: PSI=Σ(recent%−base%)·ln(recent%/base%), >0.2调查/>0.4告警(quantile分箱+eps兜底)
-# A1: compute_rolling_spearman(窗口内秩相关, 逐窗重排名精确版)
-# A2: cusum_upper_alarm(单边CUSUM→告警/首个告警位/S⁺轨迹/degraded)
-# A3: population_stability_index(基线vs近期ρ分布PSI)
-# A4: assess_pair_drift(单对一站式: CUSUM主检测+PSI辅助→PairDriftReport)
-# O1: CusumResult / PSI值 / PairDriftReport(cusum_alarm+psi_level+degraded)
-# [/ALGO_FLOW]
 """
 D_FACTOR — G07 §5.4 相关性漂移监控（上线后持续，函数级）
 

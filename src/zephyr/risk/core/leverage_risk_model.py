@@ -13,17 +13,6 @@
 # [ERROR_CONTRACT] InvalidLeverageRiskInputError(ZA-RK-0072)
 # [TESTS] tests/risk/core/test_leverage_risk_model.py
 # [TTL] permanent
-# [ALGO_FLOW]
-# I1: 持仓输入(entry_price/mark_price/leverage/position_notional/margin_balance/side) + funding_rate/holding_periods
-# I2: 维持保证金率阶梯 MaintenanceMarginTier 序列(按交易所规则,名义价值升序)
-# F1: get_maintenance_margin_rate(名义价值落档→该档mmr)
-# F2: calculate_liquidation_price(多:entry*(1-1/lev+mmr);空:entry*(1+1/lev-mmr))
-# F3: calculate_funding_cost(notional*rate*periods,空头符号取反=收入)
-# F4: calculate_margin_ratio(notional*mmr/margin_balance,>=1爆仓)
-# F5: calculate_distance_to_liquidation(多:(mark-liq)/mark;空:(liq-mark)/mark)
-# A1: assess_leverage_position(聚合快照+四级风险分级SAFE/WARNING/CRITICAL/LIQUIDATED)
-# O1: LeverageRiskSnapshot
-# [/ALGO_FLOW]
 """
 D_RISK — 杠杆风控模型（CAND-CRYPTO-008，94 号 memo §4.4 杠杆与资金费率）。
 

@@ -13,12 +13,6 @@
 # [ERROR_CONTRACT] B2CRPSError(ZA-REGIME-0033)
 # [TESTS] tests/regime/validation/test_b2_crps.py
 # [TTL] permanent
-# [ALGO_FLOW]
-# I1: prob_matrix(T,K) 逐日状态概率分布 + outcomes(T,) 事后实际主导态(0..K-1)
-# F1: crps_categorical(单点离散 CRPS: CDF 与结局指示的平方偏差和)
-# A1: evaluate_crps(模型均值 CRPS vs climatology CRPS → skill=1−model/clim → model<clim 判定)
-# O1: B2CRPSReport(crps_model/crps_climatology/skill/passed)
-# [/ALGO_FLOW]
 """
 D_REGIME — B2 CRPS 概率预测技能（11 号 memo §4.2 B2）。
 

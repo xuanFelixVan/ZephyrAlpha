@@ -14,12 +14,6 @@
 # [TESTS] tests/signal_ashare/screening/test_coarse_screening_funnel.py
 # [A_module] module_id=MOD-SIG-047 | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
-# [ALGO_FLOW]
-# I1: CoarseScreenRecord（技术形态/量比/换手率/板块强度排名/主力阶段/市场状态适配 + liquidity_score）
-# A1: 五维门槛初筛——技术(布尔) + 量价(量比>1.5、换手率门槛) + 板块(强度排名前30%) + 主力(C-011布尔) + 状态(C-021布尔)
-# A2: 容量收敛——通过数 > capacity_target 时按 liquidity_score 降序截断（截断标记 truncated=True）
-# O1: CoarseScreenResult(kept/excluded{symbol:reason}/degraded/truncated)
-# [/ALGO_FLOW]
 """
 选股漏斗第二层——初筛漏斗（BM-SEL-17，~1200→~300）。
 

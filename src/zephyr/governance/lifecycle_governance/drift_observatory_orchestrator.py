@@ -14,16 +14,6 @@
 # [TESTS] tests/governance/lifecycle/test_drift_observatory_orchestrator.py
 # [A_module] module_id=MOD-GOVERNANCE | layer=module | stability=evolving | safety=M | ai_autonomy=ai_modifiable
 # [TTL] permanent
-# [ALGO_FLOW]
-# I1: DriftObservation(strategy_id + features/model_output/realized_pnl 三载荷)
-# I2: DriftLayers 四层检测端口（input/prediction/outcome/conformal，皆可缺省降级）+ downstream_impact_gate（仅 L1）
-# F1: 四层并行检测（单层异常/越界 → 该层计 0 + degraded 留痕，不扩散）
-# F2: L1 下游影响门控（良性漂移清零 severity，防告警疲劳；gate 异常保留告警=保守方向）
-# F3: CUSUM→calibration flush 联动（L2 cusum_alarm → L4 flush_calibration_set + BC-ACI bias_corrector）
-# F4: composite=Σw·s 加权聚合 → map_response 五级响应（0.20/0.40/0.60/0.80 + coverage_breach 直达）
-# F5: 水位棘轮执行（只升不降；升级才触发执行端口；同/低水位幂等零副作用；notify 每次照发）
-# O1: DriftVerdict(response/composite/applied_response/actions_fired/failed_layers/degraded/idempotent_replay)
-# [/ALGO_FLOW]
 """D_GOVERNANCE — Drift Observatory 四层联动编排器（61 号 §3.3 纪律 4，编排层）。
 
 四层递进（memo 实际分层名）：Layer 1 输入监控（PSI/KS/MMD/Wasserstein 特征漂移，
@@ -50,6 +40,16 @@ memo 留白裁定（编排层补全，不越入检测内核）：
 
 依据: 61_lifecycle_multi_ai §3.3 纪律 4（四层 Drift Observatory 联动编排伪代码 + 施工要点①-⑤）
 Version: 0.1.0
+# [ALGO_FLOW]
+# I1: DriftObservation(strategy_id + features/model_output/realized_pnl 三载荷)
+# I2: DriftLayers 四层检测端口（input/prediction/outcome/conformal，皆可缺省降级）+ downstream_impact_gate（仅 L1）
+# F1: 四层并行检测（单层异常/越界 → 该层计 0 + degraded 留痕，不扩散）
+# F2: L1 下游影响门控（良性漂移清零 severity，防告警疲劳；gate 异常保留告警=保守方向）
+# F3: CUSUM→calibration flush 联动（L2 cusum_alarm → L4 flush_calibration_set + BC-ACI bias_corrector）
+# F4: composite=Σw·s 加权聚合 → map_response 五级响应（0.20/0.40/0.60/0.80 + coverage_breach 直达）
+# F5: 水位棘轮执行（只升不降；升级才触发执行端口；同/低水位幂等零副作用；notify 每次照发）
+# O1: DriftVerdict(response/composite/applied_response/actions_fired/failed_layers/degraded/idempotent_replay)
+# [/ALGO_FLOW]
 """
 
 from __future__ import annotations

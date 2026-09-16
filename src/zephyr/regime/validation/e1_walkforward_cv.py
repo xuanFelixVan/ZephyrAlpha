@@ -13,13 +13,6 @@
 # [ERROR_CONTRACT] E1WalkForwardCVError(ZA-REGIME-0037)
 # [TESTS] tests/regime/validation/test_e1_walkforward_cv.py
 # [TTL] permanent
-# [ALGO_FLOW]
-# I1: improvements(walk-forward 各季度窗口 MaxDD 改善序列, 既有回测产物, 如 46 季度)
-# I2: cv_threshold=0.50(§5 E1 判定门槛)
-# F1: improvements_from_pairs((dd_base, dd_exp) 窗口对 → |dd_base|−|dd_exp| 改善序列, 统一正/负值约定)
-# A1: compute_improvement_cv(mean/std/CV 正式统计 → CV<0.5 判定)
-# O1: E1CVReport(n_windows/mean/std/cv/passed)
-# [/ALGO_FLOW]
 """
 D_REGIME — E1 Walk-Forward 稳定性正式统计（11 号 memo §0.5.7 E1）。
 

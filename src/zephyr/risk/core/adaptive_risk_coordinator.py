@@ -14,14 +14,6 @@
 # [TESTS] tests/risk/test_adaptive_risk_coordinator.py
 # [TTL] permanent
 
-# [ALGO_FLOW]
-# I1: ForwardVarForecast(①预判层契约) + regime_state(C-021 状态)
-# I2: RiskWatchSnapshot(②监控层契约) + black_swan_escalated(C-038 升级标记)
-# I3: CoordinatorConfig(降仓档/regime乘数表/未知保守乘数) + B-001~B-006硬边界注册表
-# A1: 盘前计划(limit_scale×regime_multiplier收紧+sit_out透传)
-# A2: 盘中熔断分级(monitor红→HALT_NEW/橙→REDUCE; breach→REDUCE; sit_out→HALT_NEW; 黑天鹅→KILL_SWITCH advised; 取最严)
-# O1: PremarketRiskPlan / AdaptiveRiskDecision(frozen) → 执行侧编排消费
-# [/ALGO_FLOW]
 #
 # 边:
 # I1 --> A1

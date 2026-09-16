@@ -14,16 +14,6 @@
 # [TESTS] tests/regime/validation/test_wyckoff_walkforward.py
 # [TTL] permanent
 # [ARCH-REF] #10_regime_detector_spec §4.12.2 #14_regime_s2_diagnosis §4.5 #WYF-3
-# [ALGO_FLOW]
-# I1: 000300 OHLCV（CH 只读/TableRegistry 解析）+ 生产同款派生 pct_change/vol_z
-# I2: 预注册网格 PREREG_GRID + 验收带 PREREG_ACCEPTANCE + walk-forward 折定义 make_folds
-# F1: 生产引擎 wyckoff_engine.detect_wyckoff_events(params=候选) 直接复用（禁诊断版双实现漂移）
-# F2: segment_metrics —— 检出力/粘滞占比(on_share)/事件级前向收益 vs 无条件基线（恒零对照）
-# F3: select_in_train —— 分层贪心（SC→AR→ST/Spring/Test→权重/记忆窗/门槛）+ 机械 tie-break
-# F4: run_walkforward —— 逐折"训练段选值→测试段只跑一次"，WFE 汇总（overfitting_guard.assess_wfe 同族）
-# F5: PreRegistrationRegistry hash 锁定网格与验收带（看数据前登记，禁事后改标准）
-# O1: 逐折候选与样本外指标 DataFrame + JSON 落盘（报告真源）
-# [/ALGO_FLOW]
 """
 WYF-3：wyckoff 维度阈值 walk-forward 重校管线（MOD-REGIME-VAL，14 号 §4.5 方法论栈复用）。
 
@@ -46,6 +36,16 @@ WYF-3：wyckoff 维度阈值 walk-forward 重校管线（MOD-REGIME-VAL，14 号
 
 依据: S11 挖矿节点 wyckoff_vix_mining.md §3 / 14_regime_s2_diagnosis §4.5
 Version: 0.1.0
+# [ALGO_FLOW]
+# I1: 000300 OHLCV（CH 只读/TableRegistry 解析）+ 生产同款派生 pct_change/vol_z
+# I2: 预注册网格 PREREG_GRID + 验收带 PREREG_ACCEPTANCE + walk-forward 折定义 make_folds
+# F1: 生产引擎 wyckoff_engine.detect_wyckoff_events(params=候选) 直接复用（禁诊断版双实现漂移）
+# F2: segment_metrics —— 检出力/粘滞占比(on_share)/事件级前向收益 vs 无条件基线（恒零对照）
+# F3: select_in_train —— 分层贪心（SC→AR→ST/Spring/Test→权重/记忆窗/门槛）+ 机械 tie-break
+# F4: run_walkforward —— 逐折"训练段选值→测试段只跑一次"，WFE 汇总（overfitting_guard.assess_wfe 同族）
+# F5: PreRegistrationRegistry hash 锁定网格与验收带（看数据前登记，禁事后改标准）
+# O1: 逐折候选与样本外指标 DataFrame + JSON 落盘（报告真源）
+# [/ALGO_FLOW]
 """
 
 from __future__ import annotations

@@ -14,36 +14,6 @@
 # [TESTS] tests/governance/audit/test_doc_lifecycle.py
 # [A_module] module_id=MOD-GOV-043 | layer=module | stability=evolving | safety=H | ai_autonomy=ai_modifiable
 # [TTL] permanent
-# [ALGO_FLOW]
-# 层: 输入
-# - id: I1
-#   name_zh: docs/_working 文档集
-#   name_en: working_docs
-#   fields: .md/.csv/.yaml/.yml/.json（排除 README.md）
-# - id: I2
-#   name_zh: 观察清单 SSoT
-#   name_en: watchlist
-#   fields: .runtime/archive_watchlist.json（state/first_seen/baseline_mtime/ghost_refs）
-# 层: 处理
-# - id: A1
-#   name_zh: 引用提取+路径分级
-#   name_en: extract_and_classify
-#   desc: markdown 链接/反引号/纯文本路径三类提取；短命路径（.worktrees/.runtime/data 等）断裂不计分
-# - id: A2
-#   name_zh: 状态机评估
-#   name_en: evaluate
-#   desc: permanent 豁免；task_bound+（durable 幽灵>0 或 30 天零活跃）→watch；watch 满 7 天→归档；有生命迹象→复活
-# 层: 输出
-# - id: O1
-#   name_zh: 归档动作
-#   name_en: archive
-#   desc: guard_recycle 进 .runtime/recycle_bin/<ts>/（30 天可恢复，零物理删除）
-# - id: O2
-#   name_zh: 评估报告
-#   name_en: report
-#   fields: watched/revived/archived/pruned 计数 + details
-# 边: I1-->A1; I2-->A2; A1-->A2; A2-->O1; A2-->O2
-# [/ALGO_FLOW]
 """
 doc_lifecycle.py — 文档生命周期状态机（#ARCH-RECONCILER-AUTO-DELETE-GOV-001 治本核心）
 

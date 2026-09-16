@@ -14,13 +14,6 @@
 # [TESTS] tests/signal_ashare/ml_forecast/test_causal_factor_validator.py
 # [A_module] module_id=MOD-SIG-054 | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
-# [ALGO_FLOW]
-# I1: 候选因子值序列 + 前瞻收益序列 + 市场控制序列（可空）+ 因子名
-# A1: 调 MOD-SIG-042 assess_causality（lead-lag 双 IC + 偏 IC）→ 因果/相关/伪相关/不显著裁定
-# A2: 加权映射——CAUSAL_CANDIDATE ×1.2（因果加权提升 proposed）/ CORRELATED ×1.0 / SPURIOUS ×0.5 / INSIGNIFICANT ×1.0
-# A3: 降级——样本不足等 ValueError → degraded=True 中性乘子（仅统计评估口径，跳过因果加权）
-# O1: FactorCausalReport（单因子）/ list[FactorCausalReport]（批量）
-# [/ALGO_FLOW]
 """
 因果因子验证器（BM-SEL-02-M，MOD-SIG-054）。
 

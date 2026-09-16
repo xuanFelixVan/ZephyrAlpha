@@ -15,13 +15,6 @@
 # [A_module] module_id=MOD-OBS-001 | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 # [ARCH-REF] #ARCH-OBS-EXP-TRACK-001
-# [ALGO_FLOW]
-# I1: result(BacktestResult 鸭子类型: strategy_id/start_date/end_date/sharpe_ratio/max_drawdown/annual_return/total_return/win_rate/trades_count)
-# I2: config(BacktestConfig,可选: initial_capital/commission_rate/slippage_bps/benchmark_symbol/risk_free_rate) + nav_series(净值序列,可选) + lineage(上游 run_id,可选)
-# F1: _extract_params(config 五字段 + 策略 + 日期范围) / _extract_metrics(七项核心指标)
-# F2: track_vectorized_backtest(start_run(component=vectorized-backtest) → log_* + nav CSV artifact → run_id)
-# O1: run_id（NullBackend="null-run"）
-# [/ALGO_FLOW]
 """
 L_INFRA_TELEMETRY — vectorized_engine 回测结果 → 实验跟踪语义适配器（50 号 §3 ⑥，M4）。
 
@@ -93,7 +86,10 @@ def track_vectorized_backtest(
             {
                 "initial_capital": str(config.initial_capital),
                 "commission_rate": str(config.commission_rate),
-                "slippage_bps": str(config.slippage_bps),
+                # 口径披露：None≠无滑点，而是逐笔按标定真源分层解析（#23 H2）
+                "slippage_bps": (
+                    "calibrated_per_fill" if config.slippage_bps is None else str(config.slippage_bps)
+                ),
                 "benchmark_symbol": config.benchmark_symbol,
                 "risk_free_rate": float(config.risk_free_rate),
             }

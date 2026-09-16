@@ -13,14 +13,6 @@
 # [ERROR_CONTRACT] InvalidBrokerSideStopInputError(ZA-RK-0073)
 # [TESTS] tests/risk/test_drawdown_broker_side_stop.py
 # [TTL] permanent
-# [ALGO_FLOW]
-# I1: positions {symbol: {qty, stop_price, reference_price?}}(开仓时在持仓位+保护性止损价)
-# I2: broker_stop_orders [{symbol, qty, stop_price}](broker 端已确认保护性止损单)
-# I3: BrokerSideStopConfig(price_tolerance_ratio 对账容差)
-# F1: build_protective_stop_plan(逐仓位产出 ProtectiveStopIntent(symbol/qty/stop_price/SELL); qty≤0/stop_price≤0/stop≥reference 抛错)
-# F2: reconcile_broker_side_stops(计划 vs broker 实际: 按 symbol 匹配, qty 覆盖+stop_price 容差内=受保护; 未保护/错配→coverage_ok=False)
-# O1: list[ProtectiveStopIntent](开仓时同步挂单侧) + BrokerSideStopReport(coverage_ok/unprotected/mismatched/intents)
-# [/ALGO_FLOW]
 """
 D_RISK — L2 平台层 broker 端硬止损（35 号 memo §6.11 施工，§3.5.1 四层架构 L2 落地）。
 

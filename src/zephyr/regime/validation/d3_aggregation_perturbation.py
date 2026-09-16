@@ -13,13 +13,6 @@
 # [ERROR_CONTRACT] D3AggregationError(ZA-REGIME-0036)
 # [TESTS] tests/regime/validation/test_d3_aggregation_perturbation.py
 # [TTL] permanent
-# [ALGO_FLOW]
-# I1: risk_inputs_series(逐日 risk_signal_inputs: {"params":{#id:coef}, "opportunity":{...}}, 既有 detector 产物)
-# I2: 扰动幅度 pct=0.20 + tolerance=0.30(§4.4 D 类门槛)
-# F1: aggregate_risk_signal(RiskBase×共振惩罚+机会恢复→clamp, 参数化的生产公式镜像)
-# A1: run_d3_perturbation(两参数各 ×{0.8,1.2} 四点扰动→重放序列→均值相对变化判定)
-# O1: D3PerturbationReport(基线均值 + 逐扰动点统计 + max_rel_change + passed)
-# [/ALGO_FLOW]
 """
 D_REGIME — D3 聚合公式参数扰动分析（11 号 memo §0.5.7 D3）。
 

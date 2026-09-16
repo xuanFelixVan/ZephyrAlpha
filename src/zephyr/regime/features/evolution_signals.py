@@ -15,14 +15,6 @@
 # [A_module] module_id=MOD-REGIME-002 | layer=module | stability=evolving | safety=M | ai_autonomy=ai_modifiable
 # [TTL] permanent
 # [ARCH-REF] #14_regime_s2_diagnosis §4.6 演进方向 #3/#5/#6
-# [ALGO_FLOW]
-# I1: signal(衰减信号 Series, 滞回用)
-# I2: open/high/low/close/volume(OHLCV 五序列, EVR/flush 用)
-# F1: hysteresis_edge_trigger(双阈值状态机: >=enter 置1, <=exit 置0, 区间保持, NaN 保持)
-# F2: s2_evr_score(EVR 核心60: 量>1.6x均量+实体极小; ADL 三模式: 经典背离80/吸筹脉冲70/隐形吸筹50; 四分量取 max)
-# F3: s2_flush_flag(N日新低+收盘回前日区间+下影>50%+量>2x均量 四合取 → 0/1)
-# O1: 滞回状态 Series{0,1} / EVR 评分 Series[0,100] / flush flag Series{0,1}
-# [/ALGO_FLOW]
 """
 S2 演进方向小型组（14_regime_s2_diagnosis §4.6 #3/#5/#6，P2+ 函数级落地）。
 

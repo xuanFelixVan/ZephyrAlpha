@@ -13,14 +13,6 @@
 # [ERROR_CONTRACT]
 # [TESTS] tests/shared/alerts/test_alert_senders.py
 # [TTL] permanent
-# [ALGO_FLOW]
-# I1: webhook_url(企业微信机器人) / SMTP(host/port/username/password/from/to) 配置 + http_post/smtp_factory 传输注入(测试逃生门)
-# I2: 待发内容(alert 对象/report 对象/纯文本)——duck-typing getattr 取字段, 不 import 上层域(防 shared→risk/reporting 反向依赖)
-# F1: WeChatWebhookSender.send_markdown(content)——企业微信 markdown 消息 POST, status_code==200 且 errcode==0 为送达
-# F2: EmailSmtpSender.send_mail(subject, body)——SMTP_SSL/STARTTLS 发送, 异常即 False
-# F3: as_alert_sender()/as_report_sender()——适配 alert_generator.Alert / report_publisher.ArchivedReport 的可调用门面
-# O1: bool 送达结果(False=软失败, 调用方记 FAILED/告警不阻断)
-# [/ALGO_FLOW]
 """
 D_SHARED — Email/WeChat 实发 sender（55 号 §6 暂缓项施工，AI-NIGHT-001 包P）。
 

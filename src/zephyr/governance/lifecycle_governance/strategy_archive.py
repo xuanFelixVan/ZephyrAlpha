@@ -14,13 +14,6 @@
 # [TESTS] tests/governance/lifecycle/test_strategy_archive.py
 # [A_module] module_id=MOD-GOVERNANCE | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
-# [ALGO_FLOW]
-# I1: strategy_id + StrategyArchiveArtifacts(training_run_id/decay_knight/reason/params_snapshot/pnl_curve) + archive_root(默认 MAIN_REPO_ROOT/strategy_archive)
-# F1: archive_strategy(建 strategy_archive/<sid>/ → manifest.json + params_snapshot.json + pnl_curve.csv；重复归档拒)
-# F2: retrieve_strategy_archive(读 manifest.json + 产物文件清单；不存在→StrategyArchiveError)
-# F3: list_archived_strategies(扫描 archive_root 下含 manifest.json 的子目录)
-# O1: archive_strategy→归档目录 Path；retrieve→{manifest, files}
-# [/ALGO_FLOW]
 """
 D_GOVERNANCE — 退役策略归档区读写（61 号 §3.9 归档四件套第 ④ 条，函数级）。
 

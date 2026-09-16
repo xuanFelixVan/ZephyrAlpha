@@ -14,15 +14,6 @@
 # [TESTS] tests/risk/test_adaptive_risk_monitor.py
 # [TTL] permanent
 
-# [ALGO_FLOW]
-# I1: LiquidityWatchInput 序列(标的级 Amihud/萎缩/非流动标记, 上游 MOD-RK-048 产出)
-# I2: 相关性收益矩阵 {symbol: returns}(可空)
-# I3: RiskWatchConfig(非流动占比黄/红阈 + 相关性 regime 阈值)
-# A1: 流动性分级(illiquid_ratio≥红阈→red告警; ≥黄阈→yellow告警)
-# A2: 相关性体制评估(复用MOD-POS-012 assess_correlation_regime; HIGH→orange分散失效告警)
-# A3: 综合严重度取最严 + 告警聚合
-# O1: RiskWatchSnapshot(仪表盘快照+MonitoringAlert元组) → C-004/仪表盘/告警接线
-# [/ALGO_FLOW]
 #
 # 边:
 # I1 --> A1

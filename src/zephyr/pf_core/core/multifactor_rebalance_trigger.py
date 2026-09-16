@@ -12,13 +12,6 @@
 # [ERROR_CONTRACT] 漂移/排名变化为None->视为0不触发
 # [TESTS] tests/pf_core/test_multifactor_rebalance_trigger.py
 # [TTL] permanent
-# [ALGO_FLOW]
-# I1: days_since_last(距上次换仓交易日数) + weight_drift(组合权重漂移) + top30_rank_change(top-30因子排名变化)
-# I2: RebalanceTriggerParams(window 3-5/drift 0.15/rank 10×30归一化/cost 0.004/daily_alpha 0.0005)
-# F1: should_rebalance(①<3天→WAIT ②≥5天→TIME保底(不受成本门控) ③漂移>15%且成本门控通过→DRIFT ④排名变化>10且成本门控通过→SIGNAL ⑤→HOLD)
-# F2: _is_rebalance_worthwhile(Inaction Cost=drift×daily_alpha×expected_days vs Action Cost=0.4%×drift, break-even 8天, window_max=5<8安全垫)
-# O1: RebalanceDecision(trigger/action/inaction_cost/action_cost/worthwhile)
-# [/ALGO_FLOW]
 """
 25号memo §3.7#6 换仓触发决策（RebalanceTrigger 含 Inaction Cost，MVP 即做）。
 

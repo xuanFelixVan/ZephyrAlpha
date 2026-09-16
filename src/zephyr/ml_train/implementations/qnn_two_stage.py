@@ -14,38 +14,6 @@
 # [TESTS] tests/ml_train/test_qnn_two_stage.py
 # [A_module] module_id=MOD-ML-010 | layer=module | stability=evolving | safety=M | ai_autonomy=ai_modifiable
 # [TTL] permanent
-# [ALGO_FLOW]
-# 层: 输入
-# - id: I1
-#   name: 训练特征 features
-#   fields: X(n,d)特征矩阵 + symbol_ids(n,)标的标签 + feature_names(可选)
-# - id: I2
-#   name: 目标 target
-#   fields: (n,) 次日收益
-# 层: 算法
-# - id: A1
-#   name_zh: ① Stage1 共性基座
-#   name_en: stage1_commonality
-#   intro: 全样本合并池化,逐分位数拟合HGB quantile → q_base(x)
-# - id: A2
-#   name_zh: ② Stage2 市场缩放头
-#   name_en: stage2_scaling_head
-#   intro: per-symbol 仿射缩放 OLS估计;子样本不足degraded回退
-# - id: A3
-#   name_zh: ③ 体制快速重训
-#   name_en: retrain_stage2
-#   intro: 只重估仿射头,Stage1冻结,分钟级
-# - id: A4
-#   name_zh: ④ 分位数序列输出
-#   name_en: predict_quantiles
-#   intro: per-symbol 预测+单调不交叉修正
-# 层: 输出
-# - id: O1
-#   name_zh: 分位数序列预测
-#   name_en: dict[quantile, np.ndarray]
-#   intro: {q:(n,)}单调不减,下游GAP-F-01消费
-#   downstream: MOD-ML-DENSITY密度头; D_REGIME体制标签扩展 ([CONSUMERS] 头)
-# [/ALGO_FLOW]
 #
 # 边:
 # I1 --> A1

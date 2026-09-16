@@ -13,13 +13,6 @@
 # [ERROR_CONTRACT] A4ImportanceError(ZA-REGIME-0032)
 # [TESTS] tests/regime/validation/test_a4_feature_importance.py
 # [TTL] permanent
-# [ALGO_FLOW]
-# I1: score_fn(X_window)→float(越大越好, 如 HMM log-likelihood) + X(T,F) 特征矩阵 + windows 窗口边界
-# I2: n_repeats=5 / stability_threshold=0.70(§4.1 A4: top-2 在≥70%窗口保持) / negligible_share=0.01
-# F1: 窗口内列洗牌(rng.permutation 仅作用于窗口切片) × n_repeats → 逐特征重要性
-# A1: permutation_importance_windows(逐窗口逐特征扰动→均值重要性/占比/top-2 稳定性聚合)
-# O1: A4PermutationReport(mean_importance/share/top2_stability/negligible_features/passed)
-# [/ALGO_FLOW]
 """
 D_REGIME — A4 特征重要性 Permutation 主轨（11 号 memo §4.1 A4）。
 

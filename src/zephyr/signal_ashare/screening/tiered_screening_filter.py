@@ -14,13 +14,6 @@
 # [TESTS] tests/signal_ashare/screening/test_tiered_screening_filter.py
 # [A_module] module_id=MOD-SIG-046 | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
-# [ALGO_FLOW]
-# I1: TieredFilterRecord（symbol/board/close/prev_close/停牌/ST/上市天数/日均成交额/弃庄概率）
-# A1: limit_pct_for(board, is_st) → 板块涨跌停幅度（宪章§2约束四：主板±10%/科创创业±20%/ST±10%/北交所±30%）
-# A2: is_limit_locked_price(close, prev_close, limit_pct) → 涨跌停封死推导（|涨幅|≥幅度−ε）
-# A3: 四排除机制——委托骨架 run_graded_exclusion（板块幅度自推导经 is_limit_locked 钩子闭包注入）：物理(封死/停牌/ST)/门禁(次新<30天)/分级(日均成交额<500万)/概率(弃庄>0.95)
-# O1: TieredFilterResult(kept/excluded{symbol:reason}/degraded)
-# [/ALGO_FLOW]
 """
 选股漏斗第一层——分级指标过滤（BM-SEL-16，~7000→~1200）——A 股信号域薄适配层。
 

@@ -14,14 +14,6 @@
 # [TESTS] tests/governance/lifecycle/test_msprt_promotion_channel.py
 # [A_module] module_id=MOD-GOVERNANCE | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
-# [ALGO_FLOW]
-# I1: (champion_id, challenger_id) 通道预注册 + 内核配置（alpha/tau/historical_effects/window_size）
-# I2: 逐笔 delta（challenger_pnl − champion_pnl，调用方/DeltaExtractor 契约计算）/ 批量 delta 序列
-# F1: register 预注册建通道（重复/空 ID/自配对拒）
-# F2: feed 单笔推进（内核 update → 决策映射状态机；终局后幂等短路）
-# F3: feed_batch 批量调度入口（达终局早停；空批返回当前快照）
-# O1: PromotionVerdict（state/decision/n/m_value/log_m——晋升/留观/回退三态裁决输出）
-# [/ALGO_FLOW]
 """
 D_GOVERNANCE — mSPRT Champion-Challenger 晋升编排层（61 号 §3.3 纪律 1 通道化）。
 

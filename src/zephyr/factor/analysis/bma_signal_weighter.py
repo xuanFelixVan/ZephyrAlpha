@@ -14,14 +14,6 @@
 # [TESTS] tests/factor/test_bma_signal_weighter.py
 # [A_module] module_id=MOD-L02-001 | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
-# [ALGO_FLOW]
-# I1: 各信号评估 SignalEvaluation(ic/icir/ic_decay_ratio/direction/regime_ic?)
-# A1: 预测力门禁——ic≤0.03 出局；decay>0.5 出局；icir<0.5 得分×0.5 降权；regime_ic≤0 出局
-# A2: BMA 后验权重——softmax(κ·ic·icir) 伪似然（Hoeting 1999 BIC 近似轻量替代），Σ=1
-# A3: 平滑——w_t=α·w_prev+(1-α)·w_raw（α=0.9），出局信号权重归 0 后重归一
-# A4: 一致性置信度——方向加权多数派占比 agreement；双低（agreement<0.6 且 top_weight<0.5）→ NO_TRADE
-# O1: BmaWeightReport(weights/gated_out/direction/agreement/confidence/decision)
-# [/ALGO_FLOW]
 """
 模块48 动态信号权重模型（Bayesian Model Averaging，CAND-FAC-013 / B10-01481）。
 

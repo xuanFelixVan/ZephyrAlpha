@@ -14,14 +14,6 @@
 # [TESTS] tests/reporting/test_attribution_registry_mapper.py
 # [A_module] module_id=MOD-RPT-MAPPER | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
-# [ALGO_FLOW]
-# I1: shapley_strategy_attribution 产出 dict（shapley_values/full_portfolio_return/invariant_status）
-# I2: validate_strategy_pnl_invariant 产出 dict（strategy_contributions/diff/invariant_status）
-# F1: map_shapley_to_attribution_result（invariant PASS → method=factor_based + factor_contributions=shapley_values）
-# F2: map_invariant_to_attribution_result（method=factor_based + factor_contributions=contribution_ratio + alpha=未解释残差 diff）
-# F3: validate_attribution_result（registry 写入前形状校验：method 枚举 + 数值字段 NaN/非数值拒）
-# O1: attribution_result dict（62 号 §7.2 形状：method/allocation_effect/selection_effect/interaction_effect/factor_contributions/alpha）
-# [/ALGO_FLOW]
 """
 D_REPORTING — 归因结果 → experiment_registry.attribution_result 字段映射（62 号未施工清单 #4）。
 

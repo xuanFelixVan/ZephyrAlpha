@@ -13,12 +13,6 @@
 # [ERROR_CONTRACT] 无（校验结果以问题列表返回，不抛异常）
 # [TESTS] tests/position/test_single_name_cap_caliber.py
 # [TTL] permanent
-# [ALGO_FLOW]
-# I1: 三层单票上限口径映射 SINGLE_NAME_CAP_LAYERS（MOD-POS-001 策略层 5% / MOD-POS-021 firm 聚合 8% / MOD-POS-010 最终硬限 5%）
-# A1: validate_tier_calibers（合法性+冗余裁剪检测：firm 层 > 最终硬限时 8% 永不 binding 属冗余中间值）
-# A2: check_production_consistency（映射表 vs 三模块生产默认值漂移检测）
-# O1: 问题列表 list[str]（空=通过；冗余裁剪为 WARNING 级登记项，非阻断）
-# [/ALGO_FLOW]
 """
 单票上限三层口径映射 + 校验（31号 §2.4.1 / §5，32号 §6 同名行）。
 

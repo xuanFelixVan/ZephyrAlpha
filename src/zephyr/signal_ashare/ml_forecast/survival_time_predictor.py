@@ -14,13 +14,6 @@
 # [TESTS] tests/signal_ashare/ml_forecast/test_survival_time_predictor.py
 # [A_module] module_id=MOD-SIG-045 | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
-# [ALGO_FLOW]
-# I1: 持有期 durations + 事件指示 events（1=止盈止损发生，0=右删失）+ 协变量 X（市场状态等，可空）
-# A1: kaplan_meier——非参数基线生存曲线（分层校准用）
-# A2: WeibullAFTModel.fit——AFT 参数生存模型 MLE（解析梯度/Hessian Newton 法，y=log t 参数化）
-# A3: 预测件——中位时间/S(t)/horizon 内事件概率/期望时间（Γ 闭式）
-# O1: SurvivalCurve / WeibullAFTModel（coef/intercept/sigma/loglik）
-# [/ALGO_FLOW]
 """
 Survival 止盈止损时间预测（BM-SEL-15，MOD-SIG-045）。
 

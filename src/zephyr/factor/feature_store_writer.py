@@ -15,12 +15,6 @@
 # [A_module] module_id=MOD-L02-FS-WRITER | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 # [ARCH-REF] #15_data_feature_layer_spec §3.4 特征仓库存储层
-# [ALGO_FLOW]
-# I1: 长表特征值 DataFrame(trade_date/symbol/factor_id/value) + factor_version + 可选 client(注入式)
-# F1: build_feature_value_rows(校验必需列 → 对齐 INSERT_COLUMNS 的行 tuple；NaN→None 保 NULL 语义)
-# F2: write_feature_values(空输入短路 0；client 缺省延迟取 get_client；分块 INSERT c1_market.factor_feature_value)
-# O1: 行 tuple 列表 / 写入行数 int
-# [/ALGO_FLOW]
 """
 特征仓库写入管道（15_data_feature_layer_spec §3.4 要点④存储层）。
 

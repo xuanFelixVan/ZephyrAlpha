@@ -13,14 +13,6 @@
 # [ERROR_CONTRACT] D1ConfidenceGridError(ZA-REGIME-0035)
 # [TESTS] tests/regime/validation/test_d1_confidence_grid.py
 # [TTL] permanent
-# [ALGO_FLOW]
-# I1: max_p_values(walk-forward 全区间逐日 max(P) 序列, 既有 detector 产物)
-# I2: bands(四档映射 (下界,base) 降序, 默认镜像 detector 生产值) + pct=0.20 扰动幅度
-# F1: apply_confidence_bands(单点 max(P)→base_confidence, 从高到低取首个命中档)
-# A1: run_d1_threshold_grid(三档下界各 ×{0.8,1.0,1.2} 全网格 27 组合→合法组合重放序列→均值/档位占比)
-# A2: 相对变化 |均值−基线均值|/|基线均值| <30% 判定(§4.4 D 类稳健门槛)
-# O1: D1GridReport(基线均值 + 逐网格点统计 + max_rel_change + passed)
-# [/ALGO_FLOW]
 """
 D_REGIME — D1 ConfidenceSignal 四档阈值 ±20% 敏感性网格（11 号 memo §0.5.7 D1）。
 

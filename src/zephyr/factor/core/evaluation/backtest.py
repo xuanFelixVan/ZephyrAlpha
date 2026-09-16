@@ -16,18 +16,6 @@
 # [TESTS] tests/factor/test_evaluation_backtest.py
 # [A_module] module_id=MOD-L02-001 | layer=module | stability=stable | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
-# [ALGO_FLOW]
-# I1: symbol 列表 + factor_id + 评估日期区间（evaluate_factor 入参）
-# I2: market_kline_daily 历史长表（ch_reader 注入 FINAL 保证去重）+ market_kline_daily_hfq 后复权真值
-# F1: _adjusted_close_panel 复权价面板（close×adj_factor，NULL/0/负回退 1.0，#197：除权日前向收益不再误判腰斩）
-# A0: normalize_market_panel 出口量纲/复权归一（车道K 两 P0：volume 手→股逐行自洽探测 +
-#     价格改读后复权真值并按窗口末锚定，除权不再进收益）
-# A1: 数据加载+面板组装（长表→宽表，trade_date 截面对齐禁 ingested_at）
-# A2: 逐标的 FactorBase.compute 因子值调度
-# A3: _compute_forward_returns 前向收益（复权价 shift(-horizon)，仅回测评估不实盘）
-# A4: metrics 纯函数汇总（IC/IR/OOS/分组收益）
-# O1: EvaluationResult（IC/IR 等评估指标；数据不足字段为 0）
-# [/ALGO_FLOW]
 """
 D-FACTOR-03 因子评估回测运行器——端到端因子评估。
 

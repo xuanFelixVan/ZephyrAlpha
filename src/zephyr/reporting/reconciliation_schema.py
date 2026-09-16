@@ -13,14 +13,6 @@
 # [ERROR_CONTRACT]
 # [TESTS] tests/reporting/test_reconciliation_schema.py
 # [TTL] permanent
-# [ALGO_FLOW]
-# I1: 无运行时输入（纯 DDL 常量模块）
-# F1: reconciliation_differences——对账差异表(成交对账 5 类 DriftType 落库, 54 号 §3.3)
-# F2: attribution_results——归因结果表(策略层/firm 层两层归因产物, §3.5 两层架构)
-# F3: audit_trail——三阶段审计轨迹(原始事件/匹配决策/归因结果, §3.3, append-only + 哈希链)
-# F4: report_archive——报告归档表(§3.7 ReportPublisher DB 归档位, 对齐哈希链模式)
-# O1: ALL_TABLES 有序 DDL 元组 + table_names() 查询
-# [/ALGO_FLOW]
 """
 D_REPORTING — 对账/归因 DB 持久化 schema 定义（54 号 §7 开放问题落地前提）。
 

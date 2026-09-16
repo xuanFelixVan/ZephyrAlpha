@@ -14,12 +14,6 @@
 # [TESTS] tests/governance/lifecycle/test_ai_behavior_baseline.py
 # [A_module] module_id=MOD-GOVERNANCE | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
-# [ALGO_FLOW]
-# I1: SessionBehavior 序列（commits/duration_hours/三类文件数/modules_touched）
-# F1: compute_baseline(commits_per_hour + 三类文件占比 的均值/总体标准差 + known_modules 并集)
-# F2: detect_anomalies(z>|threshold| → commit_frequency/type_distribution；新模块 → first_touch_module)
-# O1: BehaviorBaseline；list[BehaviorAnomaly]（空=正常）
-# [/ALGO_FLOW]
 """
 D_GOVERNANCE — AI 会话行为基线 + 异常告警（61 号 §3.6 BM-RC-04-F，函数级 MVP）。
 

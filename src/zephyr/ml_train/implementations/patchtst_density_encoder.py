@@ -14,34 +14,6 @@
 # [TESTS] tests/ml_train/test_patchtst_density_encoder.py
 # [A_module] module_id=MOD-ML-011 | layer=module | stability=evolving | safety=M | ai_autonomy=ai_modifiable
 # [TTL] permanent
-# [ALGO_FLOW]
-# 层: 输入
-# - id: I1
-#   name: 时序特征 x
-#   fields: (n, lookback, n_channels) 三维张量, 默认60天×60因子
-# - id: I2
-#   name: PatchtstEncoderConfig
-#   fields: patch_len=16, stride=8, d_proj=16, min_samples=8
-# 层: 算法
-# - id: A1
-#   name_zh: ① patchify
-#   name_en: patchify
-#   intro: 每通道切patch(通道独立)
-# - id: A2
-#   name_zh: ② SVD patch embedding
-#   name_en: svd_embedding
-#   intro: 全样本patch合并SVD取top-d_proj主成分
-# - id: A3
-#   name_zh: ③ 注意力池化
-#   name_en: attention_pool
-#   intro: query=均值embedding, softmax加权patch维→每通道d维向量
-# 层: 输出
-# - id: O1
-#   name_zh: PatchtstFeatures
-#   name_en: PatchtstFeatures
-#   intro: channel_embeddings(n,C,d)+pooled(n,d)作密度预测前置特征
-#   downstream: MOD-ML-DENSITY密度头; MOD-ML-010 QNN Stage1 ([CONSUMERS] 头)
-# [/ALGO_FLOW]
 #
 # 边:
 # I1 --> A1

@@ -12,13 +12,6 @@
 # [ERROR_CONTRACT] 空违规清单->FEASIBLE/ACCEPT
 # [TESTS] tests/pf_core/test_multifactor_constraint_arbitration.py
 # [TTL] permanent
-# [ALGO_FLOW]
-# I1: violations(list[ConstraintViolation] 求解器违规清单) + universe_size(当前股票池大小)
-# I2: C1-C7策略级约束参数(STRATEGY_CONSTRAINTS, 25号memo §3.5裁定目标态, CTR-003注入对齐MOD-PF-006)
-# F1: arbitrate(①无违反→FEASIBLE/ACCEPT ②仅软违反→SOFT_VIOLATION/ACCEPT_WITH_PENALTY ③硬违反且可缩→SHRINK_UNIVERSE剔5只 ④硬违反不可缩→REDUCE_GROSS降至80%)
-# F2: build_multifactor_risk_limits(C1-C7策略参数→CTR-003 RiskLimits注入, max_single_position=0.02/max_sector_concentration=0.05)
-# O1: ArbitrationResult(status/action/target_universe_size/gross_leverage_cap)
-# [/ALGO_FLOW]
 """
 25号memo §3.7#2 七约束链冲突仲裁（ConstraintArbitration）+ C1-C7↔CTR-003 对齐。
 

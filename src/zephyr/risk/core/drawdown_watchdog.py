@@ -13,13 +13,6 @@
 # [ERROR_CONTRACT] InvalidWatchdogInputError(ZA-RK-0074)
 # [TESTS] tests/risk/test_drawdown_watchdog.py
 # [TTL] permanent
-# [ALGO_FLOW]
-# I1: broker_holdings {symbol: {qty}}(轮询实盘真实持仓; None=轮询失败)
-# I2: strategy_state {symbol: "OPEN"/"CLOSED"}(策略侧持仓状态; None=冷启动守卫)
-# I3: kill_switch_state "OPEN"/"CLOSED"(DefaultRiskValidator 状态, L3 轮询核对对象)
-# F1: poll_once(fail-closed 轮询失败判定 → detect_ghost_positions 一致性核对 → 裁决强平清单)
-# O1: WatchdogVerdict(status/ghosts/force_liquidate_symbols/halt_new_orders/reason)
-# [/ALGO_FLOW]
 """
 D_RISK — L3 看门狗一致性裁决（35 号 memo §6.11 施工，§3.5.1 四层架构 L3 落地）。
 

@@ -14,16 +14,6 @@
 # [TESTS] tests/governance/lifecycle/test_retirement_workflow.py
 # [A_module] module_id=MOD-GOVERNANCE | layer=module | stability=evolving | safety=M | ai_autonomy=ai_modifiable
 # [TTL] permanent
-# [ALGO_FLOW]
-# I1: strategy_id + RetirementPorts（get_decay_alerts/run_backtest/check_peers/get_regime_mismatch 四必备 + 执行六可选）
-# I2: sustained_min_days=10（持续告警阈值）+ lookback_days=126（诊断回测窗口）+ human_approved（评审制人工闸门）+ knight（五骑士归因，可选）
-# F1: Step1 触发——持续告警过滤（consecutive_days≥10）→ OBSERVING，未达标→MONITORING 返回
-# F2: Step2 诊断——oos_sharpe/is_regime_wide/regime_mismatch 三元组（端口供给，本模块不重算）
-# F3: Step3 决策——三选一矩阵（oos>0&mismatch→REOPTIMIZE；oos>-0.2&非全策略坏→PAUSE_CUT_SIZE；否则 RETIRE）
-# F4: Step4 退役执行——仅 RETIRE+human_approved：scale(0.5)→disable_new_entries→flatten→archive→ARCHIVED
-# F5: Step5 复盘——五骑士归因 classify_decay_knight + record_methodology 沉淀
-# O1: RetirementWorkflowResult（state/sustained_alerts/diagnosis/decision/executed_actions/knight/escalation_required）
-# [/ALGO_FLOW]
 """
 D_GOVERNANCE — 策略退役 5 步工作流编排（61 号 §3.9，函数级 MVP）。
 

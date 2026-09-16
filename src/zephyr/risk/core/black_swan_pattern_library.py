@@ -14,13 +14,6 @@
 # [TESTS] tests/risk/test_black_swan_pattern_library.py
 # [TTL] permanent
 
-# [ALGO_FLOW]
-# I1: MarketFeatures(7维市场体征: 波动率倍数/回撤/相关性/流动性萎缩/跳空/跌停潮/外围跌幅)
-# I2: 7模式模板库(权重+参考水平+阈值+降仓建议) + BlackSwanConfig(统一阈值覆盖)
-# A1: 逐模式加权相似度评分(score=Σw·clamp(f/r,0,1)/Σw)
-# A2: 命中判定与升级规则(≥2模式或BS-007→escalate; 最严降仓建议)
-# O1: BlackSwanScreenResult(matches/escalate/scale/matching_log) → C-004 升级+提前降仓+审计
-# [/ALGO_FLOW]
 #
 # 边:
 # I1 --> A1

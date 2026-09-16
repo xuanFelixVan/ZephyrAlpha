@@ -14,15 +14,6 @@
 # [TESTS] tests/risk/test_adaptive_risk_forecast.py
 # [TTL] permanent
 
-# [ALGO_FLOW]
-# I1: 历史收益序列 + 平行条件标签(可空) + 目标条件桶(可空)
-# I2: 共形校准 (预测, 实际) 对(可空)
-# I3: ForwardVarConfig(var_level/conformal_alpha/var_limit_pct/sit_out_var_pct/密度窗口)
-# A1: 条件PDF密度预测(复用MOD-SIG-043)→var_pct/cvar_pct(负值口径取正)
-# A2: 共形校准(复用MOD-SIG-044 SplitConformalPredictor)→margin q̂; 无校准→margin=0+degraded
-# A3: 限额对照(limit_scale=min(1,limit/conformal_var), breached, sit_out)
-# O1: ForwardVarForecast(frozen) → C-004 盘前裁决 / var_intraday_recalc 盘前基线
-# [/ALGO_FLOW]
 #
 # 边:
 # I1 --> A1

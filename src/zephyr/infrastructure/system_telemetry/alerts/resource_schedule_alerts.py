@@ -21,34 +21,6 @@
 # [TESTS] tests/infrastructure/test_resource_schedule_alerts.py
 # [A_module] module_id=MOD-RESCHED-ALERT | layer=module | stability=evolving | safety=M | ai_autonomy=ai_modifiable
 # [TTL] permanent
-# [ALGO_FLOW]
-# 层: 输入
-# - id: I1
-#   name: 闸 findings
-#   fields: resource_schedule_gate.run_all_checks 输出（Finding 列表）
-#   code: publish_findings
-# 层: 算法
-# - id: A1
-#   name_zh: ① finding→通知映射
-#   name_en: publish_findings
-#   intro: 理由码→key（sched_overlap_group:<组内对> 等）；block→critical/warn→warning
-#   desc: dedup key 粒度=冲突对/实体，静默窗口默认 30min；消息含 task_ids+at+detail
-#   inputs: I1
-#   outputs: OpsAlertFeed 板条目（notifications.jsonl）
-# - id: A2
-#   name_zh: ② 解除联动
-#   name_en: resolve_cleared
-#   intro: 本轮无 block finding 的既有 key → resolve（滞回解除照抄 ops_alert_feed）
-#   desc: 冲突消解后告警灰显（promotion 页近期解除项）
-#   inputs: I1
-#   outputs: resolve 计数
-# 层: 输出
-# - id: O1
-#   name_zh: 告警送达
-#   name_en: alert delivery
-#   intro: notifications.jsonl → api_server /api/ops-notifications → promotion 页横幅+晨审可见
-#   downstream: MOD-INF-OPS-ALERT-FEED 既有消费链（零改动复用）
-# [/ALGO_FLOW]
 #
 # 边:
 # I1 --> A1
@@ -73,6 +45,7 @@
 晨审挂接：通知板=``.runtime/ops_notifications/notifications.jsonl``（机器可读
 JSONL），晨审/AI 会话冷启动直接读板或经 ``GET /api/ops-notifications``——本模块
 零额外接口。
+# [ALGO_FLOW] external: docs/03_modules/_domain_infrastructure/algo_flow/resource_schedule_alerts.yaml
 """
 
 from __future__ import annotations

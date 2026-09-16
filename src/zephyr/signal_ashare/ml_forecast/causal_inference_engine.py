@@ -14,13 +14,6 @@
 # [TESTS] tests/signal_ashare/ml_forecast/test_causal_inference_engine.py
 # [A_module] module_id=MOD-SIG-042 | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
-# [ALGO_FLOW]
-# I1: 事件节点+关联边（公司/行业/概念，边权+传导时滞）；因子/收益/市场控制序列
-# A1: conduction_paths——BFS 传导路径推演（深度×边权衰减，cutoff 剪枝）
-# A2: propagate_impact——事件冲击沿图衰减扩散 → 各节点传导风险分
-# A3: assess_causality——lead-lag 双 IC + 控制市场后的偏 IC（残差法）→ 因果/相关/伪相关裁定
-# O1: ConductionPath / ImpactMap / CausalAssessment(forward_ic/backward_ic/partial_ic/verdict)
-# [/ALGO_FLOW]
 """
 知识图谱与因果推演引擎（BM-SEL-11，MOD-SIG-042）。
 

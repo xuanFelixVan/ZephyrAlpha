@@ -31,12 +31,6 @@ Generator
 
 依据: 蓝图 MOD-FEEDBACK_LOOP §3-§9
 
-# [ALGO_FLOW]
-# I1: skeletons(相对路径→代码骨架 dict, 默认 SKELETONS 模板全集) + target_root(写入根, 默认 BASE=包目录, 测试传 tmp_path 隔离)
-# A1: _write_one(目标已存在→skipped; 否则 temp-file(pid 后缀)+os.replace 原子写入→created; PermissionError/异常→error)
-# A2: ThreadPoolExecutor(max_workers=8) 并行写盘 + as_completed 聚合 created/skipped/errors 三态计数
-# O1: (created, skipped, errors) 三元组
-# [/ALGO_FLOW]
 """
 
 

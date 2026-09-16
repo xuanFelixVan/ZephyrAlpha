@@ -14,13 +14,6 @@
 # [TESTS] tests/plan_engine/test_track_fusion.py
 # [A_module] module_id=MOD-PLAN-020 | layer=module | stability=evolving | safety=M | ai_autonomy=ai_modifiable
 # [TTL] permanent
-# [ALGO_FLOW]
-# I1: list[TrackSignal](track/direction/target_weight/source/ai_discovered)
-# A1: 校验(同轨冲突Fail-Closed) + 分组(应急/人工/自动)
-# A2: 优先级裁决(应急>人工>自动; 人工与自动冲突加L6标记)
-# A3: 自动轨融合(双轨同向强共振min weight/单轨中等/反向CONFLICT_L6不出指令)
-# O1: FusedDirective(direction/target_weight/priority_track/strength/needs_l6_review/reason)
-# [/ALGO_FLOW]
 """
 四轨融合器（Multi-Track Fusion，v8.0）（MOD-PLAN-020）。
 

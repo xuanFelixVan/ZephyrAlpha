@@ -14,13 +14,6 @@
 # [TESTS] tests/plan_engine/test_premarket_workflow.py
 # [A_module] module_id=MOD-PLAN-021 | layer=module | stability=evolving | safety=M | ai_autonomy=ai_modifiable
 # [TTL] permanent
-# [ALGO_FLOW]
-# I1: trading_date + stages(默认三段式SOP)
-# A1: SOP校验(排程窗口/段序/依赖存在/mandatory必备)
-# A2: build_premarket_dag(→WorkDAG复用MOD-INF-035模型)
-# A3: 进度追踪(状态机+mandatory失败阻断+人工接管点+state_sink回调)
-# O1: WorkDAG / progress快照(ready/blocked/takeover_point/by_stage)
-# [/ALGO_FLOW]
 """
 D-TRADING-15 A股盘前标准化工作流（MOD-PLAN-021）。
 

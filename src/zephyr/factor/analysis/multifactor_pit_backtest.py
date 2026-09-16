@@ -12,12 +12,6 @@
 # [ERROR_CONTRACT] PIT违规->PITViolationError(fail-closed); 数据缺失->当日记录skipped继续
 # [TESTS] tests/factor/test_multifactor_pit_backtest.py
 # [TTL] permanent
-# [ALGO_FLOW]
-# I1: decision_dates + 注入式数据回调(load_factors/load_ic_history/load_covariance/load_industry) + PITBacktestParams(ic_window=60/cov_window=60)
-# F1: 5层PIT断言(assert_factor_pit/assert_ic_weight_pit/assert_covariance_pit/assert_industry_pit, 违规抛错)
-# F2: run_backtest主循环(①因子值AS OF JOIN+断言 ②IC历史截止t-1+断言 ③降级链决策(forward_returns=None防前瞻) ④合成因子分 ⑤协方差+断言 ⑥组合优化+仲裁(注入) ⑦换仓触发(首次=INIT) ⑧非换仓日持仓偏差监控(critical→DRIFT_CRITICAL强制换仓) ⑨记录)
-# O1: list[BacktestDayRecord](日期/方法/触发器/偏差警报数/skipped)
-# [/ALGO_FLOW]
 """
 25号memo §3.7#7 多因子 PIT 安全回测框架（MultifactorPITBacktestFramework，MOD-L02-015）。
 

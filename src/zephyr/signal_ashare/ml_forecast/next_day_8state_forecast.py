@@ -14,15 +14,6 @@
 # [TESTS] tests/signal_ashare/ml_forecast/test_next_day_8state_forecast.py
 # [A_module] module_id=MOD-SIG-037 | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
-# [ALGO_FLOW]
-# I1: 指数日 K OHLC 序列（默认 000300，loader 走 market_index_kline 真源表）
-# A1: 单日 8 态分类: 振幅≥3% → VIOLENT; |涨跌幅|≤0.3% → FLAT_CLOSE;
-#     缺口>+0.5% 高开 / <-0.5% 低开 / 其间平开 × 收≥开高走 / 收<开低走 → 6 网格态
-# A2: 一阶马尔可夫转移矩阵: 历史状态转移频次 + Laplace(α=1) 平滑 → 8×8 行归一矩阵
-# A3: 平稳分布修正: 幂迭代求 π，预测分布 = (1−blend)×经验行 + blend×π（防稀有态过拟合）
-# A4: confidence = top_probability × 支持度因子 min(1, 当前态出发转移数/30)
-# O1: NextDayForecast（8 态概率分布 + 众数态 + 置信度，供下游风控节流/权重修正）
-# [/ALGO_FLOW]
 """
 次日 8 状态预测（交易决策架构 9.2 八态叠加模型，BM-SEL-04，MOD-SIG-037）。
 

@@ -14,14 +14,6 @@
 # [TESTS] tests/signal_ashare/test_cross_market_conduction_sensor.py
 # [A_module] module_id=MOD-SIG-038 | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
-# [ALGO_FLOW]
-# I1: 外盘指数日收益（us_index: SPX/DJI/IXIC）+ A 股指数日收益（market_index_kline: 000300）
-# A1: 日历对齐: 外盘 t 日收益 → A 股其后首个交易日（bisect 取最新先于当日的外盘日期）
-# A2: 领先滞后相关: lag ∈ [0..2] 取 |corr| 最大者（lag0=隔夜传导当日生效，lag≥1=延续效应）
-# A3: 传导系数 beta = cov(外盘, A股@best_lag)/var(外盘)（简版 Granger 思路的回归斜率）
-# A4: 异动分档: |shock|<1% NONE / [1%,2%) MILD / ≥2% SEVERE; 影响预测 = Σ beta×shock（clip ±5%）
-# O1: ConductionSnapshot（分市场传导系数+影响预测 + 总影响 + 最重异动档 + 置信度）
-# [/ALGO_FLOW]
 """
 跨市场传导传感器（90 号 §22.3 BM-SEL-06，MOD-SIG-038）。
 

@@ -22,45 +22,6 @@
 # [TESTS] tests/infrastructure/test_resource_sampler.py
 # [A_module] module_id=MOD-RESCHED-SAMPLER | layer=module | stability=evolving | safety=M | ai_autonomy=ai_modifiable
 # [TTL] permanent
-# [ALGO_FLOW]
-# 层: 输入
-# - id: I1
-#   name: 注册表实体清单
-#   fields: config/resource_profile_registry.yaml（路径可注入）
-#   code: load_entities / derive_patterns
-# - id: I2
-#   name: 进程表快照
-#   fields: psutil 全表（pid/cmdline/create_time/cpu_times）
-#   code: _ps_snapshot（scanner 注入点=测试 stub 主通道）
-# 层: 算法
-# - id: A1
-#   name_zh: ① 观测模式推导
-#   name_en: derive_patterns
-#   intro: schedule_truth_source→cmdline 正则（ps1 抽被调脚本基名/静态表/宿主共享跳过）
-#   desc: ps1 真源解析 _PS1_SCRIPT_RE；schedule.yaml 槽位=宿主共享 v1 不归因；手动实体走 STATIC_OBSERVE_PATTERNS
-#   inputs: I1
-#   outputs: dict[task_id, compiled_regex]
-# - id: A2
-#   name_zh: ② 扫描记样本
-#   name_en: scan_once
-#   intro: 正则命中→GNU time 口径样本→append-only JSONL（Prometheus 命名字段）
-#   desc: cpu_ratio=生存期均值（%P 口径）；resident=瞬时 RSS（跨轮 max 由回写聚合）
-#   inputs: I1, I2
-#   outputs: .runtime/logs/resource_samples/<task_id>.jsonl
-# - id: A3
-#   name_zh: ③ 实测回写
-#   name_en: writeback
-#   intro: memory=实测 max+15% margin（尖刺不失真）、duration=P90，CAS 只动 measured 四键
-#   desc: VPA margin 口径；safe_write_text CAS；人填字段零触碰
-#   inputs: A2
-#   outputs: 注册表 measured.peak_mem_gb/p90_duration_min/samples/last_at
-# 层: 输出
-# - id: O1
-#   name_zh: 画像实测闭环
-#   name_en: measured feedback loop
-#   intro: 人申报初值→采样器实测回写→闸内存天花板/重叠判定消费实测口径
-#   downstream: zephyr.gov_enforcement.commit_gates.resource_schedule_gate; generate_resource_week_view
-# [/ALGO_FLOW]
 #
 # 边:
 # I1 --> A1
@@ -99,6 +60,7 @@ CLI:
   python -m zephyr.infrastructure.system_telemetry.resource_sampler scan
   python -m zephyr.infrastructure.system_telemetry.resource_sampler writeback
   python -m zephyr.infrastructure.system_telemetry.resource_sampler scan --loop --interval 60
+# [ALGO_FLOW] external: docs/03_modules/_domain_infrastructure/algo_flow/resource_sampler.yaml
 """
 
 from __future__ import annotations

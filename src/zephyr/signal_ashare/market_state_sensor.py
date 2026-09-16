@@ -14,14 +14,6 @@
 # [TESTS] tests/signal_ashare/test_market_state_sensor.py
 # [A_module] module_id=MOD-SIG-036 | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
-# [ALGO_FLOW]
-# I1: 指数日 K 收盘序列 closes（默认 000300 沪深300，loader 走 market_index_kline 真源表）
-# A1: trend_score = 0.5×tanh(ret20/0.10) + 0.5×tanh((ma20/ma60−1)/0.05) ∈ [-1,1]
-# A2: vol_percentile = 近 20 日已实现波动率（日收益 std×√252）在 trailing 250 日滚动波动率中的分位 ∈ [0,1]
-# A3: 3×3 规则映射: trend≥0.2 BULL / ≤−0.2 BEAR / 其间 NEUTRAL; vol_pct<1/3 LOW / >2/3 HIGH / 其间 MEDIUM
-# A4: confidence = 阈值边际（距最近分类边界的归一化距离）× 样本充足因子 ∈ [0,1]
-# O1: MarketStateSnapshot（9 网格状态 + 趋势/波动分解 + 置信度，供下游风控节流消费）
-# [/ALGO_FLOW]
 """
 市场状态传感器（10 号 regime spec §2.1 结构探测器规则版，MOD-SIG-036）。
 

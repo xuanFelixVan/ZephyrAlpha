@@ -13,17 +13,6 @@
 # [ERROR_CONTRACT] InvalidAttributionInputError(ZA-RPT-0030)
 # [TESTS] tests/reporting/test_attribution.py
 # [TTL] permanent
-# [ALGO_FLOW]
-# I1: Fill 成交回报(CTR-005, 含 strategy_id/fill_id/fill_price/filled_quantity) + side(调用方从 Order 传入, Fill 契约无 side)
-# I2: fee_calculator(可选注入, 默认 AShareFeeCalculator——54 号复用优先)
-# I3: strategy_pnls/firm_pnl(求和不变量校验输入) + strategy_returns/weights(Shapley 输入)
-# F1: StrategyPnlAccountant.record_fill(fill, side)——按 strategy_id 归集, FIFO 配对, 买入开仓累成本/卖出撮合出 realized net_pnl
-# F2: validate_strategy_pnl_invariant(strategy_pnls, firm_pnl, tolerance_bps=1.0)——Σ(strategy)==firm 硬门禁(54 号 §3.5 施工算法)
-# F3: shapley_strategy_attribution(strategy_returns, weights)——Shapley 值公平分配交互效应(54 号 §3.12 施工算法, O(2^n) 精确, n≤8)
-# A1: 跨 session 持仓追踪——键=(strategy_id, symbol) FIFO lot 队列, 不引入 session_id 隔离(防幽灵成交/PnL 漏算)
-# A2: fill_id 幂等——重复 record_fill 同一 fill_id 直接跳过(事件流重放安全)
-# O1: all_strategy_pnls() -> {strategy_id: net_pnl}; open_positions(); 不变量校验 verdict; Shapley 分解结果
-# [/ALGO_FLOW]
 """
 D_REPORTING — 对账归因函数级实现（54 号 G25 §3.5/§3.12）。
 

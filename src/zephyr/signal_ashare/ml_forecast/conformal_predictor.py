@@ -14,13 +14,6 @@
 # [TESTS] tests/signal_ashare/ml_forecast/test_conformal_predictor.py
 # [A_module] module_id=MOD-SIG-044 | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
-# [ALGO_FLOW]
-# I1: 校准集 (预测值, 实际值) 序列 / 滚动残差流 / 密度 PDF 分位数
-# A1: split-conformal 标准算法——非 conformity 分数 s_i=|y−ŷ|，q̂=第 ⌈(n+1)(1−α)⌉ 小值
-# A2: rolling conformal——trailing window 无加权残差分位数（Phase 0 基线，慢而稳）
-# A3: conformal_band_around_quantiles——PDF 分位数外裹 conformal 安全缓冲
-# O1: PredictionInterval(lo, hi) / margin；empirical_coverage 覆盖率评估件
-# [/ALGO_FLOW]
 """
 共形预测器（BM-SEL-14，MOD-SIG-044）。
 

@@ -14,15 +14,6 @@
 # [TESTS] tests/risk/test_crowding_response_engine.py
 # [TTL] permanent
 
-# [ALGO_FLOW]
-# I1: crowding_score(MOD-RK-13产出标量) + drawdown_pct/slope(回撤状态标量)
-# I2: fingerprints {strategy_id: PnL形态序列}(可空)
-# I3: CrowdingResponseConfig(拥挤阈/相似阈/三档缩放/悖论回撤阈)
-# A1: 逻辑指纹相似度(z-归一化→两两DTW复用clone_guard→sim=1/(1+dtw)取max)
-# A2: 拥挤判定(score超阈 OR sim超阈)→降杠杆/降仓/漏斗降权
-# A3: 悖论防护(拥挤∧回撤超阈∧斜率>0→熔断式退出)
-# O1: CrowdingResponseAction(frozen) → 漏斗第六层降权/仓位杠杆收紧/强制退出
-# [/ALGO_FLOW]
 #
 # 边:
 # I1 --> A2

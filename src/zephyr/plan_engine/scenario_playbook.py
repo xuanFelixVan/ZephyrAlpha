@@ -14,13 +14,6 @@
 # [TESTS] tests/plan_engine/test_scenario_playbook.py
 # [A_module] module_id=MOD-PLAN-019 | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
-# [ALGO_FLOW]
-# I1: 模板库(默认9情景/可注入覆盖) + market_state + active_scenario + events + bar_index
-# A1: match(情景过滤→触发命中(常配或state∧event)→保守优先多命中取risk_escalation最高)
-# A2: 确认流状态机(PROPOSED→CONFIRMED→EXECUTED; REJECTED/EXPIRED终态; 非法迁移拒绝)
-# A3: settle(Beta(1,1)命中率平滑→review payload→review_sink回调)
-# O1: PlaybookMatch / PlaybookConfirmation.status / settle payload
-# [/ALGO_FLOW]
 """
 C-005 多情景对策——预案模板库 + 盘中实时匹配 + 执行确认流（MOD-PLAN-019）。
 

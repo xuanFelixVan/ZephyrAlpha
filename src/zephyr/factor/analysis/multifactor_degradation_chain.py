@@ -12,16 +12,6 @@
 # [ERROR_CONTRACT] 空输入->等权兜底; 任何分支不满足->逐级降级不抛错
 # [TESTS] tests/factor/test_multifactor_degradation_chain.py
 # [TTL] permanent
-# [ALGO_FLOW]
-# I1: factor_panel(dict[str, pd.Series] 因子值面板) + ic_history(dict[str, list[float]] 历史IC) + forward_returns(可选前向收益)
-# I2: DegradationChainParams(ic_min_samples=20/concentration=0.70/ic_abs_floor=0.02/regression_min_obs=120/condition_number_max=50)
-# F1: decide(回归可行性→IC加权→等权兜底 三级降级决策, 输出SynthesisDecision(method+reason+ic_weights))
-# A1: 回归分支(forward_returns≥120 且 条件数<50→regression; 条件数≥50→降IC加权)
-# A2: IC加权分支(样本≥20: 全池|IC|均值<0.02→等权; 权重集中度>0.70→等权; 否则ic_weighted)
-# A3: 等权兜底(样本<20→equal_weight)
-# F2: synthesize_with_degradation(decide后分派到 multifactor_synthesis 三方法, 纯增量不替换既有方法)
-# O1: SynthesisDecision + 合成信号 pd.Series
-# [/ALGO_FLOW]
 """
 25号memo §3.7#1 合成降级链决策算法（SynthesisDegradationChain）。
 

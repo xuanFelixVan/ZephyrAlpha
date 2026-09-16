@@ -12,12 +12,6 @@
 # [ERROR_CONTRACT] 可交易标的<min_names->IC返回NaN; 全False mask->空截面
 # [TESTS] tests/factor/test_multifactor_tradability_mask.py
 # [TTL] permanent
-# [ALGO_FLOW]
-# I1: is_suspended/is_limit_up/is_limit_down(bool DataFrame 日期×标的) + daily_amount(成交额) + min_amount(流动性阈值)
-# F1: build_tradability_mask(可交易=未停牌 ∧ 未涨停 ∧ 未跌停 ∧ 成交额≥阈值; 防IC计算上游污染)
-# F2: masked_rank_ic(仅可交易截面 spearman IC; 可交易数<min_names→NaN)
-# O1: tradability_mask(bool DataFrame) + 掩码后 rank IC float
-# [/ALGO_FLOW]
 """
 25号memo Phase 4.1 Mask-First 可交易性掩码（tradability_mask，MVP 最高优先）。
 

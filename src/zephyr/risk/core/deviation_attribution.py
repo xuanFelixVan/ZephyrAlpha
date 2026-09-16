@@ -13,14 +13,6 @@
 # [ERROR_CONTRACT] InvalidDeviationDecompositionError(ZA-RK-0068)
 # [TESTS] tests/risk/core/test_deviation_attribution.py
 # [TTL] permanent
-# [ALGO_FLOW]
-# I1: total_deviation(累计收益口径总偏差, 带符号) + execution_cost_drag(H-A 执行成本拖累) + timing_lag(H-B 时滞/未成交错过收益) + position_weight_pairs(H-C 输入: [(权重差, 标的区间收益)])
-# F1: H-A 执行成本偏差——实盘滑点+费用相对回测假设的多付出成本(收益口径, 通常≤0)
-# F2: H-B 时滞/未成交偏差——实盘未成交/延迟成交部分错过的区间收益
-# F3: H-C 仓位权重偏差——Σ(w_live_i - w_backtest_i) × r_i(权重偏离×标的收益)
-# F4: H-D 残差——total - (H-A+H-B+H-C)(未解释: 市场环境/噪声/口径差)
-# O1: 四因子分解 dict + 加性不变量 PASS/FAIL + dominant_factor + 各因子占总偏差份额
-# [/ALGO_FLOW]
 """
 D_RISK — 实盘 vs 回测偏离归因分解 H-A~D 四因子（55 号 §6 暂缓项施工）。
 

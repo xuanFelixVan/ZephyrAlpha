@@ -13,14 +13,6 @@
 # [ERROR_CONTRACT] 常数列/含NaN/列数<1/样本<2->ValueError
 # [TESTS] tests/factor/test_correlation_neff.py
 # [TTL] permanent
-# [ALGO_FLOW]
-# I1: 对齐收益率面板(T×k)
-# F1: Ledoit-Wolf收缩(标准化→S=相关矩阵, 目标F=I; d²=||S−I||²_F/p, b̄²=(1/pT²)Σ||z_tz_tᵀ−S||²_F, α=min(b̄²,d²)/d²)
-# F2: α双重用途(收缩强度本身=组合相关结构噪声信号; α大即使Neff≥3也应警惕)
-# A1: ledoit_wolf_shrinkage(闭式最优α→S*=(1−α)S+αI, 保证正定稳定特征值)
-# A2: effective_bets(特征值分解Neff=(Σλ)²/Σλ²; 等相关近似N/(1+(N−1)ρ̄)仅辅助)
-# O1: ShrinkageResult(shrunk_corr+alpha) / NeffResult(neff+alpha+eigenvalues+neff_equicorr)
-# [/ALGO_FLOW]
 """
 D_FACTOR — G07 组合层有效下注数 Neff 引擎（23 号 memo §3.1⑤）
 

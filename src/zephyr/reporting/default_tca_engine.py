@@ -14,15 +14,6 @@
 # [TESTS]
 # [A_module] module_id=MOD-L07-001 | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
-# [ALGO_FLOW]
-# I1: Fill(成交回报: fill_price/filled_quantity/commission/fill_timestamp) + Order(原始委托: limit_price/quantity/side)
-# I2: benchmark_price_source(DECISION/ARRIVAL/VWAP/TWAP/PREV_CLOSE，默认DECISION)
-# F1: _calc_slippage_bps(方向感知滑点: BUY=(fill-intended)/intended, SELL=(intended-fill)/intended, ×10000)
-# F2: _calc_is_decomposition(IS四桶: commission+spread+market_impact+timing_risk)
-# A1: analyze(单笔TCA: 滑点+佣金+IS四桶分解→ExecutionReport)
-# A2: analyze_batch(批量TCA: 逐笔analyze→list[ExecutionReport])
-# O1: ExecutionReport(slippage_bps/commission/is_decomposition/algo_type)
-# [/ALGO_FLOW]
 
 # ---
 # domain: reporting

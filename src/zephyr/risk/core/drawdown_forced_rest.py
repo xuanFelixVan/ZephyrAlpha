@@ -13,13 +13,6 @@
 # [ERROR_CONTRACT] InvalidForcedRestInputError(ZA-RK-0065)
 # [TESTS] tests/risk/test_drawdown_forced_rest.py
 # [TTL] permanent
-# [ALGO_FLOW]
-# I1: trigger(trade_date)记录Level4触发日 + clear()人工清除
-# I2: ForcedRestConfig(rest_trading_days=5, §2.5.2 Level4) + 有序交易日历list[date](调用方注入)
-# F1: is_resting(current_date,trading_days)→触发日后已完成休息交易日数<5即休息中
-# F2: remaining_rest_days(current_date,trading_days)→max(0, 5-已完成休息交易日数)
-# O1: bool休息中 / int剩余休息天数 (消费方: 复位链前置校验+盘前启动闸门)
-# [/ALGO_FLOW]
 """
 D_RISK — Level 4 强制休息 5 天自动计时器（35 号 memo §6.1 施工，§3.4 落地）。
 

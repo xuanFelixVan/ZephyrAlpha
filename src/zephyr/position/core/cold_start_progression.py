@@ -14,15 +14,6 @@
 # [TESTS] tests/position/test_cold_start_progression.py
 # [A_module] module_id=MOD-POS-020 | layer=module | stability=evolving | safety=M | ai_autonomy=ai_modifiable
 # [TTL] permanent
-# [ALGO_FLOW]
-# I1: ColdStartEvalInput(stage/days_in_stage/divergence/risk_downgraded/rolling_sharpe/oos_sharpe/loss/decay_alert/consecutive_rollbacks)
-# I2: ColdStartProgressionConfig(T0 5-10 日/T1 10-20 日/divergence 阈值 0.30/Sharpe 系数 0.7/0.85/回退上限 2)
-# F1: T0 门控（divergence<阈值 且未风控降级 → PROMOTE T1；失败证据 → ROLLBACK SIMULATION）
-# F2: T1 门控（Rolling Sharpe≥OOS×0.7 且无连续 3 日亏损超限 → PROMOTE T2；否则 ROLLBACK T0）
-# F3: T2 门控（Rolling Sharpe≥OOS×0.85 且 Decay 无告警 → HOLD；否则 ROLLBACK T1）
-# F4: 回退计数（连续 2 次 → ESCALATE_RETIREMENT）；retrain_paused=stage≠T2
-# O1: ColdStartEvalResult(stage/action/position_ratio/retrain_paused/consecutive_rollbacks/detail)
-# [/ALGO_FLOW]
 """
 D_POSITION — 冷启动 T0/T1/T2 渐进建仓评估（61 号 §3.1，函数级）。
 

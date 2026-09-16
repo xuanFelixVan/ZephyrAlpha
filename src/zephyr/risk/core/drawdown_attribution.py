@@ -13,14 +13,6 @@
 # [ERROR_CONTRACT] InvalidAttributionInputError(ZA-RK-0063)
 # [TESTS] tests/risk/test_drawdown_attribution.py
 # [TTL] permanent
-# [ALGO_FLOW]
-# I1: 诊断输入(信号按规则/止损均R/仓位一致/频率在计划/市场结构质变, §3.12五问矩阵)
-# I2: 归因输入(drawdown_pct+strategy_pnls+entry_var/current_var+pnls_history+AttributionBias+regime)
-# F1: diagnose_drawdown_type(五问任一违例→BEHAVIOURAL, 全None→UNDETERMINED, 否则STATISTICAL)
-# F2: drawdown_attribution_flow(0 VaR恶化比>1.5前馈减仓≤50% → 1 dd<5%门控 → 2 相关性归因 → 3 因子偏差 → 4 regime交叉)
-# A1: _avg_correlation(20日窗策略PnL两两Pearson均值, 除零/样本不足守卫)
-# O1: DrawdownDiagnosis / AttributionResult(systemic_pct+per_strategy+root_cause+response_routing) 或 None
-# [/ALGO_FLOW]
 """
 D_RISK — 回撤类型诊断 + 归因自动化（35 号 memo §6.7/§6.13 施工，§3.12/§3.16 落地）。
 

@@ -15,12 +15,6 @@
 # [A_module] module_id=MOD-REGIME-002 | layer=module | stability=evolving | safety=M | ai_autonomy=ai_modifiable
 # [TTL] permanent
 # [ARCH-REF] #10_regime_detector_spec §4.8.1 #T4 赶顶
-# [ALGO_FLOW]
-# I1: close 价格序列（index=日期；取末段多窗口拟合）
-# F1: _lppl_fit_window（单窗口网格搜索：固定 (tc,m,ω) → y=A+B·dt^m+C1·dt^m·cos(ωln dt)+C2·dt^m·sin(ωln dt) 线性 lstsq，取 SSE 最小）
-# F2: lppl_blowoff_score（多窗口拟合 → 五维评分映射：m/ω 经验区间 +20/+20，tc 中位≤20 日 +25，有效窗口占比>50% +15，tc 标准差<20 日 +10）
-# O1: LPPLResult（score 0-90 + m/ω/tc 中位 + valid_window_ratio + degraded）
-# [/ALGO_FLOW]
 """
 LPPL 赶顶检测（10_regime_detector_spec §4.8.1，T4 疯狂期）。
 

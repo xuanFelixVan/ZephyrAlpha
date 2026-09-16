@@ -14,15 +14,6 @@
 # [TESTS] tests/signal_ashare/test_market_lifecycle_phase.py
 # [A_module] module_id=MOD-SIG-041 | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
-# [ALGO_FLOW]
-# I1: 板块日 K（kline_sector）→ 新高占比序列 nh（当日收盘创 trailing 250 日新高的板块占比）
-# I2: 可选指数收盘序列 closes（000300，指数趋势一致性校验，loader 走 market_index_kline）
-# A1: 水位: 慢线 MA20(nh) ≥ 0.10 → 高位; 趋势: 快线 MA5(nh) > 慢线 → 上行（严格大于，不升即滞涨）
-# A2: 2×2 季节映射: 低+升 SPRING / 高+升 SUMMER / 高+降 AUTUMN / 低+降 WINTER
-# A3: 季节约束: WINTER → forbid_bottom_fishing（冬季禁抄底）; AUTUMN → force_exit（秋季强制离场）
-# A4: confidence = 样本因子 × (0.4+0.6×边际) ± 指数一致性调整（±0.1，clip [0,1]）
-# O1: LifecyclePhaseSnapshot（季节 + 约束 + 持续天数 + 置信度，供下游风控节流消费）
-# [/ALGO_FLOW]
 """
 市场生命周期相位（90 号 §22.4 BM-SEL-10，MOD-SIG-041）。
 

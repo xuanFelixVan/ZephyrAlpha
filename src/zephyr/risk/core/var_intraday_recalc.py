@@ -15,15 +15,6 @@
 # [TESTS] tests/risk/test_var_intraday_recalc.py
 # [TTL] permanent
 
-# [ALGO_FLOW]
-# I1: IntradayTriggerInput(opening_nav/current_nav(clean NAV)/var_baseline_pct/回撤/5类布尔事件)
-# I2: current_returns(盘中最新收益序列) + current_nav + premarket_baseline(盘前基线,可空)
-# I3: IntradayRecalcConfig(亏损0.5×VaR/回撤8%/显著20%/冷却300s/日限6次)
-# A1: intraday_var_recalc_trigger(7条件检测→优先级去重→冷却期/日频上限防抖→suppressed留痕)
-# A2: intraday_var_recalc(var_calculator+tail_monitor重算→基线对比var_change_ratio>20%显著→breach状态机更新→recalc_log累积)
-# O1: IntradayRecalcTrigger(triggered/first_trigger/reason/suppressed)
-# O2: IntradayVarResult(var_95/cvar_95/breach_state/significant_change) → 35号 §3.13 重新 evaluate 覆盖盘前 response
-# [/ALGO_FLOW]
 """
 Intraday VaR Recalc — 盘中 VaR/ES 重算触发与执行 (36号 §3.12)
 

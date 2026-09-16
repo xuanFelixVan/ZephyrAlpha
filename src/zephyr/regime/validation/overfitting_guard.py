@@ -15,14 +15,6 @@
 # [A_module] module_id=MOD-REGIME-VAL-OFIT | layer=module | stability=evolving | safety=M | ai_autonomy=ai_modifiable
 # [TTL] permanent
 # [ARCH-REF] #14_regime_s2_diagnosis §4.5 防过拟合方法论栈
-# [ALGO_FLOW]
-# I1: score 序列+事件日期（事件研究）/ params dict（预注册）/ Sharpe+矩或收益序列（MinTRL）/ IS+OOS Sharpe（WFE）
-# F1: event_study（事件日 asof 对齐 → ±窗口评分极值 vs 事件前全历史滚动窗口极值的分位）
-# F2: PreRegistrationRegistry（JSON 文件级参数 hash 锁定：register 禁覆盖 / verify 一致性）
-# F3: min_track_record_length（MinTRL=1+[1-γ3·SR+(γ4-1)/4·SR²]·(Z_α/SR)²，Bailey & López de Prado 2014）
-# F4: walk_forward_efficiency/assess_wfe（WFE=OOS/IS，≥0.6 pass / 0.5-0.6 marginal / <0.5 red_flag）
-# O1: 事件研究 DataFrame / verify bool / MinTRL 年数 / WFE 裁决 dict
-# [/ALGO_FLOW]
 """
 防过拟合方法论栈 MVP（14_regime_s2_diagnosis §4.5，N=3 小样本专用）。
 
