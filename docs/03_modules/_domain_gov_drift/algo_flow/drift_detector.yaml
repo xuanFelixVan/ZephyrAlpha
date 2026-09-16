@@ -1,0 +1,46 @@
+# ALGO_FLOW 外部真源——drift_detector（_domain_gov_drift 域，真源 src/zephyr/gov_drift/drift_detector.py）
+# 2026-09-15 P2-1 契约头减负批量出仓：docstring 内联块逐字节副本，extractor 经
+# external 锚加载走同一 parse_algo_flow 管线；算法公共面变化时同步更新本块。
+doc_type: architecture_view
+ttl: permanent
+module: src.zephyr.gov_drift.drift_detector
+source_of_truth: src/zephyr/gov_drift/drift_detector.py
+algo_flow: |
+    # [ALGO_FLOW]
+    # 层: 输入
+    # - id: I1
+    #   name: drift_event 参数
+    #   fields: 参数 drift_event，类型注解 object
+    #   code: drift_detector.py 顶层公共函数形参（AST 提取）
+    # - id: I2
+    #   name: strategy 参数
+    #   fields: 参数 strategy，类型注解 str | None
+    #   code: drift_detector.py 顶层公共函数形参（AST 提取）
+    # 层: 算法
+    # - id: A1
+    #   name_zh: ① DriftDetector
+    #   name_en: DriftDetector
+    #   intro: class DriftDetector 源码 L73-L117
+    #   desc: 公共方法（定义序）: baseline, establish_baseline, detect, is_drifting；源码 L73-L117
+    #   inputs: 无参数
+    #   outputs: 返回值
+    # - id: A2
+    #   name_zh: ② trigger_recovery
+    #   name_en: trigger_recovery
+    #   intro: trigger_recovery(drift_event, strategy) 源码 L120-L121
+    #   desc: 源码 L120-L121
+    #   inputs: drift_event strategy
+    #   outputs: bool
+    # 层: 输出
+    # - id: O1
+    #   name_zh: bool
+    #   name_en: bool
+    #   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+    #   downstream: zephyr.governance.__init__
+    # [/ALGO_FLOW]
+    #
+    # 边:
+    # I1 --> A1
+    # I2 --> A1
+    # A1 --> A2
+    # A2 --> O1

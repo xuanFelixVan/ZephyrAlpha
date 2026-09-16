@@ -24,32 +24,7 @@ Credibility Engine — credibility_engine.py
 
 对标 blueprint.md §2.21 / TASK-INF-0022 / D-023-35。
 
-# [ALGO_FLOW]
-# 层: 输入
-# - id: I1
-#   name: 模块内部数据
-#   fields: 无公共形参/无再导出（AST 事实）
-#   code: credibility_engine.py
-# 层: 算法
-# - id: A1
-#   name_zh: ① CredibilityEngine
-#   name_en: CredibilityEngine
-#   intro: class CredibilityEngine 源码 L82-L175
-#   desc: 公共方法（定义序）: set_owner_override, compute, get_score；源码 L82-L175
-#   inputs: 无参数
-#   outputs: 返回值
-#   （注：A1 之后另有 1 个公共定义未列入（含 1 个数据契约/异常/枚举声明类），见源码）
-# 层: 输出
-# - id: O1
-#   name_zh: 模块公共 API 面（2 定义）
-#   name_en: public defs
-#   intro: CredibilityEngine
-#   downstream: src/zephyr/gov_drift/_analysis.py ; src/zephyr/gov_drift/brain_integration.py ;…
-# [/ALGO_FLOW]
-#
-# 边:
-# I1 --> A1
-# A1 --> O1
+# [ALGO_FLOW] external: docs/03_modules/_domain_gov_drift/algo_flow/credibility_engine.yaml
 """
 
 from __future__ import annotations

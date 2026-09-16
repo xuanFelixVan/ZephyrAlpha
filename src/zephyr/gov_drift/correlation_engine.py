@@ -24,32 +24,7 @@ Correlation Engine — correlation_engine.py
 
 对标 blueprint.md §5.2 / TASK-INF-0026 / D-023-09。
 
-# [ALGO_FLOW]
-# 层: 输入
-# - id: I1
-#   name: db_path 参数
-#   fields: 参数 db_path（无注解）
-#   code: correlation_engine.py 顶层公共函数形参（AST 提取）
-# 层: 算法
-# - id: A1
-#   name_zh: ① CorrelationEngine
-#   name_en: CorrelationEngine
-#   intro: class CorrelationEngine 源码 L85-L190
-#   desc: 公共方法（定义序）: db_path, compute_co_occurrence, compute_causal_chain, compute_dimension_clusters, detect_systemic_…
-#   inputs: db_path
-#   outputs: 返回值
-#   （注：A1 之后另有 1 个公共定义未列入（含 1 个数据契约/异常/枚举声明类），见源码）
-# 层: 输出
-# - id: O1
-#   name_zh: 模块公共 API 面（2 定义）
-#   name_en: public defs
-#   intro: CorrelationEngine
-#   downstream: src/zephyr/gov_drift/_analysis.py ; src/zephyr/gov_drift/brain_integration.py ;…
-# [/ALGO_FLOW]
-#
-# 边:
-# I1 --> A1
-# A1 --> O1
+# [ALGO_FLOW] external: docs/03_modules/_domain_gov_drift/algo_flow/correlation_engine.yaml
 """
 
 from __future__ import annotations

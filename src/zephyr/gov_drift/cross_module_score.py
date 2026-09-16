@@ -24,32 +24,7 @@ Cross Module Score — cross_module_score.py
 
 对标 blueprint.md §2.19 / D-023-33。
 
-# [ALGO_FLOW]
-# 层: 输入
-# - id: I1
-#   name: 模块内部数据
-#   fields: 无公共形参/无再导出（AST 事实）
-#   code: cross_module_score.py
-# 层: 算法
-# - id: A1
-#   name_zh: ① CrossModuleScorer
-#   name_en: CrossModuleScorer
-#   intro: class CrossModuleScorer 源码 L87-L185
-#   desc: 公共方法（定义序）: history, compute, check_thresholds；源码 L87-L185
-#   inputs: 无参数
-#   outputs: 返回值
-#   （注：A1 之后另有 2 个公共定义未列入（含 2 个数据契约/异常/枚举声明类），见源码）
-# 层: 输出
-# - id: O1
-#   name_zh: 模块公共 API 面（3 定义）
-#   name_en: public defs
-#   intro: CrossModuleScorer
-#   downstream: src/zephyr/gov_drift/_analysis.py ; tests/cross/test_cross_module_score.py
-# [/ALGO_FLOW]
-#
-# 边:
-# I1 --> A1
-# A1 --> O1
+# [ALGO_FLOW] external: docs/03_modules/_domain_gov_drift/algo_flow/cross_module_score.yaml
 """
 
 from __future__ import annotations
