@@ -49790,6 +49790,20 @@ entries:
   desc_zh: ""
   desc_en: ""
   plain_zh: "用编造的行情数据检查车道E增强件的预测区间功能没坏"
+- module_path: src/zephyr/data/transport/__init__.py
+  domain_id: D_DATA
+  name_zh: "跨境双活传输层包"
+  name_en: "Cross-Border Dual Transport Package"
+  desc_zh: "zephyr.data.transport 包导出：Cloudflare Tunnel 配置生成+双线路热切换状态机（MOD-DATA-072）"
+  desc_en: ""
+  plain_zh: "这个包是跨境数据传输的入口，把双线路切换的各个零件统一对外提供：主线直连、备用隧道、还有自动切换的开关逻辑。别的程序要用跨境传输功能，从这里拿就行。"
+- module_path: src/zephyr/data/transport/cross_border_dual.py
+  domain_id: D_DATA
+  name_zh: "跨境双线路热切换状态机"
+  name_en: "Cross-Border Dual-Path Transport"
+  desc_zh: "主线路HTTPS直连+备用Cloudflare Tunnel；三感知切备/60s时间驱动切回/积压饱和递减（94号 §7.2，MOD-DATA-072）"
+  desc_en: ""
+  plain_zh: "境内连境外交易所经常卡成蜗牛，这个模块准备了两条路：平时走自家直连快线，一旦发现快线又断又慢又积压，就自动换到云flare备用隧道，过一分钟再偷偷试试快线恢复没有。避免行情断流看不到、单子传不出去。"
 
 battle_map_steps:
 - step_id: BM-BUY-05

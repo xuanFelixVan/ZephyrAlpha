@@ -1,3 +1,4 @@
+# [BLUEPRINT] MOD-DATA-072 | docs/03_modules/_domain_data/transport/blueprint.md | §7.2
 # [MODULE] zephyr.data.transport.cross_border_dual
 # [DOMAIN] D_DATA
 # [DEPENDENCIES] 无（骨架期零外部依赖）
@@ -11,7 +12,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] 未知状态→ValueError; probe 回调异常视为探测失败（保持备线路）
 # [TESTS] tests/zephyr/data/transport/test_cross_border_dual.py
-# [A_module] module_id=CAND-CRYPTO-009 | layer=module | stability=evolving | safety=M | ai_autonomy=ai_modifiable
+# [A_module] module_id=MOD-DATA-072 | layer=module | stability=evolving | safety=M | ai_autonomy=ai_modifiable
 # [TTL] permanent
 """
 跨境网络双活传输层（CAND-CRYPTO-009 / 94号 §7.2）。

@@ -2244,7 +2244,7 @@ entries:
   related_rulings: ['裁定#257']
   superseded_by: null
 
-- ruling_id: '裁定#264'
+- ruling_id: '裁定#266'
   title: 审计链多写方互踩断链治本——events.jsonl 追加临界区跨进程文件锁+锁内实时重读尾哈希；5,595 prev 断链根因实证；26,909 HMAC 不可验段与 5,343 内容失配段以 integrity_incident 追加事件显式处置
   date: '2026-09-16'
   category: 数据治理
@@ -2261,10 +2261,12 @@ entries:
     audit_chain_verifier 预注入 entry_hash（既有 AI-AUDIT12 strip 治本已覆盖，生效点
     #77357 起零新发）；③ HMAC=写入期 env 密钥轮转后密钥值丢失，现行密钥两约定均
     不可验（不可验证≠证实篡改），永久不可修复只能显式声明。治本：writer.py append
-    临界区改 with 实例锁+_cross_process_append_lock（msvcrt.locking LK_NBLCK 自旋
-    2ms 至 10s 超时/fcntl 降级，复用 scheduler.py::acquire_single_instance_lock 先例
-    语义；锁文件 events.jsonl.lock 永不删除；随句柄生命周期，进程被杀 OS 自动释放；
-    超时 fail-closed 抛 TimeoutError）+ _read_tail_entry_hash（反向块扫描实时尾哈希，
+    临界区改 with 实例锁+_cross_process_append_lock（OS 阻塞锁：msvcrt.locking LK_LOCK
+    每秒自动重试约 10s 后 OSError→映射 TimeoutError fail-closed/POSIX flock LOCK_EX
+    全阻塞——零用户态轮询，守"永久系统禁时间触发轮询"铁律（PERM-TRIGGER 同源），
+    并经 OPEN-WITHOUT-WITH with 持柄改造：内层 finally 先 UNLCK、with 退出后关柄；
+    复用 scheduler.py::acquire_single_instance_lock 先例语义；锁文件
+    events.jsonl.lock 永不删除；进程被杀 OS 关柄自动释放无 stale 锁）+ _read_tail_entry_hash（反向块扫描实时尾哈希，
     容忍撕裂尾行，扫描超限 fail-closed 拒写）——锁内重读真实尾，prev_hash 不再取自
     实例内存。性能 p50=4.7ms（fsync 主导），旧读取方（verifier/query/merkle/retention）
     零改动。处置：追加式 integrity_incident 事件（新事件类型已入 writer 白名单）记录
@@ -2273,11 +2275,75 @@ entries:
     重算既有事件（retention 不变量+"截头必破 genesis"既证）。gate_chain.jsonl 现健康
     （145 条 0 断链）未加锁为观察项：若未来多进程 verifier 并发成现实，复用同型锁改造。
   evidence: >-
-    docs/_working/audit_chain_incident_forensics_gwa.md（普查复验表/HMAC 密钥分段考古/
+    docs/_working/audit_integrity/audit_chain_incident_forensics_gwa.md（普查复验表/HMAC 密钥分段考古/
     写方清单/复现输出/性能基准）+ src/zephyr/gov_audit/writer.py diff + 
     tests/governance/audit/test_writer_multiproc_append.py（11 用例：4 进程并发链完整/
     同 prev 签名绝迹/撕裂尾行/锁超时/被杀释放）+ .runtime/tmp/audit_census_gwa*.json
     + 双进程 repro REPRODUCED→治本后 0 断链
   related_arch: []
   related_rulings: []
+  superseded_by: null
+- ruling_id: '裁定#267'
+  title: 审计链 HMAC 密钥分期验证与新真钥部署——era 注册表+IntegrityVerifier 分期语义（禁 try-all/强分期 fail-loud/lost=known_loss）+256-bit 真钥入 .env 终结公开默认钥装饰期
+  date: '2026-09-16'
+  category: 治本
+  status: active
+  summary: >-
+    裁定#266（GW-A 互踩治本）的密钥政策延续批（st-auditkey-20260916，Owner 开工令）。
+    三项裁定：① 2026-05-26~06-01 遗失密钥段 26,909 条判永久不可验证（非篡改，
+    entry_hash 全自洽三班互证；找回通道穷尽：全机 env/F 盘 vault/git 全史/config 通道），
+    以 lost 分期显式定性，append-only 不重写历史；② 现行公开默认钥签名期（8.8 万+条）
+    以 weak 分期诚实呈现（无密码学保证）；③ 立即部署 256-bit 真钥入 .env（满足
+    secret_registry required=true），但分期验证语义同窗先行——IntegrityVerifier 自动解析
+    模式按记录时间戳选分期钥（era 范围外钥验过=失配，红蓝攻击用例钉死；强分期 env 缺失
+    fail-loud 禁静默降级；14 天过渡窗接纳长驻旧进程旧钥签名按 weak 计）。终验：生产
+    events.jsonl 115,034 条 HMAC 维度 mismatch=0、known_loss=26,909 精确、weak=88,125、
+    新钥冒烟 strong 通过。附带修复 GW-A 已提交回归一处（锁 mkdir 副作用消灭写入失败
+    路径致 I8 readonly 保护失效+失败计数未覆盖锁段）。实施细节=docs/_working/audit_integrity/
+    2026-09-16-audit-key-era-deployment.md（含移交 C-1~C-4）。
+  affected_files:
+    - d:\ZephyrAlpha\src\zephyr\gov_audit\integrity.py
+    - d:\ZephyrAlpha\src\zephyr\gov_audit\writer.py
+    - d:\ZephyrAlpha\config\audit_key_eras.yaml
+    - d:\ZephyrAlpha\tests\governance\audit\test_key_era_verification.py
+    - d:\ZephyrAlpha\tests\conftest.py
+  related_arch: ['#ARCH-308']
+  related_rulings: ['裁定#266']
+  superseded_by: null
+
+- ruling_id: '裁定#268'
+  title: transport 双节点 blueprint_id 欠账落位终态——CAND-CRYPTO-009 转正 MOD-DATA-072+头注释随扫描落位（#262 后续路径执行完毕）
+  date: '2026-09-16'
+  category: 数据治理
+  status: active
+  summary: >-
+    裁定#262 后续路径执行批（st-transport-20260916，Owner 2026-09-16「解决所有欠账」令）。
+    ①转正：CAND-CRYPTO-009 → MOD-DATA-072（candidate_module_registry status=promoted+
+    promoted_to 带 MOD 锚；落位域 D_DATA——按代码头 [DOMAIN] 与 depgraph 实占，
+    候选登记域 D_MKT_DATA 为候选期规划位，转正注记如实分叉）。
+    ②头注释落位：src/zephyr/data/transport/__init__.py 与 cross_border_dual.py 首行补
+    [BLUEPRINT] MOD-DATA-072 | docs/03_modules/_domain_data/transport/blueprint.md | §7.2，
+    [A_module] module_id=CAND-CRYPTO-009→MOD-DATA-072（同树共享包 id，
+    #ARCH-SSOT-MODULEID-SAMETREE-001 豁免成立）。
+    ③再生落位：generate_project_depgraph --output-db depgraph --force 全量重建后，
+    双节点 blueprint_id=MOD-DATA-072 实测非空、blueprint_id_invalid=0——#262 所述
+    idx_nodes_path 唯一约束与 --update-module 禁改两重阻断在「头注释随扫描落位」通道下
+    天然不存在（生成器快照 DELETE+INSERT 语义，无 CAND- 候选行占位残留），零裸 SQL。
+    ④配套登记：blueprint.md 新建（身份注册型，instrument_master 先例；creation_token=
+    data-transport-blueprint-20260916 经 batch_creation_tokens 硬化通道登记；§11 代码
+    索引与 §0.6 五图视图由 syncer/生成器机生）+module_translation_registry 双条目补登。
+    ⑤验证：align_all 硬=0（注册表层 CAND 转正链=0、治理双向=0）；transport 测试 23
+    passed；depgraph/d3_metadata 套件 55 passed+7 skipped 零回归。
+    备注：scaffold md 前门被 SSoT alias 模糊启发式误拦（md 子命令无 --force-override
+    出口），按防重复实质改走直建+batch_creation_tokens 官方通道；误报定性=alias 子串
+    模糊匹配（transport 与 data_source_integrator 非真重复）。
+  affected_files:
+    - src/zephyr/data/transport/__init__.py
+    - src/zephyr/data/transport/cross_border_dual.py
+    - docs/03_modules/_domain_data/transport/blueprint.md
+    - docs/01_policies_and_standards/_registry/catalogs/candidate_module_registry.yaml
+    - docs/01_policies_and_standards/_registry/catalogs/module_translation_registry.yaml
+    - docs/01_policies_and_standards/_registry/catalogs/capability_canonical_file_registry.yaml
+  related_arch: ['#ARCH-BREG-001']
+  related_rulings: ['裁定#262']
   superseded_by: null
