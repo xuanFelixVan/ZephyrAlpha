@@ -27711,6 +27711,10 @@ creation_tokens:
   token: ai-layer-vision-readme-20260916
   created_by: st-ailayer-20260917
   capability: ai_layer_vision
+- file: docs/_working/ai_layer_vision/OBJ_R_rules_standards/README.md
+  token: ai-layer-vision-readme-20260916
+  created_by: st-ailayer-20260917
+  capability: ai_layer_vision
 - file: docs/_working/industry_chain_alpha/industry_chain_alpha_plan.md
   token: industry-chain-alpha-industry-chain-alpha-plan-20260916
   created_by: st-igalpha-20260917
@@ -27803,4 +27807,12 @@ creation_tokens:
   token: resource-schedule-regen-tasks-register-resource-view-publish-task-20260916
   created_by: st-govmap-20260915
   capability: resource_schedule_regen_tasks
+- file: scripts/industry_graph/build_chain_exposure_matrix.py
+  token: chain-alpha-build-chain-exposure-matrix-20260916
+  created_by: st-igalpha-20260917
+  capability: chain_alpha
+- file: scripts/industry_graph/backfill_futures_main.py
+  token: chain-alpha-backfill-futures-main-20260916
+  created_by: st-igalpha-20260917
+  capability: chain_alpha
 di_seam_exemptions: []
