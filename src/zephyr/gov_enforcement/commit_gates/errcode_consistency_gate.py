@@ -5,7 +5,7 @@
 # [CONSUMERS] zephyr.gov_enforcement.rule_bridge.git_commit_gateway.GitCommitGateway.__init__（in_process_gate_registry.yaml 自动注册）
 # [STARTUP] imported
 # [MATURITY] production
-# [INVARIANTS] staged 含 src/zephyr/**.py 或 error_code_registry.yaml 才执行；判定逻辑零重实现（调用测试 SSoT collect_violations 六断言证据集）；观测面=git index（本 commit 后的仓库态），基线=HEAD——**只阻断本次新增违规**，存量违规降级 warn+留痕并归属其责任人（裁定登记号待补；治 2026-09-16 起 4 小时全局卡死：他会话未入 git 的文件让所有含 src/zephyr 的批次连坐）；SSoT 缺 collect_violations=fail-closed（禁退回逐断言遍历＝禁把存量算到本次头上）；index 面全绿即短路返回（不扫 HEAD 基线——常态提交零额外开销，基线扫描仅在有违规时付）；非 Zephyr 项目 fail-open；priority=131 唯一
+# [INVARIANTS] staged 含 src/zephyr/**.py 或 error_code_registry.yaml 才执行；判定逻辑零重实现（调用测试 SSoT collect_violations 六断言证据集）；观测面=git index（本 commit 后的仓库态），基线=HEAD——**只阻断本次新增违规**，存量违规降级 warn+留痕并归属其责任人（裁定#279；治 2026-09-16 起 4 小时全局卡死：他会话未入 git 的文件让所有含 src/zephyr 的批次连坐）；SSoT 缺 collect_violations=fail-closed（禁退回逐断言遍历＝禁把存量算到本次头上）；index 面全绿即短路返回（不扫 HEAD 基线——常态提交零额外开销，基线扫描仅在有违规时付）；非 Zephyr 项目 fail-open；priority=131 唯一
 # [MODIFY-GUARD] gate_id="GATE-ERRCODE-CONSISTENCY"; check 闭包签名 (gateway, files, **kwargs) -> tuple[bool, str]
 # [STABILITY] evolving
 # [SAFETY] M
@@ -38,7 +38,7 @@
 3. files 触发（staged 含 src/zephyr/**.py 或注册表 yaml 才执行），
    控制 commit 时延；非 Zephyr 项目 fail-open。
 
-观测面与基线差分（2026-09-16 事故治本；裁定登记号待补）
+观测面与基线差分（2026-09-16 事故治本；裁定#279）
 --------------------------------------
 第一性原理：全局对账型门禁的**判定对象**必须是「本 commit 之后的仓库态」，
 不是「本机磁盘上碰巧有什么」。旧实现两条都错：

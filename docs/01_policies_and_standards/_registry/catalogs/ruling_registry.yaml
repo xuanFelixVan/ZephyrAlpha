@@ -2798,3 +2798,251 @@ entries:
     - '#ARCH-COLLECTION-HYGIENE-001'
   related_rulings: ['裁定#275', '裁定#276']
   superseded_by: null
+
+- ruling_id: '裁定#279'
+  title: 全局对账型门禁的观测面必须是 git index/tree 而非本机磁盘，且必须做 HEAD 基线差分——存量不一致只挡引入者，不连坐无辜提交人
+  date: '2026-09-16'
+  category: 治理架构
+  status: active
+  summary: >-
+    病根：全仓扫描型门禁（ERRCODE-CONSISTENCY 等）观测的是"我这台机器此刻磁盘上有什么"，
+    而它要判的命题是"这次提交之后仓库是什么状态"。两者在三种常态下必然背离：
+    ①提交队列落地 worktree 的 .runtime 派生物永不随主仓刷新（gitignored）；
+    ②他会话在途 WIP 尚未落库；③本机残留/陈旧缓存。于是门禁对**不存在的仓库状态**
+    断言违规，把无关批次挡死（2026-09-16 16:34 起 GATE-ERRCODE-CONSISTENCY 连续
+    4 小时挡死所有含 src/zephyr 的批次，ZA-PA-0031/32/33 指向尚未进 git 的 pf_alloc
+    文件；DECISION-MAP R21 同族，拿一天前的 depgraph 缓存判 MOD 对账不一致）。
+    裁定：①观测面统一为 git index（git grep --cached / cat-file），磁盘只作补充证据；
+    ②必须做 HEAD 基线差分（Google Tricorder "only new warnings"、bors-ng staging
+    分支模型同源）：违规集 = NOW(index) − BASE(HEAD)，存量只挡引入它的那次提交；
+    ③常态零额外开销是硬要求——index 面全绿即短路返回，不付第二次扫描
+    （实测 7.53s→3.03s，与差分前同量级）；④fail-closed 语义保留：校验器不可达/
+    真源损坏仍阻断，差分只改"谁该被挡"，不改"要不要挡"。
+    同族盲区（本裁定适用面，逐个另案清偿，禁一次性大改）：
+    CAP-CONSISTENCY（延期须附 claimant+TTL 证据）、schema_file_exists_gate.py
+    L117-120、doc_ref_broken_gate.py、consumers_accuracy_gate.py L202-233、
+    DECISION-MAP R21（已按"hash 未命中→None，降级 warning"清偿）。
+  evidence: >-
+    双环境实证：①忠实 serializer 沙箱（git reset --hard dev 后只放 3 个待验文件）
+    NOW(index)={} 2.60s / BASE(HEAD)={} 2.94s / gate ok=True 3.03s；
+    ②主仓活体 NOW(index)={} 2.96s / BASE(HEAD)={} 3.39s / introduced={} /
+    gate ok=True 3.69s。短路钉：test_clean_index_skips_baseline_scan 断言
+    只请求 tree=None 一次（calls == [None]）。既有 19 例 + SSoT 六断言违规证据集
+    全绿；pf_alloc 三文件由其归属会话 fc28026614（车道D2 组合分配链落地）正常落库后
+    ERRCODE 面自动归零（git log --diff-filter=A 实测三文件均由该 commit 首次进 git；
+    =反证原阻断是观测面错误而非数据错误，本裁定未改任何业务数据）。
+  affected_files:
+    - src/zephyr/gov_enforcement/commit_gates/errcode_consistency_gate.py
+    - tests/governance/commit_gates/test_errcode_consistency_gate.py
+    - tests/governance/test_error_code_consistency.py
+  related_arch: []
+  related_rulings: []
+  superseded_by: null
+
+- ruling_id: '裁定#280'
+  title: 提交队列的瞬态环境失败（索引锁争用/Windows 句柄占用/全局提交锁超时/CAS 重试耗尽前的插队）一律退回 pending，绝不死信——死信只留给"物品本身坏了"
+  date: '2026-09-16'
+  category: 治理架构
+  status: active
+  summary: >-
+    病根：死信的语义是"这个物品是坏的，人工来看"。但队列把三类性质完全不同的失败
+    混进了同一个出口：物品性失败（门禁判内容违规、快照路径非法）、环境性失败
+    （git index.lock 争用、reset --hard 撞 Windows 句柄占用、全局提交锁 LOCK_TIMEOUT）、
+    以及并发插队（CAS 重试上限过低）。环境失败死信=把无辜物品判坏，8 会话并发期
+    一夜 16 项死信实证（q-…-0009/0010/0011 LOCK_TIMEOUT、q-…-0013 CAS 耗尽、
+    q-…-0017 DECISION-MAP 假阳性、q-…-0018/0019 句柄占用）。
+    裁定：①落地侧新增 _TRANSIENT_GIT_MARKERS 特征串单一真源 + _is_transient_git_error()，
+    覆盖索引锁族（index.lock/unable to create）与 Windows 句柄占用族（unable to unlink/
+    permission denied/being used by another process/the process cannot access the file）；
+    **刻意不收裸 "Invalid argument"**（太宽，真 bug 也报它，收进来=把真物品失败洗成
+    环境失败，坏物品会无限重试卡队）；②LOCK_TIMEOUT 抛 LandingEnvironmentError，
+    全局提交锁等待由 gateway 缺省 60s 放宽到 300s（队列本就异步，无交互延迟预算）；
+    ③CAS 重试上限 3→6（重放产生同内容 commit，CAS 保护不分叉，提上限只是把
+    "人工 requeue"换成"自动重同步"）；④死因三分类 classify_dead_reason 的 env 标记表
+    同步补齐，历史死信与直连路径也能正确判读为"物品无辜可 requeue"；
+    ⑤CAS 重试耗尽**仍是死信**（不卡队），这条边界不许跟着放宽。
+  evidence: >-
+    tests/governance/test_commit_queue_landing.py 30 passed（新增 5 例：锁等待透传钉
+    _lock_wait_seconds==300.0、LOCK_TIMEOUT 退回 pending 且 claim 已释放
+    kinds==[claim,commit,release]、句柄占用生产实录原串退回 pending、
+    特征串两族覆盖 + 反向钉裸 Invalid argument 不归瞬态、CAS 耗尽仍死信且
+    commit_calls()==2）；tests/governance/test_commit_queue.py 80 passed（含
+    TestClassifyDeadReason 三例，既有 DLQ 语义零回归）。落地实证：98d55d9a35（全局锁争用改判环境失败 + CAS 重试上限 3→6）+ 9dcbfcec06（Windows 句柄占用/索引锁残留归瞬态）。
+  affected_files:
+    - scripts/governance/commit_queue_landing.py
+    - scripts/commit_queue.py
+    - tests/governance/test_commit_queue_landing.py
+    - tests/governance/test_commit_queue.py
+  related_arch: []
+  related_rulings: []
+  superseded_by: null
+
+- ruling_id: '裁定#281'
+  title: 常驻门禁进程冻结门禁语义——任何门禁治本的生效延迟上限等于该进程寿命，必须自检代码纪元并原地 re-exec；落地环境的派生缓存陈旧不得当作违规证据
+  date: '2026-09-16'
+  category: 治理架构
+  status: active
+  summary: >-
+    病根（两条叠加，缺一不可复现事故）：①commit_belt_daemon 是常驻进程，门禁模块在
+    进程启动时 import 一次并常驻内存，模块内没有任何 reload/restart/SIGHUP/哨兵机制
+    （grep 全文无匹配）——21:39 落地的 R21 假阳性治本对 07:17 启动的守护进程**完全无效**，
+    14 小时前的模块对象仍在内存里按旧逻辑判违规，22:06 挡死 q-…-0017。
+    推论：本仓所有门禁治本的生效延迟上限=守护进程寿命，而"修好了但不生效"比"没修"
+    更危险（修复者会误判自己的治本无效，进而重复施工或错误回滚）。
+    ②落地 worktree 的 .runtime/ 是 gitignored，派生缓存（depgraph_scan_cache.json）
+    永不随主仓刷新——事故时它比 checkout 旧一整天，门禁拿它当"当前事实"。
+    裁定：①常驻门禁进程必须自检代码纪元（如 src/zephyr/gov_enforcement 的 HEAD sha 或
+    内容指纹），纪元变更时在**安全点**（两轮 drain 之间、lease 已释放）原地
+    os.execv 重启自身——execv 替换进程映像=新 import、无孤儿、不依赖外部监管者拉起；
+    禁自杀式退出（本仓无计划任务重拉 belt daemon，退出即掐断全仓排队落地）。
+    ②门禁不得把派生缓存当违规证据的唯一来源：缓存 hash 未命中=陈旧=未知，未知即降级
+    出声（warning），禁回退"取第一条"这类拿旧版本文件判当前违规的写法。
+    ③本裁定的施工属**共享基础设施变更**，8 会话并发期禁自行 kill 常驻进程
+    （会掐断他人排队落地），须在其静默窗或经 Owner 门位执行。
+  evidence: >-
+    活体取证：belt daemon PID 28648 启动于 07:17:43，R21 治本 634a9d71fc 落库于 21:39:55，
+    q-…-0017 于 22:06:22 死于同一条 R21 假阳性；落地 worktree
+    .runtime/depgraph_scan_cache.json mtime=Sep 15 22:17，内含改名前的
+    MOD-INT_NEWS_CHAIN/MOD-INT_CHAIN_IMPACT，而主仓同名缓存 mtime=Sep 16 21:55
+    已是 MOD-INT-NEWS-CHAIN（连字符）；对两文件做 sha256 查表实证 hash **未命中**
+    （命中即不会报错），坐实"陈旧缓存 + 旧代码回退首条"双因叠加。
+    非破坏性解阻：把主仓新鲜缓存拷入落地 worktree（原件保留为
+    *.stale-20260916.bak），随后 q-…-0020 正常落地（250c134d9d）——反证阻断来自
+    观测面陈旧而非物品内容。
+  affected_files:
+    - src/zephyr/gov_enforcement/rule_bridge/commit_belt_daemon.py
+    - src/zephyr/trading/decision_map.py
+  related_arch: []
+  related_rulings: []
+  superseded_by: null
+
+- ruling_id: '裁定#282'
+  title: EXP 族晋级判据禁挪——DS-275 覆盖边界只许"另立降权协议"，不许改主协议 IS 窗；exp02 在修复源上恒 not_evaluable
+  date: '2026-09-16'
+  category: 量化施工
+  status: active
+  summary: >-
+    背景：DS-275 修复表源覆盖=A 段 2017-01~2021-12 + B 段 2026-07-22 起，中间
+    2022-01~2026-07 是源覆盖空洞（非构建缺陷）；EXP 族主协议 IS 窗 2019-01~2023-12
+    （60 个月）在修复源上只有 36 个月可得。三项候选处置：A 缩 IS 窗到 2019-2021、
+    B 补挖 2022-2026 提取、C 判 not_evaluable。
+    裁定：**主协议 IS 窗一格不动**（预注册判据禁挪是本仓铁律；挪窗=用事后信息改闸门，
+    预注册当场失效），改为在看结果之前**另行预注册**一个降权协议 exp_r36：
+    IS' 2019-01~2021-12；显著性由 t p<0.05 收紧到 |t|>3.0（Harvey-Liu-Zhu 2016；
+    量化依据 SE ∝ 1/sqrt(T)（Lo 2002），T 60→36 月使 SE 放大 sqrt(60/36)=1.291 倍，
+    同等严格度只能提高门槛，降低即自我放水）；|IC|>=0.02 效应量地板不变（效应量与
+    样本量无关，放大它=变相放宽）；覆盖率>=60% 分母换成 IS' 月数；无 OOS' ⇒ OOS 段
+    显式 not_evaluable（禁落成 n_months=0，那与"跑了但样本不足"同形）；
+    evidence_class=preliminary-coverage-limited、promotion_authority=none
+    （永不产出晋级/否决结论）。两条 fail-closed：exp_r36 只成立在 --source repaired
+    （污染源上跑降权协议=给假历史发一张看起来合法的证）；exp02 × repaired 恒
+    not_evaluable（DS-275 的 eps_std 结构性不可得、表内恒 0，以其为分歧归一分母算出的
+    IC 是对不存在数据的断言；χ²(n-1) 在 n=1 时自由度 0=无定义，0 不是"零分歧"而是
+    "不可得"）。路径 B（补挖 2022-2026）**本批不授权**：PDF 缓存 99.6% 就位但残余
+    4,993 份提取属独立班次，且不得在督导器仍在看 C4 扫尾时重复拉起提取批。
+    协议表落库这一步本身即预注册动作（时间戳不可变、先于任何结果）；出证已在看结果之前
+    完成协议冻结后另行执行（结论见本条 evidence：三因子零通过），产物按 evidence_class
+    分开归档（降权协议证据禁与主协议出证混放）。
+  evidence: >-
+    代码与钉：_PROTOCOLS 协议表 + --protocol CLI + _seg_oos 显式 not_evaluable +
+    _emit 单一出口 + _PANEL_HI 面板上界（缺省=主协议 OOS 末，历史行为零漂移）。
+    实测：主协议合成 ic_gate 串与 registry 头 2026-09-12 原文全等（True）；
+    exp_r36×polluted 退出码 2；exp02×repaired 产出 not_evaluable JSON
+    （consensus_table=c3_fundamental.consensus_daily_repaired、oos_window=null、
+    promotion_authority=none）。tests/scripts/test_build_consensus_daily_repaired.py
+    17 passed（原 9 + 协议 5 钉：主协议判据逐字冻结、exp_r36 只严不宽、无 OOS 显式态、
+    两条 fail-closed 出口；+ 滑点腿 3 钉，对应同批 _narrow 治本）。
+    降权协议出证实绩（--source repaired --protocol exp_r36，三因子全跑，两次独立运行
+    逐字节相同）：exp02=not_evaluable（eps_std 结构性恒 0）；exp04 n_months=33、
+    IC +0.0363 过效应量地板但 t_p=0.02505 ⇒ |t|=2.241 < 3.0，且 OOS/IS 腿 not_evaluable；
+    exp06 IC −0.0191、|t|=1.299、窄口径四档单调恶化至 −0.620。
+    **结论：修复源上零因子通过降权协议**；因 promotion_authority=none，该证据既不能晋级
+    也不能否决，唯一合法用途=坐实"2022-2026 源空洞补齐前，EXP 族在修复轨上不具备可判定
+    的证据基础"。主协议（唯一持晋级权）在修复源上**未运行**（运行即把 36 月当 60 月用=
+    类别错误）。证据 JSON 落 gitignored logs/experiment_tracking_fallback/
+    expNN_eval_run1_r36_20260916.json，追踪态正本内联于
+    docs/_working/reports/2026-09-16-consensus-repaired-build.md §9.2。
+  affected_files:
+    - scripts/backtest/eval_exp_expectations.py
+    - tests/scripts/test_build_consensus_daily_repaired.py
+  related_arch: []
+  related_rulings: []
+  superseded_by: null
+
+- ruling_id: '裁定#283'
+  title: mid 置信度提取值不入聚合（留档）——Fellegi-Sunter 复核区不得自动合并；DS-275 消费侧离散度不可得即 NaN/not_evaluable；变体 D 预注册但不启用
+  date: '2026-09-16'
+  category: 数据治理
+  status: active
+  summary: >-
+    争议：A 段 high-only 入聚合是铁律，但 high 密度低（60,477 研报证据集经守卫+截断后
+    38,467 行入聚合），mid 若并入可显著提高覆盖。
+    裁定：**mid 维持不入聚合、只留档**。依据 Fellegi-Sunter(1969) 三区判定——
+    match / non-match / clerical-review zone：mid 正是"机器不能自动接受也不能自动拒绝"
+    的复核区，把复核区并入聚合等于让未经人工复核的证据直接进入决策链，且无法事后
+    撤回（"只增不改"的表结构使污染不可回收，这正是 DS-229 事故的形态）。
+    密度低是**证据不足的诚实呈现**，不是可以用降低证据标准来填补的缺口；
+    Diether-Malloy-Scherbina(2002) 的分散度溢价研究同样以"可辨识的预测分布"为前提，
+    把不可辨识的 mid 混入会让分散度统计失去解释力。
+    配套两项：①离散度在 n_reports<2 时必须 NaN 而非 0（χ²(n-1) 自由度 0=无定义；
+    0 会被消费端读成"全体分析师完全一致"=最强的假信号），且本项只施于 DS-275 消费侧
+    （DS-229 历史行零触及是铁律，不改其存储语义）；②变体 D（mid 以独立列/独立
+    evidence_class 并入，聚合口径仍 high-only）**预注册但不启用**——先写死口径再谈
+    开不开，避免"看到覆盖率不好看再回头设计口径"。
+  evidence: >-
+    构建期守卫实证：0<eps<=50 剔除 634 行（2017-2021 全 A 股真实 EPS 上界=茅台 2021
+    的 41.76；eps>50 定向采样 14/14 全为营收/净利行串列）、slot<=3 截断 126 行；
+    落库 1,563,996 行（A 1,472,629/1,854 标的、60/60 月覆盖 2017-01~2021-12；
+    B 91,367/2,632）。三重对照 3/3 PASS：B 段与 DS-229 重叠期逐日秩相关 0.9713
+    （判据>=0.9 预注册未挪）、锚点股"多源须有修正"违反 0、A 段 20 季末快照日
+    独立 SQL 路径重算比对 213 行不一致 0。exp02×repaired 恒 not_evaluable
+    即离散度不可得的消费侧落地（裁定#282 同批）。
+  affected_files:
+    - scripts/ch/build_consensus_daily_repaired.py
+    - src/zephyr/data/implementations/consensus_daily_repaired_compute.py
+    - scripts/backtest/eval_exp_expectations.py
+  related_arch: []
+  related_rulings: []
+  superseded_by: null
+
+- ruling_id: '裁定#284'
+  title: DS-275 双轨不切换（switch_gate=Owner）——并预注册切换判据；consensus_crosscheck 永不切换、pit_query 不在切换面
+  date: '2026-09-16'
+  category: 数据治理
+  status: active
+  summary: >-
+    裁定：**本批不切换**。DS-229（污染轨）与 DS-275（修复轨）物理隔离双轨并存，
+    DS-229 历史行零触及；切换权归 Owner（risk_tier_registry 语义：资金/生产流转
+    级变更=high 域门位），会话不得自决。理由：①修复轨覆盖 2017-01~2021-12 +
+    2026-07-22 起，中间 4.5 年是源空洞——切换等于把一段连续历史换成两段不连续历史，
+    任何跨 2022-2026 的回测/因子会在断口上产生无法归因的跳变；②McLean-Pontiff(2016)
+    的因子衰减与 Bailey-López de Prado(2014) 的 DSR/PBO 都要求在**同一口径的连续样本**
+    上评估，切轨会同时改变数据与口径，使前后出证不可比；③修复轨自身尚未产出任何
+    晋级级证据（裁定#282 的 exp_r36 无晋级权），没有切换的实证前提。
+    预注册切换判据（写死在切换发生之前，禁事后挑选）：
+    C1 修复轨在主协议 IS 窗（2019-2023）上覆盖>=60%（当前 36/60=60% 恰好压线，
+      但 OOS 窗 2024+ 覆盖为 0 ⇒ 主协议整体 not_evaluable，故 C1 现判不满足）；
+    C2 至少一个 EXP 族因子在**主协议**下出证通过（|IC|>=0.02 & t p<0.05 & 覆盖>=60%），
+      降权协议 exp_r36 的通过不计入（无晋级权）；
+    C3 2022-01~2026-07 空洞被真实源补齐（提取补挖或第三方 PIT 源接入），
+      且补齐批次自身通过三重对照验收；
+    C4 切换演练：同一评估脚本在双轨上并行出证、差异归因完成且无未解释跳变。
+    四条全满足才提交 Owner 门位，缺一不得切换。
+    边界：**consensus_crosscheck 永不切换**（它的职责就是暴露两轨差异，切轨即自废）；
+    **pit_query 不在切换面**（它是查询口径而非数据源，切轨不改变其语义，把它列进
+    切换面会造成"改查询=改数据"的错误耦合）。
+  evidence: >-
+    双轨并存实证：DS-275 落库 1,563,996 行且 DS-229 历史行零触及（构建脚本无 UPDATE/
+    DELETE 路径，ReplacingMergeTree 读取一律 FINAL）；重叠期秩相关 0.9713 反证污染症状
+    （同窗 DS-229 三年份 uniq=1 的天数 1,074 日=历史快照被今日预期回放覆盖的数值坐实）。
+    注册侧：data_asset_registry DS-275 条目 dual_track/switch_gate=Owner 事实写入
+    format_summary（注册表无此键先例，故不擅自扩表）；capability + 品类 +
+    creation_token x6 + depgraph 4 节点 planned→generated + 模块大白话简介 x4 同批落库
+    （250c134d9d）。
+  affected_files:
+    - docs/01_policies_and_standards/_registry/catalogs/data_asset_registry.yaml
+    - scripts/ch/build_consensus_daily_repaired.py
+    - scripts/backtest/eval_exp_expectations.py
+  related_arch: []
+  related_rulings: []
+  superseded_by: null
