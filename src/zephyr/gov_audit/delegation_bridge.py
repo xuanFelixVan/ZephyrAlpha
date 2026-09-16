@@ -18,31 +18,7 @@
 """
 
 
-# [ALGO_FLOW]
-# 层: 输入
-# - id: I1
-#   name: 模块内部数据
-#   fields: 无公共形参/无再导出（AST 事实）
-#   code: delegation_bridge.py
-# 层: 算法
-# - id: A1
-#   name_zh: ① DelegationBridge
-#   name_en: DelegationBridge
-#   intro: class DelegationBridge 源码 L58-L111
-#   desc: 公共方法（定义序）: report_delegation_failure, report_delegation_timeout, is_available；源码 L58-L111
-#   inputs: 无参数
-#   outputs: 返回值
-# 层: 输出
-# - id: O1
-#   name_zh: 模块公共 API 面（1 定义）
-#   name_en: public defs
-#   intro: DelegationBridge
-#   downstream: audit-orchestrator.delegation_auditor(委托审计时上报)
-# [/ALGO_FLOW]
-#
-# 边:
-# I1 --> A1
-# A1 --> O1
+# [ALGO_FLOW] external: docs/03_modules/_domain_gov_audit/algo_flow/delegation_bridge.yaml
 """
 
 from __future__ import annotations

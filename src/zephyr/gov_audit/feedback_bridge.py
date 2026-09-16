@@ -18,31 +18,7 @@
 """
 
 
-# [ALGO_FLOW]
-# 层: 输入
-# - id: I1
-#   name: storage_path 参数
-#   fields: 参数 storage_path（无注解）
-#   code: feedback_bridge.py 顶层公共函数形参（AST 提取）
-# 层: 算法
-# - id: A1
-#   name_zh: ① FeedbackBridge
-#   name_en: FeedbackBridge
-#   intro: Bridge between audit-trail anomaly findings and the Feedbac…
-#   desc: Bridge between audit-trail anomaly findings and the Feedback Loop Engine. Two parallel AP…；公共方法（定义序）: anomaly…
-#   inputs: storage_path
-#   outputs: 返回值
-# 层: 输出
-# - id: O1
-#   name_zh: 模块公共 API 面（1 定义）
-#   name_en: public defs
-#   intro: FeedbackBridge
-#   downstream: audit-orchestrator.feedback_policy(策略引擎消费反馈)
-# [/ALGO_FLOW]
-#
-# 边:
-# I1 --> A1
-# A1 --> O1
+# [ALGO_FLOW] external: docs/03_modules/_domain_gov_audit/algo_flow/feedback_bridge.yaml
 """
 
 from __future__ import annotations
