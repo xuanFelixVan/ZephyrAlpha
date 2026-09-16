@@ -213,9 +213,9 @@ OllamaServe（显存/内存常驻，GPU offload 自动）、TickSubscriber（盘
 | 14 | [Metric and label naming best practices](https://prometheus.io/docs/practices/naming/) / [Metric types](https://prometheus.io/docs/concepts/metric_types/) | Prometheus 官方 | 访问 2026-09 |
 | 15 | [VPA: The Recommender（p90/p95+15% margin 管线）](https://erikzilinsky.com/posts/vpa1.html)（Google VPA 组工程师）/ [The Definitive Guide](https://povilasv.me/vertical-pod-autoscaling-the-definitive-guide/) / [P90 尖刺失真警示](https://scaleops.com/blog/why-pod-rightsizing-fails-in-production-a-deep-dive-into-vpa-and-what-actually-works/) | Erik Zilinsky / povilasv / Scaleops | 访问 2026-09 |
 
-## 10. 开放问题（待 Owner 裁定）
+## 10. 开放问题（已全部闭环，留痕备查）
 
-1. **backtest-run 端点补 E0** 是否从 B2 提前为单独小批（带安全属性，建议提前）。
-2. **交易窗边界**：E0 现行 09:00-15:30 vs auction 槽位 09:15-09:25 十秒级抓取——维持现状（E0 只管 heavy 重活、高频轻载走调度器守卫）还是收口统一，登记备查。
+1. **backtest-run 端点补 E0**：已按"提前"裁定执行——通宵班落地并实盘冒烟（api_server `_e0_gate_decision_for_backtest`，盘中请求被拒 reason=gate_deny_trading_hours）。
+2. **交易窗边界**：**已裁定=维持现状**（E0 只管 heavy 重活、高频轻载走 DataScheduler 调度器守卫+trading_day_only 任务级守卫，两层既有机制已覆盖 auction 槽位，收口统一无增量收益）——2026-09-16 验收批 a51b959d07 备查登记，无后续动作。
 
 （原问题 1"注册表归属"已按自裁协议裁决于 §4.5-④：config/ + ROOR tier 0，留痕不再开放。）

@@ -431,7 +431,7 @@ tiers:
         format: yaml
         tier: tier_1_governance
         maintenance: manual（aliases/description 随生成器增减同步）
-        entry_count: 3067
+        entry_count: 3072
         counting_rule: creation_tokens 数组条目数
         status: active
         description: >-
@@ -500,7 +500,8 @@ tiers:
         physical_path: architecture_model/index.yaml
         format: yaml
         maintenance: manual
-        entry_count: 74
+        entry_count: 75
+        counting_rule: domains 数组条目数
         status: active
         description: 74 个架构分区项
 
@@ -595,7 +596,7 @@ tiers:
         physical_path: docs/01_policies_and_standards/_registry/catalogs/strategy_registry.yaml
         format: yaml
         maintenance: manual
-        entry_count: 159
+        entry_count: 161
         counting_rule: strategies 数组条目数
         status: draft
         description: 交易策略唯一真源（SSoT）——5 类 146 条已落盘（2026-08-20 实测）。P1-A Step1-8 全量闭环（code_path 半派生补全完成）。#ARCH-BREG-001 P1-A
