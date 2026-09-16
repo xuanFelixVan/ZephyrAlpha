@@ -3,7 +3,7 @@
  * families 层全量重建、pipeline/out_of_scope_refs 人工语义层）——本文件只读渲染：
  * ① 布局：竖向流水线（层卡 L0→L6 顺序贯通，左轨=层徽+名称+竖连线）——每层=层体（职责行+挂载
  *    chip 流+配置真源+未接线候选项），未接线候选项=橙虚框警示卡+note 大白话（治理缺口直读）。
- * ② 统计：counts 机生值（总模块/疑似孤儿）+七族计数+接线三态分布，全部真源现算零硬编码
+ * ② 统计：counts 机生值（总模块/疑似孤儿）+七族计数+接线四态分布，全部真源现算零硬编码
  *    （宪法 §9.5 静态清单禁手工维护）；页面片头计数 #govm-count 同源填充。
  * 激活检测：页面片段经 innerHTML 注入（script 不执行），本文件由 loader 显式加载；
  *           30s tick 时仅 p-govm 可见才 fetch，页面隐藏零开销（tdm/factory 同款）。
@@ -25,9 +25,10 @@
     });
   }
 
-  /* 接线三态（真源 wiring 枚举；色板沿 tdm/factory 既有语义，不发明新色）。族名=L*_ 键原文
-   * （机生标识，非翻译对象——禁硬编码翻译字典，宪法 §9.9） */
-  var WIRING_KEYS = { wired: 0, wired_by_header: 0, suspect_orphan: 0 };
+  /* 接线四态（真源 wiring 枚举：wired=AST import 实锚 / wired_dynamic=importlib 运行时字符串解析 /
+   * wired_by_header=仅头声明 / suspect_orphan=无消费证据；色板沿 tdm/factory 既有语义不发明新色）。
+   * 族名=L*_ 键原文（机生标识，非翻译对象——禁硬编码翻译字典，宪法 §9.9） */
+  var WIRING_KEYS = { wired: 0, wired_dynamic: 0, wired_by_header: 0, suspect_orphan: 0 };
 
   function load() {
     if (GOVM.busy) return;
@@ -92,9 +93,9 @@
     var oos = document.getElementById('govm-oos');
     if (!pipe || !stats || !oos) return;
 
-    /* ── 统计条：counts 机生值 + 七族现算计数 + 接线三态现算分布（零硬编码计数）── */
+    /* ── 统计条：counts 机生值 + 七族现算计数 + 接线四态现算分布（零硬编码计数）── */
     var fams = d.families || {};
-    var wsum = { wired: 0, wired_by_header: 0, suspect_orphan: 0 };
+    var wsum = { wired: 0, wired_dynamic: 0, wired_by_header: 0, suspect_orphan: 0 };
     var chips = [];
     var c = d.counts || {};
     chips.push(gs('总模块', c.total_modules != null ? c.total_modules : '—', 'hot'));
@@ -103,7 +104,8 @@
       (fams[k] || []).forEach(function (m) { if (m && m.wiring in WIRING_KEYS) wsum[m.wiring] += 1; });
       chips.push(gs(k, (fams[k] || []).length, ''));
     });
-    chips.push(gs('已接线', wsum.wired, 'ok'));
+    chips.push(gs('已接线·静态', wsum.wired, 'ok'));
+    chips.push(gs('已接线·运行时', wsum.wired_dynamic, 'ok'));
     chips.push(gs('头声明接线', wsum.wired_by_header, ''));
     chips.push(gs('疑似孤儿(族算)', wsum.suspect_orphan, 'warn'));
     stats.innerHTML = chips.join('');

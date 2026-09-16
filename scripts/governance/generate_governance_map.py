@@ -25,7 +25,11 @@
 机器源(零手工清单):
 1. 模块头 [MODULE]/[DOMAIN]/[CONSUMERS]/[MATURITY](src/ + scripts/ 扫描)
 2. 族分类关键词表(本文件 _FAMILY_PATTERNS,优先级序)
-3. import 反查接线状态(wired / wired_by_header / suspect_orphan)
+3. AST import 边检测接线状态(wired=静态 import 实锚 / wired_dynamic=importlib 字符串解析 /
+   wired_by_header=仅头声明 / suspect_orphan=无任何消费证据)——解析 ast.Import/ast.ImportFrom,
+   字符串字面量与散文/`__all__` 永不构成 wired(2026-09-15 治本:旧 substring 判定自证造假)
+   wired_by_header 只判 [CONSUMERS] 非空、不辨语义;否定式头("无装配消费方…"/"none")实测
+   17 件全落在本图治理域之外(2026-09-16 量),故不预设排除谓词——真进图再按词表裁定
 
 输出: config/governance_operations_map.yaml
   - families        机器层:族→模块清单(每次全量重建)
@@ -42,6 +46,7 @@ CLI:
 from __future__ import annotations
 
 import argparse
+import ast
 import re
 import sys
 from pathlib import Path
@@ -79,7 +84,9 @@ _GOVERNANCE_RE = re.compile(_GOVERNANCE_UNIVERSE, re.IGNORECASE)
 _HEADER_RE = {
     "module": re.compile(r"#\s*\[MODULE\]\s*(\S+)"),
     "domain": re.compile(r"#\s*\[DOMAIN\]\s*(\S+)"),
-    "consumers": re.compile(r"#\s*\[CONSUMERS\]\s*(.+)"),
+    # [ \t]* not \s* : \s matches newlines, so an empty "# [CONSUMERS]" line would otherwise
+    # swallow the newline and capture the next header line as a phantom declared consumer.
+    "consumers": re.compile(r"#\s*\[CONSUMERS\][ \t]*(.+)"),
     "maturity": re.compile(r"#\s*\[MATURITY\]\s*(\S+)"),
     "ttl": re.compile(r"#\s*\[TTL\]\s*(\S+)"),
 }
@@ -146,21 +153,148 @@ def _import_spec(path: Path) -> str:
     return ".".join(parts)
 
 
-def _build_wiring_index(files: list[Path], tokens: set[str]) -> dict[str, set[str]]:
-    """单遍扫描:token → 引用它的文件集合(排除 token 自身文件名命中)。"""
-    index: dict[str, set[str]] = {t: set() for t in tokens}
+# 运行时字符串分发调用名:模块以完整点分字符串出现且文件用它们动态导入 → wired_dynamic
+_DYNAMIC_DISPATCH_CALLS = frozenset({"import_module", "__import__"})
+
+# 接线四态枚举(稳定序)——counts 分布与 CLI 摘要的唯一真源,禁在别处硬编码 tier 清单
+_WIRING_TIERS = ("wired", "wired_dynamic", "wired_by_header", "suspect_orphan")
+
+
+def _package_dotted(path: Path) -> str:
+    """文件所属包的点分路径(用于解析相对 import)。__init__.py 的包即其所在目录。"""
+    spec = _import_spec(path)
+    if path.name == "__init__.py" and spec.endswith(".__init__"):
+        return spec[: -len(".__init__")]
+    return spec.rsplit(".", 1)[0] if "." in spec else ""
+
+
+def _wiring_key(path: Path) -> str:
+    """候选匹配 import 边用的点分标识:__init__.py 归一到其包路径(否则 '...__init__'
+    永不匹配任何 import 边),其余用完整模块 spec。"""
+    spec = _import_spec(path)
+    if path.name == "__init__.py" and spec.endswith(".__init__"):
+        return spec[: -len(".__init__")]
+    return spec
+
+
+def _import_edges(node: ast.AST, pkg: str) -> set[str]:
+    """单个 import 节点 → 点分边集（相对 import 依 pkg 解析；`import x.*` 不产点分边）。"""
+    if isinstance(node, ast.Import):
+        return {a.name for a in node.names}
+    if not isinstance(node, ast.ImportFrom):
+        return set()
+    base = node.module or ""
+    if node.level:
+        anchor = pkg
+        for _ in range(node.level - 1):
+            anchor = anchor.rsplit(".", 1)[0] if "." in anchor else ""
+        full = f"{anchor}.{base}" if base else anchor
+    else:
+        full = base
+    if not full:
+        return set()
+    return {full} | {f"{full}.{a.name}" for a in node.names if a.name != "*"}
+
+
+def _dotted_literal(node: ast.AST) -> str | None:
+    """整串即点分模块名的字符串字面量（散文/docstring 含空格换行不入集）。"""
+    if not isinstance(node, ast.Constant) or not isinstance(node.value, str):
+        return None
+    v = node.value
+    return v if "." in v and v.replace(".", "").isidentifier() else None
+
+
+def _is_dispatch_call(node: ast.AST) -> bool:
+    """是否为 importlib.import_module / __import__ 运行时分发调用点。"""
+    if not isinstance(node, ast.Call):
+        return False
+    fn = node.func
+    name = fn.attr if isinstance(fn, ast.Attribute) else (fn.id if isinstance(fn, ast.Name) else "")
+    return name in _DYNAMIC_DISPATCH_CALLS
+
+
+def _file_wiring_signals(tree: ast.AST, pkg: str) -> tuple[set[str], set[str], bool]:
+    """单文件 AST → (真实 import 点分边集, 完整点分字符串字面量集, 是否含运行时分发调用)。
+
+    import 边含模块级与函数内 ast.Import/ast.ImportFrom(相对 import 依 pkg 解析)。
+    字符串字面量仅收"整串即点分模块名"者——散文/docstring 含空格换行不入集,`__all__`
+    里的裸名不含点也不入集,二者都永不构成 wired。
+    """
+    edges: set[str] = set()
+    strmods: set[str] = set()
+    dispatch = False
+    for node in ast.walk(tree):
+        edges |= _import_edges(node, pkg)
+        lit = _dotted_literal(node)
+        if lit is not None:
+            strmods.add(lit)
+        dispatch = dispatch or _is_dispatch_call(node)
+    return edges, strmods, dispatch
+
+
+def _build_wiring_index(files: list[Path], wiring_keys: set[str]) -> dict[str, Any]:
+    """单遍 AST 扫描全部候选文件,构建接线判定四索引(键=完整点分标识,非 token 子串)。
+
+    - static[full] : 含指向 full 的真实 import 边(dotted)的文件集合
+    - bare[stem]   : 以裸名 `import stem` / `from stem import ...`(无点,sys.path 插件式)引用的文件集合
+    - strspec[full]: 把 full 作为完整点分字符串字面量出现在其内的文件集合
+    - dispatch     : 含 importlib.import_module / __import__ 运行时分发调用的文件集合
+
+    (旧实现是 `if tok in text` 子串命中——把 `__all__` 与散文也算作消费,虚报 wired。)
+    """
+    static: dict[str, set[str]] = {k: set() for k in wiring_keys}
+    strspec: dict[str, set[str]] = {k: set() for k in wiring_keys}
+    bare: dict[str, set[str]] = {}
+    dispatch: set[str] = set()
     for f in files:
         try:
-            text = f.read_text(encoding="utf-8", errors="replace")
-        except OSError:
+            tree = ast.parse(f.read_text(encoding="utf-8", errors="replace"))
+        except (OSError, SyntaxError, ValueError, RecursionError):
             continue
-        stem = f.stem
-        for tok in tokens:
-            if tok == stem:
-                continue  # 自身文件名不构成消费
-            if tok in text:
-                index[tok].add(str(f))
-    return index
+        cf = str(f)
+        edges, strmods, has_dispatch = _file_wiring_signals(tree, _package_dotted(f))
+        if has_dispatch:
+            dispatch.add(cf)
+        for e in edges:
+            if "." in e:
+                bucket = static.get(e)
+                if bucket is not None:
+                    bucket.add(cf)
+            else:
+                bare.setdefault(e, set()).add(cf)
+        for sm in strmods:
+            bucket = strspec.get(sm)
+            if bucket is not None:
+                bucket.add(cf)
+    return {"static": static, "bare": bare, "strspec": strspec, "dispatch": dispatch}
+
+
+def _wiring_evidence(c: dict[str, Any], idx: dict[str, Any]) -> tuple[set[str], set[str]]:
+    """单候选的接线证据 → (静态 import 方集合, 运行时分发字符串引用集合)(自引用剔除)。
+
+    裸名 sys.path 插件式 import(from x_reconciler import make_...)仅存在于 scripts 侧,
+    故只对 scripts.* 候选启用 stem 命中,避免 stdlib 同名裸 import 误判 src 为 wired。
+    """
+    key = c["_key"]
+    own = str(REPO_ROOT / c["path"])
+    importers = {f for f in idx["static"].get(key, set()) if f != own}
+    stem = key.rsplit(".", 1)[-1]
+    if not importers and stem != "__init__" and c["_spec"].startswith("scripts."):
+        importers = {f for f in idx["bare"].get(stem, set()) if f != own}
+    dynamic = {f for f in idx["strspec"].get(key, set()) if f != own and f in idx["dispatch"]}
+    return importers, dynamic
+
+
+def _wiring_tier(c: dict[str, Any], idx: dict[str, Any]) -> str:
+    """四态判定(优先级序):静态实锚 > 运行时分发 > 仅头声明 > 无消费证据。"""
+    importers, dynamic = _wiring_evidence(c, idx)
+    if importers:
+        return "wired"
+    if dynamic:
+        return "wired_dynamic"
+    if c["_consumers_header"]:
+        return "wired_by_header"
+    return "suspect_orphan"
 
 
 def scan() -> dict[str, Any]:
@@ -176,7 +310,6 @@ def scan() -> dict[str, Any]:
         if fam is None:
             continue
         spec = _import_spec(p)
-        tok = spec.rsplit(".", 1)[-1]
         candidates.append(
             {
                 "module": header.get("module") or spec,
@@ -184,28 +317,39 @@ def scan() -> dict[str, Any]:
                 "domain": header.get("domain", ""),
                 "maturity": header.get("maturity", ""),
                 "family": fam,
-                "_token": tok,
+                "_spec": spec,
+                "_key": _wiring_key(p),
                 "_consumers_header": header.get("consumers", ""),
             }
         )
-    tokens = {c["_token"] for c in candidates}
-    wiring_index = _build_wiring_index(files, tokens)
+    wiring_keys = {c["_key"] for c in candidates}
+    idx = _build_wiring_index(files, wiring_keys)
     modules: dict[str, Any] = {}
     for c in candidates:
-        refs = wiring_index.get(c["_token"], set())
-        if refs:
-            wiring = "wired"
-        elif c["_consumers_header"]:
-            wiring = "wired_by_header"
-        else:
-            wiring = "suspect_orphan"
-        c.pop("_token")
+        c["wiring"] = _wiring_tier(c, idx)
+        c.pop("_spec")
+        c.pop("_key")
         c.pop("_consumers_header")
-        c["wiring"] = wiring
         modules.setdefault(c["family"], []).append(c)
     for fam in modules:
         modules[fam].sort(key=lambda m: m["path"])
     return modules
+
+
+def _build_counts(families: dict[str, Any]) -> dict[str, int]:
+    """接线四态分布计数(机生,零硬编码;键序沿 _WIRING_TIERS 稳定便于 diff)。"""
+    tiers = {t: 0 for t in _WIRING_TIERS}
+    for mods in families.values():
+        for m in mods:
+            if m.get("wiring") in tiers:
+                tiers[m["wiring"]] += 1
+    return {
+        "total_modules": sum(len(v) for v in families.values()),
+        "wired": tiers["wired"],
+        "wired_dynamic": tiers["wired_dynamic"],
+        "wired_by_header": tiers["wired_by_header"],
+        "suspect_orphans": tiers["suspect_orphan"],
+    }
 
 
 def build_document(dry_run: bool) -> dict[str, Any]:
@@ -235,12 +379,7 @@ def build_document(dry_run: bool) -> dict[str, Any]:
             "(effective_from 首次落定 '2026-09-15',防重跑漂移)。"
             "模块明细以稳定标识符引用,禁复制条目内容(TDM INV-1 同款纪律)。"
         ),
-        "counts": {
-            "total_modules": sum(len(v) for v in families.values()),
-            "suspect_orphans": sum(
-                1 for mods in families.values() for m in mods if m["wiring"] == "suspect_orphan"
-            ),
-        },
+        "counts": _build_counts(families),
         "out_of_scope_refs": human_keys.get("out_of_scope_refs", _OUT_OF_SCOPE_DEFAULTS),
         "pipeline": human_keys.get("pipeline", _PIPELINE_DEFAULT),
         "families": families,

@@ -4,12 +4,15 @@ name_zh: 治理运行地图
 ttl: permanent
 effective_from: '2026-09-15'
 generator: scripts/governance/generate_governance_map.py
-generated_at: '2026-09-16T14:09:39.514846+00:00'
+generated_at: '2026-09-16T16:32:36.700286+00:00'
 ssot_note_zh: 骨架机生(宪法 §9.5):families 层由生成器全量重建,禁手工编辑;pipeline/out_of_scope_refs/effective_from 为人工语义层,生成器保留(effective_from
   首次落定 '2026-09-15',防重跑漂移)。模块明细以稳定标识符引用,禁复制条目内容(TDM INV-1 同款纪律)。
 counts:
-  total_modules: 412
-  suspect_orphans: 3
+  total_modules: 414
+  wired: 242
+  wired_dynamic: 6
+  wired_by_header: 70
+  suspect_orphans: 96
 out_of_scope_refs:
 - name_zh: 提交门禁体系
   ref: docs/01_policies_and_standards/_registry/catalogs/commit_gate_registry.yaml
@@ -135,67 +138,67 @@ families:
     domain: D_GOV_SCRIPTS
     maturity: production
     family: L1_monitor
-    wiring: wired
+    wiring: wired_by_header
   - module: scripts.governance.verify_schema_health
     path: scripts/governance/d11_compliance/verify_schema_health.py
     domain: D_GOV_SCRIPTS
     maturity: production
     family: L1_monitor
-    wiring: wired
+    wiring: wired_by_header
   - module: scripts.governance.git_health_smoke
     path: scripts/governance/git_health_smoke.py
     domain: D_GOV_SCRIPTS
     maturity: production
     family: L1_monitor
-    wiring: wired
+    wiring: wired_by_header
   - module: scripts.governance.meta.governance_watchdog
     path: scripts/governance/meta/governance_watchdog.py
     domain: D_GOV_SCRIPTS
     maturity: production
     family: L1_monitor
-    wiring: wired
+    wiring: wired_by_header
   - module: scripts.governance.meta.validate_environment_health
     path: scripts/governance/meta/validate_environment_health.py
     domain: D_GOV_SCRIPTS
     maturity: production
     family: L1_monitor
-    wiring: wired
+    wiring: suspect_orphan
   - module: scripts.governance.meta.validate_script_system_health
     path: scripts/governance/meta/validate_script_system_health.py
     domain: D_GOV_SCRIPTS
     maturity: production
     family: L1_monitor
-    wiring: wired
+    wiring: suspect_orphan
   - module: scripts.governance.session_startup_health_check
     path: scripts/governance/session_startup_health_check.py
     domain: D_GOV_SCRIPTS
     maturity: production
     family: L1_monitor
-    wiring: wired
+    wiring: wired_by_header
   - module: scripts.governance.vms_cron_monitor
     path: scripts/governance/vms/vms_cron_monitor.py
     domain: D_GOV_SCRIPTS
     maturity: production
     family: L1_monitor
-    wiring: wired
+    wiring: suspect_orphan
   - module: scripts.governance.vms_health_check
     path: scripts/governance/vms/vms_health_check.py
     domain: D_GOV_SCRIPTS
     maturity: production
     family: L1_monitor
-    wiring: wired
+    wiring: suspect_orphan
   - module: scripts.industry_graph.theme_linkage_monitor
     path: scripts/industry_graph/theme_linkage_monitor.py
     domain: D_DATA
     maturity: production
     family: L1_monitor
-    wiring: wired
+    wiring: wired_by_header
   - module: zephyr.ops.ch_health_probe
     path: scripts/ops/ch_health_probe.py
     domain: D_DATA
     maturity: ''
     family: L1_monitor
-    wiring: wired
+    wiring: suspect_orphan
   - module: scripts.ops.e2e_ch_alert_probe
     path: scripts/ops/e2e_ch_alert_probe.py
     domain: ''
@@ -219,13 +222,13 @@ families:
     domain: D_AUTONOMY_CORE
     maturity: production
     family: L1_monitor
-    wiring: wired
+    wiring: suspect_orphan
   - module: zephyr.autonomy_core.skills.skill_telemetry
     path: src/zephyr/autonomy_core/skills/skill_telemetry.py
     domain: D_AUTONOMY_CORE
     maturity: production
     family: L1_monitor
-    wiring: wired
+    wiring: suspect_orphan
   - module: zephyr.compliance.manipulation_realtime_monitor
     path: src/zephyr/compliance/manipulation_realtime_monitor.py
     domain: D_COMPLIANCE
@@ -243,7 +246,7 @@ families:
     domain: D_FBL_DETECTORS
     maturity: production
     family: L1_monitor
-    wiring: wired
+    wiring: suspect_orphan
   - module: zephyr.feedback_loop.detectors.drift.distribution_drift_monitor
     path: src/zephyr/feedback_loop/detectors/drift/distribution_drift_monitor.py
     domain: D_FBL_DETECTORS
@@ -255,7 +258,7 @@ families:
     domain: D_FBL_DETECTORS
     maturity: production
     family: L1_monitor
-    wiring: wired
+    wiring: suspect_orphan
   - module: zephyr.feedback_loop.diagnosers.diagnosis.knowledge_bus_factor_monitor
     path: src/zephyr/feedback_loop/diagnosers/diagnosis/knowledge_bus_factor_monitor.py
     domain: D_FBL_DIAGNOSERS
@@ -279,7 +282,7 @@ families:
     domain: D_FBL_DIAGNOSERS
     maturity: production
     family: L1_monitor
-    wiring: wired
+    wiring: suspect_orphan
   - module: zephyr.feedback_loop.diagnosers.health.e2e_integration_health
     path: src/zephyr/feedback_loop/diagnosers/health/e2e_integration_health.py
     domain: D_FBL_DIAGNOSERS
@@ -297,31 +300,31 @@ families:
     domain: D_FBL_DIAGNOSERS
     maturity: production
     family: L1_monitor
-    wiring: wired
+    wiring: suspect_orphan
   - module: zephyr.feedback_loop.diagnosers.health.global_health_map
     path: src/zephyr/feedback_loop/diagnosers/health/global_health_map.py
     domain: D_FBL_DIAGNOSERS
     maturity: production
     family: L1_monitor
-    wiring: wired
+    wiring: suspect_orphan
   - module: zephyr.feedback_loop.diagnosers.health.memory_self_check
     path: src/zephyr/feedback_loop/diagnosers/health/memory_self_check.py
     domain: D_FBL_DIAGNOSERS
     maturity: production
     family: L1_monitor
-    wiring: wired
+    wiring: suspect_orphan
   - module: zephyr.feedback_loop.diagnosers.health.model_health
     path: src/zephyr/feedback_loop/diagnosers/health/model_health.py
     domain: D_FBL_DIAGNOSERS
     maturity: production
     family: L1_monitor
-    wiring: wired
+    wiring: suspect_orphan
   - module: zephyr.feedback_loop.diagnosers.health.self_benchmark
     path: src/zephyr/feedback_loop/diagnosers/health/self_benchmark.py
     domain: D_FBL_DIAGNOSERS
     maturity: production
     family: L1_monitor
-    wiring: wired
+    wiring: suspect_orphan
   - module: zephyr.feedback_loop.diagnosers.health.self_bottleneck_detector
     path: src/zephyr/feedback_loop/diagnosers/health/self_bottleneck_detector.py
     domain: D_FBL_DIAGNOSERS
@@ -333,7 +336,7 @@ families:
     domain: D_FBL_DIAGNOSERS
     maturity: production
     family: L1_monitor
-    wiring: wired
+    wiring: suspect_orphan
   - module: zephyr.feedback_loop.diagnosers.reliability.data_volume_growth_monitor
     path: src/zephyr/feedback_loop/diagnosers/reliability/data_volume_growth_monitor.py
     domain: D_FBL_DIAGNOSERS
@@ -357,7 +360,7 @@ families:
     domain: D_FBL_VERIFICATION
     maturity: production
     family: L1_monitor
-    wiring: wired
+    wiring: suspect_orphan
   - module: zephyr.feedback_loop.scheduler_health
     path: src/zephyr/feedback_loop/scheduler_health.py
     domain: D_FEEDBACK_LOOP
@@ -387,7 +390,7 @@ families:
     domain: D_GOV_CODE_QUALITY
     maturity: production
     family: L1_monitor
-    wiring: wired
+    wiring: wired_by_header
   - module: zephyr.gov_drift.detector_core.model_drift_monitor
     path: src/zephyr/gov_drift/detector_core/model_drift_monitor.py
     domain: D_GOV_DRIFT
@@ -417,7 +420,7 @@ families:
     domain: D_GOVERNANCE
     maturity: production
     family: L1_monitor
-    wiring: wired
+    wiring: wired_by_header
   - module: zephyr.governance.audit.health_score_calculator
     path: src/zephyr/governance/audit/health_score_calculator.py
     domain: D_GOV_AUDIT
@@ -435,7 +438,7 @@ families:
     domain: D_GOVERNANCE
     maturity: production
     family: L1_monitor
-    wiring: wired
+    wiring: wired_by_header
   - module: zephyr.governance.ops_governance.burn_rate_monitor
     path: src/zephyr/governance/ops_governance/burn_rate_monitor.py
     domain: D_GOV_OPS_RESILIENCE
@@ -471,7 +474,7 @@ families:
     domain: ''
     maturity: ''
     family: L1_monitor
-    wiring: wired
+    wiring: suspect_orphan
   - module: zephyr.infrastructure.quality.quality_monitor
     path: src/zephyr/infrastructure/quality/quality_monitor.py
     domain: D_INFRA_RUNTIME
@@ -489,7 +492,7 @@ families:
     domain: ''
     maturity: ''
     family: L1_monitor
-    wiring: wired
+    wiring: wired_by_header
   - module: zephyr.infrastructure.system_telemetry._trace_bridge
     path: src/zephyr/infrastructure/system_telemetry/_trace_bridge.py
     domain: D_INFRA_RUNTIME
@@ -549,7 +552,7 @@ families:
     domain: D_OPS
     maturity: production
     family: L1_monitor
-    wiring: wired
+    wiring: wired_by_header
   - module: zephyr.infrastructure.system_telemetry.auto_bootstrap
     path: src/zephyr/infrastructure/system_telemetry/auto_bootstrap.py
     domain: D_INFRA_RUNTIME
@@ -591,13 +594,13 @@ families:
     domain: D_OPS
     maturity: production
     family: L1_monitor
-    wiring: wired
+    wiring: wired_by_header
   - module: zephyr.infrastructure.system_telemetry.latency_attributor
     path: src/zephyr/infrastructure/system_telemetry/latency_attributor.py
     domain: D_INFRA_TELEMETRY
     maturity: production
     family: L1_monitor
-    wiring: wired
+    wiring: wired_by_header
   - module: zephyr.infrastructure.system_telemetry.logs
     path: src/zephyr/infrastructure/system_telemetry/logs/__init__.py
     domain: D_INFRA_RUNTIME
@@ -633,7 +636,7 @@ families:
     domain: D_INFRA_TELEMETRY
     maturity: production
     family: L1_monitor
-    wiring: wired
+    wiring: wired_by_header
   - module: zephyr.infrastructure.system_telemetry.ops_incident_aggregate
     path: src/zephyr/infrastructure/system_telemetry/ops_incident_aggregate.py
     domain: D_OPS
@@ -645,7 +648,7 @@ families:
     domain: D_AUTONOMY_CORE
     maturity: production
     family: L1_monitor
-    wiring: wired
+    wiring: suspect_orphan
   - module: zephyr.infrastructure.system_telemetry.profiles
     path: src/zephyr/infrastructure/system_telemetry/profiles/__init__.py
     domain: ''
@@ -711,13 +714,13 @@ families:
     domain: D_PF_CORE
     maturity: production
     family: L1_monitor
-    wiring: wired
+    wiring: wired_by_header
   - module: zephyr.plan_engine.plan_deviation_monitor
     path: src/zephyr/plan_engine/plan_deviation_monitor.py
     domain: D_PLAN
     maturity: production
     family: L1_monitor
-    wiring: wired
+    wiring: wired_by_header
   - module: zephyr.position.core.correlation_regime_monitor
     path: src/zephyr/position/core/correlation_regime_monitor.py
     domain: D_POSITION
@@ -753,7 +756,7 @@ families:
     domain: D_RISK
     maturity: production
     family: L1_monitor
-    wiring: wired
+    wiring: wired_by_header
   - module: zephyr.risk.core.ai_agent_monitor
     path: src/zephyr/risk/core/ai_agent_monitor.py
     domain: D_RISK
@@ -765,7 +768,7 @@ families:
     domain: D_RISK
     maturity: production
     family: L1_monitor
-    wiring: wired
+    wiring: wired_by_header
   - module: zephyr.risk.core.crowding_monitor
     path: src/zephyr/risk/core/crowding_monitor.py
     domain: D_RISK
@@ -795,13 +798,13 @@ families:
     domain: D_RISK
     maturity: production
     family: L1_monitor
-    wiring: wired
+    wiring: wired_by_header
   - module: zephyr.risk.core.survival_line_monitor
     path: src/zephyr/risk/core/survival_line_monitor.py
     domain: D_RISK
     maturity: testing
     family: L1_monitor
-    wiring: wired_by_header
+    wiring: wired
   - module: zephyr.risk.core.tail_risk_monitor
     path: src/zephyr/risk/core/tail_risk_monitor.py
     domain: D_RISK
@@ -819,7 +822,7 @@ families:
     domain: D_AUTONOMY_CORE
     maturity: production
     family: L1_monitor
-    wiring: wired
+    wiring: suspect_orphan
   - module: zephyr.sell_decision.core.sell_signal_accuracy_monitor
     path: src/zephyr/sell_decision/core/sell_signal_accuracy_monitor.py
     domain: D_SELL_DECISION
@@ -903,7 +906,7 @@ families:
     domain: D_SIGQC
     maturity: production
     family: L1_monitor
-    wiring: wired
+    wiring: wired_by_header
   - module: zephyr.trading.health_monitor
     path: src/zephyr/trading/health_monitor.py
     domain: D_INFRA_RUNTIME
@@ -916,13 +919,13 @@ families:
     domain: D_AUTONOMY_PERM
     maturity: production
     family: L3_fuse
-    wiring: wired
+    wiring: suspect_orphan
   - module: scripts.governance.meta.manage_kill_switch
     path: scripts/governance/meta/manage_kill_switch.py
     domain: D_AUTONOMY_PERM
     maturity: production
     family: L3_fuse
-    wiring: wired
+    wiring: suspect_orphan
   - module: zephyr.autonomy_core.kill_switch_orchestrator
     path: src/zephyr/autonomy_core/kill_switch_orchestrator.py
     domain: D_AUTONOMY_CORE
@@ -934,7 +937,7 @@ families:
     domain: D_AUTONOMY_CORE
     maturity: production
     family: L3_fuse
-    wiring: wired
+    wiring: wired_by_header
   - module: zephyr.autonomy_core.skills.skill_kill_switch
     path: src/zephyr/autonomy_core/skills/skill_kill_switch.py
     domain: D_AUTONOMY_CORE
@@ -958,7 +961,7 @@ families:
     domain: D_GOVERNANCE
     maturity: production
     family: L3_fuse
-    wiring: wired
+    wiring: wired_dynamic
   - module: zephyr.governance.ops_governance.stream_abort_guard
     path: src/zephyr/governance/ops_governance/stream_abort_guard.py
     domain: D_GOV_OPS_RESILIENCE
@@ -982,7 +985,7 @@ families:
     domain: D_INFRA_RUNTIME
     maturity: production
     family: L3_fuse
-    wiring: wired
+    wiring: suspect_orphan
   - module: zephyr.infrastructure.pipeline.circuit_breaker_manager
     path: src/zephyr/infrastructure/pipeline/circuit_breaker_manager.py
     domain: D_INFRA_RUNTIME
@@ -1000,7 +1003,7 @@ families:
     domain: D_MKT_DATA
     maturity: production
     family: L3_fuse
-    wiring: wired
+    wiring: wired_by_header
   - module: zephyr.market_data.failover.manager
     path: src/zephyr/market_data/failover/manager.py
     domain: D_MKT_DATA
@@ -1043,61 +1046,61 @@ families:
     domain: D_GOV_SCRIPTS
     maturity: production
     family: L2_resource
-    wiring: wired
+    wiring: suspect_orphan
   - module: scripts.governance.d5_architecture.check_budget_health
     path: scripts/governance/d5_architecture/check_budget_health.py
     domain: D_GOV_SCRIPTS
     maturity: production
     family: L2_resource
-    wiring: wired_by_header
+    wiring: suspect_orphan
   - module: scripts.governance.meta.manage_error_budget
     path: scripts/governance/meta/manage_error_budget.py
     domain: D_GOV_SCRIPTS
     maturity: production
     family: L2_resource
-    wiring: wired
+    wiring: suspect_orphan
   - module: zephyr.autonomy_core.context.complexity_budget
     path: src/zephyr/autonomy_core/context/complexity_budget.py
     domain: D_AUTONOMY_CORE
     maturity: production
     family: L2_resource
-    wiring: wired
+    wiring: suspect_orphan
   - module: zephyr.autonomy_core.context.context_budget
     path: src/zephyr/autonomy_core/context/context_budget.py
     domain: D_AUTONOMY_CORE
     maturity: production
     family: L2_resource
-    wiring: wired
+    wiring: wired_by_header
   - module: zephyr.autonomy_core.context.context_budget_tracker
     path: src/zephyr/autonomy_core/context/context_budget_tracker.py
     domain: D_AUTONOMY_CORE
     maturity: production
     family: L2_resource
-    wiring: wired
+    wiring: suspect_orphan
   - module: zephyr.feedback_loop.detectors.reliability.blast_radius_budget
     path: src/zephyr/feedback_loop/detectors/reliability/blast_radius_budget.py
     domain: D_FBL_DETECTORS
     maturity: production
     family: L2_resource
-    wiring: wired
+    wiring: suspect_orphan
   - module: zephyr.feedback_loop.diagnosers.cognitive.cognitive_load_budget
     path: src/zephyr/feedback_loop/diagnosers/cognitive/cognitive_load_budget.py
     domain: D_FBL_DIAGNOSERS
     maturity: production
     family: L2_resource
-    wiring: wired
+    wiring: suspect_orphan
   - module: zephyr.feedback_loop.diagnosers.cognitive.meta_guard_latency_budget
     path: src/zephyr/feedback_loop/diagnosers/cognitive/meta_guard_latency_budget.py
     domain: D_FBL_DIAGNOSERS
     maturity: production
     family: L2_resource
-    wiring: wired
+    wiring: suspect_orphan
   - module: zephyr.feedback_loop.error_budget
     path: src/zephyr/feedback_loop/error_budget.py
     domain: D_FEEDBACK_LOOP
     maturity: production
     family: L2_resource
-    wiring: wired
+    wiring: suspect_orphan
   - module: zephyr.feedback_loop.forensic.guard_complexity_budget
     path: src/zephyr/feedback_loop/forensic/guard_complexity_budget.py
     domain: D_FEEDBACK_LOOP
@@ -1109,7 +1112,7 @@ families:
     domain: D_FBL_VERIFICATION
     maturity: production
     family: L2_resource
-    wiring: wired
+    wiring: suspect_orphan
   - module: zephyr.gov_drift.resource_guard
     path: src/zephyr/gov_drift/resource_guard.py
     domain: D_GOV_DRIFT
@@ -1121,13 +1124,13 @@ families:
     domain: D_GOV_CODE_QUALITY
     maturity: production
     family: L2_resource
-    wiring: wired
+    wiring: wired_by_header
   - module: zephyr.governance.context_governance.context_budget
     path: src/zephyr/governance/context_governance/context_budget.py
     domain: D_GOVERNANCE
     maturity: production
     family: L2_resource
-    wiring: wired
+    wiring: suspect_orphan
   - module: zephyr.governance.financial_governance.budget_enforcement
     path: src/zephyr/governance/financial_governance/budget_enforcement.py
     domain: D_GOV_REPAIR
@@ -1145,7 +1148,7 @@ families:
     domain: D_OPS
     maturity: production
     family: L2_resource
-    wiring: wired
+    wiring: wired_by_header
   - module: zephyr.governance.ops_governance.budget_models
     path: src/zephyr/governance/ops_governance/budget_models.py
     domain: D_OPS
@@ -1157,7 +1160,7 @@ families:
     domain: D_OPS
     maturity: production
     family: L2_resource
-    wiring: wired
+    wiring: suspect_orphan
   - module: zephyr.governance.ops_governance.budget_tracker
     path: src/zephyr/governance/ops_governance/budget_tracker.py
     domain: D_OPS
@@ -1169,19 +1172,19 @@ families:
     domain: D_OPS
     maturity: production
     family: L2_resource
-    wiring: wired
+    wiring: suspect_orphan
   - module: zephyr.governance.ops_governance.error_budget_burst_limiter
     path: src/zephyr/governance/ops_governance/error_budget_burst_limiter.py
     domain: D_GOV_OPS_RESILIENCE
     maturity: production
     family: L2_resource
-    wiring: wired
+    wiring: wired_by_header
   - module: zephyr.governance.ops_governance.self_budget_tracker
     path: src/zephyr/governance/ops_governance/self_budget_tracker.py
     domain: D_GOV_OPS_RESILIENCE
     maturity: production
     family: L2_resource
-    wiring: wired
+    wiring: suspect_orphan
   - module: zephyr.governance.ops_governance.token_budget
     path: src/zephyr/governance/ops_governance/token_budget.py
     domain: D_OPS
@@ -1193,13 +1196,13 @@ families:
     domain: D_INFRA_RUNTIME
     maturity: production
     family: L2_resource
-    wiring: wired
+    wiring: wired_by_header
   - module: zephyr.infrastructure.budget_enforcement
     path: src/zephyr/infrastructure/budget_enforcement/__init__.py
     domain: D_INFRA_RUNTIME
     maturity: production
     family: L2_resource
-    wiring: wired
+    wiring: wired_dynamic
   - module: zephyr.infrastructure.budget_enforcement.rbac_bridge
     path: src/zephyr/infrastructure/budget_enforcement/rbac_bridge.py
     domain: D_INFRA_RUNTIME
@@ -1211,19 +1214,19 @@ families:
     domain: ''
     maturity: ''
     family: L2_resource
-    wiring: wired
+    wiring: wired_dynamic
   - module: zephyr.infrastructure.capacity_assurance.budget_forecaster
     path: src/zephyr/infrastructure/capacity_assurance/budget_forecaster.py
     domain: D_INFRA_RUNTIME
     maturity: production
     family: L2_resource
-    wiring: wired
+    wiring: suspect_orphan
   - module: zephyr.infrastructure.capacity_assurance.contracts
     path: src/zephyr/infrastructure/capacity_assurance/contracts/__init__.py
     domain: ''
     maturity: ''
     family: L2_resource
-    wiring: wired
+    wiring: suspect_orphan
   - module: zephyr.infrastructure.capacity_assurance.contracts.batch1_infra
     path: src/zephyr/infrastructure/capacity_assurance/contracts/batch1_infra.py
     domain: D_INFRA_RUNTIME
@@ -1253,37 +1256,37 @@ families:
     domain: D_INFRA_RUNTIME
     maturity: production
     family: L2_resource
-    wiring: wired
+    wiring: suspect_orphan
   - module: zephyr.infrastructure.capacity_assurance.host_resource_governor
     path: src/zephyr/infrastructure/capacity_assurance/host_resource_governor.py
     domain: D_INFRA_RUNTIME
     maturity: production
     family: L2_resource
-    wiring: wired
+    wiring: suspect_orphan
   - module: zephyr.infrastructure.capacity_assurance.risk_mitigation
     path: src/zephyr/infrastructure/capacity_assurance/risk_mitigation.py
     domain: D_INFRA_RUNTIME
     maturity: production
     family: L2_resource
-    wiring: wired
+    wiring: suspect_orphan
   - module: zephyr.infrastructure.capacity_assurance.schema
     path: src/zephyr/infrastructure/capacity_assurance/schema.py
     domain: D_INFRA_RUNTIME
     maturity: production
     family: L2_resource
-    wiring: wired
+    wiring: suspect_orphan
   - module: zephyr.infrastructure.capacity_assurance.sli_instrumentation
     path: src/zephyr/infrastructure/capacity_assurance/sli_instrumentation.py
     domain: D_INFRA_RUNTIME
     maturity: production
     family: L2_resource
-    wiring: wired
+    wiring: suspect_orphan
   - module: zephyr.infrastructure.capacity_assurance.tech_stack
     path: src/zephyr/infrastructure/capacity_assurance/tech_stack.py
     domain: D_INFRA_RUNTIME
     maturity: production
     family: L2_resource
-    wiring: wired
+    wiring: suspect_orphan
   - module: zephyr.infrastructure.capacity_assurance.token_budget
     path: src/zephyr/infrastructure/capacity_assurance/token_budget.py
     domain: D_INFRA_RUNTIME
@@ -1301,7 +1304,7 @@ families:
     domain: D_INFRA_RUNTIME
     maturity: production
     family: L2_resource
-    wiring: wired
+    wiring: suspect_orphan
   - module: zephyr.infrastructure.rollback.budget_tracker
     path: src/zephyr/infrastructure/rollback/budget_tracker.py
     domain: D_INFRA_RECOVERY
@@ -1331,25 +1334,25 @@ families:
     domain: D_INFRA_RUNTIME
     maturity: production
     family: L2_resource
-    wiring: wired
+    wiring: suspect_orphan
   - module: zephyr.integration.budget_enforcer.__init__
     path: src/zephyr/integration/budget_enforcer/__init__.py
     domain: ''
     maturity: ''
     family: L2_resource
-    wiring: wired
+    wiring: suspect_orphan
   - module: zephyr.integration.budget_enforcer.degradation_spiral_detector
     path: src/zephyr/integration/budget_enforcer/degradation_spiral_detector.py
     domain: D_INTEGRATION
     maturity: production
     family: L2_resource
-    wiring: wired
+    wiring: suspect_orphan
   - module: zephyr.orchestrator.governance.capacity_budget
     path: src/zephyr/orchestrator/governance/capacity_budget.py
     domain: D_ORCHESTRATOR
     maturity: production
     family: L2_resource
-    wiring: wired
+    wiring: suspect_orphan
   - module: zephyr.pf_alloc.core.risk_budget_allocator
     path: src/zephyr/pf_alloc/core/risk_budget_allocator.py
     domain: D_PF_ALLOC
@@ -1367,7 +1370,7 @@ families:
     domain: D_POSITION
     maturity: production
     family: L2_resource
-    wiring: wired
+    wiring: wired_by_header
   - module: zephyr.position.core.position_time_budget
     path: src/zephyr/position/core/position_time_budget.py
     domain: D_POSITION
@@ -1385,7 +1388,7 @@ families:
     domain: D_SHARED
     maturity: production
     family: L2_resource
-    wiring: wired
+    wiring: wired_by_header
   - module: zephyr.shared.contracts.escalation.budget_alert
     path: src/zephyr/shared/contracts/escalation/budget_alert.py
     domain: D_SHARED
@@ -1403,13 +1406,13 @@ families:
     domain: D_SHARED
     maturity: production
     family: L2_resource
-    wiring: wired
+    wiring: wired_by_header
   - module: zephyr.trading.gpu_consensus_scheduler
     path: src/zephyr/trading/gpu_consensus_scheduler.py
     domain: D_TRADING
     maturity: production
     family: L2_resource
-    wiring: wired
+    wiring: wired_by_header
   - module: zephyr.trading.gpu_monitor
     path: src/zephyr/trading/gpu_monitor.py
     domain: D_TRADING
@@ -1428,13 +1431,13 @@ families:
     domain: D_GOVERNANCE
     maturity: production
     family: L4_reap
-    wiring: wired_by_header
+    wiring: suspect_orphan
   - module: scripts.governance._sync.fix_orphan_deps
     path: scripts/governance/_sync/fix_orphan_deps.py
     domain: D_GOV_SCRIPTS
     maturity: production
     family: L4_reap
-    wiring: wired_by_header
+    wiring: suspect_orphan
   - module: scripts.governance.check_wiring_orphan
     path: scripts/governance/check_wiring_orphan.py
     domain: ''
@@ -1446,43 +1449,43 @@ families:
     domain: D_GOV_SCRIPTS
     maturity: production
     family: L4_reap
-    wiring: wired
+    wiring: suspect_orphan
   - module: scripts.governance.d1_structure.detect_orphan_py
     path: scripts/governance/d1_structure/detect_orphan_py.py
     domain: D_GOV_SCRIPTS
     maturity: production
     family: L4_reap
-    wiring: wired
+    wiring: suspect_orphan
   - module: scripts.governance.d5_architecture.checkers.check_orphan_outputs
     path: scripts/governance/d5_architecture/checkers/check_orphan_outputs.py
     domain: D_GOV_SCRIPTS
     maturity: production
     family: L4_reap
-    wiring: wired
+    wiring: suspect_orphan
   - module: scripts.governance.fix_orphan_exports
     path: scripts/governance/d7_code/fix_orphan_exports.py
     domain: D_GOV_SCRIPTS
     maturity: production
     family: L4_reap
-    wiring: wired_by_header
+    wiring: suspect_orphan
   - module: scripts.governance.governance.d9_knowledge.detect_orphan_documents
     path: scripts/governance/d9_knowledge/detect_orphan_documents.py
     domain: D_GOV_SCRIPTS
     maturity: production
     family: L4_reap
-    wiring: wired
+    wiring: suspect_orphan
   - module: scripts.governance.meta.benchmark.test_fixtures.orphan_file_without_module_registration
     path: scripts/governance/meta/benchmark/test_fixtures/orphan_file_without_module_registration.py
     domain: D_GOV_SCRIPTS
     maturity: production
     family: L4_reap
-    wiring: wired
+    wiring: suspect_orphan
   - module: zephyr.feedback_loop.diagnosers.reliability.zombie_fle_detector
     path: src/zephyr/feedback_loop/diagnosers/reliability/zombie_fle_detector.py
     domain: D_FBL_DIAGNOSERS
     maturity: production
     family: L4_reap
-    wiring: wired
+    wiring: suspect_orphan
   - module: zephyr.gov_drift.orphan_scanner
     path: src/zephyr/gov_drift/orphan_scanner.py
     domain: D_GOV_DRIFT
@@ -1500,13 +1503,13 @@ families:
     domain: D_INFRA_RUNTIME
     maturity: production
     family: L4_reap
-    wiring: wired
+    wiring: wired_dynamic
   - module: zephyr.security.access_control.orphan_judge.__init__
     path: src/zephyr/security/access_control/orphan_judge/__init__.py
     domain: ''
     maturity: ''
     family: L4_reap
-    wiring: wired
+    wiring: wired_dynamic
   - module: zephyr.security.access_control.orphan_judge.__main__
     path: src/zephyr/security/access_control/orphan_judge/__main__.py
     domain: D_SECURITY
@@ -1548,7 +1551,7 @@ families:
     domain: D_SECURITY
     maturity: production
     family: L4_reap
-    wiring: wired
+    wiring: wired_by_header
   - module: zephyr.security.access_control.orphan_judge.duplicate_detector
     path: src/zephyr/security/access_control/orphan_judge/duplicate_detector.py
     domain: D_SECURITY
@@ -1560,13 +1563,13 @@ families:
     domain: D_SECURITY
     maturity: production
     family: L4_reap
-    wiring: wired
+    wiring: wired_by_header
   - module: zephyr.security.access_control.orphan_judge.feedback_bridge
     path: src/zephyr/security/access_control/orphan_judge/feedback_bridge.py
     domain: D_SECURITY
     maturity: production
     family: L4_reap
-    wiring: wired
+    wiring: wired_by_header
   - module: zephyr.security.access_control.orphan_judge.judge
     path: src/zephyr/security/access_control/orphan_judge/judge.py
     domain: D_SECURITY
@@ -1578,13 +1581,13 @@ families:
     domain: D_SECURITY
     maturity: production
     family: L4_reap
-    wiring: wired
+    wiring: wired_by_header
   - module: zephyr.security.access_control.orphan_judge.mcp_integration
     path: src/zephyr/security/access_control/orphan_judge/mcp_integration.py
     domain: D_SECURITY
     maturity: production
     family: L4_reap
-    wiring: wired
+    wiring: wired_by_header
   - module: zephyr.security.access_control.orphan_judge.models
     path: src/zephyr/security/access_control/orphan_judge/models.py
     domain: D_SECURITY
@@ -1608,7 +1611,7 @@ families:
     domain: D_SECURITY
     maturity: production
     family: L4_reap
-    wiring: wired
+    wiring: wired_by_header
   - module: zephyr.security.access_control.orphan_judge.reference_graph_engine
     path: src/zephyr/security/access_control/orphan_judge/reference_graph_engine.py
     domain: D_SECURITY
@@ -1670,6 +1673,18 @@ families:
     maturity: production
     family: L5_selfheal
     wiring: wired
+  - module: scripts.ch.apply_consensus_daily_repaired_ddl
+    path: scripts/ch/apply_consensus_daily_repaired_ddl.py
+    domain: D_FACTOR
+    maturity: design
+    family: L5_selfheal
+    wiring: wired_by_header
+  - module: scripts.ch.build_consensus_daily_repaired
+    path: scripts/ch/build_consensus_daily_repaired.py
+    domain: D_FACTOR
+    maturity: design
+    family: L5_selfheal
+    wiring: wired_by_header
   - module: scripts.governance.audit_llm_registry_reconciliation
     path: scripts/governance/audit_llm_registry_reconciliation.py
     domain: D_GOV_SCRIPTS
@@ -1681,7 +1696,7 @@ families:
     domain: D_GOV_SCRIPTS
     maturity: production
     family: L5_selfheal
-    wiring: wired
+    wiring: wired_by_header
   - module: scripts.governance.d8_doc_sync.agents_cheatsheet_drift_reconciler
     path: scripts/governance/d8_doc_sync/agents_cheatsheet_drift_reconciler.py
     domain: D_GOV_DOCS
@@ -1717,13 +1732,13 @@ families:
     domain: D_GOV_SCRIPTS
     maturity: production
     family: L5_selfheal
-    wiring: wired
+    wiring: wired_by_header
   - module: scripts.governance.meta.verify_reconciliation_registry
     path: scripts/governance/meta/verify_reconciliation_registry.py
     domain: D_GOV_SCRIPTS
     maturity: production
     family: L5_selfheal
-    wiring: wired
+    wiring: wired_by_header
   - module: scripts.governance.reconcile_generators
     path: scripts/governance/reconcile_generators.py
     domain: D_GOV_SCRIPTS
@@ -1747,49 +1762,49 @@ families:
     domain: D_GOV_SCRIPTS
     maturity: production
     family: L5_selfheal
-    wiring: wired
+    wiring: suspect_orphan
   - module: '#'
     path: scripts/governance/repair/concurrent_write_test.py
     domain: '#'
     maturity: production
     family: L5_selfheal
-    wiring: wired
+    wiring: suspect_orphan
   - module: scripts.governance.repair.p2_pg_concurrent_test
     path: scripts/governance/repair/p2_pg_concurrent_test.py
     domain: ''
     maturity: ''
     family: L5_selfheal
-    wiring: wired
+    wiring: suspect_orphan
   - module: scripts.governance.repair.red_blue_test
     path: scripts/governance/repair/red_blue_test.py
     domain: D_GOV_AUDIT
     maturity: production
     family: L5_selfheal
-    wiring: wired
+    wiring: suspect_orphan
   - module: scripts.governance.repair.rollback_depgraph
     path: scripts/governance/repair/rollback_depgraph.py
     domain: D_GOV_AUDIT
     maturity: production
     family: L5_selfheal
-    wiring: wired
+    wiring: suspect_orphan
   - module: zephyr.feedback_loop.diagnosers.health.self_health_monitor
     path: src/zephyr/feedback_loop/diagnosers/health/self_health_monitor.py
     domain: D_FBL_DIAGNOSERS
     maturity: production
     family: L5_selfheal
-    wiring: wired
+    wiring: suspect_orphan
   - module: zephyr.feedback_loop.diagnosers.reliability.capacity_aware_repair
     path: src/zephyr/feedback_loop/diagnosers/reliability/capacity_aware_repair.py
     domain: D_FBL_DIAGNOSERS
     maturity: production
     family: L5_selfheal
-    wiring: wired
+    wiring: suspect_orphan
   - module: zephyr.feedback_loop.gates.blueprint_code_reconciler
     path: src/zephyr/feedback_loop/gates/blueprint_code_reconciler.py
     domain: D_FBL_VERIFICATION
     maturity: production
     family: L5_selfheal
-    wiring: wired
+    wiring: suspect_orphan
   - module: zephyr.feedback_loop.verifiers.canary_repair
     path: src/zephyr/feedback_loop/verifiers/canary_repair.py
     domain: D_FBL_VERIFICATION
@@ -1825,13 +1840,13 @@ families:
     domain: D_GOV_CODE_QUALITY
     maturity: production
     family: L5_selfheal
-    wiring: wired
+    wiring: wired_by_header
   - module: zephyr.governance.architecture_governance.blueprint_reconciler
     path: src/zephyr/governance/architecture_governance/blueprint_reconciler.py
     domain: D_GOVERNANCE
     maturity: production
     family: L5_selfheal
-    wiring: wired
+    wiring: wired_by_header
   - module: zephyr.governance.audit.blueprint_status_transition_reconciler
     path: src/zephyr/governance/audit/blueprint_status_transition_reconciler.py
     domain: D_GOV_AUDIT
@@ -1891,7 +1906,7 @@ families:
     domain: D_GOV_AUDIT
     maturity: production
     family: L5_selfheal
-    wiring: wired
+    wiring: wired_dynamic
   - module: zephyr.governance.audit.reconciliation_registry
     path: src/zephyr/governance/audit/reconciliation_registry.py
     domain: D_GOV_AUDIT
@@ -1951,7 +1966,7 @@ families:
     domain: D_INFRA_RUNTIME
     maturity: production
     family: L5_selfheal
-    wiring: wired
+    wiring: wired_by_header
   - module: zephyr.infrastructure.auto_fix_engine.alignment_syncer
     path: src/zephyr/infrastructure/auto_fix_engine/alignment_syncer.py
     domain: D_INFRA_RUNTIME
@@ -2119,13 +2134,13 @@ families:
     domain: D_ORCHESTRATOR
     maturity: production
     family: L5_selfheal
-    wiring: wired
+    wiring: suspect_orphan
   - module: zephyr.position.position_reconciler
     path: src/zephyr/position/position_reconciler.py
     domain: D_POSITION
     maturity: production
     family: L5_selfheal
-    wiring: wired
+    wiring: suspect_orphan
   - module: zephyr.reporting.reconciliation_schema
     path: src/zephyr/reporting/reconciliation_schema.py
     domain: D_REPORTING
@@ -2150,37 +2165,37 @@ families:
     domain: ''
     maturity: ''
     family: L0_lifecycle
-    wiring: wired
+    wiring: suspect_orphan
   - module: scripts.governance.d5_architecture.validators.lifecycle.validate_lifecycle_refs
     path: scripts/governance/d5_architecture/validators/lifecycle/validate_lifecycle_refs.py
     domain: D_GOV_SCRIPTS
     maturity: production
     family: L0_lifecycle
-    wiring: wired
+    wiring: suspect_orphan
   - module: scripts.governance.d5_architecture.validators.lifecycle.validate_module_lifecycle
     path: scripts/governance/d5_architecture/validators/lifecycle/validate_module_lifecycle.py
     domain: D_GOV_SCRIPTS
     maturity: production
     family: L0_lifecycle
-    wiring: wired
+    wiring: suspect_orphan
   - module: scripts.governance.d8_doc_sync.validate_document_lifecycle
     path: scripts/governance/d8_doc_sync/validate_document_lifecycle.py
     domain: D_GOV_SCRIPTS
     maturity: production
     family: L0_lifecycle
-    wiring: wired
+    wiring: suspect_orphan
   - module: scripts.governance.meta.session_startup_check
     path: scripts/governance/meta/session_startup_check.py
     domain: D_GOV_SCRIPTS
     maturity: production
     family: L0_lifecycle
-    wiring: wired
+    wiring: suspect_orphan
   - module: scripts.governance.meta.trace_finding_lifecycle
     path: scripts/governance/meta/trace_finding_lifecycle.py
     domain: D_GOV_SCRIPTS
     maturity: production
     family: L0_lifecycle
-    wiring: wired
+    wiring: suspect_orphan
   - module: zephyr.autonomy_core.skills.skill_lifecycle
     path: src/zephyr/autonomy_core/skills/skill_lifecycle.py
     domain: D_AUTONOMY_CORE
@@ -2198,19 +2213,19 @@ families:
     domain: D_FBL_DETECTORS
     maturity: production
     family: L0_lifecycle
-    wiring: wired
+    wiring: suspect_orphan
   - module: zephyr.feedback_loop.gates.flag_lifecycle_manager
     path: src/zephyr/feedback_loop/gates/flag_lifecycle_manager.py
     domain: D_FBL_VERIFICATION
     maturity: production
     family: L0_lifecycle
-    wiring: wired
+    wiring: suspect_orphan
   - module: zephyr.gov_code_quality.code_dedup.shared_lifecycle_manager
     path: src/zephyr/gov_code_quality/code_dedup/shared_lifecycle_manager.py
     domain: D_GOV_CODE_QUALITY
     maturity: production
     family: L0_lifecycle
-    wiring: wired
+    wiring: wired_by_header
   - module: zephyr.gov_enforcement.rule_bridge.checker_supervisor
     path: src/zephyr/gov_enforcement/rule_bridge/checker_supervisor.py
     domain: D_GOV_ENFORCEMENT
@@ -2228,7 +2243,7 @@ families:
     domain: D_GOV_RULE
     maturity: production
     family: L0_lifecycle
-    wiring: wired
+    wiring: wired_by_header
   - module: zephyr.governance.audit.doc_lifecycle
     path: src/zephyr/governance/audit/doc_lifecycle.py
     domain: D_GOV_AUDIT
@@ -2252,7 +2267,7 @@ families:
     domain: ''
     maturity: ''
     family: L0_lifecycle
-    wiring: wired
+    wiring: suspect_orphan
   - module: zephyr.governance.lifecycle_governance.ai_behavior_baseline
     path: src/zephyr/governance/lifecycle_governance/ai_behavior_baseline.py
     domain: D_GOVERNANCE
@@ -2270,7 +2285,7 @@ families:
     domain: D_GOVERNANCE
     maturity: production
     family: L0_lifecycle
-    wiring: wired
+    wiring: wired_by_header
   - module: zephyr.governance.lifecycle_governance.migration_strategy
     path: src/zephyr/governance/lifecycle_governance/migration_strategy.py
     domain: D_GOVERNANCE
@@ -2300,7 +2315,7 @@ families:
     domain: D_GOVERNANCE
     maturity: production
     family: L0_lifecycle
-    wiring: wired
+    wiring: wired_by_header
   - module: zephyr.governance.lifecycle_governance.rollback_state_machine
     path: src/zephyr/governance/lifecycle_governance/rollback_state_machine.py
     domain: D_GOVERNANCE
@@ -2324,7 +2339,7 @@ families:
     domain: D_GOVERNANCE
     maturity: production
     family: L0_lifecycle
-    wiring: wired
+    wiring: wired_by_header
   - module: zephyr.governance.resilience_governance.f5_shutdown_manager
     path: src/zephyr/governance/resilience_governance/f5_shutdown_manager.py
     domain: D_GOV_OPS_RESILIENCE
@@ -2342,7 +2357,7 @@ families:
     domain: D_INFRA_A2A
     maturity: production
     family: L0_lifecycle
-    wiring: wired
+    wiring: wired_by_header
   - module: zephyr.infrastructure.asset_inventory.lifecycle
     path: src/zephyr/infrastructure/asset_inventory/lifecycle.py
     domain: D_INFRA_RUNTIME
@@ -2354,7 +2369,7 @@ families:
     domain: ''
     maturity: ''
     family: L0_lifecycle
-    wiring: wired
+    wiring: suspect_orphan
   - module: zephyr.infrastructure.lifecycle.scope_guard
     path: src/zephyr/infrastructure/lifecycle/scope_guard.py
     domain: D_INFRA_RUNTIME
@@ -2390,85 +2405,85 @@ families:
     domain: D_ORCHESTRATOR
     maturity: production
     family: L0_lifecycle
-    wiring: wired
+    wiring: suspect_orphan
   - module: zephyr.orchestrator.lifecycle
     path: src/zephyr/orchestrator/lifecycle/__init__.py
     domain: D_ORCHESTRATOR
     maturity: ''
     family: L0_lifecycle
-    wiring: wired
+    wiring: suspect_orphan
   - module: zephyr.orchestrator.lifecycle.housekeeping
     path: src/zephyr/orchestrator/lifecycle/housekeeping.py
     domain: D_ORCHESTRATOR
     maturity: production
     family: L0_lifecycle
-    wiring: wired
+    wiring: suspect_orphan
   - module: zephyr.orchestrator.lifecycle.incident_postmortem
     path: src/zephyr/orchestrator/lifecycle/incident_postmortem.py
     domain: D_ORCHESTRATOR
     maturity: production
     family: L0_lifecycle
-    wiring: wired
+    wiring: suspect_orphan
   - module: zephyr.orchestrator.lifecycle.rolling_upgrade
     path: src/zephyr/orchestrator/lifecycle/rolling_upgrade.py
     domain: D_ORCHESTRATOR
     maturity: production
     family: L0_lifecycle
-    wiring: wired
+    wiring: suspect_orphan
   - module: zephyr.orchestrator.lifecycle.session_conflict
     path: src/zephyr/orchestrator/lifecycle/session_conflict.py
     domain: D_ORCHESTRATOR
     maturity: production
     family: L0_lifecycle
-    wiring: wired
+    wiring: suspect_orphan
   - module: zephyr.orchestrator.lifecycle.startup_sequencer
     path: src/zephyr/orchestrator/lifecycle/startup_sequencer.py
     domain: D_ORCHESTRATOR
     maturity: production
     family: L0_lifecycle
-    wiring: wired
+    wiring: suspect_orphan
   - module: zephyr.orchestrator.lifecycle.state_propagation
     path: src/zephyr/orchestrator/lifecycle/state_propagation.py
     domain: D_ORCHESTRATOR
     maturity: production
     family: L0_lifecycle
-    wiring: wired
+    wiring: suspect_orphan
   - module: zephyr.orchestrator.lifecycle.state_synchronizer
     path: src/zephyr/orchestrator/lifecycle/state_synchronizer.py
     domain: D_ORCHESTRATOR
     maturity: production
     family: L0_lifecycle
-    wiring: wired
+    wiring: suspect_orphan
   - module: zephyr.orchestrator.lifecycle.system_transfer
     path: src/zephyr/orchestrator/lifecycle/system_transfer.py
     domain: D_ORCHESTRATOR
     maturity: production
     family: L0_lifecycle
-    wiring: wired
+    wiring: suspect_orphan
   - module: zephyr.orchestrator.lifecycle.teardown_manager
     path: src/zephyr/orchestrator/lifecycle/teardown_manager.py
     domain: D_ORCHESTRATOR
     maturity: production
     family: L0_lifecycle
-    wiring: wired
+    wiring: suspect_orphan
   - module: zephyr.pf_alloc.strategy_lifecycle_event
     path: src/zephyr/pf_alloc/strategy_lifecycle_event.py
     domain: D_PF_ALLOC
     maturity: production
     family: L0_lifecycle
-    wiring: wired
+    wiring: suspect_orphan
   - module: zephyr.security.access_control.secrets_lifecycle
     path: src/zephyr/security/access_control/secrets_lifecycle.py
     domain: D_SECURITY
     maturity: design
     family: L0_lifecycle
-    wiring: wired
+    wiring: wired_by_header
   - module: zephyr.security.access_control.session_lifecycle
     path: src/zephyr/security/access_control/session_lifecycle.py
     domain: D_SECURITY
     maturity: design
     family: L0_lifecycle
-    wiring: wired
+    wiring: wired_by_header
   - module: zephyr.shared.contracts.strategy_lifecycle_event
     path: src/zephyr/shared/contracts/strategy_lifecycle_event.py
     domain: D_INFRASTRUCTURE
@@ -2492,7 +2507,7 @@ families:
     domain: ''
     maturity: ''
     family: L0_lifecycle
-    wiring: wired
+    wiring: suspect_orphan
   - module: zephyr.shared.lifecycle.daemon_registry
     path: src/zephyr/shared/lifecycle/daemon_registry.py
     domain: D_INFRA_RUNTIME
@@ -2522,13 +2537,13 @@ families:
     domain: D_SHARED
     maturity: production
     family: L0_lifecycle
-    wiring: wired
+    wiring: wired_by_header
   - module: zephyr.signal_ashare.market_lifecycle_phase
     path: src/zephyr/signal_ashare/market_lifecycle_phase.py
     domain: D_ASHARE_SIGNAL
     maturity: production
     family: L0_lifecycle
-    wiring: wired
+    wiring: wired_by_header
   - module: zephyr.signal_ashare.strategy_signal.pattern_lifecycle
     path: src/zephyr/signal_ashare/strategy_signal/pattern_lifecycle.py
     domain: D_ASHARE_SIGNAL
@@ -2576,7 +2591,7 @@ families:
     domain: D_INFRA_RUNTIME
     maturity: production
     family: L0_lifecycle
-    wiring: wired
+    wiring: suspect_orphan
   L6_audit:
   - module: scripts.ops_guard
     path: scripts/ops_guard.py
@@ -2589,7 +2604,7 @@ families:
     domain: D_SHARED
     maturity: production
     family: L6_audit
-    wiring: wired
+    wiring: wired_by_header
   - module: zephyr.trading.ai_audit_logger
     path: src/zephyr/trading/ai_audit_logger.py
     domain: D_INFRA_RUNTIME

@@ -1,7 +1,7 @@
 # [MODULE] tests.test_generate_governance_map
 # [DOMAIN] D_GOV_SCRIPTS
 # [TTL] permanent
-"""generate_governance_map 单测:族分类优先级/头解析/人工层保留/接线三态。
+"""generate_governance_map 单测:族分类优先级/头解析/人工层保留/接线四态(AST import 边/__all__/散文/importlib 动态)。
 
 零真实仓库依赖:REPO_ROOT/OUTPUT_PATH monkeypatch 到 tmp_path。
 """
@@ -118,6 +118,50 @@ class TestBuildDocument:
         assert doc2["pipeline"]["layers"][4]["mounts"] == ["zephyr.trading.process_reaper"]
         assert doc2["out_of_scope_refs"][0]["name_zh"] == "自定义引用"
         assert doc2["counts"]["total_modules"] == 1  # 机器层仍全量重建
+
+
+class TestWiringClassifierMechanism:
+    """接线判定回归:钉住"机制"而非计数——静态 import / __all__ / 散文 / importlib 动态 四路。"""
+
+    @staticmethod
+    def _write(root: Path, rel: str, text: str) -> None:
+        f = root / rel
+        f.parent.mkdir(parents=True, exist_ok=True)
+        f.write_text(text, encoding="utf-8")
+
+    def _seed(self, root: Path) -> None:
+        # (a) 真实静态 import：别处 `from zephyr.gmfix import wired_probe`
+        self._write(root, "src/zephyr/gmfix/wired_probe.py", "# [MODULE] zephyr.gmfix.wired_probe\nx = 1\n")
+        self._write(root, "src/zephyr/gmfix/consumer_static.py", "from zephyr.gmfix import wired_probe\n")
+        # (b) 仅在包 __all__ 出现(裸名,无 import 语句)——不得算 wired
+        self._write(root, "src/zephyr/gmfix/allpkg/__init__.py", '__all__ = ["allpkg_probe"]\n')
+        self._write(root, "src/zephyr/gmfix/allpkg/allpkg_probe.py", "# [MODULE] zephyr.gmfix.allpkg.allpkg_probe\nx = 1\n")
+        # (c) 仅在别处 docstring 散文里点名——不得算 wired
+        self._write(root, "src/zephyr/gmfix/docconsumer.py", '"""mentions zephyr.gmfix.doc_probe usage in prose."""\n')
+        self._write(root, "src/zephyr/gmfix/doc_probe.py", "# [MODULE] zephyr.gmfix.doc_probe\nx = 1\n")
+        # (d) importlib 字符串解析:REGISTRY 存完整点分串 + import_module 分发——归 dynamic(非硬接线)
+        self._write(
+            root,
+            "src/zephyr/gmfix/dynconsumer.py",
+            "import importlib\n"
+            'REGISTRY = {"k": "zephyr.gmfix.dyn_probe"}\n'
+            "def load():\n"
+            "    return importlib.import_module(REGISTRY['k'])\n",
+        )
+        self._write(root, "src/zephyr/gmfix/dyn_probe.py", "# [MODULE] zephyr.gmfix.dyn_probe\nx = 1\n")
+
+    def test_ast_classifier_tiers(self, tmp_path, monkeypatch):
+        self._seed(tmp_path)
+        monkeypatch.setattr(g, "REPO_ROOT", tmp_path)
+        mods = g.scan()
+        by_path = {m["path"]: m["wiring"] for ms in mods.values() for m in ms}
+        assert by_path["src/zephyr/gmfix/wired_probe.py"] == "wired"
+        assert by_path["src/zephyr/gmfix/allpkg/allpkg_probe.py"] == "suspect_orphan"
+        assert by_path["src/zephyr/gmfix/doc_probe.py"] == "suspect_orphan"
+        assert by_path["src/zephyr/gmfix/dyn_probe.py"] == "wired_dynamic"
+        # 核心病根回归锚:__all__ 再导出与散文点名绝不可伪装成 import 实锚
+        assert by_path["src/zephyr/gmfix/allpkg/allpkg_probe.py"] != "wired"
+        assert by_path["src/zephyr/gmfix/doc_probe.py"] != "wired"
 
 
 if __name__ == "__main__":

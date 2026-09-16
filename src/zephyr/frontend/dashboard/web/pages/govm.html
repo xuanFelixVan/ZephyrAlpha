@@ -2,17 +2,18 @@
     <h2 class="page-title">治理操作全景 <span class="badge b-pass">实时映射</span></h2>
     <div class="page-sub">系统组 · <b>治理运行地图（GOMAP-001，<span id="govm-count">—</span> 模块机生骨架）的原生实时视图——真源 YAML 一改这边自动变（30 秒轮询）</b>· 七层流水线 L0→L6：孵化→监控→资源→熔断→收割→自愈→审计 ｜ 模块路径点击复制 ｜ ⚠ 未接线候选=治理缺口直读</div>
 
-    <!-- 图例+meta 条（接线三态+未接线候选，色板沿 tdm/factory 既有语义不发明新色） -->
+    <!-- 图例+meta 条（接线四态：静态 import / 运行时 importlib / 头声明 / 孤儿 + 未接线候选，色板沿 tdm/factory 既有语义不发明新色） -->
     <div class="card" style="margin-bottom:10px;display:flex;gap:10px;align-items:center;flex-wrap:wrap">
       <span class="dim" style="font-size:12px">图例</span>
-      <span style="font-size:12px"><span style="display:inline-block;width:10px;height:10px;background:#0f2740;border:1.5px solid #1e5a8f;border-radius:3px;vertical-align:middle"></span> 已接线（import 实锚）</span>
+      <span style="font-size:12px"><span style="display:inline-block;width:10px;height:10px;background:#0f2740;border:1.5px solid #1e5a8f;border-radius:3px;vertical-align:middle"></span> 已接线·静态（AST import 实锚）</span>
+      <span style="font-size:12px"><span style="display:inline-block;width:10px;height:10px;background:#0f2740;border:1.5px dashed #1e5a8f;border-radius:3px;vertical-align:middle"></span> 已接线·运行时（importlib 字符串解析）</span>
       <span style="font-size:12px"><span style="display:inline-block;width:10px;height:10px;background:#0e2612;border:1.5px solid #2e7d32;border-radius:3px;vertical-align:middle"></span> 头声明接线（CONSUMERS 声明）</span>
       <span style="font-size:12px"><span style="display:inline-block;width:10px;height:10px;background:#2a1c0e;border:1.5px dashed #8a4a12;border-radius:3px;vertical-align:middle"></span> 疑似孤儿（无消费方）</span>
       <span style="font-size:12px"><span style="display:inline-block;width:10px;height:10px;background:#2a1c0e;border:1.5px dashed #8a4a12;border-radius:99px;vertical-align:middle"></span> ⚠ 层内未接线候选（流水线缺口）</span>
       <span style="margin-left:auto;font-size:11px" class="dim" id="govm-meta">加载中…</span>
     </div>
 
-    <!-- 真源统计条：counts 机生值+七族计数+接线三态分布（全部真源现算，禁硬编码计数） -->
+    <!-- 真源统计条：counts 机生值+七族计数+接线四态分布（全部真源现算，禁硬编码计数） -->
     <div class="card" id="govm-stats" style="margin-bottom:10px;display:flex;gap:14px;align-items:center;flex-wrap:wrap">
       <span class="dim" style="font-size:12px">真源统计</span>
       <span id="govm-stat-chips" style="display:flex;gap:6px;align-items:center;flex-wrap:wrap;font-size:12px;color:#8a94a6">加载中…</span>
