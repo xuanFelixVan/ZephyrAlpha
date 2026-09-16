@@ -118,3 +118,61 @@ class TestEnvAbortEscalation:
         st["env_aborts"] = 0  # 复位语义
         cbd._escalate_env_aborts(st)
         assert st["env_aborts"] == 1
+
+
+# ── 裁定#281①：纪元自检三态（未变不重启/变了安全点 execv/lease 被持不重启）──
+
+def _epoch_mod():
+    return cbd
+
+
+def _fake_execv(monkeypatch, calls):
+    import os as _os
+
+    def _fake(exec_path, argv):
+        calls.append((exec_path, argv))
+
+    monkeypatch.setattr(_os, "execv", _fake)
+
+
+def test_epoch_unchanged_no_reexec(tmp_path, monkeypatch):
+    """纪元未变 → 不重启（drain 正常继续）。"""
+    mod = _epoch_mod()
+    calls: list = []
+    _fake_execv(monkeypatch, calls)
+    monkeypatch.setattr(mod, "_gov_enforcement_epoch", lambda root: "sha-same")
+    monkeypatch.setattr(mod, "_serializer_lease_held", lambda qroot: False)
+    state: dict = {"epoch": "sha-same"}
+    assert mod._check_and_reexec(tmp_path, tmp_path, state) is False
+    assert calls == []
+
+
+def test_epoch_changed_reexecs_at_safe_point(tmp_path, monkeypatch):
+    """纪元变更 + lease 已释放（安全点）→ 单例锁先释放、execv 原地替换进程。"""
+    mod = _epoch_mod()
+    calls: list = []
+    _fake_execv(monkeypatch, calls)
+    monkeypatch.setattr(mod, "_gov_enforcement_epoch", lambda root: "sha-new")
+    monkeypatch.setattr(mod, "_serializer_lease_held", lambda qroot: False)
+    # 预置活体单例锁（真实位置=<root>/.runtime/commit_queue/）→ execv 前必须被释放
+    # （execv 不跑 finally，不释放=新进程被锁挡死 exit 2）
+    qroot = tmp_path / ".runtime" / "commit_queue"
+    qroot.mkdir(parents=True, exist_ok=True)
+    lock = qroot / mod._DAEMON_LOCK
+    lock.write_text(json.dumps({"pid": 1, "ts": 0.0}), encoding="utf-8")
+    state: dict = {"epoch": "sha-old"}
+    assert mod._check_and_reexec(tmp_path, tmp_path, state) is True
+    assert len(calls) == 1
+    assert not lock.exists(), "execv 前必须释放单例锁"
+
+
+def test_epoch_changed_but_lease_held_defers(tmp_path, monkeypatch):
+    """lease 被持（非安全点）→ 不重启，等下一个安全点。"""
+    mod = _epoch_mod()
+    calls: list = []
+    _fake_execv(monkeypatch, calls)
+    monkeypatch.setattr(mod, "_gov_enforcement_epoch", lambda root: "sha-new")
+    monkeypatch.setattr(mod, "_serializer_lease_held", lambda qroot: True)
+    state: dict = {"epoch": "sha-old"}
+    assert mod._check_and_reexec(tmp_path, tmp_path, state) is False
+    assert calls == []

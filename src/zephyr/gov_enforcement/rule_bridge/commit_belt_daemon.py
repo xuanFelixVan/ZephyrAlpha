@@ -208,6 +208,92 @@ def _escalate_env_aborts(counter: dict) -> None:
         pass
 
 
+# ── 裁定#281①：常驻进程代码纪元自检 + 安全点原地 re-exec（2026-09-17 施工）──
+# 病根：本守护 import 门禁模块一次常驻内存，任何门禁治本的生效延迟上限=进程寿命
+# （实证：PID 28648 自 07:17 常驻，21:39 落地的 R21 治本对它无效，22:06 仍按旧码
+# 挡死 q-…-0017）。治本=每轮 drain 后自检门禁子树纪元（HEAD tree sha），变更即
+# 在安全点（lease 已释放、两轮 drain 之间）os.execv 原地重启——禁自杀退出（本仓
+# 无计划任务重拉本守护，退出即掐断全仓排队落地）。
+_SERIALIZER_LEASE = "serializer.lease"
+_REEXEC_ENV_FLAG = "ZEPHYR_BELT_DAEMON_NO_REEXEC"  # 运维逃生：置 1 禁自动 re-exec
+
+
+def _gov_enforcement_epoch(project_root: Path) -> str | None:
+    """门禁代码纪元：src/zephyr/gov_enforcement 的 HEAD tree sha。
+
+    tree sha 对子树内任何文件任何变更敏感且零成本（单次 rev-parse）；
+    git 不可达返回 None（fail-open：无证据不重启）。经 run_subprocess_hidden
+    （process_pool 正门，禁裸 subprocess——对齐 worktree_drift_watchdog 口径）。
+    """
+    from zephyr.shared.infra.process_pool import run_subprocess_hidden  # noqa: PLC0415
+
+    try:
+        r = run_subprocess_hidden(
+            ["git", "rev-parse", "HEAD:src/zephyr/gov_enforcement"],
+            capture_output=True,
+            text=True,
+            cwd=str(project_root),
+            timeout=10,
+        )
+        if r is not None and r.returncode == 0 and r.stdout.strip():
+            return r.stdout.strip()
+    except Exception:  # noqa: BLE001 — 环境故障按"纪元未知"处理
+        pass
+    return None
+
+
+def _serializer_lease_held(qroot: Path) -> bool:
+    """Serializer lease 活体判定（serializer.lease：PID 判活；判不了=按持有，保守不重启）。"""
+    import zephyr.shared.infra.process_pool as pp  # noqa: PLC0415
+
+    lease = qroot / _SERIALIZER_LEASE
+    try:
+        if not lease.exists():
+            return False
+        data = json.loads(lease.read_text(encoding="utf-8"))
+        pid = data.get("pid", 0)
+        return isinstance(pid, int) and pid > 0 and pp.is_pid_alive(pid)
+    except Exception:  # noqa: BLE001 — 保守：lease 态未知=当持有，禁在未知态重启
+        return True
+
+
+def _reexec_self(project_root: Path) -> None:
+    """原地 re-exec：先释放单例锁（execv 不跑 finally），再替换进程映像。
+
+    execv=新 import、无孤儿、不依赖外部监管者拉起（裁定#281 原文语义）；
+    watchdog 观察者线程随进程映像替换一并消亡，新进程自会重建。
+    """
+    _release_singleton(_queue_root(project_root))
+    logger.warning("belt_daemon: 门禁代码纪元变更，安全点原地 re-exec（裁定#281）")
+    argv = [sys.executable, str(Path(__file__).resolve()), *sys.argv[1:]]
+    os.execv(sys.executable, argv)
+
+
+def _check_and_reexec(project_root: Path, qroot: Path, state: dict, *, enabled: bool = True) -> bool:
+    """纪元自检 → 安全点原地 re-exec。返回 True=已触发 re-exec。
+
+    安全点契约：只在 _drain_once 返回之后调用（lease 已由 bootstrap 释放、两轮
+    drain 之间）；serializer lease 活体时不动作（等下一个安全点）；git 不可达
+    不动作（无证据不重启）；enabled=False（pytest 上界模式/运维逃生旗）零动作。
+    """
+    if not enabled or os.environ.get(_REEXEC_ENV_FLAG):
+        return False
+    epoch = _gov_enforcement_epoch(project_root)
+    if epoch is None:
+        return False
+    prev = state.get("epoch")
+    if prev is None:
+        state["epoch"] = epoch  # 启动种子：只对运行期间发生的变更反应
+        return False
+    if epoch == prev:
+        return False
+    if _serializer_lease_held(qroot):
+        logger.info("belt_daemon: 纪元已变更但 serializer lease 被持，等下一个安全点")
+        return False
+    _reexec_self(project_root)
+    return True
+
+
 def run_daemon(project_root: str | Path, *, max_events: int | None = None) -> int:
     """事件驱动主循环：watchdog 观察 pending/ → 防抖 → 自举排空。
 
@@ -220,7 +306,7 @@ def run_daemon(project_root: str | Path, *, max_events: int | None = None) -> in
         logger.warning("belt_daemon 已在运行（单例锁活体），本次启动退出")
         return 2
     seen_dead: set[str] = set()
-    _loop_state: dict = {"env_aborts": 0}
+    _loop_state: dict = {"env_aborts": 0, "epoch": None}
     _ledger_dead_letters(root, seen_dead)  # 启动即登记存量死信（首次全量）
     _check_ledger_backlog()  # 启动即自检积压
     try:
@@ -261,6 +347,10 @@ def run_daemon(project_root: str | Path, *, max_events: int | None = None) -> in
                 _ledger_dead_letters(root, seen_dead)
                 _check_ledger_backlog()
                 events += 1
+                # 裁定#281①：drain 已返回=lease 已释放=安全点；纪元变更即原地 re-exec
+                # （pytest 上界模式 max_events 非 None=enabled=False，测试零副作用）
+                if _check_and_reexec(root, qroot, _loop_state, enabled=max_events is None):
+                    return 0
         finally:
             observer.stop()
             observer.join(timeout=5)
