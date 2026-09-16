@@ -2,7 +2,7 @@
  * 刷新=重跑生成器；渲染契约见 features/resourceweek/rw-engine.js。
  */
 window.RW_VIEW_DATA = {
- "generated_at": "2026-09-16T01:18:34+00:00",
+ "generated_at": "2026-09-16T02:05:13+00:00",
  "generator": "scripts/governance/generators/generate_resource_week_view.py",
  "registry": "config\\resource_profile_registry.yaml",
  "registry_sha256": "53151a956a4f",
