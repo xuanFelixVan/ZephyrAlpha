@@ -71,11 +71,13 @@ def _isolate(monkeypatch, tmp_path):
     monkeypatch.setattr(ext, "REPO_ROOT", tmp_path)
     ext._PLANNED_MIRROR.clear()
     ext._PLANNED_REMAP.clear()
+    ext._PLANNED_UNIQ.clear()
     ext._MIRROR_DOMAINS.clear()
     ext._EXISTING_YAML_CACHE.clear()
     yield tmp_path
     ext._PLANNED_MIRROR.clear()
     ext._PLANNED_REMAP.clear()
+    ext._PLANNED_UNIQ.clear()
     ext._MIRROR_DOMAINS.clear()
     ext._EXISTING_YAML_CACHE.clear()
 
@@ -240,3 +242,79 @@ def test_never_overwrites_foreign_yaml_even_when_derived(tmp_path):
     for name in ("solo.yaml", "d__solo.yaml"):
         assert "src/zephyr/" in (d / name).read_text(encoding="utf-8")
     assert "# [ALGO_FLOW]" in p.read_text(encoding="utf-8")  # 源文件保持内联未动
+
+
+def test_manifest_mode_targets_are_cross_package_one_batch(tmp_path, capsys):
+    """--files-from 清单模式：整波跨包一次规划（逐 pkg 调用会把同域镜像规划切批）。
+
+    波次并发前提：一个域目录只由一个会话规划——清单模式是 6 个并发子代理共用
+    单一批次规划入口，同时跳过缺失/非 .py 行（清单与盘不同步时宁漏勿错）。
+    """
+    a = _mk_src(tmp_path, "src/zephyr/dz/access/wal.py")
+    b = _mk_src(tmp_path, "src/zephyr/dz/boot.py")
+    manifest = tmp_path / ".runtime/tmp/plan.txt"
+    manifest.parent.mkdir(parents=True, exist_ok=True)
+    manifest.write_text(
+        "\n".join(
+            [
+                "src/zephyr/dz/access/wal.py",
+                "src/zephyr/dz/boot.py",
+                "src/zephyr/dz/gone.py",  # 缺失 → 跳过
+                "docs/notes.md",  # 非 .py → 跳过
+                "",
+            ]
+        ),
+        encoding="utf-8",
+    )
+    got = ext._iter_targets(None, None, ".runtime/tmp/plan.txt")
+    assert got == [a, b]
+    assert ext.main(["--files-from", ".runtime/tmp/plan.txt", "--dry-run"]) == 0
+    import json as _json
+
+    out = _json.loads(capsys.readouterr().out)
+    assert out["summary"] == {"dryrun": 2}
+    assert {r["file"] for r in out["results"]} == {
+        "src/zephyr/dz/access/wal.py",
+        "src/zephyr/dz/boot.py",
+    }
+
+
+def test_same_named_subpackage_init_files_get_unique_landing(tmp_path):
+    """批级注入性：不同子包同名 __init__.py 不得共用一个 yaml（后者覆盖=静默丢图）。
+
+    2026-09-16 波次 dry-run 普查实证（grp6 唯一碰撞对）：
+    signal_fundamental/{gen,strategy}/implementations/__init__.py 都推导
+    implementations__init__.yaml。rel 字典序首件保原名，次件升阶梯名；两件都落盘。
+    """
+    a = _mk_src(tmp_path, "src/zephyr/sf/gen/implementations/__init__.py")
+    b = _mk_src(tmp_path, "src/zephyr/sf/strategy/implementations/__init__.py")
+    ext._plan_stem_collision_remaps([a, b])  # __init__ 不入 stem 表（既有契约）
+    ext._plan_capacity_mirrors([a, b])
+    ext._plan_path_uniqueness([a, b])
+    ra = ext.externalize(a, dry_run=True)
+    rb = ext.externalize(b, dry_run=True)
+    assert ra["yaml"] != rb["yaml"], (ra, rb)
+    assert ra["yaml"].endswith("implementations__init__.yaml")  # 首件原名不动
+    assert rb["yaml"].startswith(ra["yaml"].rsplit("/", 1)[0] + "/")
+    for r in (ra, rb):
+        assert "___init__" not in r["yaml"]  # 域目录不得退化成 _domain___init__
+    ext._plan_path_uniqueness([b, a])
+    assert {ext.externalize(x, dry_run=True)["yaml"] for x in (a, b)} == {
+        ra["yaml"],
+        rb["yaml"],
+    }  # 与批内顺序无关
+
+
+def test_uniqueness_pass_leaves_non_colliding_plan_untouched(tmp_path):
+    """无碰撞批：注入性收口零改道（既有平铺/镜像命名契约不回跳）。"""
+    targets = [
+        _mk_src(tmp_path, "src/zephyr/d/access/wal.py"),
+        _mk_src(tmp_path, "src/zephyr/d/impl/__init__.py"),
+        _mk_src(tmp_path, "src/zephyr/d/boot.py"),
+    ]
+    ext._plan_capacity_mirrors(targets)
+    before = {p.name: ext._predicted_yaml_rel(p, p.relative_to(tmp_path).as_posix(), "_domain_d") for p in targets}
+    ext._plan_path_uniqueness(targets)
+    assert ext._PLANNED_UNIQ == {}
+    after = {p.name: ext._predicted_yaml_rel(p, p.relative_to(tmp_path).as_posix(), "_domain_d") for p in targets}
+    assert after == before

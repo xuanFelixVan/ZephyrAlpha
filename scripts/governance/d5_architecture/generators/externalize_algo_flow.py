@@ -376,6 +376,68 @@ def _plan_capacity_mirrors(targets: list[Path]) -> None:
         _plan_domain_mirror(dom, items)
 
 
+# 批级落点唯一性消歧表：rel_py → 升档后的 yaml_rel（main() 批末统一填充）
+_PLANNED_UNIQ: dict[str, str] = {}
+
+
+def _predicted_yaml_rel(py_path: Path, rel: str, domain_dir: str) -> str:
+    """规划期落点预测——与 externalize() 的取值链逐字一致（dry-run=落盘同源）。"""
+    return (
+        _existing_yaml_for(rel, domain_dir)
+        or _PLANNED_UNIQ.get(rel, "")
+        or _PLANNED_MIRROR.get(rel, "")
+        or _PLANNED_REMAP.get(rel, "")
+        or _yaml_rel_for(py_path, rel, domain_dir)
+    )
+
+
+def _plan_path_uniqueness(targets: list[Path]) -> None:
+    """批级落点注入性收口（dry-run 普查实证碰撞族）。
+
+    _plan_stem_collision_remaps 跳过 __init__.py，前提是 ``<parent>__init__`` 命名天然
+    唯一——不同子包同名时不成立（signal_fundamental/{gen,strategy}/implementations/
+    __init__.py 两件都推导出 implementations__init__.yaml，后者覆盖前者=静默丢图）。
+    治本=批末对全量预测落点做注入性检查：同路径多源按 rel 字典序保首件，其余沿
+    _candidate_bases 阶梯升到首个未占用名（批内占/盘上他人真源都算占），阶梯用尽落
+    flatten（源路径唯一 ⇒ 名称唯一）。
+    """
+    _PLANNED_UNIQ.clear()
+    pred: dict[str, list[tuple[Path, str, str]]] = {}
+    order: list[tuple[str, Path, str, str]] = []
+    for p in targets:
+        rel = p.relative_to(REPO_ROOT).as_posix()
+        try:
+            src = p.read_text(encoding="utf-8")
+        except (OSError, UnicodeDecodeError):
+            continue
+        if _ANCHOR_RE.search(src) or not _has_inline_algo_flow(src):
+            continue
+        dom = _domain_of(rel)
+        y = _predicted_yaml_rel(p, rel, dom)
+        pred.setdefault(y, []).append((p, rel, dom))
+        order.append((rel, p, dom, y))
+    used = {y for _, _, _, y in order}
+    for y, es in sorted(pred.items()):
+        if len(es) < 2:
+            continue
+        # 首件（rel 字典序）保留原落点——y 仍在 used 中，否则受害者会重新选中同一撞名
+        _, *victims = sorted(es, key=lambda t: t[1])
+        for p, rel, dom in victims:
+            dir_part = y.rsplit("/", 1)[0]
+            bucket = _src_bucket(rel)[1] or dom.removeprefix("_domain_")
+            picked = ""
+            for base in _candidate_bases(p, rel, bucket):
+                cand = f"{dir_part}/{base}"
+                if cand in used or _yaml_owned_by(REPO_ROOT / cand, rel) is False:
+                    continue
+                picked = cand
+                break
+            if not picked:
+                picked = f"{dir_part}/{_flatten_base(rel)}"
+            used.add(picked)
+            _PLANNED_UNIQ[rel] = picked
+
+
 def _docstring_span(src: str) -> tuple[int, int] | None:
     """module docstring 的 (start_line_idx, end_line_idx)（0 基，含端点）。"""
     tree = ast.parse(src)
@@ -482,6 +544,7 @@ def externalize(py_path: Path, dry_run: bool) -> dict:
     domain_dir = _domain_of(rel)
     yaml_rel = (
         _existing_yaml_for(rel, domain_dir)
+        or _PLANNED_UNIQ.get(rel, "")
         or _PLANNED_MIRROR.get(rel, "")
         or _PLANNED_REMAP.get(rel, "")
         or _yaml_rel_for(py_path, rel, domain_dir)
@@ -607,7 +670,20 @@ def externalize(py_path: Path, dry_run: bool) -> dict:
     }
 
 
-def _iter_targets(domain: str | None, single_file: str | None) -> list[Path]:
+def _iter_targets(
+    domain: str | None, single_file: str | None, files_from: str | None = None
+) -> list[Path]:
+    if files_from:
+        # 清单模式：整波跨包一次规划（逐 pkg 调用会把同域容量规划切成多批）
+        out: list[Path] = []
+        for ln in (REPO_ROOT / files_from).read_text(encoding="utf-8").splitlines():
+            rel = ln.strip()
+            if not rel or not rel.endswith(".py"):
+                continue
+            p = REPO_ROOT / rel
+            if p.is_file():
+                out.append(p)
+        return out
     if single_file:
         return [REPO_ROOT / single_file]
     root = REPO_ROOT / "src" / "zephyr" / (domain or "")
@@ -625,13 +701,19 @@ def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(description="ALGO_FLOW 内联块批量出仓器（P2-1）")
     parser.add_argument("--domain", help="src/zephyr/<pkg> 域（如 backtest）；缺省=全量")
     parser.add_argument("--file", help="单文件模式（相对仓库根）")
+    parser.add_argument(
+        "--files-from",
+        dest="files_from",
+        help="清单模式：每行一个仓库根相对 .py 路径（整波跨包一次规划，优先于 --domain/--file）",
+    )
     parser.add_argument("--dry-run", action="store_true", help="零写入，只报告")
     parser.add_argument("--limit", type=int, default=0, help="本批最多处理 N 个（0=不限）")
     args = parser.parse_args(argv)
 
-    targets = _iter_targets(args.domain, args.file)
+    targets = _iter_targets(args.domain, args.file, args.files_from)
     _plan_stem_collision_remaps(targets)
     _plan_capacity_mirrors(targets)
+    _plan_path_uniqueness(targets)
     results = []
     done = 0
     for p in targets:
