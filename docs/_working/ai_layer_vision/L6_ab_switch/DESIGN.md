@@ -273,6 +273,6 @@ EXEMPT-ZONE-FM 真实路径（R2 头注释）：前身=post-commit warn reconcil
 
 **红蓝 R3 修复记录**：R3：L6→L7 事件定名 switch_archived_due 并对齐接收方 8 字段口径。
 
-**红蓝 R4 修复记录**：①影子上岗券事件定名 work_order_shadow_ready（§③ L203 行同步）；②switch_archived_due 字段映射明文化：winner_ref←本稿 champion_ref、loser_ref←challenger_ref、diff_summary←"A/B 对比摘要"档、criteria_ref+criteria_hash←criteria_yaml_ref+hash（微名以 L7 接收方口径为准）。
+**红蓝 R4 修复记录**：①影子上岗券事件定名 work_order_shadow_ready（§③ L203 行同步）；②switch_archived_due 字段映射明文化：winner_ref←本稿 champion_ref、loser_ref←challenger_ref、diff_summary←"A/B 对比摘要"档、criteria_ref+criteria_hash←criteria_yaml_ref+hash（微名以 L7 接收方口径为准）。时间线注：R3 定口径、R4 微名明文化，非矛盾。
 
 **红蓝 R5 补充**：多对象并行测试的相关性闸沿用业务层冠军挑战者联赛既定规则（相关系数>0.7 视为同一注押两次，合并算额度）——AI 层对象（模型/工具/模块）影子测试同样适用，判据登记处=OBJ_R 标准资产盘点。

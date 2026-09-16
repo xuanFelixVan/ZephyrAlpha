@@ -285,4 +285,5 @@ promotion 页），一样是常量文件（policy）；②过度工程检查：�
 
 - **R2（dead 终态无回传）**：§2.7 dead 行补回执事件 `work_order_dead`（payload={order_id, reason}）→L2 候选卡跳 rejected——L2 稿同批补 rejected 入边，dead 不再是无回传黑洞。连带核记：§1 台账①与 §3 库内路 `INTAKE_E2_HANDOFF` 的 evidence_ref 增补已经 L2 稿 R2 同批落地。
 
-**红蓝 R3 修复记录**：R3：C3 事件 5→7 kind 补全（shadow_ready/closed_due/dead），计数同步。
+**红蓝 R3 修复记录**：C3 事件补全 3 项（shadow_ready/closed_due/dead）。
+**红蓝 R4 修复记录**：C3 计数校正为 8 kind（R3 时误记 7）；§①/L198/L234 两事件分工澄清（shadow_ready→L6 与 closed_due→L7 勿混称）。
