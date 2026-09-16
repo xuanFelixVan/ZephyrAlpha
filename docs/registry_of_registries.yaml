@@ -42,7 +42,7 @@ tiers:
         physical_path: scripts/script-manifest.yaml
         format: yaml
         maintenance: auto （scripts/generate_manifest.py）
-        entry_count: 983
+        entry_count: 991
         counting_rule: scripts 数组条目数（generate_manifest.py 全树再生）
         status: active
         description: 全 scripts/ 下 755 个 .py 脚本的完整注册——path/domain/execution_plane
@@ -52,7 +52,7 @@ tiers:
         physical_path: scripts/governance/script_manifest.yaml
         format: yaml
         maintenance: manual
-        entry_count: 433
+        entry_count: 434
         counting_rule: scripts 数组条目数（governance 子集，__manifest__ 块提取）
         status: active
         description: Governance 脚本子集（可能与 REG-SCRIPT-001 有重叠）
@@ -404,7 +404,7 @@ tiers:
         format: yaml
         tier: tier_1_governance
         maintenance: manual
-        entry_count: 760  # 2026-08-11 更新：含 2026-08-11 第一性原理调研发现的 35 项 proposed 议题（#ARCH-AIGOV-001~010/AICOLLAB-001/RISK-001~005/QUANT-001~005/REG-001~005/ASHARE-001~002/COMPLIANCE-001/SDD-001/AUDIT-001/DRIFT-002/EXEC-001/CI-001/REGCAN-001）
+        entry_count: 761  # 2026-08-11 更新：含 2026-08-11 第一性原理调研发现的 35 项 proposed 议题（#ARCH-AIGOV-001~010/AICOLLAB-001/RISK-001~005/QUANT-001~005/REG-001~005/ASHARE-001~002/COMPLIANCE-001/SDD-001/AUDIT-001/DRIFT-002/EXEC-001/CI-001/REGCAN-001）
         counting_rule: entries 数组条目数（含 deprecated 全量）
         status: active
         ssoT_for: architecture_issue_id, issue_status, issue_adjudication
@@ -417,7 +417,7 @@ tiers:
         format: yaml
         tier: tier_1_governance
         maintenance: semi-auto（canonical 声明=manual；扫描=auto via CapabilityLookup.__init__）
-        entry_count: 377
+        entry_count: 378
         counting_rule: capability 条目数（2026-09-06 实测回填，全部 alive；creation_tokens/di_seam_exemptions 为独立数组不入本表计数）
         status: active
         ssot_for: capability_canonical_file, capability_aliases, duplicate_status, removed_duplicates_audit
@@ -431,7 +431,7 @@ tiers:
         format: yaml
         tier: tier_1_governance
         maintenance: manual（aliases/description 随生成器增减同步）
-        entry_count: 3072
+        entry_count: 5520
         counting_rule: creation_tokens 数组条目数
         status: active
         description: >-
@@ -448,7 +448,7 @@ tiers:
         physical_path: architecture_model/contracts/error_code_registry.yaml
         format: yaml
         maintenance: manual
-        entry_count: 783
+        entry_count: 788
         counting_rule: error_codes 条目数（2026-09-06 占位码转正批完成后实测终值——41 前缀 183 类转正；e27cf22c FAC/FBL 去重删 11 条双条目后终值 770，总管 2026-09-06 复核修正）
         status: active
         description: 212 个业务异常 error_code 的 canonical 登记——code/class/module/file 归属，ZA-XX-NNNN 格式，grep 唯一命中。维度 5.99.21 error_code SSoT 专项工程 + 5.99.11 MCP错误码SSoT扩展
@@ -650,7 +650,7 @@ tiers:
         physical_path: docs/01_policies_and_standards/_registry/catalogs/data_asset_registry.yaml
         format: yaml
         maintenance: manual
-        entry_count: 259
+        entry_count: 264
         counting_rule: 含 deprecated 全量（物理 yaml 条目数=datasets 数组，2026-09-06 实测）
         status: active
         description: 数据资产唯一真源（SSoT）——三实体模型（sources/datasets/jobs，对标 OpenLineage Source/Dataset/Job）。sources 15 个外部/内部数据源 + datasets 102 条 + jobs 82 条（DS-001~102/JOB-001~082 稳定编号；2026-08-14 v1.2.0 对标聚宽 JQData/quant666 补登 22 数据集+6 管道：市场约束/基本面/公司行动事件/资金面/中国宏观/申万行业）。S6 裁定改名扩展自 dataflow_graph_registry.yaml（registry_id/module_id 保留，稳定标识符不断）。#ARCH-BREG-001 P1-B
@@ -672,7 +672,7 @@ tiers:
         physical_path: docs/01_policies_and_standards/_registry/catalogs/experiment_registry.yaml
         format: yaml
         maintenance: manual
-        entry_count: 8
+        entry_count: 11
         counting_rule: experiments 数组条目数
         status: draft
         description: 实验/回测目录唯一真源（SSoT）——登记所有实验运行实例（backtest/factor_eval/strategy_eval/param_search/walk_forward/regime_validation）的元信息。存储后端=FallbackBackend 本地 JSON（MLflow 已裁定完全卸载），展示层=Panel 实验历史 Tab。parent_experiment_id 支持迭代链。5 条真实可溯源实验（4 条 regime_validation completed + 1 条 walk_forward running）。#ARCH-BREG-001 P2

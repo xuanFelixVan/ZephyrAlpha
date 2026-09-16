@@ -164,3 +164,73 @@ def test_apply_updates_noop_when_clean(crc, tmp_path, monkeypatch):
     rows = crc.verify_entry_counts(roor)
     assert crc.apply_roor_entry_count_updates(rows, roor) == []
     assert roor.read_text(encoding="utf-8") == before
+
+
+# ── CR-007b：注册表文件内嵌 entry_counts 快照行对账与回填 ──────────────────
+
+INTERNAL_TMPL = """version: "1.0"
+entry_counts: {{sources: 18, datasets: 241, jobs: 105}}  # 派生快照值，禁止凭此报数
+sources:
+{sources}
+datasets: [{d}]
+jobs: [{j}]
+"""
+
+
+def _setup_internal(crc, tmp_path, monkeypatch, datasets=264, jobs=105):
+    """构造内嵌快照：sources 18=18（MATCH）、datasets 声明 241 实测 N、jobs 105=105。"""
+    src = chr(10).join(f"  - s{i}" for i in range(18))
+    reg = tmp_path / "fake_reg.yaml"
+    reg.write_text(
+        INTERNAL_TMPL.format(sources=src, datasets=datasets, jobs=jobs,
+                             d=", ".join(f"d{i}" for i in range(datasets)),
+                             j=", ".join(f"j{i}" for i in range(jobs))),
+        encoding="utf-8",
+        newline=chr(10),
+    )
+    monkeypatch.setattr(
+        crc, "INTERNAL_COUNT_SPECS",
+        {"REG-TEST-001": ("fake_reg.yaml", {"sources": "sources", "datasets": "datasets", "jobs": "jobs"})},
+    )
+    monkeypatch.setattr(crc, "REPO_ROOT", tmp_path)
+    return reg
+
+
+def test_internal_verify_stale_and_match(crc, tmp_path, monkeypatch):
+    """datasets 声明 241 实测 264 = STALE；sources/jobs 相符 = MATCH。"""
+    _setup_internal(crc, tmp_path, monkeypatch, datasets=264, jobs=105)
+    rows = {(r["key"], r["verdict"]) for r in crc.verify_internal_entry_counts()}
+    assert ("datasets", "STALE") in rows
+    assert ("sources", "MATCH") in rows
+    assert ("jobs", "MATCH") in rows
+
+
+def test_internal_apply_fixes_numbers_keeps_comment(crc, tmp_path, monkeypatch):
+    """回填只改 STALE 数字：注释保留、其余键原样、复验零 STALE。"""
+    reg = _setup_internal(crc, tmp_path, monkeypatch, datasets=264, jobs=105)
+    rows = crc.verify_internal_entry_counts()
+    updates = crc.apply_internal_entry_count_updates(rows)
+    assert updates == ["REG-TEST-001 entry_counts.datasets: 241 -> 264"]
+    text = reg.read_text(encoding="utf-8")
+    assert "entry_counts: {sources: 18, datasets: 264, jobs: 105}  # 派生快照值，禁止凭此报数" in text
+    assert all(r["verdict"] != "STALE" for r in crc.verify_internal_entry_counts())
+
+
+def test_internal_noop_when_clean(crc, tmp_path, monkeypatch):
+    """全 MATCH 时回填零改动零写盘。"""
+    reg = _setup_internal(crc, tmp_path, monkeypatch, datasets=241, jobs=105)
+    before = reg.read_text(encoding="utf-8")
+    rows = crc.verify_internal_entry_counts()
+    assert crc.apply_internal_entry_count_updates(rows) == []
+    assert reg.read_text(encoding="utf-8") == before
+
+
+def test_internal_no_inline_is_informational(crc, tmp_path, monkeypatch):
+    """无内嵌快照行=NO_INLINE 留痕不算问题，回填零更新。"""
+    reg = tmp_path / "fake_reg.yaml"
+    reg.write_text('version: "1.0"' + chr(10) + "datasets: [a, b]" + chr(10), encoding="utf-8", newline=chr(10))
+    monkeypatch.setattr(crc, "INTERNAL_COUNT_SPECS", {"REG-TEST-001": ("fake_reg.yaml", {"datasets": "datasets"})})
+    monkeypatch.setattr(crc, "REPO_ROOT", tmp_path)
+    rows = crc.verify_internal_entry_counts()
+    assert rows[0]["verdict"] == "NO_INLINE"
+    assert crc.apply_internal_entry_count_updates(rows) == []

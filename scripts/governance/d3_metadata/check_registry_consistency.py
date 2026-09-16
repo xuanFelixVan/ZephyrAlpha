@@ -5,7 +5,7 @@
 # [CONSUMERS]
 # [STARTUP] manual
 # [MATURITY] production
-# [INVARIANTS] CR-001~006 只读不改文件；CR-007 默认只读，--update-entry-counts 显式授权才写 ROOR（行级手术保注释）；回填仅限 ENTRY_SPECS 已登记口径的 STALE 行
+# [INVARIANTS] CR-001~006 只读不改文件；CR-007/CR-007b 默认只读，--update-entry-counts 显式授权才写（ROOR 行级手术 + 内嵌 entry_counts 快照行，均保注释）；回填仅限已登记口径的 STALE 行
 # [MODIFY-GUARD]
 # [STABILITY] evolving
 # [SAFETY] M
@@ -560,6 +560,89 @@ def apply_roor_entry_count_updates(rows: list[dict], roor_path: Path = ROOR_PATH
     return updates
 
 
+# CR-007b（2026-09-17）：注册表文件头部内嵌 entry_counts 快照行回填。
+# 病灶：部分登记表自带 entry_counts 内联快照（自述"派生快照值"），但 CR-007 只回填
+# ROOR 自身，这四行从未有生成器负责 → 手工维护必然漂移（宪法 §9.5；
+# data_asset_registry 声明 datasets=241/实测 264、jobs=105/122 实证）。
+# 口径：声明键 ↔ 同名顶层数组实测长度；registry_of_logs 另有 check_registry_of_logs.py
+# 读同一字段，回填后两处口径自然对齐。
+INTERNAL_COUNT_SPECS: dict[str, tuple[str, dict[str, str]]] = {
+    "REG-DATAFLOW-001": (
+        "docs/01_policies_and_standards/_registry/catalogs/data_asset_registry.yaml",
+        {"sources": "sources", "datasets": "datasets", "jobs": "jobs"},
+    ),
+    "REG-FEATURE-ADJ-001": (
+        "docs/01_policies_and_standards/_registry/catalogs/feature_adjudication_registry.yaml",
+        {"features": "features"},
+    ),
+    "REG-LOG-001": (
+        "docs/01_policies_and_standards/_registry/catalogs/registry_of_logs.yaml",
+        {"logs": "logs"},
+    ),
+    "REG-CMP-REPORT-001": (
+        "docs/01_policies_and_standards/_registry/catalogs/compliance_report_registry.yaml",
+        {"report_items": "report_items"},
+    ),
+}
+
+_INLINE_EC_RE = re.compile(r"^entry_counts:\s*\{([^}]*)\}(.*)$", re.M)
+
+
+def verify_internal_entry_counts() -> list[dict]:
+    """CR-007b 对账：内嵌 entry_counts 快照行 vs 顶层数组实测长度。
+
+    STALE 记问题；MISSING / NO_INLINE 仅留痕（文件缺失或本就无快照行不算漂移）。
+    """
+    rows: list[dict] = []
+    for rid, (rel, keys) in INTERNAL_COUNT_SPECS.items():
+        path = REPO_ROOT / rel
+        if not path.is_file():
+            rows.append({"rid": rid, "verdict": "MISSING", "expected": None, "actual": None,
+                         "note": f"物理文件不存在: {rel}", "path": rel})
+            continue
+        text = path.read_text(encoding="utf-8")
+        m = _INLINE_EC_RE.search(text)
+        data = load_yaml(path)
+        if m is None or not isinstance(data, dict):
+            rows.append({"rid": rid, "verdict": "NO_INLINE", "expected": None, "actual": None,
+                         "note": "无内嵌 entry_counts 快照行或顶层非 dict", "path": rel})
+            continue
+        for key, list_key in keys.items():
+            dm = re.search(rf"\b{re.escape(key)}:\s*(\d+)\b", m.group(1))
+            value = data.get(list_key)
+            actual = len(value) if isinstance(value, list) else None
+            expected = int(dm.group(1)) if dm else None
+            verdict = "MATCH" if expected is not None and expected == actual else "STALE"
+            rows.append({"rid": rid, "key": key, "verdict": verdict, "expected": expected,
+                         "actual": actual, "note": f"{list_key} 数组条目数", "path": rel})
+    return rows
+
+
+def apply_internal_entry_count_updates(rows: list[dict]) -> list[str]:
+    """CR-007b 回填：对 STALE 行按文件做行级手术（只改数字，保注释保格式）。"""
+    by_file: dict[str, list[dict]] = {}
+    for r in rows:
+        if r["verdict"] == "STALE":
+            by_file.setdefault(r["path"], []).append(r)
+    updates: list[str] = []
+    for rel, stale in by_file.items():
+        path = REPO_ROOT / rel
+        text = path.read_text(encoding="utf-8")
+        m = _INLINE_EC_RE.search(text)
+        if m is None:
+            continue
+        body = m.group(1)
+        for r in stale:
+            k_re = re.compile(rf"(\b{re.escape(r['key'])}:\s*)(\d+)")
+            body, n = k_re.subn(rf"\g<1>{r['actual']}", body, count=1)
+            if n:
+                updates.append(f"{r['rid']} entry_counts.{r['key']}: {r['expected']} -> {r['actual']}")
+        new_line = f"entry_counts: {{{body}}}{m.group(2)}"
+        text = text[: m.start()] + new_line + text[m.end():]
+        path.write_text(text, encoding="utf-8", newline="\n")
+    return updates
+
+
 def main() -> None:
     """入口函数"""
     parser = argparse.ArgumentParser(description="跨登记表一致性校验脚本")
@@ -631,6 +714,24 @@ def main() -> None:
                 print(f"    {verdict}: {row['rid']} {row['note']}", file=sys.stderr)
         status = "PASS" if entry_problems == 0 else f"FAIL ({entry_problems} 项)"
         print(f"  CR-007: entry_count 实测对账（ROOR）... {status}", file=sys.stderr)
+
+    # CR-007b：注册表文件内嵌 entry_counts 快照行（同权 STALE 记账）
+    internal_rows = verify_internal_entry_counts()
+    if args.update_entry_counts:
+        iupdates = apply_internal_entry_count_updates(internal_rows)
+        for u in iupdates:
+            print(f"    [FIXED] {u}", file=sys.stderr)
+        if iupdates:
+            internal_rows = verify_internal_entry_counts()  # 回填后复验
+    istale = [r for r in internal_rows if r["verdict"] == "STALE"]
+    for r in istale:
+        entry_problems += 1
+        print(
+            f"    STALE: {r['rid']} entry_counts.{r['key']} 声明={r['expected']} 实测={r['actual']}",
+            file=sys.stderr,
+        )
+    status = "PASS" if not istale else f"FAIL ({len(istale)} 项)"
+    print(f"  CR-007b: 内嵌 entry_counts 对账 ... {status}", file=sys.stderr)
 
     total = all_findings.total
     if total == 0:

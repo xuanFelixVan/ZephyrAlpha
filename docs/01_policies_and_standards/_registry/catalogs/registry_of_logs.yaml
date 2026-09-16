@@ -34,7 +34,7 @@ created: '2026-08-22'
 last_updated: '2026-08-22'
 related_arch: '92号清单 §7.12（M4-①）/ 44号备忘 §12.1'
 unique_key: [log_id]
-entry_counts: {logs: 97}
+entry_counts: {logs: 98}
 
 # 扫描口径（check_registry_of_logs.py 对账基准，改动需同步脚本常量）：
 scan_scope:
