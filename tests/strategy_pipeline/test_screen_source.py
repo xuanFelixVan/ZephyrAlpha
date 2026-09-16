@@ -132,3 +132,124 @@ class TestCorr:
         items = [{"key": "A@a.py", "source_file": "x/a.py"},
                  {"key": "B@b.py", "source_file": "x/b.py"}]
         assert ss.corr_matrix(items) == {}  # 宁漏勿误：单件失败不阻断批
+
+
+class TestWindowProvenance:
+    """p 值分母 n 逐行=被检验统计量的记录窗（配对不变量）；批次身份 parity 不破。"""
+
+    _DAYS = {("2020-01-01", "2023-12-31"): 970,      # 股票/指数族 IS 窗（实测台账）
+             ("2021-04-01", "2023-12-31"): 669,       # ETF 族 IS 窗（覆盖起点不同）
+             ("2020-01-01", "2026-09-11"): 1623}      # 起点锚到最新可用日的更长窗
+
+    def _fake_q(self, monkeypatch, is_rows, oos_rows):
+        import re as _re
+
+        def fake_q(sql):
+            if "count()" in sql:
+                m = _re.search(r"trade_date >= '([\d-]+)' AND trade_date <= '([\d-]+)'", sql)
+                assert m, f"unexpected count sql: {sql}"
+                return [(self._DAYS[(m.group(1), m.group(2))],)]
+            if "oos_tested" in sql:
+                return oos_rows
+            return is_rows
+        monkeypatch.setattr(ss, "_q", fake_q)
+        monkeypatch.setattr(ss, "_decay_suspect", lambda: 0.5)
+
+    def test_is_batch_row_n_equals_its_recorded_window(self, monkeypatch):
+        # 冻结 IS 批存量行：记录窗=IS 窗 → n 与回退默认同为 970（行为不变，配对正确）
+        self._fake_q(
+            monkeypatch,
+            [("CAND-is", 1.0, "s/a.py", 0.2, "window=2020-01-01/2023-12-31; kind=stock", -0.1)],
+            [("CAND-is", "s/a.py", "C4-OOS", 0.5, 0.1)])
+        assert ss.is_window_days() == 970
+        items = ss.fetch_bothwin()
+        assert ss.sample_days_for_item(items[0]) == 970
+        p_map, _ = ss.passing_with_p()
+        assert p_map["CAND-is@a.py"] == round(ss.p_from_sharpe(1.0, 970), 6)
+
+    def test_longer_window_row_uses_its_own_sample(self, monkeypatch):
+        # 记录窗更长的行：n 必须随之变为 1623，否则用 970 会虚增显著性
+        self._fake_q(
+            monkeypatch,
+            [("CAND-long", 1.0, "s/b.py", 0.2, "window=2020-01-01/2026-09-11; kind=stock", -0.1)],
+            [("CAND-long", "s/b.py", "C4-OOS", 0.5, 0.1)])
+        items = ss.fetch_bothwin()
+        assert ss.sample_days_for_item(items[0]) == 1623
+        p_map, _ = ss.passing_with_p()
+        assert p_map["CAND-long@b.py"] == round(ss.p_from_sharpe(1.0, 1623), 6)
+        # 同 Sharpe、窗更长 → 分母更大 → p 更小（证明 n 随样本移动，非固定 970）
+        assert p_map["CAND-long@b.py"] < round(ss.p_from_sharpe(1.0, 970), 6)
+
+    def test_etf_kind_row_uses_shorter_sample(self, monkeypatch):
+        # ETF 族记录窗（2021-04 起）样本更少 → n=669，全局 970 会低估 p
+        self._fake_q(
+            monkeypatch,
+            [("CAND-etf", 1.0, "s/e.py", 0.2, "window=2021-04-01/2023-12-31; kind=etf", -0.1)],
+            [("CAND-etf", "s/e.py", "C4-OOS", 0.5, 0.1)])
+        items = ss.fetch_bothwin()
+        assert ss.sample_days_for_item(items[0]) == 669
+
+    def test_window_from_notes_parses_and_ignores_missing(self):
+        assert ss.window_from_notes("window=2020-01-01/2023-12-31; kind=stock") == ("2020-01-01", "2023-12-31")
+        assert ss.window_from_notes("no window here") is None
+        assert ss.window_from_notes(None) is None
+
+    def test_batch_identity_parity_preserved(self, monkeypatch):
+        seen: dict[str, str] = {}
+
+        def fake_q(sql):
+            if "count()" in sql:
+                return [(970,)]
+            if "oos_tested" in sql:
+                return [("CAND-x", "s/a.py", "C4-OOS", 0.5, 0.1)]
+            seen["is_sql"] = sql
+            return [("CAND-x", 1.0, "s/a.py", 0.2, "window=2020-01-01/2023-12-31; kind=stock", -0.1)]
+        monkeypatch.setattr(ss, "_q", fake_q)
+        monkeypatch.setattr(ss, "_decay_suspect", lambda: 0.5)
+        # 批次身份常量仍冻结（可复现）
+        assert ss.IS_BATCH == "C4-translated-20260912"
+        assert ss.IS_WIN == ("2020-01-01", "2023-12-31")
+        items = ss.fetch_bothwin()
+        # IS 联查锁死冻结批 ∧ verdict（与 strategy_screen_query.cmd_bothwin 同口径）
+        assert f"screen_batch = '{ss.IS_BATCH}'" in seen["is_sql"]
+        assert "verdict = 'translated_c4'" in seen["is_sql"]
+        assert items and items[0]["strategy_id"] == "CAND-x"
+
+
+class TestLiveCorrWindow:
+    """活 ρ 矩阵估计窗：锚点固定、终点随快照表最新可用日动态前移（解冻 2023-12-31）。"""
+
+    def test_net_window_end_advances_with_data(self, monkeypatch):
+        import datetime as _dt
+
+        def fake_q(sql):
+            if "ORDER BY trade_date DESC" in sql:
+                # 末行回退 PIT_TAIL_LAG=1 → 最新 2026-09-11 尾日不入样，取 2026-09-10
+                return [(_dt.date(2026, 9, 10),)]
+            return [(1623,)]
+        monkeypatch.setattr(ss, "_q", fake_q)
+        assert ss.live_estimation_end() == "2026-09-10"
+        start, end = ss.net_window()
+        assert start == ss.IS_WIN[0] == "2020-01-01"
+        assert end == "2026-09-10" > ss.IS_WIN[1]  # 越过冻结终点 2023-12-31
+
+    def test_live_end_falls_back_when_snapshot_empty(self, monkeypatch):
+        monkeypatch.setattr(ss, "_q", lambda sql: [])
+        assert ss.live_estimation_end() == ss.IS_WIN[1]
+
+    def test_net_returns_builds_over_dynamic_window(self, monkeypatch):
+        import types as _types
+        captured: dict[str, tuple] = {}
+
+        class FakeMod:
+            def build(self, start, end):
+                captured["args"] = (start, end)
+                return ("weights", "closes")
+        fake_engine = _types.ModuleType("_c4_engine")
+        fake_engine.daily_net_returns = lambda w, c: pd.Series(
+            [0.01, -0.01], index=pd.date_range("2020-01-01", periods=2))
+        monkeypatch.setitem(sys.modules, "_c4_engine", fake_engine)
+        monkeypatch.setattr(ss, "_module_for", lambda sf: FakeMod())
+        monkeypatch.setattr(ss, "live_estimation_end", lambda: "2026-09-10")
+        ss.net_returns("x/a.py")
+        assert captured["args"] == ("2020-01-01", "2026-09-10")  # 不再是 (…, 2023-12-31)

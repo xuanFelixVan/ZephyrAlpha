@@ -6,8 +6,14 @@
 # [CONSUMERS] zephyr.strategy_pipeline.intake（run_intake_auto 数据源）; 验收⑥历史批回放
 # [STARTUP] imported
 # [MATURITY] experimental
-# [INVARIANTS] 台账只读（本模块禁写 strategy_screen）；及格判定口径与 strategy_screen_query.cmd_bothwin
-#   一字不差（IS 冻结批 ∧ verdict=translated_c4 联查全部 oos_tested，键=strategy_id+source_file）；
+# [INVARIANTS] 台账只读（本模块禁写 strategy_screen）；两职分离（勿混）：
+#   ①批次身份/可复现——哪一行的 is_sharpe 出自哪个冻结窗，是行事实、不可改：及格判定口径与
+#     strategy_screen_query.cmd_bothwin 一字不差（IS 冻结批 ∧ verdict=translated_c4 联查全部
+#     oos_tested，键=strategy_id+source_file）。三向 parity 只约束此职（静默延长该窗会毁配对）。
+#   ②活估计/统计输入——p 值分母 n（年数）按行取被检验统计量自身的记录窗（notes 的 window=…/…，
+#     缺省回退 IS 冻结窗），统计量与其样本必须同窗；禁把模块级 IS_WIN 当"当前窗"通配。
+#     相关矩阵=描述今日相关结构供下游聚类/分配，窗终点随快照表最新可用日动态前移
+#     （锚 IS_WIN[0]+动态末−PIT_TAIL_LAG，仿 auto_mount.build(IS_WIN_START,end)），故不受①的 parity 约束。
 #   p 值=t 双侧检验解析式（SR_ann·sqrt(年数) 的渐近正态），族=当批及格全集（BH 语义）；
 #   相关矩阵只算及格集两两 ρ（日净收益 inner 对齐，重叠<60 日=0 不聚类——宁漏勿误）；
 #   三轴启发式只影响差异化论证与挂图类别的"新条目初值"，真源仍是注册表既有字段（只增不改）
@@ -35,8 +41,12 @@ from pathlib import Path
 from typing import Any
 
 ROOT = Path(__file__).resolve().parents[3]
-IS_BATCH = "C4-translated-20260912"          # 冻结 IS 批（bothwin 真源同款）
+IS_BATCH = "C4-translated-20260912"          # 冻结 IS 批（bothwin 真源同款，批次身份不可改）
+# IS_WIN=冻结 IS 批的产生窗。仅两用途：①批次身份记录；②行无记录窗时的回退默认。
+# 任何"当前估计"路径（活 ρ 矩阵终点 / 逐行 p 值 n）禁把它当"当前窗"直读（见 [INVARIANTS] 两职分离）。
 IS_WIN = ("2020-01-01", "2023-12-31")
+SNAP_TABLE = "c1_backtest.regime_snapshot_history"  # 交易日历/快照真源（窗口天数与 auto_mount 判定同源）
+PIT_TAIL_LAG = 1                            # 活窗尾窗回退行数：尾日证据未定不入样（仿 auto_mount）
 MIN_CORR_OVERLAP_DAYS = 60                   # 重叠不足不判相关（宁漏勿误）
 DECAY_SUSPECT = 0.5                          # 回退值；运行时优先取 strategy_screen_query 真源
 
@@ -109,7 +119,7 @@ def _decay_suspect() -> float:
         sys.path.insert(0, str(ROOT / "scripts/backtest"))
         from strategy_screen_query import DECAY_SUSPECT as v  # noqa: PLC0415 土规真源
         return float(v)
-    except Exception:  # noqa: BLE001——回退常量（DDL 注释同值）
+    except Exception:  # noqa: BLE001 回退常量（DDL 注释同值）
         return DECAY_SUSPECT
 
 
@@ -120,8 +130,8 @@ def fetch_bothwin() -> list[dict[str, Any]]:
         f"SELECT strategy_id, is_sharpe, source_file, turnover, notes, max_drawdown FROM c1_backtest.strategy_screen "
         f"WHERE screen_batch = '{IS_BATCH}' AND verdict = 'translated_c4'")
     oos_rows = _q(
-        f"SELECT strategy_id, source_file, screen_batch, is_sharpe, oos_years_decay FROM c1_backtest.strategy_screen "
-        f"WHERE verdict = 'oos_tested' AND is_sharpe IS NOT NULL ORDER BY screen_batch")
+        "SELECT strategy_id, source_file, screen_batch, is_sharpe, oos_years_decay FROM c1_backtest.strategy_screen "
+        "WHERE verdict = 'oos_tested' AND is_sharpe IS NOT NULL ORDER BY screen_batch")
     oos_map: dict[tuple[str, str], list[dict[str, Any]]] = {}
     for sid, sf, batch, sharpe, decay in oos_rows:
         oos_map.setdefault((sid, sf), []).append({"batch": batch, "sharpe": sharpe, "decay": decay})
@@ -142,11 +152,32 @@ def fetch_bothwin() -> list[dict[str, Any]]:
     return [i for i in items if i["gate_bothwin_pass"]]
 
 
-def is_window_days() -> int:
-    """IS 窗交易日数（regime_snapshot_history 行数口径=auto_mount 判定同源）。"""
-    rows = _q("SELECT count() FROM c1_backtest.regime_snapshot_history "
-              f"WHERE trade_date >= '{IS_WIN[0]}' AND trade_date <= '{IS_WIN[1]}'")
+_WINDOW_RE = re.compile(r"window=(\d{4}-\d{2}-\d{2})/(\d{4}-\d{2}-\d{2})")
+
+
+def window_from_notes(notes: str | None) -> tuple[str, str] | None:
+    """从台账 notes 自由文本解析该行统计量的记录窗（c4_batch_screen 落 'window=start/end; kind='）。"""
+    m = _WINDOW_RE.search(notes or "")
+    return (m.group(1), m.group(2)) if m else None
+
+
+def window_days(start: str, end: str) -> int:
+    """任意窗交易日数（regime_snapshot_history 行数口径=auto_mount 判定同源）。"""
+    rows = _q(f"SELECT count() FROM {SNAP_TABLE} "
+              f"WHERE trade_date >= '{start}' AND trade_date <= '{end}'")
     return int(rows[0][0])
+
+
+def is_window_days() -> int:
+    """冻结 IS 批默认窗天数——仅当行无记录窗时回退；不再是通配"当前窗"的单一真值。"""
+    return window_days(*IS_WIN)
+
+
+def sample_days_for_item(item: dict[str, Any]) -> int:
+    """该行被检验统计量的自样本天数：优先其记录窗（notes window=），缺省回退 IS 冻结窗。
+    配对不变量——p 值分母必须=产生该 is_sharpe 的样本，禁全局猜测（见 [INVARIANTS] ②）。"""
+    win = window_from_notes(item.get("notes"))
+    return is_window_days() if win is None else window_days(*win)
 
 
 def p_from_sharpe(sharpe: float, days: int) -> float:
@@ -158,10 +189,17 @@ def p_from_sharpe(sharpe: float, days: int) -> float:
 
 
 def passing_with_p(items: list[dict[str, Any]] | None = None) -> tuple[dict[str, float], list[dict[str, Any]]]:
-    """（BH 假设族={及格 key: p}，items）。族=当批及格全集（含已入库者，防选择偏差）。"""
+    """（BH 假设族={及格 key: p}，items）。族=当批及格全集（含已入库者，防选择偏差）。
+    逐行按自身记录窗取 n（同窗缓存去重，避免逐行查库）。"""
     items = fetch_bothwin() if items is None else items
-    days = is_window_days()
-    return {i["key"]: round(p_from_sharpe(i["is_sharpe"], days), 6) for i in items}, items
+    cache: dict[tuple[str, str] | None, int] = {}
+    out: dict[str, float] = {}
+    for i in items:
+        win = window_from_notes(i.get("notes"))
+        if win not in cache:
+            cache[win] = sample_days_for_item(i)
+        out[i["key"]] = round(p_from_sharpe(i["is_sharpe"], cache[win]), 6)
+    return out, items
 
 
 def _module_for(source_file: str):
@@ -171,14 +209,30 @@ def _module_for(source_file: str):
     return auto_mount._load_translated_module(source_file)
 
 
+def live_estimation_end() -> str:
+    """活估计窗终点=快照表最新可用交易日回退 PIT_TAIL_LAG 行（仿 auto_mount.build 的动态 end）。
+    尾日证据未定不入样（PIT）；无数据回退 IS 冻结终点（fail-safe，禁写死 2023-12-31）。"""
+    rows = _q(f"SELECT trade_date FROM {SNAP_TABLE} WHERE trade_date >= '{IS_WIN[0]}' "
+              f"ORDER BY trade_date DESC LIMIT 1 OFFSET {PIT_TAIL_LAG}")
+    if not rows:
+        return IS_WIN[1]
+    d = rows[0][0]
+    return d.strftime("%Y-%m-%d") if hasattr(d, "strftime") else str(d)[:10]
+
+
+def net_window() -> tuple[str, str]:
+    """ρ 矩阵日净收益估计窗：锚=IS_WIN[0]（与冻结口径可比起点），终点随可用数据动态前移。"""
+    return (IS_WIN[0], live_estimation_end())
+
+
 def net_returns(source_file: str):
-    """翻译件 IS 窗日净收益（经 auto_mount 加载契约=build+引擎）。"""
+    """翻译件活窗日净收益（经 auto_mount 加载契约=build+引擎；终点随当前数据，非冻结 2023）。"""
     sys.path.insert(0, str(ROOT / "scripts/backtest/translated"))
     import _c4_engine  # noqa: PLC0415
     import pandas as pd  # noqa: PLC0415
 
     mod = _module_for(source_file)
-    weights, closes = mod.build(*IS_WIN)
+    weights, closes = mod.build(*net_window())
     net = _c4_engine.daily_net_returns(weights, closes)
     net.index = pd.to_datetime(net.index)
     return net
@@ -194,7 +248,7 @@ def corr_matrix(items: list[dict[str, Any]]) -> dict[tuple[str, str], float]:
     for i in items:
         try:
             nets[i["key"]] = net_returns(i["source_file"])
-        except Exception:  # noqa: BLE001——单件回测失败=不参与聚类（宁漏勿误），不阻断批
+        except Exception:  # noqa: BLE001 单件回测失败=不参与聚类（宁漏勿误），不阻断批
             continue
         finally:
             gc.collect()
