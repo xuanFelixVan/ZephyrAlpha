@@ -27035,6 +27035,10 @@ creation_tokens:
   token: s11-nodes-mining-risk-overlay-mining-20260916
   created_by: st-qoder-t1a-20260915
   capability: s11_nodes_mining
+- file: docs/_working/full-auto-chain/S11_assembled_backtest/nodes/coverage_map_cert_gates_mining.md
+  token: s11-nodes-mining-coverage-map-cert-gates-mining-20260916
+  created_by: st-qoder-t1a-20260915
+  capability: s11_nodes_mining
 - file: scripts/governance/d5_architecture/syncers/normalize_blueprint_autogen_anchors.py
   token: blueprint-anchor-sync-normalize-blueprint-autogen-anchors-20260916
   created_by: st-qoder-t1a-20260915
@@ -27167,4 +27171,24 @@ creation_tokens:
   token: industry-chain-alpha-industry-chain-alpha-plan-20260916
   created_by: st-igalpha-20260917
   capability: industry_chain_alpha
+- file: docs/_working/automation/20260917_automation_linkage_plan_v1.md
+  token: automation-linkage-20260917-automation-linkage-plan-v1-20260916
+  created_by: st-autolnk-20260917
+  capability: automation_linkage
+- file: docs/_working/automation/20260917_wo_gpu01_night_mining_ollama.md
+  token: automation-linkage-20260917-wo-gpu01-night-mining-ollama-20260916
+  created_by: st-autolnk-20260917
+  capability: automation_linkage
+- file: docs/_working/automation/20260917_wo_gpu02_kronos_batch_scoring.md
+  token: automation-linkage-20260917-wo-gpu02-kronos-batch-scoring-20260916
+  created_by: st-autolnk-20260917
+  capability: automation_linkage
+- file: docs/_working/automation/20260917_wo_gpu03_sft_gguf_ollama_chain.md
+  token: automation-linkage-20260917-wo-gpu03-sft-gguf-ollama-chain-20260916
+  created_by: st-autolnk-20260917
+  capability: automation_linkage
+- file: docs/_working/automation/20260917_wo_gpu04_rl_execution_training.md
+  token: automation-linkage-20260917-wo-gpu04-rl-execution-training-20260916
+  created_by: st-autolnk-20260917
+  capability: automation_linkage
 di_seam_exemptions: []
