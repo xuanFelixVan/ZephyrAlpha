@@ -354,6 +354,14 @@ def _subscribe_governance_regeneration() -> None:
       - YAML 真源变更（手编无 apply 调用）由本函数启动时 mtime 对比兜底
     复用 scripts/governance/reconcile_generators.py 的 reconcile_stale()。
     """
+    # pytest 守卫（批8 r5 实证）：测试内 boot 会真实重生成生产产物——domain_doc
+    # 实测 158.7s > 120s pytest timeout 杀死全量（test_mcp_full_lifecycle_e2e
+    # 中招）。测试禁写生产路径（宪法 §9.6），重生成属生产启动兜底，测试环境跳过。
+    import os as _os
+
+    if _os.environ.get("PYTEST_CURRENT_TEST"):
+        logger.info("Governance regeneration skipped under pytest (test isolation)")
+        return
     try:
         import sys as _sys
 
