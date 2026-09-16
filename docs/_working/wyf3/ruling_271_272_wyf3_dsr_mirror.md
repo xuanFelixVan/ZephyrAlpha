@@ -94,7 +94,12 @@ registry: docs/01_policies_and_standards/_registry/catalogs/ruling_registry.yaml
 `strategy_validation` 流水线随请求口径强制注入；`metrics.calculate_full_metrics → TrialLedger`
 新增 depgraph 边。
 
-**残余待接（登记不隐藏）**：`risk_validation_bridge.admit_strategy` 的 dsr 入参因该文件被
-他会话在途 claim（`st-btfix-p17-20260916`，12h TTL）暂缓。
+**残余待接（登记不隐藏，2026-09-16 复核修正原表述）**：此前记为"`risk_validation_bridge.admit_strategy`
+的 dsr 入参暂缓"——经核该符号全仓不存在（`git grep -F admit_strategy` 零命中），且该桥只暴露
+`validate_order` / `validate_portfolio` 两个入参口径（`src/zephyr/governance/adapters/risk_validation_bridge.py:58-102`），
+**没有"策略准入"这一层**。因此真实缺口不是"某个入参没传 dsr"，而是**缺一个策略准入端口**：
+dsr 判定目前只在挂载门（auto_mount）生效，下单/会话装配路径上没有任何消费口可读它。
+补齐它需要新建端口方法（改变治理桥契约，属跨域改动），且该文件在他会话
+（`st-btfix-p17-20260916`）在途 claim 中，故仍不在本批施工范围——按"缺件"而非"漏传参"登记。
 
 连带发现另案处置：`strict_overfitting_gate` 经查为**死配置**（全注册表零条目，读了没人设）。

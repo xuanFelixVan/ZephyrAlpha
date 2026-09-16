@@ -523,6 +523,9 @@ class _RiskBroker:
         self.fill_callbacks.append(callback)
 
     def push_fill(self, fill) -> None:
+        # 券商侧同步变动（本 mock 只推买入）：否则本地账跟了成交、券商仓还停在
+        # recover_from_broker 的播种值，对账会暴露一个 mock 自己造的假漂移。
+        self.holdings[fill.symbol] = self.holdings.get(fill.symbol, Decimal("0")) + fill.filled_quantity
         for callback in getattr(self, "fill_callbacks", []):
             callback(fill)
 
@@ -741,6 +744,66 @@ class TestAsyncFillDispatch:
         # 漏的这笔以漂移暴露 → 冻结该标的（停错方向，不静默放行）
         assert session._risk_layer.run_reconcile_once() is False
         assert session._risk_layer.is_symbol_frozen("600000.SH") is True
+
+
+class TestPaperSessionEndToEnd:
+    """全链路彩排：唯一入口=CLI main()，装配→启动→成交→收盘停→排空→对账一次跑通。
+
+    分段各测都绿不等于链路通（本仓 P0 病根正是"每段自证清白、段间接口无人调用"），
+    故本用例不经任何测试专用装配捷径：session_factory 只是记录会话句柄，
+    装配仍走生产 assemble_session。
+    """
+
+    def test_cli_run_lights_the_whole_chain(self, tmp_path, monkeypatch, capsys):
+        from zephyr.ex_core.position_tracker.tracker import PositionTracker
+
+        monkeypatch.setattr(sps, "_RISK_STATE_DIR", tmp_path)  # 宪法 §9.6：禁写生产 data/
+        real = PositionTracker.apply_fill
+        # 落账拖慢：令"收盘停机那一刻仍有在途成交"成为确定事实，而非靠线程调度运气
+        monkeypatch.setattr(
+            PositionTracker, "apply_fill", lambda self, fill, side: (time.sleep(0.3), real(self, fill, side))[1]
+        )
+        broker = _RiskBroker(holdings={"600000.SH": "100"})
+        clock = _FakeClock(_sh(15, 4))
+        holder: dict = {}
+
+        def _factory(args, brk):
+            session = sps.assemble_session(args, brk, state_dir=tmp_path)
+            holder["session"] = session
+            return session
+
+        pushed: dict = {"done": False}
+
+        def _sleeper(_seconds: float) -> None:
+            if not pushed["done"]:
+                pushed["done"] = True
+                session = holder["session"]
+                order = _order(session._order_manager)
+                broker.push_fill(_fill(order.order_id))  # 券商推送口径（经 broker 回调链）
+            clock.advance(120.0)  # 一觉睡过 15:05 → 有界循环自然收场
+
+        code = sps.main(
+            [],
+            broker_factory=lambda: broker,
+            session_factory=_factory,
+            sleeper=_sleeper,
+            now_fn=clock,
+            qmt_probe=lambda: True,
+        )
+        session = holder["session"]
+        out = capsys.readouterr().out
+        assert code == 0
+        assert "会话装配失败" not in out and "[RISK] 组合级风控层已装配" in out
+        assert pushed["done"] is True and session.fill_dispatcher.stats.enqueued == 1
+        # stop 在 main 的 finally 里发生 → 派发线程必须已退出且那一笔已落账
+        assert session.fill_dispatcher.is_running is False
+        assert session.fill_dispatcher.stats.dispatched == 1
+        book = session._risk_layer._position_tracker.get_positions()
+        # 200 = 100（start() 的 recover_from_broker 播种）+ 100（派发线程落账）
+        assert book.holdings["600000.SH"] == Decimal("200")
+        assert session._risk_layer.run_reconcile_once() is True  # 本地账与券商仓对齐
+        assert session._risk_layer.is_symbol_frozen("600000.SH") is False
+        assert broker.disconnected is True
 
 
 class TestRiskLayerFailFast:
