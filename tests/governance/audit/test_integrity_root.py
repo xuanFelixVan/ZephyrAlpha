@@ -117,12 +117,14 @@ class TestIntegrityVerifierInit:
         from zephyr.shared.io.paths import AUDIT_DATA_DIR
 
         verifier = IntegrityVerifier()
-        assert verifier.event_log_path == AUDIT_DATA_DIR / "events.jsonl"
+        # 2026-09-16：event_log_path property 已去重删除（与 writer.py extract 级克隆，
+        # 全仓公共消费面仅此两处）——构造注入白盒断言走私有属性
+        assert verifier._event_log_path == AUDIT_DATA_DIR / "events.jsonl"
 
     def test_custom_path(self, tmp_path):
         path = tmp_path / "custom.jsonl"
         verifier = IntegrityVerifier(event_log_path=path)
-        assert verifier.event_log_path == path
+        assert verifier._event_log_path == path  # property 去重删除后白盒断言（同上）
 
     def test_hmac_key_stored_as_bytes(self):
         verifier = IntegrityVerifier(hmac_key="secret")

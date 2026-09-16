@@ -260,16 +260,10 @@ class IntegrityVerifier:
         self._era_cfg = _load_key_eras() if hmac_key_was_none else None
 
     # ── Stage 4 公共化（2026-07-29）：只读 properties ──
-    @property
-    def event_log_path(self):
-        """只读：event_log_path（Stage 4 公共化）。"""
-        return self._event_log_path
-
-    @event_log_path.setter
-    def event_log_path(self, value):
-        """写入：event_log_path（Stage 4 公共化）。"""
-        self._event_log_path = value
-
+    # event_log_path property 已删除（2026-09-16 st-auditkey）：全仓零消费方实证
+    # （tests 中的 .event_log_path 均为 AuditWriter 实例），且与 writer.py:431 构成
+    # extract 级 100% 克隆（CloneGuard CAPABILITY-OVERLAP 硬阻断）——按门禁建议
+    # 合并去重：路径经构造参数注入，无公共读取需求。
     @property
     def hmac_key(self):
         """只读：hmac_key（Stage 4 公共化）。"""
