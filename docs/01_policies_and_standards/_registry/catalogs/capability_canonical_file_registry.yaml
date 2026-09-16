@@ -5016,6 +5016,18 @@ capabilities:
     docs/_working/reports/2026-09-16-consensus-repaired-build.md；设计 =
     docs/01_policies_and_standards/policies/expectation_consumption_design_policy.md §M1/§9。
 creation_tokens:
+- file: "tests/backtest/test_f06_e2e_pipeline.py"
+  token: "f06-e2e-test-20260916"
+  created_by: "st-f06combo-20260915"
+  capability: "position_recipe_grid_compile"
+- file: "scripts/run_f06_grid.ps1"
+  token: "f06-grid-runner-20260916"
+  created_by: "st-f06combo-20260915"
+  capability: "position_recipe_grid_compile"
+- file: "scripts/register_f06_grid_task.ps1"
+  token: "f06-grid-register-20260916"
+  created_by: "st-f06combo-20260915"
+  capability: "position_recipe_grid_compile"
 - file: "docs/_working/audit_integrity/2026-09-16-audit-key-era-deployment.md"
   token: "audit-key-era-deploy-report-20260916"
   created_by: "st-auditkey-20260916"
@@ -26309,6 +26321,10 @@ creation_tokens:
   capability: resource_schedule_panorama
 - file: "scripts/data/audit_technical_indicator_coverage.py"
   token: "ti-coverage-audit-20260916"
+- file: "scripts/data/bdpan_tick_watch.py"
+  token: "bdpan-tick-watch-20260916"
+  created_by: "st-tickdrain-20260916"
+  capability: "technical_indicator"
   created_by: "st-tickdrain-20260916"
   capability: "technical_indicator"
 - file: src/zephyr/infrastructure/system_telemetry/alerts/ops_alert_feed.py
