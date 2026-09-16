@@ -5,7 +5,7 @@ title: "AutoRuntime Core 蓝图 — 系统大脑·三层运行时运营中心"
 doc_type: blueprint
 template_for: blueprint
 status: Active
-version: "6.0.15"
+version: "6.0.16"
 layer: L1_foundation
 owner: ZephyrAlpha-Owner
 classification: confidential
@@ -1048,6 +1048,7 @@ STEP 3: 拆分后验证
 | `tests/automation/test_auto_integrator.py` | ✅ 已实现 | |
 | `tests/automation/test_auto_runtime_core.py` | ✅ 已实现 | |
 | `tests/automation/test_auto_runtime_e2e.py` | ✅ 已实现 | |
+| `tests/automation/test_auto_runtime_vram_budget_gate.py` | ✅ 已实现 | |
 | `tests/automation/test_auto_task_generator.py` | ✅ 已实现 | |
 | `tests/capability/test_capability_card.py` | ✅ 已实现 | |
 | `tests/capability/test_capability_registry.py` | ✅ 已实现 | |
