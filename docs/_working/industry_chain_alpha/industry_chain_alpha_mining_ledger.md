@@ -145,6 +145,7 @@ Noise 轮 0；受阻 2（429，已重试成功）。四闸过滤记录：中心�
 | D4 | 概念/行业分类/图谱三方交叉稽核 | stock_concept+industry_class+ig_* | 治理批 | 【已建】（概念≠产业链裁定在案） | — | 已建 |
 | D5 | IO 2023 延长表升级 | io_ingest 换数据文件 | D_DATA | 未建（等官方数据可得） | L-M | 挂起（数据可得即解锁，管道幂等现成） |
 | D6 | **链暴露矩阵派生表**（stock×上游源×方向×强度×PIT） | ig_node_company+ig_company_edge+ig_io_edge | 全清单地基（A/B/C 三类 10+ 项踩其上） | 未建 | **H** | **施工·批1 第一件** |
+| D7 | **Entity Master 实体身份证库**（Owner 四轮令新增：ig_unlisted_entity 升级为唯一实体身份库——多市场代码映射/中英文名/别名/国家；listed_symbol 仅 21/14,070 填充待批量补全；2330.TW 与 TSM.TW 双形态并存=首个消歧试点；全球行情接入的身份前置） | ig_unlisted_entity+全网代码检索 | 全球链扩展（线C/D） | 未建 | **H** | 施工·批4——方案见 [industry_chain_global_expansion_plan.md](industry_chain_global_expansion_plan.md) |
 
 ### E 类：展示与研究
 
