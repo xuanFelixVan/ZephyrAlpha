@@ -1,0 +1,41 @@
+# ALGO_FLOW 外部真源——alert_handler（_domain_orchestrator 域，真源 src/zephyr/orchestrator/contracts/alert_handler.py）
+# 2026-09-15 P2-1 契约头减负批量出仓：docstring 内联块逐字节副本，extractor 经
+# external 锚加载走同一 parse_algo_flow 管线；算法公共面变化时同步更新本块。
+doc_type: architecture_view
+ttl: permanent
+module: src.zephyr.orchestrator.contracts.alert_handler
+source_of_truth: src/zephyr/orchestrator/contracts/alert_handler.py
+algo_flow: |
+    # [ALGO_FLOW]
+    # 层: 输入
+    # - id: I1
+    #   name: event 参数
+    #   fields: 参数 event，类型注解 object
+    #   code: alert_handler.py 顶层公共函数形参（AST 提取）
+    # 层: 算法
+    # - id: A1
+    #   name_zh: ① AlertHandler
+    #   name_en: AlertHandler
+    #   intro: class AlertHandler 源码 L75-L105
+    #   desc: 公共方法（定义序）: handle_alert；源码 L75-L105
+    #   inputs: task_repo
+    #   outputs: 返回值
+    # - id: A2
+    #   name_zh: ② handle_alert
+    #   name_en: handle_alert
+    #   intro: handle_alert(event) 源码 L220-L221
+    #   desc: 源码 L220-L221
+    #   inputs: event
+    #   outputs: object | None
+    # 层: 输出
+    # - id: O1
+    #   name_zh: object | None
+    #   name_en: object | None
+    #   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+    #   downstream: zephyr.feedback_loop.alert_dispatcher; zephyr.trading.work_orchestrator
+    # [/ALGO_FLOW]
+    #
+    # 边:
+    # I1 --> A1
+    # A1 --> A2
+    # A2 --> O1

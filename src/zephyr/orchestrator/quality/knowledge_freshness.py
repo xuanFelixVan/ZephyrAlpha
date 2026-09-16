@@ -18,31 +18,7 @@
 """
 知识新鲜度废止管理器（CT-KNOWLEDGE-FRESHNESS）——KE过期标记+自动失效。
 
-# [ALGO_FLOW]
-# 层: 输入
-# - id: I1
-#   name: 模块内部数据
-#   fields: 无公共形参/无再导出（AST 事实）
-#   code: knowledge_freshness.py
-# 层: 算法
-# - id: A1
-#   name_zh: ① KnowledgeFreshnessManager
-#   name_en: KnowledgeFreshnessManager
-#   intro: class KnowledgeFreshnessManager 源码 L51-L59
-#   desc: 公共方法（定义序）: is_stale, should_deprecate；源码 L51-L59
-#   inputs: 无参数
-#   outputs: 返回值
-# 层: 输出
-# - id: O1
-#   name_zh: 模块公共 API 面（1 定义）
-#   name_en: public defs
-#   intro: KnowledgeFreshnessManager
-#   downstream: 见模块头 [CONSUMERS]
-# [/ALGO_FLOW]
-#
-# 边:
-# I1 --> A1
-# A1 --> O1
+# [ALGO_FLOW] external: docs/03_modules/_domain_orchestrator/algo_flow/knowledge_freshness.yaml
 """
 
 from datetime import UTC, datetime

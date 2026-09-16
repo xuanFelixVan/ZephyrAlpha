@@ -24,45 +24,7 @@ B1-00201（AUD-DRAFT-001-DIGEST P2 波 P2-W13，CAND-ORCH-002，C2）：只读�
 查重分工（蓝图 §0）：status_dashboard=面板渲染消费方（本件=其上游只读数据
 源，不渲染）；state_synchronizer=运行时状态传播（写向，本件零写入纯只读）。
 
-# [ALGO_FLOW]
-# 层: 输入
-# - id: I1
-#   name: collectors 参数
-#   fields: 参数 collectors（无注解）
-#   code: global_state_aggregator.py 顶层公共函数形参（AST 提取）
-# - id: I2
-#   name: clock 参数
-#   fields: 参数 clock（无注解）
-#   code: global_state_aggregator.py 顶层公共函数形参（AST 提取）
-# 层: 算法
-# - id: A1
-#   name_zh: ① StateSnapshot
-#   name_en: StateSnapshot
-#   intro: 统一全局状态快照（frozen；readings 按枚举序确定性排列）。
-#   desc: 统一全局状态快照（frozen；readings 按枚举序确定性排列）。；公共方法（定义序）: healthy, reading_of, to_dict, to_json；源码 L120-L162
-#   inputs: 无参数
-#   outputs: 返回值
-# - id: A2
-#   name_zh: ② GlobalStateAggregator
-#   name_en: GlobalStateAggregator
-#   intro: 六域只读聚合器（采集器注入 + 降级标记 + 快照查询）。
-#   desc: 六域只读聚合器（采集器注入 + 降级标记 + 快照查询）。；公共方法（定义序）: register_collector, registered_domains, collect, latest；源码 L165-L263
-#   inputs: collectors clock
-#   outputs: 返回值
-#   （注：A2 之后另有 3 个公共定义未列入（含 3 个数据契约/异常/枚举声明类），见源码）
-# 层: 输出
-# - id: O1
-#   name_zh: 模块公共 API 面（5 定义）
-#   name_en: public defs
-#   intro: StateSnapshot, GlobalStateAggregator
-#   downstream: 运行时装配批（状态面板数据源 / 告警路由快照供给 / 六域采集器绑定）
-# [/ALGO_FLOW]
-#
-# 边:
-# I1 --> A1
-# I2 --> A1
-# A1 --> A2
-# A2 --> O1
+# [ALGO_FLOW] external: docs/03_modules/_domain_orchestrator/algo_flow/global_state_aggregator.yaml
 """
 
 from __future__ import annotations

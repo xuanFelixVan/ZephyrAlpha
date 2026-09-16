@@ -7,46 +7,7 @@
 """
 
 
-# [ALGO_FLOW]
-# 层: 输入
-# - id: I1
-#   name: alert_handler 子模块符号 1个
-#   fields: AlertHandler
-#   code: zephyr.orchestrator.contracts.alert_handler
-# - id: I2
-#   name: context_bridge 子模块符号 1个
-#   fields: ContextBridge
-#   code: zephyr.orchestrator.execution.context_bridge
-# - id: I3
-#   name: memory_writer 子模块符号 2个
-#   fields: MemoryWriter / archive_to_vms
-#   code: zephyr.orchestrator.execution.memory_writer
-# - id: I4
-#   name: script_runner 子模块符号 1个
-#   fields: ScriptRunner
-#   code: zephyr.orchestrator.execution.script_runner
-# 层: 算法
-# - id: A1
-#   name_zh: ① 包级聚合再导出
-#   name_en: zephyr.orchestrator.__init__
-#   intro: MOD-INF-039 包入口
-#   desc: MOD-INF-039 包入口，包级聚合再导出并声明 __all__（12项）
-#   inputs: I1 I2 I3 I4
-#   outputs: zephyr.orchestrator 包级公共命名空间
-#   invariant: 包级导出以 __all__ 声明为准（12项）
-# 层: 输出
-# - id: O1
-#   name_zh: zephyr.orchestrator 包公共 API
-#   name_en: __all__ 12项
-#   intro: MOD-INF-039 包入口——对外统一出口
-#   downstream: 见蓝图头 [CONSUMERS] 声明
-# [/ALGO_FLOW]
-# 边:
-# I1 --> A1
-# I2 --> A1
-# I3 --> A1
-# I4 --> A1
-# A1 --> O1
+# [ALGO_FLOW] external: docs/03_modules/_domain_orchestrator/algo_flow/orchestrator__init__.yaml
 """
 
 from zephyr.orchestrator.contracts.alert_handler import AlertHandler

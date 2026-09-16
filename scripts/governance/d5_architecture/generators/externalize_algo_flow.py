@@ -9,7 +9,9 @@
 #   外部 yaml 落 docs/03_modules/<domain>/algo_flow/<stem>.yaml（doc_type=architecture_view 过 DCR-001，
 #   目录契约 allowed=[.md,.yaml]）；幂等（已带 external 锚的文件跳过）；域过滤 --domain/--file；
 #   --dry-run 零写入；yaml 块文本 = docstring 内联块逐字节副本（含边段，block-scalar 保留原样）；
-#   只处理 module docstring 含真内联块的文件（锚行不算）
+#   只处理 module docstring 含真内联块的文件（锚行不算）；
+#   批级 stem 碰撞预判（P2-1 orchestrator 批实证）：同域非 __init__ 同 stem 多文件时子包件
+#   确定性改道 parent__stem，dry-run 预测=落盘路径（消除盘存在改道的时序依赖）
 # [MODIFY-GUARD] 无
 # [STABILITY] evolving
 # [SAFETY] M
@@ -66,6 +68,36 @@ _ANCHOR_RE = re.compile(r"^#\s*\[ALGO_FLOW\]\s+external:\s*(\S+)\s*$", re.MULTIL
 
 # 既有 yaml 反查缓存：domain_dir → {source_of_truth: yaml_rel}（批9 幂等治本）
 _EXISTING_YAML_CACHE: dict[str, dict[str, str]] = {}
+
+# 批级 stem 碰撞预判表：rel_py → yaml_rel（main() 批开始前静态填充）
+_PLANNED_REMAP: dict[str, str] = {}
+
+
+def _plan_stem_collision_remaps(targets: list[Path]) -> None:
+    """批开始前静态判定同 stem 碰撞，子包件确定性改道 ``<parent>__<stem>.yaml``。
+
+    映射改道雷同族（b9 实证）：_yaml_rel_for 靠"盘上 yaml 已存在"改道，同批内
+    后处理文件在写入前阶段不可预测（依赖 rglob 排序+落盘副作用）——dry-run 与
+    正式跑路径不一致。此处按批清单预判：同 domain_dir 内非 __init__ 同 stem
+    ≥2 文件时，域根件保平铺名，子包件（深度 > src/zephyr/<domain>/）加 parent 前缀；
+    不同子包各得唯一名，处理顺序无关。
+    """
+    _PLANNED_REMAP.clear()
+    by_stem: dict[tuple[str, str], list[Path]] = {}
+    for p in targets:
+        if p.name == "__init__.py":
+            continue
+        rel = p.relative_to(REPO_ROOT).as_posix()
+        by_stem.setdefault((_domain_of(rel), p.stem), []).append(p)
+    for (domain_dir, stem), paths in by_stem.items():
+        if len(paths) < 2:
+            continue
+        for p in paths:
+            rel_parts = p.relative_to(REPO_ROOT).parts  # src/zephyr/<domain>/... 域根件=4 段
+            if len(rel_parts) > 4:  # 子包件 → <parent>__<stem>.yaml
+                _PLANNED_REMAP[p.relative_to(REPO_ROOT).as_posix()] = (
+                    f"docs/03_modules/{domain_dir}/algo_flow/{p.parent.name}__{stem}.yaml"
+                )
 
 
 def _existing_yaml_for(rel_py: str, domain_dir: str) -> str:
@@ -261,9 +293,10 @@ def externalize(py_path: Path, dry_run: bool) -> dict:
             ds_node = n
             break
 
-    # 外部 yaml 路径：既有 yaml（source_of_truth 反查）优先，无则按推导命名
+    # 外部 yaml 路径：既有 yaml（source_of_truth 反查）优先，次批级碰撞预判，
+    # 无则按推导命名
     domain_dir = _domain_of(rel)
-    yaml_rel = _existing_yaml_for(rel, domain_dir) or _yaml_rel_for(py_path, rel, domain_dir)
+    yaml_rel = _existing_yaml_for(rel, domain_dir) or _PLANNED_REMAP.get(rel, "") or _yaml_rel_for(py_path, rel, domain_dir)
     stem = py_path.stem
 
     # 锚行窗口：纯源码坐标实测。值↔源码行映射在含 ``\n`` 转义的 docstring 上不保真
@@ -405,6 +438,7 @@ def main(argv: list[str] | None = None) -> int:
     args = parser.parse_args(argv)
 
     targets = _iter_targets(args.domain, args.file)
+    _plan_stem_collision_remaps(targets)
     results = []
     done = 0
     for p in targets:

@@ -18,31 +18,7 @@
 """
 外部依赖版本锁（CT-DEPS）——Python包版本锁定+hash验证+安全审计。
 
-# [ALGO_FLOW]
-# 层: 输入
-# - id: I1
-#   name: 模块内部数据
-#   fields: 无公共形参/无再导出（AST 事实）
-#   code: dependency_lock.py
-# 层: 算法
-# - id: A1
-#   name_zh: ① DependencyLock
-#   name_en: DependencyLock
-#   intro: class DependencyLock 源码 L49-L66
-#   desc: 公共方法（定义序）: get, list_all, check_safety；源码 L49-L66
-#   inputs: 无参数
-#   outputs: 返回值
-# 层: 输出
-# - id: O1
-#   name_zh: 模块公共 API 面（1 定义）
-#   name_en: public defs
-#   intro: DependencyLock
-#   downstream: 见模块头 [CONSUMERS]
-# [/ALGO_FLOW]
-#
-# 边:
-# I1 --> A1
-# A1 --> O1
+# [ALGO_FLOW] external: docs/03_modules/_domain_orchestrator/algo_flow/dependency_lock.yaml
 """
 
 

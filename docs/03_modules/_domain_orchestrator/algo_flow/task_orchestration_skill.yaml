@@ -1,0 +1,60 @@
+# ALGO_FLOW 外部真源——task_orchestration_skill（_domain_orchestrator 域，真源 src/zephyr/orchestrator/task_orchestration_skill.py）
+# 2026-09-15 P2-1 契约头减负批量出仓：docstring 内联块逐字节副本，extractor 经
+# external 锚加载走同一 parse_algo_flow 管线；算法公共面变化时同步更新本块。
+doc_type: architecture_view
+ttl: permanent
+module: src.zephyr.orchestrator.task_orchestration_skill
+source_of_truth: src/zephyr/orchestrator/task_orchestration_skill.py
+algo_flow: |
+    # [ALGO_FLOW]
+    # 层: 输入
+    # - id: I1
+    #   name: clock 参数
+    #   fields: 参数 clock（无注解）
+    #   code: task_orchestration_skill.py 顶层公共函数形参（AST 提取）
+    # - id: I2
+    #   name: executor 参数
+    #   fields: 参数 executor（无注解）
+    #   code: task_orchestration_skill.py 顶层公共函数形参（AST 提取）
+    # - id: I3
+    #   name: dlq_sink 参数
+    #   fields: 参数 dlq_sink（无注解）
+    #   code: task_orchestration_skill.py 顶层公共函数形参（AST 提取）
+    # 层: 算法
+    # - id: A1
+    #   name_zh: ① ExecutionReport
+    #   name_en: ExecutionReport
+    #   intro: 整计划执行报告（records 按波次/层内序确定性排列，frozen）。
+    #   desc: 整计划执行报告（records 按波次/层内序确定性排列，frozen）。；公共方法（定义序）: succeeded, status_of；源码 L168-L186
+    #   inputs: 无参数
+    #   outputs: 返回值
+    # - id: A2
+    #   name_zh: ② WorkDAG
+    #   name_en: WorkDAG
+    #   intro: 轻量 DAG（work_dag 语义：拓扑分层 + 未知依赖/循环拒绝）。
+    #   desc: 轻量 DAG（work_dag 语义：拓扑分层 + 未知依赖/循环拒绝）。 参照 agent_orchestrator 纯内存/DI 既有模式内建；边仅经 depends_on…；公共方法（定义序）: add_node…
+    #   inputs: 无参数
+    #   outputs: 返回值
+    # - id: A3
+    #   name_zh: ③ TaskOrchestrationSkill
+    #   name_en: TaskOrchestrationSkill
+    #   intro: 任务编排技能（契约登记 + 分解成 DAG + 人工确认 + 波次执行 + 重试/DLQ）。
+    #   desc: 任务编排技能（契约登记 + 分解成 DAG + 人工确认 + 波次执行 + 重试/DLQ）。；公共方法（定义序）: register_contract, contract_of, contracts, decompos…
+    #   inputs: clock executor dlq_sink
+    #   outputs: 返回值
+    #   （注：A3 之后另有 6 个公共定义未列入（含 6 个数据契约/异常/枚举声明类），见源码）
+    # 层: 输出
+    # - id: O1
+    #   name_zh: 模块公共 API 面（9 定义）
+    #   name_en: public defs
+    #   intro: ExecutionReport, WorkDAG, TaskOrchestrationSkill
+    #   downstream: 运行时装配批（任务分解入口 / 真实执行器绑定 / DLQ 落库路由 / 人工确认闸门）
+    # [/ALGO_FLOW]
+    #
+    # 边:
+    # I1 --> A1
+    # I2 --> A1
+    # I3 --> A1
+    # A1 --> A2
+    # A2 --> A3
+    # A3 --> O1
