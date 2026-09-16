@@ -1,0 +1,51 @@
+# ALGO_FLOW 外部真源——daban_sleeve_strategy（_domain_portfolio_core 域，真源 src/zephyr/pf_core/strategies/daban_sleeve_strategy.py）
+# 2026-09-15 P2-1 契约头减负批量出仓：docstring 内联块逐字节副本，extractor 经
+# external 锚加载走同一 parse_algo_flow 管线；算法公共面变化时同步更新本块。
+# 2026-09-16 同步（st-dabanapp2-20260916）：模块扩公共面——持久化负载 PIT 消费
+# （row_to_engine_payload/build_signals_from_load/build_weight_panel_for_dates），
+# 按本头注规则同步 A1 desc 公共方法清单与 O1 消费面，历史截断文本一并补全。
+doc_type: architecture_view
+ttl: permanent
+module: src.zephyr.pf_core.strategies.daban_sleeve_strategy
+source_of_truth: src/zephyr/pf_core/strategies/daban_sleeve_strategy.py
+algo_flow: |
+    # [ALGO_FLOW]
+    # 层: 输入
+    # - id: I1
+    #   name: selector 参数
+    #   fields: 参数 selector（无注解）
+    #   code: daban_sleeve_strategy.py 顶层公共函数形参（AST 提取）
+    # - id: I2
+    #   name: youzi_engine 参数
+    #   fields: 参数 youzi_engine（无注解）
+    #   code: daban_sleeve_strategy.py 顶层公共函数形参（AST 提取）
+    # - id: I3
+    #   name: quant_engine 参数
+    #   fields: 参数 quant_engine（无注解）
+    #   code: daban_sleeve_strategy.py 顶层公共函数形参（AST 提取）
+    # - id: I4
+    #   name: fusion_engine 参数
+    #   fields: 参数 fusion_engine（无注解）
+    #   code: daban_sleeve_strategy.py 顶层公共函数形参（AST 提取）
+    # 层: 算法
+    # - id: A1
+    #   name_zh: ① DabanSleeveStrategy
+    #   name_en: DabanSleeveStrategy
+    #   intro: 打板 sleeve 组装策略——双引擎融合评分 × 6 类决策优先级取 Top-N。
+    #   desc: 打板 sleeve 组装策略——双引擎融合评分 × 6 类决策优先级取 Top-N。 signals 负载约定（dict[str, dict]，键=标的代码）；公共方法（定义序）: generate_target_weights, row_to_engine_payload, build_signals_from_load, build_weight_panel_for_dates, select。持久化负载消费：默认经 DatabaseService PIT 真读 c1_market.daban_engine_load（trade_date<T 前一交易日分区，禁未来函数；读空显式 skipped 非静默零权重）；row_to_engine_payload 只产可产字段，selector 资格门键省略（机构输入非事件源可产，喂默认将系统性清零）。
+    #   inputs: selector youzi_engine quant_engine fusion_engine
+    #   outputs: 返回值
+    # 层: 输出
+    # - id: O1
+    #   name_zh: 模块公共 API 面（1 类 4 公共方法）
+    #   name_en: public defs
+    #   intro: DabanSleeveStrategy（generate_target_weights / row_to_engine_payload / build_signals_from_load / build_weight_panel_for_dates / select）
+    #   downstream: zephyr.pf_core.strategies（lazy re-export）; lane A framework_composer（daban-sleeve 成员面板路，暂 ROUTE_NO_DAILY_SOURCE 披露位）; zephyr.ex_core.daban_load_producer（产负载行 ↔ 本策略 PIT 消费闭环）
+    # [/ALGO_FLOW]
+    #
+    # 边:
+    # I1 --> A1
+    # I2 --> A1
+    # I3 --> A1
+    # I4 --> A1
+    # A1 --> O1
