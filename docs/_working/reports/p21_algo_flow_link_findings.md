@@ -242,3 +242,29 @@ date: 2026-09-17
   TTL/配额类瞬态，未取证前不下结论。
 - 归属留痕：79da32493a（#ARCH-324 登记）把他会话 staged 的 **#ARCH-325** 一条（31 行完整条目）
   一并带进 commit——AGENTS §2.5 记录的暂存区吸收常态，条目完好无损，此处仅为归属可追溯。
+
+## 14. 两轮零缺陷核销 + 一次"缺陷"其实是空命题：退役批次不清镜像（#ARCH-326）
+
+- **第 8 轮唯一 `defects=1` 的归因**：`wt_unreadable: src/zephyr/infrastructure/model_capability_exam/__init__.py`
+  ——该路径已**不在 HEAD**：他会话退役批 6a0eca4700（st-govmap，09-17 05:35，P4-β 死壳退役）把整棵树删了。
+  对一条已不存在的路径复验"本批落地后的工作区内容"是**空命题**，不是本战役的断链。
+- **核销器判据精确化**（scratch 工具，非门禁，只收紧不放松）：`FileNotFoundError` 且路径不在 HEAD 树内
+  → 记 `info_foreign_retired` 只报数；仍在 HEAD 却读不出（占用/权限/损坏）才算硬缺陷 `wt_unreadable`。
+- **两轮零缺陷达成**：第 9 轮（判据修正后，全 60 批）`VERIFY defects={}`，覆盖
+  `py=2342 / anchored=2338 / yaml_ok=2338 / compared=2176`；第 10 轮同判据重跑（期间 HEAD 又被他会话推进）
+  仍 `defects={}`，逐项计数与第 9 轮逐位相同。**"连续两次测试问题=0" 判据满足。**
+- **顺带普查出的真问题不在这批**：镜像**反向悬挂**。全库 3227 件 ALGO_FLOW 镜像逐件读 `source_of_truth`
+  对 dev 树判存在性 → 命中且仅命中 1 件（上述 `model_capability_exam` 镜像）；常驻终态检查器
+  `bt_head_state_check.py`（3576 py + 3227 yaml 全量）独立复算同一件，其余三类判据零命中。
+  盲区成因=两向都是 staged 作用域：退役批次删 `.py` 时其镜像天然不在同批清单，ALGO-FLOW-LINK
+  判据②（yaml 的 source_of_truth 存在）永不触发，仓内也没有全库反向检测面
+  （d5 `check_algo_flow.py` 只查 staged `.py` 标记，`algo_flow_applier --verify` 只按固定模块清单算覆盖率）。
+- **登记与处置口径**（#ARCH-326，P2中/open）：本战役**不代删**——①AGENTS §3.4 他车道改动不代修；
+  ②删除须同步从 `capability_canonical_file_registry.yaml` 摘其 creation_token 条目，
+  注册表净删按 §5 属 Owner 门位。补救一条命令即够（`git rm` 该 yaml + CAS 摘 token 同批），
+  机制侧建议=反向孤件普查并入 `d8_doc_sync` 事件触发对账（勿进 pre-commit：3227 件全库扫描属触碰税，
+  perf 方案 §2.6 分级不允许）。
+- **登记过程自身的一条教训**：首版写入把 `issue_id` 写成 `"#326"`（模板 `#{NID}` 只替换了数字，丢了
+  `ARCH-` 前缀），读回复解析断言 `ids[-1] == "#ARCH-326"` 当场抓到并在同一工作区副本内改正——
+  注册表是永久产物，**读回断言必须比"写成功"更严**，它抓到的正是这类事后 review 抓不住的错。
+  机证：对 dev 纯追加 26 行、`cl[:len(dev)] == dev` 逐位相同（零删除），条目数 771→772 且 `issue_id` 全表唯一。

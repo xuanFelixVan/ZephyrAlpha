@@ -21885,3 +21885,29 @@ entries:
   status: 'open'
   created: '2026-09-17'
   last_updated: '2026-09-17'
+- issue_id: "#ARCH-326"
+  title: >-
+    模块退役批次不清 ALGO_FLOW 镜像：source_of_truth 消失的"反向孤件"没有任何检测面
+    （实证 6a0eca4700 删 infrastructure/model_capability_exam/ 全树后其镜像 yaml 仍在 HEAD）
+  severity: P2中
+  adjudication: >-
+    实测：P2-1 战役全库镜像普查（3227 件镜像逐件读 source_of_truth 对 dev 树做存在性判定）
+    命中且仅命中 1 件孤件 =
+    docs/03_modules/_domain_infrastructure/algo_flow/model_capability_exam/model_capability_exam__init__.yaml。
+    盲区成因=两个方向都是 staged 作用域：ALGO-FLOW-LINK 判据①只判"staged .py 的 external 锚
+    指向的 yaml 存在"，判据②只判"staged yaml 的 source_of_truth 存在"——退役批次删 .py 时其
+    镜像天然不在同一批 staged 清单里，判据②永不触发；仓内也没有全库反向扫镜像悬挂的检测面
+    （d5 check_algo_flow.py 是 pre-commit 的 staged .py 标记检查，algo_flow_applier --verify
+    是按固定模块清单统计覆盖率，均不覆盖本形态）。影响：死文档留在语料里被后续人工阅读与
+    --check 误当真源，且**每次模块退役都复发**（本役 90+ 批次/3227 件镜像已复发 1 次）。
+  fix_phase: >-
+    处置=登记归口、本战役不代删：①AGENTS §3.4 他车道改动不代修——退役属 st-govmap 车道的
+    P4-β 批；②删该镜像须同步从 capability_canonical_file_registry.yaml 摘其 creation_token
+    条目，注册表净删按 §5 是 Owner 门位，不由本战役自行翻转。一次性补救（Owner/退役车道执行）
+    =git rm 该 yaml + safe_write_text CAS 摘 token 同批落地。机制侧建议（未实施）：反向孤件
+    普查并入 d8_doc_sync 事件触发对账，勿进 pre-commit——3227 件全库扫描属触碰税，
+    perf 方案 §2.6 的分级不允许；本役的一次性普查脚本判据（source_of_truth 对 dev 树存在性）
+    可直接搬。
+  status: open
+  created: '2026-09-17'
+  last_updated: '2026-09-17'
