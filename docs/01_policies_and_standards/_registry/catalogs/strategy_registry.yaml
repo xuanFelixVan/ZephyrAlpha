@@ -12855,3 +12855,167 @@ strategies:
       ruling_ref: "docs/_working/pipeline-research/reports/intake-20260915-1136.md"
     code_symbol: "scripts/backtest/translated/c4_fact_4db4c41e.py::build"
     code_fingerprint: null
+  - strategy_id: "STR-MULTIFACTOR-098"
+    name: "small_cap_hl"
+    name_zh: "small_cap_hl"
+    aliases: [CAND-5301c5d9d7c8]
+    strategy_class: "multifactor"
+    sleeve: "alpha"
+    alpha_sources: []
+    variant_of: null
+    entry_logic: "C6 auto_intake 生成（启发式初值，语义字段待复核）：翻译件 scripts/backtest/translated/c4_5301c5d9d7c8_small_cap_hl.py；入场/出场逻辑见翻译件源码 build 契约。"
+    exit_logic: "见翻译件源码 build 契约（auto_intake 条目）。"
+    position_sizing: ""
+    risk_rules: []
+    holding_period: "波段"
+    benchmark_id: "BMK-ABSOLUTE-001"
+    universe_id: "UNI-RULE-001"
+    cost_model_id: "CST-ASTOCK-001"
+    module_id: "MOD-BT-189"
+    doc_ref: "docs/_working/pipeline-research/reports/intake-20260916-1316.md"
+    code_path: "scripts/backtest/translated/c4_5301c5d9d7c8_small_cap_hl.py"
+    lifecycle_status: "candidate"
+    status: "active"
+    version: "1.0.0"
+    created_at: "2026-09-16"
+    updated_at: "2026-09-16"
+    go_live_date: null
+    retired_date: null
+    owner: "MOD-GOVERNANCE"
+    decay_detection_method: null
+    decay_threshold: null
+    last_decay_scan_at: null
+    mrp_baseline: null
+    adaptation_level: null
+    last_refit_at: null
+    baseline_sharpe: 0.518
+    baseline_expectancy: null
+    baseline_win_rate: null
+    baseline_profit_factor: null
+    baseline_max_drawdown: -0.3056
+    combination_strategy: {}
+    meta_labeling_config: {}
+    origin: "c4_translated"
+    distilled_to_code: true
+    capacity_aum_limit: null
+    participation_rate_limit: 0.05
+    market_impact_model: "square_root"
+    baseline_trade_frequency: null
+    decay_cause: "unknown"
+    decay_scan_frequency: "monthly"
+    sharpe: null
+    max_drawdown: null
+    annual_return: null
+    capacity: null
+    turnover: null
+    last_evaluated_at: "2026-09-16"
+    code_commit: null
+    data_quality_policy:
+      null_rate: {threshold: 0.02, window: "1d"}
+      drift_method: "psi"
+      drift_threshold: 0.2
+      freshness: {staleness_sla: "2d"}
+      semantic_contract:
+        null_semantics: "null=未计算/未产生（非零值），禁止零填充"
+        default_fill_policy: "none"
+    null_rate: null
+    drift_psi: null
+    drift_ks_pvalue: null
+    last_quality_scan_at: null
+    entry_series: null
+    range_bounds: {}
+    primary_timeframe: "daily"
+    applicable_timeframes: [1d]
+    regime_valid: []
+    regime_invalid: []
+    direction: "long"
+    entry_role: "trigger"
+    applies_to: []
+    tags: [multifactor, auto_intake]
+    algorithm_status: "quantized"
+    evidence: "auto_intake C4-OOS-2024-2026：§8 双窗及格 IS SR=0.518；OOS C4-OOS-2024-2026:SR=0.156；BH-FDR 未过（candidate 留观，后续批次重检）；三轴（启发式初值）multifactor/波段/alpha。"
+    family_redundancy: null
+    code_symbol: "scripts/backtest/translated/c4_5301c5d9d7c8_small_cap_hl.py::build"
+    code_fingerprint: null
+  - strategy_id: "STR-MULTIFACTOR-099"
+    name: "snake_cap"
+    name_zh: "snake_cap"
+    aliases: [CAND-8664521af1a0]
+    strategy_class: "multifactor"
+    sleeve: "alpha"
+    alpha_sources: []
+    variant_of: null
+    entry_logic: "C6 auto_intake 生成（启发式初值，语义字段待复核）：翻译件 scripts/backtest/translated/c4_8664521af1a0_snake_cap.py；入场/出场逻辑见翻译件源码 build 契约。"
+    exit_logic: "见翻译件源码 build 契约（auto_intake 条目）。"
+    position_sizing: ""
+    risk_rules: []
+    holding_period: "波段"
+    benchmark_id: "BMK-ABSOLUTE-001"
+    universe_id: "UNI-RULE-001"
+    cost_model_id: "CST-ASTOCK-001"
+    module_id: "MOD-BT-189"
+    doc_ref: "docs/_working/pipeline-research/reports/intake-20260916-1316.md"
+    code_path: "scripts/backtest/translated/c4_8664521af1a0_snake_cap.py"
+    lifecycle_status: "candidate"
+    status: "active"
+    version: "1.0.0"
+    created_at: "2026-09-16"
+    updated_at: "2026-09-16"
+    go_live_date: null
+    retired_date: null
+    owner: "MOD-GOVERNANCE"
+    decay_detection_method: null
+    decay_threshold: null
+    last_decay_scan_at: null
+    mrp_baseline: null
+    adaptation_level: null
+    last_refit_at: null
+    baseline_sharpe: 0.397
+    baseline_expectancy: null
+    baseline_win_rate: null
+    baseline_profit_factor: null
+    baseline_max_drawdown: -0.2402
+    combination_strategy: {}
+    meta_labeling_config: {}
+    origin: "c4_translated"
+    distilled_to_code: true
+    capacity_aum_limit: null
+    participation_rate_limit: 0.05
+    market_impact_model: "square_root"
+    baseline_trade_frequency: null
+    decay_cause: "unknown"
+    decay_scan_frequency: "monthly"
+    sharpe: null
+    max_drawdown: null
+    annual_return: null
+    capacity: null
+    turnover: null
+    last_evaluated_at: "2026-09-16"
+    code_commit: null
+    data_quality_policy:
+      null_rate: {threshold: 0.02, window: "1d"}
+      drift_method: "psi"
+      drift_threshold: 0.2
+      freshness: {staleness_sla: "2d"}
+      semantic_contract:
+        null_semantics: "null=未计算/未产生（非零值），禁止零填充"
+        default_fill_policy: "none"
+    null_rate: null
+    drift_psi: null
+    drift_ks_pvalue: null
+    last_quality_scan_at: null
+    entry_series: null
+    range_bounds: {}
+    primary_timeframe: "daily"
+    applicable_timeframes: [1d]
+    regime_valid: []
+    regime_invalid: []
+    direction: "long"
+    entry_role: "trigger"
+    applies_to: []
+    tags: [multifactor, auto_intake]
+    algorithm_status: "quantized"
+    evidence: "auto_intake C4-OOS-2024-2026：§8 双窗及格 IS SR=0.397；OOS C4-OOS-2024-2026:SR=0.404；BH-FDR 未过（candidate 留观，后续批次重检）；三轴（启发式初值）multifactor/波段/alpha。"
+    family_redundancy: null
+    code_symbol: "scripts/backtest/translated/c4_8664521af1a0_snake_cap.py::build"
+    code_fingerprint: null
