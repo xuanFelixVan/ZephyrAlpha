@@ -48,3 +48,15 @@ completes_when: 待批清单全部获 Owner 批复处置完毕
 ## 五、审计六发现（登记不代修）
 
 ①F06Grid/C4Exam 周六 14:00 同刻双重活 ②CH 周六凌晨同窗（补注册后闸可见）③nightly_sentiment 双真源（槽位 08:20 vs 任务 22:30）④见"三" ⑤sch_pattern_mining 有源无任务 ⑥周六 06:00 双备份同刻。
+
+## 六、拍板落地处置记录（2026-09-17，Owner"全部拍板"批）
+
+| 处置 | 证据 | 状态 |
+|------|------|------|
+| 禁用 4 个测试遗留任务（C4Exam_Full0916 / C4Exam_OneShot0915 / FactoryLaneC_Full0916 / FactoryLaneC_OneShot0915） | State: Ready→Disabled（逐一经 Get-ScheduledTask 复核） | ✅ 已执行（禁用未删，可逆） |
+| 退役 22:30 NightlySentiment（双真源归一，Owner"这个同意"） | Ready→Disabled；08:20 调度器槽位保留（当日窗口+近 7 日补漏，覆盖更全） | ✅ 已执行 |
+| 注册 ZephyrAlpha_WeeklyRest 周日休息窗（Owner"全部拍板"批） | state=Ready，trigger=Sunday@05:00；保险丝=`.runtime/weekly_rest_skip.flag`（通宵班写入即跳过当周）；120 秒宽限，abort=`shutdown /a`；日志=`.runtime/logs/weekly_rest.log` | ✅ 已执行 |
+| 时间修正：04:00→05:00 | 原定 04:00 撞 tilib 02:30 夜批（申报 120 分钟≈04:30 完），顺延一小时 | ✅ 修正后注册 |
+| 已知代价备案 | 周日 06:00 DailyBackup 跳过一次（机器已关，周一 06:00 照常）；周六 06:00 VHDX 备份不受影响；周日 catchup_guard/采样器回写各停一班 | 备案 |
+
+新件：`scripts/ops/weekly_rest_guard.ps1`（新建，纯 ASCII，skip 保险丝设计）。
