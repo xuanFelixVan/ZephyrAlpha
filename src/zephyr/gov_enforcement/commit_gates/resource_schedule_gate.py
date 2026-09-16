@@ -16,6 +16,8 @@
 #   E0 复用 classify_window/gate_decision 纯函数，异常/日历未知 fail-closed;
 #   cron 解析异常=该实体跳时间窗检查并记 finding（不炸整闸）;
 #   理由码沿用 E0 风格：sched_overlap_group/sched_mem_ceiling/sched_e0_block
+#   +sched_truth_drift（本闸）+sched_gate_absent/sched_view_stale（排产链健康码，
+#   由注册表生成器 --check 臂产出——检测者须独立于被检测的闸本体）
 # [MODIFY-GUARD] gate_id="RESOURCE-SCHEDULE"；理由码变更须同步 resource_schedule_alerts+视图
 # [STABILITY] evolving
 # [SAFETY] L
@@ -48,6 +50,10 @@
 4. ``check_truth_drift`` — 生成器重抽 window_expr 与注册表快照比对 →
    sched_truth_drift（warn，防指针失效）。
 
+sched_* 理由码清单齐此六码：后两码 ``sched_gate_absent``（C-5 E0/闸/闸注册缺席）
+与 ``sched_view_stale``（C-10 视图指纹过期）不由本闸产出——闸本体缺席时无法自证，
+检测者必须独立于被检测者，故由注册表生成器 ``--check`` 臂产出。
+
 runtime 快查（非提交链路）：``runtime_e0_decision(now, is_trading_day, purpose)`` ——
 api_server backtest-run 端点接 E0 用的同口径封装。
 # [ALGO_FLOW] external: docs/03_modules/_domain_gov_enforcement/algo_flow/resource_schedule_gate.yaml
@@ -77,6 +83,12 @@ __all__: Final = [
     "runtime_e0_decision",
     "load_registry_entities",
     "Finding",
+    "REASON_OVERLAP",
+    "REASON_MEM",
+    "REASON_E0",
+    "REASON_DRIFT",
+    "REASON_GATE_ABSENT",
+    "REASON_VIEW_STALE",
 ]
 
 GATE_ID: Final = "RESOURCE-SCHEDULE"
@@ -86,6 +98,10 @@ REASON_OVERLAP: Final = "sched_overlap_group"
 REASON_MEM: Final = "sched_mem_ceiling"
 REASON_E0: Final = "sched_e0_block"
 REASON_DRIFT: Final = "sched_truth_drift"
+# 排产链健康码（2026-09-17 P0，v2 方案 C-5/C-10）——产出方=注册表生成器 --check 臂
+# （闸本体缺席时无法自证，检测者必须独立于被检测者）；清单真源仍在本模块。
+REASON_GATE_ABSENT: Final = "sched_gate_absent"  # C-5：E0/闸/闸注册缺席（原先静默）
+REASON_VIEW_STALE: Final = "sched_view_stale"  # C-10：rw-data.js 内嵌指纹≠注册表现盘指纹
 
 # 展开窗档地平线（28 天覆盖月度 cron，如 monthly_static）
 HORIZON_DAYS: Final = 28

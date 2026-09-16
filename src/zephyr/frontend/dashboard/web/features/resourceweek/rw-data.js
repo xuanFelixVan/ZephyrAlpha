@@ -2,10 +2,10 @@
  * 刷新=重跑生成器；渲染契约见 features/resourceweek/rw-engine.js。
  */
 window.RW_VIEW_DATA = {
- "generated_at": "2026-09-16T02:29:34+00:00",
+ "generated_at": "2026-09-16T18:36:10+00:00",
  "generator": "scripts/governance/generators/generate_resource_week_view.py",
  "registry": "config\\resource_profile_registry.yaml",
- "registry_sha256": "46bed77c7489",
+ "registry_sha256": "028c70c2edba",
  "week_start": "2026-09-14",
  "days": [
   "09-14 周一",
@@ -16,8 +16,8 @@ window.RW_VIEW_DATA = {
   "09-19 周六",
   "09-20 周日"
  ],
- "total_entities": 57,
- "scheduled": 27,
+ "total_entities": 73,
+ "scheduled": 30,
  "block_conflicts": 0,
  "conflicts": [],
  "lanes": [
@@ -2004,8 +2004,8 @@ window.RW_VIEW_DATA = {
    "exclusive_group": [],
    "trading_sensitive": true,
    "peak_mem_gb": 4.0,
-   "measured_peak_mem_gb": null,
-   "measured_p90_duration_min": null,
+   "measured_peak_mem_gb": 2.2116,
+   "measured_p90_duration_min": 29,
    "status": "planned",
    "window_type": "manual",
    "window_expr": null,
@@ -2040,8 +2040,8 @@ window.RW_VIEW_DATA = {
    ],
    "trading_sensitive": true,
    "peak_mem_gb": 6.0,
-   "measured_peak_mem_gb": null,
-   "measured_p90_duration_min": null,
+   "measured_peak_mem_gb": 0.1616,
+   "measured_p90_duration_min": 3,
    "status": "planned",
    "window_type": "manual",
    "window_expr": null,
@@ -2231,6 +2231,186 @@ window.RW_VIEW_DATA = {
    "unscheduled": true
   },
   {
+   "task_id": "ops_ai_wrapper_inject",
+   "resource_class": "light",
+   "pool": "default",
+   "exclusive_group": [],
+   "trading_sensitive": false,
+   "peak_mem_gb": 0.5,
+   "measured_peak_mem_gb": null,
+   "measured_p90_duration_min": null,
+   "status": "planned",
+   "window_type": "manual",
+   "window_expr": null,
+   "est_duration_min": 5,
+   "slots": [],
+   "unscheduled": true
+  },
+  {
+   "task_id": "ops_bdpan_tick_watch",
+   "resource_class": "network_download",
+   "pool": "default",
+   "exclusive_group": [
+    "tick_drain"
+   ],
+   "trading_sensitive": false,
+   "peak_mem_gb": 1.0,
+   "measured_peak_mem_gb": null,
+   "measured_p90_duration_min": null,
+   "status": "planned",
+   "window_type": "manual",
+   "window_expr": null,
+   "est_duration_min": 30,
+   "slots": [],
+   "unscheduled": true
+  },
+  {
+   "task_id": "ops_board_index_realtime",
+   "resource_class": "network_download",
+   "pool": "default",
+   "exclusive_group": [],
+   "trading_sensitive": false,
+   "peak_mem_gb": 1.0,
+   "measured_peak_mem_gb": null,
+   "measured_p90_duration_min": null,
+   "status": "planned",
+   "window_type": "manual",
+   "window_expr": null,
+   "est_duration_min": 15,
+   "slots": [],
+   "unscheduled": true
+  },
+  {
+   "task_id": "ops_ch_optimize_merge_weekly",
+   "resource_class": "db_heavy",
+   "pool": "heavy",
+   "exclusive_group": [
+    "ch_bulk_write"
+   ],
+   "trading_sensitive": true,
+   "peak_mem_gb": 3.0,
+   "measured_peak_mem_gb": null,
+   "measured_p90_duration_min": null,
+   "status": "planned",
+   "window_type": "manual",
+   "window_expr": null,
+   "est_duration_min": 120,
+   "slots": [],
+   "unscheduled": true
+  },
+  {
+   "task_id": "ops_daily_backup",
+   "resource_class": "light",
+   "pool": "default",
+   "exclusive_group": [],
+   "trading_sensitive": false,
+   "peak_mem_gb": 1.0,
+   "measured_peak_mem_gb": null,
+   "measured_p90_duration_min": null,
+   "status": "planned",
+   "window_type": "manual",
+   "window_expr": null,
+   "est_duration_min": 60,
+   "slots": [],
+   "unscheduled": true
+  },
+  {
+   "task_id": "ops_io_check_monthly",
+   "resource_class": "light",
+   "pool": "default",
+   "exclusive_group": [],
+   "trading_sensitive": false,
+   "peak_mem_gb": 0.5,
+   "measured_peak_mem_gb": null,
+   "measured_p90_duration_min": null,
+   "status": "planned",
+   "window_type": "manual",
+   "window_expr": null,
+   "est_duration_min": 30,
+   "slots": [],
+   "unscheduled": true
+  },
+  {
+   "task_id": "ops_qmt_watchdog",
+   "resource_class": "light",
+   "pool": "default",
+   "exclusive_group": [],
+   "trading_sensitive": false,
+   "peak_mem_gb": 0.5,
+   "measured_peak_mem_gb": null,
+   "measured_p90_duration_min": null,
+   "status": "planned",
+   "window_type": "manual",
+   "window_expr": null,
+   "est_duration_min": 5,
+   "slots": [],
+   "unscheduled": true
+  },
+  {
+   "task_id": "ops_sector_snapshot",
+   "resource_class": "network_download",
+   "pool": "default",
+   "exclusive_group": [],
+   "trading_sensitive": false,
+   "peak_mem_gb": 1.0,
+   "measured_peak_mem_gb": null,
+   "measured_p90_duration_min": null,
+   "status": "planned",
+   "window_type": "manual",
+   "window_expr": null,
+   "est_duration_min": 15,
+   "slots": [],
+   "unscheduled": true
+  },
+  {
+   "task_id": "ops_tilib_indicator_backfill_nightly",
+   "resource_class": "cpu_heavy",
+   "pool": "heavy",
+   "exclusive_group": [],
+   "trading_sensitive": true,
+   "peak_mem_gb": 2.0,
+   "measured_peak_mem_gb": null,
+   "measured_p90_duration_min": null,
+   "status": "planned",
+   "window_type": "manual",
+   "window_expr": null,
+   "est_duration_min": 120,
+   "slots": [],
+   "unscheduled": true
+  },
+  {
+   "task_id": "ops_ttl_rejudge_daily",
+   "resource_class": "light",
+   "pool": "default",
+   "exclusive_group": [],
+   "trading_sensitive": false,
+   "peak_mem_gb": 0.5,
+   "measured_peak_mem_gb": null,
+   "measured_p90_duration_min": null,
+   "status": "planned",
+   "window_type": "manual",
+   "window_expr": null,
+   "est_duration_min": 15,
+   "slots": [],
+   "unscheduled": true
+  },
+  {
+   "task_id": "ops_weekly_vm_backup",
+   "resource_class": "light",
+   "pool": "default",
+   "exclusive_group": [],
+   "trading_sensitive": false,
+   "peak_mem_gb": 1.0,
+   "measured_peak_mem_gb": null,
+   "measured_p90_duration_min": null,
+   "status": "planned",
+   "window_type": "manual",
+   "window_expr": null,
+   "est_duration_min": 240,
+   "slots": [],
+   "unscheduled": true
+  },
+  {
    "task_id": "sch_c4_exam",
    "resource_class": "cpu_heavy",
    "pool": "heavy",
@@ -2305,6 +2485,41 @@ window.RW_VIEW_DATA = {
    "est_duration_min": 1,
    "slots": [],
    "unscheduled": true
+  },
+  {
+   "task_id": "sch_f06_grid",
+   "resource_class": "cpu_heavy",
+   "pool": "light",
+   "exclusive_group": [],
+   "trading_sensitive": true,
+   "peak_mem_gb": 0.5,
+   "measured_peak_mem_gb": null,
+   "measured_p90_duration_min": null,
+   "status": "active",
+   "window_type": "cron",
+   "window_expr": "0 14 * * 6",
+   "est_duration_min": 1440,
+   "slots": [
+    {
+     "dow": 5,
+     "ranges": [
+      [
+       840,
+       1440
+      ]
+     ]
+    },
+    {
+     "dow": 6,
+     "ranges": [
+      [
+       0,
+       840
+      ]
+     ]
+    }
+   ],
+   "unscheduled": false
   },
   {
    "task_id": "sch_factory_lane_c",
@@ -2853,6 +3068,38 @@ window.RW_VIEW_DATA = {
    "exclusive_group": [],
    "trading_sensitive": false,
    "peak_mem_gb": 0.5,
+   "measured_peak_mem_gb": 0.0276,
+   "measured_p90_duration_min": 7,
+   "status": "active",
+   "window_type": "event",
+   "window_expr": null,
+   "est_duration_min": 1,
+   "slots": [],
+   "unscheduled": true
+  },
+  {
+   "task_id": "sch_resource_regen_check",
+   "resource_class": "light",
+   "pool": "light",
+   "exclusive_group": [],
+   "trading_sensitive": false,
+   "peak_mem_gb": 0.5,
+   "measured_peak_mem_gb": null,
+   "measured_p90_duration_min": null,
+   "status": "active",
+   "window_type": "event",
+   "window_expr": null,
+   "est_duration_min": 2,
+   "slots": [],
+   "unscheduled": true
+  },
+  {
+   "task_id": "sch_resource_sampler_scan",
+   "resource_class": "light",
+   "pool": "light",
+   "exclusive_group": [],
+   "trading_sensitive": false,
+   "peak_mem_gb": 0.5,
    "measured_peak_mem_gb": null,
    "measured_p90_duration_min": null,
    "status": "active",
@@ -2861,6 +3108,166 @@ window.RW_VIEW_DATA = {
    "est_duration_min": 1,
    "slots": [],
    "unscheduled": true
+  },
+  {
+   "task_id": "sch_resource_sampler_writeback",
+   "resource_class": "light",
+   "pool": "light",
+   "exclusive_group": [],
+   "trading_sensitive": false,
+   "peak_mem_gb": 0.5,
+   "measured_peak_mem_gb": null,
+   "measured_p90_duration_min": null,
+   "status": "active",
+   "window_type": "cron",
+   "window_expr": "40 5 * * *",
+   "est_duration_min": 15,
+   "slots": [
+    {
+     "dow": 0,
+     "ranges": [
+      [
+       340,
+       355
+      ]
+     ]
+    },
+    {
+     "dow": 1,
+     "ranges": [
+      [
+       340,
+       355
+      ]
+     ]
+    },
+    {
+     "dow": 2,
+     "ranges": [
+      [
+       340,
+       355
+      ]
+     ]
+    },
+    {
+     "dow": 3,
+     "ranges": [
+      [
+       340,
+       355
+      ]
+     ]
+    },
+    {
+     "dow": 4,
+     "ranges": [
+      [
+       340,
+       355
+      ]
+     ]
+    },
+    {
+     "dow": 5,
+     "ranges": [
+      [
+       340,
+       355
+      ]
+     ]
+    },
+    {
+     "dow": 6,
+     "ranges": [
+      [
+       340,
+       355
+      ]
+     ]
+    }
+   ],
+   "unscheduled": false
+  },
+  {
+   "task_id": "sch_resource_view_publish",
+   "resource_class": "light",
+   "pool": "light",
+   "exclusive_group": [],
+   "trading_sensitive": false,
+   "peak_mem_gb": 1.0,
+   "measured_peak_mem_gb": null,
+   "measured_p90_duration_min": null,
+   "status": "active",
+   "window_type": "cron",
+   "window_expr": "50 5 * * *",
+   "est_duration_min": 15,
+   "slots": [
+    {
+     "dow": 0,
+     "ranges": [
+      [
+       350,
+       365
+      ]
+     ]
+    },
+    {
+     "dow": 1,
+     "ranges": [
+      [
+       350,
+       365
+      ]
+     ]
+    },
+    {
+     "dow": 2,
+     "ranges": [
+      [
+       350,
+       365
+      ]
+     ]
+    },
+    {
+     "dow": 3,
+     "ranges": [
+      [
+       350,
+       365
+      ]
+     ]
+    },
+    {
+     "dow": 4,
+     "ranges": [
+      [
+       350,
+       365
+      ]
+     ]
+    },
+    {
+     "dow": 5,
+     "ranges": [
+      [
+       350,
+       365
+      ]
+     ]
+    },
+    {
+     "dow": 6,
+     "ranges": [
+      [
+       350,
+       365
+      ]
+     ]
+    }
+   ],
+   "unscheduled": false
   },
   {
    "task_id": "sch_rss_hub",

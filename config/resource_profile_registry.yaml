@@ -7,11 +7,11 @@ doc_type: register
 ttl: permanent
 title: 资源画像注册表（resource profile registry）
 status: active
-generated_at: '2026-09-16T17:14:03Z'
+generated_at: '2026-09-16T18:19:13Z'
 generated_by: scripts/governance/generators/generate_resource_profile_registry.py
 maintenance: auto
 counting_rule: entities 数组条目数（生成器三源全量再生；条目禁手工增删）
-total_entities: 72
+total_entities: 74
 field_count: 18
 mem_ceiling_gb: 10.0
 mem_ceiling_source: src/zephyr/trading/process_reaper.py _DANGEROUS_MEM_GB（引用不收编）
@@ -1354,6 +1354,27 @@ entities:
   samples_uri: .runtime/logs/resource_samples/sch_process_reaper.jsonl
   status: active
   notes_zh: ProcessReaper
+- task_id: sch_resource_regen_check
+  module_id: null
+  map_node_id: null
+  resource_class: light
+  pool: light
+  peak_mem_gb: 0.5
+  est_duration_min: 2
+  exclusive_group: []
+  window_type: event
+  window_expr: null
+  schedule_truth_source: scripts/register_resource_regen_check_task.ps1
+  trading_sensitive: false
+  measured:
+    peak_mem_gb: null
+    p90_duration_min: null
+    samples: 0
+    last_at: null
+  samples_uri: .runtime/logs/resource_samples/sch_resource_regen_check.jsonl
+  status: active
+  notes_zh: 每小时排产自检+漂移就地再生+C-5/C-10 告警发布（register_resource_regen_check_task.ps1；cadence=注册后 Post-Registration 补 PT1H 重复，ps1
+    静态文本无 cron 可抽→event，与 ResourceSamplerScan 同型先例）
 - task_id: sch_resource_sampler_scan
   module_id: null
   map_node_id: null
@@ -1394,6 +1415,26 @@ entities:
   samples_uri: .runtime/logs/resource_samples/sch_resource_sampler_writeback.jsonl
   status: active
   notes_zh: 日 05:40 measured 回写（git 跟踪文件日更一次，derived-sync 例行吸收）
+- task_id: sch_resource_view_publish
+  module_id: null
+  map_node_id: null
+  resource_class: light
+  pool: light
+  peak_mem_gb: 1.0
+  est_duration_min: 15
+  exclusive_group: []
+  window_type: cron
+  window_expr: 50 5 * * *
+  schedule_truth_source: scripts/register_resource_view_publish_task.ps1
+  trading_sensitive: false
+  measured:
+    peak_mem_gb: null
+    p90_duration_min: null
+    samples: 0
+    last_at: null
+  samples_uri: .runtime/logs/resource_samples/sch_resource_view_publish.jsonl
+  status: active
+  notes_zh: 日 05:50 周历重渲+闸 findings 告警发布（register_resource_view_publish_task.ps1；排在采样器回写 05:40 之后——视图吃 measured 回写结果）
 - task_id: sch_rss_hub
   module_id: null
   map_node_id: null

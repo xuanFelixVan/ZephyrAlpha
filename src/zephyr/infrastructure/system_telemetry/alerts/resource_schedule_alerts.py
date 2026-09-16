@@ -34,10 +34,15 @@
 不碰飞书/SMTP 已裁撤通道、不改 ops_alert_feed 模块本体）。
 
 映射规则：
-- block 级 finding（sched_overlap_group/sched_mem_ceiling/sched_e0_block）→
-  severity=critical，key=`<reason_code>:<排序 task_ids>`（同冲突去重）；
-- warn 级（sched_truth_drift 等）→ severity=warning；
+- block 级 finding（sched_overlap_group/sched_mem_ceiling/sched_e0_block/
+  sched_gate_absent）→ severity=critical，key=`<reason_code>:<排序 task_ids>`（同冲突去重）；
+- warn 级（sched_truth_drift/sched_view_stale 等）→ severity=warning；
 - 本轮未再触发的既有活动告警 → resolve()（灰显解除，滞回语义照抄供给线）。
+
+多发布方纪律（2026-09-17 P0）：解除联动按 module_id 划界，各发布方只解除自己的
+key——闸/视图发布方用缺省 `resource-schedule-gate`，注册表再生自检发布方传
+`resource-schedule-regen`。混用同一 id 会让两臂互删对方告警（视图日更臂不含
+健康码，跑一次就把再生臂的闸缺席告警 resolve 掉）。
 
 静默窗口：同 key 30 分钟内只刷新 count/last_seen 不重复（OpsAlertFeed.publish
 内建语义，本模块只传窗口参数）。
@@ -66,6 +71,9 @@ _TITLES: dict[str, str] = {
     "sched_mem_ceiling": "排班冲突：内存天花板超限",
     "sched_e0_block": "排班冲突：交易时段未过 E0 闸",
     "sched_truth_drift": "排班真源漂移（window_expr 与真源不一致）",
+    # 排产链健康码（2026-09-17 P0，v2 方案 C-5/C-10；产出方=注册表生成器 --check 臂）
+    "sched_gate_absent": "排班闸缺席：E0/冲突闸/闸注册不可解析（日历守卫静默失效）",
+    "sched_view_stale": "排班视图过期：rw-data.js 内嵌指纹与注册表现盘不一致",
 }
 
 
@@ -132,7 +140,14 @@ class ResourceScheduleAlerts:
 
 
 # 模块级便捷函数（视图生成器/闸扫描后的单行动接）
-def publish_findings(findings: list, board_dir: str | None = None) -> dict:
-    """便捷入口：ResourceScheduleAlerts(board_dir).publish_findings(findings)。"""
-    return ResourceScheduleAlerts(board_dir=board_dir).publish_findings(findings)
+def publish_findings(findings: list, board_dir: str | None = None, module_id: str | None = None) -> dict:
+    """便捷入口：ResourceScheduleAlerts(board_dir, module_id).publish_findings(findings)。
+
+    module_id 省略=缺省发布方 `resource-schedule-gate`；再生自检臂传
+    `resource-schedule-regen`（多发布方纪律，见模块头）。
+    """
+    kw: dict = {"board_dir": board_dir}
+    if module_id:
+        kw["module_id"] = module_id
+    return ResourceScheduleAlerts(**kw).publish_findings(findings)
 

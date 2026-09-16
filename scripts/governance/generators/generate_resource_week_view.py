@@ -218,12 +218,17 @@ def build_view_data(registry_path: Path, now: datetime | None = None) -> dict:
     lanes, skipped = build_week_slots(entities, week_start)
     conflicts, n_block = build_conflicts(registry_path, now)
     reg_bytes = Path(registry_path).read_bytes()
+    # registry_sha256 口径=sha256(bytes 先把 CRLF 归一为 LF)[:12]——读侧是注册表生成器
+    # C-10 新鲜度自检（registry_content_sha）；行尾归一是为了不让 git/编辑器的
+    # CRLF↔LF 翻转被误判成视图过期。两侧一致性由
+    # tests/infrastructure/test_resource_schedule_regen_check.py 锁死，改一处必须改两处
+    fingerprint = hashlib.sha256(reg_bytes.replace(b"\r\n", b"\n")).hexdigest()[:12]
     days = [(week_start + timedelta(days=i)).strftime("%m-%d 周" + "一二三四五六日"[i]) for i in range(7)]
     return {
         "generated_at": now.astimezone(timezone.utc).isoformat(timespec="seconds"),
         "generator": "scripts/governance/generators/generate_resource_week_view.py",
         "registry": str(Path(registry_path).relative_to(REPO_ROOT)) if Path(registry_path).is_relative_to(REPO_ROOT) else str(registry_path),
-        "registry_sha256": hashlib.sha256(reg_bytes).hexdigest()[:12],
+        "registry_sha256": fingerprint,
         "week_start": week_start.strftime("%Y-%m-%d"),
         "days": days,
         "total_entities": len(lanes),
