@@ -447,3 +447,72 @@ def test_external_algo_flow_path_escape_rejected(tmp_path, monkeypatch):
     assert s.algo_flow is None, "非 docs/ 前缀的外部块必须拒绝"
 
     clear_blueprint_cache()
+
+
+# ── 修正点①前置豁免：__init__ 自身声明图优先于子文件回扫（2026-09-16 F-A 治本）──
+
+_YAML_ONE_NODE = "algo_flow: |\n    # [ALGO_FLOW]\n    # 层: 输入\n    # - id: PKG1\n    #   name: 包公共面\n    # [/ALGO_FLOW]\n"
+
+
+def _rich_child(tmp_path, rel="pkg/child.py", n=600):
+    """写一个 docstring 远超 _RICH_DOC_LEN 的子模块（旧口径下它会顶掉包入口卡片）。"""
+    p = tmp_path / rel
+    p.parent.mkdir(parents=True, exist_ok=True)
+    p.write_text(
+        '"""ChildRich — 子模块算法真源。\n\n' + "填充说明文字。" * n + '\n"""\n\nY = 1\n',
+        encoding="utf-8",
+    )
+    return p
+
+
+def test_init_with_anchor_graph_wins_over_rich_child(tmp_path, monkeypatch):
+    """包入口仅一行锚（docstring 缩到阈值下）→ 卡片必须仍解到自身，不得张冠李戴给子模块。"""
+    import _shared.code_algorithm_extractor as ext
+
+    monkeypatch.setattr(ext, "REPO_ROOT", tmp_path)
+    _rich_child(tmp_path)
+    yaml_dir = tmp_path / "docs/03_modules/_domain_test/algo_flow"
+    yaml_dir.mkdir(parents=True)
+    (yaml_dir / "pkg__init__.yaml").write_text(_YAML_ONE_NODE, encoding="utf-8")
+    init = tmp_path / "pkg/__init__.py"
+    init.write_text(
+        '"""PkgInit — 包入口（算法图已出仓）。\n\n'
+        "# [ALGO_FLOW] external: docs/03_modules/_domain_test/algo_flow/pkg__init__.yaml\n"
+        '"""\n\nZ = 1\n',
+        encoding="utf-8",
+    )
+    s = ext.extract_algorithm_from_code(init, module_id="MOD-TEST-FA1", truncate=False)
+    assert s.source_path.replace("\\", "/").endswith("pkg/__init__.py")
+    assert [n.id for n in s.algo_flow.nodes] == ["PKG1"]
+
+
+def test_init_with_short_inline_block_wins_over_rich_child(tmp_path, monkeypatch):
+    """判据=「自身是否声明了图」而非 docstring 长度：短内联块同样不得被子文件顶掉。"""
+    import _shared.code_algorithm_extractor as ext
+
+    monkeypatch.setattr(ext, "REPO_ROOT", tmp_path)
+    _rich_child(tmp_path)
+    init = tmp_path / "pkg2/__init__.py"
+    init.parent.mkdir(parents=True, exist_ok=True)
+    init.write_text(
+        '"""PkgInit2 — 包入口。\n\n'
+        "# [ALGO_FLOW]\n# 层: 输入\n# - id: PKG2\n# [/ALGO_FLOW]\n"
+        '"""\n\nZ = 1\n',
+        encoding="utf-8",
+    )
+    s = ext.extract_algorithm_from_code(init, module_id="MOD-TEST-FA2", truncate=False)
+    assert [n.id for n in s.algo_flow.nodes] == ["PKG2"]
+
+
+def test_init_without_own_graph_still_rescans_rich_child(tmp_path, monkeypatch):
+    """既有意图不回退：包入口自身无图 → 仍回扫富 docstring 子文件（修正点①原语义）。"""
+    import _shared.code_algorithm_extractor as ext
+
+    monkeypatch.setattr(ext, "REPO_ROOT", tmp_path)
+    child = _rich_child(tmp_path, rel="pkg3/child.py")  # noqa: F841 — 仅需存在供回扫命中
+    init = tmp_path / "pkg3/__init__.py"
+    init.write_text('"""PkgInit3 — 包入口说明，无算法图。\n"""\n\nZ = 1\n', encoding="utf-8")
+    s = ext.extract_algorithm_from_code(init, module_id="MOD-TEST-FA3", truncate=False)
+    assert s.source_path.replace("\\", "/").endswith("pkg3/child.py")
+
+    clear_blueprint_cache()

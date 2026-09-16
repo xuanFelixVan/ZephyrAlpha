@@ -49,7 +49,6 @@ from __future__ import annotations
 import argparse
 import ast
 import json
-import pathlib
 import re
 import sys
 from pathlib import Path
@@ -394,15 +393,19 @@ def _predicted_yaml_rel(py_path: Path, rel: str, domain_dir: str) -> str:
 def _plan_path_uniqueness(targets: list[Path]) -> None:
     """批级落点注入性收口（dry-run 普查实证碰撞族）。
 
-    _plan_stem_collision_remaps 跳过 __init__.py，前提是 ``<parent>__init__`` 命名天然
-    唯一——不同子包同名时不成立（signal_fundamental/{gen,strategy}/implementations/
-    __init__.py 两件都推导出 implementations__init__.yaml，后者覆盖前者=静默丢图）。
-    治本=批末对全量预测落点做注入性检查：同路径多源按 rel 字典序保首件，其余沿
-    _candidate_bases 阶梯升到首个未占用名（批内占/盘上他人真源都算占），阶梯用尽落
-    flatten（源路径唯一 ⇒ 名称唯一）。
+    两个触发面，同一升档处置：
+    ① 批内同路径多源——_plan_stem_collision_remaps 跳过 __init__.py，前提是
+      ``<parent>__init__`` 命名天然唯一，不同子包同名时不成立
+      （signal_fundamental/{gen,strategy}/implementations/__init__.py 都推导出
+      implementations__init__.yaml，后者覆盖前者=静默丢图）。
+    ② 盘上他人真源占用——跨包路由到同一域目录时（cross_asset 件路由 _domain_trading，
+      推导名 core__init__.yaml 已被 trading/core/__init__.py 落盘件占据），写前守卫
+      只能报 failed，重跑必然同错=永久无解；规划期升档才解得开。
+    处置=按 rel 字典序逐件认领：预测名未被批内认领、且非他人真源才保留原落点，
+    否则沿 _candidate_bases 阶梯升到首个可用名，阶梯用尽落 flatten
+    （源路径唯一 ⇒ 名称唯一）。
     """
     _PLANNED_UNIQ.clear()
-    pred: dict[str, list[tuple[Path, str, str]]] = {}
     order: list[tuple[str, Path, str, str]] = []
     for p in targets:
         rel = p.relative_to(REPO_ROOT).as_posix()
@@ -413,29 +416,25 @@ def _plan_path_uniqueness(targets: list[Path]) -> None:
         if _ANCHOR_RE.search(src) or not _has_inline_algo_flow(src):
             continue
         dom = _domain_of(rel)
-        y = _predicted_yaml_rel(p, rel, dom)
-        pred.setdefault(y, []).append((p, rel, dom))
-        order.append((rel, p, dom, y))
-    used = {y for _, _, _, y in order}
-    for y, es in sorted(pred.items()):
-        if len(es) < 2:
+        order.append((rel, p, dom, _predicted_yaml_rel(p, rel, dom)))
+    claimed: set[str] = set()
+    for rel, p, dom, y in sorted(order, key=lambda t: t[0]):
+        if y not in claimed and _yaml_owned_by(REPO_ROOT / y, rel) is not False:
+            claimed.add(y)
             continue
-        # 首件（rel 字典序）保留原落点——y 仍在 used 中，否则受害者会重新选中同一撞名
-        _, *victims = sorted(es, key=lambda t: t[1])
-        for p, rel, dom in victims:
-            dir_part = y.rsplit("/", 1)[0]
-            bucket = _src_bucket(rel)[1] or dom.removeprefix("_domain_")
-            picked = ""
-            for base in _candidate_bases(p, rel, bucket):
-                cand = f"{dir_part}/{base}"
-                if cand in used or _yaml_owned_by(REPO_ROOT / cand, rel) is False:
-                    continue
-                picked = cand
-                break
-            if not picked:
-                picked = f"{dir_part}/{_flatten_base(rel)}"
-            used.add(picked)
-            _PLANNED_UNIQ[rel] = picked
+        dir_part = y.rsplit("/", 1)[0]
+        bucket = _src_bucket(rel)[1] or dom.removeprefix("_domain_")
+        picked = ""
+        for base in _candidate_bases(p, rel, bucket):
+            cand = f"{dir_part}/{base}"
+            if cand == y or cand in claimed or _yaml_owned_by(REPO_ROOT / cand, rel) is False:
+                continue
+            picked = cand
+            break
+        if not picked:
+            picked = f"{dir_part}/{_flatten_base(rel)}"
+        claimed.add(picked)
+        _PLANNED_UNIQ[rel] = picked
 
 
 def _docstring_span(src: str) -> tuple[int, int] | None:
@@ -507,20 +506,53 @@ def _yaml_rel_for(py_path: Path, rel: str, domain_dir: str) -> str:
     return yaml_rel
 
 
+def _count_unreachable_blocks(src: str) -> int:
+    """module docstring 之外的 ALGO_FLOW 起标记数（死块计数）。
+
+    出处=文件头注释横幅区 / 第二个裸字符串字面量（S4 注入历史产物）。所有读卡路径
+    （extractor、check_algo_flow 门禁、翻译 reconciler）只读 module docstring，
+    故出仓不碰它=零信息变化；此处只计数不隐藏，供报告与普查消费。
+    """
+    starts = [
+        ln for ln in src.splitlines()
+        if _ALGO_FLOW_START in ln and ln.strip().startswith("#") and "external:" not in ln
+    ]
+    if not starts:
+        return 0
+    try:
+        ds = ast.get_docstring(ast.parse(src)) or ""
+    except SyntaxError:
+        return 0
+    in_ds = sum(
+        1 for ln in ds.splitlines()
+        if _ALGO_FLOW_START in ln and ln.strip().startswith("#") and "external:" not in ln
+    )
+    return max(0, len(starts) - in_ds)
+
+
 def externalize(py_path: Path, dry_run: bool) -> dict:
     """单文件出仓。返回 result dict（status: externalized|already|skipped|failed|dryrun）。"""
     rel = py_path.relative_to(REPO_ROOT).as_posix()
     src = py_path.read_text(encoding="utf-8")
+    dead = _count_unreachable_blocks(src)
+    anchor = _ANCHOR_RE.search(src)
+    if anchor:
+        # 有锚即已出仓（内联块按设计已被换成锚行）——此判据必须先于内联块检查，
+        # 否则幂等复跑会把已完成件报成 skipped/no inline block（dry-run 口径失真）。
+        res: dict = {"file": rel, "status": "already", "yaml": anchor.group(1)}
+        if dead:
+            res["unreachable_blocks"] = dead
+        return res
     if not _has_inline_algo_flow(src):
-        return {"file": rel, "status": "skipped", "reason": "no inline block"}
-    if _ANCHOR_RE.search(src):
-        return {"file": rel, "status": "already"}
+        reason = f"{dead} block(s) outside module docstring (unreachable)" if dead else "no inline block"
+        return {"file": rel, "status": "skipped", "reason": reason}
 
     tree = ast.parse(src)
     ds = ast.get_docstring(tree) or ""
     before = parse_algo_flow(ds)
     if before is None or not before.nodes:
-        return {"file": rel, "status": "skipped", "reason": "block unparsable (no nodes)"}
+        reason = f"{dead} block(s) outside module docstring (unreachable)" if dead else "block unparsable (no nodes)"
+        return {"file": rel, "status": "skipped", "reason": reason}
     extracted = _extract_inline_block(ds)
     if extracted is None:
         return {"file": rel, "status": "skipped", "reason": "block span not found"}
@@ -635,39 +667,38 @@ def externalize(py_path: Path, dry_run: bool) -> dict:
         bak.unlink(missing_ok=True)
         raise
 
-    # 终验：extractor 全链路（含 yaml 加载）
-    import importlib  # noqa: PLC0415
-
+    # 终验：extractor 全链路（含 yaml 加载）。不 reload——reload 重跑模块体会冲掉
+    # 测试套件的 REPO_ROOT 打桩（终验于是读不到刚写的临时 yaml，误判空图），
+    # 且逐件 re-import 在 2000+ 件批次上是纯开销；extractor 每次调用现读源码与 yaml。
     import _shared.code_algorithm_extractor as ext  # noqa: PLC0415
 
-    importlib.reload(ext)
     final = ext.extract_algorithm_from_code(py_path, module_id="", truncate=False)
     final_ids = [(n.id, n.layer) for n in final.algo_flow.nodes] if final.algo_flow else None
     final_edges = [(e.src, e.dst, e.is_break) for e in final.algo_flow.edges] if final.algo_flow else None
-    bak.unlink(missing_ok=True)
-    # __init__.py 特例：extractor 修正点①对 __init__ 强制回扫子文件——anchor-only 后
-    # 富 docstring 遮蔽态解除，真源可能路由到子文件（其子文件自带的 ALGO_FLOW 图
-    # 接管卡片）。这不算迁移错误：extractor 真实路由即全景图真源。判定：
-    #   picked==self → 比对 nodes/edges（常规 round-trip）；
-    #   picked!=self → rerouted，要求 yaml 块自身 parse 与 before 一致（已由内存
-    #   round-trip 保证），标注 rerouted_to 让全景图消费方知悉真源变化。
     picked = final.source_path if final.source_type == "code" else ""
-    if picked and pathlib.Path(picked).name == "__init__.py" and pathlib.Path(picked) == py_path:
-        if final_ids != nodes_b or final_edges != edges_b:
-            # 终验失败 → 回滚
-            py_path.write_bytes(bak.read_bytes()) if bak.exists() else py_path.write_text(src, encoding="utf-8")
-            yaml_path.unlink(missing_ok=True)
-            return {"file": rel, "status": "failed", "reason": "final extractor mismatch", "final": final_ids}
-        return {"file": rel, "status": "externalized", "yaml": yaml_rel, "nodes": len(nodes_b), "edges": len(edges_b)}
-    # picked != self（或 source 非 code）：内存 round-trip 已验证块等价，接受并标注
-    return {
-        "file": rel,
-        "status": "externalized",
-        "yaml": yaml_rel,
-        "nodes": len(nodes_b),
-        "edges": len(edges_b),
-        "rerouted_to": picked,
-    }
+    picked_tail = picked.replace("\\", "/")
+    # 尾缀比对而非全等：本函数内 importlib.reload(ext) 会重跑 extractor 模块体，
+    # 测试套件的 REPO_ROOT 打桩被冲掉 → source_path 带回临时根前缀（同一文件、不同根）。
+    if not (picked_tail == rel or picked_tail.endswith("/" + rel)) or final_ids != nodes_b or final_edges != edges_b:
+        # 能到此步说明本文件自身声明了块 → extractor 必须解到自己。
+        # 旧「__init__ 回扫子文件也算通过（rerouted_to）」宽松分支随 F-A 治本删除：
+        # 真源被顶到子文件=包卡片张冠李戴，按失败回滚（字节级还原，不靠文本重排）。
+        py_path.write_bytes(bak.read_bytes())
+        bak.unlink(missing_ok=True)
+        yaml_path.unlink(missing_ok=True)
+        return {
+            "file": rel,
+            "status": "failed",
+            "reason": "final extractor mismatch"
+            + (" (rerouted)" if picked_tail and picked_tail != rel else ""),
+            "picked": picked,
+            "nodes_after": final_ids,
+        }
+    bak.unlink(missing_ok=True)
+    out = {"file": rel, "status": "externalized", "yaml": yaml_rel, "nodes": len(nodes_b), "edges": len(edges_b)}
+    if dead:
+        out["unreachable_blocks"] = dead
+    return out
 
 
 def _iter_targets(

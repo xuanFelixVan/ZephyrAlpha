@@ -162,6 +162,18 @@ def _empty(module_id: str = "", blueprint_ref: str = "", quality_issue: str = ""
     )
 
 
+# 修正点①的前置豁免判据：自身 docstring 是否显式声明了可解析的 ALGO_FLOW 图
+def _docstring_declares_graph(docstring: str) -> bool:
+    """内联块或 external 锚解出非空节点 = 机器显式声明「本文件即算法真源」。"""
+    if not docstring or _ALGO_FLOW_START not in docstring:
+        return False
+    block = docstring if _has_inline_algo_flow(docstring) else (_load_external_algo_flow(docstring) or "")
+    if _ALGO_FLOW_START not in block:
+        return False
+    flow = parse_algo_flow(block)
+    return bool(flow and flow.nodes)
+
+
 # 修正点①：__init__.py 回退扫描子文件
 def _find_richest_docstring_file(py_path: Path) -> tuple[Path, str, int, int]:
     """找到 docstring 最丰富的 .py 文件。
@@ -169,6 +181,9 @@ def _find_richest_docstring_file(py_path: Path) -> tuple[Path, str, int, int]:
     若 py_path 本身有非空 module docstring（≥30字），直接用它；
     否则（常见于 __init__.py 包入口）扫描同目录及一级子目录的 .py，
     返回 docstring 最长者的 (路径, docstring, 起行, 止行)。
+
+    例外：``__init__.py`` 自身已声明 ALGO_FLOW 图（内联块或 external 锚）时不回扫——
+    「本文件写了图」是显式真源声明，按长度判会把包卡片顶到某个子模块上。
 
     Returns:
         (actual_path, docstring, start_line, end_line)；py_path 不存在或全部失败 → (py_path, "", 0, 0)
@@ -180,6 +195,12 @@ def _find_richest_docstring_file(py_path: Path) -> tuple[Path, str, int, int]:
     # 修正点①加强：__init__.py 通常是包入口说明（非算法真源），即使有 docstring 也扫描子文件找更丰富的；
     # 非 __init__.py 且 docstring 充分（≥30字）则直接用
     if best[1] and len(best[1]) >= 30 and py_path.name != "__init__.py":
+        return best
+    # 自身已声明图则不回扫：回扫判据是 docstring 长度（_RICH_DOC_LEN），而「包入口写了
+    # ALGO_FLOW」是显式意图声明——按长度判会把包卡片张冠李戴到某个子模块（子模块另有自己的卡片）。
+    # 内联块出仓成一行锚后 docstring 从 500+ 掉到 ~88 字符即触发此误判（2026-09-16 实测 166 件：
+    # 133 件 HEAD 因内联块超阈值而自身胜出=恢复，33 件 HEAD 起即误归属=治本）。
+    if best[1] and _docstring_declares_graph(best[1]):
         return best
 
     # 回退扫描：同目录 + 一级子目录

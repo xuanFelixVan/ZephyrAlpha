@@ -29,6 +29,7 @@ for _p in (_GOV_DIR, _GEN_DIR):
         sys.path.insert(0, _p)
 
 import externalize_algo_flow as ext  # noqa: E402
+import _shared.code_algorithm_extractor as coae  # noqa: E402
 
 
 def _module_src(stem: str) -> str:
@@ -68,7 +69,9 @@ def _seed_flat(root: Path, domain_dir: str, n: int) -> None:
 
 @pytest.fixture(autouse=True)
 def _isolate(monkeypatch, tmp_path):
+    # 两个根都要打桩：出仓器落点用 ext.REPO_ROOT，写时终验走 extractor 自己的 REPO_ROOT
     monkeypatch.setattr(ext, "REPO_ROOT", tmp_path)
+    monkeypatch.setattr(coae, "REPO_ROOT", tmp_path)
     ext._PLANNED_MIRROR.clear()
     ext._PLANNED_REMAP.clear()
     ext._PLANNED_UNIQ.clear()
@@ -318,3 +321,67 @@ def test_uniqueness_pass_leaves_non_colliding_plan_untouched(tmp_path):
     assert ext._PLANNED_UNIQ == {}
     after = {p.name: ext._predicted_yaml_rel(p, p.relative_to(tmp_path).as_posix(), "_domain_d") for p in targets}
     assert after == before
+
+
+def test_foreign_occupant_escalates_at_plan_time(tmp_path):
+    """盘上他人真源占用（无批内碰撞）→ 规划期升档，不再永久 failed（grp2 cross_asset 实证）。"""
+    foreign = tmp_path / "docs/03_modules/_domain_trading/algo_flow"
+    foreign.mkdir(parents=True)
+    (foreign / "core__init__.yaml").write_text(
+        "doc_type: architecture_view\nsource_of_truth: src/zephyr/trading/core/__init__.py\n", encoding="utf-8"
+    )
+    p = _mk_src(tmp_path, "src/zephyr/cross_asset/core/__init__.py")
+    rel = "src/zephyr/cross_asset/core/__init__.py"
+    ext._plan_path_uniqueness([p])
+    assert ext._PLANNED_UNIQ[rel].endswith("cross_asset__core__init__.yaml")
+    r = ext.externalize(p, dry_run=False)
+    assert r["status"] == "externalized", r
+    assert r["yaml"] == ext._PLANNED_UNIQ[rel]
+    # 他人真源逐字不动
+    assert "src/zephyr/trading/core/__init__.py" in (foreign / "core__init__.yaml").read_text(encoding="utf-8")
+
+
+def test_rerun_reports_already_with_anchor_target(tmp_path):
+    """幂等复跑口径：已出仓件必须报 already（曾误报 skipped/no inline block，dry-run 失真）。"""
+    p = _mk_src(tmp_path, "src/zephyr/d/again.py")
+    first = ext.externalize(p, dry_run=False)
+    assert first["status"] == "externalized", first
+    again = ext.externalize(p, dry_run=False)
+    assert again["status"] == "already"
+    assert again["yaml"] == first["yaml"]
+
+
+def test_block_only_outside_docstring_is_skipped_as_unreachable(tmp_path):
+    """死块（docstring 外横幅区）不出仓也不隐藏：reason 点名 unreachable。"""
+    p = tmp_path / "src/zephyr/d/dead.py"
+    p.parent.mkdir(parents=True)
+    p.write_text(
+        "# [BLUEPRINT] MOD-X | docs/03_modules/_domain_d/blueprint.md\n"
+        "# [ALGO_FLOW]\n# 层: 输入\n# - id: B1\n#   name: 死块\n# [/ALGO_FLOW]\n"
+        '"""DeadBanner — 横幅区块，docstring 无块。\n\n概述文字。\n"""\n\nX = 1\n',
+        encoding="utf-8",
+    )
+    r = ext.externalize(p, dry_run=False)
+    assert r["status"] == "skipped"
+    assert "outside module docstring" in r["reason"]
+    assert p.read_text(encoding="utf-8").count("# [ALGO_FLOW]") == 1  # 死块原样保留（无人读，不删）
+
+
+def test_residual_dead_block_counted_on_success(tmp_path):
+    """出仓成功时把残留死块计数带进结果，报告侧可见（不静默）。"""
+    p = tmp_path / "src/zephyr/d/twoblock.py"
+    p.parent.mkdir(parents=True)
+    p.write_text(
+        '"""TwoBlock — 契约头减负夹具。\n\n'
+        "# [ALGO_FLOW]\n# 层: 输入\n# - id: I1\n#   name: 入参\n# [/ALGO_FLOW]\n"
+        '"""\n\n'
+        "X = 1\n\n"
+        '"""\n'
+        "# [ALGO_FLOW]\n# 层: 输入\n# - id: DEAD1\n#   name: 第二个字符串字面量块\n# [/ALGO_FLOW]\n"
+        '"""\n',
+        encoding="utf-8",
+    )
+    r = ext.externalize(p, dry_run=False)
+    assert r["status"] == "externalized", r
+    assert r["unreachable_blocks"] == 1
+    assert "DEAD1" in p.read_text(encoding="utf-8")
