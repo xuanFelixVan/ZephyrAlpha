@@ -9,7 +9,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR-CONTRACT] AssertionError->fail
 # [TESTS] tests/regime/test_synthetic_vix_iv_path.py
-# [INVARIANTS] 输入 iv=小数/输出 VIX=百分数(×100)；双标的 50ETF+300ETF 取均值、单标的降级；ATM 边界 |abs(delta)-0.5|<0.15 严格小于（0.15 本身被排除）；无可插值到期日→退化为可用 IV 均值；数据缺失→空 Series 不抛；vix_pct∈[0,1]
+# [INVARIANTS] 输入 iv=小数/输出 VIX=百分数(×100)；双标的 50ETF+300ETF 取均值、单标的降级；ATM 边界 |abs(delta)-0.5|<0.15 严格小于（0.15 本身被排除）；无可插值到期日→退化为可用 IV 均值；数据缺失→空 Series 不抛；vix_pct∈[0,1]；iv<=0 伪装值与 delta NULL 行不入 ATM 池且必出声（SVX-1-P0 消费纪律，实测）；σ30 对两腿 IV 严格单调、平移等变、被腿均值包络（实测）；ATM 池均值与 option_type/strike 组合无关（实测）；NaT 到期日两桶皆不入（实测）；_interp 的 t2==t1 分支为整数 dte 分割不变式下的不可达防御码（实测不可触发，仅文档）
 # [A_module] module_id: MOD-TEST-SYNTH-VIX-IV | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 # [ARCH-REF] #MOD-REGIME-002 #10_regime_detector_spec §4.9 #Phase2c #SVX-2 #SVX-1
@@ -27,6 +27,13 @@
   ⑦ vix_pct_from_vix 值域 [0,1] 与 warmup 期 NaN（含 rank 端点精确值）
   ⑧ IV 量纲回归：输入必须是**小数**（0.20）、输出是**百分数**（20.0）
   ＋ PIT 粗检（截断输入与全量前缀严格相等）＋ 零 delta 曲面的 fail-closed 显式降级
+  ⑨ SVX-1-P0 消费侧 fail-closed：iv<=0 伪装值不入池/不稀释均值且 WARNING 点名进料口；
+     全伪装值 → 空 Series；iv=NaN 不冒充伪装值（notna 守卫）
+  ⑩ delta NULL 行 fail-closed：出声 + 不入池 + 不污染另一标的（NaN 比较语义钉死）；
+     ATM 空池告警两成因可判别（恒 0 带事故签名 / 无平值档不带）
+  ⑪ 插值数学性质：对腿 IV 严格单调、增量恒等于 w×Δ×100、平移等变、被腿均值包络不外推；
+     NaT 到期日两桶皆不入；_interp_vix_for_date 空组 → NaN
+  ⑫ ATM 池均值语义不变量：结果与 option_type 组合、strike 列取值无关（公式只用 iv/delta/dte）
 
 量纲判定依据（⑧）：本模块头 §CBOE 简化公式第 4 步 "VIX = σ_30 × 100（百分数）"，
 且唯一进料口 src/zephyr/data/implementations/miniqmt_provider.py::_solve_iv 用
@@ -39,12 +46,13 @@ Black-Scholes + Newton-Raphson（初值 σ=0.3）反解 → 落库 iv 为小数�
 from __future__ import annotations
 
 import logging
+from itertools import pairwise
 
 import numpy as np
 import pandas as pd
 import pytest
 
-from zephyr.regime.features.synthetic_vix import compute_synthetic_vix, vix_pct_from_vix
+from zephyr.regime.features.synthetic_vix import _interp_vix_for_date, compute_synthetic_vix, vix_pct_from_vix
 
 # ---------------------------------------------------------------------------
 # 测试数据构造（MultiIndex(trade_date, underlying)，列含 strike/expiry/iv/option_type/delta/vega）
@@ -615,3 +623,296 @@ class TestChainIntegrationAndPit:
         vix = compute_synthetic_vix(self._multi_day_surface(n_dates=50))
         assert vix.index.is_monotonic_increasing
         assert isinstance(vix.index, pd.DatetimeIndex)
+
+
+# ---------------------------------------------------------------------------
+# ⑨ SVX-1-P0 消费侧 fail-closed：iv<=0 伪装值（coverage 实测基线缺失弧 129→130/137→138）
+# ---------------------------------------------------------------------------
+
+
+class TestFakeZeroIvExclusion:
+    """iv<=0 = 进料口反解失败被 DEFAULT 0 兜出的伪装值：不入池、不稀释均值、必出声。"""
+
+    def test_negative_iv_row_excluded_and_warning_names_feed(self, caplog) -> None:
+        """同池 {0.20, -0.20}：伪装值若入均值 → mean=0 → VIX 0；真语义 → 20.0 且 WARNING 点名 iv<=0 与进料口。"""
+        df = _surface(
+            [
+                ("2024-06-01", "510050", "2024-07-01", 0.20, 0.50, "call"),
+                ("2024-06-01", "510050", "2024-07-01", -0.20, 0.52, "call"),
+            ]
+        )
+        with caplog.at_level(logging.WARNING):
+            vix = compute_synthetic_vix(df)
+        assert vix.iloc[0] == pytest.approx(20.0, rel=1e-12)
+        msgs = " | ".join(r.getMessage() for r in caplog.records if r.levelno >= logging.WARNING)
+        assert "iv<=0" in msgs and "miniqmt_provider" in msgs, f"伪装值排除未出声/未点名进料口：{msgs}"
+
+    def test_zero_iv_default_disguise_not_halving_vix(self) -> None:
+        """iv=0.0（DDL DEFAULT 0 的生产签名）被排除：剩腿 0.18 → 18.0，而非被 0 稀释的 9.0。"""
+        df = _surface(
+            [
+                ("2024-06-01", "510050", "2024-07-01", 0.18, 0.50, "call"),
+                ("2024-06-01", "510050", "2024-07-01", 0.0, 0.49, "put"),
+            ]
+        )
+        vix = compute_synthetic_vix(df)
+        assert vix.iloc[0] == pytest.approx(18.0, rel=1e-12)
+
+    def test_exclusion_precedes_interp_so_far_leg_mean_unpolluted(self) -> None:
+        """排除发生在 ATM/插值之前：远月 {0.32, -0.50} 剔伪装 → far 均值仍 0.32，
+        结果与"手工先删伪装行"的干净曲面逐位相等（污染则 far 均值 -0.09、VIX 变负，可判别）。"""
+        dirty = _surface(
+            [
+                ("2024-06-03", "510050", "2024-06-21", 0.20, 0.50, "call"),
+                ("2024-06-03", "510050", "2024-07-19", 0.32, 0.50, "call"),
+                ("2024-06-03", "510050", "2024-07-19", -0.50, 0.51, "call"),
+            ]
+        )
+        clean = _surface(
+            [
+                ("2024-06-03", "510050", "2024-06-21", 0.20, 0.50, "call"),
+                ("2024-06-03", "510050", "2024-07-19", 0.32, 0.51, "call"),
+            ]
+        )
+        expected = _interp_expected(0.20, 0.32, 18, 46)
+        assert compute_synthetic_vix(dirty).iloc[0] == pytest.approx(expected, rel=1e-12)
+        assert compute_synthetic_vix(clean).iloc[0] == pytest.approx(expected, rel=1e-12)
+
+    def test_all_rows_nonpositive_iv_returns_empty_and_warns(self, caplog) -> None:
+        """全伪装值曲面（iv ∈ {0, -0.1}）→ 排除后 df 空 → 空 Series（调用方回退）且已出声。"""
+        df = _surface(
+            [
+                ("2024-06-01", "510050", "2024-07-01", 0.0, 0.50, "call"),
+                ("2024-06-01", "510300", "2024-07-01", -0.1, 0.50, "put"),
+            ]
+        )
+        with caplog.at_level(logging.WARNING):
+            out = compute_synthetic_vix(df)
+        assert out.empty and out.name == "vix"
+        msgs = " | ".join(r.getMessage() for r in caplog.records if r.levelno >= logging.WARNING)
+        assert "iv<=0" in msgs
+
+    def test_nan_iv_is_not_fake_zero_and_skipped_by_mean(self, caplog) -> None:
+        """notna 守卫：NaN iv 不触发伪装值告警（缺失≠伪装），mean 的 skipna 取有效腿。"""
+        df = _surface(
+            [
+                ("2024-06-01", "510050", "2024-07-01", 0.24, 0.50, "call"),
+                ("2024-06-01", "510050", "2024-07-01", np.nan, 0.48, "put"),
+            ]
+        )
+        with caplog.at_level(logging.WARNING):
+            vix = compute_synthetic_vix(df)
+        assert vix.iloc[0] == pytest.approx(24.0, rel=1e-12)
+        msgs = " | ".join(r.getMessage() for r in caplog.records if r.levelno >= logging.WARNING)
+        assert "iv<=0" not in msgs
+
+
+# ---------------------------------------------------------------------------
+# ⑩ delta NULL fail-closed（缺失弧 140→141）+ ATM 空池告警两成因判别
+# ---------------------------------------------------------------------------
+
+
+class TestNullDeltaFailClosed:
+    """delta=NULL 是进料口"显式标注不可用"：出声 + 不入池（NaN 比较→False），不按 0 猜。"""
+
+    def test_nan_delta_row_warns_and_stays_out_of_pool(self, caplog) -> None:
+        """{delta=NaN, iv=0.90} 与 {delta=0.50, iv=0.20} 同日：NULL 行不入池 → 20.0
+        （若误入池 mean=0.55→55.0，可判别）；WARNING 点名 NULL 与 fail-closed。"""
+        df = _surface(
+            [
+                ("2024-06-01", "510050", "2024-07-01", 0.90, np.nan, "call"),
+                ("2024-06-01", "510050", "2024-07-01", 0.20, 0.50, "call"),
+            ]
+        )
+        with caplog.at_level(logging.WARNING):
+            vix = compute_synthetic_vix(df)
+        assert vix.iloc[0] == pytest.approx(20.0, rel=1e-12)
+        msgs = " | ".join(r.getMessage() for r in caplog.records if r.levelno >= logging.WARNING)
+        assert "NULL" in msgs and "fail-closed" in msgs, f"delta NULL 未出声：{msgs}"
+
+    def test_all_nan_delta_double_warning_and_empty_output(self, caplog) -> None:
+        """全 NULL delta：NULL 告警 + ATM 空池告警双出声，输出空 Series。"""
+        df = _surface([("2024-06-01", "510050", "2024-07-01", 0.20, np.nan, "call")])
+        with caplog.at_level(logging.WARNING):
+            out = compute_synthetic_vix(df)
+        assert out.empty and out.name == "vix"
+        msgs = " | ".join(r.getMessage() for r in caplog.records if r.levelno >= logging.WARNING)
+        assert "NULL" in msgs and "ATM" in msgs
+
+    def test_nan_delta_underlying_dropped_without_polluting_valid_one(self) -> None:
+        """510300 全 NULL delta（iv=0.99 高伪装力）被整标的剔除 → 走单标的分支输出 510050 的 20.0，
+        而非 mean(20, 99)=59.5 —— NULL 行连"借道均值"污染另一标的的机会都没有。"""
+        df = _surface(
+            [
+                ("2024-06-01", "510050", "2024-07-01", 0.20, 0.52, "call"),
+                ("2024-06-01", "510300", "2024-07-01", 0.99, np.nan, "call"),
+            ]
+        )
+        vix = compute_synthetic_vix(df)
+        assert len(vix) == 1
+        assert vix.iloc[0] == pytest.approx(20.0, rel=1e-12)
+
+
+class TestAtmEmptyWarningSignatureDiscrimination:
+    """_atm_empty_warning 两成因（①delta 恒 0=进料口事故 / ②当日确无平值档）必须可判别。"""
+
+    def test_reason1_all_zero_delta_carries_accident_signature(self, caplog) -> None:
+        df = _surface([("2024-06-01", "510050", "2024-07-01", 0.20, 0.0, "call")])
+        with caplog.at_level(logging.WARNING):
+            out = compute_synthetic_vix(df)
+        assert out.empty
+        msgs = " | ".join(r.getMessage() for r in caplog.records if r.levelno >= logging.WARNING)
+        assert "SVX-1-P0 事故签名" in msgs, f"恒 0 delta 未带事故签名（进料口再断将无法分辨成因）：{msgs}"
+
+    def test_reason2_no_atm_tier_without_accident_signature(self, caplog) -> None:
+        """delta 分布合理但离 0.5 远（0.95/-0.90）→ 正常市场结构：出声但不误挂事故签名。"""
+        df = _surface(
+            [
+                ("2024-06-01", "510050", "2024-07-01", 0.20, 0.95, "call"),
+                ("2024-06-01", "510050", "2024-07-01", 0.30, -0.90, "put"),
+            ]
+        )
+        with caplog.at_level(logging.WARNING):
+            out = compute_synthetic_vix(df)
+        assert out.empty
+        msgs = " | ".join(r.getMessage() for r in caplog.records if r.levelno >= logging.WARNING)
+        assert "ATM" in msgs and "事故签名" not in msgs
+
+
+# ---------------------------------------------------------------------------
+# ⑪ 插值数学性质（严格单调 / 平移等变 / 包络不外推 / 缺流动性健壮）
+# ---------------------------------------------------------------------------
+
+
+class TestInterpMathProperties:
+    """断言打在 σ30 = iv_near + (iv_far-iv_near)·w、w=(30-t1)/(t2-t1)∈[0,1] 的代数事实上。"""
+
+    def test_empty_group_helper_returns_nan(self) -> None:
+        """防御分支（缺失弧 62→63）：空组 → NaN（经公共 API 不可达——groupby 组必非空——
+        故直接单测 helper；NaN 会被上层 dropna 吞掉，不会变成 0 混进均值）。"""
+        assert np.isnan(_interp_vix_for_date(pd.DataFrame()))
+
+    def test_vix_strictly_monotone_in_far_leg_with_exact_increment(self) -> None:
+        """far IV 网格递增 → VIX 严格递增，且每步增量恒等于 w×Δiv×100（w=12/28）。
+
+        注：同文件另有 `_interp_vix_for_date` 的 t2==t1 分支（缺失弧 78→79）——
+        dte=(expiry-trade_date).dt.days 恒为整数且 near/far 掩码互补（t1≤30<t2），
+        该相等在公共 API 下数学不可达，属防御性死码；强行覆盖只能 mock 内部，
+        违反"不 mock 主路径"纪律，故仅在此文档化，不造测试。
+        """
+        values = []
+        for far_iv in (0.22, 0.28, 0.34, 0.40):
+            df = _surface(
+                [
+                    ("2024-06-03", "510050", "2024-06-21", 0.20, 0.50, "call"),  # t1=18
+                    ("2024-06-03", "510050", "2024-07-19", far_iv, 0.50, "call"),  # t2=46
+                ]
+            )
+            values.append(compute_synthetic_vix(df).iloc[0])
+        assert all(b > a for a, b in pairwise(values))
+        w = (30 - 18) / (46 - 18)
+        for a, b in pairwise(values):
+            assert b - a == pytest.approx(0.06 * w * 100, abs=1e-9)
+
+    def test_vix_translation_equivariant_in_pool_iv(self) -> None:
+        """整池 IV 平移 +0.05 → VIX 平移 +5.0（均值与插值对平移等变，无隐式基线）。"""
+        base = _surface(
+            [
+                ("2024-06-03", "510050", "2024-06-21", 0.20, 0.50, "call"),
+                ("2024-06-03", "510050", "2024-07-19", 0.32, 0.50, "call"),
+            ]
+        )
+        shifted = _surface(
+            [
+                ("2024-06-03", "510050", "2024-06-21", 0.25, 0.50, "call"),
+                ("2024-06-03", "510050", "2024-07-19", 0.37, 0.50, "call"),
+            ]
+        )
+        v0 = compute_synthetic_vix(base).iloc[0]
+        v1 = compute_synthetic_vix(shifted).iloc[0]
+        assert v1 - v0 == pytest.approx(5.0, abs=1e-9)
+
+    @pytest.mark.parametrize(
+        ("near_expiry", "far_expiry", "t1", "t2"),
+        [
+            ("2024-06-06", "2024-07-06", 5, 35),
+            ("2024-06-21", "2024-07-21", 20, 50),
+            ("2024-06-30", "2024-07-02", 29, 31),
+        ],
+    )
+    def test_interp_bracketed_by_leg_means_never_extrapolates(
+        self, near_expiry: str, far_expiry: str, t1: int, t2: int
+    ) -> None:
+        """w∈(0,1) → σ30 严格落在两腿均值之间（内插不外推）；数值=手算 w 公式。"""
+        df = _surface(
+            [
+                ("2024-06-01", "510050", near_expiry, 0.18, 0.50, "call"),
+                ("2024-06-01", "510050", far_expiry, 0.30, 0.50, "call"),
+            ]
+        )
+        vix = compute_synthetic_vix(df).iloc[0]
+        assert 18.0 < vix < 30.0
+        assert vix == pytest.approx(_interp_expected(0.18, 0.30, t1, t2), rel=1e-12)
+
+    def test_nat_expiry_row_enters_neither_leg_bucket(self) -> None:
+        """到期日缺失（NaT→dte NaN）：两桶掩码均 False → 不入桶。
+        若误入近月桶 mean=(0.20+0.90)/2=0.55→55.0，可判别；真值 20.0。"""
+        df = _surface(
+            [
+                ("2024-06-01", "510050", "2024-07-01", 0.20, 0.50, "call"),  # dte=30
+                ("2024-06-01", "510050", None, 0.90, 0.50, "call"),  # 缺流动性：expiry 缺失
+            ]
+        )
+        vix = compute_synthetic_vix(df)
+        assert vix.iloc[0] == pytest.approx(20.0, rel=1e-12)
+
+    def test_term_boundary_inversion_still_brackets_with_near_max_dte(self) -> None:
+        """多档近月 {10, 30}：iv_near=mean(0.10,0.30)=0.20、t1=max=30 → w=0 → σ30=iv_near=20.0。
+        钉住"桶边界取 max(dte)、值取全桶均值"的不对称语义（w=0 时结果=近月池均值）。"""
+        df = _surface(
+            [
+                ("2024-06-01", "510050", "2024-06-11", 0.10, 0.50, "call"),  # dte=10
+                ("2024-06-01", "510050", "2024-07-01", 0.30, 0.50, "call"),  # dte=30 → t1
+                ("2024-06-01", "510050", "2024-07-11", 0.60, 0.50, "call"),  # dte=40 → far
+            ]
+        )
+        vix = compute_synthetic_vix(df).iloc[0]
+        assert vix == pytest.approx(20.0, rel=1e-12)
+        assert 10.0 <= vix <= 60.0  # 包络（对全池）仍成立
+
+
+# ---------------------------------------------------------------------------
+# ⑫ ATM 池均值语义不变量：只用 iv/delta/dte，option_type 与 strike 不进数学
+# ---------------------------------------------------------------------------
+
+
+class TestPoolMeanSemanticInvariants:
+    def test_result_invariant_to_option_type_composition_at_equal_mean(self) -> None:
+        """put/call 平价在本简化式中的体现：均值只认池 IV——
+        {call .22, put .18} 与 {call .20, call .20} 同 dte → 同为 20.0（平价中间价）。"""
+        pair = _surface(
+            [
+                ("2024-06-01", "510050", "2024-07-01", 0.22, 0.52, "call"),
+                ("2024-06-01", "510050", "2024-07-01", 0.18, -0.52, "put"),
+            ]
+        )
+        twin_calls = _surface(
+            [
+                ("2024-06-01", "510050", "2024-07-01", 0.20, 0.50, "call"),
+                ("2024-06-01", "510050", "2024-07-01", 0.20, 0.51, "call"),
+            ]
+        )
+        assert compute_synthetic_vix(pair).iloc[0] == pytest.approx(20.0, rel=1e-12)
+        assert compute_synthetic_vix(twin_calls).iloc[0] == pytest.approx(20.0, rel=1e-12)
+
+    def test_strike_column_values_do_not_enter_math(self) -> None:
+        """极端行权价鲁棒性 = strike 列根本不参与公式：任意改写（0.001/1e9）结果逐位不变。
+        （深实/深虚档的排除走 |delta| 边界，已由 TestAtmFilterBoundary 钉死。）"""
+        recs: list[Record] = [
+            ("2024-06-03", "510050", "2024-06-21", 0.20, 0.50, "call"),
+            ("2024-06-03", "510050", "2024-07-19", 0.32, 0.50, "call"),
+        ]
+        base = compute_synthetic_vix(_surface(recs)).iloc[0]
+        weird_df = _surface(recs)
+        weird_df = weird_df.assign(strike=[0.001, 1e9])
+        assert compute_synthetic_vix(weird_df).iloc[0] == pytest.approx(base, rel=1e-12)
