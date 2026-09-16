@@ -28,37 +28,7 @@ dry-run 先行）+ **破坏性变更检测**（字段删除/类型变更 → CI 
 做 CRUD（本件不管条目数据）；跨 Collection 查询沿用 kb_engine/检索层语义
 （本件只保证 schema 演进不破坏查询契约）。纯内存/DI，不触网不起子进程。
 
-# [ALGO_FLOW]
-# 层: 输入
-# - id: I1
-#   name: clock 参数
-#   fields: 参数 clock（无注解）
-#   code: collection_schema_manager.py 顶层公共函数形参（AST 提取）
-# - id: I2
-#   name: migration_runner 参数
-#   fields: 参数 migration_runner（无注解）
-#   code: collection_schema_manager.py 顶层公共函数形参（AST 提取）
-# 层: 算法
-# - id: A1
-#   name_zh: ① CollectionSchemaManager
-#   name_en: CollectionSchemaManager
-#   intro: 8 Collection schema 版本注册 + 迁移编排 + 破坏性变更检测件。
-#   desc: 8 Collection schema 版本注册 + 迁移编排 + 破坏性变更检测件。；公共方法（定义序）: register_schema, get_schema, list_versions, detect_bre…
-#   inputs: clock migration_runner
-#   outputs: 返回值
-#   （注：A1 之后另有 9 个公共定义未列入（含 9 个数据契约/异常/枚举声明类），见源码）
-# 层: 输出
-# - id: O1
-#   name_zh: 模块公共 API 面（10 定义）
-#   name_en: public defs
-#   intro: CollectionSchemaManager
-#   downstream: 运行时装配批（8 Collection schema 注册 / 迁移编排 / CI 破坏性变更报告）
-# [/ALGO_FLOW]
-#
-# 边:
-# I1 --> A1
-# I2 --> A1
-# A1 --> O1
+# [ALGO_FLOW] external: docs/03_modules/_domain_knowledge/algo_flow/collection_schema_manager.yaml
 """
 
 from __future__ import annotations

@@ -28,47 +28,7 @@ KNW-010（五类/六类枚举姊妹稿）归并。
 遍历基座，不算分）；layered_memory_orchestrator=图谱层适配消费方（本件不
 做编排）。
 
-# [ALGO_FLOW]
-# 层: 输入
-# - id: I1
-#   name: conn 参数
-#   fields: 参数 conn（无注解）
-#   code: financial_knowledge_graph.py 顶层公共函数形参（AST 提取）
-# - id: I2
-#   name: relation_types 参数
-#   fields: 参数 relation_types（无注解）
-#   code: financial_knowledge_graph.py 顶层公共函数形参（AST 提取）
-# - id: I3
-#   name: max_edges 参数
-#   fields: 参数 max_edges（无注解）
-#   code: financial_knowledge_graph.py 顶层公共函数形参（AST 提取）
-# - id: I4
-#   name: clock 参数
-#   fields: 参数 clock（无注解）
-#   code: financial_knowledge_graph.py 顶层公共函数形参（AST 提取）
-# 层: 算法
-# - id: A1
-#   name_zh: ① FinancialKnowledgeGraph
-#   name_en: FinancialKnowledgeGraph
-#   intro: SQLite 邻接表图谱（实体/关系 + 遍历 + LLM 审核入图 + 规模护栏）。
-#   desc: SQLite 邻接表图谱（实体/关系 + 遍历 + LLM 审核入图 + 规模护栏）。；公共方法（定义序）: add_entity, remove_entity, get_entity, entity_count, e…
-#   inputs: conn relation_types max_edges clock
-#   outputs: 返回值
-#   （注：A1 之后另有 7 个公共定义未列入（含 7 个数据契约/异常/枚举声明类），见源码）
-# 层: 输出
-# - id: O1
-#   name_zh: 模块公共 API 面（8 定义）
-#   name_en: public defs
-#   intro: FinancialKnowledgeGraph
-#   downstream: 运行时装配批（供应链推理 / 概念联动检索 / LLM抽取人工审核入图）
-# [/ALGO_FLOW]
-#
-# 边:
-# I1 --> A1
-# I2 --> A1
-# I3 --> A1
-# I4 --> A1
-# A1 --> O1
+# [ALGO_FLOW] external: docs/03_modules/_domain_knowledge/algo_flow/financial_knowledge_graph.yaml
 """
 
 from __future__ import annotations

@@ -435,7 +435,7 @@ nodes:
   # ── S0-1 新闻情绪语义分析（Owner 2026-09-09：本地模型情绪打分入图；新闻→决策链的理解层）──
 - node_id: TDM-E-L1-S0-1
   name_zh: 新闻情绪语义分析
-  note_confirmed: 2026-09-15
+  note_confirmed: 2026-09-16  # grp6p2s3 出仓复核：机器块搬 yaml，算法口径逐字未变
   market: cn_a
   flow: entry_flow
   layer: L1

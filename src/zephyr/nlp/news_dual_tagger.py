@@ -32,28 +32,7 @@ r"""MOD-NLP-DUALTAG-001 — 新闻双标签生成器（GAP-F-21，新闻页"可�
 - gap_pct=(actual-anchor)/|anchor|×100；|gap|≤容差→符合预期，>容差→超预期，<-容差→低于预期；
 - 锚/实际值缺 → 无锚未定（anchor_missing 留痕，宁缺毋假）。
 
-# [ALGO_FLOW]
-# 层: 输入
-# - id: I1 新闻 list[NewsTagInput]（news_id/title/content/symbols/actual_value）
-# - id: I2 日历规则组 list[EventKeywordRule]（事件类型+关键词+提前披露标记）
-# - id: I3 资金痕迹 dict[symbol → 净流入]（注入位）
-# - id: I4 一致预期锚 dict[symbol → ConsensusAnchor]（analyst_forecast 或注入位）
-# 层: 特征
-# - id: F1 日历关键词命中
-# - id: F2 资金痕迹阈值判定
-# - id: F3 预期差 gap_pct
-# 层: 算法
-# - id: A1 双标签封闭集合判定（可预测性四态 × 预期差四态）
-# 层: 输出
-# - id: O1 NewsDualTagResult（items 逐条双标签 + counts 计数 + 降级留痕）
-# [/ALGO_FLOW]
-#
-# 边:
-# I1,I2 --> F1
-# I1,I3 --> F2
-# I1,I4 --> F3
-# F1,F2,F3 --> A1
-# A1 --> O1
+# [ALGO_FLOW] external: docs/03_modules/_domain_intelligence/algo_flow/news_dual_tagger.yaml
 """
 
 from __future__ import annotations

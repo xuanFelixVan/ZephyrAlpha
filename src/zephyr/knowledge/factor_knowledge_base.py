@@ -28,37 +28,7 @@ knowledge 集合语义（**注入 kb_writer 回调**，因子注册与状态变�
 注入 kb_writer 挂接其 knowledge 集合语义，不自建存储）；financial_knowledge_
 graph=六类实体邻接图谱（本件关系仅因子间三类闭合词表，零交集）。
 
-# [ALGO_FLOW]
-# 层: 输入
-# - id: I1
-#   name: clock 参数
-#   fields: 参数 clock（无注解）
-#   code: factor_knowledge_base.py 顶层公共函数形参（AST 提取）
-# - id: I2
-#   name: kb_writer 参数
-#   fields: 参数 kb_writer（无注解）
-#   code: factor_knowledge_base.py 顶层公共函数形参（AST 提取）
-# 层: 算法
-# - id: A1
-#   name_zh: ① FactorKnowledgeBase
-#   name_en: FactorKnowledgeBase
-#   intro: 因子知识库（定义/关系/历史三表 + kb 写入回调 + 确定性查询）。
-#   desc: 因子知识库（定义/关系/历史三表 + kb 写入回调 + 确定性查询）。；公共方法（定义序）: register_factor, get_definition, get_status, add_relation, re…
-#   inputs: clock kb_writer
-#   outputs: 返回值
-#   （注：A1 之后另有 7 个公共定义未列入（含 7 个数据契约/异常/枚举声明类），见源码）
-# 层: 输出
-# - id: O1
-#   name_zh: 模块公共 API 面（8 定义）
-#   name_en: public defs
-#   intro: FactorKnowledgeBase
-#   downstream: 运行时装配批（因子注册入库 / vector_memory knowledge 集合写入绑定 / 因子查询路由）
-# [/ALGO_FLOW]
-#
-# 边:
-# I1 --> A1
-# I2 --> A1
-# A1 --> O1
+# [ALGO_FLOW] external: docs/03_modules/_domain_knowledge/algo_flow/factor_knowledge_base.yaml
 """
 
 from __future__ import annotations

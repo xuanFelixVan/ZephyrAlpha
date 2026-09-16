@@ -32,20 +32,7 @@ r"""MOD-NLP-IMPACT-001 — 新闻影响评估分级 + 热点聚类（GAP-F-22，
    主题词典与 MOD-SIG-066 同源语义、本模块自维护小集（消费形态不同——
    归因 vs 聚类计数，config.theme_keywords 可覆盖）。
 
-# [ALGO_FLOW]
-# 层: 输入
-# - id: I1 新闻清单 list[NewsItemInput]（news_id/title/content/source/publish_time）
-# 层: 算法
-# - id: A1 A/B/C 分级（关键词规则）
-# - id: A2 主题聚类计数 + 多源共振
-# 层: 输出
-# - id: O1 NewsImpactReport（graded + hotspots + grade_counts）
-# [/ALGO_FLOW]
-#
-# 边:
-# I1 --> A1
-# I1 --> A2
-# A1,A2 --> O1
+# [ALGO_FLOW] external: docs/03_modules/_domain_intelligence/algo_flow/news_impact_grader.yaml
 """
 
 from __future__ import annotations

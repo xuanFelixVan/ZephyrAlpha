@@ -27,47 +27,7 @@ knowledge_quality_assessor=条目质量四维评分（零交集）；rag_pipelin
 管道（本件产出 PaperRecord 可供其 ingest，不实现检索）；假设实体注册归
 hypothesis_registry（本件仅经注入 sink 上报候选词，不新建假设实体）。
 
-# [ALGO_FLOW]
-# 层: 输入
-# - id: I1
-#   name: arxiv_fetcher 参数
-#   fields: 参数 arxiv_fetcher（无注解）
-#   code: paper_tracker.py 顶层公共函数形参（AST 提取）
-# - id: I2
-#   name: summarizer 参数
-#   fields: 参数 summarizer（无注解）
-#   code: paper_tracker.py 顶层公共函数形参（AST 提取）
-# - id: I3
-#   name: hypothesis_sink 参数
-#   fields: 参数 hypothesis_sink（无注解）
-#   code: paper_tracker.py 顶层公共函数形参（AST 提取）
-# - id: I4
-#   name: clock 参数
-#   fields: 参数 clock（无注解）
-#   code: paper_tracker.py 顶层公共函数形参（AST 提取）
-# 层: 算法
-# - id: A1
-#   name_zh: ① PaperTracker
-#   name_en: PaperTracker
-#   intro: 论文追踪器（订阅注册表 + 注入抓取 + 指纹去重 + 趋势 + 假设对接）。
-#   desc: 论文追踪器（订阅注册表 + 注入抓取 + 指纹去重 + 趋势 + 假设对接）。；公共方法（定义序）: subscribe, unsubscribe, list_subscriptions, fetch_topic, f…
-#   inputs: arxiv_fetcher summarizer hypothesis_sink clock trend_window trend_rec…
-#   outputs: 返回值
-#   （注：A1 之后另有 5 个公共定义未列入（含 5 个数据契约/异常/枚举声明类），见源码）
-# 层: 输出
-# - id: O1
-#   name_zh: 模块公共 API 面（6 定义）
-#   name_en: public defs
-#   intro: PaperTracker
-#   downstream: 运行时装配批（主题订阅注册 / arXiv 抓取适配器绑定 / 假设提取对接）
-# [/ALGO_FLOW]
-#
-# 边:
-# I1 --> A1
-# I2 --> A1
-# I3 --> A1
-# I4 --> A1
-# A1 --> O1
+# [ALGO_FLOW] external: docs/03_modules/_domain_knowledge/algo_flow/paper_tracker.yaml
 """
 
 from __future__ import annotations

@@ -27,47 +27,7 @@ D-KNOWLEDGE-11）：RAGAS 思想单机版——知识条目四维评分（准确
 查重分工：gov_audit/kb_gate=入闸门禁（本件=入库后质量评分与隔离，不做门
 禁判定）；kb_engine=条目存取（本件经注入回调写回质量分，不直连存储）。
 
-# [ALGO_FLOW]
-# 层: 输入
-# - id: I1
-#   name: weights 参数
-#   fields: 参数 weights（无注解）
-#   code: knowledge_quality_assessor.py 顶层公共函数形参（AST 提取）
-# - id: I2
-#   name: quarantine_threshold 参数
-#   fields: 参数 quarantine_threshold（无注解）
-#   code: knowledge_quality_assessor.py 顶层公共函数形参（AST 提取）
-# - id: I3
-#   name: quarantine_weight 参数
-#   fields: 参数 quarantine_weight（无注解）
-#   code: knowledge_quality_assessor.py 顶层公共函数形参（AST 提取）
-# - id: I4
-#   name: half_life_days 参数
-#   fields: 参数 half_life_days（无注解）
-#   code: knowledge_quality_assessor.py 顶层公共函数形参（AST 提取）
-# 层: 算法
-# - id: A1
-#   name_zh: ① KnowledgeQualityAssessor
-#   name_en: KnowledgeQualityAssessor
-#   intro: 知识条目四维评分 + 时效衰减 + 隔离降权 + 复核队列。
-#   desc: 知识条目四维评分 + 时效衰减 + 隔离降权 + 复核队列。；公共方法（定义序）: assess, get_score, retrieval_weight, enqueue_review, next_review, r…
-#   inputs: weights quarantine_threshold quarantine_weight half_life_days citatio…
-#   outputs: 返回值
-#   （注：A1 之后另有 4 个公共定义未列入（含 4 个数据契约/异常/枚举声明类），见源码）
-# 层: 输出
-# - id: O1
-#   name_zh: 模块公共 API 面（5 定义）
-#   name_en: public defs
-#   intro: KnowledgeQualityAssessor
-#   downstream: 运行时装配批（KBEngine 质量分写回 / 检索降权 / 定期复核编排）
-# [/ALGO_FLOW]
-#
-# 边:
-# I1 --> A1
-# I2 --> A1
-# I3 --> A1
-# I4 --> A1
-# A1 --> O1
+# [ALGO_FLOW] external: docs/03_modules/_domain_knowledge/algo_flow/knowledge_quality_assessor.yaml
 """
 
 from __future__ import annotations

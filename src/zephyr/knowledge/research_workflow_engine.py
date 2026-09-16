@@ -28,55 +28,7 @@ B6-08551（AUD-DRAFT-001-DIGEST P2 波 P2-W03，CAND-KNW-017，B6 D-RESEARCH-09�
 次运行执行引擎，不管项目生命周期）；layered_command_chain=Agent 层级委
 托（零交集）。上线门禁实体归 gov_audit kb_gate 族（本件仅注入回调）。
 
-# [ALGO_FLOW]
-# 层: 输入
-# - id: I1
-#   name: clock 参数
-#   fields: 参数 clock（无注解）
-#   code: research_workflow_engine.py 顶层公共函数形参（AST 提取）
-# - id: I2
-#   name: sleeper 参数
-#   fields: 参数 sleeper（无注解）
-#   code: research_workflow_engine.py 顶层公共函数形参（AST 提取）
-# - id: I3
-#   name: gate 参数
-#   fields: 参数 gate（无注解）
-#   code: research_workflow_engine.py 顶层公共函数形参（AST 提取）
-# - id: I4
-#   name: audit_sink 参数
-#   fields: 参数 audit_sink（无注解）
-#   code: research_workflow_engine.py 顶层公共函数形参（AST 提取）
-# 层: 算法
-# - id: A1
-#   name_zh: ① ResearchTemplate
-#   name_en: ResearchTemplate
-#   intro: 研究模板（DAG 定义载体，frozen）。
-#   desc: 研究模板（DAG 定义载体，frozen）。；公共方法（定义序）: factor_research；源码 L162-L193
-#   inputs: 无参数
-#   outputs: 返回值
-# - id: A2
-#   name_zh: ② ResearchWorkflowEngine
-#   name_en: ResearchWorkflowEngine
-#   intro: 研究工作流引擎（模板注册表 + DAG 拓扑执行 + 退避重试 + 门禁 + 审计）。
-#   desc: 研究工作流引擎（模板注册表 + DAG 拓扑执行 + 退避重试 + 门禁 + 审计）。；公共方法（定义序）: register_template, get_template, list_templates, run,…
-#   inputs: clock sleeper gate audit_sink base_backoff_seconds max_backoff_seconds
-#   outputs: 返回值
-#   （注：A2 之后另有 8 个公共定义未列入（含 8 个数据契约/异常/枚举声明类），见源码）
-# 层: 输出
-# - id: O1
-#   name_zh: 模块公共 API 面（10 定义）
-#   name_en: public defs
-#   intro: ResearchTemplate, ResearchWorkflowEngine
-#   downstream: 运行时装配批（研究模板注册 / 上线门禁绑定 / 审计路由）
-# [/ALGO_FLOW]
-#
-# 边:
-# I1 --> A1
-# I2 --> A1
-# I3 --> A1
-# I4 --> A1
-# A1 --> A2
-# A2 --> O1
+# [ALGO_FLOW] external: docs/03_modules/_domain_knowledge/algo_flow/research_workflow_engine.yaml
 """
 
 from __future__ import annotations

@@ -29,47 +29,7 @@ experiment_tracking / 因子库**联动接口**（注入适配器，挂载即回
 experiment_tracking=实验运行记录（本件只挂引用）；knowledge_artifact_store
 =6 类产出不可变工件（本件=项目维度聚合视图）。纯内存/DI，不触网不起子进程。
 
-# [ALGO_FLOW]
-# 层: 输入
-# - id: I1
-#   name: conn 参数
-#   fields: 参数 conn（无注解）
-#   code: research_project_aggregate.py 顶层公共函数形参（AST 提取）
-# - id: I2
-#   name: clock 参数
-#   fields: 参数 clock（无注解）
-#   code: research_project_aggregate.py 顶层公共函数形参（AST 提取）
-# - id: I3
-#   name: hypothesis_registry 参数
-#   fields: 参数 hypothesis_registry（无注解）
-#   code: research_project_aggregate.py 顶层公共函数形参（AST 提取）
-# - id: I4
-#   name: evidence_chain 参数
-#   fields: 参数 evidence_chain（无注解）
-#   code: research_project_aggregate.py 顶层公共函数形参（AST 提取）
-# 层: 算法
-# - id: A1
-#   name_zh: ① ResearchProjectAggregate
-#   name_en: ResearchProjectAggregate
-#   intro: 研究项目聚合根（状态机 + 子实体挂载 + SQLite 持久化 + 联动）。
-#   desc: 研究项目聚合根（状态机 + 子实体挂载 + SQLite 持久化 + 联动）。；公共方法（定义序）: create_project, get_project, list_projects, transition, at…
-#   inputs: conn clock hypothesis_registry evidence_chain experiment_tracker fact…
-#   outputs: 返回值
-#   （注：A1 之后另有 5 个公共定义未列入（含 5 个数据契约/异常/枚举声明类），见源码）
-# 层: 输出
-# - id: O1
-#   name_zh: 模块公共 API 面（6 定义）
-#   name_en: public defs
-#   intro: ResearchProjectAggregate
-#   downstream: 运行时装配批（研究项目建模 / hypothesis_registry 等联动注入点装配）
-# [/ALGO_FLOW]
-#
-# 边:
-# I1 --> A1
-# I2 --> A1
-# I3 --> A1
-# I4 --> A1
-# A1 --> O1
+# [ALGO_FLOW] external: docs/03_modules/_domain_knowledge/algo_flow/research_project_aggregate.yaml
 """
 
 from __future__ import annotations

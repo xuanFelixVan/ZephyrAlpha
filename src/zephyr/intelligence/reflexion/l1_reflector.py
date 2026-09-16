@@ -34,37 +34,7 @@ GP0 手动形态 = 规则化归因 MVP: 归因走关键词词表匹配(config �
 不做什么: 不做 L2 同类任务归纳(N=5 累积, Phase 2); 不做 L3 跨任务(远期);
 不做反思触发裁决(归 Phase 1 ReflCtrl 频率闸门)。
 
-# [ALGO_FLOW]
-# 层: 输入
-# - id: I1
-#   name: rules 参数
-#   fields: 参数 rules（无注解）
-#   code: l1_reflector.py 顶层公共函数形参（AST 提取）
-# - id: I2
-#   name: suggestion_templates 参数
-#   fields: 参数 suggestion_templates（无注解）
-#   code: l1_reflector.py 顶层公共函数形参（AST 提取）
-# 层: 算法
-# - id: A1
-#   name_zh: ① L1Reflector
-#   name_en: L1Reflector
-#   intro: L1 单轨迹反思器(规则化归因 MVP, 不调 LLM)。
-#   desc: L1 单轨迹反思器(规则化归因 MVP, 不调 LLM)。；公共方法（定义序）: categories, classify, suggest, reflect；源码 L167-L261
-#   inputs: rules suggestion_templates
-#   outputs: 返回值
-#   （注：A1 之后另有 1 个公共定义未列入（含 1 个数据契约/异常/枚举声明类），见源码）
-# 层: 输出
-# - id: O1
-#   name_zh: 模块公共 API 面（2 定义）
-#   name_en: public defs
-#   intro: L1Reflector
-#   downstream: zephyr.intelligence.reflexion.roles; zephyr.intelligence.reflexion.batch_runner
-# [/ALGO_FLOW]
-#
-# 边:
-# I1 --> A1
-# I2 --> A1
-# A1 --> O1
+# [ALGO_FLOW] external: docs/03_modules/_domain_intelligence/algo_flow/l1_reflector.yaml
 """
 
 from __future__ import annotations

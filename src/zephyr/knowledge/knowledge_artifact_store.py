@@ -28,32 +28,7 @@ ClassifiedKnowledgePackage/ModuleMappingResult/NewModule/TrialResult 词表
 档基座，不做证据关联）；kb_engine=通用条目 CRUD（本件=闭合 schema 的聚
 合根存储，零交集）。
 
-# [ALGO_FLOW]
-# 层: 输入
-# - id: I1
-#   name: clock 参数
-#   fields: 参数 clock（无注解）
-#   code: knowledge_artifact_store.py 顶层公共函数形参（AST 提取）
-# 层: 算法
-# - id: A1
-#   name_zh: ① KnowledgeArtifactStore
-#   name_en: KnowledgeArtifactStore
-#   intro: 6 类产出不可变 schema + 版本链存储 + 6 维索引查询（聚合根）。
-#   desc: 6 类产出不可变 schema + 版本链存储 + 6 维索引查询（聚合根）。；公共方法（定义序）: put, get, history, query；源码 L124-L269
-#   inputs: clock
-#   outputs: 返回值
-#   （注：A1 之后另有 3 个公共定义未列入（含 3 个数据契约/异常/枚举声明类），见源码）
-# 层: 输出
-# - id: O1
-#   name_zh: 模块公共 API 面（4 定义）
-#   name_en: public defs
-#   intro: KnowledgeArtifactStore
-#   downstream: 运行时装配批（研究产出版本链归档 / 六维索引检索 / 聚合根不变量挂载）
-# [/ALGO_FLOW]
-#
-# 边:
-# I1 --> A1
-# A1 --> O1
+# [ALGO_FLOW] external: docs/03_modules/_domain_knowledge/algo_flow/knowledge_artifact_store.yaml
 """
 
 from __future__ import annotations

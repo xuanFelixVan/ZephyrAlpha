@@ -28,37 +28,7 @@ RAG **五层记忆收口编排**：层适配器**全注入**（缺层标记 degr
 cross_collection_retriever=向量库内跨集合检索（本件=跨异构记忆层编排，层适配
 器由装配批注入）。纯内存/DI，不触网不起子进程。
 
-# [ALGO_FLOW]
-# 层: 输入
-# - id: I1
-#   name: adapters 参数
-#   fields: 参数 adapters（无注解）
-#   code: layered_memory_orchestrator.py 顶层公共函数形参（AST 提取）
-# - id: I2
-#   name: clock 参数
-#   fields: 参数 clock（无注解）
-#   code: layered_memory_orchestrator.py 顶层公共函数形参（AST 提取）
-# 层: 算法
-# - id: A1
-#   name_zh: ① LayeredMemoryOrchestrator
-#   name_en: LayeredMemoryOrchestrator
-#   intro: 五层记忆收口编排件（层注册 + 统一检索 + 降级 + 健康检查）。
-#   desc: 五层记忆收口编排件（层注册 + 统一检索 + 降级 + 健康检查）。；公共方法（定义序）: register_layer, unregister_layer, registered_layers, search, he…
-#   inputs: adapters clock
-#   outputs: 返回值
-#   （注：A1 之后另有 6 个公共定义未列入（含 6 个数据契约/异常/枚举声明类），见源码）
-# 层: 输出
-# - id: O1
-#   name_zh: 模块公共 API 面（7 定义）
-#   name_en: public defs
-#   intro: LayeredMemoryOrchestrator
-#   downstream: 运行时装配批（五层记忆统一注入点装配 / RAG 检索收口）
-# [/ALGO_FLOW]
-#
-# 边:
-# I1 --> A1
-# I2 --> A1
-# A1 --> O1
+# [ALGO_FLOW] external: docs/03_modules/_domain_knowledge/algo_flow/layered_memory_orchestrator.yaml
 """
 
 from __future__ import annotations

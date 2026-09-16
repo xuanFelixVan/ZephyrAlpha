@@ -28,40 +28,7 @@ source} 五要素 + 数值/枚举/关系 3 类型词表闭合，confidence=1.0 �
 账本与其上的 grounding 校验语义，不重建锚定流水线）；sentinel_hallucination
 _detector=幻觉检测哨兵（本件=双锁拒绝不评分，零交集）。
 
-# [ALGO_FLOW]
-# 层: 输入
-# - id: I1
-#   name: clock 参数
-#   fields: 参数 clock（无注解）
-#   code: universal_fact_ledger.py 顶层公共函数形参（AST 提取）
-# 层: 算法
-# - id: A1
-#   name_zh: ① UniversalFactLedger
-#   name_en: UniversalFactLedger
-#   intro: UFL 追加式事实账本（写后不可改；查询确定性排序）。
-#   desc: UFL 追加式事实账本（写后不可改；查询确定性排序）。；公共方法（定义序）: append, contains, get, facts_of, entities, size；源码 L152-L210
-#   inputs: clock
-#   outputs: 返回值
-# - id: A2
-#   name_zh: ② DoubleLockGrounding
-#   name_en: DoubleLockGrounding
-#   intro: DoubleLockGrounding 校验器（实体锁 + 数值锁；拒绝不可降级须修正重提）。
-#   desc: DoubleLockGrounding 校验器（实体锁 + 数值锁；拒绝不可降级须修正重提）。 - 实体锁：LLM 输出引用的每个实体须存在于 UFL； - 数值锁：每条数值断言…；公共方法（定义序）: validat…
-#   inputs: ledger strength numeric_tolerance
-#   outputs: 返回值
-#   （注：A2 之后另有 7 个公共定义未列入（含 7 个数据契约/异常/枚举声明类），见源码）
-# 层: 输出
-# - id: O1
-#   name_zh: 模块公共 API 面（9 定义）
-#   name_en: public defs
-#   intro: UniversalFactLedger, DoubleLockGrounding
-#   downstream: 运行时装配批（事实写入接数据检索层 / DoubleLock 校验接 LLM 输出管线 / 强度档位装配）
-# [/ALGO_FLOW]
-#
-# 边:
-# I1 --> A1
-# A1 --> A2
-# A2 --> O1
+# [ALGO_FLOW] external: docs/03_modules/_domain_intelligence/algo_flow/universal_fact_ledger.yaml
 """
 
 from __future__ import annotations

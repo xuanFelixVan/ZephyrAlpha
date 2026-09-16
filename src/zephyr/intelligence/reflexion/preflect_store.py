@@ -34,40 +34,7 @@ PreFlect 失败模式库（12号文 §3.3/§4.3 P1-3）.
 检索：规则化关键词重叠打分（trigger_conditions 子串命中计数，与 L1 归因同路线，
 不引嵌入模型）。落盘：root/preflect_patterns.json 原子写，可读回（严格校验）。
 
-# [ALGO_FLOW]
-# 层: 输入
-# - id: I1
-#   name: root 参数
-#   fields: 参数 root（无注解）
-#   code: preflect_store.py 顶层公共函数形参（AST 提取）
-# 层: 算法
-# - id: A1
-#   name_zh: ① FailurePatternEntry
-#   name_en: FailurePatternEntry
-#   intro: 失败模式条目（§3.
-#   desc: 失败模式条目（§3.3 四要素冻结：模式/触发条件/规避建议/来源反思 ID）.；公共方法（定义序）: to_dict, from_dict；源码 L103-L194
-#   inputs: 无参数
-#   outputs: 返回值
-# - id: A2
-#   name_zh: ② PreFlectStore
-#   name_en: PreFlectStore
-#   intro: 失败模式库：落盘 root/preflect_patterns.
-#   desc: 失败模式库：落盘 root/preflect_patterns.json，可读回.；公共方法（定义序）: path, add, ingest_reflection, get, edit, retrieve, build…
-#   inputs: root
-#   outputs: 返回值
-#   （注：A2 之后另有 1 个公共定义未列入（含 1 个数据契约/异常/枚举声明类），见源码）
-# 层: 输出
-# - id: O1
-#   name_zh: 模块公共 API 面（3 定义）
-#   name_en: public defs
-#   intro: FailurePatternEntry, PreFlectStore
-#   downstream: tests/intelligence/test_preflect_store.py
-# [/ALGO_FLOW]
-#
-# 边:
-# I1 --> A1
-# A1 --> A2
-# A2 --> O1
+# [ALGO_FLOW] external: docs/03_modules/_domain_intelligence/algo_flow/preflect_store.yaml
 """
 
 from __future__ import annotations

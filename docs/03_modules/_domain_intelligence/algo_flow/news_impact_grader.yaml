@@ -1,0 +1,22 @@
+# ALGO_FLOW 外部真源——news_impact_grader（_domain_intelligence 域，真源 src/zephyr/nlp/news_impact_grader.py）
+# 2026-09-15 P2-1 契约头减负批量出仓：docstring 内联块逐字节副本，extractor 经
+# external 锚加载走同一 parse_algo_flow 管线；算法公共面变化时同步更新本块。
+doc_type: architecture_view
+ttl: permanent
+module: src.zephyr.nlp.news_impact_grader
+source_of_truth: src/zephyr/nlp/news_impact_grader.py
+algo_flow: |
+    # [ALGO_FLOW]
+    # 层: 输入
+    # - id: I1 新闻清单 list[NewsItemInput]（news_id/title/content/source/publish_time）
+    # 层: 算法
+    # - id: A1 A/B/C 分级（关键词规则）
+    # - id: A2 主题聚类计数 + 多源共振
+    # 层: 输出
+    # - id: O1 NewsImpactReport（graded + hotspots + grade_counts）
+    # [/ALGO_FLOW]
+    #
+    # 边:
+    # I1 --> A1
+    # I1 --> A2
+    # A1,A2 --> O1

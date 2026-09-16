@@ -34,68 +34,7 @@ MOD-INT-NEWS-NIGHT NightlySentimentWindow — 夜间新闻情绪窗口聚合器�
 依据: 92号清单 §8.4 + 44号备忘 §4 表 M3-② 行 + 26号备忘 §2.7 + tracker #138/#139
 Version: 0.1.0
 
-# [ALGO_FLOW]
-# 层: 输入
-# - id: I1
-#   name: trade_date 参数
-#   fields: 参数 trade_date，类型注解 datetime.date
-#   code: nightly_sentiment_window.py 顶层公共函数形参（AST 提取）
-# - id: I2
-#   name: analyzer 参数
-#   fields: 参数 analyzer（无注解）
-#   code: nightly_sentiment_window.py 顶层公共函数形参（AST 提取）
-# - id: I3
-#   name: linker 参数
-#   fields: 参数 linker（无注解）
-#   code: nightly_sentiment_window.py 顶层公共函数形参（AST 提取）
-# - id: I4
-#   name: persist 参数
-#   fields: 参数 persist（无注解）
-#   code: nightly_sentiment_window.py 顶层公共函数形参（AST 提取）
-# 层: 算法
-# - id: A1
-#   name_zh: ① NightlySentimentResult
-#   name_en: NightlySentimentResult
-#   intro: 夜间新闻情绪窗口聚合结果（JSON 可序列化）。
-#   desc: 夜间新闻情绪窗口聚合结果（JSON 可序列化）。 window 归属日=交易日（次日）：窗口=[前一交易日 18:00, 交易日 08:00)。 degraded=True 表示…；公共方法（定义序）: to_dict…
-#   inputs: 无参数
-#   outputs: 返回值
-# - id: A2
-#   name_zh: ② nightly_window
-#   name_en: nightly_window
-#   intro: 夜间窗口边界：[前一交易日 18:00, 交易日 08:00)，左闭右开。
-#   desc: 夜间窗口边界：[前一交易日 18:00, 交易日 08:00)，左闭右开。 注：前一"交易日"按自然日前推一天（周末/节假日新闻同样落入窗口， 窗口语义=时间窗非交易日历推导——…；源码 L203-L212
-#   inputs: trade_date
-#   outputs: tuple[datetime.datetime, datetime.datet…
-# - id: A3
-#   name_zh: ③ compute_nightly_sentiment
-#   name_en: compute_nightly_sentiment
-#   intro: 夜间新闻情绪窗口聚合主入口（M3-②）。
-#   desc: 夜间新闻情绪窗口聚合主入口（M3-②）。 Args: trade_date: 交易日（ISO 字符串或 date，窗口归属日=次日）。 analyzer: 情绪分析器（None=…；源码 L249-L397
-#   inputs: trade_date analyzer linker persist writer top_n
-#   outputs: NightlySentimentResult
-#   （注：A3 之后另有 1 个公共定义未列入（含 1 个数据契约/异常/枚举声明类），见源码）
-# 层: 输出
-# - id: O1
-#   name_zh: tuple[datetime.datetime, datetime.datet…
-#   name_en: tuple[datetime.datetime, datetime.datet…
-#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
-#   downstream: 夜间批/盘前流程调用方（92号 §8.4③）；MOD-PLAN-004 overnight_boundary_reviser 消费接线待统筹裁定（本模块输出契…
-# - id: O2
-#   name_zh: NightlySentimentResult
-#   name_en: NightlySentimentResult
-#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
-#   downstream: 夜间批/盘前流程调用方（92号 §8.4③）；MOD-PLAN-004 overnight_boundary_reviser 消费接线待统筹裁定（本模块输出契…
-# [/ALGO_FLOW]
-#
-# 边:
-# I1 --> A1
-# I2 --> A1
-# I3 --> A1
-# I4 --> A1
-# A1 --> A2
-# A2 --> A3
-# A3 --> O1
+# [ALGO_FLOW] external: docs/03_modules/_domain_intelligence/algo_flow/nightly_sentiment_window.yaml
 """
 
 from __future__ import annotations

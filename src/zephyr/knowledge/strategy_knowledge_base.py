@@ -27,47 +27,7 @@ B10-02182（AUD-DRAFT-001-DIGEST P2 波 P2-W03，CAND-KNW-005，A1 D-KNOWLEDGE-0
 填快照，不重算指标）；kb_engine=通用 CRUD 门面（本件仅挂其 decisions 集合语
 义）；factor_knowledge_base=因子三表（本件=策略卡，零交集）。
 
-# [ALGO_FLOW]
-# 层: 输入
-# - id: I1
-#   name: clock 参数
-#   fields: 参数 clock（无注解）
-#   code: strategy_knowledge_base.py 顶层公共函数形参（AST 提取）
-# - id: I2
-#   name: kb_writer 参数
-#   fields: 参数 kb_writer（无注解）
-#   code: strategy_knowledge_base.py 顶层公共函数形参（AST 提取）
-# - id: I3
-#   name: backfill_adapter 参数
-#   fields: 参数 backfill_adapter（无注解）
-#   code: strategy_knowledge_base.py 顶层公共函数形参（AST 提取）
-# - id: I4
-#   name: sqlite_conn 参数
-#   fields: 参数 sqlite_conn（无注解）
-#   code: strategy_knowledge_base.py 顶层公共函数形参（AST 提取）
-# 层: 算法
-# - id: A1
-#   name_zh: ① StrategyKnowledgeBase
-#   name_en: StrategyKnowledgeBase
-#   intro: 策略知识库（策略卡三要素 + 回填 + FTS 教训检索 + 确定性查询）。
-#   desc: 策略知识库（策略卡三要素 + 回填 + FTS 教训检索 + 确定性查询）。；公共方法（定义序）: register_card, get_card, get_status, refresh_performance, g…
-#   inputs: clock kb_writer backfill_adapter sqlite_conn
-#   outputs: 返回值
-#   （注：A1 之后另有 6 个公共定义未列入（含 6 个数据契约/异常/枚举声明类），见源码）
-# 层: 输出
-# - id: O1
-#   name_zh: 模块公共 API 面（7 定义）
-#   name_en: public defs
-#   intro: StrategyKnowledgeBase
-#   downstream: 运行时装配批（策略卡注册入库 / experiment_tracking 回填适配器绑定 / 教训 FTS 挂 sqlite 连接）
-# [/ALGO_FLOW]
-#
-# 边:
-# I1 --> A1
-# I2 --> A1
-# I3 --> A1
-# I4 --> A1
-# A1 --> O1
+# [ALGO_FLOW] external: docs/03_modules/_domain_knowledge/algo_flow/strategy_knowledge_base.yaml
 """
 
 from __future__ import annotations

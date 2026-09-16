@@ -28,42 +28,7 @@ SQLite **FTS5 全文检索**（注入连接）+ **引用关系表**（cites/cite
 维度聚合（本件=资产维度目录与引用）；cross_collection_retriever=向量库
 跨集合检索（本件语义检索仅挂注入适配器）。纯内存/DI，不触网不起子进程。
 
-# [ALGO_FLOW]
-# 层: 输入
-# - id: I1
-#   name: conn 参数
-#   fields: 参数 conn（无注解）
-#   code: research_catalog.py 顶层公共函数形参（AST 提取）
-# - id: I2
-#   name: clock 参数
-#   fields: 参数 clock（无注解）
-#   code: research_catalog.py 顶层公共函数形参（AST 提取）
-# - id: I3
-#   name: semantic_adapter 参数
-#   fields: 参数 semantic_adapter（无注解）
-#   code: research_catalog.py 顶层公共函数形参（AST 提取）
-# 层: 算法
-# - id: A1
-#   name_zh: ① ResearchCatalog
-#   name_en: ResearchCatalog
-#   intro: 研究资产目录件（索引 + 标签 + FTS5 + 引用 + 语义检索 + 分级过滤）。
-#   desc: 研究资产目录件（索引 + 标签 + FTS5 + 引用 + 语义检索 + 分级过滤）。；公共方法（定义序）: index_asset, get_asset, list_assets, add_tags, remove_…
-#   inputs: conn clock semantic_adapter
-#   outputs: 返回值
-#   （注：A1 之后另有 5 个公共定义未列入（含 5 个数据契约/异常/枚举声明类），见源码）
-# 层: 输出
-# - id: O1
-#   name_zh: 模块公共 API 面（6 定义）
-#   name_en: public defs
-#   intro: ResearchCatalog
-#   downstream: 运行时装配批（研究资产索引 / 引用图谱 / L1-L4 分级检索注入点装配）
-# [/ALGO_FLOW]
-#
-# 边:
-# I1 --> A1
-# I2 --> A1
-# I3 --> A1
-# A1 --> O1
+# [ALGO_FLOW] external: docs/03_modules/_domain_knowledge/algo_flow/research_catalog.yaml
 """
 
 from __future__ import annotations

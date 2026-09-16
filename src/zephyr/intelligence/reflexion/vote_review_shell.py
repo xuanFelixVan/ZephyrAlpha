@@ -43,60 +43,7 @@ docstring 后的非空物理行数(含 import/类与函数声明行), 实测值�
 辩论制评审(Phase 2 P2-2); 不呼叫任何 LLM(会话产出由人搬运落盘); 不自动应用
 胜出候选(产出仅供人终审).
 
-# [ALGO_FLOW]
-# 层: 输入
-# - id: I1
-#   name: candidates_dir 参数
-#   fields: 参数 candidates_dir，类型注解 Path
-#   code: vote_review_shell.py 顶层公共函数形参（AST 提取）
-# - id: I2
-#   name: output_path 参数
-#   fields: 参数 output_path，类型注解 Path
-#   code: vote_review_shell.py 顶层公共函数形参（AST 提取）
-# - id: I3
-#   name: quorum 参数
-#   fields: 参数 quorum（无注解）
-#   code: vote_review_shell.py 顶层公共函数形参（AST 提取）
-# - id: I4
-#   name: engine 参数
-#   fields: 参数 engine（无注解）
-#   code: vote_review_shell.py 顶层公共函数形参（AST 提取）
-# 层: 算法
-# - id: A1
-#   name_zh: ① run_review
-#   name_en: run_review
-#   intro: 候选收集→A2AVoting 逐候选计票→最优落盘 selected/→裁决报告 JSON（人手动调用）.
-#   desc: 候选收集→A2AVoting 逐候选计票→最优落盘 selected/→裁决报告 JSON（人手动调用）.；源码 L174-L228
-#   inputs: candidates_dir output_path quorum engine
-#   outputs: dict
-# - id: A2
-#   name_zh: ② main
-#   name_en: main
-#   intro: 人手动 CLI 入口（唯一触发路径；
-#   desc: 人手动 CLI 入口（唯一触发路径；无调度器/定时器/导入副作用）.；源码 L231-L247
-#   inputs: argv
-#   outputs: int
-#   （注：A2 之后另有 2 个公共定义未列入（含 2 个数据契约/异常/枚举声明类），见源码）
-# 层: 输出
-# - id: O1
-#   name_zh: dict
-#   name_en: dict
-#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
-#   downstream: 人手动触发 CLI(python -m zephyr.intelligence.reflexion.vote_review_shell)
-# - id: O2
-#   name_zh: int
-#   name_en: int
-#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
-#   downstream: 人手动触发 CLI(python -m zephyr.intelligence.reflexion.vote_review_shell)
-# [/ALGO_FLOW]
-#
-# 边:
-# I1 --> A1
-# I2 --> A1
-# I3 --> A1
-# I4 --> A1
-# A1 --> A2
-# A2 --> O1
+# [ALGO_FLOW] external: docs/03_modules/_domain_intelligence/algo_flow/vote_review_shell.yaml
 """
 
 from __future__ import annotations

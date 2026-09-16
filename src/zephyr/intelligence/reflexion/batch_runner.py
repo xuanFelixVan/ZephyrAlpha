@@ -31,58 +31,7 @@
 不做什么: 不做定时自触发(挂点由人/计划任务调用, 本件不含调度器); 不做盘中
 实时反思; 不做反思触发裁决(归 Phase 1 ReflCtrl)。
 
-# [ALGO_FLOW]
-# 层: 输入
-# - id: I1
-#   name: now 参数
-#   fields: 参数 now，类型注解 datetime | None
-#   code: batch_runner.py 顶层公共函数形参（AST 提取）
-# - id: I2
-#   name: path 参数
-#   fields: 参数 path，类型注解 Path
-#   code: batch_runner.py 顶层公共函数形参（AST 提取）
-# 层: 算法
-# - id: A1
-#   name_zh: ① is_intraday
-#   name_en: is_intraday
-#   intro: 判定盘中窗口: 工作日(周一至五) 且 09:30 <= 当地时间 < 15:00。
-#   desc: 判定盘中窗口: 工作日(周一至五) 且 09:30 <= 当地时间 < 15:00。；源码 L120-L126
-#   inputs: now
-#   outputs: bool
-# - id: A2
-#   name_zh: ② load_trajectory
-#   name_en: load_trajectory
-#   intro: 读单个轨迹文件(json)为 Trajectory; 格式非法 → ValueError。
-#   desc: 读单个轨迹文件(json)为 Trajectory; 格式非法 → ValueError。；源码 L129-L148
-#   inputs: path
-#   outputs: Trajectory
-# - id: A3
-#   name_zh: ③ BatchReflectionRunner
-#   name_en: BatchReflectionRunner
-#   intro: 盘后批量反思器: 轨迹目录 → 批量反思记录落盘。
-#   desc: 盘后批量反思器: 轨迹目录 → 批量反思记录落盘。 盘中零调用: 本类一切批量执行入口先过 _guard_off_hours(09:30-15:00 拒执行); 任何盘中反思需求…；公共方法（定义序）: run_bat…
-#   inputs: store evaluator reflector
-#   outputs: 返回值
-#   （注：A3 之后另有 1 个公共定义未列入（含 1 个数据契约/异常/枚举声明类），见源码）
-# 层: 输出
-# - id: O1
-#   name_zh: bool
-#   name_en: bool
-#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
-#   downstream: 见模块头 [CONSUMERS]
-# - id: O2
-#   name_zh: Trajectory
-#   name_en: Trajectory
-#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
-#   downstream: 见模块头 [CONSUMERS]
-# [/ALGO_FLOW]
-#
-# 边:
-# I1 --> A1
-# I2 --> A1
-# A1 --> A2
-# A2 --> A3
-# A3 --> O1
+# [ALGO_FLOW] external: docs/03_modules/_domain_intelligence/algo_flow/batch_runner.yaml
 """
 
 from __future__ import annotations
