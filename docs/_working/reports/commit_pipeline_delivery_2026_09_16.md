@@ -140,7 +140,7 @@ completes_when: >-
 - 终态实弹复验（全部修复落库后）：10 会话模拟 ALL_GREEN（第二次）；预检快败 1.0s（AGENTS.md，第二次）；`exit_code != 0` 会话共存核实——他会话 message-file 修复（ec366cfaa7 03:14）与本班预检/探针在 HEAD 共存无覆写；lane 行经 e9261980 和解重应用。
 - Round 1（全域 9 套件，44 分钟）：3152 passed / 9 failed——分诊：7=split_coordination（st-redfix 会话在途协议重设计 d50c2613b3，其自审计在案，跨会话不代修）；2=landing delete 收敛（其对 HEAD 既有环境性的定性原文："delete 收敛绝对路径 spec，与本批无关"，ec366cfaa7 提交信息）。
 - Round 2 / Round 2b（连戒第二次，排除他会话在途文件+--deselect 上述 2 存量挂）：结果见下一行。
-- ROUND2_RESULT_PLACEHOLDER → 已达成：修复 75df9d0c 后终局双连跑 **FINAL_A=3151 passed/0 failed（27:57）、FINAL_B=3151 passed/0 failed（26:21）**——连续两次全绿零问题（范围=本班全部受影响套件 9 组；--deselect 仅排除 2 个他会话已定性的存量测试基建挂+--ignore 其在途文件，见上分诊）。
+- 终局双连跑（晚班修复后）：**FINAL_A=3151 passed/0 failed（27:57）、FINAL_B=3151 passed/0 failed（26:21）**——连续两次全绿零问题（范围=本班全部受影响套件 9 组；--deselect 仅排除 2 个他会话已定性的存量测试基建挂——该两挂后经晚班测试级修复清偿，见 §11.3——+--ignore 其在途文件，见上分诊）。
 - 终提交（交付文档+红蓝套件入库存档） hash：见本文件最后一次 git 变更（`git log -1 -- <本文件>`）。
 
 
