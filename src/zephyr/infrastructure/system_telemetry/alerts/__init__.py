@@ -61,6 +61,7 @@ from pathlib import Path
 import yaml
 
 from zephyr.shared.io.paths import REPO_ROOT
+from zephyr.infrastructure.system_telemetry.alerts.resource_schedule_alerts import ResourceScheduleAlerts
 
 logger = logging.getLogger(__name__)
 
@@ -168,12 +169,13 @@ class AlertSubsystem:
 
 
 __all__ = [
+    "AlertLevel",
+    "AlertSubsystem",
     "CRITICAL",
     "ERROR",
     "INFO",
+    "ResourceScheduleAlerts",
     "WARNING",
-    "AlertLevel",
-    "AlertSubsystem",
     "ack",
     "alert",
     "before",
