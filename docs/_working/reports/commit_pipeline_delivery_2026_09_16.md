@@ -187,3 +187,9 @@ noise 轮：无。矿脉枯竭：R3 五脉全见底，本域收口。
 2. **W2（翻译条目被剪）=generate_rule_catalog 再生成不保育手写条目**——写入者进程被 write_audit 直接捕获（置信度很高）；SSOT 红线视角=生成器与登记工具的管线顺序缺陷。
 3. **W4（孤魂提交 301a6ee82a）=直连 _GlobalCommitLock 与 Serializer lease 两把互斥锁互不排他**——61 秒 gate 窗口内 dev ref 竞态，reflog parent 链硬证据（置信度很高）。
 **当晚落地治本**：①孵化器 spawn 自动登记 reaper keep-list（误杀釜底抽薪，本轮 265/265 验证）；②stash 通告机制核实已在位（2026-08-01 R3 治本，缺口在跨会话可见性）。**移交维护班（证据齐全）**：A.双锁统一（直连与队列落地共用一把互斥）——孤魂类根治，核心手术需专班；B.generate_rule_catalog 保育非生成条目（W2 类根治）；C.write_audit watch 列表补 scripts/ 治理热文件盲区；D.结构解=多会话回归 worktree 隔离默认（宪法 RULE-WORKTREE 既有方向）。
+
+### 11.5 终局验证（晚班收口）
+- 双连跑 NIGHT_A/NIGHT_B（全域 9 套件含 split/landing 全量，无 deselect）exit 0×2 + 定版捕获轮 **3449 passed / 0 failed / 2 skipped / 1 xfailed**（26:10）——连续三次全绿零问题，连戒达成（覆盖面较晨班 3151 再 +298，含全部晚班新修）。
+- 10 会话并发模拟 ALL_GREEN（终版含隔离修复）；belt 守护换新 PID 28648（含阈值告警+环境失败升级）。
+- 红蓝套件（10 用例）随全域三连绿；FILE-COPY 治本双钉（孪生 CLEAN+真克隆仍拦）在库。
+- 收口链：c3729434（8 文件）+ 本节。全链 commit 经 GitCommitGateway，归属逐笔核实。
