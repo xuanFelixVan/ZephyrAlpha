@@ -1,8 +1,8 @@
-# 自动生成于 2026-09-16T15:10:42Z
+# 自动生成于 2026-09-16T15:29:39Z
 # 来源: scripts/governance/**/*.py __manifest__ 块
 # 手工编辑无效——修改请通过各 .py 文件的 __manifest__ 块
 
-generated_at: '2026-09-16T15:10:42Z'
+generated_at: '2026-09-16T15:29:39Z'
 generated_by: scripts/governance/generators/generate_script_manifest.py
 source: scripts/governance/**/*.py → __manifest__ 块
 total_scripts: 434
@@ -557,8 +557,9 @@ scripts:
   - --warn-only
   - --jsonl
   warn_only: false
-  description: '扫描 .yaml/.md/.py 文件的 UTF-8 BOM，阻断 BOM 污染。 对标 AGENTS.md §4 编码安全 — open()
-    禁止省略 encoding=''utf-8''。 本门禁是 generate_registry_master_index.py BOM 免疫的编码层预防防线。
+  description: '扫描 .yaml/.md/.py 文件的 UTF-8 BOM，阻断 BOM 污染。 对标 quality_standard.md 维度
+    D-A 编码安全 — open() 禁止省略 encoding=''utf-8''。 本门禁是 generate_registry_master_index.py
+    BOM 免疫的编码层预防防线。
 
     '
   tags:
@@ -906,7 +907,7 @@ scripts:
   args:
   - --fix
   warn_only: false
-  description: 全库孤儿.py文件检测（AGENTS.md §6.5 — .py只允许在scripts/** / src/zephyr/** / tests/**
+  description: 全库孤儿.py文件检测（GATE-17 — .py只允许在scripts/** / src/zephyr/** / tests/**
     任意子目录）
   tags:
   - Critical
@@ -1521,7 +1522,7 @@ scripts:
   timeout_seconds: 60
   args: []
   warn_only: false
-  description: depends_on 依赖链路深度审计（AGENTS.md §6.2 — 引用链不超过3层）
+  description: depends_on 依赖链路深度审计（TRAE-029 — 引用链不超过3层，rules/trae_029_doc_operation_security.yaml）
   tags:
   - Critical
   - Periodic
@@ -1643,6 +1644,7 @@ scripts:
   - --json
   - --package
   - --scan-root
+  - --check-targets
   warn_only: false
   description: 蓝图↔代码双向对齐检测——代码[BLUEPRINT]头部module_id双源验证(registry+depgraph)+蓝图§4文件清单depgraph派生(裁定#211)；--scan-root
     用于
@@ -2823,8 +2825,8 @@ scripts:
   - --warn-only
   - --jsonl
   warn_only: false
-  description: parse AGENTS.md §8.2 task menu (SKIP until §8.2 authored), verify referenced
-    files exist. Anchored to AI加载路径不可漂移铁律
+  description: parse AGENTS.md task menu (SKIP until authored), verify referenced
+    files exist. GATE-22 AI加载路径不可漂移
   tags:
   - Critical
 - name: d5_architecture/validators/validate_module_schema.py

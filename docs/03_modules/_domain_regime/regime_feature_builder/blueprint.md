@@ -3,9 +3,9 @@ module_id: MOD-REGIME-002
 title: "Regime特征管道蓝图 — ClickHouse→RegimeFeatures/OverlaySignals/RiskSignalInputs（C1一票否决验证的数据地基）"
 doc_type: blueprint
 status: Active
-version: "0.1.10"
+version: "0.1.11"
 design_maturity: production
-build_status: generated
+build_status: stable
 ttl: permanent
 layer: L2_domain
 layer_name: regime
@@ -861,7 +861,7 @@ MOD-REGIME-002 → D_DATA (ClickHouse 行情)
 
 | 图 | 位置 | 状态 | 链接 |
 |----|------|------|------|
-| 依赖图 (depgraph) | `blueprint_id=MOD-REGIME-002` 的 33 个 file 节点 | production | `extract_depgraph.py --modules MOD-REGIME-002` |
+| 依赖图 (depgraph) | `blueprint_id=MOD-REGIME-002` 的 34 个 file 节点 | production | `extract_depgraph.py --modules MOD-REGIME-002` |
 | 数据流图 (dataflow) | 0 个 Dataset / 1 个 Job | active | `apply_dataflowgraph.py --list-datasets` |
 | 决策架构图 (decision) | 0 个决策节点 / 1 个决策层 | N/A | `generate_decision_diagram.py` |
 | 蓝图 (blueprint) | 本文件 | Active | — |
@@ -872,8 +872,8 @@ MOD-REGIME-002 → D_DATA (ClickHouse 行情)
 |------|-------------------|--------------------------|:-------:|
 | module_id | MOD-REGIME-002 | MOD-REGIME-002 | ✅ |
 | domain_id | N/A | N/A | ✅ |
-| build_status | generated | generated | ✅ |
-| file_count | 33 文件 | N/A | — |
+| build_status | stable | stable | ✅ |
+| file_count | 34 文件 | N/A | — |
 
 > 冲突时以 depgraph 为准（ARCH-056 + ARCH-MM-001 声明 vs 验证框架）。
 
@@ -903,6 +903,7 @@ MOD-REGIME-002 → D_DATA (ClickHouse 行情)
 | `tests/regime/features/test_lppl_detector.py` | ✅ 已实现 | |
 | `tests/regime/features/test_s2_fund_score.py` | ✅ 已实现 | |
 | `tests/regime/test_breadth_fallback.py` | ✅ 已实现 | |
+| `tests/regime/test_breadth_thrust_walkforward.py` | ✅ 已实现 | |
 | `tests/regime/test_july_case_e2e.py` | ✅ 已实现 | |
 | `tests/regime/test_overlay_features.py` | ✅ 已实现 | |
 | `tests/regime/test_overlay_signals_builder.py` | ✅ 已实现 | |
