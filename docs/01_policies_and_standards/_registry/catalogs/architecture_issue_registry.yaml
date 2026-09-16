@@ -21697,3 +21697,12 @@ entries:
   related_adjudication: '裁定#263'
   created: '2026-09-16'
   last_updated: '2026-09-16'
+- issue_id: '#ARCH-COLLECTION-HYGIENE-001'
+  title: pytest 收集卫生——.runtime/tmp 会话级测试残留拷贝被收集致假红（norecursedirs 全列表钉扎 + 精简 ini 镜像 + 杂散文件实证探针）
+  severity: P1高
+  adjudication: 病根（2026-09-14 外审整改实证）：会话在 .runtime/tmp 留下的 test_*.py 陈旧副本被 pytest 递归收集，canonical 套件全绿的同时产出假红（test_bothwin_gate）——100% AI 开发场景下测试信号是唯一安全网，假红与假绿同等致命（假红会让 AI 去"修"一个不存在的缺陷，并把真缺陷掩盖在噪声里）。三层防御：①pyproject [tool.pytest.ini_options].norecursedirs 显式含 .runtime 并整体重含 pytest 默认项（该选项是**替换**语义而非追加，只写 .runtime 会误伤 .* /build/dist/venv 等）；②禁以宽泛名 data/tmp 加宽黑名单——tests/data 与 tests/zephyr/data 是真实测试目录，加宽=静默漏测（施工中实测抓到并回退），由 tests/backtest/test_collection_hygiene.py 钉扎完整列表 + 真实目录存在性自检；③实证探针：向 .runtime/tmp 放杂散 test 文件后 args 模式收集结果必须零污染（配置正确性以行为验证而非以字符串比对为准）。附带治本：交接精简跑法 ini 属永久产物，禁驻 .runtime/tmp TTL 清扫区（cleanup 会扫走→收集卫生随之失守）。定址沿革 外审遗留㉑→裁定#275→裁定#278：最终寄居根目录既有纳管件 py.ini 的 [pytest] 段（独立件需 .gitignore 放行=撞 PROTECTED-PATHS Owner 闸）。同批暴露本锚的第二层静默失效：.ini 里误写 [tool:pytest] 时 pytest 照打 configfile 而选项零生效（该段名仅 .cfg 生效），看守器 compare_pytest_configs 判据由三类扩为四类（D=段名 + addopts 必带 --strict-markers），并把守卫"永久件缺失即 skip"改为硬失败（skip 长期掩护守卫静默不执行）。
+  fix_phase: 已落地（pyproject norecursedirs 全列表 + tests/backtest/test_collection_hygiene.py 三例守卫 + py.ini [pytest] 段镜像 + compare_pytest_configs 第 4 判据 D 与 pre-commit 挂点）
+  status: 'resolved'
+  related_adjudication: '裁定#278'
+  created: '2026-09-14'
+  last_updated: '2026-09-16'

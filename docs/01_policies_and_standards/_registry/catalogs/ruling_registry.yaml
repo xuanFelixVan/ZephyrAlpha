@@ -2727,3 +2727,74 @@ entries:
   related_arch: []
   related_rulings: ['裁定#257']
   superseded_by: null
+- ruling_id: '裁定#278'
+  title: 交接精简 pytest 配置定址改寄居根目录既有纳管件 py.ini 的 [pytest] 段（裁定#275
+    独立件方案作废：落地须 .gitignore 单点放行=PROTECTED-PATHS Owner 闸，永久产物生命周期里不嵌人工闸）+
+    看守器新增"段名/strict-markers 静默失效"第 4 判据
+  date: '2026-09-16'
+  category: 治本
+  status: active
+  summary: >-
+    病根实证①（定址侧）：裁定#275 把精简跑法 ini 从 .runtime/tmp（TTL 清扫区，实测两轮被扫）
+    迁为"根目录独立件 pytest_min.ini"，但根目录受 /* 型忽略规则覆盖，新永久件须在 .gitignore
+    加 !pytest_min.ini 单点放行——.gitignore 是 PROTECTED-PATHS（ARCH-MODEL-LIFECYCLE-001），
+    修改须 Owner 审批且无 CLI 逃生旗，GitCommitGateway 直连两次 rc=8 硬拦。未伪造审批标记
+    （POST-COMMIT-GUARD 对伪造 [GW:] 会 reset 回滚，且手写审批标记本身即事故）。
+    结论：一个永久产物的一生里嵌一道只能人开的闸，与"全管线自动化、无需人工参与"的目标
+    结构性冲突——该方案在自治批产语境下不成立。
+    病根实证②（移植当日新发现，比定址更危险）：pytest 读 .ini 只认 [pytest] 段
+    （_pytest/config/findpaths.py load_config_dict_from_file 按后缀分支：.ini→[pytest]，
+    [tool:pytest] 仅 .cfg 生效）。初版移植误写 [tool:pytest]，探针实测 pytest 照样打印
+    `configfile: py.ini` 却 markers/--strict-markers/timeout/norecursedirs 全部零生效
+    （Unknown pytest.mark.slow 告警 + 3 passed）。即"配置看着在、实则整套失效"的静默放宽：
+    文件缺失至少被看守器判漂移，误段名此前无任何机制可见——正是本看守器要防的那类
+    "换个跑法结论就变"缺陷的镜像形态（放宽版）。
+    裁定①：精简 pytest 配置寄居根目录既有纳管件 py.ini 的 [pytest] 段，跑法
+    `python -m pytest -c py.ini <目标>`。py.ini 已在 DIRECTORY-CONTRACT root_directory_whitelist
+    且 .gitignore 已 !py.ini 放行→零受保护路径变更、零合同变更；rootdir 仍是仓库本体
+    （-c <ini> 的 rootdir=ini 所在目录，实测）；py.ini 不在 pytest 自动发现名清单
+    （pytest.ini/.pytest.ini/pyproject.toml/tox.ini/setup.cfg），故只有显式 -c 才生效，
+    不改默认全量跑法（与"独立件"同一非侵入性质）。
+    裁定②：裁定#275 的"独立件 pytest_min.ini 驻根"定址部分作废（superseded_by 本裁定），
+    其"永久产物禁入 TTL 区""config/ 收不下 .ini（DCR-005）""markers 是 linelist 每行一个"
+    三条判据完整保留并继续生效。
+    裁定③：看守器 compare_pytest_configs 判据由三类扩为四类，新增 D=段名判据——py.ini
+    无 [pytest] 段或只有 [tool:pytest] 即判漂移并早退（不再叠加比对噪声）；同时要求
+    addopts 保留 --strict-markers（丢了它 A 类 markers 漂移在精简跑法下不可见）。
+    自家测试钉扎误段名检出 + 真仓 py.ini vs pyproject 零漂移（防"测试全用 tmp fixture、
+    真配置烂了没人知道"）；收集卫生守卫同步段名判据并把"永久件缺失"从 pytest.skip 改为
+    硬失败（skip 曾长期掩护该守卫静默不执行）。
+    裁定④：引用面同步——.pre-commit-config.yaml GATE-PYTEST-CONFIG-DRIFT 的 files 正则
+    ^(pyproject\.toml|py\.ini)$、gate_registry（生成器再生，非手改）、
+    module_translation_registry（upsert 工具）、pyproject P1-4 留痕注记（历史记录保留彼时
+    件名+括注现址，不改写事实）。
+    被否方案：(a) 申请 .gitignore 审批——夜班拿不到，且把人工闸永久嵌进产物生命周期；
+    (b) 放 config/——DCR-005 只允许 .yaml/.yml/.json，全合同 77 目录条目无一允许 .ini；
+    (c) 改名 pytest.ini——成为自动发现名，直接顶掉 pyproject 默认跑法（全仓跑法突变）；
+    (d) 退回 .runtime/tmp/——TTL 区，本轮实测两次被 GATE-ROOT-TEMP-SWEEP 扫走；
+    (e) 保留 [tool:pytest] 赌 pytest 向后兼容——实测零生效，否；
+    (f) 放宽 PROTECTED-PATHS 或加白名单豁免——属治理逃逸（用白名单消除当前不想处理的告警），否。
+    残余不隐藏：① .runtime/tmp/pytest_min.ini 原件按 TTL 处置，其 creation-token 台账条目
+    保留为审计痕迹（append-only 台账不追改，token 已消耗而落点变更）；② 历史批次报告与
+    裁定#275 原文中的 pytest_min.ini 字样为历史记录不改写；③ 三处生成物
+    docs/02_enterprise_architecture/02_domain_architecture_docs/{33,48,55}_*.md 随生成器再生对齐。
+  evidence: >-
+    GitCommitGateway rc=8 PROTECTED-PATHS 直连拦截留痕（.runtime/tmp/bt_land_direct.summary.txt
+    两条 tools_t5b_pytestmin）+ 误段名探针（-c py.ini 下 Unknown pytest.mark.slow + 3 passed，
+    修正段名后同一探针 'zz_not_registered' not found in markers 硬失败=strict-markers 生效）+
+    compare_pytest_configs --json 真仓 ok=true（ini_section=pytest，markers 集合 9 项双边相等，
+    timeout 120/120）+ tests/governance/d7_code/test_compare_pytest_configs.py 10 例绿 +
+    tests/backtest/test_collection_hygiene.py 3 例绿零 skip + pytest -c py.ini --collect-only
+    configfile: py.ini / rootdir=D:\ZephyrAlpha。
+  affected_files:
+    - py.ini
+    - pyproject.toml
+    - .pre-commit-config.yaml
+    - scripts/governance/d7_code/compare_pytest_configs.py
+    - tests/governance/d7_code/test_compare_pytest_configs.py
+    - tests/backtest/test_collection_hygiene.py
+    - docs/01_policies_and_standards/_registry/catalogs/gate_registry.yaml
+  related_arch:
+    - '#ARCH-COLLECTION-HYGIENE-001'
+  related_rulings: ['裁定#275', '裁定#276']
+  superseded_by: null

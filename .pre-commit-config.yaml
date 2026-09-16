@@ -140,13 +140,13 @@ repos:
         description: "检测 staged 的 src/zephyr/**/*.py module docstring 是否含 # [ALGO_FLOW] 标记（算法全景图推导流程图真源），缺失则阻断"
 
       - id: gate-pytest-config-drift
-        name: "GATE-PYTEST-CONFIG-DRIFT: pyproject 与 pytest_min.ini 双配置语义对齐（2026-09-15 外审遗留②）"
+        name: "GATE-PYTEST-CONFIG-DRIFT: pyproject 与 py.ini [pytest] 段双配置语义对齐（2026-09-15 外审遗留②）"
         entry: python scripts/governance/d7_code/compare_pytest_configs.py
         language: system
         pass_filenames: false
         always_run: false
-        files: ^(pyproject\.toml|\.runtime/tmp/pytest_min\.ini)$
-        description: "当 pyproject.toml 或 pytest_min.ini 变更时校验双配置 markers 集合相等/timeout 继承/ini 无 cache_dir——防同测试两配置判定漂移（P1-4 复验期 INTERNALERROR 实证）"
+        files: ^(pyproject\.toml|py\.ini)$
+        description: "当 pyproject.toml 或 py.ini [pytest] 段（交接精简跑法，裁定#278 寄居既有纳管件）变更时校验双配置 段名=[pytest]/markers 集合相等/timeout 继承/addopts 带 --strict-markers/ini 无 cache_dir——防同测试两配置判定漂移（P1-4 复验期 INTERNALERROR 实证；.ini 误写 [tool:pytest]=静默零配置实证）"
 
       - id: ruff
         name: "Ruff Lint"

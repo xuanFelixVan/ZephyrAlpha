@@ -3,7 +3,7 @@ doc_type: register
 ttl: permanent
 title: GATE 门禁登记表
 status: active
-generated_at: '2026-09-16T00:42:48Z'
+generated_at: '2026-09-16T14:22:32Z'
 generated_by: scripts/governance/generators/generate_gate_registry.py
 maintenance: auto
 source: .pre-commit-config.yaml + commit_gates/*.py + MANUAL_GATES
@@ -40,11 +40,13 @@ gates:
   status: active
   source: pre-commit
 - gate_id: GATE-PYTEST-CONFIG-DRIFT
-  name: 'GATE-PYTEST-CONFIG-DRIFT: pyproject 与 pytest_min.ini 双配置语义对齐（2026-09-15 外审遗留②）'
+  name: 'GATE-PYTEST-CONFIG-DRIFT: pyproject 与 py.ini [pytest] 段双配置语义对齐（2026-09-15
+    外审遗留②）'
   entry: python scripts/governance/d7_code/compare_pytest_configs.py
-  description: 当 pyproject.toml 或 pytest_min.ini 变更时校验双配置 markers 集合相等/timeout 继承/ini
-    无 cache_dir——防同测试两配置判定漂移（P1-4 复验期 INTERNALERROR 实证）
-  files_trigger: ^(pyproject\.toml|\.runtime/tmp/pytest_min\.ini)$
+  description: 当 pyproject.toml 或 py.ini [pytest] 段（交接精简跑法，裁定#278 寄居既有纳管件）变更时校验双配置
+    段名=[pytest]/markers 集合相等/timeout 继承/addopts 带 --strict-markers/ini 无 cache_dir——防同测试两配置判定漂移（P1-4
+    复验期 INTERNALERROR 实证；.ini 误写 [tool:pytest]=静默零配置实证）
+  files_trigger: ^(pyproject\.toml|py\.ini)$
   always_run: false
   category: unknown
   status: active
@@ -628,7 +630,7 @@ gates:
   source: commit-gate
   own_scope: true
 - gate_id: BARE-SUBPROCESS
-  name: 'BARE-SUBPROCESS: BARE-SUBPROCESS（CommitGate, priority=108）'
+  name: 'BARE-SUBPROCESS: BARE-SUBPROCESS（CommitGate, priority=132）'
   entry: in-process (GitCommitGateway)
   description: BARE-SUBPROCESS
   files_trigger: ''

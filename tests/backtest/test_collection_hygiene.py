@@ -12,8 +12,9 @@ test_strategy_screen_query.py 陈旧副本）曾被 pytest 收集，canonical �
 结构性防御（本守卫钉扎，防配置回退）：
   1. pyproject [tool.pytest.ini_options].norecursedirs 覆盖 .runtime/data/tmp
      （norecursedirs 整体替换 pytest 默认值，必须重含默认项——pytest 文档契约）；
-  2. 精简 ini（config/pytest_min.ini，-c 引用时整体替换 pyproject；2026-09-16 外审
-     遗留㉑由 .runtime/tmp TTL 区迁永久纳管——原位置会被 cleanup 扫走，收集卫生随之失守）
+  2. 精简 ini（寄居项目根既有纳管件 py.ini 的 [pytest] 段，-c 引用时整体替换 pyproject；
+     2026-09-16 外审遗留㉑→裁定#275→#278 三轮定址：原驻 .runtime/tmp TTL 区会被 cleanup
+     扫走，收集卫生随之失守；独立件则需 .gitignore 放行=撞 PROTECTED-PATHS Owner 闸）
      同步 norecursedirs + testpaths 指回 canonical tests 树（无参裸跑不收集
      rootdir 内残留）；
   3. 实证探针：.runtime/tmp 放置杂散 test 文件后，args 模式收集结果零污染。
@@ -68,13 +69,20 @@ def test_pyproject_norecursedirs_covers_runtime_data_tmp():
 
 
 def test_scratch_ini_mirrors_hygiene():
-    """精简 ini（-c 引用时替换 pyproject）必须自带同款 norecursedirs。"""
-    ini = _REPO / "config" / "pytest_min.ini"
-    if not ini.exists():
-        pytest.skip("config/pytest_min.ini 缺失（永久纳管件，正常检出必在——缺失=检出破损）")
+    """精简 ini（-c 引用时替换 pyproject）必须自带同款 norecursedirs，且落在有效段里。
+
+    缺失=硬失败不 skip：本件是根目录永久纳管件，"缺失"只可能是检出破损，
+    而 skip 会让守卫静默变绿（曾用 skip 掩护着配置断裂无人察觉，2026-09-16 实证）。
+    """
+    ini = _REPO / "py.ini"
+    assert ini.is_file(), "根目录 py.ini 缺失（交接精简跑法断裂=检出破损，非可跳过状态）"
     text = ini.read_text(encoding="utf-8")
+    # 段名判据：pytest 对 .ini 只读 [pytest]（[tool:pytest] 仅 .cfg 生效）——段名写错时
+    # 下方所有断言照样通过而 pytest 实际零配置，故必须先钉段名。
+    assert "\n[pytest]\n" in f"\n{text}", "py.ini 缺 [pytest] 段（误写 [tool:pytest] 会被 pytest 整体忽略）"
     assert "norecursedirs" in text
     assert ".runtime" in text
+    assert "testpaths" in text
     # 同防误伤约束
     nore_line = [ln for ln in text.splitlines() if ln.strip().startswith("norecursedirs")][0]
     assert " data " not in f" {nore_line} " and " tmp " not in f" {nore_line} "
@@ -82,9 +90,8 @@ def test_scratch_ini_mirrors_hygiene():
 
 def test_stray_copy_never_collected(tmp_path):
     """实证探针：.runtime/tmp 放杂散 test 文件，args 模式收集零污染。"""
-    min_ini = _REPO / "config" / "pytest_min.ini"
-    if not min_ini.exists():
-        pytest.skip("config/pytest_min.ini 缺失——与 test_scratch_ini_mirrors_hygiene 同守卫")
+    min_ini = _REPO / "py.ini"
+    assert min_ini.is_file(), "py.ini 缺失——与 test_scratch_ini_mirrors_hygiene 同守卫"
     stray = _REPO / ".runtime" / "tmp" / "test_zz_collection_hygiene_probe.py"
     stray.parent.mkdir(parents=True, exist_ok=True)
     stray.write_text("def test_probe_should_never_be_collected():\n    assert True\n", encoding="utf-8")
@@ -92,7 +99,7 @@ def test_stray_copy_never_collected(tmp_path):
         # 注意：精简 ini addopts 已含 -q，命令行再加 -q 会变 -qq（collect-only
         # 连 nodeid 行都吞掉），故此处不再传 -q。
         out = _pytest(
-            "tests/backtest/test_engine_base.py", "--collect-only", "--no-header", "-c", "config/pytest_min.ini"
+            "tests/backtest/test_engine_base.py", "--collect-only", "--no-header", "-c", "py.ini"
         )
         # 杂散探针不得被收集（收集行=含 "::" 的行；头部 rootdir/configfile 行含
         # ".runtime" 属正常输出，不参与断言）

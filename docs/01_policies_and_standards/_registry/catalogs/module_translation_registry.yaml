@@ -49437,9 +49437,9 @@ entries:
   domain_id: D_GOV_SCRIPTS
   name_zh: "pytest双配置漂移看守"
   name_en: "compare_pytest_configs"
-  desc_zh: "比较 pyproject.toml 与 .runtime/tmp/pytest_min.ini 两套 pytest 配置的语义漂移：markers 注册集合相等、timeout 继承、ini 禁 cache_dir（-p no:cacheprovider 组合会 INTERNALERROR）。pre-commit 挂点 gate-pytest-config-drift。"
+  desc_zh: "比较 pyproject.toml [tool.pytest.ini_options] 与根目录 py.ini [pytest] 段（交接精简跑法，裁定#278 寄居既有纳管件）的四类语义漂移：ini 段名必须是 [pytest]（.ini 里 [tool:pytest] 被 pytest 整体忽略=configfile 照打而零配置，静默放宽）、markers 注册集合相等、timeout 继承、addopts 带 --strict-markers、ini 禁 cache_dir（-p no:cacheprovider 组合会 INTERNALERROR）；markers 按 pytest linelist 语义逐行解析（单行分号只注册第一个=历史静默失效根因）。pre-commit 挂点 gate-pytest-config-drift。"
   desc_en: ""
-  plain_zh: "项目里同一批测试有两套 pytest 配置（全量版和精简版），改了其中一个忘了另一个，就会出现'换个跑法结果不一样'的假故障。这个小工具在提交时自动对比两份配置的三处关键项：测试标记注册是否一致、超时兜底是否同步、精简版里是否误写了会炸的缓存参数，发现不对齐就拦下提醒同步。"
+  plain_zh: "项目里同一批测试有两套 pytest 配置（全量版在 pyproject，精简版寄在根目录 py.ini 里），改了其中一个忘了另一个就会出现'换个跑法结果不一样'的假故障。这个小工具在提交时逐条比对两套配置的四个关键点：精简版那段的名字 pytest 到底认不认（名字写错就等于整套配置静默失效，比缺文件更坑）、测试标记清单是否一致、超时兜底数值是否同步、有没有误写会炸的缓存参数，不对齐就拦下提醒同步。"
 - module_path: src/zephyr/signal_ashare/strategy_signal/pattern_lifecycle.py
   domain_id: D_ASHARE_SIGNAL
   name_zh: "形态生命周期复活观察"
@@ -49944,34 +49944,6 @@ entries:
   desc_zh: ""
   desc_en: ""
   plain_zh: "回测跑完把每一笔成交摊开算账：佣金里有多少是被五元最低收费吃掉的、单子切太碎让成本贵了几倍、冲击那一腿到底有没有真的计费。算完把这些事实和告警塞进回测产物，让亏掉的钱一半是手续费写在报告上，而不是靠人猜。"
-- module_path: schemas/categories/fundamental/consensus_daily_repaired.py
-  domain_id: D_FACTOR
-  name_zh: "一致预期修复表结构真源"
-  name_en: ""
-  desc_zh: ""
-  desc_en: ""
-  plain_zh: "用大白话说：这份文件定义了一张新表的样子，专门存放从研报原件里找回来的历史预期数据，和那张被脏数据污染的老表分开摆，谁也不碰谁。"
-- module_path: src/zephyr/data/implementations/consensus_daily_repaired_compute.py
-  domain_id: D_DATA
-  name_zh: "一致预期修复计算核"
-  name_en: ""
-  desc_zh: ""
-  desc_en: ""
-  plain_zh: "用大白话说：把从研报原件里提取出来的历史预测值，重新按天和股票算成一致预期，算法完全沿用老表那套，只是换了数据来源，这样两张表才比得出谁对谁错。"
-- module_path: scripts/ch/apply_consensus_daily_repaired_ddl.py
-  domain_id: D_FACTOR
-  name_zh: "修复表建表部署脚本"
-  name_en: ""
-  desc_zh: ""
-  desc_en: ""
-  plain_zh: "用大白话说：一次性把新的修复表在数据库里建出来，建完顺手检查表在不在、老表有没有被误伤，重复跑也不会出事。"
-- module_path: scripts/ch/build_consensus_daily_repaired.py
-  domain_id: D_FACTOR
-  name_zh: "一致预期修复重建器"
-  name_en: ""
-  desc_zh: ""
-  desc_en: ""
-  plain_zh: "用大白话说：从研报原件提取出来的干净历史预测里，只挑高置信度的行并滤掉量纲串列的错值，重算出一份可以安全回测的历史一致预期，用来解锁之前被堵住的几个因子。"
 
 battle_map_steps:
 - step_id: BM-BUY-05

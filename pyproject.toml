@@ -152,7 +152,8 @@ addopts = [
     "--max-worker-restart=5",
 ]
 # P1-4 复验留痕（2026-09-14 外审遗留批）：tests/backtest -n4 连续两轮全绿
-#（1171 passed / exit 0；第 1 轮走 pytest_min.ini 精简配置，第 2 轮走本文件默认配置），
+#（1171 passed / exit 0；第 1 轮走精简配置（彼时件名 pytest_min.ini，现寄根目录 py.ini
+# 的 [pytest] 段——裁定#278），第 2 轮走本文件默认配置），
 # 审查报告观测的并行 2 失败未再复现，与 #ARCH-XDIST-WORKER-CRASH-001 四层治本
 #（PID-unique basetemp / 退出自清理 basetemp / 空目录回收 / --max-worker-restart=5）
 # 已在库的结论一致。附：用 `-p no:cacheprovider` 跑本文件配置的项目会因 cache_dir
