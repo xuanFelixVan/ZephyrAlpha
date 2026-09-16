@@ -28,42 +28,7 @@ SemanticAuditor 编排器——9阶段管道统一调度.
 - Stage 8: FixPrioritizer — 修复优先级排序+批处理分组
 - Stage 9: BlastRadius — 影响爆炸半径+级联过时检测(可选)
 
-# [ALGO_FLOW]
-# 层: 输入
-# - id: I1
-#   name: project_root 参数
-#   fields: 参数 project_root（无注解）
-#   code: orchestrator.py 顶层公共函数形参（AST 提取）
-# - id: I2
-#   name: llm_api_available 参数
-#   fields: 参数 llm_api_available（无注解）
-#   code: orchestrator.py 顶层公共函数形参（AST 提取）
-# - id: I3
-#   name: max_workers 参数
-#   fields: 参数 max_workers（无注解）
-#   code: orchestrator.py 顶层公共函数形参（AST 提取）
-# 层: 算法
-# - id: A1
-#   name_zh: ① SemanticAuditor
-#   name_en: SemanticAuditor
-#   intro: 语义审计主类——2类纯语义触发+9阶段管道.
-#   desc: 语义审计主类——2类纯语义触发+9阶段管道. 依据蓝图 MOD-INF-028 §4.1 公共API契约: - audit(doc_path, mode): 审计单个规则文档 -…；公共方法（定义序）: audit,…
-#   inputs: project_root llm_api_available max_workers
-#   outputs: 返回值
-#   （注：A1 之后另有 1 个公共定义未列入（含 1 个数据契约/异常/枚举声明类），见源码）
-# 层: 输出
-# - id: O1
-#   name_zh: 模块公共 API 面（2 定义）
-#   name_en: public defs
-#   intro: SemanticAuditor
-#   downstream: audit_orchestrator; cli; gates
-# [/ALGO_FLOW]
-#
-# 边:
-# I1 --> A1
-# I2 --> A1
-# I3 --> A1
-# A1 --> O1
+# [ALGO_FLOW] external: docs/03_modules/_domain_governance/algo_flow/semantic_audit/orchestrator.yaml
 """
 
 from __future__ import annotations

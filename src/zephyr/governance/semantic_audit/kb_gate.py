@@ -24,31 +24,7 @@ kb_gate — re-export shim for zephyr.gov_audit.kb_gate (MOD-INF-020 canonical).
 governance/audit-trail/contracts.py 既有 shim 范式一致。蓝图 §0.1 本行标注
 "挂靠自 MOD-INF-020"，本收敛使物理事实与蓝图声明一致。
 
-# [ALGO_FLOW]
-# 层: 输入
-# - id: I1
-#   name: gov_audit.kb_gate 公共符号
-#   fields: KBAuditGate/KBWriteCheckResult/PoisoningScanResult
-#   code: zephyr.gov_audit.kb_gate
-# 层: 算法
-# - id: A1
-#   name_zh: ① 符号转发
-#   name_en: re-export
-#   intro: 原样转发 3 个公共符号，保证本模块导入路径兼容
-#   desc: 单条 from-import + __all__，无自有逻辑
-#   inputs: I1
-#   outputs: 3 个公共符号
-#   invariant: re-export shim，不包含任何自有实现
-# 层: 输出
-# - id: O1
-#   name_zh: KB 审计门控公共符号
-#   name_en: public symbols
-#   downstream: zephyr.gov_audit.cli; zephyr.governance.semantic_audit.__init__
-# [/ALGO_FLOW]
-#
-# 边:
-# I1 --> A1
-# A1 --> O1
+# [ALGO_FLOW] external: docs/03_modules/_domain_governance/algo_flow/semantic_audit/kb_gate.yaml
 """
 
 from zephyr.gov_audit.kb_gate import (  # noqa: F401

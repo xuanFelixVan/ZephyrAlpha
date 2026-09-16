@@ -24,47 +24,7 @@ ARCH-303（2026-08-31 裁定）：预算硬门主维度=COST（单位=元人民�
 TOKEN 策略保留为防跑飞二级兜底保险丝。
 Blueprint: docs/03_modules/_domain-autonomy_perm/budget-enforcer/blueprint.md §2-4
 
-# [ALGO_FLOW]
-# 层: 输入
-# - id: I1
-#   name: 模块内部数据
-#   fields: 无公共形参/无再导出（AST 事实）
-#   code: budget_engine.py
-# 层: 算法
-# - id: A1
-#   name_zh: ① BudgetEngineProtocol
-#   name_en: BudgetEngineProtocol
-#   intro: BudgetEngine 协议——5.133.2 DI 注入契约。
-#   desc: BudgetEngine 协议——5.133.2 DI 注入契约。 覆盖跨层调用方实际使用的方法/属性： pre_flight_check / get_snapshot / ge…；公共方法（定义序）: current…
-#   inputs: 无参数
-#   outputs: 返回值
-# - id: A2
-#   name_zh: ② BudgetEngine
-#   name_en: BudgetEngine
-#   intro: class BudgetEngine 源码 L137-L896
-#   desc: 公共方法（定义序）: policies, alerts, degradation_steps, current_degradation_level, active_step_idx, ensure_initialize…
-#   inputs: 无参数
-#   outputs: 返回值
-# - id: A3
-#   name_zh: ③ subscribe_eventbus
-#   name_en: subscribe_eventbus
-#   intro: 订阅 EventBusBackpressure 的 slo_violation 事件。
-#   desc: 订阅 EventBusBackpressure 的 slo_violation 事件。 幂等：重复调用安全。Backpressure 总线不可用时静默跳过。 供 boot_hoo…；源码 L904-L920
-#   inputs: 无参数
-#   outputs: 返回值
-# 层: 输出
-# - id: O1
-#   name_zh: 模块公共 API 面（3 定义）
-#   name_en: public defs
-#   intro: BudgetEngineProtocol, BudgetEngine, subscribe_eventbus
-#   downstream: 见模块头 [CONSUMERS]
-# [/ALGO_FLOW]
-#
-# 边:
-# I1 --> A1
-# A1 --> A2
-# A2 --> A3
-# A3 --> O1
+# [ALGO_FLOW] external: docs/03_modules/_domain_governance/algo_flow/ops_governance/budget_engine.yaml
 """
 
 from __future__ import annotations

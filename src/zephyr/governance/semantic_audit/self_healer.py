@@ -29,42 +29,7 @@ Stage 7 自愈闭环 — 修复->自测->回滚.
 
 数据流: 修复文本+目标文档 -> Stage 7 自愈闭环 -> HealResult
 
-# [ALGO_FLOW]
-# 层: 输入
-# - id: I1
-#   name: issue_aggregator 参数
-#   fields: 参数 issue_aggregator（无注解）
-#   code: self_healer.py 顶层公共函数形参（AST 提取）
-# - id: I2
-#   name: llm_bridge 参数
-#   fields: 参数 llm_bridge（无注解）
-#   code: self_healer.py 顶层公共函数形参（AST 提取）
-# - id: I3
-#   name: rollback_handler 参数
-#   fields: 参数 rollback_handler（无注解）
-#   code: self_healer.py 顶层公共函数形参（AST 提取）
-# 层: 算法
-# - id: A1
-#   name_zh: ① SelfHealer
-#   name_en: SelfHealer
-#   intro: Stage 7 自愈闭环 — 修复->自测->回滚.
-#   desc: Stage 7 自愈闭环 — 修复->自测->回滚. 接收 IssueAggregator 的聚合问题和 LLMBridge 的修复建议, 执行修复(原子写入), 自测验证(im…；公共方法（定义序）: heal, b…
-#   inputs: issue_aggregator llm_bridge rollback_handler
-#   outputs: 返回值
-#   （注：A1 之后另有 2 个公共定义未列入（含 2 个数据契约/异常/枚举声明类），见源码）
-# 层: 输出
-# - id: O1
-#   name_zh: 模块公共 API 面（3 定义）
-#   name_en: public defs
-#   intro: SelfHealer
-#   downstream: FixPrioritizer; AuditOrchestrator (MOD-INF-027)
-# [/ALGO_FLOW]
-#
-# 边:
-# I1 --> A1
-# I2 --> A1
-# I3 --> A1
-# A1 --> O1
+# [ALGO_FLOW] external: docs/03_modules/_domain_governance/algo_flow/semantic_audit/self_healer.yaml
 """
 
 from __future__ import annotations

@@ -1,0 +1,33 @@
+# ALGO_FLOW 外部真源——llm_bridge（_domain_governance 域，真源 src/zephyr/governance/semantic_audit/llm_bridge.py）
+# 2026-09-15 P2-1 契约头减负批量出仓：docstring 内联块逐字节副本，extractor 经
+# external 锚加载走同一 parse_algo_flow 管线；算法公共面变化时同步更新本块。
+doc_type: architecture_view
+ttl: permanent
+module: src.zephyr.governance.semantic_audit.llm_bridge
+source_of_truth: src/zephyr/governance/semantic_audit/llm_bridge.py
+algo_flow: |
+    # [ALGO_FLOW]
+    # 层: 输入
+    # - id: I1
+    #   name: api_available 参数
+    #   fields: 参数 api_available（无注解）
+    #   code: llm_bridge.py 顶层公共函数形参（AST 提取）
+    # 层: 算法
+    # - id: A1
+    #   name_zh: ① LLMBridge
+    #   name_en: LLMBridge
+    #   intro: class LLMBridge 源码 L80-L153
+    #   desc: 公共方法（定义序）: generate_fix, generate_fix_batch, is_available, set_available；源码 L80-L153
+    #   inputs: api_available
+    #   outputs: 返回值
+    # 层: 输出
+    # - id: O1
+    #   name_zh: 模块公共 API 面（1 定义）
+    #   name_en: public defs
+    #   intro: LLMBridge
+    #   downstream: self_healer; fix_prioritizer
+    # [/ALGO_FLOW]
+    #
+    # 边:
+    # I1 --> A1
+    # A1 --> O1

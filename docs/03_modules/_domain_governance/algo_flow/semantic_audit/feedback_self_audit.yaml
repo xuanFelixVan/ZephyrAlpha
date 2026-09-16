@@ -1,0 +1,33 @@
+# ALGO_FLOW 外部真源——feedback_self_audit（_domain_governance 域，真源 src/zephyr/governance/semantic_audit/feedback_self_audit.py）
+# 2026-09-15 P2-1 契约头减负批量出仓：docstring 内联块逐字节副本，extractor 经
+# external 锚加载走同一 parse_algo_flow 管线；算法公共面变化时同步更新本块。
+doc_type: architecture_view
+ttl: permanent
+module: src.zephyr.governance.semantic_audit.feedback_self_audit
+source_of_truth: src/zephyr/governance/semantic_audit/feedback_self_audit.py
+algo_flow: |
+    # [ALGO_FLOW]
+    # 层: 输入
+    # - id: I1
+    #   name: gov_audit.feedback_self_audit 公共符号
+    #   fields: CircularDependencyResult/FeedbackNode/FeedbackSelfAuditor/SelfReinforcementResult
+    #   code: zephyr.gov_audit.feedback_self_audit
+    # 层: 算法
+    # - id: A1
+    #   name_zh: ① 符号转发
+    #   name_en: re-export
+    #   intro: 原样转发 4 个公共符号，保证本模块导入路径兼容
+    #   desc: 单条 from-import + __all__，无自有逻辑
+    #   inputs: I1
+    #   outputs: 4 个公共符号
+    #   invariant: re-export shim，不包含任何自有实现
+    # 层: 输出
+    # - id: O1
+    #   name_zh: 反馈自审计公共符号
+    #   name_en: public symbols
+    #   downstream: zephyr.governance.semantic_audit.__init__
+    # [/ALGO_FLOW]
+    #
+    # 边:
+    # I1 --> A1
+    # A1 --> O1

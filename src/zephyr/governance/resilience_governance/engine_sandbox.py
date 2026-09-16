@@ -28,37 +28,7 @@ Architecture: MMNTM Lethal Trifecta mitigation — the escalation engine itself
 is a high-value target requiring OS-level isolation.
 Reference: Claude Code CVE-2025-59536, Anthropic Sandboxing.
 
-# [ALGO_FLOW]
-# 层: 输入
-# - id: I1
-#   name: project_root 参数
-#   fields: 参数 project_root（无注解）
-#   code: engine_sandbox.py 顶层公共函数形参（AST 提取）
-# - id: I2
-#   name: profile 参数
-#   fields: 参数 profile（无注解）
-#   code: engine_sandbox.py 顶层公共函数形参（AST 提取）
-# 层: 算法
-# - id: A1
-#   name_zh: ① EngineSandbox
-#   name_en: EngineSandbox
-#   intro: OS-level sandbox for the escalation engine.
-#   desc: OS-level sandbox for the escalation engine. Enforces filesystem isolation, network isolat…；公共方法（定义序）: profile…
-#   inputs: project_root profile
-#   outputs: 返回值
-#   （注：A1 之后另有 5 个公共定义未列入（含 5 个数据契约/异常/枚举声明类），见源码）
-# 层: 输出
-# - id: O1
-#   name_zh: 模块公共 API 面（6 定义）
-#   name_en: public defs
-#   intro: EngineSandbox
-#   downstream: zephyr.infrastructure.escalation
-# [/ALGO_FLOW]
-#
-# 边:
-# I1 --> A1
-# I2 --> A1
-# A1 --> O1
+# [ALGO_FLOW] external: docs/03_modules/_domain_governance/algo_flow/resilience_governance/engine_sandbox.yaml
 """
 
 from __future__ import annotations

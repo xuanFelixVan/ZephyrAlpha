@@ -17,32 +17,7 @@
 """
 
 
-# [ALGO_FLOW]
-# 层: 输入
-# - id: I1
-#   name: default_mode 参数
-#   fields: 参数 default_mode（无注解）
-#   code: fail_mode_manager.py 顶层公共函数形参（AST 提取）
-# 层: 算法
-# - id: A1
-#   name_zh: ① FailModeManager
-#   name_en: FailModeManager
-#   intro: class FailModeManager 源码 L78-L164
-#   desc: 公共方法（定义序）: state, record_health_check, health_check, evaluate, current_mode, should_recover, auto_recover, re…
-#   inputs: default_mode
-#   outputs: 返回值
-#   （注：A1 之后另有 3 个公共定义未列入（含 3 个数据契约/异常/枚举声明类），见源码）
-# 层: 输出
-# - id: O1
-#   name_zh: 模块公共 API 面（4 定义）
-#   name_en: public defs
-#   intro: FailModeManager
-#   downstream: 见模块头 [CONSUMERS]
-# [/ALGO_FLOW]
-#
-# 边:
-# I1 --> A1
-# A1 --> O1
+# [ALGO_FLOW] external: docs/03_modules/_domain_governance/algo_flow/resilience_governance/fail_mode_manager.yaml
 """
 
 import time

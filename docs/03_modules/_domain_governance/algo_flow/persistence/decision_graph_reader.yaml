@@ -1,0 +1,33 @@
+# ALGO_FLOW 外部真源——decision_graph_reader（_domain_governance 域，真源 src/zephyr/governance/persistence/decision_graph_reader.py）
+# 2026-09-15 P2-1 契约头减负批量出仓：docstring 内联块逐字节副本，extractor 经
+# external 锚加载走同一 parse_algo_flow 管线；算法公共面变化时同步更新本块。
+doc_type: architecture_view
+ttl: permanent
+module: src.zephyr.governance.persistence.decision_graph_reader
+source_of_truth: src/zephyr/governance/persistence/decision_graph_reader.py
+algo_flow: |
+    # [ALGO_FLOW]
+    # 层: 输入
+    # - id: I1
+    #   name: db_path 参数
+    #   fields: 参数 db_path（无注解）
+    #   code: decision_graph_reader.py 顶层公共函数形参（AST 提取）
+    # 层: 算法
+    # - id: A1
+    #   name_zh: ① DecisionGraphReader
+    #   name_en: DecisionGraphReader
+    #   intro: 决策流图数据库只读读取器。
+    #   desc: 决策流图数据库只读读取器。 懒加载连接，可作 context manager 使用： with DecisionGraphReader() as reader: layers =…；公共方法（定义序）: close,…
+    #   inputs: db_path
+    #   outputs: 返回值
+    # 层: 输出
+    # - id: O1
+    #   name_zh: 模块公共 API 面（1 定义）
+    #   name_en: public defs
+    #   intro: DecisionGraphReader
+    #   downstream: scripts/governance/extract_decisiongraph.py; scripts/governance/apply_decisiong…
+    # [/ALGO_FLOW]
+    #
+    # 边:
+    # I1 --> A1
+    # A1 --> O1

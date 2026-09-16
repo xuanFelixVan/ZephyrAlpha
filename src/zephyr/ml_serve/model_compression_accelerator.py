@@ -31,47 +31,7 @@ validation_pipeline（MOD-BT-027）=C-003 回测门禁本体（本件注入判�
 门禁（本件注入检查回调）；model_drift_monitor（MOD-MLS-001）=推理漂移监
 控（零交集）。
 
-# [ALGO_FLOW]
-# 层: 输入
-# - id: I1
-#   name: phase_executors 参数
-#   fields: 参数 phase_executors（无注解）
-#   code: model_compression_accelerator.py 顶层公共函数形参（AST 提取）
-# - id: I2
-#   name: numeric_error_validator 参数
-#   fields: 参数 numeric_error_validator（无注解）
-#   code: model_compression_accelerator.py 顶层公共函数形参（AST 提取）
-# - id: I3
-#   name: double_lock_checker 参数
-#   fields: 参数 double_lock_checker（无注解）
-#   code: model_compression_accelerator.py 顶层公共函数形参（AST 提取）
-# - id: I4
-#   name: c003_gate 参数
-#   fields: 参数 c003_gate（无注解）
-#   code: model_compression_accelerator.py 顶层公共函数形参（AST 提取）
-# 层: 算法
-# - id: A1
-#   name_zh: ① ModelCompressionAccelerator
-#   name_en: ModelCompressionAccelerator
-#   intro: 三阶段压缩编排器（执行器/验证器全注入 + 压缩登记册）。
-#   desc: 三阶段压缩编排器（执行器/验证器全注入 + 压缩登记册）。；公共方法（定义序）: register_model, run_phase, record_of, records_of, next_phase, regist…
-#   inputs: phase_executors numeric_error_validator double_lock_checker c003_gate…
-#   outputs: 返回值
-#   （注：A1 之后另有 5 个公共定义未列入（含 5 个数据契约/异常/枚举声明类），见源码）
-# 层: 输出
-# - id: O1
-#   name_zh: 模块公共 API 面（6 定义）
-#   name_en: public defs
-#   intro: ModelCompressionAccelerator
-#   downstream: 运行时装配批（三阶段压缩流水线装配 / 留出集登记与校准防泄漏 / 压缩登记册查询）
-# [/ALGO_FLOW]
-#
-# 边:
-# I1 --> A1
-# I2 --> A1
-# I3 --> A1
-# I4 --> A1
-# A1 --> O1
+# [ALGO_FLOW] external: docs/03_modules/_domain_ml_serve/algo_flow/model_compression_accelerator.yaml
 """
 
 from __future__ import annotations

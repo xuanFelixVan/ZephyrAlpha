@@ -1,0 +1,33 @@
+# ALGO_FLOW 外部真源——agent_dispatch（_domain_governance 域，真源 src/zephyr/governance/ops_governance/agent_dispatch.py）
+# 2026-09-15 P2-1 契约头减负批量出仓：docstring 内联块逐字节副本，extractor 经
+# external 锚加载走同一 parse_algo_flow 管线；算法公共面变化时同步更新本块。
+doc_type: architecture_view
+ttl: permanent
+module: src.zephyr.governance.ops_governance.agent_dispatch
+source_of_truth: src/zephyr/governance/ops_governance/agent_dispatch.py
+algo_flow: |
+    # [ALGO_FLOW]
+    # 层: 输入
+    # - id: I1
+    #   name: 调度查询
+    #   fields: domain_key / keyword
+    #   code: resolve_domain (L710) / resolve_by_keyword (L723)
+    # 层: 算法
+    # - id: A1
+    #   name_zh: 调度表声明
+    #   name_en: dispatch_table_declare
+    #   intro: DISPATCH_TABLE 登记各域 DomainDispatch(pre_read/re_read/token_budget/blueprint_section)
+    #   code: DISPATCH_TABLE (L34)
+    # - id: A2
+    #   name_zh: 域解析
+    #   name_en: domain_resolve
+    #   intro: 按键精确查；按关键字小写模糊匹配 domain/blueprint_section/pre_read
+    #   code: resolve_domain (L710) / resolve_by_keyword (L723)
+    # 层: 输出
+    # - id: O1
+    #   name_zh: 域调度项
+    #   name_en: domain_dispatch
+    #   intro: DomainDispatch | list[DomainDispatch]（未命中 None/空列表）
+    #   downstream: 施工 Agent 调度流程
+    # [/ALGO_FLOW]
+    # 边: I1 --> A1 ; A1 --> A2 ; A2 --> O1

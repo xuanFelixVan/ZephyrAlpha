@@ -16,31 +16,7 @@
 """
 
 
-# [ALGO_FLOW]
-# 层: 输入
-# - id: I1
-#   name: 包内子模块公共符号
-#   fields: import 再导出符号: _DATAFLOW_CORE_TABLES
-#   code: __init__.py import L45
-# 层: 算法
-# - id: A1
-#   name_zh: ① 包公共面再导出
-#   name_en: __init__ re-export
-#   intro: 再导出 dataflowgraph_schema, base_repo, database_service, depgraph_reader, intent_…
-#   desc: __init__ import L45；__all__ 10 项（AST 事实）
-#   inputs: I1
-#   outputs: __all__ 公共符号表
-# 层: 输出
-# - id: O1
-#   name_zh: 公共 API 面（10 符号）
-#   name_en: __all__
-#   intro: dataflowgraph_schema, base_repo, database_service, depgraph_reader, intent_keyw…
-#   downstream: 见模块头 [CONSUMERS]
-# [/ALGO_FLOW]
-#
-# 边:
-# I1 --> A1
-# A1 --> O1
+# [ALGO_FLOW] external: docs/03_modules/_domain_governance/algo_flow/persistence/persistence__init__.yaml
 """
 
 from zephyr.governance.persistence.dataflowgraph_schema import _DATAFLOW_CORE_TABLES  # noqa: F401

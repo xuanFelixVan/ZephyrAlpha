@@ -27,47 +27,7 @@ model_router 注册 **GLM-5.1** 深度审查 profile + **考试校准**（校准
 adapter（MOD-MLS-003）=DeepSeek-V4-Pro 代码生成适配（零交集，本件=深度
 审查）；model_compression_accelerator（MOD-MLS-002）=压缩编排（零交集）。
 
-# [ALGO_FLOW]
-# 层: 输入
-# - id: I1
-#   name: reviewer 参数
-#   fields: 参数 reviewer（无注解）
-#   code: deep_review_model_adapter.py 顶层公共函数形参（AST 提取）
-# - id: I2
-#   name: exam_runner 参数
-#   fields: 参数 exam_runner（无注解）
-#   code: deep_review_model_adapter.py 顶层公共函数形参（AST 提取）
-# - id: I3
-#   name: profile_registrar 参数
-#   fields: 参数 profile_registrar（无注解）
-#   code: deep_review_model_adapter.py 顶层公共函数形参（AST 提取）
-# - id: I4
-#   name: clock 参数
-#   fields: 参数 clock（无注解）
-#   code: deep_review_model_adapter.py 顶层公共函数形参（AST 提取）
-# 层: 算法
-# - id: A1
-#   name_zh: ① DeepReviewModelAdapter
-#   name_en: DeepReviewModelAdapter
-#   intro: GLM-5.1 深度审查适配（profile 注册 + 考试校准 + findings 输出校验）。
-#   desc: GLM-5.1 深度审查适配（profile 注册 + 考试校准 + findings 输出校验）。；公共方法（定义序）: register_profile, calibrate, review, profile_of…
-#   inputs: reviewer exam_runner profile_registrar clock
-#   outputs: 返回值
-#   （注：A1 之后另有 9 个公共定义未列入（含 9 个数据契约/异常/枚举声明类），见源码）
-# 层: 输出
-# - id: O1
-#   name_zh: 模块公共 API 面（10 定义）
-#   name_en: public defs
-#   intro: DeepReviewModelAdapter
-#   downstream: 运行时装配批（model_router GLM-5.1 profile 装配 / 考试校准与阈值标定 / 深度审查调用适配）
-# [/ALGO_FLOW]
-#
-# 边:
-# I1 --> A1
-# I2 --> A1
-# I3 --> A1
-# I4 --> A1
-# A1 --> O1
+# [ALGO_FLOW] external: docs/03_modules/_domain_ml_serve/algo_flow/deep_review_model_adapter.yaml
 """
 
 from __future__ import annotations

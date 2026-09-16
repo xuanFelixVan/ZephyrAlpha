@@ -26,31 +26,7 @@ agent_spec.registry vs autonomy_core.skill_rbac_registry）。函数为 duck-typ
 skill_rbac_registry capability 对象的兼容性不变。
 蓝图 §0.1 本行标注"挂靠自 MOD-INF-020"，本收敛使物理事实与蓝图声明一致。
 
-# [ALGO_FLOW]
-# 层: 输入
-# - id: I1
-#   name: gov_audit.spec_auditor 公共符号
-#   fields: record_agent_spec
-#   code: zephyr.gov_audit.spec_auditor
-# 层: 算法
-# - id: A1
-#   name_zh: ① 符号转发
-#   name_en: re-export
-#   intro: 原样转发 record_agent_spec，保证本模块导入路径兼容
-#   desc: 单条 from-import + __all__，无自有逻辑
-#   inputs: I1
-#   outputs: record_agent_spec
-#   invariant: re-export shim，不包含任何自有实现
-# 层: 输出
-# - id: O1
-#   name_zh: Agent Spec 审计记录函数
-#   name_en: record_agent_spec
-#   downstream: zephyr.governance.semantic_audit.__init__
-# [/ALGO_FLOW]
-#
-# 边:
-# I1 --> A1
-# A1 --> O1
+# [ALGO_FLOW] external: docs/03_modules/_domain_governance/algo_flow/semantic_audit/spec_auditor.yaml
 """
 
 from zephyr.gov_audit.spec_auditor import AgentCapability, record_agent_spec  # noqa: F401
