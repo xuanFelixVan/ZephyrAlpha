@@ -698,7 +698,7 @@ gaps:
     detection_threshold: 5500
     expected_daily_avg: 5508
     actual_daily_avg: 0   # 09-14/09-15 circ_mv 非空 0（synth 版本被合并仲裁吞并）
-    status: "resolved"   # 裁定#288（st-stkind-20260916）治本：provider 补 total_mv/circ_mv 映射（元÷1e4=万元）+ 写前完成键预查去重（≤62 天窗口，fail-open）；存量=备份后采集正道重采 07-01~09-16（真上游数据替换 synth hack）+ OPTIMIZE FINAL 收敛
+    status: "resolved"   # 裁定#288（st-stkind-20260916）治本：provider 补 total_mv/circ_mv 映射（元÷1e4=万元）+ 写前完成键预查去重（≤62 天窗口，fail-open）；存量=备份后采集正道重采（09-01~09-16 已落真源行；09-14/15/16 三日 FINAL+raw 双视角 100% 非空、单源 akshare，OPTIMIZE FINAL 已收敛）+ 07-01~09-13 synth 残余行（99%+ 覆盖）待 weekend_calibration 全量刷新以修后链路自然替换
     root_cause: "双批形态=增量断点续传边界日重叠（last_key=最后采集日=下次 start）逐日重插第二版本行 + 09-15 synth 一次性回填对 07-01~09-14 已采日期插平行版本 → GW-G2 实测 09-14 raw 11112 行=双版本并存；ReplacingMergeTree 无 version 列合并任意版本胜出，09-15 晚间增量重采 09-14/09-15 的新 part 合并时整体胜过 synth 版本 → circ_mv 从 5556 非空被打回 0（09-11 则任意留存 5488 合成行）——这正是合成行不进采集链的结构性脆弱。"
     impact: "daban 四引擎 float_market_cap 09-15 负载行降级 default；任何以 raw 视角读该表的消费方见到双批。"
     resolution_plan: "已完成（#288）。下游 daban_engine_load 已落 default 行不强行改写：重算路径=盘后 daily_kline 批内 DAG（daban_board_event_derive→daban_engine_load_daily）按事件日窗口 ReplacingMergeTree (trade_date,symbol) 同键重放幂等，重放即恢复 real——事件日 09-15 的 default 行须显式重跑 daban_engine_load_daily 才回 real，登记待 Owner/盘后批决断。"
