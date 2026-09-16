@@ -4,7 +4,7 @@
 manifest_version: 2.0.0
 generated_by: generate_manifest.py (auto-scan)
 generated_at: '2026-09-16'
-total_scripts: 982
+total_scripts: 983
 scripts:
 - name: __init__.py
   path: __init__.py
@@ -2238,6 +2238,14 @@ scripts:
   status: registered
   timeout_seconds: 60
   dimensions: []
+- name: data/audit_technical_indicator_coverage.py
+  path: data/audit_technical_indicator_coverage.py
+  description: 对 c1_market.technical_indicator 按"单标的+时间窗"样本逐列审计非空率：
+  domain: audit
+  execution_plane: warm-path
+  status: registered
+  timeout_seconds: 60
+  dimensions: []
 - name: data/backfill_bse_minute_history.py
   path: data/backfill_bse_minute_history.py
   description: 背景（2026-09-15 排查报告 docs/_working/archive/2026-09/2026-09-15-kline1min-valuation-coverage-investigation.md）：
@@ -4392,7 +4400,7 @@ scripts:
   dimensions: []
 - name: governance/d5_architecture/syncers/sync_blueprint_code_index.py
   path: governance/d5_architecture/syncers/sync_blueprint_code_index.py
-  description: 对标：AGENTS.md §6.1 蓝图-代码同步强制约定
+  description: 对标：蓝图-代码同步强制约定（稳定锚：AGENTS.md RULE-DEPGRAPH / RULE-PANORAMA，
   domain: governance
   execution_plane: warm-path
   status: registered
