@@ -13,16 +13,6 @@
 # [ERROR_CONTRACT] EodReconciliationError(ZA-EX-0023)
 # [TESTS] tests/ex_core/test_eod_reconciliation.py
 # [TTL] permanent
-# [ALGO_FLOW]
-# I1: trade_date(交易日 YYYY-MM-DD) + broker_cash(券商端资金, 可选) + broker_settled_holdings(券商端日终交割持仓, 可选)
-# I2: PositionReconciler(系统账 vs 券商账双源持仓对账, 注入) + OrderManager(未成交订单归档, 注入) + PositionTracker(系统现金/T+1对齐目标, 注入)
-# F1: run_eod(trade_date, ...)——盘后全量对账一次执行
-# A1: 持仓全量对账——委托 PositionReconciler.reconcile()(差异冻结/解冻语义复用盘中件)
-# A2: 资金核对——系统现金(PositionTracker.cash) vs 券商端资金, |diff|>cash_tolerance 记资金差异
-# A3: 未成交订单日终转 EXPIRED——OrderManager.expire_open_orders()(交易所日终自动作废的本地台账归档)
-# A4: T+1 可用更新——align_to_broker=True 时以券商端交割持仓+资金为权威 rebuild_from_broker(T+1 交割确认后系统账对齐; 默认 False 仅报告不动账)
-# O1: EodReconcileResult(positions_matched/cash_diff/expired_order_ids/t1_aligned/matched)——调用方留痕+告警路由
-# [/ALGO_FLOW]
 """
 D_EX_CORE — 盘后全量对账（40 号 §6.1 gap 10 Phase 2，PositionReconciler 扩展）。
 

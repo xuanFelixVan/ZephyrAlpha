@@ -14,11 +14,6 @@
 # [ERROR_CONTRACT]
 # [TESTS] tests/ex_core/test_daban_instant_circuit_breaker.py
 # [TTL] permanent
-# [ALGO_FLOW]
-# I1: live_data(current_seal/initial_seal) + echelon_status + quant_seat_ratio
-# F1: 触发器①seal_ratio<70%→SEAL_COLLAPSE ②梯队断层→ECHELON_FRACTURE ③量化席位hard→QUANT_SEAT_HARD
-# O1: {trigger, action, qty_ratio?, reason?}（熔断=INSTANT_SELL 全仓 / 未触发=MONITOR）
-# [/ALGO_FLOW]
 """
 打板专用瞬时风控（24_daban_strategy_detail §3.13 缺失#2 施工，首批实盘前必做）。
 

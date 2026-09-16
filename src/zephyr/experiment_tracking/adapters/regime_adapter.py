@@ -15,13 +15,6 @@
 # [A_module] module_id=MOD-OBS-001 | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 # [ARCH-REF] #ARCH-OBS-EXP-TRACK-001
-# [ALGO_FLOW]
-# I1: probabilities(RegimeProbabilities 鸭子类型: probabilities/dominant_regime/dominant_frequency/confidence) + shrinkage(ShrinkageResult: value/confidence_signal/risk_signal/shrinkage_enabled)
-# I2: feature_stats(输入特征统计,可选) + model_params(HMM 超参,可选) + lineage(上游 run_id 映射,可选)
-# F1: _extract_metrics(输出状态分布 per-state 概率 + confidence + shrinkage 三值)
-# F2: track_regime_detection(start_run(component=regime-detector) → log_params/log_metrics → run_id)
-# O1: run_id（NullBackend="null-run"）
-# [/ALGO_FLOW]
 """
 L_INFRA_TELEMETRY — regime_detector 检测结果 → 实验跟踪语义适配器（50 号 §3 ⑥，M4）。
 

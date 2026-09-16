@@ -13,16 +13,6 @@
 # [ERROR_CONTRACT] InvalidRejectionActionInputError(ZA-EX-0014)
 # [TESTS] tests/ex_core/test_rejection_action_handler.py
 # [TTL] permanent
-# [ALGO_FLOW]
-# I1: action(RejectionAction) + order(Order) + error(原始异常, 可选) + error_code(可选, classify_and_execute 入口)
-# I2: retry_fn(重试执行器注入) + alert_sink(告警出口注入) + reconcile_trigger(持仓对账触发注入)
-# F1: execute(action, order, error)——按 40 号 §2.7 表执行实际动作
-# A1: RETRY_ONCE——order_id 去重, 首拒调 retry_fn, 再拒降级放弃(撤单率≤15%防线)
-# A2: ALERT_FREEZE——告警 + strategy_id 入冻结表(is_strategy_frozen 供下单链查询, 人工 unfreeze)
-# A3: ALERT_RECONCILE——告警 + reconcile_trigger(strategy_id, symbol)(T+1锁定/持仓不一致对账)
-# A4: IDEMPOTENT_RETURN——返回已有 broker_order_id(幂等)
-# O1: RejectionActionResult(outcome/broker_order_id/frozen_strategy_id)——调用方留痕
-# [/ALGO_FLOW]
 """
 D_EX_CORE — 拒单分类动作执行器（40 号 §6.1 gap 4 闭合，AI-NIGHT-001 包P）。
 

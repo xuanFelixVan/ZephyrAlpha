@@ -14,13 +14,6 @@
 # [ERROR_CONTRACT]
 # [TESTS] tests/ex_core/test_daban_signal_decision.py
 # [TTL] permanent
-# [ALGO_FLOW]
-# I1: echelon_health/height/sector_resonance/follow_count（前置质量评估四输入）
-# I2: emotion_score/tech_score/phase/is_limit_down_rebound（7类决策四输入）
-# F1: pre_validate_daban_signal——健康40+高度20+共振20+跟风20 百分制门控
-# F2: classify_decision_v192——冰点/反核门控反核路径；否则 PHASE_THRESHOLDS 打板路径六类
-# O1: {pass, score, reason} / 决策类标签（BOARD/CONTINUE/INVERSE_BOARD/REFLUSH_DIVE/WATCH/REJECT/WAIT）
-# [/ALGO_FLOW]
 """
 打板信号前置门控 + 7 类交易动作决策（24_daban_strategy_detail §3.14#8 + §3.13#3 施工）。
 

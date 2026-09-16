@@ -15,16 +15,6 @@
 # [A_module] module_id=MOD-EX-063 | layer=module | stability=evolving | safety=H | ai_autonomy=ai_modifiable
 # [TTL] permanent
 
-# [ALGO_FLOW]
-# I1: trading_date + clock
-# I2: 四探针(risk_limits/compliance/data_quality/system_readiness)
-# A1: 限额基线关(取值域+基线日期=当日)
-# A2: 纪律预检关(违规清单须空)
-# A3: 数据完整性关(QualityReport.passed)
-# A4: 系统就绪关(子系统映射全真,未就绪点名)
-# A5: 全量聚合(ready=全过; 探针异常=PROBE_ERROR阻断项)
-# O1: PremarketReport(frozen)
-# [/ALGO_FLOW]
 #
 # 边:
 # I1 --> A1

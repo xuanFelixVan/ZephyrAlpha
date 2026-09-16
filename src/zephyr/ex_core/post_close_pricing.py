@@ -13,14 +13,6 @@
 # [ERROR_CONTRACT] PostClosePricingError(ZA-EX-0016)
 # [TESTS] tests/ex_core/test_post_close_pricing.py
 # [TTL] permanent
-# [ALGO_FLOW]
-# I1: order(未成交委托单) + close_price(当日收盘价) + at_time(当前时刻)
-# F1: is_in_post_close_window(t)——15:05≤t≤15:30 窗口判定
-# F2: is_post_close_eligible(symbol)——北交所(4/8/920 前缀)不适用拒绝
-# F3: validate_post_close_price(side, limit, close)——买入≥收盘/卖出≤收盘
-# F4: convert_to_post_close_order(order, close_price, at_time)——生成盘后固定价格申报规格(不可撤单+15:30 自动作废)
-# O1: PostCloseOrderSpec -> 调用方(申报通道装配层)
-# [/ALGO_FLOW]
 """
 D_EX_CORE — 盘后固定价格交易通道（40 号 §6.1 gap 16，函数级 MVP）。
 

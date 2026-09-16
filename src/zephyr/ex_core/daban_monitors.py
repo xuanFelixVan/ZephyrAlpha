@@ -14,13 +14,6 @@
 # [ERROR_CONTRACT] 空订单簿→depth=0 兜底（sar 放大→保守降仓，Fail-Closed）
 # [TESTS] tests/ex_core/test_daban_monitors.py
 # [TTL] permanent
-# [ALGO_FLOW]
-# I1: position(qty) + order_book(bid_levels/ofi) + seal_data(current/initial)（持仓微结构监控）
-# I2: win/premium/taker_bs_ratio_var（信号衰减监控逐笔输入）
-# F1: HoldingPeriodMicrostructureMonitor.monitor——SaR 前瞻滑点 + OFI latent build-up + 封单持续监控→分级响应
-# F2: SignalDecayMonitor.update——CUSUM(内生) + 方差压缩(外生) + PSI(分布漂移) 三检测器
-# O1: {action: MONITOR/ALERT/REDUCE_50, reason} / {level: OK/REDUCE/STOP, type?, reason}
-# [/ALGO_FLOW]
 """
 打板监控族（24_daban_strategy_detail §3.14#9 + §3.13#6 施工）。
 

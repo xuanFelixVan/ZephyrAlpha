@@ -15,12 +15,6 @@
 # [A_module] module_id=MOD-OBS-001 | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 # [ARCH-REF] #ARCH-OBS-EXP-TRACK-001
-# [ALGO_FLOW]
-# I1: C2ProtectionReport(events/mean_improvement/min_improvement/skipped/passed) 或 C3AttributionReport(states/total_avoided/defensive_share/bull_mean_shrinkage/passed)（鸭子类型）
-# I2: lineage(上游 run_id 映射,如 c1_run_id) + extra_tags
-# F1: track_c2_result(per-event 改善指标 + passed → run) / track_c3_result(per-state 归因 + passed → run)
-# O1: run_id（NullBackend="null-run"）
-# [/ALGO_FLOW]
 """
 L_INFRA_TELEMETRY — C2/C3 验证器结果 → 实验跟踪语义适配器（50 号 §3 ⑥，M4）。
 

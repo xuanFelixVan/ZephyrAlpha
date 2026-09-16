@@ -15,13 +15,6 @@
 # [A_module] module_id=MOD-OBS-001 | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 # [ARCH-REF] #ARCH-OBS-EXP-TRACK-001
-# [ALGO_FLOW]
-# I1: features(特征矩阵 DataFrame 鸭子类型: columns/shape/isna/index) + builder_info(构建参数,可选) + lineage(上游 run_id,可选)
-# F1: _extract_metrics(行数/列数/整体缺失率/日期范围)
-# F2: _log_schema_artifact(列名 schema CSV + 前 snapshot_rows 行快照 CSV)
-# F3: track_feature_build(start_run(component=feature-build) → log_* → run_id)
-# O1: run_id（NullBackend="null-run"）
-# [/ALGO_FLOW]
 """
 L_INFRA_TELEMETRY — regime_feature_builder 特征矩阵 → 实验跟踪语义适配器（50 号 §3 ⑥，M4）。
 

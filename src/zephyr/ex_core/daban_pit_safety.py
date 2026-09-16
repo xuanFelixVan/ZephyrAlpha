@@ -14,15 +14,6 @@
 # [ERROR_CONTRACT] PIT 违规→AssertionError（Fail-Closed，宁停不错）
 # [TESTS] tests/ex_core/test_daban_pit_safety.py
 # [TTL] permanent
-# [ALGO_FLOW]
-# I1: symbol + as_of_date + db_session（鸭子类型 execute(sql,params).fetchall()，行需 .trade_date 属性+可 dict()）
-# I2: DabanPITBacktestFramework 注入 data_loader(source,date)->dict / trading_days(start,end) / next_trading_day(date)
-# I3: from_db_session 装配真实依赖——db_session+symbol→get_dragon_tiger_pit；zephyr.data.trading_calendar→XSHG 真日历；其余数据源 source_loaders 显式注入
-# F1: get_dragon_tiger_pit——latest=T-1 查询 + 逐行 PIT 断言
-# F2: assert_pit——按 PIT_RULES 对 dragon_tiger/next_day_auction 硬断言
-# F3: run_backtest——加载+PIT 断言→pre_validate 门控→情绪周期定位→classify_decision_v192→次日出场→汇总
-# O1: 龙虎榜行列表 / run_backtest 汇总 dict(trades/total/by_decision)
-# [/ALGO_FLOW]
 """
 打板 PIT 安全族（24_daban_strategy_detail §3.13#5 + §3.14#10 施工）。
 

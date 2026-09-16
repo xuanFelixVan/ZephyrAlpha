@@ -13,13 +13,6 @@
 # [ERROR_CONTRACT] InvalidExecutionReportInputError(ZA-EX-0012)
 # [TESTS] tests/ex_core/test_execution_report.py
 # [TTL] permanent
-# [ALGO_FLOW]
-# I1: Order(委托单, 含 side/limit_price/quantity/idempotency_key) + ExecutionEngineRunRecord(引擎聚合快照: filled_quantity/avg_fill_price/commission/venue/algo_type/起止时间)
-# F1: build_execution_report(order, run_record)——组装 CTR-P1-007 ExecutionReport(frozen codegen 契约)
-# F2: 滑点计算——signed_slippage_bps: BUY=(avg_fill-intended)/intended×1e4; SELL=(intended-avg_fill)/intended×1e4(正=不利成本); intended=0 退化 0.0
-# F3: vwap_price=avg_fill_price(单券商 MVP 口径: 成交量加权均价即成交均价)
-# O1: ExecutionReport(CTR-P1-007) -> D_REPORTING(TCA/归因消费)
-# [/ALGO_FLOW]
 """
 D_EX_CORE — CTR-P1-007 ExecutionReport 产出逻辑（GAP-L06-003 P0）。
 

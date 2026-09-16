@@ -14,18 +14,6 @@
 # [ERROR_CONTRACT] 评分输入夹取到合法域（Clamp，不抛异常）
 # [TESTS] tests/ex_core/test_daban_named_functions.py
 # [TTL] permanent
-# [ALGO_FLOW]
-# I1: height_counts(高度→家数) / 高度评分三元组 / 竞价三维分+竞价涨幅+匹配量比 / 封流比+封成比 / 封板时间+量比+封单强度 / 回封时长+封单方向 / 量化席位占比
-# F1: classify_echelon_health——崩塌→孤龙→中位断层→完整 四档判定
-# F2: score_consecutive_height_with_death_pool——非完美梯队 3板-40/4板-30
-# F3: score_auction_3d——大盘30+板块30+个股40 夹取求和→CONFIRM/WATCH/REJECT
-# F4: detect_auction_paper_tiger——涨幅7-8%且匹配量<3%→一票否决
-# F5: score_seal_structure——封流比/封成比双指标各50分
-# F6: forecast_next_day_premium——封板时间×量能×封单→溢价区间+建议（只预测不决策）
-# F7: classify_reflush_board——15分钟内回封+封单递增=良性; 20-30分钟未回封=承接崩塌
-# F8: detect_quant_seat_warning——hard 70%/soft 58% 双阈值降权
-# O1: 各函数 dict 结果（标签/score/区间/降权+reason）
-# [/ALGO_FLOW]
 """
 打板 8 具名函数（24_daban_strategy_detail §3.1/§3.9/§3.11 施工，首批回测校准项）。
 

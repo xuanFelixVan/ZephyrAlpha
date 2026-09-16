@@ -15,13 +15,6 @@
 # [A_module] module_id=MOD-OBS-001 | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 # [ARCH-REF] #ARCH-OBS-EXP-TRACK-001
-# [ALGO_FLOW]
-# I1: result(BacktestResult 鸭子类型) + runner_config(StrategyRunnerConfig,可选: strategy_id/factor_ids/synthesis_method/rebalance_freq/pit_shift/top_n/max_single/backtest_config)
-# I2: lineage(上游 run_id 映射,可选)
-# F1: _extract_params(全链路配置: 因子/合成/调仓/PIT/成本细节——滑点/手续费来自 backtest_config)
-# F2: track_strategy_runner_result(start_run(component=full-chain-backtest) → log_* → run_id)
-# O1: run_id（NullBackend="null-run"）
-# [/ALGO_FLOW]
 """
 L_INFRA_TELEMETRY — StrategyRunner 全链路回测 → 实验跟踪语义适配器（50 号 §3 ⑥，M4）。
 

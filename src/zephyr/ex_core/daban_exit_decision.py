@@ -14,14 +14,6 @@
 # [ERROR_CONTRACT] cost_basis<=0→HOLD+人工复核（不抛异常，Fail-Closed 不误导卖出）
 # [TESTS] tests/ex_core/test_daban_exit_decision.py
 # [TTL] permanent
-# [ALGO_FLOW]
-# I1: position(cost_basis/consecutive_board/exploded) + auction_data(open_price) + forecast(phase/divergence) + holding_days
-# I2: t1_data(close/high/limit_up_price/seal_ratio) + echelon_status（classify_position_status 输入）
-# F1: NextDayExitDecision.decide——硬退出①低开闷杀②持仓超时③炸板退潮→高开两档止盈→分歧度软退出→连板持有
-# F2: classify_position_status——T+1涨停收盘+封单存在+梯队非孤板→consecutive_board; 触涨停未封收→exploded（回写 position）
-# F3: reflush_next_day_exit_decision——反核后次日：高开≥5%止盈/低开≤-3%止损/持5天时间止盈/其余观察
-# O1: {action, qty_ratio, reason}（action∈STOP_LOSS/SELL_ALL/SELL_HALF/HOLD）
-# [/ALGO_FLOW]
 """
 打板次日出场决策族（24_daban_strategy_detail §3.13 缺失#1/#7 施工）。
 
