@@ -21,31 +21,7 @@ Trend-Cycle Separator — v0.9.0 R113
 Blindspot: Long-term trends conflated with short-term anomalies.
 Risk: R113 — Gradual trend growth triggers anomaly on otherwise healthy metric.
 
-# [ALGO_FLOW]
-# 层: 输入
-# - id: I1
-#   name: 模块内部数据
-#   fields: 无公共形参/无再导出（AST 事实）
-#   code: trend_cycle_separator.py
-# 层: 算法
-# - id: A1
-#   name_zh: ① TrendCycleSeparator
-#   name_en: TrendCycleSeparator
-#   intro: class TrendCycleSeparator 源码 L55-L57
-#   desc: 公共方法（定义序）: separate；源码 L55-L57
-#   inputs: 无参数
-#   outputs: 返回值
-# 层: 输出
-# - id: O1
-#   name_zh: 模块公共 API 面（1 定义）
-#   name_en: public defs
-#   intro: TrendCycleSeparator
-#   downstream: 见模块头 [CONSUMERS]
-# [/ALGO_FLOW]
-#
-# 边:
-# I1 --> A1
-# A1 --> O1
+# [ALGO_FLOW] external: docs/03_modules/_domain_feedback_loop/algo_flow/detectors/drift/trend_cycle_separator.yaml
 """
 
 from dataclasses import dataclass

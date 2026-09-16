@@ -21,31 +21,7 @@ Blast Radius Detector — v0.12.0 R167
 Blindspot: Repair side effects across subsystems not modeled.
 Risk: R167 — Repair on subsystem A breaks subsystem B; cascading failure.
 
-# [ALGO_FLOW]
-# 层: 输入
-# - id: I1
-#   name: 模块内部数据
-#   fields: 无公共形参/无再导出（AST 事实）
-#   code: blast_radius.py
-# 层: 算法
-# - id: A1
-#   name_zh: ① BlastRadius
-#   name_en: BlastRadius
-#   intro: class BlastRadius 源码 L55-L59
-#   desc: 公共方法（定义序）: estimate；源码 L55-L59
-#   inputs: 无参数
-#   outputs: 返回值
-# 层: 输出
-# - id: O1
-#   name_zh: 模块公共 API 面（1 定义）
-#   name_en: public defs
-#   intro: BlastRadius
-#   downstream: 见模块头 [CONSUMERS]
-# [/ALGO_FLOW]
-#
-# 边:
-# I1 --> A1
-# A1 --> O1
+# [ALGO_FLOW] external: docs/03_modules/_domain_feedback_loop/algo_flow/detectors/reliability/blast_radius.yaml
 """
 
 from dataclasses import dataclass, field

@@ -27,66 +27,7 @@ B10-01824（AUD-DRAFT-001-DIGEST P1 波 W-P1-24，CAND-FBLDETEC-001，A1交易�
 接口只接受分布样本，不消费 IC/绩效时间序列；响应只产语义信号，降级/重训
 执行归运行时装配批。
 
-# [ALGO_FLOW]
-# 层: 输入
-# - id: I1
-#   name: reference 参数
-#   fields: 参数 reference，类型注解 np.ndarray | list[float]
-#   code: distribution_drift_monitor.py 顶层公共函数形参（AST 提取）
-# - id: I2
-#   name: current 参数
-#   fields: 参数 current，类型注解 np.ndarray | list[float]
-#   code: distribution_drift_monitor.py 顶层公共函数形参（AST 提取）
-# - id: I3
-#   name: buckets 参数
-#   fields: 参数 buckets，类型注解 int
-#   code: distribution_drift_monitor.py 顶层公共函数形参（AST 提取）
-# 层: 算法
-# - id: A1
-#   name_zh: ① psi
-#   name_en: psi
-#   intro: 总体稳定性指数 PSI = Σ(a%−e%)·ln(a%/e%)（reference 分位分箱）。
-#   desc: 总体稳定性指数 PSI = Σ(a%−e%)·ln(a%/e%)（reference 分位分箱）。；源码 L218-L227
-#   inputs: reference current buckets
-#   outputs: float
-# - id: A2
-#   name_zh: ② kl_divergence
-#   name_en: kl_divergence
-#   intro: KL 散度 D_KL(current‖reference)（同分箱直方图，nats）。
-#   desc: KL 散度 D_KL(current‖reference)（同分箱直方图，nats）。；源码 L230-L239
-#   inputs: reference current buckets
-#   outputs: float
-# - id: A3
-#   name_zh: ③ mdd
-#   name_en: mdd
-#   intro: 均值差异距离 MDD = |μ_cur − μ_ref| / σ_ref（线性核 MMD² 标准化口径；
-#   desc: 均值差异距离 MDD = |μ_cur − μ_ref| / σ_ref（线性核 MMD² 标准化口径； σ_ref=0 时退化为原量纲绝对差）。；源码 L242-L256
-#   inputs: reference current
-#   outputs: float
-# - id: A4
-#   name_zh: ④ DistributionDriftMonitor
-#   name_en: DistributionDriftMonitor
-#   intro: 三路分布漂移监控器（MOD-FBL-001）。
-#   desc: 三路分布漂移监控器（MOD-FBL-001）。 用法： mon = DistributionDriftMonitor() rep = mon.check_feature(ref_…；公共方法（定义序）: check,…
-#   inputs: thresholds response_matrix buckets
-#   outputs: 返回值
-#   （注：A4 之后另有 6 个公共定义未列入（含 6 个数据契约/异常/枚举声明类），见源码）
-# 层: 输出
-# - id: O1
-#   name_zh: float
-#   name_en: float
-#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
-#   downstream: 运行时装配批（D_FACTOR 特征降级执行 / D_ML_TRAIN 重训触发 / MOD-DATENG-001 告警路由汇入）
-# [/ALGO_FLOW]
-#
-# 边:
-# I1 --> A1
-# I2 --> A1
-# I3 --> A1
-# A1 --> A2
-# A2 --> A3
-# A3 --> A4
-# A4 --> O1
+# [ALGO_FLOW] external: docs/03_modules/_domain_feedback_loop/algo_flow/detectors/drift/distribution_drift_monitor.yaml
 """
 
 from __future__ import annotations

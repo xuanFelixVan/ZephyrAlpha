@@ -21,31 +21,7 @@ Self HA — v0.13.0 R173
 Blindspot: Single FLE instance is SPOF for self-healing.
 Risk: R173 — FLE itself fails; no other instance takes over.
 
-# [ALGO_FLOW]
-# 层: 输入
-# - id: I1
-#   name: 模块内部数据
-#   fields: 无公共形参/无再导出（AST 事实）
-#   code: self_ha.py
-# 层: 算法
-# - id: A1
-#   name_zh: ① 数据契约声明
-#   name_en: data class declarations
-#   intro: 纯声明类（无公共方法，AST 事实）: SelfHA
-#   desc: 数据契约/异常/枚举声明共 1 类；无算法流程（AST 事实）
-#   inputs: I1
-#   outputs: 数据契约类集合
-# 层: 输出
-# - id: O1
-#   name_zh: 数据契约声明（1 类）
-#   name_en: data classes
-#   intro: SelfHA
-#   downstream: 见模块头 [CONSUMERS]
-# [/ALGO_FLOW]
-#
-# 边:
-# I1 --> A1
-# A1 --> O1
+# [ALGO_FLOW] external: docs/03_modules/_domain_feedback_loop/algo_flow/detectors/guard/self_ha.yaml
 """
 
 from dataclasses import dataclass, field

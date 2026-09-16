@@ -20,31 +20,7 @@ Runbook Executor — v0.13.0 R186a
 
 Blindspot: Known procedures require manual execution even when automated.
 
-# [ALGO_FLOW]
-# 层: 输入
-# - id: I1
-#   name: 模块内部数据
-#   fields: 无公共形参/无再导出（AST 事实）
-#   code: runbook_executor.py
-# 层: 算法
-# - id: A1
-#   name_zh: ① RunbookExecutor
-#   name_en: RunbookExecutor
-#   intro: class RunbookExecutor 源码 L54-L58
-#   desc: 公共方法（定义序）: execute；源码 L54-L58
-#   inputs: 无参数
-#   outputs: 返回值
-# 层: 输出
-# - id: O1
-#   name_zh: 模块公共 API 面（1 定义）
-#   name_en: public defs
-#   intro: RunbookExecutor
-#   downstream: 见模块头 [CONSUMERS]
-# [/ALGO_FLOW]
-#
-# 边:
-# I1 --> A1
-# A1 --> O1
+# [ALGO_FLOW] external: docs/03_modules/_domain_feedback_loop/algo_flow/detectors/reliability/runbook_executor.yaml
 """
 
 from dataclasses import dataclass, field

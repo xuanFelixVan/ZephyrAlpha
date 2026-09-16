@@ -27,31 +27,7 @@ Mitigation: Track per-alert-type exposure count. Model desensitization as
 exponential decay of response probability. When curve drops below 50%,
 auto-escalate to alternate channel or increase severity.
 
-# [ALGO_FLOW]
-# 层: 输入
-# - id: I1
-#   name: 模块内部数据
-#   fields: 无公共形参/无再导出（AST 事实）
-#   code: alert_desensitization_curve.py
-# 层: 算法
-# - id: A1
-#   name_zh: ① AlertDesensitizationCurve
-#   name_en: AlertDesensitizationCurve
-#   intro: class AlertDesensitizationCurve 源码 L63-L96
-#   desc: 公共方法（定义序）: record_exposure, get_desensitization, get_response_rate, needs_escalation, is_desensitized…
-#   inputs: 无参数
-#   outputs: 返回值
-# 层: 输出
-# - id: O1
-#   name_zh: 模块公共 API 面（1 定义）
-#   name_en: public defs
-#   intro: AlertDesensitizationCurve
-#   downstream: 见模块头 [CONSUMERS]
-# [/ALGO_FLOW]
-#
-# 边:
-# I1 --> A1
-# A1 --> O1
+# [ALGO_FLOW] external: docs/03_modules/_domain_feedback_loop/algo_flow/detectors/guard/alert_desensitization_curve.yaml
 """
 
 from __future__ import annotations
