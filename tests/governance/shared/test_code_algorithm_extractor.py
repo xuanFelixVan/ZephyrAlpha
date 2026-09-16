@@ -578,3 +578,100 @@ def test_empty_edge_section_and_indented_block_scalar():
     g = parse_algo_flow(indented)
     assert g is not None
     assert [(e.src, e.dst) for e in g.edges] == [("I1", "A1"), ("A1", "O1")]
+
+
+def test_indented_plain_edge_lines_parse():
+    """镜像实际形态的第二条静默丢边路：不带 "边:" 段标记的一行一边，缩进后必须照解。
+
+    上面那条同名意图的测试只走 "边:" 段写法——段行正则自带 ^\\s* 容错、切段后重组为
+    无缩进 "# seg"，于是把普通边行的 rstrip-only 病根完全遮住（2026-09-16 全仓普查：
+    3158 件镜像按本形态边数几乎全体归零；消费方喂的是 yaml dedent 后的块串，
+    所以门禁与文档两侧都"看着没问题"——典型的假绿）。
+    """
+    from _shared.code_algorithm_extractor import parse_algo_flow
+
+    body = _flow_block("#\n# 边:\n# I1 --> A1\n# A1 --> O1\n")
+    # 整块缩进（模拟块标量真实形态）：段标记与普通边行同批位移
+    indented = "\n".join("    " + ln for ln in body.splitlines())
+    g = parse_algo_flow(indented)
+    assert g is not None
+    assert [(e.src, e.dst) for e in g.edges] == [("I1", "A1"), ("A1", "O1")]
+
+
+def test_comma_fanin_edges_expand():
+    """并列端点展开：`# I1,I2 --> A1` = 两条边；目的侧并列同理（全角逗号/顿号同权）。"""
+    from _shared.code_algorithm_extractor import parse_algo_flow
+
+    g = parse_algo_flow(_flow_block("# 边:\n# I1,I2 --> A1\n# A1 --> O1，O2\n"))
+    assert g is not None
+    assert [(e.src, e.dst) for e in g.edges] == [("I1", "A1"), ("I2", "A1"), ("A1", "O1"), ("A1", "O2")]
+
+
+def test_comma_fanin_break_flag_propagates():
+    """断点箭头展开后每条子边都带 is_break（否则并列写法可绕过断点着色）。"""
+    from _shared.code_algorithm_extractor import parse_algo_flow
+
+    g = parse_algo_flow(_flow_block("# 边:\n# I1,I2 -.->|断点| A1\n"))
+    assert g is not None
+    assert [(e.src, e.dst, e.is_break) for e in g.edges] == [("I1", "A1", True), ("I2", "A1", True)]
+
+
+def test_single_endpoint_syntax_unchanged_by_fanin():
+    """零回归面：单端点写法在展开改造后仍恰好一条边（N×M 展开 1×1=1）。"""
+    from _shared.code_algorithm_extractor import parse_algo_flow
+
+    g = parse_algo_flow(_flow_block("# 边:\n# I1 --> A1\n"))
+    assert g is not None
+    assert len(g.edges) == 1 and (g.edges[0].src, g.edges[0].dst) == ("I1", "A1")
+
+
+_SHORTHAND_BLOCK = """\
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1 新闻 list[NewsTagInput]（news_id/title/content）
+# - id: I2
+#   name: 日历规则组
+# 层: 特征
+# - id: F1 日历关键词命中
+#   intro: 已有简介字段
+# 层: 算法
+# - id: 中文节点名 非 ASCII 头不截断
+# - id: A1
+#   name_zh: 主流程
+# [/ALGO_FLOW]
+#
+# 边:
+# I1,I2 --> F1
+# F1 --> A1
+"""
+
+
+def test_shorthand_id_splits_description_losslessly():
+    """速记 `- id: I1 中文名+类型`：id 只留 ASCII 首 token，余文落进人类字段不丢。
+
+    病根实证（2026-09-16 全仓普查 17 件）：旧写法整行入 id → ① mermaid 节点键含空格
+    必炸；② 边端点 `I1` 与 id `I1 新闻…` 永不相等，图全体悬空；③ 出仓器 _ids_of
+    与 parse_algo_flow 两套 id 口径（前者取首 token）互相打脸。
+    """
+    from _shared.code_algorithm_extractor import parse_algo_flow
+
+    g = parse_algo_flow(_SHORTHAND_BLOCK)
+    assert g is not None
+    by_id = {n.id: n for n in g.nodes}
+    assert set(by_id) == {"I1", "I2", "F1", "中文节点名 非 ASCII 头不截断", "A1"}
+    assert by_id["I1"].name_zh == "新闻 list[NewsTagInput]（news_id/title/content）"
+    assert by_id["F1"].intro == "已有简介字段"  # 已有字段优先，速记余文让位到下一空字段
+    assert by_id["F1"].name_zh == "日历关键词命中"
+    assert [(e.src, e.dst) for e in g.edges] == [("I1", "F1"), ("I2", "F1"), ("F1", "A1")]
+
+
+def test_id_without_description_and_non_ascii_head_unchanged():
+    """无描述/非 ASCII 头两态保持旧行为（不误伤手写非规范 id）。"""
+    from _shared.code_algorithm_extractor import parse_algo_flow
+
+    g = parse_algo_flow(_SHORTHAND_BLOCK)
+    assert g is not None
+    by_id = {n.id: n for n in g.nodes}
+    assert by_id["I2"].name_zh == "日历规则组"  # 仅 "- id: I2" → id 原样
+    odd = next(i for i in by_id if i.startswith("中文节点名"))
+    assert "非 ASCII 头不截断" in odd

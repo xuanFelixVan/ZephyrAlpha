@@ -727,7 +727,12 @@ _ALGO_NODE_FIELD_MAP = {
 }
 
 # 边定义正则：# SRC -.->|断点| DST  或  # SRC --> DST  或  # SRC -->|label| DST
-_ALGO_EDGE_RE = re.compile(r"^#\s*([A-Za-z0-9_]+)\s+(-\.->|-->)(\|[^|]*\|)?\s+([A-Za-z0-9_]+)")
+# 端点允许逗号并列（# I1,I2 --> A1 = 两条边）：旧正则只认单端点，并列写法整行不匹配
+# → 该件边数静默归零且无报错（2026-09-16 全仓普查 29 个镜像件踩中）。
+_ALGO_EDGE_ID = r"[A-Za-z0-9_]+"
+_ALGO_EDGE_ENDS = rf"{_ALGO_EDGE_ID}(?:\s*[,，、]\s*{_ALGO_EDGE_ID})*"
+_ALGO_EDGE_SPLIT_RE = re.compile(r"[,，、]")
+_ALGO_EDGE_RE = re.compile(rf"^#\s*({_ALGO_EDGE_ENDS})\s*(-\.->|-->)(\|[^|]*\|)?\s+({_ALGO_EDGE_ENDS})")
 
 # 紧凑边段行：# 边: SRC --> DST ; SRC2 --> DST2（分号分隔多边，一行装一条以上）
 _ALGO_EDGE_SECTION_RE = re.compile(r"^\s*#\s*边\s*[:：]\s*(.*)$")
@@ -782,6 +787,20 @@ def _parse_algo_flow_nodes(block: str) -> list[AlgoFlowNode]:
     nodes: list[AlgoFlowNode] = []
     current_layer = ""
     current: AlgoFlowNode | None = None
+    pending_desc = ""
+
+    def _flush() -> None:
+        """收尾当前节点：速记余文落进第一个空的人类字段（信息不丢）。"""
+        nonlocal pending_desc
+        if current is None:
+            return
+        if pending_desc:
+            for attr in ("name_zh", "intro", "desc"):
+                if not getattr(current, attr):
+                    setattr(current, attr, pending_desc)
+                    break
+        nodes.append(current)
+        pending_desc = ""
 
     for raw in block.splitlines():
         line = raw.strip()
@@ -793,18 +812,24 @@ def _parse_algo_flow_nodes(block: str) -> list[AlgoFlowNode]:
         # 层切换：层: <name>
         m_layer = re.match(r"^层\s*:\s*(.+)$", content)
         if m_layer:
-            if current is not None:
-                nodes.append(current)
+            _flush()
             current_layer = m_layer.group(1).strip()
             current = None
             continue
 
-        # 节点起点：- id: <id>
+        # 节点起点：- id: <id>（速记写法 "- id: I1 中文名+类型" 只取首 token 作 id：
+        # id 兼作边端点与 mermaid 节点键，必须 ASCII 标识符，否则边静默悬空+图渲染炸）
         m_id = re.match(r"^-\s+id\s*:\s*(.+)$", content)
         if m_id:
-            if current is not None:
-                nodes.append(current)
-            current = AlgoFlowNode(id=m_id.group(1).strip(), layer=current_layer)
+            _flush()
+            raw_id = m_id.group(1).strip()
+            parts = raw_id.split(None, 1)
+            head = parts[0] if parts else ""
+            rest = parts[1].strip() if len(parts) > 1 else ""
+            if rest and re.fullmatch(_ALGO_EDGE_ID, head):
+                current, pending_desc = AlgoFlowNode(id=head, layer=current_layer), rest
+            else:
+                current, pending_desc = AlgoFlowNode(id=raw_id, layer=current_layer), ""
             continue
 
         # 字段：key: value
@@ -821,8 +846,7 @@ def _parse_algo_flow_nodes(block: str) -> list[AlgoFlowNode]:
                 setattr(current, attr, value)
             continue
 
-    if current is not None:
-        nodes.append(current)
+    _flush()
     return nodes
 
 
@@ -832,9 +856,11 @@ def _algo_edge_line_segments(raw: str) -> list[str]:
     病根（静默丢边实证）：``_ALGO_EDGE_RE`` 要求 ``#`` 后紧跟 ASCII 节点号，
     而契约允许的 ``# 边: A --> B ; A --> C`` 整行以中文"边"开头→永不匹配→
     该文件边数直接归零且无任何报错（普查 62 个 ALGO_FLOW 镜像 yaml 丢 162 条边）。
+    第二个同源病根：只 rstrip 不 strip→带缩进的边行（yaml 块标量里的每一行、嵌套
+    docstring 里的块）同样不匹配 ``^#``，镜像件边数再次静默归零（2026-09-16 全仓普查）。
     仅对带 ``边:`` 段标记的行做分号切分——单行边语法一字不改，零回归面。
     """
-    line = raw.rstrip()
+    line = raw.strip()
     m = _ALGO_EDGE_SECTION_RE.match(line)
     if not m:
         return [line]
@@ -857,5 +883,9 @@ def _parse_algo_flow_edges(scan_region: str) -> list[AlgoFlowEdge]:
                 continue
             src, arrow, label, dst = m.group(1), m.group(2), (m.group(3) or ""), m.group(4)
             is_break = arrow == "-.->" or "断点" in label
-            edges.append(AlgoFlowEdge(src=src, dst=dst, is_break=is_break))
+            # 并列端点展开：一行写 N×M 条边（单端点时 1×1=1 条，与旧行为等价）
+            for s in _ALGO_EDGE_SPLIT_RE.split(src):
+                for d in _ALGO_EDGE_SPLIT_RE.split(dst):
+                    if s.strip() and d.strip():
+                        edges.append(AlgoFlowEdge(src=s.strip(), dst=d.strip(), is_break=is_break))
     return edges

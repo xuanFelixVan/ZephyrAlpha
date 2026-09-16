@@ -164,3 +164,113 @@ def test_staged_content_preferred(tmp_path: Path) -> None:
         ["docs/03_modules/_domain_x/algo_flow/demo.yaml"], root, read_staged=read_staged
     )
     assert not blocked, msg
+
+
+# ------------------------------------------------------------------ 图可达判据（2026-09-16 增）
+# "块可解析"曾是太弱的门槛：id 吞中文描述、并列/紧凑边写法、块标量缩进三类坏图能在门禁全绿
+# 下存活（全仓普查 17+29 件，边数静默归零=全景图假绿）。判据真源=validate_graph，
+# 本组测试钉住"门禁确实消费它"以及"只在基础设施故障时降级"。
+# 反向钉：_YAML_OK 本身字段不全（缺 name_en/输出层）却必须放行——字段欠账不进门禁，
+# 否则全仓百余件历史欠账连坐无辜提交人。
+
+_YAML_NO_EDGE = "\n".join(
+    ln for ln in _YAML_OK.splitlines() if not ln.strip().startswith(("# 边:", "# I1 -->"))
+) + "\n"
+
+_YAML_FANIN = """# ALGO_FLOW 外部真源——demo（并列+紧凑边写法）
+doc_type: architecture_view
+ttl: permanent
+module: zephyr.pkg_a.demo
+source_of_truth: src/zephyr/pkg_a/demo.py
+algo_flow: |
+    # [ALGO_FLOW]
+    # 层: 输入
+    # - id: I1
+    #   name: 入参一
+    # - id: I2
+    #   name: 入参二
+    # 层: 算法
+    # - id: F1
+    #   name_zh: 汇流
+    # - id: A1
+    #   name_zh: 主流程
+    # 层: 输出
+    # - id: O1
+    #   name_zh: 出参
+    #   is_break: true
+    # [/ALGO_FLOW]
+    # 边:
+    # I1, I2 --> F1 ; F1 --> A1
+    # A1 -.->|断点| O1
+"""
+
+
+def _write_mirror(root: Path, text: str) -> None:
+    (root / "docs/03_modules/_domain_x/algo_flow/demo.yaml").write_text(text, encoding="utf-8")
+
+
+def test_mirror_without_edges_blocks(tmp_path: Path) -> None:
+    """边段整体不匹配（缩进/紧凑写法病根）→ 边数归零=无图，硬阻断。"""
+    root = _make_repo(tmp_path)
+    _write_mirror(root, _YAML_NO_EDGE)
+    blocked, msg = check_algo_flow_links(["docs/03_modules/_domain_x/algo_flow/demo.yaml"], root)
+    assert blocked, msg
+    assert "推导图不可达" in msg and "无边定义" in msg
+
+
+def test_anchor_to_dangling_edge_yaml_blocks(tmp_path: Path) -> None:
+    """锚指向的 yaml 图坏（端点未定义）同样阻断——锚校验不止查"文件在不在"。"""
+    root = _make_repo(tmp_path)
+    _write_mirror(root, _YAML_OK.replace("# I1 --> A1", "# I1 --> A9"))
+    blocked, msg = check_algo_flow_links(["src/zephyr/pkg_a/demo.py"], root)
+    assert blocked, msg
+    assert "边终点未定义" in msg
+
+
+def test_illegal_node_id_blocks(tmp_path: Path) -> None:
+    """id 含中文/空格 → mermaid 节点键必炸，硬阻断。"""
+    root = _make_repo(tmp_path)
+    _write_mirror(root, _YAML_OK.replace("# - id: I1", "# - id: ① 输入层"))
+    blocked, msg = check_algo_flow_links(["docs/03_modules/_domain_x/algo_flow/demo.yaml"], root)
+    assert blocked, msg
+    assert "节点ID非法" in msg
+
+
+def test_break_edge_inconsistency_blocks(tmp_path: Path) -> None:
+    """正常边指向 is_break 节点（断点标记漂移）→ 图判据不一致，硬阻断。"""
+    root = _make_repo(tmp_path)
+    _write_mirror(root, _YAML_FANIN.replace("# A1 -.->|断点| O1", "# A1 --> O1"))
+    blocked, msg = check_algo_flow_links(["docs/03_modules/_domain_x/algo_flow/demo.yaml"], root)
+    assert blocked, msg
+    assert "正常边指向断点节点" in msg
+
+
+def test_shorthand_id_with_description_passes(tmp_path: Path) -> None:
+    """速记写法 "- id: I1 中文描述"：id 取首 token、描述不丢，边端点仍可解析 → 放行。"""
+    root = _make_repo(tmp_path)
+    _write_mirror(root, _YAML_OK.replace("# - id: I1", "# - id: I1 入参闸门"))
+    blocked, msg = check_algo_flow_links(
+        ["src/zephyr/pkg_a/demo.py", "docs/03_modules/_domain_x/algo_flow/demo.yaml"], root
+    )
+    assert not blocked, msg
+
+
+def test_fanin_and_compact_edge_spellings_pass(tmp_path: Path) -> None:
+    """并列端点展开 + 分号紧凑写法：旧解析器此处边数归零，修好后必须放行。"""
+    root = _make_repo(tmp_path)
+    _write_mirror(root, _YAML_FANIN)
+    blocked, msg = check_algo_flow_links(
+        ["src/zephyr/pkg_a/demo.py", "docs/03_modules/_domain_x/algo_flow/demo.yaml"], root
+    )
+    assert not blocked, msg
+
+
+def test_graph_rules_unavailable_degrades_fail_open(tmp_path: Path, monkeypatch) -> None:
+    """判据真源不可达=基础设施故障 → 降级放行（不得把"加载失败"判成违规连坐提交人）。"""
+    from zephyr.gov_enforcement.commit_gates import algo_flow_link_gate as g
+
+    root = _make_repo(tmp_path)
+    _write_mirror(root, _YAML_NO_EDGE)
+    monkeypatch.setattr(g, "_load_graph_rules", lambda _root: None)
+    blocked, msg = check_algo_flow_links(["docs/03_modules/_domain_x/algo_flow/demo.yaml"], root)
+    assert not blocked, msg

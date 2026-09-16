@@ -1,12 +1,15 @@
 # [BLUEPRINT] MOD-GATE_ENGINE | docs/03_modules/_cross_layer/gate_engine/blueprint.md | §0.1
 # [MODULE] zephyr.gov_enforcement.commit_gates.algo_flow_link_gate
 # [DOMAIN] D_GOV_CODE_QUALITY
-# [DEPENDENCIES] zephyr.gov_enforcement.rule_bridge.commit_gate_registry (GateSpec); zephyr.shared.utils.time_utils
+# [DEPENDENCIES] zephyr.gov_enforcement.rule_bridge.commit_gate_registry (GateSpec); zephyr.shared.utils.time_utils;
+#   scripts.governance._shared.code_algorithm_extractor（解析+死块几何）; scripts.governance._shared.algo_flow_validate_marker（validate_graph 图判据真源）
 # [CONSUMERS] in_process_gate_registry.yaml（auto_register_gates YAML 驱动注册）
 # [STARTUP] imported
 # [MATURITY] production
 # [INVARIANTS] 硬阻断——本 commit 触碰的 .py 中 ``# [ALGO_FLOW] external: <path>`` 锚指向的 yaml 必须存在且
-#   algo_flow 块可解析（parse_algo_flow 有节点），本 commit 触碰的 */algo_flow/*.yaml 必须自身可解析且
+#   algo_flow 块可解析（parse_algo_flow 有节点）+ 图可达（validate_graph：节点 id 合法唯一/至少一条边/
+#   边端点已定义/断点一致——图坏=全景图静默空图，判据真源在 algo_flow_validate_marker 不重写第二份），
+#   本 commit 触碰的 */algo_flow/*.yaml 必须自身可解析且
 #   source_of_truth 指向实存源文件（Owner 批7 认可，2026-09-16），且本 commit 触碰的 src/zephyr .py
 #   不得在 module docstring 之外另留 ALGO_FLOW 机器块（双真源，P2-1 死块批 2026-09-16 增；几何判据
 #   共用 extractor.algo_flow_dead_block_spans，extractor 不可用=基础设施故障 fail-open）；
@@ -36,12 +39,17 @@ docs/03_modules/<domain>/algo_flow/<stem>.yaml，算法图真源在 yaml 侧。
 治本方案（Owner 批7 认可，2026-09-16 落地）
 --------
 pre-commit 注册（priority=108，own-diff）：
-  1. 本 commit files 中每个 .py：扫 external 锚 → 目标 yaml 存在 + algo_flow 块可解析
-  2. 本 commit files 中每个 */algo_flow/*.yaml：可解析 + source_of_truth 实存
-  3. 本 commit files 中每个 src/zephyr .py：module docstring 之外不得另留 ALGO_FLOW 机器块
+  1. 本 commit files 中每个 .py：扫 external 锚 → 目标 yaml 存在 + algo_flow 块可解析 + 图可达
+  2. 本 commit files 中每个 */algo_flow/*.yaml：可解析 + 图可达 + source_of_truth 实存
+  3. 图可达判据 = algo_flow_validate_marker.validate_graph（id 合法唯一 / 至少一条边 /
+     边端点已定义 / 断点边一致）——"可解析"曾经是太弱的门槛：2026-09-16 全仓普查实证
+     "- id: I1 中文描述" 让 17 件节点 id 吞掉描述（mermaid 节点键含空格必炸 + 边端点全体悬空）、
+     "# I1,I2 --> F1" 并列写法让 29 件边数静默归零、yaml 块标量的行首缩进让边行整体不匹配
+     （三处都在 extractor 治本）——坏图在门禁全绿下存活，正是"假绿"类
+  4. 本 commit files 中每个 src/zephyr .py：module docstring 之外不得另留 ALGO_FLOW 机器块
      （P2-1 死块普查实证：14 字段契约头里的副本所有读卡路径都看不见，锚+副本=双真源，
      184 件长期静默存活；几何判据与出仓器共用 extractor.algo_flow_dead_block_spans）
-  4. 违规聚合一次给全，硬阻断；基础设施故障 fail-open
+  5. 违规聚合一次给全，硬阻断；基础设施故障 fail-open
 
 设计权衡
 --------
@@ -75,6 +83,44 @@ def _norm_posix(f: str | Path, repo_root: Path) -> str:
     except ValueError:
         pass
     return p.as_posix()
+
+
+def _load_graph_rules(root: Path) -> tuple[Callable, Callable, Callable] | None:
+    """取判据真源 (parse_algo_flow, validate_graph, algo_flow_dead_block_spans)。
+
+    判据一律不在门禁内重写第二份：解析/图规则真源在 scripts/governance/_shared，
+    几何规则真源在 extractor。找不到落点返回 None=基础设施故障降级。
+    网关进程未必已把 scripts/governance 放进 sys.path——不补 bootstrap 判据会静默
+    fail-open（与 import_integrity_gate 同源套路）。
+    """
+    import sys
+
+    def _try():
+        from _shared.algo_flow_validate_marker import validate_graph  # noqa: PLC0415
+        from _shared.code_algorithm_extractor import (  # noqa: PLC0415
+            algo_flow_dead_block_spans,
+            parse_algo_flow,
+        )
+
+        return parse_algo_flow, validate_graph, algo_flow_dead_block_spans
+
+    try:
+        return _try()
+    except ImportError:
+        pass
+    cands = (
+        root / "scripts" / "governance",
+        Path(__file__).resolve().parents[4] / "scripts" / "governance",
+    )
+    gov = next((c for c in cands if (c / "_shared" / "code_algorithm_extractor.py").is_file()), None)
+    if gov is None:
+        return None
+    if str(gov) not in sys.path:
+        sys.path.insert(0, str(gov))
+    try:
+        return _try()
+    except ImportError:
+        return None
 
 
 def check_algo_flow_links(
@@ -121,6 +167,11 @@ def check_algo_flow_links(
         logger.warning("ALGO-FLOW-LINK fail-open: yaml 解析器加载失败", exc_info=True)
         return False, ""
 
+    # 判据一次加载复用（sys.modules 已缓存，但每文件两轮 import 查找纯属浪费）
+    rules = _load_graph_rules(root)
+    if rules is None:
+        logger.warning("ALGO-FLOW-LINK 判据降级：scripts/governance/_shared 不可达，仅结构校验")
+
     def _validate_block(content: str) -> tuple[bool, str]:
         """yaml 文本 → (ok, why)：可解析 + algo_flow 块结构完整（+extractor 全解析当可用）。"""
         try:
@@ -134,54 +185,28 @@ def check_algo_flow_links(
             return False, "algo_flow 块缺起/收标记"
         if "# - id:" not in block:
             return False, "algo_flow 块无节点行"
+        if rules is None:
+            return True, ""  # extractor 不在 sys.path——结构校验兜底（判据不重写第二份）
+        parse_algo_flow, validate_graph = rules[0], rules[1]
         try:
-            from _shared.code_algorithm_extractor import parse_algo_flow  # noqa: PLC0415
-
-            if parse_algo_flow(block) is None:
-                return False, "parse_algo_flow 无节点"
-        except ImportError:
-            pass  # extractor 不在 sys.path——结构校验兜底
+            data = parse_algo_flow(block)
         except Exception as e:  # noqa: BLE001
             return False, f"parse_algo_flow 异常: {type(e).__name__}"
+        if data is None:
+            return False, "parse_algo_flow 无节点"
+        problems = validate_graph(data)
+        if problems:
+            return False, "推导图不可达：" + "；".join(problems[:4])
         return True, ""
 
     failures: list[str] = []
 
     def _dead_block_lines(content: str) -> list[int]:
-        """docstring 外的 ALGO_FLOW 块起行（1 基）；extractor 不可用=基础设施故障放行。
-
-        网关进程未必已把 scripts/governance 放进 sys.path——不补 bootstrap 本判据会
-        静默 fail-open（与 import_integrity_gate 同源套路）。
-        """
-        import sys
-
-        mod = None
-        try:
-            from _shared.code_algorithm_extractor import algo_flow_dead_block_spans as _f  # noqa: PLC0415
-
-            mod = _f
-        except ImportError:
-            # 几何判据是纯字符串函数，不依赖目标仓——落点找不到时退回本门所属检出
-            cands = (
-                root / "scripts" / "governance",
-                Path(__file__).resolve().parents[4] / "scripts" / "governance",
-            )
-            gov = next((c for c in cands if (c / "_shared" / "code_algorithm_extractor.py").is_file()), None)
-            if gov is None:
-                return []
-            if str(gov) not in sys.path:
-                sys.path.insert(0, str(gov))
-            try:
-                from _shared.code_algorithm_extractor import algo_flow_dead_block_spans as _f  # noqa: PLC0415
-
-                mod = _f
-            except ImportError:
-                return []
-        except Exception as e:  # noqa: BLE001
-            logger.warning("ALGO-FLOW-LINK 双真源检出异常: %s", e)
+        """docstring 外的 ALGO_FLOW 块起行（1 基）；判据不可用=基础设施故障放行。"""
+        if rules is None:
             return []
         try:
-            return [s + 1 for s, _e, _c in mod(content)]
+            return [s + 1 for s, _e, _c in rules[2](content)]
         except Exception as e:  # noqa: BLE001
             logger.warning("ALGO-FLOW-LINK 双真源检出异常: %s", e)
             return []
