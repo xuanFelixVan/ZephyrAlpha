@@ -24,32 +24,68 @@ algo_flow: |
     #   name: volume 参数
     #   fields: 参数 volume，类型注解 pd.Series
     #   code: wyckoff_engine.py 顶层公共函数形参（AST 提取）
+    # - id: I5
+    #   name: params 参数
+    #   fields: 参数 params，类型注解 WyckoffParams（frozen dataclass，真源 DEFAULT_WYCKOFF_PARAMS）
+    #   code: wyckoff_engine.py L84-L141（WYF-3 前为散落的魔数常量，现收敛单真源）
     # 层: 算法
     # - id: A1
     #   name_zh: ① detect_wyckoff_events
     #   name_en: detect_wyckoff_events
     #   intro: 识别 Wyckoff 6 阶段事件点，返回 DataFrame[ps,sc,ar,st,spring,test]（0/…
-    #   desc: 识别 Wyckoff 6 阶段事件点，返回 DataFrame[ps,sc,ar,st,spring,test]（0/1 flag）。 所有事件标记用 rolling + shi…；源码 L84-L168
-    #   inputs: close high low volume pct_change vol_z window
+    #   desc: 识别 Wyckoff 6 阶段事件点，返回 DataFrame[ps,sc,ar,st,spring,test]（0/1 flag）。 所有事件标记用 rolling + shi…；源码 L228-L317
+    #   inputs: close high low volume pct_change vol_z params
     #   outputs: pd.DataFrame
     # - id: A2
     #   name_zh: ② wyckoff_score
     #   name_en: wyckoff_score
     #   intro: Wyckoff 吸筹评分 → 0-100（累加已出现阶段分数，cap 100）。
-    #   desc: Wyckoff 吸筹评分 → 0-100（累加已出现阶段分数，cap 100）。 每个阶段一旦出现，后续日期都算"已发生"（cummax 传播），加权累加。 映射（对齐 S2 c…；源码 L171-L205
-    #   inputs: close high low volume pct_change vol_z window
+    #   desc: 组合入口=detect_wyckoff_events + wyckoff_score_from_events。 每个阶段一旦出现，后续日期都算"已发生"（cummax 传播），
+    #     加权累加。映射（对齐 S2 c…）；WYF-3 证伪置为 falsified 时本函数显式返回恒 0 并一次性 WARNING
+    #     （禁静默零值），源码 L360-L397
+    #   inputs: close high low volume pct_change vol_z params
     #   outputs: pd.Series
+    # - id: A3
+    #   name_zh: ③ wyckoff_stage_occurrence
+    #   name_en: wyckoff_stage_occurrence
+    #   intro: 事件表 → 六阶段 cummax 发生态列（供面板与 walk-forward 复用，禁双实现漂移）。
+    #   desc: 与评分共用同一传播语义，保证"检出日"与"计分层"两处口径同源可核对；源码 L320-L336
+    #   inputs: A1 产物
+    #   outputs: pd.DataFrame
+    # - id: A4
+    #   name_zh: ④ wyckoff_score_from_events
+    #   name_en: wyckoff_score_from_events
+    #   intro: 已检事件表 → 0-100 评分（纯计算，脱离行情输入，供 walk-forward 逐候选复用）。
+    #   desc: WYF-3 阈值重校要求"检一次、评多组权重"，故把评分侧独立成公共函数——避免校准器
+    #     重写一遍传播与加权逻辑造成双真源；证伪态同样恒 0 + 披露；源码 L338-L358
+    #   inputs: A1 产物 params
+    #   outputs: pd.Series
+    # - id: A5
+    #   name_zh: ⑤ wyckoff_dimension_status
+    #   name_en: wyckoff_dimension_status
+    #   intro: 维度可用性披露快照（status/reason/evidence/recheck_when/ruling），只读语义。
+    #   desc: WYF-3 结论=falsified（walk-forward 命中率劣于基线 17.7pp、0/5 折为正、合并 t=-0.10、
+    #     WFE=-1.25；latch_dichotomy 证明恒零与误爆不可同时避免=判据问题），消费方据此显式区分
+    #     "该维零分"与"该维未计算"；生产路径不改状态，_set_dimension_status 仅校准/测试通道；源码 L200-L226
+    #   inputs:
+    #   outputs: dict
     # 层: 输出
     # - id: O1
     #   name_zh: pd.DataFrame
     #   name_en: pd.DataFrame
     #   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
-    #   downstream: MOD-REGIME-002(OverlaySignalsConstructor消费s2_wyckoff_score→S2 confirm)
+    #   downstream: MOD-REGIME-002(OverlaySignalsConstructor消费s2_wyckoff_score→S2 confirm)；
+    #     zephyr.regime.validation.wyckoff_walkforward（WYF-3 逐候选复用）
     # - id: O2
     #   name_zh: pd.Series
     #   name_en: pd.Series
     #   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
     #   downstream: MOD-REGIME-002(OverlaySignalsConstructor消费s2_wyckoff_score→S2 confirm)
+    # - id: O3
+    #   name_zh: dict
+    #   name_en: dict
+    #   intro: 维度证伪披露快照（消费方与面板据此标注"恒 0=已证伪"而非"无信号"）
+    #   downstream: 面板/报告/审计读取侧
     # [/ALGO_FLOW]
     #
     # 边:
@@ -57,5 +93,15 @@ algo_flow: |
     # I2 --> A1
     # I3 --> A1
     # I4 --> A1
+    # I5 --> A1
+    # I5 --> A4
     # A1 --> A2
-    # A2 --> O1
+    # A1 --> A3
+    # A1 --> A4
+    # A4 --> A2
+    # A5 --> A2
+    # A1 --> O1
+    # A3 --> O1
+    # A2 --> O2
+    # A4 --> O2
+    # A5 --> O3

@@ -31,9 +31,28 @@
 from __future__ import annotations
 
 import pandas as pd
+import pytest
 from typing import Final
 
+from zephyr.regime.features import wyckoff_engine as we
 from zephyr.regime.features.wyckoff_engine import detect_wyckoff_events, wyckoff_score
+
+
+@pytest.fixture(autouse=True)
+def _dimension_enabled():
+    """本文件检验六阶段判据与算分**算术**，须在出口未被证伪闸门关闭时进行。
+
+    2026-09-16 WYF-3 出厂态 = `_DIMENSION_STATUS["status"] == "falsified"`，此时
+    `wyckoff_score` **显式恒 0**（禁静默恒零的披露形态）。若不在每个用例前临时
+    切回 enabled，本文件所有评分断言都会退化成"0 与 0 相比"的空断言。
+    恒 0 出口自身的契约（一次性告警、事件层仍可用、出厂态护栏）由
+    tests/regime/validation/test_wyckoff_walkforward.py 覆盖。
+    """
+    saved = we.wyckoff_dimension_status()
+    we._set_dimension_status("enabled")
+    yield
+    we._DIMENSION_STATUS.clear()
+    we._DIMENSION_STATUS.update(saved)
 
 # ---------------------------------------------------------------------------
 # 合成 OHLCV 场景构造
