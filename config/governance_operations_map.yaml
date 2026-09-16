@@ -4,15 +4,15 @@ name_zh: 治理运行地图
 ttl: permanent
 effective_from: '2026-09-15'
 generator: scripts/governance/generate_governance_map.py
-generated_at: '2026-09-16T16:32:36.700286+00:00'
+generated_at: '2026-09-16T23:41:42.626110+00:00'
 ssot_note_zh: 骨架机生(宪法 §9.5):families 层由生成器全量重建,禁手工编辑;pipeline/out_of_scope_refs/effective_from 为人工语义层,生成器保留(effective_from
   首次落定 '2026-09-15',防重跑漂移)。模块明细以稳定标识符引用,禁复制条目内容(TDM INV-1 同款纪律)。
 counts:
-  total_modules: 414
-  wired: 242
+  total_modules: 416
+  wired: 244
   wired_dynamic: 6
-  wired_by_header: 70
-  suspect_orphans: 96
+  wired_by_header: 71
+  suspect_orphans: 95
 out_of_scope_refs:
 - name_zh: 提交门禁体系
   ref: docs/01_policies_and_standards/_registry/catalogs/commit_gate_registry.yaml
@@ -143,6 +143,12 @@ families:
     path: scripts/governance/d11_compliance/verify_schema_health.py
     domain: D_GOV_SCRIPTS
     maturity: production
+    family: L1_monitor
+    wiring: wired_by_header
+  - module: scripts.governance.generators.generate_skeleton_health
+    path: scripts/governance/generators/generate_skeleton_health.py
+    domain: D_GOV_SCRIPTS
+    maturity: testing
     family: L1_monitor
     wiring: wired_by_header
   - module: scripts.governance.git_health_smoke
@@ -611,6 +617,12 @@ families:
     path: src/zephyr/infrastructure/system_telemetry/logs/structured_sink.py
     domain: D_INFRA_RUNTIME
     maturity: production
+    family: L1_monitor
+    wiring: wired
+  - module: zephyr.infrastructure.system_telemetry.measure_calibration
+    path: src/zephyr/infrastructure/system_telemetry/measure_calibration.py
+    domain: D_INFRA_RUNTIME
+    maturity: testing
     family: L1_monitor
     wiring: wired
   - module: zephyr.infrastructure.system_telemetry.metrics
@@ -1352,7 +1364,7 @@ families:
     domain: D_ORCHESTRATOR
     maturity: production
     family: L2_resource
-    wiring: suspect_orphan
+    wiring: wired
   - module: zephyr.pf_alloc.core.risk_budget_allocator
     path: src/zephyr/pf_alloc/core/risk_budget_allocator.py
     domain: D_PF_ALLOC
