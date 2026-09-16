@@ -43,44 +43,7 @@ Usage::
     from zephyr.gov_enforcement.commit_gates.battle_map_alignment_gate import make_battle_map_alignment_gate
     registry.register(make_battle_map_alignment_gate())
 
-# [ALGO_FLOW]
-# 层: 输入
-# - id: I1
-#   name: staged 文件列表
-#   fields: files（gateway 传入）
-#   code: _check 按 _TRIGGER_SUFFIXES 匹配触发
-# - id: I2
-#   name: battle_map 三表 + 翻译真源 + policy
-#   fields: PostgreSQL battle_map_steps/anchors/edges + module_translation_registry.yaml + battle_map_domain_policy.yaml
-#   code: align_battle_map.run_alignment(write_report=False)
-# 层: 算法
-# - id: A1
-#   name_zh: ① 纯判定
-#   name_en: evaluate_battle_map_report
-#   intro: ghost/orphan_steps/missing_narratives >0 → 硬；其余 → 软
-#   desc: 纯函数（report 进、判定出），可脱离 PG 单测
-#   inputs: I2
-#   outputs: (hard_list, soft_list)
-# - id: A2
-#   name_zh: ② 阻塞语义封装
-#   name_en: _check 闭包
-#   intro: hard_list 非空 → 阻断；run_alignment 异常 → fail-open
-#   desc: 触发判定在前（未触发=秒回 True）
-#   inputs: A1 I1
-#   outputs: (passed, detail)
-# 层: 输出
-# - id: O1
-#   name_zh: GateSpec
-#   name_en: GateSpec(gate_id="GATE-BATTLE-MAP-ALIGNMENT", priority=833)
-#   intro: 文件触发型混合门禁（三类硬+四类软）
-#   downstream: git_commit_gateway.GitCommitGateway.__init__
-# [/ALGO_FLOW]
-#
-# 边:
-# I1 --> A2
-# I2 --> A1
-# A1 --> A2
-# A2 --> O1
+# [ALGO_FLOW] external: docs/03_modules/_domain_gov_enforcement/algo_flow/commit_gates/b/battle_map_alignment_gate.yaml
 """
 
 from __future__ import annotations

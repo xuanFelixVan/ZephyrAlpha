@@ -75,52 +75,7 @@ Usage::
     from zephyr.gov_enforcement.commit_gates.capability_lookup_required_gate import make_capability_lookup_required_gate
     registry.register(make_capability_lookup_required_gate())
 
-# [ALGO_FLOW]
-# 层: 输入
-# - id: I1
-#   name: session_id 参数
-#   fields: 参数 session_id（无注解）
-#   code: capability_lookup_required_gate.py 顶层公共函数形参（AST 提取）
-# 层: 算法
-# - id: A1
-#   name_zh: ① make_capability_lookup_required_gate
-#   name_en: make_capability_lookup_required_gate
-#   intro: 构造 Capability Lookup 强制门禁 GateSpec。
-#   desc: 构造 Capability Lookup 强制门禁 GateSpec。 Returns: GateSpec(gate_id="CAPABILITY-LOOKUP-REQUIRED…；源码 L360-L396
-#   inputs: 无参数
-#   outputs: GateSpec
-# - id: A2
-#   name_zh: ② get_audit_log_path
-#   name_en: get_audit_log_path
-#   intro: 公共接口：get_audit_log_path（Stage 4 公共化）。
-#   desc: 公共接口：get_audit_log_path（Stage 4 公共化）。；源码 L400-L402
-#   inputs: session_id
-#   outputs: Path
-# - id: A3
-#   name_zh: ③ audit_log_dir_exists
-#   name_en: audit_log_dir_exists
-#   intro: 公共接口：audit_log_dir_exists（Stage 4 公共化）。
-#   desc: 公共接口：audit_log_dir_exists（Stage 4 公共化）。；源码 L406-L408
-#   inputs: 无参数
-#   outputs: bool
-# 层: 输出
-# - id: O1
-#   name_zh: GateSpec
-#   name_en: GateSpec
-#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
-#   downstream: zephyr.gov_enforcement.rule_bridge.git_commit_gateway.GitCommitGateway.__init__
-# - id: O2
-#   name_zh: Path
-#   name_en: Path
-#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
-#   downstream: zephyr.gov_enforcement.rule_bridge.git_commit_gateway.GitCommitGateway.__init__
-# [/ALGO_FLOW]
-#
-# 边:
-# I1 --> A1
-# A1 --> A2
-# A2 --> A3
-# A3 --> O1
+# [ALGO_FLOW] external: docs/03_modules/_domain_gov_enforcement/algo_flow/commit_gates/c/capability_lookup_required_gate.yaml
 """
 
 from __future__ import annotations

@@ -37,31 +37,7 @@ ReplacingMergeTree(col_name) 后检查 col_name 是否在 blocked 集合中。
 - 检出违规 → fail-closed（passed=False，阻断 commit）
 - 无 staged 文件 → 放行
 
-# [ALGO_FLOW]
-# 层: 输入
-# - id: I1
-#   name: 模块内部数据
-#   fields: 无公共形参/无再导出（AST 事实）
-#   code: ch_version_col_gate.py
-# 层: 算法
-# - id: A1
-#   name_zh: ① make_ch_version_col_gate
-#   name_en: make_ch_version_col_gate
-#   intro: 构造 CH version 列语义误用阻断 GateSpec（硬阻断型）。
-#   desc: 构造 CH version 列语义误用阻断 GateSpec（硬阻断型）。 Returns: GateSpec(gate_id="CH-VERSION-COL", priorit…；源码 L152-L177
-#   inputs: 无参数
-#   outputs: GateSpec
-# 层: 输出
-# - id: O1
-#   name_zh: GateSpec
-#   name_en: GateSpec
-#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
-#   downstream: zephyr.gov_enforcement.rule_bridge.git_commit_gateway.GitCommitGateway.__init__
-# [/ALGO_FLOW]
-#
-# 边:
-# I1 --> A1
-# A1 --> O1
+# [ALGO_FLOW] external: docs/03_modules/_domain_gov_enforcement/algo_flow/commit_gates/c/ch_version_col_gate.yaml
 """
 
 from __future__ import annotations

@@ -41,39 +41,7 @@ Usage::
 
     registry.register(make_frontend_map_gate())
 
-# [ALGO_FLOW]
-# 层: 输入
-# - id: I1
-#   name: frontend_map + manifest 真源
-#   fields: web/frontend_map.yaml（302 功能点）+ features/manifest.yaml（11 模块）
-#   code: check_frontend_map.run_checks()
-# 层: 算法
-# - id: A1
-#   name_zh: ① 动态加载校验器
-#   name_en: sys.path insert generators 目录 + import run_checks
-#   intro: 校验逻辑单一真源在 scripts 层，gate 复用不复制
-#   desc: 先例=align_all.py 同目录动态 import；import 失败=fail-closed（registry 异常降级）
-#   inputs: I1
-#   outputs: 三规则结果 (fails, warns, total)
-# - id: A2
-#   name_zh: ② 阻塞语义封装
-#   name_en: _check 闭包
-#   intro: fails>0 → passed=False 阻断（明细逐条列出）；warns 只展示不阻断
-#   desc: R0 id 重复 / R1 backend_ref 悬空 → 阻断；R2 manifest 双向 / R3 file 失联 → warn
-#   inputs: A1
-#   outputs: (passed, detail)
-# 层: 输出
-# - id: O1
-#   name_zh: GateSpec
-#   name_en: GateSpec(gate_id="FRONTEND-MAP", priority=137)
-#   intro: 硬阻断型确定性门禁（六图对齐 commit 链闭环）
-#   downstream: zephyr.gov_enforcement.rule_bridge.git_commit_gateway.GitCommitGateway.__init__
-# [/ALGO_FLOW]
-#
-# 边:
-# I1 --> A1
-# A1 --> A2
-# A2 --> O1
+# [ALGO_FLOW] external: docs/03_modules/_domain_gov_enforcement/algo_flow/commit_gates/f/frontend_map_gate.yaml
 """
 
 from __future__ import annotations

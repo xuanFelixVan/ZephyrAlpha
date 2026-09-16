@@ -1,0 +1,57 @@
+# ALGO_FLOW 外部真源——frontend_truth_source_gate（_domain_gov_enforcement 域，真源 src/zephyr/gov_enforcement/commit_gates/frontend_truth_source_gate.py）
+# 2026-09-15 P2-1 契约头减负批量出仓：docstring 内联块逐字节副本，extractor 经
+# external 锚加载走同一 parse_algo_flow 管线；算法公共面变化时同步更新本块。
+doc_type: architecture_view
+ttl: permanent
+module: src.zephyr.gov_enforcement.commit_gates.frontend_truth_source_gate
+source_of_truth: src/zephyr/gov_enforcement/commit_gates/frontend_truth_source_gate.py
+algo_flow: |
+    # [ALGO_FLOW]
+    # 层: 输入
+    # - id: I1
+    #   name: staged .js 文件 diff
+    #   fields: name-only 文件列表 + per-file unified=0 diff + git show :path 全文
+    #   code: _collect_eligible_js_files / _parse_diff_with_line_numbers / _read_staged_file
+    # 层: 算法
+    # - id: A1
+    #   name_zh: ① 目录契约过滤
+    #   name_en: _collect_eligible_js_files
+    #   intro: web/ 前缀 .js 过滤 + 基建/宿主/纯UI 豁免
+    #   desc: TRAE-086 §folder_assignment 七类目录边界：core/features 参检，services/api.js、loader、event_bus、app*、theme、widgets/、vendor/、mocks/ 豁免
+    #   inputs: I1
+    #   outputs: 参检文件列表
+    # - id: A2
+    #   name_zh: ② 内联数据数组启发式
+    #   name_en: _scan_inline_data_rows
+    #   intro: added 行连续 ≥6 对象字面量行 + DEMO/MOCK/FAKE/SAMPLE 数组声明命中
+    #   desc: 只看 added 行（不追溯存量）；命中记 (起始行, 行数)
+    #   inputs: 参检文件的 added 行
+    #   outputs: findings 明细
+    # - id: A3
+    #   name_zh: ③ 零后端接线检测
+    #   name_en: _scan_zero_wiring
+    #   intro: 文件全文无 ZK.api/fetch( 引用 → warn
+    #   desc: 文件级属性检查（新文件零接线=自建数据世界）
+    #   inputs: git show :path 全文
+    #   outputs: findings 明细
+    # - id: A4
+    #   name_zh: ④ warn 输出 + 审计落盘
+    #   name_en: _audit_findings
+    #   intro: findings 追加 .runtime/gate_audit/frontend_truth_source.jsonl
+    #   desc: _HARD_BLOCK=False 时 passed=True + warn 明细；True 时 fail-closed 阻断（一行升级预留）
+    #   inputs: A2/A3 findings
+    #   outputs: (passed, detail)
+    # 层: 输出
+    # - id: O1
+    #   name_zh: GateSpec
+    #   name_en: GateSpec(gate_id="FRONTEND-TRUTH-SOURCE", priority=136)
+    #   intro: warn 型门禁（升级预留 _HARD_BLOCK）
+    #   downstream: zephyr.gov_enforcement.rule_bridge.git_commit_gateway.GitCommitGateway.__init__
+    # [/ALGO_FLOW]
+    #
+    # 边:
+    # I1 --> A1
+    # A1 --> A2
+    # A1 --> A3
+    # A2 --> A4
+    # A3 --> A4

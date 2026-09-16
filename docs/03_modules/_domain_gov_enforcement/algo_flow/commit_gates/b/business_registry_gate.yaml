@@ -1,0 +1,47 @@
+# ALGO_FLOW 外部真源——business_registry_gate（_domain_gov_enforcement 域，真源 src/zephyr/gov_enforcement/commit_gates/business_registry_gate.py）
+# 2026-09-15 P2-1 契约头减负批量出仓：docstring 内联块逐字节副本，extractor 经
+# external 锚加载走同一 parse_algo_flow 管线；算法公共面变化时同步更新本块。
+doc_type: architecture_view
+ttl: permanent
+module: src.zephyr.gov_enforcement.commit_gates.business_registry_gate
+source_of_truth: src/zephyr/gov_enforcement/commit_gates/business_registry_gate.py
+algo_flow: |
+    # [ALGO_FLOW]
+    # 层: 输入
+    # - id: I1
+    #   name: staged 文件列表
+    #   fields: files（gateway 传入）
+    #   code: _check 按 _REGISTRY_SPECS 前缀匹配触发
+    # - id: I2
+    #   name: 命中的库 YAML + depgraph
+    #   fields: docs/01_policies_and_standards/_registry/catalogs/<registry>.yaml；depgraph nodes
+    #   code: _validate_registry_file + _module_exists_in_depgraph
+    # 层: 算法
+    # - id: A1
+    #   name_zh: ① 整库校验
+    #   name_en: validate_registry_file
+    #   intro: id 唯一 + module_id 非空且 MOD-* 格式（确定性，硬）
+    #   desc: 纯函数可单测；YAML 异常向上抛（gate fail-closed）
+    #   inputs: I2
+    #   outputs: list[str] fails
+    # - id: A2
+    #   name_zh: ② depgraph 存在性
+    #   name_en: _module_exists_in_depgraph
+    #   intro: PG 只读查询 module_id 是否存在（fail-open）
+    #   desc: DB 异常→跳过子检查并 warn（不阻断）
+    #   inputs: I2
+    #   outputs: set[str] 缺失 module_id
+    # 层: 输出
+    # - id: O1
+    #   name_zh: GateSpec
+    #   name_en: GateSpec(gate_id="BUSINESS-REGISTRY", priority=139)
+    #   intro: 硬阻断型确定性门禁（业务库入库必须挂 depgraph 锚点）
+    #   downstream: git_commit_gateway.GitCommitGateway.__init__
+    # [/ALGO_FLOW]
+    #
+    # 边:
+    # I1 --> A1
+    # I2 --> A1
+    # I2 --> A2
+    # A1 --> O1
+    # A2 --> O1

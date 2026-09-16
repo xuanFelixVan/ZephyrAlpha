@@ -39,31 +39,7 @@ Usage::
     from zephyr.gov_enforcement.commit_gates.decision_map_gate import make_decision_map_gate
     registry.register(make_decision_map_gate())
 
-# [ALGO_FLOW]
-# 层: 输入
-# - id: I1
-#   name: 地图真源 + 三注册表 + 代码策略 id
-#   fields: config/trading_decision_map.yaml + catalogs 三库 + pf_core AST 字面量
-#   code: check_decision_map.run_checks()
-# 层: 算法
-# - id: A1
-#   name_zh: ① 动态加载校验器并执行
-#   name_en: _check 闭包
-#   intro: sys.path 动态 import check_decision_map（先例=FRONTEND-MAP/align_all）
-#   desc: fails>0 → 阻断（明细逐条）；warns 只展示；异常=fail-closed
-#   inputs: I1
-#   outputs: (passed, detail)
-# 层: 输出
-# - id: O1
-#   name_zh: GateSpec
-#   name_en: GateSpec(gate_id="DECISION-MAP", priority=138)
-#   intro: 硬阻断型确定性门禁（七图对齐 commit 链闭环之一）
-#   downstream: git_commit_gateway.GitCommitGateway.__init__
-# [/ALGO_FLOW]
-#
-# 边:
-# I1 --> A1
-# A1 --> O1
+# [ALGO_FLOW] external: docs/03_modules/_domain_gov_enforcement/algo_flow/commit_gates/d/decision_map_gate.yaml
 """
 
 from __future__ import annotations

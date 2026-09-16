@@ -28,31 +28,7 @@ frontmatter + 非空 doc_type，说明本应放正式目录却被塞进豁免区
 治本动机：原 reconciler 是 post-commit 非阻断 warn，仅记录报告。本 gate 在 commit()
 内嵌等效校验，阻断新引入的豁免区 frontmatter 文件。
 
-# [ALGO_FLOW]
-# 层: 输入
-# - id: I1
-#   name: 模块内部数据
-#   fields: 无公共形参/无再导出（AST 事实）
-#   code: exempt_zone_frontmatter_gate.py
-# 层: 算法
-# - id: A1
-#   name_zh: ① make_exempt_zone_frontmatter_gate
-#   name_en: make_exempt_zone_frontmatter_gate
-#   intro: 构造豁免区 frontmatter 门禁 GateSpec（fail-closed 阻断型，含历史违规豁免）。
-#   desc: 构造豁免区 frontmatter 门禁 GateSpec（fail-closed 阻断型，含历史违规豁免）。 Returns: GateSpec(gate_id="EXEMPT…；源码 L109-L165
-#   inputs: 无参数
-#   outputs: GateSpec
-# 层: 输出
-# - id: O1
-#   name_zh: GateSpec
-#   name_en: GateSpec
-#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
-#   downstream: zephyr.gov_enforcement.rule_bridge.git_commit_gateway.GitCommitGateway.__init__
-# [/ALGO_FLOW]
-#
-# 边:
-# I1 --> A1
-# A1 --> O1
+# [ALGO_FLOW] external: docs/03_modules/_domain_gov_enforcement/algo_flow/commit_gates/e/exempt_zone_frontmatter_gate.yaml
 """
 
 from __future__ import annotations

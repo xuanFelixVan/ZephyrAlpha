@@ -1,0 +1,33 @@
+# ALGO_FLOW 外部真源——empty_handler_gate（_domain_gov_enforcement 域，真源 src/zephyr/gov_enforcement/commit_gates/empty_handler_gate.py）
+# 2026-09-15 P2-1 契约头减负批量出仓：docstring 内联块逐字节副本，extractor 经
+# external 锚加载走同一 parse_algo_flow 管线；算法公共面变化时同步更新本块。
+doc_type: architecture_view
+ttl: permanent
+module: src.zephyr.gov_enforcement.commit_gates.empty_handler_gate
+source_of_truth: src/zephyr/gov_enforcement/commit_gates/empty_handler_gate.py
+algo_flow: |
+    # [ALGO_FLOW]
+    # 层: 输入
+    # - id: I1
+    #   name: 模块内部数据
+    #   fields: 无公共形参/无再导出（AST 事实）
+    #   code: empty_handler_gate.py
+    # 层: 算法
+    # - id: A1
+    #   name_zh: ① make_empty_handler_gate
+    #   name_en: make_empty_handler_gate
+    #   intro: 构造空事件 handler 函数阻断门禁 GateSpec（硬阻断型）。
+    #   desc: 构造空事件 handler 函数阻断门禁 GateSpec（硬阻断型）。 Returns: GateSpec(gate_id="EMPTY-HANDLER", priority=…；源码 L272-L312
+    #   inputs: 无参数
+    #   outputs: GateSpec
+    # 层: 输出
+    # - id: O1
+    #   name_zh: GateSpec
+    #   name_en: GateSpec
+    #   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+    #   downstream: zephyr.gov_enforcement.rule_bridge.git_commit_gateway.GitCommitGateway.__init__
+    # [/ALGO_FLOW]
+    #
+    # 边:
+    # I1 --> A1
+    # A1 --> O1
