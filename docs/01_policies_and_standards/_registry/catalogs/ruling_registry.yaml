@@ -3318,3 +3318,41 @@ entries:
   related_rulings:
     - '裁定#269'
   superseded_by: ''
+- ruling_id: '裁定#293'
+  title: 'S-OWNER-001「震荡期 300ETF 波段+底仓T」E4 考试 OOS 结果定性=不及格（做T 净贡献线未达），卡归档留案底、OOS single-pass 已消费、禁复试图救'
+  date: '2026-09-17'
+  category: '策略工厂'
+  status: 'active'
+  summary: >-
+    E4 考试执行代理（st-sowner001-20260916，Owner 插队令授权）对策略卡
+    2026-09-16-s-owner-001-300etf-band-t.md 完成预注册考试并出证：IS 2012-05-28..2023-12-31
+    冻结网格 432 组全记录（独立结果 46 种），IS Sharpe 全部为负（max=-0.1291，>=1.2 组数=0）、
+    做T 净贡献全部为负——IS 阶段已无可选出正 Sharpe 配置；OOS 2024-01-01..2026-09-15 单次
+    （643 交易日）三臂+基准：A 全策略 Sharpe 1.6804/MaxDD -3.94%/年换手 2.13x/做T 净
+    -190.30 元（11 回转），B 无门 1.7065（+6,342 元/23 回转），C 无做T 1.6911，基准买入持有
+    0.6337/MaxDD -16.26%。冻结验收线四条 AND（Sharpe>=1.2 ✅/MaxDD<=15% ✅/做T 净贡献>0 ❌
+    /换手<=60x ✅）→ verdict=FAIL。裁定三要点：
+    ①定性=不及格成立：拖累臂为做T 臂（净贡献 -190.30 元<0；成本敏感性解析显示毛边际
+    ≈2.7bp/边<全成本 ≈3.3bp/边，对成本无鲁棒性），且门增量（A−C）在 OOS 为零附近负值；
+    ②A 臂 OOS Sharpe 1.68 不作为技能证据采信（平均敞口 9.07%、仅 9 笔波段交易、IS 全负的
+    参数族在牛市 OOS 段的少数 beta/运气暴露，MaxDD 优势主要来自长期空仓）；
+    ③处置=该卡不进 E7 弹药包，随出证报告归档留案底；OOS single-pass 已消费，后续任何会话
+    对本卡换参数重跑 OOS 均视为违反预注册纪律的第二真源作弊。诚实披露：t_max_trips 网格维
+    为死维（每日仅一次 10:30 决策点）与"计数值<0"落地为 countdown c∈[8,12] 均已在冻结文档
+    预注册或在出证报告偏差清单中列示。
+  evidence: >-
+    冻结文档 docs/_working/factory/strategy_cards/e4_freeze_s_owner_001_300etf_band_t.md
+    （commit b4c3c6f26d，先于任何跑数）；出证报告
+    docs/_working/factory/strategy_cards/e4_report_s_owner_001_300etf_band_t.md；
+    考试产物 data/backtest_artifacts/runs/S-OWNER-001-e4/（summary.json+is_grid_full.csv
+    432 组全量+oos_nav_curves.csv）；实现与测试
+    src/zephyr/strategy_factory/owner_band_t/（8 件）+tests/strategy_factory/（30 用例两轮 0 失败，
+    含未来函数反事实/PIT/做T 额度红蓝）；数据核查：kline_60min 为个股库无 000300 指数小时线、
+    kline_etf_60min OOS 段 2,575 根覆盖充足（报告 §1）。
+  affected_files:
+    - docs/_working/factory/strategy_cards/e4_report_s_owner_001_300etf_band_t.md
+    - data/backtest_artifacts/runs/S-OWNER-001-e4/summary.json
+    - src/zephyr/strategy_factory/owner_band_t/exam.py
+  related_arch: []
+  related_rulings: []
+  superseded_by: ''
