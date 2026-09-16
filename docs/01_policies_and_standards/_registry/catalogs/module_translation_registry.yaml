@@ -50035,6 +50035,13 @@ entries:
   desc_zh: "枚举 tick_data 竞价窗口密集日，仅对 auction_snapshot 空窗日 INSERT-only 回灌，防覆盖 miniqmt 原产"
   desc_en: ""
   plain_zh: "这个脚本是把过去漏掉的集合竞价数据补回来的工具。它会自己找出哪些天的数据够完整可以补、哪些天已经有数据不能碰，然后只往空白的日子里灌数，已经有的数一根毫毛都不动。6月到9月一共补了32天约16万行，一次性活儿干完就收工。"
+- module_path: scripts/backtest/promotion_combo_gate.py
+  domain_id: D_BACKTEST
+  name_zh: "转正组合门打分器"
+  name_en: "promotion combo gate"
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "给模拟盘里的策略打分：OOS 夏普够不够大、回撤够不够浅、成交笔数够不够多、DSR 是不是正的，四条全过才建议转正，缺证据就判继续观察，绝不冤枉也不放水，最后一页报告给 Owner 拍板"
 
 battle_map_steps:
 - step_id: BM-BUY-05
