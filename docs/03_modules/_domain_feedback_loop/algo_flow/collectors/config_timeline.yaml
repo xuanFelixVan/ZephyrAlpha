@@ -1,0 +1,28 @@
+# ALGO_FLOW 外部真源——config_timeline（_domain_feedback_loop 域，真源 src/zephyr/feedback_loop/collectors/config_timeline.py）
+# 2026-09-15 P2-1 契约头减负批量出仓：docstring 内联块逐字节副本，extractor 经
+# external 锚加载走同一 parse_algo_flow 管线；算法公共面变化时同步更新本块。
+doc_type: architecture_view
+ttl: permanent
+module: src.zephyr.feedback_loop.collectors.config_timeline
+source_of_truth: src/zephyr/feedback_loop/collectors/config_timeline.py
+algo_flow: |
+    # [ALGO_FLOW]
+    # 层: 输入
+    # - id: I1
+    #   name: 配置变更记录
+    #   fields: change dict（一次配置变更的描述）
+    #   code: ConfigTimeline.record
+    # 层: 算法
+    # - id: A1
+    #   name_zh: 变更追加留痕
+    #   name_en: change_append_recording
+    #   intro: 将变更 dict 追加到 changes 时间线列表，形成可关联异常的变更历史
+    #   code: ConfigTimeline.record
+    # 层: 输出
+    # - id: O1
+    #   name_zh: 配置变更时间线
+    #   name_en: config_change_timeline
+    #   intro: changes 列表——按到达顺序排列的变更历史
+    #   downstream: FLE 诊断方（变更-异常关联分析）
+    # [/ALGO_FLOW]
+    # 边: I1 --> A1 ; A1 --> O1

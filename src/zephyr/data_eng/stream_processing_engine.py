@@ -26,47 +26,7 @@ B5-07234（AUD-DRAFT-001-DIGEST P2 波 P2-W02，CAND-DATENG-007，B5）：事件
 件是通用事件时间窗口引擎，不重采样行情周期；引擎不拉取事件（事件流由
 调用方注入 ingest），聚合输出经注入 sink 回调，不直连存储。
 
-# [ALGO_FLOW]
-# 层: 输入
-# - id: I1
-#   name: allowed_lateness 参数
-#   fields: 参数 allowed_lateness（无注解）
-#   code: stream_processing_engine.py 顶层公共函数形参（AST 提取）
-# - id: I2
-#   name: sink 参数
-#   fields: 参数 sink（无注解）
-#   code: stream_processing_engine.py 顶层公共函数形参（AST 提取）
-# - id: I3
-#   name: side_output_sink 参数
-#   fields: 参数 side_output_sink（无注解）
-#   code: stream_processing_engine.py 顶层公共函数形参（AST 提取）
-# - id: I4
-#   name: backpressure_sink 参数
-#   fields: 参数 backpressure_sink（无注解）
-#   code: stream_processing_engine.py 顶层公共函数形参（AST 提取）
-# 层: 算法
-# - id: A1
-#   name_zh: ① StreamProcessingEngine
-#   name_en: StreamProcessingEngine
-#   intro: 单机事件时间窗口引擎（注册 + ingest + poll 触发 + flush 排空）。
-#   desc: 单机事件时间窗口引擎（注册 + ingest + poll 触发 + flush 排空）。；公共方法（定义序）: register_window, watermark, ingest, poll, flush, sta…
-#   inputs: allowed_lateness sink side_output_sink backpressure_sink max_queue
-#   outputs: 返回值
-#   （注：A1 之后另有 6 个公共定义未列入（含 6 个数据契约/异常/枚举声明类），见源码）
-# 层: 输出
-# - id: O1
-#   name_zh: 模块公共 API 面（7 定义）
-#   name_en: public defs
-#   intro: StreamProcessingEngine
-#   downstream: 运行时装配批（行情事件流接 kline_resampler 上游 / 聚合指标落指标sink / 背压接流控）
-# [/ALGO_FLOW]
-#
-# 边:
-# I1 --> A1
-# I2 --> A1
-# I3 --> A1
-# I4 --> A1
-# A1 --> O1
+# [ALGO_FLOW] external: docs/03_modules/_domain_data_eng/algo_flow/stream_processing_engine.yaml
 """
 
 from __future__ import annotations

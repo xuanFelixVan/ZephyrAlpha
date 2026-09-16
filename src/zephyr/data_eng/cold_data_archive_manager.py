@@ -28,47 +28,7 @@ hash/archived_at）、保留期清理裁决（保留期注册表 + 清理执行�
 入连接上自建自维护；物理清理由注入 purge_executor 执行，本件只做裁决
 与索引维护；tiered_storage（D_GOV_AUDIT）为分层存储语义件，零交集。
 
-# [ALGO_FLOW]
-# 层: 输入
-# - id: I1
-#   name: index_conn 参数
-#   fields: 参数 index_conn（无注解）
-#   code: cold_data_archive_manager.py 顶层公共函数形参（AST 提取）
-# - id: I2
-#   name: clock 参数
-#   fields: 参数 clock（无注解）
-#   code: cold_data_archive_manager.py 顶层公共函数形参（AST 提取）
-# - id: I3
-#   name: archiver 参数
-#   fields: 参数 archiver（无注解）
-#   code: cold_data_archive_manager.py 顶层公共函数形参（AST 提取）
-# - id: I4
-#   name: purge_executor 参数
-#   fields: 参数 purge_executor（无注解）
-#   code: cold_data_archive_manager.py 顶层公共函数形参（AST 提取）
-# 层: 算法
-# - id: A1
-#   name_zh: ① ColdDataArchiveManager
-#   name_en: ColdDataArchiveManager
-#   intro: 冷数据归档编排件（计划 + 索引 + 清理裁决 + 只读检索 + 周期计划）。
-#   desc: 冷数据归档编排件（计划 + 索引 + 清理裁决 + 只读检索 + 周期计划）。；公共方法（定义序）: plan_archive, run_archive, register_retention, plan_purge…
-#   inputs: index_conn clock archiver purge_executor alert_sink
-#   outputs: 返回值
-#   （注：A1 之后另有 6 个公共定义未列入（含 6 个数据契约/异常/枚举声明类），见源码）
-# 层: 输出
-# - id: O1
-#   name_zh: 模块公共 API 面（7 定义）
-#   name_en: public defs
-#   intro: ColdDataArchiveManager
-#   downstream: 运行时装配批（归档调度挂 auto_archive 周期计划 / 归档索引接 SQLite / 清理接存储执行器）
-# [/ALGO_FLOW]
-#
-# 边:
-# I1 --> A1
-# I2 --> A1
-# I3 --> A1
-# I4 --> A1
-# A1 --> O1
+# [ALGO_FLOW] external: docs/03_modules/_domain_data_eng/algo_flow/cold_data_archive_manager.yaml
 """
 
 from __future__ import annotations

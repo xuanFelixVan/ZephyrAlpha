@@ -1,0 +1,33 @@
+# ALGO_FLOW 外部真源——secondary_alert_channel（_domain_feedback_loop 域，真源 src/zephyr/feedback_loop/actors/secondary_alert_channel.py）
+# 2026-09-15 P2-1 契约头减负批量出仓：docstring 内联块逐字节副本，extractor 经
+# external 锚加载走同一 parse_algo_flow 管线；算法公共面变化时同步更新本块。
+doc_type: architecture_view
+ttl: permanent
+module: src.zephyr.feedback_loop.actors.secondary_alert_channel
+source_of_truth: src/zephyr/feedback_loop/actors/secondary_alert_channel.py
+algo_flow: |
+    # [ALGO_FLOW]
+    # 层: 输入
+    # - id: I1
+    #   name: 告警发送请求与通道心跳
+    #   fields: send_alert(message, severity)；heartbeat(channel) 心跳
+    #   code: SecondaryAlertChannel.send_alert / heartbeat
+    # 层: 算法
+    # - id: A1
+    #   name_zh: 通道健康判定
+    #   name_en: channel_health_check
+    #   intro: 超 3×heartbeat_interval 未心跳的通道标记为 DOWN
+    #   code: SecondaryAlertChannel.check_channels
+    # - id: A2
+    #   name_zh: 故障转移选路
+    #   name_en: channel_failover
+    #   intro: 主通道 DOWN 时按 channels 顺序切到首个 HEALTHY 通道并累计 failover_count
+    #   code: SecondaryAlertChannel.check_channels
+    # 层: 输出
+    # - id: O1
+    #   name_zh: 告警投递结果
+    #   name_en: alert_dispatch_result
+    #   intro: {"channel": 当前活跃通道, "message", "severity", "failover_count"} dict
+    #   downstream: 负责人通知终端（sms / email / push）
+    # [/ALGO_FLOW]
+    # 边: I1 --> A1 ; A1 --> A2 ; A2 --> O1

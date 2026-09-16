@@ -17,31 +17,7 @@
 
 """Action Selector — FLE 动作优先级选择与连败熔断退役。
 
-# [ALGO_FLOW]
-# 层: 输入
-# - id: I1
-#   name: 诊断结果与动作执行反馈
-#   fields: diagnosis；ActionRecord(action_type, success)
-#   code: ActionSelector.select_action / record_result
-# 层: 算法
-# - id: A1
-#   name_zh: 优先级顺序选动作
-#   name_en: priority_order_selection
-#   intro: 按 action_priority 顺序返回首个未退役 ActionType，全部退役则 None
-#   code: ActionSelector.select_action
-# - id: A2
-#   name_zh: 连败熔断退役
-#   name_en: consecutive_failure_retirement
-#   intro: 同动作连败 >=3 次则退役 7 天，到期自动恢复
-#   code: ActionSelector.record_result
-# 层: 输出
-# - id: O1
-#   name_zh: 选中动作与执行分发
-#   name_en: selected_action_dispatch
-#   intro: 选中的 ActionType；execute_action 委托 protocol_adapter 分发执行
-#   downstream: zephyr.feedback_loop.protocols.FeedbackProtocolAdapter.dispatch_action
-# [/ALGO_FLOW]
-# 边: I1 --> A1 ; A1 --> A2 ; A2 --> O1
+# [ALGO_FLOW] external: docs/03_modules/_domain_feedback_loop/algo_flow/actors/action_selector.yaml
 """
 
 import time

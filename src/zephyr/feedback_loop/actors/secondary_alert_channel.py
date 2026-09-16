@@ -26,31 +26,7 @@ Mitigation: Multi-channel fallback chain (primary -> secondary -> tertiary).
 Health-check each channel with heartbeat pings. Auto-failover when primary
 loses connectivity for >heartbeat_interval. Log all channel transitions.
 
-# [ALGO_FLOW]
-# 层: 输入
-# - id: I1
-#   name: 告警发送请求与通道心跳
-#   fields: send_alert(message, severity)；heartbeat(channel) 心跳
-#   code: SecondaryAlertChannel.send_alert / heartbeat
-# 层: 算法
-# - id: A1
-#   name_zh: 通道健康判定
-#   name_en: channel_health_check
-#   intro: 超 3×heartbeat_interval 未心跳的通道标记为 DOWN
-#   code: SecondaryAlertChannel.check_channels
-# - id: A2
-#   name_zh: 故障转移选路
-#   name_en: channel_failover
-#   intro: 主通道 DOWN 时按 channels 顺序切到首个 HEALTHY 通道并累计 failover_count
-#   code: SecondaryAlertChannel.check_channels
-# 层: 输出
-# - id: O1
-#   name_zh: 告警投递结果
-#   name_en: alert_dispatch_result
-#   intro: {"channel": 当前活跃通道, "message", "severity", "failover_count"} dict
-#   downstream: 负责人通知终端（sms / email / push）
-# [/ALGO_FLOW]
-# 边: I1 --> A1 ; A1 --> A2 ; A2 --> O1
+# [ALGO_FLOW] external: docs/03_modules/_domain_feedback_loop/algo_flow/actors/secondary_alert_channel.yaml
 """
 
 from __future__ import annotations

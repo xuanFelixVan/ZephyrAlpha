@@ -27,55 +27,7 @@ min_build_spec（AUD-DRAFT-001-DIGEST P0）：
   - 修复优先序：跨源仲裁 > 前值填充 > 剔除标记（能修不剔）
   - quality_flag 取值：ok / arbitrated / filled（剔除行出列，标记入 audit 与 quality_flags）
 
-# [ALGO_FLOW]
-# 层: 输入
-# - id: I1
-#   name: price_jump_pct 参数
-#   fields: 参数 price_jump_pct（无注解）
-#   code: cleaning_anomaly_engine.py 顶层公共函数形参（AST 提取）
-# - id: I2
-#   name: price_jump_z 参数
-#   fields: 参数 price_jump_z（无注解）
-#   code: cleaning_anomaly_engine.py 顶层公共函数形参（AST 提取）
-# - id: I3
-#   name: volume_spike_mult 参数
-#   fields: 参数 volume_spike_mult（无注解）
-#   code: cleaning_anomaly_engine.py 顶层公共函数形参（AST 提取）
-# - id: I4
-#   name: volume_z 参数
-#   fields: 参数 volume_z（无注解）
-#   code: cleaning_anomaly_engine.py 顶层公共函数形参（AST 提取）
-# 层: 算法
-# - id: A1
-#   name_zh: ① default_alert_sink
-#   name_en: default_alert_sink
-#   intro: 惰性装配 zephyr.data.alerter 告警路由（复用 B13-04267 链路）。
-#   desc: 惰性装配 zephyr.data.alerter 告警路由（复用 B13-04267 链路）。 Returns: sink(level, title, message)：leve…；源码 L155-L168
-#   inputs: 无参数
-#   outputs: Callable[[str, str, str], None]
-# - id: A2
-#   name_zh: ② CleaningAnomalyEngine
-#   name_en: CleaningAnomalyEngine
-#   intro: 清洗规则库 + 自动修复策略引擎。
-#   desc: 清洗规则库 + 自动修复策略引擎。；公共方法（定义序）: detect, repair；源码 L171-L452
-#   inputs: price_jump_pct price_jump_z volume_spike_mult volume_z alert_sink
-#   outputs: 返回值
-#   （注：A2 之后另有 5 个公共定义未列入（含 5 个数据契约/异常/枚举声明类），见源码）
-# 层: 输出
-# - id: O1
-#   name_zh: Callable[[str, str, str], None]
-#   name_en: Callable[[str, str, str], None]
-#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
-#   downstream: 见模块头 [CONSUMERS]
-# [/ALGO_FLOW]
-#
-# 边:
-# I1 --> A1
-# I2 --> A1
-# I3 --> A1
-# I4 --> A1
-# A1 --> A2
-# A2 --> O1
+# [ALGO_FLOW] external: docs/03_modules/_domain_data_eng/algo_flow/cleaning_anomaly_engine.yaml
 """
 
 from __future__ import annotations

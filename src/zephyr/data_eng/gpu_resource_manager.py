@@ -26,47 +26,7 @@ CUDA 显存分区与预算（训练/推理配额注册表）+ 时段优先调度
 集，只对注入 probe 的采样做配额/时段/OOM 裁决；降级只是标记
 （degraded_to_cpu=True），不执行进程/设备切换（OS 副作用零）。
 
-# [ALGO_FLOW]
-# 层: 输入
-# - id: I1
-#   name: total_memory_mb 参数
-#   fields: 参数 total_memory_mb（无注解）
-#   code: gpu_resource_manager.py 顶层公共函数形参（AST 提取）
-# - id: I2
-#   name: clock 参数
-#   fields: 参数 clock（无注解）
-#   code: gpu_resource_manager.py 顶层公共函数形参（AST 提取）
-# - id: I3
-#   name: nvml_probe 参数
-#   fields: 参数 nvml_probe（无注解）
-#   code: gpu_resource_manager.py 顶层公共函数形参（AST 提取）
-# - id: I4
-#   name: telemetry_sink 参数
-#   fields: 参数 telemetry_sink（无注解）
-#   code: gpu_resource_manager.py 顶层公共函数形参（AST 提取）
-# 层: 算法
-# - id: A1
-#   name_zh: ① GpuResourceManager
-#   name_en: GpuResourceManager
-#   intro: GPU 资源裁决件（配额 + 时段优先 + 水位监控 + OOM 降级）。
-#   desc: GPU 资源裁决件（配额 + 时段优先 + 水位监控 + OOM 降级）。；公共方法（定义序）: register_quota, set_schedule, acquire, release, check_waterm…
-#   inputs: total_memory_mb clock nvml_probe telemetry_sink alert_sink oom_waterm…
-#   outputs: 返回值
-#   （注：A1 之后另有 5 个公共定义未列入（含 5 个数据契约/异常/枚举声明类），见源码）
-# 层: 输出
-# - id: O1
-#   name_zh: 模块公共 API 面（6 定义）
-#   name_en: public defs
-#   intro: GpuResourceManager
-#   downstream: 运行时装配批（盘中推理/盘后训练调度挂时段表 / 显存水位接 gpu_monitor 探针 / 降级标记接推理运行时）
-# [/ALGO_FLOW]
-#
-# 边:
-# I1 --> A1
-# I2 --> A1
-# I3 --> A1
-# I4 --> A1
-# A1 --> O1
+# [ALGO_FLOW] external: docs/03_modules/_domain_data_eng/algo_flow/gpu_resource_manager.yaml
 """
 
 from __future__ import annotations

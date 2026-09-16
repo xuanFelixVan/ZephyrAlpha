@@ -21,31 +21,7 @@ Knowledge Packaging — v0.9.0 R123
 Blindspot: Unstructured KB prevents efficient knowledge transfer.
 Risk: R123 — Knowledge trapped in raw form; unusable by downstream subsystems.
 
-# [ALGO_FLOW]
-# 层: 输入
-# - id: I1
-#   name: 模块内部数据
-#   fields: 无公共形参/无再导出（AST 事实）
-#   code: knowledge_packaging.py
-# 层: 算法
-# - id: A1
-#   name_zh: ① KnowledgePackaging
-#   name_en: KnowledgePackaging
-#   intro: class KnowledgePackaging 源码 L55-L57
-#   desc: 公共方法（定义序）: package；源码 L55-L57
-#   inputs: 无参数
-#   outputs: 返回值
-# 层: 输出
-# - id: O1
-#   name_zh: 模块公共 API 面（1 定义）
-#   name_en: public defs
-#   intro: KnowledgePackaging
-#   downstream: 见模块头 [CONSUMERS]
-# [/ALGO_FLOW]
-#
-# 边:
-# I1 --> A1
-# A1 --> O1
+# [ALGO_FLOW] external: docs/03_modules/_domain_feedback_loop/algo_flow/collectors/knowledge_packaging.yaml
 """
 
 from dataclasses import dataclass

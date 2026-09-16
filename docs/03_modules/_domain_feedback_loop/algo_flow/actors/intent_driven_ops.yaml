@@ -1,0 +1,28 @@
+# ALGO_FLOW 外部真源——intent_driven_ops（_domain_feedback_loop 域，真源 src/zephyr/feedback_loop/actors/intent_driven_ops.py）
+# 2026-09-15 P2-1 契约头减负批量出仓：docstring 内联块逐字节副本，extractor 经
+# external 锚加载走同一 parse_algo_flow 管线；算法公共面变化时同步更新本块。
+doc_type: architecture_view
+ttl: permanent
+module: src.zephyr.feedback_loop.actors.intent_driven_ops
+source_of_truth: src/zephyr/feedback_loop/actors/intent_driven_ops.py
+algo_flow: |
+    # [ALGO_FLOW]
+    # 层: 输入
+    # - id: I1
+    #   name: 待校验动作
+    #   fields: action 字符串；declared_intents 已声明意图清单
+    #   code: IntentDrivenOps.validate
+    # 层: 算法
+    # - id: A1
+    #   name_zh: 操作意图符合性校验
+    #   name_en: operator_intent_validation
+    #   intro: 对照 declared_intents 校验动作是否违背负责人意图（当前为占位实现，恒返回 True）
+    #   code: IntentDrivenOps.validate
+    # 层: 输出
+    # - id: O1
+    #   name_zh: 校验结论
+    #   name_en: validation_verdict
+    #   intro: bool——动作是否获准执行
+    #   downstream: FLE 动作执行层（actors 各执行器）
+    # [/ALGO_FLOW]
+    # 边: I1 --> A1 ; A1 --> O1

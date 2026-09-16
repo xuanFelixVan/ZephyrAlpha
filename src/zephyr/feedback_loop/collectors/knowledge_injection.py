@@ -21,31 +21,7 @@ Knowledge Injection — v0.8.0 R102
 Blindspot: Human expert knowledge cannot be injected into FLE KB.
 Risk: R102 — FLE relearns what owner already knows.
 
-# [ALGO_FLOW]
-# 层: 输入
-# - id: I1
-#   name: 模块内部数据
-#   fields: 无公共形参/无再导出（AST 事实）
-#   code: knowledge_injection.py
-# 层: 算法
-# - id: A1
-#   name_zh: ① KnowledgeInjection
-#   name_en: KnowledgeInjection
-#   intro: class KnowledgeInjection 源码 L55-L59
-#   desc: 公共方法（定义序）: inject；源码 L55-L59
-#   inputs: 无参数
-#   outputs: 返回值
-# 层: 输出
-# - id: O1
-#   name_zh: 模块公共 API 面（1 定义）
-#   name_en: public defs
-#   intro: KnowledgeInjection
-#   downstream: 见模块头 [CONSUMERS]
-# [/ALGO_FLOW]
-#
-# 边:
-# I1 --> A1
-# A1 --> O1
+# [ALGO_FLOW] external: docs/03_modules/_domain_feedback_loop/algo_flow/collectors/knowledge_injection.yaml
 """
 
 from dataclasses import dataclass, field

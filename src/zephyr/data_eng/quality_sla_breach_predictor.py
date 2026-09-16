@@ -27,47 +27,7 @@ B14-04723（AUD-DRAFT-001-DIGEST P2 波 P2-W02，CAND-DATENG-006，A9运维架
 件——本件不采集指标，只对注入的达成率序列做外推预测；告警经注入
 alert_sink 回调，本件不接告警路由。
 
-# [ALGO_FLOW]
-# 层: 输入
-# - id: I1
-#   name: clock 参数
-#   fields: 参数 clock（无注解）
-#   code: quality_sla_breach_predictor.py 顶层公共函数形参（AST 提取）
-# - id: I2
-#   name: alert_sink 参数
-#   fields: 参数 alert_sink（无注解）
-#   code: quality_sla_breach_predictor.py 顶层公共函数形参（AST 提取）
-# - id: I3
-#   name: elevated_threshold 参数
-#   fields: 参数 elevated_threshold（无注解）
-#   code: quality_sla_breach_predictor.py 顶层公共函数形参（AST 提取）
-# - id: I4
-#   name: critical_threshold 参数
-#   fields: 参数 critical_threshold（无注解）
-#   code: quality_sla_breach_predictor.py 顶层公共函数形参（AST 提取）
-# 层: 算法
-# - id: A1
-#   name_zh: ① QualitySlaBreachPredictor
-#   name_en: QualitySlaBreachPredictor
-#   intro: 质量 SLO 违约预测件（注册表 + 趋势外推 + burn-rate 分级 + 告警）。
-#   desc: 质量 SLO 违约预测件（注册表 + 趋势外推 + burn-rate 分级 + 告警）。；公共方法（定义序）: register_slo, forecast；源码 L155-L287
-#   inputs: clock alert_sink elevated_threshold critical_threshold
-#   outputs: 返回值
-#   （注：A1 之后另有 4 个公共定义未列入（含 4 个数据契约/异常/枚举声明类），见源码）
-# 层: 输出
-# - id: O1
-#   name_zh: 模块公共 API 面（5 定义）
-#   name_en: public defs
-#   intro: QualitySlaBreachPredictor
-#   downstream: 运行时装配批（数据新鲜度/完整性/信号产出 SLO 巡检挂调度 / 告警接 alert 路由）
-# [/ALGO_FLOW]
-#
-# 边:
-# I1 --> A1
-# I2 --> A1
-# I3 --> A1
-# I4 --> A1
-# A1 --> O1
+# [ALGO_FLOW] external: docs/03_modules/_domain_data_eng/algo_flow/quality_sla_breach_predictor.yaml
 """
 
 from __future__ import annotations

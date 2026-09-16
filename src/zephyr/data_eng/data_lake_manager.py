@@ -27,47 +27,7 @@ B5-07240（AUD-DRAFT-001-DIGEST P2 波 P2-W02，CAND-DATENG-009，B5）：热层
 archive_manager（MOD-DATENG-002）管 CH 分区→Parquet 归档索引，本件管数
 据集级层间迁移/保留/压缩裁决，索引归前者，编排归后者。
 
-# [ALGO_FLOW]
-# 层: 输入
-# - id: I1
-#   name: clock 参数
-#   fields: 参数 clock（无注解）
-#   code: data_lake_manager.py 顶层公共函数形参（AST 提取）
-# - id: I2
-#   name: migrate_executor 参数
-#   fields: 参数 migrate_executor（无注解）
-#   code: data_lake_manager.py 顶层公共函数形参（AST 提取）
-# - id: I3
-#   name: purge_executor 参数
-#   fields: 参数 purge_executor（无注解）
-#   code: data_lake_manager.py 顶层公共函数形参（AST 提取）
-# - id: I4
-#   name: compress_executor 参数
-#   fields: 参数 compress_executor（无注解）
-#   code: data_lake_manager.py 顶层公共函数形参（AST 提取）
-# 层: 算法
-# - id: A1
-#   name_zh: ① DataLakeManager
-#   name_en: DataLakeManager
-#   intro: 数据湖三层编排件（策略注册表 + 迁移/清理/压缩计划与执行）。
-#   desc: 数据湖三层编排件（策略注册表 + 迁移/清理/压缩计划与执行）。；公共方法（定义序）: register_tier_policy, register_dataset, plan_migrations, run_migr…
-#   inputs: clock migrate_executor purge_executor compress_executor alert_sink
-#   outputs: 返回值
-#   （注：A1 之后另有 7 个公共定义未列入（含 7 个数据契约/异常/枚举声明类），见源码）
-# 层: 输出
-# - id: O1
-#   name_zh: 模块公共 API 面（8 定义）
-#   name_en: public defs
-#   intro: DataLakeManager
-#   downstream: 运行时装配批（层间迁移挂调度 / 保留清理接存储执行器 / 压缩归档接 Parquet 写入器）
-# [/ALGO_FLOW]
-#
-# 边:
-# I1 --> A1
-# I2 --> A1
-# I3 --> A1
-# I4 --> A1
-# A1 --> O1
+# [ALGO_FLOW] external: docs/03_modules/_domain_data_eng/algo_flow/data_lake_manager.yaml
 """
 
 from __future__ import annotations

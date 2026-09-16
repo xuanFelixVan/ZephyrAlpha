@@ -25,31 +25,7 @@ Risk: R462 — FLE deadlocked waiting for operator who is unavailable.
 Mitigation: Tiered escalation with timeouts. Urgent actions auto-escalate
 after configurable window. Non-urgent queue with max staleness.
 
-# [ALGO_FLOW]
-# 层: 输入
-# - id: I1
-#   name: 待审批决策与负责人心跳
-#   fields: submit_decision(decision_id, urgency)；last_ack 心跳时间戳
-#   code: OwnerAbsenceEscalation.submit_decision / owner_ack
-# 层: 算法
-# - id: A1
-#   name_zh: 缺席状态分级
-#   name_en: absence_state_classification
-#   intro: 距 last_ack 超 warning_timeout(300s) → UNRESPONSIVE，超 critical_timeout(900s) → ABSENT
-#   code: OwnerAbsenceEscalation.check_absence
-# - id: A2
-#   name_zh: 缺席自动升级审批
-#   name_en: absence_auto_escalation
-#   intro: ABSENT 且 urgency=critical → auto_approved；入队前清理超 max_queue_age(3600s) 的陈旧决策
-#   code: OwnerAbsenceEscalation.submit_decision / _prune_stale
-# 层: 输出
-# - id: O1
-#   name_zh: 审批裁决
-#   name_en: decision_verdict
-#   intro: {"action": auto_approved|queued, "reason": ...} 裁决 dict
-#   downstream: FLE 动作执行层（紧急动作在负责人缺席时放行）
-# [/ALGO_FLOW]
-# 边: I1 --> A1 ; A1 --> A2 ; A2 --> O1
+# [ALGO_FLOW] external: docs/03_modules/_domain_feedback_loop/algo_flow/actors/owner_absence_escalation.yaml
 """
 
 from __future__ import annotations
