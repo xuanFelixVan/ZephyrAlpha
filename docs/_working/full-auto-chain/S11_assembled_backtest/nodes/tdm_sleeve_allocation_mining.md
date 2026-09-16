@@ -110,3 +110,61 @@ fw-tdm-current 校验容差恰为 1e-6——边界同量级，建议生成器侧
 - 一句话结论：**PP-001 的资金分配是一台"只进不出、不看业绩"的机器——起步档保守合格、
   语义门纪律合格，但没有晋级/降级/退役三件套：挂上是单向门，权重与整装回测证据零耦合，
   组合会随挂图数量单调碎片化。三件套（SLE-1/2/3）应作为 TDM→实盘资金链的先决件立项。**
+
+## 7 施工回填（#13 T3③ R2SIX 盲区 + IS_WIN 冻结解除，2026-09-16 复验）
+
+> 回填人：st-qoder-t1a-20260915。结论：§4 SLE-3②③ 与 SLE-1 已由车道 B/B2 施工落地并合入主干
+> （commit b2b1c5c928 SLE-3②③ + 105b0d02d7 三处真缺陷修复批）。本回填只做真数据复验与残余登记，
+> 授权脚本零改动（复验证据见 §7.2）；验收口径=auto_mount `--explain` 的 phase_before/phase_after。
+
+### 7.1 做了什么（对照 SLE-3 / 任务 a·b·c）
+
+- **(a) euphoria/distribution 盲区（SLE-3③）**：归因链新增微观情绪相位 `phase_overlay`
+  （广度指数 399106 收盘 + 涨家数占比，全 trailing 无前视），与宏观腿 `R2SIX` 经 `resolve_six_phase`
+  两轴合成六段相位；`CLASS_CANDIDATE_STATES["value_reversal"]` 纳入 euphoria/distribution，L1 防御格
+  自此进入候选检验队列。设计迭代：v1（乖离+波动分位+HMM r3 门）2019-2026 仅命中 4 天、两处公认
+  亢奋顶全漏（根因 HMM dominant 跨期 label switching）→ v2 定稿微观情绪轴，冰点/复苏 r10/r11 优先不被覆盖。
+  **映射真源核查（任务"若在 YAML 就改 YAML"）**：六段词表真源=`zephyr.signal_ashare.core.environment_switch.SIX_STATES`
+  （代码封闭集，已 import 复用无第二真源）；亢奋/退潮需实时广度计算、非静态字典可表达，故不存在
+  "YAML 里有盲区待改"的情形；宏观腿 R2SIX 与 `framework_composer.REGIME_STATE_TO_ACTIVATION_PHASE`
+  孪生表由守卫 `test_r2six_drift_guard_vs_framework_composer` 钉防漂移。
+- **(b) IS_WIN 冻结（SLE-3②）**：判定窗终点由写死 2023-12-31 改为 `IS_WIN_START` 锚 +
+  快照表最新可用日回退 `PIT_TAIL_LAG=1` 行动态派生（`load_phase_panel`，auto_mount.py:80/262）。
+- **(c) 0.05 平铺起步（SLE-1）**：**未擅改交易参数**（经核）。F1 判定 0.05 观察期起步"本身可辩护"，
+  挂图路径（only-add 放行域）保留 0.05 起步 + 老 sleeve 等比缩水（`sleeve_plan`）；另新增真实分配语义
+  `sleeve_weights`（w ∝ 正超额 SR×置信÷年化波动，风险预算口径）作**提案面**，`--rebalance` 只出 diff
+  永不写图，落图须过 `weight_adjust_assert` + Owner 门位。第一性理由：0.05 是"新成员观察期"下限、非
+  绩效参数，直接改会与 only-add 语义门冲突；缺的是观察期后的晋级回路，已由 SLE-1 提案面补上。
+
+### 7.2 证据（真数据复验，小窗口抽样——全窗仅日频 index/snapshot 级，无重算）
+
+- 数据可用性（CH 只读，经 `zephyr.data.ch_reader.query`）：
+  - `c1_backtest.regime_snapshot_history`：**2019-04-01 .. 2026-09-15**（3621 行）→ **2024+ 数据真实存在**，
+    IS 窗冻结无数据侧阻碍，解除成立（非假数据、非静默回落旧窗）。
+  - 广度 399106 收盘 1996-05-10..2026-09-15；`advance_count>0` 止于 **2026-07-02**（F4 结构性断更，
+    known_data_gaps 已登记，provider 侧另有车道修），断更日按 `RegimeFeatureBuilder._load_breadth`
+    同门口径回退 `EQW_ALLA`（kline_index_calc，adv>0 覆盖 2019-01-03..2026-09-15）→ 微观相位腿全窗可用。
+- **防御段触发前后对比**（`explain_panel`，判定窗 `2020-01-01..2026-09-14`，3248 交易日）：
+
+  | 口径 | euphoria 天数 | distribution 天数 | 防御段合计天数 | 防御段触发次数(episodes) |
+  |------|--------------|-------------------|----------------|--------------------------|
+  | 改造前（仅宏观腿 R2SIX） | 0 | 0 | **0** | **0** |
+  | 改造后（宏观 ⊕ 微观 overlay） | 76 | 362 | **438** | **50**（euphoria 13 / distribution 37） |
+
+  → 盲区从"恒 0、永不触发"变为可被真实触发（**+438 日 / +50 次**）。
+- 传播落地图证：`config/framework_plans.yaml:252` 已有 sleeve `activation: ignition+expansion+euphoria`
+  经生成器落图，证明补全相位贯通 ②→fw-tdm-current。
+- 测试全绿（fake 面板/引擎零 IO，tmp_path 隔离，不触生产 data/）：`test_auto_mount_sle3.py` 12 +
+  `test_auto_mount.py` 64 + `test_generate_framework_plan_from_tdm.py` 11 = **87 passed**。
+
+### 7.3 残余（登记不硬闯）
+
+- **SLE-3③ 落地度（防御格挂载待 Owner）**：代码侧防御段"可被触发"已闭环；但
+  `config/trading_decision_map.yaml:4417-4418` 的 `TDM-E-L1` euphoria/distribution **格子仍 `mounted: []`**，
+  标注 `pending-owner-adoption`——根因=PP-001 sleeves 内无防御型 sleeve 可挂，"是否新设防御档"属
+  Owner 资金分配决策（非代码缺陷）。该 map 文件不在本任务授权清单且已由 map 侧如实登记，不代改；
+  待 Owner 裁定新设防御 sleeve 后，挂图器即可把过 FDR 门的 value_reversal 件挂上 L1 防御格。
+- **SLE-1 Owner 门位**：`--rebalance` 提案→落图的 `weight_adjust_assert` 门位待 Owner 开闸
+  （真实非等比调权必然过不了 only_add），本件不自动调权。
+- 判定缓存键已升 `v4`（auto_mount.py:154），相位/窗口规则再改需删 `.runtime/tmp/auto_mount_judge_cache.json` 复算。
+- 本回填无新增 .py 模块（无 translation 登记义务）；授权脚本复验期未改动，ruff/高复杂度门保持合入态、零新增。
