@@ -29,42 +29,7 @@ B14-04526（AUD-DRAFT-001-DIGEST P2 波 P2-W01，CAND-H1FS-011，A9 运维架构
 件只做任务排队与时隙裁决，不实现训练）；ha_sla_framework=SLA 健康编排（零
 交集）。
 
-# [ALGO_FLOW]
-# 层: 输入
-# - id: I1
-#   name: clock 参数
-#   fields: 参数 clock（无注解）
-#   code: ml_pipeline_process.py 顶层公共函数形参（AST 提取）
-# - id: I2
-#   name: is_trading_hours 参数
-#   fields: 参数 is_trading_hours（无注解）
-#   code: ml_pipeline_process.py 顶层公共函数形参（AST 提取）
-# - id: I3
-#   name: gpu_schedule 参数
-#   fields: 参数 gpu_schedule（无注解）
-#   code: ml_pipeline_process.py 顶层公共函数形参（AST 提取）
-# 层: 算法
-# - id: A1
-#   name_zh: ① MlPipelineProcess
-#   name_en: MlPipelineProcess
-#   intro: P5 ML 管线进程编排件（四职责队列 + 交易时段退让 + GPU 夜间互斥）。
-#   desc: P5 ML 管线进程编排件（四职责队列 + 交易时段退让 + GPU 夜间互斥）。；公共方法（定义序）: resource_declaration, enqueue, dequeue, cancel, pending,…
-#   inputs: clock is_trading_hours gpu_schedule
-#   outputs: 返回值
-#   （注：A1 之后另有 3 个公共定义未列入（含 3 个数据契约/异常/枚举声明类），见源码）
-# 层: 输出
-# - id: O1
-#   name_zh: 模块公共 API 面（4 定义）
-#   name_en: public defs
-#   intro: MlPipelineProcess
-#   downstream: 运行时装配批（P5 ML 管线进程四职责任务队列装配 / 交易时段退让与 GPU 夜间互斥裁决）
-# [/ALGO_FLOW]
-#
-# 边:
-# I1 --> A1
-# I2 --> A1
-# I3 --> A1
-# A1 --> O1
+# [ALGO_FLOW] external: docs/03_modules/_domain_infrastructure_runtime/algo_flow/ml_pipeline_process.yaml
 """
 
 from __future__ import annotations

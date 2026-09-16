@@ -26,47 +26,7 @@ QPS 限流统一入口。业界对标 cgroup 式资源隔离 + CPU 亲和 + 令�
 并告警留痕）；实际 OS 级设置经注入 ``executor`` 回调，默认 None 仅记录到
 ``applied_records``。本件不做真实 cgroup/亲和系统调用。
 
-# [ALGO_FLOW]
-# 层: 输入
-# - id: I1
-#   name: quotas 参数
-#   fields: 参数 quotas（无注解）
-#   code: resource_scheduler.py 顶层公共函数形参（AST 提取）
-# - id: I2
-#   name: clock 参数
-#   fields: 参数 clock（无注解）
-#   code: resource_scheduler.py 顶层公共函数形参（AST 提取）
-# - id: I3
-#   name: executor 参数
-#   fields: 参数 executor（无注解）
-#   code: resource_scheduler.py 顶层公共函数形参（AST 提取）
-# - id: I4
-#   name: alert_sink 参数
-#   fields: 参数 alert_sink（无注解）
-#   code: resource_scheduler.py 顶层公共函数形参（AST 提取）
-# 层: 算法
-# - id: A1
-#   name_zh: ① ResourceScheduler
-#   name_en: ResourceScheduler
-#   intro: 三平面资源调度器（配额注册表 + 统一准入裁决 + executor 注入）。
-#   desc: 三平面资源调度器（配额注册表 + 统一准入裁决 + executor 注入）。；公共方法（定义序）: admit, plane_usage, applied_records；源码 L182-L339
-#   inputs: quotas clock executor alert_sink
-#   outputs: 返回值
-#   （注：A1 之后另有 7 个公共定义未列入（含 7 个数据契约/异常/枚举声明类），见源码）
-# 层: 输出
-# - id: O1
-#   name_zh: 模块公共 API 面（8 定义）
-#   name_en: public defs
-#   intro: ResourceScheduler
-#   downstream: 运行时装配批（Hot/Warm/Cold 三平面进程资源准入统一入口）
-# [/ALGO_FLOW]
-#
-# 边:
-# I1 --> A1
-# I2 --> A1
-# I3 --> A1
-# I4 --> A1
-# A1 --> O1
+# [ALGO_FLOW] external: docs/03_modules/_domain_infrastructure_runtime/algo_flow/resource_scheduler.yaml
 """
 
 from __future__ import annotations

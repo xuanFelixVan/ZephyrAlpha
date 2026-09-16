@@ -15,16 +15,6 @@
 # [A_module] module_id=MOD-GOV-050 | layer=module | stability=evolving | safety=H | ai_autonomy=ai_modifiable
 # [TTL] permanent
 
-# [ALGO_FLOW]
-# I1: OrderIntent(intent_id/strategy_id/symbol/side/quantity/amount)
-# I2: ThresholdSplitConfig(双阈值+alert_ratio+window_minutes+symbol覆盖) + 注入端口(gateway/alert/audit/clock)
-# A1: 意图校验(非法→InvalidOrderIntentError)
-# A2: 阻断集命中→BLOCKED(不计入窗口)
-# A3: 登记入窗+惰性清理跨日
-# A4: 两档窗累计(30分钟滑动窗/当日窗)与阈值比对(≥2笔+每笔低于阈值+累计≥阈值×ratio)
-# A5: 判拆分→阻断集+提请审批(幂等)+审计+CRITICAL告警(端口异常隔离,阻断必生效)
-# O1: SplitDetectionResult(frozen)
-# [/ALGO_FLOW]
 #
 # 边:
 # I1 --> A1
@@ -50,47 +40,7 @@ Fail-Closed 铁律：审批/告警/审计端口异常不阻断检测主流程（
 SSoT: docs/03_modules/_domain_gov_enforcement/threshold_split_detector/blueprint.md
 Version: 0.1.0
 
-# [ALGO_FLOW]
-# 层: 输入
-# - id: I1
-#   name: config 参数
-#   fields: 参数 config（无注解）
-#   code: threshold_split_detector.py 顶层公共函数形参（AST 提取）
-# - id: I2
-#   name: approval_gateway 参数
-#   fields: 参数 approval_gateway（无注解）
-#   code: threshold_split_detector.py 顶层公共函数形参（AST 提取）
-# - id: I3
-#   name: alert_sink 参数
-#   fields: 参数 alert_sink（无注解）
-#   code: threshold_split_detector.py 顶层公共函数形参（AST 提取）
-# - id: I4
-#   name: audit_sink 参数
-#   fields: 参数 audit_sink（无注解）
-#   code: threshold_split_detector.py 顶层公共函数形参（AST 提取）
-# 层: 算法
-# - id: A1
-#   name_zh: ① ThresholdSplitDetector
-#   name_en: ThresholdSplitDetector
-#   intro: 阈值拆分检测器（登记即检测，Fail-Closed）。
-#   desc: 阈值拆分检测器（登记即检测，Fail-Closed）。 Args: config: 双阈值 + alert_ratio + window_minutes + symbol 覆盖。…；公共方法（定义序）: registe…
-#   inputs: config approval_gateway alert_sink audit_sink clock
-#   outputs: 返回值
-#   （注：A1 之后另有 8 个公共定义未列入（含 8 个数据契约/异常/枚举声明类），见源码）
-# 层: 输出
-# - id: O1
-#   name_zh: 模块公共 API 面（9 定义）
-#   name_en: public defs
-#   intro: ThresholdSplitDetector
-#   downstream: 交易意图登记入口(运行时装配批串接下单链路); default_approval_gateway(MOD-L08-001, 提请审批载体)
-# [/ALGO_FLOW]
-#
-# 边:
-# I1 --> A1
-# I2 --> A1
-# I3 --> A1
-# I4 --> A1
-# A1 --> O1
+# [ALGO_FLOW] external: docs/03_modules/_domain_gov_enforcement/algo_flow/rule_enforcement/threshold_split_detector.yaml
 """
 
 from __future__ import annotations

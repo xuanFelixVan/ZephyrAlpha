@@ -26,47 +26,7 @@ fallback 回调并标记 downgraded）。不重复 A9 进程隔离建设。
 降级通道以内存 buffer 兜底读写（确定性），每次写同步转发 fallback 回调
 （承载降级 Redis 语义，本件不触网）。
 
-# [ALGO_FLOW]
-# 层: 输入
-# - id: I1
-#   name: namespace 参数
-#   fields: 参数 namespace（无注解）
-#   code: shared_memory_zero_copy.py 顶层公共函数形参（AST 提取）
-# - id: I2
-#   name: size_threshold 参数
-#   fields: 参数 size_threshold（无注解）
-#   code: shared_memory_zero_copy.py 顶层公共函数形参（AST 提取）
-# - id: I3
-#   name: fallback 参数
-#   fields: 参数 fallback（无注解）
-#   code: shared_memory_zero_copy.py 顶层公共函数形参（AST 提取）
-# - id: I4
-#   name: clock 参数
-#   fields: 参数 clock（无注解）
-#   code: shared_memory_zero_copy.py 顶层公共函数形参（AST 提取）
-# 层: 算法
-# - id: A1
-#   name_zh: ① ZeroCopyChannelManager
-#   name_en: ZeroCopyChannelManager
-#   intro: 零拷贝通道管理器（命名空间隔离 + 生命周期 + 超限降级）。
-#   desc: 零拷贝通道管理器（命名空间隔离 + 生命周期 + 超限降级）。；公共方法（定义序）: create, attach, detach, free, write, read, info, channel_names；源码…
-#   inputs: namespace size_threshold fallback clock
-#   outputs: 返回值
-#   （注：A1 之后另有 3 个公共定义未列入（含 3 个数据契约/异常/枚举声明类），见源码）
-# 层: 输出
-# - id: O1
-#   name_zh: 模块公共 API 面（4 定义）
-#   name_en: public defs
-#   intro: ZeroCopyChannelManager
-#   downstream: 运行时装配批（42万条因子值跨进程零拷贝传递通道装配）
-# [/ALGO_FLOW]
-#
-# 边:
-# I1 --> A1
-# I2 --> A1
-# I3 --> A1
-# I4 --> A1
-# A1 --> O1
+# [ALGO_FLOW] external: docs/03_modules/_domain_infrastructure_runtime/algo_flow/shared_memory_zero_copy.yaml
 """
 
 from __future__ import annotations

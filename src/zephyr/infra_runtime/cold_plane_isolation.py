@@ -29,42 +29,7 @@ Cold 平面侧声明校验与通道门禁，不重复 cgroup 级隔离）；late
 allocator=延迟预算分解（零交集）；runtime_plane_tag=平面标签契约（本件复用
 其平面语义，不重建标签体系）。
 
-# [ALGO_FLOW]
-# 层: 输入
-# - id: I1
-#   name: clock 参数
-#   fields: 参数 clock（无注解）
-#   code: cold_plane_isolation.py 顶层公共函数形参（AST 提取）
-# - id: I2
-#   name: is_trading_hours 参数
-#   fields: 参数 is_trading_hours（无注解）
-#   code: cold_plane_isolation.py 顶层公共函数形参（AST 提取）
-# - id: I3
-#   name: alert_sink 参数
-#   fields: 参数 alert_sink（无注解）
-#   code: cold_plane_isolation.py 顶层公共函数形参（AST 提取）
-# 层: 算法
-# - id: A1
-#   name_zh: ① ColdPlaneIsolator
-#   name_en: ColdPlaneIsolator
-#   intro: Cold 平面隔离件（配额校验 + 通道门禁 + iFind 令牌桶 + 待激活队列）。
-#   desc: Cold 平面隔离件（配额校验 + 通道门禁 + iFind 令牌桶 + 待激活队列）。；公共方法（定义序）: declare_quota, open_channel, is_open, acquire_ifind,…
-#   inputs: clock is_trading_hours alert_sink
-#   outputs: 返回值
-#   （注：A1 之后另有 6 个公共定义未列入（含 6 个数据契约/异常/枚举声明类），见源码）
-# 层: 输出
-# - id: O1
-#   name_zh: 模块公共 API 面（7 定义）
-#   name_en: public defs
-#   intro: ColdPlaneIsolator
-#   downstream: 运行时装配批（Cold 平面配额声明校验 / 通道白名单门禁 / 盘中产出盘后激活）
-# [/ALGO_FLOW]
-#
-# 边:
-# I1 --> A1
-# I2 --> A1
-# I3 --> A1
-# A1 --> O1
+# [ALGO_FLOW] external: docs/03_modules/_domain_infrastructure_runtime/algo_flow/cold_plane_isolation.yaml
 """
 
 from __future__ import annotations

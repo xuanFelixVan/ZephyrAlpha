@@ -25,45 +25,7 @@ query/execute/health/close）+ 统一查询门面 ``route(key)`` 路由 + 连接
 
 纯内存确定性：本件不建真实连接池、不触网；后端实例由装配方注入。
 
-# [ALGO_FLOW]
-# 层: 输入
-# - id: I1
-#   name: clock 参数
-#   fields: 参数 clock（无注解）
-#   code: database_layer.py 顶层公共函数形参（AST 提取）
-# - id: I2
-#   name: sleeper 参数
-#   fields: 参数 sleeper（无注解）
-#   code: database_layer.py 顶层公共函数形参（AST 提取）
-# 层: 算法
-# - id: A1
-#   name_zh: ① DbBackend
-#   name_en: DbBackend
-#   intro: 数据库后端协议（query/execute/health/close 语义统一）。
-#   desc: 数据库后端协议（query/execute/health/close 语义统一）。；公共方法（定义序）: query, execute, health, close；源码 L93-L110
-#   inputs: 无参数
-#   outputs: 返回值
-# - id: A2
-#   name_zh: ② DatabaseLayer
-#   name_en: DatabaseLayer
-#   intro: 数据库统一门面（后端注册表 + 路由 + 借还 + 超时重试）。
-#   desc: 数据库统一门面（后端注册表 + 路由 + 借还 + 超时重试）。；公共方法（定义序）: register_backend, route, connection, borrowed, query_with_retry,…
-#   inputs: clock sleeper
-#   outputs: 返回值
-#   （注：A2 之后另有 1 个公共定义未列入（含 1 个数据契约/异常/枚举声明类），见源码）
-# 层: 输出
-# - id: O1
-#   name_zh: 模块公共 API 面（3 定义）
-#   name_en: public defs
-#   intro: DbBackend, DatabaseLayer
-#   downstream: 运行时装配批（sqlite/duckdb/pg/clickhouse 后端注册与统一查询路由门面）
-# [/ALGO_FLOW]
-#
-# 边:
-# I1 --> A1
-# I2 --> A1
-# A1 --> A2
-# A2 --> O1
+# [ALGO_FLOW] external: docs/03_modules/_domain_infrastructure_runtime/algo_flow/database_layer.yaml
 """
 
 from __future__ import annotations
