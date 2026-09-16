@@ -4,7 +4,7 @@ title: L7 传承段——回流闭环（增补提案，段位待 Owner 点头）
 owner: ZephyrAlpha-Owner
 session: st-ailayer-20260917
 date: 2026-09-17
-status: skeleton_pending_mining
+status: design_done
 ---
 
 # L7 传承段骨架卡（V2 挖矿新增提案）
@@ -35,5 +35,7 @@ negative_archive 阴性库；ruling_registry（判据留痕的传统真源）。
 5. 遗忘机制：传承库自己的 TTL/压缩（库不能只进不出）
 
 ## 状态
-壳已立。**段位本身是 V2 挖矿的增补提案，待 Owner 点头后转正；若 Owner 裁"不立段"，
-本卡内容并入 L1/L4 的待挖清单。**
+**design_done**——真源设计稿已定稿：[DESIGN.md](DESIGN.md)（2026-09-17：五方边界裁定+PG
+ai_heritage 三类条目 schema+回流接线+防近亲繁殖四约束+双轨不对称+三类差异化遗忘+关单机检
++9 施工项；自审闸=施工；3 项待 Owner）。待挖清单 1-5 全部在稿内销项。段位转正确认随主会话
+夜批全批生效。
