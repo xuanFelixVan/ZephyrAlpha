@@ -92,6 +92,25 @@ def pytest_configure(config):
     # 旧目录由 runtime_cleanup reconciler（TTL 7d 文件清理 + 空目录回收）自动回收。
     if getattr(config.option, "basetemp", None) is None:
         config.option.basetemp = str(_rt_tmp / f"pytest_{_os_conf.getpid()}")
+
+    # basetemp 自愈（批8 r4 实证 1594 errors）：.runtime/tmp 有 TTL 清理活动，
+    # 20min+ 长跑中途 basetemp 被删后，所有 autouse fixture（_isolate_commit_queue_root）
+    # 与内建 tmp_path 的 mktemp 级联 FileNotFoundError。getbasetemp 缓存命中时
+    # 目录若已消失则重建，pytest 原生不会自愈（make_numbered_dir 不带 parents）。
+    import pytest as _pytest_mod
+
+    _TPF = _pytest_mod.TempPathFactory
+
+    _orig_getbasetemp = _TPF.getbasetemp
+
+    def _getbasetemp_selfheal(self):
+        bt = self._basetemp
+        if bt is not None and not bt.exists():
+            bt.mkdir(parents=True, exist_ok=True)
+        return _orig_getbasetemp(self)
+
+    _TPF.getbasetemp = _getbasetemp_selfheal
+
     # junitxml：AI 调用（ZEPHYR_AI_PYTEST=1）默认输出到 .runtime/tmp/junit.xml，
     # 避免 AI 显式传 --junit-xml=tmp_junit_p0.xml 污染根目录。仅当未显式指定时生效。
     if _os_conf.environ.get("ZEPHYR_AI_PYTEST") == "1" and getattr(config.option, "xmlpath", None) is None:
@@ -412,3 +431,18 @@ def _isolate_commit_queue_root(tmp_path_factory, monkeypatch):
     """
     iso_root = tmp_path_factory.mktemp("commit_queue_iso")
     monkeypatch.setenv("ZEPHYR_COMMIT_QUEUE_DIR", str(iso_root))
+
+
+@pytest.fixture(autouse=True)
+def _isolate_audit_key_eras(monkeypatch):
+    """autouse：pytest 全域禁用仓内审计密钥分期注册表（config/audit_key_eras.yaml）。
+
+    ZEPHYR_AUDIT_KEY_ERAS 是 IntegrityVerifier 分期注册表的测试/多仓隔离覆盖位
+    （integrity.py _load_key_eras；先例 _isolate_commit_queue_root 同型）。
+    未隔离时：仓内注册表的 era 边界（真钥部署时刻）会把测试事件（now() 时间戳）
+    划入强分期——测试环境无 env 密钥即 fail-loud 误判 mismatch。
+    分期语义专测（tests/governance/audit/test_key_era_verification.py）在自身
+    fixture 内显式 setenv 覆盖本值（后执行者生效）。
+    """
+    monkeypatch.setenv("ZEPHYR_AUDIT_KEY_ERAS", str(Path(__file__).parent / "_nonexistent_audit_key_eras.yaml"))
+
