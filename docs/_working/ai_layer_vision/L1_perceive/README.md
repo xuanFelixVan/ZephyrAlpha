@@ -4,7 +4,7 @@ title: L1 感知段——外扫+内监（进化循环的点火器）
 owner: ZephyrAlpha-Owner
 session: st-ailayer-20260917
 date: 2026-09-17
-status: skeleton_pending_mining
+status: design_done
 ---
 
 # L1 感知段骨架卡（原"搜索"段扩为双向；扩法待 Owner 点头）
@@ -33,3 +33,7 @@ MAPE-K Monitor（循环第一位，Kephart & Chess 2003）；MLOps CT drift 触�
 
 ## 状态
 壳已立（本卡）。深挖产出放本目录，过挖后自审闸后升级为真源设计稿。
+**2026-09-17 深挖完成**：真源设计稿=[DESIGN.md](DESIGN.md)（design_v1：源注册表 v1 十二源五轨
+全真实 URL/内监五通道接线图（真实路径+信号名）/搜索任务单 schema v1/事件触发合规裁定
+（FactoryLaneC 先例链）/骨架即地图机制/月度体检建议书 schema/三边契约/9 施工项；
+自审闸=施工 8 项+挂起排期 1 项（L7 先验接口）。
