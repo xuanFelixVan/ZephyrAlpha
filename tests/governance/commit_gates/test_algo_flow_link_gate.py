@@ -1,3 +1,5 @@
+# [BLUEPRINT] MOD-GOV_LONG_PARAM_LIST_GATE | (auto-injected by S4 reconciler) | §
+# [TTL] permanent
 """ALGO-FLOW-LINK 门禁纯逻辑单测（批9 收尾批 T3，tmp_path 隔离）。"""
 
 from __future__ import annotations
