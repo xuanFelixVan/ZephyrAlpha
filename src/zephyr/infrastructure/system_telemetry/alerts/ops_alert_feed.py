@@ -2,7 +2,7 @@
 # [BLUEPRINT] MOD-INF-OPS-ALERT-FEED | docs/03_modules/_domain_infrastructure_operations/ops_alert_feed/blueprint.md | §
 # [MODULE] zephyr.infrastructure.system_telemetry.alerts.ops_alert_feed
 # [INVARIANTS] 通知必落盘 JSONL（进程重启不丢）; 同 dedup key 静默窗口内只刷新不重复; probe 异常 fail-safe 不抛出; 板目录可注入（测试隔离禁写生产 .runtime）
-# [MODIFY-GUARD] config/alert_rules.yaml; src/zephyr/frontend/dashboard/api_server.py（/api/ops-notifications + 探针线程段）
+# [MODIFY-GUARD] config/alert_rules.yaml; config/resource_optimization.yaml（ops_alerting.project_rss_alert_gb=RSS 兜底线数值真源）; src/zephyr/frontend/dashboard/api_server.py（/api/ops-notifications + 探针线程段）
 # [CONSUMERS] src/zephyr/frontend/dashboard/api_server.py（告警段 30s 探针线程 + /api/ops-notifications 端点）; tests/frontend/test_ops_alert_feed.py
 # [STABILITY] evolving
 # [SAFETY] M
@@ -22,7 +22,10 @@ facade 定时 evaluate("__scheduled__") 是空转占位——规则引擎在、�
 
 1. ``probe_project_rss_bytes`` — 项目衍生进程 RSS 探针（psutil）：
    当前进程树（self+全部后代）∪ cmdline/exe 引用仓根路径的进程。
-   8GB 阈值语义=项目自身内存即将失控（9-15 事故：9 孤儿 llama-server ≈12GB）。
+   8GB 线语义=项目自身内存即将失控（9-15 事故：9 孤儿 llama-server ≈12GB）；
+   该绝对值在代码里零副本——规则条件真源=config/alert_rules.yaml，GiB 口径登记与
+   规则缺席兜底真源=config/resource_optimization.yaml ops_alerting.project_rss_alert_gb
+   （排班表 v2 §2.3 C-1⑤ 消硬编码）。
 2. ``OpsAlertFeed.publish/list_active`` — 通知板（JSONL 落盘
    ``.runtime/ops_notifications/notifications.jsonl``，safe_write_text CAS 写）：
    同 dedup key 静默窗口内只刷新 count/last_seen 不重复发布；resolve 语义打
@@ -79,6 +82,47 @@ RESOLVE_HYSTERESIS = 0.9
 
 # 已解除通知在前端的保留时长（灰显供回看）
 RESOLVED_RETENTION_S = 3600.0
+
+# ── 项目 RSS 绝对值告警线（排班表 v2 施工方案 §2.3 C-1⑤：消"8GB 绝对值"散落）──
+# 规则真源仍是 config/alert_rules.yaml ALERT-SYS-002 的 condition（本模块照旧读它）；
+# 下面这条 GiB 线的登记真源=config/resource_optimization.yaml
+# ops_alerting.project_rss_alert_gb，仅当规则源缺席（文件缺失/损坏/无内存字节型规则）
+# 时充当兜底线——静默失明比误报更坏，但兜底也只在 YAML 有值时生效（不臆造阈值）。
+_RESOURCE_CFG_RELPATH: Final[str] = "config/resource_optimization.yaml"
+_RSS_ALERT_KEY: Final[str] = "project_rss_alert_gb"
+_RSS_ALERT_SECTION: Final[str] = "ops_alerting"
+_GIB_BYTES: Final[int] = 1024 ** 3
+_MEMORY_METRIC_FRAGMENT: Final[str] = "memory"
+#: 兜底合成规则 id（与真源规则同前缀风格，MODIFY-GUARD 声明本模块不改规则文件）
+FALLBACK_OOM_RULE_ID: Final[str] = "ALERT-SYS-002-FALLBACK"
+
+
+def load_project_rss_alert_bytes() -> int | None:
+    """读 resource_optimization.yaml ops_alerting.project_rss_alert_gb（GiB → 字节）。
+
+    返回 None=键缺席/文件不可读/数值非法——调用方不臆造阈值（本模块零数值副本），
+    仅 loud warning 后维持既有"无规则即不告警"语义。
+    """
+    import yaml  # try 外绑定：except 子句求值时需可见 yaml.YAMLError（非 ValueError 子类）
+
+    try:
+        data = yaml.safe_load((REPO_ROOT / _RESOURCE_CFG_RELPATH).read_text(encoding="utf-8")) or {}
+        section = data.get(_RSS_ALERT_SECTION) if isinstance(data, dict) else None
+        raw_gb = section.get(_RSS_ALERT_KEY) if isinstance(section, dict) else None
+        if raw_gb is None:
+            logger.warning(
+                "load_project_rss_alert_bytes: %s 缺 %s.%s 键——OOM 兜底线不可用",
+                _RESOURCE_CFG_RELPATH, _RSS_ALERT_SECTION, _RSS_ALERT_KEY,
+            )
+            return None
+        gb = float(raw_gb)
+        if gb <= 0:
+            logger.warning("load_project_rss_alert_bytes: 非正数值 %s——OOM 兜底线不可用", raw_gb)
+            return None
+        return int(gb * _GIB_BYTES)
+    except (OSError, ValueError, TypeError, yaml.YAMLError) as exc:
+        logger.warning("load_project_rss_alert_bytes 读表失败（OOM 兜底线不可用）: %s", exc)
+        return None
 
 
 def board_dir() -> Path:
@@ -518,13 +562,41 @@ class OpsAlertFeed:
         self._rules_loaded = True
         return self._rules
 
+    def _memory_rules(self) -> list[dict]:
+        """内存字节型规则清单：真源=config/alert_rules.yaml；缺席时按兜底线合成一条。
+
+        兜底合成（排班表 v2 §2.3 C-1⑤）只在规则源"完全没有内存字节型规则"时启用，
+        生产正常路径逐字不变；silence_window 等字段刻意不写，沿用调用处既有缺省
+        （不新增第二处口径）。兜底线本身来自 resource_optimization.yaml，
+        该键也缺席 → 返回空表（与改造前"无规则=不告警"同语义，但已 loud warning）。
+        """
+        rules = [
+            r
+            for r in self._load_rules()
+            if _MEMORY_METRIC_FRAGMENT in str(r.get("metric", "")) and "bytes" in str(r.get("metric", ""))
+        ]
+        if rules:
+            return rules
+        fb_bytes = load_project_rss_alert_bytes()
+        if fb_bytes is None:
+            return []
+        logger.warning(
+            "alert_rules.yaml 无内存字节型规则——OOM 评估改按 %s.%s 兜底线 %d 字节",
+            _RESOURCE_CFG_RELPATH, _RSS_ALERT_KEY, fb_bytes,
+        )
+        return [{
+            "id": FALLBACK_OOM_RULE_ID,
+            "name": "oom_risk",
+            "severity": "critical",
+            "metric": "system.memory_rss_bytes",
+            "condition": f"> {fb_bytes}",
+            "description": "内存即将耗尽（RSS 兜底线，数值真源见 config/resource_optimization.yaml）",
+        }]
+
     def evaluate_memory_rules(self, value: float) -> list[dict]:
         """对内存类规则（metric 含 memory 的字节型规则）评估，返回触发规则列表。"""
         triggered: list[dict] = []
-        for rule in self._load_rules():
-            metric = str(rule.get("metric", ""))
-            if "memory" not in metric or "bytes" not in metric:
-                continue
+        for rule in self._memory_rules():
             condition = str(rule.get("condition", ""))
             if self._check(value, condition):
                 triggered.append(rule)
@@ -744,9 +816,9 @@ class OpsAlertFeed:
                 ops.append({"op": "failed", "key": rule.get("id"), "reason": str(exc)[:120]})
         # 无 critical 触发 → 按滞回解除既有 OOM 项
         if not any(str(r.get("severity")).lower() == "critical" for r in triggered):
-            for rule in self._load_rules():
+            for rule in self._memory_rules():  # 含兜底合成规则——否则其触发后永不自解
                 metric = str(rule.get("metric", ""))
-                if "memory" not in metric or SURVIVAL_METRIC_FRAGMENT in metric:
+                if _MEMORY_METRIC_FRAGMENT not in metric or SURVIVAL_METRIC_FRAGMENT in metric:
                     continue
                 condition = str(rule.get("condition", ""))
                 threshold = self._threshold_of(condition)
@@ -785,6 +857,7 @@ class OpsAlertFeed:
 
 
 __all__ = [
+    "FALLBACK_OOM_RULE_ID",
     "FIRST_TICK_DELAY_S",
     "RESOLVED_RETENTION_S",
     "RESOLVE_HYSTERESIS",
@@ -794,6 +867,7 @@ __all__ = [
     "TICK_INTERVAL_S",
     "OpsAlertFeed",
     "board_dir",
+    "load_project_rss_alert_bytes",
     "parse_nav_tsv",
     "probe_project_rss_bytes",
     "probe_survival_status",

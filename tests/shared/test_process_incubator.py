@@ -10,7 +10,8 @@
   （child_pid/parent_pid/ancestor_chain/expected_lifetime_s/owner）
 - 水位门禁三态：低于 queue 线放行 / queue 线有界等待后放行 / reject 线拒绝
   （probe 注入，零真实内存依赖）
-- 门禁阈值引用 resource_optimization.yaml（缺文件兜底 90）
+- 门禁阈值引用 resource_optimization.yaml（queue=memory_incubator_queue_percent、
+  reject=memory_emergency_percent；缺键/缺文件按 85/90 兜底，出厂值与兜底值对账）
 - sweep 对账：子进程退出后 exited 戳 / mark_reaped / stats
 - fail-open：探测异常按 0 放行；ledger 目录注入（tmp_path，禁写生产路径）
 
@@ -30,10 +31,13 @@ if str(_PROJECT_ROOT / "src") not in sys.path:
     sys.path.insert(0, str(_PROJECT_ROOT / "src"))
 
 from zephyr.shared.infra.process_incubator import (  # noqa: E402
+    DEFAULT_QUEUE_AT_PERCENT,
+    DEFAULT_REJECT_AT_PERCENT,
     IncubationRecord,
     ProcessIncubator,
     SpawnWaterGate,
     WaterLevelRejected,
+    load_queue_threshold,
     load_reject_threshold,
 )
 
@@ -162,6 +166,83 @@ def test_reject_threshold_from_yaml(tmp_path: Path, monkeypatch: pytest.MonkeyPa
     # YAML 缺席 → 90 兜底
     monkeypatch.setattr(mod, "REPO_ROOT", tmp_path / "nonexistent")
     assert load_reject_threshold() == 90.0
+
+
+def _write_pressure_cfg(root: Path, body: dict) -> Path:
+    """临时仓根写 config/resource_optimization.yaml 的 pressure_thresholds 段。"""
+    import yaml
+
+    cfg_dir = root / "config"
+    cfg_dir.mkdir(parents=True, exist_ok=True)
+    (cfg_dir / "resource_optimization.yaml").write_text(yaml.safe_dump(body), encoding="utf-8")
+    return root
+
+
+def test_queue_threshold_from_yaml(tmp_path: Path, monkeypatch: pytest.MonkeyPatch):
+    """C-1④ 消硬编码：queue 线与 reject 线同源引用 resource_optimization.yaml。"""
+    import zephyr.shared.infra.process_incubator as mod
+
+    # YAML 有值 → 引用该值（运行时读取，非导入期快照）
+    root = _write_pressure_cfg(tmp_path, {"pressure_thresholds": {"memory_incubator_queue_percent": 77.5}})
+    monkeypatch.setattr(mod, "REPO_ROOT", root)
+    assert load_queue_threshold() == 77.5
+
+    # 键缺席 → 战役口径兜底（与改造前现值一致，防缺键炸孵化链路）
+    root2 = _write_pressure_cfg(tmp_path / "nokey", {"pressure_thresholds": {"memory_emergency_percent": 99.0}})
+    monkeypatch.setattr(mod, "REPO_ROOT", root2)
+    assert load_queue_threshold() == DEFAULT_QUEUE_AT_PERCENT
+
+    # 整文件缺席 → 兜底
+    monkeypatch.setattr(mod, "REPO_ROOT", tmp_path / "nonexistent")
+    assert load_queue_threshold() == DEFAULT_QUEUE_AT_PERCENT
+
+
+def test_queue_threshold_degrades_instead_of_raising(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch, caplog: pytest.LogCaptureFixture
+):
+    """坏 YAML / 非数值 → loud warning + 缺省兜底，绝不把孵化链路炸掉。"""
+    import zephyr.shared.infra.process_incubator as mod
+
+    bad = tmp_path / "bad"
+    (bad / "config").mkdir(parents=True)
+    (bad / "config" / "resource_optimization.yaml").write_text("pressure_thresholds: [:::", encoding="utf-8")
+    monkeypatch.setattr(mod, "REPO_ROOT", bad)
+    with caplog.at_level("WARNING", logger=mod.logger.name):
+        assert load_queue_threshold() == DEFAULT_QUEUE_AT_PERCENT
+    assert "load_pressure_threshold" in caplog.text
+
+    _write_pressure_cfg(tmp_path / "str", {"pressure_thresholds": {"memory_incubator_queue_percent": "x"}})
+    monkeypatch.setattr(mod, "REPO_ROOT", tmp_path / "str")
+    assert load_queue_threshold() == DEFAULT_QUEUE_AT_PERCENT
+
+
+def test_spawn_gate_queue_line_follows_yaml(tmp_path: Path, monkeypatch: pytest.MonkeyPatch):
+    """gate 默认排队线走 YAML；显式传参仍优先（既有测试注入面不破）。"""
+    import zephyr.shared.infra.process_incubator as mod
+
+    _write_pressure_cfg(
+        tmp_path,
+        {"pressure_thresholds": {"memory_incubator_queue_percent": 60.0, "memory_emergency_percent": 99.0}},
+    )
+    monkeypatch.setattr(mod, "REPO_ROOT", tmp_path)
+    gate = SpawnWaterGate(probe=lambda: 65.0, wait_s=0.1, retry_interval_s=0.02)
+    assert gate.queue_at == 60.0 and gate.reject_at == 99.0
+    with pytest.raises(WaterLevelRejected, match="timeout"):
+        gate.check_or_wait()
+    # 65% 在 YAML 线 60 之上 = 排队；显式传 95 线则直接放行
+    assert SpawnWaterGate(queue_at_percent=95.0, reject_at_percent=99.0, probe=lambda: 65.0).check_or_wait() == 65.0
+
+
+def test_shipped_config_declares_both_water_lines():
+    """出厂 config 必须真的声明两线数值（靠兜底过活=口径静默漂移，注册表不许说谎）。"""
+    import yaml
+
+    data = yaml.safe_load(
+        (_PROJECT_ROOT / "config" / "resource_optimization.yaml").read_text(encoding="utf-8")
+    )
+    pt = data.get("pressure_thresholds") or {}
+    assert pt.get("memory_incubator_queue_percent") == DEFAULT_QUEUE_AT_PERCENT
+    assert pt.get("memory_emergency_percent") == DEFAULT_REJECT_AT_PERCENT
 
 
 # ── 对账/收割协同 ────────────────────────────────────────────────────────────

@@ -730,6 +730,34 @@ class AutoRuntimeCore:
 # `from __future__ import annotations` 惰性求值。
 
 
+def _vram_hard_cap_gb() -> float | None:
+    """显存硬上限（GB）——唯一真源 config/gguf_vram_budget.yaml 的 hard_cap_gb。
+
+    排班表 v2 §2.3 C-2 治本（L-7 顺带项）：原 ensure_running 内联抄数 21.6 违反该
+    YAML 自订纪律（"单真源，禁止另造口径"）与 RULE-SSOT；改为复用既有 loader
+    （zephyr.intelligence.gguf_model_manager.load_budget_table，MOD-INF-060），
+    本文件零数值副本。lazy import 同 5.150.2 协作者既有惯例（守护运行时导入，
+    且不在 [DEPENDENCIES] 头部新增模块级边）。
+
+    失败语义：表缺席/结构非法（GgufBudgetTableError）→ None + loud warning，
+    调用方按既有 fail-safe 放行（与 nvidia-smi 缺席同语义，绝不因读表炸启动链路）。
+    """
+    try:
+        from zephyr.intelligence.gguf_model_manager import (
+            DEFAULT_BUDGET_TABLE_PATH,
+            load_budget_table,
+        )
+
+        return float(load_budget_table(REPO_ROOT / DEFAULT_BUDGET_TABLE_PATH).hard_cap_gb)
+    except Exception as exc:  # noqa: BLE001 — 预算表不可读=门禁降级，不阻断孵化链路
+        logger.warning(
+            "_vram_hard_cap_gb: 读 gguf_vram_budget.yaml 失败（%s: %s）——VRAM 预算门本次降级放行",
+            type(exc).__name__,
+            exc,
+        )
+        return None
+
+
 class _OllamaProcessManager:
     """ollama 进程生命周期协作者（职责簇：存活探测 / 自动启动 / 可用性确保 / 进程终止）。
 
@@ -763,18 +791,25 @@ class _OllamaProcessManager:
         # VRAM 超订相关；显存已超 gguf_vram_budget 硬上限时不再孵化新 llama-server
         # （防崩溃循环再孵），fail-safe：探测失败放行（不阻断有 ollama 健康检查兜底的链路）。
         try:
-            import subprocess as _sp
+            # 绑定名必须是 `subprocess` 本身：原 `import subprocess as _sp` 只绑 _sp，
+            # 而下方 except 子句求值时引用 subprocess.SubprocessError → 名字未绑定，
+            # nvidia-smi 缺席（FileNotFoundError=OSError 分支）时反抛 NameError 炸穿
+            # ensure_running，与注释宣称的 fail-safe 放行相反（本次治 C-2 时实测发现）。
+            import subprocess
 
-            _smi = _sp.run(
+            _smi = subprocess.run(
                 ["nvidia-smi", "--query-gpu=memory.used", "--format=csv,noheader,nounits"],
                 capture_output=True, text=True, timeout=8,
             )
             if _smi.returncode == 0 and _smi.stdout.strip():
                 _vram_used_gb = float(_smi.stdout.strip().splitlines()[0]) / 1024.0
-                if _vram_used_gb > 21.6:  # gguf_vram_budget.yaml hard_cap_gb（RTX 3090 24GB×90%）
+                _hard_cap_gb = _vram_hard_cap_gb()  # 真源=config/gguf_vram_budget.yaml hard_cap_gb
+                if _hard_cap_gb is not None and _vram_used_gb > _hard_cap_gb:
                     logger.error(
-                        "ensure_running: VRAM %.1fGB > hard_cap 21.6GB——拒绝孵化 ollama serve（防崩溃循环）",
+                        "ensure_running: VRAM %.1fGB > hard_cap %.1fGB"
+                        "（gguf_vram_budget.yaml hard_cap_gb）——拒绝孵化 ollama serve（防崩溃循环）",
                         _vram_used_gb,
+                        _hard_cap_gb,
                     )
                     return False
         except (OSError, ValueError, subprocess.SubprocessError):

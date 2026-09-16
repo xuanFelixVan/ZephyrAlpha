@@ -17,6 +17,12 @@ pressure_thresholds:
   memory_warning_percent: 70.0
   memory_critical_percent: 80.0
   memory_emergency_percent: 90.0
+  # 统一孵化入口（process_incubator）spawn 前的排队线（Windows=commit charge 占用率）：
+  # ≥ 此值有界等待重试，≥ memory_emergency_percent 直接拒绝孵化。
+  # 治理出处=排班表 v2 施工方案 §2.3 C-1④（消 process_incubator 硬编码 85%，治理战役 M2
+  # 口径不变）；消费方=zephyr.shared.infra.process_incubator.load_queue_threshold
+  # （运行时读取，YAML 缺键时该模块按同值兜底）。
+  memory_incubator_queue_percent: 85.0
   cpu_warning_percent: 75.0
   cpu_critical_percent: 85.0
   cpu_emergency_percent: 95.0
@@ -67,3 +73,16 @@ history:
   max_in_memory: 10000
   sqlite_path: "data/resource_optimization_history.db"
   sqlite_enabled: false
+
+# ── 运营告警绝对值口径（排班表 v2 施工方案 §2.3 C-1⑤：消"告警 8GB 绝对值"散落）──
+# 裁定边界=真源 v1 方案 §2.1 关键裁定-③：压力口径五套（本文件百分比 / resource_guard
+# 比率 / reaper 绝对值 / incubator 水位线 / 运营告警绝对值）不收编，统一口径=v2 挂起
+# 议题——本节只做"数值落 YAML"，不与上方百分比互推。
+ops_alerting:
+  # 项目衍生进程 RSS 合计告警线（GiB；9-15 事故口径=9 个孤儿 llama-server ≈12GB）。
+  # 运行时规则真源仍是 config/alert_rules.yaml ALERT-SYS-002 的 condition（字节数）；
+  # 本键=同一根线的 GiB 口径登记，并在该规则缺席（alert_rules.yaml 缺失/损坏）时
+  # 充当 OpsAlertFeed 兜底线，防供给线静默失明。
+  # 消费方=zephyr.infrastructure.system_telemetry.alerts.ops_alert_feed
+  #        .load_project_rss_alert_bytes（键缺席 → 不臆造阈值，仅 loud warning 降级）。
+  project_rss_alert_gb: 8.0

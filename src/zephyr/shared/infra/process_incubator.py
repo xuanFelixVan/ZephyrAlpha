@@ -22,9 +22,10 @@ ProcessLifecycleGateway 双轨并存、孵化不收割；9-15 事故 9 个孤儿
    ``.runtime/process_incubator/ledger.jsonl``（safe_write_text CAS）。
    登记表=reaper（M3）收割依据，替代 cmdline 特征猜测。
 2. **水位门禁（M2）**：spawn 前查内存水位（Windows=commit charge percent，
-   其余=RAM percent）——≥ queue_at（85%，战役口径）→ 有界等待重试；≥ reject_at
-   （引用 config/resource_optimization.yaml memory_emergency_percent，勿收编）
-   → 抛 WaterLevelRejected。YAML 缺席→缺省 85/90。
+   其余=RAM percent）——≥ queue_at（引用 config/resource_optimization.yaml
+   memory_incubator_queue_percent，v2 C-1④ 消硬编码）→ 有界等待重试；≥ reject_at
+   （引用同文件 memory_emergency_percent，勿收编）→ 抛 WaterLevelRejected。
+   两键 YAML 缺席→按同名缺省常量 85/90 兜底（口径不变，仅数值落 YAML）。
 3. **兼容迁移面**：``spawn_registered`` 与 process_pool.spawn_python_hidden
    同签名（附登记参数，全部有缺省）——消费方仅改 import 行即完成迁移。
 
@@ -54,8 +55,9 @@ logger = logging.getLogger(__name__)
 LEDGER_DIRNAME = "process_incubator"
 LEDGER_FILENAME = "ledger.jsonl"
 
-# 水位门禁缺省（战役 M2 口径 85%；reject 线引用 resource_optimization.yaml
-# memory_emergency_percent——仅引用不收编，YAML 缺席时 90 兜底）
+# 水位门禁缺省常量——仅作 resource_optimization.yaml 缺键/坏文件兜底，
+# 运行时真源两线均在 YAML（queue=memory_incubator_queue_percent，
+# reject=memory_emergency_percent；排班表 v2 §2.3 C-1④ 消硬编码，口径与数值不变）
 DEFAULT_QUEUE_AT_PERCENT = 85.0
 DEFAULT_REJECT_AT_PERCENT = 90.0
 WATER_GATE_WAIT_S = 30.0
@@ -134,17 +136,36 @@ def memory_water_percent() -> float:
         return 0.0
 
 
-def load_reject_threshold() -> float:
-    """引用 config/resource_optimization.yaml 的 memory_emergency_percent（勿收编）。"""
-    try:
-        import yaml
+def _load_pressure_threshold(key: str, default: float) -> float:
+    """读 config/resource_optimization.yaml pressure_thresholds.<key>（缺键/坏文件回退缺省）。
 
+    单一取值器：queue/reject 两线共用，防各写一份 YAML 解析（第二真源之外的复制件）。
+    """
+    import yaml  # try 外先绑定：except 子句求值时需可见 yaml.YAMLError（它不是 ValueError 子类）
+
+    try:
         p = REPO_ROOT / "config" / "resource_optimization.yaml"
         data = yaml.safe_load(p.read_text(encoding="utf-8")) or {}
-        value = (data.get("pressure_thresholds") or {}).get("memory_emergency_percent")
-        return float(value) if value is not None else DEFAULT_REJECT_AT_PERCENT
-    except (OSError, yaml.YAMLError, ValueError, TypeError):
-        return DEFAULT_REJECT_AT_PERCENT
+        value = (data.get("pressure_thresholds") or {}).get(key)
+        return float(value) if value is not None else default
+    except (OSError, ValueError, TypeError, yaml.YAMLError) as exc:
+        logger.warning("load_pressure_threshold(%s) 降级缺省 %s: %s", key, default, exc)
+        return default
+
+
+def load_reject_threshold() -> float:
+    """引用 config/resource_optimization.yaml 的 memory_emergency_percent（勿收编）。"""
+    return _load_pressure_threshold("memory_emergency_percent", DEFAULT_REJECT_AT_PERCENT)
+
+
+def load_queue_threshold() -> float:
+    """引用 config/resource_optimization.yaml 的 memory_incubator_queue_percent。
+
+    治理出处=排班表 v2 施工方案 §2.3 C-1④：原战役 M2 排队线 85 硬编码在本模块，
+    与 reject 线（已引用 YAML）口径不对称；现两线同源同语义——YAML 缺键时按
+    DEFAULT_QUEUE_AT_PERCENT 兜底（与改造前现值一致，防缺键炸孵化链路）。
+    """
+    return _load_pressure_threshold("memory_incubator_queue_percent", DEFAULT_QUEUE_AT_PERCENT)
 
 
 class WaterLevelRejected(RuntimeError):
@@ -155,21 +176,22 @@ class SpawnWaterGate:
     """spawn 前水位门禁：queue 线有界等待，reject 线立即拒绝。
 
     Args:
-        queue_at_percent: 排队线（战役口径 85）。
-        reject_at_percent: 拒绝线（缺省引用 resource_optimization.yaml emergency 线）。
+        queue_at_percent: 排队线；None=运行时引用 resource_optimization.yaml
+            memory_incubator_queue_percent（排班表 v2 C-1④，缺键兜底同战役口径 85）。
+        reject_at_percent: 拒绝线；None=运行时引用 resource_optimization.yaml emergency 线。
         wait_s: queue 线上有界等待总时长（超时仍超线=拒绝）。
         probe: 水位探测函数（测试注入点）。
     """
 
     def __init__(
         self,
-        queue_at_percent: float = DEFAULT_QUEUE_AT_PERCENT,
+        queue_at_percent: float | None = None,
         reject_at_percent: float | None = None,
         wait_s: float = WATER_GATE_WAIT_S,
         retry_interval_s: float = WATER_GATE_RETRY_INTERVAL_S,
         probe=None,
     ):
-        self.queue_at = queue_at_percent
+        self.queue_at = queue_at_percent if queue_at_percent is not None else load_queue_threshold()
         self.reject_at = reject_at_percent if reject_at_percent is not None else load_reject_threshold()
         self.wait_s = wait_s
         self.retry_interval_s = retry_interval_s
@@ -411,5 +433,7 @@ __all__ = [
     "WaterLevelRejected",
     "get_incubator",
     "ledger_dir",
+    "load_queue_threshold",
+    "load_reject_threshold",
     "memory_water_percent",
 ]

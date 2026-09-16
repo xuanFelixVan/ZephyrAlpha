@@ -1504,22 +1504,43 @@ _SCHEDULE_ZH = {
     "integrity_check": "完整性巡检（23:00）", "catchup_guard": "错过补跑（05:30）",
 }
 
-# 时段 → cron（真源=schedule.yaml 动态加载，禁硬编码副本——2026-09-03 对账实证：
-# 硬编码 catchup_guard 03:30 vs 真源 05:30 漂移 2 小时；6 段 cron（含秒）剥离秒位兼容 5 段计算）
+# 时段 → cron（真源=排班注册表 window_expr，禁硬编码副本——2026-09-03 对账实证：
+# 硬编码 catchup_guard 03:30 vs 真源 05:30 漂移 2 小时）
+#
+# 排班表 v2 §2.3 C-4 单源化（2026-09-17）：源从「schedule.yaml 原文」改为「注册表
+# window_expr」。原因：schedule.yaml 的 cron 是 **APScheduler dow 口径（0=周一）**，
+# 而全仓 cron 消费端（resource_schedule_gate / 周历视图 / 本端点）统一走 croniter
+# 标准 cron 口径（0=周日）——dow 归一的唯一映射层=生成器
+# generate_resource_profile_registry（注册表头 cron_convention 自证）。本端点原
+# 自写解析器把 0 读成周日，15/21 个带 dow 的时段整体错位一天（周日误报、周五漏报），
+# 即 C-4 的"第三套"。现只消费归一后的 window_expr → cron 件数三套并两套。
+_SLOT_TASK_ID_PREFIX = "data_slot_"  # 注册表中 schedule.yaml 槽位实体命名约定
+
+
 def _load_schedule_crons() -> dict[str, str]:
-    """schedule.yaml → {时段: 5段cron}；6 段（含秒）剥离秒位；读取失败返回空（下次调度显示空，不炸端点）。"""
+    """注册表 → {时段: 标准cron}（时段名=task_id 去 data_slot_ 前缀）。
+
+    只收 schedule_truth_source 指回 schedule.yaml 的槽位实体；注册表缺席/未再生/
+    结构异常 → 返回空表（下次调度显示空，不炸端点——与原实现读取失败同语义）。
+    """
     import yaml
 
-    path = _REPO / "src" / "zephyr" / "data" / "config" / "schedule.yaml"
+    path = _REPO / "config" / "resource_profile_registry.yaml"
     try:
         data = yaml.safe_load(path.read_text(encoding="utf-8")) or {}
         out: dict[str, str] = {}
-        for name, cfg in (data.get("schedules") or {}).items():
-            expr = str((cfg or {}).get("cron", "")).strip()
-            if not expr:
+        for ent in (data.get("entities") or []):
+            if not isinstance(ent, dict):
                 continue
-            fields = expr.split()
-            out[name] = " ".join(fields[-5:]) if len(fields) == 6 else expr
+            if "schedule.yaml" not in str(ent.get("schedule_truth_source") or ""):
+                continue
+            tid = str(ent.get("task_id") or "")
+            if not tid.startswith(_SLOT_TASK_ID_PREFIX):
+                continue
+            name = tid[len(_SLOT_TASK_ID_PREFIX):]
+            expr = str(ent.get("window_expr") or "").strip()
+            if name and expr:
+                out[name] = expr
         return out
     except Exception:  # noqa: BLE001 — 真源读取失败降级空表，端点不炸
         return {}
@@ -1528,54 +1549,65 @@ def _load_schedule_crons() -> dict[str, str]:
 _SCHEDULE_CRON = _load_schedule_crons()
 
 
-def _next_cron_run(expr: str) -> str:
-    """简化 5 段 cron 下次运行计算（支持 */n、数字、范围、*；够 schedule.yaml 全部 14 时段）。"""
+def _next_cron_run(expr: str, base=None) -> str:
+    """cron → 下次触发的可读倒计时（解析真源=croniter，与排班闸/周历视图同口径）。
+
+    排班表 v2 §2.3 C-4 单源化：本函数原自写一套简化字段匹配器（注释"够 schedule.yaml
+    全部 14 时段"，实际真源已扩到 21 时段），且其 dow 字段按"0=周日"解读，而
+    schedule.yaml 是 APScheduler 口径"0=周一"——15 个带 dow 的时段整体错位一天
+    （周日误报"下次调度"、周五档漏报）。现仓内 cron 件数=生成器（dow 归一映射层）
+    + croniter（消费端）两套，本端点只做消费。
+
+    Args:
+        expr: 注册表 window_expr（标准 cron，0=周日）；'|' 分隔多段时取最近一段。
+        base: 计算基准时刻（测试注入点）；None=当前北京 wall time
+            （与 resource_schedule_gate.expand_windows 同基准，防 UTC 错位）。
+
+    失败语义与改造前一致：表达式空/字段数非法/croniter 缺席或解析异常 → 返回 ""
+    （端点"下次调度"显示空，绝不抛出）；三档中文串格式逐字保留。
+    """
     import datetime as _dt
+    from zoneinfo import ZoneInfo
 
-    fields = expr.split()
-    if len(fields) != 5:
+    expr_s = str(expr or "").strip()
+    if not expr_s:
         return ""
-    min_f, hour_f, dom_f, mon_f, dow_f = fields
+    try:
+        from croniter import croniter
+    except ImportError:  # pragma: no cover — 依赖缺席=降级空显示（同闸 warn 臂）
+        logger.warning("_next_cron_run: croniter 缺席，下次调度降级为空")
+        return ""
 
-    def field_match(val: int, lo: int, hi: int, expr_f: str) -> bool:
-        if expr_f == "*":
-            return lo <= val <= hi
-        if expr_f.startswith("*/"):
-            try:
-                step = int(expr_f[2:])
-                return val % step == lo % step if step else False
-            except ValueError:
-                return False
-        for part in expr_f.split(","):
-            if "-" in part:
-                a, b = part.split("-")
-                if int(a) <= val <= int(b):
-                    return True
-            elif part.isdigit() and int(part) == val:
-                return True
-        return False
+    if base is None:
+        base = _dt.datetime.now(ZoneInfo("Asia/Shanghai"))
+    base = base.replace(second=0, microsecond=0)
 
-    base = _dt.datetime.now().replace(second=0, microsecond=0)
-    for offset in range(1, 8 * 24 * 60):   # 最多向后扫 8 天
-        t = base + _dt.timedelta(minutes=offset)
-        # cron dow: 0=周日（项目用 0-4=周日~周四 交易周口径）
-        if not field_match(t.minute, 0, 59, min_f):
+    best = None
+    for seg in expr_s.split("|"):
+        seg = seg.strip()
+        parts = seg.split()
+        if not seg or len(parts) not in (5, 6):
             continue
-        if not field_match(t.hour, 0, 23, hour_f):
-            continue
-        if dom_f != "*" and not field_match(t.day, 1, 31, dom_f):
-            continue
-        if mon_f != "*" and not field_match(t.month, 1, 12, mon_f):
-            continue
-        if dow_f != "*" and not field_match((t.weekday() + 1) % 7, 0, 6, dow_f):
-            continue
-        delta = t - base
-        if delta.total_seconds() < 3600:
-            return f"{(t-base).seconds//60} 分钟后（{t.strftime('%H:%M')}）"
-        if delta.days >= 1:
-            return f"{delta.days} 天后（{t.strftime('%m-%d %H:%M')}）"
-        return f"{delta.seconds//3600} 小时后（{t.strftime('%H:%M')}）"
-    return ""
+        if len(parts) == 6:
+            # 6 段（APScheduler 秒 分 时 日 月 周）剥秒位降 5 段——与 expand_windows 同口径
+            # （croniter 6.2.2 的 6 段是"分 时 日 月 周 秒"，原样喂会整体错位）
+            seg = " ".join(parts[1:])
+        try:
+            nxt = croniter(seg, base).get_next(_dt.datetime)
+        except (ValueError, KeyError, TypeError):
+            continue  # 非法表达式段跳过（全段非法=返回 ""，与旧实现同语义）
+        if best is None or nxt < best:
+            best = nxt
+    if best is None:
+        return ""
+
+    delta = best - base
+    total = delta.total_seconds()
+    if total < 3600:
+        return f"{int(total // 60)} 分钟后（{best.strftime('%H:%M')}）"
+    if delta.days >= 1:
+        return f"{delta.days} 天后（{best.strftime('%m-%d %H:%M')}）"
+    return f"{int(total // 3600)} 小时后（{best.strftime('%H:%M')}）"
 
 
 def _load_tasks_meta() -> dict[str, dict[str, str]]:

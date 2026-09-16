@@ -7,7 +7,7 @@
 
 覆盖：
 - OpsAlertFeed 板三操作：publish 创建/静默窗口去重/解除+保留期（tmp_path 隔离）
-- tick 端到端（假探针）：9GB 触发 ALERT-SYS-002 发布 → 持续触发静默刷新 → 回落滞回解除
+- tick 端到端（假探针）：阈值上沿触发 ALERT-SYS-002 发布 → 持续触发静默刷新 → 回落滞回解除
 - 探针 fail-safe：probe 抛异常 → ok:false 不上抛；真 psutil 探针返回正数
 - GET /api/ops-notifications：有数据透传 / 板异常降级（TestClient + 板目录重定向）
 - 前端接线静态断言：api.js 通道 + promotion.js 横幅注入/轮询/静默降级
@@ -36,16 +36,41 @@ if str(_PROJECT_ROOT / "src") not in sys.path:
 
 from zephyr.infrastructure.system_telemetry.alerts import ops_alert_feed as feed_mod  # noqa: E402
 from zephyr.infrastructure.system_telemetry.alerts.ops_alert_feed import (  # noqa: E402
+    FALLBACK_OOM_RULE_ID,
     SURVIVAL_METRIC_FRAGMENT,
     OpsAlertFeed,
+    load_project_rss_alert_bytes,
     parse_nav_tsv,
     probe_project_rss_bytes,
     probe_survival_status,
     survival_input_from_nav,
 )
 
-GB = 1024**3
-THRESHOLD = 8 * GB  # 与 ALERT-SYS-002 condition "> 8589934592" 同源
+
+def _prod_oom_rule() -> dict:
+    """OOM 线数值真源=config/alert_rules.yaml ALERT-SYS-002（本文件禁副本）。
+
+    排班表 v2 施工方案 §2.3 C-1⑤：绝对值告警线不再散落在代码/测试里，调档只改
+    YAML（规则条件）+ config/resource_optimization.yaml ops_alerting 登记（兜底线），
+    本测试自动跟随；规则被删=基线失效，直接测红而非静默用旧值。
+    """
+    import yaml
+
+    cfg = yaml.safe_load((_PROJECT_ROOT / "config" / "alert_rules.yaml").read_text(encoding="utf-8")) or {}
+    for rule in cfg.get("rules") or []:
+        if str(rule.get("id")) == "ALERT-SYS-002":
+            return rule
+    raise AssertionError("config/alert_rules.yaml 缺 ALERT-SYS-002——测试基线失效（勿改回硬编码）")
+
+
+_PROD_OOM = _prod_oom_rule()
+THRESHOLD = int(str(_PROD_OOM.get("condition", "")).lstrip(">").strip())
+# 假探针取值=该线的比例（原 9/9.5/7.6/7/1 GB 相对 8GB 线的同比例，改线不改编排）
+PROBE_OVER = int(THRESHOLD * 1.125)         # 超阈 → critical
+PROBE_OVER_MORE = int(THRESHOLD * 1.1875)   # 仍超阈 → 静默窗刷新
+PROBE_IN_BAND = int(THRESHOLD * 0.95)       # 滞回带内（>阈值*0.9 且 <阈值）→ 不动作
+PROBE_RECOVERED = int(THRESHOLD * 0.875)    # 回落到滞回线下 → 解除
+PROBE_IDLE = int(THRESHOLD * 0.125)         # 远低于阈值
 
 
 def _slm():
@@ -81,7 +106,7 @@ def board(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> Path:
 
 @pytest.fixture()
 def feed(board: Path, tmp_path: Path) -> OpsAlertFeed:
-    """注入临时规则的 feed（内存规则阈值 8GB critical + 一条 warning 对照）。"""
+    """注入临时规则的 feed（内存规则阈值=生产 ALERT-SYS-002 同值 critical + 一条 warning 对照）。"""
     rules = {
         "rules": [
             {
@@ -90,7 +115,7 @@ def feed(board: Path, tmp_path: Path) -> OpsAlertFeed:
                 "severity": "critical",
                 "metric": "system.memory_rss_bytes",
                 "condition": f"> {THRESHOLD}",
-                "description": "内存即将耗尽（>8GB RSS）",
+                "description": _PROD_OOM.get("description", "oom_risk"),
                 "silence_window": "5m",
             },
             {
@@ -160,7 +185,7 @@ def test_list_active_orders_active_first(feed: OpsAlertFeed):
 
 
 def test_tick_triggers_and_publishes(feed: OpsAlertFeed):
-    s = feed.tick(probe=lambda: int(9 * GB), now=1000.0)
+    s = feed.tick(probe=lambda: PROBE_OVER, now=1000.0)
     assert s["ok"] is True and s["triggered"] == ["ALERT-SYS-002"]
     assert s["ops"] and s["ops"][0]["op"] == "created"
     active = feed.list_active(now=1000.0)
@@ -169,22 +194,22 @@ def test_tick_triggers_and_publishes(feed: OpsAlertFeed):
 
 
 def test_tick_silence_then_resolve_on_recovery(feed: OpsAlertFeed):
-    feed.tick(probe=lambda: int(9 * GB), now=1000.0)
-    s2 = feed.tick(probe=lambda: int(9.5 * GB), now=1100.0)  # 仍超阈：静默刷新
+    feed.tick(probe=lambda: PROBE_OVER, now=1000.0)
+    s2 = feed.tick(probe=lambda: PROBE_OVER_MORE, now=1100.0)  # 仍超阈：静默刷新
     assert s2["ops"] and s2["ops"][0]["op"] == "refresh"
     # 回落到阈值*0.9 以下 → 解除（滞回）
-    s3 = feed.tick(probe=lambda: int(7 * GB), now=1200.0)
+    s3 = feed.tick(probe=lambda: PROBE_RECOVERED, now=1200.0)
     assert any(op["op"] == "resolved" for op in s3["ops"])
     assert feed.list_active(now=1200.0)[0]["resolved_at"] == 1200.0
     # 高于滞回线但低于阈值 → 不触发也不解除（滞回带内保持原状）
     feed.publish(key="ALERT-SYS-002", severity="critical", title="t", message="m", now=1300.0)
-    s4 = feed.tick(probe=lambda: int(7.6 * GB), now=1400.0)
+    s4 = feed.tick(probe=lambda: PROBE_IN_BAND, now=1400.0)
     assert s4["ops"] == []
 
 
 def test_tick_warning_not_published(feed: OpsAlertFeed):
     """非 critical 规则不落板（首期只承 OOM critical）。"""
-    s = feed.tick(probe=lambda: int(1 * GB), now=1000.0)
+    s = feed.tick(probe=lambda: PROBE_IDLE, now=1000.0)
     assert s["triggered"] == [] and s["ops"] == []
 
 
@@ -340,7 +365,7 @@ def test_frontend_e2e_fake_oom_event_visible(page, base_url):
                 "key": "ALERT-SYS-002",
                 "severity": "critical",
                 "title": "oom_risk",
-                "message": "内存即将耗尽（>8GB RSS）（实测 9663676416 字节）",
+                "message": "内存即将耗尽（RSS 超告警线）（实测 9663676416 字节）",
                 "source": "ops-alert-feed",
                 "first_seen": "2026-09-16T05:30:00",
                 "count": 1,
@@ -376,7 +401,7 @@ _SURVIVAL_RULES = {
             "severity": "critical",
             "metric": "system.memory_rss_bytes",
             "condition": f"> {THRESHOLD}",
-            "description": "内存即将耗尽（>8GB RSS）",
+            "description": _PROD_OOM.get("description", "oom_risk"),
             "silence_window": "5m",
         },
         {
@@ -582,7 +607,7 @@ def test_evaluate_survival_rules_selects_by_status(tmp_path: Path):
 def test_tick_publishes_survival_metric_with_rule_shape(survival_feed: OpsAlertFeed, board: Path):
     payload = {"status": "survival_breach", "breaches": ["Sharpe 0.41 < 0.8"], "input": None}
     s = survival_feed.tick(
-        probe=lambda: int(1 * GB),
+        probe=lambda: PROBE_IDLE,
         now=1000.0,
         survival_probe=lambda: payload,
     )
@@ -599,7 +624,7 @@ def test_tick_publishes_survival_metric_with_rule_shape(survival_feed: OpsAlertF
 
 def test_tick_publishes_failure_rule_only(survival_feed: OpsAlertFeed):
     s = survival_feed.tick(
-        probe=lambda: int(1 * GB),
+        probe=lambda: PROBE_IDLE,
         now=1000.0,
         survival_probe=lambda: {"status": "failure", "breaches": ["回撤 33% > 25%"], "input": None},
     )
@@ -608,9 +633,9 @@ def test_tick_publishes_failure_rule_only(survival_feed: OpsAlertFeed):
 
 def test_tick_ok_resolves_earlier_survival_alert(survival_feed: OpsAlertFeed):
     breach = {"status": "survival_breach", "breaches": ["x"], "input": None}
-    survival_feed.tick(probe=lambda: int(1 * GB), now=1000.0, survival_probe=lambda: breach)
+    survival_feed.tick(probe=lambda: PROBE_IDLE, now=1000.0, survival_probe=lambda: breach)
     s2 = survival_feed.tick(
-        probe=lambda: int(1 * GB),
+        probe=lambda: PROBE_IDLE,
         now=1000.0 + _ONE_DAY + 1,
         survival_probe=lambda: {"status": "ok", "breaches": [], "input": None},
     )
@@ -624,7 +649,7 @@ def test_survival_input_absent_publishes_nothing_and_keeps_feed_alive(
     """缺输入 → 生存线一段不产任何通知 + loud warning + tick 仍 ok（内存段照跑）。"""
     with caplog.at_level("WARNING", logger=feed_mod.logger.name):
         s = survival_feed.tick(
-            probe=lambda: int(9 * GB),
+            probe=lambda: PROBE_OVER,
             now=1000.0,
             survival_probe=lambda: probe_survival_status(query_fn=lambda sql, timeout: ""),
         )
@@ -639,7 +664,7 @@ def test_survival_probe_crash_does_not_break_feed(survival_feed: OpsAlertFeed):
     def _boom():
         raise RuntimeError("nav source exploded")
 
-    s = survival_feed.tick(probe=lambda: int(1 * GB), now=1000.0, survival_probe=_boom)
+    s = survival_feed.tick(probe=lambda: PROBE_IDLE, now=1000.0, survival_probe=_boom)
     assert s["ok"] is True and s["survival"]["available"] is False
     assert s["survival"]["ops"] == []
 
@@ -668,10 +693,10 @@ def test_survival_recomputed_on_rule_cadence_not_every_tick(survival_feed: OpsAl
         calls.append(1)
         return {"status": "ok", "breaches": [], "input": None}
 
-    survival_feed.tick(probe=lambda: int(1 * GB), now=1000.0, survival_probe=_probe)
-    survival_feed.tick(probe=lambda: int(1 * GB), now=1030.0, survival_probe=_probe)
+    survival_feed.tick(probe=lambda: PROBE_IDLE, now=1000.0, survival_probe=_probe)
+    survival_feed.tick(probe=lambda: PROBE_IDLE, now=1030.0, survival_probe=_probe)
     assert len(calls) == 1
-    survival_feed.tick(probe=lambda: int(1 * GB), now=1000.0 + _ONE_DAY + 1, survival_probe=_probe)
+    survival_feed.tick(probe=lambda: PROBE_IDLE, now=1000.0 + _ONE_DAY + 1, survival_probe=_probe)
     assert len(calls) == 2
 
 
@@ -706,7 +731,7 @@ def test_survival_end_to_end_from_nav_tsv_to_board(survival_feed: OpsAlertFeed, 
     """端到端（无网络）：合成净值 TSV → 判定 → 规则 → 通知板（真实探针，仅换查询通道）。"""
     tsv = _nav_tsv(_FALLING)
     s = survival_feed.tick(
-        probe=lambda: int(1 * GB),
+        probe=lambda: PROBE_IDLE,
         now=1000.0,
         survival_probe=lambda: probe_survival_status(query_fn=lambda sql, timeout: tsv),
     )
@@ -716,3 +741,105 @@ def test_survival_end_to_end_from_nav_tsv_to_board(survival_feed: OpsAlertFeed, 
     assert entries[0]["labels"]["metric"] == "kpi.survival_line.status"
     # 落板规则由判定结果选择（非硬编 id）
     assert [r["id"] for r in survival_feed.evaluate_survival_rules(s["survival"]["status"])] == ["ALERT-KPI-002"]
+
+
+# ── RSS 绝对值告警线落 YAML（排班表 v2 §2.3 C-1⑤ 消硬编码）─────────────────────
+
+
+_MISSING = object()
+
+
+def _repo_with_rss_line(root: Path, raw) -> Path:
+    """临时仓根写 config/resource_optimization.yaml 的 ops_alerting.project_rss_alert_gb。"""
+    import yaml
+
+    cfg_dir = root / "config"
+    cfg_dir.mkdir(parents=True, exist_ok=True)
+    body = {"ops_alerting": {"project_rss_alert_gb": raw}} if raw is not _MISSING else {"ops_alerting": {}}
+    (cfg_dir / "resource_optimization.yaml").write_text(yaml.safe_dump(body), encoding="utf-8")
+    return root
+
+
+def test_rss_alert_line_read_from_yaml(tmp_path: Path, monkeypatch: pytest.MonkeyPatch):
+    """兜底线数值来自 resource_optimization.yaml（代码零副本）：改表即改线。"""
+    monkeypatch.setattr(feed_mod, "REPO_ROOT", _repo_with_rss_line(tmp_path / "a", 3.5))
+    assert load_project_rss_alert_bytes() == int(3.5 * 1024**3)
+
+
+def test_rss_alert_yaml_registration_matches_rule_source():
+    """生产登记的 GiB 线必须与 ALERT-SYS-002 规则条件同值（两处登记分叉=测试红）。"""
+    assert load_project_rss_alert_bytes() == THRESHOLD
+
+
+@pytest.mark.parametrize("raw", [_MISSING, "abc", -1, 0])
+def test_rss_alert_line_unusable_returns_none_without_inventing(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch, caplog: pytest.LogCaptureFixture, raw
+):
+    """缺键/非法值/非正值 → None（绝不臆造阈值兜一个数），且 loud warning。"""
+    import yaml
+
+    if raw is _MISSING:
+        root = _repo_with_rss_line(tmp_path / "miss", None)
+    elif raw == "abc":
+        root = tmp_path / "bad"
+        (root / "config").mkdir(parents=True, exist_ok=True)
+        (root / "config" / "resource_optimization.yaml").write_text(
+            yaml.safe_dump({"ops_alerting": {"project_rss_alert_gb": "abc"}}), encoding="utf-8"
+        )
+    else:
+        root = _repo_with_rss_line(tmp_path / f"n{raw}", raw)
+    monkeypatch.setattr(feed_mod, "REPO_ROOT", root)
+    with caplog.at_level("WARNING", logger=feed_mod.logger.name):
+        assert load_project_rss_alert_bytes() is None
+    assert "load_project_rss_alert_bytes" in caplog.text
+
+
+def test_rss_alert_line_missing_file_returns_none(tmp_path: Path, monkeypatch: pytest.MonkeyPatch):
+    """整文件缺席（测试/裸机环境）→ None + 不抛。"""
+    monkeypatch.setattr(feed_mod, "REPO_ROOT", tmp_path / "nonexistent_repo_root")
+    assert load_project_rss_alert_bytes() is None
+
+
+def test_fallback_rule_only_when_rule_source_has_no_memory_rule(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch, board: Path
+):
+    """alert_rules.yaml 无内存字节型规则时，按 resource_optimization.yaml 兜底线合成规则。"""
+    import yaml
+
+    empty_rules = tmp_path / "empty_rules.yaml"
+    empty_rules.write_text(
+        yaml.safe_dump({"rules": [{"id": "X", "metric": "system.cpu_percent", "condition": "> 80"}]}),
+        encoding="utf-8",
+    )
+    monkeypatch.setattr(feed_mod, "REPO_ROOT", _repo_with_rss_line(tmp_path / "repo", THRESHOLD / 1024**3))
+    f = OpsAlertFeed(board_dir=board, rules_path=empty_rules)
+    assert [r["id"] for r in f.evaluate_memory_rules(float(THRESHOLD * 1.2))] == [FALLBACK_OOM_RULE_ID]
+    assert f.evaluate_memory_rules(float(THRESHOLD * 0.5)) == []
+
+
+def test_no_fallback_line_keeps_legacy_silent_semantics(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch, board: Path
+):
+    """规则源与兜底线双双缺席 → 不告警（改造前语义），但绝不静默（loud warning）。"""
+    import yaml
+
+    empty_rules = tmp_path / "empty_rules.yaml"
+    empty_rules.write_text(yaml.safe_dump({"rules": []}), encoding="utf-8")
+    monkeypatch.setattr(feed_mod, "REPO_ROOT", tmp_path / "nonexistent_repo_root")
+    f = OpsAlertFeed(board_dir=board, rules_path=empty_rules)
+    assert f.evaluate_memory_rules(float(THRESHOLD * 9)) == []
+
+
+def test_tick_end_to_end_via_fallback_line(tmp_path: Path, monkeypatch: pytest.MonkeyPatch, board: Path):
+    """端到端：兜底规则触发落板 → 回落滞回解除（证明合成规则可被 _threshold_of 解）。"""
+    import yaml
+
+    empty_rules = tmp_path / "empty_rules.yaml"
+    empty_rules.write_text(yaml.safe_dump({"rules": []}), encoding="utf-8")
+    monkeypatch.setattr(feed_mod, "REPO_ROOT", _repo_with_rss_line(tmp_path / "repo", THRESHOLD / 1024**3))
+    f = OpsAlertFeed(board_dir=board, rules_path=empty_rules)
+    s = f.tick(probe=lambda: int(THRESHOLD * 1.2), now=1000.0)
+    assert s["triggered"] == [FALLBACK_OOM_RULE_ID]
+    assert s["ops"] and s["ops"][0]["op"] == "created"
+    s2 = f.tick(probe=lambda: int(THRESHOLD * 0.5), now=2000.0)
+    assert any(op["op"] == "resolved" for op in s2["ops"]), s2["ops"]
