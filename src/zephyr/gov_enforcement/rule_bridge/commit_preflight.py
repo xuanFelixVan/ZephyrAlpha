@@ -115,6 +115,10 @@ PREFLIGHT_GATES: frozenset[str] = frozenset(
         "TEST-SOURCE-CONSISTENCY",
         "TABLE-NAME-REGISTRY",
         "DATETIME-NOW-FORBIDDEN",
+        # 2026-09-16 晚（st-resched-fix 死信实证）：新会话首提交撞 LOOKUP 门禁
+        # 才知道要 find——进预检后 1 秒快败+精确指引，队列死信类消灭。
+        # 输入面审计：信号型（会话 lookup 审计态+files 分类豁免判定），无暂存依赖。
+        "CAPABILITY-LOOKUP-REQUIRED",
     }
 )
 
@@ -134,6 +138,7 @@ _ESCAPE_HINTS: dict[str, str] = {
     "TEST-SOURCE-CONSISTENCY": "测试 import 的符号须与源码一致（名称漂移）",
     "TABLE-NAME-REGISTRY": "表名走 TableRegistry 真源，禁硬编码字符串",
     "DATETIME-NOW-FORBIDDEN": "生成器代码禁裸时间戳函数（详情见该门禁消息）——改用 now_utc()",
+    "CAPABILITY-LOOKUP-REQUIRED": "施工前能力反查：capability_lookup.CapabilityLookup().find('<关键词>', session_id='<本会话>') 或 MCP rule_discovery（一次即可，审计按会话记账）",
 }
 
 _AUDIT_PATH = Path(".runtime/audit/preflight_events.jsonl")

@@ -769,3 +769,47 @@ def test_already_landed_strips_noop_prefix_for_ancestor_check(
     )
     # 真实不存在的前缀 sha 仍判未落盘
     assert landing._already_landed({"landed_id": f"{cql._NOOP_LANDED_PREFIX}{'0' * 40}"}) is None
+
+
+class TestPathspecSelfHeal:
+    """Mode B 自愈红蓝钉（st-commitspeed-20260916 晚，st-resched-fix/st-auditfix 死信）：
+    gateway 首次 commit 报 pathspec did not match（新文件 staging 丢失微因）→
+    重放 apply+prestage 后重试须成功。"""
+
+    def test_self_heal_retry_succeeds(self, tmp_repo: Path, tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
+        import hashlib  # 局部导入：blob sha 计算
+        real_gateway = cql.WorktreeLanding(repo_root=tmp_repo, queue_root=tmp_path / "cq_real")
+        # 构造：正常 landing 走到 gateway.commit 前，把 gateway.commit 替换为
+        # 首次返回 pathspec 失败、重放后放行真 commit 的序列
+        import scripts.governance.commit_queue_landing as cql_mod
+
+        landing = cql.WorktreeLanding(repo_root=tmp_repo, queue_root=tmp_path / "cq_sh")
+        landing.ensure_worktree()
+        gw = landing._get_gateway()
+        _sha = hashlib.sha256(b"x=1\n").hexdigest()
+        item = {
+            "qid": "q-20260916-sess-sh-0001",
+            "session_id": "sess-sh",
+            "message": "self heal probe",
+            "files": [{"path": "sh_new.py", "action": "modify", "blob_sha256": _sha, "blob_ref": f"blobs/{_sha}"}],
+        }
+        # 种 blob
+        (tmp_path / "cq_sh" / "blobs").mkdir(parents=True, exist_ok=True)
+        (tmp_path / "cq_sh" / "blobs" / hashlib.sha256(b"x=1\n").hexdigest()).write_bytes(b"x=1\n")
+        calls = {"n": 0}
+        orig_commit = type(gw).commit
+
+        def flaky_commit(self, *a, **k):
+            calls["n"] += 1
+            if calls["n"] == 1:
+                return gw_mod.CommitResult(
+                    status=gw_mod.CommitStatus.COMMIT_FAILED,
+                    message="git commit failed: error: pathspec ':(icase)sh_new.py' did not match any file(s) known to git",
+                )
+            return orig_commit(self, *a, **k)
+
+        from unittest.mock import patch
+
+        with patch.object(type(gw), "commit", flaky_commit):
+            result = landing(item, tmp_path / "cq_sh")
+        assert result.ok, f"自愈重试后须落地成功: {result.reason}"

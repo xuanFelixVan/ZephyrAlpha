@@ -470,6 +470,18 @@ class WorktreeLanding:
             else:
                 adds.append(rel)
         if adds:
+            # Mode A 治本（st-commitspeed-20260916 晚，st-dbgap-fix/st-tickdrain 死信
+            # 实证）：scripts/data/* 等 gitignored 路径混入快照，git add rc=1 整项死，
+            # RuntimeError 截断后 AI 读不到病灶。前置 check-ignore 精确点名+可行动指引。
+            chk = self._git_wt("check-ignore", "--no-index", "--", *adds, check=False)
+            if chk.returncode == 0 and chk.stdout.strip():
+                ignored = [x for x in chk.stdout.strip().splitlines() if x.strip()]
+                raise RuntimeError(
+                    "prestage 拒绝：以下快照路径被 .gitignore 忽略（再生产物区，禁入 git）：\n"
+                    + "\n".join(f"  - {x}" for x in ignored[:10])
+                    + "\n修复：①把文件移到非忽略目录（如 scripts/data/ 下代码应移 scripts/）后重新入队；"
+                    "②或确认该路径应入库，修 .gitignore 精确豁免（对齐 sz_open_data 先例）后重新入队"
+                )
             pathspec = self.worktree_path / ".git_prestage_add_paths.txt"
             pathspec.write_text("\n".join(adds) + "\n", encoding="utf-8")
             try:
@@ -804,6 +816,43 @@ class WorktreeLanding:
                         # 落地留痕审计不变。
                         allow_promote=True,
                     )
+                    # Mode B 自愈（st-commitspeed-20260916 晚，st-resched-fix/st-auditfix
+                    # pathspec 死信实证）：新文件在 prestage 已 staged，但 gateway commit
+                    # 报 "did not match any file(s) known to git"=index 中 staging 丢失
+                    # （微因待观测——已加诊断）。自愈：重放 apply+prestage 一次后重试
+                    # commit；仍败→死信带 git status 诊断（下次必可归因）。
+                    if (
+                        result.status.name == "COMMIT_FAILED"
+                        and "did not match" in (result.message or "")
+                        and "pathspec" in (result.message or "")
+                    ):
+                        from zephyr.gov_enforcement.rule_bridge.git_commit_gateway import (  # noqa: PLC0415
+                            CommitResult,
+                        )
+
+                        logger.warning(
+                            "[landing] qid=%s pathspec 丢 staging 自愈：重放 apply+prestage 后重试 commit", qid,
+                        )
+                        commit_files = self._apply_snapshot(item, queue_root)
+                        self._prestage_snapshot(item, commit_files)
+                        _diag = self._git_wt("status", "--porcelain", "--", *self._item_paths(item))
+                        result = gateway.commit(
+                            session_id,
+                            commit_files,
+                            full_message,
+                            allow_non_worktree=True,
+                            allow_tracked_drift=True,
+                            allow_multi_domain=True,
+                            allow_promote=True,
+                        )
+                        if result.status.name == "COMMIT_FAILED" and "did not match" in (result.message or ""):
+                            result = CommitResult(
+                                status=result.status,
+                                message=(
+                                    f"{result.message[:1200]}\n"
+                                    f"[诊断] 自愈重试仍败——worktree status（本项文件）:\n{_diag.stdout[:600]}"
+                                ),
+                            )
                 finally:
                     if prev_env is None:
                         os.environ.pop(_GATEWAY_ENV, None)

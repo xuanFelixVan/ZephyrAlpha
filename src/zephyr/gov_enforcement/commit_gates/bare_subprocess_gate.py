@@ -50,7 +50,7 @@ CREATE_NO_WINDOW，复用 process_pool.py"，但 enforcement.paired_gate_id=null
    只扫 added 行确保不阻断存量 171 处的 CI。
 2. **AST 精确检测**：比正则更准确，天然不检测字符串/注释内的 subprocess.run 引用
 3. **只检测 added 行**：存量违规由人工排查，gate 只防新增
-4. **priority=108**：在 IMPORT-INTEGRITY=107 之后，CAPABILITY-LOOKUP-REQUIRED=110 之前
+4. **priority=132**（原 108，2026-09-16 让位 ALGO-FLOW-LINK——后到者让位先例 DATA-TASK 78->41 同款；仍在内容扫描带）
 5. **import alias 识别**：`import subprocess as sp; sp.run(...)` 也检测
 
 Usage::
@@ -227,7 +227,7 @@ def make_bare_subprocess_gate() -> GateSpec:
     """构造裸 subprocess 调用 fail-closed GateSpec。
 
     Returns:
-        GateSpec(gate_id="BARE-SUBPROCESS", priority=108)。
+        GateSpec(gate_id="BARE-SUBPROCESS", priority=132)。
         fail-closed：检出违规返回 (False, detail)，阻断 commit。
         2026-07-27 P2 升级（warn-only → fail-closed）。
     """
@@ -327,4 +327,4 @@ def make_bare_subprocess_gate() -> GateSpec:
             return False, detail  # fail-closed：passed=False 阻断 commit
         return True, ""
 
-    return GateSpec(gate_id="BARE-SUBPROCESS", check=_check, priority=108)
+    return GateSpec(gate_id="BARE-SUBPROCESS", check=_check, priority=132)
