@@ -5,7 +5,7 @@
 # [CONSUMERS] zephyr.backtest.implementations.vectorized_engine; zephyr.backtest.implementations.event_driven_engine
 # [STARTUP] imported
 # [MATURITY] production
-# [INVARIANTS] IS->WFA->OOS不可跳级;参数锁定;Sharpe>0.5准入;偏离阈值真源=alert_threshold_registry(THD-DEVIATION-001/002,fail-closed);DSR可选判定器默认关闭(dsr_threshold=None不参与判定,52号§7③)
+# [INVARIANTS] IS->WFA->OOS不可跳级;参数锁定;Sharpe>0.5准入;偏离阈值真源=alert_threshold_registry(THD-DEVIATION-001/002,fail-closed);DSR判定器默认开启(dsr_threshold=DSR_SIGNIFICANCE_THRESHOLD=0.95,fail-closed,车道L接线)——三线裁决evaluate_dsr与回测→实盘准入谓词evaluate_strategy_risk_admission=唯一判定源,DecisionGate/fw_backtest验收/risk_validation_bridge实盘准入共用(禁两轨各算各的)
 # [MODIFY-GUARD] none
 # [STABILITY] evolving
 # [SAFETY] M
@@ -48,7 +48,10 @@ from zephyr.backtest.core.overfitting_detector import (
     DEFAULT_OOS_SHARPE_THRESHOLD_RATIO,
 )
 from zephyr.shared.alerts.threshold_loader import load_alert_thresholds
-from zephyr.simulation.deflated_sharpe_calculator import DSR_OVERFITTING_FLOOR
+from zephyr.simulation.deflated_sharpe_calculator import (
+    DSR_OVERFITTING_FLOOR,
+    DSR_SIGNIFICANCE_THRESHOLD,
+)
 
 
 class DecisionGateError(Exception):
@@ -60,6 +63,159 @@ class DecisionGateError(Exception):
         super().__init__(*args)
         if error_code is not None:
             self.error_code = error_code
+
+
+# ===== 单一判定源：DSR 三线裁决 + 回测→实盘风险准入（车道 L 接线，SSOT=MOD-SIM-024 常量）=====
+#
+# 设计第一性原理（专业机构风控门控实践 / López de Prado CPCV-PBO 社区共识 / Zipline·
+# vectorbt 等开源对照）：一个"多重检验校正后的显著性概率"（DSR）既是回测验收的硬项，
+# 也必须是实盘策略准入门的判据——两者若各写各的阈值/各算各的数，就会出现"回测判过
+# 拟合、实盘却放行"的跨轨割裂（本车道 P0 病灶）。故此处把裁决抽成唯一谓词，回测验收
+# (strategy_pipeline.fw_backtest) 与实盘准入 (governance.adapters.risk_validation_bridge)
+# 共用同一函数、同一三线语义、同一 DSR_SIGNIFICANCE_THRESHOLD 放行线，结构性保证两轨
+# accept/reject 一致。默认 fail-closed：数据缺失/未注入 = 拒，绝不静默放行。
+
+
+@dataclass(frozen=True)
+class DsrVerdict:
+    """DSR 三线裁决结果（单一判定源产出，供门控/验收/实盘准入共用）。
+
+    Attributes:
+        passed: 是否通过（仅 significant 带为 True）
+        band: 落带分类——"significant" | "overfitting" | "review" | "unavailable"
+        dsr: 参与判定的 DSR 值（未注入时为 None）
+        threshold: 显著性放行线（默认 DSR_SIGNIFICANCE_THRESHOLD=0.95）
+        reason: 人类可读判定原因（含三线语义关键词，供留痕/告警）
+    """
+
+    passed: bool
+    band: str
+    dsr: float | None
+    threshold: float
+    reason: str
+
+
+def evaluate_dsr(dsr: float | None, *, threshold: float = DSR_SIGNIFICANCE_THRESHOLD) -> DsrVerdict:
+    """DSR 三线裁决（单一判定源，非年化 DSR∈(0,1)，SSOT=MOD-SIM-024 常量）。
+
+    语义（2026-09-15 A5 裁定沿用）：
+      - dsr >= threshold(默认 0.95)            -> significant，通过（放行线）
+      - dsr < DSR_OVERFITTING_FLOOR(=0.5)      -> overfitting，判不通过（低于运气中值）
+      - FLOOR <= dsr < threshold 中间带        -> review，fail-closed 判不通过（需补样本/人工复核）
+      - dsr 为 None                            -> unavailable，fail-closed 判不通过（禁误放行）
+
+    Args:
+        dsr: 预计算 DSR（官方件 MOD-SIM-024 或 metrics.calculate_full_metrics 产出）；None=未注入
+        threshold: 显著性放行线（默认 DSR_SIGNIFICANCE_THRESHOLD=0.95）
+
+    Returns:
+        DsrVerdict: 三线裁决（reason 关键词与 DecisionGate.check_oos_stage 留痕口径一致）
+    """
+    if dsr is None:
+        return DsrVerdict(
+            passed=False,
+            band="unavailable",
+            dsr=None,
+            threshold=threshold,
+            reason=f"DSR判定器已启用(阈值{threshold})但未注入dsr,按不通过处理(fail-closed)",
+        )
+    dsr_f = float(dsr)
+    if dsr_f >= threshold:
+        return DsrVerdict(
+            passed=True,
+            band="significant",
+            dsr=dsr_f,
+            threshold=threshold,
+            reason=f"DSR判定通过: {dsr_f:.4f} >= {threshold}",
+        )
+    if dsr_f < DSR_OVERFITTING_FLOOR:
+        return DsrVerdict(
+            passed=False,
+            band="overfitting",
+            dsr=dsr_f,
+            threshold=threshold,
+            reason=f"DSR判定未通过(低于运气中值否决线): {dsr_f:.4f} < {DSR_OVERFITTING_FLOOR}",
+        )
+    return DsrVerdict(
+        passed=False,
+        band="review",
+        dsr=dsr_f,
+        threshold=threshold,
+        reason=(
+            f"DSR存疑(中间带): {DSR_OVERFITTING_FLOOR:.2f} <= {dsr_f:.4f} < {threshold}, "
+            "fail-closed判不通过(需补样本或人工复核)"
+        ),
+    )
+
+
+@dataclass(frozen=True)
+class RiskAdmissionVerdict:
+    """回测→实盘风险准入统一裁决（车道 L 单一判定源）。
+
+    Attributes:
+        accepted: 是否放行（fail-closed：过拟合旗标为真/缺失、DSR 不达显著线均未放行）
+        reasons: 判定原因列表（留痕/告警用）
+        overfitting_flag: 参与判定的过拟合旗标（None=缺失，按 fail-closed 处理）
+        dsr: 参与判定的 DSR（None=未注入）
+        dsr_threshold: 显著性放行线
+        dsr_band: DSR 落带分类（见 DsrVerdict.band；旗标已单独否决时仍如实记录）
+    """
+
+    accepted: bool
+    reasons: list[str]
+    overfitting_flag: bool | None
+    dsr: float | None
+    dsr_threshold: float
+    dsr_band: str
+
+
+def evaluate_strategy_risk_admission(
+    overfitting_flag: bool | None,
+    dsr: float | None,
+    *,
+    dsr_threshold: float = DSR_SIGNIFICANCE_THRESHOLD,
+) -> RiskAdmissionVerdict:
+    """回测与实盘共用的风险准入判据（单一真源——禁两轨各算各的）。
+
+    规则（全 fail-closed，禁静默放行）：
+      - overfitting_flag is True            -> 拒（SIM-56 过拟合阻断：产出的旗标必须被消费）
+      - overfitting_flag is None            -> 拒（旗标缺失无证据，fail-closed）
+      - evaluate_dsr(dsr, dsr_threshold).passed is False -> 拒（DSR 未达显著线，含中间带/未注入）
+      全部通过才 accepted=True。
+
+    Args:
+        overfitting_flag: 回测产出过拟合旗标（metrics.is_overfitting / artifact.overfitting_flag）
+        dsr: 回测产出 DSR（与 overfitting_flag 同源 metrics.calculate_full_metrics 产出）
+        dsr_threshold: 显著性放行线（默认 DSR_SIGNIFICANCE_THRESHOLD=0.95）
+
+    Returns:
+        RiskAdmissionVerdict: 准入裁决（reasons 逐条留痕）
+    """
+    reasons: list[str] = []
+    accepted = True
+
+    if overfitting_flag is True:
+        accepted = False
+        reasons.append("过拟合旗标否决: overfitting_flag=True（SIM-56 上线前门禁——旗标产即必消）")
+    elif overfitting_flag is None:
+        accepted = False
+        reasons.append("过拟合旗标缺失: overfitting_flag=None，无证据按不通过处理(fail-closed)")
+    else:
+        reasons.append("过拟合旗标通过: overfitting_flag=False")
+
+    dv = evaluate_dsr(dsr, threshold=dsr_threshold)
+    reasons.append(dv.reason)
+    if not dv.passed:
+        accepted = False
+
+    return RiskAdmissionVerdict(
+        accepted=accepted,
+        reasons=reasons,
+        overfitting_flag=overfitting_flag,
+        dsr=dv.dsr,
+        dsr_threshold=dsr_threshold,
+        dsr_band=dv.band,
+    )
 
 
 # ===== Phase 5 后置双闸(11号文⑨ BM-BT-07): regime适配 + 参数收缩稳定性 =====
@@ -257,11 +413,14 @@ class DecisionGateConfig:
         cliff_sharpe_drop: 悬崖型参数Sharpe下降阈值(默认0.50)
         backtest_live_deviation_warn: 回测-实盘偏差告警阈值(默认0.30,真源=alert_threshold_registry THD-DEVIATION-001)
         backtest_live_deviation_retire: 回测-实盘偏差退役阈值(默认0.50,真源=alert_threshold_registry THD-DEVIATION-002)
-        dsr_threshold: OOS段DSR可选判定器阈值(默认None=关闭,不破坏既有行为;
-            52号§7③可选注入——三线语义(2026-09-15 A5,SSOT=MOD-SIM-024常量):
-            dsr>=阈值(建议DSR_SIGNIFICANCE_THRESHOLD=0.95)通过; dsr<DSR_OVERFITTING_FLOOR(0.5)判不通过;
-            中间带存疑fail-closed判不通过。调用方须预计算并注入dsr(官方件 MOD-SIM-024 或
-            metrics.calculate_full_metrics 产出),未注入按不通过处理(fail-closed))
+        dsr_threshold: OOS段DSR判定器阈值(**2026-09-16 车道 L 接线：默认由关闭改为显式安全
+            默认 DSR_SIGNIFICANCE_THRESHOLD=0.95——风控门控默认应 fail-closed，一个经多重检验
+            校正后仍不显著(DSR<0.95)的策略无放行理由；此为"刹车踏板连上卡钳"的默认生效**)。
+            三线语义(SSOT=MOD-SIM-024 常量,复用单一判定源 evaluate_dsr):
+            dsr>=阈值通过; dsr<DSR_OVERFITTING_FLOOR(0.5)判不通过; 中间带存疑 fail-closed判不通过;
+            已启用但未注入 dsr 亦判不通过(fail-closed)。显式回退旧行为=构造时传 dsr_threshold=None
+            (不参与判定,仅供确知不需要 DSR 门的可信内部场景使用)。调用方须预计算并注入 dsr
+            (官方件 MOD-SIM-024 或 metrics.calculate_full_metrics 产出)
         regime_suitability_checker: Phase5 regime适配判定器(默认None=跳过不阻断;
             11号文⑨ BM-BT-07可选注入,签名(strategy_type, current_regime)->RegimeSuitabilityVerdict;
             默认实现见 default_regime_suitability_checker,适配矩阵可用其 matrix 参数覆盖)
@@ -279,7 +438,7 @@ class DecisionGateConfig:
     cliff_sharpe_drop: float = 0.50
     backtest_live_deviation_warn: float = _DEVIATION_DEFAULTS["backtest_live_deviation_warn"]
     backtest_live_deviation_retire: float = _DEVIATION_DEFAULTS["backtest_live_deviation_retire"]
-    dsr_threshold: float | None = None
+    dsr_threshold: float | None = DSR_SIGNIFICANCE_THRESHOLD
     regime_suitability_checker: Callable[[str, str], RegimeSuitabilityVerdict] | None = None
     shrinkage_stability_checker: Callable[[Mapping[str, Any], Mapping[str, Any]], ShrinkageStabilityVerdict] | None = (
         None
@@ -624,28 +783,15 @@ class DecisionGate:
         dsr_f: float | None = None
         dsr_passed = True
         if self.config.dsr_threshold is not None:
-            if dsr is None:
-                dsr_passed = False
-                reasons.append(f"DSR判定器已启用(阈值{self.config.dsr_threshold})但未注入dsr,按不通过处理(fail-closed)")
-            else:
+            if dsr is not None:
                 try:
                     dsr_f = float(dsr)
                 except (TypeError, ValueError) as exc:
                     raise DecisionGateError(f"dsr必须是数值: {dsr!r}") from exc
-                if dsr_f >= self.config.dsr_threshold:
-                    dsr_passed = True
-                    reasons.append(f"DSR判定通过: {dsr_f:.4f} >= {self.config.dsr_threshold}")
-                elif dsr_f < DSR_OVERFITTING_FLOOR:
-                    dsr_passed = False
-                    reasons.append(
-                        f"DSR判定未通过(低于运气中值否决线): {dsr_f:.4f} < {DSR_OVERFITTING_FLOOR}"
-                    )
-                else:
-                    dsr_passed = False
-                    reasons.append(
-                        f"DSR存疑(中间带): {DSR_OVERFITTING_FLOOR:.2f} <= {dsr_f:.4f} < "
-                        f"{self.config.dsr_threshold}, fail-closed判不通过(需补样本或人工复核)"
-                    )
+            # 单一判定源：与回测验收/实盘准入共用 evaluate_dsr 三线语义（禁两轨各算各的）
+            dv = evaluate_dsr(dsr_f, threshold=self.config.dsr_threshold)
+            dsr_passed = dv.passed
+            reasons.append(dv.reason)
 
         passed = bool(params_locked) and ratio_passed and dsr_passed
         if passed:
@@ -1069,11 +1215,15 @@ __all__ = [
     "DecisionGateContext",
     "DecisionGateError",
     "DecisionGateResult",
+    "DsrVerdict",
     "ISStageResult",
     "OOSStageResult",
     "RegimeSuitabilityVerdict",
+    "RiskAdmissionVerdict",
     "ShrinkageStabilityVerdict",
     "WFAStageResult",
     "default_regime_suitability_checker",
     "default_shrinkage_stability_checker",
+    "evaluate_dsr",
+    "evaluate_strategy_risk_admission",
 ]

@@ -72,6 +72,7 @@ from typing import Any
 
 ROOT = Path(__file__).resolve().parents[3]
 EVIDENCE_DIR = ROOT / "data" / "backtest_artifacts" / "fw-auto"
+ARTIFACT_DIR = ROOT / "data" / "backtest_artifacts"
 GENERATOR_SCRIPT = ROOT / "scripts" / "backtest" / "generate_framework_plan_from_tdm.py"
 REGIME_WRITER_SCRIPT = ROOT / "scripts" / "backtest" / "print_regime_history.py"
 PLAN_ID = "fw-tdm-current"
@@ -186,6 +187,74 @@ def load_regime_series(start: str, end: str) -> dict[str, Any]:
     return out
 
 
+# ---------- 风险信号消费（车道 L：acceptance 真读 overfitting_flag/DSR/n_trials）----------
+
+def _load_artifact_nav(run_id: str | None) -> "Any":
+    """读回测产物 equity_curve 重建净值序列（只读；缺文件/短序列/异常→None，禁崩主流程）。
+
+    run_framework_backtest 落 `data/backtest_artifacts/<run_id>.json`，其 metrics 快照仅含
+    overfitting_flag（引擎 sink 字段），不含 dsr/n_trials——故 S11 验收在此用同一 DSR 真源
+    （metrics.calculate_full_metrics + 账本 n_trials）复算，与引擎逐位同输入同函数→零分叉。
+    """
+    if not run_id:
+        return None
+    path = ARTIFACT_DIR / f"{run_id}.json"
+    if not path.exists():
+        return None
+    try:
+        import pandas as pd
+
+        d = json.loads(path.read_text(encoding="utf-8"))
+        ec = d.get("equity_curve") or []
+        if len(ec) < 2:
+            return None
+        nav = pd.Series({str(p["timestamp"]): float(p["equity"]) for p in ec})
+        return nav.sort_index()
+    except (OSError, ValueError, KeyError, TypeError):
+        return None
+
+
+def _evaluate_risk_decision(result: dict) -> dict[str, Any]:
+    """对整装回测结果施加回测→实盘共用风险判据（单一真源，fail-closed）。
+
+    取值优先级：产物 metrics 若已带 dsr/n_trials 直接用（前向兼容引擎侧上收），否则用
+    净值序列复算（同一 DSR 官方件 + 账本 n_trials）。overfitting_flag 取引擎产物旗标。
+    最终裁决一律经 decision_gate.evaluate_strategy_risk_admission——缺失即拒，绝不静默放行。
+    """
+    from zephyr.backtest.core.decision_gate import evaluate_strategy_risk_admission
+    from zephyr.backtest.core.metrics import calculate_full_metrics
+
+    metrics = result.get("metrics") or {}
+    overfitting_flag = metrics.get("overfitting_flag")
+    dsr = metrics.get("dsr")
+    n_trials = metrics.get("n_trials")
+    n_trials_source = metrics.get("n_trials_source")
+
+    if dsr is None:
+        nav = _load_artifact_nav(result.get("run_id"))
+        if nav is not None:
+            try:
+                full = calculate_full_metrics(nav, trades_count=int(metrics.get("trades_count") or 0))
+                dsr = full.get("dsr")
+                n_trials = full.get("n_trials", n_trials)
+                n_trials_source = full.get("n_trials_source", n_trials_source)
+                if overfitting_flag is None:
+                    overfitting_flag = full.get("is_overfitting")
+            except Exception as exc:  # noqa: BLE001——DSR 复算失败=缺证据，交由 fail-closed 拒
+                _alert(f"整装回测风险裁决 DSR 复算失败（fail-closed 将拒）: {type(exc).__name__}: {exc}"[:200],
+                       level="WARN")
+
+    admission = evaluate_strategy_risk_admission(overfitting_flag, dsr)
+    return {
+        "accepted": bool(admission.accepted),
+        "overfitting_flag": overfitting_flag,
+        "dsr": dsr,
+        "n_trials": n_trials,
+        "n_trials_source": n_trials_source,
+        "reasons": list(admission.reasons),
+    }
+
+
 # ---------- 核心契约 ----------
 
 def run_fw_backtest_due(event: dict) -> dict[str, Any]:
@@ -217,12 +286,15 @@ def run_fw_backtest_due(event: dict) -> dict[str, Any]:
     # ①.5 regime 日序新鲜度闸（fresh=零成本直通；stale=告警披露进证据包，不阻断跑批）
     regime_guard = ensure_regime_snapshot()
 
-    # ② 幂等闸：指纹未变且最近一次 ok → 跳过（自裁留痕：同指纹重跑结果必然逐位同——
-    #    面板由同窗口同数据决定，引擎确定性；省分钟级重跑与产物膨胀）
+    # ② 幂等闸：指纹未变且最近一次"已风险放行"ok → 跳过（自裁留痕：同指纹重跑结果必然逐位同——
+    #    面板由同窗口同数据决定，引擎确定性；省分钟级重跑与产物膨胀）。
+    #    车道 L：额外要求旧证据 risk_admitted is True——车道 L 接线前落的老证据只有 ok=True
+    #    从无 risk_admitted（风险闸未接），据其短路将令被冻结的过拟合策略永不再判 → 必须重跑复评。
     fp = plan_fingerprint()
     latest = _latest_evidence()
     if not force and latest and latest.get("plan", {}).get("fingerprint") == fp["fingerprint"] \
-            and latest.get("acceptance", {}).get("ok"):
+            and latest.get("acceptance", {}).get("ok") \
+            and latest.get("acceptance", {}).get("risk_admitted") is True:
         return {
             "ok": True,
             "skipped": "plan_fingerprint_unchanged（同指纹最近已 ok，force=true 可强制重跑）",
@@ -246,12 +318,24 @@ def run_fw_backtest_due(event: dict) -> dict[str, Any]:
 
     # ④ 验收+证据包
     recon = result.get("panel_reconciliation") or {}
+    # 车道 L（P0）：风险信号产即必消——acceptance 真读 overfitting_flag/DSR/n_trials，
+    # 经与实盘共用判据 evaluate_strategy_risk_admission，不过关即判失败（禁静默放行）。
+    risk = _evaluate_risk_decision(result)
+    base_ok = (
+        bool(result.get("ok")) and bool(recon.get("within_tolerance"))
+        and int(result.get("equity_points") or 0) > 0
+    )
     acceptance = {
-        "ok": bool(result.get("ok")) and bool(recon.get("within_tolerance"))
-        and int(result.get("equity_points") or 0) > 0,
+        "ok": bool(base_ok and risk["accepted"]),
         "run_ok": bool(result.get("ok")),
         "within_tolerance": bool(recon.get("within_tolerance")),
         "equity_points": int(result.get("equity_points") or 0),
+        "risk_admitted": bool(risk["accepted"]),
+        "overfitting_flag": risk["overfitting_flag"],
+        "dsr": risk["dsr"],
+        "n_trials": risk["n_trials"],
+        "n_trials_source": risk["n_trials_source"],
+        "risk_reasons": risk["reasons"],
     }
     metrics = result.get("metrics") or {}
     core_metrics = {
@@ -284,6 +368,7 @@ def run_fw_backtest_due(event: dict) -> dict[str, Any]:
             "equity_points": result.get("equity_points"),
             "trades": result.get("trades"),
             "core_metrics": core_metrics,
+            "risk_decision": risk,
         },
         "generator": gen,
         "duration_s": round(time.time() - t0, 1),
@@ -292,11 +377,18 @@ def run_fw_backtest_due(event: dict) -> dict[str, Any]:
     evidence_path = _write_evidence(summary)
     summary["evidence_path"] = str(evidence_path)
     if not acceptance["ok"]:
+        risk_note = ""
+        if base_ok and not risk["accepted"]:
+            risk_note = (
+                f" 风险闸否决: overfitting_flag={risk['overfitting_flag']} "
+                f"dsr={risk['dsr']} n_trials={risk['n_trials']} "
+                f"({risk['n_trials_source']}) reasons={risk['reasons']}"
+            )
         _alert(
             f"fw-tdm-current 整装回测验收未过: ok={acceptance['run_ok']} "
             f"within_tolerance={acceptance['within_tolerance']} "
-            f"equity_points={acceptance['equity_points']} warn={result.get('warn')!r} "
-            f"evidence={evidence_path}",
+            f"equity_points={acceptance['equity_points']} warn={result.get('warn')!r}"
+            f"{risk_note} evidence={evidence_path}",
             level="ERROR",
         )
     return summary

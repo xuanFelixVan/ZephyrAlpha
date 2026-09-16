@@ -457,6 +457,7 @@ class EventDrivenEngine(BacktestEngineBase):
         walk_forward_results: list[dict],
         param_sensitivity: dict[str, list[tuple[Any, float]]] | None = None,
         params_locked: bool = True,
+        dsr: float | None = None,
     ) -> DecisionGateResult:
         """3阶段决策门控评估（IS->WFA->OOS，不可跳级）。
 
@@ -470,6 +471,7 @@ class EventDrivenEngine(BacktestEngineBase):
             walk_forward_results: Walk-Forward 窗口结果列表
             param_sensitivity: 参数敏感性扫描结果；None 跳过稳定性门控
             params_locked: 参数是否已锁定（OOS 阶段要求锁定）
+            dsr: Deflated Sharpe Ratio；None 时决策门控按 fail-closed 拒绝
 
         Returns:
             DecisionGateResult: 三阶段综合判定结果
@@ -482,6 +484,7 @@ class EventDrivenEngine(BacktestEngineBase):
             walk_forward_results=walk_forward_results,
             oos_sharpe=oos_sharpe,
             params_locked=params_locked,
+            dsr=dsr,
         )
 
     def wf_fold_to_gate_dict(self, wf_fold_results: list[dict]) -> list[dict]:

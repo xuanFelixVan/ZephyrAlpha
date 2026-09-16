@@ -230,13 +230,39 @@ def calculate_ic_ir(
 # 注意: 此默认值(10)仅为fallback, 调用方MUST传入实际试错次数(策略数/参数组合数).
 # 若实际试错次数>10而未显式传入, DSR会偏乐观(undercorrected).
 # 对于参数搜索/网格优化的场景, n_trials应=参数组合总数.
+# 车道 L 接线(2026-09-16): 未显式传入时不再直接吃这个默认 10，而是自动向可审计
+# 真源 TrialLedger(MOD-BT-200) 取全局累计机器回测数；仅当账本不可读时才退回此默认并留
+# n_trials_source="fallback_default:..."（禁硬编码拍脑袋基数）。
 DEFAULT_N_TRIALS = 10
+
+
+def _resolve_n_trials(n_trials: int | None) -> tuple[int, str]:
+    """解析 DSR 多重检验基数 n_trials（真值优先，来源可溯，fail-closed 不猜）。
+
+    优先级：
+      1. 调用方显式传入整数 -> (n, "explicit")
+      2. 缺省(None) -> 读可审计真源 TrialLedger.cumulative_trials() -> (n, "trial_ledger:<n>")
+      3. 账本不可读 -> 退回 DEFAULT_N_TRIALS + 留痕 (DEFAULT_N_TRIALS, "fallback_default:<err>")
+
+    懒导入 TrialLedger 避免 import 环（账本仅依赖 file_utils/paths）。
+    """
+    if n_trials is not None:
+        return int(n_trials), "explicit"
+    try:
+        from zephyr.backtest.core.n_trial_ledger import TrialLedger
+
+        n = int(TrialLedger().cumulative_trials())
+        if n < 1:
+            raise ValueError(f"账本读数非法(<1): {n}")
+        return n, f"trial_ledger:{n}"
+    except Exception as exc:  # noqa: BLE001——账本缺失/非法=退回默认并留痕，绝不让纯数学路径崩
+        return DEFAULT_N_TRIALS, f"fallback_default:{type(exc).__name__}"
 
 
 def calculate_full_metrics(
     nav_series: pd.Series,
     trades_count: int = 0,
-    n_trials: int = DEFAULT_N_TRIALS,
+    n_trials: int | None = None,
     risk_free_rate: float = DEFAULT_RISK_FREE_RATE,
     periods_per_year: int = TRADING_DAYS_PER_YEAR,
 ) -> dict:
@@ -253,7 +279,9 @@ def calculate_full_metrics(
     Args:
         nav_series: 净值序列(按日期排序,首值为初始资金)
         trades_count: 总交易笔数
-        n_trials: 试错次数(用于DSR多重测试修正)
+        n_trials: 试错次数(用于DSR多重测试修正)。None=自动向可审计真源 TrialLedger
+            (MOD-BT-200,全局累计机器回测数)取真值；显式传整数=调用方指定基数。
+            DEFAULT_N_TRIALS(=10) 仅在账本不可读时作 fallback 并留痕，禁裸吃默认。
         risk_free_rate: 年化无风险利率
         periods_per_year: 年化周期数(默认252交易日)
 
@@ -263,7 +291,8 @@ def calculate_full_metrics(
               dsr/adjusted_sharpe/expected_max_sharpe/is_overfitting
               (dsr∈(0,1)概率; adjusted_sharpe=年化Sharpe;
                expected_max_sharpe=E[max(Z_N)] 多重测试期望;
-               is_overfitting=dsr<0.5 运气中值否决线,放行线0.95归 is_significant)
+               is_overfitting=dsr<0.5 运气中值否决线,放行线0.95归 is_significant) +
+              n_trials(实际用于修正的基数) + n_trials_source(来源可溯标记)
     """
     # 基础指标(复用现有calculate_metrics)
     base_metrics = calculate_metrics(
@@ -272,6 +301,9 @@ def calculate_full_metrics(
         risk_free_rate=risk_free_rate,
         periods_per_year=periods_per_year,
     )
+
+    # n_trials 真值解析（None→账本，来源留痕）——DSR 多重检验基数，来源可溯
+    n_trials_resolved, n_trials_source = _resolve_n_trials(n_trials)
 
     # 收益率序列(日频,直接喂官方件——量纲自洽)
     nav = nav_series.dropna()
@@ -285,13 +317,15 @@ def calculate_full_metrics(
         result["adjusted_sharpe"] = float(base_metrics["sharpe_ratio"])
         result["expected_max_sharpe"] = 0.0
         result["is_overfitting"] = True
+        result["n_trials"] = int(n_trials_resolved)
+        result["n_trials_source"] = n_trials_source
         return result
 
     dsr_result = DeflatedSharpeCalculator(
         DSRConfig(periods_per_year=periods_per_year)
     ).calculate(
         [float(r) for r in returns],
-        num_trials=int(n_trials),
+        num_trials=int(n_trials_resolved),
         risk_free_rate=risk_free_rate / periods_per_year,
     )
 
@@ -303,6 +337,8 @@ def calculate_full_metrics(
     # is_overfitting 语义=运气中值否决线(dsr < DSR_OVERFITTING_FLOOR=0.5);
     # 显著性放行线 0.95 归 MOD-SIM-024 is_significant。
     result["is_overfitting"] = bool(dsr_result.dsr < DSR_OVERFITTING_FLOOR)
+    result["n_trials"] = int(n_trials_resolved)
+    result["n_trials_source"] = n_trials_source
     return result
 
 

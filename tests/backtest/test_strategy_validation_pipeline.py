@@ -47,6 +47,7 @@ def _clean_request(**overrides) -> StrategyValidationRequest:
         "params": {"window": 10},
         "walk_forward_results": _wf_windows(),
         "oos_sharpe": 0.85,
+        "dsr": 0.97,
         "param_sensitivity": _stable_sensitivity(),
         "perturbed_results": [{"sharpe_ratio": 0.95}, {"sharpe_ratio": 1.02}],
         "period_results": [
@@ -72,13 +73,14 @@ class TestPipelineHappyPath:
         assert verdict.strategy_id == "strat_mf_v1"
 
     def test_minimal_request(self):
-        # 可选维度全缺省: 仅必填字段, 过拟合维度默认稳定
+        # 可选维度全缺省: 仅必填字段+dsr(默认门控强制项), 过拟合维度默认稳定
         req = StrategyValidationRequest(
             strategy_id="s1",
             is_sharpe=1.0,
             params={"a": 1},
             walk_forward_results=_wf_windows(),
             oos_sharpe=0.9,
+            dsr=0.97,
         )
         verdict = run_strategy_validation(req)
         assert verdict.can_deploy is True
@@ -126,10 +128,17 @@ class TestOverfittingVetoPropagation:
 
 
 class TestDSRInjection:
-    def test_default_gate_ignores_dsr(self):
-        # 默认门控未配置 dsr_threshold → 注入低 dsr 不影响裁决
+    def test_default_gate_enforces_dsr(self):
+        # 默认门控已强制 DSR（裁定登记：dsr_threshold=0.95）→ 低 dsr 一票否决
         verdict = run_strategy_validation(_clean_request(dsr=0.0))
-        assert verdict.can_deploy is True
+        assert verdict.can_deploy is False
+        assert any("DSR" in x for x in verdict.reasons)
+
+    def test_default_gate_missing_dsr_fail_closed(self):
+        # 未注入 dsr 按不通过处理（fail-closed），不得静默放行
+        verdict = run_strategy_validation(_clean_request(dsr=None))
+        assert verdict.can_deploy is False
+        assert any("fail-closed" in x for x in verdict.reasons)
 
     def test_custom_gate_with_dsr_threshold(self):
         gate = DecisionGate(DecisionGateConfig(dsr_threshold=0.5))

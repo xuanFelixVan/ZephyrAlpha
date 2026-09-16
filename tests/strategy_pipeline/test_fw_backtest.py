@@ -41,7 +41,9 @@ _FP = {"plan_id": "fw-tdm-current", "weights": {"a": 1.0}, "tdm_sha256_12": "dea
        "fingerprint": "abc123def456"}
 
 
-def _fake_run_result(ok: bool = True, within: bool = True, equity: int = 60) -> dict:
+def _fake_run_result(ok: bool = True, within: bool = True, equity: int = 60,
+                     overfitting: bool = False, dsr: float | None = 0.97,
+                     n_trials: int | None = 4497) -> dict:
     return {
         "ok": ok,
         "run_id": "bt-fw-test1234",
@@ -56,7 +58,9 @@ def _fake_run_result(ok: bool = True, within: bool = True, equity: int = 60) -> 
                                  "over_tolerance_cells": 0 if within else 5},
         "equity_points": equity,
         "trades": 42,
-        "metrics": {"total_return": 0.1, "sharpe_ratio": 1.2, "plan_id": "fw-tdm-current"},
+        "metrics": {"total_return": 0.1, "sharpe_ratio": 1.2, "plan_id": "fw-tdm-current",
+                    "trades_count": 42, "overfitting_flag": overfitting, "dsr": dsr,
+                    "n_trials": n_trials, "n_trials_source": "trial_ledger" if n_trials else None},
         "warn": None if (ok and within and equity) else "degraded",
     }
 
@@ -113,7 +117,7 @@ class TestRunFwBacktestDue:
         _patch_happy_path(monkeypatch)
         monkeypatch.setattr(fw, "_latest_evidence", lambda: {
             "plan": {"fingerprint": _FP["fingerprint"]},
-            "acceptance": {"ok": True},
+            "acceptance": {"ok": True, "risk_admitted": True},
             "evidence_path": "latest.json",
         })
         out = fw.run_fw_backtest_due({"payload": {"trigger": "auto_mount"}})
@@ -122,9 +126,23 @@ class TestRunFwBacktestDue:
     def test_force_bypasses_idempotent_skip(self, isolated, monkeypatch):
         calls = _patch_happy_path(monkeypatch)
         monkeypatch.setattr(fw, "_latest_evidence", lambda: {
-            "plan": {"fingerprint": _FP["fingerprint"]}, "acceptance": {"ok": True}})
+            "plan": {"fingerprint": _FP["fingerprint"]},
+            "acceptance": {"ok": True, "risk_admitted": True}})
         out = fw.run_fw_backtest_due({"payload": {"force": True}})
         assert out["ok"] is True and calls  # force 越过幂等闸真实重跑
+
+    def test_legacy_ok_evidence_forces_reeval(self, isolated, monkeypatch):
+        """车道 L 接线前的老证据只有 ok=True 无 risk_admitted → 不得据其短路，必须重跑复评。"""
+        calls = _patch_happy_path(monkeypatch)
+        monkeypatch.setattr(fw, "_latest_evidence", lambda: {
+            "plan": {"fingerprint": _FP["fingerprint"]},
+            "acceptance": {"ok": True},  # 老证据：风险闸从未接，无 risk_admitted 字段
+            "evidence_path": "latest.json",
+        })
+        out = fw.run_fw_backtest_due({"payload": {"trigger": "auto_mount"}})
+        assert not out.get("skipped")  # 未被幂等闸短路
+        assert calls  # 真实重跑并复评风险
+        assert "risk_admitted" in out["acceptance"]
 
     def test_over_tolerance_no_retry(self, isolated, monkeypatch):
         _patch_happy_path(monkeypatch, run_result=_fake_run_result(within=False))
@@ -133,6 +151,53 @@ class TestRunFwBacktestDue:
         assert out["acceptance"]["within_tolerance"] is False
         assert any(lv == "ERROR" for lv, _ in isolated["alerts"])
         assert Path(out["evidence_path"]).exists()
+
+    def test_overfitting_strategy_rejected(self, isolated, monkeypatch):
+        """P0：现网 bt-fw-823d7fd7 型——overfitting_flag=True 必须判 ok=false（禁静默放行）。"""
+        _patch_happy_path(monkeypatch,
+                          run_result=_fake_run_result(overfitting=True, dsr=0.000049, n_trials=4497))
+        out = fw.run_fw_backtest_due({"payload": {"trigger": "auto_mount"}})
+        assert out["ok"] is False
+        assert out["acceptance"]["risk_admitted"] is False
+        assert out["acceptance"]["overfitting_flag"] is True
+        assert any(lv == "ERROR" and "风险闸否决" in m for lv, m in isolated["alerts"])
+
+    def test_dsr_below_significance_line_rejected(self, isolated, monkeypatch):
+        """DSR 中间带（0.5<=dsr<0.95，overfitting_flag=False）仍 fail-closed 拒——不误放行。"""
+        _patch_happy_path(monkeypatch,
+                          run_result=_fake_run_result(overfitting=False, dsr=0.7, n_trials=4497))
+        out = fw.run_fw_backtest_due({"payload": {"trigger": "auto_mount"}})
+        assert out["ok"] is False
+        assert out["acceptance"]["risk_admitted"] is False
+
+    def test_real_n_trials_recorded_in_evidence(self, isolated, monkeypatch):
+        """n_trials 真值（非硬编码 10）随验收落证据包（来源可溯）。"""
+        _patch_happy_path(monkeypatch,
+                          run_result=_fake_run_result(overfitting=False, dsr=0.98, n_trials=4497))
+        out = fw.run_fw_backtest_due({"payload": {"trigger": "auto_mount"}})
+        assert out["ok"] is True
+        assert out["acceptance"]["n_trials"] == 4497
+        assert out["acceptance"]["n_trials"] != 10  # 绝非旧的拍脑袋默认
+        body = json.loads(Path(out["evidence_path"]).read_text(encoding="utf-8"))
+        assert body["run"]["risk_decision"]["n_trials"] == 4497
+
+    def test_dsr_recomputed_from_artifact_single_source(self, isolated, monkeypatch):
+        """产物 metrics 缺 dsr 时，从净值序列用同一真源复算 n_trials，且仍走 fail-closed 判据。"""
+        import pandas as pd
+
+        res = _fake_run_result(overfitting=False)
+        res["metrics"].pop("dsr", None)  # 模拟引擎 sink 不上收 dsr 的现网形态
+        res["metrics"].pop("n_trials", None)
+        res["metrics"].pop("n_trials_source", None)
+        _patch_happy_path(monkeypatch, run_result=res)
+        monkeypatch.setattr(
+            fw, "_load_artifact_nav",
+            lambda run_id: pd.Series([1_000_000 + 3_000 * i for i in range(120)]),
+        )
+        out = fw.run_fw_backtest_due({"payload": {"trigger": "auto_mount"}})
+        rd = out["acceptance"]
+        assert rd["dsr"] is not None  # 复算成功
+        assert rd["n_trials"] is not None and rd["n_trials"] >= 1  # 真值来源，非 None
 
     def test_generator_failure_raises(self, isolated, monkeypatch):
         monkeypatch.setattr(fw, "_run_generator",

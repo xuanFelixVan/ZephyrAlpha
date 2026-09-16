@@ -56,6 +56,7 @@ class TestPhase5NoInjection:
             param_sensitivity=_stable_sensitivity(),
             walk_forward_results=_wf_windows(4),
             oos_sharpe=0.85,
+            dsr=0.99,
         )
         assert result.overall_passed is True
         assert result.can_deploy is True
@@ -86,6 +87,7 @@ class TestPhase5NoInjection:
             param_sensitivity=_stable_sensitivity(),
             walk_forward_results=_wf_windows(4),
             oos_sharpe=0.85,
+            dsr=0.99,
             phase5_context=ctx,
         )
         assert result.overall_passed is True
@@ -108,6 +110,7 @@ class TestPhase5RegimeDowngrade:
             param_sensitivity=_stable_sensitivity(),
             walk_forward_results=_wf_windows(4),
             oos_sharpe=0.85,
+            dsr=0.99,
             phase5_context=ctx,
         )
         assert result.overall_passed is True
@@ -128,6 +131,7 @@ class TestPhase5RegimeDowngrade:
             param_sensitivity=_stable_sensitivity(),
             walk_forward_results=_wf_windows(4),
             oos_sharpe=0.85,
+            dsr=0.99,
             phase5_context=ctx,
         )
         assert result.downgraded is True
@@ -145,6 +149,7 @@ class TestPhase5RegimeDowngrade:
             param_sensitivity=_stable_sensitivity(),
             walk_forward_results=_wf_windows(4),
             oos_sharpe=0.85,
+            dsr=0.99,
             phase5_context=ctx,
         )
         assert result.overall_passed is True
@@ -165,6 +170,7 @@ class TestPhase5RegimeDowngrade:
             param_sensitivity=_stable_sensitivity(),
             walk_forward_results=_wf_windows(4),
             oos_sharpe=0.85,
+            dsr=0.99,
             phase5_context=ctx,
         )
         assert result.downgraded is True
@@ -183,6 +189,7 @@ class TestPhase5RegimeDowngrade:
             param_sensitivity=_stable_sensitivity(),
             walk_forward_results=_wf_windows(4),
             oos_sharpe=0.85,
+            dsr=0.99,
             phase5_context=ctx,
         )
         assert result.downgraded is True
@@ -201,6 +208,7 @@ class TestPhase5RegimeDowngrade:
                 param_sensitivity=_stable_sensitivity(),
                 walk_forward_results=_wf_windows(4),
                 oos_sharpe=0.85,
+                dsr=0.99,
                 phase5_context=None,
             )
         assert exc_info.value.error_code == "ZA-BT-0038"
@@ -224,6 +232,7 @@ class TestPhase5ShrinkageDowngrade:
             param_sensitivity=_stable_sensitivity(),
             walk_forward_results=_wf_windows(4),
             oos_sharpe=0.85,
+            dsr=0.99,
             phase5_context=ctx,
         )
         assert result.overall_passed is True
@@ -246,6 +255,7 @@ class TestPhase5ShrinkageDowngrade:
             param_sensitivity=_stable_sensitivity(),
             walk_forward_results=_wf_windows(4),
             oos_sharpe=0.85,
+            dsr=0.99,
             phase5_context=ctx,
         )
         assert result.overall_passed is True
@@ -266,6 +276,7 @@ class TestPhase5ShrinkageDowngrade:
             param_sensitivity=None,
             walk_forward_results=_wf_windows(4),
             oos_sharpe=0.85,
+            dsr=0.99,
             phase5_context=ctx,
         )
         assert result.overall_passed is True
@@ -285,6 +296,7 @@ class TestPhase5ShrinkageDowngrade:
                 param_sensitivity=_stable_sensitivity(),
                 walk_forward_results=_wf_windows(4),
                 oos_sharpe=0.85,
+                dsr=0.99,
                 phase5_context=None,
             )
         assert exc_info.value.error_code == "ZA-BT-0039"
@@ -309,6 +321,7 @@ class TestPhase5BothGates:
             param_sensitivity=_stable_sensitivity(),
             walk_forward_results=_wf_windows(4),
             oos_sharpe=0.85,
+            dsr=0.99,
             phase5_context=ctx,
         )
         assert result.overall_passed is True
@@ -335,6 +348,7 @@ class TestPhase5BothGates:
             param_sensitivity=_stable_sensitivity(),
             walk_forward_results=_wf_windows(4),
             oos_sharpe=0.85,
+            dsr=0.99,
             phase5_context=ctx,
         )
         assert result.overall_passed is True
@@ -383,6 +397,7 @@ class TestPhase5CustomMatrix:
             param_sensitivity=_stable_sensitivity(),
             walk_forward_results=_wf_windows(4),
             oos_sharpe=0.85,
+            dsr=0.99,
             phase5_context=ctx,
         )
         assert result.downgraded is False
@@ -396,6 +411,7 @@ class TestPhase5CustomMatrix:
             param_sensitivity=_stable_sensitivity(),
             walk_forward_results=_wf_windows(4),
             oos_sharpe=0.85,
+            dsr=0.99,
             phase5_context=ctx2,
         )
         assert result2.downgraded is True

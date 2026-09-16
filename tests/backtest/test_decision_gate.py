@@ -27,8 +27,13 @@ from zephyr.backtest.core.decision_gate import (
     DecisionGate,
     DecisionGateConfig,
     DecisionGateError,
+    evaluate_dsr,
+    evaluate_strategy_risk_admission,
 )
-from zephyr.simulation.deflated_sharpe_calculator import DSR_SIGNIFICANCE_THRESHOLD
+from zephyr.simulation.deflated_sharpe_calculator import (
+    DSR_OVERFITTING_FLOOR,
+    DSR_SIGNIFICANCE_THRESHOLD,
+)
 
 # ============== 辅助构造 ==============
 
@@ -219,13 +224,13 @@ class TestWFAStage:
 class TestOOSStage:
     def test_pass(self):
         gate = DecisionGate()
-        r = gate.check_oos_stage(1.0, 0.8, params_locked=True)
+        r = gate.check_oos_stage(1.0, 0.8, params_locked=True, dsr=0.99)
         assert r.passed is True
         assert r.oos_is_ratio == pytest.approx(0.8)
 
     def test_ratio_boundary(self):
         gate = DecisionGate()
-        r = gate.check_oos_stage(1.0, 0.7, params_locked=True)
+        r = gate.check_oos_stage(1.0, 0.7, params_locked=True, dsr=0.99)
         assert r.passed is True  # >= 0.7 通过
 
     def test_ratio_fail(self):
@@ -254,9 +259,18 @@ class TestOOSStage:
 
 
 class TestDSROptionalJudge:
-    def test_default_off_dsr_ignored(self):
-        """默认关闭: dsr_threshold=None 时即使注入低dsr也不参与判定"""
+    def test_default_on_dsr_fail_closed(self):
+        """车道 L 接线: 默认 dsr_threshold=0.95（开启），注入低 dsr 判不通过（fail-closed）。"""
         gate = DecisionGate()
+        assert gate.config.dsr_threshold == pytest.approx(DSR_SIGNIFICANCE_THRESHOLD)
+        r = gate.check_oos_stage(1.0, 0.9, params_locked=True, dsr=0.0)
+        assert r.passed is False
+        assert r.dsr == pytest.approx(0.0)
+        assert any("DSR判定未通过" in x for x in r.reasons)
+
+    def test_explicit_disable_ignores_dsr(self):
+        """显式 dsr_threshold=None 才关闭判定器（不参与判定，向后兼容可信内部场景）。"""
+        gate = DecisionGate(DecisionGateConfig(dsr_threshold=None))
         r = gate.check_oos_stage(1.0, 0.9, params_locked=True, dsr=0.0)
         assert r.passed is True
         assert r.dsr is None
@@ -327,6 +341,7 @@ class TestEvaluate:
             param_sensitivity=_stable_sensitivity(),
             walk_forward_results=_wf_windows(4),
             oos_sharpe=0.85,
+            dsr=0.96,  # 车道 L：DSR 判定器默认开启，三阶段全过需注入显著 DSR(>=0.95)
         )
         assert result.overall_passed is True
         assert result.can_deploy is True
@@ -396,6 +411,69 @@ class TestDeviationMonitor:
         gate = DecisionGate()
         with pytest.raises(DecisionGateError):
             gate.monitor_backtest_live_deviation(0.0, 0.5)
+
+    def test_non_numeric_raises(self):
+        gate = DecisionGate()
+        with pytest.raises(DecisionGateError):
+            gate.monitor_backtest_live_deviation("a", 0.5)
+
+    def test_registry_defaults(self):
+        cfg = DecisionGateConfig()
+        assert cfg.backtest_live_deviation_warn == pytest.approx(0.30)
+        assert cfg.backtest_live_deviation_retire == pytest.approx(0.50)
+
+
+# ============== 车道 L：DSR 单一判定源 + 回测→实盘准入谓词 ==============
+
+
+class TestEvaluateDsrSingleSource:
+    def test_significant_band_pass(self):
+        v = evaluate_dsr(DSR_SIGNIFICANCE_THRESHOLD + 0.01)
+        assert v.passed is True and v.band == "significant"
+
+    def test_middle_band_fail_closed(self):
+        v = evaluate_dsr(0.7)
+        assert v.passed is False and v.band == "review"
+        assert "DSR存疑(中间带)" in v.reason
+
+    def test_below_floor_overfitting(self):
+        v = evaluate_dsr(DSR_OVERFITTING_FLOOR - 0.01)
+        assert v.passed is False and v.band == "overfitting"
+        assert "DSR判定未通过" in v.reason
+
+    def test_none_unavailable_fail_closed(self):
+        v = evaluate_dsr(None)
+        assert v.passed is False and v.band == "unavailable"
+        assert "fail-closed" in v.reason
+
+
+class TestStrategyRiskAdmission:
+    def test_overfitting_flag_true_rejected(self):
+        v = evaluate_strategy_risk_admission(True, 0.0001)
+        assert v.accepted is False
+        assert any("overfitting_flag=True" in r for r in v.reasons)
+
+    def test_overfitting_flag_missing_fail_closed(self):
+        v = evaluate_strategy_risk_admission(None, 0.99)
+        assert v.accepted is False
+        assert any("fail-closed" in r for r in v.reasons)
+
+    def test_significant_and_not_overfitting_accepted(self):
+        v = evaluate_strategy_risk_admission(False, 0.96)
+        assert v.accepted is True
+
+    def test_real_bt_823d7fd7_style_input_rejected(self):
+        # 现网实证：overfitting_flag=True、DSR≈0（Sharpe -2.12），必须被拒
+        v = evaluate_strategy_risk_admission(True, 0.000049)
+        assert v.accepted is False
+
+    def test_two_track_single_source_consistency(self):
+        """同一 dsr 在 DecisionGate OOS 段与准入谓词得到一致裁决（单一真源）。"""
+        for dsr in (0.96, 0.7, 0.0, None):
+            gate = DecisionGate()  # 默认 0.95 放行线
+            oos = gate.check_oos_stage(1.0, 1.0, params_locked=True, dsr=dsr)
+            adm = evaluate_strategy_risk_admission(False, dsr)
+            assert oos.passed == adm.accepted, f"dsr={dsr} 两轨裁决分叉"
 
     def test_non_numeric_raises(self):
         gate = DecisionGate()
