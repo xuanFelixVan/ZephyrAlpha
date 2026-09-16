@@ -18,31 +18,7 @@
 """
 
 
-# [ALGO_FLOW]
-# 层: 输入
-# - id: I1
-#   name: 模块内部数据
-#   fields: 无公共形参/无再导出（AST 事实）
-#   code: drift_bridge.py
-# 层: 算法
-# - id: A1
-#   name_zh: ① DriftBridge
-#   name_en: DriftBridge
-#   intro: class DriftBridge 源码 L58-L87
-#   desc: 公共方法（定义序）: notify_change, is_available；源码 L58-L87
-#   inputs: 无参数
-#   outputs: 返回值
-# 层: 输出
-# - id: O1
-#   name_zh: 模块公共 API 面（1 定义）
-#   name_en: public defs
-#   intro: DriftBridge
-#   downstream: orphan-judge.judge.OrphanJudge(starve/stale判定)
-# [/ALGO_FLOW]
-#
-# 边:
-# I1 --> A1
-# A1 --> O1
+# [ALGO_FLOW] external: docs/03_modules/_domain_security/algo_flow/access_control/orphan_judge/drift_bridge.yaml
 """
 
 from __future__ import annotations

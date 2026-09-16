@@ -18,31 +18,7 @@
 """
 
 
-# [ALGO_FLOW]
-# 层: 输入
-# - id: I1
-#   name: config_path 参数
-#   fields: 参数 config_path（无注解）
-#   code: config_loader.py 顶层公共函数形参（AST 提取）
-# 层: 算法
-# - id: A1
-#   name_zh: ① ConfigLoader
-#   name_en: ConfigLoader
-#   intro: class ConfigLoader 源码 L65-L102
-#   desc: 公共方法（定义序）: load, save, config, reload；源码 L65-L102
-#   inputs: config_path
-#   outputs: 返回值
-# 层: 输出
-# - id: O1
-#   name_zh: 模块公共 API 面（1 定义）
-#   name_en: public defs
-#   intro: ConfigLoader
-#   downstream: orphan-judge.judge.OrphanJudge; 各checker初始化
-# [/ALGO_FLOW]
-#
-# 边:
-# I1 --> A1
-# A1 --> O1
+# [ALGO_FLOW] external: docs/03_modules/_domain_security/algo_flow/access_control/orphan_judge/config_loader.yaml
 """
 
 from __future__ import annotations

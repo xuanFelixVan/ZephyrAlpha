@@ -18,31 +18,7 @@
 """
 
 
-# [ALGO_FLOW]
-# 层: 输入
-# - id: I1
-#   name: 模块内部数据
-#   fields: 无公共形参/无再导出（AST 事实）
-#   code: db.py
-# 层: 算法
-# - id: A1
-#   name_zh: ① JudgmentDB
-#   name_en: JudgmentDB
-#   intro: class JudgmentDB 源码 L76-L163
-#   desc: 公共方法（定义序）: insert, get, list_by_verdict, summary, delete, clear；源码 L76-L163
-#   inputs: 无参数
-#   outputs: 返回值
-# 层: 输出
-# - id: O1
-#   name_zh: 模块公共 API 面（1 定义）
-#   name_en: public defs
-#   intro: JudgmentDB
-#   downstream: orphan-judge.__main__._cmd_report; report_generator
-# [/ALGO_FLOW]
-#
-# 边:
-# I1 --> A1
-# A1 --> O1
+# [ALGO_FLOW] external: docs/03_modules/_domain_security/algo_flow/access_control/orphan_judge/db.yaml
 """
 
 from __future__ import annotations

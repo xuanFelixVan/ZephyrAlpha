@@ -17,31 +17,7 @@
 """
 
 
-# [ALGO_FLOW]
-# 层: 输入
-# - id: I1
-#   name: storage_path 参数
-#   fields: 参数 storage_path（无注解）
-#   code: feedback_bridge.py 顶层公共函数形参（AST 提取）
-# 层: 算法
-# - id: A1
-#   name_zh: ① FeedbackBridge
-#   name_en: FeedbackBridge
-#   intro: class FeedbackBridge 源码 L58-L100
-#   desc: 公共方法（定义序）: report_misjudgment, is_available；源码 L58-L100
-#   inputs: storage_path
-#   outputs: 返回值
-# 层: 输出
-# - id: O1
-#   name_zh: 模块公共 API 面（1 定义）
-#   name_en: public defs
-#   intro: FeedbackBridge
-#   downstream: orphan-judge.judge.OrphanJudge(误判反馈)
-# [/ALGO_FLOW]
-#
-# 边:
-# I1 --> A1
-# A1 --> O1
+# [ALGO_FLOW] external: docs/03_modules/_domain_security/algo_flow/access_control/orphan_judge/feedback_bridge.yaml
 """
 
 import logging
