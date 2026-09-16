@@ -17,7 +17,9 @@
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] 任一检查异常→降级 alerter 告警不炸调度器；CHECK 全过→静默（仅落表）
-# [TESTS] tests/zephyr/data/test_consensus_crosscheck.py（阈值分类纯函数）；--selftest 实弹演习
+# [TESTS] self（--selftest 火警演习）；阈值分类纯函数暂无独立单测文件——原指向的
+#          tests/zephyr/data/test_consensus_crosscheck.py 从未入库，2026-09-17 据实更正
+#          （本件按裁定#284 永不切换，本次只修注释不动数据源指向）
 # [TTL] permanent
 """consensus_crosscheck — 一致预期管线每日双向验证器（2026-09-14）。
 
