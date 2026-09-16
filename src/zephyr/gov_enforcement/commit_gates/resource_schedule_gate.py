@@ -16,9 +16,13 @@
 #   互斥组重叠/内存天花板/申报超线=硬阻断；真源漂移=warn 不阻断（防指针失效告警）;
 #   planned 实体不占内存并发预算（裁定 R-D：未排产不计和）——同判据适用于第四查;
 #   第四查 check_pool_concurrency（v2 C-8 同刻冲突结构盲区）：同 pool 同刻跨组堆积 +
-#   同池并发内存和超 mem_ceiling 双判据，一律 sched_pool_concurrency（block），
+#   同池并发内存和超 mem_ceiling 双判据，一律 sched_pool_concurrency（block；判据①的 R-F
+#   豁免对另出 warn 留痕，不阻断），
 #   与 check_mem_ceiling 共用同一窗档展开/扫描线求和数学（_budget_rows/_concurrency_sweep
 #   单源，禁两套口径）；未挂 pool 的实体不臆造合成池（池缺席=sched_pool_undeclared 的账）;
+#   判据①豁免位 co_start_intent（裁定 R-F，盘中车道并行是设计意图）：双方均声明才跳过，
+#   单侧声明不豁免；判据②内存预算永不豁免；豁免对数随 warn finding 的
+#   extra.waived_pair_count 留痕可数（不新增理由码）;
 #   常驻/event 型实体（window_expr 缺席或 est_duration_min≤0）永不进窗档求和（与
 #   check_mem_ceiling 同口径），只在 finding.extra.resident_baseline_gb 显影该池常驻基线
 #   ——基线可见而不掺和窗档账;
@@ -154,6 +158,9 @@ REASON_TASK_DISABLED: Final = "sched_task_disabled"  # C-15：声明 active 但�
 REASON_TASK_MISSING: Final = "sched_task_missing"  # C-15：ps1/别名在册但系统查无此任务
 REASON_TASK_ORPHAN: Final = "sched_task_orphan"  # C-15：系统里有而表里没有（画像/闸双失明）
 REASON_TASK_PROBE: Final = "sched_task_probe_unavailable"  # C-15：schtasks 探针降级（不静默）
+
+# finding.extra.kind 取值（同码不同账的分流键；消费方=视图/P3 输入/告警去噪）
+_KIND_CO_START_WAIVED: Final = "co_start_intent_waived"  # 裁定 R-F：判据①声明制豁免留痕（warn）
 
 # 展开窗档地平线（28 天覆盖月度 cron，如 monthly_static）
 HORIZON_DAYS: Final = 28
@@ -434,6 +441,25 @@ def _shares_group(a: dict, b: dict) -> bool:
     return bool(set(a.get("exclusive_group") or []) & set(b.get("exclusive_group") or []))
 
 
+# co_start_intent 声明位为字符串时的取值口径（YAML 一般解析成 bool，防手写 "false" 被当真值）
+_CO_START_TRUTHY: Final = frozenset({"true", "1", "yes", "y", "on"})
+
+
+def _declares_co_start(e: dict) -> bool:
+    """实体是否声明 co_start_intent（同刻共开工意图，裁定 R-F）。"""
+    v = e.get("co_start_intent")
+    if isinstance(v, str):
+        return v.strip().lower() in _CO_START_TRUTHY
+    return bool(v)
+
+
+def _co_start_waived(a: dict, b: dict) -> bool:
+    """判据①豁免对（裁定 R-F）：**双方**都声明共开工意图才豁免——单侧声明=单方面主张，
+    对方未表态即不豁免（保守面；盘中车道并行是设计意图，分钟粒度错峰数学上不可消解）。
+    """
+    return _declares_co_start(a) and _declares_co_start(b)
+
+
 def _hit_focus(ids, focus: set[str] | None) -> bool:
     """own-scope 过滤（宪法 §3）：focus=None=全量判；否则须命中本次变更实体才报。"""
     return focus is None or bool(set(ids) & set(focus))
@@ -457,7 +483,8 @@ def check_pool_concurrency(
     两判据（同用 REASON_POOL_CONCURRENCY，窗档展开/扫描线求和数学与 check_mem_ceiling 同源）：
 
     ① **同刻跨组堆积**：同 pool、窗档起点同一瞬间 ≥2 实体、且两者无共享 exclusive_group
-       —— 它们必然同时抢同一条泳道，而互斥账上零记录；合法出口=错峰或声明互斥；
+       —— 它们必然同时抢同一条泳道，而互斥账上零记录；合法出口=错峰、声明互斥，或双方均
+       声明 ``co_start_intent``（裁定 R-F 共开工意图，豁免对数留痕见 extra.waived_pair_count）；
     ② **同池并发内存和超线**：同 pool 扫描线活跃集（≥2 实体）申报 peak_mem_gb 之和
        > mem_ceiling_gb —— 跨组同样计入（check_mem_ceiling 不分池，本判据是它的**分池
        归口**账）。
@@ -470,6 +497,10 @@ def check_pool_concurrency(
       其申报内存另汇总为该池 ``resident_baseline_gb`` 随 finding 显影——基线可见，不冒充窗档；
     * ``focus``：own-scope 归因集（本次 staged 变更实体），非 None 时只报命中集内实体的
       finding——全仓存量债不连坐本提交人（宪法 §3）；
+    * ``co_start_intent``（裁定 R-F 声明制豁免）：只豁免判据①，且须**双方**都声明（单侧=
+      单方面主张，不豁免）；判据②内存求和与互斥组交叠账都不因它松动。豁免对按池聚成一条
+      **warn** 留痕（``extra.waived_pair_count``/``extra.waived_pairs``），不新增理由码；
+      ``pileup=False`` 时判据①整体不跑，故也没有豁免账；
     * ``pileup=False``：跳过判据①，只判预算类判据②。闸在**归因失败**（非 git 通道）时用
       它——①是新冲突类、存量非零（P3 清零对象），无归因即全量判=连坐；②是预算类、存量
       全绿，归因失败也不放松（保守面不窄）。
@@ -504,6 +535,7 @@ def check_pool_concurrency(
                 for (s, _t) in wins:
                     by_instant.setdefault(s, []).append(e)
             seen_pairs: set[tuple[str, str]] = set()
+            waived_pairs: set[tuple[str, str]] = set()  # 裁定 R-F：双方均声明 co_start_intent 的对
             for t, group in sorted(by_instant.items(), key=lambda x: x[0]):
                 if len(group) < 2:
                     continue
@@ -517,6 +549,9 @@ def check_pool_concurrency(
                         if pair in seen_pairs or _shares_group(a, b):
                             continue  # 同组=check_overlap_group 的账，不在此重复记
                         seen_pairs.add(pair)
+                        if _co_start_waived(a, b):
+                            waived_pairs.add(pair)
+                            continue  # 声明制豁免（R-F）：只免判据①，判据②预算照判
                         if not _hit_focus(pair, focus):
                             continue
                         pair_mem = mem_of.get(ta, 0.0) + mem_of.get(tb, 0.0)
@@ -538,6 +573,33 @@ def check_pool_concurrency(
                                 },
                             )
                         )
+            # 豁免留痕（R-F 验收："豁免了几对"必须数得出来）：审计口径 focus=None 全量可数，
+            # 闸侧 own-scope 只显影命中本次变更的对（warn 不阻断，是给提交人看的回执不是罚单）
+            if waived_pairs:
+                logger.info(
+                    "%s: 池 %s 同刻堆积判据按 co_start_intent 双方声明豁免 %d 对（裁定 R-F，内存预算不豁免）",
+                    GATE_ID,
+                    pool,
+                    len(waived_pairs),
+                )
+            shown = sorted(p for p in waived_pairs if _hit_focus(p, focus))
+            if shown:
+                findings.append(
+                    Finding(
+                        REASON_POOL_CONCURRENCY,
+                        "warn",
+                        sorted({tid for p in shown for tid in p}),
+                        f"池 {pool} 同刻共开工意图声明豁免 {len(shown)} 对（双方均声明 co_start_intent，"
+                        "判据①不记账；判据②内存预算与互斥组交叠照判）",
+                        extra={
+                            "pool": pool,
+                            "kind": _KIND_CO_START_WAIVED,
+                            "waived_pair_count": len(shown),
+                            "waived_pairs": [list(p) for p in shown],
+                            "resident_baseline_gb": base,
+                        },
+                    )
+                )
 
         # ── 判据②：同池并发内存和超 mem_ceiling（跨组一律计入的分池归口账）──
         snapshots, mem_by_id = _concurrency_sweep(members)
@@ -709,14 +771,21 @@ def run_pool_concurrency_audit(
     消费方=P3 重排班的输入（"冲突数 N→0"的 N 从这里数）与 ops/晨审的可选体检；**不经**
     run_all_checks（理由见其 docstring）。并进视图/告警桥只需把本函数输出传给
     publish_findings（桥的映射按 reason_code 通用，零改动）。
+
+    口径提醒：N 只数 **block** 记录；判据①按 co_start_intent 双方声明豁免的对（裁定 R-F）
+    以 warn 记录随表留痕，按 ``extra.kind == "co_start_intent_waived"`` 与
+    ``extra.waived_pair_count`` 数得出，不计入待清零冲突。
     """
     entities, header = load_registry_entities(registry_path)
     return check_pool_concurrency(entities, now, horizon_days, ceiling_gb=_mem_ceiling_gb(header))
 
 
-# 参与并发账的注册表字段（own-scope 归因比对键）：改这些=改并发账；改 notes_zh/module_id/
+# 参与并发账的注册表字段（own-scope 归因比对键）：改这些=改并发账（co_start_intent 是
+# 判据①的豁免位，翻它即改同刻账）；改 notes_zh/module_id/
 # map_node_id 之类不改账（备注修订不该替存量债背锅）
-_POOL_ACCOUNTING_FIELDS: Final = ("pool", "window_expr", "est_duration_min", "peak_mem_gb", "exclusive_group", "status")
+_POOL_ACCOUNTING_FIELDS: Final = (
+    "pool", "window_expr", "est_duration_min", "peak_mem_gb", "exclusive_group", "status", "co_start_intent"
+)
 
 
 def _registry_focus_ids(gateway, registry_path: str | Path, entities: list[dict]) -> set[str] | None:

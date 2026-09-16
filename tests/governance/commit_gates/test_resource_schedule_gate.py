@@ -6,7 +6,8 @@
 # [AI_AUTONOMY] ai_modifiable
 # [TESTS] tests/governance/commit_gates/test_resource_schedule_gate.py
 # [TTL] task_bound
-"""排班冲突闸测试：四检查+漂移+own-scope+红蓝（E0 异常 fail-closed/JSONL 损坏/时钟回拨/cron 坏）。"""
+"""排班冲突闸测试：四检查+漂移+own-scope+红蓝（E0 异常 fail-closed/JSONL 损坏/时钟回拨/cron 坏）
++判据①共开工意图声明豁免 co_start_intent（裁定 R-F）。"""
 from __future__ import annotations
 
 from datetime import datetime, timezone
@@ -42,10 +43,15 @@ def _reg(tmp_path, entities, **header):
     return p
 
 
-def _e(tid, grp=None, expr="0 10 * * 1", dur=60, mem=2.0, ts=True, status="active", pool=None, wtype="cron"):
-    return {"task_id": tid, "status": status, "exclusive_group": grp or [], "window_expr": expr,
-            "window_type": wtype, "est_duration_min": dur, "peak_mem_gb": mem, "trading_sensitive": ts,
-            "pool": pool}
+def _e(tid, grp=None, expr="0 10 * * 1", dur=60, mem=2.0, ts=True, status="active", pool=None, wtype="cron",
+       co_start=None):
+    ent = {"task_id": tid, "status": status, "exclusive_group": grp or [], "window_expr": expr,
+           "window_type": wtype, "est_duration_min": dur, "peak_mem_gb": mem, "trading_sensitive": ts,
+           "pool": pool}
+    if co_start is not None:
+        # 缺省**不落键**——"无 co_start_intent 字段"必须与加字段前逐字节同账（回归钉用）
+        ent["co_start_intent"] = co_start
+    return ent
 
 
 # ── 检查①：互斥组重叠 ──
@@ -158,14 +164,16 @@ def test_e0_bad_cron_fail_closed():
 
 # ── 检查④：同池并发账（v2 C-8 同刻冲突结构盲区，2026-09-17 P2-a）──
 
-def _c4_exam(**over):
+def _c4_exam(co_start=None, **over):
     """生产实样 fixture（不依赖真注册表）：sch_c4_exam=heavy 池/[mine_vs_exam] 组/周六 14:00/2.0GB÷8h。"""
-    return dict(_e("sch_c4_exam", ["mine_vs_exam"], "0 14 * * 6", 480, mem=2.0, ts=True, pool="heavy"), **over)
+    return dict(_e("sch_c4_exam", ["mine_vs_exam"], "0 14 * * 6", 480, mem=2.0, ts=True, pool="heavy",
+                   co_start=co_start), **over)
 
 
-def _f06_grid(**over):
+def _f06_grid(co_start=None, **over):
     """生产实样 fixture：sch_f06_grid=heavy 池/**无互斥组**/同 cron 0 14 * * 6/0.5GB÷24h。"""
-    return dict(_e("sch_f06_grid", [], "0 14 * * 6", 1440, mem=0.5, ts=True, pool="heavy"), **over)
+    return dict(_e("sch_f06_grid", [], "0 14 * * 6", 1440, mem=0.5, ts=True, pool="heavy",
+                   co_start=co_start), **over)
 
 
 def test_pool_concurrency_same_instant_cross_group_caught():
@@ -274,6 +282,137 @@ def test_pool_concurrency_focus_pileup_own_scope_discipline():
     assert check_pool_concurrency(staggered, WED, focus={"nope"}, pileup=False) == []
 
 
+# ── 裁定 R-F：同刻共开工意图声明 co_start_intent（判据①声明制豁免，判据②不豁免）──
+
+MORNING = datetime(2026, 9, 16, 0, 30, tzinfo=TZ)  # 周三 08:30 北京（盘前：地平线覆盖 09:15 那一起爆刻）
+KIND_PILEUP = "same_instant_cross_group"
+KIND_SUM = "pool_mem_sum"
+KIND_WAIVED = "co_start_intent_waived"
+
+
+def _auction(**over):
+    """生产实样：data_slot_auction_highfreq=realtime 池/9:15-9:25 每分钟起爆/1.0GB÷10min。"""
+    return _e("data_slot_auction_highfreq", [], "15-25 9 * * 1-5", 10, mem=1.0, ts=False, pool="realtime", **over)
+
+
+def _lane(tid, **over):
+    """生产实样：盘中车道（realtime 池 `*/5 9-15 * * 1-5`，2 分钟窗口）——相位与 auction 必撞。"""
+    return _e(tid, [], "*/5 9-15 * * 1-5", 2, mem=1.0, ts=False, pool="realtime", **over)
+
+
+def test_pool_concurrency_both_declared_co_start_waives_pileup():
+    """裁定 R-F：盘中车道并行是设计意图——双方均声明 co_start_intent → 判据①跳过（warn 留痕不阻断）。
+
+    豁免的正当性=分钟粒度错峰在数学上不可消解：auction 覆盖 9:15-9:25 每一分钟，任一 `*/5`
+    相位在那个区间必同刻起爆，所以"错峰"这条出口对盘中车道是空集，只能走声明制（对标
+    Airflow pool 声明式并行 / K8s PDB 意图声明面）。
+    """
+    ents = [_c4_exam(co_start=True), _f06_grid(co_start=True)]
+    f = check_pool_concurrency(ents, WED)
+    assert [x for x in f if x.severity == "block"] == []  # 不再产同刻堆积罚单
+    assert len(f) == 1 and f[0].severity == "warn"  # 但留痕在账（豁免不是隐身）
+    x = f[0]
+    assert x.reason_code == REASON_POOL_CONCURRENCY  # 理由码不新增（告警桥零改动）
+    assert x.extra["kind"] == KIND_WAIVED and x.extra["pool"] == "heavy"
+    assert x.extra["waived_pair_count"] == 1
+    assert x.extra["waived_pairs"] == [["sch_c4_exam", "sch_f06_grid"]]
+    assert x.task_ids == ["sch_c4_exam", "sch_f06_grid"]
+    assert "co_start_intent" in x.detail and "内存预算" in x.detail  # 出口提醒：②不豁免
+    # 声明位不越界替其他账背书：互斥组交叠（检查①）与申报超线（检查②）一概不因此变绿
+    assert check_overlap_group(ents, WED) == []
+    assert check_mem_ceiling(ents, WED) == []
+
+
+def test_pool_concurrency_single_sided_declaration_does_not_waive():
+    """保守面：单侧声明=单方面主张，对方未表态即不豁免；两侧都写"假值"同样不豁免。"""
+    for ents in ([_c4_exam(co_start=True), _f06_grid()], [_c4_exam(), _f06_grid(co_start=True)]):
+        f = check_pool_concurrency(ents, WED)
+        assert [x.extra["kind"] for x in f] == [KIND_PILEUP] and f[0].severity == "block"
+    # 手写 YAML 的字符串假值不得被 bool("false") 蒙混过关（取值口径见 _declares_co_start）
+    for a, b in (("false", "no"), ("0", "FALSE"), (False, False)):
+        f = check_pool_concurrency([_c4_exam(co_start=a), _f06_grid(co_start=b)], WED)
+        assert [x.extra["kind"] for x in f] == [KIND_PILEUP], f"{a!r}/{b!r} 被当成了声明"
+    # 字符串真值认（生成器若把声明位写成字符串也不漏豁免）
+    f = check_pool_concurrency([_c4_exam(co_start="true"), _f06_grid(co_start="Yes")], WED)
+    assert [x.extra["kind"] for x in f] == [KIND_WAIVED]
+
+
+def test_pool_concurrency_declaration_never_waives_mem_budget():
+    """钉死 R-F 的边界：声明只买"同刻不罚"，买不到"预算豁免"——判据②照全额求和 block。"""
+    staggered = [_e("h1", [], "0 10 * * 1", 120, mem=6.0, ts=False, pool="heavy", co_start=True),
+                 _e("h2", [], "30 10 * * 1", 120, mem=6.0, ts=False, pool="heavy", co_start=True)]
+    f = check_pool_concurrency(staggered, WED)  # 错峰开工：①本就不撞
+    assert [x.extra["kind"] for x in f] == [KIND_SUM] and f[0].severity == "block"
+    assert "12.0GB" in f[0].detail
+    collide = [dict(staggered[0]), dict(staggered[1], window_expr="0 10 * * 1")]
+    f2 = check_pool_concurrency(collide, WED)  # 同刻开工+双声明：①豁免、②照拦
+    kinds = {x.extra["kind"]: x.severity for x in f2}
+    assert kinds == {KIND_WAIVED: "warn", KIND_SUM: "block"}
+    # 单实体申报超线也不因声明松动（画像本身的账，在检查②）
+    over = check_mem_ceiling([_f06_grid(co_start=True, peak_mem_gb=11.0)], WED)
+    assert over and over[0].severity == "block"
+
+
+def test_pool_concurrency_waiver_pair_count_is_countable_in_audit(tmp_path):
+    """可见性验收：豁免了几对要在 run_pool_concurrency_audit 返回值里数得出来（含真实盘中载荷）。"""
+    four = [_auction(co_start=True), _lane("data_slot_intraday_minute", co_start=True),
+            _lane("data_slot_intraday_realtime", co_start=True), _lane("data_slot_intraday_sector", co_start=True)]
+    # 反证：不声明时这 4 条车道 6 对全罚（4 者两两同刻，互斥组皆空）
+    blocks = [x for x in check_pool_concurrency([dict(e, co_start_intent=None) for e in four], MORNING)
+              if x.severity == "block"]
+    assert len(blocks) == 6 and all(x.extra["pool"] == "realtime" for x in blocks)
+    audit = run_pool_concurrency_audit(_reg(tmp_path, four), MORNING)
+    assert [x for x in audit if x.severity == "block"] == []
+    waived = [x for x in audit if x.extra.get("kind") == KIND_WAIVED]
+    assert len(waived) == 1 and waived[0].extra["pool"] == "realtime"  # 每池一条聚合记录
+    assert waived[0].extra["waived_pair_count"] == 6  # 数得出来的那个数
+    assert sum(x.extra["waived_pair_count"] for x in waived) == len(blocks)
+    pairs = {tuple(p) for p in waived[0].extra["waived_pairs"]}
+    assert ("data_slot_auction_highfreq", "data_slot_intraday_minute") in pairs  # 本批要治的那对
+    assert "concurrent_mem_gb" not in waived[0].extra  # 豁免记录不冒充预算求和账
+
+
+def test_pool_concurrency_absent_field_is_bit_for_bit_legacy_behaviour():
+    """回归钉：字段缺席（现盘注册表全仓未声明）→ 与加机制之前的账逐条同形，且零豁免记录。"""
+    legacy = [_c4_exam(), _f06_grid()]
+    explicit_null = [dict(_c4_exam(), co_start_intent=None), dict(_f06_grid(), co_start_intent=None)]
+    a = check_pool_concurrency(legacy, WED)
+    b = check_pool_concurrency(explicit_null, WED)
+    assert [(x.reason_code, x.severity, x.task_ids, x.at, x.render()) for x in a] == [
+        (x.reason_code, x.severity, x.task_ids, x.at, x.render()) for x in b]
+    assert len(a) == 1 and a[0].extra["kind"] == KIND_PILEUP and a[0].severity == "block"
+    assert a[0].extra.get("waived_pair_count") is None
+    reg = Path(__file__).resolve().parents[3] / "config" / "resource_profile_registry.yaml"
+    if reg.exists():
+        ents, _header = load_registry_entities(reg)
+        assert not any("co_start_intent" in e for e in ents), "现盘注册表已有人声明→本钉的存量口径要同步"
+        assert [x for x in run_pool_concurrency_audit(reg, WED) if x.extra.get("kind") == KIND_WAIVED] == []
+
+
+def test_pool_concurrency_declaration_across_different_pools_is_harmless():
+    """防御面：声明位只在同池对内起作用——不同池的两条泳道没有同刻账，声明既不罚也不留豁免痕。"""
+    assert check_pool_concurrency([_c4_exam(co_start=True), _f06_grid(pool="default", co_start=True)], WED) == []
+    # 同池三人：声明的两人豁免，第三人与其各自照罚（豁免是"对"级账，不是"实体"级赦免）
+    ents = [_c4_exam(co_start=True), _f06_grid(co_start=True),
+            _e("sch_extra", [], "0 14 * * 6", 60, mem=0.5, ts=False, pool="heavy")]
+    f = check_pool_concurrency(ents, WED)
+    blocks = [x for x in f if x.severity == "block"]
+    waived = [x for x in f if x.extra["kind"] == KIND_WAIVED]
+    assert {tuple(x.task_ids) for x in blocks} == {
+        ("sch_c4_exam", "sch_extra"), ("sch_extra", "sch_f06_grid")}
+    assert len(waived) == 1 and waived[0].extra["waived_pair_count"] == 1
+    assert waived[0].extra["waived_pairs"] == [["sch_c4_exam", "sch_f06_grid"]]
+
+
+def test_pool_concurrency_waiver_trace_follows_focus_and_pileup_scope():
+    """豁免留痕的 own-scope 口径（宪法 §3）：审计全量可数，闸侧只显影命中本次变更的对。"""
+    ents = [_c4_exam(co_start=True), _f06_grid(co_start=True)]
+    assert len(check_pool_concurrency(ents, WED)) == 1  # focus=None=全量（P3 审计输入）
+    assert len(check_pool_concurrency(ents, WED, focus={"sch_f06_grid"})) == 1  # 变更方在账里→回执
+    assert check_pool_concurrency(ents, WED, focus={"someone_else"}) == []  # 与本提交无关→不刷屏
+    assert check_pool_concurrency(ents, WED, pileup=False) == []  # 判据①整体没跑=没有豁免账可留
+
+
 def test_pool_concurrency_audit_entry_point_and_run_all_checks_exclusion(tmp_path):
     """全仓清单真源=run_pool_concurrency_audit（P3 输入）；run_all_checks 有意不并（告警链不淹）。"""
     p = _reg(tmp_path, [_c4_exam(), _f06_grid()])
@@ -311,9 +450,17 @@ def test_production_registry_pool_concurrency_audit_is_usable_input():
     known = {str(e.get("task_id")) for e in entities}
     findings = run_pool_concurrency_audit(reg, WED)
     for f in findings:
-        assert f.reason_code == REASON_POOL_CONCURRENCY and f.severity == "block"
+        assert f.reason_code == REASON_POOL_CONCURRENCY
         assert f.extra.get("pool") in lanes, f"finding 挂了词表外的池：{f.extra.get('pool')}"
         assert set(f.task_ids) <= known and len(f.task_ids) >= 2  # 单实体超线归 sched_mem_ceiling
+        if f.extra.get("kind") == "co_start_intent_waived":
+            # 豁免留痕（R-F）不是待清零冲突：warn 级、无冲突时刻、对数与清单自洽
+            assert f.severity == "warn" and not f.at
+            assert f.extra["waived_pair_count"] > 0
+            assert len(f.extra["waived_pairs"]) == f.extra["waived_pair_count"]
+            assert all(len(p) == 2 and set(p) <= known for p in f.extra["waived_pairs"])
+            continue
+        assert f.severity == "block"
         assert f.at and f.extra.get("concurrent_mem_gb", 0) > 0
 
 # ── 检查⑤：真源漂移 ──
@@ -473,3 +620,43 @@ def test_gate_unattributable_channel_skips_pileup_but_keeps_ceiling(tmp_path):
                 _e("h2", ["mine_vs_exam"], "30 10 * * 1", 120, mem=6.0, ts=False, pool="heavy")]
     ok2, msg2 = gate.check(None, [str(_reg(tmp_path, breached))])
     assert ok2 is False and REASON_POOL_CONCURRENCY in msg2 and "12.0GB" in msg2
+
+
+# ── 裁定 R-F 闸侧落地：声明制豁免在真实提交通道上的样子 ──────────────────────
+
+def test_gate_passes_declared_pair_and_emits_waiver_receipt(tmp_path, monkeypatch, caplog):
+    """双声明同刻对：闸放行（不再让设计上故意的盘中车道并行挨罚），但豁免回执进日志。"""
+    import logging
+
+    _pin_repo_relpath(monkeypatch)
+    caplog.set_level(logging.INFO)
+    ents = [_c4_exam(co_start=True), _f06_grid(co_start=True)]
+    p = _reg(tmp_path, ents)
+    gw = _FakeGateway(staged=_dump(ents), head=_dump([ents[0], dict(ents[1], window_expr="0 3 * * 0")]))
+    ok, msg = make_resource_schedule_gate().check(gw, [str(p)])
+    assert ok is True and msg == ""  # 同一次挪动，未声明时是阻断（见下钉）
+    assert "co_start_intent" in caplog.text and "豁免 1 对" in caplog.text
+
+
+def test_gate_declaration_only_commit_is_attributable(tmp_path):
+    """声明位=并发账字段：只翻 co_start_intent 的提交必须归因得到（豁免不得成为隐身账）。"""
+    import zephyr.gov_enforcement.commit_gates.resource_schedule_gate as g
+
+    declared = [_c4_exam(co_start=True), _f06_grid(co_start=True)]
+    legacy = [_c4_exam(), _f06_grid()]
+    gw = _FakeGateway(staged=_dump(declared), head=_dump(legacy))
+    assert g._registry_focus_ids(gw, "config/resource_profile_registry.yaml", declared) == {
+        "sch_c4_exam", "sch_f06_grid"}
+    # 反证恒绿：声明位不变、账也不变时不得凭空归因
+    gw2 = _FakeGateway(staged=_dump(legacy), head=_dump(legacy))
+    assert g._registry_focus_ids(gw2, "config/resource_profile_registry.yaml", legacy) == set()
+
+
+def test_gate_still_blocks_when_only_one_side_declares(tmp_path, monkeypatch):
+    """单侧声明在闸上同样是"不豁免"——与上面那钉只差一个声明位，形成对照。"""
+    _pin_repo_relpath(monkeypatch)
+    ents = [_c4_exam(co_start=True), _f06_grid()]
+    p = _reg(tmp_path, ents)
+    gw = _FakeGateway(staged=_dump(ents), head=_dump([ents[0], dict(ents[1], window_expr="0 3 * * 0")]))
+    ok, msg = make_resource_schedule_gate().check(gw, [str(p)])
+    assert ok is False and REASON_POOL_CONCURRENCY in msg and "sch_f06_grid" in msg
