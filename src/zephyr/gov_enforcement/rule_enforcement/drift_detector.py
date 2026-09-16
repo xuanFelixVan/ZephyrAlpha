@@ -37,31 +37,7 @@ SRC-0038: 副本文件 — 保持独立实现，待后续审核。
 
 对标: MOD-INF-023 blueprint.md §2.5（自动对账策略）+ trigger_router.yaml drift_detected
 
-# [ALGO_FLOW]
-# 层: 输入
-# - id: I1
-#   name: payload 参数
-#   fields: 参数 payload，类型注解 dict[str, Any]
-#   code: drift_detector.py 顶层公共函数形参（AST 提取）
-# 层: 算法
-# - id: A1
-#   name_zh: ① trigger_recovery
-#   name_en: trigger_recovery
-#   intro: ``drift_detected`` 触发器恢复入口。
-#   desc: ``drift_detected`` 触发器恢复入口。 Parameters ---------- payload : dict trigger_router.dispatch(…；源码 L86-L182
-#   inputs: payload
-#   outputs: dict[str, Any]
-# 层: 输出
-# - id: O1
-#   name_zh: dict[str, Any]
-#   name_en: dict[str, Any]
-#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
-#   downstream: 见模块头 [CONSUMERS]
-# [/ALGO_FLOW]
-#
-# 边:
-# I1 --> A1
-# A1 --> O1
+# [ALGO_FLOW] external: docs/03_modules/_domain_gov_enforcement/algo_flow/rule_enforcement/drift_detector.yaml
 """
 
 from __future__ import annotations

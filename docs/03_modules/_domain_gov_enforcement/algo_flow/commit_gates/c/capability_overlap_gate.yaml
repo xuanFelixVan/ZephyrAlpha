@@ -1,0 +1,41 @@
+# ALGO_FLOW 外部真源——capability_overlap_gate（_domain_gov_enforcement 域，真源 src/zephyr/gov_enforcement/commit_gates/capability_overlap_gate.py）
+# 2026-09-15 P2-1 契约头减负批量出仓：docstring 内联块逐字节副本，extractor 经
+# external 锚加载走同一 parse_algo_flow 管线；算法公共面变化时同步更新本块。
+doc_type: architecture_view
+ttl: permanent
+module: src.zephyr.gov_enforcement.commit_gates.capability_overlap_gate
+source_of_truth: src/zephyr/gov_enforcement/commit_gates/capability_overlap_gate.py
+algo_flow: |
+    # [ALGO_FLOW]
+    # 层: 输入
+    # - id: I1
+    #   name: 模块内部数据
+    #   fields: 无公共形参/无再导出（AST 事实）
+    #   code: capability_overlap_gate.py
+    # 层: 算法
+    # - id: A1
+    #   name_zh: ① make_capability_overlap_gate
+    #   name_en: make_capability_overlap_gate
+    #   intro: 构造新建 .py 文件 CapabilityLookup 提示门禁 GateSpec（warn-only）。
+    #   desc: 构造新建 .py 文件 CapabilityLookup 提示门禁 GateSpec（warn-only）。 Returns: GateSpec(gate_id="CAPABIL…；源码 L301-L358
+    #   inputs: 无参数
+    #   outputs: GateSpec
+    # - id: A2
+    #   name_zh: CloneGuard 阻断项 cosmetic 触碰税豁免过滤（裁定#273）
+    #   name_en: cosmetic_touch_tax_exemption
+    #   intro: 阻断 findings 按 source_file 去重后逐个问 _is_cosmetic_only_change，全豁免即放行
+    #   desc: 只免"注释/文档字符串搬运"型触碰；任一文件有可执行语义变更即照常阻断，读不到源码不豁免（fail-closed）。
+    #   code: _is_cosmetic_only_change
+    #   depends: A1
+    # 层: 输出
+    # - id: O1
+    #   name_zh: GateSpec
+    #   name_en: GateSpec
+    #   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+    #   downstream: zephyr.gov_enforcement.rule_bridge.git_commit_gateway.GitCommitGateway.__init__
+    # [/ALGO_FLOW]
+    #
+    # 边:
+    # I1 --> A1
+    # I1 --> A2
+    # A1 --> O1

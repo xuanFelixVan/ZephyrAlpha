@@ -30,58 +30,7 @@ DLQ 重试策略 — 对接 shared/events/dlq.DeadLetterQueue 的真重试。
 会被自动重新捕获为新死信（幂等键去重）。退避间隔由 DeadLetterQueue 的
 retry_interval 控制（构造参数，默认 60s）。
 
-# [ALGO_FLOW]
-# 层: 输入
-# - id: I1
-#   name: dlq 参数
-#   fields: 参数 dlq（无注解）
-#   code: dlq_retry_policy.py 顶层公共函数形参（AST 提取）
-# - id: I2
-#   name: observer 参数
-#   fields: 参数 observer（无注解）
-#   code: dlq_retry_policy.py 顶层公共函数形参（AST 提取）
-# 层: 算法
-# - id: A1
-#   name_zh: ① get_default_observer
-#   name_en: get_default_observer
-#   intro: 进程级默认重投递总线（懒加载单例）。
-#   desc: 进程级默认重投递总线（懒加载单例）。 生产接线：运行时应将事件消费者 subscribe 到本总线（或通过 `DLQRetryPolicy(observer=...)` 注入自己…；源码 L103-L115
-#   inputs: 无参数
-#   outputs: Observer
-# - id: A2
-#   name_zh: ② DLQRetryPolicy
-#   name_en: DLQRetryPolicy
-#   intro: 死信重试策略——从 DeadLetterQueue 取待重试死信并真重投递。
-#   desc: 死信重试策略——从 DeadLetterQueue 取待重试死信并真重投递。 Args: dlq: 注入的 DeadLetterQueue（测试/定制 DB 路径）；None -…；公共方法（定义序）: retry_p…
-#   inputs: dlq observer
-#   outputs: 返回值
-# - id: A3
-#   name_zh: ③ retry_pending
-#   name_en: retry_pending
-#   intro: retry_pending() 源码 L196-L197
-#   desc: 源码 L196-L197
-#   inputs: 无参数
-#   outputs: RetryResult
-#   （注：A3 之后另有 1 个公共定义未列入（含 1 个数据契约/异常/枚举声明类），见源码）
-# 层: 输出
-# - id: O1
-#   name_zh: Observer
-#   name_en: Observer
-#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
-#   downstream: zephyr.infrastructure.pipeline.dead_letter_queue; AutoRuntime Core retry phase
-# - id: O2
-#   name_zh: RetryResult
-#   name_en: RetryResult
-#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
-#   downstream: zephyr.infrastructure.pipeline.dead_letter_queue; AutoRuntime Core retry phase
-# [/ALGO_FLOW]
-#
-# 边:
-# I1 --> A1
-# I2 --> A1
-# A1 --> A2
-# A2 --> A3
-# A3 --> O1
+# [ALGO_FLOW] external: docs/03_modules/_domain_gov_enforcement/algo_flow/rule_enforcement/dlq_retry_policy.yaml
 """
 
 from __future__ import annotations

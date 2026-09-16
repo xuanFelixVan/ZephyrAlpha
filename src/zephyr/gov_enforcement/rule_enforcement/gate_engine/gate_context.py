@@ -23,48 +23,7 @@ v0.2.0: 统一 GateResult 数据模型——GatePipeline 与 GateEngine 共享�
   - violations 列表从 GateEngine 原生支持
   - from_engine() 工厂方法桥接 GateEngine 的输出
 
-# [ALGO_FLOW]
-# 层: 输入
-# - id: I1
-#   name: 模块内部数据
-#   fields: 无公共形参/无再导出（AST 事实）
-#   code: gate_context.py
-# 层: 算法
-# - id: A1
-#   name_zh: ① GateResult
-#   name_en: GateResult
-#   intro: class GateResult 源码 L99-L170
-#   desc: 公共方法（定义序）: passed, p0_violations, has_p0, summary, from_engine_result；源码 L99-L170
-#   inputs: 无参数
-#   outputs: 返回值
-# - id: A2
-#   name_zh: ② GateContext
-#   name_en: GateContext
-#   intro: class GateContext 源码 L174-L215
-#   desc: 公共方法（定义序）: serialize, deserialize；源码 L174-L215
-#   inputs: 无参数
-#   outputs: 返回值
-# - id: A3
-#   name_zh: ③ main
-#   name_en: main
-#   intro: main() 源码 L221-L222
-#   desc: 源码 L221-L222
-#   inputs: 无参数
-#   outputs: 返回值
-#   （注：A3 之后另有 2 个公共定义未列入（含 2 个数据契约/异常/枚举声明类），见源码）
-# 层: 输出
-# - id: O1
-#   name_zh: 模块公共 API 面（5 定义）
-#   name_en: public defs
-#   intro: GateResult, GateContext, main
-#   downstream: 见模块头 [CONSUMERS]
-# [/ALGO_FLOW]
-#
-# 边:
-# I1 --> A1
-# A1 --> A2
-# A2 --> A3
-# A3 --> O1
+# [ALGO_FLOW] external: docs/03_modules/_domain_gov_enforcement/algo_flow/rule_enforcement/gate_engine/gate_context.yaml
 """
 
 from __future__ import annotations

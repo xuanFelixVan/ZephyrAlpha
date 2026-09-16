@@ -1,0 +1,56 @@
+# ALGO_FLOW 外部真源——_diff_helpers（_domain_gov_enforcement 域，真源 src/zephyr/gov_enforcement/commit_gates/_diff_helpers.py）
+# 2026-09-15 P2-1 契约头减负批量出仓：docstring 内联块逐字节副本，extractor 经
+# external 锚加载走同一 parse_algo_flow 管线；算法公共面变化时同步更新本块。
+doc_type: architecture_view
+ttl: permanent
+module: src.zephyr.gov_enforcement.commit_gates._diff_helpers
+source_of_truth: src/zephyr/gov_enforcement/commit_gates/_diff_helpers.py
+algo_flow: |
+    # [ALGO_FLOW]
+    # 层: 输入
+    # - id: I1
+    #   name: unified=0 git diff 原文 + staged 文件路径集
+    #   fields: diff_stdout(str) / gateway 暂存区句柄
+    #   code: _parse_diff_with_line_numbers / _get_added_lines
+    # 层: 算法
+    # - id: A1
+    #   name_zh: diff 行号解析（幻影空行跳过）
+    #   name_en: diff_line_number_parsing
+    #   intro: split("
+    ") 逐行扫描，hunk 头锚定起始行号，" "/+ 行累加行号，裸空行跳过（
+
+     翻译幻影不占行号）
+    #   code: _parse_diff_with_line_numbers
+    # - id: A2
+    #   name_zh: AST 豁免行集合提取
+    #   name_en: ast_exempt_line_extraction
+    #   intro: ast 解析 docstring/SQL_* 常量定义行范围，替代正则近似（R95/R96 治本）
+    #   code: _extract_docstring_lines / _extract_sql_constant_lines
+    # - id: A3
+    #   name_zh: 去 docstring 后 AST 语义指纹
+    #   name_en: ast_semantic_fingerprint
+    #   intro: ast.walk 剥除 Module/Class/Function 首表达式字符串字面量后 ast.dump，注释与文档噪声不入指纹
+    #   desc: 解析失败（SyntaxError/ValueError/RecursionError）返回 None，由调用方按 fail-closed 处置。
+    #   code: _ast_semantic_fingerprint
+    # - id: A4
+    #   name_zh: cosmetic-only 触碰判定（裁定#273 触碰税豁免）
+    #   name_en: cosmetic_only_change_check
+    #   intro: HEAD 与 staged 两侧 A3 指纹相等才判"零可执行语义变更"
+    #   desc: 任一侧读不到或指纹为 None 即判非 cosmetic（照常送门禁检测）；只免注释触碰，不免真实改动。
+    #   code: _is_cosmetic_only_change
+    #   depends: A3
+    # 层: 输出
+    # - id: O1
+    #   name: added 行号集 / 豁免行号集（供 8 个 commit gate 消费）
+    #   fields: list[tuple[int,str]] / set[int]
+    #   code: 各 gate 的违规行与豁免行差集判定
+    # [/ALGO_FLOW]
+    #
+    # 边:
+    # I1 --> A1
+    # I1 --> A2
+    # I1 --> A3
+    # A3 --> A4
+    # A1 --> O1
+    # A2 --> O1
+    # A4 --> O1
