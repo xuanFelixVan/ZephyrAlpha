@@ -122,7 +122,8 @@ class TestGateSpecFields:
         assert make_bare_subprocess_gate().gate_id == "BARE-SUBPROCESS"
 
     def test_priority(self):
-        assert make_bare_subprocess_gate().priority == 108  # noqa: bare-subprocess  在 IMPORT-INTEGRITY=107 之后，CAPABILITY-LOOKUP-REQUIRED=110 之前
+        # 132 而非 108：2026-09-16 让位 ALGO-FLOW-LINK（=108，后到者让位先例），仍在内容扫描带
+        assert make_bare_subprocess_gate().priority == 132  # noqa: bare-subprocess
 
 
 # ---------------------------------------------------------------------------

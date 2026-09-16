@@ -5,7 +5,7 @@
 # [CONSUMERS] zephyr.gov_enforcement.rule_bridge.git_commit_gateway.GitCommitGateway.__init__
 # [STARTUP] imported
 # [MATURITY] production
-# [INVARIANTS] Phase A 升级——extract 级克隆硬阻断(passed=False), review 级警告, CloneGuard 降级时 warn-only 兜底(passed=True); tests/ 豁免; token overlap 检查保留 warn-only(原有行为); CloneGuard 检查 staged .py 文件(AM filter)∩own-scope（2026-09-11 own-scope 推广：外来 staged 落审计不代查，None 退化全量）; git diff 失败 fail-loud; token 匹配 ≥4 字符才告警
+# [INVARIANTS] Phase A 升级——extract 级克隆硬阻断(passed=False), review 级警告, CloneGuard 降级时 warn-only 兜底(passed=True); tests/ 豁免; token overlap 检查保留 warn-only(原有行为); CloneGuard 检查 staged .py 文件(AM filter)∩own-scope（2026-09-11 own-scope 推广：外来 staged 落审计不代查，None 退化全量）; 触碰税豁免（裁定#273）=阻断项源文件与 HEAD 去 docstring 后 AST 等价时不判给本批，读不到/解析不了即不豁免（fail-closed 照常阻断）; git diff 失败 fail-loud; token 匹配 ≥4 字符才告警
 # [MODIFY-GUARD] gate_id="CAPABILITY-OVERLAP"；check 闭包签名 (gateway, files, **kwargs) -> tuple[bool, str]
 # [STABILITY] evolving
 # [SAFETY] L
@@ -42,31 +42,7 @@ Usage::
     registry.register(make_capability_overlap_gate())
     # commit() 内部：registry.check_all(gateway, files, session_id=sid, ...)
 
-# [ALGO_FLOW]
-# 层: 输入
-# - id: I1
-#   name: 模块内部数据
-#   fields: 无公共形参/无再导出（AST 事实）
-#   code: capability_overlap_gate.py
-# 层: 算法
-# - id: A1
-#   name_zh: ① make_capability_overlap_gate
-#   name_en: make_capability_overlap_gate
-#   intro: 构造新建 .py 文件 CapabilityLookup 提示门禁 GateSpec（warn-only）。
-#   desc: 构造新建 .py 文件 CapabilityLookup 提示门禁 GateSpec（warn-only）。 Returns: GateSpec(gate_id="CAPABIL…；源码 L301-L358
-#   inputs: 无参数
-#   outputs: GateSpec
-# 层: 输出
-# - id: O1
-#   name_zh: GateSpec
-#   name_en: GateSpec
-#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
-#   downstream: zephyr.gov_enforcement.rule_bridge.git_commit_gateway.GitCommitGateway.__init__
-# [/ALGO_FLOW]
-#
-# 边:
-# I1 --> A1
-# A1 --> O1
+# [ALGO_FLOW] external: docs/03_modules/_domain_gov_enforcement/algo_flow/commit_gates/c/capability_overlap_gate.yaml
 """
 
 from __future__ import annotations
@@ -79,6 +55,7 @@ from pathlib import Path
 from zephyr.gov_enforcement.commit_gates._diff_helpers import (
     _audit_foreign_staged,
     _build_own_scope,
+    _is_cosmetic_only_change,
     _norm_rel,
 )
 from zephyr.gov_enforcement.rule_bridge.commit_gate_registry import GateSpec, is_test_exempt
@@ -362,9 +339,32 @@ def make_capability_overlap_gate() -> GateSpec:
             return True, ""  # CloneGuard 不可用，降级 warn-only 兜底
 
         if not cg_result.passed:
+            # 触碰税豁免（裁定#273，2026-09-16 P2-1 出仓波次）：源文件与 HEAD 去
+            # docstring 后 AST 等价 = 本批零可执行语义变更，既有克隆不该判给本批。
+            # fail-closed：读不到/解析不了即不豁免，照常硬阻断。
+            exempt_cache: dict[str, bool] = {}
+            blocking = []
+            for f in cg_result.findings:
+                rel = str(f.source_file).replace("\\", "/")
+                cos = exempt_cache.get(rel)
+                if cos is None:
+                    cos = _is_cosmetic_only_change(gateway, rel)
+                    exempt_cache[rel] = cos
+                if not cos:
+                    blocking.append(f)
+            if exempt_cache:
+                logger.warning(
+                    "CAPABILITY-OVERLAP: %d 个源文件为纯文档串编辑（AST 等价 HEAD），"
+                    "其 %d 条既有克隆命中豁免（裁定#273），其余 %d 条照常阻断",
+                    sum(1 for v in exempt_cache.values() if v),
+                    len(cg_result.findings) - len(blocking),
+                    len(blocking),
+                )
+            if not blocking:
+                return True, ""
             # extract 级克隆发现——硬阻断（"必须合并"）
             reasons = []
-            for f in cg_result.findings:
+            for f in blocking:
                 reasons.append(
                     f"  - {f.source_file}:{f.source_function} 与 "
                     f"{f.existing_file}:{f.existing_lineno} 的 {f.existing_function} "

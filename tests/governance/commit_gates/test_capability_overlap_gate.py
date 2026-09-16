@@ -85,6 +85,18 @@ def _point_registry_at(monkeypatch, tmp_path, content):
     return yaml_path
 
 
+@pytest.fixture(autouse=True)
+def _no_real_clone_guard(monkeypatch):
+    """本文件不测 CloneGuard 引擎本体：真调引擎 ≈31s/例，且结果随索引状态漂移。
+
+    返回 None = "CloneGuard 不可用"分支（warn-only 兜底），正是这些例所断言的路径。
+    需要阻断发现的例在体内再 monkeypatch 覆盖本桩（见 TestCosmeticTouchTaxExemption）。
+    """
+    import zephyr.gov_enforcement.commit_gates.capability_overlap_gate as _cog
+
+    monkeypatch.setattr(_cog, "_run_clone_guard_check", lambda files: None)
+
+
 # ---------------------------------------------------------------------------
 # TestGateSpecFields
 # ---------------------------------------------------------------------------
@@ -263,3 +275,100 @@ class TestGatewayIntegration:
         passed, msg = make_capability_overlap_gate().check(gw, [])
         assert passed
         assert msg == ""
+
+
+# ---------------------------------------------------------------------------
+# TestCosmeticTouchTaxExemption — 裁定#273 CloneGuard 触碰税豁免
+# ---------------------------------------------------------------------------
+class TestCosmeticTouchTaxExemption:
+    """阻断项源文件若与 HEAD 去 docstring 后 AST 等价 → 既有克隆不判给本批。
+
+    fail-closed 方向同步行测试：真实语义变更/新增件/读不到，一律照常硬阻断。
+    """
+
+    HEAD_A = '"""说明\n\n# [ALGO_FLOW]\n# 层: 输入\n# [/ALGO_FLOW]\n"""\n\n\ndef dup():\n    return 1\n'
+    STAGED_COSMETIC_A = '# [ALGO_FLOW] external: docs/x.yaml\n"""说明。"""\n\n\ndef dup():\n    return 1\n'
+    STAGED_REAL_A = '"""说明。"""\n\n\ndef dup():\n    return 2\n'
+
+    def _gw(self, head_blobs, staged_blobs):
+        gw = MagicMock()
+        gw.project_root = _PROJECT_ROOT
+
+        def _run_git(cmd):
+            arg = cmd[-1]
+            if arg.startswith("HEAD:"):
+                text = head_blobs.get(arg[5:])
+                return _MockResult(0, text) if text is not None else _MockResult(1, "")
+            if arg.startswith(":"):
+                text = staged_blobs.get(arg[1:])
+                return _MockResult(0, text) if text is not None else _MockResult(1, "")
+            if "--name-only" in cmd:
+                return _MockResult(0, "\n".join(sorted(staged_blobs)))
+            return _MockResult(0, "")
+
+        gw.run_git = _run_git
+        return gw
+
+    def _stub_blocking_findings(self, monkeypatch, sources):
+        from zephyr.clone_guard.orchestrator import CheckResult
+
+        import zephyr.gov_enforcement.commit_gates.capability_overlap_gate as cog
+
+        findings = []
+        for src in sources:
+            f = MagicMock()
+            f.source_file, f.source_function = src, "dup"
+            f.existing_file, f.existing_function, f.existing_lineno = "src/zephyr/other.py", "dup", 7
+            f.similarity, f.severity, f.clone_type = 1.0, "extract", "exact"
+            findings.append(f)
+        monkeypatch.setattr(
+            cog,
+            "_run_clone_guard_check",
+            lambda files: CheckResult(passed=False, findings=findings, checked_files=len(files)),
+        )
+        return cog
+
+    def test_docstring_only_source_is_exempt(self, tmp_path, monkeypatch):
+        _point_registry_at(monkeypatch, tmp_path, "capabilities: []\n")
+        self._stub_blocking_findings(monkeypatch, ["src/a.py"])
+        gw = self._gw({"src/a.py": self.HEAD_A}, {"src/a.py": self.STAGED_COSMETIC_A})
+        passed, msg = make_capability_overlap_gate().check(gw, [])
+        assert passed is True
+        assert msg == ""
+
+    def test_executable_change_still_blocks(self, tmp_path, monkeypatch):
+        _point_registry_at(monkeypatch, tmp_path, "capabilities: []\n")
+        self._stub_blocking_findings(monkeypatch, ["src/a.py"])
+        gw = self._gw({"src/a.py": self.HEAD_A}, {"src/a.py": self.STAGED_REAL_A})
+        passed, msg = make_capability_overlap_gate().check(gw, [])
+        assert passed is False
+        assert "src/a.py:dup" in msg
+
+    def test_new_file_is_not_exempt(self, tmp_path, monkeypatch):
+        """HEAD 无此件（新增）→ 读不到即不豁免（新增克隆正是本门禁要拦的）。"""
+        _point_registry_at(monkeypatch, tmp_path, "capabilities: []\n")
+        self._stub_blocking_findings(monkeypatch, ["src/a.py"])
+        gw = self._gw({}, {"src/a.py": self.STAGED_REAL_A})
+        passed, msg = make_capability_overlap_gate().check(gw, [])
+        assert passed is False
+        assert "src/a.py" in msg
+
+    def test_unparseable_staged_fails_closed(self, tmp_path, monkeypatch):
+        _point_registry_at(monkeypatch, tmp_path, "capabilities: []\n")
+        self._stub_blocking_findings(monkeypatch, ["src/a.py"])
+        gw = self._gw({"src/a.py": self.HEAD_A}, {"src/a.py": "def dup(:"})
+        passed, _ = make_capability_overlap_gate().check(gw, [])
+        assert passed is False
+
+    def test_mixed_batch_blocks_only_on_real_changes(self, tmp_path, monkeypatch):
+        """同批混有纯文档串件与真实变更件：豁免只吃掉前者，后者照常阻断且点名。"""
+        _point_registry_at(monkeypatch, tmp_path, "capabilities: []\n")
+        self._stub_blocking_findings(monkeypatch, ["src/a.py", "src/b.py"])
+        gw = self._gw(
+            {"src/a.py": self.HEAD_A, "src/b.py": self.HEAD_A},
+            {"src/a.py": self.STAGED_COSMETIC_A, "src/b.py": self.STAGED_REAL_A},
+        )
+        passed, msg = make_capability_overlap_gate().check(gw, [])
+        assert passed is False
+        assert "src/b.py" in msg
+        assert "src/a.py" not in msg

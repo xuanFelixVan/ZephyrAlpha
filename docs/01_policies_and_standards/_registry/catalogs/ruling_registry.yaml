@@ -2513,3 +2513,39 @@ entries:
   related_arch: ['#52_backtest_validation_standard']
   related_rulings: []
   superseded_by: null
+- ruling_id: '裁定#273'
+  title: CloneGuard「触碰税」清偿口径=门禁侧 cosmetic-only（去 docstring 后 AST 等价）fail-closed 豁免，禁止用 echo-guard.yml 白名单批量消化存量克隆
+  date: '2026-09-16'
+  category: 治本
+  status: active
+  summary: >-
+    病根实证：P2-1 ALGO_FLOW 出仓波次 grp2p2（infrastructure 域 273 件）被 CAPABILITY-OVERLAP
+    硬阻断 34 条 extract 级克隆——本批源码可执行行零变更（只把机器块从 docstring 搬进 docs/
+    yaml），克隆两侧皆既有；预扫余下 9 子批共 271 个唯一阻断对。按批走 echo-guard.yml
+    acknowledged 通道需逐对断言"双方确属合理重复"（批6/批7 2026-09-15 已登记 30 条先例），
+    规模再放大 9 倍即把白名单变成存量债消音器——违 RULE-CLONEGUARD"禁止用白名单消除当前
+    不想处理的告警"。
+    第一性原理裁定：门禁要防的是"新增重复实现"，判据应为"本提交是否改变可执行语义"，
+    而非"文件是否被触碰"。机械判据=HEAD↔staged 两侧 ast.parse 后剥除
+    Module/ClassDef/FunctionDef/AsyncFunctionDef 的 body[0] 字符串常量，再比
+    ast.dump(include_attributes=False) 指纹——注释天然不入 AST、docstring 显式剥除，
+    纯文档串/注释/空白编辑等价放行；装饰器/签名/类型注解/语句增删任一变化即不等价，照常阻断。
+    读不到 HEAD（新增件）或任一侧解析失败一律判"非 cosmetic"（fail-closed=照常送检）。
+    实践对齐：语义化 diff 分类（git --ignore-all-space、comment-only/format-only change
+    分类器）与机构侧 CL 分带（non-functional change 走轻量审查）同思路；PMD-CPD/jscpd
+    类复制检测亦按变更行作用域报告，不因整文件被触碰而追讨存量。
+    残余不隐藏：271 对既有克隆已机器化清单化（交波次收口报告附表），归"克隆债专项清账"议题，
+    本豁免不使其消失（review 级仍照报）。
+    配套施工：_diff_helpers 新增 _ast_semantic_fingerprint/_is_cosmetic_only_change
+    （共享件，后续 docstring 类批量作业可复用）；CAPABILITY-OVERLAP 阻断分支消费；
+    新增 18 例（helper 13 + gate 接线 5，含 fail-closed 全场景）；顺带把
+    test_capability_overlap_gate 8 例真调 CloneGuard 引擎（31s/例且结果随索引漂移）改桩注入，
+    整文件 158s→3.3s。
+  affected_files:
+    - src/zephyr/gov_enforcement/commit_gates/_diff_helpers.py
+    - src/zephyr/gov_enforcement/commit_gates/capability_overlap_gate.py
+    - tests/governance/commit_gates/test_diff_helpers.py
+    - tests/governance/commit_gates/test_capability_overlap_gate.py
+  related_arch: []
+  related_rulings: []
+  superseded_by: null

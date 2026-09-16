@@ -2,11 +2,11 @@
 # [MODULE] zephyr.gov_enforcement.commit_gates._diff_helpers
 # [DOMAIN] D_GOV_CODE_QUALITY
 # [DEPENDENCIES] —
-# [CONSUMERS] zephyr.gov_enforcement.commit_gates.unsafe_dict_spread_gate; zephyr.gov_enforcement.commit_gates.datetime_now_forbidden_gate; zephyr.gov_enforcement.commit_gates.bare_sql_gate; zephyr.gov_enforcement.commit_gates.hardcoded_url_gate; zephyr.gov_enforcement.commit_gates.high_complexity_gate; zephyr.gov_enforcement.commit_gates.import_integrity_gate; zephyr.gov_enforcement.commit_gates.bare_subprocess_gate; zephyr.gov_enforcement.commit_gates.consumers_accuracy_gate
+# [CONSUMERS] zephyr.gov_enforcement.commit_gates.unsafe_dict_spread_gate; zephyr.gov_enforcement.commit_gates.datetime_now_forbidden_gate; zephyr.gov_enforcement.commit_gates.bare_sql_gate; zephyr.gov_enforcement.commit_gates.hardcoded_url_gate; zephyr.gov_enforcement.commit_gates.high_complexity_gate; zephyr.gov_enforcement.commit_gates.import_integrity_gate; zephyr.gov_enforcement.commit_gates.bare_subprocess_gate; zephyr.gov_enforcement.commit_gates.consumers_accuracy_gate; zephyr.gov_enforcement.commit_gates.capability_overlap_gate
 # [STARTUP] imported
 # [MATURITY] production
-# [INVARIANTS] gate 共享 diff 解析工具模块——提取 unsafe_dict_spread_gate / datetime_now_forbidden_gate / bare_sql_gate / hardcoded_url_gate / high_complexity_gate / import_integrity_gate / bare_subprocess_gate / consumers_accuracy_gate 公共 diff 解析函数，消除 FUNCTION-DUP 重复定义；纯函数无副作用；不可达路径 fail-open（返回空集/空列表/None）；_extract_docstring_lines 用 ast 精确识别 docstring（R95 治本），不再用正则近似；_extract_sql_constant_lines 用 ast 精确识别 SQL_*/_SQL_* 常量定义行范围（R96 治本），替代 bare_sql_gate 的 _SQL_CONSTANT_DEF_RE 正则近似；_make_noqa_pattern + _extract_noqa_lines 消除 import_integrity_gate / bare_subprocess_gate 的 noqa 提取克隆（#ARCH-FORCE-MERGE-DEDUP-001）；_module_to_file_candidates 消除 import_integrity_gate / consumers_accuracy_gate 的模块路径转换克隆；_matches_any_prefix 消除 _is_project_module / _is_abstract_code 的前缀判断同构克隆
-# [MODIFY-GUARD] 函数签名：_is_exempt_line(str)->bool, _extract_docstring_lines(str)->set[int], _extract_sql_constant_lines(str)->set[int], _parse_diff_with_line_numbers(str)->list[tuple[int,str]], _read_staged_file(gateway,str)->str|None, _read_head_file(gateway,str)->str|None, _collect_function_names(str)->set[str], _make_noqa_pattern(str)->re.Pattern, _extract_noqa_lines(str,re.Pattern)->set[int], _module_to_file_candidates(str)->list[str], _matches_any_prefix(str,tuple)->bool
+# [INVARIANTS] gate 共享 diff 解析工具模块——提取 unsafe_dict_spread_gate / datetime_now_forbidden_gate / bare_sql_gate / hardcoded_url_gate / high_complexity_gate / import_integrity_gate / bare_subprocess_gate / consumers_accuracy_gate 公共 diff 解析函数，消除 FUNCTION-DUP 重复定义；纯函数无副作用；不可达路径 fail-open（返回空集/空列表/None）；_extract_docstring_lines 用 ast 精确识别 docstring（R95 治本），不再用正则近似；_extract_sql_constant_lines 用 ast 精确识别 SQL_*/_SQL_* 常量定义行范围（R96 治本），替代 bare_sql_gate 的 _SQL_CONSTANT_DEF_RE 正则近似；_make_noqa_pattern + _extract_noqa_lines 消除 import_integrity_gate / bare_subprocess_gate 的 noqa 提取克隆（#ARCH-FORCE-MERGE-DEDUP-001）；_module_to_file_candidates 消除 import_integrity_gate / consumers_accuracy_gate 的模块路径转换克隆；_matches_any_prefix 消除 _is_project_module / _is_abstract_code 的前缀判断同构克隆；_is_cosmetic_only_change 用「去 docstring 后 AST 指纹」机械判定零可执行语义变更（裁定#273 触碰税豁免），读不到/解析不了一律判非 cosmetic（fail-closed 照常送检）
+# [MODIFY-GUARD] 函数签名：_is_exempt_line(str)->bool, _extract_docstring_lines(str)->set[int], _extract_sql_constant_lines(str)->set[int], _parse_diff_with_line_numbers(str)->list[tuple[int,str]], _read_staged_file(gateway,str)->str|None, _read_head_file(gateway,str)->str|None, _collect_function_names(str)->set[str], _make_noqa_pattern(str)->re.Pattern, _extract_noqa_lines(str,re.Pattern)->set[int], _module_to_file_candidates(str)->list[str], _matches_any_prefix(str,tuple)->bool, _ast_semantic_fingerprint(str)->str|None, _is_cosmetic_only_change(gateway,str)->bool
 # [STABILITY] stable
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
@@ -38,30 +38,7 @@ Usage::
         _read_staged_file,
     )
 
-# [ALGO_FLOW]
-# 层: 输入
-# - id: I1
-#   name: unified=0 git diff 原文 + staged 文件路径集
-#   fields: diff_stdout(str) / gateway 暂存区句柄
-#   code: _parse_diff_with_line_numbers / _get_added_lines
-# 层: 算法
-# - id: A1
-#   name_zh: diff 行号解析（幻影空行跳过）
-#   name_en: diff_line_number_parsing
-#   intro: split("\n") 逐行扫描，hunk 头锚定起始行号，" "/+ 行累加行号，裸空行跳过（\r\r\n 翻译幻影不占行号）
-#   code: _parse_diff_with_line_numbers
-# - id: A2
-#   name_zh: AST 豁免行集合提取
-#   name_en: ast_exempt_line_extraction
-#   intro: ast 解析 docstring/SQL_* 常量定义行范围，替代正则近似（R95/R96 治本）
-#   code: _extract_docstring_lines / _extract_sql_constant_lines
-# 层: 输出
-# - id: O1
-#   name: added 行号集 / 豁免行号集（供 8 个 commit gate 消费）
-#   fields: list[tuple[int,str]] / set[int]
-#   code: 各 gate 的违规行与豁免行差集判定
-# [/ALGO_FLOW]
-# 边: I1 --> A1 ; I1 --> A2 ; A1 --> O1 ; A2 --> O1
+# [ALGO_FLOW] external: docs/03_modules/_domain_gov_enforcement/algo_flow/commit_gates/_/_diff_helpers.yaml
 """
 
 from __future__ import annotations
@@ -538,3 +515,55 @@ def _is_src_zephyr_file(py_file: str) -> bool:
     （#ARCH-FORCE-MERGE-DEDUP-001，2026-09-10 st-legacy-clear-20260910）。
     """
     return str(py_file).replace("\\", "/").startswith(_SRC_ZEPHYR_PREFIX)
+
+
+_DOC_BEARING_NODES = (ast.Module, ast.ClassDef, ast.FunctionDef, ast.AsyncFunctionDef)
+
+
+def _ast_semantic_fingerprint(src: str) -> str | None:
+    """去 docstring 后的 AST 指纹——「可执行语义是否等价」的机械判据。
+
+    注释不入 AST、docstring 显式剥除，故纯文档串/注释/空白编辑两侧指纹相同；
+    装饰器、签名、类型注解、字符串常量（非 docstring）全部入指纹，改了就不相等。
+    永不抛异常：解析失败返回 None（调用方按 fail-closed 处理=照常送检）。
+    """
+    try:
+        tree = ast.parse(src)
+    except (SyntaxError, ValueError, RecursionError):
+        return None
+    for node in ast.walk(tree):
+        if not isinstance(node, _DOC_BEARING_NODES):
+            continue
+        body = list(getattr(node, "body", None) or [])
+        if not body:
+            continue
+        first = body[0]
+        if (
+            isinstance(first, ast.Expr)
+            and isinstance(first.value, ast.Constant)
+            and isinstance(first.value.value, str)
+        ):
+            node.body = body[1:] or [ast.Pass()]
+    try:
+        return ast.dump(tree, annotate_fields=True, include_attributes=False)
+    except (RecursionError, ValueError):
+        return None
+
+
+def _is_cosmetic_only_change(gateway, py_file: str) -> bool:
+    """HEAD↔staged 去 docstring 后 AST 等价 = 纯文档串/注释/空白编辑（零可执行语义变更）。
+
+    病根（裁定#273，2026-09-16 P2-1 ALGO_FLOW 出仓波次）：出仓只把机器块从 docstring
+    搬进 docs/ yaml，源码可执行语义逐字未动，但 CAPABILITY-OVERLAP 的 CloneGuard 按
+    「staged .py 全量送检」把**两侧既有**的 extract 级克隆判给本批=触碰税，存量债让
+    无辜批次硬阻断。语义零变更的编辑不该为存量克隆买单。
+
+    fail-closed：新增文件（HEAD 无此件）、任一侧读取/解析失败 → False（照常送检）。
+    """
+    head = _read_head_file(gateway, py_file)
+    staged = _read_staged_file(gateway, py_file)
+    if head is None or staged is None:
+        return False
+    head_fp = _ast_semantic_fingerprint(head)
+    staged_fp = _ast_semantic_fingerprint(staged)
+    return head_fp is not None and head_fp == staged_fp

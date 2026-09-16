@@ -54,8 +54,10 @@ if str(_PROJECT_ROOT) not in sys.path:
     sys.path.insert(0, str(_PROJECT_ROOT))
 
 from zephyr.gov_enforcement.commit_gates._diff_helpers import (  # noqa: E402
+    _ast_semantic_fingerprint,
     _extract_docstring_lines,
     _extract_sql_constant_lines,
+    _is_cosmetic_only_change,
     _is_exempt_line,
     _parse_diff_with_line_numbers,
 )
@@ -457,3 +459,92 @@ class TestExtractSqlConstantLines:
     def test_empty_file(self):
         """空文件返回空集合。"""
         assert _extract_sql_constant_lines("") == set()
+
+
+# ---------------------------------------------------------------------------
+# TestAstSemanticFingerprint / TestIsCosmeticOnlyChange — 裁定#273 触碰税判据
+# ---------------------------------------------------------------------------
+class TestAstSemanticFingerprint:
+    """去 docstring 后的 AST 指纹：文档串/注释编辑等价，可执行语义编辑不等价。"""
+
+    def test_module_docstring_removal_is_same_fingerprint(self):
+        with_block = '"""\n模块说明\n\n# [ALGO_FLOW]\n# 层: 输入\n# [/ALGO_FLOW]\n"""\n\n\ndef f():\n    return 1\n'
+        without_anchor = '"""模块说明。"""\n\n\ndef f():\n    return 1\n'
+        assert _ast_semantic_fingerprint(with_block) == _ast_semantic_fingerprint(without_anchor)
+
+    def test_function_and_class_docstrings_are_stripped(self):
+        a = 'class C:\n    """甲。\n\n    细节\n    """\n\n    def m(self):\n        """乙。"""\n        return 1\n'
+        b = "class C:\n    def m(self):\n        return 1\n"
+        assert _ast_semantic_fingerprint(a) == _ast_semantic_fingerprint(b)
+
+    def test_docstring_only_body_stays_significant(self):
+        """body 里非首位的字符串表达式不是 docstring，改动必须体现在指纹上。"""
+        a = 'def f():\n    return 1\n\n\ndef g():\n    "doc"\n    "shadow"\n'
+        b = 'def f():\n    return 1\n\n\ndef g():\n    "doc"\n'
+        assert _ast_semantic_fingerprint(a) != _ast_semantic_fingerprint(b)
+
+    def test_comment_only_change_is_same_fingerprint(self):
+        a = "# 说明\nx = 1  # 尾注\n"
+        b = "x = 1\n"
+        assert _ast_semantic_fingerprint(a) == _ast_semantic_fingerprint(b)
+
+    def test_signature_and_decorator_changes_differ(self):
+        base = "def f(a):\n    return a\n"
+        assert _ast_semantic_fingerprint(base) != _ast_semantic_fingerprint("def f(a, b=1):\n    return a\n")
+        assert _ast_semantic_fingerprint(base) != _ast_semantic_fingerprint("@property\ndef f(a):\n    return a\n")
+
+    def test_syntax_error_returns_none(self):
+        assert _ast_semantic_fingerprint("def f(:\n") is None
+
+    def test_empty_source_is_stable(self):
+        assert _ast_semantic_fingerprint("") == _ast_semantic_fingerprint("# 只有注释\n")
+
+
+class _StubGateway:
+    """按 git 子命令回放 HEAD/staged blob 文本；rc=1 模拟读不到（新增件/git 失败）。"""
+
+    project_root = _PROJECT_ROOT
+
+    def __init__(self, head=None, staged=None):
+        self._head = head
+        self._staged = staged
+
+    def run_git(self, cmd):
+        arg = cmd[-1]
+        text, ok = (self._head, self._head is not None) if arg.startswith("HEAD:") else (self._staged, self._staged is not None)
+        return _Res(0 if ok else 1, text or "")
+
+
+class _Res:
+    def __init__(self, returncode, stdout):
+        self.returncode = returncode
+        self.stdout = stdout
+
+
+class TestIsCosmeticOnlyChange:
+    """fail-closed 方向：判不准就照常送检。"""
+
+    HEAD = '"""说明\n\n# [ALGO_FLOW] 机器块\n# [/ALGO_FLOW]\n"""\n\n\ndef f():\n    return 1\n'
+
+    def test_docstring_only_edit_is_cosmetic(self):
+        head = self.HEAD
+        staged = '"""说明。"""\n\n\ndef f():\n    return 1\n'
+        assert _is_cosmetic_only_change(_StubGateway(head=head, staged=staged), "src/zephyr/a.py") is True
+
+    def test_anchor_line_added_is_still_cosmetic(self):
+        """出仓真实形态：锚注释行 + 机器块搬走，可执行体逐字未动 → cosmetic。"""
+        staged = "# [ALGO_FLOW] external: docs/x.yaml\n" + '"""说明。"""\n\n\ndef f():\n    return 1\n'
+        assert _is_cosmetic_only_change(_StubGateway(head=self.HEAD, staged=staged), "src/zephyr/a.py") is True
+
+    def test_executable_change_is_not_cosmetic(self):
+        staged = '"""说明。"""\n\n\ndef f():\n    return 2\n'
+        assert _is_cosmetic_only_change(_StubGateway(head=self.HEAD, staged=staged), "src/zephyr/a.py") is False
+
+    def test_new_file_is_not_cosmetic(self):
+        assert _is_cosmetic_only_change(_StubGateway(head=None, staged="x = 1\n"), "src/zephyr/new.py") is False
+
+    def test_staged_read_failure_is_not_cosmetic(self):
+        assert _is_cosmetic_only_change(_StubGateway(head=self.HEAD, staged=None), "src/zephyr/a.py") is False
+
+    def test_unparseable_staged_is_not_cosmetic(self):
+        assert _is_cosmetic_only_change(_StubGateway(head=self.HEAD, staged="def f(:"), "src/zephyr/a.py") is False
