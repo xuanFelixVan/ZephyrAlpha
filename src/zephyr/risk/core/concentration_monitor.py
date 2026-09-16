@@ -2,7 +2,7 @@
 # [MODULE] zephyr.risk.core.concentration_monitor
 # [DOMAIN] D_RISK
 # [DEPENDENCIES] zephyr.shared.foundation.errors; numpy
-# [CONSUMERS] MOD-RK-02(Pre-Trade Checker,集中度Hard Block) ; MOD-RK-03(Portfolio Risk Monitor,实时监控) ; MOD-RK-13(Crowding Monitor)
+# [CONSUMERS] 无现役消费方（2026-09-15 实测：src 生产代码零 runtime import、零实例化、零 update() 调用；原声称 MOD-RK-02/03/13 均未接线）。单票仓位上限已由 DefaultRiskValidator.validate_order 以 max_single_position 现役强制；HHI/行业维度无跨持仓数据源，接入通知看板须决策门持仓装配（超出本次接线欠账授权范围，已另行登记）。证据与回归锁见 tests/risk/test_risk_signal_consumer_wiring.py。
 # [STARTUP] imported
 # [MATURITY] production
 # [INVARIANTS] weights归一化(总和=1);HHI∈[0,1];max_single_weight≤1;告警级别由当前集中度唯一决定;事件去抖(连续相同级别不重复发射)

@@ -2,7 +2,7 @@
 # [MODULE] zephyr.risk.core.crowding_monitor
 # [DOMAIN] D_RISK
 # [DEPENDENCIES] zephyr.risk.risk_manager_base
-# [CONSUMERS] MOD-L04-001(DefaultRiskManagerOrchestrator,拥挤度评估) ; MOD-RK-07(ConcentrationMonitor,组合内集中度输入)
+# [CONSUMERS] 无现役消费方（2026-09-15 实测：DefaultRiskManagerOrchestrator 于 src 内从未实例化、其 check_crowding 从未被调用、CrowdingMonitor 仅 TYPE_CHECKING 引用；原声称 MOD-RK-07 输入方向亦相反，ConcentrationMonitor 不消费本件）。拥挤度需多策略持仓簿的 overlap/consensus 输入，src 内无该数据源生产者；无出口强接只会成为占位死探针，属设计性死件。证据与回归锁见 tests/risk/test_risk_signal_consumer_wiring.py。
 # [STARTUP] imported
 # [MATURITY] production
 # [INVARIANTS] overlap=Σmin/Σmax;consensus=|Σsign|/n;crowding=0.5×overlap+0.5×consensus;is_crowded=crowding>threshold;纯机制零参数

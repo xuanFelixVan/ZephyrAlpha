@@ -3,7 +3,7 @@
 # [MODULE] zephyr.risk.core.drawdown_state_machine
 # [DOMAIN] D_RISK
 # [DEPENDENCIES] zephyr.shared.foundation.errors; zephyr.shared.state_store
-# [CONSUMERS] zephyr.risk.core.drawdown_session_persistence; RiskOrchestrator(§6.5 接线位)
+# [CONSUMERS] 无现役端到端消费方（2026-09-15 实测：唯一 import 方 zephyr.risk.core.drawdown_session_persistence 虽实例化本件，但其对外函数 premarket_initialization/postmarket_persist 于 src 内零调用者、整链未接入任何事件通道；原声称 RiskOrchestrator §6.5 接线位从未落地；其持久化依赖的 JsonStateStore 根目录未被装配、无可达落盘位）。现役回撤分级判定由 DrawdownTracker+DrawdownController 在 evaluate_intraday 内闭环消费，本状态机为并行未启用设计件（非为接线而接线）。阈值口径与 THD-DRAWDOWN-001/002/003(5%/10%/15%) 一致、未改动。证据与回归锁见 tests/risk/test_risk_signal_consumer_wiring.py。
 # [STARTUP] imported
 # [MATURITY] production
 # [INVARIANTS] 升级单调取最严(多源触发直接跳到最高态); 降级不可跳级(WARN→NORMAL/DANGER→WARN/CRISIS→DANGER逐级); 降级三重守卫(半阈值+min_hold+VaR交叉验证); RECOVERY阶梯不可跳过(0→1→2→NORMAL且须毕业准则); KILL仅人工复位可出(无自动路径); 状态外部化(JsonStateStore原子写,损坏抛StateCorruptError不静默兜底); peak语义不属本模块(capital_curve_manager管辖)

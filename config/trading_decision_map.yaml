@@ -3130,7 +3130,7 @@ nodes:
   # M-36 收口：熔断从模糊词变等级表（判定=R1-01 离散状态机，D108 设计原则）；梯度减仓=R1-02；
   # 护盘资产定向加仓窄门=R1-03（proposed 假说，回测验证前不生效）
 - node_id: TDM-X-R1-01
-  note_confirmed: 2026-09-16  # db06 出仓复核：机器块搬 yaml，算法口径逐字未变
+  note_confirmed: 2026-09-16  # db06 机器块搬 yaml 口径未变；本轮再确认=仅 [CONSUMERS] 头据实回填（消费方 AST 实测零在网），五级判定轴/阈值/迟滞逐字未动
   name_zh: 熔断分级判定
   market: cn_a
   flow: exit_flow

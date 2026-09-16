@@ -3,7 +3,7 @@
 # [MODULE] zephyr.risk.core.var_intraday_recalc
 # [DOMAIN] D_RISK
 # [DEPENDENCIES] zephyr.shared.foundation.errors; numpy; MOD-RK-05(VaR Calculator); MOD-RK-15(Tail Risk Monitor); MOD-RK-05C(VaR Breach 状态机,可选注入)
-# [CONSUMERS] 35号 §3.13 intraday_risk_loop(盘中循环检测触发后调用,设计契约); RiskLayerOrchestrator(编排注入)
+# [CONSUMERS] 无现役消费方（2026-09-15 实测：IntradayVarRecalcController 于 src 生产代码零实例化、零调用；原声称 35号 §3.13 intraday_risk_loop 与 RiskLayerOrchestrator 编排注入均未接线）。现役盘中 VaR/ES 已由 RiskLayerOrchestrator.evaluate_intraday 每轮经 VaRCalculator+TailRiskMonitor 直接重算，本重算控制器功能被取代、无独立消费出口，属设计性死件（非为接线而接线）。证据与回归锁见 tests/risk/test_risk_signal_consumer_wiring.py。
 # [STARTUP] imported
 # [MATURITY] evolving
 # [INVARIANTS] 7条触发任一满足即重算; 多触发去重(返回首个命中按优先级: 政策>涨跌停潮>传导>相关性>波动率>回撤>亏损, reason记录全部命中); 冷却期5分钟内不重算(suppressed留痕); 单日最多6次(达上限freq_cap_hit告警); 条件1基于clean NAV; var_change_ratio>20%→significant; 计数器日切重置
