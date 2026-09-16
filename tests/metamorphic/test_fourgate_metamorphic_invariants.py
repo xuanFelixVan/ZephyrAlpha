@@ -239,16 +239,15 @@ def test_binomial_degenerate_known_values(hits, n, p0, expected):
     assert binomial_ge_pvalue(hits, n, p0) == pytest.approx(expected)
 
 
-@pytest.mark.parametrize(("p0", "ref"), [(1.0, "log1p"), (0.0, "log")])
-def test_binomial_boundary_p0_domain_error_characterized(p0, ref):
-    """特征化（缺陷 F-1，不修复——生产代码本试点禁改）：
-
-    p0∈{0,1} 且 hits∈(0,n) 通过入参校验（0<=p0<=1）却在 math.log/log1p(0)
-    抛 ValueError(domain)——校验承诺与实现边界不一致。钉扎现状防静默漂移，
-    修复属裁定事项（报告 F-1）。
+@pytest.mark.parametrize(("p0", "expected"), [(1.0, 1.0), (0.0, 0.0)])
+def test_binomial_boundary_p0_exact_values(p0, expected):
+    """F-1 修复转正（总包整合班 2026-09-16）：退化基线 p0∈{0,1} 不再 math domain error，
+    返回精确值（p0=0 全质量在 0→hits≥1 不可能事件 p=0；p0=1 全质量在 n→hits≤n 必然事件 p=1）。
+    原特征化（钉 ValueError）已由 src 修复取代，此测试钉修复防回归。
     """
-    with pytest.raises(ValueError, match="domain"):
-        binomial_ge_pvalue(50, 100, p0)
+    assert binomial_ge_pvalue(50, 100, p0) == expected
+    # 浮点 hits 同样覆盖（n_eff 折扣路径）
+    assert binomial_ge_pvalue(50.5, 100, p0) == expected
 
 
 @pytest.mark.parametrize("args", [(-1, 100, 0.5), (50, -100, 0.5), (50, 100, 1.5), (50, 100, -0.1)])

@@ -91,6 +91,10 @@ def binomial_ge_pvalue(hits: float, n: float, p0: float) -> float:
         return 0.0  # 不可能事件（钳位前先判，P(X≥n+1)=0）
     if hits <= 0:
         return 1.0  # 必然事件（浮点累积前短路）
+    if p0 == 0.0:
+        return 0.0  # 退化基线：全部概率质量在 0，hits≥1 为不可能事件（精确值，禁走 log(0)）
+    if p0 == 1.0:
+        return 1.0  # 退化基线：全部概率质量在 n，hits≤n 为必然事件（精确值，禁走 log1p(-1)）
     k = min(max(hits, 0.0), n)
     total = 0.0
     k_lo = int(math.ceil(k))
