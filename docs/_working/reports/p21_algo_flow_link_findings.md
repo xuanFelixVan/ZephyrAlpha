@@ -161,3 +161,44 @@ date: 2026-09-17
   收口动作=本轮把治理套件全量跑（而非只跑改到的单测）列为落地前必做，本轮起执行。
 - 归属：出仓战役工具链测试（自家件），无外部责任人。
 
+## 11. 常驻守护的旧判据缓存把三条判据整体关掉：门还在、牙没了（P0，#ARCH-323，已修）
+
+- 实测（serial 轮，真串行 stage→judge）：同一条 ALGO-FLOW-LINK 在 R4/R5 正常开火
+  （q…0064/q…0065 死信，原文逐字命中），而 **R1_dead_block（q…0066→`e10ac5acc4`）与
+  R3_no_edges（q…0067→`2924601305`）双双落地**。五场景中把落地的两个与拦住的两分开的
+  唯一变量：R1/R3 的判据取自 `_load_graph_rules`，R4/R5 的两条（锚指向 yaml 实存、
+  source_of_truth 实存）不取自它——"部分失效"是门禁最坏的失效形态：全绿，但牙已掉。
+- 根因两半：
+  ① **判据装载吃 sys.modules 缓存**。旧写法 `from _shared.code_algorithm_extractor import
+  algo_flow_dead_block_spans …`，常驻进程若在符号诞生前 import 过 extractor，之后每次装载
+  都撞 ImportError → `rules=None` → 死块/体内多块/图可达三条判据静默关闭。时间线闭合：
+  belt 守护 PID 28552/28648 自 **09-16 07:17** 常驻，而 `algo_flow_dead_block_spans`
+  **09-16 21:58**（`787fd269d5`）、`duplicate_inline_algo_flow_spans` **09-17 00:52**
+  （`834c5ffb9c`）才进 extractor。
+  ② **纪元自检只测门禁子树**。裁定#281 的 re-exec 判据是 `HEAD:src/zephyr/gov_enforcement`
+  tree sha，而判据真源住 `scripts/governance/_shared/`——判据侧治本对常驻守护永不可见，
+  守护不会重启。①是病灶，②是让病灶长期不愈的麻药。
+- 影响面（诚实口径）：战役 ~90 个经队列落地的批次，其死块/图可达判据在**落地瞬间**未被执行。
+  结论"存量语料干净"另有独立证据：离线复验波（`bt_verify_wave`，每批 fresh import、逐件
+  复算剪枝 AST 指纹 + 字节码 tie-break）覆盖同一判据链且 defects=0——不是假设；
+  但"门禁在生产路由上确实开过火"此前被高估，本轮起以红蓝实弹为唯一效力证据。
+- 已处置（三层，只收紧不放宽）：
+  ①判据**按盘上文件直载**（`importlib` 独立模块名，不污染他人在用的 `code_algorithm_extractor`
+  条目），按 (判据目录, 两源文件 mtime_ns+size) 指纹缓存——判据语义恒等于提交时刻的仓库内容，
+  不受进程寿命摆布；②`rules=None` 拆成两态：**判据源不在盘上**=环境降级（结构性兜底仍在，
+  维持放行），**在盘上却加载不出**=仓库自身缺陷 → fail-closed 阻断并指名判据源；
+  ③守护纪元扩到 `scripts/governance`，判据侧治本也走安全点 re-exec（单侧无证据不废另一侧）。
+  HEAD 两件注资走 Edit 清偿 + fix-forward，机证=与 pre-probe 版本**逐字节相同**
+  （`MATCH-pre-probe`，40897/3878 两长度一致）。测试：stale sys.modules 不再能关判据 /
+  在盘不可载必阻断 / 判据子树单独变更也 re-exec；既有 3 条 epoch 测试补判据子树 stub
+  （`tmp_path` 落在真仓内，不 stub 会取到真 sha 造出假"纪元变更"）。
+- 探针侧教训（**非仓缺陷**，留此防重踩）：
+  ①`commit_queue.py enqueue` 的**同键覆盖**是有设计依据的行为（`(session_id, path)` 键、
+  pending 内仅留最新，见其 # [INVARIANTS] 与 66 号 §6.2），一次全 stage 多场景时共用同一目标件
+  的先发项会被后发项整体移除（本战役 0056/0058/0061-0063 三次"项消失"皆此，非数据丢失）
+  ——多场景探针必须真串行（已加 `serial` 模式）；②落地后主仓常年 `MM`（受限收敛只写工作区、
+  index 留旧 blob），用 `git status --porcelain` 判"工作区干净"会把探针自己拦下（serial 轮
+  R2 首枚即 `skip_dirty`）——判据改为工作区字节 == `git show HEAD:<rel>`。
+- 归属：ALGO-FLOW-LINK 判据装载（本战役自家件）+ belt 守护纪元（裁定#281 同家）。
+  与 §9 同族但机制不同：§9 是判据几何口径缺一类载体，本条是判据**装载**在常驻进程里失能。
+

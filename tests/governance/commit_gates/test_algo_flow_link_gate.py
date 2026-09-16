@@ -268,14 +268,77 @@ def test_fanin_and_compact_edge_spellings_pass(tmp_path: Path) -> None:
 
 
 def test_graph_rules_unavailable_degrades_fail_open(tmp_path: Path, monkeypatch) -> None:
-    """判据真源不可达=基础设施故障 → 降级放行（不得把"加载失败"判成违规连坐提交人）。"""
+    """判据源**不在盘上**=环境降级 → 结构性兜底放行（不得把环境问题判成违规连坐提交人）。"""
     from zephyr.gov_enforcement.commit_gates import algo_flow_link_gate as g
 
     root = _make_repo(tmp_path)
     _write_mirror(root, _YAML_NO_EDGE)
     monkeypatch.setattr(g, "_load_graph_rules", lambda _root: None)
+    monkeypatch.setattr(g, "_rules_source_present", lambda _root: False)
     blocked, msg = check_algo_flow_links(["docs/03_modules/_domain_x/algo_flow/demo.yaml"], root)
     assert not blocked, msg
+
+
+def test_criteria_source_on_disk_but_unloadable_blocks(tmp_path: Path, monkeypatch) -> None:
+    """判据源在盘上却拿不到=仓库自身缺陷 → 必须阻断。
+
+    旧行为是 rules=None 一律降级：死块/体内多块/图可达三条判据整体静默关闭而门禁全绿，
+    2026-09-17 红蓝实弹 R1/R3 经生产队列真落地（e10ac5acc4 / 2924601305）的机制半边。
+    """
+    from zephyr.gov_enforcement.commit_gates import algo_flow_link_gate as g
+
+    root = _make_repo(tmp_path)
+    _write_mirror(root, _YAML_NO_EDGE)
+    monkeypatch.setattr(g, "_load_graph_rules", lambda _root: None)
+    monkeypatch.setattr(g, "_rules_source_present", lambda _root: True)
+    blocked, msg = check_algo_flow_links(["docs/03_modules/_domain_x/algo_flow/demo.yaml"], root)
+    assert blocked, "判据源在场却加载失败被当环境问题放行=假绿"
+    assert "判据真源" in msg and "fail-closed" in msg, msg
+
+
+# R1 实弹形态：锚在 docstring 内、机器块紧跟 docstring 之后（与 _PY_DEAD_BLOCK 的"之前"对称）
+_PY_DEAD_BLOCK_AFTER_DOCSTRING = (
+    '"""demo —— 说明。\n\n'
+    "# [ALGO_FLOW] external: docs/03_modules/_domain_x/algo_flow/demo.yaml\n"
+    '"""\n'
+    "# [ALGO_FLOW]\n# 层: 算法\n# - id: RB9\n#   name: 红蓝探针块\n# [/ALGO_FLOW]\n"
+    "# 边:\n# RB9 --> RB9\n\nX = 1\n"
+)
+
+
+def test_stale_sys_modules_criteria_does_not_disable_gate(tmp_path: Path, monkeypatch) -> None:
+    """常驻进程 sys.modules 里的**旧判据副本**不得让判据线失能（R1/R3 落地根因半边）。
+
+    复刻事故形态：`_shared.code_algorithm_extractor` 已被某更早的 import 缓存、且缺
+    2026-09-16/17 新增的两个几何符号——旧写法 `from _shared... import` 撞 ImportError
+    → rules=None → 死块判据静默关闭（belt 守护 07:17 常驻，死块符号 21:58 才进
+    extractor，实测 R1 落地）。现写法按盘上文件直载，判据语义与提交时刻仓库一致。
+    """
+    import sys
+    import types
+
+    from zephyr.gov_enforcement.commit_gates import algo_flow_link_gate as g
+
+    stale_ext = types.ModuleType("_shared.code_algorithm_extractor")
+    stale_ext.parse_algo_flow = lambda *a, **k: None  # 只有旧符号，几何判据缺席
+    stale_val = types.ModuleType("_shared.algo_flow_validate_marker")
+    pkg = types.ModuleType("_shared")
+    pkg.__path__ = []  # type: ignore[attr-defined]
+    pkg.code_algorithm_extractor = stale_ext  # type: ignore[attr-defined]
+    pkg.algo_flow_validate_marker = stale_val  # type: ignore[attr-defined]
+    for name, mod in (("_shared", pkg),
+                      ("_shared.code_algorithm_extractor", stale_ext),
+                      ("_shared.algo_flow_validate_marker", stale_val)):
+        monkeypatch.setitem(sys.modules, name, mod)
+
+    assert g._load_graph_rules(tmp_path) is not None, "判据须从盘上直载，不吃 sys.modules 旧缓存"
+
+    root = _make_repo(tmp_path)
+    (root / "src/zephyr/pkg_a/after.py").write_text(
+        _PY_DEAD_BLOCK_AFTER_DOCSTRING, encoding="utf-8"
+    )
+    blocked, msg = check_algo_flow_links(["src/zephyr/pkg_a/after.py"], root)
+    assert blocked and "落在 module docstring 之外" in msg, msg
 
 
 _PY_DUP_INLINE = (

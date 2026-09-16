@@ -211,25 +211,29 @@ def _escalate_env_aborts(counter: dict) -> None:
 # ── 裁定#281①：常驻进程代码纪元自检 + 安全点原地 re-exec（2026-09-17 施工）──
 # 病根：本守护 import 门禁模块一次常驻内存，任何门禁治本的生效延迟上限=进程寿命
 # （实证：PID 28648 自 07:17 常驻，21:39 落地的 R21 治本对它无效，22:06 仍按旧码
-# 挡死 q-…-0017）。治本=每轮 drain 后自检门禁子树纪元（HEAD tree sha），变更即
-# 在安全点（lease 已释放、两轮 drain 之间）os.execv 原地重启——禁自杀退出（本仓
-# 无计划任务重拉本守护，退出即掐断全仓排队落地）。
+# 挡死 q-…-0017）。治本=每轮 drain 后自检子树纪元（HEAD tree sha），变更即在安全点
+# （lease 已释放、两轮 drain 之间）os.execv 原地重启——禁自杀退出（本仓无计划任务
+# 重拉本守护，退出即掐断全仓排队落地）。
+# 自检范围经 #ARCH-323 扩为"门禁代码 + 判据真源"两子树：只测前者是半个盲区，
+# 实证代价=死块判据 21:58 进 scripts/governance/_shared/extractor 而常驻守护按旧码
+# 跑，三条图/几何判据静默失效，红蓝实弹两发变异真落地（e10ac5acc4/2924601305）。
 _SERIALIZER_LEASE = "serializer.lease"
 _REEXEC_ENV_FLAG = "ZEPHYR_BELT_DAEMON_NO_REEXEC"  # 运维逃生：置 1 禁自动 re-exec
+_PRIMARY_SUBTREE = "src/zephyr/gov_enforcement"  # 门禁代码子树
+_CRITERIA_SUBTREE = "scripts/governance"  # 门禁判据真源子树（extractor/校验器住这里）
 
 
-def _gov_enforcement_epoch(project_root: Path) -> str | None:
-    """门禁代码纪元：src/zephyr/gov_enforcement 的 HEAD tree sha。
+def _subtree_epoch(project_root: Path, subtree: str) -> str | None:
+    """HEAD 里某子树的 tree sha：对子树内任何文件任何变更敏感且零成本（单次 rev-parse）。
 
-    tree sha 对子树内任何文件任何变更敏感且零成本（单次 rev-parse）；
-    git 不可达返回 None（fail-open：无证据不重启）。经 run_subprocess_hidden
+    git 不可达/子树不存在返回 None（该子树按"无证据"处理）；经 run_subprocess_hidden
     （process_pool 正门，禁裸 subprocess——对齐 worktree_drift_watchdog 口径）。
     """
     from zephyr.shared.infra.process_pool import run_subprocess_hidden  # noqa: PLC0415
 
     try:
         r = run_subprocess_hidden(
-            ["git", "rev-parse", "HEAD:src/zephyr/gov_enforcement"],
+            ["git", "rev-parse", f"HEAD:{subtree}"],
             capture_output=True,
             text=True,
             cwd=str(project_root),
@@ -240,6 +244,31 @@ def _gov_enforcement_epoch(project_root: Path) -> str | None:
     except Exception:  # noqa: BLE001 — 环境故障按"纪元未知"处理
         pass
     return None
+
+
+def _gov_enforcement_epoch(project_root: Path) -> str | None:
+    """门禁代码纪元：src/zephyr/gov_enforcement 的 HEAD tree sha。"""
+    return _subtree_epoch(project_root, _PRIMARY_SUBTREE)
+
+
+def _gate_code_epoch(project_root: Path) -> str | None:
+    """门禁代码 + **判据真源**两个子树的合成纪元（2026-09-17 扩）。
+
+    只测门禁子树是半个盲区：ALGO-FLOW-LINK 这类门的判据真源住在
+    `scripts/governance/_shared/`（extractor 的几何/图规则），判据治本往往**只动
+    scripts 侧**——旧口径下这类治本对常驻守护永不可见，实证代价=死块判据符号
+    21:58 进 extractor 而 07:17 起常驻的守护按旧码跑，红蓝实弹 R1/R3 双双落地。
+    单侧无证据不废另一侧（该子树不在 HEAD 里=无代码可陈旧），全无可证才返回 None。
+    """
+    parts = [
+        e
+        for e in (
+            _gov_enforcement_epoch(project_root),
+            _subtree_epoch(project_root, _CRITERIA_SUBTREE),
+        )
+        if e
+    ]
+    return "|".join(parts) if parts else None
 
 
 def _serializer_lease_held(qroot: Path) -> bool:
@@ -264,7 +293,7 @@ def _reexec_self(project_root: Path) -> None:
     watchdog 观察者线程随进程映像替换一并消亡，新进程自会重建。
     """
     _release_singleton(_queue_root(project_root))
-    logger.warning("belt_daemon: 门禁代码纪元变更，安全点原地 re-exec（裁定#281）")
+    logger.warning("belt_daemon: 门禁代码/判据真源纪元变更，安全点原地 re-exec（裁定#281）")
     argv = [sys.executable, str(Path(__file__).resolve()), *sys.argv[1:]]
     os.execv(sys.executable, argv)
 
@@ -278,7 +307,7 @@ def _check_and_reexec(project_root: Path, qroot: Path, state: dict, *, enabled: 
     """
     if not enabled or os.environ.get(_REEXEC_ENV_FLAG):
         return False
-    epoch = _gov_enforcement_epoch(project_root)
+    epoch = _gate_code_epoch(project_root)
     if epoch is None:
         return False
     prev = state.get("epoch")

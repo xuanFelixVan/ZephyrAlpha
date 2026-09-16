@@ -141,6 +141,8 @@ def test_epoch_unchanged_no_reexec(tmp_path, monkeypatch):
     calls: list = []
     _fake_execv(monkeypatch, calls)
     monkeypatch.setattr(mod, "_gov_enforcement_epoch", lambda root: "sha-same")
+    # 判据子树单独 stub：tmp_path 落在真仓内，不 stub 会取到真 sha 造出假"纪元变更"
+    monkeypatch.setattr(mod, "_subtree_epoch", lambda root, sub: None)
     monkeypatch.setattr(mod, "_serializer_lease_held", lambda qroot: False)
     state: dict = {"epoch": "sha-same"}
     assert mod._check_and_reexec(tmp_path, tmp_path, state) is False
@@ -153,6 +155,7 @@ def test_epoch_changed_reexecs_at_safe_point(tmp_path, monkeypatch):
     calls: list = []
     _fake_execv(monkeypatch, calls)
     monkeypatch.setattr(mod, "_gov_enforcement_epoch", lambda root: "sha-new")
+    monkeypatch.setattr(mod, "_subtree_epoch", lambda root, sub: None)
     monkeypatch.setattr(mod, "_serializer_lease_held", lambda qroot: False)
     # 预置活体单例锁（真实位置=<root>/.runtime/commit_queue/）→ execv 前必须被释放
     # （execv 不跑 finally，不释放=新进程被锁挡死 exit 2）
@@ -172,7 +175,28 @@ def test_epoch_changed_but_lease_held_defers(tmp_path, monkeypatch):
     calls: list = []
     _fake_execv(monkeypatch, calls)
     monkeypatch.setattr(mod, "_gov_enforcement_epoch", lambda root: "sha-new")
+    monkeypatch.setattr(mod, "_subtree_epoch", lambda root, sub: None)
     monkeypatch.setattr(mod, "_serializer_lease_held", lambda qroot: True)
     state: dict = {"epoch": "sha-old"}
     assert mod._check_and_reexec(tmp_path, tmp_path, state) is False
     assert calls == []
+
+
+def test_criteria_subtree_only_change_also_reexecs(tmp_path, monkeypatch):
+    """判据真源子树单独变更也要 re-exec——旧口径只测 src/zephyr/gov_enforcement，
+    extractor（scripts/governance/_shared）治本对常驻守护永不可见：红蓝实弹 R1/R3
+    经生产队列落地的正是这个盲区（守护 07:17 常驻，死块判据符号 21:58 才进 extractor）。
+    """
+    mod = _epoch_mod()
+    calls: list = []
+    _fake_execv(monkeypatch, calls)
+    monkeypatch.setattr(mod, "_gov_enforcement_epoch", lambda root: "sha-gate")
+    monkeypatch.setattr(
+        mod,
+        "_subtree_epoch",
+        lambda root, sub: "sha-gate" if sub == mod._PRIMARY_SUBTREE else "sha-crit-new",
+    )
+    monkeypatch.setattr(mod, "_serializer_lease_held", lambda qroot: False)
+    state: dict = {"epoch": "sha-gate|sha-crit-old"}
+    assert mod._check_and_reexec(tmp_path, tmp_path, state) is True
+    assert len(calls) == 1

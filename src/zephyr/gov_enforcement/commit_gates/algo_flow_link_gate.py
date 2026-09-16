@@ -15,7 +15,9 @@
 #   docstring 之内只允许一个载体（锚或块二选一，两处并存=永不被消费的副本=双真源；P2-1 死块批
 #   2026-09-16 增、体内多块线 2026-09-17 增、锚块并存同日经红蓝实弹哑火后并入同一判据；
 #   几何判据共用 extractor.algo_flow_dead_block_spans 与
-#   extractor.duplicate_inline_algo_flow_spans，extractor 不可用=基础设施故障 fail-open）；
+#   extractor.duplicate_inline_algo_flow_spans，判据真源**按盘上文件直载并按指纹重载**
+#   （常驻进程 sys.modules 旧缓存=判据静默失效，2026-09-17 R1/R3 落地根因）；
+#   判据源不在盘上=环境降级仅结构校验，在盘上却加载不出=fail-closed 阻断）；
 #   own-diff 扫描——只查本次 commit files 清单，
 #   他会话 staged 文件零接触（#ARCH-GATE-OWN-SCOPE-001 单一真源模式）；staged 内容优先（锚校验读 staged，
 #   经 _diff_helpers._read_staged_file=``git show :<path>``，无 staged 回退工作区）；
@@ -98,46 +100,101 @@ def _norm_posix(f: str | Path, repo_root: Path) -> str:
     return p.as_posix()
 
 
-def _load_graph_rules(root: Path) -> tuple[Callable, Callable, Callable, Callable] | None:
-    """取判据真源 (parse_algo_flow, validate_graph, algo_flow_dead_block_spans,
-    duplicate_inline_algo_flow_spans)。
+_RULES_FILES = ("code_algorithm_extractor.py", "algo_flow_validate_marker.py")
+# 判据符号位点 (文件, 符号)——缺任一即判据不完整，必须显形（静默缺判据=假绿）
+_RULES_SYMBOLS = (
+    ("code_algorithm_extractor.py", "parse_algo_flow"),
+    ("algo_flow_validate_marker.py", "validate_graph"),
+    ("code_algorithm_extractor.py", "algo_flow_dead_block_spans"),
+    ("code_algorithm_extractor.py", "duplicate_inline_algo_flow_spans"),
+)
+# (判据目录, 两源文件指纹) → 判据四元组：盘上一变即重载，一版代码至多 exec 一次
+_FRESH_RULES_CACHE: dict[tuple[str, tuple[tuple[int, int], ...]], tuple[Callable, ...]] = {}
 
-    判据一律不在门禁内重写第二份：解析/图规则真源在 scripts/governance/_shared，
-    几何规则真源在 extractor。找不到落点返回 None=基础设施故障降级。
-    网关进程未必已把 scripts/governance 放进 sys.path——不补 bootstrap 判据会静默
-    fail-open（与 import_integrity_gate 同源套路）。
-    """
-    import sys
 
-    def _try():
-        from _shared.algo_flow_validate_marker import validate_graph  # noqa: PLC0415
-        from _shared.code_algorithm_extractor import (  # noqa: PLC0415
-            algo_flow_dead_block_spans,
-            duplicate_inline_algo_flow_spans,
-            parse_algo_flow,
-        )
-
-        return parse_algo_flow, validate_graph, algo_flow_dead_block_spans, (
-            duplicate_inline_algo_flow_spans
-        )
-
-    try:
-        return _try()
-    except ImportError:
-        pass
-    cands = (
+def _rules_dir(root: Path) -> Path | None:
+    """判据真源目录（`_shared`）：先本 commit 所属根（落地 worktree 与主仓同构），再本模块所在仓。"""
+    for c in (
         root / "scripts" / "governance",
         Path(__file__).resolve().parents[4] / "scripts" / "governance",
-    )
-    gov = next((c for c in cands if (c / "_shared" / "code_algorithm_extractor.py").is_file()), None)
-    if gov is None:
+    ):
+        if (c / "_shared" / _RULES_FILES[0]).is_file():
+            return c / "_shared"
+    return None
+
+
+def _rules_source_present(root: Path) -> bool:
+    """判据源文件是否都在盘上——True 时仍取不到判据=仓库自身缺陷（调用侧据此 fail-closed）。"""
+    d = _rules_dir(root)
+    return d is not None and all((d / f).is_file() for f in _RULES_FILES)
+
+
+def _fresh_rules(shared: Path) -> tuple[Callable, ...] | None:
+    """绕过 sys.modules 按文件直载判据（独立模块名，不污染他人在用的 `code_algorithm_extractor`）。"""
+    import importlib.util  # noqa: PLC0415
+    import sys  # noqa: PLC0415
+
+    mods: dict[str, object] = {}
+    for f in _RULES_FILES:
+        path = shared / f
+        spec = importlib.util.spec_from_file_location(f"_algo_flow_link_rules.{f[:-3]}", path)
+        if spec is None or spec.loader is None:
+            return None
+        mod = importlib.util.module_from_spec(spec)
+        key = f"_algo_flow_link_rules.{f[:-3]}"
+        sys.modules[key] = mod  # exec 期间的自引用（如有）解析到本次副本而非缓存副本
+        try:
+            spec.loader.exec_module(mod)
+        except Exception:  # noqa: BLE001 — 加载失败上抛给调用侧按缺陷处置，不在此静默
+            sys.modules.pop(key, None)
+            logger.exception("ALGO-FLOW-LINK 判据直载失败: %s", path)
+            return None
+        mods[f] = mod
+    out = []
+    for f, sym in _RULES_SYMBOLS:
+        fn = getattr(mods[f], sym, None)
+        if not callable(fn):
+            logger.error("ALGO-FLOW-LINK 判据缺符号: %s.%s", f, sym)
+            return None
+        out.append(fn)
+    return tuple(out)
+
+
+def _load_graph_rules(root: Path) -> tuple[Callable, Callable, Callable, Callable] | None:
+    """取判据真源 (parse_algo_flow, validate_graph, algo_flow_dead_block_spans,
+    duplicate_inline_algo_flow_spans)，**以盘上版本为准**。
+
+    判据一律不在门禁内重写第二份：解析/图规则真源在 scripts/governance/_shared，
+    几何规则真源在 extractor。
+
+    为什么不再 `from _shared... import`（2026-09-17 R1/R3 双落地根因治本）：走
+    sys.modules 的导入形态下，常驻进程（belt 守护 / serializer）只要在判据新增符号
+    **之前** import 过 extractor，之后每次取判据都撞 ImportError → 返回 None →
+    死块/体内多块/图可达三条判据整体静默关闭，而不依赖判据的锚存在性与
+    source_of_truth 两条照常开火——"门还在、牙没了"，红蓝实弹实测同一条门禁
+    R4/R5 阻断、R1/R3 落地（PID 28552/28648 自 07:17 常驻，
+    `algo_flow_dead_block_spans` 21:58 才进 extractor）。现按 (目录, 源文件指纹)
+    缓存直载结果：判据语义恒等于提交时刻的仓库内容，不再受进程寿命摆布。
+
+    返回 None 只保留一种含义：**判据源文件不在盘上**（环境降级，结构性兜底仍在）；
+    在盘上却加载不出=仓库自身缺陷，由调用侧 `_rules_source_present` 判并 fail-closed。
+    """
+    shared = _rules_dir(root)
+    if shared is None:
         return None
-    if str(gov) not in sys.path:
-        sys.path.insert(0, str(gov))
     try:
-        return _try()
-    except ImportError:
+        fp = (str(shared), tuple(
+            (lambda st: (st.st_mtime_ns, st.st_size))((shared / f).stat()) for f in _RULES_FILES
+        ))
+    except OSError:
         return None
+    hit = _FRESH_RULES_CACHE.get(fp)
+    if hit is not None:
+        return hit  # type: ignore[return-value]
+    rules = _fresh_rules(shared)
+    if rules is not None:
+        _FRESH_RULES_CACHE[fp] = rules
+    return rules  # type: ignore[return-value]
 
 
 def check_algo_flow_links(
@@ -184,10 +241,19 @@ def check_algo_flow_links(
         logger.warning("ALGO-FLOW-LINK fail-open: yaml 解析器加载失败", exc_info=True)
         return False, ""
 
-    # 判据一次加载复用（sys.modules 已缓存，但每文件两轮 import 查找纯属浪费）
+    # 判据一次加载复用（按盘上指纹缓存，盘上一变即重载——见 _load_graph_rules 病根段）
     rules = _load_graph_rules(root)
     if rules is None:
-        logger.warning("ALGO-FLOW-LINK 判据降级：scripts/governance/_shared 不可达，仅结构校验")
+        if _rules_source_present(root):
+            # 判据源在盘上却拿不到=仓库自身缺陷，此时放行等于把"死块/体内多块/图可达"
+            # 三条线整体关掉而门禁全绿（2026-09-17 R1/R3 经生产队列真落地的形态）。
+            return True, (
+                "ALGO-FLOW-LINK：判据真源 scripts/governance/_shared/{code_algorithm_extractor,"
+                "algo_flow_validate_marker}.py 在盘上但加载失败——本门无法判定，按 fail-closed 阻断"
+                "（判据不可得时放行=静默假绿，与它要防的双真源/坏图同害）。查 logger 记录的"
+                " ImportError/缺符号明细，修复判据源后重新提交。"
+            )
+        logger.warning("ALGO-FLOW-LINK 判据降级：scripts/governance/_shared 不在盘上，仅结构校验")
 
     def _validate_block(content: str) -> tuple[bool, str]:
         """yaml 文本 → (ok, why)：可解析 + algo_flow 块结构完整（+extractor 全解析当可用）。"""

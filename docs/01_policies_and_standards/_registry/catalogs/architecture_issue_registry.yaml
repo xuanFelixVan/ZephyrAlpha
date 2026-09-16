@@ -21798,3 +21798,31 @@ entries:
   status: fixed
   created: '2026-09-17'
   last_updated: '2026-09-17'
+- issue_id: "#ARCH-323"
+  title: >-
+    判据装载吃 sys.modules 旧缓存 + 守护纪元只测门禁子树：ALGO-FLOW-LINK 的死块/体内多块/图可达
+    三条判据在常驻 belt 守护里整体静默失能，红蓝实弹 R1/R3 经生产队列真落地（e10ac5acc4 /
+    2924601305），而同一条门的锚存在性与 source_of_truth 两条照常开火
+  severity: P0阻断
+  adjudication: >-
+    实测：serial 轮（真串行 stage→judge→stage）五场景里 R4_anchor_dead(q…0064)/R5_sot_broken(q…0065)
+    按预期死信，R1_dead_block(q…0066) 与 R3_no_edges(q…0067) 却 landed=true——HEAD 里逐字节命中变异内容。
+    把两者分开的唯一变量是判据来源：R1/R3 走 _load_graph_rules，R4/R5 不走。根因两半：①旧装载写法
+    from _shared.code_algorithm_extractor import … 走 sys.modules，常驻进程在符号诞生前 import 过就永远
+    拿不到新符号（ImportError→rules=None→三条判据静默关闭，仅留结构性校验）；时间线闭合——belt 守护
+    PID 28552/28648 自 09-16 07:17 常驻，algo_flow_dead_block_spans 09-16 21:58(787fd269d5)、
+    duplicate_inline_algo_flow_spans 09-17 00:52(834c5ffb9c) 才进 extractor。②裁定#281 的 re-exec
+    纪元只覆盖 src/zephyr/gov_enforcement，判据真源住 scripts/governance/_shared，故判据侧治本对守护
+    永不可见、不会重启。影响面：本役 ~90 个经队列落地的批次其死块/图可达判据在落地瞬间未执行；
+    "存量语料干净"另有独立证据（离线复验波每批 fresh import 逐件复算剪枝 AST 指纹+字节码
+    tie-break=defects 0），但门禁在生产路由上的效力此前被高估——自此以红蓝实弹为唯一效力证据。
+  fix_phase: >-
+    已修（2026-09-17，三层且只收紧）：①判据按盘上文件 importlib 直载（独立模块名，不污染他人在用的
+    sys.modules 条目），按 (判据目录, 两源文件 mtime_ns+size) 指纹缓存，盘上一变即重载；②rules=None
+    拆两态——判据源不在盘上=环境降级维持结构性兜底放行，在盘上却加载不出=仓库自身缺陷按 fail-closed
+    阻断并指名判据源；③守护纪元扩到 scripts/governance（单侧无证据不废另一侧），判据侧治本也走安全点
+    re-exec。HEAD 两件注资 Edit 清偿+fix-forward，机证=与 pre-probe 版本逐字节相同。测试 3 条：
+    stale sys.modules 不再能关判据 / 在盘不可载必阻断 / 判据子树单独变更也 re-exec。
+  status: fixed
+  created: '2026-09-17'
+  last_updated: '2026-09-17'

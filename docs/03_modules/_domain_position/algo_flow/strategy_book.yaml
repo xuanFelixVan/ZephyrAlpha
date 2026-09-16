@@ -69,5 +69,13 @@ algo_flow: |
     #   consumers: MOD-POS-021 FirmRiskAggregator 求和→MOD-POS-001 Kelly 精裁决
     # [/ALGO_FLOW]
     #
+    # 边:
+    # I1,I2,I3 --> A1
+    # A1 --> A2
+    # I2 --> F1,F2
+    # F1,F2 --> A2
+    # A2 --> A3
+    # I3 --> A3,F3
+    # A3 --> O1
     # 说明：F3 的绩效分只交给外面的 RegimeMetaAllocator 做后验分配，
     # 不进 TargetPortfolio，所以它只进不出。
