@@ -2,7 +2,7 @@
 # [BLUEPRINT] MOD-REGIME-002 | docs/03_modules/_domain_regime/regime_feature_builder/blueprint.md | §4 Phase2b
 # [MODULE] tests.regime.test_overlay_signals_builder
 # [DOMAIN] D_REGIME
-# [DEPENDENCIES] zephyr.regime.overlay_signals_builder; zephyr.regime.core.regime_detector; pandas; numpy
+# [DEPENDENCIES] zephyr.regime.overlay_signals_builder; zephyr.regime.core.regime_detector; zephyr.regime.features.overlay_features; pandas; numpy; ast; inspect; logging; re
 # [CONSUMERS] pytest;CI_pipeline
 # [STABILITY] volatile
 # [SAFETY] L
@@ -23,20 +23,32 @@
   - PIT：build_for_date(dt) 只用 ≤ dt-1（shift(1) 生效）
   - 降级：feature_builder=None → 全维度=0.0（纯 HMM）
   - 端到端：overlay_signals 喂 RegimeDetector._run_overlay 不报错
+  - 阈值校准欠账台账：_precompute 尾部对 ALERT 项的运行期一次性告警（内容/次数/闸门），
+    以及 builder 侧 claims 与台账的一致性（车道#14 补覆盖，OVB-4）
 
 依据: 10_regime_detector_spec v1.3.1 §4 / Phase 2 计划 §Phase2b
 """
 
 from __future__ import annotations
 
+import ast
+import inspect
+import logging
+import re
+
 import numpy as np
 import pandas as pd
 import pytest
 
+from zephyr.regime import overlay_signals_builder
 from zephyr.regime.core.regime_detector import (
     TRANSITION_CONFIG,
     TRANSITIONS,
     RegimeDetector,
+)
+from zephyr.regime.features.overlay_features import (
+    ALERT_UNCALIBRATED_THRESHOLDS,
+    THRESHOLD_CALIBRATION_LEDGER,
 )
 from zephyr.regime.overlay_signals_builder import (
     _STUB_DIMS,
@@ -936,3 +948,199 @@ class TestEndToEnd:
         probs, shrinkage = detector.detect(regime_features, overlay_signals=overlay, risk_signal_inputs=risk_inputs)
         assert 0.0 < shrinkage.value <= 1.0
         assert len(probs.probabilities) == 7  # 4 HMM 态(r1-r4) + 3 overlay 态(r10-r12)
+
+
+# ---------------------------------------------------------------------------
+# 阈值校准欠账台账：运行期一次性告警（OVB-4，车道#14 补覆盖）
+# ---------------------------------------------------------------------------
+# 该告警是"5 项阈值里还有 3 项未经 A 股本土 walk-forward 复推"这一欠账在运行期唯一的
+# 暴露面（台账真源在 overlay_features.THRESHOLD_CALIBRATION_LEDGER，结构契约见
+# tests/regime/test_overlay_features.py::TestThresholdCalibrationLedgerSchema）。
+# 复验审计认定此路径零覆盖——悄悄删一条 ALERT、把 RESOLVED 也告出来、或告警文案与
+# 台账口径互相打脸，过去都无测试会变红。
+
+_LEDGER_WARN_ANCHOR = "阈值校准欠账"
+_LEDGER_WARN_LOGGER = "zephyr.regime.overlay_signals_builder"
+
+# RESOLVED 项（不得进入运行期告警，避免噪声）
+_RESOLVED_IDS = frozenset({"s2_capitulation_confirm", "s1_vix_panic_s2_vix"})
+
+# "12.44→6.24（虚增 1.99x）" 型"改前→改后（幅度 Nx）"量级 claims
+_MAGNITUDE_CLAIM = re.compile(
+    r"(\d+(?:\.\d+)?)\s*%?→\s*(\d+(?:\.\d+)?)\s*%?[（(]([^（）()]*?)(\d+(?:\.\d+)?)\s*[xX倍]"
+)
+
+
+@pytest.fixture(autouse=True)
+def _fresh_ledger_warn_gate(monkeypatch):
+    """把"已告警"闸门复位成未触发态，使告警断言与测试执行顺序无关。
+
+    现行闸门挂在实例上（_precompute 读 getattr(self, "_threshold_ledger_warned")），
+    新建 ctor 天然 fresh；本 fixture 额外按名字扫模块命名空间里所有 *ledger_warned*
+    开关并置 False——若日后闸门提升为模块级（进程 once），这里同样先复位再断言。
+    """
+    for name in [n for n in dir(overlay_signals_builder) if "ledger_warned" in n]:
+        monkeypatch.setattr(overlay_signals_builder, name, False, raising=False)
+    yield
+
+
+def _ledger_warnings(caplog) -> list[str]:
+    """本次捕获里与阈值台账相关的告警文案（其余 WARN 噪声不参与断言）。"""
+    return [r.getMessage() for r in caplog.records if _LEDGER_WARN_ANCHOR in r.getMessage()]
+
+
+def _make_ledger_ctor() -> tuple[OverlaySignalsConstructor, pd.DatetimeIndex]:
+    """常态市场最小接线的 ctor（只为把 _precompute 驱动到尾部告警分支）。"""
+    dates = _make_dates(300)
+    feat = _make_features(dates, vol_pct=0.3, corr=0.5)
+    idx_df = _make_index_df(dates, np.linspace(3000, 3500, 300), np.full(300, 1e8))
+    ctor = OverlaySignalsConstructor(
+        backtest_start="2020-01-01",
+        backtest_end="2021-03-01",
+        data_load_start="2020-01-01",
+        feature_builder=_MockFeatureBuilder(feat, idx_df),
+    )
+    return ctor, dates
+
+
+class TestThresholdLedgerRuntimeWarning:
+    """ALERT 欠账的一次性 WARNING（内容/次数/闸门/口径；两路降级也必须出声）。"""
+
+    def test_warning_lists_exactly_alert_entries(self, caplog):
+        """告警逐条点名 ALERT 欠账，且绝不夹带 RESOLVED 项。"""
+        ctor, dates = _make_ledger_ctor()
+        with caplog.at_level(logging.WARNING, logger=_LEDGER_WARN_LOGGER):
+            ctor.build_for_date(dates[250])
+        msgs = _ledger_warnings(caplog)
+        assert len(msgs) == 1, f"应恰有一条阈值台账告警，实际 {len(msgs)}: {msgs}"
+        msg = msgs[0]
+        listed = [x.strip() for x in msg.split(": ", 1)[1].split(" — ")[0].split(",")]
+        assert listed == list(ALERT_UNCALIBRATED_THRESHOLDS), (
+            f"告警点名 {listed} 与台账 ALERT 集 {list(ALERT_UNCALIBRATED_THRESHOLDS)} 不一致"
+        )
+        for resolved in sorted(_RESOLVED_IDS):
+            assert resolved not in msg, f"已裁定 RESOLVED 的 {resolved} 不应再告警（噪声）"
+        assert "THRESHOLD_CALIBRATION_LEDGER" in msg, "告警须指向台账真源，否则读者无处查证"
+        assert all(r.levelno == logging.WARNING for r in caplog.records if _LEDGER_WARN_ANCHOR in r.getMessage())
+
+    def test_warning_fires_once_within_one_instance(self, caplog):
+        """同一 ctor 生命周期内只告一次：重复 build_for_date 与强制重算 _precompute 都不再刷。"""
+        ctor, dates = _make_ledger_ctor()
+        with caplog.at_level(logging.WARNING, logger=_LEDGER_WARN_LOGGER):
+            ctor.build_for_date(dates[250])
+            ctor.build_for_date(dates[260])  # 命中 _cache 短路
+            ctor._cache = None  # 人为强制再跑一次 _precompute（绕开记忆化，专测闸门本身）
+            ctor.build_for_date(dates[270])
+        assert len(_ledger_warnings(caplog)) == 1, "闸门失效 → 每次预计算都会刷屏"
+
+    def test_warning_rearms_for_each_new_constructor(self, caplog):
+        """钉死当前语义：闸门是实例级（每个新 ctor 各告一次），非进程级 once。
+
+        这是有意的行为探针而非漏测：若日后把闸门提升为模块级/进程级 once，本测试
+        须随之改为"全进程仅一次"（_fresh_ledger_warn_gate 已同时兼容两种形态）。
+        """
+        ctor_a, dates = _make_ledger_ctor()
+        with caplog.at_level(logging.WARNING, logger=_LEDGER_WARN_LOGGER):
+            ctor_a.build_for_date(dates[250])
+            ctor_b, _ = _make_ledger_ctor()
+            ctor_b.build_for_date(dates[250])
+        assert len(_ledger_warnings(caplog)) == 2, "当前实现下两个独立 ctor 应各告一次"
+
+    def test_no_warning_when_nothing_pending(self, caplog, monkeypatch):
+        """台账全清（ALERT 集为空）→ 不得凭空发告警（builder 的 `if pending` 守卫）。"""
+        monkeypatch.setattr(overlay_signals_builder.overlay_features, "ALERT_UNCALIBRATED_THRESHOLDS", ())
+        ctor, dates = _make_ledger_ctor()
+        with caplog.at_level(logging.WARNING, logger=_LEDGER_WARN_LOGGER):
+            ctor.build_for_date(dates[250])
+        assert ctor._cache is not None, "_precompute 未跑完，本测试无效"
+        assert _ledger_warnings(caplog) == []
+
+    def test_warning_text_agrees_with_ledger_disposition(self, caplog):
+        """跨模块口径一致：告警说"现行值沿用"，则每条 ALERT 台账处置必须也说"保留现值"。"""
+        ctor, dates = _make_ledger_ctor()
+        with caplog.at_level(logging.WARNING, logger=_LEDGER_WARN_LOGGER):
+            ctor.build_for_date(dates[250])
+        msg = _ledger_warnings(caplog)[0]
+        assert "现行值沿用" in msg, "告警文案已不再声称沿用 → 与台账 ALERT 处置段的『保留现值』脱钩"
+        for key in ALERT_UNCALIBRATED_THRESHOLDS:
+            action = THRESHOLD_CALIBRATION_LEDGER[key].split("|")[-1]
+            assert "保留现值" in action, (
+                f"告警文案声称沿用，但台账 {key} 处置段未记『保留现值』——两处口径必须同步"
+            )
+
+    def test_ledger_debt_disclosed_without_feature_builder(self, caplog):
+        """降级路①：无 feature_builder（全维 0.0 纯 HMM）也必出声——欠账与取数成败无关。"""
+        ctor = OverlaySignalsConstructor(
+            backtest_start="2020-01-01",
+            backtest_end="2021-03-01",
+            data_load_start="2020-01-01",
+            feature_builder=None,
+        )
+        with caplog.at_level(logging.WARNING, logger=_LEDGER_WARN_LOGGER):
+            assert ctor._precompute() == {}
+        assert len(_ledger_warnings(caplog)) == 1, "降级路吞掉了台账欠账告警"
+
+    def test_ledger_debt_disclosed_when_build_features_raises(self, caplog):
+        """降级路②：build_features 抛异常走全降级，台账告警同样不得被 return 吞掉。"""
+        ctor, _dates = _make_ledger_ctor()
+
+        def _boom() -> dict:
+            raise RuntimeError("特征管道炸了")
+
+        ctor._feature_builder.build_features = _boom
+        with caplog.at_level(logging.WARNING, logger=_LEDGER_WARN_LOGGER):
+            assert ctor._precompute() == {}
+        assert len(_ledger_warnings(caplog)) == 1, "异常降级路吞掉了台账欠账告警"
+
+
+class TestThresholdLedgerCallSiteCoupling:
+    """台账 ↔ builder 调用点的耦合：欠账项不得与生产维度/参数脱钩。"""
+
+    def test_alert_entries_map_to_live_overlay_dims(self):
+        """每条 ALERT 欠账的 <转换>_<维度> 键必须落在 _TRANSITION_DIMS 真实维度上。
+
+        防两类静默漂移：① 维度改名/下线后台账还在告警（读者无处对口径）；
+        ② 新维度阈值上线却忘了登记台账（此路由 test_ledger_and_code_reference_each_other
+        在 features 侧把关，本处把关"登记了也必须对得上生产维度清单"）。
+        """
+        for key in ALERT_UNCALIBRATED_THRESHOLDS:
+            tid, _, dim = key.partition("_")
+            assert tid.upper() in _TRANSITION_DIMS, f"台账 ALERT 项 {key} 的转换前缀 {tid} 不存在"
+            assert dim in _TRANSITION_DIMS[tid.upper()], (
+                f"台账 ALERT 项 {key} 声称的维度 {tid.upper()}.{dim} 已不在 overlay 维度清单里"
+            )
+
+    def test_resolved_capitulation_confirm_is_never_wired(self):
+        """confirm 项判 RESOLVED 的前提=生产调用点从不传 halflife/lookback（无第二套实阈值）。
+
+        一旦 builder 开始传 confirm 参数，该 RESOLVED 裁定即刻失效，必须回到 ALERT 并告警。
+        """
+        tree = ast.parse(inspect.getsource(overlay_signals_builder))
+        call_kwargs: list[set[str]] = []
+        for node in ast.walk(tree):
+            if not isinstance(node, ast.Call):
+                continue
+            fn = node.func
+            name = fn.attr if isinstance(fn, ast.Attribute) else getattr(fn, "id", "")
+            if name == "s2_capitulation_score":
+                call_kwargs.append({kw.arg for kw in node.keywords if kw.arg})
+        assert call_kwargs, "builder 已不再调用 s2_capitulation_score → 台账 confirm 项须同步重裁定"
+        offenders = [ks & {"halflife", "lookback"} for ks in call_kwargs]
+        assert not any(offenders), f"生产调用点已传入 confirm 级参数 {offenders} → 台账须改判 ALERT"
+
+    def test_documented_before_after_magnitudes_agree_with_stated_multiple(self):
+        """OVB-2 量级 claims（doc-only）自检：改前/改后比值须等于文案声称的倍数。
+
+        不在测试里二次硬编码 12.44/6.24/1.99——三者全部从同一句 claims 解析，
+        只验其互洽；写错任一个数字（如比值与倍数不符）即红。
+        """
+        doc = inspect.getdoc(OverlaySignalsConstructor._compute_limit_up_metrics) or ""
+        claims = _MAGNITUDE_CLAIM.findall(doc)
+        assert claims, "_compute_limit_up_metrics 的量级 claims 已消失 → 本测试须随裁定更新或删除"
+        for before, after, qualifier, multiple in claims:
+            b, a, m = float(before), float(after), float(multiple)
+            assert abs(b / a - m) <= 0.01 * m + 1e-6, (
+                f"量级 claims 自相矛盾: {before}→{after} 实算 {b / a:.4f}x ≠ 声称 {multiple}x"
+            )
+            if "虚增" in qualifier:
+                assert b > a, f"声称虚增却记录 {before}→{after}（改后反而更大）"

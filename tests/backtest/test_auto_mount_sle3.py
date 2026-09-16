@@ -18,6 +18,7 @@
 可检验）；③BHY-FDR q=10% 族级接受/拒绝边界含 SR 方向/OOS 反向/大族 HLZ 三门
 （SLE-3①）。另兑现 auto_mount.py:125 注释点名的守卫件
 test_r2six_drift_guard_vs_framework_composer（R2SIX 与 composer 孪生表防漂移）。
+微观两相（亢奋/退潮）各有一条端到端件走满 judge→FDR 门→activated→③ 分配证据链。
 """
 from __future__ import annotations
 
@@ -158,6 +159,14 @@ def _panel_with_phases(days: int = 300) -> pd.DataFrame:
     return pd.DataFrame({"dom": "r2", "euphoria": True, "distribution": False, "six": six})
 
 
+def _panel_with_distribution(days: int = 300) -> pd.DataFrame:
+    """与亢奋件同几何：宏观 r2（R2SIX 不路由）+ 微观腿 61 日派发段 → six 仅在派发段有值。"""
+    idx = pd.bdate_range("2025-01-02", periods=days)
+    six = pd.Series(np.nan, index=idx, dtype=object)
+    six[100:161] = "distribution"
+    return pd.DataFrame({"dom": "r2", "euphoria": False, "distribution": True, "six": six})
+
+
 def _seg(p: float, **kw) -> dict:
     st = {"n": 61, "sr": 2.5, "vol": 0.18, "t": 4.0, "p": p,
           "oos_n": 0, "oos_sr": 0.0}
@@ -181,6 +190,57 @@ class TestEuphoriaEndToEnd:
         receipt = apply_multiple_testing([j], q=am.FDR_Q)
         assert receipt["m"] >= 1 and "euphoria" in j["activated"]
         assert j["segments"]["euphoria"]["accepted"] is True
+
+
+class TestDistributionEndToEnd:
+    """退潮（派发）相位端到端：与亢奋同一条链 judge → BHY-FDR 门 → activated → ③ 分配证据。
+
+    此前 distribution 只有"两相皆可探测"的单元级证据（TestPhaseOverlay），激活链从未被
+    走过；L1 防御腿的价值正在派发段（破 MA20 + 广度转弱离场），此件把该路径钉成回归。
+    """
+
+    def test_distribution_can_activate_through_fdr_gate(self, monkeypatch):
+        panel = _panel_with_distribution()
+        rng = np.random.default_rng(5)
+        net = pd.Series(0.0, index=panel.index)
+        dist = panel["six"] == "distribution"
+        net[dist] = 0.003 + rng.normal(0, 0.0005, int(dist.sum()))   # 派发段显著正超额（离场择时）
+        net[~dist] = 0.0001 + rng.normal(0, 0.0005, int((~dist).sum()))
+        monkeypatch.setattr(am, "_load_translated_module", lambda rel: _FakeMod())
+        monkeypatch.setitem(sys.modules, "_c4_engine", _FakeC4(net))
+        j = am.judge_activation_state("STR-FAKE-002", "value_reversal", "x.py", panel)
+        assert "distribution" in j["segments"], "解冻+补映射后退潮相位必须进入检验队列"
+        assert j["segments"]["distribution"]["n"] == int(dist.sum()) == 61  # 样本=派发段全样本（≥MIN_SEG_DAYS）
+        receipt = apply_multiple_testing([j], q=am.FDR_Q)
+        assert receipt["m"] == 1 and receipt["n_rejected"] == 1
+        assert "distribution" in j["activated"]
+        assert j["segments"]["distribution"]["accepted"] is True
+        assert j["segments"]["distribution"]["reject_reason"] == ""
+
+    def test_distribution_activation_reaches_allocation_floor(self, monkeypatch):
+        # ②→③ 闭环：过门的退潮证据进 allocation_evidence（states=[distribution]），
+        # 在全零图上按恒等式拿到观察期起步档（0.05），底仓承接余下 0.95。
+        panel = _panel_with_distribution()
+        rng = np.random.default_rng(5)
+        net = pd.Series(0.0, index=panel.index)
+        dist = panel["six"] == "distribution"
+        net[dist] = 0.003 + rng.normal(0, 0.0005, int(dist.sum()))
+        net[~dist] = 0.0001 + rng.normal(0, 0.0005, int((~dist).sum()))
+        monkeypatch.setattr(am, "_load_translated_module", lambda rel: _FakeMod())
+        monkeypatch.setitem(sys.modules, "_c4_engine", _FakeC4(net))
+        j = am.judge_activation_state("STR-FAKE-002", "value_reversal", "x.py", panel)
+        apply_multiple_testing([j], q=am.FDR_Q)
+        ev = am.allocation_evidence([j], {"STR-FAKE-002": "verified"})
+        assert ev["STR-FAKE-002"]["states"] == ["distribution"]
+        assert ev["STR-FAKE-002"]["selection"] is False and ev["STR-FAKE-002"]["retired"] is False
+        old = [{"strategy_ref": "STR-FAKE-002", "weight": 0.05},
+               {"strategy_ref": "default-equity", "weight": 0.95}]
+        w = am.sleeve_weights(old, ev)
+        assert w["STR-FAKE-002"] == pytest.approx(am.NEW_SLEEVE_WEIGHT, abs=1e-9)
+        assert abs(sum(w.values()) - 1.0) < 1e-12  # SLE-4 Σ 精确闭合
+        rows = {r["strategy_ref"]: r for r in am.allocation_request(old, ev)}
+        assert rows["STR-FAKE-002"]["stage"] == "proven"
+        assert rows["default-equity"]["stage"] == "frozen"  # 无 ② 证据的底仓不参与竞争
 
 
 class TestBhyFdrGate:
@@ -220,5 +280,6 @@ def test_r2six_drift_guard_vs_framework_composer():
     # framework_composer.REGIME_STATE_TO_ACTIVATION_PHASE 是 R2SIX 的组合期孪生表
     # （其文件头自述"两处必须同步"），任何一侧改动必须同批——漂移即红。
     from zephyr.pf_core.strategy_engine.framework_composer import (
-        REGIME_STATE_TO_ACTIVATION_PHASE,)
+        REGIME_STATE_TO_ACTIVATION_PHASE,
+    )
     assert R2SIX == REGIME_STATE_TO_ACTIVATION_PHASE

@@ -466,6 +466,8 @@ def sleeve_weights(old: list[dict[str, Any]], evidence: dict[str, dict[str, Any]
     证据来源 evidence[sid]={sr, vol, confidence, retired}（judge_activation_state 汇编）。
     约束链：观察期下限 floor → 按比例水填至单 sleeve 上限 cap → 步长带 |Δw|≤step（防一次性甩仓）
     → 无证据/未过门的老 sleeve 权重冻结，等比承接残差（Σ=1 恒等式要求，非裁量）→ _apportion 精确闭合。
+    可行性前置：预算连 floor 都发不齐（len×floor > pool）即显式 ValueError 拒——静默把观察期下限
+    降格为 0 等于"挂名不投钱"，比不出提案更坏（提案面只读，抛错由调用方出声）。
     逆波动折算=风险平价分配（Maslov 等实践的 risk-budget 口径），非"谁历史收益高给谁"的收益追逐。
     """
     prev = {x["strategy_ref"]: float(x["weight"]) for x in old}
@@ -475,7 +477,7 @@ def sleeve_weights(old: list[dict[str, Any]], evidence: dict[str, dict[str, Any]
     pool = 1.0 - sum(frozen.values())
     if pool <= 0 or not eligible:
         return _apportion(1.0, frozen or {r: prev[r] for r in prev})
-    if len(eligible) * min(floor, pool / len(eligible)) > pool + 1e-12:
+    if len(eligible) * floor > pool + 1e-12:
         raise ValueError(f"不可行：{len(eligible)} 条证据 sleeve × 观察下限 {floor} > 可用预算 {pool:.4f}")
     alloc = {r: 0.0 for r in eligible}
     rest = pool
@@ -934,10 +936,14 @@ def rebalance_proposal(entries: list[dict[str, Any]], panel, only: set[str] | No
     except AssertionError as exc:
         gate = f"reject: {exc}"
     after_text = rescale_sleeves(text, {k: v for k, v in after_w.items() if k in before_w})
+    # 新 ref 在地图里没有 sleeve 块可写（挂图=only-add 通道的职责），rescale_sleeves 只能动存量
+    # → 单列 unmounted_new_refs 出声，禁让读者把"diff 只动存量"读成"提案只动了存量"。
+    unmounted_new_refs = sorted(k for k in after_w if k not in before_w)
     diff = "\n".join(difflib.unified_diff(text.splitlines(), after_text.splitlines(),
                                           "map.sleeves.current", "map.sleeves.proposed", lineterm="", n=0))
     return {"window": window_of(panel), "cap": cap, "fdr": receipt, "gate": gate, "evidence": ev,
             "before": before_w, "after": after_w, "diff": diff,
+            "unmounted_new_refs": unmounted_new_refs,
             "requests": allocation_request(sleeves, ev, cap=cap)}
 
 
@@ -972,7 +978,8 @@ def main() -> None:
     if args.rebalance:
         out = rebalance_proposal(entries, panel, only)
         print(out["diff"] or "(零 diff——提案与现权一致)")
-        print(json.dumps({k: out[k] for k in ("window", "cap", "fdr", "gate", "after")}, ensure_ascii=False, indent=1))
+        print(json.dumps({k: out[k] for k in ("window", "cap", "fdr", "gate", "after",
+                                              "unmounted_new_refs")}, ensure_ascii=False, indent=1))
         for row in out["requests"]:
             print(f"  {row['strategy_ref']:<24} w={row['weight']:.6f} sw={row['signal_weight']:.4f} "
                   f"cap_left={row['capacity']:.4f} stage={row['stage']}")

@@ -219,6 +219,24 @@ class OverlaySignalsConstructor:
 
     # ── 预计算 ────────────────────────────────────────────────────────────
 
+    def _warn_threshold_ledger_debt(self) -> None:
+        """阈值校准欠账一次性告警（OVB-4 五项，RESOLVED 不告警）。
+
+        位点纪律：必须在 `_precompute` 的任何 return 之前调用——"无 feature_builder"和
+        "build_features 抛异常"两条全降级路上，欠账同样存在且更需要被看见（数据都取不到
+        时没人会去翻正常路的日志）。每实例一次，正常/降级两路共用同一旗标。
+        """
+        if getattr(self, "_threshold_ledger_warned", False):
+            return
+        self._threshold_ledger_warned = True
+        pending = overlay_features.ALERT_UNCALIBRATED_THRESHOLDS
+        if pending:
+            _logger.warning(
+                "overlay 阈值校准欠账（未经 A 股本土 walk-forward 复推，现行值沿用）: %s "
+                "— 详情见 overlay_features.THRESHOLD_CALIBRATION_LEDGER",
+                ", ".join(pending),
+            )
+
     def _precompute(self) -> dict[str, pd.Series]:
         """一次性加载特征 + 向量化计算 25 可算维度 Series（已 shift(1)）。
 
@@ -226,6 +244,7 @@ class OverlaySignalsConstructor:
             {dim_key: pd.Series}，每个 Series 已 shift(1)（PIT）。
             数据缺失的维度不放入 cache（build_for_date 走 0.0 降级）。
         """
+        self._warn_threshold_ledger_debt()  # 降级路也必须出声，故置于任何 return 之前
         if self._cache is not None:
             return self._cache
 
@@ -502,17 +521,6 @@ class OverlaySignalsConstructor:
             cache["sudden_volume"] = overlay_features.t6_sudden_volume_flag(vol_z, pct_change)
         else:
             _logger.warning("T6 sudden_volume 数据缺失，降级 0.0")
-
-        # ── 阈值校准欠账一次性告警（OVB-4 五项，RESOLVED 不告警）──
-        if not getattr(self, "_threshold_ledger_warned", False):
-            self._threshold_ledger_warned = True
-            pending = overlay_features.ALERT_UNCALIBRATED_THRESHOLDS
-            if pending:
-                _logger.warning(
-                    "overlay 阈值校准欠账（未经 A 股本土 walk-forward 复推，现行值沿用）: %s "
-                    "— 详情见 overlay_features.THRESHOLD_CALIBRATION_LEDGER",
-                    ", ".join(pending),
-                )
 
         _logger.info(
             "OverlaySignalsConstructor._precompute: 可算维度 %d，policy/bad_news_flat=%s，vix_pct=%s，wyckoff=%s",
