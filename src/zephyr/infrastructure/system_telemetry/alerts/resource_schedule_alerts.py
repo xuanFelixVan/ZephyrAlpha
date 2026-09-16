@@ -34,8 +34,8 @@
 不碰飞书/SMTP 已裁撤通道、不改 ops_alert_feed 模块本体）。
 
 映射规则：
-- block 级 finding（sched_overlap_group/sched_mem_ceiling/sched_e0_block/
-  sched_gate_absent/sched_pool_undeclared）→ severity=critical，key=`<reason_code>:<排序 task_ids>`（同冲突去重）；
+- block 级 finding（sched_overlap_group/sched_mem_ceiling/sched_pool_concurrency/
+  sched_e0_block/sched_gate_absent/sched_pool_undeclared）→ severity=critical，key=`<reason_code>:<排序 task_ids>`（同冲突去重）；
 - warn 级（sched_truth_drift/sched_view_stale/sched_task_* 实测差集 等）→ severity=warning；
 - 本轮未再触发的既有活动告警 → resolve()（灰显解除，滞回语义照抄供给线）。
 
@@ -69,6 +69,8 @@ DEFAULT_SILENCE_WINDOW_S: Final = 1800.0
 _TITLES: dict[str, str] = {
     "sched_overlap_group": "排班冲突：互斥组时间窗交叠",
     "sched_mem_ceiling": "排班冲突：内存天花板超限",
+    # 第四查（2026-09-17 P2-a，v2 方案 C-8 同刻冲突结构盲区；产出方=闸 check_pool_concurrency）
+    "sched_pool_concurrency": "排班冲突：同池同刻跨组并发未记账/同池并发内存和超天花板",
     "sched_e0_block": "排班冲突：交易时段未过 E0 闸",
     "sched_truth_drift": "排班真源漂移（window_expr 与真源不一致）",
     # 排产链健康码（2026-09-17 P0，v2 方案 C-5/C-10；产出方=注册表生成器 --check 臂）
