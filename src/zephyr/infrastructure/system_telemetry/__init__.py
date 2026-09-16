@@ -115,12 +115,13 @@ from zephyr.infrastructure.system_telemetry.traces import (
     noop_span,
 )
 from zephyr.infrastructure.system_telemetry.watchdog import Watchdog, WatchdogHeartbeat
+from zephyr.infrastructure.system_telemetry.resource_sampler import ResourceSampler
 
 __all__ = [
-    "CT_TEL_SLA",
     "AIBehaviorEvent",
     "AlertLevel",
     "AlertSubsystem",
+    "CT_TEL_SLA",
     "ContractMetricsCollector",
     "DriftAlert",
     "ErrorContext",
@@ -131,6 +132,7 @@ __all__ = [
     "ProbeStatus",
     "ProfileSubsystem",
     "ReadinessProbe",
+    "ResourceSampler",
     "SchemaSubsystem",
     "SlaRecord",
     "Span",
@@ -164,13 +166,13 @@ __all__ = [
     "metrics_bridge",
     "next_archive_batch_id",
     "noop_span",
+    "otel_instrumentation",
     "profiles",
     "register_module",
     "schema",
     "traces",
     "validate_error_context",
     "watchdog",
-    "otel_instrumentation",
 ]
 
 __all__.append("MetricsBridge")

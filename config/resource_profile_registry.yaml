@@ -1,0 +1,1193 @@
+# [GENERATED] 本文件由生成器产出，禁手工增删条目（静态清单生成器产出红线）。
+# 人可复核字段（module_id/map_node_id/pool/peak_mem_gb/est_duration_min/
+# exclusive_group/status/notes_zh）可改，再生时合并保全；时间值（window_expr）
+# 人禁填——再生自真源重抽。
+schema_version: 1.0.0
+doc_type: register
+ttl: permanent
+title: 资源画像注册表（resource profile registry）
+status: active
+generated_at: '2026-09-16T01:14:27Z'
+generated_by: scripts/governance/generators/generate_resource_profile_registry.py
+maintenance: auto
+counting_rule: entities 数组条目数（生成器三源全量再生；条目禁手工增删）
+total_entities: 57
+field_count: 18
+mem_ceiling_gb: 10.0
+mem_ceiling_source: src/zephyr/trading/process_reaper.py _DANGEROUS_MEM_GB（引用不收编）
+groups:
+  ch_bulk_write: CH 大 DELETE+INSERT 互斥（亿行级写库族）
+  tick_drain: tick 排水 vs 回补互斥（local_replay 排水/大回补族）
+  mine_vs_exam: 周六挖掘→考尺串行（成功先例：10:00→14:00）
+  repair_passport: 亿行级修复=护照登记+窗口+白名单三件套
+  gpu_default: GPU 显存互斥（Kronos/Ollama/SFT/转换）
+  llm_local: 本地 LLM 推理批互斥（qwen3:8b 单实例）
+cron_convention: 标准 cron（0=周日，croniter 口径）；schedule.yaml 的 APScheduler dow（0=周一）由生成器归一——生成器=映射层
+e0_mapping_note: resource_class←E0 compute_class 映射层在本生成器（local→light，local_gpu/mixed→heavy，api→llm_api_*）；E0 真源 scripts/backtest/compute_window_gate.py
+  不动
+plan_ref: docs/_working/resource_schedule/resource_schedule_panorama_plan_v1.md
+entities:
+- task_id: data_slot_auction_highfreq
+  module_id: null
+  map_node_id: null
+  resource_class: light
+  pool: realtime
+  peak_mem_gb: 1.0
+  est_duration_min: 10
+  exclusive_group: []
+  window_type: cron
+  window_expr: 15-25 9 * * 1-5
+  schedule_truth_source: src/zephyr/data/config/schedule.yaml
+  trading_sensitive: false
+  measured:
+    peak_mem_gb: null
+    p90_duration_min: null
+    samples: 0
+    last_at: null
+  samples_uri: .runtime/logs/resource_samples/data_slot_auction_highfreq.jsonl
+  status: active
+  notes_zh: 集合竞价高频层——9:15-9:25每10秒抓取五档盘口快照，用于主力行为分析
+- task_id: data_slot_catchup_guard
+  module_id: null
+  map_node_id: null
+  resource_class: light
+  pool: default
+  peak_mem_gb: 1.0
+  est_duration_min: 30
+  exclusive_group: []
+  window_type: cron
+  window_expr: 30 5 * * *
+  schedule_truth_source: src/zephyr/data/config/schedule.yaml
+  trading_sensitive: false
+  measured:
+    peak_mem_gb: null
+    p90_duration_min: null
+    samples: 0
+    last_at: null
+  samples_uri: .runtime/logs/resource_samples/data_slot_catchup_guard.jsonl
+  status: active
+  notes_zh: 调度对账补跑层——检测错过档期的任务并自动补跑（月度/周度/日频 overdue + 空表兜底）
+- task_id: data_slot_consensus_crosscheck
+  module_id: null
+  map_node_id: null
+  resource_class: db_heavy
+  pool: default
+  peak_mem_gb: 2.5
+  est_duration_min: 60
+  exclusive_group: []
+  window_type: cron
+  window_expr: 30 23 * * 1-5
+  schedule_truth_source: src/zephyr/data/config/schedule.yaml
+  trading_sensitive: true
+  measured:
+    peak_mem_gb: null
+    p90_duration_min: null
+    samples: 0
+    last_at: null
+  samples_uri: .runtime/logs/resource_samples/data_slot_consensus_crosscheck.jsonl
+  status: active
+  notes_zh: 一致预期管线双向验证——自建聚合 vs 同花顺快照每日对答案（独立真源互查，非数据下载层）
+- task_id: data_slot_daily_backfill
+  module_id: null
+  map_node_id: null
+  resource_class: network_download
+  pool: heavy
+  peak_mem_gb: 2.5
+  est_duration_min: 120
+  exclusive_group:
+  - tick_drain
+  window_type: cron
+  window_expr: 00 17 * * 1-5
+  schedule_truth_source: src/zephyr/data/config/schedule.yaml
+  trading_sensitive: false
+  measured:
+    peak_mem_gb: null
+    p90_duration_min: null
+    samples: 0
+    last_at: null
+  samples_uri: .runtime/logs/resource_samples/data_slot_daily_backfill.jsonl
+  status: active
+  notes_zh: 每日盘后补下载层——检测当日数据缺口并自动补下载（治本#ARCH-DATA-TICK-GAP-001）
+- task_id: data_slot_daily_capital
+  module_id: null
+  map_node_id: null
+  resource_class: network_download
+  pool: default
+  peak_mem_gb: 2.0
+  est_duration_min: 45
+  exclusive_group: []
+  window_type: cron
+  window_expr: 00 18 * * 1-5
+  schedule_truth_source: src/zephyr/data/config/schedule.yaml
+  trading_sensitive: false
+  measured:
+    peak_mem_gb: null
+    p90_duration_min: null
+    samples: 0
+    last_at: null
+  samples_uri: .runtime/logs/resource_samples/data_slot_daily_capital.jsonl
+  status: active
+  notes_zh: 盘后资金面层——资金流向/龙虎榜/大宗/期货/股本变动/限售解禁/美股
+- task_id: data_slot_daily_crypto
+  module_id: null
+  map_node_id: null
+  resource_class: network_download
+  pool: light
+  peak_mem_gb: 1.0
+  est_duration_min: 10
+  exclusive_group: []
+  window_type: cron
+  window_expr: 30 8 * * *
+  schedule_truth_source: src/zephyr/data/config/schedule.yaml
+  trading_sensitive: false
+  measured:
+    peak_mem_gb: null
+    p90_duration_min: null
+    samples: 0
+    last_at: null
+  samples_uri: .runtime/logs/resource_samples/data_slot_daily_crypto.jsonl
+  status: active
+  notes_zh: 币圈日线层——7×24 市场 UTC 日界，北京 08:30=UTC 00:30 拉上一完整 UTC 日（每日含周末）
+- task_id: data_slot_daily_event
+  module_id: null
+  map_node_id: null
+  resource_class: network_download
+  pool: default
+  peak_mem_gb: 2.0
+  est_duration_min: 45
+  exclusive_group: []
+  window_type: cron
+  window_expr: 00 19 * * 1-5
+  schedule_truth_source: src/zephyr/data/config/schedule.yaml
+  trading_sensitive: false
+  measured:
+    peak_mem_gb: null
+    p90_duration_min: null
+    samples: 0
+    last_at: null
+  samples_uri: .runtime/logs/resource_samples/data_slot_daily_event.jsonl
+  status: active
+  notes_zh: 盘后事件层——分析师预期/财报快报/审计/分红配股/质押/披露计划
+- task_id: data_slot_daily_kline
+  module_id: null
+  map_node_id: null
+  resource_class: db_heavy
+  pool: heavy
+  peak_mem_gb: 3.0
+  est_duration_min: 90
+  exclusive_group: []
+  window_type: cron
+  window_expr: 30 16 * * 1-5
+  schedule_truth_source: src/zephyr/data/config/schedule.yaml
+  trading_sensitive: true
+  measured:
+    peak_mem_gb: null
+    p90_duration_min: null
+    samples: 0
+    last_at: null
+  samples_uri: .runtime/logs/resource_samples/data_slot_daily_kline.jsonl
+  status: active
+  notes_zh: 盘后日K线层——日/周/月K线+复权+估值+指标+ETF净值
+- task_id: data_slot_event_driven
+  module_id: null
+  map_node_id: null
+  resource_class: network_download
+  pool: default
+  peak_mem_gb: 1.0
+  est_duration_min: 3
+  exclusive_group: []
+  window_type: cron
+  window_expr: '*/3 * * * *'
+  schedule_truth_source: src/zephyr/data/config/schedule.yaml
+  trading_sensitive: false
+  measured:
+    peak_mem_gb: null
+    p90_duration_min: null
+    samples: 0
+    last_at: null
+  samples_uri: .runtime/logs/resource_samples/data_slot_event_driven.jsonl
+  status: active
+  notes_zh: 事件驱动层——快新闻(含海外RSS)/EDB宏观数据，每3分钟轮询
+- task_id: data_slot_integrity_check
+  module_id: null
+  map_node_id: null
+  resource_class: light
+  pool: default
+  peak_mem_gb: 1.0
+  est_duration_min: 15
+  exclusive_group: []
+  window_type: cron
+  window_expr: 00 23 * * 1-5
+  schedule_truth_source: src/zephyr/data/config/schedule.yaml
+  trading_sensitive: false
+  measured:
+    peak_mem_gb: null
+    p90_duration_min: null
+    samples: 0
+    last_at: null
+  samples_uri: .runtime/logs/resource_samples/data_slot_integrity_check.jsonl
+  status: active
+  notes_zh: 每日完整性巡检层——动态发现全表检测当日数据是否达标，不达标告警
+- task_id: data_slot_intraday_minute
+  module_id: null
+  map_node_id: null
+  resource_class: light
+  pool: realtime
+  peak_mem_gb: 1.0
+  est_duration_min: 2
+  exclusive_group: []
+  window_type: cron
+  window_expr: '*/5 9-15 * * 1-5'
+  schedule_truth_source: src/zephyr/data/config/schedule.yaml
+  trading_sensitive: false
+  measured:
+    peak_mem_gb: null
+    p90_duration_min: null
+    samples: 0
+    last_at: null
+  samples_uri: .runtime/logs/resource_samples/data_slot_intraday_minute.jsonl
+  status: active
+  notes_zh: 盘中分钟K线层——A股/ETF/LOF分钟K线盘中滚动更新
+- task_id: data_slot_intraday_realtime
+  module_id: null
+  map_node_id: null
+  resource_class: light
+  pool: realtime
+  peak_mem_gb: 1.0
+  est_duration_min: 2
+  exclusive_group: []
+  window_type: cron
+  window_expr: '*/5 9-15 * * 1-5'
+  schedule_truth_source: src/zephyr/data/config/schedule.yaml
+  trading_sensitive: false
+  measured:
+    peak_mem_gb: null
+    p90_duration_min: null
+    samples: 0
+    last_at: null
+  samples_uri: .runtime/logs/resource_samples/data_slot_intraday_realtime.jsonl
+  status: active
+  notes_zh: 盘中实时层——Tick/L2/Greeks/IV/期货/涨跌停/集合竞价/港股K线
+- task_id: data_slot_intraday_sector
+  module_id: null
+  map_node_id: null
+  resource_class: light
+  pool: realtime
+  peak_mem_gb: 1.0
+  est_duration_min: 2
+  exclusive_group: []
+  window_type: cron
+  window_expr: '*/5 9-15 * * 1-5'
+  schedule_truth_source: src/zephyr/data/config/schedule.yaml
+  trading_sensitive: false
+  measured:
+    peak_mem_gb: null
+    p90_duration_min: null
+    samples: 0
+    last_at: null
+  samples_uri: .runtime/logs/resource_samples/data_slot_intraday_sector.jsonl
+  status: active
+  notes_zh: 盘中板块K线层——880xxx板块分钟K线（mootdx TCP直连，独立于miniqmt慢任务）
+- task_id: data_slot_monthly_static
+  module_id: null
+  map_node_id: null
+  resource_class: network_download
+  pool: default
+  peak_mem_gb: 1.5
+  est_duration_min: 60
+  exclusive_group: []
+  window_type: cron
+  window_expr: 00 9 1 * *
+  schedule_truth_source: src/zephyr/data/config/schedule.yaml
+  trading_sensitive: false
+  measured:
+    peak_mem_gb: null
+    p90_duration_min: null
+    samples: 0
+    last_at: null
+  samples_uri: .runtime/logs/resource_samples/data_slot_monthly_static.jsonl
+  status: active
+  notes_zh: 月初静态层——股票列表/板块分类/指数成分/交易日历
+- task_id: data_slot_news_slow
+  module_id: null
+  map_node_id: null
+  resource_class: network_download
+  pool: default
+  peak_mem_gb: 2.0
+  est_duration_min: 180
+  exclusive_group: []
+  window_type: cron
+  window_expr: '*/30 * * * *'
+  schedule_truth_source: src/zephyr/data/config/schedule.yaml
+  trading_sensitive: false
+  measured:
+    peak_mem_gb: null
+    p90_duration_min: null
+    samples: 0
+    last_at: null
+  samples_uri: .runtime/logs/resource_samples/data_slot_news_slow.jsonl
+  status: active
+  notes_zh: 慢新闻层——个股新闻(stock_em)/研报(research_report)，独立队列不堵 event_driven 快新闻
+- task_id: data_slot_nightly_financial
+  module_id: null
+  map_node_id: null
+  resource_class: db_heavy
+  pool: heavy
+  peak_mem_gb: 3.0
+  est_duration_min: 120
+  exclusive_group: []
+  window_type: cron
+  window_expr: 00 22 * * 1-5
+  schedule_truth_source: src/zephyr/data/config/schedule.yaml
+  trading_sensitive: true
+  measured:
+    peak_mem_gb: null
+    p90_duration_min: null
+    samples: 0
+    last_at: null
+  samples_uri: .runtime/logs/resource_samples/data_slot_nightly_financial.jsonl
+  status: active
+  notes_zh: 夜间财务层——财报/财务指标/十大股东/融资融券(T+1)
+- task_id: data_slot_nightly_sentiment
+  module_id: null
+  map_node_id: null
+  resource_class: light
+  pool: default
+  peak_mem_gb: 1.0
+  est_duration_min: 20
+  exclusive_group: []
+  window_type: cron
+  window_expr: 20 8 * * *
+  schedule_truth_source: src/zephyr/data/config/schedule.yaml
+  trading_sensitive: false
+  measured:
+    peak_mem_gb: null
+    p90_duration_min: null
+    samples: 0
+    last_at: null
+  samples_uri: .runtime/logs/resource_samples/data_slot_nightly_sentiment.jsonl
+  status: active
+  notes_zh: 夜间情绪窗层——compute_nightly_sentiment 日频接线（当日窗口+近7日缺口补跑，ReplacingMergeTree…
+- task_id: data_slot_pre_market
+  module_id: null
+  map_node_id: null
+  resource_class: network_download
+  pool: default
+  peak_mem_gb: 1.5
+  est_duration_min: 15
+  exclusive_group: []
+  window_type: cron
+  window_expr: 30 8 * * 1-5
+  schedule_truth_source: src/zephyr/data/config/schedule.yaml
+  trading_sensitive: false
+  measured:
+    peak_mem_gb: null
+    p90_duration_min: null
+    samples: 0
+    last_at: null
+  samples_uri: .runtime/logs/resource_samples/data_slot_pre_market.jsonl
+  status: active
+  notes_zh: 盘前元数据层——JOB-077 股票基本信息/涨跌停价格/停复牌/指数成分/ST状态（universe构造与回测撮合约束前提）
+- task_id: data_slot_research_nightly
+  module_id: null
+  map_node_id: null
+  resource_class: network_download
+  pool: default
+  peak_mem_gb: 2.5
+  est_duration_min: 120
+  exclusive_group: []
+  window_type: cron
+  window_expr: 30 20 * * 1-5
+  schedule_truth_source: src/zephyr/data/config/schedule.yaml
+  trading_sensitive: false
+  measured:
+    peak_mem_gb: null
+    p90_duration_min: null
+    samples: 0
+    last_at: null
+  samples_uri: .runtime/logs/resource_samples/data_slot_research_nightly.jsonl
+  status: active
+  notes_zh: 研报明细层——research_report_detail_incremental（东财研报中心全字段含预测期EPS/PE；历史已回补 14…
+- task_id: data_slot_weekend_backfill
+  module_id: null
+  map_node_id: null
+  resource_class: network_download
+  pool: heavy
+  peak_mem_gb: 3.0
+  est_duration_min: 240
+  exclusive_group:
+  - tick_drain
+  window_type: cron
+  window_expr: 00 2 * * 1
+  schedule_truth_source: src/zephyr/data/config/schedule.yaml
+  trading_sensitive: false
+  measured:
+    peak_mem_gb: null
+    p90_duration_min: null
+    samples: 0
+    last_at: null
+  samples_uri: .runtime/logs/resource_samples/data_slot_weekend_backfill.jsonl
+  status: active
+  notes_zh: 周末补下载层——检测过去7天缺失的tick/K线数据并精准补下载
+- task_id: data_slot_weekend_calibration
+  module_id: null
+  map_node_id: null
+  resource_class: db_heavy
+  pool: heavy
+  peak_mem_gb: 4.0
+  est_duration_min: 180
+  exclusive_group:
+  - ch_bulk_write
+  window_type: cron
+  window_expr: 00 3 * * 1
+  schedule_truth_source: src/zephyr/data/config/schedule.yaml
+  trading_sensitive: true
+  measured:
+    peak_mem_gb: null
+    p90_duration_min: null
+    samples: 0
+    last_at: null
+  samples_uri: .runtime/logs/resource_samples/data_slot_weekend_calibration.jsonl
+  status: active
+  notes_zh: 周末后校准层——全量校准/TDX板块/概念板块/美股全量（周一03:00，QMT可用）
+- task_id: dynamic_local_replay
+  module_id: null
+  map_node_id: null
+  resource_class: db_heavy
+  pool: heavy
+  peak_mem_gb: 3.0
+  est_duration_min: 120
+  exclusive_group:
+  - tick_drain
+  window_type: dynamic
+  window_expr: null
+  schedule_truth_source: docs/_working/resource_schedule/resource_schedule_panorama_plan_v1.md
+  trading_sensitive: true
+  measured:
+    peak_mem_gb: null
+    p90_duration_min: null
+    samples: 0
+    last_at: null
+  samples_uri: .runtime/logs/resource_samples/dynamic_local_replay.jsonl
+  status: planned
+  notes_zh: local_replay 排水（事件突发 replay_batch，与 tick 回补互斥）
+- task_id: event_dashboard_backtest_run
+  module_id: null
+  map_node_id: null
+  resource_class: cpu_heavy
+  pool: heavy
+  peak_mem_gb: 2.0
+  est_duration_min: 60
+  exclusive_group: []
+  window_type: event
+  window_expr: null
+  schedule_truth_source: docs/_working/resource_schedule/resource_schedule_panorama_plan_v1.md
+  trading_sensitive: true
+  measured:
+    peak_mem_gb: null
+    p90_duration_min: null
+    samples: 0
+    last_at: null
+  samples_uri: .runtime/logs/resource_samples/event_dashboard_backtest_run.jsonl
+  status: planned
+  notes_zh: 面板 backtest-run 端点（无 E0 远程重算入口→B2 已纳管）
+- task_id: event_dashboard_services_control
+  module_id: null
+  map_node_id: null
+  resource_class: light
+  pool: default
+  peak_mem_gb: 0.5
+  est_duration_min: 5
+  exclusive_group: []
+  window_type: event
+  window_expr: null
+  schedule_truth_source: docs/_working/resource_schedule/resource_schedule_panorama_plan_v1.md
+  trading_sensitive: false
+  measured:
+    peak_mem_gb: null
+    p90_duration_min: null
+    samples: 0
+    last_at: null
+  samples_uri: .runtime/logs/resource_samples/event_dashboard_services_control.jsonl
+  status: planned
+  notes_zh: 面板服务编排端点（重启/停止控制面，轻载触发器）
+- task_id: manual_bdpan_tick_backfill
+  module_id: null
+  map_node_id: null
+  resource_class: network_download
+  pool: default
+  peak_mem_gb: 4.0
+  est_duration_min: 1440
+  exclusive_group:
+  - tick_drain
+  - ch_bulk_write
+  window_type: manual
+  window_expr: null
+  schedule_truth_source: docs/_working/resource_schedule/resource_schedule_panorama_plan_v1.md
+  trading_sensitive: false
+  measured:
+    peak_mem_gb: null
+    p90_duration_min: null
+    samples: 0
+    last_at: null
+  samples_uri: .runtime/logs/resource_samples/manual_bdpan_tick_backfill.jsonl
+  status: planned
+  notes_zh: bdpan tick 大回补（全手动，与 heavy 槽互不可见）
+- task_id: manual_bse_minute_backfill
+  module_id: null
+  map_node_id: null
+  resource_class: network_download
+  pool: default
+  peak_mem_gb: 3.0
+  est_duration_min: 720
+  exclusive_group:
+  - tick_drain
+  - ch_bulk_write
+  window_type: manual
+  window_expr: null
+  schedule_truth_source: docs/_working/resource_schedule/resource_schedule_panorama_plan_v1.md
+  trading_sensitive: false
+  measured:
+    peak_mem_gb: null
+    p90_duration_min: null
+    samples: 0
+    last_at: null
+  samples_uri: .runtime/logs/resource_samples/manual_bse_minute_backfill.jsonl
+  status: planned
+  notes_zh: BSE 分钟回补（死线 2026-09-17，手动）
+- task_id: manual_convert_gguf
+  module_id: null
+  map_node_id: null
+  resource_class: gpu
+  pool: heavy
+  peak_mem_gb: 6.0
+  est_duration_min: 60
+  exclusive_group:
+  - gpu_default
+  window_type: manual
+  window_expr: null
+  schedule_truth_source: docs/_working/resource_schedule/resource_schedule_panorama_plan_v1.md
+  trading_sensitive: true
+  measured:
+    peak_mem_gb: null
+    p90_duration_min: null
+    samples: 0
+    last_at: null
+  samples_uri: .runtime/logs/resource_samples/manual_convert_gguf.jsonl
+  status: planned
+  notes_zh: GGUF 转换（GPU 手动）
+- task_id: manual_factory_grid_anova
+  module_id: null
+  map_node_id: null
+  resource_class: light
+  pool: default
+  peak_mem_gb: 1.0
+  est_duration_min: 15
+  exclusive_group: []
+  window_type: manual
+  window_expr: null
+  schedule_truth_source: docs/_working/resource_schedule/resource_schedule_panorama_plan_v1.md
+  trading_sensitive: false
+  measured:
+    peak_mem_gb: null
+    p90_duration_min: null
+    samples: 0
+    last_at: null
+  samples_uri: .runtime/logs/resource_samples/manual_factory_grid_anova.jsonl
+  status: planned
+  notes_zh: 网格 ANOVA/E4 考尺/DSR 重算（cpu 分钟级手动）
+- task_id: manual_factory_grid_executor
+  module_id: null
+  map_node_id: null
+  resource_class: cpu_heavy
+  pool: heavy
+  peak_mem_gb: 4.0
+  est_duration_min: 240
+  exclusive_group: []
+  window_type: manual
+  window_expr: null
+  schedule_truth_source: docs/_working/resource_schedule/resource_schedule_panorama_plan_v1.md
+  trading_sensitive: true
+  measured:
+    peak_mem_gb: null
+    p90_duration_min: null
+    samples: 0
+    last_at: null
+  samples_uri: .runtime/logs/resource_samples/manual_factory_grid_executor.jsonl
+  status: planned
+  notes_zh: 工厂网格执行器（单批最大算力实体，2万配方）
+- task_id: manual_hypothesis_translator
+  module_id: null
+  map_node_id: null
+  resource_class: llm_api_local
+  pool: default
+  peak_mem_gb: 1.5
+  est_duration_min: 15
+  exclusive_group:
+  - llm_local
+  window_type: manual
+  window_expr: null
+  schedule_truth_source: docs/_working/resource_schedule/resource_schedule_panorama_plan_v1.md
+  trading_sensitive: true
+  measured:
+    peak_mem_gb: null
+    p90_duration_min: null
+    samples: 0
+    last_at: null
+  samples_uri: .runtime/logs/resource_samples/manual_hypothesis_translator.jsonl
+  status: planned
+  notes_zh: 假设翻译器（llm_api_local 手动/夜批）
+- task_id: manual_kronos_adapter
+  module_id: null
+  map_node_id: null
+  resource_class: gpu
+  pool: heavy
+  peak_mem_gb: 6.0
+  est_duration_min: 60
+  exclusive_group:
+  - gpu_default
+  window_type: manual
+  window_expr: null
+  schedule_truth_source: docs/_working/resource_schedule/resource_schedule_panorama_plan_v1.md
+  trading_sensitive: true
+  measured:
+    peak_mem_gb: null
+    p90_duration_min: null
+    samples: 0
+    last_at: null
+  samples_uri: .runtime/logs/resource_samples/manual_kronos_adapter.jsonl
+  status: planned
+  notes_zh: Kronos 适配器（CUDA auto，GPU 与 Ollama/桌面抢显存）
+- task_id: manual_lane_b_miner
+  module_id: null
+  map_node_id: null
+  resource_class: llm_api_local
+  pool: default
+  peak_mem_gb: 2.0
+  est_duration_min: 20
+  exclusive_group:
+  - llm_local
+  window_type: manual
+  window_expr: null
+  schedule_truth_source: docs/_working/resource_schedule/resource_schedule_panorama_plan_v1.md
+  trading_sensitive: true
+  measured:
+    peak_mem_gb: null
+    p90_duration_min: null
+    samples: 0
+    last_at: null
+  samples_uri: .runtime/logs/resource_samples/manual_lane_b_miner.jsonl
+  status: planned
+  notes_zh: Lane-B 挖掘（llm_api_local 手动/夜批）
+- task_id: manual_lane_c_agentic_miner
+  module_id: null
+  map_node_id: null
+  resource_class: llm_api_local
+  pool: default
+  peak_mem_gb: 2.0
+  est_duration_min: 30
+  exclusive_group:
+  - llm_local
+  window_type: manual
+  window_expr: null
+  schedule_truth_source: docs/_working/resource_schedule/resource_schedule_panorama_plan_v1.md
+  trading_sensitive: true
+  measured:
+    peak_mem_gb: null
+    p90_duration_min: null
+    samples: 0
+    last_at: null
+  samples_uri: .runtime/logs/resource_samples/manual_lane_c_agentic_miner.jsonl
+  status: planned
+  notes_zh: Lane-C agentic 挖掘（llm_api_local+cpu，分钟-十几分钟）
+- task_id: manual_lof_minute_backfill
+  module_id: null
+  map_node_id: null
+  resource_class: network_download
+  pool: default
+  peak_mem_gb: 2.0
+  est_duration_min: 360
+  exclusive_group:
+  - tick_drain
+  window_type: manual
+  window_expr: null
+  schedule_truth_source: docs/_working/resource_schedule/resource_schedule_panorama_plan_v1.md
+  trading_sensitive: false
+  measured:
+    peak_mem_gb: null
+    p90_duration_min: null
+    samples: 0
+    last_at: null
+  samples_uri: .runtime/logs/resource_samples/manual_lof_minute_backfill.jsonl
+  status: planned
+  notes_zh: LOF 分钟回补（手动）
+- task_id: manual_mcts_miner
+  module_id: null
+  map_node_id: null
+  resource_class: llm_api_local
+  pool: default
+  peak_mem_gb: 2.0
+  est_duration_min: 30
+  exclusive_group:
+  - llm_local
+  window_type: manual
+  window_expr: null
+  schedule_truth_source: docs/_working/resource_schedule/resource_schedule_panorama_plan_v1.md
+  trading_sensitive: true
+  measured:
+    peak_mem_gb: null
+    p90_duration_min: null
+    samples: 0
+    last_at: null
+  samples_uri: .runtime/logs/resource_samples/manual_mcts_miner.jsonl
+  status: planned
+  notes_zh: MCTS 挖掘（llm_api_local+cpu 手动）
+- task_id: manual_repair_kline_tz
+  module_id: null
+  map_node_id: null
+  resource_class: db_heavy
+  pool: heavy
+  peak_mem_gb: 6.0
+  est_duration_min: 2880
+  exclusive_group:
+  - repair_passport
+  - ch_bulk_write
+  window_type: manual
+  window_expr: null
+  schedule_truth_source: docs/_working/resource_schedule/resource_schedule_panorama_plan_v1.md
+  trading_sensitive: true
+  measured:
+    peak_mem_gb: null
+    p90_duration_min: null
+    samples: 0
+    last_at: null
+  samples_uri: .runtime/logs/resource_samples/manual_repair_kline_tz.jsonl
+  status: planned
+  notes_zh: K线时区修复月务（15.6亿行 DELETE+回插=全库最大破坏性负载，护照级）
+- task_id: manual_run_sentiment_batch
+  module_id: null
+  map_node_id: null
+  resource_class: llm_api_local
+  pool: default
+  peak_mem_gb: 3.0
+  est_duration_min: 180
+  exclusive_group:
+  - llm_local
+  window_type: manual
+  window_expr: null
+  schedule_truth_source: docs/_working/resource_schedule/resource_schedule_panorama_plan_v1.md
+  trading_sensitive: true
+  measured:
+    peak_mem_gb: null
+    p90_duration_min: null
+    samples: 0
+    last_at: null
+  samples_uri: .runtime/logs/resource_samples/manual_run_sentiment_batch.jsonl
+  status: planned
+  notes_zh: 情绪批量（2010-2026 全历史，llm_api_local 小时级）
+- task_id: manual_run_sft_train
+  module_id: null
+  map_node_id: null
+  resource_class: gpu
+  pool: heavy
+  peak_mem_gb: 8.0
+  est_duration_min: 240
+  exclusive_group:
+  - gpu_default
+  window_type: manual
+  window_expr: null
+  schedule_truth_source: docs/_working/resource_schedule/resource_schedule_panorama_plan_v1.md
+  trading_sensitive: true
+  measured:
+    peak_mem_gb: null
+    p90_duration_min: null
+    samples: 0
+    last_at: null
+  samples_uri: .runtime/logs/resource_samples/manual_run_sft_train.jsonl
+  status: planned
+  notes_zh: SFT 手动重训（GPU 小时级）
+- task_id: manual_sector880_backfill
+  module_id: null
+  map_node_id: null
+  resource_class: network_download
+  pool: default
+  peak_mem_gb: 2.0
+  est_duration_min: 240
+  exclusive_group:
+  - tick_drain
+  window_type: manual
+  window_expr: null
+  schedule_truth_source: docs/_working/resource_schedule/resource_schedule_panorama_plan_v1.md
+  trading_sensitive: false
+  measured:
+    peak_mem_gb: null
+    p90_duration_min: null
+    samples: 0
+    last_at: null
+  samples_uri: .runtime/logs/resource_samples/manual_sector880_backfill.jsonl
+  status: planned
+  notes_zh: 880 板块分钟回补（手动）
+- task_id: manual_tick_depth5_backfill
+  module_id: null
+  map_node_id: null
+  resource_class: network_download
+  pool: default
+  peak_mem_gb: 3.0
+  est_duration_min: 720
+  exclusive_group:
+  - tick_drain
+  window_type: manual
+  window_expr: null
+  schedule_truth_source: docs/_working/resource_schedule/resource_schedule_panorama_plan_v1.md
+  trading_sensitive: false
+  measured:
+    peak_mem_gb: null
+    p90_duration_min: null
+    samples: 0
+    last_at: null
+  samples_uri: .runtime/logs/resource_samples/manual_tick_depth5_backfill.jsonl
+  status: planned
+  notes_zh: tick 五档深度回补（水位 7600 万行，手动）
+- task_id: sch_c4_exam
+  module_id: null
+  map_node_id: null
+  resource_class: cpu_heavy
+  pool: heavy
+  peak_mem_gb: 2.0
+  est_duration_min: 480
+  exclusive_group:
+  - mine_vs_exam
+  window_type: cron
+  window_expr: 0 14 * * 6
+  schedule_truth_source: scripts/register_c4_exam_task.ps1
+  trading_sensitive: true
+  measured:
+    peak_mem_gb: null
+    p90_duration_min: null
+    samples: 0
+    last_at: null
+  samples_uri: .runtime/logs/resource_samples/sch_c4_exam.jsonl
+  status: active
+  notes_zh: C4Exam
+- task_id: sch_ch_health_probe
+  module_id: null
+  map_node_id: null
+  resource_class: light
+  pool: light
+  peak_mem_gb: 0.5
+  est_duration_min: 1
+  exclusive_group: []
+  window_type: event
+  window_expr: null
+  schedule_truth_source: scripts/register_guard_tasks.ps1
+  trading_sensitive: false
+  measured:
+    peak_mem_gb: null
+    p90_duration_min: null
+    samples: 0
+    last_at: null
+  samples_uri: .runtime/logs/resource_samples/sch_ch_health_probe.jsonl
+  status: active
+  notes_zh: CHHealthProbe
+- task_id: sch_data_scheduler
+  module_id: null
+  map_node_id: null
+  resource_class: light
+  pool: light
+  peak_mem_gb: 1.5
+  est_duration_min: 0
+  exclusive_group: []
+  window_type: event
+  window_expr: null
+  schedule_truth_source: scripts/register_guard_tasks.ps1
+  trading_sensitive: false
+  measured:
+    peak_mem_gb: null
+    p90_duration_min: null
+    samples: 0
+    last_at: null
+  samples_uri: .runtime/logs/resource_samples/sch_data_scheduler.jsonl
+  status: active
+  notes_zh: AtLogOn 常驻守护（est=0 表示常驻）
+- task_id: sch_deadman_switch
+  module_id: null
+  map_node_id: null
+  resource_class: light
+  pool: light
+  peak_mem_gb: 0.3
+  est_duration_min: 1
+  exclusive_group: []
+  window_type: event
+  window_expr: null
+  schedule_truth_source: scripts/register_guard_tasks.ps1
+  trading_sensitive: false
+  measured:
+    peak_mem_gb: null
+    p90_duration_min: null
+    samples: 0
+    last_at: null
+  samples_uri: .runtime/logs/resource_samples/sch_deadman_switch.jsonl
+  status: active
+  notes_zh: DeadmanSwitch
+- task_id: sch_factory_lane_c
+  module_id: null
+  map_node_id: null
+  resource_class: cpu_heavy
+  pool: heavy
+  peak_mem_gb: 2.0
+  est_duration_min: 240
+  exclusive_group:
+  - mine_vs_exam
+  window_type: cron
+  window_expr: 0 10 * * 6
+  schedule_truth_source: scripts/register_factory_lane_c_task.ps1
+  trading_sensitive: true
+  measured:
+    peak_mem_gb: null
+    p90_duration_min: null
+    samples: 0
+    last_at: null
+  samples_uri: .runtime/logs/resource_samples/sch_factory_lane_c.jsonl
+  status: active
+  notes_zh: FactoryLaneC
+- task_id: sch_index_minute_eod
+  module_id: null
+  map_node_id: null
+  resource_class: light
+  pool: light
+  peak_mem_gb: 0.5
+  est_duration_min: 10
+  exclusive_group: []
+  window_type: cron
+  window_expr: 10 15 * * *
+  schedule_truth_source: scripts/register_counter_trend_feeder_tasks.ps1
+  trading_sensitive: false
+  measured:
+    peak_mem_gb: null
+    p90_duration_min: null
+    samples: 0
+    last_at: null
+  samples_uri: .runtime/logs/resource_samples/sch_index_minute_eod.jsonl
+  status: active
+  notes_zh: IndexMinuteEOD
+- task_id: sch_intraday_fund_flow
+  module_id: null
+  map_node_id: null
+  resource_class: light
+  pool: light
+  peak_mem_gb: 0.5
+  est_duration_min: 10
+  exclusive_group: []
+  window_type: cron
+  window_expr: 5 10 * * *|5 11 * * *|35 13 * * *|35 14 * * *|5 15 * * *
+  schedule_truth_source: scripts/register_counter_trend_feeder_tasks.ps1
+  trading_sensitive: false
+  measured:
+    peak_mem_gb: null
+    p90_duration_min: null
+    samples: 0
+    last_at: null
+  samples_uri: .runtime/logs/resource_samples/sch_intraday_fund_flow.jsonl
+  status: active
+  notes_zh: IntradayFundFlow
+- task_id: sch_ollama_serve
+  module_id: null
+  map_node_id: null
+  resource_class: llm_api_local
+  pool: light
+  peak_mem_gb: 8.0
+  est_duration_min: 0
+  exclusive_group:
+  - gpu_default
+  window_type: event
+  window_expr: null
+  schedule_truth_source: scripts/register_ollama_serve_task.ps1
+  trading_sensitive: true
+  measured:
+    peak_mem_gb: null
+    p90_duration_min: null
+    samples: 0
+    last_at: null
+  samples_uri: .runtime/logs/resource_samples/sch_ollama_serve.jsonl
+  status: active
+  notes_zh: AtLogOn 常驻（est=0 表示常驻）；qwen3:8b 显存/内存驻留
+- task_id: sch_paper_session
+  module_id: null
+  map_node_id: null
+  resource_class: light
+  pool: light
+  peak_mem_gb: 1.0
+  est_duration_min: 30
+  exclusive_group: []
+  window_type: cron
+  window_expr: 25 9 * * *
+  schedule_truth_source: scripts/register_paper_session_task.ps1
+  trading_sensitive: false
+  measured:
+    peak_mem_gb: null
+    p90_duration_min: null
+    samples: 0
+    last_at: null
+  samples_uri: .runtime/logs/resource_samples/sch_paper_session.jsonl
+  status: active
+  notes_zh: PaperSession
+- task_id: sch_pattern_mining
+  module_id: null
+  map_node_id: null
+  resource_class: light
+  pool: light
+  peak_mem_gb: 1.0
+  est_duration_min: 5
+  exclusive_group: []
+  window_type: cron
+  window_expr: 0 9 * * *
+  schedule_truth_source: scripts/register_pattern_mining_task.ps1
+  trading_sensitive: false
+  measured:
+    peak_mem_gb: null
+    p90_duration_min: null
+    samples: 0
+    last_at: null
+  samples_uri: .runtime/logs/resource_samples/sch_pattern_mining.jsonl
+  status: active
+  notes_zh: PatternMining
+- task_id: sch_post_settlement
+  module_id: null
+  map_node_id: null
+  resource_class: light
+  pool: light
+  peak_mem_gb: 0.5
+  est_duration_min: 30
+  exclusive_group: []
+  window_type: cron
+  window_expr: 30 15 * * 1,2,3,4,5
+  schedule_truth_source: scripts/register_post_settlement_task.ps1
+  trading_sensitive: false
+  measured:
+    peak_mem_gb: null
+    p90_duration_min: null
+    samples: 0
+    last_at: null
+  samples_uri: .runtime/logs/resource_samples/sch_post_settlement.jsonl
+  status: active
+  notes_zh: PostSettlement
+- task_id: sch_process_reaper
+  module_id: null
+  map_node_id: null
+  resource_class: light
+  pool: light
+  peak_mem_gb: 0.5
+  est_duration_min: 1
+  exclusive_group: []
+  window_type: event
+  window_expr: null
+  schedule_truth_source: scripts/register_process_reaper_task.ps1
+  trading_sensitive: false
+  measured:
+    peak_mem_gb: null
+    p90_duration_min: null
+    samples: 0
+    last_at: null
+  samples_uri: .runtime/logs/resource_samples/sch_process_reaper.jsonl
+  status: active
+  notes_zh: ProcessReaper
+- task_id: sch_rss_hub
+  module_id: null
+  map_node_id: null
+  resource_class: light
+  pool: light
+  peak_mem_gb: 0.8
+  est_duration_min: 0
+  exclusive_group: []
+  window_type: event
+  window_expr: null
+  schedule_truth_source: scripts/register_aux_tasks.ps1
+  trading_sensitive: false
+  measured:
+    peak_mem_gb: null
+    p90_duration_min: null
+    samples: 0
+    last_at: null
+  samples_uri: .runtime/logs/resource_samples/sch_rss_hub.jsonl
+  status: active
+  notes_zh: AtLogOn 常驻（pm2 resurrect，est=0 表示常驻）
+- task_id: sch_tick_subscriber
+  module_id: null
+  map_node_id: null
+  resource_class: light
+  pool: light
+  peak_mem_gb: 1.5
+  est_duration_min: 0
+  exclusive_group: []
+  window_type: event
+  window_expr: null
+  schedule_truth_source: scripts/register_guard_tasks.ps1
+  trading_sensitive: false
+  measured:
+    peak_mem_gb: null
+    p90_duration_min: null
+    samples: 0
+    last_at: null
+  samples_uri: .runtime/logs/resource_samples/sch_tick_subscriber.jsonl
+  status: active
+  notes_zh: AtLogOn 常驻（est=0）；盘中高频 WAL 写
+- task_id: sch_trading_watchdog
+  module_id: null
+  map_node_id: null
+  resource_class: light
+  pool: light
+  peak_mem_gb: 0.5
+  est_duration_min: 5
+  exclusive_group: []
+  window_type: event
+  window_expr: null
+  schedule_truth_source: scripts/register_guard_tasks.ps1
+  trading_sensitive: false
+  measured:
+    peak_mem_gb: null
+    p90_duration_min: null
+    samples: 0
+    last_at: null
+  samples_uri: .runtime/logs/resource_samples/sch_trading_watchdog.jsonl
+  status: retired
+  notes_zh: 注册为 DISABLED（裁定 INT-03：Owner 手动启用才生效）
+- task_id: sch_trae_cache_cleanup
+  module_id: null
+  map_node_id: null
+  resource_class: light
+  pool: light
+  peak_mem_gb: 0.3
+  est_duration_min: 5
+  exclusive_group: []
+  window_type: event
+  window_expr: null
+  schedule_truth_source: scripts/register_aux_tasks.ps1
+  trading_sensitive: false
+  measured:
+    peak_mem_gb: null
+    p90_duration_min: null
+    samples: 0
+    last_at: null
+  samples_uri: .runtime/logs/resource_samples/sch_trae_cache_cleanup.jsonl
+  status: active
+  notes_zh: TraeCacheCleanup
+- task_id: sch_worktree_drift_watchdog
+  module_id: null
+  map_node_id: null
+  resource_class: light
+  pool: light
+  peak_mem_gb: 0.5
+  est_duration_min: 1
+  exclusive_group: []
+  window_type: event
+  window_expr: null
+  schedule_truth_source: scripts/register_drift_watchdog_task.ps1
+  trading_sensitive: false
+  measured:
+    peak_mem_gb: null
+    p90_duration_min: null
+    samples: 0
+    last_at: null
+  samples_uri: .runtime/logs/resource_samples/sch_worktree_drift_watchdog.jsonl
+  status: active
+  notes_zh: WorktreeDriftWatchdog

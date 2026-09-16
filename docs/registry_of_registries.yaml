@@ -130,6 +130,18 @@ tiers:
         status: draft
         description: 修复模式知识库索引——历史修复模式聚合 + 预置模式库。初始自举时从 bootstrap_fix_patterns.json 加载，之后由 FixPatternLearner 持续更新
 
+      - registry_id: REG-RESCHED-001
+        name: 资源画像注册表
+        physical_path: config/resource_profile_registry.yaml
+        format: yaml
+        maintenance: auto （scripts/governance/generators/generate_resource_profile_registry.py）
+        entry_count: 57
+        counting_rule: entities 数组条目数（生成器三源全量再生；CR-007 对账=机械比对 entities 条目数与 entry_count）
+        status: active
+        description: 全项目耗资源实体 18 字段画像单一真源（17 计划任务+21 数据槽位+19 手动/事件/动态实体；
+          互斥组枚举+mem_ceiling 引用 reaper 红线）——采样器/排班冲突闸/周历视图/晨审共同消费
+          （MOD-RESCHED-PROFILE/SAMPLER/GATE/ALERT/VIEW，资源排班全景 2026-09-16）
+
   - tier: 1
     name: 治理与政策级
     description: 治理层面的登记表——文档/目录/依赖/审计等

@@ -49734,6 +49734,41 @@ entries:
   desc_zh: ""
   desc_en: ""
   plain_zh: "提交前检查 ALGO_FLOW external 锚与 yaml 卡片的链接完整性：源码里锚指向的 yaml 文件必须真实存在且算法图块可解析，yaml 卡片的 source_of_truth 必须指向真实存在的源文件。只扫描本次提交涉及的文件，不会碰其他会话的暂存内容；文件读不了等基础设施故障时放行不拦。"
+- module_path: scripts/governance/generators/generate_resource_profile_registry.py
+  domain_id: D_GOV_SCRIPTS
+  name_zh: "资源画像注册表生成器"
+  name_en: "Resource Profile Registry Generator"
+  desc_zh: "解析 register_*.ps1 计划任务、schedule.yaml 数据槽位与手动实体种子，产出 18 字段资源画像注册表，人填字段合并保全再生"
+  desc_en: ""
+  plain_zh: "它把全项目里所有费电费内存的活儿登记成一本花名册：定时任务从 Windows 计划任务脚本里读触发时间，数据槽位从调度配置里读 cron，手工跑的重活按清单补录。每次重跑都保留你人工批注的内容，时间信息永远以原始配置为准。"
+- module_path: src/zephyr/infrastructure/system_telemetry/resource_sampler.py
+  domain_id: D_INFRA_RUNTIME
+  name_zh: "资源实测采样器"
+  name_en: "Resource Sampler"
+  desc_zh: "零侵入 cmdline 匹配观察进程表，样本 append-only JSONL，实测回写注册表 measured 段（max+15% margin/P90）"
+  desc_en: ""
+  plain_zh: "它像保安巡逻一样隔段时间看一眼电脑里正在跑的重活，记下每个活儿吃了多少内存、跑了多久，然后把这些实测数字写回花名册，让排班表不再靠拍脑袋估。"
+- module_path: src/zephyr/gov_enforcement/commit_gates/resource_schedule_gate.py
+  domain_id: D_GOV_CODE_QUALITY
+  name_zh: "排班冲突检测闸"
+  name_en: "Resource Schedule Conflict Gate"
+  desc_zh: "三检查（互斥组重叠/内存天花板/E0交易时段）+真源漂移检测的 own-scope commit gate"
+  desc_en: ""
+  plain_zh: "提交排班表之前它先当裁判：同一互斥组的两件重活时间撞车不行、同一时刻内存加起来超线不行、交易日的白天想开重算力不行。它还会核对排班表和原始配置是否一致，防止表改了源头没改。"
+- module_path: src/zephyr/infrastructure/system_telemetry/alerts/resource_schedule_alerts.py
+  domain_id: D_INFRA_TELEMETRY
+  name_zh: "排班冲突告警桥"
+  name_en: "Resource Schedule Alerts Bridge"
+  desc_zh: "闸 findings 映射为 OpsAlertFeed 通知（block→critical），静默窗口去重，冲突消失自动解除"
+  desc_en: ""
+  plain_zh: "它把裁判判出的冲突送到门口的公告板上：严重冲突挂红灯、小问题挂黄灯，同一件事反复发生只刷一条不刷屏，问题解决后自动摘牌。"
+- module_path: scripts/governance/generators/generate_resource_week_view.py
+  domain_id: D_GOV_SCRIPTS
+  name_zh: "周历全景视图生成器"
+  name_en: "Resource Week View Generator"
+  desc_zh: "注册表→周历网格数据（rw-data.js 机生禁手改），冲突同源标注，供只读前端页渲染"
+  desc_en: ""
+  plain_zh: "它把排班花名册画成一张一周日历图：每件活儿占一条泳道，几点到几点一块一块标出来，撞车的涂红。图上的数据全部机器生成，谁也不能在图上手工涂改。"
 
 battle_map_steps:
 - step_id: BM-BUY-05
