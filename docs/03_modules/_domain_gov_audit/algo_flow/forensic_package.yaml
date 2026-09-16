@@ -1,0 +1,33 @@
+# ALGO_FLOW 外部真源——forensic_package（_domain_gov_audit 域，真源 src/zephyr/gov_audit/forensic_package.py）
+# 2026-09-15 P2-1 契约头减负批量出仓：docstring 内联块逐字节副本，extractor 经
+# external 锚加载走同一 parse_algo_flow 管线；算法公共面变化时同步更新本块。
+doc_type: architecture_view
+ttl: permanent
+module: src.zephyr.gov_audit.forensic_package
+source_of_truth: src/zephyr/gov_audit/forensic_package.py
+algo_flow: |
+    # [ALGO_FLOW]
+    # 层: 输入
+    # - id: I1
+    #   name: 模块内部数据
+    #   fields: 无公共形参/无再导出（AST 事实）
+    #   code: forensic_package.py
+    # 层: 算法
+    # - id: A1
+    #   name_zh: ① ForensicPackage
+    #   name_en: ForensicPackage
+    #   intro: class ForensicPackage 源码 L56-L99
+    #   desc: 公共方法（定义序）: chain, events, bundle, verify_chain；源码 L56-L99
+    #   inputs: 无参数
+    #   outputs: 返回值
+    # 层: 输出
+    # - id: O1
+    #   name_zh: 模块公共 API 面（1 定义）
+    #   name_en: public defs
+    #   intro: ForensicPackage
+    #   downstream: zephyr.infrastructure.escalation
+    # [/ALGO_FLOW]
+    #
+    # 边:
+    # I1 --> A1
+    # A1 --> O1
