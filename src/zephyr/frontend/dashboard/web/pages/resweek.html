@@ -1,0 +1,34 @@
+<section class="page" id="p-resweek">
+    <h2 class="page-title">资源排班周历 <span class="badge b-pass">只读</span></h2>
+    <div class="page-sub">系统组 · <b>全项目耗资源实体的一周排班全景（库=resource_profile_registry.yaml，数据全部来自生成器，视图禁手改）</b> · 泳道=实体 ｜ 横轴=周一→周日 0-24h ｜ 红=冲突（闸 RESOURCE-SCHEDULE 判定）｜ 刷新=重跑 generate_resource_week_view.py</div>
+
+    <div class="card" style="margin-bottom:10px;display:flex;gap:10px;align-items:center;flex-wrap:wrap">
+      <span class="dim" style="font-size:12px">图例</span>
+      <span style="font-size:12px"><span style="display:inline-block;width:10px;height:10px;background:#1e5a8f;border-radius:3px;vertical-align:middle"></span> cron 排程块</span>
+      <span style="font-size:12px"><span style="display:inline-block;width:10px;height:10px;background:#8a4a12;border-radius:3px;vertical-align:middle"></span> 交易敏感（E0 管辖）</span>
+      <span style="font-size:12px"><span style="display:inline-block;width:10px;height:10px;background:#7a1f2b;border-radius:3px;vertical-align:middle"></span> 冲突实体</span>
+      <span style="font-size:12px"><span style="display:inline-block;width:10px;height:10px;background:#2e7d32;border-radius:3px;vertical-align:middle"></span> 常驻/无窗（清单）</span>
+      <input id="rw-srch" placeholder="搜索实体（task_id）…" oninput="rwFilter(this.value)"
+             style="background:#0d1117;border:1px solid #263042;border-radius:6px;color:var(--text);padding:4px 10px;font-size:12px;width:180px">
+      <span class="dim" style="font-size:11px" id="rw-hint">滚轮缩放横轴 ｜ 块悬停看画像 ｜ 只读视图——排班变更走真源+生成器</span>
+      <span style="margin-left:auto;font-size:11px" class="dim" id="rw-meta">加载中…</span>
+    </div>
+    <div class="card" id="rw-confbar" style="margin-bottom:10px;display:none;font-size:12px"></div>
+
+    <div class="card" style="position:relative;overflow:auto;max-height:calc(100vh - 240px)">
+      <div id="rw-world" style="position:relative;min-width:1100px"></div>
+    </div>
+</section>
+<style>
+  #rw-world .rw-grid { display:grid; grid-template-columns: 240px repeat(7, 1fr); gap:0; }
+  #rw-world .rw-head { font-size:11px; color:#7d8aa0; padding:4px 6px; border-bottom:1px solid #263042; text-align:center; position:sticky; top:0; background:#0d1117; z-index:2; }
+  #rw-world .rw-lane { display:contents; }
+  #rw-world .rw-name { font-size:11px; color:var(--text); padding:3px 6px; border-bottom:1px solid #1a2233; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; cursor:default; }
+  #rw-world .rw-day { position:relative; height:26px; border-bottom:1px solid #1a2233; border-left:1px solid #1a2233; }
+  #rw-world .rw-hour { position:absolute; top:0; bottom:0; border-left:1px dashed #161e2e; }
+  #rw-world .rw-blk { position:absolute; top:4px; bottom:4px; background:#1e5a8f; border-radius:3px; min-width:2px; cursor:default; }
+  #rw-world .rw-blk.e0 { background:#8a4a12; }
+  #rw-world .rw-blk.conflict { background:#7a1f2b; outline:1px solid #d05a6a; }
+  #rw-world .rw-blk:hover { filter:brightness(1.4); }
+  #rw-confbar .rw-conf { padding:2px 8px; border-radius:6px; background:#2a1216; border:1px solid #7a1f2b; margin-right:8px; display:inline-block; }
+</style>

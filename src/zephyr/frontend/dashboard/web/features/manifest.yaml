@@ -2,7 +2,7 @@
 # 契约：每模块一个独立文件 features/<id>.js；init(chart,ctx)/render(d)/destroy()；样式自注入；模块间只经 ZK.bus 通信
 # 纪律：新功能一律模块制；禁止隐式跨模块摸对方 DOM/状态（depends 显式声明）
 version: "1.1.0"
-updated: 2026-09-15
+updated: 2026-09-16
 modules:
   - id: cost-line
     name: 持仓成本线
@@ -860,5 +860,17 @@ modules:
     toggle: none
     styles: pages/govm.html <style>   # 画布页同 tdm/factory 先例：样式随页面片段
     acceptance: ACC-F-GOVM-MAP
+    handbook: []
+    status: active
+  - id: resweek-view
+    name: 资源排班周历
+    file: features/resourceweek/rw-engine.js
+    page: resweek
+    init: "rwInit()"
+    destroy: none
+    depends: []                                     # 零外部依赖：数据=window.RW_VIEW_DATA（生成器机生 rw-data.js），无 fetch 无后端端点
+    toggle: none
+    styles: self-injected                           # .rw-* 随 pages/resweek.html 内联，不写全局 main.css
+    acceptance: ACC-F-RESWEEK-VIEW                  # 验收=渲染全部实体/数据全部来自生成器/视图禁手改（B3）
     handbook: []
     status: active

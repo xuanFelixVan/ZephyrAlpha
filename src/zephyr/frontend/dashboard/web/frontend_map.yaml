@@ -4,8 +4,8 @@
 # 生成源：features/manifest.yaml + 手工维护 + scan_frontend_pages.py 半自动补登（auto_scanned=true 待逐页人工复核转正）
 # D38 模块总线（2026-09-07）：有后端模块承载的功能点必须挂 module:MOD-*（与 depgraph frontend_ref 双向闭合，
 #   经 MOD 总线与交易决策地图/五图互通——全图全库对齐铁律）；纯前端逻辑用 none: 声明事由
-version: 2.3.2
-updated: '2026-09-15'
+version: 2.3.3
+updated: '2026-09-16'
 features:
 - id: F-STOCKQ-COSTLINE
   name: 持仓成本线
@@ -2789,4 +2789,11 @@ features:
   module_id: promotion-page
   file: features/promotion/promotion.js
   backend_ref: api:/api/promotion-decide   # api_server 第四获准写端点；授权=Owner 2026-09-15 通宵指令+宪法 §5 拍板门位数字化；执行器=promotion_advisory.decide(token=None, via="frontend")
+  status: active
+- id: F-RESWEEK-WEEKGRID
+  name: 资源排班周历全景
+  page: resweek
+  module_id: resweek-view
+  file: features/resourceweek/rw-engine.js
+  backend_ref: [module:MOD-RESCHED-VIEW, registry:config/resource_profile_registry.yaml]
   status: active
