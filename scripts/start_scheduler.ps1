@@ -26,6 +26,26 @@
 #     fix #ARCH-BOOT-002 F: root cause = PowerShell redirected output pipe buffer fills -> WaitForExit()
 #     never returns -> main thread deadlocks. Polling sidesteps; do NOT "optimize" back to WaitForExit.
 #
+# Reap-responsibility three-way cross-mark (schedule v2 S2.3 C-13, 2026-09-17).
+#   Mirror notes live in the other two faces: src/zephyr/shared/infra/process_incubator.py
+#   and src/zephyr/trading/process_reaper.py. English-only here on purpose (.ps1 must be
+#   pure ASCII -- PS 5.1 decodes BOM-less files as GBK and mangles CJK into fake syntax errors).
+#   Judgment split (mutually exclusive, do not bleed across):
+#     * this guard = LOCK-DIMENSION SELF-CLEAN: on stale lock / stale heartbeat it kills
+#       orphaned children of $BizModule ONLY. Scope = its own descendants, never project-wide.
+#     * incubator  = PRE-SPAWN REJECT: water gate before spawn (queue wait / reject),
+#       zero action on already-live processes.
+#     * process_reaper = POST-HOC REAP: project-wide feature matrix (orphan / aged /
+#       runaway / ghost), one-shot under Task Scheduler.
+#   Reconciliation: this scheduler family is whitelisted inside process_reaper, so the
+#   reaper never touches it -- self-clean below is the ONLY path for a stranded scheduler
+#   process. The incubator<->reaper ledger (process_incubator ledger.jsonl) does not cover
+#   guard children, because they are spawned by this script, not by the incubator.
+#   Time vs space dimension (also clears the C-6 "four same-named schedulers" confusion):
+#   WHEN a job runs belongs to the schedule truth source (resource_profile_registry.yaml +
+#   schedule.yaml + register_*.ps1 + live schtasks query). These three files are
+#   SPACE-dimension executors only -- never add schedule windows into an executor.
+#
 # DEPLOY (one-time, no admin): powershell -ExecutionPolicy Bypass -File scripts\register_guard_tasks.ps1
 #   Registers BOTH watchdog tasks (scheduler + tick_subscriber).
 #   Task Scheduler watchdog is the SOLE entry (legacy Startup .lnk/.bat removed 2026-07-27:

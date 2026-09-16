@@ -34,6 +34,19 @@ ProcessLifecycleGateway 双轨并存、孵化不收割；9-15 事故 9 个孤儿
 
 边界：不替代 MCPProcessPool 池化语义（长驻复用进程仍走 pool）；不改
 ProcessLifecycleGateway（其消费方渐进迁移至本模块）；收割本体在 reaper（M3）。
+
+收割职责三面互标（排班表 v2 §2.3 C-13，2026-09-17；另两面 =
+zephyr.trading.process_reaper / scripts/start_scheduler.ps1，各自文件头有镜像注）：
+- 本件=三面中的**事前拒生**面：SpawnWaterGate 只在 spawn 之前判"现在该不该再生一个"
+  （queue 线有界等待 / reject 线抛 WaterLevelRejected），对已存活进程**零动作**——
+  勿在本件长出收割逻辑。事后全项目收割归 process_reaper（孤儿/超龄/失控/幽灵特征维），
+  锁维自清归 start_scheduler.ps1（只清其 $BizModule 自己的孤儿子嗣）。三面判定权互斥。
+- 对账口径：``.runtime/process_incubator/ledger.jsonl`` 是本件↔reaper 唯一机械可对账接口
+  （本件登记 → reaper 读并对已收割记录 mark_reaped 回写）；三面之外另起孵化路径=破账
+  （这就是"孵化必登记"不变量的由来）。水位两线数值真源=config/resource_optimization.yaml。
+- 时间维 vs 空间维（顺带消 C-6 同名认知风险）：「何时跑」真源=排班表
+  （config/resource_profile_registry.yaml + schedule.yaml + register_*.ps1 + schtasks 实测），
+  本件与另两面皆**空间维执行体**，只判"此刻该不该有它 / 该不该活着"，勿在执行体内加时间窗常量。
 """
 
 from __future__ import annotations

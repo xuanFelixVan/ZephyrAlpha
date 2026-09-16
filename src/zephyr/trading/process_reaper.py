@@ -52,6 +52,20 @@ process_reaper.py — 项目残留进程清理器（无状态 one-shot，Task Sc
 - Trae 幽灵进程清理（2026-08-28 三次误杀事故后终审重构，见下方「幽灵判据治本」）
 - drift 指标：git stash>5 自动清理（cleanup_stash.py）、worktree 变更>50 告警记录
 
+收割职责三面互标（排班表 v2 §2.3 C-13，2026-09-17；另两面 =
+zephyr.shared.infra.process_incubator / scripts/start_scheduler.ps1，各自文件头有镜像注）：
+- 判定权三分互斥：incubator=**事前拒生**（spawn 前水位门禁，只管"要不要再生"，对活进程零动作）；
+  start_scheduler.ps1=**锁维自清**（stale lock/心跳过期时只清自己 $BizModule=zephyr.data.scheduler
+  的孤儿子嗣，作用域=本守卫子嗣，非全项目）；本件=**事后收割**（全项目特征维：孤儿/超龄/失控/幽灵）。
+  另两面不得长出收割逻辑，本件也不得长出水位准入。
+- 对账口径：唯一机械可对账接口=孵化台账 .runtime/process_incubator/ledger.jsonl
+  （incubator 登记 → 本件 _reap_incubated_expired 判 + mark_reaped 回写）；scheduler 族走
+  lock+heartbeat 自有闭环且已入本件默认白名单（_WHITELIST_PATTERNS 的 zephyr.data.scheduler 条）
+  → 本件对它恒零动作，其孤儿只有守卫自清一条路（三面不双杀）。
+- 时间维 vs 空间维（顺带消 C-6 同名认知风险）：「何时跑」真源=排班表
+  （config/resource_profile_registry.yaml + schedule.yaml + register_*.ps1 + schtasks 实测），
+  本件与另两面皆**空间维执行体**——只判"此刻谁该活着"，勿在执行体内加时间窗常量。
+
 幽灵判据治本（2026-08-28 终审，替代旧 WMI 窗口观测方案）：
 旧方案死穴：window-config 挂在 renderer 上、MainWindowTitle/Handle 挂在 main 上（永不同属
 一个进程），renderer 的 handle 恒为 0，唯一保护是 PowerShell+WMI 查出的可见窗口集——

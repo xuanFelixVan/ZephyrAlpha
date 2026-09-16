@@ -23,10 +23,16 @@ pytest.importorskip(
 )
 
 from zephyr.orchestrator.global_state_aggregator import (  # noqa: E402
+    HEALTH_STATUS_DEGRADED,
+    HEALTH_STATUS_HEALTHY,
+    HEALTH_STATUS_UNHEALTHY,
+    HEALTH_STATUS_UNKNOWN,
+    SYSTEM_HEALTH_SOURCE_NAMES,
     GlobalStateAggregator,
     GlobalStateError,
     StateDomain,
     StateSnapshot,
+    build_system_health_collector,
 )
 
 _T0 = datetime.datetime(2026, 8, 25, 9, 30, 0)
@@ -190,3 +196,281 @@ class TestQuery:
         assert data["healthy"] is False
         assert data["degraded_domains"] == ["risk"]
         assert data["domains"]["risk"]["ok"] is False
+
+
+# ──────────────────────────────────────────────────────────────────────────────
+# L-4 系统健康域四源绑定（排班表 v2 §2.2 L-4 / P2-d）
+# ──────────────────────────────────────────────────────────────────────────────
+
+
+def _healthy_sampler() -> dict:
+    return {
+        "entities_total": 72,
+        "observable_tasks": 18,
+        "host_shared_skipped": 3,
+        "evidence_rows": 5,
+        "direction_counts": {"match": 4, "underdeclared": 1},
+    }
+
+
+def _healthy_incubator() -> dict:
+    return {
+        "water_percent": 41.3,
+        "queue_line_percent": 85.0,
+        "reject_line_percent": 90.0,
+        "ledger_stats": {"total": 4, "active": 2, "expired_active": 0, "owners": ["boot_hooks"]},
+    }
+
+
+def _healthy_gpu() -> dict:
+    return {"available": True, "gpu_count": 1, "gpu_percent": 12.0, "memory_used_gb": 3.0, "memory_total_gb": 24.0}
+
+
+def _healthy_reaper() -> dict:
+    return {"ghost_suspects": 0, "suspect_pids": []}
+
+
+def _collector(**overrides):
+    stubs = {
+        "resource_sampler_summary": _healthy_sampler,
+        "incubator_water_level": _healthy_incubator,
+        "gpu_stats": _healthy_gpu,
+        "reaper_outcome": _healthy_reaper,
+    }
+    stubs.update(overrides)
+    return build_system_health_collector(**stubs)
+
+
+_ALL_STUBS_DOWN = {
+    "resource_sampler_summary": lambda: (_ for _ in ()).throw(OSError("nope")),
+    "incubator_water_level": lambda: (_ for _ in ()).throw(OSError("nope")),
+    "gpu_stats": lambda: (_ for _ in ()).throw(OSError("nope")),
+    "reaper_outcome": lambda: (_ for _ in ()).throw(OSError("nope")),
+}
+
+_PAYLOAD_KEYS = {
+    "status",
+    "sources",
+    "sources_total",
+    "healthy_count",
+    "degraded_sources",
+    "unhealthy_sources",
+    "unknown_sources",
+    "water_percent",
+    "incubator_active",
+    "gpu_available",
+    "gpu_percent",
+    "ghost_suspects",
+    "sampler_evidence_rows",
+}
+
+
+class TestL4SystemHealthBinding:
+    def test_four_healthy_sources_roll_up_to_healthy(self) -> None:
+        payload = _collector()()
+        assert payload["status"] == HEALTH_STATUS_HEALTHY
+        assert payload["sources_total"] == 4
+        assert payload["healthy_count"] == 4
+        assert payload["degraded_sources"] == []
+        assert payload["unhealthy_sources"] == []
+        assert payload["unknown_sources"] == []
+        assert list(payload["sources"].keys()) == list(SYSTEM_HEALTH_SOURCE_NAMES)  # 确定性键序
+
+    def test_metrics_pass_through_verbatim(self) -> None:
+        payload = _collector()()
+        assert payload["sources"]["incubator"]["metrics"]["water_percent"] == 41.3
+        assert payload["sources"]["resource_sampler"]["metrics"]["evidence_rows"] == 5
+        assert payload["sources"]["gpu_monitor"]["metrics"]["gpu_count"] == 1
+        assert payload["sources"]["reaper"]["metrics"]["ghost_suspects"] == 0
+
+    def test_flat_convenience_fields_populated(self) -> None:
+        payload = _collector()()
+        assert payload["water_percent"] == 41.3
+        assert payload["incubator_active"] == 2
+        assert payload["gpu_available"] is True
+        assert payload["gpu_percent"] == 12.0
+        assert payload["ghost_suspects"] == 0
+        assert payload["sampler_evidence_rows"] == 5
+
+    # ── 逐源判定规则 ──
+
+    def test_gpu_unavailable_degrades_not_unhealthy(self) -> None:
+        payload = _collector(gpu_stats=lambda: {"available": False})()
+        assert payload["sources"]["gpu_monitor"]["status"] == HEALTH_STATUS_DEGRADED
+        assert payload["status"] == HEALTH_STATUS_DEGRADED
+        assert payload["degraded_sources"] == ["gpu_monitor"]
+
+    def test_water_at_reject_line_is_unhealthy(self) -> None:
+        def _hot():
+            m = _healthy_incubator()
+            m["water_percent"] = 93.5
+            return m
+
+        payload = _collector(incubator_water_level=_hot)()
+        assert payload["sources"]["incubator"]["status"] == HEALTH_STATUS_UNHEALTHY
+        assert payload["status"] == HEALTH_STATUS_UNHEALTHY
+        assert "拒绝线" in payload["sources"]["incubator"]["note"]
+
+    def test_water_at_queue_line_degrades(self) -> None:
+        def _warm():
+            m = _healthy_incubator()
+            m["water_percent"] = 86.0
+            return m
+
+        payload = _collector(incubator_water_level=_warm)()
+        assert payload["sources"]["incubator"]["status"] == HEALTH_STATUS_DEGRADED
+
+    def test_expired_incubation_degrades(self) -> None:
+        def _leak():
+            m = _healthy_incubator()
+            m["ledger_stats"] = {"total": 9, "active": 3, "expired_active": 2, "owners": ["x"]}
+            return m
+
+        payload = _collector(incubator_water_level=_leak)()
+        assert payload["sources"]["incubator"]["status"] == HEALTH_STATUS_DEGRADED
+
+    def test_reaper_open_suspects_degrade(self) -> None:
+        payload = _collector(reaper_outcome=lambda: {"ghost_suspects": 2, "suspect_pids": [1, 2]})()
+        assert payload["sources"]["reaper"]["status"] == HEALTH_STATUS_DEGRADED
+        assert payload["ghost_suspects"] == 2
+
+    def test_sampler_zero_evidence_degrades(self) -> None:
+        def _dry():
+            m = _healthy_sampler()
+            m["evidence_rows"] = 0
+            return m
+
+        payload = _collector(resource_sampler_summary=_dry)()
+        assert payload["sources"]["resource_sampler"]["status"] == HEALTH_STATUS_DEGRADED
+
+    def test_sampler_zero_observable_degrades(self) -> None:
+        def _blind():
+            m = _healthy_sampler()
+            m["observable_tasks"] = 0
+            return m
+
+        payload = _collector(resource_sampler_summary=_blind)()
+        assert payload["sources"]["resource_sampler"]["status"] == HEALTH_STATUS_DEGRADED
+
+    # ── 隔离与降级 ──
+
+    def test_source_exception_is_isolated_not_raised(self) -> None:
+        def _boom():
+            raise RuntimeError("nvidia-smi 挂了")
+
+        payload = _collector(gpu_stats=_boom)()
+        section = payload["sources"]["gpu_monitor"]
+        assert section["status"] == HEALTH_STATUS_UNHEALTHY
+        assert section["available"] is False
+        assert "nvidia-smi 挂了" in section["error"]
+        assert payload["status"] == HEALTH_STATUS_UNHEALTHY
+        assert payload["unhealthy_sources"] == ["gpu_monitor"]
+        assert payload["healthy_count"] == 3  # 他源不受影响
+
+    def test_source_non_mapping_is_unhealthy(self) -> None:
+        payload = _collector(reaper_outcome=lambda: [1, 2])()
+        assert payload["sources"]["reaper"]["status"] == HEALTH_STATUS_UNHEALTHY
+        assert "非 Mapping" in payload["sources"]["reaper"]["error"]
+
+    def test_key_set_is_constant_even_when_all_sources_fail(self) -> None:
+        happy = set(_collector()())
+        broken_payload = _collector(**_ALL_STUBS_DOWN)()
+        assert happy == set(broken_payload) == _PAYLOAD_KEYS  # 下游按键读取永不 KeyError
+        for section in broken_payload["sources"].values():
+            assert set(section) == {"status", "available", "note", "error", "metrics"}
+        assert broken_payload["unknown_sources"] == []  # 炸=UNHEALTHY 而非 UNKNOWN
+
+    def test_missing_metrics_leave_flat_defaults_not_keyerror(self) -> None:
+        payload = _collector(
+            resource_sampler_summary=lambda: {},
+            incubator_water_level=lambda: {},
+            gpu_stats=lambda: {},
+            reaper_outcome=lambda: {},
+        )()
+        assert payload["water_percent"] is None
+        assert payload["incubator_active"] is None
+        assert payload["gpu_available"] is False
+        assert payload["gpu_percent"] is None
+        assert payload["ghost_suspects"] is None
+        assert payload["sampler_evidence_rows"] is None
+
+    # ── 与聚合器端到端接线 ──
+
+    def test_registered_into_aggregator_and_json_serialisable(self) -> None:
+        agg = _agg(_collectors(**{StateDomain.SYSTEM_HEALTH: _collector()}))
+        snap = agg.collect(snapshot_id="snap-l4")
+        assert snap.healthy is True
+        data = json.loads(snap.to_json())
+        health = data["domains"]["system_health"]
+        assert health["ok"] is True
+        assert health["payload"]["status"] == HEALTH_STATUS_HEALTHY
+        assert sorted(health["payload"]["sources"]) == sorted(SYSTEM_HEALTH_SOURCE_NAMES)
+
+    def test_overall_json_deterministic_with_binding(self) -> None:
+        agg = _agg(_collectors(**{StateDomain.SYSTEM_HEALTH: _collector()}))
+        s1 = agg.collect(snapshot_id="snap-l4")
+        assert s1.to_json() == agg.collect(snapshot_id="snap-l4").to_json()
+
+    def test_source_degrade_does_not_degrade_domain_reading(self) -> None:
+        agg = _agg(
+            _collectors(
+                **{
+                    StateDomain.SYSTEM_HEALTH: _collector(
+                        reaper_outcome=lambda: {"ghost_suspects": 1, "suspect_pids": [7]}
+                    )
+                }
+            )
+        )
+        snap = agg.collect()
+        assert snap.healthy is True  # 采集成功=域不降级；源内降级≠域降级
+        assert snap.reading_of(StateDomain.SYSTEM_HEALTH).payload["status"] == HEALTH_STATUS_DEGRADED
+
+    # ── 缺省适配器与词表 ──
+
+    def test_default_adapters_cover_all_four_sources(self) -> None:
+        from zephyr.orchestrator.global_state_aggregator import _DEFAULT_SOURCE_ADAPTERS
+
+        assert set(_DEFAULT_SOURCE_ADAPTERS) == set(SYSTEM_HEALTH_SOURCE_NAMES)
+        for adapter in _DEFAULT_SOURCE_ADAPTERS.values():
+            assert callable(adapter)
+
+    def test_health_vocabulary_matches_system_telemetry(self) -> None:
+        """词表对齐：本件四常量字面量须与 HealthStatus 真源逐字一致。"""
+        health_mod = pytest.importorskip(
+            "zephyr.infrastructure.system_telemetry.health",
+            reason="system_telemetry.health not importable",
+        )
+        vocab = {
+            health_mod.HealthStatus.HEALTHY,
+            health_mod.HealthStatus.DEGRADED,
+            health_mod.HealthStatus.UNHEALTHY,
+            health_mod.HealthStatus.UNKNOWN,
+        }
+        assert {
+            HEALTH_STATUS_HEALTHY,
+            HEALTH_STATUS_DEGRADED,
+            HEALTH_STATUS_UNHEALTHY,
+            HEALTH_STATUS_UNKNOWN,
+        } == vocab
+
+    def test_core_import_pulls_no_executor_modules(self) -> None:
+        """零依赖不变量：仅 import 本件不得连带拉起四执行体（延迟 import 纪律）。"""
+        import subprocess
+        import sys
+
+        code = (
+            "import sys;"
+            "import zephyr.orchestrator.global_state_aggregator;"
+            "print(any(m.startswith('zephyr.trading.gpu_monitor')"
+            " or m.startswith('zephyr.trading.process_reaper')"
+            " or m.startswith('zephyr.shared.infra.process_incubator')"
+            " or m.startswith('zephyr.infrastructure.system_telemetry.resource_sampler')"
+            " for m in sys.modules))"
+        )
+        # 子进程隔离：本进程模块表已被同批其他测试污染，只有在干净解释器里
+        # "仅 import 本件"才等价于生产导入路径。
+        out = subprocess.run(
+            [sys.executable, "-c", code], capture_output=True, text=True, timeout=180, check=False
+        )
+        assert out.returncode == 0, out.stderr
+        assert out.stdout.strip().endswith("False"), out.stdout
