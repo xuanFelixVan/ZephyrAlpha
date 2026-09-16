@@ -39,7 +39,10 @@ from zephyr.infrastructure.system_telemetry.alerts.resource_schedule_alerts impo
 from zephyr.gov_enforcement.commit_gates.resource_schedule_gate import (  # noqa: E402
     run_all_checks,
 )
-from zephyr.infrastructure.system_telemetry.resource_sampler import ResourceSampler  # noqa: E402
+from zephyr.infrastructure.system_telemetry.resource_sampler import (  # noqa: E402
+    ENV_LEDGER,
+    ResourceSampler,
+)
 
 
 def _evidence_dir() -> Path | None:
@@ -63,7 +66,11 @@ def sandbox(tmp_path):
             "trading_sensitive": True,
             "measured": {"peak_mem_gb": None, "p90_duration_min": None, "samples": 0, "last_at": None},
             "samples_uri": f".runtime/logs/resource_samples/{PROBE_TASK}.jsonl",
-            "status": "planned", "notes_zh": "E2E 探针（模拟重活，仅沙箱注册表）",
+            # status=active 而非 planned：裁定 R-D（2026-09-17 v2 方案 §3）把 planned（纸面
+            # 未排产）实体剔出闸的内存并发和——本探针是**真起真测**的活进程（① spawn ② 采样
+            # ③ 回写都发生了），按 R-D 语义就该占预算，故挂 active。挂 planned 会让 ④ 的
+            # 6+6>10 内存天花板断言变成"求和臂被排产判据挡掉"的假绿，失去端到端意义。
+            "status": "active", "notes_zh": "E2E 探针（模拟重活，仅沙箱注册表；R-D 下必须 active 才占并发预算）",
         }
     )
     entities.append(
@@ -85,10 +92,14 @@ def sandbox(tmp_path):
     return reg
 
 
-def test_e2e_full_chain(sandbox, tmp_path):
+def test_e2e_full_chain(sandbox, tmp_path, monkeypatch):
     evid = _evidence_dir()
     steps: dict[str, dict] = {}
     sandbox_samples = tmp_path / "samples"
+    # L-1 归因链不参与本测试：生产孵化台账里躺着几百个历史 pid，Windows 会复用 pid，
+    # 探针的新 pid 可能被台账"认成"别的实体 → chain_conflict 偶发零捕获（flaky）。
+    # 台账 join 自有合成 fixture 钉（test_resource_sampler.py L-1 段），此处显式断链。
+    monkeypatch.setenv(ENV_LEDGER, str(tmp_path / "e2e-ledger-absent.jsonl"))
 
     # ── ① 启动：轻量子进程模拟重活（marker cmdline；psutil 真进程表可见）──
     # 寿命 45s：scan_once 逐进程读 cmdline，负载下扫描耗时可能超 6s——探针必须

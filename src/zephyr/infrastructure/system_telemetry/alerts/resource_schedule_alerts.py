@@ -35,8 +35,8 @@
 
 映射规则：
 - block 级 finding（sched_overlap_group/sched_mem_ceiling/sched_e0_block/
-  sched_gate_absent）→ severity=critical，key=`<reason_code>:<排序 task_ids>`（同冲突去重）；
-- warn 级（sched_truth_drift/sched_view_stale 等）→ severity=warning；
+  sched_gate_absent/sched_pool_undeclared）→ severity=critical，key=`<reason_code>:<排序 task_ids>`（同冲突去重）；
+- warn 级（sched_truth_drift/sched_view_stale/sched_task_* 实测差集 等）→ severity=warning；
 - 本轮未再触发的既有活动告警 → resolve()（灰显解除，滞回语义照抄供给线）。
 
 多发布方纪律（2026-09-17 P0）：解除联动按 module_id 划界，各发布方只解除自己的
@@ -74,6 +74,12 @@ _TITLES: dict[str, str] = {
     # 排产链健康码（2026-09-17 P0，v2 方案 C-5/C-10；产出方=注册表生成器 --check 臂）
     "sched_gate_absent": "排班闸缺席：E0/冲突闸/闸注册不可解析（日历守卫静默失效）",
     "sched_view_stale": "排班视图过期：rw-data.js 内嵌指纹与注册表现盘不一致",
+    # 排产真值健康码第二批（2026-09-17 P1-a，v2 方案 C-7/C-15；产出方同为生成器 --check 臂）
+    "sched_pool_undeclared": "排班池违规：pool 不在执行器真实泳道词表（幽灵池/串空间维池）",
+    "sched_task_disabled": "计划任务被禁用：注册表声明 active，系统实测 Disabled",
+    "sched_task_missing": "计划任务缺席：ps1/真源在册且声明 active，系统查无此任务（纸面排班）",
+    "sched_task_orphan": "计划任务孤儿：系统在跑而注册表不认识（画像与冲突闸双失明）",
+    "sched_task_probe_unavailable": "计划任务实测探针降级：schtasks 读不动，C-15 对账未执行",
 }
 
 

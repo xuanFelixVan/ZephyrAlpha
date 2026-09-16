@@ -93,6 +93,28 @@ def test_mem_ceiling_undeclared_skipped_then_total_ok(tmp_path):
     assert check_mem_ceiling(ents, WED) == []  # 未申报不参与求和（实测回写后自动纳入）
 
 
+def test_mem_ceiling_planned_excluded_from_sum_but_single_line_still_checked():
+    """裁定 R-D（2026-09-17 v2 方案 §3）：planned=画像在册但**未排产**，不占并发预算。
+
+    31 个纸面实体一起进求和会把真实重活的预算挤掉（"防纸面排班挤掉真实重活"）。
+    两条判据都要钉住，缺一即回归：
+    ① planned+planned 同窗 6+6=12 > 10 → **不报**（未排产不计和）；
+    ② 同两实体改成 active → **必报**（求和臂没被顺手删空，只是换了准入条件）；
+    ③ planned 单实体自己申报 11GB → **仍报**（那是画像本身的问题，与排没排产无关）。
+    """
+    planned_pair = [_e("p1", ["g1"], "0 10 * * 1", 120, mem=6.0, ts=False, status="planned"),
+                    _e("p2", ["g1"], "30 10 * * 1", 120, mem=6.0, ts=False, status="planned")]
+    assert check_mem_ceiling(planned_pair, WED) == []
+    # 同载荷换 active 必须出码——否则上面那条"不报"只是求和被删空的假绿
+    active_pair = [dict(e, status="active") for e in planned_pair]
+    f = check_mem_ceiling(active_pair, WED)
+    assert f and f[0].reason_code == "sched_mem_ceiling" and f[0].detail.startswith("同窗并发内存和 12.0GB")
+    # 单实体超线照查（准入=_eligible，不含排产判据）
+    solo = _e("paper_big", [], "0 2 * * 0", 600, mem=11.0, ts=False, status="planned")
+    s = check_mem_ceiling([solo], WED)
+    assert s and s[0].task_ids == ["paper_big"] and "超 mem_ceiling_gb=10.0" in s[0].detail
+
+
 # ── 检查③：E0 交易时段 ──
 
 def test_e0_blocks_trading_sensitive_weekday_noon():

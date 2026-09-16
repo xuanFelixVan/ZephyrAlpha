@@ -7,7 +7,7 @@ doc_type: register
 ttl: permanent
 title: 资源画像注册表（resource profile registry）
 status: active
-generated_at: '2026-09-16T18:19:13Z'
+generated_at: '2026-09-16T20:14:30Z'
 generated_by: scripts/governance/generators/generate_resource_profile_registry.py
 maintenance: auto
 counting_rule: entities 数组条目数（生成器三源全量再生；条目禁手工增删）
@@ -22,6 +22,26 @@ groups:
   repair_passport: 亿行级修复=护照登记+窗口+白名单三件套
   gpu_default: GPU 显存互斥（Kronos/Ollama/SFT/转换）
   llm_local: 本地 LLM 推理批互斥（qwen3:8b 单实例）
+pool_vocabulary:
+  lanes:
+  - default
+  - heavy
+  - intraday_minute
+  - intraday_sector
+  - realtime
+  workers:
+    default: 8
+    heavy: 2
+    intraday_minute: 4
+    intraday_sector: 2
+    realtime: 4
+  source: src/zephyr/data/scheduler.py
+  audit_namespace_excluded:
+  - cpu
+  - gpu
+  note: pool=执行器真实泳道词表（实测提取，禁硬编码）；值不在 lanes 内即幽灵池（daily_crypto 事故：不存在的 executor 在触发时被 APScheduler 摘 job，任务从未自动跑成）——check 臂
+    sched_pool_undeclared 并阻断再生（v2 方案 C-7/裁定 R-C）。audit_namespace_excluded=空间维池（回答'落到哪台算力'），与时间维泳道同名不同物，注册表挂它=串维度（C-6）
+extraction_warnings: []
 cron_convention: 标准 cron（0=周日，croniter 口径）；schedule.yaml 的 APScheduler dow（0=周一）由生成器归一——生成器=映射层
 e0_mapping_note: resource_class←E0 compute_class 映射层在本生成器（local→light，local_gpu/mixed→heavy，api→llm_api_*）；E0 真源 scripts/backtest/compute_window_gate.py
   不动
@@ -44,6 +64,8 @@ entities:
     p90_duration_min: null
     samples: 0
     last_at: null
+    no_sample_reason_zh: 无槽位级 pid：schedule.yaml 槽位跑在 DataScheduler 单进程内（APScheduler 线程），进程表无独立 pid；按宿主 RSS 逐槽回填=N 倍重复计数宿主，L-1
+      台账 join 亦未给出该槽位记录，故 measured 留 null（禁编造）
   samples_uri: .runtime/logs/resource_samples/data_slot_auction_highfreq.jsonl
   status: active
   notes_zh: 集合竞价高频层——9:15-9:25每10秒抓取五档盘口快照，用于主力行为分析
@@ -64,6 +86,8 @@ entities:
     p90_duration_min: null
     samples: 0
     last_at: null
+    no_sample_reason_zh: 无槽位级 pid：schedule.yaml 槽位跑在 DataScheduler 单进程内（APScheduler 线程），进程表无独立 pid；按宿主 RSS 逐槽回填=N 倍重复计数宿主，L-1
+      台账 join 亦未给出该槽位记录，故 measured 留 null（禁编造）
   samples_uri: .runtime/logs/resource_samples/data_slot_catchup_guard.jsonl
   status: active
   notes_zh: 调度对账补跑层——检测错过档期的任务并自动补跑（月度/周度/日频 overdue + 空表兜底）
@@ -84,6 +108,8 @@ entities:
     p90_duration_min: null
     samples: 0
     last_at: null
+    no_sample_reason_zh: 无槽位级 pid：schedule.yaml 槽位跑在 DataScheduler 单进程内（APScheduler 线程），进程表无独立 pid；按宿主 RSS 逐槽回填=N 倍重复计数宿主，L-1
+      台账 join 亦未给出该槽位记录，故 measured 留 null（禁编造）
   samples_uri: .runtime/logs/resource_samples/data_slot_consensus_crosscheck.jsonl
   status: active
   notes_zh: 一致预期管线双向验证——自建聚合 vs 同花顺快照每日对答案（独立真源互查，非数据下载层）
@@ -105,6 +131,8 @@ entities:
     p90_duration_min: null
     samples: 0
     last_at: null
+    no_sample_reason_zh: 无槽位级 pid：schedule.yaml 槽位跑在 DataScheduler 单进程内（APScheduler 线程），进程表无独立 pid；按宿主 RSS 逐槽回填=N 倍重复计数宿主，L-1
+      台账 join 亦未给出该槽位记录，故 measured 留 null（禁编造）
   samples_uri: .runtime/logs/resource_samples/data_slot_daily_backfill.jsonl
   status: active
   notes_zh: 每日盘后补下载层——检测当日数据缺口并自动补下载（治本#ARCH-DATA-TICK-GAP-001）
@@ -125,6 +153,8 @@ entities:
     p90_duration_min: null
     samples: 0
     last_at: null
+    no_sample_reason_zh: 无槽位级 pid：schedule.yaml 槽位跑在 DataScheduler 单进程内（APScheduler 线程），进程表无独立 pid；按宿主 RSS 逐槽回填=N 倍重复计数宿主，L-1
+      台账 join 亦未给出该槽位记录，故 measured 留 null（禁编造）
   samples_uri: .runtime/logs/resource_samples/data_slot_daily_capital.jsonl
   status: active
   notes_zh: 盘后资金面层——资金流向/龙虎榜/大宗/期货/股本变动/限售解禁/美股
@@ -132,7 +162,7 @@ entities:
   module_id: null
   map_node_id: null
   resource_class: network_download
-  pool: light
+  pool: default
   peak_mem_gb: 1.0
   est_duration_min: 10
   exclusive_group: []
@@ -145,6 +175,8 @@ entities:
     p90_duration_min: null
     samples: 0
     last_at: null
+    no_sample_reason_zh: 无槽位级 pid：schedule.yaml 槽位跑在 DataScheduler 单进程内（APScheduler 线程），进程表无独立 pid；按宿主 RSS 逐槽回填=N 倍重复计数宿主，L-1
+      台账 join 亦未给出该槽位记录，故 measured 留 null（禁编造）
   samples_uri: .runtime/logs/resource_samples/data_slot_daily_crypto.jsonl
   status: active
   notes_zh: 币圈日线层——7×24 市场 UTC 日界，北京 08:30=UTC 00:30 拉上一完整 UTC 日（每日含周末）
@@ -165,6 +197,8 @@ entities:
     p90_duration_min: null
     samples: 0
     last_at: null
+    no_sample_reason_zh: 无槽位级 pid：schedule.yaml 槽位跑在 DataScheduler 单进程内（APScheduler 线程），进程表无独立 pid；按宿主 RSS 逐槽回填=N 倍重复计数宿主，L-1
+      台账 join 亦未给出该槽位记录，故 measured 留 null（禁编造）
   samples_uri: .runtime/logs/resource_samples/data_slot_daily_event.jsonl
   status: active
   notes_zh: 盘后事件层——分析师预期/财报快报/审计/分红配股/质押/披露计划
@@ -185,6 +219,8 @@ entities:
     p90_duration_min: null
     samples: 0
     last_at: null
+    no_sample_reason_zh: 无槽位级 pid：schedule.yaml 槽位跑在 DataScheduler 单进程内（APScheduler 线程），进程表无独立 pid；按宿主 RSS 逐槽回填=N 倍重复计数宿主，L-1
+      台账 join 亦未给出该槽位记录，故 measured 留 null（禁编造）
   samples_uri: .runtime/logs/resource_samples/data_slot_daily_kline.jsonl
   status: active
   notes_zh: 盘后日K线层——日/周/月K线+复权+估值+指标+ETF净值
@@ -205,6 +241,8 @@ entities:
     p90_duration_min: null
     samples: 0
     last_at: null
+    no_sample_reason_zh: 无槽位级 pid：schedule.yaml 槽位跑在 DataScheduler 单进程内（APScheduler 线程），进程表无独立 pid；按宿主 RSS 逐槽回填=N 倍重复计数宿主，L-1
+      台账 join 亦未给出该槽位记录，故 measured 留 null（禁编造）
   samples_uri: .runtime/logs/resource_samples/data_slot_event_driven.jsonl
   status: active
   notes_zh: 事件驱动层——快新闻(含海外RSS)/EDB宏观数据，每3分钟轮询
@@ -225,6 +263,8 @@ entities:
     p90_duration_min: null
     samples: 0
     last_at: null
+    no_sample_reason_zh: 无槽位级 pid：schedule.yaml 槽位跑在 DataScheduler 单进程内（APScheduler 线程），进程表无独立 pid；按宿主 RSS 逐槽回填=N 倍重复计数宿主，L-1
+      台账 join 亦未给出该槽位记录，故 measured 留 null（禁编造）
   samples_uri: .runtime/logs/resource_samples/data_slot_integrity_check.jsonl
   status: active
   notes_zh: 每日完整性巡检层——动态发现全表检测当日数据是否达标，不达标告警
@@ -245,6 +285,8 @@ entities:
     p90_duration_min: null
     samples: 0
     last_at: null
+    no_sample_reason_zh: 无槽位级 pid：schedule.yaml 槽位跑在 DataScheduler 单进程内（APScheduler 线程），进程表无独立 pid；按宿主 RSS 逐槽回填=N 倍重复计数宿主，L-1
+      台账 join 亦未给出该槽位记录，故 measured 留 null（禁编造）
   samples_uri: .runtime/logs/resource_samples/data_slot_intraday_minute.jsonl
   status: active
   notes_zh: 盘中分钟K线层——A股/ETF/LOF分钟K线盘中滚动更新
@@ -265,6 +307,8 @@ entities:
     p90_duration_min: null
     samples: 0
     last_at: null
+    no_sample_reason_zh: 无槽位级 pid：schedule.yaml 槽位跑在 DataScheduler 单进程内（APScheduler 线程），进程表无独立 pid；按宿主 RSS 逐槽回填=N 倍重复计数宿主，L-1
+      台账 join 亦未给出该槽位记录，故 measured 留 null（禁编造）
   samples_uri: .runtime/logs/resource_samples/data_slot_intraday_realtime.jsonl
   status: active
   notes_zh: 盘中实时层——Tick/L2/Greeks/IV/期货/涨跌停/集合竞价/港股K线
@@ -285,6 +329,8 @@ entities:
     p90_duration_min: null
     samples: 0
     last_at: null
+    no_sample_reason_zh: 无槽位级 pid：schedule.yaml 槽位跑在 DataScheduler 单进程内（APScheduler 线程），进程表无独立 pid；按宿主 RSS 逐槽回填=N 倍重复计数宿主，L-1
+      台账 join 亦未给出该槽位记录，故 measured 留 null（禁编造）
   samples_uri: .runtime/logs/resource_samples/data_slot_intraday_sector.jsonl
   status: active
   notes_zh: 盘中板块K线层——880xxx板块分钟K线（mootdx TCP直连，独立于miniqmt慢任务）
@@ -305,6 +351,8 @@ entities:
     p90_duration_min: null
     samples: 0
     last_at: null
+    no_sample_reason_zh: 无槽位级 pid：schedule.yaml 槽位跑在 DataScheduler 单进程内（APScheduler 线程），进程表无独立 pid；按宿主 RSS 逐槽回填=N 倍重复计数宿主，L-1
+      台账 join 亦未给出该槽位记录，故 measured 留 null（禁编造）
   samples_uri: .runtime/logs/resource_samples/data_slot_monthly_static.jsonl
   status: active
   notes_zh: 月初静态层——股票列表/板块分类/指数成分/交易日历
@@ -325,6 +373,8 @@ entities:
     p90_duration_min: null
     samples: 0
     last_at: null
+    no_sample_reason_zh: 无槽位级 pid：schedule.yaml 槽位跑在 DataScheduler 单进程内（APScheduler 线程），进程表无独立 pid；按宿主 RSS 逐槽回填=N 倍重复计数宿主，L-1
+      台账 join 亦未给出该槽位记录，故 measured 留 null（禁编造）
   samples_uri: .runtime/logs/resource_samples/data_slot_news_slow.jsonl
   status: active
   notes_zh: 慢新闻层——个股新闻(stock_em)/研报(research_report)，独立队列不堵 event_driven 快新闻
@@ -345,6 +395,8 @@ entities:
     p90_duration_min: null
     samples: 0
     last_at: null
+    no_sample_reason_zh: 无槽位级 pid：schedule.yaml 槽位跑在 DataScheduler 单进程内（APScheduler 线程），进程表无独立 pid；按宿主 RSS 逐槽回填=N 倍重复计数宿主，L-1
+      台账 join 亦未给出该槽位记录，故 measured 留 null（禁编造）
   samples_uri: .runtime/logs/resource_samples/data_slot_nightly_financial.jsonl
   status: active
   notes_zh: 夜间财务层——财报/财务指标/十大股东/融资融券(T+1)
@@ -365,6 +417,8 @@ entities:
     p90_duration_min: null
     samples: 0
     last_at: null
+    no_sample_reason_zh: 无槽位级 pid：schedule.yaml 槽位跑在 DataScheduler 单进程内（APScheduler 线程），进程表无独立 pid；按宿主 RSS 逐槽回填=N 倍重复计数宿主，L-1
+      台账 join 亦未给出该槽位记录，故 measured 留 null（禁编造）
   samples_uri: .runtime/logs/resource_samples/data_slot_nightly_sentiment.jsonl
   status: active
   notes_zh: 夜间情绪窗层——compute_nightly_sentiment 日频接线（当日窗口+近7日缺口补跑，ReplacingMergeTree…
@@ -385,6 +439,8 @@ entities:
     p90_duration_min: null
     samples: 0
     last_at: null
+    no_sample_reason_zh: 无槽位级 pid：schedule.yaml 槽位跑在 DataScheduler 单进程内（APScheduler 线程），进程表无独立 pid；按宿主 RSS 逐槽回填=N 倍重复计数宿主，L-1
+      台账 join 亦未给出该槽位记录，故 measured 留 null（禁编造）
   samples_uri: .runtime/logs/resource_samples/data_slot_pre_market.jsonl
   status: active
   notes_zh: 盘前元数据层——JOB-077 股票基本信息/涨跌停价格/停复牌/指数成分/ST状态（universe构造与回测撮合约束前提）
@@ -405,6 +461,8 @@ entities:
     p90_duration_min: null
     samples: 0
     last_at: null
+    no_sample_reason_zh: 无槽位级 pid：schedule.yaml 槽位跑在 DataScheduler 单进程内（APScheduler 线程），进程表无独立 pid；按宿主 RSS 逐槽回填=N 倍重复计数宿主，L-1
+      台账 join 亦未给出该槽位记录，故 measured 留 null（禁编造）
   samples_uri: .runtime/logs/resource_samples/data_slot_research_nightly.jsonl
   status: active
   notes_zh: 研报明细层——research_report_detail_incremental（东财研报中心全字段含预测期EPS/PE；历史已回补 14…
@@ -426,6 +484,8 @@ entities:
     p90_duration_min: null
     samples: 0
     last_at: null
+    no_sample_reason_zh: 无槽位级 pid：schedule.yaml 槽位跑在 DataScheduler 单进程内（APScheduler 线程），进程表无独立 pid；按宿主 RSS 逐槽回填=N 倍重复计数宿主，L-1
+      台账 join 亦未给出该槽位记录，故 measured 留 null（禁编造）
   samples_uri: .runtime/logs/resource_samples/data_slot_weekend_backfill.jsonl
   status: active
   notes_zh: 周末补下载层——检测过去7天缺失的tick/K线数据并精准补下载
@@ -447,6 +507,8 @@ entities:
     p90_duration_min: null
     samples: 0
     last_at: null
+    no_sample_reason_zh: 无槽位级 pid：schedule.yaml 槽位跑在 DataScheduler 单进程内（APScheduler 线程），进程表无独立 pid；按宿主 RSS 逐槽回填=N 倍重复计数宿主，L-1
+      台账 join 亦未给出该槽位记录，故 measured 留 null（禁编造）
   samples_uri: .runtime/logs/resource_samples/data_slot_weekend_calibration.jsonl
   status: active
   notes_zh: 周末后校准层——全量校准/TDX板块/概念板块/美股全量（周一03:00，QMT可用）
@@ -609,10 +671,10 @@ entities:
   schedule_truth_source: docs/_working/resource_schedule/resource_schedule_panorama_plan_v1.md
   trading_sensitive: true
   measured:
-    peak_mem_gb: 2.2116
-    p90_duration_min: 29
-    samples: 4
-    last_at: '2026-09-16T05:06:46+00:00'
+    peak_mem_gb: 2.602
+    p90_duration_min: 573
+    samples: 179
+    last_at: '2026-09-16T20:08:24+00:00'
   samples_uri: .runtime/logs/resource_samples/manual_factory_grid_executor.jsonl
   status: planned
   notes_zh: 工厂网格执行器（单批最大算力实体，2万配方）
@@ -654,7 +716,7 @@ entities:
     peak_mem_gb: 0.1616
     p90_duration_min: 3
     samples: 6
-    last_at: '2026-09-16T05:06:46+00:00'
+    last_at: '2026-09-16T20:08:24+00:00'
   samples_uri: .runtime/logs/resource_samples/manual_kronos_adapter.jsonl
   status: planned
   notes_zh: Kronos 适配器（CUDA auto，GPU 与 Ollama/桌面抢显存）
@@ -1105,10 +1167,10 @@ entities:
   schedule_truth_source: scripts/register_c4_exam_task.ps1
   trading_sensitive: true
   measured:
-    peak_mem_gb: null
-    p90_duration_min: null
-    samples: 0
-    last_at: null
+    peak_mem_gb: 0.0817
+    p90_duration_min: 3
+    samples: 1
+    last_at: '2026-09-16T20:08:24+00:00'
   samples_uri: .runtime/logs/resource_samples/sch_c4_exam.jsonl
   status: active
   notes_zh: C4Exam
@@ -1116,7 +1178,7 @@ entities:
   module_id: null
   map_node_id: null
   resource_class: light
-  pool: light
+  pool: default
   peak_mem_gb: 0.5
   est_duration_min: 1
   exclusive_group: []
@@ -1129,6 +1191,7 @@ entities:
     p90_duration_min: null
     samples: 0
     last_at: null
+    no_sample_reason_zh: 本轮进程表无匹配进程：ps1 真源在册但该班次未被触发（或采样间隔内已退出）
   samples_uri: .runtime/logs/resource_samples/sch_ch_health_probe.jsonl
   status: active
   notes_zh: CHHealthProbe
@@ -1136,7 +1199,7 @@ entities:
   module_id: null
   map_node_id: null
   resource_class: light
-  pool: light
+  pool: default
   peak_mem_gb: 1.5
   est_duration_min: 0
   exclusive_group: []
@@ -1149,6 +1212,7 @@ entities:
     p90_duration_min: null
     samples: 0
     last_at: null
+    no_sample_reason_zh: 本轮进程表无匹配进程：ps1 真源在册但该班次未被触发（或采样间隔内已退出）
   samples_uri: .runtime/logs/resource_samples/sch_data_scheduler.jsonl
   status: active
   notes_zh: AtLogOn 常驻守护（est=0 表示常驻）
@@ -1156,7 +1220,7 @@ entities:
   module_id: null
   map_node_id: null
   resource_class: light
-  pool: light
+  pool: default
   peak_mem_gb: 0.3
   est_duration_min: 1
   exclusive_group: []
@@ -1169,6 +1233,7 @@ entities:
     p90_duration_min: null
     samples: 0
     last_at: null
+    no_sample_reason_zh: 本轮进程表无匹配进程：ps1 真源在册但该班次未被触发（或采样间隔内已退出）
   samples_uri: .runtime/logs/resource_samples/sch_deadman_switch.jsonl
   status: active
   notes_zh: DeadmanSwitch
@@ -1176,7 +1241,7 @@ entities:
   module_id: null
   map_node_id: null
   resource_class: cpu_heavy
-  pool: light
+  pool: heavy
   peak_mem_gb: 0.5
   est_duration_min: 1440
   exclusive_group: []
@@ -1189,6 +1254,7 @@ entities:
     p90_duration_min: null
     samples: 0
     last_at: null
+    no_sample_reason_zh: 本轮进程表无匹配进程：ps1 真源在册但该班次未被触发（或采样间隔内已退出）
   samples_uri: .runtime/logs/resource_samples/sch_f06_grid.jsonl
   status: active
   notes_zh: F06Grid
@@ -1206,10 +1272,10 @@ entities:
   schedule_truth_source: scripts/register_factory_lane_c_task.ps1
   trading_sensitive: true
   measured:
-    peak_mem_gb: null
-    p90_duration_min: null
-    samples: 0
-    last_at: null
+    peak_mem_gb: 0.0819
+    p90_duration_min: 206
+    samples: 10
+    last_at: '2026-09-16T20:08:24+00:00'
   samples_uri: .runtime/logs/resource_samples/sch_factory_lane_c.jsonl
   status: active
   notes_zh: FactoryLaneC
@@ -1217,7 +1283,7 @@ entities:
   module_id: null
   map_node_id: null
   resource_class: light
-  pool: light
+  pool: default
   peak_mem_gb: 0.5
   est_duration_min: 10
   exclusive_group: []
@@ -1230,6 +1296,7 @@ entities:
     p90_duration_min: null
     samples: 0
     last_at: null
+    no_sample_reason_zh: 本轮进程表无匹配进程：ps1 真源在册但该班次未被触发（或采样间隔内已退出）
   samples_uri: .runtime/logs/resource_samples/sch_index_minute_eod.jsonl
   status: active
   notes_zh: IndexMinuteEOD
@@ -1237,7 +1304,7 @@ entities:
   module_id: null
   map_node_id: null
   resource_class: light
-  pool: light
+  pool: realtime
   peak_mem_gb: 0.5
   est_duration_min: 10
   exclusive_group: []
@@ -1250,6 +1317,7 @@ entities:
     p90_duration_min: null
     samples: 0
     last_at: null
+    no_sample_reason_zh: 本轮进程表无匹配进程：ps1 真源在册但该班次未被触发（或采样间隔内已退出）
   samples_uri: .runtime/logs/resource_samples/sch_intraday_fund_flow.jsonl
   status: active
   notes_zh: IntradayFundFlow
@@ -1257,7 +1325,7 @@ entities:
   module_id: null
   map_node_id: null
   resource_class: llm_api_local
-  pool: light
+  pool: heavy
   peak_mem_gb: 8.0
   est_duration_min: 0
   exclusive_group:
@@ -1267,10 +1335,10 @@ entities:
   schedule_truth_source: scripts/register_ollama_serve_task.ps1
   trading_sensitive: true
   measured:
-    peak_mem_gb: null
-    p90_duration_min: null
-    samples: 0
-    last_at: null
+    peak_mem_gb: 0.0082
+    p90_duration_min: 44
+    samples: 2
+    last_at: '2026-09-16T20:08:24+00:00'
   samples_uri: .runtime/logs/resource_samples/sch_ollama_serve.jsonl
   status: active
   notes_zh: AtLogOn 常驻（est=0 表示常驻）；qwen3:8b 显存/内存驻留
@@ -1278,7 +1346,7 @@ entities:
   module_id: null
   map_node_id: null
   resource_class: light
-  pool: light
+  pool: realtime
   peak_mem_gb: 1.0
   est_duration_min: 30
   exclusive_group: []
@@ -1291,6 +1359,7 @@ entities:
     p90_duration_min: null
     samples: 0
     last_at: null
+    no_sample_reason_zh: 本轮进程表无匹配进程：ps1 真源在册但该班次未被触发（或采样间隔内已退出）
   samples_uri: .runtime/logs/resource_samples/sch_paper_session.jsonl
   status: active
   notes_zh: PaperSession
@@ -1298,7 +1367,7 @@ entities:
   module_id: null
   map_node_id: null
   resource_class: light
-  pool: light
+  pool: default
   peak_mem_gb: 1.0
   est_duration_min: 5
   exclusive_group: []
@@ -1311,6 +1380,7 @@ entities:
     p90_duration_min: null
     samples: 0
     last_at: null
+    no_sample_reason_zh: 本轮进程表无匹配进程：ps1 真源在册但该班次未被触发（或采样间隔内已退出）
   samples_uri: .runtime/logs/resource_samples/sch_pattern_mining.jsonl
   status: active
   notes_zh: PatternMining
@@ -1318,7 +1388,7 @@ entities:
   module_id: null
   map_node_id: null
   resource_class: light
-  pool: light
+  pool: default
   peak_mem_gb: 0.5
   est_duration_min: 30
   exclusive_group: []
@@ -1327,10 +1397,10 @@ entities:
   schedule_truth_source: scripts/register_post_settlement_task.ps1
   trading_sensitive: false
   measured:
-    peak_mem_gb: null
-    p90_duration_min: null
-    samples: 0
-    last_at: null
+    peak_mem_gb: 0.0
+    p90_duration_min: 0
+    samples: 1
+    last_at: '2026-09-16T20:08:24+00:00'
   samples_uri: .runtime/logs/resource_samples/sch_post_settlement.jsonl
   status: active
   notes_zh: PostSettlement
@@ -1338,7 +1408,7 @@ entities:
   module_id: null
   map_node_id: null
   resource_class: light
-  pool: light
+  pool: default
   peak_mem_gb: 0.5
   est_duration_min: 1
   exclusive_group: []
@@ -1347,10 +1417,10 @@ entities:
   schedule_truth_source: scripts/register_process_reaper_task.ps1
   trading_sensitive: false
   measured:
-    peak_mem_gb: 0.0276
-    p90_duration_min: 7
-    samples: 2
-    last_at: '2026-09-16T05:06:46+00:00'
+    peak_mem_gb: 0.0294
+    p90_duration_min: 6
+    samples: 45
+    last_at: '2026-09-16T20:08:24+00:00'
   samples_uri: .runtime/logs/resource_samples/sch_process_reaper.jsonl
   status: active
   notes_zh: ProcessReaper
@@ -1358,7 +1428,7 @@ entities:
   module_id: null
   map_node_id: null
   resource_class: light
-  pool: light
+  pool: default
   peak_mem_gb: 0.5
   est_duration_min: 2
   exclusive_group: []
@@ -1371,6 +1441,7 @@ entities:
     p90_duration_min: null
     samples: 0
     last_at: null
+    no_sample_reason_zh: 本轮进程表无匹配进程：ps1 真源在册但该班次未被触发（或采样间隔内已退出）
   samples_uri: .runtime/logs/resource_samples/sch_resource_regen_check.jsonl
   status: active
   notes_zh: 每小时排产自检+漂移就地再生+C-5/C-10 告警发布（register_resource_regen_check_task.ps1；cadence=注册后 Post-Registration 补 PT1H 重复，ps1
@@ -1379,7 +1450,7 @@ entities:
   module_id: null
   map_node_id: null
   resource_class: light
-  pool: light
+  pool: default
   peak_mem_gb: 0.5
   est_duration_min: 1
   exclusive_group: []
@@ -1392,6 +1463,7 @@ entities:
     p90_duration_min: null
     samples: 0
     last_at: null
+    no_sample_reason_zh: 本轮进程表无匹配进程：ps1 真源在册但该班次未被触发（或采样间隔内已退出）
   samples_uri: .runtime/logs/resource_samples/sch_resource_sampler_scan.jsonl
   status: active
   notes_zh: AtLogOn+PT10M one-shot 采样扫描（2026-09-16 生产接线：register_resource_sampler_scan_task.ps1）
@@ -1399,7 +1471,7 @@ entities:
   module_id: null
   map_node_id: null
   resource_class: light
-  pool: light
+  pool: default
   peak_mem_gb: 0.5
   est_duration_min: 15
   exclusive_group: []
@@ -1412,6 +1484,7 @@ entities:
     p90_duration_min: null
     samples: 0
     last_at: null
+    no_sample_reason_zh: 本轮进程表无匹配进程：ps1 真源在册但该班次未被触发（或采样间隔内已退出）
   samples_uri: .runtime/logs/resource_samples/sch_resource_sampler_writeback.jsonl
   status: active
   notes_zh: 日 05:40 measured 回写（git 跟踪文件日更一次，derived-sync 例行吸收）
@@ -1419,7 +1492,7 @@ entities:
   module_id: null
   map_node_id: null
   resource_class: light
-  pool: light
+  pool: default
   peak_mem_gb: 1.0
   est_duration_min: 15
   exclusive_group: []
@@ -1432,6 +1505,7 @@ entities:
     p90_duration_min: null
     samples: 0
     last_at: null
+    no_sample_reason_zh: 本轮进程表无匹配进程：ps1 真源在册但该班次未被触发（或采样间隔内已退出）
   samples_uri: .runtime/logs/resource_samples/sch_resource_view_publish.jsonl
   status: active
   notes_zh: 日 05:50 周历重渲+闸 findings 告警发布（register_resource_view_publish_task.ps1；排在采样器回写 05:40 之后——视图吃 measured 回写结果）
@@ -1439,7 +1513,7 @@ entities:
   module_id: null
   map_node_id: null
   resource_class: light
-  pool: light
+  pool: default
   peak_mem_gb: 0.8
   est_duration_min: 0
   exclusive_group: []
@@ -1452,6 +1526,7 @@ entities:
     p90_duration_min: null
     samples: 0
     last_at: null
+    no_sample_reason_zh: 本轮进程表无匹配进程：ps1 真源在册但该班次未被触发（或采样间隔内已退出）
   samples_uri: .runtime/logs/resource_samples/sch_rss_hub.jsonl
   status: active
   notes_zh: AtLogOn 常驻（pm2 resurrect，est=0 表示常驻）
@@ -1459,7 +1534,7 @@ entities:
   module_id: null
   map_node_id: null
   resource_class: light
-  pool: light
+  pool: realtime
   peak_mem_gb: 1.5
   est_duration_min: 0
   exclusive_group: []
@@ -1472,6 +1547,7 @@ entities:
     p90_duration_min: null
     samples: 0
     last_at: null
+    no_sample_reason_zh: 本轮进程表无匹配进程：ps1 真源在册但该班次未被触发（或采样间隔内已退出）
   samples_uri: .runtime/logs/resource_samples/sch_tick_subscriber.jsonl
   status: active
   notes_zh: AtLogOn 常驻（est=0）；盘中高频 WAL 写
@@ -1479,7 +1555,7 @@ entities:
   module_id: null
   map_node_id: null
   resource_class: light
-  pool: light
+  pool: default
   peak_mem_gb: 0.5
   est_duration_min: 5
   exclusive_group: []
@@ -1499,7 +1575,7 @@ entities:
   module_id: null
   map_node_id: null
   resource_class: light
-  pool: light
+  pool: default
   peak_mem_gb: 0.3
   est_duration_min: 5
   exclusive_group: []
@@ -1512,6 +1588,7 @@ entities:
     p90_duration_min: null
     samples: 0
     last_at: null
+    no_sample_reason_zh: 本轮进程表无匹配进程：ps1 真源在册但该班次未被触发（或采样间隔内已退出）
   samples_uri: .runtime/logs/resource_samples/sch_trae_cache_cleanup.jsonl
   status: active
   notes_zh: TraeCacheCleanup
@@ -1519,7 +1596,7 @@ entities:
   module_id: null
   map_node_id: null
   resource_class: light
-  pool: light
+  pool: default
   peak_mem_gb: 0.5
   est_duration_min: 1
   exclusive_group: []
@@ -1528,10 +1605,10 @@ entities:
   schedule_truth_source: scripts/register_drift_watchdog_task.ps1
   trading_sensitive: false
   measured:
-    peak_mem_gb: null
-    p90_duration_min: null
-    samples: 0
-    last_at: null
+    peak_mem_gb: 0.1058
+    p90_duration_min: 275
+    samples: 3
+    last_at: '2026-09-16T20:08:24+00:00'
   samples_uri: .runtime/logs/resource_samples/sch_worktree_drift_watchdog.jsonl
   status: active
   notes_zh: WorktreeDriftWatchdog

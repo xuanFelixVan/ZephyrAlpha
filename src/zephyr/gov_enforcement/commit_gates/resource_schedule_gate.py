@@ -13,11 +13,14 @@
 # [INVARIANTS] 结构校验型闸（登记时/提交时），不是运行时调度器;
 #   own-scope——仅 staged 命中 config/resource_profile_registry.yaml 时触发;
 #   互斥组重叠/内存天花板/申报超线=硬阻断；真源漂移=warn 不阻断（防指针失效告警）;
+#   planned 实体不占内存并发预算（裁定 R-D：未排产不计和）;
 #   E0 复用 classify_window/gate_decision 纯函数，异常/日历未知 fail-closed;
 #   cron 解析异常=该实体跳时间窗检查并记 finding（不炸整闸）;
 #   理由码沿用 E0 风格：sched_overlap_group/sched_mem_ceiling/sched_e0_block
-#   +sched_truth_drift（本闸）+sched_gate_absent/sched_view_stale（排产链健康码，
-#   由注册表生成器 --check 臂产出——检测者须独立于被检测的闸本体）
+#   +sched_truth_drift（本闸）+排产真值健康码七码 sched_gate_absent/sched_view_stale
+#   /sched_pool_undeclared/sched_task_disabled/sched_task_missing/sched_task_orphan
+#   /sched_task_probe_unavailable（由注册表生成器 --check 臂产出——检测者须独立于
+#   被检测的闸与注册表本体，但清单真源在本模块）
 # [MODIFY-GUARD] gate_id="RESOURCE-SCHEDULE"；理由码变更须同步 resource_schedule_alerts+视图
 # [STABILITY] evolving
 # [SAFETY] L
@@ -43,16 +46,20 @@
    展开+est_duration_min 区间数学）→ sched_overlap_group（block）；
 2. ``check_mem_ceiling`` — 同窗并发 peak_mem_gb 之和 > mem_ceiling_gb（引用
    reaper _DANGEROUS_MEM_GB=10 红线，勿收编）→ sched_mem_ceiling（block）；单实体
-   申报超线同拦；
+   申报超线同拦。裁定 R-D（2026-09-17 v2 方案）：status=planned 的纸面实体**不占并发
+   预算**（未排产不计和，防"纸面排班"挤掉真实重活），但单实体申报超线仍照查；
 3. ``check_e0_trading`` — trading_sensitive 实体 cron 窗落交易时段保守带
    （gate_decision 不放行）→ sched_e0_block（block；E0 纯函数复用，异常/日历未知
    fail-closed）；
 4. ``check_truth_drift`` — 生成器重抽 window_expr 与注册表快照比对 →
    sched_truth_drift（warn，防指针失效）。
 
-sched_* 理由码清单齐此六码：后两码 ``sched_gate_absent``（C-5 E0/闸/闸注册缺席）
-与 ``sched_view_stale``（C-10 视图指纹过期）不由本闸产出——闸本体缺席时无法自证，
-检测者必须独立于被检测者，故由注册表生成器 ``--check`` 臂产出。
+sched_* 理由码清单齐此十一码：``sched_gate_absent``（C-5 E0/闸/闸注册缺席）与
+``sched_view_stale``（C-10 视图指纹过期）、``sched_pool_undeclared``（C-7/R-C 幽灵池与
+串审计空间维池）、``sched_task_disabled``/``sched_task_missing``/``sched_task_orphan``/
+``sched_task_probe_unavailable``（C-15 Windows 计划任务实测差集）七码不由本闸产出——
+闸本体缺席时无法自证、注册表也无法自证"声明与操作系统实况一致"，检测者必须独立于被
+检测者，故由注册表生成器 ``--check`` 臂产出（本模块仍是清单真源，三处同步由单测锁死）。
 
 runtime 快查（非提交链路）：``runtime_e0_decision(now, is_trading_day, purpose)`` ——
 api_server backtest-run 端点接 E0 用的同口径封装。
@@ -89,6 +96,11 @@ __all__: Final = [
     "REASON_DRIFT",
     "REASON_GATE_ABSENT",
     "REASON_VIEW_STALE",
+    "REASON_POOL_UNDECLARED",
+    "REASON_TASK_DISABLED",
+    "REASON_TASK_MISSING",
+    "REASON_TASK_ORPHAN",
+    "REASON_TASK_PROBE",
 ]
 
 GATE_ID: Final = "RESOURCE-SCHEDULE"
@@ -102,6 +114,14 @@ REASON_DRIFT: Final = "sched_truth_drift"
 # （闸本体缺席时无法自证，检测者必须独立于被检测者）；清单真源仍在本模块。
 REASON_GATE_ABSENT: Final = "sched_gate_absent"  # C-5：E0/闸/闸注册缺席（原先静默）
 REASON_VIEW_STALE: Final = "sched_view_stale"  # C-10：rw-data.js 内嵌指纹≠注册表现盘指纹
+# 排产真值健康码第二批（2026-09-17 P1-a，v2 方案 C-7/C-15）——同样**不由本闸产出**：
+# 它们检测的正是"注册表这份声明本身可不可信"，检测者必须在被检测物之外，故由注册表
+# 生成器 --check 臂产出；本模块仍是理由码清单真源（告警桥标题/生成器字面量三处同步）。
+REASON_POOL_UNDECLARED: Final = "sched_pool_undeclared"  # C-7/R-C：pool 不在执行器真实泳道词表
+REASON_TASK_DISABLED: Final = "sched_task_disabled"  # C-15：声明 active 但系统实测 Disabled
+REASON_TASK_MISSING: Final = "sched_task_missing"  # C-15：ps1/别名在册但系统查无此任务
+REASON_TASK_ORPHAN: Final = "sched_task_orphan"  # C-15：系统里有而表里没有（画像/闸双失明）
+REASON_TASK_PROBE: Final = "sched_task_probe_unavailable"  # C-15：schtasks 探针降级（不静默）
 
 # 展开窗档地平线（28 天覆盖月度 cron，如 monthly_static）
 HORIZON_DAYS: Final = 28
@@ -206,6 +226,16 @@ def _eligible(e: dict) -> bool:
     return status not in ("retired", "orphaned_source")
 
 
+def _counts_in_budget(e: dict) -> bool:
+    """是否占内存并发预算（裁定 R-D，2026-09-17 v2 方案 §3）。
+
+    planned=画像已登记但**未排产**（方案 §8"行为零变更"），31 个纸面实体一起进求和会把
+    真实重活的预算挤掉（R-D 原话：防"纸面排班"挤掉真实重活）。故只把它们从**并发和**
+    里剔除；单实体申报超线仍照查（那是画像本身的问题，与排没排产无关）。
+    """
+    return _eligible(e) and str(e.get("status") or "active") != "planned"
+
+
 # ---------------------------------------------------------------------------
 # ② 三检查（纯函数，entities 注入）
 # ---------------------------------------------------------------------------
@@ -287,12 +317,13 @@ def check_mem_ceiling(entities: list[dict], now: datetime, horizon_days: int = H
                 )
             )
     # 并发窗求和：事件点扫描（窗起点+mem/窗终点-mem，扫描线求活跃和）
+    # R-D（2026-09-17）：只有排了产的实体占预算——planned 纸面实体不参与并发和（见 _counts_in_budget）
     events: list[tuple[datetime, int, float]] = []
-    entity_ids = sorted({str(e.get("task_id")) for e in entities if _eligible(e)})
+    entity_ids = sorted({str(e.get("task_id")) for e in entities if _counts_in_budget(e)})
     id_mem: dict[str, float] = {}
     id_wins: dict[str, list[tuple[datetime, datetime]]] = {}
     for e in entities:
-        if not _eligible(e):
+        if not _counts_in_budget(e):
             continue
         mem = e.get("peak_mem_gb")
         if mem is None:
